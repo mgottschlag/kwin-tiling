@@ -920,14 +920,11 @@ writeFile( const char *tname, int mode, const char *cont )
 }
 
 
-char *background;
-
 static void
 handleBgCfg( Entry *ce, Section *cs ATTR_UNUSED )
 {
 	if (!ce->active) /* can be only the X-*-Greeter one */
-		writeFile( def_BackgroundCfg, 0644,
-		           background ? background : def_background );
+		writeFile( def_BackgroundCfg, 0644, def_background );
 #if 0 /* risk of kcontrol clobbering the original file */
 	else if (old_confs)
 		linkFile( ce );
@@ -2113,6 +2110,11 @@ typedef struct {
 	int (*cond)( void );
 } FDefs;
 
+/*
+ * The idea is to determine how exactly the pre-existing config would
+ * have been interpreted, so no default configs are created where builtin
+ * defaults were used so far.
+ */
 static void
 applyDefs( FDefs *chgdef, int ndefs, const char *path )
 {
@@ -2129,70 +2131,23 @@ applyDefs( FDefs *chgdef, int ndefs, const char *path )
 		}
 }
 
-#ifdef XDMCP
-static FDefs kdmdefs_all[] = {
-{ "Xdmcp", "Xaccess", "%s/kdm/Xaccess", 0 },
-{ "Xdmcp", "Willing", "", 0 },
-};
-#endif
-
-static FDefs kdmdefs_eq_22[] = {
-{ "General", "PidFile", "/var/run/xdm.pid",  0 },
-{ "X-*-Core", "Setup", "%s/kdm/Xsetup",  0 },
-{ "X-*-Core", "Startup", "%s/kdm/Xstartup",  0 },
-{ "X-*-Core", "Reset", "%s/kdm/Xreset",  0 },
-{ "X-*-Core", "Session", "%s/kdm/Xsession",  0 },
-};
-
-#ifdef XDMCP
-static int
-if_xdmcp (void)
-{
-	return isTrue( getFqVal( "Xdmcp", "Enable", "true" ) );
-}
-
-static FDefs kdmdefs_le_30[] = {
-{ "Xdmcp", "KeyFile", "%s/kdm/kdmkeys", if_xdmcp },
-};
-#endif
-
-/* HACK: misused by is22conf() below */
-static FDefs kdmdefs_ge_30[] = {
-{ "X-*-Core", "Setup", "", 0 },
-{ "X-*-Core", "Startup", "", 0 },
-{ "X-*-Core", "Reset", "", 0 },
-{ "X-*-Core", "Session", XBINDIR "/xterm -ls -T", 0 },
-};
-
 static int
 if_usebg (void)
 {
 	return isTrue( getFqVal( "X-*-Greeter", "UseBackground", "true" ) );
 }
 
-static FDefs kdmdefs_ge_31[] = {
-{ "X-*-Greeter","BackgroundCfg","%s/kdm/backgroundrc", if_usebg },
+static FDefs kdmdefs_all[] = {
+#ifdef XDMCP
+{ "Xdmcp", "Xaccess", "%s/kdm/Xaccess", 0 },
+{ "Xdmcp", "Willing", "", 0 },
+#endif
+{ "X-*-Core", "Setup", "", 0 },
+{ "X-*-Core", "Startup", "", 0 },
+{ "X-*-Core", "Reset", "", 0 },
+{ "X-*-Core", "Session", XBINDIR "/xterm -ls -T", 0 },
+{ "X-*-Greeter", "BackgroundCfg", "%s/kdm/backgroundrc", if_usebg },
 };
-
-static int
-is22conf( const char *path )
-{
-	char *p;
-	const char *val;
-	int i, sl;
-
-	sl = ASPrintf( &p, "%s/kdm/", path );
-	/* safe bet, i guess ... */
-	for (i = 0; i < 4; i++) {
-		val = getFqVal( "X-*-Core", kdmdefs_ge_30[i].key, 0 );
-		if (val && !memcmp( val, p, sl )) {
-			free( p );
-			return 0;
-		}
-	}
-	free( p );
-	return 1;
-}
 
 typedef struct KUpdEnt {
 	const char *okey, *nsec, *nkey;
@@ -2222,13 +2177,13 @@ P_UseLilo( const char *sect ATTR_UNUSED, char **value )
 CONF_GEN_KMERGE
 
 static int
-mergeKdmRcNewer( const char *path )
+mergeKdmRcNewer( const char *path, int obsRet )
 {
 	char *p;
 	const char *cp, *sec, *key;
 	RSection *rootsect, *cs;
 	REntry *ce;
-	int i, j;
+	int i, j, ma, mi;
 	static char sname[64];
 
 	ASPrintf( &p, "%s/kdm/kdmrc", path );
@@ -2236,15 +2191,22 @@ mergeKdmRcNewer( const char *path )
 		free( p );
 		return 0;
 	}
-	printf( "Information: reading pre-existing kdmrc %s (from kde >= 2.2.x)\n", p );
+	for (cs = rootsect; cs; cs = cs->next)
+		if (!strcmp( cs->name, "General" ))
+			for (ce = cs->ents; ce; ce = ce->next)
+				if (!strcmp( ce->key, "ConfigVersion" ))
+					goto gotcfgv;
+	printf( "Information: ignoring pre-existing kdmrc %s from kde < 3.1\n", p );
+	free( p );
+	return obsRet;
+  gotcfgv:
+	sscanf( ce->value, "%d.%d", &ma, &mi );
+	oldver = (ma << 8) | mi;
+	printf( "Information: reading pre-existing kdmrc %s (config version %d.%d)\n",
+	        p, ma, mi );
 	free( p );
 
 	for (cs = rootsect; cs; cs = cs->next) {
-		if (!strcmp( cs->name, "Desktop0" )) {
-			background = mstrdup( "[Desktop0]\n" );
-			for (ce = cs->ents; ce; ce = ce->next)
-				strCat( &background, "%s=%s\n", ce->key, ce->value );
-		} else {
 			cp = strrchr( cs->name, '-' );
 			if (!cp)
 				cp = cs->name;
@@ -2285,34 +2247,9 @@ mergeKdmRcNewer( const char *path )
 		  dropsec:
 			printf( "Information: dropping section [%s]\n", cs->name );
 		  gotsec: ;
-		}
 	}
 
-#ifdef XDMCP
 	applyDefs( kdmdefs_all, as(kdmdefs_all), path );
-#endif
-	if (!*(cp = getFqVal( "General", "ConfigVersion", "" ))) { /* < 3.1 */
-		mod_usebg = 1;
-		if (is22conf( path )) {
-			/* work around 2.2.x defaults borkedness */
-			applyDefs( kdmdefs_eq_22, as(kdmdefs_eq_22), path );
-			printf( "Information: pre-existing kdmrc is from kde 2.2\n" );
-		} else {
-			applyDefs( kdmdefs_ge_30, as(kdmdefs_ge_30), path );
-			printf( "Information: pre-existing kdmrc is from kde 3.0\n" );
-		}
-#ifdef XDMCP
-		/* work around minor <= 3.0.x defaults borkedness */
-		applyDefs( kdmdefs_le_30, as(kdmdefs_le_30), path );
-#endif
-	} else {
-		int ma, mi;
-		sscanf( cp, "%d.%d", &ma, &mi );
-		oldver = (ma << 8) | mi;
-		printf( "Information: pre-existing kdmrc is from kde >= 3.1 (config version %d.%d)\n", ma, mi );
-		applyDefs( kdmdefs_ge_30, as(kdmdefs_ge_30), path );
-		applyDefs( kdmdefs_ge_31, as(kdmdefs_ge_31), path );
-	}
 
 	return 1;
 }
@@ -2600,7 +2537,7 @@ int main( int argc, char **argv )
 	StrList *fp;
 	Section *cs;
 	Entry *ce, **cep;
-	int i, ap, newer, locals, foreigns;
+	int i, ap, locals, foreigns;
 	int no_old_xdm = 0, no_old_kde = 0;
 	struct stat st;
 	char *nname;
@@ -2708,7 +2645,6 @@ int main( int argc, char **argv )
 		exit( 1 );
 
 	makeDefaultConfig();
-	newer = 0;
 	if (no_old) {
 		DIR *dir;
 		if ((dir = opendir( newdir ))) {
@@ -2729,17 +2665,20 @@ int main( int argc, char **argv )
 			closedir( dir );
 		}
 	} else {
+		int newer = 0;
 		if (oldkde) {
-			if (!(newer = mergeKdmRcNewer( oldkde )) && !mergeKdmRcOld( oldkde ))
+			if (!(newer = mergeKdmRcNewer( oldkde, 1 )) && !mergeKdmRcOld( oldkde ))
 				fprintf( stderr,
-				         "Cannot read old kdmrc at specified location\n" );
+				         "Cannot read pre-existing kdmrc at specified location\n" );
 		} else if (!no_old_kde) {
 			for (i = 0; i < as(oldkdes); i++) {
-				if ((newer = mergeKdmRcNewer( oldkdes[i] )) ||
-				    mergeKdmRcOld( oldkdes[i] )) {
+				if (i && !strcmp( oldkdes[0], oldkdes[i] ))
+					continue;
+				if ((newer = mergeKdmRcNewer( oldkdes[i], 0 ))) {
 					oldkde = oldkdes[i];
 					break;
 				}
+				mergeKdmRcOld( oldkdes[i] ); /* only prints a message */
 			}
 		}
 		if (!newer && !no_old_xdm) {
@@ -2758,6 +2697,12 @@ int main( int argc, char **argv )
 		} else
 			oldxdm = 0;
 	}
+	/*
+	 * How to proceed with pre-existing scripts (which are named in the config):
+	 * - old_scripts set or some scripts in new target already => keep 'em
+	 * - no_old_scripts set or all scripts outside new target => pretend that
+	 *   the old config did not reference them in the first place
+	 */
 	if (no_old_scripts)
 		goto no_old_s;
 	if (!old_scripts) {
