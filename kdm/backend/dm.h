@@ -501,6 +501,7 @@ char **gRecvArgv( void );
 typedef char *(*GConvFunc)( int what, const char *prompt );
 int verify( GConvFunc gconv, int rootok );
 int startClient( volatile int *pid );
+void clientExited( void );
 void sessionExit( int status ) ATTR_NORETURN;
 int readDmrc( void );
 extern char **userEnviron, **systemEnviron;

@@ -1647,7 +1647,7 @@ startClient( volatile int *pid )
 }
 
 void
-sessionExit( int status )
+clientExited( void )
 {
 	int pid;
 #ifdef USE_PAM
@@ -1698,6 +1698,7 @@ sessionExit( int status )
 			Wait4( &pid );
 			break;
 		}
+		removeAuth = 0;
 	}
 
 #ifdef USE_PAM
@@ -1718,12 +1719,20 @@ sessionExit( int status )
 			logError( "pam_setcred(DELETE_CRED) failed: %s\n",
 			          pam_strerror( pamh, pretc ) );
 		resetGids();
+		removeCreds = 0;
 	}
 	if (pamh) {
 		pam_end( pamh, PAM_SUCCESS );
 		reInitErrorLog();
+		pamh = 0;
 	}
 #endif
+}
+
+void
+sessionExit( int status )
+{
+	clientExited();
 
 	finishGreet();
 

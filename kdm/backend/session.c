@@ -656,6 +656,8 @@ manageSession( struct display *d )
 		sessionExit( EX_AL_RESERVER_DPY );
 	}
 
+	clientExited();
+
 	gSet( &mstrtalk );
 	gSendInt( D_UnUser );
 	if (gRecvInt()) {
