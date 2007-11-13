@@ -2716,12 +2716,13 @@ int main( int argc, char **argv )
 	makeDefaultConfig();
 	if (no_old) {
 		DIR *dir;
+		StrList *bfl = 0;
 		if ((dir = opendir( newdir ))) {
 			struct dirent *ent;
 			char bn[PATH_MAX];
 			while ((ent = readdir( dir ))) {
 				int l;
-			 if (!strcmp( ent->d_name, "." ) || !strcmp( ent->d_name, ".." ))
+				if (!strcmp( ent->d_name, "." ) || !strcmp( ent->d_name, ".." ))
 					continue;
 				l = sprintf( bn, "%s/%s", newdir, ent->d_name ); /* cannot overflow (kernel would not allow the creation of a longer path) */
 				if (!stat( bn, &st ) && !S_ISREG( st.st_mode ))
@@ -2729,9 +2730,11 @@ int main( int argc, char **argv )
 				if (no_backup || !memcmp( bn + l - 4, ".bak", 5 ))
 					unlink( bn );
 				else
-					displace( bn );
+					addStr( &bfl, bn );
 			}
 			closedir( dir );
+			for (; bfl; bfl = bfl->next)
+				displace( bfl->str );
 		}
 	} else {
 		int newer = 0;
