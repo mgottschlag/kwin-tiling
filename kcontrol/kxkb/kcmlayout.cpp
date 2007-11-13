@@ -497,21 +497,7 @@ void LayoutConfig::initUI()
 //	widget->chkEnableOptions->setChecked( m_kxkbConfig.m_enableXkbOptions );
 	widget->checkResetOld->setChecked(m_kxkbConfig.m_resetOldOptions);
 
-	switch( m_kxkbConfig.m_switchingPolicy ) {
-		default:
-		case SWITCH_POLICY_GLOBAL:
-			widget->grpSwitching->setSelected(0);
-			break;
-		case SWITCH_POLICY_DESKTOP:
-			widget->grpSwitching->setSelected(1);
-			break;
-		case SWITCH_POLICY_WIN_CLASS:
-			widget->grpSwitching->setSelected(2);
-			break;
-		case SWITCH_POLICY_WINDOW:
-			widget->grpSwitching->setSelected(3);
-			break;
-	}
+	widget->grpSwitching->setSelected( m_kxkbConfig.m_switchingPolicy );
 
 #ifdef STICKY_SWITCHING
     widget->chkEnableSticky->setChecked(m_kxkbConfig.m_stickySwitching);
@@ -559,21 +545,7 @@ void LayoutConfig::save()
 	m_kxkbConfig.m_showFlag = widget->chkShowFlag->isChecked();
 
 	int modeId = widget->grpSwitching->selected();
-	switch( modeId ) {
-		default:
-		case 0:
-			m_kxkbConfig.m_switchingPolicy = SWITCH_POLICY_GLOBAL;
-			break;
-		case 1:
-			m_kxkbConfig.m_switchingPolicy = SWITCH_POLICY_DESKTOP;
-			break;
-		case 2:
-			m_kxkbConfig.m_switchingPolicy = SWITCH_POLICY_WIN_CLASS;
-			break;
-		case 3:
-			m_kxkbConfig.m_switchingPolicy = SWITCH_POLICY_WINDOW;
-			break;
-	}
+	m_kxkbConfig.m_switchingPolicy = (SwitchingPolicy)modeId;
 
 #ifdef STICKY_SWITCHING
     m_kxkbConfig.m_stickySwitching = widget->chkEnableSticky->isChecked();
@@ -1019,7 +991,7 @@ extern "C"
 	m_kxkbConfig.load(KxkbConfig::LOAD_ACTIVE_OPTIONS);
 
 	if( m_kxkbConfig.m_useKxkb ) {
-	    KToolInvocation::startServiceByDesktopName("kxkb");
+            KToolInvocation::kdeinitExec("kxkb");
 	}
     }
 }
