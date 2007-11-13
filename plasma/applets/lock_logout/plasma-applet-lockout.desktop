@@ -2,7 +2,9 @@
 Encoding=UTF-8
 Name=Lock/Logout
 Name[ca]=Bloqueja/surt
+Name[de]=Bildschirmsperre und Abmeldung aus KDE
 Name[el]=Κλείδωμα/αποσύνδεση
+Name[et]=Lukustamine/väljalogimine
 Name[ga]=Glasáil/Logáil Amach
 Name[ja]=ロック/ログアウト
 Name[ko]=잠금/로그아웃
@@ -22,6 +24,7 @@ Name[zh_TW]=鎖定/登出
 Comment=Let user lock screen or end session
 Comment[ca]=Permet a l'usuari bloquejar la pantalla o sortir de la sessió
 Comment[el]=Επιτρέπει στο χρήση το κλείδωμα της οθόνης ή το τέλος της συνεδρίας
+Comment[et]=Võimaldab kasutajal ekraani lukustada ning seansi lõpetada
 Comment[ja]=スクリーンをロックしたりセッションを終了したりします
 Comment[ko]=세션을 잠그거나 끝내기
 Comment[nds]=Afmellen oder den Schirm afsluten

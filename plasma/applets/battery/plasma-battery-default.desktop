@@ -2,6 +2,7 @@
 Name=Battery Monitor
 Name[be]=Назіранне за батарэяй
 Name[ca]=Monitor de bateria
+Name[de]=Akkuüberwachung
 Name[el]=Επόπτης συστήματος
 Name[et]=Aku jälgija
 Name[ja]=バッテリモニタ
@@ -22,6 +23,7 @@ Name[zh_CN]=电池监视器
 Name[zh_TW]=電池監視器
 Comment=A battery charge monitor
 Comment[be]=Назіранне за зарадам батарэй
+Comment[de]=Eine Batteriestand-Anzeige
 Comment[el]=Ένας επόπτης φόρτισης της μπαταρίας
 Comment[et]=Aku täidetuse jälgija
 Comment[ja]=バッテリ残量モニタ

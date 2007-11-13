@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Application Launcher
 Name[ca]=Engegador d'aplicacions
+Name[de]=Programmstarter
 Name[el]=Εκτέλεση εφαρμογών
 Name[et]=Rakenduste käivitaja
 Name[ga]=Tosaitheoir Feidhmchlár
@@ -23,6 +24,7 @@ Name[zh_CN]=应用程序启动器
 Name[zh_TW]=應用程式啟動器
 Comment=Launcher to start applications
 Comment[ca]=Executador per a iniciar aplicacions
+Comment[de]=Startet verschiedene Programme
 Comment[el]=Εκτέλεση εφαρμογών
 Comment[et]=Rakenduste käivitaja
 Comment[ga]=Tosaitheoir a thosaíonn feidhmchláir
