@@ -68,7 +68,7 @@ class Interface : public KRunnerDialog
         void setDefaultItem( QListWidgetItem* );
 
     protected:
-        void hideEvent( QHideEvent* e );
+        void closeEvent(QCloseEvent* e);
 
     private:
         void resetInterface();

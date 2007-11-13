@@ -170,7 +170,7 @@ Interface::Interface(QWidget* parent)
     activityButton->setIcon(KIcon("ksysguard"));
     activityButton->setFlat(true);
     connect(activityButton, SIGNAL(clicked()), qApp, SLOT(showTaskManager()));
-    connect(activityButton, SIGNAL(clicked()), this, SLOT(hide()));
+    connect(activityButton, SIGNAL(clicked()), this, SLOT(close()));
     bottomLayout->addWidget(activityButton);
 
     bottomLayout->addStretch();
@@ -186,7 +186,7 @@ Interface::Interface(QWidget* parent)
 
     m_cancelButton = new KPushButton(KStandardGuiItem::cancel(), w);
     m_cancelButton->setFlat( true );
-    connect( m_cancelButton, SIGNAL(clicked(bool)), SLOT(hide()) );
+    connect( m_cancelButton, SIGNAL(clicked(bool)), SLOT(close()) );
     bottomLayout->addWidget( m_cancelButton );
 
     m_layout->addLayout (bottomLayout );
@@ -194,7 +194,7 @@ Interface::Interface(QWidget* parent)
     new InterfaceAdaptor( this );
     QDBusConnection::sessionBus().registerObject( "/Interface", this );
 
-    new QShortcut( QKeySequence( Qt::Key_Escape ), this, SLOT(hide()) );
+    new QShortcut( QKeySequence( Qt::Key_Escape ), this, SLOT(close()) );
 
     //FIXME: what size should we be?
     resize(400, 250);
@@ -265,6 +265,7 @@ void Interface::switchUser()
     m_header->setText(i18n("Switch users"));
     m_header->setPixmap("user");
     m_context.setSearchTerm("SESSIONS");
+    m_defaultMatch = 0;
     sessionrunner->match(&m_context);
 
     foreach (Plasma::SearchAction *action, m_context.exactMatches()) {
@@ -303,6 +304,7 @@ void Interface::resetInterface()
 {
     m_header->setText(i18n("Enter the name of an application, location or search term below."));
     m_header->setPixmap("system-search");
+    m_defaultMatch = 0;
     m_context.setSearchTerm(QString());
     m_searchTerm->clear();
     m_matchList->clear();
@@ -311,7 +313,7 @@ void Interface::resetInterface()
     showOptions( false );
 }
 
-void Interface::hideEvent( QHideEvent* e )
+void Interface::closeEvent(QCloseEvent* e)
 {
     resetInterface();
     e->accept();
@@ -337,7 +339,7 @@ void Interface::matchActivated(QListWidgetItem* item)
     } else {
         //kDebug() << "match activated! " << match->text();
         match->activate();
-        hide();
+        close();
     }
 }
 
@@ -345,13 +347,14 @@ void Interface::queueMatch()
 {
     // start over when the timer fires on the first runner
     m_nextRunner = 0;
-    
+
     // (re)start the timer
     m_matchTimer.start(200);
 
     QString term = m_searchTerm->text().trimmed();
     if (!term.isEmpty()) {
         m_context.setSearchTerm(term);
+        m_context.addStringCompletions(m_executions);
     }
 }
 
@@ -359,6 +362,7 @@ void Interface::match()
 {
     //FIXME: this induces rediculously bad flicker
     m_matchList->clear();
+    m_defaultMatch = 0;
 
     int matchCount = 0;
     QString term = m_searchTerm->text().trimmed();
@@ -367,8 +371,6 @@ void Interface::match()
         resetInterface();
         return;
     }
-
-    m_context.addStringCompletions(m_executions);
 
     // get the exact matches
     m_runners[m_nextRunner]->match(&m_context);
@@ -408,31 +410,29 @@ void Interface::match()
         m_runButton->setEnabled(false);
     }
 
-    if (++m_nextRunner >= m_runners.size())
-    {
+    if (++m_nextRunner >= m_runners.size()) {
         m_nextRunner = 0;
-        m_defaultMatch = 0;
-    }
-    else
-    {
+    } else {
         // start the timer over so we will
         // process the rest of the runners
         m_matchTimer.start(0);
     }
-
 }
 
 void Interface::exec()
 {
-    match();
-
     if (m_searchTerm->completionBox() && m_searchTerm->completionBox()->isVisible()) {
+        queueMatch();
         return;
     }
 
     SearchMatch* match = dynamic_cast<SearchMatch*>(m_matchList->currentItem());
     if (!match) {
-        return;
+        if (m_defaultMatch) {
+            match = m_defaultMatch;
+        } else {
+            return;
+        }
     }
     QString searchTerm = m_searchTerm->text();
 
@@ -467,7 +467,7 @@ void Interface::showOptions(bool show)
             m_expander = new CollapsibleWidget( this );
             m_expander->show();
             connect( m_expander, SIGNAL( collapseCompleted() ),
-                     m_expander, SLOT( hide() ) );
+                     m_expander, SLOT( close() ) );
             m_layout->insertWidget( 3, m_expander );
         }
 
@@ -507,9 +507,9 @@ void Interface::setDefaultItem( QListWidgetItem* item )
         }
 
         m_defaultMatch = dynamic_cast<SearchMatch*>(item);
-	if (!m_defaultMatch) {
-	    return;
-	}
+        if (!m_defaultMatch) {
+            return;
+        }
         hasOptions = m_defaultMatch && m_defaultMatch->action()->runner()->hasMatchOptions();
     }
 
