@@ -103,7 +103,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
       dlg->m_spinCache->setSingleStep(512);
       dlg->m_spinCache->setRange(0, 40960);
       dlg->m_spinCache->setSpecialValueText(i18n("Unlimited"));
-      dlg->m_spinCache->setSuffix(i18n(" KB"));
+      dlg->m_spinCache->setSuffix(i18n(" KiB"));
 
       connect(dlg->m_buttonAdd, SIGNAL(clicked()),
          SLOT(slotAdd()));

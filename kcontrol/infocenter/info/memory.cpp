@@ -86,11 +86,11 @@ static QString formatted_unit(t_memsize value)
 {
     if (value > (1024 * 1024))
         if (value > (1024 * 1024 * 1024))
-            return i18n("%1 GB", KGlobal::locale()->formatNumber(value / (1024 * 1024 * 1024.0), 2));
+            return i18n("%1 GiB", KGlobal::locale()->formatNumber(value / (1024 * 1024 * 1024.0), 2));
         else
-            return i18n("%1 MB", KGlobal::locale()->formatNumber(value / (1024 * 1024.0), 2));
+            return i18n("%1 MiB", KGlobal::locale()->formatNumber(value / (1024 * 1024.0), 2));
     else
-        return i18n("%1 KB", KGlobal::locale()->formatNumber(value / 1024.0, 2));
+        return i18n("%1 KiB", KGlobal::locale()->formatNumber(value / 1024.0, 2));
 }
 
 K_PLUGIN_FACTORY_DECLARATION(KInfoModulesFactory)
