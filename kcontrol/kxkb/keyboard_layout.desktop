@@ -3,13 +3,13 @@ Encoding=UTF-8
 Exec=kcmshell4 keyboard_layout
 Icon=preferences-desktop-keyboard-layout
 Type=Service
-ServiceTypes=KCModule
+ServiceTypes=KCModule,KCModuleInit
 DocPath=kxkb/index.html
 
 X-KDE-Library=kcm_keyboard_layout
 X-KDE-PluginKeyword=keyboard_layout
+X-KDE-Init-Symbol=keyboard_layout
 X-KDE-ParentApp=kcontrol
-
 X-KDE-System-Settings-Parent-Category=regional-and-language
 
 Name=Keyboard Layout

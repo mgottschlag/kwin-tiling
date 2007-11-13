@@ -1013,7 +1013,7 @@ void LayoutConfig::defaults()
 
 extern "C"
 {
-    KDE_EXPORT void kcminit_keyboard()
+    KDE_EXPORT void kcminit_keyboard_layout()
     {
 	KxkbConfig m_kxkbConfig;
 	m_kxkbConfig.load(KxkbConfig::LOAD_ACTIVE_OPTIONS);
@@ -1021,12 +1021,5 @@ extern "C"
 	if( m_kxkbConfig.m_useKxkb ) {
 	    KToolInvocation::startServiceByDesktopName("kxkb");
 	}
-//	else {
-//	    if( m_kxkbConfig.m_enableXkbOptions ) {
-//		if( !XKBExtension::setXkbOptions(m_kxkbConfig.m_options, m_kxkbConfig.m_resetOldOptions) ) {
-//		    kDebug() << "Setting XKB options failed!";
-//		}
-//	    }
-//	}
     }
 }
