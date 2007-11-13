@@ -65,6 +65,11 @@ typedef struct StrList {
 	const char *str;
 } StrList;
 
+typedef struct StrMap {
+	struct StrMap *next;
+	const char *key, *value;
+} StrMap;
+
 
 static void *
 mmalloc( size_t sz )
@@ -256,8 +261,9 @@ isTrue( const char *val )
 	       atoi( val );
 }
 
+
 static int
-mkdirp( const char *name, int mode, const char *what, int existok )
+mkpdirs( const char *name, const char *what )
 {
 	char *mfname = mstrdup( name );
 	int i;
@@ -278,7 +284,16 @@ mkdirp( const char *name, int mode, const char *what, int existok )
 			mfname[i] = '/';
 		}
 	free( mfname );
+	return 1;
+}
+
+static int
+mkdirp( const char *name, int mode, const char *what, int existok )
+{
+	struct stat st;
+
 	if (stat( name, &st )) {
+		mkpdirs( name, what );
 		if (mkdir( name, mode )) {
 			fprintf( stderr, "Cannot create %s directory %s: %s\n",
 			         what, name, strerror( errno ) );
@@ -710,25 +725,15 @@ static const char def_background[] =
 "WallpaperList=\n"
 "WallpaperMode=Scaled\n";
 
-static char *
-prepName( const char *fn )
-{
-	const char *tname;
-	char *nname;
-
-	tname = strrchr( fn, '/' );
-	ASPrintf( &nname, "%s/%s", newdir, tname ? tname + 1 : fn );
-	displace( nname );
-	return nname;
-}
-
+/* Create a new file in KDMCONF */
 static FILE *
 createFile( const char *fn, int mode )
 {
 	char *nname;
 	FILE *f;
 
-	nname = prepName( fn );
+	ASPrintf( &nname, "%s/%s", newdir, fn );
+	displace( nname );
 	if (!(f = fopen( nname, "w" ))) {
 		fprintf( stderr, "Cannot create %s\n", nname );
 		exit( 1 );
@@ -738,14 +743,17 @@ createFile( const char *fn, int mode )
 	return f;
 }
 
+/* Create a copy of a file under KDMCONF and fill it */
 static void
-writeOut( const char *fn, int mode, time_t stamp, const char *buf, size_t len )
+writeCopy( const char *fn, int mode, time_t stamp, const char *buf, size_t len )
 {
 	char *nname;
 	int fd;
 	struct utimbuf utim;
 
-	nname = prepName( fn );
+	ASPrintf( &nname, "%s/%s", newdir, fn );
+	displace( nname );
+	mkpdirs( nname, "target" );
 	if ((fd = creat( nname, mode )) < 0) {
 		fprintf( stderr, "Cannot create %s\n", nname );
 		exit( 1 );
@@ -780,6 +788,26 @@ inNewDir( const char *name )
 	return !memcmp( name, KDMCONF "/", sizeof(KDMCONF) );
 }
 
+static const char *
+getMapping( StrMap *sm, const char *k )
+{
+	for (; sm; sm = sm->next)
+		if (!strcmp( sm->key, k ))
+			return sm->value;
+	return 0;
+}
+
+static void
+addMapping( StrMap **sm, const char *k, const char *v )
+{
+	for (; *sm; sm = &(*sm)->next)
+		if (!strcmp( (*sm)->key, k ))
+			return;
+	*sm = mcalloc( sizeof(**sm) );
+	ASPrintf( (char **)&(*sm)->key, "%s", k );
+	ASPrintf( (char **)&(*sm)->value, "%s", v );
+}
+
 static int
 inList( StrList *sp, const char *s )
 {
@@ -799,6 +827,7 @@ addStr( StrList **sp, const char *s )
 	ASPrintf( (char **)&(*sp)->str, "%s", s );
 }
 
+StrMap *cfmap;
 StrList *aflist, *uflist, *eflist, *cflist, *lflist;
 
 /* file is part of new config */
@@ -837,10 +866,15 @@ linkedFile( const char *fn )
 }
 
 /*
- * XXX this stuff is highly borked. it does not handle collisions at all.
+ * NOTE: This code will not correctly deal with default files colliding
+ * with pre-existing files. This should be OK, as for each class of files
+ * (scripts, configs) only one origin is used, and conflicts between classes
+ * are rather unlikely.
  */
+
+/* Make a possibly modified copy of a file under KDMCONF */
 static int
-copyFile( Entry *ce, const char *tname, int mode, int (*proc)( File * ) )
+copyFile( Entry *ce, int mode, int (*proc)( File * ) )
 {
 	const char *tptr;
 	char *nname;
@@ -850,15 +884,44 @@ copyFile( Entry *ce, const char *tname, int mode, int (*proc)( File * ) )
 	if (!*ce->value)
 		return 1;
 
-	tptr = strrchr( tname, '/' );
-	ASPrintf( &nname, KDMCONF "/%s", tptr ? tptr + 1 : tname );
-	if (inList( cflist, ce->value ) ||
-	    inList( eflist, ce->value ) ||
-	    inList( lflist, ce->value ))
-	{
-		rt = 1;
+	if ((nname = (char *)getMapping( cfmap, ce->value ))) {
+		rt = inList( aflist, nname );
 		goto doret;
 	}
+	if (oldkde) {
+		int olen = strlen( oldkde );
+		if (!memcmp( ce->value, oldkde, olen )) {
+			if (!memcmp( ce->value + olen, "/kdm/", 5 )) {
+				tptr = ce->value + olen + 4;
+				goto gotn;
+			}
+			if (ce->value[olen] == '/') {
+				tptr = ce->value + olen;
+				goto gotn;
+			}
+		}
+	}
+	if (oldxdm) {
+		int olen = strlen( oldxdm );
+		if (!memcmp( ce->value, oldxdm, olen ) && ce->value[olen] == '/') {
+			tptr = ce->value + olen;
+			goto gotn;
+		}
+	}
+	if (!(tptr = strrchr( ce->value, '/' ))) {
+		fprintf( stderr, "Warning: cannot cope with relative path %s\n", ce->value );
+		return 0;
+	}
+  gotn:
+	ASPrintf( &nname, KDMCONF "%s", tptr );
+	if (inList( aflist, nname )) {
+		int cnt = 1;
+		do {
+			free( nname );
+			ASPrintf( &nname, KDMCONF "%s-%d", tptr , ++cnt );
+		} while (inList( aflist, nname ));
+	}
+	addMapping( &cfmap, ce->value, nname );
 	if (!readFile( &file, ce->value )) {
 		fprintf( stderr, "Warning: cannot copy file %s\n", ce->value );
 		rt = 0;
@@ -869,11 +932,13 @@ copyFile( Entry *ce, const char *tname, int mode, int (*proc)( File * ) )
 			else {
 				struct stat st;
 				stat( ce->value, &st );
-				writeOut( nname, mode, st.st_mtime, file.buf, file.eof - file.buf );
+				writeCopy( nname + sizeof(KDMCONF), mode, st.st_mtime,
+				           file.buf, file.eof - file.buf );
 				copiedFile( ce->value );
 			}
 		} else {
-			writeOut( nname, mode, 0, file.buf, file.eof - file.buf );
+			writeCopy( nname + sizeof(KDMCONF), mode, 0,
+			           file.buf, file.eof - file.buf );
 			editedFile( ce->value );
 		}
 		if (strcmp( ce->value, nname ) && inNewDir( ce->value ) && !use_destdir)
@@ -891,6 +956,8 @@ doLinkFile( const char *name )
 {
 	File file;
 
+	if (inList( aflist, name ))
+		return;
 	if (!readFile( &file, name )) {
 		fprintf( stderr, "Warning: cannot read file %s\n", name );
 		return;
@@ -898,13 +965,15 @@ doLinkFile( const char *name )
 	if (inNewDir( name ) && use_destdir) {
 		struct stat st;
 		stat( name, &st );
-		writeOut( name, st.st_mode, st.st_mtime, file.buf, file.eof - file.buf );
+		writeCopy( name + sizeof(KDMCONF), st.st_mode, st.st_mtime,
+		           file.buf, file.eof - file.buf );
 		copiedFile( name );
 	} else
 		linkedFile( name );
 	addedFile( name );
 }
 
+/* Incorporate an existing file */
 static void
 linkFile( Entry *ce )
 {
@@ -912,10 +981,13 @@ linkFile( Entry *ce )
 		doLinkFile( ce->value );
 }
 
+/* Create a new file in KDMCONF and fill it */
 static void
 writeFile( const char *tname, int mode, const char *cont )
 {
-	writeOut( tname, mode, 0, cont, strlen( cont ) );
+	FILE *f = createFile( tname + sizeof(KDMCONF), mode );
+	fputs( cont, f );
+	fclose( f );
 	addedFile( tname );
 }
 
@@ -930,7 +1002,7 @@ handleBgCfg( Entry *ce, Section *cs ATTR_UNUSED )
 		linkFile( ce );
 #endif
 	else {
-		if (!copyFile( ce, ce->value, 0644, 0 )) {
+		if (!copyFile( ce, 0644, 0 )) {
 			if (!strcmp( cs->name, "X-*-Greeter" ))
 				writeFile( def_BackgroundCfg, 0644, def_background );
 			ce->active = 0;
@@ -1350,7 +1422,7 @@ cp_keyfile( Entry *ce, Section *cs ATTR_UNUSED )
 	if (old_confs)
 		linkFile( ce );
 	else
-		if (!copyFile( ce, "kdmkeys", 0600, 0 ))
+		if (!copyFile( ce, 0600, 0 ))
 			ce->active = 0;
 }
 
@@ -1362,7 +1434,7 @@ mk_xaccess( Entry *ce, Section *cs ATTR_UNUSED )
 	else if (old_confs)
 		linkFile( ce );
 	else
-		copyFile( ce, "Xaccess", 0644, 0 ); /* don't handle error, it will disable Xdmcp automatically */
+		copyFile( ce, 0644, 0 ); /* don't handle error, it will disable Xdmcp automatically */
 }
 
 static void
@@ -1404,7 +1476,7 @@ cp_resources( Entry *ce, Section *cs ATTR_UNUSED )
 	if (old_confs)
 		linkFile( ce );
 	else
-		if (!copyFile( ce, ce->value, 0644, 0/*edit_resources*/ ))
+		if (!copyFile( ce, 0644, 0/*edit_resources*/ ))
 			ce->active = 0;
 }
 
@@ -1514,7 +1586,7 @@ mk_setup( Entry *ce, Section *cs )
 	} else {
 		if (ce->active && inNewDir( ce->value )) {
 			if (mod_usebg)
-				copyFile( ce, ce->value, 0755, edit_setup );
+				copyFile( ce, 0755, edit_setup );
 			else
 				linkFile( ce );
 		} else {
@@ -1595,7 +1667,7 @@ mk_startup( Entry *ce, Section *cs )
 	else {
 		if (ce->active && inNewDir( ce->value )) {
 			if (mod_usebg || oldver < 0x0203)
-				copyFile( ce, ce->value, 0755, edit_startup );
+				copyFile( ce, 0755, edit_startup );
 			else
 				linkFile( ce );
 		} else {
@@ -1640,7 +1712,7 @@ mk_reset( Entry *ce, Section *cs ATTR_UNUSED )
 	else {
 		if (ce->active && inNewDir( ce->value )) {
 			if (oldver < 0x0203)
-				copyFile( ce, ce->value, 0755, edit_reset );
+				copyFile( ce, 0755, edit_reset );
 			else
 				linkFile( ce );
 		} else {
@@ -2531,7 +2603,6 @@ static const char *oldxdms[] = {
 int main( int argc, char **argv )
 {
 	const char **where;
-	char *newkdmrc;
 	FILE *f;
 	StrList *fp;
 	Section *cs;
@@ -2539,7 +2610,6 @@ int main( int argc, char **argv )
 	int i, ap, locals, foreigns;
 	int no_old_xdm = 0, no_old_kde = 0;
 	struct stat st;
-	char *nname;
 
 	for (ap = 1; ap < argc; ap++) {
 		if (!strcmp( argv[ap], "--help" )) {
@@ -2782,13 +2852,11 @@ int main( int argc, char **argv )
 			for (ce = cs->ents; ce; ce = ce->next)
 				if (ce->spec->func && i == ce->spec->prio)
 					ce->spec->func( ce, cs );
-	ASPrintf( &newkdmrc, "%s/kdmrc", newdir );
-	f = createFile( newkdmrc, kdmrcmode );
+	f = createFile( "kdmrc", kdmrcmode );
 	writeKdmrc( f );
 	fclose( f );
 
-	ASPrintf( &nname, "%s/README", newdir );
-	f = createFile( nname, 0644 );
+	f = createFile( "README", 0644 );
 	fprintf( f,
 "This automatically generated configuration consists of the following files:\n" );
 	fprintf( f, "- " KDMCONF "/kdmrc\n" );
