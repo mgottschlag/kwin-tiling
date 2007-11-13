@@ -2,6 +2,7 @@
  application mode is app class (need another type?)
  merge indicatorOnly and component
 
+ make flag icons look nicer
  X.org shortcut names in buttons
  Improve component
  XkbOptions radiobuttons for exclusive group

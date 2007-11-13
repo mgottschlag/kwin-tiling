@@ -162,34 +162,34 @@ void KxkbSysTrayIcon::setPixmap(const QPixmap& pixmap)
 
 // ----------------------------
 
-void MyWidget::mousePressEvent ( QMouseEvent * event ) {
-	if (event->button() == Qt::LeftButton)
-		emit leftClick();
-	else
-		emit rightClick(event->pos());
-}
-
 KxkbLabel::KxkbLabel(int controlType, QWidget* parent):
 		KxkbWidget(controlType),
 		m_displayMode(ICON)
 {
-	m_indicatorWidget = new MyWidget(parent); 
-	m_menu = new QMenu(m_indicatorWidget);
-	
-	connect(m_indicatorWidget, SIGNAL(leftClick()), this, SIGNAL(iconToggled())); 
-	connect(contextMenu(), SIGNAL(triggered(QAction*)), this, SIGNAL(menuTriggered(QAction*)));
+    m_indicatorWidget = new QPushButton(parent);
+
+    m_indicatorWidget->setFlat(true);
+    m_indicatorWidget->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
+
+    connect( m_indicatorWidget, SIGNAL(clicked(bool)), this, SIGNAL(iconToggled()) );
+//    connect( m_indicatorWidget, SIGNAL(toggled(bool)), this, SIGNAL(iconToggled()) );
+
+    m_menu = new QMenu(m_indicatorWidget);
+    if( m_controlType >= KxkbWidget::MENU_LAYOUTS_ONLY ) {
+        m_indicatorWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+        connect(m_indicatorWidget, SIGNAL(customContextMenuRequested(const QPoint &)), 
+                    this, SLOT(contextMenuEvent(const QPoint&)));
+    }
 }
 
-void KxkbLabel::contextMenuEvent(QContextMenuEvent* ev) {
+void KxkbLabel::contextMenuEvent(const QPoint& pos)
+{
     QMenu* menu = contextMenu();
-    menu->exec(ev->globalPos());
+    menu->exec(pos);
 }
 
 void KxkbLabel::setPixmap(const QPixmap& pixmap)
 {
-	m_indicatorWidget->setIconSize(QSize(24,24));
-	m_indicatorWidget->setIcon( pixmap );
-
-//	if( ! m_indicatorWidget->isVisible() )
-//		m_indicatorWidget->show();
+    m_indicatorWidget->setIconSize(QSize(24,24));
+    m_indicatorWidget->setIcon( pixmap );
 }

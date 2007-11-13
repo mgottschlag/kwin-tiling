@@ -58,14 +58,15 @@ signals:
     void iconToggled();
 
 protected:
+    int m_controlType;
+
     KxkbWidget(int controlType);
     virtual QMenu* contextMenu() = 0;
     virtual void setToolTip(const QString& tip) = 0;
     virtual void setPixmap(const QPixmap& pixmap) = 0;
     virtual void setText(const QString& text) = 0;
 
-private:    
-    int m_controlType;
+private:
     bool m_showFlag;
     QMap<QString, QString> m_descriptionMap;
     QList<QAction*> m_actions;
@@ -98,25 +99,6 @@ private:
     KSystemTrayIcon* m_indicatorWidget;
 };
 
-/*
-    This is a wrapper around any widget which shows layout
-    to provide consistent leftClick and rightClick signals
-*/
-class MyWidget : public QPushButton {
-	Q_OBJECT
-
-    public:
-	MyWidget(QWidget* parent): QPushButton(parent) {
-	    setFlat(true);
-	}
-	
-    signals:
-	void leftClick();
-	void rightClick(const QPoint& pos);
-	
-    protected:
-	void mousePressEvent ( QMouseEvent * event );	
-};
 
 /*
     Flexible widget to show layouts
@@ -140,11 +122,11 @@ protected:
     void setVisible(bool visible) { m_indicatorWidget->setVisible(visible); }
 	
 protected slots:
-    void contextMenuEvent(QContextMenuEvent* ev);
+    void contextMenuEvent(const QPoint& pos);
 
 private:
     int m_displayMode;
-    MyWidget* m_indicatorWidget;
+    QPushButton* m_indicatorWidget;
     QMenu* m_menu;
 };
 

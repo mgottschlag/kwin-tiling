@@ -124,7 +124,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     layStatus->addWidget( mStatusLabel );
 
     if( kxkbComponent )
-        layStatus->addWidget( kxkbComponent );
+        layStatus->addWidget( kxkbComponent, 0, Qt::AlignRight );
 
     QHBoxLayout *layButtons = new QHBoxLayout();
     layButtons->setSpacing( KDialog::spacingHint() );

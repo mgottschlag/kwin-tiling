@@ -16,6 +16,9 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <QHBoxLayout>
+
+#include <KDialog>
 #include <KPluginFactory>
 #include <KPluginLoader>
 #include <KDebug>
@@ -32,7 +35,7 @@ KxkbPart::KxkbPart( QWidget* parent,
                const QList<QVariant>& args )
     : QWidget(parent)
 {
-	int controlType = KxkbWidget::MENU_LAYOUTS_ONLY;
+	int controlType = KxkbWidget::NO_MENU;
 /*	if( args.count() > 0 && args[0].type() == QVariant::Int ) {	//TODO: replace with string?
 	    controlType = args[0].toInt();
 	    kDebug() << "controlType" << controlType << "(" << args[0] << ")";
@@ -44,13 +47,17 @@ KxkbPart::KxkbPart( QWidget* parent,
 */
 	m_kxkbCore = new KxkbCore( KxkbCore::KXKB_COMPONENT );
 	if( m_kxkbCore->newInstance() == 0 ) {
-            KxkbWidget* kxkbWidget = new KxkbLabel(controlType, this);
+            KxkbLabel* kxkbWidget = new KxkbLabel(controlType, this);
             m_kxkbCore->setWidget(kxkbWidget);
+
+            QHBoxLayout *layout = new QHBoxLayout(this);
+            layout->setSpacing( KDialog::spacingHint() );
+            layout->setMargin( 0 );
+            layout->addWidget( kxkbWidget->widget(), 0, Qt::AlignCenter );
         }
         else {
             setVisible(false);
         }
-//	setWidget(kxkbWidget->widget());
 }
 
 bool 
@@ -60,7 +67,13 @@ KxkbPart::setLayout(const QString& layoutPair)
 }
 
 QString 
-KxkbPart::getCurrentLayout() { return m_kxkbCore->getCurrentLayout(); }
+KxkbPart::getCurrentLayout() 
+{
+    return m_kxkbCore->getCurrentLayout();
+}
 
 QStringList
-KxkbPart::getLayoutsList() { return m_kxkbCore->getLayoutsList(); }
+KxkbPart::getLayoutsList()
+{
+    return m_kxkbCore->getLayoutsList();
+}
