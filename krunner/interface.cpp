@@ -20,6 +20,7 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QDesktopWidget>
 #include <QLabel>
 #include <QListWidget>
 #include <QVBoxLayout>
@@ -231,10 +232,16 @@ void Interface::display(const QString& term)
         m_searchTerm->setText( term );
     }
 
-    KWindowSystem::setOnDesktop( winId(), KWindowSystem::currentDesktop() );
-    KDialog::centerOnScreen( this );
+    KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
+
+    int screen = 0;
+    if (QApplication::desktop()->numScreens() > 1) {
+        screen = QApplication::desktop()->screenNumber(QCursor::pos());
+    }
+
+    KDialog::centerOnScreen(this, screen);
     show();
-    KWindowSystem::forceActiveWindow( winId() );
+    KWindowSystem::forceActiveWindow(winId());
 
     match();
 }
