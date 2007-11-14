@@ -110,7 +110,7 @@ int main( int argc, char* argv[])
         }
     XSetWindowAttributes attrs;
     attrs.override_redirect = True;
-    const int states = 6;
+    const int states = 7;
     const int frame = 3;
     const int segment = sw / 2 / states;
     const int pw = segment * states + 2 * frame; // size of progressbar
@@ -179,25 +179,27 @@ int main( int argc, char* argv[])
             if( ev.type == ClientMessage && ev.xclient.window == DefaultRootWindow( dpy )
                 && ev.xclient.message_type == kde_splash_progress )
                 {
-                // based on ksplash
+                // these are also in ksplashx
                 const char* s = ev.xclient.data.b;
 #ifdef DEBUG
                 fprintf( stderr,"MESSAGE: %s\n", s );
 #endif
-                if( strcmp( s, "dcop" ) == 0 && state < 1 )
-                    state = 1; // not actually used, state starts from 1, because dcop cannot be checked
-                else if( strcmp( s, "kded" ) == 0 && state < 2 )
+                if( strcmp( s, "initial" ) == 0 && state < 0 )
+                    state = 0; // not actually used
+                else if( strcmp( s, "kded" ) == 0 && state < 1 )
+                    state = 1;
+                else if( strcmp( s, "confupdate" ) == 0 && state < 2 )
                     state = 2;
-                else if( strcmp( s, "kcminit" ) == 0 )
-                    ; // unused
-                else if( strcmp( s, "ksmserver" ) == 0 && state < 3 )
+                else if( strcmp( s, "kcminit" ) == 0 && state < 3 )
                     state = 3;
-                else if( strcmp( s, "wm started" ) == 0 && state < 4 )
+                else if( strcmp( s, "ksmserver" ) == 0 && state < 4 )
                     state = 4;
-                else if( strcmp( s, "kdesktop" ) == 0 && state < 5 )
+                else if( strcmp( s, "wm" ) == 0 && state < 5 )
                     state = 5;
-                else if(( strcmp( s, "kicker" ) == 0 || strcmp( s, "session ready" ) == 0 ) && state < 6 )
+                else if( strcmp( s, "desktop" ) == 0 && state < 6 )
                     state = 6;
+                else if( strcmp( s, "ready" ) == 0 && state < 7 )
+                    state = 7;
                 }
             }
         if( test && time( NULL ) >= test_time )

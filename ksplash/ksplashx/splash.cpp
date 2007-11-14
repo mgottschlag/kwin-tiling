@@ -3,7 +3,8 @@
 const int MAX_ITEMS = 100;
 const int ANIM_IMAGES_ROW = 10;
 
-// for convering from startup states to (internal) numbers
+// for converting from startup states to (internal) numbers
+// these are also in the simple splash
 const char states[][ 12 ] =
     { "initial", "kded", "confupdate", "kcminit", "ksmserver", "wm", "desktop", "ready" };
 const int LAST_STATE = 7;
