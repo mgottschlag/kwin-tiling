@@ -25,11 +25,14 @@
 #include <QWidget>
 #include <QScriptEngine>
 #include <QList>
+#include <QDBusInterface>
+#include <QDBusReply>
 
 #include <KIcon>
 #include <KBookmarkManager>
 #include <KToolInvocation>
 #include <KUrl>
+#include <KStandardDirs>
 
 
 BookmarksRunner::BookmarksRunner( QObject* parent, const QVariantList &args )
@@ -38,6 +41,7 @@ BookmarksRunner::BookmarksRunner( QObject* parent, const QVariantList &args )
     Q_UNUSED(args)
 
     setObjectName(i18n("Bookmarks"));
+    m_icon = KIcon("bookmark");
 }
 
 BookmarksRunner::~BookmarksRunner()
@@ -57,7 +61,14 @@ void BookmarksRunner::match(Plasma::SearchContext *search)
     foreach (KBookmark bookmark, matchingBookmarks) {
         kDebug() << "Found bookmark: " << bookmark.text() << " (" << bookmark.url().prettyUrl() << ")";
         Plasma::SearchAction *action = search->addPossibleMatch(this);
-        action->setIcon(KIcon("bookmark"));
+
+        KIcon icon = getFavicon(bookmark.url());
+        if (icon.isNull()) {
+            action->setIcon(m_icon);
+        }
+        else {
+            action->setIcon(icon);
+        }
         action->setText(bookmark.text());
         action->setData(bookmark.url().url());
     }
@@ -78,6 +89,26 @@ QList<KBookmark> BookmarksRunner::searchBookmarks(const KBookmarkGroup &bookmark
         currentBookmark = bookmarkGrp.next(currentBookmark);
     }
     return matchingBookmarks;
+}
+
+KIcon BookmarksRunner::getFavicon(const KUrl &url) {
+    // query the favicons module
+    QDBusInterface favicon("org.kde.kded", "/modules/favicons", "org.kde.FavIcon");
+    QDBusReply<QString> reply = favicon.call("iconForUrl", url.url());
+
+    if (!reply.isValid()) {
+        return KIcon();
+    }
+
+    // locate the favicon
+    QString iconFile = KGlobal::dirs()->findResource("cache",reply.value()+".png");
+    KIcon icon = KIcon(iconFile);
+
+    if (!icon.isNull()) {
+        return icon;
+    }
+
+    return KIcon();
 }
 
 void BookmarksRunner::exec(Plasma::SearchAction *action)
