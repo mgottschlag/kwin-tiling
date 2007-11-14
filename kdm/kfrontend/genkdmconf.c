@@ -1977,6 +1977,19 @@ upd_facedir( Entry *ce, Section *cs ATTR_UNUSED )
 	}
 }
 
+static void
+upd_preloader( Entry *ce, Section *cs ATTR_UNUSED )
+{
+	if (ce->written) { /* implies oldkde != 0 */
+		char *oldpl;
+		ASPrintf( &oldpl, "%s/bin/preloadkde", oldkdepfx );
+		if (!strcmp( ce->value, oldpl ))
+			ce->value = (char *)KDE_BINDIR "/preloadkde";
+		free( oldpl );
+	}
+}
+
+
 CONF_GEN_ENTRIES
 
 static Sect *

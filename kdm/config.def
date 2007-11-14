@@ -2640,6 +2640,7 @@ Type: string
 Default: ""
 User: greeter-c
 Instance: */KDE_BINDIR "/preloadkde"
+Update: upd_preloader
 Comment: &
 Description:
  A program to run while the greeter is visible. It is supposed to preload
