@@ -82,7 +82,7 @@ QList<KBookmark> BookmarksRunner::searchBookmarks(const KBookmarkGroup &bookmark
         if(currentBookmark.isGroup()) { //recurse
             matchingBookmarks += searchBookmarks(currentBookmark.toGroup(), query);
         } else {
-            if(currentBookmark.text().contains(query, Qt::CaseInsensitive)) {
+            if(currentBookmark.text().contains(query, Qt::CaseInsensitive) || currentBookmark.url().prettyUrl().contains(query, Qt::CaseInsensitive)) {
                 matchingBookmarks.append(currentBookmark);
             }
         }
