@@ -24,13 +24,13 @@
 
 #include <KDebug>
 #include <KRun>
-#include <KIconLoader>
 #include <KLocale>
 #include <KMimeType>
 #include <KService>
 #include <KStandardDirs>
 #include <KToolInvocation>
 #include <KUrl>
+#include <KIcon>
 
 #include <kservicetypetrader.h>
 
@@ -46,7 +46,7 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
     setObjectName(i18n("Locations"));
     // query ktrader for all available searchproviders and preload the default icon
     m_offers = KServiceTypeTrader::self()->query("SearchProvider");
-    m_icon = QIcon(KIconLoader::global()->loadIcon("konqueror", KIconLoader::Small));
+    m_icon = KIcon("konqueror");
 }
 
 WebshortcutRunner::~WebshortcutRunner()
