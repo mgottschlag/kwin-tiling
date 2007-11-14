@@ -477,7 +477,7 @@ static bool waitState( int expected_state )
         fprintf( stderr, "No window contents\n" );
         exit( 3 );
         }
-    time_t test_time = time( NULL ) + 5;
+    time_t test_time = time( NULL ) + 2;
 #ifdef DEBUG
     fprintf( stderr,"AWATING STATE: %d (%s)\n", expected_state, states[ expected_state ] );
 #endif
@@ -540,7 +540,7 @@ static bool waitState( int expected_state )
         if( test && time( NULL ) >= test_time )
             {
             ++state;
-            test_time = time( NULL ) + 5;
+            test_time = time( NULL ) + 2;
             }
         if( expected_state <= state )
             return false;
