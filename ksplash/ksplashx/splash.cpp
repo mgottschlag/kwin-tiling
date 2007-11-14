@@ -23,6 +23,8 @@ const int LAST_STATE = 7;
 #include <assert.h>
 #include <dirent.h>
 
+#include <X11/Xutil.h>
+
 # ifdef HAVE_SYS_TIME_H
 #  include <sys/time.h>
 # endif
@@ -448,6 +450,10 @@ static void createWindow()
         geometry.x(), geometry.y(), geometry.width(), geometry.height(),
         0, CopyFromParent, CopyFromParent, CopyFromParent, CWOverrideRedirect | CWBackPixmap, &attrs );
     XSelectInput( qt_xdisplay(), window, ButtonPressMask | ExposureMask );
+    XClassHint class_hint;
+    class_hint.res_name = const_cast< char* >( "ksplashx" );
+    class_hint.res_class = const_cast< char* >( "ksplashx" );
+    XSetWMProperties( qt_xdisplay(), window, NULL, NULL, NULL, NULL, NULL, NULL, &class_hint );
     XMapRaised( qt_xdisplay(), window );
     }
 

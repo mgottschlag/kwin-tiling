@@ -11,6 +11,7 @@
 #include <config-workspace.h>
 
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #include <config-X11.h>
 #ifdef HAVE_XINERAMA
 extern "C" { // for older XFree86 versions
@@ -107,6 +108,10 @@ int main( int argc, char* argv[])
     XSetWindowBackgroundPixmap( dpy, win, pix );
     XSelectInput( dpy, win, ButtonPressMask );
     XSelectInput( dpy, DefaultRootWindow( dpy ), SubstructureNotifyMask );
+    XClassHint class_hint;
+    class_hint.res_name = const_cast< char* >( "ksplashsimple" );
+    class_hint.res_class = const_cast< char* >( "ksplashsimple" );
+    XSetWMProperties( dpy, win, NULL, NULL, NULL, NULL, NULL, NULL, &class_hint );
     XMapWindow( dpy, win );
     int pos = 0;
     int state = 1; // cannot check dcop connection - make this state initial
