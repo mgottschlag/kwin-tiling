@@ -91,24 +91,24 @@ QList<KBookmark> BookmarksRunner::searchBookmarks(const KBookmarkGroup &bookmark
     return matchingBookmarks;
 }
 
-QIcon BookmarksRunner::getFavicon(const KUrl &url) {
+KIcon BookmarksRunner::getFavicon(const KUrl &url) {
     // query the favicons module
     QDBusInterface favicon("org.kde.kded", "/modules/favicons", "org.kde.FavIcon");
     QDBusReply<QString> reply = favicon.call("iconForUrl", url.url());
 
     if (!reply.isValid()) {
-        return QIcon();
+        return KIcon();
     }
 
     // locate the favicon
     QString iconFile = KGlobal::dirs()->findResource("cache",reply.value()+".png");
-    QIcon icon = QIcon(iconFile);
-
-    if (!icon.isNull()) {
-        return icon;
+    if(iconFile.isNull()) {
+        return KIcon();
     }
 
-    return QIcon();
+    KIcon icon = KIcon(iconFile);
+
+    return icon;
 }
 
 void BookmarksRunner::exec(Plasma::SearchAction *action)
