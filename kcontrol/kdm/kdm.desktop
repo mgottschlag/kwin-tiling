@@ -149,7 +149,7 @@ Comment[zh_TW]=設定登入管理程式 (KDM)
 Keywords=kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart
 Keywords[be]=кіраўнік дысплея,кіраўнік уваходу,карыстальнікі,уваход,запрашэнне,лагатып,стылі,стыль,мова,краіна,шрыфты,фон,шпалеры,сесіі,сесія,выключэнне,перазагрузка,kdm,display manager,xdm,users,login,greeting,Logo,styles,language,country,fonts,background,wallpapers,sessions,shutdown,restart
 Keywords[bg]=Keywords=графична, система, вход, влизане, включване, потребител, kdm, display manager, xdm, users, login, greeting, Logo, styles, language, country, fonts, background, wallpapers, sessions, shutdown, restart
-Keywords[ca]=kdm,administrador de la pantalla,xdm,usuaris,accés,salutació,Logo,estils,llengua,país,lletres,fons,tapissos,sessions,apagar,reiniciar
+Keywords[ca]=kdm,administrador de la pantalla,xdm,usuaris,accés,salutació,Logo,estils,llengua,país,tipus de lletra,fons,tapissos,sessions,apagar,reiniciar
 Keywords[cs]=kdm,Správce obrazovky,xdm,Uživatelé,Přihlášení,Uvítání,Logo,Styly,Jazyk,Země,Písma,pozadí,Tapety,Relace,Sezení,Vypnutí,Restart
 Keywords[csb]=kdm,menadżer ekranu,xdm,brëkòwnicë,logòwanié,przëwitanié,Logò,sztéle,jãzëk,kraj,fòntë,spódk,tapetë,spòdlë,sesëje,zamkniãce systemë,resztart,zôczãce robòtë
 Keywords[cy]=kdm,rheolydd y dangosydd,xdm,defnyddwyr,mewngofnodi,cyfarchiad,Logo,arddulliau,iaith,gwlad,ffontiau,cefndir,papurau wal,sesiynau,cau,ailgychwyn
