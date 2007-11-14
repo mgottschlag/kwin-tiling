@@ -313,7 +313,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             }
         }
         if (m_showTimezone) {
-            dateString += m_timezone;
+            dateString += m_timezone.replace("_", " ");
         }
 
         // Check sizes
