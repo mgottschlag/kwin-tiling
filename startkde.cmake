@@ -274,7 +274,7 @@ fi
 for resource in tmp cache socket; do
     if ! "$lnusertemp" $resource >/dev/null; then
         echo 'startkde: Call to lnusertemp failed (temporary directories full?). Check your installation.'  1>&2
-        test -n "$ksplash_pid" && kill "$ksplash_pid"
+        test -n "$ksplash_pid" && kill "$ksplash_pid" 2>/dev/null
         xmessage -geometry 600x100 "Call to lnusertemp failed (temporary directories full?). Check your installation."
         exit 1
     fi
@@ -298,7 +298,7 @@ if qdbus >/dev/null 2>/dev/null; then
     : # ok
 else
     echo 'startkde: Could not start D-Bus. Check your installation.'  1>&2
-    test -n "$ksplash_pid" && kill "$ksplash_pid"
+    test -n "$ksplash_pid" && kill "$ksplash_pid" 2>/dev/null
     xmessage -geometry 500x100 "Could not start D-Bus. Check your installation."
     exit 1
 fi
@@ -339,7 +339,7 @@ LD_BIND_NOW=true kdeinit4 +kcminit_startup
 if test $? -ne 0; then
   # Startup error
   echo 'startkde: Could not start kdeinit4. Check your installation.'  1>&2
-  test -n "$ksplash_pid" && kill "$ksplash_pid"
+  test -n "$ksplash_pid" && kill "$ksplash_pid" 2>/dev/null
   xmessage -geometry 500x100 "Could not start kdeinit4. Check your installation."
   exit 1
 fi
@@ -368,7 +368,7 @@ kwrapper4 ksmserver $KDEWM
 if test $? -eq 255; then
   # Startup error
   echo 'startkde: Could not start ksmserver. Check your installation.'  1>&2
-  test -n "$ksplash_pid" && kill "$ksplash_pid"
+  test -n "$ksplash_pid" && kill "$ksplash_pid" 2>/dev/null
   xmessage -geometry 500x100 "Could not start ksmserver. Check your installation."
 fi
 
@@ -379,7 +379,7 @@ done
 
 echo 'startkde: Shutting down...'  1>&2
 # just in case
-test -n "$ksplash_pid" && kill "$ksplash_pid"
+test -n "$ksplash_pid" && kill "$ksplash_pid" 2>/dev/null
 
 # Clean up
 kdeinit4_shutdown
