@@ -49,6 +49,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kstandardguiitem.h>
 #include <kuser.h>
 #include <solid/control/powermanager.h>
+#include <kwindowsystem.h>
+#include <netwm.h>
 
 #include <sys/types.h>
 #include <sys/utsname.h>
@@ -57,6 +59,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <dmctl.h>
 
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/Xatom.h>
 
 #include "shutdowndlg.moc"
 #include <QX11Info>
@@ -110,6 +114,24 @@ void KSMShutdownFeedback::slotPaintEffect()
     update( 0, 0, width(), m_currentY );
 
     QTimer::singleShot( 1, this, SLOT( slotPaintEffect() ) );
+}
+
+void KSMShutdownFeedback::start()
+{
+    if( KWindowSystem::compositingActive()) {
+        // TODO there should be perhaps a more generic check
+        NETRootInfo i( QX11Info::display(), NET::SupportingWMCheck );
+        if( qstrcmp( i.wmName(), "KWin" ) == 0 )
+            return;
+    }
+    s_pSelf = new KSMShutdownFeedback();
+    s_pSelf->show();
+}
+
+void KSMShutdownFeedback::stop()
+{
+    delete s_pSelf;
+    s_pSelf = NULL;
 }
 
 ////////////
@@ -301,6 +323,19 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
 {
+    setWindowRole( "logoutdialog" );
+//#if !(QT_VERSION >= QT_VERSION_CHECK(4, 3, 3) || defined(QT_KDE_QT_COPY))
+// Qt doesn't set this on unmanaged windows
+    QByteArray appName = qAppName().toLatin1();
+    XClassHint class_hint;
+    class_hint.res_name = appName.data(); // application name
+    class_hint.res_class = const_cast<char *>(QX11Info::appClass());   // application class
+    XSetWMProperties( QX11Info::display(), winId(), NULL, NULL, NULL, NULL, NULL, NULL, &class_hint );
+    XChangeProperty( QX11Info::display(), winId(),
+        XInternAtom( QX11Info::display(), "WM_WINDOW_ROLE", False ), XA_STRING, 8, PropModeReplace,
+        (unsigned char *)"logoutdialog", strlen( "logoutdialog" ));
+    
+//#endif
     m_svg = new Plasma::Svg( "dialogs/shutdowndlg", this);
     connect( m_svg, SIGNAL(repaintNeeded()), this, SLOT(update()) );
     setModal( true );

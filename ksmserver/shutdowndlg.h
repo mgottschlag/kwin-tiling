@@ -44,9 +44,8 @@ class KSMShutdownFeedback : public QWidget
     Q_OBJECT
 
 public:
-    static void start() { s_pSelf = new KSMShutdownFeedback(); s_pSelf->show(); }
-    static void stop() { delete s_pSelf; s_pSelf = 0L; }
-    static KSMShutdownFeedback * self() { return s_pSelf; }
+    static void start();
+    static void stop();
 
 protected:
     ~KSMShutdownFeedback() {}
