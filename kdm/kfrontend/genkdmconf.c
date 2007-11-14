@@ -55,7 +55,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 static int old_scripts, no_old_scripts, old_confs, no_old,
 	no_backup, no_in_notice, use_destdir, mixed_scripts;
 static const char *newdir = KDMCONF, *facesrc = KDMDATA "/pics/users",
-	*oldxdm, *oldkde;
+	*oldxdm, *oldkde, *oldkdepfx;
 
 static int oldver;
 
@@ -1917,18 +1917,18 @@ upd_facedir( Entry *ce, Section *cs ATTR_UNUSED )
 			setpwent();
 			while ((pw = getpwent()))
 				if (strcmp( pw->pw_name, "root" )) {
-					ASPrintf( &oldpic, "%s/../apps/kdm/pics/users/%s.png",
-					          oldkde, pw->pw_name );
-					ASPrintf( &newpic, "%s/%s.face.icon", dir, pw->pw_name );
+					ASPrintf( &oldpic, "%s/share/apps/kdm/pics/users/%s.png",
+					          oldkdepfx, pw->pw_name );
+					ASPrintf( &newpic, def_FaceDir "/%s.face.icon", pw->pw_name );
 					rename( oldpic, newpic );
 					free( newpic );
 					free( oldpic );
 				}
 			endpwent();
-			ASPrintf( &oldpic, "%s/../apps/kdm/pics/users/default.png", oldkde );
+			ASPrintf( &oldpic, "%s/share/apps/kdm/pics/users/default.png", oldkdepfx );
 			if (!rename( oldpic, defpic ))
 				defpic = 0;
-			ASPrintf( &oldpic, "%s/../apps/kdm/pics/users/root.png", oldkde );
+			ASPrintf( &oldpic, "%s/share/apps/kdm/pics/users/root.png", oldkdepfx );
 			if (!rename( oldpic, rootpic ))
 				rootpic = 0;
 		}
@@ -2737,37 +2737,54 @@ int main( int argc, char **argv )
 				displace( bfl->str );
 		}
 	} else {
-		int newer = 0;
 		if (oldkde) {
-			if (!(newer = mergeKdmRcNewer( oldkde, 1 )) && !mergeKdmRcOld( oldkde ))
+			if (!mergeKdmRcNewer( oldkde, 1 ) && !mergeKdmRcOld( oldkde )) {
 				fprintf( stderr,
 				         "Cannot read pre-existing kdmrc at specified location\n" );
+				oldkde = 0;
+			}
 		} else if (!no_old_kde) {
 			for (i = 0; i < as(oldkdes); i++) {
 				if (i && !strcmp( oldkdes[0], oldkdes[i] ))
 					continue;
-				if ((newer = mergeKdmRcNewer( oldkdes[i], 0 ))) {
+				if (mergeKdmRcNewer( oldkdes[i], 0 )) {
 					oldkde = oldkdes[i];
 					break;
 				}
 				mergeKdmRcOld( oldkdes[i] ); /* only prints a message */
 			}
 		}
-		if (!newer && !no_old_xdm) {
+		if (oldkde) {
+#define SHR_CONF "/share/config"
+			int olen = strlen( oldkde );
+			if (olen < (int)sizeof(SHR_CONF) ||
+				memcmp( oldkde + olen - sizeof(SHR_CONF) + 1,
+						SHR_CONF, sizeof(SHR_CONF) ))
+			{
+				fprintf( stderr,
+				         "Warning: --old-kde does not end with " SHR_CONF ". "
+				         "Might wreak havoc.\n" );
+				oldkdepfx = oldkde;
+			} else
+				ASPrintf( (char **)&oldkdepfx,
+				           "%.*s", olen - sizeof(SHR_CONF) + 1, oldkde );
+			oldxdm = 0;
+		} else if (!no_old_xdm) {
 			XrmInitialize();
 			XrmQString = XrmPermStringToQuark( "String" );
 			if (oldxdm) {
-				if (!mergeXdmCfg( oldxdm ))
+				if (!mergeXdmCfg( oldxdm )) {
 					fprintf( stderr,
 					         "Cannot read xdm-config at specified location\n" );
+					oldxdm = 0;
+				}
 			} else
 				for (i = 0; i < as(oldxdms); i++)
 					if (mergeXdmCfg( oldxdms[i] )) {
 						oldxdm = oldxdms[i];
 						break;
 					}
-		} else
-			oldxdm = 0;
+		}
 	}
 	/*
 	 * How to proceed with pre-existing scripts (which are named in the config):
