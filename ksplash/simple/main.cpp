@@ -32,6 +32,7 @@ extern "C" { // for older XFree86 versions
 
 int main( int argc, char* argv[])
     {
+    bool small = false;
     bool test = false;
     bool print_pid = false;
     for( int i = 1;
@@ -42,6 +43,8 @@ int main( int argc, char* argv[])
             test = true;
         if( strcmp( argv[ i ], "--pid" ) == 0 )
             print_pid = true;
+        if( strcmp( argv[ i ], "SimpleSmall" ) == 0 )
+            small = true;
         }
     pid_t pid = fork();
     if( pid < -1 )
@@ -63,6 +66,8 @@ int main( int argc, char* argv[])
     if( dpy == NULL )
         return 1;
     int sx, sy, sw, sh;
+    Window* wins = NULL;
+    int wins_count = 0;
 #ifdef HAVE_XINERAMA
     // Xinerama code from Qt
     XineramaScreenInfo *xinerama_screeninfo = 0;
@@ -77,6 +82,24 @@ int main( int argc, char* argv[])
         sy = xinerama_screeninfo[ 0 ].y_org;
         sw = xinerama_screeninfo[ 0 ].width;
         sh = xinerama_screeninfo[ 0 ].height;
+        if( !small )
+            { // create windows covering other xinerama screens
+            wins_count = screenCount;
+            wins = new Window[ wins_count ];
+            for( int i = 1; // not 0
+                 i < wins_count;
+                 ++i )
+                {
+                XSetWindowAttributes attrs;
+                attrs.override_redirect = True;
+                attrs.background_pixel = BlackPixel( dpy, 0 ); // background
+                wins[ i ] = XCreateWindow( dpy, DefaultRootWindow( dpy ),
+                    xinerama_screeninfo[ i ].x_org, xinerama_screeninfo[ i ].y_org,
+                    xinerama_screeninfo[ i ].width, xinerama_screeninfo[ i ].height,
+                    0, CopyFromParent, CopyFromParent, CopyFromParent,
+                    CWOverrideRedirect | CWBackPixel, &attrs );
+                }
+            }
         }
     else
 #endif
@@ -90,29 +113,45 @@ int main( int argc, char* argv[])
     const int states = 6;
     const int frame = 3;
     const int segment = sw / 2 / states;
-    const int w = segment * states + 2 * frame;
-    const int h = sh / 20 + frame;
-    Window win = XCreateWindow( dpy, DefaultRootWindow( dpy ), sx + ( sw - w ) / 2, sy + ( sh - h ) /2, w, h,
+    const int pw = segment * states + 2 * frame; // size of progressbar
+    const int ph = sh / 20 + frame;
+    const int px = small ? 0 : sx + ( sw - pw ) / 2; // position in the pixmap
+    const int py = small ? 0 : sy + ( sh - ph ) / 2;
+    const int x = small ? sx + ( sw - pw ) / 2 : sx; // position of the window
+    const int y = small ? sy + ( sh - ph ) / 2 : sy;
+    const int w = small ? pw : sw;
+    const int h = small ? ph : sh;
+    if( wins == NULL )
+        {
+        wins = new Window[ 1 ];
+        wins_count = 1;
+        }
+    Window win = XCreateWindow( dpy, DefaultRootWindow( dpy ), x, y, w, h,
         0, CopyFromParent, CopyFromParent, CopyFromParent, CWOverrideRedirect, &attrs );
+    wins[ 0 ] = win;
     Pixmap pix = XCreatePixmap( dpy, DefaultRootWindow( dpy ), w, h, DefaultDepth( dpy, 0 ));
     XGCValues values;
-    values.foreground = WhitePixel( dpy, 0 );
+    values.foreground = BlackPixel( dpy, 0 ); // background
     GC gc = XCreateGC( dpy, pix, GCForeground, &values );
     XFillRectangle( dpy, pix, gc, 0, 0, w, h );
-    values.foreground = BlackPixel( dpy, 0 );
+    values.foreground = WhitePixel( dpy, 0 ); // outline
     XChangeGC( dpy, gc, GCForeground, &values );
-//    XFillRectangle( dpy, pix, gc, 0, 0, w, frame );
-//    XFillRectangle( dpy, pix, gc, 0, h - frame, w, frame );
-//    XFillRectangle( dpy, pix, gc, 0, 0, frame, h );
-//    XFillRectangle( dpy, pix, gc, w - frame, 0, frame, h );
+    XFillRectangle( dpy, pix, gc, px, py, pw, ph );
+    values.foreground = BlackPixel( dpy, 0 ); // progressbar
+    XChangeGC( dpy, gc, GCForeground, &values );
     XSetWindowBackgroundPixmap( dpy, win, pix );
-    XSelectInput( dpy, win, ButtonPressMask );
     XSelectInput( dpy, DefaultRootWindow( dpy ), SubstructureNotifyMask );
-    XClassHint class_hint;
-    class_hint.res_name = const_cast< char* >( "ksplashsimple" );
-    class_hint.res_class = const_cast< char* >( "ksplashsimple" );
-    XSetWMProperties( dpy, win, NULL, NULL, NULL, NULL, NULL, NULL, &class_hint );
-    XMapWindow( dpy, win );
+    for( int i = 0;
+         i < wins_count;
+         ++i )
+        {
+        XSelectInput( dpy, wins[ i ], ButtonPressMask );
+        XClassHint class_hint;
+        class_hint.res_name = const_cast< char* >( "ksplashsimple" );
+        class_hint.res_class = const_cast< char* >( "ksplashsimple" );
+        XSetWMProperties( dpy, wins[ i ], NULL, NULL, NULL, NULL, NULL, NULL, &class_hint );
+        XMapWindow( dpy, wins[ i ] );
+        }
     int pos = 0;
     int state = 1; // cannot check dcop connection - make this state initial
     const int delay = 200; // ms
@@ -125,13 +164,18 @@ int main( int argc, char* argv[])
             {
             XEvent ev;
             XNextEvent( dpy, &ev );
-            if( ev.type == ButtonPress && ev.xbutton.window == win && ev.xbutton.button == Button1 )
+            if( ev.type == ButtonPress && ev.xbutton.button == Button1 )
                 {
                 final_time = time( NULL );
                 break;
                 }
             if( ev.type == ConfigureNotify && ev.xconfigure.event == DefaultRootWindow( dpy ))
-                XRaiseWindow( dpy, win );
+                {
+                for( int i = 0;
+                     i < wins_count;
+                     ++i )
+                    XRaiseWindow( dpy, wins[ i ] );
+                }
             if( ev.type == ClientMessage && ev.xclient.window == DefaultRootWindow( dpy )
                 && ev.xclient.message_type == kde_splash_progress )
                 {
@@ -169,7 +213,7 @@ int main( int argc, char* argv[])
                 fprintf( stderr, "POS: %d\n", pos );
 #endif
                 final_time = time( NULL ) + 60;
-                XFillRectangle( dpy, pix, gc, frame + pos * segment, frame, segment, h - 2 * frame );
+                XFillRectangle( dpy, pix, gc, px + frame + pos * segment, py + frame, segment, ph - 2 * frame );
                 XSetWindowBackgroundPixmap( dpy, win, pix );
                 XClearWindow( dpy, win );
                 ++pos;
@@ -198,7 +242,11 @@ int main( int argc, char* argv[])
             }
         }
     XFreePixmap( dpy, pix );
-    XDestroyWindow( dpy, win );
+    for( int i = 0;
+         i < wins_count;
+         ++i )
+        XDestroyWindow( dpy, wins[ i ] );
+    delete[] wins;
     XFreeGC( dpy, gc );
     XCloseDisplay( dpy );
     }

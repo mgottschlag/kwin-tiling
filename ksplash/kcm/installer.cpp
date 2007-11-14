@@ -491,7 +491,7 @@ void SplashInstaller::slotTest()
   else if( mEngineOfSelected == "Simple" )
   {
     KProcess proc;
-    proc << "ksplashsimple" << "--test";
+    proc << "ksplashsimple" << themeName << "--test";
     if (proc.execute())
       KMessageBox::error(this,i18n("Unable to start ksplashsimple."));
     return;

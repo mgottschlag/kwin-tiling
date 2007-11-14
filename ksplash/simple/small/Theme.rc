@@ -1,0 +1,6 @@
+[KSplash Theme: SimpleSmall]
+Name = Small Simple Splash Screen
+Description = Small Very Simple Optimized Splash Screen
+Version = 1.0
+Author = Lubos Lunak <l.lunak@kde.org>
+Engine = Simple

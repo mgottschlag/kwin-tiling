@@ -162,7 +162,7 @@ if test -z "$dl"; then
     None)
       ;;
     Simple)
-      ksplash_pid=`ksplashsimple --pid`
+      ksplash_pid=`ksplashsimple ${ksplashrc_ksplash_theme} --pid`
       ;;
     *)
       ;;
