@@ -1895,24 +1895,58 @@ copyPlainFile( const char *from, const char *to )
 		if ((fd = creat( to, 0644 )) >= 0) {
 			write( fd, file.buf, file.eof - file.buf );
 			close( fd );
-		}
+		} else
+			fprintf( stderr, "Warning: cannot create %s\n", to );
 		freeBuf( &file );
 	}
+}
+
+static int
+copyDir( const char *from, const char *to )
+{
+	DIR *dir;
+	struct dirent *ent;
+	struct stat st;
+	char bn[PATH_MAX], bo[PATH_MAX];
+
+	if (!(dir = opendir( from )))
+		return 0;
+	while ((ent = readdir( dir ))) {
+		if (!strcmp( ent->d_name, "." ) || !strcmp( ent->d_name, ".." ))
+			continue;
+		sprintf( bo, "%s/%s", from, ent->d_name );
+		if (stat( bo, &st ) || !S_ISREG( st.st_mode ))
+			continue;
+		sprintf( bn, "%s/%s", to, ent->d_name );
+		copyPlainFile( bo, bn );
+	}
+	closedir( dir );
+	return 1;
 }
 
 static void
 upd_facedir( Entry *ce, Section *cs ATTR_UNUSED )
 {
-	char *oldpic, *newpic, *defpic, *rootpic;
-	const char *dir;
+	char *oldpic, *newpic, *olddir;
 	struct passwd *pw;
 
 	if (use_destdir)
 		return;
-	dir = ce->active ? ce->value : def_FaceDir;
-	if (mkdirp( dir, 0755, "user face", 0 )) {
-		ASPrintf( &defpic, "%s/.default.face.icon", dir );
-		ASPrintf( &rootpic, "%s/root.face.icon", dir );
+	if (oldkdepfx) { /* Do we have a previous install? */
+		/* This would be the prev install's default location */
+		ASPrintf( &olddir, "%s/share/apps/kdm/faces", oldkdepfx );
+		if (ce->active && strcmp( olddir, ce->value ))
+			/* Not default location, so don't touch the setting. */
+			return;
+		/* Default location, so absorb it. */
+		ce->active = 0;
+	} else
+		olddir = 0;
+	if (!mkdirp( def_FaceDir, 0755, "user face", 0 ))
+		return; /* Error or olddir == def_FaceDir. */
+	if (!olddir || !copyDir( olddir, def_FaceDir )) {
+		const char *defpic = def_FaceDir "/.default.face.icon";
+		const char *rootpic = def_FaceDir "/root.face.icon";
 		if (oldkde) {
 			setpwent();
 			while ((pw = getpwent()))
