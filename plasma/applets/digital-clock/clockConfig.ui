@@ -5,18 +5,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>421</width>
-    <height>373</height>
+    <width>438</width>
+    <height>335</height>
    </rect>
   </property>
   <property name="minimumSize" >
    <size>
-    <width>350</width>
+    <width>400</width>
     <height>200</height>
    </size>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" >
+  <layout class="QHBoxLayout" >
+   <item>
     <widget class="QTabWidget" name="ClockTab" >
      <property name="sizePolicy" >
       <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
@@ -37,32 +37,69 @@
       <attribute name="title" >
        <string>Appearance</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
+      <layout class="QVBoxLayout" >
+       <item>
         <widget class="QCheckBox" name="showDate" >
          <property name="text" >
           <string>Show &amp;date</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1" >
-        <widget class="QCheckBox" name="showDay" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
+       <item>
+        <layout class="QHBoxLayout" >
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>60</width>
+             <height>16</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="showDay" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>Show day of the &amp;week</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="showYear" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>Show &amp;year</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="showTimezone" >
          <property name="text" >
-          <string>Show day of the &amp;week</string>
+          <string>Show &amp;timezone</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="0" colspan="2" >
+       <item>
         <widget class="QCheckBox" name="plainClockCheck" >
          <property name="text" >
           <string>Use &amp;plain clock</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0" colspan="2" >
+       <item>
         <widget class="QGroupBox" name="plainClockGroup" >
          <property name="enabled" >
           <bool>false</bool>
@@ -205,6 +242,22 @@
     </hint>
     <hint type="destinationlabel" >
      <x>309</x>
+     <y>53</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>showDate</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>showYear</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>78</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>369</x>
      <y>53</y>
     </hint>
    </hints>

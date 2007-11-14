@@ -73,10 +73,12 @@ class Clock : public Plasma::Applet
         bool m_plainClockFontItalic;
 
         bool m_showDate;
+        bool m_showYear;
         bool m_showDay;
+        bool m_showTimezone;
 
         void animateUpdate();
-        int getOffsetForDigit(int digitNumber);
+        int getOffsetForDigit(int digitNumber, int elWidth);
 
         QSize m_defaultElementSize;
 
