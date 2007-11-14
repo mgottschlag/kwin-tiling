@@ -62,7 +62,7 @@ void BookmarksRunner::match(Plasma::SearchContext *search)
         kDebug() << "Found bookmark: " << bookmark.text() << " (" << bookmark.url().prettyUrl() << ")";
         Plasma::SearchAction *action = search->addPossibleMatch(this);
 
-        KIcon icon = getFavicon(bookmark.url());
+        QIcon icon = getFavicon(bookmark.url());
         if (icon.isNull()) {
             action->setIcon(m_icon);
         }
@@ -91,24 +91,24 @@ QList<KBookmark> BookmarksRunner::searchBookmarks(const KBookmarkGroup &bookmark
     return matchingBookmarks;
 }
 
-KIcon BookmarksRunner::getFavicon(const KUrl &url) {
+QIcon BookmarksRunner::getFavicon(const KUrl &url) {
     // query the favicons module
     QDBusInterface favicon("org.kde.kded", "/modules/favicons", "org.kde.FavIcon");
     QDBusReply<QString> reply = favicon.call("iconForUrl", url.url());
 
     if (!reply.isValid()) {
-        return KIcon();
+        return QIcon();
     }
 
     // locate the favicon
     QString iconFile = KGlobal::dirs()->findResource("cache",reply.value()+".png");
-    KIcon icon = KIcon(iconFile);
+    QIcon icon = QIcon(iconFile);
 
     if (!icon.isNull()) {
         return icon;
     }
 
-    return KIcon();
+    return QIcon();
 }
 
 void BookmarksRunner::exec(Plasma::SearchAction *action)
