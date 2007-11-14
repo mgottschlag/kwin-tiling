@@ -134,6 +134,7 @@ private:
     void completeKillingWM();
     void cancelShutdown( KSMClient* c );
     void killingCompleted();
+    void createLogoutEffectWidget();
 
     void discardSession();
     void storeSession();
@@ -205,6 +206,7 @@ private:
     bool waitAutoStart2;
     bool waitKcmInit2;
     QTimer pendingShutdown;
+    QWidget* logoutEffectWidget;
     KWorkSpace::ShutdownConfirm pendingShutdown_confirm;
     KWorkSpace::ShutdownType pendingShutdown_sdtype;
     KWorkSpace::ShutdownMode pendingShutdown_sdmode;

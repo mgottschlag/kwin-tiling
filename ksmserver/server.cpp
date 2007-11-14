@@ -585,6 +585,7 @@ extern "C" int _IceTransNoListen(const char * protocol);
 
 KSMServer::KSMServer( const QString& windowManager, bool _only_local )
   : sessionGroup( "" )
+  , logoutEffectWidget( NULL )
 {
     new KSMServerInterfaceAdaptor( this );
     QDBusConnection::sessionBus().registerObject("/KSMServer", this);

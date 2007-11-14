@@ -83,6 +83,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <QX11Info>
 #include <QApplication>
+#include <X11/Xutil.h>
+#include <X11/Xatom.h>
 
 void KSMServer::logout( int confirm, int sdtype, int sdmode )
 {
@@ -437,7 +439,9 @@ void KSMServer::completeShutdownOrCheckpoint()
 
         KNotification *n = KNotification::event( "exitkde" , QString() , QPixmap() , 0l ,  KNotification::DefaultEvent  ); // KDE says good bye
         connect(n, SIGNAL( closed() ) , this, SLOT(logoutSoundFinished()) );
+        kDebug( 1218 ) << "Starting logout event";
 	state = WaitingForKNotify;
+        createLogoutEffectWidget();
 
     } else if ( state == Checkpoint ) {
         foreach( KSMClient* c, clients ) {
@@ -449,6 +453,7 @@ void KSMServer::completeShutdownOrCheckpoint()
 
 void KSMServer::startKilling()
 {
+    kDebug( 1218 ) << "Starting killing clients";
     // kill all clients
     state = Killing;
     foreach( KSMClient* c, clients ) {
@@ -483,6 +488,8 @@ void KSMServer::completeKilling()
 
 void KSMServer::killWM()
 {
+    delete logoutEffectWidget;
+    kDebug( 1218 ) << "Starting killing WM";
     state = KillingWM;
     bool iswm = false;
     foreach( KSMClient* c, clients ) {
@@ -520,6 +527,7 @@ void KSMServer::logoutSoundFinished(  )
 {
     if( state != WaitingForKNotify )
         return;
+    kDebug( 1218 ) << "Logout event finished";
     startKilling();
 }
 
@@ -537,4 +545,27 @@ void KSMServer::timeoutWMQuit()
         kWarning( 1218 ) << "SmsDie WM timeout" ;
     }
     killingCompleted();
+}
+
+void KSMServer::createLogoutEffectWidget()
+{
+// Ok, this is rather a hack. In order to fade the whole desktop when playing the logout
+// sound, killing applications and leaving KDE, create a dummy window that triggers
+// the logout fade effect again.
+    logoutEffectWidget = new QWidget( NULL, Qt::X11BypassWindowManagerHint );
+    logoutEffectWidget->setWindowRole( "logouteffect" );
+//#if !(QT_VERSION >= QT_VERSION_CHECK(4, 3, 3) || defined(QT_KDE_QT_COPY))
+// Qt doesn't set this on unmanaged windows
+    QByteArray appName = qAppName().toLatin1();
+    XClassHint class_hint;
+    class_hint.res_name = appName.data(); // application name
+    class_hint.res_class = const_cast<char *>(QX11Info::appClass());   // application class
+    XSetWMProperties( QX11Info::display(), logoutEffectWidget->winId(),
+        NULL, NULL, NULL, NULL, NULL, NULL, &class_hint );
+    XChangeProperty( QX11Info::display(), logoutEffectWidget->winId(),
+        XInternAtom( QX11Info::display(), "WM_WINDOW_ROLE", False ), XA_STRING, 8, PropModeReplace,
+        (unsigned char *)"logouteffect", strlen( "logouteffect" ));
+//#endif
+    logoutEffectWidget->setGeometry( -100, -100, 1, 1 );
+    logoutEffectWidget->show();
 }
