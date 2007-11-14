@@ -34,9 +34,6 @@ XineramaWidget::XineramaWidget( QWidget* parent )
     connect(_enablePlacement,SIGNAL(clicked()), this, SLOT(emitConfigChanged()));
     connect(_enableMaximize,SIGNAL(clicked()), this, SLOT(emitConfigChanged()));
     connect(_unmanagedDisplay,SIGNAL(activated(int)),this,SLOT(emitConfigChanged()));
-    connect(_enableXinerama, SIGNAL(toggled(bool)), TextLabel2_2, SLOT(setEnabled(bool)));
-    connect(_enableXinerama, SIGNAL(toggled(bool)), _ksplashDisplay, SLOT(setEnabled(bool)));
-    connect(_ksplashDisplay, SIGNAL(activated(int)), this, SLOT(emitConfigChanged()));
     connect(_enableFullscreen,SIGNAL(clicked()), this, SLOT(emitConfigChanged()));
     connect(_enableXinerama,SIGNAL(toggled(bool)), _enableFullscreen, SLOT(setEnabled(bool)));
 }

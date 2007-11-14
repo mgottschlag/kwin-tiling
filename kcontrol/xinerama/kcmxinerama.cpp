@@ -87,7 +87,6 @@ KCMXinerama::KCMXinerama(QWidget *parent, const QVariantList &)
 			QString l = i18n("Display %1", i+1);
 			QRect geom = QApplication::desktop()->screenGeometry(i);
 			xw->_unmanagedDisplay->addItem(l);
-			xw->_ksplashDisplay->addItem(l);
 			dpyList.append(l);
 			xw->headTable->setText(i, 0, QString::number(geom.x()));
 			xw->headTable->setText(i, 1, QString::number(geom.y()));
@@ -99,8 +98,6 @@ KCMXinerama::KCMXinerama(QWidget *parent, const QVariantList &)
 
 		xw->headTable->setRowLabels(dpyList);
 
-		connect(xw->_ksplashDisplay, SIGNAL(activated(int)),
-			this, SLOT(windowIndicator(int)));
 		connect(xw->_unmanagedDisplay, SIGNAL(activated(int)),
 			this, SLOT(windowIndicator(int)));
 		connect(xw->_identify, SIGNAL(clicked()),
@@ -147,13 +144,6 @@ void KCMXinerama::load() {
 		else if (item == -3) // pointer warp
 			xw->_unmanagedDisplay->setCurrentIndex(_displays);
 		else	xw->_unmanagedDisplay->setCurrentIndex(item);
-
-		group =ksplashrc->group("Xinerama");
-		item = group.readEntry("KSplashScreen", QApplication::desktop()->primaryScreen());
-		if (item < 0 || item >= _displays)
-			xw->_ksplashDisplay->setCurrentIndex(QApplication::desktop()->primaryScreen());
-		else xw->_ksplashDisplay->setCurrentIndex(item);
-
 	}
 	emit changed(false);
 }
@@ -178,10 +168,6 @@ void KCMXinerama::save() {
 
                 org::kde::KWin kwin("org.kde.kwin", "/KWin", QDBusConnection::sessionBus());
                 kwin.reconfigure();
-
-		group = config->group("Xinerama");
-		group.writeEntry("KSplashScreen", xw->_enableXinerama->isChecked() ? xw->_ksplashDisplay->currentIndex() : -2 /* ignore Xinerama */);
-		group.sync();
 	}
 
 	KMessageBox::information(this, i18n("Some settings may affect only newly started applications."), i18n("KDE Multiple Monitors"), "nomorexineramaplease");
@@ -197,8 +183,6 @@ void KCMXinerama::defaults() {
 		xw->_enableMaximize->setChecked(true);
 		xw->_enableFullscreen->setChecked(true);
 		xw->_unmanagedDisplay->setCurrentIndex(
-				QApplication::desktop()->primaryScreen());
-		xw->_ksplashDisplay->setCurrentIndex(
 				QApplication::desktop()->primaryScreen());
 		emit changed(true);
 	} else {
