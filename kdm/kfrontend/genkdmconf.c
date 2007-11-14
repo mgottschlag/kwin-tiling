@@ -827,6 +827,40 @@ addStr( StrList **sp, const char *s )
 	ASPrintf( (char **)&(*sp)->str, "%s", s );
 }
 
+static StrList *
+splitList( const char *str )
+{
+	StrList *sp = 0, **spp = &sp;
+	const char *e;
+	if (!*str)
+		return 0;
+	for (;;) {
+		*spp = mcalloc( sizeof(**spp) );
+		if (!(e = strchr( str, ',' )))
+			break;
+		ASPrintf( (char **)&(*spp)->str, "%.*s", (int)(e - str), str );
+		str = e + 1;
+		spp = &(*spp)->next;
+	}
+	(*spp)->str = mstrdup( str );
+	return sp;
+}
+
+static char *
+joinList( StrList *sp )
+{
+	char *s = 0;
+	if (!sp)
+		return mstrdup( "" );
+	s = mstrdup( sp->str );
+	for (;;) {
+		sp = sp->next;
+		if (!sp)
+			return s;
+		strCat( &s, ",%s", sp->str );
+	}
+}
+
 StrMap *cfmap;
 StrList *aflist, *uflist, *eflist, *cflist, *lflist;
 
@@ -1975,6 +2009,35 @@ upd_facedir( Entry *ce, Section *cs ATTR_UNUSED )
 			copyPlainFile( oldpic, rootpic );
 		}
 	}
+}
+
+static void
+upd_sessionsdirs( Entry *ce, Section *cs ATTR_UNUSED )
+{
+	StrList *sl, *sp;
+	int olen;
+	char olddir[PATH_MAX];
+
+	if (ce->written) {
+		sprintf( olddir, "%s/share/apps/kdm/sessions", oldkdepfx );
+		olen = strlen( oldkde );
+		sl = splitList( ce->value );
+		for (sp = sl; sp; sp = sp->next) {
+			if (!strcmp( sp->str, olddir ))
+				sp->str = def_SessionsDirs;
+			else if (!memcmp( sp->str, oldkde, olen ) &&
+			         !memcmp( sp->str + olen, "/kdm/", 5 ))
+			{
+				char newdir[PATH_MAX];
+				sprintf( newdir, KDMCONF "%s", sp->str + olen + 4 );
+				mkdirp( newdir, 0755, "sessions", 0 );
+				copyDir( sp->str, newdir );
+				sp->str = newdir;
+			}
+		}
+		ce->value = joinList( sl );
+	} else
+		mkdirp( KDMCONF "/sessions", 0755, "sessions", 0 );
 }
 
 static void

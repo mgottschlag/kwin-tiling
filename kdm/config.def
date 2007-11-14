@@ -1932,14 +1932,17 @@ Description:
 
 Key: SessionsDirs
 Type: list
-Default: KDMDATA "/sessions"
+Default: *KDMDATA "/sessions"
 User: core
 User: greeter-c
-Instance: #*/"/etc/X11/sessions,/usr/share/xsessions"
+Instance: */KDMCONF "/sessions," KDMDATA "/sessions"
+Update: upd_sessionsdirs
 Comment:
- The directories containing session type definitions in .desktop format.
+ The directories containing session type definitions in .desktop format,
+ ordered by falling priority.
 Description:
  A list of directories containing session type definitions.
+ Ordered by falling priority.
 # See <xref linkend="kdmrc-sessions"> for details.
 
 Key: ClientLogFile
