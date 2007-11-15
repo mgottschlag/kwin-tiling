@@ -74,6 +74,11 @@ class SearchMatch : public QListWidgetItem
             return m_action->isEnabled();
         }
 
+        bool hasMatchOptions()
+        {
+            return m_action->runner()->hasMatchOptions();
+        }
+
         void setAction(Plasma::SearchAction* action)
         {
             m_action = action;
@@ -87,9 +92,24 @@ class SearchMatch : public QListWidgetItem
             setDefault(m_default);
         }
 
-        Plasma::SearchAction* action()
+        QString toString()
+        {
+            return m_action->data().toString();
+        }
+
+        Plasma::SearchAction::Type actionType()
+        {
+            return m_action->type();
+        }
+
+        /*Plasma::SearchAction* action()
         {
             return m_action;
+        }*/
+
+        void createMatchOptions(QWidget* parent)
+        {
+            m_action->runner()->createMatchOptions(parent);
         }
 
         void setDefault( bool def ) {
@@ -264,8 +284,8 @@ void Interface::switchUser()
     display();
     m_header->setText(i18n("Switch users"));
     m_header->setPixmap("user");
-    m_context.setSearchTerm("SESSIONS");
     m_defaultMatch = 0;
+    m_context.setSearchTerm("SESSIONS");
     sessionrunner->match(&m_context);
 
     foreach (Plasma::SearchAction *action, m_context.exactMatches()) {
@@ -327,15 +347,22 @@ void Interface::matchActivated(QListWidgetItem* item)
         return;
     }
 
-    Plasma::SearchAction *action = match->action();
-    m_optionsButton->setEnabled(action->runner()->hasMatchOptions());
-
-    if (!action->isEnabled()) {
+    if (!match->actionEnabled()) {
         return;
     }
 
-    if (action->type() == Plasma::SearchAction::InformationalMatch) {
-        m_searchTerm->setText(action->data().toString());
+    QString searchTerm = m_searchTerm->text();
+    if (!m_executions.contains(searchTerm)) {
+        m_executions << searchTerm;
+
+        //TODO: how many items should we remember exactly?
+        if (m_executions.size() > 100) {
+            m_executions.pop_front();
+        }
+    }
+
+    if (match->actionType() == Plasma::SearchAction::InformationalMatch) {
+        m_searchTerm->setText(match->toString());
     } else {
         //kDebug() << "match activated! " << match->text();
         match->activate();
@@ -353,6 +380,7 @@ void Interface::queueMatch()
 
     QString term = m_searchTerm->text().trimmed();
     if (!term.isEmpty()) {
+        m_defaultMatch = 0;
         m_context.setSearchTerm(term);
         m_context.addStringCompletions(m_executions);
     }
@@ -426,7 +454,7 @@ void Interface::exec()
         return;
     }
 
-    SearchMatch* match = dynamic_cast<SearchMatch*>(m_matchList->currentItem());
+    QListWidgetItem* match = m_matchList->currentItem();
     if (!match) {
         if (m_defaultMatch) {
             match = m_defaultMatch;
@@ -434,22 +462,8 @@ void Interface::exec()
             return;
         }
     }
-    QString searchTerm = m_searchTerm->text();
 
-    if (!m_executions.contains(searchTerm)) {
-        m_executions << searchTerm;
-
-        //TODO: how many items should we remember exactly?
-        if (m_executions.size() > 100) {
-            m_executions.pop_front();
-        }
-    }
-
-    if (match && match->actionEnabled()) {
-        matchActivated(match );
-    } else if (m_defaultMatch) {
-        matchActivated(m_defaultMatch);
-    }
+    matchActivated(match);
 }
 
 void Interface::showOptions(bool show)
@@ -457,7 +471,7 @@ void Interface::showOptions(bool show)
     //TODO: in the case where we are no longer showing options
     //      should we have the runner delete it's options?
     if (show) {
-        if (!m_defaultMatch || !m_defaultMatch->action()->runner()->hasMatchOptions()) {
+        if (!m_defaultMatch || !m_defaultMatch->hasMatchOptions()) {
             // in this case, there is nothing to show
             return;
         }
@@ -474,7 +488,7 @@ void Interface::showOptions(bool show)
         //kDebug() << "set inner widget to " << m_defaultMatch->runner()->options();
         delete m_optionsWidget;
         m_optionsWidget = new QWidget(this);
-        m_defaultMatch->action()->runner()->createMatchOptions(m_optionsWidget);
+        m_defaultMatch->createMatchOptions(m_optionsWidget);
         m_optionsButton->setText( i18n( "Hide Options" ) );
     } else {
         delete m_optionsWidget;
@@ -510,7 +524,7 @@ void Interface::setDefaultItem( QListWidgetItem* item )
         if (!m_defaultMatch) {
             return;
         }
-        hasOptions = m_defaultMatch && m_defaultMatch->action()->runner()->hasMatchOptions();
+        hasOptions = m_defaultMatch && m_defaultMatch->hasMatchOptions();
     }
 
     m_optionsButton->setEnabled(hasOptions);
