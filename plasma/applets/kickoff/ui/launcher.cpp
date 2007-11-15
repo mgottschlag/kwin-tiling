@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -21,7 +21,8 @@
 #include "ui/launcher.h"
 
 // Qt
-#include <QCoreApplication>
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
@@ -91,13 +92,13 @@ public:
         view->setDropIndicatorShown(true);
         view->setDragDropMode(QAbstractItemView::InternalMove);
         view->setModel(model);
+        //view->setCurrentIndex(QModelIndex());
         setupEventHandler(view);
 
         connect(view,SIGNAL(customContextMenuRequested(QPoint)),q,SLOT(showViewContextMenu(QPoint)));
 
         contentSwitcher->addTab(icon,name);
         contentArea->addWidget(view);
-        
     }
 
     void initTabs()
@@ -113,7 +114,7 @@ public:
 
         // My Computer view
         setupSystemView();
-       
+
         // Recently Used view 
         setupRecentView();
 
@@ -388,13 +389,47 @@ void Launcher::keyPressEvent(QKeyEvent *event)
 #endif
 }
 
-void Launcher::showEvent(QShowEvent *)
+void Launcher::moveEvent(QMoveEvent *e)
 {
     // focus the search bar ready for typing 
+    int leftMargin = 1;
+    int rightMargin = 1;
+    int topMargin = 1;
+    int bottomMargin = 1;
+
+    QRect r(QApplication::desktop()->screenGeometry(this));
+    QRect g(geometry());
+
+    if (g.left() == r.left()) {
+        leftMargin = 0;
+    }
+
+    if (g.right() == r.right()) {
+        rightMargin = 0;
+    }
+
+    if (g.top() == r.top()) {
+        topMargin = 0;
+    }
+
+    if (g.bottom() == r.bottom()) {
+        bottomMargin = 0;
+    }
+
+    setContentsMargins(leftMargin, rightMargin, topMargin, rightMargin);
+    QWidget::moveEvent(e);
+}
+
+void Launcher::showEvent(QShowEvent *e)
+{
     d->searchBar->setFocus();
+    QWidget::showEvent(e);
 }
 
 void Launcher::paintEvent(QPaintEvent*)
 {
     // TODO - Draw a pretty background here
+    QPainter p(this);
+    p.setPen(QPen(palette().mid(), 0));
+    p.drawRect(rect().adjusted(0, 0, -1, -1));
 }

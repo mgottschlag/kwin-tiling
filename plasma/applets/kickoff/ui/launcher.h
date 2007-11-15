@@ -51,6 +51,7 @@ public:
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
     virtual void showEvent(QShowEvent *event);
+    virtual void moveEvent(QMoveEvent *event);
     virtual void paintEvent(QPaintEvent *event);
 
 private Q_SLOTS:
