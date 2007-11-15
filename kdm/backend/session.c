@@ -757,26 +757,12 @@ baseEnv( const char *user )
 {
 	char **env;
 
-	env = 0;
-
-#ifdef _AIX
-	/* we need the tags SYSENVIRON: and USRENVIRON: in the call to setpenv() */
-	env = setEnv( env, "SYSENVIRON:", 0 );
-#endif
+	env = inheritEnv( 0, (const char **)exportList );
 
 	if (user) {
 		env = setEnv( env, "USER", user );
-#ifdef _AIX
-		env = setEnv( env, "LOGIN", user );
-#endif
 		env = setEnv( env, "LOGNAME", user );
 	}
-
-#ifdef _AIX
-	env = setEnv( env, "USRENVIRON:", 0 );
-#endif
-
-	env = inheritEnv( env, (const char **)exportList );
 
 	env = setEnv( env, "DISPLAY",
 	              memcmp( td->name, "localhost:", 10 ) ?

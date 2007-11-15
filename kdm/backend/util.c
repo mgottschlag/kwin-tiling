@@ -436,18 +436,9 @@ setEnv( char **e, const char *name, const char *value )
 	int envsize;
 	int l;
 
-#ifdef _AIX
-	/* setpenv() depends on "SYSENVIRON:", not "SYSENVIRON:=" */
-	if (!value) {
-		if (!strDup( &newe, name ))
-			return e;
-	} else
-#endif
-	{
-		newe = 0;
-		if (!strApp( &newe, name, "=", value, (char *)0 ))
-			return e;
-	}
+	newe = 0;
+	if (!strApp( &newe, name, "=", value, (char *)0 ))
+		return e;
 	envsize = 0;
 	if (e) {
 		l = strlen( name );

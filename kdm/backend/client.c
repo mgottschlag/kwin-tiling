@@ -1476,6 +1476,8 @@ startClient( volatile int *pid )
 		 * obtain updated user environment list. This call will initialize
 		 * global 'newenv'.
 		 */
+		userEnviron = xCopyStrArr( 1, userEnviron );
+		userEnviron[0] = (char *)"USRENVIRON:";
 		if (setpenv( curuser, PENV_INIT | PENV_ARGV | PENV_NOEXEC,
 		             userEnviron, NULL ) != 0)
 		{
