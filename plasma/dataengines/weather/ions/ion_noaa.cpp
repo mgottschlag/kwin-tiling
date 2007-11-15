@@ -80,19 +80,29 @@ void NOAAIon::init()
     getXMLSetup();
 }
 
-bool NOAAIon::validate(const QString& source) const
+QString NOAAIon::validate(const QString& source) const
 {
     QHash<QString, QString>::const_iterator it = d->m_locations.find(source);
     if (it != d->m_locations.end()) {
-        return true;
+        return source;
     }
-    return false;
+    return QString();
 }
 
 bool NOAAIon::updateIonSource(const QString& source)
 {
-    getXMLData(source);
-    return true;
+    kDebug() << "updateIonSource() SOURCE: " << source;
+    QString result = this->validate(source);
+
+    if (!result.isEmpty()) {
+        QStringList tokens = result.split(':');
+        setData(source, "validate", QString("valid:single:%1").arg(tokens[1]));
+        //getXMLData(source);
+        return true;
+    }
+    QStringList tokens = source.split(":");
+    setData(source, "validate", QString("invalid:single:%1").arg(tokens[1]));
+    return true; 
 }
 
 // Parses city list and gets the correct city based on ID number
