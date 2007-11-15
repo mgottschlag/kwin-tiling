@@ -53,8 +53,8 @@ public:
         ,removableStorageItem(0)
         ,fixedStorageItem(0)
     {
-        
     }
+
     QStandardItem *lookupDeviceByMountPoint(const QString& mountPoint)
     {
         QString mountUrl = KUrl(mountPoint).url();
@@ -70,10 +70,6 @@ public:
             const Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
             if (!access) {
                 return;
-            }
-            if (!access->isAccessible()) {
-                bool result = const_cast<Solid::StorageAccess*>(access)->setup();
-                qDebug() << "Setup result:" << result;
             }
 
             QStandardItem *deviceItem = StandardItemFactory::createItemForDevice(device);
@@ -100,6 +96,7 @@ public:
             }
             deviceItemById.insert(device.udi(),deviceItem);
     }
+
     void loadStorageItems()
     {
         // get device list
@@ -108,11 +105,11 @@ public:
         // add items
         removableStorageItem = new QStandardItem(i18n("Removable Storage"));
         fixedStorageItem = new QStandardItem(i18n("Storage"));
-        
+
         foreach(const Solid::Device& device,deviceList) {
-            addDevice(device);        
+            addDevice(device);
         }
-        
+
         q->appendRow(removableStorageItem);
         q->appendRow(fixedStorageItem);
     }
@@ -125,7 +122,6 @@ public:
         placesItem->appendRow(homeItem);
 
         QStandardItem *networkItem = StandardItemFactory::createItemForUrl("remote:/");
-        networkItem->setData(QVariant(),SubTitleRole);
         placesItem->appendRow(networkItem); 
 
         KService::Ptr settingsService = KService::serviceByStorageId("kde4-systemsettings.desktop");
@@ -135,6 +131,7 @@ public:
 
         q->appendRow(placesItem);
     }
+
     void queryFreeSpace(const QString& mountPoint)
     {
         KDiskFreeSpace *freeSpace = KDiskFreeSpace::findUsageInfo(mountPoint);
@@ -155,19 +152,21 @@ SystemModel::SystemModel(QObject *parent)
     d->loadPlaces();
     d->loadStorageItems();
 
-    connect(Solid::DeviceNotifier::instance(),SIGNAL(deviceAdded(QString)),this,SLOT(deviceAdded(QString)));
-    connect(Solid::DeviceNotifier::instance(),SIGNAL(deviceRemoved(QString)),this,SLOT(deviceRemoved(QString)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)), this, SLOT(deviceAdded(QString)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(QString)), this, SLOT(deviceRemoved(QString)));
+}
 
-    }
 SystemModel::~SystemModel()
 {
     delete d;
 }
+
 void SystemModel::deviceAdded(const QString& udi)
 {
     qDebug() << "SystemModel adding device" << udi;
     d->addDevice(Solid::Device(udi));
 }
+
 void SystemModel::deviceRemoved(const QString& udi)
 {
     QStandardItem *deviceItem = d->deviceItemById[udi];
@@ -177,6 +176,7 @@ void SystemModel::deviceRemoved(const QString& udi)
         d->deviceItemById.remove(udi);
     }
 }
+
 void SystemModel::registerDevicePaths()
 {
     QList<Solid::Device> deviceList = Solid::Device::listFromType(Solid::DeviceInterface::StorageAccess,QString());
@@ -187,6 +187,7 @@ void SystemModel::registerDevicePaths()
         }
     }
 }
+
 void SystemModel::freeSpaceInfoAvailable(const QString& mountPoint,quint64,quint64 kbUsed,quint64 kbAvailable)
 {
     QStandardItem *deviceItem = d->lookupDeviceByMountPoint(mountPoint);

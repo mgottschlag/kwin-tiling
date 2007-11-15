@@ -72,7 +72,7 @@ public:
         QList<QString> desktopFiles;
 
         foreach(const QString& application,applications) {
-            KService::Ptr service = KService::serviceByStorageId(application);
+            KService::Ptr service = KService::serviceByStorageId("kde4-" + application + ".desktop");
             if (service) {
                 desktopFiles << service->entryPath();
             }
