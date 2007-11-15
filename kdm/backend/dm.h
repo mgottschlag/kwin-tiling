@@ -339,12 +339,14 @@ struct protoDisplay {
 };
 #endif /* XDMCP */
 
-/* status code for RStopDisplay */
-#define DS_RESTART  0
-#define DS_TEXTMODE 1
-#define DS_RESERVE  2
-#define DS_REMOTE   3
-#define DS_REMOVE   4
+/* status code for rStopDisplay */
+#define DS_MASK      255
+# define DS_RESTART  0
+# define DS_TEXTMODE 1
+# define DS_RESERVE  2
+# define DS_REMOTE   3
+# define DS_REMOVE   4
+#define DS_SCHEDULE  256 /* flag for DS_TEXTMODE */
 
 /* command codes dpy process -> master process */
 #define D_User       1

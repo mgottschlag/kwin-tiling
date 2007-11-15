@@ -534,7 +534,7 @@ stopToTTY( struct display *d )
 	if ((d->displayType & d_location) == dLocal)
 		switch (d->status) {
 		default:
-			rStopDisplay( d, DS_TEXTMODE | 0x100 );
+			rStopDisplay( d, DS_TEXTMODE | DS_SCHEDULE );
 		case reserve:
 		case textMode:
 			break;
@@ -1482,13 +1482,13 @@ rStopDisplay( struct display *d, int endState )
 		if (d->serverPid != -1)
 			terminateProcess( d->serverPid, d->termSignal );
 		d->status = zombie;
-		d->zstatus = endState & 0xff;
+		d->zstatus = endState & DS_MASK;
 		debug( " zombiefied\n" );
 	} else if (endState == DS_TEXTMODE) {
 #ifdef HAVE_VTS
 		d->status = textMode;
 		checkTTYMode();
-	} else if (endState == (DS_TEXTMODE | 0x100)) {
+	} else if (endState == (DS_TEXTMODE | DS_SCHEDULE)) {
 		d->status = textMode;
 #else
 		switchToTTY( d );
