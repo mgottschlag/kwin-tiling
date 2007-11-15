@@ -32,6 +32,8 @@
 #include <KLineEdit>
 #include <KLocalizedString>
 
+#include "ui/itemdelegate.h"
+
 using namespace Kickoff;
 
 class SearchBar::Private
@@ -57,20 +59,22 @@ SearchBar::SearchBar(QWidget *parent)
     // setup UI
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(3);
+    layout->setSpacing(0); // we do the spacing manually to line up with the views below
 
     QLabel *searchLabel = new QLabel(i18n("Search:"),this);
+    QLabel *searchIcon = new QLabel(this);
+    searchIcon->setPixmap(KIcon("system-search").pixmap(ItemDelegate::ICON_SIZE, ItemDelegate::ICON_SIZE));
 
     d->editWidget = new KLineEdit(this);
     d->editWidget->installEventFilter(this);
     d->editWidget->setClearButtonShown(true);
     connect(d->editWidget,SIGNAL(textChanged(QString)),this,SIGNAL(startUpdateTimer()));
 
-    QLabel *searchIcon = new QLabel(this);
-    searchIcon->setPixmap(KIcon("system-search").pixmap(32,32));
-
+    layout->addSpacing(ItemDelegate::ITEM_LEFT_MARGIN - 3);
+    layout->addWidget(searchIcon);
+    layout->addSpacing(ItemDelegate::ICON_TEXT_MARGIN);
     layout->addWidget(searchLabel);
     layout->addWidget(d->editWidget);
-    layout->addWidget(searchIcon);
     setLayout(layout);
 
     setFocusProxy(d->editWidget);
