@@ -33,8 +33,8 @@
 #include <KFileItem>
 #include <KParts/BrowserExtension>
 #include <KBookmarkManager>
-#include <solid/device.h>
-#include <solid/storageaccess.h>
+#include <Solid/Device>
+#include <Solid/StorageAccess>
 
 // Local
 #include "core/favoritesmodel.h"
@@ -157,10 +157,12 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
 
     // display menu
     KMenu menu;
-    foreach(QAction *action, actions) {
+    menu.addTitle(index.data(Qt::DisplayRole).value<QString>());
+    foreach (QAction* action, actions) {
         menu.addAction(action);
     }
-    QAction *result = menu.exec(QCursor::pos()); 
+
+    QAction *result = menu.exec(QCursor::pos());
 
     if (result == favoriteAction) {
         if (isFavorite) {
