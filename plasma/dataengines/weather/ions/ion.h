@@ -90,7 +90,7 @@ protected:
      *
      * @arg initialized whether or not the ion is currently ready to fetch data
      */
-    void setInitialized(const bool initialized);
+    void setInitialized(bool initialized);
 
     /**
      * reimplemented from DataEngine
