@@ -92,12 +92,12 @@ QString NOAAIon::validate(const QString& source) const
 bool NOAAIon::updateIonSource(const QString& source)
 {
     // We expect the applet to send the source in the following tokenization:
-    // ionname:verify:place_name - Triggers validation of place
+    // ionname:validate:place_name - Triggers validation of place
     // ionname:weather:place_name - Triggers receiving weather of place
 
     kDebug() << "updateIonSource() SOURCE: " << source;
     QStringList sourceAction = source.split(':');
-    if (sourceAction[1] == QString("verify")) {
+    if (sourceAction[1] == QString("validate")) {
         kDebug() << "Initiate Validating of place: " << sourceAction[2];
 
         QString result = this->validate(QString("%1:%2").arg(sourceAction[0]).arg(sourceAction[2]));
@@ -413,10 +413,15 @@ void NOAAIon::updateWeather(const QString& source)
     if (dataFields["comfortTemperature"] != "N/A") {
         if (d->m_weatherData[source].windchill_F != "NA") {
             setData(source, "Windchill", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
+            setData(source, "Humidex", "N/A");
         }
         if (d->m_weatherData[source].heatindex_F != "NA" && d->m_weatherData[source].temperature_F.toInt() != d->m_weatherData[source].heatindex_F.toInt()) {
             setData(source, "Humidex", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
+            setData(source, "Windchill", "N/A");
         }
+     } else {
+       setData(source, "Windchill", "N/A");
+       setData(source, "Humidex", "N/A");
      }
 
      setData(source, "Dewpoint", this->dewpoint(source));
@@ -448,12 +453,8 @@ void NOAAIon::updateWeather(const QString& source)
      }
 
      setData(source, "Wind Gust", dataFields["windGust"]);
-     if (dataFields["windGust"] != "N/A") {
-         setData(source, "Wind Gust Unit", dataFields["windGustUnit"]);
-     }
-
+     setData(source, "Wind Gust Unit", dataFields["windGustUnit"]);
      setData(source, "Wind Direction", dataFields["windDirection"]);
-
      setData(source, "Credit", "NOAA National Weather Service");
 }
 
@@ -571,6 +572,7 @@ QMap<QString, QString> NOAAIon::wind(const QString& source)
     // May not have any winds
     if (d->m_weatherData[source].windSpeed == "NA") {
         windInfo.insert("windSpeed", "Calm");
+        windInfo.insert("windUnit", "N/A");
     } else {
         if (d->m_useMetric) {
             if (d->m_windInMeters) {
@@ -589,6 +591,7 @@ QMap<QString, QString> NOAAIon::wind(const QString& source)
     // May not always have gusty winds
     if (d->m_weatherData[source].windGust == "NA") {
         windInfo.insert("windGust", "N/A");
+        windInfo.insert("windGustUnit", "N/A");
     } else {
         if (d->m_useMetric) {
             if (d->m_windInMeters) {
