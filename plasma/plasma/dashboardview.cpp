@@ -38,6 +38,8 @@ DashBoardView::DashBoardView(int screen, QWidget *parent)
     //FIXME: this OUGHT to be true if we don't have composite, probably
     setDrawWallpaper(false);
     hide();
+
+    connect( scene(), SIGNAL(launchActivated()), SLOT(hide()) );
 }
 
 DashBoardView::~DashBoardView()
