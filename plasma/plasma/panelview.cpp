@@ -78,9 +78,9 @@ Plasma::Corona *PanelView::corona() const
 void PanelView::updatePanelGeometry()
 {
     kDebug() << "New panel geometry is" << containment()->geometry();
-    QSize size = m_containment->size().toSize();
+    QSize size = containment()->size().toSize();
     QRect geom(QPoint(0,0), size);
-    int screen = m_containment->screen();
+    int screen = containment()->screen();
 
     if (screen < 0) {
         //TODO: is there a valid use for -1 with a panel? floating maybe?

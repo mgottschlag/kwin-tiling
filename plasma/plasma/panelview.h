@@ -68,7 +68,6 @@ private slots:
     void updatePanelGeometry();
 
 private:
-    Plasma::Containment *m_containment;
     Plasma::Svg *m_background;
 };
 
