@@ -146,7 +146,10 @@ autoLogon( time_t tdiff )
 		reStr( &curtype, "classic" );
 		cursource = (td->hstent->rLogin == 1) ? PWSRC_RELOGIN : PWSRC_MANUAL;
 		return 1;
-	} else if (*td->autoUser && !td->autoDelay && (tdiff > 0 || td->autoAgain))
+	} else if (*td->autoUser && !td->autoDelay &&
+	           ((tdiff > 0 && ((td->displayType & d_lifetime) == dTransient ||
+	                           !td->hstent->lastExit)) ||
+	            td->autoAgain))
 	{
 		unsigned int lmask;
 		Window dummy1, dummy2;
