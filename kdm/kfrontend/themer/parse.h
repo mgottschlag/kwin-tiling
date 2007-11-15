@@ -61,6 +61,10 @@ void parseStyle( const QDomElement &, StyleType & );
 
 void setWidgetAttribs( QWidget *, const StyleType & );
 
+enum NoSpaceDebug { NoSpace };
+enum SpaceDebug { Space };
+static inline QDebug& operator<<(QDebug& ds, NoSpaceDebug) { return ds.nospace(); }
+static inline QDebug& operator<<(QDebug& ds, SpaceDebug) { return ds.space(); }
 #ifdef KDE_NO_DEBUG_OUTPUT
 static inline QDebug enter( const char * ) { return kDebugDevNull(); }
 static inline QDebug debug() { return kDebugDevNull(); }

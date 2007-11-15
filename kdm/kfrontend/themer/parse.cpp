@@ -282,22 +282,26 @@ QDebug
 enter( const char *fct )
 {
 	prefixes.push( prefix );
-	prefix.replace( '-', ' ' ).append( "|- " );
-	return dbgs << prefixes.top() << fct << " ";
+	prefix.replace( '-', ' ' ).append( " |-" );
+	if (prefixes.top().isEmpty())
+		return dbgs << fct;
+	return dbgs << (qPrintable( prefixes.top() ) + 1) << fct;
 }
 
 QDebug
 debug()
 {
-	return dbgs << prefix;
+	if (prefix.isEmpty())
+		return dbgs;
+	return dbgs << (qPrintable( prefix ) + 1);
 }
 
 QDebug
 leave()
 {
-	prefix[prefix.length() - 3] = '\\';
+	prefix[prefix.length() - 2] = '\\';
 	QString nprefix( prefix );
 	prefix = prefixes.pop();
-	return dbgs << nprefix;
+	return dbgs << (qPrintable( nprefix ) + 1);
 }
 #endif

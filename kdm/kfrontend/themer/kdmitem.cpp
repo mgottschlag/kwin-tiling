@@ -211,10 +211,10 @@ KdmItem::doPlugActions( bool )
 void
 KdmItem::setGeometry( QStack<QSize> &parentSizes, const QRect &newGeometry, bool force )
 {
-	enter("Item::setGeometry") << objectName() << " " << newGeometry << endl;
+	enter("Item::setGeometry") << objectName() << newGeometry;
 	// check if already 'in place'
 	if (!force && area == newGeometry) {
-		leave() << "unchanged" << endl;
+		leave() << "unchanged";
 		return;
 	}
 
@@ -230,7 +230,7 @@ KdmItem::setGeometry( QStack<QSize> &parentSizes, const QRect &newGeometry, bool
 
 	// TODO send *selective* repaint signal
 
-	leave() << "done" << endl;
+	leave() << "done";
 }
 
 void
@@ -354,7 +354,7 @@ KdmItem::ensureHintedSize( QSize &hintedSize )
 {
 	if (!hintedSize.isValid()) {
 		hintedSize = sizeHint();
-		debug() << "hintedSize " << hintedSize << endl;
+		debug() << "hinted" << hintedSize;
 	}
 	return hintedSize;
 }
@@ -367,7 +367,7 @@ KdmItem::ensureBoxHint( QSize &boxHint, QStack<QSize> &parentSizes, QSize &hinte
 			boxHint = ensureHintedSize( hintedSize );
 		else
 			boxHint = boxManager->sizeHint( parentSizes );
-		debug() << "boxHint " << boxHint << endl;
+		debug() << "boxHint" << boxHint;
 	}
 	return boxHint;
 }
@@ -377,7 +377,7 @@ getParentSize( const QStack<QSize> &parentSizes, int levels )
 {
 	int off = parentSizes.size() - 1 - levels;
 	if (off < 0) {
-		kError() << "Theme references element below the root." << endl;
+		kError() << "Theme references element below the root.";
 		off = 0;
 	}
 	return parentSizes[off];
@@ -425,8 +425,8 @@ KdmItem::calcSize(
 void
 KdmItem::sizingHint( QStack<QSize> &parentSizes, SizeHint &hint )
 {
-	enter("Item::sizingHint") << objectName() << " parentSize #"
-		<< parentSizes.size() << " " << parentSizes.top() << endl;
+	enter("Item::sizingHint") << objectName() << NoSpace << "parentSize #"
+		<< parentSizes.size() << Space << parentSizes.top();
 
 	QSize hintedSize, boxHint;
 	hint.min = hint.opt = hint.max = parentSizes.top();
@@ -434,8 +434,7 @@ KdmItem::sizingHint( QStack<QSize> &parentSizes, SizeHint &hint )
 	calcSize( geom.minSize, parentSizes, hintedSize, boxHint, hint.min );
 	calcSize( geom.maxSize, parentSizes, hintedSize, boxHint, hint.max );
 
-	leave() << "size " << hint.opt
-		<< " min " << hint.min << " max " << hint.max << endl;
+	leave() << "size" << hint.opt << "min" << hint.min << "max" << hint.max;
 
 	hint.max = hint.max.expandedTo( hint.min ); // if this triggers, the theme is bust
 	hint.opt = hint.opt.boundedTo( hint.max ).expandedTo( hint.min );
@@ -452,8 +451,8 @@ KdmItem::placementHint( QStack<QSize> &sizes, const QSize &sz, const QPoint &off
 	    w = parentSize.width(),
 	    h = parentSize.height();
 
-	enter("Item::placementHint") << objectName() << " parentSize #" << sizes.size()
-		<< " " << parentSize << " size " << sz << " offset " << offset << endl;
+	enter("Item::placementHint") << objectName() << NoSpace << "parentSize #"
+		<< sizes.size() << Space << parentSize << "size" << sz << "offset" << offset;
 
 	if (geom.pos.x.type == DTpixel)
 		x += geom.pos.x.val;
@@ -483,7 +482,7 @@ KdmItem::placementHint( QStack<QSize> &sizes, const QSize &sz, const QPoint &off
 		if (geom.anchor.indexOf( 'e' ) >= 0)
 			dx = sz.width();
 	}
-	leave() << "x=" << x << " dx=" << dx << " y=" << y << " dy=" << dy << endl;
+	leave() << "x:" << x << "dx:" << dx << "y:" << y << "dy:" << dy;
 	y -= dy;
 	x -= dx;
 
@@ -504,13 +503,18 @@ KdmItem::placementHint( QStack<QSize> &sizes, const QPoint &offset )
 void
 KdmItem::showStructure( const QString &pfx )
 {
-	kDebug() << pfx << objectName() << ": " << itemType << " " << area;
+	{
+		QDebug ds = kDebug();
+		if (!pfx.isEmpty())
+			ds << (qPrintable( pfx ) + 1);
+		ds << objectName() << qPrintable( itemType ) << area;
+	}
 	if (!m_children.isEmpty()) {
 		QString npfx( pfx );
 		npfx.replace( '\\', ' ' ).replace( '-', ' ' );
 		for (int i = 0; i < m_children.count() - 1; i++)
-			m_children[i]->showStructure( npfx + "|- " );
-		m_children[m_children.count() - 1]->showStructure( npfx + "\\- " );
+			m_children[i]->showStructure( npfx + " |-" );
+		m_children[m_children.count() - 1]->showStructure( npfx + " \\-" );
 	}
 }
 
