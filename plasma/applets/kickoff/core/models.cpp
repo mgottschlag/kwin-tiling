@@ -25,36 +25,42 @@
 #include <QStandardItem>
 
 // KDE
+#include <KDebug>
+#include <KConfigGroup>
 #include <KDesktopFile>
 #include <KIcon>
 #include <KGlobal>
 #include <KMimeType>
 #include <KUrl>
-#include <solid/device.h>
-#include <solid/storageaccess.h>
+#include <Solid/Device>
+#include <Solid/StorageAccess>
+#include <Solid/StorageDrive>
 
 using namespace Kickoff;
 
 static KUrl homeUrl(getenv("HOME"));
 static KUrl remoteUrl("remote:/");
 
-class StandardItemFactoryData
+namespace Kickoff
 {
-public:
-    QHash<QString,Solid::Device> deviceByUrl;
-};
-K_GLOBAL_STATIC(StandardItemFactoryData,factoryData)
+
+K_GLOBAL_STATIC(StandardItemFactoryData, factoryData)
+
+StandardItemFactoryData* deviceFactoryData()
+{
+    return factoryData;
+}
+} // namespace Kickoff
 
 QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
 {
     KUrl url(urlString);
-    
+
     QStandardItem *item = 0; 
 
     if (factoryData->deviceByUrl.contains(urlString)) {
         return createItemForDevice(factoryData->deviceByUrl[urlString]);
-    } else if (url.isLocalFile() && QFileInfo(url.path()).suffix() == "desktop") {
-
+    } else if (url.isLocalFile() && urlString.endsWith(".desktop")) {
         // .desktop files may be services (type field == 'Application' or 'Service')
         // or they may be other types such as links.
         //
@@ -70,39 +76,41 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
         item->setText(QFileInfo(urlString).baseName());
         item->setIcon(KIcon(desktopFile.readIcon()));
 
-        KUrl desktopUrl(desktopFile.readUrl()); 
+        //FIXME: this is a hack around borkage in KRecentDocuments which stores a path in the URL
+        //       field!
+        KUrl desktopUrl(desktopFile.desktopGroup().readPathEntry("URL", QString()));
         item->setData(desktopUrl.url(),Kickoff::UrlRole);
 
         QString subTitle = desktopUrl.isLocalFile() ? desktopUrl.path() : desktopUrl.prettyUrl();
+        item->setData(subTitle, Kickoff::SubTitleRole);
 
-        item->setData(subTitle,Kickoff::SubTitleRole);
-
-        setSpecialUrlProperties(desktopUrl,item);
-
+        setSpecialUrlProperties(desktopUrl, item);
     } else {
         item = new QStandardItem;
         item->setText(QFileInfo(urlString).baseName());
         item->setIcon(KIcon(KMimeType::iconNameForUrl(url)));
-        
-        item->setData(url.url(),Kickoff::UrlRole);
-        QString subTitle = url.isLocalFile() ? url.path() : url.prettyUrl();
-        item->setData(subTitle,Kickoff::SubTitleRole);
+        item->setData(url.url(), Kickoff::UrlRole);
+        QString subTitle = url.isLocalFile() && url.path().length() > 1 ? url.path() : url.prettyUrl();
+        item->setData(subTitle, Kickoff::SubTitleRole);
 
-        setSpecialUrlProperties(url,item);
+        setSpecialUrlProperties(url, item);
     }
 
     return item;
 }
-void StandardItemFactory::associateDevice(const QString& url,const Solid::Device& device)
+
+void StandardItemFactory::associateDevice(const QString& url, const Solid::Device& device)
 {
-    factoryData->deviceByUrl.insert(url,device);
+    factoryData->deviceByUrl.insert(url, device);
 }
+
 Solid::Device StandardItemFactory::deviceForUrl(const QString& url)
 {
     return factoryData->deviceByUrl.value(url);
 }
+
 void StandardItemFactory::setSpecialUrlProperties(const KUrl& url,QStandardItem *item)
-{        
+{
     // specially handled URLs
     if (url == homeUrl) {
         item->setText(i18n("Home Folder"));
@@ -111,6 +119,7 @@ void StandardItemFactory::setSpecialUrlProperties(const KUrl& url,QStandardItem 
         item->setText(i18n("Network Folders"));
     }
 }
+
 QStandardItem *StandardItemFactory::createItemForService(KService::Ptr service)
 {
     QStandardItem *appItem = new QStandardItem;
@@ -128,18 +137,29 @@ QStandardItem *StandardItemFactory::createItemForService(KService::Ptr service)
 
     return appItem;
 }
+
 QStandardItem *StandardItemFactory::createItemForDevice(const Solid::Device& device)
 {
-     const Solid::StorageAccess* access = device.as<Solid::StorageAccess>();
-     if (!access)
+     const Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
+     if (!access) {
          return 0;
+     }
 
      QStandardItem *deviceItem = new QStandardItem;
-     deviceItem->setText(device.product());
-     deviceItem->setIcon(KIcon(device.icon()));
 
-     deviceItem->setData(access->filePath(),SubTitleRole);
-     deviceItem->setData(KUrl(access->filePath()).url(),UrlRole);
+     //FIXME: we're never getting a drive back, so we aren't getting info on when
+     //       it is removable, etc
+     const Solid::StorageDrive *drive = device.as<Solid::StorageDrive>();
+     if (!drive || drive->isRemovable() || drive->isHotpluggable()) {
+         deviceItem->setText(device.product());
+         deviceItem->setData(access->filePath(), SubTitleRole);
+     } else {
+         deviceItem->setText(access->filePath());
+         deviceItem->setData(device.product(), SubTitleRole);
+     }
+
+     deviceItem->setIcon(KIcon(device.icon()));
+     deviceItem->setData(KUrl(access->filePath()).url(), UrlRole);
 
      return deviceItem;
 }

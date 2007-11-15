@@ -37,6 +37,14 @@ namespace Solid
 
 namespace Kickoff
 {
+    class StandardItemFactoryData
+    {
+        public:
+            QHash<QString,Solid::Device> deviceByUrl;
+    };
+
+    StandardItemFactoryData* deviceFactoryData();
+
     /** 
      * Additional data roles for data which the Kickoff models supply with their items
      * for use when rendering the items and launching them.
