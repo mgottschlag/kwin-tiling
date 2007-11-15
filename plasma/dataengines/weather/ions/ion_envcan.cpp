@@ -108,11 +108,11 @@ bool EnvCanadaIon::updateIonSource(const QString& source)
 {
     kDebug() << "updateIonSource() SOURCE: " << source;
     // We expect the applet to send the source in the following tokenization:
-    // ionname:verify:place_name - Triggers validation of place
+    // ionname:validate:place_name - Triggers validation of place
     // ionname:weather:place_name - Triggers receiving weather of place
    
     QStringList sourceAction = source.split(':');
-    if (sourceAction[1] == QString("verify")) {
+    if (sourceAction[1] == QString("validate")) {
         kDebug() << "Initiate Validating of place: " << sourceAction[2];
     
         QString result = this->validate(QString("%1:%2").arg(sourceAction[0]).arg(sourceAction[2]));
@@ -889,10 +889,17 @@ void EnvCanadaIon::updateWeather(const QString& source)
     if (dataFields["comfortTemperature"] != "N/A" && !dataFields["comfortTemperature"].isEmpty()) {
         if (dataFields["comfortTemperature"].toFloat() <= 0 || (dataFields["comfortTemperature"].toFloat() <= 32 && !d->m_useMetric)) {
             setData(source, "Windchill", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
+            setData(source, "Humidex", "N/A");
         } else {
             setData(source, "Humidex", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
-        }
+            setData(source, "Windchill", "N/A");
+        }   
+     } else {
+       setData(source, "Windchill", "N/A");
+       setData(source, "Humidex", "N/A");
      }
+
+     setData(source, "Temperature Unit", dataFields["temperatureUnit"]);
 
      setData(source, "Dewpoint", this->dewpoint(source));
      if (this->dewpoint(source) != "N/A") {
@@ -921,10 +928,8 @@ void EnvCanadaIon::updateWeather(const QString& source)
          setData(source, "Wind Speed Unit", dataFields["windUnit"]);
      }
      setData(source, "Wind Gust", dataFields["windGust"]);
-     if (dataFields["windGust"] != "N/A") {
-         setData(source, "Wind Gust Unit", dataFields["windGustUnit"]);
-     }
      setData(source, "Wind Direction", dataFields["windDirection"]);
+     setData(source, "Wind Gust Unit", dataFields["windGustUnit"]);
 
      dataFields = this->regionalTemperatures(source);
      setData(source, "Normal High", dataFields["normalHigh"]);
@@ -1103,6 +1108,7 @@ QMap<QString, QString> EnvCanadaIon::temperature(const QString& source)
         if (!d->m_weatherData[source].temperature.isEmpty()) {
             temperatureInfo.insert("temperature", QString("%1").arg(QString::number(d->m_weatherData[source].temperature.toFloat(), 'f', 1)));
         }
+        temperatureInfo.insert("temperatureUnit", QString("%1C").arg(QChar(176)));
     }
     else {
         if (!d->m_weatherData[source].temperature.isEmpty()) {
@@ -1110,6 +1116,7 @@ QMap<QString, QString> EnvCanadaIon::temperature(const QString& source)
         } else {
             temperatureInfo.insert("temperature", "N/A");
         }
+	temperatureInfo.insert("temperatureUnit", QString("%1F").arg(QChar(176)));
     }  
     temperatureInfo.insert("comfortTemperature", "N/A");
 
