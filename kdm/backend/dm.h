@@ -56,6 +56,8 @@ from the copyright holder.
 #include <stdlib.h>
 #include <errno.h>
 
+extern char **environ;
+
 #ifdef XDMCP
 # if defined(__osf__)
 /* someone somewhere defines QUERY under Tru64 which confuses Xdmcp.h */

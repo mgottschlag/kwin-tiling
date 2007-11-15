@@ -49,8 +49,6 @@ from the copyright holder.
 # include <sched.h>
 #endif
 
-extern char **environ;
-
 
 SIGFUNC Signal( int sig, SIGFUNC handler )
 {

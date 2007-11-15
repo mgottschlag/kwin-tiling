@@ -1167,9 +1167,6 @@ startClient( volatile int *pid )
 	extern char **newenv; /* from libs.a, this is set up by setpenv */
 # endif
 #endif
-#ifdef HAVE_SETUSERCONTEXT
-	extern char **environ;
-#endif
 	char *failsafeArgv[2];
 	char *buf, *buf2;
 	int i;

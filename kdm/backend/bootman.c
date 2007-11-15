@@ -42,8 +42,6 @@ from the copyright holder.
 #include <stdio.h>
 #include <ctype.h>
 
-extern char **environ;
-
 static int
 getNull( char ***opts ATTR_UNUSED, int *def ATTR_UNUSED, int *cur ATTR_UNUSED )
 {
