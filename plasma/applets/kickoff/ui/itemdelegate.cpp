@@ -32,20 +32,27 @@
 
 // KDE
 #include <KColorUtils>
+#include <KDebug>
 #include <KGlobal>
 #include <KGlobalSettings>
 
 using namespace Kickoff;
 
+ItemDelegate::ItemDelegate()
+{
+}
+
 void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     const bool hover = option.state & (QStyle::State_Selected|QStyle::State_MouseOver|QStyle::State_HasFocus);
+    QRect contentRect = option.rect;
+    contentRect.setBottom(contentRect.bottom() - 1);
     QRect decorationRect = QStyle::alignedRect(option.direction,
                                                option.decorationPosition == QStyleOptionViewItem::Left ? Qt::AlignLeft : Qt::AlignRight,
                                                option.decorationSize,
-                                               option.rect);
-    QSize textSize(option.rect.width()-decorationRect.width()-ICON_TEXT_MARGIN,
-                   option.rect.height());
+                                               contentRect);
+    QSize textSize(option.rect.width() - decorationRect.width() - ICON_TEXT_MARGIN,
+                   option.rect.height() - 2);
 
     qreal freeSpace = -1;
     qreal usedSpace = -1;
@@ -59,51 +66,67 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
     QRect textRect = QStyle::alignedRect(option.direction,
                                          textAlignment,
                                          textSize,
-                                         option.rect);
+                                         contentRect.adjusted(0, 2, 0, 0));
     QString titleText = index.data(Qt::DisplayRole).value<QString>();
     QString subTitleText = index.data(SubTitleRole).value<QString>();
 
     QRect titleRect = textRect;
 
-    if (!subTitleText.isEmpty()) {
-        titleRect.setHeight(titleRect.height()/2);
+    if (subTitleText.isEmpty()) {
+        subTitleText = " ";
     }
 
+    titleRect.setHeight(titleRect.height() / 2);
     QRect subTitleRect = titleRect;
-    subTitleRect.translate(0,subTitleRect.height());
+    subTitleRect.translate(0, subTitleRect.height());
+    QFont subTitleFont = fontForSubTitle(option.font);
 
-    // draw background on hover
+    QFont titleFont(option.font);
+
     if (hover) {
         painter->save();
         painter->setPen(Qt::NoPen);
         QColor backgroundColor = option.palette.color(QPalette::Highlight);
+        QFontMetrics titleMetrics(titleFont);
+        QFontMetrics subTitleMetrics(subTitleFont);
+        QRect textAreaRect = contentRect;
+        qreal actualTextWidth = qMax(titleMetrics.width(titleText), subTitleMetrics.width(subTitleText));
+        textAreaRect.adjust(decorationRect.width() + ICON_TEXT_MARGIN - 3, 0, -(titleRect.width() - actualTextWidth) + 3, 1);
         // use a slightly translucent version of the palette's highlight color
         // for the background
         backgroundColor.setAlphaF(0.5);
         painter->setBrush(QBrush(backgroundColor));
-        painter->drawPath(roundedRectangle(option.rect,5));
+        painter->drawPath(roundedRectangle(textAreaRect, 5));
         painter->restore();
     }
 
     // draw icon
     QIcon decorationIcon = index.data(Qt::DecorationRole).value<QIcon>();
-    decorationIcon.paint(painter, decorationRect, option.decorationAlignment);
 
-    painter->save();
-    
-    // draw title and sub-title 
-    QFont titleFont(option.font);
-    painter->setFont(titleFont);
-    painter->drawText(titleRect,Qt::AlignLeft|Qt::AlignVCenter,titleText);
-
-    QFont subTitleFont = fontForSubTitle(option.font);
     if (!hover) {
-        painter->setPen(QPen(option.palette.mid(),0));
+        painter->save();
+        painter->setOpacity(0.7);
     }
 
-    painter->setFont(subTitleFont);
+    decorationIcon.paint(painter, decorationRect, option.decorationAlignment);
 
-    painter->drawText(subTitleRect,Qt::AlignLeft|Qt::AlignVCenter,subTitleText);
+    if (!hover) {
+        painter->restore();
+    }
+
+    painter->save();
+
+    // draw title
+    painter->setFont(titleFont);
+    painter->drawText(titleRect, Qt::AlignLeft|Qt::AlignVCenter, titleText);
+
+    if (hover) {
+        // draw sub-title
+        painter->setPen(QPen(option.palette.dark(), 0));
+        painter->setFont(subTitleFont);
+        painter->drawText(subTitleRect, Qt::AlignLeft|Qt::AlignVCenter, subTitleText);
+    }
+
     painter->restore();
 
     // draw free space information (for drive icons)
@@ -113,15 +136,19 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
         QFontMetrics titleMetrics(option.font);
         QFontMetrics subTitleMetrics(subTitleFont);
 
+        qreal actualTextWidth = qMax(titleMetrics.width(titleText), subTitleMetrics.width(subTitleText));
+
         QSize spaceSize = option.rect.size();
-        spaceSize.rwidth() /= 3;
+        //kDebug() << "space size is" << spaceSize.rwidth() << "and we're going to lop off"
+        //         << (actualTextWidth + decorationRect.width() + ICON_TEXT_MARGIN + 3);
+        spaceSize.rwidth() /= 3; //-= (spaceSize.width() * 2.0 / 3.0) /*actualTextWidth +*/ + decorationRect.width() + (ICON_TEXT_MARGIN * 2) + 3;
         spaceSize.rheight() -= 20;
 
         // check if there is enough space to draw the bar
-        qreal actualTextWidth = qMax(titleMetrics.width(titleText),subTitleMetrics.width(subTitleText));
         qreal textBarGap = (titleRect.width() - actualTextWidth) - (spaceSize.width() + ICON_TEXT_MARGIN);
-        if (textBarGap > 0) {
+        //kDebug() << "text bar gap is" << textBarGap;
 
+        if (textBarGap > 0) {
             // if the item view is gradually resized smaller or larger, make the bar fade out/in 
             // as enough space for it becomes available
             if (textBarGap < 20.0) {
@@ -129,17 +156,22 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
             }
 
             QRectF spaceRect = QStyle::alignedRect(option.direction,
-                                                   Qt::AlignVCenter|Qt::AlignRight,spaceSize,option.rect);
+                                                   Qt::AlignRight, spaceSize, contentRect);
 
             // add spacing between item text and free-space bar and tweak the position slightly
-            // to give a shart outline when drawn with anti-aliasing enabled
-            spaceRect.translate(-ICON_TEXT_MARGIN+0.5,0.5);
+            // to give a sharp outline when drawn with anti-aliasing enabled
+            spaceRect.translate(0.5, 3.5);
 
-            QBrush fillBrush = KColorUtils::mix(Qt::green,Qt::yellow,(usedSpace/(freeSpace+usedSpace))); 
+            QColor fillBrush = KColorUtils::mix(Qt::green, Qt::yellow, (usedSpace / (freeSpace+usedSpace)));
+            QColor penColor = option.palette.mid().color();
+            if (!hover) {
+                fillBrush.setAlpha(75);
+                penColor.setAlpha(75);
+            }
 
-            qreal width = ( usedSpace / (freeSpace+usedSpace) ) * spaceRect.width();
-            painter->setPen(QPen(option.palette.mid(),0));
-            painter->fillRect(QRectF(spaceRect.left(),spaceRect.top(),width,spaceRect.height()),fillBrush); 
+            qreal width = (usedSpace / (freeSpace + usedSpace)) * spaceRect.width();
+            painter->setPen(QPen(penColor, 0));
+            painter->fillRect(QRectF(spaceRect.left(), spaceRect.top(), width, spaceRect.height()), fillBrush);
             painter->setBrush(QBrush(Qt::NoBrush));
             painter->drawRect(spaceRect);
 
@@ -163,21 +195,27 @@ QFont ItemDelegate::fontForSubTitle(const QFont& titleFont) const
     return subTitleFont;
 }
 
-QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option,const QModelIndex& index) const
+QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-    QSize size = option.decorationSize;
-    
+    Q_UNUSED(index)
+    QSize size = option.rect.size();
+
     QFontMetrics metrics(option.font);
-    QFontMetrics subTitleMetrics(fontForSubTitle(option.font));
-    size.rwidth() += ICON_TEXT_MARGIN;
-    size.rwidth() += qMax(metrics.width(index.data(Qt::DisplayRole).value<QString>()),
-                          metrics.width(index.data(SubTitleRole).value<QString>()));
-    size.rheight() = qMax(size.height(),metrics.height() + subTitleMetrics.height());
+
+/*    size.rwidth() += ICON_TEXT_MARGIN +
+                     qMax(metrics.width(index.data(Qt::DisplayRole).value<QString>()),
+                          metrics.width(index.data(SubTitleRole).value<QString>()));*/
+    QFont subTitleFont = option.font;
+    subTitleFont.setPointSize(qMax(subTitleFont.pointSize() - 2,
+                                   KGlobalSettings::smallestReadableFont().pointSize()));
+    QFontMetrics subMetrics(subTitleFont);
+    size.setHeight(qMax(size.height(), metrics.height() + subMetrics.ascent()) + 3);
+//    kDebug() << "size hint is" << size << (metrics.height() + subMetrics.ascent());
 
     return size;
 }
 
-bool ItemDelegate::isVisible(const QModelIndex& index) const 
+bool ItemDelegate::isVisible(const QModelIndex& index) const
 {
     Q_ASSERT(index.isValid());
 
