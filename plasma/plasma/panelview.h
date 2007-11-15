@@ -20,9 +20,8 @@
 #ifndef PLASMA_PANELVIEW_H
 #define PLASMA_PANELVIEW_H
 
-#include <QGraphicsView>
-
 #include <plasma/plasma.h>
+#include <plasma/view.h>
 
 class QWidget;
 
@@ -33,7 +32,7 @@ namespace Plasma
     class Svg;
 }
 
-class PanelView : public QGraphicsView
+class PanelView : public Plasma::View
 {
     Q_OBJECT
 public:
@@ -56,20 +55,13 @@ public:
     Plasma::Location location() const;
 
     /**
-     * @return the Containment associated with this panel.
-     */
-    Plasma::Containment *containment() const;
-
-    /**
      * @return the Corona (scene) associated with this panel.
      */
     Plasma::Corona *corona() const;
 
 protected:
     void updateStruts();
-
     virtual void moveEvent(QMoveEvent *event);
-
     virtual void resizeEvent(QResizeEvent *event);
 
 private slots:

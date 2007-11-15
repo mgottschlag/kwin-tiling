@@ -18,7 +18,6 @@
 */
 
 #include "panelview.h"
-#include "panelview.moc"
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -33,15 +32,13 @@
 #include <plasma/svg.h>
 
 PanelView::PanelView(Plasma::Containment *panel, QWidget *parent)
-    : QGraphicsView(parent),
-      m_containment(panel)
+    : Plasma::View(panel, parent)
 {
-    Q_ASSERT(qobject_cast<Plasma::Corona*>(m_containment->scene()));
-    setScene(m_containment->scene());
+    Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
     updatePanelGeometry();
 
-    connect(m_containment, SIGNAL(geometryChanged()), this, SLOT(updatePanelGeometry()));
-    kDebug() << "Panel geometry is" << m_containment->geometry();
+    connect(panel, SIGNAL(geometryChanged()), this, SLOT(updatePanelGeometry()));
+    kDebug() << "Panel geometry is" << panel->geometry();
 
     // Graphics view setup
     setFrameStyle(QFrame::NoFrame);
@@ -64,18 +61,13 @@ PanelView::PanelView(Plasma::Containment *panel, QWidget *parent)
 
 void PanelView::setLocation(Plasma::Location loc)
 {
-    m_containment->setLocation(loc);
+    containment()->setLocation(loc);
     updatePanelGeometry();
 }
 
 Plasma::Location PanelView::location() const
 {
-    return m_containment->location();	
-}
-
-Plasma::Containment *PanelView::containment() const
-{
-    return m_containment;
+    return containment()->location();
 }
 
 Plasma::Corona *PanelView::corona() const
@@ -85,7 +77,7 @@ Plasma::Corona *PanelView::corona() const
 
 void PanelView::updatePanelGeometry()
 {
-    kDebug() << "New panel geometry is" << m_containment->geometry();
+    kDebug() << "New panel geometry is" << containment()->geometry();
     QSize size = m_containment->size().toSize();
     QRect geom(QPoint(0,0), size);
     int screen = m_containment->screen();
@@ -117,9 +109,7 @@ void PanelView::updatePanelGeometry()
 
     setGeometry(geom);
 
-    // now center in on the containment
     //kDebug() << "I think the panel is at " << geom;
-    setSceneRect(QRectF(m_containment->scenePos(), m_containment->size()));
 }
 
 void PanelView::updateStruts()
@@ -183,4 +173,6 @@ void PanelView::resizeEvent(QResizeEvent *event)
     QWidget::resizeEvent(event);
     updateStruts();
 }
+
+#include "panelview.moc"
 
