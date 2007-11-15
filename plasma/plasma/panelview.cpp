@@ -116,50 +116,48 @@ void PanelView::updateStruts()
 {
     NETExtendedStrut strut;
 
-    //QRect geom = geometry();
-    //QRect virtRect(QApplication::desktop()->geometry());
-
-    //FIXME: only reserve the actually used space. the commented out code
-    //       looks like a good start, but needs to be tested once we have
-    //       variable width panels
     switch (location())
     {
         case Plasma::TopEdge:
             strut.top_width = height();
-            //strut.top_width = geom.y() + h;
-            //strut.top_start = x();
-            //strut.top_end = x() + width() - 1;
+            strut.top_start = x();
+            strut.top_end = x() + width() - 1;
             break;
 
         case Plasma::BottomEdge:
-            // also claim the non-visible part at the bottom
             strut.bottom_width = height();
-            //strut.bottom_width = (virtRect.bottom() - geom.bottom()) + h;
-            //strut.bottom_start = x();
-            //strut.bottom_end = x() + width() - 1;
+            strut.bottom_start = x();
+            strut.bottom_end = x() + width() - 1;
             break;
 
         case Plasma::RightEdge:
             strut.right_width = width();
-            //strut.right_width = (virtRect.right() - geom.right()) + w;
-            //strut.right_start = y();
-            //strut.right_end = y() + height() - 1;
+            strut.right_start = y();
+            strut.right_end = y() + height() - 1;
             break;
 
         case Plasma::LeftEdge:
             strut.left_width = width();
-            //strut.left_width = geom.x() + w;
-            //strut.left_start = y();
-            //strut.left_end = y() + height() - 1;
+            strut.left_start = y();
+            strut.left_end = y() + height() - 1;
             break;
 
         default:
             break;
     }
-    KWindowSystem::setStrut(winId(), strut.left_width,
-                                     strut.right_width,
-                                     strut.top_width,
-                                     strut.bottom_width);
+
+    KWindowSystem::setExtendedStrut(winId(), strut.left_width,
+                                             strut.left_start,
+                                             strut.left_end,
+                                             strut.right_width,
+                                             strut.right_start,
+                                             strut.right_end,
+                                             strut.top_width,
+                                             strut.top_start,
+                                             strut.top_end,
+                                             strut.bottom_width,
+                                             strut.bottom_start,
+                                             strut.bottom_end);
 }
 
 void PanelView::moveEvent(QMoveEvent *event)
