@@ -114,6 +114,7 @@ KDMThemeWidget::KDMThemeWidget( QWidget *parent )
 	connect( bGetNewThemes, SIGNAL(clicked()), SLOT(getNewStuff()) );
 
 	themeDir = KGlobal::dirs()->resourceDirs( "data" ).last() + "kdm/themes/";
+	defaultTheme = 0;
 	QDir testDir( themeDir );
 	if (!testDir.exists() && !testDir.mkdir( testDir.absolutePath() ) && !geteuid())
 		KMessageBox::sorry( this, i18n("Unable to create folder %1", testDir.absolutePath() ) );
