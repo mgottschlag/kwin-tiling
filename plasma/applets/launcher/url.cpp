@@ -32,6 +32,7 @@
 
 #include <plasma/widgets/boxlayout.h>
 #include <plasma/widgets/icon.h>
+#include <plasma/containment.h>
 
 Url::Url(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
@@ -90,6 +91,9 @@ void Url::setUrl(const KUrl& url)
 void Url::openUrl()
 {
     if (m_url.isValid()) {
+        if (containment()) {
+            containment()->emitLaunchActivated();
+        }
         KRun::runUrl(m_url, m_mimetype, 0);
     }
 }
