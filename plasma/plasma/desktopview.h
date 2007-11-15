@@ -20,9 +20,8 @@
 #ifndef DESKTOPVIEW_H
 #define DESKTOPVIEW_H
 
-#include <QGraphicsView>
-
 #include "plasma/plasma.h"
+#include "plasma/view.h"
 
 class QPixmap;
 
@@ -32,26 +31,22 @@ namespace Plasma
     class Corona;
 }
 
-class DesktopView : public QGraphicsView
+class DesktopView : public Plasma::View
 {
     Q_OBJECT
 
 public:
-    DesktopView(QWidget *parent, int screen = -1);
+    DesktopView(int screen, QWidget *parent);
     ~DesktopView();
-
-    int screen() const;
 
 public slots:
     void zoomIn();
     void zoomOut();
-    void updateSceneRect();
 
 protected:
     void wheelEvent(QWheelEvent *event);
 
 private:
-    int m_screen;
     Plasma::ZoomLevel m_zoomLevel;
 };
 

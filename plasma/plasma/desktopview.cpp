@@ -37,49 +37,18 @@
 
 #include "plasmaapp.h"
 
-DesktopView::DesktopView(QWidget *parent, int screen)
-    : QGraphicsView(parent),
-      m_screen(screen),
+DesktopView::DesktopView(int screen, QWidget *parent)
+    : Plasma::View(screen, PlasmaApp::self()->corona(), parent),
       m_zoomLevel(Plasma::DesktopZoom)
 {
-    setFrameShape(QFrame::NoFrame);
-    setAutoFillBackground(true);
-    setDragMode(QGraphicsView::RubberBandDrag);
-    setCacheMode(QGraphicsView::CacheBackground);
-    setInteractive(true);
-    setAcceptDrops(true);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//    setContextMenuPolicy(Qt::NoContextMenu);
-
-    Plasma::Corona *corona = PlasmaApp::self()->corona();
-    setScene(corona);
-
-    Plasma::Containment * c = corona->containmentForScreen(screen);
-    kDebug() << "desktop view on screen" << screen << "has containment" << (qint64)c;
-    if (c) {
-        setSceneRect(c->geometry());
-        connect(c, SIGNAL(zoomIn()), this, SLOT(zoomIn()));
-        connect(c, SIGNAL(zoomOut()), this, SLOT(zoomOut()));
-        connect(c, SIGNAL(geometryChanged()), this, SLOT(updateSceneRect()));
+    if (containment()) {
+        connect(containment(), SIGNAL(zoomIn()), this, SLOT(zoomIn()));
+        connect(containment(), SIGNAL(zoomOut()), this, SLOT(zoomOut()));
     }
 }
 
 DesktopView::~DesktopView()
 {
-}
-
-int DesktopView::screen() const
-{
-    return m_screen;
-}
-
-void DesktopView::updateSceneRect()
-{
-    Plasma::Containment * c =  PlasmaApp::self()->corona()->containmentForScreen(m_screen);
-    if (c) {
-        setSceneRect(c->geometry());
-    }
 }
 
 void DesktopView::zoomIn()

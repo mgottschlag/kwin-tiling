@@ -46,7 +46,7 @@ RootWidget::RootWidget()
     // create a containment for each screen
     //FIXME: we need to respond to randr changes
     for (int i = 0; i < numScreens; ++i) {
-        DesktopView *view = new DesktopView(this, i);
+        DesktopView *view = new DesktopView(i, this);
         view->setGeometry(desktop->screenGeometry(i));
         m_desktops.append(view);
 
