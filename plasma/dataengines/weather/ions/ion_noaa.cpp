@@ -91,18 +91,29 @@ QString NOAAIon::validate(const QString& source) const
 
 bool NOAAIon::updateIonSource(const QString& source)
 {
-    kDebug() << "updateIonSource() SOURCE: " << source;
-    QString result = this->validate(source);
+    // We expect the applet to send the source in the following tokenization:
+    // ionname:verify:place_name - Triggers validation of place
+    // ionname:weather:place_name - Triggers receiving weather of place
 
-    if (!result.isEmpty()) {
-        QStringList tokens = result.split(':');
-        setData(source, "validate", QString("valid:single:%1").arg(tokens[1]));
-        //getXMLData(source);
+    kDebug() << "updateIonSource() SOURCE: " << source;
+    QStringList sourceAction = source.split(':');
+    if (sourceAction[1] == QString("verify")) {
+        kDebug() << "Initiate Validating of place: " << sourceAction[2];
+
+        QString result = this->validate(QString("%1:%2").arg(sourceAction[0]).arg(sourceAction[2]));
+        if (!result.isEmpty()) {
+            QStringList tokens = result.split(':');
+            setData(source, "validate", QString("valid:single:%1").arg(tokens[1]));
+            return true;
+        } else {
+            setData(source, "validate", QString("invalid:single:%1").arg(sourceAction[2]));
+            return true;
+        }
+     } else if (sourceAction[1] == QString("weather")) {
+        getXMLData(QString("%1:%2").arg(sourceAction[0]).arg(sourceAction[2]));
         return true;
-    }
-    QStringList tokens = source.split(":");
-    setData(source, "validate", QString("invalid:single:%1").arg(tokens[1]));
-    return true; 
+     }
+     return false;
 }
 
 // Parses city list and gets the correct city based on ID number
