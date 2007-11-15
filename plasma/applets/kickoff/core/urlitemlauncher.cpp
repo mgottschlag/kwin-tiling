@@ -29,6 +29,8 @@
 
 // KDE
 #include <KRun>
+#include <Solid/Device>
+#include <Solid/StorageAccess>
 
 // Local
 #include "core/models.h"
@@ -68,20 +70,32 @@ UrlItemLauncher::UrlItemLauncher(QObject *parent)
     , d(new Private)
 {
 }
+
 UrlItemLauncher::~UrlItemLauncher()
 {
     delete d;
 }
+
 bool UrlItemLauncher::openItem(const QModelIndex& index)
 {
-    QUrl url(index.data(UrlRole).value<QString>());
-    if (url.isEmpty()) {
+    QString urlString = index.data(UrlRole).value<QString>();
+    if (urlString.isEmpty()) {
         qDebug() << "Item" << index.data(Qt::DisplayRole) << "has to URL to open.";
         return false;
     }
 
-    qDebug() << "Opening item with URL" << url;
+    qDebug() << "Opening item with URL" << urlString;
 
+    if (deviceFactoryData()->deviceByUrl.contains(urlString)) {
+        Solid::Device device = deviceFactoryData()->deviceByUrl[urlString];
+        Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
+
+        if (!access->isAccessible()) {
+            access->setup();
+        }
+    }
+
+    QUrl url(urlString);
     HandlerInfo protocolHandler = Private::globalHandlers[url.scheme()];
     if (protocolHandler.type == ProtocolHandler && protocolHandler.handler != 0) {
         return protocolHandler.handler->openUrl(url);
@@ -95,6 +109,7 @@ bool UrlItemLauncher::openItem(const QModelIndex& index)
 
     return Private::genericHandler.openUrl(url);
 }
+
 void UrlItemLauncher::addGlobalHandler(HandlerType type,const QString& name,UrlItemHandler *handler)
 {
     HandlerInfo info;
