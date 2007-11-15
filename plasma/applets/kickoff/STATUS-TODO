@@ -44,7 +44,7 @@ Search View
 	  mailing list discussion.
 
 Presentation
-    - When used as a Plasma applet the Kickoff window does not
+    + When used as a Plasma applet the Kickoff window does not
       appear and disappear smoothly.  (Works okay when standalone
       Kickoff application is run) [Also Performance?]
 	- Missing the custom QTabBar styling to draw the view names
