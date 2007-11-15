@@ -24,13 +24,17 @@
 #include <QVBoxLayout>
 
 #include <KWindowSystem>
+#include <KAction>
+#include <KShortcut>
 
 #include "plasma/corona.h"
 #include "plasma/plasma.h"
 #include "plasma/svg.h"
 
 #include "desktopview.h"
+#include "dashboardview.h"
 #include "plasmaapp.h"
+
 
 RootWidget::RootWidget()
     : QWidget(0)
@@ -45,9 +49,29 @@ RootWidget::RootWidget()
         DesktopView *view = new DesktopView(this, i);
         view->setGeometry(desktop->screenGeometry(i));
         m_desktops.append(view);
+
+        DashBoardView *dashboard = new DashBoardView(desktop, i);
+        dashboard->setGeometry(desktop->screenGeometry(0));
+        m_dashboards.append(dashboard);
     }
 
     PlasmaApp::self()->corona();
+
+    //TODO: Make the shortcut configurable
+    KAction *showAction = new KAction( this );
+    showAction->setText( i18n( "Show Dashboard" ) );
+    showAction->setGlobalShortcut( KShortcut( Qt::CTRL + Qt::Key_F12 ) );
+    connect( showAction, SIGNAL( activated() ), this, SLOT( toggleDashboard() ) );
+
+}
+
+void RootWidget::toggleDashboard()
+{
+    int currentScreen = 0;
+    if (QApplication::desktop()->numScreens() > 1) {
+        currentScreen = QApplication::desktop()->screenNumber(QCursor::pos());
+    }
+    m_dashboards[currentScreen]->toggleVisibility();
 }
 
 void RootWidget::setAsDesktop(bool setAsDesktop)
@@ -90,6 +114,9 @@ void RootWidget::adjustSize()
     QDesktopWidget *desktop = QApplication::desktop();
     setGeometry(desktop->geometry());
     foreach (DesktopView *view, m_desktops) {
+        view->setGeometry(desktop->screenGeometry(view->screen()));
+    }
+    foreach (DashBoardView *view, m_dashboards) {
         view->setGeometry(desktop->screenGeometry(view->screen()));
     }
 }

@@ -6,6 +6,7 @@ set(plasma_SRCS
     plasmaapp.cpp
     rootwidget.cpp
     panelview.cpp
+    dashboardview.cpp
 )
 
 set(plasmaapp_dbusXML org.kde.plasma.App.xml)
