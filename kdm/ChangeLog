@@ -2,6 +2,14 @@ This change log contains only changes relevant to the KDM configuration,
 startup and packaging. Bug fixes are not listed, and feature changes only
 if they affect the configuration.
 
+2007-07-08  Oswald Buddenhagen <ossi@kde.org>
+
+	* Improve expando support in UserLogFile. Add UserLogFallback.
+
+2007-07-07  Oswald Buddenhagen <ossi@kde.org>
+
+	* Make out-of-$HOME xauth enforcable. Option ForceUserAuthDir.
+
 2007-06-20  Oswald Buddenhagen <ossi@kde.org>
 
 	* Replaced dysfunct EchoMode with working EchoPasswd.
@@ -9,6 +17,10 @@ if they affect the configuration.
 2006-10-12  Oswald Buddenhagen <ossi@kde.org>
 
 	* Removed control FiFos. Use the control sockets or kdmctl instead.
+
+2006-10-07  Oswald Buddenhagen <ossi@kde.org>
+
+	* Added greeter theming, options Theme & UseTheme.
 
 2005-08-21  Oswald Buddenhagen <ossi@kde.org>
 
