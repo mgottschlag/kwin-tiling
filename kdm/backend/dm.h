@@ -436,9 +436,9 @@ extern GTalk cnftalk;
 /* in session.c */
 extern struct display *td;
 extern const char *td_setup;
-char **baseEnv( const char *user );
+char **baseEnv( char **env, const char *user );
 char **inheritEnv( char **env, const char **what );
-char **systemEnv( const char *user );
+char **systemEnv( char **env, const char *user );
 int source( char **env, const char *file, const char *arg );
 void manageSession( struct display *d );
 

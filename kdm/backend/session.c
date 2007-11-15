@@ -51,6 +51,7 @@ const char *td_setup = "auto";
 static void deleteXloginResources( void );
 static void loadXloginResources( void );
 static void setupDisplay( const char *arg );
+static char **dupEnv( void );
 
 
 static Jmp_buf pingTime;
@@ -431,7 +432,7 @@ openGreeter()
 	loadXloginResources();
 
 	grttalk.pipe = &grtproc.pipe;
-	env = systemEnv( (char *)0 );
+	env = systemEnv( dupEnv(), 0 );
 	if (gOpen( &grtproc, (char **)0, "_greet", env, name, &td->gpipe ))
 		sessionExit( EX_UNMANAGE_DPY );
 	freeStrArr( env );
@@ -681,7 +682,7 @@ loadXloginResources()
 	char **env;
 
 	if (!xResLoaded && td->resources[0] && access( td->resources, 4 ) == 0) {
-		env = systemEnv( (char *)0 );
+		env = systemEnv( 0, 0 );
 		if ((args = parseArgs( (char **)0, td->xrdb )) &&
 		    (args = addStrArr( args, td->resources, -1 )))
 		{
@@ -699,7 +700,7 @@ setupDisplay( const char *arg )
 {
 	char **env;
 
-	env = systemEnv( (char *)0 );
+	env = systemEnv( 0, 0 );
 	(void)source( env, td->setup, arg );
 	freeStrArr( env );
 }
@@ -741,6 +742,19 @@ source( char **env, const char *file, const char *arg )
 	return 0;
 }
 
+static char **
+dupEnv( void )
+{
+	int i, l = arrLen( environ );
+	char **env;
+	if (!(env = Malloc( (l + 1) * sizeof(char *) )))
+		return 0;
+	for (i = 0; i < l; i++)
+		strDup( env + i, environ[i] );
+	env[i] = 0;
+	return env;
+}
+
 char **
 inheritEnv( char **env, const char **what )
 {
@@ -753,11 +767,10 @@ inheritEnv( char **env, const char **what )
 }
 
 char **
-baseEnv( const char *user )
+baseEnv( char **env, const char *user )
 {
-	char **env;
-
-	env = inheritEnv( 0, (const char **)exportList );
+	if (!env)
+		env = inheritEnv( 0, (const char **)exportList );
 
 	if (user) {
 		env = setEnv( env, "USER", user );
@@ -784,11 +797,9 @@ baseEnv( const char *user )
 }
 
 char **
-systemEnv( const char *user )
+systemEnv( char **env, const char *user )
 {
-	char **env;
-
-	env = baseEnv( user );
+	env = baseEnv( env, user );
 	if (td->authFile)
 		env = setEnv( env, "XAUTHORITY", td->authFile );
 	env = setEnv( env, "PATH", td->systemPath );

@@ -1218,7 +1218,7 @@ startClient( volatile int *pid )
 	curuid = p->pw_uid;
 	curgid = p->pw_gid;
 
-	env = baseEnv( curuser );
+	env = baseEnv( 0, curuser );
 	xma = 0;
 	strApp( &xma, "method=", curtype, (char *)0 );
 	if (td_setup)
@@ -1237,7 +1237,7 @@ startClient( volatile int *pid )
 		env = setEnv( env, "KRBTKFILE", krbtkfile );
 #endif
 	userEnviron = inheritEnv( env, envvars );
-	env = systemEnv( curuser );
+	env = systemEnv( 0, curuser );
 	systemEnviron = setEnv( env, "HOME", p->pw_dir );
 	debug( "user environment:\n%[|''>'\n's"
 	       "system environment:\n%[|''>'\n's"
