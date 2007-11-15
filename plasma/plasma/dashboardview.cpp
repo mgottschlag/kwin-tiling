@@ -34,6 +34,8 @@ DashBoardView::DashBoardView(int screen, QWidget *parent)
     setContextMenuPolicy(Qt::NoContextMenu);
     setWindowFlags( Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint );
     setWindowOpacity( 0.9 );
+
+    //FIXME: this OUGHT to be true if we don't have composite, probably
     setDrawWallpaper(false);
     hide();
 }
