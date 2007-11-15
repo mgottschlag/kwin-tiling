@@ -45,10 +45,9 @@
 /*
  * KdmThemer. The main theming interface
  */
-KdmThemer::KdmThemer( const QString &_filename, const QString &mode,
+KdmThemer::KdmThemer( const QString &_filename,
                       const QMap<QString, bool> &showTypes, QWidget *w )
 	: QObject()
-	, m_currentMode( mode )
 	, m_showTypes( showTypes )
 	, rootItem( 0 )
 	, m_geometryOutdated( true )
@@ -229,7 +228,7 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 				    (modes == "nowhere" ||
 				     (modes != "everywhere" &&
 				      !modes.split( ",", QString::SkipEmptyParts ).contains(
-				          m_currentMode ))))
+				          "console" ))))
 					continue;
 
 				showType = sel.attribute( "type" );

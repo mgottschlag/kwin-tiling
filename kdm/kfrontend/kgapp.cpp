@@ -221,8 +221,7 @@ kg_main( const char *argv0 )
 		if (_autoLoginDelay)
 			showTypes["timed"] = false;
 
-		// modes: console{,-fixed,-flexi}, remote{,-flexi}, flexi
-		themer = new KdmThemer( _theme, "console", showTypes, app.desktop()->screen() );
+		themer = new KdmThemer( _theme, showTypes, app.desktop()->screen() );
 		if (!themer->isOK()) {
 			delete themer;
 			themer = 0;

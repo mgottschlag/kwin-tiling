@@ -50,7 +50,7 @@ public:
 	 * Construct and destruct the interface
 	 */
 
-	KdmThemer( const QString &path, const QString &mode,
+	KdmThemer( const QString &path,
 	           const QMap<QString, bool> &types, QWidget *w );
 	~KdmThemer();
 
@@ -75,10 +75,6 @@ Q_SIGNALS:
 	void activated( const QString &id );
 
 private:
-	/*
-	 * Our display mode (e.g. console, remote, ...)
-	 */
-	QString m_currentMode;
 	QMap<QString, bool> m_showTypes;
 
 	// defines the directory the theme is in
