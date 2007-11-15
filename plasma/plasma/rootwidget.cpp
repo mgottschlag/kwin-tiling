@@ -50,8 +50,9 @@ RootWidget::RootWidget()
         view->setGeometry(desktop->screenGeometry(i));
         m_desktops.append(view);
 
-        DashBoardView *dashboard = new DashBoardView(desktop, i);
-        dashboard->setGeometry(desktop->screenGeometry(0));
+        //TODO: try and delay the construction of the dashboards?
+        DashBoardView *dashboard = new DashBoardView(i, desktop);
+        dashboard->setGeometry(desktop->screenGeometry(i));
         m_dashboards.append(dashboard);
     }
 
@@ -113,9 +114,11 @@ void RootWidget::adjustSize()
 {
     QDesktopWidget *desktop = QApplication::desktop();
     setGeometry(desktop->geometry());
+
     foreach (DesktopView *view, m_desktops) {
         view->setGeometry(desktop->screenGeometry(view->screen()));
     }
+
     foreach (DashBoardView *view, m_dashboards) {
         view->setGeometry(desktop->screenGeometry(view->screen()));
     }

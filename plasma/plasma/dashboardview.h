@@ -21,9 +21,8 @@
 #ifndef DASHBOARDVIEW_H
 #define DASHBOARDVIEW_H
 
-#include <QGraphicsView>
-
 #include "plasma/plasma.h"
+#include "plasma/view.h"
 
 class QPixmap;
 
@@ -33,22 +32,16 @@ namespace Plasma
     class Corona;
 }
 
-class DashBoardView : public QGraphicsView
+class DashBoardView : public Plasma::View
 {
     Q_OBJECT
 
 public:
-    DashBoardView(QWidget *parent, int screen = -1);
+    DashBoardView(int screen, QWidget *parent);
     ~DashBoardView();
 
-    int screen() const;
-
 public slots:
-    void updateSceneRect();
     void toggleVisibility();
-
-private:
-    int m_screen;
 };
 
 #endif // multiple inclusion guard

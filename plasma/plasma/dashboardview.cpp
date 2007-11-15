@@ -28,32 +28,13 @@
 
 #include "plasmaapp.h"
 
-DashBoardView::DashBoardView(QWidget *parent, int screen)
-    : QGraphicsView(parent),
-      m_screen(screen)
+DashBoardView::DashBoardView(int screen, QWidget *parent)
+    : Plasma::View(screen, PlasmaApp::self()->corona(), parent)
 {
-    setFrameShape(QFrame::NoFrame);
-    setAutoFillBackground(true);
-    setDragMode(QGraphicsView::RubberBandDrag);
-    setCacheMode(QGraphicsView::CacheBackground);
-    setInteractive(true);
-    setAcceptDrops(true);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setContextMenuPolicy(Qt::NoContextMenu);
     setWindowFlags( Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint );
     setWindowOpacity( 0.9 );
-
-    Plasma::Corona *corona = PlasmaApp::self()->corona();
-    setScene(corona);
-
-    Plasma::Containment * c = corona->containmentForScreen(screen);
-    kDebug() << "dashboard view on screen" << screen << "has containment" << (qint64)c;
-    if (c) {
-        setSceneRect(c->geometry());
-        connect(c, SIGNAL(geometryChanged()), this, SLOT(updateSceneRect()));
-    }
-
+    setDrawWallpaper(false);
     hide();
 }
 
@@ -71,17 +52,5 @@ void DashBoardView::toggleVisibility()
     }
 }
 
-int DashBoardView::screen() const
-{
-    return m_screen;
-}
-
-void DashBoardView::updateSceneRect()
-{
-    Plasma::Containment * c =  PlasmaApp::self()->corona()->containmentForScreen(m_screen);
-    if (c) {
-        setSceneRect(c->geometry());
-    }
-}
-
 #include "dashboardview.moc"
+
