@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
 //     } else {
 //         app = new KRunnerApp;//(dpy, 0, 0);
 //     }
-
+    app.disableSessionManagement(); // autostarted
     int rc = app.exec();
     //delete app;
     return rc;

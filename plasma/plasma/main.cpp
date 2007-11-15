@@ -47,5 +47,6 @@ int main(int argc, char **argv)
     KCmdLineArgs::addCmdLineOptions(options);
 
     PlasmaApp app;
+    app.disableSessionManagement(); // autostarted
     return app.exec();
 }
