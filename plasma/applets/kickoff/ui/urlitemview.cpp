@@ -29,10 +29,11 @@
 #include <QtGui/QPaintEvent>
 #include <QtGui/QScrollBar>
 
-#include <QtDebug>
+#include <KDebug>
 
 // Local
 #include "core/models.h"
+#include "ui/itemdelegate.h"
 
 using namespace Kickoff;
 
@@ -55,14 +56,14 @@ public:
         if (!q->model()) {
             return;
         }
-    
-        int verticalOffset = TOP_OFFSET;
+
+        int verticalOffset = ItemDelegate::TOP_OFFSET;
         int horizontalOffset = 0;
         int row = 0;
         int visualColumn = 0;
 
         QModelIndex branch = currentRootIndex;
-        
+
         while (true) {
             if (itemChildOffsets[branch]+row >= q->model()->rowCount(branch) ||
                 branch != currentRootIndex && row > MAX_CHILD_ROWS) {
@@ -75,12 +76,12 @@ public:
                     break;
                 }
             }
-        
+
             QModelIndex child = q->model()->index(row+itemChildOffsets[branch],0,branch);
 
             if (q->model()->hasChildren(child)) {
                 QSize childSize = calculateHeaderSize(child);
-                itemRects.insert(child,QRect(QPoint(HEADER_LEFT_MARGIN,verticalOffset),childSize));
+                itemRects.insert(child,QRect(QPoint(ItemDelegate::HEADER_LEFT_MARGIN,verticalOffset),childSize));
 
                 verticalOffset += childSize.height();
                 horizontalOffset = 0; 
@@ -119,6 +120,7 @@ public:
 
         updateScrollBarRange();
     }
+
     void drawHeader(QPainter *painter,
                     const QModelIndex& index,
                     const QStyleOptionViewItem& option)
@@ -130,7 +132,7 @@ public:
         painter->setFont(font);
         painter->setPen(QPen(option.palette.dark(),0));
         QString text = index.data(Qt::DisplayRole).value<QString>();
-        int dy = (int)(index.row() > 0 ? HEADER_HEIGHT / 4.0 : 0);
+        int dy = (int)(index.row() > 0 ? ItemDelegate::HEADER_HEIGHT / 4.0 : 0);
         painter->drawText(option.rect.adjusted(0, dy, 0, 0),
                           Qt::AlignVCenter|Qt::AlignLeft, text);
         painter->restore();
@@ -141,29 +143,31 @@ public:
         int pageSize = q->height();
         q->verticalScrollBar()->setRange(0,contentsHeight-pageSize);
         q->verticalScrollBar()->setPageStep(pageSize);
-        q->verticalScrollBar()->setSingleStep(ITEM_HEIGHT);
+        q->verticalScrollBar()->setSingleStep(ItemDelegate::ITEM_HEIGHT);
     }
 
     int contentWidth() const
     {
         return q->width();
     }
+
     QSize calculateItemSize(const QModelIndex& index) const 
     {
         if (itemStateProvider && !itemStateProvider->isVisible(index)) {
             return QSize();
         } else {
-            return QSize(contentWidth()/MAX_COLUMNS,q->sizeHintForIndex(index).height());
+            return  QSize(contentWidth() / MAX_COLUMNS, q->sizeHintForIndex(index).height());
         }
     }
+
     QSize calculateHeaderSize(const QModelIndex& index) const
     {
         if (itemStateProvider && !itemStateProvider->isVisible(index)) {
             return QSize();
         } else if (index.row() == 0) {
-            return QSize(q->width()-HEADER_LEFT_MARGIN, FIRST_HEADER_HEIGHT);
+            return QSize(q->width() - ItemDelegate::HEADER_LEFT_MARGIN, ItemDelegate::FIRST_HEADER_HEIGHT);
         } else {
-            return QSize(q->width()-HEADER_LEFT_MARGIN, HEADER_HEIGHT);
+            return QSize(q->width() - ItemDelegate::HEADER_LEFT_MARGIN, ItemDelegate::HEADER_HEIGHT);
         }
     }
 
@@ -171,6 +175,7 @@ public:
     {
         return point + QPoint(0,q->verticalOffset());
     }
+
     QPoint mapToViewport(const QPoint& point) const
     {
         return point - QPoint(0,q->verticalOffset());
@@ -187,16 +192,8 @@ public:
     int contentsHeight;
     ItemStateProvider *itemStateProvider;
 
-    // margin is equivalent to FlipScrollView::Private::BACK_ARROW_WIDTH + 
-    // FlipScrollView::Private::BACK_ARROW_SPACING
-    static const int ITEM_LEFT_MARGIN = 25; 
-    static const int HEADER_LEFT_MARGIN = 5; 
-    static const int ITEM_HEIGHT = 32;
-    static const int HEADER_HEIGHT = 35;
-    static const int FIRST_HEADER_HEIGHT = 20;
     static const int MAX_COLUMNS = 1;
-    static const int TOP_OFFSET = 5;
-    
+
     // TODO Eventually it will be possible to restrict each branch to only showing
     // a given number of children, with Next/Previous arrows to view more children
     //
@@ -212,7 +209,7 @@ UrlItemView::UrlItemView(QWidget *parent)
     : QAbstractItemView(parent)
     , d(new Private(this))
 {
-    setIconSize(QSize(Private::ITEM_HEIGHT,Private::ITEM_HEIGHT));
+    setIconSize(QSize(ItemDelegate::ITEM_HEIGHT,ItemDelegate::ITEM_HEIGHT));
     setMouseTracking(true);
 }
 
@@ -234,6 +231,7 @@ QModelIndex UrlItemView::indexAt(const QPoint& point) const
     }
     return QModelIndex();
 }
+
 void UrlItemView::setModel(QAbstractItemModel *model)
 {
     QAbstractItemView::setModel(model);
@@ -248,20 +246,21 @@ void UrlItemView::setModel(QAbstractItemModel *model)
     d->itemChildOffsets.clear();
     updateLayout();
 }
+
 void UrlItemView::updateLayout()
 {
     d->doLayout();
-   
+
     if (!d->visualOrder.contains(currentIndex())) {
         // select the first valid index
         setCurrentIndex(moveCursor(MoveDown,0)); 
     }
-    
 
     if (viewport()->isVisible()) {
         viewport()->update();
     }
 }
+
 void UrlItemView::scrollTo(const QModelIndex& index, ScrollHint hint)
 {
     QRect itemRect = d->itemRects[index];
@@ -301,8 +300,9 @@ void UrlItemView::scrollTo(const QModelIndex& index, ScrollHint hint)
 QRect UrlItemView::visualRect(const QModelIndex& index) const
 {
     QRect itemRect = d->itemRects[index];
-    if (!itemRect.isValid())
+    if (!itemRect.isValid()) {
         return itemRect;
+    }
 
     itemRect.moveTopLeft(d->mapToViewport(itemRect.topLeft()));
     return itemRect;
@@ -365,10 +365,12 @@ QRegion UrlItemView::visualRegionForSelection(const QItemSelection& selection) c
     }
     return region;
 }
+
 void UrlItemView::paintEvent(QPaintEvent *event)
 {
-    if (!model())
+    if (!model()) {
         return;
+    }
 
     QPainter painter(viewport());
     painter.setRenderHint(QPainter::Antialiasing);
@@ -380,7 +382,6 @@ void UrlItemView::paintEvent(QPaintEvent *event)
         const QModelIndex index = indexIter.key();
 
         if (event->region().contains(itemRect)) {
-
             QStyleOptionViewItem option = viewOptions();
             option.rect = itemRect;
 
@@ -398,18 +399,20 @@ void UrlItemView::paintEvent(QPaintEvent *event)
                 d->drawHeader(&painter,index,option);
             } else {
                 if (option.rect.left() == 0) {
-                        option.rect.setLeft(option.rect.left() + Private::ITEM_LEFT_MARGIN);
-                        option.rect.setRight(option.rect.right() - Private::ITEM_LEFT_MARGIN);
+                    option.rect.setLeft(option.rect.left() + ItemDelegate::ITEM_LEFT_MARGIN);
+                    option.rect.setRight(option.rect.right() - ItemDelegate::ITEM_RIGHT_MARGIN);
                 }
                 itemDelegate(index)->paint(&painter,option,index);
             }
         }
     }
 }
+
 void UrlItemView::resizeEvent(QResizeEvent *)
 {
     updateLayout();
 }
+
 void UrlItemView::mouseMoveEvent(QMouseEvent *event)
 {
     const QModelIndex itemUnderMouse = indexAt(event->pos());
@@ -423,19 +426,23 @@ void UrlItemView::mouseMoveEvent(QMouseEvent *event)
     }
     QAbstractItemView::mouseMoveEvent(event);
 }
+
 void UrlItemView::setItemStateProvider(ItemStateProvider *provider)
 {
     d->itemStateProvider = provider;
 }
+
 void UrlItemView::startDrag(Qt::DropActions supportedActions) 
 {
     qDebug() << "Starting UrlItemView drag with actions" << supportedActions;
     QAbstractItemView::startDrag(supportedActions);
 }
+
 void UrlItemView::dropEvent(QDropEvent *)
 {
     qDebug() << "UrlItemView drop event";
 }
+
 ItemStateProvider *UrlItemView::itemStateProvider() const
 {
     return d->itemStateProvider;
