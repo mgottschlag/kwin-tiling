@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Hotplug Event Data Engine
 Name[ca]=Motor de dades d'esdeveniments de connexió en calent
 Name[el]=Μηχανή δεδομένων γεγονότων άμεσης σύνδεσης
@@ -20,7 +19,7 @@ Name[sv]=Datagränssnitt för inkopplingshändelse
 Name[x-test]=xxHotplug Event Data Enginexx
 Name[zh_CN]=热插拔事件数据引擎
 Name[zh_TW]=熱插拔事件資料引擎
-ServiceTypes=Plasma/DataEngine
+X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=notifier
 X-KDE-Library=plasma_engine_hotplug

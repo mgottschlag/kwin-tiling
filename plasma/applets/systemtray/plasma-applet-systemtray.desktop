@@ -62,7 +62,7 @@ Name[xh]=Itreyi Yendlela yokusebenza
 Name[zh_CN]=系统托盘
 Name[zh_TW]=系統匣
 Type=Service
-ServiceTypes=Plasma/Applet
+X-KDE-ServiceTypes=Plasma/Applet
 
 X-KDE-Library=plasma_applet_systemtray
 X-KDE-PluginInfo-Author=Alexander Rodin

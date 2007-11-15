@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 Name=KDE Accessibility Tool
 Name[af]=KDE toeganklikheid program
@@ -69,4 +68,4 @@ Exec=kaccess
 X-DBUS-StartupType=None
 X-KDE-Library=kcm_access
 X-KDE-ParentApp=kcontrol
-DocPath=kcontrol/kcmaccess/index.html
+X-DocPath=kcontrol/kcmaccess/index.html

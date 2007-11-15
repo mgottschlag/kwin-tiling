@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Default Plasma Animator
 Name[bg]=Аниматор за Plasma
 Name[ca]=Animador de plasma per omissió
@@ -30,7 +29,7 @@ Name[vi]=Bộ hoạt họa Plasma mặc định
 Name[x-test]=xxDefault Plasma Animatorxx
 Name[zh_CN]=默认 Plasma 动画
 Name[zh_TW]=預設 Plasma 動畫
-ServiceTypes=Plasma/Animator
+X-KDE-ServiceTypes=Plasma/Animator
 Type=Service
 Icon=plasma
 X-KDE-Library=plasma_animator_default

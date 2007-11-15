@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Application Launcher
 Name[ca]=Engegador d'aplicacions
 Name[de]=Programmstarter
@@ -45,7 +44,7 @@ Comment[zh_CN]=启动应用程序的启动器
 Comment[zh_TW]=應用程式啟動器
 Icon=
 Type=Service
-ServiceTypes=Plasma/Applet
+X-KDE-ServiceTypes=Plasma/Applet
 
 X-KDE-Library=plasma_applet_launcher
 X-KDE-PluginInfo-Author=Robert Knight

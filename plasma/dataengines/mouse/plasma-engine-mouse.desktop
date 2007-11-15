@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Mouse Data Engine
 Name[ca]=Motor de dades del ratolí
 Name[el]=Μηχανή δεδομένων ποντικιού
@@ -41,7 +40,7 @@ Comment[x-test]=xxMouse data for Plasmoidsxx
 Comment[zh_CN]=Plasmoids 的鼠标数据
 Comment[zh_TW]=Plasmoid 的滑鼠資料
 Type=Service
-ServiceTypes=Plasma/DataEngine
+X-KDE-ServiceTypes=Plasma/DataEngine
 Icon=
 X-KDE-Library=plasma_engine_mouse
 X-EngineName=mouse

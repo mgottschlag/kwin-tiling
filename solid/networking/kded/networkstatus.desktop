@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Network Status Daemon
 Name[ar]=رقيب حالة الشبكة
 Name[bg]=Демон за състоянието на мрежата
@@ -56,7 +55,7 @@ Comment[x-test]=xxTracks status of network interfaces and provides notification 
 Comment[zh_CN]=跟踪网络接口的状态并且为正在使用网络的应用程序提供通知。
 Comment[zh_TW]=追蹤網路介面的狀態，提供通知給使用網路的應用程式
 Type=Service
-ServiceTypes=KDEDModule
+X-KDE-ServiceTypes=KDEDModule
 X-KDE-ModuleType=Library
 X-KDE-Library=networkstatus
 X-KDE-Kded-autoload=true

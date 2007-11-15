@@ -17,7 +17,7 @@ Name[x-test]=xxPagerxx
 Name[zh_CN]=分页器
 Name[zh_TW]=呼叫器
 Type=Service
-ServiceTypes=Plasma/Applet
+X-KDE-ServiceTypes=Plasma/Applet
 
 X-KDE-Library=plasma_applet_pager
 X-KDE-PluginInfo-Author=The Plasma Team

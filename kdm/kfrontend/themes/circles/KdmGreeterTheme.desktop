@@ -2,7 +2,6 @@
 # it as such
 
 [KdmGreeterTheme]
-Encoding=UTF-8
 Greeter=circles.xml
 Name=Circles
 Name[ar]=الدوائر

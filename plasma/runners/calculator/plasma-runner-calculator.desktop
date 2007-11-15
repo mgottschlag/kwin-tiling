@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Calculator Runner
 Name[ar]=منفذ الحاسبة
 Name[be]=Калькулятар
@@ -64,7 +63,7 @@ Comment[vi]=Tính biểu thức
 Comment[x-test]=xxCalculate expressionsxx
 Comment[zh_CN]=计算表达式
 Comment[zh_TW]=計算機表示式
-ServiceTypes=Plasma/Runner
+X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_calculatorrunner
 X-Krunner-ID=Calculator Runner

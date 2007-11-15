@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Exec=khotkeys
 Name=KHotKeys
 Name[af]=KDE Kortpad Sleutels
@@ -35,6 +34,6 @@ Name[vi]=Phím nóng KDE
 Name[x-test]=xxKHotKeysxx
 Name[zh_TW]=KDE 熱鍵
 Type=Service
-ServiceTypes=KDEDModule
+X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=khotkeys
 X-KDE-Kded-autoload=false

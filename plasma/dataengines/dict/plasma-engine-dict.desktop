@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Dictionary Data Engine
 Name[ca]=Motor de dades de diccionari
 Name[el]=Μηχανή δεδομένων λεξικού
@@ -42,7 +41,7 @@ Comment[sv]=Slå upp ords betydelse
 Comment[x-test]=xxLook up word meaningsxx
 Comment[zh_CN]=查阅单词含义
 Comment[zh_TW]=尋找單字的意義
-ServiceTypes=Plasma/DataEngine
+X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=accessories-dictionary
 X-KDE-Library=plasma_engine_dict

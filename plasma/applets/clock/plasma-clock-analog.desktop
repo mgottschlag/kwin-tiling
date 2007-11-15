@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Analog Clock
 Name[ar]=ساعة عادية
 Name[be]=Аналагавы гадзіннік
@@ -64,7 +63,7 @@ Comment[zh_CN]=SVG 主题的时钟
 Comment[zh_TW]=SVG 可調整外觀時鐘
 Icon=chronometer
 Type=Service
-ServiceTypes=Plasma/Applet
+X-KDE-ServiceTypes=Plasma/Applet
 
 X-KDE-Library=plasma_applet_clock
 X-KDE-PluginInfo-Author=The Plasma Team

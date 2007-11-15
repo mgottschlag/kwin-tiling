@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Button
 Name[ar]=زر
 Name[be]=Кнопка
@@ -69,7 +68,7 @@ Comment[x-test]=xxA launcher buttonxx
 Comment[zh_CN]=启动器按钮
 Comment[zh_TW]=啟動按鍵
 Type=Service
-ServiceTypes=Plasma/Applet
+X-KDE-ServiceTypes=Plasma/Applet
 
 X-KDE-Library=plasma_applet_url
 X-KDE-PluginInfo-Author=The Plasma Team

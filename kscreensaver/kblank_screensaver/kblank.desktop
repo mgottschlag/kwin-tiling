@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Exec=kblankscrn.kss
 Icon=kscreensaver
 Type=Service
-ServiceTypes=ScreenSaver
+X-KDE-ServiceTypes=ScreenSaver
 Actions=Setup;InWindow;Root;
 Name=Blank Screen
 Name[af]=Leë Skerm

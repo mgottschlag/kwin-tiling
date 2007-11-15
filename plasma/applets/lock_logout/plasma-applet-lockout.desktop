@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Lock/Logout
 Name[ca]=Bloqueja/surt
 Name[de]=Bildschirmsperre und Abmeldung aus KDE
@@ -41,7 +40,7 @@ Comment[zh_CN]=让用户锁定屏幕或结束会话
 Comment[zh_TW]=讓使用者鎖定螢幕或結束工作階段
 Icon=system-log-out
 Type=Service
-ServiceTypes=Plasma/Applet
+X-KDE-ServiceTypes=Plasma/Applet
 
 X-KDE-Library=plasma_applet_lockout
 X-KDE-PluginInfo-Author=The Plasma Team

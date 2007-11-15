@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=New Device Notifier
 Name[ca]=Notificador de dispositiu nou
 Name[de]=Geräteüberwachung
@@ -42,7 +41,7 @@ Comment[zh_CN]=Plasmoids 的设备通知程序
 Comment[zh_TW]=新增裝置通知器
 Icon=drive-removable-media-usb-pendrive
 Type=Service
-ServiceTypes=Plasma/Applet
+X-KDE-ServiceTypes=Plasma/Applet
 
 X-KDE-Library=plasma_applet_devicenotifier
 X-KDE-PluginInfo-Author=The Plasma Team

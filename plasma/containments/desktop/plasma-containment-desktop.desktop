@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Desktop
 Name[af]=Werkskerm
 Name[ar]=سطح المكتب
@@ -64,7 +63,7 @@ Name[zh_CN]=桌面
 Name[zh_TW]=桌面
 Icon=Plasma
 Type=Service
-ServiceTypes=Plasma/Applet,Plasma/Containment
+X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment
 NoDisplay=true
 
 X-KDE-Library=plasma_containment_desktop

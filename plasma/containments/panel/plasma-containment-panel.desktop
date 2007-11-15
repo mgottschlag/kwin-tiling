@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Panel
 Name[af]=Paneel
 Name[ar]=اللوحة
@@ -71,7 +70,7 @@ Comment[zh_CN]=面板容器
 Comment[zh_TW]=面板容器
 Icon=
 Type=Service
-ServiceTypes=Plasma/Applet,Plasma/Containment
+X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment
 NoDisplay=true
 
 X-KDE-Library=plasma_containment_panel

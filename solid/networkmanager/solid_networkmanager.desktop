@@ -1,7 +1,6 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
-ServiceTypes=SolidNetworkManager
+X-KDE-ServiceTypes=SolidNetworkManager
 X-KDE-Library=solid_networkmanager
 InitialPreference=100
 Name=NetworkManager

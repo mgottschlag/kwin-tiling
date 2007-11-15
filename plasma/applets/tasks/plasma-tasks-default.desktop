@@ -26,7 +26,7 @@ Name[x-test]=xxTask Managerxx
 Name[zh_CN]=任务管理器
 Name[zh_TW]=工作管理員
 Type=Service
-ServiceTypes=Plasma/Applet
+X-KDE-ServiceTypes=Plasma/Applet
 
 X-KDE-Library=plasma_applet_tasks
 X-KDE-PluginInfo-Author=Robert Knight

@@ -1,7 +1,6 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
-ServiceTypes=SolidBluetoothManager
+X-KDE-ServiceTypes=SolidBluetoothManager
 X-KDE-Library=solid_fakebluetooth
 InitialPreference=10
 Icon=system

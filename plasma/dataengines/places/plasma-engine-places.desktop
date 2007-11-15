@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Places Data Engine
 Name[ca]=Motor de dades de llocs
 Name[el]=Μηχανή δεδομένων τοποθεσιών
@@ -41,7 +40,7 @@ Comment[sv]=Platsdata för Plasmoider
 Comment[x-test]=xxPlaces data for Plasmoidsxx
 Comment[zh_CN]=Plasmoids 的位置数据
 Comment[zh_TW]=Plasmoid 的 Places 資料
-ServiceTypes=Plasma/DataEngine
+X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=folder
 X-KDE-Library=plasma_engine_places

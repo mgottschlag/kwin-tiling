@@ -44,7 +44,7 @@ Comment[zh_CN]=电池电量监视器
 Comment[zh_TW]=電池電力監測器
 Icon=battery
 Type=Service
-ServiceTypes=Plasma/Applet
+X-KDE-ServiceTypes=Plasma/Applet
 
 X-KDE-Library=plasma_applet_battery
 X-KDE-PluginInfo-Author=Sebastian Kügler

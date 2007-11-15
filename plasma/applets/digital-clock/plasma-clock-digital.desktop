@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Digital Clock
 Name[ca]=Rellotge digital
 Name[de]=Digitale Uhr
@@ -48,7 +47,7 @@ Comment[zh_TW]=SVG 可調整外觀數位時鐘
 
 Icon=chronometer
 Type=Service
-ServiceTypes=Plasma/Applet
+X-KDE-ServiceTypes=Plasma/Applet
 
 X-KDE-Library=plasma_applet_dig_clock
 X-KDE-PluginInfo-Author=Riccardo Iaconelli

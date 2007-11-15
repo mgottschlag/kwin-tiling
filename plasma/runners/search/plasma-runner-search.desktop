@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Search Runner
 Name[be]=Запуск пошуку
 Name[bg]=Търсене
@@ -63,7 +62,7 @@ Comment[wa]=Cweri des fitchîs
 Comment[x-test]=xxSearch filesxx
 Comment[zh_CN]=搜索文件
 Comment[zh_TW]=搜索檔案
-ServiceTypes=Plasma/Runner
+X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_searchrunner
 X-Krunner-ID=Search Runner

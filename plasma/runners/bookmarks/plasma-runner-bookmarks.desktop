@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Bookmark Runner
 Name[ca]=Executador de preferits
 Name[el]=Εκτελεστής σελιδοδεικτών
@@ -34,7 +33,7 @@ Comment[sr@latin]=Otvori marker
 Comment[sv]=Öppna bokmärke
 Comment[zh_CN]=打开书签
 Comment[zh_TW]=開啟書籤
-ServiceTypes=Plasma/Runner
+X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_bookmarksrunner
 X-Krunner-ID=Bookmarks Runner

@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Keyboard Map Tool
 Name[af]=Sleutelbord Kaart Program
 Name[ar]=أداة خارطة لوحة المفاتيح
@@ -66,7 +65,7 @@ Name[zh_TW]=鍵盤映射工具
 Icon=keyboard_layout
 
 Type=Service
-ServiceTypes=Plasma/Applet
+X-KDE-ServiceTypes=Plasma/Applet
 
 X-KDE-Library=plasma_applet_kxkb
 X-KDE-UniqueApplet=true

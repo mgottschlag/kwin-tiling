@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Name=Webshortcut runner
 Name[ca]=Executador de dreceres web
 Name[el]=Εκτέλεση συντομεύσεων ιστού
@@ -40,7 +39,7 @@ Comment[sv]=Kör webbgenvägar
 Comment[x-test]=xxWebshortcut runnerxx
 Comment[zh_CN]=网页快捷方式运行器
 Comment[zh_TW]=網頁捷徑執行者
-ServiceTypes=Plasma/Runner
+X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_webshortcuts
 X-Krunner-ID=Webshortcut runner
