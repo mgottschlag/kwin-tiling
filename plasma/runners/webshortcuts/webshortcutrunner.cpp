@@ -18,7 +18,6 @@
 
 #include <QAction>
 #include <QStringList>
-#include <QIcon>
 #include <QDBusInterface>
 #include <QDBusReply>
 
@@ -76,7 +75,7 @@ void WebshortcutRunner::match(Plasma::SearchContext *search)
                 action->setData(url);
 
                 // let's try if we can get a proper icon from the favicon cache
-                QIcon icon = getFavicon(url);
+                KIcon icon = getFavicon(url);
                 if (icon.isNull()){
                     action->setIcon(m_icon);
                 } else {
@@ -131,24 +130,24 @@ QString WebshortcutRunner::getSearchQuery(const QString &query, const QString &t
     return QString();
 }
 
-QIcon WebshortcutRunner::getFavicon(const KUrl &url) {
+KIcon WebshortcutRunner::getFavicon(const KUrl &url) {
     // query the favicons module
     QDBusInterface favicon("org.kde.kded", "/modules/favicons", "org.kde.FavIcon");
     QDBusReply<QString> reply = favicon.call("iconForUrl", url.url());
 
     if (!reply.isValid()) {
-        return QIcon();
+        return KIcon();
     }
 
     // locate the favicon
     QString iconFile = KGlobal::dirs()->findResource("cache",reply.value()+".png");
-    QIcon icon = QIcon(iconFile);
 
-    if (!icon.isNull()) {
-        return icon;
+    if(iconFile.isNull()) {
+	return KIcon();
     }
+    KIcon icon = KIcon(iconFile);
 
-    return QIcon();
+    return icon;
 }
 
 void WebshortcutRunner::exec(Plasma::SearchAction *action)

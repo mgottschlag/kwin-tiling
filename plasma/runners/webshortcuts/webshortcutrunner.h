@@ -37,11 +37,11 @@ class WebshortcutRunner : public Plasma::AbstractRunner {
 
     private:
         QString getSearchQuery(const QString &query, const QString &searchWord);
-        QIcon getFavicon(const KUrl& url);
+        KIcon getFavicon(const KUrl& url);
 
     private:
         KService::List m_offers;
-        QIcon m_icon;
+        KIcon m_icon;
         Plasma::SearchContext::Type m_type;
 };
 
