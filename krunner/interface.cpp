@@ -248,8 +248,12 @@ void Interface::display(const QString& term)
 {
     m_searchTerm->setFocus();
 
-    if ( !term.isEmpty() ) {
-        m_searchTerm->setText( term );
+    if (!term.isEmpty()) {
+        m_searchTerm->setText(term);
+    }
+
+    if (!isVisible()) {
+        queueMatch();
     }
 
     KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
@@ -262,8 +266,6 @@ void Interface::display(const QString& term)
     KDialog::centerOnScreen(this, screen);
     show();
     KWindowSystem::forceActiveWindow(winId());
-
-    match();
 }
 
 void Interface::switchUser()
