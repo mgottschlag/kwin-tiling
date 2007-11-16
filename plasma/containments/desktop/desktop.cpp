@@ -108,8 +108,6 @@ QPainterPath ToolBox::shape() const
 
 void ToolBox::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    Q_UNUSED(event)
-
 //    Plasma::Phase::self()->moveItem(this, Phase::SlideIn, QPoint(-25, -25));
     int x = -25; // pos().x();
     int y = 0; // pos().y();
@@ -133,7 +131,6 @@ void ToolBox::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 void ToolBox::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    Q_UNUSED(event)
 //    Plasma::Phase::self->moveItem(this, Phase::SlideOut, boundingRect()QPoint(-50, -50));
     int x = 0; // pos().x() + geometry().width();
     int y = 0;
