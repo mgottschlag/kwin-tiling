@@ -31,6 +31,7 @@
 // Plasma
 #include <plasma/widgets/boxlayout.h>
 #include <plasma/widgets/icon.h>
+#include <plasma/containment.h>
 
 // Local
 #include "ui/launcher.h"
@@ -87,6 +88,9 @@ void LauncherApplet::toggleMenu(bool pressed, QGraphicsSceneMouseEvent *event)
             QPoint globalPos = view->mapToGlobal(viewPos);
             globalPos.ry() -= m_launcher->height(); 
             m_launcher->move(globalPos);
+        }
+        if (containment()) {
+            containment()->emitLaunchActivated();
         }
     }
 
