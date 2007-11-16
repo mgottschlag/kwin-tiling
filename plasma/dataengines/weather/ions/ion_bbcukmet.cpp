@@ -38,6 +38,8 @@ public:
     // Key dicts
     QHash<QString, UKMETIon::Private::XMLMapInfo> m_place;
     QVector<QString> m_locations;
+    QStringList m_matchLocations;
+    bool isValid;
 public:
     // Weather information
     QHash<QString, WeatherData> m_weatherData;
@@ -49,6 +51,7 @@ public:
     QMap<KJob *, QXmlStreamReader*> m_forecastJobXml;
     QMap<KJob *, QString> m_forecastJobList;
 
+    
     KUrl *m_url;
     KIO::TransferJob *m_job;
 
@@ -63,6 +66,7 @@ public:
 // ctor, dtor
 UKMETIon::UKMETIon(QObject *parent, const QVariantList &args)
         : IonInterface(parent), d(new Private())
+
 {
     Q_UNUSED(args)
 }
@@ -76,32 +80,47 @@ UKMETIon::~UKMETIon()
 // Get the master list of locations to be parsed
 void UKMETIon::init()
 {
+this->setInitialized(true);
 return;
 }
 
 // Get a specific Ion's data
 bool UKMETIon::updateIonSource(const QString& source)
 {
-       Q_UNUSED(source)
-       //if (!d->m_locations.contains(source)) {
-       //    searchPlace(source);
-       //} else {
-       //    cachedLocation(source);
-      // }
-return true;
+    // We expect the applet to send the source in the following tokenization:
+    // ionname:validate:place_name - Triggers validation of place
+    // ionname:weather:place_name - Triggers receiving weather of place
+
+    kDebug() << "updateIonSource() SOURCE: " << source;
+    QStringList sourceAction = source.split(':');
+    if (sourceAction[1] == QString("validate")) {
+        kDebug() << "Initiate Find Matching places: " << sourceAction[2];
+        // Look for places the match
+        this->validate(sourceAction[2], source);
+        return true;
+
+    } else if (sourceAction[1] == QString("weather")) {
+       //getXMLData(QString("%1:%2").arg(sourceAction[0]).arg(sourceAction[2]));
+       return true;
+    }
+    return false;
 }
 
 // Parses city list and gets the correct city based on ID number
-void UKMETIon::searchPlace(const QString& key)
+void UKMETIon::validate(const QString& place, const QString& source)
 {
+    d->m_jobList.clear();
+    d->m_jobXml.clear();
+
     KUrl url;
-    url = "http://www.bbc.co.uk/cgi-perl/weather/search/new_search.pl?x=0&y=0&=Submit&search_query=" + key + "&tmpl=wap";
+    url = "http://www.bbc.co.uk/cgi-perl/weather/search/new_search.pl?x=0&y=0&=Submit&search_query=" + place + "&tmpl=wap";
     kDebug() << "URL: " << url;
 
     d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
+
     d->m_jobXml.insert(d->m_job, new QXmlStreamReader);
-    d->m_jobList.insert(d->m_job, key);
- 
+    d->m_jobList.insert(d->m_job, source);
+
     if (d->m_job) {
         connect(d->m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
                 SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
@@ -111,6 +130,8 @@ void UKMETIon::searchPlace(const QString& key)
 
 bool UKMETIon::readSearchXMLData(const QString& key, QXmlStreamReader& xml)
 {
+    kDebug() << "readSearchXMLData()";
+
     while (!xml.atEnd()) {
         xml.readNext();
  
@@ -131,34 +152,15 @@ bool UKMETIon::readSearchXMLData(const QString& key, QXmlStreamReader& xml)
 return !xml.error();
 }
 
-void UKMETIon::cachedLocation(const QString& key)
-{
-    d->m_job = 0;
-    kDebug() << "cachedLocation: d->m_place[key].place = " << d->m_place[key].place;
-    if (d->m_place.contains(key)) {
-        d->m_job = KIO::get(d->m_place[key].XMLurl, KIO::Reload, KIO::HideProgressInfo);
-        kDebug() << "URL: " << d->m_place[key].XMLurl;
-
-        if (d->m_job) {
-             d->m_forecastJobXml.insert(d->m_job, new QXmlStreamReader);
-             d->m_forecastJobList.insert(d->m_job, key);
-             kDebug() << "CACHE FORECAST FOR " << d->m_forecastJobList[d->m_job];
-             connect(d->m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                     SLOT(forecast_slotDataArrived(KIO::Job *, const QByteArray &)));
-             connect(d->m_job, SIGNAL(result(KJob *)), this, SLOT(forecast_slotJobFinished(KJob *)));
-        }
-    }
-}
- 
 void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml)
 { 
-    Q_UNUSED(source) 
     int flag = 0;
     QString url;
     QString place;
     QStringList tokens;
     Q_ASSERT(xml.isStartElement() && xml.name() == "wml");
-   
+    d->m_locations.clear();
+    kDebug() << "!!!!!!!!!!!!!! SOURCE: "<< source; 
     while (!xml.atEnd()) {
         xml.readNext();
   
@@ -172,6 +174,7 @@ void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml
 
                     // Split URL to determine station ID number
                     tokens = xml.attributes().value("href").toString().split("=");
+                    kDebug() << "TOKENS URL: " << tokens;
                     if (xml.attributes().value("href").toString().contains("world")) {
                         url = "http://feeds.bbc.co.uk/weather/feeds/obs/world/" + tokens[1] + ".xml";
                         flag = 0;
@@ -180,7 +183,10 @@ void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml
                         flag = 1;
                     }
                     place = xml.readElementText();
-  
+ 
+                    kDebug() << "PLACES FOUND: " << place; 
+                    kDebug() << "URL FOR PLACE: " << url;
+
                     if (!d->m_locations.contains(place)) {
                         if (flag) {  // This is a UK specific location
                             d->m_place[place].XMLurl = url;
@@ -197,18 +203,8 @@ void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml
             }
         } 
     }
-    // All Locations
-    if (d->m_place[source].ukPlace) {
-        //kDebug() << "UKMET: LIST OF UK PLACE: " << source;
-        setData("FoundPlaces", source, QString("%1|%2").arg(source).arg("Local"));
-        //kDebug() << "UKMET: URL OF UK PLACE: " << d->m_place[source].XMLurl;
-    }
 
-    if (!d->m_place[source].ukPlace) {
-        //kDebug() << "UKMET: LIST OF WORLD PLACE: " << source;
-        setData("FoundPlaces", source, QString("%1|%2").arg(source).arg("World"));
-        //kDebug() << "UKMET: URL OF WORLD PLACE: " << d->m_place[source].XMLurl;
-    }
+    updateWeather(source);
 }
 
 // handle when no XML tag is found
@@ -229,6 +225,8 @@ void UKMETIon::parseUnknownElement(QXmlStreamReader& xml)
     
 void UKMETIon::slotDataArrived(KIO::Job *job, const QByteArray &data)
 {
+    kDebug() << "JOB ERROR(): " << job->errorString();
+
     if (data.isEmpty() || !d->m_jobXml.contains(job)) {
         return;
     }
@@ -239,6 +237,15 @@ void UKMETIon::slotDataArrived(KIO::Job *job, const QByteArray &data)
 
 void UKMETIon::slotJobFinished(KJob *job)
 {
+    if (job->error() == 149) {
+        kDebug() << "JOB ERROR: " << job->errorString(); 
+        setData(d->m_jobList[job], "validate", QString("timeout"));
+        disconnectSource(d->m_jobList[job], this);
+        d->m_jobList.remove(job);
+        delete d->m_jobXml[job];
+        d->m_jobXml.remove(job);
+        return;
+    }   
     readSearchXMLData(d->m_jobList[job], *d->m_jobXml[job]);
     d->m_jobList.remove(job);
     delete d->m_jobXml[job];
@@ -382,17 +389,21 @@ void UKMETIon::option(int option, QVariant value)
     }
 }
 
-bool UKMETIon::validLocation(QString keyName)
-{
-    if (d->m_locations.contains(keyName)) {
-        return true;
-    }
-    return false;
-}
-
 void UKMETIon::updateWeather(const QString& source)
 {
-    Q_UNUSED(source)
+    kDebug() << "********** SIZE OF d->m_locations" << d->m_locations.size();
+    if (!d->m_locations.count()) {
+        QStringList invalidPlace = source.split(':');
+        setData(source, "validate", QString("invalid:multiple:%1").arg(invalidPlace[2]));
+        return;
+    } else {
+        QString placeList;
+        foreach (QString place, d->m_locations) {
+                 placeList.append(QString("%1:").arg(place));
+        }
+        kDebug() << "****** PLACES FOUND: " << placeList;
+        setData(source, "validate", QString("valid:multiple:bbcukmet:%1").arg(placeList));
+    }
     return;
 }
 
