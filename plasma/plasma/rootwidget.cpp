@@ -50,10 +50,7 @@ RootWidget::RootWidget()
         view->setGeometry(desktop->screenGeometry(i));
         m_desktops.append(view);
 
-        //TODO: try and delay the construction of the dashboards?
-        DashBoardView *dashboard = new DashBoardView(i, desktop);
-        dashboard->setGeometry(desktop->screenGeometry(i));
-        m_dashboards.append(dashboard);
+        m_dashboards.append(0);
     }
 
     PlasmaApp::self()->corona();
@@ -72,6 +69,14 @@ void RootWidget::toggleDashboard()
     if (QApplication::desktop()->numScreens() > 1) {
         currentScreen = QApplication::desktop()->screenNumber(QCursor::pos());
     }
+
+    if( !m_dashboards[currentScreen] ) {
+        QDesktopWidget *desktop = QApplication::desktop();
+        DashBoardView *dashboard = new DashBoardView(currentScreen, desktop);
+        dashboard->setGeometry(desktop->screenGeometry(currentScreen));
+        m_dashboards[currentScreen] = dashboard;
+    }
+
     m_dashboards[currentScreen]->toggleVisibility();
 }
 
