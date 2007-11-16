@@ -23,12 +23,14 @@
 #include <config-workspace.h>
 
 #include <stdlib.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <signal.h>
 
 #include <QDialog>
 #include <QEvent>
 #include <QKeyEvent>
+#include <QSocketNotifier>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -46,6 +48,17 @@ static void crashHandler( int  )
     signal (SIGABRT, SIG_DFL);
 #endif
     abort();
+}
+
+extern "C" {
+
+static int termPipe[2];
+
+static void termHandler( int )
+{
+    write( termPipe[1], "", 1 );
+}
+
 }
 
 //----------------------------------------------------------------------------
@@ -98,6 +111,17 @@ int kScreenSaverMain( int argc, char** argv, KScreenSaverInterface& screenSaverI
     KCmdLineArgs::addCmdLineOptions(options);
 
     KApplication app;
+
+    if (!pipe(termPipe))
+    {
+        struct sigaction sa;
+        sa.sa_handler = termHandler;
+        sigemptyset(&sa.sa_mask);
+        sa.sa_flags = 0;
+        sigaction(SIGTERM, &sa, 0);
+        QSocketNotifier *sn = new QSocketNotifier(termPipe[0], QSocketNotifier::Read, &app);
+        QObject::connect(sn, SIGNAL(activated(int)), &app, SLOT(quit()));
+    }
 
     KCrash::setCrashHandler( crashHandler );
     KGlobal::locale()->insertCatalog("klock");
