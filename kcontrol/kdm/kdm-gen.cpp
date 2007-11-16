@@ -62,6 +62,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	guicombo = new KBackedComboBox( box );
 	guicombo->insertItem( "", i18n("<placeholder>default</placeholder>") );
 	loadGuiStyles( guicombo );
+	guicombo->model()->sort( 0 );
 	QLabel *label = new QLabel( i18n("GUI s&tyle:"), box );
 	label->setBuddy( guicombo );
 	connect( guicombo, SIGNAL(activated( int )), SIGNAL(changed()) );
@@ -75,6 +76,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	colcombo = new KBackedComboBox( box );
 	colcombo->insertItem( "", i18n("<placeholder>default</placeholder>") );
 	loadColorSchemes( colcombo );
+	colcombo->model()->sort( 0 );
 	label = new QLabel( i18n("Color sche&me:"), box );
 	label->setBuddy( colcombo );
 	connect( colcombo, SIGNAL(activated( int )), SIGNAL(changed()) );
