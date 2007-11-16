@@ -25,21 +25,47 @@
 #include "plasma/corona.h"
 #include "plasma/containment.h"
 #include "plasma/svg.h"
+#include "plasma/appletbrowser.h"
 
 #include "plasmaapp.h"
 
+#include <KWindowSystem>
+
 DashBoardView::DashBoardView(int screen, QWidget *parent)
-    : Plasma::View(screen, PlasmaApp::self()->corona(), parent)
+    : Plasma::View(screen, PlasmaApp::self()->corona(), parent), 
+      m_appletBrowser( 0 )
 {
     setContextMenuPolicy(Qt::NoContextMenu);
-    setWindowFlags( Qt::X11BypassWindowManagerHint | Qt::WindowStaysOnTopHint );
+    setWindowFlags( Qt::FramelessWindowHint );
     setWindowOpacity( 0.9 );
+    setWindowState( Qt::WindowFullScreen );
+    KWindowSystem::setState(winId(), NET::KeepAbove);
 
     //FIXME: this OUGHT to be true if we don't have composite, probably
     setDrawWallpaper(false);
     hide();
 
     connect( scene(), SIGNAL(launchActivated()), SLOT(hide()) );
+}
+
+void DashBoardView::showAppletBrowser()
+{
+    if (!m_appletBrowser) {
+        m_appletBrowser = new Plasma::AppletBrowser(qobject_cast<Plasma::Corona *>(scene()), this, Qt::FramelessWindowHint );
+        m_appletBrowser->setApplication();
+        m_appletBrowser->setAttribute(Qt::WA_DeleteOnClose);
+        m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
+        connect(m_appletBrowser, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
+        KWindowSystem::setState(m_appletBrowser->winId(), NET::KeepAbove);
+        m_appletBrowser->move( 0, 0 );
+    }
+
+    m_appletBrowser->show();
+}
+
+void DashBoardView::appletBrowserDestroyed()
+{
+    m_appletBrowser = 0;
 }
 
 DashBoardView::~DashBoardView()
@@ -51,8 +77,13 @@ void DashBoardView::toggleVisibility()
     if (isHidden()) {
       show();
       raise();
+    
+      showAppletBrowser();
     } else {
       hide();
+      if (m_appletBrowser) {
+          m_appletBrowser->hide();
+      }
     }
 }
 

@@ -24,12 +24,9 @@
 #include "plasma/plasma.h"
 #include "plasma/view.h"
 
-class QPixmap;
-
 namespace Plasma
 {
-    class Svg;
-    class Corona;
+    class AppletBrowser;
 }
 
 class DashBoardView : public Plasma::View
@@ -42,6 +39,13 @@ public:
 
 public slots:
     void toggleVisibility();
+
+protected slots:
+    void showAppletBrowser();
+    void appletBrowserDestroyed();
+
+private:
+    Plasma::AppletBrowser *m_appletBrowser;
 };
 
 #endif // multiple inclusion guard
