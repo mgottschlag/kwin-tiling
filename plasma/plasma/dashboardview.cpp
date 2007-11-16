@@ -45,7 +45,7 @@ DashBoardView::DashBoardView(int screen, QWidget *parent)
     setDrawWallpaper(false);
     hide();
 
-    connect( scene(), SIGNAL(launchActivated()), SLOT(hide()) );
+    connect( scene(), SIGNAL(launchActivated()), SLOT(hideView()) );
 }
 
 void DashBoardView::showAppletBrowser()
@@ -57,6 +57,7 @@ void DashBoardView::showAppletBrowser()
         m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
         connect(m_appletBrowser, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
         KWindowSystem::setState(m_appletBrowser->winId(), NET::KeepAbove);
+        //TODO: provide a nice unobtrusive way to access the browser
         m_appletBrowser->move( 0, 0 );
     }
 
@@ -75,16 +76,21 @@ DashBoardView::~DashBoardView()
 void DashBoardView::toggleVisibility()
 {
     if (isHidden()) {
-      show();
-      raise();
+        show();
+        raise();
     
-      showAppletBrowser();
+        showAppletBrowser();
     } else {
-      hide();
-      if (m_appletBrowser) {
-          m_appletBrowser->hide();
-      }
+        hideView();
     }
+}
+
+void DashBoardView::hideView()
+{
+    if (m_appletBrowser) {
+        m_appletBrowser->hide();
+    }
+    hide();
 }
 
 #include "dashboardview.moc"
