@@ -6,6 +6,8 @@ add_subdirectory( themes )
 
 include( FindPNG )
 
+include_directories(${PNG_PNG_INCLUDE_DIR})
+
 include (CheckCXXSourceCompiles)
 CHECK_CXX_SOURCE_COMPILES(" int main() { __asm__(\"pxor %mm0, %mm0\") ; }" X86_MMX_FOUND)
 
