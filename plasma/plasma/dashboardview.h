@@ -37,6 +37,9 @@ public:
     DashBoardView(int screen, QWidget *parent);
     ~DashBoardView();
 
+protected:
+    void drawBackground(QPainter * painter, const QRectF & rect);
+
 public slots:
     void toggleVisibility();
 

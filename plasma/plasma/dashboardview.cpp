@@ -53,6 +53,16 @@ DashBoardView::~DashBoardView()
     delete m_appletBrowserWidget;
 }
 
+void DashBoardView::drawBackground(QPainter * painter, const QRectF & rect)
+{
+    if (PlasmaApp::hasComposite()) {
+        painter->setCompositionMode(QPainter::CompositionMode_Source);
+        painter->fillRect(rect, QColor(0, 0, 0, 125));
+    } else {
+        Plasma::View::drawBackground(painter, rect);
+    }
+}
+
 void DashBoardView::showAppletBrowser()
 {
     if (!m_appletBrowserWidget) {
@@ -72,7 +82,6 @@ void DashBoardView::toggleVisibility()
     if (isHidden()) {
         show();
         raise();
-    
         showAppletBrowser();
     } else {
         hideView();
