@@ -33,7 +33,7 @@
 
 DashBoardView::DashBoardView(int screen, QWidget *parent)
     : Plasma::View(screen, PlasmaApp::self()->corona(), parent), 
-      m_appletBrowser( 0 )
+      m_appletBrowserWidget( 0 )
 {
     setContextMenuPolicy(Qt::NoContextMenu);
     setWindowFlags( Qt::FramelessWindowHint );
@@ -48,29 +48,23 @@ DashBoardView::DashBoardView(int screen, QWidget *parent)
     connect( scene(), SIGNAL(launchActivated()), SLOT(hideView()) );
 }
 
-void DashBoardView::showAppletBrowser()
-{
-    if (!m_appletBrowser) {
-        m_appletBrowser = new Plasma::AppletBrowser(qobject_cast<Plasma::Corona *>(scene()), this, Qt::FramelessWindowHint );
-        m_appletBrowser->setApplication();
-        m_appletBrowser->setAttribute(Qt::WA_DeleteOnClose);
-        m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
-        connect(m_appletBrowser, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
-        KWindowSystem::setState(m_appletBrowser->winId(), NET::KeepAbove);
-        //TODO: provide a nice unobtrusive way to access the browser
-        m_appletBrowser->move( 0, 0 );
-    }
-
-    m_appletBrowser->show();
-}
-
-void DashBoardView::appletBrowserDestroyed()
-{
-    m_appletBrowser = 0;
-}
-
 DashBoardView::~DashBoardView()
 {
+    delete m_appletBrowserWidget;
+}
+
+void DashBoardView::showAppletBrowser()
+{
+    if (!m_appletBrowserWidget) {
+        m_appletBrowserWidget = new Plasma::AppletBrowserWidget(qobject_cast<Plasma::Corona *>(scene()), true, this, Qt::FramelessWindowHint );
+        m_appletBrowserWidget->setApplication();
+        m_appletBrowserWidget->setWindowTitle(i18n("Add Widgets"));
+        KWindowSystem::setState(m_appletBrowserWidget->winId(), NET::KeepAbove);
+        //TODO: provide a nice unobtrusive way to access the browser
+        m_appletBrowserWidget->move( 0, 0 );
+    }
+
+    m_appletBrowserWidget->show();
 }
 
 void DashBoardView::toggleVisibility()
@@ -87,8 +81,8 @@ void DashBoardView::toggleVisibility()
 
 void DashBoardView::hideView()
 {
-    if (m_appletBrowser) {
-        m_appletBrowser->hide();
+    if (m_appletBrowserWidget) {
+        m_appletBrowserWidget->hide();
     }
     hide();
 }

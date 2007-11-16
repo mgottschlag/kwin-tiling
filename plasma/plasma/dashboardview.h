@@ -26,7 +26,7 @@
 
 namespace Plasma
 {
-    class AppletBrowser;
+    class AppletBrowserWidget;
 }
 
 class DashBoardView : public Plasma::View
@@ -42,11 +42,10 @@ public slots:
 
 protected slots:
     void showAppletBrowser();
-    void appletBrowserDestroyed();
     void hideView();
 
 private:
-    Plasma::AppletBrowser *m_appletBrowser;
+    Plasma::AppletBrowserWidget *m_appletBrowserWidget;
 };
 
 #endif // multiple inclusion guard
