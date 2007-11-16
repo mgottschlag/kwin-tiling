@@ -32,6 +32,7 @@
 #include <KCrash>
 #include <KDebug>
 #include <KCmdLineArgs>
+#include <KWindowSystem>
 
 #include <ksmserver_interface.h>
 
@@ -43,13 +44,72 @@
 #include "desktopview.h"
 #include "panelview.h"
 
+#include <X11/extensions/Xrender.h>
+
+Display* dpy = 0;
+Colormap colormap = 0;
+Visual *visual = 0;
+bool argbVisual = false;
+bool PlasmaApp::s_hasCompositeManager = false;
+
+bool checkComposite()
+{
+    dpy = XOpenDisplay(0); // open default display
+    if (!dpy)
+    {
+        kError() << "Cannot connect to the X server" << endl;
+        return true;
+    }
+
+    PlasmaApp::s_hasCompositeManager = KWindowSystem::compositingActive();
+
+    if (PlasmaApp::s_hasCompositeManager)
+    {
+        int screen = DefaultScreen(dpy);
+        int eventBase, errorBase;
+
+        if (XRenderQueryExtension(dpy, &eventBase, &errorBase))
+        {
+            int nvi;
+            XVisualInfo templ;
+            templ.screen  = screen;
+            templ.depth   = 32;
+            templ.c_class = TrueColor;
+            XVisualInfo *xvi = XGetVisualInfo(dpy, VisualScreenMask |
+                                                   VisualDepthMask |
+                                                   VisualClassMask,
+                                              &templ, &nvi);
+            for (int i = 0; i < nvi; ++i)
+            {
+                XRenderPictFormat *format = XRenderFindVisualFormat(dpy,
+                                                                    xvi[i].visual);
+                if (format->type == PictTypeDirect && format->direct.alphaMask)
+                {
+                    visual = xvi[i].visual;
+                    colormap = XCreateColormap(dpy, RootWindow(dpy, screen),
+                                               visual, AllocNone);
+                    argbVisual = true;
+                    break;
+                }
+            }
+        }
+
+        PlasmaApp::s_hasCompositeManager = argbVisual;
+    }
+
+    kDebug() << (PlasmaApp::s_hasCompositeManager ? "Plasma can use COMPOSITE for effects"
+                                                   : "Plasma is COMPOSITE-less");
+    return true;
+}
+
 PlasmaApp* PlasmaApp::self()
 {
     return qobject_cast<PlasmaApp*>(kapp);
 }
 
 PlasmaApp::PlasmaApp()
-    : m_root(0),
+    : KUniqueApplication(checkComposite() ? dpy : dpy, dpy ? Qt::HANDLE(visual) : 0, dpy ? Qt::HANDLE(colormap) : 0),
+      m_root(0),
       m_corona(0)
 {
     new AppAdaptor(this); 
@@ -133,6 +193,11 @@ Plasma::Corona* PlasmaApp::corona()
     }
 
     return m_corona;
+}
+
+bool PlasmaApp::hasComposite()
+{
+    return s_hasCompositeManager;
 }
 
 void PlasmaApp::notifyStartup(bool completed)

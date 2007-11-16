@@ -41,6 +41,8 @@ public:
     ~PlasmaApp();
 
     static PlasmaApp* self();
+    static bool hasComposite();
+
     void notifyStartup(bool completed);
     Plasma::Corona* corona();
 
@@ -59,6 +61,9 @@ private:
     RootWidget *m_root;
     Plasma::Corona *m_corona;
     QList<PanelView*> m_panels;
+
+public:
+    static bool s_hasCompositeManager;
 };
 
 #endif // multiple inclusion guard
