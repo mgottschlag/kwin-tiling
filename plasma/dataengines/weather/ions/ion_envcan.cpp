@@ -118,10 +118,10 @@ bool EnvCanadaIon::updateIonSource(const QString& source)
         QString result = this->validate(QString("%1:%2").arg(sourceAction[0]).arg(sourceAction[2]));
         if (!result.isEmpty()) {
             QStringList tokens = result.split(':');
-            setData(source, "verify", QString("valid:single:%1").arg(tokens[1]));
+            setData(source, "validate", QString("valid:single:%1").arg(tokens[1]));
             return true;
         } else {
-            setData(source, "verify", QString("invalid:single:%1").arg(sourceAction[2]));
+            setData(source, "validate", QString("invalid:single:%1").arg(sourceAction[2]));
             return true;
         }
      } else if (sourceAction[1] == QString("weather")) {
