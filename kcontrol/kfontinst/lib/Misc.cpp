@@ -120,6 +120,16 @@ bool createDir(const QString &dir)
     return status;
 }
 
+void setFilePerms(const QByteArray &f)
+{
+    //
+    // Clear any umask before setting file perms
+    mode_t oldMask(umask(0000));
+    ::chmod(f.constData(), FILE_PERMS);
+    // Reset umask
+    ::umask(oldMask);
+}
+
 bool doCmd(const QString &cmd, const QString &p1, const QString &p2, const QString &p3)
 {
     QStringList args;

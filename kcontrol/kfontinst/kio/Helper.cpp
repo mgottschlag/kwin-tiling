@@ -313,7 +313,7 @@ bool CHelper::copyFile()
 
         bool rv=QFile::copy(from, to);
         if(rv)
-            ::chmod(QFile::encodeName(to).constData(), Misc::FILE_PERMS);
+            Misc::setFilePerms(to);
         return rv;
     }
 
@@ -340,7 +340,7 @@ bool CHelper::moveFile()
 
         if(res)
         {
-            ::chmod(toC.constData(), Misc::FILE_PERMS);
+            Misc::setFilePerms(toC);
             ::chown(toC.constData(), user, group);
         }
 

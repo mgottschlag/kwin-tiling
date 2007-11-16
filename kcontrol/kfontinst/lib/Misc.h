@@ -30,10 +30,12 @@
 #include <time.h>
 
 #include <QtCore/QDataStream>
+#include <QtCore/QFile>
 #include <KDE/KUrl>
 #include "KfiConstants.h"
 
 class QTextStream;
+class QByteArray;
 
 namespace KFI
 {
@@ -42,8 +44,8 @@ namespace Misc
 {
     enum EConstants
     {
-        FILE_PERMS   = 0644,
-        DIR_PERMS    = 0755
+        FILE_PERMS = 0644,
+        DIR_PERMS  = 0755
     };
 
     struct TFont
@@ -70,6 +72,8 @@ namespace Misc
     extern KDE_EXPORT QString getDir(const QString &f);
     extern KDE_EXPORT QString getFile(const QString &f);
     extern KDE_EXPORT bool    createDir(const QString &dir);
+    extern KDE_EXPORT void    setFilePerms(const QByteArray &f);
+    inline KDE_EXPORT void    setFilePerms(const QString &f) { setFilePerms(QFile::encodeName(f)); }
     extern KDE_EXPORT QString changeExt(const QString &f, const QString &newExt);
     extern KDE_EXPORT bool    doCmd(const QString &cmd, const QString &p1=QString(),
                                     const QString &p2=QString(), const QString &p3=QString());

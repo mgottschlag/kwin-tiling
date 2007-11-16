@@ -53,6 +53,7 @@
 #include <KDE/KStandardDirs>
 #include <KDE/KMD5>
 #include <KDE/KZip>
+#include <KDE/KConfigGroup>
 #include <kxftconfig.h>
 #include <fontconfig/fontconfig.h>
 #include "KfiConstants.h"
@@ -61,7 +62,6 @@
 #include "SuProc.h"
 #include "Socket.h"
 #include <ctype.h>
-#include <kconfiggroup.h>
 
 // Enable the following so that all URLs are actually <family>, <style>, e.g.
 //   without #define: fonts:/arial.ttf
@@ -1401,7 +1401,7 @@ void CKioFonts::put(const KUrl &u, int mode, KIO::JobFlags flags)
                 Misc::createDir(destFolderReal);
             if(0==::rename(tmpFileC.constData(), destC.constData()))
             {
-                ::chmod(destC.constData(), Misc::FILE_PERMS);
+                Misc::setFilePerms(destC);
                 if(FILE_FONT==type)
                     modified(timeout, FOLDER_USER, clearList, destFolderReal);
                 createAfm(dest);
@@ -1927,7 +1927,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, KIO::JobFlags fla
                             return;
                         }
 
-                        ::chmod(realDest.constData(), Misc::FILE_PERMS);
+                        Misc::setFilePerms(realDest);
 
                         // copy access and modification time
                         struct utimbuf ut;
