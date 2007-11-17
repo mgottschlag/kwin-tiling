@@ -208,7 +208,9 @@ bool KxkbCore::settingsRead()
 	initLayoutGroups();
     }
     else {
-	updateGroupsFromServer();
+        // for component or indicator we don't need owner map
+        m_kxkbConfig.m_switchingPolicy = SWITCH_POLICY_GLOBAL;
+        updateGroupsFromServer();
     }
 	
     if( m_kxkbConfig.m_layouts.count() == 1 ) {
