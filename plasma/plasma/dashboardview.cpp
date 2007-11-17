@@ -31,13 +31,13 @@
 
 #include <KWindowSystem>
 
-DashBoardView::DashBoardView(int screen, QWidget *parent)
+DashboardView::DashboardView(int screen, QWidget *parent)
     : Plasma::View(screen, PlasmaApp::self()->corona(), parent), 
       m_appletBrowserWidget(0)
 {
     setContextMenuPolicy(Qt::NoContextMenu);
     setWindowFlags(Qt::FramelessWindowHint );
-    setWindowOpacity(0.9);
+    //setWindowOpacity(0.9);
     setWindowState(Qt::WindowFullScreen);
     KWindowSystem::setState(winId(), NET::KeepAbove);
 
@@ -48,22 +48,25 @@ DashBoardView::DashBoardView(int screen, QWidget *parent)
     connect(containment(), SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
 }
 
-DashBoardView::~DashBoardView()
+DashboardView::~DashboardView()
 {
     delete m_appletBrowserWidget;
 }
 
-void DashBoardView::drawBackground(QPainter * painter, const QRectF & rect)
+void DashboardView::drawBackground(QPainter * painter, const QRectF & rect)
 {
     if (PlasmaApp::hasComposite()) {
+        setDrawWallpaper(false);
         painter->setCompositionMode(QPainter::CompositionMode_Source);
-        painter->fillRect(rect, QColor(0, 0, 0, 125));
+        painter->fillRect(rect, Qt::transparent);
+//        painter->fillRect(rect, QColor(0, 0, 0, 125));
     } else {
+        setDrawWallpaper(true);
         Plasma::View::drawBackground(painter, rect);
     }
 }
 
-void DashBoardView::showAppletBrowser()
+void DashboardView::showAppletBrowser()
 {
     if (!m_appletBrowserWidget) {
         m_appletBrowserWidget = new Plasma::AppletBrowserWidget(qobject_cast<Plasma::Corona *>(scene()), true, this, Qt::FramelessWindowHint );
@@ -77,12 +80,12 @@ void DashBoardView::showAppletBrowser()
     m_appletBrowserWidget->show();
 }
 
-void DashBoardView::appletBrowserDestroyed()
+void DashboardView::appletBrowserDestroyed()
 {
     m_appletBrowserWidget = 0;
 }
 
-void DashBoardView::toggleVisibility()
+void DashboardView::toggleVisibility()
 {
     if (isHidden()) {
         show();
@@ -92,7 +95,7 @@ void DashBoardView::toggleVisibility()
     }
 }
 
-void DashBoardView::hideView()
+void DashboardView::hideView()
 {
     if (m_appletBrowserWidget) {
         m_appletBrowserWidget->hide();

@@ -29,13 +29,13 @@ namespace Plasma
     class AppletBrowserWidget;
 }
 
-class DashBoardView : public Plasma::View
+class DashboardView : public Plasma::View
 {
     Q_OBJECT
 
 public:
-    DashBoardView(int screen, QWidget *parent);
-    ~DashBoardView();
+    DashboardView(int screen, QWidget *parent);
+    ~DashboardView();
 
 protected:
     void drawBackground(QPainter * painter, const QRectF & rect);
