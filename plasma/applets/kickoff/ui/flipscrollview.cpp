@@ -24,6 +24,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QScrollBar>
+#include <QStack>
 #include <QTimeLine>
 #include <QtDebug>
 
@@ -42,7 +43,6 @@ public:
           , backArrowHover(false)
           , flipAnimTimeLine(new QTimeLine())
           , animLeftToRight(true)
-          , previousVerticalOffset(0)
     {
     }
     ~Private() 
@@ -58,32 +58,39 @@ public:
             return q->rootIndex(); 
         }
     }
-    QModelIndex previousRoot() const {
-        return previousRootIndex;
+    QModelIndex previousRoot() const
+    {
+        if (previousRootIndices.isEmpty()) {
+            return QModelIndex();
+        }
+        return previousRootIndices.top();
     }
     void setCurrentRoot(const QModelIndex& index)
     {
-        previousRootIndex = currentRootIndex;
-        previousVerticalOffset = q->verticalOffset();
-        currentRootIndex = index;
-       
-        updateScrollBarRange();
-        q->verticalScrollBar()->setValue(0);
-
-        // when going back up the tree, highlight the item which opens
-        // the branch we have just left
-        if (previousRootIndex.parent() == index)
-            hoveredIndex = previousRootIndex;
-        else
+        if (previousRootIndices.isEmpty() || previousRootIndices.top() != index) {
+            // we're entering into a submenu
+            animLeftToRight = true;
             hoveredIndex = QModelIndex();
-
-        // set whether the flip animation should go in a left to right
-        // or right to left direction. 
-        // note: this check used gives the wrong value for animLeftToRight
-        // if we go down more than one level of the tree at once 
-        animLeftToRight = currentRootIndex.parent() == previousRootIndex;
+            previousRootIndices.push(currentRootIndex);
+            currentRootIndex = index;
+            previousVerticalOffsets.append(q->verticalOffset());
+            updateScrollBarRange();
+            q->verticalScrollBar()->setValue(0);
+        } else {
+            // we're exiting to the parent menu
+            animLeftToRight = false;
+            hoveredIndex = currentRootIndex;
+            previousRootIndices.pop();
+            currentRootIndex = index;
+            updateScrollBarRange();
+            q->verticalScrollBar()->setValue(previousVerticalOffsets.pop());
+        }
 
         flipAnimTimeLine->start();
+    }
+    int previousVerticalOffset()
+    {
+        return previousVerticalOffsets.isEmpty() ? 0 : previousVerticalOffsets.top();
     }
     int treeDepth(const QModelIndex& headerIndex) const 
     {
@@ -209,13 +216,13 @@ public:
 
     QTimeLine *flipAnimTimeLine;
     bool animLeftToRight;
-    int previousVerticalOffset;
 
     static const int FLIP_ANIM_DURATION = 300;
 
 private:
      QPersistentModelIndex currentRootIndex;
-     QPersistentModelIndex previousRootIndex;
+     QStack<QPersistentModelIndex> previousRootIndices;
+     QStack<int> previousVerticalOffsets;
 };
 
 FlipScrollView::FlipScrollView(QWidget *parent)
@@ -285,7 +292,7 @@ QRect FlipScrollView::visualRect(const QModelIndex& index) const
     }
 
     if (parentIsPreviousRoot) {
-        topOffset -= d->previousVerticalOffset;
+        topOffset -= d->previousVerticalOffset();
     } else {
         topOffset -= verticalOffset();
     }
