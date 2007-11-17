@@ -58,8 +58,7 @@ void DashboardView::drawBackground(QPainter * painter, const QRectF & rect)
     if (PlasmaApp::hasComposite()) {
         setDrawWallpaper(false);
         painter->setCompositionMode(QPainter::CompositionMode_Source);
-        painter->fillRect(rect, Qt::transparent);
-//        painter->fillRect(rect, QColor(0, 0, 0, 125));
+        painter->fillRect(rect, QColor(0, 0, 0, 125));
     } else {
         setDrawWallpaper(true);
         Plasma::View::drawBackground(painter, rect);
