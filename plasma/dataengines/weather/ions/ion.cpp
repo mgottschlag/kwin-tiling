@@ -66,11 +66,13 @@ bool IonInterface::isValid() const
 
 bool IonInterface::sourceRequested(const QString &source)
 {
-    kDebug() << "sourceRequested()";
+    kDebug() << "sourceRequested()" << source;
 
     if (d->initialized) {
+        kDebug() << "Calling Ion's updateIonSource()";
         return updateIonSource(source);
     } else {
+        kDebug() << "Setting Source: " << source << "Not INITIALIZED YET!";
         setData(source, Plasma::DataEngine::Data());
     }
 
@@ -86,6 +88,12 @@ bool IonInterface::updateSource(const QString& source)
 
      return false;
 }
+
+//void IonInterface::deleteIonSource(const QString& source)
+//{  
+//   kDebug() << "Ion: Removing my Source: " << source;
+//   removeSource(source);
+//}
 
 void IonInterface::setInitialized(bool initialized)
 {

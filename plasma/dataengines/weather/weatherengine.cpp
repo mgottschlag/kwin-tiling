@@ -80,6 +80,7 @@ IonInterface* WeatherEngine::loadIon(const KService::Ptr& service)
 
     // Load the Ion plugin, store it into a QMap to handle multiple ions.
     ion = service->createInstance<IonInterface>(0, QVariantList(), &error);
+    ion->setObjectName(plugName);
     if (!ion) {
         kDebug() << "weatherengine: Couldn't load ion \"" << plugName << "\"!" << error;
         return 0;
@@ -91,7 +92,8 @@ IonInterface* WeatherEngine::loadIon(const KService::Ptr& service)
     // Set the Ion's long name
     //ion->setObjectName(offers.first()->name());
     connect(ion, SIGNAL(newSource(QString)), this, SLOT(newIonSource(QString)));
-    connect(ion, SIGNAL(sourceRemoved(QString)), this, SLOT(removeIonSource(QString)));
+    //connect(ion, SIGNAL(sourceRemoved(QString)), this, SLOT(removeIonSource(QString)));
+    connect(this, SIGNAL(sourceRemoved(QString)), this, SLOT(removeIonSource(QString)));
 
     /* Set properties for the ion
      *
@@ -145,6 +147,7 @@ void WeatherEngine::newIonSource(const QString& source)
 {
     IonInterface *ion = qobject_cast<IonInterface*>(sender());
 
+    kDebug() << "New Ion Source" << source;
     if (!ion) {
         return;
     }
@@ -153,11 +156,9 @@ void WeatherEngine::newIonSource(const QString& source)
 
 void WeatherEngine::removeIonSource(const QString& source)
 {
-    IonInterface *ion = qobject_cast<IonInterface*>(sender());
-    if (!ion) {
-        return;
-    }
-    ion->disconnectSource(source, this);
+    kDebug() << "Removing source from WeatherEngine: " << source;
+    kDebug() << "Plugin to remove source from: " << d->ionForSource(source)->objectName();
+    d->ionForSource(source)->removeSource(source);
 }
 
 void WeatherEngine::dataUpdated(const QString& source, Plasma::DataEngine::Data data)
@@ -193,14 +194,19 @@ WeatherEngine::~WeatherEngine()
 // Setup each Ion for the first time
 bool WeatherEngine::sourceRequested(const QString &source)
 {
+    kDebug() << "SOURCES FOUND: " << sources();
+    
+    kDebug() << "sourceRequested()" << source;
     IonInterface *ion = d->ionForSource(source);
 
     if (!ion) {
+        kDebug() << "sourceRequested(): INVALID ION!!!!!!!!!!";
         return false;
     }
 
+    kDebug() << "About to connect Source" << source << " To the Ion!";
+    kDebug() << "IONS SOURCES: " << ion->sources();
     ion->connectSource(source, this);
-    kDebug() << "sourceRequested()" << source;
     if (!containerForSource(source)) {
         // it is an async reply, we need to set up the data anyways
         kDebug() << "no item?";

@@ -102,6 +102,10 @@ protected:
      * 
      */
     virtual bool updateIonSource(const QString &name) = 0;
+
+    //void deleteIonSource(const QString& source);
+ 
+    friend class WeatherEngine;
    
 private:
     class Private;
