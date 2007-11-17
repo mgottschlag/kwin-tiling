@@ -76,8 +76,6 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     // Default to show the timezone if it's not "Local"
     //m_showTimezone = cg.readEntry("showTimezone", m_showTimezone);
     m_showTimezone = false; // FIXME: Remove
-    kDebug() << "Timezone, show?" << m_timezone << m_showTimezone;
-    kDebug() << "Date, weekday, year?" << m_showDate << m_showDay << m_showYear;
 
     if (cg.readEntry("plainClock", true)) {
         m_clockStyle = PlainClock;
@@ -187,13 +185,11 @@ void Clock::configAccepted()
             // setting hasn't been changed.
             ui.showTimezone->setCheckState(Qt::Checked);
             m_timezone = tz;
-            //dataEngine("time")->connectSource(m_timezone, this);
             dataEngine("time")->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
         }
     } else if (m_timezone != "Local") {
         dataEngine("time")->disconnectSource(m_timezone, this);
         m_timezone = "Local";
-        //dataEngine("time")->connectSource(m_timezone, this);
         dataEngine("time")->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
     } else {
         kDebug() << "Timezone unknown: " << tzs;
@@ -230,7 +226,6 @@ void Clock::configAccepted()
     cg.writeEntry("PlainClockFontBold", m_plainClockFontBold);
     cg.writeEntry("PlainClockFontItalic", m_plainClockFontItalic);
 
-    dataEngine("time")->connectSource(m_timezone, this);
     update();
     cg.config()->sync();
 }
@@ -313,7 +308,8 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             }
         }
         if (m_showTimezone) {
-            dateString += m_timezone.replace("_", " ");
+            dateString += m_timezone;
+            dateString.replace("_", " ");
         }
 
         // Check sizes
