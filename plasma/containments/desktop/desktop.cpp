@@ -51,7 +51,6 @@ Tool::Tool(QGraphicsItem *parent)
 }
 */
 
-
 ToolBox::ToolBox(QGraphicsItem *parent)
     : QGraphicsItem(parent),
       m_icon("configure"),
@@ -181,7 +180,7 @@ void ToolBox::addTool(Plasma::Widget *tool)
     }
 
     tool->hide();
-    tool->setPos(pos());
+    tool->setPos(QPoint(0,0));
     tool->setZValue(zValue() + 1);
     tool->setParentItem(this);
 }
@@ -246,11 +245,11 @@ void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
 
     const QRect geom = QApplication::desktop()->screenGeometry(screen());
     if (m_background) {
-        kDebug() << "Rescaling SVG wallpaper to" << geom.size();
+        //kDebug() << "Rescaling SVG wallpaper to" << geom.size();
         m_background->resize(geom.size());
     } else if (!m_wallpaperPath.isEmpty()) {
         if (!m_bitmapBackground || !(m_bitmapBackground->size() == geom.size())) {
-            kDebug() << "Loading and scaling bitmap wallpaper to" << geom.size();
+            //kDebug() << "Loading and scaling bitmap wallpaper to" << geom.size() << "while our geometry is" << geometry();
             delete m_bitmapBackground;
             m_bitmapBackground = new QPixmap(m_wallpaperPath);
             (*m_bitmapBackground) = m_bitmapBackground->scaled(geom.size());
