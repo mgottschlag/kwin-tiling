@@ -54,7 +54,7 @@ class Battery : public Plasma::Applet
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
         void showConfigurationInterface();
- 
+
     protected Q_SLOTS:
         virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
         virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
@@ -63,6 +63,13 @@ class Battery : public Plasma::Applet
         void configAccepted();
 
     private:
+        Q_ENUMS( m_batteryStyle )
+        enum ClockStyle {
+            // Keep the order of styles the same order as the items in the configdialog!
+            OxygenBattery, ClassicBattery
+        };
+        int m_batteryStyle;
+
         /* Paint a label on top of the battery
          *
          */
@@ -81,7 +88,7 @@ class Battery : public Plasma::Applet
         // Configuration dialog
         KDialog *m_dialog;
         Ui::batteryConfig ui;
-        
+
         // Internal data
         QList<QVariant> batterylist, acadapterlist;
         QFont m_font;

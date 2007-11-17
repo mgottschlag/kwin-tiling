@@ -5,14 +5,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>306</width>
-    <height>95</height>
+    <width>318</width>
+    <height>170</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Configure Battery Monitor</string>
   </property>
-  <property name="accessibleName" stdset="0" >
+  <property name="accessibleName" >
    <string>Configure Battery Monitor</string>
   </property>
   <layout class="QVBoxLayout" >
@@ -34,6 +34,29 @@
      <property name="text" >
       <string>Always show &amp;background</string>
      </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="KButtonGroup" name="styleGroup" >
+     <layout class="QVBoxLayout" >
+      <item>
+       <widget class="QRadioButton" name="oxygenBattery" >
+        <property name="text" >
+         <string>Oxygen theme</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="classicBattery" >
+        <property name="text" >
+         <string>Classic theme</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
@@ -75,6 +98,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KButtonGroup</class>
+   <extends>QGroupBox</extends>
+   <header>kbuttongroup.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
