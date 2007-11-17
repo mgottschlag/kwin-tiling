@@ -45,6 +45,7 @@ public slots:
 
 protected slots:
     void showAppletBrowser();
+    void appletBrowserDestroyed();
     void hideView();
 
 private:

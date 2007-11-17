@@ -29,6 +29,7 @@ namespace Plasma
 {
     class Svg;
     class Corona;
+    class AppletBrowser;
 }
 
 class DesktopView : public Plasma::View
@@ -42,12 +43,15 @@ public:
 public slots:
     void zoomIn();
     void zoomOut();
+    void showAppletBrowser();
+    void appletBrowserDestroyed();
 
 protected:
     void wheelEvent(QWheelEvent *event);
 
 private:
     Plasma::ZoomLevel m_zoomLevel;
+    Plasma::AppletBrowser *m_appletBrowser;
 };
 
 #endif // multiple inclusion guard

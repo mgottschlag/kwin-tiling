@@ -33,19 +33,19 @@
 
 DashBoardView::DashBoardView(int screen, QWidget *parent)
     : Plasma::View(screen, PlasmaApp::self()->corona(), parent), 
-      m_appletBrowserWidget( 0 )
+      m_appletBrowserWidget(0)
 {
     setContextMenuPolicy(Qt::NoContextMenu);
-    setWindowFlags( Qt::FramelessWindowHint );
-    setWindowOpacity( 0.9 );
-    setWindowState( Qt::WindowFullScreen );
+    setWindowFlags(Qt::FramelessWindowHint );
+    setWindowOpacity(0.9);
+    setWindowState(Qt::WindowFullScreen);
     KWindowSystem::setState(winId(), NET::KeepAbove);
 
-    //FIXME: this OUGHT to be true if we don't have composite, probably
-    setDrawWallpaper(false);
+    setDrawWallpaper(!PlasmaApp::hasComposite());
     hide();
 
-    connect( scene(), SIGNAL(launchActivated()), SLOT(hideView()) );
+    connect(scene(), SIGNAL(launchActivated()), SLOT(hideView()));
+    connect(containment(), SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
 }
 
 DashBoardView::~DashBoardView()
@@ -77,12 +77,16 @@ void DashBoardView::showAppletBrowser()
     m_appletBrowserWidget->show();
 }
 
+void DashBoardView::appletBrowserDestroyed()
+{
+    m_appletBrowserWidget = 0;
+}
+
 void DashBoardView::toggleVisibility()
 {
     if (isHidden()) {
         show();
         raise();
-        showAppletBrowser();
     } else {
         hideView();
     }

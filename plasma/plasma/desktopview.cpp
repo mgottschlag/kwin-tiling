@@ -29,8 +29,10 @@
 #include <KMenu>
 #include <KRun>
 #include <KToggleAction>
+#include <KWindowSystem>
 
 #include "plasma/applet.h"
+#include "plasma/appletbrowser.h"
 #include "plasma/corona.h"
 #include "plasma/containment.h"
 #include "plasma/svg.h"
@@ -39,11 +41,13 @@
 
 DesktopView::DesktopView(int screen, QWidget *parent)
     : Plasma::View(screen, PlasmaApp::self()->corona(), parent),
-      m_zoomLevel(Plasma::DesktopZoom)
+      m_zoomLevel(Plasma::DesktopZoom),
+      m_appletBrowser(0)
 {
     if (containment()) {
         connect(containment(), SIGNAL(zoomIn()), this, SLOT(zoomIn()));
         connect(containment(), SIGNAL(zoomOut()), this, SLOT(zoomOut()));
+        connect(containment(), SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
     }
 }
 
@@ -80,6 +84,26 @@ void DesktopView::zoomOut()
     qreal s = factor / matrix().m11();
 	setSceneRect(QRectF(0, 0, width() * 1.0/factor, height() * 1.0/factor));
     scale(s, s);
+}
+
+void DesktopView::showAppletBrowser()
+{
+    if (!m_appletBrowser) {
+        m_appletBrowser = new Plasma::AppletBrowser(containment(), this);
+        m_appletBrowser->setApplication();
+        m_appletBrowser->setAttribute(Qt::WA_DeleteOnClose);
+        m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
+        connect(m_appletBrowser, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
+    }
+
+    KWindowSystem::setOnDesktop(m_appletBrowser->winId(), KWindowSystem::currentDesktop());
+    m_appletBrowser->show();
+    KWindowSystem::activateWindow(m_appletBrowser->winId());
+}
+
+void DesktopView::appletBrowserDestroyed()
+{
+    m_appletBrowser = 0;
 }
 
 void DesktopView::wheelEvent(QWheelEvent* event)
