@@ -24,6 +24,7 @@ Name[x-test]=xxKeramikxx
 ConfigPage=kstyle_keramik_config
 Comment=A style using alphablending
 Comment[bg]=Стил с алфа смесване
+Comment[ca]=Un estil que usa la mescla alfa
 Comment[de]=Ein Design mit Alphablending
 Comment[el]=Ένα στυλ που χρησιμοποιεί ανάμιξη άλφα
 Comment[et]=Alfablendingut kasutav stiil
