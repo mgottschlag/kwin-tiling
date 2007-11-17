@@ -32,6 +32,8 @@ namespace Plasma
     class AppletBrowser;
 }
 
+class DashboardView;
+
 class DesktopView : public Plasma::View
 {
     Q_OBJECT
@@ -45,6 +47,8 @@ public slots:
     void zoomOut();
     void showAppletBrowser();
     void appletBrowserDestroyed();
+    void toggleDashboard();
+    void adjustSize();
 
 protected:
     void wheelEvent(QWheelEvent *event);
@@ -52,6 +56,7 @@ protected:
 private:
     Plasma::ZoomLevel m_zoomLevel;
     Plasma::AppletBrowser *m_appletBrowser;
+    DashboardView *m_dashboard;
 };
 
 #endif // multiple inclusion guard

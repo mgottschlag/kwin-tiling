@@ -37,12 +37,14 @@
 #include "plasma/containment.h"
 #include "plasma/svg.h"
 
+#include "dashboardview.h"
 #include "plasmaapp.h"
 
 DesktopView::DesktopView(int screen, QWidget *parent)
     : Plasma::View(screen, PlasmaApp::self()->corona(), parent),
       m_zoomLevel(Plasma::DesktopZoom),
-      m_appletBrowser(0)
+      m_appletBrowser(0),
+      m_dashboard(0)
 {
     if (containment()) {
         connect(containment(), SIGNAL(zoomIn()), this, SLOT(zoomIn()));
@@ -53,6 +55,30 @@ DesktopView::DesktopView(int screen, QWidget *parent)
 
 DesktopView::~DesktopView()
 {
+    delete m_dashboard;
+}
+
+void DesktopView::toggleDashboard()
+{
+    if (!m_dashboard) {
+        m_dashboard = new DashboardView(screen(), 0);
+        m_dashboard->setGeometry(geometry());
+    }
+
+    m_dashboard->toggleVisibility();
+    kDebug() << "toggling dashboard for screen" << screen() << m_dashboard->isVisible();
+}
+
+void DesktopView::adjustSize()
+{
+    // adapt to screen resolution changes
+    QDesktopWidget *desktop = QApplication::desktop();
+    QRect geom = desktop->screenGeometry(screen());
+    setGeometry(geom);
+
+    if (m_dashboard) {
+        m_dashboard->setGeometry(geom);
+    }
 }
 
 void DesktopView::zoomIn()
@@ -88,6 +114,10 @@ void DesktopView::zoomOut()
 
 void DesktopView::showAppletBrowser()
 {
+    if (m_dashboard && m_dashboard->isVisible()) {
+        return;
+    }
+
     if (!m_appletBrowser) {
         m_appletBrowser = new Plasma::AppletBrowser(containment(), this);
         m_appletBrowser->setApplication();

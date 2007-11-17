@@ -49,8 +49,6 @@ RootWidget::RootWidget()
         DesktopView *view = new DesktopView(i, this);
         view->setGeometry(desktop->screenGeometry(i));
         m_desktops.append(view);
-
-        m_dashboards.append(0);
     }
 
     PlasmaApp::self()->corona();
@@ -70,14 +68,12 @@ void RootWidget::toggleDashboard()
         currentScreen = QApplication::desktop()->screenNumber(QCursor::pos());
     }
 
-    if( !m_dashboards[currentScreen] ) {
-        QDesktopWidget *desktop = QApplication::desktop();
-        DashBoardView *dashboard = new DashBoardView(currentScreen, desktop);
-        dashboard->setGeometry(desktop->screenGeometry(currentScreen));
-        m_dashboards[currentScreen] = dashboard;
+    if (currentScreen > m_desktops.count() - 1) {
+        kWarning() << "we don't have a DesktopView for the current screen!";
+        return;
     }
 
-    m_dashboards[currentScreen]->toggleVisibility();
+    m_desktops[currentScreen]->toggleDashboard();
 }
 
 void RootWidget::setAsDesktop(bool setAsDesktop)
@@ -121,11 +117,7 @@ void RootWidget::adjustSize()
     setGeometry(desktop->geometry());
 
     foreach (DesktopView *view, m_desktops) {
-        view->setGeometry(desktop->screenGeometry(view->screen()));
-    }
-
-    foreach (DashBoardView *view, m_dashboards) {
-        view->setGeometry(desktop->screenGeometry(view->screen()));
+        view->adjustSize();
     }
 }
 

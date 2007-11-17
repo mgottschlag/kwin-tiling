@@ -24,7 +24,6 @@
 #include <QWidget>
 
 class DesktopView;
-class DashBoardView;
 
 /**
  * @short The base widget that contains the desktop
@@ -61,7 +60,6 @@ class RootWidget : public QWidget
 
     private:
         QList<DesktopView*> m_desktops;
-        QList<DashBoardView*> m_dashboards;
 };
 
 #endif
