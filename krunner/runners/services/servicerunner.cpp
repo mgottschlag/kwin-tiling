@@ -87,7 +87,7 @@ void ServiceRunner::setupAction(const KService::Ptr &service, QAction *action)
     action->setText(service->name());
     action->setData(service->storageId());
 
-    if (service->icon().isEmpty()) {
+    if (!service->icon().isEmpty()) {
         action->setIcon(KIcon(service->icon()));
     }
 }
