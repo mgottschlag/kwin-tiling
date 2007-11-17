@@ -37,7 +37,6 @@ class PlasmaApp : public KUniqueApplication
 {
     Q_OBJECT
 public:
-    PlasmaApp();
     ~PlasmaApp();
 
     static PlasmaApp* self();
@@ -55,6 +54,7 @@ private Q_SLOTS:
     void setCrashHandler();
 
 private:
+    PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap);
     static void crashHandler(int signal);
     void createPanels();
 

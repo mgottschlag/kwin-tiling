@@ -46,7 +46,9 @@ int main(int argc, char **argv)
     options.add("nodesktop",ki18n("Starts plasma as an ordinary window rather than as the desktop."));
     KCmdLineArgs::addCmdLineOptions(options);
 
-    PlasmaApp app;
-    app.disableSessionManagement(); // autostarted
-    return app.exec();
+    PlasmaApp *app = PlasmaApp::self();
+    app->disableSessionManagement(); // autostarted
+    int rc = app->exec();
+    delete app;
+    return rc;
 }

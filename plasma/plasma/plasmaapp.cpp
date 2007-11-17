@@ -69,13 +69,11 @@ bool checkComposite()
         templ.screen  = screen;
         templ.depth   = 32;
         templ.c_class = TrueColor;
-        XVisualInfo *xvi = XGetVisualInfo(dpy, VisualScreenMask |
-                VisualDepthMask |
-                VisualClassMask,
-                &templ, &nvi);
+        XVisualInfo *xvi = XGetVisualInfo(dpy,
+                                          VisualScreenMask | VisualDepthMask | VisualClassMask,
+                                          &templ, &nvi);
         for (int i = 0; i < nvi; ++i) {
-            XRenderPictFormat *format = XRenderFindVisualFormat(dpy,
-                    xvi[i].visual);
+            XRenderPictFormat *format = XRenderFindVisualFormat(dpy, xvi[i].visual);
             if (format->type == PictTypeDirect && format->direct.alphaMask) {
                 visual = xvi[i].visual;
                 colormap = XCreateColormap(dpy, RootWindow(dpy, screen), visual, AllocNone);
@@ -85,18 +83,24 @@ bool checkComposite()
         }
     }
 
+    kDebug() << (argbVisual ? "Plasma has an argb visual" : "Plasma lacks an argb visual") << visual << colormap;
     kDebug() << ((KWindowSystem::compositingActive() && argbVisual) ? "Plasma can use COMPOSITE for effects"
-                                                                    : "Plasma is COMPOSITE-less");
+                                                                    : "Plasma is COMPOSITE-less") << "on" << dpy;
     return true;
 }
 
 PlasmaApp* PlasmaApp::self()
 {
+    if (!kapp) {
+        checkComposite();
+        return new PlasmaApp(dpy, argbVisual ? Qt::HANDLE(visual) : 0, argbVisual ? Qt::HANDLE(colormap) : 0);
+    }
+
     return qobject_cast<PlasmaApp*>(kapp);
 }
 
-PlasmaApp::PlasmaApp()
-    : KUniqueApplication(checkComposite() ? dpy : dpy, dpy ? Qt::HANDLE(visual) : 0, dpy ? Qt::HANDLE(colormap) : 0),
+PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
+    : KUniqueApplication(display, visual, colormap),
       m_root(0),
       m_corona(0)
 {
