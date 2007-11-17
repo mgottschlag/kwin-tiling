@@ -50,55 +50,43 @@ Display* dpy = 0;
 Colormap colormap = 0;
 Visual *visual = 0;
 bool argbVisual = false;
-bool PlasmaApp::s_hasCompositeManager = false;
 
 bool checkComposite()
 {
     dpy = XOpenDisplay(0); // open default display
-    if (!dpy)
-    {
+    if (!dpy) {
         kError() << "Cannot connect to the X server" << endl;
-        return true;
+        return false;
     }
 
-    PlasmaApp::s_hasCompositeManager = KWindowSystem::compositingActive();
 
-    if (PlasmaApp::s_hasCompositeManager)
-    {
-        int screen = DefaultScreen(dpy);
-        int eventBase, errorBase;
+    int screen = DefaultScreen(dpy);
+    int eventBase, errorBase;
 
-        if (XRenderQueryExtension(dpy, &eventBase, &errorBase))
-        {
-            int nvi;
-            XVisualInfo templ;
-            templ.screen  = screen;
-            templ.depth   = 32;
-            templ.c_class = TrueColor;
-            XVisualInfo *xvi = XGetVisualInfo(dpy, VisualScreenMask |
-                                                   VisualDepthMask |
-                                                   VisualClassMask,
-                                              &templ, &nvi);
-            for (int i = 0; i < nvi; ++i)
-            {
-                XRenderPictFormat *format = XRenderFindVisualFormat(dpy,
-                                                                    xvi[i].visual);
-                if (format->type == PictTypeDirect && format->direct.alphaMask)
-                {
-                    visual = xvi[i].visual;
-                    colormap = XCreateColormap(dpy, RootWindow(dpy, screen),
-                                               visual, AllocNone);
-                    argbVisual = true;
-                    break;
-                }
+    if (XRenderQueryExtension(dpy, &eventBase, &errorBase)) {
+        int nvi;
+        XVisualInfo templ;
+        templ.screen  = screen;
+        templ.depth   = 32;
+        templ.c_class = TrueColor;
+        XVisualInfo *xvi = XGetVisualInfo(dpy, VisualScreenMask |
+                VisualDepthMask |
+                VisualClassMask,
+                &templ, &nvi);
+        for (int i = 0; i < nvi; ++i) {
+            XRenderPictFormat *format = XRenderFindVisualFormat(dpy,
+                    xvi[i].visual);
+            if (format->type == PictTypeDirect && format->direct.alphaMask) {
+                visual = xvi[i].visual;
+                colormap = XCreateColormap(dpy, RootWindow(dpy, screen), visual, AllocNone);
+                argbVisual = true;
+                break;
             }
         }
-
-        PlasmaApp::s_hasCompositeManager = argbVisual;
     }
 
-    kDebug() << (PlasmaApp::s_hasCompositeManager ? "Plasma can use COMPOSITE for effects"
-                                                   : "Plasma is COMPOSITE-less");
+    kDebug() << ((KWindowSystem::compositingActive() && argbVisual) ? "Plasma can use COMPOSITE for effects"
+                                                                    : "Plasma is COMPOSITE-less");
     return true;
 }
 
@@ -116,8 +104,7 @@ PlasmaApp::PlasmaApp()
     QDBusConnection::sessionBus().registerObject("/App", this);
     notifyStartup(false);
 
-
-    // this same pattern is in KRunner (see workspace/krunner/restartingapplication.h)
+    // TODO: this same pattern is in KRunner (see workspace/krunner/restartingapplication.h)
     // would be interesting to see if this could be shared.
     if (!KCrash::crashHandler())
     {
@@ -197,7 +184,7 @@ Plasma::Corona* PlasmaApp::corona()
 
 bool PlasmaApp::hasComposite()
 {
-    return s_hasCompositeManager;
+    return argbVisual && KWindowSystem::compositingActive();
 }
 
 void PlasmaApp::notifyStartup(bool completed)

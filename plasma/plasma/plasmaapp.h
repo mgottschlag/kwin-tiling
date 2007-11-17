@@ -61,9 +61,6 @@ private:
     RootWidget *m_root;
     Plasma::Corona *m_corona;
     QList<PanelView*> m_panels;
-
-public:
-    static bool s_hasCompositeManager;
 };
 
 #endif // multiple inclusion guard
