@@ -79,7 +79,7 @@ public:
         view->installEventFilter(q); 
     }
 
-    void addView(const QString& name,const QIcon& icon,
+    void addView(const QString& name, const QIcon& icon,
                  QAbstractItemModel *model = 0, QAbstractItemView *view = 0)
     {
         view->setFrameStyle(QFrame::NoFrame);
@@ -95,9 +95,9 @@ public:
         //view->setCurrentIndex(QModelIndex());
         setupEventHandler(view);
 
-        connect(view,SIGNAL(customContextMenuRequested(QPoint)),q,SLOT(showViewContextMenu(QPoint)));
+        connect(view, SIGNAL(customContextMenuRequested(QPoint)), q, SLOT(showViewContextMenu(QPoint)));
 
-        contentSwitcher->addTab(icon,name);
+        contentSwitcher->addTab(icon, name);
         contentArea->addWidget(view);
     }
 
@@ -124,6 +124,7 @@ public:
         // Search Bar
         setupSearchView();
     }
+
     void setupLeaveView()
     {
         LeaveModel *model = new LeaveModel(q);
@@ -131,8 +132,9 @@ public:
         ItemDelegate *delegate = new ItemDelegate;
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
-        addView(i18n("Leave"),KIcon("application-exit"),model,view);
+        addView(i18n("Leave"), KIcon("application-exit"), model, view);
     }
+
     void setupFavoritesView()
     {
         FavoritesModel *model = new FavoritesModel(q);
@@ -140,12 +142,13 @@ public:
         ItemDelegate *delegate = new ItemDelegate;
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
-        addView(i18n("Favorites"),KIcon("bookmark"),model,view);
+        addView(i18n("Favorites"), KIcon("bookmark"), model, view);
 
-        connect(model,SIGNAL(rowsInserted(QModelIndex,int,int)),q,SLOT(focusFavoritesView()));
+        connect(model, SIGNAL(rowsInserted(QModelIndex, int, int)), q, SLOT(focusFavoritesView()));
 
         favoritesView = view;
     }
+
     void setupAllProgramsView() 
     {
         ApplicationModel *applicationModel = new ApplicationModel(q);
@@ -155,9 +158,10 @@ public:
         ItemDelegate *delegate = new ItemDelegate;
         applicationView->setItemDelegate(delegate);
 
-        addView(i18n("Applications"),KIcon("applications-other"),
-                    applicationModel,applicationView);
+        addView(i18n("Applications"), KIcon("applications-other"),
+                    applicationModel, applicationView);
     }
+
     void setupRecentView()
     {
         RecentlyUsedModel *model = new RecentlyUsedModel(q);
@@ -165,16 +169,17 @@ public:
         ItemDelegate *delegate = new ItemDelegate;
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
-        addView(i18n("Recently Used"),KIcon("view-calendar-week"),model,view);
+        addView(i18n("Recently Used"), KIcon("view-calendar-week"), model, view);
 
-        QAction *clearApplications = new QAction(KIcon("edit-clear-history"),i18n("Clear Recent Applications"),q);
-        QAction *clearDocuments = new QAction(KIcon("edit-clear-history"),i18n("Clear Recent Documents"),q);
+        QAction *clearApplications = new QAction(KIcon("edit-clear-history"), i18n("Clear Recent Applications"), q);
+        QAction *clearDocuments = new QAction(KIcon("edit-clear-history"), i18n("Clear Recent Documents"), q);
 
-        connect(clearApplications,SIGNAL(triggered()),model,SLOT(clearRecentApplications()));
-        connect(clearDocuments,SIGNAL(triggered()),model,SLOT(clearRecentDocuments()));
+        connect(clearApplications, SIGNAL(triggered()), model, SLOT(clearRecentApplications()));
+        connect(clearDocuments, SIGNAL(triggered()), model, SLOT(clearRecentDocuments()));
 
-        contextMenuFactory->setViewActions(view,QList<QAction*>() << clearApplications << clearDocuments);
+        contextMenuFactory->setViewActions(view, QList<QAction*>() << clearApplications << clearDocuments);
     }
+
     void setupSystemView()
     {
         SystemModel *model = new SystemModel(q);
@@ -182,9 +187,10 @@ public:
         ItemDelegate *delegate = new ItemDelegate;
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
-        
-        addView(i18n("My Computer"),systemIcon(),model,view);
+
+        addView(i18n("My Computer"), systemIcon(), model, view);
     }
+
     void setupSearchView()
     {
         SearchModel *model = new SearchModel(q);
@@ -198,31 +204,31 @@ public:
         view->setFocusPolicy(Qt::NoFocus);
         setupEventHandler(view);
 
-        connect(searchBar,SIGNAL(queryChanged(QString)),model,SLOT(setQuery(QString)));
-        connect(searchBar,SIGNAL(queryChanged(QString)),q,SLOT(focusSearchView(QString)));
+        connect(searchBar, SIGNAL(queryChanged(QString)), model, SLOT(setQuery(QString)));
+        connect(searchBar, SIGNAL(queryChanged(QString)), q, SLOT(focusSearchView(QString)));
 
         view->setContextMenuPolicy(Qt::CustomContextMenu);
-        connect(view,SIGNAL(customContextMenuRequested(QPoint)),q,SLOT(showViewContextMenu(QPoint)));
-        
+        connect(view, SIGNAL(customContextMenuRequested(QPoint)), q, SLOT(showViewContextMenu(QPoint)));
+
         contentArea->addWidget(view);
         searchView = view;
     }
+
     void registerUrlHandlers() 
     {
-        typedef UrlItemLauncher UIL;
-        
-        UIL::addGlobalHandler(UIL::ExtensionHandler,"desktop",new ServiceItemHandler);
-        UIL::addGlobalHandler(UIL::ProtocolHandler,"leave",new LeaveItemHandler);
+        UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ExtensionHandler, "desktop", new ServiceItemHandler);
+        UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ProtocolHandler, "leave", new LeaveItemHandler);
     }
+
     QIcon systemIcon()
     {
-       QList<Solid::Device> batteryList = Solid::Device::listFromType(Solid::DeviceInterface::Battery,QString());
-       
+       QList<Solid::Device> batteryList = Solid::Device::listFromType(Solid::DeviceInterface::Battery, QString());
+
        if (batteryList.isEmpty()) {
           return KIcon("computer");
        } else {
           return KIcon("computer-laptop");
-       } 
+       }
     }
 
     Launcher * const q;
@@ -237,7 +243,7 @@ public:
 };
 
 Launcher::Launcher(QWidget *parent)
-    : QWidget(parent,Qt::Window)
+    : QWidget(parent, Qt::Window)
     , d(new Private(this))
 {
     QVBoxLayout *layout = new QVBoxLayout;
@@ -251,8 +257,8 @@ Launcher::Launcher(QWidget *parent)
     d->contentSwitcher->installEventFilter(this);
     d->contentSwitcher->setIconSize(QSize(48,48));
     d->contentSwitcher->setShape(QTabBar::RoundedSouth);
-    connect( d->contentSwitcher , SIGNAL(currentChanged(int)) , d->contentArea , 
-             SLOT(setCurrentIndex(int)) );
+    connect(d->contentSwitcher, SIGNAL(currentChanged(int)),
+            d->contentArea, SLOT(setCurrentIndex(int)) );
     d->contextMenuFactory = new ContextMenuFactory(this);
 
     d->initTabs();
@@ -275,18 +281,22 @@ QSize Launcher::sizeHint() const
     size.rheight() += 100;
     return size;
 }
+
 void Launcher::setAutoHide(bool hide)
 {
     d->autoHide = hide;
 }
+
 bool Launcher::autoHide() const
 {
     return d->autoHide;
 }
+
 Launcher::~Launcher()
 {
     delete d;
 }
+
 void Launcher::focusSearchView(const QString& query)
 {
     if (!query.isEmpty()) {
@@ -295,6 +305,7 @@ void Launcher::focusSearchView(const QString& query)
         focusFavoritesView();
     }
 }
+
 void Launcher::focusFavoritesView()
 {
     d->contentSwitcher->setCurrentIndex(0);
@@ -364,15 +375,17 @@ bool Launcher::eventFilter(QObject *object, QEvent *event)
             return true;
         } 
     }
-    return QWidget::eventFilter(object,event);
+    return QWidget::eventFilter(object, event);
 }
+
 void Launcher::showViewContextMenu(const QPoint& pos)
 {
     QAbstractItemView *view = qobject_cast<QAbstractItemView*>(sender());
     if (view) {
-        d->contextMenuFactory->showContextMenu(view,d->contentArea->mapFromParent(pos));
+        d->contextMenuFactory->showContextMenu(view, d->contentArea->mapFromParent(pos));
     }
 }
+
 void Launcher::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) {
