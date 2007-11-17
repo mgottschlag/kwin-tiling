@@ -270,6 +270,12 @@ XKlavierAdaptor::startListening()
     return xkl_engine_start_listen(priv->engine, XKLL_TRACK_KEYBOARD_STATE);
 }
 
+int
+XKlavierAdaptor::stopListening()
+{
+    return xkl_engine_start_listen(priv->engine, XKLL_TRACK_KEYBOARD_STATE);
+}
+
 int 
 XKlavierAdaptor::filterEvents(XEvent* ev)
 {

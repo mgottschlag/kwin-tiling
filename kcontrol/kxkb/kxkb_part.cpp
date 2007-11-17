@@ -60,6 +60,11 @@ KxkbPart::KxkbPart( QWidget* parent,
         }
 }
 
+KxkbPart::~KxkbPart()
+{
+    delete m_kxkbCore;
+}
+
 bool 
 KxkbPart::setLayout(const QString& layoutPair)
 {

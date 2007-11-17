@@ -61,6 +61,8 @@ public:
     int getStatus() { return m_status; }
     bool x11EventFilter ( XEvent * event );
     void setWidget(KxkbWidget* kxkbWidet);
+    void cleanup();
+
 // DBUS:
 public slots:
     bool setLayout(const QString& layoutPair);
@@ -97,9 +99,12 @@ private:
     KxkbWidget *m_kxkbWidget;
     KActionCollection *actionCollection;
     
+    QWidget* m_dummyWidget;
+    
     void updateIndicator(int layout, int res);
     void initTray();
     void initKDEShortcut();
+    void stopKDEShortcut();
     void initReactions();
     void initLayoutGroups();
     void initSwitchingPolicy();

@@ -45,6 +45,7 @@ public:
 	XkbConfig getGroupNames();
 	int filterEvents(XEvent* ev);
 	int startListening();
+	int stopListening();
 	
 	static XKlavierAdaptor* getInstance(Display* dpy);
 		

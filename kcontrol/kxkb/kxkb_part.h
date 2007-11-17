@@ -32,7 +32,7 @@ class KxkbPart : public QWidget
  public:
   KxkbPart( QWidget* parent,
                const QList<QVariant>& args = QList<QVariant>() );
-  virtual ~KxkbPart() {}
+  virtual ~KxkbPart();
 
  protected slots:
   bool setLayout(const QString& layoutPair);

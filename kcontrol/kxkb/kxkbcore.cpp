@@ -76,7 +76,8 @@ KxkbCore::KxkbCore(int mode):
     m_layoutOwnerMap(NULL),
     m_rules(NULL),
     m_kxkbWidget(NULL),
-    actionCollection(NULL)
+    actionCollection(NULL),
+    m_dummyWidget(NULL)
 {
     m_status = 0;
 
@@ -92,6 +93,7 @@ KxkbCore::KxkbCore(int mode):
 
 KxkbCore::~KxkbCore()
 {
+    cleanup();
     delete actionCollection;
     delete m_kxkbWidget;
     delete m_rules;
@@ -119,7 +121,8 @@ int KxkbCore::newInstance()
 void KxkbCore::initReactions()
 {
     if( ! m_eventsHandled ) {
-        KApplication::kApplication()->installX11EventFilter(new DummyWidget(this));
+        m_dummyWidget = new DummyWidget(this);
+        KApplication::kApplication()->installX11EventFilter(m_dummyWidget);
 #ifdef HAVE_XKLAVIER
         XKlavierAdaptor::getInstance(QX11Info::display())->startListening();
 #endif
@@ -127,6 +130,21 @@ void KxkbCore::initReactions()
     }
 
     initKDEShortcut();
+}
+
+void KxkbCore::cleanup()
+{
+    kDebug() << "cleaning up";
+    if( m_dummyWidget != NULL ) {
+#ifdef HAVE_XKLAVIER
+        XKlavierAdaptor::getInstance(QX11Info::display())->stopListening();
+#endif
+        KApplication::kApplication()->removeX11EventFilter(m_dummyWidget);
+        delete m_dummyWidget;
+        m_dummyWidget = NULL;
+        m_eventsHandled = false;
+    }
+    stopKDEShortcut();
 }
 
 void KxkbCore::initKDEShortcut()
@@ -144,14 +162,19 @@ void KxkbCore::initKDEShortcut()
         kDebug() << "kde shortcut" << kAction->globalShortcut().toString();
     }
     else {
-        if( actionCollection != NULL ) {
-            KAction* kAction = static_cast<KAction*>(actionCollection->action(0));
-            disconnect(kAction, SIGNAL(triggered()), this, SLOT(toggled()));
-            disconnect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), this, SLOT(settingsChanged(int)));
-            actionCollection->clear();
-            delete actionCollection;
-            actionCollection = NULL;
-        }
+        stopKDEShortcut();
+    }
+}
+
+void KxkbCore::stopKDEShortcut()
+{
+    if( actionCollection != NULL ) {
+        KAction* kAction = static_cast<KAction*>(actionCollection->action(0));
+        disconnect(kAction, SIGNAL(triggered()), this, SLOT(toggled()));
+        disconnect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), this, SLOT(settingsChanged(int)));
+        actionCollection->clear();
+        delete actionCollection;
+        actionCollection = NULL;
     }
 }
 
