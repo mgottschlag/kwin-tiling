@@ -65,7 +65,7 @@ iniLoad( const char *fname )
 		return 0;
 	}
 	close( fd );
-	if (data[len - 1] != '\n')
+	if (data[len - 1] != '\n') /* iniEntry() needs this. */
 		data[len++] = '\n';
 	data[len] = 0;
 	return data;
@@ -96,6 +96,10 @@ iniSave( const char *data, const char *fname )
 #define apparr(d,s,n) do { memcpy (d, s, n); d += n; } while(0)
 #define appbyte(d,b) *d++ = b
 
+/*
+ * NOTE: this relies on the last line being \n-terminated - if it is not,
+ * it will read past the end of the buffer!
+ */
 char *
 iniEntry( char *data, const char *section, const char *key, const char *value )
 {
@@ -107,6 +111,7 @@ iniEntry( char *data, const char *section, const char *key, const char *value )
 		while (*p) {
 			for (; *p == ' ' || *p == '\t'; p++);
 			if (*p == '\n') {
+				/* Empty line, so don't advance insertion point. */
 				p++;
 				continue;
 			}
@@ -133,8 +138,7 @@ iniEntry( char *data, const char *section, const char *key, const char *value )
 					}
 				}
 			}
-			for (; *p != '\n'; p++);
-			p++;
+			while (*p++ != '\n');
 			if (insect)
 				secinsert = p;
 			else
