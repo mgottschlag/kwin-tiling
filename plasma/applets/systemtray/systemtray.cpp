@@ -25,11 +25,12 @@
 
 // KDE
 #include <KWindowSystem>
+#include <QGraphicsView>
 
 SystemTray::SystemTray(QObject *parent, const QVariantList &arguments)
     : Plasma::Applet(parent, arguments),
       m_systemTrayWidget(new SystemTrayWidget(0,
-                  Qt::FramelessWindowHint))
+                  Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint))
 {
     connect(m_systemTrayWidget, SIGNAL(sizeChanged()), SLOT(updateLayout()));
     m_systemTrayWidget->show();
@@ -57,7 +58,25 @@ Qt::Orientations SystemTray::expandingDirections() const
 QVariant SystemTray::itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value)
 {
     if (change == ItemPositionHasChanged) {
-        m_systemTrayWidget->move(scenePos().toPoint());
+        //figure out where this applet really is.
+        QPoint realPos(0, 0); //start with a default that's at least visible
+        QGraphicsScene *s=scene();
+        if (s) {
+            QList<QGraphicsView *> viewlist = s->views();
+            foreach (QGraphicsView *v, viewlist) {
+                QRectF r=v->sceneRect();
+                //now find out if this applet is actually on here
+                //I consider it "on here" if our pos is within the rect
+                //but there may be other valid ways to do this
+                if (r.contains(scenePos())) {
+                    kDebug() << "using view" << v;
+                    QPoint p=v->mapFromScene(scenePos());
+                    realPos = v->mapToGlobal(p);
+                    break; //no, I don't care if other views show it
+                }
+            }
+        }
+        m_systemTrayWidget->move(realPos);
     }
     return Plasma::Applet::itemChange(change, value);
 }
