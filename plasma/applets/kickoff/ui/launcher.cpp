@@ -278,7 +278,11 @@ QSize Launcher::sizeHint() const
     // height to allow X number of items to be visible in the Favorites
     // view (which shows initially on startup)
     QSize size = QWidget::sizeHint();
-    size.rheight() += 100;
+
+    // the extra 2 pixels are to make room for the content margins; see moveEvent
+    size.rwidth() += 2;
+    size.rheight() += 102;
+
     return size;
 }
 
