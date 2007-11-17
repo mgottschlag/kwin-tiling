@@ -193,7 +193,6 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
       m_lockAction(0),
       m_logoutAction(0),
       m_toolbox(0),
-      m_appletBrowser(0),
       m_background(0),
       m_bitmapBackground(0),
       m_wallpaperPath(0)
@@ -222,17 +221,17 @@ void DefaultDesktop::init()
     //m_toolbox->updateGeometry();
     m_toolbox->setPos(geometry().width() - m_toolbox->boundingRect().width(), 0);
 
-    Plasma::PushButton *tool = new Plasma::PushButton(i18n("Add Widgets"), this);
+    Plasma::PushButton *tool = new Plasma::PushButton(i18n("Add Widgets"));
     tool->resize(tool->sizeHint());
     m_toolbox->addTool(tool);
-    connect(tool, SIGNAL(clicked()), this, SLOT(launchAppletBrowser()));
+    connect(tool, SIGNAL(clicked()), this, SIGNAL(showAddWidgets()));
 
-    tool = new Plasma::PushButton(i18n("Zoom In"), this);
+    tool = new Plasma::PushButton(i18n("Zoom In"));
     connect(tool, SIGNAL(clicked()), this, SIGNAL(zoomIn()));
     tool->resize(tool->sizeHint());
     m_toolbox->addTool(tool);
 
-    tool = new Plasma::PushButton(i18n("Zoom Out"), this);
+    tool = new Plasma::PushButton(i18n("Zoom Out"));
     connect(tool, SIGNAL(clicked()), this, SIGNAL(zoomOut()));
     tool->resize(tool->sizeHint());
     m_toolbox->addTool(tool);
@@ -257,27 +256,6 @@ void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
             (*m_bitmapBackground) = m_bitmapBackground->scaled(geom.size());
         }
     }
-}
-
-void DefaultDesktop::launchAppletBrowser()
-{
-    if (!m_appletBrowser) {
-        m_appletBrowser = new Plasma::AppletBrowser(this, scene()->views().isEmpty() ? 0 :
-                                                                     scene()->views()[0]);
-        m_appletBrowser->setApplication();
-        m_appletBrowser->setAttribute(Qt::WA_DeleteOnClose);
-        m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
-        connect(m_appletBrowser, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
-    }
-
-    KWindowSystem::setOnDesktop(m_appletBrowser->winId(), KWindowSystem::currentDesktop());
-    m_appletBrowser->show();
-    KWindowSystem::activateWindow(m_appletBrowser->winId());
-}
-
-void DefaultDesktop::appletBrowserDestroyed()
-{
-    m_appletBrowser = 0;
 }
 
 void DefaultDesktop::runCommand()
@@ -316,7 +294,7 @@ QList<QAction*> DefaultDesktop::contextActions()
 
     if (!m_appletBrowserAction) {
         m_appletBrowserAction = new QAction(i18n("Add Widgets..."), this);
-        connect(m_appletBrowserAction, SIGNAL(triggered(bool)), this, SLOT(launchAppletBrowser()));
+        connect(m_appletBrowserAction, SIGNAL(triggered(bool)), this, SIGNAL(showAddWidgets()));
 
         m_runCommandAction = new QAction(i18n("Run Command..."), this);
         connect(m_runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));

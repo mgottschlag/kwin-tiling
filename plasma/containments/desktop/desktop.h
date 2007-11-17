@@ -102,13 +102,12 @@ public:
 signals:
     void zoomIn();
     void zoomOut();
+    void showAddWidgets();
 
 protected Q_SLOTS:
-    void launchAppletBrowser();
     void runCommand();
     void lockScreen();
     void logout();
-    void appletBrowserDestroyed();
 
 private:
     QAction *m_appletBrowserAction;
@@ -116,7 +115,6 @@ private:
     QAction *m_lockAction;
     QAction *m_logoutAction;
     ToolBox *m_toolbox;
-    Plasma::AppletBrowser *m_appletBrowser;
     Plasma::Svg *m_background;
     QPixmap* m_bitmapBackground;
     QString m_wallpaperPath;
