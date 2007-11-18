@@ -42,7 +42,7 @@ public:
 
     // Ion plugin methods
     IonInterface* Ion(const QString& name) const;  // Returns an Ion instance.
-    IonInterface* loadIon(const KService::Ptr& service);    // Loads an Ion plugin.
+    IonInterface* loadIon(const QString& pluginName);    // Loads an Ion plugin.
     void unloadIon(const QString& name);           // Unloads an Ion plugin.
     KService::List knownIons();                // Returns a list of Ion plugin names.
 

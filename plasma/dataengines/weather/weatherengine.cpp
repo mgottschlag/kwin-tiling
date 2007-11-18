@@ -48,6 +48,16 @@ public:
         return this->m_ions[ionName];
     }
 
+    QString ionNameForSource(const QString& source) 
+    {
+        int offset = source.indexOf(':'); 
+        if (offset < 1) {
+            return QString();
+        }
+  
+        return QString(source.left(offset));
+    }
+
     IonInterface::IonDict m_ions;
     KDateTime m_localTime;
 };
@@ -64,10 +74,21 @@ IonInterface* WeatherEngine::Ion(const QString& name) const
 }
 
 // Loads an Ion plugin given a plugin name found via KService.
-IonInterface* WeatherEngine::loadIon(const KService::Ptr& service)
+IonInterface* WeatherEngine::loadIon(const QString& plugName)
 {
     IonInterface *ion = 0;
-    QString plugName = service->property("X-IonName").toString();
+    KService::Ptr foundPlugin;
+  
+      
+   foreach(KService::Ptr service, knownIons()) {
+      if (service->property("X-IonName").toString() == plugName) {
+          kDebug() << "!!!!!!!!!!!!!!!! FOUND PLUGIN TO LOAD: " << plugName;
+          foundPlugin = service;
+          break;
+      } 
+   }
+  
+    // Check if the plugin is already loaded if so, return the plugin thats already loaded. 
     IonInterface::IonDict::const_iterator it = d->m_ions.find(plugName);
 
     if (it != d->m_ions.end()) {
@@ -79,7 +100,7 @@ IonInterface* WeatherEngine::loadIon(const KService::Ptr& service)
     QString error;
 
     // Load the Ion plugin, store it into a QMap to handle multiple ions.
-    ion = service->createInstance<IonInterface>(0, QVariantList(), &error);
+    ion = foundPlugin->createInstance<IonInterface>(0, QVariantList(), &error);
     ion->setObjectName(plugName);
     if (!ion) {
         kDebug() << "weatherengine: Couldn't load ion \"" << plugName << "\"!" << error;
@@ -89,10 +110,7 @@ IonInterface* WeatherEngine::loadIon(const KService::Ptr& service)
     // Increment counter of ions.
     ion->ref();
 
-    // Set the Ion's long name
-    //ion->setObjectName(offers.first()->name());
     connect(ion, SIGNAL(newSource(QString)), this, SLOT(newIonSource(QString)));
-    //connect(ion, SIGNAL(sourceRemoved(QString)), this, SLOT(removeIonSource(QString)));
     connect(this, SIGNAL(sourceRemoved(QString)), this, SLOT(removeIonSource(QString)));
 
     /* Set properties for the ion
@@ -116,9 +134,10 @@ IonInterface* WeatherEngine::loadIon(const KService::Ptr& service)
 void WeatherEngine::unloadIon(const QString &name)
 {
     IonInterface *ion = Ion(name);
-    if (ion) {
-        ion->deref();
 
+    if (ion) {
+        kDebug() << "Unloading Plugin: " << name;
+        ion->deref();
         if (!ion->isUsed()) {
             d->m_ions.remove(name);
             delete ion;
@@ -159,6 +178,13 @@ void WeatherEngine::removeIonSource(const QString& source)
     kDebug() << "Removing source from WeatherEngine: " << source;
     kDebug() << "Plugin to remove source from: " << d->ionForSource(source)->objectName();
     d->ionForSource(source)->removeSource(source);
+    
+    // If plugin has no more sources let's unload the plugin
+
+    if (d->ionForSource(source)->isEmpty()) {
+        kDebug() << "No more Sources found for this plugin let's unload it!";
+        unloadIon(d->ionNameForSource(source)); 
+    }
 }
 
 void WeatherEngine::dataUpdated(const QString& source, Plasma::DataEngine::Data data)
@@ -175,13 +201,9 @@ WeatherEngine::WeatherEngine(QObject *parent, const QVariantList& args)
 
     // Set any local properties for Ion to use
     d->m_localTime = KDateTime::currentDateTime(KDateTime::LocalZone);
-
-    /* FIXME: For now we just load them all as we find them, we'll need to make this configurable
-              somehow. No point in loading all plugins if your not interested in certain cities.
-    */
-    foreach(KService::Ptr service, knownIons()) {
-        loadIon(service); 
-    }
+    
+    // Get the list of available plugins but don't load them
+    knownIons();
 }
 
 // dtor
@@ -200,8 +222,11 @@ bool WeatherEngine::sourceRequested(const QString &source)
     IonInterface *ion = d->ionForSource(source);
 
     if (!ion) {
-        kDebug() << "sourceRequested(): INVALID ION!!!!!!!!!!";
-        return false;
+        kDebug() << "sourceRequested(): No Ion Found, load it up!";
+        ion = loadIon(d->ionNameForSource(source));
+        if (!ion) {
+            return false;
+        }
     }
 
     kDebug() << "About to connect Source" << source << " To the Ion!";
