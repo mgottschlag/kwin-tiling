@@ -38,6 +38,7 @@ IonInterface::IonInterface(QObject *parent)
         : Plasma::DataEngine(parent),
         d(new Private(this))
 {
+d->ref = 0;
 }
 
 // Increment reference counter
