@@ -232,11 +232,6 @@ void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
     }
 
     painter->drawPixmap(leftOffset, topOffset, *m_cachedBackground);
-    painter->setPen(Qt::red);
-    painter->drawRect(QRect(QPoint(0, 0), m_cachedBackground->size() - QSize(1, 1)));
-    painter->setPen(Qt::green);
-    painter->drawRect(QRect(leftOffset, contentTop, leftWidth, contentHeight));
-    painter->drawRect(QRect(rightOffset, topOffset,rightWidth, topHeight));
 }
 
 K_EXPORT_PLASMA_APPLET(panel, Panel)
