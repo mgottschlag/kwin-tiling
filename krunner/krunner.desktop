@@ -4,6 +4,7 @@ X-DBUS-StartupType=wait
 Name=Command Runner
 Name[ar]=منفذ الأمر
 Name[bg]=Команда
+Name[ca]=Execució d'ordres
 Name[csb]=Pòlét
 Name[de]=Programmstarter
 Name[el]=Εκτελεστής εντολών

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=SolidDevice Data Engine
 Name[ca]=Motor de dades del SolidDevice
+Name[de]=Solid-Geräte-Treiber
 Name[el]=Μηχανή δεδομένων συσκευών Solid
 Name[et]=SolidDevice'i andmete mootor
 Name[ga]=Inneall Sonraí SolidDevice
@@ -11,6 +12,7 @@ Name[nds]=SolidDevice-Hanteerkarn
 Name[ne]=ठोस यन्त्र डेटा इन्जिन
 Name[nl]=SolidDevice (gegevensengine)
 Name[nn]=Datamotor for SolidDevice
+Name[pa]=ਸੋਲਡ-ਡੀਵਾਇਸ ਡਾਟਾ ਇੰਜਣ
 Name[pt]=Motor de Dados do SolidDevice
 Name[pt_BR]=Mecanismo de Dados SolidDevice
 Name[sr]=Мотор Солида
@@ -31,6 +33,7 @@ Comment[nds]=SolidDevice-Daten för Plasmoiden
 Comment[ne]=प्लासमोइड्सका लागि ठोस यन्त्र डेटा
 Comment[nl]=SolidDevice-gegevens voor Plasmoids
 Comment[nn]=SolidDevice-data for plasmoidar
+Comment[pa]=ਪਲਾਜਮੋਡੀਸ ਲਈ ਸੋਲਡ-ਡੀਵਾਇਸ ਡਾਟਾ
 Comment[pt]=Dados do SolidDevice para os Plasmóides
 Comment[pt_BR]=Dados de SolidDevice para os Plasmoids
 Comment[sr]=Подаци из Солида за плазмоиде

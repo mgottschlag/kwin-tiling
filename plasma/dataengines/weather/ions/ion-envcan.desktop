@@ -1,15 +1,18 @@
 [Desktop Entry]
 Name=Environment Canada
+Name[ca]=Medi ambient del Canadà
 Name[el]=Περιβάλλον Καναδά
 Name[km]=បរិស្ថាន​ប្រទេស​កាណាដា
 Name[ko]=캐나다 환경부
 Name[nds]=Ümwelt Kanada
 Name[ne]=वातावरण क्यानाडा
+Name[pa]=ਇੰਨਵਾਇਰਮੈਂਟ ਕੇਨੈਡਾ
 Name[sr]=Природна средина Канада
 Name[sr@latin]=Prirodna sredina Kanada
 Name[x-test]=xxEnvironment Canadaxx
 Name[zh_CN]=加拿大环境
 Comment=XML Data from Environment Canada
+Comment[ca]=Dades XML des de Medi ambient del Canadà
 Comment[el]=Δεδομένα XML για το περιβάλλον του Καναδά
 Comment[et]=Environment Canada XML-andmed
 Comment[ga]=Sonraí XML ó Environment Canada
@@ -22,6 +25,7 @@ Comment[nds]=XML-Daten vun Ümwelt Kanada
 Comment[ne]=वातावरण क्यानाडाबाट एक्सएमएल डेटा
 Comment[nl]=XML-gegevens van Environment Canada
 Comment[nn]=XML-data frå Environment Canada
+Comment[pa]=ਇੰਨਵਾਇਰਨਮੈਂਟ ਕੇਨੈਡਾ ਤੋਂ XML ਡਾਟਾ
 Comment[pt]=Dados em XML do Environment Canada
 Comment[pt_BR]=Dados em XML do Environment Canada
 Comment[sr]=ИксМЛ подаци Природне средине Канада

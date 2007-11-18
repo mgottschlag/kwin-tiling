@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Powermanagement Data Engine
 Name[ca]=Motor de dades per a la gestió de l'energia
+Name[de]=Energieverwaltungs-Treiber
 Name[el]=Μηχανή δεδομένων διαχείρισης ενέργειας
 Name[et]=Voolutarbe andmete mootor
 Name[ga]=Inneall Sonraí Powermanagement
@@ -12,6 +13,7 @@ Name[nds]=Stroomkuntrull-Hanteerkarn
 Name[ne]=पावर व्यवस्थापन डेटा इन्जिन
 Name[nl]=Energiebeheer (gegevensengine)
 Name[nn]=Datamotor for straumstyring
+Name[pa]=ਪਾਵਰ-ਮੈਨੇਜ਼ਮੈਂਟ ਡਾਟਾ ਇੰਜਣ
 Name[pt]=Motor de Dados de Gestão de Energia
 Name[pt_BR]=Mecanismo de Dados de Gerenciamento de Energia
 Name[sr]=Мотор за управљање енергијом

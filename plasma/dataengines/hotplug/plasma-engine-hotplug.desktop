@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Hotplug Event Data Engine
 Name[ca]=Motor de dades d'esdeveniments de connexió en calent
+Name[de]=Treiber für Hotplug-Ereignisse
 Name[el]=Μηχανή δεδομένων γεγονότων άμεσης σύνδεσης
 Name[et]=Hotplug-sündmuste andmete mootor
 Name[ja]=Hotplug イベントデータエンジン
@@ -11,6 +12,7 @@ Name[nds]=Tokoppel-Hanteerkarn
 Name[ne]=हटप्लग घटना डेटा इन्जिन
 Name[nl]=Hotplug-gebeurtenis (gegevensengine)
 Name[nn]=Datamotor for Hotplug-hendingar
+Name[pa]=ਹਾਟਪਲੱਗ ਈਵੈਂਟ ਡਾਟਾ ਇੰਜਣ
 Name[pt]=Motor de Dados de Eventos do Hotplug
 Name[pt_BR]=Mecanismo de Dados de Eventos do Hotplug
 Name[sr]=Мотор врућег укључивања
