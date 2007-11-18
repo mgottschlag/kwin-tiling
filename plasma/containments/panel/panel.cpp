@@ -142,23 +142,49 @@ void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
     QSize s = geometry().toRect().size();
     m_background->resize();
 
-    const int topHeight = m_background->elementSize("top").height();
-    const int topWidth = m_background->elementSize("top").width();
-    const int leftWidth = m_background->elementSize("left").width();
-    const int leftHeight = m_background->elementSize("left").height();
-    const int rightWidth = m_background->elementSize("right").width();
-    const int bottomHeight = m_background->elementSize("bottom").height();
-
-    const int topOffset = 0;
-    const int leftOffset = 0;
-    const int contentWidth = s.width() - leftWidth - rightWidth;
-    const int contentHeight = s.height() - topHeight - bottomHeight;
-    const int rightOffset = s.width() - rightWidth;
-    const int bottomOffset = s.height() - bottomHeight;
-    const int contentTop = topHeight;
-    const int contentLeft = leftWidth;
-
     if (!m_cachedBackground || m_cachedBackground->size() != s) {
+        bool drawTop = true;
+        bool drawLeft = true;
+        bool drawRight = true;
+        bool drawBottom = true;
+
+        //FIXME: panels with less than 100% width need to paint edges, but full width panels
+        //       shouldn't
+        switch (location()) {
+            case TopEdge:
+                drawTop = false;
+                break;
+            case LeftEdge:
+                drawLeft = false;
+                break;
+            case RightEdge:
+                drawRight = false;
+                break;
+            case BottomEdge:
+                drawBottom = false;
+                break;
+            default:
+                break;
+        }
+
+        const int topHeight = drawTop ? m_background->elementSize("top").height() : 0;
+        const int topWidth = drawTop ? m_background->elementSize("top").width() : 0;
+        const int leftWidth = drawLeft ? m_background->elementSize("left").width() : 0;
+        const int leftHeight = drawLeft ? m_background->elementSize("left").height(): 0;
+        const int rightWidth = drawRight ? m_background->elementSize("right").width() : 0;
+        const int rightHeight = drawRight ? m_background->elementSize("right").height() : 0;
+        const int bottomHeight = drawBottom ? m_background->elementSize("bottom").height() : 0;
+        const int bottomWidth = drawBottom ? m_background->elementSize("bottom").height() : 0;
+
+        const int topOffset = 0;
+        const int leftOffset = 0;
+        const int contentWidth = s.width() - leftWidth - rightWidth;
+        const int contentHeight = s.height() - topHeight - bottomHeight;
+        const int rightOffset = s.width() - rightWidth;
+        const int bottomOffset = s.height() - bottomHeight;
+        const int contentTop = topHeight;
+        const int contentLeft = leftWidth;
+
         delete m_cachedBackground;
         m_cachedBackground = new QPixmap(s);
 
@@ -177,53 +203,86 @@ void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
             m_background->resize();
         }
 
-        m_background->paint(&p, QRect(leftOffset, topOffset, leftWidth, topHeight), "topleft");
-        m_background->paint(&p, QRect(rightOffset, topOffset, rightWidth, topHeight), "topright");
-        m_background->paint(&p, QRect(leftOffset, bottomOffset, leftWidth, bottomHeight), "bottomleft");
-        m_background->paint(&p, QRect(rightOffset, bottomOffset, rightWidth, bottomHeight), "bottomright");
+        if (drawTop) {
+            if (drawLeft) {
+                m_background->paint(&p, QRect(leftOffset, topOffset, leftWidth, topHeight), "topleft");
+            }
 
-        if (false && m_background->elementExists("hint-stretch-borders")) {
-            m_background->paint(&p, QRect(leftOffset, contentTop, leftWidth, contentHeight), "left");
-            m_background->paint(&p, QRect(rightOffset, contentTop, rightWidth, contentHeight), "right");
-            m_background->paint(&p, QRect(contentLeft, topOffset, contentWidth, topHeight), "top");
-            m_background->paint(&p, QRect(contentLeft, bottomOffset, contentWidth, bottomHeight), "bottom");
+            if (drawRight) {
+                m_background->paint(&p, QRect(rightOffset, topOffset, rightWidth, topHeight), "topright");
+            }
+        }
+
+        if (drawBottom) {
+            if (drawLeft) {
+                m_background->paint(&p, QRect(leftOffset, bottomOffset, leftWidth, bottomHeight), "bottomleft");
+            }
+
+            if (drawRight) {
+                m_background->paint(&p, QRect(rightOffset, bottomOffset, rightWidth, bottomHeight), "bottomright");
+            }
+        }
+
+        if (m_background->elementExists("hint-stretch-borders")) {
+            if (drawLeft) {
+                m_background->paint(&p, QRect(leftOffset, contentTop, leftWidth, contentHeight), "left");
+            }
+
+            if (drawRight) {
+                m_background->paint(&p, QRect(rightOffset, contentTop, rightWidth, contentHeight), "right");
+            }
+
+            if (drawTop) {
+                m_background->paint(&p, QRect(contentLeft, topOffset, contentWidth, topHeight), "top");
+            }
+
+            if (drawBottom) {
+                m_background->paint(&p, QRect(contentLeft, bottomOffset, contentWidth, bottomHeight), "bottom");
+            }
         } else {
-            QPixmap left(leftWidth, leftHeight);
-            left.fill(Qt::transparent);
-            {
-                QPainter sidePainter(&left);
-                sidePainter.setCompositionMode(QPainter::CompositionMode_Source);
-                m_background->paint(&sidePainter, QPoint(0, 0), "left");
+            if (drawLeft) {
+                QPixmap left(leftWidth, leftHeight);
+                left.fill(Qt::transparent);
+                {
+                    QPainter sidePainter(&left);
+                    sidePainter.setCompositionMode(QPainter::CompositionMode_Source);
+                    m_background->paint(&sidePainter, QPoint(0, 0), "left");
+                }
+                p.drawTiledPixmap(QRect(leftOffset, contentTop, leftWidth, contentHeight), left);
             }
-            p.drawTiledPixmap(QRect(leftOffset, contentTop, leftWidth, contentHeight), left);
 
-            QPixmap right(rightWidth, leftHeight);
-            right.fill(Qt::transparent);
-            {
-                QPainter sidePainter(&right);
-                sidePainter.setCompositionMode(QPainter::CompositionMode_Source);
-                m_background->paint(&sidePainter, QPoint(0, 0), "right");
+            if (drawRight) {
+                QPixmap right(rightWidth, rightHeight);
+                right.fill(Qt::transparent);
+                {
+                    QPainter sidePainter(&right);
+                    sidePainter.setCompositionMode(QPainter::CompositionMode_Source);
+                    m_background->paint(&sidePainter, QPoint(0, 0), "right");
+                }
+                p.drawTiledPixmap(QRect(rightOffset, contentTop, rightWidth, contentHeight), right);
             }
-            p.drawTiledPixmap(QRect(rightOffset, contentTop, rightWidth, contentHeight), right);
 
-            QPixmap top(topWidth, topHeight);
-            top.fill(Qt::transparent);
-            {
-                QPainter sidePainter(&top);
-                sidePainter.setCompositionMode(QPainter::CompositionMode_Source);
-                m_background->paint(&sidePainter, QPoint(0, 0), "top");
+            if (drawTop) {
+                QPixmap top(topWidth, topHeight);
+                top.fill(Qt::transparent);
+                {
+                    QPainter sidePainter(&top);
+                    sidePainter.setCompositionMode(QPainter::CompositionMode_Source);
+                    m_background->paint(&sidePainter, QPoint(0, 0), "top");
+                }
+                p.drawTiledPixmap(QRect(contentLeft, topOffset, contentWidth, topHeight), top);
             }
-            p.drawTiledPixmap(QRect(contentLeft, topOffset, contentWidth, topHeight), top);
 
-            QPixmap bottom(topWidth, bottomHeight);
-            bottom.fill(Qt::transparent);
-            {
-                QPainter sidePainter(&bottom);
-                sidePainter.setCompositionMode(QPainter::CompositionMode_Source);
-                m_background->paint(&sidePainter, QPoint(0, 0), "bottom");
+            if (drawBottom) {
+                QPixmap bottom(bottomWidth, bottomHeight);
+                bottom.fill(Qt::transparent);
+                {
+                    QPainter sidePainter(&bottom);
+                    sidePainter.setCompositionMode(QPainter::CompositionMode_Source);
+                    m_background->paint(&sidePainter, QPoint(0, 0), "bottom");
+                }
+                p.drawTiledPixmap(QRect(contentLeft, bottomOffset, contentWidth, bottomHeight), bottom);
             }
-            p.drawTiledPixmap(QRect(contentLeft, bottomOffset, contentWidth, bottomHeight), bottom);
-
         }
 
         // re-enable this once Qt's svg rendering is un-buggered
