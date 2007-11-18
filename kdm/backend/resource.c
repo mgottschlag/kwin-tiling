@@ -395,7 +395,7 @@ loadDisplayResources( struct display *d )
 
 	if (Setjmp( cnftalk.errjmp ))
 		return -1; /* may memleak */
-	if ((ret = startConfig( GC_gDisplay, &d->cfg.dep, FALSE )) <= 0)
+	if ((ret = startConfig( GC_gDisplay, &d->cfg.dep, False )) <= 0)
 		return ret;
 	gSendStr( d->name );
 	gSendStr( d->class2 );

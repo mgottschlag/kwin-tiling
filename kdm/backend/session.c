@@ -169,11 +169,11 @@ autoLogon( time_t tdiff )
 static const struct {
   int vcode, echo, ndelay;
 } grqs[] = {
-	{ V_GET_TEXT, TRUE, FALSE },
-	{ V_GET_TEXT, FALSE, FALSE },
-	{ V_GET_TEXT, TRUE, FALSE },
-	{ V_GET_TEXT, FALSE, FALSE },
-	{ V_GET_TEXT, FALSE, TRUE },
+	{ V_GET_TEXT, True, False },
+	{ V_GET_TEXT, False, False },
+	{ V_GET_TEXT, True, False },
+	{ V_GET_TEXT, False, False },
+	{ V_GET_TEXT, False, True },
 	{ V_GET_BINARY, 0, 0 }
 };
 
@@ -188,7 +188,7 @@ conv_interact( int what, const char *prompt )
 		unsigned const char *up = (unsigned const char *)prompt;
 		int len = up[3] | (up[2] << 8) | (up[1] << 16) | (up[0] << 24);
 		gSendArr( len, prompt );
-		gSendInt( FALSE ); /* ndelay */
+		gSendInt( False ); /* ndelay */
 		return gRecvArr( &len );
 	} else {
 		gSendStr( prompt );
@@ -242,7 +242,7 @@ ctrlGreeterWait( int wreply )
 #endif
 
 	if (Setjmp( mstrtalk.errjmp )) {
-		closeGreeter( TRUE );
+		closeGreeter( True );
 		sessionExit( EX_UNMANAGE_DPY );
 	}
 
@@ -365,11 +365,11 @@ ctrlGreeterWait( int wreply )
 			break;
 		case G_VerifyRootOK:
 			debug( "G_VerifyRootOK\n" );
-			rootok = TRUE;
+			rootok = True;
 			goto doverify;
 		case G_Verify:
 			debug( "G_Verify\n" );
-			rootok = FALSE;
+			rootok = False;
 		  doverify:
 			if (curuser) { free( curuser ); curuser = 0; }
 			if (curpass) { free( curpass ); curpass = 0; }
@@ -386,7 +386,7 @@ ctrlGreeterWait( int wreply )
 		case G_AutoLogin:
 			debug( "G_AutoLogin\n" );
 			doAutoLogon();
-			if (verify( conv_auto, FALSE )) {
+			if (verify( conv_auto, False )) {
 				debug( " -> return success\n" );
 				gSendInt( V_OK );
 			} else
@@ -439,9 +439,9 @@ openGreeter()
 	if (gOpen( &grtproc, (char **)0, "_greet", env, name, &td->gpipe ))
 		sessionExit( EX_UNMANAGE_DPY );
 	freeStrArr( env );
-	if ((cmd = ctrlGreeterWait( TRUE ))) {
+	if ((cmd = ctrlGreeterWait( True ))) {
 		logError( "Received unknown or unexpected command %d from greeter\n", cmd );
-		closeGreeter( TRUE );
+		closeGreeter( True );
 		sessionExit( EX_UNMANAGE_DPY );
 	}
 	debug( "%s ready\n", name );
@@ -487,7 +487,7 @@ finishGreet()
 	if (grtproc.pid > 0) {
 		gSet( &grttalk );
 		gSendInt( V_OK );
-		if ((ret = closeGreeter( FALSE )) != EX_NORMAL) {
+		if ((ret = closeGreeter( False )) != EX_NORMAL) {
 			logError( "Abnormal greeter termination, code %d, sig %d\n",
 			          wcCode( ret ), wcSig( ret ) );
 			sessionExit( EX_RESERVER_DPY );
@@ -554,7 +554,7 @@ manageSession( struct display *d )
 	td = d;
 	debug( "manageSession %s\n", d->name );
 	if ((ex = Setjmp( abortSession ))) {
-		closeGreeter( TRUE );
+		closeGreeter( True );
 		if (clientPid > 0)
 			abortClient( clientPid );
 		sessionExit( ex );
@@ -577,13 +577,13 @@ manageSession( struct display *d )
 
 	tdiff = time( 0 ) - td->hstent->lastExit - td->openDelay;
 	if (autoLogon( tdiff )) {
-		if (!verify( conv_auto, FALSE ))
+		if (!verify( conv_auto, False ))
 			goto gcont;
 	} else {
 	  regreet:
 		openGreeter();
 		if (Setjmp( idleTOJmp )) {
-			closeGreeter( TRUE );
+			closeGreeter( True );
 			sessionExit( EX_NORMAL );
 		}
 		Signal( SIGALRM, IdleTimeout );
@@ -599,7 +599,7 @@ manageSession( struct display *d )
 			           (tdiff > 0 || td->autoAgain)) ?
 			              G_GreetTimed : G_Greet );
 		  gcont:
-			cmd = ctrlGreeterWait( TRUE );
+			cmd = ctrlGreeterWait( True );
 #ifdef XDMCP
 		  recmd:
 			if (cmd == G_DChoose) {
@@ -614,10 +614,10 @@ manageSession( struct display *d )
 			if (cmd == G_Ready)
 				break;
 			if (cmd == -2)
-				closeGreeter( FALSE );
+				closeGreeter( False );
 			else {
 				logError( "Received unknown command %d from greeter\n", cmd );
-				closeGreeter( TRUE );
+				closeGreeter( True );
 			}
 			goto regreet;
 		}
@@ -667,9 +667,9 @@ manageSession( struct display *d )
 	if (gRecvInt()) {
 		openGreeter();
 		gSendInt( G_ConfShutdown );
-		if ((cmd = ctrlGreeterWait( TRUE )) != G_Ready) {
+		if ((cmd = ctrlGreeterWait( True )) != G_Ready) {
 			logError( "Received unknown command %d from greeter\n", cmd );
-			closeGreeter( TRUE );
+			closeGreeter( True );
 		}
 	}
 
@@ -694,7 +694,7 @@ loadXloginResources()
 			freeStrArr( args );
 		}
 		freeStrArr( env );
-		xResLoaded = TRUE;
+		xResLoaded = True;
 	}
 }
 
@@ -716,7 +716,7 @@ deleteXloginResources()
 
 	if (!xResLoaded)
 		return;
-	xResLoaded = FALSE;
+	xResLoaded = False;
 	prop = XInternAtom( dpy, "SCREEN_RESOURCES", True );
 	XDeleteProperty( dpy, RootWindow( dpy, 0 ), XA_RESOURCE_MANAGER );
 	if (prop)

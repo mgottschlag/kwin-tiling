@@ -255,7 +255,7 @@ main( int argc, char **argv )
 	/*
 	 * Step 1 - load configuration parameters
 	 */
-	if (!initResources( opts ) || scanConfigs( FALSE ) < 0)
+	if (!initResources( opts ) || scanConfigs( False ) < 0)
 		logPanic( "Config reader failed. Aborting ...\n" );
 
 	/* SUPPRESS 560 */
@@ -683,7 +683,7 @@ processDPipe( struct display *d )
 			if (d->sdRec.force == SHUT_ASK &&
 			    (anyUserLogins( -1 ) || d->allowShutdown == SHUT_ROOT))
 			{
-				gSendInt( TRUE );
+				gSendInt( True );
 			} else {
 				if (!sdRec.how || sdRec.force != SHUT_FORCE ||
 				    !((d->allowNuke == SHUT_NONE && sdRec.uid != d->sdRec.uid) ||
@@ -696,10 +696,10 @@ processDPipe( struct display *d )
 					free( d->sdRec.osname );
 				d->sdRec.how = 0;
 				d->sdRec.osname = 0;
-				gSendInt( FALSE );
+				gSendInt( False );
 			}
 		} else
-			gSendInt( FALSE );
+			gSendInt( False );
 		break;
 	case D_ReLogin:
 		user = gRecvStr();
@@ -896,7 +896,7 @@ cancelShutdown( void )
 		sdRec.osname = 0;
 	}
 	stopping = 0;
-	rescanConfigs( TRUE );
+	rescanConfigs( True );
 }
 
 
@@ -932,7 +932,7 @@ reapChildren( void )
 				if ((d->displayType & d_lifetime) == dReserve)
 					exitDisplay( d, DS_RESERVE, 0, 0 );
 				else
-					exitDisplay( d, DS_RESTART, XS_KEEP, TRUE );
+					exitDisplay( d, DS_RESTART, XS_KEEP, True );
 				break;
 			case EX_RESERVE:
 				debug( "display exited with EX_RESERVE\n" );
@@ -942,7 +942,7 @@ reapChildren( void )
 			case EX_REMANAGE_DPY:
 				/* user session ended */
 				debug( "display exited with EX_REMANAGE_DPY\n" );
-				exitDisplay( d, DS_RESTART, XS_KEEP, TRUE );
+				exitDisplay( d, DS_RESTART, XS_KEEP, True );
 				break;
 #endif
 			case EX_OPENFAILED_DPY:
@@ -956,7 +956,7 @@ reapChildren( void )
 				if ((d->displayType & d_origin) == dFromXDMCP)
 					sendFailed( d, "cannot open display" );
 #endif
-				exitDisplay( d, DS_RESTART, XS_RETRY, FALSE );
+				exitDisplay( d, DS_RESTART, XS_RETRY, False );
 				break;
 			case wcCompose( SIGTERM,0,0 ):
 				/* killed before/during waitForServer()
@@ -965,14 +965,14 @@ reapChildren( void )
 				   - "login now" and "suicide" pipe commands (is raiser)
 				*/
 				debug( "display exited on SIGTERM\n" );
-				exitDisplay( d, DS_RESTART, XS_RETRY, FALSE );
+				exitDisplay( d, DS_RESTART, XS_RETRY, False );
 				break;
 			case EX_AL_RESERVER_DPY:
 				/* - killed after waitForServer()
 				   - Xserver dead after remote session exit
 				*/
 				debug( "display exited with EX_AL_RESERVER_DPY\n" );
-				exitDisplay( d, DS_RESTART, XS_RESTART, FALSE );
+				exitDisplay( d, DS_RESTART, XS_RESTART, False );
 				break;
 			case EX_RESERVER_DPY:
 				/* induced by greeter:
@@ -980,7 +980,7 @@ reapChildren( void )
 				   - requested by user
 				*/
 				debug( "display exited with EX_RESERVER_DPY\n" );
-				exitDisplay( d, DS_RESTART, XS_RESTART, TRUE );
+				exitDisplay( d, DS_RESTART, XS_RESTART, True );
 				break;
 			case EX_UNMANAGE_DPY:
 				/* some fatal error */
@@ -1164,11 +1164,11 @@ mainLoop( void )
 				if (now >= sdRec.timeout) {
 					sdRec.timeout = TO_INF;
 					if (wouldShutdown())
-						stoppen( TRUE );
+						stoppen( True );
 					else
 						cancelShutdown();
 				} else {
-					stoppen( FALSE );
+					stoppen( False );
 					/*if (sdRec.timeout < to)*/
 						to = sdRec.timeout;
 				}
@@ -1218,17 +1218,17 @@ mainLoop( void )
 				case SIGTERM:
 				case SIGINT:
 					debug( "shutting down entire manager\n" );
-					stoppen( TRUE );
+					stoppen( True );
 					break;
 				case SIGHUP:
 					logInfo( "Rescanning all config files\n" );
 					forEachDisplay( markDisplay );
-					rescanConfigs( TRUE );
+					rescanConfigs( True );
 					break;
 				case SIGCHLD:
 					reapChildren();
 					if (!stopping && autoRescan)
-						rescanConfigs( FALSE );
+						rescanConfigs( False );
 					break;
 				case SIGUSR1:
 					if (startingServer &&
@@ -1523,7 +1523,7 @@ exitDisplay( struct display *d,
 
 	if (d->status == raiser) {
 		serverCmd = XS_KEEP;
-		goodExit = TRUE;
+		goodExit = True;
 	}
 
 	debug( "exitDisplay %s, "

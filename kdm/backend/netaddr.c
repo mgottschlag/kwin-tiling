@@ -203,17 +203,17 @@ addressEqual( char *a1, int len1, char *a2, int len2 )
 	char *part1, *part2;
 
 	if (len1 != len2)
-		return FALSE;
+		return False;
 	if (netaddrFamily( a1 ) != netaddrFamily( a2 ))
-		return FALSE;
+		return False;
 	part1 = netaddrPort( a1, &partlen1 );
 	part2 = netaddrPort( a2, &partlen2 );
 	if (partlen1 != partlen2 || memcmp( part1, part2, partlen1 ) != 0)
-		return FALSE;
+		return False;
 	part1 = netaddrAddress( a1, &partlen1 );
 	part2 = netaddrAddress( a2, &partlen2 );
 	if (partlen1 != partlen2 || memcmp( part1, part2, partlen1 ) != 0)
-		return FALSE;
-	return TRUE;
+		return False;
+	return True;
 }
 #endif

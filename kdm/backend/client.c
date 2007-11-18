@@ -238,7 +238,7 @@ PAM_conv( int num_msg,
 			}
 			if (!reply[count].resp) {
 				debug( "  PAM_conv aborted\n" );
-				pd->abort = TRUE;
+				pd->abort = True;
 				goto conv_err;
 			}
 			reply[count].resp_retcode = PAM_SUCCESS; /* unused in linux-pam */
@@ -277,7 +277,7 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 	struct pam_conv pconv;
 	int pretc;
 
-	pdata->abort = FALSE;
+	pdata->abort = False;
 	pconv.conv = PAM_conv;
 	pconv.appdata_ptr = (void *)pdata;
 	debug( " PAM service %s\n", psrv );
@@ -448,25 +448,25 @@ verify( GConvFunc gconv, int rootok )
 
 #ifdef USE_PAM
 
-	pnopass = FALSE;
+	pnopass = False;
 	if (!strcmp( curtype, "classic" )) {
 		if (!gconv( GCONV_USER, 0 ))
 			return 0;
 		if (isNoPassAllowed( curuser )) {
 			gconv( GCONV_PASS_ND, 0 );
 			if (!*curpass) {
-				pnopass = TRUE;
+				pnopass = True;
 				sprintf( psrvb, "%.31s-np", PAMService );
 				psrv = psrvb;
 			} else
 				psrv = PAMService;
 		} else
 			psrv = PAMService;
-		pdata.usecur = TRUE;
+		pdata.usecur = True;
 	} else {
 		sprintf( psrvb, "%.31s-%.31s", PAMService, curtype );
 		psrv = psrvb;
-		pdata.usecur = FALSE;
+		pdata.usecur = False;
 	}
 	pdata.gconv = gconv;
 	if (!doPAMAuth( psrv, &pdata ))
@@ -688,7 +688,7 @@ verify( GConvFunc gconv, int rootok )
 	reInitErrorLog();
 	debug( " pam_acct_mgmt() returned: %s\n", pam_strerror( pamh, pretc ) );
 	if (pretc == PAM_NEW_AUTHTOK_REQD) {
-		pdata.usecur = FALSE;
+		pdata.usecur = False;
 		pdata.gconv = conv_interact;
 		/* pam will have output a message already, so no prepareErrorGreet() */
 		if (gconv != conv_interact || pnopass) {
@@ -1099,11 +1099,11 @@ createClientLog( const char *log )
 			dup2( lfd, 2 );
 			close( lfd );
 			free( lname );
-			return TRUE;
+			return True;
 		}
 		if (errno != EEXIST || !macros[2].uses) {
 			free( lname );
-			return FALSE;
+			return False;
 		}
 		logInfo( "Session log file %s not usable, trying another one.\n",
 		         lname );
@@ -1284,7 +1284,7 @@ startClient( volatile int *pid )
 	}
 
 	if (*dmrcDir)
-		mergeSessionArgs( TRUE );
+		mergeSessionArgs( True );
 
 	debug( "now starting the session\n" );
 

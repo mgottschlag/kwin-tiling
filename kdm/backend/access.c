@@ -372,8 +372,8 @@ matchAclEntry( ARRAY8Ptr clientAddress, CARD16 connectionType, int direct )
 }
 
 /*
- * calls the given function for each valid indirect entry.  Returns TRUE if
- * the local host exists on any of the lists, else FALSE
+ * calls the given function for each valid indirect entry.  Returns True if
+ * the local host exists on any of the lists, else False
  */
 int
 forEachMatchingIndirectHost( ARRAY8Ptr clientAddress,
@@ -395,7 +395,7 @@ forEachMatchingIndirectHost( ARRAY8Ptr clientAddress,
 				(*function)( connectionType, choice, closure );
 		} else
 			scanHostlist( e->hosts, e->nhosts, clientAddress, connectionType,
-			              function, closure, FALSE, &haveLocalhost );
+			              function, closure, False, &haveLocalhost );
 	}
 	return haveLocalhost;
 }
@@ -420,13 +420,13 @@ forEachChooserHost( ARRAY8Ptr clientAddress, CARD16 connectionType,
 	e = matchAclEntry( clientAddress, connectionType, 0 );
 	if (e && !(e->flags & a_notAllowed) && (e->flags & a_useChooser))
 		scanHostlist( e->hosts, e->nhosts, clientAddress, connectionType,
-		              function, closure, TRUE, &haveLocalhost );
+		              function, closure, True, &haveLocalhost );
 	if (haveLocalhost)
 		(*function)( connectionType, getLocalAddress(), closure );
 }
 
 /*
- * returns TRUE if the given client is acceptable to the local host.  The
+ * returns True if the given client is acceptable to the local host.  The
  * given display client is acceptable if it occurs without a host list.
  */
 int

@@ -134,8 +134,8 @@ int
 validAuthorization( unsigned short name_length, const char *name )
 {
 	if (findProtocol( name_length, name ))
-		return TRUE;
-	return FALSE;
+		return True;
+	return False;
 }
 
 static Xauth *
@@ -148,7 +148,7 @@ generateAuthorization( unsigned short name_length, const char *name )
 	if ((a = findProtocol( name_length, name ))) {
 		if (!a->inited) {
 			(*a->InitAuth)( name_length, name );
-			a->inited = TRUE;
+			a->inited = True;
 		}
 		auth = (*a->GetAuth)( name_length, name );
 		if (auth) {
@@ -177,7 +177,7 @@ setProtoDisplayAuthorization( struct protoDisplay *pdpy,
 	if (a) {
 		if (!a->inited) {
 			(*a->InitAuth)( authorizationNameLen, authorizationName );
-			a->inited = TRUE;
+			a->inited = True;
 		}
 		if (a->GetXdmcpAuth) {
 			(*a->GetXdmcpAuth)( pdpy, authorizationNameLen, authorizationName );
@@ -288,12 +288,12 @@ saveServerAuthorizations( struct display *d, Xauth **auths, int count )
 			logError( "Cannot open X server authorization file %s\n", d->authFile );
 			free( d->authFile );
 			d->authFile = NULL;
-			return FALSE;
+			return False;
 		}
 	} else {
 		if (!(auth_file = makeServerAuthFile( d ))) {
 			logError( "Cannot create X server authorization file\n" );
-			return FALSE;
+			return False;
 		}
 	}
 #ifdef __OpenBSD__
@@ -319,11 +319,11 @@ saveServerAuthorizations( struct display *d, Xauth **auths, int count )
 				          d->authFile );
 				free( d->authFile );
 				d->authFile = NULL;
-				return FALSE;
+				return False;
 			}
 	}
 	fclose( auth_file );
-	return TRUE;
+	return True;
 }
 
 void
@@ -486,7 +486,7 @@ writeAuth( FILE *file, Xauth *auth, int *ok )
 		       auth->name_length, auth->name,
 		       auth->data_length, auth->data );
 	if (ok && !XauWriteAuth( file, auth ))
-		*ok = FALSE;
+		*ok = False;
 }
 
 static void
@@ -1088,7 +1088,7 @@ endUserAuth( FILE *old, FILE *new, const char *nname, int ok )
 		fclose( old );
 	}
 	if (fclose( new ) == EOF)
-		ok = FALSE;
+		ok = False;
 	doneAddrs();
 	return ok;
 }
@@ -1172,7 +1172,7 @@ setUserAuthorization( struct display *d )
 			envname = name_buf;
 			old = 0;
 		}
-		ok = TRUE;
+		ok = True;
 		debug( "%d authorization protocols for %s\n", d->authNum, d->name );
 		/*
 		 * Write MIT-MAGIC-COOKIE-1 authorization first, so that
@@ -1257,7 +1257,7 @@ removeUserAuthorization( struct display *d )
 				                 d->peer.length, d->name, 0 );
 #endif
 		}
-		if (endUserAuth( old, new, new_name, TRUE ))
+		if (endUserAuth( old, new, new_name, True ))
 			(void)moveUserAuth( name, new_name, 0 );
 		else
 			undoUserAuth( name, new_name );

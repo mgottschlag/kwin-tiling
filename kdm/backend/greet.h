@@ -71,9 +71,9 @@ from the copyright holder.
 #define DEBUG_VALGRIND 0x400
 #define DEBUG_STRACE   0x800
 
-#ifndef TRUE
-# define TRUE  1
-# define FALSE 0
+#ifndef True
+# define True  1
+# define False 0
 #endif
 
 #if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)

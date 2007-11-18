@@ -1194,7 +1194,7 @@ readAccessFile( const char *fname )
 	nHosts = nAliases = nAcls = nListens = nChars = error = 0;
 	if (!readFile( &file, fname, "XDMCP access control" ))
 		goto sendacl;
-	while ((displayOrAlias = readWord( &file, &len, FALSE ))) {
+	while ((displayOrAlias = readWord( &file, &len, False ))) {
 		if (*displayOrAlias == ALIAS_CHARACTER)
 		{
 			if (!(*aliasPtr = (AliasEntry *)Malloc( sizeof(AliasEntry) ))) {
@@ -1207,7 +1207,7 @@ readAccessFile( const char *fname )
 			(*aliasPtr)->pHosts = hostPtr;
 			(*aliasPtr)->nhosts = 0;
 			(*aliasPtr)->hasBad = 0;
-			while ((hostOrAlias = readWord( &file, &len, TRUE ))) {
+			while ((hostOrAlias = readWord( &file, &len, True ))) {
 				if (parseHost( &nHosts, &hostPtr, &nChars, hostOrAlias, len,
 				               PARSE_NO_BCAST ))
 					(*aliasPtr)->nhosts++;
@@ -1224,7 +1224,7 @@ readAccessFile( const char *fname )
 				break;
 			}
 			(*listenPtr)->iface = nHosts;
-			if (!(hostOrAlias = readWord( &file, &len, TRUE )) ||
+			if (!(hostOrAlias = readWord( &file, &len, True )) ||
 			    !strcmp( hostOrAlias, WILDCARD_STRING ) ||
 			    !parseHost( &nHosts, &hostPtr, &nChars, hostOrAlias, len,
 			                PARSE_NO_BCAST|PARSE_NO_PAT|PARSE_NO_ALIAS ))
@@ -1233,7 +1233,7 @@ readAccessFile( const char *fname )
 			}
 			(*listenPtr)->mcasts = nHosts;
 			(*listenPtr)->nmcasts = 0;
-			while ((hostOrAlias = readWord( &file, &len, TRUE ))) {
+			while ((hostOrAlias = readWord( &file, &len, True ))) {
 				if (parseHost( &nHosts, &hostPtr, &nChars, hostOrAlias, len,
 				               PARSE_NO_BCAST|PARSE_NO_PAT|PARSE_NO_ALIAS ))
 					(*listenPtr)->nmcasts++;
@@ -1269,7 +1269,7 @@ readAccessFile( const char *fname )
 			(*acPtr)->hosts = nHosts;
 			(*acPtr)->pHosts = hostPtr;
 			(*acPtr)->nhosts = 0;
-			while ((hostOrAlias = readWord( &file, &len, TRUE ))) {
+			while ((hostOrAlias = readWord( &file, &len, True ))) {
 				if (!strcmp( hostOrAlias, CHOOSER_STRING ))
 					(*acPtr)->flags |= a_useChooser;
 				else if (!strcmp( hostOrAlias, NOBROADCAST_STRING ))

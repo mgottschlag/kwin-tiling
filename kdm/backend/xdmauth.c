@@ -107,7 +107,7 @@ xdmGetAuthHelper( unsigned short namelen, const char *name, int includeRho )
 Xauth *
 xdmGetAuth( unsigned short namelen, const char *name )
 {
-	return xdmGetAuthHelper( namelen, name, TRUE );
+	return xdmGetAuthHelper( namelen, name, True );
 }
 
 #ifdef XDMCP
@@ -122,7 +122,7 @@ xdmGetXdmcpAuth( struct protoDisplay *pdpy,
 	if (pdpy->fileAuthorization && pdpy->xdmcpAuthorization)
 		return;
 	xdmcpauth = xdmGetAuthHelper( authorizationNameLen, authorizationName,
-	                              FALSE );
+	                              False );
 	if (!xdmcpauth)
 		return;
 	fileauth = (Xauth *)Malloc( sizeof(Xauth) );
@@ -205,7 +205,7 @@ xdmGetKey( struct protoDisplay *pdpy, ARRAY8Ptr displayID )
 	debug( "lookup key for %.*s\n", displayID->length, displayID->data );
 	keys = fopen( keyFile, "r" );
 	if (!keys)
-		return FALSE;
+		return False;
 	while (fgets( line, sizeof(line), keys )) {
 		if (line[0] == '#' || sscanf( line, "%s %s", id, key ) != 2)
 			continue;
@@ -224,13 +224,13 @@ xdmGetKey( struct protoDisplay *pdpy, ARRAY8Ptr displayID )
 			memmove( pdpy->key.data + 1, key, 7 );
 			bzero( key, sizeof(key) );
 			fclose( keys );
-			return TRUE;
+			return True;
 		}
 	}
 	bzero( line, sizeof(line) );
 	bzero( key, sizeof(key) );
 	fclose( keys );
-	return FALSE;
+	return False;
 }
 
 /*ARGSUSED*/
@@ -243,20 +243,20 @@ xdmcheckAuthentication( struct protoDisplay *pdpy,
 	XdmAuthKeyPtr incoming;
 
 	if (!xdmGetKey( pdpy, displayID ))
-		return FALSE;
+		return False;
 	if (authenticationData->length != 8)
-		return FALSE;
+		return False;
 	XdmcpUnwrap( authenticationData->data, (unsigned char *)&pdpy->key,
 	             authenticationData->data, 8 );
 	debug( "request packet auth %02[*hhx\n",
 	       authenticationData->length, authenticationData->data );
 	if (!XdmcpCopyARRAY8( authenticationData, &pdpy->authenticationData ))
-		return FALSE;
+		return False;
 	incoming = (XdmAuthKeyPtr)authenticationData->data;
 	XdmcpIncrementKey( incoming );
 	XdmcpWrap( authenticationData->data, (unsigned char *)&pdpy->key,
 	           authenticationData->data, 8 );
-	return TRUE;
+	return True;
 }
 
 #endif /* XDMCP */

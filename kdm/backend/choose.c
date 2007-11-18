@@ -922,7 +922,7 @@ doChoose()
 
 	openGreeter();
 	gSendInt( G_Choose );
-	switch (cmd = ctrlGreeterWait( TRUE )) {
+	switch (cmd = ctrlGreeterWait( True )) {
 	case G_Ready:
 		break;
 	default: /* error */
@@ -1003,7 +1003,7 @@ doChoose()
 #endif
 		if (select( n + 1, &rfds, 0, 0, to ) > 0) {
 			if (FD_ISSET( grtproc.pipe.fd.r, &rfds ))
-				switch (cmd = ctrlGreeterWait( FALSE )) {
+				switch (cmd = ctrlGreeterWait( False )) {
 				case -1:
 					break;
 				case G_Ch_Refresh:

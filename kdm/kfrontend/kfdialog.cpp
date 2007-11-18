@@ -124,7 +124,7 @@ fakeFocusIn( WId window )
 	ev.xfocus.window = window;
 	ev.xfocus.mode = NotifyNormal;
 	ev.xfocus.detail = NotifyAncestor;
-	XSendEvent( QX11Info::display(), window, FALSE, NoEventMask, &ev ); // krazy:exclude=captruefalse
+	XSendEvent( QX11Info::display(), window, False, NoEventMask, &ev );
 }
 
 int

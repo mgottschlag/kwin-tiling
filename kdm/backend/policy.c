@@ -81,7 +81,7 @@ checkAuthentication( struct protoDisplay *pdpy ATTR_UNUSED,
 	if (name->length && !memcmp( (char *)name->data, "XDM-AUTHENTICATION-1", 20 ))
 		return xdmcheckAuthentication( pdpy, displayID, name, data );
 #endif
-	return TRUE;
+	return True;
 }
 
 int
@@ -192,7 +192,7 @@ isWilling( ARRAY8Ptr addr, CARD16 connectionType,
 
 	if (autoRescan && lastscan + 15 < now) {
 		lastscan = now;
-		scanAccessDatabase( FALSE );
+		scanAccessDatabase( False );
 	}
 	ret = acceptableDisplayAddress( addr, connectionType, type );
 	if (!ret)
