@@ -39,10 +39,11 @@ public:
 
     void paintInterface(QPainter *painter,
                         const QStyleOptionGraphicsItem *option,
-                        const QRect& contentsRect);
-
+                        const QRect &contentsRect);
+    void paintBackground(QPainter *painter, const QRect &contentsRect);
 private:
     Plasma::Svg *m_background;
+    QPixmap* m_cachedBackground;
 };
 
 

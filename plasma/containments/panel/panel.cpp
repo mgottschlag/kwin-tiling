@@ -30,7 +30,8 @@
 using namespace Plasma;
 
 Panel::Panel(QObject *parent, const QVariantList &args)
-    : Containment(parent, args)
+    : Containment(parent, args),
+      m_cachedBackground(0)
 {
     //FIXME: we need a proper background painting implementation here
     m_background = new Plasma::Svg("widgets/panel-background", this);
@@ -130,15 +131,112 @@ void Panel::paintInterface(QPainter *painter,
     // blit the background (saves all the per-pixel-products that blending does)
     painter->setCompositionMode(QPainter::CompositionMode_Source);
 
-    if (m_background) {
-        m_background->resize(contentsRect.size());
-        // Plasma::Svg doesn't support drawing only part of the image (it only
-        // supports drawing the whole image to a rect), so we blit to 0,0-w,h
-        m_background->paint(painter, 0, 0);
-    }
+    paintBackground(painter, contentsRect);
 
     // restore transformation and composition mode
     painter->restore();
+}
+
+void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
+{
+    QSize s = geometry().toRect().size();
+    m_background->resize();
+
+    const int topHeight = m_background->elementSize("top").height();
+    const int topWidth = m_background->elementSize("top").width();
+    const int leftWidth = m_background->elementSize("left").width();
+    const int leftHeight = m_background->elementSize("left").height();
+    const int rightWidth = m_background->elementSize("right").width();
+    const int bottomHeight = m_background->elementSize("bottom").height();
+
+    const int topOffset = 0;
+    const int leftOffset = 0;
+    const int contentWidth = s.width() - leftWidth - rightWidth;
+    const int contentHeight = s.height() - topHeight - bottomHeight;
+    const int rightOffset = s.width() - rightWidth;
+    const int bottomOffset = s.height() - bottomHeight;
+    const int contentTop = topHeight;
+    const int contentLeft = leftWidth;
+
+    if (!m_cachedBackground || m_cachedBackground->size() != s) {
+        delete m_cachedBackground;
+        m_cachedBackground = new QPixmap(s)
+
+        m_cachedBackground->fill(Qt::transparent);
+        QPainter p(m_cachedBackground);
+        p.setCompositionMode(QPainter::CompositionMode_Source);
+        p.setRenderHint(QPainter::SmoothPixmapTransform);
+
+        //FIXME: This is a hack to fix a drawing problems with svg files where a thin transparent border is drawn around the svg image.
+        //       the transparent border around the svg seems to vary in size depending on the size of the svg and as a result increasing the
+        //       svn image by 2 all around didn't resolve the issue. For now it resizes based on the border size.
+
+        if (contentWidth > 0 && contentHeight > 0) {
+            m_background->resize(contentWidth, contentHeight);
+            m_background->paint(&p, QRect(leftWidth, topHeight, contentWidth - leftWidth - rightWidth, contentHeight - topHeight - bottomHeight), "center");
+            m_background->resize();
+        }
+
+        m_background->paint(&p, QRect(leftOffset, topOffset, leftWidth, topHeight), "topleft");
+        m_background->paint(&p, QRect(rightOffset, topOffset, rightWidth, topHeight), "topright");
+        m_background->paint(&p, QRect(leftOffset, bottomOffset, leftWidth, bottomHeight), "bottomleft");
+        m_background->paint(&p, QRect(rightOffset, bottomOffset, rightWidth, bottomHeight), "bottomright");
+
+        if (false && m_background->elementExists("hint-stretch-borders")) {
+            m_background->paint(&p, QRect(leftOffset, contentTop, leftWidth, contentHeight), "left");
+            m_background->paint(&p, QRect(rightOffset, contentTop, rightWidth, contentHeight), "right");
+            m_background->paint(&p, QRect(contentLeft, topOffset, contentWidth, topHeight), "top");
+            m_background->paint(&p, QRect(contentLeft, bottomOffset, contentWidth, bottomHeight), "bottom");
+        } else {
+            QPixmap left(leftWidth, leftHeight);
+            left.fill(Qt::transparent);
+            {
+                QPainter sidePainter(&left);
+                sidePainter.setCompositionMode(QPainter::CompositionMode_Source);
+                m_background->paint(&sidePainter, QPoint(0, 0), "left");
+            }
+            p.drawTiledPixmap(QRect(leftOffset, contentTop, leftWidth, contentHeight), left);
+
+            QPixmap right(rightWidth, leftHeight);
+            right.fill(Qt::transparent);
+            {
+                QPainter sidePainter(&right);
+                sidePainter.setCompositionMode(QPainter::CompositionMode_Source);
+                m_background->paint(&sidePainter, QPoint(0, 0), "right");
+            }
+            p.drawTiledPixmap(QRect(rightOffset, contentTop, rightWidth, contentHeight), right);
+
+            QPixmap top(topWidth, topHeight);
+            top.fill(Qt::transparent);
+            {
+                QPainter sidePainter(&top);
+                sidePainter.setCompositionMode(QPainter::CompositionMode_Source);
+                m_background->paint(&sidePainter, QPoint(0, 0), "top");
+            }
+            p.drawTiledPixmap(QRect(contentLeft, topOffset, contentWidth, topHeight), top);
+
+            QPixmap bottom(topWidth, bottomHeight);
+            bottom.fill(Qt::transparent);
+            {
+                QPainter sidePainter(&bottom);
+                sidePainter.setCompositionMode(QPainter::CompositionMode_Source);
+                m_background->paint(&sidePainter, QPoint(0, 0), "bottom");
+            }
+            p.drawTiledPixmap(QRect(contentLeft, bottomOffset, contentWidth, bottomHeight), bottom);
+
+        }
+
+        // re-enable this once Qt's svg rendering is un-buggered
+        //background->resize(contentWidth, contentHeight);
+        //background->paint(&p, QRect(contentLeft, contentTop, contentWidth, contentHeight), "center");
+    }
+
+    painter->drawPixmap(leftOffset, topOffset, *m_cachedBackground);
+    painter->setPen(Qt::red);
+    painter->drawRect(QRect(QPoint(0, 0), m_cachedBackground->size() - QSize(1, 1)));
+    painter->setPen(Qt::green);
+    painter->drawRect(QRect(leftOffset, contentTop, leftWidth, contentHeight));
+    painter->drawRect(QRect(rightOffset, topOffset,rightWidth, topHeight));
 }
 
 K_EXPORT_PLASMA_APPLET(panel, Panel)
