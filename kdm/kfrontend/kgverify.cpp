@@ -32,7 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "themer/kdmitem.h"
 
 #include <kguiitem.h>
-#include <klibloader.h>
+#include <klibrary.h>
 #include <klocale.h>
 #include <kpushbutton.h>
 #include <krandom.h>
@@ -895,33 +895,39 @@ KGVerify::init( const QStringList &plugins )
 
 	foreach (QString pg, plugins) {
 		GreeterPluginHandle plugin;
-		QString path = KLibLoader::self()->findLibrary(
-			(pg[0] == '/' ? pg : "kgreet_" + pg ).toLatin1() );
-		if (path.isEmpty()) {
+		KLibrary *lib = new KLibrary( pg[0] == '/' ? pg : "kgreet_" + pg );
+		if (lib->fileName().isEmpty()) {
 			logError( "GreeterPlugin %s does not exist\n", qPrintable( pg ) );
+			delete lib;
 			continue;
 		}
 		uint i, np = greetPlugins.count();
 		for (i = 0; i < np; i++)
-			if (greetPlugins[i].library->fileName() == path)
+			if (greetPlugins[i].library->fileName() == lib->fileName()) {
+				delete lib;
 				goto next;
-		if (!(plugin.library = KLibLoader::self()->library( path.toLatin1() ))) {
+			}
+		if (!lib->load()) {
 			logError( "Cannot load GreeterPlugin %s (%s)\n",
-			          qPrintable( pg ), qPrintable( path ) );
+			          qPrintable( pg ), qPrintable( lib->fileName() ) );
+			delete lib;
 			continue;
 		}
-		plugin.info = (kgreeterplugin_info*)plugin.library->resolveSymbol( "kgreeterplugin_info" );
+		plugin.library = lib;
+		plugin.info = (kgreeterplugin_info*)lib->resolveSymbol( "kgreeterplugin_info" );
 		if (!plugin.info) {
 			logError( "GreeterPlugin %s (%s) is no valid greet widget plugin\n",
-			          qPrintable( pg ), qPrintable( path ) );
-			plugin.library->unload();
+			          qPrintable( pg ), qPrintable( lib->fileName() ) );
+			lib->unload();
+			delete lib;
 			continue;
 		}
 
 		if (!plugin.info->init( QString(), getConf, 0 )) {
 			logError( "GreeterPlugin %s (%s) refuses to serve\n",
-			          qPrintable( pg ), qPrintable( path ) );
-			plugin.library->unload();
+			          qPrintable( pg ), qPrintable( lib->fileName() ) );
+			lib->unload();
+			delete lib;
 			continue;
 		}
 		debug( "GreeterPlugin %s (%s) loaded\n", qPrintable( pg ), plugin.info->name );
