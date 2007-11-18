@@ -36,16 +36,17 @@ public:
         int offset = name.indexOf(':');
 
         if (offset < 1) {
-            return 0;
+            return NULL;
         }
 
         QString ionName = name.left(offset);
 
-        if (!this->m_ions.contains(ionName)) {
-            return 0;
+
+        if (this->m_ions.contains(ionName)) {
+            return this->m_ions[ionName];
         }
 
-        return this->m_ions[ionName];
+        return NULL;
     }
 
     QString ionNameForSource(const QString& source) 
@@ -58,6 +59,7 @@ public:
         return QString(source.left(offset));
     }
 
+    KService::List m_ionServices;
     IonInterface::IonDict m_ions;
     KDateTime m_localTime;
 };
@@ -78,23 +80,21 @@ IonInterface* WeatherEngine::loadIon(const QString& plugName)
 {
     IonInterface *ion = 0;
     KService::Ptr foundPlugin;
-  
       
-   foreach(KService::Ptr service, knownIons()) {
+    foreach(KService::Ptr service, d->m_ionServices) {
       if (service->property("X-IonName").toString() == plugName) {
-          kDebug() << "!!!!!!!!!!!!!!!! FOUND PLUGIN TO LOAD: " << plugName;
           foundPlugin = service;
           break;
       } 
-   }
+    }
   
     // Check if the plugin is already loaded if so, return the plugin thats already loaded. 
     IonInterface::IonDict::const_iterator it = d->m_ions.find(plugName);
 
     if (it != d->m_ions.end()) {
-         ion = *it;
-         ion->ref();
-         return ion;
+        ion = *it;
+        ion->ref();
+        return ion;
     }
 
     QString error;
@@ -104,14 +104,13 @@ IonInterface* WeatherEngine::loadIon(const QString& plugName)
     ion->setObjectName(plugName);
     if (!ion) {
         kDebug() << "weatherengine: Couldn't load ion \"" << plugName << "\"!" << error;
-        return 0;
+        return NULL;
     }
 
-    // Increment counter of ions.
+    // Increment counter of ion.
     ion->ref();
 
     connect(ion, SIGNAL(newSource(QString)), this, SLOT(newIonSource(QString)));
-    connect(this, SIGNAL(sourceRemoved(QString)), this, SLOT(removeIonSource(QString)));
 
     /* Set properties for the ion
      *
@@ -125,7 +124,9 @@ IonInterface* WeatherEngine::loadIon(const QString& plugName)
     ion->option(IonInterface::WINDFORMAT, QVariant(false)); // FIXME: Should be configurable by applet
 
     // Assign the instantiated ion the key of the name of the ion.
-    d->m_ions[plugName] = ion;
+    if (!d->m_ions.contains(plugName)) {
+        d->m_ions[plugName] = ion;
+    }
 
     return ion;
 }
@@ -136,13 +137,14 @@ void WeatherEngine::unloadIon(const QString &name)
     IonInterface *ion = Ion(name);
 
     if (ion) {
-        kDebug() << "Unloading Plugin: " << name;
         ion->deref();
+        kDebug() << "Unloading Plugin: " << name;
         if (!ion->isUsed()) {
+            kDebug() << "It's not used anymore, delete it!";
             d->m_ions.remove(name);
             delete ion;
         }
-    }
+    } 
 }
 
 // Return a list of Ion plugins found.
@@ -175,16 +177,15 @@ void WeatherEngine::newIonSource(const QString& source)
 
 void WeatherEngine::removeIonSource(const QString& source)
 {
-    kDebug() << "Removing source from WeatherEngine: " << source;
-    kDebug() << "Plugin to remove source from: " << d->ionForSource(source)->objectName();
-    d->ionForSource(source)->removeSource(source);
-    
-    // If plugin has no more sources let's unload the plugin
-
-    if (d->ionForSource(source)->isEmpty()) {
-        kDebug() << "No more Sources found for this plugin let's unload it!";
-        unloadIon(d->ionNameForSource(source)); 
-    }
+    IonInterface *ion = d->ionForSource(source);
+    if (ion) {
+        ion->removeSource(source);
+        // If plugin has no more sources let's unload the plugin
+        if (ion->isEmpty()) {
+            kDebug() << "No more Sources found for this plugin let's unload it!";
+            unloadIon(d->ionNameForSource(source)); 
+        }
+    } 
 }
 
 void WeatherEngine::dataUpdated(const QString& source, Plasma::DataEngine::Data data)
@@ -203,7 +204,10 @@ WeatherEngine::WeatherEngine(QObject *parent, const QVariantList& args)
     d->m_localTime = KDateTime::currentDateTime(KDateTime::LocalZone);
     
     // Get the list of available plugins but don't load them
-    knownIons();
+    d->m_ionServices = knownIons();
+  
+    // Globally notify all plugins to remove their sources (and unload plugin)
+    connect(this, SIGNAL(sourceRemoved(QString)), this, SLOT(removeIonSource(QString)));
 }
 
 // dtor
@@ -216,8 +220,6 @@ WeatherEngine::~WeatherEngine()
 // Setup each Ion for the first time
 bool WeatherEngine::sourceRequested(const QString &source)
 {
-    kDebug() << "SOURCES FOUND: " << sources();
-    
     kDebug() << "sourceRequested()" << source;
     IonInterface *ion = d->ionForSource(source);
 
@@ -229,8 +231,6 @@ bool WeatherEngine::sourceRequested(const QString &source)
         }
     }
 
-    kDebug() << "About to connect Source" << source << " To the Ion!";
-    kDebug() << "IONS SOURCES: " << ion->sources();
     ion->connectSource(source, this);
     if (!containerForSource(source)) {
         // it is an async reply, we need to set up the data anyways
