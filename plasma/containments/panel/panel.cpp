@@ -160,7 +160,7 @@ void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
 
     if (!m_cachedBackground || m_cachedBackground->size() != s) {
         delete m_cachedBackground;
-        m_cachedBackground = new QPixmap(s)
+        m_cachedBackground = new QPixmap(s);
 
         m_cachedBackground->fill(Qt::transparent);
         QPainter p(m_cachedBackground);
@@ -231,7 +231,7 @@ void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
         //background->paint(&p, QRect(contentLeft, contentTop, contentWidth, contentHeight), "center");
     }
 
-    painter->drawPixmap(leftOffset, topOffset, *m_cachedBackground);
+    painter->drawPixmap(contentsRect, *m_cachedBackground, contentsRect);
 }
 
 K_EXPORT_PLASMA_APPLET(panel, Panel)
