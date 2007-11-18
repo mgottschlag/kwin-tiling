@@ -245,8 +245,8 @@ static int
 gRecvCmd( int *val )
 {
 	if (reader( val, sizeof(*val) ) != sizeof(*val))
-		return 0;
-	return 1;
+		return False;
+	return True;
 }
 
 static int
@@ -291,18 +291,18 @@ readFile( File *file, const char *fn, const char *what )
 
 	if ((fd = open( fn, O_RDONLY )) < 0) {
 		logInfo( "Cannot open %s file %s\n", what, fn );
-		return 0;
+		return False;
 	}
 
 	flen = lseek( fd, 0, SEEK_END );
 #ifdef HAVE_MMAP
 # ifdef WANT_CLOSE
-	file->ismapped = 0;
+	file->ismapped = False;
 # endif
 	file->buf = mmap( 0, flen + 1, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0 );
 # ifdef WANT_CLOSE
 	if (file->buf)
-		file->ismapped = 1;
+		file->ismapped = True;
 	else
 # else
 	if (!file->buf)
@@ -311,19 +311,19 @@ readFile( File *file, const char *fn, const char *what )
 	{
 		if (!(file->buf = Malloc( flen + 1 ))) {
 			close( fd );
-			return 0;
+			return False;
 		}
 		lseek( fd, 0, SEEK_SET );
 		if (read( fd, file->buf, flen ) != flen) {
 			free( file->buf );
 			logError( "Cannot read %s file %s\n", what, fn );
 			close( fd );
-			return 0;
+			return False;
 		}
 	}
 	file->eof = (file->cur = file->buf) + flen;
 	close( fd );
-	return 1;
+	return True;
 }
 
 #ifdef WANT_CLOSE
@@ -355,9 +355,9 @@ PrequestPort( Value *retval )
 {
 	if (!VxdmcpEnable.num) {
 		retval->num = 0;
-		return 1;
+		return True;
 	}
-	return 0;
+	return False;
 }
 #endif
 
@@ -371,9 +371,9 @@ PnoPassUsers( Value *retval )
 {
 	if (!VnoPassEnable.num) {
 		*retval = emptyArgv;
-		return 1;
+		return True;
 	}
-	return 0;
+	return False;
 }
 
 static int
@@ -381,9 +381,9 @@ PautoLoginX( Value *retval )
 {
 	if (!VautoLoginEnable.num) {
 		*retval = emptyStr;
-		return 1;
+		return True;
 	}
-	return 0;
+	return False;
 }
 
 CONF_READ_ENTRIES
@@ -407,7 +407,7 @@ readConfig()
 
 	if (confread)
 		return;
-	confread = 1;
+	confread = True;
 
 	debug( "reading config %s ...\n", kdmrc );
 	if (!readFile( &file, kdmrc, "master configuration" ))
@@ -428,7 +428,7 @@ readConfig()
 		sl = s;
 
 		if (*s == '[') {
-			sectmoan = 0;
+			sectmoan = False;
 			while ((s < file.eof) && (*s != '\n'))
 				s++;
 			e = s - 1;
@@ -529,7 +529,7 @@ readConfig()
 
 		if (!cursec) {
 			if (sectmoan) {
-				sectmoan = 0;
+				sectmoan = False;
 				logError( "Entry outside any section at %s:%d", kdmrc, line );
 			}
 			goto sktoeol;
@@ -812,7 +812,7 @@ addValue( ValArr *va, int id, Value *val )
 	if (va->nents == va->esiz) {
 		va->ents = Realloc( va->ents, sizeof(Val) * (va->esiz += 50) );
 		if (!va->ents)
-			return 0;
+			return False;
 	}
 	va->ents[va->nents].id = id;
 	va->ents[va->nents].val = *val;
@@ -829,7 +829,7 @@ addValue( ValArr *va, int id, Value *val )
 			va->nptrs += nu;
 			break;
 	}
-	return 1;
+	return True;
 }
 
 static void
@@ -901,7 +901,7 @@ readWord( File *file, int *len, int EOFatEOL )
   rest:
 	wordp = wordBuffer = file->cur;
   mloop:
-	quoted = 0;
+	quoted = False;
   qloop:
 	if (file->cur == file->eof) {
 	  doeow:
@@ -940,7 +940,7 @@ readWord( File *file, int *len, int EOFatEOL )
 		goto rest;
 	case '\\':
 		if (!quoted) {
-			quoted = 1;
+			quoted = True;
 			goto qloop;
 		}
 		break;
@@ -1007,9 +1007,9 @@ hasGlobCharacters( char *s )
 		switch (*s++) {
 		case '?':
 		case '*':
-			return 1;
+			return True;
 		case '\0':
-			return 0;
+			return False;
 		}
 }
 
@@ -1031,7 +1031,7 @@ parseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
 	int addr_type, addr_len;
 
 	if (!(**hostPtr = (HostEntry *)Malloc( sizeof(HostEntry) )))
-		return 0;
+		return False;
 	if (!(parse & PARSE_NO_BCAST) && !strcmp( hostOrAlias, BROADCAST_STRING ))
 	{
 		(**hostPtr)->type = HOST_BROADCAST;
@@ -1059,7 +1059,7 @@ parseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
 		{
 			logWarn( "XDMCP ACL: unresolved host %'s\n", hostOrAlias );
 			free( (char *)(**hostPtr) );
-			return 0;
+			return False;
 		}
 #if defined(IPv6) && defined(AF_INET6)
 		addr_type = ai->ai_addr->sa_family;
@@ -1082,7 +1082,7 @@ parseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
 			freeaddrinfo( ai );
 #endif
 			free( (char *)(**hostPtr) );
-			return 0;
+			return False;
 		}
 		memcpy( (**hostPtr)->entry.displayAddress.hostAddress, addr, addr_len );
 		*nChars += addr_len;
@@ -1094,10 +1094,10 @@ parseHost( int *nHosts, HostEntry ***hostPtr, int *nChars,
 	}
 	*hostPtr = &(**hostPtr)->next;
 	(*nHosts)++;
-	return 1;
+	return True;
 }
 
-/* Returns non-0 if string is matched by pattern.  Does case folding. */
+/* Returns True if string is matched by pattern.  Does case folding. */
 static int
 patternMatch( const char *string, const char *pattern )
 {
@@ -1111,14 +1111,14 @@ patternMatch( const char *string, const char *pattern )
 		switch (p = *pattern++) {
 		case '*':
 			if (!*pattern)
-				return 1;
+				return True;
 			for (string--; *string; string++)
 				if (patternMatch( string, pattern ))
-					return 1;
-			return 0;
+					return True;
+			return False;
 		case '?':
 			if (s == '\0')
-				return 0;
+				return False;
 			break;
 		case '\0':
 			return s == '\0';
@@ -1127,7 +1127,7 @@ patternMatch( const char *string, const char *pattern )
 			/* fall through */
 		default:
 			if (tolower( p ) != tolower( s ))
-				return 0;
+				return False;
 		}
 	}
 }
@@ -1150,25 +1150,25 @@ checkHostlist( HostEntry **hosts, int nh, AliasEntry *aliases, int na,
 			if (depth == MAX_DEPTH) {
 				logError( "XDMCP ACL: alias recursion involving %%%s\n",
 				          h->entry.aliasPattern );
-				return 1;
+				return True;
 			}
-			for (a = aliases, an = 0, am = 0; an < na; an++, a = a->next)
+			for (a = aliases, an = 0, am = False; an < na; an++, a = a->next)
 				if (patternMatch( a->name, h->entry.aliasPattern )) {
-					am = 1;
+					am = True;
 					if ((flags & CHECK_NOT) && a->hasBad) {
 						logError( "XDMCP ACL: alias %%%s with unresolved hosts "
 						          "in denying rule\n", a->name );
-						return 1;
+						return True;
 					}
 					if (checkHostlist( a->pHosts, a->nhosts, aliases, na,
 					                   depth + 1, flags ))
-						return 1;
+						return True;
 				}
 			if (!am) {
 				if (flags & CHECK_NOT) {
 					logError( "XDMCP ACL: unresolved alias pattern %%%s "
 					          "in denying rule\n", h->entry.aliasPattern );
-					return 1;
+					return True;
 				} else
 					logWarn( "XDMCP ACL: unresolved alias pattern %%%s\n",
 					         h->entry.aliasPattern );
@@ -1176,7 +1176,7 @@ checkHostlist( HostEntry **hosts, int nh, AliasEntry *aliases, int na,
 		} else if (h->type == HOST_PATTERN && (flags & CHECK_NO_PAT))
 			logWarn( "XDMCP ACL: wildcarded pattern %'s in host-only context\n",
 			         h->entry.hostPattern );
-	return 0;
+	return False;
 }
 
 static void
@@ -1191,14 +1191,15 @@ readAccessFile( const char *fname )
 	int nHosts, nAliases, nAcls, nListens, nChars, error, bad;
 	int i, len;
 
-	nHosts = nAliases = nAcls = nListens = nChars = error = 0;
+	nHosts = nAliases = nAcls = nListens = nChars = 0;
+	error = False;
 	if (!readFile( &file, fname, "XDMCP access control" ))
 		goto sendacl;
 	while ((displayOrAlias = readWord( &file, &len, False ))) {
 		if (*displayOrAlias == ALIAS_CHARACTER)
 		{
 			if (!(*aliasPtr = (AliasEntry *)Malloc( sizeof(AliasEntry) ))) {
-				error = 1;
+				error = True;
 				break;
 			}
 			(*aliasPtr)->name = displayOrAlias + 1;
@@ -1206,13 +1207,13 @@ readAccessFile( const char *fname )
 			(*aliasPtr)->hosts = nHosts;
 			(*aliasPtr)->pHosts = hostPtr;
 			(*aliasPtr)->nhosts = 0;
-			(*aliasPtr)->hasBad = 0;
+			(*aliasPtr)->hasBad = False;
 			while ((hostOrAlias = readWord( &file, &len, True ))) {
 				if (parseHost( &nHosts, &hostPtr, &nChars, hostOrAlias, len,
 				               PARSE_NO_BCAST ))
 					(*aliasPtr)->nhosts++;
 				else
-					(*aliasPtr)->hasBad = 1;
+					(*aliasPtr)->hasBad = True;
 			}
 			aliasPtr = &(*aliasPtr)->next;
 			nAliases++;
@@ -1220,7 +1221,7 @@ readAccessFile( const char *fname )
 		else if (!strcmp( displayOrAlias, LISTEN_STRING ))
 		{
 			if (!(*listenPtr = (ListenEntry *)Malloc( sizeof(ListenEntry) ))) {
-				error = 1;
+				error = True;
 				break;
 			}
 			(*listenPtr)->iface = nHosts;
@@ -1244,7 +1245,7 @@ readAccessFile( const char *fname )
 		else
 		{
 			if (!(*acPtr = (AclEntry *)Malloc( sizeof(AclEntry) ))) {
-				error = 1;
+				error = True;
 				break;
 			}
 			(*acPtr)->flags = 0;
@@ -1259,13 +1260,13 @@ readAccessFile( const char *fname )
 			if (!parseHost( &nHosts, &hostPtr, &nChars, displayOrAlias, len,
 			                PARSE_NO_BCAST ))
 			{
-				bad = 1;
+				bad = True;
 				if ((*acPtr)->flags & a_notAllowed) {
 					logError( "XDMCP ACL: unresolved host in denying rule\n" );
-					error = 1;
+					error = True;
 				}
 			} else
-				bad = 0;
+				bad = False;
 			(*acPtr)->hosts = nHosts;
 			(*acPtr)->pHosts = hostPtr;
 			(*acPtr)->nhosts = 0;
@@ -1289,7 +1290,7 @@ readAccessFile( const char *fname )
 
 	if (!nListens) {
 		if (!(*listenPtr = (ListenEntry *)Malloc( sizeof(ListenEntry) )))
-			error = 1;
+			error = True;
 		else {
 			(*listenPtr)->iface = -1;
 			(*listenPtr)->mcasts = nHosts;
@@ -1310,7 +1311,7 @@ readAccessFile( const char *fname )
 		                   0, (acl->flags & a_notAllowed) ? CHECK_NOT : 0 ) ||
 		    checkHostlist( acl->pHosts, acl->nhosts, aliasList, nAliases,
 		                   0, CHECK_NO_PAT ))
-			error = 1;
+			error = True;
 
 	if (error) {
 		nHosts = nAliases = nAcls = nListens = nChars = 0;

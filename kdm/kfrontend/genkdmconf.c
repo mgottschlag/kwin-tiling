@@ -208,17 +208,17 @@ readFile( File *file, const char *fn )
 	int fd;
 
 	if ((fd = open( fn, O_RDONLY )) < 0)
-		return 0;
+		return False;
 
 	flen = lseek( fd, 0, SEEK_END );
 #ifdef HAVE_MMAP
 # ifdef WANT_CLOSE
-	file->ismapped = 0;
+	file->ismapped = False;
 # endif
 	file->buf = mmap( 0, flen + 1, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0 );
 # ifdef WANT_CLOSE
 	if (file->buf)
-		file->ismapped = 1;
+		file->ismapped = True;
 	else
 # else
 	if (!file->buf)
@@ -231,12 +231,12 @@ readFile( File *file, const char *fn )
 			free( file->buf );
 			close( fd );
 			fprintf( stderr, "Cannot read file\n" );
-			return 0; /* maybe better abort? */
+			return False; /* maybe better abort? */
 		}
 	}
 	file->eof = file->buf + flen;
 	close( fd );
-	return 1;
+	return True;
 }
 
 #ifdef WANT_CLOSE
@@ -277,14 +277,14 @@ mkpdirs( const char *name, const char *what )
 					fprintf( stderr, "Cannot create parent %s of %s directory %s: %s\n",
 					         mfname, what, name, strerror( errno ) );
 					free( mfname );
-					return 0;
+					return False;
 				}
 				chmod( mfname, 0755 );
 			}
 			mfname[i] = '/';
 		}
 	free( mfname );
-	return 1;
+	return True;
 }
 
 static int
@@ -297,10 +297,10 @@ mkdirp( const char *name, int mode, const char *what, int existok )
 		if (mkdir( name, mode )) {
 			fprintf( stderr, "Cannot create %s directory %s: %s\n",
 			         what, name, strerror( errno ) );
-			return 0;
+			return False;
 		}
 		chmod( name, mode );
-		return 1;
+		return True;
 	}
 	return existok;
 }
@@ -439,7 +439,7 @@ putFqVal( const char *sect, const char *key, const char *value )
 	*cep = ce;
   haveent:
 	ASPrintf( (char **)&ce->value, "%s", value );
-	ce->written = ce->active = 1;
+	ce->written = ce->active = True;
 }
 
 static const char *csect;
@@ -813,8 +813,8 @@ inList( StrList *sp, const char *s )
 {
 	for (; sp; sp = sp->next)
 		if (!strcmp( sp->str, s ))
-			return 1;
-	return 0;
+			return True;
+	return False;
 }
 
 static void
@@ -916,7 +916,7 @@ copyFile( Entry *ce, int mode, int (*proc)( File * ) )
 	int rt;
 
 	if (!*ce->value)
-		return 1;
+		return True;
 
 	if ((nname = (char *)getMapping( cfmap, ce->value ))) {
 		rt = inList( aflist, nname );
@@ -944,7 +944,7 @@ copyFile( Entry *ce, int mode, int (*proc)( File * ) )
 	}
 	if (!(tptr = strrchr( ce->value, '/' ))) {
 		fprintf( stderr, "Warning: cannot cope with relative path %s\n", ce->value );
-		return 0;
+		return False;
 	}
   gotn:
 	ASPrintf( &nname, KDMCONF "%s", tptr );
@@ -958,7 +958,7 @@ copyFile( Entry *ce, int mode, int (*proc)( File * ) )
 	addMapping( &cfmap, ce->value, nname );
 	if (!readFile( &file, ce->value )) {
 		fprintf( stderr, "Warning: cannot copy file %s\n", ce->value );
-		rt = 0;
+		rt = False;
 	} else {
 		if (!proc || !proc( &file )) {
 			if (!use_destdir && !strcmp( ce->value, nname ))
@@ -978,7 +978,7 @@ copyFile( Entry *ce, int mode, int (*proc)( File * ) )
 		if (strcmp( ce->value, nname ) && inNewDir( ce->value ) && !use_destdir)
 			displace( ce->value );
 		addedFile( nname );
-		rt = 1;
+		rt = True;
 	}
   doret:
 	ce->value = nname;
@@ -1039,7 +1039,7 @@ handleBgCfg( Entry *ce, Section *cs ATTR_UNUSED )
 		if (!copyFile( ce, 0644, 0 )) {
 			if (!strcmp( cs->name, "X-*-Greeter" ))
 				writeFile( def_BackgroundCfg, 0644, def_background );
-			ce->active = 0;
+			ce->active = False;
 		}
 	}
 }
@@ -1109,7 +1109,7 @@ readWord( File *file, int EOFatEOL )
   rest:
 	wordp = wordBuffer = file->cur;
   mloop:
-	quoted = 0;
+	quoted = False;
   qloop:
 	if (file->cur == file->eof) {
 	  doeow:
@@ -1147,7 +1147,7 @@ readWord( File *file, int EOFatEOL )
 		goto rest;
 	case '\\':
 		if (!quoted) {
-			quoted = 1;
+			quoted = True;
 			goto qloop;
 		}
 		break;
@@ -1208,8 +1208,8 @@ static struct displayMatch {
 	const char *name;
 	int len, local;
 } displayTypes[] = {
-	{ "local", 5, 1 },
-	{ "foreign", 7, 0 },
+	{ "local", 5, True },
+	{ "foreign", 7, False },
 };
 
 static int
@@ -1283,7 +1283,7 @@ absorbXservers( const char *sect ATTR_UNUSED, char **value )
 		}
 		word = readWord( &file, 1 );
 		if (word && !strcmp( word, "reserve" )) {
-			se->reserve = 1;
+			se->reserve = True;
 			word = readWord( &file, 1 );
 		}
 		if (se->local != (word != 0))
@@ -1338,13 +1338,13 @@ absorbXservers( const char *sect ATTR_UNUSED, char **value )
 
 #ifdef HAVE_VTS
 	/* don't copy only if all local displays are ordered and have a vt */
-	cpvt = 0;
+	cpvt = False;
 	getInitTab();
 	for (se = serverList, mtty = maxTTY; se; se = se->next)
 		if (se->local) {
 			mtty++;
 			if (se->vt != mtty) {
-				cpvt = 1;
+				cpvt = True;
 				break;
 			}
 		}
@@ -1355,16 +1355,16 @@ absorbXservers( const char *sect ATTR_UNUSED, char **value )
 		se->arglvs = joinArgs( se->arglv );
 	}
 
-	se1 = 0, cpcmd = cpcmdl = 0;
+	se1 = 0, cpcmd = cpcmdl = False;
 	for (se = serverList; se; se = se->next)
 		if (se->local) {
 			if (!se1)
 				se1 = se;
 			else {
 				if (strcmp( se1->argvs, se->argvs ))
-					cpcmd = 1;
+					cpcmd = True;
 				if (strcmp( se1->arglvs, se->arglvs ))
-					cpcmdl = 1;
+					cpcmdl = True;
 			}
 		}
 	if (se1) {
@@ -1421,7 +1421,7 @@ upd_servervts( Entry *ce, Section *cs ATTR_UNUSED )
 #ifdef __linux__ /* XXX actually, sysvinit */
 		getInitTab();
 		ASPrintf( (char **)&ce->value, "-%d", maxTTY + 1 );
-		ce->active = ce->written = 1;
+		ce->active = ce->written = True;
 #endif
 	}
 }
@@ -1440,7 +1440,7 @@ upd_consolettys( Entry *ce, Section *cs ATTR_UNUSED )
 				strCat( &buf, ",tty%d", i + 1 );
 		if (buf) {
 			ce->value = buf + 1;
-			ce->active = ce->written = 1;
+			ce->active = ce->written = True;
 		}
 #endif
 	}
@@ -1457,7 +1457,7 @@ cp_keyfile( Entry *ce, Section *cs ATTR_UNUSED )
 		linkFile( ce );
 	else
 		if (!copyFile( ce, 0600, 0 ))
-			ce->active = 0;
+			ce->active = False;
 }
 
 static void
@@ -1486,7 +1486,7 @@ mk_willing( Entry *ce, Section *cs ATTR_UNUSED )
 		else {
 		  dflt:
 			ce->value = KDMCONF "/Xwilling";
-			ce->active = ce->written = 1;
+			ce->active = ce->written = True;
 			writeFile( ce->value, 0755, def_willing );
 		}
 	}
@@ -1498,7 +1498,7 @@ static int
 edit_resources( File *file )
 {
 	// XXX remove any login*, chooser*, ... resources
-	return 0;
+	return False;
 }
 */
 
@@ -1511,7 +1511,7 @@ cp_resources( Entry *ce, Section *cs ATTR_UNUSED )
 		linkFile( ce );
 	else
 		if (!copyFile( ce, 0644, 0/*edit_resources*/ ))
-			ce->active = 0;
+			ce->active = False;
 }
 
 static int
@@ -1527,7 +1527,7 @@ delstr( File *fil, const char *pat )
 				*p = '\n';
 				memcpy( p + 1, pp, fil->eof - pp + 1 );
 				fil->eof -= pp - p - 1;
-				return 1;
+				return True;
 			} else if (!memcmp( pap, "*/", 2 )) {
 				paap = pap += 2;
 				while (!isspace( *pap ))
@@ -1577,7 +1577,7 @@ delstr( File *fil, const char *pat )
 		}
 	  no: ;
 	}
-	return 0;
+	return False;
 }
 
 /* XXX
@@ -1625,7 +1625,7 @@ mk_setup( Entry *ce, Section *cs )
 				linkFile( ce );
 		} else {
 			ce->value = KDMCONF "/Xsetup";
-			ce->active = ce->written = 1;
+			ce->active = ce->written = True;
 			writeFile( ce->value, 0755, def_setup );
 		}
 	}
@@ -1634,7 +1634,7 @@ mk_setup( Entry *ce, Section *cs )
 static int
 edit_startup( File *file )
 {
-	int chg1 = 0, chg2 = 0;
+	int chg1 = False, chg2 = False;
 
 	if (mod_usebg &&
 	    (delstr( file, "\n"
@@ -1645,7 +1645,7 @@ edit_startup( File *file )
 	     delstr( file, "\n"
 	             "PIDFILE=/var/run/kdmdesktop-$DISPLAY.pid\n"
 	             "test -f $PIDFILE && kill `cat $PIDFILE`\n" )))
-		chg1 = 1;
+		chg1 = True;
 	if (oldver < 0x0203) {
 		chg2 =
 #ifdef _AIX
@@ -1706,7 +1706,7 @@ mk_startup( Entry *ce, Section *cs )
 				linkFile( ce );
 		} else {
 			ce->value = KDMCONF "/Xstartup";
-			ce->active = ce->written = 1;
+			ce->active = ce->written = True;
 			writeFile( ce->value, 0755, def_startup );
 		}
 	}
@@ -1751,7 +1751,7 @@ mk_reset( Entry *ce, Section *cs ATTR_UNUSED )
 				linkFile( ce );
 		} else {
 			ce->value = KDMCONF "/Xreset";
-			ce->active = ce->written = 1;
+			ce->active = ce->written = True;
 			writeFile( ce->value, 0755, def_reset );
 		}
 	}
@@ -1774,7 +1774,7 @@ mk_session( Entry *ce, Section *cs ATTR_UNUSED )
 		               "$HOME/.xsession-env-$DISPLAY";
 		ASPrintf( &def_session, "%s%s%s", def_session1, tmpf, def_session2 );
 		ce->value = KDMCONF "/Xsession";
-		ce->active = ce->written = 1;
+		ce->active = ce->written = True;
 		writeFile( ce->value, 0755, def_session );
 	}
 }
@@ -1804,8 +1804,8 @@ upd_showusers( Entry *ce, Section *cs )
 		if (ce->active)
 			putFqVal( cs->name, "UserList", "false" );
 		ce->value = (char *)"Selected";
-		ce->active = 0;
-		ce->written = 1;
+		ce->active = False;
+		ce->written = True;
 	}
 }
 
@@ -1816,7 +1816,7 @@ upd_minshowuid( Entry *ce, Section *cs ATTR_UNUSED )
 {
 	if (!ce->active) {
 		ce->value = defminuid;
-		ce->active = ce->written = 1;
+		ce->active = ce->written = True;
 	}
 }
 
@@ -1825,7 +1825,7 @@ upd_maxshowuid( Entry *ce, Section *cs ATTR_UNUSED )
 {
 	if (!ce->active) {
 		ce->value = defmaxuid;
-		ce->active = ce->written = 1;
+		ce->active = ce->written = True;
 	}
 }
 
@@ -1877,7 +1877,7 @@ upd_forgingseed( Entry *ce, Section *cs ATTR_UNUSED )
 {
 	if (!ce->active) {
 		ASPrintf( (char **)&ce->value, "%d", time( 0 ) );
-		ce->active = ce->written = 1;
+		ce->active = ce->written = True;
 	}
 }
 
@@ -1944,7 +1944,7 @@ copyDir( const char *from, const char *to )
 	char bn[PATH_MAX], bo[PATH_MAX];
 
 	if (!(dir = opendir( from )))
-		return 0;
+		return False;
 	while ((ent = readdir( dir ))) {
 		if (!strcmp( ent->d_name, "." ) || !strcmp( ent->d_name, ".." ))
 			continue;
@@ -1955,7 +1955,7 @@ copyDir( const char *from, const char *to )
 		copyPlainFile( bo, bn );
 	}
 	closedir( dir );
-	return 1;
+	return True;
 }
 
 static void
@@ -1973,10 +1973,10 @@ upd_facedir( Entry *ce, Section *cs ATTR_UNUSED )
 			/* Not default location, so don't touch the setting. */
 			return;
 		/* Default location, so absorb it. */
-		ce->active = 0;
+		ce->active = False;
 	} else
 		olddir = 0;
-	if (!mkdirp( def_FaceDir, 0755, "user face", 0 ))
+	if (!mkdirp( def_FaceDir, 0755, "user face", False ))
 		return; /* Error or olddir == def_FaceDir. */
 	if (!olddir || !copyDir( olddir, def_FaceDir )) {
 		const char *defpic = def_FaceDir "/.default.face.icon";
@@ -2030,14 +2030,14 @@ upd_sessionsdirs( Entry *ce, Section *cs ATTR_UNUSED )
 			{
 				char newdir[PATH_MAX];
 				sprintf( newdir, KDMCONF "%s", sp->str + olen + 4 );
-				mkdirp( newdir, 0755, "sessions", 0 );
+				mkdirp( newdir, 0755, "sessions", False );
 				copyDir( sp->str, newdir );
 				sp->str = newdir;
 			}
 		}
 		ce->value = joinList( sl );
 	} else
-		mkdirp( KDMCONF "/sessions", 0755, "sessions", 0 );
+		mkdirp( KDMCONF "/sessions", 0755, "sessions", False );
 }
 
 static void
@@ -2186,7 +2186,7 @@ readConfig( const char *fname )
 				         fname, line );
 				continue;
 			}
-			sectmoan = 0;
+			sectmoan = False;
 			nstr = sl + 1;
 			nlen = e - nstr;
 			for (cursec = rootsec; cursec; cursec = cursec->next)
@@ -2211,7 +2211,7 @@ readConfig( const char *fname )
 
 		if (!cursec) {
 			if (sectmoan) {
-				sectmoan = 0;
+				sectmoan = False;
 				fprintf( stderr, "Entry outside any section at %s:%d",
 				         fname, line );
 			}
@@ -2273,11 +2273,11 @@ mergeKdmRcOld( const char *path )
 	ASPrintf( &p, "%s/kdmrc", path );
 	if (stat( p, &st )) {
 		free( p );
-		return 0;
+		return False;
 	}
 	printf( "Information: ignoring pre-existing kdmrc %s from kde < 2.2\n", p );
 	free( p );
-	return 1;
+	return True;
 }
 
 typedef struct {
@@ -2370,7 +2370,7 @@ mergeKdmRcNewer( const char *path, int obsRet )
 	ASPrintf( &p, "%s/kdm/kdmrc", path );
 	if (!(rootsect = readConfig( p ))) {
 		free( p );
-		return 0;
+		return False;
 	}
 	for (cs = rootsect; cs; cs = cs->next)
 		if (!strcmp( cs->name, "General" ))
@@ -2432,7 +2432,7 @@ mergeKdmRcNewer( const char *path, int obsRet )
 
 	applyDefs( kdmdefs_all, as(kdmdefs_all), path );
 
-	return 1;
+	return True;
 }
 
 
@@ -2480,14 +2480,14 @@ P_list( const char *sect ATTR_UNUSED, char **value )
 	int is, d, s;
 	char *st;
 
-	for (st = *value, is = d = s = 0; st[s]; s++)
+	for (st = *value, is = False, d = s = 0; st[s]; s++)
 		if (st[s] == ' ' || st[s] == '\t') {
 			if (!is)
 				st[d++] = ',';
-			is = 1;
+			is = True;
 		} else {
 			st[d++] = st[s];
-			is = 0;
+			is = False;
 		}
 	st[d] = 0;
 }
@@ -2594,9 +2594,9 @@ dumpEntry( XrmDatabase *db ATTR_UNUSED,
 	{ /* DM.foo.bar */
 		dpy = dpybuf + 4;
 		strcpy( dpybuf + 4, XrmQuarkToString (*quarks) );
-		for (hasu = 0, el = 4; dpybuf[el]; el++)
+		for (hasu = False, el = 4; dpybuf[el]; el++)
 			if (dpybuf[el] == '_')
-				hasu = 1;
+				hasu = True;
 		if (!hasu/* && isupper (dpy[0])*/) {
 			dpy = dpybuf;
 			memcpy( dpybuf, "*:*_", 4 );
@@ -2642,11 +2642,11 @@ mergeXdmCfg( const char *path )
 		XrmEnumerateDatabase( db, &empty, &empty, XrmEnumAllLevels,
 		                      dumpEntry, (XPointer)0 );
 		applyDefs( xdmdefs, as(xdmdefs), path );
-		mod_usebg = 1;
-		return 1;
+		mod_usebg = True;
+		return True;
 	}
 	free( p );
-	return 0;
+	return False;
 }
 
 static void
@@ -2767,35 +2767,35 @@ int main( int argc, char **argv )
 			exit( 0 );
 		}
 		if (!strcmp( argv[ap], "--no-old" )) {
-			no_old = 1;
+			no_old = True;
 			continue;
 		}
 		if (!strcmp( argv[ap], "--old-scripts" )) {
-			old_scripts = 1;
+			old_scripts = True;
 			continue;
 		}
 		if (!strcmp( argv[ap], "--no-old-scripts" )) {
-			no_old_scripts = 1;
+			no_old_scripts = True;
 			continue;
 		}
 		if (!strcmp( argv[ap], "--old-confs" )) {
-			old_confs = 1;
+			old_confs = True;
 			continue;
 		}
 		if (!strcmp( argv[ap], "--no-old-xdm" )) {
-			no_old_xdm = 1;
+			no_old_xdm = True;
 			continue;
 		}
 		if (!strcmp( argv[ap], "--no-old-kde" )) {
-			no_old_kde = 1;
+			no_old_kde = True;
 			continue;
 		}
 		if (!strcmp( argv[ap], "--no-backup" )) {
-			no_backup = 1;
+			no_backup = True;
 			continue;
 		}
 		if (!strcmp( argv[ap], "--no-in-notice" )) {
-			no_in_notice = 1;
+			no_in_notice = True;
 			continue;
 		}
 		where = 0;
@@ -2818,9 +2818,9 @@ int main( int argc, char **argv )
 		*where = argv[++ap];
 	}
 	if (memcmp( newdir, KDMCONF, sizeof(KDMCONF) ))
-		use_destdir = 1;
+		use_destdir = True;
 
-	if (!mkdirp( newdir, 0755, "target", 1 ))
+	if (!mkdirp( newdir, 0755, "target", True ))
 		exit( 1 );
 
 	makeDefaultConfig();
@@ -2848,7 +2848,7 @@ int main( int argc, char **argv )
 		}
 	} else {
 		if (oldkde) {
-			if (!mergeKdmRcNewer( oldkde, 1 ) && !mergeKdmRcOld( oldkde )) {
+			if (!mergeKdmRcNewer( oldkde, True ) && !mergeKdmRcOld( oldkde )) {
 				fprintf( stderr,
 				         "Cannot read pre-existing kdmrc at specified location\n" );
 				oldkde = 0;
@@ -2905,7 +2905,7 @@ int main( int argc, char **argv )
 	if (no_old_scripts)
 		goto no_old_s;
 	if (!old_scripts) {
-		locals = foreigns = 0;
+		locals = foreigns = False;
 		for (cs = config; cs; cs = cs->next)
 			if (!strcmp( cs->spec->name, "-Core" )) {
 				for (ce = cs->ents; ce; ce = ce->next)
@@ -2915,9 +2915,9 @@ int main( int argc, char **argv )
 					     !strcmp( ce->spec->key, "Reset" )))
 					{
 						if (inNewDir( ce->value ))
-							locals = 1;
+							locals = True;
 						else
-							foreigns = 1;
+							foreigns = True;
 					}
 			}
 		if (foreigns) {
@@ -2925,14 +2925,14 @@ int main( int argc, char **argv )
 				fprintf( stderr,
 				         "Warning: both local and foreign scripts referenced. "
 				         "Will not touch any.\n" );
-				mixed_scripts = 1;
+				mixed_scripts = True;
 			} else {
 			  no_old_s:
 				for (cs = config; cs; cs = cs->next) {
 					if (!strcmp( cs->spec->name, "Xdmcp" )) {
 						for (ce = cs->ents; ce; ce = ce->next)
 							if (!strcmp( ce->spec->key, "Willing" ))
-								ce->active = ce->written = 0;
+								ce->active = ce->written = False;
 					} else if (!strcmp( cs->spec->name, "-Core" )) {
 						for (cep = &cs->ents; (ce = *cep); ) {
 							if (ce->active &&
@@ -2942,7 +2942,7 @@ int main( int argc, char **argv )
 							     !strcmp( ce->spec->key, "Session" )))
 							{
 								if (!memcmp( cs->name, "X-*-", 4 ))
-									ce->active = ce->written = 0;
+									ce->active = ce->written = False;
 								else {
 									*cep = ce->next;
 									free( ce );

@@ -200,12 +200,12 @@ isWilling( ARRAY8Ptr addr, CARD16 connectionType,
 	else {
 		if (*willing) {
 			FILE *fd;
-			int len, ok = 0;
+			int len, ok = False;
 			if ((fd = popen( willing, "r" ))) {
 				for (;;) {
 					if ((len = fGets( statusBuf, sizeof(statusBuf), fd )) != -1) {
 						if (len) {
-							ok = 1;
+							ok = True;
 							break;
 						}
 					}

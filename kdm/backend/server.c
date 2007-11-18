@@ -347,12 +347,12 @@ pingServer( struct display *d )
 		(void)alarm( 0 );
 		(void)Signal( SIGALRM, SIG_DFL );
 		XSetIOErrorHandler( oldError );
-		return 0;
+		return False;
 	}
 	(void)alarm( 0 );
 	(void)Signal( SIGALRM, oldSig );
 	(void)alarm( oldAlarm );
 	debug( "X server alive\n" );
 	XSetIOErrorHandler( oldError );
-	return 1;
+	return True;
 }

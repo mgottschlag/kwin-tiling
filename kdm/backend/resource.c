@@ -63,7 +63,7 @@ closeGetter()
 {
 	if (getter.pid) {
 		gSet( &cnftalk );
-		(void)gClose( &getter, 0, 0 );
+		(void)gClose( &getter, 0, False );
 		debug( "getter now closed\n" );
 	}
 }
@@ -146,7 +146,7 @@ getDeps()
 	ncf = gRecvInt();
 	if (!(cf = Malloc( ncf * sizeof(*cf) ))) {
 		closeGetter();
-		return 0;
+		return False;
 	}
 	for (i = 0; i < ncf; i++) {
 		cf[i].name = newStr( gRecvStr() );
@@ -158,7 +158,7 @@ getDeps()
 			delStr( cfgFiles[i].name );
 		free( cfgFiles );
 	}
-	ret = 1;
+	ret = True;
 	cfgFiles = cf;
 	numCfgFiles = ncf;
 	for (i = 0; i < as(cfgMapT); i++) {
@@ -166,7 +166,7 @@ getDeps()
 		if ((cfgMap[i] = gRecvInt()) < 0) {
 			logError( "Config reader does not support config cathegory %#x\n",
 			          cfgMapT[i] );
-			ret = 0;
+			ret = False;
 		}
 	}
 	gSendInt( -1 );
@@ -179,9 +179,9 @@ checkDep( int idx )
 	int dep;
 
 	if ((dep = cfgFiles[idx].depidx) == -1)
-		return 0;
+		return False;
 	if (checkDep( dep ))
-		return 1;
+		return True;
 	return mTime( cfgFiles[dep].name->str ) != cfgFiles[idx].deptime;
 }
 
@@ -421,7 +421,7 @@ initResources( char **argv )
 	originalArgv = argv;
 	cnftalk.pipe = &getter.pipe;
 	if (Setjmp( cnftalk.errjmp ))
-		return 0; /* may memleak */
+		return False; /* may memleak */
 	return getDeps();
 }
 
@@ -458,7 +458,7 @@ addServers( char **srv, int bType )
 			}
 			dtx = "new";
 		}
-		d->stillThere = 1;
+		d->stillThere = True;
 		d->class2 = class2;
 		d->displayType = (*name == ':' ? dLocal : dForeign) | bType;
 		if ((bType & d_lifetime) == dReserve) {

@@ -238,7 +238,7 @@ updateListener( ARRAY8Ptr addr, void **closure )
 	    (s = findInList( listensocks, addr )))
 	{
 		*closure = (void *)s;
-		s->ref = 1;
+		s->ref = True;
 		return;
 	}
 
@@ -250,7 +250,7 @@ updateListener( ARRAY8Ptr addr, void **closure )
 		free( s );
 		return;
 	}
-	s->ref = 1;
+	s->ref = True;
 	s->next = listensocks;
 	listensocks = s;
 	*closure = (void *)s;
@@ -350,7 +350,7 @@ updateMcastGroup( ARRAY8Ptr addr, void **closure )
 
 	/* Already in the group, mark & continue */
 	if ((g = findInList( s->mcastgroups, addr ))) {
-		g->ref = 1;
+		g->ref = True;
 		return;
 	}
 
@@ -372,9 +372,9 @@ updateListenSockets( void )
 
 	/* Clear Ref bits - any not marked by UpdateCallback will be closed */
 	for (s = listensocks; s; s = s->next) {
-		s->ref = 0;
+		s->ref = False;
 		for (g = s->mcastgroups; g; g = g->next)
-			g->ref = 0;
+			g->ref = False;
 	}
 	forEachListenAddr( updateListener, updateMcastGroup, &tmpPtr );
 	currentRequestPort = requestPort;
@@ -405,12 +405,12 @@ int
 processListenSockets( fd_set *reads )
 {
 	struct socklist *s;
-	int ret = 0;
+	int ret = False;
 
 	for (s = listensocks; s; s = s->next)
 		if (FD_ISSET( s->fd, reads )) {
 			processRequestSocket( s->fd );
-			ret = 1;
+			ret = True;
 		}
 	return ret;
 }

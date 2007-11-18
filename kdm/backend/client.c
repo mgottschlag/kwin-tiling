@@ -149,14 +149,14 @@ displayMsg( int lv, const char *msg, ... )
 		do { \
 			prepareErrorGreet(); \
 			gSendInt( V_AUTH ); \
-			return 0; \
+			return False; \
 		} while(0)
 
 #define V_RET_FAIL(m) \
 		do { \
 			displayStr( V_MSG_ERR, m ); \
 			gSendInt( V_FAIL ); \
-			return 0; \
+			return False; \
 		} while(0)
 
 #ifdef USE_PAM
@@ -317,7 +317,7 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 	if (pdata->abort) {
 		pam_end( pamh, PAM_SUCCESS );
 		pamh = 0;
-		return 0;
+		return False;
 	}
 	if (!curuser) {
 		debug( " asking PAM for user ...\n" );
@@ -342,7 +342,7 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 			V_RET_FAIL( 0 );
 		}
 	}
-	return 1;
+	return True;
 }
 
 #endif /* USE_PAM */
@@ -364,20 +364,20 @@ isNoPassAllowed( const char *un, struct passwd *pw )
 	int hg;
 
 	if (!*un)
-		return 0;
+		return False;
 
 	if (cursource != PWSRC_MANUAL)
-		return 1;
+		return True;
 
-	for (hg = 0, fp = td->noPassUsers; *fp; fp++)
+	for (hg = False, fp = td->noPassUsers; *fp; fp++)
 		if (**fp == '@')
-			hg = 1;
+			hg = True;
 		else if (!strcmp( un, *fp ))
-			return 1;
+			return True;
 		else if (!strcmp( "*", *fp )) {
 #if defined(USE_PAM) || defined(_AIX)
 			if (!(pw = getpwnam( un )))
-				return 0;
+				return False;
 			if (pw->pw_passwd[0] == '!' || pw->pw_passwd[0] == '*')
 				continue;
 # ifdef HAVE_GETSPNAM /* (sic!) - not USESHADOW */
@@ -387,7 +387,7 @@ isNoPassAllowed( const char *un, struct passwd *pw )
 # endif
 #endif
 			if (pw->pw_uid)
-				return 1;
+				return True;
 		}
 
 #if defined(USE_PAM) || defined(_AIX)
@@ -400,24 +400,24 @@ isNoPassAllowed( const char *un, struct passwd *pw )
 				if (**fp == '@' && !strcmp( gr->gr_name, *fp + 1 )) {
 					if (pw->pw_gid == gr->gr_gid) {
 						endgrent();
-						return 1;
+						return True;
 					}
 					for (; *gr->gr_mem; gr->gr_mem++)
 						if (!strcmp( un, *gr->gr_mem )) {
 							endgrent();
-							return 1;
+							return True;
 						}
 				}
 		endgrent();
 	}
 
-	return 0;
+	return False;
 }
 
 #if !defined(USE_PAM) && !defined(_AIX) && defined(HAVE_SETUSERCONTEXT)
-# define LC_RET0 do { login_close(lc); return 0; } while(0)
+# define LC_RET0 do { login_close(lc); return False; } while(0)
 #else
-# define LC_RET0 return 0
+# define LC_RET0 return False
 #endif
 
 int
@@ -451,7 +451,7 @@ verify( GConvFunc gconv, int rootok )
 	pnopass = False;
 	if (!strcmp( curtype, "classic" )) {
 		if (!gconv( GCONV_USER, 0 ))
-			return 0;
+			return False;
 		if (isNoPassAllowed( curuser )) {
 			gconv( GCONV_PASS_ND, 0 );
 			if (!*curpass) {
@@ -470,7 +470,7 @@ verify( GConvFunc gconv, int rootok )
 	}
 	pdata.gconv = gconv;
 	if (!doPAMAuth( psrv, &pdata ))
-		return 0;
+		return False;
 
 #elif defined(_AIX)
 
@@ -505,7 +505,7 @@ verify( GConvFunc gconv, int rootok )
 
 	if (!strcmp( curtype, "classic" )) {
 		if (!gconv( GCONV_USER, 0 ))
-			return 0;
+			return False;
 		if (isNoPassAllowed( curuser )) {
 			gconv( GCONV_PASS_ND, 0 );
 			if (!*curpass) {
@@ -514,7 +514,7 @@ verify( GConvFunc gconv, int rootok )
 			}
 		} else
 			if (!gconv( GCONV_PASS, 0 ))
-				return 0;
+				return False;
 		enduserdb();
 		msg = NULL;
 		if ((i = authenticate( curuser, curpass, &reenter, &msg ))) {
@@ -534,7 +534,7 @@ verify( GConvFunc gconv, int rootok )
 		}
 	} else if (!strcmp( curtype, "generic" )) {
 		if (!gconv( GCONV_USER, 0 ))
-			return 0;
+			return False;
 		for (curret = 0;;) {
 			msg = NULL;
 			if ((i = authenticate( curuser, curret, &reenter, &msg ))) {
@@ -552,7 +552,7 @@ verify( GConvFunc gconv, int rootok )
 			if (!reenter)
 				break;
 			if (!(curret = gconv( GCONV_HIDDEN, msg )))
-				return 0;
+				return False;
 			free( msg );
 		}
 	} else {
@@ -574,7 +574,7 @@ verify( GConvFunc gconv, int rootok )
 	}
 
 	if (!gconv( GCONV_USER, 0 ))
-		return 0;
+		return False;
 
 	if (!(p = getpwnam( curuser ))) {
 		debug( "getpwnam() failed.\n" );
@@ -617,7 +617,7 @@ verify( GConvFunc gconv, int rootok )
 		}
 	} else
 		if (!gconv( GCONV_PASS, 0 ))
-			return 0;
+			return False;
 
 # ifdef KERBEROS
 	if (p->pw_uid) {
@@ -678,7 +678,7 @@ verify( GConvFunc gconv, int rootok )
 	if (!p->pw_uid) {
 		if (!rootok && !td->allowRootLogin)
 			V_RET_FAIL( "Root logins are not allowed" );
-		return 1; /* don't deny root to log in */
+		return True; /* don't deny root to log in */
 	}
 
 #ifdef USE_PAM
@@ -698,7 +698,7 @@ verify( GConvFunc gconv, int rootok )
 			/* this cannot auth the wrong user, as only classic auths get here */
 			while (!doPAMAuth( PAMService, &pdata ))
 				if (pdata.abort)
-					return 0;
+					return False;
 			gSendInt( V_PRE_OK );
 		} else
 			gSendInt( V_CHTOK );
@@ -710,7 +710,7 @@ verify( GConvFunc gconv, int rootok )
 			if (pdata.abort) {
 				pam_end( pamh, PAM_SUCCESS );
 				pamh = 0;
-				return 0;
+				return False;
 			}
 			if (pretc == PAM_SUCCESS)
 				break;
@@ -742,7 +742,7 @@ verify( GConvFunc gconv, int rootok )
 			free( msg );
 		}
 		gSendInt( V_AUTH );
-		return 0;
+		return False;
 	}
 	if (msg)
 		free( (void *)msg );
@@ -778,12 +778,12 @@ verify( GConvFunc gconv, int rootok )
 		tim = time( NULL ) / 86400L;
 
 #   ifdef HAVE_SETUSERCONTEXT
-		quietlog = login_getcapbool( lc, "hushlogin", 0 );
+		quietlog = login_getcapbool( lc, "hushlogin", False );
 		warntime = login_getcaptime( lc, "warnexpire",
 		                             DEFAULT_WARN * 86400L,
 		                             DEFAULT_WARN * 86400L ) / 86400L;
 #   else
-		quietlog = 0;
+		quietlog = False;
 #    ifdef USESHADOW
 		warntime = sp->sp_warn != -1 ? sp->sp_warn : DEFAULT_WARN;
 #    else
@@ -858,7 +858,7 @@ verify( GConvFunc gconv, int rootok )
 	if ((
 #  ifdef HAVE_SETUSERCONTEXT
 	     /* Do we ignore a nologin file? */
-	     !login_getcapbool( lc, "ignorenologin", 0 )) &&
+	     !login_getcapbool( lc, "ignorenologin", False )) &&
 	    (!stat( (nolg = login_getcapstr( lc, "nologin", "", NULL )), &st ) ||
 #  endif
 		 !stat( (nolg = _PATH_NOLOGIN), &st )))
@@ -911,7 +911,7 @@ verify( GConvFunc gconv, int rootok )
 
 /* restrict_nohome */
 # ifdef HAVE_SETUSERCONTEXT
-	if (login_getcapbool( lc, "requirehome", 0 )) {
+	if (login_getcapbool( lc, "requirehome", False )) {
 		struct stat st;
 		if (!*p->pw_dir || stat( p->pw_dir, &st ) || st.st_uid != p->pw_uid) {
 			displayStr( V_MSG_ERR, "Home folder not available" );
@@ -923,7 +923,7 @@ verify( GConvFunc gconv, int rootok )
 
 #endif /* !_AIX */
 
-	return 1;
+	return True;
 
 }
 
@@ -946,12 +946,12 @@ saveGids( void )
 {
 	num_saved_gids = getgroups( 0, 0 );
 	if (!(saved_gids = Malloc( sizeof(gid_t) * num_saved_gids )))
-		return 0;
+		return False;
 	if (getgroups( num_saved_gids, saved_gids ) < 0) {
 		logError( "saving groups failed: %m\n" );
-		return 0;
+		return False;
 	}
-	return 1;
+	return True;
 }
 
 static int
@@ -959,13 +959,13 @@ restoreGids( void )
 {
 	if (setgroups( num_saved_gids, saved_gids ) < 0) {
 		logError( "restoring groups failed: %m\n" );
-		return 0;
+		return False;
 	}
 	if (setgid( p->pw_gid ) < 0) {
 		logError( "restoring gid failed: %m\n" );
-		return 0;
+		return False;
 	}
-	return 1;
+	return True;
 }
 #endif /* USE_PAM && HAVE_INITGROUPS */
 
@@ -975,14 +975,14 @@ resetGids( void )
 #ifdef HAVE_INITGROUPS
 	if (setgroups( 0, &p->pw_gid /* anything */ ) < 0) {
 		logError( "restoring groups failed: %m\n" );
-		return 0;
+		return False;
 	}
 #endif
 	if (setgid( 0 ) < 0) {
 		logError( "restoring gid failed: %m\n" );
-		return 0;
+		return False;
 	}
-	return 1;
+	return True;
 }
 
 static int
@@ -990,16 +990,16 @@ setGid( const char *name, int gid )
 {
 	if (setgid( gid ) < 0) {
 		logError( "setgid(%d) (user %s) failed: %m\n", gid, name );
-		return 0;
+		return False;
 	}
 #ifdef HAVE_INITGROUPS
 	if (initgroups( name, gid ) < 0) {
 		logError( "initgroups for %s failed: %m\n", name );
 		setgid( 0 );
-		return 0;
+		return False;
 	}
 #endif	 /* QNX4 doesn't support multi-groups, no initgroups() */
-	return 1;
+	return True;
 }
 
 static int
@@ -1007,9 +1007,9 @@ setUid( const char *name, int uid )
 {
 	if (setuid( uid ) < 0) {
 		logError( "setuid(%d) (user %s) failed: %m\n", uid, name );
-		return 0;
+		return False;
 	}
-	return 1;
+	return True;
 }
 
 static int
@@ -1017,10 +1017,10 @@ setUser( const char *name, int uid, int gid )
 {
 	if (setGid( name, gid )) {
 		if (setUid( name, uid ))
-			return 1;
+			return True;
 		resetGids();
 	}
-	return 0;
+	return False;
 }
 
 #if defined(SECURE_RPC) || defined(K5AUTH)
@@ -1052,17 +1052,17 @@ mergeSessionArgs( int cansave )
 	if ((!curdmrc || newdmrc) && *dmrcDir)
 		if (strApp( &mfname, dmrcDir, "/", curuser, fname, (char *)0 ))
 			fname = mfname;
-	needsave = 0;
+	needsave = False;
 	if (!curdmrc) {
 		curdmrc = iniLoad( fname );
 		if (!curdmrc) {
 			strDup( &curdmrc, "[Desktop]\nSession=default\n" );
-			needsave = 1;
+			needsave = True;
 		}
 	}
 	if (newdmrc) {
 		curdmrc = iniMerge( curdmrc, newdmrc );
-		needsave = 1;
+		needsave = True;
 	}
 	if (needsave && cansave)
 		if (!iniSave( curdmrc, fname ) && errno == ENOENT && mfname) {
@@ -1181,7 +1181,7 @@ startClient( volatile int *pid )
 		logError( "getpwnam(%s) failed.\n", curuser );
 	  pError:
 		displayStr( V_MSG_ERR, 0 );
-		return 0;
+		return False;
 	}
 #endif
 
@@ -1197,14 +1197,14 @@ startClient( volatile int *pid )
 #  if defined(KERBEROS) && defined(AFS)
 	if (krbtkfile[0] != '\0') {
 		if (k_hasafs()) {
-			int fail = 0;
+			int fail = False;
 			if (k_setpag() == -1) {
 				logError( "setpag() for %s failed\n", curuser );
-				fail = 1;
+				fail = True;
 			}
 			if ((ret = k_afsklog( NULL, NULL )) != KSUCCESS) {
 				logError( "AFS Warning: %s\n", krb_get_err_text( ret ) );
-				fail = 1;
+				fail = True;
 			}
 			if (fail)
 				displayMsg( V_MSG_ERR,
@@ -1309,7 +1309,7 @@ startClient( volatile int *pid )
 	saved_env = environ;
 	environ = pam_env;
 # endif
-	removeCreds = 1; /* set it first - i don't trust PAM's rollback */
+	removeCreds = True; /* set it first - i don't trust PAM's rollback */
 	pretc = pam_setcred( pamh, 0 );
 	reInitErrorLog();
 # ifndef HAVE_PAM_GETENVLIST
@@ -1329,17 +1329,17 @@ startClient( volatile int *pid )
 		logError( "pam_setcred() for %s failed: %s\n",
 		          curuser, pam_strerror( pamh, pretc ) );
 		resetGids();
-		return 0;
+		return False;
 	}
 
-	removeSession = 1; /* set it first - same as above */
+	removeSession = True; /* set it first - same as above */
 	pretc = pam_open_session( pamh, 0 );
 	reInitErrorLog();
 	if (pretc != PAM_SUCCESS) {
 		logError( "pam_open_session() for %s failed: %s\n",
 		          curuser, pam_strerror( pamh, pretc ) );
 		resetGids();
-		return 0;
+		return False;
 	}
 
 	/* we don't want sessreg and the startup/reset scripts run with user
@@ -1351,7 +1351,7 @@ startClient( volatile int *pid )
 # define D_LOGIN_SETGROUP 0
 #endif /* USE_PAM */
 
-	removeAuth = 1;
+	removeAuth = True;
 	chownCtrl( &td->ctrl, curuid );
 	endpwent();
 #if !defined(USE_PAM) && defined(USESHADOW) && !defined(_AIX)
@@ -1497,7 +1497,7 @@ startClient( volatile int *pid )
 			char netname[MAXNETNAMELEN+1], secretkey[HEXKEYBYTES+1];
 			int nameret, keyret;
 			int len;
-			int key_set_ok = 0;
+			int key_set_ok = False;
 			struct key_netstarg netst;
 
 			nameret = getnetname( netname );
@@ -1521,7 +1521,7 @@ startClient( volatile int *pid )
 					if (keyret == -1)
 						logError( "Failed to set NIS secret key\n" );
 					else
-						key_set_ok = 1;
+						key_set_ok = True;
 				} else {
 					/* found a key, but couldn't interpret it */
 					logError( "Password incorrect for NIS principal %s\n",
@@ -1625,7 +1625,7 @@ startClient( volatile int *pid )
 		exit( 1 );
 	case -1:
 		free( buf );
-		return 0;
+		return False;
 	}
 	debug( "StartSession, fork succeeded %d\n", *pid );
 	free( buf );
@@ -1697,7 +1697,7 @@ clientExited( void )
 			Wait4( &pid );
 			break;
 		}
-		removeAuth = 0;
+		removeAuth = False;
 	}
 
 #ifdef USE_PAM
@@ -1718,7 +1718,7 @@ clientExited( void )
 			logError( "pam_setcred(DELETE_CRED) failed: %s\n",
 			          pam_strerror( pamh, pretc ) );
 		resetGids();
-		removeCreds = 0;
+		removeCreds = False;
 	}
 	if (pamh) {
 		pam_end( pamh, PAM_SUCCESS );

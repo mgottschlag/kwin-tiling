@@ -661,7 +661,7 @@ gRecvCmd( int *cmd )
 		return 1;
 	}
 	gDebug( " -> no data\n" );
-	return 0;
+	return False;
 }
 
 void

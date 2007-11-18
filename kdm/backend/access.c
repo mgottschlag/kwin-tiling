@@ -129,7 +129,7 @@ getLocalAddress( void )
 			XdmcpAllocARRAY8( &localAddress, hostent->h_length );
 			memmove( localAddress.data, hostent->h_addr, hostent->h_length );
 #endif
-			haveLocalAddress = 1;
+			haveLocalAddress = True;
 		}
 	}
 	return &localAddress;
@@ -236,7 +236,7 @@ scanAccessDatabase( int force )
 }
 
 
-/* Returns non-0 if string is matched by pattern.  Does case folding.
+/* Returns True if string is matched by pattern.  Does case folding.
  */
 static int
 patternMatch( const char *string, const char *pattern )
@@ -251,14 +251,14 @@ patternMatch( const char *string, const char *pattern )
 		switch (p = *pattern++) {
 		case '*':
 			if (!*pattern)
-				return 1;
+				return True;
 			for (string--; *string; string++)
 				if (patternMatch( string, pattern ))
-					return 1;
-			return 0;
+					return True;
+			return False;
 		case '?':
 			if (s == '\0')
-				return 0;
+				return False;
 			break;
 		case '\0':
 			return s == '\0';
@@ -267,7 +267,7 @@ patternMatch( const char *string, const char *pattern )
 			/* fall through */
 		default:
 			if (tolower( p ) != tolower( s ))
-				return 0;
+				return False;
 		}
 	}
 }
@@ -297,7 +297,7 @@ scanHostlist( int fh, int nh,
 			break;
 		case HOST_ADDRESS:
 			if (XdmcpARRAY8Equal( getLocalAddress(), &h->entry.displayAddress.hostAddress ))
-				*haveLocalhost = 1;
+				*haveLocalhost = True;
 			else if (function)
 				(*function)( connectionType, &h->entry.displayAddress.hostAddress, closure );
 			break;
@@ -328,26 +328,26 @@ scanEntrylist( int fh, int nh,
 					if (scanEntrylist( a->hosts, a->nhosts,
 					                   clientAddress, connectionType,
 					                   clientName ))
-						return 1;
+						return True;
 			break;
 		case HOST_PATTERN:
 			if (!*clientName)
 				*clientName = networkAddressToHostname( connectionType,
 				                                        clientAddress );
 			if (patternMatch( *clientName, h->entry.hostPattern ))
-				return 1;
+				return True;
 			break;
 		case HOST_ADDRESS:
 			if (h->entry.displayAddress.connectionType == connectionType &&
 			    XdmcpARRAY8Equal( &h->entry.displayAddress.hostAddress,
 			                      clientAddress ))
-				return 1;
+				return True;
 			break;
 		default:
 			break;
 		}
 	}
-	return 0;
+	return False;
 }
 
 static AclEntry *
@@ -381,16 +381,16 @@ forEachMatchingIndirectHost( ARRAY8Ptr clientAddress,
                              ChooserFunc function, char *closure )
 {
 	AclEntry *e;
-	int haveLocalhost = 0;
+	int haveLocalhost = False;
 
-	e = matchAclEntry( clientAddress, connectionType, 0 );
+	e = matchAclEntry( clientAddress, connectionType, False );
 	if (e && !(e->flags & a_notAllowed)) {
 		if (e->flags & a_useChooser) {
 			ARRAY8Ptr choice;
 
 			choice = indirectChoice( clientAddress, connectionType );
 			if (!choice || XdmcpARRAY8Equal( getLocalAddress(), choice ))
-				haveLocalhost = 1;
+				haveLocalhost = True;
 			else
 				(*function)( connectionType, choice, closure );
 		} else
@@ -405,7 +405,7 @@ useChooser( ARRAY8Ptr clientAddress, CARD16 connectionType )
 {
 	AclEntry *e;
 
-	e = matchAclEntry( clientAddress, connectionType, 0 );
+	e = matchAclEntry( clientAddress, connectionType, False );
 	return e && !(e->flags & a_notAllowed) && (e->flags & a_useChooser) &&
 		!indirectChoice( clientAddress, connectionType );
 }
@@ -415,9 +415,9 @@ forEachChooserHost( ARRAY8Ptr clientAddress, CARD16 connectionType,
                     ChooserFunc function, char *closure )
 {
 	AclEntry *e;
-	int haveLocalhost = 0;
+	int haveLocalhost = False;
 
-	e = matchAclEntry( clientAddress, connectionType, 0 );
+	e = matchAclEntry( clientAddress, connectionType, False );
 	if (e && !(e->flags & a_notAllowed) && (e->flags & a_useChooser))
 		scanHostlist( e->hosts, e->nhosts, clientAddress, connectionType,
 		              function, closure, True, &haveLocalhost );
@@ -436,9 +436,9 @@ acceptableDisplayAddress( ARRAY8Ptr clientAddress, CARD16 connectionType,
 	AclEntry *e;
 
 	if (type == INDIRECT_QUERY)
-		return 1;
+		return True;
 
-	e = matchAclEntry( clientAddress, connectionType, 1 );
+	e = matchAclEntry( clientAddress, connectionType, True );
 	return e && !(e->flags & a_notAllowed) &&
 		(type != BROADCAST_QUERY || !(e->flags & a_notBroadcast));
 }

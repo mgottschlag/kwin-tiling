@@ -58,9 +58,9 @@ anyRunningDisplays( void )
 		case reserve:
 			break;
 		default:
-			return 1;
+			return True;
 		}
-	return 0;
+	return False;
 }
 
 int
@@ -70,8 +70,8 @@ anyReserveDisplays( void )
 
 	for (d = displays; d; d = d->next)
 		if ((d->displayType & d_lifetime) == dReserve)
-			return 1;
-	return 0;
+			return True;
+	return False;
 }
 
 int
@@ -97,9 +97,9 @@ startReserveDisplay( int lt )
 	if (rd) {
 		rd->idleTimeout = lt;
 		rd->status = notRunning;
-		return 1;
+		return True;
 	}
-	return 0;
+	return False;
 }
 
 void

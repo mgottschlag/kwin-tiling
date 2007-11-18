@@ -47,7 +47,7 @@ static int
 ignoreErrors( Display *dspl ATTR_UNUSED, XErrorEvent *event ATTR_UNUSED )
 {
 	debug( "ignoring error\n" );
-	return 0;
+	return False;
 }
 
 /*

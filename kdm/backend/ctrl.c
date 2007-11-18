@@ -747,11 +747,11 @@ processCtrl( const char *string, int len, int fd, struct display *d )
 			if (!strcmp( ar[0], "lock" )) {
 				if (ar[1])
 					goto exce;
-				d->hstent->lock = 1;
+				d->hstent->lock = True;
 			} else if (!strcmp( ar[0], "unlock" )) {
 				if (ar[1])
 					goto exce;
-				d->hstent->lock = 0;
+				d->hstent->lock = False;
 			} else if (!strcmp( ar[0], "suicide" )) {
 				if (ar[1])
 					goto exce;
@@ -887,12 +887,12 @@ handleCtrl( fd_set *reads, struct display *d )
 				nukeSock( cs );
 				continue;
 			case 1:
-				return 1;
+				return True;
 			default:
 				break;
 			}
 			csp = &cs->next;
 		}
 	}
-	return 0;
+	return False;
 }

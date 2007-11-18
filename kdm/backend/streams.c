@@ -119,9 +119,9 @@ processListenSockets( fd_set *reads )
 {
 	if (xdmcpFd >= 0 && FD_ISSET( xdmcpFd, reads )) {
 		processRequestSocket( xdmcpFd );
-		return 1;
+		return True;
 	}
-	return 0;
+	return False;
 }
 
 #endif /* STREAMSCONN && XDMCP */

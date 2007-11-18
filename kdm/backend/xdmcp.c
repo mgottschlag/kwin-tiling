@@ -334,7 +334,7 @@ networkAddressToName( CARD16 connectionType, ARRAY8Ptr connectionAddress,
 			char *hostname = NULL;
 			char *name;
 			const char *localhost;
-			int multiHomed = 0;
+			int multiHomed = False;
 			int type;
 #if defined(IPv6) && defined(AF_INET6)
 			struct addrinfo  *ai = NULL, *nai, hints;
@@ -360,7 +360,7 @@ networkAddressToName( CARD16 connectionType, ARRAY8Ptr connectionAddress,
 							if (ai->ai_protocol == nai->ai_protocol &&
 							    memcmp( ai->ai_addr, nai->ai_addr,
 							            ai->ai_addrlen ))
-								multiHomed = 1;
+								multiHomed = True;
 					}
 #else
 					hostent = gethostbyname( hostent->h_name );
@@ -909,13 +909,13 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 			d->displayNumber = pdpy->displayNumber;
 			convertClientAddress( from,
 			                      &clientAddress, &clientPort, &connectionType );
-			d->useChooser = 0;
+			d->useChooser = False;
 			d->xdmcpFd = fd;
 			if (isIndirectClient( &clientAddress, connectionType )) {
 				debug( "isIndirectClient\n" );
 				forgetIndirectClient( &clientAddress, connectionType );
 				if (useChooser( &clientAddress, connectionType )) {
-					d->useChooser = 1;
+					d->useChooser = True;
 					debug( "use chooser for %s\n", d->name );
 				}
 			}

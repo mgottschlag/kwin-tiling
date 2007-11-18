@@ -97,21 +97,21 @@ struct AuthProtocol {
 
 static struct AuthProtocol authProtocols[] = {
 { (unsigned short)18, "MIT-MAGIC-COOKIE-1",
-	mitInitAuth, mitGetAuth xdmcpauth(NULL), 0
+	mitInitAuth, mitGetAuth xdmcpauth(NULL), False
 },
 #ifdef HASXDMAUTH
 { (unsigned short)19, "XDM-AUTHORIZATION-1",
-	xdmInitAuth, xdmGetAuth xdmcpauth(xdmGetXdmcpAuth), 0
+	xdmInitAuth, xdmGetAuth xdmcpauth(xdmGetXdmcpAuth), False
 },
 #endif
 #ifdef SECURE_RPC
 { (unsigned short)9, "SUN-DES-1",
-	secureRPCInitAuth, secureRPCGetAuth xdmcpauth(NULL), 0
+	secureRPCInitAuth, secureRPCGetAuth xdmcpauth(NULL), False
 },
 #endif
 #ifdef K5AUTH
 { (unsigned short)14, "MIT-KERBEROS-5",
-	krb5InitAuth, krb5GetAuth xdmcpauth(NULL), 0
+	krb5InitAuth, krb5GetAuth xdmcpauth(NULL), False
 },
 #endif
 };
@@ -405,11 +405,11 @@ openFiles( const char *name, char *new_name, FILE **oldp, FILE **newp )
 	if (!(*newp =
 	      fdOpenW( creat( new_name, 0600 ) ))) {
 		debug( "cannot open new file %s\n", new_name );
-		return 0;
+		return False;
 	}
 	*oldp = fopen( name, "r" );
 	debug( "opens succeeded %s %s\n", name, new_name );
-	return 1;
+	return True;
 }
 
 struct addrList {
@@ -466,8 +466,8 @@ checkEntry( Xauth *auth )
 		    a->number_length == auth->number_length &&
 		    !memcmp( a->data + a->address_length,
 		             auth->number, auth->number_length ))
-			return 1;
-	return 0;
+			return True;
+	return False;
 }
 
 static void
@@ -480,7 +480,7 @@ writeAuth( FILE *file, Xauth *auth, int *ok )
 		       "number:  %02[*:hhx\n"
 		       "name:    %02[*:hhx\n"
 		       "data:    %02[*:hhx\n",
-		       ok != 0, auth->family,
+		       ok, auth->family,
 		       auth->address_length, auth->address,
 		       auth->number_length, auth->number,
 		       auth->name_length, auth->name,

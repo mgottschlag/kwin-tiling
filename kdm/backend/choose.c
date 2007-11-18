@@ -78,19 +78,19 @@ rememberIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType )
 	for (i = indirectUsers; i; i = i->next)
 		if (XdmcpARRAY8Equal( clientAddress, &i->client ) &&
 		    connectionType == i->connectionType)
-			return 1;
+			return True;
 	i = (IndirectUsersPtr)Malloc( sizeof(IndirectUsersRec) );
 	if (!i) {
-		return 0;
+		return False;
 	}
 	if (!XdmcpCopyARRAY8( clientAddress, &i->client )) {
 		free( (char *)i );
-		return 0;
+		return False;
 	}
 	i->connectionType = connectionType;
 	i->next = indirectUsers;
 	indirectUsers = i;
-	return 1;
+	return True;
 }
 
 void
@@ -118,8 +118,8 @@ isIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType )
 	for (i = indirectUsers; i; i = i->next)
 		if (XdmcpARRAY8Equal( clientAddress, &i->client ) &&
 		    connectionType == i->connectionType)
-			return 1;
-	return 0;
+			return True;
+	return False;
 }
 
 typedef struct _Choices {
@@ -169,7 +169,7 @@ registerindirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType,
 	ChoicePtr c;
 	int insert;
 #if 0
-	int found = 0;
+	int found = False;
 #endif
 
 	debug( "got indirect choice back\n" );
@@ -177,40 +177,40 @@ registerindirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType,
 		if (XdmcpARRAY8Equal( clientAddress, &c->client ) &&
 		    connectionType == c->connectionType) {
 #if 0
-			found = 1;
+			found = True;
 #endif
 			break;
 		}
 	}
 #if 0
 	if (!found)
-		return 0;
+		return False;
 #endif
 
-	insert = 0;
+	insert = False;
 	if (!c) {
-		insert = 1;
+		insert = True;
 		c = (ChoicePtr)Malloc( sizeof(ChoiceRec) );
 		if (!c)
-			return 0;
+			return False;
 		c->connectionType = connectionType;
 		if (!XdmcpCopyARRAY8( clientAddress, &c->client )) {
 			free( (char *)c );
-			return 0;
+			return False;
 		}
 	} else
 		XdmcpDisposeARRAY8( &c->choice );
 	if (!XdmcpCopyARRAY8( choice, &c->choice )) {
 		XdmcpDisposeARRAY8( &c->client );
 		free( (char *)c );
-		return 0;
+		return False;
 	}
 	if (insert) {
 		c->next = choices;
 		choices = c;
 	}
 	c->time = now;
-	return 1;
+	return True;
 }
 
 #if 0
@@ -320,7 +320,7 @@ addHostname( ARRAY8Ptr hostname, ARRAY8Ptr status,
 		    XdmcpARRAY8Equal( &hostAddr, &name->hostaddr ))
 		{
 			if (XdmcpARRAY8Equal( status, &name->status ))
-				return 0;
+				return False;
 			XdmcpDisposeARRAY8( &name->status );
 			XdmcpDisposeARRAY8( hostname );
 
@@ -329,7 +329,7 @@ addHostname( ARRAY8Ptr hostname, ARRAY8Ptr status,
 		}
 	}
 	if (!(name = (HostName *)Malloc( sizeof(*name) )))
-		return 0;
+		return False;
 	if (hostname->length) {
 		switch (addr->sa_family) {
 		case AF_INET:
@@ -353,7 +353,7 @@ addHostname( ARRAY8Ptr hostname, ARRAY8Ptr status,
 	}
 	if (!XdmcpAllocARRAY8( &name->hostaddr, hostAddr.length )) {
 		free( (char *)name );
-		return 0;
+		return False;
 	}
 	memmove( name->hostaddr.data, hostAddr.data, hostAddr.length );
 	name->connectionType = connectionType;
@@ -364,7 +364,7 @@ addHostname( ARRAY8Ptr hostname, ARRAY8Ptr status,
 
 	gSendInt( G_Ch_AddHost );
   gotold:
-	name->alive = 1;
+	name->alive = True;
 	name->willing = will;
 	name->status = *status;
 
@@ -373,7 +373,7 @@ addHostname( ARRAY8Ptr hostname, ARRAY8Ptr status,
 	gSendNStr( (char *)name->status.data, name->status.length );
 	gSendInt( will );
 
-	return 1;
+	return True;
 }
 
 static void
@@ -404,7 +404,7 @@ receivePacket( int sfd )
 	ARRAY8 authenticationName;
 	ARRAY8 hostname;
 	ARRAY8 status;
-	int saveHostname = 0;
+	int saveHostname = False;
 #if defined(IPv6) && defined(AF_INET6)
 	struct sockaddr_storage addr;
 #else
@@ -430,8 +430,8 @@ receivePacket( int sfd )
 				if (header.length == 6 + authenticationName.length +
 				    hostname.length + status.length) {
 					if (addHostname( &hostname, &status,
-					                 (struct sockaddr *)&addr, 1 ))
-						saveHostname = 1;
+					                 (struct sockaddr *)&addr, True ))
+						saveHostname = True;
 				}
 			}
 			XdmcpDisposeARRAY8( &authenticationName );
@@ -441,8 +441,8 @@ receivePacket( int sfd )
 			    XdmcpReadARRAY8( &buffer, &status )) {
 				if (header.length == 4 + hostname.length + status.length) {
 					if (addHostname( &hostname, &status,
-					                 (struct sockaddr *)&addr, 0 ))
-						saveHostname = 1;
+					                 (struct sockaddr *)&addr, False ))
+						saveHostname = True;
 				}
 			}
 			break;
@@ -656,7 +656,7 @@ makeSockAddrs( const char *name, HostAddr **hosts )
 	bzero( &hints, sizeof(hints) );
 	hints.ai_socktype = SOCK_DGRAM;
 	if (getaddrinfo( name, stringify( XDM_UDP_PORT ), &hints, &ai ))
-		return 0;
+		return False;
 	for (nai = ai; nai; nai = nai->ai_next)
 		if ((nai->ai_family == AF_INET) || (nai->ai_family == AF_INET6))
 			addHostaddr( hosts, nai->ai_addr, nai->ai_addrlen,
@@ -671,7 +671,7 @@ makeSockAddrs( const char *name, HostAddr **hosts )
 		struct hostent *hostent;
 		if (!(hostent = gethostbyname( name )) ||
 		    hostent->h_addrtype != AF_INET)
-			return 0;
+			return False;
 		memcpy( &in_addr.sin_addr, hostent->h_addr, 4 );
 	}
 	in_addr.sin_family = AF_INET;
@@ -686,7 +686,7 @@ makeSockAddrs( const char *name, HostAddr **hosts )
 # endif
 	             QUERY );
 #endif
-	return 1;
+	return True;
 }
 
 /*
@@ -703,8 +703,8 @@ registerForPing( const char *name )
 	if (!strcmp( name, "BROADCAST" ) || !strcmp( name, "*" ))
 		registerBroadcastForPing();
 	else if (!makeSockAddrs( name, &hostAddrdb ))
-		return 0;
-	return 1;
+		return False;
+	return True;
 }
 
 /*ARGSUSED*/
@@ -801,7 +801,7 @@ initXDMCP()
 
 	if (t_bind( socketFD, NULL, NULL ) < 0) {
 		t_close( socketFD );
-		return 0;
+		return False;
 	}
 
 	/*
@@ -814,21 +814,21 @@ initXDMCP()
 		if ((nconf = getnetconfigent( "udp" )) == NULL) {
 			t_unbind( socketFD );
 			t_close( socketFD );
-			return 0;
+			return False;
 		}
 
 		if (netdir_options( nconf, ND_SET_BROADCAST, socketFD, NULL )) {
 			freenetconfigent( nconf );
 			t_unbind( socketFD );
 			t_close( socketFD );
-			return 0;
+			return False;
 		}
 
 		freenetconfigent( nconf );
 	}
 #else
 	if ((socketFD = socket( AF_INET, SOCK_DGRAM, 0 )) < 0)
-		return 0;
+		return False;
 #if defined(IPv6) && defined(AF_INET6)
 	socket6FD = socket( AF_INET6, SOCK_DGRAM, 0 );
 #endif
@@ -840,7 +840,7 @@ initXDMCP()
 # endif
 #endif
 
-	return 1;
+	return True;
 }
 
 static void ATTR_NORETURN
@@ -932,7 +932,7 @@ doChoose()
 	if (!xdmcpInited) {
 		if (!initXDMCP())
 			sessionExit( EX_UNMANAGE_DPY );
-		xdmcpInited = 1;
+		xdmcpInited = True;
 	}
 	if ((td->displayType & d_location) == dLocal) {
 		/* XXX the config reader should do the lookup already */
@@ -947,7 +947,7 @@ doChoose()
 
   reping:
 	for (h = hostNamedb; h; h = h->next)
-		h->alive = 0;
+		h->alive = False;
 	pingTry = 0;
 	goto pingen;
 

@@ -403,7 +403,7 @@ secureDisplay( Display *dpy )
 	if (!_grabServer)
 	{
 		XUngrabServer( dpy );
-		XSync( dpy, 0 );
+		XSync( dpy, False );
 	}
 	debug( "secureDisplay %s done\n", dname );
 }
@@ -414,7 +414,7 @@ unsecureDisplay( Display *dpy )
 	debug( "Unsecure display %s\n", dname );
 	if (_grabServer) {
 		XUngrabServer( dpy );
-		XSync( dpy, 0 );
+		XSync( dpy, False );
 	}
 }
 
@@ -476,8 +476,8 @@ unsecureInputs( Display *dpy )
 	debug( "unsecureInputs %s\n", dname );
 	XSetInputFocus( dpy, PointerRoot, PointerRoot, CurrentTime );
 	XUngrabKeyboard( dpy, CurrentTime );
-    XUngrabPointer( dpy, CurrentTime );
-	XSync( dpy, 0 );
+	XUngrabPointer( dpy, CurrentTime );
+	XSync( dpy, False );
 }
 
 static jmp_buf pingTime;
@@ -507,20 +507,20 @@ pingServer( Display *dpy )
 	(void)alarm( _pingTimeout * 60 );
 	if (!setjmp( pingTime )) {
 		debug( "Ping server\n" );
-		XSync( dpy, 0 );
+		XSync( dpy, False );
 	} else {
 		debug( "Server dead\n" );
 		(void)alarm( 0 );
 		(void)signal( SIGALRM, SIG_DFL );
 		XSetIOErrorHandler( oldError );
-		return 0;
+		return False;
 	}
 	(void)alarm( 0 );
 	(void)signal( SIGALRM, oldSig );
 	(void)alarm( oldAlarm );
 	debug( "Server alive\n" );
 	XSetIOErrorHandler( oldError );
-	return 1;
+	return True;
 }
 
 /*
@@ -592,9 +592,9 @@ xkbSetModifier( Display *dpy, const char *name, int sts )
 	unsigned int mask;
 
 	if (!(mask = xkbModifierMask( dpy, name )))
-		return 0;
+		return False;
 	XkbLockModifiers( dpy, XkbUseCoreKbd, mask, sts ? mask : 0 );
-	return 1;
+	return True;
 }
 #endif /* HAVE_XKB */
 
@@ -643,11 +643,11 @@ setupModifiers( Display *mdpy, int numlock )
 	if (numlock == 2)
 		return;
 	newnumstate = numlock;
-	nummodified = 1;
+	nummodified = True;
 	dpy = mdpy;
 #ifdef HAVE_XKB
 	if (xkbInit( mdpy )) {
-		havexkb = 1;
+		havexkb = True;
 		oldnumstate = xkbGetModifierState( mdpy, "NumLock" );
 		xkbSetModifier( mdpy, "NumLock", numlock );
 		return;

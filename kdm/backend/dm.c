@@ -85,7 +85,7 @@ char *prog;
 int
 main( int argc, char **argv )
 {
-	int oldpid, oldumask, fd, noDaemonMode;
+	int oldpid, oldumask, fd, parentPid;
 	char *pt, *errorLogFile, **opts;
 
 	/* make sure at least world write access is disabled */
@@ -187,7 +187,7 @@ main( int argc, char **argv )
 	/*
 	 * Parse command line options
 	 */
-	noDaemonMode = getppid();
+	parentPid = getppid();
 	errorLogFile = 0;
 	if (!(opts = Malloc( 2 * sizeof(char *) )))
 		return 1;
@@ -222,9 +222,9 @@ main( int argc, char **argv )
 			        , prog );
 			exit( 0 );
 		} else if (!strcmp( pt, "daemon" ))
-			noDaemonMode = 0;
+			parentPid = 0;
 		else if (!strcmp( pt, "nodaemon" ))
-			noDaemonMode = 1;
+			parentPid = 1;
 		else if (argv[1] && !strcmp( pt, "config" ))
 			strDup( opts, *++argv );
 		else if (argv[1] && !strcmp( pt, "xrm" ))
@@ -249,7 +249,7 @@ main( int argc, char **argv )
 
 	initErrorLog( errorLogFile );
 
-	if (noDaemonMode != 1)
+	if (parentPid != 1)
 		becomeDaemon();
 
 	/*
@@ -333,11 +333,11 @@ TTYtoVT( const char *tty )
 int
 activateVT( int vt )
 {
-	int ret = 0;
+	int ret = False;
 	int con = open( "/dev/console", O_RDONLY );
 	if (con >= 0) {
 		if (!ioctl( con, VT_ACTIVATE, vt ))
-			ret = 1;
+			ret = True;
 		close( con );
 	}
 	return ret;
@@ -447,7 +447,7 @@ checkUtmp( void )
 #endif
 					utp->state = UtWait;
 				} else {
-					utp->hadSess = 1;
+					utp->hadSess = True;
 					utp->state = UtActive;
 				}
 				if (utp->time < ut->ut_time) /* theoretically superfluous */
@@ -514,7 +514,7 @@ switchToTTY( struct display *d )
 	utp->d = d;
 #endif
 	utp->time = now;
-	utp->hadSess = 0;
+	utp->hadSess = False;
 	utp->next = utmpList;
 	utmpList = utp;
 	checkUtmp();
@@ -621,7 +621,7 @@ stoppen( int force )
 		forEachDisplay( stopDisplay );
 	else
 		forEachDisplay( stopInactiveDisplay );
-	stopping = 1;
+	stopping = True;
 }
 
 
@@ -873,7 +873,7 @@ scanConfigs( int force )
 static void
 markDisplay( struct display *d )
 {
-	d->stillThere = 0;
+	d->stillThere = False;
 }
 
 static void
@@ -895,7 +895,7 @@ cancelShutdown( void )
 		free( sdRec.osname );
 		sdRec.osname = 0;
 	}
-	stopping = 0;
+	stopping = False;
 	rescanConfigs( True );
 }
 
@@ -923,20 +923,20 @@ reapChildren( void )
 #ifdef XDMCP
 			case EX_REMOTE:
 				debug( "display exited with EX_REMOTE\n" );
-				exitDisplay( d, DS_REMOTE, 0, 0 );
+				exitDisplay( d, DS_REMOTE, 0, False );
 				break;
 #endif
 			case EX_NORMAL:
 				/* (any type of) session ended */
 				debug( "display exited with EX_NORMAL\n" );
 				if ((d->displayType & d_lifetime) == dReserve)
-					exitDisplay( d, DS_RESERVE, 0, 0 );
+					exitDisplay( d, DS_RESERVE, 0, False );
 				else
 					exitDisplay( d, DS_RESTART, XS_KEEP, True );
 				break;
 			case EX_RESERVE:
 				debug( "display exited with EX_RESERVE\n" );
-				exitDisplay( d, DS_RESERVE, 0, 0 );
+				exitDisplay( d, DS_RESERVE, 0, False );
 				break;
 #if 0
 			case EX_REMANAGE_DPY:
@@ -985,13 +985,13 @@ reapChildren( void )
 			case EX_UNMANAGE_DPY:
 				/* some fatal error */
 				debug( "display exited with EX_UNMANAGE_DPY\n" );
-				exitDisplay( d, DS_REMOVE, 0, 0 );
+				exitDisplay( d, DS_REMOVE, 0, False );
 				break;
 			default:
 				/* prolly crash */
 				logError( "Unknown session exit code %d (sig %d) from manager process\n",
 				          waitCode( status ), waitSig( status ) );
-				exitDisplay( d, DS_REMOVE, 0, 0 );
+				exitDisplay( d, DS_REMOVE, 0, False );
 				break;
 			}
 		} else if ((d = findDisplayByServerPid( pid ))) {
@@ -1082,7 +1082,7 @@ wouldShutdown( void )
 {
 	switch (sdRec.force) {
 	case SHUT_FORCE:
-		return 1;
+		return True;
 	case SHUT_FORCEMY:
 		return !anyUserLogins( sdRec.uid );
 	case SHUT_CANCEL:
@@ -1323,17 +1323,17 @@ allocateVT( struct display *d )
 			for (i = tvt = 0;;) {
 				if (serverVTs[i]) {
 					tvt = atoi( serverVTs[i++] );
-					volun = 0;
+					volun = False;
 					if (tvt < 0) {
 						tvt = -tvt;
-						volun = 1;
+						volun = True;
 					}
 					if (!tvt || tvt >= 16)
 						continue;
 				} else {
 					if (++tvt >= 16)
 						break;
-					volun = 1;
+					volun = True;
 				}
 				for (cd = displays; cd; cd = cd->next) {
 					if (cd->reqSrvVT == tvt && /* protect from lusers */

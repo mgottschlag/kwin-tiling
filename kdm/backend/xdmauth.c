@@ -177,17 +177,17 @@ hexToBinary( char *key )
 	while (in[0] && in[1]) {
 		top = atox( in[0] );
 		if (top == -1)
-			return 0;
+			return False;
 		bottom = atox( in[1] );
 		if (bottom == -1)
-			return 0;
+			return False;
 		*out++ = (top << 4) | bottom;
 		in += 2;
 	}
 	if (in[0])
-		return 0;
+		return False;
 	*out++ = '\0';
-	return 1;
+	return True;
 }
 
 /*

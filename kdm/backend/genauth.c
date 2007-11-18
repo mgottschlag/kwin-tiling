@@ -437,7 +437,7 @@ generateAuthData( char *auth, int len )
 	else
 		for (i = 0; i < len; i += 8)
 			rnd[i / 8] = arc4random() | (arc4random() << 32);
-	return 1;
+	return True;
 #else
 	int fd;
 	const char *rd = randomDevice;
@@ -450,19 +450,19 @@ generateAuthData( char *auth, int len )
 		if ((fd = open( rd, O_RDONLY )) >= 0) {
 			if (read( fd, auth, len ) == len) {
 				close( fd );
-				return 1;
+				return True;
 			}
 			close( fd );
 			logError( "Cannot read randomDevice %\"s: %m\n", rd );
 		} else
 			logError( "Cannot open randomDevice %\"s: %m\n", rd );
 # ifdef DEV_RANDOM
-		return 0;
+		return False;
 # else
 	}
 
 	if (!getPrngdBytes( auth, len, prngdPort, prngdSocket ))
-		return 1;
+		return True;
 
 	{
 		unsigned *rnd = (unsigned *)auth;
@@ -480,7 +480,7 @@ generateAuthData( char *auth, int len )
 				rnd[i / 8] = tmp[i / 4] | (tmp[i / 4 + 1] << 32);
 		}
 	}
-	return 1;
+	return True;
 # endif
 #endif
 }

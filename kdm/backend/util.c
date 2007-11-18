@@ -152,12 +152,12 @@ strNDup( char **dst, const char *src, int len )
 		if (len < 0)
 			len = strlen( src );
 		if (!(*dst = Malloc( len + 1 )))
-			return 0;
+			return False;
 		memcpy( *dst, src, len );
 		(*dst)[len] = 0;
 	} else
 		*dst = 0;
-	return 1;
+	return True;
 }
 
 int
@@ -190,7 +190,7 @@ strApp( char **dst, ... )
 			free( *dst );
 			*dst = 0;
 		}
-		return 0;
+		return False;
 	}
 	dp = bk;
 	if (*dst) {
@@ -211,7 +211,7 @@ strApp( char **dst, ... )
 	va_end( va );
 	*dp = '\0';
 	*dst = bk;
-	return 1;
+	return True;
 }
 
 char *
@@ -510,7 +510,7 @@ localHostname( void )
 	if (!gotLocalHostname)
 	{
 		getHostname( localHostbuf, sizeof(localHostbuf) - 1 );
-		gotLocalHostname = 1;
+		gotLocalHostname = True;
 	}
 	return localHostbuf;
 }
@@ -687,7 +687,7 @@ noteXSession( struct display *di, struct display *d, void *ctx )
 	(void)d;
 
 	if (di->status == remoteLogin || di->userSess != dt->uid)
-		dt->any = 1;
+		dt->any = True;
 }
 
 static void
@@ -699,7 +699,7 @@ noteTTYSession( STRUCTUTMP *ut, struct display *d, void *ctx )
 	
 	if (dt->uid < 0 ||
 	    !(pw = getpwnam( ut->ut_user )) || (int)pw->pw_uid != dt->uid)
-		dt->any = 1;
+		dt->any = True;
 }
 
 int
@@ -707,7 +707,7 @@ anyUserLogins( int uid )
 {
 	AULData dt;
 
-	dt.any = 0;
+	dt.any = False;
 	dt.uid = uid;
 	listSessions( lstRemote | lstTTY, 0, &dt, noteXSession, noteTTYSession );
 	return dt.any;

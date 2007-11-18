@@ -78,19 +78,19 @@ iniSave( const char *data, const char *fname )
 
 	if ((fd = open( fname, O_WRONLY | O_CREAT | O_TRUNC | O_NONBLOCK, 0600 )) < 0) {
 		debug( "cannot create ini-file %\"s: %m", fname );
-		return 0;
+		return False;
 	}
 	len = strlen( data );
 	if ((cnt = write( fd, data, len )) == len) {
 		close( fd );
-		return 1;
+		return True;
 	}
 	if (cnt == -1)
 		debug( "cannot write ini-file %\"s: %m", fname );
 	else
 		debug( "cannot write ini-file %\"s: partial write", fname );
 	close( fd );
-	return 0;
+	return False;
 }
 
 #define apparr(d,s,n) do { memcpy (d, s, n); d += n; } while(0)
@@ -105,7 +105,7 @@ iniEntry( char *data, const char *section, const char *key, const char *value )
 {
 	char *p = data, *secinsert = 0, *pastinsert = 0, *cb, *ce, *ndata;
 	const char *t;
-	int insect = 0, ll, sl, kl, vl, len, nlen;
+	int insect = False, ll, sl, kl, vl, len, nlen;
 
 	if (p) {
 		while (*p) {

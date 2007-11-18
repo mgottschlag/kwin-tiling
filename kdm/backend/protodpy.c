@@ -55,7 +55,7 @@ findProtoDisplay( XdmcpNetaddr address,
 			return pdpy;
 		}
 	}
-	return (struct protoDisplay *)0;
+	return (struct protoDisplay *)False;
 }
 
 static void
@@ -110,7 +110,7 @@ disposeProtoDisplay( struct protoDisplay *pdpy )
 {
 	struct protoDisplay *p, *prev;
 
-	prev = 0;
+	prev = False;
 	for (p = protoDisplays; p; p=p->next) {
 		if (p == pdpy)
 			break;

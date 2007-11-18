@@ -145,7 +145,7 @@ autoLogon( time_t tdiff )
 		td->hstent->nargs = 0;
 		reStr( &curtype, "classic" );
 		cursource = (td->hstent->rLogin == 1) ? PWSRC_RELOGIN : PWSRC_MANUAL;
-		return 1;
+		return True;
 	} else if (*td->autoUser && !td->autoDelay &&
 	           ((tdiff > 0 && ((td->displayType & d_lifetime) == dTransient ||
 	                           !td->hstent->lastExit)) ||
@@ -158,11 +158,11 @@ autoLogon( time_t tdiff )
 		               &dummy1, &dummy2, &dummy3, &dummy4, &dummy5, &dummy6,
 		               &lmask );
 		if (lmask & ShiftMask)
-			return 0;
+			return False;
 		doAutoLogon();
-		return 1;
+		return True;
 	}
-	return 0;
+	return False;
 }
 
 
@@ -722,7 +722,7 @@ deleteXloginResources()
 	if (prop)
 		for (i = ScreenCount(dpy); --i >= 0; )
 			XDeleteProperty( dpy, RootWindow( dpy, i ), prop );
-	XSync( dpy, 0 );
+	XSync( dpy, False );
 }
 
 
