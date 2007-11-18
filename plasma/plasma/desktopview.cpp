@@ -83,16 +83,16 @@ void DesktopView::adjustSize()
 
 void DesktopView::zoomIn()
 {
-	qreal s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
+    qreal s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
     if (m_zoomLevel == Plasma::GroupZoom) {
         m_zoomLevel = Plasma::DesktopZoom;
-		s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
-		setSceneRect(geometry());
+        s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
+        setSceneRect(geometry());
     } else if (m_zoomLevel == Plasma::OverviewZoom) {
         m_zoomLevel = Plasma::GroupZoom;
-		qreal factor = Plasma::scalingFactor(m_zoomLevel);
-		s = factor / matrix().m11();
-		setSceneRect(QRectF(0, 0, width() * 1.0/factor, height() * 1.0/factor));
+        qreal factor = Plasma::scalingFactor(m_zoomLevel);
+        s = factor / matrix().m11();
+        setSceneRect(QRectF(0, 0, width() * 1.0/factor, height() * 1.0/factor));
     }
 
     scale(s, s);
@@ -106,9 +106,9 @@ void DesktopView::zoomOut()
         m_zoomLevel = Plasma::OverviewZoom;
     }
 
-	qreal factor = Plasma::scalingFactor(m_zoomLevel);
+    qreal factor = Plasma::scalingFactor(m_zoomLevel);
     qreal s = factor / matrix().m11();
-	setSceneRect(QRectF(0, 0, width() * 1.0/factor, height() * 1.0/factor));
+    setSceneRect(QRectF(0, 0, width() * 1.0/factor, height() * 1.0/factor));
     scale(s, s);
 }
 

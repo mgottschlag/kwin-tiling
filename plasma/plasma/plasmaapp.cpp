@@ -51,15 +51,15 @@ Colormap colormap = 0;
 Visual *visual = 0;
 bool argbVisual = false;
 
-bool checkComposite()
+void checkComposite()
 {
     dpy = XOpenDisplay(0); // open default display
     if (!dpy) {
         kError() << "Cannot connect to the X server" << endl;
-        return false;
+        return;
     }
 
-
+    return;
     int screen = DefaultScreen(dpy);
     int eventBase, errorBase;
 
@@ -86,7 +86,6 @@ bool checkComposite()
     kDebug() << (argbVisual ? "Plasma has an argb visual" : "Plasma lacks an argb visual") << visual << colormap;
     kDebug() << ((KWindowSystem::compositingActive() && argbVisual) ? "Plasma can use COMPOSITE for effects"
                                                                     : "Plasma is COMPOSITE-less") << "on" << dpy;
-    return true;
 }
 
 PlasmaApp* PlasmaApp::self()
