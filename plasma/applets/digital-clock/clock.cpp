@@ -351,12 +351,12 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         m_plainClockFont.setItalic(m_plainClockFontItalic);
 
         // Choose a relatively big font size to start with and decrease it from there to fit.
-        m_plainClockFont.setPointSize((int)(contentsRect.height()/1.5));
+        m_plainClockFont.setPointSize(qMax((int)(contentsRect.height()/1.5), 1));
         p->setFont(m_plainClockFont);
         QRect tmpTimeRect = p->boundingRect(timeRect, QPainter::TextAntialiasing, timeString);
 
-        while (tmpTimeRect.width() > timeRect.width() || tmpTimeRect.height() > timeRect.height() && m_plainClockFont.pointSize() > 1) {
-            m_plainClockFont.setPointSize(m_plainClockFont.pointSize()-1);
+        while ((tmpTimeRect.width() > timeRect.width() || tmpTimeRect.height() > timeRect.height()) && m_plainClockFont.pointSize() > 1) {
+            m_plainClockFont.setPointSize(m_plainClockFont.pointSize() - 1);
             p->setFont(m_plainClockFont);
             tmpTimeRect = p->boundingRect(timeRect, QPainter::TextAntialiasing, timeString);
         }
