@@ -42,7 +42,9 @@ class KRunnerDialog : public KDialog
         void mousePressEvent( QMouseEvent *e );
 
     private:
-        Plasma::Svg* m_background;
+        void paintBackground(QPainter* painter, const QRect &exposedRect);
+        Plasma::Svg *m_background;
+        QPixmap *m_cachedBackground;
 };
 
 #endif
