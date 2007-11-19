@@ -122,7 +122,6 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
 
     if (hover) {
         // draw sub-title
-        painter->setPen(QPen(option.palette.dark(), 0));
         painter->setFont(subTitleFont);
         painter->drawText(subTitleRect, Qt::AlignLeft|Qt::AlignVCenter, subTitleText);
     }
@@ -209,7 +208,7 @@ QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelInd
     subTitleFont.setPointSize(qMax(subTitleFont.pointSize() - 2,
                                    KGlobalSettings::smallestReadableFont().pointSize()));
     QFontMetrics subMetrics(subTitleFont);
-    size.setHeight(qMax(size.height(), metrics.height() + subMetrics.ascent()) + 3);
+    size.setHeight(qMax(option.decorationSize.height(), qMax(size.height(), metrics.height() + subMetrics.ascent()) + 3));
 //    kDebug() << "size hint is" << size << (metrics.height() + subMetrics.ascent());
 
     return size;
