@@ -50,6 +50,7 @@ const char *td_setup = "auto";
 
 static void deleteXloginResources( void );
 static void loadXloginResources( void );
+static void resetXProperties( void );
 static void setupDisplay( const char *arg );
 static char **dupEnv( void );
 
@@ -665,6 +666,7 @@ manageSession( struct display *d )
 	gSet( &mstrtalk );
 	gSendInt( D_UnUser );
 	if (gRecvInt()) {
+		resetXProperties();
 		openGreeter();
 		gSendInt( G_ConfShutdown );
 		if ((cmd = ctrlGreeterWait( True )) != G_Ready) {
@@ -722,6 +724,26 @@ deleteXloginResources()
 	if (prop)
 		for (i = ScreenCount(dpy); --i >= 0; )
 			XDeleteProperty( dpy, RootWindow( dpy, i ), prop );
+	XSync( dpy, False );
+}
+
+void
+resetXProperties()
+{
+	int i, j, nprops;
+	char *name;
+	Atom *props;
+
+	for (i = ScreenCount(dpy); --i >= 0; )
+		if ((props = XListProperties( dpy, RootWindow( dpy, i ), &nprops ))) {
+			for (j = 0; j < nprops; j++)
+				if ((name = XGetAtomName( dpy, props[j] ))) {
+					if (!memcmp( name, "_NET_", 5 ))
+						XDeleteProperty( dpy, RootWindow( dpy, i ), props[j] );
+					XFree( name );
+				}
+			XFree( props );
+		}
 	XSync( dpy, False );
 }
 
