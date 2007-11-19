@@ -49,7 +49,6 @@
 Display* dpy = 0;
 Colormap colormap = 0;
 Visual *visual = 0;
-bool argbVisual = false;
 
 void checkComposite()
 {
@@ -59,7 +58,6 @@ void checkComposite()
         return;
     }
 
-    return;
     int screen = DefaultScreen(dpy);
     int eventBase, errorBase;
 
@@ -77,14 +75,13 @@ void checkComposite()
             if (format->type == PictTypeDirect && format->direct.alphaMask) {
                 visual = xvi[i].visual;
                 colormap = XCreateColormap(dpy, RootWindow(dpy, screen), visual, AllocNone);
-                argbVisual = true;
                 break;
             }
         }
     }
 
-    kDebug() << (argbVisual ? "Plasma has an argb visual" : "Plasma lacks an argb visual") << visual << colormap;
-    kDebug() << ((KWindowSystem::compositingActive() && argbVisual) ? "Plasma can use COMPOSITE for effects"
+    kDebug() << (colormap ? "Plasma has an argb visual" : "Plasma lacks an argb visual") << visual << colormap;
+    kDebug() << ((KWindowSystem::compositingActive() && colormap) ? "Plasma can use COMPOSITE for effects"
                                                                     : "Plasma is COMPOSITE-less") << "on" << dpy;
 }
 
@@ -92,7 +89,7 @@ PlasmaApp* PlasmaApp::self()
 {
     if (!kapp) {
         checkComposite();
-        return new PlasmaApp(dpy, argbVisual ? Qt::HANDLE(visual) : 0, argbVisual ? Qt::HANDLE(colormap) : 0);
+        return new PlasmaApp(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
     }
 
     return qobject_cast<PlasmaApp*>(kapp);
@@ -187,7 +184,7 @@ Plasma::Corona* PlasmaApp::corona()
 
 bool PlasmaApp::hasComposite()
 {
-    return argbVisual && KWindowSystem::compositingActive();
+    return colormap && KWindowSystem::compositingActive();
 }
 
 void PlasmaApp::notifyStartup(bool completed)
