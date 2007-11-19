@@ -68,9 +68,9 @@ class KWinbindGreeter : public QObject, public KGreeterPlugin {
 	void slotLoginLostFocus();
 	void slotChangedDomain( const QString &dom );
 	void slotActivity();
-        void slotStartDomainList();
-        void slotReadDomainList();
-        void slotEndDomainList();
+	void slotStartDomainList();
+	void slotReadDomainList();
+	void slotEndDomainList();
 
   private:
 	void setActive( bool enable );
@@ -85,7 +85,7 @@ class KWinbindGreeter : public QObject, public KGreeterPlugin {
 	QString fixedDomain, fixedUser, curUser;
 	QStringList allUsers, mDomainListing;
 	K3ProcIO* m_domainLister;
-        QTimer mDomainListTimer;
+	QTimer mDomainListTimer;
 
 	Function func;
 	Context ctx;

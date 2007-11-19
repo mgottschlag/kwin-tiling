@@ -48,7 +48,7 @@ class KDMPasswordEdit : public KLineEdit {
 public:
 	KDMPasswordEdit( QWidget *parent ) : KLineEdit( parent )
 	{
-		setPasswordMode(true);
+		setPasswordMode( true );
 	}
 	KDMPasswordEdit( bool em , QWidget *parent ) : KLineEdit( parent )
 	{
@@ -140,9 +140,9 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			connect( loginEdit, SIGNAL(editingFinished()), SLOT(slotActivity()) );
 			connect( loginEdit, SIGNAL(textChanged( const QString & )), SLOT(slotActivity()) );
 			connect( loginEdit, SIGNAL(selectionChanged()), SLOT(slotActivity()) );
-			connect(&mDomainListTimer, SIGNAL(timeout()), SLOT(slotStartDomainList()));
+			connect( &mDomainListTimer, SIGNAL(timeout()), SLOT(slotStartDomainList()) );
 			domainCombo->addItems( staticDomains );
-			QTimer::singleShot(0, this, SLOT(slotStartDomainList()));
+			QTimer::singleShot( 0, this, SLOT(slotStartDomainList()) );
 		} else if (ctx != Login && ctx != Shutdown && grid) {
 			domainLabel = new QLabel( i18n("Domain:"), parent );
 			grid->addWidget( domainLabel, line, 0 );
@@ -168,7 +168,7 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			                          i18n("&Password:") :
 			                          i18n("Current &password:"),
 			                          parent );
-                        passwdLabel->setBuddy( passwdEdit );
+			passwdLabel->setBuddy( passwdEdit );
 			grid->addWidget( passwdLabel, line, 0 );
 			grid->addWidget( passwdEdit, line++, 1 );
 		}
@@ -349,14 +349,14 @@ KWinbindGreeter::textPrompt( const char *prompt, bool echo, bool nonBlocking )
 			                          KGreeterPluginHandler::IsSecret );
 			return;
 		} else if (pr.indexOf( QRegExp( "\\b(re-?(enter|type)|again|confirm|repeat)\\b",
-		                             Qt::CaseInsensitive ) ) >= 0)
+		                                Qt::CaseInsensitive ) ) >= 0)
 			exp = 3;
 		else if (pr.indexOf( QRegExp( "\\bnew\\b", Qt::CaseInsensitive ) ) >= 0)
 			exp = 2;
 		else {
 			handler->gplugMsgBox( QMessageBox::Critical,
 			                      i18n("Unrecognized prompt \"%1\"",
-			                        prompt ) );
+			                           prompt ) );
 			handler->gplugReturnText( 0, 0 );
 			exp = -1;
 			return;
@@ -547,62 +547,62 @@ KWinbindGreeter::slotActivity()
 void
 KWinbindGreeter::slotStartDomainList()
 {
-    mDomainListTimer.stop();
-    mDomainListing.clear();
+	mDomainListTimer.stop();
+	mDomainListing.clear();
 
-    m_domainLister = new K3ProcIO;
-    connect(m_domainLister, SIGNAL(readReady(K3ProcIO*)), SLOT(slotReadDomainList()));
-    connect(m_domainLister, SIGNAL(processExited(K3Process*)), SLOT(slotEndDomainList()));
+	m_domainLister = new K3ProcIO;
+	connect( m_domainLister, SIGNAL(readReady( K3ProcIO* )), SLOT(slotReadDomainList()) );
+	connect( m_domainLister, SIGNAL(processExited( K3Process* )), SLOT(slotEndDomainList()) );
 
-    (*m_domainLister) << "wbinfo" << "--own-domain" << "--trusted-domains";
-    m_domainLister->setComm (K3Process::Stdout);
-    m_domainLister->start();
+	(*m_domainLister) << "wbinfo" << "--own-domain" << "--trusted-domains";
+	m_domainLister->setComm( K3Process::Stdout );
+	m_domainLister->start();
 }
 
 void
 KWinbindGreeter::slotReadDomainList()
 {
-    QString line;
+	QString line;
 
-    while ( m_domainLister->readln( line ) != -1 ) {
-        mDomainListing.append(line);
-    }
+	while (m_domainLister->readln( line ) != -1) {
+		mDomainListing.append( line );
+	}
 }
 
 void
 KWinbindGreeter::slotEndDomainList()
 {
-    delete m_domainLister;
-    m_domainLister = 0;
+	delete m_domainLister;
+	m_domainLister = 0;
 
-    QStringList domainList;
-    domainList = staticDomains;
+	QStringList domainList;
+	domainList = staticDomains;
 
-    for (QStringList::const_iterator it = mDomainListing.begin();
-         it != mDomainListing.end(); ++it) {
+	for (QStringList::const_iterator it = mDomainListing.begin();
+	     it != mDomainListing.end(); ++it) {
 
-        if (!domainList.contains(*it))
-            domainList.append(*it);
-    }
+		if (!domainList.contains( *it ))
+			domainList.append( *it );
+	}
 
-    QString current = domainCombo->currentText();
+	QString current = domainCombo->currentText();
 
-    for (int i = 0; i < domainList.count(); ++i) {
-        if (i < domainCombo->count())
-            domainCombo->setItemText(i, domainList[i]);
-        else
-            domainCombo->insertItem(i, domainList[i]);
-    }
+	for (int i = 0; i < domainList.count(); ++i) {
+		if (i < domainCombo->count())
+			domainCombo->setItemText( i, domainList[i] );
+		else
+			domainCombo->insertItem( i, domainList[i] );
+	}
 
-    while (domainCombo->count() > domainList.count())
-        domainCombo->removeItem(domainCombo->count()-1);
+	while (domainCombo->count() > domainList.count())
+		domainCombo->removeItem( domainCombo->count()-1 );
 
-    domainCombo->setCurrentItem( current );
+	domainCombo->setCurrentItem( current );
 
-    if (domainCombo->currentText() != current)
-        domainCombo->setCurrentItem( defaultDomain );
+	if (domainCombo->currentText() != current)
+		domainCombo->setCurrentItem( defaultDomain );
 
-    mDomainListTimer.start(5 * 1000);
+	mDomainListTimer.start( 5 * 1000 );
 }
 
 // factory
