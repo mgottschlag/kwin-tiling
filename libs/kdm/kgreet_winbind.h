@@ -35,7 +35,7 @@ class KComboBox;
 class KLineEdit;
 class KSimpleConfig;
 class QLabel;
-class K3ProcIO;
+class KProcess;
 
 class KWinbindGreeter : public QObject, public KGreeterPlugin {
 	Q_OBJECT
@@ -69,7 +69,6 @@ class KWinbindGreeter : public QObject, public KGreeterPlugin {
 	void slotChangedDomain( const QString &dom );
 	void slotActivity();
 	void slotStartDomainList();
-	void slotReadDomainList();
 	void slotEndDomainList();
 
   private:
@@ -83,9 +82,8 @@ class KWinbindGreeter : public QObject, public KGreeterPlugin {
 	KLineEdit *passwdEdit, *passwd1Edit, *passwd2Edit;
 	KSimpleConfig *stsFile;
 	QString fixedDomain, fixedUser, curUser;
-	QStringList allUsers, mDomainListing;
-	K3ProcIO* m_domainLister;
-	QTimer mDomainListTimer;
+	QStringList allUsers;
+	KProcess* m_domainLister;
 
 	Function func;
 	Context ctx;
