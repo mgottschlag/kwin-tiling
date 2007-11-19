@@ -1156,7 +1156,92 @@ readWord( File *file, int EOFatEOL )
 	goto mloop;
 }
 
-/* backslashes are double-escaped - for KConfig and for parseArgs */
+/* backslashes are double-escaped - first parseArgs, then KConfig */
+
+static StrList *
+splitArgs( const char *string )
+{
+	const char *word;
+	char *str;
+	int wlen;
+	StrList *args, **argp = &args;
+
+	while (*string) {
+		if (isspace( *string )) {
+			string++;
+			continue;
+		}
+		word = string;
+		wlen = 0;
+		do {
+			if (*string == '\\') {
+				if (*++string != '\\')
+					string--;
+				if (*++string != '\\')
+					string--;
+				if (!*++string)
+					string--;
+				wlen++;
+			} else if (*string == '\'') {
+				while (*++string != '\'' && *string) {
+					if (*string == '\\' && *++string != '\\')
+						string--;
+					wlen++;
+				}
+			} else if (*string == '"') {
+				while (*++string != '"' && *string) {
+					if (*string == '\\') {
+						if (*++string != '\\')
+							string--;
+						if (*++string != '\\')
+							string--;
+						if (!*++string)
+							string--;
+					}
+					wlen++;
+				}
+			} else
+				wlen++;
+		} while (*++string && !isspace( *string ));
+		*argp = mmalloc( sizeof(**argp) );
+		(*argp)->str = str = mmalloc( wlen + 1 );
+		do {
+			if (*word == '\\') {
+				if (*++word != '\\')
+					word--;
+				if (*++word != '\\')
+					word--;
+				if (!*++word)
+					word--;
+				*str++ = *word;
+			} else if (*word == '\'') {
+				while (*++word != '\'' && *word) {
+					if (*word == '\\' && *++word != '\\')
+						word--;
+					*str++ = *word;
+				}
+			} else if (*word == '"') {
+				while (*++word != '"' && *word) {
+					if (*word == '\\') {
+						if (*++word != '\\')
+							word--;
+						if (*++word != '\\')
+							word--;
+						if (!*++word)
+							word--;
+					}
+					*str++ = *word;
+				}
+			} else
+				*str++ = *word;
+		} while (*++word && !isspace( *word ));
+		*str = 0;
+		argp = &(*argp)->next;
+	}
+	*argp = 0;
+	return args;
+}
+
 static const char *
 joinArgs( StrList *argv )
 {
@@ -1446,6 +1531,31 @@ upd_consolettys( Entry *ce, Section *cs ATTR_UNUSED )
 	}
 }
 #endif
+
+static void
+upd_servercmd( Entry *ce, Section *cs ATTR_UNUSED )
+{
+	StrList *sa;
+	FILE *fp;
+	char *svr;
+	char buf[20000];
+
+	if (!ce->active || oldver >= 0x0204)
+		return;
+	if (!(splitArgs( ce->value )))
+		return;
+	ASPrintf( &svr, "%s -help 2>&1", sa->str );
+	if (!(fp = popen( svr, "r" )))
+		return;
+	buf[fread( buf, 1, sizeof(buf) - 1, fp )] = 0;
+	pclose( fp );
+	if (strstr( buf, "\n-br " ))
+		addStr( &sa, "-br" );
+	if (strstr( buf, "\n-novtswitch " ))
+		addStr( &sa, "-novtswitch" );
+	ce->value = joinArgs( sa );
+	ce->written = True;
+}
 
 #ifdef XDMCP
 static void
