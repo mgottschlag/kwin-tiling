@@ -199,7 +199,7 @@ void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
 
         if (contentWidth > 0 && contentHeight > 0) {
             m_background->resize(contentWidth, contentHeight);
-            m_background->paint(&p, QRect(leftWidth, topHeight, contentWidth - leftWidth - rightWidth, contentHeight - topHeight - bottomHeight), "center");
+            m_background->paint(&p, QRect(leftWidth, topHeight, contentWidth, contentHeight), "center");
             m_background->resize();
         }
 
