@@ -35,10 +35,7 @@ class KRunnerApp : public RestartingApplication
     Q_CLASSINFO("D-Bus Interface", "org.kde.krunner.App")
 
 public:
-/*    KRunnerApp(Display *display,
-                          Qt::HANDLE visual = 0,
-                          Qt::HANDLE colormap = 0);*/
-    KRunnerApp();
+    static KRunnerApp* self();
     ~KRunnerApp();
 
     void logout( KWorkSpace::ShutdownConfirm confirm, KWorkSpace::ShutdownType sdtype );
@@ -48,9 +45,7 @@ public:
     virtual int newInstance();
     SaverEngine& screensaver() { return m_saver; }
 
-
-    //UGLY
-    static bool s_haveCompositeManager;
+    bool hasCompositeManager() const;
 
 public Q_SLOTS:
     //void showWindowList();
@@ -74,6 +69,7 @@ private slots:
     void taskDialogFinished();
 
 private:
+    KRunnerApp(Display *display, Qt::HANDLE visual = 0, Qt::HANDLE colormap = 0);
     void initialize();
 
     KActionCollection *m_actionCollection;

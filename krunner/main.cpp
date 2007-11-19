@@ -33,8 +33,6 @@
 static const char description[] = I18N_NOOP( "KDE run command interface" );
 static const char version[] = "0.1";
 
-bool KRunnerApp::s_haveCompositeManager = false;
-
 int main(int argc, char* argv[])
 {
     KAboutData aboutData( "krunner", 0, ki18n( "Run Command Interface" ),
@@ -49,67 +47,10 @@ int main(int argc, char* argv[])
         return 0;
     }
 
-    // thanks to zack rusin and frederik for pointing me in the right direction
-    // for the following bits of X11 code
-//     Display *dpy = XOpenDisplay(0); // open default display
-//     if (!dpy)
-//     {
-//         kError() << "Cannot connect to the X server" << endl;
-//         return 1;
-//     }
-// 
-//     bool argbVisual = false ;
-//     KRunnerApp::s_haveCompositeManager = KWindowSystem::compositingActive();
-// 
-//     Colormap colormap = 0;
-//     Visual *visual = 0;
-// 
-//     if (KRunnerApp::s_haveCompositeManager)
-//     {
-//         int screen = DefaultScreen(dpy);
-//         int eventBase, errorBase;
-// 
-//         if (XRenderQueryExtension(dpy, &eventBase, &errorBase))
-//         {
-//             int nvi;
-//             XVisualInfo templ;
-//             templ.screen  = screen;
-//             templ.depth   = 32;
-//             templ.c_class = TrueColor;
-//             XVisualInfo *xvi = XGetVisualInfo(dpy, VisualScreenMask |
-//                                                    VisualDepthMask |
-//                                                    VisualClassMask,
-//                                               &templ, &nvi);
-//             for (int i = 0; i < nvi; ++i)
-//             {
-//                 XRenderPictFormat *format = XRenderFindVisualFormat(dpy,
-//                                                                     xvi[i].visual);
-//                 if (format->type == PictTypeDirect && format->direct.alphaMask)
-//                 {
-//                     visual = xvi[i].visual;
-//                     colormap = XCreateColormap(dpy, RootWindow(dpy, screen),
-//                                                visual, AllocNone);
-//                     argbVisual = true;
-//                     break;
-//                 }
-//             }
-//         }
-// 
-//         KRunnerApp::s_haveCompositeManager = argbVisual;
-//     }
-// 
-//     kDebug() << "KRunnerApp::s_haveCompositeManager: " << KRunnerApp::s_haveCompositeManager;
-
-    KRunnerApp app;
-
-//     if (KRunnerApp::s_haveCompositeManager) {
-//         app = new KRunnerApp(dpy, Qt::HANDLE(visual), Qt::HANDLE(colormap));
-//     } else {
-//         app = new KRunnerApp;//(dpy, 0, 0);
-//     }
-    app.disableSessionManagement(); // autostarted
-    int rc = app.exec();
-    //delete app;
+    KRunnerApp *app = KRunnerApp::self();
+    app->disableSessionManagement(); // autostarted
+    int rc = app->exec();
+    delete app;
     return rc;
 }
 

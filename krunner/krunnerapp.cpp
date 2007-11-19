@@ -52,62 +52,63 @@
 Display* dpy = 0;
 Colormap colormap = 0;
 Visual *visual = 0;
-bool argbVisual = false;
 
-bool checkComposite()
+void checkComposite()
 {
+    // thanks to zack rusin and frederik for pointing me in the right direction
+    // for the following bits of X11 code
     dpy = XOpenDisplay(0); // open default display
     if (!dpy)
     {
         kError() << "Cannot connect to the X server" << endl;
-        return true;
+        return;
     }
 
-    KRunnerApp::s_haveCompositeManager = KWindowSystem::compositingActive();
+    int screen = DefaultScreen(dpy);
+    int eventBase, errorBase;
 
-    if (KRunnerApp::s_haveCompositeManager)
+    if (XRenderQueryExtension(dpy, &eventBase, &errorBase))
     {
-        int screen = DefaultScreen(dpy);
-        int eventBase, errorBase;
-
-        if (XRenderQueryExtension(dpy, &eventBase, &errorBase))
+        int nvi;
+        XVisualInfo templ;
+        templ.screen  = screen;
+        templ.depth   = 32;
+        templ.c_class = TrueColor;
+        XVisualInfo *xvi = XGetVisualInfo(dpy, VisualScreenMask |
+                                                VisualDepthMask |
+                                                VisualClassMask,
+                                            &templ, &nvi);
+        for (int i = 0; i < nvi; ++i)
         {
-            int nvi;
-            XVisualInfo templ;
-            templ.screen  = screen;
-            templ.depth   = 32;
-            templ.c_class = TrueColor;
-            XVisualInfo *xvi = XGetVisualInfo(dpy, VisualScreenMask |
-                                                   VisualDepthMask |
-                                                   VisualClassMask,
-                                              &templ, &nvi);
-            for (int i = 0; i < nvi; ++i)
+            XRenderPictFormat *format = XRenderFindVisualFormat(dpy,
+                                                                xvi[i].visual);
+            if (format->type == PictTypeDirect && format->direct.alphaMask)
             {
-                XRenderPictFormat *format = XRenderFindVisualFormat(dpy,
-                                                                    xvi[i].visual);
-                if (format->type == PictTypeDirect && format->direct.alphaMask)
-                {
-                    visual = xvi[i].visual;
-                    colormap = XCreateColormap(dpy, RootWindow(dpy, screen),
-                                               visual, AllocNone);
-                    argbVisual = true;
-                    break;
-                }
+                visual = xvi[i].visual;
+                colormap = XCreateColormap(dpy, RootWindow(dpy, screen),
+                                            visual, AllocNone);
+                break;
             }
         }
 
-        KRunnerApp::s_haveCompositeManager = argbVisual;
     }
-
-    kDebug() << "KRunnerApp::s_haveCompositeManager: " << KRunnerApp::s_haveCompositeManager;
-    return true;
 }
 
-KRunnerApp::KRunnerApp()
-    : RestartingApplication(checkComposite() ? dpy : dpy, dpy ? Qt::HANDLE(visual) : 0, dpy ? Qt::HANDLE(colormap) : 0),
+KRunnerApp* KRunnerApp::self()
+{
+    if (!kapp) {
+        checkComposite();
+        return new KRunnerApp(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
+    }
+
+    return qobject_cast<KRunnerApp*>(kapp);
+}
+
+KRunnerApp::KRunnerApp(Display *display, Qt::HANDLE visual, Qt::HANDLE colormap)
+    : RestartingApplication(display, visual, colormap),
       m_interface(0),
       m_tasks(0),
-      m_startupId( NULL )
+      m_startupId(NULL)
 {
     initialize();
 }
@@ -318,6 +319,11 @@ int KRunnerApp::newInstance()
 
     return RestartingApplication::newInstance();
     //return 0;
+}
+
+bool KRunnerApp::hasCompositeManager() const
+{
+    return colormap && KWindowSystem::compositingActive();
 }
 
 #include "krunnerapp.moc"
