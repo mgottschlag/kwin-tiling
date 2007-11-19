@@ -72,7 +72,7 @@ void DefaultAnimator::appear(qreal progress, QGraphicsItem* item)
 void DefaultAnimator::disappear(qreal progress, QGraphicsItem* item)
 {
     if (progress >= 1) {
-        item->resetTransform();
+        //item->resetTransform();
         return;
     }
     item->resetTransform();
