@@ -33,7 +33,7 @@ public:
     Panel(QObject *parent, const QVariantList &args);
     ~Panel();
 
-    Containment::Type type();
+    Plasma::Containment::Type type() const;
     void constraintsUpdated(Plasma::Constraints constraints);
     Qt::Orientations expandingDirections() const;
 
