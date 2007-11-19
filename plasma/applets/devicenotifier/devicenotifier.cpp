@@ -23,7 +23,7 @@
 #include <QColor>
 #include <QApplication>
 
-#include <plasma/widgets/hboxlayout.h>
+#include <plasma/layouts/hboxlayout.h>
 #include <plasma/widgets/label.h>
 #include <plasma/widgets/widget.h>
 #include <plasma/widgets/icon.h>

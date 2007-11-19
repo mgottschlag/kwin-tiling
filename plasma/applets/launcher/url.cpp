@@ -30,7 +30,7 @@
 #include <KSharedConfig>
 #include <KUrl>
 
-#include <plasma/widgets/boxlayout.h>
+#include <plasma/layouts/boxlayout.h>
 #include <plasma/widgets/icon.h>
 #include <plasma/containment.h>
 

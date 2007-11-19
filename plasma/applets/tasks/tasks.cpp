@@ -46,7 +46,7 @@
 #include <taskmanager/taskrmbmenu.h>
 
 // Plasma
-#include <plasma/widgets/boxlayout.h>
+#include <plasma/layouts/boxlayout.h>
 #include <plasma/widgets/layoutanimator.h>
 
 Tasks::Tasks(QObject* parent , const QVariantList &arguments)
