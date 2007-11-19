@@ -1,6 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2005,2006,2007 by Siraj Razick <siraj@kdemail.net>      *
- *   Copyright (C) 2007 by Riccardo Iaconelli <riccardo@kde.org>             *
+ *   Copyright (C) 2007 by Riccardo Iaconelli <riccardo@kde.org>           *
  *   Copyright (C) 2007 by Sebastian Kuegler <sebas@kde.org>               *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -91,7 +91,18 @@ Battery::Battery(QObject *parent, const QVariantList &args)
 
 QSizeF Battery::contentSizeHint() const
 {
-    return m_size;
+    QSizeF sizehint = QSizeF(m_pixelSize, m_pixelSize);
+    qreal aspectratio = contentSize().width() /  contentSize().height();
+    if (contentSize() == QSizeF(0, 0)) {
+        return sizehint;
+    } else if (aspectratio == 1) {
+        sizehint = QSizeF(contentSize().width(), contentSize().height());
+    } else if (aspectratio > 1) {
+        sizehint = QSizeF(contentSize().height(), contentSize().height());
+    } else {
+        sizehint = QSizeF(contentSize().width(), contentSize().width());
+    }
+    return sizehint;
 }
 
 void Battery::constraintsUpdated(Plasma::Constraints constraints)
@@ -106,7 +117,11 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
             kDebug() << "Huge FormFactor";
             pixelSize = m_pixelSize;
         }
-        m_theme->resize(QSize(pixelSize, pixelSize));
+	// Reset aspect ratio
+        //QSize themesize = m_theme->elementSize("Battery");
+        
+        m_size = QSizeF(QSize(pixelSize, pixelSize));
+        m_theme->resize(m_size);
         m_size = m_theme->size();
         m_font.setPointSize((int)(pixelSize/10));
         updateGeometry();
@@ -271,15 +286,7 @@ void Battery::paintLabel(QPainter *p, const QString& labelText)
 void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
     Q_UNUSED( option );
-    //Q_UNUSED( contentsRect );
-  /*
-    // FIXME: Remove for laptops
-    m_hasBattery = true;
-    m_battery_percent = 15;
-    m_battery_percent_label = "15%";
-    m_acadapter_plugged = false;
-    //m_showBatteryString = false;
-  */
+
     bool showString = true;
 
     if (formFactor() == Plasma::Vertical ||
@@ -299,9 +306,10 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         }
         return;
     }
+    QRect corect = QRect(contentsRect.top(), contentsRect.left(), contentSizeHint().toSize().width(), contentSizeHint().toSize().height());
 
     if (m_theme->elementExists("Battery")) {
-        m_theme->paint(p, contentsRect, "Battery");
+        m_theme->paint(p, corect, "Battery");
     }
 
     // Now let's find out which fillstate to show
@@ -344,14 +352,14 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
     }
     if (!fill_element.isEmpty()) {
         if (m_theme->elementExists(fill_element)) {
-            m_theme->paint(p, contentsRect, fill_element);
+            m_theme->paint(p, corect, fill_element);
         } else {
             kDebug() << fill_element << " does not exist in svg";
         }
     }
 
     if (m_acadapter_plugged) {
-        m_theme->paint(p, contentsRect, "AcAdapter");
+        m_theme->paint(p, corect, "AcAdapter");
     }
 
     // Only show batterystring when we're huge
@@ -364,11 +372,11 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
     // but no text.
     if (formFactor() == Plasma::Vertical ||
         formFactor() == Plasma::Horizontal) {
-        m_theme->paint(p, contentsRect, "Shadow");
+        m_theme->paint(p, corect, "Shadow");
         showString = false;
     }
     if (m_theme->elementExists("Overlay")) {
-        m_theme->paint(p, contentsRect, "Overlay");
+        m_theme->paint(p, corect, "Overlay");
     }
 
     if (formFactor() == Plasma::Planar ||
