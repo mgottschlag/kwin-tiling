@@ -1,4 +1,5 @@
 set(kdm_SRCS
+	dm.h
 	auth.c
 	bootman.c
 	client.c
