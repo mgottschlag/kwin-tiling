@@ -217,9 +217,9 @@ Interface::Interface(QWidget* parent)
     //FIXME: what size should we be?
     resize(400, 250);
 
-    setWidgetPalettes();
-    connect( KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()),
-             SLOT(setWidgetPalettes()) );
+    //setWidgetPalettes();
+    //connect(KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()),
+    //        SLOT(setWidgetPalettes()));
 
     //TODO: how should we order runners, particularly ones loaded from plugins?
     m_runners.append( new ShellRunner( this ) );
