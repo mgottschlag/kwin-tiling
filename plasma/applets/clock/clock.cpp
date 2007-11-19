@@ -47,7 +47,7 @@
 #include <plasma/svg.h>
 
 Clock::Clock(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent, args),
+    : Plasma::Containment(parent, args),
       m_dialog(0)
 {
     setHasConfigurationInterface(true);
@@ -55,11 +55,12 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     KConfigGroup cg = config();
     m_showTimeString = cg.readEntry("showTimeString", false);
     m_showSecondHand = cg.readEntry("showSecondHand", false);
-    m_pixelSize = cg.readEntry("size", 125);
+    int pixelSize = cg.readEntry("size", 125);
     m_timezone = cg.readEntry("timezone", "Local");
     m_theme = new Plasma::Svg("widgets/clock", this);
     m_theme->setContentType(Plasma::Svg::SingleImage);
-    m_theme->resize(m_pixelSize, m_pixelSize);
+    m_theme->resize(pixelSize, pixelSize);
+    setSize(pixelSize, pixelSize);
 
     connectToEngine();
 }
@@ -76,7 +77,8 @@ void Clock::connectToEngine()
 
 QSizeF Clock::contentSizeHint() const
 {
-    return m_size;
+    //kDebug() << "content size hint is being asked for and we return" << size();
+    return size();
 }
 
 void Clock::constraintsUpdated(Plasma::Constraints constraints)
@@ -84,11 +86,11 @@ void Clock::constraintsUpdated(Plasma::Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint) {
         setDrawStandardBackground(false);
         if (formFactor() == Plasma::Planar ||
-                formFactor() == Plasma::MediaCenter) {
-            m_size = m_theme->size();
+            formFactor() == Plasma::MediaCenter) {
+            setSize(m_theme->size());
         } else {
             QFontMetrics fm(QApplication::font());
-            m_size = QSizeF(fm.width("00:00:00") * 1.2, fm.height() * 1.5);
+            setSize(QSizeF(fm.width("00:00:00") * 1.2, fm.height() * 1.5));
         }
         updateGeometry();
     }
@@ -129,8 +131,8 @@ void Clock::showConfigurationInterface() //TODO: Make the size settable
         connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
 
     }
+
     ui.timeZones->setSelected(m_timezone, true);
-    ui.spinSize->setValue((int)m_size.width());
     ui.showTimeStringCheckBox->setChecked(m_showTimeString);
     ui.showSecondHandCheckBox->setChecked(m_showSecondHand);
     m_dialog->show();
@@ -145,9 +147,6 @@ void Clock::configAccepted()
     cg.writeEntry("showTimeString", m_showTimeString);
     cg.writeEntry("showSecondHand", m_showSecondHand);
     update();
-    cg.writeEntry("size", ui.spinSize->value());
-    m_size = QSize(ui.spinSize->value(), ui.spinSize->value());
-    m_theme->resize(m_size);
     QStringList tzs = ui.timeZones->selection();
 
     if (tzs.count() > 0) {
