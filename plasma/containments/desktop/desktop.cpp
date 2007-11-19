@@ -22,12 +22,14 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QFile>
+#include <QFileInfo>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QPainter>
 #include <QTimeLine>
 
 #include <KAuthorized>
+#include <KComboBox>
 #include <KDebug>
 #include <KRun>
 #include <KStandardDirs>
@@ -42,6 +44,8 @@
 #include "ksmserver_interface.h"
 #include "screensaver_interface.h"
 
+#include "ui_config.h"
+
 using namespace Plasma;
 
 DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
@@ -50,6 +54,7 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
       m_runCommandAction(0),
       m_lockAction(0),
       m_logoutAction(0),
+      m_configDialog(0),
       m_background(0),
       m_bitmapBackground(0),
       m_wallpaperPath(0)
@@ -63,17 +68,75 @@ DefaultDesktop::~DefaultDesktop()
 
 void DefaultDesktop::init()
 {
-    KConfigGroup config(KGlobal::config(), "General");
-    m_wallpaperPath = config.readEntry("wallpaper", KStandardDirs::locate("wallpaper", "plasma-default.png"));
+    KConfigGroup cg = config();
+    m_backgroundMode = cg.readEntry("backgroundmode", int(kStaticBackground));
 
-    //kDebug() << "wallpaperPath is" << m_wallpaperPath << QFile::exists(m_wallpaperPath);
-    if (m_wallpaperPath.isEmpty() ||
-        !QFile::exists(m_wallpaperPath)) {
-        //kDebug() << "SVG wallpaper!";
-        m_background = new Plasma::Svg("widgets/wallpaper", this);
+    m_slideShowTimer = new QTimer(this);
+    connect(m_slideShowTimer, SIGNAL(timeout()), this, SLOT(nextSlide()));
+    m_slideShowTimer->setInterval(cg.readEntry("slideTimer", 60) * 1000);
+
+    m_slidePath = cg.readEntry("slidepath", KStandardDirs::kde_default("wallpaper"));
+
+    if (m_backgroundMode == kStaticBackground) {
+        m_wallpaperPath = cg.readEntry("wallpaper", KStandardDirs::locate("wallpaper", "plasma-default.png"));
+
+        //kDebug() << "wallpaperPath is" << m_wallpaperPath << QFile::exists(m_wallpaperPath);
+        if (m_wallpaperPath.isEmpty() ||
+            !QFile::exists(m_wallpaperPath)) {
+            //kDebug() << "SVG wallpaper!";
+            m_background = new Plasma::Svg("widgets/wallpaper", this);
+        }
+    }
+    else if (m_backgroundMode == kSlideshowBackground) {
+        updateSlideList();
+        m_currentSlide = 0;
+        nextSlide(); // to show the first image
+        m_slideShowTimer->start();
     }
 
     Containment::init();
+}
+
+void DefaultDesktop::updateSlideList()
+{
+    QDir dir(m_slidePath);
+    QStringList filters;
+    filters << "*.png" << "*.jpeg" << "*.jpg";
+    dir.setNameFilters(filters);
+    dir.setFilter(QDir::Files | QDir::Hidden);
+    QFileInfoList files = dir.entryInfoList();
+    m_slideFiles.clear();
+
+    for (int i = 0; i < files.size(); ++i) {
+        m_slideFiles << files[i].absoluteFilePath();
+    }
+
+    kDebug() << "updated slide list from contents of folder: " << m_slidePath;
+    kDebug() << m_slideFiles.size() << " files found.";
+    if (m_currentSlide > m_slideFiles.size()) {
+        m_currentSlide = 0;
+    }
+}
+
+void DefaultDesktop::nextSlide()
+{
+    if (++m_currentSlide >= m_slideFiles.size()) {
+        m_currentSlide = 0;
+    }
+
+    if (m_slideFiles.size() > 0)
+    {
+        m_wallpaperPath = m_slideFiles[m_currentSlide];
+        kDebug() << "switching slides to: " << m_wallpaperPath;
+
+        if (!m_wallpaperPath.isEmpty()) {
+            const QRect geom = QApplication::desktop()->screenGeometry(screen());
+            delete m_bitmapBackground;
+            m_bitmapBackground = new QPixmap(m_wallpaperPath);
+            (*m_bitmapBackground) = m_bitmapBackground->scaled(geom.size());
+        }
+        update();
+    }
 }
 
 void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
@@ -88,9 +151,73 @@ void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
             //kDebug() << "Loading and scaling bitmap wallpaper to" << geom.size() << "while our geometry is" << geometry();
             delete m_bitmapBackground;
             m_bitmapBackground = new QPixmap(m_wallpaperPath);
+            kDebug() << "making wallpaper from image: " << m_wallpaperPath;
             (*m_bitmapBackground) = m_bitmapBackground->scaled(geom.size());
         }
     }
+}
+
+void DefaultDesktop::configure()
+{
+    if (m_configDialog == 0) {
+        m_configDialog = new KDialog;
+        m_configDialog->setCaption( i18n("Configure Desktop") );
+        m_ui = new Ui::config;
+        m_ui->setupUi(m_configDialog->mainWidget());
+        m_configDialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+        connect( m_configDialog, SIGNAL(applyClicked()), this, SLOT(applyConfig()) );
+        connect( m_configDialog, SIGNAL(okClicked()), this, SLOT(applyConfig()) );
+        m_ui->picRequester->comboBox()->insertItem(0, "http://tools.wikimedia.de/~daniel/potd/potd.php/commons/400x300");
+        m_ui->slideShowRequester->setMode(KFile::Directory);
+        m_ui->slideShowRequester->setGeometry(m_ui->picRequester->frameGeometry());
+        m_ui->slideShowTime->setMinimumTime(QTime(0,0,1)); // minimum to 1 seconds
+        
+        // hide these since we don't use them yet
+        m_ui->colorFrame->hide();
+    }
+
+    m_ui->pictureComboBox->setCurrentIndex(m_backgroundMode);
+    m_ui->picRequester->setUrl(m_wallpaperPath);
+    m_ui->slideShowRequester->setUrl(KUrl(m_slidePath));
+    int mseconds = m_slideShowTimer->interval() / 1000;
+    m_ui->slideShowTime->setTime(QTime(mseconds / 3600, (mseconds / 60) % 60, mseconds % 60));
+    m_configDialog->show();
+}
+
+void DefaultDesktop::applyConfig()
+{
+    KConfigGroup cg = config();
+    m_wallpaperPath = m_ui->picRequester->url().path();
+    cg.writeEntry("wallpaper", m_wallpaperPath);
+
+    m_backgroundMode = m_ui->pictureComboBox->currentIndex();
+    cg.writeEntry("backgroundmode", m_backgroundMode);
+
+    m_slidePath = m_ui->slideShowRequester->url().path();
+    cg.writeEntry("slidepath", m_slidePath);
+
+    QTime timerTime = m_ui->slideShowTime->time();
+    unsigned int mseconds = timerTime.second() + timerTime.minute() * 60 + timerTime.hour() * 3600;
+    m_slideShowTimer->setInterval(mseconds * 1000);
+    cg.writeEntry("slideTimer", mseconds);
+
+    if (m_backgroundMode == kStaticBackground) {
+        m_slideShowTimer->stop();
+    }
+    else if (m_backgroundMode == kSlideshowBackground) {
+        updateSlideList();
+        nextSlide();
+        m_slideShowTimer->start();
+    }
+
+    if (!m_wallpaperPath.isEmpty()) {
+        const QRect geom = QApplication::desktop()->screenGeometry(screen());
+        delete m_bitmapBackground;
+        m_bitmapBackground = new QPixmap(m_wallpaperPath);
+        (*m_bitmapBackground) = m_bitmapBackground->scaled(geom.size());
+    }
+    update();
+    cg.config()->sync();
 }
 
 void DefaultDesktop::runCommand()
@@ -134,6 +261,10 @@ QList<QAction*> DefaultDesktop::contextActions()
         m_runCommandAction = new QAction(i18n("Run Command..."), this);
         connect(m_runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
 
+        m_setupDesktopAction = new QAction(i18n("Configure Desktop..."), this);
+        m_setupDesktopAction->setIcon(KIcon("configure"));
+        connect(m_setupDesktopAction, SIGNAL(triggered()), this, SLOT(configure()));
+
         m_lockAction = new QAction(i18n("Lock Screen"), this);
         m_lockAction->setIcon(KIcon("system-lock-screen"));
         connect(m_lockAction, SIGNAL(triggered(bool)), this, SLOT(lockScreen()));
@@ -146,6 +277,8 @@ QList<QAction*> DefaultDesktop::contextActions()
     QList<QAction*> actions;
 
     actions.append(m_appletBrowserAction);
+
+    actions.append(m_setupDesktopAction);
 
     if (KAuthorized::authorizeKAction("run_command")) {
         actions.append(m_runCommandAction);

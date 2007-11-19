@@ -24,6 +24,7 @@
 #include <QObject>
 #include <QStyleOptionGraphicsItem>
 
+#include <KDialog>
 #include <KIcon>
 
 #include <plasma/containment.h>
@@ -31,12 +32,18 @@
 #include <plasma/widgets/widget.h>
 
 class QAction;
+class QTimer;
 class QTimeLine;
 
 namespace Plasma
 {
     class AppletBrowser;
     class Svg;
+}
+
+namespace Ui
+{
+    class config;
 }
 
 /*class Tool : public QObject, public QGraphicsItem
@@ -72,14 +79,39 @@ public:
 
 protected Q_SLOTS:
     void runCommand();
+    void configure();
+    void applyConfig();
+    void updateSlideList();
+    void nextSlide();
     void lockScreen();
     void logout();
 
 private:
     QAction *m_appletBrowserAction;
     QAction *m_runCommandAction;
+    QAction *m_setupDesktopAction;
     QAction *m_lockAction;
     QAction *m_logoutAction;
+
+    KDialog *m_configDialog;
+    Ui::config *m_ui;
+
+    // IMPORTANT: this needs to be in the same order as the items
+    // in the m_ui->pictureComboBox
+    enum BackgroundMode {
+        kStaticBackground,
+        kSlideshowBackground
+    };
+
+    int m_backgroundMode;
+    // slideshow settings
+
+    // the index of which m_slidePath is currently visible
+    int m_currentSlide;
+    QTimer *m_slideShowTimer;
+    QString m_slidePath;
+    QStringList m_slideFiles;
+
     Plasma::Svg *m_background;
     QPixmap* m_bitmapBackground;
     QString m_wallpaperPath;
