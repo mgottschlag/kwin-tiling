@@ -47,7 +47,7 @@
 
 // Plasma
 #include <plasma/layouts/boxlayout.h>
-#include <plasma/widgets/layoutanimator.h>
+#include <plasma/layouts/layoutanimator.h>
 
 Tasks::Tasks(QObject* parent , const QVariantList &arguments)
  : Plasma::Applet(parent,arguments)
