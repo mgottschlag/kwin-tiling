@@ -44,7 +44,7 @@ namespace KFI
 
 CViewer::CViewer()
 {
-    KPluginFactory *factory=KPluginLoader("libkfontviewpart").factory();
+    KPluginFactory *factory=KPluginLoader("kfontviewpart").factory();
 
     if(factory)
     {
