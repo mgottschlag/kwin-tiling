@@ -830,7 +830,7 @@ addStr( StrList **sp, const char *s )
 static StrList *
 splitList( const char *str )
 {
-	StrList *sp = 0, **spp = &sp;
+	StrList *sp, **spp = &sp;
 	const char *e;
 	if (!*str)
 		return 0;
@@ -843,6 +843,7 @@ splitList( const char *str )
 		spp = &(*spp)->next;
 	}
 	(*spp)->str = mstrdup( str );
+	(*spp)->next = 0;
 	return sp;
 }
 
