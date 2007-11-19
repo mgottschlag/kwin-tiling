@@ -25,6 +25,7 @@
 #include <KDebug>
 
 #include <plasma/corona.h>
+#include <plasma/widgets/layout.h>
 #include <plasma/svg.h>
 
 using namespace Plasma;
@@ -50,10 +51,39 @@ Plasma::Containment::Type Panel::containmentType() const
 
 void Panel::constraintsUpdated(Plasma::Constraints constraints)
 {
-    //kDebug() << "constraints updated with" << constraints << "!!!!!!!!!!!!!!!!!";
-    if (constraints & Plasma::LocationConstraint ||
-        constraints & Plasma::ScreenConstraint) {
+    if (constraints & Plasma::LocationConstraint || constraints & Plasma::ScreenConstraint) {
         Plasma::Location loc = location();
+        bool drawTop = true;
+        bool drawLeft = true;
+        bool drawRight = true;
+        bool drawBottom = true;
+
+        //FIXME: panels with less than 100% width need to paint edges, but full width panels
+        //       shouldn't
+        switch (loc) {
+            case TopEdge:
+                drawTop = false;
+                break;
+            case LeftEdge:
+                drawLeft = false;
+                break;
+            case RightEdge:
+                drawRight = false;
+                break;
+            case BottomEdge:
+                drawBottom = false;
+                break;
+            default:
+                break;
+        }
+
+        const int topHeight = drawTop ? m_background->elementSize("top").height() : 0;
+        const int leftWidth = drawLeft ? m_background->elementSize("left").width() : 0;
+        const int rightWidth = drawRight ? m_background->elementSize("right").width() : 0;
+        const int bottomHeight = drawBottom ? m_background->elementSize("bottom").height() : 0;
+
+
+    //kDebug() << "constraints updated with" << constraints << "!!!!!!!!!!!!!!!!!";
         int s = screen();
         if (s < 0) {
             s = 0;
@@ -72,8 +102,12 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
 
             width = r.width();
             height = 48;
+
             if (loc == BottomEdge) {
+                height += topHeight;
                 y = r.height() - height;
+            } else {
+                height += bottomHeight;
             }
             //kDebug() << "top/bottom: Width:" << width << ", height:" << height;
         } else if (loc == LeftEdge || loc == RightEdge) {
@@ -82,13 +116,24 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
             width = 48;
             height = r.height();
             if (loc == RightEdge) {
+                width += leftWidth;
                 x = r.width() - width;
+            } else {
+                width += rightWidth;
             }
             //kDebug() << "left/right: Width:" << width << ", height:" << height;
         }
-        //kDebug() << "Setting geometry to" << QRectF(x, y, width, height);
+        //kDebug() << "Setting geometry to" << QRectF(x, y, width, height) << "with margins" << leftWidth << topHeight << rightWidth << bottomHeight;
         QRectF geo = QRectF(x, y, width, height);
         setGeometry(geo);
+
+        if (layout()) {
+            //FIXME: we need a layout hint here for the magin number 4 in the svg
+            layout()->setMargin(Plasma::Layout::TopMargin, topHeight - 4);
+            layout()->setMargin(Plasma::Layout::LeftMargin, leftWidth - 4);
+            layout()->setMargin(Plasma::Layout::RightMargin, rightWidth - 4);
+            layout()->setMargin(Plasma::Layout::BottomMargin, bottomHeight - 4);
+        }
 
         if (corona()) {
             foreach (Containment *c, corona()->containments()) {
