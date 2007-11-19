@@ -49,8 +49,6 @@
 #include "collapsiblewidget.h"
 #include "interfaceadaptor.h"
 
-//#define FLASH_DIALOG 0
-
 // A little hack of a class to let us easily activate a match
 
 class SearchMatch : public QListWidgetItem
@@ -230,12 +228,6 @@ Interface::Interface(QWidget* parent)
     m_runners += Plasma::AbstractRunner::loadRunners( this );
 
     resetInterface();
-
-#ifdef FLASH_DIALOG
-    QTimer* t = new QTimer(this);
-    connect( t, SIGNAL(timeout()), this, SLOT(display()));
-    t->start( 250 );
-#endif
 }
 
 Interface::~Interface()
