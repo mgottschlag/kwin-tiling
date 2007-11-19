@@ -287,6 +287,13 @@ Name[x-test]=xxA lock key has been activatedxx
 Name[zh_CN]=锁定键现已激活
 Name[zh_TW]=已啟動鎖定鍵
 Comment=A lock key (e.g., Caps Lock or Num Lock) has changed its state and is now active
+Comment[ca]=Alguna tecla de fixació (p.ex. BloqMaj o BloqNum) ha canviat el seu estat i ara està activa
+Comment[et]=Lukustusklahv (nt. Caps Lock või Num Lock) muutis oma seisundit ning on nüüd aktiivne
+Comment[ja]=ロックキー (Caps Lock や Num Lock) の状態が変更され、非アクティブになりました
+Comment[nds]=En Fastsetttast (Tallenrast oder Grootschrievtast a.B.) hett sien Tostand ännert un is nu aktiev
+Comment[pt_BR]=Uma tecla de bloqueio (p.ex., Caps Lock ou Num Lock) teve seu estado alterado e agora está ativa
+Comment[sv]=En låstangent (t.ex. Caps Lock eller Num Lock) har ändrat tillstånd och är nu aktiv
+Comment[zh_TW]=一個鎖定鍵（如 CapsLock 或 NumLock）已改變它的狀態為啟用
 Sound=KDE_Click.wav
 
 nopresentation=236
