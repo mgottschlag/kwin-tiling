@@ -43,8 +43,6 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     m_layout = new Plasma::HBoxLayout(this);
     m_layout->setMargin(0);
     m_layout->setSpacing(0);
-    /*m_icon=new Plasma::Icon(KIcon(""),"",this);
-    m_layout->addItem(m_icon);*/
     m_label=new Plasma::Label(this);
     m_label->setText(i18n("Welcome to Device Notifier \n Plug a device to test"));
     m_label->setPen(QPen(Qt::white)); 
@@ -83,7 +81,6 @@ void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
     Q_UNUSED(p);
     Q_UNUSED(contentsRect);
     kDebug()<<"DeviceNotifier:: geometry "<<geometry().width();
-    //hide();
 }
 
 void DeviceNotifier::hideNotifier(QGraphicsItem * item)
@@ -119,28 +116,22 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
 	QString icon_temp = data["icon"].toString();
 
 	if (first) {
-	    origin_size=geometry();
 	    first=false;
-
 	    delete m_label;
-
 	    m_icon=new Plasma::Icon(KIcon(icon_temp),"",this);
 	    m_icon->setAlignment(Qt::AlignHCenter | Qt::AlignCenter);
-
 	    m_label=new Plasma::Label(this);
 	}
 
 	m_icon->setIcon(KIcon(icon_temp));
-	
 	icon = true;
 	device_name=i18n("A new device has been detected: \n");
 	device_name+=data["text"].toString();
 	m_label->setPen(QPen(Qt::white));
 	m_label->setText(device_name);
 
-	//m_layout->insertItem(0,m_icon);
-	//m_layout->insertItem(1,m_label);
-
+	m_layout->insertItem(0,m_icon);
+	
 	//FIXME Problem with updating layout of applet.Why calling updadeGeometry of the label afeter applet.
 	updateGeometry();
 	m_label->updateGeometry();

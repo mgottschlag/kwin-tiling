@@ -63,23 +63,22 @@ class DeviceNotifier : public Plasma::Applet
 
     private:
         Plasma::Label * m_label;
-		Plasma::Icon * m_icon;
+	Plasma::Icon * m_icon;
         QFont m_font;
-		QRectF origin_size;
 		
         Plasma::HBoxLayout *m_layout;
         bool icon;
-		bool first;
+	bool first;
 
         QTimer *t;
         Plasma::DataEngine* SolidEngine;
         QStringList desktop_files;
         QString m_udi;
         QString device_name;
-		int m_pixelSize;
-		int m_height;
-		int m_time;
-		KDialog *m_dialog;
+	int m_pixelSize;
+	int m_height;
+	int m_time;
+	KDialog *m_dialog;
         /// Designer Config file
         Ui::solidNotifierConfig ui;
 
