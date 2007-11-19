@@ -145,6 +145,10 @@ void Tasks::removeItemFromRootGroup(AbstractTaskItem *item)
 
 void Tasks::addWindowTask(Task::TaskPtr task)
 {
+    if (!task->showInTaskbar()) {
+        return;
+    }
+
     WindowTaskItem *item = new WindowTaskItem(_rootTaskGroup, _rootTaskGroup);
     item->setWindowTask(task);
     _windowTaskItems.insert(task,item);
@@ -154,7 +158,9 @@ void Tasks::addWindowTask(Task::TaskPtr task)
 
 void Tasks::removeWindowTask(Task::TaskPtr task)
 {
-    removeItemFromRootGroup(_windowTaskItems[task]);
+    if (_windowTaskItems.contains(task)) {
+        removeItemFromRootGroup(_windowTaskItems[task]);
+    }
 }
 
 
