@@ -34,10 +34,8 @@
 #include <KDE/KConfig>
 #include <KDE/KStandardAction>
 #include <KDE/KActionCollection>
+#include <KDE/KShortcutsDialog>
 #include <KDE/KParts/BrowserExtension>
-
-#define CFG_GROUP    "FontViewer Settings"
-#define CFG_SIZE_KEY "Window Size"
 
 namespace KFI
 {
@@ -52,6 +50,7 @@ CViewer::CViewer()
 
         actionCollection()->addAction(KStandardAction::Open, this, SLOT(fileOpen()));
         actionCollection()->addAction(KStandardAction::Quit, kapp, SLOT(quit()));
+        actionCollection()->addAction(KStandardAction::KeyBindings, this, SLOT(configureKeys()));
         itsPrintAct=actionCollection()->addAction(KStandardAction::Print, itsPreview, SLOT(print()));
 
         itsPrintAct->setEnabled(false);
@@ -73,18 +72,11 @@ CViewer::CViewer()
                 itsPreview->openUrl(url);
         }
 
-        QSize defSize(440, 530);
-
-        resize(KGlobal::config()->group(CFG_GROUP).readEntry(CFG_SIZE_KEY, defSize));
+        setAutoSaveSettings();
+        applyMainWindowSettings(KGlobal::config()->group("MainWindow"));
     }
     else
         exit(0);
-}
-
-CViewer::~CViewer()
-{
-    KGlobal::config()->group(CFG_GROUP).writeEntry(CFG_SIZE_KEY, size());
-    KGlobal::config()->sync();
 }
 
 void CViewer::fileOpen()
@@ -95,6 +87,14 @@ void CViewer::fileOpen()
                                      this, i18n("Select Font to View")));
     if(url.isValid())
         itsPreview->openUrl(url);
+}
+
+void CViewer::configureKeys()
+{
+    KShortcutsDialog dlg(KShortcutsEditor::AllActions, KShortcutsEditor::LetterShortcutsAllowed, this);
+
+    dlg.addCollection(actionCollection());
+    dlg.configure();
 }
 
 void CViewer::enableAction(const char *name, bool enable)

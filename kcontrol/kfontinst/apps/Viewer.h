@@ -39,11 +39,12 @@ class CViewer : public KParts::MainWindow
     public:
 
     CViewer();
-    virtual ~CViewer();
+    virtual ~CViewer() { }
 
     public Q_SLOTS:
 
     void fileOpen();
+    void configureKeys();
     void enableAction(const char *name, bool enable);
 
     private:
