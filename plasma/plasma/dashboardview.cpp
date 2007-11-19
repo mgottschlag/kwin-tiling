@@ -36,10 +36,10 @@ DashboardView::DashboardView(int screen, QWidget *parent)
       m_appletBrowserWidget(0)
 {
     setContextMenuPolicy(Qt::NoContextMenu);
-    setWindowFlags(Qt::FramelessWindowHint );
+    setWindowFlags(Qt::FramelessWindowHint);
     //setWindowOpacity(0.9);
     setWindowState(Qt::WindowFullScreen);
-    KWindowSystem::setState(winId(), NET::KeepAbove);
+    KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
 
     setDrawWallpaper(!PlasmaApp::hasComposite());
     hide();
