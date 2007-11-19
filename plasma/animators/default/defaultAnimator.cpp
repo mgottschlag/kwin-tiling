@@ -65,6 +65,8 @@ void DefaultAnimator::appear(qreal progress, QGraphicsItem* item)
     }
     item->resetTransform();
     item->scale(progress, progress);
+    QRectF r = item->boundingRect();
+    item->translate(r.width() / 2 * progress, r.height() / 2 * progress);
 }
 
 void DefaultAnimator::disappear(qreal progress, QGraphicsItem* item)
@@ -75,6 +77,8 @@ void DefaultAnimator::disappear(qreal progress, QGraphicsItem* item)
     }
     item->resetTransform();
     item->scale(1-progress,1-progress);
+    QRectF r = item->boundingRect();
+    item->translate(r.width() / 2 * progress, r.height() / 2 * progress);
 }
 
 QPixmap DefaultAnimator::elementAppear(qreal progress, const QPixmap& pixmap)
