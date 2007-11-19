@@ -43,7 +43,7 @@ Panel::~Panel()
     delete m_background;
 }
 
-Plasma::Containment::Type Panel::type() const
+Plasma::Containment::Type Panel::containmentType() const
 {
     return PanelContainment;
 }
