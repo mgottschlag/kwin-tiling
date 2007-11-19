@@ -290,6 +290,8 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     const qreal margin = 4;
 
     p->setPen(QPen(m_plainClockColor));
+    p->setRenderHint(QPainter::SmoothPixmapTransform);
+    p->setRenderHint(QPainter::Antialiasing);
 
     QRect timeRect;
 
@@ -365,9 +367,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                 );
         return;
     }
-
-    // The FancyClock is drawn
-    p->setRenderHint(QPainter::Antialiasing);
 
     // Find the largest possible size fitting in the remaining space
     // Aspect ratio for the whole digiclock
