@@ -61,7 +61,7 @@ void KRunnerDialog::paintEvent(QPaintEvent *e)
     //kDebug() << "clip rect set to: " << e->rect();
 
     if (KRunnerApp::self()->hasCompositeManager()) {
-        kDebug() << "gots us a compmgr!";
+        //kDebug() << "gots us a compmgr!";
         p.setCompositionMode(QPainter::CompositionMode_Source );
         p.fillRect(rect(), Qt::transparent);
     }
