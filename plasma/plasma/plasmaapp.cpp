@@ -209,7 +209,7 @@ void PlasmaApp::createPanels()
                  << "| screen:" << containment->screen()
                  << "| geometry:" << containment->geometry()
                  << "| zValue:" << containment->zValue();
-        if (containment->type() == Plasma::Containment::PanelContainment) {
+        if (containment->containmentType() == Plasma::Containment::PanelContainment) {
             kDebug() << "we have a panel!";
             PanelView *panelView = new PanelView(containment);
             m_panels << panelView;
