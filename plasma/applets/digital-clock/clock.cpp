@@ -355,7 +355,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         p->setFont(m_plainClockFont);
         QRect tmpTimeRect = p->boundingRect(timeRect, QPainter::TextAntialiasing, timeString);
 
-        while ( tmpTimeRect.width() > timeRect.width() || tmpTimeRect.height() > timeRect.height() ) {
+        while (tmpTimeRect.width() > timeRect.width() || tmpTimeRect.height() > timeRect.height() && m_plainClockFont.pointSize() > 1) {
             m_plainClockFont.setPointSize(m_plainClockFont.pointSize()-1);
             p->setFont(m_plainClockFont);
             tmpTimeRect = p->boundingRect(timeRect, QPainter::TextAntialiasing, timeString);
