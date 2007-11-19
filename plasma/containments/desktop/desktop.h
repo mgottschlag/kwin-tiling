@@ -50,35 +50,6 @@ public:
 
 };*/
 
-class ToolBox : public QObject, public QGraphicsItem
-{
-    Q_OBJECT
-
-public:
-    explicit ToolBox(QGraphicsItem *parent = 0);
-    QRectF boundingRect() const;
-    QPainterPath shape() const;
-
-    void addTool(Plasma::Widget* tool);
-
-protected:
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
-
-protected slots:
-    void animate(qreal progress);
-    void toolMoved(QGraphicsItem*);
-
-private:
-    KIcon m_icon;
-    int m_size;
-    bool m_hidden;
-    bool m_showing;
-    Plasma::Phase::AnimId m_animId;
-    int m_animFrame;
-};
-
 class DefaultDesktop : public Plasma::Containment
 {
     Q_OBJECT
@@ -99,11 +70,6 @@ public:
                         const QStyleOptionGraphicsItem *option,
                         const QRect& contentsRect);
 
-signals:
-    void zoomIn();
-    void zoomOut();
-    void showAddWidgets();
-
 protected Q_SLOTS:
     void runCommand();
     void lockScreen();
@@ -114,7 +80,6 @@ private:
     QAction *m_runCommandAction;
     QAction *m_lockAction;
     QAction *m_logoutAction;
-    ToolBox *m_toolbox;
     Plasma::Svg *m_background;
     QPixmap* m_bitmapBackground;
     QString m_wallpaperPath;

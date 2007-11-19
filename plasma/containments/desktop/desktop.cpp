@@ -36,7 +36,6 @@
 #include "plasma/appletbrowser.h"
 #include "plasma/phase.h"
 #include "plasma/svg.h"
-#include "plasma/widgets/pushbutton.h"
 #include "kworkspace/kworkspace.h"
 
 #include "krunner_interface.h"
@@ -44,146 +43,6 @@
 #include "screensaver_interface.h"
 
 using namespace Plasma;
-/*
-Tool::Tool(QGraphicsItem *parent)
-    : QGraphicsItem(parent)
-{
-}
-*/
-
-ToolBox::ToolBox(QGraphicsItem *parent)
-    : QGraphicsItem(parent),
-      m_icon("configure"),
-      m_size(50),
-      m_showing(false),
-      m_animId(0),
-      m_animFrame(0)
-{
-    setAcceptsHoverEvents(true);
-    setZValue(10000);
-    setFlag(ItemClipsToShape, true);
-    setFlag(ItemClipsChildrenToShape, false);
-
-    connect(Plasma::Phase::self(), SIGNAL(movementComplete(QGraphicsItem*)), this, SLOT(toolMoved(QGraphicsItem*)));
-}
-
-/*QRectF ToolBox::sizeHint() const
-{
-    return boundingRect();
-}*/
-
-QRectF ToolBox::boundingRect() const
-{
-    return QRectF(0, 0, m_size*2, m_size*2);
-}
-
-void ToolBox::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
-{
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
-
-    QPainterPath p = shape();
-    QRadialGradient gradient(QPoint(m_size*2, 0), m_size*3);
-    gradient.setFocalPoint(QPointF(m_size*2, 0));
-    gradient.setColorAt(0, QColor(255, 255, 255, 128));
-    gradient.setColorAt(.9, QColor(128, 128, 128, 128));
-    painter->save();
-    painter->setPen(Qt::NoPen);
-    painter->setRenderHint(QPainter::Antialiasing, true);
-    painter->setBrush(gradient);
-    painter->drawPath(p);
-    painter->restore();
-    m_icon.paint(painter, QRect(m_size*2 - 34, 2, 32, 32));
-}
-
-QPainterPath ToolBox::shape() const
-{
-    QPainterPath path;
-    int size = m_size + m_animFrame;
-    path.moveTo(m_size*2, 0);
-    path.arcTo(QRectF(m_size*2 - size, -size, size*2, size*2), 180, 90);
-    return path;
-}
-
-void ToolBox::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-//    Plasma::Phase::self()->moveItem(this, Phase::SlideIn, QPoint(-25, -25));
-    int x = -25; // pos().x();
-    int y = 0; // pos().y();
-    Plasma::Phase* phase = Plasma::Phase::self();
-    foreach (QGraphicsItem* tool, QGraphicsItem::children()) {
-//        kDebug() << "let's show and move" << (QObject*)tool << tool->geometry().toRect();
-        tool->show();
-        phase->moveItem(tool, Plasma::Phase::SlideIn, QPoint(x, y));
-        //x += 0;
-        y += static_cast<int>(tool->boundingRect().height()) + 5;
-    }
-
-    if (m_animId) {
-        phase->stopCustomAnimation(m_animId);
-    }
-
-    m_showing = true;
-    m_animId = phase->customAnimation(m_size, 150, Plasma::Phase::EaseInCurve, this, "animate");
-    QGraphicsItem::hoverEnterEvent(event);
-}
-
-void ToolBox::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-//    Plasma::Phase::self->moveItem(this, Phase::SlideOut, boundingRect()QPoint(-50, -50));
-    int x = 0; // pos().x() + geometry().width();
-    int y = 0;
-    Plasma::Phase* phase = Plasma::Phase::self();
-    foreach (QGraphicsItem* tool, QGraphicsItem::children()) {
-        phase->moveItem(tool, Plasma::Phase::SlideOut, QPoint(x, y));
-    }
-
-    if (m_animId) {
-        phase->stopCustomAnimation(m_animId);
-    }
-
-    m_showing = false;
-    m_animId = phase->customAnimation(m_size, 150, Plasma::Phase::EaseOutCurve, this, "animate");
-    QGraphicsItem::hoverLeaveEvent(event);
-}
-
-void ToolBox::animate(qreal progress)
-{
-    if (m_showing) {
-        m_animFrame = static_cast<int>(m_size * progress);
-    } else {
-        m_animFrame = static_cast<int>(m_size * (1.0 - progress));
-    }
-
-    //kDebug() << "animating at" << progress << "for" << m_animFrame;
-
-    if (progress >= 1) {
-        m_animId = 0;
-    }
-
-    update();
-}
-
-void ToolBox::toolMoved(QGraphicsItem *item)
-{
-    //kDebug() << "geometry is now " << static_cast<Plasma::Widget*>(item)->geometry();
-    if (!m_showing &&
-        QGraphicsItem::children().indexOf(static_cast<Plasma::Widget*>(item)) != -1) {
-        item->hide();
-    }
-}
-
-void ToolBox::addTool(Plasma::Widget *tool)
-{
-    if (!tool) {
-        return;
-    }
-
-    tool->hide();
-    tool->setPos(QPoint(0,0));
-    tool->setZValue(zValue() + 1);
-    tool->setParentItem(this);
-}
 
 DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
@@ -191,7 +50,6 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
       m_runCommandAction(0),
       m_lockAction(0),
       m_logoutAction(0),
-      m_toolbox(0),
       m_background(0),
       m_bitmapBackground(0),
       m_wallpaperPath(0)
@@ -216,33 +74,11 @@ void DefaultDesktop::init()
     }
 
     Containment::init();
-    m_toolbox = new ToolBox(this);
-    //m_toolbox->updateGeometry();
-    m_toolbox->setPos(geometry().width() - m_toolbox->boundingRect().width(), 0);
-
-    Plasma::PushButton *tool = new Plasma::PushButton(i18n("Add Widgets"));
-    tool->resize(tool->sizeHint());
-    m_toolbox->addTool(tool);
-    connect(tool, SIGNAL(clicked()), this, SIGNAL(showAddWidgets()));
-
-    tool = new Plasma::PushButton(i18n("Zoom In"));
-    connect(tool, SIGNAL(clicked()), this, SIGNAL(zoomIn()));
-    tool->resize(tool->sizeHint());
-    m_toolbox->addTool(tool);
-
-    tool = new Plasma::PushButton(i18n("Zoom Out"));
-    connect(tool, SIGNAL(clicked()), this, SIGNAL(zoomOut()));
-    tool->resize(tool->sizeHint());
-    m_toolbox->addTool(tool);
 }
 
 void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
 {
     //kDebug() << "DefaultDesktop constraints have changed";
-    if (constraints & Plasma::ScreenConstraint && m_toolbox) {
-        m_toolbox->setPos(geometry().width() - m_toolbox->boundingRect().width(), 0);
-    }
-
     const QRect geom = QApplication::desktop()->screenGeometry(screen());
     if (m_background) {
         //kDebug() << "Rescaling SVG wallpaper to" << geom.size();
