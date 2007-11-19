@@ -1,9 +1,4 @@
 set(kdm_SRCS
-	greet.h
-	dm.h
-	dm_socket.h
-	dm_error.h
-	dm_auth.h
 	auth.c
 	bootman.c
 	client.c
@@ -55,7 +50,7 @@ macro_add_file_dependencies(error.c ${CMAKE_CURRENT_SOURCE_DIR}/printf.c)
 kde4_add_executable(kdm NOGUI ${kdm_SRCS})
 macro_add_compile_flags(kdm -U_REENTRANT)
 target_link_libraries( kdm
-	${X11_LIBRARIES}
+	${X11_X11_LIB} ${X11_Xau_LIB} ${X11_Xdmcp_LIB} ${X11_X_EXTRA_LIBS}
 	${UNIXAUTH_LIBRARIES}
 	${SHADOW_LIBRARIES}
 	${S_LIBRARIES}
@@ -68,6 +63,7 @@ if(UTIL_LIBRARIES)
 	target_link_libraries( kdm ${UTIL_LIBRARIES} )
 endif(UTIL_LIBRARIES)
 target_link_libraries( kdm ${POSIX4_LIBRARIES} )
+set_target_properties(kdm PROPERTIES LINKER_LANGUAGE C)
 
 if(KDE4_ENABLE_FINAL)
         macro_add_file_dependencies(${CMAKE_CURRENT_BINARY_DIR}/kdm_final_cpp.cpp ${confci})
