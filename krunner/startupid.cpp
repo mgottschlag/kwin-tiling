@@ -211,9 +211,12 @@ void StartupId::start_startupid( const QString& icon_P )
         XSetWindowAttributes attrs;
         attrs.override_redirect = True;
         attrs.save_under = True; // useful saveunder if possible to avoid redrawing
+        attrs.colormap = QX11Info::appColormap();
+        attrs.background_pixel = WhitePixel( QX11Info::display(), QX11Info::appScreen());
+        attrs.border_pixel = BlackPixel( QX11Info::display(), QX11Info::appScreen());
         startup_window = XCreateWindow( QX11Info::display(), DefaultRootWindow( QX11Info::display()),
             0, 0, 1, 1, 0, QX11Info::appDepth(), InputOutput, static_cast< Visual* >( QX11Info::appVisual()),
-            CWOverrideRedirect | CWSaveUnder, &attrs );
+            CWOverrideRedirect | CWSaveUnder | CWColormap | CWBackPixel | CWBorderPixel, &attrs );
         XClassHint class_hint;
         QByteArray cls = qAppName().toLatin1();
         class_hint.res_name = cls.data();
