@@ -351,50 +351,47 @@ static int
 #if defined(USE_PAM) || defined(_AIX)
 isNoPassAllowed( const char *un )
 {
-	struct passwd *pw = 0;
+	struct passwd *pw;
 # ifdef HAVE_GETSPNAM /* (sic!) - not USESHADOW */
 	struct spwd *spw;
 # endif
 #else
-isNoPassAllowed( const char *un, struct passwd *pw )
+isNoPassAllowed( struct passwd *pw )
 {
 #endif
 	struct group *gr;
 	char **fp;
 	int hg;
 
+#if defined(USE_PAM) || defined(_AIX)
 	if (!*un)
 		return False;
+#endif
 
 	if (cursource != PWSRC_MANUAL)
 		return True;
 
+#if defined(USE_PAM) || defined(_AIX)
+	/* Give nss_ldap, etc. a chance to normalize (uppercase) the name. */
+	if (!(pw = getpwnam( un )) ||
+	    pw->pw_passwd[0] == '!' || pw->pw_passwd[0] == '*')
+		return False;
+# ifdef HAVE_GETSPNAM /* (sic!) - not USESHADOW */
+	if ((spw = getspnam( un )) &&
+	    (spw->sp_pwdp[0] == '!' || spw->sp_pwdp[0] == '*'))
+		return False;
+# endif
+#endif
+
 	for (hg = False, fp = td->noPassUsers; *fp; fp++)
 		if (**fp == '@')
 			hg = True;
-		else if (!strcmp( un, *fp ))
+		else if (!strcmp( pw->pw_name, *fp ))
 			return True;
-		else if (!strcmp( "*", *fp )) {
-#if defined(USE_PAM) || defined(_AIX)
-			if (!(pw = getpwnam( un )))
-				return False;
-			if (pw->pw_passwd[0] == '!' || pw->pw_passwd[0] == '*')
-				continue;
-# ifdef HAVE_GETSPNAM /* (sic!) - not USESHADOW */
-			if ((spw = getspnam( un )) &&
-			    (spw->sp_pwdp[0] == '!' || spw->sp_pwdp[0] == '*'))
-					continue;
-# endif
-#endif
-			if (pw->pw_uid)
-				return True;
-		}
+		else if (!strcmp( "*", *fp ) && pw->pw_uid)
+			return True;
 
-#if defined(USE_PAM) || defined(_AIX)
-	if (hg && (pw || (pw = getpwnam( un )))) {
-#else
 	if (hg) {
-#endif
 		for (setgrent(); (gr = getgrent()); )
 			for (fp = td->noPassUsers; *fp; fp++)
 				if (**fp == '@' && !strcmp( gr->gr_name, *fp + 1 )) {
@@ -403,7 +400,7 @@ isNoPassAllowed( const char *un, struct passwd *pw )
 						return True;
 					}
 					for (; *gr->gr_mem; gr->gr_mem++)
-						if (!strcmp( un, *gr->gr_mem )) {
+						if (!strcmp( pw->pw_name, *gr->gr_mem )) {
 							endgrent();
 							return True;
 						}
@@ -608,7 +605,7 @@ verify( GConvFunc gconv, int rootok )
 		goto nplogin;
 	}
 
-	if (isNoPassAllowed( curuser, p )) {
+	if (isNoPassAllowed( p )) {
 	  nplogin:
 		gconv( GCONV_PASS_ND, 0 );
 		if (!*curpass) {
@@ -1185,6 +1182,8 @@ startClient( volatile int *pid )
 	}
 #endif
 
+	strcpy( curuser, p->pw_name ); /* Use normalized login name. */
+
 #ifndef USE_PAM
 # ifdef _AIX
 	msg = NULL;
@@ -1755,7 +1754,7 @@ readDmrc()
 		return GE_NoUser;
 
 	if (*dmrcDir) {
-		if (!strApp( &fname, dmrcDir, "/", dmrcuser, ".dmrc", (char *)0 ))
+		if (!strApp( &fname, dmrcDir, "/", p->pw_name, ".dmrc", (char *)0 ))
 			return GE_Error;
 		if (!(curdmrc = iniLoad( fname ))) {
 			free( fname );

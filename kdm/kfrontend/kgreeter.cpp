@@ -373,11 +373,14 @@ KGreeter::insertSessions()
 void
 KGreeter::slotUserEntered()
 {
-	if (userView) {
+	struct passwd *pw;
+
+	if (userView && (pw = getpwnam( curUser.toLocal8Bit().data() ))) {
+		QString theUser = QString::fromLocal8Bit( pw->pw_name );
 		for (int i = 0, rc = userView->model()->rowCount(); i < rc; i++) {
 			UserListViewItem *item =
 				static_cast<UserListViewItem *>(userView->item( i ));
-			if (item->login == curUser) {
+			if (item->login == theUser) {
 				userView->setCurrentItem( item );
 				goto oke;
 			}
