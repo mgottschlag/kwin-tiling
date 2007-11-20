@@ -323,7 +323,12 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
 {
-    setWindowRole( "logoutdialog" );
+#if QT_VERSION >= QT_VERSION_CHECK( 4, 4, 0 )
+#ifdef __GNUC__
+#warning Check if qt-bugs@ is lame enough not to handle a report with a patch attached for months and months.
+#endif
+//    setWindowRole( "logoutdialog" );
+#endif
 //#if !(QT_VERSION >= QT_VERSION_CHECK(4, 3, 3) || defined(QT_KDE_QT_COPY))
 // Qt doesn't set this on unmanaged windows
     QByteArray appName = qAppName().toLatin1();
