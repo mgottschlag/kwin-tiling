@@ -4,10 +4,11 @@ const int MAX_ITEMS = 100;
 const int ANIM_IMAGES_ROW = 10;
 
 // for converting from startup states to (internal) numbers
-// these are also in the simple splash
+// these are also in the simple splash and in krunner
 const char states[][ 12 ] =
-    { "initial", "kded", "confupdate", "kcminit", "ksmserver", "wm", "desktop", "ready" };
-const int LAST_STATE = 7;
+    { "initial", "kded", "confupdate", "kcminit", "ksmserver", "wm", "desktop" };
+// State "ready" isn't used, make splash go away as soon as desktop is ready.
+const int LAST_STATE = 6;
 
 #include <config-workspace.h>
 

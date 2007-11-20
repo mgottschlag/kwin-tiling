@@ -180,7 +180,6 @@ void KSMServer::autoStart0Done()
         return;
     kDebug( 1218 ) << "Autostart 0 done";
     upAndRunning( "desktop" );
-    upAndRunning( "ready" ); // desktop is more or less ready at this point, tell ksplash to go away
     kcminitSignals = new QDBusInterface("org.kde.kcminit", "/kcminit", "org.kde.KCMInit", QDBusConnection::sessionBus(), this );
     if( !kcminitSignals->isValid())
         kWarning() << "kcminit not running?" ;
@@ -341,6 +340,8 @@ void KSMServer::finishStartup()
         return;
     if( waitAutoStart2 || waitKcmInit2 )
         return;
+
+    upAndRunning( "ready" );
 
     state = Idle;
     setupXIOErrorHandler(); // From now on handle X errors as normal shutdown.

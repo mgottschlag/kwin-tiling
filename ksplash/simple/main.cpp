@@ -110,7 +110,7 @@ int main( int argc, char* argv[])
         }
     XSetWindowAttributes attrs;
     attrs.override_redirect = True;
-    const int states = 7;
+    const int states = 6;
     const int frame = 3;
     const int segment = sw / 2 / states;
     const int pw = segment * states + 2 * frame; // size of progressbar
@@ -179,7 +179,7 @@ int main( int argc, char* argv[])
             if( ev.type == ClientMessage && ev.xclient.window == DefaultRootWindow( dpy )
                 && ev.xclient.message_type == kde_splash_progress )
                 {
-                // these are also in ksplashx
+                // these are also in ksplashx and in krunner
                 const char* s = ev.xclient.data.b;
 #ifdef DEBUG
                 fprintf( stderr,"MESSAGE: %s\n", s );
@@ -198,8 +198,9 @@ int main( int argc, char* argv[])
                     state = 5;
                 else if( strcmp( s, "desktop" ) == 0 && state < 6 )
                     state = 6;
-                else if( strcmp( s, "ready" ) == 0 && state < 7 )
-                    state = 7;
+// This last one isn't used, make splash go away as soon as desktop is ready.
+//                else if( strcmp( s, "ready" ) == 0 && state < 7 )
+//                    state = 7;
                 }
             }
         if( test && time( NULL ) >= test_time )

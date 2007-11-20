@@ -130,7 +130,7 @@ bool StartupId::x11Event( XEvent* e )
         && e->xclient.message_type == kde_splash_progress )
         {
         const char* s = e->xclient.data.b;
-        if( strcmp( s, "kicker" ) == 0 && kde_startup_status == StartupPre )
+        if( strcmp( s, "desktop" ) == 0 && kde_startup_status == StartupPre )
             {
             kde_startup_status = StartupIn;
             if( startups.count() == 0 )
@@ -138,7 +138,7 @@ bool StartupId::x11Event( XEvent* e )
             // 60(?) sec timeout - shouldn't be hopefully needed anyway, ksmserver should have it too
             QTimer::singleShot( 60000, this, SLOT( finishKDEStartup()));
             }
-        else if( strcmp( s, "session ready" ) == 0 && kde_startup_status < StartupDone )
+        else if( strcmp( s, "ready" ) == 0 && kde_startup_status < StartupDone )
             QTimer::singleShot( 2000, this, SLOT( finishKDEStartup()));
         }
     return false;
@@ -231,7 +231,7 @@ void StartupId::start_startupid( const QString& icon_P )
         else
             startup_widget->clearMask();
 
-		QPalette palette;
+        QPalette palette;
         palette.setBrush( startup_widget->backgroundRole(), QBrush( icon_pixmap ) );
         startup_widget->setPalette( palette );
         startup_widget->update();
@@ -259,7 +259,7 @@ void StartupId::update_startupid()
     int yoffset = 0;
     if( blinking )
         {
-		QPalette palette;
+        QPalette palette;
         palette.setBrush( startup_widget->backgroundRole(), QBrush( pixmaps[ color_to_pixmap[ color_index ]] ) );
         startup_widget->setPalette( palette );
         if( ++color_index >= ( sizeof( color_to_pixmap ) / sizeof( color_to_pixmap[ 0 ] )))
@@ -269,7 +269,7 @@ void StartupId::update_startupid()
         {
         yoffset = frame_to_yoffset[ frame ];
         QPixmap pm = pixmaps[ frame_to_pixmap[ frame ] ];
-		QPalette palette;
+        QPalette palette;
         palette.setBrush( startup_widget->backgroundRole(), QBrush( pm ) );
         startup_widget->setPalette( palette );
         if ( !pm.mask().isNull() )
