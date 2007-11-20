@@ -80,13 +80,24 @@ void NOAAIon::init()
     getXMLSetup();
 }
 
-QString NOAAIon::validate(const QString& source) const
+QStringList NOAAIon::validate(const QString& source) const
 {
-    QHash<QString, QString>::const_iterator it = d->m_locations.find(source);
-    if (it != d->m_locations.end()) {
-        return source;
+    QStringList placeList;
+    QHash<QString, QString>::const_iterator it = d->m_locations.constBegin();
+    while (it != d->m_locations.constEnd()) { 
+        if (it.value().toLower().contains(source.toLower())) {
+            placeList.append(it.value().split(":")[1]);
+        }
+        ++it;
     }
-    return QString();
+     
+    // Check if placeList is empty if so, return nothing.
+    if (placeList.isEmpty()) {
+        return QStringList();
+    }
+
+    placeList.sort();
+    return placeList;
 }
 
 bool NOAAIon::updateIonSource(const QString& source)
@@ -99,16 +110,19 @@ bool NOAAIon::updateIonSource(const QString& source)
     QStringList sourceAction = source.split(':');
     if (sourceAction[1] == QString("validate")) {
         kDebug() << "Initiate Validating of place: " << sourceAction[2];
-
-        QString result = this->validate(QString("%1:%2").arg(sourceAction[0]).arg(sourceAction[2]));
-        if (!result.isEmpty()) {
-            QStringList tokens = result.split(':');
-            setData(source, "validate", QString("valid:single:%1").arg(tokens[1]));
+        QStringList result = this->validate(QString("%1:%2").arg(sourceAction[0]).arg(sourceAction[2]));
+   
+        if (result.size() == 1) {
+            setData(source, "validate", QString("noaa:valid:single:%1").arg(result.join(":")));
             return true;
-        } else {
-            setData(source, "validate", QString("invalid:single:%1").arg(sourceAction[2]));
+        } else if (result.size() > 1) {
+            setData(source, "validate", QString("noaa:valid:multiple:%1").arg(result.join(":")));
+            return true;
+        } else if (result.size() == 0) {
+            setData(source, "validate", QString("noaa:invalid:single:%1").arg(sourceAction[2]));
             return true;
         }
+
      } else if (sourceAction[1] == QString("weather")) {
         getXMLData(QString("%1:%2").arg(sourceAction[0]).arg(sourceAction[2]));
         return true;
@@ -209,7 +223,7 @@ void NOAAIon::parseStationID()
                 tmp = "noaa:" + d->m_station_name + ", " + d->m_state; // Build the key name.
                 d->m_place[tmp].stateName = d->m_state;
                 d->m_place[tmp].stationName = d->m_station_name;
-	        d->m_place[tmp].XMLurl = d->m_xmlurl;
+	        d->m_place[tmp].XMLurl = d->m_xmlurl.replace("http://", "http://www.");
 
                 d->m_locations[tmp] = tmp;
             } else {
@@ -307,7 +321,7 @@ WeatherData NOAAIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
                 data.heatindex_C = xml.readElementText();
             } else if (xml.name() == "windchill_f") {
                 data.windchill_F = xml.readElementText();
-            } else if (xml.name() == "windchill_c") {
+           } else if (xml.name() == "windchill_c") {
                 data.windchill_C = xml.readElementText();
             } else if (xml.name() == "visibility_mi") {
                 data.visibility = xml.readElementText();
@@ -341,6 +355,7 @@ bool NOAAIon::readXMLData(const QString& source, QXmlStreamReader& xml)
     }
 
     d->m_weatherData[source] = data;
+   
     updateWeather(source);
     return !xml.error();
 }
@@ -390,72 +405,75 @@ void NOAAIon::option(int option, QVariant value)
     }
 }
 
-void NOAAIon::updateWeather(const QString& source)
+void NOAAIon::updateWeather(const QString& source) 
 {
+    QString weatherSource = source;
+    weatherSource.replace("noaa:", "noaa:weather:");
+
     QMap<QString, QString> dataFields;
     QStringList fieldList;
 
-    setData(source, "Country", this->country(source));
-    setData(source, "Place", this->place(source));
-    setData(source, "Airport Code", this->station(source));
+    setData(weatherSource, "Country", this->country(source));
+    setData(weatherSource, "Place", this->place(source));
+    setData(weatherSource, "Airport Code", this->station(source));
 
     // Real weather - Current conditions
-    setData(source, "Observations At", this->observationTime(source));
-    setData(source, "Current Conditions", this->condition(source));
+    setData(weatherSource, "Observations At", this->observationTime(source));
+    setData(weatherSource, "Current Conditions", this->condition(source));
     dataFields = this->temperature(source);
-    setData(source, "Temperature", dataFields["temperature"]);
+    setData(weatherSource, "Temperature", dataFields["temperature"]);
 
     if (dataFields["temperature"] != "N/A") {
-        setData(source, "Temperature Unit", dataFields["temperatureUnit"]);
+        setData(weatherSource, "Temperature Unit", dataFields["temperatureUnit"]);
     }
 
     // Do we have a comfort temperature? if so display it
     if (dataFields["comfortTemperature"] != "N/A") {
         if (d->m_weatherData[source].windchill_F != "NA") {
-            setData(source, "Windchill", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
-            setData(source, "Humidex", "N/A");
+            setData(weatherSource, "Windchill", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
+            setData(weatherSource, "Humidex", "N/A");
         }
         if (d->m_weatherData[source].heatindex_F != "NA" && d->m_weatherData[source].temperature_F.toInt() != d->m_weatherData[source].heatindex_F.toInt()) {
-            setData(source, "Humidex", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
-            setData(source, "Windchill", "N/A");
+            setData(weatherSource, "Humidex", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
+            setData(weatherSource, "Windchill", "N/A");
         }
      } else {
-       setData(source, "Windchill", "N/A");
-       setData(source, "Humidex", "N/A");
+       setData(weatherSource, "Windchill", "N/A");
+       setData(weatherSource, "Humidex", "N/A");
      }
 
-     setData(source, "Dewpoint", this->dewpoint(source));
+     setData(weatherSource, "Dewpoint", this->dewpoint(source));
      if (this->dewpoint(source) != "N/A") {
-         setData(source, "Dewpoint Unit", dataFields["temperatureUnit"]);
+         setData(weatherSource, "Dewpoint Unit", dataFields["temperatureUnit"]);
      }
  
      dataFields = this->pressure(source);
-     setData(source, "Pressure", dataFields["pressure"]);
+     setData(weatherSource, "Pressure", dataFields["pressure"]);
 
      if (dataFields["pressure"] != "N/A") {
-         setData(source, "Pressure Unit", dataFields["pressureUnit"]);
+         setData(weatherSource, "Pressure Unit", dataFields["pressureUnit"]);
      }
 
      dataFields = this->visibility(source);
-     setData(source, "Visibility", dataFields["visibility"]);
+     setData(weatherSource, "Visibility", dataFields["visibility"]);
 
      if (dataFields["visibility"] != "N/A") {
-         setData(source, "Visibility Unit", dataFields["visibilityUnit"]);
+         setData(weatherSource, "Visibility Unit", dataFields["visibilityUnit"]);
      }
 
-     setData(source, "Humidity", this->humidity(source));
+     setData(weatherSource, "Humidity", this->humidity(source));
 
      dataFields = this->wind(source);
-     setData(source, "Wind Speed", dataFields["windSpeed"]);
+     setData(weatherSource, "Wind Speed", dataFields["windSpeed"]);
 
      if (dataFields["windSpeed"] != "Calm") {
-         setData(source, "Wind Speed Unit", dataFields["windUnit"]);
+         setData(weatherSource, "Wind Speed Unit", dataFields["windUnit"]);
      }
 
-     setData(source, "Wind Gust", dataFields["windGust"]);
-     setData(source, "Wind Gust Unit", dataFields["windGustUnit"]);
-     setData(source, "Wind Direction", dataFields["windDirection"]);
-     setData(source, "Credit", "NOAA National Weather Service");
+     setData(weatherSource, "Wind Gust", dataFields["windGust"]);
+     setData(weatherSource, "Wind Gust Unit", dataFields["windGustUnit"]);
+     setData(weatherSource, "Wind Direction", dataFields["windDirection"]);
+     setData(weatherSource, "Credit", "NOAA National Weather Service");
 }
 
 QString NOAAIon::country(const QString& source)
