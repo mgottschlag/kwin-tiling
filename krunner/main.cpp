@@ -33,7 +33,8 @@
 static const char description[] = I18N_NOOP( "KDE run command interface" );
 static const char version[] = "0.1";
 
-int main(int argc, char* argv[])
+extern "C"
+KDE_EXPORT int kdemain(int argc, char* argv[])
 {
     KAboutData aboutData( "krunner", 0, ki18n( "Run Command Interface" ),
                           version, ki18n(description), KAboutData::License_GPL,
