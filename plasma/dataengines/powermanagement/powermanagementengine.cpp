@@ -140,27 +140,23 @@ void PowermanagementEngine::updateBatteryChargeState(int newState)
         state = I18N_NOOP("Could not determine battery status. Something is fishy here. :o");
     }
     setData(I18N_NOOP("Battery"), I18N_NOOP("State"), state);
-    kDebug() << "PMEngine::Battery: updateChargeState " << state;
     checkForUpdates();
 }
 
 void PowermanagementEngine::updateBatteryPlugState(bool newState)
 {
-    kDebug() << "PMEngine::Battery: updatePlugState" << newState;
     setData(I18N_NOOP("Battery"), I18N_NOOP("Plugged in"), newState);
     checkForUpdates();
 }
 
 void PowermanagementEngine::updateBatteryChargePercent(int newValue)
 {
-    kDebug() << "PMEngine::Battery: new chargepercent: " << newValue;
     setData(I18N_NOOP("Battery"), I18N_NOOP("Percent"), newValue);
     checkForUpdates();
 }
 
 void PowermanagementEngine::updateAcPlugState(bool newState)
 {
-    kDebug() << "PMEngine::AcAdapter: updatePlugState" << newState;
     setData(I18N_NOOP("AC Adapter"), I18N_NOOP("Plugged in"), newState);
     checkForUpdates();
 }
