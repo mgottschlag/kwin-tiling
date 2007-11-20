@@ -274,6 +274,7 @@ int Clock::getOffsetForDigit(const int digitNumber, const int elWidth)
 void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
     Q_UNUSED(option);
+    //TODO Draw grey rectangle around numbers, as in Nuno's idea and in his mock. Should be in the svg.
 
     if ( !m_time.isValid() || !m_date.isValid() ) {
         return;
