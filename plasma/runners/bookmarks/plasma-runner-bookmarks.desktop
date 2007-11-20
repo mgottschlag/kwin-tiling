@@ -2,6 +2,7 @@
 Name=Bookmark Runner
 Name[ca]=Executador de preferits
 Name[el]=Εκτελεστής σελιδοδεικτών
+Name[eo]=Legosigno-elektilo
 Name[et]=Järjehoidja käivitaja
 Name[ja]=ブックマーク Runner
 Name[ko]=책갈피 실행기
@@ -22,6 +23,7 @@ Comment=Open bookmark
 Comment[ca]=Obre un punts
 Comment[de]=Lesezeichen aufrufen
 Comment[el]=Άνοιγμα σελιδοδείκτη
+Comment[eo]=Malfermi legosignon
 Comment[et]=Järjehoidja avamine
 Comment[ga]=Oscail leabharmharc
 Comment[ja]=ブックマークを開く
