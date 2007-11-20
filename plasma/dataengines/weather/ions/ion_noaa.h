@@ -108,7 +108,7 @@ private:
     bool readXMLData(const QString& source, QXmlStreamReader& xml);
 
     // Check if place specified is valid or not
-    QString validate(const QString& source) const;
+    QStringList validate(const QString& source) const;
 
     // Catchall for unknown XML tags
     void parseUnknownElement(QXmlStreamReader& xml);
