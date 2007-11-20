@@ -151,7 +151,7 @@ void DefaultDesktop::getBitmapBackground()
         {
             m_bitmapBackground = new QPixmap(m_wallpaperPath);
             // NOTE: this could change to allow Full & clipped modes, etc.
-            (*m_bitmapBackground) = m_bitmapBackground->scaled(geom.size());
+            (*m_bitmapBackground) = m_bitmapBackground->scaled(geom.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         }
     }
 }
