@@ -240,7 +240,7 @@ void UKMETIon::slotJobFinished(KJob *job)
 {
     if (job->error() == 149) {
         kDebug() << "JOB ERROR: " << job->errorString(); 
-        setData(d->m_jobList[job], "validate", QString("timeout"));
+        setData(d->m_jobList[job], "validate", QString("bbcukmet:timeout"));
         disconnectSource(d->m_jobList[job], this);
         d->m_jobList.remove(job);
         delete d->m_jobXml[job];
