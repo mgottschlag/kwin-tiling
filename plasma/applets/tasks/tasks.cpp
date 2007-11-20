@@ -566,7 +566,7 @@ void TaskGroupItem::insertTask(AbstractTaskItem *item, int index)
     _tasks.insert(index, item);
 
     layout()->addItem(item);
-    layout()->update();
+    layout()->updateGeometry();
 }
 
 void TaskGroupItem::removeTask(AbstractTaskItem *item)
@@ -578,7 +578,7 @@ void TaskGroupItem::removeTask(AbstractTaskItem *item)
     }
 
     layout()->removeItem(item);
-    layout()->update();
+    layout()->updateGeometry();
 
     // if the group is now empty then ask the parent to remove it
     if (_tasks.count() == 0) {
