@@ -25,7 +25,7 @@
 #include <KDebug>
 
 #include <plasma/corona.h>
-#include <plasma/widgets/layout.h>
+#include <plasma/layouts/layout.h>
 #include <plasma/svg.h>
 
 using namespace Plasma;
