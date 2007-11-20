@@ -98,7 +98,7 @@
              <bool>true</bool>
             </property>
             <property name="filter" >
-             <string>*.png *.jpeg *.jpg</string>
+             <string>*.png *.jpeg *.jpg *.svg *.svgz</string>
             </property>
            </widget>
           </item>
@@ -123,7 +123,7 @@
                </size>
               </property>
               <property name="filter" >
-               <string>*.png *.jpeg *.jpg</string>
+               <string>*.png *.jpeg *.jpg *.svg *.svgz</string>
               </property>
              </widget>
             </item>

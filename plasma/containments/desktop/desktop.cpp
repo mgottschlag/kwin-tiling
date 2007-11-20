@@ -26,6 +26,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QPainter>
+#include <QSvgRenderer>
 #include <QTimeLine>
 
 #include <KAuthorized>
@@ -101,7 +102,7 @@ void DefaultDesktop::updateSlideList()
 {
     QDir dir(m_slidePath);
     QStringList filters;
-    filters << "*.png" << "*.jpeg" << "*.jpg";
+    filters << "*.png" << "*.jpeg" << "*.jpg" << "*.svg" << "*.svgz";
     dir.setNameFilters(filters);
     dir.setFilter(QDir::Files | QDir::Hidden);
     QFileInfoList files = dir.entryInfoList();
@@ -129,13 +130,29 @@ void DefaultDesktop::nextSlide()
         m_wallpaperPath = m_slideFiles[m_currentSlide];
         kDebug() << "switching slides to: " << m_wallpaperPath;
 
-        if (!m_wallpaperPath.isEmpty()) {
-            const QRect geom = QApplication::desktop()->screenGeometry(screen());
-            delete m_bitmapBackground;
+        getBitmapBackground();
+        update();
+    }
+}
+
+void DefaultDesktop::getBitmapBackground()
+{
+    if (!m_wallpaperPath.isEmpty()) {
+        const QRect geom = QApplication::desktop()->screenGeometry(screen());
+        delete m_bitmapBackground;
+        if (m_wallpaperPath.endsWith("svg") || m_wallpaperPath.endsWith("svgz"))
+        {
+            QSvgRenderer renderer(m_wallpaperPath);
+            m_bitmapBackground = new QPixmap(geom.size());
+            QPainter p(m_bitmapBackground);
+            renderer.render(&p);
+        }
+        else
+        {
             m_bitmapBackground = new QPixmap(m_wallpaperPath);
+            // NOTE: this could change to allow Full & clipped modes, etc.
             (*m_bitmapBackground) = m_bitmapBackground->scaled(geom.size());
         }
-        update();
     }
 }
 
@@ -148,11 +165,7 @@ void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
         m_background->resize(geom.size());
     } else if (!m_wallpaperPath.isEmpty()) {
         if (!m_bitmapBackground || !(m_bitmapBackground->size() == geom.size())) {
-            //kDebug() << "Loading and scaling bitmap wallpaper to" << geom.size() << "while our geometry is" << geometry();
-            delete m_bitmapBackground;
-            m_bitmapBackground = new QPixmap(m_wallpaperPath);
-            kDebug() << "making wallpaper from image: " << m_wallpaperPath;
-            (*m_bitmapBackground) = m_bitmapBackground->scaled(geom.size());
+            getBitmapBackground();
         }
     }
 }
@@ -210,12 +223,7 @@ void DefaultDesktop::applyConfig()
         m_slideShowTimer->start();
     }
 
-    if (!m_wallpaperPath.isEmpty()) {
-        const QRect geom = QApplication::desktop()->screenGeometry(screen());
-        delete m_bitmapBackground;
-        m_bitmapBackground = new QPixmap(m_wallpaperPath);
-        (*m_bitmapBackground) = m_bitmapBackground->scaled(geom.size());
-    }
+    getBitmapBackground();
     update();
     cg.config()->sync();
 }

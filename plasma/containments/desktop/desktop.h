@@ -87,6 +87,9 @@ protected Q_SLOTS:
     void logout();
 
 private:
+    /** populate m_bitmapBackground with the pixmap to show */
+    void getBitmapBackground();
+
     QAction *m_appletBrowserAction;
     QAction *m_runCommandAction;
     QAction *m_setupDesktopAction;
