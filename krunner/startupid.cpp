@@ -34,6 +34,9 @@
 #include <kconfig.h>
 #include <X11/Xlib.h>
 #include <QX11Info>
+#include <X11/Xutil.h>
+#include <X11/Xatom.h>
+#include <X11/extensions/shape.h>
 
 #define KDE_STARTUP_ICON "kmenu"
 
@@ -48,7 +51,7 @@ static Atom kde_splash_progress;
 StartupId::StartupId( QWidget* parent, const char* name )
     :   QWidget( parent ),
 	startup_info( KStartupInfo::CleanOnCantDetect ),
-	startup_widget( NULL ),
+	startup_window( None ),
 	blinking( true ),
 	bouncing( false )
     {
@@ -154,8 +157,9 @@ void StartupId::finishKDEStartup()
 
 void StartupId::stop_startupid()
     {
-    delete startup_widget;
-    startup_widget = NULL;
+    if( startup_window != None )
+        XDestroyWindow( QX11Info::display(), startup_window );
+    startup_window = None;
     if( blinking )
         for( int i = 0;
              i < NUM_BLINKING_PIXMAPS;
@@ -178,6 +182,19 @@ static QPixmap scalePixmap( const QPixmap& pm, int w, int h )
     return QPixmap::fromImage(result);
 }
 
+// Transparent images are converted to 32bpp pixmaps, but
+// setting those as window background needs ARGB visual
+// and compositing - convert to 24bpp, at least for now.
+static QPixmap make24bpp( const QPixmap& p )
+    {
+    QPixmap ret( p.size());
+    QPainter pt( &ret );
+    pt.drawPixmap( 0, 0, p );
+    pt.end();
+    ret.setMask( p.mask());
+    return ret;
+    }
+
 void StartupId::start_startupid( const QString& icon_P )
     {
 
@@ -189,17 +206,27 @@ void StartupId::start_startupid( const QString& icon_P )
         KIconLoader::DefaultState, QStringList(), 0, true ); // return null pixmap if not found
     if( icon_pixmap.isNull())
         icon_pixmap = SmallIcon( "system-run" );
-    if( startup_widget == NULL )
+    if( startup_window == None )
         {
-        startup_widget = new QWidget( 0, Qt::X11BypassWindowManagerHint );
-        XSetWindowAttributes attr;
-        attr.save_under = True; // useful saveunder if possible to avoid redrawing
-        XChangeWindowAttributes( QX11Info::display(), startup_widget->winId(), CWSaveUnder, &attr );
+        XSetWindowAttributes attrs;
+        attrs.override_redirect = True;
+        attrs.save_under = True; // useful saveunder if possible to avoid redrawing
+        startup_window = XCreateWindow( QX11Info::display(), DefaultRootWindow( QX11Info::display()),
+            0, 0, 1, 1, 0, QX11Info::appDepth(), InputOutput, static_cast< Visual* >( QX11Info::appVisual()),
+            CWOverrideRedirect | CWSaveUnder, &attrs );
+        XClassHint class_hint;
+        QByteArray cls = qAppName().toLatin1();
+        class_hint.res_name = cls.data();
+        class_hint.res_class = const_cast< char* >( QX11Info::appClass());
+        XSetWMProperties( QX11Info::display(), startup_window, NULL, NULL, NULL, NULL, NULL, NULL, &class_hint );
+        XChangeProperty( QX11Info::display(), winId(),
+            XInternAtom( QX11Info::display(), "WM_WINDOW_ROLE", False ), XA_STRING, 8, PropModeReplace,
+            (unsigned char *)"startupfeedback", strlen( "startupfeedback" ));
         }
-    startup_widget->resize( icon_pixmap.width(), icon_pixmap.height());
+    XResizeWindow( QX11Info::display(), startup_window, icon_pixmap.width(), icon_pixmap.height());
     if( blinking )
-        {
-        startup_widget->clearMask();
+        { // no mask
+        XShapeCombineMask( QX11Info::display(), startup_window, ShapeBounding, 0, 0, None, ShapeSet );
         int window_w = icon_pixmap.width();
         int window_h = icon_pixmap.height();
         for( int i = 0;
@@ -216,25 +243,24 @@ void StartupId::start_startupid( const QString& icon_P )
         }
     else if( bouncing )
         {
-        startup_widget->resize( 20, 20 );
-        pixmaps[ 0 ] = scalePixmap( icon_pixmap, 16, 16 );
-        pixmaps[ 1 ] = scalePixmap( icon_pixmap, 14, 18 );
-        pixmaps[ 2 ] = scalePixmap( icon_pixmap, 12, 20 );
-        pixmaps[ 3 ] = scalePixmap( icon_pixmap, 18, 14 );
-        pixmaps[ 4 ] = scalePixmap( icon_pixmap, 20, 12 );
+        XResizeWindow( QX11Info::display(), startup_window, 20, 20 );
+        pixmaps[ 0 ] = make24bpp( scalePixmap( icon_pixmap, 16, 16 ));
+        pixmaps[ 1 ] = make24bpp( scalePixmap( icon_pixmap, 14, 18 ));
+        pixmaps[ 2 ] = make24bpp( scalePixmap( icon_pixmap, 12, 20 ));
+        pixmaps[ 3 ] = make24bpp( scalePixmap( icon_pixmap, 18, 14 ));
+        pixmaps[ 4 ] = make24bpp( scalePixmap( icon_pixmap, 20, 12 ));
         frame = 0;
         }
     else
         {
-        if( !icon_pixmap.mask().isNull() )
-            startup_widget->setMask( icon_pixmap.mask() );
-        else
-            startup_widget->clearMask();
-
-        QPalette palette;
-        palette.setBrush( startup_widget->backgroundRole(), QBrush( icon_pixmap ) );
-        startup_widget->setPalette( palette );
-        startup_widget->update();
+        icon_pixmap = make24bpp( icon_pixmap );
+        if( !icon_pixmap.mask().isNull() ) // set mask
+            XShapeCombineMask( QX11Info::display(), startup_window, ShapeBounding, 0, 0,
+                icon_pixmap.mask().handle(), ShapeSet );
+        else // clear mask
+            XShapeCombineMask( QX11Info::display(), startup_window, ShapeBounding, 0, 0, None, ShapeSet );
+        XSetWindowBackgroundPixmap( QX11Info::display(), startup_window, icon_pixmap.handle());
+        XClearWindow( QX11Info::display(), startup_window );
         }
     update_startupid();
     }
@@ -259,23 +285,23 @@ void StartupId::update_startupid()
     int yoffset = 0;
     if( blinking )
         {
-        QPalette palette;
-        palette.setBrush( startup_widget->backgroundRole(), QBrush( pixmaps[ color_to_pixmap[ color_index ]] ) );
-        startup_widget->setPalette( palette );
+        XSetWindowBackgroundPixmap( QX11Info::display(), startup_window,
+            pixmaps[ color_to_pixmap[ color_index ]].handle());
+        XClearWindow( QX11Info::display(), startup_window );
         if( ++color_index >= ( sizeof( color_to_pixmap ) / sizeof( color_to_pixmap[ 0 ] )))
             color_index = 0;
         }
     else if( bouncing )
         {
         yoffset = frame_to_yoffset[ frame ];
-        QPixmap pm = pixmaps[ frame_to_pixmap[ frame ] ];
-        QPalette palette;
-        palette.setBrush( startup_widget->backgroundRole(), QBrush( pm ) );
-        startup_widget->setPalette( palette );
-        if ( !pm.mask().isNull() )
-            startup_widget->setMask( pm.mask() );
-        else
-            startup_widget->clearMask();
+        QPixmap pixmap = pixmaps[ frame_to_pixmap[ frame ] ];
+        XSetWindowBackgroundPixmap( QX11Info::display(), startup_window, pixmap.handle());
+        XClearWindow( QX11Info::display(), startup_window );
+        if ( !pixmap.mask().isNull() ) // set mask
+            XShapeCombineMask( QX11Info::display(), startup_window, ShapeBounding, 0, 0,
+                pixmap.mask().handle(), ShapeSet );
+        else // clear mask
+            XShapeCombineMask( QX11Info::display(), startup_window, ShapeBounding, 0, 0, None, ShapeSet );
         if ( ++frame >= ( sizeof( frame_to_yoffset ) / sizeof( frame_to_yoffset[ 0 ] ) ) )
             frame = 0;
         }
@@ -285,7 +311,7 @@ void StartupId::update_startupid()
     unsigned int dummy5;
     if( !XQueryPointer( QX11Info::display(), QX11Info::appRootWindow(), &dummy1, &dummy2, &x, &y, &dummy3, &dummy4, &dummy5 ))
         {
-        startup_widget->hide();
+        XUnmapWindow( QX11Info::display(), startup_window );
         update_timer.start( 100 );
         return;
         }
@@ -304,11 +330,9 @@ void StartupId::update_startupid()
     else
         X_DIFF = 32 + 7;
     int Y_DIFF = X_DIFF;
-    if( startup_widget->x() != c_pos.x() + X_DIFF
-        || startup_widget->y() != c_pos.y() + Y_DIFF + yoffset )
-        startup_widget->move( c_pos.x() + X_DIFF, c_pos.y() + Y_DIFF + yoffset );
-    startup_widget->show();
-    XRaiseWindow( QX11Info::display(), startup_widget->winId());
+    XMoveWindow( QX11Info::display(), startup_window, c_pos.x() + X_DIFF, c_pos.y() + Y_DIFF + yoffset );
+    XMapWindow( QX11Info::display(), startup_window );
+    XRaiseWindow( QX11Info::display(), startup_window );
     update_timer.start( bouncing ? 30 : 100 );
     QApplication::flush();
     }

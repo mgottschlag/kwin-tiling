@@ -50,7 +50,7 @@ class StartupId
         void finishKDEStartup();
     protected:
         KStartupInfo startup_info;
-        QWidget* startup_widget;
+        WId startup_window;
         QTimer update_timer;
         QMap< KStartupInfoId, QString > startups; // QString == pixmap
         KStartupInfoId current_startup;
