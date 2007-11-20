@@ -392,10 +392,9 @@ void UKMETIon::option(int option, QVariant value)
 
 void UKMETIon::updateWeather(const QString& source)
 {
-    kDebug() << "********** SIZE OF d->m_locations" << d->m_locations.size();
     if (!d->m_locations.count()) {
         QStringList invalidPlace = source.split(':');
-        setData(source, "validate", QString("invalid:multiple:%1").arg(invalidPlace[2]));
+        setData(source, "validate", QString("bbcukmet:invalid:multiple:%1").arg(invalidPlace[2]));
         return;
     } else {
         QString placeList;
@@ -403,7 +402,7 @@ void UKMETIon::updateWeather(const QString& source)
                  placeList.append(QString("%1:").arg(place));
         }
         kDebug() << "****** PLACES FOUND: " << placeList;
-        setData(source, "validate", QString("valid:multiple:bbcukmet:%1").arg(placeList));
+        setData(source, "validate", QString("bbcukmet:valid:multiple:%1").arg(placeList));
     }
     return;
 }
