@@ -3,14 +3,15 @@ project(KDEBASE_WORKSPACE)
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules )
 
+include (MacroLibrary)
+
 #search packages used by KDE
 find_package(KDE4 REQUIRED)
 find_package(Strigi REQUIRED)
 find_package(Blitz REQUIRED)
+macro_optional_find_package(OpenGL)
+
 include (KDE4Defaults)
-include (MacroLibrary)
-include (MacroOptionalFindPackage)
-include(MacroOptionalAddSubdirectory)
 
 
 include(ConfigureChecks.cmake)
