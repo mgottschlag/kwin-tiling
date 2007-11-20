@@ -26,7 +26,6 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QPainter>
-#include <QSvgRenderer>
 #include <QTimeLine>
 
 #include <KAuthorized>
@@ -34,6 +33,7 @@
 #include <KDebug>
 #include <KRun>
 #include <KStandardDirs>
+#include <KSvgRenderer>
 #include <KWindowSystem>
 
 #include "plasma/appletbrowser.h"
@@ -142,7 +142,7 @@ void DefaultDesktop::getBitmapBackground()
         delete m_bitmapBackground;
         if (m_wallpaperPath.endsWith("svg") || m_wallpaperPath.endsWith("svgz"))
         {
-            QSvgRenderer renderer(m_wallpaperPath);
+            KSvgRenderer renderer(m_wallpaperPath);
             m_bitmapBackground = new QPixmap(geom.size());
             QPainter p(m_bitmapBackground);
             renderer.render(&p);
@@ -158,6 +158,7 @@ void DefaultDesktop::getBitmapBackground()
 
 void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
 {
+    Q_UNUSED(constraints);
     //kDebug() << "DefaultDesktop constraints have changed";
     const QRect geom = QApplication::desktop()->screenGeometry(screen());
     if (m_background) {
