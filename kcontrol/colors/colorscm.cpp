@@ -20,6 +20,8 @@
 
 #include "colorscm.h"
 
+#include "../krdb/krdb.h"
+
 #include <QtCore/QFileInfo>
 #include <QtGui/QHeaderView>
 #include <QtGui/QStackedWidget>
@@ -139,6 +141,11 @@ void KColorCm::loadScheme(const QString &path)
     inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.0) * 20.0) + 20);
     inactiveContrastSlider->setValue(int(groupI.readEntry("ContrastAmount", 0.0) * 20.0));
 
+    KConfigGroup groupD(m_config, "ColorEffects:Disabled");
+    disabledIntensitySlider->setValue(int(groupD.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
+    disabledColorSlider->setValue(int(groupD.readEntry("ColorAmount", 0.0) * 20.0) + 20);
+    disabledContrastSlider->setValue(int(groupD.readEntry("ContrastAmount", 0.0) * 20.0));
+
     m_config = temp;
     updateFromColorSchemes();
     updateColorTable();
@@ -168,8 +175,15 @@ void KColorCm::on_schemeRemoveButton_clicked()
     {
         QString path = KGlobal::dirs()->findResource("data",
             "color-schemes/" + schemeList->currentItem()->text() + ".colors");
-        KIO::NetAccess::del(path, this);
-        delete schemeList->takeItem(schemeList->currentRow());
+        if (KIO::NetAccess::del(path, this))
+        {
+            delete schemeList->takeItem(schemeList->currentRow());
+        }
+        else
+        {
+            // deletion failed, so show an error message
+            KMessageBox::error(this, i18n("You do not have permission to delete that scheme"), i18n("Error"));
+        }
     }
 }
 
@@ -790,6 +804,11 @@ void KColorCm::load()
     inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.0) * 20.0) + 20);
     inactiveContrastSlider->setValue(int(groupI.readEntry("ContrastAmount", 0.0) * 20.0));
 
+    KConfigGroup groupD(m_config, "ColorEffects:Disabled");
+    disabledIntensitySlider->setValue(int(groupD.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
+    disabledColorSlider->setValue(int(groupD.readEntry("ColorAmount", 0.0) * 20.0) + 20);
+    disabledContrastSlider->setValue(int(groupD.readEntry("ContrastAmount", 0.0) * 20.0));
+
     updatePreviews();
 
     emit changed(false);
@@ -806,6 +825,11 @@ void KColorCm::save()
     QDBusConnection::sessionBus().send(message);
 #endif
 
+    if (applyToAlien->isChecked())
+    {
+        runRdb(KRdbExportQtColors | KRdbExportColors);
+    }
+
     emit changed(false);
 }
 
@@ -820,6 +844,18 @@ void KColorCm::on_inactiveIntensityBox_currentIndexChanged(int index)
     KConfigGroup group(m_config, "ColorEffects:Inactive");
     group.writeEntry("IntensityEffect", index);
     inactivePreview->setPalette(m_config, QPalette::Inactive);
+
+    // disable/enable slider as necessary
+    if (index == 0)
+    {
+        inactiveIntensitySlider->setDisabled(true);
+    }
+    else
+    {
+        // update based on slider value since it's enabled now
+        inactiveIntensitySlider->setDisabled(false);
+        on_inactiveIntensitySlider_valueChanged(inactiveIntensitySlider->value());
+    }
 
     emit changed(true);
 }
@@ -838,6 +874,19 @@ void KColorCm::on_inactiveColorBox_currentIndexChanged(int index)
     KConfigGroup group(m_config, "ColorEffects:Inactive");
     group.writeEntry("ColorEffect", index);
     inactivePreview->setPalette(m_config, QPalette::Inactive);
+
+    // disable/enable slider as necessary
+    if (index == 0)
+    {
+        inactiveColorSlider->setDisabled(true);
+    }
+    else
+    {
+        // update based on slider value since it's enabled now
+        inactiveColorSlider->setDisabled(false);
+        on_inactiveColorSlider_valueChanged(inactiveColorSlider->value());
+    }
+    inactiveColorButton->setDisabled(index == 0 || index == 1);
 
     emit changed(true);
 }
@@ -866,6 +915,18 @@ void KColorCm::on_inactiveContrastBox_currentIndexChanged(int index)
     group.writeEntry("ContrastEffect", index);
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
+    // disable/enable slider as necessary
+    if (index == 0)
+    {
+        inactiveContrastSlider->setDisabled(true);
+    }
+    else
+    {
+        // update based on slider value since it's enabled now
+        inactiveContrastSlider->setDisabled(false);
+        on_inactiveContrastSlider_valueChanged(inactiveContrastSlider->value());
+    }
+
     emit changed(true);
 }
 
@@ -881,30 +942,102 @@ void KColorCm::on_inactiveContrastSlider_valueChanged(int value)
 // disabled effects slots
 void KColorCm::on_disabledIntensityBox_currentIndexChanged(int index)
 {
+    KConfigGroup group(m_config, "ColorEffects:Disabled");
+    group.writeEntry("IntensityEffect", index);
+    disabledPreview->setPalette(m_config, QPalette::Disabled);
+
+    // disable/enable slider as necessary
+    if (index == 0)
+    {
+        disabledIntensitySlider->setDisabled(true);
+    }
+    else
+    {
+        // update based on slider value since it's enabled now
+        disabledIntensitySlider->setDisabled(false);
+        on_disabledIntensitySlider_valueChanged(disabledIntensitySlider->value());
+    }
+
+    emit changed(true);
 }
 
 void KColorCm::on_disabledIntensitySlider_valueChanged(int value)
 {
+    KConfigGroup group(m_config, "ColorEffects:Disabled");
+    group.writeEntry("IntensityAmount", qreal(value - 20) * 0.05);
+    disabledPreview->setPalette(m_config, QPalette::Inactive);
+
+    emit changed(true);
 }
 
 void KColorCm::on_disabledColorBox_currentIndexChanged(int index)
 {
+    KConfigGroup group(m_config, "ColorEffects:Disabled");
+    group.writeEntry("ColorEffect", index);
+    disabledPreview->setPalette(m_config, QPalette::Inactive);
+
+    // disable/enable slider as necessary
+    if (index == 0)
+    {
+        disabledColorSlider->setDisabled(true);
+    }
+    else
+    {
+        // update based on slider value since it's enabled now
+        disabledColorSlider->setDisabled(false);
+        on_disabledColorSlider_valueChanged(disabledColorSlider->value());
+    }
+    disabledColorButton->setDisabled(index == 0 || index == 1);
+
+    emit changed(true);
 }
 
 void KColorCm::on_disabledColorSlider_valueChanged(int value)
 {
+    KConfigGroup group(m_config, "ColorEffects:Disabled");
+    group.writeEntry("ColorAmount", qreal(value - 20) * 0.05);
+    inactivePreview->setPalette(m_config, QPalette::Disabled);
+
+    emit changed(true);
 }
 
 void KColorCm::on_disabledColorButton_changed(const QColor& color)
 {
+    KConfigGroup group(m_config, "ColorEffects:Disabled");
+    group.writeEntry("Color", color);
+    disabledPreview->setPalette(m_config, QPalette::Disabled);
+
+    emit changed(true);
 }
 
 void KColorCm::on_disabledContrastBox_currentIndexChanged(int index)
 {
+    KConfigGroup group(m_config, "ColorEffects:Disabled");
+    group.writeEntry("ContrastEffect", index);
+    disabledPreview->setPalette(m_config, QPalette::Disabled);
+
+    // disable/enable slider as necessary
+    if (index == 0)
+    {
+        disabledContrastSlider->setDisabled(true);
+    }
+    else
+    {
+        // update based on slider value since it's enabled now
+        disabledContrastSlider->setDisabled(false);
+        on_disabledContrastSlider_valueChanged(disabledContrastSlider->value());
+    }
+
+    emit changed(true);
 }
 
 void KColorCm::on_disabledContrastSlider_valueChanged(int value)
 {
+    KConfigGroup group(m_config, "ColorEffects:Disabled");
+    group.writeEntry("ContrastAmount", qreal(value) * 0.05);
+    disabledPreview->setPalette(m_config, QPalette::Disabled);
+
+    emit changed(true);
 }
 
 #include "colorscm.moc"

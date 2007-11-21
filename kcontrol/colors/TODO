@@ -1,6 +1,6 @@
-make "Apply to non kde apps" actually do something
-  note: maybe need kdelibs changes (krdb)
 defaults scheme
 current scheme
-effects page to actually do something
+effects page loading correctly
+previews updating on certain changes (effects combobox changes, etc.)
+saving of effects page in scheme files
 
