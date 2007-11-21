@@ -15,6 +15,7 @@ Name[kk]=Желі күйін қадағалау қызметі
 Name[km]=ដេមិន​ស្ថានភាព​បណ្តាញ
 Name[ko]=네트워크 상태 데몬
 Name[lt]=Tinklo statuso tarnyba
+Name[lv]=Tīkla stāvokļa dēmons
 Name[nb]=Nettstatus-nisse
 Name[nds]=Nettwarktostand-Dämoon
 Name[ne]=सञ्जाल वस्तुस्थिति डेइमोन
@@ -42,6 +43,7 @@ Comment[kk]=Желі интерфейстерінің күйін қадағал�
 Comment[km]=តាម​ដាន​ស្ថានភាពរបស់​​ចំណុច​ប្រទាក់​បណ្តាញ និង​ផ្តល់​នូវ​សេចក្តី​ជូន​ដំណឹង​ទៅ​កម្មវិធី​ដោយ​ប្រើ​បណ្តាញ ។
 Comment[ko]=네트워크 인터페이스의 상태를 추적하고 네트워크를 사용하는 프로그램에게 알려 줍니다.
 Comment[lt]=Seka tinklo sąsajų būseną ir informuoja apie jas programas, naudojančias tinklą
+Comment[lv]=Seko līdz jūsu tīkla ierīču stāvoklim un paziņo aplikācijām, kas izmanto tīklu.
 Comment[nb]=Holder øye med status for nettverks-grensesnitt og varsler programmer som bruker nettverket.
 Comment[nds]=Beluert den Tostand vun de Nettwarkkoppelsteden un gifft Programmen Bescheed, de dat Nettwark bruukt
 Comment[ne]=सञ्जाल इन्टरफेसहरूको वस्तुस्थिति ट्रयाक गर्दछ र सञ्जाल प्रयोग गरिरहेको अनुप्रयोगमा सूचना उपलब्ध गर्दछ ।
