@@ -101,7 +101,7 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
             setFormFactor(Plasma::Horizontal);
 
             width = r.width();
-            height = 48;
+            height = 49;
 
             if (loc == BottomEdge) {
                 height += topHeight;
@@ -113,7 +113,7 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
         } else if (loc == LeftEdge || loc == RightEdge) {
             setFormFactor(Plasma::Vertical);
 
-            width = 48;
+            width = 49;
             height = r.height();
             if (loc == RightEdge) {
                 width += leftWidth;
