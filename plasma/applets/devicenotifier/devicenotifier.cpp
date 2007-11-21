@@ -45,10 +45,8 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     m_layout->setSpacing(0);
     m_label=new Plasma::Label(this);
     m_label->setText(i18n("Welcome to Device Notifier \n Plug a device to test"));
-    m_label->setPen(QPen(Qt::white)); 
-
-    setLayout(m_layout);
-
+    m_label->setPen(QPen(Qt::white));
+    setSize(m_label->geometry().width(),m_label->geometry().height());
     m_time=5;
     m_height=150;
 
@@ -67,20 +65,13 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
 
     //connect to engine when a device is plug
     connect(SolidEngine, SIGNAL(newSource(const QString&)),this, SLOT(SourceAdded(const QString&)));
-    updateGeometry();	
+    updateGeometry();
     update();
+    
 }
 
 DeviceNotifier::~DeviceNotifier()
 {
-}
-
-void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
-{
-    Q_UNUSED(option);
-    Q_UNUSED(p);
-    Q_UNUSED(contentsRect);
-    kDebug()<<"DeviceNotifier:: geometry "<<geometry().width();
 }
 
 void DeviceNotifier::hideNotifier(QGraphicsItem * item)
@@ -151,7 +142,7 @@ void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
     Q_UNUSED(event);
     if (icon) {
 	kDebug()<<"DeviceNotifier:: call Solid Ui Server with params :"<<m_udi<<","<<desktop_files;
-	QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.kded.SolidUiServer");
+	QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
 	QDBusReply<void> reply = soliduiserver.call("showActionsDialog", m_udi,desktop_files);
     }
 }
@@ -179,5 +170,11 @@ void DeviceNotifier::configAccepted()
     m_time=ui.spinTime->value();
     m_height=ui.spinHeight->value();
 }
+
+/*QSizeF DeviceNotifier::contentSizeHint() const
+{
+    kDebug() << "content size hint is being asked for and we return" << size();
+    return QSize(m_layout->geometry().width(),m_layout->geometry().height());
+}*/
 
 #include "devicenotifier.moc"

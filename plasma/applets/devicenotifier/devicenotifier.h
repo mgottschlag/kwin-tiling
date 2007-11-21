@@ -49,17 +49,17 @@ class DeviceNotifier : public Plasma::Applet
         DeviceNotifier(QObject *parent, const QVariantList &args);
         ~DeviceNotifier();
 
-        void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
-		void moveUp();
+	//QSizeF contentSizeHint() const;
+	void moveUp();
 
     public slots:
         void SourceAdded(const QString &name);
         void dataUpdated(const QString &source, Plasma::DataEngine::Data data);
         void moveDown();
         void hideNotifier(QGraphicsItem * item);
-		void showConfigurationInterface();
-		void configAccepted();
+	void showConfigurationInterface();
+	void configAccepted();
 
     private:
         Plasma::Label * m_label;
