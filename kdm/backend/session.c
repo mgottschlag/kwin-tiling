@@ -552,6 +552,7 @@ manageSession( struct display *d )
 	int ex, cmd;
 	volatile int clientPid = -1;
 	volatile time_t tdiff = 0;
+	sigset_t ss;
 
 	td = d;
 	debug( "manageSession %s\n", d->name );
@@ -662,7 +663,11 @@ manageSession( struct display *d )
 		sessionExit( EX_AL_RESERVER_DPY );
 	}
 
+	sigemptyset( &ss );
+	sigaddset( &ss, SIGTERM );
+	sigprocmask( SIG_BLOCK, &ss, 0 );
 	clientExited();
+	sigprocmask( SIG_UNBLOCK, &ss, 0 );
 
 	gSet( &mstrtalk );
 	gSendInt( D_UnUser );
