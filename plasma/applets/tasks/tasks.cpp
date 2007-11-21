@@ -65,7 +65,7 @@ Tasks::Tasks(QObject* parent , const QVariantList &arguments)
                             Plasma::LayoutAnimator::MoveEffect);
         animator->setEffect(Plasma::LayoutAnimator::RemovedState,
                             Plasma::LayoutAnimator::FadeOutMoveEffect);
-        animator->setTimeLine(new QTimeLine(300, this));
+        animator->setTimeLine(new QTimeLine(120, this));
         _rootTaskGroup->layout()->setAnimator(animator);
 
     layout->addItem(_rootTaskGroup);
@@ -286,9 +286,9 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
         QColor endColor;
 
         if (taskFlags() & TaskHasFocus) {
-            startColor = colorScheme.background(KColorScheme::ActiveBackground).color();
+            startColor = colorScheme.background(KColorScheme::NormalBackground).color();
         } else {
-            startColor = colorScheme.background(KColorScheme::LinkBackground).color();
+            startColor = colorScheme.background(KColorScheme::AlternateBackground).color();
         }
 
         endColor = colorScheme.shade(startColor,KColorScheme::DarkShade);
@@ -316,6 +316,9 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
             painter->setPen(QPen(QColor(100, 100, 100, startColor.alpha())));
 
         painter->setBrush(background);
+        painter->drawRect(option->rect);
+    } else {
+        painter->setBrush(QBrush(colorScheme.shade(KColorScheme::ShadowShade).darker(500)));
         painter->drawRect(option->rect);
     }
 }
@@ -463,7 +466,7 @@ void AbstractTaskItem::drawTask(QPainter *painter,
 #endif
 
     // FIXME HARDCODE testing
-    painter->setPen(QPen(QColor(200,200,200), 1.0));
+    painter->setPen(QPen(QColor(255,255,255), 1.0));
 
     QRect rect = textRect().toRect();
     rect.adjust(2, 2, -2, -2); // Create a text margin
