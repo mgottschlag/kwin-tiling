@@ -965,7 +965,7 @@ void KColorCm::on_disabledIntensitySlider_valueChanged(int value)
 {
     KConfigGroup group(m_config, "ColorEffects:Disabled");
     group.writeEntry("IntensityAmount", qreal(value - 20) * 0.05);
-    disabledPreview->setPalette(m_config, QPalette::Inactive);
+    disabledPreview->setPalette(m_config, QPalette::Disabled);
 
     emit changed(true);
 }
@@ -974,7 +974,7 @@ void KColorCm::on_disabledColorBox_currentIndexChanged(int index)
 {
     KConfigGroup group(m_config, "ColorEffects:Disabled");
     group.writeEntry("ColorEffect", index);
-    disabledPreview->setPalette(m_config, QPalette::Inactive);
+    disabledPreview->setPalette(m_config, QPalette::Disabled);
 
     // disable/enable slider as necessary
     if (index == 0)
@@ -996,7 +996,7 @@ void KColorCm::on_disabledColorSlider_valueChanged(int value)
 {
     KConfigGroup group(m_config, "ColorEffects:Disabled");
     group.writeEntry("ColorAmount", qreal(value - 20) * 0.05);
-    inactivePreview->setPalette(m_config, QPalette::Disabled);
+    disabledPreview->setPalette(m_config, QPalette::Disabled);
 
     emit changed(true);
 }
