@@ -115,6 +115,36 @@ void KColorCm::populateSchemeList()
     }
 }
 
+void KColorCm::updatePreviews()
+{
+    schemePreview->setPalette(m_config);
+    inactivePreview->setPalette(m_config, QPalette::Inactive);
+    disabledPreview->setPalette(m_config, QPalette::Disabled);
+}
+
+void KColorCm::loadScheme(const QString &path)
+{
+    KSharedConfigPtr temp = m_config;
+    m_config = KSharedConfig::openConfig(path);
+    updateColorSchemes();
+
+    KConfigGroup groupG(m_config, "General");
+    shadeSortedColumn->setChecked(groupG.readEntry("shadeSortColumn", true) ? Qt::Checked : Qt::Unchecked);
+
+    KConfigGroup groupK(m_config, "KDE");
+    contrastSlider->setValue(groupK.readEntry("contrast").toInt());
+
+    KConfigGroup groupI(m_config, "ColorEffects:Inactive");
+    inactiveIntensitySlider->setValue(int(groupI.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
+    inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.0) * 20.0) + 20);
+    inactiveContrastSlider->setValue(int(groupI.readEntry("ContrastAmount", 0.0) * 20.0));
+
+    m_config = temp;
+    updateFromColorSchemes();
+    updateColorTable();
+    updatePreviews();
+}
+
 void KColorCm::loadScheme()
 {
     if (schemeList->currentItem() != NULL)
@@ -126,20 +156,7 @@ void KColorCm::loadScheme()
         bool canWrite = (permissions & QFile::WriteUser);
         schemeRemoveButton->setEnabled(canWrite);
 
-        KSharedConfigPtr temp = m_config;
-        m_config = KSharedConfig::openConfig(path);
-        updateColorSchemes();
-        KConfigGroup group(m_config, "General");
-        shadeSortedColumn->setChecked(group.readEntry("shadeSortColumn", true) ? Qt::Checked : Qt::Unchecked);
-        KConfigGroup group2(m_config, "KDE");
-        contrastSlider->setValue(group2.readEntry("contrast").toInt());
-        m_config = temp;
-        updateFromColorSchemes();
-        updateColorTable();
-
-        schemePreview->setPalette(m_config);
-        inactivePreview->setPalette(m_config, QPalette::Inactive);
-        disabledPreview->setPalette(m_config, QPalette::Disabled);
+        loadScheme(path);
 
         emit changed(true);
     }
@@ -163,25 +180,9 @@ void KColorCm::on_schemeImportButton_clicked()
 
     // TODO: possibly untar or uncompress it
     // open it
-    KSharedConfigPtr temp = m_config;
-    m_config = KSharedConfig::openConfig(url.path());
 
-    // test to see if it has color scheme info
-    // read it
-    updateColorSchemes();
-    KConfigGroup group(m_config, "General");
-    shadeSortedColumn->setChecked(group.readEntry("shadeSortColumn", true) ? Qt::Checked : Qt::Unchecked);
-    KConfigGroup group2(m_config, "KDE");
-    contrastSlider->setValue(group2.readEntry("contrast").toInt());
-
-    // set m_config back to previous value
-    m_config = temp;
-    updateFromColorSchemes();
-    updateColorTable();
-
-    schemePreview->setPalette(m_config);
-    inactivePreview->setPalette(m_config, QPalette::Inactive);
-    disabledPreview->setPalette(m_config, QPalette::Disabled);
+    // load the scheme
+    loadScheme(url.path());
 
     // save it
     saveScheme(url.fileName());
@@ -723,10 +724,7 @@ void KColorCm::changeColor(int row, const QColor &newColor)
     }
 
     updateColorSchemes();
-
-    schemePreview->setPalette(m_config);
-    inactivePreview->setPalette(m_config, QPalette::Inactive);
-    disabledPreview->setPalette(m_config, QPalette::Disabled);
+    updatePreviews();
 
     emit changed(true);
 }
@@ -758,9 +756,7 @@ void KColorCm::on_contrastSlider_valueChanged(int value)
     KConfigGroup group(m_config, "KDE");
     group.writeEntry("contrast", value);
 
-    schemePreview->setPalette(m_config);
-    inactivePreview->setPalette(m_config, QPalette::Inactive);
-    disabledPreview->setPalette(m_config, QPalette::Disabled);
+    updatePreviews();
 
     emit changed(true);
 }
@@ -789,9 +785,12 @@ void KColorCm::load()
     shadeSortedColumn->setCheckState(KGlobalSettings::shadeSortColumn() ?
         Qt::Checked : Qt::Unchecked);
 
-    schemePreview->setPalette(m_config);
-    inactivePreview->setPalette(m_config, QPalette::Inactive);
-    disabledPreview->setPalette(m_config, QPalette::Disabled);
+    KConfigGroup groupI(m_config, "ColorEffects:Inactive");
+    inactiveIntensitySlider->setValue(int(groupI.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
+    inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.0) * 20.0) + 20);
+    inactiveContrastSlider->setValue(int(groupI.readEntry("ContrastAmount", 0.0) * 20.0));
+
+    updatePreviews();
 
     emit changed(false);
 }
@@ -818,30 +817,65 @@ void KColorCm::emitChanged()
 // inactive effects slots
 void KColorCm::on_inactiveIntensityBox_currentIndexChanged(int index)
 {
+    KConfigGroup group(m_config, "ColorEffects:Inactive");
+    group.writeEntry("IntensityEffect", index);
+    inactivePreview->setPalette(m_config, QPalette::Inactive);
+
+    emit changed(true);
 }
 
 void KColorCm::on_inactiveIntensitySlider_valueChanged(int value)
 {
+    KConfigGroup group(m_config, "ColorEffects:Inactive");
+    group.writeEntry("IntensityAmount", qreal(value - 20) * 0.05);
+    inactivePreview->setPalette(m_config, QPalette::Inactive);
+
+    emit changed(true);
 }
 
 void KColorCm::on_inactiveColorBox_currentIndexChanged(int index)
 {
+    KConfigGroup group(m_config, "ColorEffects:Inactive");
+    group.writeEntry("ColorEffect", index);
+    inactivePreview->setPalette(m_config, QPalette::Inactive);
+
+    emit changed(true);
 }
 
 void KColorCm::on_inactiveColorSlider_valueChanged(int value)
 {
+    KConfigGroup group(m_config, "ColorEffects:Inactive");
+    group.writeEntry("ColorAmount", qreal(value - 20) * 0.05);
+    inactivePreview->setPalette(m_config, QPalette::Inactive);
+
+    emit changed(true);
 }
 
-void KColorCm::on_inactiveColorButton_changed(const QColor & color)
+void KColorCm::on_inactiveColorButton_changed(const QColor& color)
 {
+    KConfigGroup group(m_config, "ColorEffects:Inactive");
+    group.writeEntry("Color", color);
+    inactivePreview->setPalette(m_config, QPalette::Inactive);
+
+    emit changed(true);
 }
 
 void KColorCm::on_inactiveContrastBox_currentIndexChanged(int index)
 {
+    KConfigGroup group(m_config, "ColorEffects:Inactive");
+    group.writeEntry("ContrastEffect", index);
+    inactivePreview->setPalette(m_config, QPalette::Inactive);
+
+    emit changed(true);
 }
 
 void KColorCm::on_inactiveContrastSlider_valueChanged(int value)
 {
+    KConfigGroup group(m_config, "ColorEffects:Inactive");
+    group.writeEntry("ContrastAmount", qreal(value) * 0.05);
+    inactivePreview->setPalette(m_config, QPalette::Inactive);
+
+    emit changed(true);
 }
 
 // disabled effects slots
@@ -861,7 +895,7 @@ void KColorCm::on_disabledColorSlider_valueChanged(int value)
 {
 }
 
-void KColorCm::on_disabledColorButton_changed(const QColor & color)
+void KColorCm::on_disabledColorButton_changed(const QColor& color)
 {
 }
 

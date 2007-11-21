@@ -125,11 +125,17 @@ private:
     /** create a preview of a color scheme */
     static QPixmap createSchemePreviewIcon(const QPalette &pal, const WindecoColors &wm);
 
+    /** load a scheme from a config file at a given path */
+    void loadScheme(const QString &path);
+
     /** populate the schemeList with color schemes found on the system */
     void populateSchemeList();
 
     /** update m_colorSchemes contents from the values in m_config */
     void updateColorSchemes();
+
+    /** update all preview panes from the values in m_config */
+    void updatePreviews();
 
     /** setup the colortable with its buttons and labels */
     void setupColorTable();

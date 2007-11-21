@@ -552,10 +552,10 @@
              <string>Inactive intensity effect amount</string>
             </property>
             <property name="maximum" >
-             <number>20</number>
+             <number>40</number>
             </property>
             <property name="pageStep" >
-             <number>5</number>
+             <number>10</number>
             </property>
             <property name="orientation" >
              <enum>Qt::Horizontal</enum>
@@ -618,10 +618,10 @@
              <string>Inactive color amount</string>
             </property>
             <property name="maximum" >
-             <number>20</number>
+             <number>40</number>
             </property>
             <property name="pageStep" >
-             <number>5</number>
+             <number>10</number>
             </property>
             <property name="orientation" >
              <enum>Qt::Horizontal</enum>
@@ -670,7 +670,7 @@
              <string>Inactive contrast effect amount</string>
             </property>
             <property name="maximum" >
-             <number>10</number>
+             <number>20</number>
             </property>
             <property name="pageStep" >
              <number>5</number>
@@ -755,10 +755,10 @@
              <string>Disabled intensity effect amount</string>
             </property>
             <property name="maximum" >
-             <number>20</number>
+             <number>40</number>
             </property>
             <property name="pageStep" >
-             <number>5</number>
+             <number>10</number>
             </property>
             <property name="orientation" >
              <enum>Qt::Horizontal</enum>
@@ -821,10 +821,10 @@
              <string>Disabled color effect amount</string>
             </property>
             <property name="maximum" >
-             <number>20</number>
+             <number>40</number>
             </property>
             <property name="pageStep" >
-             <number>5</number>
+             <number>10</number>
             </property>
             <property name="orientation" >
              <enum>Qt::Horizontal</enum>
@@ -868,15 +868,15 @@
            </widget>
           </item>
           <item row="2" column="2" >
-           <widget class="QSlider" name="inactiveContrastSlider_2" >
+           <widget class="QSlider" name="disabledContrastSlider" >
             <property name="toolTip" >
              <string>Disabled contrast amount</string>
             </property>
             <property name="maximum" >
-             <number>10</number>
+             <number>20</number>
             </property>
             <property name="pageStep" >
-             <number>5</number>
+             <number>10</number>
             </property>
             <property name="orientation" >
              <enum>Qt::Horizontal</enum>
