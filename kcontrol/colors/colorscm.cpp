@@ -124,6 +124,27 @@ void KColorCm::updatePreviews()
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 }
 
+void KColorCm::updateEffectsPage()
+{
+    // NOTE: keep this in sync with kdelibs/kdeui/colors/kcolorscheme.cpp
+    KConfigGroup groupI(m_config, "ColorEffects:Inactive");
+    inactiveIntensitySlider->setValue(int(groupI.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
+    inactiveIntensityBox->setCurrentIndex(groupI.readEntry("IntensityEffect", 0));
+    inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.0) * 20.0) + 20);
+    inactiveColorBox->setCurrentIndex(groupI.readEntry("ColorEffect", 0));
+    inactiveContrastSlider->setValue(int(groupI.readEntry("ContrastAmount", 0.0) * 20.0));
+    inactiveContrastBox->setCurrentIndex(groupI.readEntry("ContrastEffect", 1));
+
+    // NOTE: keep this in sync with kdelibs/kdeui/colors/kcolorscheme.cpp
+    KConfigGroup groupD(m_config, "ColorEffects:Disabled");
+    disabledIntensitySlider->setValue(int(groupD.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
+    disabledIntensityBox->setCurrentIndex(groupD.readEntry("IntensityEffect", 0));
+    disabledColorSlider->setValue(int(groupD.readEntry("ColorAmount", 0.0) * 20.0) + 20);
+    disabledColorBox->setCurrentIndex(groupD.readEntry("ColorEffect", 0));
+    disabledContrastSlider->setValue(int(groupD.readEntry("ContrastAmount", 0.7) * 20.0));
+    disabledContrastBox->setCurrentIndex(groupD.readEntry("ContrastEffect", 1));
+}
+
 void KColorCm::loadScheme(const QString &path)
 {
     KSharedConfigPtr temp = m_config;
@@ -136,15 +157,7 @@ void KColorCm::loadScheme(const QString &path)
     KConfigGroup groupK(m_config, "KDE");
     contrastSlider->setValue(groupK.readEntry("contrast").toInt());
 
-    KConfigGroup groupI(m_config, "ColorEffects:Inactive");
-    inactiveIntensitySlider->setValue(int(groupI.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
-    inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.0) * 20.0) + 20);
-    inactiveContrastSlider->setValue(int(groupI.readEntry("ContrastAmount", 0.0) * 20.0));
-
-    KConfigGroup groupD(m_config, "ColorEffects:Disabled");
-    disabledIntensitySlider->setValue(int(groupD.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
-    disabledColorSlider->setValue(int(groupD.readEntry("ColorAmount", 0.0) * 20.0) + 20);
-    disabledContrastSlider->setValue(int(groupD.readEntry("ContrastAmount", 0.0) * 20.0));
+    updateEffectsPage(); // intentionally before swapping back m_config
 
     m_config = temp;
     updateFromColorSchemes();
@@ -799,15 +812,7 @@ void KColorCm::load()
     shadeSortedColumn->setCheckState(KGlobalSettings::shadeSortColumn() ?
         Qt::Checked : Qt::Unchecked);
 
-    KConfigGroup groupI(m_config, "ColorEffects:Inactive");
-    inactiveIntensitySlider->setValue(int(groupI.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
-    inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.0) * 20.0) + 20);
-    inactiveContrastSlider->setValue(int(groupI.readEntry("ContrastAmount", 0.0) * 20.0));
-
-    KConfigGroup groupD(m_config, "ColorEffects:Disabled");
-    disabledIntensitySlider->setValue(int(groupD.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
-    disabledColorSlider->setValue(int(groupD.readEntry("ColorAmount", 0.0) * 20.0) + 20);
-    disabledContrastSlider->setValue(int(groupD.readEntry("ContrastAmount", 0.0) * 20.0));
+    updateEffectsPage();
 
     updatePreviews();
 

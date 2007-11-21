@@ -134,14 +134,14 @@ private:
     /** update m_colorSchemes contents from the values in m_config */
     void updateColorSchemes();
 
+    /** update the effects page from the values in m_config */
+    void updateEffectsPage();
+
     /** update all preview panes from the values in m_config */
     void updatePreviews();
 
     /** setup the colortable with its buttons and labels */
     void setupColorTable();
-
-    /** setup the effects page */
-    void setupEffectsPage();
 
     /** helper to create color entries */
     void createColorEntry(QString text,
