@@ -512,6 +512,7 @@ static Jmp_buf abortSession;
 static void
 catchTerm( int n ATTR_UNUSED )
 {
+	Signal( SIGTERM, SIG_IGN );
 	Longjmp( abortSession, EX_AL_RESERVER_DPY );
 }
 
