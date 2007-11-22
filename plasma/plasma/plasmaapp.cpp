@@ -44,6 +44,7 @@
 #include "desktopview.h"
 #include "panelview.h"
 
+#include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
 
 Display* dpy = 0;
