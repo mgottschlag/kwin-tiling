@@ -30,10 +30,14 @@
 #include "plasmaapp.h"
 
 #include <KWindowSystem>
+#include <QTimer>
+
+static const int SUPPRESS_SHOW_TIMEOUT = 2*1000; // Number of millis to prevent reshow of dashboard
 
 DashboardView::DashboardView(int screen, QWidget *parent)
     : Plasma::View(screen, PlasmaApp::self()->corona(), parent), 
-      m_appletBrowserWidget(0)
+      m_appletBrowserWidget(0),
+      suppressShow( false )
 {
     setContextMenuPolicy(Qt::NoContextMenu);
     setWindowFlags(Qt::FramelessWindowHint);
@@ -92,8 +96,16 @@ void DashboardView::appletBrowserDestroyed()
 void DashboardView::toggleVisibility()
 {
     if (isHidden()) {
+	if ( suppressShow ) {
+	    kDebug() << "DashboardView::toggleVisibility but show was suppressed";
+	    return;
+	}
+
         show();
         raise();
+	suppressShow = true;
+	QTimer::singleShot( SUPPRESS_SHOW_TIMEOUT, this, SLOT(suppressShowTimeout()) );
+	
     } else {
         hideView();
     }
@@ -105,6 +117,12 @@ void DashboardView::hideView()
         m_appletBrowserWidget->hide();
     }
     hide();
+}
+
+void DashboardView::suppressShowTimeout()
+{
+    kDebug() << "DashboardView::suppressShowTimeout";
+    suppressShow = false;
 }
 
 #include "dashboardview.moc"

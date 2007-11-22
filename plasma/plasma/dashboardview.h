@@ -47,9 +47,11 @@ protected slots:
     void showAppletBrowser();
     void appletBrowserDestroyed();
     void hideView();
+    void suppressShowTimeout();
 
 private:
     Plasma::AppletBrowserWidget *m_appletBrowserWidget;
+    bool suppressShow;
 };
 
 #endif // multiple inclusion guard
