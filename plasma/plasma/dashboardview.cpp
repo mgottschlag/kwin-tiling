@@ -37,6 +37,11 @@ DashboardView::DashboardView(int screen, QWidget *parent)
 {
     setContextMenuPolicy(Qt::NoContextMenu);
     setWindowFlags(Qt::FramelessWindowHint);
+    if (!PlasmaApp::hasComposite()) {
+	setAutoFillBackground(false);
+	setAttribute(Qt::WA_NoSystemBackground);
+    }
+
     //setWindowOpacity(0.9);
     setWindowState(Qt::WindowFullScreen);
     KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
