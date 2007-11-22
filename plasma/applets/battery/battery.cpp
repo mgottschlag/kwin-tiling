@@ -108,24 +108,14 @@ QSizeF Battery::contentSizeHint() const
 void Battery::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {
-        int pixelSize = 0;
         if (formFactor() == Plasma::Vertical ||
             formFactor() == Plasma::Horizontal) {
             kDebug() << "Small FormFactor";
-            pixelSize = m_smallPixelSize;
         } else {
             kDebug() << "Huge FormFactor";
-            pixelSize = m_pixelSize;
         }
-	// Reset aspect ratio
-        //QSize themesize = m_theme->elementSize("Battery");
-        
-        m_size = QSizeF(QSize(pixelSize, pixelSize));
-        m_theme->resize(m_size);
-        m_size = m_theme->size();
-        m_font.setPointSize((int)(pixelSize/10));
-        updateGeometry();
     }
+    updateGeometry();
 }
 
 void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
@@ -233,13 +223,9 @@ void Battery::paintLabel(QPainter *p, const QString& labelText)
     // Store font size, we want to restore it shortly
     int original_font_size = m_font.pointSize();
 
-    // Fonts smaller than 4 points become unreadable, so the minimum size is 6
-    if (original_font_size < KGlobalSettings::smallestReadableFont().pointSize()) {
-        m_font.setPointSize(KGlobalSettings::smallestReadableFont().pointSize());
-    }
+    // Fonts smaller than smallestReadableFont don't make sense.
+    m_font.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(), m_font.pointSize()));
     QFontMetrics fm(m_font);
-
-
     int text_width = fm.width(labelText);
 
     // Longer texts get smaller fonts
@@ -262,6 +248,7 @@ void Battery::paintLabel(QPainter *p, const QString& labelText)
                             (int)(((contentSize().height() - (int)fm.height())/2*0.9)),
                             text_width,
                             (int)(fm.height()*1.2));
+
     // Poor man's highlighting
     if (m_isHovered) {
         m_boxColor.setAlpha(m_boxHoverAlpha);
@@ -384,7 +371,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         if (showString || m_isHovered) {
             // Show the charge percentage with a box
             // on top of the battery, but only for plasmoids bigger than ....
-            if (m_pixelSize > 36) {
+            if (contentSizeHint().width() > 48) {
                 paintLabel(p, m_battery_percent_label);
             }
         }
