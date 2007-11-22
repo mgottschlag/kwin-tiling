@@ -5,15 +5,9 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>425</width>
-    <height>239</height>
+    <width>550</width>
+    <height>372</height>
    </rect>
-  </property>
-  <property name="windowTitle" >
-   <string>Desktop Settings</string>
-  </property>
-  <property name="styleSheet" >
-   <string/>
   </property>
   <layout class="QVBoxLayout" >
    <item>
@@ -64,8 +58,20 @@
      <property name="frameShadow" >
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QGridLayout" >
-      <item row="0" column="0" >
+     <layout class="QVBoxLayout" >
+      <property name="leftMargin" >
+       <number>9</number>
+      </property>
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <item>
        <widget class="QComboBox" name="pictureComboBox" >
         <item>
          <property name="text" >
@@ -79,110 +85,181 @@
         </item>
        </widget>
       </item>
-      <item row="1" column="0" >
-       <widget class="QStackedWidget" name="stackedWidget" >
-        <property name="minimumSize" >
+      <item>
+       <widget class="QGroupBox" name="groupBox" >
+        <layout class="QVBoxLayout" >
+         <item>
+          <widget class="QStackedWidget" name="stackedWidget" >
+           <property name="minimumSize" >
+            <size>
+             <width>350</width>
+             <height>51</height>
+            </size>
+           </property>
+           <property name="currentIndex" >
+            <number>0</number>
+           </property>
+           <widget class="QWidget" name="page" >
+            <layout class="QVBoxLayout" >
+             <item>
+              <widget class="KUrlComboRequester" name="picRequester" >
+               <property name="acceptDrops" >
+                <bool>true</bool>
+               </property>
+               <property name="filter" >
+                <string>*.png *.jpeg *.jpg *.svg *.svgz</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>20</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="page_3" >
+            <layout class="QVBoxLayout" >
+             <item>
+              <layout class="QVBoxLayout" >
+               <item>
+                <widget class="KUrlRequester" name="slideShowRequester" >
+                 <property name="sizePolicy" >
+                  <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="minimumSize" >
+                  <size>
+                   <width>16</width>
+                   <height>16</height>
+                  </size>
+                 </property>
+                 <property name="filter" >
+                  <string>*.png *.jpeg *.jpg *.svg *.svgz</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" >
+                 <item>
+                  <widget class="QLabel" name="label_2" >
+                   <property name="text" >
+                    <string>Change images every:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer>
+                   <property name="orientation" >
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" >
+                    <size>
+                     <width>271</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QTimeEdit" name="slideShowTime" >
+                   <property name="minimumTime" >
+                    <time>
+                     <hour>0</hour>
+                     <minute>0</minute>
+                     <second>0</second>
+                    </time>
+                   </property>
+                   <property name="currentSection" >
+                    <enum>QDateTimeEdit::HourSection</enum>
+                   </property>
+                   <property name="displayFormat" >
+                    <string>h:mm:ss</string>
+                   </property>
+                   <property name="time" >
+                    <time>
+                     <hour>0</hour>
+                     <minute>0</minute>
+                     <second>0</second>
+                    </time>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>20</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" >
          <size>
-          <width>350</width>
-          <height>51</height>
+          <width>20</width>
+          <height>0</height>
          </size>
         </property>
-        <property name="currentIndex" >
-         <number>0</number>
-        </property>
-        <widget class="QWidget" name="page" >
-         <layout class="QHBoxLayout" >
-          <item>
-           <widget class="KUrlComboRequester" name="picRequester" >
-            <property name="acceptDrops" >
-             <bool>true</bool>
-            </property>
-            <property name="filter" >
-             <string>*.png *.jpeg *.jpg *.svg *.svgz</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="page_3" >
-         <layout class="QGridLayout" >
-          <item row="0" column="0" >
-           <layout class="QVBoxLayout" >
-            <item>
-             <widget class="KUrlRequester" name="slideShowRequester" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="minimumSize" >
-               <size>
-                <width>16</width>
-                <height>16</height>
-               </size>
-              </property>
-              <property name="filter" >
-               <string>*.png *.jpeg *.jpg *.svg *.svgz</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" >
-              <item>
-               <widget class="QLabel" name="label_2" >
-                <property name="text" >
-                 <string>Change images every:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" >
-                 <size>
-                  <width>271</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QTimeEdit" name="slideShowTime" >
-                <property name="minimumTime" >
-                 <time>
-                  <hour>0</hour>
-                  <minute>0</minute>
-                  <second>0</second>
-                 </time>
-                </property>
-                <property name="currentSection" >
-                 <enum>QDateTimeEdit::HourSection</enum>
-                </property>
-                <property name="displayFormat" >
-                 <string>h:mm:ss</string>
-                </property>
-                <property name="time" >
-                 <time>
-                  <hour>0</hour>
-                  <minute>0</minute>
-                  <second>0</second>
-                 </time>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </widget>
+       </spacer>
       </item>
      </layout>
     </widget>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
@@ -214,12 +291,12 @@
    <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>184</x>
-     <y>220</y>
+     <x>204</x>
+     <y>121</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>184</x>
-     <y>264</y>
+     <x>204</x>
+     <y>218</y>
     </hint>
    </hints>
   </connection>

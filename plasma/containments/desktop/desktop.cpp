@@ -31,6 +31,8 @@
 #include <KAuthorized>
 #include <KComboBox>
 #include <KDebug>
+#include <KFileDialog>
+#include <KImageFilePreview>
 #include <KRun>
 #include <KStandardDirs>
 #include <KSvgRenderer>
@@ -65,6 +67,7 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
 
 DefaultDesktop::~DefaultDesktop()
 {
+    delete m_configDialog;
 }
 
 void DefaultDesktop::init()
@@ -175,6 +178,7 @@ void DefaultDesktop::configure()
 {
     if (m_configDialog == 0) {
         m_configDialog = new KDialog;
+        m_configDialog->setWindowIcon(KIcon("preferences-desktop-wallpaper"));
         m_configDialog->setCaption( i18n("Configure Desktop") );
         m_ui = new Ui::config;
         m_ui->setupUi(m_configDialog->mainWidget());
@@ -185,12 +189,14 @@ void DefaultDesktop::configure()
         m_ui->slideShowRequester->setMode(KFile::Directory);
         m_ui->slideShowRequester->setGeometry(m_ui->picRequester->frameGeometry());
         m_ui->slideShowTime->setMinimumTime(QTime(0,0,1)); // minimum to 1 seconds
-        
+
         // hide these since we don't use them yet
         m_ui->colorFrame->hide();
     }
 
     m_ui->pictureComboBox->setCurrentIndex(m_backgroundMode);
+    m_ui->picRequester->fileDialog()->setCaption(i18n("Configure Desktop")); // TODO: change caption after string freeze; e.g. "Select Wallpaper"
+    m_ui->picRequester->fileDialog()->setPreviewWidget(new KImageFilePreview(m_ui->picRequester));
     m_ui->picRequester->setUrl(m_wallpaperPath);
     m_ui->slideShowRequester->setUrl(KUrl(m_slidePath));
     int mseconds = m_slideShowTimer->interval() / 1000;
