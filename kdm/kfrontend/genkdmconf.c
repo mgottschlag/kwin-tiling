@@ -1543,7 +1543,7 @@ upd_servercmd( Entry *ce, Section *cs ATTR_UNUSED )
 
 	if (!ce->active || oldver >= 0x0204)
 		return;
-	if (!(splitArgs( ce->value )))
+	if (!(sa = splitArgs( ce->value )))
 		return;
 	ASPrintf( &svr, "%s -help 2>&1", sa->str );
 	if (!(fp = popen( svr, "r" )))
