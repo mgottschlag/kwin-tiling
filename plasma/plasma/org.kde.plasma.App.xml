@@ -3,5 +3,7 @@
   <interface name="org.kde.plasma.App">
     <method name="initializeWallpaper">
     </method>
+    <method name="toggleDashboard">
+    </method>
   </interface>
 </node>

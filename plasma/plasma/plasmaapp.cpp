@@ -155,6 +155,13 @@ void PlasmaApp::initializeWallpaper()
     //m_root->desktop()->initializeWallpaper();
 }
 
+void PlasmaApp::toggleDashboard()
+{
+    if (m_root) {
+        m_root->toggleDashboard();
+    }
+}
+
 void PlasmaApp::setCrashHandler()
 {
     KCrash::setEmergencySaveFunction(PlasmaApp::crashHandler);

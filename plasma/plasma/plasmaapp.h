@@ -49,6 +49,7 @@ public Q_SLOTS:
     // DBUS interface. if you change these methods, you MUST run:
     // qdbuscpp2xml plasmaapp.h -o org.kde.plasma.App.xml
     void initializeWallpaper();
+    void toggleDashboard();
 
 private Q_SLOTS:
     void setCrashHandler();
