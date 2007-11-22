@@ -152,6 +152,9 @@ private:
     /** copy color entries from color schemes into m_config */
     void updateFromColorSchemes();
 
+    /** copy effects page entries from controls into m_config */
+    void updateFromEffectsPage();
+
     void changeColor(int row, const QColor &newColor);
 
     /** get the groupKey for the given colorSet */
@@ -180,6 +183,8 @@ private:
     WindecoColors m_wmColors;
 
     KSharedConfigPtr m_config;
+
+    bool m_disableUpdates;
 };
 
 #endif

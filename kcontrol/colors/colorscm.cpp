@@ -67,7 +67,7 @@ QColor KColorCm::WindecoColors::color(WindecoColors::Role role) const
 //END WindecoColors
 
 KColorCm::KColorCm(QWidget *parent, const QVariantList &)
-    : KCModule( KolorFactory::componentData(), parent )
+    : KCModule( KolorFactory::componentData(), parent ), m_disableUpdates(false)
 {
     KAboutData* about = new KAboutData(
         "kcmcolors", 0, ki18n("Colors"), 0, KLocalizedString(),
@@ -126,23 +126,43 @@ void KColorCm::updatePreviews()
 
 void KColorCm::updateEffectsPage()
 {
+    m_disableUpdates = true;
+
     // NOTE: keep this in sync with kdelibs/kdeui/colors/kcolorscheme.cpp
     KConfigGroup groupI(m_config, "ColorEffects:Inactive");
-    inactiveIntensitySlider->setValue(int(groupI.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
     inactiveIntensityBox->setCurrentIndex(groupI.readEntry("IntensityEffect", 0));
-    inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.0) * 20.0) + 20);
+    inactiveIntensitySlider->setValue(int(groupI.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
     inactiveColorBox->setCurrentIndex(groupI.readEntry("ColorEffect", 0));
+    if (inactiveColorBox->currentIndex() > 2)
+    {
+        inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.0) * 40.0));
+    }
+    else
+    {
+        inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.0) * 20.0) + 20);
+    }
+    inactiveColorButton->setColor(groupI.readEntry("Color", QColor(128, 128, 128)));
+    inactiveContrastBox->setCurrentIndex(groupI.readEntry("ContrastEffect", 0));
     inactiveContrastSlider->setValue(int(groupI.readEntry("ContrastAmount", 0.0) * 20.0));
-    inactiveContrastBox->setCurrentIndex(groupI.readEntry("ContrastEffect", 1));
 
     // NOTE: keep this in sync with kdelibs/kdeui/colors/kcolorscheme.cpp
     KConfigGroup groupD(m_config, "ColorEffects:Disabled");
-    disabledIntensitySlider->setValue(int(groupD.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
     disabledIntensityBox->setCurrentIndex(groupD.readEntry("IntensityEffect", 0));
-    disabledColorSlider->setValue(int(groupD.readEntry("ColorAmount", 0.0) * 20.0) + 20);
+    disabledIntensitySlider->setValue(int(groupD.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
     disabledColorBox->setCurrentIndex(groupD.readEntry("ColorEffect", 0));
-    disabledContrastSlider->setValue(int(groupD.readEntry("ContrastAmount", 0.7) * 20.0));
+    if (disabledColorBox->currentIndex() > 2)
+    {
+        disabledColorSlider->setValue(int(groupD.readEntry("ColorAmount", 0.0) * 40.0));
+    }
+    else
+    {
+        disabledColorSlider->setValue(int(groupD.readEntry("ColorAmount", 0.0) * 20.0) + 20);
+    }
+    disabledColorButton->setColor(groupD.readEntry("Color", QColor(128, 128, 128)));
     disabledContrastBox->setCurrentIndex(groupD.readEntry("ContrastEffect", 1));
+    disabledContrastSlider->setValue(int(groupD.readEntry("ContrastAmount", 0.7) * 20.0));
+
+    m_disableUpdates = false;
 }
 
 void KColorCm::loadScheme(const QString &path)
@@ -161,6 +181,7 @@ void KColorCm::loadScheme(const QString &path)
 
     m_config = temp;
     updateFromColorSchemes();
+    updateFromEffectsPage();
     updateColorTable();
     updatePreviews();
 }
@@ -257,6 +278,7 @@ void KColorCm::saveScheme(const QString &name)
         m_config = KSharedConfig::openConfig(newpath);
         // then copy current colors into new config
         updateFromColorSchemes();
+        updateFromEffectsPage();
         KConfigGroup group(m_config, "General");
         group.writeEntry("shadeSortColumn", (bool)shadeSortedColumn->checkState());
         KConfigGroup group2(m_config, "KDE");
@@ -403,6 +425,62 @@ void KColorCm::updateFromColorSchemes()
 
     KConfigGroup generalGroup(m_config, "General");
     generalGroup.writeEntry("shadeSortColumn", (bool)shadeSortedColumn->checkState());
+}
+
+void KColorCm::updateFromEffectsPage()
+{
+    if (m_disableUpdates)
+    {
+        // don't write the config as we are reading it!
+        return;
+    }
+
+    KConfigGroup groupI(m_config, "ColorEffects:Inactive");
+    KConfigGroup groupD(m_config, "ColorEffects:Disabled");
+
+    // intensity
+    groupI.writeEntry("IntensityEffect", inactiveIntensityBox->currentIndex());
+    groupD.writeEntry("IntensityEffect", disabledIntensityBox->currentIndex());
+    groupI.writeEntry("IntensityAmount", qreal(inactiveIntensitySlider->value() - 20) * 0.05);
+    groupD.writeEntry("IntensityAmount", qreal(disabledIntensitySlider->value() - 20) * 0.05);
+
+    // color
+    groupI.writeEntry("ColorEffect", inactiveColorBox->currentIndex());
+    groupD.writeEntry("ColorEffect", disabledColorBox->currentIndex());
+    if (inactiveColorBox->currentIndex() > 1)
+    {
+        groupI.writeEntry("ColorAmount", qreal(inactiveColorSlider->value()) * 0.025);
+    }
+    else
+    {
+        groupI.writeEntry("ColorAmount", qreal(inactiveColorSlider->value() - 20) * 0.05);
+    }
+    if (disabledColorBox->currentIndex() > 1)
+    {
+        groupD.writeEntry("ColorAmount", qreal(disabledColorSlider->value()) * 0.025);
+    }
+    else
+    {
+        groupD.writeEntry("ColorAmount", qreal(disabledColorSlider->value() - 20) * 0.05);
+    }
+    groupI.writeEntry("Color", inactiveColorButton->color());
+    groupD.writeEntry("Color", disabledColorButton->color());
+
+    // contrast
+    groupI.writeEntry("ContrastEffect", inactiveContrastBox->currentIndex());
+    groupD.writeEntry("ContrastEffect", disabledContrastBox->currentIndex());
+    groupI.writeEntry("ContrastAmount", qreal(inactiveContrastSlider->value()) * 0.05);
+    groupD.writeEntry("ContrastAmount", qreal(disabledContrastSlider->value()) * 0.05);
+
+    // enable/disable controls
+    inactiveIntensitySlider->setDisabled(inactiveIntensityBox->currentIndex() == 0);
+    disabledIntensitySlider->setDisabled(disabledIntensityBox->currentIndex() == 0);
+    inactiveColorSlider->setDisabled(inactiveColorBox->currentIndex() == 0);
+    disabledColorSlider->setDisabled(disabledColorBox->currentIndex() == 0);
+    inactiveColorButton->setDisabled(inactiveColorBox->currentIndex() < 2);
+    disabledColorButton->setDisabled(disabledColorBox->currentIndex() < 2);
+    inactiveContrastSlider->setDisabled(inactiveContrastBox->currentIndex() == 0);
+    disabledContrastSlider->setDisabled(disabledContrastBox->currentIndex() == 0);
 }
 
 void KColorCm::setupColorTable()
@@ -846,29 +924,15 @@ void KColorCm::emitChanged()
 // inactive effects slots
 void KColorCm::on_inactiveIntensityBox_currentIndexChanged(int index)
 {
-    KConfigGroup group(m_config, "ColorEffects:Inactive");
-    group.writeEntry("IntensityEffect", index);
+    updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
-
-    // disable/enable slider as necessary
-    if (index == 0)
-    {
-        inactiveIntensitySlider->setDisabled(true);
-    }
-    else
-    {
-        // update based on slider value since it's enabled now
-        inactiveIntensitySlider->setDisabled(false);
-        on_inactiveIntensitySlider_valueChanged(inactiveIntensitySlider->value());
-    }
 
     emit changed(true);
 }
 
 void KColorCm::on_inactiveIntensitySlider_valueChanged(int value)
 {
-    KConfigGroup group(m_config, "ColorEffects:Inactive");
-    group.writeEntry("IntensityAmount", qreal(value - 20) * 0.05);
+    updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
     emit changed(true);
@@ -876,30 +940,15 @@ void KColorCm::on_inactiveIntensitySlider_valueChanged(int value)
 
 void KColorCm::on_inactiveColorBox_currentIndexChanged(int index)
 {
-    KConfigGroup group(m_config, "ColorEffects:Inactive");
-    group.writeEntry("ColorEffect", index);
+    updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
-
-    // disable/enable slider as necessary
-    if (index == 0)
-    {
-        inactiveColorSlider->setDisabled(true);
-    }
-    else
-    {
-        // update based on slider value since it's enabled now
-        inactiveColorSlider->setDisabled(false);
-        on_inactiveColorSlider_valueChanged(inactiveColorSlider->value());
-    }
-    inactiveColorButton->setDisabled(index == 0 || index == 1);
 
     emit changed(true);
 }
 
 void KColorCm::on_inactiveColorSlider_valueChanged(int value)
 {
-    KConfigGroup group(m_config, "ColorEffects:Inactive");
-    group.writeEntry("ColorAmount", qreal(value - 20) * 0.05);
+    updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
     emit changed(true);
@@ -907,8 +956,7 @@ void KColorCm::on_inactiveColorSlider_valueChanged(int value)
 
 void KColorCm::on_inactiveColorButton_changed(const QColor& color)
 {
-    KConfigGroup group(m_config, "ColorEffects:Inactive");
-    group.writeEntry("Color", color);
+    updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
     emit changed(true);
@@ -916,29 +964,15 @@ void KColorCm::on_inactiveColorButton_changed(const QColor& color)
 
 void KColorCm::on_inactiveContrastBox_currentIndexChanged(int index)
 {
-    KConfigGroup group(m_config, "ColorEffects:Inactive");
-    group.writeEntry("ContrastEffect", index);
+    updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
-
-    // disable/enable slider as necessary
-    if (index == 0)
-    {
-        inactiveContrastSlider->setDisabled(true);
-    }
-    else
-    {
-        // update based on slider value since it's enabled now
-        inactiveContrastSlider->setDisabled(false);
-        on_inactiveContrastSlider_valueChanged(inactiveContrastSlider->value());
-    }
 
     emit changed(true);
 }
 
 void KColorCm::on_inactiveContrastSlider_valueChanged(int value)
 {
-    KConfigGroup group(m_config, "ColorEffects:Inactive");
-    group.writeEntry("ContrastAmount", qreal(value) * 0.05);
+    updateFromEffectsPage();
     inactivePreview->setPalette(m_config, QPalette::Inactive);
 
     emit changed(true);
@@ -947,29 +981,15 @@ void KColorCm::on_inactiveContrastSlider_valueChanged(int value)
 // disabled effects slots
 void KColorCm::on_disabledIntensityBox_currentIndexChanged(int index)
 {
-    KConfigGroup group(m_config, "ColorEffects:Disabled");
-    group.writeEntry("IntensityEffect", index);
+    updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
-
-    // disable/enable slider as necessary
-    if (index == 0)
-    {
-        disabledIntensitySlider->setDisabled(true);
-    }
-    else
-    {
-        // update based on slider value since it's enabled now
-        disabledIntensitySlider->setDisabled(false);
-        on_disabledIntensitySlider_valueChanged(disabledIntensitySlider->value());
-    }
 
     emit changed(true);
 }
 
 void KColorCm::on_disabledIntensitySlider_valueChanged(int value)
 {
-    KConfigGroup group(m_config, "ColorEffects:Disabled");
-    group.writeEntry("IntensityAmount", qreal(value - 20) * 0.05);
+    updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
     emit changed(true);
@@ -977,30 +997,15 @@ void KColorCm::on_disabledIntensitySlider_valueChanged(int value)
 
 void KColorCm::on_disabledColorBox_currentIndexChanged(int index)
 {
-    KConfigGroup group(m_config, "ColorEffects:Disabled");
-    group.writeEntry("ColorEffect", index);
+    updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
-
-    // disable/enable slider as necessary
-    if (index == 0)
-    {
-        disabledColorSlider->setDisabled(true);
-    }
-    else
-    {
-        // update based on slider value since it's enabled now
-        disabledColorSlider->setDisabled(false);
-        on_disabledColorSlider_valueChanged(disabledColorSlider->value());
-    }
-    disabledColorButton->setDisabled(index == 0 || index == 1);
 
     emit changed(true);
 }
 
 void KColorCm::on_disabledColorSlider_valueChanged(int value)
 {
-    KConfigGroup group(m_config, "ColorEffects:Disabled");
-    group.writeEntry("ColorAmount", qreal(value - 20) * 0.05);
+    updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
     emit changed(true);
@@ -1008,8 +1013,7 @@ void KColorCm::on_disabledColorSlider_valueChanged(int value)
 
 void KColorCm::on_disabledColorButton_changed(const QColor& color)
 {
-    KConfigGroup group(m_config, "ColorEffects:Disabled");
-    group.writeEntry("Color", color);
+    updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
     emit changed(true);
@@ -1017,29 +1021,15 @@ void KColorCm::on_disabledColorButton_changed(const QColor& color)
 
 void KColorCm::on_disabledContrastBox_currentIndexChanged(int index)
 {
-    KConfigGroup group(m_config, "ColorEffects:Disabled");
-    group.writeEntry("ContrastEffect", index);
+    updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
-
-    // disable/enable slider as necessary
-    if (index == 0)
-    {
-        disabledContrastSlider->setDisabled(true);
-    }
-    else
-    {
-        // update based on slider value since it's enabled now
-        disabledContrastSlider->setDisabled(false);
-        on_disabledContrastSlider_valueChanged(disabledContrastSlider->value());
-    }
 
     emit changed(true);
 }
 
 void KColorCm::on_disabledContrastSlider_valueChanged(int value)
 {
-    KConfigGroup group(m_config, "ColorEffects:Disabled");
-    group.writeEntry("ContrastAmount", qreal(value) * 0.05);
+    updateFromEffectsPage();
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 
     emit changed(true);
