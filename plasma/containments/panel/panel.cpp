@@ -101,25 +101,25 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
             setFormFactor(Plasma::Horizontal);
 
             width = r.width();
-            height = 49;
+            height = 48;
 
             if (loc == BottomEdge) {
-                height += topHeight;
-                y = r.height() - height;
+                height += topHeight - 1;
+                y = r.height() - height + 1;
             } else {
-                height += bottomHeight;
+                height += bottomHeight - 1;
             }
             //kDebug() << "top/bottom: Width:" << width << ", height:" << height;
         } else if (loc == LeftEdge || loc == RightEdge) {
             setFormFactor(Plasma::Vertical);
 
-            width = 49;
+            width = 48;
             height = r.height();
             if (loc == RightEdge) {
-                width += leftWidth;
+                width += leftWidth - 1;
                 x = r.width() - width;
             } else {
-                width += rightWidth;
+                width += rightWidth - 1;
             }
             //kDebug() << "left/right: Width:" << width << ", height:" << height;
         }
@@ -213,14 +213,14 @@ void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
                 break;
         }
 
-        const int topHeight = drawTop ? m_background->elementSize("top").height() : 0;
         const int topWidth = drawTop ? m_background->elementSize("top").width() : 0;
+        const int topHeight = drawTop ? m_background->elementSize("top").height() : 0;
         const int leftWidth = drawLeft ? m_background->elementSize("left").width() : 0;
         const int leftHeight = drawLeft ? m_background->elementSize("left").height(): 0;
         const int rightWidth = drawRight ? m_background->elementSize("right").width() : 0;
         const int rightHeight = drawRight ? m_background->elementSize("right").height() : 0;
+        const int bottomWidth = drawBottom ? m_background->elementSize("bottom").width() : 0;
         const int bottomHeight = drawBottom ? m_background->elementSize("bottom").height() : 0;
-        const int bottomWidth = drawBottom ? m_background->elementSize("bottom").height() : 0;
 
         const int topOffset = 0;
         const int leftOffset = 0;
