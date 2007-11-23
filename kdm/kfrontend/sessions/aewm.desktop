@@ -3,7 +3,6 @@ Type=XSession
 Exec=aewm
 TryExec=aewm
 Name=AEWM
-Name[eo]=MFA
 Name[sr]=АЕВМ
 Name[te]=ఎ ఈ డబ్ల్యు ఎం
 Name[x-test]=xxAEWMxx

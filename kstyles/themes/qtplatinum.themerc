@@ -1,6 +1,7 @@
 [Misc]
 Name=Platinum
 Name[be]=Платына
+Name[es]=Platino
 Name[fa]=پلاتینیوم
 Name[km]=ប្លាទីន
 Name[ne]=प्लेटिनम
@@ -15,6 +16,8 @@ Comment[bg]=Вграден платинен стил
 Comment[ca]=Estil integrat Platinum sense temes
 Comment[de]=Eingebautes Platinum-Design
 Comment[el]=Ενσωματωμένο στυλ Platinum
+Comment[eo]=Debaza senetosa stilo de Platinum
+Comment[es]=Estilo Platino
 Comment[et]=Sisseehitatud teematu Platinumi stiil
 Comment[ga]=Stíl insuite Platinum gan téamaí
 Comment[hu]=Beépített Platinum stílus

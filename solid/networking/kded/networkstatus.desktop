@@ -35,6 +35,7 @@ Comment[bg]=Проверява състоянието на мрежата и и�
 Comment[ca]=Fa un seguiment de l'estat de les interfícies de xarxa i proporciona notificació a les aplicacions usant la xarxa.
 Comment[de]=Überprüft den Status von Netzwerkschnittstellen und benachrichtigt Programme, die das Netzwerk verwenden.
 Comment[el]=Παρακολουθεί την κατάσταση των διασυνδέσεων δικτύου και προσφέρει ειδοποιήσεις σε εφαρμογές που χρησιμοποιούν το δίκτυο.
+Comment[es]=Estudia el estado de los interfaces de red y notifica las aplicaciones de red.
 Comment[et]=Võrguliideste oleku jälgimine ja märguannete edastamine rakendustele võrgu vahendusel.
 Comment[fa]=وضعیت واسطهای شبکه را ردیابی کرده و با استفاده از شبکه برای کاربرد، اخطار فراهم می‌کند.
 Comment[he]=עוקב אחר מצב ממשקי רשת ומספק עידכונים לתוכניות שמשתמשות ברשת

@@ -1,5 +1,6 @@
 [Misc]
 Name=MS Windows 9x
+Name[eo]=MS Vindozo 9x
 Name[ko]=MS 윈도 9x
 Name[ne]=एमएस विन्डोज् 9x
 Name[sr]=Мајкрософтов Виндоуз 9x
@@ -11,6 +12,8 @@ Comment[bg]=Вграден стил  Windows 9x style
 Comment[ca]=Estil integrat Windows 9x sense temes
 Comment[de]=Eingebautes Design im Stil von Windows 9x
 Comment[el]=Ενσωματωμένο στυλ παρόμοιο με τα Windows 9x
+Comment[eo]=Debaza senetosa stilo de Vindozo 9x
+Comment[es]=Estilo de Windows 9x sin tema
 Comment[et]=Sisseehitatud teematu Windows 9x stiil
 Comment[ga]=Stíl insuite Windows 9x gan téamaí
 Comment[hu]=Beépített Windows 9x stílus

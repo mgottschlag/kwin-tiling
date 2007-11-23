@@ -1,7 +1,6 @@
 [Misc]
 Name=Plastik
 Name[af]=Plastiek
-Name[eo]=Plastiko
 Name[fa]=پلاستیک
 Name[fy]=Plastyk
 Name[hr]=Plastika
@@ -34,6 +33,8 @@ Comment[bg]=Опростен и изчистен стил
 Comment[ca]=Un estil senzill i net
 Comment[de]=Einfaches und klares Design
 Comment[el]=Ένα απλό και καθαρό στυλ
+Comment[eo]=Simpla kaj pura stilo
+Comment[es]=Un estilo sencillo y limpio
 Comment[et]=Lihtne ja puhas stiil
 Comment[ga]=Stíl ghlan shimplí
 Comment[hu]=Egyszerű, áttekinthető stílus

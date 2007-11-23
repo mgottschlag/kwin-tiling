@@ -2,6 +2,7 @@
 Name=Environment Canada
 Name[ca]=Medi ambient del Canadà
 Name[el]=Περιβάλλον Καναδά
+Name[es]=Medioambiente de Canada
 Name[km]=បរិស្ថាន​ប្រទេស​កាណាដា
 Name[ko]=캐나다 환경부
 Name[nds]=Ümwelt Kanada
@@ -14,6 +15,7 @@ Name[zh_CN]=加拿大环境
 Comment=XML Data from Environment Canada
 Comment[ca]=Dades XML des de Medi ambient del Canadà
 Comment[el]=Δεδομένα XML για το περιβάλλον του Καναδά
+Comment[es]=Datos XML de Medioambiente de Canada
 Comment[et]=Environment Canada XML-andmed
 Comment[ga]=Sonraí XML ó Environment Canada
 Comment[ja]=Environment Canada の XML データ
