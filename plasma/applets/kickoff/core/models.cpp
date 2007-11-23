@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -56,11 +56,9 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
 {
     KUrl url(urlString);
 
-    QStandardItem *item = 0; 
+    QStandardItem *item = 0;
 
-    if (factoryData->deviceByUrl.contains(urlString)) {
-        return createItemForDevice(factoryData->deviceByUrl[urlString]);
-    } else if (url.isLocalFile() && urlString.endsWith(".desktop")) {
+    if (url.isLocalFile() && urlString.endsWith(".desktop")) {
         // .desktop files may be services (type field == 'Application' or 'Service')
         // or they may be other types such as links.
         //
@@ -99,16 +97,6 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
     return item;
 }
 
-void StandardItemFactory::associateDevice(const QString& url, const Solid::Device& device)
-{
-    factoryData->deviceByUrl.insert(url, device);
-}
-
-Solid::Device StandardItemFactory::deviceForUrl(const QString& url)
-{
-    return factoryData->deviceByUrl.value(url);
-}
-
 void StandardItemFactory::setSpecialUrlProperties(const KUrl& url,QStandardItem *item)
 {
     // specially handled URLs
@@ -138,36 +126,10 @@ QStandardItem *StandardItemFactory::createItemForService(KService::Ptr service)
     return appItem;
 }
 
-QStandardItem *StandardItemFactory::createItemForDevice(const Solid::Device& device)
-{
-     const Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
-     if (!access) {
-         return 0;
-     }
-
-     QStandardItem *deviceItem = new QStandardItem;
-
-     //FIXME: we're never getting a drive back, so we aren't getting info on when
-     //       it is removable, etc
-     const Solid::StorageDrive *drive = device.as<Solid::StorageDrive>();
-     if (!drive || drive->isRemovable() || drive->isHotpluggable()) {
-         deviceItem->setText(device.product());
-         deviceItem->setData(access->filePath(), SubTitleRole);
-     } else {
-         deviceItem->setText(access->filePath());
-         deviceItem->setData(device.product(), SubTitleRole);
-     }
-
-     deviceItem->setIcon(KIcon(device.icon()));
-     deviceItem->setData(KUrl(access->filePath()).url(), UrlRole);
-
-     return deviceItem;
-}
-
 bool Kickoff::isLaterVersion(KService::Ptr first , KService::Ptr second)
 {
     // a very crude heuristic using the .desktop path names
-    // which only understands kde3 vs kde4 
+    // which only understands kde3 vs kde4
     bool firstIsKde4 = first->entryPath().contains("kde4");
     bool secondIsKde4 = second->entryPath().contains("kde4");
 

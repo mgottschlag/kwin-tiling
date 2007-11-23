@@ -1,5 +1,6 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
+    Copyright 2007 Kevin Ottens <ervin@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -34,6 +35,7 @@
 
 // Local
 #include "core/models.h"
+#include "urlitemlauncher.h"
 
 using namespace Kickoff;
 
@@ -60,6 +62,25 @@ class UrlItemLauncher::Private
 public:
     static QHash<QString,HandlerInfo> globalHandlers;
     static GenericItemHandler genericHandler;
+
+    static bool openUrl(const QString &urlString)
+    {
+        qDebug() << "Opening item with URL" << urlString;
+
+        QUrl url(urlString);
+        HandlerInfo protocolHandler = globalHandlers[url.scheme()];
+        if (protocolHandler.type == ProtocolHandler && protocolHandler.handler != 0) {
+            return protocolHandler.handler->openUrl(url);
+        }
+
+        QString extension = QFileInfo(url.path()).completeSuffix();
+        HandlerInfo extensionHandler = globalHandlers[extension];
+        if (extensionHandler.type == ExtensionHandler && extensionHandler.handler != 0) {
+            return extensionHandler.handler->openUrl(url);
+        }
+
+        return genericHandler.openUrl(url);
+    }
 };
 
 QHash<QString,HandlerInfo> UrlItemLauncher::Private::globalHandlers;
@@ -80,34 +101,39 @@ bool UrlItemLauncher::openItem(const QModelIndex& index)
 {
     QString urlString = index.data(UrlRole).value<QString>();
     if (urlString.isEmpty()) {
-        qDebug() << "Item" << index.data(Qt::DisplayRole) << "has to URL to open.";
+        QString udi = index.data(DeviceUdiRole).toString();
+        if (!udi.isEmpty()) {
+            Solid::Device device(udi);
+            Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
+
+            if (access && !access->isAccessible()) {
+                connect(access, SIGNAL(setupDone(Solid::ErrorType, QVariant, QString)),
+                        this, SLOT(onSetupDone(Solid::ErrorType, QVariant, QString)));
+                access->setup();
+                return true;
+            }
+        }
+
+        qDebug() << "Item" << index.data(Qt::DisplayRole) << "has no URL to open.";
         return false;
     }
 
-    qDebug() << "Opening item with URL" << urlString;
+    return Private::openUrl(urlString);
+}
 
-    if (deviceFactoryData()->deviceByUrl.contains(urlString)) {
-        Solid::Device device = deviceFactoryData()->deviceByUrl[urlString];
-        Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
-
-        if (!access->isAccessible()) {
-            access->setup();
-        }
+void UrlItemLauncher::onSetupDone(Solid::ErrorType error, QVariant errorData, const QString &udi)
+{
+    if (error!=Solid::NoError) {
+        return;
     }
 
-    QUrl url(urlString);
-    HandlerInfo protocolHandler = Private::globalHandlers[url.scheme()];
-    if (protocolHandler.type == ProtocolHandler && protocolHandler.handler != 0) {
-        return protocolHandler.handler->openUrl(url);
-    }
+    Solid::Device device(udi);
+    Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
 
-    QString extension = QFileInfo(url.path()).completeSuffix();
-    HandlerInfo extensionHandler = Private::globalHandlers[extension];
-    if (extensionHandler.type == ExtensionHandler && extensionHandler.handler != 0) {
-            return extensionHandler.handler->openUrl(url); 
-    }
+    Q_ASSERT(access);
 
-    return Private::genericHandler.openUrl(url);
+    QString urlString = "file://"+access->filePath();
+    Private::openUrl(urlString);
 }
 
 void UrlItemLauncher::addGlobalHandler(HandlerType type,const QString& name,UrlItemHandler *handler)

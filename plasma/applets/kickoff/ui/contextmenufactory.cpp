@@ -1,5 +1,6 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
+    Copyright 2007 Kevin Ottens <ervin@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -63,7 +64,7 @@ public:
        KonqPopupMenu *menu = new KonqPopupMenu(items, kUrl,actionCollection,
                                                0, 0, browserFlags,
                                                0, KBookmarkManager::userBookmarksManager(), actionGroupMap);
-       
+
        if (!menu->isEmpty()) {
             QAction *action = menu->menuAction();
             action->setText(i18n("Advanced"));
@@ -95,7 +96,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
     Q_ASSERT(view);
 
     const QModelIndex index = view->indexAt(pos);
-    const QString url = index.data(UrlRole).value<QString>(); 
+    const QString url = index.data(UrlRole).value<QString>();
 
     if (url.isEmpty()) {
         return;
@@ -104,7 +105,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
     bool isFavorite = FavoritesModel::isFavorite(url);
 
     QList<QAction*> actions;
-    
+
     // add to / remove from favorites
     QAction *favoriteAction = new QAction(this);
     if (isFavorite) {
@@ -117,7 +118,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
 
     actions << favoriteAction;
 
-    // add to desktop 
+    // add to desktop
     QAction *addToDesktopAction = new QAction(this);
     addToDesktopAction->setText(i18n("Add to Desktop"));
     addToDesktopAction->setEnabled(false);
@@ -137,13 +138,14 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
     QAction *advanced = d->advancedActionsMenu(url);
     if (advanced) {
         actions << advanced;
-    }    
+    }
 
     // device actions
-    Solid::Device device = StandardItemFactory::deviceForUrl(url);
-    const Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
+    QString udi = index.data(DeviceUdiRole).toString();
+    Solid::Device device(udi);
+    Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
     QAction *ejectAction = 0;
-    if (device.isValid()) {
+    if (device.isValid() && access) {
         ejectAction = new QAction(this);
         ejectAction->setText("Eject");
         actions << ejectAction;
@@ -153,7 +155,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
     QAction *viewSeparator = new QAction(this);
     viewSeparator->setSeparator(true);
     actions << viewSeparator;
-    actions << viewActions(view); 
+    actions << viewActions(view);
 
     // display menu
     KMenu menu;
@@ -164,13 +166,15 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
 
     QAction *result = menu.exec(QCursor::pos());
 
-    if (result == favoriteAction) {
+    if (favoriteAction && result == favoriteAction) {
         if (isFavorite) {
             FavoritesModel::remove(url);
         } else {
             FavoritesModel::add(url);
         }
-    } 
+    } else if (ejectAction && result == ejectAction) {
+        access->teardown();
+    }
 
     delete favoriteAction;
     delete addToDesktopAction;

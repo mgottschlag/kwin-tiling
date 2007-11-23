@@ -25,6 +25,7 @@ QT4_ADD_DBUS_INTERFACE(Kickoff_SRCS ${krunner_xml} krunner_interface)
 
 set ( Kickoff_LIBS
         ${KDE4_KIO_LIBS}
+        ${KDE4_KFILE_LIBS}
         ${KDE4_SOLID_LIBS}
         kworkspace
         strigiqtdbusclient )

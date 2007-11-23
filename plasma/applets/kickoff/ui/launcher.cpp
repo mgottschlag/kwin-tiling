@@ -1,5 +1,6 @@
 /*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
+    Copyright 2007 Kevin Ottens <ervin@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -76,7 +77,7 @@ public:
     void setupEventHandler(QAbstractItemView *view)
     {
         view->viewport()->installEventFilter(q);
-        view->installEventFilter(q); 
+        view->installEventFilter(q);
     }
 
     void addView(const QString& name, const QIcon& icon,
@@ -103,19 +104,16 @@ public:
 
     void initTabs()
     {
-        // Find paths associated with storage items
-        SystemModel::registerDevicePaths();
-
         // Favorites view
         setupFavoritesView();
 
-        // All Programs view 
+        // All Programs view
         setupAllProgramsView();
 
         // My Computer view
         setupSystemView();
 
-        // Recently Used view 
+        // Recently Used view
         setupRecentView();
 
         // Leave view
@@ -149,7 +147,7 @@ public:
         favoritesView = view;
     }
 
-    void setupAllProgramsView() 
+    void setupAllProgramsView()
     {
         ApplicationModel *applicationModel = new ApplicationModel(q);
         applicationModel->setDuplicatePolicy(ApplicationModel::ShowLatestOnlyPolicy);
@@ -214,7 +212,7 @@ public:
         searchView = view;
     }
 
-    void registerUrlHandlers() 
+    void registerUrlHandlers()
     {
         UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ExtensionHandler, "desktop", new ServiceItemHandler);
         UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ProtocolHandler, "leave", new LeaveItemHandler);
@@ -274,7 +272,7 @@ Launcher::Launcher(QWidget *parent)
 QSize Launcher::sizeHint() const
 {
     // TODO This is essentially an arbitrarily chosen height which works
-    // reasonably well.  It would probably be better to choose the 
+    // reasonably well.  It would probably be better to choose the
     // height to allow X number of items to be visible in the Favorites
     // view (which shows initially on startup)
     QSize size = QWidget::sizeHint();
@@ -316,9 +314,9 @@ void Launcher::focusFavoritesView()
     d->contentArea->setCurrentWidget(d->favoritesView);
 }
 
-bool Launcher::eventFilter(QObject *object, QEvent *event) 
+bool Launcher::eventFilter(QObject *object, QEvent *event)
 {
-    // deliver unhandled key presses from the search bar 
+    // deliver unhandled key presses from the search bar
     // (mainly arrow keys, enter) to the active view
     if ((object == d->contentSwitcher || object == d->searchBar) && event->type() == QEvent::KeyPress) {
             // we want left/right to still nav the tabbar
@@ -337,7 +335,7 @@ bool Launcher::eventFilter(QObject *object, QEvent *event)
         QAbstractItemView *activeView = qobject_cast<QAbstractItemView*>(d->contentArea->currentWidget());
         if (activeView) {
             QCoreApplication::sendEvent(activeView, event);
-            return true; 
+            return true;
         }
     }
 
@@ -354,19 +352,19 @@ bool Launcher::eventFilter(QObject *object, QEvent *event)
         if (event->type() == QEvent::MouseButtonRelease) {
             QMouseEvent *mouseEvent = (QMouseEvent*)event;
             const QModelIndex index = view->indexAt(mouseEvent->pos());
-            if (index.isValid() && 
-                index.model()->hasChildren(index) == false && 
+            if (index.isValid() &&
+                index.model()->hasChildren(index) == false &&
                 mouseEvent->button() == Qt::LeftButton) {
-                openIndex = index;                
+                openIndex = index;
             }
         } else if (event->type() == QEvent::KeyPress) {
             QKeyEvent *keyEvent = (QKeyEvent*)event;
             const QModelIndex index = view->currentIndex();
             if (index.isValid() && index.model()->hasChildren(index) == false &&
                 (keyEvent->key() == Qt::Key_Enter || keyEvent->key() == Qt::Key_Return)) {
-                openIndex = index;                
+                openIndex = index;
             }
-        }   
+        }
         if (openIndex.isValid()) {
             d->urlLauncher->openItem(openIndex);
             // Clear the search bar when enter was pressed
@@ -377,7 +375,7 @@ bool Launcher::eventFilter(QObject *object, QEvent *event)
                 hide();
             }
             return true;
-        } 
+        }
     }
     return QWidget::eventFilter(object, event);
 }
@@ -399,7 +397,7 @@ void Launcher::keyPressEvent(QKeyEvent *event)
     // allow tab switching by pressing the left or right arrow keys
     if (event->key() == Qt::Key_Left && d->contentSwitcher->currentIndex() > 0) {
         d->contentSwitcher->setCurrentIndex(d->contentSwitcher->currentIndex()-1);
-    } else if (event->key() == Qt::Key_Right && 
+    } else if (event->key() == Qt::Key_Right &&
         d->contentSwitcher->currentIndex() < d->contentSwitcher->count()-1) {
         d->contentSwitcher->setCurrentIndex(d->contentSwitcher->currentIndex()+1);
     }
@@ -408,7 +406,7 @@ void Launcher::keyPressEvent(QKeyEvent *event)
 
 void Launcher::moveEvent(QMoveEvent *e)
 {
-    // focus the search bar ready for typing 
+    // focus the search bar ready for typing
     int leftMargin = 1;
     int rightMargin = 1;
     int topMargin = 1;

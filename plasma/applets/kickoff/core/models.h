@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -45,7 +45,7 @@ namespace Kickoff
 
     StandardItemFactoryData* deviceFactoryData();
 
-    /** 
+    /**
      * Additional data roles for data which the Kickoff models supply with their items
      * for use when rendering the items and launching them.
      */
@@ -60,10 +60,10 @@ namespace Kickoff
         /** The amount of space (in Kilobytes) used for items which represent storage. */
         DiskUsedSpaceRole = Qt::UserRole+4,
         /** The amount of free space (in Kilobytes) for items which represent storage. */
-        DiskFreeSpaceRole = Qt::UserRole+5 
+        DiskFreeSpaceRole = Qt::UserRole+5
     };
 
-    /** 
+    /**
      * Factory for creating QStandardItems with appropriate text, icons, URL
      * and other Kickoff-specific information for a given URL or Service.
      */
@@ -72,16 +72,12 @@ namespace Kickoff
     public:
         static QStandardItem *createItemForUrl(const QString& url);
         static QStandardItem *createItemForService(KService::Ptr service);
-        static QStandardItem *createItemForDevice(const Solid::Device& device);
-
-        static void associateDevice(const QString& url,const Solid::Device& device);
-        static Solid::Device deviceForUrl(const QString& url);
 
     private:
         static void setSpecialUrlProperties(const KUrl& url,QStandardItem *item);
     };
 
-    /** 
+    /**
      * Abstract base class for delegates which provide information about a model
      * item's state in a particular view.
      */
@@ -90,14 +86,14 @@ namespace Kickoff
     public:
         virtual ~ItemStateProvider() {}
 
-        /** 
-         * Returns true if a @p index should be drawn in the view or 
+        /**
+         * Returns true if a @p index should be drawn in the view or
          * false if it should be hidden.
          */
-        virtual bool isVisible(const QModelIndex& index) const = 0; 
+        virtual bool isVisible(const QModelIndex& index) const = 0;
     };
 
-    // returns true if 'first' represents a more recent version of 
+    // returns true if 'first' represents a more recent version of
     // an application than 'second'
     //
     // eg. isLaterVersion(myapp_kde4,myapp_kde3) returns true

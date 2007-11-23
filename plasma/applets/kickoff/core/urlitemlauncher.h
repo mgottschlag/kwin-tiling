@@ -1,5 +1,6 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
+    Copyright 2007 Kevin Ottens <ervin@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -21,6 +22,7 @@
 #define URLITEMLAUNCHER_H
 
 #include <QObject>
+#include <solid/storageaccess.h>
 
 class QModelIndex;
 class QUrl;
@@ -28,7 +30,7 @@ class QUrl;
 namespace Kickoff
 {
 
-/** 
+/**
  * UrlItemHandler is an abstract base class for handlers which can open particular
  * types of URL.
  *
@@ -41,13 +43,13 @@ public:
     virtual bool openUrl(const QUrl& url) = 0;
 };
 
-/** 
+/**
  * UrlItemLauncher provides facilities to open a item from a Kickoff model based on its UrlRole
  * data.
  *
  * By default, a UrlItemLauncher opens all URLs using the KRun class.  Additional handlers can be created
- * to handle URLs with particular protocols or extensions differently.  Handlers can be 
- * registered using the static addGlobalHandler() method. 
+ * to handle URLs with particular protocols or extensions differently.  Handlers can be
+ * registered using the static addGlobalHandler() method.
  */
 class UrlItemLauncher : public QObject
 {
@@ -65,10 +67,13 @@ public:
     static void addGlobalHandler(HandlerType type,
                                  const QString& name,
                                  UrlItemHandler *handler);
- 
+
 public Q_SLOTS:
-    /** Open the specified @p index from a Kickoff model. */ 
+    /** Open the specified @p index from a Kickoff model. */
     bool openItem(const QModelIndex& index);
+
+private Q_SLOTS:
+    void onSetupDone(Solid::ErrorType error, QVariant errorData, const QString &udi);
 
 private:
     class Private;
@@ -77,5 +82,5 @@ private:
 
 }
 
-#endif // URLITEMLAUNCHER_H 
+#endif // URLITEMLAUNCHER_H
 

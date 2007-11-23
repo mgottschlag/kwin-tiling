@@ -1,5 +1,6 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
+    Copyright 2007 Kevin Ottens <ervin@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -148,7 +149,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
         //kDebug() << "text bar gap is" << textBarGap;
 
         if (textBarGap > 0) {
-            // if the item view is gradually resized smaller or larger, make the bar fade out/in 
+            // if the item view is gradually resized smaller or larger, make the bar fade out/in
             // as enough space for it becomes available
             if (textBarGap < 20.0) {
                 painter->setOpacity(textBarGap/20.0);
@@ -218,7 +219,18 @@ bool ItemDelegate::isVisible(const QModelIndex& index) const
 {
     Q_ASSERT(index.isValid());
 
-    return index.model()->hasChildren(index) || !index.data(UrlRole).isNull();
+    if (index.model()->hasChildren(index)) {
+        int childCount = index.model()->rowCount(index);
+        for (int i=0; i<childCount; ++i) {
+            QModelIndex child = index.model()->index(i, 0, index);
+            if (!child.data(UrlRole).isNull()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    return !index.data(UrlRole).isNull();
 }
 
 // Taken from kdelibs/kio/kio/kfileitemdelegate.cpp
