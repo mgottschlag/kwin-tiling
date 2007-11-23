@@ -935,7 +935,7 @@ QFont CFcEngine::getQFont(const QString &family, quint32 style, int size)
 bool CFcEngine::parseUrl(const KUrl &url, int faceNo)
 {
 #ifdef KFI_FC_DEBUG
-    kDebug() << "parseUrl(" << url.prettyUrl() << ", " << faceNo << ")";
+    kDebug() << url.prettyUrl() << ' ' << faceNo;
 #endif
     if(faceNo<0)
         faceNo=0;
@@ -945,7 +945,6 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo)
 
     reinit();
 
-    //kDebug() << "parseUrl:" << url.prettyUrl();
     // Possible urls:
     //
     //    fonts:/times.ttf
@@ -968,11 +967,11 @@ bool CFcEngine::parseUrl(const KUrl &url, int faceNo)
                                           KFI_KIO_FACE, 0);
 #ifdef KFI_FC_DEBUG
             kDebug() << "Stated fonts:/ url, name:" << name << " itsFileName:" << itsFileName
-                         << " style:" << style << " itsIndex:" << itsIndex;
+                     << " style:" << style << " itsIndex:" << itsIndex;
 #endif
         }
 #ifdef KFI_FC_DEBUG
-kDebug() << "isHidden:" << hidden;
+        kDebug() << "isHidden:" << hidden;
 #endif
         if(hidden)
             name=itsFileName;
@@ -1150,7 +1149,7 @@ XftFont * CFcEngine::queryFont()
     static const int constQuerySize=8;
 
 #ifdef KFI_FC_DEBUG
-    kDebug() << "queryFont";
+    kDebug();
 #endif
 
     XftFont *f=getFont(constQuerySize);
@@ -1178,7 +1177,7 @@ XftFont * CFcEngine::queryFont()
         }
     }
 #ifdef KFI_FC_DEBUG
-    kDebug() << "queryFont - ret" << (int)f;
+    kDebug() << "ret" << (int)f;
 #endif
     return f;
 }
@@ -1188,7 +1187,7 @@ XftFont * CFcEngine::getFont(int size)
     XftFont *f=NULL;
 
 #ifdef KFI_FC_DEBUG
-    kDebug() << "getFont:" << QString(itsInstalled ? itsName : itsFileName) << ' ' << size;
+    kDebug() << QString(itsInstalled ? itsName : itsFileName) << ' ' << size;
 #endif
 
     if(itsInstalled)
@@ -1223,7 +1222,7 @@ XftFont * CFcEngine::getFont(int size)
     }
 
 #ifdef KFI_FC_DEBUG
-    kDebug() << "getFont, ret: " << (int)f;
+    kDebug() << "ret: " << (int)f;
 #endif
 
     return f;
@@ -1300,7 +1299,7 @@ bool CFcEngine::isCorrect(XftFont *f, bool checkFamily)
 void CFcEngine::getSizes()
 {
 #ifdef KFI_FC_DEBUG
-    kDebug() << "getSizes";
+    kDebug();
 #endif
 
     XftFont *f=queryFont();
@@ -1423,7 +1422,7 @@ void CFcEngine::getSizes()
     if(0==itsAlphaSize && itsSizes.count())
         itsAlphaSize=itsSizes[0];
 #ifdef KFI_FC_DEBUG
-    kDebug() << "getSizes, end";
+    kDebug() << "end";
 #endif
 }
 

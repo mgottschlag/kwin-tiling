@@ -119,7 +119,7 @@ void CFontLister::fileRenamed(const QString &from, const QString &to)
         ItemCont::Iterator it(itsItems.find(fromU));
 
 #ifdef KFI_FONTLISTER_DEBUG
-        kDebug() << "fileRenamed from: " << from << " to: " << to;
+        kDebug() << "from: " << from << " to: " << to;
 #endif
 
         if(it!=itsItems.end())
@@ -162,7 +162,7 @@ void CFontLister::fileRenamed(const QString &from, const QString &to)
 void CFontLister::filesAdded(const QString &dir)
 {
 #ifdef KFI_FONTLISTER_DEBUG
-    kDebug() << "Files added : " << dir;
+    kDebug() <<  dir;
 #endif
     KUrl url(dir);
 
@@ -179,7 +179,7 @@ void CFontLister::filesRemoved(const QStringList &files)
                                end(files.end());
 
 #ifdef KFI_FONTLISTER_DEBUG
-    kDebug() << "Files removed : " << files.count();
+    kDebug() << files.count();
 #endif
     for(; it!=end; ++it)
     {
@@ -209,7 +209,7 @@ void CFontLister::result(KJob *job)
 {
     itsJob=NULL;
 #ifdef KFI_FONTLISTER_DEBUG
-    kDebug() << "Got result";
+    kDebug();
 #endif
     if(job && !job->error())
     {

@@ -952,7 +952,7 @@ void CFontList::newItems(const KFileItemList &items)
     emit layoutAboutToBeChanged();
 
 #ifdef KFI_FONTLIST_DEBUG
-    kDebug() << "************** newItems " << items.count();
+    kDebug() << "************** " << items.count();
 
 //     for(KFileItemList::const_iterator it(items.begin()), end(items.end()) ; it!=end ; ++it)
 //         kDebug() << "               " << (int)(*it);
@@ -967,7 +967,7 @@ void CFontList::newItems(const KFileItemList &items)
 void CFontList::clearItems()
 {
 #ifdef KFI_FONTLIST_DEBUG
-    kDebug() << "************** clearItems";
+    kDebug() << "**************";
 #endif
 
     beginRemoveRows(QModelIndex(), 0, itsFamilies.count());
@@ -982,7 +982,7 @@ void CFontList::renameItems(const RenameList &items)
     emit layoutAboutToBeChanged();
 
 #ifdef KFI_FONTLIST_DEBUG
-    kDebug() << "************** renameItems " << items.count();
+    kDebug() << "************** " << items.count();
 
     for(RenameList::const_iterator it(items.begin()), end(items.end()) ; it!=end ; ++it)
         kDebug() << "               " << (*it).from.prettyUrl();
@@ -1026,7 +1026,7 @@ void CFontList::deleteItems(const KFileItemList &items)
     emit layoutAboutToBeChanged();
 
 #ifdef KFI_FONTLIST_DEBUG
-    kDebug() << "************** deleteItems " << items.count();
+    kDebug() << "************** " << items.count();
 #endif
 
     KFileItemList::ConstIterator it(items.begin()),
@@ -1056,7 +1056,7 @@ void CFontList::addItem(const KFileItem &item)
     CFontItem *font=findFont(item.url());
 
 #ifdef KFI_FONTLIST_DEBUG
-    kDebug() << "************** addItem " << item.url();
+    kDebug() << "************** " << item.url();
 #endif
     if(!font)
     {
