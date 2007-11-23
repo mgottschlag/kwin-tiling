@@ -335,13 +335,13 @@ QVariant CGroupList::data(const QModelIndex &index, int role) const
                             switch(grp->type())
                             {
                                 case CGroupListItem::ALL:      // Removing from a group
-                                    return SmallIcon("list-remove");
+                                    return SmallIcon("edit-delete");
                                 case CGroupListItem::PERSONAL: // Copying/moving
                                 case CGroupListItem::SYSTEM:   // Copying/moving
                                     return SmallIcon(Qt::LeftToRight==QApplication::layoutDirection()
                                                         ? "go-next" : "go-next-rtl");
                                 case CGroupListItem::CUSTOM:   // Adding to a group
-                                    return SmallIcon("list-add");
+                                    return SmallIcon("edit-add");
                                 default:
                                     break;
                             }

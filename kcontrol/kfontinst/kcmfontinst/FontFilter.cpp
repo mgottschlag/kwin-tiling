@@ -86,7 +86,7 @@ CFontFilter::CFontFilter(QWidget *parent)
     itsPixmaps[CRIT_STYLE]=SmallIcon("format-text-bold");
     itsPixmaps[CRIT_FOUNDRY]=SmallIcon("user");
     itsPixmaps[CRIT_FONTCONFIG]=SmallIcon("edit-find");
-    itsPixmaps[CRIT_FILENAME]=SmallIcon("font-type1");
+    itsPixmaps[CRIT_FILENAME]=SmallIcon("application-x-font-type1");
     itsPixmaps[CRIT_LOCATION]=SmallIcon("folder");
     itsPixmaps[CRIT_WS]=SmallIcon("pencil");
 

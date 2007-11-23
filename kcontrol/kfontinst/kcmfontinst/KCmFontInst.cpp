@@ -283,11 +283,11 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     // Toolbar...
     KActionMenu *settingsMenu=new KActionMenu(KIcon("configure"), i18n("Settings"), this);
     KAction     *changeTextAct=new KAction(KIcon("text"), i18n("Change Preview Text..."), this),
-                *duplicateFontsAct=new KAction(KIcon("edit-find"), i18n("Scan For Duplicate Fonts..."), this);
+                *duplicateFontsAct=new KAction(KIcon("system-search"), i18n("Scan For Duplicate Fonts..."), this);
                 //*validateFontsAct=new KAction(KIcon("checkmark"), i18n("Validate Fonts..."), this);
                 //*downloadFontsAct=new KAction(KIcon("go-down"), i18n("Download Fonts..."), this);
 
-    itsToolsMenu=new KActionMenu(KIcon("tool2"), i18n("Tools"), this);
+    itsToolsMenu=new KActionMenu(KIcon("system-run"), i18n("Tools"), this);
     itsMgtMode=new KToggleAction(KIcon("preferences-desktop-font-installer"),
                                  i18n("Font Management Mode"), this),
     itsShowPreview=new KToggleAction(KIcon("view-preview"), i18n("Show Large Preview"), this);
@@ -323,11 +323,11 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
         for(int i=0; i<3; ++i)
             itsModeControl->addItem(itsGroupList->group(modeToGrp(i))->name());
 
-    KPushButton *createGroup=new CPushButton(KGuiItem(QString(), "list-add",
+    KPushButton *createGroup=new CPushButton(KGuiItem(QString(), "edit-add",
                                                       i18n("Create a new group")),
                                              itsGroupsWidget);
 
-    itsDeleteGroupControl=new CPushButton(KGuiItem(QString(), "list-remove",
+    itsDeleteGroupControl=new CPushButton(KGuiItem(QString(), "edit-delete",
                                                    i18n("Remove group")),
                                           itsGroupsWidget);
 

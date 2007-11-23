@@ -625,7 +625,7 @@ bool CFamilyItem::updateStatus()
 
     itsIcon=1==mimeTypes.count()
                 ? KMimeType::mimeType(mimeTypes[0])->iconName()
-                : "font-truetype";
+                : "application-x-font-ttf";
 
     if(!root)
         setIsSystem(sys);
@@ -2112,7 +2112,7 @@ void CFontListView::startDrag(Qt::DropActions supportedActions)
             return;
 
         QModelIndex index(itsProxy->mapToSource(indexes.first()));
-        const char  *icon="font-bitmap";
+        const char  *icon="application-x-font-pcf";
 
         if(index.isValid())
         {
@@ -2122,9 +2122,9 @@ void CFontListView::startDrag(Qt::DropActions supportedActions)
 
             if(font && !font->isBitmap())
                 if("application/x-font-type1"==font->mimetype())
-                    icon="font-type1";
+                    icon="application-x-font-type1";
                 else
-                    icon="font-truetype";
+                    icon="application-x-font-ttf";
         }
 
         QPoint  hotspot;
