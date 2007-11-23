@@ -78,7 +78,6 @@ class CFontFilter : public KLineEdit
     void resizeEvent(QResizeEvent *ev);
     void mousePressEvent(QMouseEvent *ev);
     void setCriteria(ECriteria crit);
-    void modifyPadding();
 
     private:
 

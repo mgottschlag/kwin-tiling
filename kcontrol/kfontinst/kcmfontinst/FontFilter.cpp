@@ -22,6 +22,7 @@
  */
 
 #include "FontFilter.h"
+#include "FontFilterProxyStyle.h"
 #include <KDE/KLocale>
 #include <KDE/KIconLoader>
 #include <KDE/KToggleAction>
@@ -42,6 +43,32 @@ namespace KFI
 {
 
 static const int constArrowPad(5);
+
+// FIXME: Go back to using StyleSheets instead of a proxy style
+// once Qt has been fixed not to mess with widget font when
+// using StyleSheets
+class CFontFilterStyle : public CFontFilterProxyStyle
+{
+    public:
+
+    CFontFilterStyle(CFontFilter *parent, int ol) : CFontFilterProxyStyle(parent), overlap(ol) {}
+
+    QRect subElementRect(SubElement element, const QStyleOption *option, const QWidget *widget) const;
+
+    int overlap;
+};
+
+QRect CFontFilterStyle::subElementRect(SubElement element, const QStyleOption *option, const QWidget *widget) const
+{
+    if (SE_LineEditContents==element)
+    {
+        QRect rect(style()->subElementRect(SE_LineEditContents, option, widget));
+
+        return rect.adjusted(overlap, 0, -overlap, 0);
+    }
+
+    return CFontFilterProxyStyle::subElementRect(element, option, widget);
+}
 
 CFontFilter::CFontFilter(QWidget *parent)
            : KLineEdit(parent)
@@ -98,6 +125,7 @@ CFontFilter::CFontFilter(QWidget *parent)
     connect(wsMenu, SIGNAL(triggered(const QString &)), SLOT(wsChanged()));
 
     setCriteria(CRIT_FAMILY);
+    setStyle(new CFontFilterStyle(this, itsMenuButton->width()));
 }
 
 void CFontFilter::setMgtMode(bool m)
@@ -174,7 +202,6 @@ void CFontFilter::filterChanged()
             setCriteria(crit);
             setClickMessage(i18n("Type here to filter on %1", act->text()));
             setReadOnly(false);
-            modifyPadding();
         }
     }
 }
@@ -202,7 +229,6 @@ void CFontFilter::wsChanged()
             itsCurrentWs=ws;
             itsCurrentCriteria=CRIT_WS;
             setReadOnly(true);
-            modifyPadding();
             setCriteria(itsCurrentCriteria);
             setText(act->text());
             setClickMessage(text());
@@ -225,7 +251,6 @@ void CFontFilter::foundryChanged(const QString &foundry)
 
     itsCurrentCriteria=CRIT_FOUNDRY;
     setReadOnly(true);
-    modifyPadding();
     setText(foundry);
     setClickMessage(text());
     setCriteria(itsCurrentCriteria);
@@ -271,14 +296,14 @@ void CFontFilter::paintEvent(QPaintEvent *ev)
 void CFontFilter::resizeEvent(QResizeEvent *ev)
 {
     KLineEdit::resizeEvent(ev);
-    modifyPadding();
 
-    int frameWidth(style()->pixelMetric(QStyle::PM_DefaultFrameWidth));
+    int frameWidth(style()->pixelMetric(QStyle::PM_DefaultFrameWidth)),
+        y((height()-itsMenuButton->height())/2);
 
     if (qApp->isLeftToRight())
-        itsMenuButton->move(frameWidth + 1, frameWidth + 1);
+        itsMenuButton->move(frameWidth + 2, y);
     else
-        itsMenuButton->move(size().width() - frameWidth - itsMenuButton->width() - 1, frameWidth + 1);
+        itsMenuButton->move(size().width() - frameWidth - itsMenuButton->width() - 2, y);
 }
 
 void CFontFilter::mousePressEvent(QMouseEvent *ev)
@@ -311,13 +336,6 @@ void CFontFilter::setCriteria(ECriteria crit)
     itsCurrentCriteria=crit;
 
     emit criteriaChanged(crit, ((qulonglong)1) << (int)itsCurrentWs);
-}
-
-void CFontFilter::modifyPadding()
-{
-    setStyleSheet(QString("QLineEdit { padding-left: %1; padding-right : %2; }")
-                  .arg(itsMenuButton->width())
-                  .arg(itsMenuButton->width()-constArrowPad));
 }
 
 }
