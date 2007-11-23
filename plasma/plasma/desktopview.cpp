@@ -123,6 +123,7 @@ void DesktopView::showAppletBrowser()
         m_appletBrowser->setApplication();
         m_appletBrowser->setAttribute(Qt::WA_DeleteOnClose);
         m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
+        m_appletBrowser->setWindowIcon(KIcon("plasmagik"));
         connect(m_appletBrowser, SIGNAL(destroyed()), this, SLOT(appletBrowserDestroyed()));
     }
 

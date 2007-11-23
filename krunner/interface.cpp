@@ -139,6 +139,7 @@ Interface::Interface(QWidget* parent)
       m_defaultMatch(0)
 {
     setWindowTitle( i18n("Run Command") );
+    setWindowIcon(KIcon("preferences-desktop-launch-feedback"));
 
     KConfigGroup cg(KGlobal::config(), "General");
     m_executions = cg.readEntry("pastqueries", m_executions);
