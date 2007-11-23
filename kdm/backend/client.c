@@ -80,6 +80,7 @@ extern int loginsuccess( const char *User, const char *Host, const char *Tty, ch
 #ifdef HAVE_GETSPNAM
 # include <shadow.h>
 #endif
+#include <signal.h>
 
 /*
  * Session data, mostly what struct verify_info was for
