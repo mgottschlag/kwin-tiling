@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" 
+"dtd/kdex.dtd" [
+  <!ENTITY kappname "&plasma;">
+  <!ENTITY package "kdebase">
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<book lang="&language;">
+<bookinfo>
+<title>The &plasma; Handbook </title>
+
+<authorgroup>
+<author>&J.Hall; &J.Hall.mail;</author>
+
+<!--
+<othercredit role="developer">
+
+</othercredit>
+-->
+
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+
+</authorgroup>
+
+<copyright>
+<year>2007</year>
+<holder>&J.Hall;</holder>
+</copyright>
+
+<!--
+<legalnotice>&FDLNotice;</legalnotice> - commented out because checkXML does not like it. Will ask someone who remembers :)
+-->
+
+<date>2007-11-23</date>
+<releaseinfo>3.96.1</releaseinfo>
+
+<abstract>
+<para>&plasma; is the collective &kde; desktop experience.</para>
+</abstract>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>Plasma</keyword>
+<keyword>kdebase</keyword>
+<keyword>Desktop</keyword>
+<keyword>Panel</keyword>
+</keywordset>
+</bookinfo>
+ 
+<chapter id="introduction">
+<title>Introduction</title>
+<para>Plasma is the collective KDE desktop experience</para>
+</chapter>
+
+<chapter id="using_plasma">
+<title>Using Plasma</title>
+<para>Using plasma</para>
+</chapter>
+
+
+&documentation.index; 
+
+</book>
+<!--
+Local Variables:
+mode: sgml
+sgml-minimize-attributes: nil
+sgml-general-insert-case: lower
+sgml-indent-step: 0
+End:
+-->
+
+
+
+
+
+
+
+
+
+
