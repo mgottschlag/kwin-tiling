@@ -52,7 +52,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
 
     KConfigGroup cg = config();
-    m_showBatteryString = cg.readEntry("showBatteryString", true);
+    m_showBatteryString = cg.readEntry("showBatteryString", false);
     m_drawBackground = cg.readEntry("drawBackground", true);
     setDrawStandardBackground(m_drawBackground);
     m_pixelSize = cg.readEntry("size", 200);
@@ -157,7 +157,6 @@ void Battery::showConfigurationInterface()
 
     ui.styleGroup->setSelected(m_batteryStyle);
 
-    ui.spinSize->setValue((int)m_size.width());
     ui.showBatteryStringCheckBox->setChecked(m_showBatteryString ? Qt::Checked : Qt::Unchecked);
     ui.drawBackgroundCheckBox->setChecked(m_drawBackground ? Qt::Checked : Qt::Unchecked);
     m_dialog->show();
@@ -172,9 +171,6 @@ void Battery::configAccepted()
     m_drawBackground = ui.drawBackgroundCheckBox->checkState() == Qt::Checked;
     setDrawStandardBackground(m_drawBackground);
     cg.writeEntry("drawBackground", m_drawBackground);
-
-    m_pixelSize = ui.spinSize->value();
-    m_theme->resize(m_pixelSize, m_pixelSize);
 
     if (ui.styleGroup->selected() != m_batteryStyle) {
         QString svgFile = QString();
@@ -195,7 +191,7 @@ void Battery::configAccepted()
     dataEngine("powermanagement")->disconnectSource(I18N_NOOP("AC Adapter"), this);
     dataEngine("powermanagement")->connectSource(I18N_NOOP("AC Adapter"), this);
 
-    constraintsUpdated(Plasma::AllConstraints);
+    //constraintsUpdated(Plasma::AllConstraints);
     update();
     cg.config()->sync();
 }

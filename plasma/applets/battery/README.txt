@@ -1,10 +1,12 @@
 Obviously, this is a battery monitor applet for Plasma.
 
-The catch of those two .svg files is the following:
+The catch of those four .svg files is the following:
 
 battery-inkscape.svg is an so-called "Inkscape SVG", it's the one
 		you want to edit end export to
 battery.svg as plain .svg file.
+
+Likewise, for the Oxygen theme.
 
 This file contains various layers:
 
@@ -28,4 +30,3 @@ of that, we render only one of the FillN layers. If the AC
 Adapter is plugged in, we paint that layer on top of the cake.
 It makes no difference when we paint the Shadow, there's no
 overlap between shadow and other layers.
-
