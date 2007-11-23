@@ -134,6 +134,7 @@ class CToolBar : public KToolBar
         setMovable(false);
         setFloatable(false);
         setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        setFont(QApplication::font());
     }
 
     void addSeparator()
