@@ -60,8 +60,6 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     if (m_timezone != "Local") {
         m_showTimezone = true;
     }
-    m_theme = new Plasma::Svg("widgets/digital-clock", this);
-    m_theme->setContentType(Plasma::Svg::ImageSet);
 
     if (formFactor() == Plasma::Planar ||
         formFactor() == Plasma::MediaCenter) {
@@ -77,11 +75,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     //m_showTimezone = cg.readEntry("showTimezone", m_showTimezone);
     m_showTimezone = false; // FIXME: Remove
 
-    if (cg.readEntry("plainClock", true)) {
-        m_clockStyle = PlainClock;
-    } else {
-        m_clockStyle = FancyClock;
-    }
+    m_clockStyle = PlainClock;
     m_plainClockFont = cg.readEntry("plainClockFont", KGlobalSettings::generalFont());
 
     // FIXME: Plasma Colorscheme?, FIXME: Saving QColor to KConfig doesn't work
@@ -95,10 +89,6 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     // Set default spacings
     m_horizontalSpacing = 2;
     m_verticalSpacing = 1;
-
-    // take the size of the top half of the '0' number
-    // to calculate the aspect ratio when drawing
-    m_defaultElementSize = m_theme->elementSize("e0-p1");
 
     Plasma::DataEngine* timeEngine = dataEngine("time");
     timeEngine->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
@@ -120,7 +110,7 @@ void Clock::constraintsUpdated(Plasma::Constraints)
         formFactor() == Plasma::MediaCenter) {
         m_sizeHint = QSize(200, 72);
     } else {
-        m_sizeHint = QSize(144, 48);
+        m_sizeHint = QSize(120, 48);
     }
     updateGeometry();
 }
@@ -138,7 +128,7 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
 
     m_lastTimeSeen = m_time;
 
-    animateUpdate();
+    update();
 }
 
 void Clock::showConfigurationInterface()
@@ -152,8 +142,6 @@ void Clock::showConfigurationInterface()
         ui.showYear->setChecked(m_showYear);
         ui.showDay->setChecked(m_showDay);
         ui.showTimezone->setChecked(m_showTimezone);
-        ui.plainClockCheck->setChecked(PlainClock == m_clockStyle);
-        ui.plainClockGroup->setEnabled(PlainClock == m_clockStyle);
         ui.plainClockFontBold->setChecked(m_plainClockFontBold);
         ui.plainClockFontItalic->setChecked(m_plainClockFontItalic);
         ui.plainClockFont->setCurrentFont(m_plainClockFont);
@@ -207,11 +195,6 @@ void Clock::configAccepted()
     }
     m_showTimezone = ui.showTimezone->checkState() == Qt::Checked;
 
-    if ( ui.plainClockCheck->checkState() == Qt::Checked ) {
-        m_clockStyle = PlainClock;
-    } else {
-        m_clockStyle = FancyClock;
-    }
     m_plainClockFont = ui.plainClockFont->currentFont();
     m_plainClockColor = ui.plainClockColor->color();
     m_plainClockFontBold = ui.plainClockFontBold->checkState() == Qt::Checked;
@@ -234,43 +217,6 @@ Clock::~Clock()
 {
 }
 
-void Clock::animateUpdate()
-{
-    QTimeLine *tl = new QTimeLine(100, this);
-    tl->setFrameRange(0, 4);
-//     tl->setCurveShape(QTimeLine::EaseInCurve),
-    connect(tl, SIGNAL(frameChanged(int)), this, SLOT(animationSlot(int)));
-    tl->start();
-}
-
-void Clock::animationSlot(const int step)
-{
-    if (step == 4) { // The animation is stopped
-        m_animating = false;
-        m_lastTimeSeen = m_time;
-        update();
-    } else {
-        m_animating = true;
-        m_animationStep = step;
-        update();
-    }
-}
-
-int Clock::getOffsetForDigit(const int digitNumber, const int elWidth)
-{
-    int offset = 0;
-    const int margin = 4;
-
-    offset += (elWidth+m_horizontalSpacing)*digitNumber; // Add space taken by digit
-    offset += (int)((contentSize().width()-(elWidth*4+m_horizontalSpacing*6-margin*2))/2); // Align to center
-
-    if (digitNumber >= 2) { // There's a gap between hours and minutes...
-        offset += m_horizontalSpacing*3;
-    }
-
-    return offset;
-}
-
 void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
     Q_UNUSED(option);
@@ -287,8 +233,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     const QString day = m_date.toString("dd");
     const QString month = m_date.toString("MMM");
     const QString year = m_date.toString("yyyy");
-
-    const qreal margin = 4;
 
     p->setPen(QPen(m_plainClockColor));
     p->setRenderHint(QPainter::SmoothPixmapTransform);
@@ -345,164 +289,27 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                             (int)(contentsRect.height()));
     }
 
-    if ( m_clockStyle == PlainClock ) {
-        QString timeString = hours + ":" + minutes;
+    QString timeString = hours + ":" + minutes;
 
-        m_plainClockFont.setBold(m_plainClockFontBold);
-        m_plainClockFont.setItalic(m_plainClockFontItalic);
+    m_plainClockFont.setBold(m_plainClockFontBold);
+    m_plainClockFont.setItalic(m_plainClockFontItalic);
 
-        // Choose a relatively big font size to start with and decrease it from there to fit.
-        m_plainClockFont.setPointSize(qMax((int)(contentsRect.height()/1.5), 1));
-        p->setFont(m_plainClockFont);
-        QRect tmpTimeRect = p->boundingRect(timeRect, QPainter::TextAntialiasing, timeString);
+    // Choose a relatively big font size to start with and decrease it from there to fit.
+    m_plainClockFont.setPointSize(qMax((int)(contentsRect.height()/1.5), 1));
+    p->setFont(m_plainClockFont);
+    QRect tmpTimeRect = p->boundingRect(timeRect, QPainter::TextAntialiasing, timeString);
 
-        while ((tmpTimeRect.width() > timeRect.width() || tmpTimeRect.height() > timeRect.height()) && m_plainClockFont.pointSize() > 1) {
-            m_plainClockFont.setPointSize(m_plainClockFont.pointSize() - 1);
-            p->setFont(m_plainClockFont);
-            tmpTimeRect = p->boundingRect(timeRect, QPainter::TextAntialiasing, timeString);
-        }
-
-        p->drawText(timeRect,
-                    timeString,
-                    QTextOption(Qt::AlignHCenter)
-                );
-        return;
+    while ((tmpTimeRect.width() > timeRect.width() || tmpTimeRect.height() > timeRect.height()) && m_plainClockFont.pointSize() > 1) {
+	m_plainClockFont.setPointSize(m_plainClockFont.pointSize() - 1);
+	p->setFont(m_plainClockFont);
+	tmpTimeRect = p->boundingRect(timeRect, QPainter::TextAntialiasing, timeString);
     }
 
-    // Find the largest possible size fitting in the remaining space
-    // Aspect ratio for the whole digiclock
-
-    int maxHeight = qMin((int)(contentSize().height()), timeRect.height());
-    int maxWidth = qMin((int)(contentSize().width()-(margin*2)), (int)(timeRect.width()-(margin*2)));
-
-    if (maxHeight*3 > maxWidth) {
-        maxHeight = (int)(maxWidth/3);
-    } else if (maxHeight > maxWidth/3){
-        maxWidth = maxHeight*3;
-    }
-
-    timeRect.setWidth(maxWidth);
-    timeRect.setHeight(maxHeight);
-
-    while (timeRect.width() > maxWidth || timeRect.width()/3 > maxHeight) {
-        timeRect.setHeight(timeRect.height()-1);
-        timeRect.setWidth((int)(((timeRect.height()-m_verticalSpacing)/2)*1.4*4+(6*m_horizontalSpacing)));
-    } // small enough now.
-
-    m_theme->resize(timeRect.width(), timeRect.height());
-
-    int elHeight = qRound((timeRect.height() - m_verticalSpacing - margin*2) / 2.0);
-    int elWidth = qRound(elHeight*1.4); // Needs to be in line with the graphics
-
-    m_horizontalSpacing = qMin(4, qRound(elWidth/10));
-
-    // enforce natural aspect ratio for elements
-    QSize elSize = m_defaultElementSize;
-    elSize.scale(elWidth, elHeight, Qt::KeepAspectRatio);
-    elWidth = elSize.width();
-    elHeight = elSize.height();
-
-    // set left offset of clock elements so as to horizontally center the time display
-    int leftOffset = getOffsetForDigit(0, elWidth);
-    int upperElementTop = (int)margin;
-    int bottomElementTop = upperElementTop + elHeight + m_verticalSpacing;
-
-    // 10-hours-digit
-    m_theme->paint(p, QRectF(leftOffset, upperElementTop, elWidth, elHeight), 'e'+hours[0]+"-p1");
-    m_theme->paint(p, QRectF(leftOffset, bottomElementTop, elWidth, elHeight), 'e'+hours[0]+"-p2");
-
-    // 1-hour-digit
-    leftOffset = getOffsetForDigit(1, elWidth);
-    m_theme->paint(p, QRectF(leftOffset, upperElementTop, elWidth, elHeight), 'e'+hours[1]+"-p1");
-    m_theme->paint(p, QRectF(leftOffset, bottomElementTop, elWidth, elHeight), 'e'+hours[1]+"-p2");
-
-    // 10-minutes-digit
-    leftOffset = getOffsetForDigit(2, elWidth);
-    m_theme->paint(p, QRectF(leftOffset, upperElementTop, elWidth, elHeight), 'e'+minutes[0]+"-p1");
-    m_theme->paint(p, QRectF(leftOffset, bottomElementTop, elWidth, elHeight), 'e'+minutes[0]+"-p2");
-
-    // 1-minute-digit
-    leftOffset = getOffsetForDigit(3, elWidth);
-    m_theme->paint(p, QRectF(leftOffset, upperElementTop, elWidth, elHeight), 'e'+minutes[1]+"-p1");
-    m_theme->paint(p, QRectF(leftOffset, bottomElementTop, elWidth, elHeight), 'e'+minutes[1]+"-p2");
-
-    // Make sure we don't get artifacts if an update gets called while animating
-    if (m_animating) {
-        // If we are aninmating, this digit is for sure.
-        leftOffset = getOffsetForDigit(3, elWidth);
-        Number oldMinutes = (QChar) minutes[1]; // 1-minutes digit
-        --oldMinutes; // This is the digit which should be painted under the new one
-        QString element;
-
-        m_theme->paint(p, QRectF(leftOffset, upperElementTop, elWidth, elHeight), 'e'+minutes[1]+"-p1");
-        element = QChar('e')+oldMinutes+QString("-p2");
-        m_theme->paint(p, QRectF(leftOffset, bottomElementTop, elWidth, elHeight), element);
-
-        if (0 < m_animationStep && m_animationStep < 3) {
-            element = QChar('e')+oldMinutes+QString("-p1");
-            m_theme->paint(p, QRectF(leftOffset, bottomElementTop-(elHeight/m_animationStep),
-                                     elWidth, elHeight/m_animationStep), element);
-        } else {
-            m_theme->paint(p, QRectF(leftOffset, bottomElementTop, elWidth, elHeight/2), 'e'+minutes[1]+"-p2");
-        }
-
-        if (oldMinutes == '9') {
-            // Animate the 10-min digit if we have to
-            Number oldMinutes = (QChar) minutes[0]; // 10-minutes digit
-            --oldMinutes;
-            QString element;
-
-            m_theme->paint(p, QRectF(99, 20, elWidth, elHeight), 'e'+minutes[0]+"-p1");
-            element = QString('e')+oldMinutes+QString("-p2");
-            m_theme->paint(p, QRectF(99, 41, elWidth, elHeight), element);
-
-            if (m_animationStep < 3 && m_animationStep > 0) {
-                element = QString('e')+oldMinutes+QString("-p1");
-                m_theme->paint(p, QRectF(99, 40-(elHeight/m_animationStep), elWidth, elHeight/m_animationStep), element);
-            } else {
-                m_theme->paint(p, QRectF(99, 41, elWidth, elHeight/2), 'e'+minutes[0]+"-p2");
-            }
-
-            if (oldMinutes == '9') { //NOTE: it's 9 instead of 5 because of how I defined operator--
-                Number oldHours = (QChar) hours[1];
-                --oldHours;
-                QString element;
-
-                m_theme->paint(p, QRectF(59, 20, elWidth, elHeight), 'e'+hours[1]+"-p1");
-                element = QString('e')+oldHours+QString("-p2");
-                m_theme->paint(p, QRectF(59, 41, elWidth, elHeight), element);
-
-                if (m_animationStep < 3 && m_animationStep > 0) {
-                    element = QString('e')+oldHours+QString("-p1");
-                    m_theme->paint(p, QRectF(59, 40-(elHeight/m_animationStep), elWidth, elHeight/m_animationStep), element);
-                } else {
-
-                    m_theme->paint(p, QRectF(59, 41, elWidth, elHeight/2), 'e'+hours[1]+"-p2");
-                }
-
-                if (oldHours == '9') { //FIXME in case I'm displaying the AM/PM time
-                    Number oldHours = (QChar) hours[0];
-                    --oldHours;
-                    QString element;
-
-                    m_theme->paint(p, QRectF(39, 20, elWidth, elHeight), 'e'+hours[0]+"-p1");
-                    element = QString('e')+oldHours+QString("-p2");
-                    m_theme->paint(p, QRectF(39, 41, elWidth, elHeight), element);
-
-                    if (m_animationStep < 3 && m_animationStep > 0) {
-                        element = QString('e')+oldHours+QString("-p1");
-                        m_theme->paint(p, QRectF(39, 40-(elHeight/m_animationStep), elWidth, elHeight/m_animationStep), element);
-                    } else {
-
-                        m_theme->paint(p, QRectF(39, 41, elWidth, elHeight/(6-m_animationStep)), 'e'+hours[0]+"-p2");
-                    }
-                } else {
-                    m_theme->paint(p, QRectF(39, 20, elWidth, elHeight), 'e'+hours[0]+"-p1");
-                    m_theme->paint(p, QRectF(39, 41, elWidth, elHeight), 'e'+hours[0]+"-p2");
-                }
-            }
-        }
-    }
+    p->drawText(timeRect,
+		timeString,
+		QTextOption(Qt::AlignHCenter)
+	    );
+    return;
 }
 
 #include "clock.moc"

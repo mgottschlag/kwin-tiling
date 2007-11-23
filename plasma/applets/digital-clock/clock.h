@@ -58,7 +58,6 @@ class Clock : public Plasma::Applet
 
     protected slots:
         void configAccepted();
-        void animationSlot(int step);
 
     private:
         Q_ENUMS( m_clockStyle )
@@ -76,9 +75,6 @@ class Clock : public Plasma::Applet
         bool m_showYear;
         bool m_showDay;
         bool m_showTimezone;
-
-        void animateUpdate();
-        int getOffsetForDigit(int digitNumber, int elWidth);
 
         QSize m_defaultElementSize;
 
