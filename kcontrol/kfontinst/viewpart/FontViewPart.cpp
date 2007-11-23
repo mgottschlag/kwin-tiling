@@ -49,7 +49,6 @@
 #include <KDE/KIntNumInput>
 #include <KDE/KInputDialog>
 #include <KDE/KDialog>
-#include <KDE/KToolBarLabelAction>
 #include <KDE/KIcon>
 #include <KDE/KMimeType>
 //#include <KDE/KFileMetaInfo>
@@ -145,8 +144,6 @@ CFontViewPart::CFontViewPart(QWidget *parentWidget, QObject *parent, const QList
     itsChangeTextAction->setText(i18n("Change Text..."));
     connect(itsChangeTextAction, SIGNAL(triggered(bool)), SLOT(changeText()));
 
-    KToolBarLabelAction *toolbarLabelAction = new KToolBarLabelAction(i18n("Display:"), this);
-    actionCollection()->addAction("displayLabel", toolbarLabelAction);
     CPreviewSelectAction *displayTypeAction=new CPreviewSelectAction(this, CPreviewSelectAction::BlocksAndScripts);
     actionCollection()->addAction("displayType", displayTypeAction);
     connect(displayTypeAction, SIGNAL(range(const QList<CFcEngine::TRange> &)),
