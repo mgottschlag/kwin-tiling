@@ -54,8 +54,8 @@ public:
          * With the specified parent.
          */
         Tasks(QObject *parent, const QVariantList &args = QVariantList());
-        ~Tasks();
 
+        void init();
 
         /**
          * Sets the strategy used to automatically group tasks

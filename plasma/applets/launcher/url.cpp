@@ -40,6 +40,14 @@ Url::Url(QObject *parent, const QVariantList &args)
 //      m_icon(new Plasma::Icon(this)),
       m_dialog(0)
 {
+    setAcceptDrops(true);
+    if (args.count() > 2) {
+        setUrl(args.at(2).toString());
+    }
+}
+
+void Url::init()
+{
     KConfigGroup cg = config();
     int size = globalConfig().readEntry("IconSize", IconSize(KIconLoader::Desktop));
     size = cg.readEntry("IconSize", size);
@@ -48,21 +56,17 @@ Url::Url(QObject *parent, const QVariantList &args)
     m_icon = new Plasma::Icon(this),
     connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
     m_icon->setIconSize(size, size);
-    if (args.count() > 2) {
-        setUrl(args.at(2).toString());
-    } else {
+    if (m_url.isEmpty()) {
         setUrl(cg.readEntry("Url"));
     }
     resize(m_icon->sizeHint());
-
-    setAcceptDrops(true);
 }
 
 Url::~Url()
 {
 }
 
-void Url::saveState(KConfigGroup *cg)
+void Url::saveState(KConfigGroup *cg) const
 {
     cg->writeEntry("IconSize", m_icon->iconSize().toSize());
     cg->writeEntry("Url", m_url);

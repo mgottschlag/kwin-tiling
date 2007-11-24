@@ -39,6 +39,7 @@ class Url : public Plasma::Applet
         Url(QObject *parent, const QVariantList &args);
         ~Url();
 
+        void init();
 //        QSizeF contentSizeHint() const;
         void setUrl(const KUrl& url);
 
@@ -48,7 +49,7 @@ class Url : public Plasma::Applet
 
     protected:
         void dropEvent(QGraphicsSceneDragDropEvent *event);
-        void saveState(KConfigGroup *cg);
+        void saveState(KConfigGroup *cg) const;
         //void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
     protected slots:

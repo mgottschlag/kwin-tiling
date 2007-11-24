@@ -44,7 +44,10 @@ Pager::Pager(QObject *parent, const QVariantList &args)
 {
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
-    
+}
+
+void Pager::init()
+{
     createMenu();
 
     KConfigGroup cg = config();
@@ -67,10 +70,6 @@ Pager::Pager(QObject *parent, const QVariantList &args)
 
     m_currentDesktop = KWindowSystem::currentDesktop();
     numberOfDesktopsChanged(KWindowSystem::numberOfDesktops());
-}
-
-Pager::~Pager()
-{
 }
 
 QSizeF Pager::contentSizeHint() const

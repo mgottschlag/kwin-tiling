@@ -54,7 +54,10 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_dialog(0)
 {
     setHasConfigurationInterface(true);
+}
 
+void Clock::init()
+{
     KConfigGroup cg = config();
     m_timezone = cg.readEntry("timezone", "Local");
     if (m_timezone != "Local") {

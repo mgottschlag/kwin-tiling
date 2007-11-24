@@ -52,6 +52,10 @@
 Tasks::Tasks(QObject* parent , const QVariantList &arguments)
  : Plasma::Applet(parent,arguments)
 {
+}
+
+void Tasks::init()
+{
     Plasma::BoxLayout *layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
     layout->setMargin(0);
     _rootTaskGroup = new TaskGroupItem(this, this);
@@ -78,10 +82,6 @@ Tasks::Tasks(QObject* parent , const QVariantList &arguments)
     // add representations of existing running tasks
     registerWindowTasks();
     registerStartingTasks();
-}
-
-Tasks::~Tasks()
-{
 }
 
 void Tasks::registerStartingTasks()

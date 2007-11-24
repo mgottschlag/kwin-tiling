@@ -48,10 +48,16 @@
 
 Clock::Clock(QObject *parent, const QVariantList &args)
     : Plasma::Containment(parent, args),
-      m_dialog(0)
+      m_dialog(0),
+      m_showTimeString(false),
+      m_showSecondHand(false),
+      m_timezone("Local")
 {
     setHasConfigurationInterface(true);
+}
 
+void Clock::init()
+{
     KConfigGroup cg = config();
     m_showTimeString = cg.readEntry("showTimeString", false);
     m_showSecondHand = cg.readEntry("showSecondHand", false);

@@ -44,10 +44,11 @@ class Battery : public Plasma::Applet
         Battery(QObject *parent, const QVariantList &args);
         ~Battery();
 
+        void init();
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option,
                             const QRect &contents);
         void setPath(const QString&);
-        QSizeF contentSizeHint() const;
+        //QSizeF contentSizeHint() const;
         //QSizeF contentSize() const;
         void constraintsUpdated(Plasma::Constraints constraints);
 

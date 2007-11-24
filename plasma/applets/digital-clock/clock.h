@@ -44,6 +44,7 @@ class Clock : public Plasma::Applet
         Clock(QObject *parent, const QVariantList &args);
         ~Clock();
 
+        void init();
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
         void setPath(const QString&);
         QSizeF contentSizeHint() const;

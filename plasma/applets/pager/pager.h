@@ -36,8 +36,8 @@ class Pager : public Plasma::Applet
     Q_OBJECT
     public:
         Pager(QObject *parent, const QVariantList &args);
-        ~Pager();
 
+        void init();
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option,
                             const QRect &contents);
         QSizeF contentSizeHint() const;

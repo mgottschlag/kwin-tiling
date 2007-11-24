@@ -41,6 +41,7 @@
 Battery::Battery(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_batteryStyle(0),
+      m_theme(0),
       m_battery_percent_label(0),
       m_battery_percent(0),
       m_dialog(0),
@@ -50,12 +51,14 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
+}
 
+void Battery::init()
+{
     KConfigGroup cg = config();
     m_showBatteryString = cg.readEntry("showBatteryString", false);
     m_drawBackground = cg.readEntry("drawBackground", true);
     setDrawStandardBackground(m_drawBackground);
-    m_pixelSize = cg.readEntry("size", 200);
 
     QString svgFile = QString();
     if (cg.readEntry("style", 0) == 0) {
@@ -68,7 +71,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     m_smallPixelSize = 44;
     m_theme = new Plasma::Svg(svgFile, this);
     m_theme->setContentType(Plasma::Svg::SingleImage);
-    m_theme->resize(m_pixelSize, m_pixelSize);
+    m_theme->resize(200, 200);
 
     m_font = QApplication::font();
     m_font.setWeight(QFont::Bold);
@@ -89,22 +92,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     setAcceptsHoverEvents(true);
 }
 
-QSizeF Battery::contentSizeHint() const
-{
-    QSizeF sizehint = QSizeF(m_pixelSize, m_pixelSize);
-    qreal aspectratio = contentSize().width() /  contentSize().height();
-    if (contentSize() == QSizeF(0, 0)) {
-        return sizehint;
-    } else if (aspectratio == 1) {
-        sizehint = QSizeF(contentSize().width(), contentSize().height());
-    } else if (aspectratio > 1) {
-        sizehint = QSizeF(contentSize().height(), contentSize().height());
-    } else {
-        sizehint = QSizeF(contentSize().width(), contentSize().width());
-    }
-    return sizehint;
-}
-
 void Battery::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {
@@ -114,6 +101,11 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
         } else {
             kDebug() << "Huge FormFactor";
         }
+    }
+
+    if (constraints & Plasma::SizeConstraint && m_theme) {
+        m_theme->resize(contentSize().toSize());
+        update();
     }
     updateGeometry();
 }
