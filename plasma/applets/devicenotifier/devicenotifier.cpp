@@ -37,32 +37,13 @@ using namespace Plasma;
 
 
 DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent, args),m_dialog(0)
+    : Plasma::Applet(parent, args),m_icon("multimedia-player"),m_dialog(0)
 {
     setHasConfigurationInterface(true);
-    m_layout = new Plasma::HBoxLayout(this);
-    m_layout->setMargin(0);
-    m_layout->setSpacing(0);
-    m_label=new Plasma::Label(this);
-    m_label->setText(i18n("Welcome to Device Notifier \n Plug a device to test"));
-    m_label->setPen(QPen(Qt::white));
-    setSize(m_label->geometry().width(),m_label->geometry().height());
-    m_time=5;
-    m_height=150;
-
-    SolidEngine = dataEngine("hotplug");
-    m_udi="";
-    icon = false;
-    first=true;
     
-    m_font = QApplication::font();
-    m_font.setWeight(QFont::Bold);
-
-
-    //connect the timer to MoveDown Animation
-    t=new QTimer(this);
-    connect(t,SIGNAL(timeout()),this,SLOT(moveDown()));
-
+    setSize(128,128);
+    SolidEngine = dataEngine("hotplug");
+    
     //connect to engine when a device is plug
     connect(SolidEngine, SIGNAL(newSource(const QString&)),this, SLOT(SourceAdded(const QString&)));
     updateGeometry();
@@ -74,28 +55,13 @@ DeviceNotifier::~DeviceNotifier()
 {
 }
 
-void DeviceNotifier::hideNotifier(QGraphicsItem * item)
+void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
 {
-    icon=false; 
-    item->hide();
+    Q_UNUSED(option)
+    Q_UNUSED(rect)
+    p->setRenderHint(QPainter::SmoothPixmapTransform);
+    p->drawPixmap(rect,m_icon.pixmap(rect.size()));
 }
-
-void DeviceNotifier::moveUp()
-{
-    t->start(m_time*1000);
-    disconnect(Phase::self(),SIGNAL(movementComplete(QGraphicsItem *)),this,SLOT(hideNotifier(QGraphicsItem *)));
-    show();
-    Phase::self()->moveItem(this, Phase::SlideIn,QPoint(geometry().x(),geometry().y()-m_height));
-}
-
-
-void DeviceNotifier::moveDown()
-{
-    t->stop();
-    Phase::self()->moveItem(this, Phase::SlideOut,QPoint(geometry().x(),geometry().y()+m_height));
-    connect(Phase::self(),SIGNAL(movementComplete(QGraphicsItem *)),this,SLOT(hideNotifier(QGraphicsItem *)));
-}
-
 
 void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data data)
 {
@@ -105,29 +71,8 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
 	desktop_files=data["predicateFiles"].toStringList();
 	kDebug()<<data["icon"].toString();
 	QString icon_temp = data["icon"].toString();
-
-	if (first) {
-	    first=false;
-	    delete m_label;
-	    m_icon=new Plasma::Icon(KIcon(icon_temp),"",this);
-	    m_icon->setAlignment(Qt::AlignHCenter | Qt::AlignCenter);
-	    m_label=new Plasma::Label(this);
-	}
-
-	m_icon->setIcon(KIcon(icon_temp));
-	icon = true;
-	device_name=i18n("A new device has been detected: \n");
-	device_name+=data["text"].toString();
-	m_label->setPen(QPen(Qt::white));
-	m_label->setText(device_name);
-
-	m_layout->insertItem(0,m_icon);
-	
-	//FIXME Problem with updating layout of applet.Why calling updadeGeometry of the label afeter applet.
-	updateGeometry();
-	m_label->updateGeometry();
-	moveUp();
-     }
+	m_icon=KIcon(icon_temp);
+    }
 }
 
 void DeviceNotifier::SourceAdded(const QString& source)
@@ -140,11 +85,13 @@ void DeviceNotifier::SourceAdded(const QString& source)
 void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
-    if (icon) {
+    /*if (icon) {
 	kDebug()<<"DeviceNotifier:: call Solid Ui Server with params :"<<m_udi<<","<<desktop_files;
 	QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
 	QDBusReply<void> reply = soliduiserver.call("showActionsDialog", m_udi,desktop_files);
-    }
+    }*/
+    m_icon=KIcon("multimedia-player");
+    
 }
 
 void DeviceNotifier::showConfigurationInterface()
@@ -171,10 +118,15 @@ void DeviceNotifier::configAccepted()
     m_height=ui.spinHeight->value();
 }
 
-/*QSizeF DeviceNotifier::contentSizeHint() const
+QSizeF DeviceNotifier::contentSizeHint() const
 {
     kDebug() << "content size hint is being asked for and we return" << size();
-    return QSize(m_layout->geometry().width(),m_layout->geometry().height());
-}*/
+
+    QSizeF sizeHint = contentSize();
+    int max = qMax(sizeHint.width(), sizeHint.height());
+    sizeHint = QSizeF(max, max);
+    return sizeHint;
+}
+
 
 #include "devicenotifier.moc"

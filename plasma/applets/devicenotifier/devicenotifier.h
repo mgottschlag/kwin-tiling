@@ -50,27 +50,17 @@ class DeviceNotifier : public Plasma::Applet
         ~DeviceNotifier();
 
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
-	//QSizeF contentSizeHint() const;
-	void moveUp();
-
+	QSizeF contentSizeHint() const;
+	void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
     public slots:
         void SourceAdded(const QString &name);
         void dataUpdated(const QString &source, Plasma::DataEngine::Data data);
-        void moveDown();
-        void hideNotifier(QGraphicsItem * item);
-	void showConfigurationInterface();
+        void showConfigurationInterface();
 	void configAccepted();
 
     private:
-        Plasma::Label * m_label;
-	Plasma::Icon * m_icon;
+        KIcon m_icon;
         QFont m_font;
-		
-        Plasma::HBoxLayout *m_layout;
-        bool icon;
-	bool first;
-
-        QTimer *t;
         Plasma::DataEngine* SolidEngine;
         QStringList desktop_files;
         QString m_udi;
