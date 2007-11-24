@@ -38,6 +38,7 @@ namespace Plasma
     class ProgressBar;
 } // namespace Plasma
 
+class QStandardItemModel;
 class KDialog;
 
 class DeviceNotifier : public Plasma::Applet
@@ -53,22 +54,18 @@ class DeviceNotifier : public Plasma::Applet
 	QSizeF contentSizeHint() const;
 	void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
     public slots:
-        void SourceAdded(const QString &name);
+        void onSourceAdded(const QString &name);
+        void onSourceRemoved(const QString &name);
         void dataUpdated(const QString &source, Plasma::DataEngine::Data data);
         void showConfigurationInterface();
 	void configAccepted();
 
     private:
         KIcon m_icon;
-        QFont m_font;
-        Plasma::DataEngine* SolidEngine;
-        QStringList desktop_files;
-        QString m_udi;
-        QString device_name;
-	int m_pixelSize;
-	int m_height;
-	int m_time;
-	KDialog *m_dialog;
+        Plasma::DataEngine *m_solidEngine;
+        QStandardItemModel *m_hotplugModel;
+
+        KDialog *m_dialog;
         /// Designer Config file
         Ui::solidNotifierConfig ui;
 

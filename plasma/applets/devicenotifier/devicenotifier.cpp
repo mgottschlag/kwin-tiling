@@ -22,6 +22,7 @@
 #include <QPainter>
 #include <QColor>
 #include <QApplication>
+#include <QStandardItemModel>
 
 #include <plasma/layouts/hboxlayout.h>
 #include <plasma/widgets/label.h>
@@ -37,18 +38,24 @@ using namespace Plasma;
 
 
 DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent, args),m_icon("multimedia-player"),m_dialog(0)
+    : Plasma::Applet(parent, args),
+      m_icon("multimedia-player"),
+      m_hotplugModel(new QStandardItemModel(this)),
+      m_dialog(0)
 {
     setHasConfigurationInterface(true);
-    
+
     setSize(128,128);
-    SolidEngine = dataEngine("hotplug");
-    
+    m_solidEngine = dataEngine("hotplug");
+
     //connect to engine when a device is plug
-    connect(SolidEngine, SIGNAL(newSource(const QString&)),this, SLOT(SourceAdded(const QString&)));
+    connect(m_solidEngine, SIGNAL(newSource(const QString&)),
+            this, SLOT(onSourceAdded(const QString&)));
+    connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
+            this, SLOT(onSourceRemoved(const QString&)));
     updateGeometry();
     update();
-    
+
 }
 
 DeviceNotifier::~DeviceNotifier()
@@ -66,20 +73,27 @@ void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data data)
 {
     if (data.size()>0) {
-
-	kDebug()<<"DeviceNotifier:: "<<data[source].toString();
-	desktop_files=data["predicateFiles"].toStringList();
-	kDebug()<<data["icon"].toString();
-	QString icon_temp = data["icon"].toString();
-	m_icon=KIcon(icon_temp);
+        // TODO: Update model
+	//kDebug()<<"DeviceNotifier:: "<<data[source].toString();
+	//desktop_files=data["predicateFiles"].toStringList();
+	//kDebug()<<data["icon"].toString();
+	//QString icon_temp = data["icon"].toString();
+	//m_icon = KIcon(icon_temp);
     }
 }
 
-void DeviceNotifier::SourceAdded(const QString& source)
+void DeviceNotifier::onSourceAdded(const QString& source)
 {
     kDebug()<<"DeviceNotifier:: source added"<<source;
-    m_udi = source;
-    SolidEngine->connectSource(source, this);
+    // TODO: Update model
+    m_solidEngine->connectSource(source, this);
+
+
+}
+
+void DeviceNotifier::onSourceRemoved(const QString &name)
+{
+    // TODO: Update model
 }
 
 void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -90,12 +104,12 @@ void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
 	QDBusReply<void> reply = soliduiserver.call("showActionsDialog", m_udi,desktop_files);
     }*/
-    m_icon=KIcon("multimedia-player");
-    
+    m_icon = KIcon("multimedia-player");
 }
 
 void DeviceNotifier::showConfigurationInterface()
 {
+#if 0
      if (m_dialog == 0) {
 	kDebug()<<"DeviceNotifier:: Enter in configuration interface";
      	m_dialog = new KDialog;
@@ -109,13 +123,16 @@ void DeviceNotifier::showConfigurationInterface()
       }
       ui.spinHeight->setValue(m_height);
       m_dialog->show();
+#endif
 }
 
 void DeviceNotifier::configAccepted()
 {
+#if 0
     kDebug()<<"DeviceNotifier:: Config Accepted with params"<<ui.spinTime->value()<<","<<ui.spinHeight->value();
     m_time=ui.spinTime->value();
     m_height=ui.spinHeight->value();
+#endif
 }
 
 QSizeF DeviceNotifier::contentSizeHint() const
@@ -127,6 +144,5 @@ QSizeF DeviceNotifier::contentSizeHint() const
     sizeHint = QSizeF(max, max);
     return sizeHint;
 }
-
 
 #include "devicenotifier.moc"
