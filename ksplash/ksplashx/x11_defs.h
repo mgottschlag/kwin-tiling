@@ -2,7 +2,7 @@
  *   Copyright (C) 2007 Luboš Luňák <l.lunak@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
- *   it under the terms of the GNU Library General Public License version 2
+ *   it under the terms of the GNU General Public License version 2
  *   or later as published by the Free Software Foundation
  *
  *   This program is distributed in the hope that it will be useful,
