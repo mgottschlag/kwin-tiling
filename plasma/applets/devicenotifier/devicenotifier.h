@@ -25,6 +25,7 @@
 #include <plasma/phase.h>
 #include <KIcon>
 #include <QTimer>
+#include <QListView>
 
 #include "ui_deviceNotifierConfig.h"
 
@@ -65,6 +66,9 @@ class DeviceNotifier : public Plasma::Applet
         Plasma::DataEngine *m_solidEngine;
         QStandardItemModel *m_hotplugModel;
 
+	QListView *m_listView;
+	QWidget *m_widget;
+	QVBoxLayout *m_layout;
         KDialog *m_dialog;
         /// Designer Config file
         Ui::solidNotifierConfig ui;

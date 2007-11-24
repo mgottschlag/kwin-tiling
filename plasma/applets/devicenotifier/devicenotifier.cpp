@@ -23,6 +23,9 @@
 #include <QColor>
 #include <QApplication>
 #include <QStandardItemModel>
+#include <QGraphicsView>
+#include <QGraphicsSceneMouseEvent>
+
 
 #include <plasma/layouts/hboxlayout.h>
 #include <plasma/widgets/label.h>
@@ -34,18 +37,46 @@
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
 
+#include <solid/device.h>
+
 using namespace Plasma;
 
 
 DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
-      m_icon("multimedia-player"),
+      m_icon(""),
       m_hotplugModel(new QStandardItemModel(this)),
-      m_dialog(0)
+      m_dialog(0)    
 {
     setHasConfigurationInterface(true);
+    
+    //we display the icon corresponding to the computer
+    Solid::Device device=Solid::Device::allDevices()[0];
+   
+    while (device.parent().isValid())
+    {
+	device=device.parent();
+    }
+    m_icon=KIcon(device.icon());
+
+    m_widget= new QWidget(0,Qt::Window);
+    m_listView= new QListView(m_widget);
+    QVBoxLayout *m_layout = new QVBoxLayout();
+    m_layout->setSpacing(0);
+    m_layout->setMargin(0);
+    
+    m_listView->setModel(m_hotplugModel);
+    m_widget->setFocusPolicy(Qt::NoFocus);
+    
+    m_layout->addWidget(m_listView);
+    m_widget->setLayout(m_layout);
+    
+    m_widget->setWindowFlags(m_listView->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
+    m_widget->adjustSize();
+
 
     setSize(128,128);
+
     m_solidEngine = dataEngine("hotplug");
 
     //connect to engine when a device is plug
@@ -98,13 +129,16 @@ void DeviceNotifier::onSourceRemoved(const QString &name)
 
 void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    Q_UNUSED(event);
-    /*if (icon) {
-	kDebug()<<"DeviceNotifier:: call Solid Ui Server with params :"<<m_udi<<","<<desktop_files;
-	QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
-	QDBusReply<void> reply = soliduiserver.call("showActionsDialog", m_udi,desktop_files);
-    }*/
-    m_icon = KIcon("multimedia-player");
+    QPointF scenePos = mapToScene(boundingRect().topLeft());
+    QWidget *viewWidget = event->widget() ? event->widget()->parentWidget() : 0;
+    QGraphicsView *view = qobject_cast<QGraphicsView*>(viewWidget);
+    if (view) {
+	QPoint viewPos = view->mapFromScene(scenePos);
+	QPoint globalPos = view->mapToGlobal(viewPos);
+	globalPos.ry() -= m_widget->height(); 
+	m_widget->move(globalPos);
+    }
+    m_widget->show();
 }
 
 void DeviceNotifier::showConfigurationInterface()
