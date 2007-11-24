@@ -202,17 +202,17 @@ NICList* findNICs()
          tmp->state= ((flags & IFF_UP) == IFF_UP) ? upMessage : downMessage;
 
          if ((flags & IFF_BROADCAST) == IFF_BROADCAST)
-            tmp->type=i18n("Broadcast");
+            tmp->type=i18nc("@item:intext Mode of network card", "Broadcast");
          else if ((flags & IFF_POINTOPOINT) == IFF_POINTOPOINT)
-            tmp->type=i18n("Point to Point");
+            tmp->type=i18nc("@item:intext Mode of network card", "Point to Point");
 #ifndef _AIX
          else if ((flags & IFF_MULTICAST) == IFF_MULTICAST)
-            tmp->type=i18n("Multicast");
+            tmp->type=i18nc("@item:intext Mode of network card", "Multicast");
 #endif
          else if ((flags & IFF_LOOPBACK) == IFF_LOOPBACK)
-            tmp->type=i18n("Loopback");
+            tmp->type=i18nc("@item:intext Mode of network card", "Loopback");
          else
-            tmp->type=i18n("Unknown");
+            tmp->type=i18nc("@item:intext Mode of network card", "Unknown");
 
          tmp->addr=inet_ntoa(sinptr->sin_addr);
 
@@ -224,7 +224,7 @@ NICList* findNICs()
             tmp->netmask=inet_ntoa(sinptr->sin_addr);
          }
          else
-            tmp->netmask=i18n("Unknown");
+            tmp->netmask=i18nc("Unknown network mask", "Unknown");
 
 
          ifcopy=*ifr;
@@ -246,7 +246,7 @@ NICList* findNICs()
 #endif
          if (result!=0)
          {
-            tmp->HWaddr = i18n("Unknown");
+            tmp->HWaddr = i18nc("Unknown HWaddr", "Unknown");
          }
 
          nl->append(tmp);
