@@ -59,6 +59,7 @@ class DeviceNotifier : public Plasma::Applet
 
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
 	QSizeF contentSizeHint() const;
+	void hoverEnterEvent ( QGraphicsSceneHoverEvent  *event);
 	void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
     public slots:
         void onSourceAdded(const QString &name);
@@ -66,6 +67,7 @@ class DeviceNotifier : public Plasma::Applet
         void dataUpdated(const QString &source, Plasma::DataEngine::Data data);
         void showConfigurationInterface();
 	void configAccepted();
+	void slotOnItemDoubleclicked(const QModelIndex & );
 
     private:
         QModelIndex indexForUdi(const QString &udi) const;

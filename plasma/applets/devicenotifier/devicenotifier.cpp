@@ -31,6 +31,7 @@
 #include <plasma/widgets/label.h>
 #include <plasma/widgets/widget.h>
 #include <plasma/widgets/icon.h>
+#include <plasma/containment.h>
 
 #include <KDialog>
 
@@ -74,6 +75,20 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     m_widget->setWindowFlags(m_listView->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
     m_widget->adjustSize();
 
+    /*QPointF scenePos = mapToScene(boundingRect().topLeft());
+    QGraphicsScene * scene=containment()->scene();
+    if (scene)
+    {
+	QList<QGraphicsView *> list=scene->views();
+	kDebug()<<"size"<<list.size();
+	QGraphicsView *view=list[0];
+	if (view) {
+	    QPoint viewPos = view->mapFromScene(scenePos);
+	    QPoint globalPos = view->mapToGlobal(viewPos);
+	    globalPos.ry() -= m_widget->height(); 
+	    m_widget->move(globalPos);
+	}
+    }*/
 
     setSize(128,128);
 
@@ -84,6 +99,9 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
             this, SLOT(onSourceAdded(const QString&)));
     connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(onSourceRemoved(const QString&)));
+    
+    connect(m_listView,SIGNAL(doubleClicked ( const QModelIndex & )),this,SLOT(slotOnItemDoubleclicked( const QModelIndex & )));
+
     updateGeometry();
     update();
 
@@ -111,9 +129,9 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
         m_hotplugModel->setData(index, data["text"], Qt::DisplayRole);
         m_hotplugModel->setData(index, KIcon(data["icon"].toString()), Qt::DecorationRole);
 
-        //QString icon_temp = data["icon"].toString();
-	//m_icon = KIcon(icon_temp);
     }
+    m_widget->show();
+
 }
 
 void DeviceNotifier::onSourceAdded(const QString& name)
@@ -134,6 +152,9 @@ void DeviceNotifier::onSourceRemoved(const QString &name)
     QModelIndex index = indexForUdi(name);
     Q_ASSERT(index.isValid());
     m_hotplugModel->removeRow(index.row());
+    if (m_hotplugModel->rowCount()==0) {
+	m_widget->hide();
+    }
 }
 
 QModelIndex DeviceNotifier::indexForUdi(const QString &udi) const
@@ -146,13 +167,20 @@ QModelIndex DeviceNotifier::indexForUdi(const QString &udi) const
             return index;
         }
     }
+    //Is it possible to go here?no...
+    return QModelIndex();
 }
-
 
 void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    QPointF scenePos = mapToScene(boundingRect().topLeft());
+    Q_UNUSED(event)
+    m_widget->show();
+}
+
+void DeviceNotifier::hoverEnterEvent ( QGraphicsSceneHoverEvent  * event )
+{
     QWidget *viewWidget = event->widget() ? event->widget()->parentWidget() : 0;
+    QPointF scenePos = mapToScene(boundingRect().topLeft());
     QGraphicsView *view = qobject_cast<QGraphicsView*>(viewWidget);
     if (view) {
 	QPoint viewPos = view->mapFromScene(scenePos);
@@ -160,7 +188,6 @@ void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
 	globalPos.ry() -= m_widget->height(); 
 	m_widget->move(globalPos);
     }
-    m_widget->show();
 }
 
 void DeviceNotifier::showConfigurationInterface()
@@ -193,12 +220,20 @@ void DeviceNotifier::configAccepted()
 
 QSizeF DeviceNotifier::contentSizeHint() const
 {
-    kDebug() << "content size hint is being asked for and we return" << size();
-
     QSizeF sizeHint = contentSize();
     int max = qMax(sizeHint.width(), sizeHint.height());
     sizeHint = QSizeF(max, max);
     return sizeHint;
+}
+
+void DeviceNotifier::slotOnItemDoubleclicked(const QModelIndex & index)
+{
+    m_widget->hide();
+    QString udi=QString(m_hotplugModel->data(index, SolidUdiRole).toString());
+    QStringList desktop_files=m_hotplugModel->data(index, PredicateFilesRole).toStringList();
+    kDebug()<<"DeviceNotifier:: call Solid Ui Server with params :"<<udi<<","<<desktop_files;
+    QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
+    QDBusReply<void> reply = soliduiserver.call("showActionsDialog", udi,desktop_files);
 }
 
 #include "devicenotifier.moc"
