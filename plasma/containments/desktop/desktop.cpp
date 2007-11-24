@@ -79,7 +79,7 @@ void DefaultDesktop::init()
     connect(m_slideShowTimer, SIGNAL(timeout()), this, SLOT(nextSlide()));
     m_slideShowTimer->setInterval(cg.readEntry("slideTimer", 60) * 1000);
 
-    m_slidePath = cg.readEntry("slidepath", KStandardDirs::kde_default("wallpaper"));
+    m_slidePath = cg.readEntry("slidepath", KStandardDirs::installPath("wallpaper"));
 
     if (m_backgroundMode == kStaticBackground) {
         m_wallpaperPath = cg.readEntry("wallpaper", KStandardDirs::locate("wallpaper", "plasma-default.png"));
@@ -115,8 +115,8 @@ void DefaultDesktop::updateSlideList()
         m_slideFiles << files[i].absoluteFilePath();
     }
 
-    kDebug() << "updated slide list from contents of folder: " << m_slidePath;
-    kDebug() << m_slideFiles.size() << " files found.";
+    //kDebug() << "updated slide list from contents of folder: " << m_slidePath;
+    //kDebug() << m_slideFiles.size() << " files found.";
     if (m_currentSlide > m_slideFiles.size()) {
         m_currentSlide = 0;
     }
@@ -131,7 +131,7 @@ void DefaultDesktop::nextSlide()
     if (m_slideFiles.size() > 0)
     {
         m_wallpaperPath = m_slideFiles[m_currentSlide];
-        kDebug() << "switching slides to: " << m_wallpaperPath;
+        //kDebug() << "switching slides to: " << m_wallpaperPath;
 
         getBitmapBackground();
         update();
@@ -185,7 +185,7 @@ void DefaultDesktop::configure()
         m_configDialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
         connect( m_configDialog, SIGNAL(applyClicked()), this, SLOT(applyConfig()) );
         connect( m_configDialog, SIGNAL(okClicked()), this, SLOT(applyConfig()) );
-        m_ui->picRequester->comboBox()->insertItem(0, "http://tools.wikimedia.de/~daniel/potd/potd.php/commons/400x300");
+        m_ui->picRequester->comboBox()->insertItem(0, KStandardDirs::locate("wallpaper", "plasma-default.png"));
         m_ui->slideShowRequester->setMode(KFile::Directory);
         m_ui->slideShowRequester->setGeometry(m_ui->picRequester->frameGeometry());
         m_ui->slideShowTime->setMinimumTime(QTime(0,0,1)); // minimum to 1 seconds
