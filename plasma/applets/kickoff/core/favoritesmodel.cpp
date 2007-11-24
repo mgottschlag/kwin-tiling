@@ -84,6 +84,7 @@ public:
     {
         KConfigGroup favoritesGroup = componentData().config()->group("Favorites");
         favoritesGroup.writeEntry("FavoriteURLs",globalFavoriteList);
+        favoritesGroup.config()->sync();
     }
     static QList<QString> globalFavoriteList;
     static QSet<QString> globalFavoriteSet;
@@ -121,6 +122,9 @@ void FavoritesModel::add(const QString& url)
     foreach(FavoritesModel* model,Private::models) {
         model->d->addFavoriteItem(url);
     }
+
+    // save after each add in case we crash
+    Private::saveFavorites();
 }
 void FavoritesModel::remove(const QString& url)
 {
@@ -130,6 +134,9 @@ void FavoritesModel::remove(const QString& url)
    foreach(FavoritesModel* model,Private::models) {
        model->d->removeFavoriteItem(url);
    }
+
+    // save after each remove in case of crash or other mishaps
+    Private::saveFavorites();
 }
 bool FavoritesModel::isFavorite(const QString& url)
 {
