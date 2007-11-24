@@ -47,8 +47,8 @@ HalPower::HalPower(QObject *parent, const QStringList  & /*args */)
 {
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)),
             this, SLOT(slotDeviceRemoved(const QString &)));
-    connect(Solid::DeviceNotifier::instance(), SIGNAL(newDeviceInterface(const QString &, int)),
-            this, SLOT(slotNewDeviceInterface(const QString &, int)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)),
+            this, SLOT(slotDeviceAdded(const QString &)));
 
     m_pluggedAdapterCount = 0;
     computeAcAdapters();
@@ -458,12 +458,12 @@ void HalPower::slotButtonPressed(Solid::Button::ButtonType type)
     }
 }
 
-void HalPower::slotNewDeviceInterface(const QString &udi, int type)
+void HalPower::slotDeviceAdded(const QString &udi)
 {
-    switch (type)
+    Solid::Device *device = new Solid::Device(udi);
+    if (device->is<Solid::AcAdapter>())
     {
-    case Solid::DeviceInterface::AcAdapter:
-        m_acAdapters[udi] = new Solid::Device(udi);
+        m_acAdapters[udi] = device;
         connect(m_acAdapters[udi]->as<Solid::AcAdapter>(), SIGNAL(plugStateChanged(bool, const QString &)),
                  this, SLOT(slotPlugStateChanged(bool)));
 
@@ -472,19 +472,22 @@ void HalPower::slotNewDeviceInterface(const QString &udi, int type)
         {
             m_pluggedAdapterCount++;
         }
-        break;
-    case Solid::DeviceInterface::Battery:
-        m_batteries[udi] = new Solid::Device(udi);
+    }
+    else if (device->is<Solid::Battery>())
+    {
+        m_batteries[udi] = device;
         connect(m_batteries[udi]->as<Solid::Battery>(), SIGNAL(chargePercentChanged(int, const QString &)),
                  this, SLOT(updateBatteryStats()));
-        break;
-    case Solid::DeviceInterface::Button:
-        m_buttons[udi] = new Solid::Device(udi);
+    }
+    else if (device->is<Solid::Button>())
+    {
+        m_buttons[udi] = device;
         connect(m_buttons[udi]->as<Solid::Button>(), SIGNAL(pressed(int, const QString &)),
                  this, SLOT(slotButtonPressed(int)));
-        break;
-    default:
-        break;
+    }
+    else
+    {
+        delete device;
     }
 }
 
