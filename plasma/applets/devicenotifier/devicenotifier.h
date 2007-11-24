@@ -24,6 +24,7 @@
 #include <plasma/dataengine.h>
 #include <plasma/phase.h>
 #include <KIcon>
+#include <QModelIndex>
 #include <QTimer>
 #include <QListView>
 
@@ -51,6 +52,11 @@ class DeviceNotifier : public Plasma::Applet
         DeviceNotifier(QObject *parent, const QVariantList &args);
         ~DeviceNotifier();
 
+        enum SpecificRoles {
+            SolidUdiRole = Qt::UserRole+1,
+            PredicateFilesRole = Qt::UserRole+2
+        };
+
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
 	QSizeF contentSizeHint() const;
 	void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
@@ -62,6 +68,8 @@ class DeviceNotifier : public Plasma::Applet
 	void configAccepted();
 
     private:
+        QModelIndex indexForUdi(const QString &udi) const;
+
         KIcon m_icon;
         Plasma::DataEngine *m_solidEngine;
         QStandardItemModel *m_hotplugModel;

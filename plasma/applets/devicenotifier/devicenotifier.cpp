@@ -104,28 +104,50 @@ void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data data)
 {
     if (data.size()>0) {
-        // TODO: Update model
-	//kDebug()<<"DeviceNotifier:: "<<data[source].toString();
-	//desktop_files=data["predicateFiles"].toStringList();
-	//kDebug()<<data["icon"].toString();
-	//QString icon_temp = data["icon"].toString();
+        QModelIndex index = indexForUdi(source);
+        Q_ASSERT(index.isValid());
+
+        m_hotplugModel->setData(index, data["predicateFiles"], PredicateFilesRole);
+        m_hotplugModel->setData(index, data["text"], Qt::DisplayRole);
+        m_hotplugModel->setData(index, KIcon(data["icon"].toString()), Qt::DecorationRole);
+
+        //QString icon_temp = data["icon"].toString();
 	//m_icon = KIcon(icon_temp);
     }
 }
 
-void DeviceNotifier::onSourceAdded(const QString& source)
+void DeviceNotifier::onSourceAdded(const QString& name)
 {
-    kDebug()<<"DeviceNotifier:: source added"<<source;
+    kDebug()<<"DeviceNotifier:: source added"<<name;
+    QStandardItem *item = new QStandardItem();
+    item->setData(name, SolidUdiRole);
+    m_hotplugModel->insertRow(0, item);
+
     // TODO: Update model
-    m_solidEngine->connectSource(source, this);
+    m_solidEngine->connectSource(name, this);
 
 
 }
 
 void DeviceNotifier::onSourceRemoved(const QString &name)
 {
-    // TODO: Update model
+    QModelIndex index = indexForUdi(name);
+    Q_ASSERT(index.isValid());
+    m_hotplugModel->removeRow(index.row());
 }
+
+QModelIndex DeviceNotifier::indexForUdi(const QString &udi) const
+{
+    int rowCount = m_hotplugModel->rowCount();
+    for (int i=0; i<rowCount; ++i) {
+        QModelIndex index = m_hotplugModel->index(i, 0);
+        QString itemUdi = m_hotplugModel->data(index, SolidUdiRole).toString();
+        if (itemUdi==udi) {
+            return index;
+        }
+    }
+}
+
 
 void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
