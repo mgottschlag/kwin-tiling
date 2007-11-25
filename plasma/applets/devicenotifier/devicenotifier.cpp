@@ -64,16 +64,30 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     m_icon=KIcon(device.icon());
 
     m_widget= new QWidget(0,Qt::Window);
+    m_widget->setStyleSheet("{ border : 0px }");
     m_listView= new ListView(m_widget);
     QVBoxLayout *m_layout = new QVBoxLayout();
     m_layout->setSpacing(0);
     m_layout->setMargin(0);
     
+    QLabel *Label = new QLabel(i18n("Recently devices plugged : "));
+    QLabel *Icon = new QLabel();
+    Icon->setPixmap(KIcon("emblem-mounted").pixmap(ItemDelegate::ICON_SIZE, ItemDelegate::ICON_SIZE));
+    Icon->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    
+    QHBoxLayout *m_layout2 = new QHBoxLayout();
+    m_layout2->setSpacing(0);
+    m_layout2->setMargin(0);
+
+    m_layout2->addWidget(Icon);
+    m_layout2->addWidget(Label);
+
     m_listView->setModel(m_hotplugModel);
     ItemDelegate *delegate = new ItemDelegate;
     m_listView->setItemDelegate(delegate);
     m_widget->setFocusPolicy(Qt::NoFocus);
-    
+
+    m_layout->addLayout(m_layout2);
     m_layout->addWidget(m_listView);
     m_widget->setLayout(m_layout);
     
