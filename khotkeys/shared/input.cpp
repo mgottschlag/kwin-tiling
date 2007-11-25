@@ -24,7 +24,6 @@
 #include <kkeyserver.h>
 #include <kdebug.h>
 #include <kapplication.h>
-#include <kdeversion.h>
 #include <QTimer>
 
 #include "khotkeysglobal.h"

@@ -31,7 +31,6 @@
 #include <QtGui/QFont>
 #include <QtGui/QColor>
 #include <KDE/KUrl>
-#include <kdeversion.h>
 #include <fontconfig/fontconfig.h>
 #include "KfiConstants.h"
 #include "Misc.h"
