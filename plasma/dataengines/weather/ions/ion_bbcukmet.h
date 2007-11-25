@@ -19,8 +19,8 @@
 
 /* Ion for BBC Weather from UKMET Office */
 
-#ifndef _ION_UKMET_H
-#define _ION_UKMET_H
+#ifndef _ION_BBCUKMET_H
+#define _ION_BBCUKMET_H
 
 #include <QtXml/QXmlStreamReader>
 #include <QtCore/QStringList>
@@ -53,7 +53,7 @@ public:
     UKMETIon(QObject *parent, const QVariantList &args);
     ~UKMETIon();
     void init();  // Setup the city location, fetching the correct URL name.
-    void option(int option, QVariant value);
+    void option(int option, const QVariant& value);
     bool updateIonSource(const QString& source);
     void updateWeather(const QString& source); // Sync data source with Applet
 

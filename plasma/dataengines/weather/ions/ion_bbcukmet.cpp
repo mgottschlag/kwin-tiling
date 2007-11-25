@@ -365,7 +365,7 @@ bool UKMETIon::readObservationXMLData(QString& key, QXmlStreamReader& xml)
 }
 
 // User toggleable values set from the dataengine <-> Plasma Applet
-void UKMETIon::option(int option, QVariant value)
+void UKMETIon::option(int option, const QVariant& value)
 {
     switch (option) {
     case IonInterface::UNITS:

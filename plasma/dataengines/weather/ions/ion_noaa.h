@@ -70,7 +70,7 @@ public:
     NOAAIon(QObject *parent, const QVariantList &args);
     ~NOAAIon();
     void init(void);  // Setup the city location, fetching the correct URL name.
-    void option(int option, QVariant value);
+    void option(int option, const QVariant& value);
     bool updateIonSource(const QString& source); // Sync data source with Applet
     void updateWeather(const QString& source);
 

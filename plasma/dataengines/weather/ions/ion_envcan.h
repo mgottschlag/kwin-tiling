@@ -130,7 +130,7 @@ public:
     ~EnvCanadaIon();
     void init();  // Setup the city location, fetching the correct URL name.
     bool updateIonSource(const QString& source); // Sync data source with Applet
-    void option(int option, QVariant value);
+    void option(int option, const QVariant& value);
     void updateWeather(const QString& source);
 
 protected slots:

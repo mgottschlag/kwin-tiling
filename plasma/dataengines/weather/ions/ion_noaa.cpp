@@ -378,7 +378,7 @@ void NOAAIon::parseUnknownElement(QXmlStreamReader& xml)
 }
 
 // User toggleable values set from the dataengine <-> Plasma Applet
-void NOAAIon::option(int option, QVariant value)
+void NOAAIon::option(int option, const QVariant& value)
 {
     switch (option) {
     case IonInterface::UNITS:

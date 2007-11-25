@@ -78,7 +78,7 @@ public:
     /**
     * Reimplement to set the wanted options for the ion such as unit and time, and wind speed formats.
     */
-    virtual void option(int option, QVariant value) = 0;
+    virtual void option(int option, const QVariant& value) = 0;
 
 public slots:
     bool updateSource(const QString& source);

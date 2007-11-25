@@ -854,7 +854,7 @@ void EnvCanadaIon::parseUnknownElement(QXmlStreamReader& xml)
 }
 
 // User toggleable values set from the dataengine <-> Plasma Applet
-void EnvCanadaIon::option(int option, QVariant value)
+void EnvCanadaIon::option(int option, const QVariant& value)
 {
     switch (option) {
     case IonInterface::UNITS:

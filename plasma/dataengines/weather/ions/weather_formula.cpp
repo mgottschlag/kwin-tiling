@@ -17,8 +17,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-#include <math.h>
 #include "weather_formula.h"
+#include <math.h>
 
 WeatherFormula::WeatherFormula()
 {
