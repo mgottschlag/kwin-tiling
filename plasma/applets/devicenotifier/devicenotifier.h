@@ -42,6 +42,7 @@ namespace Plasma
 
 class QStandardItemModel;
 class KDialog;
+class ListView;
 
 class DeviceNotifier : public Plasma::Applet
 {
@@ -76,7 +77,7 @@ class DeviceNotifier : public Plasma::Applet
         Plasma::DataEngine *m_solidEngine;
         QStandardItemModel *m_hotplugModel;
 
-	QListView *m_listView;
+	ListView *m_listView;
 	QWidget *m_widget;
 	QVBoxLayout *m_layout;
         KDialog *m_dialog;

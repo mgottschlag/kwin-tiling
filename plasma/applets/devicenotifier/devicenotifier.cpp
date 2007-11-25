@@ -40,6 +40,9 @@
 
 #include <solid/device.h>
 
+#include "itemdelegate.h"
+#include "listview.h"
+
 using namespace Plasma;
 
 
@@ -61,12 +64,14 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     m_icon=KIcon(device.icon());
 
     m_widget= new QWidget(0,Qt::Window);
-    m_listView= new QListView(m_widget);
+    m_listView= new ListView(m_widget);
     QVBoxLayout *m_layout = new QVBoxLayout();
     m_layout->setSpacing(0);
     m_layout->setMargin(0);
     
     m_listView->setModel(m_hotplugModel);
+    ItemDelegate *delegate = new ItemDelegate;
+    m_listView->setItemDelegate(delegate);
     m_widget->setFocusPolicy(Qt::NoFocus);
     
     m_layout->addWidget(m_listView);
