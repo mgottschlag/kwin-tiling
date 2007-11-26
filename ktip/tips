@@ -19,8 +19,7 @@ also useful sites for major applications like
 <html>
 <p>
 KDE is translated into many languages. You can change the country and
-language with the Control Center in "Regional &amp; Accessibility"
-->."Country/Region &amp; Language".
+language with the System Settings by selecting "Regional and Language".
 </p>
 <p>For more information about KDE translations and translators, see <a
 href="http://l10n.kde.org/">http://l10n.kde.org</a>.
@@ -28,47 +27,18 @@ href="http://l10n.kde.org/">http://l10n.kde.org</a>.
 <br>
 <center>
 <img src="crystalsvg/48x48/apps/locale.png">
-<p align="right"><em>Contributed by Andrea Rizzi</em></p>
-</html>
-</tip>
-
-
-<tip category="KDE2">
-<html>
-<p>
-You can minimize all your windows on the current desktop at once and
-thus reach the desktop itself by clicking on the desktop icon on the
-panel.</p>
-<p>If you do not currently have the icon there, you can add it by 
-right clicking on the panel, and then selecting 
-Add Applet to Panel->Show Desktop.
-<br>
-<center>
-<img src="crystalsvg/48x48/filesystems/desktop.png">
 </center>
 </html>
 </tip>
 
-<tip category="KDE|Win2Unix">
-<html>
-<p>
-If you temporarily need more screen real-estate, you can <strong>"fold
-in" the panel</strong> by clicking on one of the arrows at the ends of
-the panel. Alternatively, make it hide automatically by changing the
-settings in the Control Center (Desktop->Panels, Hiding tab).
-</p>
-<p>For more information about Kicker, the KDE Panel, see <a
-href="help:/kicker">the Kicker Handbook</a>.
-</p>
-</html>
-</tip>
+
 
 
 <tip category="KDE|Win2Unix">
 <html>
 <p>
 The program Klipper, which is started by default and resides in the
-system tray at the right end of the panel, keeps a number of text
+system tray, keeps a number of text
 selections around. These can be retrieved or even (in the case of
 URLs, for example) be executed.</p>
 
@@ -81,27 +51,8 @@ href="help:/klipper">the Klipper Handbook</a></p>
 </html>
 </tip>
 
-<tip category="KDE|Win2Unix">
-<html>
-<p>
-The window list, which is accessible via an icon on the panel, provides a
-quick overview of all windows on all virtual desktops. Alternatively,
-press Alt+F5 to display the window list.</p><br>
-<center>
-<img src="crystalsvg/48x48/apps/window_list.png">
-</center>
-</html>
-</tip>
 
-<tip category="Konqueror">
-<html>
-<p>The <b>"Location" label</b> in Konqueror is draggable.</p>
-<p>This means you can create a shortcut (e.g. on the desktop or the panel)
-by dragging it there with the mouse. You can also drop it on to Konsole or
-edit fields to get the URL typed in there (as you can with links or files
-displayed in Konqueror).</p>
-</html>
-</tip>
+
 
 <tip category="KDE2|Desktop">
 <html>
@@ -109,7 +60,7 @@ displayed in Konqueror).</p>
 Double-clicking on the titlebar of any window "shades" it, which means
 that only the titlebar stays visible. Double-clicking the titlebar a
 second time will make the window visible again.<br>
-Of course, you can change this behavior within the Control Center.
+Of course, you can change this behavior within the System Settings.
 </p>
 <p>For more information about ways to manipulate windows in KDE, take
 a look at <a href="help:/khelpcenter/userguide/windows-how-to-work.html">the KDE User Guide</a>.</p>
@@ -129,29 +80,9 @@ User Guide</a>.</p>
 </html>
 </tip>
 
-<tip category="Keyboard">
-<html>
-<p>
-You can assign <b>keyboard shortcuts</b> to your favorite applications in the
-KDE menu editor (K-menu->Settings->Menu Editor). Select the application
-(e.g. Konsole), then click on the image next to "Current shortcut
-key:". Press the key combination you want (say, Ctrl+Alt+K).
-<p>That is it: now you can fire up Konsoles with Ctrl+Alt+K.</p>
-</html>
-</tip>
 
-<tip category="KDE2|Win2Unix">
-<html>
-<p>
-You can configure the number of virtual desktops by adjusting the "Number
-of desktops" slider in the Control Center (Desktop->Multiple Desktops).
-</p>
 
-<p>For more information about using virtual desktops, look at <a
-href="help:/khelpcenter/userguide/windows-how-to-work.html#using-multiple-desktops">the
-KDE User Guide</a>.</p>
-</html>
-</tip>
+
 
 <tip category="KDE|General">
 <html>
@@ -200,7 +131,7 @@ by regularly checking the web site <A
 KDE is based on a well-designed C++ foundation. C++ is a programming
 language well suited to desktop development. The KDE object model
 extends the power of C++ even further. See
- <a href="http://developer.kde.org/">http://developer.kde.org/</a>
+ <a href="http://techbase.kde.org/">http://techbase.kde.org/</a>
 for details.</p><br>
 <center><img src="oxygen/48x48/apps/konqueror.png"></center>
 </html>
@@ -215,16 +146,6 @@ to another place, e.g. another Konqueror window or the desktop.</p>
 </html>
 </tip>
 
-<tip category="Keyboard">
-<html>
-<p>
-You can cycle through the virtual desktops by holding the Ctrl key and
-pressing Tab or Shift+Tab.</p>
-<p>For more information about using virtual desktops, look at <a
-href="help:/khelpcenter/userguide/windows-how-to-work.html#using-multiple-desktops">the
-KDE User Guide</a>.</p>
-</html>
-</tip>
 
 <tip category="General|Help">
 <html>
@@ -240,40 +161,12 @@ Guide</a>.</p>
 </html>
 </tip>
 
-<tip category="Desktop">
-<html>
-<P>Clicking with the right mouse button on panel icons or applets opens a
-popup menu that allows you to move or remove the item, or add a new
-one.</P>
-<p>For more information about customizing Kicker, the KDE Panel, see
-<a href="help:/kicker">the Kicker Handbook</a>.</p>
-</html>
-</tip>
 
 <tip category="General">
 <html>
 <P>If a toolbar is not large enough to display all buttons on it, you can
 click on the small arrow at the far right end of the toolbar to see
 the remaining buttons.</P>
-</html>
-</tip>
-
-
-<tip category="General">
-<html>
-<P>You can run non-KDE applications without problems on a KDE
-desktop. It is even possible to integrate them into the menu system.
-The KDE program "KAppfinder" will look for known programs to integrate
-them into the menu.</P>
-</html>
-</tip>
-
-<tip  category="General|Desktop">
-<html>
-<p>You can quickly move the panel to another screen edge by "grabbing" it with
-the left mouse button and moving it to where you want it.</p>
-<p>For more information about personalizing Kicker, the KDE Panel,
-take a look at <a href="help:/kicker">the Kicker Handbook</a>.</p>
 </html>
 </tip>
 
@@ -287,69 +180,7 @@ of games.</p><br>
 </html>
 </tip>
 
-<tip category="LookNFeel">
-<html>
-<p>You can <strong>quickly change the background</strong> image of the
-desktop by dragging a graphics image from a Konqueror window to the
-desktop background.</p>
-</html>
-</tip>
 
-<tip category="LookNFeel">
-<html>
-<p>You can change the background color of the desktop by dragging a color
-from a color selector in any application to the desktop background.
-</p>
-</html>
-</tip>
-
-<tip category="Panel">
-<html>
-<p>
-A fast way to get your favorite application onto your panel is to
-right-click the panel (Panel Menu) and select Add to Panel->Application->whatever.
-</p>
-</html>
-</tip>
-
-
-<tip category="Panel">
-<html>
-<p>
-You can add more applets to your panel by selecting Panel
-Menu->Add->Applet from the K menu.
-</p>
-</html>
-</tip>
-
-<tip category="Panel">
-<html>
-<p>
-You can add a little command line to your panel by selecting Panel
-Menu->Add to Panel->Applet->Run Command from the K menu.
-</p>
-<p>For information about other applets available for the KDE Panel,
-take a look at <a href="help:/kicker">the Kicker Handbook</a>.</p>
-</html>
-</tip>
-
-<tip category="Panel|LookNFeel">
-<html>
-<p>Want to see the local time of your friends or
-business partners <b>around the world</b>?</p>
-<p>Just press the middle mouse button on the <b>panel clock</b>.</p>
-</html>
-</tip>
-
-<tip category="Panel|LookNFeel">
-<html>
-<p>Your <b>panel clock</b> can be configured to display the time
-in <b>plain</b>, <b>digital</b>, <b>analog</b> or <b>fuzzy-style</b>
-mode.</p>
-<p>See <a href="help:/kicker/clock-applet.html">the Kicker
-Handbook</a> for more information.</p>
-</html>
-</tip>
 
 <tip category="Keyboard">
 <html>
@@ -386,31 +217,8 @@ text cursor there.</p>
 </html>
 </tip>
 
-<tip category="Keyboard|Help">
-<html>
-<p>
-You can access a <strong>man page</strong> by entering a
-hash mark (#) and the name of the man page wherever you can enter
-a URL, like in the location field of the web browser or the
-<strong>Alt+F2</strong> command-line.</p><br>
-<center>
-<img src="oxygen/48x48/apps/khelpcenter.png">
-</html>
-</tip>
 
-<tip category="Keyboard|Help">
-<html>
-<p>
-You can access an <strong>info page</strong> by entering a double hash mark (##)
- and the
-name of the info page wherever you can enter a URL, like in the URL
-line of the web browser or the <strong>Alt+F2</strong> command-line.
-</p>
-<br>
-<center>
-<img src="oxygen/48x48/apps/khelpcenter.png">
-</html>
-</tip>
+
 
 <tip category="Keyboard|Desktop">
 <html>
@@ -418,7 +226,7 @@ line of the web browser or the <strong>Alt+F2</strong> command-line.
 If you cannot access the titlebar, you can still <strong>move a window</strong>
 on the screen by holding the Alt key, clicking anywhere into the window
 and "dragging" it with the mouse.</p><br>
-<p>Of course, you can change this behavior by using the Control Center.</p>
+<p>Of course, you can change this behavior in the System Settings.</p>
 </html>
 </tip>
 
@@ -465,27 +273,13 @@ href="help:/kscd">the KsCD Handbook</a>.</p>
 </tip>
 
 
-<tip category="Keyboard|Konsole">
-<html>
-<p>
-Some people open many terminal windows just to enter <em>one single</em>
-command.</p>
-<ul>
-<li>Use <strong>Alt+F2</strong> for just firing up programs (Alt+F2 "kword") or
-<li>use Konsole tabs (Ctrl+Shift+n) if you need text output.
-</ul>
-<p>On the topic of konsole tabs, if you want to keep track of what
-task you are doing in each tab, you can rename the active tab
-by typing Ctrl+Alt+s. So now you can have a shell that you are logged
-in as root named "root".</p>
-</html>
-</tip>
+
 
 <tip category="LookNFeel">
 <html>
 <p>
 You can change the color of the window titlebars by clicking on the title bar of the
-example window in the <em>Appearance & Themes</em> module within the Control Center.
+example window in the <em>Appearance</em> module within the System Settings.
 </p>
 <p>You can use the other aspects of the example graphic to further customize the appearance of KDE on your computer.</p>
 </html>
@@ -496,7 +290,7 @@ example window in the <em>Appearance & Themes</em> module within the Control Cen
 <p>
 The difference between window manager styles and old-fashioned themes is
 that the former even reflect window titlebar color settings from the
-Control Center and might implement different features.</p>
+System Settings and might implement different features.</p>
 </html>
 </tip>
 
@@ -504,7 +298,7 @@ Control Center and might implement different features.</p>
 <html>
 <p>If you want to know when <b>the next release</b> of KDE is planned,
 look for the release schedule on <a
- href="http://developer.kde.org/">http://developer.kde.org</a>. If you only
+ href="http://techbase.kde.org/">http://techbase.kde.org</a>. If you only
 find old release schedules, there will probably be some weeks/months of
 intensive development left before the next release.</p><br>
 <center><img src="oxygen/48x48/apps/konqueror.png"></center>
@@ -534,15 +328,7 @@ completion in a UNIX shell. Use Ctrl+E to invoke it.
 </tip>
 
 
-<tip category="Panel">
-<html>
-<p>If you want another panel, to make more space for your applets and
-buttons, press right mouse button on the panel to invoke the panel menu
-and select "Add to Panel->Panel->Panel".</p><p>
-(You can then put anything on the fresh panel, adjust its size and
-so on.)</p>
-</html>
-</tip>
+
 
 <tip category="General">
 <html>
@@ -561,22 +347,10 @@ will have the choice between pasting the URL or entering that folder.</p>
 <p>
 Choose the one you want, so you do not have to write the entire path
 in the terminal window.</p>
-<p align="right"><em>Contributed by Gerard Delafond</em></p>
 </html>
 </tip>
 
-<tip category="General">
-<html>
-<p>
-You can hide mixer devices in KMix by clicking on "Hide" in the
-context menu that appears when you click with the right mouse button
-on one of the sliders.
-</p>
-<p>Take a look at <a href="help:/kmix">the KMix Handbook</a> for more
-KMix tips and tricks.</p>
-<p align="right"><em>Contributed by Stefan Schimanski</em></p>
-</html>
-</tip>
+
 
 <tip category="Konqueror">
 <html>
@@ -601,7 +375,6 @@ files as well as user-dependent configuration files are saved. If you
 work in a Konsole window, you can easily change to your home folder
 by entering the <b>cd</b> command without any parameters.
 </p>
-<p align="right"><em>Contributed by Carsten Niehaus</em></p>
 </html>
 </tip>
 
@@ -616,7 +389,6 @@ extension. Executable files in KDE are represented by the gear icon
 in Konqueror. In the Konsole window, they are often colored red
 (depending on your settings).
 </p>
-<p align="right"><em>Contributed by Carsten Niehaus</em></p>
 </html>
 </tip>
 
@@ -626,7 +398,6 @@ in Konqueror. In the Konsole window, they are often colored red
 If you want to make your desktop look more interesting, you can find
 additional themes, widget styles, window decorations and more at <a href="http://kde-look.org/">kde-look.org</a>.
 </p>
-<p align="right"><em>Contributed by Carsten Niehaus</em></p>
 </html>
 </tip>
 
@@ -638,7 +409,6 @@ text? Try selecting some text with the left mouse button and click
 elsewhere with the middle mouse button. The selected text will be
 pasted at the click position. This even works between different programs.
 </p>
-<p align="right"><em>Contributed by Carsten Niehaus</em></p>
 </html>
 </tip>
 
@@ -663,57 +433,23 @@ just like <em>xmag</em>, with the difference that it magnifies on the fly.
 <tip category="Multimedia">
 <html>
 <p>
-Sound in KDE is coordinated by the <b>artsd</b> sound server. You can
-configure the sound server from the Control Center by selecting
-Sound &amp; Multimedia->Sound Server.
-</p>
-<p align="right"><em>Contributed by Jeff Tranter</em></p><br>
-</html>
-</tip>
-
-<tip category="Multimedia">
-<html>
-<p>
 You can associate sounds, pop up windows, and more with KDE events. This can be configured
-from the Control Center by selecting Sound &amp; Multimedia->System Notifications.
-</p>
-<p align="right"><em>Contributed by Jeff Tranter</em></p><br>
-</html>
-</tip>
-
-
-<tip category="Multimedia">
-<html>
-<p>
-Most non-KDE sound applications that do not know about the sound server can be
-run using the <b>artsdsp</b> command. When the application is run, accesses to
-the audio device will be redirected to the <b>artsd</b> sound server.
-</p>
-
-<p>
-The command format is:<br>
-<b>artsdsp</b> <em>application</em> <em>arguments</em> ...
-</p>
-<p align="right"><em>Contributed by Jeff Tranter</em></p><br>
-</html>
-</tip>
-
-
-<tip category="Panel">
-<html>
-<p>
-If you hold down the <b>Shift</b> key while moving a panel item (like a button
-or applet), it will move the other items as well.
+from the System Settings by selecting Notifications.
 </p>
 </html>
 </tip>
+
+
+
+
+
 
 <tip category="General">
 <html>
 <p>
-KDE's 'kioslaves' do not just work in Konqueror: you can use network
+KDE is a fully network transparent environment: you can use network
 URLs in any KDE application. For example, you can enter a URL like
-ftp://www.server.com/myfile in the Kate Open dialog, and Kate will
+ftp://www.server.com/myfile in the KWrite Open dialog, and KWrite will
 open the file and save changes back to the FTP server when you click
 on 'Save.'
 </p>
@@ -729,7 +465,7 @@ Konqueror's location bar.
 </p>
 <p>
 In fact, all KDE applications support fish:// URLs - try entering one
-in the Open dialog of Kate, for instance.
+in the Open dialog of KWrite, for instance.
 </p>
 </html>
 </tip>
@@ -773,7 +509,7 @@ is a lowercase "i" instead of a question mark).
 <html>
 <p>
 KDE supports several different window focus modes: take a look in the
-Control Center, under Desktop->Window Behavior. For example, if you
+System Settings under Window Behavior. For example, if you
 use the mouse a lot, you might prefer the "Focus follows mouse" setting.
 </p>
 </html>
@@ -798,19 +534,6 @@ to view the handbook for kwrite simply type help:/kwrite.</p>
 </html>
 </tip>
 
-<tip category="LookNFeel">
-<html>
-<p>Thanks to the <a href="http://svg.kde.org" title="ksvg">KSVG
-project</a>, KDE now has full support for the Scalable Vector Graphics
-(SVG) image filetypes. You can view these images in Konqueror and even
-set an SVG image as a background for your desktop.</p>
-
-<p>There is also a great bunch of <a
-href="http://kdelook.org/index.php?xcontentmode=7" title="kdelook
-SVG">SVG wallpapers</a> for your desktop background available at <a
-href="http://kdelook.org" title="kdelook">kde-look.org</a>.</p>
-</html>
-</tip>
 
 <tip category="Konqueror">
 <html>
@@ -876,24 +599,6 @@ comprehensive calender).</p>
 </html>
 </tip>
 
-<tip category="General">
-<html>
-<p>You can use the mouse wheel to quickly perform a number of tasks;
-here are a few you might not have known of: 
-
-<ul><li>Ctrl+Mouse-Wheel in the Konqueror web browser to change the font-size,
-or in Konqueror file manager to change icon size.</li>
-
-<li>Shift+Mouse-Wheel for fast scrolling in all KDE applications.</li>
-
-<li>Mouse-Wheel over the taskbar in Kicker to quickly alternate between
-different windows.</li>
-
-<li>Mouse-Wheel over the Desktop Previewer and Pager to change
-desktop.</li></ul></p>
-
-</html>
-</tip>
 
 <tip category="Konqueror">
 <html>
@@ -932,39 +637,9 @@ someone.</p>
 </html>
 </tip>
 
-<tip category="General">
-<html>
-<p>While remembering passwords may be tedious, and writing them down
-on paper or in a text file may be insecure and untidy, KWallet is an
-application that can save and manage all of your passwords in strongly
-encrypted files, and permit access to them with the use of one master
-password.</p>
 
-<p>KWallet can be accessed from kcontrol, KDE's Control Center; from
-there, simply go to Security &amp; Privacy->KDE Wallet. For more
-information on KWallet and on how to use it, check <a
-href="help:/kwallet" title="kwallet">the handbook</a>.</p>
 
-</html>
-</tip>
 
-<tip category="Desktop">
-<html>
-<p>By pressing the Middle Mouse-Button on the desktop you can get a
-brief list of all the windows on each desktop. From here you can also
- unclutter or cascade the windows.</p>
-</html>
-</tip>
-
-<tip category="Desktop">
-<html>
-<p>Different virtual desktops can be customized individually, to a
-certain extent. For example, you can specify a particular background
-for a given desktop: Take a look in KDE's Control Center, under
-Appearance &amp; Themes->Background, or right-click on the desktop and
-select Configure Desktop.</p>
-</html>
-</tip>
 
 <tip category="Konqueror">
 <html>
@@ -986,7 +661,7 @@ some of the tabs where you might think it is useful.</p>
 You can let KDE turn the <b>NumLock</b> ON or OFF at startup.
 </p>
 <p>
-Open the Control Center, select Peripherals->Keyboard and make your
+Open the System Settings, select Keyboard &amp; Mouse and make your
  choice.
 </p>
 <p>
