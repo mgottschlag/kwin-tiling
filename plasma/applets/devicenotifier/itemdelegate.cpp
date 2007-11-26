@@ -35,6 +35,8 @@
 #include <KGlobal>
 #include <KGlobalSettings>
 
+using namespace Notifier;
+
 ItemDelegate::ItemDelegate()
 {
 }
@@ -58,7 +60,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
                                          textSize,
                                          contentRect.adjusted(0, 2, 0, 0));
     QString titleText = index.data(Qt::DisplayRole).value<QString>();
-    QString subTitleText = index.data(Qt::DisplayRole).value<QString>();
+    QString subTitleText = index.data(ActionRole).value<QString>();
 
     QRect titleRect = textRect;
 
@@ -110,11 +112,12 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
     painter->setFont(titleFont);
     painter->drawText(titleRect, Qt::AlignLeft|Qt::AlignVCenter, titleText);
 
-    if (hover) {
-        // draw sub-title
-        painter->setFont(subTitleFont);
-        painter->drawText(subTitleRect, Qt::AlignLeft|Qt::AlignVCenter, subTitleText);
+    // draw sub-title
+    painter->setFont(subTitleFont);
+    if (!hover) {
+	painter->setPen(QPen(Qt::gray));
     }
+    painter->drawText(subTitleRect, Qt::AlignLeft|Qt::AlignVCenter, subTitleText);
 
     painter->restore();
     

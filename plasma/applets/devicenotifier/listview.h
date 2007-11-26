@@ -22,7 +22,9 @@
 
 // Qt
 #include <QAbstractItemView>
-
+namespace Notifier
+{
+    
 class ListView : public QAbstractItemView
 {
 Q_OBJECT
@@ -60,4 +62,5 @@ private:
     Private * const d;
 };
 
+}
 #endif // LISTVIEW_H

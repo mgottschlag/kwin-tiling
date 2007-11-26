@@ -32,6 +32,8 @@
 
 #include "itemdelegate.h"
 
+using namespace Notifier;
+
 class ListView::Private
 {
 public:

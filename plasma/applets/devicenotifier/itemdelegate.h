@@ -23,6 +23,17 @@
 // Qt
 #include <QtGui/QAbstractItemDelegate>
 
+namespace Notifier
+{
+
+    enum SpecificRoles {
+            SolidUdiRole = Qt::UserRole+1,
+            PredicateFilesRole = Qt::UserRole+2,
+	    ActionRole = Qt::UserRole+3
+    };
+
+
+
 class ItemDelegate : public QAbstractItemDelegate
 {
 public:
@@ -55,4 +66,5 @@ private:
     QFont fontForSubTitle(const QFont& titleFont) const;
 };
 
+}
 #endif // ITEMDELEGATE_H 

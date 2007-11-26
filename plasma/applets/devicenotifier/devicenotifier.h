@@ -42,7 +42,11 @@ namespace Plasma
 
 class QStandardItemModel;
 class KDialog;
-class ListView;
+
+namespace Notifier
+{
+    class ListView;
+}
 
 class DeviceNotifier : public Plasma::Applet
 {
@@ -53,11 +57,7 @@ class DeviceNotifier : public Plasma::Applet
         DeviceNotifier(QObject *parent, const QVariantList &args);
         ~DeviceNotifier();
 
-        enum SpecificRoles {
-            SolidUdiRole = Qt::UserRole+1,
-            PredicateFilesRole = Qt::UserRole+2
-        };
-
+	void init();
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
 	QSizeF contentSizeHint() const;
 	void hoverEnterEvent ( QGraphicsSceneHoverEvent  *event);
@@ -69,6 +69,7 @@ class DeviceNotifier : public Plasma::Applet
         void showConfigurationInterface();
 	void configAccepted();
 	void slotOnItemDoubleclicked(const QModelIndex & );
+	void onTimerExpired();
 
     private:
         QModelIndex indexForUdi(const QString &udi) const;
@@ -77,10 +78,14 @@ class DeviceNotifier : public Plasma::Applet
         Plasma::DataEngine *m_solidEngine;
         QStandardItemModel *m_hotplugModel;
 
-	ListView *m_listView;
+	Notifier::ListView *m_listView;
 	QWidget *m_widget;
 	QVBoxLayout *m_layout;
         KDialog *m_dialog;
+	int m_displayTime;
+	int m_numberItems;
+	int m_itemsValidity;
+	QTimer * m_timer;
         /// Designer Config file
         Ui::solidNotifierConfig ui;
 
