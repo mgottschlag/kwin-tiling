@@ -803,15 +803,6 @@ void KCMStyle::loadStyle( KConfig& config )
 	// Obtain all style names
 	QStringList allStyles = QStyleFactory::keys();
 
-	// Some hardcoded Qt styles, to be translated later.
-	(void) I18N_NOOP2("@item:inlistbox Widget style", "Windows");
-	(void) I18N_NOOP2("@item:inlistbox Widget style", "WindowsXP");
-	(void) I18N_NOOP2("@item:inlistbox Widget style", "WindowsVista");
-	(void) I18N_NOOP2("@item:inlistbox Widget style", "Motif");
-	(void) I18N_NOOP2("@item:inlistbox Widget style", "CDE");
-	(void) I18N_NOOP2("@item:inlistbox Widget style", "Plastique");
-	(void) I18N_NOOP2("@item:inlistbox Widget style", "Cleanlooks");
-
 	// Get translated names, remove all hidden style entries.
 	QStringList styles;
 	StyleEntry* entry;
@@ -831,10 +822,8 @@ void KCMStyle::loadStyle( KConfig& config )
 		}
 		else
 		{
-			// Try to translate style, may be one of Qt's hardcoded.
-			QString name = i18nc("@item:inlistbox Widget style", (*it).toUtf8());
-			styles += name;
-			nameToStyleKey[name] = id;
+			styles += (*it); //Fall back to the key (but in original case)
+			nameToStyleKey[*it] = id;
 		}
 	}
 
