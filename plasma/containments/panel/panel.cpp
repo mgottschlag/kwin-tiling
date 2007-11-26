@@ -128,11 +128,10 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
         setGeometry(geo);
 
         if (layout()) {
-            //FIXME: we need a layout hint here for the magin number 4 in the svg
-            layout()->setMargin(Plasma::Layout::TopMargin, topHeight - 4);
-            layout()->setMargin(Plasma::Layout::LeftMargin, leftWidth - 4);
-            layout()->setMargin(Plasma::Layout::RightMargin, rightWidth - 4);
-            layout()->setMargin(Plasma::Layout::BottomMargin, bottomHeight - 4);
+            layout()->setMargin(Plasma::Layout::TopMargin, topHeight);
+            layout()->setMargin(Plasma::Layout::LeftMargin, leftWidth);
+            layout()->setMargin(Plasma::Layout::RightMargin, rightWidth);
+            layout()->setMargin(Plasma::Layout::BottomMargin, bottomHeight);
         }
 
         if (corona()) {
