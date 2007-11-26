@@ -83,6 +83,12 @@ protected Q_SLOTS:
     void applyConfig();
     void updateSlideList();
     void nextSlide();
+
+    /**
+     * invoke kns dialog to get new wallpapers
+     */
+    void getNewStuff();
+    
     void lockScreen();
     void logout();
 

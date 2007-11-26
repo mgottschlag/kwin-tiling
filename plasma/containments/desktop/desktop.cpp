@@ -42,6 +42,7 @@
 #include "plasma/phase.h"
 #include "plasma/svg.h"
 #include "kworkspace/kworkspace.h"
+#include "knewstuff2/engine.h"
 
 #include "krunner_interface.h"
 #include "ksmserver_interface.h"
@@ -128,14 +129,29 @@ void DefaultDesktop::nextSlide()
         m_currentSlide = 0;
     }
 
-    if (m_slideFiles.size() > 0)
-    {
+    if (m_slideFiles.size() > 0) {
         m_wallpaperPath = m_slideFiles[m_currentSlide];
         //kDebug() << "switching slides to: " << m_wallpaperPath;
 
         getBitmapBackground();
         update();
     }
+}
+
+void DefaultDesktop::getNewStuff()
+{
+    KNS::Entry::List entries;
+
+    KNS::Engine *engine = new KNS::Engine(0);
+    if (engine->init("background.knsrc")) {
+        entries = engine->downloadDialogModal(m_configDialog);
+
+        if (entries.size() > 0) {
+            // do something with the newly downloaded images
+        }
+    }
+    
+    delete engine;
 }
 
 void DefaultDesktop::getBitmapBackground()
@@ -185,6 +201,7 @@ void DefaultDesktop::configure()
         m_configDialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
         connect( m_configDialog, SIGNAL(applyClicked()), this, SLOT(applyConfig()) );
         connect( m_configDialog, SIGNAL(okClicked()), this, SLOT(applyConfig()) );
+        connect( m_ui->getNewStuffButton, SIGNAL(clicked()), this, SLOT(getNewStuff()));
         m_ui->picRequester->comboBox()->insertItem(0, KStandardDirs::locate("wallpaper", "plasma-default.png"));
         m_ui->slideShowRequester->setMode(KFile::Directory);
         m_ui->slideShowRequester->setGeometry(m_ui->picRequester->frameGeometry());
