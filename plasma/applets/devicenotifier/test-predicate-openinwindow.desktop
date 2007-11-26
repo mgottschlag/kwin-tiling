@@ -6,24 +6,11 @@ Actions=open;
 
 [Desktop Action open]
 Name=Dolphin
-Name[de]=Öffnen
-Name[el]=άνοιγμα
-Name[eo]=malfermata
-Name[ga]=oscail
-Name[ko]=열기
-Name[lv]=atvērts
-Name[nb]=åpne
-Name[nds]=Opmaken
-Name[nl]=openen
-Name[oc]=dobrir
-Name[pa]=ਖੋਲ੍ਹੋ
-Name[pt]=abrir
-Name[pt_BR]=abrir
-Name[sr]=отворено
-Name[sr@latin]=otvoreno
-Name[sv]=öppen
-Name[x-test]=xxopenxx
-Name[zh_CN]=打开
-Name[zh_TW]=開啟
+Name[ar]=الدولفين
+Name[lv]= Dolphin
+Name[ne]=डल्फिन
+Name[pa]=ਡਾਲਫਿਨ
+Name[sr]=Делфин
+Name[x-test]=xxDolphinxx
 Exec=dbus-launch dolphin
 
