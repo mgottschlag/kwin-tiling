@@ -49,7 +49,8 @@ class Battery : public Plasma::Applet
                             const QRect &contents);
         void setPath(const QString&);
         QSizeF contentSizeHint() const;
-        //QSizeF contentSize() const;
+        Qt::Orientations expandingDirections() const;
+
         void constraintsUpdated(Plasma::Constraints constraints);
 
     public slots:
