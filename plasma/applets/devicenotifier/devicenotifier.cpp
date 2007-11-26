@@ -120,8 +120,8 @@ void DeviceNotifier::init()
 	    m_widget->move(globalPos);
 	}
     }*/
-
-    setSize(128,128);
+    int pixelSize = cg.readEntry("size", 128);
+    setSize(pixelSize,pixelSize);
 
     m_solidEngine = dataEngine("hotplug");
 
