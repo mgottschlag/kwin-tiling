@@ -111,6 +111,22 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
     updateGeometry();
 }
 
+QSizeF Battery::contentSizeHint() const
+{
+    QSizeF sizehint = QSizeF(m_pixelSize, m_pixelSize);
+    qreal aspectratio = contentSize().width() / contentSize().height();
+    if (contentSize() == QSizeF(0, 0)) {
+        return sizehint;
+    } else if (aspectratio == 1) {
+        sizehint = QSizeF(contentSize().width(), contentSize().height());
+    } else if (aspectratio > 1) {
+        sizehint = QSizeF(contentSize().height(), contentSize().height());
+    } else {
+        sizehint = QSizeF(contentSize().width(), contentSize().width());
+	}
+	return sizehint;
+}
+
 void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
     if (source == I18N_NOOP("Battery")) {
