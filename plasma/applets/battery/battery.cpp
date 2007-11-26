@@ -72,6 +72,7 @@ void Battery::init()
     m_theme = new Plasma::Svg(svgFile, this);
     m_theme->setContentType(Plasma::Svg::SingleImage);
     m_theme->resize(200, 200);
+    setSize(200,200);
 
     m_font = QApplication::font();
     m_font.setWeight(QFont::Bold);
@@ -97,9 +98,9 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint) {
         if (formFactor() == Plasma::Vertical ||
             formFactor() == Plasma::Horizontal) {
-            kDebug() << "Small FormFactor";
+            kDebug() << "Horizontal or Vertical FormFactor";
         } else {
-            kDebug() << "Huge FormFactor";
+            kDebug() << "Other FormFactor";
         }
     }
 
@@ -176,6 +177,7 @@ void Battery::configAccepted()
         m_theme = new Plasma::Svg(svgFile, this);
         kDebug() << "Changing theme to " << svgFile;
         cg.writeEntry("style", m_batteryStyle);
+        m_theme->resize(contentSize());
     }
 
     dataEngine("powermanagement")->disconnectSource(I18N_NOOP("Battery"), this);
