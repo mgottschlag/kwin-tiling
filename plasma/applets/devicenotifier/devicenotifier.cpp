@@ -173,7 +173,7 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
 	}
 	if (nb_actions!=1)
 	{
-	    QString s = i18n("1 action available", "%1 actions available", nb_actions);
+	    QString s = i18np("1 action available", "%1 actions available", nb_actions);
 	    m_hotplugModel->setData(index,s, ActionRole);
 	    kDebug()<<"DeviceNotifier:: Nb Actions"<<nb_actions;
 	}
