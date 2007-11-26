@@ -3,7 +3,8 @@ project(plasma-devicenotifier)
 set(devicenotifier_SRCS
     devicenotifier.cpp
     itemdelegate.cpp
-    listview.cpp)
+    listview.cpp
+    notifierwidget.cpp)
 
 kde4_add_ui_files(devicenotifier_SRCS deviceNotifierConfig.ui )
 kde4_add_plugin(plasma_applet_devicenotifier ${devicenotifier_SRCS})

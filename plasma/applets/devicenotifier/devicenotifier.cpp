@@ -26,11 +26,8 @@
 #include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
 
-
-#include <plasma/layouts/hboxlayout.h>
-#include <plasma/widgets/label.h>
+#include <plasma/svg.h>
 #include <plasma/widgets/widget.h>
-#include <plasma/widgets/icon.h>
 #include <plasma/containment.h>
 
 #include <KDialog>
@@ -44,6 +41,7 @@
 
 #include "itemdelegate.h"
 #include "listview.h"
+#include "notifierwidget.h"
 
 using namespace Plasma;
 using namespace Notifier;
@@ -75,14 +73,16 @@ void DeviceNotifier::init()
     }
     m_icon=KIcon(device.icon());
 
-    m_widget= new QWidget(0,Qt::Window);
+    m_widget= new NotifierWidget(0,Qt::Window);
     m_widget->setStyleSheet("{ border : 0px }");
     m_listView= new ListView(m_widget);
     QVBoxLayout *m_layout = new QVBoxLayout();
     m_layout->setSpacing(0);
     m_layout->setMargin(0);
+
+    m_background = new Plasma::Svg("dialogs/background", this);
     
-    QLabel *Label = new QLabel(i18n("Recently plugged devices:"));
+    QLabel *Label = new QLabel(i18n("<font color=white>Recently plugged devices:</font>"));
     QLabel *Icon = new QLabel();
     Icon->setPixmap(KIcon("emblem-mounted").pixmap(ItemDelegate::ICON_SIZE, ItemDelegate::ICON_SIZE));
     Icon->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);

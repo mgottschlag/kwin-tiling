@@ -33,11 +33,6 @@
 namespace Plasma
 {
     class Svg;
-    class Widget;
-    class Label;
-    class Icon;
-    class HBoxLayout;
-    class ProgressBar;
 } // namespace Plasma
 
 class QStandardItemModel;
@@ -46,6 +41,7 @@ class KDialog;
 namespace Notifier
 {
     class ListView;
+    class NotifierWidget;
 }
 
 class DeviceNotifier : public Plasma::Applet
@@ -79,8 +75,9 @@ class DeviceNotifier : public Plasma::Applet
         QStandardItemModel *m_hotplugModel;
 
 	Notifier::ListView *m_listView;
-	QWidget *m_widget;
+	Notifier::NotifierWidget *m_widget;
 	QVBoxLayout *m_layout;
+	Plasma::Svg *m_background;
         KDialog *m_dialog;
 	int m_displayTime;
 	int m_numberItems;
