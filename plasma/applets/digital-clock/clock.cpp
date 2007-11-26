@@ -93,6 +93,7 @@ void Clock::init()
     m_horizontalSpacing = 2;
     m_verticalSpacing = 1;
 
+    setSize(QSize(200, 72));
     Plasma::DataEngine* timeEngine = dataEngine("time");
     timeEngine->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
 }
@@ -102,10 +103,6 @@ Qt::Orientations Clock::expandingDirections() const
     return Qt::Vertical;
 }
 
-QSizeF Clock::contentSizeHint() const
-{
-    return m_sizeHint;
-}
 
 void Clock::constraintsUpdated(Plasma::Constraints)
 {
