@@ -82,7 +82,7 @@ void DeviceNotifier::init()
     m_layout->setSpacing(0);
     m_layout->setMargin(0);
     
-    QLabel *Label = new QLabel(i18n("Recently devices plugged : "));
+    QLabel *Label = new QLabel(i18n("Recently plugged devices:"));
     QLabel *Icon = new QLabel();
     Icon->setPixmap(KIcon("emblem-mounted").pixmap(ItemDelegate::ICON_SIZE, ItemDelegate::ICON_SIZE));
     Icon->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
@@ -173,8 +173,7 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
 	}
 	if (nb_actions!=1)
 	{
-	    QString s = QString::number(nb_actions);
-	    s=s+QString(i18n(" actions available"));
+	    QString s = i18n("1 action available", "%1 actions available", nb_actions);
 	    m_hotplugModel->setData(index,s, ActionRole);
 	    kDebug()<<"DeviceNotifier:: Nb Actions"<<nb_actions;
 	}

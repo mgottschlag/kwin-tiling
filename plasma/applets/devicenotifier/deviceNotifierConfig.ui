@@ -83,7 +83,7 @@
        <item>
         <widget class="QLabel" name="labelSize" >
          <property name="text" >
-          <string>Number of items displayed :</string>
+          <string>Number of items displayed:</string>
          </property>
         </widget>
        </item>
@@ -104,7 +104,7 @@
        <item>
         <widget class="QLabel" name="label" >
          <property name="text" >
-          <string>Display time of items :</string>
+          <string>Display time of items:</string>
          </property>
         </widget>
        </item>
