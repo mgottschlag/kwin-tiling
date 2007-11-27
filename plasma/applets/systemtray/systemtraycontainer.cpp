@@ -43,7 +43,7 @@ SystemTrayContainer::SystemTrayContainer(WId clientId, QWidget *parent)
     // HACK: Tell the client to draw it's own black background rather than
     // taking ours as things are broken with ARGB visuals it seems.
     XSetWindowBackgroundPixmap(QX11Info::display(), clientId, None);
-    XSetWindowBackground(QX11Info::display(), clientId, 255 /* black */);
+    XSetWindowBackground(QX11Info::display(), clientId, 0 /* black */);
 
     kDebug() << "attempting to embed" << clientId;
     embedClient(clientId);
