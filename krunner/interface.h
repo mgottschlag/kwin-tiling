@@ -91,6 +91,8 @@ class Interface : public KRunnerDialog
         SearchMatch* m_defaultMatch;
         Plasma::SearchContext m_context;
         QStringList m_executions;
+
+        bool m_execQueued;
 };
 
 #endif

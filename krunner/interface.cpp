@@ -136,7 +136,8 @@ Interface::Interface(QWidget* parent)
       m_nextRunner(0),
       m_expander(0),
       m_optionsWidget(0),
-      m_defaultMatch(0)
+      m_defaultMatch(0),
+      m_execQueued(false)
 {
     setWindowTitle( i18n("Run Command") );
     setWindowIcon(KIcon("preferences-desktop-launch-feedback"));
@@ -200,6 +201,7 @@ Interface::Interface(QWidget* parent)
                                   w);
     m_runButton->setFlat( true );
     m_runButton->setEnabled( false );
+    m_runButton->setDefault(true);
     connect( m_runButton, SIGNAL( clicked(bool) ), SLOT(exec()) );
     bottomLayout->addWidget( m_runButton );
 
@@ -392,6 +394,7 @@ void Interface::match()
 
     if (term.isEmpty()) {
         resetInterface();
+        m_execQueued = false;
         return;
     }
 
@@ -435,6 +438,10 @@ void Interface::match()
 
     if (++m_nextRunner >= m_runners.size()) {
         m_nextRunner = 0;
+        if (m_execQueued && !m_matchList->count() > 0) {
+            exec();
+        }
+        m_execQueued = false;
     } else {
         // start the timer over so we will
         // process the rest of the runners
@@ -449,16 +456,23 @@ void Interface::exec()
         return;
     }
 
-    QListWidgetItem* match = m_matchList->currentItem();
-    if (!match) {
+    kDebug() << "match list has" << m_matchList->count() << "items";
+
+    QListWidgetItem* currentMatch = m_matchList->currentItem();
+    if (!currentMatch) {
         if (m_defaultMatch) {
-            match = m_defaultMatch;
-        } else {
+            currentMatch = m_defaultMatch;
+        } else if (m_matchList->count() < 2) {
+            //TODO: the < 2 is a bit of a hack; we *always* get a search option returned,
+            //      so if we only have 1 item and it's not selected, guess what it is? ;)
+            //      we might be able to do better here.
+            m_execQueued = true;
+            match();
             return;
         }
     }
 
-    matchActivated(match);
+    matchActivated(currentMatch);
 }
 
 void Interface::showOptions(bool show)
