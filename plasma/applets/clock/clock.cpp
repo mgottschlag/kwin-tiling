@@ -55,6 +55,8 @@ Clock::Clock(QObject *parent, const QVariantList &args)
 {
     setHasConfigurationInterface(true);
     resize(125, 125);
+    setMinimumSize(QSizeF(50, 50));
+    setMaximumSize(QSizeF(400, 400));
 
     m_theme = new Plasma::Svg("widgets/clock", this);
     m_theme->setContentType(Plasma::Svg::SingleImage);
