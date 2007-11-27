@@ -65,14 +65,21 @@ void DeviceNotifier::init()
 
 
     //we display the icon corresponding to the computer
-    Solid::Device device=Solid::Device::allDevices()[0];
-   
-    while (device.parent().isValid())
-    {
-	device=device.parent();
+    QList<Solid::Device> list=Solid::Device::allDevices();
+    if	(list.size()>0) {
+	Solid::Device device=list[0];
+    
+	while (device.parent().isValid())
+	{
+	    device=device.parent();
+	}
+	m_icon=KIcon(device.icon());
     }
-    m_icon=KIcon(device.icon());
-
+    else
+    {
+	//default icon if problem
+	m_icon=KIcon("computer");
+    }
     m_widget= new NotifierWidget(0,Qt::Window);
     m_widget->setStyleSheet("{ border : 0px }");
     m_listView= new ListView(m_widget);
@@ -120,7 +127,7 @@ void DeviceNotifier::init()
 	    m_widget->move(globalPos);
 	}
     }*/
-    int pixelSize = cg.readEntry("size", 128);
+    int pixelSize = cg.readEntry("size", 48);
     setSize(pixelSize,pixelSize);
 
     m_solidEngine = dataEngine("hotplug");
@@ -229,7 +236,9 @@ QModelIndex DeviceNotifier::indexForUdi(const QString &udi) const
 void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
-    m_widget->show();
+    if(event->buttons () == Qt::LeftButton) {
+	m_widget->show();
+    }
 }
 
 void DeviceNotifier::hoverEnterEvent ( QGraphicsSceneHoverEvent  * event )
