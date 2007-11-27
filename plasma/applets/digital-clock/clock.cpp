@@ -307,7 +307,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     p->drawText(timeRect,
 		timeString,
-		QTextOption(Qt::AlignHCenter)
+		QTextOption(Qt::AlignCenter)
 	    );
     return;
 }
