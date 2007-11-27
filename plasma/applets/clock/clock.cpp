@@ -167,6 +167,7 @@ void Clock::configAccepted()
         if (tz != m_timezone) {
             dataEngine("time")->disconnectSource(m_timezone, this);
             m_timezone = tz;
+            cg.writeEntry("timezone", m_timezone);
         }
     } else if (m_timezone != "Local") {
         dataEngine("time")->disconnectSource(m_timezone, this);
