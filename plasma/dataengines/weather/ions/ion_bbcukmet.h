@@ -58,8 +58,8 @@ public:
     void updateWeather(const QString& source); // Sync data source with Applet
 
 protected slots:
-    void slotDataArrived(KIO::Job *, const QByteArray &);
-    void slotJobFinished(KJob *);
+    void setup_slotDataArrived(KIO::Job *, const QByteArray &);
+    void setup_slotJobFinished(KJob *);
     void forecast_slotDataArrived(KIO::Job *, const QByteArray &);
     void forecast_slotJobFinished(KJob *);
 
@@ -68,6 +68,7 @@ private:
 
     // Load and Parse the place search XML listings
     void validate(const QString& place, const QString& source);
+    void getXMLData(const QString& source);
     bool readSearchXMLData(const QString& source, QXmlStreamReader& xml);
     void parseSearchLocations(const QString& source, QXmlStreamReader& xml);
 

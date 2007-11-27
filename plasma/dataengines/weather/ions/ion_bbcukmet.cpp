@@ -80,8 +80,7 @@ UKMETIon::~UKMETIon()
 // Get the master list of locations to be parsed
 void UKMETIon::init()
 {
-this->setInitialized(true);
-return;
+    this->setInitialized(true);
 }
 
 // Get a specific Ion's data
@@ -93,17 +92,40 @@ bool UKMETIon::updateIonSource(const QString& source)
 
     kDebug() << "updateIonSource() SOURCE: " << source;
     QStringList sourceAction = source.split(':');
+
     if (sourceAction[1] == QString("validate")) {
         kDebug() << "Initiate Find Matching places: " << sourceAction[2];
-        // Look for places the match
+        // Look for places to match
         this->validate(sourceAction[2], source);
         return true;
 
     } else if (sourceAction[1] == QString("weather")) {
-       //getXMLData(QString("%1:%2").arg(sourceAction[0]).arg(sourceAction[2]));
+       QStringList splitPlace = sourceAction[2].split("|");
+       d->m_place[QString("bbcukmet:%1").arg(splitPlace[0])].XMLurl = QString("http://%1").arg(splitPlace[1]); 
+       getXMLData(QString("%1:%2").arg(sourceAction[0]).arg(splitPlace[0]));
        return true;
     }
     return false;
+}
+
+// Gets specific city XML data
+void UKMETIon::getXMLData(const QString& source)
+{
+    KUrl url;
+   
+    url = d->m_place[source].XMLurl;
+
+    kDebug() << "URL Location: " << url.url();
+
+    d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
+    d->m_forecastJobXml.insert(d->m_job, new QXmlStreamReader);
+    d->m_forecastJobList.insert(d->m_job, source);
+
+    if (d->m_job) {
+        connect(d->m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
+                SLOT(forecast_slotDataArrived(KIO::Job *, const QByteArray &)));
+        connect(d->m_job, SIGNAL(result(KJob *)), this, SLOT(forecast_slotJobFinished(KJob *)));
+    }
 }
 
 // Parses city list and gets the correct city based on ID number
@@ -124,8 +146,8 @@ void UKMETIon::validate(const QString& place, const QString& source)
 
     if (d->m_job) {
         connect(d->m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
-                SLOT(slotDataArrived(KIO::Job *, const QByteArray &)));
-        connect(d->m_job, SIGNAL(result(KJob *)), this, SLOT(slotJobFinished(KJob *)));
+                SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
+        connect(d->m_job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
     }
 }
 
@@ -159,9 +181,9 @@ void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml
     QString url;
     QString place;
     QStringList tokens;
+    QString tmp;
     Q_ASSERT(xml.isStartElement() && xml.name() == "wml");
     d->m_locations.clear();
-    kDebug() << "!!!!!!!!!!!!!! SOURCE: "<< source; 
     while (!xml.atEnd()) {
         xml.readNext();
   
@@ -175,30 +197,31 @@ void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml
 
                     // Split URL to determine station ID number
                     tokens = xml.attributes().value("href").toString().split("=");
-                    kDebug() << "TOKENS URL: " << tokens;
                     if (xml.attributes().value("href").toString().contains("world")) {
-                        url = "http://feeds.bbc.co.uk/weather/feeds/obs/world/" + tokens[1] + ".xml";
+                        url = "feeds.bbc.co.uk/weather/feeds/obs/world/" + tokens[1] + ".xml";
                         flag = 0;
                     } else {
-                        url = "http://feeds.bbc.co.uk/weather/feeds/obs/id/" + tokens[1] + ".xml";
+                        url = "feeds.bbc.co.uk/weather/feeds/obs/id/" + tokens[1] + ".xml";
                         flag = 1;
                     }
                     place = xml.readElementText();
+                    tmp = QString("bbcukmet:%1").arg(place);
  
                     kDebug() << "PLACES FOUND: " << place; 
                     kDebug() << "URL FOR PLACE: " << url;
 
                     if (!d->m_locations.contains(place)) {
+                    
                         if (flag) {  // This is a UK specific location
-                            d->m_place[place].XMLurl = url;
-                            d->m_place[place].place = place;
-                            d->m_place[place].ukPlace = true;
+                            d->m_place[tmp].XMLurl = url;
+                            d->m_place[tmp].place = place;
+                            d->m_place[tmp].ukPlace = true;
                         } else {
-                            d->m_place[place].XMLurl = url;
-                            d->m_place[place].place = place;
-                            d->m_place[place].ukPlace = false;
+                            d->m_place[tmp].XMLurl = url;
+                            d->m_place[tmp].place = place;
+                            d->m_place[tmp].ukPlace = false;
                         }
-                        d->m_locations.append(place);
+                        d->m_locations.append(tmp);
                     }
                 }
             }
@@ -224,7 +247,7 @@ void UKMETIon::parseUnknownElement(QXmlStreamReader& xml)
     }
 }
     
-void UKMETIon::slotDataArrived(KIO::Job *job, const QByteArray &data)
+void UKMETIon::setup_slotDataArrived(KIO::Job *job, const QByteArray &data)
 {
     kDebug() << "JOB ERROR(): " << job->errorString();
 
@@ -236,7 +259,7 @@ void UKMETIon::slotDataArrived(KIO::Job *job, const QByteArray &data)
     d->m_jobXml[job]->addData(data.data());
 }
 
-void UKMETIon::slotJobFinished(KJob *job)
+void UKMETIon::setup_slotJobFinished(KJob *job)
 {
     if (job->error() == 149) {
         kDebug() << "JOB ERROR: " << job->errorString(); 
@@ -399,7 +422,7 @@ void UKMETIon::updateWeather(const QString& source)
     } else {
         QString placeList;
         foreach (QString place, d->m_locations) {
-                 placeList.append(QString("%1:").arg(place));
+                 placeList.append(QString("%1:extra:%2:").arg(place.split(":")[1]).arg(d->m_place[place].XMLurl));
         }
         kDebug() << "****** PLACES FOUND: " << placeList;
         setData(source, "validate", QString("bbcukmet:valid:multiple:%1").arg(placeList));
