@@ -31,6 +31,7 @@
 #include <plasma/containment.h>
 
 #include <KDialog>
+#include <krun.h>
 #include <kdesktopfileactions.h>
 #include <kstandarddirs.h>
 
@@ -180,7 +181,7 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
 	}
 	if (nb_actions!=1)
 	{
-	    QString s = i18np("1 action available", "%1 actions available", nb_actions);
+	    QString s = i18np("0 action available", "%1 actions available", nb_actions);
 	    m_hotplugModel->setData(index,s, ActionRole);
 	    kDebug()<<"DeviceNotifier:: Nb Actions"<<nb_actions;
 	}
@@ -311,9 +312,24 @@ void DeviceNotifier::slotOnItemDoubleclicked(const QModelIndex & index)
     m_timer->stop();
     QString udi=QString(m_hotplugModel->data(index, SolidUdiRole).toString());
     QStringList desktop_files=m_hotplugModel->data(index, PredicateFilesRole).toStringList();
-    kDebug()<<"DeviceNotifier:: call Solid Ui Server with params :"<<udi<<","<<desktop_files;
-    QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
-    QDBusReply<void> reply = soliduiserver.call("showActionsDialog", udi,desktop_files);
+    QList<KServiceAction> services;
+    int nb_actions=0;
+    foreach (QString desktop, desktop_files) {
+	    QString filePath = KStandardDirs::locate("data", "solid/actions/"+desktop);
+	    services = KDesktopFileActions::userDefinedServices(filePath, true);
+	    nb_actions+=services.size();
+    }
+    if (nb_actions==1)
+    {
+	QString exec = services[0].exec();
+	KRun::runCommand(exec, QString(), services[0].icon(), 0);
+    }
+    else
+    {
+	kDebug()<<"DeviceNotifier:: call Solid Ui Server with params :"<<udi<<","<<desktop_files;
+	QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
+	QDBusReply<void> reply = soliduiserver.call("showActionsDialog", udi,desktop_files);
+    }
 }
 
 void DeviceNotifier::onTimerExpired()
