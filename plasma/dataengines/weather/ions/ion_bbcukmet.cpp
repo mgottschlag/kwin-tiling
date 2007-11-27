@@ -118,6 +118,7 @@ void UKMETIon::getXMLData(const QString& source)
     kDebug() << "URL Location: " << url.url();
 
     d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
+    d->m_job->addMetaData("cookies", "none"); // Disable displaying cookies
     d->m_forecastJobXml.insert(d->m_job, new QXmlStreamReader);
     d->m_forecastJobList.insert(d->m_job, source);
 
