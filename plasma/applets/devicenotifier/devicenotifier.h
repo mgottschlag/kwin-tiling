@@ -54,8 +54,8 @@ class DeviceNotifier : public Plasma::Applet
         ~DeviceNotifier();
 
 	void init();
+	Qt::Orientations expandingDirections() const;
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
-	QSizeF contentSizeHint() const;
 	void hoverEnterEvent ( QGraphicsSceneHoverEvent  *event);
 	void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
     public slots:

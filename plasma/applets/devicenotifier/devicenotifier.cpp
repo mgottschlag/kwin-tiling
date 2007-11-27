@@ -63,7 +63,8 @@ void DeviceNotifier::init()
     m_displayTime = cg.readEntry("TimeDisplayed", 8);
     m_numberItems = cg.readEntry("NumberItems", 4);
     m_itemsValidity = cg.readEntry("ItemsValidity", 5);
-
+    
+    setSize(128,128);
 
     //we display the icon corresponding to the computer
     QList<Solid::Device> list=Solid::Device::allDevices();
@@ -128,9 +129,6 @@ void DeviceNotifier::init()
 	    m_widget->move(globalPos);
 	}
     }*/
-    int pixelSize = cg.readEntry("size", 48);
-    setSize(pixelSize,pixelSize);
-
     m_solidEngine = dataEngine("hotplug");
 
     //connect to engine when a device is plug
@@ -149,6 +147,13 @@ void DeviceNotifier::init()
 DeviceNotifier::~DeviceNotifier()
 {
 }
+
+
+Qt::Orientations DeviceNotifier::expandingDirections() const
+{
+    return Qt::Vertical;
+}
+
 
 void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
 {
@@ -295,15 +300,6 @@ void DeviceNotifier::configAccepted()
     cg.writeEntry("NumberItems", m_numberItems);
     cg.writeEntry("ItemsValidity", m_itemsValidity);
     cg.config()->sync();
-}
-
-QSizeF DeviceNotifier::contentSizeHint() const
-{
-    /*QSizeF sizeHint = contentSize();
-    int max = qMax(sizeHint.width(), sizeHint.height());
-    sizeHint = QSizeF(max, max);
-    return sizeHint;*/
-    return size();
 }
 
 void DeviceNotifier::slotOnItemDoubleclicked(const QModelIndex & index)
