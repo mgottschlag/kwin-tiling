@@ -48,12 +48,17 @@
 
 Clock::Clock(QObject *parent, const QVariantList &args)
     : Plasma::Containment(parent, args),
-      m_dialog(0),
       m_showTimeString(false),
       m_showSecondHand(false),
-      m_timezone("Local")
+      m_timezone("Local"),
+      m_dialog(0)
 {
     setHasConfigurationInterface(true);
+    resize(125, 125);
+
+    m_theme = new Plasma::Svg("widgets/clock", this);
+    m_theme->setContentType(Plasma::Svg::SingleImage);
+    m_theme->resize(size());
 }
 
 void Clock::init()
@@ -61,12 +66,7 @@ void Clock::init()
     KConfigGroup cg = config();
     m_showTimeString = cg.readEntry("showTimeString", false);
     m_showSecondHand = cg.readEntry("showSecondHand", false);
-    int pixelSize = cg.readEntry("size", 125);
     m_timezone = cg.readEntry("timezone", "Local");
-    m_theme = new Plasma::Svg("widgets/clock", this);
-    m_theme->setContentType(Plasma::Svg::SingleImage);
-    m_theme->resize(pixelSize, pixelSize);
-    setSize(pixelSize, pixelSize);
 
     connectToEngine();
 }
@@ -99,6 +99,10 @@ void Clock::constraintsUpdated(Plasma::Constraints constraints)
             setSize(QSizeF(fm.width("00:00:00") * 1.2, fm.height() * 1.5));
         }
         updateGeometry();
+    }
+
+    if (constraints & Plasma::SizeConstraint) {
+        m_theme->resize(size());
     }
 }
 
