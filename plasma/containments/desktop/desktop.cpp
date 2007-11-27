@@ -59,6 +59,7 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
       m_lockAction(0),
       m_logoutAction(0),
       m_configDialog(0),
+      m_ui(0),
       m_background(0),
       m_bitmapBackground(0),
       m_wallpaperPath(0)
@@ -69,6 +70,7 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
 DefaultDesktop::~DefaultDesktop()
 {
     delete m_configDialog;
+    delete m_ui;
 }
 
 void DefaultDesktop::init()
