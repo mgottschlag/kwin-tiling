@@ -240,7 +240,18 @@ void DeviceNotifier::hoverEnterEvent ( QGraphicsSceneHoverEvent  * event )
     if (view) {
 	QPoint viewPos = view->mapFromScene(scenePos);
 	QPoint globalPos = view->mapToGlobal(viewPos);
-	globalPos.ry() -= m_widget->height(); 
+	if ((globalPos.ry()-m_widget->height())< 0) {
+	    
+	    scenePos = mapToScene(boundingRect().bottomLeft());
+	    viewPos = view->mapFromScene(scenePos);
+	    globalPos = view->mapToGlobal(viewPos);
+	}
+	else {
+	    globalPos.ry() -= m_widget->height();
+	}
+	if ((globalPos.rx() + m_widget->width()) > view->width()) {
+	    globalPos.rx()-=((globalPos.rx() + m_widget->width())-view->width());
+	}
 	m_widget->move(globalPos);
     }
 }
@@ -273,14 +284,16 @@ void DeviceNotifier::configAccepted()
     cg.writeEntry("TimeDisplayed", m_displayTime);
     cg.writeEntry("NumberItems", m_numberItems);
     cg.writeEntry("ItemsValidity", m_itemsValidity);
+    cg.config()->sync();
 }
 
 QSizeF DeviceNotifier::contentSizeHint() const
 {
-    QSizeF sizeHint = contentSize();
+    /*QSizeF sizeHint = contentSize();
     int max = qMax(sizeHint.width(), sizeHint.height());
     sizeHint = QSizeF(max, max);
-    return sizeHint;
+    return sizeHint;*/
+    return size();
 }
 
 void DeviceNotifier::slotOnItemDoubleclicked(const QModelIndex & index)
