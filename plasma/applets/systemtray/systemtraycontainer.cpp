@@ -1,7 +1,6 @@
 /***************************************************************************
- *   systemtray.h                                                          *
+ *   systemtraywidget.h                                                    *
  *                                                                         *
- *   Copyright (C) 2007 Alexander Rodin <rodin.alexander@gmail.com>        *
  *   Copyright (C) 2007 Jason Stubbs <jasonbstubbs@gmail.com>              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -20,48 +19,46 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef SYSTEMTRAY_H
-#define SYSTEMTRAY_H
-
 // Own
-#include "systemtraywidget.h"
+#include "systemtraycontainer.h"
+
+// KDE
+#include <KDebug>
 
 // Qt
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QPointer>
+#include <QX11Info>
 
-// Plasma
-#include <plasma/applet.h>
+// Xlib
+#include <X11/Xlib.h>
 
-class SystemTray: public Plasma::Applet
+SystemTrayContainer::SystemTrayContainer(WId clientId, QWidget *parent)
+    : QX11EmbedContainer(parent)
 {
-Q_OBJECT
+    connect(this, SIGNAL(clientClosed()), SLOT(deleteLater()));
+    connect(this, SIGNAL(error(QX11EmbedContainer::Error)), SLOT(handleError(QX11EmbedContainer::Error)));
 
-public:
-    SystemTray(QObject *parent, const QVariantList &arguments = QVariantList());
-    ~SystemTray();
+    // Tray icons have a fixed size of 22x22
+    setMinimumSize(22, 22);
 
-    QSizeF contentSizeHint() const;
-    Qt::Orientations expandingDirections() const;
+    // HACK: Tell the client to draw it's own black background rather than
+    // taking ours as things are broken with ARGB visuals it seems.
+    XSetWindowBackgroundPixmap(QX11Info::display(), clientId, None);
+    XSetWindowBackground(QX11Info::display(), clientId, 255 /* black */);
 
-protected:
-    QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value);
+    kDebug() << "attempting to embed" << clientId;
+    embedClient(clientId);
 
-private slots:
-    void updateSize();
-    void handleSceneChange(const QList<QRectF> &region);
+#if 0
+    // BUG: error() sometimes return Unknown even on success
+    if (error() == Unknown || error() == InvalidWindowID) {
+        kDebug() << "embedding failed for" << clientId;
+        deleteLater();
+    }
+#endif
+}
 
-private:
-    bool intersectsRegion(const QList<QRectF> &region);
-    QGraphicsView * findView();
-
-    // These can all be deleted externally so we guard them
-    QPointer<SystemTrayWidget> m_systemTrayWidget;
-    QPointer<QGraphicsScene> m_currentScene;
-    QPointer<QGraphicsView> m_currentView;
-};
-
-K_EXPORT_PLASMA_APPLET(systemtray, SystemTray)
-
-#endif // SYSTEMTRAY_H
+void SystemTrayContainer::handleError(QX11EmbedContainer::Error error)
+{
+    Q_UNUSED(error);
+    deleteLater();
+}

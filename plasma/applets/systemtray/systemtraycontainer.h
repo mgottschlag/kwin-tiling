@@ -1,7 +1,6 @@
 /***************************************************************************
- *   systemtray.h                                                          *
+ *   systemtraywidget.h                                                    *
  *                                                                         *
- *   Copyright (C) 2007 Alexander Rodin <rodin.alexander@gmail.com>        *
  *   Copyright (C) 2007 Jason Stubbs <jasonbstubbs@gmail.com>              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -20,48 +19,21 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef SYSTEMTRAY_H
-#define SYSTEMTRAY_H
-
-// Own
-#include "systemtraywidget.h"
+#ifndef SYSTEMTRAYCONTAINER_H
+#define SYSTEMTRAYCONTAINER_H
 
 // Qt
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QPointer>
+#include <QX11EmbedContainer>
 
-// Plasma
-#include <plasma/applet.h>
-
-class SystemTray: public Plasma::Applet
+class SystemTrayContainer: public QX11EmbedContainer
 {
 Q_OBJECT
 
 public:
-    SystemTray(QObject *parent, const QVariantList &arguments = QVariantList());
-    ~SystemTray();
-
-    QSizeF contentSizeHint() const;
-    Qt::Orientations expandingDirections() const;
-
-protected:
-    QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value);
+    SystemTrayContainer(WId client, QWidget *parent);
 
 private slots:
-    void updateSize();
-    void handleSceneChange(const QList<QRectF> &region);
-
-private:
-    bool intersectsRegion(const QList<QRectF> &region);
-    QGraphicsView * findView();
-
-    // These can all be deleted externally so we guard them
-    QPointer<SystemTrayWidget> m_systemTrayWidget;
-    QPointer<QGraphicsScene> m_currentScene;
-    QPointer<QGraphicsView> m_currentView;
+    void handleError(QX11EmbedContainer::Error error);
 };
 
-K_EXPORT_PLASMA_APPLET(systemtray, SystemTray)
-
-#endif // SYSTEMTRAY_H
+#endif // SYSTRAYCONTAINER_H

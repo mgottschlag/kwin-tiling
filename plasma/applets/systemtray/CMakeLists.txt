@@ -2,6 +2,7 @@ project(plasma-systemtray)
 
 set(systemtray_SRCS
     systemtray.cpp
+    systemtraycontainer.cpp
     systemtraywidget.cpp)
 
 kde4_add_plugin(plasma_applet_systemtray ${systemtray_SRCS})

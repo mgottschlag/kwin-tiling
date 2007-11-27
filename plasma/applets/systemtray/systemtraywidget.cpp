@@ -2,6 +2,7 @@
  *   systemtraywidget.h                                                    *
  *                                                                         *
  *   Copyright (C) 2007 Alexander Rodin                                    *
+ *   Copyright (C) 2007 Jason Stubbs <jasonbstubbs@gmail.com>              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,15 +22,9 @@
 
 // Own
 #include "systemtraywidget.h"
-
-// KDE
-#include <KDebug>
-#include <KWindowSystem>
+#include "systemtraycontainer.h"
 
 // Qt
-#include <QEvent>
-#include <QHBoxLayout>
-#include <QX11EmbedContainer>
 #include <QX11Info>
 
 // Xlib
@@ -45,28 +40,32 @@ enum
 };
 }
 
-SystemTrayWidget::SystemTrayWidget(QWidget *parent, Qt::WindowFlags f)
-    : QWidget(parent, f)
+SystemTrayWidget::SystemTrayWidget(QWidget *parent)
+    : QWidget(parent),
+    // HACK: We need a better way to find out our orientation and when it changes
+    m_orientation(parent->width() > parent->height() ? Qt::Horizontal : Qt::Vertical),
+    m_nextRow(0),
+    m_nextColumn(0)
 {
-    m_layout = new QHBoxLayout(this);
-    setLayout(m_layout);
-    QPalette newPalette = palette();
-    newPalette.setBrush(QPalette::Window, Qt::black);
-    setPalette(newPalette);
-    KWindowSystem::setState(winId(), NET::Sticky | NET::KeepAbove);
-    init();
-}
+    // Add stretches around our QGridLayout so tray icons are centered when in
+    // a vertical or horizontal orientation.
+    QHBoxLayout* hLayout = new QHBoxLayout();
+    QVBoxLayout* vLayout = new QVBoxLayout();
+    m_mainLayout = new QGridLayout();
 
-bool SystemTrayWidget::x11Event(XEvent *event)
-{
-    if (event->type == ClientMessage) {
-        if (event->xclient.message_type == m_opcodeAtom &&
-            event->xclient.data.l[1] == SYSTEM_TRAY_REQUEST_DOCK) {
-            embedWindow((WId)event->xclient.data.l[2]);
-            return true;
-        }
-    }
-    return QWidget::x11Event(event);
+    hLayout->addStretch();
+    hLayout->addLayout(vLayout);
+    hLayout->addStretch();
+
+    vLayout->addStretch();
+    vLayout->addLayout(m_mainLayout);
+    vLayout->addStretch();
+
+    // Don't add any margins around our outside
+    setLayout(hLayout);
+    layout()->setContentsMargins(0, 0, 0, 0);
+
+    init();
 }
 
 void SystemTrayWidget::init()
@@ -95,51 +94,85 @@ void SystemTrayWidget::init()
     }
 }
 
-bool SystemTrayWidget::event(QEvent *event)
+bool SystemTrayWidget::x11Event(XEvent *event)
 {
-    if (event->type() == QEvent::LayoutRequest) {
-        resize(minimumSize());
-        emit sizeChanged();
-    }
-    return QWidget::event(event);
-}
+    if (event->type == ClientMessage) {
+        if (event->xclient.message_type == m_opcodeAtom &&
+            event->xclient.data.l[1] == SYSTEM_TRAY_REQUEST_DOCK) {
 
-void SystemTrayWidget::embedWindow(WId id)
-{
-    kDebug() << "trying to add window with id " << id;
-    if (! m_containers.contains(id)) {
-        QX11EmbedContainer *container = new QX11EmbedContainer(this);
-        container->embedClient(id);
-        // TODO: add error handling
-        m_layout->addWidget(container);
-        container->show();
-        m_containers[id] = container;
-        connect(container, SIGNAL(clientClosed()), this, SLOT(windowClosed()) );
-        kDebug() << "SystemTray: Window with id " << id << "added" << container;
-    }
-}
+            // Set up a SystemTrayContainer for the client
+            SystemTrayContainer *container = new SystemTrayContainer((WId)event->xclient.data.l[2], this);
+            addWidgetToLayout(container);
 
-//what exactly is this for? is it related to QX11EmbedContainer::discardClient? why is it blank?
-void SystemTrayWidget::discardWindow(WId)
-{
-}
+            connect(container, SIGNAL(clientIsEmbedded()), this, SIGNAL(sizeShouldChange()));
+            connect(container, SIGNAL(destroyed(QObject *)), this, SLOT(removeContainer(QObject *)));
 
-void SystemTrayWidget::windowClosed()
-{
-    kDebug() << "Window closed";
-    //by this point the window id is gone, so we have to iterate to find out who's lost theirs
-    ContainersList::iterator i = m_containers.begin();
-    while (i != m_containers.end()) {
-        QX11EmbedContainer *c=i.value();
-        if (c->clientWinId()==0) {
-            i=m_containers.erase(i);
-            kDebug() << "deleting container" << c;
-            delete c;
-            //do NOT assume that there will never be more than one without an id
-            continue;
+            return true;
         }
-        ++i;
     }
+    return QWidget::x11Event(event);
+}
+
+void SystemTrayWidget::addWidgetToLayout(QWidget *widget)
+{
+    // Figure out where it should go and add it to our layout
+
+    if (m_orientation == Qt::Horizontal) {
+        // Add down then across when horizontal
+        if (m_nextRow == m_mainLayout->rowCount()
+            && m_mainLayout->minimumSize().height() + m_mainLayout->spacing()
+               + widget->minimumHeight() > maximumHeight()) {
+            m_nextColumn++;
+            m_nextRow = 0;
+        }
+        m_mainLayout->addWidget(widget, m_nextRow, m_nextColumn);
+        m_nextRow++;
+    } else {
+        // Add across then down when vertical
+        if (m_nextColumn == m_mainLayout->columnCount()
+            && m_mainLayout->minimumSize().width() + m_mainLayout->spacing()
+               + widget->minimumWidth() > maximumWidth()) {
+            m_nextRow++;
+            m_nextColumn = 0;
+        }
+        m_mainLayout->addWidget(widget, m_nextRow, m_nextColumn);
+        m_nextColumn++;
+    }
+}
+
+void SystemTrayWidget::removeContainer(QObject *container)
+{
+    // Pull all widgets from our container, skipping over the one that was just
+    // deleted
+    QList<QWidget *> remainingWidgets;
+    while (QLayoutItem* item = m_mainLayout->takeAt(0)) {
+        if (item->widget() && item->widget() != container) {
+            remainingWidgets.append(item->widget());
+        }
+        delete item;
+    }
+
+    // Reset the widths and heights in our layout to 0 so that the removed
+    // widget's space isn't kept
+    // (Why doesn't QGridLayout do this automatically?)
+    for (int row = 0; row < m_mainLayout->rowCount(); row++) {
+        m_mainLayout->setRowMinimumHeight(row, 0);
+    }
+    for (int column = 0; column < m_mainLayout->columnCount(); column++) {
+        m_mainLayout->setColumnMinimumWidth(column, 0);
+    }
+
+    // Re-add remaining widgets
+    m_nextRow = 0;
+    m_nextColumn = 0;
+    foreach (QWidget *widget, remainingWidgets) {
+        addWidgetToLayout(widget);
+    }
+
+    // Force a layout so that minimumSizeHint() returns the correct value and
+    // signal that our size should change
+    layout()->activate();
+    emit sizeShouldChange();
 }
 
 #include "systemtraywidget.moc"

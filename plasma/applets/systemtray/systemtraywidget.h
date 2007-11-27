@@ -2,6 +2,7 @@
  *   systemtraywidget.h                                                    *
  *                                                                         *
  *   Copyright (C) 2007 Alexander Rodin                                    *
+ *   Copyright (C) 2007 Jason Stubbs <jasonbstubbs@gmail.com>              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -19,49 +20,44 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef QSYSTRAY_H
-#define QSYSTRAY_H
+#ifndef SYSTRAYWIDGET_H
+#define SYSTRAYWIDGET_H
 
 // Qt
+#include <QGridLayout>
 #include <QWidget>
-#include <QHash>
 
 // Xlib
 #include <X11/Xdefs.h>
-
-class QHBoxLayout;
-class QX11EmbedContainer;
 
 class SystemTrayWidget: public QWidget
 {
 Q_OBJECT
 
 public:
-    SystemTrayWidget(QWidget *parent = 0, Qt::WindowFlags f = 0);
+    SystemTrayWidget(QWidget *parent);
 
 protected:
     bool x11Event(XEvent *event);
-    bool event(QEvent *event);
 
 Q_SIGNALS:
-    void sizeChanged();
+    void sizeShouldChange();
 
 private slots:
-    void init();
-    void embedWindow(WId id);
-    void discardWindow(WId id);
-    /**
-     * Removes the container with id 0 from our list.
-     */
-    void windowClosed();
+    void removeContainer(QObject *container);
 
 private:
-    typedef QHash<WId, QX11EmbedContainer*> ContainersList;
-    
-    ContainersList m_containers;
-    QHBoxLayout *m_layout;
+    void addWidgetToLayout(QWidget *widget);
+    void init();
+
+    QGridLayout *m_mainLayout;
+    Qt::Orientation m_orientation;
+    int m_nextRow;
+    int m_nextColumn;
+
+    // These need to remain allocated for the duration of our lifetime
     Atom m_selectionAtom;
     Atom m_opcodeAtom;
 };
 
-#endif // QSYSTRAY_H
+#endif // SYSTRAYWIDGET_H
