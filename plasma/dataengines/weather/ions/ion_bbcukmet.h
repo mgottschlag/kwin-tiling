@@ -37,12 +37,19 @@ class WeatherData
 {
 
 public:
-    QString title;
-
+    QString place;
+    QString stationName;
     // Current observation information.
-    QString conditionTime;
-    QString weather;
-    QString observations;
+    QString obsTime;
+    QString condition;
+    QString temperature_C;
+    QString temperature_F;
+    QString windDirection;
+    QString windSpeed_miles;
+    QString humidity;
+    QString pressure;
+    QString pressureTendency;
+    QString visibilityStr;
 };
 
 class KDE_EXPORT UKMETIon : public IonInterface

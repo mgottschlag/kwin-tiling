@@ -329,7 +329,7 @@ void UKMETIon::parseWeatherChannel(WeatherData& data, QXmlStreamReader& xml)
   
         if (xml.isStartElement()) {
             if (xml.name() == "title") {
-                kDebug() << "PLACE NAME: " << xml.readElementText();
+                data.stationName = xml.readElementText().split("Observations for")[1].trimmed();
             } else if (xml.name() == "item") {
                 parseWeatherObservation(data, xml);
             } else {
@@ -353,9 +353,43 @@ void UKMETIon::parseWeatherObservation(WeatherData& data, QXmlStreamReader& xml)
 
         if (xml.isStartElement()) {
             if (xml.name() == "title") {
-                kDebug() << "CONDITIONS: " << xml.readElementText();
+                QString conditionString = xml.readElementText();
+
+                // Get the observation time.
+                QStringList conditionData = conditionString.split(":");
+                data.obsTime = conditionData[0];
+                data.condition = conditionData[1].split(".")[0].trimmed();
+                kDebug() << "TIME: " << data.obsTime;
+	        kDebug() << "CONDITIONS: " << data.condition;
+
             } else if (xml.name() == "description") {
-                kDebug() << "OBSERVATIONS: " << xml.readElementText();
+                QString observeString = xml.readElementText();
+                QStringList observeData = observeString.split(":");
+
+                data.temperature_C = observeData[1].split(QChar(176))[0].trimmed();
+                data.temperature_F = observeData[1].split("(")[1].split(QChar(176))[0];
+
+                data.windDirection = observeData[2].split(",")[0].trimmed();
+                data.windSpeed_miles = observeData[3].split(",")[0].split(" ")[1];
+        
+                data.humidity = observeData[4].split(",")[0].split(" ")[1];
+
+                data.pressure = observeData[5].split(",")[0].split(" ")[1].split("mB")[0];
+
+                data.pressureTendency = observeData[5].split(",")[1].trimmed();
+
+                data.visibilityStr = observeData[6].trimmed();
+                kDebug() << "TEMPERATURE IN C: " << data.temperature_C;
+                kDebug() << "TEMPERATURE IN F: " << data.temperature_F;
+
+                kDebug() << "WIND DIRECTION:" << data.windDirection;
+                kDebug() << "WIND SPEED: " << data.windSpeed_miles;
+                kDebug() << "HUMIDITY: " << data.humidity;
+ 
+                kDebug() << "PRESSURE: " << data.pressure;
+                kDebug() << "PRESSURE TENDENCY: " << data.pressureTendency;
+                kDebug() << "VISIBILITY: " << data.visibilityStr;
+
             } else {
                 parseUnknownElement(xml);
             }
