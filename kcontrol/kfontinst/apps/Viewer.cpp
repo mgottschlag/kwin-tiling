@@ -62,16 +62,6 @@ CViewer::CViewer()
         setCentralWidget(itsPreview->widget());
         createGUI(itsPreview);
 
-        KCmdLineArgs *args(KCmdLineArgs::parsedArgs());
-
-        if(args->count() > 0)
-        {
-            KUrl url(args->url(args->count() - 1));
-
-            if(url.isValid())
-                itsPreview->openUrl(url);
-        }
-
         setAutoSaveSettings();
         applyMainWindowSettings(KGlobal::config()->group("MainWindow"));
     }
@@ -85,6 +75,11 @@ void CViewer::fileOpen()
                                              "application/x-font-type1 "
                                              "application/x-font-bdf application/x-font-pcf ",
                                      this, i18n("Select Font to View")));
+    showUrl(url);
+}
+
+void CViewer::showUrl(const KUrl &url)
+{
     if(url.isValid())
         itsPreview->openUrl(url);
 }
@@ -117,10 +112,26 @@ int main(int argc, char **argv)
     KCmdLineArgs::addCmdLineOptions(options);
 
     KApplication app;
+    
+    KCmdLineArgs *args(KCmdLineArgs::parsedArgs());
 
     KFI::CViewer *viewer=new KFI::CViewer;
-
     viewer->show();
+    if(args->count() > 0)
+    {
+        for (int i = 0; i < args->count(); ++i)
+        {
+            KUrl url(args->url(i));
+
+            if (i != 0)
+            {
+                viewer=new KFI::CViewer;
+                viewer->show();
+            }
+            viewer->showUrl(url);
+        }
+    }
+
     return app.exec();
 }
 
