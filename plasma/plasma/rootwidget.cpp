@@ -46,12 +46,12 @@ RootWidget::RootWidget()
     // create a containment for each screen
     //FIXME: we need to respond to randr changes
     for (int i = 0; i < numScreens; ++i) {
-        DesktopView *view = new DesktopView(i, this);
-        view->setGeometry(desktop->screenGeometry(i));
-        m_desktops.append(view);
+        createDesktopView(i);
     }
 
-    PlasmaApp::self()->corona();
+    // this line initializes the corona.
+    Plasma::Corona *corona = PlasmaApp::self()->corona();
+    connect(corona, SIGNAL(newScreen(int)), this, SLOT(newDesktopView(int)));
 
     //TODO: Make the shortcut configurable
     KAction *showAction = new KAction( this );
@@ -91,7 +91,7 @@ void RootWidget::setAsDesktop(bool setAsDesktop)
             setGeometry(desktopGeometry);
         }
 
-        connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize()));
+        connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize(int)));
     } else {
         setWindowFlags(windowFlags() & ~Qt::FramelessWindowHint);
 
@@ -111,14 +111,24 @@ RootWidget::~RootWidget()
 {
 }
 
-void RootWidget::adjustSize()
+void RootWidget::adjustSize(int screen)
 {
     QDesktopWidget *desktop = QApplication::desktop();
     setGeometry(desktop->geometry());
 
     foreach (DesktopView *view, m_desktops) {
-        view->adjustSize();
+        if (view->screen() == screen) {
+            view->adjustSize();
+        }
     }
+}
+
+void RootWidget::createDesktopView(int screen)
+{
+    // we have a new screen. neat.
+    DesktopView *view = new DesktopView(screen, this);
+    view->setGeometry(QApplication::desktop()->screenGeometry(screen));
+    m_desktops.append(view);
 }
 
 #include "rootwidget.moc"

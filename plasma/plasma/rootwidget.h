@@ -58,7 +58,8 @@ class RootWidget : public QWidget
         void toggleDashboard();
 
     protected slots:
-        void adjustSize();
+        void adjustSize(int screen);
+        void createDesktopView(int screen);
 
     private:
         QList<DesktopView*> m_desktops;
