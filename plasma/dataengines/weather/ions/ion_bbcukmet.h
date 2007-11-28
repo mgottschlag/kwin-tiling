@@ -62,7 +62,17 @@ public:
     void init();  // Setup the city location, fetching the correct URL name.
     void option(int option, const QVariant& value);
     bool updateIonSource(const QString& source);
-    void updateWeather(const QString& source); // Sync data source with Applet
+    void updateWeather(const QString& source);
+
+    QString place(const QString& source);
+    QString station(const QString& source);
+    QString observationTime(const QString& source);
+    QString condition(const QString& source);
+    QMap<QString, QString> temperature(const QString& source);
+    QMap<QString, QString> wind(const QString& source);
+    QString humidity(const QString& source);
+    QString visibility(const QString& source);
+    QMap<QString, QString> pressure(const QString& source);
 
 protected slots:
     void setup_slotDataArrived(KIO::Job *, const QByteArray &);
@@ -74,7 +84,8 @@ private:
     /* UKMET Methods - Internal for Ion */
 
     // Load and Parse the place search XML listings
-    void validate(const QString& place, const QString& source);
+    void findPlace(const QString& place, const QString& source);
+    void validate(const QString& source); // Sync data source with Applet
     void getXMLData(const QString& source);
     bool readSearchXMLData(const QString& source, QXmlStreamReader& xml);
     void parseSearchLocations(const QString& source, QXmlStreamReader& xml);
@@ -86,6 +97,7 @@ private:
     void parseWeatherObservation(WeatherData& data, QXmlStreamReader& xml);
     void parseUnknownElement(QXmlStreamReader& xml);
 
+    
 private:
     class Private;
     Private *const d;

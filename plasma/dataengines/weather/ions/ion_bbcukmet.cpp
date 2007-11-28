@@ -87,22 +87,21 @@ void UKMETIon::init()
 bool UKMETIon::updateIonSource(const QString& source)
 {
     // We expect the applet to send the source in the following tokenization:
-    // ionname:validate:place_name - Triggers validation of place
-    // ionname:weather:place_name - Triggers receiving weather of place
+    // ionname|validate|place_name - Triggers validation of place
+    // ionname|weather|place_name - Triggers receiving weather of place
 
     kDebug() << "updateIonSource() SOURCE: " << source;
-    QStringList sourceAction = source.split(':');
+    QStringList sourceAction = source.split('|');
 
     if (sourceAction[1] == QString("validate")) {
         kDebug() << "Initiate Find Matching places: " << sourceAction[2];
         // Look for places to match
-        this->validate(sourceAction[2], source);
+        this->findPlace(sourceAction[2], source);
         return true;
 
     } else if (sourceAction[1] == QString("weather")) {
-       QStringList splitPlace = sourceAction[2].split("|");
-       d->m_place[QString("bbcukmet:%1").arg(splitPlace[0])].XMLurl = QString("http://%1").arg(splitPlace[1]); 
-       getXMLData(QString("%1:%2").arg(sourceAction[0]).arg(splitPlace[0]));
+       d->m_place[QString("bbcukmet|%1").arg(sourceAction[2])].XMLurl = sourceAction[3]; 
+       getXMLData(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
        return true;
     }
     return false;
@@ -130,7 +129,7 @@ void UKMETIon::getXMLData(const QString& source)
 }
 
 // Parses city list and gets the correct city based on ID number
-void UKMETIon::validate(const QString& place, const QString& source)
+void UKMETIon::findPlace(const QString& place, const QString& source)
 {
     d->m_jobList.clear();
     d->m_jobXml.clear();
@@ -183,6 +182,7 @@ void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml
     QString place;
     QStringList tokens;
     QString tmp;
+    int counter = 2;
     Q_ASSERT(xml.isStartElement() && xml.name() == "wml");
     d->m_locations.clear();
     while (!xml.atEnd()) {
@@ -199,19 +199,26 @@ void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml
                     // Split URL to determine station ID number
                     tokens = xml.attributes().value("href").toString().split("=");
                     if (xml.attributes().value("href").toString().contains("world")) {
-                        url = "feeds.bbc.co.uk/weather/feeds/obs/world/" + tokens[1] + ".xml";
+                        url = "http://feeds.bbc.co.uk/weather/feeds/obs/world/" + tokens[1] + ".xml";
                         flag = 0;
                     } else {
-                        url = "feeds.bbc.co.uk/weather/feeds/obs/id/" + tokens[1] + ".xml";
+                        url = "http://feeds.bbc.co.uk/weather/feeds/obs/id/" + tokens[1] + ".xml";
                         flag = 1;
                     }
                     place = xml.readElementText();
-                    tmp = QString("bbcukmet:%1").arg(place);
+                    tmp = QString("bbcukmet|%1").arg(place);
  
                     kDebug() << "PLACES FOUND: " << place; 
                     kDebug() << "URL FOR PLACE: " << url;
 
-                    if (!d->m_locations.contains(place)) {
+                    // Duplicate places can exist
+                    if (d->m_locations.contains(tmp)) {
+                         
+                        QString dupePlace = place;
+                        tmp = QString("bbcukmet|%1").arg(QString("%1 (#%2)").arg(dupePlace).arg(counter));
+                        place = QString("%1 (#%2)").arg(dupePlace).arg(counter);
+                        counter++;
+                    }
                     
                         if (flag) {  // This is a UK specific location
                             d->m_place[tmp].XMLurl = url;
@@ -223,13 +230,11 @@ void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml
                             d->m_place[tmp].ukPlace = false;
                         }
                         d->m_locations.append(tmp);
-                    }
                 }
             }
         } 
     }
-
-    updateWeather(source);
+    validate(source);
 }
 
 // handle when no XML tag is found
@@ -264,7 +269,7 @@ void UKMETIon::setup_slotJobFinished(KJob *job)
 {
     if (job->error() == 149) {
         kDebug() << "JOB ERROR: " << job->errorString(); 
-        setData(d->m_jobList[job], "validate", QString("bbcukmet:timeout"));
+        setData(d->m_jobList[job], "validate", QString("bbcukmet|timeout"));
         disconnectSource(d->m_jobList[job], this);
         d->m_jobList.remove(job);
         delete d->m_jobXml[job];
@@ -357,6 +362,7 @@ void UKMETIon::parseWeatherObservation(WeatherData& data, QXmlStreamReader& xml)
 
                 // Get the observation time.
                 QStringList conditionData = conditionString.split(":");
+
                 data.obsTime = conditionData[0];
                 data.condition = conditionData[1].split(".")[0].trimmed();
                 kDebug() << "TIME: " << data.obsTime;
@@ -397,7 +403,7 @@ void UKMETIon::parseWeatherObservation(WeatherData& data, QXmlStreamReader& xml)
     }
 }
 
-bool UKMETIon::readObservationXMLData(QString& key, QXmlStreamReader& xml)
+bool UKMETIon::readObservationXMLData(QString& source, QXmlStreamReader& xml)
 {
     WeatherData data;
 
@@ -418,7 +424,9 @@ bool UKMETIon::readObservationXMLData(QString& key, QXmlStreamReader& xml)
         }
     }
 
-    d->m_weatherData[key] = data;
+    kDebug() << "SOURCE ======>" << source;
+    d->m_weatherData[source] = data;
+    updateWeather(source);
     return !xml.error();
 }
 
@@ -443,26 +451,158 @@ void UKMETIon::option(int option, const QVariant& value)
     case IonInterface::WINDFORMAT:
         if (value.toBool()) {
             d->m_windInMeters = true;
+        } else {
+            d->m_windInMeters = false;
         }
         break;
     }
 }
 
-void UKMETIon::updateWeather(const QString& source)
+void UKMETIon::validate(const QString& source)
 {
+    bool beginflag = true;
+
     if (!d->m_locations.count()) {
-        QStringList invalidPlace = source.split(':');
-        setData(source, "validate", QString("bbcukmet:invalid:multiple:%1").arg(invalidPlace[2]));
+        QStringList invalidPlace = source.split('|');
+        setData(source, "validate", QString("bbcukmet|invalid|multiple|%1").arg(invalidPlace[2]));
         return;
     } else {
         QString placeList;
         foreach (QString place, d->m_locations) {
-                 placeList.append(QString("%1:extra:%2:").arg(place.split(":")[1]).arg(d->m_place[place].XMLurl));
+                 if (beginflag) {
+                     placeList.append(QString("%1|extra|%2").arg(place.split("|")[1]).arg(d->m_place[place].XMLurl));
+                     beginflag = false;
+                 } else {
+                     placeList.append(QString("|place|%1|extra|%2").arg(place.split("|")[1]).arg(d->m_place[place].XMLurl));
+                 }
         }
-        kDebug() << "****** PLACES FOUND: " << placeList;
-        setData(source, "validate", QString("bbcukmet:valid:multiple:%1").arg(placeList));
+        setData(source, "validate", QString("bbcukmet|valid|multiple|place|%1").arg(placeList));
     }
-    return;
+}
+
+void UKMETIon::updateWeather(const QString& source)
+{
+    QString weatherSource = source;
+    weatherSource.replace("bbcukmet|", "bbcukmet|weather|");
+    weatherSource.append(QString("|%1").arg(d->m_place[source].XMLurl));
+
+    QMap<QString, QString> dataFields;
+    QStringList fieldList;
+
+    setData(weatherSource, "Place", this->place(source));
+    setData(weatherSource, "Station", this->station(source));
+    setData(weatherSource, "Observation Period", this->observationTime(source));
+    setData(weatherSource, "Current Conditions", this->condition(source));
+ 
+    setData(weatherSource, "Humidity", this->humidity(source));
+    setData(weatherSource, "Visibility", this->visibility(source));
+   
+    dataFields = this->temperature(source);
+    setData(weatherSource, "Temperature", dataFields["temperature"]);
+    setData(weatherSource, "Temperature Unit", dataFields["temperatureUnit"]);
+   
+    dataFields = this->pressure(source);
+    setData(weatherSource, "Pressure", dataFields["pressure"]);
+    setData(weatherSource, "Pressure Unit", dataFields["pressureUnit"]);
+    setData(weatherSource, "Pressure Tendency", dataFields["pressureTendency"]);
+  
+    dataFields = this->wind(source);
+    setData(weatherSource, "Wind Speed", dataFields["windSpeed"]);
+    setData(weatherSource, "Wind Speed Unit", dataFields["windUnit"]);
+    setData(weatherSource, "Wind Direction", dataFields["windDirection"]);
+
+    setData(weatherSource, "Credit", "BBC / UK MET Office");
+}
+
+QString UKMETIon::place(const QString& source)
+{
+    return source.split("|")[1];
+}
+
+QString UKMETIon::station(const QString& source)
+{
+    return d->m_weatherData[source].stationName;
+}
+
+QString UKMETIon::observationTime(const QString& source)
+{
+    return d->m_weatherData[source].obsTime;
+}
+
+QString UKMETIon::condition(const QString& source)
+{
+    return d->m_weatherData[source].condition;
+}
+
+QMap<QString, QString> UKMETIon::temperature(const QString& source)
+{
+    QMap<QString, QString> temperatureInfo;
+
+    if (d->m_useMetric) {
+        temperatureInfo.insert("temperature", QString("%1").arg(d->m_weatherData[source].temperature_C));
+        temperatureInfo.insert("temperatureUnit", QString("%1C").arg(QChar(176)));
+    } else {
+        temperatureInfo.insert("temperature", QString("%1").arg(d->m_weatherData[source].temperature_F));
+        temperatureInfo.insert("temperatureUnit", QString("%1F").arg(QChar(176)));
+    }
+    return temperatureInfo;
+}
+
+QMap<QString, QString> UKMETIon::wind(const QString& source)
+{
+    QMap<QString, QString> windInfo;
+    if (d->m_weatherData[source].windSpeed_miles == "N/A") {
+        windInfo.insert("windSpeed", "N/A");
+        windInfo.insert("windUnit", "N/A");
+    } else {
+        if (d->m_useMetric) {
+            if (d->m_windInMeters) {
+                windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_formula.milesToMS(d->m_weatherData[source].windSpeed_miles.toFloat()), 'f', 2)));
+                windInfo.insert("windUnit","m/s");
+            } else {
+                windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_formula.milesToKM(d->m_weatherData[source].windSpeed_miles.toFloat()), 'f', 1)));
+                windInfo.insert("windUnit", "km/h");
+            } 
+        } else {
+            windInfo.insert("windSpeed", QString(d->m_weatherData[source].windSpeed_miles));
+            windInfo.insert("windUnit", "mph");
+        }
+    }
+    windInfo.insert("windDirection", d->m_weatherData[source].windDirection);
+    return windInfo;
+}
+
+QString UKMETIon::humidity(const QString& source)
+{
+    if (d->m_weatherData[source].humidity == "N/A%") {
+        return "N/A";
+    } 
+    return d->m_weatherData[source].humidity;
+}
+
+QString UKMETIon::visibility(const QString& source)
+{
+    return d->m_weatherData[source].visibilityStr;
+}
+
+QMap<QString, QString> UKMETIon::pressure(const QString& source)
+{
+    QMap<QString, QString> pressureInfo;
+    if (d->m_weatherData[source].pressure == "N/A") {
+        pressureInfo.insert("pressure", "N/A");
+        return pressureInfo;
+    }
+   
+    if (d->m_useMetric) {
+        pressureInfo.insert("pressure", QString("%1").arg(QString::number(d->m_formula.millibarsToKilopascals(d->m_weatherData[source].pressure.toFloat()), 'f', 1)));
+        pressureInfo.insert("pressureUnit", "kPa");
+    } else {
+        pressureInfo.insert("pressure", QString("%1").arg(QString::number(d->m_formula.millibarsToInches(d->m_weatherData[source].pressure.toFloat()), 'f', 2)));
+        pressureInfo.insert("pressureUnit", "in");
+    }
+
+    pressureInfo.insert("pressureTendency", d->m_weatherData[source].pressureTendency);
+    return pressureInfo;
 }
 
 #include "ion_bbcukmet.moc"
