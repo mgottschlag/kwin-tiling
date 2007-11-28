@@ -36,7 +36,7 @@ class QListWidget;
 class QListWidgetItem;
 class QVBoxLayout;
 
-class KLineEdit;
+class KComboBox;
 class KPushButton;
 class KTitleWidget;
 
@@ -79,7 +79,7 @@ class Interface : public KRunnerDialog
         QTimer m_matchTimer;
         QVBoxLayout* m_layout;
         KTitleWidget* m_header;
-        KLineEdit* m_searchTerm;
+        KComboBox* m_searchTerm;
         QListWidget* m_matchList;
         QLabel* m_optionsLabel;
         KPushButton* m_cancelButton;

@@ -30,6 +30,7 @@
 #include <QHideEvent>
 
 #include <KActionCollection>
+#include <KComboBox>
 #include <KCompletionBox>
 #include <KDebug>
 #include <KDialog>
@@ -156,11 +157,12 @@ Interface::Interface(QWidget* parent)
     m_header->setBackgroundRole( QPalette::Base );
     m_layout->addWidget( m_header );
 
-    m_searchTerm = new KLineEdit(w);
+    m_searchTerm = new KComboBox(w);
+    KLineEdit *lineEdit = new KLineEdit(m_searchTerm);
+    lineEdit->setCompletionObject(m_context.completionObject());
+    lineEdit->setClearButtonShown(true);
+    m_searchTerm->setLineEdit(lineEdit);
     m_header->setBuddy(m_searchTerm);
-    m_searchTerm->clear();
-    m_searchTerm->setClearButtonShown(true);
-    m_searchTerm->setCompletionObject(m_context.completionObject());
     m_layout->addWidget(m_searchTerm);
     connect(m_searchTerm, SIGNAL(textChanged(QString)),
             this, SLOT(queueMatch()));
@@ -244,7 +246,7 @@ void Interface::display(const QString& term)
     m_searchTerm->setFocus();
 
     if (!term.isEmpty()) {
-        m_searchTerm->setText(term);
+        m_searchTerm->setItemText(0, term);
     }
 
     if (!isVisible()) {
@@ -323,7 +325,10 @@ void Interface::resetInterface()
     m_header->setPixmap("system-search");
     m_defaultMatch = 0;
     m_context.setSearchTerm(QString());
-    m_searchTerm->clear();
+    m_context.addStringCompletions(m_executions);
+    m_searchTerm->addItems(m_executions);
+    m_searchTerm->addItem(QString());
+    m_searchTerm->setCurrentIndex(m_searchTerm->count() - 1);
     m_matchList->clear();
     m_runButton->setEnabled( false );
     m_optionsButton->setEnabled( false );
@@ -348,18 +353,17 @@ void Interface::matchActivated(QListWidgetItem* item)
         return;
     }
 
-    QString searchTerm = m_searchTerm->text();
-    if (!m_executions.contains(searchTerm)) {
-        m_executions << searchTerm;
+    QString searchTerm = m_searchTerm->currentText();
+    m_executions.removeAll(searchTerm);
+    m_executions << searchTerm;
 
-        //TODO: how many items should we remember exactly?
-        if (m_executions.size() > 100) {
-            m_executions.pop_front();
-        }
+    //TODO: how many items should we remember exactly?
+    if (m_executions.size() > 100) {
+        m_executions.pop_front();
     }
 
     if (match->actionType() == Plasma::SearchAction::InformationalMatch) {
-        m_searchTerm->setText(match->toString());
+        m_searchTerm->setItemText(0, match->toString());
     } else {
         //kDebug() << "match activated! " << match->text();
         match->activate();
@@ -375,7 +379,7 @@ void Interface::queueMatch()
     // (re)start the timer
     m_matchTimer.start(200);
 
-    QString term = m_searchTerm->text().trimmed();
+    QString term = m_searchTerm->currentText().trimmed();
     if (!term.isEmpty()) {
         m_defaultMatch = 0;
         m_context.setSearchTerm(term);
@@ -390,7 +394,7 @@ void Interface::match()
     m_defaultMatch = 0;
 
     int matchCount = 0;
-    QString term = m_searchTerm->text().trimmed();
+    QString term = m_searchTerm->currentText().trimmed();
 
     if (term.isEmpty()) {
         resetInterface();
