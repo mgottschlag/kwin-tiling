@@ -86,7 +86,7 @@ QStringList NOAAIon::validate(const QString& source) const
     QHash<QString, QString>::const_iterator it = d->m_locations.constBegin();
     while (it != d->m_locations.constEnd()) { 
         if (it.value().toLower().contains(source.toLower())) {
-            placeList.append(it.value().split(":")[1]);
+            placeList.append(QString("place|%1").arg(it.value().split("|")[1]));
         }
         ++it;
     }
@@ -107,24 +107,24 @@ bool NOAAIon::updateIonSource(const QString& source)
     // ionname:weather:place_name - Triggers receiving weather of place
 
     kDebug() << "updateIonSource() SOURCE: " << source;
-    QStringList sourceAction = source.split(':');
+    QStringList sourceAction = source.split('|');
     if (sourceAction[1] == QString("validate")) {
         kDebug() << "Initiate Validating of place: " << sourceAction[2];
-        QStringList result = this->validate(QString("%1:%2").arg(sourceAction[0]).arg(sourceAction[2]));
+        QStringList result = this->validate(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
    
         if (result.size() == 1) {
-            setData(source, "validate", QString("noaa:valid:single:%1").arg(result.join(":")));
+            setData(source, "validate", QString("noaa|valid|single|%1").arg(result.join("|")));
             return true;
         } else if (result.size() > 1) {
-            setData(source, "validate", QString("noaa:valid:multiple:%1").arg(result.join(":")));
+            setData(source, "validate", QString("noaa|valid|multiple|%1").arg(result.join("|")));
             return true;
         } else if (result.size() == 0) {
-            setData(source, "validate", QString("noaa:invalid:single:%1").arg(sourceAction[2]));
+            setData(source, "validate", QString("noaa|invalid|single|%1").arg(sourceAction[2]));
             return true;
         }
 
      } else if (sourceAction[1] == QString("weather")) {
-        getXMLData(QString("%1:%2").arg(sourceAction[0]).arg(sourceAction[2]));
+        getXMLData(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
         return true;
      }
      return false;
@@ -220,7 +220,7 @@ void NOAAIon::parseStationID()
             } else if (d->m_xmlSetup.name() == "xml_url") {
                 d->m_xmlurl = d->m_xmlSetup.readElementText();
 
-                tmp = "noaa:" + d->m_station_name + ", " + d->m_state; // Build the key name.
+                tmp = "noaa|" + d->m_station_name + ", " + d->m_state; // Build the key name.
                 d->m_place[tmp].stateName = d->m_state;
                 d->m_place[tmp].stationName = d->m_station_name;
 	        d->m_place[tmp].XMLurl = d->m_xmlurl.replace("http://", "http://www.");
@@ -408,17 +408,18 @@ void NOAAIon::option(int option, const QVariant& value)
 void NOAAIon::updateWeather(const QString& source) 
 {
     QString weatherSource = source;
-    weatherSource.replace("noaa:", "noaa:weather:");
+   
+    weatherSource.replace("noaa|", "noaa|weather|");
 
     QMap<QString, QString> dataFields;
     QStringList fieldList;
 
     setData(weatherSource, "Country", this->country(source));
     setData(weatherSource, "Place", this->place(source));
-    setData(weatherSource, "Airport Code", this->station(source));
+    setData(weatherSource, "Station", this->station(source));
 
     // Real weather - Current conditions
-    setData(weatherSource, "Observations At", this->observationTime(source));
+    setData(weatherSource, "Observation Period", this->observationTime(source));
     setData(weatherSource, "Current Conditions", this->condition(source));
     dataFields = this->temperature(source);
     setData(weatherSource, "Temperature", dataFields["temperature"]);
@@ -505,9 +506,9 @@ QString NOAAIon::condition(const QString& source)
 QString NOAAIon::dewpoint(const QString& source)
 {
     if (d->m_useMetric) {
-        return QString("%1").arg(d->m_weatherData[source].dewpoint_C);
+        return d->m_weatherData[source].dewpoint_C;
     }
-    return QString("%1").arg(d->m_weatherData[source].dewpoint_F);
+    return d->m_weatherData[source].dewpoint_F;
 }
 
 QString NOAAIon::humidity(const QString& source)
@@ -531,7 +532,7 @@ QMap<QString, QString> NOAAIon::visibility(const QString& source)
         visibilityInfo.insert("visibilityUnit", "km");
         return visibilityInfo;
     } 
-    visibilityInfo.insert("visibility", QString("%1").arg(d->m_weatherData[source].visibility));
+    visibilityInfo.insert("visibility", d->m_weatherData[source].visibility);
     visibilityInfo.insert("visibilityUnit", "mi");
     return visibilityInfo;
 }
@@ -540,10 +541,10 @@ QMap<QString, QString> NOAAIon::temperature(const QString& source)
 {
     QMap<QString, QString> temperatureInfo;
     if (d->m_useMetric) {
-        temperatureInfo.insert("temperature", QString("%1").arg(d->m_weatherData[source].temperature_C));
+        temperatureInfo.insert("temperature", d->m_weatherData[source].temperature_C);
         temperatureInfo.insert("temperatureUnit", QString("%1C").arg(QChar(176)));
     } else {
-        temperatureInfo.insert("temperature", QString("%1").arg(d->m_weatherData[source].temperature_F));
+        temperatureInfo.insert("temperature", d->m_weatherData[source].temperature_F);
         temperatureInfo.insert("temperatureUnit", QString("%1F").arg(QChar(176)));
     }
     temperatureInfo.insert("comfortTemperature", "N/A");
@@ -574,10 +575,10 @@ QMap<QString, QString> NOAAIon::pressure(const QString& source)
         return pressureInfo;
     } 
     if (d->m_useMetric) {
-        pressureInfo.insert("pressure", QString("%1").arg(QString::number(d->m_formula.inchesToKilopascals(d->m_weatherData[source].pressure.toFloat()), 'f', 1)));
+        pressureInfo.insert("pressure", QString::number(d->m_formula.inchesToKilopascals(d->m_weatherData[source].pressure.toFloat()), 'f', 1));
         pressureInfo.insert("pressureUnit", "kPa");
     } else {
-        pressureInfo.insert("pressure", QString("%1").arg(d->m_weatherData[source].pressure));
+        pressureInfo.insert("pressure", d->m_weatherData[source].pressure);
         pressureInfo.insert("pressureUnit", "in");
     }
     return pressureInfo;
