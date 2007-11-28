@@ -2022,10 +2022,10 @@ void CFontListView::view()
     {
         QSet<CFontItem *>::ConstIterator it(fonts.begin()),
                                          end(fonts.end());
+        QStringList                      args;
 
         for(; it!=end; ++it)
         {
-            QStringList args;
 
             // If we can, speed up font viewer by passing the font details...
             if((*it)->isEnabled())
@@ -2071,9 +2071,9 @@ void CFontListView::view()
                 if(!done)
                     args << (*it)->url().url();
             }
-
-            QProcess::startDetached(KFI_VIEWER, args);
         }
+
+        QProcess::startDetached(KFI_VIEWER, args);
     }
 }
 
