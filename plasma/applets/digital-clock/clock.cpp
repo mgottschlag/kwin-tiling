@@ -93,7 +93,8 @@ void Clock::init()
     m_horizontalSpacing = 2;
     m_verticalSpacing = 1;
 
-    setSize(QSize(200, 72));
+    setSize(QSize(120, 72));
+    setMinimumSize(QSizeF(80, 44));
     Plasma::DataEngine* timeEngine = dataEngine("time");
     timeEngine->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
 }
