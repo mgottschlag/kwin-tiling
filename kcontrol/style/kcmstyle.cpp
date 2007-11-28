@@ -494,6 +494,15 @@ void KCMStyle::styleSpecificConfig()
 	delete dial;
 }
 
+void KCMStyle::changeEvent( QEvent *event )
+{
+	KCModule::changeEvent( event );
+	if ( event->type() == QEvent::PaletteChange ) {
+		// Force re-rendering of the preview, to apply new palette
+		switchStyle(currentStyle(), true);
+	}
+}
+
 void KCMStyle::load()
 {
 	KConfig config( "kdeglobals", KConfig::FullConfig );

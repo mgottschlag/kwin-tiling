@@ -77,6 +77,8 @@ protected:
 	void loadMisc( KConfig& config );
 	void addWhatsThis();
 
+	virtual void changeEvent( QEvent *event );
+
 protected Q_SLOTS:
 	void styleSpecificConfig();
 	void updateConfigButton();
