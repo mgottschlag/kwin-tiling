@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Places Data Engine
 Name[ca]=Motor de dades de llocs
+Name[de]=Daten-Treiber für Orte
 Name[el]=Μηχανή δεδομένων τοποθεσιών
 Name[es]=Motor de datos de ubicaciones
 Name[et]=Asukohtade andmete mootor
@@ -25,6 +26,7 @@ Name[zh_CN]=Plasma 数据引擎
 Name[zh_TW]=Places 資料引擎
 Comment=Places data for Plasmoids
 Comment[ca]=Dades de llocs pels plasmoides
+Comment[de]="Orte" für Plasmoide
 Comment[el]=Δεδομένα τοποθεσιών για πλασμοειδή
 Comment[es]=Lugares para los plasmoides
 Comment[et]=Asukohtade andmed plasmoididele
