@@ -1,6 +1,7 @@
 /*  
-    Copyright 2007 Alexis Ménard <darktears31@gmail.com>
-
+    Copyright 2007 Robert Knight <robertknight@gmail.com>
+    Copyright 2007 by Alexis Ménard <darktears31@gmail.com>
+    
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -16,7 +17,6 @@
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
 */
-
 #ifndef LISTVIEW_H
 #define LISTVIEW_H
 

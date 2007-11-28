@@ -1,5 +1,6 @@
 /*  
-    Copyright 2007 Alexis Ménard <darktears31@gmail.com>
+    Copyright 2007 Robert Knight <robertknight@gmail.com>
+    Copyright 2007 Alexis Menard <darktears31@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -16,6 +17,7 @@
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
 */
+
 
 #ifndef ITEMDELEGATE_H
 #define ITEMDELEGATE_H
