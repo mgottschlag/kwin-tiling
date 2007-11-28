@@ -40,6 +40,7 @@ public:
     QVector<QString> m_locations;
     QStringList m_matchLocations;
     bool isValid;
+
 public:
     // Weather information
     QHash<QString, WeatherData> m_weatherData;
@@ -51,7 +52,6 @@ public:
     QMap<KJob *, QXmlStreamReader*> m_forecastJobXml;
     QMap<KJob *, QString> m_forecastJobList;
 
-    
     KUrl *m_url;
     KIO::TransferJob *m_job;
 
@@ -140,7 +140,6 @@ void UKMETIon::findPlace(const QString& place, const QString& source)
 
     d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
     d->m_job->addMetaData("cookies", "none"); // Disable displaying cookies
-
     d->m_jobXml.insert(d->m_job, new QXmlStreamReader);
     d->m_jobList.insert(d->m_job, source);
 
@@ -207,7 +206,7 @@ void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml
                     }
                     place = xml.readElementText();
                     tmp = QString("bbcukmet|%1").arg(place);
- 
+
                     kDebug() << "PLACES FOUND: " << place; 
                     kDebug() << "URL FOR PLACE: " << url;
 
@@ -255,14 +254,18 @@ void UKMETIon::parseUnknownElement(QXmlStreamReader& xml)
     
 void UKMETIon::setup_slotDataArrived(KIO::Job *job, const QByteArray &data)
 {
-    kDebug() << "JOB ERROR(): " << job->errorString();
-
+    QByteArray local = data;
     if (data.isEmpty() || !d->m_jobXml.contains(job)) {
         return;
     }
 
+    // XXX: BBC doesn't convert unicode strings so this breaks XML formatting. Not pretty.
+    if (local.startsWith("<?xml version")) {
+        local.replace("<?xml version=\"1.0\"?>", "<?xml version=\"1.0\" encoding=\"cp1252\" ?>");
+    }
+
     // Send to xml.
-    d->m_jobXml[job]->addData(data.data());
+    d->m_jobXml[job]->addData(local.data());
 }
 
 void UKMETIon::setup_slotJobFinished(KJob *job)
@@ -275,7 +278,7 @@ void UKMETIon::setup_slotJobFinished(KJob *job)
         delete d->m_jobXml[job];
         d->m_jobXml.remove(job);
         return;
-    }   
+    }
     readSearchXMLData(d->m_jobList[job], *d->m_jobXml[job]);
     d->m_jobList.remove(job);
     delete d->m_jobXml[job];
@@ -284,13 +287,20 @@ void UKMETIon::setup_slotJobFinished(KJob *job)
 
 void UKMETIon::forecast_slotDataArrived(KIO::Job *job, const QByteArray &data)
 {
+    QByteArray local = data;
     kDebug() << "UKMET: RECEIVING FORECAST INFORMATION\n";
     if (data.isEmpty() || !d->m_forecastJobXml.contains(job)) {
         return;
     }
   
+    // XXX: I don't know what to say about this. But horrible. We can't really do much about this :/
+    // No, it's not UTF-8, it really lies.
+    if (local.startsWith("<?xml version")) {
+        local.replace("encoding=\"UTF-8\"?>", "encoding=\"cp1252\" ?>");
+    }
+
     // Send to xml.
-    d->m_forecastJobXml[job]->addData(data.data());
+    d->m_forecastJobXml[job]->addData(local.data());
 }
 
 void UKMETIon::forecast_slotJobFinished(KJob *job)
@@ -424,7 +434,6 @@ bool UKMETIon::readObservationXMLData(QString& source, QXmlStreamReader& xml)
         }
     }
 
-    kDebug() << "SOURCE ======>" << source;
     d->m_weatherData[source] = data;
     updateWeather(source);
     return !xml.error();
