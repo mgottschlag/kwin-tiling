@@ -158,7 +158,6 @@ void KxkbCore::initKDEShortcut()
             connect(KGlobalSettings::self(), SIGNAL(settingsChanged(int)), this, SLOT(settingsChanged(int)));
         }
         KAction* kAction = static_cast<KAction*>(actionCollection->action(0));
-        actionCollection->readSettings();
         kDebug() << "kde shortcut" << kAction->globalShortcut().toString();
     }
     else {
@@ -180,13 +179,10 @@ void KxkbCore::stopKDEShortcut()
 
 void KxkbCore::settingsChanged(int category)
 {
-    if ( category != KGlobalSettings::SETTINGS_SHORTCUTS)
-        return;
-
-    if( actionCollection != NULL ) {
-        kDebug() << "global settings changed";
-        actionCollection->readSettings();
-        kDebug() << "kde shortcut" << static_cast<KAction*>(actionCollection->action(0))->globalShortcut().toString();
+    if ( category == KGlobalSettings::SETTINGS_SHORTCUTS) {
+        // TODO: can we do it more efficient or recreating action collection is the only way?
+        stopKDEShortcut();
+        initKDEShortcut();
     }
 }
 
@@ -383,7 +379,7 @@ void KxkbCore::iconMenuTriggered(QAction* action)
     }
     else
     {
-//        emit quit();
+//        quit;
     }
 }
 

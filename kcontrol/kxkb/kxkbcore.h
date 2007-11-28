@@ -81,9 +81,6 @@ protected:
     bool settingsRead();
     void layoutApply();
     
-signals:
-    void quit();
-		
 private:
     int m_mode;
     int m_currentLayout;

@@ -454,7 +454,6 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
 //    actionCollection->setConfigGlobal(true);
     KAction* a = NULL;
 #include "kxkbbindings.cpp"
-    actionCollection->readSettings();
     kDebug() << "getting shortcut" << a->globalShortcut().toString();
 
     widget->kdeKeySequence->setModifierlessAllowed(false);
@@ -557,7 +556,7 @@ void LayoutConfig::save()
     KShortcut shortcut(widget->kdeKeySequence->keySequence());
     action->setGlobalShortcut(shortcut, KAction::ActiveShortcut, KAction::NoAutoloading);
     kDebug() << "saving kxkb shortcut" << shortcut.toString();
-    actionCollection->writeSettings();
+//    actionCollection->writeSettings();
 
     KGlobalSettings::emitChange(KGlobalSettings::SettingsChanged, KGlobalSettings::SETTINGS_SHORTCUTS);
 
