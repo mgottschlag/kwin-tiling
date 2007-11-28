@@ -312,13 +312,15 @@ public:
     void setRules(XkbRules* rules) { m_rules = rules; }
     void reset() { QAbstractItemModel::reset(); }
 
-    void gotoGroup(const QString& group, QAbstractItemView* view) {
+    void gotoGroup(const QString& group, QTreeView* view) {
         int index = m_rules->optionGroups().keys().indexOf(group);
 //        kDebug() << "scrolling to group" << index << "-" << group;
         if( index != -1 ) {
+            QModelIndex modelIdx = createIndex(index,0);
 //            view->selectionModel()->setCurrentIndex(createIndex(index,0), QItemSelectionModel::NoUpdate);
-            view->scrollTo(createIndex(index,0), QAbstractItemView::PositionAtTop);
-            view->selectionModel()->setCurrentIndex(createIndex(index,0), QItemSelectionModel::Current);
+            view->setExpanded(modelIdx, true);
+            view->scrollTo(modelIdx, QAbstractItemView::PositionAtTop);
+            view->selectionModel()->setCurrentIndex(modelIdx, QItemSelectionModel::Current);
             view->setFocus(Qt::OtherFocusReason);
 //            kDebug() << "wdg:" << view->itemDelegate(createIndex(index, 0).child(0,0));
         }
