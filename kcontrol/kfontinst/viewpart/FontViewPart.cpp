@@ -533,8 +533,7 @@ void CFontViewPart::stat(const QString &path)
     else
         statUrl=KUrl(path);
 
-    KIO::StatJob * job = KIO::stat(statUrl, 
-       statUrl.isLocalFile() ? KIO::HideProgressInfo : KIO::DefaultFlags);
+    KIO::StatJob * job = KIO::stat(statUrl, KIO::HideProgressInfo);
     job->ui()->setWindow(itsFrame->parentWidget());
     job->setSide(KIO::StatJob::SourceSide);
     connect(job, SIGNAL(result (KJob *)), this, SLOT(statResult(KJob *)));
