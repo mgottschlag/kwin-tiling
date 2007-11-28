@@ -77,10 +77,10 @@ void Battery::init()
     m_font = QApplication::font();
     m_font.setWeight(QFont::Bold);
 
-    m_textColor = KColorScheme(QPalette::Active, KColorScheme::View).foreground().color();
-    m_boxColor = KColorScheme(QPalette::Active, KColorScheme::View).background().color();
+    m_textColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color();
+    m_boxColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).background().color();
 
-    m_boxAlpha = 92;
+    m_boxAlpha = 128;
     m_boxHoverAlpha = 192;
     m_boxColor.setAlpha(m_boxAlpha);
 
@@ -253,10 +253,17 @@ void Battery::paintLabel(QPainter *p, const QString& labelText)
         // Smaller texts get a wider box
         text_width = (int)(text_width * 1.4);
     }
+    if (formFactor() == Plasma::Horizontal ||
+        formFactor() == Plasma::Vertical) {
+        m_font = KGlobalSettings::smallestReadableFont();
+        m_font.setWeight(QFont::Bold);
+        fm = QFontMetrics(m_font);
+        text_width = (int)(fm.width(labelText)+8);
+    } 
     p->setFont(m_font);
 
     // Let's find a good position for painting the background
-    QRect text_rect = QRect((int)((contentSize().width()-fm.width(labelText))/2),
+    QRect text_rect = QRect((int)((contentSize().width()-text_width)/2),
                             (int)(((contentSize().height() - (int)fm.height())/2*0.9)),
                             text_width,
                             (int)(fm.height()*1.2));
@@ -372,20 +379,16 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
     if (formFactor() == Plasma::Vertical ||
         formFactor() == Plasma::Horizontal) {
         m_theme->paint(p, corect, "Shadow");
-        showString = false;
     }
     if (m_theme->elementExists("Overlay")) {
         m_theme->paint(p, corect, "Overlay");
     }
 
-    if (formFactor() == Plasma::Planar ||
-        formFactor() == Plasma::MediaCenter) {
-        if (showString || m_isHovered) {
-            // Show the charge percentage with a box
-            // on top of the battery, but only for plasmoids bigger than ....
-            if (contentSizeHint().width() > 48) {
-                paintLabel(p, m_battery_percent_label);
-            }
+    if (showString || m_isHovered) {
+        // Show the charge percentage with a box
+        // on top of the battery, but only for plasmoids bigger than ....
+        if (contentSizeHint().width() >= 44) {
+            paintLabel(p, m_battery_percent_label);
         }
     }
 }
