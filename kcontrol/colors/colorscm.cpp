@@ -133,7 +133,7 @@ void KColorCm::updateEffectsPage()
     inactiveIntensityBox->setCurrentIndex(groupI.readEntry("IntensityEffect", 0));
     inactiveIntensitySlider->setValue(int(groupI.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
     inactiveColorBox->setCurrentIndex(groupI.readEntry("ColorEffect", 0));
-    if (inactiveColorBox->currentIndex() > 2)
+    if (inactiveColorBox->currentIndex() > 1)
     {
         inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.0) * 40.0));
     }
@@ -150,7 +150,7 @@ void KColorCm::updateEffectsPage()
     disabledIntensityBox->setCurrentIndex(groupD.readEntry("IntensityEffect", 0));
     disabledIntensitySlider->setValue(int(groupD.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
     disabledColorBox->setCurrentIndex(groupD.readEntry("ColorEffect", 0));
-    if (disabledColorBox->currentIndex() > 2)
+    if (disabledColorBox->currentIndex() > 1)
     {
         disabledColorSlider->setValue(int(groupD.readEntry("ColorAmount", 0.0) * 40.0));
     }
