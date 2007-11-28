@@ -34,19 +34,14 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_cachedBackground(0)
 {
-    //FIXME: we need a proper background painting implementation here
     m_background = new Plasma::Svg("widgets/panel-background", this);
     setZValue(150);
+    setContainmentType(Containment::PanelContainment);
 }
 
 Panel::~Panel()
 {
     delete m_background;
-}
-
-Plasma::Containment::Type Panel::containmentType() const
-{
-    return PanelContainment;
 }
 
 void Panel::constraintsUpdated(Plasma::Constraints constraints)

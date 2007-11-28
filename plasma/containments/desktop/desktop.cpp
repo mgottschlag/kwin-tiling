@@ -65,6 +65,7 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
       m_wallpaperPath(0)
 {
     //kDebug() << "!!! loading desktop";
+    setContainmentType(Containment::DesktopContainment);
 }
 
 DefaultDesktop::~DefaultDesktop()
@@ -190,11 +191,6 @@ void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
             getBitmapBackground();
         }
     }
-}
-
-Containment::Type DefaultDesktop::containmentType() const
-{
-    return Containment::DesktopContainment;
 }
 
 void DefaultDesktop::configure()
