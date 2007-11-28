@@ -33,7 +33,7 @@ public:
 
     IonInterface* ionForSource(const QString& name)
     {
-        int offset = name.indexOf(':');
+        int offset = name.indexOf('|');
 
         if (offset < 1) {
             return NULL;
@@ -51,7 +51,7 @@ public:
 
     QString ionNameForSource(const QString& source) 
     {
-        int offset = source.indexOf(':'); 
+        int offset = source.indexOf('|'); 
         if (offset < 1) {
             return QString();
         }
@@ -158,7 +158,7 @@ KService::List WeatherEngine::knownIons()
     }
 
     foreach(KService::Ptr service, offers) {
-        setData("ions", service->property("X-IonName").toString(), QString("%1:%2").arg(service->property("Name").toString()).arg(service->property("X-IonName").toString()));
+        setData("ions", service->property("X-IonName").toString(), QString("%1|%2").arg(service->property("Name").toString()).arg(service->property("X-IonName").toString()));
     }
 
     return offers;
