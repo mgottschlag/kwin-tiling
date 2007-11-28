@@ -192,6 +192,11 @@ void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
     }
 }
 
+Containment::Type DefaultDesktop::containmentType() const
+{
+    return Containment::DesktopContainment;
+}
+
 void DefaultDesktop::configure()
 {
     if (m_configDialog == 0) {

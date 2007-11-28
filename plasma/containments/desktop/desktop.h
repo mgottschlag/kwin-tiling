@@ -66,6 +66,7 @@ public:
     ~DefaultDesktop();
     void init();
     void constraintsUpdated(Plasma::Constraints constraints);
+    Containment::Type containmentType() const;
 
     QList<QAction*> contextActions();
 
