@@ -878,7 +878,7 @@ void KTheme::addPreview()
 bool KTheme::copyFile( const QString & from, const QString & to )
 {
     // we overwrite b/c of restoring the "original" theme
-    return KIO::file_copy( KUrl(from), KUrl(to), -1, KIO::Overwrite /*overwrite*/ );
+    return KIO::file_copy( KUrl(from), KUrl(to), -1, KIO::HideProgressInfo | KIO::Overwrite /*overwrite*/ );
 }
 
 QString KTheme::findResource( const QString & section, const QString & path )
