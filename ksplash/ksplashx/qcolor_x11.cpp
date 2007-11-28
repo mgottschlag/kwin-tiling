@@ -1,4 +1,14 @@
 /****************************************************************************
+**
+** This file is based on sources of the Qt GUI Toolkit, used under the terms
+** of the GNU General Public License version 2 (see the original copyright
+** notice below).
+** All further contributions to this file are (and are required to be)
+** licensed under the terms of the GNU General Public License as published by
+** the Free Software Foundation; either version 2 of the License, or
+** (at your option) any later version.
+**
+** The original Qt license header follows:
 ** 
 **
 ** Implementation of QColor class for X11
