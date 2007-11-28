@@ -58,6 +58,16 @@ float WeatherFormula::inchesToKilopascals(float inches) const
     return (inches * 3.386389);
 }
 
+float WeatherFormula::millibarsToInches(float millibar) const
+{
+    return (millibar * 0.0295301);
+}
+
+float WeatherFormula::millibarsToKilopascals(float millibar) const
+{
+    return (millibar * 0.10);
+}
+
 float WeatherFormula::centimetersToIN(float cm) const 
 {
     return (cm * 0.393700787);

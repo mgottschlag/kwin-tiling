@@ -36,6 +36,8 @@ public:
     float kilometersToMI(float km) const;
     float kilopascalsToInches(float kpa) const;
     float inchesToKilopascals(float inches) const;
+    float millibarsToKilopascals(float milibar) const;
+    float millibarsToInches(float milibar) const;
     float centimetersToIN(float cm) const;
     float inchesToCM(float inch) const;
     float millimetersToIN(float mm) const;
@@ -44,6 +46,7 @@ public:
     // Winds measured in meters per second
     float kilometersToMS(float km) const;
     float milesToMS(float miles) const;
+
 };
 
 #endif
