@@ -49,7 +49,7 @@ CViewer::CViewer()
         itsPreview=factory->create<KParts::ReadOnlyPart>(this);
 
         actionCollection()->addAction(KStandardAction::Open, this, SLOT(fileOpen()));
-        actionCollection()->addAction(KStandardAction::Quit, kapp, SLOT(quit()));
+        actionCollection()->addAction(KStandardAction::Quit, this, SLOT(close()));
         actionCollection()->addAction(KStandardAction::KeyBindings, this, SLOT(configureKeys()));
         itsPrintAct=actionCollection()->addAction(KStandardAction::Print, itsPreview, SLOT(print()));
 
