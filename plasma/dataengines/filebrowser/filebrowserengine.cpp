@@ -110,10 +110,21 @@ void FileBrowserEngine::updateData(const QString &path, EventType event)
                 kDebug() << "MATCH";
                 it.value()->setData("item.type", QVariant("directory"));
 
-                it.value()->setData("directories.visible", InvalidIfEmpty(visibleDirectories));
-                it.value()->setData("directories.all", InvalidIfEmpty(allDirectories));
-                it.value()->setData("files.visible", InvalidIfEmpty(visibleFiles));
-                it.value()->setData("files.all", InvalidIfEmpty(allFiles));
+                QVariant vdTmp;
+                if (!visibleDirectories.isEmpty()) vdTmp = QVariant(visibleDirectories);
+                it.value()->setData("directories.visible", vdTmp);
+
+                QVariant adTmp;
+                if (!allDirectories.empty()) adTmp = QVariant(allDirectories);
+                it.value()->setData("directories.all", adTmp);
+
+                QVariant vfTmp;
+                if (!visibleFiles.empty()) vfTmp = QVariant(visibleFiles);
+                it.value()->setData("files.visible", vfTmp);
+
+                QVariant afTmp;
+                if (!allFiles.empty()) afTmp = QVariant(allFiles);
+                it.value()->setData("files.all", afTmp);
             }
         }
     } else if (type == FILE) {
