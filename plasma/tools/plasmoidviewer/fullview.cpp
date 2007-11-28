@@ -33,24 +33,34 @@
 
 using namespace Plasma;
 
-FullView::FullView(QWidget *parent)
-    : QGraphicsView(parent)
+FullView::FullView(const QString &ff, QWidget *parent)
+    : QGraphicsView(parent),
+      m_formfactor(Plasma::Planar)
 {
-    setScene(&corona);
-    connect(&corona, SIGNAL(sceneRectChanged(QRectF)),
-	    this, SLOT(sceneRectChanged(QRectF)));
+    QString formfactor = ff.toLower();
+    if (formfactor == "vertical") {
+        m_formfactor = Plasma::Vertical;
+    } else if (formfactor == "horizontal") {
+        m_formfactor = Plasma::Horizontal;
+    } else if (formfactor == "mediacenter") {
+        m_formfactor = Plasma::MediaCenter;
+    }
+
+    setScene(&m_corona);
+    connect(&m_corona, SIGNAL(sceneRectChanged(QRectF)),
+            this, SLOT(sceneRectChanged(QRectF)));
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
     QPixmap bg(KStandardDirs::locate("appdata", "checker.png"));
-    corona.setBackgroundBrush(bg);
+    m_corona.setBackgroundBrush(bg);
 }
 
 void FullView::addApplet(const QString &a)
 {
-    Containment *containment = corona.addContainment("null");
-
+    Containment *containment = m_corona.addContainment("null");
+    containment->setFormFactor(m_formfactor);
     Applet *applet = containment->addApplet(a, QVariantList(),
 					    0, QRectF(0, 0, -1, -1));
     applet->setFlag(QGraphicsItem::ItemIsMovable, false);
@@ -60,7 +70,7 @@ void FullView::addApplet(const QString &a)
                                   i18n("The applet '%1' could not be loaded", a));
     }
 
-    setSceneRect(corona.sceneRect());
+    setSceneRect(m_corona.sceneRect());
     setWindowTitle(applet->name());
     setWindowIcon(SmallIcon(applet->icon()));
 }

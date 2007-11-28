@@ -35,7 +35,7 @@ class FullView : public QGraphicsView
     Q_OBJECT
 
 public:
-    explicit FullView(QWidget *parent = 0);
+    explicit FullView(const QString &formfactor = "planar", QWidget *parent = 0);
 
     void addApplet(const QString &a);
 
@@ -43,7 +43,8 @@ protected slots:
     void sceneRectChanged(const QRectF &rect);
 
 private:
-    Plasma::Corona corona;
+    Plasma::Corona m_corona;
+    Plasma::FormFactor m_formfactor;
 };
 
 #endif
