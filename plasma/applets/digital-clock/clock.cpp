@@ -28,7 +28,6 @@
 #include <QStyleOptionGraphicsItem>
 #include <QSpinBox>
 #include <QTimeLine>
-#include <KGlobalSettings>
 
 #include <KDebug>
 #include <KLocale>
@@ -36,10 +35,10 @@
 #include <KSharedConfig>
 #include <KTimeZoneWidget>
 #include <KDialog>
+#include <KColorScheme>
+#include <KGlobalSettings>
 
-#include <plasma/svg.h>
-
-#include <clocknumber.h>
+#include <plasma/theme.h>
 
 
 Clock::Clock(QObject *parent, const QVariantList &args)
@@ -82,8 +81,13 @@ void Clock::init()
     m_plainClockFont = cg.readEntry("plainClockFont", KGlobalSettings::generalFont());
 
     // FIXME: Plasma Colorscheme?, FIXME: Saving QColor to KConfig doesn't work
-    //m_plainClockColor = cg.readEntry("plainClockColor", Qt::white);
+    //QColor default_color = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color(); 
+    //m_plainClockColor = cg.readEntry("plainClockColor", default_color);
+    
+    // FIXME: Remove, currently, plasma's foreground seems to be black
     m_plainClockColor = Qt::white;
+
+
     m_plainClockFontBold = cg.readEntry("plainClockFontBold", true);
     m_plainClockFontItalic = cg.readEntry("plainClockFontItalic", false);
     m_plainClockFont.setBold(m_plainClockFontBold);
