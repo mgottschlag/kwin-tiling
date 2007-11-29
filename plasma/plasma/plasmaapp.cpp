@@ -213,6 +213,7 @@ void PlasmaApp::createPanels()
 {
     foreach (Plasma::Containment *containment, corona()->containments()) {
         kDebug() << "Containment name:" << containment->name()
+                 << "| type" << containment->containmentType()
                  << "| screen:" << containment->screen()
                  << "| geometry:" << containment->geometry()
                  << "| zValue:" << containment->zValue();

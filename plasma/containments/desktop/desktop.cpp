@@ -65,7 +65,6 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
       m_wallpaperPath(0)
 {
     //kDebug() << "!!! loading desktop";
-    setContainmentType(Containment::DesktopContainment);
 }
 
 DefaultDesktop::~DefaultDesktop()
