@@ -55,4 +55,4 @@ X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=accessories-dictionary
 X-KDE-Library=plasma_engine_dict
-X-EngineName=dict
+X-Plasma-EngineName=dict

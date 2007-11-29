@@ -55,4 +55,4 @@ X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=
 X-KDE-Library=plasma_engine_weather
-X-EngineName=weather
+X-Plasma-EngineName=weather

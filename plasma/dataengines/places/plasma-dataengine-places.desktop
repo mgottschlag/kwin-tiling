@@ -53,4 +53,4 @@ X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=folder
 X-KDE-Library=plasma_engine_places
-X-EngineName=places
+X-Plasma-EngineName=places

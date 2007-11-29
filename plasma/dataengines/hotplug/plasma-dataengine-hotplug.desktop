@@ -26,4 +26,4 @@ X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=notifier
 X-KDE-Library=plasma_engine_hotplug
-X-EngineName=hotplug
+X-Plasma-EngineName=hotplug

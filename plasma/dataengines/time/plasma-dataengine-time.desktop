@@ -66,4 +66,4 @@ X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=alarmclock
 X-KDE-Library=plasma_engine_time
-X-EngineName=time
+X-Plasma-EngineName=time

@@ -51,5 +51,5 @@ Type=Service
 X-KDE-ServiceTypes=Plasma/DataEngine
 Icon=
 X-KDE-Library=plasma_engine_mouse
-X-EngineName=mouse
+X-Plasma-EngineName=mouse
 
