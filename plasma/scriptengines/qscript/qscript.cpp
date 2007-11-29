@@ -47,6 +47,7 @@ QScriptValue constructTimerClass(QScriptEngine *engine);
 QScriptValue constructFontClass(QScriptEngine *engine);
 QScriptValue constructQRectFClass(QScriptEngine *engine);
 QScriptValue constructQPointClass(QScriptEngine *engine);
+QScriptValue constructQSizeFClass(QScriptEngine *engine);
 
 /*
  * Workaround the fact that QtScripts handling of variants seems a bit broken.
@@ -104,8 +105,6 @@ QScript::QScript( QObject *parent, const QVariantList &args )
     : Plasma::ScriptEngine( parent )
 {
     kDebug() << "Script applet launched, args" << args;
-    kDebug() << "ScriptName:" << applet()->name();
-    kDebug() << "ScriptCategory:" << applet()->category();
 
     m_engine = new QScriptEngine( this );
     setupObjects();
@@ -120,11 +119,6 @@ void QScript::reportError()
     kDebug() << "Error: " << m_engine->uncaughtException().toString()
 	     << " at line " << m_engine->uncaughtExceptionLineNumber() << endl;
     kDebug() << m_engine->uncaughtExceptionBacktrace();
-}
-
-QSizeF QScript::size() const
-{
-    return QSizeF(200.0, 200.0);
 }
 
 void QScript::showConfigurationInterface()
@@ -216,6 +210,10 @@ void QScript::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
 
 bool QScript::init()
 {
+    kDebug() << "ScriptName:" << applet()->name();
+    kDebug() << "ScriptCategory:" << applet()->category();
+
+    applet()->resize(200, 200);
     QFile file(mainScript());
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         kWarning() << "Unable to load script file";
@@ -242,7 +240,7 @@ void QScript::setupObjects()
     m_self = m_engine->newQObject( this );
     m_self.setScope( global );    
 
-    global.setProperty("applet", m_self);    
+    global.setProperty("applet", m_self);
     // Add a global loadui method for ui files
     QScriptValue fun = m_engine->newFunction( QScript::loadui );
     global.setProperty("loadui", fun);
@@ -259,6 +257,7 @@ void QScript::setupObjects()
     global.setProperty("QTimer", constructTimerClass(m_engine));
     global.setProperty("QFont", constructFontClass(m_engine));
     global.setProperty("QRectF", constructQRectFClass(m_engine));
+    global.setProperty("QSizeF", constructQSizeFClass(m_engine));
     global.setProperty("QPoint", constructQPointClass(m_engine));
 
     // Bindings for data engine

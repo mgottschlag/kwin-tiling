@@ -38,8 +38,6 @@ public:
 
     void reportError();
 
-    Q_INVOKABLE QSizeF size() const;
-
     void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
 
     Q_INVOKABLE QString findDataResource( const QString &filename );

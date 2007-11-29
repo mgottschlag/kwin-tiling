@@ -1,11 +1,12 @@
 set(qscript_engine_SRCS
     qscript.cpp
-    qtgui/painter.cpp
-    qtgui/timer.cpp
     qtgui/font.cpp
     qtgui/graphicsitem.cpp
-    qtgui/rect.cpp
+    qtgui/painter.cpp
     qtgui/point.cpp
+    qtgui/rect.cpp
+    qtgui/size.cpp
+    qtgui/timer.cpp
 )
 
 kde4_add_plugin(plasma_scriptengine_qscript ${qscript_engine_SRCS})
