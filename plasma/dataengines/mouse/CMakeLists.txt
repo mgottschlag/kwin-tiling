@@ -15,5 +15,5 @@ if (X11_Xfixes_FOUND)
 endif (X11_Xfixes_FOUND)
 
 install(TARGETS plasma_engine_mouse DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES plasma-engine-mouse.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
+install(FILES plasma-dataengine-mouse.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
 
