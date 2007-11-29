@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=JavaScript Engine
+Comment=JavaScript Plasmoids Using QScript
+X-KDE-ServiceTypes=Plasma/ScriptEngine
+Type=Service
+Icon=text-x-script
+X-KDE-Library=plasma_scriptengine_qscript
+X-EngineName=qscript
