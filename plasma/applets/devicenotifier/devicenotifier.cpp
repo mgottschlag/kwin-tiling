@@ -34,6 +34,7 @@
 #include <krun.h>
 #include <kdesktopfileactions.h>
 #include <kstandarddirs.h>
+#include <KDesktopFile>
 
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
@@ -174,26 +175,36 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
         m_hotplugModel->setData(index, KIcon(data["icon"].toString()), Qt::DecorationRole);
 	
 	int nb_actions = 0;
-	QString last_action;
+	KServiceAction default_action;
+	bool find_default_action=false;
 	foreach (QString desktop, data["predicateFiles"].toStringList()) {
 	    QString filePath = KStandardDirs::locate("data", "solid/actions/"+desktop);
 	    QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
+	    KDesktopFile cfg(filePath);
 	    nb_actions+=services.size();
-	    if (services.size()>0)
+	    foreach (KServiceAction action,services)
 	    {
-		last_action=QString("Open with "+services[0].text());
+		if(action.name()==cfg.desktopGroup().readEntry("X-KDE-DEFAULT-ACTION"))
+		{
+		    default_action=action;
+		    find_default_action=true;
+		    kDebug()<<"Found Default Actions"<<default_action.text();
+		}
 	    }
 	}
-	if (nb_actions!=1)
+	if (!find_default_action)
 	{
-	    QString s = i18np("0 action available", "%1 actions available", nb_actions);
-	    m_hotplugModel->setData(index,s, ActionRole);
+	    QVariant var;
+	    var.setValue(KServiceAction());
+	    m_hotplugModel->setData(index,var, ActionRole);
 	    kDebug()<<"DeviceNotifier:: Nb Actions"<<nb_actions;
 	}
 	else
 	{	 
-	    kDebug()<<"DeviceNotifier:: Actions"<<last_action;
-	    m_hotplugModel->setData(index,last_action, ActionRole);	    
+	    kDebug()<<"DeviceNotifier:: Actions"<<default_action.text();
+	    QVariant var;
+	    var.setValue(default_action);
+	    m_hotplugModel->setData(index,var, ActionRole);	    
 	}
 
     }
@@ -308,24 +319,12 @@ void DeviceNotifier::slotOnItemDoubleclicked(const QModelIndex & index)
     m_timer->stop();
     QString udi=QString(m_hotplugModel->data(index, SolidUdiRole).toString());
     QStringList desktop_files=m_hotplugModel->data(index, PredicateFilesRole).toStringList();
-    QList<KServiceAction> services;
-    int nb_actions=0;
-    foreach (QString desktop, desktop_files) {
-	    QString filePath = KStandardDirs::locate("data", "solid/actions/"+desktop);
-	    services = KDesktopFileActions::userDefinedServices(filePath, true);
-	    nb_actions+=services.size();
-    }
-    if (nb_actions==1)
-    {
-	QString exec = services[0].exec();
-	KRun::runCommand(exec, QString(), services[0].icon(), 0);
-    }
-    else
-    {
-	kDebug()<<"DeviceNotifier:: call Solid Ui Server with params :"<<udi<<","<<desktop_files;
-	QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
-	QDBusReply<void> reply = soliduiserver.call("showActionsDialog", udi,desktop_files);
-    }
+    KServiceAction default_action=m_hotplugModel->data(index,ActionRole).value<KServiceAction>();
+    QString exec = default_action.exec();
+    KRun::runCommand(exec, QString(), default_action.icon(), 0);
+    /*kDebug()<<"DeviceNotifier:: call Solid Ui Server with params :"<<udi<<","<<desktop_files;
+    QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
+    QDBusReply<void> reply = soliduiserver.call("showActionsDialog", udi,desktop_files); */   
 }
 
 void DeviceNotifier::onTimerExpired()

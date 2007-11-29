@@ -38,6 +38,7 @@
 #include <KGlobal>
 #include <KGlobalSettings>
 
+
 using namespace Notifier;
 
 ItemDelegate::ItemDelegate()
@@ -63,7 +64,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
                                          textSize,
                                          contentRect.adjusted(0, 2, 0, 0));
     QString titleText = index.data(Qt::DisplayRole).value<QString>();
-    QString subTitleText = index.data(ActionRole).value<QString>();
+    QString subTitleText = index.data(ActionRole).value<KServiceAction>().text();
 
     QRect titleRect = textRect;
 
