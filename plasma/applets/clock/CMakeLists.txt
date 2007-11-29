@@ -7,4 +7,4 @@ kde4_add_plugin(plasma_applet_clock ${clock_SRCS})
 target_link_libraries(plasma_applet_clock plasma ${KDE4_KIO_LIBS})
 
 install(TARGETS plasma_applet_clock DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES plasma-clock-analog.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES plasma-applet-analogclock.desktop DESTINATION ${SERVICES_INSTALL_DIR})
