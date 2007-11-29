@@ -1,5 +1,5 @@
+add_subdirectory(analog-clock)
 add_subdirectory(battery)
-add_subdirectory(clock)
 add_subdirectory(digital-clock)
 add_subdirectory(kickoff)
 add_subdirectory(launcher)
