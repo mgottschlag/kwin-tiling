@@ -42,6 +42,7 @@ class Url : public Plasma::Applet
         void init();
 //        QSizeF contentSizeHint() const;
         void setUrl(const KUrl& url);
+        void constraintsUpdated(Plasma::Constraints constraints);
 
     public slots:
         void propertiesDialog();

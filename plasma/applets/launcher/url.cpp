@@ -36,11 +36,11 @@
 
 Url::Url(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
-      m_icon(0),
-//      m_icon(new Plasma::Icon(this)),
       m_dialog(0)
 {
     setAcceptDrops(true);
+    new Plasma::HBoxLayout(this);
+    m_icon = new Plasma::Icon(this);
     if (args.count() > 2) {
         setUrl(args.at(2).toString());
     }
@@ -49,17 +49,11 @@ Url::Url(QObject *parent, const QVariantList &args)
 void Url::init()
 {
     KConfigGroup cg = config();
-    int size = globalConfig().readEntry("IconSize", IconSize(KIconLoader::Desktop));
-    size = cg.readEntry("IconSize", size);
 
-    new Plasma::HBoxLayout(this);
-    m_icon = new Plasma::Icon(this),
     connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
-    m_icon->setIconSize(size, size);
-    if (m_url.isEmpty()) {
-        setUrl(cg.readEntry("Url"));
-    }
-    resize(m_icon->sizeHint());
+    setUrl(cg.readEntry("Url", m_url));
+    setDrawStandardBackground(false);
+    kDebug() << "size hint is" << sizeHint() << size();
 }
 
 Url::~Url()
@@ -68,16 +62,8 @@ Url::~Url()
 
 void Url::saveState(KConfigGroup *cg) const
 {
-    cg->writeEntry("IconSize", m_icon->iconSize().toSize());
     cg->writeEntry("Url", m_url);
 }
-
-/*QSizeF Url::contentSizeHint() const
-{
-//    kDebug() << "contentSize is " << m_icon->boundingRect().size();
-    kDebug() << (m_icon ? m_icon->sizeHint() : QSizeF(48, 48)).toSize(); //m_icon->sizeHint();
-    return m_icon ? m_icon->sizeHint() : QSizeF(48, 48); //m_icon->sizeHint();
-}*/
 
 void Url::setUrl(const KUrl& url)
 {
@@ -99,6 +85,14 @@ void Url::openUrl()
             containment()->emitLaunchActivated();
         }
         KRun::runUrl(m_url, m_mimetype, 0);
+    }
+}
+
+void Url::constraintsUpdated(Plasma::Constraints constraints)
+{
+    setDrawStandardBackground(false);
+    if (constraints & Plasma::SizeConstraint) {
+        m_icon->resize(size());
     }
 }
 
