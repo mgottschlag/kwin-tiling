@@ -553,6 +553,7 @@ void KSMServer::createLogoutEffectWidget()
 // sound, killing applications and leaving KDE, create a dummy window that triggers
 // the logout fade effect again.
     logoutEffectWidget = new QWidget( NULL, Qt::X11BypassWindowManagerHint );
+    logoutEffectWidget->winId(); // workaround for Qt4.3 setWindowRole() assert
     logoutEffectWidget->setWindowRole( "logouteffect" );
 //#if !(QT_VERSION >= QT_VERSION_CHECK(4, 3, 3) || defined(QT_KDE_QT_COPY))
 // Qt doesn't set this on unmanaged windows
