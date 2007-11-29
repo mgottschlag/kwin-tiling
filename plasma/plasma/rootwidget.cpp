@@ -41,24 +41,23 @@ RootWidget::RootWidget()
 {
     setFocusPolicy(Qt::NoFocus);
 
+    // this line also initializes the corona.
+    Plasma::Corona *corona = PlasmaApp::self()->corona();
+
+    // create a containment for each screen
     QDesktopWidget *desktop = QApplication::desktop();
     int numScreens = desktop->numScreens();
-    // create a containment for each screen
-    //FIXME: we need to respond to randr changes
     for (int i = 0; i < numScreens; ++i) {
         createDesktopView(i);
     }
 
-    // this line initializes the corona.
-    Plasma::Corona *corona = PlasmaApp::self()->corona();
-    connect(corona, SIGNAL(newScreen(int)), this, SLOT(newDesktopView(int)));
+    connect(corona, SIGNAL(newScreen(int)), this, SLOT(createDesktopView(int)));
 
     //TODO: Make the shortcut configurable
     KAction *showAction = new KAction( this );
     showAction->setText( i18n( "Show Dashboard" ) );
     showAction->setGlobalShortcut( KShortcut( Qt::CTRL + Qt::Key_F12 ) );
     connect( showAction, SIGNAL( activated() ), this, SLOT( toggleDashboard() ) );
-
 }
 
 void RootWidget::toggleDashboard()
