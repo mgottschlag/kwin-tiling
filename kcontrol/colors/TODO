@@ -1,6 +1,4 @@
 defaults scheme
 current scheme
-effects page loading correctly
-previews updating on certain changes (effects combobox changes, etc.)
-saving of effects page in scheme files
-
+query kwin for WM colors (post-4.0)
+'are you sure' dialog when loading scheme if working scheme has changed
