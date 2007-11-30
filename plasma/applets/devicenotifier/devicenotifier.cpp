@@ -270,10 +270,10 @@ void DeviceNotifier::hoverEnterEvent ( QGraphicsSceneHoverEvent  * event )
 	    
 	    scenePos = mapToScene(boundingRect().bottomLeft());
 	    viewPos = view->mapFromScene(scenePos);
-	    globalPos = view->mapToGlobal(viewPos);
+	    globalPos = view->mapToGlobal(viewPos)+QPoint(0,10);
 	}
 	else {
-	    globalPos.ry() -= m_widget->height();
+	    globalPos.ry() -= (m_widget->height()+10);
 	}
 	if ((globalPos.rx() + m_widget->width()) > view->width()) {
 	    globalPos.rx()-=((globalPos.rx() + m_widget->width())-view->width());
