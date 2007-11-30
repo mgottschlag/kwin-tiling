@@ -155,6 +155,22 @@ Qt::Orientations DeviceNotifier::expandingDirections() const
     return Qt::Vertical;
 }
 
+QSizeF DeviceNotifier::contentSizeHint() const
+{
+    QSizeF sizeHint = contentSize();
+    switch (formFactor()) {
+        case Plasma::Vertical:
+            sizeHint.setHeight(sizeHint.width());
+            break;
+        case Plasma::Horizontal:
+            sizeHint.setWidth(sizeHint.height());
+            break;
+        default:
+            break;
+    }
+
+    return sizeHint;
+}
 
 void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
 {
