@@ -6,10 +6,4 @@ X-KDE-DEFAULT-ACTION=open
 
 [Desktop Action open]
 Name=Open with Dolphin
-Name[ar]=الدولفين
-Name[lv]= Dolphin
-Name[ne]=डल्फिन
-Name[pa]=ਡਾਲਫਿਨ
-Name[sr]=Делфин
-Name[x-test]=xxDolphinxx
 Exec=dbus-launch dolphin
