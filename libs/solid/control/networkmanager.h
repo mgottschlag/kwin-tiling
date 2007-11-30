@@ -53,7 +53,7 @@ namespace Control
         /**
          * Manager connection state describes the connection status of the system as a whole
          */
-        enum SOLIDCONTROL_EXPORT ConnectionState{ UnknownState, Connecting, Connected, Disconnected };
+        enum ConnectionState{ UnknownState, Connecting, Connected, Disconnected };
         /**
          * Get the manager connection state
          */
