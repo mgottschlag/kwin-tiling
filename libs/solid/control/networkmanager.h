@@ -23,6 +23,7 @@
 
 #include <QtCore/QObject>
 
+#include <Solid/Networking>
 #include <solid/control/solid_control_export.h>
 
 namespace Solid
@@ -49,15 +50,10 @@ namespace Control
      */
     namespace NetworkManager
     {
-        // == NMState
-        /**
-         * Manager connection state describes the connection status of the system as a whole
-         */
-        enum ConnectionState{ UnknownState, Connecting, Connected, Disconnected };
         /**
          * Get the manager connection state
          */
-        SOLIDCONTROL_EXPORT ConnectionState connectionState();
+        SOLIDCONTROL_EXPORT Solid::Networking::Status status();
         /**
          * Retrieves the list of all the network interfaces in the system.
          * It includes both hardware and virtual devices.
@@ -119,7 +115,7 @@ namespace Control
             /**
              * This signal is emitted when the system's connection state changes
              */
-            void connectionStateChanged(ConnectionState state);
+            void statusChanged(Solid::Networking::Status status);
             /**
              * This signal is emitted when a new network interface is available.
              *

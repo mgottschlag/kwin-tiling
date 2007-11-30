@@ -21,6 +21,7 @@
 #define SOLID_IFACES_NETWORKMANAGER
 
 #include <QtCore/QObject>
+#include <Solid/Networking>
 #include <solid/control/solid_control_export.h>
 #include <solid/control/networkmanager.h>
 
@@ -57,7 +58,7 @@ namespace Ifaces
         /**
          * Get the manager connection state
          */
-        virtual Solid::Control::NetworkManager::ConnectionState connectionState() const = 0;
+        virtual Solid::Networking::Status status() const = 0;
 
         /**
          * Retrieves the list of all the network interfaces Unique Network Identifiers (UNIs)
@@ -124,7 +125,7 @@ namespace Ifaces
         /**
          * This signal is emitted when the system's connection state changes
          */
-        void connectionStateChanged(Solid::Control::NetworkManager::ConnectionState state);
+        void statusChanged(Solid::Networking::Status status);
 
         /**
          * This signal is emitted when a new network interface is available.

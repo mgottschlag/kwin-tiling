@@ -1,4 +1,4 @@
-/*  This file is part of kdepim
+/*  This file is part of kdebase/workspace/solid
     Copyright (C) 2005,2007 Will Stephenson <wstephenson@kde.org>
 
     This library is free software; you can redistribute it and/or
@@ -53,8 +53,10 @@ Q_SIGNALS:
     void statusChanged( uint status );
 protected Q_SLOTS:
     void serviceOwnerChanged( const QString & name ,const QString & oldOwner, const QString & newOwner );
-
+    void solidNetworkingStatusChanged( Solid::Networking::Status status );
 protected:
+    // set up embedded backend
+    void init();
     // recalculate cached status
     void updateStatus();
 

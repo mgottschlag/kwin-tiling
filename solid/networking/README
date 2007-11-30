@@ -33,6 +33,3 @@ To use:
    connect the service and see how the client responds.
 6) Use KConnectionManager in your own code.
 
-TODO: Move libs to kdelibs and the rest to kdebase.  Merge my secret
-networkstatus 3.5 branches to trunk.
-

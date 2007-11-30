@@ -71,9 +71,9 @@ FakeNetworkManager::~FakeNetworkManager()
     delete mAuthValidator;
 }
 
-Solid::Control::NetworkManager::ConnectionState FakeNetworkManager::connectionState() const
+Solid::Networking::Status FakeNetworkManager::status() const
 {
-    return Solid::Control::NetworkManager::UnknownState;
+    return Solid::Networking::Unknown;
 }
 
 QStringList FakeNetworkManager::networkInterfaces() const

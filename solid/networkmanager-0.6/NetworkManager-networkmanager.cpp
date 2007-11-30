@@ -69,7 +69,7 @@ NMNetworkManager::~NMNetworkManager()
     delete d;
 }
 
-Solid::Control::NetworkManager::ConnectionState NMNetworkManager::connectionState() const
+Solid::Networking::Status NMNetworkManager::status() const
 {
     if (NM_STATE_UNKNOWN == d->cachedState)
     {
@@ -82,18 +82,18 @@ Solid::Control::NetworkManager::ConnectionState NMNetworkManager::connectionStat
     }
     switch ( d->cachedState ) {
         case NM_STATE_CONNECTING:
-            return Solid::Control::NetworkManager::Connecting;
+            return Solid::Networking::Connecting;
             break;
         case NM_STATE_CONNECTED:
-            return Solid::Control::NetworkManager::Connected;
+            return Solid::Networking::Connected;
             break;
         case NM_STATE_DISCONNECTED:
-            return Solid::Control::NetworkManager::Disconnected;
+            return Solid::Networking::Unconnected;
             break;
         default:
         case NM_STATE_UNKNOWN:
         case NM_STATE_ASLEEP:
-            return Solid::Control::NetworkManager::UnknownState;
+            return Solid::Networking::Unknown;
             break;
     }
 }
@@ -200,21 +200,21 @@ void NMNetworkManager::stateChanged(uint state)
     switch ( d->cachedState ) {
         case NM_STATE_CONNECTING:
             kDebug(1441) << "NMNetworkManager::stateChanged() Connecting";
-            emit connectionStateChanged( Solid::Control::NetworkManager::Connecting );
+            emit statusChanged( Solid::Networking::Connecting );
             break;
         case NM_STATE_CONNECTED:
             kDebug(1441) << "NMNetworkManager::stateChanged() CONNECTED";
-            emit connectionStateChanged( Solid::Control::NetworkManager::Connected );
+            emit statusChanged( Solid::Networking::Connected );
             break;
         case NM_STATE_DISCONNECTED:
-            kDebug(1441) << "NMNetworkManager::stateChanged() Disconnected";
-            emit connectionStateChanged( Solid::Control::NetworkManager::Disconnected );
+            kDebug(1441) << "NMNetworkManager::stateChanged() Unconnected";
+            emit statusChanged( Solid::Networking::Unconnected );
             break;
         default:
         case NM_STATE_UNKNOWN:
         case NM_STATE_ASLEEP:
-            kDebug(1441) << "NMNetworkManager::stateChanged() UnknownState";
-            emit connectionStateChanged( Solid::Control::NetworkManager::UnknownState );
+            kDebug(1441) << "NMNetworkManager::stateChanged() Unknown";
+            emit statusChanged( Solid::Networking::Unknown );
             break;
     }
 }

@@ -35,7 +35,7 @@ Q_OBJECT
     public:
         NMNetworkManager(QObject * parent, const QStringList  & args);
         virtual ~NMNetworkManager();
-        Solid::Control::NetworkManager::ConnectionState connectionState() const;
+        Solid::Networking::Status status() const;
         QStringList networkInterfaces() const;
         QStringList activeNetworkInterfaces() const;
         QObject * createNetworkInterface(const QString &);

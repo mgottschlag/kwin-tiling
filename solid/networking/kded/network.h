@@ -1,4 +1,4 @@
-/*  This file is part of kdepim.
+/*  This file is part of kdebase/workspace/solid
     Copyright (C) 2005,2007 Will Stephenson <wstephenson@kde.org>
 
     This library is free software; you can redistribute it and/or
@@ -28,7 +28,6 @@
 class Network
 {
 public:
-//	Network( const QString name );
 	Network( const QString & name, int status, const QString & serviceName );
 	/**
 	 * Update the status of this network

@@ -42,8 +42,8 @@ Solid::Control::NetworkManagerPrivate::NetworkManagerPrivate()
                 this, SLOT(_k_networkInterfaceAdded(const QString &)));
         connect(managerBackend(), SIGNAL(networkInterfaceRemoved(const QString &)),
                 this, SLOT(_k_networkInterfaceRemoved(const QString &)));
-        connect(managerBackend(), SIGNAL(stateChanged(Solid::Control::NetworkManager::ConnectionState)),
-                this, SIGNAL(connectionStateChanged(Solid::Control::NetworkManager::ConnectionState)));
+        connect(managerBackend(), SIGNAL(stateChanged(Solid::Networking::Status)),
+                this, SIGNAL(stateChanged(Solid::Control::Networking::Status)));
     }
 }
 
@@ -125,9 +125,9 @@ void Solid::Control::NetworkManager::notifyHiddenNetwork(const QString &networkN
     SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), notifyHiddenNetwork(networkName));
 }
 
-Solid::Control::NetworkManager::ConnectionState Solid::Control::NetworkManager::connectionState()
+Solid::Networking::Status Solid::Control::NetworkManager::status()
 {
-    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), Solid::Control::NetworkManager::UnknownState, connectionState());
+    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), Solid::Networking::Unknown, status());
 }
 
 const Solid::Control::NetworkInterface &Solid::Control::NetworkManagerPrivate::findNetworkInterface(const QString &uni)
@@ -151,6 +151,11 @@ const Solid::Control::NetworkInterface &Solid::Control::NetworkManagerPrivate::f
 const Solid::Control::NetworkInterface &Solid::Control::NetworkManager::findNetworkInterface(const QString &uni)
 {
     return globalNetworkManager->findNetworkInterface(uni);
+}
+
+Solid::Control::NetworkManager::Notifier * Solid::Control::NetworkManager::notifier()
+{
+    return globalNetworkManager;
 }
 
 void Solid::Control::NetworkManagerPrivate::_k_networkInterfaceAdded(const QString &uni)

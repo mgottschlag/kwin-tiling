@@ -1,4 +1,4 @@
-/*  This file is part of kdepim
+/*  This file is part of kdebase/workspace/solid
     Copyright (C) 2005,2007 Will Stephenson <wstephenson@kde.org>
 
     This library is free software; you can redistribute it and/or
@@ -24,6 +24,7 @@
 #include <QMap>
 
 #include <KDebug>
+#include <solid/control/networkmanager.h>
 
 #include "network.h"
 #include "clientadaptor.h"
@@ -31,7 +32,6 @@
 #include "networkstatus.h"
 
 #include <kpluginfactory.h>
-#include <kpluginloader.h>
 
 K_PLUGIN_FACTORY(NetworkStatusFactory,
                  registerPlugin<NetworkStatusModule>();
@@ -55,6 +55,7 @@ public:
     }
     NetworkMap networks;
     Solid::Networking::Status status;
+    Solid::Control::NetworkManager::Notifier * notifier;
 };
 
 // CTORS/DTORS
@@ -69,6 +70,7 @@ NetworkStatusModule::NetworkStatusModule(QObject* parent, const QList<QVariant>&
     QDBusConnectionInterface * sessionBus = dbus.interface();
 
     connect( sessionBus, SIGNAL(serviceOwnerChanged(const QString&,const QString&,const QString&)), this, SLOT(serviceOwnerChanged(const QString&,const QString&,const QString&)) );
+    //init();
 }
 
 NetworkStatusModule::~NetworkStatusModule()
@@ -164,10 +166,24 @@ void NetworkStatusModule::registerNetwork( const QString & networkName, int stat
 
 void NetworkStatusModule::unregisterNetwork( const QString & networkName )
 {
-    kDebug( 1222 ) << networkName << " unregistered.";
+    if ( networkName != QLatin1String("SolidNetwork") ) {
+        kDebug( 1222 ) << networkName << " unregistered.";
 
-    d->networks.remove( networkName );
-    updateStatus();
+        d->networks.remove( networkName );
+        updateStatus();
+    }
+}
+
+void NetworkStatusModule::init()
+{
+    d->notifier = Solid::Control::NetworkManager::notifier();
+    Solid::Networking::Status status = Solid::Control::NetworkManager::status();
+    registerNetwork( QLatin1String("SolidNetwork"), status, QLatin1String("org.kde.kded") );
+}
+
+void NetworkStatusModule::solidNetworkingStatusChanged( Solid::Networking::Status status )
+{
+    setNetworkStatus( QLatin1String("SolidNetwork"), status );
 }
 
 #include "networkstatus.moc"
