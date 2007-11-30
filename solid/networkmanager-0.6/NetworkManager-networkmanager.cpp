@@ -69,6 +69,35 @@ NMNetworkManager::~NMNetworkManager()
     delete d;
 }
 
+Solid::Control::NetworkManager::ConnectionState NMNetworkManager::connectionState() const
+{
+    if (NM_STATE_UNKNOWN == d->cachedState)
+    {
+        QDBusReply< uint > state = d->manager.call("state");
+        if (state.isValid())
+        {
+            kDebug(1441) << "  got state: " << state.value();
+            d->cachedState = state.value();
+        }
+    }
+    switch ( d->cachedState ) {
+        case NM_STATE_CONNECTING:
+            return Solid::Control::NetworkManager::Connecting;
+            break;
+        case NM_STATE_CONNECTED:
+            return Solid::Control::NetworkManager::Connected;
+            break;
+        case NM_STATE_DISCONNECTED:
+            return Solid::Control::NetworkManager::Disconnected;
+            break;
+        default:
+        case NM_STATE_UNKNOWN:
+        case NM_STATE_ASLEEP:
+            return Solid::Control::NetworkManager::UnknownState;
+            break;
+    }
+}
+
 QStringList NMNetworkManager::networkInterfaces() const
 {
     kDebug(1441) << "NMNetworkManager::networkInterfaces()";
@@ -167,8 +196,27 @@ void NMNetworkManager::notifyHiddenNetwork(const QString  & /*netname */)
 
 void NMNetworkManager::stateChanged(uint state)
 {
-    kDebug(1441) << "NMNetworkManager::stateChanged() (" << state << ")";
     d->cachedState = state;
+    switch ( d->cachedState ) {
+        case NM_STATE_CONNECTING:
+            kDebug(1441) << "NMNetworkManager::stateChanged() Connecting";
+            emit connectionStateChanged( Solid::Control::NetworkManager::Connecting );
+            break;
+        case NM_STATE_CONNECTED:
+            kDebug(1441) << "NMNetworkManager::stateChanged() CONNECTED";
+            emit connectionStateChanged( Solid::Control::NetworkManager::Connected );
+            break;
+        case NM_STATE_DISCONNECTED:
+            kDebug(1441) << "NMNetworkManager::stateChanged() Disconnected";
+            emit connectionStateChanged( Solid::Control::NetworkManager::Disconnected );
+            break;
+        default:
+        case NM_STATE_UNKNOWN:
+        case NM_STATE_ASLEEP:
+            kDebug(1441) << "NMNetworkManager::stateChanged() UnknownState";
+            emit connectionStateChanged( Solid::Control::NetworkManager::UnknownState );
+            break;
+    }
 }
 
 void NMNetworkManager::receivedDeviceAdded(QDBusObjectPath objpath)

@@ -42,6 +42,8 @@ Solid::Control::NetworkManagerPrivate::NetworkManagerPrivate()
                 this, SLOT(_k_networkInterfaceAdded(const QString &)));
         connect(managerBackend(), SIGNAL(networkInterfaceRemoved(const QString &)),
                 this, SLOT(_k_networkInterfaceRemoved(const QString &)));
+        connect(managerBackend(), SIGNAL(stateChanged(Solid::Control::NetworkManager::ConnectionState)),
+                this, SIGNAL(connectionStateChanged(Solid::Control::NetworkManager::ConnectionState)));
     }
 }
 
@@ -121,6 +123,11 @@ void Solid::Control::NetworkManager::setWirelessEnabled(bool enabled)
 void Solid::Control::NetworkManager::notifyHiddenNetwork(const QString &networkName)
 {
     SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), notifyHiddenNetwork(networkName));
+}
+
+Solid::Control::NetworkManager::ConnectionState Solid::Control::NetworkManager::connectionState()
+{
+    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), Solid::Control::NetworkManager::UnknownState, connectionState());
 }
 
 const Solid::Control::NetworkInterface &Solid::Control::NetworkManagerPrivate::findNetworkInterface(const QString &uni)

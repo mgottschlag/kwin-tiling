@@ -22,6 +22,7 @@
 
 #include <QtCore/QObject>
 #include <solid/control/solid_control_export.h>
+#include <solid/control/networkmanager.h>
 
 namespace Solid
 {
@@ -52,6 +53,11 @@ namespace Ifaces
          */
         virtual ~NetworkManager();
 
+
+        /**
+         * Get the manager connection state
+         */
+        virtual Solid::Control::NetworkManager::ConnectionState connectionState() const = 0;
 
         /**
          * Retrieves the list of all the network interfaces Unique Network Identifiers (UNIs)
@@ -115,6 +121,11 @@ namespace Ifaces
         virtual void notifyHiddenNetwork(const QString &networkName) = 0;
 
     Q_SIGNALS:
+        /**
+         * This signal is emitted when the system's connection state changes
+         */
+        void connectionStateChanged(Solid::Control::NetworkManager::ConnectionState state);
+
         /**
          * This signal is emitted when a new network interface is available.
          *

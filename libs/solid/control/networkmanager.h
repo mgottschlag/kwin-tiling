@@ -49,6 +49,15 @@ namespace Control
      */
     namespace NetworkManager
     {
+        // == NMState
+        /**
+         * Manager connection state describes the connection status of the system as a whole
+         */
+        enum SOLIDCONTROL_EXPORT ConnectionState{ UnknownState, Connecting, Connected, Disconnected };
+        /**
+         * Get the manager connection state
+         */
+        SOLIDCONTROL_EXPORT ConnectionState connectionState();
         /**
          * Retrieves the list of all the network interfaces in the system.
          * It includes both hardware and virtual devices.
@@ -107,6 +116,10 @@ namespace Control
         {
             Q_OBJECT
         Q_SIGNALS:
+            /**
+             * This signal is emitted when the system's connection state changes
+             */
+            void connectionStateChanged(ConnectionState state);
             /**
              * This signal is emitted when a new network interface is available.
              *

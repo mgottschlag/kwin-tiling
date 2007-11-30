@@ -46,6 +46,7 @@ Q_OBJECT
         FakeNetworkManager(QObject * parent, const QStringList  & args);
         FakeNetworkManager(QObject * parent, const QStringList  & args, const QString  & xmlFile);
         virtual ~FakeNetworkManager();
+        Solid::Control::NetworkManager::ConnectionState connectionState() const;
         QStringList networkInterfaces() const;
         QStringList activeNetworkInterfaces() const;
         QObject * createNetworkInterface(const QString &);
