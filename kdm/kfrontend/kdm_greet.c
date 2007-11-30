@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <signal.h>
 #include <setjmp.h>
 #include <ctype.h>
+#include <locale.h>
 #include <time.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -716,6 +717,18 @@ cleanup( void )
 	}
 }
 
+static int
+goodLocale( const char *var )
+{
+	char *l = getenv( var );
+	if (!l)
+		return False;
+	if (*l && strcmp( l, "C" ) && strcmp( l, "POSIX" ))
+		return True;
+	unsetenv( l );
+	return False;
+}
+
 extern void kg_main( const char *argv0 );
 
 int
@@ -763,7 +776,28 @@ main( int argc ATTR_UNUSED, char **argv )
 		logPanic( "Cannot save $HOME\n" );
 	atexit( cleanup );
 
-	setenv( "LC_ALL", _language, 1 );
+	if (*_language) {
+		/*
+		 * Make reasonably sure the locale is not POSIX. This will still fail
+		 * if all of the following apply:
+		 * - LANG, LC_MESSAGES & LC_ALL resolve to POSIX
+		 * - an abbreviated locale is configured (the kcm does this)
+		 * - the en_US locale is not installed
+		 */
+		if (!goodLocale( "LC_ALL" ) &&
+		    !goodLocale( "LC_MESSAGES" ) &&
+		    !goodLocale( "LANG" ))
+		{
+			if (strchr( _language, '_' ) && setlocale( LC_ALL, _language ))
+				setenv( "LANG", _language, 1 );
+			else if (setlocale( LC_ALL, "en_US" ))
+				setenv( "LANG", "en_US", 1 );
+			else
+				logError( "Cannot set locale. Translations will not work.\n" );
+		}
+
+		setenv( "LANGUAGE", _language, 1 );
+	}
 
 	kg_main( argv[0] );
 

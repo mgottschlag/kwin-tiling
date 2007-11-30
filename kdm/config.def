@@ -2201,13 +2201,14 @@ Description:
 
 Key: Language
 Type: string
-Default: "en_US"
+Default: ""
 User: greeter-c
 Instance: #*/"de_DE"
 Update: upd_language
 Comment: &
 Description:
- Language and locale to use in the greeter, encoded like $<envar>LC_LANG</envar>.
+ Language and locale to use in the greeter, encoded like $<envar>LANGUAGE</envar>.
+ If empty, the settings from the environment are used.
 
 Key: UserCompletion
 Type: bool
