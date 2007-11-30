@@ -42,8 +42,8 @@ Solid::Control::NetworkManagerPrivate::NetworkManagerPrivate()
                 this, SLOT(_k_networkInterfaceAdded(const QString &)));
         connect(managerBackend(), SIGNAL(networkInterfaceRemoved(const QString &)),
                 this, SLOT(_k_networkInterfaceRemoved(const QString &)));
-        connect(managerBackend(), SIGNAL(stateChanged(Solid::Networking::Status)),
-                this, SIGNAL(stateChanged(Solid::Control::Networking::Status)));
+        connect(managerBackend(), SIGNAL(statusChanged(Solid::Networking::Status)),
+                this, SIGNAL(statusChanged(Solid::Networking::Status)));
     }
 }
 

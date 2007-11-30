@@ -1,4 +1,3 @@
-message(status "NM-UTIL_INCLUDE_DIRS: ${NM-UTIL_INCLUDE_DIRS}")
 include_directories(${NETWORKMANAGER_INCLUDE_DIRS} ${NM-UTIL_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/../control)
 
 add_subdirectory(tests)

@@ -70,7 +70,7 @@ NetworkStatusModule::NetworkStatusModule(QObject* parent, const QList<QVariant>&
     QDBusConnectionInterface * sessionBus = dbus.interface();
 
     connect( sessionBus, SIGNAL(serviceOwnerChanged(const QString&,const QString&,const QString&)), this, SLOT(serviceOwnerChanged(const QString&,const QString&,const QString&)) );
-    //init();
+    init();
 }
 
 NetworkStatusModule::~NetworkStatusModule()
@@ -177,12 +177,15 @@ void NetworkStatusModule::unregisterNetwork( const QString & networkName )
 void NetworkStatusModule::init()
 {
     d->notifier = Solid::Control::NetworkManager::notifier();
+    connect( d->notifier, SIGNAL(statusChanged(Solid::Networking::Status)),
+            this, SLOT(solidNetworkingStatusChanged(Solid::Networking::Status)));
     Solid::Networking::Status status = Solid::Control::NetworkManager::status();
     registerNetwork( QLatin1String("SolidNetwork"), status, QLatin1String("org.kde.kded") );
 }
 
 void NetworkStatusModule::solidNetworkingStatusChanged( Solid::Networking::Status status )
 {
+    kDebug( 1222 ) << "SolidNetwork changed status: " << status;
     setNetworkStatus( QLatin1String("SolidNetwork"), status );
 }
 

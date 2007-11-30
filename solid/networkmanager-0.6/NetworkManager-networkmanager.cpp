@@ -199,21 +199,21 @@ void NMNetworkManager::stateChanged(uint state)
     d->cachedState = state;
     switch ( d->cachedState ) {
         case NM_STATE_CONNECTING:
-            kDebug(1441) << "NMNetworkManager::stateChanged() Connecting";
+            kDebug(1441) << "NMNetworkManager::statusChanged() Connecting";
             emit statusChanged( Solid::Networking::Connecting );
             break;
         case NM_STATE_CONNECTED:
-            kDebug(1441) << "NMNetworkManager::stateChanged() CONNECTED";
+            kDebug(1441) << "NMNetworkManager::statusChanged() CONNECTED";
             emit statusChanged( Solid::Networking::Connected );
             break;
+        case NM_STATE_ASLEEP:
         case NM_STATE_DISCONNECTED:
-            kDebug(1441) << "NMNetworkManager::stateChanged() Unconnected";
+            kDebug(1441) << "NMNetworkManager::statusChanged() Unconnected";
             emit statusChanged( Solid::Networking::Unconnected );
             break;
         default:
         case NM_STATE_UNKNOWN:
-        case NM_STATE_ASLEEP:
-            kDebug(1441) << "NMNetworkManager::stateChanged() Unknown";
+            kDebug(1441) << "NMNetworkManager::statusChanged() Unknown";
             emit statusChanged( Solid::Networking::Unknown );
             break;
     }
