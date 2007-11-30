@@ -1,3 +1,12 @@
+[ColorEffects:Disabled]
+Color=107,135,22
+ColorAmount=0
+ColorEffect=0
+ContrastAmount=0.65
+ContrastEffect=1
+IntensityAmount=0.3
+IntensityEffect=2
+
 [Colors:Button]
 BackgroundAlternate=90,98,109
 BackgroundNormal=82,88,99
