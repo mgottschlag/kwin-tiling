@@ -16,7 +16,7 @@ qt4_add_dbus_adaptor(kded_networkstatus_PART_SRCS
 
 kde4_add_plugin(kded_networkstatus ${kded_networkstatus_PART_SRCS})
 
-target_link_libraries(kded_networkstatus ${KDE4_KIO_LIBS})
+target_link_libraries(kded_networkstatus ${KDE4_KIO_LIBS} solidcontrol)
 
 install(TARGETS kded_networkstatus DESTINATION ${PLUGIN_INSTALL_DIR})
 

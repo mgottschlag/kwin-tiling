@@ -1,4 +1,5 @@
-include_directories(${NETWORKMANAGER_DEFINITIONS} ${LIBNM-UTILS_DEFINITIONS} ${CMAKE_CURRENT_SOURCE_DIR}/../control)
+message(status "NM-UTIL_INCLUDE_DIRS: ${NM-UTIL_INCLUDE_DIRS}")
+include_directories(${NETWORKMANAGER_INCLUDE_DIRS} ${NM-UTIL_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/../control)
 
 add_subdirectory(tests)
 
@@ -16,8 +17,7 @@ target_link_libraries(solid_networkmanager_static ${KDE4_KDECORE_LIBS} solidcont
 
 kde4_add_plugin(solid_networkmanager module.cpp ${solid_networkmanager_PART_SRCS})
 
-message(STATUS "nm-util Libs are ${NM-UTIL_LIBRARY}")
-target_link_libraries(solid_networkmanager ${NM-UTIL_LIBRARY} ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} solidcontrol solidcontrolifaces)
+target_link_libraries(solid_networkmanager ${NM-UTIL_LIBRARIES} ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} solidcontrol solidcontrolifaces)
 install(TARGETS solid_networkmanager DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES solid_networkmanager.desktop DESTINATION ${SERVICES_INSTALL_DIR}/solidbackends )
