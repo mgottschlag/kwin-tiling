@@ -87,6 +87,7 @@ public:
     QString humidity(const QString& source);
     QString visibility(const QString& source);
     QMap<QString, QString> pressure(const QString& source);
+    QVector<QString> forecasts(const QString& source);
 
 protected slots:
     void setup_slotDataArrived(KIO::Job *, const QByteArray &);
@@ -113,7 +114,7 @@ private:
     void parsePlaceObservation(const QString& source, WeatherData& data, QXmlStreamReader& xml);
     void parseWeatherChannel(const QString& source, WeatherData& data, QXmlStreamReader& xml);
     void parseWeatherObservation(const QString& source, WeatherData& data, QXmlStreamReader& xml);
-    void parseFiveDayForecast(WeatherData& data, QXmlStreamReader& xml);
+    void parseFiveDayForecast(const QString& source, QXmlStreamReader& xml);
     void parseUnknownElement(QXmlStreamReader& xml);
     
 private:
