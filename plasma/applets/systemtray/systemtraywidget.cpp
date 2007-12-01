@@ -61,9 +61,11 @@ SystemTrayWidget::SystemTrayWidget(QWidget *parent)
     vLayout->addLayout(m_mainLayout);
     vLayout->addStretch();
 
-    // Don't add any margins around our outside
     setLayout(hLayout);
-    layout()->setContentsMargins(0, 0, 0, 0);
+
+    // Override spacing set by the current style
+    layout()->setContentsMargins(4, 4, 4, 4);
+    layout()->setSpacing(4);
 
     init();
 }
