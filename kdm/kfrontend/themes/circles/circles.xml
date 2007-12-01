@@ -2,38 +2,16 @@
 <!DOCTYPE greeter SYSTEM "greeter.dtd">
 <greeter>
 	<style font="Sans 12" base-color="#80ffffff"/>
-	<item type="rect" id="background">
-		<pos x="0" y="0" height="100%" width="100%"/>
-		<fixed>
-			<item type="svg">
-				<normal file="background.svg"/>
-				<pos x="0" y="0" width="100%" height="-75"/>
-			</item>
-			<item type="rect">
-				<normal color="#000000"/>
-				<pos x="0" y="-75" width="100%" height="75"/>
-				<fixed>
-					<item type="rect">
-						<normal color="#ffffff"/>
-						<pos x="0" y="4" width="100%" height="100%"/>
-					</item>
-				</fixed>
-			</item>
-			<item type="pixmap">
-				<normal file="flower.png"/>
-				<pos x="100%" y="100%" anchor="se"/>
-			</item>
-		</fixed>
+	<item type="svg" background="true">
+		<normal file="background.svg"/>
+		<pos x="0" y="0" width="100%" height="-75"/>
 	</item>
-	<item type="label" id="clock">
-		<normal color="#000000" font="Sans 12"/>
-		<pos x="-20" y="-37" anchor="e"/>
-		<text>%c</text>
-	</item>
-	<item type="rect">
+	<item type="rect" background="true">
+		<normal color="#000000"/>
 		<pos x="0" y="-75" width="100%" height="75"/>
 		<fixed>
-			<item type="rect">
+			<item type="rect" background="true">
+				<normal color="#ffffff"/>
 				<pos x="0" y="4" width="100%" height="100%"/>
 				<box orientation="horizontal" spacing="10" xpadding="10">
 					<item type="rect" id="language_button" button="true">
@@ -131,6 +109,15 @@
 				</box>
 			</item>
 		</fixed>
+	</item>
+	<item type="pixmap" background="true">
+		<normal file="flower.png"/>
+		<pos x="100%" y="100%" anchor="se"/>
+	</item>
+	<item type="label" id="clock">
+		<normal color="#000000" font="Sans 12"/>
+		<pos x="-20" y="-37" anchor="e"/>
+		<text>%c</text>
 	</item>
 	<item type="rect" id="timed-label">
 		<show type="timed"/>

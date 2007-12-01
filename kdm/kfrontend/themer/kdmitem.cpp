@@ -32,6 +32,16 @@
 #include <QLineEdit>
 #include <QPainter>
 
+static bool
+toBool( const QString &str )
+{
+	bool ok;
+	int val = str.toInt( &ok );
+	if (!ok)
+		return str == "true";
+	return val != 0;
+}
+
 KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	: QObject( parent )
 	, isButton( false )
@@ -77,11 +87,7 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 			parseSize( el.attribute( "max-width", QString() ), geom.maxSize.x );
 			parseSize( el.attribute( "max-height", QString() ), geom.maxSize.y );
 			geom.anchor = el.attribute( "anchor", "nw" );
-			QString exp = el.attribute( "expand", "false" );
-			bool ok;
-			geom.expand = exp.toInt( &ok );
-			if (!ok)
-				geom.expand = exp == "true";
+			geom.expand = toBool( el.attribute( "expand", "false" ) );
 		} else if (tagName == "buddy")
 			buddy = el.attribute( "idref", "" );
 		else if (tagName == "style")
@@ -91,7 +97,9 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	if (!style.font.present)
 		parseFont( "Sans 14", style.font );
 
-	setObjectName( node.toElement().attribute( "id", QString::number( (ulong)this, 16 ) ) );
+	QDomElement el = node.toElement();
+	setObjectName( el.attribute( "id", QString::number( (ulong)this, 16 ) ) );
+	isBackground = toBool( el.attribute( "background", "false" ) );
 
 	if (!parentItem)
 		// The "toplevel" node (the screen) is really just like a fixed node
@@ -234,7 +242,7 @@ KdmItem::setGeometry( QStack<QSize> &parentSizes, const QRect &newGeometry, bool
 }
 
 void
-KdmItem::paint( QPainter *p, const QRect &rect )
+KdmItem::paint( QPainter *p, const QRect &rect, bool background )
 {
 	if (!isVisible())
 		return;
@@ -242,7 +250,7 @@ KdmItem::paint( QPainter *p, const QRect &rect )
 	if (myWidget)
 		return;
 
-	if (area.intersects( rect )) {
+	if (area.intersects( rect ) && (!background || isBackground)) {
 		QRect contentsRect = area.intersect( rect );
 		contentsRect.translate( qMin( 0, -area.x() ), qMin( 0, -area.y() ) );
 		drawContents( p, contentsRect );
@@ -261,7 +269,7 @@ KdmItem::paint( QPainter *p, const QRect &rect )
 
 	// Dispatch paint events to children
 	forEachChild (itm)
-		itm->paint( p, rect );
+		itm->paint( p, rect, background );
 }
 
 bool

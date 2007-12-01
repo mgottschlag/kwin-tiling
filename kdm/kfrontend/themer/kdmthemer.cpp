@@ -181,7 +181,7 @@ KdmThemer::widgetEvent( QEvent *e )
 			//kDebug() << "paint on: " << paintRect;
 
 			QPainter p( widget() );
-			rootItem->paint( &p, paintRect );
+			rootItem->paint( &p, paintRect, false );
 			rootItem->showWidget();
 		}
 		break;
@@ -193,14 +193,12 @@ KdmThemer::widgetEvent( QEvent *e )
 void
 KdmThemer::paintBackground( QPaintDevice *dev )
 {
-	if (KdmItem *bg = findNode( "background" )) {
-		debug() << "==== setting background geometry ====";
-		QRect rect( 0, 0, dev->width(), dev->height() );
-		QStack<QSize> ps;
-		bg->setGeometry( ps, rect, true );
-		QPainter p( dev );
-		bg->paint( &p, rect );
-	}
+	debug() << "==== setting background geometry ====";
+	QRect rect( 0, 0, dev->width(), dev->height() );
+	QStack<QSize> ps;
+	rootItem->setGeometry( ps, rect, true );
+	QPainter p( dev );
+	rootItem->paint( &p, rect, true );
 }
 
 void

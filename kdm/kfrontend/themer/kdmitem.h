@@ -107,7 +107,7 @@ public:
 	 * This is the compositing core function. It buffers paint operations
 	 * to speed up rendering of dynamic objects.
 	 */
-	void paint( QPainter *painter, const QRect &boundaries );
+	void paint( QPainter *painter, const QRect &boundaries, bool background );
 
 	/**
 	 * Update representation of contents and repaint.
@@ -213,6 +213,7 @@ protected:
 
 	QString buddy;
 	bool isButton;
+	bool isBackground;
 
 	// This struct is filled in by KdmItem base class
 	struct DataPair {
