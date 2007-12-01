@@ -259,7 +259,6 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 				newItem = new KdmPixmap( parent, subnode );
 			else
 				continue;
-			newItem->setIsButton( el.attribute( "button", "false" ) == "true" );
 			newItem->setShowType( showType, showTypeInvert );
 			connect( newItem, SIGNAL(needUpdate( int, int, int, int )),
 			         SLOT(update( int, int, int, int )) );

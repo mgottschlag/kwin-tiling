@@ -44,7 +44,6 @@ toBool( const QString &str )
 
 KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	: QObject( parent )
-	, isButton( false )
 	, boxManager( 0 )
 	, fixedManager( 0 )
 	, myWidget( 0 )
@@ -99,6 +98,7 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 
 	QDomElement el = node.toElement();
 	setObjectName( el.attribute( "id", QString::number( (ulong)this, 16 ) ) );
+	isButton = toBool( el.attribute( "button", "false" ) );
 	isBackground = toBool( el.attribute( "background", "false" ) );
 
 	if (!parentItem)
