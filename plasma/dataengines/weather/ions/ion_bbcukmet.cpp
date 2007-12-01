@@ -538,7 +538,7 @@ void UKMETIon::parseFiveDayForecast(WeatherData& data, QXmlStreamReader& xml)
          Summary,
          MaxTemp, 
          MinTemp, 
-         WindSpeed,
+         WindSpeed
     };
 
     WeatherData::ForecastInfo *forecast = new WeatherData::ForecastInfo;
