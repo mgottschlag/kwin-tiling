@@ -1,5 +1,5 @@
-<!ELEMENT greeter (item | fixed | box)+>
-<!ELEMENT item (fixed | box | pos | normal | active | prelight | show | text | stock | color | style | buddy)*>
+<!ELEMENT greeter (item | fixed | box | normal | style)+>	<!-- The root is an item of type "rect". -->
+<!ELEMENT item (item | fixed | box | pos | normal | active | prelight | show | text | stock | color | style | buddy)*>
 <!ELEMENT fixed (item+)>
 <!ELEMENT box (item+)>
 <!ELEMENT pos EMPTY>
@@ -14,10 +14,12 @@
 <!ELEMENT buddy EMPTY>
 
 <!--
-IDs with a special meaning are:
+Items with these IDs get special treatment:
 	xconsole | userlist |
 	caps-lock-warning | xauth-warning | pam-error | timed-label |
 	login_button | session_button | system_button
+Items with these IDs might get special treatment by conversation plugins:
+	talker | domain-entry | user-entry | pw-entry
 Items with these IDs are always hidden:
 	pam-message | language_button
 -->
@@ -67,9 +69,10 @@ Items with these IDs are always hidden:
 	min-height CDATA #IMPLIED
 	homogeneous (true | false) #IMPLIED
 >
+<!-- modes: (everywhere | nowhere | console | * ) -->
 <!-- type: !? (config | chooser | system | halt | reboot | suspend | timed | plugin-*) -->
 <!ATTLIST show
-	modes (everywhere | nowhere) "everywhere"
+	modes CDATA #IMPLIED
 	type CDATA #IMPLIED
 >
 <!ATTLIST text
