@@ -587,9 +587,9 @@ int setBootOption( const char *opt, SdRec *sdr );
 void commitBootOption( void );
 
 /* in netaddr.c */
-char *netaddrAddress( char *netaddrp, int *lenp );
-char *netaddrPort( char *netaddrp, int *lenp );
-int convertAddr( char *saddr, int *len, char **addr );
+CARD8 *netaddrAddress( char *netaddrp, int *lenp );
+CARD8 *netaddrPort( char *netaddrp, int *lenp );
+int convertAddr( char *saddr, int *len, CARD8 **addr );
 int netaddrFamily( char *netaddrp );
 int addressEqual( char *a1, int len1, char *a2, int len2 );
 

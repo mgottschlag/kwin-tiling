@@ -129,7 +129,7 @@ convertClientAddress( struct sockaddr *from,
                       CARD16 *type ) /* return */
 {
 	int length, family;
-	char *data;
+	CARD8 *data;
 
 	data = netaddrPort( (XdmcpNetaddr)from, &length );
 	XdmcpAllocARRAY8( port, length );
@@ -156,7 +156,7 @@ all_query_respond( struct sockaddr *from, int fromlen,
 	int family;
 	int length;
 
-	family = convertAddr( (XdmcpNetaddr)from, &length, (char **)&(addr.data) );
+	family = convertAddr( (XdmcpNetaddr)from, &length, &addr.data );
 	addr.length = length; /* convert int to short */
 	debug( "all_query_respond: conntype=%d, addr=%02[*:hhx\n",
 	       family, addr.length, addr.data );

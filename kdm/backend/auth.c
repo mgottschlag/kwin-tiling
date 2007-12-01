@@ -490,12 +490,12 @@ writeAuth( FILE *file, Xauth *auth, int *ok )
 }
 
 static void
-writeAddr( int family, int addr_length, char *addr,
+writeAddr( int family, int addr_length, CARD8 *addr,
            FILE *file, Xauth *auth, int *ok )
 {
 	auth->family = (unsigned short)family;
 	auth->address_length = addr_length;
-	auth->address = addr;
+	auth->address = (char *)addr;
 	debug( "writeAddr: writing and saving an entry\n" );
 	writeAuth( file, auth, ok );
 	if (!checkEntry( auth ))
@@ -531,7 +531,7 @@ defineLocal( FILE *file, Xauth *auth, int *ok )
 	 * see), whereas gethostname() kindly truncates it for me.
 	 */
 	uname( &name );
-	writeAddr( FamilyLocal, strlen( name.nodename ), name.nodename,
+	writeAddr( FamilyLocal, strlen( name.nodename ), (CARD8 *)name.nodename,
 	           file, auth, ok );
 #endif
 
@@ -557,7 +557,7 @@ defineLocal( FILE *file, Xauth *auth, int *ok )
 	 */
 	if (strcmp( displayname, name.nodename ))
 # endif
-		writeAddr( FamilyLocal, strlen( displayname ), displayname,
+		writeAddr( FamilyLocal, strlen( displayname ), (CARD8 *)displayname,
 		           file, auth, ok );
 #endif
 }
@@ -597,7 +597,7 @@ static void
 defineSelf( FILE *file, Xauth *auth, int *ok )
 {
 	struct ifaddrs *ifap, *ifr;
-	char *addr;
+	CARD8 *addr;
 	int family, len;
 
 	if (getifaddrs( &ifap ) < 0)
@@ -660,7 +660,7 @@ defineSelf( int fd, FILE *file, Xauth *auth, int *ok )
 	if (t_getname( fd, &netb, LOCALNAME ) == -1)
 		t_error( "t_getname" );
 	/* what a kludge */
-	writeAddr( FamilyInternet, 4, netb.buf+4, file, auth, ok );
+	writeAddr( FamilyInternet, 4, (CARD8 *)netb.buf+4, file, auth, ok );
 }
 
 #else
@@ -690,7 +690,6 @@ defineSelf( int fd, FILE *file, Xauth *auth, int *ok )
 	struct ipb ifnet;
 	struct in_ifaddr ifaddr;
 	struct strioctl str;
-	unsigned char *addr;
 	int len, ipfd;
 
 	if ((ipfd = open( "/dev/ip", O_RDWR, 0 )) < 0) {
@@ -731,7 +730,7 @@ defineSelf( int fd, FILE *file, Xauth *auth, int *ok )
 		if (IA_SIN( &ifaddr )->sin_addr.s_addr == htonl( 0x7f000001 ))
 			continue;
 
-		writeAddr( FamilyInternet, 4, (char *)&(IA_SIN( &ifaddr )->sin_addr),
+		writeAddr( FamilyInternet, 4, (CARD8 *)&(IA_SIN( &ifaddr )->sin_addr),
 		           file, auth, ok );
 
 	}
@@ -796,7 +795,7 @@ defineSelf( int fd, FILE *file, Xauth *auth, int *ok )
 {
 	char buf[2048], *cp, *cplim;
 	int len;
-	char *addr;
+	CARD8 *addr;
 	int family;
 	ifr_type *ifr;
 #ifdef USE_SIOCGLIFCONF
@@ -851,7 +850,7 @@ defineSelf( int fd, FILE *file, Xauth *auth, int *ok )
 		 */
 		if (IFR_ADDR( ifr ).sa_family == AF_DECnet) {
 				len = sizeof(struct dn_naddr);
-				addr = (char *)IFR_ADDR( ifr ).sa_data;
+				addr = (CARD8 *)IFR_ADDR( ifr ).sa_data;
 				family = FamilyDECnet;
 		} else
 #endif
@@ -911,7 +910,7 @@ static void
 defineSelf( int fd, int file, int auth, int *ok )
 {
 	int len;
-	caddr_t addr;
+	CARD8 *addr;
 	int family;
 
 	struct utsname name;
@@ -938,7 +937,7 @@ defineSelf( int fd, int file, int auth, int *ok )
 		         (int)hp->h_length );
 		if ((family = convertAddr( &(saddr.sa), &len, &addr )) >= 0)
 			writeAddr( FamilyInternet, sizeof(inetaddr->sin_addr),
-			           (char *)(&inetaddr->sin_addr), file, auth, ok );
+			           (CARD8 *)(&inetaddr->sin_addr), file, auth, ok );
 	}
 }
 
@@ -1013,7 +1012,7 @@ writeLocalAuth( FILE *file, Xauth *auth, const char *name, int *ok )
  */
 
 static int
-convertAuthAddr( char *saddr, int *len, char **addr )
+convertAuthAddr( char *saddr, int *len, CARD8 **addr )
 {
 	int ret = convertAddr( saddr, len, addr );
 	if (ret == FamilyInternet &&
@@ -1027,7 +1026,7 @@ writeRemoteAuth( FILE *file, Xauth *auth, XdmcpNetaddr peer, int peerlen,
                  const char *name, int *ok )
 {
 	int family = FamilyLocal;
-	char *addr;
+	CARD8 *addr;
 
 	debug( "writeRemoteAuth: %s %.*s\n", name, auth->name_length, auth->name );
 	if (!peer || peerlen < 2)

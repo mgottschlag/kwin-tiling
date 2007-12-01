@@ -57,7 +57,7 @@ netaddrFamily( char *netaddrp )
    and sets *lenp to the length of the address
    or 0 if not using TCP or UDP. */
 
-char *
+CARD8 *
 netaddrPort( char *netaddrp, int *lenp )
 {
 #ifdef STREAMSCONN
@@ -68,11 +68,11 @@ netaddrPort( char *netaddrp, int *lenp )
 	{
 	case AF_INET:
 		*lenp = 2;
-		return (char *)&(((struct sockaddr_in *)netaddrp)->sin_port);
+		return (CARD8 *)&(((struct sockaddr_in *)netaddrp)->sin_port);
 #if defined(IPv6) && defined(AF_INET6)
 	case AF_INET6:
 		*lenp = 2;
-		return (char *)&(((struct sockaddr_in6 *)netaddrp)->sin6_port);
+		return (CARD8 *)&(((struct sockaddr_in6 *)netaddrp)->sin6_port);
 #endif
 	default:
 		*lenp = 0;
@@ -85,7 +85,7 @@ netaddrPort( char *netaddrp, int *lenp )
 /* given an char *, returns a pointer to the network address
    and sets *lenp to the length of the address */
 
-char *
+CARD8 *
 netaddrAddress( char *netaddrp, int *lenp )
 {
 #ifdef STREAMSCONN
@@ -96,22 +96,22 @@ netaddrAddress( char *netaddrp, int *lenp )
 #ifdef UNIXCONN
 	case AF_UNIX:
 		*lenp = strlen( ((struct sockaddr_un *)netaddrp)->sun_path );
-		return (char *)(((struct sockaddr_un *)netaddrp)->sun_path);
+		return (CARD8 *)(((struct sockaddr_un *)netaddrp)->sun_path);
 #endif
 #ifdef TCPCONN
 	case AF_INET:
 		*lenp = sizeof(struct in_addr);
-		return (char *)&(((struct sockaddr_in *)netaddrp)->sin_addr);
+		return (CARD8 *)&(((struct sockaddr_in *)netaddrp)->sin_addr);
 #if defined(IPv6) && defined(AF_INET6)
 	case AF_INET6:
 	{
 		struct in6_addr *a = &(((struct sockaddr_in6 *)netaddrp)->sin6_addr);
 		if (IN6_IS_ADDR_V4MAPPED( a )) {
 			*lenp = sizeof(struct in_addr);
-			return ((char *)&(a->s6_addr))+12;
+			return ((CARD8 *)&(a->s6_addr))+12;
 		} else {
 			*lenp = sizeof(struct in6_addr);
-			return (char *)&(a->s6_addr);
+			return (CARD8 *)&(a->s6_addr);
 		}
 	}
 #endif
@@ -119,7 +119,7 @@ netaddrAddress( char *netaddrp, int *lenp )
 #ifdef DNETCONN
 	case AF_DECnet:
 		*lenp = sizeof(struct dn_naddr);
-		return (char *)&(((struct sockaddr_dn *)netaddrp)->sdn_add);
+		return (CARD8 *)&(((struct sockaddr_dn *)netaddrp)->sdn_add);
 #endif
 #ifdef AF_CHAOS
 	case AF_CHAOS:
@@ -137,7 +137,7 @@ netaddrAddress( char *netaddrp, int *lenp )
    Returns the X protocol family used, e.g., FamilyInternet */
 
 int
-convertAddr( char *saddr, int *len, char **addr )
+convertAddr( char *saddr, int *len, CARD8 **addr )
 {
 	int retval;
 
@@ -200,7 +200,7 @@ int
 addressEqual( char *a1, int len1, char *a2, int len2 )
 {
 	int partlen1, partlen2;
-	char *part1, *part2;
+	CARD8 *part1, *part2;
 
 	if (len1 != len2)
 		return False;
