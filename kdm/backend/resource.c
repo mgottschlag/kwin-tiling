@@ -39,6 +39,8 @@ from the copyright holder.
 
 #include <sys/stat.h>
 
+#define WANT_CORE_DEFS
+#include <config.ci>
 
 static char **originalArgv;
 

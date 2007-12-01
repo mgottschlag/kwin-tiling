@@ -38,6 +38,8 @@ from the copyright holder.
 #define _DM_H_ 1
 
 #include "greet.h"
+
+#define WANT_CORE_DECLS
 #include <config.ci>
 
 #include <X11/X.h> /* FamilyInternet6 */

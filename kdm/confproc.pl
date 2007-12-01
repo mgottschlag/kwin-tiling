@@ -154,11 +154,11 @@ my $ov_locs = "";
 
 my %ov_glob_decl_conds = ();
 my $ov_glob_decls = "";
-my %ov_glob_def_conds = ();
 my %ov_glob_defs = ();
 my %ov_loc_def_conds = ();
 my %ov_loc_defs = ();
 
+my %ov_greet_decl_conds = ();
 my %ov_greet_conds = ();
 my $ov_greet_init = "";
 my $ov_greet_init_qapp = "";
@@ -427,21 +427,29 @@ while (<INFILE>) {
               if ($sect =~ /^-/) {
                 my @oa = (
                   [ "{ ".$kid.", boffset(".$hvn.") },", "LOC" ],
-                  [ $ctype.$hvn.";", "LDEF" ]
                 );
                 add_cond($kif, $hvn, \@oa, \%ov_loc_conds);
                 $ov_locs .= " \\\n".$oa[0][0];
-                $ov_loc_defs{$ctype} .= " \\\n\t".$oa[1][0];
+
+                @oa = (
+                  [ $ctype.$hvn.";", "LDEF" ]
+                );
+                add_cond($kif, $hvn, \@oa, \%ov_loc_def_conds);
+                $ov_loc_defs{$ctype} .= " \\\n\t".$oa[0][0];
               } else {
                 my @oa = (
                   [ "{ ".$kid.", &".$hvn." },", "GLOB" ],
                   [ $ctype.$hvn.";", "GDEF" ],
-                  [ "extern ".$ctype.$hvn.";", "GDECL" ]
                 );
                 add_cond($kif, $hvn, \@oa, \%ov_glob_conds);
                 $ov_globs .= " \\\n".$oa[0][0];
                 $ov_glob_defs{$ctype} .= " \\\n".$oa[1][0];
-                $ov_glob_decls .= " \\\n".$oa[2][0];
+
+                @oa = (
+                  [ "extern ".$ctype.$hvn.";", "GDECL" ]
+                );
+                add_cond($kif, $hvn, \@oa, \%ov_glob_decl_conds);
+                $ov_glob_decls .= " \\\n".$oa[0][0];
               }
             } else { # greeter(-c)?
               my ($typ, $gtr, $isc, $qapp);
@@ -464,7 +472,6 @@ while (<INFILE>) {
               my @oa = (
                 [ "_".$hvn." = ".$gtr.";", "GRINIT" ],
                 [ $typ."_".$hvn.";", "GRDEF" ],
-                [ "extern ".$typ."_".$hvn.";", "GRDECL" ]
               );
               add_cond($kif, $hvn, \@oa, \%ov_greet_conds);
               if ($qapp) {
@@ -473,7 +480,12 @@ while (<INFILE>) {
                   $ov_greet_init .= " \\\n    ".$oa[0][0];
               }
               $ov_greet_defs{$typ} .= " \\\n".$oa[1][0];
-              $ov_greet_decls[$isc] .= " \\\n".$oa[2][0];
+
+              @oa = (
+                [ "extern ".$typ."_".$hvn.";", "GRDECL" ]
+              );
+              add_cond($kif, $hvn, \@oa, \%ov_greet_decl_conds);
+              $ov_greet_decls[$isc] .= " \\\n".$oa[0][0];
             }
           }
         } else {
@@ -704,8 +716,31 @@ print OUTFILE
   "#ifndef CONFIG_DEFS\n".
   "#define CONFIG_DEFS\n\n".
   $raw_out."\n\n".
+  "#endif /* CONFIG_DEFS */\n\n\n";
+
+print OUTFILE
+  "#if (defined(WANT_CORE_DECLS) || defined(WANT_GREET_DECLS)) && !defined(CONF_ENUMS_DEFINED)\n".
+  "#define CONF_ENUMS_DEFINED\n\n".
   $ov_enum_defs."\n".
-  $ov_defaults."\n\n";
+  "#endif\n\n\n";
+
+print OUTFILE
+  "#if (defined(WANT_CONF_READ) || defined(WANT_CONF_GEN)) && !defined(CONF_SECTS)\n\n".
+  emit_conds(\%ov_ent_conds).
+  emit_conds(\%ov_sec_conds).
+  "#define CONF_SECTS \\\n \\\n".
+  "static Sect \\\n".
+    $ov_sect_defs.
+  "    *allSects[]\t= { \\\n".
+    $ov_sect_refs.
+  "    };\n\n".
+  "#endif\n\n\n";
+
+######### config reader definitions #########
+
+print OUTFILE
+  "#if defined(WANT_CONF_READ) && !defined(CONF_READ_DEFINED)\n".
+  "#define CONF_READ_DEFINED\n\n";
 
 my $ov_vars = "";
 my %ov_var_conds = ();
@@ -722,16 +757,6 @@ print OUTFILE
     "    Vdummy;\n\n\n";
 
 print OUTFILE
-  emit_conds(\%ov_ent_conds).
-  emit_conds(\%ov_sec_conds).
-  "#define CONF_SECTS \\\n \\\n".
-  "static Sect \\\n".
-    $ov_sect_defs.
-  "    *allSects[]\t= { \\\n".
-    $ov_sect_refs.
-  "    };\n\n\n";
-
-print OUTFILE
   emit_conds(\%ov_enum_conds).
   "#define CONF_READ_ENTRIES \\\n \\\n".
   $ov_enums.
@@ -739,39 +764,68 @@ print OUTFILE
   "CONF_SECTS\n\n\n";
 
 print OUTFILE
-  "#define CONF_MAX_PRIO ".$max_prio."\n\n".
-  "#define CONF_GEN_ENTRIES \\\n".
-  $ov_gen_sects." \\\n".
-  "CONF_SECTS\n\n\n";
+  "#endif /* WANT_CONF_READ */\n\n\n";
+
+######### core definitions #########
 
 print OUTFILE
+  "#if defined(WANT_CORE_DECLS) && !defined(CONF_CORE_GLOBAL_DECLS)\n\n".
+  emit_conds(\%ov_glob_decl_conds).
+  "#define CONF_CORE_GLOBAL_DECLS \\\n".
+  $ov_glob_decls."\n\n\n".
+  emit_conds(\%ov_loc_def_conds).
+  "#define CONF_CORE_LOCAL_DEFS \\\n".
+  emit_defs(\%ov_loc_defs)."\n\n\n".
+  "#endif /* WANT_CORE_DECLS */\n\n\n";
+
+print OUTFILE
+  "#if defined(WANT_CORE_DEFS) && !defined(CONF_CORE_GLOBAL_DEFS)\n\n".
   emit_conds(\%ov_glob_conds).
   "#define CONF_CORE_GLOBALS \\\n".
   $ov_globs."\n\n\n".
-  "#define CONF_CORE_GLOBAL_DECLS \\\n".
-  $ov_glob_decls."\n\n\n".
   "#define CONF_CORE_GLOBAL_DEFS \\\n".
-  emit_defs(\%ov_glob_defs)."\n\n\n";
-
-print OUTFILE
+  emit_defs(\%ov_glob_defs)."\n\n".
   emit_conds(\%ov_loc_conds).
   "#define CONF_CORE_LOCALS \\\n".
   $ov_locs."\n\n\n".
-  "#define CONF_CORE_LOCAL_DEFS \\\n".
-  emit_defs(\%ov_loc_defs)."\n\n\n\n";
+  "#endif /* WANT_CORE_DEFS */\n\n\n";
+
+######### greeter definitions #########
 
 print OUTFILE
+  "#if defined(WANT_GREET_DECLS) && !defined(CONF_GREET_C_DECLS)\n\n".
+  emit_conds(\%ov_greet_decl_conds).
+  "#define CONF_GREET_C_DECLS \\\n".
+  $ov_greet_decls[1]."\n\n\n".
+  "#define CONF_GREET_CPP_DECLS \\\n".
+  $ov_greet_decls[0]."\n\n\n".
+  "#endif /* WANT_GREET_DECLS */\n\n\n";
+
+print OUTFILE
+  "#if defined(WANT_GREET_DEFS) && !defined(CONF_GREET_DEFS)\n\n".
   emit_conds(\%ov_greet_conds).
   "#define CONF_GREET_INIT \\\n".
   $ov_greet_init."\n\n\n".
   "#define CONF_GREET_INIT_QAPP \\\n".
   $ov_greet_init_qapp."\n\n\n".
-  "#define CONF_GREET_C_DECLS \\\n".
-  $ov_greet_decls[1]."\n\n\n".
-  "#define CONF_GREET_CPP_DECLS \\\n".
-  $ov_greet_decls[0]."\n\n\n".
   "#define CONF_GREET_DEFS \\\n".
-  emit_defs(\%ov_greet_defs)."\n\n\n";
+  emit_defs(\%ov_greet_defs)."\n\n".
+  "#endif /* WANT_GREET_DEFS */\n\n\n";
+
+######### genkdmconf definitions #########
+
+print OUTFILE
+  "#if defined(WANT_CONF_GEN) && !defined(CONF_GEN_DEFINED)\n".
+  "#define CONF_GEN_DEFINED\n\n";
+
+print OUTFILE
+  $ov_defaults."\n";
+
+print OUTFILE
+  "#define CONF_MAX_PRIO ".$max_prio."\n\n".
+  "#define CONF_GEN_ENTRIES \\\n".
+  $ov_gen_sects." \\\n".
+  "CONF_SECTS\n\n\n";
 
 my ($ov1, $ov2) = ("", "");
 my %ex_sec_conds = ();
@@ -833,9 +887,10 @@ print OUTFILE
   $ov_km_sects.
   "KUpdSec kupsects[] = { \\\n".
   $ov_km_sect_refs.
-  "};\n";
+  "};\n\n\n";
+
 print OUTFILE
-  "\n#endif /* CONFIG_DEFS */\n";
+  "#endif /* WANT_CONF_GEN */\n";
 
 } else {
 

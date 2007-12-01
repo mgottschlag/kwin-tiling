@@ -48,6 +48,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # include <utmp.h>
 #endif
 
+#define WANT_CONF_GEN
 #include <config.ci>
 
 #define RCVERSTR stringify(RCVERMAJOR) "." stringify(RCVERMINOR)

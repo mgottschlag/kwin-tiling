@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define KDMCONFIG_H
 
 #include <greet.h>
+
+#define WANT_GREET_DECLS
 #include <config.ci>
 
 #ifdef __cplusplus
