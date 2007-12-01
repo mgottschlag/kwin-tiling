@@ -1,0 +1,109 @@
+<!ELEMENT greeter (item | fixed | box)+>
+<!ELEMENT item (fixed | box | pos | normal | active | prelight | show | text | stock | color | style | buddy)*>
+<!ELEMENT fixed (item+)>
+<!ELEMENT box (item+)>
+<!ELEMENT pos EMPTY>
+<!ELEMENT show EMPTY>
+<!ELEMENT text (#PCDATA)>
+<!ELEMENT normal EMPTY>
+<!ELEMENT active EMPTY>
+<!ELEMENT prelight EMPTY>
+<!ELEMENT stock EMPTY>
+<!ELEMENT color EMPTY>
+<!ELEMENT style EMPTY>
+<!ELEMENT buddy EMPTY>
+
+<!--
+IDs with a special meaning are:
+	xconsole | userlist |
+	caps-lock-warning | xauth-warning | pam-error | timed-label |
+	login_button | session_button | system_button
+Items with these IDs are always hidden:
+	pam-message | language_button
+-->
+
+<!ATTLIST item
+	type (rect | entry | pixmap | label | svg | list) #REQUIRED
+	id CDATA #IMPLIED
+	button (true | false) #IMPLIED
+	background (true | false) #IMPLIED
+>
+<!ATTLIST pos
+	x CDATA #IMPLIED
+	y CDATA #IMPLIED
+	anchor CDATA "c"
+	width CDATA #IMPLIED
+	height CDATA #IMPLIED
+	min-width CDATA #IMPLIED
+	min-height CDATA #IMPLIED
+	max-width CDATA #IMPLIED
+	max-height CDATA #IMPLIED
+	expand (true | false) #IMPLIED
+>
+<!ENTITY % colorattrs "
+	file CDATA #IMPLIED
+	color CDATA #IMPLIED
+	font CDATA #IMPLIED
+	tint CDATA #IMPLIED
+	alpha CDATA #IMPLIED">
+<!ATTLIST normal
+	%colorattrs;
+>
+<!ATTLIST active
+	%colorattrs;
+>
+<!ATTLIST prelight
+	%colorattrs;
+>
+<!ATTLIST stock
+	type (language | session | system | disconnect | quit | halt | reboot | chooser | caps-lock-warning | timed-label | welcome-label | username-label | domain-label | username-label | password-label | login) #REQUIRED
+>
+<!ATTLIST box
+	orientation (horizontal | vertical) "horizontal"
+	spacing CDATA #IMPLIED
+	xpadding CDATA #IMPLIED
+	ypadding CDATA #IMPLIED
+	min-width CDATA #IMPLIED
+	min-height CDATA #IMPLIED
+	homogeneous (true | false) #IMPLIED
+>
+<!-- type: !? (config | chooser | system | halt | reboot | suspend | timed | plugin-*) -->
+<!ATTLIST show
+	modes (everywhere | nowhere) "everywhere"
+	type CDATA #IMPLIED
+>
+<!ATTLIST text
+	xml:lang CDATA #IMPLIED
+>
+<!ATTLIST color
+	labelcolor CDATA #IMPLIED
+	altlabelcolor CDATA #IMPLIED
+>
+<!ATTLIST style
+	font CDATA #IMPLIED
+	edit-font CDATA #IMPLIED
+	window-color CDATA #IMPLIED
+	window-alpha CDATA #IMPLIED
+	window-text-color CDATA #IMPLIED
+	window-text-alpha CDATA #IMPLIED
+	base-color CDATA #IMPLIED
+	base-alpha CDATA #IMPLIED
+	alternate-base-color CDATA #IMPLIED
+	alternate-base-alpha CDATA #IMPLIED
+	text-color CDATA #IMPLIED
+	text-alpha CDATA #IMPLIED
+	highlight-color CDATA #IMPLIED
+	highlight-alpha CDATA #IMPLIED
+	highlighted-text-color CDATA #IMPLIED
+	highlighted-text-alpha CDATA #IMPLIED
+	button-color CDATA #IMPLIED
+	button-alpha CDATA #IMPLIED
+	button-text-color CDATA #IMPLIED
+	button-text-alpha CDATA #IMPLIED
+	bright-text-color CDATA #IMPLIED
+	bright-text-alpha CDATA #IMPLIED
+	frame (true | false) #IMPLIED
+>
+<!ATTLIST buddy
+	idref IDREF #REQUIRED
+>
