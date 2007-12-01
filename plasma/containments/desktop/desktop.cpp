@@ -244,7 +244,6 @@ void DefaultDesktop::applyConfig()
     m_slidePaths.clear();
     for (int i = 0; i < m_ui->slidePaths->count(); ++i)
     {
-        kDebug() << "adding path to slidelist: " << m_ui->slidePaths->item(i)->text();
         m_slidePaths << m_ui->slidePaths->item(i)->text();
     }
     cg.writeEntry("slidepath", m_slidePaths);
