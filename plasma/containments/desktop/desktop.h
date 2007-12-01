@@ -84,6 +84,19 @@ protected Q_SLOTS:
     void updateSlideList();
     void nextSlide();
 
+    /** add new path button was clicked */
+    void addSlidePath();
+
+    /** add a new slide path */
+    void addPathOk();
+
+    /** remove the currently selected path */
+    void removeSlidePath();
+
+    /** the slidepath selection has changed,
+     * used to enable/disable the remove button */
+    void slidePathCurrentRowChanged(int row);
+
     /**
      * invoke kns dialog to get new wallpapers
      */
@@ -118,7 +131,7 @@ private:
     // the index of which m_slidePath is currently visible
     int m_currentSlide;
     QTimer *m_slideShowTimer;
-    QString m_slidePath;
+    QStringList m_slidePaths;
     QStringList m_slideFiles;
 
     Plasma::Svg *m_background;

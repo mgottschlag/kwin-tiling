@@ -82,7 +82,12 @@ void DefaultDesktop::init()
     connect(m_slideShowTimer, SIGNAL(timeout()), this, SLOT(nextSlide()));
     m_slideShowTimer->setInterval(cg.readEntry("slideTimer", 60) * 1000);
 
-    m_slidePath = cg.readEntry("slidepath", KStandardDirs::installPath("wallpaper"));
+    m_slidePaths = cg.readEntry("slidepaths", QStringList());
+
+    if (m_slidePaths.isEmpty())
+    {
+        m_slidePaths << KStandardDirs::installPath("wallpaper");
+    }
 
     if (m_backgroundMode == kStaticBackground) {
         m_wallpaperPath = cg.readEntry("wallpaper", KStandardDirs::locate("wallpaper", "plasma-default.png"));
@@ -106,16 +111,19 @@ void DefaultDesktop::init()
 
 void DefaultDesktop::updateSlideList()
 {
-    QDir dir(m_slidePath);
-    QStringList filters;
-    filters << "*.png" << "*.jpeg" << "*.jpg" << "*.svg" << "*.svgz";
-    dir.setNameFilters(filters);
-    dir.setFilter(QDir::Files | QDir::Hidden);
-    QFileInfoList files = dir.entryInfoList();
     m_slideFiles.clear();
+    foreach (QString slidePath, m_slidePaths)
+    {
+        QDir dir(slidePath);
+        QStringList filters;
+        filters << "*.png" << "*.jpeg" << "*.jpg" << "*.svg" << "*.svgz";
+        dir.setNameFilters(filters);
+        dir.setFilter(QDir::Files | QDir::Hidden);
+        QFileInfoList files = dir.entryInfoList();
 
-    for (int i = 0; i < files.size(); ++i) {
-        m_slideFiles << files[i].absoluteFilePath();
+        for (int i = 0; i < files.size(); ++i) {
+            m_slideFiles << files[i].absoluteFilePath();
+        }
     }
 
     //kDebug() << "updated slide list from contents of folder: " << m_slidePath;
@@ -204,20 +212,21 @@ void DefaultDesktop::configure()
         connect( m_configDialog, SIGNAL(applyClicked()), this, SLOT(applyConfig()) );
         connect( m_configDialog, SIGNAL(okClicked()), this, SLOT(applyConfig()) );
         connect( m_ui->getNewStuffButton, SIGNAL(clicked()), this, SLOT(getNewStuff()));
+        connect( m_ui->addSlidePathButton, SIGNAL(clicked()), this, SLOT(addSlidePath()));
+        connect( m_ui->removeSlidePathButton, SIGNAL(clicked()), this, SLOT(removeSlidePath()));
         m_ui->picRequester->comboBox()->insertItem(0, KStandardDirs::locate("wallpaper", "plasma-default.png"));
-        m_ui->slideShowRequester->setMode(KFile::Directory);
-        m_ui->slideShowRequester->setGeometry(m_ui->picRequester->frameGeometry());
         m_ui->slideShowTime->setMinimumTime(QTime(0,0,1)); // minimum to 1 seconds
 
         // hide these since we don't use them yet
         m_ui->colorFrame->hide();
     }
 
+    m_ui->slidePaths->clear();
+    m_ui->slidePaths->addItems(m_slidePaths);
     m_ui->pictureComboBox->setCurrentIndex(m_backgroundMode);
     m_ui->picRequester->fileDialog()->setCaption(i18n("Configure Desktop")); // TODO: change caption after string freeze; e.g. "Select Wallpaper"
     m_ui->picRequester->fileDialog()->setPreviewWidget(new KImageFilePreview(m_ui->picRequester));
     m_ui->picRequester->setUrl(m_wallpaperPath);
-    m_ui->slideShowRequester->setUrl(KUrl(m_slidePath));
     int mseconds = m_slideShowTimer->interval() / 1000;
     m_ui->slideShowTime->setTime(QTime(mseconds / 3600, (mseconds / 60) % 60, mseconds % 60));
     m_configDialog->show();
@@ -232,8 +241,13 @@ void DefaultDesktop::applyConfig()
     m_backgroundMode = m_ui->pictureComboBox->currentIndex();
     cg.writeEntry("backgroundmode", m_backgroundMode);
 
-    m_slidePath = m_ui->slideShowRequester->url().path();
-    cg.writeEntry("slidepath", m_slidePath);
+    m_slidePaths.clear();
+    for (int i = 0; i < m_ui->slidePaths->count(); ++i)
+    {
+        kDebug() << "adding path to slidelist: " << m_ui->slidePaths->item(i)->text();
+        m_slidePaths << m_ui->slidePaths->item(i)->text();
+    }
+    cg.writeEntry("slidepath", m_slidePaths);
 
     QTime timerTime = m_ui->slideShowTime->time();
     unsigned int mseconds = timerTime.second() + timerTime.minute() * 60 + timerTime.hour() * 3600;
@@ -252,6 +266,44 @@ void DefaultDesktop::applyConfig()
     getBitmapBackground();
     update();
     cg.config()->sync();
+}
+
+void DefaultDesktop::slidePathCurrentRowChanged(int row)
+{
+    // enable if there's a valid selection, otherwise disable
+    m_ui->removeSlidePathButton->setEnabled(row != -1);
+}
+
+void DefaultDesktop::addSlidePath()
+{
+    // get a folder with a non-modal kfiledialog
+    KUrl url;
+    if (m_slidePaths.size() > 0) {
+        url = KUrl(m_slidePaths[m_slidePaths.size() - 1]);
+    }
+
+    KFileDialog * dialog = new KFileDialog(url, "*", NULL, NULL);
+    dialog->setMode(KFile::Directory);
+    
+    dialog->show();
+    connect(dialog, SIGNAL(okClicked()), this, SLOT(addPathOk()));
+}
+
+void DefaultDesktop::addPathOk()
+{
+    // add the path to the ui
+    KFileDialog * dialog = qobject_cast<KFileDialog*>(sender());
+    QString path = dialog->selectedUrl().path();
+    m_ui->slidePaths->addItem(path);
+    dialog->deleteLater();
+}
+
+void DefaultDesktop::removeSlidePath()
+{
+    int index = m_ui->slidePaths->currentRow();
+    if (index > 0) {
+        delete m_ui->slidePaths->takeItem(index);
+    }
 }
 
 void DefaultDesktop::runCommand()
