@@ -222,10 +222,9 @@ static const struct {
 	{ "disconnect",        I18N_NOOP("Disconn_ect") },
 	{ "quit",              I18N_NOOP("_Quit") },
 	{ "halt",              I18N_NOOP("Power o_ff") },
-	{ "suspend",           I18N_NOOP("_Suspend") },
+//	{ "suspend",           I18N_NOOP("_Suspend") },
 	{ "reboot",            I18N_NOOP("Re_boot") },
 	{ "chooser",           I18N_NOOP("XDMCP Choose_r") },
-	{ "config",            I18N_NOOP("Confi_gure") },
 	{ "caps-lock-warning", I18N_NOOP("Caps Lock is enabled") },
 	{ "timed-label",       I18N_NOOP("User %s will log in in %d seconds") },
 	{ "welcome-label",     I18N_NOOP("Welcome to %h") },	// _greetString
