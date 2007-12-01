@@ -23,6 +23,7 @@
 #define _ION_BBCUKMET_H
 
 #include <QtXml/QXmlStreamReader>
+#include <QRegExp>
 #include <QtCore/QStringList>
 #include <QDebug>
 #include <kurl.h>
@@ -50,6 +51,19 @@ public:
     QString pressure;
     QString pressureTendency;
     QString visibilityStr;
+
+    // Five day forecast
+    struct ForecastInfo {
+        QString period;
+        QString summary;
+        int tempHigh;
+        int tempLow;
+        int windSpeed;
+        QString windDirection;
+    };
+
+    // 5 day Forecast
+    QVector <WeatherData::ForecastInfo *> forecasts;
 };
 
 class KDE_EXPORT UKMETIon : public IonInterface
@@ -77,6 +91,8 @@ public:
 protected slots:
     void setup_slotDataArrived(KIO::Job *, const QByteArray &);
     void setup_slotJobFinished(KJob *);
+    void observation_slotDataArrived(KIO::Job *, const QByteArray &);
+    void observation_slotJobFinished(KJob *);
     void forecast_slotDataArrived(KIO::Job *, const QByteArray &);
     void forecast_slotJobFinished(KJob *);
 
@@ -86,17 +102,19 @@ private:
     // Load and Parse the place search XML listings
     void findPlace(const QString& place, const QString& source);
     void validate(const QString& source); // Sync data source with Applet
+    void getFiveDayForecast(const QString& source);
     void getXMLData(const QString& source);
     bool readSearchXMLData(const QString& source, QXmlStreamReader& xml);
+    bool readFiveDayForecastXMLData(const QString& source, QXmlStreamReader& xml);
     void parseSearchLocations(const QString& source, QXmlStreamReader& xml);
 
     // Observation parsing methods
-    bool readObservationXMLData(QString& source, QXmlStreamReader& xml);
-    void parsePlaceObservation(WeatherData& data, QXmlStreamReader& xml);
-    void parseWeatherChannel(WeatherData& data, QXmlStreamReader& xml);
-    void parseWeatherObservation(WeatherData& data, QXmlStreamReader& xml);
+    bool readObservationXMLData(const QString& source, QXmlStreamReader& xml);
+    void parsePlaceObservation(const QString& source, WeatherData& data, QXmlStreamReader& xml);
+    void parseWeatherChannel(const QString& source, WeatherData& data, QXmlStreamReader& xml);
+    void parseWeatherObservation(const QString& source, WeatherData& data, QXmlStreamReader& xml);
+    void parseFiveDayForecast(WeatherData& data, QXmlStreamReader& xml);
     void parseUnknownElement(QXmlStreamReader& xml);
-
     
 private:
     class Private;
