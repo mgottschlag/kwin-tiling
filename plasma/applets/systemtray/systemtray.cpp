@@ -48,6 +48,13 @@ QSizeF SystemTray::contentSizeHint() const
     return size;
 }
 
+void SystemTray::constraintsUpdated(Plasma::Constraints constraints)
+{
+    if (constraints & Plasma::FormFactorConstraint) {
+        updateWidgetOrientation();
+    }
+}
+
 Qt::Orientations SystemTray::expandingDirections() const
 {
     // Extra space isn't useful in either direction
@@ -105,6 +112,7 @@ void SystemTray::handleSceneChange(const QList<QRectF> &region)
             m_systemTrayWidget = new SystemTrayWidget(view);
             connect(m_systemTrayWidget, SIGNAL(sizeShouldChange()), this, SLOT(updateSize()));
         }
+        updateWidgetOrientation();
         m_systemTrayWidget->setVisible(true);
     }
 
@@ -141,6 +149,19 @@ void SystemTray::updateSize()
 {
     // Just ask our parent's layout to give us an appropriate size
     updateGeometry();
+}
+
+void SystemTray::updateWidgetOrientation()
+{
+    if (!m_systemTrayWidget) {
+        return;
+    }
+    // TODO: Handle other form factors
+    if (formFactor() == Plasma::Horizontal) {
+        m_systemTrayWidget->setOrientation(Qt::Horizontal);
+    } else {
+        m_systemTrayWidget->setOrientation(Qt::Vertical);
+    }
 }
 
 #include "systemtray.moc"

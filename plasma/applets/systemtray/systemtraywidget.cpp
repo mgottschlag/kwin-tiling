@@ -42,8 +42,7 @@ enum
 
 SystemTrayWidget::SystemTrayWidget(QWidget *parent)
     : QWidget(parent),
-    // HACK: We need a better way to find out our orientation and when it changes
-    m_orientation(parent->width() > parent->height() ? Qt::Horizontal : Qt::Vertical),
+    m_orientation(Qt::Horizontal),
     m_nextRow(0),
     m_nextColumn(0)
 {
@@ -107,12 +106,20 @@ bool SystemTrayWidget::x11Event(XEvent *event)
             addWidgetToLayout(container);
 
             connect(container, SIGNAL(clientIsEmbedded()), this, SIGNAL(sizeShouldChange()));
-            connect(container, SIGNAL(destroyed(QObject *)), this, SLOT(removeContainer(QObject *)));
+            connect(container, SIGNAL(destroyed(QObject *)), this, SLOT(relayoutContainers(QObject *)));
 
             return true;
         }
     }
     return QWidget::x11Event(event);
+}
+
+void SystemTrayWidget::setOrientation(Qt::Orientation orientation)
+{
+    if (orientation != m_orientation) {
+        m_orientation = orientation;
+        relayoutContainers();
+    }
 }
 
 void SystemTrayWidget::addWidgetToLayout(QWidget *widget)
@@ -142,13 +149,13 @@ void SystemTrayWidget::addWidgetToLayout(QWidget *widget)
     }
 }
 
-void SystemTrayWidget::removeContainer(QObject *container)
+void SystemTrayWidget::relayoutContainers(QObject *removeContainer)
 {
     // Pull all widgets from our container, skipping over the one that was just
     // deleted
     QList<QWidget *> remainingWidgets;
     while (QLayoutItem* item = m_mainLayout->takeAt(0)) {
-        if (item->widget() && item->widget() != container) {
+        if (item->widget() && item->widget() != removeContainer) {
             remainingWidgets.append(item->widget());
         }
         delete item;

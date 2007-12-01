@@ -44,6 +44,7 @@ public:
 
     QSizeF contentSizeHint() const;
     Qt::Orientations expandingDirections() const;
+    void constraintsUpdated(Plasma::Constraints constraints);
 
 protected:
     QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value);
@@ -55,6 +56,7 @@ private slots:
 private:
     bool intersectsRegion(const QList<QRectF> &region);
     QGraphicsView * findView();
+    void updateWidgetOrientation();
 
     // These can all be deleted externally so we guard them
     QPointer<SystemTrayWidget> m_systemTrayWidget;

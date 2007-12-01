@@ -37,6 +37,8 @@ Q_OBJECT
 public:
     SystemTrayWidget(QWidget *parent);
 
+    void setOrientation(Qt::Orientation);
+
 protected:
     bool x11Event(XEvent *event);
 
@@ -44,7 +46,7 @@ Q_SIGNALS:
     void sizeShouldChange();
 
 private slots:
-    void removeContainer(QObject *container);
+    void relayoutContainers(QObject *removeContainer = 0);
 
 private:
     void addWidgetToLayout(QWidget *widget);
