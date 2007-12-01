@@ -6,4 +6,13 @@ X-KDE-DEFAULT-ACTION=open
 
 [Desktop Action open]
 Name=Open with Dolphin
+Name[ca]=Obre amb el Dolphin
+Name[el]=Άνοιγμα με το Dolphin
+Name[eu]=Ireki Dolphin-arekin 
+Name[ga]=Oscail le Dolphin
+Name[ja]=Dolphin で開く
+Name[lv]=Atvērt ar Dolphin
+Name[nds]=Mit Dolphin opmaken
+Name[pl]=Otwórz w Dolpinie
+Name[pt_BR]=Abrir com o Dolphin
 Exec=dbus-launch dolphin
