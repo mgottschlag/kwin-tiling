@@ -331,7 +331,7 @@ void UKMETIon::observation_slotDataArrived(KIO::Job *job, const QByteArray &data
     }
 
     // Send to xml.
-    d->m_obsJobXml[job]->addData(local.data());
+    d->m_obsJobXml[job]->addData(local);
 }
 
 void UKMETIon::observation_slotJobFinished(KJob *job)

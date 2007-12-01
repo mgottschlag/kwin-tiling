@@ -172,7 +172,7 @@ void NOAAIon::setup_slotDataArrived(KIO::Job *job, const QByteArray &data)
     }
 
     // Send to xml.
-    d->m_xmlSetup.addData(data.data());
+    d->m_xmlSetup.addData(data);
 }
 
 void NOAAIon::slotDataArrived(KIO::Job *job, const QByteArray &data)
@@ -183,7 +183,7 @@ void NOAAIon::slotDataArrived(KIO::Job *job, const QByteArray &data)
     }
 
     // Send to xml.
-    d->m_jobXml[job]->addData(data.data());
+    d->m_jobXml[job]->addData(data);
 }
 
 void NOAAIon::slotJobFinished(KJob *job)
