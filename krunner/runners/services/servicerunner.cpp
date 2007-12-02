@@ -82,7 +82,7 @@ void ServiceRunner::exec(Plasma::SearchAction* action)
     }
 }
 
-void ServiceRunner::setupAction(const KService::Ptr &service, QAction *action)
+void ServiceRunner::setupAction(const KService::Ptr &service, Plasma::SearchAction *action)
 {
     action->setText(service->name());
     action->setData(service->storageId());

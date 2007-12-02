@@ -50,7 +50,7 @@ void ShellRunner::match(Plasma::SearchContext *search)
 
     if (search->type() == Plasma::SearchContext::Executable ||
         search->type() == Plasma::SearchContext::ShellCommand)  {
-        QAction* action = search->addExactMatch(this);
+        Plasma::SearchAction* action = search->addExactMatch(this);
         action->setIcon(KIcon("system-run"));
         action->setText(i18n("Run %1", search->searchTerm()));
     }
@@ -67,7 +67,6 @@ void ShellRunner::exec(Plasma::SearchAction* action)
     if (!m_enabled) {
         return;
     }
-
     KRun::runCommand(action->searchTerm(), NULL);
 }
 

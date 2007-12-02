@@ -40,6 +40,10 @@ class KComboBox;
 class KPushButton;
 class KTitleWidget;
 
+namespace ThreadWeaver {
+    class JobCollection;
+}
+
 class CollapsibleWidget;
 class SearchMatch;
 
@@ -61,6 +65,8 @@ class Interface : public KRunnerDialog
     protected Q_SLOTS:
         void match();
         void queueMatch();
+        void queueUpdates();
+        void updateMatches();
         void setWidgetPalettes();
         void exec();
         void matchActivated( QListWidgetItem* );
@@ -74,9 +80,10 @@ class Interface : public KRunnerDialog
         void resetInterface();
 
         Plasma::AbstractRunner::List m_runners;
-        int m_nextRunner; // index of the next runner to call match() on
+//         int m_nextRunner; // index of the next runner to call match() on
 
         QTimer m_matchTimer;
+        QTimer m_updateTimer;
         QVBoxLayout* m_layout;
         KTitleWidget* m_header;
         KComboBox* m_searchTerm;
@@ -87,6 +94,8 @@ class Interface : public KRunnerDialog
         KPushButton* m_optionsButton;
         CollapsibleWidget* m_expander;
         QWidget *m_optionsWidget;
+
+        QList<ThreadWeaver::JobCollection*> m_searchJobs;
 
         SearchMatch* m_defaultMatch;
         Plasma::SearchContext m_context;

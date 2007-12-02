@@ -54,7 +54,7 @@ void SessionRunner::match(Plasma::SearchContext *search)
     if (KAuthorized::authorizeKAction("start_new_session") &&
         dm.isSwitchable() &&
         dm.numReserve() >= 0) {
-        QAction *action = search->addExactMatch(this);
+        Plasma::SearchAction *action = search->addExactMatch(this);
         action->setIcon(KIcon("fork"));
         action->setText(i18n("New Session"));
     }
@@ -70,7 +70,7 @@ void SessionRunner::match(Plasma::SearchContext *search)
             continue;
         }
 
-        QAction* action = search->addPossibleMatch(this);
+        Plasma::SearchAction* action = search->addPossibleMatch(this);
         action->setIcon(KIcon("user"));
         action->setText(DM::sess2Str(session));
         action->setData(session.session);

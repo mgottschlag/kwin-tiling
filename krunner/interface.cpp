@@ -42,6 +42,11 @@
 #include <KTitleWidget>
 #include <KWindowSystem>
 
+// #include <threadweaver/DebuggingAids.h>
+// #include <ThreadWeaver/Thread>
+#include <ThreadWeaver/JobCollection>
+#include <ThreadWeaver/Weaver>
+
 #include <plasma/abstractrunner.h>
 
 #include "runners/services/servicerunner.h"
@@ -49,6 +54,9 @@
 #include "runners/shell/shellrunner.h"
 #include "collapsiblewidget.h"
 #include "interfaceadaptor.h"
+
+using ThreadWeaver::Weaver;
+using ThreadWeaver::JobCollection;
 
 // A little hack of a class to let us easily activate a match
 
@@ -65,7 +73,9 @@ class SearchMatch : public QListWidgetItem
 
         void activate()
         {
-            m_action->activate( QAction::Trigger );
+            //Bypass (terminated) thread problems with signals
+            //m_action->activate( QAction::Trigger );
+            m_action->exec();
         }
 
         bool actionEnabled()
@@ -132,11 +142,40 @@ class SearchMatch : public QListWidgetItem
         Plasma::SearchAction* m_action;
 };
 
+// Class to run queries in different threads
+class FindMatchesJob : public ThreadWeaver::Job
+{
+public:
+    FindMatchesJob(const QString& term, Plasma::AbstractRunner* runner, Plasma::SearchContext* context, QObject* parent = 0);
+protected:
+    void run();
+private:
+    QString m_term;
+    Plasma::SearchContext* m_context;
+    Plasma::AbstractRunner* m_runner;
+};
+
+FindMatchesJob::FindMatchesJob( const QString& term, Plasma::AbstractRunner* runner, Plasma::SearchContext* context, QObject* parent )
+    : ThreadWeaver::Job(parent),
+      m_term(term),
+      m_context(context),
+      m_runner(runner)
+{
+//     setObjectName( runner->objectName() );
+}
+
+void FindMatchesJob::run()
+{
+//     kDebug() << "Running match for " << m_runner->objectName() << " in Thread " << thread()->id() << endl;
+    m_runner->performMatch(*m_context);
+}
+
+
 Interface::Interface(QWidget* parent)
     : KRunnerDialog( parent ),
-      m_nextRunner(0),
       m_expander(0),
       m_optionsWidget(0),
+//m_searchJobs(0),
       m_defaultMatch(0),
       m_execQueued(false)
 {
@@ -148,6 +187,9 @@ Interface::Interface(QWidget* parent)
 
     m_matchTimer.setSingleShot(true);
     connect(&m_matchTimer, SIGNAL(timeout()), this, SLOT(match()));
+
+    m_updateTimer.setSingleShot(true);
+    connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(updateMatches()));
 
     QWidget* w = mainWidget();
     m_layout = new QVBoxLayout(w);
@@ -230,15 +272,21 @@ Interface::Interface(QWidget* parent)
     m_runners.append( new ShellRunner( this ) );
     m_runners.append( new ServiceRunner( this ) );
     m_runners.append( new SessionRunner( this ) );
-    m_runners += Plasma::AbstractRunner::loadRunners( this );
+    QStringList whitelist = cg.readEntry( "runners",QStringList() );
+    m_runners += Plasma::AbstractRunner::loadRunners( this, whitelist );
+
+    connect(&m_context, SIGNAL(matchesChanged()), this, SLOT(queueUpdates()));
 
     resetInterface();
+
+//     ThreadWeaver::setDebugLevel(true, 4);
 }
 
 Interface::~Interface()
 {
     KConfigGroup cg(KGlobal::config(), "General");
     cg.writeEntry("pastqueries", m_executions);
+    m_context.clearMatches();
 }
 
 void Interface::display(const QString& term)
@@ -373,27 +421,31 @@ void Interface::matchActivated(QListWidgetItem* item)
 
 void Interface::queueMatch()
 {
-    // start over when the timer fires on the first runner
-    m_nextRunner = 0;
-
-    // (re)start the timer
-    m_matchTimer.start(200);
-
-    QString term = m_searchTerm->currentText().trimmed();
-    if (!term.isEmpty()) {
-        m_defaultMatch = 0;
-        m_context.setSearchTerm(term);
-        m_context.addStringCompletions(m_executions);
+    if (m_matchTimer.isActive()) {
+        return;
     }
+    Weaver::instance()->dequeue();
+    m_matchTimer.start(200);
+}
+
+void Interface::queueUpdates()
+{
+    if (m_updateTimer.isActive()) {
+        return;
+    }
+    //Wait 100ms between updating matches
+    m_updateTimer.start(100);
 }
 
 void Interface::match()
 {
-    //FIXME: this induces rediculously bad flicker
-    m_matchList->clear();
+    // If ThreadWeaver is idle, it is safe to clear previous jobs
+    if ( Weaver::instance()->isIdle() ) {
+        qDeleteAll( m_searchJobs );
+        m_searchJobs.clear();
+    }
     m_defaultMatch = 0;
 
-    int matchCount = 0;
     QString term = m_searchTerm->currentText().trimmed();
 
     if (term.isEmpty()) {
@@ -401,19 +453,30 @@ void Interface::match()
         m_execQueued = false;
         return;
     }
+    m_context.setSearchTerm(term);
+    m_context.addStringCompletions(m_executions);
+    JobCollection *job = new JobCollection( this );
+    m_searchJobs.append( job );
 
-    // get the exact matches
-    m_runners[m_nextRunner]->match(&m_context);
+    foreach (Plasma::AbstractRunner* runner, m_runners) {
+        job->addJob( new FindMatchesJob(term, runner, &m_context, job) );
+    }
 
-    //foreach (Plasma::AbstractRunner* runner, m_runners) {
-    //    //kDebug() << "\trunner: " << runner->objectName();
-    //    runner->match(&m_context);
-    //}
+    Weaver::instance()->enqueue( job );
 
+}
+
+void Interface::updateMatches()
+{
+    //FIXME: this induces rediculously bad flicker
+    m_matchList->clear();
+
+    int matchCount = 0;
+    m_defaultMatch = 0;
     QList<QList<Plasma::SearchAction *> > matchLists;
     matchLists << m_context.informationalMatches()
-               << m_context.exactMatches()
-               << m_context.possibleMatches();
+                      << m_context.exactMatches()
+                      << m_context.possibleMatches();
 
     foreach (QList<Plasma::SearchAction *> matchList, matchLists) {
         foreach (Plasma::SearchAction *action, matchList) {
@@ -425,11 +488,11 @@ void Interface::match()
             if (makeDefault &&
                 (action->type() != Plasma::SearchAction::InformationalMatch ||
                  !action->data().toString().isEmpty())) {
-                match->setDefault(true);
-                m_defaultMatch = match;
-                m_optionsButton->setEnabled(action->runner()->hasMatchOptions());
-                m_runButton->setEnabled(true);
-            }
+                     match->setDefault(true);
+                     m_defaultMatch = match;
+                     m_optionsButton->setEnabled(action->runner()->hasMatchOptions());
+                     m_runButton->setEnabled(true);
+                 }
 
             ++matchCount;
         }
@@ -438,18 +501,6 @@ void Interface::match()
     if (!m_defaultMatch) {
         showOptions(false);
         m_runButton->setEnabled(false);
-    }
-
-    if (++m_nextRunner >= m_runners.size()) {
-        m_nextRunner = 0;
-        if (m_execQueued && !m_matchList->count() > 0) {
-            exec();
-        }
-        m_execQueued = false;
-    } else {
-        // start the timer over so we will
-        // process the rest of the runners
-        m_matchTimer.start(0);
     }
 }
 
@@ -475,7 +526,6 @@ void Interface::exec()
             return;
         }
     }
-
     matchActivated(currentMatch);
 }
 
