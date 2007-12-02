@@ -33,10 +33,6 @@ KdmRect::KdmRect( QObject *parent, const QDomNode &node )
 	rect.active.present = false;
 	rect.prelight.present = false;
 
-	// A rect can have no properties (defaults to parent ones)
-	if (node.isNull())
-		return;
-
 	// Read RECT TAGS
 	QDomNodeList childList = node.childNodes();
 	for (int nod = 0; nod < childList.count(); nod++) {

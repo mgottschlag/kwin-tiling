@@ -29,10 +29,6 @@ KdmList::KdmList( QObject *parent, const QDomNode &node )
 {
 	itemType = "list";
 
-	// A list can have no properties (defaults to parent ones)
-	if (node.isNull())
-		return;
-
 	// Read RECT TAGS
 	QDomNodeList childList = node.childNodes();
 	for (int nod = 0; nod < childList.count(); nod++) {
