@@ -257,6 +257,7 @@ protected:
 
 	QString m_showType;
 	bool m_showTypeInvert;
+	int m_minScrWidth, m_minScrHeight;
 
 	bool m_visible, m_shown;
 

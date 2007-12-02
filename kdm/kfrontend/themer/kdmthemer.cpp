@@ -85,7 +85,6 @@ KdmThemer::KdmThemer( const QString &_filename,
 	basedir = QFileInfo( filename ).absolutePath();
 
 	generateItems( rootItem, theme );
-	rootItem->updateVisible();
 
 /*	*TODO*
 	// Animation timer
@@ -103,6 +102,7 @@ void
 KdmThemer::setWidget( QWidget *w )
 {
 	if ((m_widget = w)) {
+		rootItem->updateVisible();
 		setWidgetAttribs( m_widget, rootItem->style );
 		rootItem->plugActions();
 	}

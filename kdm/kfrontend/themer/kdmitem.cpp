@@ -48,6 +48,8 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	, fixedManager( 0 )
 	, myWidget( 0 )
 	, m_showTypeInvert( false )
+	, m_minScrWidth( 0 )
+	, m_minScrHeight( 0 )
 	, m_visible( true )
 	, m_shown( true )
 {
@@ -78,6 +80,9 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 				return;
 			}
 		}
+
+		m_minScrWidth = sel.attribute( "min-screen-width" ).toInt();
+		m_minScrHeight = sel.attribute( "min-screen-height" ).toInt();
 	}
 
 	// Set default layout for every item
@@ -162,10 +167,16 @@ KdmItem::needUpdate()
 void
 KdmItem::updateThisVisible()
 {
-	bool show =
-		m_shown &&
-		(m_showType.isNull() ||
-		 (themer()->typeVisible( m_showType ) ^ m_showTypeInvert));
+	bool show = m_shown;
+	if (show && (!m_showType.isNull() || m_minScrWidth || m_minScrHeight)) {
+		KdmThemer *thm = themer();
+		if ((!m_showType.isNull() &&
+		     !(thm->typeVisible( m_showType ) ^ m_showTypeInvert)) ||
+		    (thm->widget() &&
+		     (thm->widget()->width() < m_minScrWidth ||
+		      thm->widget()->height() < m_minScrHeight)))
+			show = false;
+	}
 	if (m_visible != show) {
 		m_visible = show;
 		emit needPlacement();
@@ -286,6 +297,10 @@ void
 KdmItem::paint( QPainter *p, const QRect &rect, bool background )
 {
 	if (!isVisible())
+		return;
+	if (background &&
+	    (p->device()->width() < m_minScrWidth ||
+	     p->device()->height() < m_minScrHeight))
 		return;
 
 	if (myWidget)
