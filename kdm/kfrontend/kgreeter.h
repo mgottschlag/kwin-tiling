@@ -145,7 +145,7 @@ class KThemedGreeter : public KGreeter {
 //	KdmClock *clock;
 	KdmThemer *themer;
 	KdmItem *caps_warning, *xauth_warning, *pam_error, *timed_label,
-	        *console_rect, *userlist_rect,
+	        *userlist_node, *userlist_rect,
 	        *session_button, *system_button;
 
 //  public: // from KGVerifyHandler

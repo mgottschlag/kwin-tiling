@@ -785,8 +785,14 @@ KThemedGreeter::KThemedGreeter( KdmThemer *_themer )
 	connect( themer, SIGNAL(activated( const QString & )),
 	         SLOT(slotThemeActivated( const QString & )) );
 
-	console_rect = themer->findNode( "xconsole" ); // kdm ext
-	userlist_rect = themer->findNode( "userlist" );
+	KdmItem *console_node = themer->findNode( "xconsole" ); // kdm ext
+	KdmItem *console_rect = themer->findNode( "xconsole-rect" ); // kdm ext
+	if (!console_rect)
+		console_rect = console_node;
+	userlist_node = themer->findNode( "userlist" );
+	userlist_rect = themer->findNode( "userlist-rect" );
+	if (!userlist_rect)
+		userlist_rect = userlist_node;
 	caps_warning = themer->findNode( "caps-lock-warning" );
 	xauth_warning = themer->findNode( "xauth-warning" ); // kdm ext
 	pam_error = themer->findNode( "pam-error" );
@@ -802,9 +808,9 @@ KThemedGreeter::KThemedGreeter( KdmThemer *_themer )
 		itm->setVisible( false );
 
 #ifdef WITH_KDM_XCONSOLE
-	if (console_rect) {
+	if (console_node) {
 		if (consoleView)
-			console_rect->setWidget( consoleView );
+			console_node->setWidget( consoleView );
 		else
 			console_rect->setVisible( false );
 	}
@@ -887,8 +893,8 @@ KThemedGreeter::pluginSetup()
 {
 	inherited::pluginSetup();
 
-	if (userView && verify->entitiesLocal() && verify->entityPresettable() && userlist_rect) {
-		userlist_rect->setWidget( userView );
+	if (userView && verify->entitiesLocal() && verify->entityPresettable() && userlist_node) {
+		userlist_node->setWidget( userView );
 		userlist_rect->setVisible( true );
 	} else {
 		if (userView)
