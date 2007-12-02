@@ -500,13 +500,7 @@ QString createName(const QString &family, int weight, int width, int slant)
         name+=QChar(' ')+slantString;
     }
 
-    // i18n: Filtering message for the composed font name.
-    // Composed name is formed as the basic font name, followed by comma, then
-    // attributes separated by spaces; e.g. "Lucida, medium italic".
-    // The basic name comes untranslated, but the attributes are translated.
-    // The comma must remain as separator of the basic name and attributes
-    // should the composition be modified!
-    return i18nc("@item Composed font name", "%1", name);
+    return name;
 }
 
 QString weightStr(int w, bool emptyNormal)
