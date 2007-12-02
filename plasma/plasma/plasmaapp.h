@@ -53,6 +53,7 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void setCrashHandler();
+    void cleanup();
 
 private:
     PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap);

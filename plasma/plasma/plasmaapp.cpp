@@ -139,13 +139,22 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     createPanels();
     notifyStartup(true);
 
-    connect(this, SIGNAL(aboutToQuit()), corona(), SLOT(saveApplets()));
+    connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
 }
 
 PlasmaApp::~PlasmaApp()
 {
+
+}
+
+void PlasmaApp::cleanup()
+{
+    corona()->saveApplets();
     delete m_root;
+    m_root = 0;
     qDeleteAll(m_panels);
+    m_panels.clear();
+    delete corona();
 }
 
 void PlasmaApp::initializeWallpaper()
