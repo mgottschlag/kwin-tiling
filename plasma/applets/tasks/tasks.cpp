@@ -248,7 +248,7 @@ void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
 QSizeF AbstractTaskItem::maximumSize() const
 {
     // A fixed maximum size is used instead of calculating the content size
-    // because overly-long task items make navigating around the task bar 
+    // because overly-long task items make navigating around the task bar
     // more difficult
     QSizeF size(200, 200);
 #if 0
@@ -275,11 +275,11 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
 
     KColorScheme colorScheme(QPalette::Active);
 
-    if (option->state & QStyle::State_MouseOver 
-         || _fadeTimer->state() == QTimeLine::Running 
+    if (option->state & QStyle::State_MouseOver
+         || _fadeTimer->state() == QTimeLine::Running
          || taskFlags() & TaskHasFocus)
     {
-        QLinearGradient background(boundingRect().topLeft(), 
+        QLinearGradient background(boundingRect().topLeft(),
                                    boundingRect().bottomLeft());
 
         QColor startColor;
@@ -605,7 +605,7 @@ void TaskGroupItem::reorderTasks(int from, int to)
     _tasks.insert(to,TaskEntry(task));
 }
 
-qreal TaskGroupItem::titleHeight() const 
+qreal TaskGroupItem::titleHeight() const
 {
     if (_borderStyle != CaptionBorder) {
         return 0;
@@ -720,8 +720,8 @@ StartupTaskItem::StartupTaskItem(QGraphicsItem *parent, QObject *parentObject)
 {
 }
 
-void StartupTaskItem::setStartupTask(Startup::StartupPtr task) 
-{ 
+void StartupTaskItem::setStartupTask(Startup::StartupPtr task)
+{
     _task = task;
 
     setText(task->text());
@@ -741,15 +741,15 @@ WindowTaskItem::WindowTaskItem(QGraphicsItem *parent, QObject *parentObject)
 void WindowTaskItem::activate()
 {
     // the Task class has a method called activateRaiseOrIconify() which
-    // should perform the required action here.  
-    // 
+    // should perform the required action here.
+    //
     // however it currently does not minimize the task's window if the item
     // is clicked whilst the window is active probably because the active window by
     // the time the mouse is released over the window task button is not the
     // task's window but instead the desktop window
     //
-    // TODO: the Kicker panel in KDE 3.x has a feature whereby clicking on it 
-    // does not take away the focus from the active window (unless clicking 
+    // TODO: the Kicker panel in KDE 3.x has a feature whereby clicking on it
+    // does not take away the focus from the active window (unless clicking
     // in a widget such as a line edit which does accept the focus)
     // this needs to be implemented for Plasma's own panels.
     if (_task) {

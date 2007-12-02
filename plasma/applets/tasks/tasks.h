@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2007 Robert Knight <robertknight@gmail.com> 
+    Copyright (C) 2007 Robert Knight <robertknight@gmail.com>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -88,9 +88,9 @@ private:
 
         // creates task representations for tasks which are in
         // the process of being started
-        // this allows some indication that the task is loading 
+        // this allows some indication that the task is loading
         // to be displayed until the window associated with the task
-        // appears 
+        // appears
         void registerStartingTasks();
 
         void addItemToRootGroup(AbstractTaskItem* item);
@@ -113,7 +113,7 @@ private:
  * in response to updates from the source which provides information
  * about the task.
  *
- * //TODO: Clarify the above sentence 
+ * //TODO: Clarify the above sentence
  *
  * Sub-classes can change the task's text and icon using the
  * setText() and setIcon() methods.  They can also set flags
@@ -133,7 +133,7 @@ public:
     void setIcon(const QIcon &icon);
 
     /**
-     * This enum describes the generic flags which are currently 
+     * This enum describes the generic flags which are currently
      * set by the task.
      */
     enum TaskFlag
@@ -162,8 +162,8 @@ public:
     /** Returns the current icon for this task. */
     QIcon icon() const;
 
-    /** 
-     * Returns the overlays for this task.  Overlays 
+    /**
+     * Returns the overlays for this task.  Overlays
      * are arbitrary QGraphicsItem instances which are arranged
      * on top of the task's icon to display additional status
      * information about the task.
@@ -173,7 +173,7 @@ public:
     /** Returns the tasks applet which owns the task. */
     Tasks* parentApplet() const;
 
-    /** 
+    /**
      * Called when the user clicks on the task to activate it.
      * This usually means bringing the window containing the task
      * to the foreground.
@@ -182,7 +182,7 @@ public:
 
     /**
      * Called when the user requests to close the task.
-     * Sub-classes must ensure that finished() is called when 
+     * Sub-classes must ensure that finished() is called when
      * the task is closed.
      *
      * The default implementation simply calls finished()
@@ -277,7 +277,7 @@ private:
 /**
  * A task item for a task which represents a window on the desktop.
  */
-class WindowTaskItem : public AbstractTaskItem 
+class WindowTaskItem : public AbstractTaskItem
 {
     Q_OBJECT
 
@@ -327,7 +327,7 @@ private:
     Startup::StartupPtr _task;
 };
 
-/** 
+/**
  * A graphics item which holds a group of tasks.
  * To add a task to a group, set the AbstractTaskItem's parent
  * to the TaskGroupItem instance.
@@ -371,15 +371,15 @@ public:
     /** Removes a task item from the group. */
     void removeTask(AbstractTaskItem *item);
 
-    /** 
-     * Reorders a task item within a group. 
+    /**
+     * Reorders a task item within a group.
      *
      * @param from The current position of the task to move
-     * @param to The new position of the task to move 
+     * @param to The new position of the task to move
      */
     void reorderTasks(int from, int to);
 
-    /** 
+    /**
      * The enum describes the available styles for the border
      * which can surround the group.
      */
@@ -393,8 +393,8 @@ public:
     /** Returns the style of the border which surrounds the group. */
     BorderStyle borderStyle() const;
 
-    /** 
-     * Sets the color of the group.  This is used to render 
+    /**
+     * Sets the color of the group.  This is used to render
      * the border and tint the background.
      */
     void setColor(const QColor &color);
@@ -425,7 +425,7 @@ private:
         NoAction,
         InsertTaskAction, // insert the dropped task into the group
         GroupTasksAction  // group the dropped task together with the
-                          // task underneath it and insert the 
+                          // task underneath it and insert the
                           // group at the event's position
     };
     DropAction dropAction(const QPointF &pos) const;
@@ -461,7 +461,7 @@ private:
 
 
 /**
- * Base class for strategies which can be used to 
+ * Base class for strategies which can be used to
  * automatically group tasks.
  */
 class AbstractGroupingStrategy
@@ -469,7 +469,7 @@ class AbstractGroupingStrategy
 public:
     virtual ~AbstractGroupingStrategy() {};
 
-    /** 
+    /**
      * Specifies a suggested grouping of tasks
      */
     class GroupSuggestion
@@ -492,10 +492,10 @@ public:
     };
 
     /**
-     * Examines a set of @p tasks and returns a list of 
+     * Examines a set of @p tasks and returns a list of
      * suggested named sub-groups of tasks.
      *
-     * The suggested groups may include all, some or none from the 
+     * The suggested groups may include all, some or none from the
      * @p tasks set.
      *
      * Sub-classes must re-implement this method to arrange tasks
