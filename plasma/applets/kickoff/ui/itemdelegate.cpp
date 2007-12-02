@@ -103,17 +103,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
 
     // draw icon
     QIcon decorationIcon = index.data(Qt::DecorationRole).value<QIcon>();
-
-    if (!hover) {
-        painter->save();
-        painter->setOpacity(0.7);
-    }
-
     decorationIcon.paint(painter, decorationRect, option.decorationAlignment);
-
-    if (!hover) {
-        painter->restore();
-    }
 
     painter->save();
 
