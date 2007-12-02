@@ -47,8 +47,39 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	, boxManager( 0 )
 	, fixedManager( 0 )
 	, myWidget( 0 )
+	, m_showTypeInvert( false )
 	, m_visible( true )
 {
+	QDomNode showNode = node.namedItem( "show" );
+	if (!showNode.isNull()) {
+		QDomElement sel = showNode.toElement();
+
+		QString modes = sel.attribute( "modes" );
+		if (!modes.isNull() &&
+			(modes == "nowhere" ||
+				(modes != "everywhere" &&
+				!modes.split( ",", QString::SkipEmptyParts ).contains(
+					"console" ))))
+		{
+			m_visible = false;
+			return;
+		}
+
+		m_showType = sel.attribute( "type" );
+		if (!m_showType.isNull()) {
+			if (m_showType[0] == '!') {
+				m_showType.remove( 0, 1 );
+				m_showTypeInvert = true;
+			}
+			if (!m_showType.startsWith( "plugin-" ) &&
+				themer()->typeVisible( m_showType ) == m_showTypeInvert)
+			{
+				m_visible = false;
+				return;
+			}
+		}
+	}
+
 	// Set default layout for every item
 	currentManager = MNone;
 	geom.pos.x.type = geom.pos.y.type =

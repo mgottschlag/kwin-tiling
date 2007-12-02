@@ -30,6 +30,8 @@ KdmPixmap::KdmPixmap( QObject *parent, const QDomNode &node )
 	: KdmItem( parent, node )
 {
 	itemType = "pixmap";
+	if (!isVisible())
+		return;
 
 	// Set default values for pixmap (note: strings are already Null)
 	pixmap.normal.tint.setRgb( 0xFFFFFF );

@@ -48,6 +48,8 @@ KdmLabel::KdmLabel( QObject *parent, const QDomNode &node )
 	, action( 0 )
 {
 	itemType = "label";
+	if (!isVisible())
+		return;
 
 	// Set default values for label (note: strings are already Null)
 	label.normal.font = label.active.font = label.prelight.font = style.font;

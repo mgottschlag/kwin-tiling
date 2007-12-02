@@ -214,33 +214,6 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 		QString tagName = el.tagName();
 
 		if (tagName == "item") {
-			QString showType;
-			bool showTypeInvert = false;
-
-			QDomNode showNode = subnode.namedItem( "show" );
-			if (!showNode.isNull()) {
-				QDomElement sel = showNode.toElement();
-
-				QString modes = sel.attribute( "modes" );
-				if (!modes.isNull() &&
-				    (modes == "nowhere" ||
-				     (modes != "everywhere" &&
-				      !modes.split( ",", QString::SkipEmptyParts ).contains(
-				          "console" ))))
-					continue;
-
-				showType = sel.attribute( "type" );
-				if (!showType.isNull()) {
-					if (showType[0] == '!') {
-						showType.remove( 0, 1 );
-						showTypeInvert = true;
-					}
-					if (!showType.startsWith( "plugin-" ) &&
-					    m_showTypes.contains( showType ) == showTypeInvert)
-						continue;
-				}
-			}
-
 			QString type = el.attribute( "type" );
 			KdmItem *newItem;
 			if (type == "label")
@@ -259,7 +232,10 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 				newItem = new KdmPixmap( parent, subnode );
 			else
 				continue;
-			newItem->setShowType( showType, showTypeInvert );
+			if (!newItem->isVisible()) {
+				delete newItem;
+				continue;
+			}
 			connect( newItem, SIGNAL(needUpdate( int, int, int, int )),
 			         SLOT(update( int, int, int, int )) );
 			connect( newItem, SIGNAL(needPlacement()),

@@ -145,7 +145,6 @@ public:
 
 	QString type() const { return itemType; }
 	void setType( const QString &t ) { itemType = t; }
-	void setShowType( const QString &t, bool i ) { m_showType = t; m_showTypeInvert = i; }
 
 	virtual void setWidget( QWidget *widget );
 	void showWidget( bool show = true );

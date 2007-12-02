@@ -28,6 +28,8 @@ KdmRect::KdmRect( QObject *parent, const QDomNode &node )
 	: KdmItem( parent, node )
 {
 	itemType = "rect";
+	if (!isVisible())
+		return;
 
 	// Set default values for rect (note: strings are already Null)
 	rect.active.present = false;

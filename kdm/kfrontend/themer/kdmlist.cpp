@@ -28,6 +28,8 @@ KdmList::KdmList( QObject *parent, const QDomNode &node )
 	: KdmItem( parent, node )
 {
 	itemType = "list";
+	if (!isVisible())
+		return;
 
 	// Read RECT TAGS
 	QDomNodeList childList = node.childNodes();
