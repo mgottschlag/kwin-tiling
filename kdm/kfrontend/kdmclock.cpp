@@ -71,9 +71,6 @@ void KdmClock::timeout()
 
 void KdmClock::paintEvent( QPaintEvent * )
 {
-	if (!isVisible())
-		return;
-
 	QPainter p( this );
 #ifdef MORE
 	drawFrame( &p );
