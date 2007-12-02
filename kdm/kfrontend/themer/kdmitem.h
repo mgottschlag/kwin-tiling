@@ -196,6 +196,8 @@ protected:
 
 	virtual void doPlugActions( bool plug );
 
+	void updateThisVisible();
+
 	/**
 	 * emits needUpdate( int, int, int, int ) with the full widget area.
 	 */
@@ -256,7 +258,7 @@ protected:
 	QString m_showType;
 	bool m_showTypeInvert;
 
-	bool m_visible;
+	bool m_visible, m_shown;
 
 	friend class KdmLabel; // isButton
 	friend class KdmLayoutBox; // geom.expand

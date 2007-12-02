@@ -49,6 +49,7 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	, myWidget( 0 )
 	, m_showTypeInvert( false )
 	, m_visible( true )
+	, m_shown( true )
 {
 	QDomNode showNode = node.namedItem( "show" );
 	if (!showNode.isNull()) {
@@ -159,8 +160,12 @@ KdmItem::needUpdate()
 }
 
 void
-KdmItem::setVisible( bool show )
+KdmItem::updateThisVisible()
 {
+	bool show =
+		m_shown &&
+		(m_showType.isNull() ||
+		 (themer()->typeVisible( m_showType ) ^ m_showTypeInvert));
 	if (m_visible != show) {
 		m_visible = show;
 		emit needPlacement();
@@ -168,10 +173,16 @@ KdmItem::setVisible( bool show )
 }
 
 void
+KdmItem::setVisible( bool show )
+{
+	m_shown = show;
+	updateThisVisible();
+}
+
+void
 KdmItem::updateVisible()
 {
-	if (!m_showType.isNull())
-		setVisible( themer()->typeVisible( m_showType ) ^ m_showTypeInvert );
+	updateThisVisible();
 	forEachChild (itm)
 		itm->updateVisible();
 }
@@ -181,7 +192,7 @@ KdmItem::themer()
 {
 	if (KdmThemer *thm = qobject_cast<KdmThemer *>(parent()))
 		return thm;
-	if (KdmItem *parentItem = qobject_cast<KdmItem *>( parent() ))
+	if (KdmItem *parentItem = qobject_cast<KdmItem *>(parent()))
 		return parentItem->themer();
 	return 0;
 }
@@ -213,7 +224,7 @@ KdmItem::widgetGone()
 void
 KdmItem::showWidget( bool show )
 {
-	if (!m_visible)
+	if (!isVisible())
 		show = false;
 	if (myWidget) {
 		if (show) {
