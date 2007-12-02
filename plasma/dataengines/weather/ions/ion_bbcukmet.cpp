@@ -506,6 +506,9 @@ void UKMETIon::parseFiveDayForecast(const QString& source, QXmlStreamReader& xml
          WindSpeed
     };
 
+    // Flush out the old forecasts when updating.
+    d->m_weatherData[source].forecasts.clear();
+
     WeatherData::ForecastInfo *forecast = new WeatherData::ForecastInfo;
 
     QRegExp numParser("(Max|Min|Wind)\\s+-*([0-9]+)");
@@ -545,9 +548,8 @@ void UKMETIon::parseFiveDayForecast(const QString& source, QXmlStreamReader& xml
                         case WindSpeed:
                            forecast->windSpeed = numberValue;
                            forecast->windDirection = dataText.split("(")[1].split(")")[0];
-                           d->m_weatherData[source].forecasts.append(forecast);
                            dataItem = 0;
-
+                           d->m_weatherData[source].forecasts.append(forecast);
                            forecast = new WeatherData::ForecastInfo;
                            break;
                     };
