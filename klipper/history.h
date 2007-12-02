@@ -155,6 +155,6 @@ private:
 
 };
 
-inline const HistoryItem* History::first() { return itemList.first(); }
+inline const HistoryItem* History::first() { return itemList.count() > 0 ? itemList.first() : 0; }
 
 #endif
