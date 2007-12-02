@@ -56,10 +56,9 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 
 		QString modes = sel.attribute( "modes" );
 		if (!modes.isNull() &&
-			(modes == "nowhere" ||
-				(modes != "everywhere" &&
-				!modes.split( ",", QString::SkipEmptyParts ).contains(
-					"console" ))))
+		    (modes == "nowhere" ||
+		     (modes != "everywhere" &&
+		      !modes.split( ",", QString::SkipEmptyParts ).contains( "console" ))))
 		{
 			m_visible = false;
 			return;
@@ -72,7 +71,7 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 				m_showTypeInvert = true;
 			}
 			if (!m_showType.startsWith( "plugin-" ) &&
-				themer()->typeVisible( m_showType ) == m_showTypeInvert)
+			    themer()->typeVisible( m_showType ) == m_showTypeInvert)
 			{
 				m_visible = false;
 				return;
