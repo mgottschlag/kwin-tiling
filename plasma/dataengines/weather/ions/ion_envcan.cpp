@@ -265,10 +265,14 @@ WeatherData EnvCanadaIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& 
             } else if (xml.name() == "location") {
                 parseLocations(data, xml);
             } else if (xml.name() == "warnings") {
+                // Cleanup warning list on update
+                data.warnings.clear();
                 parseWarnings(data, xml);
             } else if (xml.name() == "currentConditions") {
                 parseConditions(data, xml);
             } else if (xml.name() == "forecastGroup") {
+                // Clean up forecast list on update
+                data.forecasts.clear();
                 parseWeatherForecast(data, xml);
             } else if (xml.name() == "yesterdayConditions") {
                 parseYesterdayWeather(data, xml);
