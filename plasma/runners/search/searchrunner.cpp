@@ -65,7 +65,7 @@ void SearchRunner::match(Plasma::SearchContext *search)
         QString iconname = hit.mimetype;
         iconname.replace('/', '-');
         QString formatted  = formatUri(hit.uri, term);
-        Plasma::SearchAction* action = search->addPossibleMatch(this);
+        Plasma::SearchMatch* action = search->addPossibleMatch(this);
         action->setIcon(KIcon(iconname));
         action->setText(formatted);
         action->setMimetype(hit.mimetype);
@@ -73,12 +73,12 @@ void SearchRunner::match(Plasma::SearchContext *search)
         action->setRelevance(hit.score);
     }
 
-    Plasma::SearchAction *action = search->addPossibleMatch(this);
+    Plasma::SearchMatch *action = search->addPossibleMatch(this);
     action->setText(i18n("search for %1", term));
     action->setRelevance(0);
 }
 
-void SearchRunner::exec(Plasma::SearchAction *action)
+void SearchRunner::exec(Plasma::SearchMatch *action)
 {
     QString file = action->data().toString();
     qDebug() << "openFile " << file;

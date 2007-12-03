@@ -68,7 +68,7 @@ void WebshortcutRunner::match(Plasma::SearchContext *search)
                 actionText = actionText.arg(service->name(),
                                             term.right(term.length() - term.indexOf(':') - 1));
 
-                Plasma::SearchAction *action = search->addExactMatch(this);
+                Plasma::SearchMatch *action = search->addExactMatch(this);
                 action->setText(actionText);
                 QString url = getSearchQuery(service->property("Query").toString(), term);
                 //kDebug() << "url is" << url << "!!!!!!!!!!!!!!!!!!!!!!!";
@@ -90,14 +90,14 @@ void WebshortcutRunner::match(Plasma::SearchContext *search)
     if (m_type == Plasma::SearchContext::Directory ||
         m_type == Plasma::SearchContext::Help) {
         //kDebug() << "Locations matching because of" << m_type;
-        Plasma::SearchAction *action = search->addExactMatch(this);
+        Plasma::SearchMatch *action = search->addExactMatch(this);
         action->setText(i18n("Open %1", term));
         action->setIcon(m_icon);
         return;
     }
 
     if (m_type == Plasma::SearchContext::NetworkLocation) {
-        Plasma::SearchAction *action = search->addPossibleMatch(this);
+        Plasma::SearchMatch *action = search->addPossibleMatch(this);
         KUrl url(term);
 
         if (url.protocol().isEmpty()) {
@@ -150,7 +150,7 @@ KIcon WebshortcutRunner::getFavicon(const KUrl &url) {
     return icon;
 }
 
-void WebshortcutRunner::exec(Plasma::SearchAction *action)
+void WebshortcutRunner::exec(Plasma::SearchMatch *action)
 {
     QString location = action->data().toString();
 

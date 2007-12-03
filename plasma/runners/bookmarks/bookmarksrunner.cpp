@@ -60,7 +60,7 @@ void BookmarksRunner::match(Plasma::SearchContext *search)
     QList<KBookmark> matchingBookmarks = searchBookmarks(bookmarkGrp, search->searchTerm());
     foreach (KBookmark bookmark, matchingBookmarks) {
         kDebug() << "Found bookmark: " << bookmark.text() << " (" << bookmark.url().prettyUrl() << ")";
-        Plasma::SearchAction *action = search->addPossibleMatch(this);
+        Plasma::SearchMatch *action = search->addPossibleMatch(this);
 
         QIcon icon = getFavicon(bookmark.url());
         if (icon.isNull()) {
@@ -111,7 +111,7 @@ KIcon BookmarksRunner::getFavicon(const KUrl &url) {
     return icon;
 }
 
-void BookmarksRunner::exec(Plasma::SearchAction *action)
+void BookmarksRunner::exec(Plasma::SearchMatch *action)
 {
     KUrl url = (KUrl)action->data().toString();
     kDebug() << "BookmarksRunner::exec opening: " << url.url();

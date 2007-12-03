@@ -58,7 +58,7 @@ void CalculatorRunner::match(Plasma::SearchContext *search)
     QString result = calculate(cmd);
 
     if (!result.isEmpty() && result != cmd) {
-        Plasma::SearchAction *action = search->addInformationalMatch(this);
+        Plasma::SearchMatch *action = search->addInformationalMatch(this);
         action->setIcon(KIcon("accessories-calculator"));
         action->setText(QString("%1 = %2").arg(cmd, result));
         action->setData("= " + result);

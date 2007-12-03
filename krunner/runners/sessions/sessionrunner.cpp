@@ -54,7 +54,7 @@ void SessionRunner::match(Plasma::SearchContext *search)
     if (KAuthorized::authorizeKAction("start_new_session") &&
         dm.isSwitchable() &&
         dm.numReserve() >= 0) {
-        Plasma::SearchAction *action = search->addExactMatch(this);
+        Plasma::SearchMatch *action = search->addExactMatch(this);
         action->setIcon(KIcon("fork"));
         action->setText(i18n("New Session"));
     }
@@ -70,14 +70,14 @@ void SessionRunner::match(Plasma::SearchContext *search)
             continue;
         }
 
-        Plasma::SearchAction* action = search->addPossibleMatch(this);
+        Plasma::SearchMatch* action = search->addPossibleMatch(this);
         action->setIcon(KIcon("user"));
         action->setText(DM::sess2Str(session));
         action->setData(session.session);
     }
 }
 
-void SessionRunner::exec(Plasma::SearchAction * action)
+void SessionRunner::exec(Plasma::SearchMatch * action)
 {
     if (!action->data().toString().isEmpty()) {
         //TODO: implement session switching here!

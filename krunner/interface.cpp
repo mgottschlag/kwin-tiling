@@ -65,7 +65,7 @@ using ThreadWeaver::Job;
 class SearchMatch : public QListWidgetItem
 {
     public:
-        SearchMatch(Plasma::SearchAction* action, QListWidget* parent)
+        SearchMatch(Plasma::SearchMatch* action, QListWidget* parent)
             : QListWidgetItem( parent ),
               m_default(false),
               m_action(0)
@@ -88,7 +88,7 @@ class SearchMatch : public QListWidgetItem
             return m_action->runner()->hasMatchOptions();
         }
 
-        void setAction(Plasma::SearchAction* action)
+        void setAction(Plasma::SearchMatch* action)
         {
             m_action = action;
             setIcon(m_action->icon());
@@ -106,12 +106,12 @@ class SearchMatch : public QListWidgetItem
             return m_action->data().toString();
         }
 
-        Plasma::SearchAction::Type actionType()
+        Plasma::SearchMatch::Type actionType()
         {
             return m_action->type();
         }
 
-        /*Plasma::SearchAction* action()
+        /*Plasma::SearchMatch* action()
         {
             return m_action;
         }*/
@@ -139,7 +139,7 @@ class SearchMatch : public QListWidgetItem
 
     private:
         bool m_default;
-        Plasma::SearchAction* m_action;
+        Plasma::SearchMatch* m_action;
 };
 
 // Restricts simultaneous jobs of the same type
@@ -412,8 +412,8 @@ void Interface::switchUser()
     m_context.setSearchTerm("SESSIONS");
     sessionrunner->match(&m_context);
 
-    foreach (Plasma::SearchAction *action, m_context.exactMatches()) {
-        bool makeDefault = action->type() != Plasma::SearchAction::InformationalMatch;
+    foreach (Plasma::SearchMatch *action, m_context.exactMatches()) {
+        bool makeDefault = action->type() != Plasma::SearchMatch::InformationalMatch;
 
         SearchMatch *match = new SearchMatch(action, m_matchList);
 
@@ -487,7 +487,7 @@ void Interface::matchActivated(QListWidgetItem* item)
         m_executions.pop_front();
     }
 
-    if (match->actionType() == Plasma::SearchAction::InformationalMatch) {
+    if (match->actionType() == Plasma::SearchMatch::InformationalMatch) {
         m_searchTerm->setItemText(0, match->toString());
     } else {
         //kDebug() << "match activated! " << match->text();
@@ -547,20 +547,20 @@ void Interface::updateMatches()
 
     int matchCount = 0;
     m_defaultMatch = 0;
-    QList<QList<Plasma::SearchAction *> > matchLists;
+    QList<QList<Plasma::SearchMatch *> > matchLists;
     matchLists << m_context.informationalMatches()
                       << m_context.exactMatches()
                       << m_context.possibleMatches();
 
-    foreach (QList<Plasma::SearchAction *> matchList, matchLists) {
-        foreach (Plasma::SearchAction *action, matchList) {
+    foreach (QList<Plasma::SearchMatch *> matchList, matchLists) {
+        foreach (Plasma::SearchMatch *action, matchList) {
             bool makeDefault = !m_defaultMatch && action->isEnabled();
 
             SearchMatch *match = new SearchMatch(action, 0);
             m_matchList->insertItem(matchCount, match);
 
             if (makeDefault &&
-                (action->type() != Plasma::SearchAction::InformationalMatch ||
+                (action->type() != Plasma::SearchMatch::InformationalMatch ||
                  !action->data().toString().isEmpty())) {
                      match->setDefault(true);
                      m_defaultMatch = match;

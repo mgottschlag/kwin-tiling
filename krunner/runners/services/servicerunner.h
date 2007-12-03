@@ -44,8 +44,8 @@ class ServiceRunner : public Plasma::AbstractRunner
 
     protected:
         void match(Plasma::SearchContext *context);
-        void exec(Plasma::SearchAction* action);
-        void setupAction(const KService::Ptr &service, Plasma::SearchAction *action);
+        void exec(Plasma::SearchMatch* action);
+        void setupAction(const KService::Ptr &service, Plasma::SearchMatch *action);
 };
 
 #endif

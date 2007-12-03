@@ -50,7 +50,7 @@ void ShellRunner::match(Plasma::SearchContext *search)
 
     if (search->type() == Plasma::SearchContext::Executable ||
         search->type() == Plasma::SearchContext::ShellCommand)  {
-        Plasma::SearchAction* action = search->addExactMatch(this);
+        Plasma::SearchMatch* action = search->addExactMatch(this);
         action->setIcon(KIcon("system-run"));
         action->setText(i18n("Run %1", search->searchTerm()));
     }
@@ -62,7 +62,7 @@ void ShellRunner::createMatchOptions(QWidget* parent)
     ui.setupUi(parent);
 }
 
-void ShellRunner::exec(Plasma::SearchAction* action)
+void ShellRunner::exec(Plasma::SearchMatch* action)
 {
     if (!m_enabled) {
         return;

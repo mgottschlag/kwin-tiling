@@ -39,7 +39,7 @@ class BookmarksRunner : public Plasma::AbstractRunner
         ~BookmarksRunner();
 
         void match(Plasma::SearchContext *context);
-        void exec(Plasma::SearchAction *action);
+        void exec(Plasma::SearchMatch *action);
 
     private:
         QList<KBookmark> searchBookmarks(const KBookmarkGroup &bookmarkGrp, const QString &query);

@@ -37,7 +37,7 @@ class SessionRunner : public Plasma::AbstractRunner
 
     protected:
         void match(Plasma::SearchContext *context);
-        void exec(Plasma::SearchAction* action);
+        void exec(Plasma::SearchMatch* action);
 };
 
 #endif

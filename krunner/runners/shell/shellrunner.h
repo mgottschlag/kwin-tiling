@@ -40,7 +40,7 @@ class ShellRunner : public Plasma::AbstractRunner
 
     protected:
         void match(Plasma::SearchContext *search);
-        void exec(Plasma::SearchAction *action);
+        void exec(Plasma::SearchMatch *action);
 
     private:
         bool m_enabled;

@@ -74,7 +74,7 @@ void ServiceRunner::match(Plasma::SearchContext *search)
     }
 }
 
-void ServiceRunner::exec(Plasma::SearchAction* action)
+void ServiceRunner::exec(Plasma::SearchMatch* action)
 {
     KService::Ptr service = KService::serviceByStorageId(action->data().toString());
     if (service) {
@@ -82,7 +82,7 @@ void ServiceRunner::exec(Plasma::SearchAction* action)
     }
 }
 
-void ServiceRunner::setupAction(const KService::Ptr &service, Plasma::SearchAction *action)
+void ServiceRunner::setupAction(const KService::Ptr &service, Plasma::SearchMatch *action)
 {
     action->setText(service->name());
     action->setData(service->storageId());

@@ -41,7 +41,7 @@ class SearchRunner : public Plasma::AbstractRunner
         SearchRunner( QObject* parent, const QVariantList &args );
         ~SearchRunner();
 
-        void exec(Plasma::SearchAction *action);
+        void exec(Plasma::SearchMatch *action);
         virtual void match(Plasma::SearchContext *search);
 };
 
