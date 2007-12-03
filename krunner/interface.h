@@ -41,7 +41,7 @@ class KPushButton;
 class KTitleWidget;
 
 namespace ThreadWeaver {
-    class JobCollection;
+    class Job;
 }
 
 class CollapsibleWidget;
@@ -95,7 +95,7 @@ class Interface : public KRunnerDialog
         CollapsibleWidget* m_expander;
         QWidget *m_optionsWidget;
 
-        QList<ThreadWeaver::JobCollection*> m_searchJobs;
+        QList<ThreadWeaver::Job*> m_searchJobs;
 
         SearchMatch* m_defaultMatch;
         Plasma::SearchContext m_context;

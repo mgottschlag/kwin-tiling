@@ -44,8 +44,10 @@
 
 // #include <threadweaver/DebuggingAids.h>
 // #include <ThreadWeaver/Thread>
-#include <ThreadWeaver/JobCollection>
+#include <ThreadWeaver/Job>
+#include <ThreadWeaver/QueuePolicy>
 #include <ThreadWeaver/Weaver>
+#include <QMutex>
 
 #include <plasma/abstractrunner.h>
 
@@ -56,7 +58,7 @@
 #include "interfaceadaptor.h"
 
 using ThreadWeaver::Weaver;
-using ThreadWeaver::JobCollection;
+using ThreadWeaver::Job;
 
 // A little hack of a class to let us easily activate a match
 
@@ -73,8 +75,6 @@ class SearchMatch : public QListWidgetItem
 
         void activate()
         {
-            //Bypass (terminated) thread problems with signals
-            //m_action->activate( QAction::Trigger );
             m_action->exec();
         }
 
@@ -142,8 +142,85 @@ class SearchMatch : public QListWidgetItem
         Plasma::SearchAction* m_action;
 };
 
+// Restricts simultaneous jobs of the same type
+// Similar to ResourceRestrictionPolicy but check the object type first
+class RunnerRestrictionPolicy : public ThreadWeaver::QueuePolicy
+{
+public:
+    ~RunnerRestrictionPolicy();
+
+    static RunnerRestrictionPolicy& instance();
+
+    void setCap(int cap)
+    {
+        m_cap = cap;
+    }
+    int cap() const
+    {
+        return m_cap;
+    }
+
+    bool canRun(Job* job);
+    void free(Job* job);
+    void release(Job* job);
+    void destructed(Job* job);
+private:
+    RunnerRestrictionPolicy();
+
+    QHash<QString, int> m_runCounts;
+    int m_cap;
+    QMutex m_mutex;
+};
+
+RunnerRestrictionPolicy::RunnerRestrictionPolicy()
+    : QueuePolicy(),
+      m_cap(2)
+{
+}
+
+RunnerRestrictionPolicy::~RunnerRestrictionPolicy()
+{
+}
+
+RunnerRestrictionPolicy& RunnerRestrictionPolicy::instance()
+{
+    static RunnerRestrictionPolicy policy;
+    return policy;
+}
+
+bool RunnerRestrictionPolicy::canRun(Job* job)
+{
+    QMutexLocker l ( &m_mutex );
+    QString type = job->objectName();
+    if (m_runCounts.value(type) > m_cap) {
+//         kDebug() << "Denying job " << type << " because of " << m_runCounts[type] << " current jobs" << endl;
+        return false;
+    } else {
+        m_runCounts[type]++;
+        return true;
+    }
+}
+
+void RunnerRestrictionPolicy::free(Job* job)
+{
+    QMutexLocker l ( &m_mutex );
+    QString type = job->objectName();
+    if (m_runCounts.value(type)) {
+        m_runCounts[type]--;
+    }
+}
+
+void RunnerRestrictionPolicy::release(Job* job)
+{
+    free(job);
+}
+
+void RunnerRestrictionPolicy::destructed(Job* job)
+{
+}
+
 // Class to run queries in different threads
-class FindMatchesJob : public ThreadWeaver::Job
+class FindMatchesJob : public Job
 {
 public:
     FindMatchesJob(const QString& term, Plasma::AbstractRunner* runner, Plasma::SearchContext* context, QObject* parent = 0);
@@ -161,7 +238,8 @@ FindMatchesJob::FindMatchesJob( const QString& term, Plasma::AbstractRunner* run
       m_context(context),
       m_runner(runner)
 {
-//     setObjectName( runner->objectName() );
+    setObjectName( runner->objectName() );
+    assignQueuePolicy( &RunnerRestrictionPolicy::instance() );
 }
 
 void FindMatchesJob::run()
@@ -175,7 +253,6 @@ Interface::Interface(QWidget* parent)
     : KRunnerDialog( parent ),
       m_expander(0),
       m_optionsWidget(0),
-//m_searchJobs(0),
       m_defaultMatch(0),
       m_execQueued(false)
 {
@@ -455,15 +532,12 @@ void Interface::match()
     }
     m_context.setSearchTerm(term);
     m_context.addStringCompletions(m_executions);
-    JobCollection *job = new JobCollection( this );
-    m_searchJobs.append( job );
 
     foreach (Plasma::AbstractRunner* runner, m_runners) {
-        job->addJob( new FindMatchesJob(term, runner, &m_context, job) );
+        Job *job = new FindMatchesJob(term, runner, &m_context, this);
+        Weaver::instance()->enqueue( job );
+        m_searchJobs.append( job );
     }
-
-    Weaver::instance()->enqueue( job );
-
 }
 
 void Interface::updateMatches()
