@@ -29,6 +29,7 @@
 #include <KRun>
 #include <KSharedConfig>
 #include <KUrl>
+#include <KDesktopFile>
 
 #include <plasma/layouts/boxlayout.h>
 #include <plasma/widgets/icon.h>
@@ -39,8 +40,9 @@ Url::Url(QObject *parent, const QVariantList &args)
       m_dialog(0)
 {
     setAcceptDrops(true);
-    new Plasma::HBoxLayout(this);
+    //new Plasma::HBoxLayout(this);
     m_icon = new Plasma::Icon(this);
+    setMinimumSize(QSize(48,48));
     if (args.count() > 2) {
         setUrl(args.at(2).toString());
     }
@@ -71,7 +73,15 @@ void Url::setUrl(const KUrl& url)
 
     KMimeType::Ptr mime = KMimeType::findByUrl(url);
     m_mimetype = mime->name();
-    m_icon->setIcon(KMimeType::iconNameForUrl(url));
+
+    if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
+        KDesktopFile *f= new KDesktopFile(m_url.toLocalFile());
+        m_text = f->readName();
+        m_icon->setIcon(f->readIcon());
+    }else{
+        m_text = m_url.fileName();
+        m_icon->setIcon(KMimeType::iconNameForUrl(url));
+    }
 
     if (m_icon->icon().isNull()) {
         m_icon->setIcon("unknown");
@@ -91,6 +101,16 @@ void Url::openUrl()
 void Url::constraintsUpdated(Plasma::Constraints constraints)
 {
     setDrawStandardBackground(false);
+
+    if (constraints & Plasma::FormFactorConstraint) {
+        if (formFactor() == Plasma::Planar ||
+            formFactor() == Plasma::MediaCenter) {
+            m_icon->setText(m_text);
+        } else {
+            m_icon->setText(0);
+        }
+    }
+
     if (constraints & Plasma::SizeConstraint) {
         m_icon->resize(size());
     }
@@ -111,6 +131,7 @@ void Url::acceptedPropertiesDialog()
     KConfigGroup cg = config();
     m_url = m_dialog->kurl();
     cg.writeEntry("Url", m_url);
+    setUrl(m_url);
     update();
     delete m_dialog;
     m_dialog = 0;
@@ -127,6 +148,7 @@ void Url::dropEvent(QGraphicsSceneDragDropEvent *event)
         }
     }
 }
+
 
 #include "url.moc"
 
