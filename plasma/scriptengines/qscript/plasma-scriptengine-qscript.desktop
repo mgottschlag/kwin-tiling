@@ -1,7 +1,9 @@
 [Desktop Entry]
 Name=JavaScript Engine
 Name[ca]=Motor JavaScript
+Name[de]=JavaScript-Treiber
 Name[el]=Μηχανή JavaScript
+Name[et]=JavaScripti mootor
 Name[ja]=JavaScript エンジン
 Name[ko]=자바스크립트 엔진
 Name[lv]=JavaScript dzinējs
@@ -19,7 +21,9 @@ Name[zh_CN]=JavaScript 引擎
 Name[zh_TW]=JavaScript 引擎
 Comment=JavaScript Plasmoids Using QScript
 Comment[ca]=Plasmoides JavaScript que usen el QScript
+Comment[de]=JavaScript-Plasmoide die QScript verwenden
 Comment[el]=Πλασμοειδή JavaScript που χρησιμοποιούν QScript
+Comment[et]=JavaScripti plasmoid, mis kasutab QScripti
 Comment[ja]=QScript を使う JavaScript プラズモイド
 Comment[ko]=QScript를 사용하는 자바스크립트 Plasmoid
 Comment[lv]=JavaScript plazmoīds, kas izmanto QScript
