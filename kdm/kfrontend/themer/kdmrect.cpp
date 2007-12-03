@@ -55,7 +55,7 @@ KdmRect::KdmRect( QObject *parent, const QDomNode &node )
 }
 
 void
-KdmRect::drawContents( QPainter *p, const QRect & )
+KdmRect::drawContents( QPainter *p, const QRect &r )
 {
 	// choose the correct rect class
 	RectStruct::RectClass *rClass = &rect.normal;
@@ -67,7 +67,7 @@ KdmRect::drawContents( QPainter *p, const QRect & )
 	if (!rClass->color.isValid())
 		return;
 
-	p->fillRect( area, QBrush( rClass->color ) );
+	p->fillRect( r, QBrush( rClass->color ) );
 }
 
 void

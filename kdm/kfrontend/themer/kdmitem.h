@@ -184,7 +184,8 @@ protected:
 	 * (or a part of) into the @p image keeping inside the @p rect .
 	 * Try to do this as fast as possible.
 	 * @param painter the painter to draw the item with
-	 * @param region the part of the the image to render
+	 * @param region the area of the device to be painted. This is already
+	 *   intersected with the area of the item.
 	 */
 	virtual void drawContents( QPainter *painter, const QRect &region ) = 0;
 

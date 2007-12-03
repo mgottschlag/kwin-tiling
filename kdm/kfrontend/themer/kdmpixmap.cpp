@@ -163,24 +163,6 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 {
 	PixmapStruct::PixmapClass &pClass = getCurClass();
 
-	int px = area.left() + r.left();
-	int py = area.top() + r.top();
-	int sx = r.x();
-	int sy = r.y();
-	int sw = r.width();
-	int sh = r.height();
-	if (px < 0) {
-		px *= -1;
-		sx += px;
-		px = 0;
-	}
-	if (py < 0) {
-		py *= -1;
-		sy += py;
-		py = 0;
-	}
-
-
 	if (pClass.readyPixmap.isNull()) {
 		QImage scaledImage;
 
@@ -203,14 +185,13 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 		}
 
 		if (scaledImage.isNull()) {
-			p->fillRect( px, py, sw, sh, Qt::black );
+			p->fillRect( r, Qt::black );
 			return;
 		}
 
 		pClass.readyPixmap = QPixmap::fromImage( scaledImage );
 	}
-	// kDebug() << "Pixmap::drawContents " << pClass.readyPixmap.size() << " " << px << " " << py << " " << sx << " " << sy << " " << sw << " " << sh;
-	p->drawPixmap( px, py, pClass.readyPixmap, sx, sy, sw, sh );
+	p->drawPixmap( r.topLeft(), pClass.readyPixmap, QRect( r.topLeft() - area.topLeft(), r.size() ) );
 }
 
 void

@@ -162,7 +162,7 @@ KdmLabel::sizeHint()
 }
 
 void
-KdmLabel::drawContents( QPainter *p, const QRect &/*r*/  )
+KdmLabel::drawContents( QPainter *p, const QRect &r )
 {
 	// choose the correct label class
 	struct LabelStruct::LabelClass *l = &label.normal;
@@ -173,6 +173,7 @@ KdmLabel::drawContents( QPainter *p, const QRect &/*r*/  )
 	// draw the label
 	p->setFont( l->font.font );
 	p->setPen( l->color );
+	p->setClipRect( r );
 	if (pAccelOff != -1) {
 		QRect tarea( area );
 		QFontMetrics fm( l->font.font );
@@ -189,6 +190,7 @@ KdmLabel::drawContents( QPainter *p, const QRect &/*r*/  )
 		p->drawText( tarea, 0, pText.mid( pAccelOff + 1 ) );
 	} else
 		p->drawText( area, 0, cText );
+	p->setClipping( false );
 }
 
 void

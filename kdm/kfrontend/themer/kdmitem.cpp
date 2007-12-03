@@ -306,9 +306,8 @@ KdmItem::paint( QPainter *p, const QRect &rect, bool background )
 	if (myWidget)
 		return;
 
-	if (area.intersects( rect ) && (!background || isBackground)) {
-		QRect contentsRect = area.intersect( rect );
-		contentsRect.translate( qMin( 0, -area.x() ), qMin( 0, -area.y() ) );
+	QRect contentsRect = area.intersect( rect );
+	if (!contentsRect.isEmpty() && (!background || isBackground)) {
 		drawContents( p, contentsRect );
 		if (debugLevel & DEBUG_THEMING) {
 			// Draw bounding rect for this item
