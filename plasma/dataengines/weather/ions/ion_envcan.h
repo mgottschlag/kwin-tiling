@@ -133,6 +133,8 @@ public:
     void option(int option, const QVariant& value);
     void updateWeather(const QString& source);
 
+    static const int MAX_WARNINGS = 4;
+
 protected slots:
     void setup_slotDataArrived(KIO::Job *, const QByteArray &);
     void setup_slotJobFinished(KJob *);

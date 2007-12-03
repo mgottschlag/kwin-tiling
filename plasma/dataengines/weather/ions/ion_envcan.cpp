@@ -968,20 +968,23 @@ void EnvCanadaIon::updateWeather(const QString& source)
 
      dataFields = this->warnings(source);
      // Check if we have warnings or watches
-     if (!dataFields["watch"].isEmpty()) {
-         fieldList = dataFields["watch"].split('|');
-         setData(weatherSource, "Watch Priority", fieldList[0]);
-         setData(weatherSource, "Watch Description", fieldList[1]);
-         setData(weatherSource, "Watch Info", fieldList[2]);
-         setData(weatherSource, "Watch Timestamp", fieldList[3]);
-     }
-     if (!dataFields["warning"].isEmpty()) {
-         fieldList = dataFields["warning"].split('|');
-         setData(weatherSource, "Warning Priority", fieldList[0]);
-         setData(weatherSource, "Warning Description", fieldList[1]);
-         setData(weatherSource, "Warning Info", fieldList[2]);
-         setData(weatherSource, "Warning Timestamp", fieldList[3]);
-     }
+
+     for (int i = 0; i < EnvCanadaIon::MAX_WARNINGS; i++) {
+          if (!dataFields[QString("watch %1").arg(i)].isEmpty()) {
+              fieldList = dataFields[QString("watch %1").arg(i)].split('|');
+              setData(weatherSource, QString("Watch Priority %1").arg(i), fieldList[0]);
+              setData(weatherSource, QString("Watch Description %1").arg(i), fieldList[1]);
+              setData(weatherSource, QString("Watch Info %1").arg(i), fieldList[2]);
+              setData(weatherSource, QString("Watch Timestamp %1").arg(i), fieldList[3]);
+          }
+          if (!dataFields[QString("warning %1").arg(i)].isEmpty()) {
+              fieldList = dataFields[QString("warning %1").arg(i)].split('|');
+              setData(weatherSource, QString("Warning Priority %1").arg(i), fieldList[0]);
+              setData(weatherSource, QString("Warning Description %1").arg(i), fieldList[1]);
+              setData(weatherSource, QString("Warning Info %1").arg(i), fieldList[2]);
+              setData(weatherSource, QString("Warning Timestamp %1").arg(i), fieldList[3]);
+          }
+      }
 
      forecastList = this->forecasts(source);
      foreach(QString forecastItem, forecastList) {
@@ -1160,9 +1163,9 @@ QMap<QString, QString> EnvCanadaIon::warnings(const QString& source)
     QString warnType;
     for (int i = 0; i < d->m_weatherData[source].warnings.size(); ++i) {
         if (d->m_weatherData[source].warnings[i]->type == "watch") {
-            warnType = "watch";
+            warnType = QString("watch %1").arg(i);
         } else {
-            warnType = "warning";
+            warnType = QString("warning %1").arg(i);
         }
         warningData[warnType] = QString("%1|%2|%3|%4").arg(d->m_weatherData[source].warnings[i]->priority) \
                                 .arg(d->m_weatherData[source].warnings[i]->description) \
