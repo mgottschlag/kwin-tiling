@@ -27,6 +27,9 @@
 #include <QImage>
 #include <QPixmap>
 
+class QSignalMapper;
+class KSvgRenderer;
+
 /*
  * KdmPixmap. A pixmap element
  */
@@ -53,6 +56,7 @@ protected:
 		struct PixmapClass {
 			QString fullpath;
 			QImage image;
+			KSvgRenderer *svgRenderer;
 			QPixmap readyPixmap;
 			QColor tint;
 			bool present;
@@ -60,10 +64,20 @@ protected:
 		} normal, active, prelight;
 	} pixmap;
 
+	QSignalMapper *qsm;
+
 private:
 	// Method to load the image given by the theme
 	void definePixmap( const QDomElement &el, PixmapStruct::PixmapClass &pc );
 	bool loadPixmap( PixmapStruct::PixmapClass &pc );
+	bool loadSvg( PixmapStruct::PixmapClass &pc );
+	void applyTint( PixmapStruct::PixmapClass &pClass, QImage &img );
+	void updateSize( PixmapStruct::PixmapClass &pClass );
+	PixmapStruct::PixmapClass &getClass( ItemState sts );
+	PixmapStruct::PixmapClass &getCurClass() { return getClass( state ); }
+
+private Q_SLOTS:
+	void slotAnimate( int sts );
 };
 
 #endif

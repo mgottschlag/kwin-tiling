@@ -25,9 +25,11 @@
 #include <ksvgrenderer.h>
 
 #include <QPainter>
+#include <QSignalMapper>
 
 KdmPixmap::KdmPixmap( QObject *parent, const QDomNode &node )
 	: KdmItem( parent, node )
+	, qsm( 0 )
 {
 	itemType = "pixmap";
 	if (!isVisible())
@@ -35,8 +37,11 @@ KdmPixmap::KdmPixmap( QObject *parent, const QDomNode &node )
 
 	// Set default values for pixmap (note: strings are already Null)
 	pixmap.normal.tint.setRgb( 0xFFFFFF );
+	pixmap.normal.svgRenderer = 0;
 	pixmap.active.present = false;
+	pixmap.active.svgRenderer = 0;
 	pixmap.prelight.present = false;
+	pixmap.prelight.svgRenderer = 0;
 
 	// Read PIXMAP TAGS
 	QDomNodeList childList = node.childNodes();
@@ -79,7 +84,7 @@ KdmPixmap::loadPixmap( PixmapStruct::PixmapClass &pClass )
 {
 	if (!pClass.image.isNull())
 		return true;
-	if (pClass.svgImage || pClass.fullpath.isEmpty())
+	if (pClass.fullpath.isEmpty())
 		return false;
 	if (area.isValid()) {
 		int dot = pClass.fullpath.lastIndexOf( '.' );
@@ -97,6 +102,33 @@ KdmPixmap::loadPixmap( PixmapStruct::PixmapClass &pClass )
   gotit:
 	if (pClass.image.format() != QImage::Format_ARGB32)
 		pClass.image = pClass.image.convertToFormat( QImage::Format_ARGB32 );
+	applyTint( pClass, pClass.image );
+	return true;
+}
+
+bool
+KdmPixmap::loadSvg( PixmapStruct::PixmapClass &pClass )
+{
+	if (pClass.svgRenderer)
+		return true;
+	if (pClass.fullpath.isEmpty())
+		return false;
+	pClass.svgRenderer = new KSvgRenderer( pClass.fullpath, this );
+	if (!pClass.svgRenderer->isValid()) {
+		delete pClass.svgRenderer;
+		pClass.svgRenderer = 0;
+		kWarning() << "failed to load " << pClass.fullpath ;
+		pClass.fullpath.clear();
+		return false;
+	}
+	if (pClass.svgRenderer->animated()) {
+		if (!qsm) {
+			qsm = new QSignalMapper( this );
+			connect( qsm, SIGNAL(mapped( int )), SLOT(slotAnimate( int )) );
+		}
+		qsm->setMapping( pClass.svgRenderer, state ); // assuming we only load the current state
+		connect( pClass.svgRenderer, SIGNAL(repaintNeeded()), qsm, SLOT(map()) );
+	}
 	return true;
 }
 
@@ -104,30 +136,32 @@ QSize
 KdmPixmap::sizeHint()
 {
 	// use the pixmap size as the size hint
-	if (loadPixmap( pixmap.normal ))
+	if (!pixmap.normal.svgImage && loadPixmap( pixmap.normal ))
 		return pixmap.normal.image.size();
 	return KdmItem::sizeHint();
+}
+
+void
+KdmPixmap::updateSize( PixmapStruct::PixmapClass &pClass )
+{
+	if (pClass.readyPixmap.size() != area.size())
+		pClass.readyPixmap = QPixmap();
 }
 
 void
 KdmPixmap::setGeometry( QStack<QSize> &parentSizes, const QRect &newGeometry, bool force )
 {
 	KdmItem::setGeometry( parentSizes, newGeometry, force );
-	pixmap.active.readyPixmap = QPixmap();
-	pixmap.prelight.readyPixmap = QPixmap();
-	pixmap.normal.readyPixmap = QPixmap();
+	updateSize( pixmap.active );
+	updateSize( pixmap.prelight );
+	updateSize( pixmap.normal );
 }
 
 
 void
 KdmPixmap::drawContents( QPainter *p, const QRect &r )
 {
-	// choose the correct pixmap class
-	PixmapStruct::PixmapClass *pClass = &pixmap.normal;
-	if (state == Sactive && pixmap.active.present)
-		pClass = &pixmap.active;
-	if (state == Sprelight && pixmap.prelight.present)
-		pClass = &pixmap.prelight;
+	PixmapStruct::PixmapClass &pClass = getCurClass();
 
 	int px = area.left() + r.left();
 	int py = area.top() + r.top();
@@ -147,64 +181,82 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 	}
 
 
-	if (pClass->readyPixmap.isNull()) {
+	if (pClass.readyPixmap.isNull()) {
 		QImage scaledImage;
 
-		// use the loaded pixmap or a scaled version if needed
-		if (area.size() != pClass->image.size()) { // true for isNull
-			if (!pClass->fullpath.isNull()) {
-				if (pClass->svgImage) {
-					KSvgRenderer svg( pClass->fullpath );
-					if (svg.isValid()) {
-						pClass->image = QImage( area.size(), QImage::Format_ARGB32 );
-						pClass->image.fill( 0 );
-						QPainter pa( &pClass->image );
-						svg.render( &pa );
-						scaledImage = pClass->image;
-					} else {
-						kWarning() << "failed to load " << pClass->fullpath ;
-						pClass->fullpath.clear();
-					}
-				} else if (loadPixmap( *pClass ))
-					scaledImage = pClass->image.scaled( area.size(),
-						Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
+		if (pClass.svgImage) {
+			if (loadSvg( pClass )) {
+				scaledImage = QImage( area.size(), QImage::Format_ARGB32 );
+				scaledImage.fill( 0 );
+				QPainter pa( &scaledImage );
+				pClass.svgRenderer->render( &pa );
+				applyTint( pClass, scaledImage );
 			}
-		} else
-			scaledImage = pClass->image;
+		} else {
+			// use the loaded pixmap or a scaled version if needed
+			if (area.size() != pClass.image.size()) { // true for isNull
+				if (loadPixmap( pClass ))
+					scaledImage = pClass.image.scaled( area.size(),
+						Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
+			} else
+				scaledImage = pClass.image;
+		}
 
 		if (scaledImage.isNull()) {
 			p->fillRect( px, py, sw, sh, Qt::black );
 			return;
 		}
 
-		if (pClass->tint.rgb() != 0xFFFFFFFF) {
-			// blend image(pix) with the given tint
-
-			int w = scaledImage.width();
-			int h = scaledImage.height();
-			int tint_red = pClass->tint.red();
-			int tint_green = pClass->tint.green();
-			int tint_blue = pClass->tint.blue();
-			int tint_alpha = pClass->tint.alpha();
-
-			for (int y = 0; y < h; ++y) {
-				QRgb *ls = (QRgb *)scaledImage.scanLine( y );
-				for (int x = 0; x < w; ++x) {
-					QRgb l = ls[x];
-					int r = qRed( l ) * tint_red / 255;
-					int g = qGreen( l ) * tint_green / 255;
-					int b = qBlue( l ) * tint_blue / 255;
-					int a = qAlpha( l ) * tint_alpha / 255;
-					ls[x] = qRgba( r, g, b, a );
-				}
-			}
-
-		}
-
-		pClass->readyPixmap = QPixmap::fromImage( scaledImage );
+		pClass.readyPixmap = QPixmap::fromImage( scaledImage );
 	}
-	// kDebug() << "Pixmap::drawContents " << pClass->readyPixmap.size() << " " << px << " " << py << " " << sx << " " << sy << " " << sw << " " << sh;
-	p->drawPixmap( px, py, pClass->readyPixmap, sx, sy, sw, sh );
+	// kDebug() << "Pixmap::drawContents " << pClass.readyPixmap.size() << " " << px << " " << py << " " << sx << " " << sy << " " << sw << " " << sh;
+	p->drawPixmap( px, py, pClass.readyPixmap, sx, sy, sw, sh );
+}
+
+void
+KdmPixmap::applyTint( PixmapStruct::PixmapClass &pClass, QImage &img )
+{
+	if (pClass.tint.rgba() == 0xFFFFFFFF)
+		return;
+
+	int w = img.width();
+	int h = img.height();
+	int tint_red = pClass.tint.red();
+	int tint_green = pClass.tint.green();
+	int tint_blue = pClass.tint.blue();
+	int tint_alpha = pClass.tint.alpha();
+
+	for (int y = 0; y < h; ++y) {
+		QRgb *ls = (QRgb *)img.scanLine( y );
+		for (int x = 0; x < w; ++x) {
+			QRgb l = ls[x];
+			int r = qRed( l ) * tint_red / 255;
+			int g = qGreen( l ) * tint_green / 255;
+			int b = qBlue( l ) * tint_blue / 255;
+			int a = qAlpha( l ) * tint_alpha / 255;
+			ls[x] = qRgba( r, g, b, a );
+		}
+	}
+}
+
+KdmPixmap::PixmapStruct::PixmapClass &
+KdmPixmap::getClass( ItemState sts )
+{
+	return
+		(sts == Sprelight && pixmap.prelight.present) ?
+			pixmap.active :
+			(sts == Sactive && pixmap.active.present) ?
+				pixmap.active :
+				pixmap.normal;
+}
+
+void
+KdmPixmap::slotAnimate( int sts )
+{
+	PixmapStruct::PixmapClass &pClass = getClass( ItemState(sts) );
+	pClass.readyPixmap = QPixmap();
+	if (&pClass == &getCurClass())
+		needUpdate();
 }
 
 void

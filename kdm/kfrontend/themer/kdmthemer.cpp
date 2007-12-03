@@ -85,13 +85,6 @@ KdmThemer::KdmThemer( const QString &_filename,
 	basedir = QFileInfo( filename ).absolutePath();
 
 	generateItems( rootItem, theme );
-
-/*	*TODO*
-	// Animation timer
-	QTimer *time = new QTimer( this );
-	time->start( 500 );
-	connect( time, SIGNAL(timeout()), SLOT(update()) )
-*/
 }
 
 KdmThemer::~KdmThemer()
