@@ -238,6 +238,7 @@ static const struct {
 	{ "login",             I18N_NOOP("_Login") }
 };
 
+// public static
 QString
 KdmLabel::lookupStock( const QString &stock )
 {

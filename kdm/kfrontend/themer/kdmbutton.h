@@ -19,73 +19,31 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef KDMLABEL_H
-#define KDMLABEL_H
+#ifndef KDMBUTTON_H
+#define KDMBUTTON_H
 
 #include "kdmitem.h"
 
-#include <QColor>
-#include <QFont>
-
-class QAction;
-class QTimer;
-
 /*
- * KdmLabel. A label element
+ * KdmButton. A label element
  */
 
-class KdmLabel : public KdmItem {
+class KdmButton : public KdmItem {
 	Q_OBJECT
 
 public:
-	KdmLabel( QObject *parent, const QDomNode &node );
-	void setText( const QString &txt );
-
-	static QString timedUser;
-	static int timedDelay;
-
-	/* Method to lookup the caption associated with an item */
-	static QString lookupStock( const QString &stock );
+	KdmButton( QObject *parent, const QDomNode &node );
 
 protected:
-	// reimplemented; returns the minimum size of rendered text
-	virtual QSize sizeHint();
-
-	// draw the label
 	virtual void drawContents( QPainter *p, const QRect &r );
-
-	// handle switching between normal / active / prelight configurations
-	virtual void statusChanged( bool descend );
 
 	virtual void doPlugActions( bool plug );
 
-	struct LabelStruct {
-		QString text;
-		bool isTimer;
-		struct LabelClass {
-			QColor color;
-			FontType font;
-			bool present;
-		} normal, active, prelight;
-	} label;
-
-	QTimer *timer;
-	QAction *action;
-
-public Q_SLOTS:
-	void update();
-
-private:
-	/* Lookup variables in the text */
-	QString lookupText( const QString &t );
-
-	void setCText( const QString &txt );
-
-	QString cText, pText;
-	int pAccelOff;
+	QString text;
 
 private Q_SLOTS:
 	void activate();
+	void widgetGone();
 };
 
-#endif // KDMLABEL_H
+#endif // KDMBUTTON_H

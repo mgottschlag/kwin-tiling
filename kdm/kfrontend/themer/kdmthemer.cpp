@@ -25,6 +25,7 @@
 #include "kdmrect.h"
 #include "kdmlist.h"
 #include "kdmlabel.h"
+#include "kdmbutton.h"
 
 #include <kdm_greet.h>
 #include <kfdialog.h>
@@ -211,6 +212,8 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 			KdmItem *newItem;
 			if (type == "label")
 				newItem = new KdmLabel( parent, subnode );
+			else if (type == "button")
+				newItem = new KdmButton( parent, subnode );
 			else if (type == "pixmap")
 				newItem = new KdmPixmap( parent, subnode );
 			else if (type == "rect")

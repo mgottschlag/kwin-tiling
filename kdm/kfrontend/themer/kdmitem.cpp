@@ -211,8 +211,6 @@ KdmItem::themer()
 void
 KdmItem::setWidget( QWidget *widget )
 {
-//	delete myWidget;	-- we *never* own the widget
-
 	if ((myWidget = widget)) {
 		myWidget->hide(); // yes, really
 		connect( myWidget, SIGNAL(destroyed()), SLOT(widgetGone()) );

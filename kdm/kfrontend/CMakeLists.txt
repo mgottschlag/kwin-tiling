@@ -24,6 +24,8 @@ set(kdmthemer_SRCS
 	themer/kdmlist.h
 	themer/kdmlabel.cpp
 	themer/kdmlabel.h
+	themer/kdmbutton.cpp
+	themer/kdmbutton.h
 	themer/kdmlayout.cpp
 	themer/kdmlayout.h
 	themer/parse.cpp
