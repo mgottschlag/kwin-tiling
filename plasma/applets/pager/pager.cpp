@@ -156,7 +156,7 @@ void Pager::recalculateWindowRects()
     m_activeWindows.clear();
     foreach(WId window, windows) {
 	KWindowInfo info = KWindowSystem::windowInfo(window, NET::WMGeometry | NET::WMFrameExtents | NET::WMWindowType | NET::WMDesktop | NET::WMState | NET::XAWMState);
-	NET::WindowType type = info.windowType(NET::NormalMask | NET::DialogMask);
+	NET::WindowType type = info.windowType(NET::NormalMask | NET::DialogMask | NET::OverrideMask | NET::UtilityMask);
 	if(type == -1 || info.hasState(NET::SkipPager) || info.isMinimized()) {
 	    continue;
 	}
