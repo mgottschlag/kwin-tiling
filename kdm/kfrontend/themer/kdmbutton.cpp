@@ -65,7 +65,9 @@ KdmButton::doPlugActions( bool )
 	QWidget *w = themer()->widget();
 	if (w) {
 		if (!myWidget) {
-			myWidget = new QPushButton( text, w );
+			QPushButton *btn = new QPushButton( text, w );
+			btn->setAutoDefault( false );
+			myWidget = btn;
 			myWidget->hide(); // yes, really
 			setWidgetAttribs( myWidget, style );
 			connect( myWidget, SIGNAL(destroyed()), SLOT(widgetGone()) );
