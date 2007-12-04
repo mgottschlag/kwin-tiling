@@ -193,6 +193,8 @@ kg_main( const char *argv0 )
 	XSetIOErrorHandler( xIOErr );
 	KComponentData inst( argv[0] );
 	GreeterApp app( as(argv) - 1, argv );
+	foreach (const QString &dir, KGlobal::dirs()->resourceDirs( "qtplugins" ))
+		app.addLibraryPath( dir );
 	initQAppConfig();
 	KGlobalSettings::self();
 
