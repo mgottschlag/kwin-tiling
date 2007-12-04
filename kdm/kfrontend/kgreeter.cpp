@@ -65,6 +65,7 @@ class UserListView : public QListWidget {
 	{
 		setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Ignored );
 		setUniformItemSizes( true );
+		setVerticalScrollMode( ScrollPerPixel );
 		setIconSize( QSize( 48, 48 ) );
 	}
 
