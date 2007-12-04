@@ -13,7 +13,8 @@
 
 #include <assert.h>
 
-#include <Qt3Support/Q3PtrList>
+#include <QtCore/QList>
+#include <QtCore/QListIterator>
 
 #include <kdebug.h>
 
@@ -74,13 +75,15 @@ class KDE_EXPORT Action_data_group
         virtual ~Action_data_group();
         virtual void update_triggers();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
-        typedef Q3PtrListIterator< Action_data_base > Iterator; // CHECKME neni const :(
-        Iterator first_child() const;
+        typedef QList< Action_data_base* >::iterator Iterator; // CHECKME neni const :(
+        typedef QList< Action_data_base* >::const_iterator ConstIterator; // CHECKME neni const :(
+        ConstIterator first_child() const;
+        ConstIterator after_last_child() const;
         bool is_system_group() const;
         system_group_t system_group() const;
         using Action_data_base::set_conditions; // make public
     protected:
-        Q3PtrList< Action_data_base > list;
+        QList< Action_data_base* > list;
         system_group_t _system_group; // e.g. menuedit entries, can't be deleted or renamed
         friend class Action_data_base; // CHECKME
         void add_child( Action_data_base* child_P );
@@ -265,14 +268,23 @@ inline
 Action_data_group::~Action_data_group()
     {
 //    kDebug( 1217 ) << "~Action_data_group() :" << list.count();
-    while( list.first())
-        delete list.first();
+    if( !list.isEmpty() )
+        {
+            while( list.first())
+            delete list.first();
+        }
     }
     
 inline
-Action_data_group::Iterator Action_data_group::first_child() const
+Action_data_group::ConstIterator Action_data_group::first_child() const
     {
-    return Iterator( list );
+    return list.begin();
+    }
+
+inline
+Action_data_group::ConstIterator Action_data_group::after_last_child() const
+    {
+    return list.end();
     }
 
 inline
@@ -296,7 +308,7 @@ void Action_data_group::add_child( Action_data_base* child_P )
 inline
 void Action_data_group::remove_child( Action_data_base* child_P )
     {
-    list.removeRef( child_P ); // is not auto-delete
+    list.remove( child_P ); // is not auto-delete
     }
     
 // Action_data

@@ -72,8 +72,8 @@ Action_data_base* Action_data_base::create_cfg_read( KConfigGroup& cfg_P, Action
         {
         if( cfg_P.readEntry( "AllowMerge", false ))
             {
-            for( Action_data_group::Iterator it = parent_P->first_child();
-                 it;
+            for( Action_data_group::ConstIterator it = parent_P->first_child();
+                 it != parent_P->after_last_child();
                  ++it )
                 {
                 if( Action_data_group* existing = dynamic_cast< Action_data_group* >( *it ))
@@ -151,8 +151,8 @@ void Action_data_group::cfg_write( KConfigGroup& cfg_P ) const
     
 void Action_data_group::update_triggers()
     {
-    for( Action_data_group::Iterator it = first_child();
-         it;
+    for( Action_data_group::ConstIterator it = first_child();
+         it != after_last_child();
          ++it )
         ( *it )->update_triggers();
     }

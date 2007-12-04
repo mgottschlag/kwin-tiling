@@ -115,8 +115,8 @@ void Tab_widget::save_current_action_changes()
             module->current_action_data()->parent(), NULL );
         item->set_conditions( static_cast< Condition_list_tab* >( pages[ TAB_CONDITIONS ] )
             ->get_data( item ));
-        for( Action_data_group::Iterator it = old->first_child();
-             it;
+        for( Action_data_group::ConstIterator it = old->first_child();
+             it != old->after_last_child();
             )
             {
             Action_data_base* tmp = ( *it );

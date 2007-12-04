@@ -140,8 +140,8 @@ void Actions_listview_widget::build_up_recursively( Action_data_group* parent_P,
     Action_listview_item* item_parent_P )
     {
     Action_listview_item* prev = NULL;
-    for( Action_data_group::Iterator it = parent_P->first_child();
-         it;
+    for( Action_data_group::ConstIterator it = parent_P->first_child();
+         it != parent_P->after_last_child();
          ++it )
         {
         prev = create_item( item_parent_P, prev, ( *it )); 

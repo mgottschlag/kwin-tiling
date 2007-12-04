@@ -55,8 +55,8 @@ Menuentry_shortcut_action_data* khotkeys_get_menu_entry_internal2(
     {
     if( !data_P->enabled( false ))
         return NULL;
-    for( Action_data_group::Iterator it = data_P->first_child();
-         it;
+    for( Action_data_group::ConstIterator it = data_P->first_child();
+         it != data_P->after_last_child();
          ++it )
         {
         if( !(*it)->enabled( true ))
@@ -81,8 +81,8 @@ Menuentry_shortcut_action_data* khotkeys_get_menu_entry_internal2(
     
 Action_data_group* khotkeys_get_menu_root( Action_data_group* data_P )
     {
-    for( Action_data_group::Iterator it = data_P->first_child();
-         it;
+    for( Action_data_group::ConstIterator it = data_P->first_child();
+         it != data_P->after_last_child();
          ++it )
         if( Action_data_group* group = dynamic_cast< Action_data_group* >( *it ))
             {
@@ -111,8 +111,8 @@ void khotkeys_get_all_shortcuts_internal(const Action_data_group* data_P, QStrin
     {
     if( !data_P->enabled( false ))
         return;
-    for( Action_data_group::Iterator it = data_P->first_child();
-         it;
+    for( Action_data_group::ConstIterator it = data_P->first_child();
+         it != data_P->after_last_child();
          ++it )
         {
         if( !(*it)->enabled( true ))
@@ -147,8 +147,8 @@ KService::Ptr khotkeys_find_menu_entry_internal(const Action_data_group* data_P,
     {
     if( !data_P->enabled( false ))
         return KService::Ptr();
-    for( Action_data_group::Iterator it = data_P->first_child();
-         it;
+    for( Action_data_group::ConstIterator it = data_P->first_child();
+         it != data_P->after_last_child();
          ++it )
         {
         if( !(*it)->enabled( true ))

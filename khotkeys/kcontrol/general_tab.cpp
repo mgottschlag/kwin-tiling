@@ -104,7 +104,7 @@ void General_tab::set_data( const Action_data* data_P )
         }
     action_name_lineedit->setText( data_P->name());
     disable_checkbox->setChecked( !data_P->enabled( true ));
-    if( !data_P->parent()->enabled( false ))
+    if( data_P->parent() && !data_P->parent()->enabled( false ))
         disable_checkbox->setText( i18n( "&Disable (group is disabled)" ));
     else
         disable_checkbox->setText( i18n( "&Disable" ));
