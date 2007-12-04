@@ -2,3 +2,4 @@ defaults scheme
 current scheme
 query kwin for WM colors (post-4.0)
 'are you sure' dialog when loading scheme if working scheme has changed
+options (i.e. "things on the first tab") not saved in schemes (in kdeglobals only)
