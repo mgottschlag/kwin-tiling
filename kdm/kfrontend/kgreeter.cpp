@@ -88,7 +88,10 @@ class UserListView : public QListWidget {
 			}
 			cachedSizeHint.setWidth(
 				style()->pixelMetric( QStyle::PM_ScrollBarExtent ) +
-				frameWidth() * 2 + maxw );
+				(frameWidth() +
+				 (style()->styleHint( QStyle::SH_ScrollView_FrameOnlyAroundContents ) ?
+					style()->pixelMetric(QStyle::PM_DefaultFrameWidth) : 0)) * 2 +
+				maxw );
 			cachedSizeHint.setHeight( frameWidth() * 2 + h );
 		}
 		return cachedSizeHint;
