@@ -177,39 +177,40 @@ parseFont( const QDomElement &el, FontType &ft )
 }
 
 
-void
+bool
 parseColor( const QString &s, const QString &a, QColor &color )
 {
-	if (!s.length() || s.at( 0 ) != '#')
-		return;
-	bool ok;
-	QString sCopy = s;
-	uint hexColor = sCopy.remove( 0, 1 ).toUInt( &ok, 16 );
-	if (ok) {
-		if (sCopy.length() == 8)
-			color.setRgba( hexColor );
-		else {
-			color.setRgb( hexColor );
-			if (!a.isNull())
-				color.setAlpha( int(a.toFloat() * 255) );
-		}
+	bool ok = false;
+	if (s.startsWith( '#' )) {
+		uint hexColor = s.mid( 1 ).toUInt( &ok, 16 );
+		if (ok) {
+			if (s.length() == 9)
+				color.setRgba( hexColor );
+			else
+				color.setRgb( hexColor );
+		} else
+			return false;
 	}
+	if (!a.isEmpty()) {
+		float fltAlpha = a.toFloat( &ok );
+		if (ok)
+			color.setAlpha( int(fltAlpha * 255) );
+	}
+	return ok;
 }
 
 void
 parseColor( const QDomElement &el, QColor &color )
 {
-	parseColor( el.attribute( "color", QString() ),
-	            el.attribute( "alpha", "1.0" ), color );
+	parseColor( el.attribute( "color" ), el.attribute( "alpha" ), color );
 }
 
 
 static void
 parsePalEnt( const QDomElement &el, const QString &core, QPalette &pal, QPalette::ColorRole cr )
 {
-	QColor col;
-	parseColor( el.attribute( core + "-color", QString() ), el.attribute( core + "-alpha", "1.0" ), col );
-	if (col.isValid())
+	QColor col = pal.color( cr );
+	if (parseColor( el.attribute( core + "-color" ), el.attribute( core + "-alpha" ), col ))
 		pal.setColor( cr, col );
 }
 
@@ -266,7 +267,8 @@ void
 setWidgetAttribs( QWidget *widget, const StyleType &style )
 {
 	widget->setPalette( style.palette );
-	if (style.palette.isBrushSet( QPalette::Normal, QPalette::Window ))
+	if (style.palette.isBrushSet( QPalette::Normal, QPalette::Window ) &&
+	    style.palette.brush( QPalette::Window ).isOpaque())
 		widget->setAutoFillBackground( true );
 	setWidgetAttribs( widget, style, style.frame );
 }
