@@ -185,12 +185,27 @@ void KColorCm::loadScheme(const QString &path)
     updateFromEffectsPage();
     updateColorTable();
     updatePreviews();
+
+    //m_changed = false;
 }
 
 void KColorCm::loadScheme()
 {
     if (schemeList->currentItem() != NULL)
     {
+        if (0) // TODO if changes made to loaded scheme
+        {
+            if (KMessageBox::Continue != KMessageBox::warningContinueCancel(this,
+                i18n("Selecting another scheme will discard any changes you have made"),
+                i18n("Are you sure?"),
+                KStandardGuiItem::cont(),
+                KStandardGuiItem::cancel(),
+                "noDiscardWarning"))
+            {
+                return;
+            }
+        }
+
         QString path = KGlobal::dirs()->findResource("data",
             "color-schemes/" + schemeList->currentItem()->text() + ".colors");
 
