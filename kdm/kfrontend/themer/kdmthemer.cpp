@@ -97,7 +97,8 @@ KdmThemer::setWidget( QWidget *w )
 {
 	if ((m_widget = w)) {
 		rootItem->updateVisible();
-		setWidgetAttribs( m_widget, rootItem->style );
+		m_widget->setPalette( rootItem->style.palette );
+		m_widget->setFont( rootItem->style.font.font );
 		rootItem->plugActions();
 	}
 }
