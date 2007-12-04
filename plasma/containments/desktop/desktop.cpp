@@ -282,7 +282,7 @@ void DefaultDesktop::addSlidePath()
         url = KUrl(m_slidePaths[m_slidePaths.size() - 1]);
     }
 
-    KFileDialog * dialog = new KFileDialog(url, "*", NULL, NULL);
+    KFileDialog * dialog = new KFileDialog(url, "*", m_configDialog, m_configDialog);
     dialog->setMode(KFile::Directory);
     
     dialog->show();
@@ -301,7 +301,7 @@ void DefaultDesktop::addPathOk()
 void DefaultDesktop::removeSlidePath()
 {
     int index = m_ui->slidePaths->currentRow();
-    if (index > 0) {
+    if (index > -1) {
         delete m_ui->slidePaths->takeItem(index);
     }
 }
