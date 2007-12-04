@@ -395,7 +395,6 @@ void DefaultDesktop::lockDesktopToggle() {
 
 void DefaultDesktop::lockDesktop(bool lock) {
     m_appletBrowserAction->setVisible(!lock);
-    m_runCommandAction->setVisible(!lock);
     m_setupDesktopAction->setVisible(!lock);
     corona()->setImmutable(lock);
     if (lock) {
