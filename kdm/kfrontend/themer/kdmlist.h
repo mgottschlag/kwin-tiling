@@ -24,8 +24,6 @@
 
 #include "kdmitem.h"
 
-#include <QColor>
-
 /*
  * KdmList: A themed (user) list
  */
@@ -39,11 +37,6 @@ public:
 protected:
 	// no-op
 	virtual void drawContents( QPainter *p, const QRect &r );
-
-	struct ListStruct {
-		//QColor iconBg;
-		QColor labelBg, altLabelBg;
-	} list;
 
 	virtual void setWidget( QWidget *widget );
 };

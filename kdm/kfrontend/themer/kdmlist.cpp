@@ -22,6 +22,7 @@
 #include "kdmlist.h"
 #include "kdmthemer.h"
 
+#include <QColor>
 #include <QListWidget>
 
 KdmList::KdmList( QObject *parent, const QDomNode &node )
@@ -39,9 +40,15 @@ KdmList::KdmList( QObject *parent, const QDomNode &node )
 		QString tagName = el.tagName();
 
 		if (tagName == "color") {
+			QColor col1 = style.palette.color( QPalette::Base );
+			QColor col2 = style.palette.color( QPalette::AlternateBase );
+			if (parseColor( el.attribute( "labelcolor" ), QString(), col1 )) {
+				style.palette.setColor( QPalette::Base, col1 );
+				style.palette.setColor( QPalette::AlternateBase, col1 );
+			}
+			if (parseColor( el.attribute( "altlabelcolor" ), QString(), col2 ))
+				style.palette.setColor( QPalette::AlternateBase, col2 );
 			//parseColor( el.attribute( "iconcolor", QString() ), QString(), list.iconBg );
-			parseColor( el.attribute( "labelcolor", QString() ), QString(), list.labelBg );
-			parseColor( el.attribute( "altlabelcolor", QString() ), QString(), list.altLabelBg );
 		}
 	}
 }
@@ -55,18 +62,8 @@ void
 KdmList::setWidget( QWidget *widget )
 {
 	KdmItem::setWidget( widget );
-	if (QListWidget *lw = qobject_cast<QListWidget *>( widget )) {
-		if (list.labelBg.isValid()) {
-			QPalette pal;
-			pal.setColor( QPalette::Base, list.labelBg );
-			if (list.altLabelBg.isValid()) {
-				pal.setColor( QPalette::AlternateBase, list.altLabelBg );
-				lw->setAlternatingRowColors( true );
-			}
-			lw->setPalette( pal );
-		} else
-			lw->viewport()->setAutoFillBackground( false );
-	}
+	if (QListWidget *lw = qobject_cast<QListWidget *>( widget ))
+		setWidgetAttribs( lw->viewport(), style );
 }
 
 #include "kdmlist.moc"
