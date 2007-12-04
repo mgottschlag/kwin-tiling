@@ -2024,14 +2024,12 @@ Key: GUIStyle
 Type: string
 Default: ""
 User: greeter
-Instance: #*/"Windows"
+Instance: #*/"Plastique"
 Update: upd_guistyle
-Comment:
- Widget style of the greeter. "" means the built-in default which currently
- is "Plastik".
+Comment: &
 Description:
  Specify the widget style for the greeter. Empty means to use the
- built-in default which currently is <literal>Plastik</literal>.
+ built-in default which currently is <literal>Oxygen</literal>.
 
 Key: ColorScheme
 Type: string

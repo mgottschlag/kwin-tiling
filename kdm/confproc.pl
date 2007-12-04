@@ -60,7 +60,7 @@ sub getl()
 sub dedb($)
 {
   my $t = shift;
-  $t =~ s,</?(command|guilabel|quote)>,\",g;
+  $t =~ s,</?(command|guilabel|quote|literal)>,\",g;
   $t =~ s,</?(acronym|envar|filename|option|systemitem( [^ >]+)?)>,,g;
   $t =~ s,<emphasis>([^<]+)</emphasis>,uc($1),ge;
   $t =~ s,&amp;,&,g;
