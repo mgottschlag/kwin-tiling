@@ -23,7 +23,7 @@
 
 #include <QtCore/QObject>
 
-#include <Solid/Networking>
+#include <solid/networking.h>
 #include <solid/control/solid_control_export.h>
 
 namespace Solid
