@@ -2031,6 +2031,11 @@ upd_userlogfile( Entry *ce, Section *cs ATTR_UNUSED )
 		ASPrintf( (char **)&ce->value, "%.*s%%d%s", p - ce->value, ce->value, p + 2 );
 }
 
+/*
+ * Copy single file.
+ * Do not overwrite existing target.
+ * Do not complain if source cannot be read.
+ */
 static void
 copyPlainFile( const char *from, const char *to )
 {
@@ -2038,10 +2043,10 @@ copyPlainFile( const char *from, const char *to )
 	int fd;
 
 	if (readFile( &file, from )) {
-		if ((fd = creat( to, 0644 )) >= 0) {
+		if ((fd = open( to, O_WRONLY | O_CREAT | O_EXCL, 0644 )) >= 0) {
 			write( fd, file.buf, file.eof - file.buf );
 			close( fd );
-		} else
+		} else if (errno != EEXIST)
 			fprintf( stderr, "Warning: cannot create %s\n", to );
 		freeBuf( &file );
 	}
@@ -2086,14 +2091,17 @@ upd_facedir( Entry *ce, Section *cs ATTR_UNUSED )
 			return;
 		/* Default location, so absorb it. */
 		ce->active = False;
+		/* Don't copy if old dir == new new. */
+		if (!strcmp( olddir, def_FaceDir ))
+			olddir = 0;
 	} else
 		olddir = 0;
-	if (!mkdirp( def_FaceDir, 0755, "user face", False ))
-		return; /* Error or olddir == def_FaceDir. */
-	if (!olddir || !copyDir( olddir, def_FaceDir )) {
+	if (mkdirp( def_FaceDir, 0755, "user face", True )) {
 		const char *defpic = def_FaceDir "/.default.face.icon";
 		const char *rootpic = def_FaceDir "/root.face.icon";
-		if (oldkde) {
+		if (oldkde && (!olddir || !copyDir( olddir, def_FaceDir )) &&
+		    oldver < 0x0201) /* This isn't exact - didn't inc version. */
+		{
 			setpwent();
 			while ((pw = getpwent()))
 				if (strcmp( pw->pw_name, "root" )) {
