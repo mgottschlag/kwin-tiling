@@ -38,6 +38,7 @@
 #include <KSvgRenderer>
 #include <KWindowSystem>
 
+#include "plasma/corona.h"
 #include "plasma/appletbrowser.h"
 #include "plasma/phase.h"
 #include "plasma/svg.h"
@@ -54,9 +55,10 @@ using namespace Plasma;
 
 DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
+      m_lockDesktopAction(0),
       m_appletBrowserAction(0),
       m_runCommandAction(0),
-      m_lockAction(0),
+      m_lockScreenAction(0),
       m_logoutAction(0),
       m_configDialog(0),
       m_ui(0),
@@ -105,7 +107,6 @@ void DefaultDesktop::init()
         nextSlide(); // to show the first image
         m_slideShowTimer->start();
     }
-
     Containment::init();
 }
 
@@ -342,17 +343,23 @@ QList<QAction*> DefaultDesktop::contextActions()
     if (!m_appletBrowserAction) {
         m_appletBrowserAction = new QAction(i18n("Add Widgets..."), this);
         connect(m_appletBrowserAction, SIGNAL(triggered(bool)), this, SIGNAL(showAddWidgets()));
+        m_appletBrowserAction->setIcon(KIcon("edit-add"));
 
         m_runCommandAction = new QAction(i18n("Run Command..."), this);
         connect(m_runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
+        m_runCommandAction->setIcon(KIcon("system-run"));
 
         m_setupDesktopAction = new QAction(i18n("Configure Desktop..."), this);
         m_setupDesktopAction->setIcon(KIcon("configure"));
         connect(m_setupDesktopAction, SIGNAL(triggered()), this, SLOT(configure()));
 
-        m_lockAction = new QAction(i18n("Lock Screen"), this);
-        m_lockAction->setIcon(KIcon("system-lock-screen"));
-        connect(m_lockAction, SIGNAL(triggered(bool)), this, SLOT(lockScreen()));
+        m_lockDesktopAction = new QAction(i18n("Lock Widgets"), this);
+        lockDesktop(corona()->isImmutable());
+        connect(m_lockDesktopAction, SIGNAL(triggered(bool)), this, SLOT(lockDesktopToggle()));
+
+        m_lockScreenAction = new QAction(i18n("Lock Screen"), this);
+        m_lockScreenAction->setIcon(KIcon("system-lock-screen"));
+        connect(m_lockScreenAction, SIGNAL(triggered(bool)), this, SLOT(lockScreen()));
 
         m_logoutAction = new QAction(i18n("Logout"), this);
         m_logoutAction->setIcon(KIcon("system-log-out"));
@@ -365,12 +372,14 @@ QList<QAction*> DefaultDesktop::contextActions()
 
     actions.append(m_setupDesktopAction);
 
+    actions.append(m_lockDesktopAction);
+
     if (KAuthorized::authorizeKAction("run_command")) {
         actions.append(m_runCommandAction);
     }
 
     if (KAuthorized::authorizeKAction("lock_screen")) {
-        actions.append(m_lockAction);
+        actions.append(m_lockScreenAction);
     }
 
     if (KAuthorized::authorizeKAction("logout")) {
@@ -378,6 +387,24 @@ QList<QAction*> DefaultDesktop::contextActions()
     }
 
     return actions;
+}
+
+void DefaultDesktop::lockDesktopToggle() {
+    lockDesktop(!corona()->isImmutable());
+}
+
+void DefaultDesktop::lockDesktop(bool lock) {
+    m_appletBrowserAction->setVisible(!lock);
+    m_runCommandAction->setVisible(!lock);
+    m_setupDesktopAction->setVisible(!lock);
+    corona()->setImmutable(lock);
+    if (lock) {
+        m_lockDesktopAction->setIcon(KIcon("object-unlocked"));
+        m_lockDesktopAction->setText(i18n("Unlock Widgets"));
+    } else {
+        m_lockDesktopAction->setIcon(KIcon("object-locked"));
+        m_lockDesktopAction->setText(i18n("Lock Widgets"));
+    }
 }
 
 void DefaultDesktop::logout()

@@ -102,17 +102,20 @@ protected Q_SLOTS:
      */
     void getNewStuff();
     
+    void lockDesktopToggle();
     void lockScreen();
     void logout();
 
 private:
     /** populate m_bitmapBackground with the pixmap to show */
     void getBitmapBackground();
+    void lockDesktop(bool lock);
 
+    QAction *m_lockDesktopAction;
     QAction *m_appletBrowserAction;
     QAction *m_runCommandAction;
     QAction *m_setupDesktopAction;
-    QAction *m_lockAction;
+    QAction *m_lockScreenAction;
     QAction *m_logoutAction;
 
     KDialog *m_configDialog;
