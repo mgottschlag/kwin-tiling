@@ -126,7 +126,7 @@ private:
     static QPixmap createSchemePreviewIcon(const QPalette &pal, const WindecoColors &wm);
 
     /** load a scheme from a config file at a given path */
-    void loadScheme(const QString &path);
+    void loadScheme(KSharedConfigPtr config);
 
     /** populate the schemeList with color schemes found on the system */
     void populateSchemeList();

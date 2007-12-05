@@ -102,6 +102,18 @@ void KColorCm::populateSchemeList()
 {
     // clear the list in case this is being called from reset button click
     schemeList->clear();
+    // add current scheme entry
+    QIcon icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(m_config),
+                                         WindecoColors(m_config));
+    schemeList->addItem(new QListWidgetItem(icon, i18n("Current")));
+    
+    // add default entry
+    m_config->setReadDefaults(true);
+    icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(m_config),
+                                         WindecoColors(m_config));
+    schemeList->addItem(new QListWidgetItem(icon, i18n("Default")));
+    m_config->setReadDefaults(false);
+
     QStringList schemeFiles = KGlobal::dirs()->findAllResources("data", "color-schemes/*.colors", KStandardDirs::NoDuplicates);
     for (int i = 0; i < schemeFiles.size(); ++i)
     {
@@ -111,7 +123,7 @@ void KColorCm::populateSchemeList()
 
         // add the entry
         KSharedConfigPtr config = KSharedConfig::openConfig(filename);
-        QIcon icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(config),
+        icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(config),
                                              WindecoColors(config));
         schemeList->addItem(new QListWidgetItem(icon, info.baseName()));
     }
@@ -166,10 +178,10 @@ void KColorCm::updateEffectsPage()
     m_disableUpdates = false;
 }
 
-void KColorCm::loadScheme(const QString &path)
+void KColorCm::loadScheme(KSharedConfigPtr config) // const QString &path)
 {
     KSharedConfigPtr temp = m_config;
-    m_config = KSharedConfig::openConfig(path);
+    m_config = config;
     updateColorSchemes();
 
     KConfigGroup groupG(m_config, "General");
@@ -193,29 +205,47 @@ void KColorCm::loadScheme()
 {
     if (schemeList->currentItem() != NULL)
     {
-        if (0) // TODO if changes made to loaded scheme
+        QString name = schemeList->currentItem()->text();
+        if (name == i18n("Default"))
         {
-            if (KMessageBox::Continue != KMessageBox::warningContinueCancel(this,
-                i18n("Selecting another scheme will discard any changes you have made"),
-                i18n("Are you sure?"),
-                KStandardGuiItem::cont(),
-                KStandardGuiItem::cancel(),
-                "noDiscardWarning"))
-            {
-                return;
-            }
+            KSharedConfigPtr config = m_config;
+            config->setReadDefaults(true);
+            loadScheme(config);
+            config->setReadDefaults(false);
+            // load the default scheme
+            emit changed(true);
         }
+        else if (name == i18n("Current"))
+        {
+            load();
+        }
+        else
+        {
+            if (0) // TODO if changes made to loaded scheme
+            {
+                if (KMessageBox::Continue != KMessageBox::warningContinueCancel(this,
+                    i18n("Selecting another scheme will discard any changes you have made"),
+                    i18n("Are you sure?"),
+                    KStandardGuiItem::cont(),
+                    KStandardGuiItem::cancel(),
+                    "noDiscardWarning"))
+                {
+                    return;
+                }
+            }
 
-        QString path = KGlobal::dirs()->findResource("data",
-            "color-schemes/" + schemeList->currentItem()->text() + ".colors");
+            QString path = KGlobal::dirs()->findResource("data",
+                "color-schemes/" + name + ".colors");
 
-        int permissions = QFile(path).permissions();
-        bool canWrite = (permissions & QFile::WriteUser);
-        schemeRemoveButton->setEnabled(canWrite);
+            int permissions = QFile(path).permissions();
+            bool canWrite = (permissions & QFile::WriteUser);
+            schemeRemoveButton->setEnabled(canWrite);
 
-        loadScheme(path);
+            KSharedConfigPtr config = KSharedConfig::openConfig(path);
+            loadScheme(config);
 
-        emit changed(true);
+            emit changed(true);
+        }
     }
 }
 
@@ -246,7 +276,8 @@ void KColorCm::on_schemeImportButton_clicked()
     // open it
 
     // load the scheme
-    loadScheme(url.path());
+    KSharedConfigPtr config = KSharedConfig::openConfig(url.path());
+    loadScheme(config);
 
     // save it
     saveScheme(url.fileName());
