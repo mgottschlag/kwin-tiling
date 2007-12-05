@@ -190,13 +190,29 @@ void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
 {
     Q_UNUSED(constraints);
     //kDebug() << "DefaultDesktop constraints have changed";
-    const QRect geom = QApplication::desktop()->screenGeometry(screen());
-    if (m_background) {
-        //kDebug() << "Rescaling SVG wallpaper to" << geom.size();
-        m_background->resize(geom.size());
-    } else if (!m_wallpaperPath.isEmpty()) {
-        if (!m_bitmapBackground || !(m_bitmapBackground->size() == geom.size())) {
-            getBitmapBackground();
+    if (constraints & Plasma::SizeConstraint) {
+        const QRect geom = QApplication::desktop()->screenGeometry(screen());
+        if (m_background) {
+            //kDebug() << "Rescaling SVG wallpaper to" << geom.size();
+            m_background->resize(geom.size());
+        } else if (!m_wallpaperPath.isEmpty()) {
+            if (!m_bitmapBackground || !(m_bitmapBackground->size() == geom.size())) {
+                getBitmapBackground();
+            }
+        }
+    }
+
+    if (constraints & Plasma::ImmutableConstraint && m_appletBrowserAction) {
+        // we need to update the menu items that have already been created
+        bool locked = isImmutable();
+        m_appletBrowserAction->setVisible(!locked);
+        m_setupDesktopAction->setVisible(!locked);
+        if (locked) {
+            m_lockDesktopAction->setIcon(KIcon("object-unlocked"));
+            m_lockDesktopAction->setText(i18n("Unlock Widgets"));
+        } else {
+            m_lockDesktopAction->setIcon(KIcon("object-locked"));
+            m_lockDesktopAction->setText(i18n("Lock Widgets"));
         }
     }
 }
@@ -379,8 +395,7 @@ QList<QAction*> DefaultDesktop::contextActions()
         connect(m_setupDesktopAction, SIGNAL(triggered()), this, SLOT(configure()));
 
         m_lockDesktopAction = new QAction(i18n("Lock Widgets"), this);
-        lockDesktop(corona()->isImmutable());
-        connect(m_lockDesktopAction, SIGNAL(triggered(bool)), this, SLOT(lockDesktopToggle()));
+        connect(m_lockDesktopAction, SIGNAL(triggered(bool)), this, SLOT(toggleDesktopImmutability()));
 
         m_lockScreenAction = new QAction(i18n("Lock Screen"), this);
         m_lockScreenAction->setIcon(KIcon("system-lock-screen"));
@@ -389,6 +404,7 @@ QList<QAction*> DefaultDesktop::contextActions()
         m_logoutAction = new QAction(i18n("Logout"), this);
         m_logoutAction->setIcon(KIcon("system-log-out"));
         connect(m_logoutAction, SIGNAL(triggered(bool)), this, SLOT(logout()));
+        constraintsUpdated(Plasma::ImmutableConstraint);
     }
 
     QList<QAction*> actions;
@@ -414,20 +430,11 @@ QList<QAction*> DefaultDesktop::contextActions()
     return actions;
 }
 
-void DefaultDesktop::lockDesktopToggle() {
-    lockDesktop(!corona()->isImmutable());
-}
-
-void DefaultDesktop::lockDesktop(bool lock) {
-    m_appletBrowserAction->setVisible(!lock);
-    m_setupDesktopAction->setVisible(!lock);
-    corona()->setImmutable(lock);
-    if (lock) {
-        m_lockDesktopAction->setIcon(KIcon("object-unlocked"));
-        m_lockDesktopAction->setText(i18n("Unlock Widgets"));
+void DefaultDesktop::toggleDesktopImmutability() {
+    if (corona()) {
+        corona()->setImmutable(!corona()->isImmutable());
     } else {
-        m_lockDesktopAction->setIcon(KIcon("object-locked"));
-        m_lockDesktopAction->setText(i18n("Lock Widgets"));
+        setImmutable(!isImmutable());
     }
 }
 

@@ -108,14 +108,13 @@ protected Q_SLOTS:
      */
     void getNewStuff();
     
-    void lockDesktopToggle();
+    void toggleDesktopImmutability();
     void lockScreen();
     void logout();
 
 private:
     /** populate m_bitmapBackground with the pixmap to show */
     void getBitmapBackground();
-    void lockDesktop(bool lock);
 
     QAction *m_lockDesktopAction;
     QAction *m_appletBrowserAction;
