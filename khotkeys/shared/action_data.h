@@ -269,6 +269,7 @@ Action_data_group::~Action_data_group()
     {
 //    kDebug( 1217 ) << "~Action_data_group() :" << list.count();
     qDeleteAll(list);
+    list.clear();
     }
     
 inline
