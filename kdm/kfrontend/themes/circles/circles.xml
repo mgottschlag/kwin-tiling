@@ -119,7 +119,6 @@
 		<text>%c</text>
 	</item>
 	<item type="rect" id="timed-label">
-		<show type="timed"/>
 		<normal color="#FFFFFF" alpha="0.5"/>
 		<pos anchor="c" x="50%" y="20%" width="box" height="box"/>
 		<box orientation="vertical" xpadding="50" ypadding="5" spacing="0">

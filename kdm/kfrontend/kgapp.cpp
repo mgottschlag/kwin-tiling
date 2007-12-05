@@ -220,8 +220,6 @@ kg_main( const char *argv0 )
 			showTypes["reboot"] = true;
 			// "suspend" not implemented
 		}
-		if (_autoLoginDelay)
-			showTypes["timed"] = false;
 
 		themer = new KdmThemer( _theme, showTypes, app.desktop()->screen() );
 		if (!themer->isOK()) {
