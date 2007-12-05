@@ -207,11 +207,27 @@ parseColor( const QDomElement &el, QColor &color )
 
 
 static void
-parsePalEnt( const QDomElement &el, const QString &core, QPalette &pal, QPalette::ColorRole cr )
+parsePalEnt( const QDomElement &el, const QString &pfx, const QString &core,
+             QPalette &pal, QPalette::ColorGroup cg, QPalette::ColorRole cr )
 {
-	QColor col = pal.color( cr );
-	if (parseColor( el.attribute( core + "-color" ), el.attribute( core + "-alpha" ), col ))
-		pal.setColor( cr, col );
+	QColor col = pal.color( cg, cr );
+	if (parseColor( el.attribute( pfx + core + "-color" ),
+	                el.attribute( pfx + core + "-alpha" ), col ))
+		pal.setColor( cg, cr, col );
+}
+
+static void
+parsePalEnt( const QDomElement &el, const QString &core,
+             QPalette &pal, QPalette::ColorRole cr )
+{
+	parsePalEnt( el, "all-", core, pal, QPalette::Active, cr );
+	parsePalEnt( el, "all-", core, pal, QPalette::Inactive, cr );
+	parsePalEnt( el, "all-", core, pal, QPalette::Disabled, cr );
+	parsePalEnt( el, QString(), core, pal, QPalette::Active, cr );
+	parsePalEnt( el, QString(), core, pal, QPalette::Inactive, cr );
+	parsePalEnt( el, "active-", core, pal, QPalette::Active, cr );
+	parsePalEnt( el, "inactive-", core, pal, QPalette::Inactive, cr );
+	parsePalEnt( el, "disabled-", core, pal, QPalette::Disabled, cr );
 }
 
 void
