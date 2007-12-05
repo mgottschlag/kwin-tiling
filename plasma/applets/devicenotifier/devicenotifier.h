@@ -23,6 +23,7 @@
 #include <plasma/applet.h>
 #include <plasma/dataengine.h>
 #include <plasma/phase.h>
+#include <plasma/dialog.h>
 #include <KIcon>
 #include <QModelIndex>
 #include <QTimer>
@@ -76,7 +77,7 @@ class DeviceNotifier : public Plasma::Applet
         QStandardItemModel *m_hotplugModel;
 
 	Notifier::ListView *m_listView;
-	Notifier::NotifierWidget *m_widget;
+	Plasma::Dialog *m_widget;
 	QVBoxLayout *m_layout;
 	Plasma::Svg *m_background;
         KDialog *m_dialog;

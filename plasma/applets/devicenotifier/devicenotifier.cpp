@@ -24,11 +24,11 @@
 #include <QApplication>
 #include <QStandardItemModel>
 #include <QGraphicsView>
-#include <QGraphicsSceneMouseEvent>
 
 #include <plasma/svg.h>
 #include <plasma/widgets/widget.h>
 #include <plasma/containment.h>
+#include <plasma/dialog.h>
 
 #include <KDialog>
 #include <krun.h>
@@ -43,7 +43,6 @@
 
 #include "itemdelegate.h"
 #include "listview.h"
-#include "notifierwidget.h"
 
 using namespace Plasma;
 using namespace Notifier;
@@ -83,7 +82,7 @@ void DeviceNotifier::init()
 	//default icon if problem
 	m_icon=KIcon("computer");
     }
-    m_widget= new NotifierWidget(0,Qt::Window);
+    m_widget= new Dialog();
     m_widget->setStyleSheet("{ border : 0px }");
     m_listView= new ListView(m_widget);
     QVBoxLayout *m_layout = new QVBoxLayout();
@@ -116,20 +115,6 @@ void DeviceNotifier::init()
     m_widget->setWindowFlags(m_listView->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
     m_widget->adjustSize();
 
-    /*QPointF scenePos = mapToScene(boundingRect().topLeft());
-    QGraphicsScene * scene=containment()->scene();
-    if (scene)
-    {
-	QList<QGraphicsView *> list=scene->views();
-	kDebug()<<"size"<<list.size();
-	QGraphicsView *view=list[0];
-	if (view) {
-	    QPoint viewPos = view->mapFromScene(scenePos);
-	    QPoint globalPos = view->mapToGlobal(viewPos);
-	    globalPos.ry() -= m_widget->height(); 
-	    m_widget->move(globalPos);
-	}
-    }*/
     m_solidEngine = dataEngine("hotplug");
 
     //connect to engine when a device is plug
@@ -148,7 +133,6 @@ void DeviceNotifier::init()
 DeviceNotifier::~DeviceNotifier()
 {
 }
-
 
 Qt::Orientations DeviceNotifier::expandingDirections() const
 {
@@ -277,34 +261,15 @@ void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
     Applet::mousePressEvent(event);
 }
 
-void DeviceNotifier::hoverEnterEvent ( QGraphicsSceneHoverEvent  * event )
+void DeviceNotifier::hoverEnterEvent ( QGraphicsSceneHoverEvent  *event )
 {
-    QWidget *viewWidget = event->widget() ? event->widget()->parentWidget() : 0;
-    QPointF scenePos = mapToScene(boundingRect().topLeft());
-    QGraphicsView *view = qobject_cast<QGraphicsView*>(viewWidget);
-    if (view) {
-	QPoint viewPos = view->mapFromScene(scenePos);
-	QPoint globalPos = view->mapToGlobal(viewPos);
-	if ((globalPos.ry()-m_widget->height())< 0) {
-	    
-	    scenePos = mapToScene(boundingRect().bottomLeft());
-	    viewPos = view->mapFromScene(scenePos);
-	    globalPos = view->mapToGlobal(viewPos)+QPoint(0,10);
-	}
-	else {
-	    globalPos.ry() -= (m_widget->height()+10);
-	}
-	if ((globalPos.rx() + m_widget->width()) > view->width()) {
-	    globalPos.rx()-=((globalPos.rx() + m_widget->width())-view->width());
-	}
-	m_widget->move(globalPos);
-    }
+    m_widget->position(event, boundingRect(), mapToScene(boundingRect().topLeft()));
 }
 
 void DeviceNotifier::showConfigurationInterface()
 {
-     if (m_dialog == 0) {
-	kDebug()<<"DeviceNotifier:: Enter in configuration interface";
+    if (m_dialog == 0) {
+        kDebug()<<"DeviceNotifier:: Enter in configuration interface";
      	m_dialog = new KDialog;
         m_dialog->setCaption( i18n("Configure New Device Notifier") );
 
