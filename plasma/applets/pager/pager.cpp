@@ -155,11 +155,21 @@ void Pager::recalculateWindowRects()
     }
     m_activeWindows.clear();
     foreach(WId window, windows) {
-	KWindowInfo info = KWindowSystem::windowInfo(window, NET::WMGeometry | NET::WMFrameExtents | NET::WMWindowType | NET::WMDesktop | NET::WMState | NET::XAWMState);
-	NET::WindowType type = info.windowType(NET::NormalMask | NET::DialogMask | NET::OverrideMask | NET::UtilityMask);
-	if(type == -1 || info.hasState(NET::SkipPager) || info.isMinimized()) {
-	    continue;
-	}
+        KWindowInfo info = KWindowSystem::windowInfo(window, NET::WMGeometry | NET::WMFrameExtents | NET::WMWindowType | NET::WMDesktop | NET::WMState | NET::XAWMState);
+        NET::WindowType type = info.windowType(NET::NormalMask | NET::DialogMask | NET::OverrideMask |
+                                               NET::UtilityMask | NET::DesktopMask | NET::DockMask |
+                                               NET::TopMenuMask | NET::SplashMask | NET::ToolbarMask |
+                                               NET::MenuMask);
+
+        // the reason we don't check for -1 or Net::Unknown here is that legitimate windows, such
+        // as some java application windows, may not have a type set for them.
+        // apparently sane defaults on properties is beyond the wisdom of x11.
+        if (type == NET::Desktop || type == NET::Dock || type == NET::TopMenu ||
+            type == NET::Splash || type == NET::Menu || type == NET::Toolbar ||
+            info.hasState(NET::SkipPager) || info.isMinimized()) {
+            continue;
+        }
+
 	for(int i = 0; i < m_desktopCount; i++) {
 	    if(!info.isOnDesktop(i+1)) {
 		continue;
