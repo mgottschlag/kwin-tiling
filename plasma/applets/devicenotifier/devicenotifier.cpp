@@ -269,9 +269,12 @@ QModelIndex DeviceNotifier::indexForUdi(const QString &udi) const
 void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
-    if(event->buttons () == Qt::LeftButton) {
-	m_widget->show();
+    if (event->buttons () == Qt::LeftButton && contentRect().contains(event->pos())) {
+        m_widget->show();
+        event->accept();
+        return;
     }
+    Applet::mousePressEvent(event);
 }
 
 void DeviceNotifier::hoverEnterEvent ( QGraphicsSceneHoverEvent  * event )
