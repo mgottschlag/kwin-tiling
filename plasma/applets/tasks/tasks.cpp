@@ -653,10 +653,17 @@ void TaskGroupItem::paint(QPainter *painter,
 
 void TaskGroupItem::activate()
 {
+    if (!dynamic_cast<TaskGroupItem*>(parentItem())) {
+        // this is the root group, and we don't want to activate *every* window!
+        return;
+    }
+
+    // this is a task sub-group, so let's activate the windows in it
     foreach(TaskEntry entry, _tasks) {
         entry.task->activate();
     }
 }
+
 void TaskGroupItem::close()
 {
     foreach(TaskEntry entry, _tasks) {
