@@ -1,5 +1,5 @@
-<!ELEMENT greeter (item | fixed | box | normal | style)+>	<!-- The root is an item of type "rect". -->
-<!ELEMENT item (item | fixed | box | pos | normal | active | prelight | show | text | stock | color | style | buddy)*>
+<!ELEMENT greeter (item | normal | style)+>	<!-- The root is an item of type "rect". -->
+<!ELEMENT item (fixed | box | pos | normal | active | prelight | show | text | stock | color | style | buddy)*>
 <!ELEMENT fixed (item+)>
 <!ELEMENT box (item+)>
 <!ELEMENT pos EMPTY>

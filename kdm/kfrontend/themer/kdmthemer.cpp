@@ -241,8 +241,20 @@ KdmThemer::generateItems( KdmItem *parent, const QDomNode &node )
 			         SLOT(slotNeedPlugging()) );
 			connect( newItem, SIGNAL(activated( const QString & )),
 			         SIGNAL(activated( const QString & )) );
-			generateItems( newItem, subnode );
-		} else if (tagName == "box") {
+			generateLayouts( newItem, subnode );
+		}
+	}
+}
+
+void
+KdmThemer::generateLayouts( KdmItem *parent, const QDomNode &node )
+{
+	const QDomNodeList &subnodeList = node.childNodes();
+	for (int nod = 0; nod < subnodeList.count(); nod++) {
+		QDomNode subnode = subnodeList.item( nod );
+		QString tagName = subnode.toElement().tagName();
+
+		if (tagName == "box") {
 			parent->setBoxLayout( subnode );
 			generateItems( parent, subnode );
 		} else if (tagName == "fixed") {

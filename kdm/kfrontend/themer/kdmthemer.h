@@ -97,6 +97,7 @@ private:
 	 * item list and adds those to the themer
 	 */
 	void generateItems( KdmItem *parent, const QDomNode &node );
+	void generateLayouts( KdmItem *parent, const QDomNode &node );
 
 	void showStructure();
 
