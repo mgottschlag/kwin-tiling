@@ -36,6 +36,9 @@
 #include <QHash>
 #include <QPainter>
 #include <QTimer>
+#include <QX11Info>
+
+#include <X11/Xlib.h>
 
 #include <unistd.h>
 #include <sys/utsname.h>
@@ -230,7 +233,7 @@ static const struct {
 	{ "reboot",            I18N_NOOP("Re_boot") },
 	{ "chooser",           I18N_NOOP("XDMCP Choose_r") },
 	{ "caps-lock-warning", I18N_NOOP("Caps Lock is enabled") },
-	{ "timed-label",       I18N_NOOP("User %s will log in in %d seconds") },
+	{ "timed-label",       I18N_NOOP("User %u will log in in %t") },
 	{ "welcome-label",     I18N_NOOP("Welcome to %h") },	// _greetString
 	{ "domain-label",      I18N_NOOP("_Domain:") },
 	{ "username-label",    I18N_NOOP("_Username:") },
@@ -263,7 +266,11 @@ KdmLabel::lookupText( const QString &t )
 	QHash<QChar,QString> m;
 	struct utsname uts;
 	uname( &uts );
+	m['d'] = QString::fromLocal8Bit( DisplayString( QX11Info::display() ) );
 	m['n'] = QString::fromLocal8Bit( uts.nodename );
+	m['s'] = QString::fromLocal8Bit( uts.sysname );
+	m['r'] = QString::fromLocal8Bit( uts.release );
+	m['m'] = QString::fromLocal8Bit( uts.machine );
 	char buf[256];
 	buf[sizeof(buf) - 1] = '\0';
 	m['h'] = gethostname( buf, sizeof(buf) - 1 ) ? "localhost" : QString::fromLocal8Bit( buf );
@@ -272,8 +279,8 @@ KdmLabel::lookupText( const QString &t )
 #elif defined(HAVE_SYS_SYSTEMINFO)
 	m['o'] = (unsigned)sysinfo( SI_SRPC_DOMAIN, buf, sizeof(buf) ) > sizeof(buf) ? "localdomain" : QString::fromLocal8Bit( buf );
 #endif
-	m['d'] = QString::number( timedDelay );
-	m['s'] = timedUser;
+	m['t'] = i18np( "1 second", "%1 seconds", timedDelay );
+	m['u'] = timedUser;
 	// xgettext:no-c-format
 	KGlobal::locale()->setDateFormat( i18nc("date format", "%a %d %B") );
 	m['c'] = KGlobal::locale()->formatDateTime( QDateTime::currentDateTime(), KLocale::LongDate );
