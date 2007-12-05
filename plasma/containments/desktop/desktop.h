@@ -114,7 +114,7 @@ protected Q_SLOTS:
 
 private:
     /** populate m_bitmapBackground with the pixmap to show */
-    void getBitmapBackground();
+    void createBitmapBackground();
 
     QAction *m_lockDesktopAction;
     QAction *m_appletBrowserAction;
@@ -142,7 +142,6 @@ private:
     QStringList m_slidePaths;
     QStringList m_slideFiles;
 
-    Plasma::Svg *m_background;
     QPixmap* m_bitmapBackground;
     QString m_wallpaperPath;
 };

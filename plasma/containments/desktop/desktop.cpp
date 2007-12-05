@@ -41,7 +41,7 @@
 #include "plasma/corona.h"
 #include "plasma/appletbrowser.h"
 #include "plasma/phase.h"
-#include "plasma/svg.h"
+#include "plasma/theme.h"
 #include "kworkspace/kworkspace.h"
 #include "knewstuff2/engine.h"
 
@@ -62,7 +62,6 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
       m_logoutAction(0),
       m_configDialog(0),
       m_ui(0),
-      m_background(0),
       m_bitmapBackground(0),
       m_wallpaperPath(0)
 {
@@ -98,7 +97,7 @@ void DefaultDesktop::init()
         if (m_wallpaperPath.isEmpty() ||
             !QFile::exists(m_wallpaperPath)) {
             //kDebug() << "SVG wallpaper!";
-            m_background = new Plasma::Svg("widgets/wallpaper", this);
+            m_wallpaperPath = Plasma::Theme::self()->image("widgets/wallpaper");
         }
     }
     else if (m_backgroundMode == kSlideshowBackground) {
@@ -144,7 +143,7 @@ void DefaultDesktop::nextSlide()
         m_wallpaperPath = m_slideFiles[m_currentSlide];
         //kDebug() << "switching slides to: " << m_wallpaperPath;
 
-        getBitmapBackground();
+        createBitmapBackground();
         update();
     }
 }
@@ -161,28 +160,29 @@ void DefaultDesktop::getNewStuff()
             // do something with the newly downloaded images
         }
     }
-    
+
     delete engine;
 }
 
-void DefaultDesktop::getBitmapBackground()
+void DefaultDesktop::createBitmapBackground()
 {
-    if (!m_wallpaperPath.isEmpty()) {
-        const QRect geom = QApplication::desktop()->screenGeometry(screen());
+    if (!m_wallpaperPath.isEmpty() && QFile::exists(m_wallpaperPath)) {
         delete m_bitmapBackground;
-        if (m_wallpaperPath.endsWith("svg") || m_wallpaperPath.endsWith("svgz"))
-        {
-            KSvgRenderer renderer(m_wallpaperPath);
-            m_bitmapBackground = new QPixmap(geom.size());
-            QPainter p(m_bitmapBackground);
-            renderer.render(&p);
-        }
-        else
-        {
+        if (m_wallpaperPath.endsWith("svg") || m_wallpaperPath.endsWith("svgz")) {
+            KSvgRenderer svg(m_wallpaperPath);
+            QImage image(svg.defaultSize(), QImage::Format_ARGB32_Premultiplied);
+            image.fill(0x0);
+            QPainter p(&image);
+            svg.render(&p);
+            m_bitmapBackground = new QPixmap(QPixmap::fromImage(image));
+        } else {
             m_bitmapBackground = new QPixmap(m_wallpaperPath);
             // NOTE: this could change to allow Full & clipped modes, etc.
-            (*m_bitmapBackground) = m_bitmapBackground->scaled(geom.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         }
+
+        // now scale it to the correct size
+        //kDebug() << "currently is size" << m_bitmapBackground->size() << "and scaling it to" << contentSize();
+        (*m_bitmapBackground) = m_bitmapBackground->scaled(contentSize().toSize(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     }
 }
 
@@ -192,14 +192,14 @@ void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
     //kDebug() << "DefaultDesktop constraints have changed";
     if (constraints & Plasma::SizeConstraint) {
         const QRect geom = QApplication::desktop()->screenGeometry(screen());
-        if (m_background) {
+/*        if (m_background) {
             //kDebug() << "Rescaling SVG wallpaper to" << geom.size();
             m_background->resize(geom.size());
-        } else if (!m_wallpaperPath.isEmpty()) {
+        } else if (!m_wallpaperPath.isEmpty()) {*/
             if (!m_bitmapBackground || !(m_bitmapBackground->size() == geom.size())) {
-                getBitmapBackground();
+                createBitmapBackground();
             }
-        }
+//        }
     }
 
     if (constraints & Plasma::ImmutableConstraint && m_appletBrowserAction) {
@@ -282,7 +282,7 @@ void DefaultDesktop::applyConfig()
         m_slideShowTimer->start();
     }
 
-    getBitmapBackground();
+    createBitmapBackground();
     update();
     cg.config()->sync();
 }
@@ -459,7 +459,7 @@ void DefaultDesktop::paintInterface(QPainter *painter,
                                     const QRect& contentsRect)
 {
     //kDebug() << "paintInterface of background";
-    if (!m_background && !m_bitmapBackground) {
+    if (!m_bitmapBackground) {
         Containment::paintInterface(painter, option, contentsRect);
         return;
     }
@@ -474,12 +474,7 @@ void DefaultDesktop::paintInterface(QPainter *painter,
     // blit the background (saves all the per-pixel-products that blending does)
     painter->setCompositionMode(QPainter::CompositionMode_Source);
 
-    if (m_background) {
-        // Plasma::Svg doesn't support drawing only part of the image (it only
-        // supports drawing the whole image to a rect), so we blit to 0,0-w,h
-        m_background->paint(painter, contentsRect);
-    //kDebug() << "draw svg of background";
-    } else if (m_bitmapBackground) {
+    if (m_bitmapBackground) {
         // for pixmaps we draw only the exposed part (untransformed since the
         // bitmapBackground already has the size of the viewport)
         painter->drawPixmap(option->exposedRect, *m_bitmapBackground, option->exposedRect);
