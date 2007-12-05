@@ -14,6 +14,7 @@
 				<normal color="#ffffff"/>
 				<pos x="0" y="4" width="100%" height="100%"/>
 				<box orientation="horizontal" spacing="10" xpadding="10">
+<!--
 					<item type="rect" id="language_button" button="true">
 						<normal color="#ffffff"/>
 						<pos y="50%" anchor="w" width="box" height="box"/>
@@ -33,6 +34,7 @@
 							</item>
 						</box>
 					</item>
+-->
 					<item type="rect" id="session_button" button="true">
 						<normal color="#ffffff"/>
 						<pos y="50%" anchor="w" width="box" height="box"/>
@@ -72,6 +74,7 @@
 							</item>
 						</box>
 					</item>
+<!--
 					<item type="rect" id="disconnect_button" button="true">
 						<normal color="#ffffff"/>
 						<show modes="flexi,remote"/>
@@ -101,6 +104,7 @@
 							</item>
 						</box>
 					</item>
+-->
 				</box>
 			</item>
 		</fixed>
@@ -145,6 +149,7 @@
 					<item type="rect" id="talker">
 						<pos anchor="n" x="50%" width="box" height="box"/>
 						<!-- box orientation="vertical" xpadding="0" ypadding="0" spacing="10" -->
+<!--
 						<box orientation="horizontal" xpadding="0" ypadding="0" spacing="0">
 							<item type="rect">
 								<normal color="#FF8080" alpha="0.0"/>
@@ -188,6 +193,7 @@
 								</box>
 							</item>
 						</box>
+-->
 					</item>
 				</box>
 				<fixed>
