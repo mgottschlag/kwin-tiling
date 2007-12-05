@@ -215,6 +215,9 @@ void DefaultDesktop::configure()
         connect( m_ui->getNewStuffButton, SIGNAL(clicked()), this, SLOT(getNewStuff()));
         connect( m_ui->addSlidePathButton, SIGNAL(clicked()), this, SLOT(addSlidePath()));
         connect( m_ui->removeSlidePathButton, SIGNAL(clicked()), this, SLOT(removeSlidePath()));
+        connect( m_ui->moveDownButton, SIGNAL(clicked()), this, SLOT(movePathDown()));
+        connect( m_ui->moveUpButton, SIGNAL(clicked()), this, SLOT(movePathUp()));
+        connect( m_ui->slidePaths, SIGNAL(currentRowChanged(int)), this, SLOT(slidePathCurrentRowChanged(int)));
         m_ui->picRequester->comboBox()->insertItem(0, KStandardDirs::locate("wallpaper", "plasma-default.png"));
         m_ui->slideShowTime->setMinimumTime(QTime(0,0,1)); // minimum to 1 seconds
 
@@ -268,10 +271,32 @@ void DefaultDesktop::applyConfig()
     cg.config()->sync();
 }
 
+void DefaultDesktop::movePathDown()
+{
+    int index = m_ui->slidePaths->currentRow();
+    if (index > -1) {
+        QListWidgetItem * item = m_ui->slidePaths->takeItem(index);
+        m_ui->slidePaths->insertItem(index + 1, item);
+        m_ui->slidePaths->setCurrentRow(index + 1);
+    }
+}
+
+void DefaultDesktop::movePathUp()
+{
+    int index = m_ui->slidePaths->currentRow();
+    if (index > -1) {
+        QListWidgetItem * item = m_ui->slidePaths->takeItem(index);
+        m_ui->slidePaths->insertItem(index - 1, item);
+        m_ui->slidePaths->setCurrentRow(index - 1);
+    }
+}
+
 void DefaultDesktop::slidePathCurrentRowChanged(int row)
 {
     // enable if there's a valid selection, otherwise disable
     m_ui->removeSlidePathButton->setEnabled(row != -1);
+    m_ui->moveUpButton->setEnabled(row > 0);
+    m_ui->moveDownButton->setEnabled(row >= 0 && row < m_ui->slidePaths->count() - 1);
 }
 
 void DefaultDesktop::addSlidePath()
@@ -282,7 +307,7 @@ void DefaultDesktop::addSlidePath()
         url = KUrl(m_slidePaths[m_slidePaths.size() - 1]);
     }
 
-    KFileDialog * dialog = new KFileDialog(url, "*", m_configDialog, m_configDialog);
+    KFileDialog * dialog = new KFileDialog(url, "*", m_configDialog);
     dialog->setMode(KFile::Directory);
     
     dialog->show();

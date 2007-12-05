@@ -97,6 +97,12 @@ protected Q_SLOTS:
      * used to enable/disable the remove button */
     void slidePathCurrentRowChanged(int row);
 
+    /** move the selected path up in the list */
+    void movePathDown();
+
+    /** move the selected path down in the list */
+    void movePathUp();
+
     /**
      * invoke kns dialog to get new wallpapers
      */
