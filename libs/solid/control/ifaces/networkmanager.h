@@ -21,7 +21,7 @@
 #define SOLID_IFACES_NETWORKMANAGER
 
 #include <QtCore/QObject>
-#include <Solid/Networking>
+#include <solid/networking.h>
 #include <solid/control/solid_control_export.h>
 #include <solid/control/networkmanager.h>
 
