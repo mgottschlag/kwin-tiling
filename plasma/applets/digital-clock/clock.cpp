@@ -28,7 +28,7 @@
 #include <QSpinBox>
 #include <QTimeLine>
 #include <QGraphicsView>
-#include <QGraphicsSceneMouseEvent>
+#include <QtGui/QGraphicsSceneMouseEvent>
 
 #include <KDebug>
 #include <KLocale>

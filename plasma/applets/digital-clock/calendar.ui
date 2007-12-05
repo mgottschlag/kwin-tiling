@@ -1,0 +1,38 @@
+<ui version="4.0" >
+ <class>calendar</class>
+ <widget class="QWidget" name="calendar" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>330</width>
+    <height>284</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <property name="styleSheet" >
+   <string>
+		background: black;
+		color: white 
+</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <widget class="KDateTable" name="kdatetable" />
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KDateTable</class>
+   <extends>QWidget</extends>
+   <header>kdatetable.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resource.qrc" />
+ </resources>
+ <connections/>
+</ui>
