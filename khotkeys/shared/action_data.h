@@ -268,11 +268,7 @@ inline
 Action_data_group::~Action_data_group()
     {
 //    kDebug( 1217 ) << "~Action_data_group() :" << list.count();
-    if( !list.isEmpty() )
-        {
-            while( list.first())
-            delete list.first();
-        }
+    qDeleteAll(list);
     }
     
 inline
