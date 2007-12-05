@@ -20,8 +20,12 @@
 
 SMServerConfigImpl::SMServerConfigImpl(QWidget *parent ) : SMServerConfigDlg(parent) {
     connect(confirmLogoutCheck,SIGNAL(toggled(bool)), SLOT(configChanged()));
-    connect(loginGroup,SIGNAL(clicked(int)), SLOT(configChanged()));
-    connect(sdGroup,SIGNAL(clicked(int)),SLOT(configChanged()));
+    connect(previousSessionRadio,SIGNAL(toggled(bool)), SLOT(configChanged()));
+    connect(savedSessionRadio,SIGNAL(toggled(bool)), SLOT(configChanged()));
+    connect(emptySessionRadio,SIGNAL(toggled(bool)), SLOT(configChanged()));
+    connect(logoutRadio,SIGNAL(toggled(bool)), SLOT(configChanged()));
+    connect(haltRadio,SIGNAL(toggled(bool)), SLOT(configChanged()));
+    connect(rebootRadio,SIGNAL(toggled(bool)), SLOT(configChanged()));
     connect(excludeLineedit,SIGNAL(textChanged(QString)),SLOT(configChanged()));
     connect(offerShutdownCheck,SIGNAL(toggled(bool)),SLOT(configChanged()));
 }
