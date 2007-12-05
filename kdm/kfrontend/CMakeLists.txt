@@ -1,6 +1,5 @@
 include(MacroAddFileDependencies)
 
-add_subdirectory( themer )
 add_subdirectory( themes )
 add_subdirectory( pics )
 add_subdirectory( sessions )
