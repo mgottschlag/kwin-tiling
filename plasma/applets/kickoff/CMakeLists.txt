@@ -16,7 +16,7 @@ set( Kickoff_SRCS
        ui/launcher.cpp
        ui/searchbar.cpp
        ui/tabbar.cpp
-       ui/urlitemview.cpp  )
+       ui/urlitemview.cpp )
 
 set(screensaver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/org.freedesktop.ScreenSaver.xml)
 QT4_ADD_DBUS_INTERFACE(Kickoff_SRCS ${screensaver_xml} screensaver_interface)
@@ -44,13 +44,16 @@ IF (CMAKE_BUILD_TYPE MATCHES Debug)
    install(TARGETS kickoff DESTINATION ${BIN_INSTALL_DIR})
 ENDIF (CMAKE_BUILD_TYPE MATCHES Debug)
 
-# Plasma Applet
-set ( Applet_SRCS
-        ${Kickoff_SRCS}
-        applet/applet.cpp )
-
+# Kickoff Plasma Applet
+set ( Applet_SRCS ${Kickoff_SRCS} applet/applet.cpp )
 kde4_add_plugin(plasma_applet_launcher ${Applet_SRCS})
 target_link_libraries(plasma_applet_launcher plasma ${Kickoff_LIBS}) 
 install(TARGETS plasma_applet_launcher DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES applet/plasma-applet-launcher.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
+# Simple KMenu Plasma Applet
+set ( SimpleApplet_SRCS ${Kickoff_SRCS} simpleapplet/menuview.cpp simpleapplet/simpleapplet.cpp )
+kde4_add_plugin(plasma_applet_simplelauncher ${SimpleApplet_SRCS})
+target_link_libraries(plasma_applet_simplelauncher plasma ${Kickoff_LIBS}) 
+install(TARGETS plasma_applet_simplelauncher DESTINATION ${PLUGIN_INSTALL_DIR})
+install(FILES simpleapplet/plasma-applet-simplelauncher.desktop DESTINATION ${SERVICES_INSTALL_DIR})
