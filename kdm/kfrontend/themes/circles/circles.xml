@@ -29,7 +29,6 @@
 								<prelight color="#666666" font="Sans 12"/>
 								<active color="#ff0000" font="Sans 12"/>
 								<pos y="50%" anchor="w"/>
-								<!-- Stock label for: _Language -->
 								<stock type="language"/>
 							</item>
 						</box>
@@ -49,7 +48,6 @@
 								<prelight color="#666666" font="Sans 12"/>
 								<active color="#ff0000" font="Sans 12"/>
 								<pos y="50%" anchor="w"/>
-								<!-- Stock label for: _Session -->
 								<stock type="session"/>
 							</item>
 						</box>
@@ -70,7 +68,6 @@
 								<prelight color="#666666" font="Sans 12"/>
 								<active color="#ff0000" font="Sans 12"/>
 								<pos y="50%" anchor="w"/>
-								<!-- Stock label for: _Actions -->
 								<stock type="system"/>
 							</item>
 						</box>
@@ -91,7 +88,6 @@
 								<prelight color="#666666" font="Sans 12"/>
 								<active color="#ff0000" font="Sans 12"/>
 								<pos y="50%" anchor="w"/>
-								<!-- Stock label for: D_isconnect -->
 								<stock type="disconnect"/>
 								<show modes="remote"/>
 							</item>
@@ -100,7 +96,6 @@
 								<prelight color="#666666" font="Sans 12"/>
 								<active color="#ff0000" font="Sans 12"/>
 								<pos y="50%" anchor="w"/>
-								<!-- Stock label for: _Quit -->
 								<stock type="quit"/>
 								<show modes="flexi"/>
 							</item>
@@ -127,7 +122,6 @@
 			<item type="label">
 				<normal color="#000000" font="Sans 12"/>
 				<pos x="50%" anchor="n"/>
-				<!-- Stock label for: User %s will login in %d seconds -->
 				<stock type="timed-label"/>
 			</item>
 		</box>
@@ -146,7 +140,6 @@
 					<item type="label">
 						<pos anchor="n" x="50%"/>
 						<normal color="#000000" font="Sans 14"/>
-						<!-- Stock label for: Welcome to %h -->
 						<stock type="welcome-label"/>
 					</item>
 					<item type="rect" id="talker">
@@ -162,21 +155,18 @@
 										<buddy idref="domain-entry"/>
 										<pos anchor="ne" x="100%"/>
 										<normal color="#000000" font="Sans 12"/>
-										<!-- Stock label for: _Domain: -->
 										<stock type="domain-label"/>
 									</item>
 									<item type="label">
 										<buddy idref="user-entry"/>
 										<pos anchor="ne" x="100%"/>
 										<normal color="#000000" font="Sans 12"/>
-										<!-- Stock label for: _Username: -->
 										<stock type="username-label"/>
 									</item>
 									<item type="label">
 										<buddy idref="pw-entry"/>
 										<pos anchor="ne" x="100%"/>
 										<normal color="#000000" font="Sans 12"/>
-										<!-- Stock label for: _Password: -->
 										<stock type="password-label"/>
 									</item>
 								</box>
@@ -213,7 +203,6 @@
 							<item type="label">
 								<normal color="#ff0000" font="Sans 12"/>
 								<pos x="50%" anchor="n"/>
-								<!-- Stock label for: You've got capslock on! -->
 								<stock type="caps-lock-warning"/>
 							</item>
 						</box>
