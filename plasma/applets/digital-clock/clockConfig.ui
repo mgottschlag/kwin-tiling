@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>420</width>
-    <height>320</height>
+    <height>428</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -31,7 +31,7 @@
       </size>
      </property>
      <property name="currentIndex" >
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="AppearanceTab" >
       <attribute name="title" >
@@ -113,8 +113,15 @@
       <attribute name="title" >
        <string>Timezones</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
+      <layout class="QVBoxLayout" >
+       <item>
+        <widget class="QCheckBox" name="localTimeZone" >
+         <property name="text" >
+          <string>Use &amp;local timezone</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="KTimeZoneWidget" name="timeZones" >
          <property name="minimumSize" >
           <size>
@@ -188,6 +195,22 @@
     <hint type="destinationlabel" >
      <x>369</x>
      <y>53</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>localTimeZone</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>timeZones</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>209</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>209</x>
+     <y>239</y>
     </hint>
    </hints>
   </connection>

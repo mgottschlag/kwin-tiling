@@ -1,10 +1,10 @@
 project(plasma-dig-clock)
 
 set(clock_SRCS
-    clock.cpp
-    clocknumber.cpp)
+    clock.cpp)
 
 kde4_add_ui_files(clock_SRCS clockConfig.ui )
+kde4_add_ui_files(clock_SRCS calendar.ui )
 kde4_add_plugin(plasma_applet_dig_clock ${clock_SRCS})
 target_link_libraries(plasma_applet_dig_clock plasma ${KDE4_KDEUI_LIBS})
 

@@ -20,7 +20,6 @@
  ***************************************************************************/
 
 #include "clock.h"
-#include "clocknumber.h"
 
 #include <math.h>
 
@@ -28,6 +27,8 @@
 #include <QStyleOptionGraphicsItem>
 #include <QSpinBox>
 #include <QTimeLine>
+#include <QGraphicsView>
+#include <QGraphicsSceneMouseEvent>
 
 #include <KDebug>
 #include <KLocale>
@@ -37,8 +38,10 @@
 #include <KDialog>
 #include <KColorScheme>
 #include <KGlobalSettings>
-
+#include <kdatepicker.h>
+#include <kdatetable.h>
 #include <plasma/theme.h>
+#include <plasma/dialog.h>
 
 
 Clock::Clock(QObject *parent, const QVariantList &args)
@@ -50,7 +53,9 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_showYear(0),
       m_showDay(0),
       m_showTimezone(0),
-      m_dialog(0)
+      m_calendarIsShown(0),
+      m_dialog(0),
+      m_calendar(0)
 {
     setHasConfigurationInterface(true);
 }
@@ -59,9 +64,12 @@ void Clock::init()
 {
     KConfigGroup cg = config();
     m_timezone = cg.readEntry("timezone", "Local");
+    m_showTimezone = false;
     if (m_timezone != "Local") {
         m_showTimezone = true;
     }
+    m_showTimezone = cg.readEntry("showTimezone", m_showTimezone);
+    kDebug() << "showTimezone:" << m_showTimezone;
 
     if (formFactor() == Plasma::Planar ||
         formFactor() == Plasma::MediaCenter) {
@@ -72,10 +80,6 @@ void Clock::init()
         m_showYear = cg.readEntry("showYear", false);
     }
     m_showDay = cg.readEntry("showDay", true);
-
-    // Default to show the timezone if it's not "Local"
-    //m_showTimezone = cg.readEntry("showTimezone", m_showTimezone);
-    m_showTimezone = false; // FIXME: Remove
 
     m_clockStyle = PlainClock;
     m_plainClockFont = cg.readEntry("plainClockFont", KGlobalSettings::generalFont());
@@ -136,10 +140,45 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
     update();
 }
 
+void Clock::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    Q_UNUSED(event)
+    if(event->buttons () == Qt::LeftButton) {
+        kDebug() << "*Click*";
+        showCalendar(event);
+    }
+}
+
+void Clock::showCalendar(QGraphicsSceneMouseEvent *event)
+{
+    if (!m_calendarIsShown) {
+        kDebug();
+        if (m_calendar == 0) {
+            m_calendar = new Plasma::Dialog();
+            //m_calendar->setStyleSheet("{ border : 0px }");
+            QVBoxLayout *m_layout = new QVBoxLayout();
+            m_layout->setSpacing(0);
+            m_layout->setMargin(0);
+
+            m_calendarUi.setupUi(m_calendar);
+            m_calendar->setLayout(m_layout);
+            m_calendar->setWindowFlags(Qt::Popup);
+            m_calendar->adjustSize();
+        }
+        m_calendar->position(event, boundingRect(), mapToScene(boundingRect().topLeft()));
+        m_calendar->show();
+        m_calendarIsShown = true;
+    } else {
+        m_calendar->hide();
+        m_calendarIsShown = false;
+    }
+}
+
 void Clock::showConfigurationInterface()
 {
     if (m_dialog == 0) {
         m_dialog = new KDialog;
+
         m_dialog->setCaption( i18n("Configure Clock") );
 
         ui.setupUi(m_dialog->mainWidget());
@@ -152,6 +191,8 @@ void Clock::showConfigurationInterface()
         ui.plainClockFont->setCurrentFont(m_plainClockFont);
         ui.plainClockColor->setColor(m_plainClockColor);
         ui.timeZones->setSelected(m_timezone, true);
+        ui.timeZones->setEnabled(m_timezone != "Local");
+        ui.localTimeZone->setChecked(m_timezone == "Local");
 
         m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
 
@@ -168,8 +209,12 @@ void Clock::configAccepted()
     KConfigGroup cg = config();
     //QGraphicsItem::update();
     QStringList tzs = ui.timeZones->selection();
-
-    if (tzs.count() > 0) {
+    if (ui.localTimeZone->checkState() == Qt::Checked) {
+        dataEngine("time")->disconnectSource(m_timezone, this);
+        m_timezone = "Local";
+        dataEngine("time")->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
+        cg.writeEntry("timezone", m_timezone);
+    } else if (tzs.count() > 0) {
         //TODO: support multiple timezones
         QString tz = tzs.at(0);
         if (tz != m_timezone) {
@@ -180,10 +225,12 @@ void Clock::configAccepted()
             m_timezone = tz;
             dataEngine("time")->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
         }
+        cg.writeEntry("timezone", m_timezone);
     } else if (m_timezone != "Local") {
         dataEngine("time")->disconnectSource(m_timezone, this);
         m_timezone = "Local";
         dataEngine("time")->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
+        cg.writeEntry("timezone", m_timezone);
     } else {
         kDebug() << "Timezone unknown: " << tzs;
     }
@@ -196,9 +243,10 @@ void Clock::configAccepted()
     cg.writeEntry("showDay", m_showDay);
 
     if (m_showTimezone != (ui.showTimezone->checkState() == Qt::Checked)) {
+        m_showTimezone = ui.showTimezone->checkState() == Qt::Checked;
         cg.writeEntry("showTimezone", m_showTimezone);
+        kDebug() << "Saving show timezone: " << m_showTimezone;
     }
-    m_showTimezone = ui.showTimezone->checkState() == Qt::Checked;
 
     m_plainClockFont = ui.plainClockFont->currentFont();
     m_plainClockColor = ui.plainClockColor->color();
@@ -220,6 +268,7 @@ void Clock::configAccepted()
 
 Clock::~Clock()
 {
+	//delete m_calendar;
 }
 
 void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)

@@ -27,7 +27,10 @@
 
 #include <plasma/applet.h>
 #include <plasma/dataengine.h>
+#include <plasma/dialog.h>
 #include "ui_clockConfig.h"
+#include "ui_calendar.h"
+#include <kdatepicker.h>
 
 
 class KDialog;
@@ -48,6 +51,7 @@ class Clock : public Plasma::Applet
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
         void setPath(const QString&);
         void constraintsUpdated(Plasma::Constraints);
+        void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
         // reimplemented
         Qt::Orientations expandingDirections() const;
@@ -58,6 +62,7 @@ class Clock : public Plasma::Applet
 
     protected slots:
         void configAccepted();
+        void showCalendar(QGraphicsSceneMouseEvent *event);
 
     private:
         Q_ENUMS( m_clockStyle )
@@ -75,6 +80,7 @@ class Clock : public Plasma::Applet
         bool m_showYear;
         bool m_showDay;
         bool m_showTimezone;
+        bool m_calendarIsShown;
 
         QSize m_defaultElementSize;
 
@@ -85,9 +91,13 @@ class Clock : public Plasma::Applet
         QTime m_time;
         QDate m_date;
         KDialog *m_dialog; //should we move this into another class?
+        Plasma::Dialog *m_calendar;
+        QVBoxLayout *m_layout;
         QTime m_lastTimeSeen;
         /// Designer Config file
         Ui::clockConfig ui;
+        Ui::calendar m_calendarUi;
+
         bool m_animating;
         int m_animationStep;
 
