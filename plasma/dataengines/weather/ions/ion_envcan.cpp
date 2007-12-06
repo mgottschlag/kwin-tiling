@@ -1000,6 +1000,7 @@ void EnvCanadaIon::updateWeather(const QString& source)
      foreach(QString forecastItem, forecastList) {
          fieldList = forecastItem.split('|');
 
+         // TODO: We don't convert the wind format (Knots, meteres per second, bft) for the Long Forecast yet. These are not used in the applet (for now).
          if (d->m_useMetric) {
              setData(weatherSource, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5") \
                      .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[3]).arg(fieldList[4]).arg(fieldList[5]));
