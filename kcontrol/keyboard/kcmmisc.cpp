@@ -69,7 +69,8 @@ KeyboardConfig::KeyboardConfig(QWidget *parent, const QVariantList &)
 //   lay->addStretch();
 
   ui->click->setRange(0, 100, 10);
-  ui->delay->setRange(100, 5000, 50, false);
+  ui->delay->setRange(100, 5000, 50);
+  ui->delay->setSliderEnabled(false);
   ui->rate->setRange(0.2, 50, 5, false);
 
   sliderMax = (int)floor (0.5 + 2*(log(5000)-log(100)) / (log(5000)-log(4999)));
