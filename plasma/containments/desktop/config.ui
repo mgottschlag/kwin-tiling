@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>417</height>
+    <height>390</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
@@ -91,7 +91,7 @@
             </size>
            </property>
            <property name="currentIndex" >
-            <number>1</number>
+            <number>0</number>
            </property>
            <widget class="QWidget" name="page" >
             <layout class="QVBoxLayout" >
@@ -124,7 +124,7 @@
             <layout class="QVBoxLayout" >
              <item>
               <layout class="QGridLayout" >
-               <item rowspan="4" row="1" column="0" >
+               <item rowspan="5" row="1" column="0" >
                 <widget class="KListWidget" name="slidePaths" />
                </item>
                <item row="1" column="1" >
