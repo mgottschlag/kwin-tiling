@@ -46,7 +46,18 @@ public:
     // Winds measured in meters per second
     float kilometersToMS(float km) const;
     float milesToMS(float miles) const;
+    float knotsToMS(float knots) const;
 
+    // Winds measured in knots
+    float kilometersToKT(float km) const;
+    float milesToKT(float miles) const;
+    float knotsToKM(float knots) const;
+    float knotsToMI(float knots) const;
+    
+    // Winds measured in beaufort scale value
+    int knotsToBF(float knots) const;
+    int milesToBF(float miles) const;
+    int kilometersToBF(float km) const;
 };
 
 #endif
