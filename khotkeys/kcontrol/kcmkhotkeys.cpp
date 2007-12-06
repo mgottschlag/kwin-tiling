@@ -111,8 +111,8 @@ Module::Module( QWidget* parent_P, const QVariantList & )
       ki18n("(c) 1999-2005 Lubos Lunak"));
     about->addAuthor(ki18n("Lubos Lunak"), ki18n("Maintainer"), "l.lunak@kde.org");
     setAboutData( about );
-
-		}
+    load();
+}
 
 Module::~Module()
     {
@@ -324,6 +324,7 @@ void Module::changed()
 
 void Module::init_arts()
     {
+#warning Port to Phonon
 #ifdef HAVE_ARTS
     if( haveArts())
         {
