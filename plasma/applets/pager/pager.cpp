@@ -120,7 +120,7 @@ void Pager::showConfigurationInterface()
 
     }
     ui.showDesktopNumberCheckBox->setChecked(m_showDesktopNumber);
-    
+
     ui.spinHeight->setValue(m_itemHeight);
     ui.spinRows->setValue(m_rows);
     ui.spinRows->setMaximum(m_desktopCount);
@@ -134,7 +134,7 @@ void Pager::recalculateGeometry()
     m_rects.clear();
 
     int columns = m_desktopCount/m_rows + m_desktopCount%m_rows;
-    for(int i = 0; i < m_desktopCount; i++) {
+    for (int i = 0; i < m_desktopCount; i++) {
         m_rects.append(QRectF((i%columns)*itemWidth+2*(i%columns),
                        m_itemHeight*(i/columns) + 2*(i/columns),
                        itemWidth,
@@ -150,8 +150,8 @@ void Pager::recalculateWindowRects()
 {
     QList<WId> windows = KWindowSystem::stackingOrder();
     m_windowRects.clear();
-    for(int i = 0; i < m_desktopCount; i++) {
-	m_windowRects.append(QList<QPair<WId, QRect> >());
+    for (int i = 0; i < m_desktopCount; i++) {
+        m_windowRects.append(QList<QPair<WId, QRect> >());
     }
     m_activeWindows.clear();
     foreach(WId window, windows) {
@@ -170,21 +170,21 @@ void Pager::recalculateWindowRects()
             continue;
         }
 
-	for(int i = 0; i < m_desktopCount; i++) {
-	    if(!info.isOnDesktop(i+1)) {
-		continue;
-	    }
-	    QRect windowRect = info.frameGeometry();
-	    windowRect = QRectF(windowRect.x() * m_scaleFactor,
-				 windowRect.y() * m_scaleFactor,
-				 windowRect.width() * m_scaleFactor, 
-				 windowRect.height() * m_scaleFactor).toRect();
-	    windowRect.translate(m_rects[i].topLeft().toPoint());
-	    m_windowRects[i].append(QPair<WId, QRect>(window, windowRect));
-	    if(window == KWindowSystem::activeWindow()) {
-		m_activeWindows.append(windowRect);
-	    }
-	}
+        for (int i = 0; i < m_desktopCount; i++) {
+            if (!info.isOnDesktop(i+1)) {
+                continue;
+            }
+            QRect windowRect = info.frameGeometry();
+            windowRect = QRectF(windowRect.x() * m_scaleFactor,
+                                windowRect.y() * m_scaleFactor,
+                                windowRect.width() * m_scaleFactor, 
+                                windowRect.height() * m_scaleFactor).toRect();
+            windowRect.translate(m_rects[i].topLeft().toPoint());
+            m_windowRects[i].append(QPair<WId, QRect>(window, windowRect));
+            if (window == KWindowSystem::activeWindow()) {
+                m_activeWindows.append(windowRect);
+            }
+        }
     }
     update();
 }
@@ -194,13 +194,13 @@ void Pager::configAccepted()
     KConfigGroup cg = config();
     m_showDesktopNumber = ui.showDesktopNumberCheckBox->isChecked();
     cg.writeEntry("showDesktopNumber", m_showDesktopNumber);
-    
+
     m_itemHeight = ui.spinHeight->value();
     cg.writeEntry("height", m_itemHeight);
-    
+
     m_rows = ui.spinRows->value();
-    if(m_rows > m_desktopCount) {
-	m_rows = m_desktopCount;
+    if (m_rows > m_desktopCount) {
+        m_rows = m_desktopCount;
     }
     cg.writeEntry("rows", m_rows);
     updateConstraints();
@@ -256,33 +256,33 @@ void Pager::showingDesktopChanged(bool showing)
 
 void Pager::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(event->buttons() != Qt::RightButton)
+    if (event->buttons() != Qt::RightButton)
     {
-       for(int i = 0; i < m_desktopCount; i++) {
-	  if(m_rects[i].contains(event->pos())) {
-	    for(int j = 0; j < m_windowRects.count(); j++) {
-		for(int k = m_windowRects[j].count() - 1; k >= 0 ; k--) {
-		    if(m_windowRects[j][k].second.contains(event->pos().toPoint()) && m_rects[i].contains(event->pos().toPoint())) {
-			m_dragOriginal = m_windowRects[j][k].second;
-			m_dragOriginalPos = m_dragCurrentPos = event->pos();
-			m_dragId = m_windowRects[j][k].first;
-			break;
-		    }
-		}
-	    }
-	    if(m_dragOriginal.isEmpty()) {
-		m_dragOriginal = m_rects[i].toRect();
-		m_dragOriginalPos = m_dragCurrentPos = event->pos();
-	    }
-	    for(int i = 0; i < m_desktopCount; i++) {
-		if(m_rects[i].contains(event->pos().toPoint())) {
-		    m_dragHighlightedDesktop = i;
-		    break;
-		}
-	    }
-	    return;
-	  }
-       }
+        for (int i = 0; i < m_desktopCount; i++) {
+            if (m_rects[i].contains(event->pos())) {
+                for (int j = 0; j < m_windowRects.count(); j++) {
+                    for (int k = m_windowRects[j].count() - 1; k >= 0 ; k--) {
+                        if (m_windowRects[j][k].second.contains(event->pos().toPoint()) && m_rects[i].contains(event->pos().toPoint())) {
+                            m_dragOriginal = m_windowRects[j][k].second;
+                            m_dragOriginalPos = m_dragCurrentPos = event->pos();
+                            m_dragId = m_windowRects[j][k].first;
+                            break;
+                        }
+                    }
+                }
+                if (m_dragOriginal.isEmpty()) {
+                    m_dragOriginal = m_rects[i].toRect();
+                    m_dragOriginalPos = m_dragCurrentPos = event->pos();
+                }
+                for (int i = 0; i < m_desktopCount; i++) {
+                    if (m_rects[i].contains(event->pos().toPoint())) {
+                        m_dragHighlightedDesktop = i;
+                        break;
+                    }
+                }
+                return;
+            }
+        }
     }
     Applet::mousePressEvent(event);
 }
@@ -291,11 +291,11 @@ void Pager::wheelEvent(QGraphicsSceneWheelEvent *e)
 {
     int newDesk;
     int desktops = KWindowSystem::numberOfDesktops();
-    
-/*
-    if (m_kwin->numberOfViewports(0).width() * m_kwin->numberOfViewports(0).height() > 1 )
-        desktops = m_kwin->numberOfViewports(0).width() * m_kwin->numberOfViewports(0).height();
-*/
+
+    /*
+       if (m_kwin->numberOfViewports(0).width() * m_kwin->numberOfViewports(0).height() > 1 )
+       desktops = m_kwin->numberOfViewports(0).width() * m_kwin->numberOfViewports(0).height();
+       */
     if (e->delta() < 0)
     {
         newDesk = m_currentDesktop % desktops + 1;
@@ -314,58 +314,58 @@ void Pager::wheelEvent(QGraphicsSceneWheelEvent *e)
 
 void Pager::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(m_dragId != 0) {
-	m_dragCurrentPos = event->pos();
-	m_dragHighlightedDesktop = -1;
-	for(int i = 0; i < m_desktopCount; i++) {
-	    if(m_rects[i].contains(event->pos().toPoint())) {
-		m_dragHighlightedDesktop = i;
-		break;
-	    }
-	}
-	m_hoverRect = QRectF();
-	foreach(QRectF rect, m_rects) {
-	    if(rect.contains(event->pos())) {
-		m_hoverRect = rect;
-		break;
-	    }
-	}
-	update();
+    if (m_dragId != 0) {
+        m_dragCurrentPos = event->pos();
+        m_dragHighlightedDesktop = -1;
+        for(int i = 0; i < m_desktopCount; i++) {
+            if(m_rects[i].contains(event->pos().toPoint())) {
+                m_dragHighlightedDesktop = i;
+                break;
+            }
+        }
+        m_hoverRect = QRectF();
+        foreach(QRectF rect, m_rects) {
+            if(rect.contains(event->pos())) {
+                m_hoverRect = rect;
+                break;
+            }
+        }
+        update();
     } else if (m_dragOriginal.isEmpty()) {
-	Applet::mouseMoveEvent(event);
+        Applet::mouseMoveEvent(event);
     }
 }
 
 void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(event->pos() == m_dragOriginalPos) {
-	m_dragOriginalPos = m_dragCurrentPos = QPointF();
-	m_dragId = 0;
-	m_dragOriginal = QRect();
-	m_dragHighlightedDesktop = -1;
-	for(int i = 0; i < m_desktopCount; i++) {
-	    if(m_rects[i].contains(event->pos().toPoint()) && m_currentDesktop != i+1) {
-		KWindowSystem::setCurrentDesktop(i+1);
-		m_currentDesktop = i+1;
-		update();
-		return;
-	    }
-	}
+    if (event->pos() == m_dragOriginalPos) {
+        m_dragOriginalPos = m_dragCurrentPos = QPointF();
+        m_dragId = 0;
+        m_dragOriginal = QRect();
+        m_dragHighlightedDesktop = -1;
+        for(int i = 0; i < m_desktopCount; i++) {
+            if(m_rects[i].contains(event->pos().toPoint()) && m_currentDesktop != i+1) {
+                KWindowSystem::setCurrentDesktop(i+1);
+                m_currentDesktop = i+1;
+                update();
+                return;
+            }
+        }
     } else {
-	if(m_dragHighlightedDesktop != -1) {
-	    QPointF dest = m_dragCurrentPos - m_rects[m_dragHighlightedDesktop].topLeft() - m_dragOriginalPos + m_dragOriginal.topLeft();
-	    dest = QPointF(dest.x()/m_scaleFactor, dest.y()/m_scaleFactor);
-	    KWindowSystem::setOnDesktop(m_dragId, m_dragHighlightedDesktop+1);
+        if (m_dragHighlightedDesktop != -1) {
+            QPointF dest = m_dragCurrentPos - m_rects[m_dragHighlightedDesktop].topLeft() - m_dragOriginalPos + m_dragOriginal.topLeft();
+            dest = QPointF(dest.x()/m_scaleFactor, dest.y()/m_scaleFactor);
+            KWindowSystem::setOnDesktop(m_dragId, m_dragHighlightedDesktop+1);
             XMoveWindow(QX11Info::display(), m_dragId, dest.toPoint().x(), dest.toPoint().y());
-	}
-	m_dragOriginalPos = m_dragCurrentPos = QPointF();
-	m_dragId = 0;
-	m_dragOriginal = QRect();
-	m_dragHighlightedDesktop = -1;
-	m_timer->start();
+        }
+        m_dragOriginalPos = m_dragCurrentPos = QPointF();
+        m_dragId = 0;
+        m_dragOriginal = QRect();
+        m_dragHighlightedDesktop = -1;
+        m_timer->start();
     }
 
-	Applet::mouseReleaseEvent(event);
+    Applet::mouseReleaseEvent(event);
 }
 
 void Pager::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
@@ -375,14 +375,14 @@ void Pager::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 void Pager::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
-    foreach(QRectF rect, m_rects) {
-	if(rect.contains(event->pos())) {
-	    if(m_hoverRect != rect) {
-		m_hoverRect = rect;
-		update();
-	    }
-	    return;
-	}
+    foreach (QRectF rect, m_rects) {
+        if (rect.contains(event->pos())) {
+            if (m_hoverRect != rect) {
+                m_hoverRect = rect;
+                update();
+            }
+            return;
+        }
     }
     m_hoverRect = QRectF();
     update();
@@ -391,9 +391,9 @@ void Pager::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 void Pager::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED( event );
-    if(m_hoverRect != QRectF()) {
-	m_hoverRect = QRectF();
-	update();
+    if (m_hoverRect != QRectF()) {
+        m_hoverRect = QRectF();
+        update();
     }
 }
 
@@ -401,58 +401,60 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
 {
     Q_UNUSED( option );
     Q_UNUSED( contentsRect );
-    
+
     // paint desktop background
     QBrush hoverBrush(QColor(255,255,255,50));
     QBrush defaultBrush(Qt::NoBrush);
     painter->setPen(Qt::NoPen);
-    for(int i = 0; i < m_desktopCount; i++) {
-	if(m_rects[i] == m_hoverRect) {
-	    painter->setBrush(hoverBrush);
-	} else {
-	    painter->setBrush(defaultBrush);
-	}
-	painter->drawRect(m_rects[i]);
+    for (int i = 0; i < m_desktopCount; i++) {
+        if (m_rects[i] == m_hoverRect) {
+            painter->setBrush(hoverBrush);
+        } else {
+            painter->setBrush(defaultBrush);
+        }
+        painter->drawRect(m_rects[i]);
     }
-    
+
     // draw window thumbnails
     QPen windowPen(Qt::white);
     QBrush windowBrush(QColor(200,200,200));
     QBrush activeWindowBrush(QColor(100,100,255));
     painter->setPen(windowPen);
-    for(int i = 0; i < m_windowRects.count(); i++) {
-	for(int j = 0; j < m_windowRects[i].count(); j++) {
-	    QRect rect = m_windowRects[i][j].second;
-	    if(m_activeWindows.contains(rect)) {
-		painter->setBrush(activeWindowBrush);
-	    } else {
-		painter->setBrush(windowBrush);
-	    }
-	    if(m_dragId == m_windowRects[i][j].first) {
-		rect.translate((m_dragCurrentPos - m_dragOriginalPos).toPoint());
-		painter->setClipRect(option->exposedRect);
-	    } else {
-		painter->setClipRect(m_rects[i]);
-	    }
-	    painter->drawRect(rect);
-	}
+    for (int i = 0; i < m_windowRects.count(); i++) {
+        for(int j = 0; j < m_windowRects[i].count(); j++) {
+            QRect rect = m_windowRects[i][j].second;
+            if(m_activeWindows.contains(rect)) {
+                painter->setBrush(activeWindowBrush);
+            } else {
+                painter->setBrush(windowBrush);
+            }
+            if(m_dragId == m_windowRects[i][j].first) {
+                rect.translate((m_dragCurrentPos - m_dragOriginalPos).toPoint());
+                painter->setClipRect(option->exposedRect);
+            } else {
+                painter->setClipRect(m_rects[i]);
+            }
+            painter->drawRect(rect);
+        }
     }
-    
+
     // draw desktop foreground
     painter->setClipRect(option->exposedRect);
     QPen activePen(Qt::white);
     QPen defaultPen(QColor(120,120,120));
     painter->setBrush(Qt::NoBrush);
-    for(int i = 0; i < m_desktopCount; i++) {
-	if(i + 1 == m_currentDesktop || i == m_dragHighlightedDesktop) {
-	    painter->setPen(activePen);
-	} else {
-	    painter->setPen(defaultPen);
-	}
-	painter->drawRect(m_rects[i]);
-	if(m_showDesktopNumber) {
-	    painter->drawText(m_rects[i], Qt::AlignCenter, QString::number(i+1));
-	}
+    for( int i = 0; i < m_desktopCount; i++) {
+        if (i + 1 == m_currentDesktop || i == m_dragHighlightedDesktop) {
+            painter->setPen(activePen);
+        } else {
+            painter->setPen(defaultPen);
+        }
+
+        painter->drawRect(m_rects[i]);
+
+        if (m_showDesktopNumber) {
+            painter->drawText(m_rects[i], Qt::AlignCenter, QString::number(i+1));
+        }
     }
 }
 
