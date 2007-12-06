@@ -538,7 +538,7 @@ QMap<QString, QString> NOAAIon::visibility(const QString& source)
         return visibilityInfo;
     }
     if (d->m_useMetric) {
-        visibilityInfo.insert("visibility", QString("%1").arg(QString::number(d->m_formula.milesToKM(d->m_weatherData[source].visibility.toFloat()), 'f', 1)));
+        visibilityInfo.insert("visibility", QString::number(d->m_formula.milesToKM(d->m_weatherData[source].visibility.toFloat()), 'f', 1));
         visibilityInfo.insert("visibilityUnit", "km");
         return visibilityInfo;
     } 
