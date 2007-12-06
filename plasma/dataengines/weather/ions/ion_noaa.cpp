@@ -55,7 +55,8 @@ public:
     bool m_useUTC;  // Ion option: Timezone may be local time or UTC time
     bool m_useMetric; // Ion option: Units may be Metric or Imperial
     bool m_windInMeters; // Ion option: Display wind format in meters per second only
-
+    bool m_windInKnots; // Ion option: Display wind format in knots
+    bool m_windInBft; // ion option: Display wind by the beaufort scale model
     WeatherFormula m_formula;
 };
 
@@ -395,11 +396,20 @@ void NOAAIon::option(int option, const QVariant& value)
             d->m_useUTC = true;
         }
         break;
-    case IonInterface::WINDFORMAT:
-        if (value.toBool()) {
-           d->m_windInMeters = true;
-        } else {
-           d->m_windInMeters = false;
+    case IonInterface::USEROPTION: // This ion uses this for wind format type
+        QStringList option = value.toString().split("|");
+
+        d->m_windInMeters = false;
+        d->m_windInKnots = false;
+        d->m_windInBft = false;
+
+        // Metastring format:  envcan|option|type
+        if (option[2] == "WINDMS") {
+            d->m_windInMeters = true;
+        } else if (option[2] == "WINDKNOTS") {
+            d->m_windInKnots = true;
+        } else if (option[2] == "WINDBEAUFORT") {
+            d->m_windInBft = true;
         }
         break;
     }
@@ -595,15 +605,29 @@ QMap<QString, QString> NOAAIon::wind(const QString& source)
     } else {
         if (d->m_useMetric) {
             if (d->m_windInMeters) {
-                windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_formula.milesToMS(d->m_weatherData[source].windSpeed.toFloat()), 'f', 2)));
+                windInfo.insert("windSpeed", QString::number(d->m_formula.milesToMS(d->m_weatherData[source].windSpeed.toFloat()), 'f', 2));
                 windInfo.insert("windUnit", "m/s");
+            } else if (d->m_windInKnots) {
+                windInfo.insert("windSpeed", QString::number(d->m_formula.milesToKT(d->m_weatherData[source].windSpeed.toFloat()), 'f', 1));
+                windInfo.insert("windUnit", "kt");
+            } else if (d->m_windInBft) {
+                windInfo.insert("windSpeed", QString::number(d->m_formula.milesToBF(d->m_weatherData[source].windSpeed.toInt())));
+                windInfo.insert("windUnit", "bft");
             } else {
-                windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_formula.milesToKM(d->m_weatherData[source].windSpeed.toFloat()), 'f', 1)));
+                windInfo.insert("windSpeed", QString::number(d->m_formula.milesToKM(d->m_weatherData[source].windSpeed.toFloat()), 'f', 1));
                 windInfo.insert("windUnit", "km/h");
             }
         } else {
-            windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_weatherData[source].windSpeed.toFloat(), 'f', 1)));
-            windInfo.insert("windUnit", "mph");
+            if (d->m_windInKnots) {
+                windInfo.insert("windSpeed", QString::number(d->m_formula.milesToKT(d->m_weatherData[source].windSpeed.toFloat()), 'f', 1));
+                windInfo.insert("windUnit", "kt");
+            } else if (d->m_windInBft) {
+                windInfo.insert("windSpeed", QString::number(d->m_formula.milesToBF(d->m_weatherData[source].windSpeed.toInt())));
+                windInfo.insert("windUnit", "bft");
+            } else {
+                windInfo.insert("windSpeed", QString::number(d->m_weatherData[source].windSpeed.toFloat(), 'f', 1));
+                windInfo.insert("windUnit", "mph");
+            }
         }
     }
 
@@ -614,15 +638,29 @@ QMap<QString, QString> NOAAIon::wind(const QString& source)
     } else {
         if (d->m_useMetric) {
             if (d->m_windInMeters) {
-                windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_formula.milesToMS(d->m_weatherData[source].windGust.toFloat()), 'f', 2)));
+                windInfo.insert("windGust", QString::number(d->m_formula.milesToMS(d->m_weatherData[source].windGust.toFloat()), 'f', 2));
                 windInfo.insert("windGustUnit", "m/s");
+            } else if (d->m_windInKnots) {
+                windInfo.insert("windGust", QString::number(d->m_formula.milesToKT(d->m_weatherData[source].windGust.toFloat()), 'f', 1));
+                windInfo.insert("windGustUnit", "kt");
+            } else if (d->m_windInBft) {
+                windInfo.insert("windGust", QString::number(d->m_formula.milesToBF(d->m_weatherData[source].windGust.toInt())));
+                windInfo.insert("windGustunit", "bft");
             } else {
-                windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_formula.milesToKM(d->m_weatherData[source].windGust.toFloat()), 'f', 1)));
+                windInfo.insert("windGust", QString::number(d->m_formula.milesToKM(d->m_weatherData[source].windGust.toFloat()), 'f', 1));
                 windInfo.insert("windGustUnit", "km/h");
             }
         } else {
-            windInfo.insert("windGust", QString("%1").arg(QString::number(d->m_weatherData[source].windGust.toFloat(), 'f', 1)));
-            windInfo.insert("windGustUnit", "mph");
+            if (d->m_windInKnots) {
+                windInfo.insert("windGust", QString::number(d->m_formula.milesToKT(d->m_weatherData[source].windGust.toFloat()), 'f', 1));
+                windInfo.insert("windGustUnit", "kt");
+            } else if (d->m_windInBft) {
+                windInfo.insert("windGust", QString::number(d->m_formula.milesToBF(d->m_weatherData[source].windGust.toInt())));
+                windInfo.insert("windGustunit", "bft");
+            } else {
+                windInfo.insert("windGust", QString::number(d->m_weatherData[source].windGust.toFloat(), 'f', 1));
+                windInfo.insert("windGustUnit", "mph");
+            }
         }
     }
 
