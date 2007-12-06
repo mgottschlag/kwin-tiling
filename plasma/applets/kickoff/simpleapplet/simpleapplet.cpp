@@ -83,7 +83,10 @@ void MenuLauncherApplet::toggleMenu(bool pressed, QGraphicsSceneMouseEvent *even
     if (view) {
         QPoint viewPos = view->mapFromScene(scenePos);
         globalPos = view->mapToGlobal(viewPos);
-        globalPos.ry() -= m_menuview->sizeHint().height();
+        int ypos = globalPos.ry() - m_menuview->sizeHint().height();
+        if( ypos < 0 )
+            ypos = globalPos.ry() + boundingRect().height();
+        globalPos.ry() = ypos;
     }
 
     m_menuview->setAttribute(Qt::WA_DeleteOnClose);
