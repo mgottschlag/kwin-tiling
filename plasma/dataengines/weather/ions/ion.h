@@ -74,7 +74,7 @@ public:
     */
     bool isValid() const;
 
-    enum ionOptions { UNITS, TIMEFORMAT, WINDFORMAT };
+    enum ionOptions { UNITS, TIMEFORMAT, USEROPTION };
     /**
     * Reimplement to set the wanted options for the ion such as unit and time, and wind speed formats.
     */
