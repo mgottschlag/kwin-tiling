@@ -351,7 +351,9 @@ void EnvCanadaIon::parseDateTime(WeatherData& data, QXmlStreamReader& xml, Weath
                 xml.readElementText();
             else if (xml.name() == "minute")
                 xml.readElementText();
-            else if (xml.name() == "timeStamp") {
+	    else if (xml.name() == "timeStamp")
+		xml.readElementText();
+            else if (xml.name() == "textSummary") {
                 if (d->m_useUTC && dateZone == "UTC") {
                     // Which timestamp are we for?
 
@@ -392,8 +394,6 @@ void EnvCanadaIon::parseDateTime(WeatherData& data, QXmlStreamReader& xml, Weath
                         data.moonsetTimestamp = xml.readElementText();
                     }
                 }
-            } else if (xml.name() == "textSummary") {
-                xml.readElementText();
             }
         }
     }
