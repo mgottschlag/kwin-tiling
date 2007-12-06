@@ -112,16 +112,14 @@ IonInterface* WeatherEngine::loadIon(const QString& plugName)
 
     connect(ion, SIGNAL(newSource(QString)), this, SLOT(newIonSource(QString)));
 
-    /* Set properties for the ion
+    /* Set system related properties for the ion
      *
      * TIMEFORMAT is displaying the time/date in UTC or user's local time
      * UNITS is setting the weather units used, Celsius/Fahrenheit, Kilopascals/Inches of Mercury, etc
-     * WINDFORMAT enable winds to be displayed as meters per second (m/s) some countries display winds like this
      */
 
     ion->option(IonInterface::TIMEFORMAT, QVariant(d->m_localTime.isUtc()));
     ion->option(IonInterface::UNITS, KGlobal::locale()->measureSystem());
-    ion->option(IonInterface::WINDFORMAT, QVariant(false)); // FIXME: Should be configurable by applet
 
     // Assign the instantiated ion the key of the name of the ion.
     if (!d->m_ions.contains(plugName)) {
@@ -172,6 +170,7 @@ void WeatherEngine::newIonSource(const QString& source)
     if (!ion) {
         return;
     }
+
     ion->connectSource(source, this);
 }
 
@@ -235,6 +234,10 @@ bool WeatherEngine::sourceRequested(const QString &source)
     if (!containerForSource(source)) {
         // it is an async reply, we need to set up the data anyways
         kDebug() << "no item?";
+        // Pass user options here if found
+        if (source.contains("option")) {
+            ion->option(IonInterface::USEROPTION, source);
+        }
         setData(source, Data());
     }
     return true;
