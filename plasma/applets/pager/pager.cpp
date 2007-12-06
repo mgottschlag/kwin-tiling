@@ -28,10 +28,10 @@
 #include <QTimer>
 #include <QX11Info>
 
-#include <KSharedConfig>
 #include <KDialog>
 #include <KColorScheme>
 #include <KGlobalSettings>
+#include <KSharedConfig>
 #include <KWindowSystem>
 #include <NETRootInfo>
 #include <KToolInvocation>
@@ -215,16 +215,19 @@ void Pager::currentDesktopChanged(int desktop)
 
 void Pager::windowAdded(WId id)
 {
+    Q_UNUSED(id)
     m_timer->start();
 }
 
 void Pager::windowRemoved(WId id)
 {
+    Q_UNUSED(id)
     m_timer->start();
 }
 
 void Pager::activeWindowChanged(WId id)
 {
+    Q_UNUSED(id)
     m_timer->start();
 }
 
@@ -245,11 +248,13 @@ void Pager::stackingOrderChanged()
 
 void Pager::windowChanged(WId id)
 {
+    Q_UNUSED(id)
     m_timer->start();
 }
 
 void Pager::showingDesktopChanged(bool showing)
 {
+    Q_UNUSED(showing)
     m_timer->start();
 }
 
@@ -260,26 +265,12 @@ void Pager::mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
         for (int i = 0; i < m_desktopCount; i++) {
             if (m_rects[i].contains(event->pos())) {
-                for (int j = 0; j < m_windowRects.count(); j++) {
-                    for (int k = m_windowRects[j].count() - 1; k >= 0 ; k--) {
-                        if (m_windowRects[j][k].second.contains(event->pos().toPoint()) && m_rects[i].contains(event->pos().toPoint())) {
-                            m_dragOriginal = m_windowRects[j][k].second;
-                            m_dragOriginalPos = m_dragCurrentPos = event->pos();
-                            m_dragId = m_windowRects[j][k].first;
-                            break;
-                        }
-                    }
-                }
+                m_dragStartDesktop = m_dragHighlightedDesktop = i;
+                m_dragOriginalPos = m_dragCurrentPos = event->pos();
                 if (m_dragOriginal.isEmpty()) {
                     m_dragOriginal = m_rects[i].toRect();
-                    m_dragOriginalPos = m_dragCurrentPos = event->pos();
                 }
-                for (int i = 0; i < m_desktopCount; i++) {
-                    if (m_rects[i].contains(event->pos().toPoint())) {
-                        m_dragHighlightedDesktop = i;
-                        break;
-                    }
-                }
+
                 return;
             }
         }
@@ -314,56 +305,67 @@ void Pager::wheelEvent(QGraphicsSceneWheelEvent *e)
 
 void Pager::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (m_dragId != 0) {
+    if (m_dragId) {
         m_dragCurrentPos = event->pos();
         m_dragHighlightedDesktop = -1;
-        for(int i = 0; i < m_desktopCount; i++) {
-            if(m_rects[i].contains(event->pos().toPoint())) {
+        for (int i = 0; i < m_desktopCount; i++) {
+            if (m_rects[i].contains(event->pos().toPoint())) {
                 m_dragHighlightedDesktop = i;
                 break;
             }
         }
         m_hoverRect = QRectF();
-        foreach(QRectF rect, m_rects) {
-            if(rect.contains(event->pos())) {
+        foreach (QRectF rect, m_rects) {
+            if (rect.contains(event->pos())) {
                 m_hoverRect = rect;
                 break;
             }
         }
         update();
-    } else if (m_dragOriginal.isEmpty()) {
+        event->accept();
+        return;
+    } else if (m_dragStartDesktop != -1 && (event->pos() - m_dragOriginalPos).toPoint().manhattanLength() > KGlobalSettings::dndEventDelay()) {
+        for (int k = m_windowRects[m_dragStartDesktop].count() - 1; k >= 0 ; k--) {
+            if (m_windowRects[m_dragStartDesktop][k].second.contains(m_dragOriginalPos.toPoint())) {
+                m_dragOriginal = m_windowRects[m_dragStartDesktop][k].second;
+                m_dragId = m_windowRects[m_dragStartDesktop][k].first;
+                event->accept();
+                break;
+            }
+        }
+    }
+
+    if (m_dragOriginal.isEmpty()) {
         Applet::mouseMoveEvent(event);
     }
 }
 
 void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->pos() == m_dragOriginalPos) {
-        m_dragOriginalPos = m_dragCurrentPos = QPointF();
-        m_dragId = 0;
-        m_dragOriginal = QRect();
-        m_dragHighlightedDesktop = -1;
-        for(int i = 0; i < m_desktopCount; i++) {
-            if(m_rects[i].contains(event->pos().toPoint()) && m_currentDesktop != i+1) {
-                KWindowSystem::setCurrentDesktop(i+1);
-                m_currentDesktop = i+1;
-                update();
-                return;
-            }
-        }
-    } else {
+    if (m_dragId) {
         if (m_dragHighlightedDesktop != -1) {
             QPointF dest = m_dragCurrentPos - m_rects[m_dragHighlightedDesktop].topLeft() - m_dragOriginalPos + m_dragOriginal.topLeft();
             dest = QPointF(dest.x()/m_scaleFactor, dest.y()/m_scaleFactor);
             KWindowSystem::setOnDesktop(m_dragId, m_dragHighlightedDesktop+1);
             XMoveWindow(QX11Info::display(), m_dragId, dest.toPoint().x(), dest.toPoint().y());
         }
-        m_dragOriginalPos = m_dragCurrentPos = QPointF();
-        m_dragId = 0;
-        m_dragOriginal = QRect();
-        m_dragHighlightedDesktop = -1;
         m_timer->start();
+    } else {
+        for (int i = 0; i < m_desktopCount; i++) {
+            if (m_rects[i].contains(event->pos().toPoint()) && m_currentDesktop != i+1) {
+                KWindowSystem::setCurrentDesktop(i+1);
+                m_currentDesktop = i+1;
+                update();
+                break;
+            }
+        }
     }
+
+    m_dragId = 0;
+    m_dragOriginal = QRect();
+    m_dragHighlightedDesktop = -1;
+    m_dragStartDesktop = -1;
+    m_dragOriginalPos = m_dragCurrentPos = QPointF();
 
     Applet::mouseReleaseEvent(event);
 }
@@ -421,14 +423,14 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     QBrush activeWindowBrush(QColor(100,100,255));
     painter->setPen(windowPen);
     for (int i = 0; i < m_windowRects.count(); i++) {
-        for(int j = 0; j < m_windowRects[i].count(); j++) {
+        for (int j = 0; j < m_windowRects[i].count(); j++) {
             QRect rect = m_windowRects[i][j].second;
-            if(m_activeWindows.contains(rect)) {
+            if (m_activeWindows.contains(rect)) {
                 painter->setBrush(activeWindowBrush);
             } else {
                 painter->setBrush(windowBrush);
             }
-            if(m_dragId == m_windowRects[i][j].first) {
+            if (m_dragId == m_windowRects[i][j].first) {
                 rect.translate((m_dragCurrentPos - m_dragOriginalPos).toPoint());
                 painter->setClipRect(option->exposedRect);
             } else {
