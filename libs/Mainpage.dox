@@ -5,7 +5,7 @@ Libraries for the KDE workspace.
 The following libraries are available:
 - <a href="../plasma/html/index.html">libplasma</a>, a library for implementing
   %Plasma applets and data engines
-- <a href="../workspace/html/index.html">libkworkspace</a>, a library for
+- <a href="../kworkspace/html/index.html">libkworkspace</a>, a library for
   interacting with the workspace
 
 In addition, two KDM plugins are provided.
