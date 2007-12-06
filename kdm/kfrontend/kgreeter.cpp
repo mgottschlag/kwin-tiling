@@ -810,14 +810,14 @@ KThemedGreeter::KThemedGreeter( KdmThemer *_themer )
 	if ((itm = themer->findNode( "language_button" ))) // not implemented yet
 		itm->setVisible( false );
 
-#ifdef WITH_KDM_XCONSOLE
 	if (console_node) {
+#ifdef WITH_KDM_XCONSOLE
 		if (consoleView)
 			console_node->setWidget( consoleView );
 		else
+#endif
 			console_rect->setVisible( false );
 	}
-#endif
 
 	if (xauth_warning && (_authorized || !_authComplain))
 		xauth_warning->setVisible( false );
