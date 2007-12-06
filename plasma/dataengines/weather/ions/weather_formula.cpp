@@ -113,6 +113,10 @@ float WeatherFormula::kilometersToKT(float km) const
     return (km * 0.539956803);  
 }
 
+float WeatherFormula::milesToKT(float miles) const
+{
+    return (miles * 0.868976242);
+}
 float WeatherFormula::knotsToMI(float knots) const
 {   
     return (knots * 1.507794);
