@@ -62,7 +62,8 @@ public:
     bool m_useUTC;  // Ion option: Timezone may be local time or UTC time
     bool m_useMetric; // Ion option: Units may be Metric or Imperial
     bool m_windInMeters; // Ion option: Display wind format in meters per second only
-
+    bool m_windInKnots; // Ion option: Display wind format in knots
+    bool m_windInBft; // ion option: Display wind by the beaufort scale model
     WeatherFormula m_formula;
 };
 
@@ -579,11 +580,20 @@ void UKMETIon::option(int option, const QVariant& value)
             d->m_useUTC = true;
         }
         break;
-    case IonInterface::WINDFORMAT:
-        if (value.toBool()) {
+    case IonInterface::USEROPTION: // This ion uses this for wind format type
+        QStringList option = value.toString().split("|");
+
+        d->m_windInMeters = false;
+        d->m_windInKnots = false;
+        d->m_windInBft = false;
+
+        // Metastring format:  envcan|option|type
+        if (option[2] == "WINDMS") {
             d->m_windInMeters = true;
-        } else {
-            d->m_windInMeters = false;
+        } else if (option[2] == "WINDKNOTS") {
+            d->m_windInKnots = true;
+        } else if (option[2] == "WINDBEAUFORT") {
+            d->m_windInBft = true;
         }
         break;
     }
@@ -655,13 +665,27 @@ void UKMETIon::updateWeather(const QString& source)
             if (d->m_windInMeters) {
                 windSpeed = QString::number(d->m_formula.milesToMS(fieldList[4].toFloat()), 'f', 1);
                 windUnit = "m/s";
+            } else if (d->m_windInKnots) {
+                windSpeed = QString::number(d->m_formula.milesToKT(fieldList[4].toFloat()), 'f', 1);
+                windUnit = "kt";
+            } else if (d->m_windInBft) {
+                windSpeed = QString::number(d->m_formula.milesToBF(fieldList[4].toInt()));
+                windUnit = "bft";
             } else {
                 windSpeed = QString::number(d->m_formula.milesToKM(fieldList[4].toFloat()), 'f', 1);
                 windUnit = "km/h";
             }
         } else {
-            windSpeed = fieldList[4];
-            windUnit = "mph";
+            if (d->m_windInKnots) {
+                windSpeed = QString::number(d->m_formula.milesToKT(fieldList[4].toFloat()), 'f', 1);
+                windUnit = "kt";
+            } else if (d->m_windInBft) {
+                windSpeed = QString::number(d->m_formula.milesToBF(fieldList[4].toInt()));
+                windUnit = "bft";
+            } else {
+                windSpeed = fieldList[4];
+                windUnit = "mph";
+            }
         }
      
         setData(weatherSource, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6|%7") \
@@ -716,15 +740,29 @@ QMap<QString, QString> UKMETIon::wind(const QString& source)
     } else {
         if (d->m_useMetric) {
             if (d->m_windInMeters) {
-                windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_formula.milesToMS(d->m_weatherData[source].windSpeed_miles.toFloat()), 'f', 2)));
+                windInfo.insert("windSpeed", QString::number(d->m_formula.milesToMS(d->m_weatherData[source].windSpeed_miles.toFloat()), 'f', 2));
                 windInfo.insert("windUnit","m/s");
+            } else if (d->m_windInKnots) {
+                windInfo.insert("windSpeed", QString::number(d->m_formula.milesToKT(d->m_weatherData[source].windSpeed_miles.toFloat()), 'f', 1));
+                windInfo.insert("windUnit", "kt");
+            } else if (d->m_windInBft) {
+                windInfo.insert("WindSpeed", QString::number(d->m_formula.milesToBF(d->m_weatherData[source].windSpeed_miles.toInt())));
+                windInfo.insert("windUnit", "bft");
             } else {
-                windInfo.insert("windSpeed", QString("%1").arg(QString::number(d->m_formula.milesToKM(d->m_weatherData[source].windSpeed_miles.toFloat()), 'f', 1)));
+                windInfo.insert("windSpeed", QString::number(d->m_formula.milesToKM(d->m_weatherData[source].windSpeed_miles.toFloat()), 'f', 1));
                 windInfo.insert("windUnit", "km/h");
             } 
         } else {
-            windInfo.insert("windSpeed", QString(d->m_weatherData[source].windSpeed_miles));
-            windInfo.insert("windUnit", "mph");
+            if (d->m_windInKnots) {
+                windInfo.insert("windSpeed", QString::number(d->m_formula.milesToKT(d->m_weatherData[source].windSpeed_miles.toFloat()), 'f', 1));
+                windInfo.insert("WindUnit", "kt");
+            } else if (d->m_windInBft) {
+                windInfo.insert("WindSpeed", QString::number(d->m_formula.milesToBF(d->m_weatherData[source].windSpeed_miles.toInt())));
+                windInfo.insert("windUnit", "bft");
+            } else {
+                windInfo.insert("windSpeed", QString(d->m_weatherData[source].windSpeed_miles));
+                windInfo.insert("windUnit", "mph");
+            }
         }
     }
     windInfo.insert("windDirection", d->m_weatherData[source].windDirection);
@@ -753,10 +791,10 @@ QMap<QString, QString> UKMETIon::pressure(const QString& source)
     }
    
     if (d->m_useMetric) {
-        pressureInfo.insert("pressure", QString("%1").arg(QString::number(d->m_formula.millibarsToKilopascals(d->m_weatherData[source].pressure.toFloat()), 'f', 1)));
+        pressureInfo.insert("pressure", QString::number(d->m_formula.millibarsToKilopascals(d->m_weatherData[source].pressure.toFloat()), 'f', 1));
         pressureInfo.insert("pressureUnit", "kPa");
     } else {
-        pressureInfo.insert("pressure", QString("%1").arg(QString::number(d->m_formula.millibarsToInches(d->m_weatherData[source].pressure.toFloat()), 'f', 2)));
+        pressureInfo.insert("pressure", QString::number(d->m_formula.millibarsToInches(d->m_weatherData[source].pressure.toFloat()), 'f', 2));
         pressureInfo.insert("pressureUnit", "in");
     }
 
