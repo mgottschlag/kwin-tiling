@@ -111,7 +111,7 @@ private:
     Private * const d;
 };
 
-};
+}
 
 #endif // MENUVIEW_H
 
