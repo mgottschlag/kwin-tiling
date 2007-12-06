@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=KMenu Application Launcher
-Comment=Launcher to start applications
+Name=Application Launcher Menu
+Comment=Traditional menu based application launcher
 Icon=
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
