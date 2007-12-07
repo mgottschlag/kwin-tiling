@@ -245,6 +245,7 @@ void KColorCm::loadScheme()
 
             int permissions = QFile(path).permissions();
             bool canWrite = (permissions & QFile::WriteUser);
+            kDebug() << "checking permissions of " << path;
             schemeRemoveButton->setEnabled(canWrite);
 
             KSharedConfigPtr config = KSharedConfig::openConfig(path);
@@ -309,9 +310,13 @@ void KColorCm::on_schemeSaveButton_clicked()
 
 void KColorCm::saveScheme(const QString &name)
 {
+    QRegExp fixer("[\\W,.-]");
+    QString filename = name;
+    filename = filename.remove(fixer);
+
     // check if that name is already in the list
     QString path = KGlobal::dirs()->saveLocation("data", "color-schemes/") +
-        name + ".colors";
+        filename + ".colors";
 
     QFile file(path);
     int permissions = file.permissions();
@@ -327,7 +332,7 @@ void KColorCm::saveScheme(const QString &name)
     {
         // go ahead and save it
         QString newpath = KGlobal::dirs()->saveLocation("data", "color-schemes/");
-        newpath += name + ".colors";
+        newpath += filename + ".colors";
         KSharedConfigPtr temp = m_config;
         m_config = KSharedConfig::openConfig(newpath);
         // then copy current colors into new config
@@ -347,7 +352,9 @@ void KColorCm::saveScheme(const QString &name)
         if (foundItems.size() < 1)
         {
             // add it to the list since it's not in there already
-            schemeList->addItem(new QListWidgetItem(icon, name));
+            QListWidgetItem * newItem = new QListWidgetItem(icon, name);
+            newItem->setData(Qt::UserRole, filename);
+            schemeList->addItem(newItem);
 
             // then select the new item
             schemeList->setCurrentRow(schemeList->count() - 1);

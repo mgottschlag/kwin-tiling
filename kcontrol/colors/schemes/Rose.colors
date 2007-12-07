@@ -79,6 +79,7 @@ ForegroundVisited=223,191,255
 
 [General]
 shadeSortColumn=true
+Name=Rose
 
 [KDE]
 contrast=7
