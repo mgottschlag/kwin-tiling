@@ -200,7 +200,7 @@ kg_main( const char *argv0 )
 
 	Display *dpy = QX11Info::display();
 
-	_colorScheme = KStandardDirs::locate( "data", "kdisplay/color-schemes/" + _colorScheme + ".kcsrc" );
+	_colorScheme = KStandardDirs::locate( "data", "color-schemes/" + _colorScheme + ".colors" );
 	if (!_colorScheme.isEmpty()) {
 		KSharedConfigPtr config = KSharedConfig::openConfig( _colorScheme, KConfig::SimpleConfig );
 		app.setPalette( KGlobalSettings::createApplicationPalette( config ) );
