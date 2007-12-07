@@ -67,6 +67,9 @@ private slots:
     /** slot called when the shadeSortedColumn checkbox is checked/unchecked */
     void on_shadeSortedColumn_stateChanged(int state);
 
+    /** slot called when the useInactiveEffects checkbox is checked/unchecked */
+    void on_useInactiveEffects_stateChanged(int state);
+
     /** slot called when any varies button is clicked */
     void variesClicked();
 
@@ -125,6 +128,9 @@ private:
     /** create a preview of a color scheme */
     static QPixmap createSchemePreviewIcon(const QPalette &pal, const WindecoColors &wm);
 
+    /** load from global */
+    void loadInternal(bool loadOptions);
+
     /** load a scheme from a config file at a given path */
     void loadScheme(KSharedConfigPtr config);
 
@@ -154,6 +160,9 @@ private:
 
     /** copy effects page entries from controls into m_config */
     void updateFromEffectsPage();
+
+    /** copy options from controls into m_config */
+    void updateFromOptions();
 
     void changeColor(int row, const QColor &newColor);
 

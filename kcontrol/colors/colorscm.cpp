@@ -106,7 +106,7 @@ void KColorCm::populateSchemeList()
     QIcon icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(m_config),
                                          WindecoColors(m_config));
     schemeList->addItem(new QListWidgetItem(icon, i18n("Current")));
-    
+
     // add default entry
     m_config->setReadDefaults(true);
     icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(m_config),
@@ -148,9 +148,9 @@ void KColorCm::updateEffectsPage()
 
     // NOTE: keep this in sync with kdelibs/kdeui/colors/kcolorscheme.cpp
     KConfigGroup groupI(m_config, "ColorEffects:Inactive");
-    inactiveIntensityBox->setCurrentIndex(groupI.readEntry("IntensityEffect", 0));
+    inactiveIntensityBox->setCurrentIndex(abs(groupI.readEntry("IntensityEffect", 0)));
     inactiveIntensitySlider->setValue(int(groupI.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
-    inactiveColorBox->setCurrentIndex(groupI.readEntry("ColorEffect", 0));
+    inactiveColorBox->setCurrentIndex(abs(groupI.readEntry("ColorEffect", 0)));
     if (inactiveColorBox->currentIndex() > 1)
     {
         inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.0) * 40.0));
@@ -160,7 +160,7 @@ void KColorCm::updateEffectsPage()
         inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.0) * 20.0) + 20);
     }
     inactiveColorButton->setColor(groupI.readEntry("Color", QColor(128, 128, 128)));
-    inactiveContrastBox->setCurrentIndex(groupI.readEntry("ContrastEffect", 0));
+    inactiveContrastBox->setCurrentIndex(abs(groupI.readEntry("ContrastEffect", 0)));
     inactiveContrastSlider->setValue(int(groupI.readEntry("ContrastAmount", 0.0) * 20.0));
 
     // NOTE: keep this in sync with kdelibs/kdeui/colors/kcolorscheme.cpp
@@ -181,25 +181,30 @@ void KColorCm::updateEffectsPage()
     disabledContrastSlider->setValue(int(groupD.readEntry("ContrastAmount", 0.7) * 20.0));
 
     m_disableUpdates = false;
+
+    // enable/disable controls
+    inactiveIntensitySlider->setDisabled(inactiveIntensityBox->currentIndex() == 0);
+    disabledIntensitySlider->setDisabled(disabledIntensityBox->currentIndex() == 0);
+    inactiveColorSlider->setDisabled(inactiveColorBox->currentIndex() == 0);
+    disabledColorSlider->setDisabled(disabledColorBox->currentIndex() == 0);
+    inactiveColorButton->setDisabled(inactiveColorBox->currentIndex() < 2);
+    disabledColorButton->setDisabled(disabledColorBox->currentIndex() < 2);
+    inactiveContrastSlider->setDisabled(inactiveContrastBox->currentIndex() == 0);
+    disabledContrastSlider->setDisabled(disabledContrastBox->currentIndex() == 0);
 }
 
 void KColorCm::loadScheme(KSharedConfigPtr config) // const QString &path)
 {
     KSharedConfigPtr temp = m_config;
     m_config = config;
+
     updateColorSchemes();
-
-    KConfigGroup groupG(m_config, "General");
-    shadeSortedColumn->setChecked(groupG.readEntry("shadeSortColumn", true) ? Qt::Checked : Qt::Unchecked);
-
-    KConfigGroup groupK(m_config, "KDE");
-    contrastSlider->setValue(groupK.readEntry("contrast").toInt());
-
     updateEffectsPage(); // intentionally before swapping back m_config
 
     m_config = temp;
     updateFromColorSchemes();
     updateFromEffectsPage();
+    updateFromOptions();
     updateColorTable();
     updatePreviews();
 
@@ -223,7 +228,7 @@ void KColorCm::loadScheme()
         }
         else if (name == i18n("Current"))
         {
-            load();
+            loadInternal(false);
         }
         else
         {
@@ -343,10 +348,7 @@ void KColorCm::saveScheme(const QString &name)
         updateFromColorSchemes();
         updateFromEffectsPage();
         KConfigGroup group(m_config, "General");
-        group.writeEntry("shadeSortColumn", (bool)shadeSortedColumn->checkState());
         group.writeEntry("Name", name);
-        KConfigGroup group2(m_config, "KDE");
-        group2.writeEntry("contrast", contrastSlider->value());
         // sync it
         m_config->sync();
 
@@ -485,12 +487,18 @@ void KColorCm::updateFromColorSchemes()
     WMGroup.writeEntry("activeForeground", m_wmColors.color(WindecoColors::ActiveForeground));
     WMGroup.writeEntry("inactiveBackground", m_wmColors.color(WindecoColors::InactiveBackground));
     WMGroup.writeEntry("inactiveForeground", m_wmColors.color(WindecoColors::InactiveForeground));
+}
 
-    KConfigGroup KDEgroup(m_config, "KDE");
-    KDEgroup.writeEntry("contrast", contrastSlider->value());
+void KColorCm::updateFromOptions()
+{
+    KConfigGroup groupK(m_config, "KDE");
+    groupK.writeEntry("contrast", contrastSlider->value());
 
-    KConfigGroup generalGroup(m_config, "General");
-    generalGroup.writeEntry("shadeSortColumn", (bool)shadeSortedColumn->checkState());
+    KConfigGroup groupG(m_config, "General");
+    groupG.writeEntry("shadeSortColumn", bool(shadeSortedColumn->checkState() != Qt::Unchecked));
+
+    KConfigGroup groupI(m_config, "ColorEffects:Inactive");
+    groupI.writeEntry("Enable", bool(useInactiveEffects->checkState() != Qt::Unchecked));
 }
 
 void KColorCm::updateFromEffectsPage()
@@ -935,12 +943,25 @@ void KColorCm::on_contrastSlider_valueChanged(int value)
 void KColorCm::on_shadeSortedColumn_stateChanged(int state)
 {
     KConfigGroup group(m_config, "General");
-    group.writeEntry("shadeSortColumn", (bool)state);
+    group.writeEntry("shadeSortColumn", bool(state != Qt::Unchecked));
+
+    emit changed(true);
+}
+
+void KColorCm::on_useInactiveEffects_stateChanged(int state)
+{
+    KConfigGroup group(m_config, "ColorEffects:Inactive");
+    group.writeEntry("Enable", bool(state != Qt::Unchecked));
 
     emit changed(true);
 }
 
 void KColorCm::load()
+{
+    loadInternal(true);
+}
+
+void KColorCm::loadInternal(bool loadOptions)
 {
     // clean the config, in case we have changed the in-memory kconfig
     m_config->markAsClean();
@@ -952,9 +973,14 @@ void KColorCm::load()
     // fill in the color scheme list
     populateSchemeList();
 
-    contrastSlider->setValue(KGlobalSettings::contrast());
-    shadeSortedColumn->setCheckState(KGlobalSettings::shadeSortColumn() ?
-        Qt::Checked : Qt::Unchecked);
+    if (loadOptions)
+    {
+        contrastSlider->setValue(KGlobalSettings::contrast());
+        shadeSortedColumn->setCheckState(KGlobalSettings::shadeSortColumn() ? Qt::Checked : Qt::Unchecked);
+
+        KConfigGroup group(m_config, "ColorEffects:Inactive");
+        useInactiveEffects->setCheckState(group.readEntry("Enable", false) ? Qt::Checked : Qt::Unchecked);
+    }
 
     updateEffectsPage();
 
@@ -965,6 +991,14 @@ void KColorCm::load()
 
 void KColorCm::save()
 {
+    KConfigGroup groupI(m_config, "ColorEffects:Inactive");
+
+    // disable (inactive) effects if that is requested
+    int a = (useInactiveEffects->checkState() == Qt::Unchecked ? -1 : 1);
+    groupI.writeEntry("IntensityEffect", a*inactiveIntensityBox->currentIndex());
+    groupI.writeEntry("ColorEffect", a*inactiveColorBox->currentIndex());
+    groupI.writeEntry("ContrastEffect", a*inactiveContrastBox->currentIndex());
+
     m_config->sync();
     KGlobalSettings::self()->emitChange(KGlobalSettings::PaletteChanged);
 #ifdef Q_WS_X11
@@ -978,6 +1012,11 @@ void KColorCm::save()
     {
         runRdb(KRdbExportQtColors | KRdbExportColors);
     }
+
+    // now restore the normalized effect values
+    groupI.writeEntry("IntensityEffect", inactiveIntensityBox->currentIndex());
+    groupI.writeEntry("ColorEffect", inactiveColorBox->currentIndex());
+    groupI.writeEntry("ContrastEffect", inactiveContrastBox->currentIndex());
 
     emit changed(false);
 }

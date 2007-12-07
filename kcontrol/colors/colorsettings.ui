@@ -113,7 +113,7 @@
          </property>
          <layout class="QVBoxLayout" >
           <item>
-           <widget class="QCheckBox" name="useEffects" >
+           <widget class="QCheckBox" name="useInactiveEffects" >
             <property name="text" >
              <string>Apply inactive window color &amp;effects</string>
             </property>
