@@ -37,6 +37,7 @@ from the copyright holder.
 #include "dm_error.h"
 
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -47,17 +48,27 @@ iniLoad( const char *fname )
 {
 	char *data;
 	int fd, len;
+	struct stat st;
 
 	if ((fd = open( fname, O_RDONLY | O_NONBLOCK )) < 0) {
 		debug( "cannot open ini-file %\"s: %m", fname );
 		return 0;
 	}
-	len = lseek( fd, 0, SEEK_END );
+	if (fstat( fd, &st ) || !S_ISREG( st.st_mode )) {
+		logWarn( "Ini-file %\"s is no regular file\n", fname );
+		close( fd );
+		return 0;
+	}
+	if (st.st_size >= 0x10000) {
+		logWarn( "Ini-file %\"s is too big\n", fname );
+		close( fd );
+		return 0;
+	}
+	len = st.st_size;
 	if (!(data = Malloc( len + 2 ))) {
 		close( fd );
 		return 0;
 	}
-	lseek( fd, 0, SEEK_SET );
 	if (read( fd, data, len ) != len) {
 		debug( "cannot read ini-file %\"s: %m", fname );
 		free( data );
