@@ -163,19 +163,18 @@ void KDMGeneralWidget::loadColorSchemes( KBackedComboBox *combo )
 {
 	// XXX: Global + local schemes
 	QStringList list = KGlobal::dirs()->
-		findAllResources( "data", "kdisplay/color-schemes/*.kcsrc", KStandardDirs::NoDuplicates );
+		findAllResources( "data", "color-schemes/*.colors", KStandardDirs::NoDuplicates );
 	for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
 	{
 		KConfig _config( *it, KConfig::SimpleConfig );
-		KConfigGroup config(&_config, "Color Scheme" );
+		KConfigGroup config(&_config, "General" );
 
 		QString str;
-		if (!(str = config.readEntry( "Name" )).isEmpty() ||
-			!(str = config.readEntry( "name" )).isEmpty())
+		if (!(str = config.readEntry( "Name" )).isEmpty())
 		{
 			QString str2 = (*it).mid( (*it).lastIndexOf( '/' ) + 1 ); // strip off path
-			str2.resize( str2.length() - 6 ); // strip off ".kcsrc
-				combo->insertItem( str2, str );
+			str2.chop( 7 ); // strip off ".colors"
+			combo->insertItem( str2, str );
 		}
 	}
 }
