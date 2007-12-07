@@ -63,7 +63,7 @@ class UserListView : public QListWidget {
 		: QListWidget( parent )
 		, cachedSizeHint( -1, 0 )
 	{
-		setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Ignored );
+		setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Ignored );
 		setUniformItemSizes( true );
 		setVerticalScrollMode( ScrollPerPixel );
 		setIconSize( QSize( 48, 48 ) );
@@ -381,7 +381,7 @@ KGreeter::slotUserEntered()
 	struct passwd *pw;
 
 	if (userView) {
-		if (pw = getpwnam( curUser.toLocal8Bit().data() )) {
+		if ((pw = getpwnam( curUser.toLocal8Bit().data() ))) {
 			QString theUser = QString::fromLocal8Bit( pw->pw_name );
 			for (int i = 0, rc = userView->model()->rowCount(); i < rc; i++) {
 				UserListViewItem *item =
