@@ -1,6 +1,21 @@
 [Desktop Entry]
 Name=Application Launcher Menu
+Name[ca]=Menú de l'engegador d'aplicacions
+Name[de]=Programmstarter-Menü
+Name[ga]=Roghchlár Tosaitheora Feidhmchlár
+Name[ja]=アプリケーション起動メニュー
+Name[pt]=Menu do Lançador de Aplicações
+Name[pt_BR]=Menu do Lançador de Aplicativos
+Name[sv]=Programstartmeny
+Name[zh_TW]=應用程式啟動器選單
 Comment=Traditional menu based application launcher
+Comment[ca]=Engegador d'aplicacions basat en el menú tradicional
+Comment[de]=Traditioneller Programmstarter mit Menüs
+Comment[ja]=アプリケーションランチャーに基づく従来のメニュー
+Comment[pt]=Lançador de aplicações baseado num menu tradicional
+Comment[pt_BR]=Lançador de aplicativos baseado em um menu tradicional
+Comment[sv]=Traditionell menybaserad programstart
+Comment[zh_TW]=傳統選單式的應用程式啟動器
 Icon=
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
