@@ -581,7 +581,7 @@ void runRdb( uint flags )
   /* Qt exports */
   if ( exportQtColors || exportQtSettings )
   {
-    QSettings* settings = new QSettings;
+    QSettings* settings = new QSettings(QSettings::IniFormat, QSettings::UserScope, "TrollTech");
 
     if ( exportQtColors )
       applyQtColors( kglobals, *settings, newPal );    // For kcmcolors
