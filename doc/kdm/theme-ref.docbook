@@ -1,0 +1,1282 @@
+<chapter id="kdm-themes">
+  <title>Creating themes for the &kdm; greeter</title>
+
+  <para>
+    This section describes the creation of themes for the themed
+    greeter.  For examples including screenshots, see the installed
+    standard themes and the themes from
+    <ulink type="http" url="http://www.kde-look.org/index.php?xcontentmode=40">
+    the theme website</ulink>.
+  </para>
+
+  <sect1 id="theme-overview">
+    <title>Theme Overview</title>
+
+    <para>
+      &kdm; themes can be created by creating an XML file that follows the
+      specification in
+      <filename>$<envar>KDEDIR</envar>/share/apps/doc/kdm/greeter.dtd</filename>.
+      Theme files are stored in the directory
+      <filename class="directory">$<envar>KDEDIR</envar>/share/apps/kdm/themes/<replaceable>theme_name</replaceable></filename>.
+      The theme directory should contain a file called
+      <filename>KdmGreeterTheme.desktop</filename> which has similar format
+      to other <filename class="extension">.desktop</filename> files and looks
+      like:
+
+<programlisting>
+[KdmGreeterTheme]
+Encoding=UTF-8
+Greeter=circles.xml
+Name=Circles
+Description=Theme with blue circles
+Author=Bond, James Bond
+Copyright=(c) 2002 Bond, James Bond
+Screenshot=screenshot.png
+</programlisting>
+    </para>
+
+    <para>
+      The <literal>Name</literal>, <literal>Description</literal>,
+      <literal>Author</literal> and <literal>Copyright</literal> fields can
+      be translated just like in other
+      <filename class="extension">.desktop</filename> files. All the files
+      that are mentioned should be in the theme directory itself.  The
+      <literal>Screenshot</literal> field points to a file which should be a
+      200x150 screenshot of the theme in action (it is OK not to have one,
+      but it makes it nicer for the user).  The <literal>Greeter</literal>
+      entry points to an XML file that contains the description of the theme.
+    </para>
+
+    <!--
+    <para>
+      Once a theme is installed, it can be tested with the
+      <command>gdmthemetester</command> program.  This program assumes that
+      the X server supports a nested server command.  This command takes two
+      arguments, first the environment that should be used.  The environment
+      can be one of the following values: console, console-timed, flexi,
+      remote-flexi, or xdmcp.  The &quot;console&quot; option tests the
+      theme as it would be shown on an attached display.  The
+      &quot;console-timed&quot; option tests the theme as it would be shown
+      on an attached display with timed login enabled.  The &quot;flexi&quot;
+      option tests the theme as it would be shown on an attached flexible
+      display (such as started via Xnest).  Finally, the &quot;xdmcp&quot;
+      option tests the theme as it would be shown for remote XDMCP 
+      displays.  The second argument is the theme name.  For example, to 
+      test how the circles theme would look in XDMP remote display mode,
+      you would run the following command:
+    </para>
+
+<cmdsynopsis>
+  <command>gdmthemetester</command> <arg>xdmcp</arg> <arg><replaceable>circles</replaceable></arg>
+</cmdsynopsis>
+
+    <para>
+      When developing a theme, make sure to test all the environments, and
+      make sure to test how the caps lock warning looks by pressing the caps
+      lock key.  Running <command>gdmthemetester</command> is also a good way
+      to take screenshots of &kdm; themes.  Simply take a screenshot of the
+      theme running in the nested display window.  This can be done in GNOME
+      by focusing the nested login window and pressing Alt-PrintScreen.
+    </para>
+    -->
+
+    <para>
+      Once a theme has been fully tested, make a tarball that contains
+      the directory as it would be installed to the
+      <filename class="directory">$<envar>KDEDIR</envar>/share/apps/kdm/themes</filename>
+      directory. This is the standard format for distributing &kdm; themes.
+    </para>
+  </sect1>
+
+  <sect1 id="theme-format">
+    <title>Detailed Description of Theme XML format</title>
+
+    <sect2 id="greeter-tag">
+      <title>Toplevel Node</title>
+
+      <para>
+        &kdm; themes are XML files with the &lt;greeter&gt; tag at their root.
+        The toplevel node is an <link linkend="item-nodes">item node</link>
+        of type <literal>rect</literal> with an implicit
+        <link linkend="fixed-nodes">fixed layout</link>.
+      </para>
+
+      <!--
+      <para>
+        You may specify a Qt GUI style to
+        be used with this theme by using the gui-style attribute in the
+          greeter tag as in the following example.
+ gui-style=&quot;Plastique&quot;
+      </para>
+      -->
+
+<programlisting>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;!DOCTYPE greeter SYSTEM "greeter.dtd"&gt;
+&lt;greeter&gt;
+[...]
+&lt;/greeter&gt;
+</programlisting>
+
+      <para>
+        Contained within the greeter tag can be the nodes described
+        in the next sections of this document.  Some of these nodes are
+        containers (layout nodes, item nodes) which can contain other
+        nodes again.
+      </para>
+    </sect2>
+
+    <sect2 id="item-nodes">
+      <title>Item Nodes</title>
+
+      <para>
+        A &kdm; theme is created by specifying a hierarchy of item and layout
+        nodes.  Item nodes can have the following value for the
+        <literal>type</literal> attribute:
+      </para>
+
+      <variablelist>
+
+        <varlistentry>
+          <term>button</term>
+          <listitem>
+            <para>
+              A button field.  This field uses a Qt button.
+            </para>
+            <para>
+              It is also possible to make any other item act like a button
+              by setting its <literal>button</literal> attribute to
+              <literal>true</literal>.  However, it is better to use
+              Qt buttons in &kdm; themes since these are accessible to
+              users with disabilities.
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>entry</term>
+          <listitem>
+            <para>An input widget like a line edit or combo box.
+              Note that this is merely a placeholder for Qt widgets.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>label</term>
+          <listitem>
+            <para>
+              A text label.  Must contain either a
+              <link linkend="text-nodes"><literal>text</literal> node</link>
+              or a
+              <link linkend="stock-nodes"><literal>stock</literal> node</link>
+              to specify the text.
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>list</term>
+          <listitem>
+            <para>A face browser widget.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>pixmap</term>
+          <listitem>
+            <para>A raster image in a format that Qt supports, &eg;
+              PNG, JPEG, Tiff, etc.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>rect</term>
+          <listitem>
+            <para>A plain rectangle.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>svg</term>
+          <listitem>
+            <para>A vector image in SVG format.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>
+        For example:
+<programlisting>
+&lt;item type=&quot;label&quot;&gt;
+</programlisting>
+
+        An item that acts as a button:
+<programlisting>
+ &lt;item type=&quot;rect&quot; id=&quot;disconnect_button&quot; button=&quot;true&quot;&gt;.
+</programlisting>
+      </para>
+
+      <para>
+        By default, the &kdm; login screen will disappear after authentication.
+        This can result in flicker between the login screen and the session.
+        The <literal>background</literal> attribute allows users to specify
+        what elements of the theme are the background image.  When used, this
+        will cause &kdm; to remove all non-background items from the display
+        and render the remaining <literal>background</literal> items to the root
+        window.  This can be used to create a smooth transition between the
+        login screen and the session:
+
+<programlisting>
+&lt;item type=&quot;rect&quot; background=&quot;true&quot;&gt;
+  &lt;normal file="background.svg"/&gt;
+  &lt;pos x=&quot;0&quot; y=&quot;0&quot; width=&quot;100%&quot; height=&quot;-75&quot;/&gt;
+&lt;/item&gt;
+</programlisting>
+
+        To use a different background for login transition than the one
+        used for login, the theme should specify two item nodes (which
+        could contain pixmaps or svg images, for example).  The item
+        which corresponds to the greeter background should not have the
+        <literal>background</literal> property while the item which corresponds
+        to the transition background should have the
+        <literal>background</literal> property.  For instance :
+
+<programlisting>
+&lt;?xml version="1.0" encoding=&quot;UTF-8&quot;?&gt;
+&lt;!DOCTYPE greeter SYSTEM &quot;greeter.dtd&quot;&gt;
+&lt;greeter&gt;
+  &lt;item type=&quot;rect&quot; background=&quot;true&quot;&gt;
+    &lt;normal file="background_for_login.svg"/&gt;
+    &lt;pos x=&quot;0&quot; y=&quot;0&quot; width=&quot;100%&quot; height=&quot;100%&quot;/&gt;
+  &lt;/item&gt;
+  &lt;item type=&quot;rect&quot;&gt;
+    &lt;normal file="background_for_greeter.svg"/&gt;
+    &lt;pos x=&quot;0&quot; y=&quot;0&quot; width=&quot;100%&quot; height=&quot;100%&quot;/&gt;
+  &lt;/item&gt;
+  [...]
+&lt;/greeter&gt;
+</programlisting>
+
+      </para>
+
+      <variablelist>
+        <para>
+          Each item can be given a name via the <literal>id</literal>
+          attribute. Certain ids are recognized by &kdm; to give those
+          items a special function:
+        </para>
+
+        <!--
+        <varlistentry>
+          <term><literal>list</literal> items</term>
+          <listitem>
+
+            <para>
+              List items by default display as lists, but the
+              <literal>combo=&quot;true&quot;</literal> attribute can be used
+              to specify combo box style (combo style supported since &kde; ).
+              Some predefined lists may be included in a theme by using the
+              following id values.  Customized lists may also be defined,
+              which are explained below.
+            </para>
+
+            <segmentedlist>
+              <?dbhtml list-presentation="table"?>
+              <segtitle>Id</segtitle><segtitle>Function</segtitle>
+
+              <seglistitem>
+                <seg>session</seg>
+                <seg>A list of available sessions, which allows the user to
+                  pick the session to use.  Supported since &kde; .</seg>
+              </seglistitem>
+
+              <seglistitem>
+                <seg>language</seg>
+                <seg>A list of available languages, which allows the user to
+                  pick the language to use.  Supported since &kde; .</seg>
+              </seglistitem>
+
+            </segmentedlist>
+          </listitem>
+        </varlistentry>
+        -->
+
+        <varlistentry>
+          <term><literal>button</literal> items and items with the
+            <literal>button=&quot;true&quot;</literal> attribute.</term>
+
+          <listitem>
+            <para>
+              Buttons typically trigger certain actions.
+              Addionally, &kdm; will hide buttons whose actions are
+              not available for some reason.
+            </para>
+
+            <segmentedlist>
+              <?dbhtml list-presentation="table"?>
+              <segtitle>Id</segtitle><segtitle>Action</segtitle>
+
+              <seglistitem>
+                <seg>chooser_button</seg>
+                <seg>Runs the XDMCP chooser.</seg>
+              </seglistitem>
+
+              <!--
+              <seglistitem>
+                <seg>custom_cmd_button[0-9]</seg>
+                <seg>Runs the <filename>n-th</filename> custom command.</seg>
+              </seglistitem>
+              -->
+
+              <seglistitem>
+                <seg>disconnect_button</seg>
+                <seg>Disconnect from remote session.</seg>
+              </seglistitem>
+
+              <!--
+              <seglistitem>
+                <seg>language_button</seg>
+                <seg>Open the language selection menu.</seg>
+              </seglistitem>
+              -->
+
+              <!--
+              <seglistitem>
+                <seg>halt_button</seg>
+                <seg>Power off the system.</seg>
+              </seglistitem>
+
+              <seglistitem>
+                <seg>reboot_button</seg>
+                <seg>Restart the system.</seg>
+              </seglistitem>
+
+              <seglistitem>
+                <seg>suspend_button</seg>
+                <seg>Suspend the system.</seg>
+              </seglistitem>
+              -->
+
+              <seglistitem>
+                <seg>session_button</seg>
+                <seg>Open the session type selection menu.</seg>
+              </seglistitem>
+
+              <seglistitem>
+                <seg>system_button</seg>
+                <seg>Open a catch-all menu with various options and actions,
+                  depending on the configuration.</seg>
+              </seglistitem>
+            </segmentedlist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><literal>label</literal> items</term>
+
+          <listitem>
+            <para>
+              &kdm; will show/hide these labels and set their text depending
+              on the state of the login dialog.
+            </para>
+
+            <segmentedlist>
+              <?dbhtml list-presentation="table"?>
+              <segtitle>Id</segtitle><segtitle>Function</segtitle>
+
+              <!--
+              <seglistitem>
+                <seg>pam-prompt</seg>
+                <seg>Label that displays the <acronym>PAM</acronym> prompt.
+                  This is the prompt that <acronym>PAM</acronym>
+                  uses to ask for username, password, etc.</seg>
+              </seglistitem>
+
+              <seglistitem>
+                <seg>pam-message</seg>
+                <seg>Label that displays the <acronym>PAM</acronym> message.
+                  These are messages that <acronym>PAM</acronym>/&kdm; gives
+                  about state of the account, help about the prompts and other
+                  information.</seg>
+              </seglistitem>
+              -->
+
+              <seglistitem>
+                <seg>pam-error</seg>
+                <seg>This displays the <guilabel>Login failed.</guilabel>
+                  message.</seg>
+              </seglistitem>
+
+            </segmentedlist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Widget embedding items</term>
+
+          <listitem>
+            <para>
+              &kdm; will embed particular Qt widgets into these items.
+            </para>
+
+            <segmentedlist>
+              <?dbhtml list-presentation="table"?>
+              <segtitle>Id</segtitle><segtitle>Function</segtitle>
+
+              <seglistitem>
+                <seg>user-entry</seg>
+                <seg>Entry field for username entry.</seg>
+              </seglistitem>
+
+              <seglistitem>
+                <seg>pw-entry</seg>
+                <seg>Entry field for password entry.</seg>
+              </seglistitem>
+
+              <seglistitem>
+                <seg>domain-entry</seg>
+                <seg>Some <quote>conversation</quote> plugins use this field
+                  to query a domain name. If this field is present, the related
+                  enclosing items should have
+                  <link linkend="show-nodes">show nodes</link> with the type
+                  <literal>plugin-domain-entry</literal>.</seg>
+              </seglistitem>
+
+              <seglistitem>
+                <seg>talker</seg>
+                <seg>This item should be of type <literal>rect</literal>.
+                  It represents the <quote>hot</quote> area of the
+                  greeter: it contains the <literal>label</literal> and
+                  <literal>entry</literal> items which concern the
+                  authentication process.  If a given
+                  <quote>conversation</quote> plugin cannot match the
+                  existing items with its needs, it tries to embed a complex
+                  widget with an own layout into this item, thus completely
+                  overriding the theme's <quote>talker</quote>.
+                  Strictily speaking, &kdm; themes do not need to provide
+                  own <quote>talker</quote> designs at all, as all &kdm;
+                  authentication plugins are able make use of the
+                  <literal>talker</literal> item.
+                </seg>
+              </seglistitem>
+
+              <seglistitem>
+                <seg>userlist</seg>
+                <seg>This item must be of type <literal>list</literal>.
+                  If the user list feature is enabled, &kdm; will embed
+                  the user list widget here. Otherwise, this item is
+                  hidden.</seg>
+              </seglistitem>
+
+              <seglistitem>
+                <seg>xconsole</seg>
+                <seg>This item should be of type <literal>rect</literal>.
+                  If the built-in <command>xconsole</command> feature is
+                  compiled in and enabled, &kdm; will embed
+                  the console log widget here. Otherwise, this item is
+                  hidden.</seg>
+              </seglistitem>
+
+            </segmentedlist>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Other items</term>
+
+          <listitem>
+            <para>
+              &kdm; will show/hide these items depending on the configuration
+              and the current state of the greeter.  &kdm; does not impose
+              type requirements on them, but they usually lend themselves
+              to a particular type.
+            </para>
+
+            <segmentedlist>
+              <?dbhtml list-presentation="table"?>
+              <segtitle>Id</segtitle><segtitle>Shown only when ...</segtitle>
+
+              <seglistitem>
+                <seg>timed-label</seg>
+                <seg>... timed login is in progress.</seg>
+              </seglistitem>
+
+              <seglistitem>
+                <seg>caps-lock-warning</seg>
+                <seg>... Caps Lock is active.</seg>
+              </seglistitem>
+
+              <seglistitem>
+                <seg>xauth-warning</seg>
+                <seg>... the &X-Server; requires no X authorization to
+                  connect.</seg>
+              </seglistitem>
+
+              <!--
+              <seglistitem>
+                <seg>pam-error-logo</seg>
+                <seg>... a pam-error message is being displayed.
+                  This is useful for displaying an <guiicon>Attention</guiicon>
+                  icon, for example.</seg>
+              </seglistitem>
+              -->
+
+              <seglistitem>
+                <seg>userlist-rect</seg>
+                <seg>... the user list is enabled.  By nesting the
+                  <literal>userlist</literal> item into this one, it is possible
+                  to create something like a frame around the list and have
+                  it shown only when the user list itself if shown.</seg>
+              </seglistitem>
+
+              <seglistitem>
+                <seg>xconsole-rect</seg>
+                <seg>... the built-in <command>xconsole</command> is enabled.
+                  Analogous to <literal>userlist-rect</literal>.</seg>
+              </seglistitem>
+
+            </segmentedlist>
+          </listitem>
+        </varlistentry>
+
+      </variablelist>
+
+    </sect2>
+
+    <sect2 id="layout-nodes">
+      <title>Layout Container Nodes</title>
+
+      <para>
+        Layout nodes appear inside item nodes and contain item nodes again.
+        The type of the layout node determines the arrangement of its
+        child nodes.  An item node can contain one layout node of each type.
+      </para>
+
+      <sect3 id="box-nodes">
+        <title>Box Nodes</title>
+
+        <para>
+          Box nodes automatically arrange their children in a row.
+          They are specified as follows:
+<programlisting>
+&lt;box orientation=&quot;<replaceable>alignment</replaceable>&quot; min-width=&quot;<replaceable>num</replaceable>&quot; min-height=&quot;<replaceable>num</replaceable>&quot;
+    xpadding=&quot;<replaceable>num</replaceable>&quot; ypadding=&quot;<replaceable>num</replaceable>&quot; spacing=&quot;<replaceable>num</replaceable>&quot;
+    homogeneous=&quot;<replaceable>bool</replaceable>&quot;&gt;
+</programlisting>
+          Where <replaceable>num</replaceable> means number of pixels and
+          <replaceable>bool</replaceable> means either <literal>true</literal>
+          or <literal>false</literal>.
+          The <replaceable>alignment</replaceable> value can be either
+          <literal>horizontal</literal> or <literal>vertical</literal>.
+          If you leave any attribute off, it will default to zero for numbers,
+          <literal>false</literal> for bools and <literal>vertical</literal>
+          for the orientation.
+        </para>
+
+        <para>
+          The spacing is the distance between neighboring child items.
+          The padding is the box' outer margin.
+          If the box is homogeneous, the same amount of space is allocated
+          to each child item.
+        </para>
+      </sect3>
+
+      <sect3 id="fixed-nodes">
+        <title>Fixed Nodes</title>
+
+        <para>
+          Fixed is a container that has its children
+          laid out at precise coordinates.  The size of this container
+          is the smallest rectangle that contains all the children.  Fixed
+          has no extra attributes and so you just use:
+<programlisting>
+&lt;fixed&gt;
+</programlisting>
+          Then you put other items with proper position nodes inside it.
+        </para>
+      </sect3>
+
+    </sect2>
+
+    <sect2 id="position-nodes">
+      <title>Position Nodes</title>
+
+      <para>
+        Each item can specify its position and size via the <literal>pos</literal>
+        node.  For example:
+<programlisting>
+&lt;pos x=&quot;0&quot; y=&quot;4&quot; width=&quot;100%&quot; height=&quot;100%&quot;/&gt;
+</programlisting>
+      </para>
+
+      <para>
+        If the size is not specified, it will be the item's
+        <quote>natural</quote> size, called the size hint.
+        Note that not all items have a useful size hint.
+      </para>
+
+      <para>
+        Both position and size can be given in percent and will be calculated
+        relative to the size of the enclosing container in this case.
+        For toplevel items it is the percentage of the whole screen.
+        By appending circumflexes (<literal>^</literal>) to the size
+        specification it is possible to modify it to be relative to the
+        size of the enclosing item's enclosing item and so on.
+      </para>
+
+      <para>
+        If the item contains a box, <literal>width</literal> and
+        <literal>height</literal> can be specified to be
+        <literal>box</literal> to mean that they are supposed to be the width
+        and height of the box, that is the items in the box plus the padding.
+      </para>
+
+      <para>
+        One of <literal>width</literal> and <literal>height</literal> can
+        be specified to be <literal>scale</literal>
+        to mean that it should be scaled according to the other dimension's
+        scale relative to its size hint.  Use this to preserve the aspect
+        ratio of scaled images automatically.
+      </para>
+
+      <para>
+        If the <literal>expand</literal> attribute is specified and
+        <literal>true</literal>, this item will be expanded in the
+        enclosing box as much as possible (that is it will be given
+        more space if available).
+      </para>
+
+      <para>
+        If <literal>width</literal> or <literal>height</literal> is a
+        plain number, a negative value represents
+        an offset from the enclosing container's size.  Note that it is
+        possible to specify a positive offset by writing two minus signs.
+      </para>
+
+      <para>
+        In either case it is possible to constrain the final size with the
+        <literal>min-width</literal>, <literal>min-height</literal>,
+        <literal>max-width</literal> and <literal>max-height</literal>
+        attributes which can be specified in the same ways as
+        <literal>width</literal> and <literal>height</literal>.
+      </para>
+
+      <para>
+        If <literal>x</literal> or <literal>y</literal> is a plain number,
+        a negative value represents an offset from the right resp. bottom edge,
+        unlike the default which is the left resp. top edge.
+      </para>
+
+      <para>
+        It is also possible to specify which point within the item the
+        position refers to.  This is called the anchor and can be one of
+        <literal>n</literal>, <literal>ne</literal>, <literal>e</literal>,
+        <literal>se</literal>, <literal>s</literal>, <literal>sw</literal>,
+        <literal>w</literal> and <literal>nw</literal> or <literal>c</literal>
+        which stand for the different edges/corners resp. center (the default).
+        For example:
+<programlisting>
+&lt;pos x=&quot;10%&quot; y=&quot;50%&quot; anchor=&quot;w&quot; width=&quot;80%&quot; height=&quot;95&quot;/&gt;
+</programlisting>
+      </para>
+
+    </sect2>
+
+    <sect2 id="show-nodes">
+      <title>Show Nodes</title>
+
+      <!-- not really implemented
+      <para>
+        Some items may only display in certain modes, like when doing a
+        remote display.  Multiple values can be specified and must be
+        separated with commas.  The following values are possible:
+      </para>
+
+      <para>
+        <filename>console</filename> - In console mode.
+      </para>
+      <para>
+        <filename>console-fixed</filename> - In console non-flexi mode.
+      </para>
+      <para>
+        <filename>console-flexi</filename> - In console &amp; flexi mode.
+      </para>
+      <para>
+        <filename>flexi</filename> - In flexi mode.
+      </para>
+      <para>
+        <filename>remote</filename> - In remote mode.
+      </para>
+      <para>
+        <filename>remote-flexi</filename> - In remote &amp; flexi mode.
+      </para>
+
+      <para>
+        For example:
+<programlisting>
+&lt;show modes=&quot;flexi,remote&quot;/&gt;
+</programlisting>
+      </para>
+      -->
+
+      <para>
+        You can specify the <literal>type</literal> attribute to indicate that
+        certain items should only be displayed if the type is set.
+        Prefixing the type with an exclamation mark (<literal>!</literal>)
+        reverses the condition.
+        Valid values include the following:
+        <segmentedlist>
+          <?dbhtml list-presentation="table"?>
+          <segtitle>Type</segtitle><segtitle>Display if ...</segtitle>
+
+          <seglistitem>
+            <seg><literal>chooser</literal></seg>
+            <seg>switching to remote login is permitted.</seg>
+          </seglistitem>
+
+          <!--
+          <seglistitem>
+            <seg><literal>custom_cmd[0-9]</literal></seg>
+            <seg><literal>n-th</literal> CustomCommand is specified in
+              the &kdm; configuration.</seg>
+          </seglistitem>
+          -->
+
+          <seglistitem>
+            <seg><literal>halt</literal> and <literal>reboot</literal></seg>
+            <seg>system shutdown is permitted.</seg>
+          </seglistitem>
+
+          <!--
+          <seglistitem>
+            <seg><literal>suspend</literal></seg>
+            <seg>suspending the system is permitted.</seg>
+          </seglistitem>
+          -->
+
+          <seglistitem>
+            <seg><literal>system</literal></seg>
+            <seg>no condition (always set in &kdm;).</seg>
+          </seglistitem>
+
+          <!--
+          <seglistitem>
+            <seg><literal>timed</literal></seg>
+            <seg>a timed login is being counted down.</seg>
+          </seglistitem>
+          -->
+
+          <seglistitem>
+            <seg><literal>plugin-</literal><replaceable>entry-name</replaceable></seg>
+            <seg>the <quote>conversation</quote> plugin provides a
+              corresponding input field.</seg>
+          </seglistitem>
+
+        </segmentedlist>
+
+        For example:
+<programlisting>
+&lt;show type=&quot;chooser&quot;/&gt;
+</programlisting>
+      </para>
+
+      <para>
+        Alternatively, you can specify a <literal>min-screen-width</literal> or
+        <literal>min-screen-height</literal> value to indicate that certain
+        items should be displayed only if the screen resolution is the
+        at least the specified size.
+        For example:
+<programlisting>
+&lt;show min-screen-height=&quot;768&quot;/&gt;
+</programlisting>
+      </para>
+
+    </sect2>
+
+    <sect2 id="nor-act-pre-nodes">
+      <title>Normal/Active/Prelight Nodes</title>
+
+      <para>
+        The look of most item types can be parametrized via the following
+        tags:
+      </para>
+
+      <variablelist>
+        <varlistentry>
+          <term><literal>normal</literal></term>
+          <listitem>
+            <para>Normal state.</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term><literal>prelight</literal></term>
+          <listitem>
+            <para>When the mouse is hovering over the item.</para>
+          </listitem>
+        </varlistentry>
+        <varlistentry>
+          <term><literal>active</literal></term>
+          <listitem>
+            <para>When a mouse button is clicked on the item.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <variablelist>
+
+        <para>
+          The exact set of available attributes depends on the item type:
+        </para>
+
+        <varlistentry>
+          <term><literal>rect</literal></term>
+          <listitem>
+            <para>
+<programlisting>
+&lt;normal color=&quot;#000000&quot; alpha=&quot;0.0&quot;/&gt;
+</programlisting>
+              Either of the attributes may be omitted, in which case the
+              default is used (the example represents the defaults).
+              <literal>alpha</literal> is a floating point number between
+              zero (transparent) and one (opaque).
+              <literal>color</literal> is a hashmark followed by a six-digit
+              hex number; the format is
+              <quote><literal>#</literal><replaceable>rrggbb</replaceable></quote>.
+              Alternatively, <literal>color</literal> may be specified as an
+              eight-digit hex number, in which case the first two digits are
+              the alpha value.
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><literal>label</literal></term>
+          <listitem>
+            <para>
+<programlisting>
+&lt;normal color=&quot;#ffffff&quot; alpha=&quot;1.0&quot; font=&quot;Sans 14&quot;/&gt;
+</programlisting>
+              <literal>alpha</literal> and <literal>color</literal> are
+              specified like in <quote>rect</quote> items.
+            </para>
+            <para>
+              <literal>font</literal> follows the format
+              <quote><replaceable>family-list</replaceable>&nbsp;<replaceable>style-options</replaceable>&nbsp;<replaceable>size</replaceable></quote>.
+              Each part is optional.
+            </para>
+            <para>
+              <replaceable>family-list</replaceable> is a comma-separated
+              list of font families like <quote>helvetica</quote>,
+              <quote>monospace</quote>, etc.
+            </para>
+            <para>
+              <replaceable>style-options</replaceable> is a space-delimited
+              list of keywords from the categories style, weight and stretch;
+              from each category at most one.
+              The style can be <literal>normal</literal>,
+              <literal>italic</literal> or <literal>oblique</literal>.
+              Weight can be <literal>ultra-light</literal>,
+              <literal>light</literal>, <literal>medium</literal>,
+              <literal>semi-bold</literal>, <literal>bold</literal>,
+              <literal>ultra-bold</literal> or <literal>heavy</literal>.
+              Allowable stretches comprise <literal>ultra-condensed</literal>,
+              <literal>extra-condensed</literal>, <literal>condensed</literal>,
+              <literal>semi-condensed</literal>, <literal>normal</literal>,
+              <literal>semi-expanded</literal>, <literal>expanded</literal>,
+              <literal>extra-expanded</literal> and <literal>ultra-expanded</literal>.
+            </para>
+            <para>
+              <replaceable>size</replaceable> is either a floating point
+              number representing the size in points (1/72 inch) or an
+              integer followed by <literal>px</literal> representing the
+              size in pixels.  Point sizes are preferable, as they are
+              independent from the display resolution.
+            </para>
+            <para>
+              If either attribute is left out, the values from the
+              <link linkend="style-nodes">style node</link> are used.
+              If this yields no window-text color specification, white
+              is used.  The default font is the one configured in &kdmrc;.
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><literal>pixmap</literal></term>
+          <term><literal>svg</literal></term>
+          <listitem>
+            <para>
+<programlisting>
+&lt;normal file=&quot;picture.png&quot; tint=&quot;#dddddd&quot; alpha=&quot;1.0&quot;/&gt;
+</programlisting>
+            </para>
+
+            <para>
+              <literal>file</literal> specifies the file containing the image.
+              Relative pathnames are relative to the theme's directory.
+            </para>
+
+            <para>
+              For <literal>pixmap</literal> nodes, &kdm; first tries to open
+              a file that matches <replaceable>basename</replaceable><literal>-</literal><replaceable>width</replaceable><literal>x</literal><replaceable>height</replaceable><literal>.</literal><replaceable>extension</replaceable>
+              based on the specified file name, so the best-quality image
+              for a given resolution can be used.
+            </para>
+
+            <!--
+            <para>
+              Note that an alternative image file can be specified using the
+              <literal>altfile</literal><optional><replaceable>n</replaceable></optional>
+              attribute.  &kdm; will use the last valid image filename
+              specified.  For example:
+<programlisting>
+&lt;normal file=&quot;picture.png&quot; altfile1=&quot;distribution-blah-image.png&quot; altfile2=&quot;distribution-foo-image.png&quot;/&gt;
+</programlisting>
+              If <filename>distribution-foo-image.png</filename> is a valid
+              image filename it will be used.
+              Otherwise distribution-blah-image.png will be used if valid.
+              This feature is supported since &kde; .
+            </para>
+            -->
+
+            <para>
+              <literal>tint</literal> and <literal>alpha</literal> form a
+              color specification like in <literal>rect</literal> items.
+              Each pixel of the image is multiplied with this color
+              component-wise.
+            </para>
+          </listitem>
+        </varlistentry>
+
+      </variablelist>
+
+    </sect2>
+
+    <sect2 id="style-nodes">
+      <title>Widget Style Nodes</title>
+
+      <para>
+        This tag makes it possible to change the appearance of labels and
+        Qt widgets embedded into the theme, e.g., line edits, buttons or
+        the user list.
+        The style settings are inherited by child items, but can be
+        overridden individually. The defaults are taken from &kdmrc;.
+      </para>
+
+      <para>
+        The <literal>font</literal> attribute defines the font for all widgets.
+        For widgets with an input function it can be overridden with the
+        <literal>edit-font</literal> attribute.
+        Fonts are specified the same way as in
+        <link linkend="nor-act-pre-nodes">normal/active/prelight nodes</link>.
+      </para>
+
+      <para>
+        Usually, the theming engine tries hard to remove any frames from
+        Qt widgets, so they melt into the theme seamlessly.  In cases
+        where this is not desired, the <literal>frame</literal> attribute can
+        be set to <literal>true</literal>.
+      </para>
+
+      <para>
+        It is possible to specify almost the entire palette for the widgets
+        as documented at
+        <ulink type="http" url="http://doc.trolltech.com/4.3/qpalette.html">Trolltech's site</ulink>.
+        Attribute names are composed from a scope, a color role and a suffix.
+
+        Possible scopes are - in order of increasing precedence -
+        <literal>all-</literal> for all color groups,
+        no scope for the active and inactive color groups and
+        <literal>active-</literal>, <literal>inactive-</literal> and
+        <literal>disabled-</literal> for the respective color group.
+
+        Supported color roles are
+        <literal>window</literal>, <literal>window-text</literal>,
+        <literal>base</literal>, <literal>alternate-base</literal>,
+        <literal>text</literal>, <literal>bright-text</literal>,
+        <literal>highlight</literal>, <literal>highlighted-text</literal>,
+        <literal>button</literal> and <literal>button-text</literal>.
+
+        The suffix can be <literal>-color</literal> or
+        <literal>-alpha</literal> with the respective meaning as in
+        <link linkend="nor-act-pre-nodes">normal/active/prelight nodes</link>.
+      </para>
+
+      <para>
+        Example:
+<programlisting>
+&lt;style edit-font=&quot;Comic 16&quot; text-color=&quot;#dddddd&quot; frame=&quot;true&quot;/&gt;
+</programlisting>
+      </para>
+    </sect2>
+
+    <sect2 id="color-nodes">
+      <title>Face Browser Color Nodes</title>
+
+      <para>
+        Color nodes permit overriding the background color of the items
+        in the face browser. <literal>labelcolor</literal> and
+        <literal>altlabelcolor</literal> are essentially equivalent to
+        <literal>all-base-color</literal> resp.
+        <literal>all-alternate-base-color</literal> in
+        <link linkend="style-nodes">style nodes</link>.
+        If only <literal>labelcolor</literal> is specified, alternating
+        item backgrounds are disabled.
+      </para>
+
+      <para>
+<programlisting>
+&lt;color labelcolor=&quot;#80ffffff&quot; altlabelcolor=&quot;#80f0f0f0&quot;/&gt;
+</programlisting>
+      </para>
+    </sect2>
+
+    <sect2 id="text-nodes">
+      <title>Text Nodes</title>
+
+      <para>
+        Text tags are used by labels.  They can be used to display
+        localized text as follows (if the <literal>xml:lang</literal>
+        attribute is omitted, the POSIX locale is assumed):
+<programlisting>
+&lt;text xml:lang=&quot;fr&quot;&gt;Option&lt;/text&gt;
+</programlisting>
+      </para>
+
+      <!--
+      <para>
+        You can include pango markup in the text nodes for labels, however
+        you must encode it.  So for example to have the label of
+        &quot;foo&lt;sup&gt;bar&lt;/sup&gt;&quot;, you must type:
+<programlisting>
+&lt;text&gt;&quot;foo&lt;sup&gt;bar&lt;/sup&gt;&quot;&lt;/text&gt;
+</programlisting>
+      </para>
+      -->
+
+      <para>
+        Text nodes can contain the following special character sequences
+        which will be translated as follows:
+      </para>
+
+      <segmentedlist>
+        <?dbhtml list-presentation="table"?>
+        <segtitle>Sequence</segtitle><segtitle>Expansion</segtitle>
+
+        <seglistitem>
+          <seg>%%</seg>
+          <seg>A literal % character</seg>
+        </seglistitem>
+
+        <seglistitem>
+          <seg>%c</seg>
+          <seg>Wall clock time and date</seg>
+        </seglistitem>
+
+        <seglistitem>
+          <seg>%d</seg>
+          <seg>Display name (<envar>DISPLAY</envar> environment variable)</seg>
+        </seglistitem>
+
+        <seglistitem>
+          <seg>%h</seg>
+          <seg>Hostname (<function>gethostname</function> output)</seg>
+        </seglistitem>
+
+        <seglistitem>
+          <seg>%m</seg>
+          <seg>Machine name (<structfield>machine</structfield> part of
+            <function>uname</function> output)</seg>
+        </seglistitem>
+
+        <seglistitem>
+          <seg>%n</seg>
+          <seg>Node name (<structfield>nodename</structfield> part of
+            <function>uname</function> output)</seg>
+        </seglistitem>
+
+        <seglistitem>
+          <seg>%o</seg>
+          <seg>Domain name (<function>getdomainname</function> output)</seg>
+        </seglistitem>
+
+        <seglistitem>
+          <seg>%r</seg>
+          <seg>Release name (<structfield>release</structfield> part of
+            <function>uname</function> output)</seg>
+        </seglistitem>
+
+        <seglistitem>
+          <seg>%s</seg>
+          <seg>System name (<structfield>sysname</structfield> part of
+            <function>uname</function> output)</seg>
+        </seglistitem>
+
+        <seglistitem>
+          <seg>%t</seg>
+          <seg>Remaining number of seconds until timed login is performed,
+            plus the appropriate i18n plural form of <quote>second</quote></seg>
+        </seglistitem>
+
+        <seglistitem>
+          <seg>%u</seg>
+          <seg>Username for timed login</seg>
+        </seglistitem>
+
+        <!-- Need to switch to richtext painting for this purpose.
+        <seglistitem>
+          <seg>\n</seg>
+          <seg>Newline</seg>
+        </seglistitem>
+        -->
+
+        <seglistitem>
+          <seg>_</seg>
+          <seg>Causes the following character to be an accelerator</seg>
+        </seglistitem>
+
+      </segmentedlist>
+
+      <para>
+        <literal>%t</literal> and <literal>%u</literal> are intended to be
+        used only internally to display the <literal>timed-label</literal>
+        message, which is automatically updated every second.
+      </para>
+    </sect2>
+
+    <sect2 id="stock-nodes">
+      <title>Stock Nodes</title>
+
+      <para>
+        Certain common localized labels can be specified via the stock
+        tags.  The <literal>text</literal> tag is ignored if the
+        <literal>stock</literal> tag is used.  You really should use the
+        stock labels rather than just putting all the translations into
+        the themes.  This yields faster load times and likely better
+        translations.  The following values are valid:
+      </para>
+
+      <segmentedlist>
+        <?dbhtml list-presentation="table"?>
+        <segtitle>Type</segtitle><segtitle>Expansion</segtitle>
+
+        <!--
+        <seglistitem>
+          <seg>ok</seg>
+          <seg><quote>_OK</quote></seg>
+        </seglistitem>
+        <seglistitem>
+          <seg>cancel</seg>
+          <seg>_Cancel</seg>
+        </seglistitem>
+        <seglistitem>
+          <seg>options</seg>
+          <seg>_Options</seg>
+        </seglistitem>
+        <seglistitem>
+          <seg>custom_cmd[0-9]</seg>
+          <seg>Obtained from the config file.</seg>
+        </seglistitem>
+        -->
+        <seglistitem>
+          <seg>caps-lock-warning</seg>
+          <seg><quote>Caps Lock is enabled</quote></seg>
+        </seglistitem>
+        <seglistitem>
+          <seg>chooser</seg>
+          <seg><quote>XDMCP Choose_r</quote></seg>
+        </seglistitem>
+        <seglistitem>
+          <seg>quit</seg>
+          <seg><quote>_Quit</quote></seg>
+        </seglistitem>
+        <seglistitem>
+          <seg>disconnect</seg>
+          <seg><quote>Disconn_ect</quote></seg>
+        </seglistitem>
+        <seglistitem>
+          <seg>halt</seg>
+          <seg><quote>Power o_ff</quote></seg>
+        </seglistitem>
+        <seglistitem>
+          <seg>language</seg>
+          <seg><quote>_Language</quote></seg>
+        </seglistitem>
+        <seglistitem>
+          <seg>session</seg>
+          <seg><quote>Session _Type</quote></seg>
+        </seglistitem>
+        <seglistitem>
+          <seg>reboot</seg>
+          <seg><quote>Re_boot</quote></seg>
+        </seglistitem>
+        <!--
+        <seglistitem>
+          <seg>suspend</seg>
+          <seg><quote>Sus_pend</quote></seg>
+        </seglistitem>
+        -->
+        <seglistitem>
+          <seg>system</seg>
+          <seg><quote>_Menu</quote></seg>
+        </seglistitem>
+        <seglistitem>
+          <seg>timed-label</seg>
+          <seg><quote>User %u will login in %t</quote></seg>
+        </seglistitem>
+        <seglistitem>
+          <seg>domain-label</seg>
+          <seg><quote>_Domain:</quote></seg>
+        </seglistitem>
+        <seglistitem>
+          <seg>username-label</seg>
+          <seg><quote>_Username:</quote></seg>
+        </seglistitem>
+        <seglistitem>
+          <seg>password-label</seg>
+          <seg><quote>_Password:</quote></seg>
+        </seglistitem>
+        <seglistitem>
+          <seg>welcome-label</seg>
+          <seg><quote>Welcome to %h</quote></seg>
+        </seglistitem>
+
+      </segmentedlist>
+
+      <para>
+        For example:
+<programlisting>
+&lt;stock type=&quot;welcome-label&quot;/&gt;
+</programlisting>
+      </para>
+    </sect2>
+
+    <sect2 id="buddy-nodes">
+      <title>Buddy Nodes</title>
+
+      <para>
+        Items which do not directly cause an action can be assigned a buddy.
+        The buddy is given input focus when the item is activated (clicked
+        or a <literal>label</literal>'s accelerator pressed).
+      </para>
+
+      <para>
+        The buddy is referenced by id with the <literal>idref</literal>
+        attribute.  Obviously, it must be given an id.  Example:
+<programlisting>
+&lt;item type=&quot;label&quot;&gt;
+  &lt;stock type=&quot;username-label&quot;/&gt;
+  &lt;buddy idref=&quot;user-entry&quot;/&gt;
+  [...]
+&lt;/item&gt;
+[...]
+&lt;item type=&quot;entry&quot; id=&quot;user-entry&quot;&gt;
+  [...]
+&lt;/item&gt;
+</programlisting>
+      </para>
+    </sect2>
+
+  </sect1>
+
+</chapter>

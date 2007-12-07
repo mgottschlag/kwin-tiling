@@ -9,6 +9,7 @@
   <!ENTITY XDMCP "<acronym>XDMCP</acronym>">
   <!ENTITY xdm "<application>xdm</application>">
   <!ENTITY kdmrc-ref SYSTEM "kdmrc-ref.docbook">
+  <!ENTITY theme-ref SYSTEM "theme-ref.docbook">
   <!ENTITY % addindex "INCLUDE">
   <!ENTITY % English "INCLUDE" > <!-- change language only here -->
 ]>
@@ -40,7 +41,7 @@
 </copyright>
 
 <copyright>
-<year>2002</year>
+<year>2002</year><year>2007</year>
 <holder>&Oswald.Buddenhagen;</holder>
 </copyright>
 
@@ -49,8 +50,10 @@
 <holder>&Lauri.Watts;</holder>
 </copyright>
 
-<date>2003-03-01</date>
-<releaseinfo>0.05.02</releaseinfo>
+<legalnotice>&FDLNotice;</legalnotice>
+
+<date>2007-12-07</date>
+<releaseinfo>0.06.00</releaseinfo>
 
 <abstract>
 <para>This document describes &kdm; the &kde; Display Manager. &kdm;
@@ -676,6 +679,8 @@ server accidentally crashed.</para>
 </chapter>
 
 &kdmrc-ref;
+
+&theme-ref;
 
 <!-- ************************************************************ -->   
 <chapter id="configuring-your-system-for-kdm">
@@ -1312,7 +1317,7 @@ General Public License: look at the source code.
 <chapter id="credits"><title>Credits and License</title>
 
 <para>&kdm; is derived from, and includes code from,
-&xdm; (C) Keith Packard, MIT X Consortium.</para>
+&xdm; &copy; Keith Packard, MIT X Consortium.</para>
 
 <para>&kdm; 0.1 was written by &Matthias.Ettrich;.  Later versions till &kde;
 2.0.x were written by &Steffen.Hansen;.  Some new features for &kde; 2.1.x and
@@ -1339,20 +1344,23 @@ Zumstein<email>zumstein@ssd.ethz.ch</email>. Last update August 9,
 &Neal.Crook.mail;. Last update August 6,
 2000</para></listitem>
 
-<listitem><para>Documentation extended and revised for &kde; 2.2 by 
-&Oswald.Buddenhagen; &Oswald.Buddenhagen.mail;.  Last update August,
-2001</para></listitem>
+<listitem><para>Documentation extended and revised for &kde; 2.2 and 4.0 by 
+&Oswald.Buddenhagen; &Oswald.Buddenhagen.mail;.  Last update December 7,
+2007</para></listitem>
 
 </itemizedlist></para>
 
 <para>Documentation copyright &Steffen.Hansen;, Gregor Zumstein, &Neal.Crook;
-and &Oswald.Buddenhagen;. This document also includes large parts of the &xdm;
-man page, which is (C) Keith Packard.</para>
+and &Oswald.Buddenhagen;.
+This document also includes large parts of the &xdm; man page,
+which is &copy; Keith Packard.
+The theme format documentation is heavily based on the GDM manual,
+which is &copy; Martin K. Petersen, George Lebl, Red Hat, Inc. and
+Sun Microsystems, Inc.</para>
 
 <!--TRANS:CREDIT_FOR_TRANSLATORS -->
 
 &underFDL;
-&underGPL;
 
 </chapter>
 
