@@ -310,9 +310,13 @@ void KColorCm::on_schemeSaveButton_clicked()
 
 void KColorCm::saveScheme(const QString &name)
 {
-    QRegExp fixer("[\\W,.-]");
     QString filename = name;
-    filename = filename.remove(fixer);
+    filename.remove('\''); // So Foo's does not become FooS
+    QRegExp fixer("[\\W,.-]+(.?)");
+    int offset;
+    while ((offset = fixer.indexIn(filename)) >= 0)
+        filename.replace(offset, fixer.matchedLength(), fixer.cap(1).toUpper());
+    filename.replace(0, 1, filename.at(0).toUpper());
 
     // check if that name is already in the list
     QString path = KGlobal::dirs()->saveLocation("data", "color-schemes/") +
