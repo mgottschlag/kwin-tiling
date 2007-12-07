@@ -125,7 +125,12 @@ void KColorCm::populateSchemeList()
         KSharedConfigPtr config = KSharedConfig::openConfig(filename);
         icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(config),
                                              WindecoColors(config));
-        schemeList->addItem(new QListWidgetItem(icon, info.baseName()));
+        KConfigGroup group(config, "General");
+        QString name = group.readEntry("Name", info.baseName());
+        QListWidgetItem * newItem = new QListWidgetItem(icon, name);
+        // stash the file basename for use later
+        newItem->setData(Qt::UserRole, info.baseName());
+        schemeList->addItem(newItem);
     }
 }
 
@@ -206,6 +211,7 @@ void KColorCm::loadScheme()
     if (schemeList->currentItem() != NULL)
     {
         QString name = schemeList->currentItem()->text();
+        QString fileBaseName = schemeList->currentItem()->data(Qt::UserRole).toString();
         if (name == i18n("Default"))
         {
             KSharedConfigPtr config = m_config;
@@ -235,7 +241,7 @@ void KColorCm::loadScheme()
             }
 
             QString path = KGlobal::dirs()->findResource("data",
-                "color-schemes/" + name + ".colors");
+                "color-schemes/" + fileBaseName + ".colors");
 
             int permissions = QFile(path).permissions();
             bool canWrite = (permissions & QFile::WriteUser);
@@ -254,7 +260,8 @@ void KColorCm::on_schemeRemoveButton_clicked()
     if (schemeList->currentItem() != NULL)
     {
         QString path = KGlobal::dirs()->findResource("data",
-            "color-schemes/" + schemeList->currentItem()->text() + ".colors");
+            "color-schemes/" + schemeList->currentItem()->data(Qt::UserRole).toString() +
+            ".colors");
         if (KIO::NetAccess::del(path, this))
         {
             delete schemeList->takeItem(schemeList->currentRow());
@@ -288,7 +295,7 @@ void KColorCm::on_schemeSaveButton_clicked()
     QString previousName;
     if (schemeList->currentItem() != NULL)
     {
-        previousName = schemeList->currentItem()->text();
+        previousName = schemeList->currentItem()->data(Qt::UserRole).toString();
     }
     // prompt for the name to save as
     bool ok;
@@ -328,6 +335,7 @@ void KColorCm::saveScheme(const QString &name)
         updateFromEffectsPage();
         KConfigGroup group(m_config, "General");
         group.writeEntry("shadeSortColumn", (bool)shadeSortedColumn->checkState());
+        group.writeEntry("name", name);
         KConfigGroup group2(m_config, "KDE");
         group2.writeEntry("contrast", contrastSlider->value());
         // sync it
