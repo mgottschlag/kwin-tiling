@@ -203,7 +203,7 @@ KGreeter::insertUser( const QImage &default_pix,
 		if (p.load( fn + ".icon" ) || p.load( fn )) {
 			QSize ns( 48, 48 );
 			if (p.size() != ns)
-				p = p.convertToFormat( QImage::Format_RGB32 ).scaled( ns, Qt::KeepAspectRatio, Qt::SmoothTransformation );
+				p = p.convertToFormat( QImage::Format_ARGB32 ).scaled( ns, Qt::KeepAspectRatio, Qt::SmoothTransformation );
 			goto gotit;
 		}
 		dp = 1 - dp;
@@ -270,7 +270,7 @@ KGreeter::insertUsers()
 		QSize ns( 48, 48 );
 		if (default_pix.size() != ns)
 			default_pix =
-			  default_pix.convertToFormat( QImage::Format_RGB32 ).scaled( ns, Qt::KeepAspectRatio, Qt::SmoothTransformation );
+			  default_pix.convertToFormat( QImage::Format_ARGB32 ).scaled( ns, Qt::KeepAspectRatio, Qt::SmoothTransformation );
 	}
 	if (_showUsers == SHOW_ALL) {
 		UserList noUsers( _noUsers );
