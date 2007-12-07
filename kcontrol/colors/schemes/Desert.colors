@@ -1,6 +1,3 @@
-[General]
-Name=Desert
-
 [ColorEffects:Disabled]
 Color=80,77,72
 ColorAmount=0.125
@@ -82,6 +79,7 @@ ForegroundVisited=117,87,182
 
 [General]
 shadeSortColumn=true
+Name=Desert
 
 [KDE]
 contrast=7

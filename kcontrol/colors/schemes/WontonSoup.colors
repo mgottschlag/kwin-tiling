@@ -1,6 +1,3 @@
-[General]
-Name=Wonton Soup
-
 [ColorEffects:Disabled]
 Color=107,135,22
 ColorAmount=0
@@ -82,6 +79,7 @@ ForegroundVisited=64,128,255
 
 [General]
 shadeSortColumn=true
+Name=Wonton Soup
 
 [KDE]
 contrast=7

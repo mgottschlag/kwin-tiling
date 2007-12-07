@@ -1,6 +1,3 @@
-[General]
-Name=Stone Orchid
-
 [ColorEffects:Disabled]
 Color=127,131,144
 ColorAmount=0.125
@@ -82,6 +79,7 @@ ForegroundVisited=69,40,134
 
 [General]
 shadeSortColumn=true
+Name=Stone Orchid
 
 [KDE]
 contrast=7

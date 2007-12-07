@@ -1,6 +1,3 @@
-[General]
-Name=Midnight Meadow
-
 [ColorEffects:Disabled]
 Color=107,135,22
 ColorAmount=0.025
@@ -82,6 +79,7 @@ ForegroundVisited=195,172,244
 
 [General]
 shadeSortColumn=true
+Name=Midnight Meadow
 
 [KDE]
 contrast=7

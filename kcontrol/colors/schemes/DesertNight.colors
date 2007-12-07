@@ -1,6 +1,3 @@
-[General]
-Name=Desert Night
-
 [ColorEffects:Disabled]
 Color=48,43,30
 ColorAmount=0.125
@@ -82,6 +79,7 @@ ForegroundVisited=192,128,255
 
 [General]
 shadeSortColumn=true
+Name=Desert Night
 
 [KDE]
 contrast=7

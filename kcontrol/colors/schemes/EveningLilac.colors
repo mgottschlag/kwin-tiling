@@ -1,6 +1,3 @@
-[General]
-Name=Evening Lilac
-
 [ColorEffects:Disabled]
 Color=92,100,111
 ColorAmount=-0.15
@@ -82,6 +79,7 @@ ForegroundVisited=177,79,154
 
 [General]
 shadeSortColumn=true
+Name=Evening Lilac
 
 [KDE]
 contrast=7

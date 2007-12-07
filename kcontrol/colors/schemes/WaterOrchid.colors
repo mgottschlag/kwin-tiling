@@ -1,6 +1,3 @@
-[General]
-Name=Water Orchid
-
 [ColorEffects:Disabled]
 Color=48,43,30
 ColorAmount=-0.75
@@ -82,6 +79,7 @@ ForegroundVisited=195,181,218
 
 [General]
 shadeSortColumn=true
+Name=Water Orchid
 
 [KDE]
 contrast=7
