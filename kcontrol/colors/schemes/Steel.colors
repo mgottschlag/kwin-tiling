@@ -7,6 +7,15 @@ ContrastEffect=1
 IntensityAmount=0.25
 IntensityEffect=2
 
+[ColorEffects:Inactive]
+Color=135,133,129
+ColorAmount=0.05
+ColorEffect=2
+ContrastAmount=0.25
+ContrastEffect=2
+IntensityAmount=0
+IntensityEffect=0
+
 [Colors:Button]
 BackgroundAlternate=224,223,220
 BackgroundNormal=232,231,227
