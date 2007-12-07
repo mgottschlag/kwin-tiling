@@ -122,6 +122,7 @@ private:
     QAction *m_setupDesktopAction;
     QAction *m_lockScreenAction;
     QAction *m_logoutAction;
+    QAction *m_separator;
 
     KDialog *m_configDialog;
     Ui::config *m_ui;

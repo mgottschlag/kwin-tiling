@@ -405,19 +405,22 @@ QList<QAction*> DefaultDesktop::contextActions()
         m_logoutAction->setIcon(KIcon("system-log-out"));
         connect(m_logoutAction, SIGNAL(triggered(bool)), this, SLOT(logout()));
         constraintsUpdated(Plasma::ImmutableConstraint);
+
+        m_separator = new QAction(this);
+        m_separator->setSeparator(true);
     }
 
     QList<QAction*> actions;
 
-    actions.append(m_appletBrowserAction);
-
-    actions.append(m_setupDesktopAction);
-
-    actions.append(m_lockDesktopAction);
-
     if (KAuthorized::authorizeKAction("run_command")) {
         actions.append(m_runCommandAction);
     }
+
+    actions.append(m_appletBrowserAction);
+    actions.append(m_setupDesktopAction);
+
+    actions.append(m_separator);
+    actions.append(m_lockDesktopAction);
 
     if (KAuthorized::authorizeKAction("lock_screen")) {
         actions.append(m_lockScreenAction);
