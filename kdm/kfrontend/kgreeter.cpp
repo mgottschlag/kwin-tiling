@@ -38,8 +38,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <KConfigGroup>
 
 #include <QAction>
+#include <QBuffer>
 #include <QDir>
 #include <QFile>
+#include <QImageReader>
 #include <QKeyEvent>
 #include <QLabel>
 #include <QListWidget>
@@ -52,6 +54,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <sys/types.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <pwd.h>
 #include <grp.h>
 
@@ -179,6 +182,11 @@ KGreeter::~KGreeter()
 	delete stsGroup;
 }
 
+#define FILE_LIMIT_ICON 20
+#define FILE_LIMIT_IMAGE 200
+#define PIXEL_LIMIT_ICON 100
+#define PIXEL_LIMIT_IMAGE 300
+
 void
 KGreeter::insertUser( const QImage &default_pix,
                       const QString &username, struct passwd *ps )
@@ -197,16 +205,47 @@ KGreeter::insertUser( const QImage &default_pix,
 		nd = 1;
 	QImage p;
 	do {
-		QString fn = dp ?
-		             QFile::decodeName( ps->pw_dir ) + "/.face" :
-		             _faceDir + '/' + username + ".face";
-		if (p.load( fn + ".icon" ) || p.load( fn )) {
-			QSize ns( 48, 48 );
-			if (p.size() != ns)
-				p = p.convertToFormat( QImage::Format_ARGB32 ).scaled( ns, Qt::KeepAspectRatio, Qt::SmoothTransformation );
-			goto gotit;
+		dp ^= 1;
+		QByteArray fn = !dp ?
+		                QByteArray( ps->pw_dir ) + '/' :
+		                QFile::encodeName( _faceDir + '/' + username );
+		fn += ".face.icon";
+		int fd, ico;
+		if ((fd = open( fn.data(), O_RDONLY | O_NONBLOCK )) < 0) {
+			fn.chop( 5 );
+			if ((fd = open( fn.data(), O_RDONLY | O_NONBLOCK )) < 0)
+				continue;
+			ico = 0;
+		} else
+			ico = 1;
+		QFile f;
+		f.open( fd, QFile::ReadOnly );
+		int fs = f.size();
+		if (fs > (ico ? FILE_LIMIT_ICON : FILE_LIMIT_IMAGE) * 1000) {
+			logWarn( "%s exceeds file size limit (%dkB)\n",
+			         fn.data(), ico ? FILE_LIMIT_ICON : FILE_LIMIT_IMAGE );
+			continue;
 		}
-		dp = 1 - dp;
+		QByteArray fc = f.read( fs );
+		::close( fd );
+		QBuffer buf( &fc );
+		buf.open( QBuffer::ReadOnly );
+		QImageReader ir( &buf );
+		QSize sz = ir.size();
+		int lim = ico ? PIXEL_LIMIT_ICON : PIXEL_LIMIT_IMAGE;
+		if (sz.width() > lim || sz.height() > lim) {
+			logWarn( "%s exceeds image dimension limit (%dx%d)\n",
+			         fn.data(), lim, lim );
+			continue;
+		}
+		sz.scale( 48, 48, Qt::KeepAspectRatio );
+		ir.setScaledSize( sz );
+		p = ir.read();
+		if (p.isNull()) {
+			logInfo( "%s is no valid image\n", fn.data() );
+			continue;
+		}
+		goto gotit;
 	} while (--nd >= 0);
 	p = default_pix;
   gotit:
