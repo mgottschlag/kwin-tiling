@@ -163,7 +163,7 @@ Action_data::Action_data( KConfigGroup& cfg_P, Action_data_group* parent_P )
     : Action_data_base( cfg_P, parent_P )
     {
     KConfigGroup triggersGroup( cfg_P.config(), cfg_P.name() + "Triggers" );
-    _triggers = new Trigger_list( cfg_P, this );
+    _triggers = new Trigger_list( triggersGroup, this );
     KConfigGroup actionsGroup( cfg_P.config(), cfg_P.name() + "Actions" );
     _actions = new Action_list( actionsGroup, this );
     }
