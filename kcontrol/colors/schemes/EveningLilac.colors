@@ -87,11 +87,7 @@ ForegroundPositive=164,208,122
 ForegroundVisited=177,79,154
 
 [General]
-shadeSortColumn=true
 Name=Evening Lilac
-
-[KDE]
-contrast=7
 
 [WM]
 activeBackground=144,133,157

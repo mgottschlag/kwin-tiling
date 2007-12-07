@@ -87,11 +87,7 @@ ForegroundPositive=145,221,100
 ForegroundVisited=223,191,255
 
 [General]
-shadeSortColumn=true
 Name=Blue Deep
-
-[KDE]
-contrast=7
 
 [WM]
 activeBackground=17,42,71

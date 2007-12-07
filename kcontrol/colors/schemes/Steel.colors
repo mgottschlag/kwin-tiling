@@ -87,11 +87,7 @@ ForegroundPositive=67,102,46
 ForegroundVisited=100,74,155
 
 [General]
-shadeSortColumn=true
 Name=Steel
-
-[KDE]
-contrast=7
 
 [WM]
 activeBackground=74,139,163

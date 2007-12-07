@@ -87,11 +87,7 @@ ForegroundPositive=145,221,100
 ForegroundVisited=64,128,255
 
 [General]
-shadeSortColumn=true
 Name=Wonton Soup
-
-[KDE]
-contrast=7
 
 [WM]
 activeBackground=99,105,115

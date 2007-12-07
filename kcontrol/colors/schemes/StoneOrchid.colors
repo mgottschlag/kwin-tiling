@@ -87,11 +87,7 @@ ForegroundPositive=0,110,40
 ForegroundVisited=69,40,134
 
 [General]
-shadeSortColumn=true
 Name=Stone Orchid
-
-[KDE]
-contrast=7
 
 [WM]
 activeBackground=177,77,122

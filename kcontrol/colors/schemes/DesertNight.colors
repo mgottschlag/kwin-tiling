@@ -87,11 +87,7 @@ ForegroundPositive=128,255,128
 ForegroundVisited=192,128,255
 
 [General]
-shadeSortColumn=true
 Name=Desert Night
-
-[KDE]
-contrast=7
 
 [WM]
 activeBackground=161,40,6

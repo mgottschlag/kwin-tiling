@@ -87,11 +87,7 @@ ForegroundPositive=120,183,83
 ForegroundVisited=195,181,218
 
 [General]
-shadeSortColumn=true
 Name=Water Orchid
-
-[KDE]
-contrast=7
 
 [WM]
 activeBackground=190,154,220

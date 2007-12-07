@@ -87,11 +87,7 @@ ForegroundPositive=0,137,43
 ForegroundVisited=147,87,211
 
 [General]
-shadeSortColumn=true
 Name=Whitewater
-
-[KDE]
-contrast=7
 
 [WM]
 activeBackground=41,101,164

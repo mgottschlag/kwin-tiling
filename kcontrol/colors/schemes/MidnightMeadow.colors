@@ -87,11 +87,7 @@ ForegroundPositive=142,255,37
 ForegroundVisited=195,172,244
 
 [General]
-shadeSortColumn=true
 Name=Midnight Meadow
-
-[KDE]
-contrast=7
 
 [WM]
 activeBackground=141,193,89

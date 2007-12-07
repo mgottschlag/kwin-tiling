@@ -87,11 +87,7 @@ ForegroundPositive=55,164,43
 ForegroundVisited=223,191,255
 
 [General]
-shadeSortColumn=true
 Name=Rose
-
-[KDE]
-contrast=7
 
 [WM]
 activeBackground=166,106,106

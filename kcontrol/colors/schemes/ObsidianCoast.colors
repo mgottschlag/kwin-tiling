@@ -87,11 +87,7 @@ ForegroundPositive=120,183,83
 ForegroundVisited=142,121,165
 
 [General]
-shadeSortColumn=true
 Name=Obsidian Coast
-
-[KDE]
-contrast=7
 
 [WM]
 activeBackground=19,47,80

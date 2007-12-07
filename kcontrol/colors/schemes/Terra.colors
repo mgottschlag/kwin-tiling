@@ -87,11 +87,7 @@ ForegroundPositive=0,77,0
 ForegroundVisited=74,96,57
 
 [General]
-shadeSortColumn=true
 Name=Terra
-
-[KDE]
-contrast=7
 
 [WM]
 activeBackground=13,38,8
