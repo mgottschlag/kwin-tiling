@@ -1,3 +1,6 @@
+[General]
+Name=Desert
+
 [ColorEffects:Disabled]
 Color=80,77,72
 ColorAmount=0.125

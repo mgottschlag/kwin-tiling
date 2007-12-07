@@ -1,3 +1,6 @@
+[General]
+Name=Stone Orchid
+
 [ColorEffects:Disabled]
 Color=127,131,144
 ColorAmount=0.125

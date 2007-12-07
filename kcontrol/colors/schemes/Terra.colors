@@ -1,3 +1,6 @@
+[General]
+Name=Terra
+
 [ColorEffects:Disabled]
 Color=99,96,77
 ColorAmount=0.125

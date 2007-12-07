@@ -1,3 +1,6 @@
+[General]
+Name=Desert Night
+
 [ColorEffects:Disabled]
 Color=48,43,30
 ColorAmount=0.125
