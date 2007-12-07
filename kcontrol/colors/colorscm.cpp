@@ -344,7 +344,7 @@ void KColorCm::saveScheme(const QString &name)
         updateFromEffectsPage();
         KConfigGroup group(m_config, "General");
         group.writeEntry("shadeSortColumn", (bool)shadeSortedColumn->checkState());
-        group.writeEntry("name", name);
+        group.writeEntry("Name", name);
         KConfigGroup group2(m_config, "KDE");
         group2.writeEntry("contrast", contrastSlider->value());
         // sync it
