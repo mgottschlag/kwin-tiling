@@ -296,7 +296,7 @@ void KColorCm::on_schemeSaveButton_clicked()
     QString previousName;
     if (schemeList->currentItem() != NULL)
     {
-        previousName = schemeList->currentItem()->data(Qt::UserRole).toString();
+        previousName = schemeList->currentItem()->data(Qt::DisplayRole).toString();
     }
     // prompt for the name to save as
     bool ok;
