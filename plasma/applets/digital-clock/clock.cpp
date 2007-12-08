@@ -179,23 +179,22 @@ void Clock::showConfigurationInterface()
         m_dialog->setCaption( i18n("Configure Clock") );
 
         ui.setupUi(m_dialog->mainWidget());
-        ui.showDate->setChecked(m_showDate);
-        ui.showYear->setChecked(m_showYear);
-        ui.showDay->setChecked(m_showDay);
-        ui.showTimezone->setChecked(m_showTimezone);
-        ui.plainClockFontBold->setChecked(m_plainClockFontBold);
-        ui.plainClockFontItalic->setChecked(m_plainClockFontItalic);
-        ui.plainClockFont->setCurrentFont(m_plainClockFont);
-        ui.plainClockColor->setColor(m_plainClockColor);
-        ui.timeZones->setSelected(m_timezone, true);
-        ui.timeZones->setEnabled(m_timezone != "Local");
-        ui.localTimeZone->setChecked(m_timezone == "Local");
-
         m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
 
         connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
         connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
     }
+    ui.showDate->setChecked(m_showDate);
+    ui.showYear->setChecked(m_showYear);
+    ui.showDay->setChecked(m_showDay);
+    ui.showTimezone->setChecked(m_showTimezone);
+    ui.plainClockFontBold->setChecked(m_plainClockFontBold);
+    ui.plainClockFontItalic->setChecked(m_plainClockFontItalic);
+    ui.plainClockFont->setCurrentFont(m_plainClockFont);
+    ui.plainClockColor->setColor(m_plainClockColor);
+    ui.timeZones->setSelected(m_timezone, true);
+    ui.timeZones->setEnabled(m_timezone != "Local");
+    ui.localTimeZone->setChecked(m_timezone == "Local");
 
     ui.timeZones->setSelected(m_timezone, true);
     m_dialog->show();
