@@ -1,5 +1,4 @@
 [ColorEffects:Disabled]
-Color=92,100,111
 ColorAmount=-0.15
 ColorEffect=1
 ContrastAmount=0.5
@@ -8,7 +7,6 @@ IntensityAmount=0.25
 IntensityEffect=2
 
 [ColorEffects:Inactive]
-Color=146,145,142
 ColorAmount=0.2
 ColorEffect=1
 ContrastAmount=0.25
