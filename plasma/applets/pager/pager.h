@@ -29,6 +29,7 @@
 #include "ui_pagerConfig.h"
 
 class KDialog;
+class KSelectionOwner;
 
 
 class Pager : public Plasma::Applet
@@ -69,6 +70,7 @@ class Pager : public Plasma::Applet
 	void windowChanged(WId id);
   	void showingDesktopChanged(bool showing);
         void slotConfigureDesktop();
+        void lostDesktopLayoutOwner();
 
     protected:
         void createMenu();
@@ -90,6 +92,7 @@ class Pager : public Plasma::Applet
 	QList<QList<QPair<WId, QRect> > > m_windowRects;
 	QList<QRect> m_activeWindows;
         QList<QAction*> actions;
+        KSelectionOwner* m_desktopLayoutOwner;
 	
 	// dragging of windows
 	QRect m_dragOriginal;

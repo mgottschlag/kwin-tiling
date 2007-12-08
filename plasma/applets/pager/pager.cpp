@@ -35,6 +35,7 @@
 #include <KWindowSystem>
 #include <NETRootInfo>
 #include <KToolInvocation>
+#include <kmanagerselection.h>
 
 #include <plasma/svg.h>
 #include <plasma/theme.h>
@@ -67,6 +68,12 @@ void Pager::init()
     connect(KWindowSystem::self(), SIGNAL(stackingOrderChanged()), this, SLOT(stackingOrderChanged()));
     connect(KWindowSystem::self(), SIGNAL(windowChanged(WId)), this, SLOT(windowChanged(WId)));
     connect(KWindowSystem::self(), SIGNAL(showingDesktopChanged(bool)), this, SLOT(showingDesktopChanged(bool)));
+
+    m_desktopLayoutOwner = new KSelectionOwner( QString( "_NET_DESKTOP_LAYOUT_S%1" )
+        .arg( QX11Info::appScreen()).toLatin1().data(), QX11Info::appScreen(), this );
+    connect( m_desktopLayoutOwner, SIGNAL( lostOwnership()), SLOT( lostDesktopLayoutOwner()));
+    if( !m_desktopLayoutOwner->claim( false ))
+        lostDesktopLayoutOwner();
 
     m_currentDesktop = KWindowSystem::currentDesktop();
     numberOfDesktopsChanged(KWindowSystem::numberOfDesktops());
@@ -144,6 +151,12 @@ void Pager::recalculateGeometry()
                     m_itemHeight*m_rows + 2*m_rows - 1);
 
     updateGeometry();
+    if( m_desktopLayoutOwner != NULL )
+    { // must own manager selection before setting global desktop layout
+        NET::Orientation orient = NET::OrientationHorizontal;
+        NETRootInfo i( QX11Info::display(), 0 );
+        i.setDesktopLayout( orient, columns, m_rows, NET::DesktopLayoutCornerTopLeft );
+    }
 }
 
 void Pager::recalculateWindowRects()
@@ -458,6 +471,12 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
             painter->drawText(m_rects[i], Qt::AlignCenter, QString::number(i+1));
         }
     }
+}
+
+void Pager::lostDesktopLayoutOwner()
+{
+    delete m_desktopLayoutOwner;
+    m_desktopLayoutOwner = NULL;
 }
 
 #include "pager.moc"
