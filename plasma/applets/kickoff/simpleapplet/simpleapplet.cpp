@@ -38,6 +38,7 @@
 #include <plasma/containment.h>
 
 // Local
+#include "core/itemhandlers.h"
 #include "core/models.h"
 #include "core/applicationmodel.h"
 #include "core/favoritesmodel.h"
@@ -101,6 +102,8 @@ void MenuLauncherApplet::init()
     d->showLeaveSwitchUser = cg.readEntry("showLeaveSwitchUser",d->showLeaveSwitchUser);
     d->showLeaveLock = cg.readEntry("showLeaveLock",d->showLeaveLock);
     d->showLeaveLogout = cg.readEntry("showLeaveLogout",d->showLeaveLogout);
+
+    Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ProtocolHandler, "leave", new Kickoff::LeaveItemHandler);
 }
 
 QSizeF MenuLauncherApplet::contentSizeHint() const
@@ -170,6 +173,7 @@ void MenuLauncherApplet::toggleMenu(bool pressed, QGraphicsSceneMouseEvent *even
 
     if (!d->menuview) {
         d->menuview = new QMenu();
+        connect(d->menuview,SIGNAL(triggered(QAction*)),this,SLOT(actionTriggered(QAction*)));
 
         if(!d->appview) {
             d->appview = new Kickoff::MenuView();
@@ -227,6 +231,15 @@ void MenuLauncherApplet::toggleMenu(bool pressed, QGraphicsSceneMouseEvent *even
 
     d->menuview->setAttribute(Qt::WA_DeleteOnClose);
     d->menuview->popup(globalPos);
+}
+
+void MenuLauncherApplet::actionTriggered(QAction *action)
+{
+    if (action->data().type() == QVariant::Url) {
+        Kickoff::UrlItemLauncher *launcher = d->appview ? d->appview->launcher() : 0;
+        if (launcher)
+            launcher->openUrl(action->data().toUrl().toString());
+    }
 }
 
 #include "simpleapplet.moc"

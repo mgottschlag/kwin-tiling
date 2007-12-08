@@ -76,7 +76,7 @@ MenuView::MenuView(QWidget *parent)
 {
     connect(this,SIGNAL(triggered(QAction*)),this,SLOT(actionTriggered(QAction*)));
     UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ExtensionHandler,"desktop",new ServiceItemHandler);
-    UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ProtocolHandler, "leave", new LeaveItemHandler);
+    //UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ProtocolHandler, "leave", new LeaveItemHandler);
 }
 MenuView::~MenuView()
 {
@@ -102,6 +102,10 @@ void MenuView::setModel(QAbstractItemModel *model)
 QAbstractItemModel *MenuView::model() const
 {
     return d->model;
+}
+UrlItemLauncher *MenuView::launcher() const
+{
+    return d->launcher;
 }
 QModelIndex MenuView::indexForAction(QAction *action) const
 {
@@ -259,8 +263,6 @@ void MenuView::actionTriggered(QAction *action)
     QModelIndex index = indexForAction(action);
     if (index.isValid())
         d->launcher->openItem(index);
-    else if (action->data().type() == QVariant::Url)
-        d->launcher->openUrl(action->data().toUrl().toString());
 }
 
 #include "menuview.moc"

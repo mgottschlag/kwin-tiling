@@ -31,6 +31,8 @@ class QAbstractItemModel;
 namespace Kickoff
 {
 
+class UrlItemLauncher;
+
 /**
  * A view for a QAbstractItemModel which displays the model (set with setModel())
  * as a hierarchical menu.
@@ -58,6 +60,9 @@ public:
     void setModel(QAbstractItemModel *model);
     /** Returns the model displayed by this menu. */
     QAbstractItemModel *model() const;
+
+    /** Returns the UrlItemLauncher used to handle launching of urls. */
+    UrlItemLauncher *launcher() const;
 
     /** Maps an action in the menu to its corresponding index in model() */
     QModelIndex indexForAction(QAction *action) const;
