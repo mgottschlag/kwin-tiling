@@ -27,8 +27,6 @@
 #include "systemtraywidget.h"
 
 // Qt
-#include <QGraphicsScene>
-#include <QGraphicsView>
 #include <QPointer>
 
 // Plasma
@@ -46,22 +44,15 @@ public:
     Qt::Orientations expandingDirections() const;
     void constraintsUpdated(Plasma::Constraints constraints);
 
-protected:
-    QVariant itemChange(QGraphicsItem::GraphicsItemChange change, const QVariant &value);
-
 private slots:
     void updateSize();
-    void handleSceneChange(const QList<QRectF> &region);
 
 private:
-    bool intersectsRegion(const QList<QRectF> &region);
-    QGraphicsView * findView();
     void updateWidgetOrientation();
+    void updateWidgetGeometry();
 
-    // These can all be deleted externally so we guard them
+    // The parent widget might delete this so we guard it
     QPointer<SystemTrayWidget> m_systemTrayWidget;
-    QPointer<QGraphicsScene> m_currentScene;
-    QPointer<QGraphicsView> m_currentView;
 };
 
 K_EXPORT_PLASMA_APPLET(systemtray, SystemTray)
