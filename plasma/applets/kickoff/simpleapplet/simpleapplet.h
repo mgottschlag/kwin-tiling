@@ -20,23 +20,10 @@
 #ifndef SIMPLEAPPLET_H
 #define SIMPLEAPPLET_H
 
-// KDE
-#include <KIcon>
-
 // Plasma
 #include <plasma/applet.h>
 
 class QGraphicsSceneMouseEvent;
-
-namespace Kickoff
-{
-    class MenuView;
-}
-namespace Plasma
-{
-    class Icon;
-    class PushButton;
-}
 
 class MenuLauncherApplet : public Plasma::Applet
 {
@@ -46,15 +33,21 @@ public:
         MenuLauncherApplet(QObject *parent, const QVariantList &args);
         virtual ~MenuLauncherApplet();
 
+        void init();
+
         QSizeF contentSizeHint() const;
         Qt::Orientations expandingDirections() const;
 
+public slots:
+        void showConfigurationInterface();
+
 protected slots:
+        void configAccepted();
         void toggleMenu(bool pressed, QGraphicsSceneMouseEvent *event);
 
 private:
-        Kickoff::MenuView *m_menuview;
-        Plasma::Icon *m_icon;
+        class Private;
+        Private * const d;
 };
 
 K_EXPORT_PLASMA_APPLET(menulauncher, MenuLauncherApplet)

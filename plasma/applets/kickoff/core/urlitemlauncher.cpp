@@ -121,6 +121,11 @@ bool UrlItemLauncher::openItem(const QModelIndex& index)
     return Private::openUrl(urlString);
 }
 
+bool UrlItemLauncher::openUrl(const QString& url)
+{
+    return Private::openUrl(url);
+}
+
 void UrlItemLauncher::onSetupDone(Solid::ErrorType error, QVariant errorData, const QString &udi)
 {
     if (error!=Solid::NoError) {

@@ -23,6 +23,7 @@
 // Qt
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QStack>
+#include <QtCore/QUrl>
 #include <QtDebug>
 
 // Local
@@ -75,6 +76,7 @@ MenuView::MenuView(QWidget *parent)
 {
     connect(this,SIGNAL(triggered(QAction*)),this,SLOT(actionTriggered(QAction*)));
     UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ExtensionHandler,"desktop",new ServiceItemHandler);
+    UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ProtocolHandler, "leave", new LeaveItemHandler);
 }
 MenuView::~MenuView()
 {
@@ -121,7 +123,8 @@ QModelIndex MenuView::indexForAction(QAction *action) const
     QMenu *menu = qobject_cast<QMenu*>(parentWidget);
     while (menu) {
         int row = menu->actions().indexOf(action);
-        Q_ASSERT( row != -1 );
+        if( row < 0 )
+            return QModelIndex();
         rows.push(row);
 
         if (menu == this) {
@@ -254,7 +257,10 @@ int MenuView::column() const
 void MenuView::actionTriggered(QAction *action)
 {
     QModelIndex index = indexForAction(action);
-    Q_ASSERT(index.isValid());
-    d->launcher->openItem(index);    
+    if (index.isValid())
+        d->launcher->openItem(index);
+    else if (action->data().type() == QVariant::Url)
+        d->launcher->openUrl(action->data().toUrl().toString());
 }
+
 #include "menuview.moc"

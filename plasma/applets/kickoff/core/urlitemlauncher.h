@@ -71,6 +71,8 @@ public:
 public Q_SLOTS:
     /** Open the specified @p index from a Kickoff model. */
     bool openItem(const QModelIndex& index);
+    /** Open the specified @p url */
+    bool openUrl(const QString& url);
 
 private Q_SLOTS:
     void onSetupDone(Solid::ErrorType error, QVariant errorData, const QString &udi);
