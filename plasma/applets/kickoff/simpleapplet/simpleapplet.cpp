@@ -236,9 +236,12 @@ void MenuLauncherApplet::toggleMenu(bool pressed, QGraphicsSceneMouseEvent *even
 void MenuLauncherApplet::actionTriggered(QAction *action)
 {
     if (action->data().type() == QVariant::Url) {
-        Kickoff::UrlItemLauncher *launcher = d->appview ? d->appview->launcher() : 0;
-        if (launcher)
-            launcher->openUrl(action->data().toUrl().toString());
+        QUrl url = action->data().toUrl();
+        if (url.scheme() == "leave") {
+            Kickoff::UrlItemLauncher *launcher = d->appview ? d->appview->launcher() : 0;
+            if (launcher)
+                launcher->openUrl(url.toString());
+        }
     }
 }
 
