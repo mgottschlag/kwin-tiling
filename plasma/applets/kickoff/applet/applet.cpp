@@ -21,6 +21,8 @@
 #include "applet/applet.h"
 
 // Qt
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
 #include <QtDebug>
@@ -77,16 +79,27 @@ void LauncherApplet::toggleMenu(bool pressed, QGraphicsSceneMouseEvent *event)
         m_launcher->adjustSize();
     }
 
-    // try to position the launcher just above the applet with the left
-    // edge of the applet and the left edge of the launcher aligned
+    // try to position the launcher alongside the top or bottom edge of the
+    // applet with and aligned to the left or right of the applet
     if (!m_launcher->isVisible()) {
-        QPointF scenePos = mapToScene(boundingRect().topLeft());
         QWidget *viewWidget = event->widget() ? event->widget()->parentWidget() : 0;
         QGraphicsView *view = qobject_cast<QGraphicsView*>(viewWidget);
+        QDesktopWidget *desktop = QApplication::desktop();
         if (view) {
-            QPoint viewPos = view->mapFromScene(scenePos);
+            QPoint viewPos = view->mapFromScene(scenePos());
             QPoint globalPos = view->mapToGlobal(viewPos);
-            globalPos.ry() -= m_launcher->height(); 
+            QRect desktopRect = desktop->availableGeometry(view);
+            QRect size = mapToView(view, contentRect());
+            // Prefer to open below the icon so as to act like a regular menu
+            if (globalPos.y() + size.height() + m_launcher->height()
+                < desktopRect.bottom()) {
+                globalPos.ry() += size.height();
+            } else {
+                globalPos.ry() -= m_launcher->height();
+            }
+            if (globalPos.x() + m_launcher->width() > desktopRect.right()) {
+                globalPos.rx() -= m_launcher->width() - size.width();
+            }
             m_launcher->move(globalPos);
         }
         if (containment()) {
