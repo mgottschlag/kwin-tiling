@@ -88,7 +88,7 @@ CFontFilter::CFontFilter(QWidget *parent)
     itsPixmaps[CRIT_FONTCONFIG]=SmallIcon("edit-find");
     itsPixmaps[CRIT_FILENAME]=SmallIcon("application-x-font-type1");
     itsPixmaps[CRIT_LOCATION]=SmallIcon("folder");
-    itsPixmaps[CRIT_WS]=SmallIcon("pencil");
+    itsPixmaps[CRIT_WS]=SmallIcon("draw-freehand");
 
     itsActionGroup=new QActionGroup(this);
     addAction(CRIT_FAMILY, i18n("Family"), true, true);
