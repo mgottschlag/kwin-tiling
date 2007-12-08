@@ -13,6 +13,7 @@
 #include <config-khotkeys.h> // HAVE_ARTS
 
 #include "kcmkhotkeys.h"
+#include "khotkeysiface.h"
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -66,7 +67,7 @@ extern "C"
         KToolInvocation::kdeinitExec( "khotkeys" );
     else
         {
-    QDBusInterface kded("org.kde.kded", "/kded", "org.kde.kded");
+        QDBusInterface kded("org.kde.kded", "/kded", "org.kde.kded");
 		QDBusReply<bool> reply = kded.call("loadModule",QString( "khotkeys" ) );
         if( !reply.isValid())
             {
@@ -140,29 +141,31 @@ void Module::save()
     {
     tab_widget->save_current_action_changes();
     settings.actions = _actions_root;
+    kDebug(1217) << "Storing actions" << _actions_root;
     settings.write_settings();
+    QDBusConnection bus = QDBusConnection::sessionBus();
     if( daemon_disabled())
         {
-#ifdef __GNUC__
-#warning port to DBUS signal quit
-#endif
-
-        //kapp->dcopClient()->send( "khotkeys*", "khotkeys", "quit()", data );
+        if( bus.interface()->isServiceRegistered( "org.kde.khotkeys" ))
+            {
+            // wait for it to finish
+            org::kde::khotkeys* iface = new org::kde::khotkeys("org.kde.khotkeys", "/KHotKeys", bus, this);
+            iface->quit();
+            sleep( 1 );
+            }
         kDebug( 1217 ) << "disabling khotkeys daemon";
         }
     else
         {
-        if( !QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.khotkeys" ))
+        if( !bus.interface()->isServiceRegistered( "org.kde.khotkeys" ))
             {
             kDebug( 1217 ) << "launching new khotkeys daemon";
             KToolInvocation::kdeinitExec( "khotkeys" );
             }
         else
             {
-#ifdef __GNUC__
-#warning port to DBUS signal reread_configuration
-#endif
-            //kapp->dcopClient()->send( "khotkeys*", "khotkeys", "reread_configuration()", data );
+            org::kde::khotkeys* iface = new org::kde::khotkeys("org.kde.khotkeys", "/KHotKeys", bus, this);
+            iface->reread_configuration();
             kDebug( 1217 ) << "telling khotkeys daemon to reread configuration";
             }
         }

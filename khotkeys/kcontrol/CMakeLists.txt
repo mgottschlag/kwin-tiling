@@ -58,6 +58,9 @@ kde4_add_ui3_files(kcm_khotkeys_PART_SRCS
     ui/voice_settings_tab_ui.ui
     ui/voice_input_widget_ui.ui)
 
+
+qt4_add_dbus_interface(kcm_khotkeys_PART_SRCS ../app/org.kde.khotkeys.xml khotkeysiface)
+
 kde4_add_plugin(kcm_khotkeys ${kcm_khotkeys_PART_SRCS})
 
 

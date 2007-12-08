@@ -31,19 +31,20 @@
 #include <gestures.h>
 #include <voices.h>
 
+#include "khotkeysadaptor.h"
+
 K_PLUGIN_FACTORY(KHotKeysModuleFactory,
-                 registerPlugin<KHotKeys::KHotKeysModule>();
+                 registerPlugin<KHotKeysModule>();
     )
 K_EXPORT_PLUGIN(KHotKeysModuleFactory("khotkeys"))
 
-namespace KHotKeys
-{
 
 // KhotKeysModule
 
 KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
     : KDEDModule(parent)
     {
+    new KhotkeysAdaptor(this);
     for( int i = 0;
          i < 5;
          ++i )
@@ -51,18 +52,12 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
         if( QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.khotkeys" ))
             {
             // wait for it to finish
-#ifdef __GNUC__
-#warning port to DBUS signal quit
-#endif
-            //kapp->dcopClient()->call( "khotkeys*", "khotkeys", "quit()", data, reply, replyData );
+            QDBusConnection::sessionBus().send( QDBusMessage::createMethodCall( "org.kde.khotkeys", "/KHotKeys", "", "quit" ));
             sleep( 1 );
             }
         }
-#ifdef __GNUC__
-#warning port to DBUS registerAs
-#endif
-    //client.registerAs( "khotkeys", false ); // extra dcop connection (like if it was an app)
-    init_global_data( true, this ); // grab keys
+    QDBusConnection::sessionBus().registerObject("/KHotKeys", this);
+    KHotKeys::init_global_data( true, this ); // grab keys
     // CHECKME triggery a dalsi vytvaret az tady za inicializaci
     actions_root = NULL;
     reread_configuration();
@@ -78,19 +73,19 @@ void KHotKeysModule::reread_configuration()
     { // TODO
     kDebug( 1217 ) << "reading configuration";
     delete actions_root;
-    khotkeys_set_active( false );
-    Settings settings;
+    KHotKeys::khotkeys_set_active( false );
+    KHotKeys::Settings settings;
     settings.read_settings( false );
-    gesture_handler->set_mouse_button( settings.gesture_mouse_button );
-    gesture_handler->set_timeout( settings.gesture_timeout );
-    gesture_handler->enable( !settings.gestures_disabled_globally );
-    gesture_handler->set_exclude( settings.gestures_exclude );
-    voice_handler->set_shortcut( settings.voice_shortcut );
+    KHotKeys::gesture_handler->set_mouse_button( settings.gesture_mouse_button );
+    KHotKeys::gesture_handler->set_timeout( settings.gesture_timeout );
+    KHotKeys::gesture_handler->enable( !settings.gestures_disabled_globally );
+    KHotKeys::gesture_handler->set_exclude( settings.gestures_exclude );
+    KHotKeys::voice_handler->set_shortcut( settings.voice_shortcut );
 #if 0 // TEST CHECKME
     settings.write_settings();
 #endif
     actions_root = settings.actions;
-    khotkeys_set_active( true );
+    KHotKeys::khotkeys_set_active( true );
     actions_root->update_triggers();
     }
 
@@ -99,6 +94,5 @@ void KHotKeysModule::quit()
     delete this;
     }
 
-} // namespace KHotKeys
 
 #include "kded.moc"
