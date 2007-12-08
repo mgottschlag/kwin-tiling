@@ -73,6 +73,8 @@ public:
         // a background
         //QRectF boundingRect() const;
 
+        void constraintsUpdated(Plasma::Constraints constraints);
+
 private slots:
         void addWindowTask(Task::TaskPtr);
         void removeWindowTask(Task::TaskPtr);
@@ -289,9 +291,14 @@ public:
     void setWindowTask(Task::TaskPtr task);
     /** Returns the window represented by this task. */
     Task::TaskPtr windowTask() const;
+    /** Tells the window manager the minimized task's geometry. */
+    void publishIconGeometry();
 
     virtual void activate();
     virtual void close();
+
+    /** Overrided from LayoutItem */
+    void setGeometry(const QRectF& geometry);
 
 protected:
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);

@@ -29,6 +29,7 @@
 #include <QApplication>
 #include <QGraphicsScene>
 #include <QGraphicsSceneDragDropEvent>
+#include <QGraphicsView>
 #include <QIcon>
 #include <QLinearGradient>
 #include <QTimeLine>
@@ -162,6 +163,20 @@ void Tasks::removeWindowTask(Task::TaskPtr task)
         removeItemFromRootGroup(_windowTaskItems[task]);
     }
 }
+
+void Tasks::constraintsUpdated(Plasma::Constraints constraints)
+{
+    if (constraints & Plasma::LocationConstraint) {
+        foreach (AbstractTaskItem *taskItem, _rootTaskGroup->tasks()) {
+            //TODO: Update this if/when tasks() returns other types
+            WindowTaskItem *windowTaskItem = dynamic_cast<WindowTaskItem *>(taskItem);
+            if (windowTaskItem) {
+                windowTaskItem->publishIconGeometry();
+            }
+        }
+    }
+}
+
 
 
 
@@ -796,6 +811,7 @@ void WindowTaskItem::updateTask()
     setIcon(QIcon(iconPixmap));
     setText(_task->visibleName());
 }
+
 void WindowTaskItem::setWindowTask(Task::TaskPtr task)
 {
     if (_task)
@@ -828,5 +844,22 @@ void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
     TaskRMBMenu menu( windowTask() );
     menu.exec( e->screenPos() );
 }
-#include "tasks.moc"
 
+void WindowTaskItem::setGeometry(const QRectF& geometry)
+{
+    AbstractTaskItem::setGeometry(geometry);
+    publishIconGeometry();
+}
+
+void WindowTaskItem::publishIconGeometry()
+{
+    QGraphicsView *parentView = view();
+    if (!parentView || !_task) {
+        return;
+    }
+    QRect rect = mapToView(parentView, boundingRect());
+    rect.moveTopLeft(parentView->mapToGlobal(rect.topLeft()));
+    _task->publishIconGeometry(rect);
+}
+
+#include "tasks.moc"
