@@ -5,99 +5,74 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>217</width>
-    <height>109</height>
+    <width>199</width>
+    <height>52</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Configure Pager</string>
   </property>
-  <property name="accessibleName" stdset="0" >
+  <property name="accessibleName" >
    <string>Configure Pager</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <item>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <item row="0" column="0" colspan="3" >
     <widget class="QCheckBox" name="showDesktopNumberCheckBox" >
      <property name="text" >
       <string>Display the desktop &amp;number</string>
      </property>
     </widget>
    </item>
-   <item>
-    <layout class="QGridLayout" >
-     <item row="0" column="0" >
-      <widget class="QLabel" name="labelSize" >
-       <property name="text" >
-        <string>Height:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1" >
-      <widget class="QSpinBox" name="spinHeight" >
-       <property name="toolTip" >
-        <string>Change the height of the desktop items</string>
-       </property>
-       <property name="whatsThis" >
-        <string>Change the height of the desktop items</string>
-       </property>
-       <property name="minimum" >
-        <number>20</number>
-       </property>
-       <property name="maximum" >
-        <number>500</number>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2" >
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>31</width>
-         <height>27</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="1" column="0" >
-      <widget class="QLabel" name="labelRows" >
-       <property name="text" >
-        <string>Number of rows:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1" >
-      <widget class="QSpinBox" name="spinRows" >
-       <property name="toolTip" >
-        <string>Change the number of rows</string>
-       </property>
-       <property name="whatsThis" >
-        <string>Change the number of rows</string>
-       </property>
-       <property name="minimum" >
-        <number>1</number>
-       </property>
-       <property name="maximum" >
-        <number>20</number>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="2" >
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="labelRows" >
+     <property name="text" >
+      <string>Number of rows:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>spinRows</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QSpinBox" name="spinRows" >
+     <property name="toolTip" >
+      <string>Change the number of rows</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Change the number of rows</string>
+     </property>
+     <property name="minimum" >
+      <number>1</number>
+     </property>
+     <property name="maximum" >
+      <number>20</number>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

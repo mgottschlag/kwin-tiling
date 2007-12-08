@@ -41,10 +41,21 @@
 #include <plasma/theme.h>
 
 Pager::Pager(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent, args), m_dialog(0), m_dragId(0), m_dragHighlightedDesktop(-1)
+    : Plasma::Applet(parent, args),
+      m_dialog(0),
+      m_showDesktopNumber(true),
+      m_rows(2),
+      m_columns(0),
+      m_dragId(0),
+      m_dragHighlightedDesktop(-1)
 {
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
+
+    // initialize with a decent default
+    m_desktopCount = KWindowSystem::numberOfDesktops();
+    m_size = QSizeF(88, 44);
+    setContentSize(QSizeF(88, 44));
 }
 
 void Pager::init()
@@ -52,9 +63,16 @@ void Pager::init()
     createMenu();
 
     KConfigGroup cg = config();
-    m_showDesktopNumber = cg.readEntry("showDesktopNumber", true);
-    m_itemHeight = cg.readEntry("height", 22);
-    m_rows = cg.readEntry("rows", 2);
+    m_showDesktopNumber = cg.readEntry("showDesktopNumber", m_showDesktopNumber);
+    m_rows = globalConfig().readEntry("rows", m_rows);
+
+    if (m_rows < 1) {
+        m_rows = 1;
+    } else if (m_rows > m_desktopCount) {
+        m_rows = m_desktopCount;
+    }
+
+    recalculateGeometry();
 
     m_timer = new QTimer(this);
     m_timer->setSingleShot(true);
@@ -72,22 +90,18 @@ void Pager::init()
     m_desktopLayoutOwner = new KSelectionOwner( QString( "_NET_DESKTOP_LAYOUT_S%1" )
         .arg( QX11Info::appScreen()).toLatin1().data(), QX11Info::appScreen(), this );
     connect( m_desktopLayoutOwner, SIGNAL( lostOwnership()), SLOT( lostDesktopLayoutOwner()));
-    if( !m_desktopLayoutOwner->claim( false ))
+    if ( !m_desktopLayoutOwner->claim( false ))
         lostDesktopLayoutOwner();
 
     m_currentDesktop = KWindowSystem::currentDesktop();
-    numberOfDesktopsChanged(KWindowSystem::numberOfDesktops());
 }
 
-QSizeF Pager::contentSizeHint() const
+void Pager::constraintsUpdated(Plasma::Constraints constraints)
 {
-    return m_size;
-}
-
-void Pager::constraintsUpdated(Plasma::Constraints)
-{
-    recalculateGeometry();
-    recalculateWindowRects();
+    if (constraints & Plasma::SizeConstraint) {
+        recalculateGeometry();
+        recalculateWindowRects();
+    }
 }
 
 void Pager::createMenu()
@@ -128,7 +142,6 @@ void Pager::showConfigurationInterface()
     }
     ui.showDesktopNumberCheckBox->setChecked(m_showDesktopNumber);
 
-    ui.spinHeight->setValue(m_itemHeight);
     ui.spinRows->setValue(m_rows);
     ui.spinRows->setMaximum(m_desktopCount);
     m_dialog->show();
@@ -136,23 +149,32 @@ void Pager::showConfigurationInterface()
 
 void Pager::recalculateGeometry()
 {
-    m_scaleFactor = qreal(m_itemHeight) / QApplication::desktop()->height();
+    if (!m_rects.isEmpty() && contentSize() == m_size) {
+        return;
+    }
+
+    qreal itemHeight = (contentSize().height() - ((m_rows - 1) * 2)) / m_rows;
+    //kDebug() << "************************* itemHeight is" << itemHeight << contentSize().height();
+    m_scaleFactor = itemHeight / QApplication::desktop()->height();
     qreal itemWidth = QApplication::desktop()->width() * m_scaleFactor;
     m_rects.clear();
 
     int columns = m_desktopCount/m_rows + m_desktopCount%m_rows;
     for (int i = 0; i < m_desktopCount; i++) {
         m_rects.append(QRectF((i%columns)*itemWidth+2*(i%columns),
-                       m_itemHeight*(i/columns) + 2*(i/columns),
-                       itemWidth,
-                       m_itemHeight));
+                               itemHeight*(i/columns) + 2*(i/columns),
+                               itemWidth,
+                               itemHeight));
     }
-    m_size = QSizeF(columns*itemWidth + 2*columns - 1,
-                    m_itemHeight*m_rows + 2*m_rows - 1);
 
-    updateGeometry();
-    if( m_desktopLayoutOwner != NULL )
+    m_size = QSizeF(columns*itemWidth + 2*columns - 1,
+                    contentSize().height());
+    setContentSize(m_size);
+    //kDebug() << "new size set" << m_size << m_rows << m_columns << columns << itemWidth;
+
+    if (m_desktopLayoutOwner && columns != m_columns)
     { // must own manager selection before setting global desktop layout
+        m_columns = columns;
         NET::Orientation orient = NET::OrientationHorizontal;
         NETRootInfo i( QX11Info::display(), 0 );
         i.setDesktopLayout( orient, columns, m_rows, NET::DesktopLayoutCornerTopLeft );
@@ -208,16 +230,20 @@ void Pager::configAccepted()
     m_showDesktopNumber = ui.showDesktopNumberCheckBox->isChecked();
     cg.writeEntry("showDesktopNumber", m_showDesktopNumber);
 
-    m_itemHeight = ui.spinHeight->value();
-    cg.writeEntry("height", m_itemHeight);
-
-    m_rows = ui.spinRows->value();
-    if (m_rows > m_desktopCount) {
-        m_rows = m_desktopCount;
+    // we need to keep all pager applets consistent since this affects
+    // the layout of the desktops as used by the window manager,
+    // so we store the row count in the applet global configuration
+    if (m_rows != ui.spinRows->value()) {
+        KConfigGroup globalcg = globalConfig();
+        m_rows = ui.spinRows->value();
+        if (m_rows > m_desktopCount) {
+            m_rows = m_desktopCount;
+        }
+        globalcg.writeEntry("rows", m_rows);
+        // force an update of the column count in recalculateGeometry
+        m_columns = 0;
+        updateConstraints();
     }
-    cg.writeEntry("rows", m_rows);
-    updateConstraints();
-    cg.config()->sync();
 }
 
 void Pager::currentDesktopChanged(int desktop)
@@ -250,6 +276,7 @@ void Pager::numberOfDesktopsChanged(int num)
     if (m_rows > m_desktopCount) {
         m_rows = m_desktopCount;
     }
+    m_rects.clear();
     recalculateGeometry();
     m_timer->start();
 }

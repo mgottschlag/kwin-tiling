@@ -41,7 +41,6 @@ class Pager : public Plasma::Applet
         void init();
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option,
                             const QRect &contents);
-        QSizeF contentSizeHint() const;
         void constraintsUpdated(Plasma::Constraints);
 	Qt::Orientations expandingDirections() const;
         virtual QList<QAction*> contextActions();
@@ -80,8 +79,8 @@ class Pager : public Plasma::Applet
         KDialog *m_dialog;
         Ui::pagerConfig ui;
 	bool m_showDesktopNumber;
-	int m_itemHeight;
 	int m_rows;
+	int m_columns;
 	
 	int m_desktopCount;
 	int m_currentDesktop;
