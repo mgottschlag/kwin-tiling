@@ -9,9 +9,6 @@
     <height>284</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Form</string>
-  </property>
   <property name="styleSheet" >
    <string>
 		background: black;
