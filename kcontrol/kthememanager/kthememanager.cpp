@@ -393,12 +393,12 @@ void kthememanager::queryLNFModules()
     dlg->lvDetails->sort();*/
 
     // For now use a static list
-    dlg->btnBackground->setIcon( KIcon( "background" ) );
-    dlg->btnColors->setIcon( KIcon( "colorscm" ) );
-    dlg->btnStyle->setIcon( KIcon( "style" ) );
-    dlg->btnIcons->setIcon( KIcon( "icons" ) );
-    dlg->btnFonts->setIcon( KIcon( "fonts" ) );
-    dlg->btnSaver->setIcon( KIcon( "kscreensaver" ) );
+    dlg->btnBackground->setIcon( KIcon( "preferences-desktop-wallpaper" ) );
+    dlg->btnColors->setIcon( KIcon( "preferences-desktop-color" ) );
+    dlg->btnStyle->setIcon( KIcon( "preferences-desktop-theme-style" ) );
+    dlg->btnIcons->setIcon( KIcon( "preferences-desktop-icons" ) );
+    dlg->btnFonts->setIcon( KIcon( "preferences-desktop-font" ) );
+    dlg->btnSaver->setIcon( KIcon( "preferences-desktop-wallpaper" ) );
 }
 
 void kthememanager::updatePreview( const QString & pixFile )
