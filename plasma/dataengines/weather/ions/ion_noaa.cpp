@@ -111,7 +111,7 @@ bool NOAAIon::updateIonSource(const QString& source)
     QStringList sourceAction = source.split('|');
     if (sourceAction[1] == QString("validate")) {
         kDebug() << "Initiate Validating of place: " << sourceAction[2];
-        QStringList result = this->validate(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
+        QStringList result = validate(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
    
         if (result.size() == 1) {
             setData(source, "validate", QString("noaa|valid|single|%1").arg(result.join("|")));
@@ -200,7 +200,7 @@ void NOAAIon::setup_slotJobFinished(KJob *job)
 {
     Q_UNUSED(job)
     readXMLSetup();
-    this->setInitialized(true);
+    setInitialized(true);
 }
 
 void NOAAIon::parseStationID()
@@ -424,14 +424,14 @@ void NOAAIon::updateWeather(const QString& source)
     QMap<QString, QString> dataFields;
     QStringList fieldList;
 
-    setData(weatherSource, "Country", this->country(source));
-    setData(weatherSource, "Place", this->place(source));
-    setData(weatherSource, "Station", this->station(source));
+    setData(weatherSource, "Country", country(source));
+    setData(weatherSource, "Place", place(source));
+    setData(weatherSource, "Station", station(source));
 
     // Real weather - Current conditions
-    setData(weatherSource, "Observation Period", this->observationTime(source));
-    setData(weatherSource, "Current Conditions", this->condition(source));
-    dataFields = this->temperature(source);
+    setData(weatherSource, "Observation Period", observationTime(source));
+    setData(weatherSource, "Current Conditions", condition(source));
+    dataFields = temperature(source);
     setData(weatherSource, "Temperature", dataFields["temperature"]);
 
     if (dataFields["temperature"] != "N/A") {
@@ -453,28 +453,28 @@ void NOAAIon::updateWeather(const QString& source)
        setData(weatherSource, "Humidex", "N/A");
      }
 
-     setData(weatherSource, "Dewpoint", this->dewpoint(source));
-     if (this->dewpoint(source) != "N/A") {
+     setData(weatherSource, "Dewpoint", dewpoint(source));
+     if (dewpoint(source) != "N/A") {
          setData(weatherSource, "Dewpoint Unit", dataFields["temperatureUnit"]);
      }
  
-     dataFields = this->pressure(source);
+     dataFields = pressure(source);
      setData(weatherSource, "Pressure", dataFields["pressure"]);
 
      if (dataFields["pressure"] != "N/A") {
          setData(weatherSource, "Pressure Unit", dataFields["pressureUnit"]);
      }
 
-     dataFields = this->visibility(source);
+     dataFields = visibility(source);
      setData(weatherSource, "Visibility", dataFields["visibility"]);
 
      if (dataFields["visibility"] != "N/A") {
          setData(weatherSource, "Visibility Unit", dataFields["visibilityUnit"]);
      }
 
-     setData(weatherSource, "Humidity", this->humidity(source));
+     setData(weatherSource, "Humidity", humidity(source));
 
-     dataFields = this->wind(source);
+     dataFields = wind(source);
      setData(weatherSource, "Wind Speed", dataFields["windSpeed"]);
 
      if (dataFields["windSpeed"] != "Calm") {

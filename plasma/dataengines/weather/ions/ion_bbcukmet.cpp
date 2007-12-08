@@ -94,7 +94,7 @@ UKMETIon::~UKMETIon()
 // Get the master list of locations to be parsed
 void UKMETIon::init()
 {
-    this->setInitialized(true);
+    setInitialized(true);
 }
 
 // Get a specific Ion's data
@@ -108,7 +108,7 @@ bool UKMETIon::updateIonSource(const QString& source)
 
     if (sourceAction[1] == QString("validate")) {
         // Look for places to match
-        this->findPlace(sourceAction[2], source);
+        findPlace(sourceAction[2], source);
         return true;
 
     } else if (sourceAction[1] == QString("weather")) {
@@ -632,30 +632,30 @@ void UKMETIon::updateWeather(const QString& source)
     QVector<QString> forecastList;
     int i = 0;
 
-    setData(weatherSource, "Place", this->place(source));
-    setData(weatherSource, "Station", this->station(source));
-    setData(weatherSource, "Observation Period", this->observationTime(source));
-    setData(weatherSource, "Current Conditions", this->condition(source));
+    setData(weatherSource, "Place", place(source));
+    setData(weatherSource, "Station", station(source));
+    setData(weatherSource, "Observation Period", observationTime(source));
+    setData(weatherSource, "Current Conditions", condition(source));
  
-    setData(weatherSource, "Humidity", this->humidity(source));
-    setData(weatherSource, "Visibility", this->visibility(source));
+    setData(weatherSource, "Humidity", humidity(source));
+    setData(weatherSource, "Visibility", visibility(source));
    
-    dataFields = this->temperature(source);
+    dataFields = temperature(source);
     setData(weatherSource, "Temperature", dataFields["temperature"]);
     setData(weatherSource, "Temperature Unit", dataFields["temperatureUnit"]);
    
-    dataFields = this->pressure(source);
+    dataFields = pressure(source);
     setData(weatherSource, "Pressure", dataFields["pressure"]);
     setData(weatherSource, "Pressure Unit", dataFields["pressureUnit"]);
     setData(weatherSource, "Pressure Tendency", dataFields["pressureTendency"]);
   
-    dataFields = this->wind(source);
+    dataFields = wind(source);
     setData(weatherSource, "Wind Speed", dataFields["windSpeed"]);
     setData(weatherSource, "Wind Speed Unit", dataFields["windUnit"]);
     setData(weatherSource, "Wind Direction", dataFields["windDirection"]);
 
     // 5 Day forecast info
-    forecastList = this->forecasts(source);
+    forecastList = forecasts(source);
 
     QString windSpeed;
     QString windUnit;

@@ -42,8 +42,8 @@ public:
         QString ionName = name.left(offset);
 
 
-        if (this->m_ions.contains(ionName)) {
-            return this->m_ions[ionName];
+        if (m_ions.contains(ionName)) {
+            return m_ions[ionName];
         }
 
         return NULL;

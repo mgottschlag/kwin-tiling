@@ -103,7 +103,7 @@ void IonInterface::setInitialized(bool initialized)
     if (d->initialized) {
         foreach (const QString &source, sources()) {
             kDebug() << "Calling updateSource() for SOURCE = " << source;
-            this->updateSource(source);
+            updateSource(source);
         }
     }
 }
