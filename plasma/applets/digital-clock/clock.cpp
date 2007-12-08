@@ -84,13 +84,10 @@ void Clock::init()
     m_clockStyle = PlainClock;
     m_plainClockFont = cg.readEntry("plainClockFont", KGlobalSettings::generalFont());
 
-    // FIXME: Plasma Colorscheme?, FIXME: Saving QColor to KConfig doesn't work
-    //QColor default_color = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color(); 
-    //m_plainClockColor = cg.readEntry("plainClockColor", default_color);
-    
     // FIXME: Remove, currently, plasma's foreground seems to be black
-    m_plainClockColor = Qt::white;
-
+    //QColor default_color = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color(); 
+    QColor default_color = Qt::white;
+    m_plainClockColor = cg.readEntry("plainClockColor", default_color);
 
     m_plainClockFontBold = cg.readEntry("plainClockFontBold", true);
     m_plainClockFontItalic = cg.readEntry("plainClockFontItalic", false);
@@ -256,11 +253,11 @@ void Clock::configAccepted()
     m_plainClockFont.setBold(m_plainClockFontBold);
     m_plainClockFont.setItalic(m_plainClockFontItalic);
 
-    cg.writeEntry("PlainClock", m_clockStyle == PlainClock);
-    cg.writeEntry("PlainClockFont", m_plainClockFont);
-    cg.writeEntry("PlainClockColor", m_plainClockColor);
-    cg.writeEntry("PlainClockFontBold", m_plainClockFontBold);
-    cg.writeEntry("PlainClockFontItalic", m_plainClockFontItalic);
+    cg.writeEntry("plainClock", m_clockStyle == PlainClock);
+    cg.writeEntry("plainClockFont", m_plainClockFont);
+    cg.writeEntry("plainClockColor", m_plainClockColor);
+    cg.writeEntry("plainClockFontBold", m_plainClockFontBold);
+    cg.writeEntry("plainClockFontItalic", m_plainClockFontItalic);
 
     update();
     cg.config()->sync();
