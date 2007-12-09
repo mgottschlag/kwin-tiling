@@ -24,7 +24,6 @@
 // Qt
 #include <QCheckBox>
 #include <QVBoxLayout>
-#include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
 #include <QtDebug>
 
@@ -78,7 +77,7 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
 
     d->icon = new Plasma::Icon(QString(), this);
     d->icon->setFlag(ItemIsMovable, false);
-    connect(d->icon, SIGNAL(pressed(bool, QGraphicsSceneMouseEvent*)), this, SLOT(toggleMenu(bool,QGraphicsSceneMouseEvent*)));
+    connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
 
     d->showFavorites = true;
     d->showLeaveSwitchUser = true;
@@ -166,7 +165,7 @@ void MenuLauncherApplet::configAccepted()
     d->menuview = 0;
 }
 
-void MenuLauncherApplet::toggleMenu(bool pressed, QGraphicsSceneMouseEvent *event)
+void MenuLauncherApplet::toggleMenu(bool pressed)
 {
     if (!pressed) {
         return;
@@ -214,15 +213,14 @@ void MenuLauncherApplet::toggleMenu(bool pressed, QGraphicsSceneMouseEvent *even
     }
 
     const QPointF scenePos = mapToScene(boundingRect().topLeft());
-    QWidget *viewWidget = event->widget() ? event->widget()->parentWidget() : 0;
-    QGraphicsView *view = qobject_cast<QGraphicsView*>(viewWidget);
+    QGraphicsView *viewWidget = view();
     QPoint globalPos;
-    if (view) {
-        const QPoint viewPos = view->mapFromScene(scenePos);
-        globalPos = view->mapToGlobal(viewPos);
+    if (viewWidget) {
+        const QPoint viewPos = viewWidget->mapFromScene(scenePos);
+        globalPos = viewWidget->mapToGlobal(viewPos);
         int ypos = globalPos.ry() - d->menuview->sizeHint().height();
         if( ypos < 0 ) {
-            const QRect size = mapToView(view, boundingRect());
+            const QRect size = mapToView(viewWidget, boundingRect());
             ypos = globalPos.ry() + size.height();
         }
         globalPos.ry() = ypos;

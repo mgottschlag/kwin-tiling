@@ -24,7 +24,6 @@
 #include <plasma/applet.h>
 
 class QAction;
-class QGraphicsSceneMouseEvent;
 
 class MenuLauncherApplet : public Plasma::Applet
 {
@@ -44,7 +43,7 @@ public slots:
 
 protected slots:
         void configAccepted();
-        void toggleMenu(bool pressed, QGraphicsSceneMouseEvent *event);
+        void toggleMenu(bool pressed);
         void actionTriggered(QAction *action);
 
 private:

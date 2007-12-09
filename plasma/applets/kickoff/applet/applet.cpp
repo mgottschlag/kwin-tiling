@@ -23,7 +23,6 @@
 // Qt
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QGraphicsSceneMouseEvent>
 #include <QGraphicsView>
 #include <QtDebug>
 
@@ -47,7 +46,7 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
     layout->setMargin(0);
     Plasma::Icon *icon = new Plasma::Icon(KIcon("start-here"), QString(), this);
     icon->setFlag(ItemIsMovable, false);
-    connect(icon, SIGNAL(pressed(bool, QGraphicsSceneMouseEvent*)), this, SLOT(toggleMenu(bool,QGraphicsSceneMouseEvent*)));
+    connect(icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
 }
 
 LauncherApplet::~LauncherApplet()
@@ -65,7 +64,7 @@ Qt::Orientations LauncherApplet::expandingDirections() const
     return 0;
 }
 
-void LauncherApplet::toggleMenu(bool pressed, QGraphicsSceneMouseEvent *event)
+void LauncherApplet::toggleMenu(bool pressed)
 {
     if (!pressed) {
         return;
@@ -82,14 +81,13 @@ void LauncherApplet::toggleMenu(bool pressed, QGraphicsSceneMouseEvent *event)
     // try to position the launcher alongside the top or bottom edge of the
     // applet with and aligned to the left or right of the applet
     if (!m_launcher->isVisible()) {
-        QWidget *viewWidget = event->widget() ? event->widget()->parentWidget() : 0;
-        QGraphicsView *view = qobject_cast<QGraphicsView*>(viewWidget);
+        QGraphicsView *viewWidget = view();
         QDesktopWidget *desktop = QApplication::desktop();
-        if (view) {
-            QPoint viewPos = view->mapFromScene(scenePos());
-            QPoint globalPos = view->mapToGlobal(viewPos);
-            QRect desktopRect = desktop->availableGeometry(view);
-            QRect size = mapToView(view, contentRect());
+        if (viewWidget) {
+            QPoint viewPos = viewWidget->mapFromScene(scenePos());
+            QPoint globalPos = viewWidget->mapToGlobal(viewPos);
+            QRect desktopRect = desktop->availableGeometry(viewWidget);
+            QRect size = mapToView(viewWidget, contentRect());
             // Prefer to open below the icon so as to act like a regular menu
             if (globalPos.y() + size.height() + m_launcher->height()
                 < desktopRect.bottom()) {

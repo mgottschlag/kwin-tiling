@@ -26,8 +26,6 @@
 // Plasma
 #include <plasma/applet.h>
 
-class QGraphicsSceneMouseEvent;
-
 namespace Kickoff
 {
     class Launcher;
@@ -50,7 +48,7 @@ public:
         Qt::Orientations expandingDirections() const;
 
 protected slots:
-        void toggleMenu(bool pressed, QGraphicsSceneMouseEvent *event);
+        void toggleMenu(bool pressed);
 
 private:
         Kickoff::Launcher *m_launcher;
