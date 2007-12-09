@@ -184,7 +184,6 @@ void MenuLauncherApplet::toggleMenu(bool pressed, QGraphicsSceneMouseEvent *even
         }
         foreach (QAction *action, d->appview->actions())
             d->menuview->addAction(action);
-        connect(d->menuview,SIGNAL(triggered(QAction*)),d->appview,SLOT(actionTriggered(QAction*)));
 
         if (d->showFavorites) {
             if (!d->favview) {
@@ -195,7 +194,6 @@ void MenuLauncherApplet::toggleMenu(bool pressed, QGraphicsSceneMouseEvent *even
             d->menuview->addSeparator();
             foreach (QAction *action, d->favview->actions())
                 d->menuview->addAction(action);
-            connect(d->menuview,SIGNAL(triggered(QAction*)),d->favview,SLOT(actionTriggered(QAction*)));
         }
 
         if (d->showLeaveSwitchUser || d->showLeaveLock || d->showLeaveLogout) {
@@ -242,6 +240,18 @@ void MenuLauncherApplet::actionTriggered(QAction *action)
             Kickoff::UrlItemLauncher *launcher = d->appview ? d->appview->launcher() : 0;
             if (launcher)
                 launcher->openUrl(url.toString());
+        }
+    }
+    else {
+        for(QWidget* w = action->parentWidget(); w; w = w->parentWidget()) {
+            if (w == d->appview) {
+                d->appview->actionTriggered(action);
+                break;
+            }
+            else if (w == d->favview) {
+                d->favview->actionTriggered(action);
+                break;
+            }
         }
     }
 }

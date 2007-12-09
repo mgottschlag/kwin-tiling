@@ -101,6 +101,10 @@ protected:
      */
     virtual void updateAction(QAction *action, const QModelIndex& index);
 
+public Q_SLOTS:
+    // an item in the menu got triggered
+    void actionTriggered(QAction* action);
+
 private Q_SLOTS:
     void rowsInserted(const QModelIndex& parent,int start,int end);
     void rowsRemoved(const QModelIndex& parent,int start,int end);
@@ -108,8 +112,6 @@ private Q_SLOTS:
     void modelReset();
     // performs on-demand filling of sub-menus in the tree
     void fillSubMenu();
-    // an item in the menu got triggered
-    void actionTriggered(QAction* action);
 
 private:
     class Private;
