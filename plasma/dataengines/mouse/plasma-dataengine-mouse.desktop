@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=Mouse Data Engine
 Name[ca]=Motor de dades del ratolí
+Name[csb]=Czérownik pòdôwków mëszë
 Name[de]=Mausdaten-Treiber
 Name[el]=Μηχανή δεδομένων ποντικιού
+Name[eo]=Musa datuma motoro
 Name[es]=Motor de datos del ratón
 Name[et]=Hiire andmete mootor
 Name[eu]=Saguaren datu motorea
@@ -28,8 +30,10 @@ Name[zh_CN]=鼠标数据引擎
 Name[zh_TW]=滑鼠資料引擎
 Comment=Mouse data for Plasmoids
 Comment[ca]=Dades del ratolí pels plasmoides
+Comment[csb]=Czérownik pòdôwków mëszë dlô plazmoidów
 Comment[de]=Mausdaten für Plasmoide
 Comment[el]=Δεδομένα ποντικιού για πλασμοειδή
+Comment[eo]=Musaj datumoj por Plasmoids (Plasma-apletoj)
 Comment[et]=Hiire andmed plasmoididele
 Comment[eu]=Plasmoiden sagu data
 Comment[ga]=Sonraí luiche le haghaidh Plasmoids

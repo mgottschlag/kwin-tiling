@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=BBC Weather from UK MET Office
 Name[ca]=Meteorologia de la BBC des de UK MET Office
+Name[csb]=Wiodro BBC z bura  UK-MET
 Name[de]=BBC-Wetter aus dem UK-MET-Büro
 Name[el]=Καιρός του BBC από το γραφείο UK MET
+Name[eo]=BBC-vetero el UK-MET-oficejo
 Name[es]=Meteorología de la BBC de la Oficina meteorológica del Reino Unido
 Name[et]=BBC ilmateade Briti ilmateenistusest
 Name[eu]=BBC eguraldia UK MET bulegotik
@@ -31,8 +33,10 @@ Name[zh_CN]=来自英国 MET 办公室来的 BBC 天气报告
 Name[zh_TW]=BBC 天氣報告，從 UK MET 辦公室來
 Comment=XML Data from the UK MET Office
 Comment[ca]=Dades XML des de UK MET Office
+Comment[csb]=XML-pòdôwczi z bura UK-MET
 Comment[de]=XML-Daten aus dem UK-MET-Büro
 Comment[el]=Δεδομένα XML από το γραφείο UK MET
+Comment[eo]=XML-datumoj el la UK-MET-oficejo
 Comment[es]=Datos XML de la Oficina Meteorológica del Reino Unido
 Comment[et]=Briti ilmateenistuse XML-andmed
 Comment[eu]=XML datuak UK MET bulegotik

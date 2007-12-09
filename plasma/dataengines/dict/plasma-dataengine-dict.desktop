@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Dictionary Data Engine
 Name[ca]=Motor de dades de diccionari
+Name[csb]=Czérownik słowôrza
 Name[de]=Wörterbuch-Treiber
 Name[el]=Μηχανή δεδομένων λεξικού
 Name[eo]=Vortardatuma Maŝino
@@ -33,6 +34,7 @@ Comment=Look up word meanings
 Comment[ca]=Cerca els significats de paraules
 Comment[de]=Nachschlagen von Wortbedeutungen
 Comment[el]=Αναζήτηση σημασίας λέξεων
+Comment[eo]=Serĉi difinojn de vortoj
 Comment[es]=Buscar significado de las palabras
 Comment[et]=Sõna tähenduse otsimine
 Comment[hu]=Értelmező szótár

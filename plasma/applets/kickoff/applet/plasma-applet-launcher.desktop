@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Application Launcher
 Name[ca]=Engegador d'aplicacions
+Name[csb]=Zrëszôcz programów
 Name[de]=Programmstarter
 Name[el]=Εκτέλεση εφαρμογών
 Name[eo]=Aplikaĵolanĉilo
@@ -36,7 +37,7 @@ Comment=Launcher to start applications
 Comment[ca]=Executador per a iniciar aplicacions
 Comment[de]=Startet verschiedene Programme
 Comment[el]=Εκτέλεση εφαρμογών
-Comment[eo]=Aplikaĵlanĉilo
+Comment[eo]=Aplikaĵolanĉilo
 Comment[es]=Lanzador para iniciar aplicaciones
 Comment[et]=Rakenduste käivitaja
 Comment[eu]=Abiarazlea aplikazioak abiarazteko

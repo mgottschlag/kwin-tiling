@@ -2,6 +2,7 @@
 Name=HighColor Classic
 Name[be]=Класічны стыль HighColor
 Name[ca]=Clàssic d'alt color
+Name[csb]=Wësoczé farwë - klasykòwi
 Name[de]=HighColor klassisch
 Name[el]=Κλασικό πολλών χρωμάτων
 Name[eo]=AltKoloro klasiko
@@ -36,6 +37,7 @@ Comment=Highcolor version of the classic style
 Comment[be]=Версія класічнага стылю з вялікай колькасцю колераў
 Comment[bg]=Класически стил с усилени цветове
 Comment[ca]=Versió d'alt color de l'estil clàssic
+Comment[csb]=Wësoczé farwë - wersëjô klasykòwégò sztélu (65.536 farwów)
 Comment[de]=HighColor-Version (65.536 Farben) des klassischen Designs
 Comment[el]=Έκδοση με πολλά χρώματα του κλασικού στυλ
 Comment[eo]=Altkolora versio de la klasika stilo

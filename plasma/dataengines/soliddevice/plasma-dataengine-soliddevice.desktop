@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=SolidDevice Data Engine
 Name[ca]=Motor de dades del SolidDevice
+Name[csb]=Czérownik ùrządzeniów Solid
 Name[de]=Solid-Geräte-Treiber
 Name[el]=Μηχανή δεδομένων συσκευών Solid
+Name[eo]=SolidDevice-datuma motoro
 Name[es]=Motor de datos SolidDevice
 Name[et]=SolidDevice'i andmete mootor
 Name[eu]=SolidDevice datu motorea
@@ -29,8 +31,10 @@ Name[zh_CN]=SolidDevice 数据引擎
 Name[zh_TW]=SolidDevice 資料引擎
 Comment=SolidDevice data for Plasmoids
 Comment[ca]=Dades del SolidDevice pels plasmoides
+Comment[csb]=Czérownik ùrządzeniów Solid dlô plazmoidów
 Comment[de]=Solid-Gerätedaten für Plasmoide
 Comment[el]=Δεδομένα συσκευών Solid για πλασμοειδή
+Comment[eo]=Datumoj de SolidDevice por Plasmoids
 Comment[es]=Datos de SolidDevice para los plasmoides
 Comment[et]=SolidDevice'i andmed plasmoididele
 Comment[eu]=Plasmoiden SolidDevice datuak

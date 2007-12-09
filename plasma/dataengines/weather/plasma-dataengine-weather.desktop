@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=Weather Data Engine
 Name[ca]=Motor de dades meteorològiques
+Name[csb]=Czérownik ùsłëżnotów wiodra
 Name[de]=Wetterdienst-Treiber
 Name[el]=Μηχανή δεδομένων καιρού
+Name[eo]=Datuma motoro pri vetero
 Name[es]=Motor de datos meteorológicos
 Name[et]=Ilmaandmete mootor
 Name[eu]=Eguraldiaren datu motorea
@@ -30,8 +32,10 @@ Name[zh_CN]=天气数据引擎
 Name[zh_TW]=天氣資料引擎
 Comment=Weather data for Plasmoids
 Comment[ca]=Dades meteorològiques pels plasmoides
+Comment[csb]=Czérownik ùsłëżnotów wiodra dlô plazmoidów
 Comment[de]=Wetterdienst-Daten für Plasmoide
 Comment[el]=Δεδομένα καιρού για πλασμοειδή
+Comment[eo]=Veteraj datumoj por Plasmoids
 Comment[es]=Datos meteorológicos para los plasmoides
 Comment[et]=Ilmaandmed plasmoididele
 Comment[eu]=Plasmoiden eguraldiaren datuak

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Bookmark Runner
 Name[ca]=Executador de preferits
+Name[csb]=Zrëszôcz załóżków
 Name[de]=Lesezeichen-Ausführung
 Name[el]=Εκτελεστής σελιδοδεικτών
 Name[eo]=Legosigno-elektilo
@@ -27,6 +28,7 @@ Name[zh_CN]=书签运行器
 Name[zh_TW]=書籤執行者
 Comment=Open bookmark
 Comment[ca]=Obre un punts
+Comment[csb]=Òtemkni załóżczi
 Comment[de]=Lesezeichen aufrufen
 Comment[el]=Άνοιγμα σελιδοδείκτη
 Comment[eo]=Malfermi legosignon
