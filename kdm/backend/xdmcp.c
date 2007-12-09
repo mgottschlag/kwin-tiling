@@ -425,7 +425,7 @@ sendForward( CARD16 connectionType, ARRAY8Ptr address, char *closure )
 		in_addr.sin_len = sizeof(in_addr);
 # endif
 		in_addr.sin_family = AF_INET;
-		in_addr.sin_port = htons( (short)XDM_UDP_PORT );
+		in_addr.sin_port = htons( (short)requestPort );
 		if (address->length != 4)
 			return;
 		memmove( (char *)&in_addr.sin_addr, address->data, address->length );
@@ -440,7 +440,7 @@ sendForward( CARD16 connectionType, ARRAY8Ptr address, char *closure )
 		in6_addr.sin6_len = sizeof(in6_addr);
 # endif
 		in6_addr.sin6_family = AF_INET6;
-		in6_addr.sin6_port = htons( (short)XDM_UDP_PORT );
+		in6_addr.sin6_port = htons( (short)requestPort );
 		if (address->length != 16)
 			return;
 		memmove( (char *)&in6_addr.sin6_addr, address->data, address->length );
