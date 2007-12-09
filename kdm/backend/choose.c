@@ -127,90 +127,76 @@ typedef struct _Choices {
 	ARRAY8 client;
 	CARD16 connectionType;
 	ARRAY8 choice;
-	time_t time;
+	time_t timeout;
 } ChoiceRec, *ChoicePtr;
 
 static ChoicePtr choices;
 
+time_t
+disposeIndirectHosts()
+{
+	ChoicePtr c;
+
+	while (choices) {
+		if (choices->timeout > now)
+			return choices->timeout;
+		debug( "timing out indirect host\n" );
+		c = choices;
+		choices = c->next;
+		XdmcpDisposeARRAY8( &c->client );
+		XdmcpDisposeARRAY8( &c->choice );
+		free( (char *)c );
+	}
+	return TO_INF;
+}
+
 ARRAY8Ptr
 indirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType )
 {
-	ChoicePtr c, next, prev;
+	ChoicePtr c;
 
-	prev = 0;
-	for (c = choices; c; c = next) {
-		next = c->next;
-		debug( "choice checking timeout: %ld >? %d\n",
-		       (long)(now - c->time), choiceTimeout );
-		if (now - c->time > (time_t)choiceTimeout) {
-			debug( "timeout choice %ld > %d\n",
-			       (long)(now - c->time), choiceTimeout );
-			if (prev)
-				prev->next = next;
-			else
-				choices = next;
-			XdmcpDisposeARRAY8( &c->client );
-			XdmcpDisposeARRAY8( &c->choice );
-			free( (char *)c );
-		} else {
-			if (XdmcpARRAY8Equal( clientAddress, &c->client ) &&
-			    connectionType == c->connectionType)
-				return &c->choice;
-			prev = c;
-		}
-	}
+	for (c = choices; c; c = c->next)
+		if (XdmcpARRAY8Equal( clientAddress, &c->client ) &&
+		    connectionType == c->connectionType)
+			return &c->choice;
 	return 0;
 }
 
-int
-registerindirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType,
+void
+registerIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType,
                         ARRAY8Ptr choice )
 {
-	ChoicePtr c;
-	int insert;
-#if 0
-	int found = False;
-#endif
+	ChoicePtr c, *cp;
 
 	debug( "got indirect choice back\n" );
-	for (c = choices; c; c = c->next) {
+	for (cp = &choices; (c = *cp); cp = &c->next) {
 		if (XdmcpARRAY8Equal( clientAddress, &c->client ) &&
-		    connectionType == c->connectionType) {
-#if 0
-			found = True;
-#endif
-			break;
+		    connectionType == c->connectionType)
+		{
+			*cp = c->next;
+			while (*cp)
+				cp = &(*cp)->next;
+			XdmcpDisposeARRAY8( &c->choice );
+			goto found;
 		}
 	}
-#if 0
-	if (!found)
-		return False;
-#endif
 
-	insert = False;
-	if (!c) {
-		insert = True;
-		c = (ChoicePtr)Malloc( sizeof(ChoiceRec) );
-		if (!c)
-			return False;
-		c->connectionType = connectionType;
-		if (!XdmcpCopyARRAY8( clientAddress, &c->client )) {
-			free( (char *)c );
-			return False;
-		}
-	} else
-		XdmcpDisposeARRAY8( &c->choice );
+	if (!(c = (ChoicePtr)Malloc( sizeof(ChoiceRec) )))
+		return;
+	if (!XdmcpCopyARRAY8( clientAddress, &c->client )) {
+		free( c );
+		return;
+	}
+	c->connectionType = connectionType;
+  found:
 	if (!XdmcpCopyARRAY8( choice, &c->choice )) {
 		XdmcpDisposeARRAY8( &c->client );
 		free( (char *)c );
-		return False;
+		return;
 	}
-	if (insert) {
-		c->next = choices;
-		choices = c;
-	}
-	c->time = now;
-	return True;
+	c->timeout = now + choiceTimeout;
+	c->next = 0;
+	*cp = c;
 }
 
 #if 0

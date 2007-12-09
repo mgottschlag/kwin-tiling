@@ -717,7 +717,7 @@ processDPipe( struct display *d )
 		ct = gRecvInt();
 		ha.data = (unsigned char *)gRecvArr( &len );
 		ha.length = (CARD16)len;
-		registerindirectChoice( &ca, ct, &ha );
+		registerIndirectChoice( &ca, ct, &ha );
 		XdmcpDisposeARRAY8( &ha );
 		XdmcpDisposeARRAY8( &ca );
 		break;
@@ -1154,7 +1154,11 @@ mainLoop( void )
 	{
 		if (!stopping)
 			startDisplays();
+#ifdef XDMCP
+		to = disposeIndirectHosts();
+#else
 		to = TO_INF;
+#endif
 		if (sdRec.how) {
 			if (sdRec.start != TO_INF && now < sdRec.start) {
 				/*if (sdRec.start < to)*/

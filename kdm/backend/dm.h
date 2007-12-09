@@ -634,11 +634,12 @@ void forEachChooserHost( ARRAY8Ptr clientAddress, CARD16 connectionType, Chooser
 void forEachListenAddr( ListenFunc listenfunction, ListenFunc mcastfcuntion, void **closure );
 
 /* in choose.c */
+time_t disposeIndirectHosts( void );
 ARRAY8Ptr indirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType );
 int isIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType );
 int rememberIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType );
 void forgetIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType );
-int registerindirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType, ARRAY8Ptr choice );
+void registerIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType, ARRAY8Ptr choice );
 int doChoose( void );
 
 /* socket.c or streams.c */
