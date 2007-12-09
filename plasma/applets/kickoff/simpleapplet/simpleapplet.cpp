@@ -103,7 +103,7 @@ void MenuLauncherApplet::init()
     d->showLeaveLock = cg.readEntry("showLeaveLock",d->showLeaveLock);
     d->showLeaveLogout = cg.readEntry("showLeaveLogout",d->showLeaveLogout);
 
-    Kickoff::UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ExtensionHandler,"desktop",new Kickoff::ServiceItemHandler);
+    Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ExtensionHandler,"desktop",new Kickoff::ServiceItemHandler);
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ProtocolHandler, "leave", new Kickoff::LeaveItemHandler);
 }
 
