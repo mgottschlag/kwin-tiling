@@ -390,10 +390,15 @@ forEachMatchingIndirectHost( ARRAY8Ptr clientAddress,
 
 			choice = indirectChoice( clientAddress, connectionType );
 			if (!choice || XdmcpARRAY8Equal( getLocalAddress(), choice ))
+				/* If nothing was chosen yet, we want to pop up the chooser.
+				 * If we were chosen, we want to pop up the greeter. */
 				haveLocalhost = True;
 			else
+				/* If something else was chosen, we forward the query to
+				 * the chosen host. */
 				(*function)( connectionType, choice, closure );
 		} else
+			/* Just forward the query to each listed host. */
 			scanHostlist( e->hosts, e->nhosts, clientAddress, connectionType,
 			              function, closure, False, &haveLocalhost );
 	}
