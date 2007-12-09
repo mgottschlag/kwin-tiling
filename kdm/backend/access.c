@@ -296,7 +296,8 @@ scanHostlist( int fh, int nh,
 					              haveLocalhost );
 			break;
 		case HOST_ADDRESS:
-			if (XdmcpARRAY8Equal( getLocalAddress(), &h->entry.displayAddress.hostAddress ))
+			if (haveLocalhost &&
+			    XdmcpARRAY8Equal( getLocalAddress(), &h->entry.displayAddress.hostAddress ))
 				*haveLocalhost = True;
 			else if (function)
 				(*function)( connectionType, &h->entry.displayAddress.hostAddress, closure );
@@ -420,14 +421,11 @@ forEachChooserHost( ARRAY8Ptr clientAddress, CARD16 connectionType,
                     ChooserFunc function, char *closure )
 {
 	AclEntry *e;
-	int haveLocalhost = False;
 
 	e = matchAclEntry( clientAddress, connectionType, False );
 	if (e && !(e->flags & a_notAllowed) && (e->flags & a_useChooser))
 		scanHostlist( e->hosts, e->nhosts, clientAddress, connectionType,
-		              function, closure, True, &haveLocalhost );
-	if (haveLocalhost)
-		(*function)( connectionType, getLocalAddress(), closure );
+		              function, closure, True, 0 );
 }
 
 /*
