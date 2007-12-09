@@ -208,8 +208,7 @@ conv_interact( int what, const char *prompt )
 			case GCONV_PASS:
 			case GCONV_PASS_ND:
 				/* assert( tag & V_IS_PASSWORD );*/
-				if (curpass)
-					free( curpass );
+				wipeStr( curpass );
 				curpass = ret;
 				break;
 			default:
@@ -373,7 +372,7 @@ ctrlGreeterWait( int wreply )
 			rootok = False;
 		  doverify:
 			if (curuser) { free( curuser ); curuser = 0; }
-			if (curpass) { free( curpass ); curpass = 0; }
+			wipeStr( curpass ); curpass = 0;
 			if (curtype) free( curtype );
 			curtype = gRecvStr();
 			debug( " type %\"s\n", curtype );

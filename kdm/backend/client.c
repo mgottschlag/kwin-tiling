@@ -146,18 +146,25 @@ displayMsg( int lv, const char *msg, ... )
 }
 #endif
 
+#define V_RET \
+		do { \
+			wipeStr( curpass ); \
+			curpass = 0; \
+			return False; \
+		} while(0)
+
 #define V_RET_AUTH \
 		do { \
 			prepareErrorGreet(); \
 			gSendInt( V_AUTH ); \
-			return False; \
+			V_RET; \
 		} while(0)
 
 #define V_RET_FAIL(m) \
 		do { \
 			displayStr( V_MSG_ERR, m ); \
 			gSendInt( V_FAIL ); \
-			return False; \
+			V_RET; \
 		} while(0)
 
 #ifdef USE_PAM
@@ -318,7 +325,7 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 	if (pdata->abort) {
 		pam_end( pamh, PAM_SUCCESS );
 		pamh = 0;
-		return False;
+		V_RET;
 	}
 	if (!curuser) {
 		debug( " asking PAM for user ...\n" );
@@ -413,9 +420,9 @@ isNoPassAllowed( struct passwd *pw )
 }
 
 #if !defined(USE_PAM) && !defined(_AIX) && defined(HAVE_SETUSERCONTEXT)
-# define LC_RET0 do { login_close(lc); return False; } while(0)
+# define LC_RET0 do { login_close(lc); V_RET; } while(0)
 #else
-# define LC_RET0 return False
+# define LC_RET0 V_RET
 #endif
 
 int
@@ -676,6 +683,8 @@ verify( GConvFunc gconv, int rootok )
 	if (!p->pw_uid) {
 		if (!rootok && !td->allowRootLogin)
 			V_RET_FAIL( "Root logins are not allowed" );
+		wipeStr( curpass );
+		curpass = 0;
 		return True; /* don't deny root to log in */
 	}
 
@@ -708,7 +717,7 @@ verify( GConvFunc gconv, int rootok )
 			if (pdata.abort) {
 				pam_end( pamh, PAM_SUCCESS );
 				pamh = 0;
-				return False;
+				V_RET;
 			}
 			if (pretc == PAM_SUCCESS)
 				break;
@@ -740,7 +749,7 @@ verify( GConvFunc gconv, int rootok )
 			free( msg );
 		}
 		gSendInt( V_AUTH );
-		return False;
+		V_RET;
 	}
 	if (msg)
 		free( (void *)msg );
@@ -1179,7 +1188,7 @@ startClient( volatile int *pid )
 		logError( "getpwnam(%s) failed.\n", curuser );
 	  pError:
 		displayStr( V_MSG_ERR, 0 );
-		return False;
+		V_RET;
 	}
 #endif
 
@@ -1329,7 +1338,7 @@ startClient( volatile int *pid )
 		logError( "pam_setcred() for %s failed: %s\n",
 		          curuser, pam_strerror( pamh, pretc ) );
 		resetGids();
-		return False;
+		V_RET;
 	}
 
 	removeSession = True; /* set it first - same as above */
@@ -1339,7 +1348,7 @@ startClient( volatile int *pid )
 		logError( "pam_open_session() for %s failed: %s\n",
 		          curuser, pam_strerror( pamh, pretc ) );
 		resetGids();
-		return False;
+		V_RET;
 	}
 
 	/* we don't want sessreg and the startup/reset scripts run with user
@@ -1625,10 +1634,12 @@ startClient( volatile int *pid )
 		exit( 1 );
 	case -1:
 		free( buf );
-		return False;
+		V_RET;
 	}
 	debug( "StartSession, fork succeeded %d\n", *pid );
 	free( buf );
+	wipeStr( curpass );
+	curpass = 0;
 
 	gSet( &ctltalk );
 	if (!Setjmp( ctltalk.errjmp ))
@@ -1642,7 +1653,7 @@ startClient( volatile int *pid )
 	gClosen( ctltalk.pipe );
 	finishGreet();
 
-	return 1;
+	return True;
 }
 
 void
