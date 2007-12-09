@@ -48,6 +48,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QListWidgetItem>
 #include <QMenu>
 #include <QMovie>
+#include <QPainter>
 #include <QPushButton>
 #include <QStyle>
 
@@ -182,6 +183,18 @@ KGreeter::~KGreeter()
 	delete stsGroup;
 }
 
+static void
+expandFace( QImage &img )
+{
+	if (img.width() < 48) {
+		QImage nimg( 48, img.height(), QImage::Format_ARGB32 );
+		nimg.fill( 0 );
+		QPainter p( &nimg );
+		p.drawImage( (48 - img.width()) / 2, 0, img );
+		img = nimg;
+	}
+}
+
 #define FILE_LIMIT_ICON 20
 #define FILE_LIMIT_IMAGE 200
 #define PIXEL_LIMIT_ICON 100
@@ -245,6 +258,7 @@ KGreeter::insertUser( const QImage &default_pix,
 			logInfo( "%s is no valid image\n", fn.data() );
 			continue;
 		}
+		expandFace( p );
 		goto gotit;
 	} while (--nd >= 0);
 	p = default_pix;
@@ -307,9 +321,11 @@ KGreeter::insertUsers()
 			if (!default_pix.load( _faceDir + "/.default.face" ))
 				logError( "Cannot open default user face\n" );
 		QSize ns( 48, 48 );
-		if (default_pix.size() != ns)
+		if (default_pix.size() != ns) {
 			default_pix =
 			  default_pix.convertToFormat( QImage::Format_ARGB32 ).scaled( ns, Qt::KeepAspectRatio, Qt::SmoothTransformation );
+			expandFace( default_pix );
+		}
 	}
 	if (_showUsers == SHOW_ALL) {
 		UserList noUsers( _noUsers );
