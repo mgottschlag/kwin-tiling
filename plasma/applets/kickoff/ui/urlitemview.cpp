@@ -130,7 +130,7 @@ public:
         font.setBold(true);
         font.setPointSize(font.pointSize()+1);
         painter->setFont(font);
-        painter->setPen(QPen(option.palette.dark(),0));
+        painter->setPen(QPen(option.palette.text(),0));
         QString text = index.data(Qt::DisplayRole).value<QString>();
         int dy = (int)(index.row() > 0 ? ItemDelegate::HEADER_HEIGHT / 4.0 : 0);
         painter->drawText(option.rect.adjusted(0, dy, 0, 0),

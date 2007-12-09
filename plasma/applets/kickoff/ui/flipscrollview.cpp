@@ -117,7 +117,7 @@ public:
     void drawHeader(QPainter *painter,const QRect& rect,const QModelIndex& headerIndex)
     {
         painter->save();
-         painter->setPen(QPen(q->palette().dark(),0));
+         painter->setPen(QPen(q->palette().text(),0));
          painter->setFont(q->font());
 
          QFontMetrics metrics(q->font());
