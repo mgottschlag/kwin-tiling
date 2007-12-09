@@ -278,7 +278,7 @@ main( int argc, char **argv )
 	 */
 
 #ifdef XDMCP
-	init_session_id();
+	initXdmcp();
 #else
 	debug( "not compiled for XDMCP\n" );
 #endif

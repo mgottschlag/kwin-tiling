@@ -598,7 +598,7 @@ int addressEqual( char *a1, int len1, char *a2, int len2 );
 /* in xdmcp.c */
 char *networkAddressToHostname( CARD16 connectionType, ARRAY8Ptr connectionAddress );
 void sendFailed( struct display *d, const char *reason );
-void init_session_id( void );
+void initXdmcp( void );
 
 /* in policy.c */
 struct sockaddr;
