@@ -75,8 +75,6 @@ MenuView::MenuView(QWidget *parent)
     , d(new Private(this))
 {
     connect(this,SIGNAL(triggered(QAction*)),this,SLOT(actionTriggered(QAction*)));
-    UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ExtensionHandler,"desktop",new ServiceItemHandler);
-    //UrlItemLauncher::addGlobalHandler(UrlItemLauncher::ProtocolHandler, "leave", new LeaveItemHandler);
 }
 MenuView::~MenuView()
 {
