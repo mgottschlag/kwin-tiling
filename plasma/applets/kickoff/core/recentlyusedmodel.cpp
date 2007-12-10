@@ -48,12 +48,14 @@ public:
     }
     void removeExistingItem(const QString& path) 
     {
+        if (!itemsByPath.contains(path)) {
+            return;
+        }
+
         QStandardItem *existingItem = itemsByPath[path];
         //qDebug() << "Removing existing item" << existingItem;
-        if (existingItem != 0) {
-            Q_ASSERT(existingItem->parent());
-            existingItem->parent()->removeRow(existingItem->row());
-        }
+        Q_ASSERT(existingItem->parent());
+        existingItem->parent()->removeRow(existingItem->row());
     }
     void addRecentApplication(KService::Ptr service,bool append) 
     {
@@ -111,7 +113,7 @@ public:
     QStandardItem *recentDocumentItem;
     QStandardItem *recentAppItem;
 
-    QHash<QString,QStandardItem*> itemsByPath;
+    QHash<QString, QStandardItem*> itemsByPath;
 };
 
 RecentlyUsedModel::RecentlyUsedModel(QObject *parent)
