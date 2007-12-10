@@ -17,11 +17,10 @@
    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301, USA.
 */
-#ifndef _HISTORYSTRINGITEM_H_
-#define _HISTORYSTRINGITEM_H_
+#ifndef HISTORYSTRINGITEM_H
+#define HISTORYSTRINGITEM_H
 
-
-#include <Qt3Support/Q3ColorDrag>
+#include <QMimeData>
 
 #include "historyitem.h"
 
