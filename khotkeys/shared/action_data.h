@@ -223,13 +223,6 @@ const Condition_list* Action_data_base::conditions() const
     }
     
 inline
-void Action_data_base::set_conditions( Condition_list* conditions_P )
-    {
-    assert( _conditions == NULL );
-    _conditions = conditions_P;
-    }
-
-inline
 Action_data_group* Action_data_base::parent() const
     {
     return _parent;

@@ -44,7 +44,7 @@ Action_data_base::Action_data_base( KConfigGroup& cfg_P, Action_data_group* pare
     if( parent())
         parent()->add_child( this );
     }
-    
+
 Action_data_base::~Action_data_base()
     {
 //    kDebug( 1217 ) << "~Action_data_base() :" << this;
@@ -123,6 +123,12 @@ bool Action_data_base::enabled( bool ignore_group_P ) const
         return _enabled;
     else
         return _enabled && ( parent() == NULL || parent()->enabled( false ));
+    }
+
+void Action_data_base::set_conditions( Condition_list* conditions_P )
+    {
+    assert( _conditions == NULL );
+    _conditions = conditions_P;
     }
 
 bool Action_data_base::conditions_match() const
