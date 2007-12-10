@@ -199,31 +199,6 @@ registerIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType,
 	*cp = c;
 }
 
-#if 0
-static void
-removeindirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType )
-{
-	ChoicePtr c, prev;
-
-	prev = 0;
-	for (c = choices; c; c = c->next) {
-		if (XdmcpARRAY8Equal( clientAddress, &c->client ) &&
-		    connectionType == c->connectionType)
-		{
-			if (prev)
-				prev->next = c->next;
-			else
-				choices = c->next;
-			XdmcpDisposeARRAY8( &c->client );
-			XdmcpDisposeARRAY8( &c->choice );
-			free( (char *)c );
-			return;
-		}
-		prev = c;
-	}
-}
-#endif
-
 
 /* ####################### */
 
