@@ -26,7 +26,7 @@
 #include <QRadioButton>
 #include <QLineEdit>
 #include <QWidget>
-#include <QtGui>
+#include <QtGui/QtGui>
 #include <QKeySequence>
 
 #include <kicon.h>
