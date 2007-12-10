@@ -10,7 +10,7 @@ IntensityEffect=2
 Color=0,0,0
 ColorAmount=0.025
 ColorEffect=2
-ContrastAmount=0.3
+ContrastAmount=0.25
 ContrastEffect=2
 IntensityAmount=0
 IntensityEffect=0
@@ -58,8 +58,8 @@ ForegroundPositive=0,137,43
 ForegroundVisited=147,87,211
 
 [Colors:View]
-BackgroundAlternate=252,250,247
-BackgroundNormal=255,255,255
+BackgroundAlternate=246,245,242
+BackgroundNormal=240,238,235
 DecorationFocus=21,61,109
 DecorationHover=40,101,165
 ForegroundActive=119,174,240
