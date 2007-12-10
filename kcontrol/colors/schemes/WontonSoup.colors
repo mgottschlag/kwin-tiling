@@ -3,7 +3,7 @@ ColorAmount=0
 ColorEffect=0
 ContrastAmount=0.65
 ContrastEffect=1
-IntensityAmount=0.3
+IntensityAmount=0.25
 IntensityEffect=2
 
 [ColorEffects:Inactive]
@@ -11,7 +11,7 @@ ColorAmount=0
 ColorEffect=0
 ContrastAmount=0.25
 ContrastEffect=2
-IntensityAmount=0.1
+IntensityAmount=0.05
 IntensityEffect=2
 
 [Colors:Button]
@@ -88,7 +88,7 @@ ForegroundVisited=64,128,255
 Name=Wonton Soup
 
 [WM]
-activeBackground=99,105,115
+activeBackground=138,151,166
 activeForeground=224,237,255
 inactiveBackground=82,89,99
 inactiveForeground=140,152,168
