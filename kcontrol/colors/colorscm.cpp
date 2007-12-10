@@ -457,10 +457,6 @@ void KColorCm::updateColorSchemes()
     m_colorSchemes.append(KColorScheme(QPalette::Active, KColorScheme::Tooltip, m_config));
 
     m_wmColors.load(m_config);
-
-    // TODO KConfigGroup KDEgroup(m_config, "KDE");
-    // TODO m_contrast = KDEgroup.readEntry("contrast", contrastSlider->value());
-    // TODO m_shadeSorted = KDEgroup.readEntry("shadeSortColumn", (bool)shadeSortedColumn->checkState());
 }
 
 void KColorCm::updateFromColorSchemes()
@@ -968,6 +964,7 @@ void KColorCm::loadInternal(bool loadOptions)
     m_config->reparseConfiguration();
 
     // update the color table
+    updateColorSchemes();
     updateColorTable();
 
     // fill in the color scheme list
