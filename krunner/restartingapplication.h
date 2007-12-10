@@ -19,7 +19,7 @@
 #ifndef RESTARTINGAPPLICATION_H
 #define RESTARTINGAPPLICATION_H
 
-#include <Qt>
+#include <QtCore/Qt>
 #include <KUniqueApplication>
 
 class RestartingApplication : public KUniqueApplication

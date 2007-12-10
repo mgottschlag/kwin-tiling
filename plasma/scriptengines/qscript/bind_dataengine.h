@@ -19,7 +19,7 @@
 #ifndef BIND_DATAENGINE_H
 #define BIND_DATAENGINE_H
 
-#include <QtScript>
+#include <QtScript/QtScript>
 #include <KDebug>
 
 #include <plasma/dataengine.h>
