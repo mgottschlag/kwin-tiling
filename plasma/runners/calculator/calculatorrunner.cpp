@@ -20,7 +20,6 @@
 
 #include "calculatorrunner.h"
 
-#include <QAction>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QWidget>
