@@ -497,6 +497,7 @@ static int Xio_ErrorHandler( Display * )
     }
 
     exit(0); // Don't report error, it's not our fault.
+    return 0; // Bogus return value, notreached
 }
 
 void KSMServer::setupXIOErrorHandler()
