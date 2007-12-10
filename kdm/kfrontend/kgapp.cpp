@@ -180,6 +180,8 @@ static int
 xIOErr( Display * )
 {
 	exit( EX_RESERVER_DPY );
+	// Bogus return value, notreached
+	return 0;
 }
 
 void
