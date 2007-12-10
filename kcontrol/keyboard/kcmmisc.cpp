@@ -73,7 +73,7 @@ KeyboardConfig::KeyboardConfig(QWidget *parent, const QVariantList &)
   ui->delay->setSliderEnabled(false);
   ui->rate->setRange(0.2, 50, 5, false);
 
-  sliderMax = (int)floor (0.5 + 2*(log(5000)-log(100)) / (log(5000)-log(4999)));
+  sliderMax = (int)floor (0.5 + 2*(log(5000.0L)-log(100.0L)) / (log(5000.0L)-log(4999.0L)));
   ui->delaySlider->setRange(0, sliderMax);
   ui->delaySlider->setSingleStep(sliderMax/100);
   ui->delaySlider->setPageStep(sliderMax/10);
@@ -202,8 +202,8 @@ QString KeyboardConfig::quickHelp() const
 }
 
 void KeyboardConfig::delaySliderChanged (int value) {
-	double alpha  = sliderMax / (log(5000) - log(100));
-	double linearValue = exp (value/alpha + log(100));
+	double alpha  = sliderMax / (log(5000.0L) - log(100.0L));
+	double linearValue = exp (value/alpha + log(100.0L));
 
 	ui->delay->setValue((int)floor(0.5 + linearValue));
 
@@ -211,8 +211,8 @@ void KeyboardConfig::delaySliderChanged (int value) {
 }
 
 void KeyboardConfig::delaySpinboxChanged (int value) {
-	double alpha  = sliderMax / (log(5000) - log(100));
-	double logVal = alpha * (log(value)-log(100));
+	double alpha  = sliderMax / (log(5000.0L) - log(100.0L));
+	double logVal = alpha * (log(value)-log(100.0L));
 
 	ui->delaySlider->setValue ((int)floor (0.5 + logVal));
 
