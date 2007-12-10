@@ -167,7 +167,8 @@ public:
 private:
     RunnerRestrictionPolicy();
 
-    QHash<QString, int> m_runCounts;
+//     QHash<QString, int> m_runCounts;
+    int m_count;
     int m_cap;
     QMutex m_mutex;
 };
@@ -190,24 +191,28 @@ RunnerRestrictionPolicy& RunnerRestrictionPolicy::instance()
 
 bool RunnerRestrictionPolicy::canRun(Job* job)
 {
-    QMutexLocker l ( &m_mutex );
-    QString type = job->objectName();
-    if (m_runCounts.value(type) > m_cap) {
-//         kDebug() << "Denying job " << type << " because of " << m_runCounts[type] << " current jobs" << endl;
+    Q_UNUSED(job)
+    QMutexLocker l(&m_mutex);
+//     QString type = job->objectName();
+    if (m_count/*m_runCounts.value(type)*/ > m_cap) {
+//         kDebug() << "Denying job " << type << " because of " << m_count/*m_runCounts[type]*/ << " current jobs" << endl;
         return false;
     } else {
-        m_runCounts[type]++;
+//         m_runCounts[type]++;
+        ++m_count;
         return true;
     }
 }
 
 void RunnerRestrictionPolicy::free(Job* job)
 {
-    QMutexLocker l ( &m_mutex );
-    QString type = job->objectName();
-    if (m_runCounts.value(type)) {
-        m_runCounts[type]--;
-    }
+    Q_UNUSED(job)
+    QMutexLocker l(&m_mutex);
+//     QString type = job->objectName();
+    --m_count;
+//     if (m_runCounts.value(type)) {
+//         m_runCounts[type]--;
+//     }
 }
 
 void RunnerRestrictionPolicy::release(Job* job)
@@ -217,6 +222,7 @@ void RunnerRestrictionPolicy::release(Job* job)
 
 void RunnerRestrictionPolicy::destructed(Job* job)
 {
+    Q_UNUSED(job)
 }
 
 // Class to run queries in different threads
@@ -238,8 +244,10 @@ FindMatchesJob::FindMatchesJob( const QString& term, Plasma::AbstractRunner* run
       m_context(context),
       m_runner(runner)
 {
-    setObjectName( runner->objectName() );
-    assignQueuePolicy( &RunnerRestrictionPolicy::instance() );
+//     setObjectName( runner->objectName() );
+    if (runner->speed() == Plasma::AbstractRunner::SlowSpeed) {
+        assignQueuePolicy(&RunnerRestrictionPolicy::instance());
+    }
 }
 
 void FindMatchesJob::run()
@@ -531,7 +539,7 @@ void Interface::match()
         return;
     }
     m_context.setSearchTerm(term);
-    m_context.addStringCompletions(m_executions);
+//     m_context.addStringCompletions(m_executions);	
 
     foreach (Plasma::AbstractRunner* runner, m_runners) {
         Job *job = new FindMatchesJob(term, runner, &m_context, this);

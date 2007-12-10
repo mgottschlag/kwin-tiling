@@ -30,6 +30,7 @@ SearchRunner::SearchRunner( QObject* parent, const QVariantList &args )
 {
     Q_UNUSED( args );
     setObjectName( i18n( "Search" ) );
+    setSpeed(AbstractRunner::SlowSpeed);
 }
 
 SearchRunner::~SearchRunner()
