@@ -62,66 +62,6 @@ from the copyright holder.
 
 #include <netdb.h>
 
-typedef struct _IndirectUsers {
-	struct _IndirectUsers *next;
-	ARRAY8 client;
-	CARD16 connectionType;
-} IndirectUsersRec, *IndirectUsersPtr;
-
-static IndirectUsersPtr indirectUsers;
-
-int
-rememberIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType )
-{
-	IndirectUsersPtr i;
-
-	for (i = indirectUsers; i; i = i->next)
-		if (XdmcpARRAY8Equal( clientAddress, &i->client ) &&
-		    connectionType == i->connectionType)
-			return True;
-	i = (IndirectUsersPtr)Malloc( sizeof(IndirectUsersRec) );
-	if (!i) {
-		return False;
-	}
-	if (!XdmcpCopyARRAY8( clientAddress, &i->client )) {
-		free( (char *)i );
-		return False;
-	}
-	i->connectionType = connectionType;
-	i->next = indirectUsers;
-	indirectUsers = i;
-	return True;
-}
-
-void
-forgetIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType )
-{
-	IndirectUsersPtr *i, ni;
-
-	for (i = &indirectUsers; *i; i = &(*i)->next)
-		if (XdmcpARRAY8Equal( clientAddress, &(*i)->client ) &&
-		    connectionType == (*i)->connectionType)
-		{
-			ni = (*i)->next;
-			XdmcpDisposeARRAY8( &(*i)->client );
-			free( (char *)(*i) );
-			(*i) = ni;
-			break;
-		}
-}
-
-int
-isIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType )
-{
-	IndirectUsersPtr i;
-
-	for (i = indirectUsers; i; i = i->next)
-		if (XdmcpARRAY8Equal( clientAddress, &i->client ) &&
-		    connectionType == i->connectionType)
-			return True;
-	return False;
-}
-
 typedef struct _Choices {
 	struct _Choices *next;
 	ARRAY8 client;
@@ -155,11 +95,43 @@ indirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType )
 {
 	ChoicePtr c;
 
+	debug( "have indirect choice?\n" );
 	for (c = choices; c; c = c->next)
 		if (XdmcpARRAY8Equal( clientAddress, &c->client ) &&
 		    connectionType == c->connectionType)
-			return &c->choice;
+		{
+			debug( c->choice.data ? "  yes\n" : "  not yet\n" );
+			return c->choice.data ? &c->choice : 0;
+		}
+	debug( "  host not registered\n" );
 	return 0;
+}
+
+int
+checkIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType )
+{
+	ChoicePtr c, *cp;
+	int uc;
+
+	debug( "checkIndirectChoice\n" );
+	for (cp = &choices; (c = *cp); cp = &c->next) {
+		if (XdmcpARRAY8Equal( clientAddress, &c->client ) &&
+		    connectionType == c->connectionType)
+		{
+			*cp = c->next;
+			if (c->choice.data) {
+				XdmcpDisposeARRAY8( &c->choice );
+				debug( "  choice already made\n" );
+				uc = False;
+			} else
+				uc = True;
+			XdmcpDisposeARRAY8( &c->client );
+			free( c );
+			return uc;
+		}
+	}
+	debug( "  host not registered\n" );
+	return False;
 }
 
 void
@@ -168,7 +140,7 @@ registerIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType,
 {
 	ChoicePtr c, *cp;
 
-	debug( "got indirect choice back\n" );
+	debug( "registering indirect %s\n", choice ? "choice" : "client" );
 	for (cp = &choices; (c = *cp); cp = &c->next) {
 		if (XdmcpARRAY8Equal( clientAddress, &c->client ) &&
 		    connectionType == c->connectionType)
@@ -176,7 +148,9 @@ registerIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType,
 			*cp = c->next;
 			while (*cp)
 				cp = &(*cp)->next;
-			XdmcpDisposeARRAY8( &c->choice );
+			if (choice)
+				XdmcpDisposeARRAY8( &c->choice );
+			debug( "  replacing existing\n" );
 			goto found;
 		}
 	}
@@ -188,8 +162,9 @@ registerIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType,
 		return;
 	}
 	c->connectionType = connectionType;
+	c->choice.data = 0;
   found:
-	if (!XdmcpCopyARRAY8( choice, &c->choice )) {
+	if (choice && !XdmcpCopyARRAY8( choice, &c->choice )) {
 		XdmcpDisposeARRAY8( &c->client );
 		free( (char *)c );
 		return;

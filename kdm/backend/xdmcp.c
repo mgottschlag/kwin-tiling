@@ -389,9 +389,9 @@ all_query_respond( struct sockaddr *from, int fromlen,
 	connectionType = family;
 
 	if (type == INDIRECT_QUERY)
-		rememberIndirectClient( &addr, connectionType );
+		registerIndirectChoice( &addr, connectionType, 0 );
 	else
-		forgetIndirectClient( &addr, connectionType );
+		checkIndirectChoice( &addr, connectionType );
 
 	authenticationName = chooseAuthentication( authenticationNames );
 	if (isWilling( &addr, connectionType, authenticationName, &status, type ))
@@ -1004,13 +1004,11 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 			                      &clientAddress, &clientPort, &connectionType );
 			d->useChooser = False;
 			d->xdmcpFd = fd;
-			if (isIndirectClient( &clientAddress, connectionType )) {
-				debug( "isIndirectClient\n" );
-				forgetIndirectClient( &clientAddress, connectionType );
-				if (useChooser( &clientAddress, connectionType )) {
-					d->useChooser = True;
-					debug( "use chooser for %s\n", d->name );
-				}
+			if (checkIndirectChoice( &clientAddress, connectionType ) &&
+			    useChooser( &clientAddress, connectionType ))
+			{
+				d->useChooser = True;
+				debug( "use chooser for %s\n", d->name );
 			}
 			d->clientAddr = clientAddress;
 			d->connectionType = connectionType;

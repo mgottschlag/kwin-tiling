@@ -636,9 +636,7 @@ void forEachListenAddr( ListenFunc listenfunction, ListenFunc mcastfcuntion, voi
 /* in choose.c */
 time_t disposeIndirectHosts( void );
 ARRAY8Ptr indirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType );
-int isIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType );
-int rememberIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType );
-void forgetIndirectClient( ARRAY8Ptr clientAddress, CARD16 connectionType );
+int checkIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType );
 void registerIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType, ARRAY8Ptr choice );
 int doChoose( void );
 

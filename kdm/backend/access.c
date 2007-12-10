@@ -412,8 +412,7 @@ useChooser( ARRAY8Ptr clientAddress, CARD16 connectionType )
 	AclEntry *e;
 
 	e = matchAclEntry( clientAddress, connectionType, False );
-	return e && !(e->flags & a_notAllowed) && (e->flags & a_useChooser) &&
-		!indirectChoice( clientAddress, connectionType );
+	return e && !(e->flags & a_notAllowed) && (e->flags & a_useChooser);
 }
 
 void
