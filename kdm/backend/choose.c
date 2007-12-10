@@ -65,6 +65,7 @@ from the copyright holder.
 typedef struct _Choices {
 	struct _Choices *next;
 	ARRAY8 client;
+	ARRAY8 port;
 	CARD16 connectionType;
 	ARRAY8 choice;
 	time_t timeout;
@@ -84,6 +85,7 @@ disposeIndirectHosts()
 		c = choices;
 		choices = c->next;
 		XdmcpDisposeARRAY8( &c->client );
+		XdmcpDisposeARRAY8( &c->port );
 		XdmcpDisposeARRAY8( &c->choice );
 		free( (char *)c );
 	}
@@ -91,13 +93,15 @@ disposeIndirectHosts()
 }
 
 ARRAY8Ptr
-indirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType )
+indirectChoice( ARRAY8Ptr clientAddress, ARRAY8Ptr clientPort,
+                CARD16 connectionType )
 {
 	ChoicePtr c;
 
 	debug( "have indirect choice?\n" );
 	for (c = choices; c; c = c->next)
 		if (XdmcpARRAY8Equal( clientAddress, &c->client ) &&
+		    XdmcpARRAY8Equal( clientPort, &c->port ) &&
 		    connectionType == c->connectionType)
 		{
 			debug( c->choice.data ? "  yes\n" : "  not yet\n" );
@@ -108,7 +112,8 @@ indirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType )
 }
 
 int
-checkIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType )
+checkIndirectChoice( ARRAY8Ptr clientAddress, ARRAY8Ptr clientPort,
+                     CARD16 connectionType )
 {
 	ChoicePtr c, *cp;
 	int uc;
@@ -116,6 +121,7 @@ checkIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType )
 	debug( "checkIndirectChoice\n" );
 	for (cp = &choices; (c = *cp); cp = &c->next) {
 		if (XdmcpARRAY8Equal( clientAddress, &c->client ) &&
+		    XdmcpARRAY8Equal( clientPort, &c->port ) &&
 		    connectionType == c->connectionType)
 		{
 			*cp = c->next;
@@ -135,14 +141,15 @@ checkIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType )
 }
 
 void
-registerIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType,
-                        ARRAY8Ptr choice )
+registerIndirectChoice( ARRAY8Ptr clientAddress, ARRAY8Ptr clientPort,
+                        CARD16 connectionType, ARRAY8Ptr choice )
 {
 	ChoicePtr c, *cp;
 
 	debug( "registering indirect %s\n", choice ? "choice" : "client" );
 	for (cp = &choices; (c = *cp); cp = &c->next) {
 		if (XdmcpARRAY8Equal( clientAddress, &c->client ) &&
+		    XdmcpARRAY8Equal( clientPort, &c->port ) &&
 		    connectionType == c->connectionType)
 		{
 			*cp = c->next;
@@ -161,10 +168,16 @@ registerIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType,
 		free( c );
 		return;
 	}
+	if (!XdmcpCopyARRAY8( clientPort, &c->port )) {
+		XdmcpDisposeARRAY8( &c->client );
+		free( c );
+		return;
+	}
 	c->connectionType = connectionType;
 	c->choice.data = 0;
   found:
 	if (choice && !XdmcpCopyARRAY8( choice, &c->choice )) {
+		XdmcpDisposeARRAY8( &c->port );
 		XdmcpDisposeARRAY8( &c->client );
 		free( (char *)c );
 		return;
@@ -810,6 +823,7 @@ chooseHost( int hid )
 			} else {
 				gSendInt( D_ChooseHost );
 				gSendArr( td->clientAddr.length, (char *)td->clientAddr.data );
+				gSendArr( td->clientPort.length, (char *)td->clientPort.data );
 				gSendInt( td->connectionType );
 				gSendArr( h->hostaddr.length, (char *)h->hostaddr.data );
 				goto bout;
@@ -838,6 +852,7 @@ directChooseHost( const char *name )
 	} else {
 		gSendInt( D_ChooseHost );
 		gSendArr( td->clientAddr.length, (char *)td->clientAddr.data );
+		gSendArr( td->clientPort.length, (char *)td->clientPort.data );
 		gSendInt( td->connectionType );
 		gSendArr( hosts->addrlen, (char *)hosts->addr );
 		sessionExit( EX_NORMAL );

@@ -377,7 +377,7 @@ matchAclEntry( ARRAY8Ptr clientAddress, CARD16 connectionType, int direct )
  * the local host exists on any of the lists, else False
  */
 int
-forEachMatchingIndirectHost( ARRAY8Ptr clientAddress,
+forEachMatchingIndirectHost( ARRAY8Ptr clientAddress, ARRAY8Ptr clientPort,
                              CARD16 connectionType,
                              ChooserFunc function, char *closure )
 {
@@ -389,7 +389,7 @@ forEachMatchingIndirectHost( ARRAY8Ptr clientAddress,
 		if (e->flags & a_useChooser) {
 			ARRAY8Ptr choice;
 
-			choice = indirectChoice( clientAddress, connectionType );
+			choice = indirectChoice( clientAddress, clientPort, connectionType );
 			if (!choice || XdmcpARRAY8Equal( getLocalAddress(), choice ))
 				/* If nothing was chosen yet, we want to pop up the chooser.
 				 * If we were chosen, we want to pop up the greeter. */

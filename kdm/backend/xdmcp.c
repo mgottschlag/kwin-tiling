@@ -376,12 +376,15 @@ all_query_respond( struct sockaddr *from, int fromlen,
 	ARRAY8Ptr authenticationName;
 	ARRAY8 status;
 	ARRAY8 addr;
+	ARRAY8 port;
 	CARD16 connectionType;
 	int family;
 	int length;
 
 	family = convertAddr( (XdmcpNetaddr)from, &length, &addr.data );
 	addr.length = length; /* convert int to short */
+	port.data = netaddrPort( (XdmcpNetaddr)from, &length );
+	port.length = length; /* convert int to short */
 	debug( "all_query_respond: conntype=%d, addr=%02[*:hhx\n",
 	       family, addr.length, addr.data );
 	if (family < 0)
@@ -389,9 +392,9 @@ all_query_respond( struct sockaddr *from, int fromlen,
 	connectionType = family;
 
 	if (type == INDIRECT_QUERY)
-		registerIndirectChoice( &addr, connectionType, 0 );
+		registerIndirectChoice( &addr, &port, connectionType, 0 );
 	else
-		checkIndirectChoice( &addr, connectionType );
+		checkIndirectChoice( &addr, &port, connectionType );
 
 	authenticationName = chooseAuthentication( authenticationNames );
 	if (isWilling( &addr, connectionType, authenticationName, &status, type ))
@@ -495,7 +498,7 @@ indirect_respond( struct sockaddr *from, int fromlen, int length, int fd )
 		XdmcpWriteARRAYofARRAY8( &buffer, &queryAuthenticationNames );
 
 		localHostAsWell =
-			forEachMatchingIndirectHost( &clientAddress, connectionType,
+			forEachMatchingIndirectHost( &clientAddress, &clientPort, connectionType,
 			                             sendForward, (char *)(long)fd );
 
 		XdmcpDisposeARRAY8( &clientAddress );
@@ -1004,15 +1007,15 @@ manage( struct sockaddr *from, int fromlen, int length, int fd )
 			                      &clientAddress, &clientPort, &connectionType );
 			d->useChooser = False;
 			d->xdmcpFd = fd;
-			if (checkIndirectChoice( &clientAddress, connectionType ) &&
+			if (checkIndirectChoice( &clientAddress, &clientPort, connectionType ) &&
 			    useChooser( &clientAddress, connectionType ))
 			{
 				d->useChooser = True;
 				debug( "use chooser for %s\n", d->name );
 			}
 			d->clientAddr = clientAddress;
+			d->clientPort = clientPort;
 			d->connectionType = connectionType;
-			XdmcpDisposeARRAY8( &clientPort );
 			if (pdpy->fileAuthorization) {
 				d->authorizations = (Xauth **)Malloc( sizeof(Xauth *) );
 				if (!d->authorizations) {

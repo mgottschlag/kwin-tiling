@@ -657,7 +657,7 @@ processDPipe( struct display *d )
 	GTalk dpytalk;
 #ifdef XDMCP
 	int ct, len;
-	ARRAY8 ca, ha;
+	ARRAY8 ca, cp, ha;
 #endif
 
 	dpytalk.pipe = &d->pipe;
@@ -714,11 +714,14 @@ processDPipe( struct display *d )
 	case D_ChooseHost:
 		ca.data = (unsigned char *)gRecvArr( &len );
 		ca.length = (CARD16)len;
+		cp.data = (unsigned char *)gRecvArr( &len );
+		cp.length = (CARD16)len;
 		ct = gRecvInt();
 		ha.data = (unsigned char *)gRecvArr( &len );
 		ha.length = (CARD16)len;
-		registerIndirectChoice( &ca, ct, &ha );
+		registerIndirectChoice( &ca, &cp, ct, &ha );
 		XdmcpDisposeARRAY8( &ha );
+		XdmcpDisposeARRAY8( &cp );
 		XdmcpDisposeARRAY8( &ca );
 		break;
 	case D_RemoteHost:

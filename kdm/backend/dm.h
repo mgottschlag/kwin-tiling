@@ -278,6 +278,7 @@ struct display {
 	unsigned displayNumber;     /* numerical part of name */
 	int useChooser;             /* Run the chooser for this display */
 	ARRAY8 clientAddr;          /* for chooser picking */
+	ARRAY8 clientPort;          /* ... */
 	unsigned connectionType;    /* ... */
 	int xdmcpFd;
 #endif
@@ -627,7 +628,8 @@ typedef void (*ListenFunc)( ARRAY8Ptr addr, void **closure );
 /* in access.c */
 ARRAY8Ptr getLocalAddress( void );
 int acceptableDisplayAddress( ARRAY8Ptr clientAddress, CARD16 connectionType, xdmOpCode type );
-int forEachMatchingIndirectHost( ARRAY8Ptr clientAddress, CARD16 connectionType, ChooserFunc function, char *closure );
+int forEachMatchingIndirectHost( ARRAY8Ptr clientAddress, ARRAY8Ptr clientPort, CARD16 connectionType,
+                                 ChooserFunc function, char *closure );
 void scanAccessDatabase( int force );
 int useChooser( ARRAY8Ptr clientAddress, CARD16 connectionType );
 void forEachChooserHost( ARRAY8Ptr clientAddress, CARD16 connectionType, ChooserFunc function, char *closure );
@@ -635,9 +637,10 @@ void forEachListenAddr( ListenFunc listenfunction, ListenFunc mcastfcuntion, voi
 
 /* in choose.c */
 time_t disposeIndirectHosts( void );
-ARRAY8Ptr indirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType );
-int checkIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType );
-void registerIndirectChoice( ARRAY8Ptr clientAddress, CARD16 connectionType, ARRAY8Ptr choice );
+ARRAY8Ptr indirectChoice( ARRAY8Ptr clientAddress, ARRAY8Ptr clientPort, CARD16 connectionType );
+int checkIndirectChoice( ARRAY8Ptr clientAddress, ARRAY8Ptr clientPort, CARD16 connectionType );
+void registerIndirectChoice( ARRAY8Ptr clientAddress, ARRAY8Ptr clientPort, CARD16 connectionType,
+                             ARRAY8Ptr choice );
 int doChoose( void );
 
 /* socket.c or streams.c */
