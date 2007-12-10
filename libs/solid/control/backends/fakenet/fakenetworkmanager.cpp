@@ -17,7 +17,7 @@
 
 */
 #include <QFile>
-#include <QtXml>
+#include <QtXml/QtXml>
 #include <QLatin1String>
 
 #include <kstandarddirs.h>

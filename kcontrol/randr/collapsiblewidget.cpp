@@ -17,7 +17,7 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include <QtGui>
+#include <QtGui/QtGui>
 #include <QTimeLine>
 #include <collapsiblewidget.h>
 
