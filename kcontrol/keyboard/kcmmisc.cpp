@@ -212,7 +212,7 @@ void KeyboardConfig::delaySliderChanged (int value) {
 
 void KeyboardConfig::delaySpinboxChanged (int value) {
 	double alpha  = sliderMax / (log(5000.0L) - log(100.0L));
-	double logVal = alpha * (log(value)-log(100.0L));
+	double logVal = alpha * (log((double)value)-log(100.0L));
 
 	ui->delaySlider->setValue ((int)floor (0.5 + logVal));
 
