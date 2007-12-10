@@ -40,7 +40,7 @@ private:
 	QString getCountryFromLayoutName(const QString& layoutName);
 	
   public:
-	static const QString& ERROR_CODE;
+	static const QString ERROR_CODE;
 	
 	static LayoutIcon& getInstance();
         void clearCache() { m_pixmapCache.clear(); }

@@ -35,7 +35,7 @@ static const int FLAG_MAX_WIDTH = 21;
 static const int FLAG_MAX_HEIGHT = 14;
 
 const QString LayoutIcon::flagTemplate("l10n/%1/flag.png");
-const QString& LayoutIcon::ERROR_CODE("error");
+const QString LayoutIcon::ERROR_CODE("error");
 LayoutIcon* LayoutIcon::instance;
 
 
