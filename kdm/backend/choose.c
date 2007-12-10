@@ -131,6 +131,7 @@ checkIndirectChoice( ARRAY8Ptr clientAddress, ARRAY8Ptr clientPort,
 				uc = False;
 			} else
 				uc = True;
+			XdmcpDisposeARRAY8( &c->port );
 			XdmcpDisposeARRAY8( &c->client );
 			free( c );
 			return uc;
