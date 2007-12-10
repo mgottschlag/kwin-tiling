@@ -539,7 +539,7 @@ void Interface::match()
         return;
     }
     m_context.setSearchTerm(term);
-//     m_context.addStringCompletions(m_executions);	
+    m_context.addStringCompletions(m_executions);
 
     foreach (Plasma::AbstractRunner* runner, m_runners) {
         Job *job = new FindMatchesJob(term, runner, &m_context, this);
