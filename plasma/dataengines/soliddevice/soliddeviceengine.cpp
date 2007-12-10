@@ -657,6 +657,7 @@ qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
     //determine the free space available on the device
     const char *path=mountPoint.toAscii().constData();
 
+#if HAVE_STATFS
     struct statfs fs_obj;
     if (statfs(path,&fs_obj) < 0){
         return -1;
@@ -664,6 +665,10 @@ qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
     else{
         return (qlonglong)fs_obj.f_bfree*(qlonglong)fs_obj.f_bsize;
     }
+#else
+#warning TODO: handle statvfs() systems
+    return -1;
+#endif
 }
 
 bool SolidDeviceEngine::updateFreeSpace(const QString &udi)
