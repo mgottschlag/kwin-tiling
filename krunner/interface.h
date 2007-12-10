@@ -36,7 +36,7 @@ class QListWidget;
 class QListWidgetItem;
 class QVBoxLayout;
 
-class KComboBox;
+class KHistoryComboBox;
 class KPushButton;
 class KTitleWidget;
 
@@ -80,13 +80,12 @@ class Interface : public KRunnerDialog
         void resetInterface();
 
         Plasma::AbstractRunner::List m_runners;
-//         int m_nextRunner; // index of the next runner to call match() on
 
         QTimer m_matchTimer;
         QTimer m_updateTimer;
         QVBoxLayout* m_layout;
         KTitleWidget* m_header;
-        KComboBox* m_searchTerm;
+        KHistoryComboBox* m_searchTerm;
         QListWidget* m_matchList;
         QLabel* m_optionsLabel;
         KPushButton* m_cancelButton;
@@ -99,7 +98,6 @@ class Interface : public KRunnerDialog
 
         SearchMatch* m_defaultMatch;
         Plasma::SearchContext m_context;
-        QStringList m_executions;
 
         bool m_execQueued;
 };

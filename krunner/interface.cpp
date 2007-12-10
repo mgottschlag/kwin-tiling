@@ -30,7 +30,7 @@
 #include <QHideEvent>
 
 #include <KActionCollection>
-#include <KComboBox>
+#include <KHistoryComboBox>
 #include <KCompletionBox>
 #include <KDebug>
 #include <KDialog>
@@ -267,9 +267,6 @@ Interface::Interface(QWidget* parent)
     setWindowTitle( i18n("Run Command") );
     setWindowIcon(KIcon("preferences-desktop-launch-feedback"));
 
-    KConfigGroup cg(KGlobal::config(), "General");
-    m_executions = cg.readEntry("pastqueries", m_executions);
-
     m_matchTimer.setSingleShot(true);
     connect(&m_matchTimer, SIGNAL(timeout()), this, SLOT(match()));
 
@@ -284,7 +281,8 @@ Interface::Interface(QWidget* parent)
     m_header->setBackgroundRole( QPalette::Base );
     m_layout->addWidget( m_header );
 
-    m_searchTerm = new KComboBox(w);
+    m_searchTerm = new KHistoryComboBox(false,w);
+    m_searchTerm->setDuplicatesEnabled(false);
     KLineEdit *lineEdit = new KLineEdit(m_searchTerm);
     lineEdit->setCompletionObject(m_context.completionObject());
     lineEdit->setClearButtonShown(true);
@@ -295,6 +293,11 @@ Interface::Interface(QWidget* parent)
             this, SLOT(queueMatch()));
     connect(m_searchTerm, SIGNAL(returnPressed()),
             this, SLOT(exec()));
+
+    KConfigGroup cg(KGlobal::config(), "General");
+    QStringList executions = cg.readEntry("pastqueries", QStringList());
+    //Handle updates to the completion object as well
+    m_searchTerm->setHistoryItems(executions, true);
 
     //TODO: temporary feedback, change later with the "icon parade" :)
     m_matchList = new QListWidget(w);
@@ -370,7 +373,7 @@ Interface::Interface(QWidget* parent)
 Interface::~Interface()
 {
     KConfigGroup cg(KGlobal::config(), "General");
-    cg.writeEntry("pastqueries", m_executions);
+    cg.writeEntry("pastqueries", m_searchTerm->historyItems());
     m_context.clearMatches();
 }
 
@@ -458,14 +461,13 @@ void Interface::resetInterface()
     m_header->setPixmap("system-search");
     m_defaultMatch = 0;
     m_context.setSearchTerm(QString());
-    m_context.addStringCompletions(m_executions);
-    m_searchTerm->addItems(m_executions);
     m_searchTerm->addItem(QString());
     m_searchTerm->setCurrentIndex(m_searchTerm->count() - 1);
     m_matchList->clear();
     m_runButton->setEnabled( false );
     m_optionsButton->setEnabled( false );
     showOptions( false );
+    m_matchTimer.stop();
 }
 
 void Interface::closeEvent(QCloseEvent* e)
@@ -487,13 +489,7 @@ void Interface::matchActivated(QListWidgetItem* item)
     }
 
     QString searchTerm = m_searchTerm->currentText();
-    m_executions.removeAll(searchTerm);
-    m_executions << searchTerm;
-
-    //TODO: how many items should we remember exactly?
-    if (m_executions.size() > 100) {
-        m_executions.pop_front();
-    }
+    m_searchTerm->addToHistory(searchTerm);
 
     if (match->actionType() == Plasma::SearchMatch::InformationalMatch) {
         m_searchTerm->setItemText(0, match->toString());
@@ -539,7 +535,7 @@ void Interface::match()
         return;
     }
     m_context.setSearchTerm(term);
-    m_context.addStringCompletions(m_executions);
+    m_context.addStringCompletions(m_searchTerm->historyItems());
 
     foreach (Plasma::AbstractRunner* runner, m_runners) {
         Job *job = new FindMatchesJob(term, runner, &m_context, this);
