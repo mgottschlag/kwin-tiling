@@ -31,7 +31,7 @@ class QTimer;
    - Loads Ions (data sources from various inputs).
    - Handles interaction from Applet <-> Dataengine
 */
-class WeatherEngine : protected Plasma::DataEngine
+class WeatherEngine : public Plasma::DataEngine
 {
     Q_OBJECT
 
