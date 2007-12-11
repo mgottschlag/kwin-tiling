@@ -75,6 +75,9 @@ public:
 
         void constraintsUpdated(Plasma::Constraints constraints);
 
+protected slots:
+        virtual void wheelEvent(QGraphicsSceneWheelEvent *);
+
 private slots:
         void addWindowTask(Task::TaskPtr);
         void removeWindowTask(Task::TaskPtr);
@@ -193,6 +196,9 @@ public:
 
     // reimplemented from LayoutItem
     virtual QSizeF maximumSize() const;
+
+signals:
+    void activated(AbstractTaskItem *);
 
 protected:
     /** Constructs a new task item. */
@@ -417,6 +423,13 @@ public:
     /** Returns whether the task group is collapsed. */
     bool collapsed() const;
 
+    /**
+     * Cycle the active task in a circular behaviour
+     *
+     * @param delta  if >0 go to the previous one, else go to the successive one
+     */
+    void cycle(int delta);
+
     // reimplemented
     virtual void paint(QPainter *painter,
                        const QStyleOptionGraphicsItem *option,
@@ -425,6 +438,9 @@ public:
     virtual void activate();
     virtual void close();
     virtual QSizeF maximumSize() const;
+
+public slots:
+    void updateActive(AbstractTaskItem *task);
 
 private:
     enum DropAction
@@ -452,10 +468,13 @@ private:
           rect(taskArea)
         {}
 
+        bool operator==(const TaskEntry entry) const { return entry.task == task; }
+
         AbstractTaskItem *task;
         QRectF rect;
     };
     QList<TaskEntry> _tasks;
+    int _activeTask;
     BorderStyle _borderStyle;
     QColor _color;
     DropAction _potentialDropAction;

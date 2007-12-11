@@ -177,6 +177,10 @@ void Tasks::constraintsUpdated(Plasma::Constraints constraints)
     }
 }
 
+void Tasks::wheelEvent(QGraphicsSceneWheelEvent *e)
+{
+     _rootTaskGroup->cycle(e->delta());
+}
 
 
 
@@ -531,6 +535,7 @@ TaskGroupItem::TaskGroupItem(QGraphicsItem *parent, QObject *parentObject)
     : AbstractTaskItem(parent, parentObject)
     , _borderStyle(NoBorder)
     , _potentialDropAction(NoAction)
+    , _activeTask(-1)
     , _caretIndex(0)
     , _allowSubGroups(true)
 {
@@ -580,6 +585,9 @@ void TaskGroupItem::insertTask(AbstractTaskItem *item, int index)
         parentGroup->removeTask(item);
     }
 
+    connect(item, SIGNAL(activated(AbstractTaskItem *)),
+            this, SLOT(updateActive(AbstractTaskItem *)));
+
     item->setParentItem(this);
     _tasks.insert(index, item);
 
@@ -606,6 +614,36 @@ void TaskGroupItem::removeTask(AbstractTaskItem *item)
             scene()->removeItem(this);
             deleteLater();
         }
+    }
+
+    disconnect(item, SIGNAL(activated(AbstractTaskItem *)),
+            this, SLOT(updateActive(AbstractTaskItem *)));
+}
+
+void TaskGroupItem::updateActive(AbstractTaskItem *task)
+{
+    _activeTask = _tasks.indexOf(TaskEntry(task));
+}
+
+void TaskGroupItem::cycle(int delta)
+{
+    //only cycle active task if there are 2 tasks or more
+    if (_tasks.count() < 2) {
+        return;
+    }
+
+    if (_activeTask == -1) {
+        _tasks[0].task->activate();
+    }
+    //cycle active task with the circular array tecnique
+    else if (delta < 0) {
+        //if _activeTask < _tasks.count() the new _activeTask
+        //will be _activeTask+1, else it will be 1
+        _tasks[(_activeTask+1)%_tasks.count()].task->activate();
+    }else{
+        //if _activeTask > 1 the new _activeTask
+        //will be _activeTask-1, else it will be _tasks.count()
+        _tasks[(_tasks.count() + _activeTask -1 )%_tasks.count()].task->activate();
     }
 }
 
@@ -794,6 +832,7 @@ void WindowTaskItem::updateTask()
     // task flags
     if (_task->isActive()) {
         setTaskFlags(taskFlags() | TaskHasFocus);
+        emit activated(this);
     } else {
         setTaskFlags(taskFlags() & ~TaskHasFocus);
     }
