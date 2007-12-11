@@ -130,7 +130,13 @@ public:
     ~EnvCanadaIon();
     void init();  // Setup the city location, fetching the correct URL name.
     bool updateIonSource(const QString& source); // Sync data source with Applet
-    void option(int option, const QVariant& value);
+
+    bool options(const QString& source);
+    bool metricUnit(void);
+    bool timezone(void);
+    void setMeasureUnit(const QString& unit);
+    void setTimezoneFormat(const QString& tz);
+
     void updateWeather(const QString& source);
 
     static const int MAX_WARNINGS = 4;

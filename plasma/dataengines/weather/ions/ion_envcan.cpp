@@ -32,6 +32,7 @@ private:
         QString cityName;
         QString territoryName;
         QString cityCode;
+        QString sourceOptions;
     };
 
 public:
@@ -52,8 +53,8 @@ public:
     KUrl *m_url;
     KIO::TransferJob *m_job;
 
-    bool m_useUTC;  // Ion option: Timezone may be local time or UTC time
-    bool m_useMetric; // Ion option: Units may be Metric or Imperial
+    int m_timezoneType;  // Ion option: Timezone may be local time or UTC time
+    int m_measureType; // Ion option: Units may be Metric or Imperial
     bool m_windInMeters; // Ion option: Display wind format in meters per second only
     bool m_windInKnots; // Ion option: Display wind format in knots
     bool m_windInBft; // ion option: Display wind by the beaufort scale model
@@ -105,7 +106,7 @@ QStringList EnvCanadaIon::validate(const QString& source) const
         }
         ++it;
     }
-   
+
     // Check if placeList is empty if so, return nothing.
     if (placeList.isEmpty()) {
         return QStringList();
@@ -121,11 +122,11 @@ bool EnvCanadaIon::updateIonSource(const QString& source)
     // We expect the applet to send the source in the following tokenization:
     // ionname|validate|place_name - Triggers validation of place
     // ionname|weather|place_name - Triggers receiving weather of place
-   
+
     QStringList sourceAction = source.split('|');
     if (sourceAction[1] == QString("validate")) {
         kDebug() << "Initiate Validating of place: " << sourceAction[2];
-    
+
         QStringList result = validate(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
 
         if (result.size() == 1) {
@@ -139,11 +140,11 @@ bool EnvCanadaIon::updateIonSource(const QString& source)
             return true;
         }
 
-     } else if (sourceAction[1] == QString("weather")) {
+    } else if (sourceAction[1] == QString("weather")) {
         getXMLData(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
         return true;
-     }
-     return false;
+    }
+    return false;
 }
 
 // Parses city list and gets the correct city based on ID number
@@ -277,14 +278,11 @@ WeatherData EnvCanadaIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& 
                 parseWeatherForecast(data, xml);
             } else if (xml.name() == "yesterdayConditions") {
                 parseYesterdayWeather(data, xml);
-            }
-            else if (xml.name() == "riseSet") {
+            } else if (xml.name() == "riseSet") {
                 parseAstronomicals(data, xml);
-            }
-            else if (xml.name() == "almanac") {
-              parseWeatherRecords(data, xml);
-            }
-            else {
+            } else if (xml.name() == "almanac") {
+                parseWeatherRecords(data, xml);
+            } else {
                 parseUnknownElement(xml);
             }
         }
@@ -352,10 +350,10 @@ void EnvCanadaIon::parseDateTime(WeatherData& data, QXmlStreamReader& xml, Weath
                 xml.readElementText();
             else if (xml.name() == "minute")
                 xml.readElementText();
-	    else if (xml.name() == "timeStamp")
-		xml.readElementText();
+            else if (xml.name() == "timeStamp")
+                xml.readElementText();
             else if (xml.name() == "textSummary") {
-                if (d->m_useUTC && dateZone == "UTC") {
+                if (timezone() && dateZone == "UTC") {
                     // Which timestamp are we for?
 
                     if (dateType == "eventIssue") {
@@ -858,41 +856,60 @@ void EnvCanadaIon::parseUnknownElement(QXmlStreamReader& xml)
     }
 }
 
-// User toggleable values set from the dataengine <-> Plasma Applet
-void EnvCanadaIon::option(int option, const QVariant& value)
+void EnvCanadaIon::setMeasureUnit(const QString& unitType)
 {
-    switch (option) {
-    case IonInterface::UNITS:
-        // Set the Units used (Depends on Ion)
-        if (value.toInt() == KLocale::Metric) {
-            d->m_useMetric = true;
-        }
-        if (value.toInt() == KLocale::Imperial) {
-            d->m_useMetric = false;
-        }
-        break;
-    case IonInterface::TIMEFORMAT:
-        if (value.toBool()) {
-            d->m_useUTC = true;
-        }
-        break;
-    case IonInterface::USEROPTION: // This ion uses this for wind format type
-        QStringList option = value.toString().split("|");
+    d->m_measureType = unitType.toInt();
+}
 
-        d->m_windInMeters = false;
-        d->m_windInKnots = false;
-        d->m_windInBft = false;
+void EnvCanadaIon::setTimezoneFormat(const QString& tz)
+{
+    d->m_timezoneType = tz.toInt(); // Boolean
+}
 
-        // Metastring format:  envcan|option|type
-        if (option[2] == "WINDMS") {
+bool EnvCanadaIon::metricUnit()
+{
+    if (d->m_measureType == KLocale::Metric) {
+        return true;
+    }
+
+    // Imperial units
+    return false;
+}
+
+bool EnvCanadaIon::timezone()
+{
+    if (d->m_timezoneType) {
+        return true;
+    }
+
+    // Not UTC, local time
+    return false;
+}
+
+// Custom options, for now this just handles wind type.
+bool EnvCanadaIon::options(const QString& source)
+{
+    QByteArray str = source.toLocal8Bit();
+    // Get the dynamic Q_PROPERTY based on the datasource as property name.
+    d->m_place[source].sourceOptions = property(str.data()).toString();
+    QStringList option = d->m_place[source].sourceOptions.split("|");
+    kDebug() << "========> Available Options: " << d->m_place[source].sourceOptions;
+
+    d->m_windInMeters = false;
+    d->m_windInKnots = false;
+    d->m_windInBft = false;
+
+    // Metastring format:  option|type
+    if (option[0] == "WINDFORMAT") {
+        if (option[1] == "MS") {
             d->m_windInMeters = true;
-        } else if (option[2] == "WINDKNOTS") {
+        } else if (option[1] == "KNOTS") {
             d->m_windInKnots = true;
-        } else if (option[2] == "WINDBEAUFORT") {
+        } else if (option[1] == "BEAUFORT") {
             d->m_windInBft = true;
         }
-        break;
     }
+    return true;
 }
 
 void EnvCanadaIon::updateWeather(const QString& source)
@@ -901,9 +918,10 @@ void EnvCanadaIon::updateWeather(const QString& source)
     QStringList fieldList;
     QVector<QString> forecastList;
     int i = 0;
-  
+
     QString weatherSource = source;
     weatherSource.replace("envcan|", "envcan|weather|");
+    options(weatherSource);
 
     setData(weatherSource, "Country", country(source));
     setData(weatherSource, "Place", QString("%1, %2").arg(city(source)).arg(territory(source)));
@@ -918,144 +936,144 @@ void EnvCanadaIon::updateWeather(const QString& source)
 
     // Do we have a comfort temperature? if so display it
     if (dataFields["comfortTemperature"] != "N/A" && !dataFields["comfortTemperature"].isEmpty()) {
-        if (dataFields["comfortTemperature"].toFloat() <= 0 || (dataFields["comfortTemperature"].toFloat() <= 32 && !d->m_useMetric)) {
+        if (dataFields["comfortTemperature"].toFloat() <= 0 || (dataFields["comfortTemperature"].toFloat() <= 32 && !metricUnit())) {
             setData(weatherSource, "Windchill", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
             setData(weatherSource, "Humidex", "N/A");
         } else {
             setData(weatherSource, "Humidex", QString("%1%2").arg(dataFields["comfortTemperature"]).arg(QChar(176)));
             setData(weatherSource, "Windchill", "N/A");
-        }   
-     } else {
-       setData(weatherSource, "Windchill", "N/A");
-       setData(weatherSource, "Humidex", "N/A");
-     }
+        }
+    } else {
+        setData(weatherSource, "Windchill", "N/A");
+        setData(weatherSource, "Humidex", "N/A");
+    }
 
-     setData(weatherSource, "Temperature Unit", dataFields["temperatureUnit"]);
+    setData(weatherSource, "Temperature Unit", dataFields["temperatureUnit"]);
 
-     setData(weatherSource, "Dewpoint", dewpoint(source));
-     if (dewpoint(source) != "N/A") {
-         setData(weatherSource, "Dewpoint Unit", dataFields["temperatureUnit"]);
-     }
+    setData(weatherSource, "Dewpoint", dewpoint(source));
+    if (dewpoint(source) != "N/A") {
+        setData(weatherSource, "Dewpoint Unit", dataFields["temperatureUnit"]);
+    }
 
-     dataFields = pressure(source);
-     setData(weatherSource, "Pressure", dataFields["pressure"]);
-  
-     if (dataFields["pressure"] != "N/A") {
-         setData(weatherSource, "Pressure Tendency", dataFields["pressureTendency"]);
-         setData(weatherSource, "Pressure Unit", dataFields["pressureUnit"]);
-     }
+    dataFields = pressure(source);
+    setData(weatherSource, "Pressure", dataFields["pressure"]);
 
-     dataFields = visibility(source);
-     setData(weatherSource, "Visibility", dataFields["visibility"]);
-     if (dataFields["visibility"] != "N/A") {
-         setData(weatherSource, "Visibility Unit", dataFields["visibilityUnit"]);
-     }
+    if (dataFields["pressure"] != "N/A") {
+        setData(weatherSource, "Pressure Tendency", dataFields["pressureTendency"]);
+        setData(weatherSource, "Pressure Unit", dataFields["pressureUnit"]);
+    }
 
-     setData(weatherSource, "Humidity", humidity(source));
+    dataFields = visibility(source);
+    setData(weatherSource, "Visibility", dataFields["visibility"]);
+    if (dataFields["visibility"] != "N/A") {
+        setData(weatherSource, "Visibility Unit", dataFields["visibilityUnit"]);
+    }
 
-     dataFields = wind(source);
-     setData(weatherSource, "Wind Speed", dataFields["windSpeed"]);
-     if (dataFields["windSpeed"] != "N/A") {
-         setData(weatherSource, "Wind Speed Unit", dataFields["windUnit"]);
-     }
-     setData(weatherSource, "Wind Gust", dataFields["windGust"]);
-     setData(weatherSource, "Wind Direction", dataFields["windDirection"]);
-     setData(weatherSource, "Wind Gust Unit", dataFields["windGustUnit"]);
+    setData(weatherSource, "Humidity", humidity(source));
 
-     dataFields = regionalTemperatures(source);
-     setData(weatherSource, "Normal High", dataFields["normalHigh"]);
-     setData(weatherSource, "Normal Low", dataFields["normalLow"]);
-     if (dataFields["normalHigh"] != "N/A" && dataFields["normalLow"] != "N/A") {
-         setData(weatherSource, "Regional Temperature Unit", dataFields["regionalTempUnit"]);
-     }
+    dataFields = wind(source);
+    setData(weatherSource, "Wind Speed", dataFields["windSpeed"]);
+    if (dataFields["windSpeed"] != "N/A") {
+        setData(weatherSource, "Wind Speed Unit", dataFields["windUnit"]);
+    }
+    setData(weatherSource, "Wind Gust", dataFields["windGust"]);
+    setData(weatherSource, "Wind Direction", dataFields["windDirection"]);
+    setData(weatherSource, "Wind Gust Unit", dataFields["windGustUnit"]);
 
-     // Check if UV index is available for the location
-     dataFields = uvIndex(source);
-     setData(weatherSource, "UV Index", dataFields["uvIndex"]);
-     if (dataFields["uvIndex"] != "N/A") {
-         setData(weatherSource, "UV Rating", dataFields["uvRating"]);
-     }
+    dataFields = regionalTemperatures(source);
+    setData(weatherSource, "Normal High", dataFields["normalHigh"]);
+    setData(weatherSource, "Normal Low", dataFields["normalLow"]);
+    if (dataFields["normalHigh"] != "N/A" && dataFields["normalLow"] != "N/A") {
+        setData(weatherSource, "Regional Temperature Unit", dataFields["regionalTempUnit"]);
+    }
 
-     dataFields = warnings(source);
-     // Check if we have warnings or watches
+    // Check if UV index is available for the location
+    dataFields = uvIndex(source);
+    setData(weatherSource, "UV Index", dataFields["uvIndex"]);
+    if (dataFields["uvIndex"] != "N/A") {
+        setData(weatherSource, "UV Rating", dataFields["uvRating"]);
+    }
 
-     for (int i = 0; i < EnvCanadaIon::MAX_WARNINGS; i++) {
-          if (!dataFields[QString("watch %1").arg(i)].isEmpty()) {
-              fieldList = dataFields[QString("watch %1").arg(i)].split('|');
-              setData(weatherSource, QString("Watch Priority %1").arg(i), fieldList[0]);
-              setData(weatherSource, QString("Watch Description %1").arg(i), fieldList[1]);
-              setData(weatherSource, QString("Watch Info %1").arg(i), fieldList[2]);
-              setData(weatherSource, QString("Watch Timestamp %1").arg(i), fieldList[3]);
-          }
-          if (!dataFields[QString("warning %1").arg(i)].isEmpty()) {
-              fieldList = dataFields[QString("warning %1").arg(i)].split('|');
-              setData(weatherSource, QString("Warning Priority %1").arg(i), fieldList[0]);
-              setData(weatherSource, QString("Warning Description %1").arg(i), fieldList[1]);
-              setData(weatherSource, QString("Warning Info %1").arg(i), fieldList[2]);
-              setData(weatherSource, QString("Warning Timestamp %1").arg(i), fieldList[3]);
-          }
-      }
+    dataFields = warnings(source);
+    // Check if we have warnings or watches
 
-     forecastList = forecasts(source);
-     foreach(QString forecastItem, forecastList) {
-         fieldList = forecastItem.split('|');
+    for (int i = 0; i < EnvCanadaIon::MAX_WARNINGS; i++) {
+        if (!dataFields[QString("watch %1").arg(i)].isEmpty()) {
+            fieldList = dataFields[QString("watch %1").arg(i)].split('|');
+            setData(weatherSource, QString("Watch Priority %1").arg(i), fieldList[0]);
+            setData(weatherSource, QString("Watch Description %1").arg(i), fieldList[1]);
+            setData(weatherSource, QString("Watch Info %1").arg(i), fieldList[2]);
+            setData(weatherSource, QString("Watch Timestamp %1").arg(i), fieldList[3]);
+        }
+        if (!dataFields[QString("warning %1").arg(i)].isEmpty()) {
+            fieldList = dataFields[QString("warning %1").arg(i)].split('|');
+            setData(weatherSource, QString("Warning Priority %1").arg(i), fieldList[0]);
+            setData(weatherSource, QString("Warning Description %1").arg(i), fieldList[1]);
+            setData(weatherSource, QString("Warning Info %1").arg(i), fieldList[2]);
+            setData(weatherSource, QString("Warning Timestamp %1").arg(i), fieldList[3]);
+        }
+    }
 
-         // TODO: We don't convert the wind format (Knots, meteres per second, bft) for the Long Forecast yet. These are not used in the applet (for now).
-         if (d->m_useMetric) {
-             setData(weatherSource, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5") \
-                     .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[3]).arg(fieldList[4]).arg(fieldList[5]));
+    forecastList = forecasts(source);
+    foreach(QString forecastItem, forecastList) {
+        fieldList = forecastItem.split('|');
 
-             setData(weatherSource, QString("Long Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6|%7|%8") \
-                     .arg(fieldList[0]).arg(fieldList[2]).arg(fieldList[3]).arg(fieldList[4]).arg(fieldList[6]) \
-                     .arg(fieldList[7]).arg(fieldList[8]).arg(fieldList[9]));
-          } else {
-              setData(weatherSource, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5") \
-                      .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[3] == "N/A" ? "N/A" : \
-                      QString::number(d->m_formula.celsiusToF(fieldList[3].toFloat()), 'd', 0)) \
-                      .arg(fieldList[4] == "N/A" ? "N/A" : QString::number(d->m_formula.celsiusToF(fieldList[4].toFloat()),'d',0)).arg(fieldList[5]));
+        // TODO: We don't convert the wind format (Knots, meteres per second, bft) for the Long Forecast yet. These are not used in the applet (for now).
+        if (metricUnit()) {
+            setData(weatherSource, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5") \
+                    .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[3]).arg(fieldList[4]).arg(fieldList[5]));
 
-               setData(weatherSource, QString("Long Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6|%7|%8") \
-                       .arg(fieldList[0]).arg(fieldList[2]).arg(fieldList[3] == "N/A" ? "N/A" : \
-                       QString::number(d->m_formula.celsiusToF(fieldList[3].toFloat()),'d', 0)) \
-                       .arg(fieldList[4] == "N/A" ? "N/A" : QString::number(d->m_formula.celsiusToF(fieldList[4].toFloat()),'d',0)).arg(fieldList[6]).arg(fieldList[7]) \
-                       .arg(fieldList[8]).arg(fieldList[9]));
-            }
+            setData(weatherSource, QString("Long Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6|%7|%8") \
+                    .arg(fieldList[0]).arg(fieldList[2]).arg(fieldList[3]).arg(fieldList[4]).arg(fieldList[6]) \
+                    .arg(fieldList[7]).arg(fieldList[8]).arg(fieldList[9]));
+        } else {
+            setData(weatherSource, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5") \
+                    .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[3] == "N/A" ? "N/A" : \
+                            QString::number(d->m_formula.celsiusToF(fieldList[3].toFloat()), 'd', 0)) \
+                    .arg(fieldList[4] == "N/A" ? "N/A" : QString::number(d->m_formula.celsiusToF(fieldList[4].toFloat()), 'd', 0)).arg(fieldList[5]));
 
-            i++;
+            setData(weatherSource, QString("Long Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6|%7|%8") \
+                    .arg(fieldList[0]).arg(fieldList[2]).arg(fieldList[3] == "N/A" ? "N/A" : \
+                            QString::number(d->m_formula.celsiusToF(fieldList[3].toFloat()), 'd', 0)) \
+                    .arg(fieldList[4] == "N/A" ? "N/A" : QString::number(d->m_formula.celsiusToF(fieldList[4].toFloat()), 'd', 0)).arg(fieldList[6]).arg(fieldList[7]) \
+                    .arg(fieldList[8]).arg(fieldList[9]));
         }
 
-     dataFields = yesterdayWeather(source);
-     setData(weatherSource, "Yesterday High", dataFields["prevHigh"]);
-     setData(weatherSource, "Yesterday Low", dataFields["prevLow"]);
-   
-     if (dataFields["prevHigh"] != "N/A" && dataFields["prevLow"] != "N/A") {
-         setData(weatherSource ,"Yesterday Temperature Unit", dataFields["yesterdayTempUnit"]);
-     }
+        i++;
+    }
 
-     setData(weatherSource, "Yesterday Precip Total", dataFields["prevPrecip"]);
-     setData(weatherSource, "Yesterday Precip Unit", dataFields["prevPrecipUnit"]);
+    dataFields = yesterdayWeather(source);
+    setData(weatherSource, "Yesterday High", dataFields["prevHigh"]);
+    setData(weatherSource, "Yesterday Low", dataFields["prevLow"]);
 
-     dataFields = sunriseSet(source);
-     setData(weatherSource, "Sunrise At", dataFields["sunrise"]);
-     setData(weatherSource, "Sunset At", dataFields["sunset"]);
+    if (dataFields["prevHigh"] != "N/A" && dataFields["prevLow"] != "N/A") {
+        setData(weatherSource , "Yesterday Temperature Unit", dataFields["yesterdayTempUnit"]);
+    }
 
-     dataFields = moonriseSet(source);
-     setData(weatherSource, "Moonrise At", dataFields["moonrise"]);
-     setData(weatherSource, "Moonset At", dataFields["moonset"]);
+    setData(weatherSource, "Yesterday Precip Total", dataFields["prevPrecip"]);
+    setData(weatherSource, "Yesterday Precip Unit", dataFields["prevPrecipUnit"]);
 
-     dataFields = weatherRecords(source);
-     setData(weatherSource, "Record High Temperature", dataFields["recordHigh"]);
-     setData(weatherSource, "Record Low Temperature", dataFields["recordLow"]);
-     if (dataFields["recordHigh"] != "N/A" && dataFields["recordLow"] != "N/A") {
-         setData(weatherSource, "Record Temperature Unit", dataFields["recordTempUnit"]);
-     }
+    dataFields = sunriseSet(source);
+    setData(weatherSource, "Sunrise At", dataFields["sunrise"]);
+    setData(weatherSource, "Sunset At", dataFields["sunset"]);
 
-     setData(weatherSource, "Record Rainfall", dataFields["recordRain"]);
-     setData(weatherSource, "Record Rainfall Unit", dataFields["recordRainUnit"]);
-     setData(weatherSource, "Record Snowfall", dataFields["recordSnow"]);
-     setData(weatherSource, "Record Snowfall Unit", dataFields["recordSnowUnit"]);
+    dataFields = moonriseSet(source);
+    setData(weatherSource, "Moonrise At", dataFields["moonrise"]);
+    setData(weatherSource, "Moonset At", dataFields["moonset"]);
 
-     setData(weatherSource, "Credit", "Environment Canada");
+    dataFields = weatherRecords(source);
+    setData(weatherSource, "Record High Temperature", dataFields["recordHigh"]);
+    setData(weatherSource, "Record Low Temperature", dataFields["recordLow"]);
+    if (dataFields["recordHigh"] != "N/A" && dataFields["recordLow"] != "N/A") {
+        setData(weatherSource, "Record Temperature Unit", dataFields["recordTempUnit"]);
+    }
+
+    setData(weatherSource, "Record Rainfall", dataFields["recordRain"]);
+    setData(weatherSource, "Record Rainfall Unit", dataFields["recordRainUnit"]);
+    setData(weatherSource, "Record Snowfall", dataFields["recordSnow"]);
+    setData(weatherSource, "Record Snowfall Unit", dataFields["recordSnowUnit"]);
+
+    setData(weatherSource, "Credit", "Environment Canada");
 }
 
 QString EnvCanadaIon::country(const QString& source)
@@ -1077,9 +1095,9 @@ QString EnvCanadaIon::region(const QString& source)
 QString EnvCanadaIon::station(const QString& source)
 {
     if (!d->m_weatherData[source].stationID.isEmpty()) {
-         return d->m_weatherData[source].stationID.toUpper();
+        return d->m_weatherData[source].stationID.toUpper();
     }
-    
+
     return QString("N/A");
 }
 
@@ -1097,14 +1115,14 @@ QString EnvCanadaIon::condition(const QString& source)
 
 QString EnvCanadaIon::dewpoint(const QString& source)
 {
-    if (d->m_useMetric) {
+    if (metricUnit()) {
         if (!d->m_weatherData[source].dewpoint.isEmpty()) {
             return QString::number(d->m_weatherData[source].dewpoint.toFloat(), 'f', 1);
         }
     }
- 
+
     if (!d->m_weatherData[source].dewpoint.isEmpty()) {
-         return QString::number(d->m_formula.celsiusToF(d->m_weatherData[source].dewpoint.toFloat()), 'f', 1);
+        return QString::number(d->m_formula.celsiusToF(d->m_weatherData[source].dewpoint.toFloat()), 'f', 1);
     }
 
     return QString("N/A");
@@ -1118,12 +1136,12 @@ QString EnvCanadaIon::humidity(const QString& source)
     return QString("N/A");
 }
 
-QMap<QString,QString> EnvCanadaIon::visibility(const QString& source)
+QMap<QString, QString> EnvCanadaIon::visibility(const QString& source)
 {
     QMap<QString, QString> visibilityInfo;
 
     if (!d->m_weatherData[source].visibility == 0) {
-        if (d->m_useMetric) {
+        if (metricUnit()) {
             visibilityInfo.insert("visibility", QString::number(d->m_weatherData[source].visibility, 'f', 1));
             visibilityInfo.insert("visibilityUnit", "km");
         } else {
@@ -1131,7 +1149,7 @@ QMap<QString,QString> EnvCanadaIon::visibility(const QString& source)
             visibilityInfo.insert("visibilityUnit", "mi");
         }
     } else {
-      visibilityInfo.insert("visibility", "N/A");
+        visibilityInfo.insert("visibility", "N/A");
     }
     return visibilityInfo;
 }
@@ -1139,27 +1157,25 @@ QMap<QString,QString> EnvCanadaIon::visibility(const QString& source)
 QMap<QString, QString> EnvCanadaIon::temperature(const QString& source)
 {
     QMap<QString, QString> temperatureInfo;
-    if (d->m_useMetric) {
+    if (metricUnit()) {
         if (!d->m_weatherData[source].temperature.isEmpty()) {
             temperatureInfo.insert("temperature", QString::number(d->m_weatherData[source].temperature.toFloat(), 'f', 1));
         }
         temperatureInfo.insert("temperatureUnit", QString("%1C").arg(QChar(176)));
-    }
-    else {
+    } else {
         if (!d->m_weatherData[source].temperature.isEmpty()) {
             temperatureInfo.insert("temperature", QString::number(d->m_formula.celsiusToF(d->m_weatherData[source].temperature.toFloat()), 'f', 1));
         } else {
             temperatureInfo.insert("temperature", "N/A");
         }
-	temperatureInfo.insert("temperatureUnit", QString("%1F").arg(QChar(176)));
-    }  
+        temperatureInfo.insert("temperatureUnit", QString("%1F").arg(QChar(176)));
+    }
     temperatureInfo.insert("comfortTemperature", "N/A");
 
     if (d->m_weatherData[source].comforttemp != "N/A") {
-        if (d->m_useMetric) {
+        if (metricUnit()) {
             temperatureInfo.insert("comfortTemperature", d->m_weatherData[source].comforttemp);
-        }
-        else {
+        } else {
             if (!d->m_weatherData[source].comforttemp.isEmpty()) {
                 temperatureInfo.insert("comfortTemperature", QString::number(d->m_formula.celsiusToF(d->m_weatherData[source].comforttemp.toFloat()), 'f', 1));
             }
@@ -1248,7 +1264,7 @@ QMap<QString, QString> EnvCanadaIon::pressure(const QString& source)
         pressureInfo.insert("pressure", "N/A");
         return pressureInfo;
     } else {
-        if (d->m_useMetric) {
+        if (metricUnit()) {
             pressureInfo.insert("pressure", QString::number(d->m_weatherData[source].pressure, 'f', 1));
             pressureInfo.insert("pressureUnit", "kPa");
         } else {
@@ -1272,7 +1288,7 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source)
         windInfo.insert("windSpeed", "Calm");
         windInfo.insert("windUnit", "N/A");
     } else {
-        if (d->m_useMetric) {
+        if (metricUnit()) {
             if (d->m_windInMeters) {
                 windInfo.insert("windSpeed", QString::number(d->m_formula.kilometersToMS(d->m_weatherData[source].windSpeed.toInt()), 'f', 2));
                 windInfo.insert("windUnit", "m/s");
@@ -1305,8 +1321,8 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source)
         windInfo.insert("windGust", "N/A");
         windInfo.insert("windGustUnit", "N/A");
     } else {
-        if (d->m_useMetric) {
-            if (d->m_windInMeters) { 
+        if (metricUnit()) {
+            if (d->m_windInMeters) {
                 windInfo.insert("windGust", QString::number(d->m_formula.kilometersToMS(d->m_weatherData[source].windGust.toInt()), 'f', 2));
                 windInfo.insert("windGustUnit", "m/s");
             } else if (d->m_windInKnots) {
@@ -1315,7 +1331,7 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source)
             } else if (d->m_windInBft) {
                 windInfo.insert("windGust", QString::number(d->m_formula.kilometersToBF(d->m_weatherData[source].windGust.toInt())));
                 windInfo.insert("windGustUnit", "bft");
-            } else { 
+            } else {
                 windInfo.insert("windGust", QString::number(d->m_weatherData[source].windGust.toInt()));
                 windInfo.insert("windGustUnit", "km/h");
             }
@@ -1327,8 +1343,8 @@ QMap<QString, QString> EnvCanadaIon::wind(const QString& source)
                 windInfo.insert("windGust", QString::number(d->m_formula.kilometersToBF(d->m_weatherData[source].windGust.toInt())));
                 windInfo.insert("windGustUnit", "bft");
             } else {
-               windInfo.insert("windGust", QString::number(d->m_formula.kilometersToMI(d->m_weatherData[source].windGust.toInt()), 'f', 1));
-               windInfo.insert("windGustUnit", "mph");
+                windInfo.insert("windGust", QString::number(d->m_formula.kilometersToMI(d->m_weatherData[source].windGust.toInt()), 'f', 1));
+                windInfo.insert("windGustUnit", "mph");
             }
         }
     }
@@ -1369,7 +1385,7 @@ QMap<QString, QString> EnvCanadaIon::regionalTemperatures(const QString& source)
     if (d->m_weatherData[source].normalHigh.isEmpty()) {
         regionalTempInfo.insert("normalHigh", "N/A");
     } else {
-        if (d->m_useMetric) {
+        if (metricUnit()) {
             regionalTempInfo.insert("normalHigh", d->m_weatherData[source].normalHigh);
         } else {
             regionalTempInfo.insert("normalHigh", QString("%1").arg(d->m_formula.celsiusToF(d->m_weatherData[source].normalHigh.toFloat())));
@@ -1379,14 +1395,14 @@ QMap<QString, QString> EnvCanadaIon::regionalTemperatures(const QString& source)
     if (d->m_weatherData[source].normalLow.isEmpty()) {
         regionalTempInfo.insert("normalLow", "N/A");
     } else {
-        if (d->m_useMetric) {
+        if (metricUnit()) {
             regionalTempInfo.insert("normalLow", d->m_weatherData[source].normalLow);
         } else {
             regionalTempInfo.insert("normalLow", QString("%1").arg(d->m_formula.celsiusToF(d->m_weatherData[source].normalLow.toFloat())));
         }
     }
 
-    if (d->m_useMetric) {
+    if (metricUnit()) {
         regionalTempInfo.insert("regionalTempUnit", QString("%1C").arg(QChar(176)));
     } else {
         regionalTempInfo.insert("regionalTempUnit", QString("%1F").arg(QChar(176)));
@@ -1402,8 +1418,8 @@ QMap<QString, QString> EnvCanadaIon::yesterdayWeather(const QString& source)
     if (d->m_weatherData[source].prevHigh.isEmpty()) {
         yesterdayInfo.insert("prevHigh", "N/A");
     } else {
-        if (d->m_useMetric) {
-            yesterdayInfo.insert("prevHigh", d->m_weatherData[source].prevHigh); 
+        if (metricUnit()) {
+            yesterdayInfo.insert("prevHigh", d->m_weatherData[source].prevHigh);
         } else {
             yesterdayInfo.insert("prevHigh", QString::number(d->m_formula.celsiusToF(d->m_weatherData[source].prevHigh.toFloat())));
         }
@@ -1412,28 +1428,28 @@ QMap<QString, QString> EnvCanadaIon::yesterdayWeather(const QString& source)
     if (d->m_weatherData[source].prevLow.isEmpty()) {
         yesterdayInfo.insert("prevLow", "N/A");
     } else {
-        if (d->m_useMetric) {
+        if (metricUnit()) {
             yesterdayInfo.insert("prevLow", d->m_weatherData[source].prevLow);
         } else {
             yesterdayInfo.insert("prevLow", QString::number(d->m_formula.celsiusToF(d->m_weatherData[source].prevLow.toFloat()), 'f', 1));
         }
     }
 
-    if (d->m_useMetric) {
+    if (metricUnit()) {
         yesterdayInfo.insert("yesterdayTempUnit", QString("%1C").arg(QChar(176)));
     } else {
         yesterdayInfo.insert("yesterdayTempUnit", QString("%1F").arg(QChar(176)));
     }
 
     if (d->m_weatherData[source].prevPrecipTotal == "Trace") {
-            yesterdayInfo.insert("prevPrecip", "Trace");
-            return yesterdayInfo;
+        yesterdayInfo.insert("prevPrecip", "Trace");
+        return yesterdayInfo;
     }
 
     if (d->m_weatherData[source].prevPrecipTotal.isEmpty()) {
         yesterdayInfo.insert("prevPrecip", "N/A");
     } else {
-        if (d->m_useMetric) {
+        if (metricUnit()) {
             yesterdayInfo.insert("prevPrecipTotal", d->m_weatherData[source].prevPrecipTotal);
             yesterdayInfo.insert("prevPrecipUnit", d->m_weatherData[source].prevPrecipType);
         } else {
@@ -1448,13 +1464,13 @@ QMap<QString, QString> EnvCanadaIon::yesterdayWeather(const QString& source)
 QMap<QString, QString> EnvCanadaIon::sunriseSet(const QString& source)
 {
     QMap<QString, QString> sunInfo;
-  
+
     if (d->m_weatherData[source].sunriseTimestamp.isEmpty()) {
         sunInfo.insert("sunrise", "N/A");
     } else {
         sunInfo.insert("sunrise", d->m_weatherData[source].sunriseTimestamp);
     }
- 
+
     if (d->m_weatherData[source].sunsetTimestamp.isEmpty()) {
         sunInfo.insert("sunset", "N/A");
     } else {
@@ -1467,19 +1483,19 @@ QMap<QString, QString> EnvCanadaIon::sunriseSet(const QString& source)
 QMap<QString, QString> EnvCanadaIon::moonriseSet(const QString& source)
 {
     QMap<QString, QString> moonInfo;
- 
+
     if (d->m_weatherData[source].moonriseTimestamp.isEmpty()) {
         moonInfo.insert("moonrise", "N/A");
     } else {
         moonInfo.insert("moonrise", d->m_weatherData[source].moonriseTimestamp);
     }
-   
+
     if (d->m_weatherData[source].moonsetTimestamp.isEmpty()) {
         moonInfo.insert("moonset", "N/A");
     } else {
         moonInfo.insert("moonset", d->m_weatherData[source].moonsetTimestamp);
     }
-   
+
     return moonInfo;
 }
 
@@ -1490,7 +1506,7 @@ QMap<QString, QString> EnvCanadaIon::weatherRecords(const QString& source)
     if (d->m_weatherData[source].recordHigh == 0) {
         recordInfo.insert("recordHigh", "N/A");
     } else {
-        if (d->m_useMetric) {
+        if (metricUnit()) {
             recordInfo.insert("recordHigh", QString("%1").arg(d->m_weatherData[source].recordHigh));
         } else {
             recordInfo.insert("recordHigh", QString::number(d->m_formula.celsiusToF(d->m_weatherData[source].recordHigh), 'f', 1));
@@ -1500,15 +1516,15 @@ QMap<QString, QString> EnvCanadaIon::weatherRecords(const QString& source)
     if (d->m_weatherData[source].recordLow == 0) {
         recordInfo.insert("recordLow", "N/A");
     } else {
-        if (d->m_useMetric) {
+        if (metricUnit()) {
             recordInfo.insert("recordLow", QString("%1").arg(d->m_weatherData[source].recordLow));
         } else {
             recordInfo.insert("recordLow", QString::number(d->m_formula.celsiusToF(d->m_weatherData[source].recordLow), 'f', 1));
         }
-       
+
     }
 
-    if (d->m_useMetric) {
+    if (metricUnit()) {
         recordInfo.insert("recordTempUnit", QString("%1C").arg(QChar(176)));
     } else {
         recordInfo.insert("recordTempUnit", QString("%1F").arg(QChar(176)));
@@ -1517,7 +1533,7 @@ QMap<QString, QString> EnvCanadaIon::weatherRecords(const QString& source)
     if (d->m_weatherData[source].recordRain == 0) {
         recordInfo.insert("recordRain", "N/A");
     } else {
-        if (d->m_useMetric) {
+        if (metricUnit()) {
             recordInfo.insert("recordRain", QString("%1").arg(d->m_weatherData[source].recordRain));
             recordInfo.insert("recordRainUnit", QString("mm"));
         } else {
@@ -1529,7 +1545,7 @@ QMap<QString, QString> EnvCanadaIon::weatherRecords(const QString& source)
     if (d->m_weatherData[source].recordSnow == 0) {
         recordInfo.insert("recordSnow", "N/A");
     } else {
-        if (d->m_useMetric) {
+        if (metricUnit()) {
             recordInfo.insert("recordSnow", QString("%1").arg(d->m_weatherData[source].recordSnow));
             recordInfo.insert("recordSnowUnit", QString("cm"));
         } else {
@@ -1540,5 +1556,5 @@ QMap<QString, QString> EnvCanadaIon::weatherRecords(const QString& source)
 
     return recordInfo;
 }
- 
+
 #include "ion_envcan.moc"

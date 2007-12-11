@@ -74,7 +74,11 @@ public:
     UKMETIon(QObject *parent, const QVariantList &args);
     ~UKMETIon();
     void init();  // Setup the city location, fetching the correct URL name.
-    void option(int option, const QVariant& value);
+    bool options (const QString& source);
+    bool metricUnit(void);
+    bool timezone(void);
+    void setMeasureUnit(const QString& unit);
+    void setTimezoneFormat(const QString& tz);
     bool updateIonSource(const QString& source);
     void updateWeather(const QString& source);
 
@@ -116,7 +120,7 @@ private:
     void parseWeatherObservation(const QString& source, WeatherData& data, QXmlStreamReader& xml);
     void parseFiveDayForecast(const QString& source, QXmlStreamReader& xml);
     void parseUnknownElement(QXmlStreamReader& xml);
-    
+
 private:
     class Private;
     Private *const d;

@@ -52,7 +52,7 @@ public:
     QString windDirection;
     QString windSpeed; // Float value
     QString windGust; // Float value
-    QString pressure; 
+    QString pressure;
     QString dewpoint_F;
     QString dewpoint_C;
     QString heatindex_F;
@@ -70,7 +70,11 @@ public:
     NOAAIon(QObject *parent, const QVariantList &args);
     ~NOAAIon();
     void init(void);  // Setup the city location, fetching the correct URL name.
-    void option(int option, const QVariant& value);
+    bool options (const QString& source);
+    bool metricUnit(void);
+    bool timezone(void);
+    void setMeasureUnit(const QString& unit);
+    void setTimezoneFormat(const QString& tz);
     bool updateIonSource(const QString& source); // Sync data source with Applet
     void updateWeather(const QString& source);
 
