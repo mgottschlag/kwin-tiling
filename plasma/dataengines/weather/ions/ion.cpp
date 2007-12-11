@@ -25,12 +25,10 @@ class IonInterface::Private : public QObject
 public:
     Private(IonInterface *i)
             : ion(i),
-              initialized(false)
-    {}
+            initialized(false) {}
 
     int ref;
     IonInterface *ion;
-    bool valid;
     bool initialized;
 };
 
@@ -38,7 +36,8 @@ IonInterface::IonInterface(QObject *parent)
         : Plasma::DataEngine(parent),
         d(new Private(this))
 {
-d->ref = 0;
+// Initialize the loaded ion with a reference count of 0.
+    d->ref = 0;
 }
 
 // Increment reference counter
@@ -59,50 +58,42 @@ bool IonInterface::isUsed() const
     return d->ref != 0;
 }
 
-// Check if Ion is valid - Not used yet
-bool IonInterface::isValid() const
-{
-    return d->valid;
-}
-
+/**
+ * If the ion is not initialized just set the initial data source up even if it's empty, we'll retry once the initialization is done
+ */
 bool IonInterface::sourceRequested(const QString &source)
 {
-    kDebug() << "sourceRequested()" << source;
-
     if (d->initialized) {
-        kDebug() << "Calling Ion's updateIonSource()";
         return updateIonSource(source);
     } else {
-        kDebug() << "Setting Source: " << source << "Not INITIALIZED YET!";
         setData(source, Plasma::DataEngine::Data());
     }
 
     return true;
 }
 
-bool IonInterface::updateSource(const QString& source) 
+/**
+ * Update the ion's datasource. Triggered when a Plasma::DataEngine::connectSource() timeout occurs.
+ */
+bool IonInterface::updateSource(const QString& source)
 {
-     kDebug() << "updateSource()";
-     if (d->initialized) {
-         return updateIonSource(source);
-     }
+    kDebug() << "updateSource()";
+    if (d->initialized) {
+        return updateIonSource(source);
+    }
 
-     return false;
+    return false;
 }
 
-//void IonInterface::deleteIonSource(const QString& source)
-//{  
-//   kDebug() << "Ion: Removing my Source: " << source;
-//   removeSource(source);
-//}
-
+/**
+ * Set the ion to make sure it is ready to get real data.
+ */
 void IonInterface::setInitialized(bool initialized)
 {
     d->initialized = initialized;
 
     if (d->initialized) {
-        foreach (const QString &source, sources()) {
-            kDebug() << "Calling updateSource() for SOURCE = " << source;
+        foreach(const QString &source, sources()) {
             updateSource(source);
         }
     }
