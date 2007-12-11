@@ -51,6 +51,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
+    setSize(200,200);
 }
 
 void Battery::init()
@@ -71,8 +72,7 @@ void Battery::init()
     m_smallPixelSize = 44;
     m_theme = new Plasma::Svg(svgFile, this);
     m_theme->setContentType(Plasma::Svg::SingleImage);
-    m_theme->resize(200, 200);
-    setSize(200,200);
+    m_theme->resize(contentSize());
 
     m_font = QApplication::font();
     m_font.setWeight(QFont::Bold);
