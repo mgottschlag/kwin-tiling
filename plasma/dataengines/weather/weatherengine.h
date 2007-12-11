@@ -27,39 +27,86 @@
 
 class QTimer;
 
-/* DataEngine class
-   - Loads Ions (data sources from various inputs).
-   - Handles interaction from Applet <-> Dataengine
-*/
+/**
+ * This class is DataEngine. It handles loading, unloading, updating any data the ions wish to send. It is a gateway for datasources (ions) to
+ * communicate with the WeatherEngine.
+ */
+
 class WeatherEngine : public Plasma::DataEngine
 {
     Q_OBJECT
 
 public:
-    // ctor, dtor
+    /** Constructor
+     * @param parent The parent object.
+     * @param args Argument list, unused.
+     */
     WeatherEngine(QObject *parent, const QVariantList &args);
+
+    // Destructor
     ~WeatherEngine();
 
-    // Ion plugin methods
-    IonInterface* Ion(const QString& name) const;  // Returns an Ion instance.
-    IonInterface* loadIon(const QString& pluginName);    // Loads an Ion plugin.
-    void unloadIon(const QString& name);           // Unloads an Ion plugin.
-    KService::List knownIons();                // Returns a list of Ion plugin names.
+    /**
+     * Get an a IonInterface instance.
+     * @arg name ion (plugin) name.
+     * @return IonInterface an instance of a loaded plugin.
+     */
+    IonInterface* Ion(const QString& name) const;
+    /**
+     * Load a plugin
+     * @arg pluginName Name of the plugin
+     * @return IonInterface returns an instance of the loaded plugin
+     */
+    IonInterface* loadIon(const QString& pluginName);
+    /**
+     * Unload a plugin.
+     * @arg name Name of the plugin.
+     */
+    void unloadIon(const QString& name);
+    /**
+     * Get a list of known plugins found.
+     * @returns a list of plugin offers found.
+     */
+    KService::List knownIons();
 
 protected:
-    // dataEngine method - We use it to communicate to the Ion plugins to set the data sources
+    /**
+     * Reimplemented from Plasma::DataEngine. We use it to communicate to the Ion plugins to set the data sources.
+     * @param source The datasource name.
+     */
     bool sourceRequested(const QString &source);
 
 protected slots:
-    // SLOT: trigger to indicate new data is available from an Ion. There are two modes.
-    // When using a timer no ion is specified, otherwise when loading an ion an ion is
-    // specified.
+    /**
+     * Reimplemented from Plasma::DataEngine.
+     * @param source The datasource to be updated.
+     * @param data The new data updated.
+     */
     void dataUpdated(const QString& source, Plasma::DataEngine::Data data);
+    /**
+     * Notify WeatherEngine a new ion has data sources.
+     * @arg source datasource name.
+     */
     void newIonSource(const QString& source);
+    /**
+     * Notify WeatherEngine a datasource is being removed.
+     * @arg source datasource name.
+     */
     void removeIonSource(const QString& source);
+    /**
+     * Reimplemented from Plasma::DataEngine.
+     * @param source The datasource to update.
+     */
     bool updateSource(const QString& source);
 
 private:
+    /**
+     * Read in any dynamic Q_PROPERTY values using the datasource as the property name. This is for custom options.
+     * @arg source The datasource namea
+     * @return The dynamic property() using the datasource as the property name
+     */
+    QString getAppletOptions(const QString& source);
+
     class Private;
     Private *const d;
 };
