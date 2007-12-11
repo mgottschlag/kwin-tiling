@@ -70,7 +70,7 @@ class Clock : public Plasma::Applet
             PlainClock, FancyClock
         };
 
-        int m_clockStyle;
+        ClockStyle m_clockStyle;
         QFont m_plainClockFont;
         QColor m_plainClockColor;
         bool m_plainClockFontBold;
@@ -80,14 +80,9 @@ class Clock : public Plasma::Applet
         bool m_showYear;
         bool m_showDay;
         bool m_showTimezone;
-        bool m_calendarIsShown;
-
-        QSize m_defaultElementSize;
 
         QSizeF m_sizeHint;
-        int m_pixelSize;
         QString m_timezone;
-        Plasma::Svg* m_theme;
         QTime m_time;
         QDate m_date;
         KDialog *m_dialog; //should we move this into another class?
@@ -97,13 +92,6 @@ class Clock : public Plasma::Applet
         /// Designer Config file
         Ui::clockConfig ui;
         Ui::calendar m_calendarUi;
-
-        bool m_animating;
-        int m_animationStep;
-
-        // Default spacings
-        int m_horizontalSpacing;
-        int m_verticalSpacing;
 };
 
 K_EXPORT_PLASMA_APPLET(dig_clock, Clock)
