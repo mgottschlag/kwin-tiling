@@ -209,7 +209,7 @@ KdmLayoutBox::update( QStack<QSize> &parentSizes, const QRect &parentGeometry, b
 QSize
 KdmLayoutBox::sizeHint( QStack<QSize> &parentSizes )
 {
-	enter("Box::sizeHint") << "parentSize #" << parentSizes.size()
+	enter("Box::sizeHint") << NoSpace << "parentSize #" << parentSizes.size()
 		<< Space << parentSizes.top();
 
 	int ccnt = 0;
