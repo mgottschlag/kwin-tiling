@@ -23,6 +23,7 @@
 #include <QList>
 #include <QObject>
 #include <QStyleOptionGraphicsItem>
+#include <QTimer>
 
 #include <KDialog>
 #include <KIcon>
@@ -31,8 +32,10 @@
 #include <plasma/phase.h>
 #include <plasma/widgets/widget.h>
 
+#include "renderthread.h"
+
+class BackgroundDialog;
 class QAction;
-class QTimer;
 class QTimeLine;
 
 namespace Plasma
@@ -81,40 +84,17 @@ protected Q_SLOTS:
     void runCommand();
     void configure();
     void applyConfig();
-    void updateSlideList();
     void nextSlide();
-
-    /** add new path button was clicked */
-    void addSlidePath();
-
-    /** add a new slide path */
-    void addPathOk();
-
-    /** remove the currently selected path */
-    void removeSlidePath();
-
-    /** the slidepath selection has changed,
-     * used to enable/disable the remove button */
-    void slidePathCurrentRowChanged(int row);
-
-    /** move the selected path up in the list */
-    void movePathDown();
-
-    /** move the selected path down in the list */
-    void movePathUp();
-
-    /**
-     * invoke kns dialog to get new wallpapers
-     */
-    void getNewStuff();
     
     void toggleDesktopImmutability();
     void lockScreen();
     void logout();
 
+    void updateBackground();
+    void updateBackground(int, const QImage &img);
 private:
-    /** populate m_bitmapBackground with the pixmap to show */
-    void createBitmapBackground();
+    void reloadConfig();
+    QSize resolution() const;
 
     QAction *m_lockDesktopAction;
     QAction *m_appletBrowserAction;
@@ -124,27 +104,23 @@ private:
     QAction *m_logoutAction;
     QAction *m_separator;
 
-    KDialog *m_configDialog;
-    Ui::config *m_ui;
-
-    // IMPORTANT: this needs to be in the same order as the items
-    // in the m_ui->pictureComboBox
-    enum BackgroundMode {
-        kStaticBackground,
-        kSlideshowBackground
-    };
-
+    BackgroundDialog *m_configDialog;
+    
     int m_backgroundMode;
     // slideshow settings
 
     // the index of which m_slidePath is currently visible
     int m_currentSlide;
-    QTimer *m_slideShowTimer;
-    QStringList m_slidePaths;
+    QTimer m_slideshowTimer;
     QStringList m_slideFiles;
 
-    QPixmap* m_bitmapBackground;
+    QPixmap m_bitmapBackground;
     QString m_wallpaperPath;
+    int m_wallpaperPosition;
+    QColor m_wallpaperColor;
+    
+    RenderThread m_renderer;
+    int m_current_renderer_token;
 };
 
 #endif // PLASMA_PANEL_H
