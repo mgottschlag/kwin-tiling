@@ -120,6 +120,13 @@
            </widget>
           </item>
           <item>
+           <widget class="QCheckBox" name="inactiveSelectionEffect" >
+            <property name="text" >
+             <string>In&amp;active selection changes color</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <widget class="QCheckBox" name="shadeSortedColumn" >
             <property name="text" >
              <string>Shade sorted column &amp;in lists</string>

@@ -61,15 +61,6 @@ private slots:
     /** slot called when color on a KColorButton changes */
     void colorChanged( const QColor &newColor );
 
-    /** slot called when the contrast slider on the main page changes */
-    void on_contrastSlider_valueChanged(int value);
-
-    /** slot called when the shadeSortedColumn checkbox is checked/unchecked */
-    void on_shadeSortedColumn_stateChanged(int state);
-
-    /** slot called when the useInactiveEffects checkbox is checked/unchecked */
-    void on_useInactiveEffects_stateChanged(int state);
-
     /** slot called when any varies button is clicked */
     void variesClicked();
 
@@ -87,6 +78,12 @@ private slots:
 
     /** null slot to emit changed(true) */
     void emitChanged();
+
+    // options slots
+    void on_contrastSlider_valueChanged(int value);
+    void on_shadeSortedColumn_stateChanged(int state);
+    void on_inactiveSelectionEffect_stateChanged(int state);
+    void on_useInactiveEffects_stateChanged(int state);
 
     // effects page slots
     void on_inactiveIntensityBox_currentIndexChanged(int index);

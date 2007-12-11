@@ -495,6 +495,16 @@ void KColorCm::updateFromOptions()
 
     KConfigGroup groupI(m_config, "ColorEffects:Inactive");
     groupI.writeEntry("Enable", bool(useInactiveEffects->checkState() != Qt::Unchecked));
+    // only write this setting if it is not the default; this way we can change the default more easily in later KDE
+    // the setting will still written by explicitly checking/unchecking the box
+    if (inactiveSelectionEffect->checkState() != Qt::Unchecked)
+    {
+        groupI.writeEntry("ChangeSelectionColor", true);
+    }
+    else
+    {
+        groupI.deleteEntry("ChangeSelectionColor");
+    }
 }
 
 void KColorCm::updateFromEffectsPage()
@@ -949,6 +959,26 @@ void KColorCm::on_useInactiveEffects_stateChanged(int state)
     KConfigGroup group(m_config, "ColorEffects:Inactive");
     group.writeEntry("Enable", bool(state != Qt::Unchecked));
 
+    m_disableUpdates = true;
+    printf("re-init\n");
+    inactiveSelectionEffect->setCheckState(group.readEntry("ChangeSelectionColor", bool(state != Qt::Unchecked))
+                                           ? Qt::Checked : Qt::Unchecked);
+    m_disableUpdates = false;
+
+    emit changed(true);
+}
+
+void KColorCm::on_inactiveSelectionEffect_stateChanged(int state)
+{
+    if (m_disableUpdates)
+    {
+        // don't write the config as we are reading it!
+        return;
+    }
+
+    KConfigGroup group(m_config, "ColorEffects:Inactive");
+    group.writeEntry("ChangeSelectionColor", bool(state != Qt::Unchecked));
+
     emit changed(true);
 }
 
@@ -977,6 +1007,10 @@ void KColorCm::loadInternal(bool loadOptions)
 
         KConfigGroup group(m_config, "ColorEffects:Inactive");
         useInactiveEffects->setCheckState(group.readEntry("Enable", false) ? Qt::Checked : Qt::Unchecked);
+        // NOTE: keep this in sync with kdelibs/kdeui/colors/kcolorscheme.cpp
+        // NOTE: remove extra logic from updateFromOptions and on_useInactiveEffects_stateChanged when this changes!
+        inactiveSelectionEffect->setCheckState(group.readEntry("ChangeSelectionColor", group.readEntry("Enable", false))
+                                               ? Qt::Checked : Qt::Unchecked);
     }
 
     updateEffectsPage();
