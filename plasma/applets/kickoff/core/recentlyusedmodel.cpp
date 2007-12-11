@@ -56,6 +56,7 @@ public:
         //qDebug() << "Removing existing item" << existingItem;
         Q_ASSERT(existingItem->parent());
         existingItem->parent()->removeRow(existingItem->row());
+        itemsByPath.remove(path);
     }
     void addRecentApplication(KService::Ptr service,bool append) 
     {
