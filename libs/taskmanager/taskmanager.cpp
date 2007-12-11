@@ -127,6 +127,7 @@ TaskManager::TaskManager()
 TaskManager::~TaskManager()
 {
     KGlobal::locale()->removeCatalog("libtaskmanager");
+    delete d;
 }
 
 void TaskManager::configure_startup()
@@ -1639,6 +1640,7 @@ Startup::Startup(const KStartupInfoId& id, const KStartupInfoData& data,
 
 Startup::~Startup()
 {
+    delete d;
 }
 
 QString Startup::text() const
