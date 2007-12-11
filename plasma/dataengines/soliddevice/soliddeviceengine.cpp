@@ -37,6 +37,9 @@
 #endif
 
 #include <sys/stat.h>
+#ifdef HAVE_SYS_STATFS_H
+#include <sys/statfs.h>
+#endif
 
 #ifdef HAVE_SYS_VFS_H
 #include <sys/vfs.h>
@@ -657,7 +660,7 @@ qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
     //determine the free space available on the device
     const char *path=mountPoint.toAscii().constData();
 
-#if HAVE_STATFS
+#ifdef HAVE_STATFS
     struct statfs fs_obj;
     if (statfs(path,&fs_obj) < 0){
         return -1;

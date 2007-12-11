@@ -60,6 +60,9 @@
 /* Define to 1 if you have the <sys/param.h> header file. */
 #cmakedefine HAVE_SYS_PARAM_H 1
 
+/* Define to 1 if you have the <sys/statfs.h> header file. */
+#cmakedefine HAVE_SYS_STATFS_H 1
+
 /* Define to 1 if you have statfs(). */
 #cmakedefine HAVE_STATFS 1
 
