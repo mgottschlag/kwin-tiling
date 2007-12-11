@@ -99,6 +99,11 @@ IonInterface* WeatherEngine::loadIon(const QString& plugName)
 
     QString error;
 
+    // Do we have a valid plugin?
+    if (!foundPlugin) {
+        return NULL;
+    }
+
     // Load the Ion plugin, store it into a QMap to handle multiple ions.
     ion = foundPlugin->createInstance<IonInterface>(0, QVariantList(), &error);
     ion->setObjectName(plugName);
