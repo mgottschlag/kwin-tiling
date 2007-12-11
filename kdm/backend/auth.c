@@ -302,6 +302,7 @@ saveServerAuthorizations( struct display *d, Xauth **auths, int count )
 		logError( "Cannot find _x11 user\n" );
 	else
 		fchown( fileno( auth_file ), x11->pw_uid, x11->pw_gid );
+	endpwent();
 #endif
 	debug( "file: %s  auth: %p\n", d->authFile, auths );
 	for (i = 0; i < count; i++) {

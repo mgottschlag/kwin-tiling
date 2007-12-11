@@ -673,6 +673,7 @@ listSessions( int flags, struct display *d, void *ctx,
 #else
 	ENDUTENT();
 #endif
+	endpwent(); /* The TTY callbacks use getpwnam(). */
 }
 
 typedef struct {

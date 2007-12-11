@@ -146,11 +146,29 @@ displayMsg( int lv, const char *msg, ... )
 }
 #endif
 
+#ifdef _AIX
+# define _ENDUSERDB , enduserdb()
+#else
+# define _ENDUSERDB
+#endif
+#ifdef HAVE_GETSPNAM /* (sic!) - not USESHADOW */
+# define _ENDSPENT , endspent()
+#else
+# define _ENDSPENT()
+#endif
+#define END_ENT endpwent() _ENDSPENT _ENDUSERDB
+
+#define V_RET_NP \
+		do { \
+			END_ENT; \
+			return False; \
+		} while(0)
+
 #define V_RET \
 		do { \
 			wipeStr( curpass ); \
 			curpass = 0; \
-			return False; \
+			V_RET_NP; \
 		} while(0)
 
 #define V_RET_AUTH \
@@ -519,8 +537,7 @@ verify( GConvFunc gconv, int rootok )
 			}
 		} else
 			if (!gconv( GCONV_PASS, 0 ))
-				return False;
-		enduserdb();
+				V_RET_NP;
 		msg = NULL;
 		if ((i = authenticate( curuser, curpass, &reenter, &msg ))) {
 			debug( "authenticate() failed: %s\n", msg );
@@ -622,7 +639,7 @@ verify( GConvFunc gconv, int rootok )
 		}
 	} else
 		if (!gconv( GCONV_PASS, 0 ))
-			return False;
+			V_RET_NP;
 
 # ifdef KERBEROS
 	if (p->pw_uid) {
@@ -1362,10 +1379,6 @@ startClient( volatile int *pid )
 
 	removeAuth = True;
 	chownCtrl( &td->ctrl, curuid );
-	endpwent();
-#if !defined(USE_PAM) && defined(USESHADOW) && !defined(_AIX)
-	endspent();
-#endif
 	ctltalk.pipe = &ctlpipe;
 	ASPrintf( &buf, "sub-daemon for display %s", td->name );
 	ASPrintf( &buf2, "client for display %s", td->name );
@@ -1640,6 +1653,7 @@ startClient( volatile int *pid )
 	free( buf );
 	wipeStr( curpass );
 	curpass = 0;
+	END_ENT;
 
 	gSet( &ctltalk );
 	if (!Setjmp( ctltalk.errjmp ))
@@ -1764,6 +1778,7 @@ readDmrc()
 	char *data, *fname = 0;
 	int len, pid, pfd[2], err;
 
+	endpwent();
 	if (!dmrcuser || !dmrcuser[0] || !(p = getpwnam( dmrcuser )))
 		return GE_NoUser;
 
