@@ -371,6 +371,7 @@ KGreeter::insertUsers()
 		}
 	}
 	endpwent();
+	endgrent();
 	if (_sortUsers) {
 		if (userView)
 			userView->sortItems();
