@@ -278,12 +278,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
         p->setFont(KGlobalSettings::smallestReadableFont());
 
-        const QString hours = m_time.toString("HH");
-        const QString minutes = m_time.toString("mm");
-        const QString day = m_date.toString("dd");
-        const QString month = m_date.toString("MMM");
-        const QString year = m_date.toString("yyyy");
-
         p->setPen(QPen(m_plainClockColor));
         p->setRenderHint(QPainter::SmoothPixmapTransform);
         p->setRenderHint(QPainter::Antialiasing);
@@ -295,13 +289,10 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         if (m_showDate || m_showTimezone) {
             QString dateString;
             if (m_showDate) {
-                dateString = day + ' ' + month + ' ';
+                dateString = m_date.toString(Qt::SystemLocaleDate);
                 if (m_showDay) {
                     QString weekday = QDate::longDayName(m_date.dayOfWeek()); // FIXME: Respect timezone settings
                     dateString = weekday + ", "  + dateString;
-                }
-                if (m_showYear) {
-                    dateString += year + ' ';
                 }
             }
             if (m_showTimezone) {
@@ -339,7 +330,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                                 (contentsRect.height()));
         }
 
-        QString timeString = hours + ":" + minutes;
+        QString timeString = m_time.toString(Qt::SystemLocaleDate);
 
         m_plainClockFont.setBold(m_plainClockFontBold);
         m_plainClockFont.setItalic(m_plainClockFontItalic);
