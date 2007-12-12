@@ -31,9 +31,9 @@
 #include <KSeparator>
 #include <KStandardDirs>
 #include <KSvgRenderer>
-#include <Plasma/PackageMetadata>
 #include <knewstuff2/engine.h>
 #include <ThreadWeaver/Weaver>
+#include <plasma/packagemetadata.h>
 
 class BackgroundContainer
 {

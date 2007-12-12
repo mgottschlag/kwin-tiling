@@ -9,8 +9,8 @@
 #include <KLocalizedString>
 #include <KStandardDirs>
 #include <KSvgRenderer>
-#include <Plasma/PackageStructure>
-#include <Plasma/PackageMetadata>
+#include <plasma/packagestructure.h>
+#include <plasma/packagemetadata.h>
 #include <ThreadWeaver/Weaver>
 
 using namespace Plasma;

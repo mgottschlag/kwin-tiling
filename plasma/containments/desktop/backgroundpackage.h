@@ -17,8 +17,8 @@
 #include <QSize>
 #include <QThread>
 #include <QVariant>
-#include <Plasma/Package>
 #include <ThreadWeaver/Job>
+#include <plasma/package.h>
 
 namespace Plasma { class PackageMetadata; }
 
