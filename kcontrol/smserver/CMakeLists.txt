@@ -1,5 +1,3 @@
-add_definitions(-DQT3_SUPPORT)
-########### next target ###############
 
 set(kcm_smserver_PART_SRCS kcmsmserver.cpp smserverconfigimpl.cpp )
 
