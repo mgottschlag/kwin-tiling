@@ -55,7 +55,7 @@
     </widget>
    </item>
    <item>
-    <widget class="Q3ButtonGroup" name="loginGroup" >
+    <widget class="QGroupBox" name="loginGroup" >
      <property name="whatsThis" >
       <string>&lt;ul>
 &lt;li>&lt;b>Restore previous session:&lt;/b> Will save all applications running on exit and restore them when they next start up&lt;/li>
@@ -92,7 +92,7 @@
     </widget>
    </item>
    <item>
-    <widget class="Q3ButtonGroup" name="sdGroup" >
+    <widget class="QGroupBox" name="sdGroup" >
      <property name="whatsThis" >
       <string>Here you can choose what should happen by default when you log out. This only has meaning, if you logged in through KDM.</string>
      </property>
@@ -125,7 +125,7 @@
     </widget>
    </item>
    <item>
-    <widget class="Q3ButtonGroup" name="advancedGroup" >
+    <widget class="QGroupBox" name="advancedGroup" >
      <property name="title" >
       <string>Advanced</string>
      </property>
@@ -175,12 +175,6 @@
  <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>Q3ButtonGroup</class>
-   <extends>Q3GroupBox</extends>
-   <header>Qt3Support/Q3ButtonGroup</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>

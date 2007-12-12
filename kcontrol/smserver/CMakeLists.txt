@@ -9,7 +9,7 @@ kde4_add_ui_files(kcm_smserver_PART_SRCS smserverconfigdlg.ui )
 kde4_add_plugin(kcm_smserver ${kcm_smserver_PART_SRCS})
 
 
-target_link_libraries(kcm_smserver  ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDEUI_LIBS} )
+target_link_libraries(kcm_smserver  ${KDE4_KDEUI_LIBS} )
 
 install(TARGETS kcm_smserver  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
