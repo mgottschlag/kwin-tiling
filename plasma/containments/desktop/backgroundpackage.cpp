@@ -1,5 +1,8 @@
 #include "backgroundpackage.h"
 #include <cmath>
+// <cmath> does not define fabs (by the standard, even if it does with gcc)
+#include <math.h>
+
 #include <QFileInfo>
 #include <QPainter>
 #include <KDebug>
