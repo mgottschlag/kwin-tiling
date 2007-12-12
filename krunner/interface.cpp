@@ -265,7 +265,7 @@ Interface::Interface(QWidget* parent)
       m_execQueued(false)
 {
     setWindowTitle( i18n("Run Command") );
-    setWindowIcon(KIcon("preferences-desktop-launch-feedback"));
+    setWindowIcon(KIcon("system-run"));
 
     m_matchTimer.setSingleShot(true);
     connect(&m_matchTimer, SIGNAL(timeout()), this, SLOT(match()));
@@ -319,7 +319,7 @@ Interface::Interface(QWidget* parent)
 
     KPushButton *activityButton = new KPushButton(w);
     activityButton->setText(i18n("Show System Activity"));
-    activityButton->setIcon(KIcon("ksysguard"));
+    activityButton->setIcon(KIcon("utilities-system-monitor"));
     activityButton->setFlat(true);
     connect(activityButton, SIGNAL(clicked()), qApp, SLOT(showTaskManager()));
     connect(activityButton, SIGNAL(clicked()), this, SLOT(close()));

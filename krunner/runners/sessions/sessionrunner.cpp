@@ -55,7 +55,7 @@ void SessionRunner::match(Plasma::SearchContext *search)
         dm.isSwitchable() &&
         dm.numReserve() >= 0) {
         Plasma::SearchMatch *action = search->addExactMatch(this);
-        action->setIcon(KIcon("fork"));
+        action->setIcon(KIcon("system-switch-user"));
         action->setText(i18n("New Session"));
     }
 
@@ -71,7 +71,7 @@ void SessionRunner::match(Plasma::SearchContext *search)
         }
 
         Plasma::SearchMatch* action = search->addPossibleMatch(this);
-        action->setIcon(KIcon("user"));
+        action->setIcon(KIcon("user-identity"));
         action->setText(DM::sess2Str(session));
         action->setData(session.session);
     }
