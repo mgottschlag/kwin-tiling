@@ -505,10 +505,10 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, quint32 st
                                             text.length());
                             if(needResize)
                                 pix=pix.scaledToHeight(h);
-                            pix = QPixmap(extents.width+(2*constOffset)<constInitialWidth
-                                           ? extents.width+(2*constOffset)
-                                           : constInitialWidth,
-                                       h);
+                            pix = pix.copy(0, 0, extents.width+(2*constOffset)<constInitialWidth
+                                                    ? extents.width+(2*constOffset)
+                                                    : constInitialWidth,
+                                           h);
                             rv=true;
                         }
                         else
@@ -536,10 +536,10 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, quint32 st
                                 }
                                 if(needResize)
                                     pix=pix.scaledToHeight(h);
-                                pix = QPixmap(x+constOffset<constInitialWidth
-                                               ? x+constOffset
-                                               : constInitialWidth,
-                                           h);
+                                pix = pix.copy(0, 0, x+constOffset<constInitialWidth
+                                                        ? x+constOffset
+                                                        : constInitialWidth,
+                                               h);
                                 XftUnlockFace(xftFont);
                                 rv=true;
                             }
