@@ -16,7 +16,7 @@ IntensityAmount=-0.1
 IntensityEffect=0
 
 [Colors:Button]
-BackgroundAlternate=224,223,223
+BackgroundAlternate=224,223,222
 BackgroundNormal=232,231,231
 DecorationFocus=43,116,199
 DecorationHover=119,183,255
@@ -30,7 +30,7 @@ ForegroundPositive=0,110,40
 ForegroundVisited=128,0,255
 
 [Colors:Selection]
-BackgroundAlternate=42,106,170
+BackgroundAlternate=92,145,200
 BackgroundNormal=96,148,207
 DecorationFocus=43,116,199
 DecorationHover=119,183,255
@@ -58,7 +58,7 @@ ForegroundPositive=0,110,40
 ForegroundVisited=128,0,255
 
 [Colors:View]
-BackgroundAlternate=247,247,248
+BackgroundAlternate=248,247,246
 BackgroundNormal=255,255,255
 DecorationFocus=43,116,199
 DecorationHover=119,183,255
