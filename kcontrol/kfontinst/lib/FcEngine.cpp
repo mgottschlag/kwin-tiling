@@ -505,7 +505,7 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, quint32 st
                                             text.length());
                             if(needResize)
                                 pix=pix.scaledToHeight(h);
-                            pix.resize(extents.width+(2*constOffset)<constInitialWidth
+                            pix = QPixmap(extents.width+(2*constOffset)<constInitialWidth
                                            ? extents.width+(2*constOffset)
                                            : constInitialWidth,
                                        h);
@@ -536,7 +536,7 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, quint32 st
                                 }
                                 if(needResize)
                                     pix=pix.scaledToHeight(h);
-                                pix.resize(x+constOffset<constInitialWidth
+                                pix = QPixmap(x+constOffset<constInitialWidth
                                                ? x+constOffset
                                                : constInitialWidth,
                                            h);
