@@ -56,7 +56,7 @@
 K_PLUGIN_FACTORY(KeyboardConfigFactory,
         registerPlugin<KeyboardConfig>("keyboard");
         )
-K_EXPORT_PLUGIN(KeyboardConfigFactory("kcmmisc")) // Messages.sh extracts into kxkb.pot
+K_EXPORT_PLUGIN(KeyboardConfigFactory("kcmkeyboard"))
 
 KeyboardConfig::KeyboardConfig(QWidget *parent, const QVariantList &)
 	: KCModule(KeyboardConfigFactory::componentData(), parent)
