@@ -167,7 +167,6 @@ void RenderThread::run()
         QPainter p(&result);
         if (scalable) {
             // tiling is ignored for scalable wallpapers
-			kDebug() << "loading svg background: " << file;
             KSvgRenderer svg(file);
             if (m_restart) {
                 continue;
@@ -175,7 +174,6 @@ void RenderThread::run()
             svg.render(&p);
         }
         else {
-			kDebug() << "loading non svg background " << file;
             QImage scaled = img.scaled(scaledSize, Qt::IgnoreAspectRatio, mode);
             if (m_restart) {
                 continue;
