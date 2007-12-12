@@ -312,13 +312,9 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     connect(m_mode, SIGNAL(currentIndexChanged(int)),
             this, SLOT(changeBackgroundMode(int)));
     
-    // details
-    QGroupBox *detailsBox = new QGroupBox(i18n("&Details"), main);
-    leftLayout->addWidget(detailsBox);
-    QVBoxLayout *detailsLayout = new QVBoxLayout;
-    detailsBox->setLayout(detailsLayout);
+    // stacked widget
     QStackedWidget *stack = new QStackedWidget(main);
-    detailsLayout->addWidget(stack);
+    leftLayout->addWidget(stack);
     connect(m_mode, SIGNAL(currentIndexChanged(int)),
             stack, SLOT(setCurrentIndex(int)));
     
@@ -481,14 +477,13 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config)
 {
     // initialize
     int mode = config.readEntry("backgroundmode", int(kStaticBackground));
-	m_mode->setCurrentIndex(mode);
+    m_mode->setCurrentIndex(mode);
     int delay = config.readEntry("slideTimer", 60);
-	kDebug() << "reading slideTimer as : " << delay;
     QTime time(0, 0, 0);
     time = time.addSecs(delay);
     m_slideshowDelay->setTime(time);
 
-	m_dirlist->clear();
+    m_dirlist->clear();
     QStringList dirs = config.readEntry("slidepaths", QStringList());
     if (dirs.isEmpty()) {
         dirs << KStandardDirs::installPath("wallpaper");
@@ -528,7 +523,6 @@ void BackgroundDialog::saveConfig(KConfigGroup config)
         }
         config.writeEntry("slidepaths", dirs);
         int seconds = QTime(0, 0, 0).secsTo(m_slideshowDelay->time());
-		kDebug() << "setting slideTimer to: " << seconds;
         config.writeEntry("slideTimer", seconds);
     }
 }

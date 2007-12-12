@@ -157,11 +157,14 @@ void DefaultDesktop::reloadConfig()
     
     m_backgroundMode = cg.readEntry("backgroundmode", 
         (int) BackgroundDialog::kStaticBackground);
+
+    // used in both modes, so read it no matter which mode we are in
+    m_wallpaperPosition = cg.readEntry("wallpaperposition", 0);
+    m_wallpaperColor = cg.readEntry("wallpapercolor", QColor(Qt::black));
+
     if (m_backgroundMode == BackgroundDialog::kStaticBackground) {
         m_wallpaperPath = cg.readEntry("wallpaper",
             KStandardDirs::locate("wallpaper", "plasma-default.png"));
-        m_wallpaperPosition = cg.readEntry("wallpaperposition", 0);
-        m_wallpaperColor = cg.readEntry("wallpapercolor", QColor(Qt::black));
         m_slideshowTimer.stop();
         updateBackground();
     }
@@ -180,11 +183,9 @@ void DefaultDesktop::reloadConfig()
             foreach (QFileInfo wp, files)
             {
                 m_slideFiles.append(wp.filePath());
-                kDebug() << "add background to slideshow" << wp.filePath();
             }
         }
         int delay = cg.readEntry("slideTimer", 60);
-		kDebug() << "reading slideTimer as : " << delay;
         m_slideshowTimer.setInterval(delay * 1000);
         if (!m_slideshowTimer.isActive()) {
             m_slideshowTimer.start();
