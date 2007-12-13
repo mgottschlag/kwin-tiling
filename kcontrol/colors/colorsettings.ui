@@ -241,7 +241,7 @@
        <item>
         <widget class="QStackedWidget" name="stackedWidget" >
          <property name="currentIndex" >
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="commonColorsPage" >
           <layout class="QGridLayout" >
@@ -520,6 +520,9 @@
           <layout class="QGridLayout" >
            <item row="0" column="0" >
             <widget class="QTableWidget" name="colorTable" >
+             <property name="editTriggers" >
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
              <property name="selectionMode" >
               <enum>QAbstractItemView::SingleSelection</enum>
              </property>
