@@ -42,7 +42,7 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     setAcceptDrops(true);
     //new Plasma::HBoxLayout(this);
     m_icon = new Plasma::Icon(this);
-    setMinimumSize(QSize(48,48));
+    setMinimumSize(QSize(48,78));
     if (args.count() > 2) {
         setUrl(args.at(2).toString());
     }
