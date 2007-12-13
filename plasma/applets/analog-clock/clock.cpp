@@ -54,7 +54,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_dialog(0)
 {
     setHasConfigurationInterface(true);
-    resize(125, 125);
+    setSize(125, 125);
     setMinimumSize(QSizeF(50, 50));
 
     m_theme = new Plasma::Svg("widgets/clock", this);
@@ -82,28 +82,32 @@ void Clock::connectToEngine()
     }
 }
 
+Qt::Orientations Clock::expandingDirections() const
+{
+    return 0;
+}
+
 QSizeF Clock::contentSizeHint() const
 {
-    //kDebug() << "content size hint is being asked for and we return" << size();
-    return size();
+    QSizeF sizeHint = contentSize();
+    switch (formFactor()) {
+        case Plasma::Vertical:
+            sizeHint.setHeight(sizeHint.width());
+            break;
+        case Plasma::Horizontal:
+            sizeHint.setWidth(sizeHint.height());
+            break;
+        default:
+            break;
+    }
+
+    return sizeHint;
 }
 
 void Clock::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {
         setDrawStandardBackground(false);
-        if (formFactor() == Plasma::Planar ||
-            formFactor() == Plasma::MediaCenter) {
-            setSize(m_theme->size());
-        } else {
-            QFontMetrics fm(QApplication::font());
-            setSize(QSizeF(fm.width("00:00:00") * 1.2, fm.height() * 1.5));
-        }
-        updateGeometry();
-    }
-
-    if (constraints & Plasma::SizeConstraint) {
-        m_theme->resize(size());
     }
 }
 
@@ -213,7 +217,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     QRectF tempRect(0, 0, 0, 0);
 
-    QSizeF boundSize = rect.size();
+    QSizeF boundSize = contentSize();
     QSize elementSize;
 
     p->setRenderHint(QPainter::SmoothPixmapTransform);
@@ -222,17 +226,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     qreal minutes = 6.0 * m_time.minute() - 180;
     qreal hours = 30.0 * m_time.hour() - 180 + ((m_time.minute() / 59.0) * 30.0);
 
-    if (formFactor() == Plasma::Horizontal ||
-        formFactor() == Plasma::Vertical) {
-        QString time = m_time.toString();
-        QFontMetrics fm(QApplication::font());
-        if (m_showSecondHand) {
-            p->drawText((int)(rect.width() * 0.1), (int)(rect.height() * 0.25), m_time.toString());
-        } else {
-            p->drawText((int)(rect.width() * 0.1), (int)(rect.height() * 0.25), m_time.toString("hh:mm"));
-        }
-        return;
-    }
     m_theme->paint(p, rect, "ClockFace");
 
     p->save();
