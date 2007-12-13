@@ -17,7 +17,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#include "url.h"
+#include "icon.h"
 
 #include <QGraphicsSceneDragDropEvent>
 
@@ -35,7 +35,7 @@
 #include <plasma/widgets/icon.h>
 #include <plasma/containment.h>
 
-Url::Url(QObject *parent, const QVariantList &args)
+IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_dialog(0)
 {
@@ -48,7 +48,7 @@ Url::Url(QObject *parent, const QVariantList &args)
     }
 }
 
-void Url::init()
+void IconApplet::init()
 {
     KConfigGroup cg = config();
 
@@ -58,16 +58,16 @@ void Url::init()
     kDebug() << "size hint is" << sizeHint() << size();
 }
 
-Url::~Url()
+IconApplet::~IconApplet()
 {
 }
 
-void Url::saveState(KConfigGroup *cg) const
+void IconApplet::saveState(KConfigGroup *cg) const
 {
     cg->writeEntry("Url", m_url);
 }
 
-void Url::setUrl(const KUrl& url)
+void IconApplet::setUrl(const KUrl& url)
 {
     m_url = url;
 
@@ -88,7 +88,7 @@ void Url::setUrl(const KUrl& url)
     }
 }
 
-void Url::openUrl()
+void IconApplet::openUrl()
 {
     if (m_url.isValid()) {
         if (containment()) {
@@ -98,7 +98,7 @@ void Url::openUrl()
     }
 }
 
-void Url::constraintsUpdated(Plasma::Constraints constraints)
+void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
 {
     setDrawStandardBackground(false);
 
@@ -116,7 +116,7 @@ void Url::constraintsUpdated(Plasma::Constraints constraints)
     }
 }
 
-void Url::propertiesDialog()
+void IconApplet::propertiesDialog()
 {
     if (m_dialog == 0) {
         m_dialog = new KPropertiesDialog(m_url);
@@ -126,7 +126,7 @@ void Url::propertiesDialog()
     m_dialog->show();
 }
 
-void Url::acceptedPropertiesDialog()
+void IconApplet::acceptedPropertiesDialog()
 {
     KConfigGroup cg = config();
     m_url = m_dialog->kurl();
@@ -137,7 +137,7 @@ void Url::acceptedPropertiesDialog()
     m_dialog = 0;
 }
 
-void Url::dropEvent(QGraphicsSceneDragDropEvent *event)
+void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     if (KUrl::List::canDecode(event->mimeData())) {
         KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
@@ -150,5 +150,5 @@ void Url::dropEvent(QGraphicsSceneDragDropEvent *event)
 }
 
 
-#include "url.moc"
+#include "icon.moc"
 

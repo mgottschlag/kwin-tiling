@@ -18,8 +18,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef URL_H
-#define URL_H
+#ifndef ICON_APPLET_H
+#define ICON_APPLET_H
 
 #include <KUrl>
 
@@ -32,12 +32,12 @@ namespace Plasma
     class Icon;
 }
 
-class Url : public Plasma::Applet
+class IconApplet : public Plasma::Applet
 {
     Q_OBJECT
     public:
-        Url(QObject *parent, const QVariantList &args);
-        ~Url();
+        IconApplet(QObject *parent, const QVariantList &args);
+        ~IconApplet();
 
         void init();
 //        QSizeF contentSizeHint() const;
@@ -64,6 +64,6 @@ class Url : public Plasma::Applet
         KUrl m_url;
 };
 
-K_EXPORT_PLASMA_APPLET(url, Url)
+K_EXPORT_PLASMA_APPLET(icon, IconApplet)
 
 #endif

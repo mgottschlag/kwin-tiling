@@ -103,6 +103,8 @@ void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
 {
     Q_UNUSED(constraints);
     
+
+    m_icons.init(this);
     if (constraints & Plasma::SizeConstraint) {
         m_renderer.setSize(resolution()); 
         updateBackground();

@@ -1,7 +1,8 @@
 set(desktop_SRCS
+    desktop.cpp
+    iconloader.cpp
     backgrounddialog.cpp
     backgroundpackage.cpp
-    desktop.cpp
     renderthread.cpp)
 
 kde4_add_ui_files( desktop_SRCS config.ui )

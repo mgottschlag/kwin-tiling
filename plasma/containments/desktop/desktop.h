@@ -32,6 +32,8 @@
 #include <plasma/phase.h>
 #include <plasma/widgets/widget.h>
 
+#include "iconloader.h"
+
 #include "renderthread.h"
 
 class BackgroundDialog;
@@ -116,6 +118,10 @@ private:
 
     QPixmap m_bitmapBackground;
     QString m_wallpaperPath;
+
+    //Desktop icons
+    IconLoader m_icons;
+
     int m_wallpaperPosition;
     QColor m_wallpaperColor;
     
