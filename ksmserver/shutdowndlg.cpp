@@ -355,7 +355,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     KUser userInformation;
     QString logoutMsg;
-    QString userName = userInformation.fullName();
+    QString userName = userInformation.property( KUser::FullName ).toString();
     QString loginName = userInformation.loginName();
 
     if (userName.isEmpty()) {
