@@ -39,7 +39,7 @@
 #include <KColorScheme>
 #include <KGlobalSettings>
 #include <kdatepicker.h>
-#include <kdatetable.h>
+//#include <kdatetable.h>
 #include <plasma/theme.h>
 #include <plasma/dialog.h>
 
@@ -55,6 +55,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_showYear(false),
       m_showDay(false),
       m_showTimezone(false),
+      m_twentyFour(false),
       m_sizeHint(),
       m_timezone(0),
       m_time(),
@@ -75,7 +76,7 @@ void Clock::init()
     KConfigGroup cg = config();
     m_timezone = cg.readEntry("timezone", "Local");
 
-    m_showTimezone = cg.readEntry("showTimezone", (m_timezone == "Local"));
+    m_showTimezone = cg.readEntry("showTimezone", (m_timezone != "Local"));
 
     kDebug() << "showTimezone:" << m_showTimezone;
 
@@ -89,6 +90,7 @@ void Clock::init()
     //}
 
     m_showDay = cg.readEntry("showDay", true);
+    m_twentyFour = cg.readEntry("twentyFour", true);
 
     m_plainClockFont = cg.readEntry("plainClockFont", m_plainClockFont);
     m_plainClockColor = cg.readEntry("plainClockColor", m_plainClockColor);
@@ -98,7 +100,7 @@ void Clock::init()
     m_plainClockFont.setBold(m_plainClockFontBold);
     m_plainClockFont.setItalic(m_plainClockFontItalic);
 
-    setSize(QSize(120, 72));
+    setSize(QSize(120, 60));
     setMinimumContentSize(QSizeF(80, 44));
     Plasma::DataEngine* timeEngine = dataEngine("time");
     timeEngine->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
@@ -184,6 +186,7 @@ void Clock::showConfigurationInterface()
     ui.showDate->setChecked(m_showDate);
     ui.showYear->setChecked(m_showYear);
     ui.showDay->setChecked(m_showDay);
+    ui.twentyFour->setChecked(m_twentyFour);
     ui.showTimezone->setChecked(m_showTimezone);
     ui.plainClockFontBold->setChecked(m_plainClockFontBold);
     ui.plainClockFontItalic->setChecked(m_plainClockFontItalic);
@@ -234,6 +237,8 @@ void Clock::configAccepted()
     cg.writeEntry("showYear", m_showYear);
     m_showDay = ui.showDay->checkState() == Qt::Checked;
     cg.writeEntry("showDay", m_showDay);
+    m_twentyFour = ui.twentyFour->checkState() == Qt::Checked;
+    cg.writeEntry("twentyFour", m_twentyFour);
 
     if (m_showTimezone != (ui.showTimezone->checkState() == Qt::Checked)) {
         m_showTimezone = ui.showTimezone->checkState() == Qt::Checked;
@@ -289,14 +294,17 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         if (m_showDate || m_showTimezone) {
             QString dateString;
             if (m_showDate) {
-                dateString = m_date.toString(Qt::SystemLocaleDate);
+                dateString = m_date.toString("d MMM");
                 if (m_showDay) {
-                    QString weekday = QDate::longDayName(m_date.dayOfWeek()); // FIXME: Respect timezone settings
+                    QString weekday = QDate::shortDayName(m_date.dayOfWeek()); // FIXME: Respect timezone settings
                     dateString = weekday + ", "  + dateString;
+                }
+                if (m_showYear) {
+                    dateString = dateString + m_date.toString(" yyyy");
                 }
             }
             if (m_showTimezone) {
-                dateString += m_timezone;
+                dateString = dateString + " " + m_timezone;
                 dateString.replace("_", " ");
             }
 
@@ -329,9 +337,13 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                                 (contentsRect.width()),
                                 (contentsRect.height()));
         }
-
-        QString timeString = m_time.toString(Qt::SystemLocaleDate);
-
+        QString timeString;
+        if (m_twentyFour) {
+            timeString = m_time.toString("hh:mm");
+        } else {
+            timeString = m_time.toString("hh:mm AP");
+        }
+        
         m_plainClockFont.setBold(m_plainClockFontBold);
         m_plainClockFont.setItalic(m_plainClockFontItalic);
 

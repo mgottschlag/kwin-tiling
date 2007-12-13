@@ -31,7 +31,7 @@
       </size>
      </property>
      <property name="currentIndex" >
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="AppearanceTab" >
       <attribute name="title" >
@@ -104,6 +104,13 @@
         <widget class="QCheckBox" name="showTimezone" >
          <property name="text" >
           <string>Show &amp;timezone</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="2" >
+        <widget class="QCheckBox" name="twentyFour" >
+         <property name="text" >
+          <string>24-hour format</string>
          </property>
         </widget>
        </item>

@@ -5,27 +5,28 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>330</width>
-    <height>284</height>
+    <width>274</width>
+    <height>255</height>
    </rect>
   </property>
   <property name="styleSheet" >
-   <string>
-		background: black;
-		color: white 
-</string>
+   <string/>
   </property>
   <layout class="QVBoxLayout" >
    <item>
-    <widget class="KDateTable" name="kdatetable" />
+    <widget class="KDatePicker" name="kdatepicker" >
+     <property name="autoFillBackground" >
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KDateTable</class>
-   <extends>QWidget</extends>
-   <header>kdatetable.h</header>
+   <class>KDatePicker</class>
+   <extends>QFrame</extends>
+   <header>kdatepicker.h</header>
   </customwidget>
  </customwidgets>
  <resources>
