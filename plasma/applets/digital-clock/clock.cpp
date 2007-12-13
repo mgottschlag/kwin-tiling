@@ -39,7 +39,6 @@
 #include <KColorScheme>
 #include <KGlobalSettings>
 #include <kdatepicker.h>
-//#include <kdatetable.h>
 #include <plasma/theme.h>
 #include <plasma/dialog.h>
 
@@ -102,8 +101,7 @@ void Clock::init()
 
     setSize(QSize(120, 60));
     setMinimumContentSize(QSizeF(80, 44));
-    Plasma::DataEngine* timeEngine = dataEngine("time");
-    timeEngine->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
+    dataEngine("time")->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
 }
 
 Qt::Orientations Clock::expandingDirections() const
