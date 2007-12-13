@@ -25,7 +25,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget" >
      <property name="currentIndex" >
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="schemePage" >
       <attribute name="title" >
@@ -247,6 +247,9 @@
           <layout class="QGridLayout" >
            <item row="0" column="0" >
             <widget class="QTableWidget" name="commonColorTable" >
+             <property name="editTriggers" >
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
              <property name="selectionMode" >
               <enum>QAbstractItemView::SingleSelection</enum>
              </property>
