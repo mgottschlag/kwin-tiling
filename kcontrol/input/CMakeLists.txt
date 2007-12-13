@@ -4,6 +4,7 @@ KDE4_NO_ENABLE_FINAL(input)
 
 macro_optional_find_package(USB)
 macro_bool_to_01(LIBUSB_FOUND HAVE_LIBUSB)
+macro_log_feature(LIBUSB_FOUND "libusb" "User level access to USB devices" "http://libusb.sourceforge.net/" FALSE "" "Provides Logitech mouse support in KControl.")
 configure_file (config-kcontrol-input.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kcontrol-input.h )
 
 include_directories( ${KDE4_INCLUDES} )
@@ -11,9 +12,6 @@ include_directories( ${KDE4_INCLUDES} )
 
 if (LIBUSB_FOUND)
   include_directories( ${LIBUSB_INCLUDE_DIR} )
-else( LIBUSB_FOUND)
-  #use macro_log_feature for it
-  MESSAGE(STATUS "Logitech mouse support is disabled. Provide libusb to enable it.")
 endif (LIBUSB_FOUND)
 
 if(X11_Xcursor_FOUND)
