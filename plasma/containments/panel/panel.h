@@ -43,6 +43,10 @@ public:
 private:
     Plasma::Svg *m_background;
     QPixmap* m_cachedBackground;
+    bool m_drawTop : 1;
+    bool m_drawLeft : 1;
+    bool m_drawRight : 1;
+    bool m_drawBottom : 1;
 };
 
 

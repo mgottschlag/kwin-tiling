@@ -32,7 +32,11 @@ using namespace Plasma;
 
 Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
-      m_cachedBackground(0)
+      m_cachedBackground(0),
+      m_drawTop(true),
+      m_drawLeft(true),
+      m_drawRight(true),
+      m_drawBottom(true)
 {
     m_background = new Plasma::Svg("widgets/panel-background", this);
     setZValue(150);
@@ -46,80 +50,95 @@ Panel::~Panel()
 
 void Panel::constraintsUpdated(Plasma::Constraints constraints)
 {
+    //kDebug() << "constraints updated with" << constraints << "!!!!!!!!!!!!!!!!!";
     if (constraints & Plasma::LocationConstraint || constraints & Plasma::ScreenConstraint) {
         Plasma::Location loc = location();
-        bool drawTop = true;
-        bool drawLeft = true;
-        bool drawRight = true;
-        bool drawBottom = true;
+        m_drawTop = true;
+        m_drawLeft = true;
+        m_drawRight = true;
+        m_drawBottom = true;
 
-        //FIXME: panels with less than 100% width need to paint edges, but full width panels
-        //       shouldn't
-        switch (loc) {
-            case TopEdge:
-                drawTop = false;
-                break;
-            case LeftEdge:
-                drawLeft = false;
-                break;
-            case RightEdge:
-                drawRight = false;
-                break;
-            case BottomEdge:
-                drawBottom = false;
-                break;
-            default:
-                break;
-        }
-
-        const int topHeight = drawTop ? m_background->elementSize("top").height() : 0;
-        const int leftWidth = drawLeft ? m_background->elementSize("left").width() : 0;
-        const int rightWidth = drawRight ? m_background->elementSize("right").width() : 0;
-        const int bottomHeight = drawBottom ? m_background->elementSize("bottom").height() : 0;
-
-
-    //kDebug() << "constraints updated with" << constraints << "!!!!!!!!!!!!!!!!!";
         int s = screen();
         if (s < 0) {
             s = 0;
         }
 
-
         QRect r = QApplication::desktop()->screenGeometry(s);
+
         //kDebug() << "Setting location to" << loc << "on screen" << s << "with geom" << r;
         setMaximumSize(r.size());
         int x = 0;
         int y = 0;
         int width = 0;
         int height = 0;
+        int topHeight = m_background->elementSize("top").height();
+        int leftWidth = m_background->elementSize("left").width();
+        int rightWidth = m_background->elementSize("right").width();
+        int bottomHeight = m_background->elementSize("bottom").height();
+
         if (loc == BottomEdge || loc == TopEdge) {
             setFormFactor(Plasma::Horizontal);
 
-            width = r.width();
+            //FIXME: don't hardcode 48px
             height = 48;
+            //FIXME: don't hardcode full width
+            width = r.width();
 
             if (loc == BottomEdge) {
+                m_drawBottom = false;
+                bottomHeight = 0;
                 height += topHeight - 1;
                 y = r.height() - height + 1;
             } else {
+                m_drawTop = false;
+                topHeight = 0;
                 height += bottomHeight - 1;
+            }
+
+            if (x <= r.x()) {
+                m_drawLeft = false;
+                leftWidth = 0;
+            }
+
+            if (x + width >= r.right()) {
+                m_drawRight = false;
+                rightWidth = 0;
             }
             //kDebug() << "top/bottom: Width:" << width << ", height:" << height;
         } else if (loc == LeftEdge || loc == RightEdge) {
             setFormFactor(Plasma::Vertical);
 
+            //FIXME: don't hardcode 48px
             width = 48;
+            //FIXME: don't hardcode full height
             height = r.height();
+
             if (loc == RightEdge) {
+                m_drawRight = false;
+                rightWidth = 0;
                 width += leftWidth - 1;
                 x = r.width() - width;
             } else {
+                m_drawLeft = false;
+                leftWidth = 0;
                 width += rightWidth - 1;
+            }
+
+            if (y <= r.y()) {
+                m_drawTop = false;
+                topHeight = 0;
+            }
+
+            if (y + height >= r.bottom()) {
+                m_drawBottom = false;
+                bottomHeight = 0;
             }
             //kDebug() << "left/right: Width:" << width << ", height:" << height;
         }
-        //kDebug() << "Setting geometry to" << QRectF(x, y, width, height) << "with margins" << leftWidth << topHeight << rightWidth << bottomHeight;
+
         QRectF geo = QRectF(x, y, width, height);
+
+        //kDebug() << "Setting geometry to" << geo << "with margins" << leftWidth << topHeight << rightWidth << bottomHeight;
         setGeometry(geo);
 
         if (layout()) {
@@ -183,38 +202,14 @@ void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
     m_background->resize();
 
     if (!m_cachedBackground || m_cachedBackground->size() != s) {
-        bool drawTop = true;
-        bool drawLeft = true;
-        bool drawRight = true;
-        bool drawBottom = true;
-
-        //FIXME: panels with less than 100% width need to paint edges, but full width panels
-        //       shouldn't
-        switch (location()) {
-            case TopEdge:
-                drawTop = false;
-                break;
-            case LeftEdge:
-                drawLeft = false;
-                break;
-            case RightEdge:
-                drawRight = false;
-                break;
-            case BottomEdge:
-                drawBottom = false;
-                break;
-            default:
-                break;
-        }
-
-        const int topWidth = drawTop ? m_background->elementSize("top").width() : 0;
-        const int topHeight = drawTop ? m_background->elementSize("top").height() : 0;
-        const int leftWidth = drawLeft ? m_background->elementSize("left").width() : 0;
-        const int leftHeight = drawLeft ? m_background->elementSize("left").height(): 0;
-        const int rightWidth = drawRight ? m_background->elementSize("right").width() : 0;
-        const int rightHeight = drawRight ? m_background->elementSize("right").height() : 0;
-        const int bottomWidth = drawBottom ? m_background->elementSize("bottom").width() : 0;
-        const int bottomHeight = drawBottom ? m_background->elementSize("bottom").height() : 0;
+        const int topWidth = m_drawTop ? m_background->elementSize("top").width() : 0;
+        const int topHeight = m_drawTop ? m_background->elementSize("top").height() : 0;
+        const int leftWidth = m_drawLeft ? m_background->elementSize("left").width() : 0;
+        const int leftHeight = m_drawLeft ? m_background->elementSize("left").height(): 0;
+        const int rightWidth = m_drawRight ? m_background->elementSize("right").width() : 0;
+        const int rightHeight = m_drawRight ? m_background->elementSize("right").height() : 0;
+        const int bottomWidth = m_drawBottom ? m_background->elementSize("bottom").width() : 0;
+        const int bottomHeight = m_drawBottom ? m_background->elementSize("bottom").height() : 0;
 
         const int topOffset = 0;
         const int leftOffset = 0;
@@ -243,44 +238,44 @@ void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
             m_background->resize();
         }
 
-        if (drawTop) {
-            if (drawLeft) {
+        if (m_drawTop) {
+            if (m_drawLeft) {
                 m_background->paint(&p, QRect(leftOffset, topOffset, leftWidth, topHeight), "topleft");
             }
 
-            if (drawRight) {
+            if (m_drawRight) {
                 m_background->paint(&p, QRect(rightOffset, topOffset, rightWidth, topHeight), "topright");
             }
         }
 
-        if (drawBottom) {
-            if (drawLeft) {
+        if (m_drawBottom) {
+            if (m_drawLeft) {
                 m_background->paint(&p, QRect(leftOffset, bottomOffset, leftWidth, bottomHeight), "bottomleft");
             }
 
-            if (drawRight) {
+            if (m_drawRight) {
                 m_background->paint(&p, QRect(rightOffset, bottomOffset, rightWidth, bottomHeight), "bottomright");
             }
         }
 
         if (m_background->elementExists("hint-stretch-borders")) {
-            if (drawLeft) {
+            if (m_drawLeft) {
                 m_background->paint(&p, QRect(leftOffset, contentTop, leftWidth, contentHeight), "left");
             }
 
-            if (drawRight) {
+            if (m_drawRight) {
                 m_background->paint(&p, QRect(rightOffset, contentTop, rightWidth, contentHeight), "right");
             }
 
-            if (drawTop) {
+            if (m_drawTop) {
                 m_background->paint(&p, QRect(contentLeft, topOffset, contentWidth, topHeight), "top");
             }
 
-            if (drawBottom) {
+            if (m_drawBottom) {
                 m_background->paint(&p, QRect(contentLeft, bottomOffset, contentWidth, bottomHeight), "bottom");
             }
         } else {
-            if (drawLeft) {
+            if (m_drawLeft) {
                 QPixmap left(leftWidth, leftHeight);
                 left.fill(Qt::transparent);
                 {
@@ -291,7 +286,7 @@ void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
                 p.drawTiledPixmap(QRect(leftOffset, contentTop, leftWidth, contentHeight), left);
             }
 
-            if (drawRight) {
+            if (m_drawRight) {
                 QPixmap right(rightWidth, rightHeight);
                 right.fill(Qt::transparent);
                 {
@@ -302,7 +297,7 @@ void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
                 p.drawTiledPixmap(QRect(rightOffset, contentTop, rightWidth, contentHeight), right);
             }
 
-            if (drawTop) {
+            if (m_drawTop) {
                 QPixmap top(topWidth, topHeight);
                 top.fill(Qt::transparent);
                 {
@@ -313,7 +308,7 @@ void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
                 p.drawTiledPixmap(QRect(contentLeft, topOffset, contentWidth, topHeight), top);
             }
 
-            if (drawBottom) {
+            if (m_drawBottom) {
                 QPixmap bottom(bottomWidth, bottomHeight);
                 bottom.fill(Qt::transparent);
                 {
