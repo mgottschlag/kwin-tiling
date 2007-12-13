@@ -21,6 +21,7 @@
 #include <kstandarddirs.h>
 #include <kapplication.h>
 #include <kdesktopfile.h>
+#include <kworkspace.h>
 #include <klocale.h>
 #include <kservice.h>
 #include <kprocess.h>
@@ -115,6 +116,12 @@ void Command_url_action::execute()
         return;
     KUriFilterData uri;
     QString cmd = command_url();
+    static bool sm_ready = false;
+    if( !sm_ready )
+        {
+        KWorkSpace::propagateSessionManager();
+        sm_ready = true;
+        }
 //    int space_pos = command_url().find( ' ' );
 //    if( command_url()[ 0 ] != '\'' && command_url()[ 0 ] != '"' && space_pos > -1
 //        && command_url()[ space_pos - 1 ] != '\\' )
