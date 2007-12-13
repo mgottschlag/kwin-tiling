@@ -40,12 +40,11 @@ class IconApplet : public Plasma::Applet
         ~IconApplet();
 
         void init();
-//        QSizeF contentSizeHint() const;
         void setUrl(const KUrl& url);
         void constraintsUpdated(Plasma::Constraints constraints);
+        void showConfigurationInterface();
 
     public slots:
-        void propertiesDialog();
         void openUrl();
 
     protected:

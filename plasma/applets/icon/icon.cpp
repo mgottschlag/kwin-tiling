@@ -40,6 +40,7 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
       m_dialog(0)
 {
     setAcceptDrops(true);
+    setHasConfigurationInterface(true);
     //new Plasma::HBoxLayout(this);
     m_icon = new Plasma::Icon(this);
     setMinimumSize(QSize(48,78));
@@ -116,7 +117,7 @@ void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
     }
 }
 
-void IconApplet::propertiesDialog()
+void IconApplet::showConfigurationInterface()
 {
     if (m_dialog == 0) {
         m_dialog = new KPropertiesDialog(m_url);
@@ -133,7 +134,7 @@ void IconApplet::acceptedPropertiesDialog()
     cg.writeEntry("Url", m_url);
     setUrl(m_url);
     update();
-    delete m_dialog;
+    m_dialog->deleteLater();
     m_dialog = 0;
 }
 
