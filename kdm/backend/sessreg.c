@@ -111,8 +111,12 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 	int wtmp;
 #endif
 #ifndef NO_LASTLOG
+# ifdef HAVE_LASTLOGX
+	struct lastlogx ll;
+# else
 	int llog;
-	struct LASTLOG ll;
+	struct lastlog ll;
+# endif
 #endif
 	STRUCTUTMP ut_ent;
 
@@ -281,7 +285,7 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 		ll.ll_time = ut_ent.ut_time;
 		memcpy( ll.ll_line, ut_ent.ut_line, sizeof(ll.ll_line) );
 		memcpy( ll.ll_host, ut_ent.ut_host, sizeof(ll.ll_host) );
-# ifdef HAVE_UTMPX
+# ifdef HAVE_LASTLOGX
 		updlastlogx( LLOG_FILE, uid, &ll );
 # else
 		if ((llog = open( LLOG_FILE, O_RDWR )) < 0)

@@ -72,6 +72,9 @@
 /* Define if the system uses extended utmp */
 #cmakedefine HAVE_UTMPX 1
 
+/* Define if the system uses extended lastlog */
+#cmakedefine HAVE_LASTLOGX 1
+
 /* Define if kdm should use Sun's secure RPC for Xauth cookies. */
 #cmakedefine SECURE_RPC 1
 

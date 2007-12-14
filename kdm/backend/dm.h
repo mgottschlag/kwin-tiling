@@ -111,7 +111,6 @@ extern char **environ;
 # define GETUTENT getutxent
 # define PUTUTLINE pututxline
 # define ENDUTENT endutxent
-# define LASTLOG lastlogx
 # define ut_time ut_tv.tv_sec
 # define ll_time ll_tv.tv_sec
 #else
@@ -121,7 +120,6 @@ extern char **environ;
 # define GETUTENT getutent
 # define PUTUTLINE pututline
 # define ENDUTENT endutent
-# define LASTLOG lastlog
 #endif
 #ifndef HAVE_STRUCT_UTMP_UT_USER
 # define ut_user ut_name
