@@ -67,4 +67,4 @@ typedef enum {
 }
 #endif
 
-#endif // KCHECKPASS_ENUMS_H
+#endif /* KCHECKPASS_ENUMS_H */
