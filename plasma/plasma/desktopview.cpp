@@ -50,6 +50,7 @@ DesktopView::DesktopView(int screen, QWidget *parent)
         connect(containment(), SIGNAL(zoomIn()), this, SLOT(zoomIn()));
         connect(containment(), SIGNAL(zoomOut()), this, SLOT(zoomOut()));
         connect(containment(), SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
+        containment()->enableToolBoxTool("zoomIn", false);
     }
 }
 
@@ -83,16 +84,22 @@ void DesktopView::adjustSize()
 
 void DesktopView::zoomIn()
 {
+    containment()->enableToolBoxTool("zoomOut", true);
     qreal s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
     if (m_zoomLevel == Plasma::GroupZoom) {
+        containment()->enableToolBoxTool("zoomIn", false);
         m_zoomLevel = Plasma::DesktopZoom;
         s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
         setSceneRect(geometry());
     } else if (m_zoomLevel == Plasma::OverviewZoom) {
+        containment()->enableToolBoxTool("zoomIn", true);
         m_zoomLevel = Plasma::GroupZoom;
         qreal factor = Plasma::scalingFactor(m_zoomLevel);
         s = factor / matrix().m11();
         setSceneRect(QRectF(0, 0, width() * 1.0/factor, height() * 1.0/factor));
+    } else {
+        containment()->enableToolBoxTool("zoomIn", false);
+        return;
     }
 
     scale(s, s);
@@ -100,10 +107,16 @@ void DesktopView::zoomIn()
 
 void DesktopView::zoomOut()
 {
+    containment()->enableToolBoxTool("zoomIn", true);
     if (m_zoomLevel == Plasma::DesktopZoom) {
+        containment()->enableToolBoxTool("zoomOut", true);
         m_zoomLevel = Plasma::GroupZoom;
     } else if (m_zoomLevel == Plasma::GroupZoom) {
+        containment()->enableToolBoxTool("zoomOut", false);
         m_zoomLevel = Plasma::OverviewZoom;
+    } else {
+        containment()->enableToolBoxTool("zoomOut", false);
+        return;
     }
 
     qreal factor = Plasma::scalingFactor(m_zoomLevel);
