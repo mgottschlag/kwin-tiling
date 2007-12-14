@@ -99,7 +99,7 @@ void
 sessreg( struct display *d, int pid, const char *user, int uid )
 {
 	const char *dot, *colon;
-	int left, clen;
+	int left, clen, c;
 #ifdef BSD_UTMP
 	FILE *ttys;
 	int utmp, slot, freeslot;
@@ -107,7 +107,9 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 #else
 	unsigned crc, i;
 #endif
-	int wtmp, c;
+#ifndef HAVE_UPDWTMP
+	int wtmp;
+#endif
 #ifndef NO_LASTLOG
 	int llog;
 	struct LASTLOG ll;
@@ -257,6 +259,13 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 # endif
 #endif
 
+#ifdef HAVE_UPDWTMP
+# ifdef HAVE_UTMPX
+	updwtmpx( WTMP_FILE, &ut_ent );
+# else
+	updwtmp( WTMP_FILE, &ut_ent );
+# endif
+#else
 	if ((wtmp = open( WTMP_FILE, O_WRONLY|O_APPEND )) < 0)
 		debug( "cannot open wtmp file " WTMP_FILE ": %m\n" );
 	else {
@@ -264,6 +273,7 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 			logError( "Cannot write wtmp file " WTMP_FILE ": %m\n" );
 		close( wtmp );
 	}
+#endif
 
 #ifndef NO_LASTLOG
 	if (pid) {

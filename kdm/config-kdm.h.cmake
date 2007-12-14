@@ -66,6 +66,9 @@
 /* Define if the system has no getutent */
 #cmakedefine BSD_UTMP 1
 
+/* Define if the system has the updwtmp function */
+#cmakedefine HAVE_UPDWTMP 1
+
 /* Define if the system uses extended utmp */
 #cmakedefine HAVE_UTMPX 1
 

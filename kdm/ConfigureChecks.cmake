@@ -82,6 +82,7 @@ if (NOT HAVE_UTMPX)
 		set(BSD_UTMP 1)
 	endif (NOT have_getutent)
 endif (NOT HAVE_UTMPX)
+check_function_exists(updwtmp HAVE_UPDWTMP)
 
 check_function_exists(arc4random HAVE_ARC4RANDOM)
 if (NOT HAVE_ARC4RANDOM)
