@@ -58,10 +58,6 @@ from The Open Group.
 # endif
 #endif
 
-#if !defined(__svr4__) && !defined(__QNX__)
-# define SESSREG_HOST
-#endif
-
 #ifdef BSD
 # if !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__)
 /* *BSD doesn't like a ':0' type entry in utmp */
@@ -144,7 +140,7 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 #endif
 		left = 0;
 	} else {
-#ifdef SESSREG_HOST
+#ifdef HAVE_STRUCT_UTMP_UT_HOST
 # ifndef BSD_UTMP
 		if (pid)
 # endif
@@ -226,7 +222,7 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 		while (read( utmp, (char *)&entry, sizeof(entry) ) == sizeof(entry)) {
 			if (!strncmp( entry.ut_line, ut_ent.ut_line,
 			              sizeof(entry.ut_line) ))
-#  ifdef SESSREG_HOST
+#  ifdef HAVE_STRUCT_UTMP_UT_HOST
 				if (!strncmp( entry.ut_host, ut_ent.ut_host,
 				              sizeof(entry.ut_host) ))
 #  endif
@@ -243,7 +239,7 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 			slot = freeslot;
 	  found:
 
-#  ifdef SESSREG_HOST
+#  ifdef HAVE_STRUCT_UTMP_UT_HOST
 		if (!pid)
 			bzero( ut_ent.ut_host, sizeof(ut_ent.ut_host) );
 #  endif

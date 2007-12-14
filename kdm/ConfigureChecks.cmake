@@ -3,6 +3,7 @@ include(CheckStructMember)
 
 check_struct_member("struct passwd" "pw_expire" "pwd.h" HAVE_STRUCT_PASSWD_PW_EXPIRE)
 check_struct_member("struct utmp" "ut_user" "utmp.h" HAVE_STRUCT_UTMP_UT_USER)
+check_struct_member("struct utmp" "ut_host" "utmp.h" HAVE_STRUCT_UTMP_UT_HOST)
 
 check_include_files(lastlog.h HAVE_LASTLOG_H)
 check_include_files(termio.h HAVE_TERMIO_H)
