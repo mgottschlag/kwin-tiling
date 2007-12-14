@@ -48,6 +48,9 @@
 /* Define to 1 if `ut_user' is member of `struct utmp'. */
 #cmakedefine HAVE_STRUCT_UTMP_UT_USER 1
 
+/* Define to 1 if `ut_host' is member of `struct utmp'. */
+#cmakedefine HAVE_STRUCT_UTMP_UT_HOST 1
+
 /* Define to 1 if you have the `sysinfo' function. */
 #cmakedefine HAVE_SYSINFO 1
 
