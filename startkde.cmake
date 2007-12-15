@@ -79,7 +79,7 @@ if test $? -ne 0; then
     xmessage -geometry 500x100 "Could not start kstartupconfig4. Check your installation."
     exit 1
 fi
-. $kdehome/share/config/startupconfig
+[ -e $kdehome/share/config/startupconfig] && . $kdehome/share/config/startupconfig
 
 # XCursor mouse theme needs to be applied here to work even for kded or ksmserver
 if test -n "$kcminputrc_mouse_cursortheme" -o -n "$kcminputrc_mouse_cursorsize" ; then
