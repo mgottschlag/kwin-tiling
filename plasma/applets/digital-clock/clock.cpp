@@ -337,9 +337,9 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         }
         QString timeString;
         if (m_twentyFour) {
-            timeString = m_time.toString("hh:mm");
+            timeString = m_time.toString("h:mm");
         } else {
-            timeString = m_time.toString("hh:mm AP");
+            timeString = m_time.toString("h:mm AP");
         }
         
         m_plainClockFont.setBold(m_plainClockFontBold);
