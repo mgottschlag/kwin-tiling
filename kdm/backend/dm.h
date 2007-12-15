@@ -112,7 +112,6 @@ extern char **environ;
 # define PUTUTLINE pututxline
 # define ENDUTENT endutxent
 # define ut_time ut_tv.tv_sec
-# define ll_time ll_tv.tv_sec
 #else
 # define STRUCTUTMP struct utmp
 # define UTMPNAME utmpname

@@ -113,6 +113,7 @@ sessreg( struct display *d, int pid, const char *user, int uid )
 #ifndef NO_LASTLOG
 # ifdef HAVE_LASTLOGX
 	struct lastlogx ll;
+#  define ll_time ll_tv.tv_sec
 # else
 	int llog;
 	struct lastlog ll;
