@@ -70,7 +70,7 @@ void Tasks::init()
                             Plasma::LayoutAnimator::MoveEffect);
         animator->setEffect(Plasma::LayoutAnimator::RemovedState,
                             Plasma::LayoutAnimator::FadeOutMoveEffect);
-        animator->setTimeLine(new QTimeLine(120, this));
+        animator->setTimeLine(new QTimeLine(1000, this));
         _rootTaskGroup->layout()->setAnimator(animator);
 
     layout->addItem(_rootTaskGroup);
