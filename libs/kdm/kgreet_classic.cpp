@@ -115,11 +115,11 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 			passwdEdit->setObjectName( "pw-entry" );
 			widgetList << passwdEdit;
 		} else {
-                        passwdLabel = new QLabel( func == Authenticate ?
-			                            i18n("&Password:") :
-			                            i18n("Current &password:"),
+			passwdLabel = new QLabel( func == Authenticate ?
+			                             i18n("&Password:") :
+			                             i18n("Current &password:"),
 			                          parent );
-                        passwdLabel->setBuddy( passwdEdit );
+			passwdLabel->setBuddy( passwdEdit );
 			grid->addWidget( passwdLabel, line, 0 );
 			grid->addWidget( passwdEdit, line++, 1 );
 		}

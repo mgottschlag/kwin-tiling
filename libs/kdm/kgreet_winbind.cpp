@@ -163,8 +163,8 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			widgetList << passwdEdit;
 		} else {
 			passwdLabel = new QLabel( func == Authenticate ?
-			                          i18n("&Password:") :
-			                          i18n("Current &password:"),
+			                             i18n("&Password:") :
+			                             i18n("Current &password:"),
 			                          parent );
 			passwdLabel->setBuddy( passwdEdit );
 			grid->addWidget( passwdLabel, line, 0 );
