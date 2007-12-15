@@ -242,12 +242,8 @@ void MenuLauncherApplet::actionTriggered(QAction *action)
     }
     else {
         for(QWidget* w = action->parentWidget(); w; w = w->parentWidget()) {
-            if (w == d->appview) {
-                d->appview->actionTriggered(action);
-                break;
-            }
-            else if (w == d->favview) {
-                d->favview->actionTriggered(action);
+            if (Kickoff::MenuView *view = dynamic_cast<Kickoff::MenuView*>(w)) {
+                view->actionTriggered(action);
                 break;
             }
         }
