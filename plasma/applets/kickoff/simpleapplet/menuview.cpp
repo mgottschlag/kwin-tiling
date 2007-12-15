@@ -27,6 +27,7 @@
 #include <QtDebug>
 
 // Local
+#include "core/models.h"
 #include "core/itemhandlers.h"
 
 using namespace Kickoff;
@@ -86,7 +87,12 @@ QAction *MenuView::createLeafAction(const QModelIndex&,QObject *parent)
 }
 void MenuView::updateAction(QAction *action,const QModelIndex& index)
 {
-    action->setText(index.data(Qt::DisplayRole).value<QString>());
+    QString text = index.data(Qt::DisplayRole).value<QString>();
+    const QString name = index.data(Kickoff::SubTitleRole).value<QString>();
+    if (action->menu()==0 && name.contains(text,Qt::CaseInsensitive))
+        text = name;
+    action->setText(text.replace("&","&&"));
+
     action->setIcon(index.data(Qt::DecorationRole).value<QIcon>());
 }
 void MenuView::setModel(QAbstractItemModel *model)
