@@ -21,48 +21,19 @@
 #define LOCKOUT_H
 
 #include <plasma/applet.h>
-#include <plasma/dataengine.h>
-#include <plasma/phase.h>
-#include <KIcon>
-#include <QTimer>
 
-
-namespace Plasma
-{
-    class Svg;
-    class Widget;
-    class Icon;
-    class VBoxLayout;
-} // namespace Plasma
-
-class KDialog;
-class IconHover;
 
 class LockOut : public Plasma::Applet
 {
     Q_OBJECT
 
-
     public:
         LockOut(QObject *parent, const QVariantList &args);
         ~LockOut();
-        void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
 
     public slots:
-		void showConfigurationInterface();
-		void configAccepted();
-		void clickLogout();
-		void clickLock();
-
-    private:
-		IconHover * m_icon_logout;
-		IconHover * m_icon_lock;
-        QFont m_font;	
-        Plasma::VBoxLayout *m_layout;
-        QString * test;
-		int m_pixelSize;
-		KDialog *m_dialog;
-
+        void clickLogout();
+        void clickLock();
 };
 
 K_EXPORT_PLASMA_APPLET(lockout, LockOut)
