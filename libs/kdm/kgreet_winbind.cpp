@@ -280,6 +280,7 @@ KWinbindGreeter::setUser( const QString &user )
 	slotChangedDomain( dom );
 	loginEdit->setText( usr );
 	passwdEdit->setFocus();
+	passwdEdit->selectAll();
 }
 
 void // virtual
