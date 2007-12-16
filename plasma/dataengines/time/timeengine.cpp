@@ -44,40 +44,27 @@ TimeEngine::~TimeEngine()
 bool TimeEngine::sourceRequested(const QString &name)
 {
     //kDebug() << "TimeEngine::sourceRequested " << name;
-    if (name == "Local") {
-        setData(I18N_NOOP("Local"), I18N_NOOP("Time"), QTime::currentTime());
-        setData(I18N_NOOP("Local"), I18N_NOOP("Date"), QDate::currentDate());
 
-        return true;
-    }
-
-    KTimeZone newTz  = KSystemTimeZones::zone(name);
-    if (!newTz.isValid()) {
-        return false;
-    }
-
-    KDateTime dt = KDateTime::currentDateTime(newTz);
-    setData(name, I18N_NOOP("Time"), dt.time());
-    setData(name, I18N_NOOP("Date"), dt.date());
-
-    return true;
+    return updateSource(name);
 }
 
 bool TimeEngine::updateSource(const QString &tz)
 {
     //kDebug() << "TimeEngine::updateTime()";
 
-    QDateTime dt = QDateTime::currentDateTime();
-    KTimeZone local = KSystemTimeZones::local();
     static const QString localName = I18N_NOOP("Local");
     if (tz == localName) {
-        setData(tz, I18N_NOOP("Time"), dt.time());
-        setData(tz, I18N_NOOP("Date"), dt.date());
+        setData(localName, I18N_NOOP("Time"), QTime::currentTime());
+        setData(localName, I18N_NOOP("Date"), QDate::currentDate());
     } else {
         KTimeZone newTz = KSystemTimeZones::zone(tz);
-        QDateTime localizeDt = local.convert(newTz, dt);
-        setData(tz, I18N_NOOP("Time"), localizeDt.time());
-        setData(tz, I18N_NOOP("Date"), localizeDt.date());
+        if (!newTz.isValid()) {
+            return false;
+        }
+
+        KDateTime dt = KDateTime::currentDateTime(newTz);
+        setData(tz, I18N_NOOP("Time"), dt.time());
+        setData(tz, I18N_NOOP("Date"), dt.date());
     }
 
     return true;
