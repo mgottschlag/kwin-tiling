@@ -174,6 +174,7 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
     if (!d->menuview) {
         d->menuview = new QMenu();
         connect(d->menuview,SIGNAL(triggered(QAction*)),this,SLOT(actionTriggered(QAction*)));
+        connect(d->menuview,SIGNAL(aboutToHide()),d->icon,SLOT(setUnpressed()));
 
         if(!d->appview) {
             d->appview = new Kickoff::MenuView();
@@ -228,6 +229,7 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
 
     d->menuview->setAttribute(Qt::WA_DeleteOnClose);
     d->menuview->popup(globalPos);
+    d->icon->setPressed();
 }
 
 void MenuLauncherApplet::actionTriggered(QAction *action)

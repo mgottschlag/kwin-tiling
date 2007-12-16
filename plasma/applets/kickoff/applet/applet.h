@@ -51,6 +51,7 @@ protected slots:
         void toggleMenu(bool pressed);
 
 private:
+        Plasma::Icon *m_icon;
         Kickoff::Launcher *m_launcher;
 };
 

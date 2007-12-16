@@ -48,9 +48,13 @@ public:
     virtual bool eventFilter(QObject *object, QEvent *event);
     virtual QSize sizeHint() const;
 
+signals:
+    void aboutToHide();
+
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
     virtual void showEvent(QShowEvent *event);
+    virtual void hideEvent(QHideEvent *event);
     virtual void moveEvent(QMoveEvent *event);
     virtual void paintEvent(QPaintEvent *event);
 

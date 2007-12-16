@@ -441,6 +441,12 @@ void Launcher::showEvent(QShowEvent *e)
     QWidget::showEvent(e);
 }
 
+void Launcher::hideEvent(QHideEvent *e)
+{
+    emit aboutToHide();
+    QWidget::hideEvent(e);
+}
+
 void Launcher::paintEvent(QPaintEvent*)
 {
     // TODO - Draw a pretty background here

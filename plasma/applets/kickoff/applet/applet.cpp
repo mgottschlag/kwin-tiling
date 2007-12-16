@@ -44,9 +44,9 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
 //    setDrawStandardBackground(true);
     Plasma::HBoxLayout *layout = new Plasma::HBoxLayout(this);
     layout->setMargin(0);
-    Plasma::Icon *icon = new Plasma::Icon(KIcon("start-here"), QString(), this);
-    icon->setFlag(ItemIsMovable, false);
-    connect(icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
+    m_icon = new Plasma::Icon(KIcon("start-here"), QString(), this);
+    m_icon->setFlag(ItemIsMovable, false);
+    connect(m_icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
 }
 
 LauncherApplet::~LauncherApplet()
@@ -76,6 +76,7 @@ void LauncherApplet::toggleMenu(bool pressed)
         m_launcher->setWindowFlags(m_launcher->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
         m_launcher->setAutoHide(true);
         m_launcher->adjustSize();
+        connect(m_launcher, SIGNAL(aboutToHide()), m_icon, SLOT(setUnpressed()));
     }
 
     // try to position the launcher alongside the top or bottom edge of the
@@ -106,6 +107,7 @@ void LauncherApplet::toggleMenu(bool pressed)
     }
 
     m_launcher->setVisible(!m_launcher->isVisible());
+    m_icon->setPressed();
 }
 
 #include "applet.moc"
