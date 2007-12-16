@@ -182,6 +182,7 @@ Dtime::Dtime(QWidget * parent)
   v3->addItem(spacer3, 0, 9, 2, 1);
 
   QGridLayout *top = new QGridLayout( this );
+  top->setMargin( 0 );
   top->setSpacing( KDialog::spacingHint() );
 
   top->addWidget(dateBox, 1,0);
