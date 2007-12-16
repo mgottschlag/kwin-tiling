@@ -99,9 +99,13 @@ void SystemTray::updateWidgetGeometry()
         m_systemTrayWidget->setVisible(true);
     }
 
-    QRect rect = mapToView(parentView, boundingRect());
-    m_systemTrayWidget->setMaximumSize(rect.size());
-    m_systemTrayWidget->setGeometry(rect);
+    // Set the system tray to its minimum size and centre it above the item
+    QRect itemRect = mapToView(parentView, boundingRect());
+    QRect widgetRect = QRect(QPoint(0, 0), m_systemTrayWidget->minimumSizeHint());
+    widgetRect.moveTop(itemRect.top() + (itemRect.height() - widgetRect.height()) / 2);
+    widgetRect.moveLeft(itemRect.left() + (itemRect.width() - widgetRect.width()) / 2);
+    m_systemTrayWidget->setMaximumSize(itemRect.size());
+    m_systemTrayWidget->setGeometry(widgetRect);
 }
 
 #include "systemtray.moc"
