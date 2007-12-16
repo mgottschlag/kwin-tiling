@@ -129,30 +129,30 @@ void MenuLauncherApplet::showConfigurationInterface()
         d->dialog->mainWidget()->setLayout(layout);
 
         d->showFavCheckBox = new QCheckBox(i18n("Favorites"), d->dialog->mainWidget());
-        d->showFavCheckBox->setCheckState(d->showFavorites ? Qt::Checked : Qt::Unchecked);
         layout->addWidget(d->showFavCheckBox);
     
         d->showSwitchUserCheckBox = new QCheckBox(i18n("Switch User"), d->dialog->mainWidget());
-        d->showSwitchUserCheckBox->setCheckState(d->showLeaveSwitchUser ? Qt::Checked : Qt::Unchecked);
         layout->addWidget(d->showSwitchUserCheckBox);
     
         d->showLockCheckBox = new QCheckBox(i18n("Lock"), d->dialog->mainWidget());
-        d->showLockCheckBox->setCheckState(d->showLeaveLock ? Qt::Checked : Qt::Unchecked);
         layout->addWidget(d->showLockCheckBox);
     
         d->showLogoutCheckBox = new QCheckBox(i18n("Logout"), d->dialog->mainWidget());
-        d->showLogoutCheckBox->setCheckState(d->showLeaveLogout ? Qt::Checked : Qt::Unchecked);
         layout->addWidget(d->showLogoutCheckBox);
     }
+    d->showFavCheckBox->setChecked(d->showFavorites);
+    d->showSwitchUserCheckBox->setChecked(d->showLeaveSwitchUser);
+    d->showLockCheckBox->setChecked(d->showLeaveLock);
+    d->showLogoutCheckBox->setChecked(d->showLeaveLogout);
     d->dialog->show();
 }
 
 void MenuLauncherApplet::configAccepted()
 {
-    d->showFavorites = d->showFavCheckBox->checkState() == Qt::Checked;
-    d->showLeaveSwitchUser = d->showSwitchUserCheckBox->checkState() == Qt::Checked;
-    d->showLeaveLock = d->showLockCheckBox->checkState() == Qt::Checked;
-    d->showLeaveLogout = d->showLogoutCheckBox->checkState() == Qt::Checked;
+    d->showFavorites = d->showFavCheckBox->isChecked();
+    d->showLeaveSwitchUser = d->showSwitchUserCheckBox->isChecked();
+    d->showLeaveLock = d->showLockCheckBox->isChecked();
+    d->showLeaveLogout = d->showLogoutCheckBox->isChecked();
 
     KConfigGroup cg = config();
     cg.writeEntry("showFavorites", d->showFavorites);

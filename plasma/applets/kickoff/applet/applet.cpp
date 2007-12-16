@@ -115,20 +115,20 @@ void LauncherApplet::showConfigurationInterface()
         vl->addWidget(new QLabel(i18n("Number of visible items:"), d->dialog->mainWidget()));
         d->visibleCountEdit = new KIntNumInput(d->dialog->mainWidget());
         d->visibleCountEdit->setMinimum(1);
-        d->visibleCountEdit->setValue(d->visibleItemsCount);
         d->visibleCountEdit->setSliderEnabled(false);
         vl->addWidget(d->visibleCountEdit);
 
         d->switchOnHoverCheckBox = new QCheckBox(i18n("Switch tabs on hover"), d->dialog->mainWidget());
-        d->switchOnHoverCheckBox->setCheckState(d->switchTabsOnHover ? Qt::Checked : Qt::Unchecked);
         layout->addWidget(d->switchOnHoverCheckBox);
     }
+    d->visibleCountEdit->setValue(d->visibleItemsCount);
+    d->switchOnHoverCheckBox->setChecked(d->switchTabsOnHover);
     d->dialog->show();
 }
 
 void LauncherApplet::configAccepted()
 {
-    d->switchTabsOnHover = d->switchOnHoverCheckBox->checkState() == Qt::Checked;
+    d->switchTabsOnHover = d->switchOnHoverCheckBox->isChecked();
     d->visibleItemsCount = d->visibleCountEdit->value();
 
     KConfigGroup cg = config();
