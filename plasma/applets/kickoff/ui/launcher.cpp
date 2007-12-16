@@ -233,7 +233,7 @@ public:
     UrlItemLauncher *urlLauncher;
     SearchBar *searchBar;
     QStackedWidget *contentArea;
-    QTabBar *contentSwitcher;
+    TabBar *contentSwitcher;
     QAbstractItemView *searchView;
     QAbstractItemView *favoritesView;
     ContextMenuFactory *contextMenuFactory;
@@ -292,6 +292,16 @@ void Launcher::setAutoHide(bool hide)
 bool Launcher::autoHide() const
 {
     return d->autoHide;
+}
+
+void Launcher::setSwitchTabsOnHover(bool switchOnHover)
+{
+    d->contentSwitcher->setSwitchTabsOnHover(switchOnHover);
+}
+
+bool Launcher::switchTabsOnHover() const
+{
+    return d->contentSwitcher->switchTabsOnHover();
 }
 
 Launcher::~Launcher()

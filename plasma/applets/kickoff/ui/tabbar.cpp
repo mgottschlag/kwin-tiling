@@ -30,7 +30,8 @@ using namespace Kickoff;
 
 TabBar::TabBar(QWidget *parent)
     : QTabBar(parent),
-      m_hoveredTabIndex(-1)
+      m_hoveredTabIndex(-1),
+      m_switchOnHover(true)
 {
     //FIXME: should be replaced with a Phase custom animation
     m_animator.setDuration(150);
@@ -43,6 +44,16 @@ TabBar::TabBar(QWidget *parent)
     m_tabSwitchTimer.setSingleShot(true);
     connect(&m_tabSwitchTimer, SIGNAL(timeout()), this, SLOT(switchToHoveredTab()));
     setMouseTracking(true);
+}
+
+void TabBar::setSwitchTabsOnHover(bool switchOnHover)
+{
+    m_switchOnHover = switchOnHover;
+}
+
+bool TabBar::switchTabsOnHover() const
+{
+    return m_switchOnHover;
 }
 
 QSize TabBar::tabSizeHint(int index) const
@@ -115,7 +126,7 @@ void TabBar::leaveEvent(QEvent *event)
 void TabBar::mouseMoveEvent(QMouseEvent *event)
 {
     m_hoveredTabIndex = tabAt(event->pos());
-    if (m_hoveredTabIndex > -1 && m_hoveredTabIndex != currentIndex()) {
+    if (m_switchOnHover && m_hoveredTabIndex > -1 && m_hoveredTabIndex != currentIndex()) {
         m_tabSwitchTimer.stop();
         m_tabSwitchTimer.start(50);
     }

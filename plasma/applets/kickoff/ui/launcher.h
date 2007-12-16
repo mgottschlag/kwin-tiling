@@ -44,6 +44,10 @@ public:
     void setAutoHide(bool autoHide);
     bool autoHide() const;
 
+    /** Specifies whether hovering switches between tabs or if a click is required to switch the tabs. */
+    void setSwitchTabsOnHover(bool switchOnHover);
+    bool switchTabsOnHover() const;
+
     // reimplemented
     virtual bool eventFilter(QObject *object, QEvent *event);
     virtual QSize sizeHint() const;

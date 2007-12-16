@@ -43,16 +43,22 @@ Q_OBJECT
 public:
         LauncherApplet(QObject *parent, const QVariantList &args);
         virtual ~LauncherApplet();
+        
+        void init();
 
         QSizeF contentSizeHint() const;
         Qt::Orientations expandingDirections() const;
 
+public slots:
+        void showConfigurationInterface();
+
 protected slots:
+        void configAccepted();
         void toggleMenu(bool pressed);
 
 private:
-        Plasma::Icon *m_icon;
-        Kickoff::Launcher *m_launcher;
+        class Private;
+        Private * const d;
 };
 
 K_EXPORT_PLASMA_APPLET(launcher, LauncherApplet)

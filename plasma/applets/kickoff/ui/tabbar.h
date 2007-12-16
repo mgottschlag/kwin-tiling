@@ -35,6 +35,10 @@ Q_OBJECT
 public:
     TabBar(QWidget *parent);
 
+    /** Specifies whether hovering switches between tabs or if a click is required to switch the tabs. */
+    void setSwitchTabsOnHover(bool switchOnHover);
+    bool switchTabsOnHover() const;
+
 protected:
     // reimplemented from QTabBar
     virtual QSize tabSizeHint(int index) const;
@@ -53,6 +57,7 @@ private:
     QTimer m_tabSwitchTimer;
     QTimeLine m_animator;
     QVector<int> m_animStates;
+    bool m_switchOnHover;
 };
 
 }

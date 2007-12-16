@@ -24,10 +24,13 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QGraphicsView>
+#include <QCheckBox>
+#include <QVBoxLayout>
 #include <QtDebug>
 
 // KDE
 #include <KIcon>
+#include <KDialog>
 
 // Plasma
 #include <plasma/layouts/boxlayout.h>
@@ -37,21 +40,46 @@
 // Local
 #include "ui/launcher.h"
 
+class LauncherApplet::Private
+{
+public:
+    Plasma::Icon *icon;
+    Kickoff::Launcher *launcher;
+    bool switchTabsOnHover;
+    
+    KDialog *dialog;
+    QCheckBox *switchOnHoverCheckBox;
+
+    Private() : launcher(0), dialog(0) {}
+    ~Private() { delete dialog; delete launcher; }
+};
+
 LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent,args),
-      m_launcher(0)
+      d(new Private)
+      
 {
-//    setDrawStandardBackground(true);
+    setHasConfigurationInterface(true);
+    //setDrawStandardBackground(true);
+
     Plasma::HBoxLayout *layout = new Plasma::HBoxLayout(this);
     layout->setMargin(0);
-    m_icon = new Plasma::Icon(KIcon("start-here"), QString(), this);
-    m_icon->setFlag(ItemIsMovable, false);
-    connect(m_icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
+    d->icon = new Plasma::Icon(KIcon("start-here"), QString(), this);
+    d->icon->setFlag(ItemIsMovable, false);
+    connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
+
+    d->switchTabsOnHover = true;
 }
 
 LauncherApplet::~LauncherApplet()
 {
-    delete m_launcher;
+    delete d;
+}
+
+void LauncherApplet::init()
+{
+    KConfigGroup cg = config();
+    d->switchTabsOnHover = cg.readEntry("SwitchTabsOnHover",d->switchTabsOnHover);
 }
 
 QSizeF LauncherApplet::contentSizeHint() const
@@ -64,6 +92,38 @@ Qt::Orientations LauncherApplet::expandingDirections() const
     return 0;
 }
 
+void LauncherApplet::showConfigurationInterface()
+{
+    if (! d->dialog) {
+        d->dialog = new KDialog();
+        d->dialog->setCaption( i18nc("@title:window","Configure Launcher") );
+        d->dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+        connect(d->dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+        connect(d->dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+
+        QVBoxLayout *layout = new QVBoxLayout(d->dialog->mainWidget());
+        d->dialog->mainWidget()->setLayout(layout);
+
+        d->switchOnHoverCheckBox = new QCheckBox(i18n("Switch Tabs on Hover"), d->dialog->mainWidget());
+        d->switchOnHoverCheckBox->setCheckState(d->switchTabsOnHover ? Qt::Checked : Qt::Unchecked);
+        layout->addWidget(d->switchOnHoverCheckBox);
+    }
+    d->dialog->show();
+}
+
+void LauncherApplet::configAccepted()
+{
+    d->switchTabsOnHover = d->switchOnHoverCheckBox->checkState() == Qt::Checked;
+
+    KConfigGroup cg = config();
+    cg.writeEntry("SwitchTabsOnHover",d->switchTabsOnHover);
+    cg.config()->sync();
+
+    if (d->launcher) {
+        d->launcher->setSwitchTabsOnHover(d->switchTabsOnHover);
+    }
+}
+
 void LauncherApplet::toggleMenu(bool pressed)
 {
     if (!pressed) {
@@ -71,17 +131,18 @@ void LauncherApplet::toggleMenu(bool pressed)
     }
 
     //qDebug() << "Launcher button clicked";
-    if (!m_launcher) {
-        m_launcher = new Kickoff::Launcher(0);
-        m_launcher->setWindowFlags(m_launcher->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
-        m_launcher->setAutoHide(true);
-        m_launcher->adjustSize();
-        connect(m_launcher, SIGNAL(aboutToHide()), m_icon, SLOT(setUnpressed()));
+    if (!d->launcher) {
+        d->launcher = new Kickoff::Launcher(0);
+        d->launcher->setWindowFlags(d->launcher->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
+        d->launcher->setAutoHide(true);
+        d->launcher->setSwitchTabsOnHover(d->switchTabsOnHover);
+        d->launcher->adjustSize();
+        connect(d->launcher, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
     }
 
     // try to position the launcher alongside the top or bottom edge of the
     // applet with and aligned to the left or right of the applet
-    if (!m_launcher->isVisible()) {
+    if (!d->launcher->isVisible()) {
         QGraphicsView *viewWidget = view();
         QDesktopWidget *desktop = QApplication::desktop();
         if (viewWidget) {
@@ -90,24 +151,24 @@ void LauncherApplet::toggleMenu(bool pressed)
             QRect desktopRect = desktop->availableGeometry(viewWidget);
             QRect size = mapToView(viewWidget, contentRect());
             // Prefer to open below the icon so as to act like a regular menu
-            if (globalPos.y() + size.height() + m_launcher->height()
+            if (globalPos.y() + size.height() + d->launcher->height()
                 < desktopRect.bottom()) {
                 globalPos.ry() += size.height();
             } else {
-                globalPos.ry() -= m_launcher->height();
+                globalPos.ry() -= d->launcher->height();
             }
-            if (globalPos.x() + m_launcher->width() > desktopRect.right()) {
-                globalPos.rx() -= m_launcher->width() - size.width();
+            if (globalPos.x() + d->launcher->width() > desktopRect.right()) {
+                globalPos.rx() -= d->launcher->width() - size.width();
             }
-            m_launcher->move(globalPos);
+            d->launcher->move(globalPos);
         }
         if (containment()) {
             containment()->emitLaunchActivated();
         }
     }
 
-    m_launcher->setVisible(!m_launcher->isVisible());
-    m_icon->setPressed();
+    d->launcher->setVisible(!d->launcher->isVisible());
+    d->icon->setPressed();
 }
 
 #include "applet.moc"
