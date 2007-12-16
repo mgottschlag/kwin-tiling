@@ -273,7 +273,9 @@ void DeviceNotifier::showConfigurationInterface()
      	m_dialog = new KDialog;
         m_dialog->setCaption( i18n("Configure New Device Notifier") );
 
-        ui.setupUi(m_dialog->mainWidget());
+        QWidget *widget = new QWidget;
+        ui.setupUi(widget);
+        m_dialog->setMainWidget(widget);
         m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
         connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
         connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
