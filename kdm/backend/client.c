@@ -277,11 +277,13 @@ PAM_conv( int num_msg,
 	for (; count >= 0; count--)
 		if (reply[count].resp)
 			switch (msg[count]->msg_style) {
-			case PAM_PROMPT_ECHO_ON:
-			case PAM_PROMPT_ECHO_OFF: /* could wipe ... */
+			case PAM_PROMPT_ECHO_OFF:
+				wipeStr( reply[count].resp );
+				break;
 #ifdef PAM_BINARY_PROMPT
-			case PAM_BINARY_PROMPT: /* ... that too ... */
+			case PAM_BINARY_PROMPT: /* Don't know length, so how wipe? */
 #endif
+			case PAM_PROMPT_ECHO_ON:
 				free( reply[count].resp );
 				break;
 			}
@@ -741,8 +743,7 @@ verify( GConvFunc gconv, int rootok )
 			/* effectively there is only PAM_AUTHTOK_ERR */
 			gSendInt( V_FAIL );
 		}
-		if (curpass)
-			free( curpass );
+		wipeStr( curpass );
 		curpass = newpass;
 		newpass = 0;
 	} else if (pretc != PAM_SUCCESS) {
