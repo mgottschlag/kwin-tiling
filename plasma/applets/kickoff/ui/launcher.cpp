@@ -68,6 +68,7 @@ public:
         , favoritesView(0)
         , contextMenuFactory(0)
         , autoHide(false)
+        , visibleItemCount(10)
     {
     }
     ~Private()
@@ -238,6 +239,7 @@ public:
     QAbstractItemView *favoritesView;
     ContextMenuFactory *contextMenuFactory;
     bool autoHide;
+    int visibleItemCount;
 };
 
 Launcher::Launcher(QWidget *parent)
@@ -279,7 +281,11 @@ QSize Launcher::sizeHint() const
 
     // the extra 2 pixels are to make room for the content margins; see moveEvent
     size.rwidth() += 2;
-    size.rheight() += 102;
+
+    //size.rheight() += 102;
+    size.rheight() = d->searchBar->sizeHint().height() +
+                     d->contentSwitcher->sizeHint().height() +
+                     ItemDelegate::ITEM_HEIGHT * d->visibleItemCount;
 
     return size;
 }
@@ -302,6 +308,16 @@ void Launcher::setSwitchTabsOnHover(bool switchOnHover)
 bool Launcher::switchTabsOnHover() const
 {
     return d->contentSwitcher->switchTabsOnHover();
+}
+
+void Launcher::setVisibleItemCount(int count)
+{
+    d->visibleItemCount = count;
+}
+
+int Launcher::visibleItemCount() const
+{
+    return d->visibleItemCount;
 }
 
 Launcher::~Launcher()

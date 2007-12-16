@@ -26,11 +26,13 @@
 #include <QGraphicsView>
 #include <QCheckBox>
 #include <QVBoxLayout>
+#include <QLabel>
 #include <QtDebug>
 
 // KDE
 #include <KIcon>
 #include <KDialog>
+#include <KNumInput>
 
 // Plasma
 #include <plasma/layouts/boxlayout.h>
@@ -46,9 +48,11 @@ public:
     Plasma::Icon *icon;
     Kickoff::Launcher *launcher;
     bool switchTabsOnHover;
+    int visibleItemsCount;
     
     KDialog *dialog;
     QCheckBox *switchOnHoverCheckBox;
+    KIntNumInput *visibleCountEdit;
 
     Private() : launcher(0), dialog(0) {}
     ~Private() { delete dialog; delete launcher; }
@@ -69,6 +73,7 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
     connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
 
     d->switchTabsOnHover = true;
+    d->visibleItemsCount = 10;
 }
 
 LauncherApplet::~LauncherApplet()
@@ -80,6 +85,7 @@ void LauncherApplet::init()
 {
     KConfigGroup cg = config();
     d->switchTabsOnHover = cg.readEntry("SwitchTabsOnHover",d->switchTabsOnHover);
+    d->visibleItemsCount = cg.readEntry("VisibleItemsCount",d->visibleItemsCount);
 }
 
 QSizeF LauncherApplet::contentSizeHint() const
@@ -104,7 +110,16 @@ void LauncherApplet::showConfigurationInterface()
         QVBoxLayout *layout = new QVBoxLayout(d->dialog->mainWidget());
         d->dialog->mainWidget()->setLayout(layout);
 
-        d->switchOnHoverCheckBox = new QCheckBox(i18n("Switch Tabs on Hover"), d->dialog->mainWidget());
+        QHBoxLayout *vl = new QHBoxLayout(d->dialog->mainWidget());
+        layout->addLayout(vl);
+        vl->addWidget(new QLabel(i18n("Number of visible items:"), d->dialog->mainWidget()));
+        d->visibleCountEdit = new KIntNumInput(d->dialog->mainWidget());
+        d->visibleCountEdit->setMinimum(1);
+        d->visibleCountEdit->setValue(d->visibleItemsCount);
+        d->visibleCountEdit->setSliderEnabled(false);
+        vl->addWidget(d->visibleCountEdit);
+
+        d->switchOnHoverCheckBox = new QCheckBox(i18n("Switch tabs on hover"), d->dialog->mainWidget());
         d->switchOnHoverCheckBox->setCheckState(d->switchTabsOnHover ? Qt::Checked : Qt::Unchecked);
         layout->addWidget(d->switchOnHoverCheckBox);
     }
@@ -114,13 +129,19 @@ void LauncherApplet::showConfigurationInterface()
 void LauncherApplet::configAccepted()
 {
     d->switchTabsOnHover = d->switchOnHoverCheckBox->checkState() == Qt::Checked;
+    d->visibleItemsCount = d->visibleCountEdit->value();
 
     KConfigGroup cg = config();
     cg.writeEntry("SwitchTabsOnHover",d->switchTabsOnHover);
+    cg.writeEntry("VisibleItemsCount",d->visibleItemsCount);
     cg.config()->sync();
 
     if (d->launcher) {
         d->launcher->setSwitchTabsOnHover(d->switchTabsOnHover);
+        if (d->launcher->visibleItemCount() != d->visibleItemsCount) {
+            d->launcher->setVisibleItemCount(d->visibleItemsCount);
+            d->launcher->adjustSize();
+        }
     }
 }
 
@@ -136,6 +157,7 @@ void LauncherApplet::toggleMenu(bool pressed)
         d->launcher->setWindowFlags(d->launcher->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
         d->launcher->setAutoHide(true);
         d->launcher->setSwitchTabsOnHover(d->switchTabsOnHover);
+        d->launcher->setVisibleItemCount(d->visibleItemsCount);
         d->launcher->adjustSize();
         connect(d->launcher, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
     }

@@ -48,6 +48,10 @@ public:
     void setSwitchTabsOnHover(bool switchOnHover);
     bool switchTabsOnHover() const;
 
+    /** Specifies the number of visible items used to determinate the visible height. */
+    void setVisibleItemCount(int count);
+    int visibleItemCount() const;
+
     // reimplemented
     virtual bool eventFilter(QObject *object, QEvent *event);
     virtual QSize sizeHint() const;
