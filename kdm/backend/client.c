@@ -109,6 +109,7 @@ struct login_cap *lc;
 #endif
 #ifdef USE_PAM
 static pam_handle_t *pamh;
+static int inAuth;
 #elif defined(_AIX)
 static char tty[16], hostname[100];
 #else
@@ -220,7 +221,7 @@ PAM_conv( int num_msg,
 		switch (msg[count]->msg_style) {
 		case PAM_TEXT_INFO:
 			debug( " PAM_TEXT_INFO: %s\n", msg[count]->msg );
-			displayStr( V_MSG_INFO, msg[count]->msg );
+			displayStr( inAuth ? V_MSG_INFO_AUTH : V_MSG_INFO, msg[count]->msg );
 			continue;
 		case PAM_ERROR_MSG:
 			debug( " PAM_ERROR_MSG: %s\n", msg[count]->msg );
@@ -337,11 +338,13 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 # endif
 	reInitErrorLog();
 
+	inAuth = True;
 	debug( " pam_authenticate() ...\n" );
 	pretc = pam_authenticate( pamh,
 	                          td->allowNullPasswd ? 0 : PAM_DISALLOW_NULL_AUTHTOK );
 	reInitErrorLog();
 	debug( " pam_authenticate() returned: %s\n", pam_strerror( pamh, pretc ) );
+	inAuth = False;
 	if (pdata->abort) {
 		pam_end( pamh, PAM_SUCCESS );
 		pamh = 0;
@@ -729,10 +732,12 @@ verify( GConvFunc gconv, int rootok )
 		} else
 			gSendInt( V_CHTOK );
 		for (;;) {
+			inAuth = True;
 			debug( " pam_chauthtok() ...\n" );
 			pretc = pam_chauthtok( pamh, PAM_CHANGE_EXPIRED_AUTHTOK );
 			reInitErrorLog();
 			debug( " pam_chauthtok() returned: %s\n", pam_strerror( pamh, pretc ) );
+			inAuth = False;
 			if (pdata.abort) {
 				pam_end( pamh, PAM_SUCCESS );
 				pamh = 0;

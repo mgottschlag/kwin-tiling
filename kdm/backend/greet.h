@@ -233,6 +233,7 @@ from the copyright holder.
 #define V_CHTOK         113 /* password expired; change now */
 #define V_CHTOK_AUTH    114 /* password expired; change now, but authenticate first */
 #define V_PRE_OK        115 /* authentication succeeded, continue with password change */
+#define V_MSG_INFO_AUTH 116 /* info message during auth attached; 0 return */
 /* queries */
 #define V_GET_TEXT      200 /* str prompt, int echo, int ndelay; str return, int tag */
 # define V_IS_SECRET        1

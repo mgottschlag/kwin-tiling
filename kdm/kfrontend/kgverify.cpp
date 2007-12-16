@@ -565,6 +565,7 @@ KGVerify::handleFailVerify( QWidget *parent, bool showUser )
 				free( msg );
 			gSendInt( 0 );
 			continue;
+		case V_MSG_INFO_AUTH: // should not happen
 		case V_MSG_INFO:
 			debug( " V_MSG_INFO\n" );
 			msg = gRecvStr();
@@ -683,7 +684,7 @@ KGVerify::handleVerify()
 			debug( " V_MSG_ERR\n" );
 			msg = gRecvStr();
 			debug( "  %s->textMessage(%\"s, true)\n", pName.data(), msg );
-			if (!greet->textMessage( msg, true )) {
+			if (!greet->textMessage( msg, true )) { // XXX little point in filtering
 				debug( "  message passed\n" );
 				vrfErrBox( parent, user, msg );
 			} else
@@ -692,8 +693,8 @@ KGVerify::handleVerify()
 				free( msg );
 			gSendInt( 0 );
 			continue;
-		case V_MSG_INFO:
-			debug( " V_MSG_INFO\n" );
+		case V_MSG_INFO_AUTH:
+			debug( " V_MSG_INFO_AUTH\n" );
 			msg = gRecvStr();
 			debug( "  %s->textMessage(%\"s, false)\n", pName.data(), msg );
 			if (!greet->textMessage( msg, false )) {
@@ -701,6 +702,14 @@ KGVerify::handleVerify()
 				vrfInfoBox( parent, user, msg );
 			} else
 				debug( "  message swallowed\n" );
+			free( msg );
+			gSendInt( 0 );
+			continue;
+		case V_MSG_INFO:
+			debug( " V_MSG_INFO\n" );
+			msg = gRecvStr();
+			debug( "  display %\"s\n", msg );
+			vrfInfoBox( parent, user, msg );
 			free( msg );
 			gSendInt( 0 );
 			continue;
