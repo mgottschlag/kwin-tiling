@@ -63,7 +63,7 @@ KdmList::setWidget( QWidget *widget )
 {
 	KdmItem::setWidget( widget );
 	if (QListWidget *lw = qobject_cast<QListWidget *>( widget ))
-		setWidgetAttribs( lw->viewport(), style );
+		setWidgetAttribs( lw->viewport() );
 }
 
 #include "kdmlist.moc"

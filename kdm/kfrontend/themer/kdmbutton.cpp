@@ -69,7 +69,7 @@ KdmButton::doPlugActions( bool )
 			btn->setAutoDefault( false );
 			myWidget = btn;
 			myWidget->hide(); // yes, really
-			setWidgetAttribs( myWidget, style );
+			setWidgetAttribs( myWidget );
 			connect( myWidget, SIGNAL(destroyed()), SLOT(widgetGone()) );
 			connect( myWidget, SIGNAL(clicked()), SLOT(activate()) );
 			emit needPlacement();

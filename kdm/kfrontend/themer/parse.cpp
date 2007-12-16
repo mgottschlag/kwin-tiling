@@ -250,7 +250,7 @@ parseStyle( const QDomElement &el, StyleType &style )
 		style.frame = frame == "true";
 }
 
-static void
+void
 setWidgetAttribs( QWidget *widget, const StyleType &style, bool frame )
 {
 	widget->setFont(
@@ -278,16 +278,6 @@ setWidgetAttribs( QWidget *widget, const StyleType &style, bool frame )
 				  !widget->testAttribute( Qt::WA_NoSystemBackground ) &&
 				  widget->palette().brush( widget->backgroundRole() ).isOpaque() )));
 }
-
-void
-setWidgetAttribs( QWidget *widget, const StyleType &style )
-{
-	widget->setPalette( style.palette );
-	widget->setAutoFillBackground(
-		style.palette.isBrushSet( QPalette::Normal, widget->backgroundRole() ) );
-	setWidgetAttribs( widget, style, style.frame );
-}
-
 
 #ifndef KDE_NO_DEBUG_OUTPUT
 static QString prefix;

@@ -197,6 +197,10 @@ protected:
 
 	virtual void doPlugActions( bool plug );
 
+	bool eventFilter( QObject *o, QEvent *e );
+	void setWidgetAttribs( QWidget * );
+	void updatePalette( QWidget *w );
+
 	void updateThisVisible();
 
 	/**

@@ -29,6 +29,7 @@
 
 #include <kdm_greet.h> // debug*
 
+#include <QEvent>
 #include <QLineEdit>
 #include <QPainter>
 
@@ -214,7 +215,7 @@ KdmItem::setWidget( QWidget *widget )
 	if ((myWidget = widget)) {
 		myWidget->hide(); // yes, really
 		connect( myWidget, SIGNAL(destroyed()), SLOT(widgetGone()) );
-		setWidgetAttribs( myWidget, style );
+		setWidgetAttribs( myWidget );
 	}
 
 	emit needPlugging();
@@ -228,6 +229,37 @@ KdmItem::widgetGone()
 
 	emit needPlugging();
 	emit needPlacement();
+}
+
+void
+KdmItem::setWidgetAttribs( QWidget *widget )
+{
+	widget->setPalette( style.palette );
+	widget->installEventFilter( this );
+	updatePalette( myWidget );
+	::setWidgetAttribs( widget, style, style.frame );
+}
+
+void
+KdmItem::updatePalette( QWidget *w )
+{
+	bool set = w->palette().isBrushSet( w->palette().currentColorGroup(),
+	                                    w->backgroundRole() );
+	bool opaque = set && w->palette().brush( w->backgroundRole() ).isOpaque();
+	w->setAutoFillBackground( set );
+	w->setAttribute( Qt::WA_OpaquePaintEvent, opaque );
+}
+
+bool
+KdmItem::eventFilter( QObject *o, QEvent *e )
+{
+	if (e->type() == QEvent::WindowActivate ||
+	    e->type() == QEvent::WindowDeactivate ||
+	    e->type() == QEvent::EnabledChange)
+	{
+		updatePalette( (QWidget *)o );
+	}
+	return false;
 }
 
 void
