@@ -84,6 +84,7 @@ class Clock : public Plasma::Applet
 
         QSizeF m_sizeHint;
         QString m_timezone;
+        QString m_prettyTimezone;
         QTime m_time;
         QDate m_date;
         KDialog *m_dialog; //should we move this into another class?

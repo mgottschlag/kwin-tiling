@@ -56,7 +56,8 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_showTimezone(false),
       m_twentyFour(false),
       m_sizeHint(),
-      m_timezone(0),
+      m_timezone(),
+      m_prettyTimezone(),
       m_time(),
       m_date(),
       m_dialog(0),
@@ -126,6 +127,7 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
     Q_UNUSED(source);
     m_time = data["Time"].toTime();
     m_date = data["Date"].toDate();
+    m_prettyTimezone = data["Timezone"].toString();
 
     // avoid unnecessary repaints
     if (m_time.minute() != m_lastTimeSeen.minute()) {
@@ -302,7 +304,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                 }
             }
             if (m_showTimezone) {
-                dateString = dateString + " " + m_timezone;
+                dateString = dateString + " " + m_prettyTimezone;
                 dateString.replace("_", " ");
             }
 

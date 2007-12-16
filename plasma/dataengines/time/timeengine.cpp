@@ -56,6 +56,8 @@ bool TimeEngine::updateSource(const QString &tz)
     if (tz == localName) {
         setData(localName, I18N_NOOP("Time"), QTime::currentTime());
         setData(localName, I18N_NOOP("Date"), QDate::currentDate());
+        // this is relatively cheap - KSTZ::local() is cached
+        setData(tz, I18N_NOOP("Timezone"), KSystemTimeZones::local().name());
     } else {
         KTimeZone newTz = KSystemTimeZones::zone(tz);
         if (!newTz.isValid()) {
@@ -65,6 +67,7 @@ bool TimeEngine::updateSource(const QString &tz)
         KDateTime dt = KDateTime::currentDateTime(newTz);
         setData(tz, I18N_NOOP("Time"), dt.time());
         setData(tz, I18N_NOOP("Date"), dt.date());
+        setData(tz, I18N_NOOP("Timezone"), tz);
     }
 
     return true;
