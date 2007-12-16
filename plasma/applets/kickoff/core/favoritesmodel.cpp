@@ -102,6 +102,10 @@ FavoritesModel::FavoritesModel(QObject *parent)
     Private::models << this;
     if (Private::models.count() == 1 && Private::globalFavoriteList.isEmpty()) {
         Private::loadFavorites();
+    } else {
+        foreach (QString url, Private::globalFavoriteList) {
+            d->addFavoriteItem(url);
+        }
     }
 }
 FavoritesModel::~FavoritesModel()
