@@ -213,15 +213,14 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
         }
     }
 
-    const QPointF scenePos = mapToScene(boundingRect().topLeft());
     QGraphicsView *viewWidget = view();
     QPoint globalPos;
     if (viewWidget) {
-        const QPoint viewPos = viewWidget->mapFromScene(scenePos);
+        const QPoint viewPos = viewWidget->mapFromScene(scenePos());
         globalPos = viewWidget->mapToGlobal(viewPos);
         int ypos = globalPos.ry() - d->menuview->sizeHint().height();
         if( ypos < 0 ) {
-            const QRect size = mapToView(viewWidget, boundingRect());
+            const QRect size = mapToView(viewWidget, contentRect());
             ypos = globalPos.ry() + size.height();
         }
         globalPos.ry() = ypos;
