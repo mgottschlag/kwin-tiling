@@ -238,6 +238,9 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
                 return access->filePath();
             }
         }
+        else if (index.parent().row()==0) {
+            return d->placesModel->url(sourceIndex).url();
+        }
 
         return QVariant();
     } else if (role==DiskUsedSpaceRole || role== DiskFreeSpaceRole) {
