@@ -379,6 +379,7 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
 
     widget = new Ui_LayoutConfigWidget();
     widget->setupUi(this);
+    layout()->setMargin(0);
 //  main->addWidget(widget);
 
     m_srcModel = new SrcLayoutModel(m_rules, NULL);
