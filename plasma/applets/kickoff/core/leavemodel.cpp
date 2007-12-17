@@ -20,6 +20,9 @@
 // Own
 #include "core/leavemodel.h"
 
+// Qt
+#include <QFileInfo>
+
 // KDE
 #include <KLocalizedString>
 #include <KIcon>
@@ -34,6 +37,50 @@ class LeaveModel::Private
 {
 };
 
+QStandardItem* LeaveModel::createStandardItem(const QString& url)
+{
+    //Q_ASSERT(QUrl(url).scheme() == "leave");
+    QStandardItem *item = new QStandardItem();
+    const QString basename = QFileInfo(url).baseName();
+    if (basename == "logout") {
+        item->setText(i18n("Logout"));
+        item->setIcon(KIcon("system-log-out"));
+        item->setData(i18n("End session"),Kickoff::SubTitleRole);
+    }
+    else if (basename == "lock") {
+        item->setText(i18n("Lock"));
+        item->setIcon(KIcon("system-lock-screen"));
+        item->setData(i18n("Lock the screen"),Kickoff::SubTitleRole);
+    }
+    else if (basename == "switch") {
+        item->setText(i18n("Logout"));
+        item->setIcon(KIcon("system-switch-user"));
+        item->setData(i18n("Start a parallel session as a different user"),Kickoff::SubTitleRole);
+    }
+    else if (basename == "sleep") {
+        item->setText(i18n("Sleep"));
+        item->setData(url,Kickoff::SubTitleRole);
+    }
+    else if (basename == "hibernate") {
+        item->setText(i18n("Hibernate"));
+        item->setData(url,Kickoff::SubTitleRole);
+    }
+    else if (basename == "shutdown") {
+        item->setText(i18n("Shutdown"));
+        item->setData(i18n("Turn off the computer"),Kickoff::SubTitleRole);
+    }
+    else if (basename == "restart") {
+        item->setText(i18n("Restart"));
+        item->setData(i18n("Restart the computer"),Kickoff::SubTitleRole);
+    }
+    else {
+        item->setText(basename);
+        item->setData(url,Kickoff::SubTitleRole);
+    }
+    item->setData(url,Kickoff::UrlRole);
+    return item;
+}
+
 LeaveModel::LeaveModel(QObject *parent)
     : QStandardItemModel(parent)
     , d(0)
@@ -42,21 +89,15 @@ LeaveModel::LeaveModel(QObject *parent)
     QStandardItem *sessionOptions = new QStandardItem(i18n("Session"));
 
         // Logout
-        QStandardItem *logoutOption = new QStandardItem(KIcon("system-log-out"),i18n("Logout"));
-        logoutOption->setData("leave:/logout",Kickoff::UrlRole);
-        logoutOption->setData(i18n("End session"),Kickoff::SubTitleRole);
+        QStandardItem *logoutOption = createStandardItem("leave:/logout");
         sessionOptions->appendRow(logoutOption);
 
         // Lock
-        QStandardItem *lockOption = new QStandardItem(KIcon("system-lock-screen"),i18n("Lock"));
-        lockOption->setData("leave:/lock",Kickoff::UrlRole);
-        lockOption->setData(i18n("Lock the screen"),Kickoff::SubTitleRole);
+        QStandardItem *lockOption = createStandardItem("leave:/lock");
         sessionOptions->appendRow(lockOption);
 
         // Switch User
-        QStandardItem *switchUserOption = new QStandardItem(KIcon("system-switch-user"),i18n("Switch User"));
-        switchUserOption->setData("leave:/switch",Kickoff::UrlRole);
-        switchUserOption->setData(i18n("Start a parallel session as a different user."),Kickoff::SubTitleRole);
+        QStandardItem *switchUserOption = createStandardItem("leave:/switch");
         sessionOptions->appendRow(switchUserOption);
 
     // System Options
@@ -67,28 +108,22 @@ LeaveModel::LeaveModel(QObject *parent)
 
         // Sleep
         if (sleepStates.contains(SuspendState)) {
-            QStandardItem *sleepOption = new QStandardItem(i18n("Sleep"));
-            sleepOption->setData("leave:/sleep",Kickoff::UrlRole);
+            QStandardItem *sleepOption = createStandardItem("leave:/sleep");
             systemOptions->appendRow(sleepOption);
         }
 
         // Hibernate
         if (sleepStates.contains(HibernateState)) {
-            QStandardItem *hibernateOption = new QStandardItem(i18n("Hibernate"));
-            hibernateOption->setData("leave:/hibernate",Kickoff::UrlRole);
+            QStandardItem *hibernateOption = createStandardItem("leave:/hibernate");
             systemOptions->appendRow(hibernateOption);
         }
 
         // Shutdown
-        QStandardItem *shutDownOption = new QStandardItem(i18n("Shutdown"));
-        shutDownOption->setData("leave:/shutdown",Kickoff::UrlRole);
-        shutDownOption->setData(i18n("Turn off the computer"),Kickoff::SubTitleRole);
+        QStandardItem *shutDownOption = createStandardItem("leave:/shutdown");
         systemOptions->appendRow(shutDownOption);
 
         // Restart
-        QStandardItem *restartOption = new QStandardItem(i18n("Restart"));
-        restartOption->setData("leave:/restart",Kickoff::UrlRole);
-        restartOption->setData(i18n("Restart the computer"),Kickoff::SubTitleRole);
+        QStandardItem *restartOption = createStandardItem("leave:/restart");
         systemOptions->appendRow(restartOption);
 
     appendRow(sessionOptions);

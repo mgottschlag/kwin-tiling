@@ -19,10 +19,12 @@
 
 // Own
 #include "core/models.h"
+#include "core/leavemodel.h"
 
 // Qt
 #include <QFileInfo>
 #include <QStandardItem>
+#include <QUrl>
 
 // KDE
 #include <KDebug>
@@ -83,15 +85,22 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
         item->setData(subTitle, Kickoff::SubTitleRole);
 
         setSpecialUrlProperties(desktopUrl, item);
-    } else {
-        item = new QStandardItem;
-        item->setText(QFileInfo(urlString).baseName());
-        item->setIcon(KIcon(KMimeType::iconNameForUrl(url)));
-        item->setData(url.url(), Kickoff::UrlRole);
-        QString subTitle = url.isLocalFile() && url.path().length() > 1 ? url.path() : url.prettyUrl();
-        item->setData(subTitle, Kickoff::SubTitleRole);
+    }
+    else {
+        if (url.scheme() == "leave") {
+            item = LeaveModel::createStandardItem(urlString);
+        }
+        if (! item) {
+            item = new QStandardItem;
+            const QString basename = QFileInfo(urlString).baseName();
+            item->setText(basename);
+            item->setIcon(KIcon(KMimeType::iconNameForUrl(url)));
+            item->setData(url.url(), Kickoff::UrlRole);
+            QString subTitle = url.isLocalFile() && url.path().length() > 1 ? url.path() : url.prettyUrl();
+            item->setData(subTitle, Kickoff::SubTitleRole);
 
-        setSpecialUrlProperties(url, item);
+            setSpecialUrlProperties(url, item);
+        }
     }
 
     return item;

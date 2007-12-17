@@ -33,6 +33,9 @@ Q_OBJECT
 public:
     LeaveModel(QObject *parent);
     ~LeaveModel();
+
+    static QStandardItem* createStandardItem(const QString& url);
+
 private:
     class Private;
     Private * const d;
