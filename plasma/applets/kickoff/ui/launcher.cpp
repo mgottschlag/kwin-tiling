@@ -111,7 +111,7 @@ public:
         // All Programs view
         setupAllProgramsView();
 
-        // My Computer view
+        // System view
         setupSystemView();
 
         // Recently Used view
@@ -187,7 +187,7 @@ public:
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
 
-        addView(i18n("My Computer"), systemIcon(), model, view);
+        addView(i18n("Computer"), systemIcon(), model, view);
     }
 
     void setupSearchView()
