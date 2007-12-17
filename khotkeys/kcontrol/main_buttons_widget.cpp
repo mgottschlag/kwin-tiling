@@ -36,6 +36,7 @@ Main_buttons_widget::Main_buttons_widget( QWidget* parent_P, const char* name_P 
         module, SLOT( changed()));
     connect( delete_action_button, SIGNAL( clicked()),
         module, SLOT( changed()));
+    layout()->setMargin(0);
     setMaximumHeight( sizeHint().height()); // it gets too high and I have no idea why
     }
 

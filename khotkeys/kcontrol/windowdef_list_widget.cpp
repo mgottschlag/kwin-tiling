@@ -39,6 +39,7 @@ Windowdef_list_widget::Windowdef_list_widget( QWidget* parent_P, const char* nam
     : Windowdef_list_widget_ui( parent_P, name_P ), autodetect_object( NULL ),
         autodetect_slot( NULL ), selected_item( NULL )
     {
+    layout()->setMargin(0);
     QMenu* popup = new QMenu; // CHECKME looks like setting parent doesn't work
     QAction *action = popup->addAction( i18n( "Simple Window..." ) );
     connect( action, SIGNAL( triggered()), SLOT( new_selected()));
