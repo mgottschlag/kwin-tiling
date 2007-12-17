@@ -244,7 +244,10 @@ void Pager::configAccepted()
         globalcg.writeEntry("rows", m_rows);
         // force an update of the column count in recalculateGeometry
         m_columns = 0;
-        updateConstraints();
+        m_size = QSizeF(-1, -1);
+        recalculateGeometry();
+        recalculateWindowRects();
+        update();
     }
 }
 
