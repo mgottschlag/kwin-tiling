@@ -42,6 +42,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klocale.h>
 #include <kglobal.h>
 #include <kconfig.h>
+#include <kmanagerselection.h>
 #include "server.h"
 #include <QX11Info>
 
@@ -239,6 +240,10 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
 #endif
 
     KSMServer *server = new KSMServer( wm, only_local);
+    
+    // for the KDE-already-running check in startkde
+    KSelectionOwner kde_running( "_KDE_RUNNING", 0 );
+    kde_running.claim( false );
 
     IceSetIOErrorHandler( IoErrorHandler );
 
