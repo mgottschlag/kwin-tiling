@@ -39,6 +39,16 @@ Name[zh_CN]=数字钟
 Name[zh_TW]=數位時鐘
 
 Comment=An simple digital clock
+Comment[ca]=Un rellotge digital senzill
+Comment[el]=Ένα απλό ψηφιακό ρολόι
+Comment[ga]=Clog simplí digiteach
+Comment[ja]=シンプルなデジタル時計
+Comment[km]=នាឡិការ​ឌីជីថល​ធម្មតា
+Comment[lv]=Vienkāršs digitālais pulkstenis
+Comment[nds]=En eenfach Digitaalklock
+Comment[pt]=Um relógio digital simples
+Comment[pt_BR]=Um relógio digital simples
+Comment[sv]=En enkel digitalklocka
 
 Icon=chronometer
 Type=Service
@@ -56,6 +66,7 @@ X-KDE-PluginInfo-Category[de]=Datum und Zeit
 X-KDE-PluginInfo-Category[el]=Ημερομηνία και ώρα
 X-KDE-PluginInfo-Category[ga]=Dáta agus Am
 X-KDE-PluginInfo-Category[ja]=日付と時間
+X-KDE-PluginInfo-Category[km]=កាល​បរិច្ឆេទ និង​ពេលវេលា
 X-KDE-PluginInfo-Category[lv]=Datums un laiks
 X-KDE-PluginInfo-Category[nds]=Datum un Tiet
 X-KDE-PluginInfo-Category[pt]=Data e Hora
