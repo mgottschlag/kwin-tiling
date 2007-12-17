@@ -91,11 +91,13 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
     }
     else {
         item = new QStandardItem;
-        const QString basename = QFileInfo(urlString).baseName();
+        const QString subTitle = url.isLocalFile() ? url.path() : url.prettyUrl();
+        QString basename = QFileInfo(urlString).baseName();
+        if (basename.isNull())
+            basename = subTitle;
         item->setText(basename);
         item->setIcon(KIcon(KMimeType::iconNameForUrl(url)));
         item->setData(url.url(), Kickoff::UrlRole);
-        QString subTitle = url.isLocalFile() && url.path().length() > 1 ? url.path() : url.prettyUrl();
         item->setData(subTitle, Kickoff::SubTitleRole);
 
         setSpecialUrlProperties(url, item);
