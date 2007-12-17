@@ -119,6 +119,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
             this, SLOT(slotPreviewExited(K3Process *)));
 
     QBoxLayout *topLayout = new QHBoxLayout(this);
+    topLayout->setMargin(0);
     topLayout->setSpacing(KDialog::spacingHint());
 
     // left column
