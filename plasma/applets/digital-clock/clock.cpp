@@ -55,15 +55,9 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_showDay(false),
       m_showTimezone(false),
       m_twentyFour(false),
-      m_sizeHint(),
-      m_timezone(),
-      m_prettyTimezone(),
-      m_time(),
-      m_date(),
       m_dialog(0),
       m_calendar(0),
-      m_layout(0),
-      m_lastTimeSeen()
+      m_layout(0)
 {
     setHasConfigurationInterface(true);
 
@@ -80,14 +74,8 @@ void Clock::init()
 
     kDebug() << "showTimezone:" << m_showTimezone;
 
-    //if (formFactor() == Plasma::Planar ||
-    //     formFactor() == Plasma::MediaCenter) {
-    //    m_showDate = cg.readEntry("showDate", false);
-    //    m_showYear = cg.readEntry("showYear", false);
-    //} else {
     m_showDate = cg.readEntry("showDate", false);
     m_showYear = cg.readEntry("showYear", false);
-    //}
 
     m_showDay = cg.readEntry("showDay", true);
     m_twentyFour = cg.readEntry("twentyFour", true);
@@ -113,12 +101,9 @@ Qt::Orientations Clock::expandingDirections() const
 
 void Clock::constraintsUpdated(Plasma::Constraints)
 {
-    if (formFactor() == Plasma::Planar ||
-        formFactor() == Plasma::MediaCenter) {
-        m_sizeHint = QSize(200, 72);
-    } else {
-        m_sizeHint = QSize(120, 48);
-    }
+    // I'm not sure why this is needed, since we don't actually change
+    // any geometry in this method, but it screws up the system tray
+    // without it.
     updateGeometry();
 }
 
@@ -279,9 +264,8 @@ Clock::~Clock()
 void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
     Q_UNUSED(option);
-    //TODO Draw grey rectangle around numbers, as in Nuno's idea and in his mock. Should be in the svg.
 
-    if ( m_time.isValid() && m_date.isValid() ) {
+    if (m_time.isValid() && m_date.isValid()) {
 
         p->setFont(KGlobalSettings::smallestReadableFont());
 
@@ -345,7 +329,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         } else {
             timeString = m_time.toString("h:mm AP");
         }
-        
+
         m_plainClockFont.setBold(m_plainClockFontBold);
         m_plainClockFont.setItalic(m_plainClockFontItalic);
 
