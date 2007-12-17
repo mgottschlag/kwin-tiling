@@ -86,21 +86,19 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
 
         setSpecialUrlProperties(desktopUrl, item);
     }
+    else if (url.scheme() == "leave") {
+        item = LeaveModel::createStandardItem(urlString);
+    }
     else {
-        if (url.scheme() == "leave") {
-            item = LeaveModel::createStandardItem(urlString);
-        }
-        if (! item) {
-            item = new QStandardItem;
-            const QString basename = QFileInfo(urlString).baseName();
-            item->setText(basename);
-            item->setIcon(KIcon(KMimeType::iconNameForUrl(url)));
-            item->setData(url.url(), Kickoff::UrlRole);
-            QString subTitle = url.isLocalFile() && url.path().length() > 1 ? url.path() : url.prettyUrl();
-            item->setData(subTitle, Kickoff::SubTitleRole);
+        item = new QStandardItem;
+        const QString basename = QFileInfo(urlString).baseName();
+        item->setText(basename);
+        item->setIcon(KIcon(KMimeType::iconNameForUrl(url)));
+        item->setData(url.url(), Kickoff::UrlRole);
+        QString subTitle = url.isLocalFile() && url.path().length() > 1 ? url.path() : url.prettyUrl();
+        item->setData(subTitle, Kickoff::SubTitleRole);
 
-            setSpecialUrlProperties(url, item);
-        }
+        setSpecialUrlProperties(url, item);
     }
 
     return item;
