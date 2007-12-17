@@ -41,10 +41,13 @@ public:
 
 protected slots:
     void sceneRectChanged(const QRectF &rect);
+    void resizeEvent(QResizeEvent *event);
 
 private:
     Plasma::Corona m_corona;
     Plasma::FormFactor m_formfactor;
+    Plasma::Containment *m_containment;
+    Plasma::Applet *m_applet;
 };
 
 #endif

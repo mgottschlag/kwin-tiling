@@ -35,7 +35,9 @@ using namespace Plasma;
 
 FullView::FullView(const QString &ff, QWidget *parent)
     : QGraphicsView(parent),
-      m_formfactor(Plasma::Planar)
+      m_formfactor(Plasma::Planar),
+      m_containment(0),
+      m_applet(0)
 {
     QString formfactor = ff.toLower();
     if (formfactor == "vertical") {
@@ -59,26 +61,34 @@ FullView::FullView(const QString &ff, QWidget *parent)
 
 void FullView::addApplet(const QString &a)
 {
-    Containment *containment = m_corona.addContainment("null");
-    containment->setFormFactor(m_formfactor);
-    Applet *applet = containment->addApplet(a, QVariantList(),
+    m_containment = m_corona.addContainment("null");
+    m_containment->setFormFactor(m_formfactor);
+    m_applet = m_containment->addApplet(a, QVariantList(),
 					    0, QRectF(0, 0, -1, -1));
-    applet->setFlag(QGraphicsItem::ItemIsMovable, false);
-    if (applet->failedToLaunch()) {
+    m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
+    if (m_applet->failedToLaunch()) {
         // TODO Can we give a better error message somehow?
-        applet->setFailedToLaunch(true,
+        m_applet->setFailedToLaunch(true,
                                   i18n("The applet '%1' could not be loaded", a));
     }
 
     setSceneRect(m_corona.sceneRect());
-    setWindowTitle(applet->name());
-    setWindowIcon(SmallIcon(applet->icon()));
+    setWindowTitle(m_applet->name());
+    setWindowIcon(SmallIcon(m_applet->icon()));
+}
+
+void FullView::resizeEvent(QResizeEvent *event)
+{
+    if (!m_applet) {
+        return;
+    }
+    m_containment->resize(size());
+    m_applet->setGeometry(QRectF(QPoint(0, 0), size()));
 }
 
 void FullView::sceneRectChanged(const QRectF &rect)
 {
     setSceneRect(rect);
-    resize(rect.size().toSize());
 }
 
 #include "fullview.moc"
