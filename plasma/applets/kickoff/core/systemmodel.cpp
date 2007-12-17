@@ -239,7 +239,8 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
             }
         }
         else if (index.parent().row()==0) {
-            return d->placesModel->url(sourceIndex).url();
+            KUrl url = d->placesModel->url(sourceIndex);
+            return url.isLocalFile() ? url.path() : url.prettyUrl();
         }
 
         return QVariant();
