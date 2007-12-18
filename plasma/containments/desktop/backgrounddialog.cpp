@@ -306,7 +306,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     
     // static or slideshow?
     m_mode = new QComboBox(main);
-    m_mode->addItem(i18n("Static Picture"));
+    m_mode->addItem(i18n("Wallpaper Image"));
     m_mode->addItem(i18n("Slideshow"));
     leftLayout->addWidget(m_mode);
     connect(m_mode, SIGNAL(currentIndexChanged(int)),
@@ -321,14 +321,12 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     // static picture
     QWidget *staticPictureWidget = new QWidget(stack);
     stack->addWidget(staticPictureWidget);
-    QVBoxLayout *staticPictureLayout = new QVBoxLayout;
+    QGridLayout *staticPictureLayout = new QGridLayout;
+    staticPictureLayout->setColumnStretch(2, 10);
     staticPictureWidget->setLayout(staticPictureLayout);
     
     // combo with backgrounds
-    QHBoxLayout *pictureLayout = new QHBoxLayout;
     QLabel *pictureLabel = new QLabel("&Picture:", staticPictureWidget);
-    pictureLayout->addWidget(pictureLabel);
-    pictureLayout->addSpacing(20);
     m_view = new QComboBox(main);
     m_model = new BackgroundListModel(m_ratio, this);
     m_view->setModel(m_model);
@@ -336,11 +334,11 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     connect(m_view, SIGNAL(currentIndexChanged(int)),
             this, SLOT(update()));
     pictureLabel->setBuddy(m_view);
-    pictureLayout->addWidget(m_view, 1);
-    
+    staticPictureLayout->addWidget(pictureLabel, 0, 0, Qt::AlignRight);
+    staticPictureLayout->addWidget(m_view, 0, 1, 1, 2);
+
     // resize method
-    QHBoxLayout *resizeMethodLayout = new QHBoxLayout;
-    QLabel *resizeMethodLabel = new QLabel(i18n("P&osition:"), staticPictureWidget);
+    QLabel *resizeMethodLabel = new QLabel(i18n("P&ositioning:"), staticPictureWidget);
     m_resizeMethod = new QComboBox(main);
     m_resizeMethod->addItem(i18n("Scaled"), 
                             Background::Scale);
@@ -355,32 +353,23 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     connect(m_resizeMethod, SIGNAL(currentIndexChanged(int)),
             this, SLOT(update()));
     resizeMethodLabel->setBuddy(m_resizeMethod);
-    resizeMethodLayout->addWidget(resizeMethodLabel);
-    resizeMethodLayout->addWidget(m_resizeMethod);
-    
+    staticPictureLayout->addWidget(resizeMethodLabel, 1, 0, Qt::AlignRight);
+    staticPictureLayout->addWidget(m_resizeMethod, 1, 1);
+
     // color
-    QHBoxLayout *colorLayout = new QHBoxLayout;
     QLabel *colorLabel = new QLabel(i18n("&Color:"), staticPictureWidget);
     m_color = new KColorButton(this);
     m_color->setColor(palette().color(QPalette::Window));
     connect(m_color, SIGNAL(changed(QColor)), main, SLOT(update()));
     colorLabel->setBuddy(m_color);
-    colorLayout->addWidget(colorLabel);
-    colorLayout->addWidget(m_color);
-    
+    staticPictureLayout->addWidget(colorLabel, 2, 0, Qt::AlignRight);
+    staticPictureLayout->addWidget(m_color, 2, 1);
+
+    staticPictureLayout->setRowStretch(3, 10);
     m_metadataSeparator = new KSeparator(Qt::Horizontal, staticPictureWidget);
     m_authorLine = new QLabel(staticPictureWidget);
     m_emailLine = new QLabel(staticPictureWidget);
-    
-    staticPictureLayout->addStrut(350);
-    staticPictureLayout->addLayout(pictureLayout);
-    staticPictureLayout->addLayout(resizeMethodLayout);
-    staticPictureLayout->addLayout(colorLayout);
-    staticPictureLayout->addWidget(m_metadataSeparator);
-    staticPictureLayout->addWidget(m_authorLine);
-    staticPictureLayout->addWidget(m_emailLine);
-    staticPictureLayout->addStretch();
-    
+
     // slideshow
     QWidget *slideshowWidget = new QWidget(stack);
     stack->addWidget(slideshowWidget);
