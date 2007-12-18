@@ -176,17 +176,27 @@ void DefaultDesktop::reloadConfig()
         filters << "*.png" << "*.jpeg" << "*.jpg" << "*.svg" << "*.svgz";
         
         m_slideFiles.clear();
-        foreach (QString path, dirs) {
+
+        for (int i = 0; i < dirs.size(); ++i) {
+            QString path = dirs[i];
             // TODO load packages, too
             QDir dir(path);
             dir.setNameFilters(filters);
             dir.setFilter(QDir::Files | QDir::Hidden);
+
             QFileInfoList files = dir.entryInfoList();
-            foreach (QFileInfo wp, files)
-            {
+            foreach (QFileInfo wp, files) {
                 m_slideFiles.append(wp.filePath());
             }
+
+            // now make it look in sub-dirs
+            dir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
+            QFileInfoList subdirs = dir.entryInfoList();
+            foreach (QFileInfo wp, subdirs) {
+                dirs.append(wp.filePath());
+            }
         }
+
         int delay = cg.readEntry("slideTimer", 60);
         m_slideshowTimer.setInterval(delay * 1000);
         if (!m_slideshowTimer.isActive()) {
