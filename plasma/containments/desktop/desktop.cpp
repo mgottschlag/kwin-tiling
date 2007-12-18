@@ -155,6 +155,8 @@ void DefaultDesktop::applyConfig()
 
 void DefaultDesktop::reloadConfig()
 {
+    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
+
     KConfigGroup cg = config();
     
     m_backgroundMode = cg.readEntry("backgroundmode", 
@@ -186,7 +188,8 @@ void DefaultDesktop::reloadConfig()
 
             QFileInfoList files = dir.entryInfoList();
             foreach (QFileInfo wp, files) {
-                m_slideFiles.append(wp.filePath());
+                int position = m_slideFiles.size() == 0 ? 0 : qrand() % m_slideFiles.size();
+                m_slideFiles.insert(position, wp.filePath());
             }
 
             // now make it look in sub-dirs

@@ -401,16 +401,6 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
         i18n("&Remove directory"),
         slideshowWidget);
     connect(m_removeDir, SIGNAL(clicked()), this, SLOT(slotRemoveDir()));
-    m_moveUp = new QPushButton(
-        KIcon("go-up"),
-        i18n("Move &up"),
-        slideshowWidget);
-    connect(m_moveUp, SIGNAL(clicked()), this, SLOT(slotMoveUp()));
-    m_moveDown = new QPushButton(
-        KIcon("go-down"),
-        i18n("Move &down"),
-        slideshowWidget);
-    connect(m_moveDown, SIGNAL(clicked()), this, SLOT(slotMoveDown()));
     
     QHBoxLayout *slideshowDelayLayout = new QHBoxLayout;
     QLabel *slideshowDelayLabel = new QLabel(
@@ -428,8 +418,6 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     dirlistLayout->addLayout(dirlistButtons);
     dirlistButtons->addWidget(m_addDir);
     dirlistButtons->addWidget(m_removeDir);
-    dirlistButtons->addWidget(m_moveUp);
-    dirlistButtons->addWidget(m_moveDown);
     dirlistButtons->addStretch();
     slideshowLayout->addLayout(dirlistLayout);
     slideshowLayout->addLayout(slideshowDelayLayout);
@@ -599,32 +587,10 @@ void BackgroundDialog::slotRemoveDir()
     }
 }
 
-void BackgroundDialog::slotMoveUp()
-{
-    int row = m_dirlist->currentRow();
-    if (row > 0) {
-        QListWidgetItem *item = m_dirlist->takeItem(row);
-        m_dirlist->insertItem(row - 1, item);
-        m_dirlist->setCurrentRow(row - 1);
-    }
-}
-
-void BackgroundDialog::slotMoveDown()
-{
-    int row = m_dirlist->currentRow();
-    if (row >= 0 && row < m_dirlist->count() - 1) {
-        QListWidgetItem *item = m_dirlist->takeItem(row);
-        m_dirlist->insertItem(row + 1, item);
-        m_dirlist->setCurrentRow(row + 1);
-    }
-}
-
 void BackgroundDialog::updateSlideshow()
 {
     int row = m_dirlist->currentRow();
     m_removeDir->setEnabled(row != -1);
-    m_moveUp->setEnabled(row > 0);
-    m_moveDown->setEnabled(row >= 0 && row < m_dirlist->count() - 1);
     
     // populate background list
     m_slideshowBackgrounds.clear();

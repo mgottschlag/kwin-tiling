@@ -63,8 +63,6 @@ private:
     QListWidget *m_dirlist;
     QPushButton *m_addDir;
     QPushButton *m_removeDir;
-    QPushButton *m_moveUp;
-    QPushButton *m_moveDown;
     QTimeEdit *m_slideshowDelay;
     
     QString m_img;
@@ -89,8 +87,6 @@ private slots:
     
     void slotAddDir();
     void slotRemoveDir();
-    void slotMoveUp();
-    void slotMoveDown();
     void updateSlideshow();
     void updateSlideshowPreview();
     
