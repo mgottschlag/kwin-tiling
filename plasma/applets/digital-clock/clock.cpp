@@ -23,11 +23,11 @@
 
 #include <math.h>
 
-#include <QPainter>
-#include <QStyleOptionGraphicsItem>
-#include <QSpinBox>
-#include <QTimeLine>
-#include <QGraphicsView>
+#include <QtGui/QPainter>
+#include <QtGui/QStyleOptionGraphicsItem>
+#include <QtGui/QSpinBox>
+#include <QtCore/QTimeLine>
+#include <QtGui/QGraphicsView>
 #include <QtGui/QGraphicsSceneMouseEvent>
 
 #include <KDebug>
@@ -38,7 +38,7 @@
 #include <KDialog>
 #include <KColorScheme>
 #include <KGlobalSettings>
-#include <kdatepicker.h>
+#include <KDatePicker>
 #include <plasma/theme.h>
 #include <plasma/dialog.h>
 
@@ -126,7 +126,6 @@ void Clock::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
     if(event->buttons () == Qt::LeftButton) {
-        kDebug() << "*Click*";
         showCalendar(event);
     }
 }
@@ -135,7 +134,7 @@ void Clock::showCalendar(QGraphicsSceneMouseEvent *event)
 {
     if (m_calendar == 0) {
         m_calendar = new Plasma::Dialog();
-        //m_calendar->setStyleSheet("{ border : 0px }");
+        //m_calendar->setStyleSheet("{ border : 0px }"); // FIXME: crashes
         m_layout = new QVBoxLayout();
         m_layout->setSpacing(0);
         m_layout->setMargin(0);
@@ -146,7 +145,7 @@ void Clock::showCalendar(QGraphicsSceneMouseEvent *event)
         m_calendar->adjustSize();
     }
 
-    if (m_calendar->isVisible()){
+    if (m_calendar->isVisible()) {
         m_calendar->hide();
     } else {
         kDebug(); 
@@ -160,7 +159,7 @@ void Clock::showConfigurationInterface()
     if (m_dialog == 0) {
         m_dialog = new KDialog;
 
-        m_dialog->setCaption( i18n("Configure Clock") );
+        m_dialog->setCaption(i18n("Configure Clock"));
 
         QWidget *widget = new QWidget;
         ui.setupUi(widget);
@@ -282,7 +281,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             if (m_showDate) {
                 dateString = m_date.toString("d MMM");
                 if (m_showDay) {
-                    QString weekday = QDate::shortDayName(m_date.dayOfWeek()); // FIXME: Respect timezone settings
+                    QString weekday = QDate::shortDayName(m_date.dayOfWeek());
                     dateString = weekday + ", "  + dateString;
                 }
                 if (m_showYear) {
@@ -332,7 +331,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
         m_plainClockFont.setBold(m_plainClockFontBold);
         m_plainClockFont.setItalic(m_plainClockFontItalic);
-
+ 
         // Choose a relatively big font size to start with and decrease it from there to fit.
         m_plainClockFont.setPointSize(qMax((int)(contentsRect.height()/1.5), 1));
         p->setFont(m_plainClockFont);

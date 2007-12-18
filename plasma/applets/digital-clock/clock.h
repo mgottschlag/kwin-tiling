@@ -21,16 +21,16 @@
 #ifndef CLOCK_H
 #define CLOCK_H
 
-#include <QTime>
-#include <QDate>
-#include <QX11Info>
+#include <QtCore/QTime>
+#include <QtCore/QDate>
+#include <QtGui/QX11Info>
 
 #include <plasma/applet.h>
 #include <plasma/dataengine.h>
 #include <plasma/dialog.h>
 #include "ui_clockConfig.h"
 #include "ui_calendar.h"
-#include <kdatepicker.h>
+#include <KDatePicker>
 
 
 class KDialog;
@@ -90,7 +90,7 @@ class Clock : public Plasma::Applet
         Plasma::Dialog *m_calendar;
         QVBoxLayout *m_layout;
         QTime m_lastTimeSeen;
-        /// Designer Config file
+        /// Designer Config files
         Ui::clockConfig ui;
         Ui::calendar m_calendarUi;
 };
