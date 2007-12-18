@@ -14,6 +14,7 @@
 
 #include "actions_listview_widget.h"
 
+#include <QVBoxLayout>
 #include <Qt3Support/Q3Header>
 
 #include <klocale.h>
@@ -30,18 +31,27 @@ namespace KHotKeys
 {
 
 Actions_listview_widget::Actions_listview_widget( QWidget* parent_P, const char* name_P )
-    : Actions_listview_widget_ui( parent_P, name_P ), recent_item( NULL ),
+    : QWidget( parent_P ), recent_item( NULL ),
         saved_current_item( NULL )
     {
 //    actions_listview->setSorting( 0 );
-    actions_listview->header()->hide();
-    actions_listview->addColumn( "" );
+    actions_listview = new KHListView( this );
+    actions_listview->addColumn( i18n("Actions") );
+    actions_listview->header()->setStretchEnabled( true );
     actions_listview->setRootIsDecorated( true ); // CHECKME
+    actions_listview->setDragEnabled( true );
+    actions_listview->setDropVisualizer( true );
+    actions_listview->setAcceptDrops( true );
     connect( actions_listview, SIGNAL( current_changed( Q3ListViewItem* )),
         SLOT( current_changed( Q3ListViewItem* )));
     connect( actions_listview, SIGNAL( moved( Q3ListViewItem*, Q3ListViewItem*, Q3ListViewItem* )),
         SLOT( item_moved( Q3ListViewItem*, Q3ListViewItem*, Q3ListViewItem* )));
     // KHotKeys::Module::changed()
+
+    QVBoxLayout* layout = new QVBoxLayout( this );
+    layout->addWidget( actions_listview );
+    layout->setMargin( 0 );
+    layout->setSpacing( 0 );
     }
 
 void Actions_listview_widget::action_name_changed( const QString& )

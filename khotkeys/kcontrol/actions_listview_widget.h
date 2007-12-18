@@ -11,9 +11,11 @@
 #ifndef _ACTIONS_LISTVIEW_WIDGET_H_
 #define _ACTIONS_LISTVIEW_WIDGET_H_
 
-#include <action_data.h>
+#include <Q3ListViewItem>
 
-#include <actions_listview_widget_ui.h>
+#include <khlistview.h>
+
+#include <action_data.h>
 
 
 namespace KHotKeys
@@ -22,8 +24,7 @@ namespace KHotKeys
 class Action_listview_item;
 class Action_data_base;
 
-class Actions_listview_widget
-    : public Actions_listview_widget_ui
+class Actions_listview_widget : public QWidget
     { 
     Q_OBJECT
     public:
@@ -43,6 +44,7 @@ class Actions_listview_widget
             Action_listview_item* item_parent_P );
         Action_listview_item* recent_item;
         Action_listview_item* saved_current_item;
+        KHListView* actions_listview;
     private Q_SLOTS:
         void item_moved( Q3ListViewItem* item_P, Q3ListViewItem* was_after_P, Q3ListViewItem* after_P );
         void current_changed( Q3ListViewItem* item_P );
@@ -94,11 +96,6 @@ void Actions_listview_widget::clear()
 
 // Actions_listview
 
-inline
-Actions_listview_widget* Actions_listview::widget()
-    {
-    return _widget;
-    }
     
 // Action_listview_item
 

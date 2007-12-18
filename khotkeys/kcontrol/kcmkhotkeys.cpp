@@ -90,12 +90,16 @@ Module::Module( QWidget* parent_P, const QVariantList & )
     init_global_data( false, this ); // don't grab keys
     init_arts();
     QVBoxLayout* vbox = new QVBoxLayout( this );
-    vbox->setSpacing( 6 );
-    vbox->setMargin( 11 );
+    vbox->setSpacing( KDialog::spacingHint() );
+    vbox->setMargin( 0 );
     QSplitter* splt = new QSplitter( this );
     actions_listview_widget = new Actions_listview_widget( splt );
+    actions_listview_widget->setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Expanding );
     tab_widget = new Tab_widget( splt );
+    tab_widget->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
     vbox->addWidget( splt );
+    splt->setStretchFactor( 0, 0 );
+    splt->setStretchFactor( 1, 1 );
     buttons_widget = new Main_buttons_widget( this );
     vbox->addWidget( buttons_widget );
     connect( actions_listview_widget, SIGNAL( current_action_changed()),
