@@ -533,9 +533,9 @@ void AbstractTaskItem::close()
 
 TaskGroupItem::TaskGroupItem(QGraphicsItem *parent, QObject *parentObject)
     : AbstractTaskItem(parent, parentObject)
+    , _activeTask(-1)
     , _borderStyle(NoBorder)
     , _potentialDropAction(NoAction)
-    , _activeTask(-1)
     , _caretIndex(0)
     , _allowSubGroups(true)
 {
