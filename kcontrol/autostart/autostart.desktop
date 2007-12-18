@@ -15,6 +15,7 @@ Name[es]=Inicio automático
 Name[pt]=Arranque
 Name[pt_BR]=Arranque
 Name[sv]=Automatisk start
+Name[xx]=xxAutostartxx
 
 Comment=A Configuration tool for managing what programs start up with KDE.
 Comment[es]=Un herramienta de configuración para administrar qué programas se iniciarán con KDE.
@@ -22,6 +23,7 @@ Comment[et]=KDE juhtimiskeskuse tööriist, millega saab määrata, millised rak
 Comment[pt]=Uma ferramenta do KControl para gerir os programas que arrancam com o KDE.
 Comment[pt_BR]=Uma ferramenta do KControl para gerir os programas que arrancam com o KDE.
 Comment[sv]=Ett inställningsverktyg för att hantera vilka program som startas tillsammans med KDE.
+Comment[xx]=xxA Configuration tool for managing what programs start up with KDE.xx
 
 Keywords=Autostart Manager
 Keywords[es]=Administrador de inicio automático
@@ -30,5 +32,6 @@ Keywords[ja]=自動起動マネージャ
 Keywords[pt]=Gestor do Arranque
 Keywords[pt_BR]=Gestor do Arranque
 Keywords[sv]=Autostart hantering
+Keywords[xx]=xxAutostart Managerxx
 
 Categories=Qt;KDE;X-KDE-settings-components;
