@@ -6,7 +6,7 @@ X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_khotkeys
 X-KDE-Init-Symbol=khotkeys
 X-KDE-ParentApp=kcontrol
-X-KDE-System-Settings-Parent-Category=accessibility
+X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Input Actions
 Name[af]=Inset Aksies
