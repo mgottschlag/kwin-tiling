@@ -73,13 +73,13 @@ KSMShutdownFeedback * KSMShutdownFeedback::s_pSelf = 0L;
 
 KSMShutdownFeedback::KSMShutdownFeedback()
  : QWidget( 0L, Qt::Popup ),
-   m_currentY( 0 )
+    m_currentY( 0 ),
+    m_pixmap( size() )
 {
     setObjectName( "feedbackwidget" );
     setAttribute( Qt::WA_NoSystemBackground );
     setAttribute( Qt::WA_PaintOnScreen );
     setGeometry( QApplication::desktop()->geometry() );
-    m_pixmap.resize( size() );
     m_pixmap.fill( Qt::transparent );
     QTimer::singleShot( 10, this, SLOT( slotPaintEffect() ) );
 }
@@ -317,6 +317,8 @@ bool KSMPushButton::event( QEvent *e )
 
 //////
 
+Q_DECLARE_METATYPE(Solid::Control::PowerManager::SuspendMethod)
+
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
                                 bool maysd, KWorkSpace::ShutdownType sdtype )
   : QDialog( parent, Qt::Popup )
@@ -394,15 +396,23 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
             btnHalt->setFocus();
 
         QMenu *shutdownMenu = new QMenu( btnHalt );
-        connect( shutdownMenu, SIGNAL(activated(int)), SLOT(slotSuspend(int)) );
+        QActionGroup* spdActionGroup = new QActionGroup(shutdownMenu);
+        connect( spdActionGroup, SIGNAL(triggered(QAction*)), SLOT(slotSuspend(QAction*)) );
         btnHalt->setPopupMenu( shutdownMenu );
         Solid::Control::PowerManager::SuspendMethods spdMethods = Solid::Control::PowerManager::supportedSuspendMethods();
-        if( spdMethods & Solid::Control::PowerManager::Standby )
-          shutdownMenu->insertItem( i18n("Standby"), Solid::Control::PowerManager::Standby );
-        if( spdMethods & Solid::Control::PowerManager::ToRam )
-          shutdownMenu->insertItem( i18n("Suspend to RAM"), Solid::Control::PowerManager::ToRam );
-        if( spdMethods & Solid::Control::PowerManager::ToDisk )
-          shutdownMenu->insertItem( i18n("Suspend to Disk"), Solid::Control::PowerManager::ToDisk );
+        if( spdMethods & Solid::Control::PowerManager::Standby ) {
+            QAction* action = new QAction(i18n("Standby"), spdActionGroup);
+            action->setData(QVariant::fromValue(Solid::Control::PowerManager::Standby));
+        }
+        if( spdMethods & Solid::Control::PowerManager::ToRam ) {
+            QAction* action = new QAction(i18n("Suspend to RAM"), spdActionGroup);
+            action->setData(QVariant::fromValue(Solid::Control::PowerManager::ToRam));
+        }
+        if( spdMethods & Solid::Control::PowerManager::ToDisk ) {
+            QAction* action = new QAction(i18n("Suspend to Disk"), spdActionGroup);
+            action->setData(QVariant::fromValue(Solid::Control::PowerManager::ToDisk));
+        }
+        shutdownMenu->addActions(spdActionGroup->actions());
 
         // Reboot
         KSMPushButton* btnReboot = new KSMPushButton( i18n("Restart Computer"), this );
@@ -418,21 +428,21 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
             cur = def;
 
         QMenu *rebootMenu = new QMenu( btnReboot );
-        connect( rebootMenu, SIGNAL(activated(int)), SLOT(slotReboot(int)) );
+            QActionGroup* rebootActionGroup = new QActionGroup(rebootMenu);
+            connect( rebootActionGroup, SIGNAL(triggered(QAction*)), SLOT(slotReboot(QAction*)) );
         btnReboot->setPopupMenu( rebootMenu );
 
         int index = 0;
-        for (QStringList::ConstIterator it = rebootOptions.begin(); it != rebootOptions.end(); ++it, ++index)
-            {
+            for (QStringList::ConstIterator it = rebootOptions.begin(); it != rebootOptions.end(); ++it, ++index) {
             QString label = (*it);
             label=label.replace('&',"&&");
+                QAction* action = new QAction(label, rebootActionGroup);
+                action->setData(index);
             if (index == cur) {
-                rebootMenu->insertItem( label + i18nc("current option in boot loader", " (current)"), index );
-            }
-            else {
-                rebootMenu->insertItem( label, index );
+                    action->setText( label + i18nc("current option in boot loader", " (current)") );
             }
         }
+            rebootMenu->addActions(rebootActionGroup->actions());
         }
     }
 
@@ -481,8 +491,9 @@ void KSMShutdownDlg::slotReboot()
     accept();
 }
 
-void KSMShutdownDlg::slotReboot(int opt)
+void KSMShutdownDlg::slotReboot(QAction* action)
 {
+    int opt = action->data().toInt();
     if (int(rebootOptions.size()) > opt)
         m_bootOption = rebootOptions[opt];
     m_shutdownType = KWorkSpace::ShutdownTypeReboot;
@@ -498,10 +509,10 @@ void KSMShutdownDlg::slotHalt()
 }
 
 
-void KSMShutdownDlg::slotSuspend(int method)
+void KSMShutdownDlg::slotSuspend(QAction* action)
 {
     m_bootOption.clear();
-    Solid::Control::PowerManager::SuspendMethod spdMethod = static_cast<Solid::Control::PowerManager::SuspendMethod>(method);
+    Solid::Control::PowerManager::SuspendMethod spdMethod = action->data().value<Solid::Control::PowerManager::SuspendMethod>();
     Solid::Control::PowerManager::suspend( spdMethod );
     reject();
 }

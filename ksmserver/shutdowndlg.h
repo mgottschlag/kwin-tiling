@@ -106,8 +106,8 @@ public Q_SLOTS:
     void slotLogout();
     void slotHalt();
     void slotReboot();
-    void slotReboot(int);
-    void slotSuspend(int);
+    void slotReboot(QAction*);
+    void slotSuspend(QAction*);
 
 protected:
     ~KSMShutdownDlg() {}

@@ -27,6 +27,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // needed to avoid clash with INT8 defined in X11/Xmd.h on solaris
 #define QT_CLEAN_NAMESPACE 1
+#include <QStringList>
 #include <QObject>
 
 #include <QSocketNotifier>
@@ -41,7 +42,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define SESSION_PREVIOUS_LOGOUT "saved at previous logout"
 #define SESSION_BY_USER  "saved by user"
 
-typedef QList<Q3CString> QCStringList;
 class KSMListener;
 class KSMConnection;
 class KSMClient;

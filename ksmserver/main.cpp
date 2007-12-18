@@ -182,11 +182,10 @@ void sanity_check( int argc, char* argv[] )
         fputs(msg_post, stderr);
 
         QApplication a(argc, argv);
-        Q3CString qmsg(256+path.length());
-        qmsg.sprintf(msg.data(), path.data());
+        QString qmsg = QString::fromLatin1(msg); // no translations possible yet...
+        qmsg.replace("%s", path);
         qmsg = msg_pre+qmsg+msg_post;
-        KMessageBox::error(0, "KDE Installation Problem!",
-            QLatin1String(qmsg.data()));
+        KMessageBox::error(0, "KDE Installation Problem!", qmsg);
         exit(255);
     }
 }

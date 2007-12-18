@@ -40,7 +40,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 #include <time.h>
 
-#include <k3staticdeleter.h>
+#include <kglobal.h>
 #include <krandom.h>
 #include "server.h"
 
@@ -82,17 +82,15 @@ void KSMClient::resetState()
  * In this case SmsGenerateClientID() returns NULL, but we really want a
  * client ID, so we fake one.
  */
-static K3StaticDeleter<QString> smy_addr;
+K_GLOBAL_STATIC(QString, my_addr)
 char * safeSmsGenerateClientID( SmsConn /*c*/ )
 {
 //  Causes delays with misconfigured network :-/.
 //    char *ret = SmsGenerateClientID(c);
     char* ret = NULL;
     if (!ret) {
-       static QString *my_addr = 0;
-       if (!my_addr) {
+       if (my_addr->isEmpty()) {
 //           qWarning("Can't get own host name. Your system is severely misconfigured\n");
-           smy_addr.setObject(my_addr,new QString);
 
            /* Faking our IP address, the 0 below is "unknown" address format
               (1 would be IP, 2 would be DEC-NET format) */
