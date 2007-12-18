@@ -53,6 +53,12 @@ private Q_SLOTS:
     void freeSpaceInfoAvailable(const QString& mountPoint, quint64 kbSize,
                                 quint64 kbUsed, quint64 kbAvailable);
 
+    void sourceDataChanged(const QModelIndex &start, const QModelIndex &end);
+    void sourceRowsAboutToBeInserted(const QModelIndex &parent, int start, int end);
+    void sourceRowsInserted(const QModelIndex &parent, int start, int end);
+    void sourceRowsAboutToBeRemoved(const QModelIndex &parent, int start, int end);
+    void sourceRowsRemoved(const QModelIndex &parent, int start, int end);
+
 private:
     class Private;
     Private * const d;

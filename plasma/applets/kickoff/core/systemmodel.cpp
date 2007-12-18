@@ -28,6 +28,7 @@
 #include <QTimer>
 
 // KDE
+#include <KConfigGroup>
 #include <KDiskFreeSpace>
 #include <KLocalizedString>
 #include <KIcon>
@@ -49,6 +50,12 @@
 
 using namespace Kickoff;
 
+static const int APPLICATIONS_ROW = 0;
+static const int BOOKMARKS_ROW = 1;
+static const int REMOVABLE_ROW = 2;
+static const int FIXED_ROW = 3;
+static const int LAST_ROW = FIXED_ROW;
+
 struct UsageInfo
 {
     UsageInfo()
@@ -69,12 +76,27 @@ public:
         ,placesModel(new KFilePlacesModel(parent))
     {
         q->setSourceModel(placesModel);
-        topLevelSections << i18n("Places")
+
+        connect(placesModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+                q, SLOT(sourceDataChanged(QModelIndex,QModelIndex)));
+        connect(placesModel, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)),
+                q, SLOT(sourceRowsAboutToBeInserted(QModelIndex,int,int)));
+        connect(placesModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
+                q, SLOT(sourceRowsInserted(QModelIndex,int,int)));
+        connect(placesModel, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)),
+                q, SLOT(sourceRowsAboutToBeRemoved(QModelIndex,int,int)));
+        connect(placesModel, SIGNAL(rowsRemoved(QModelIndex,int,int)),
+                q, SLOT(sourceRowsRemoved(QModelIndex,int,int)));
+
+        topLevelSections << i18n("Applications")
+                         << i18n("Places")
                          << i18n("Removable Storage")
                          << i18n("Storage");
+        loadApplications();
         connect(&refreshTimer, SIGNAL(timeout()),
                 q, SLOT(startRefreshingUsageInfo()));
         refreshTimer.start(10000);
+        QTimer::singleShot(0, q, SLOT(startRefreshingUsageInfo()));
     }
 
     void queryFreeSpace(const QString& mountPoint)
@@ -84,9 +106,18 @@ public:
                 q, SLOT(freeSpaceInfoAvailable(QString,quint64,quint64,quint64)));
     }
 
+    void loadApplications()
+    {
+       KConfigGroup appsGroup = componentData().config()->group("SystemApplications");
+       QStringList defaultApps;
+       defaultApps << "kde4-systemsettings.desktop";
+       appsList = appsGroup.readEntry("DesktopFiles", defaultApps);
+    }
+
     SystemModel * const q;
     KFilePlacesModel *placesModel;
     QStringList topLevelSections;
+    QStringList appsList;
     QList<QString> mountPointsQueue;
     QMap<QString, UsageInfo> usageByMountpoint;
     QTimer refreshTimer;
@@ -110,7 +141,7 @@ QModelIndex SystemModel::mapFromSource(const QModelIndex &sourceIndex) const
     QModelIndex parent;
 
     if (!d->placesModel->isDevice(sourceIndex)) {
-        parent = index(0, 0);
+        parent = index(BOOKMARKS_ROW, 0);
     } else {
         Solid::Device dev = d->placesModel->deviceForIndex(sourceIndex);
 
@@ -122,9 +153,9 @@ QModelIndex SystemModel::mapFromSource(const QModelIndex &sourceIndex) const
         }
 
         if (drive && (drive->isHotpluggable() || drive->isRemovable())) {
-            parent = index(1, 0);
+            parent = index(REMOVABLE_ROW, 0);
         } else {
-            parent = index(2, 0);
+            parent = index(FIXED_ROW, 0);
         }
     }
 
@@ -162,15 +193,19 @@ QModelIndex SystemModel::parent(const QModelIndex &item) const
 int SystemModel::rowCount(const QModelIndex &parent) const
 {
     if (!parent.isValid()) {
-        return 3;
+        return LAST_ROW+1;
     } else if (!parent.parent().isValid()) {
-        return d->placesModel->rowCount();
+        if (parent.row()==APPLICATIONS_ROW) {
+            return d->appsList.size();
+        } else {
+            return d->placesModel->rowCount();
+        }
     } else {
         return 0;
     }
 }
 
-int SystemModel::columnCount(const QModelIndex &parent) const
+int SystemModel::columnCount(const QModelIndex &/*parent*/) const
 {
     return 1;
 }
@@ -185,6 +220,24 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
         }
     }
 
+    if (index.internalId()-1==APPLICATIONS_ROW) {
+        KService::Ptr service = KService::serviceByStorageId(d->appsList[index.row()]);
+
+        switch(role)
+        {
+        case Qt::DisplayRole:
+            return service->name();
+        case Qt::DecorationRole:
+            return KIcon(service->icon());
+        case SubTitleRole:
+            return service->genericName();
+        case UrlRole:
+            return service->entryPath();
+        default:
+            return QVariant();
+        }
+    }
+
     if (role==UrlRole && !d->placesModel->isHidden(mapToSource(index))) {
         QModelIndex parent = index.parent();
         QModelIndex sourceIndex = mapToSource(index);
@@ -192,7 +245,7 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
         bool isDevice = d->placesModel->isDevice(sourceIndex);
         bool wellPlaced = false;
 
-        if (!isDevice && parent.row()==0) {
+        if (!isDevice && parent.row()==BOOKMARKS_ROW) {
             wellPlaced = true;
         } else if (isDevice) {
             Solid::Device dev = d->placesModel->deviceForIndex(sourceIndex);
@@ -206,9 +259,9 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
 
             bool fixed = !drive || (!drive->isHotpluggable() && !drive->isRemovable());
 
-            if (!fixed && parent.row()==1) {
+            if (!fixed && parent.row()==REMOVABLE_ROW) {
                 wellPlaced = true;
-            } else if (fixed && parent.row()==2) {
+            } else if (fixed && parent.row()==FIXED_ROW) {
                 wellPlaced = true;
             }
         }
@@ -237,8 +290,7 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
             if (access) {
                 return access->filePath();
             }
-        }
-        else if (index.parent().row()==0) {
+        } else if (index.parent().row()!=APPLICATIONS_ROW) {
             KUrl url = d->placesModel->url(sourceIndex);
             return url.isLocalFile() ? url.path() : url.prettyUrl();
         }
@@ -333,6 +385,53 @@ void SystemModel::freeSpaceInfoAvailable(const QString& mountPoint, quint64,
             }
         }
     }
+}
+
+void Kickoff::SystemModel::sourceDataChanged(const QModelIndex &start, const QModelIndex &end)
+{
+    if (start.parent().isValid()) return;
+
+    for (int row = BOOKMARKS_ROW; row<=LAST_ROW; ++row) {
+        QModelIndex section = index(row, 0);
+
+        QModelIndex new_start = index(start.row(), start.column(), section);
+        QModelIndex new_end = index(end.row(), end.column(), section);
+        emit dataChanged(new_start, new_end);
+    }
+}
+
+void Kickoff::SystemModel::sourceRowsAboutToBeInserted(const QModelIndex &parent, int start, int end)
+{
+    if (parent.isValid()) return;
+
+    for (int row = BOOKMARKS_ROW; row<=LAST_ROW; ++row) {
+        QModelIndex section = index(row, 0);
+        beginInsertRows(section, start, end);
+    }
+}
+
+void Kickoff::SystemModel::sourceRowsInserted(const QModelIndex &parent, int /*start*/, int /*end*/)
+{
+    if (parent.isValid()) return;
+
+    endInsertRows();
+}
+
+void Kickoff::SystemModel::sourceRowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
+{
+    if (parent.isValid()) return;
+
+    for (int row = BOOKMARKS_ROW; row<=LAST_ROW; ++row) {
+        QModelIndex section = index(row, 0);
+        beginRemoveRows(section, start, end);
+    }
+}
+
+void Kickoff::SystemModel::sourceRowsRemoved(const QModelIndex &parent, int /*start*/, int /*end*/)
+{
+    if (parent.isValid()) return;
+
+    endRemoveRows();
 }
 
 #include "systemmodel.moc"
