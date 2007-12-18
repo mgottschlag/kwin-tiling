@@ -849,6 +849,9 @@ void WindowTaskItem::updateTask()
                                      true);
     setIcon(QIcon(iconPixmap));
     setText(_task->visibleName());
+
+    //redraw
+    update();
 }
 
 void WindowTaskItem::setWindowTask(Task::TaskPtr task)
