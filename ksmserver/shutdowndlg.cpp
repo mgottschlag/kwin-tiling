@@ -337,7 +337,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     XChangeProperty( QX11Info::display(), winId(),
         XInternAtom( QX11Info::display(), "WM_WINDOW_ROLE", False ), XA_STRING, 8, PropModeReplace,
         (unsigned char *)"logoutdialog", strlen( "logoutdialog" ));
-    
+
 //#endif
     m_svg = new Plasma::Svg( "dialogs/shutdowndlg", this);
     connect( m_svg, SIGNAL(repaintNeeded()), this, SLOT(update()) );
@@ -424,24 +424,24 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
         int def, cur;
         if ( DM().bootOptions( rebootOptions, def, cur ) ) {
-        if ( cur == -1 )
-            cur = def;
+            if ( cur == -1 )
+                cur = def;
 
-        QMenu *rebootMenu = new QMenu( btnReboot );
+            QMenu *rebootMenu = new QMenu( btnReboot );
             QActionGroup* rebootActionGroup = new QActionGroup(rebootMenu);
             connect( rebootActionGroup, SIGNAL(triggered(QAction*)), SLOT(slotReboot(QAction*)) );
-        btnReboot->setPopupMenu( rebootMenu );
+            btnReboot->setPopupMenu( rebootMenu );
 
-        int index = 0;
+            int index = 0;
             for (QStringList::ConstIterator it = rebootOptions.begin(); it != rebootOptions.end(); ++it, ++index) {
-            QString label = (*it);
-            label=label.replace('&',"&&");
+                QString label = (*it);
+                label=label.replace('&',"&&");
                 QAction* action = new QAction(label, rebootActionGroup);
                 action->setData(index);
-            if (index == cur) {
+                if (index == cur) {
                     action->setText( label + i18nc("current option in boot loader", " (current)") );
+                }
             }
-        }
             rebootMenu->addActions(rebootActionGroup->actions());
         }
     }
