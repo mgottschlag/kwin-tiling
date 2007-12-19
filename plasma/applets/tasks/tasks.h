@@ -175,9 +175,6 @@ public:
      */
     //QList<QGraphicsItem*> overlays() const;
 
-    /** Returns the tasks applet which owns the task. */
-    Tasks* parentApplet() const;
-
     /**
      * Called when the user clicks on the task to activate it.
      * This usually means bringing the window containing the task
@@ -207,12 +204,15 @@ protected:
     /** Sub-classes should call this method when the task closes. */
     void finished();
 
+    /** Event compression **/
+    void queueUpdate();
 
     // reimplemented
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    virtual void timerEvent(QTimerEvent *event);
     virtual void paint(QPainter *painter,
                        const QStyleOptionGraphicsItem *option,
                        QWidget *widget);
@@ -222,7 +222,6 @@ protected:
        return QSize(MinTaskIconSize, MinTaskIconSize);
    }
 
-protected:
     /** Draws the background for the task item. */
     virtual void drawBackground(QPainter *painter,
                                 const QStyleOptionGraphicsItem *option,
@@ -269,6 +268,8 @@ private:
 
     QPointF _dragOffset;
     AbstractTaskItem* _previousDragTarget;
+    int m_updateTimerId;
+    QTime m_lastUpdate;
 
     // minimum size (in pixels) of a task's icon
     static const int MinTaskIconSize = 48;
@@ -439,8 +440,15 @@ public:
     virtual void close();
     virtual QSizeF maximumSize() const;
 
+    /** Event compression **/
+    void queueGeometryUpdate();
+
 public slots:
     void updateActive(AbstractTaskItem *task);
+
+protected:
+    /** Reimplemented **/
+    virtual void timerEvent(QTimerEvent *event);
 
 private:
     enum DropAction
@@ -480,6 +488,7 @@ private:
     DropAction _potentialDropAction;
     int _caretIndex;
     bool _allowSubGroups;
+    int m_geometryUpdateTimerId;
 
     static const int CaretWidth = 5;
     static const int GroupBorderWidth = 16;

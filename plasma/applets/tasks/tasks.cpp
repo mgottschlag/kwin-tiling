@@ -186,10 +186,11 @@ void Tasks::wheelEvent(QGraphicsSceneWheelEvent *e)
 
 
 AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
-    : Widget(parent,parentObject)
-    , _flags(0)
-    , _fadeTimer(0)
-    , _previousDragTarget(0)
+    : Widget(parent,parentObject),
+      _flags(0),
+      _fadeTimer(0),
+      _previousDragTarget(0),
+      m_updateTimerId(-1)
 {
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
@@ -221,7 +222,36 @@ void AbstractTaskItem::setText(const QString &text)
 {
     _text = text;
 
-    updateGeometry();
+    TaskGroupItem *group = qobject_cast<TaskGroupItem*>(parent());
+    if (group) {
+        group->queueGeometryUpdate();
+    }
+}
+
+void AbstractTaskItem::queueUpdate()
+{
+    if (m_updateTimerId != -1) {
+        return;
+    }
+
+    if (m_lastUpdate.elapsed() < 200) {
+        if (m_updateTimerId == -1) {
+            m_updateTimerId = startTimer(200);
+        }
+
+        return;
+    }
+
+    update();
+    m_lastUpdate.restart();
+}
+
+void AbstractTaskItem::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() == m_updateTimerId) {
+        update();
+        m_updateTimerId = -1;
+    }
 }
 
 QString AbstractTaskItem::text() const
@@ -285,7 +315,10 @@ void AbstractTaskItem::setIcon(const QIcon &icon)
 {
     _icon = icon; //icon.pixmap(MinTaskIconSize);
 
-    updateGeometry();
+    TaskGroupItem *group = qobject_cast<TaskGroupItem*>(parent());
+    if (group) {
+        group->queueGeometryUpdate();
+    }
 }
 
 void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
@@ -473,6 +506,8 @@ void AbstractTaskItem::drawTask(QPainter *painter,
                                 const QStyleOptionGraphicsItem *option,
                                 QWidget *)
 {
+    Q_UNUSED(option)
+
     _icon.paint( painter , iconRect().toRect() );
 
 #if 0
@@ -532,12 +567,13 @@ void AbstractTaskItem::close()
 
 
 TaskGroupItem::TaskGroupItem(QGraphicsItem *parent, QObject *parentObject)
-    : AbstractTaskItem(parent, parentObject)
-    , _activeTask(-1)
-    , _borderStyle(NoBorder)
-    , _potentialDropAction(NoAction)
-    , _caretIndex(0)
-    , _allowSubGroups(true)
+    : AbstractTaskItem(parent, parentObject),
+      _activeTask(-1),
+      _borderStyle(NoBorder),
+      _potentialDropAction(NoAction),
+      _caretIndex(0),
+      _allowSubGroups(true),
+      m_geometryUpdateTimerId(-1)
 {
     setAcceptDrops(true);
 
@@ -592,7 +628,7 @@ void TaskGroupItem::insertTask(AbstractTaskItem *item, int index)
     _tasks.insert(index, item);
 
     layout()->addItem(item);
-    layout()->updateGeometry();
+    queueGeometryUpdate();
 }
 
 void TaskGroupItem::removeTask(AbstractTaskItem *item)
@@ -604,7 +640,7 @@ void TaskGroupItem::removeTask(AbstractTaskItem *item)
     }
 
     layout()->removeItem(item);
-    layout()->updateGeometry();
+    queueGeometryUpdate();
 
     // if the group is now empty then ask the parent to remove it
     if (_tasks.count() == 0) {
@@ -775,6 +811,21 @@ void TaskGroupItem::drawBorder(QPainter *painter,
     }
 }
 
+void TaskGroupItem::queueGeometryUpdate()
+{
+    if (m_geometryUpdateTimerId == -1) {
+        m_geometryUpdateTimerId = startTimer(200);
+    }
+}
+
+void TaskGroupItem::timerEvent(QTimerEvent *event)
+{
+    if (event->timerId() == m_geometryUpdateTimerId) {
+        updateGeometry();
+        m_geometryUpdateTimerId = -1;
+    }
+}
+
 StartupTaskItem::StartupTaskItem(QGraphicsItem *parent, QObject *parentObject)
     : AbstractTaskItem(parent, parentObject)
 {
@@ -851,7 +902,7 @@ void WindowTaskItem::updateTask()
     setText(_task->visibleName());
 
     //redraw
-    update();
+    queueUpdate();
 }
 
 void WindowTaskItem::setWindowTask(Task::TaskPtr task)
