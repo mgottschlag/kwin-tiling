@@ -104,16 +104,20 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
     top->addWidget(tabwidget);
 
     tab1 = new KMouseDlg(this);
-    Q3ButtonGroup *group = new Q3ButtonGroup( tab1 );
+    QButtonGroup *group = new QButtonGroup( tab1 );
     group->setExclusive( true );
-    group->hide();
-    group->insert( tab1->singleClick );
-    group->insert( tab1->doubleClick );
+    group->addButton( tab1->singleClick );
+    group->addButton( tab1->doubleClick );
 
     tabwidget->addTab(tab1, i18n("&General"));
 
-    connect(tab1->handedBox, SIGNAL(clicked(int)), this, SLOT(changed()));
-    connect(tab1->handedBox, SIGNAL(clicked(int)), this, SLOT(slotHandedChanged(int)));
+    group = new QButtonGroup( tab1 );
+    group->setExclusive( true );
+    group->addButton( tab1->rightHanded,RIGHT_HANDED );
+    group->addButton( tab1->leftHanded,LEFT_HANDED );
+
+    connect(group, SIGNAL(buttonClicked(int)), this, SLOT(changed()));
+    connect(group, SIGNAL(buttonClicked(int)), this, SLOT(slotHandedChanged(int)));
 
     wtstr = i18n("If you are left-handed, you may prefer to swap the"
          " functions of the left and right buttons on your pointing device"

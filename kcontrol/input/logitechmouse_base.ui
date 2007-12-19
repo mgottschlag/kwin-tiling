@@ -13,15 +13,12 @@
     </widget>
    </item>
    <item>
-    <widget class="Q3ButtonGroup" name="resolutionSelector" >
+    <widget class="QGroupBox" name="resolutionSelector" >
      <property name="enabled" >
       <bool>false</bool>
      </property>
      <property name="title" >
       <string>Sensor Resolution</string>
-     </property>
-     <property name="radioButtonExclusive" >
-      <bool>true</bool>
      </property>
      <layout class="QHBoxLayout" >
       <item>
@@ -67,15 +64,12 @@
     </widget>
    </item>
    <item>
-    <widget class="Q3ButtonGroup" name="channelSelector" >
+    <widget class="QGroupBox" name="channelSelector" >
      <property name="enabled" >
       <bool>false</bool>
      </property>
      <property name="title" >
       <string>RF Channel</string>
-     </property>
-     <property name="exclusive" >
-      <bool>true</bool>
      </property>
      <layout class="QHBoxLayout" >
       <item>

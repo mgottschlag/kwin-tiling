@@ -11,7 +11,7 @@
   </property>
   <layout class="QVBoxLayout" >
    <item>
-    <widget class="Q3ButtonGroup" name="handedBox" >
+    <widget class="QGroupBox" name="handedBox" >
      <property name="sizePolicy" >
       <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
        <horstretch>0</horstretch>
@@ -20,12 +20,6 @@
      </property>
      <property name="title" >
       <string>Button Order</string>
-     </property>
-     <property name="exclusive" >
-      <bool>true</bool>
-     </property>
-     <property name="radioButtonExclusive" >
-      <bool>true</bool>
      </property>
      <layout class="QGridLayout" >
       <item row="2" column="2" >
@@ -310,14 +304,6 @@
  <layoutdefault spacing="6" margin="11" />
  <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
- <customwidgets>
-  <customwidget>
-   <class>Q3ButtonGroup</class>
-   <extends>Q3GroupBox</extends>
-   <header>Qt3Support/Q3ButtonGroup</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <tabstops>
   <tabstop>rightHanded</tabstop>
   <tabstop>leftHanded</tabstop>
