@@ -68,7 +68,7 @@ float WeatherFormula::millibarsToKilopascals(float millibar) const
     return (millibar * 0.10);
 }
 
-float WeatherFormula::centimetersToIN(float cm) const 
+float WeatherFormula::centimetersToIN(float cm) const
 {
     return (cm * 0.393700787);
 }
@@ -110,7 +110,7 @@ float WeatherFormula::knotsToKM(float knots) const
 
 float WeatherFormula::kilometersToKT(float km) const
 {
-    return (km * 0.539956803);  
+    return (km * 0.539956803);
 }
 
 float WeatherFormula::milesToKT(float miles) const
@@ -118,48 +118,48 @@ float WeatherFormula::milesToKT(float miles) const
     return (miles * 0.868976242);
 }
 float WeatherFormula::knotsToMI(float knots) const
-{   
+{
     return (knots * 1.507794);
 }
 
 int WeatherFormula::knotsToBF(float knots) const
 {
-    if(knots < 1) {
-       return 0;
+    if (knots < 1) {
+        return 0;
     } else if (knots >= 1 && knots < 4) {
-       return 1;
+        return 1;
     } else if (knots >= 4 && knots < 7) {
-       return 2;
+        return 2;
     } else if (knots >= 7 && knots < 11) {
-       return 3;
+        return 3;
     } else if (knots >= 11 && knots < 16) {
-       return 4;
+        return 4;
     } else if (knots >= 16 && knots < 22) {
-       return 5;
+        return 5;
     } else if (knots >= 22 && knots < 28) {
-       return 6;
+        return 6;
     } else if (knots >= 28 && knots < 34) {
-       return 7;
+        return 7;
     } else if (knots >= 34 && knots < 41) {
-       return 8;
+        return 8;
     } else if (knots >= 41 && knots < 48) {
-       return 9;
+        return 9;
     } else if (knots >= 48 && knots < 56) {
-       return 10;
+        return 10;
     } else if (knots >= 56 && knots < 64) {
-       return 11;
+        return 11;
     } else {
-      return 12;
+        return 12;
     }
 }
 
 int WeatherFormula::milesToBF(float miles) const
 {
-   return knotsToBF( miles / 1.1507794);
+    return knotsToBF(miles / 1.1507794);
 }
 
 int WeatherFormula::kilometersToBF(float km) const
 {
-   return knotsToBF(km / 1.852);
+    return knotsToBF(km / 1.852);
 }
 

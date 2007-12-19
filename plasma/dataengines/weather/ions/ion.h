@@ -26,6 +26,7 @@
 #include <plasma/dataengine.h>
 
 /**
+* @author Shawn Starr
 * This is the base class to be used to implement new ions for the WeatherEngine.
 * The idea is that you can have multiple ions which provide weather information from different services to the engine from which an applet will request the data from.
 *

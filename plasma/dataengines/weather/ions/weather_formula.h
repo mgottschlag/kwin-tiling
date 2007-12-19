@@ -53,7 +53,7 @@ public:
     float milesToKT(float miles) const;
     float knotsToKM(float knots) const;
     float knotsToMI(float knots) const;
-    
+
     // Winds measured in beaufort scale value
     int knotsToBF(float knots) const;
     int milesToBF(float miles) const;

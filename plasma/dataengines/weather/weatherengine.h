@@ -28,6 +28,7 @@
 class QTimer;
 
 /**
+ * @author Shawn Starr
  * This class is DataEngine. It handles loading, unloading, updating any data the ions wish to send. It is a gateway for datasources (ions) to
  * communicate with the WeatherEngine.
  */
