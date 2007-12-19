@@ -138,7 +138,6 @@ private:
   KIntNumInput *dragStartDist;
   KIntNumInput *wheelScrollLines;
 
-  Q3ButtonGroup *handedBox;
 //  QRadioButton *leftHanded, *rightHanded;
 //  QCheckBox *doubleClick;
 //  QCheckBox *cbAutoSelect;
