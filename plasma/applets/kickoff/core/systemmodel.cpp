@@ -222,7 +222,8 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
 
     if (index.internalId()-1==APPLICATIONS_ROW) {
         KService::Ptr service = KService::serviceByStorageId(d->appsList[index.row()]);
-
+      if (service)
+      {
         switch(role)
         {
         case Qt::DisplayRole:
@@ -236,6 +237,7 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
         default:
             return QVariant();
         }
+      }
     }
 
     if (role==UrlRole && !d->placesModel->isHidden(mapToSource(index))) {
