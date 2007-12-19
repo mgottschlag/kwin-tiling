@@ -13,6 +13,7 @@ Name[fi]=Digitaalinen kello
 Name[fr]=Horloge digitale
 Name[fy]=Digitale klok
 Name[ga]=Clog Digiteach
+Name[hi]=डिजिटल घड़ी
 Name[hr]=Digitalni sat
 Name[hu]=Digitális óra
 Name[ja]=デジタル時計
@@ -40,18 +41,6 @@ Name[zh_CN]=数字钟
 Name[zh_TW]=數位時鐘
 
 Comment=A simple digital clock
-Comment[ca]=Un rellotge digital senzill
-Comment[el]=Ένα απλό ψηφιακό ρολόι
-Comment[ga]=Clog simplí digiteach
-Comment[hu]=Egyszerű digitális óra
-Comment[ja]=シンプルなデジタル時計
-Comment[km]=នាឡិការ​ឌីជីថល​ធម្មតា
-Comment[lv]=Vienkāršs digitālais pulkstenis
-Comment[nds]=En eenfach Digitaalklock
-Comment[pt]=Um relógio digital simples
-Comment[pt_BR]=Um relógio digital simples
-Comment[sv]=En enkel digitalklocka
-Comment[zh_CN]=简易的数字钟
 
 Icon=chronometer
 Type=Service

@@ -4,6 +4,7 @@ X-KDE-ServiceTypes=SolidBluetoothManager
 X-KDE-Library=solid_bluez
 InitialPreference=100
 Name=BlueZ
+Name[hi]=ब्लूज़
 Name[ne]=ब्लुZ
 Name[sr]=БлуЗ
 Name[x-test]=xxBlueZxx
