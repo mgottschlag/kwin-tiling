@@ -220,11 +220,17 @@ void AbstractTaskItem::finished()
 
 void AbstractTaskItem::setText(const QString &text)
 {
+    if (_text == text) {
+        return;
+    }
+
     _text = text;
 
     TaskGroupItem *group = qobject_cast<TaskGroupItem*>(parent());
     if (group) {
         group->queueGeometryUpdate();
+    } else {
+        updateGeometry();
     }
 }
 
@@ -318,6 +324,8 @@ void AbstractTaskItem::setIcon(const QIcon &icon)
     TaskGroupItem *group = qobject_cast<TaskGroupItem*>(parent());
     if (group) {
         group->queueGeometryUpdate();
+    } else {
+        updateGeometry();
     }
 }
 
