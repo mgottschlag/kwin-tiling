@@ -39,6 +39,7 @@ public:
 
 protected:
     void drawBackground(QPainter * painter, const QRectF & rect);
+    void keyPressEvent(QKeyEvent *event);
 
 public slots:
     void toggleVisibility();
@@ -51,7 +52,9 @@ protected slots:
 
 private:
     Plasma::AppletBrowserWidget *m_appletBrowserWidget;
-    bool suppressShow;
+    bool m_suppressShow;
+    bool m_zoomIn;
+    bool m_zoomOut;
 };
 
 #endif // multiple inclusion guard

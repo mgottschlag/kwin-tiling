@@ -22,6 +22,7 @@
 #include "dashboardview.h"
 
 #include <QDesktopWidget>
+#include <QKeyEvent>
 #include <QTimer>
 
 #include <KWindowSystem>
@@ -31,15 +32,18 @@
 #include "plasma/containment.h"
 #include "plasma/svg.h"
 #include "plasma/appletbrowser.h"
+#include "plasma/widgets/pushbutton.h"
 
 #include "plasmaapp.h"
 
 static const int SUPPRESS_SHOW_TIMEOUT = 500; // Number of millis to prevent reshow of dashboard
 
 DashboardView::DashboardView(int screen, QWidget *parent)
-    : Plasma::View(screen, PlasmaApp::self()->corona(), parent), 
+    : Plasma::View(screen, PlasmaApp::self()->corona(), parent),
       m_appletBrowserWidget(0),
-      suppressShow( false )
+      m_suppressShow(false),
+      m_zoomIn(false),
+      m_zoomOut(false)
 {
     setContextMenuPolicy(Qt::NoContextMenu);
     setWindowFlags(Qt::FramelessWindowHint);
@@ -48,7 +52,6 @@ DashboardView::DashboardView(int screen, QWidget *parent)
         setAttribute(Qt::WA_NoSystemBackground);
     }
 
-    //setWindowOpacity(0.9);
     setWindowState(Qt::WindowFullScreen);
     KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
     KWindowSystem::setOnAllDesktops(winId(), true);
@@ -61,6 +64,11 @@ DashboardView::DashboardView(int screen, QWidget *parent)
 
     connect(scene(), SIGNAL(launchActivated()), SLOT(hideView()));
     connect(containment(), SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
+    Plasma::PushButton *tool = new Plasma::PushButton(i18n("Hide Dashboard"));
+    tool->resize(tool->sizeHint());
+    containment()->addToolBoxTool(tool, "hideDashboard");
+    containment()->enableToolBoxTool("hideDashboard", false);
+    connect(tool, SIGNAL(clicked()), this, SLOT(hideView()));
 }
 
 DashboardView::~DashboardView()
@@ -91,7 +99,7 @@ void DashboardView::showAppletBrowser()
         m_appletBrowserWidget->move( 0, 0 );
     }
 
-    m_appletBrowserWidget->show();
+    m_appletBrowserWidget->setHidden(m_appletBrowserWidget->isVisible());
 }
 
 void DashboardView::appletBrowserDestroyed()
@@ -102,16 +110,31 @@ void DashboardView::appletBrowserDestroyed()
 void DashboardView::toggleVisibility()
 {
     if (isHidden()) {
-        if (suppressShow) {
+        if (m_suppressShow) {
             kDebug() << "DashboardView::toggleVisibility but show was suppressed";
             return;
         }
 
+        m_zoomOut = containment()->isToolboxToolEnabled("zoomOut");
+        m_zoomIn = containment()->isToolboxToolEnabled("zoomIn");
+        containment()->enableToolBoxTool("hideDashboard", true);
+        containment()->enableToolBoxTool("zoomOut", false);
+        containment()->enableToolBoxTool("zoomIn", false);
+
         show();
         raise();
-        suppressShow = true;
+
+        m_suppressShow = true;
         QTimer::singleShot(SUPPRESS_SHOW_TIMEOUT, this, SLOT(suppressShowTimeout()));
     } else {
+        if (m_zoomOut) {
+            containment()->enableToolBoxTool("zoomOut", true);
+        }
+
+        if (m_zoomIn) {
+            containment()->enableToolBoxTool("zoomOut", true);
+        }
+
         hideView();
     }
 }
@@ -121,13 +144,24 @@ void DashboardView::hideView()
     if (m_appletBrowserWidget) {
         m_appletBrowserWidget->hide();
     }
+
+    containment()->enableToolBoxTool("hideDashboard", false);
     hide();
 }
 
 void DashboardView::suppressShowTimeout()
 {
     kDebug() << "DashboardView::suppressShowTimeout";
-    suppressShow = false;
+    m_suppressShow = false;
+}
+
+void DashboardView::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        hideView();
+    }
+
+    Plasma::View::keyPressEvent(event);
 }
 
 #include "dashboardview.moc"
