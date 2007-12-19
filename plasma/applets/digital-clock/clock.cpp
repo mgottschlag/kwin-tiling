@@ -88,8 +88,8 @@ void Clock::init()
     m_plainClockFont.setBold(m_plainClockFontBold);
     m_plainClockFont.setItalic(m_plainClockFontItalic);
 
-    setSize(QSize(120, 60));
-    setMinimumContentSize(QSizeF(80, 44));
+    setContentSize(120, 60);
+    setMinimumContentSize(80, 44);
     dataEngine("time")->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
 }
 

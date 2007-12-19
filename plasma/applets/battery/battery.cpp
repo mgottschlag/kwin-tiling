@@ -51,7 +51,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
-    setSize(200,200);
+    setContentSize(200, 200);
 }
 
 void Battery::init()

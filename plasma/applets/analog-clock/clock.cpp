@@ -54,8 +54,8 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_dialog(0)
 {
     setHasConfigurationInterface(true);
-    setSize(125, 125);
-    setMinimumSize(QSizeF(50, 50));
+    setContentSize(125, 125);
+    setMinimumContentSize(50, 50);
 
     m_theme = new Plasma::Svg("widgets/clock", this);
     m_theme->setContentType(Plasma::Svg::SingleImage);

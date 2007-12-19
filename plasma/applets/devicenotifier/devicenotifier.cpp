@@ -64,7 +64,7 @@ void DeviceNotifier::init()
     m_numberItems = cg.readEntry("NumberItems", 4);
     m_itemsValidity = cg.readEntry("ItemsValidity", 5);
     
-    setSize(128,128);
+    setContentSize(128, 128);
 
     //we display the icon corresponding to the computer
     QList<Solid::Device> list=Solid::Device::allDevices();
