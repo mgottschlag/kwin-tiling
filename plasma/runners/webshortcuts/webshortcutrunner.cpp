@@ -45,7 +45,7 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
     setObjectName(i18n("Web Shortcut"));
     // query ktrader for all available searchproviders and preload the default icon
     m_offers = KServiceTypeTrader::self()->query("SearchProvider");
-    m_icon = KIcon("konqueror");
+    m_icon = KIcon("internet-web-browser");
 }
 
 WebshortcutRunner::~WebshortcutRunner()
