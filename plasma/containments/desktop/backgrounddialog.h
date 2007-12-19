@@ -53,7 +53,7 @@ private:
     KSeparator *m_metadataSeparator;
     QLabel *m_authorLine;
     QLabel *m_emailLine;
-    QLabel *m_monitor;
+    QLabel *m_preview;
     
     QPushButton *m_newStuff;
     

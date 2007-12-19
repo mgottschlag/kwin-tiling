@@ -292,7 +292,6 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
 , m_res(res)
 , m_ratio((float) res.width() / res.height())
 , m_currentSlide(-1)
-// TODO scale preview widget to the actual screen aspect ratio
 , m_preview_renderer(QSize(128, 101), (float) 128 / res.width())
 {
     setWindowIcon(KIcon("preferences-desktop-wallpaper"));
@@ -412,15 +411,23 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     slideshowLayout->addLayout(slideshowDelayLayout);
     
     // preview
-    QLabel *preview = new QLabel(main);
+    QLabel *monitor = new QLabel(main);
     QString monitorPath = KStandardDirs::locate("data",  "kcontrol/pics/monitor.png");
-    preview->setPixmap(QPixmap(monitorPath));
-    preview->setWhatsThis(i18n(
+    
+    // Size of monitor image: 200x186
+    // Geometry of "display" part of monitor image: (23,14)-[151x115]
+    qreal previewRatio = 128.0 / (101.0 * m_ratio);
+    QSize monitorSize(200, int(186 * previewRatio));
+    QRect previewRect(23, int(14 * previewRatio), 151, int(115 * previewRatio));
+    m_preview_renderer.setSize(previewRect.size());
+    
+    monitor->setPixmap(QPixmap(monitorPath).scaled(monitorSize));
+    monitor->setWhatsThis(i18n(
         "This picture of a monitor contains a preview of "
         "what the current settings will look like on your desktop."));
-    m_monitor = new QLabel(preview);
-    m_monitor->setScaledContents(true);
-    m_monitor->setGeometry(23, 14, 151, 115);
+    m_preview = new QLabel(monitor);
+    m_preview->setScaledContents(true);
+    m_preview->setGeometry(previewRect);
     
     // get new stuff
     QHBoxLayout *newStuffLayout = new QHBoxLayout;
@@ -430,7 +437,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     newStuffLayout->addWidget(m_newStuff);
     newStuffLayout->addStretch();
     
-    rightLayout->addWidget(preview);
+    rightLayout->addWidget(monitor);
     rightLayout->addStretch();
     rightLayout->addLayout(newStuffLayout);
     rightLayout->addStretch();
@@ -590,7 +597,7 @@ void BackgroundDialog::updateSlideshow()
     
     // start preview
     if (m_slideshowBackgrounds.isEmpty()) {
-        m_monitor->setPixmap(QPixmap());
+        m_preview->setPixmap(QPixmap());
         m_preview_timer.stop();
     }
     else {
@@ -616,7 +623,7 @@ void BackgroundDialog::updateSlideshowPreview()
         setPreview(m_img, method);
     }
     else {
-        m_monitor->setPixmap(QPixmap());
+        m_preview->setPixmap(QPixmap());
     }
 }
 
@@ -649,7 +656,7 @@ void BackgroundDialog::previewRenderingDone(int token, const QImage &image)
 {
     // display preview only if it is the latest rendered file
     if (token == m_preview_token) {
-        m_monitor->setPixmap(QPixmap::fromImage(image));
+        m_preview->setPixmap(QPixmap::fromImage(image));
     }
 }
 
