@@ -257,12 +257,13 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   vbox->setMargin(KDialog::marginHint());
   vbox->setSpacing(KDialog::spacingHint());
 
-  Q3GroupBox *grp = new Q3GroupBox(i18n("Audible Bell"), bell);
-  grp->setColumnLayout( 0, Qt::Horizontal );
+  QGroupBox *grp = new QGroupBox(i18n("Audible Bell"), bell);
+  QHBoxLayout *layout = new QHBoxLayout;
+  grp->setLayout(layout);
   vbox->addWidget(grp);
 
   QVBoxLayout *vvbox = new QVBoxLayout();
-  grp->layout()->addItem( vvbox );
+  layout->addLayout( vvbox );
   vvbox->setSpacing( KDialog::spacingHint() );
 
   systemBell = new QCheckBox(i18n("Use &system bell"), grp);
@@ -304,12 +305,13 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   // -----------------------------------------------------
 
   // visible bell ----------------------------------------
-  grp = new Q3GroupBox(i18n("Visible Bell"), bell);
-  grp->setColumnLayout( 0, Qt::Horizontal );
+  grp = new QGroupBox(i18n("Visible Bell"), bell);
+  layout = new QHBoxLayout;
+  grp->setLayout(layout);
   vbox->addWidget(grp);
 
   vvbox = new QVBoxLayout();
-  grp->layout()->addItem( vvbox );
+  layout->addLayout( vvbox );
   vvbox->setSpacing(KDialog::spacingHint());
 
   visibleBell = new QCheckBox(i18n("&Use visible bell"), grp);
@@ -376,12 +378,13 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   vbox->setMargin(KDialog::marginHint());
   vbox->setSpacing(KDialog::spacingHint());
 
-  grp = new Q3GroupBox(i18n("S&ticky Keys"), modifiers);
-  grp->setColumnLayout( 0, Qt::Horizontal );
+  grp = new QGroupBox(i18n("S&ticky Keys"), modifiers);
+  layout = new QHBoxLayout;
+  grp->setLayout(layout);
   vbox->addWidget(grp);
 
   vvbox = new QVBoxLayout();
-  grp->layout()->addItem( vvbox );
+  layout->addLayout(vvbox);
   vvbox->setSpacing(KDialog::spacingHint());
 
   stickyKeys = new QCheckBox(i18n("Use &sticky keys"), grp);
@@ -408,12 +411,13 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   stickyKeysBeep = new QCheckBox(i18n("Use system bell whenever a modifier gets latched, locked or unlocked"), grp);
   hbox->addWidget(stickyKeysBeep);
 
-  grp = new Q3GroupBox(i18n("Locking Keys"), modifiers);
-  grp->setColumnLayout( 0, Qt::Horizontal );
+  grp = new QGroupBox(i18n("Locking Keys"), modifiers);
+  layout = new QHBoxLayout;
+  grp->setLayout(layout);
   vbox->addWidget(grp);
 
   vvbox = new QVBoxLayout();
-  grp->layout()->addItem( vvbox );
+  layout->addLayout(vvbox);
   vvbox->setSpacing(KDialog::spacingHint());
 
   toggleKeysBeep = new QCheckBox(i18n("Use system bell whenever a locking key gets activated or deactivated"), grp);
@@ -451,12 +455,13 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   vbox = new QVBoxLayout(filters);
   vbox->setMargin(KDialog::marginHint());
   vbox->setSpacing(KDialog::spacingHint());
-  grp = new Q3GroupBox(i18n("Slo&w Keys"), filters);
-  grp->setColumnLayout( 0, Qt::Horizontal );
+  grp = new QGroupBox(i18n("Slo&w Keys"), filters);
+  layout = new QHBoxLayout;
+  grp->setLayout(layout);
   vbox->addWidget(grp);
 
   vvbox = new QVBoxLayout();
-  grp->layout()->addItem( vvbox );
+  layout->addLayout(vvbox);
   vvbox->setSpacing(KDialog::spacingHint());
 
   slowKeys = new QCheckBox(i18n("&Use slow keys"), grp);
@@ -493,12 +498,13 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   slowKeysRejectBeep = new QCheckBox(i18n("&Use system bell whenever a key is rejected"), grp);
   hbox->addWidget(slowKeysRejectBeep);
 
-  grp = new Q3GroupBox(i18n("Bounce Keys"), filters);
-  grp->setColumnLayout( 0, Qt::Horizontal );
+  grp = new QGroupBox(i18n("Bounce Keys"), filters);
+  layout= new QHBoxLayout;
+  grp->setLayout(layout);
   vbox->addWidget(grp);
 
   vvbox = new QVBoxLayout();
-  grp->layout()->addItem( vvbox );
+  layout->addLayout( vvbox );
   vvbox->setSpacing(KDialog::spacingHint());
 
   bounceKeys = new QCheckBox(i18n("Use bou&nce keys"), grp);
@@ -545,12 +551,13 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   vbox->setMargin(KDialog::marginHint());
   vbox->setSpacing(KDialog::spacingHint());
 
-  grp = new Q3GroupBox(i18n("Activation Gestures"), features);
-  grp->setColumnLayout( 0, Qt::Horizontal );
+  grp = new QGroupBox(i18n("Activation Gestures"), features);
+  layout = new QHBoxLayout;
+  grp->setLayout(layout);
   vbox->addWidget(grp);
 
   vvbox = new QVBoxLayout();
-  grp->layout()->addItem( vvbox );
+  layout->addLayout( vvbox );
   vvbox->setSpacing(KDialog::spacingHint());
 
   gestures = new QCheckBox(i18n("Use gestures for activating sticky keys and slow keys"), grp);
@@ -579,12 +586,13 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   timeoutDelay->setLabel(i18n("Timeout:"));
   hbox->addWidget(timeoutDelay);
 
-  grp = new Q3GroupBox(i18n("Notification"), features);
-  grp->setColumnLayout( 0, Qt::Horizontal );
+  grp = new QGroupBox(i18n("Notification"), features);
+  layout = new QHBoxLayout;
+  grp->setLayout(layout);
   vbox->addWidget(grp);
 
   vvbox = new QVBoxLayout();
-  grp->layout()->addItem( vvbox );
+  layout->addLayout(vvbox);
   vvbox->setSpacing(KDialog::spacingHint());
 
   accessxBeep = new QCheckBox(i18n("Use the system bell whenever a gesture is used to turn an accessibility feature on or off"), grp);
