@@ -73,6 +73,8 @@ private:
     QList<Background *> m_slideshowBackgrounds;
     int m_currentSlide;
     
+    QStringList m_selected;
+    
     RenderThread m_preview_renderer;
     int m_preview_token;
     
@@ -84,6 +86,7 @@ private:
 private slots:
     void update();
     void getNewStuff();
+    void browse();
     
     void slotAddDir();
     void slotRemoveDir();

@@ -21,10 +21,12 @@
 #include <QPainter>
 #include <QStackedWidget>
 #include <QTimeEdit>
+#include <QToolButton>
 #include <QVBoxLayout>
 #include <KColorButton>
 #include <KDebug>
 #include <KDirSelectDialog>
+#include <KFileDialog>
 #include <KGlobalSettings>
 #include <KLocalizedString>
 #include <KPushButton>
@@ -97,6 +99,8 @@ public:
     Background* package(int index) const;
     
     void reload();
+    void reload(const QStringList &selected);
+    void addBackground(const QString &path);
     int indexOf(const QString &path) const;
     virtual bool contains(const QString &bg) const;
 private:
@@ -131,21 +135,39 @@ BackgroundListModel::BackgroundListModel(float ratio, QObject *listener)
 : m_listener(listener)
 , m_ratio(ratio)
 {
-    reload();
 }
 
-void BackgroundListModel::reload()
+void BackgroundListModel::reload() 
+{
+    reload(QStringList());
+}
+
+void BackgroundListModel::reload(const QStringList& selected)
 {
     QStringList dirs = KGlobal::dirs()->findDirs("wallpaper", "");
     QList<Background *> tmp;
-    foreach (QString dir, dirs)
-    {
+    foreach (QString file, selected) {
+        if (!contains(file)) {
+            tmp << new BackgroundFile(file, m_ratio);
+        }
+    }
+    foreach (QString dir, dirs) {
         tmp += findAllBackgrounds(this, dir, m_ratio);
     }
     
-    beginInsertRows(QModelIndex(), 0, tmp.size() - 1);
-    m_packages = tmp + m_packages;
-    endInsertRows();
+    if (!tmp.isEmpty()) {
+        beginInsertRows(QModelIndex(), 0, tmp.size() - 1);
+        m_packages = tmp + m_packages;
+        endInsertRows();
+    }
+}
+
+void BackgroundListModel::addBackground(const QString& path) {
+    if (!contains(path)) {
+        beginInsertRows(QModelIndex(), 0, 0);
+        m_packages.prepend(new BackgroundFile(path, m_ratio));
+        endInsertRows();
+    }
 }
 
 int BackgroundListModel::indexOf(const QString &path) const
@@ -326,6 +348,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     
     // combo with backgrounds
     QLabel *pictureLabel = new QLabel("&Picture:", staticPictureWidget);
+    QHBoxLayout *pictureLayout = new QHBoxLayout;    
     m_view = new QComboBox(main);
     m_model = new BackgroundListModel(m_ratio, this);
     m_view->setModel(m_model);
@@ -333,8 +356,16 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     connect(m_view, SIGNAL(currentIndexChanged(int)),
             this, SLOT(update()));
     pictureLabel->setBuddy(m_view);
+    QToolButton *pictureUrlButton = new QToolButton(this);
+    pictureUrlButton->setIcon(KIcon("document-open"));
+    pictureUrlButton->setToolTip(i18n("Browse"));
+    connect(pictureUrlButton, SIGNAL(clicked()), this, SLOT(browse()));
+    
+    pictureLayout->addWidget(m_view);
+    pictureLayout->addWidget(pictureUrlButton);
+    
     staticPictureLayout->addWidget(pictureLabel, 0, 0, Qt::AlignRight);
-    staticPictureLayout->addWidget(m_view, 0, 1, 1, 2);
+    staticPictureLayout->addLayout(pictureLayout, 0, 1, 1, 2);
 
     // resize method
     QLabel *resizeMethodLabel = new QLabel(i18n("P&ositioning:"), staticPictureWidget);
@@ -475,6 +506,8 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config)
     foreach (QString dir, dirs) {
         m_dirlist->addItem(dir);
     }
+    m_selected = config.readEntry("selected", QStringList());
+    m_model->reload(m_selected);
     QString currentPath = config.readEntry("wallpaper",
         KStandardDirs::locate("wallpaper", "plasma-default.png"));
     int index = m_model->indexOf(currentPath);
@@ -499,6 +532,7 @@ void BackgroundDialog::saveConfig(KConfigGroup config)
         config.writeEntry("wallpapercolor", m_color->color());
         config.writeEntry("wallpaperposition", 
             m_resizeMethod->itemData(m_resizeMethod->currentIndex()).toInt());
+        config.writeEntry("selected", m_selected);
     }
     else {
         QStringList dirs;
@@ -522,6 +556,29 @@ void BackgroundDialog::getNewStuff()
             m_model->reload();
         }
     }
+}
+
+void BackgroundDialog::browse()
+{
+    QString wallpaper = KFileDialog::getOpenFileName(KUrl(), 
+                                                     "*.png *.jpeg *.jpg *.svg *.svgz", 
+                                                     this, 
+                                                     i18n("Select a wallpaper image file"));
+    if (wallpaper.isEmpty()) {
+        return;
+    }
+    
+    // add background to the model
+    m_model->addBackground(wallpaper);
+    
+    // select it
+    int index = m_model->indexOf(wallpaper);
+    if (index != -1) {
+        m_view->setCurrentIndex(index);
+    }
+    
+    // save it
+    m_selected << wallpaper;
 }
 
 bool BackgroundDialog::setMetadata(QLabel *label, 
