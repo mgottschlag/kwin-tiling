@@ -21,6 +21,7 @@
 #include <KAboutData>
 #include <KCmdLineArgs>
 #include <KLocale>
+#include <KIcon>
 
 #include <config-workspace.h>
 #include "plasmaapp.h"
@@ -48,6 +49,7 @@ KDE_EXPORT int kdemain(int argc, char **argv)
     KCmdLineArgs::addCmdLineOptions(options);
 
     PlasmaApp *app = PlasmaApp::self();
+    QApplication::setWindowIcon(KIcon("plasmagik"));
     app->disableSessionManagement(); // autostarted
     int rc = app->exec();
     delete app;
