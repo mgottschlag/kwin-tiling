@@ -21,6 +21,11 @@
 
 #include "dashboardview.h"
 
+#include <QDesktopWidget>
+#include <QTimer>
+
+#include <KWindowSystem>
+
 #include "plasma/applet.h"
 #include "plasma/corona.h"
 #include "plasma/containment.h"
@@ -28,9 +33,6 @@
 #include "plasma/appletbrowser.h"
 
 #include "plasmaapp.h"
-
-#include <KWindowSystem>
-#include <QTimer>
 
 static const int SUPPRESS_SHOW_TIMEOUT = 500; // Number of millis to prevent reshow of dashboard
 
@@ -49,6 +51,10 @@ DashboardView::DashboardView(int screen, QWidget *parent)
     //setWindowOpacity(0.9);
     setWindowState(Qt::WindowFullScreen);
     KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
+    KWindowSystem::setOnAllDesktops(winId(), true);
+
+    QDesktopWidget *desktop = QApplication::desktop();
+    setGeometry(desktop->screenGeometry(screen));
 
     setDrawWallpaper(!PlasmaApp::hasComposite());
     hide();

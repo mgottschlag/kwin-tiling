@@ -63,7 +63,6 @@ void DesktopView::toggleDashboard()
 {
     if (!m_dashboard) {
         m_dashboard = new DashboardView(screen(), 0);
-        m_dashboard->setGeometry(geometry());
     }
 
     m_dashboard->toggleVisibility();
