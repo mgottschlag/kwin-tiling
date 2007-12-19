@@ -107,9 +107,8 @@ void PanelView::updatePanelGeometry()
             break;
     }
 
+    kDebug() << (QObject*)this << "thinks its panel is at " << geom;
     setGeometry(geom);
-
-    //kDebug() << "I think the panel is at " << geom;
 }
 
 void PanelView::updateStruts()
