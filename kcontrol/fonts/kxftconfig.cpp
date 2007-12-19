@@ -32,8 +32,6 @@
 #include <klocale.h>
 #include <kde_file.h>
 #include <QDir>
-#include <QSettings>
-#include <QFont>
 
 #include <stdarg.h>
 #include <stdio.h>

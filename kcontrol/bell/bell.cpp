@@ -20,7 +20,6 @@
 */
 
 #include <QCheckBox>
-#include <QLayout>
 #include <QPushButton>
 
 

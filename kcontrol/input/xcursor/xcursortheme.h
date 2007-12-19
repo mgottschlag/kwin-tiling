@@ -20,9 +20,7 @@
 #ifndef XCURSORTHEME_H
 #define XCURSORTHEME_H
 
-#include <QList>
 #include <QHash>
-#include <QPixmap>
 
 #include "legacytheme.h"
 

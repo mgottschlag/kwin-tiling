@@ -19,13 +19,8 @@
  */
 
 
-#include <QDialog>
 #include <QPushButton>
-#include <QLabel>
-#include <QRadioButton>
-#include <QButtonGroup>
 #include <QWidget>
-#include <QLayout>
 #include <QtGui/QProgressBar>
 #include <QTimer>
 

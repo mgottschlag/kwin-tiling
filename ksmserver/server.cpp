@@ -57,14 +57,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 
 #include <QFile>
-#include <QTextStream>
-#include <QDataStream>
 #include <QPushButton>
-#include <QMessageBox>
-#include <QTimer>
-#include <QDesktopWidget>
 #include <QRegExp>
 #include <QtDBus/QtDBus>
+#include <QSocketNotifier>
 
 #include <klocale.h>
 #include <kglobal.h>
@@ -87,7 +83,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <dmctl.h>
 #include <QX11Info>
-#include <QApplication>
 #include <krandom.h>
 #include "klauncher_interface.h"
 

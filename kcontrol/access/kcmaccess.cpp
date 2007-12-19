@@ -11,20 +11,17 @@
 
 
 #include <QTabWidget>
-#include <QLayout>
-#include <Qt3Support/Q3GroupBox>
 #include <QLabel>
 #include <QCheckBox>
 #include <QLineEdit>
 #include <QRadioButton>
-#include <QSlider>
-#include <QSpinBox>
 #include <QtGui/QX11Info>
 #include <QtDBus/QtDBus>
 
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QGroupBox>
 #include <klocale.h>
 
 #include <kcombobox.h>

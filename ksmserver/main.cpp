@@ -31,7 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <string.h>
 
 #include <KMessageBox>
-#include <QDir>
 #include <QtDBus/QtDBus>
 
 #include <kapplication.h>

@@ -47,14 +47,12 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QLayout>
 #include <QCheckBox>
 #undef Below
 #undef Above
 #include <QSlider>
 #include <QWhatsThis>
 #include <QTabWidget>
-#include <QRadioButton>
 
 #include <ktoolinvocation.h>
 #include <klocale.h>

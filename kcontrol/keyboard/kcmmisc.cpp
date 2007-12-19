@@ -29,14 +29,10 @@
 #include <config-X11.h>
 #include <math.h>
 
-#include <QSlider>
-#include <QFileInfo>
 #include <QCheckBox>
 
-#include <QLayout>
 #include <QWhatsThis>
 #include <KButtonGroup>
-#include <QRadioButton>
 
 #include <klocale.h>
 #include <kconfig.h>

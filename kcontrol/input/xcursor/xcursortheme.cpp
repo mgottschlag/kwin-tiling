@@ -21,11 +21,9 @@
 #include <KConfig>
 #include <KConfigGroup>
 
-#include <QApplication>
 #include <QCursor>
 #include <QImage>
 #include <QDir>
-#include <QPainter>
 #include <QX11Info>
 
 #include <X11/Xlib.h>

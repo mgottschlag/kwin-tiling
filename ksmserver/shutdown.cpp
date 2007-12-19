@@ -54,13 +54,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <limits.h>
 #endif
 
-#include <QFile>
-#include <QTextStream>
-#include <QDataStream>
 #include <QPushButton>
-#include <QMessageBox>
 #include <QTimer>
-#include <QDesktopWidget>
 #include <QtDBus/QtDBus>
 
 #include <klocale.h>
@@ -80,8 +75,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <kdebug.h>
 
+#include <QDesktopWidget>
 #include <QX11Info>
-#include <QApplication>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>
 

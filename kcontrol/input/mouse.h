@@ -31,8 +31,6 @@
 #ifndef __MOUSECONFIG_H__
 #define __MOUSECONFIG_H__
 
-#include <QButtonGroup>
-#include <QDialog>
 #include <QLabel>
 #include <QtGui/QLCDNumber>
 #include <QPushButton>

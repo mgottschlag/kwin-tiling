@@ -21,12 +21,8 @@
 #include <KConfig>
 #include <KConfigGroup>
 
-#include <QPixmap>
-#include <QList>
 #include <QStringList>
 #include <QDir>
-#include <QSettings>
-#include <QX11Info>
 
 #include "thememodel.h"
 #include "thememodel.moc"

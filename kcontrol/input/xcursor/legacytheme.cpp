@@ -25,11 +25,8 @@
 
 #include <KLocale>
 
-#include <QApplication>
 #include <QCursor>
 #include <QImage>
-#include <QPainter>
-#include <QList>
 #include <QHash>
 #include <QX11Info>
 

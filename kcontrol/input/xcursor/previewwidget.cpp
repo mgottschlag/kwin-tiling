@@ -23,7 +23,6 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xcursor/Xcursor.h>
-#include <QX11Info>
 
 #include "cursortheme.h"
 

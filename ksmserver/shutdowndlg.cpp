@@ -28,15 +28,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "plasma/svg.h"
 
 #include <QApplication>
-#include <QCursor>
 #include <QLabel>
-#include <QLayout>
 #include <QPainter>
 #include <QMenu>
-#include <QStyle>
 #include <QTimer>
-#include <QSvgRenderer>
 #include <QPaintEvent>
+#include <QDesktopWidget>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 #include <kdebug.h>
 #include <kdialog.h>
@@ -64,7 +63,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "shutdowndlg.moc"
 #include <QX11Info>
-#include <QDesktopWidget>
 #include <QTimeLine>
 
 #define GLOW_WIDTH 3

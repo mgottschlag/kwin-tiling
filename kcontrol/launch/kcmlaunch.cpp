@@ -18,14 +18,12 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include <QLabel>
-#include <QLayout>
 #include <QGroupBox>
 
 //Added by qt3to4:
 #include <QVBoxLayout>
 #include <QGridLayout>
 
-#include <QtDBus/QtDBus>
 #include <kapplication.h>
 #include <klocale.h>
 #include <kconfig.h>

@@ -27,14 +27,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // needed to avoid clash with INT8 defined in X11/Xmd.h on solaris
 #define QT_CLEAN_NAMESPACE 1
-#include <QObject>
 
-#include <QSocketNotifier>
 #include <kapplication.h>
 #include <kworkspace.h>
-#include <QTimer>
-#include <QTime>
-#include <QMap>
 
 #include "server2.h"
 

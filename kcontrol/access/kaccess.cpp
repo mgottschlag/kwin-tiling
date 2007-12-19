@@ -4,9 +4,11 @@
 #include <QTimer>
 #include <QPainter>
 
-#include <QLayout>
 #include <QLabel>
 #include <QtGui/QDesktopWidget>
+#include <QGroupBox>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 #include <KDialog>
 #include <KMessageBox>

@@ -12,7 +12,6 @@
 #include <QComboBox>
 #include <QDir>
 #include <QLabel>
-#include <QLayout>
 #include <QPushButton>
 #include <QtCore/QSettings>
 

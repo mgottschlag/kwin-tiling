@@ -20,8 +20,6 @@
  */
 
 #include <QCheckBox>
-#include <QLayout>
-#include <QRadioButton>
 //Added by qt3to4:
 #include <QVBoxLayout>
 

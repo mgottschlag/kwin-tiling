@@ -21,7 +21,6 @@
 #include <QStyle>
 #include <QCursor>
 #include <QImage>
-#include <QPainter>
 #include <QFile>
 #include <QX11Info>
 
