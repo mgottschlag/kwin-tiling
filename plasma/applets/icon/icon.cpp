@@ -122,6 +122,7 @@ void IconApplet::showConfigurationInterface()
     if (m_dialog == 0) {
         m_dialog = new KPropertiesDialog(m_url);
         connect(m_dialog, SIGNAL(applied()), this, SLOT(acceptedPropertiesDialog()));
+        connect(m_dialog, SIGNAL(propertiesClosed()), this, SLOT(propertiesDialogClosed()));
     }
 
     m_dialog->show();
@@ -134,7 +135,10 @@ void IconApplet::acceptedPropertiesDialog()
     cg.writeEntry("Url", m_url);
     setUrl(m_url);
     update();
-    m_dialog->deleteLater();
+}
+
+void IconApplet::propertiesDialogClosed()
+{
     m_dialog = 0;
 }
 

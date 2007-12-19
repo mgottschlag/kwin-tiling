@@ -54,6 +54,7 @@ class IconApplet : public Plasma::Applet
 
     protected slots:
         void acceptedPropertiesDialog();
+        void propertiesDialogClosed();
 
     private:
         Plasma::Icon* m_icon;
