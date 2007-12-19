@@ -45,6 +45,7 @@ GlobalShortcutsModule::GlobalShortcutsModule( QWidget * parent, const QVariantLi
 {
     ui = new Ui::GlobalShortcuts();
     ui->setupUi(this);
+    layout()->setMargin(0);
     
     KCModule::setButtons( KCModule::Buttons(KCModule::Default) );
     
