@@ -53,8 +53,8 @@ DashboardView::DashboardView(int screen, QWidget *parent)
     }
 
     setWindowState(Qt::WindowFullScreen);
-    KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
     KWindowSystem::setOnAllDesktops(winId(), true);
+    KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
 
     QDesktopWidget *desktop = QApplication::desktop();
     setGeometry(desktop->screenGeometry(screen));
@@ -91,10 +91,10 @@ void DashboardView::drawBackground(QPainter * painter, const QRectF & rect)
 void DashboardView::showAppletBrowser()
 {
     if (!m_appletBrowserWidget) {
-        m_appletBrowserWidget = new Plasma::AppletBrowserWidget(qobject_cast<Plasma::Corona *>(scene()), true, this, Qt::FramelessWindowHint );
+        m_appletBrowserWidget = new Plasma::AppletBrowserWidget(containment(), true, this, Qt::FramelessWindowHint );
         m_appletBrowserWidget->setApplication();
         m_appletBrowserWidget->setWindowTitle(i18n("Add Widgets"));
-        KWindowSystem::setState(m_appletBrowserWidget->winId(), NET::KeepAbove);
+        KWindowSystem::setState(m_appletBrowserWidget->winId(), NET::KeepAbove|NET::SkipTaskbar);
         //TODO: provide a nice unobtrusive way to access the browser
         m_appletBrowserWidget->move( 0, 0 );
     }
