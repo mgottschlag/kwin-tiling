@@ -564,27 +564,34 @@ void Interface::updateMatches()
             m_matchList->insertItem(matchCount, match);
 
             if (makeDefault &&
+                action->relevance() > 0 &&
                 (action->type() != Plasma::SearchMatch::InformationalMatch ||
                  !action->data().toString().isEmpty())) {
-                     match->setDefault(true);
-                     m_defaultMatch = match;
-                     m_optionsButton->setEnabled(action->runner()->hasMatchOptions());
-                     m_runButton->setEnabled(true);
-                 }
+                match->setDefault(true);
+                m_defaultMatch = match;
+                m_optionsButton->setEnabled(action->runner()->hasMatchOptions());
+                m_runButton->setEnabled(true);
+            }
 
             ++matchCount;
         }
     }
 
     if (!m_defaultMatch) {
+        if (m_execQueued && Weaver::instance()->isIdle() ) {
+            m_execQueued = false;
+        }
         showOptions(false);
         m_runButton->setEnabled(false);
+    } else if (m_execQueued) {
+        m_execQueued = false;
+        exec();
     }
 }
 
 void Interface::exec()
 {
-    if (m_searchTerm->completionBox() && m_searchTerm->completionBox()->isVisible()) {
+    if (!m_execQueued && m_searchTerm->completionBox() && m_searchTerm->completionBox()->isVisible()) {
         queueMatch();
         return;
     }
