@@ -725,6 +725,7 @@ Screenshot=screenshot.png
         Prefixing the type with an exclamation mark (<literal>!</literal>)
         reverses the condition.
         Valid values include the following:
+      </para>
         <segmentedlist>
           <?dbhtml list-presentation="table"?>
           <segtitle>Type</segtitle><segtitle>Display if ...</segtitle>
@@ -774,6 +775,8 @@ Screenshot=screenshot.png
 
         </segmentedlist>
 
+
+      <para>
         For example:
 <programlisting>
 &lt;show type=&quot;chooser&quot;/&gt;
