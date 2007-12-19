@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Locations runner
+Comment=File and URL opener
+X-KDE-ServiceTypes=Plasma/Runner
+Type=Service
+X-KDE-Library=krunner_locations
+X-Krunner-ID=Locations runner

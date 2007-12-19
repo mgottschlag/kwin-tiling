@@ -42,7 +42,7 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
 {
     Q_UNUSED(args);
     // set the name shown after the result in krunner window
-    setObjectName(i18n("Locations"));
+    setObjectName(i18n("Web Shortcut"));
     // query ktrader for all available searchproviders and preload the default icon
     m_offers = KServiceTypeTrader::self()->query("SearchProvider");
     m_icon = KIcon("konqueror");
@@ -86,32 +86,6 @@ void WebshortcutRunner::match(Plasma::SearchContext *search)
             }
         }
     }
-
-    if (m_type == Plasma::SearchContext::Directory ||
-        m_type == Plasma::SearchContext::Help) {
-        //kDebug() << "Locations matching because of" << m_type;
-        Plasma::SearchMatch *action = search->addExactMatch(this);
-        action->setText(i18n("Open %1", term));
-        action->setIcon(m_icon);
-        return;
-    }
-
-    if (m_type == Plasma::SearchContext::NetworkLocation) {
-        Plasma::SearchMatch *action = search->addPossibleMatch(this);
-        KUrl url(term);
-
-        if (url.protocol().isEmpty()) {
-            url.clear();
-            url.setHost(term);
-            url.setProtocol("http");
-        }
-
-        action->setText(i18n("Go to %1", url.prettyUrl()));
-        action->setIcon(m_icon);
-        action->setData(url.url());
-        return;
-    }
-
 }
 
 QString WebshortcutRunner::getSearchQuery(const QString &query, const QString &term)
@@ -154,18 +128,8 @@ void WebshortcutRunner::exec(Plasma::SearchMatch *action)
 {
     QString location = action->data().toString();
 
-    if (location.isEmpty()) {
-        location = action->searchTerm();
-    }
-
-    //kDebug() << "command: " << action->term();
-    //kDebug() << "url: " << location;
-    if (m_type == Plasma::SearchContext::UnknownType ||
-        (m_type == Plasma::SearchContext::NetworkLocation &&
-         location.left(4) == "http")) {
+    if (!location.isEmpty()) {
         KToolInvocation::invokeBrowser(location);
-    } else {
-        new KRun(location, 0);
     }
 }
 
