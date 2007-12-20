@@ -31,19 +31,19 @@
 
 #include "ui_deviceNotifierConfig.h"
 
-namespace Plasma
-{
-    class Svg;
-} // namespace Plasma
+//namespace Plasma
+//{
+//    class Svg;
+//} // namespace Plasma
 
 class QStandardItemModel;
 class KDialog;
 
-namespace Notifier
-{
-    class ListView;
-    class NotifierWidget;
-}
+//namespace Notifier
+//{
+//    class ListView;
+//    class NotifierWidget;
+//}
 
 class DeviceNotifier : public Plasma::Applet
 {
@@ -54,20 +54,20 @@ class DeviceNotifier : public Plasma::Applet
         DeviceNotifier(QObject *parent, const QVariantList &args);
         ~DeviceNotifier();
 
-	void init();
-	Qt::Orientations expandingDirections() const;
-    QSizeF contentSizeHint() const;
+        void init();
+        Qt::Orientations expandingDirections() const;
+        QSizeF contentSizeHint() const;
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
-	void hoverEnterEvent ( QGraphicsSceneHoverEvent  *event);
-	void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
+        void hoverEnterEvent ( QGraphicsSceneHoverEvent  *event);
+        void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
     public slots:
         void onSourceAdded(const QString &name);
         void onSourceRemoved(const QString &name);
         void dataUpdated(const QString &source, Plasma::DataEngine::Data data);
         void showConfigurationInterface();
-	void configAccepted();
-	void slotOnItemDoubleclicked(const QModelIndex & );
-	void onTimerExpired();
+        void configAccepted();
+        void slotOnItemDoubleclicked(const QModelIndex & );
+        void onTimerExpired();
 
     private:
         QModelIndex indexForUdi(const QString &udi) const;
@@ -76,18 +76,16 @@ class DeviceNotifier : public Plasma::Applet
         Plasma::DataEngine *m_solidEngine;
         QStandardItemModel *m_hotplugModel;
 
-	Notifier::ListView *m_listView;
-	Plasma::Dialog *m_widget;
-	QVBoxLayout *m_layout;
-	Plasma::Svg *m_background;
+        Plasma::Dialog *m_widget;
+        //Plasma::Svg *m_background; NOT USED
         KDialog *m_dialog;
-	int m_displayTime;
-	int m_numberItems;
-	int m_itemsValidity;
-	QTimer * m_timer;
+        int m_displayTime;
+        int m_numberItems;
+        int m_itemsValidity;
+        QTimer * m_timer;
+
         /// Designer Config file
         Ui::solidNotifierConfig ui;
-
 };
 
 K_EXPORT_PLASMA_APPLET(devicenotifier, DeviceNotifier)

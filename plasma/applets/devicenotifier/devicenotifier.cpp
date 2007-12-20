@@ -50,52 +50,59 @@ using namespace Notifier;
 DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_icon(""),
-      m_hotplugModel(new QStandardItemModel(this)),
-      m_dialog(0)    
+      m_solidEngine(0),
+      m_hotplugModel(0),
+      m_widget(0),
+      //m_background(0),
+      m_dialog(0),
+      m_displayTime(0),
+      m_numberItems(0),
+      m_itemsValidity(0),
+      m_timer(0)
 {
+    kDebug();
     setHasConfigurationInterface(true);
 }
 
 void DeviceNotifier::init()
 {
     KConfigGroup cg = config();
-    m_timer=new QTimer();
+    m_timer = new QTimer();
     m_displayTime = cg.readEntry("TimeDisplayed", 8);
     m_numberItems = cg.readEntry("NumberItems", 4);
     m_itemsValidity = cg.readEntry("ItemsValidity", 5);
-    
+
     setContentSize(128, 128);
 
     //we display the icon corresponding to the computer
     QList<Solid::Device> list=Solid::Device::allDevices();
-    if	(list.size()>0) {
-	Solid::Device device=list[0];
-    
-	while (device.parent().isValid())
-	{
-	    device=device.parent();
-	}
-	m_icon=KIcon(device.icon());
-    }
-    else
-    {
-	//default icon if problem
-	m_icon=KIcon("computer");
+    if (list.size()>0) {
+        Solid::Device device=list[0];
+
+        while (device.parent().isValid()) {
+            device=device.parent();
+        }
+        m_icon=KIcon(device.icon());
+    } else {
+        //default icon if problem
+        m_icon=KIcon("computer");
     }
     m_widget= new Dialog();
-    m_widget->setStyleSheet("{ border : 0px }");
-    m_listView= new ListView(m_widget);
+    //TODO: from plasmoidviewer- Could not parse stylesheet of widget
+    //m_widget->setStyleSheet("{ border : 0px }");
+
     QVBoxLayout *m_layout = new QVBoxLayout();
     m_layout->setSpacing(0);
     m_layout->setMargin(0);
 
-    m_background = new Plasma::Svg("dialogs/background", this);
-    
+    //m_background = new Plasma::Svg("dialogs/background", this); NOT USED
+    m_hotplugModel = new QStandardItemModel(this);
+
     QLabel *Label = new QLabel(i18n("<font color=white>Recently plugged devices:</font>"));
     QLabel *Icon = new QLabel();
     Icon->setPixmap(KIcon("emblem-mounted").pixmap(ItemDelegate::ICON_SIZE, ItemDelegate::ICON_SIZE));
     Icon->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-    
+
     QHBoxLayout *m_layout2 = new QHBoxLayout();
     m_layout2->setSpacing(0);
     m_layout2->setMargin(0);
@@ -103,6 +110,7 @@ void DeviceNotifier::init()
     m_layout2->addWidget(Icon);
     m_layout2->addWidget(Label);
 
+    Notifier::ListView *m_listView= new ListView(m_widget);
     m_listView->setModel(m_hotplugModel);
     ItemDelegate *delegate = new ItemDelegate;
     m_listView->setItemDelegate(delegate);
@@ -111,7 +119,7 @@ void DeviceNotifier::init()
     m_layout->addLayout(m_layout2);
     m_layout->addWidget(m_listView);
     m_widget->setLayout(m_layout);
-    
+
     m_widget->setWindowFlags(m_listView->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
     m_widget->adjustSize();
 
@@ -122,16 +130,21 @@ void DeviceNotifier::init()
             this, SLOT(onSourceAdded(const QString&)));
     connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(onSourceRemoved(const QString&)));
-    
-    connect(m_listView,SIGNAL(doubleClicked ( const QModelIndex & )),this,SLOT(slotOnItemDoubleclicked( const QModelIndex & )));
 
+    connect(m_listView,SIGNAL(doubleClicked ( const QModelIndex & )),
+            this,SLOT(slotOnItemDoubleclicked( const QModelIndex & )));
     connect(m_timer,SIGNAL(timeout()),this,SLOT(onTimerExpired()));
+
     updateGeometry();
     update();
 }
 
 DeviceNotifier::~DeviceNotifier()
 {
+    delete m_widget;
+    delete m_dialog;
+    delete m_hotplugModel;
+    delete m_timer;
 }
 
 Qt::Orientations DeviceNotifier::expandingDirections() const
@@ -143,14 +156,14 @@ QSizeF DeviceNotifier::contentSizeHint() const
 {
     QSizeF sizeHint = contentSize();
     switch (formFactor()) {
-        case Plasma::Vertical:
-            sizeHint.setHeight(sizeHint.width());
-            break;
-        case Plasma::Horizontal:
-            sizeHint.setWidth(sizeHint.height());
-            break;
-        default:
-            break;
+    case Plasma::Vertical:
+        sizeHint.setHeight(sizeHint.width());
+        break;
+    case Plasma::Horizontal:
+        sizeHint.setWidth(sizeHint.height());
+        break;
+    default:
+        break;
     }
 
     return sizeHint;
@@ -173,44 +186,38 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
         m_hotplugModel->setData(index, data["predicateFiles"], PredicateFilesRole);
         m_hotplugModel->setData(index, data["text"], Qt::DisplayRole);
         m_hotplugModel->setData(index, KIcon(data["icon"].toString()), Qt::DecorationRole);
-	
-	int nb_actions = 0;
-	KServiceAction default_action;
-	bool find_default_action=false;
-	foreach (QString desktop, data["predicateFiles"].toStringList()) {
-	    QString filePath = KStandardDirs::locate("data", "solid/actions/"+desktop);
-	    QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
-	    KDesktopFile cfg(filePath);
-	    nb_actions+=services.size();
-	    foreach (KServiceAction action,services)
-	    {
-		if(action.name()==cfg.desktopGroup().readEntry("X-KDE-DEFAULT-ACTION"))
-		{
-		    default_action=action;
-		    find_default_action=true;
-		    kDebug()<<"Found Default Actions"<<default_action.text();
-		}
-	    }
-	}
-	if (!find_default_action)
-	{
-	    QVariant var;
-	    var.setValue(KServiceAction());
-	    m_hotplugModel->setData(index,var, ActionRole);
-	    kDebug()<<"DeviceNotifier:: Nb Actions"<<nb_actions;
-	}
-	else
-	{	 
-	    kDebug()<<"DeviceNotifier:: Actions"<<default_action.text();
-	    QVariant var;
-	    var.setValue(default_action);
-	    m_hotplugModel->setData(index,var, ActionRole);	    
-	}
 
+        int nb_actions = 0;
+        KServiceAction default_action;
+        bool find_default_action=false;
+        foreach (QString desktop, data["predicateFiles"].toStringList()) {
+            QString filePath = KStandardDirs::locate("data", "solid/actions/"+desktop);
+            QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
+            KDesktopFile cfg(filePath);
+            nb_actions+=services.size();
+
+            foreach (KServiceAction action,services) {
+                if(action.name()==cfg.desktopGroup().readEntry("X-KDE-DEFAULT-ACTION")) {
+                    default_action=action;
+                    find_default_action=true;
+                    kDebug()<<"Found Default Actions"<<default_action.text();
+                }
+            }
+        }
+        if (!find_default_action) {
+            QVariant var;
+            var.setValue(KServiceAction());
+            m_hotplugModel->setData(index,var, ActionRole);
+            kDebug()<<"DeviceNotifier:: Nb Actions"<<nb_actions;
+        } else {
+            kDebug()<<"DeviceNotifier:: Actions"<<default_action.text();
+            QVariant var;
+            var.setValue(default_action);
+            m_hotplugModel->setData(index,var, ActionRole);
+        }
     }
     m_widget->show();
     m_timer->start(m_displayTime*1000);
-
 }
 
 void DeviceNotifier::onSourceAdded(const QString& name)
@@ -222,8 +229,6 @@ void DeviceNotifier::onSourceAdded(const QString& name)
 
     // TODO: Update model
     m_solidEngine->connectSource(name, this);
-
-
 }
 
 void DeviceNotifier::onSourceRemoved(const QString &name)
@@ -232,7 +237,7 @@ void DeviceNotifier::onSourceRemoved(const QString &name)
     Q_ASSERT(index.isValid());
     m_hotplugModel->removeRow(index.row());
     if (m_hotplugModel->rowCount()==0) {
-	m_widget->hide();
+        m_widget->hide();
     }
 }
 
@@ -247,6 +252,7 @@ QModelIndex DeviceNotifier::indexForUdi(const QString &udi) const
         }
     }
     //Is it possible to go here?no...
+    kDebug() << "We should not be here!";
     return QModelIndex();
 }
 
@@ -270,7 +276,7 @@ void DeviceNotifier::showConfigurationInterface()
 {
     if (m_dialog == 0) {
         kDebug()<<"DeviceNotifier:: Enter in configuration interface";
-     	m_dialog = new KDialog;
+        m_dialog = new KDialog;
         m_dialog->setCaption( i18n("Configure New Device Notifier") );
 
         QWidget *widget = new QWidget;
@@ -279,11 +285,12 @@ void DeviceNotifier::showConfigurationInterface()
         m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
         connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
         connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
-	ui.spinTime->setValue(m_displayTime);
-	ui.spinItems->setValue(m_numberItems);
-	ui.spinTimeItems->setValue(m_itemsValidity);	
-      }
-      m_dialog->show();
+        ui.spinTime->setValue(m_displayTime);
+        ui.spinItems->setValue(m_numberItems);
+        ui.spinTimeItems->setValue(m_itemsValidity);
+    }
+
+    m_dialog->show();
 }
 
 void DeviceNotifier::configAccepted()
@@ -310,7 +317,7 @@ void DeviceNotifier::slotOnItemDoubleclicked(const QModelIndex & index)
     KRun::runCommand(exec, QString(), default_action.icon(), 0);
     /*kDebug()<<"DeviceNotifier:: call Solid Ui Server with params :"<<udi<<","<<desktop_files;
     QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
-    QDBusReply<void> reply = soliduiserver.call("showActionsDialog", udi,desktop_files); */   
+    QDBusReply<void> reply = soliduiserver.call("showActionsDialog", udi,desktop_files); */
 }
 
 void DeviceNotifier::onTimerExpired()
