@@ -42,6 +42,9 @@ RootWidget::RootWidget()
     setFocusPolicy(Qt::NoFocus);
 
     // this line also initializes the corona.
+    KConfigGroup cg(KGlobal::config(), "General");
+    Plasma::Theme::self()->setFont(cg.readEntry("desktopFont", font()));
+
     Plasma::Corona *corona = PlasmaApp::self()->corona();
 
     // create a containment for each screen
