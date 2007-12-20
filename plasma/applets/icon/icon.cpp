@@ -31,6 +31,7 @@
 #include <KUrl>
 #include <KDesktopFile>
 
+#include <plasma/theme.h>
 #include <plasma/layouts/boxlayout.h>
 #include <plasma/widgets/icon.h>
 #include <plasma/containment.h>
@@ -43,7 +44,10 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     //new Plasma::HBoxLayout(this);
     m_icon = new Plasma::Icon(this);
-    setMinimumSize(QSize(48,78));
+    const int min = IconSize(KIconLoader::Desktop);
+    const int textHeight = Plasma::Theme::self()->fontMetrics().height();
+    const int spacing = 4;
+    setMinimumContentSize(min + spacing, min + textHeight + spacing*2);
     if (args.count() > 2) {
         setUrl(args.at(2).toString());
     }
