@@ -358,6 +358,17 @@ void TaskManager::windowAdded(WId w )
     Task::TaskPtr t( new Task( w, 0 ) );
     d->tasksByWId[w] = t;
 
+    if (d->startupInfo) {
+        KStartupInfoId startupInfoId;
+        // checkStartup modifies startupInfoId
+        d->startupInfo->checkStartup(w, startupInfoId);
+        foreach (Startup::StartupPtr startup, d->startups) {
+            if (startup->id() == startupInfoId) {
+                startup->addWindowMatch(w);
+            }
+        }
+    }
+
     // kDebug() << "TM: Task added for WId: " << w;
 
     emit taskAdded(t);
@@ -1628,6 +1639,7 @@ public:
 
     KStartupInfoId id;
     KStartupInfoData data;
+    QSet<WId> windowMatches;
 };
 
 Startup::Startup(const KStartupInfoId& id, const KStartupInfoData& data,
@@ -1667,6 +1679,16 @@ void Startup::update(const KStartupInfoData& data)
 KStartupInfoId Startup::id() const
 {
     return d->id;
+}
+
+void Startup::addWindowMatch(WId window)
+{
+    d->windowMatches.insert(window);
+}
+
+bool Startup::matchesWindow(WId window) const
+{
+    return d->windowMatches.contains(window);
 }
 
 int TaskManager::currentDesktop() const

@@ -496,6 +496,9 @@ public:
     void update( const KStartupInfoData& data );
     KStartupInfoId id() const;
 
+    void addWindowMatch(WId window);
+    bool matchesWindow(WId window) const;
+
 Q_SIGNALS:
     /**
      * Indicates that this startup has changed in some way.
