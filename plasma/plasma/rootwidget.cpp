@@ -30,6 +30,7 @@
 #include "plasma/corona.h"
 #include "plasma/plasma.h"
 #include "plasma/svg.h"
+#include "plasma/theme.h"
 
 #include "desktopview.h"
 #include "dashboardview.h"
