@@ -23,7 +23,6 @@
 #include "ui_randrconfigbase.h"
 #include "randr.h"
 
-#ifdef HAS_RANDR_1_2
 
 class RandRDisplay;
 class SettingsContainer;
@@ -61,6 +60,5 @@ private:
 	LayoutManager *m_layoutManager;
 };
 
-#endif
 
 #endif

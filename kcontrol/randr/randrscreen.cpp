@@ -26,7 +26,6 @@
 #include "randroutput.h"
 #include "randrmode.h"
 
-#ifdef HAS_RANDR_1_2
 RandRScreen::RandRScreen(int screenIndex)
 : m_resources(0L)
 {
@@ -568,5 +567,4 @@ void RandRScreen::slotOutputChanged(RROutput id, int changes)
 
 #include "randrscreen.moc"
 
-#endif
 

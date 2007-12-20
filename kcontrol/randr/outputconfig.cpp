@@ -20,7 +20,6 @@
 #include "outputgraphicsitem.h"
 #include "randroutput.h"
 #include <kdebug.h>
-#ifdef HAS_RANDR_1_2
 
 OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsItem *item)
 : QWidget(parent)
@@ -112,4 +111,3 @@ void OutputConfig::loadRefreshRates()
 }
 
 #include "outputconfig.moc"
-#endif

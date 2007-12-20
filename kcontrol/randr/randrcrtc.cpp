@@ -23,7 +23,6 @@
 #include "randroutput.h"
 #include "randrmode.h"
 
-#ifdef HAS_RANDR_1_2
 RandRCrtc::RandRCrtc(RandRScreen *parent, RRCrtc id)
 : QObject(parent)
 {
@@ -427,5 +426,4 @@ ModeList RandRCrtc::modes() const
 
 #include "randrcrtc.moc"
 
-#endif
 

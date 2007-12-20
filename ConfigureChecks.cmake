@@ -1,5 +1,6 @@
 include(UnixAuth)
 include(CheckTypeSize)
+include(FindPkgConfig)
 
 macro_optional_find_package(XKB) # kxkb, kdm
 
@@ -78,3 +79,6 @@ set(CMAKE_EXTRA_INCLUDE_FILES sys/socket.h)
 check_type_size("struct ucred" STRUCT_UCRED)       # kio_fonts
 
 check_function_exists(getpeereid  HAVE_GETPEEREID) # kdesu
+
+pkg_check_modules (XRANDR_1_2   xrandr>=1.2)
+macro_bool_to_01(XRANDR_1_2_FOUND HAS_RANDR_1_2)

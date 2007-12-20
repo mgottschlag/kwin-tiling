@@ -21,7 +21,6 @@
 
 #include "randr.h"
 
-#ifdef HAS_RANDR_1_2
 
 class RandRMode
 {
@@ -42,6 +41,5 @@ private:
 	RRMode m_id;
 };
 
-#endif // HAS_RANDR_1_2
 
 #endif

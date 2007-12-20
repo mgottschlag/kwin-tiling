@@ -24,8 +24,6 @@
 #include "randroutput.h"
 #include <cmath>
 
-#ifdef HAS_RANDR_1_2
-
 LayoutManager::LayoutManager(RandRScreen *screen, QGraphicsScene *scene)
 : QObject(screen)
 {
@@ -148,4 +146,3 @@ void LayoutManager::adjustScene(OutputGraphicsItem *current, QList<OutputGraphic
 	}
 	
 }
-#endif // HAS_RANDR_1_2

@@ -27,7 +27,6 @@
 #include "randr.h"
 #include <kdebug.h>
 
-#ifdef HAS_RANDR_1_2
 
 RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 : QWidget(parent), Ui::RandRConfigBase()
@@ -155,4 +154,3 @@ void RandRConfig::slotUpdateView()
 
 #include "randrconfig.moc"
 
-#endif

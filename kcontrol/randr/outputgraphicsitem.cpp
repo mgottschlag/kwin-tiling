@@ -24,8 +24,6 @@
 #include <QGraphicsScene>
 #include "randroutput.h"
 #include "randr.h"
-#ifdef HAS_RANDR_1_2
-
 OutputGraphicsItem::OutputGraphicsItem(RandROutput *output)
 : QGraphicsRectItem(output->rect())
 {
@@ -261,4 +259,3 @@ bool OutputGraphicsItem::isConnected()
 }
 
 #include "outputgraphicsitem.moc"
-#endif

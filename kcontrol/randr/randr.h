@@ -22,6 +22,7 @@
 
 #include <QString>
 #include <QPixmap>
+#include <config-randr.h>
 
 extern "C"
 {
@@ -32,10 +33,6 @@ extern "C"
 #undef INT8
 #undef INT32
 #include <X11/extensions/Xrandr.h>
-
-#if RANDR_MAJOR > 1 || (RANDR_MAJOR == 1 && RANDR_MINOR >= 2)
-#define HAS_RANDR_1_2 1
-#endif
 }
 
 #ifdef HAS_RANDR_1_2

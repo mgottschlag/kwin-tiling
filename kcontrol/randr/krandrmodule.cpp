@@ -26,6 +26,7 @@
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 #include <kdebug.h>
+#include <config-randr.h>
 
 #include "randr.h"
 

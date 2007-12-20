@@ -18,7 +18,6 @@
 
 #include "randrmode.h"
 
-#ifdef HAS_RANDR_1_2
 
 RandRMode::RandRMode(XRRModeInfo *info)
 {
@@ -77,4 +76,3 @@ bool RandRMode::isValid() const
 	return m_valid;
 }
 
-#endif

@@ -24,7 +24,6 @@
 #include <QRect>
 #include "randr.h"
 
-#ifdef HAS_RANDR_1_2
 
 class QAction;
 class KConfig;
@@ -143,6 +142,4 @@ private:
 
 	RandRScreen *m_screen;
 };
-#endif
-
 #endif

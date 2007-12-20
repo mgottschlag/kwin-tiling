@@ -25,8 +25,11 @@
 #include <QX11Info>
 
 #include "randrdisplay.h"
+#ifdef HAS_RANDR_1_2 
 #include "randrscreen.h"
+#endif
 #include "legacyrandrscreen.h"
+#include <config-randr.h>
 
 RandRDisplay::RandRDisplay()
 : m_valid(true)

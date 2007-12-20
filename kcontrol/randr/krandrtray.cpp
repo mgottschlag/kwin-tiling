@@ -30,12 +30,15 @@
 #include <QMouseEvent>
 #include <QVariant>
 
+#include <config-randr.h>
 #include "krandrtray.h"
 #include "krandrpassivepopup.h"
 #include "krandrtray.moc"
 #include "legacyrandrscreen.h"
+#ifdef HAS_RANDR_1_2
 #include "randrscreen.h"
 #include "randroutput.h"
+#endif
 #include "randrmode.h"
 
 KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)

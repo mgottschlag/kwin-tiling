@@ -1,21 +1,23 @@
 include_directories( ${X11_Xrandr_INCLUDE_PATH}  )
 
+configure_file (config-randr.h.cmake
+${CMAKE_CURRENT_BINARY_DIR}/config-randr.h )
+
 ########### next target ###############
+
 
 set(randrinternal_PART_SRCS 
    ktimerdialog.cpp
-   layoutmanager.cpp 
    randr.cpp 
-   randrscreen.cpp
-   randrcrtc.cpp
-   randroutput.cpp
-   randrmode.cpp
    randrdisplay.cpp
-   randrconfig.cpp
-   outputconfig.cpp
-   outputgraphicsitem.cpp
    collapsiblewidget.cpp
    legacyrandrscreen.cpp) 
+
+if( XRANDR_1_2_FOUND )
+   set(randrinternal_PART_SRCS ${randrinternal_PART_SRCS} layoutmanager.cpp 
+       outputconfig.cpp outputgraphicsitem.cpp randrconfig.cpp randrcrtc.cpp 
+randrmode.cpp randroutput.cpp randrscreen.cpp)
+endif( XRANDR_1_2_FOUND )
 
 set(kcm_randr_PART_SRCS 
    krandrmodule.cpp 

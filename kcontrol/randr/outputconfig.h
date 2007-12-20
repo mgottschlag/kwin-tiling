@@ -24,8 +24,6 @@
 #include "ui_outputconfigbase.h"
 #include "randr.h"
 
-#ifdef HAS_RANDR_1_2
-
 class RandROutput;
 class OutputGraphicsItem;
 
@@ -50,6 +48,5 @@ private:
 	OutputGraphicsItem *m_item;
 };
 
-#endif
 
 #endif

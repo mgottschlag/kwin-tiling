@@ -26,7 +26,6 @@
 #include "randrcrtc.h"
 #include "randrmode.h"
 
-#ifdef HAS_RANDR_1_2
 RandROutput::RandROutput(RandRScreen *parent, RROutput id)
 : QObject(parent)
 {
@@ -529,5 +528,4 @@ void RandROutput::slotCrtcChanged(RRCrtc c, int changes)
 
 #include "randroutput.moc"
 
-#endif
 

@@ -19,13 +19,16 @@
 
 #include <kdebug.h>
 
+#include <config-randr.h>
 #include "krandrapp.h"
 #include "krandrapp.moc"
 
 #include "randrconfig.h"
 #include "krandrtray.h"
 
+#ifdef HAS_RANDR_1_2
 #include "randrscreen.h"
+#endif
 #include "legacyrandrscreen.h"
 #include <X11/Xlib.h>
 

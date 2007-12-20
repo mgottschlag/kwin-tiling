@@ -23,7 +23,6 @@
 #include <QRect>
 #include "randr.h"
 
-#ifdef HAS_RANDR_1_2
 
 class RandRCrtc : public QObject
 {
@@ -86,6 +85,5 @@ private:
 
 	RandRScreen *m_screen;
 };
-#endif
 
 #endif

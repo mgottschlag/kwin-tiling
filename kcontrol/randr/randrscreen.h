@@ -24,8 +24,6 @@
 #include <QMap>
 #include "randr.h"
 
-#ifdef HAS_RANDR_1_2
-
 
 class QAction;
 class KConfig;
@@ -122,6 +120,5 @@ private:
 	ModeMap m_modes;
 		
 };
-#endif
 
 #endif
