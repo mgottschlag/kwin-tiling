@@ -38,8 +38,8 @@
 #ifdef HAS_RANDR_1_2
 #include "randrscreen.h"
 #include "randroutput.h"
-#endif
 #include "randrmode.h"
+#endif
 
 KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
 : KSystemTrayIcon("randr", parent)
