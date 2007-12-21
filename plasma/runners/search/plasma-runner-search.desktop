@@ -2,7 +2,7 @@
 Name=Search Runner
 Name[be]=Запуск пошуку
 Name[bg]=Търсене
-Name[ca]=Executador de cerques
+Name[ca]=Execució de cerques
 Name[csb]=Zrëszë szëkbã
 Name[de]=Suche durchführen
 Name[el]=Εκτελεστής αναζήτησης
@@ -62,6 +62,7 @@ Comment[ja]=ファイルを検索
 Comment[kk]=Файлдарды табу
 Comment[km]=ស្វែងរក​ឯកសារ​
 Comment[ko]=파일 찾기
+Comment[ku]=Li pelan bigere
 Comment[lv]=Failu meklēšana
 Comment[nb]=Søk i filer
 Comment[nds]=Dateien söken

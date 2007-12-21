@@ -1,6 +1,22 @@
 [Desktop Entry]
 Name=Locations runner
+Name[ca]=Execució d'ubicacions
+Name[ja]=場所 Runner
+Name[km]=កម្មវិធី​ចាប់ផ្ដើម​ទីតាំង
+Name[lv]=Vietu palaidējs
+Name[nds]=Stedenkieker
+Name[pt]=Execução de Locais
+Name[pt_BR]=Execução de Locais
+Name[sv]=Visa platser
 Comment=File and URL opener
+Comment[ca]=Obre fitxers i URL
+Comment[ja]=ファイルと URL を開きます
+Comment[km]=កម្មវិធី​បើក ឯកសារ និង URL
+Comment[lv]=Failu un URL atvērējs
+Comment[nds]=Opmaker för Dateien un URLs
+Comment[pt]=Abertura de ficheiros e URL's
+Comment[pt_BR]=Abertura de ficheiros e URL's
+Comment[sv]=Öppna filer och webbadresser
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_locations
