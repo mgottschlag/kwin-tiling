@@ -5,7 +5,7 @@ add_subdirectory( pics )
 add_subdirectory( sessions )
 
 include_directories(
-	${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/background
+	${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/kdm/background
 	${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kdm
 	${BLITZ_INCLUDES}
 )

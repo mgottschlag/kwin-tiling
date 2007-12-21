@@ -24,15 +24,15 @@ add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DHAVE_CONFIG_H=1)
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
 
 set( backgroundlib_SRCS
-    ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/background/bgrender.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/background/bgsettings.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/kdm/background/bgrender.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/kdm/background/bgsettings.cpp
 )
 
 set( kcmbackgroundlib_SRCS
-    ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/background/bgdialog.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/background/bgadvanced.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/background/bgmonitor.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/background/bgwallpaper.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/kdm/background/bgdialog.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/kdm/background/bgadvanced.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/kdm/background/bgmonitor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/kcontrol/kdm/background/bgwallpaper.cpp
 )
 
 include_directories(

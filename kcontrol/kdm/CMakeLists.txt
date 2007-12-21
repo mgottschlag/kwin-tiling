@@ -1,11 +1,15 @@
+add_subdirectory( background )
+
 # Currently needed for DEFAULT_TEXT_HEIGHT
 # The plan is to move konq_iconviewwidget to kdesktop and then it's all inside workspace.
 # But first KonqOperations must be redesigned to not use konq_iconviewwidget...
 include_directories( ${BLITZ_INCLUDES} )
 
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/background/  )
+
 add_definitions (-DQT3_SUPPORT)
 
-kde4_add_ui3_files(kcmbackgroundlib_SRCS ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/background/bgdialog_ui.ui ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/background/bgwallpaper_ui.ui ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/background/bgadvanced_ui.ui)
+kde4_add_ui3_files(kcmbackgroundlib_SRCS ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/kdm/background/bgdialog_ui.ui ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/kdm/background/bgwallpaper_ui.ui ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/kdm/background/bgadvanced_ui.ui)
 
 set(kcm_kdm_PART_SRCS ${kcmbackgroundlib_SRCS} ${backgroundlib_SRCS}
    background.cpp

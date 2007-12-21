@@ -1,7 +1,3 @@
-
-
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/background/  )
-
 macro_optional_find_package(Freetype)
 
 set(libkxftconfig_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/fonts/kxftconfig.cpp )
@@ -17,7 +13,6 @@ if(X11_Xkb_FOUND)
 endif(X11_Xkb_FOUND)
 
 add_subdirectory( bell )
-#add_subdirectory( background )
 
 add_subdirectory( input )
 add_subdirectory( kdm )
