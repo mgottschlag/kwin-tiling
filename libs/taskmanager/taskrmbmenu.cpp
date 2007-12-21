@@ -230,13 +230,12 @@ QMenu* TaskRMBMenu::makeAdvancedMenu(Task::TaskPtr t)
 QMenu* TaskRMBMenu::makeDesktopsMenu(Task::TaskPtr t)
 {
     QMenu* m = new QMenu( this );
-    int it = toDesktopMap.size() + 1;
     m->setTitle( i18n("To &Desktop") );
 
     QAction *a = m->addAction( i18n("&All Desktops"), this, SLOT( slotToDesktop() ) );
     a->setCheckable(true);
     toDesktopMap.append( QPair<Task::TaskPtr, int>( t, 0 ) ); // 0 means all desktops
-    a->setData( it++ );
+    a->setData( 0 );
     a->setChecked( t->isOnAllDesktops() );
 
     m->addSeparator();
