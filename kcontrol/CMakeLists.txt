@@ -17,7 +17,7 @@ if(X11_Xkb_FOUND)
 endif(X11_Xkb_FOUND)
 
 add_subdirectory( bell )
-add_subdirectory( background )
+#add_subdirectory( background )
 
 add_subdirectory( input )
 add_subdirectory( kdm )
