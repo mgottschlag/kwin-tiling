@@ -76,10 +76,17 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
         item->setText(QFileInfo(urlString).baseName());
         item->setIcon(KIcon(desktopFile.readIcon()));
 
-        //FIXME: this is a hack around borkage in KRecentDocuments which stores a path in the URL
-        //       field!
+        //FIXME: desktopUrl is a hack around borkage in KRecentDocuments which
+        //       stores a path in the URL field!
         KUrl desktopUrl(desktopFile.desktopGroup().readPathEntry("URL", QString()));
-        item->setData(desktopUrl.url(),Kickoff::UrlRole);
+        if (!desktopUrl.url().isEmpty()) {
+            item->setData(desktopUrl.url(), Kickoff::UrlRole);
+        } else {
+            // desktopUrl.url() is empty if the file doesn't exist so set the
+            // url role to that which was passed so that the item can still be
+            // manually removed
+            item->setData(urlString, Kickoff::UrlRole);
+        }
 
         QString subTitle = desktopUrl.isLocalFile() ? desktopUrl.path() : desktopUrl.prettyUrl();
         item->setData(subTitle, Kickoff::SubTitleRole);
