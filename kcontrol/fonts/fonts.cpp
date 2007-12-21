@@ -494,20 +494,6 @@ int FontAASettings::exec()
 
 /**** KFonts ****/
 
-static QString desktopConfigName()
-{
-  int desktop=0;
-  if (QX11Info::display())
-    desktop = DefaultScreen(QX11Info::display());
-  QString name;
-  if (desktop == 0)
-    name = "kdesktoprc";
-  else
-    name.sprintf("kdesktop-screen-%drc", desktop);
-
-  return name;
-}
-
 KFonts::KFonts(QWidget *parent, const QVariantList &args)
     :   KCModule(FontFactory::componentData(), parent, args)
 {
@@ -521,7 +507,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
     << i18n("Menu")           << "General"    << "menuFont"     << ""
     << i18n("Window title")   << "WM"         << "activeFont"   << ""
     << i18n("Taskbar")        << "General"    << "taskbarFont"  << ""
-    << i18n("Desktop")        << "FMSettings" << "StandardFont" << desktopConfigName();
+    << i18n("Desktop")        << "General"    << "desktopFont" << "";
 
   QList<QFont> defaultFontList;
 
