@@ -275,7 +275,7 @@ AbstractTaskItem::TaskFlags AbstractTaskItem::taskFlags() const
     return _flags;
 }
 
-void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *)
+void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     const int FadeInDuration = 100;
 
@@ -285,9 +285,10 @@ void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *)
     if (_fadeTimer->state() != QTimeLine::Running) {
         _fadeTimer->start();
     }
+    Widget::hoverEnterEvent(event);
 }
 
-void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
+void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     const int FadeOutDuration = 200;
 
@@ -298,6 +299,7 @@ void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *)
         _fadeTimer->setCurrentTime(FadeOutDuration);
         _fadeTimer->start();
     }
+    Widget::hoverLeaveEvent(event);
 }
 
 QSizeF AbstractTaskItem::maximumSize() const
@@ -845,6 +847,9 @@ void StartupTaskItem::setStartupTask(Startup::StartupPtr task)
 
     setText(task->text());
     setIcon(KIcon(task->icon()));
+    Plasma::ToolTipData tip;
+    tip.mainText = task->text();
+    tip.image = task->icon();
 }
 
 Startup::StartupPtr StartupTaskItem::startupTask() const
@@ -906,6 +911,11 @@ void WindowTaskItem::updateTask()
     QPixmap iconPixmap = _task->icon(preferredIconSize().width(),
                                      preferredIconSize().height(),
                                      true);
+    Plasma::ToolTipData data;
+    data.mainText = _task->visibleName();
+    data.subText = i18nc("Which virtual desktop a window is currently on", "On %1", KWindowSystem::desktopName(_task->desktop()));
+    data.image = iconPixmap;
+    setToolTip(data);
     setIcon(QIcon(iconPixmap));
     setText(_task->visibleName());
 

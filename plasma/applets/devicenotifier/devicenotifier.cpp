@@ -270,6 +270,7 @@ void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void DeviceNotifier::hoverEnterEvent ( QGraphicsSceneHoverEvent  *event )
 {
     m_widget->position(event, boundingRect(), mapToScene(boundingRect().topLeft()));
+    Applet::hoverEnterEvent(event);
 }
 
 void DeviceNotifier::showConfigurationInterface()

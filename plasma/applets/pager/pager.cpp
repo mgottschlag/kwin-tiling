@@ -418,6 +418,7 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 void Pager::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     hoverMoveEvent(event);
+    Applet::hoverEnterEvent(event);
 }
 
 void Pager::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
@@ -442,6 +443,7 @@ void Pager::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
         m_hoverRect = QRectF();
         update();
     }
+    Applet::hoverLeaveEvent(event);
 }
 
 void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)

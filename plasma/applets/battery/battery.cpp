@@ -216,16 +216,16 @@ void Battery::configAccepted()
 
 void Battery::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    Q_UNUSED( event );
     m_isHovered = true;
     update();
+    Applet::hoverEnterEvent(event);
 }
 
 void Battery::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    Q_UNUSED( event );
     m_isHovered = false;
     update();
+    Applet::hoverLeaveEvent(event);
 }
 
 Battery::~Battery()
