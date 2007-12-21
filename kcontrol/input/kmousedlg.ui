@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>631</width>
-    <height>393</height>
+    <width>480</width>
+    <height>403</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
@@ -22,38 +22,6 @@
       <string>Button Order</string>
      </property>
      <layout class="QGridLayout" >
-      <item row="2" column="2" >
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType" >
-         <enum>QSizePolicy::Expanding</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="2" column="0" >
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeType" >
-         <enum>QSizePolicy::Expanding</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item row="0" column="0" >
        <widget class="QRadioButton" name="rightHanded" >
         <property name="text" >
@@ -61,13 +29,6 @@
         </property>
         <property name="checked" >
          <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" >
-       <widget class="QRadioButton" name="leftHanded" >
-        <property name="text" >
-         <string>Le&amp;ft handed</string>
         </property>
        </widget>
       </item>
@@ -92,6 +53,29 @@
          <bool>false</bool>
         </property>
        </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QRadioButton" name="leftHanded" >
+        <property name="text" >
+         <string>Le&amp;ft handed</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </widget>
@@ -201,13 +185,16 @@
               <property name="bottomMargin" >
                <number>0</number>
               </property>
-              <item row="1" column="1" >
-               <widget class="QLabel" name="lb_short" >
+              <item row="0" column="0" >
+               <widget class="QLabel" name="lDelay" >
                 <property name="text" >
-                 <string>Short</string>
+                 <string>Dela&amp;y:</string>
                 </property>
                 <property name="wordWrap" >
                  <bool>false</bool>
+                </property>
+                <property name="buddy" >
+                 <cstring>slAutoSelect</cstring>
                 </property>
                </widget>
               </item>
@@ -233,29 +220,26 @@
               <item rowspan="2" row="0" column="3" >
                <spacer>
                 <property name="orientation" >
-                 <enum>Qt::Vertical</enum>
+                 <enum>Qt::Horizontal</enum>
                 </property>
                 <property name="sizeType" >
                  <enum>QSizePolicy::Expanding</enum>
                 </property>
                 <property name="sizeHint" >
                  <size>
-                  <width>230</width>
+                  <width>20</width>
                   <height>20</height>
                  </size>
                 </property>
                </spacer>
               </item>
-              <item row="0" column="0" >
-               <widget class="QLabel" name="lDelay" >
+              <item row="1" column="1" >
+               <widget class="QLabel" name="lb_short" >
                 <property name="text" >
-                 <string>Dela&amp;y:</string>
+                 <string>Short</string>
                 </property>
                 <property name="wordWrap" >
                  <bool>false</bool>
-                </property>
-                <property name="buddy" >
-                 <cstring>slAutoSelect</cstring>
                 </property>
                </widget>
               </item>
@@ -293,7 +277,7 @@
      </property>
      <property name="sizeHint" >
       <size>
-       <width>608</width>
+       <width>20</width>
        <height>4</height>
       </size>
      </property>
