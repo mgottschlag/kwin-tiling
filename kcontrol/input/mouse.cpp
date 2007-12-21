@@ -219,7 +219,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
          " flying across the screen, making it hard to control.</p>");
     accel->setWhatsThis( wtstr );
 
-    thresh = new KIntNumInput(accel, 20, tab2);
+    thresh = new KIntNumInput(20, tab2);
     thresh->setLabel(i18n("Pointer threshold:"));
     thresh->setRange(0,20,1);
     thresh->setSteps(1,1);
@@ -241,7 +241,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
 
     // It would be nice if the user had a test field.
     // Selecting such values in milliseconds is not intuitive
-    doubleClickInterval = new KIntNumInput(thresh, 2000, tab2);
+    doubleClickInterval = new KIntNumInput(2000, tab2);
     doubleClickInterval->setLabel(i18n("Double click interval:"));
     doubleClickInterval->setRange(0, 2000, 100);
     doubleClickInterval->setSuffix(i18n(" msec"));
@@ -259,7 +259,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
 
     lay->addSpacing(15);
 
-    dragStartTime = new KIntNumInput(doubleClickInterval, 2000, tab2);
+    dragStartTime = new KIntNumInput(2000, tab2);
     dragStartTime->setLabel(i18n("Drag start time:"));
     dragStartTime->setRange(0, 2000, 100);
     dragStartTime->setSuffix(i18n(" msec"));
@@ -272,7 +272,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
          " drag start time, a drag operation will be initiated.");
     dragStartTime->setWhatsThis( wtstr );
 
-    dragStartDist = new KIntNumInput(dragStartTime, 20, tab2);
+    dragStartDist = new KIntNumInput(20, tab2);
     dragStartDist->setLabel(i18n("Drag start distance:"));
     dragStartDist->setRange(1, 20, 1);
     dragStartDist->setSteps(1,1);
@@ -286,7 +286,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
          " operation will be initiated.");
     dragStartDist->setWhatsThis( wtstr );
 
-    wheelScrollLines = new KIntNumInput(dragStartDist, 3, tab2);
+    wheelScrollLines = new KIntNumInput(3, tab2);
     wheelScrollLines->setLabel(i18n("Mouse wheel scrolls by:"));
     wheelScrollLines->setRange(1, 12, 1);
     wheelScrollLines->setSteps(1,1);
@@ -329,7 +329,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
   vvbox->addItem(hbox);
   hbox->setSpacing(KDialog::spacingHint());
   hbox->addSpacing(24);
-  mk_interval = new KIntNumInput(mk_delay, 0, mouse);
+  mk_interval = new KIntNumInput(0, mouse);
   mk_interval->setLabel(i18n("R&epeat interval:"), Qt::AlignVCenter);
   mk_interval->setSuffix(i18n(" msec"));
   mk_interval->setRange(1, 1000, 10);
@@ -339,7 +339,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
   vvbox->addItem(hbox);
   hbox->setSpacing(KDialog::spacingHint());
   hbox->addSpacing(24);
-  mk_time_to_max = new KIntNumInput(mk_interval, 0, mouse);
+  mk_time_to_max = new KIntNumInput(0, mouse);
   mk_time_to_max->setLabel(i18n("Acceleration &time:"), Qt::AlignVCenter);
   mk_time_to_max->setRange(100, 10000, 200);
   mk_time_to_max->setSuffix(i18n(" msec"));
@@ -349,7 +349,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
   vvbox->addItem(hbox);
   hbox->setSpacing(KDialog::spacingHint());
   hbox->addSpacing(24);
-  mk_max_speed = new KIntNumInput(mk_time_to_max, 0, mouse);
+  mk_max_speed = new KIntNumInput(0, mouse);
   mk_max_speed->setLabel(i18n("Ma&ximum speed:"), Qt::AlignVCenter);
   mk_max_speed->setRange(1, 2000, 20);
   mk_max_speed->setSuffix(i18n(" pixel/sec"));
@@ -359,7 +359,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
   vvbox->addItem(hbox);
   hbox->setSpacing(KDialog::spacingHint());
   hbox->addSpacing(24);
-  mk_curve = new KIntNumInput(mk_max_speed, 0, mouse);
+  mk_curve = new KIntNumInput(0, mouse);
   mk_curve->setLabel(i18n("Acceleration &profile:"), Qt::AlignVCenter);
   mk_curve->setRange(-1000, 1000, 100);
   hbox->addWidget(mk_curve);
