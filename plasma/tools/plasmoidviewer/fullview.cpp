@@ -36,12 +36,12 @@ using namespace Plasma;
 
 FullView::FullView(const QString &ff, QWidget *parent)
     : QGraphicsView(parent),
+      m_formfactor(Plasma::Planar),
       m_containment(0),
       m_applet(0)
 {
     QString formfactor = ff.toLower();
-//     kDebug() << formfactor;
-    if (ff.isEmpty() || formfactor == "planar") {
+    if (formfactor.isEmpty() || formfactor == "planar") {
         m_formfactor = Plasma::Planar;
     } else if (formfactor == "vertical") {
         m_formfactor = Plasma::Vertical;
