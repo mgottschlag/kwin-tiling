@@ -267,7 +267,6 @@ private:
     QTimeLine* _fadeTimer;
 
     QPointF _dragOffset;
-    AbstractTaskItem* _previousDragTarget;
     int m_updateTimerId;
     QTime m_lastUpdate;
 
@@ -301,20 +300,26 @@ public:
     /** Tells the window manager the minimized task's geometry. */
     void publishIconGeometry();
 
-    virtual void activate();
     virtual void close();
 
     /** Overrided from LayoutItem */
     void setGeometry(const QRectF& geometry);
 
+public slots:
+    virtual void activate();
+
 protected:
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+    virtual void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
+    virtual void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
+    virtual void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
 
 private slots:
     void updateTask();
 
 private:
     Task::TaskPtr _task;
+    QTimer* _activateTimer;
 };
 
 /**

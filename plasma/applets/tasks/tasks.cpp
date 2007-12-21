@@ -33,6 +33,7 @@
 #include <QIcon>
 #include <QLinearGradient>
 #include <QTimeLine>
+#include <QTimer>
 #include <QStyleOptionGraphicsItem>
 #include <QtDebug>
 #include <QTextLayout>
@@ -189,7 +190,6 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
     : Widget(parent,parentObject),
       _flags(0),
       _fadeTimer(0),
-      _previousDragTarget(0),
       m_updateTimerId(-1)
 {
     setAcceptsHoverEvents(true);
@@ -858,7 +858,8 @@ Startup::StartupPtr StartupTaskItem::startupTask() const
 }
 
 WindowTaskItem::WindowTaskItem(QGraphicsItem *parent, QObject *parentObject)
-    : AbstractTaskItem(parent, parentObject)
+    : AbstractTaskItem(parent, parentObject),
+    _activateTimer(0)
 {
 }
 
@@ -954,6 +955,35 @@ void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
     e->accept();
     TaskRMBMenu menu( windowTask() );
     menu.exec( e->screenPos() );
+}
+
+void WindowTaskItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
+{
+    event->accept();
+    if (!_activateTimer) {
+        _activateTimer = new QTimer();
+        _activateTimer->setSingleShot(true);
+        _activateTimer->setInterval(300);
+        connect(_activateTimer, SIGNAL(timeout()), this, SLOT(activate()));
+    }
+    _activateTimer->start();
+}
+
+void WindowTaskItem::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    Q_UNUSED(event);
+
+    // restart the timer so that activate() is only called after the mouse
+    // stops moving
+    _activateTimer->start();
+}
+
+void WindowTaskItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    Q_UNUSED(event);
+
+    delete _activateTimer;
+    _activateTimer = 0;
 }
 
 void WindowTaskItem::setGeometry(const QRectF& geometry)
