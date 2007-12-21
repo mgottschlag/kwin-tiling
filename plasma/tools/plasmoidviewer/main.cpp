@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 
     KCmdLineOptions options;
     options.add( "f" );
-    options.add( "formfactor", ki18n( "The formfactor to use" ) );
+    options.add( "formfactor <name>", ki18n( "The formfactor to use (horizontal, vertical, mediacenter or planar)" ), "planar");
     options.add( "+applet", ki18n( "Name of applet to add" ) );
     KCmdLineArgs::addCmdLineOptions( options );
 
@@ -60,8 +60,9 @@ int main(int argc, char **argv)
     }
 
     QString formfactor;
-    if ( args->isSet( "formfactor" ) ) {
-        formfactor= args->getOption( "formfactor" );
+    if (args->isSet("formfactor")) {
+//         kDebug() << "formfactor is set";
+        formfactor = args->getOption("formfactor");
     }
 
     FullView view( formfactor );

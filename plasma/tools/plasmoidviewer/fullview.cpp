@@ -30,17 +30,20 @@
 #include <KStandardDirs>
 #include <KIconLoader>
 #include <QIcon>
+#include <QResizeEvent>
 
 using namespace Plasma;
 
 FullView::FullView(const QString &ff, QWidget *parent)
     : QGraphicsView(parent),
-      m_formfactor(Plasma::Planar),
       m_containment(0),
       m_applet(0)
 {
     QString formfactor = ff.toLower();
-    if (formfactor == "vertical") {
+//     kDebug() << formfactor;
+    if (ff.isEmpty() || formfactor == "planar") {
+        m_formfactor = Plasma::Planar;
+    } else if (formfactor == "vertical") {
         m_formfactor = Plasma::Vertical;
     } else if (formfactor == "horizontal") {
         m_formfactor = Plasma::Horizontal;
@@ -64,7 +67,7 @@ void FullView::addApplet(const QString &a)
     m_containment = m_corona.addContainment("null");
     m_containment->setFormFactor(m_formfactor);
     m_applet = m_containment->addApplet(a, QVariantList(),
-					    0, QRectF(0, 0, -1, -1));
+                                        0, QRectF(0, 0, -1, -1));
     m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
     if (m_applet->failedToLaunch()) {
         // TODO Can we give a better error message somehow?
@@ -80,10 +83,29 @@ void FullView::addApplet(const QString &a)
 void FullView::resizeEvent(QResizeEvent *event)
 {
     if (!m_applet) {
+        kDebug() << "no applet";
         return;
     }
-    m_containment->resize(size());
-    m_applet->setGeometry(QRectF(QPoint(0, 0), size()));
+
+    // The applet always keeps its aspect ratio, so let's respect it.
+    int ratio = event->oldSize().width() / event->oldSize().height();
+    int newPossibleWidth = size().height()*ratio;
+    int newWidth, newHeight;
+    if (newPossibleWidth > size().width()) {
+        newHeight = size().width()/ratio;
+        newWidth = newHeight*ratio;
+    } else {
+        newWidth = newPossibleWidth;
+        newHeight = newWidth/ratio;
+    }
+    m_containment->resize(QSize(newWidth, newHeight));
+    m_applet->setGeometry(QRectF(QPoint(0, 0), QSize(newWidth, newHeight)));
+    kDebug() << "oooooooooooooooooo";
+
+    event->accept();
+
+//     m_containment->resize(size());
+//     m_applet->setGeometry(QRectF(QPoint(0, 0), size()));
 }
 
 void FullView::sceneRectChanged(const QRectF &rect)
