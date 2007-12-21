@@ -124,11 +124,10 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
 
 void Clock::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    Q_UNUSED(event)
-    if (!contentRect().contains(event->pos())) {
-        event->ignore();
-    } else if (event->buttons() == Qt::LeftButton) {
+    if (event->buttons() == Qt::LeftButton && contentRect().contains(event->pos())) {
         showCalendar(event);
+    } else {
+        event->ignore();
     }
 }
 
