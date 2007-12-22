@@ -83,6 +83,7 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
             height = 48;
             //FIXME: don't hardcode full width
             width = r.width();
+            setMinimumSize(QSizeF(width, height));
 
             if (loc == BottomEdge) {
                 m_drawBottom = false;
@@ -112,6 +113,7 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
             width = 48;
             //FIXME: don't hardcode full height
             height = r.height();
+            setMinimumSize(QSizeF(width, height));
 
             if (loc == RightEdge) {
                 m_drawRight = false;
