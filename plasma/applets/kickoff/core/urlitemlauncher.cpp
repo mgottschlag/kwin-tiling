@@ -73,7 +73,7 @@ public:
             return protocolHandler.handler->openUrl(url);
         }
 
-        QString extension = QFileInfo(url.path()).completeSuffix();
+        QString extension = QFileInfo(url.path()).suffix();
         HandlerInfo extensionHandler = globalHandlers[extension];
         if (extensionHandler.type == ExtensionHandler && extensionHandler.handler != 0) {
             return extensionHandler.handler->openUrl(url);
