@@ -3,7 +3,6 @@ Type=XSession
 Exec=vtwm
 TryExec=vtwm
 Name=VTWM
-Name[eo]=VTFA
 Name[hi]=वीटीडबल्यूएम
 Name[sr]=ВТВМ
 Name[te]= వి టి డబ్ల్యు ఎం

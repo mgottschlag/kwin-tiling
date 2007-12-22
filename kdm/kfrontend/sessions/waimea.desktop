@@ -3,7 +3,6 @@ Type=XSession
 Exec=waimea
 TryExec=waimea
 Name=Waimea
-Name[eo]=Vaimeo
 Name[hi]=वाईमिया
 Name[ne]=विमेआ
 Name[pa]=ਵਾਈਮਿਆ

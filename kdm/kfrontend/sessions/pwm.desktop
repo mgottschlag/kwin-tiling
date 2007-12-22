@@ -3,7 +3,6 @@ Type=XSession
 Exec=pwm
 TryExec=pwm
 Name=PWM
-Name[eo]=UnuFA
 Name[hi]=पीडबल्यूएम
 Name[sr]=ПВМ
 Name[te]=పి డబ్ల్యు ఎం

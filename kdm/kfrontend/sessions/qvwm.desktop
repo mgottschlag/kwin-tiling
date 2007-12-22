@@ -3,7 +3,6 @@ Type=XSession
 Exec=qvwm
 TryExec=qvwm
 Name=QVWM
-Name[eo]=QVFA
 Name[hi]=क्यूवीडबल्यूएम
 Name[sr]=КуВВМ
 Name[te]=క్యు వి డబ్ల్యు ఎం

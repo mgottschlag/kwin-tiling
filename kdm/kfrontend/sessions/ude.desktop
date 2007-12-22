@@ -3,7 +3,6 @@ Type=XSession
 Exec=ude
 TryExec=ude
 Name=UDE
-Name[eo]=ULĈ
 Name[hi]=यूडीई
 Name[sr]=УДЕ
 Name[te]=యుడిఈ

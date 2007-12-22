@@ -3,7 +3,6 @@ Type=XSession
 Exec=phluid
 TryExec=phluid
 Name=Phluid
-Name[eo]=Plena
 Name[hi]=फ्लुइड
 Name[pa]=ਫਲੁਇਡ
 Name[sr]=Флуид

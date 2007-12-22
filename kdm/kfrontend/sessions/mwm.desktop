@@ -3,7 +3,6 @@ Type=XSession
 Exec=mwm
 TryExec=mwm
 Name=MWM
-Name[eo]=MFA
 Name[hi]=एमडबल्यूएम
 Name[sr]=МВМ
 Name[te]=ఎం డబ్ల్యు ఎం

@@ -3,7 +3,6 @@ Type=XSession
 Exec=lwm
 TryExec=lwm
 Name=LWM
-Name[eo]=MFA
 Name[hi]=एलडबल्यूएम
 Name[sr]=ЛВМ
 Name[te]=ఎల్ డబ్ల్యు ఎం

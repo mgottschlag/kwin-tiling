@@ -3,7 +3,6 @@ Type=XSession
 Exec=twm
 TryExec=twm
 Name=TWM
-Name[eo]=TFA
 Name[hi]=टीडबल्यूएम
 Name[sr]=ТВМ
 Name[te]=టి డబ్ల్యు ఎం

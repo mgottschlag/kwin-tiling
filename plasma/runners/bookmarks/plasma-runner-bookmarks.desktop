@@ -2,7 +2,7 @@
 Name=Bookmark Runner
 Name[ca]=Execució de preferits
 Name[csb]=Zrëszôcz załóżków
-Name[de]=Lesezeichen-Ausführung
+Name[de]=Lesezeichen aufrufen
 Name[el]=Εκτελεστής σελιδοδεικτών
 Name[eo]=Legosigno-elektilo
 Name[es]=Motor de favoritos
@@ -52,6 +52,7 @@ Comment[nds]=Leesteken opmaken
 Comment[nl]=Bladwijzer openen
 Comment[nn]=Opna bokmerke
 Comment[pa]=ਬੁੱਕਮਾਰਕ ਖੋਲ੍ਹੋ
+Comment[pl]=Otwórz zakładkę
 Comment[pt]=Abrir um favorito
 Comment[pt_BR]=Abrir um favorito
 Comment[se]=Raba girjemearkka

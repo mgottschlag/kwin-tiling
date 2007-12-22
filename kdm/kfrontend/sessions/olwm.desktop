@@ -3,7 +3,6 @@ Type=XSession
 Exec=olwm
 TryExec=olwm
 Name=OLWM
-Name[eo]=OLFA
 Name[hi]=ओएलडबल्यूएम
 Name[sr]=ОЛВМ
 Name[te]=ఒ ఎల్ డబ్యు ఎం

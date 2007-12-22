@@ -3,7 +3,6 @@ Type=XSession
 Exec=w9wm
 TryExec=w9wm
 Name=W9WM
-Name[eo]=F9FA
 Name[hi]=डबल्यू9डबल्यूएम
 Name[sr]=В9ВМ
 Name[ta]=IceWM

@@ -3,7 +3,6 @@ Type=XSession
 Exec=oroborus
 TryExec=oroborus
 Name=Oroborus
-Name[eo]=Koloroj
 Name[hi]=ऑरोबोरस
 Name[ne]=ओरोबोरस
 Name[pa]=ਓਰੂਬੋਰੁਸ

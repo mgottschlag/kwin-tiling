@@ -3,7 +3,6 @@ Type=XSession
 Exec=icewm-session
 TryExec=icewm-session
 Name=IceWM
-Name[eo]=GlaciFA
 Name[hi]=आइस-डबल्यूएम
 Name[sr]=АјсВМ
 Name[sv]=Ice WM
