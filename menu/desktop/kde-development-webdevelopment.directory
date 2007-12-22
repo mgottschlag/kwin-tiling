@@ -67,7 +67,7 @@ Name[wa]=Disvelopmint waibe
 Name[x-test]=xxWeb Developmentxx
 Name[zh_CN]=Web 开发
 Name[zh_TW]=網頁開發
-Icon=package-network
+Icon=applications-development-web
 
 [Desktop Entry]
 Encoding=UTF-8
@@ -138,5 +138,5 @@ Name[wa]=Disvelopmint waibe
 Name[x-test]=xxWeb Developmentxx
 Name[zh_CN]=Web 开发
 Name[zh_TW]=網頁開發
-Icon=package-network
+Icon=applications-development-web
 

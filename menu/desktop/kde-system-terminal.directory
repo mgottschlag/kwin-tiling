@@ -70,5 +70,5 @@ Name[x-test]=xxTerminal Applicationsxx
 Name[xh]=Izicelo Zesiphelo sendlela
 Name[zh_CN]=终端应用程序
 Name[zh_TW]=終端機程式
-Icon=konsole
+Icon=utilities-terminal
 Version=1.0
