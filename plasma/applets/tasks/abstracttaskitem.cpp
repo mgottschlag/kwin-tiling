@@ -41,7 +41,7 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
       m_updateTimerId(-1)
 {
     setAcceptsHoverEvents(true);
-    setAcceptDrops(true);
+    //setAcceptDrops(true);
 
     _fadeTimer = new QTimeLine();
     _fadeTimer->setCurveShape(QTimeLine::LinearCurve);

@@ -36,6 +36,7 @@ WindowTaskItem::WindowTaskItem(QGraphicsItem *parent, QObject *parentObject)
     : AbstractTaskItem(parent, parentObject),
     _activateTimer(0)
 {
+    setAcceptDrops(true);
 }
 
 void WindowTaskItem::activate()

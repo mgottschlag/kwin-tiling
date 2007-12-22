@@ -38,12 +38,12 @@ TaskGroupItem::TaskGroupItem(QGraphicsItem *parent, QObject *parentObject)
     : AbstractTaskItem(parent, parentObject),
       _activeTask(-1),
       _borderStyle(NoBorder),
-      _potentialDropAction(NoAction),
+      //_potentialDropAction(NoAction),
       _caretIndex(0),
       _allowSubGroups(true),
       m_geometryUpdateTimerId(-1)
 {
-    setAcceptDrops(true);
+   //setAcceptDrops(true);
 
    new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
    layout()->setMargin(0);

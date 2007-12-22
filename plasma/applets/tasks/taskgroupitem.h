@@ -167,7 +167,7 @@ private:
     int _activeTask;
     BorderStyle _borderStyle;
     QColor _color;
-    DropAction _potentialDropAction;
+    //DropAction _potentialDropAction;
     int _caretIndex;
     bool _allowSubGroups;
     int m_geometryUpdateTimerId;
