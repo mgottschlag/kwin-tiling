@@ -43,6 +43,7 @@ class IconApplet : public Plasma::Applet
         void setUrl(const KUrl& url);
         void constraintsUpdated(Plasma::Constraints constraints);
         void showConfigurationInterface();
+        Qt::Orientations expandingDirections() const;
 
     public slots:
         void openUrl();

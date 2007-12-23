@@ -42,12 +42,8 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
 {
     setAcceptDrops(true);
     setHasConfigurationInterface(true);
-    //new Plasma::HBoxLayout(this);
     m_icon = new Plasma::Icon(this);
-    const int min = IconSize(KIconLoader::Desktop);
-    const int textHeight = Plasma::Theme::self()->fontMetrics().height();
-    const int spacing = 4;
-    setMinimumContentSize(min + spacing, min + textHeight + spacing*2);
+
     if (args.count() > 2) {
         setUrl(args.at(2).toString());
     }
@@ -111,12 +107,15 @@ void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
             m_icon->setText(m_text);
+            setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
         } else {
             m_icon->setText(0);
+            setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Panel)));
         }
     }
 
     if (constraints & Plasma::SizeConstraint) {
+        setContentSize(size());
         m_icon->resize(size());
     }
 }
@@ -158,6 +157,10 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
     }
 }
 
+Qt::Orientations IconApplet::expandingDirections() const
+{
+    return 0;
+}
 
 #include "icon.moc"
 
