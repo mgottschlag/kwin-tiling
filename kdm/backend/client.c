@@ -155,7 +155,7 @@ displayMsg( int lv, const char *msg, ... )
 #ifdef HAVE_GETSPNAM /* (sic!) - not USESHADOW */
 # define _ENDSPENT , endspent()
 #else
-# define _ENDSPENT()
+# define _ENDSPENT
 #endif
 #define END_ENT endpwent() _ENDSPENT _ENDUSERDB
 
