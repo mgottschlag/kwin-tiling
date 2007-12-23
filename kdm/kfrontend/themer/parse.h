@@ -65,14 +65,8 @@ enum NoSpaceDebug { NoSpace };
 enum SpaceDebug { Space };
 template<NoSpaceDebug> static inline QDebug& operator<<(QDebug& ds, NoSpaceDebug) { return ds.nospace(); }
 template<SpaceDebug> static inline QDebug& operator<<(QDebug& ds, SpaceDebug) { return ds.space(); }
-#ifdef KDE_NO_DEBUG_OUTPUT
-static inline QDebug enter( const char * ) { return kDebugDevNull(); }
-static inline QDebug debug() { return kDebugDevNull(); }
-static inline QDebug leave() { return kDebugDevNull(); }
-#else
 QDebug enter( const char *fct );
 QDebug debug();
 QDebug leave();
-#endif
 
 #endif

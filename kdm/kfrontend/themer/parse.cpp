@@ -279,11 +279,10 @@ setWidgetAttribs( QWidget *widget, const StyleType &style, bool frame )
 				  widget->palette().brush( widget->backgroundRole() ).isOpaque() )));
 }
 
-#ifndef KDE_NO_DEBUG_OUTPUT
 static QString prefix;
 static QStack<QString> prefixes;
 
-# define dbgs kDebug( (debugLevel & DEBUG_THEMING) != 0 )
+#define dbgs ((debugLevel & DEBUG_THEMING) ? QDebug( QtDebugMsg ) : kDebugDevNull())
 
 QDebug
 enter( const char *fct )
@@ -311,4 +310,3 @@ leave()
 	prefix = prefixes.pop();
 	return dbgs << (qPrintable( nprefix ) + 1);
 }
-#endif

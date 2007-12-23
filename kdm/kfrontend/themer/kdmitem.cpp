@@ -597,7 +597,7 @@ void
 KdmItem::showStructure( const QString &pfx )
 {
 	{
-		QDebug ds = kDebug();
+		QDebug ds( QtDebugMsg );
 		if (!pfx.isEmpty())
 			ds << (qPrintable( pfx ) + 1);
 		ds << objectName() << qPrintable( itemType ) << area;

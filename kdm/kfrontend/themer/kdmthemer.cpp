@@ -267,7 +267,7 @@ KdmThemer::generateLayouts( KdmItem *parent, const QDomNode &node )
 void
 KdmThemer::showStructure()
 {
-	kDebug() << "======= item tree =======";
+	QDebug( QtDebugMsg ) << "======= item tree =======";
 	rootItem->showStructure( QString() );
 }
 
