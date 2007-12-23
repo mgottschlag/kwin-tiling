@@ -35,7 +35,7 @@ public:
 
         void init();
 
-        QSizeF contentSizeHint() const;
+        void constraintsUpdated(Plasma::Constraints constraints);
         Qt::Orientations expandingDirections() const;
 
 public slots:

@@ -72,9 +72,6 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
 {
     setHasConfigurationInterface(true);
 
-    Plasma::HBoxLayout *layout = new Plasma::HBoxLayout(this);
-    layout->setMargin(0);
-
     d->icon = new Plasma::Icon(QString(), this);
     d->icon->setFlag(ItemIsMovable, false);
     connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
@@ -106,14 +103,25 @@ void MenuLauncherApplet::init()
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ProtocolHandler, "leave", new Kickoff::LeaveItemHandler);
 }
 
-QSizeF MenuLauncherApplet::contentSizeHint() const
-{
-    return QSizeF(48,48);
-}
-
 Qt::Orientations MenuLauncherApplet::expandingDirections() const
 {
     return 0;
+}
+
+void MenuLauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
+{
+    if (constraints & Plasma::FormFactorConstraint) {
+        if (formFactor() == Plasma::Planar ||
+            formFactor() == Plasma::MediaCenter) {
+            setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
+        } else {
+            setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Panel)));
+        }
+    }
+
+    if (constraints & Plasma::SizeConstraint) {
+        d->icon->resize(contentSize());
+    }
 }
 
 void MenuLauncherApplet::showConfigurationInterface()

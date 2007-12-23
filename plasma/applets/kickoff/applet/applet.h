@@ -43,10 +43,10 @@ Q_OBJECT
 public:
         LauncherApplet(QObject *parent, const QVariantList &args);
         virtual ~LauncherApplet();
-        
+
         void init();
 
-        QSizeF contentSizeHint() const;
+        void constraintsUpdated(Plasma::Constraints constraints);
         Qt::Orientations expandingDirections() const;
 
 public slots:

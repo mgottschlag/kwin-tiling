@@ -64,10 +64,7 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
       
 {
     setHasConfigurationInterface(true);
-    //setDrawStandardBackground(true);
 
-    Plasma::HBoxLayout *layout = new Plasma::HBoxLayout(this);
-    layout->setMargin(0);
     d->icon = new Plasma::Icon(KIcon("start-here"), QString(), this);
     d->icon->setFlag(ItemIsMovable, false);
     connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
@@ -88,14 +85,25 @@ void LauncherApplet::init()
     d->visibleItemsCount = cg.readEntry("VisibleItemsCount",d->visibleItemsCount);
 }
 
-QSizeF LauncherApplet::contentSizeHint() const
-{
-    return QSizeF(48,48);
-}
-
 Qt::Orientations LauncherApplet::expandingDirections() const
 {
     return 0;
+}
+
+void LauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
+{
+    if (constraints & Plasma::FormFactorConstraint) {
+        if (formFactor() == Plasma::Planar ||
+            formFactor() == Plasma::MediaCenter) {
+            setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
+        } else {
+            setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Panel)));
+        }
+    }
+
+    if (constraints & Plasma::SizeConstraint) {
+        d->icon->resize(contentSize());
+    }
 }
 
 void LauncherApplet::showConfigurationInterface()
