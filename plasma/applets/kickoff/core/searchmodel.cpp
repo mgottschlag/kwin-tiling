@@ -20,13 +20,16 @@
 // Own
 #include "core/searchmodel.h"
 
+#include "config-kickoff-applets.h" 
 // Qt
 #include <QtDebug>
 
 // KDE
 #include <KMimeType>
 #include <KServiceTypeTrader>
+#ifdef HAVE_STRIGIDBUS
 #include <strigi/qtdbus/strigiclient.h>
+#endif
 #include <solid/networking.h>
 
 // Local
@@ -214,6 +217,7 @@ QString IndexerSearch::name() const
 }
 void IndexerSearch::setQuery(const QString& query)
 {
+#ifdef HAVE_STRIGIDBUS 
     static StrigiClient searchClient;
 
     QList<QString> urls;
@@ -224,6 +228,7 @@ void IndexerSearch::setQuery(const QString& query)
         }
     }
     emit resultsAvailable(urls);
+#endif
 }
 
 #include "searchmodel.moc"

@@ -1,4 +1,9 @@
 # Kickoff Shared
+if(STRIGI_STRIGIQTDBUSCLIENT_LIBRARY)
+   set(HAVE_STRIGIDBUS 1)
+endif(STRIGI_STRIGIQTDBUSCLIENT_LIBRARY)
+configure_file(core/config-kickoff-applets.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kickoff-applets.h )
+
 set( Kickoff_SRCS
        core/applicationmodel.cpp
        core/favoritesmodel.cpp
@@ -27,8 +32,10 @@ set ( Kickoff_LIBS
         ${KDE4_KIO_LIBS}
         ${KDE4_KFILE_LIBS}
         ${KDE4_SOLID_LIBS}
-        kworkspace
-        strigiqtdbusclient )
+        kworkspace)
+if(HAVE_STRIGIDBUS)
+     set ( Kickoff_LIBS ${Kickoff_LIBS} strigiqtdbusclient )
+endif(HAVE_STRIGIDBUS)
 
 include_directories( ${STRIGI_INCLUDE_DIR} )
 
