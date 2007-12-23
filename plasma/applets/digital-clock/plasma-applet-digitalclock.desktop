@@ -56,6 +56,7 @@ Comment[pt_BR]=Um relógio digital simples
 Comment[sr]=Једноставан дигитални часовник
 Comment[sr@latin]=Jednostavan digitalni časovnik
 Comment[sv]=En enkel digitalklocka
+Comment[x-test]=xxA simple digital clockxx
 Comment[zh_CN]=简易的数字钟
 Comment[zh_TW]=簡單數位時鐘
 
@@ -86,6 +87,7 @@ X-KDE-PluginInfo-Category[pt_BR]=Data e Hora
 X-KDE-PluginInfo-Category[sr]=Датум и време
 X-KDE-PluginInfo-Category[sr@latin]=Datum i vreme
 X-KDE-PluginInfo-Category[sv]=Datum och tid
+X-KDE-PluginInfo-Category[x-test]=xxDate and Timexx
 X-KDE-PluginInfo-Category[zh_CN]=日期和时间
 X-KDE-PluginInfo-Category[zh_TW]=日期和時間
 X-KDE-PluginInfo-Depends=
