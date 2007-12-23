@@ -38,11 +38,12 @@ SystemTray::~SystemTray()
 
 QSizeF SystemTray::contentSizeHint() const
 {
-    if (!m_systemTrayWidget) {
+    QGraphicsView *v = view();
+    if (!(m_systemTrayWidget && v)) {
         return QSizeF();
     }
     QRect widgetRect(QPoint(0, 0), m_systemTrayWidget->minimumSizeHint());
-    return mapFromView(view(), widgetRect).size();
+    return mapFromView(v, widgetRect).size();
 }
 
 Qt::Orientations SystemTray::expandingDirections() const
