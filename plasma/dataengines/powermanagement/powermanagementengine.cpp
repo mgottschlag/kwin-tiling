@@ -1,6 +1,7 @@
 /*
  *   Copyright (C) 2007 Aaron Seigo <aseigo@kde.org>
  *   Copyright (C) 2007 Sebastian Kuegler <sebas@kde.org>
+ *   CopyRight (C) 2007 Maor Vanmak <mvanmak1@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -33,13 +34,11 @@
 
 PowermanagementEngine::PowermanagementEngine(QObject* parent, const QVariantList& args)
         : Plasma::DataEngine(parent)
-        , m_battery(0)
         , m_acadapter(0)
         , m_sources(0)
 {
     Q_UNUSED(args)
-    
-    m_sources = QStringList();
+        
     m_sources << I18N_NOOP("Battery") << I18N_NOOP("AC Adapter") << I18N_NOOP("Sleepstates");
     
     // This following call can be removed, but if we do, the
@@ -51,7 +50,8 @@ PowermanagementEngine::~PowermanagementEngine()
 {}
 
 void PowermanagementEngine::init()
-{}
+{
+}
 
 QStringList PowermanagementEngine::sources() const 
 {
@@ -68,26 +68,37 @@ bool PowermanagementEngine::sourceRequested(const QString &name)
             setData(I18N_NOOP("Battery"), I18N_NOOP("has Battery"), false);
             return true;
         }
+        
+        uint index = 0;
+        QStringList battery_sources;
+        
         foreach (Solid::Device device_battery, list_battery) {
-            setData(I18N_NOOP("Battery"), I18N_NOOP("has Battery"), true);
-            m_battery = device_battery.as<Solid::Battery>();
-            if (m_battery->type() != Solid::Battery::PrimaryBattery) {
-                kDebug() << "Some other battery found.";
-            } else {
-                kDebug() << "PMEngine::Primary battery found.";
+            Solid::Battery* battery = device_battery.as<Solid::Battery>();
 
-                connect(m_battery, SIGNAL(chargeStateChanged(int, const QString &)), this,
-                        SLOT(updateBatteryChargeState(int)));
-                connect(m_battery, SIGNAL(chargePercentChanged(int, const QString &)), this,
-                        SLOT(updateBatteryChargePercent(int)));
-                connect(m_battery, SIGNAL(plugStateChanged(bool, const QString &)), this,
-                        SLOT(updateBatteryPlugState(bool)));
+            if(battery != 0) {
+                QString source = QString(I18N_NOOP("Battery%1")).arg(index++);
+
+                battery_sources<<source;
+
+                m_batterySources[device_battery.udi()] = source;
+
+                connect(battery, SIGNAL(chargeStateChanged(int, const QString &)), this,
+                        SLOT(updateBatteryChargeState(int, const QString &)));
+                connect(battery, SIGNAL(chargePercentChanged(int, const QString &)), this,
+                        SLOT(updateBatteryChargePercent(int, const QString &)));
+                connect(battery, SIGNAL(plugStateChanged(bool, const QString &)), this,
+                        SLOT(updateBatteryPlugState(bool, const QString &)));
 
                 // Set initial values
-                updateBatteryChargeState(m_battery->chargeState());
-                updateBatteryChargePercent(m_battery->chargePercent());
-                updateBatteryPlugState(m_battery->isPlugged());
+                updateBatteryChargeState(battery->chargeState(), device_battery.udi());
+                updateBatteryChargePercent(battery->chargePercent(), device_battery.udi());
+                updateBatteryPlugState(battery->isPlugged(), device_battery.udi());
             }
+        }
+        
+        if(battery_sources.count() > 0) {
+            setData(I18N_NOOP("Battery"), I18N_NOOP("has Battery"), true);
+            setData(I18N_NOOP("Battery"), I18N_NOOP("sources"), battery_sources);
         }
     } else if (name == I18N_NOOP("AC Adapter")) {
         // AC Adapter handling
@@ -99,7 +110,6 @@ bool PowermanagementEngine::sourceRequested(const QString &name)
             connect(m_acadapter, SIGNAL(plugStateChanged(bool, const QString &)), this,
                     SLOT(updateAcPlugState(bool)));
         }
-
     } else if (name == I18N_NOOP("Sleepstates")) {
         QSet<Solid::PowerManagement::SleepState> sleepstates =
                                 Solid::PowerManagement::supportedSleepStates();
@@ -123,11 +133,10 @@ bool PowermanagementEngine::sourceRequested(const QString &name)
     } else {
         kDebug() << "Data for '" << name << "' not found";
     }
-    
     return true;
 }
 
-void PowermanagementEngine::updateBatteryChargeState(int newState)
+void PowermanagementEngine::updateBatteryChargeState(int newState, const QString& udi)
 {
     QString state;
     if (newState == Solid::Battery::NoCharge) {
@@ -139,19 +148,22 @@ void PowermanagementEngine::updateBatteryChargeState(int newState)
     } else {
         state = I18N_NOOP("Could not determine battery status. Something is fishy here. :o");
     }
-    setData(I18N_NOOP("Battery"), I18N_NOOP("State"), state);
+    const QString& source = m_batterySources[udi];
+    setData(source, I18N_NOOP("State"), state);
     checkForUpdates();
 }
 
-void PowermanagementEngine::updateBatteryPlugState(bool newState)
+void PowermanagementEngine::updateBatteryPlugState(bool newState, const QString& udi)
 {
-    setData(I18N_NOOP("Battery"), I18N_NOOP("Plugged in"), newState);
+    const QString& source = m_batterySources[udi];
+    setData(source, I18N_NOOP("Plugged in"), newState);
     checkForUpdates();
 }
 
-void PowermanagementEngine::updateBatteryChargePercent(int newValue)
+void PowermanagementEngine::updateBatteryChargePercent(int newValue, const QString& udi)
 {
-    setData(I18N_NOOP("Battery"), I18N_NOOP("Percent"), newValue);
+    const QString& source = m_batterySources[udi];
+    setData(source, I18N_NOOP("Percent"), newValue);
     checkForUpdates();
 }
 

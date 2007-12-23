@@ -25,6 +25,8 @@
 #include <solid/battery.h>
 #include <solid/acadapter.h>
 
+#include <QHash>
+
 /**
  * This class provides runtime information about the battery and AC status
  * for use in a simple batter monitor application.
@@ -43,15 +45,17 @@ protected:
     void init();
 
 protected slots:
-    void updateBatteryChargeState(int newState);
-    void updateBatteryChargePercent(int newValue);
-    void updateBatteryPlugState(bool newState);
+    void updateBatteryChargeState(int newState, const QString& udi);
+    void updateBatteryPlugState(bool newState, const QString& udi);
+    void updateBatteryChargePercent(int newValue, const QString& udi);
     void updateAcPlugState(bool newState);
 
 private:
-    Solid::Battery* m_battery;
     Solid::AcAdapter* m_acadapter;
     QStringList m_sources;
+    
+    QHash<QString, QString> m_batterySources;
+    
 };
 
 K_EXPORT_PLASMA_DATAENGINE(powermanagement, PowermanagementEngine)
