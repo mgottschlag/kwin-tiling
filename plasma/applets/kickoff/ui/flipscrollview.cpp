@@ -527,7 +527,7 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
             if (option.state & (QStyle::State_Selected|QStyle::State_MouseOver)) {
                 painter.setBrush(palette().highlight());
             } else {
-                painter.setBrush(palette().dark());
+                painter.setBrush(palette().text());
             }
 
             QRect triRect = option.rect;
