@@ -33,7 +33,7 @@
 #include <QGraphicsItem>
 #include <QColor>
 
-#include <plasma/containment.h>
+#include <plasma/applet.h>
 #include <plasma/dataengine.h>
 #include "ui_clockConfig.h"
 
@@ -46,7 +46,7 @@ namespace Plasma
     class Svg;
 }
 
-class Clock : public Plasma::Containment
+class Clock : public Plasma::Applet
 {
     Q_OBJECT
     public:

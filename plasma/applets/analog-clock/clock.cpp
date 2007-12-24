@@ -47,7 +47,7 @@
 #include <plasma/svg.h>
 
 Clock::Clock(QObject *parent, const QVariantList &args)
-    : Plasma::Containment(parent, args),
+    : Plasma::Applet(parent, args),
       m_showTimeString(false),
       m_showSecondHand(false),
       m_timezone("Local"),
