@@ -53,7 +53,7 @@ QStandardItem* LeaveModel::createStandardItem(const QString& url)
         item->setData(i18n("Lock the screen"),Kickoff::SubTitleRole);
     }
     else if (basename == "switch") {
-        item->setText(i18n("Logout"));
+        item->setText(i18n("Switch User"));
         item->setIcon(KIcon("system-switch-user"));
         item->setData(i18n("Start a parallel session as a different user"),Kickoff::SubTitleRole);
     }
