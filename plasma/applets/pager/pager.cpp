@@ -163,10 +163,10 @@ void Pager::recalculateGeometry()
 
     int columns = m_desktopCount/m_rows + m_desktopCount%m_rows;
     for (int i = 0; i < m_desktopCount; i++) {
-        m_rects.append(QRectF((i%columns)*itemWidth+2*(i%columns),
+        m_rects.append(QRectF((i%columns)*itemWidth + 2*(i%columns),
                                itemHeight*(i/columns) + 2*(i/columns),
-                               itemWidth,
-                               itemHeight));
+                               itemWidth-2,
+                               itemHeight-2));
     }
 
     m_size = QSizeF(columns*itemWidth + 2*columns - 1,
