@@ -31,6 +31,9 @@ class LockOut : public Plasma::Applet
         LockOut(QObject *parent, const QVariantList &args);
         ~LockOut();
 
+        QSizeF contentSizeHint() const;
+        Qt::Orientations expandingDirections() const;
+
     public slots:
         void clickLogout();
         void clickLock();

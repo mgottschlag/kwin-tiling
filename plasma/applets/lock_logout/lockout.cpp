@@ -56,6 +56,29 @@ LockOut::~LockOut()
 {
 }
 
+QSizeF LockOut::contentSizeHint() const
+{
+    QSizeF sizeHint = contentSize();
+    switch (formFactor()) {
+        case Plasma::Vertical:
+            sizeHint.setHeight(sizeHint.width() * 2);
+            break;
+        case Plasma::Horizontal:
+            sizeHint.setWidth(sizeHint.height() / 2);
+            break;
+        default:
+            sizeHint = layout()->sizeHint();
+            break;
+    }
+
+    return sizeHint;
+}
+
+Qt::Orientations LockOut::expandingDirections() const
+{
+    return 0;
+}
+
 void LockOut::clickLock()
 {
     kDebug()<<"LockOut:: lock clicked ";
