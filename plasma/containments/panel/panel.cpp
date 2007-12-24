@@ -83,7 +83,6 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
             height = 48;
             //FIXME: don't hardcode full width
             width = r.width();
-            setMinimumSize(QSizeF(width, height));
 
             if (loc == BottomEdge) {
                 m_drawBottom = false;
@@ -113,7 +112,6 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
             width = 48;
             //FIXME: don't hardcode full height
             height = r.height();
-            setMinimumSize(QSizeF(width, height));
 
             if (loc == RightEdge) {
                 m_drawRight = false;
@@ -137,6 +135,12 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
             }
             //kDebug() << "left/right: Width:" << width << ", height:" << height;
         }
+
+        // Lock the size so that stray applets don't cause the panel to grow
+        // or the removal of applets to cause the panel to shrink
+        // TODO: Update this when user-resizing is implemented
+        setMinimumSize(QSizeF(width, height));
+        setMaximumSize(QSizeF(width, height));
 
         QRectF geo = QRectF(x, y, width, height);
 
