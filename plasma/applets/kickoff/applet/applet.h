@@ -46,6 +46,7 @@ public:
 
         void init();
 
+        virtual QSizeF sizeHint() const;
         void constraintsUpdated(Plasma::Constraints constraints);
         Qt::Orientations expandingDirections() const;
 

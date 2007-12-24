@@ -108,6 +108,12 @@ Qt::Orientations MenuLauncherApplet::expandingDirections() const
     return 0;
 }
 
+QSizeF MenuLauncherApplet::sizeHint() const
+{
+    //ensure a square size in the panel
+    return QSizeF(size().height(), size().height());
+}
+
 void MenuLauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {

@@ -90,6 +90,12 @@ Qt::Orientations LauncherApplet::expandingDirections() const
     return 0;
 }
 
+QSizeF LauncherApplet::sizeHint() const
+{
+    //ensure a square size in the panel
+    return QSizeF(size().height(), size().height());
+}
+
 void LauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {
