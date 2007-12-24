@@ -21,7 +21,6 @@
 // Own
 #include "tasks.h"
 #include "taskgroupitem.h"
-#include "startuptaskitem.h"
 #include "windowtaskitem.h"
 
 // Qt
@@ -78,7 +77,8 @@ void Tasks::registerStartingTasks()
 
 void Tasks::addStartingTask(Startup::StartupPtr task)
 {
-    StartupTaskItem* item = new StartupTaskItem(_rootTaskGroup, _rootTaskGroup);
+    WindowTaskItem* item = new WindowTaskItem(_rootTaskGroup, _rootTaskGroup);
+    item->setStartupTask(task);
     _startupTaskItems.insert(task, item);
 
     addItemToRootGroup(item);
@@ -86,7 +86,9 @@ void Tasks::addStartingTask(Startup::StartupPtr task)
 
 void Tasks::removeStartingTask(Startup::StartupPtr task)
 {
-    removeItemFromRootGroup(_startupTaskItems[task]);
+    if (_startupTaskItems.contains(task)) {
+        removeItemFromRootGroup(_startupTaskItems[task]);
+    }
 }
 
 void Tasks::registerWindowTasks()
@@ -132,7 +134,17 @@ void Tasks::addWindowTask(Task::TaskPtr task)
         return;
     }
 
-    WindowTaskItem *item = new WindowTaskItem(_rootTaskGroup, _rootTaskGroup);
+    WindowTaskItem *item = 0;
+    foreach (Startup::StartupPtr startup, _startupTaskItems.keys()) {
+        if (startup->matchesWindow(task->window())) {
+            item = dynamic_cast<WindowTaskItem *>(_startupTaskItems.take(startup));
+        }
+    }
+
+    if (!item) {
+        item = new WindowTaskItem(_rootTaskGroup, _rootTaskGroup);
+    }
+
     item->setWindowTask(task);
     _windowTaskItems.insert(task,item);
 

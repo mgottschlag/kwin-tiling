@@ -29,6 +29,7 @@
 // KDE
 #include <KAuthorized>
 #include <KDebug>
+#include <KIcon>
 #include <KLocalizedString>
 #include <taskmanager/taskrmbmenu.h>
 
@@ -98,6 +99,17 @@ void WindowTaskItem::updateTask()
 
     //redraw
     queueUpdate();
+}
+
+void WindowTaskItem::setStartupTask(Startup::StartupPtr task)
+{
+    setText(task->text());
+    setIcon(KIcon(task->icon()));
+
+    Plasma::ToolTipData tip;
+    tip.mainText = task->text();
+    tip.image = task->icon();
+    setToolTip(tip);
 }
 
 void WindowTaskItem::setWindowTask(Task::TaskPtr task)

@@ -37,10 +37,14 @@ public:
     /** Constructs a new representation for a window task. */
     WindowTaskItem(QGraphicsItem *parent, QObject *parentObject);
 
+    /** Sets the starting task represented by this item. */
+    void setStartupTask(Startup::StartupPtr task);
+
     /** Sets the window represented by this task. */
     void setWindowTask(Task::TaskPtr task);
     /** Returns the window represented by this task. */
     Task::TaskPtr windowTask() const;
+
     /** Tells the window manager the minimized task's geometry. */
     void publishIconGeometry();
 
