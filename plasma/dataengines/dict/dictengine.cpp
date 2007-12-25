@@ -103,8 +103,7 @@ QString DictEngine::parseToHtml(QByteArray &text)
           if (currentLine.startsWith("552")) //if no match was found
           {
               def += "<dt>";
-              def += i18n("<b>No match found for %1 in database "+dictName.toAscii()+".</b>\n",
-                          currentWord).toUtf8();
+              def += i18n("<b>No match found for %1 in database %2.</b>", currentWord, dictName);
               def += "</dt>";
               break;
           }
