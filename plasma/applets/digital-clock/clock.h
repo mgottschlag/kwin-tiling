@@ -65,6 +65,8 @@ class Clock : public Plasma::Applet
         void showCalendar(QGraphicsSceneMouseEvent *event);
 
     private:
+        QRect preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text);
+
         Q_ENUMS( m_clockStyle )
         enum ClockStyle {
             PlainClock, FancyClock

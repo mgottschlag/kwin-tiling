@@ -295,14 +295,8 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             }
 
             // Check sizes
-            p->setFont(KGlobalSettings::smallestReadableFont());
-            QRect dateRect = p->boundingRect(contentsRect,
-                        QPainter::TextAntialiasing,
-                        dateString);
+            QRect dateRect = preparePainter(p, contentsRect, KGlobalSettings::smallestReadableFont(), dateString);
             int subtitleHeight = dateRect.height();
-            if (dateRect.width() > contentsRect.width()) {
-                subtitleHeight = dateRect.height()*2;
-            }
 
             p->drawText(QRectF(0,
                                 contentsRect.bottom()-subtitleHeight,
@@ -333,22 +327,32 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         m_plainClockFont.setBold(m_plainClockFontBold);
         m_plainClockFont.setItalic(m_plainClockFontItalic);
  
-        // Choose a relatively big font size to start with and decrease it from there to fit.
+        // Choose a relatively big font size to start with
         m_plainClockFont.setPointSize(qMax((int)(contentsRect.height()/1.5), 1));
-        p->setFont(m_plainClockFont);
-        QRect tmpTimeRect = p->boundingRect(timeRect, QPainter::TextAntialiasing, timeString);
-
-        while ((tmpTimeRect.width() > timeRect.width() || tmpTimeRect.height() > timeRect.height()) && m_plainClockFont.pointSize() > 1) {
-            m_plainClockFont.setPointSize(m_plainClockFont.pointSize() - 1);
-            p->setFont(m_plainClockFont);
-            tmpTimeRect = p->boundingRect(timeRect, QPainter::TextAntialiasing, timeString);
-        }
+        preparePainter(p, timeRect, m_plainClockFont, timeString);
 
         p->drawText(timeRect,
                     timeString,
                     QTextOption(Qt::AlignCenter)
                 );
     }
+}
+
+QRect Clock::preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text)
+{
+    QRect tmpRect;
+    QFont tmpFont = font;
+
+    // Starting with the given font, decrease its size until it'll fit in the
+    // given rect allowing wrapping where possible
+    do {
+        p->setFont(tmpFont);
+        tmpFont.setPointSize(tmpFont.pointSize() - 1);
+        tmpRect = p->boundingRect(rect, Qt::TextWordWrap, text);
+    } while (tmpFont.pointSize() >= 1 && (tmpRect.width() > rect.width() ||
+            tmpRect.height() > rect.height()));
+
+    return tmpRect;
 }
 
 #include "clock.moc"
