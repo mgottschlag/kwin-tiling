@@ -52,11 +52,12 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
 void IconApplet::init()
 {
     KConfigGroup cg = config();
-
+    //setMinimumSize(QSize(48,68));
+    
     connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
     setUrl(cg.readEntry("Url", m_url));
     setDrawStandardBackground(false);
-    kDebug() << "size hint is" << sizeHint() << size();
+    setDisplayLines(2);
 }
 
 IconApplet::~IconApplet()
@@ -129,6 +130,32 @@ void IconApplet::showConfigurationInterface()
     }
 
     m_dialog->show();
+}
+
+QSizeF IconApplet::sizeHint() const
+{
+    QSizeF iconSize = m_icon->sizeHint();
+    int width = qBound(minimumSize().width(), iconSize.width(), maximumSize().width());
+    int height = qBound(minimumSize().height(), iconSize.height(), maximumSize().height());
+    return QSizeF(width,height);
+}
+
+void IconApplet::setDisplayLines(int displayLines)
+{
+    if (m_icon) {
+        if (m_icon->numDisplayLines() == displayLines) {
+            return;
+        }
+        m_icon->setNumDisplayLines(displayLines);
+        update();
+    }
+}
+int IconApplet::displayLines()
+{
+    if (m_icon) {
+        return m_icon->numDisplayLines();
+    }
+    return 0;
 }
 
 void IconApplet::acceptedPropertiesDialog()

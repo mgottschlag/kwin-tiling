@@ -43,6 +43,9 @@ class IconApplet : public Plasma::Applet
         void setUrl(const KUrl& url);
         void constraintsUpdated(Plasma::Constraints constraints);
         void showConfigurationInterface();
+        void setDisplayLines(int displayLines);
+        int displayLines();
+        QSizeF sizeHint() const;
         Qt::Orientations expandingDirections() const;
 
     public slots:
@@ -51,7 +54,6 @@ class IconApplet : public Plasma::Applet
     protected:
         void dropEvent(QGraphicsSceneDragDropEvent *event);
         void saveState(KConfigGroup *cg) const;
-        //void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
     protected slots:
         void acceptedPropertiesDialog();
@@ -63,6 +65,7 @@ class IconApplet : public Plasma::Applet
         KPropertiesDialog *m_dialog;
         QString m_mimetype;
         KUrl m_url;
+        int m_displayLines;
 };
 
 K_EXPORT_PLASMA_APPLET(icon, IconApplet)
