@@ -204,7 +204,7 @@ void URLGrabber::actionMenu( bool wm_class_check )
         }
         myMenu->addSeparator();
         // add an edit-possibility
-        QAction *editAction = new QAction(KIcon("object-edit"), i18n("&Edit Contents..."), this);
+        QAction *editAction = new QAction(KIcon("document-properties"), i18n("&Edit Contents..."), this);
         connect(editAction, SIGNAL(triggered()), SLOT(editData()));
         myMenu->addAction(editAction);
 
