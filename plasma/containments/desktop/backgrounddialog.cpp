@@ -549,7 +549,7 @@ void BackgroundDialog::getNewStuff()
 {
     
     KNS::Engine engine(0);
-    if (engine.init("background.knsrc")) {
+    if (engine.init("wallpaper.knsrc")) {
         KNS::Entry::List entries = engine.downloadDialogModal(this);
 
         if (entries.size() > 0) {
