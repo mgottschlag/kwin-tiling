@@ -66,7 +66,7 @@ class DeviceNotifier : public Plasma::Applet
         void dataUpdated(const QString &source, Plasma::DataEngine::Data data);
         void showConfigurationInterface();
         void configAccepted();
-        void slotOnItemDoubleclicked(const QModelIndex & );
+        void slotOnItemClicked(const QModelIndex & );
         void onTimerExpired();
 
     private:

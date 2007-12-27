@@ -31,10 +31,11 @@
 #include <plasma/dialog.h>
 
 #include <KDialog>
-#include <krun.h>
+#include <KRun>
 #include <kdesktopfileactions.h>
-#include <kstandarddirs.h>
+#include <KStandardDirs>
 #include <KDesktopFile>
+#include <KGlobalSettings>
 
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
@@ -131,8 +132,14 @@ void DeviceNotifier::init()
     connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(onSourceRemoved(const QString&)));
 
-    connect(m_listView,SIGNAL(doubleClicked ( const QModelIndex & )),
-            this,SLOT(slotOnItemDoubleclicked( const QModelIndex & )));
+    if (KGlobalSettings::singleClick())
+    {
+	connect(m_listView,SIGNAL(clicked ( const QModelIndex & )),this,SLOT(slotOnItemClicked( const QModelIndex & )));
+    }
+    else
+    {
+	connect(m_listView,SIGNAL(doubleClicked ( const QModelIndex & )),this,SLOT(slotOnItemClicked( const QModelIndex & )));
+    }
     connect(m_timer,SIGNAL(timeout()),this,SLOT(onTimerExpired()));
 
     updateGeometry();
@@ -307,7 +314,7 @@ void DeviceNotifier::configAccepted()
     cg.config()->sync();
 }
 
-void DeviceNotifier::slotOnItemDoubleclicked(const QModelIndex & index)
+void DeviceNotifier::slotOnItemClicked(const QModelIndex & index)
 {
     m_widget->hide();
     m_timer->stop();
