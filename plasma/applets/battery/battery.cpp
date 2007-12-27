@@ -110,6 +110,10 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
     if (constraints & Plasma::SizeConstraint && m_theme) {
         m_theme->resize(contentSize().toSize());
         update();
+        // Save new size to config
+        KConfigGroup cg = config();
+        cg.writeEntry("size", (int)(boundingRect().height()));
+        cg.sync();
     }
     updateGeometry();
 }
