@@ -143,6 +143,7 @@ int PopupProxy::insertFromSpill( int index ) {
     while (spillPointer.hasNext() && remainingHeight >= 0) {
         const HistoryItem *item = spillPointer.next();
         if ( m_filter.indexIn( item->text() ) == -1) {
+            nextItemNumber++; // also count hidden items
             continue;
         }
         tryInsertItem( item, remainingHeight, index++ );
