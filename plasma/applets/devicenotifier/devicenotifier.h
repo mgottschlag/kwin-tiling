@@ -31,19 +31,8 @@
 
 #include "ui_deviceNotifierConfig.h"
 
-//namespace Plasma
-//{
-//    class Svg;
-//} // namespace Plasma
-
 class QStandardItemModel;
 class KDialog;
-
-//namespace Notifier
-//{
-//    class ListView;
-//    class NotifierWidget;
-//}
 
 class DeviceNotifier : public Plasma::Applet
 {
@@ -77,7 +66,6 @@ class DeviceNotifier : public Plasma::Applet
         QStandardItemModel *m_hotplugModel;
 
         Plasma::Dialog *m_widget;
-        //Plasma::Svg *m_background; NOT USED
         KDialog *m_dialog;
         int m_displayTime;
         int m_numberItems;

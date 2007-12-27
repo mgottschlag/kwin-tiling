@@ -21,6 +21,7 @@
 
 #include <QPainter>
 #include <QColor>
+#include <QTreeView>
 #include <QApplication>
 #include <QStandardItemModel>
 #include <QGraphicsView>
@@ -43,7 +44,7 @@
 #include <solid/device.h>
 
 #include "itemdelegate.h"
-#include "listview.h"
+#include "notifierview.h"
 
 using namespace Plasma;
 using namespace Notifier;
@@ -89,14 +90,11 @@ void DeviceNotifier::init()
         m_icon=KIcon("computer");
     }
     m_widget= new Dialog();
-    //TODO: from plasmoidviewer- Could not parse stylesheet of widget
-    //m_widget->setStyleSheet("{ border : 0px }");
-
+    
     QVBoxLayout *m_layout = new QVBoxLayout();
     m_layout->setSpacing(0);
     m_layout->setMargin(0);
 
-    //m_background = new Plasma::Svg("dialogs/background", this); NOT USED
     m_hotplugModel = new QStandardItemModel(this);
 
     QLabel *Label = new QLabel(i18n("<font color=white>Recently plugged devices:</font>"));
@@ -111,17 +109,17 @@ void DeviceNotifier::init()
     m_layout2->addWidget(Icon);
     m_layout2->addWidget(Label);
 
-    Notifier::ListView *m_listView= new ListView(m_widget);
-    m_listView->setModel(m_hotplugModel);
+    Notifier::NotifierView *m_notifierView= new NotifierView(m_widget);
+    m_notifierView->setModel(m_hotplugModel);
     ItemDelegate *delegate = new ItemDelegate;
-    m_listView->setItemDelegate(delegate);
+    m_notifierView->setItemDelegate(delegate);
     m_widget->setFocusPolicy(Qt::NoFocus);
 
     m_layout->addLayout(m_layout2);
-    m_layout->addWidget(m_listView);
+    m_layout->addWidget(m_notifierView);
     m_widget->setLayout(m_layout);
 
-    m_widget->setWindowFlags(m_listView->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
+    m_widget->setWindowFlags(m_notifierView->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
     m_widget->adjustSize();
 
     m_solidEngine = dataEngine("hotplug");
@@ -132,14 +130,14 @@ void DeviceNotifier::init()
     connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(onSourceRemoved(const QString&)));
 
-    if (KGlobalSettings::singleClick())
+    /*if (KGlobalSettings::singleClick())
     {
-	connect(m_listView,SIGNAL(clicked ( const QModelIndex & )),this,SLOT(slotOnItemClicked( const QModelIndex & )));
+	connect(m_notifierView,SIGNAL(clicked ( const QModelIndex & )),this,SLOT(slotOnItemClicked( const QModelIndex & )));
     }
     else
-    {
-	connect(m_listView,SIGNAL(doubleClicked ( const QModelIndex & )),this,SLOT(slotOnItemClicked( const QModelIndex & )));
-    }
+    {*/
+	connect(m_notifierView,SIGNAL(activated ( const QModelIndex & )),this,SLOT(slotOnItemClicked( const QModelIndex & )));
+    //}
     connect(m_timer,SIGNAL(timeout()),this,SLOT(onTimerExpired()));
 
     updateGeometry();
@@ -233,7 +231,7 @@ void DeviceNotifier::onSourceAdded(const QString& name)
     QStandardItem *item = new QStandardItem();
     item->setData(name, SolidUdiRole);
     m_hotplugModel->insertRow(0, item);
-
+    
     // TODO: Update model
     m_solidEngine->connectSource(name, this);
 }
