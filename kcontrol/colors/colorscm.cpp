@@ -53,11 +53,12 @@ KColorCm::WindecoColors::WindecoColors(const KSharedConfigPtr &config)
 
 void KColorCm::WindecoColors::load(const KSharedConfigPtr &config)
 {
+    // NOTE: keep this in sync with kdelibs/kdeui/kernel/kglobalsettings.cpp
     KConfigGroup group(config, "WM");
-    m_colors[ActiveBackground] = group.readEntry("activeBackground", KGlobalSettings::activeTitleColor());
-    m_colors[ActiveForeground] = group.readEntry("activeForeground", KGlobalSettings::activeTextColor());
-    m_colors[InactiveBackground] = group.readEntry("inactiveBackground", KGlobalSettings::inactiveTitleColor());
-    m_colors[InactiveForeground] = group.readEntry("inactiveForeground", KGlobalSettings::activeTitleColor());
+    m_colors[ActiveBackground] = group.readEntry("activeBackground", QColor(96, 148, 207));
+    m_colors[ActiveForeground] = group.readEntry("activeForeground", QColor(255, 255, 255));
+    m_colors[InactiveBackground] = group.readEntry("inactiveBackground", QColor(224, 223, 222));
+    m_colors[InactiveForeground] = group.readEntry("inactiveForeground", QColor(20, 19, 18));
 }
 
 QColor KColorCm::WindecoColors::color(WindecoColors::Role role) const
@@ -150,23 +151,23 @@ void KColorCm::updateEffectsPage()
     KConfigGroup groupI(m_config, "ColorEffects:Inactive");
     inactiveIntensityBox->setCurrentIndex(abs(groupI.readEntry("IntensityEffect", 0)));
     inactiveIntensitySlider->setValue(int(groupI.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
-    inactiveColorBox->setCurrentIndex(abs(groupI.readEntry("ColorEffect", 0)));
+    inactiveColorBox->setCurrentIndex(abs(groupI.readEntry("ColorEffect", 2)));
     if (inactiveColorBox->currentIndex() > 1)
     {
-        inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.0) * 40.0));
+        inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.025) * 40.0));
     }
     else
     {
-        inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.0) * 20.0) + 20);
+        inactiveColorSlider->setValue(int(groupI.readEntry("ColorAmount", 0.05) * 20.0) + 20);
     }
-    inactiveColorButton->setColor(groupI.readEntry("Color", QColor(128, 128, 128)));
-    inactiveContrastBox->setCurrentIndex(abs(groupI.readEntry("ContrastEffect", 0)));
-    inactiveContrastSlider->setValue(int(groupI.readEntry("ContrastAmount", 0.0) * 20.0));
+    inactiveColorButton->setColor(groupI.readEntry("Color", QColor(112, 111, 110)));
+    inactiveContrastBox->setCurrentIndex(abs(groupI.readEntry("ContrastEffect", 2)));
+    inactiveContrastSlider->setValue(int(groupI.readEntry("ContrastAmount", 0.1) * 20.0));
 
     // NOTE: keep this in sync with kdelibs/kdeui/colors/kcolorscheme.cpp
     KConfigGroup groupD(m_config, "ColorEffects:Disabled");
-    disabledIntensityBox->setCurrentIndex(groupD.readEntry("IntensityEffect", 0));
-    disabledIntensitySlider->setValue(int(groupD.readEntry("IntensityAmount", 0.0) * 20.0) + 20);
+    disabledIntensityBox->setCurrentIndex(groupD.readEntry("IntensityEffect", 2));
+    disabledIntensitySlider->setValue(int(groupD.readEntry("IntensityAmount", 0.1) * 20.0) + 20);
     disabledColorBox->setCurrentIndex(groupD.readEntry("ColorEffect", 0));
     if (disabledColorBox->currentIndex() > 1)
     {
@@ -176,9 +177,9 @@ void KColorCm::updateEffectsPage()
     {
         disabledColorSlider->setValue(int(groupD.readEntry("ColorAmount", 0.0) * 20.0) + 20);
     }
-    disabledColorButton->setColor(groupD.readEntry("Color", QColor(128, 128, 128)));
+    disabledColorButton->setColor(groupD.readEntry("Color", QColor(112, 111, 110)));
     disabledContrastBox->setCurrentIndex(groupD.readEntry("ContrastEffect", 1));
-    disabledContrastSlider->setValue(int(groupD.readEntry("ContrastAmount", 0.7) * 20.0));
+    disabledContrastSlider->setValue(int(groupD.readEntry("ContrastAmount", 0.65) * 20.0));
 
     m_disableUpdates = false;
 
