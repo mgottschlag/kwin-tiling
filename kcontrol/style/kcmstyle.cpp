@@ -667,16 +667,6 @@ void KCMStyle::save()
 #endif
 	}
 
-	//update kicker to re-used tooltips kicker parameter otherwise, it overwritted
-	//by style tooltips parameters.
-	QByteArray data;
-#ifdef __GNUC__
-#warning "kde4: who is org.kde.kicker?"
-#endif
-#ifdef Q_WS_X11
-	QDBusInterface kicker( "org.kde.kicker", "/kicker");
-	kicker.call("configure");
-#endif
 	// Clean up
 	m_bEffectsDirty  = false;
 	m_bToolbarsDirty = false;
@@ -1074,7 +1064,7 @@ void KCMStyle::loadMisc( KConfig& config )
 		comboToolbarIcons->setCurrentIndex(0);
 
 	configGroup = config.group("KDE");
-	cbIconsOnButtons->setChecked(configGroup.readEntry("ShowIconsOnPushButtons", false));
+	cbIconsOnButtons->setChecked(configGroup.readEntry("ShowIconsOnPushButtons", true));
 	cbEnableTooltips->setChecked(!configGroup.readEntry("EffectNoTooltip", false));
 	cbTearOffHandles->setChecked(configGroup.readEntry("InsertTearOffHandle", false));
 
