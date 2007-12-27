@@ -72,7 +72,7 @@ Number of commands=1
 Regexp=^\\/.+\\.jpg$
 
 [Action_0/Command_0]
-Commandline=kview %s
+Commandline=okular %s
 Description=Launch K&View
 Description[af]=Lanseer K-bekyk
 Description[ar]=نفّذ K&View
@@ -278,7 +278,7 @@ Description[zh_TW]=使用 &Konqueror 開啟
 Enabled=true
 
 [Action_1/Command_1]
-Commandline=ps x |grep -q '[m]ozilla' && mozilla -remote openURL\(%s, new-window\) || mozilla %s
+Commandline=ps x |grep -q '[m]ozilla' && mozilla -remote openURL(%s, new-window) || mozilla %s
 Icon=mozilla
 Description=Open with &Mozilla
 Description[af]=Maak oop met Mozilla
@@ -423,7 +423,7 @@ Description[zh_TW]=送出 &URL
 Enabled=true
 
 [Action_1/Command_3]
-Commandline=ps x |grep -q '[f]irefox' && firefox -remote openURL\(%s, new-window\) || firefox %s
+Commandline=ps x |grep -q '[f]irefox' && firefox -remote openURL(%s, new-window) || firefox %s
 Icon=firefox
 Description=Open with &Firefox
 Description[af]=Maak oop met Firefox
@@ -843,81 +843,10 @@ Description[x-test]=xxText Filexx
 Description[xh]=Ifayile Yombhalo
 Description[zh_CN]=文本文件
 Description[zh_TW]=文字檔案
-Number of commands=2
+Number of commands=1
 Regexp=^\\/.+\\.txt$
 
 [Action_3/Command_0]
-Commandline=kedit %s
-Description=Launch K&Edit
-Description[af]=Lanseer Kredigeer
-Description[ar]=نفّذ K&Edit
-Description[be]=Запусціць K&Edit
-Description[bg]=&Стартиране на KEdit
-Description[bn]=কে-&এডিট চালাও
-Description[br]=Lañsañ K&Edit
-Description[ca]=Engega el K&Edit
-Description[cs]=Spustit K&Edit
-Description[csb]=Zrëszë editorã K&Edit
-Description[cy]=Cychwyn K&Edit
-Description[da]=Start K&Edit
-Description[de]=K&Edit starten
-Description[el]=Εκκίνηση K&Edit
-Description[eo]=Lanĉi &Kodredaktilon
-Description[es]=Iniciar K&Edit
-Description[et]=K&Editi käivitamine
-Description[eu]=Abiarazi K&Edit 
-Description[fa]=راه‌اندازیK&Edit‌
-Description[fi]=Käynistä K&Edit
-Description[fr]=Démarrer K&Edit
-Description[fy]=Mei K&Edit begjinne
-Description[ga]=Tosaigh K&Edit
-Description[gl]=Executar K&Edit
-Description[he]=הפעל את K&Edit
-Description[hi]=के-एडिट चालू करें (&E)
-Description[hr]=Pokreni K&Edit uređivač
-Description[hu]=A K&Edit elindítása
-Description[is]=Ræsa K&Edit
-Description[it]=Avvia K&Edit
-Description[ja]=KEdit を起動(&E)
-Description[ka]=K&Edit-ის გაშვება
-Description[kk]=K&Edit-ты жегу
-Description[km]=ចាប់ផ្ដើម KEdit
-Description[ko]=KEdit 실행(&E)
-Description[lt]=Paleisti K&Edit
-Description[lv]=Palaist K&Edit
-Description[mk]=Стартувај K&Edit
-Description[ms]=Lancar K&Edit
-Description[nb]=Start K&Edit
-Description[nds]=K&Edit starten
-Description[ne]=केडीई सम्पादन सुरुआत गर्नुहोस्
-Description[nl]=K&Edit opstarten
-Description[nn]=Start K&Edit
-Description[pa]=ਕੇ-ਐਡਿਟ ਚਲਾਓ(&E)
-Description[pl]=Uruchom &Edytor
-Description[pt]=Lançar o K&Edit
-Description[pt_BR]=Abrir &Kedit
-Description[ro]=Execută K&Edit
-Description[ru]=Запуск K&Edit
-Description[se]=Álggat K&Edit
-Description[sk]=Spustiť K&Edit
-Description[sl]=Zaženi K&Edit
-Description[sr]=Покрени &К-уређивање
-Description[sr@latin]=Pokreni &K-uređivanje
-Description[sv]=Starta K&edit
-Description[ta]=K&Editஐ இறக்கு
-Description[tg]=Ба кор даровардани K&Edit
-Description[th]=เรียกใช้งาน K&Edit
-Description[tr]=K&edit Çalıştır
-Description[uk]=Запустити K&Edit
-Description[uz]=K&Edit'ни ишга тушириш
-Description[vi]=Khởi chạy K&Edit
-Description[wa]=Enonder K&Edit
-Description[x-test]=xxLaunch K&Editxx
-Description[zh_CN]=调用 K&Edit
-Description[zh_TW]=啟動 K&Edit
-Enabled=true
-
-[Action_3/Command_1]
 Commandline=kwrite %s
 Description=Launch K&Write
 Description[af]=Lanseer Kskryf
@@ -1456,7 +1385,7 @@ Description[vi]=URL FTP
 Description[wa]=Hårdêye FTP
 Description[x-test]=xxftp URLxx
 Description[zh_TW]=FTP URL
-Number of commands=5
+Number of commands=4
 Regexp=^ftp://.
 
 [Action_6/Command_0]
@@ -1533,80 +1462,7 @@ Description[zh_TW]=使用 &Konqueror 開啟
 Enabled=true
 
 [Action_6/Command_1]
-Commandline=netscape -no-about-splash -remote openURL\(%s, new-window\)
-Description=Open with &Netscape
-Description[af]=Open met Netscape
-Description[ar]=افتح بواسطة &نيتسكيب
-Description[be]=Адкрыць у &Netscape
-Description[bg]=О&тваряне с Netscape
-Description[bn]=নেটস্কেপ দিয়ে খোলো (&ন)
-Description[br]=Digeriñ gant &Netscape
-Description[ca]=Obre amb el &Netscape
-Description[cs]=Otevřít pomocí &Netscape
-Description[csb]=Òtemkni w &Netscape
-Description[cy]=Agor gyda &Netscape
-Description[da]=Åbn med &Netscape
-Description[de]=Mit &Netscape öffnen
-Description[el]=Άνοιγμα με το &Netscape
-Description[eo]=Malfermi per &Netskapo
-Description[es]=Abrir con &Netscape
-Description[et]=&Netscape'is avamine
-Description[eu]= Ireki &Netscaperekin
-Description[fa]=باز کردن با &نت‌اسکیپ
-Description[fi]=Avaa &Netscapella
-Description[fr]=Ouvrir dans &Netscape
-Description[fy]=Iepenje mei &Netscape
-Description[ga]=Oscail le &Netscape
-Description[gl]=Abrir con &Netscape
-Description[he]=פתח באמצעות &Netscape
-Description[hi]=नेटस्केप के साथ खोलें (&N)
-Description[hr]=Otvori pomoću &Netscapea
-Description[hu]=Megnyitás a &Netscape-pel
-Description[is]=Opna með &Netscape
-Description[it]=Apri con &Netscape
-Description[ja]=Netscape で開く(&N)
-Description[ka]=&Netscape-სი გახსნა
-Description[kk]=&Netscape-те ашу
-Description[km]=បើក​ជាមួយ Netscape
-Description[ko]=넷스케이프로 열기(&N)
-Description[lt]=Atverti su &Netscape
-Description[lv]=Atvērt ar &Netscape
-Description[mk]=Отвори со &Netscape
-Description[ms]=Buka dengan &Netscape
-Description[nb]=Åpne med &Netscape
-Description[nds]=Mit &Netscape opmaken
-Description[ne]=नेटस्केपसँग खोल्नुहोस्
-Description[nl]=Openen met &Netscape
-Description[nn]=Opna med &Netscape
-Description[pa]=ਨੈੱਟਸਕੇਪ ਨਾਲ ਖੋਲ੍ਹੋ(&N)
-Description[pl]=Otwórz w &Netscape
-Description[pt]=Abrir com o &Netscape
-Description[pt_BR]=Abrir com o &Netscape
-Description[ro]=Deschide cu &Netscape
-Description[ru]=Открыть в &Netscape
-Description[se]=Raba &Netscapeain
-Description[sk]=Otvoriť pomocou &Netscape
-Description[sl]=Odpri z &Netscape
-Description[sr]=Отвори &Нетскејпом
-Description[sr@latin]=Otvori &Netscapeom
-Description[sv]=Öppna med &Netscape
-Description[ta]=நெட்ஸ்கேப்புடன் திற
-Description[te]=(&N) నెట్ స్కేప్ తొ తెరువు
-Description[tg]=Бо &Netscape боз кунед
-Description[th]=เปิดด้วยเน็&ตสเคป
-Description[tr]=&Netscape ile Aç
-Description[uk]=Відкрити з &Netscape
-Description[uz]=&Netscape билан очиш
-Description[vi]=Mở bằng &Netscape
-Description[wa]=Drovi avou &Netscape
-Description[x-test]=xxOpen with &Netscapexx
-Description[xh]=Vula nge &Netscape
-Description[zh_CN]=用 &Netscape 打开
-Description[zh_TW]=使用 &Netscape 開啟
-Enabled=true
-
-[Action_6/Command_2]
-Commandline=mozilla -remote openURL\(%s, new-window\)
+Commandline=mozilla -remote openURL(%s, new-window)
 Description=Open with &Mozilla
 Description[af]=Maak oop met Mozilla
 Description[ar]=افتح بواسطة &موزيلا
@@ -1678,7 +1534,7 @@ Description[zh_CN]=用 &Mozilla 打开
 Description[zh_TW]=使用 &Mozilla 開啟
 Enabled=true
 
-[Action_6/Command_3]
+[Action_6/Command_2]
 Commandline=kmail --body  %s
 Description=Send &URL
 Description[af]=Stuur URL
@@ -1749,7 +1605,7 @@ Description[zh_CN]=发送 &URL
 Description[zh_TW]=送出 &URL
 Enabled=true
 
-[Action_6/Command_4]
+[Action_6/Command_3]
 Commandline=kmail  --attach %s
 Description=Send &File
 Description[af]=Stuur Lêer
