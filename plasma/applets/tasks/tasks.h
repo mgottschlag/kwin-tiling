@@ -20,8 +20,12 @@
 #ifndef TASKS_H
 #define TASKS_H
 
+// Own
+#include "ui_tasksConfig.h"
+
 // KDE
 #include <taskmanager/taskmanager.h>
+#include <KDialog>
 
 // Plasma
 #include <plasma/applet.h>
@@ -45,6 +49,7 @@ public:
          * With the specified parent.
          */
         Tasks(QObject *parent, const QVariantList &args = QVariantList());
+        ~Tasks();
 
         void init();
 
@@ -65,8 +70,10 @@ public:
         //QRectF boundingRect() const;
 
         void constraintsUpdated(Plasma::Constraints constraints);
+        void showConfigurationInterface();
 
 protected slots:
+        void configAccepted();
         virtual void wheelEvent(QGraphicsSceneWheelEvent *);
 
 private slots:
@@ -96,6 +103,10 @@ private:
 
         QHash<Task::TaskPtr,AbstractTaskItem*> _windowTaskItems;
         QHash<Startup::StartupPtr,AbstractTaskItem*> _startupTaskItems;
+
+        bool _showTooltip;
+        KDialog *m_dialog;
+        Ui::tasksConfig ui;
 };
 
 K_EXPORT_PLASMA_APPLET(tasks, Tasks)

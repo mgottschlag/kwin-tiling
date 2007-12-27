@@ -35,7 +35,7 @@ class WindowTaskItem : public AbstractTaskItem
 
 public:
     /** Constructs a new representation for a window task. */
-    WindowTaskItem(QGraphicsItem *parent, QObject *parentObject);
+    WindowTaskItem(QGraphicsItem *parent, QObject *parentObject, const bool showTooltip);
 
     /** Sets the starting task represented by this item. */
     void setStartupTask(Startup::StartupPtr task);
@@ -47,6 +47,9 @@ public:
 
     /** Tells the window manager the minimized task's geometry. */
     void publishIconGeometry();
+
+    /** Switch on/off tooltips above tasks */
+    void setShowTooltip(const bool showit);
 
     virtual void close();
 
@@ -68,6 +71,7 @@ private slots:
 private:
     Task::TaskPtr _task;
     QTimer* _activateTimer;
+    bool _showTooltip;
 };
 
 #endif

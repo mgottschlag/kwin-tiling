@@ -33,11 +33,12 @@
 #include <KLocalizedString>
 #include <taskmanager/taskrmbmenu.h>
 
-WindowTaskItem::WindowTaskItem(QGraphicsItem *parent, QObject *parentObject)
+WindowTaskItem::WindowTaskItem(QGraphicsItem *parent, QObject *parentObject, const bool showTooltip)
     : AbstractTaskItem(parent, parentObject),
     _activateTimer(0)
 {
     setAcceptDrops(true);
+    _showTooltip = showTooltip;
 }
 
 void WindowTaskItem::activate()
@@ -67,6 +68,12 @@ void WindowTaskItem::close()
     finished();
 }
 
+void WindowTaskItem::setShowTooltip(const bool showit)
+{
+    _showTooltip = showit;
+    updateTask();
+}
+
 void WindowTaskItem::updateTask()
 {
     Q_ASSERT( _task );
@@ -89,14 +96,18 @@ void WindowTaskItem::updateTask()
     QPixmap iconPixmap = _task->icon(preferredIconSize().width(),
                                      preferredIconSize().height(),
                                      true);
-    Plasma::ToolTipData data;
-    data.mainText = _task->visibleName();
-    data.subText = i18nc("Which virtual desktop a window is currently on", "On %1", KWindowSystem::desktopName(_task->desktop()));
-    data.image = iconPixmap;
-    setToolTip(data);
+    if (_showTooltip) {
+      Plasma::ToolTipData data;
+      data.mainText = _task->visibleName();
+      data.subText = i18nc("Which virtual desktop a window is currently on", "On %1", KWindowSystem::desktopName(_task->desktop()));
+      data.image = iconPixmap;
+      setToolTip(data);
+    } else {
+        Plasma::ToolTipData data;
+        setToolTip(data); // Clear
+    }
     setIcon(QIcon(iconPixmap));
     setText(_task->visibleName());
-
     //redraw
     queueUpdate();
 }

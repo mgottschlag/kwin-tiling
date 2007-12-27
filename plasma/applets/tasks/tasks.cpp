@@ -22,6 +22,10 @@
 #include "tasks.h"
 #include "taskgroupitem.h"
 #include "windowtaskitem.h"
+#include "ui_tasksConfig.h"
+
+// KDE
+#include <KDialog>
 
 // Qt
 #include <QGraphicsSceneWheelEvent>
@@ -34,6 +38,13 @@
 Tasks::Tasks(QObject* parent , const QVariantList &arguments)
  : Plasma::Applet(parent,arguments)
 {
+    setHasConfigurationInterface(true);
+    m_dialog = 0;
+}
+
+Tasks::~Tasks()
+{
+    delete m_dialog;
 }
 
 void Tasks::init()
@@ -61,6 +72,9 @@ void Tasks::init()
        // _rootTaskGroup->setColor( QColor(100,120,130) );
         _rootTaskGroup->setText("Root Group");
 
+    KConfigGroup cg = config();
+    _showTooltip = cg.readEntry("showTooltip", true);
+
     // add representations of existing running tasks
     registerWindowTasks();
     registerStartingTasks();
@@ -77,7 +91,7 @@ void Tasks::registerStartingTasks()
 
 void Tasks::addStartingTask(Startup::StartupPtr task)
 {
-    WindowTaskItem* item = new WindowTaskItem(_rootTaskGroup, _rootTaskGroup);
+    WindowTaskItem* item = new WindowTaskItem(_rootTaskGroup, _rootTaskGroup, _showTooltip);
     item->setStartupTask(task);
     _startupTaskItems.insert(task, item);
 
@@ -142,7 +156,7 @@ void Tasks::addWindowTask(Task::TaskPtr task)
     }
 
     if (!item) {
-        item = new WindowTaskItem(_rootTaskGroup, _rootTaskGroup);
+        item = new WindowTaskItem(_rootTaskGroup, _rootTaskGroup, _showTooltip);
     }
 
     item->setWindowTask(task);
@@ -175,5 +189,42 @@ void Tasks::wheelEvent(QGraphicsSceneWheelEvent *e)
 {
      _rootTaskGroup->cycle(e->delta());
 }
+
+void Tasks::showConfigurationInterface()
+{
+    if (m_dialog == 0) {
+        m_dialog = new KDialog;
+        m_dialog->setCaption(i18n("Configure Taskbar"));
+
+        QWidget *widget = new QWidget;
+        ui.setupUi(widget);
+        m_dialog->setMainWidget(widget);
+        m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+
+        connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
+        connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
+    }
+    ui.showTooltip->setChecked(_showTooltip);
+    m_dialog->show();
+}
+
+void Tasks::configAccepted()
+{
+    KConfigGroup cg = config();
+    if (_showTooltip != (ui.showTooltip->checkState() == Qt::Checked)) {
+        _showTooltip = !_showTooltip;
+        foreach (AbstractTaskItem *taskItem, _rootTaskGroup->tasks()) {
+            //TODO: Update this if/when tasks() returns other types
+            WindowTaskItem *windowTaskItem = dynamic_cast<WindowTaskItem *>(taskItem);
+            if (windowTaskItem) {
+                windowTaskItem->setShowTooltip(_showTooltip);
+            }
+        }
+        update();
+        cg.writeEntry("showTooltip", _showTooltip);
+        cg.config()->sync();
+    }
+}
+
 
 #include "tasks.moc"
