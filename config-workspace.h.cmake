@@ -45,6 +45,9 @@
 /* Define to 1 if you have the `sigset' function. */
 #define HAVE_SIGSET 1
 
+/* Define to 1 if you have statvfs */
+#cmakedefine HAVE_STATVFS 1
+
 /* Define to 1 if you have the <string.h> header file. */
 #cmakedefine HAVE_STRING_H 1
 
@@ -62,6 +65,9 @@
 
 /* Define to 1 if you have the <sys/statfs.h> header file. */
 #cmakedefine HAVE_SYS_STATFS_H 1
+
+/* Define to 1 if you have the <sys/statvfs.h> header file. */
+#cmakedefine HAVE_SYS_STATVFS_H 1
 
 /* Define to 1 if you have statfs(). */
 #cmakedefine HAVE_STATFS 1

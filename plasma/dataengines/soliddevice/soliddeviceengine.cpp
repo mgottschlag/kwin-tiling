@@ -40,6 +40,9 @@
 #ifdef HAVE_SYS_STATFS_H
 #include <sys/statfs.h>
 #endif
+#ifdef HAVE_SYS_STATVFS_H
+#include <sys/statvfs.h>
+#endif
 
 #ifdef HAVE_SYS_VFS_H
 #include <sys/vfs.h>
@@ -660,7 +663,14 @@ qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
     //determine the free space available on the device
     const char *path=mountPoint.toAscii().constData();
 
-#if defined(HAVE_STATFS) && !defined(Q_OS_SOLARIS)
+#ifdef HAVE_STATVFS
+    struct statvfs fs_obj;
+    if (statvfs(path,&fs_obj) < 0) {
+        return -1;
+    } else {
+        return (qlonglong)fs_obj.f_bfree*(qlonglong)fs_obj.f_frsize;
+    }
+#elif defined(HAVE_STATFS) && !defined(Q_OS_SOLARIS)
     struct statfs fs_obj;
     if (statfs(path,&fs_obj) < 0){
         return -1;
@@ -669,7 +679,7 @@ qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
         return (qlonglong)fs_obj.f_bfree*(qlonglong)fs_obj.f_bsize;
     }
 #else
-#warning TODO: handle statvfs() systems
+#warning "This system does not support statfs or statvfs - freeDiskSpace() will return -1"
     return -1;
 #endif
 }
