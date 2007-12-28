@@ -742,7 +742,7 @@ Task::Task(WId w, QObject *parent, const char *name)
     // load the icon for X applications
     if (d->pixmap.isNull())
     {
-        d->pixmap = SmallIcon("x");
+        d->pixmap = SmallIcon("xorg");
     }
 
 #ifdef THUMBNAILING_POSSIBLE
@@ -823,7 +823,7 @@ void Task::refreshIcon()
     // load the icon for X applications
     if (d->pixmap.isNull())
     {
-        d->pixmap = SmallIcon("x");
+        d->pixmap = SmallIcon("xorg");
     }
 
     d->lastIcon = QPixmap();
@@ -1098,7 +1098,7 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
 
       // Icon of last resort
       if( pixmap.isNull() ) {
-        pixmap = KIconLoader::global()->loadIcon( "go",
+        pixmap = KIconLoader::global()->loadIcon( "xorg",
                                                   KIconLoader::NoGroup,
                                                   KIconLoader::SizeSmall );
         isStaticIcon = true;
@@ -1121,7 +1121,7 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
 
       // Icon of last resort
       if( pixmap.isNull() ) {
-        pixmap = KIconLoader::global()->loadIcon( "go",
+        pixmap = KIconLoader::global()->loadIcon( "xorg",
                             KIconLoader::NoGroup,
                             KIconLoader::SizeMedium );
         isStaticIcon = true;
@@ -1152,7 +1152,7 @@ QPixmap Task::bestIcon( int size, bool &isStaticIcon )
 
       // Icon of last resort
       if( pixmap.isNull() ) {
-        pixmap = KIconLoader::global()->loadIcon( "go",
+        pixmap = KIconLoader::global()->loadIcon( "xorg",
                                                   KIconLoader::NoGroup,
                                                   size );
         isStaticIcon = true;
