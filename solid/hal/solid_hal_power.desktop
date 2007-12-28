@@ -64,6 +64,7 @@ Comment[sr]=Хардверско управљање енергијом прек�
 Comment[sr@latin]=Hardversko upravljanje energijom preko HAL demona
 Comment[sv]=Hantering av strömsparfunktion i hårdvara med HAL-demon från freedesktop.org
 Comment[vi]=Quản lý nguồn điện, dùng trình HAL của freedesktop.org
+Comment[wa]=Manaedjmint di l' enerdjeye di l' éndjolreye eployant l' démon HAL di freedesktop.org
 Comment[x-test]=xxHardware power management using freedesktop.org HAL daemonxx
 Comment[zh_CN]=使用 freedesktop.org HAL 守护程序的硬件电源管理
 Comment[zh_TW]=使用 freedesktop.org 的 HAL 伺服程式做電源管理
