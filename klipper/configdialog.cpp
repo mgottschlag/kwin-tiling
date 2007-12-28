@@ -44,7 +44,7 @@ ConfigDialog::ConfigDialog(QWidget *parent, KConfigSkeleton *skeleton, const Act
 
     w = new QWidget(this);
     actionWidget = new ActionWidget(list, w);
-    addPage(actionWidget, i18nc("Actions Config", "Actions"), "configure", i18n("Actions Config"));
+    addPage(actionWidget, i18nc("Actions Config", "Actions"), "system-run", i18n("Actions Config"));
 
     w = new QWidget(this);
     shortcutsWidget = new KShortcutsEditor( collection, w, KShortcutsEditor::GlobalAction );
@@ -216,7 +216,6 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent )
 
         QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget,
                                                     QStringList() << action->regExp() << action->description());
-        item->setIcon(0, KIcon("bookmark"));
         item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
 
         QListIterator<ClipCommand*> it2( action->commands() );
@@ -250,11 +249,11 @@ ActionWidget::ActionWidget( const ActionList *list, QWidget *parent )
     QHBoxLayout *buttonLayout = new QHBoxLayout;
     mainLayout->addLayout(buttonLayout);
 
-    QPushButton *button = new QPushButton(KIcon("edit-add"), i18n("&Add Action"), this);
+    QPushButton *button = new QPushButton(KIcon("list-add"), i18n("&Add Action"), this);
     connect(button, SIGNAL(clicked()), SLOT(slotAddAction()));
     buttonLayout->addWidget(button);
 
-    delActionButton = new QPushButton(KIcon("edit-delete"), i18n("&Delete Action"), this);
+    delActionButton = new QPushButton(KIcon("list-remove"), i18n("&Delete Action"), this);
     connect(delActionButton, SIGNAL(clicked()), SLOT(slotDeleteAction()));
     buttonLayout->addWidget(delActionButton);
 
@@ -295,8 +294,8 @@ void ActionWidget::slotContextMenu(const QPoint& pos)
         return;
 
     KMenu *menu = new KMenu;
-    QAction *addCmd = menu->addAction(KIcon("edit-add"), i18n("Add Command"));
-    QAction *rmCmd = menu->addAction(KIcon("edit-delete"), i18n("Remove Command"));
+    QAction *addCmd = menu->addAction(KIcon("list-add"), i18n("Add Command"));
+    QAction *rmCmd = menu->addAction(KIcon("list-remove"), i18n("Remove Command"));
     if ( !item->parent() ) {// no "command" item
         rmCmd->setEnabled( false );
         item->setExpanded ( true );
@@ -332,7 +331,6 @@ void ActionWidget::slotAddAction()
     QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget,
                                                 QStringList() << i18n("Double-click here to set the regexp")
                                                               << i18n("<new action>"));
-    item->setIcon(0, KIcon("bookmark"));
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
 }
 

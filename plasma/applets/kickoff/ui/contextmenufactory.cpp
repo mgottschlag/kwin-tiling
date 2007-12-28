@@ -68,7 +68,7 @@ public:
        if (!menu->isEmpty()) {
             QAction *action = menu->menuAction();
             action->setText(i18n("Advanced"));
-            action->setIcon(KIcon("edit-add"));
+            action->setIcon(KIcon("list-add"));
             return action;
        } else {
             delete menu;

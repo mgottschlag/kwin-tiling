@@ -264,7 +264,7 @@ QList<QAction*> DefaultDesktop::contextActions()
     if (!m_appletBrowserAction) {
         m_appletBrowserAction = new QAction(i18n("Add Widgets..."), this);
         connect(m_appletBrowserAction, SIGNAL(triggered(bool)), this, SIGNAL(showAddWidgets()));
-        m_appletBrowserAction->setIcon(KIcon("edit-add"));
+        m_appletBrowserAction->setIcon(KIcon("list-add"));
 
         m_runCommandAction = new QAction(i18n("Run Command..."), this);
         connect(m_runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
@@ -275,6 +275,7 @@ QList<QAction*> DefaultDesktop::contextActions()
         connect(m_setupDesktopAction, SIGNAL(triggered()), this, SLOT(configure()));
 
         m_lockDesktopAction = new QAction(i18n("Lock Widgets"), this);
+        m_lockDesktopAction->setIcon(KIcon("object-locked"));
         connect(m_lockDesktopAction, SIGNAL(triggered(bool)), this, SLOT(toggleDesktopImmutability()));
 
         m_lockScreenAction = new QAction(i18n("Lock Screen"), this);

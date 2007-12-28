@@ -411,12 +411,12 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     connect(m_dirlist, SIGNAL(currentRowChanged(int)), this, SLOT(updateSlideshow()));
     QVBoxLayout *dirlistButtons = new QVBoxLayout;
     m_addDir = new QPushButton(
-        KIcon("edit-add"), 
+        KIcon("list-add"),
         i18n("&Add directory..."),
         slideshowWidget);
     connect(m_addDir, SIGNAL(clicked()), this, SLOT(slotAddDir()));
     m_removeDir = new QPushButton(
-        KIcon("edit-delete"), 
+        KIcon("list-remove"),
         i18n("&Remove directory"),
         slideshowWidget);
     connect(m_removeDir, SIGNAL(clicked()), this, SLOT(slotRemoveDir()));

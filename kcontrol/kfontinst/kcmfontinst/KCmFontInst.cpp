@@ -283,7 +283,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
 
     // Toolbar...
     KActionMenu *settingsMenu=new KActionMenu(KIcon("configure"), i18n("Settings"), this);
-    KAction     *changeTextAct=new KAction(KIcon("text"), i18n("Change Preview Text..."), this),
+    KAction     *changeTextAct=new KAction(KIcon("edit-rename"), i18n("Change Preview Text..."), this),
                 *duplicateFontsAct=new KAction(KIcon("system-search"), i18n("Scan For Duplicate Fonts..."), this);
                 //*validateFontsAct=new KAction(KIcon("checkmark"), i18n("Validate Fonts..."), this);
                 //*downloadFontsAct=new KAction(KIcon("go-down"), i18n("Download Fonts..."), this);
@@ -324,7 +324,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
         for(int i=0; i<3; ++i)
             itsModeControl->addItem(itsGroupList->group(modeToGrp(i))->name());
 
-    KPushButton *createGroup=new CPushButton(KGuiItem(QString(), "edit-add",
+    KPushButton *createGroup=new CPushButton(KGuiItem(QString(), "list-add",
                                                       i18n("Create a new group")),
                                              itsGroupsWidget);
 
@@ -353,7 +353,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     itsFontListView->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     itsFontListView->readConfig(cg);
 
-    itsAddFontControl=new CPushButton(KGuiItem(i18n("Add..."), "addfont",
+    itsAddFontControl=new CPushButton(KGuiItem(i18n("Add..."), "list-add-font",
                                                i18n("Install fonts")),
                                       itsFontsWidget);
 
