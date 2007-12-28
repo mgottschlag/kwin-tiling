@@ -418,7 +418,7 @@ void Interface::switchUser()
 
     display();
     m_header->setText(i18n("Switch users"));
-    m_header->setPixmap("user");
+    m_header->setPixmap("system-switch-user");
     m_defaultMatch = 0;
     m_context.setSearchTerm("SESSIONS");
     sessionrunner->match(&m_context);
