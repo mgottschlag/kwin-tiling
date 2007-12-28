@@ -42,12 +42,10 @@ LockOut::LockOut(QObject *parent, const QVariantList &args)
     layout->setSpacing(0);
 
     Plasma::Icon *icon_lock = new Plasma::Icon(KIcon("system-lock-screen"), "", this);
-    icon_lock->setAlignment(Qt::AlignCenter);
     layout->addItem(icon_lock);
     connect(icon_lock, SIGNAL(clicked()), this, SLOT(clickLock()));
 
     Plasma::Icon *icon_logout = new Plasma::Icon(KIcon("system-log-out"), "", this);
-    icon_logout->setAlignment(Qt::AlignCenter);
     layout->addItem(icon_logout);
     connect(icon_logout, SIGNAL(clicked()), this, SLOT(clickLogout()));
 }
