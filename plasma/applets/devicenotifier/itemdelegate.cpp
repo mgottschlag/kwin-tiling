@@ -137,17 +137,22 @@ QFont ItemDelegate::fontForSubTitle(const QFont& titleFont) const
 QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     Q_UNUSED(index)
-    QSize size = option.rect.size();
-
     QFontMetrics metrics(option.font);
 
     QFont subTitleFont = option.font;
     subTitleFont.setPointSize(qMax(subTitleFont.pointSize() - 2,
                                    KGlobalSettings::smallestReadableFont().pointSize()));
     QFontMetrics subMetrics(subTitleFont);
-    size.setHeight(qMax(option.decorationSize.height(), qMax(size.height(), metrics.height() + subMetrics.ascent()) + 3));
 
-    return size;
+    int height = qMax(option.decorationSize.height(), metrics.height() + subMetrics.ascent() + 3);
+
+    QString titleText = index.data(Qt::DisplayRole).value<QString>();
+    QString subTitleText = index.data(ActionRole).value<KServiceAction>().text();
+
+    int width = qMax(metrics.width(titleText), subMetrics.width(subTitleText));
+    width+=option.decorationSize.width()+ICON_TEXT_MARGIN;
+
+    return QSize(width, height);
 }
 
 // Taken from kdelibs/kio/kio/kfileitemdelegate.cpp
