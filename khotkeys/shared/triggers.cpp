@@ -118,7 +118,7 @@ Shortcut_trigger::Shortcut_trigger( Action_data* data_P, const KShortcut& shortc
     }
 
 Shortcut_trigger::Shortcut_trigger( KConfigGroup& cfg_P, Action_data* data_P )
-    : Trigger( cfg_P, data_P ), _shortcut( cfg_P.readEntry( "Key", 0 ))
+    : Trigger( cfg_P, data_P ), _shortcut( cfg_P.readEntry( "Key", QString() ))
     {
     keyboard_handler->insert_item( shortcut(), this );
     }
