@@ -20,6 +20,7 @@
 #include "timeengine.h"
 
 #include <QDate>
+#include <QStringList>
 #include <QTime>
 #include <QTimer>
 
@@ -52,12 +53,14 @@ bool TimeEngine::updateSource(const QString &tz)
 {
     //kDebug() << "TimeEngine::updateTime()";
 
+    QString timezone;
+
     static const QString localName = I18N_NOOP("Local");
     if (tz == localName) {
         setData(localName, I18N_NOOP("Time"), QTime::currentTime());
         setData(localName, I18N_NOOP("Date"), QDate::currentDate());
         // this is relatively cheap - KSTZ::local() is cached
-        setData(tz, I18N_NOOP("Timezone"), KSystemTimeZones::local().name());
+        timezone = KSystemTimeZones::local().name();
     } else {
         KTimeZone newTz = KSystemTimeZones::zone(tz);
         if (!newTz.isValid()) {
@@ -67,8 +70,13 @@ bool TimeEngine::updateSource(const QString &tz)
         KDateTime dt = KDateTime::currentDateTime(newTz);
         setData(tz, I18N_NOOP("Time"), dt.time());
         setData(tz, I18N_NOOP("Date"), dt.date());
-        setData(tz, I18N_NOOP("Timezone"), tz);
+        timezone = tz;
     }
+
+    setData(tz, I18N_NOOP("Timezone"), timezone);
+    QStringList tzParts = timezone.split("/");
+    setData(tz, I18N_NOOP("Timezone Continent"), tzParts.takeFirst());
+    setData(tz, I18N_NOOP("Timezone City"), tzParts.takeFirst());
 
     return true;
 }
