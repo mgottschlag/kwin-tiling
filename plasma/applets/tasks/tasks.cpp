@@ -169,6 +169,7 @@ void Tasks::removeWindowTask(TaskPtr task)
 {
     if (_windowTaskItems.contains(task)) {
         removeItemFromRootGroup(_windowTaskItems[task]);
+        _windowTaskItems.remove(task);
     }
 }
 
