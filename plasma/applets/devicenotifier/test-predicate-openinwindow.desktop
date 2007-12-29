@@ -2,7 +2,6 @@
 X-KDE-Solid-Predicate=[[ StorageVolume.ignored == false AND StorageVolume.usage == 'FileSystem' ] OR [ IS StorageAccess AND StorageDrive.driveType == 'Floppy' ]]
 Type=Service
 Actions=open;
-X-KDE-DEFAULT-ACTION=open
 
 [Desktop Action open]
 Name=Open with Dolphin

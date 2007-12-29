@@ -61,7 +61,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
 
     QRect textRect = QStyle::alignedRect(option.direction,textAlignment,textSize,contentRect.adjusted(0, 2, 0, 0));
     QString titleText = index.data(Qt::DisplayRole).value<QString>();
-    QString subTitleText = index.data(ActionRole).value<KServiceAction>().text();
+    QString subTitleText = index.data(ActionRole).value<QString>();
 
     if (subTitleText.isEmpty()) {
         subTitleText = " ";
@@ -147,7 +147,7 @@ QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelInd
     int height = qMax(option.decorationSize.height(), metrics.height() + subMetrics.ascent() + 3);
 
     QString titleText = index.data(Qt::DisplayRole).value<QString>();
-    QString subTitleText = index.data(ActionRole).value<KServiceAction>().text();
+    QString subTitleText = index.data(ActionRole).value<QString>();
 
     int width = qMax(metrics.width(titleText), subMetrics.width(subTitleText));
     width+=option.decorationSize.width()+ICON_TEXT_MARGIN;

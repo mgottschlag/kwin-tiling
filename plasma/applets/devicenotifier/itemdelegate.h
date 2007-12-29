@@ -25,11 +25,6 @@
 // Qt
 #include <QtGui/QAbstractItemDelegate>
 
-//KDE
-#include <kdesktopfileactions.h>
-
-Q_DECLARE_METATYPE(KServiceAction)
-
 namespace Notifier
 {
 
