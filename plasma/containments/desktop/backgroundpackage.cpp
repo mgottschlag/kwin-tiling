@@ -21,17 +21,17 @@ public:
     ResizeThread(const QString &path, float ratio, QObject *parent = 0);
     virtual ~ResizeThread();
     
-    virtual void start(const QModelIndex &index);
+    virtual void start(QPersistentModelIndex index);
     virtual void run();
     
     QImage result() const;
-    QModelIndex index() const;
+    QPersistentModelIndex index() const;
     bool isInitialized() const;
 private:
     QString m_path;
     QImage m_result;
     float m_ratio;
-    QModelIndex m_index;
+    QPersistentModelIndex m_index;
 };
 
 ResizeThread::ResizeThread(const QString &path, float ratio, QObject *parent)
@@ -44,7 +44,7 @@ ResizeThread::ResizeThread(const QString &path, float ratio, QObject *parent)
 ResizeThread::~ResizeThread() {
 }
 
-void ResizeThread::start(const QModelIndex &index)
+void ResizeThread::start(QPersistentModelIndex index)
 {
     m_index = index;
     ThreadWeaver::Weaver::instance()->enqueue(this);
@@ -52,7 +52,7 @@ void ResizeThread::start(const QModelIndex &index)
 
 bool ResizeThread::isInitialized() const
 {
-    return m_index != QModelIndex();
+    return m_index.isValid();
 }
 
 void ResizeThread::run()
@@ -70,7 +70,7 @@ QImage ResizeThread::result() const
     }
 }
 
-QModelIndex ResizeThread::index() const
+QPersistentModelIndex ResizeThread::index() const
 {
     return m_index;
 }
@@ -251,7 +251,7 @@ bool BackgroundPackage::screenshotGenerationStarted() const
     return true;
 }
 
-void BackgroundPackage::generateScreenshot(const QModelIndex &) const
+void BackgroundPackage::generateScreenshot(QPersistentModelIndex) const
 {
 }
 
@@ -308,7 +308,7 @@ bool BackgroundFile::screenshotGenerationStarted() const
     return m_resizer_started;
 }
 
-void BackgroundFile::generateScreenshot(const QModelIndex & index) const
+void BackgroundFile::generateScreenshot(QPersistentModelIndex index) const
 {
     ResizeThread *resizer = new ResizeThread(m_file, m_ratio);
     connect(resizer, SIGNAL(done(ThreadWeaver::Job *)),

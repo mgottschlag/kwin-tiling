@@ -12,7 +12,7 @@
 
 #include <memory>
 #include <QImage>
-#include <QModelIndex>
+#include <QPersistentModelIndex>
 #include <QPixmap>
 #include <QSize>
 #include <QThread>
@@ -50,7 +50,7 @@ public:
                                    ResizeMethod method) const = 0;
     virtual QPixmap screenshot() const = 0;
     virtual bool screenshotGenerationStarted() const = 0;
-    virtual void generateScreenshot(const QModelIndex &index) const = 0;
+    virtual void generateScreenshot(QPersistentModelIndex index) const = 0;
     virtual QString title() const = 0;
     virtual QString author() const = 0;
     virtual QString email() const = 0;
@@ -75,7 +75,7 @@ public:
                                    ResizeMethod method) const;
     virtual QPixmap screenshot() const;
     virtual bool screenshotGenerationStarted() const;
-    virtual void generateScreenshot(const QModelIndex &index) const;
+    virtual void generateScreenshot(QPersistentModelIndex index) const;
     virtual QString author() const;
     virtual QString title() const;
     virtual QString email() const;
@@ -104,7 +104,7 @@ public:
     virtual QString findBackground(const QSize &resolution,
                                    ResizeMethod method) const;
     virtual bool screenshotGenerationStarted() const;
-    virtual void generateScreenshot(const QModelIndex &index) const;    
+    virtual void generateScreenshot(QPersistentModelIndex index) const;
     virtual QPixmap screenshot() const;
     virtual QString author() const;
     virtual QString title() const;
@@ -119,7 +119,7 @@ private:
 private slots:
     void updateScreenshot(ThreadWeaver::Job *);
 signals:
-    void screenshotDone(QModelIndex);
+    void screenshotDone(QPersistentModelIndex index);
 };
 
 #endif // BACKGROUNDPACKAGE_H

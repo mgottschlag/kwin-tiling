@@ -218,8 +218,8 @@ QVariant BackgroundListModel::data(const QModelIndex &index, int role) const
     case BackgroundDelegate::ScreenshotRole: {
         QPixmap pix = b->screenshot();
         if (pix.isNull() && !b->screenshotGenerationStarted()) {
-            connect(b, SIGNAL(screenshotDone(QModelIndex)),
-                    m_listener, SLOT(updateScreenshot(QModelIndex)), 
+            connect(b, SIGNAL(screenshotDone(QPersistentModelIndex)),
+                    m_listener, SLOT(updateScreenshot(QPersistentModelIndex)),
                     Qt::QueuedConnection);
             b->generateScreenshot(index);
         }
@@ -717,7 +717,7 @@ void BackgroundDialog::previewRenderingDone(int token, const QImage &image)
     }
 }
 
-void BackgroundDialog::updateScreenshot(const QModelIndex& index)
+void BackgroundDialog::updateScreenshot(QPersistentModelIndex index)
 {
     m_view->view()->update(index);
 }

@@ -96,7 +96,7 @@ private slots:
     void changeBackgroundMode(int mode);
     void previewRenderingDone(int token, const QImage &pix);
     
-    void updateScreenshot(const QModelIndex &);
+    void updateScreenshot(QPersistentModelIndex index);
     void cleanup();
 };
 

@@ -64,6 +64,8 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
       m_wallpaperPath(0),
       m_renderer(resolution(), 1.0)
 {
+    qRegisterMetaType<QImage>("QImage");
+    qRegisterMetaType<QPersistentModelIndex>("QPersistentModelIndex");
     connect(&m_renderer, SIGNAL(done(int, QImage)),
             this, SLOT(updateBackground(int, QImage)));
     connect(&m_slideshowTimer, SIGNAL(timeout()),
