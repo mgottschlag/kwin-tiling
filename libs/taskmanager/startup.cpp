@@ -1,7 +1,7 @@
 /*****************************************************************
 
-Copyright (c) 2001 Matthias Elter <elter@kde.org>
-Copyright (c) 2001 John Firebaugh <jfirebaugh@kde.org>
+Copyright (c) 2000-2001 Matthias Elter <elter@kde.org>
+Copyright (c) 2001 Richard Moore <rich@kde.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,52 +22,78 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#ifndef TASKRMBMENU_H
-#define TASKRMBMENU_H
-
 // Own
-#include "task.h"
+#include "startup.h"
 
 // Qt
-#include <QMenu>
-#include <QList>
-#include <QPair>
+#include <QSet>
 
 namespace TaskManager
 {
 
-class KDE_EXPORT TaskRMBMenu : public QMenu
+class Startup::Private
 {
-	Q_OBJECT
-
 public:
-	explicit TaskRMBMenu(const TaskList&, bool showAll = true, QWidget *parent = 0);
-	explicit TaskRMBMenu(TaskPtr, bool showAll = true, QWidget *parent = 0);
+    Private(const KStartupInfoId& id, const KStartupInfoData& data)
+        : id(id), data(data)
+    {
+    }
 
-private:
-	void fillMenu(TaskPtr);
-	void fillMenu();
-    QMenu* makeAdvancedMenu(TaskPtr);
-	QMenu* makeDesktopsMenu(TaskPtr);
-	QMenu* makeDesktopsMenu();
-
-private Q_SLOTS:
-	void slotMinimizeAll();
-	void slotMaximizeAll();
-	void slotRestoreAll();
-	void slotShadeAll();
-	void slotCloseAll();
-	void slotAllToDesktop();
-	void slotAllToCurrentDesktop();
-	void slotToDesktop();
-
-private:
-	TaskList tasks;
-	bool showAll;
-	QList< QPair<TaskPtr, int> > toDesktopMap;
+    KStartupInfoId id;
+    KStartupInfoData data;
+    QSet<WId> windowMatches;
 };
+
+Startup::Startup(const KStartupInfoId& id, const KStartupInfoData& data,
+                 QObject * parent, const char *name)
+    : QObject(parent),
+      d(new Private(id, data))
+{
+    setObjectName( name );
+}
+
+Startup::~Startup()
+{
+    delete d;
+}
+
+QString Startup::text() const
+{
+    return d->data.findName();
+}
+
+QString Startup::bin() const
+{
+    return d->data.bin();
+}
+
+QString Startup::icon() const
+{
+    return d->data.findIcon();
+}
+
+void Startup::update(const KStartupInfoData& data)
+{
+    d->data.update(data);
+    emit changed();
+}
+
+KStartupInfoId Startup::id() const
+{
+    return d->id;
+}
+
+void Startup::addWindowMatch(WId window)
+{
+    d->windowMatches.insert(window);
+}
+
+bool Startup::matchesWindow(WId window) const
+{
+    return d->windowMatches.contains(window);
+}
 
 } // TaskManager namespace
 
 
-#endif
+#include "startup.moc"

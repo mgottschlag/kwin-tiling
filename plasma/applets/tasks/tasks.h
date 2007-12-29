@@ -77,11 +77,11 @@ protected slots:
         virtual void wheelEvent(QGraphicsSceneWheelEvent *);
 
 private slots:
-        void addWindowTask(Task::TaskPtr);
-        void removeWindowTask(Task::TaskPtr);
+        void addWindowTask(TaskManager::TaskPtr);
+        void removeWindowTask(TaskManager::TaskPtr);
 
-        void addStartingTask(Startup::StartupPtr);
-        void removeStartingTask(Startup::StartupPtr);
+        void addStartingTask(TaskManager::StartupPtr);
+        void removeStartingTask(TaskManager::StartupPtr);
 
 private:
         // creates task representations for existing windows
@@ -101,8 +101,8 @@ private:
 
         TaskGroupItem* _rootTaskGroup;
 
-        QHash<Task::TaskPtr,AbstractTaskItem*> _windowTaskItems;
-        QHash<Startup::StartupPtr,AbstractTaskItem*> _startupTaskItems;
+        QHash<TaskManager::TaskPtr,AbstractTaskItem*> _windowTaskItems;
+        QHash<TaskManager::StartupPtr,AbstractTaskItem*> _startupTaskItems;
 
         bool _showTooltip;
         KDialog *m_dialog;

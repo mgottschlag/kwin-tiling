@@ -83,13 +83,13 @@ void Tasks::init()
 void Tasks::registerStartingTasks()
 {
     // listen for addition and removal of starting tasks
-    connect(TaskManager::self(), SIGNAL(startupAdded(Startup::StartupPtr)),
-            this, SLOT(addStartingTask(Startup::StartupPtr)) );
-    connect(TaskManager::self(), SIGNAL(startupRemoved(Startup::StartupPtr)),
-            this, SLOT(removeStartingTask(Startup::StartupPtr)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(startupAdded(TaskManager::StartupPtr)),
+            this, SLOT(addStartingTask(TaskManager::StartupPtr)) );
+    connect(TaskManager::TaskManager::self(), SIGNAL(startupRemoved(TaskManager::StartupPtr)),
+            this, SLOT(removeStartingTask(TaskManager::StartupPtr)));
 }
 
-void Tasks::addStartingTask(Startup::StartupPtr task)
+void Tasks::addStartingTask(TaskManager::StartupPtr task)
 {
     WindowTaskItem* item = new WindowTaskItem(_rootTaskGroup, _rootTaskGroup, _showTooltip);
     item->setStartupTask(task);
@@ -98,7 +98,7 @@ void Tasks::addStartingTask(Startup::StartupPtr task)
     addItemToRootGroup(item);
 }
 
-void Tasks::removeStartingTask(Startup::StartupPtr task)
+void Tasks::removeStartingTask(TaskManager::StartupPtr task)
 {
     if (_startupTaskItems.contains(task)) {
         removeItemFromRootGroup(_startupTaskItems[task]);
@@ -107,10 +107,10 @@ void Tasks::removeStartingTask(Startup::StartupPtr task)
 
 void Tasks::registerWindowTasks()
 {
-    TaskManager *manager = TaskManager::self();
+    TaskManager::TaskManager *manager = TaskManager::TaskManager::self();
 
-    Task::Dict tasks = manager->tasks();
-    QMapIterator<WId,Task::TaskPtr> iter(tasks);
+    TaskManager::TaskDict tasks = manager->tasks();
+    QMapIterator<WId,TaskManager::TaskPtr> iter(tasks);
 
     while (iter.hasNext())
     {
@@ -119,10 +119,10 @@ void Tasks::registerWindowTasks()
     }
 
     // listen for addition and removal of window tasks
-    connect(TaskManager::self(), SIGNAL(taskAdded(Task::TaskPtr)),
-            this, SLOT(addWindowTask(Task::TaskPtr)));
-    connect(TaskManager::self(), SIGNAL(taskRemoved(Task::TaskPtr)),
-            this, SLOT(removeWindowTask(Task::TaskPtr)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(taskAdded(TaskManager::TaskPtr)),
+            this, SLOT(addWindowTask(TaskManager::TaskPtr)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(taskRemoved(TaskManager::TaskPtr)),
+            this, SLOT(removeWindowTask(TaskManager::TaskPtr)));
 }
 
 void Tasks::addItemToRootGroup(AbstractTaskItem *item)
@@ -142,14 +142,14 @@ void Tasks::removeItemFromRootGroup(AbstractTaskItem *item)
 //    item->deleteLater();
 }
 
-void Tasks::addWindowTask(Task::TaskPtr task)
+void Tasks::addWindowTask(TaskManager::TaskPtr task)
 {
     if (!task->showInTaskbar()) {
         return;
     }
 
     WindowTaskItem *item = 0;
-    foreach (Startup::StartupPtr startup, _startupTaskItems.keys()) {
+    foreach (TaskManager::StartupPtr startup, _startupTaskItems.keys()) {
         if (startup->matchesWindow(task->window())) {
             item = dynamic_cast<WindowTaskItem *>(_startupTaskItems.take(startup));
         }
@@ -165,7 +165,7 @@ void Tasks::addWindowTask(Task::TaskPtr task)
     addItemToRootGroup(item);
 }
 
-void Tasks::removeWindowTask(Task::TaskPtr task)
+void Tasks::removeWindowTask(TaskManager::TaskPtr task)
 {
     if (_windowTaskItems.contains(task)) {
         removeItemFromRootGroup(_windowTaskItems[task]);

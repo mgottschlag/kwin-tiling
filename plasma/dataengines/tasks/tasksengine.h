@@ -43,12 +43,12 @@ class TasksEngine : public Plasma::DataEngine
 
     private slots:
         void taskChanged();
-        void taskAdded(Task::TaskPtr task);
-        void taskRemoved(Task::TaskPtr task);
+        void taskAdded(TaskManager::TaskPtr task);
+        void taskRemoved(TaskManager::TaskPtr task);
 
     private:
-        void connectTask(Task::TaskPtr task);
-        void setDataForTask(Task::TaskPtr task);
+        void connectTask(TaskManager::TaskPtr task);
+        void setDataForTask(TaskManager::TaskPtr task);
 };
 
 K_EXPORT_PLASMA_DATAENGINE(tasks, TasksEngine)

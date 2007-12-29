@@ -28,42 +28,48 @@ using namespace Plasma;
 TasksEngine::TasksEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent)
 {
+    Q_UNUSED(args);
 }
-void TasksEngine::connectTask( Task::TaskPtr task )
+
+void TasksEngine::connectTask( TaskManager::TaskPtr task )
 {
         connect( task.constData() , SIGNAL(changed()) , this , SLOT(taskChanged()) );
 }
+
 void TasksEngine::init()
 {
-    foreach( Task::TaskPtr task , TaskManager::self()->tasks().values() ) {
+    foreach( TaskManager::TaskPtr task , TaskManager::TaskManager::self()->tasks().values() ) {
         connectTask(task);
         setDataForTask(task);
     }
 
-    connect( TaskManager::self() , SIGNAL(taskAdded(Task::TaskPtr)) , this , SLOT(taskAdded(Task::TaskPtr)) );
-    connect( TaskManager::self() , SIGNAL(taskRemoved(Task::TaskPtr)) , this , SLOT(taskRemoved(Task::TaskPtr)) );
-
+    connect(TaskManager::TaskManager::self(), SIGNAL(taskAdded(TaskManager::TaskPtr)),
+            this, SLOT(taskAdded(TaskManager::TaskPtr)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(taskRemoved(TaskManager::TaskPtr)),
+            this, SLOT(taskRemoved(TaskManager::TaskPtr)));
 }
 
-void TasksEngine::taskAdded(Task::TaskPtr task)
+void TasksEngine::taskAdded(TaskManager::TaskPtr task)
 {
     connectTask(task);
     setDataForTask(task);
 }
-void TasksEngine::taskRemoved(Task::TaskPtr task)
+
+void TasksEngine::taskRemoved(TaskManager::TaskPtr task)
 {
     removeSource( QString::number(task->window()) );
 }
+
 void TasksEngine::taskChanged()
 {
-    Task* task = qobject_cast<Task*>(sender());
+    TaskManager::Task* task = qobject_cast<TaskManager::Task*>(sender());
 
     Q_ASSERT(task);
 
-    setDataForTask( Task::TaskPtr(task) );
+    setDataForTask( TaskManager::TaskPtr(task) );
 }
 
-void TasksEngine::setDataForTask(Task::TaskPtr task)
+void TasksEngine::setDataForTask(TaskManager::TaskPtr task)
 {
     Q_ASSERT( task );
 

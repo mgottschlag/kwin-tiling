@@ -38,12 +38,12 @@ public:
     WindowTaskItem(QGraphicsItem *parent, QObject *parentObject, const bool showTooltip);
 
     /** Sets the starting task represented by this item. */
-    void setStartupTask(Startup::StartupPtr task);
+    void setStartupTask(TaskManager::StartupPtr task);
 
     /** Sets the window represented by this task. */
-    void setWindowTask(Task::TaskPtr task);
+    void setWindowTask(TaskManager::TaskPtr task);
     /** Returns the window represented by this task. */
-    Task::TaskPtr windowTask() const;
+    TaskManager::TaskPtr windowTask() const;
 
     /** Tells the window manager the minimized task's geometry. */
     void publishIconGeometry();
@@ -69,7 +69,7 @@ private slots:
     void updateTask();
 
 private:
-    Task::TaskPtr _task;
+    TaskManager::TaskPtr _task;
     QTimer* _activateTimer;
     bool _showTooltip;
 };

@@ -112,7 +112,7 @@ void WindowTaskItem::updateTask()
     queueUpdate();
 }
 
-void WindowTaskItem::setStartupTask(Startup::StartupPtr task)
+void WindowTaskItem::setStartupTask(TaskManager::StartupPtr task)
 {
     setText(task->text());
     setIcon(KIcon(task->icon()));
@@ -123,7 +123,7 @@ void WindowTaskItem::setStartupTask(Startup::StartupPtr task)
     setToolTip(tip);
 }
 
-void WindowTaskItem::setWindowTask(Task::TaskPtr task)
+void WindowTaskItem::setWindowTask(TaskManager::TaskPtr task)
 {
     if (_task)
         disconnect(_task.constData(), 0, this, 0);
@@ -140,7 +140,7 @@ void WindowTaskItem::setWindowTask(Task::TaskPtr task)
     qDebug() << "Task added, isActive = " << task->isActive();
 }
 
-Task::TaskPtr WindowTaskItem::windowTask() const
+TaskManager::TaskPtr WindowTaskItem::windowTask() const
 {
     return _task;
 }
@@ -152,7 +152,7 @@ void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
         return;
     }
     e->accept();
-    TaskRMBMenu menu( windowTask() );
+    TaskManager::TaskRMBMenu menu( windowTask() );
     menu.exec( e->screenPos() );
 }
 

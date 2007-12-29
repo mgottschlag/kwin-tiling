@@ -22,12 +22,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
+// Own
+#include "taskmanager.h"
+
+// System
 #include <assert.h>
 
+// KDE
 #include <kicon.h>
 #include <klocale.h>
-
-#include "taskmanager.h"
 
 #if defined(HAVE_XCOMPOSITE) && \
     defined(HAVE_XRENDER) && \
@@ -36,9 +39,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #endif
 
 #include "taskrmbmenu.h"
-#include "taskrmbmenu.moc"
 
-TaskRMBMenu::TaskRMBMenu(const Task::List& theTasks, bool show, QWidget *parent)
+namespace TaskManager
+{
+
+TaskRMBMenu::TaskRMBMenu(const TaskList& theTasks, bool show, QWidget *parent)
 	: QMenu( parent )
 	, tasks( theTasks )
 	, showAll( show )
@@ -54,14 +59,14 @@ TaskRMBMenu::TaskRMBMenu(const Task::List& theTasks, bool show, QWidget *parent)
     }
 }
 
-TaskRMBMenu::TaskRMBMenu(Task::TaskPtr task, bool show, QWidget *parent)
+TaskRMBMenu::TaskRMBMenu(TaskPtr task, bool show, QWidget *parent)
 	: QMenu( parent )
 	, showAll( show )
 {
 	fillMenu(task);
 }
 
-void TaskRMBMenu::fillMenu(Task::TaskPtr t)
+void TaskRMBMenu::fillMenu(TaskPtr t)
 {
     QAction *a;
 
@@ -116,10 +121,10 @@ void TaskRMBMenu::fillMenu()
 {
     QAction *a;
 
-    Task::List::iterator itEnd = tasks.end();
-    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
+    TaskList::iterator itEnd = tasks.end();
+    for (TaskList::iterator it = tasks.begin(); it != itEnd; ++it)
     {
-        Task::TaskPtr t = (*it);
+        TaskPtr t = (*it);
 
         a = addMenu( new TaskRMBMenu(t, this) );
         a->setIcon( QIcon( t->pixmap() ) );
@@ -137,8 +142,8 @@ void TaskRMBMenu::fillMenu()
         a = addMenu(makeDesktopsMenu());
 
         a = addAction(i18n("All &to Current Desktop"), this, SLOT(slotAllToCurrentDesktop()));
-        Task::List::iterator itEnd = tasks.end();
-        for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
+        TaskList::iterator itEnd = tasks.end();
+        for (TaskList::iterator it = tasks.begin(); it != itEnd; ++it)
         {
             if (!(*it)->isOnCurrentDesktop())
             {
@@ -153,7 +158,7 @@ void TaskRMBMenu::fillMenu()
 
     a = addAction( i18n( "Mi&nimize All" ), this, SLOT( slotMinimizeAll() ) );
     itEnd = tasks.end();
-    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
+    for (TaskList::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         if( !(*it)->isIconified() ) {
             enable = true;
@@ -166,7 +171,7 @@ void TaskRMBMenu::fillMenu()
 
     a = addAction( i18n( "Ma&ximize All" ), this, SLOT( slotMaximizeAll() ) );
     itEnd = tasks.end();
-    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
+    for (TaskList::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         if( !(*it)->isMaximized() ) {
             enable = true;
@@ -179,7 +184,7 @@ void TaskRMBMenu::fillMenu()
 
     a = addAction( i18n( "&Restore All" ), this, SLOT( slotRestoreAll() ) );
     itEnd = tasks.end();
-    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
+    for (TaskList::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         if( (*it)->isIconified() || (*it)->isMaximized() ) {
             enable = true;
@@ -195,7 +200,7 @@ void TaskRMBMenu::fillMenu()
     addAction( KIcon( "list-remove" ), i18n( "&Close All" ), this, SLOT( slotCloseAll() ) );
 }
 
-QMenu* TaskRMBMenu::makeAdvancedMenu(Task::TaskPtr t)
+QMenu* TaskRMBMenu::makeAdvancedMenu(TaskPtr t)
 {
     QAction *a;
     QMenu* menu = new QMenu(this);
@@ -227,14 +232,14 @@ QMenu* TaskRMBMenu::makeAdvancedMenu(Task::TaskPtr t)
     return menu;
 }
 
-QMenu* TaskRMBMenu::makeDesktopsMenu(Task::TaskPtr t)
+QMenu* TaskRMBMenu::makeDesktopsMenu(TaskPtr t)
 {
     QMenu* m = new QMenu( this );
     m->setTitle( i18n("To &Desktop") );
 
     QAction *a = m->addAction( i18n("&All Desktops"), this, SLOT( slotToDesktop() ) );
     a->setCheckable(true);
-    toDesktopMap.append( QPair<Task::TaskPtr, int>( t, 0 ) ); // 0 means all desktops
+    toDesktopMap.append( QPair<TaskPtr, int>( t, 0 ) ); // 0 means all desktops
     a->setData( 0 );
     a->setChecked( t->isOnAllDesktops() );
 
@@ -244,7 +249,7 @@ QMenu* TaskRMBMenu::makeDesktopsMenu(Task::TaskPtr t)
         QString name = QString("&%1 %2").arg(i).arg(TaskManager::self()->desktopName(i).replace('&', "&&"));
         a = m->addAction( name, this, SLOT( slotToDesktop() ) );
         a->setCheckable(true);
-        toDesktopMap.append( QPair<Task::TaskPtr, int>( t, i ) );
+        toDesktopMap.append( QPair<TaskPtr, int>( t, i ) );
         a->setData( i );
         a->setChecked( !t->isOnAllDesktops() && t->desktop() == i );
     }
@@ -273,8 +278,8 @@ QMenu* TaskRMBMenu::makeDesktopsMenu()
 
 void TaskRMBMenu::slotMinimizeAll()
 {
-    Task::List::iterator itEnd = tasks.end();
-    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
+    TaskList::iterator itEnd = tasks.end();
+    for (TaskList::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         (*it)->setIconified(true);
     }
@@ -282,8 +287,8 @@ void TaskRMBMenu::slotMinimizeAll()
 
 void TaskRMBMenu::slotMaximizeAll()
 {
-    Task::List::iterator itEnd = tasks.end();
-    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
+    TaskList::iterator itEnd = tasks.end();
+    for (TaskList::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         (*it)->setMaximized(true);
     }
@@ -291,8 +296,8 @@ void TaskRMBMenu::slotMaximizeAll()
 
 void TaskRMBMenu::slotRestoreAll()
 {
-    Task::List::iterator itEnd = tasks.end();
-    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
+    TaskList::iterator itEnd = tasks.end();
+    for (TaskList::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         (*it)->restore();
     }
@@ -300,8 +305,8 @@ void TaskRMBMenu::slotRestoreAll()
 
 void TaskRMBMenu::slotShadeAll()
 {
-    Task::List::iterator itEnd = tasks.end();
-    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
+    TaskList::iterator itEnd = tasks.end();
+    for (TaskList::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         (*it)->setShaded( !(*it)->isShaded() );
     }
@@ -309,8 +314,8 @@ void TaskRMBMenu::slotShadeAll()
 
 void TaskRMBMenu::slotCloseAll()
 {
-    Task::List::iterator itEnd = tasks.end();
-    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
+    TaskList::iterator itEnd = tasks.end();
+    for (TaskList::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         (*it)->close();
     }
@@ -321,8 +326,8 @@ void TaskRMBMenu::slotAllToDesktop()
     QAction *action = qobject_cast<QAction *>( sender() );
     if( action ) {
       int desktop = action->data().toInt();
-      Task::List::iterator itEnd = tasks.end();
-      for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
+      TaskList::iterator itEnd = tasks.end();
+      for (TaskList::iterator it = tasks.begin(); it != itEnd; ++it)
       {
           (*it)->toDesktop( desktop );
       }
@@ -331,8 +336,8 @@ void TaskRMBMenu::slotAllToDesktop()
 
 void TaskRMBMenu::slotAllToCurrentDesktop()
 {
-    Task::List::iterator itEnd = tasks.end();
-    for (Task::List::iterator it = tasks.begin(); it != itEnd; ++it)
+    TaskList::iterator itEnd = tasks.end();
+    for (TaskList::iterator it = tasks.begin(); it != itEnd; ++it)
     {
         (*it)->toCurrentDesktop();
     }
@@ -342,7 +347,12 @@ void TaskRMBMenu::slotToDesktop()
 {
     QAction *action = qobject_cast<QAction *>( sender() );
     if( action ) {
-        QPair<Task::TaskPtr, int> pair = toDesktopMap[action->data().toInt()];
+        QPair<TaskPtr, int> pair = toDesktopMap[action->data().toInt()];
         pair.first->toDesktop( pair.second );
     }
 }
+
+} // TaskManager namespace
+
+
+#include "taskrmbmenu.moc"
