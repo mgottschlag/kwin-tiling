@@ -26,10 +26,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define TASK_H
 
 // Qt
-#include <QDrag>
-#include <QObject>
-#include <QPixmap>
-#include <QWidget>
+#include <QtGui/QDrag>
+#include <QtGui/QPixmap>
+#include <QtGui/QWidget>
 
 // KDE
 #include <ksharedptr.h>

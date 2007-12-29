@@ -26,7 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define STARTUP_H
 
 // Qt
-#include <QObject>
+#include <QtCore/QObject>
 
 // KDE
 #include <ksharedptr.h>
