@@ -311,7 +311,6 @@ Interface::Interface(QWidget* parent)
     QHBoxLayout* bottomLayout = new QHBoxLayout(w);
     m_optionsButton = new KPushButton(KStandardGuiItem::configure(), this);
     m_optionsButton->setText( i18n( "Show Options" ) );
-    m_optionsButton->setFlat( true );
     m_optionsButton->setEnabled( false );
     m_optionsButton->setCheckable( true );
     connect( m_optionsButton, SIGNAL(toggled(bool)), SLOT(showOptions(bool)) );
@@ -320,7 +319,6 @@ Interface::Interface(QWidget* parent)
     KPushButton *activityButton = new KPushButton(w);
     activityButton->setText(i18n("Show System Activity"));
     activityButton->setIcon(KIcon("utilities-system-monitor"));
-    activityButton->setFlat(true);
     connect(activityButton, SIGNAL(clicked()), qApp, SLOT(showTaskManager()));
     connect(activityButton, SIGNAL(clicked()), this, SLOT(close()));
     bottomLayout->addWidget(activityButton);
@@ -331,14 +329,12 @@ Interface::Interface(QWidget* parent)
     m_runButton = new KPushButton(KGuiItem(i18n( "Launch" ), "system-run",
                                            QString(), runButtonWhatsThis),
                                   w);
-    m_runButton->setFlat( true );
     m_runButton->setEnabled( false );
     m_runButton->setDefault(true);
     connect( m_runButton, SIGNAL( clicked(bool) ), SLOT(exec()) );
     bottomLayout->addWidget( m_runButton );
 
     m_cancelButton = new KPushButton(KStandardGuiItem::cancel(), w);
-    m_cancelButton->setFlat( true );
     connect( m_cancelButton, SIGNAL(clicked(bool)), SLOT(close()) );
     bottomLayout->addWidget( m_cancelButton );
 
