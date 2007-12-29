@@ -136,6 +136,7 @@ void WindowTaskItem::setWindowTask(TaskManager::TaskPtr task)
             this, SLOT(updateTask()));
 
     updateTask();
+    publishIconGeometry();
 
     qDebug() << "Task added, isActive = " << task->isActive();
 }
