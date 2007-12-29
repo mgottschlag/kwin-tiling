@@ -33,6 +33,9 @@
 class AbstractTaskItem;
 class TaskGroupItem;
 
+using TaskManager::StartupPtr;
+using TaskManager::TaskPtr;
+
 /**
  * An applet which provides a visual representation of running
  * graphical tasks (ie. tasks that have some form of visual interface),
@@ -77,11 +80,11 @@ protected slots:
         virtual void wheelEvent(QGraphicsSceneWheelEvent *);
 
 private slots:
-        void addWindowTask(TaskManager::TaskPtr);
-        void removeWindowTask(TaskManager::TaskPtr);
+        void addWindowTask(TaskPtr);
+        void removeWindowTask(TaskPtr);
 
-        void addStartingTask(TaskManager::StartupPtr);
-        void removeStartingTask(TaskManager::StartupPtr);
+        void addStartingTask(StartupPtr);
+        void removeStartingTask(StartupPtr);
 
 private:
         // creates task representations for existing windows
@@ -101,8 +104,8 @@ private:
 
         TaskGroupItem* _rootTaskGroup;
 
-        QHash<TaskManager::TaskPtr,AbstractTaskItem*> _windowTaskItems;
-        QHash<TaskManager::StartupPtr,AbstractTaskItem*> _startupTaskItems;
+        QHash<TaskPtr,AbstractTaskItem*> _windowTaskItems;
+        QHash<StartupPtr,AbstractTaskItem*> _startupTaskItems;
 
         bool _showTooltip;
         KDialog *m_dialog;
