@@ -31,31 +31,31 @@ TasksEngine::TasksEngine(QObject* parent, const QVariantList& args)
     Q_UNUSED(args);
 }
 
-void TasksEngine::connectTask( TaskManager::TaskPtr task )
+void TasksEngine::connectTask(TaskPtr task)
 {
         connect( task.constData() , SIGNAL(changed()) , this , SLOT(taskChanged()) );
 }
 
 void TasksEngine::init()
 {
-    foreach( TaskManager::TaskPtr task , TaskManager::TaskManager::self()->tasks().values() ) {
+    foreach(TaskPtr task , TaskManager::TaskManager::self()->tasks().values() ) {
         connectTask(task);
         setDataForTask(task);
     }
 
-    connect(TaskManager::TaskManager::self(), SIGNAL(taskAdded(TaskManager::TaskPtr)),
-            this, SLOT(taskAdded(TaskManager::TaskPtr)));
-    connect(TaskManager::TaskManager::self(), SIGNAL(taskRemoved(TaskManager::TaskPtr)),
-            this, SLOT(taskRemoved(TaskManager::TaskPtr)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(taskAdded(TaskPtr)),
+            this, SLOT(taskAdded(TaskPtr)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(taskRemoved(TaskPtr)),
+            this, SLOT(taskRemoved(TaskPtr)));
 }
 
-void TasksEngine::taskAdded(TaskManager::TaskPtr task)
+void TasksEngine::taskAdded(TaskPtr task)
 {
     connectTask(task);
     setDataForTask(task);
 }
 
-void TasksEngine::taskRemoved(TaskManager::TaskPtr task)
+void TasksEngine::taskRemoved(TaskPtr task)
 {
     removeSource( QString::number(task->window()) );
 }
@@ -66,10 +66,10 @@ void TasksEngine::taskChanged()
 
     Q_ASSERT(task);
 
-    setDataForTask( TaskManager::TaskPtr(task) );
+    setDataForTask(TaskPtr(task));
 }
 
-void TasksEngine::setDataForTask(TaskManager::TaskPtr task)
+void TasksEngine::setDataForTask(TaskPtr task)
 {
     Q_ASSERT( task );
 

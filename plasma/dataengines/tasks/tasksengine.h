@@ -28,6 +28,9 @@
 #include <plasma/dataengine.h>
 #include <taskmanager/taskmanager.h>
 
+using TaskManager::StartupPtr;
+using TaskManager::TaskPtr;
+
 /**
  * This class evaluates the basic expressions given in the interface.
  */
@@ -43,12 +46,12 @@ class TasksEngine : public Plasma::DataEngine
 
     private slots:
         void taskChanged();
-        void taskAdded(TaskManager::TaskPtr task);
-        void taskRemoved(TaskManager::TaskPtr task);
+        void taskAdded(TaskPtr task);
+        void taskRemoved(TaskPtr task);
 
     private:
-        void connectTask(TaskManager::TaskPtr task);
-        void setDataForTask(TaskManager::TaskPtr task);
+        void connectTask(TaskPtr task);
+        void setDataForTask(TaskPtr task);
 };
 
 K_EXPORT_PLASMA_DATAENGINE(tasks, TasksEngine)
