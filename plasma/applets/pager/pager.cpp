@@ -19,6 +19,8 @@
 
 #include "pager.h"
 
+#include <math.h>
+
 #include <QApplication>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
@@ -55,7 +57,7 @@ Pager::Pager(QObject *parent, const QVariantList &args)
     // initialize with a decent default
     m_desktopCount = KWindowSystem::numberOfDesktops();
     m_size = QSizeF(88, 44);
-    setContentSize(QSizeF(88, 44));
+    setContentSize(m_size);
 }
 
 void Pager::init()
@@ -121,6 +123,11 @@ Qt::Orientations Pager::expandingDirections() const
     return 0;
 }
 
+QSizeF Pager::contentSizeHint() const
+{
+    return m_size;
+}
+
 void Pager::slotConfigureDesktop()
 {
   QString error;
@@ -155,23 +162,27 @@ void Pager::recalculateGeometry()
         return;
     }
 
-    qreal itemHeight = (contentSize().height() - ((m_rows - 1) * 2)) / m_rows;
-    //kDebug() << "************************* itemHeight is" << itemHeight << contentSize().height();
+    const int padding = 2;
+
+    qreal itemHeight = (contentSize().height() - padding * (m_rows - 1)) / m_rows;
     m_scaleFactor = itemHeight / QApplication::desktop()->height();
     qreal itemWidth = QApplication::desktop()->width() * m_scaleFactor;
-    m_rects.clear();
+    int columns = m_desktopCount / m_rows + m_desktopCount % m_rows;
 
-    int columns = m_desktopCount/m_rows + m_desktopCount%m_rows;
+    m_rects.clear();
+    QRectF itemRect;
+    itemRect.setWidth(floor(itemWidth - 1));
+    itemRect.setHeight(floor(itemHeight - 1));
     for (int i = 0; i < m_desktopCount; i++) {
-        m_rects.append(QRectF((i%columns)*itemWidth + 2*(i%columns),
-                               itemHeight*(i/columns) + 2*(i/columns),
-                               itemWidth-2,
-                               itemHeight-2));
+        itemRect.moveLeft(floor((i % columns) * (itemWidth + padding)));
+        itemRect.moveTop(floor((i / columns) * (itemHeight + padding)));
+        m_rects.append(itemRect);
     }
 
-    m_size = QSizeF(columns*itemWidth + 2*columns - 1,
-                    contentSize().height());
-    setContentSize(m_size);
+    m_size = QSizeF(ceil(columns * itemWidth + padding * (columns - 1)),
+                    ceil(m_rows * itemHeight + padding * (m_rows - 1)));
+
+    updateGeometry();
     //kDebug() << "new size set" << m_size << m_rows << m_columns << columns << itemWidth;
 
     if (m_desktopLayoutOwner && columns != m_columns)

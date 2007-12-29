@@ -44,6 +44,7 @@ class Pager : public Plasma::Applet
         void constraintsUpdated(Plasma::Constraints);
 	Qt::Orientations expandingDirections() const;
         virtual QList<QAction*> contextActions();
+        QSizeF contentSizeHint() const;
 
     public slots:
         void showConfigurationInterface();
