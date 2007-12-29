@@ -71,6 +71,8 @@ void Battery::init()
     m_theme = new Plasma::Svg(svgFile, this);
     m_theme->setContentType(Plasma::Svg::SingleImage);
     m_theme->resize(contentSize());
+    setMinimumContentSize(m_smallPixelSize, m_smallPixelSize);
+    setContentSize(m_smallPixelSize, m_smallPixelSize);
 
     m_font = QApplication::font();
     m_font.setWeight(QFont::Bold);
@@ -113,7 +115,6 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
         // Save new size to config
         KConfigGroup cg = config();
         cg.writeEntry("size", (int)(boundingRect().height()));
-        cg.sync();
     }
     updateGeometry();
 }
@@ -126,12 +127,11 @@ QSizeF Battery::contentSizeHint() const
             sizeHint.setHeight(sizeHint.width()*m_numOfBattery);
             break;
         case Plasma::Horizontal:
-            sizeHint.setWidth(sizeHint.height());
+            sizeHint.setWidth(sizeHint.height()*m_numOfBattery);
             break;
         default:
             break;
     }
-
     return sizeHint;
 }
 
@@ -315,8 +315,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         return;
     }
     
-    int width = contentSizeHint().toSize().width()/m_numOfBattery;
-    
+    int width = contentsRect.width()/m_numOfBattery;
     int battery_num = 0;
     QMap<QString, QPair<int, QString > >::iterator it_battery_data;
     for (it_battery_data = m_batteries_data.begin(); 
