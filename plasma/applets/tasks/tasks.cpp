@@ -175,14 +175,15 @@ void Tasks::removeWindowTask(TaskPtr task)
 void Tasks::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::LocationConstraint) {
-        foreach (AbstractTaskItem *taskItem, _rootTaskGroup->tasks()) {
-            //TODO: Update this if/when tasks() returns other types
+        foreach (AbstractTaskItem *taskItem, _windowTaskItems) {
             WindowTaskItem *windowTaskItem = dynamic_cast<WindowTaskItem *>(taskItem);
             if (windowTaskItem) {
                 windowTaskItem->publishIconGeometry();
             }
         }
     }
+
+    kDebug() << contentSize();
 }
 
 void Tasks::wheelEvent(QGraphicsSceneWheelEvent *e)
@@ -213,8 +214,7 @@ void Tasks::configAccepted()
     KConfigGroup cg = config();
     if (_showTooltip != (ui.showTooltip->checkState() == Qt::Checked)) {
         _showTooltip = !_showTooltip;
-        foreach (AbstractTaskItem *taskItem, _rootTaskGroup->tasks()) {
-            //TODO: Update this if/when tasks() returns other types
+        foreach (AbstractTaskItem *taskItem, _windowTaskItems) {
             WindowTaskItem *windowTaskItem = dynamic_cast<WindowTaskItem *>(taskItem);
             if (windowTaskItem) {
                 windowTaskItem->setShowTooltip(_showTooltip);
