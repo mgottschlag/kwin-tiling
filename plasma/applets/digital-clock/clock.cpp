@@ -319,7 +319,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         }
         QString timeString;
         if (m_twentyFour) {
-            timeString = m_time.toString("h:mm");
+            timeString = m_time.toString("hh:mm");
         } else {
             timeString = m_time.toString("h:mm AP");
         }
