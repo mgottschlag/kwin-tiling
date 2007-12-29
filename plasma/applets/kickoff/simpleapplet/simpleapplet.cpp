@@ -91,7 +91,7 @@ void MenuLauncherApplet::init()
 {
     KConfigGroup cg = config();
 
-    d->icon->setIcon(KIcon(cg.readEntry("icon","start-here")));
+    d->icon->setIcon(KIcon(cg.readEntry("icon","start-here-kde")));
     //setMinimumContentSize(d->icon->iconSize()); //setSize(d->icon->iconSize())
 
     d->showFavorites = cg.readEntry("showFavorites",d->showFavorites);
