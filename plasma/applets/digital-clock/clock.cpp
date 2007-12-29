@@ -112,7 +112,7 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
     Q_UNUSED(source);
     m_time = data["Time"].toTime();
     m_date = data["Date"].toDate();
-    m_prettyTimezone = data["Timezone"].toString();
+    m_prettyTimezone = data["Timezone City"].toString();
 
     // avoid unnecessary repaints
     if (m_time.minute() != m_lastTimeSeen.minute()) {
