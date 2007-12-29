@@ -46,25 +46,11 @@ SystemTrayWidget::SystemTrayWidget(QWidget *parent)
     m_nextRow(0),
     m_nextColumn(0)
 {
-    // Add stretches around our QGridLayout so tray icons are centered when in
-    // a vertical or horizontal orientation.
-    QHBoxLayout* hLayout = new QHBoxLayout();
-    QVBoxLayout* vLayout = new QVBoxLayout();
-    m_mainLayout = new QGridLayout();
-
-    hLayout->addStretch();
-    hLayout->addLayout(vLayout);
-    hLayout->addStretch();
-
-    vLayout->addStretch();
-    vLayout->addLayout(m_mainLayout);
-    vLayout->addStretch();
-
-    setLayout(hLayout);
+    m_mainLayout = new QGridLayout(this);
 
     // Override spacing set by the current style
-    layout()->setContentsMargins(4, 4, 4, 4);
-    layout()->setSpacing(4);
+    m_mainLayout->setContentsMargins(4, 4, 4, 4);
+    m_mainLayout->setSpacing(4);
 
     init();
 }
