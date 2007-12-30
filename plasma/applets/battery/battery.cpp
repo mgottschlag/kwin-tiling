@@ -2,6 +2,7 @@
  *   Copyright (C) 2005,2006,2007 by Siraj Razick <siraj@kdemail.net>      *
  *   Copyright (C) 2007 by Riccardo Iaconelli <riccardo@kde.org>           *
  *   Copyright (C) 2007 by Sebastian Kuegler <sebas@kde.org>               *
+ *   Copyright (C) 2007 by Luka Renko <lure@kubuntu.org>                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -56,6 +57,7 @@ void Battery::init()
 {
     KConfigGroup cg = config();
     m_showBatteryString = cg.readEntry("showBatteryString", false);
+    m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", true);
     m_drawBackground = cg.readEntry("drawBackground", true);
     setDrawStandardBackground(m_drawBackground);
 
@@ -124,12 +126,21 @@ QSizeF Battery::contentSizeHint() const
     QSizeF sizeHint = contentSize();
     switch (formFactor()) {
         case Plasma::Vertical:
-            sizeHint.setHeight(sizeHint.width()*m_numOfBattery);
+            if (m_showMultipleBatteries) {
+                sizeHint.setHeight(sizeHint.width()*m_numOfBattery);
+            }
+            else {
+                sizeHint.setHeight(sizeHint.width());
+            }
             break;
         case Plasma::Horizontal:
         case Plasma::Planar:
         case Plasma::MediaCenter:
-            sizeHint.setWidth(sizeHint.height()*m_numOfBattery);
+            if (m_showMultipleBatteries) {
+                sizeHint.setWidth(sizeHint.height()*m_numOfBattery);
+            } else {
+                sizeHint.setWidth(sizeHint.height());
+            }
             break;
         default:
             break;
@@ -178,6 +189,7 @@ void Battery::showConfigurationInterface()
     ui.styleGroup->setSelected(m_batteryStyle);
 
     ui.showBatteryStringCheckBox->setChecked(m_showBatteryString ? Qt::Checked : Qt::Unchecked);
+    ui.showMultipleBatteriesCheckBox->setChecked(m_showMultipleBatteries ? Qt::Checked : Qt::Unchecked);
     ui.drawBackgroundCheckBox->setChecked(m_drawBackground ? Qt::Checked : Qt::Unchecked);
     m_dialog->show();
 }
@@ -187,6 +199,9 @@ void Battery::configAccepted()
     KConfigGroup cg = config();
     m_showBatteryString = ui.showBatteryStringCheckBox->checkState() == Qt::Checked;
     cg.writeEntry("showBatteryString", m_showBatteryString);
+
+    m_showMultipleBatteries = ui.showMultipleBatteriesCheckBox->checkState() == Qt::Checked;
+    cg.writeEntry("showMultipleBatteries", m_showMultipleBatteries);
 
     m_drawBackground = ui.drawBackgroundCheckBox->checkState() == Qt::Checked;
     setDrawStandardBackground(m_drawBackground);
@@ -206,6 +221,7 @@ void Battery::configAccepted()
         cg.writeEntry("style", m_batteryStyle);
         m_theme->resize(contentSize());
     }
+    updateGeometry(); // may change due to showMultipleBatteries
 
     //reconnect sources
     disconnectSources();
@@ -386,28 +402,59 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         }
         return;
     }
-    
-    int width = contentsRect.width()/m_numOfBattery;
-    int battery_num = 0;
-    QMap<QString, QPair<int, QString > >::iterator it_battery_data;
-    for (it_battery_data = m_batteries_data.begin(); 
-         it_battery_data != m_batteries_data.end();
-         ++it_battery_data)
-    {
-        QRect corect = QRect(contentsRect.left()+battery_num*width, contentsRect.top(), width, contentSizeHint().toSize().height());
    
+    if (m_showMultipleBatteries) {
+        // paint each battery with own charge level
+        int battery_num = 0;
+        int width = contentsRect.width()/m_numOfBattery;
+        QMap<QString, QPair<int, QString > >::iterator it_battery_data;
+        for (it_battery_data = m_batteries_data.begin(); 
+             it_battery_data != m_batteries_data.end();
+             ++it_battery_data)
+        {
+            QRect corect = QRect(contentsRect.left()+battery_num*width, 
+                                 contentsRect.top(), 
+                                 width, contentSizeHint().toSize().height());
+       
+            // paint battery with appropriate charge level
+            paintBattery(p, corect, it_battery_data->first);
+
+            if (showString || m_isHovered) {
+                // Show the charge percentage with a box
+                // on top of the battery, but only for plasmoids bigger than ....
+                if (width >= 44) {
+                    paintLabel(p, corect, it_battery_data->second);
+                }
+            }
+            
+            ++battery_num;
+        }
+    } else {
+        // paint only one battery and show cumulative charge level
+        int battery_num = 0;
+        int battery_charge = 0;
+        QMap<QString, QPair<int, QString > >::iterator it_battery_data;
+        for (it_battery_data = m_batteries_data.begin(); 
+             it_battery_data != m_batteries_data.end();
+             ++it_battery_data)
+        {
+            battery_charge += it_battery_data->first;
+            ++battery_num;
+        }
+        battery_charge = battery_charge / battery_num;
+
         // paint battery with appropriate charge level
-        paintBattery(p, corect, it_battery_data->first);
+        paintBattery(p, contentsRect, battery_charge);
 
         if (showString || m_isHovered) {
             // Show the charge percentage with a box
             // on top of the battery, but only for plasmoids bigger than ....
-            if (width >= 44) {
-                paintLabel(p, corect, it_battery_data->second);
+            if (contentsRect.width() >= 44) {
+                QString batteryLabel = QVariant(battery_charge).toString();
+                batteryLabel.append("%");
+                paintLabel(p, contentsRect, batteryLabel);
             }
         }
-        
-        ++battery_num;
     }
 }
 

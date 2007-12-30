@@ -27,6 +27,16 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="showMultipleBatteriesCheckBox" >
+     <property name="toolTip" >
+      <string/>
+     </property>
+     <property name="text" >
+      <string>Show the state for &amp;each battery present</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QCheckBox" name="drawBackgroundCheckBox" >
      <property name="toolTip" >
       <string/>

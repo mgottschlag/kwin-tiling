@@ -77,6 +77,8 @@ class Battery : public Plasma::Applet
         void paintBattery(QPainter *p, const QRect &contentsRect, int batteryPercent);
         /* Paint a label on top of the battery */
         void paintLabel(QPainter *p, const QRect &contentsRect, const QString& labelText);
+        /* Show multiple batteries with individual icons and charge info? */
+        bool m_showMultipleBatteries;
         /* Should the battery charge information be shown on top? */
         bool m_showBatteryString;
         QSizeF m_size;
