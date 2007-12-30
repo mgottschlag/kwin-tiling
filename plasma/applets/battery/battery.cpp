@@ -127,6 +127,7 @@ QSizeF Battery::contentSizeHint() const
             sizeHint.setHeight(sizeHint.width()*m_numOfBattery);
             break;
         case Plasma::Horizontal:
+        case Plasma::Planar:
             sizeHint.setWidth(sizeHint.height()*m_numOfBattery);
             break;
         default:
@@ -232,7 +233,7 @@ Battery::~Battery()
 {
 }
 
-void Battery::paintLabel(QPainter *p, const QString& labelText)
+void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& labelText)
 {
     // Store font size, we want to restore it shortly
     int original_font_size = m_font.pointSize();
@@ -265,8 +266,8 @@ void Battery::paintLabel(QPainter *p, const QString& labelText)
     p->setFont(m_font);
 
     // Let's find a good position for painting the background
-    QRect text_rect = QRect((int)((contentSize().width()-text_width)/2),
-                            (int)(((contentSize().height() - (int)fm.height())/2*0.9)),
+    QRect text_rect = QRect(contentsRect.left()+(contentsRect.width()-text_width)/2,
+                            contentsRect.top()+((contentsRect.height() - (int)fm.height())/2*0.9),
                             text_width,
                             (int)(fm.height()*1.2));
 
@@ -310,7 +311,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
             // Show that there's no battery
-                paintLabel(p, I18N_NOOP("0"));
+            paintLabel(p, contentsRect, I18N_NOOP("0"));
         }
         return;
     }
@@ -322,7 +323,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
          it_battery_data != m_batteries_data.end();
          ++it_battery_data)
     {
-        QRect corect = QRect(contentsRect.top()+battery_num*width, contentsRect.left(), width, contentSizeHint().toSize().height());
+        QRect corect = QRect(contentsRect.left()+battery_num*width, contentsRect.top(), width, contentSizeHint().toSize().height());
     
         if (m_theme->elementExists("Battery")) {
             m_theme->paint(p, corect, "Battery");
@@ -400,7 +401,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             // Show the charge percentage with a box
             // on top of the battery, but only for plasmoids bigger than ....
             if (width >= 44) {
-                paintLabel(p, it_battery_data->second);
+                paintLabel(p, corect, it_battery_data->second);
             }
         }
         

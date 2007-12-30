@@ -74,7 +74,7 @@ class Battery : public Plasma::Applet
         void disconnectSources();
         int m_batteryStyle;
         /* Paint a label on top of the battery */
-        void paintLabel(QPainter *p, const QString& labelText);
+        void paintLabel(QPainter *p, const QRect &contentsRect, const QString& labelText);
         /* Should the battery charge information be shown on top? */
         bool m_showBatteryString;
         QSizeF m_size;
