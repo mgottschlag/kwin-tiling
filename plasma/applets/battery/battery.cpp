@@ -284,7 +284,7 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
 
     // Let's find a good position for painting the background
     QRect text_rect = QRect(contentsRect.left()+(contentsRect.width()-text_width)/2,
-                            contentsRect.top()+((contentsRect.height() - (int)fm.height())/2*0.9),
+                            (int)(contentsRect.top()+((contentsRect.height() - (int)fm.height())/2*0.9)),
                             text_width,
                             (int)(fm.height()*1.2));
 
