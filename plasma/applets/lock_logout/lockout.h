@@ -30,9 +30,9 @@ class LockOut : public Plasma::Applet
     public:
         LockOut(QObject *parent, const QVariantList &args);
         ~LockOut();
-	void init();
+        void init();
 
-	QSizeF contentSizeHint() const;
+        QSizeF contentSizeHint() const;
         Qt::Orientations expandingDirections() const;
 
     public slots:
