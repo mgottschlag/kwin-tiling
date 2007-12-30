@@ -2,6 +2,7 @@
 ksmserver - the KDE session management server
 
 Copyright 2000 Matthias Ettrich <ettrich@kde.org>
+Copyright 2007 Urs Wolfer <uwolfer @ kde.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,23 +28,25 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "shutdowndlg.h"
 #include "plasma/svg.h"
 
-#include <QApplication>
+#include <QBitmap>
+#include <QDesktopWidget>
 #include <QLabel>
 #include <QPainter>
 #include <QMenu>
 #include <QTimer>
+#include <QTimeLine>
 #include <QPaintEvent>
-#include <QDesktopWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
+#include <qimageblitz.h>
+
+#include <KApplication>
 #include <kdebug.h>
 #include <kdialog.h>
 #include <kglobalsettings.h>
 #include <kiconloader.h>
 #include <klocale.h>
-#include <qimageblitz.h>
-#include <QPixmap>
 #include <kseparator.h>
 #include <kstandardguiitem.h>
 #include <kuser.h>
@@ -62,10 +65,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/Xatom.h>
 
 #include "shutdowndlg.moc"
-#include <QX11Info>
-#include <QTimeLine>
 
-#define GLOW_WIDTH 3
+#define FONTCOLOR "#bfbfbf"
 
 KSMShutdownFeedback * KSMShutdownFeedback::s_pSelf = 0L;
 
@@ -134,9 +135,9 @@ void KSMShutdownFeedback::stop()
 
 ////////////
 
-KSMPushButton::KSMPushButton( const QString &text, QWidget *parent )
+KSMPushButton::KSMPushButton( const QString &text, QWidget *parent, bool smallButton )
  : QPushButton( parent ),  m_highlight( false ), m_text( text ), m_popupMenu(0), m_popupTimer(0),
-   m_glowOpacity( 0.0 )
+   m_glowOpacity( 0.0 ), m_smallButton( smallButton )
 {
     setAttribute(Qt::WA_Hover, true);
     m_text = text;
@@ -145,11 +146,17 @@ KSMPushButton::KSMPushButton( const QString &text, QWidget *parent )
 
 void KSMPushButton::init()
 {
-    setMinimumSize( 85 + GLOW_WIDTH, 85 + GLOW_WIDTH );
+    if (m_smallButton) {
+        setMinimumSize(88, 22);
+        setFixedHeight(22); // workaround: force correct height
+    } else {
+        setMinimumSize(165, 38);
+    }
+
     connect( this, SIGNAL(pressed()), SLOT(slotPressed()) );
     connect( this, SIGNAL(released()), SLOT(slotReleased()) );
 
-    m_glowSvg = new Plasma::Svg( "dialogs/shutdowndlgbuttonglow", this );
+    m_glowSvg = new Plasma::Svg("dialogs/shutdowndialog", this);
     connect( m_glowSvg, SIGNAL(repaintNeeded()), this, SLOT(update()) );
 
     m_glowTimeLine = new QTimeLine( 150, this );
@@ -157,12 +164,12 @@ void KSMPushButton::init()
             this, SLOT(animateGlow(qreal)) );
 
     QFont fnt;
-    fnt.setPixelSize( 13 );
-    fnt.setBold( true );
+    fnt.setPixelSize(12);
+
     // Calculate the width of the text when splitted on two lines and
     // properly resize the button.
-    if( QFontMetrics(fnt).width( m_text ) > width()-4-(2*GLOW_WIDTH) ||
-          2 * QFontMetrics(fnt).lineSpacing() > height()-54-(2*GLOW_WIDTH) ) {
+    if (QFontMetrics(fnt).width(m_text) > width() - 4 - (m_smallButton ? 16 : 32) ||
+        (2 * QFontMetrics(fnt).lineSpacing() > height() && !m_smallButton) ) {
         int w, h;
         int i = m_text.length()/2;
         int fac = 1;
@@ -174,14 +181,15 @@ void KSMPushButton::init()
         }
         QString upper = m_text.left( i );
         QString lower = m_text.right( m_text.length() - i );
-#ifdef __GNUC__
-#warning "Which one of the following two is correct?"
-#endif
-        w = qMax( QFontMetrics(fnt).width( upper ) + 6, QFontMetrics(fnt).width( lower ) + 6 );
-        w = qMax( w, width() );
-        h = qMax( height(), 2 * QFontMetrics( fnt ).lineSpacing() + 52 + GLOW_WIDTH );
-        if( w > width() || h > height()) {
-            setMinimumSize( w, h );
+
+        w = qMax(QFontMetrics(fnt).width(upper) + 18 + (m_smallButton ? 16 : 32),
+                 QFontMetrics(fnt).width(lower) + 18 + (m_smallButton ? 16 : 32));
+        w = qMax(w, width());
+        h = qMax(height(), ((upper.isEmpty() || lower.isEmpty()) ? 1 : 2) * QFontMetrics(fnt).lineSpacing());
+        if (w > width() || h > height()) {
+            setMinimumSize(w, h);
+            if (m_smallButton)
+                setFixedHeight(h);
             updateGeometry();
         }
     }
@@ -193,50 +201,46 @@ void KSMPushButton::paintEvent( QPaintEvent * e )
     p.setClipRect( e->rect() );
     p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
     QPen pen;
-    p.setBrush( QColor(255,255,255,40) );
-    pen.setColor(QColor(150,150,150,200));
-    pen.setWidth(1);
-    p.setPen( pen );
     QFont fnt;
-    fnt.setPixelSize( 13 );
-    fnt.setBold( true );
+    fnt.setPixelSize(12);
     p.setFont( fnt );
-
-    if( m_glowOpacity > 0 ) {
-        p.save();
-        p.setOpacity( m_glowOpacity );
-        m_glowSvg->paint( &p, 0, 0 );
-        p.restore();
-    }
-
-    p.setRenderHints( QPainter::Antialiasing, false);
-    p.drawRect( QRect( GLOW_WIDTH, GLOW_WIDTH, width()-(2*GLOW_WIDTH), height()-(2*GLOW_WIDTH) ) );
-    p.drawPixmap( width()/2 - 16, 14, m_pixmap );
+    p.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
     p.save();
-    p.translate( 0, 50 );
-    p.setPen( QPen( QColor( Qt::black ) ) );
-    p.drawText( 0, 0, width(), height()-50, Qt::AlignHCenter|Qt::AlignVCenter|Qt::TextWordWrap|Qt::TextShowMnemonic, m_text );
+
+    if (m_glowOpacity > 0) {
+        p.setOpacity(m_glowOpacity); // fade in
+        m_glowSvg->paint(&p, QRect(0, 0, width(), height()), m_smallButton ? "button-small-hover" : "button-hover");
+        p.setOpacity(1.0 - m_glowOpacity); // fade normal background out
+        m_glowSvg->paint(&p, QRect(0, 0, width(), height()), m_smallButton ? "button-small-normal" : "button-normal");
+        p.setOpacity(1.0);
+    } else {
+        m_glowSvg->resize();
+        m_glowSvg->paint(&p, QRect(0, 0, width(), height()), m_smallButton ? "button-small-normal" : "button-normal");
+    }
+
+    p.restore();
+
+    p.setRenderHints( QPainter::Antialiasing, false);
+    p.drawPixmap(width() - (m_smallButton ? 16 : 32) - 4, height() / 2 - (m_smallButton ? 8 : 16), m_pixmap);
+
+    p.save();
+    p.setPen(QPen(QColor(FONTCOLOR)));
+    p.drawText(10, 0, width() - (m_smallButton ? 16 : 32) - 8, height(),
+               Qt::AlignVCenter | Qt::AlignLeft | Qt::TextWordWrap | Qt::TextShowMnemonic, m_text);
     p.restore();
 
     if( m_popupMenu ) {
         p.save();
-        p.setBrush( Qt::black );
-        pen.setColor(QColor(Qt::black));
+        p.setBrush(QColor(FONTCOLOR));
+        pen.setColor(QColor(FONTCOLOR));
         p.setPen( pen );
         QPoint points[3] = {
-            QPoint( width()-10-GLOW_WIDTH, height()-7-GLOW_WIDTH ),
-            QPoint( width()-4-GLOW_WIDTH, height()-7-GLOW_WIDTH ),
-            QPoint( width()-7-GLOW_WIDTH, height()-4-GLOW_WIDTH ) };
-        p.drawPolygon( points, 3 );
+            QPoint(width() - 10 - 34, height() - 7),
+            QPoint(width() - 4 - 34, height() - 7),
+            QPoint(width() - 7 - 34, height() - 4) };
+        p.drawPolygon(points, 3); // TODO: use QStyle
         p.restore();
-    }
-
-    if( hasFocus() ) {
-        pen.setBrush( QColor( 50, 50, 50) );
-        pen.setStyle( Qt::DotLine );
-        p.setPen( pen );
-        p.drawRect( QRect( 2+GLOW_WIDTH, 2+GLOW_WIDTH, width()-4-(2*GLOW_WIDTH), height()-4-(2*GLOW_WIDTH) ) );
     }
 }
 
@@ -255,8 +259,9 @@ void KSMPushButton::animateGlow( qreal value )
 void KSMPushButton::setPixmap( const QPixmap &p )
 {
     m_pixmap = p;
-    if( m_pixmap.size().width() != 32 || m_pixmap.size().height () != 32 )
-        m_pixmap = m_pixmap.scaled( 32, 32 );
+    int size = m_smallButton ? 16 : 32;
+    if (m_pixmap.size().width() != size || m_pixmap.size().height() != size)
+        m_pixmap = m_pixmap.scaled(size, size);
     update();
 }
 
@@ -293,18 +298,26 @@ void KSMPushButton::slotTimeout()
 
 bool KSMPushButton::event( QEvent *e )
 {
-    if( e->type() == QEvent::HoverEnter )
+    if (e->type() == QEvent::HoverEnter || e->type() == QEvent::FocusIn)
     {
+        if (m_glowOpacity > 0) // already hovered
+            return true;
         m_highlight = true;
         m_glowTimeLine->setDirection( QTimeLine::Forward );
+        if (m_glowTimeLine->state() == QTimeLine::Running)
+            m_glowTimeLine->stop();
         m_glowTimeLine->start();
         update();
         return true;
     }
-    else if( e->type() == QEvent::HoverLeave )
+    else if (e->type() == QEvent::HoverLeave || e->type() == QEvent::FocusOut)
     {
+        if (hasFocus())
+            return true;
         m_highlight = false;
         m_glowTimeLine->setDirection( QTimeLine::Backward );
+        if (m_glowTimeLine->state() == QTimeLine::Running)
+            m_glowTimeLine->stop();
         m_glowTimeLine->start();
         update();
         return true;
@@ -337,21 +350,39 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         (unsigned char *)"logoutdialog", strlen( "logoutdialog" ));
 
 //#endif
-    m_svg = new Plasma::Svg( "dialogs/shutdowndlg", this);
+    m_svg = new Plasma::Svg("dialogs/shutdowndialog", this);
     connect( m_svg, SIGNAL(repaintNeeded()), this, SLOT(update()) );
     setModal( true );
-    resize(420, 180);
+    resize(400, 220);
     KDialog::centerOnScreen(this);
 
-    int space = maysd ? 10 : 80;
     QVBoxLayout *mainLayout = new QVBoxLayout();
-    mainLayout->setMargin( 0 );
-    QHBoxLayout *btnLayout = new QHBoxLayout();
-    btnLayout->setSpacing( space );
+
+    mainLayout->setContentsMargins(9, 9, 12, 7);
+    QVBoxLayout *buttonLayout = new QVBoxLayout();
+    buttonLayout->addStretch();
+    QHBoxLayout *buttonMainLayout = new QHBoxLayout();
+    buttonMainLayout->addStretch();
+    buttonMainLayout->addLayout(buttonLayout);
+
+    QHBoxLayout *topLayout = new QHBoxLayout();
+
+    QHBoxLayout *bottomLayout = new QHBoxLayout();
 
     QFont fnt;
-    fnt.setBold( true );
-    fnt.setPixelSize( 20 );
+    fnt.setPixelSize(16);
+
+    QLabel *versionLabel = new QLabel(this);
+
+#if 0 // enable after feature freeze, needs more testing
+    QString version = QString(KDE_VERSION_STRING);
+    int start = version.lastIndexOf('(');
+    if (start != -1)
+        version = version.mid(start + 1, version.length() - start - 2);
+    versionLabel->setText("<font color='" + QString(FONTCOLOR) + "'>" + version + "</font>");
+#endif
+    versionLabel->setText("<font color='" + QString(FONTCOLOR) + "'>KDE 4.0</font>");
+    versionLabel->setFont(fnt);
 
     KUser userInformation;
     QString logoutMsg;
@@ -364,31 +395,30 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         logoutMsg = i18n( "End Session for %1 (%2)", userName, loginName );
     }
 
-    QLabel *topLabel = new QLabel( this );
+    QLabel *logoutMessageLabel = new QLabel(this);
     // FIXME Made the color picked from the user's one
-    topLabel->setText( "<font color='#eeeeec'>" + logoutMsg + "</font>" );
-    topLabel->setFixedHeight( 30 );
-    topLabel->setSizePolicy( QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed ) );
-    topLabel->setAlignment( Qt::AlignCenter );
-    topLabel->setFont( fnt );
-    topLabel->setMargin( 5 );
+    logoutMessageLabel->setText("<font color='" + QString(FONTCOLOR) + "'>" + logoutMsg + "</font>");
+    logoutMessageLabel->setAlignment(Qt::AlignRight);
+    fnt.setPixelSize(12);
+    logoutMessageLabel->setFont(fnt);
+    logoutMessageLabel->setWordWrap(true);
 
-    mainLayout->addWidget( topLabel, 0 );
-    mainLayout->addStretch();
-    mainLayout->addLayout( btnLayout );
-    mainLayout->addSpacing( 5 );
+    topLayout->addWidget(versionLabel, 0, Qt::AlignTop); // correct possition if logoutMessageLabel has multiple lines
+    topLayout->addWidget(logoutMessageLabel, 1, Qt::AlignBottom);
 
     KSMPushButton* btnLogout = new KSMPushButton( i18n("Logout"), this );
-    btnLogout->setPixmap( KIconLoader::global()->loadIcon( "edit-undo", KIconLoader::NoGroup, 32 ) );
+    btnLogout->setPixmap(KIconLoader::global()->loadIcon("system-switch-user", KIconLoader::NoGroup, 32));
     btnLogout->setFocus();
     connect(btnLogout, SIGNAL(clicked()), SLOT(slotLogout()));
-    btnLayout->addWidget( btnLogout, 0 );
+    buttonLayout->addWidget(btnLogout);
+    buttonLayout->addStretch();
 
     if (maysd) {
         // Shutdown
         KSMPushButton* btnHalt = new KSMPushButton( i18n("Turn Off Computer"), this );
-        btnHalt->setPixmap( KIconLoader::global()->loadIcon( "application-exit", KIconLoader::NoGroup, 32 ) );
-        btnLayout->addWidget( btnHalt, 0 );
+        btnHalt->setPixmap(KIconLoader::global()->loadIcon("system-log-out", KIconLoader::NoGroup, 32));
+        buttonLayout->addWidget(btnHalt);
+        buttonLayout->addStretch();
         connect(btnHalt, SIGNAL(clicked()), SLOT(slotHalt()));
         if ( sdtype == KWorkSpace::ShutdownTypeHalt )
             btnHalt->setFocus();
@@ -414,9 +444,10 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
         // Reboot
         KSMPushButton* btnReboot = new KSMPushButton( i18n("Restart Computer"), this );
-        btnReboot->setPixmap( KIconLoader::global()->loadIcon( "view-refresh", KIconLoader::NoGroup, 32 ) );
+        btnReboot->setPixmap(KIconLoader::global()->loadIcon("system-restart", KIconLoader::NoGroup, 32));
         connect(btnReboot, SIGNAL(clicked()), SLOT(slotReboot()));
-        btnLayout->addWidget( btnReboot, 0 );
+        buttonLayout->addWidget(btnReboot);
+        buttonLayout->addStretch();
         if ( sdtype == KWorkSpace::ShutdownTypeReboot )
             btnReboot->setFocus();
 
@@ -444,35 +475,38 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         }
     }
 
-    KSMPushButton* btnBack = new KSMPushButton( i18n("Cancel"), this );
-    btnBack->setPixmap( KIconLoader::global()->loadIcon( "dialog-cancel", KIconLoader::NoGroup, 32 ) );
-    btnLayout->addWidget( btnBack, 0 );
+    KSMPushButton* btnBack = new KSMPushButton(i18n("Cancel"), this, true);
+    btnBack->setPixmap(KIconLoader::global()->loadIcon( "dialog-cancel", KIconLoader::NoGroup, 16));
+    bottomLayout->addStretch();
+    bottomLayout->addWidget(btnBack);
     connect(btnBack, SIGNAL(clicked()), SLOT(reject()));
 
-    btnLayout->insertSpacing( 0, 10 );
-    btnLayout->insertSpacing( -1, 10 );
-    btnLayout->insertStretch( 0, 1 );
-    btnLayout->insertStretch( -1, 1 );
+    mainLayout->addLayout(topLayout);
+    mainLayout->addLayout(buttonMainLayout);
+    mainLayout->addLayout(bottomLayout);
+
     setLayout( mainLayout );
 }
 
 void KSMShutdownDlg::paintEvent(QPaintEvent *e)
 {
+    Q_UNUSED(e);
     QPainter p(this);
-    p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-    p.setClipRect(e->rect());
-    p.save();
-    p.setCompositionMode(QPainter::CompositionMode_Source);
-    p.fillRect(rect(), Qt::transparent);
-    p.restore();
-
-    m_svg->paint( &p, 0, 0 );
+    p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    m_svg->paint(&p, QRect(0, 0, width(), height()), "background");
 }
 
 void KSMShutdownDlg::resizeEvent(QResizeEvent *e)
 {
-    m_svg->resize( e->size() );
     QDialog::resizeEvent( e );
+
+    QBitmap mask(size());
+    mask.fill(Qt::color0);
+
+    QPainter p(&mask);
+    m_svg->resize(size());
+    m_svg->paint(&p, QRect(0, 0, width(), height()), "background");
+    setMask(mask);
 }
 
 void KSMShutdownDlg::slotLogout()

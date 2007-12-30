@@ -67,7 +67,7 @@ class KSMPushButton : public QPushButton
     Q_OBJECT
 
 public:
-    explicit KSMPushButton( const QString &text, QWidget *parent = 0 );
+    explicit KSMPushButton( const QString &text, QWidget *parent = 0, bool smallButton = false );
 
     void setPixmap( const QPixmap & );
     void setPopupMenu( QMenu * );
@@ -92,6 +92,7 @@ private:
     Plasma::Svg* m_glowSvg;
     qreal m_glowOpacity;
     QTimeLine *m_glowTimeLine;
+    bool m_smallButton;
 };
 
 // The confirmation dialog
