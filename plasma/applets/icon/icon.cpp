@@ -135,8 +135,8 @@ void IconApplet::showConfigurationInterface()
 QSizeF IconApplet::sizeHint() const
 {
     QSizeF iconSize = m_icon->sizeHint();
-    int width = qBound(minimumSize().width(), iconSize.width(), maximumSize().width());
-    int height = qBound(minimumSize().height(), iconSize.height(), maximumSize().height());
+    double width = qBound(minimumSize().width(), iconSize.width(), maximumSize().width());
+    double height = qBound(minimumSize().height(), iconSize.height(), maximumSize().height());
     return QSizeF(width,height);
 }
 
