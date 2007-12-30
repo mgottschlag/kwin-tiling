@@ -38,6 +38,8 @@
 Tasks::Tasks(QObject* parent , const QVariantList &arguments)
  : Plasma::Applet(parent,arguments)
 {
+    Plasma::BoxLayout *layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
+    layout->setMargin(0);
     setHasConfigurationInterface(true);
     m_dialog = 0;
 }
@@ -49,8 +51,6 @@ Tasks::~Tasks()
 
 void Tasks::init()
 {
-    Plasma::BoxLayout *layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
-    layout->setMargin(0);
     _rootTaskGroup = new TaskGroupItem(this, this);
 
     // testing
@@ -65,7 +65,7 @@ void Tasks::init()
         animator->setTimeLine(new QTimeLine(200, this));
         _rootTaskGroup->layout()->setAnimator(animator);
 
-    layout->addItem(_rootTaskGroup);
+    layout()->addItem(_rootTaskGroup);
 
     // testing
         _rootTaskGroup->setBorderStyle(TaskGroupItem::NoBorder);
@@ -183,8 +183,6 @@ void Tasks::constraintsUpdated(Plasma::Constraints constraints)
             }
         }
     }
-
-    kDebug() << contentSize();
 }
 
 void Tasks::wheelEvent(QGraphicsSceneWheelEvent *e)
