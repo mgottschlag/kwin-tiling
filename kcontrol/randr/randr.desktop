@@ -4,7 +4,8 @@ Icon=preferences-desktop-display-randr
 Type=Service
 X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_randr
-Hidden[$e]=$(if xdpyinfo|grep RANDR > /dev/null; then echo "false"; else echo "true"; fi)
+#This is always false when kbuildsycoca runs, probably because it is now a QCoreApplication
+#Hidden[$e]=$(if xdpyinfo|grep RANDR > /dev/null; then echo "false"; else echo "true"; fi)
 
 X-KDE-System-Settings-Parent-Category=computer-administration
 
