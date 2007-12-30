@@ -72,13 +72,13 @@ KSMShutdownFeedback * KSMShutdownFeedback::s_pSelf = 0L;
 
 KSMShutdownFeedback::KSMShutdownFeedback()
  : QWidget( 0L, Qt::Popup ),
-    m_currentY( 0 ),
-    m_pixmap( size() )
+    m_currentY( 0 )
 {
     setObjectName( "feedbackwidget" );
     setAttribute( Qt::WA_NoSystemBackground );
     setAttribute( Qt::WA_PaintOnScreen );
     setGeometry( QApplication::desktop()->geometry() );
+    m_pixmap = QPixmap( QApplication::desktop()->geometry().size() );
     m_pixmap.fill( Qt::transparent );
     QTimer::singleShot( 10, this, SLOT( slotPaintEffect() ) );
 }
@@ -112,7 +112,7 @@ void KSMShutdownFeedback::slotPaintEffect()
     m_currentY += 10;
     update( 0, 0, width(), m_currentY );
 
-    QTimer::singleShot( 1, this, SLOT( slotPaintEffect() ) );
+    QTimer::singleShot( 5, this, SLOT( slotPaintEffect() ) );
 }
 
 void KSMShutdownFeedback::start()
