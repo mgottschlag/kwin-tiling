@@ -80,6 +80,7 @@ Comment[sr]=Прати стање мрежних сучеља и обавешт�
 Comment[sr@latin]=Prati stanje mrežnih sučelja i obaveštava o programima koji koriste mrežu
 Comment[sv]=Följer status hos nätverksgränssnitt och tillhandahåller underrättelser till program som använder nätverket.
 Comment[th]=ติดตามสถานะของส่วนติดต่อเครือข่ายและมีการแจ้งเตือนไปยังแอพพลิเคชั่น โดยใช้เครือข่าย
+Comment[uk]=Слідкує за станом мережних інтерфейсів і надає сповіщення програмам, які використовують мережу.
 Comment[x-test]=xxTracks status of network interfaces and provides notification to applications using the network.xx
 Comment[zh_CN]=跟踪网络接口的状态并且为正在使用网络的应用程序提供通知。
 Comment[zh_TW]=追蹤網路介面的狀態，提供通知給使用網路的應用程式
