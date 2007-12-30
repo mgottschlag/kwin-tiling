@@ -7,6 +7,7 @@ X-DocPath=kcontrol/solid/index.html
 
 X-KDE-Library=kcm_solid
 X-KDE-ParentApp=kcontrol
+X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Solid
 Name[ar]=صلب
