@@ -206,7 +206,9 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
             }
         if (nb_actions > 1)
 	{
-	    QString s = i18n("%1 actions for this device", nb_actions);
+	    QString s = i18np("1 action for this device",
+                              "%1 actions for this device",
+                              nb_actions);
 	    m_hotplugModel->setData(index,s, ActionRole);
         }
 	else
