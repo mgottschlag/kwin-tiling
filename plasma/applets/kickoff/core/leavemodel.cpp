@@ -59,18 +59,22 @@ QStandardItem* LeaveModel::createStandardItem(const QString& url)
     }
     else if (basename == "sleep") {
         item->setText(i18n("Sleep"));
+        item->setIcon(KIcon("system-suspend"));
         item->setData(url,Kickoff::SubTitleRole);
     }
     else if (basename == "hibernate") {
         item->setText(i18n("Hibernate"));
+        item->setIcon(KIcon("system-suspend-hibernate"));
         item->setData(url,Kickoff::SubTitleRole);
     }
     else if (basename == "shutdown") {
         item->setText(i18n("Shutdown"));
+        item->setIcon(KIcon("system-log-out"));
         item->setData(i18n("Turn off the computer"),Kickoff::SubTitleRole);
     }
     else if (basename == "restart") {
         item->setText(i18n("Restart"));
+        item->setIcon(KIcon("system-restart"));
         item->setData(i18n("Restart the computer"),Kickoff::SubTitleRole);
     }
     else {
