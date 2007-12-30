@@ -40,4 +40,4 @@ Name[wa]=Drovi avou Dolphin
 Name[x-test]=xxOpen with Dolphinxx
 Name[zh_CN]=用 Dolphin 打开
 Name[zh_TW]=使用 Dolphin 開啟
-Exec=dbus-launch dolphin
+Exec=dolphin %f
