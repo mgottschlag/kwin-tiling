@@ -293,6 +293,72 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
     m_boxColor.setAlpha(m_boxAlpha);
 }
 
+void Battery::paintBattery(QPainter *p, const QRect &contentsRect, int batteryPercent)
+{
+    if (m_theme->elementExists("Battery")) {
+        m_theme->paint(p, contentsRect, "Battery");
+    }
+
+    // Now let's find out which fillstate to show
+    QString fill_element = QString();
+
+    if (m_batteryStyle == OxygenBattery) {
+        if (batteryPercent > 95) {
+            fill_element = "Fill100";
+        } else if (batteryPercent > 80) {
+            fill_element = "Fill80";
+        } else if (batteryPercent > 50) {
+            fill_element = "Fill60";
+        } else if (batteryPercent > 20) {
+            fill_element = "Fill40";
+        } else if (batteryPercent > 10) {
+            fill_element = "Fill20";
+        } // Don't show a fillbar below 11% charged
+    } else { // OxyenStyle
+        if (batteryPercent > 95) {
+            fill_element = "Fill100";
+        } else if (batteryPercent > 90) {
+            fill_element = "Fill90";
+        } else if (batteryPercent > 80) {
+            fill_element = "Fill80";
+        } else if (batteryPercent > 70) {
+            fill_element = "Fill70";
+        } else if (batteryPercent > 55) {
+            fill_element = "Fill60";
+        } else if (batteryPercent > 40) {
+            fill_element = "Fill50";
+        } else if (batteryPercent > 30) {
+            fill_element = "Fill40";
+        } else if (batteryPercent > 20) {
+            fill_element = "Fill30";
+        } else if (batteryPercent > 10) {
+            fill_element = "Fill20";
+        } else if (batteryPercent >= 5) {
+            fill_element = "Fill10";
+        } // Lower than 5%? Show no fillbar.
+    }
+    if (!fill_element.isEmpty()) {
+        if (m_theme->elementExists(fill_element)) {
+            m_theme->paint(p, contentsRect, fill_element);
+        } else {
+            kDebug() << fill_element << " does not exist in svg";
+        }
+    }
+
+    if (m_acadapter_plugged) {
+        m_theme->paint(p, contentsRect, "AcAdapter");
+    }
+
+    // For small FormFactors, we're drawing a shadow
+    if (formFactor() == Plasma::Vertical ||
+        formFactor() == Plasma::Horizontal) {
+        m_theme->paint(p, contentsRect, "Shadow");
+    }
+    if (m_theme->elementExists("Overlay")) {
+        m_theme->paint(p, contentsRect, "Overlay");
+    }
+}
+
 void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
     Q_UNUSED( option );
@@ -329,73 +395,10 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
          ++it_battery_data)
     {
         QRect corect = QRect(contentsRect.left()+battery_num*width, contentsRect.top(), width, contentSizeHint().toSize().height());
-    
-        if (m_theme->elementExists("Battery")) {
-            m_theme->paint(p, corect, "Battery");
-        }
-    
-        // Now let's find out which fillstate to show
-        QString fill_element = QString();
-    
-        if (m_batteryStyle == OxygenBattery) {
-            if (it_battery_data->first > 95) {
-                fill_element = "Fill100";
-            } else if (it_battery_data->first > 80) {
-                fill_element = "Fill80";
-            } else if (it_battery_data->first > 50) {
-                fill_element = "Fill60";
-            } else if (it_battery_data->first > 20) {
-                fill_element = "Fill40";
-            } else if (it_battery_data->first > 10) {
-                fill_element = "Fill20";
-            } // Don't show a fillbar below 11% charged
-        } else { // OxyenStyle
-            if (it_battery_data->first > 95) {
-                fill_element = "Fill100";
-            } else if (it_battery_data->first > 90) {
-                fill_element = "Fill90";
-            } else if (it_battery_data->first > 80) {
-                fill_element = "Fill80";
-            } else if (it_battery_data->first > 70) {
-                fill_element = "Fill70";
-            } else if (it_battery_data->first > 55) {
-                fill_element = "Fill60";
-            } else if (it_battery_data->first > 40) {
-                fill_element = "Fill50";
-            } else if (it_battery_data->first > 30) {
-                fill_element = "Fill40";
-            } else if (it_battery_data->first > 20) {
-                fill_element = "Fill30";
-            } else if (it_battery_data->first > 10) {
-                fill_element = "Fill20";
-            } else if (it_battery_data->first >= 5) {
-                fill_element = "Fill10";
-            } // Lower than 5%? Show no fillbar.
-        }
-        if (!fill_element.isEmpty()) {
-            if (m_theme->elementExists(fill_element)) {
-                m_theme->paint(p, corect, fill_element);
-            } else {
-                kDebug() << fill_element << " does not exist in svg";
-            }
-        }
-        
-    
+   
+        // paint battery with appropriate charge level
+        paintBattery(p, corect, it_battery_data->first);
 
-        if (m_acadapter_plugged) {
-            m_theme->paint(p, corect, "AcAdapter");
-        }
-    
-        // For small FormFactors, we're drawing a shadow,
-        // but no text.
-        if (formFactor() == Plasma::Vertical ||
-            formFactor() == Plasma::Horizontal) {
-            m_theme->paint(p, corect, "Shadow");
-        }
-        if (m_theme->elementExists("Overlay")) {
-            m_theme->paint(p, corect, "Overlay");
-        }
-    
         if (showString || m_isHovered) {
             // Show the charge percentage with a box
             // on top of the battery, but only for plasmoids bigger than ....

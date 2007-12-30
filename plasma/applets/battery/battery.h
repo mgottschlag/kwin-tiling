@@ -73,6 +73,8 @@ class Battery : public Plasma::Applet
         void connectSources();
         void disconnectSources();
         int m_batteryStyle;
+        /* Paint battery with proper charge level */
+        void paintBattery(QPainter *p, const QRect &contentsRect, int batteryPercent);
         /* Paint a label on top of the battery */
         void paintLabel(QPainter *p, const QRect &contentsRect, const QString& labelText);
         /* Should the battery charge information be shown on top? */
