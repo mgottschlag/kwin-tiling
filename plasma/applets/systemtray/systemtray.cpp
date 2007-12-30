@@ -28,7 +28,8 @@
 
 SystemTray::SystemTray(QObject *parent, const QVariantList &arguments)
     : Plasma::Applet(parent, arguments)
-{ }
+{
+}
 
 SystemTray::~SystemTray()
 {
@@ -54,11 +55,11 @@ Qt::Orientations SystemTray::expandingDirections() const
 
 void SystemTray::constraintsUpdated(Plasma::Constraints constraints)
 {
-    if (constraints & Plasma::FormFactorConstraint) {
-        updateWidgetOrientation();
-    }
     if (constraints & (Plasma::LocationConstraint | Plasma::SizeConstraint)) {
         updateWidgetGeometry();
+    }
+    if (constraints & Plasma::FormFactorConstraint) {
+        updateWidgetOrientation();
     }
 }
 
