@@ -42,27 +42,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <qimageblitz.h>
 
 #include <KApplication>
-#include <kdebug.h>
 #include <kdialog.h>
-#include <kglobalsettings.h>
 #include <kiconloader.h>
 #include <klocale.h>
-#include <kseparator.h>
-#include <kstandardguiitem.h>
 #include <kuser.h>
 #include <solid/control/powermanager.h>
 #include <kwindowsystem.h>
 #include <netwm.h>
 
-#include <sys/types.h>
-#include <sys/utsname.h>
-#include <unistd.h>
-#include <stdlib.h>
 #include <dmctl.h>
-
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/Xatom.h>
 
 #include "shutdowndlg.moc"
 
@@ -78,7 +66,7 @@ KSMShutdownFeedback::KSMShutdownFeedback()
     setAttribute( Qt::WA_NoSystemBackground );
     setAttribute( Qt::WA_PaintOnScreen );
     setGeometry( QApplication::desktop()->geometry() );
-    m_pixmap = QPixmap( QApplication::desktop()->geometry().size() );
+    m_pixmap = QPixmap( size() );
     m_pixmap.fill( Qt::transparent );
     QTimer::singleShot( 10, this, SLOT( slotPaintEffect() ) );
 }
@@ -101,7 +89,7 @@ void KSMShutdownFeedback::slotPaintEffect()
     if ( m_currentY >= height() )
         return;
 
-    QImage image = QPixmap::grabWindow( QX11Info::appRootWindow(), 0, m_currentY, width(), 10 ).toImage();
+    QImage image = QPixmap::grabWindow( QApplication::desktop()->winId(), 0, m_currentY, width(), 10 ).toImage();
     Blitz::intensity( image, -0.4 );
     Blitz::grayscale( image );
 
