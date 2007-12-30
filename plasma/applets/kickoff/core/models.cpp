@@ -73,7 +73,7 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
 
         item = new QStandardItem;
         KDesktopFile desktopFile(url.path());
-        item->setText(QFileInfo(urlString).baseName());
+        item->setText(QFileInfo(urlString.mid(0, urlString.lastIndexOf('.'))).completeBaseName());
         item->setIcon(KIcon(desktopFile.readIcon()));
 
         //FIXME: desktopUrl is a hack around borkage in KRecentDocuments which
@@ -99,7 +99,7 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
     else {
         item = new QStandardItem;
         const QString subTitle = url.isLocalFile() ? url.path() : url.prettyUrl();
-        QString basename = QFileInfo(urlString).baseName();
+        QString basename = QFileInfo(urlString).completeBaseName();
         if (basename.isNull())
             basename = subTitle;
         item->setText(basename);
