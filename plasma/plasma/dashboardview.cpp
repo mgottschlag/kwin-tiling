@@ -52,10 +52,6 @@ DashboardView::DashboardView(int screen, QWidget *parent)
         setAttribute(Qt::WA_NoSystemBackground);
     }
 
-    setWindowState(Qt::WindowFullScreen);
-    KWindowSystem::setOnAllDesktops(winId(), true);
-    KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
-
     QDesktopWidget *desktop = QApplication::desktop();
     setGeometry(desktop->screenGeometry(screen));
 
@@ -114,6 +110,10 @@ void DashboardView::toggleVisibility()
             kDebug() << "DashboardView::toggleVisibility but show was suppressed";
             return;
         }
+
+        setWindowState(Qt::WindowFullScreen);
+        KWindowSystem::setOnAllDesktops(winId(), true);
+        KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
 
         m_zoomOut = containment()->isToolboxToolEnabled("zoomOut");
         m_zoomIn = containment()->isToolboxToolEnabled("zoomIn");
