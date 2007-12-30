@@ -87,12 +87,12 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
             if (loc == BottomEdge) {
                 m_drawBottom = false;
                 bottomHeight = 0;
-                height += topHeight - 1;
-                y = r.height() - height + 1;
+                height += topHeight;
+                y = r.bottom() - height + 1;
             } else {
                 m_drawTop = false;
                 topHeight = 0;
-                height += bottomHeight - 1;
+                height += bottomHeight;
             }
 
             if (x <= r.x()) {
@@ -116,12 +116,12 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
             if (loc == RightEdge) {
                 m_drawRight = false;
                 rightWidth = 0;
-                width += leftWidth - 1;
-                x = r.width() - width;
+                width += leftWidth;
+                x = r.right() - width + 1;
             } else {
                 m_drawLeft = false;
                 leftWidth = 0;
-                width += rightWidth - 1;
+                width += rightWidth;
             }
 
             if (y <= r.y()) {
