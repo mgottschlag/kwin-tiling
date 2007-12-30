@@ -128,6 +128,7 @@ QSizeF Battery::contentSizeHint() const
             break;
         case Plasma::Horizontal:
         case Plasma::Planar:
+        case Plasma::MediaCenter:
             sizeHint.setWidth(sizeHint.height()*m_numOfBattery);
             break;
         default:
@@ -301,7 +302,11 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
     if (formFactor() == Plasma::Vertical ||
         formFactor() == Plasma::Horizontal) {
         showString = false;
-    };
+    } else if (formFactor() == Plasma::Planar ||
+               formFactor() == Plasma::MediaCenter) {
+        // Only show batterystring when we're huge
+        showString = m_showBatteryString;
+    }
 
     p->setRenderHint(QPainter::SmoothPixmapTransform);
     p->setRenderHint(QPainter::Antialiasing);
@@ -332,8 +337,8 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         // Now let's find out which fillstate to show
         QString fill_element = QString();
     
-          if (m_batteryStyle == OxygenBattery) {
-              if (it_battery_data->first > 95) {
+        if (m_batteryStyle == OxygenBattery) {
+            if (it_battery_data->first > 95) {
                 fill_element = "Fill100";
             } else if (it_battery_data->first > 80) {
                 fill_element = "Fill80";
@@ -379,12 +384,6 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
 
         if (m_acadapter_plugged) {
             m_theme->paint(p, corect, "AcAdapter");
-        }
-    
-        // Only show batterystring when we're huge
-        if (formFactor() == Plasma::Planar ||
-            formFactor() == Plasma::MediaCenter) {
-            showString = m_showBatteryString;
         }
     
         // For small FormFactors, we're drawing a shadow,
