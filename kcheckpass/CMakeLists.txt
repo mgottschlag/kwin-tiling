@@ -25,7 +25,7 @@ target_link_libraries(kcheckpass ${KDE4_KDEFAKES_LIBS} ${UNIXAUTH_LIBRARIES} ${S
 install(TARGETS kcheckpass DESTINATION ${LIBEXEC_INSTALL_DIR})
 install(CODE "
     set(KCP_PATH \"\$ENV{DESTDIR}${LIBEXEC_INSTALL_DIR}/kcheckpass\")
-    EXECUTE_PROCESS(COMMAND sh -c \"chown root \${KCP_PATH} && chmod +s \${KCP_PATH}\")
+    EXECUTE_PROCESS(COMMAND sh -c \"chown root '\${KCP_PATH}' && chmod +s '\${KCP_PATH}'\")
 ")
 
 install_pam_service(kcheckpass)
