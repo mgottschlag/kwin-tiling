@@ -66,7 +66,7 @@ void IconLoader::init(DefaultDesktop *desktop)
     m_desktopDir.openUrl(homedir);
 }
 
-void IconLoader::addIcon(KUrl url)
+void IconLoader::addIcon(const KUrl& url)
 {
     QVariantList args;
     args << url.path();
@@ -85,7 +85,7 @@ void IconLoader::addIcon(Plasma::Applet *applet)
     }
 }
 
-void IconLoader::deleteIcon(KUrl url)
+void IconLoader::deleteIcon(const KUrl& url)
 {
     Plasma::Applet *applet = m_iconMap.value(url.path());
     if (applet) {

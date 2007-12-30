@@ -45,9 +45,9 @@ public:
 
 
 private:
-    void addIcon(KUrl url);
+    void addIcon(const KUrl &url);
     void addIcon(Plasma::Applet *applet);
-    void deleteIcon(KUrl url);
+    void deleteIcon(const KUrl &url);
     void deleteIcon(Plasma::Applet *applet);
     
     KDirLister m_desktopDir;
