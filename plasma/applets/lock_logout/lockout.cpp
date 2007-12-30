@@ -36,7 +36,11 @@
 
 LockOut::LockOut(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args)
-{
+{ 
+}
+
+void LockOut::init()
+{   
     Plasma::VBoxLayout *layout = new Plasma::VBoxLayout(this);
     layout->setMargin(0);
     layout->setSpacing(0);
@@ -48,6 +52,7 @@ LockOut::LockOut(QObject *parent, const QVariantList &args)
     Plasma::Icon *icon_logout = new Plasma::Icon(KIcon("system-log-out"), "", this);
     layout->addItem(icon_logout);
     connect(icon_logout, SIGNAL(clicked()), this, SLOT(clickLogout()));
+
 }
 
 LockOut::~LockOut()
@@ -65,7 +70,8 @@ QSizeF LockOut::contentSizeHint() const
             sizeHint.setWidth(sizeHint.height() / 2);
             break;
         default:
-            sizeHint = layout()->sizeHint();
+	    //totally arbitrary size
+            sizeHint = QSizeF(48,96);
             break;
     }
 
