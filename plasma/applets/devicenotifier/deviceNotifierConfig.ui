@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
+    <width>402</width>
     <height>300</height>
    </rect>
   </property>
@@ -47,7 +47,7 @@
        <item>
         <widget class="QLabel" name="labelSize_2" >
          <property name="text" >
-          <string>Time to stay on top (s):</string>
+          <string>Time to stay on top (s) :</string>
          </property>
         </widget>
        </item>
@@ -83,7 +83,7 @@
        <item>
         <widget class="QLabel" name="labelSize" >
          <property name="text" >
-          <string>Number of items displayed:</string>
+          <string>Number of items displayed (0 for no limit) :</string>
          </property>
         </widget>
        </item>
@@ -104,7 +104,7 @@
        <item>
         <widget class="QLabel" name="label" >
          <property name="text" >
-          <string>Display time of items:</string>
+          <string>Display time of items (0 for no limit) :</string>
          </property>
         </widget>
        </item>
