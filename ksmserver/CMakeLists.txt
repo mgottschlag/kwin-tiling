@@ -25,17 +25,13 @@ ADD_CUSTOM_COMMAND(OUTPUT ${kcminit_xml}
        DEPENDS ${kcminit_adaptor})
 QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${kcminit_xml} kcminit_interface )
 
-
 #set(kdesktop_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/kdesktop/org.kde.kdesktop.Desktop.xml)
 #QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${kdesktop_xml} kdesktop_interface )
 
 set(klauncher_xml  ${DBUS_INTERFACES_INSTALL_DIR}/org.kde.KLauncher.xml)
 QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${klauncher_xml} klauncher_interface )
 
-
 qt4_add_dbus_adaptor( ksmserver_KDEINIT_SRCS org.kde.KSMServerInterface.xml server.h KSMServer )
-
-
 
 kde4_add_kdeinit_executable( ksmserver ${ksmserver_KDEINIT_SRCS})
 
@@ -59,7 +55,6 @@ install(TARGETS kcheckrunning DESTINATION ${BIN_INSTALL_DIR})
 
 ########### install files ###############
 
-install( FILES shutdownkonq.png  DESTINATION  ${DATA_INSTALL_DIR}/ksmserver/pics )
 install( FILES ksmserver.upd DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
 install( PROGRAMS move_session_config.sh DESTINATION  ${KCONF_UPDATE_INSTALL_DIR} )
 install( FILES org.kde.KSMServerInterface.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR})
