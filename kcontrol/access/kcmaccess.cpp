@@ -427,7 +427,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   vvbox->addItem(hbox);
   hbox->setSpacing(KDialog::spacingHint());
   hbox->addStretch(1);
-  kNotifyModifiersButton = new QPushButton("Configure System Notification...", grp);
+  kNotifyModifiersButton = new QPushButton(i18n("Configure &Notifications..."), grp);
   kNotifyModifiersButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   hbox->addWidget(kNotifyModifiersButton);
 
@@ -606,7 +606,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   vvbox->addItem(hbox);
   hbox->setSpacing(KDialog::spacingHint());
   hbox->addStretch(1);
-  kNotifyAccessXButton = new QPushButton("Configure System Notification...", grp);
+  kNotifyAccessXButton = new QPushButton(i18n("Configure &Notifications..."), grp);
   kNotifyAccessXButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   hbox->addWidget(kNotifyAccessXButton);
 
