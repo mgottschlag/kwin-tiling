@@ -31,9 +31,10 @@
 #include <k3listview.h>
 #include <kdialog.h>
 
+#include <QBoxLayout>
 #include <QDir>
-#include <QPixmap>
 #include <QLabel>
+#include <QPixmap>
 
 #include "themepage.h"
 #include "themepage.moc"
