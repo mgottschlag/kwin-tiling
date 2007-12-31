@@ -53,6 +53,8 @@ void LockOut::init()
     layout->addItem(icon_logout);
     connect(icon_logout, SIGNAL(clicked()), this, SLOT(clickLogout()));
 
+    //It seems the layout geometry must be calculated by hand for the first time
+    layout->setGeometry(QRectF(0,0, contentSize().width(), contentSize().height()));
 }
 
 LockOut::~LockOut()
@@ -71,7 +73,9 @@ QSizeF LockOut::contentSizeHint() const
             break;
         default:
 	    //totally arbitrary size
-            sizeHint = QSizeF(48,96);
+            if (sizeHint.width() < 10) {
+                sizeHint = QSizeF(48,96);
+            }
             break;
     }
 
