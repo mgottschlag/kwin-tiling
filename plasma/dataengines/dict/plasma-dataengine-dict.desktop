@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Dictionary Data Engine
+Name[bg]=Речник
 Name[ca]=Motor de dades de diccionari
 Name[csb]=Czérownik słowôrza
 Name[de]=Wörterbuch-Treiber
@@ -41,6 +42,7 @@ Name[x-test]=xxDictionary Data Enginexx
 Name[zh_CN]=字典数据引擎
 Name[zh_TW]=字典資料引擎
 Comment=Look up word meanings
+Comment[bg]=Търсене на думи
 Comment[ca]=Cerca els significats de paraules
 Comment[de]=Nachschlagen von Wortbedeutungen
 Comment[el]=Αναζήτηση σημασίας λέξεων

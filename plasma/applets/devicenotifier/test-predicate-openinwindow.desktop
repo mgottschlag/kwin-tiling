@@ -5,6 +5,7 @@ Actions=open;
 
 [Desktop Action open]
 Name=Open with Dolphin
+Name[bg]=Отваряне с Dolphin
 Name[ca]=Obre amb el Dolphin
 Name[csb]=Òtemkni w Dolphinie
 Name[de]=Mit Dolphin öffnen

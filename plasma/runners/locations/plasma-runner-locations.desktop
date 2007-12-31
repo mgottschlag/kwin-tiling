@@ -1,9 +1,11 @@
 [Desktop Entry]
 Name=Locations runner
+Name[bg]=Местоположения
 Name[ca]=Execució d'ubicacions
 Name[de]=Orte anzeigen
 Name[el]=Άνοιγμα τοποθεσιών
 Name[eo]=Lanĉilo de aplikaĵoj
+Name[es]=Motor de localizaciones
 Name[et]=Asukohtade käivitaja
 Name[ga]=Feidhmitheoir suíomh
 Name[ja]=場所 Runner
@@ -26,10 +28,12 @@ Name[x-test]=xxLocations runnerxx
 Name[zh_CN]=位置运行器
 Name[zh_TW]=位置執行者
 Comment=File and URL opener
+Comment[bg]=Отваряне на файлове и адреси
 Comment[ca]=Obre fitxers i URL
 Comment[de]=Öffnet Dateien und Adressen
 Comment[el]=Άνοιγμα αρχείων και URL
 Comment[eo]=Malfermas dosierojn kaj adresojn
+Comment[es]=Visor de ficheros y URL
 Comment[et]=Faili ja URL-i avaja
 Comment[ga]=Osclóir Comhad agus URLanna
 Comment[is]=Skráa og slóða opnun

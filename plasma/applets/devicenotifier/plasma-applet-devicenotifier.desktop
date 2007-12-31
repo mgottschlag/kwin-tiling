@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=New Device Notifier
+Name[bg]=Уведомяване за нови устройства
 Name[ca]=Notificador de dispositiu nou
 Name[csb]=Mònitór nowich ùrządzeniów
 Name[de]=Geräteüberwachung
@@ -84,10 +85,12 @@ X-KDE-PluginInfo-Name=notifier
 X-KDE-PluginInfo-Version=pre0.1
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Category=System Information
+X-KDE-PluginInfo-Category[bg]=Информация за системата
 X-KDE-PluginInfo-Category[ca]=Informació del sistema
 X-KDE-PluginInfo-Category[de]=Systeminformationen
 X-KDE-PluginInfo-Category[el]=Πληροφορίες συστήματος
 X-KDE-PluginInfo-Category[eo]=Sisteminformoj
+X-KDE-PluginInfo-Category[es]=Información del sistema
 X-KDE-PluginInfo-Category[et]=Süsteemi info
 X-KDE-PluginInfo-Category[ga]=Eolas faoin Chóras
 X-KDE-PluginInfo-Category[hu]=Rendszerinformáció

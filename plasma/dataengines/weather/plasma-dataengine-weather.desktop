@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Weather Data Engine
+Name[bg]=Време
 Name[ca]=Motor de dades meteorològiques
 Name[csb]=Czérownik ùsłëżnotów wiodra
 Name[de]=Wetterdienst-Treiber
@@ -38,6 +39,7 @@ Name[x-test]=xxWeather Data Enginexx
 Name[zh_CN]=天气数据引擎
 Name[zh_TW]=天氣資料引擎
 Comment=Weather data for Plasmoids
+Comment[bg]=Време (Plasmoids)
 Comment[ca]=Dades meteorològiques pels plasmoides
 Comment[csb]=Czérownik ùsłëżnotów wiodra dlô plazmoidów
 Comment[de]=Wetterdienst-Daten für Plasmoide

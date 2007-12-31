@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Digital Clock
 Name[be]=Лічбавы гадзіннік
+Name[bg]=Цифров часовник
 Name[ca]=Rellotge digital
 Name[csb]=Cëfrowi zédżer
 Name[de]=Digitale Uhr
@@ -44,10 +45,12 @@ Name[zh_CN]=数字钟
 Name[zh_TW]=數位時鐘
 
 Comment=A simple digital clock
+Comment[bg]=Обикновен цифров часовник
 Comment[ca]=Un rellotge digital senzill
 Comment[de]=Eine einfache digitale Uhr
 Comment[el]=Ένα απλό ψηφιακό ρολόι
 Comment[eo]=Simpla cifereca horloĝo
+Comment[es]=Un reloj digital sencillo
 Comment[et]=Lihtne digikell
 Comment[ga]=Clog simplí digiteach
 Comment[ja]=シンプルなデジタル時計
@@ -82,10 +85,12 @@ X-KDE-PluginInfo-Name=digital-clock
 X-KDE-PluginInfo-Version=0.0.1
 X-KDE-PluginInfo-Website=http://www.ruphy.org/
 X-KDE-PluginInfo-Category=Date and Time
+X-KDE-PluginInfo-Category[bg]=Дата и час
 X-KDE-PluginInfo-Category[ca]=Data i hora
 X-KDE-PluginInfo-Category[de]=Datum und Zeit
 X-KDE-PluginInfo-Category[el]=Ημερομηνία και ώρα
 X-KDE-PluginInfo-Category[eo]=Dato kaj Tempo
+X-KDE-PluginInfo-Category[es]=Fecha y hora
 X-KDE-PluginInfo-Category[et]=Kuupäev ja kellaaeg
 X-KDE-PluginInfo-Category[ga]=Dáta agus Am
 X-KDE-PluginInfo-Category[hu]=Dátum és idő

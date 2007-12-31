@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Mouse Data Engine
+Name[bg]=Мишка
 Name[ca]=Motor de dades del ratolí
 Name[csb]=Czérownik pòdôwków mëszë
 Name[de]=Mausdaten-Treiber
@@ -37,6 +38,7 @@ Name[x-test]=xxMouse Data Enginexx
 Name[zh_CN]=鼠标数据引擎
 Name[zh_TW]=滑鼠資料引擎
 Comment=Mouse data for Plasmoids
+Comment[bg]=Данни за мишка (Plasmoids)
 Comment[ca]=Dades del ratolí pels plasmoides
 Comment[csb]=Czérownik pòdôwków mëszë dlô plazmoidów
 Comment[de]=Mausdaten für Plasmoide

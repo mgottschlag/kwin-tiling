@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Application Launcher Menu
+Name[bg]=Стартиране на програми
 Name[ca]=Menú de l'engegador d'aplicacions
 Name[csb]=Menu zrëszôcza programów
 Name[de]=K-Menü (traditionell)
@@ -77,10 +78,12 @@ X-KDE-PluginInfo-Name=simplelauncher
 X-KDE-PluginInfo-Version=0.1
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Category=Application Launchers
+X-KDE-PluginInfo-Category[bg]=Стартиране на програми
 X-KDE-PluginInfo-Category[ca]=Engegadors d'aplicacions
 X-KDE-PluginInfo-Category[de]=Programmstarter
 X-KDE-PluginInfo-Category[el]=Εκτέλεση εφαρμογών
 X-KDE-PluginInfo-Category[eo]=Aplikaĵolanĉiloj
+X-KDE-PluginInfo-Category[es]=Lanzador de aplicaciones
 X-KDE-PluginInfo-Category[et]=Rakenduste käivitajad
 X-KDE-PluginInfo-Category[ga]=Tosaitheoirí Feidhmchlár
 X-KDE-PluginInfo-Category[hu]=Programindítók

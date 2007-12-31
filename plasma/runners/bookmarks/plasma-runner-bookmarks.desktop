@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Bookmark Runner
+Name[bg]=Отметки
 Name[ca]=Execució de preferits
 Name[csb]=Zrëszôcz załóżków
 Name[de]=Lesezeichen aufrufen
@@ -34,6 +35,7 @@ Name[x-test]=xxBookmark Runnerxx
 Name[zh_CN]=书签运行器
 Name[zh_TW]=書籤執行者
 Comment=Open bookmark
+Comment[bg]=Отваряне на отметка
 Comment[ca]=Obre un punts
 Comment[csb]=Òtemkni załóżczi
 Comment[de]=Lesezeichen aufrufen

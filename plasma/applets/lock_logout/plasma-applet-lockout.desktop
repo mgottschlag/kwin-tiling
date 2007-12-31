@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Lock/Logout
+Name[bg]=Заключване и изход
 Name[ca]=Bloqueja/surt
 Name[csb]=Blokòwanié ekranu/Wëlogòwanié
 Name[de]=Bildschirmsperre und Abmeldung aus KDE
@@ -40,6 +41,7 @@ Name[x-test]=xxLock/Logoutxx
 Name[zh_CN]=锁定/注销
 Name[zh_TW]=鎖定/登出
 Comment=Let user lock screen or end session
+Comment[bg]=Заключване на екрана и завършване на сесията
 Comment[ca]=Permet a l'usuari bloquejar la pantalla o sortir de la sessió
 Comment[csb]=Blokùje ekran abò wëlogòwùje z KDE
 Comment[de]=Sperrt den Bildschirm oder meldet die KDE-Sitzung ab
@@ -88,10 +90,12 @@ X-KDE-PluginInfo-Name=lockout
 X-KDE-PluginInfo-Version=pre0.1
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Category=System Information
+X-KDE-PluginInfo-Category[bg]=Информация за системата
 X-KDE-PluginInfo-Category[ca]=Informació del sistema
 X-KDE-PluginInfo-Category[de]=Systeminformationen
 X-KDE-PluginInfo-Category[el]=Πληροφορίες συστήματος
 X-KDE-PluginInfo-Category[eo]=Sisteminformoj
+X-KDE-PluginInfo-Category[es]=Información del sistema
 X-KDE-PluginInfo-Category[et]=Süsteemi info
 X-KDE-PluginInfo-Category[ga]=Eolas faoin Chóras
 X-KDE-PluginInfo-Category[hu]=Rendszerinformáció

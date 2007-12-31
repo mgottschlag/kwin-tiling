@@ -2,6 +2,7 @@
 Name=Time Data Engine
 Name[ar]=محرك بيانات الوقت
 Name[be]=Рухавік дадзеных Time
+Name[bg]=Време
 Name[ca]=Motor de dades d'hora
 Name[csb]=Czérownik czasu ë datuma
 Name[de]=Zeitdaten-Treiber
@@ -44,7 +45,7 @@ Name[x-test]=xxTime Data Enginexx
 Name[zh_CN]=时间数据引擎
 Name[zh_TW]=時間資料引擎
 Comment=Time data for Plasmoids
-Comment[bg]=Време за Plasmoids
+Comment[bg]=Време (Plasmoids)
 Comment[ca]=Dades d'hora pels plasmoides
 Comment[csb]=Czérownik czasu ë datuma dlô plazmoidów
 Comment[de]=Zeitdaten für Plasmoide

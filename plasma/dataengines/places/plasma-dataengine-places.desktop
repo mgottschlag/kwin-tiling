@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Places Data Engine
+Name[bg]=Места
 Name[ca]=Motor de dades de llocs
 Name[de]=Daten-Treiber für Orte
 Name[el]=Μηχανή δεδομένων τοποθεσιών
@@ -36,6 +37,7 @@ Name[x-test]=xxPlaces Data Enginexx
 Name[zh_CN]=位置数据引擎
 Name[zh_TW]=Places 資料引擎
 Comment=Places data for Plasmoids
+Comment[bg]=Места за Plasmoids
 Comment[ca]=Dades de llocs pels plasmoides
 Comment[de]="Orte" für Plasmoide
 Comment[el]=Δεδομένα τοποθεσιών για πλασμοειδή

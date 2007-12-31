@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Environment Canada
+Name[bg]=Околна среда в Канада
 Name[ca]=Medi ambient del Canadà
 Name[el]=Περιβάλλον Καναδά
 Name[es]=Medioambiente de Canada
@@ -17,6 +18,7 @@ Name[wa]=Evironmint Canade
 Name[x-test]=xxEnvironment Canadaxx
 Name[zh_CN]=加拿大环境
 Comment=XML Data from Environment Canada
+Comment[bg]=XML данни за околната среда в Канада
 Comment[ca]=Dades XML des de Medi ambient del Canadà
 Comment[de]=XML-Daten von Environment Canada
 Comment[el]=Δεδομένα XML για το περιβάλλον του Καναδά

@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=File and Directory Browser Engine
+Name[bg]=Файлов браузър
 Name[ca]=Motor fullejador de fitxers i directoris
 Name[de]=Datei- und Ordnerbrowser
 Name[el]=Μηχανή περιήγησης αρχείων και φακέλων
@@ -36,6 +37,7 @@ Name[x-test]=xxFile and Directory Browser Enginexx
 Name[zh_CN]=文件和目录浏览器引擎
 Name[zh_TW]=檔案與目錄瀏覽器引擎
 Comment=Info about files and directories for Plasmoids
+Comment[bg]=Информация за файлове и директории (Plasmoids)
 Comment[ca]=Informació quant a fitxers i directoris pels plasmoides
 Comment[de]=Informationen über Dateien und Ordner für Plasmoide
 Comment[el]=Πληροφορίες για αρχεία και καταλόγους για πλασμοειδή
