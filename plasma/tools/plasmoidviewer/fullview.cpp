@@ -89,14 +89,15 @@ void FullView::resizeEvent(QResizeEvent *event)
 
     // The applet always keeps its aspect ratio, so let's respect it.
     float ratio = event->oldSize().width() / event->oldSize().height();
-    int newPossibleWidth = size().height()*ratio;
-    int newWidth, newHeight;
+    float newPossibleWidth = size().height()*ratio;
+    int newWidth;
+    int newHeight;
     if (newPossibleWidth > size().width()) {
-        newHeight = size().width()/ratio;
-        newWidth = newHeight*ratio;
+        newHeight = (int)(size().width()/ratio);
+        newWidth = (int)(newHeight*ratio);
     } else {
-        newWidth = newPossibleWidth;
-        newHeight = newWidth/ratio;
+        newWidth = (int)newPossibleWidth;
+        newHeight = (int)(newWidth/ratio);
     }
     m_containment->resize(QSize(newWidth, newHeight));
     m_applet->setGeometry(QRectF(QPoint(0, 0), QSize(newWidth, newHeight)));
