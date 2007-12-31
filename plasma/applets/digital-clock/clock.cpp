@@ -280,17 +280,35 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         if (m_showDate || m_showTimezone) {
             QString dateString;
             if (m_showDate) {
-                dateString = m_date.toString("d MMM");
+                QString day = m_date.toString("d");
+                QString month = m_date.toString("MMM");
+                if (m_showYear) {
+                    QString year = m_date.toString("yyyy");
+                    dateString = i18nc("@label Short date: "
+                                       "%1 day in the month, %2 short month name, %3 year",
+                                       "%1 %2 %3", day, month, year);
+                }
+                else {
+                    dateString = i18nc("@label Short date: "
+                                       "%1 day in the month, %2 short month name",
+                                       "%1 %2", day, month);
+                }
                 if (m_showDay) {
                     QString weekday = QDate::shortDayName(m_date.dayOfWeek());
-                    dateString = weekday + ", "  + dateString;
+                    dateString = i18nc("@label Day of the week with date: "
+                                       "%1 short day name, %2 short date",
+                                       "%1, %2", weekday, dateString);
                 }
-                if (m_showYear) {
-                    dateString = dateString + m_date.toString(" yyyy");
+                if (m_showTimezone) {
+                    QString timezone = m_prettyTimezone;
+                    timezone.replace("_", " ");
+                    dateString = i18nc("@label Date with timezone: "
+                                       "%1 day of the week with date, %2 timezone",
+                                       "%1 %2", dateString, timezone);
                 }
             }
-            if (m_showTimezone) {
-                dateString = dateString + " " + m_prettyTimezone;
+            else if (m_showTimezone) {
+                dateString = m_prettyTimezone;
                 dateString.replace("_", " ");
             }
 
@@ -318,10 +336,16 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                                 (contentsRect.height()));
         }
         QString timeString;
+        // FIXME: 12/24-hr distinction makes no sense in many languages.
+        // Instead, possibly do this: use KLocale's formatTime() by default,
+        // with a checkbox "Custom time format" which would allow editing
+        // the KLocale time format string.
         if (m_twentyFour) {
-            timeString = m_time.toString("hh:mm");
+            // i18n: See http://doc.trolltech.com/4.3/qtime.html#toString
+            // for possible format expressions.
+            timeString = m_time.toString(i18nc("@item 24-hr clock format", "hh:mm"));
         } else {
-            timeString = m_time.toString("h:mm AP");
+            timeString = m_time.toString(i18nc("@item 12-hr clock format", "h:mm AP"));
         }
 
         m_plainClockFont.setBold(m_plainClockFontBold);

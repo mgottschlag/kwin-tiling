@@ -36,6 +36,10 @@ TimeEngine::TimeEngine(QObject* parent, const QVariantList& args)
 {
     Q_UNUSED(args)
     setMinimumUpdateInterval(333);
+
+    // To have translated timezone names
+    // (effectively a noop if the catalog is already present).
+    KGlobal::locale()->insertCatalog("timezones4");
 }
 
 TimeEngine::~TimeEngine()
@@ -73,8 +77,9 @@ bool TimeEngine::updateSource(const QString &tz)
         timezone = tz;
     }
 
-    setData(tz, I18N_NOOP("Timezone"), timezone);
-    QStringList tzParts = timezone.split("/");
+    QString trTimezone = i18n(timezone.toUtf8());
+    setData(tz, I18N_NOOP("Timezone"), trTimezone);
+    QStringList tzParts = trTimezone.split("/");
     setData(tz, I18N_NOOP("Timezone Continent"), tzParts.takeFirst());
     setData(tz, I18N_NOOP("Timezone City"), tzParts.takeFirst());
 
