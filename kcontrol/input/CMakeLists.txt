@@ -60,7 +60,7 @@ kde4_add_ui_files(kcm_input_PART_SRCS kmousedlg.ui logitechmouse_base.ui )
 kde4_add_plugin(kcm_input ${kcm_input_PART_SRCS})
 
 
-target_link_libraries(kcm_input ${KDE4_KIO_LIBS})
+target_link_libraries(kcm_input ${KDE4_KDE3SUPPORT_LIBS})
 if (LIBUSB_FOUND)
    target_link_libraries(kcm_input ${LIBUSB_LIBRARIES})
 endif (LIBUSB_FOUND)
