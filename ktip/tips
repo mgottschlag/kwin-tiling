@@ -10,7 +10,7 @@ also useful sites for major applications like
 </P>
 <br>
 <center>
-<img src="crystalsvg/48x48/filesystems/desktop.png">
+<img src="oxygen/48x48/places/user-desktop.png">
 </center>
 </html>
 </tip>
@@ -26,7 +26,7 @@ href="http://l10n.kde.org/">http://l10n.kde.org</a>.
 </p>
 <br>
 <center>
-<img src="crystalsvg/48x48/apps/locale.png">
+<img src="oxygen/48x48/apps/preferences-desktop-locale.png">
 </center>
 </html>
 </tip>
@@ -72,7 +72,7 @@ a look at <a href="help:/khelpcenter/userguide/windows-how-to-work.html">the KDE
 <p>
 You can cycle through the windows on a virtual desktop by holding the
 Alt key and pressing Tab or Shift+Tab.</p><br>
-<center><img src="oxygen/48x48/apps/kcmkwm.png"></center></p>
+<center><img src="oxygen/48x48/places/user-desktop.png"></center></p>
 
 <p>For more information, see 
 <a href="help:/khelpcenter/userguide/windows-how-to-work.html">the KDE
@@ -157,7 +157,7 @@ href="help:/khelpcenter/userguide/getting-help.html">the KDE User
 Guide</a>.</p>
 
 <br>
-<center><img src="oxygen/48x48/apps/khelpcenter.png"></center>
+<center><img src="oxygen/48x48/actions/help-contents.png"></center>
 </html>
 </tip>
 
@@ -176,7 +176,7 @@ the remaining buttons.</P>
 If you need to kill some time, KDE comes with an extensive collection
 of games.</p><br>
 <center>
-<img src="crystalsvg/48x48/apps/package_games.png">
+<img src="oxygen/48x48/categories/applications-games.png">
 </html>
 </tip>
 
@@ -190,7 +190,7 @@ If you know its name, you can <strong>execute any program</strong> by pressing
 and entering the program name in the command-line window provided.<p>
 <br>
 <center>
-<img src="oxygen/48x48/apps/kmenu.png">
+<img src="oxygen/48x48/apps/kde.png">
 </html>
 </tip>
 
@@ -202,7 +202,7 @@ You can <strong>browse any URL</strong> by pressing
 command-line window provided.
 </p><br>
 <center>
-<img src="oxygen/48x48/filesystems/network.png">
+<img src="oxygen/48x48/places/network-workgroup.png">
 </html>
 </tip>
 
