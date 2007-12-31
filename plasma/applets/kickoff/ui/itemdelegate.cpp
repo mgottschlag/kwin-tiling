@@ -91,8 +91,11 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
         QFontMetrics titleMetrics(titleFont);
         QFontMetrics subTitleMetrics(subTitleFont);
         QRect textAreaRect = contentRect;
-        qreal actualTextWidth = qMax(titleMetrics.width(titleText), subTitleMetrics.width(subTitleText));
-        textAreaRect.adjust(decorationRect.width() + ICON_TEXT_MARGIN - 3, 0, -(titleRect.width() - actualTextWidth) + 3, 1);
+        int actualTextWidth = qMax(titleMetrics.width(titleText), subTitleMetrics.width(subTitleText));
+        textAreaRect.adjust(decorationRect.width() + ICON_TEXT_MARGIN - 3,
+                            0,
+                            -(titleRect.width() - actualTextWidth) + 3,
+                            1);
         // use a slightly translucent version of the palette's highlight color
         // for the background
         backgroundColor.setAlphaF(0.5);

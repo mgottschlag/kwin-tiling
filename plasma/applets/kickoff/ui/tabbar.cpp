@@ -97,7 +97,7 @@ void TabBar::paintEvent(QPaintEvent *event)
         }
 
         if (m_animStates[i] > 0) {
-            bgColor.setAlpha((m_animStates[i] / qreal(m_animator.endFrame())) * 255.0);
+            bgColor.setAlphaF(m_animStates[i] / qreal(m_animator.endFrame()));
             bgBrush.setColor(bgColor);
             painter.fillRect(tabRect(i), bgBrush);
         }
@@ -106,7 +106,7 @@ void TabBar::paintEvent(QPaintEvent *event)
         QFontMetrics metrics(painter.font());
         int textHeight = metrics.height();
         QRect iconRect = rect;
-        int delta = m_animStates[i] / qreal(m_animator.endFrame()) * 4;
+        int delta = m_animStates[i] / m_animator.endFrame() * 4;
         iconRect.setBottom(iconRect.bottom()-textHeight);
         iconRect.adjust(0, -delta, 0, -delta);
         tabIcon(i).paint(&painter,iconRect);

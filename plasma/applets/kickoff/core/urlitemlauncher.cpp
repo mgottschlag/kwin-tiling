@@ -128,6 +128,8 @@ bool UrlItemLauncher::openUrl(const QString& url)
 
 void UrlItemLauncher::onSetupDone(Solid::ErrorType error, QVariant errorData, const QString &udi)
 {
+    Q_UNUSED(errorData);
+
     if (error!=Solid::NoError) {
         return;
     }
