@@ -110,8 +110,8 @@ install(TARGETS kdmctl DESTINATION ${BIN_INSTALL_DIR})
 build_confci()
 
 ## use 'GENKDMCONF_FLAGS=... make install' to override
+set(KDM_PATH "$ENV{DESTDIR}${CONFIG_INSTALL_DIR}/kdm")
+set(FACE_SRC_PATH "${CMAKE_CURRENT_SOURCE_DIR}/pics")
 install(CODE "
-set(KDM_PATH \"\$ENV{DESTDIR}${CONFIG_INSTALL_DIR}/kdm\")
-set(FACE_SRC_PATH \"${CMAKE_CURRENT_SOURCE_DIR}/pics\")
-exec_program(\"${CMAKE_CURRENT_BINARY_DIR}/genkdmconf\" ARGS --in '\${KDM_PATH}' --no-in-notice --face-src '\${FACE_SRC_PATH}' \$GENKDMCONF_FLAGS)
+exec_program(\"${CMAKE_CURRENT_BINARY_DIR}/genkdmconf\" ARGS --in '${KDM_PATH}' --no-in-notice --face-src '${FACE_SRC_PATH}' \$GENKDMCONF_FLAGS)
 ")
