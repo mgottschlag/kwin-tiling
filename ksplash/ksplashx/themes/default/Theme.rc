@@ -1,9 +1,9 @@
 [KSplash Theme: Default]
-Name = KDE 3.5 Splash Screen
-Description = Waves of change
+Name = KDE 4.0 Splash Screen
+Description = Nice, powerful and stylish Oxygen Splash Screen.
 Version = 1.0
-Author = Danny Allen <danny@dannyallen.co.uk>
-Homepage = http://www.kde-edu.org
+Author = Riccardo Iaconelli <riccardo@kde.org>
+Homepage = http://www.ruphy.org
 
 # Theme behaviour settings.
 Engine = KSplashX
