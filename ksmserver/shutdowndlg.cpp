@@ -362,14 +362,30 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     QLabel *versionLabel = new QLabel(this);
 
+    int vmajor, vminor, vbugfix;
 #if 0 // enable after feature freeze, needs more testing
     QString version = QString(KDE_VERSION_STRING);
     int start = version.lastIndexOf('(');
     if (start != -1)
         version = version.mid(start + 1, version.length() - start - 2);
-    versionLabel->setText("<font color='" + QString(FONTCOLOR) + "'>" + version + "</font>");
+    // Parse major/minor/bugfix numbers; set bugfix to -1 if not present.
+    // ...
+#else
+    vmajor = 4;
+    vminor = 0;
+    vbugfix = -1;
 #endif
-    versionLabel->setText("<font color='" + QString(FONTCOLOR) + "'>KDE 4.0</font>");
+    QString vcomposed;
+    if (vbugfix >= 0) {
+        // Placeholders tagged <numid> to avoid treatment as amounts.
+        vcomposed = i18nc("@label In corner of the logout dialog",
+                          "KDE <numid>%1.%2.%3</numid>", vmajor, vminor, vbugfix);
+    }
+    else {
+        vcomposed = i18nc("@label In corner of the logout dialog",
+                          "KDE <numid>%1.%2</numid>", vmajor, vminor);
+    }
+    versionLabel->setText("<font color='" + QString(FONTCOLOR) + "'>" + vcomposed + "</font>");
     versionLabel->setFont(fnt);
 
     KUser userInformation;
