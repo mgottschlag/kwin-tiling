@@ -30,6 +30,7 @@
 CalculatorRunner::CalculatorRunner( QObject* parent, const QVariantList &args )
     : Plasma::AbstractRunner(parent)
 {
+    KGlobal::locale()->insertCatalog("krunner_calculatorrunner");
     Q_UNUSED(args)
 
     setObjectName(i18n("Calculator"));

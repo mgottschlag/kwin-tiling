@@ -40,6 +40,7 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
     : Plasma::AbstractRunner(parent),
       m_type(Plasma::SearchContext::UnknownType)
 {
+    KGlobal::locale()->insertCatalog("krunner_webshortcutsrunner");
     Q_UNUSED(args);
     // set the name shown after the result in krunner window
     setObjectName(i18n("Web Shortcut"));

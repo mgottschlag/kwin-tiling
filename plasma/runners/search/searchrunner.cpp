@@ -28,6 +28,7 @@
 SearchRunner::SearchRunner( QObject* parent, const QVariantList &args )
     : Plasma::AbstractRunner( parent )
 {
+    KGlobal::locale()->insertCatalog("krunner_searchrunner");
     Q_UNUSED( args );
     setObjectName( i18n( "Search" ) );
     setSpeed(AbstractRunner::SlowSpeed);
