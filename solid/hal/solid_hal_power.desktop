@@ -3,6 +3,7 @@ Type=Service
 X-KDE-ServiceTypes=SolidPowerManager
 X-KDE-Library=solid_hal_power
 InitialPreference=100
+Icon=preferences-system-power-management
 Name=HAL-Power
 Name[ar]=طاقة HAL
 Name[de]=HAL-Energieverwaltung
