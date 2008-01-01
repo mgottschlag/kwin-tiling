@@ -43,6 +43,13 @@ int DefaultAnimator::framesPerSecond(Plasma::Phase::Animation animation)
     }
 }
 
+int DefaultAnimator::framesPerSecond(Plasma::Phase::Movement movement)
+{
+    // not making this explecit confuses some compilers as the three framesPerSecond method signatures
+    // are too vague, resulting in unintended hiding of methods
+    return Plasma::Animator::framesPerSecond(movement);
+}
+
 int DefaultAnimator::framesPerSecond(Plasma::Phase::ElementAnimation animation)
 {
     switch (animation) {
@@ -83,7 +90,7 @@ void DefaultAnimator::disappear(qreal progress, QGraphicsItem* item)
 
 QPixmap DefaultAnimator::elementAppear(qreal progress, const QPixmap& pixmap)
 {
-    //kDebug() << "DefaultAnimator::elementAppear(" << progress <<  ")";
+    //kDebug() << progress;
     QPixmap pix = pixmap;
 
     if (progress < 1) {
@@ -102,7 +109,7 @@ QPixmap DefaultAnimator::elementAppear(qreal progress, const QPixmap& pixmap)
 
 QPixmap DefaultAnimator::elementDisappear(qreal progress, const QPixmap& pixmap)
 {
-    //kDebug() << "DefaultAnimator::elementDisappear(" << progress <<  ")";
+    //kDebug() << progress;
     QPixmap pix = pixmap;
 
     if (progress > 0) {

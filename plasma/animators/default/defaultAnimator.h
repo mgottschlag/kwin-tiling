@@ -30,6 +30,7 @@ public:
     explicit DefaultAnimator(QObject *parent = 0, const QVariantList& list = QVariantList());
 
     int framesPerSecond(Plasma::Phase::Animation animation);
+    int framesPerSecond(Plasma::Phase::Movement movement);
     int framesPerSecond(Plasma::Phase::ElementAnimation animation);
 
     void appear(qreal progress, QGraphicsItem* item);
