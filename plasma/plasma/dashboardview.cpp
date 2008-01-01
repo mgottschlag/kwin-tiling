@@ -60,9 +60,7 @@ DashboardView::DashboardView(int screen, QWidget *parent)
 
     connect(scene(), SIGNAL(launchActivated()), SLOT(hideView()));
     connect(containment(), SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
-    Plasma::PushButton *tool = new Plasma::PushButton(i18n("Hide Dashboard"));
-    tool->resize(tool->sizeHint());
-    containment()->addToolBoxTool(tool, "hideDashboard");
+    Plasma::Widget *tool = containment()->addToolBoxTool("hideDashboard", "preferences-desktop-display", i18n("Hide Dashboard"));
     containment()->enableToolBoxTool("hideDashboard", false);
     connect(tool, SIGNAL(clicked()), this, SLOT(hideView()));
 }
