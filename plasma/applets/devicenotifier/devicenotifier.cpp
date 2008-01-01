@@ -426,7 +426,7 @@ void DeviceNotifier::configAccepted()
     cg.writeEntry("TimeDisplayed", m_displayTime);
     cg.writeEntry("NumberItems", m_numberItems);
     cg.writeEntry("ItemsValidity", m_itemsValidity);
-    cg.config()->sync();
+    emit configNeedsSaving();
 }
 
 void DeviceNotifier::slotOnItemClicked(const QModelIndex & index)

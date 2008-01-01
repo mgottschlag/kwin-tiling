@@ -180,7 +180,7 @@ void Clock::configAccepted()
 
     connectToEngine();
     constraintsUpdated(Plasma::AllConstraints);
-    cg.config()->sync();
+    emit configNeedsSaving();
 }
 
 Clock::~Clock()

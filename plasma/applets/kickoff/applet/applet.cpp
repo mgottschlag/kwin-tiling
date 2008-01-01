@@ -148,7 +148,7 @@ void LauncherApplet::configAccepted()
     KConfigGroup cg = config();
     cg.writeEntry("SwitchTabsOnHover",d->switchTabsOnHover);
     cg.writeEntry("VisibleItemsCount",d->visibleItemsCount);
-    cg.config()->sync();
+    emit configNeedsSaving();
 
     if (d->launcher) {
         d->launcher->setSwitchTabsOnHover(d->switchTabsOnHover);

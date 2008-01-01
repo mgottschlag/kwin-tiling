@@ -173,7 +173,7 @@ void MenuLauncherApplet::configAccepted()
     cg.writeEntry("showLeaveSwitchUser", d->showLeaveSwitchUser);
     cg.writeEntry("showLeaveLock", d->showLeaveLock);
     cg.writeEntry("showLeaveLogout", d->showLeaveLogout);
-    cg.config()->sync();
+    emit configNeedsSaving();
 
     delete d->menuview;
     d->menuview = 0;

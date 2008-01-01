@@ -229,7 +229,7 @@ void Battery::configAccepted()
 
     //constraintsUpdated(Plasma::AllConstraints);
     update();
-    cg.config()->sync();
+    emit configNeedsSaving();
 }
 
 void Battery::hoverEnterEvent(QGraphicsSceneHoverEvent *event)

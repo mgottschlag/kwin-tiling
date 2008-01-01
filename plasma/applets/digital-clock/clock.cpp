@@ -248,7 +248,7 @@ void Clock::configAccepted()
     cg.writeEntry("plainClockFontItalic", m_plainClockFontItalic);
 
     update();
-    cg.config()->sync();
+    emit configNeedsSaving();
 }
 
 Clock::~Clock()

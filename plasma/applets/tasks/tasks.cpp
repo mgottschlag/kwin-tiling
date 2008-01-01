@@ -210,7 +210,6 @@ void Tasks::showConfigurationInterface()
 
 void Tasks::configAccepted()
 {
-    KConfigGroup cg = config();
     if (_showTooltip != (ui.showTooltip->checkState() == Qt::Checked)) {
         _showTooltip = !_showTooltip;
         foreach (AbstractTaskItem *taskItem, _windowTaskItems) {
@@ -220,8 +219,10 @@ void Tasks::configAccepted()
             }
         }
         update();
+
+        KConfigGroup cg = config();
         cg.writeEntry("showTooltip", _showTooltip);
-        cg.config()->sync();
+        emit configNeedsSaving();
     }
 }
 
