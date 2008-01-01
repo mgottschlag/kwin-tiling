@@ -442,7 +442,7 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
     connect( widget->chkEnableSticky, SIGNAL(toggled(bool)), this, SLOT(changed()));
 #endif
 
-    KIcon clearIcon = qApp->isLeftToRight() ? KIcon("edit-clear-locationbar-rtl") : KIcon("edit-clear-locationbar");
+    KIcon clearIcon = qApp->isLeftToRight() ? KIcon("edit-clear-locationbar-rtl") : KIcon("edit-clear-locationbar-ltr");
     widget->xkbClearButton->setIcon(clearIcon);
     widget->xkb3dClearButton->setIcon(clearIcon);
     connect(widget->xkbClearButton, SIGNAL(clicked()), this, SLOT(clearXkbSequence()));
