@@ -37,6 +37,10 @@
 #include <Solid/Device>
 #include <Solid/StorageAccess>
 
+// Plasma
+#include <plasma/containment.h>
+#include <plasma/corona.h>
+
 // Local
 #include "core/favoritesmodel.h"
 #include "core/models.h"
@@ -46,6 +50,11 @@ using namespace Kickoff;
 class ContextMenuFactory::Private
 {
 public:
+    Private()
+      : applet(0)
+    {
+    }
+
     QAction *advancedActionsMenu(const QString& url) const
     {
        KUrl kUrl(url);
@@ -78,6 +87,7 @@ public:
     }
 
     QMap<QAbstractItemView*,QList<QAction*> > viewActions;
+    Plasma::Applet *applet;
 };
 
 ContextMenuFactory::ContextMenuFactory(QObject *parent)
@@ -120,15 +130,17 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
 
     // add to desktop
     QAction *addToDesktopAction = new QAction(this);
-    addToDesktopAction->setText(i18n("Add to Desktop"));
-    addToDesktopAction->setEnabled(false);
-    actions << addToDesktopAction;
 
     // add to main panel
     QAction *addToPanelAction = new QAction(this);
-    addToPanelAction->setText(i18n("Add to Panel"));
-    addToPanelAction->setEnabled(false);
-    actions << addToPanelAction;
+
+    if (d->applet) {
+        addToDesktopAction->setText(i18n("Add to Desktop"));
+        actions << addToDesktopAction;
+
+        addToPanelAction->setText(i18n("Add to Panel"));
+        actions << addToPanelAction;
+    }
 
     // advanced item actions
     QAction *advancedSeparator = new QAction(this);
@@ -174,6 +186,35 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
         }
     } else if (ejectAction && result == ejectAction) {
         access->teardown();
+    } else if (addToDesktopAction && result == addToDesktopAction) {
+        if (d->applet) {
+            Plasma::Containment *containment = d->applet->containment();
+            if (containment) {
+                Plasma::Corona *corona = containment->corona();
+                if (corona) {
+                    Plasma::Containment *desktop = corona->containmentForScreen(containment->screen());
+                    if (desktop) {
+                        QVariantList args;
+                        args << url;
+                        desktop->addApplet("icon", args);
+                    }
+                }
+            }
+        }
+    } else if (addToPanelAction && result == addToPanelAction) {
+        if (d->applet) {
+            // we assume that the panel is the same containment where the kickoff is located
+            Plasma::Containment *panel = d->applet->containment();
+            if (panel) {
+                QVariantList args;
+                args << url;
+
+                // move it to the middle of the panel
+                QRectF rect(panel->contentSize().width()/2, 0, 150, panel->contentSize().height());
+
+                panel->addApplet("icon", args, 0, rect);
+            }
+        }
     }
 
     delete favoriteAction;
@@ -193,6 +234,11 @@ void ContextMenuFactory::setViewActions(QAbstractItemView *view,const QList<QAct
 QList<QAction*> ContextMenuFactory::viewActions(QAbstractItemView *view) const
 {
     return d->viewActions[view];
+}
+
+void ContextMenuFactory::setApplet(Plasma::Applet *applet)
+{
+    d->applet = applet;
 }
 
 #include "contextmenufactory.moc"

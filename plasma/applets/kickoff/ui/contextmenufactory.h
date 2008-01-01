@@ -22,6 +22,9 @@
 // Qt
 #include <QAction>
 
+// Plasma
+#include <plasma/applet.h>
+
 class QAbstractItemView;
 
 namespace Kickoff
@@ -37,6 +40,8 @@ public:
 
     void setViewActions(QAbstractItemView *view,const QList<QAction*>& actions);
     QList<QAction*> viewActions(QAbstractItemView *view) const;
+
+    void setApplet(Plasma::Applet *applet);
 
 public Q_SLOTS:
     void showContextMenu(QAbstractItemView *view,const QPoint& pos); 

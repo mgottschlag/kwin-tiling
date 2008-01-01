@@ -320,6 +320,11 @@ int Launcher::visibleItemCount() const
     return d->visibleItemCount;
 }
 
+void Launcher::setApplet(Plasma::Applet *applet)
+{
+    d->contextMenuFactory->setApplet(applet);
+}
+
 Launcher::~Launcher()
 {
     delete d;

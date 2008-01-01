@@ -173,6 +173,7 @@ void LauncherApplet::toggleMenu(bool pressed)
         d->launcher->setSwitchTabsOnHover(d->switchTabsOnHover);
         d->launcher->setVisibleItemCount(d->visibleItemsCount);
         d->launcher->adjustSize();
+        d->launcher->setApplet(this);
         connect(d->launcher, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
     }
 

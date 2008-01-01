@@ -23,6 +23,9 @@
 // Qt
 #include <QWidget>
 
+// Plasma
+#include <plasma/applet.h>
+
 namespace Kickoff
 {
 
@@ -51,6 +54,9 @@ public:
     /** Specifies the number of visible items used to determinate the visible height. */
     void setVisibleItemCount(int count);
     int visibleItemCount() const;
+
+    /** Specifies the plasma applet the launcher is working on. */
+    void setApplet(Plasma::Applet *applet);
 
     // reimplemented
     virtual bool eventFilter(QObject *object, QEvent *event);
