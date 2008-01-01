@@ -289,6 +289,7 @@ void TaskGroupItem::queueGeometryUpdate()
 void TaskGroupItem::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == m_geometryUpdateTimerId) {
+        killTimer(m_geometryUpdateTimerId);
         updateGeometry();
         m_geometryUpdateTimerId = -1;
     }

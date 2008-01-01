@@ -103,6 +103,7 @@ void AbstractTaskItem::queueUpdate()
 void AbstractTaskItem::timerEvent(QTimerEvent *event)
 {
     if (event->timerId() == m_updateTimerId) {
+        killTimer(m_updateTimerId);
         update();
         m_updateTimerId = -1;
     }
