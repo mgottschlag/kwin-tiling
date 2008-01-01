@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=kcmshell4 xserver
-Icon=kcmx
+Icon=xorg
 Type=Service
 X-KDE-ServiceTypes=KCModule
 X-DocPath=kinfocenter/xserver/index.html

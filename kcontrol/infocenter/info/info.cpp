@@ -268,7 +268,7 @@ static bool GetInfo_XServer_Generic( Q3ListView *lBox )
     sorting_allowed = false;
 
     next = new Q3ListViewItem(lBox, i18n("Server Information"));
-    next->setPixmap(0, SmallIcon("kcmx"));
+    next->setPixmap(0, SmallIcon("xorg"));
     next->setOpen(true);
     next->setSelectable(false);
     next->setExpandable(false);

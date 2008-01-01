@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=kcmshell4 processor
-Icon=kcmprocessor
+Icon=cpu
 Type=Service
 X-KDE-ServiceTypes=KCModule
 X-DocPath=kinfocenter/processor/index.html

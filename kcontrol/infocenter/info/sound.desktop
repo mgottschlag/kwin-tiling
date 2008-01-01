@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=kcmshell4 sound
-Icon=kcmsound
+Icon=preferences-desktop-sound
 Type=Service
 X-KDE-ServiceTypes=KCModule
 X-DocPath=kinfocenter/sound/index.html
