@@ -4,6 +4,7 @@ X-KDE-ServiceTypes=SolidPowerManager
 X-KDE-Library=solid_hal_power
 InitialPreference=100
 Name=HAL-Power
+Name[ar]=طاقة HAL
 Name[de]=HAL-Energieverwaltung
 Name[fi]=HAL Power
 Name[ga]=Cumhacht HAL

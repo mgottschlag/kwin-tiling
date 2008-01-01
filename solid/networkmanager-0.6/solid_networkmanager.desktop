@@ -36,6 +36,7 @@ Name[x-test]=xxNetworkManagerxx
 Name[zh_CN]=网络管理器
 Name[zh_TW]=網路管理員
 Comment=Network management using the NetworkManager daemon
+Comment[ar]=إدارة الشبكة باستعمال رقيب NetworkManager
 Comment[be]=Кіраванне сеткай пры дапамозе сервіса NetworkManager
 Comment[bg]=Управление на мрежата с демона NetworkManager
 Comment[ca]=Gestor de xarxes que usa el dimoni NetworkManager
