@@ -485,3 +485,6 @@ void Launcher::paintEvent(QPaintEvent*)
     p.setPen(QPen(palette().mid(), 0));
     p.drawRect(rect().adjusted(0, 0, -1, -1));
 }
+
+#include "launcher.moc"
+
