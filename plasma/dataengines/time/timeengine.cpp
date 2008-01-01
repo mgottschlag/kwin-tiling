@@ -80,8 +80,9 @@ bool TimeEngine::updateSource(const QString &tz)
     QString trTimezone = i18n(timezone.toUtf8());
     setData(tz, I18N_NOOP("Timezone"), trTimezone);
     QStringList tzParts = trTimezone.split("/");
-    setData(tz, I18N_NOOP("Timezone Continent"), tzParts.takeFirst());
-    setData(tz, I18N_NOOP("Timezone City"), tzParts.takeFirst());
+
+    setData(tz, I18N_NOOP("Timezone Continent"), tzParts.value(0));
+    setData(tz, I18N_NOOP("Timezone City"), tzParts.value(1));
 
     return true;
 }
