@@ -25,6 +25,8 @@
 
 #include <unistd.h>
 
+#include <QApplication>
+#include <QDesktopWidget>
 #include <QPixmapCache>
 #include <QTimer>
 #include <QtDBus/QtDBus>
@@ -124,13 +126,30 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
         setCrashHandler();
     }
 
-    // enlarge application pixmap cache
-    // TODO: make this dependand on system
-    // memory and screen resolution. 8MB is ok for caching the background up
-    // to 1600x1200 resolution
-    if (QPixmapCache::cacheLimit() < 8192) {
-        QPixmapCache::setCacheLimit(8192);
+    // Enlarge application pixmap cache
+    
+    // Calculate the size required to hold background pixmaps for all screens.
+    // Add 10% so that other (smaller) pixmaps can also be cached.
+    int cacheSize = 0;
+    QDesktopWidget *desktop = QApplication::desktop();
+    for (int i = 0; i < desktop->numScreens(); i++) {
+        QRect geometry = desktop->screenGeometry(i);
+        cacheSize += 4 * geometry.width() * geometry.height() / 1024;
     }
+    cacheSize += cacheSize / 10;
+
+    // Calculate the size of physical system memory
+    int memorySize = sysconf(_SC_PHYS_PAGES);
+    memorySize *= sysconf(_SC_PAGESIZE) / 1024;
+
+    // Increase the pixmap cache size to 1% of system memory if it isn't already
+    // larger so as to maximize cache usage. 1% of 1GB ~= 10MB.
+    if (cacheSize < memorySize / 100) {
+        cacheSize = memorySize / 100;
+    }
+
+    kDebug() << "Setting the pixmap cache size to" << cacheSize << "kilobytes";
+    QPixmapCache::setCacheLimit(cacheSize);
 
     m_root = new RootWidget();
     m_root->setAsDesktop(KCmdLineArgs::parsedArgs()->isSet("desktop"));
