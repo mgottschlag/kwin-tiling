@@ -148,13 +148,13 @@ TaskManager::TaskPtr WindowTaskItem::windowTask() const
 
 void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
 {
-    if(!KAuthorized::authorizeKAction("kwin_rmb") )
-    {
+    if (!KAuthorized::authorizeKAction("kwin_rmb") || _task.isNull()) {
+        AbstractTaskItem::contextMenuEvent(e);
         return;
     }
-    e->accept();
-    TaskManager::TaskRMBMenu menu( windowTask() );
-    menu.exec( e->screenPos() );
+
+    TaskManager::TaskRMBMenu menu(_task);
+    menu.exec(e->screenPos());
 }
 
 void WindowTaskItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
