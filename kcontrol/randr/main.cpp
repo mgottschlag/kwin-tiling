@@ -26,6 +26,7 @@
 #include <kglobal.h>
 
 #include "krandrapp.h"
+#include <KIcon>
 
 static const char krandrtrayVersion[] = "0.5";
 int main(int argc, char **argv)
@@ -46,6 +47,6 @@ int main(int argc, char **argv)
 	KCmdLineArgs::addStdCmdLineOptions();
 
 	KRandRApp app;
-
+	QApplication::setWindowIcon(KIcon("preferences-desktop-display-randr"));
 	return app.exec();
 }

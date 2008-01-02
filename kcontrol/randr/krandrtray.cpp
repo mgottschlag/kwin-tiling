@@ -42,11 +42,11 @@
 #endif
 
 KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
-: KSystemTrayIcon("randr", parent)
+: KSystemTrayIcon("preferences-desktop-display-randr", parent)
 , m_help(new KHelpMenu(parent, KGlobal::mainComponent().aboutData(), false, actionCollection()))
 , m_popupUp(false), m_display(dpy)
 {
-	setIcon(KSystemTrayIcon::loadIcon("randr"));
+	setIcon(KSystemTrayIcon::loadIcon("preferences-desktop-display-randr"));
 	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
 	this->setToolTip( i18n("Screen resize & rotate"));
 
