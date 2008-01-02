@@ -9,7 +9,7 @@ X-KDE-Init-Symbol=energy
 X-KDE-ParentApp=kcontrol
 X-KDE-Init-Phase=2
 
-X-KDE-System-Settings-Parent-Category=computer-administration
+X-KDE-System-Settings-Parent-Category=display
 
 Name=Power Control
 Name[af]=Krag Beheer

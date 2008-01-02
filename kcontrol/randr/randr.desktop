@@ -7,7 +7,7 @@ X-KDE-Library=kcm_randr
 #This is always false when kbuildsycoca runs, probably because it is now a QCoreApplication
 #Hidden[$e]=$(if xdpyinfo|grep RANDR > /dev/null; then echo "false"; else echo "true"; fi)
 
-X-KDE-System-Settings-Parent-Category=computer-administration
+X-KDE-System-Settings-Parent-Category=display
 
 Name=Size & Orientation
 Name[af]=Grootte & Ooriëntasie
