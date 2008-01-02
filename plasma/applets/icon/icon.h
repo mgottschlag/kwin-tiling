@@ -60,6 +60,11 @@ class IconApplet : public Plasma::Applet
         void propertiesDialogClosed();
 
     private:
+        //dropUrls from DolphinDropController
+        void dropUrls(const KUrl::List& urls,
+                      const KUrl& destination,
+                      Qt::KeyboardModifiers modifier);
+
         Plasma::Icon* m_icon;
         QString m_text;
         KPropertiesDialog *m_dialog;

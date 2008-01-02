@@ -20,6 +20,7 @@
 #include "icon.h"
 
 #include <QGraphicsSceneDragDropEvent>
+#include <QMimeData>
 
 #include <KDebug>
 #include <KLocale>
@@ -30,6 +31,9 @@
 #include <KSharedConfig>
 #include <KUrl>
 #include <KDesktopFile>
+#include <KShell>
+#include <KMenu>
+#include <kio/copyjob.h>
 
 #include <plasma/theme.h>
 #include <plasma/layouts/boxlayout.h>
@@ -53,7 +57,7 @@ void IconApplet::init()
 {
     KConfigGroup cg = config();
     //setMinimumSize(QSize(48,68));
-    
+
     connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
     setUrl(cg.readEntry("Url", m_url));
     setDrawStandardBackground(false);
@@ -79,8 +83,12 @@ void IconApplet::setUrl(const KUrl& url)
     if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
         KDesktopFile *f= new KDesktopFile(m_url.toLocalFile());
         m_text = f->readName();
+        //corrupted desktop file?
+        if (m_text.isNull()) {
+            m_text = m_url.fileName();
+        }
         m_icon->setIcon(f->readIcon());
-    }else{
+    } else {
         m_text = m_url.fileName();
         m_icon->setIcon(KMimeType::iconNameForUrl(url));
     }
@@ -116,8 +124,7 @@ void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::SizeConstraint) {
-        setContentSize(size());
-        m_icon->resize(size());
+        m_icon->resize(contentSize());
     }
 }
 
@@ -174,19 +181,155 @@ void IconApplet::propertiesDialogClosed()
 
 void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-    if (KUrl::List::canDecode(event->mimeData())) {
-        KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
+   if (!KUrl::List::canDecode(event->mimeData())) {
+       return;
+   }
 
-        if (urls.count() > 0) {
-            event->accept();
-            setUrl(urls.first());
+    //FIXME: this hacky workaround must go away when KUrl::List::fromMimeData(event->mimeData()); will be fixed
+    QString payload = event->mimeData()->text();
+    if (payload.isEmpty()) {
+        return;
+    }
+    KUrl::List urls(payload.split("\n"));
+
+    //if there are more than one the last is junk
+    if (urls.count() > 1) {
+        urls.removeLast();
+    }
+    //KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
+
+    if (urls.count() > 0) {
+        event->accept();
+    } else {
+        return;
+    }
+
+
+    if (m_url.isEmpty()) {
+        setUrl(urls.first());
+        constraintsUpdated(Plasma::FormFactorConstraint);
+    } else if (m_url.isLocalFile() &&
+              (m_mimetype == "application/x-executable" ||
+                m_mimetype == "application/x-shellscript" ||
+                KDesktopFile::isDesktopFile(m_url.toLocalFile()))) {
+
+        //Parameters
+        QString params;
+        foreach (KUrl url, urls) {
+            if (url.isLocalFile()) {
+                params += " " + KShell::quoteArg(url.path());
+            } else {
+                params += " " + KShell::quoteArg(url.prettyUrl());
+            }
         }
+
+        //Command
+        QString commandStr;
+        //Extract the commend from the Desktop file
+        if (KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
+            KDesktopFile *f= new KDesktopFile(m_url.toLocalFile());
+            KConfigGroup config = f->desktopGroup();
+            commandStr = config.readPathEntry( "Exec", QString() );
+        //Else just exec the local executable
+        } else {
+            commandStr = KShell::quoteArg(m_url.path());
+        }
+
+        KRun::runCommand(commandStr+" "+params, 0);
+    } else if (m_mimetype == "inode/directory") {
+        dropUrls(urls, m_url, event->modifiers());
     }
 }
 
 Qt::Orientations IconApplet::expandingDirections() const
 {
     return 0;
+}
+
+
+//dropUrls from DolphinDropController
+void IconApplet::dropUrls(const KUrl::List& urls,
+                          const KUrl& destination,
+                          Qt::KeyboardModifiers modifier)
+{
+    kDebug() << "Source" << urls;
+    kDebug() << "Destination:" << destination;
+
+    Qt::DropAction action = Qt::CopyAction;
+
+    const bool shiftPressed   = modifier & Qt::ShiftModifier;
+    const bool controlPressed = modifier & Qt::ControlModifier;
+    const bool altPressed = modifier & Qt::AltModifier;
+    if (shiftPressed && controlPressed) {
+        // shortcut for 'Link Here' is used
+        action = Qt::LinkAction;
+    } else if (shiftPressed) {
+        // shortcut for 'Move Here' is used
+        action = Qt::MoveAction;
+    } else if (controlPressed) {
+        // shortcut for 'Copy Here' is used
+        action = Qt::CopyAction;
+    } else if (altPressed) {
+        // shortcut for 'Link Here' is used
+        action = Qt::LinkAction;
+    } else {
+        // open a context menu which offers the following actions:
+        // - Move Here
+        // - Copy Here
+        // - Link Here
+        // - Cancel
+
+        KMenu popup(0);
+
+        QString seq = QKeySequence(Qt::ShiftModifier).toString();
+        seq.chop(1); // chop superfluous '+'
+        QAction* moveAction = popup.addAction(KIcon("go-jump"),
+                                              i18nc("@action:inmenu",
+                                                    "&Move Here\t<shortcut>%1</shortcut>", seq));
+
+        seq = QKeySequence(Qt::ControlModifier).toString();
+        seq.chop(1);
+        QAction* copyAction = popup.addAction(KIcon("edit-copy"),
+                                              i18nc("@action:inmenu",
+                                                    "&Copy Here\t<shortcut>%1</shortcut>", seq));
+
+        seq = QKeySequence(Qt::ControlModifier + Qt::ShiftModifier).toString();
+        seq.chop(1);
+        QAction* linkAction = popup.addAction(KIcon("insert-link"),
+                                              i18nc("@action:inmenu",
+                                                    "&Link Here\t<shortcut>%1</shortcut>", seq));
+
+        popup.addSeparator();
+        popup.addAction(KIcon("process-stop"), i18nc("@action:inmenu", "Cancel"));
+
+        QAction* activatedAction = popup.exec(QCursor::pos());
+        if (activatedAction == moveAction) {
+            action = Qt::MoveAction;
+        } else if (activatedAction == copyAction) {
+            action = Qt::CopyAction;
+        } else if (activatedAction == linkAction) {
+            action = Qt::LinkAction;
+        } else {
+            return;
+        }
+    }
+
+    switch (action) {
+    case Qt::MoveAction:
+        KIO::move(urls, destination);
+        break;
+
+    case Qt::CopyAction:
+        KIO::copy(urls, destination);
+        break;
+
+    case Qt::LinkAction:
+        KIO::link(urls, destination);
+        break;
+
+    default:
+        break;
+    }
 }
 
 #include "icon.moc"
