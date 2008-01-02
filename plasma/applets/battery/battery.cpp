@@ -162,6 +162,7 @@ QSizeF Battery::contentSizeHint() const
 
 Qt::Orientations Battery::expandingDirections() const
 {
+    // no use of additional space in any direction
     return 0;
 }
 
@@ -169,13 +170,13 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
 {
     if (source.startsWith(I18N_NOOP("Battery"))) {
         int battery_percent = data[I18N_NOOP("Percent")].toInt();
-        QString battery_percent_label = data[I18N_NOOP("Percent")].toString();
-        battery_percent_label.append("%");
-        m_batteries_data[source] = qMakePair(battery_percent, battery_percent_label);
-        kDebug() << "Applet::Battery::dataUpdated " << m_batteries_data[source].first;
+        QString battery_state = data[I18N_NOOP("State")].toString();
+        m_batteries_data[source] = qMakePair(battery_percent, battery_state);
+        kDebug() << source << "state:" << battery_state << ":" 
+                 << battery_percent << "%";
     } else if (source == I18N_NOOP("AC Adapter")) {
         m_acadapter_plugged = data[I18N_NOOP("Plugged in")].toBool();
-        kDebug() << "Applet::AC Adapter dataUpdated: " << m_acadapter_plugged;
+        kDebug() << source << "plugged:" << m_acadapter_plugged;
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
     }
@@ -443,7 +444,9 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                 // Show the charge percentage with a box
                 // on top of the battery, but only for plasmoids bigger than ....
                 if (width >= 44) {
-                    paintLabel(p, corect, it_battery_data->second);
+                    QString batteryLabel = QVariant(it_battery_data->first).toString();
+                    batteryLabel.append("%");
+                    paintLabel(p, corect, batteryLabel);
                 }
             }
             
