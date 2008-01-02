@@ -76,7 +76,7 @@ void DictEngine::getDefinition()
 
       connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(socketClosed()));
       tcpSocket->disconnectFromHost();
-      setData(currentWord, dictName, parseToHtml(ret));
+      setData(currentWord, dictName, ret);
 }
 
 
