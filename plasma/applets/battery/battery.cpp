@@ -42,7 +42,7 @@
 Battery::Battery(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_batteryStyle(0),
-      m_smallPixelSize(48),
+      m_smallPixelSize(22),
       m_theme(0),
       m_dialog(0),
       m_isHovered(0),
@@ -51,8 +51,9 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
-    setMinimumContentSize(m_smallPixelSize, m_smallPixelSize);
-    setContentSize(m_smallPixelSize, m_smallPixelSize);
+    // TODO: minimum size causes size on panel to be huge (do not use for now)
+    //setMinimumContentSize(m_smallPixelSize, m_smallPixelSize);
+    setContentSize(64, 64);
 }
 
 void Battery::init()
@@ -61,7 +62,11 @@ void Battery::init()
     m_showBatteryString = cg.readEntry("showBatteryString", false);
     m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", true);
     m_drawBackground = cg.readEntry("drawBackground", true);
-    setDrawStandardBackground(m_drawBackground);
+
+    // TODO: set background on panel causes 0 height, so do not use it
+    if (formFactor() != Plasma::Vertical && formFactor() != Plasma::Horizontal) {
+        setDrawStandardBackground(m_drawBackground);
+    }
 
     QString svgFile = QString();
     if (cg.readEntry("style", 0) == 0) {
@@ -102,14 +107,21 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint) {
         if (formFactor() == Plasma::Vertical) {
             kDebug() << "Vertical FormFactor";
+            // TODO: set background(true) on panel causes 0 height, so do not use it
+            setDrawStandardBackground(false);
         } else if (formFactor() == Plasma::Horizontal) {
             kDebug() << "Horizontal FormFactor";
+            // TODO: set background(true) on panel causes 0 height, so do not use it
+            setDrawStandardBackground(false);
         } else if (formFactor() == Plasma::Planar) {
             kDebug() << "Planar FormFactor";
+            setDrawStandardBackground(m_drawBackground);
         } else if (formFactor() == Plasma::MediaCenter) {
             kDebug() << "MediaCenter FormFactor";
+            setDrawStandardBackground(m_drawBackground);
         } else {
             kDebug() << "Other FormFactor" << formFactor();
+            setDrawStandardBackground(m_drawBackground);
         }
     }
 
@@ -117,7 +129,6 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
         kDebug() << "SizeChanged: " << contentSize();
         m_theme->resize(contentSize().toSize());
     }
-    updateGeometry();
 }
 
 QSizeF Battery::contentSizeHint() const
@@ -206,8 +217,12 @@ void Battery::configAccepted()
     cg.writeEntry("showMultipleBatteries", m_showMultipleBatteries);
 
     m_drawBackground = ui.drawBackgroundCheckBox->checkState() == Qt::Checked;
-    setDrawStandardBackground(m_drawBackground);
     cg.writeEntry("drawBackground", m_drawBackground);
+
+    // TODO: set background on panel causes 0 height, so do not use it
+    if (formFactor() != Plasma::Vertical && formFactor() != Plasma::Horizontal) {
+        setDrawStandardBackground(m_drawBackground);
+    }
 
     if (ui.styleGroup->selected() != m_batteryStyle) {
         QString svgFile = QString();
