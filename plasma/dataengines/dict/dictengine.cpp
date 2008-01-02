@@ -32,7 +32,7 @@ DictEngine::DictEngine(QObject* parent, const QVariantList& args)
 {
     Q_UNUSED(args)
     serverName="dict.org"; //In case we need to switch it later
-    dictName="gcide"; //Default, good dictionary
+    dictName="wn"; //Default, good dictionary
 }
 
 DictEngine::~DictEngine()
