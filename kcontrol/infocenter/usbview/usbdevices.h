@@ -18,7 +18,7 @@
 
 #if defined(__DragonFly__)
 #include <bus/usb/usb.h>
-#elif defined(Q_OS_FREEBSD)
+#elif defined(Q_OS_FREEBSD) || defined(Q_OS_NETBSD)
 #include <dev/usb/usb.h>
 #endif
 
@@ -67,7 +67,7 @@ private:
 
   unsigned int _vendorID, _prodID, _revMajor, _revMinor;
 
-#ifdef Q_OS_FREEBSD
+#if defined(Q_OS_FREEBSD) || defined(Q_OS_NETBSD)
   void collectData( int fd, int level, usb_device_info &di, int parent );
   QStringList _devnodes;
 #endif

@@ -24,3 +24,7 @@
 
 /* Define to 1 if you have the <Alib.h> header file. */
 #cmakedefine HAVE_ALIB_H 1
+
+/* Define to 1 if you have statvfs */
+#cmakedefine HAVE_STATVFS 1
+
