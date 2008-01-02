@@ -23,11 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Own
 #include "taskmanager.h"
-
-// Qt
-#include <QApplication>
-#include <QDesktopWidget>
-#include <QX11Info>
+#include "taskmanager_p.h"
 
 // KDE
 #include <KConfig>
@@ -35,21 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KGlobal>
 #include <KLocale>
 #include <K3StaticDeleter>
-
-#if defined(HAVE_XCOMPOSITE) && \
-    defined(HAVE_XRENDER) && \
-    defined(HAVE_XFIXES)
-#include <X11/Xlib.h>
-#include <X11/extensions/Xcomposite.h>
-#include <X11/extensions/Xfixes.h>
-#include <X11/extensions/Xrender.h>
-#include <fixx11h.h>
-#if XCOMPOSITE_VERSION >= 00200 && \
-    XFIXES_VERSION >= 20000 && \
-    (RENDER_MAJOR > 0 || RENDER_MINOR >= 6)
-#define THUMBNAILING_POSSIBLE
-#endif
-#endif
 
 namespace TaskManager
 {

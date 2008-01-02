@@ -25,13 +25,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // Own
 #include "task.h"
 #include "taskmanager.h"
+#include "taskmanager_p.h"
 
 // Qt
-#include <QApplication>
-#include <QDesktopWidget>
 #include <QMimeData>
 #include <QTimer>
-#include <QX11Info>
 
 // KDE
 #include <KIconLoader>
