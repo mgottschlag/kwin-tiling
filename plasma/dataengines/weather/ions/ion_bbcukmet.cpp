@@ -717,7 +717,7 @@ void UKMETIon::updateWeather(const QString& source)
         i++;
     }
 
-    setData(weatherSource, "Credit", "BBC / UK MET Office");
+    setData(weatherSource, "Credit", I18N_NOOP("Supported by backstage.bbc.co.uk / Data from UK MET Office"));
 }
 
 QString UKMETIon::place(const QString& source)

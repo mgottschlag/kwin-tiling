@@ -507,7 +507,7 @@ void NOAAIon::updateWeather(const QString& source)
     setData(weatherSource, "Wind Gust", dataFields["windGust"]);
     setData(weatherSource, "Wind Gust Unit", dataFields["windGustUnit"]);
     setData(weatherSource, "Wind Direction", dataFields["windDirection"]);
-    setData(weatherSource, "Credit", "NOAA National Weather Service");
+    setData(weatherSource, "Credit", I18N_NOOP("Data provided by NOAA National Weather Service"));
 }
 
 QString NOAAIon::country(const QString& source)

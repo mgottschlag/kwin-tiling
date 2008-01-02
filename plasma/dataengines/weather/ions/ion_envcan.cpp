@@ -1073,7 +1073,7 @@ void EnvCanadaIon::updateWeather(const QString& source)
     setData(weatherSource, "Record Snowfall", dataFields["recordSnow"]);
     setData(weatherSource, "Record Snowfall Unit", dataFields["recordSnowUnit"]);
 
-    setData(weatherSource, "Credit", "Environment Canada");
+    setData(weatherSource, "Credit", I18N_NOOP("Data provided by Environment Canada"));
 }
 
 QString EnvCanadaIon::country(const QString& source)
