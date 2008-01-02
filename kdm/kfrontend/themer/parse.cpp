@@ -192,9 +192,9 @@ parseColor( const QString &s, const QString &a, QColor &color )
 			return false;
 	}
 	if (!a.isEmpty()) {
-		qreal fltAlpha = a.toFloat( &ok );
+		float fltAlpha = a.toFloat( &ok );
 		if (ok)
-			color.setAlphaF(fltAlpha);
+			color.setAlphaF( fltAlpha );
 	}
 	return ok;
 }
