@@ -42,6 +42,7 @@
 Battery::Battery(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_batteryStyle(0),
+      m_smallPixelSize(48),
       m_theme(0),
       m_dialog(0),
       m_isHovered(0),
@@ -50,7 +51,8 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
-    setContentSize(200,200);
+    setMinimumContentSize(m_smallPixelSize, m_smallPixelSize);
+    setContentSize(m_smallPixelSize, m_smallPixelSize);
 }
 
 void Battery::init()
@@ -69,12 +71,9 @@ void Battery::init()
         m_batteryStyle = ClassicBattery;
         svgFile = "widgets/battery";
     }
-    m_smallPixelSize = 44;
     m_theme = new Plasma::Svg(svgFile, this);
     m_theme->setContentType(Plasma::Svg::SingleImage);
     m_theme->resize(contentSize());
-    setMinimumContentSize(m_smallPixelSize, m_smallPixelSize);
-    setContentSize(m_smallPixelSize, m_smallPixelSize);
 
     m_font = QApplication::font();
     m_font.setWeight(QFont::Bold);
@@ -96,27 +95,27 @@ void Battery::init()
         dataUpdated(battery_source, dataEngine("powermanagement")->query(battery_source));
     }
     dataUpdated(I18N_NOOP("AC Adapter"), dataEngine("powermanagement")->query(I18N_NOOP("AC Adapter")));
-
-    setAcceptsHoverEvents(true);
 }
 
 void Battery::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {
-        if (formFactor() == Plasma::Vertical ||
-            formFactor() == Plasma::Horizontal) {
-            kDebug() << "Horizontal or Vertical FormFactor";
+        if (formFactor() == Plasma::Vertical) {
+            kDebug() << "Vertical FormFactor";
+        } else if (formFactor() == Plasma::Horizontal) {
+            kDebug() << "Horizontal FormFactor";
+        } else if (formFactor() == Plasma::Planar) {
+            kDebug() << "Planar FormFactor";
+        } else if (formFactor() == Plasma::MediaCenter) {
+            kDebug() << "MediaCenter FormFactor";
         } else {
-            kDebug() << "Other FormFactor";
+            kDebug() << "Other FormFactor" << formFactor();
         }
     }
 
     if (constraints & Plasma::SizeConstraint && m_theme) {
+        kDebug() << "SizeChanged: " << contentSize();
         m_theme->resize(contentSize().toSize());
-        update();
-        // Save new size to config
-        KConfigGroup cg = config();
-        cg.writeEntry("size", (int)(boundingRect().height()));
     }
     updateGeometry();
 }
@@ -124,9 +123,10 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
 QSizeF Battery::contentSizeHint() const
 {
     QSizeF sizeHint = contentSize();
+    kDebug() << "SizeHintIn: " << sizeHint;
     switch (formFactor()) {
         case Plasma::Vertical:
-            if (m_showMultipleBatteries) {
+            if (m_numOfBattery > 1 && m_showMultipleBatteries) {
                 sizeHint.setHeight(sizeHint.width()*m_numOfBattery);
             }
             else {
@@ -136,7 +136,7 @@ QSizeF Battery::contentSizeHint() const
         case Plasma::Horizontal:
         case Plasma::Planar:
         case Plasma::MediaCenter:
-            if (m_showMultipleBatteries) {
+            if (m_numOfBattery > 1 && m_showMultipleBatteries) {
                 sizeHint.setWidth(sizeHint.height()*m_numOfBattery);
             } else {
                 sizeHint.setWidth(sizeHint.height());
@@ -145,6 +145,7 @@ QSizeF Battery::contentSizeHint() const
         default:
             break;
     }
+    kDebug() << "SizeHintOut: " << sizeHint;
     return sizeHint;
 }
 
@@ -200,6 +201,7 @@ void Battery::configAccepted()
     m_showBatteryString = ui.showBatteryStringCheckBox->checkState() == Qt::Checked;
     cg.writeEntry("showBatteryString", m_showBatteryString);
 
+    bool old_showMultipleBatteries = m_showMultipleBatteries;
     m_showMultipleBatteries = ui.showMultipleBatteriesCheckBox->checkState() == Qt::Checked;
     cg.writeEntry("showMultipleBatteries", m_showMultipleBatteries);
 
@@ -221,13 +223,16 @@ void Battery::configAccepted()
         cg.writeEntry("style", m_batteryStyle);
         m_theme->resize(contentSize());
     }
-    updateGeometry(); // may change due to showMultipleBatteries
+
+    if (m_numOfBattery > 1 && old_showMultipleBatteries != m_showMultipleBatteries) {
+        kDebug() << "Show multiple battery changed: " << m_showMultipleBatteries;
+        updateGeometry();
+    }
 
     //reconnect sources
     disconnectSources();
     connectSources();
 
-    //constraintsUpdated(Plasma::AllConstraints);
     update();
     emit configNeedsSaving();
 }
@@ -414,7 +419,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         {
             QRect corect = QRect(contentsRect.left()+battery_num*width, 
                                  contentsRect.top(), 
-                                 width, contentSizeHint().toSize().height());
+                                 width, contentSize().toSize().height());
        
             // paint battery with appropriate charge level
             paintBattery(p, corect, it_battery_data->first);
