@@ -46,7 +46,7 @@ IF (CMAKE_BUILD_TYPE MATCHES Debug)
          main.cpp )
 
    kde4_add_executable(kickoff ${Application_SRCS})
-   target_link_libraries(kickoff ${Kickoff_LIBS})
+   target_link_libraries(kickoff plasma ${Kickoff_LIBS})
 
    install(TARGETS kickoff DESTINATION ${BIN_INSTALL_DIR})
 ENDIF (CMAKE_BUILD_TYPE MATCHES Debug)
