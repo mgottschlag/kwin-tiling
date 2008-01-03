@@ -20,6 +20,9 @@
 #include "icon.h"
 
 #include <QGraphicsSceneDragDropEvent>
+#include <QGraphicsSceneMouseEvent>
+#include <QGraphicsItem>
+#include <QEvent>
 #include <QMimeData>
 
 #include <KDebug>
@@ -62,6 +65,8 @@ void IconApplet::init()
     setUrl(cg.readEntry("Url", m_url));
     setDrawStandardBackground(false);
     setDisplayLines(2);
+
+    m_icon->installSceneEventFilter(this);
 }
 
 IconApplet::~IconApplet()
@@ -142,8 +147,8 @@ void IconApplet::showConfigurationInterface()
 QSizeF IconApplet::sizeHint() const
 {
     QSizeF iconSize = m_icon->sizeHint();
-    double width = qBound(minimumSize().width(), iconSize.width(), maximumSize().width());
-    double height = qBound(minimumSize().height(), iconSize.height(), maximumSize().height());
+    qreal width = qBound(minimumSize().width(), iconSize.width(), maximumSize().width());
+    qreal height = qBound(minimumSize().height(), iconSize.height(), maximumSize().height());
     return QSizeF(width,height);
 }
 
@@ -244,6 +249,36 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
 Qt::Orientations IconApplet::expandingDirections() const
 {
     return 0;
+}
+
+bool IconApplet::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
+{
+    switch (event->type())
+    {
+        case QEvent::GraphicsSceneMouseMove:
+        {
+            mouseMoveEvent(dynamic_cast<QGraphicsSceneMouseEvent*>(event));
+            break;
+        }
+
+        default:
+            break;
+    }
+
+    return QGraphicsItem::sceneEventFilter(watched, event);
+}
+
+void IconApplet::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    QPointF curPos = transform().map(event->pos());
+    QPointF lastPos = transform().map(event->lastPos());
+    QPointF delta = curPos-lastPos;
+    QGraphicsItem* appletHandle = parentItem();
+
+    if(appletHandle && (formFactor() == Plasma::Planar)) {
+        //don't move the icon as well because appletHandle will do it for us
+        appletHandle->moveBy(delta.x(),delta.y());
+    }
 }
 
 
