@@ -1,5 +1,6 @@
 [Misc]
 Name=B3/KDE
+Name[fr]=B3 / KDE
 Name[ne]=बी३/केडीई
 Name[sr]=Б3/КДЕ
 Name[x-test]=xxB3/KDExx
@@ -15,6 +16,7 @@ Comment[es]=B3/Modificación de B2
 Comment[et]=B3/B2 modifikatsioon
 Comment[eu]=B3/B2ren aldaketa
 Comment[fi]=B3/B2:n muunnelma
+Comment[fr]=B3 / Modification de B2
 Comment[fy]=B3/modifikaasje fan B2
 Comment[ga]=B3/Mionathrú ar B2
 Comment[gl]=B3/Modificación de B2
