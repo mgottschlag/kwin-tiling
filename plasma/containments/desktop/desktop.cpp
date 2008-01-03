@@ -315,6 +315,11 @@ QList<QAction*> DefaultDesktop::contextActions()
     actions.append(m_setupDesktopAction);
 
     actions.append(m_separator);
+
+    //icon actions
+    actions << s_icons->contextActions();
+
+    actions.append(m_separator);
     actions.append(m_lockDesktopAction);
 
     if (KAuthorized::authorizeKAction("lock_screen")) {
