@@ -121,6 +121,7 @@ void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
             m_icon->setText(0);
             setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Panel)));
         }
+        setMaximumContentSize(m_icon->sizeFromIconSize(256));
     }
 
     if (constraints & Plasma::SizeConstraint) {
