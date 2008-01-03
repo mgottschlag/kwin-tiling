@@ -164,4 +164,4 @@ X-KDE-Library=kcm_joystick
 X-KDE-Test-Module=true
 Icon=preferences-desktop-gaming
 Categories=Qt;KDE;X-KDE-settings-hardware;
-X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
+X-KDE-System-Settings-Parent-Category=computer-administration
