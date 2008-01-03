@@ -216,7 +216,7 @@ void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
         const int rightHeight = m_drawRight ? m_background->elementSize("right").height() : 0;
         const int bottomWidth = m_drawBottom ? m_background->elementSize("bottom").width() : 0;
         const int bottomHeight = m_drawBottom ? m_background->elementSize("bottom").height() : 0;
-
+        //kDebug() << "********************************* " << topWidth << topHeight;
         const int topOffset = 0;
         const int leftOffset = 0;
         const int contentWidth = s.width() - leftWidth - rightWidth;
