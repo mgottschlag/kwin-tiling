@@ -2035,14 +2035,11 @@ Key: ColorScheme
 Type: string
 Default: ""
 User: greeter
-Instance: #*/"Pumpkin"
-Comment:
- Widget color scheme of the greeter. "" means the built-in default which
- currently is yellowish grey with some light blue and yellow elements.
+Instance: #*/"MidnightMeadow"
+Comment: &
 Description:
- Specify the widget color scheme for the greeter. Empty means to use
- the built-in default which currently is yellowish grey with some light
- blue and yellow elements.
+ Specify the widget color scheme for the greeter. Empty means to use the
+ built-in default which currently is <literal>Oxygen</literal>.
 
 Key: LogoArea
 Type: enum
