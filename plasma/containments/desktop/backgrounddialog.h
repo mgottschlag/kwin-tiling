@@ -36,6 +36,7 @@ public:
         kSlideshowBackground
     };
     
+    // FIXME seems that we're leaking, make a distructor
     BackgroundDialog(const QSize &res, 
                      const KConfigGroup &config,
                      QWidget *parent = 0);
@@ -50,7 +51,9 @@ private:
     QComboBox *m_view;
     BackgroundListModel *m_model;
     
-    KSeparator *m_metadataSeparator;
+    QLabel *m_authorLabel;
+    QLabel *m_emailLabel;
+    QLabel *m_licenseLabel;
     QLabel *m_authorLine;
     QLabel *m_emailLine;
     QLabel *m_licenseLine;
@@ -79,8 +82,7 @@ private:
     RenderThread m_preview_renderer;
     int m_preview_token;
     
-    bool setMetadata(QLabel *label, 
-                     const QString &caption, 
+    bool setMetadata(QLabel *label,
                      const QString &text);
     void setPreview(const QString &img, Background::ResizeMethod method);
     virtual bool contains(const QString &path) const;

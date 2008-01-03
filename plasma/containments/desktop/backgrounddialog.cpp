@@ -409,15 +409,24 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     staticPictureLayout->addWidget(colorLabel, 2, 0, Qt::AlignRight);
     staticPictureLayout->addWidget(m_color, 2, 1);
 
-    m_metadataSeparator = new KSeparator(Qt::Horizontal, staticPictureWidget);
+    m_authorLabel = new QLabel(staticPictureWidget);
+    m_emailLabel = new QLabel(staticPictureWidget);
+    m_licenseLabel = new QLabel(staticPictureWidget);
+
+    m_authorLabel->setText("<qt><b> "+i18n("Author:")+" </b></qt>");
+    m_emailLabel->setText("<qt><b> "+i18n("E-Mail:")+" </b></qt>");
+    m_licenseLabel->setText("<qt><b> "+i18n("License:")+" </b></qt>");
+
     m_authorLine = new QLabel(staticPictureWidget);
     m_emailLine = new QLabel(staticPictureWidget);
     m_licenseLine = new QLabel(staticPictureWidget);
-    
-    staticPictureLayout->addWidget(m_metadataSeparator, 3, 0, 1, 2);
-    staticPictureLayout->addWidget(m_authorLine, 4, 0, 1, 2);
-    staticPictureLayout->addWidget(m_emailLine, 5, 0, 1, 2);
-    staticPictureLayout->addWidget(m_licenseLine, 6, 0, 1, 2);
+
+    staticPictureLayout->addWidget(m_authorLabel, 3, 0, Qt::AlignRight);
+    staticPictureLayout->addWidget(m_authorLine, 3, 1);
+    staticPictureLayout->addWidget(m_emailLabel, 4, 0, Qt::AlignRight);
+    staticPictureLayout->addWidget(m_emailLine, 4, 1);
+    staticPictureLayout->addWidget(m_licenseLabel, 5, 0, Qt::AlignRight);
+    staticPictureLayout->addWidget(m_licenseLine, 5, 1);
     //staticPictureLayout->setRowStretch(7, 10);
 
     // slideshow
@@ -601,8 +610,7 @@ void BackgroundDialog::browse()
     m_selected << wallpaper;
 }
 
-bool BackgroundDialog::setMetadata(QLabel *label, 
-                                   const QString &caption, 
+bool BackgroundDialog::setMetadata(QLabel *label,
                                    const QString &text)
 {
     if (text.isEmpty()) {
@@ -611,7 +619,7 @@ bool BackgroundDialog::setMetadata(QLabel *label,
     }
     else {
         label->show();
-        label->setText("<b>" + caption + ":</b> " + text);
+        label->setText(text);
         return true;
     }
 }
@@ -626,9 +634,15 @@ void BackgroundDialog::update()
     if (!b) {
         return;
     }
-    bool someMetadata = setMetadata(m_authorLine, i18n("Author"), b->author());
-    someMetadata = setMetadata(m_emailLine, i18n("E-mail"), b->email()) || someMetadata;
-    m_metadataSeparator->setVisible(someMetadata);
+
+    // FIXME the second parameter is not used, get rid of it.
+    bool someMetadata = setMetadata(m_authorLine, b->author());
+    someMetadata = setMetadata(m_emailLine, b->email()) || someMetadata;
+    m_authorLabel->setVisible(someMetadata);
+    m_emailLabel->setVisible(someMetadata);
+    m_licenseLabel->setVisible(someMetadata);
+//     m_metadataSeparator->setVisible(someMetadata);
+
     
     Background::ResizeMethod method = (Background::ResizeMethod)
         m_resizeMethod->itemData(m_resizeMethod->currentIndex()).value<int>();
