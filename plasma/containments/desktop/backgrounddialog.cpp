@@ -384,12 +384,12 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     // resize method
     QLabel *resizeMethodLabel = new QLabel(i18n("P&ositioning:"), staticPictureWidget);
     m_resizeMethod = new QComboBox(main);
+    m_resizeMethod->addItem(i18n("Scale and crop"),
+                            Background::ScaleCrop);
     m_resizeMethod->addItem(i18n("Scaled"), 
                             Background::Scale);
     m_resizeMethod->addItem(i18n("Centered"), 
                             Background::Center);
-    m_resizeMethod->addItem(i18n("Scale and crop"),
-                            Background::ScaleCrop);
     m_resizeMethod->addItem(i18n("Tiled"),
                             Background::Tiled);
     m_resizeMethod->addItem(i18n("Center tiled"),
