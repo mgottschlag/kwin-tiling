@@ -141,7 +141,7 @@ public:
         ItemDelegate *delegate = new ItemDelegate;
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
-        addView(i18n("Favorites"), KIcon("bookmark"), model, view);
+        addView(i18n("Favorites"), KIcon("bookmarks"), model, view);
 
         connect(model, SIGNAL(rowsInserted(QModelIndex, int, int)), q, SLOT(focusFavoritesView()));
 

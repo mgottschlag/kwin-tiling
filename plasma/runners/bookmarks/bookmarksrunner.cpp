@@ -41,7 +41,7 @@ BookmarksRunner::BookmarksRunner( QObject* parent, const QVariantList &args )
     KGlobal::locale()->insertCatalog("krunner_bookmarksrunner");
     Q_UNUSED(args)
     setObjectName(i18n("Bookmarks"));
-    m_icon = KIcon("bookmark");
+    m_icon = KIcon("bookmarks");
 }
 
 BookmarksRunner::~BookmarksRunner()
