@@ -82,13 +82,13 @@ CFontFilter::CFontFilter(QWidget *parent)
     itsMenuButton->setToolTip(i18n("Set Criteria"));
 
     itsMenu=new QMenu(this);
-    itsPixmaps[CRIT_FAMILY]=SmallIcon("draw-text");
+    itsPixmaps[CRIT_FAMILY]=SmallIcon("text");
     itsPixmaps[CRIT_STYLE]=SmallIcon("format-text-bold");
-    itsPixmaps[CRIT_FOUNDRY]=SmallIcon("x-office-contact");
+    itsPixmaps[CRIT_FOUNDRY]=SmallIcon("user");
     itsPixmaps[CRIT_FONTCONFIG]=SmallIcon("system-search");
     itsPixmaps[CRIT_FILENAME]=SmallIcon("application-x-font-type1");
     itsPixmaps[CRIT_LOCATION]=SmallIcon("folder");
-    itsPixmaps[CRIT_WS]=SmallIcon("draw-freehand");
+    itsPixmaps[CRIT_WS]=SmallIcon("character-set");
 
     itsActionGroup=new QActionGroup(this);
     addAction(CRIT_FAMILY, i18n("Family"), true, true);

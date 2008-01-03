@@ -128,7 +128,7 @@ class CPasswordDialog : public KPasswordDialog
             setPrompt(i18n("The requested action requires administrator privileges.\n"
                            "Please enter the system administrator's password."));
 
-        setPixmap(DesktopIcon("password"));
+        setPixmap(DesktopIcon("dialog-password"));
     }
 
     bool checkPassword()
