@@ -297,7 +297,7 @@ void BackgroundDelegate::paint(QPainter *painter,
                    option.rect.top() + MARGIN,
                    option.rect.width() - x - MARGIN * 2,
                    maxheight);
-    QString text = title;
+    QString text = title.replace("_", " ");
     if (!author.isEmpty()) {
         text += "\n" + author;
     }
