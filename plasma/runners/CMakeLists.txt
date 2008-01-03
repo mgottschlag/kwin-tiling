@@ -1,5 +1,5 @@
 add_subdirectory(calculator)
-add_subdirectory(search)
+#add_subdirectory(search)
 add_subdirectory(locations)
 add_subdirectory(webshortcuts)
 add_subdirectory(bookmarks)
