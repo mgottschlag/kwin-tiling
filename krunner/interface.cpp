@@ -296,6 +296,7 @@ Interface::Interface(QWidget* parent)
 
     KConfigGroup cg(KGlobal::config(), "General");
     QStringList executions = cg.readEntry("pastqueries", QStringList());
+    executions << QString();
     //Handle updates to the completion object as well
     m_searchTerm->setHistoryItems(executions, true);
 
