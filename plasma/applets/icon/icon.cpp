@@ -25,6 +25,7 @@
 #include <QEvent>
 #include <QMimeData>
 
+#include <KGlobalSettings>
 #include <KDebug>
 #include <KLocale>
 #include <KIconLoader>
@@ -62,7 +63,7 @@ void IconApplet::init()
     KConfigGroup cg = config();
     //setMinimumSize(QSize(48,68));
 
-    connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
+    connectMouseSlots();
     setUrl(cg.readEntry("Url", m_url));
     setDrawStandardBackground(false);
     setDisplayLines(2);
@@ -274,11 +275,14 @@ void IconApplet::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QPointF curPos = transform().map(event->pos());
     QPointF lastPos = transform().map(event->lastPos());
     QPointF delta = curPos-lastPos;
-    QGraphicsItem* appletHandle = parentItem();
 
-    if(appletHandle && (formFactor() == Plasma::Planar)) {
-        //don't move the icon as well because appletHandle will do it for us
-        appletHandle->moveBy(delta.x(),delta.y());
+    if(!isImmutable()) {
+        QGraphicsItem* appletHandle = parentItem();
+
+        if(appletHandle && (formFactor() == Plasma::Planar)) {
+            //don't move the icon as well because appletHandle will do it for us
+            appletHandle->moveBy(delta.x(),delta.y());
+        }
     }
 }
 
@@ -365,6 +369,17 @@ void IconApplet::dropUrls(const KUrl::List& urls,
 
     default:
         break;
+    }
+}
+
+void IconApplet::connectMouseSlots()
+{
+    if(KGlobalSettings::singleClick()) {
+        //kDebug() << "Single-Click initialized.";
+        connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
+    } else {
+        //kDebug() << "Double-Click initialized.";
+        connect(m_icon, SIGNAL(doubleClicked()), this, SLOT(openUrl()));
     }
 }
 
