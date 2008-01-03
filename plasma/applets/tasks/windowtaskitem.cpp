@@ -101,6 +101,7 @@ void WindowTaskItem::updateTask()
       data.mainText = _task->visibleName();
       data.subText = i18nc("Which virtual desktop a window is currently on", "On %1", KWindowSystem::desktopName(_task->desktop()));
       data.image = iconPixmap;
+      data.windowToPreview = _task->window();
       setToolTip(data);
     } else {
         Plasma::ToolTipData data;
