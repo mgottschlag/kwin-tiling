@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>696</width>
-    <height>542</height>
+    <width>622</width>
+    <height>576</height>
    </rect>
   </property>
   <layout class="QGridLayout" >
@@ -19,10 +19,16 @@
       <attribute name="title" >
        <string>Layout</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
+      <layout class="QVBoxLayout" >
+       <item>
         <widget class="KButtonGroup" name="grpEnableKxkb" >
          <layout class="QHBoxLayout" >
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
           <item>
            <widget class="QRadioButton" name="radioButton" >
             <property name="toolTip" >
@@ -59,19 +65,18 @@
          </layout>
         </widget>
        </item>
-       <item row="1" column="0" >
+       <item>
         <widget class="QGroupBox" name="grpIndicatorOptions" >
          <property name="title" >
           <string>Indicator Options</string>
          </property>
-         <layout class="QVBoxLayout" >
-          <item>
-           <widget class="QCheckBox" name="chkShowSingle" >
-            <property name="text" >
-             <string>Show indicator for single layout</string>
-            </property>
-           </widget>
-          </item>
+         <layout class="QHBoxLayout" >
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
           <item>
            <widget class="QCheckBox" name="chkShowFlag" >
             <property name="whatsThis" >
@@ -85,10 +90,17 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="chkShowSingle" >
+            <property name="text" >
+             <string>Show indicator for single layout</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
-       <item row="2" column="0" >
+       <item>
         <widget class="QGroupBox" name="grpLayouts" >
          <property name="whatsThis" >
           <string>&lt;h1>Keyboard Layout&lt;/h1> Here you can choose your keyboard layout and model. The 'model' refers to the type of keyboard that is connected to your computer, while the keyboard layout defines "which key does what" and may be different for different countries.</string>
@@ -97,66 +109,131 @@
           <string/>
          </property>
          <layout class="QGridLayout" >
-          <item row="0" column="0" colspan="2" >
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <item row="0" column="0" >
+           <widget class="QLabel" name="label_4" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text" >
+             <string>Keyboard &amp;model:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>comboModel</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QComboBox" name="comboModel" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+              <horstretch>2</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="whatsThis" >
+             <string>Here you can choose a keyboard model. This setting is independent of your keyboard layout and refers to the "hardware" model, i.e. the way your keyboard is manufactured. Modern keyboards that come with your computer usually have two extra keys and are referred to as "104-key" models, which is probably what you want if you do not know what kind of keyboard you have.
+</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
            <layout class="QHBoxLayout" >
             <item>
-             <widget class="QLabel" name="label_4" >
-              <property name="text" >
-               <string>Keyboard &amp;model:</string>
-              </property>
-              <property name="buddy" >
-               <cstring>comboModel</cstring>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="comboModel" >
+             <widget class="QLabel" name="textLabel1_4" >
               <property name="sizePolicy" >
-               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-                <horstretch>0</horstretch>
+               <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+                <horstretch>1</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="whatsThis" >
-               <string>Here you can choose a keyboard model. This setting is independent of your keyboard layout and refers to the "hardware" model, i.e. the way your keyboard is manufactured. Modern keyboards that come with your computer usually have two extra keys and are referred to as "104-key" models, which is probably what you want if you do not know what kind of keyboard you have.
-</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="0" >
-           <layout class="QVBoxLayout" >
-            <item>
-             <widget class="QLabel" name="textLabel1_4" >
               <property name="text" >
                <string>Available layouts:</string>
               </property>
+              <property name="buddy" >
+               <cstring>srcTableView</cstring>
+              </property>
              </widget>
             </item>
             <item>
-             <widget class="QTreeView" name="srcTableView" >
-              <property name="selectionMode" >
-               <enum>QAbstractItemView::SingleSelection</enum>
-              </property>
-              <property name="selectionBehavior" >
-               <enum>QAbstractItemView::SelectRows</enum>
+             <widget class="QToolButton" name="btnRemove" >
+              <property name="text" >
+               <string>...</string>
               </property>
              </widget>
             </item>
            </layout>
           </item>
           <item row="1" column="1" >
-           <layout class="QVBoxLayout" >
+           <layout class="QHBoxLayout" >
+            <property name="spacing" >
+             <number>0</number>
+            </property>
             <item>
-             <widget class="QLabel" name="textLabel1_4_2" >
+             <widget class="QToolButton" name="btnAdd" >
               <property name="text" >
-               <string>Active layouts:</string>
+               <string>...</string>
               </property>
              </widget>
             </item>
             <item>
+             <widget class="QLabel" name="textLabel1_4_2" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+                <horstretch>3</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text" >
+               <string>Active layouts:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
+              </property>
+              <property name="buddy" >
+               <cstring>dstTableView</cstring>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QTreeView" name="srcTableView" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="selectionMode" >
+             <enum>QAbstractItemView::SingleSelection</enum>
+            </property>
+            <property name="selectionBehavior" >
+             <enum>QAbstractItemView::SelectRows</enum>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" >
+           <layout class="QHBoxLayout" >
+            <property name="spacing" >
+             <number>0</number>
+            </property>
+            <item>
              <widget class="QTreeView" name="dstTableView" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="selectionMode" >
                <enum>QAbstractItemView::SingleSelection</enum>
               </property>
@@ -169,141 +246,114 @@
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" >
-              <property name="spacing" >
-               <number>6</number>
-              </property>
-              <property name="leftMargin" >
-               <number>0</number>
-              </property>
-              <property name="topMargin" >
-               <number>0</number>
-              </property>
-              <property name="rightMargin" >
-               <number>0</number>
-              </property>
-              <property name="bottomMargin" >
-               <number>0</number>
-              </property>
+             <layout class="QVBoxLayout" >
               <item>
-               <widget class="QPushButton" name="btnAdd" >
+               <widget class="QToolButton" name="btnUp" >
                 <property name="text" >
-                 <string>Add >></string>
+                 <string>...</string>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="btnRemove" >
-                <property name="text" >
-                 <string>&lt;&lt; Remove</string>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Vertical</enum>
                 </property>
-               </widget>
+                <property name="sizeHint" >
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="btnUp" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
+               <widget class="QToolButton" name="btnDown" >
                 <property name="text" >
-                 <string/>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="btnDown" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text" >
-                 <string/>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QGridLayout" >
-              <item row="0" column="0" >
-               <widget class="QLabel" name="textLabel1" >
-                <property name="text" >
-                 <string>Layout variant:</string>
-                </property>
-                <property name="buddy" >
-                 <cstring>comboVariant</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1" colspan="2" >
-               <widget class="QComboBox" name="comboVariant" >
-                <property name="sizePolicy" >
-                 <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="whatsThis" >
-                 <string>Here you can choose a variant of selected keyboard layout. Layout variants usually represent different key maps for the same language. For example, Ukrainian layout might have four variants: basic, winkeys (as in Windows), typewriter (as in typewriters) and phonetic (each Ukrainian letter is placed on a transliterated latin one).
-</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0" >
-               <widget class="QLabel" name="textLabel1_6" >
-                <property name="text" >
-                 <string>Label:</string>
-                </property>
-                <property name="buddy" >
-                 <cstring>editDisplayName</cstring>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1" colspan="2" >
-               <widget class="QLineEdit" name="editDisplayName" >
-                <property name="maxLength" >
-                 <number>3</number>
+                 <string>...</string>
                 </property>
                </widget>
               </item>
              </layout>
             </item>
            </layout>
-          </item>
-          <item row="2" column="0" colspan="2" >
-           <widget class="Line" name="line" >
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-           </widget>
           </item>
           <item row="3" column="0" colspan="2" >
            <layout class="QHBoxLayout" >
             <item>
-             <widget class="QLabel" name="textLabel1_3" >
+             <widget class="QLabel" name="textLabel1" >
               <property name="text" >
-               <string>Command:</string>
+               <string>Layout variant:</string>
               </property>
               <property name="buddy" >
-               <cstring>editCmdLine</cstring>
+               <cstring>comboVariant</cstring>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="editCmdLine" >
-              <property name="whatsThis" >
-               <string>This is the command which will be executed to initialize configured layouts.</string>
+             <widget class="QComboBox" name="comboVariant" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
               </property>
-              <property name="readOnly" >
-               <bool>true</bool>
+              <property name="whatsThis" >
+               <string>Here you can choose a variant of selected keyboard layout. Layout variants usually represent different key maps for the same language. For example, Ukrainian layout might have four variants: basic, winkeys (as in Windows), typewriter (as in typewriters) and phonetic (each Ukrainian letter is placed on a transliterated latin one).
+</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="textLabel1_6" >
+              <property name="text" >
+               <string>Label:</string>
+              </property>
+              <property name="buddy" >
+               <cstring>editDisplayName</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="editDisplayName" >
+              <property name="maxLength" >
+               <number>3</number>
               </property>
              </widget>
             </item>
            </layout>
+          </item>
+          <item row="4" column="0" >
+           <widget class="QLabel" name="textLabel1_3" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+              <horstretch>1</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text" >
+             <string>Command:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>editCmdLine</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" >
+           <widget class="QLineEdit" name="editCmdLine" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+              <horstretch>2</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="whatsThis" >
+             <string>This is the command which will be executed to initialize configured layouts.</string>
+            </property>
+            <property name="readOnly" >
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
