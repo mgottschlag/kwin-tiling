@@ -183,22 +183,58 @@ KGreeter::~KGreeter()
 	delete stsGroup;
 }
 
-static void
-expandFace( QImage &img )
-{
-	if (img.width() < 48) {
-		QImage nimg( 48, img.height(), QImage::Format_ARGB32 );
-		nimg.fill( 0 );
-		QPainter p( &nimg );
-		p.drawImage( (48 - img.width()) / 2, 0, img );
-		img = nimg;
-	}
-}
-
 #define FILE_LIMIT_ICON 20
 #define FILE_LIMIT_IMAGE 200
 #define PIXEL_LIMIT_ICON 100
 #define PIXEL_LIMIT_IMAGE 300
+
+static bool
+loadFace( QByteArray &fn, QImage &p )
+{
+	int fd, ico;
+	if ((fd = open( fn.data(), O_RDONLY | O_NONBLOCK )) < 0) {
+		fn.chop( 5 );
+		if ((fd = open( fn.data(), O_RDONLY | O_NONBLOCK )) < 0)
+			return false;
+		ico = 0;
+	} else
+		ico = 1;
+	QFile f;
+	f.open( fd, QFile::ReadOnly );
+	int fs = f.size();
+	if (fs > (ico ? FILE_LIMIT_ICON : FILE_LIMIT_IMAGE) * 1000) {
+		logWarn( "%s exceeds file size limit (%dkB)\n",
+		         fn.data(), ico ? FILE_LIMIT_ICON : FILE_LIMIT_IMAGE );
+		return false;
+	}
+	QByteArray fc = f.read( fs );
+	::close( fd );
+	QBuffer buf( &fc );
+	buf.open( QBuffer::ReadOnly );
+	QImageReader ir( &buf );
+	QSize sz = ir.size();
+	int lim = ico ? PIXEL_LIMIT_ICON : PIXEL_LIMIT_IMAGE;
+	if (sz.width() > lim || sz.height() > lim) {
+		logWarn( "%s exceeds image dimension limit (%dx%d)\n",
+		         fn.data(), lim, lim );
+		return false;
+	}
+	sz.scale( 48, 48, Qt::KeepAspectRatio );
+	ir.setScaledSize( sz );
+	p = ir.read();
+	if (p.isNull()) {
+		logInfo( "%s is no valid image\n", fn.data() );
+		return false;
+	}
+	if (p.width() < 48) {
+		QImage np( 48, p.height(), QImage::Format_ARGB32 );
+		np.fill( 0 );
+		QPainter pnt( &np );
+		pnt.drawImage( (48 - p.width()) / 2, 0, p );
+		p = np;
+	}
+	return true;
+}
 
 void
 KGreeter::insertUser( const QImage &default_pix,
@@ -223,43 +259,8 @@ KGreeter::insertUser( const QImage &default_pix,
 		                QByteArray( ps->pw_dir ) + '/' :
 		                QFile::encodeName( _faceDir + '/' + username );
 		fn += ".face.icon";
-		int fd, ico;
-		if ((fd = open( fn.data(), O_RDONLY | O_NONBLOCK )) < 0) {
-			fn.chop( 5 );
-			if ((fd = open( fn.data(), O_RDONLY | O_NONBLOCK )) < 0)
-				continue;
-			ico = 0;
-		} else
-			ico = 1;
-		QFile f;
-		f.open( fd, QFile::ReadOnly );
-		int fs = f.size();
-		if (fs > (ico ? FILE_LIMIT_ICON : FILE_LIMIT_IMAGE) * 1000) {
-			logWarn( "%s exceeds file size limit (%dkB)\n",
-			         fn.data(), ico ? FILE_LIMIT_ICON : FILE_LIMIT_IMAGE );
-			continue;
-		}
-		QByteArray fc = f.read( fs );
-		::close( fd );
-		QBuffer buf( &fc );
-		buf.open( QBuffer::ReadOnly );
-		QImageReader ir( &buf );
-		QSize sz = ir.size();
-		int lim = ico ? PIXEL_LIMIT_ICON : PIXEL_LIMIT_IMAGE;
-		if (sz.width() > lim || sz.height() > lim) {
-			logWarn( "%s exceeds image dimension limit (%dx%d)\n",
-			         fn.data(), lim, lim );
-			continue;
-		}
-		sz.scale( 48, 48, Qt::KeepAspectRatio );
-		ir.setScaledSize( sz );
-		p = ir.read();
-		if (p.isNull()) {
-			logInfo( "%s is no valid image\n", fn.data() );
-			continue;
-		}
-		expandFace( p );
-		goto gotit;
+		if (loadFace( fn, p ))
+			goto gotit;
 	} while (--nd >= 0);
 	p = default_pix;
   gotit:
@@ -317,14 +318,11 @@ KGreeter::insertUsers()
 
 	QImage default_pix;
 	if (userView) {
-		if (!default_pix.load( _faceDir + "/.default.face.icon" ))
-			if (!default_pix.load( _faceDir + "/.default.face" ))
-				logError( "Cannot open default user face\n" );
-		QSize ns( 48, 48 );
-		if (default_pix.size() != ns) {
-			default_pix =
-			  default_pix.convertToFormat( QImage::Format_ARGB32 ).scaled( ns, Qt::KeepAspectRatio, Qt::SmoothTransformation );
-			expandFace( default_pix );
+		QByteArray fn = QFile::encodeName( _faceDir + "/.default.face.icon" );
+		if (!loadFace( fn, default_pix )) {
+			logError( "Cannot open default user face\n" );
+			default_pix = QImage( 48, 48, QImage::Format_ARGB32 );
+			default_pix.fill( 0 );
 		}
 	}
 	if (_showUsers == SHOW_ALL) {
