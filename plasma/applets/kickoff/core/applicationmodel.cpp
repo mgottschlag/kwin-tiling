@@ -181,7 +181,7 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
          if (serviceGroup->noDisplay() || serviceGroup->childCount() == 0)
             continue;
 
-         qDebug() << "Service group" << serviceGroup->entryPath() << serviceGroup->icon()
+         kDebug(250) << "Service group" << serviceGroup->entryPath() << serviceGroup->icon()
              << serviceGroup->relPath() << serviceGroup->directoryEntryPath();
 
          icon = serviceGroup->icon();
