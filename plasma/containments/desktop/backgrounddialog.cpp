@@ -357,7 +357,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     QWidget *staticPictureWidget = new QWidget(stack);
     stack->addWidget(staticPictureWidget);
     QGridLayout *staticPictureLayout = new QGridLayout;
-    staticPictureLayout->setColumnStretch(2, 10);
+    //staticPictureLayout->setColumnStretch(2, 10);
     staticPictureWidget->setLayout(staticPictureLayout);
     
     // combo with backgrounds
@@ -409,10 +409,16 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     staticPictureLayout->addWidget(colorLabel, 2, 0, Qt::AlignRight);
     staticPictureLayout->addWidget(m_color, 2, 1);
 
-    staticPictureLayout->setRowStretch(3, 10);
     m_metadataSeparator = new KSeparator(Qt::Horizontal, staticPictureWidget);
     m_authorLine = new QLabel(staticPictureWidget);
     m_emailLine = new QLabel(staticPictureWidget);
+    m_licenseLine = new QLabel(staticPictureWidget);
+    
+    staticPictureLayout->addWidget(m_metadataSeparator, 3, 0, 1, 2);
+    staticPictureLayout->addWidget(m_authorLine, 4, 0, 1, 2);
+    staticPictureLayout->addWidget(m_emailLine, 5, 0, 1, 2);
+    staticPictureLayout->addWidget(m_licenseLine, 6, 0, 1, 2);
+    //staticPictureLayout->setRowStretch(7, 10);
 
     // slideshow
     QWidget *slideshowWidget = new QWidget(stack);
