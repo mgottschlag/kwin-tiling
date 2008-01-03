@@ -239,8 +239,8 @@ void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
         //       svn image by 2 all around didn't resolve the issue. For now it resizes based on the border size.
 
         if (contentWidth > 0 && contentHeight > 0) {
-            m_background->resize(contentWidth, contentHeight);
-            m_background->paint(&p, QRect(topOffset, leftHeight, s.width(), s.height()), "center");
+            m_background->resize(s);
+            m_background->paint(&p, QRect(QPoint(0, 0), s), "center");
             m_background->resize();
         }
 
