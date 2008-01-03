@@ -51,11 +51,11 @@ void DictEngine::setServer(const QString &server)
 
 void DictEngine::getDefinition()
 {
-      if(currentWord == QLatin1String("about"))
+/*      if(currentWord == QLatin1String("about"))
       {
           setData(currentWord, "gcide", "<!--PAGE START--><!--DEFINITION START--><dl><dt><b>Developers</b></dt><!--PAGE START--><dd>KDE4 Dictionary Applet for Plasma was written by <i>Thomas Georgiou</i> and <i>Jeff Cooper</i></dd></dl>");
             return;
-      }
+      }*/// NOT GOOD!!!
 
       tcpSocket->waitForReadyRead();
       tcpSocket->readAll();
