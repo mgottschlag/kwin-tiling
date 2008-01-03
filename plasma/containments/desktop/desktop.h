@@ -107,10 +107,10 @@ private:
     QAction *m_separator;
 
     BackgroundDialog *m_configDialog;
-    
-    int m_backgroundMode;
-    // slideshow settings
 
+    int m_backgroundMode;
+
+    // slideshow settings
     // the index of which m_slidePath is currently visible
     int m_currentSlide;
     QTimer m_slideshowTimer;
@@ -119,14 +119,14 @@ private:
     QPixmap m_bitmapBackground;
     QString m_wallpaperPath;
 
-    //Desktop icons
-    IconLoader m_icons;
-
     int m_wallpaperPosition;
     QColor m_wallpaperColor;
-    
+
     RenderThread m_renderer;
     int m_current_renderer_token;
+
+    //Desktop icons
+    static IconLoader *s_icons;
 };
 
 #endif // PLASMA_PANEL_H

@@ -53,6 +53,8 @@
 
 using namespace Plasma;
 
+IconLoader * DefaultDesktop::s_icons = 0;
+
 DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_lockDesktopAction(0),
@@ -76,6 +78,11 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
 DefaultDesktop::~DefaultDesktop()
 {
     delete m_configDialog;
+    if (s_icons && s_icons->parent() == this) {
+        // reset the static var; the s_icons objects itself is parented to us,
+        // so it'll get deleted just fine
+        s_icons = 0;
+    }
 }
 
 void DefaultDesktop::init()
@@ -104,9 +111,14 @@ QSize DefaultDesktop::resolution() const
 void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
 {
     Q_UNUSED(constraints);
-    
 
-    m_icons.init(this);
+    if (constraints & ScreenConstraint) {
+        if (screen() == 0 && !s_icons) {
+            s_icons = new IconLoader(this);
+            s_icons->init(this);
+        }
+    }
+
     if (constraints & Plasma::SizeConstraint) {
         m_renderer.setSize(resolution()); 
         updateBackground();
