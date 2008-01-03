@@ -513,7 +513,7 @@ void NOAAIon::updateWeather(const QString& source)
 QString NOAAIon::country(const QString& source)
 {
     Q_UNUSED(source);
-    return QString("United States of America");
+    return QString("USA");
 }
 QString NOAAIon::place(const QString& source)
 {
