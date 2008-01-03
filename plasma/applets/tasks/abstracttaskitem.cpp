@@ -34,6 +34,8 @@
 // KDE
 #include <KColorScheme>
 
+#include "plasma/plasma.h"
+
 AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
     : Widget(parent,parentObject),
       _flags(0),
@@ -227,10 +229,10 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
             painter->setPen(QPen(QColor(100, 100, 100, startColor.alpha())));
 
         painter->setBrush(background);
-        painter->drawRect(option->rect);
+        painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
     } else {
         painter->setBrush(QBrush(colorScheme.shade(KColorScheme::ShadowShade).darker(500)));
-        painter->drawRect(option->rect);
+        painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
     }
 }
 
