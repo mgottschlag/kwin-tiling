@@ -85,7 +85,6 @@ SaverEngine::~SaverEngine()
 
 //---------------------------------------------------------------------------
 
-// This should be called only using DBus.
 void SaverEngine::Lock()
 {
     bool ok = true;
@@ -95,7 +94,7 @@ void SaverEngine::Lock()
 // It takes a while for krunner_lock to start and lock the screen.
 // Therefore delay the DBus call until it tells krunner that the locking is in effect.
 // This is done only for --forcelock .
-        if( ok )
+        if( ok && calledFromDBus())
         {
             mLockTransactions.append(message().createReply());
             setDelayedReply(true);
