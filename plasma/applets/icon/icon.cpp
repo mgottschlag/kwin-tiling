@@ -50,6 +50,7 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     setAcceptDrops(true);
     setHasConfigurationInterface(true);
     m_icon = new Plasma::Icon(this);
+    m_icon->setDrawBackground(true);
 
     if (args.count() > 2) {
         setUrl(args.at(2).toString());
