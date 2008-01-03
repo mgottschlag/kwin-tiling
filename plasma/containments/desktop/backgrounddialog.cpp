@@ -7,6 +7,8 @@
   (at your option) any later version.
 */
 
+#define USE_BACKGROUND_PACKAGES
+
 #include "backgrounddialog.h"
 #include <memory>
 #include <QAbstractItemView>
@@ -35,7 +37,13 @@
 #include <KSvgRenderer>
 #include <knewstuff2/engine.h>
 #include <ThreadWeaver/Weaver>
+
+#ifdef USE_BACKGROUND_PACKAGES
+
 #include <plasma/packagemetadata.h>
+#include <plasma/package.h>
+
+#endif
 
 class BackgroundContainer
 {
@@ -51,21 +59,27 @@ findAllBackgrounds(const BackgroundContainer *container,
                    float ratio)
 {
     QList<Background *> res;
-    
+
 #ifdef USE_BACKGROUND_PACKAGES
+
     // get all packages in this directory
-    QStringList packages = Package::knownPackages(path);
+    QStringList packages = Plasma::Package::knownPackages(path);
     foreach (QString packagePath, packages)
     {
+        kDebug() << packagePath;
         std::auto_ptr<Background> pkg(
-            new BackgroundPackage(packagePath, ratio));
+            new BackgroundPackage(path+packagePath, ratio));
+//             kDebug() << "Package is valid?" << pkg->isValid();
+//             kDebug() << "Path passed to the constructor" << path+packagePath;
         if (pkg->isValid() && 
             (!container || !container->contains(pkg->path()))) {
             res.append(pkg.release());
         }
     }
+//     kDebug() << packages << res;
+
 #endif
-            
+
     // search normal wallpapers
     QDir dir(path);
     QStringList filters;
@@ -79,7 +93,7 @@ findAllBackgrounds(const BackgroundContainer *container,
             res.append(new BackgroundFile(wp.filePath(), ratio));
         }
     }
-    
+
     return res;
 }
 
@@ -561,7 +575,7 @@ void BackgroundDialog::getNewStuff()
 void BackgroundDialog::browse()
 {
     QString wallpaper = KFileDialog::getOpenFileName(KUrl(), 
-                                                     "*.png *.jpeg *.jpg *.svg *.svgz", 
+                                                     "*.png *.jpeg *.jpg *.svg *.svgz",
                                                      this, 
                                                      i18n("Select a wallpaper image file"));
     if (wallpaper.isEmpty()) {
