@@ -140,7 +140,7 @@ CFontViewPart::CFontViewPart(QWidget *parentWidget, QObject *parent, const QList
     connect(itsFaceSelector, SIGNAL(valueChanged(int)), SLOT(showFace(int)));
 
     itsChangeTextAction=actionCollection()->addAction("changeText");
-    itsChangeTextAction->setIcon(KIcon("text"));
+    itsChangeTextAction->setIcon(KIcon("edit-rename"));
     itsChangeTextAction->setText(i18n("Change Text..."));
     connect(itsChangeTextAction, SIGNAL(triggered(bool)), SLOT(changeText()));
 
