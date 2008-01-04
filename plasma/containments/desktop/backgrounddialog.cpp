@@ -229,7 +229,9 @@ QVariant BackgroundListModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case Qt::DisplayRole:
-        return b->title();
+        return b->title().replace(QString("_"), QString(" "));;
+//         temp.replace(QString("_"), QString(" ")); // Look better
+//         return temp;
     case BackgroundDelegate::ScreenshotRole: {
         QPixmap pix = b->screenshot();
         if (pix.isNull() && !b->screenshotGenerationStarted()) {
