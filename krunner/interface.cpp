@@ -296,7 +296,6 @@ Interface::Interface(QWidget* parent)
 
     KConfigGroup cg(KGlobal::config(), "General");
     QStringList executions = cg.readEntry("pastqueries", QStringList());
-    executions << QString();
     //Handle updates to the completion object as well
     m_searchTerm->setHistoryItems(executions, true);
 
@@ -458,8 +457,7 @@ void Interface::resetInterface()
     m_header->setPixmap("system-search");
     m_defaultMatch = 0;
     m_context.setSearchTerm(QString());
-    m_searchTerm->addItem(QString());
-    m_searchTerm->setCurrentIndex(m_searchTerm->count() - 1);
+    m_searchTerm->setCurrentItem(QString(), true);
     m_matchList->clear();
     m_runButton->setEnabled( false );
     m_optionsButton->setEnabled( false );
