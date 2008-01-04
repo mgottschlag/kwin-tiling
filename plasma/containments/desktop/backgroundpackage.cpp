@@ -270,6 +270,11 @@ QString BackgroundPackage::email() const
     return metadata()->email();
 }
 
+QString BackgroundPackage::license() const
+{
+    return metadata()->license();
+}
+
 bool BackgroundPackage::isValid() const
 {
     return Package::isValid();
@@ -336,6 +341,11 @@ QString BackgroundFile::title() const
 }
 
 QString BackgroundFile::email() const
+{
+    return QString();
+}
+
+QString BackgroundFile::license() const
 {
     return QString();
 }

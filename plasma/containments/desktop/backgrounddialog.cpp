@@ -558,7 +558,7 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config)
     m_selected = config.readEntry("selected", QStringList());
     m_model->reload(m_selected);
     QString currentPath = config.readEntry("wallpaper",
-        KStandardDirs::locate("wallpaper", "plasma-default.png"));
+        KStandardDirs::locate("wallpaper", "EOS"));
     int index = m_model->indexOf(currentPath);
     if (index != -1) {
         m_view->setCurrentIndex(index);
@@ -665,6 +665,7 @@ void BackgroundDialog::update()
 
     // FIXME the second parameter is not used, get rid of it.
     bool someMetadata = setMetadata(m_authorLine, b->author());
+    someMetadata = setMetadata(m_licenseLine, b->license()) || someMetadata;
     someMetadata = setMetadata(m_emailLine, b->email()) || someMetadata;
     m_authorLabel->setVisible(someMetadata);
     m_emailLabel->setVisible(someMetadata);

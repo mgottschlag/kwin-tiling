@@ -54,6 +54,7 @@ public:
     virtual QString title() const = 0;
     virtual QString author() const = 0;
     virtual QString email() const = 0;
+    virtual QString license() const = 0;
     
     virtual bool isValid() const = 0;
 
@@ -79,6 +80,7 @@ public:
     virtual QString author() const;
     virtual QString title() const;
     virtual QString email() const;
+    virtual QString license() const;
     virtual bool isValid() const;
 private:
     QString resString(const QSize &size) const;
@@ -109,6 +111,7 @@ public:
     virtual QString author() const;
     virtual QString title() const;
     virtual QString email() const;
+    virtual QString license() const;
     virtual bool isValid() const;
 private:
     QString m_file;
