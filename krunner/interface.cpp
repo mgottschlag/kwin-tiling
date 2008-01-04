@@ -457,7 +457,7 @@ void Interface::resetInterface()
     m_header->setPixmap("system-search");
     m_defaultMatch = 0;
     m_context.setSearchTerm(QString());
-    m_searchTerm->setCurrentItem(QString(), true);
+    m_searchTerm->setCurrentItem(QString(), true, 0);
     m_matchList->clear();
     m_runButton->setEnabled( false );
     m_optionsButton->setEnabled( false );
