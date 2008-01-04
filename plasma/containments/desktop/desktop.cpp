@@ -162,8 +162,8 @@ void DefaultDesktop::applyConfig()
 {
     Q_ASSERT(m_configDialog);
     m_configDialog->saveConfig(config());
-    config().config()->sync();
-    
+    emit configNeedsSaving();
+
     reloadConfig();
 }
 
@@ -178,7 +178,7 @@ void DefaultDesktop::reloadConfig()
 
     kDebug() << "Default would be" << KStandardDirs::locate("wallpaper", "EOS/contents/images/1920x1200.jpg");
     kDebug() << "but we're loading" << m_wallpaperPath << "instead";
-    
+
     m_backgroundMode = cg.readEntry("backgroundmode", 
         (int) BackgroundDialog::kStaticBackground);
 
