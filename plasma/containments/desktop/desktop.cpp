@@ -172,6 +172,12 @@ void DefaultDesktop::reloadConfig()
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 
     KConfigGroup cg = config();
+
+    m_wallpaperPath = cg.readEntry("wallpaper",
+            KStandardDirs::locate("wallpaper", "EOS/contents/images/1920x1200.jpg"));
+
+    kDebug() << "Default would be" << KStandardDirs::locate("wallpaper", "EOS/contents/images/1920x1200.jpg");
+    kDebug() << "but we're loading" << m_wallpaperPath << "instead";
     
     m_backgroundMode = cg.readEntry("backgroundmode", 
         (int) BackgroundDialog::kStaticBackground);
@@ -181,8 +187,7 @@ void DefaultDesktop::reloadConfig()
     m_wallpaperColor = cg.readEntry("wallpapercolor", QColor(Qt::black));
 
     if (m_backgroundMode == BackgroundDialog::kStaticBackground) {
-        m_wallpaperPath = cg.readEntry("wallpaper",
-            KStandardDirs::locate("wallpaper", "plasma-default.png"));
+
         m_slideshowTimer.stop();
         updateBackground();
     }

@@ -560,7 +560,11 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config)
     m_selected = config.readEntry("selected", QStringList());
     m_model->reload(m_selected);
     QString currentPath = config.readEntry("wallpaper",
-        KStandardDirs::locate("wallpaper", "EOS"));
+            KStandardDirs::locate("wallpaper", "EOS/contents/images/1920x1200.jpg"));
+
+    kDebug() << "Default would be" << KStandardDirs::locate("wallpaper", "EOS/contents/images/1920x1200.jpg");
+    kDebug() << "but we're loading" << currentPath << "instead";
+
     int index = m_model->indexOf(currentPath);
     if (index != -1) {
         m_view->setCurrentIndex(index);
