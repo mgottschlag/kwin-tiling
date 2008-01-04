@@ -148,7 +148,7 @@ Comment[wa]=Ene modifieuse tape (metans MAJ oudonbén CTRL) a candjî si estat e
 Comment[x-test]=xxA modifier key (e.g., Shift or Control) has changed its state and is now activexx
 Comment[zh_CN]=修饰键(即 Shift 或 Ctrl)更改了其状态，现已激活
 Comment[zh_TW]=一個組合鍵（如 Shift 或 Ctrl 等）已改變了它的狀態
-Sound=KDE_Click.wav
+Sound=KDE-Sys-Special.ogg
 
 nopresentation=236
 
@@ -241,7 +241,7 @@ Comment[wa]=Ene modifieuse tape (metans MAJ oudonbén CTRL) a candjî si estat e
 Comment[x-test]=xxA modifier key (e.g., Shift or Control) has changed its state and is now inactivexx
 Comment[zh_CN]=修饰键(即 Shift 或 Ctrl)更改了其状态，现未激活
 Comment[zh_TW]=一個組合鍵（如 Shift 或 Ctrl 等）已改變了它的狀態
-Sound=KDE_Click.wav
+Sound=KDE-Sys-Special.ogg
 
 nopresentation=236
 
@@ -334,7 +334,7 @@ Comment[wa]=Ene modifieuse tape (metans MAJ oudonbén CTRL) a stî serêye eyet 
 Comment[x-test]=xxA modifier key (e.g., Shift or Control) has been locked and is now active for all of the following keypressesxx
 Comment[zh_CN]=修饰键(即 Shift 或 Ctrl)已被锁定，现在将适用于后续按键
 Comment[zh_TW]=一個組合鍵（如 Shift 或 Ctrl 等）已被鎖定，現在再按任何鍵都視為快捷鍵組合
-Sound=KDE_Click.wav
+Sound=KDE-Sys-Special.ogg
 
 nopresentation=236
 
@@ -426,7 +426,7 @@ Comment[wa]=Ene tape ki sere (metans CAPS LOCK oudonbén NUM LOCK) a candjî si 
 Comment[x-test]=xxA lock key (e.g., Caps Lock or Num Lock) has changed its state and is now activexx
 Comment[zh_CN]=锁定键(如 Caps Lock 或 Num Lock)更改了其状态，现已激活
 Comment[zh_TW]=一個鎖定鍵（如 CapsLock 或 NumLock）已改變它的狀態為啟用
-Sound=KDE_Click.wav
+Sound=KDE-Sys-Special.ogg
 
 nopresentation=236
 
@@ -520,7 +520,7 @@ Comment[wa]=Ene tape ki sere (metans CAPS LOCK oudonbén NUM LOCK) a candjî si 
 Comment[x-test]=xxA lock key (e.g., Caps Lock or Num Lock) has changed its state and is now inactivexx
 Comment[zh_CN]=锁定键(如 Caps Lock 或 Num Lock)更改了其状态，现未激活
 Comment[zh_TW]=一個鎖定鍵（如 CapsLock 或 NumLock）已改變它的狀態
-Sound=KDE_Click.wav
+Sound=KDE-Sys-Special.ogg
 
 nopresentation=236
 
@@ -619,7 +619,7 @@ Comment[wa]=Les aclapantès tapes on stî metowes oudonbén dismetowes
 Comment[x-test]=xxSticky keys has been enabled or disabledxx
 Comment[zh_CN]=启用或禁用了粘滞键
 Comment[zh_TW]=相黏鍵已啟動或關閉。
-Sound=KDE_Click.wav
+Sound=KDE-Sys-Special.ogg
 Action=Popup
 nopresentation=236
 
@@ -716,7 +716,7 @@ Comment[wa]=Des londjinnès tapes ont stî metowe en alaedje oudonbén dismetowe
 Comment[x-test]=xxSlow keys has been enabled or disabledxx
 Comment[zh_CN]=启用或禁用了筛选键
 Comment[zh_TW]=慢速鍵已啟動或關閉。
-Sound=KDE_Click.wav
+Sound=KDE-Sys-Special.ogg
 Action=Popup
 nopresentation=236
 
@@ -812,7 +812,7 @@ Comment[uk]=Було активовано або деактивовано пру
 Comment[x-test]=xxBounce keys has been enabled or disabledxx
 Comment[zh_CN]=启用或禁用了撞击键
 Comment[zh_TW]=彈回鍵已啟動或關閉。
-Sound=KDE_Click.wav
+Sound=KDE-Sys-Special.ogg
 Action=PassivePopup
 nopresentation=236
 
@@ -912,6 +912,6 @@ Comment[wa]=Des tapes di soris ont stî metowe en alaedje oudonbén dismetowes
 Comment[x-test]=xxMouse keys has been enabled or disabledxx
 Comment[zh_CN]=启用或禁用了鼠标键
 Comment[zh_TW]=滑鼠鍵已啟動或關閉。
-Sound=KDE_Click.wav
+Sound=KDE-Sys-Special.ogg
 Action=PassivePopup
 nopresentation=236
