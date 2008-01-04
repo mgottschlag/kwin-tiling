@@ -389,7 +389,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     // resize method
     QLabel *resizeMethodLabel = new QLabel(i18n("P&ositioning:"), staticPictureWidget);
     m_resizeMethod = new QComboBox(main);
-    m_resizeMethod->addItem(i18n("Scale and crop"),
+    m_resizeMethod->addItem(i18n("Scale & Crop"),
                             Background::ScaleCrop);
     m_resizeMethod->addItem(i18n("Scaled"), 
                             Background::Scale);
@@ -446,12 +446,12 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     QVBoxLayout *dirlistButtons = new QVBoxLayout;
     m_addDir = new QPushButton(
         KIcon("list-add"),
-        i18n("&Add directory..."),
+        i18n("&Add Directory..."),
         slideshowWidget);
     connect(m_addDir, SIGNAL(clicked()), this, SLOT(slotAddDir()));
     m_removeDir = new QPushButton(
         KIcon("list-remove"),
-        i18n("&Remove directory"),
+        i18n("&Remove Directory"),
         slideshowWidget);
     connect(m_removeDir, SIGNAL(clicked()), this, SLOT(slotRemoveDir()));
     
@@ -503,8 +503,8 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     newStuffLayout->addStretch();
 
     //icon settings
-    QLabel *showIconsLabel = new QLabel(i18n("&Show Icons"), main);
-    QLabel *alignToGridLabel = new QLabel(i18n("&Align To Grid"), main);
+    QLabel *showIconsLabel = new QLabel(i18n("&Show icons"), main);
+    QLabel *alignToGridLabel = new QLabel(i18n("&Align to grid"), main);
     m_showIcons = new QCheckBox(main);
     m_alignToGrid = new QCheckBox(main);
     showIconsLabel->setBuddy(m_showIcons);
@@ -626,7 +626,7 @@ void BackgroundDialog::browse()
     QString wallpaper = KFileDialog::getOpenFileName(KUrl(), 
                                                      "*.png *.jpeg *.jpg *.svg *.svgz",
                                                      this, 
-                                                     i18n("Select a wallpaper image file"));
+                                                     i18n("Select Wallpaper Image File"));
     if (wallpaper.isEmpty()) {
         return;
     }
