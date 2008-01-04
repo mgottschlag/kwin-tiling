@@ -41,7 +41,7 @@
        <item row="0" column="0" >
         <widget class="QLabel" name="plainClockFontLabel" >
          <property name="text" >
-          <string>Plain clock font</string>
+          <string>Plain clock font:</string>
          </property>
         </widget>
        </item>
@@ -65,7 +65,7 @@
        <item row="3" column="0" >
         <widget class="QLabel" name="plainClockColorLabel" >
          <property name="text" >
-          <string>Plain clock color</string>
+          <string>Plain clock color:</string>
          </property>
         </widget>
        </item>

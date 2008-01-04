@@ -397,7 +397,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
                             Background::Center);
     m_resizeMethod->addItem(i18n("Tiled"),
                             Background::Tiled);
-    m_resizeMethod->addItem(i18n("Center tiled"),
+    m_resizeMethod->addItem(i18n("Center Tiled"),
                             Background::CenterTiled);
     connect(m_resizeMethod, SIGNAL(currentIndexChanged(int)),
             this, SLOT(update()));
@@ -496,7 +496,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     
     // get new stuff
     QHBoxLayout *newStuffLayout = new QHBoxLayout;
-    m_newStuff = new QPushButton(i18n("&New wallpaper..."), main);
+    m_newStuff = new QPushButton(i18n("&New Wallpaper..."), main);
     connect(m_newStuff, SIGNAL(clicked()), this, SLOT(getNewStuff()));
     newStuffLayout->addStretch();
     newStuffLayout->addWidget(m_newStuff);
