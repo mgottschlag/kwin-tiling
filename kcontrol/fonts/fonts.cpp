@@ -621,8 +621,8 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
    lay->addWidget( label, 0, 0 );
    cbAA = new QComboBox( this );
    cbAA->insertItem( AAEnabled, i18nc( "Use anti-aliasing", "Enabled" )); // change AASetting type if order changes
-   cbAA->insertItem( AASystem, i18nc( "Use anti-aliasing", "System settings" ));
-   cbAA->insertItem( AADisabled, i18nc( "Use annti-aliasing", "Disabled" ));
+   cbAA->insertItem( AASystem, i18nc( "Use anti-aliasing", "System Settings" ));
+   cbAA->insertItem( AADisabled, i18nc( "Use anti-aliasing", "Disabled" ));
    cbAA->setWhatsThis( i18n("If this option is selected, KDE will smooth the edges of curves in "
                               "fonts."));
    aaSettingsButton = new QPushButton( i18n( "Configure..." ), this);

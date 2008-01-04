@@ -119,7 +119,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
     // add to / remove from favorites
     QAction *favoriteAction = new QAction(this);
     if (isFavorite) {
-        favoriteAction->setText(i18n("Remove from Favorites"));
+        favoriteAction->setText(i18n("Remove From Favorites"));
         favoriteAction->setIcon(KIcon("list-remove"));
     } else {
         favoriteAction->setText(i18n("Add to Favorites"));

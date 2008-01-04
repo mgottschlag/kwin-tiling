@@ -1615,11 +1615,11 @@ CFontListView::CFontListView(QWidget *parent, CFontList *model)
     setWhatsThis(model->whatsThis());
     header()->setWhatsThis(whatsThis());
     itsStdMenu=new QMenu(this);
-    itsDeleteAct=itsStdMenu->addAction(KIcon("edit-delete"), i18n("Delete..."),
+    itsDeleteAct=itsStdMenu->addAction(KIcon("edit-delete"), i18n("Delete"),
                                        this, SIGNAL(del()));
     itsPrintAct=itsStdMenu->addAction(KIcon("document-print"), i18n("Print..."),
                                       this, SIGNAL(print()));
-    itsViewAct=itsStdMenu->addAction(KIcon("kfontview"), i18n("Open in Font Viewer..."),
+    itsViewAct=itsStdMenu->addAction(KIcon("kfontview"), i18n("Open in Font Viewer"),
                                       this, SLOT(view()));
     itsStdMenu->addSeparator();
     QAction *reloadAct=itsStdMenu->addAction(KIcon("view-refresh"), i18n("Reload"), this, SIGNAL(reload()));

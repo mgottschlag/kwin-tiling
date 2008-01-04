@@ -170,13 +170,13 @@ void KRunnerApp::initialize()
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::SHIFT+Qt::Key_Delete));
         connect(a, SIGNAL(triggered(bool)), SLOT(logoutWithoutConfirmation()));
 
-        a = m_actionCollection->addAction( I18N_NOOP("Halt without Confirmation") );
-        a->setText( i18n(I18N_NOOP("Halt without Confirmation")) );
+        a = m_actionCollection->addAction( I18N_NOOP("Halt Without Confirmation") );
+        a->setText( i18n(I18N_NOOP("Halt Without Confirmation")) );
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::SHIFT+Qt::Key_PageDown));
         connect(a, SIGNAL(triggered(bool)), SLOT(haltWithoutConfirmation()));
 
-        a = m_actionCollection->addAction( I18N_NOOP("Reboot without Confirmation") );
-        a->setText( i18n(I18N_NOOP("Reboot without Confirmation")) );
+        a = m_actionCollection->addAction( I18N_NOOP("Reboot Without Confirmation") );
+        a->setText( i18n(I18N_NOOP("Reboot Without Confirmation")) );
         qobject_cast<KAction*>( a )->setGlobalShortcut(KShortcut(Qt::ALT+Qt::CTRL+Qt::SHIFT+Qt::Key_PageUp));
         connect(a, SIGNAL(triggered(bool)), SLOT(rebootWithoutConfirmation()));
     }

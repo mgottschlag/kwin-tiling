@@ -21,7 +21,7 @@
      <item>
       <widget class="QLabel" name="screenLabel" >
        <property name="text" >
-        <string>Settings for Screen:</string>
+        <string>Settings for screen:</string>
        </property>
        <property name="buddy" >
         <cstring>screenCombo</cstring>
@@ -42,7 +42,7 @@
      <item>
       <widget class="QLabel" name="sizeLabel" >
        <property name="text" >
-        <string>Screen Size:</string>
+        <string>Screen size:</string>
        </property>
        <property name="buddy" >
         <cstring>sizeCombo</cstring>
@@ -63,7 +63,7 @@
      <item>
       <widget class="QLabel" name="rateLabel" >
        <property name="text" >
-        <string>Refresh Rate:</string>
+        <string>Refresh rate:</string>
        </property>
       </widget>
      </item>
