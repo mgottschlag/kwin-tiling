@@ -59,8 +59,8 @@ void IconLoader::init(DefaultDesktop *desktop)
 
     //load stored settings
     KConfigGroup cg = m_desktop->config();
-    m_iconShow = cg.readEntry(i18n("ShowIcons"),m_iconShow);
-    m_gridAlign = cg.readEntry(i18n("AlignToGrid"),m_gridAlign);
+    m_iconShow = cg.readEntry("showIcons",m_iconShow);
+    m_gridAlign = cg.readEntry(i18n("alignToGrid"),m_gridAlign);
     m_enableMedia = cg.readEntry(i18n("EnableMedia"),m_enableMedia);
 
     
@@ -82,15 +82,11 @@ void IconLoader::init(DefaultDesktop *desktop)
     connect(&m_desktopDir, SIGNAL(deleteItem(KFileItem)), this, SLOT(deleteItem(KFileItem)));
     
     createMenu();
-    showIcons(m_iconShow);
+    setShowIcons(m_iconShow);
 }
 
 void IconLoader::createMenu()
 {
-    m_showIcons = new KToggleAction(i18n("Show Icons"), this);
-    connect(m_showIcons, SIGNAL(triggered(bool)), this, SLOT(slotShowIcons(bool)));
-    actions.append(m_showIcons);
-
     QAction* alignHorizontal = new QAction(i18n("Align Horizontaly"), this);
     connect(alignHorizontal, SIGNAL(triggered(bool)), this , SLOT(slotAlignHorizontal()));
     actions.append(alignHorizontal);
@@ -102,25 +98,10 @@ void IconLoader::createMenu()
 
 QList<QAction*> IconLoader::contextActions()
 {
-    //Update action.
-    m_showIcons->setChecked(m_iconShow);
     if (!m_iconShow) {
-        QList<QAction*> item;
-        item.append(m_showIcons);
-        return item;
+        return QList<QAction*>();
     }
     return actions;
-}
-
-void IconLoader::slotShowIcons(bool iconShow)
-{
-    m_iconShow = iconShow;
-    showIcons(m_iconShow);
-}
-
-void IconLoader::slotAlignToGrid(bool alignToGrid)
-{
-    setGridAligned(alignToGrid);
 }
 
 void IconLoader::slotAlignHorizontal()
@@ -436,9 +417,15 @@ void IconLoader::setGridSize(const QSizeF& gridSize)
     }
 }
 
-void IconLoader::showIcons(bool iconsVisible)
+bool IconLoader::showIcons() const
 {
-    if (iconsVisible) {
+    return m_iconShow;
+}
+
+void IconLoader::setShowIcons(bool iconsVisible)
+{
+    m_iconShow = iconsVisible;
+    if (m_iconShow) {
         m_desktopDir.openUrl(KGlobalSettings::desktopPath());
     } else {
         m_desktopDir.stop();

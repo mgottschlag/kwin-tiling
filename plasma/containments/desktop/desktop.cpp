@@ -222,6 +222,11 @@ void DefaultDesktop::reloadConfig()
         m_currentSlide = -1;
         nextSlide();
     }
+
+    if(s_icons) {
+        s_icons->setShowIcons(cg.readEntry("showIcons",true));
+        s_icons->setGridAligned(cg.readEntry("alignToGrid",true));
+    }
 }
 
 void DefaultDesktop::updateBackground()

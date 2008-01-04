@@ -24,6 +24,7 @@ class QLabel;
 class QListWidget;
 class QPushButton;
 class QTimeEdit;
+class QCheckBox;
 class KColorButton;
 class KSeparator;
 
@@ -81,6 +82,9 @@ private:
     
     RenderThread m_preview_renderer;
     int m_preview_token;
+
+    QCheckBox *m_alignToGrid;
+    QCheckBox *m_showIcons;
     
     bool setMetadata(QLabel *label,
                      const QString &text);

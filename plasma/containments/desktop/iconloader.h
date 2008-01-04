@@ -109,6 +109,9 @@ public:
      */
     virtual QList<QAction*> contextActions();
 
+    bool showIcons() const;
+    void setShowIcons(bool iconsVisible);
+
     void changeAlignment(bool horizontal);
     //inline const QList<Plasma::Applet*>& desktopItems();
 
@@ -118,7 +121,6 @@ private:
     void addIcon(Plasma::Applet *applet);
     void deleteIcon(const KUrl &url);
     void deleteIcon(Plasma::Applet *applet);
-    void showIcons(bool iconsVisible);
     void configureMedia();
     void createMenu();
 
@@ -139,7 +141,6 @@ private:
     bool m_gridAlign;
     bool m_enableMedia;
     QSizeF m_gridSize;
-    KToggleAction* m_showIcons;
 
 private Q_SLOTS:
     void newItems(const KFileItemList& items);
@@ -148,11 +149,8 @@ private Q_SLOTS:
     void sourceAdded(const QString &source);
     void sourceDeleted(const QString &source);
 
-    void slotShowIcons(bool showIcons);
     void slotAlignHorizontal();
     void slotAlignVertical();
-    void slotAlignToGrid(bool alignToGrid);
-
 };
 
 QPoint IconLoader::mapToGrid(const QPointF &pos) const

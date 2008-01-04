@@ -25,6 +25,7 @@
 #include <QTimeEdit>
 #include <QToolButton>
 #include <QVBoxLayout>
+#include <QCheckBox>
 #include <KColorButton>
 #include <KDebug>
 #include <KDirSelectDialog>
@@ -335,9 +336,11 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     setButtons(Ok | Cancel | Apply);
 
     QWidget *main = new QWidget(this);
-    QHBoxLayout *layout = new QHBoxLayout;
+    QVBoxLayout *layout = new QVBoxLayout;
+    QHBoxLayout *backgroundLayout = new QHBoxLayout;
     QVBoxLayout *leftLayout = new QVBoxLayout;
     QVBoxLayout *rightLayout = new QVBoxLayout;
+    QHBoxLayout *iconLayout = new QHBoxLayout;
     
     // static or slideshow?
     m_mode = new QComboBox(main);
@@ -496,14 +499,31 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     newStuffLayout->addStretch();
     newStuffLayout->addWidget(m_newStuff);
     newStuffLayout->addStretch();
+
+    //icon settings
+    QLabel *showIconsLabel = new QLabel(i18n("&Show Icons"), main);
+    QLabel *alignToGridLabel = new QLabel(i18n("&Align To Grid"), main);
+    m_showIcons = new QCheckBox(main);
+    m_alignToGrid = new QCheckBox(main);
+    showIconsLabel->setBuddy(m_showIcons);
+    alignToGridLabel->setBuddy(m_alignToGrid);
+    iconLayout->addWidget(showIconsLabel);
+    iconLayout->addWidget(m_showIcons);
+    iconLayout->addWidget(alignToGridLabel);
+    iconLayout->addWidget(m_alignToGrid);
+    iconLayout->addStretch();
     
     rightLayout->addWidget(monitor);
     rightLayout->addStretch();
     rightLayout->addLayout(newStuffLayout);
     rightLayout->addStretch();
     
-    layout->addLayout(leftLayout, 1);
-    layout->addLayout(rightLayout);
+    backgroundLayout->addLayout(leftLayout, 1);
+    backgroundLayout->addLayout(rightLayout);
+
+    layout->addLayout(backgroundLayout);
+    layout->addLayout(iconLayout);
+    
     main->setLayout(layout);
     
     qRegisterMetaType<QImage>("QImage");
@@ -543,6 +563,11 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config)
     if (index != -1) {
         m_view->setCurrentIndex(index);
     }
+
+    bool showIcons = config.readEntry("showIcons",true);
+    m_showIcons->setCheckState(showIcons ? Qt::Checked : Qt::Unchecked);
+    bool alignToGrid = config.readEntry("alignToGrid", true);
+    m_alignToGrid->setCheckState(alignToGrid ? Qt::Checked : Qt::Unchecked);
     
     if (mode == kSlideshowBackground) {
         updateSlideshow();
@@ -572,6 +597,9 @@ void BackgroundDialog::saveConfig(KConfigGroup config)
         int seconds = QTime(0, 0, 0).secsTo(m_slideshowDelay->time());
         config.writeEntry("slideTimer", seconds);
     }
+
+    config.writeEntry("showIcons", (m_showIcons->checkState() == Qt::Checked ? true : false));
+    config.writeEntry("alignToGrid", (m_alignToGrid->checkState() == Qt::Checked ? true : false));
 }
 
 void BackgroundDialog::getNewStuff()
