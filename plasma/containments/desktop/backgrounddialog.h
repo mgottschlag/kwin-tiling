@@ -28,6 +28,7 @@ class QPushButton;
 class QTimeEdit;
 class QCheckBox;
 class KColorButton;
+class KFileDialog;
 class KSeparator;
 
 class BackgroundDialog : public KDialog, public Ui::BackgroundDialog
@@ -71,6 +72,7 @@ private:
     //QPushButton *m_addDir;
     //QPushButton *m_removeDir;
     //QTimeEdit *m_slideshowDelay;
+    KFileDialog *m_dialog;
     
     QString m_img;
     QSize m_res;
@@ -96,6 +98,7 @@ private slots:
     void update();
     void getNewStuff();
     void browse();
+    void showFileDialog();
     
     void slotAddDir();
     void slotRemoveDir();

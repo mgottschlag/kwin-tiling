@@ -351,7 +351,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     connect(m_view, SIGNAL(currentIndexChanged(int)),
             this, SLOT(update()));
     m_pictureUrlButton->setIcon(KIcon("document-open"));
-    connect(m_pictureUrlButton, SIGNAL(clicked()), this, SLOT(browse()));
+    connect(m_pictureUrlButton, SIGNAL(clicked()), this, SLOT(showFileDialog()));
 
     // resize method
     m_resizeMethod->addItem(i18n("Scale & Crop"),
@@ -493,12 +493,25 @@ void BackgroundDialog::getNewStuff()
     }
 }
 
+void BackgroundDialog::showFileDialog()
+{
+    m_dialog = new KFileDialog(KUrl(), "*.png *.jpeg *.jpg *.svg *.svgz", this);
+    dialog.setOperationMode(KFileDialog::Opening);
+    m_dialog->setCaption(i18n("Select Wallpaper Image File"));
+    m_dialog->setModal(false);
+    m_dialog->show();
+    m_dialog->raise();
+    m_dialog->activateWindow();
+
+    connect(m_dialog, SIGNAL(okClicked()), this, SLOT(browse()));
+}
+
 void BackgroundDialog::browse()
 {
-    QString wallpaper = KFileDialog::getOpenFileName(KUrl(), 
-                                                     "*.png *.jpeg *.jpg *.svg *.svgz",
-                                                     this, 
-                                                     i18n("Select Wallpaper Image File"));
+    QString wallpaper = m_dialog->selectedFile();
+
+    delete m_dialog;
+
     if (wallpaper.isEmpty()) {
         return;
     }
