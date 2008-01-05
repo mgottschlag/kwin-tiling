@@ -228,13 +228,13 @@ void IconLoader::alignHorizontal(const QList<Plasma::Applet*> &items)
     QPointF pos;
     for(pos.ry() = gridHeight/2; pos.y() < desktopHeight; pos.ry() += gridHeight) {
         for(pos.rx() = gridWidth/2; pos.x() < desktopWidth; pos.rx() += gridWidth) {
-            QGraphicsItem *existing = m_desktop->scene()->itemAt(pos);
+            Plasma::Applet *existing = dynamic_cast<Plasma::Applet*>(m_desktop->scene()->itemAt(pos));
             // If the existing index is in the items list with an index
             // greater than icon index current we will have to move it.
             // So ignore it
             // If its equal then existing == icon
-            int existingIndex = items.indexOf((Plasma::Applet*)existing);
-            if (!existing || (existing == m_desktop) || (existingIndex>=index)) {
+            int existingIndex = items.indexOf(existing);
+            if (!existing || existing ==m_desktop || existingIndex >= index) {
                 alignToGrid(icon, mapToGrid(pos));
                 // get next
                 if (++index < itemCount) {
@@ -268,14 +268,14 @@ void IconLoader::alignVertical(const QList<Plasma::Applet*> &items)
     QPointF pos;
     for(pos.rx() = gridWidth/2; pos.x() < desktopWidth; pos.rx() += gridWidth) {
         for(pos.ry() = gridHeight/2; pos.y() < desktopHeight; pos.ry() += gridHeight) {
-            QGraphicsItem *existing = m_desktop->scene()->itemAt(pos);
+            Plasma::Applet *existing = dynamic_cast<Plasma::Applet*>(m_desktop->scene()->itemAt(pos));
             // If *existing is in items list with an index
             // greater than current icon index, then we will have to move
             // existing after.
             // So ignore it
             // If its equal then existing == icon then... we ignore it too
-            int existingIndex = items.indexOf((Plasma::Applet*)existing);
-            if (!existing || (existing == m_desktop) || (existingIndex>=index)) {
+            int existingIndex = items.indexOf(existing);
+            if (!existing || existing == m_desktop || existingIndex >= index) {
                 alignToGrid(icon, mapToGrid(pos));
                 // get next
                 if (++index < itemCount) {
