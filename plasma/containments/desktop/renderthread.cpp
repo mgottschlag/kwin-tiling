@@ -45,6 +45,7 @@ int RenderThread::render(const QString &file,
                           Background::ResizeMethod method,
                           Qt::TransformationMode mode)
 {
+    int token;
     {
         QMutexLocker lock(&m_mutex);
         m_file = file;
@@ -52,6 +53,7 @@ int RenderThread::render(const QString &file,
         m_method = method;
         m_mode = mode;
         m_restart = true;
+        token = ++m_current_token;
     }
     
     if (!isRunning()) {
@@ -61,7 +63,7 @@ int RenderThread::render(const QString &file,
         m_condition.wakeOne();
     }
     
-    return ++m_current_token;
+    return token;
 }
 
 void RenderThread::run()
