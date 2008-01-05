@@ -496,7 +496,7 @@ void BackgroundDialog::getNewStuff()
 void BackgroundDialog::showFileDialog()
 {
     m_dialog = new KFileDialog(KUrl(), "*.png *.jpeg *.jpg *.svg *.svgz", this);
-    dialog.setOperationMode(KFileDialog::Opening);
+    m_dialog->setOperationMode(KFileDialog::Opening);
     m_dialog->setCaption(i18n("Select Wallpaper Image File"));
     m_dialog->setModal(false);
     m_dialog->show();
