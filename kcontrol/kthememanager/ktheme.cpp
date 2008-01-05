@@ -285,7 +285,7 @@ QString KTheme::createYourself( bool pack )
     konqBgColorElem.setAttribute( "rgb", konqConf.readEntry( "BgColor",QColor() ).name() );
     konqElem.appendChild( konqBgColorElem );
     m_root.appendChild( konqElem );
-
+#if 0
     // 9. Kicker (aka KDE Panel)
     KConfig _kickerConf( "kickerrc" );
     KConfigGroup kickerConf(&_kickerConf, "General" );
@@ -321,7 +321,7 @@ QString KTheme::createYourself( bool pack )
 
 
     m_root.appendChild( panelElem );
-
+#endif
     // 10. Widget style
     QDomElement widgetsElem = m_dom.createElement( "widgets" );
     widgetsElem.setAttribute( "name", globalConf->group("General").readEntry( "widgetStyle", KStyle::defaultStyle() ) );
@@ -613,7 +613,7 @@ void KTheme::apply()
             QDBusMessage::createSignal("/KonqMain", "org.kde.Konqueror.Main", "reparseConfiguration");
         QDBusConnection::sessionBus().send(message);
     }
-
+#if 0
     // 9. Kicker
     QDomElement panelElem = m_dom.elementsByTagName( "panel" ).item( 0 ).toElement();
 
@@ -642,7 +642,7 @@ void KTheme::apply()
         QDBusInterface kicker( "org.kde.kicker", "kicker");
         kicker.call("configure");
     }
-
+#endif
     // 10. Widget style
     QDomElement widgetsElem = m_dom.elementsByTagName( "widgets" ).item( 0 ).toElement();
 
