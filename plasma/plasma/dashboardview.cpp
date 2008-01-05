@@ -88,6 +88,11 @@ void DashboardView::showAppletBrowser()
         m_appletBrowserWidget = new Plasma::AppletBrowserWidget(containment(), true, this, Qt::FramelessWindowHint );
         m_appletBrowserWidget->setApplication();
         m_appletBrowserWidget->setWindowTitle(i18n("Add Widgets"));
+        QPalette p = m_appletBrowserWidget->palette();
+        p.setBrush(QPalette::Background, QBrush(QColor(0, 0, 0, 180)));
+        m_appletBrowserWidget->setPalette(p);
+        m_appletBrowserWidget->setBackgroundRole(QPalette::Background);
+        m_appletBrowserWidget->setAutoFillBackground(true);
         KWindowSystem::setState(m_appletBrowserWidget->winId(), NET::KeepAbove|NET::SkipTaskbar);
         //TODO: provide a nice unobtrusive way to access the browser
         m_appletBrowserWidget->move( 0, 0 );
@@ -115,6 +120,7 @@ void DashboardView::toggleVisibility()
 
         m_zoomOut = containment()->isToolboxToolEnabled("zoomOut");
         m_zoomIn = containment()->isToolboxToolEnabled("zoomIn");
+
         containment()->enableToolBoxTool("hideDashboard", true);
         containment()->enableToolBoxTool("zoomOut", false);
         containment()->enableToolBoxTool("zoomIn", false);
@@ -125,14 +131,6 @@ void DashboardView::toggleVisibility()
         m_suppressShow = true;
         QTimer::singleShot(SUPPRESS_SHOW_TIMEOUT, this, SLOT(suppressShowTimeout()));
     } else {
-        if (m_zoomOut) {
-            containment()->enableToolBoxTool("zoomOut", true);
-        }
-
-        if (m_zoomIn) {
-            containment()->enableToolBoxTool("zoomOut", true);
-        }
-
         hideView();
     }
 }
@@ -143,6 +141,8 @@ void DashboardView::hideView()
         m_appletBrowserWidget->hide();
     }
 
+    containment()->enableToolBoxTool("zoomOut", m_zoomOut);
+    containment()->enableToolBoxTool("zoomIn", m_zoomIn);
     containment()->enableToolBoxTool("hideDashboard", false);
     hide();
 }
