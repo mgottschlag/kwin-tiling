@@ -28,6 +28,7 @@ class RandRDisplay;
 class SettingsContainer;
 class CollapsibleWidget;
 class QGraphicsScene;
+class OutputGraphicsItem;
 class LayoutManager;
 
 
@@ -47,10 +48,14 @@ public:
 
 public slots:
 	void slotUpdateView();
+	void slotAdjustOutput(OutputGraphicsItem *o);
 
 signals:
 	void changed(bool c);
 
+protected:
+	virtual void resizeEvent(QResizeEvent *event);
+	
 private:
 	RandRDisplay *m_display;
 	bool m_changed;

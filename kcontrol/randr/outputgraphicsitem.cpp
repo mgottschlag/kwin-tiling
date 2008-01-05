@@ -24,6 +24,7 @@
 #include <QGraphicsScene>
 #include "randroutput.h"
 #include "randr.h"
+
 OutputGraphicsItem::OutputGraphicsItem(RandROutput *output)
 : QGraphicsRectItem(output->rect())
 {
@@ -33,14 +34,27 @@ OutputGraphicsItem::OutputGraphicsItem(RandROutput *output)
 	setBrush(QColor(0,255,0,128));
 	setFlag(QGraphicsItem::ItemIsMovable, true);
 	setFlag(QGraphicsItem::ItemIsSelectable, true);
-	m_text = new QGraphicsTextItem(output->name(), this);
-
+	
+	// An example of this description text with radeonhd on randr 1.2:
+	// DVI-I_2/digital
+	// 1680x1050 (60.0 Hz)
+	int w = output->rect().width(), h = output->rect().height();
+	QString refresh = QString::number(output->refreshRate(), 'f', 1);
+	QString desc = output->name() + "\n" + 
+	               QString("%1x%2 (%3 Hz)").arg(w).arg(h).arg(refresh);
+				
+	m_text = new QGraphicsTextItem(desc, this);
+	
 	QFont f = m_text->font();
 	f.setPixelSize(72);
 	m_text->setFont(f);
 
-	QRect r = output->rect();
-	m_text->setPos(r.width()/2,r.height()/2);
+	QRectF textRect = m_text->boundingRect();
+	QRect  outRect  = output->rect();
+	
+	// more accurate text centering
+	m_text->setPos((outRect.width() - textRect.width()) / 2,
+	               (outRect.height() - textRect.height()) / 2);
 }
 
 OutputGraphicsItem::~OutputGraphicsItem()

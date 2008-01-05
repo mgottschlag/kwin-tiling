@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2007 Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
+ * Copyright (c) 2007 Harry Bock <hbock@providence.edu>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -88,13 +89,14 @@ void RandRConfig::load()
 
 		OutputConfig *c = new OutputConfig(0, output, o);
 		w = m_container->insertWidget(c, output->name());
+		if(output->isActive())
+			w->setExpanded(true);
 		m_outputList.append(w);
+		
 		kDebug() << "Rect: " << output->rect();
 		connect(c, SIGNAL(updateView()), this, SLOT(slotUpdateView()));
-	}
-
+	}		    
 	slotUpdateView();
-
 }
 
 void RandRConfig::save()
@@ -124,6 +126,16 @@ void RandRConfig::update()
 	// TODO: implement
 }
 
+void RandRConfig::resizeEvent(QResizeEvent *event)
+{
+	slotUpdateView();
+}
+
+void RandRConfig::slotAdjustOutput(OutputGraphicsItem *o)
+{
+	// TODO: Implement
+}
+
 void RandRConfig::slotUpdateView()
 {
 	QRect r;
@@ -132,7 +144,7 @@ void RandRConfig::slotUpdateView()
 	// updates the graphics view so that all outputs fit inside of it
 	OutputMap outputs = m_display->currentScreen()->outputs();
 	foreach(RandROutput *output, outputs)
-	{
+	{		
 		if (first)
 		{
 			first = false;
@@ -141,9 +153,13 @@ void RandRConfig::slotUpdateView()
 		else
 			r = r.united(output->rect());
 	}
+	// scale the total bounding rectangle for all outputs to fit
+	// 80% of the containing QGraphicsView
 	float scaleX = (float)screenView->width() / r.width();
 	float scaleY = (float)screenView->height() / r.height();
-	float scale = (scaleX < scaleY)? scaleX : scaleY;
+	float scale = (scaleX < scaleY) ? scaleX : scaleY;
+	scale *= 0.80f;
+	
 	kDebug() << "Scaling by " << scale;
 	kDebug() << "ScreenView rect = " << screenView->rect() << " visible rect: " << r;
 	screenView->resetMatrix();
