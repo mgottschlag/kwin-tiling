@@ -152,14 +152,21 @@ void RecentlyUsedModel::recentDocumentRemoved(const QString& path)
     qDebug() << "Recent document removed" << path;
     d->removeExistingItem(path);
 }
+
 void RecentlyUsedModel::recentApplicationAdded(KService::Ptr service,int)
 {
-    d->addRecentApplication(service,false);
+    if (service) {
+        d->addRecentApplication(service,false);
+    }
 }
+
 void RecentlyUsedModel::recentApplicationRemoved(KService::Ptr service)
 {
-    d->removeExistingItem(service->entryPath());
+    if (service) {
+        d->removeExistingItem(service->entryPath());
+    }
 }
+
 void RecentlyUsedModel::recentApplicationsCleared()
 {
     QSet<QStandardItem*> appItems;
