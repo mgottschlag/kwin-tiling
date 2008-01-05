@@ -373,6 +373,13 @@ Interface::~Interface()
     m_context.clearMatches();
 }
 
+void Interface::clearHistory()
+{
+    m_searchTerm->clearHistory();
+    KConfigGroup cg(KGlobal::config(), "General");
+    cg.writeEntry("pastqueries", m_searchTerm->historyItems());
+}
+
 void Interface::display(const QString& term)
 {
     m_searchTerm->setFocus();

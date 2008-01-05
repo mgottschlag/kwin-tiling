@@ -61,6 +61,7 @@ class Interface : public KRunnerDialog
         // qdbuscpp2xml interface.h -o org.kde.krunner.Interface.xml
         void display(const QString& term = QString());
         void switchUser();
+        void clearHistory();
 
     protected Q_SLOTS:
         void match();

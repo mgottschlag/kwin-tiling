@@ -8,5 +8,7 @@
     </method>
     <method name="switchUser">
     </method>
+    <method name="clearHistory">
+    </method>
   </interface>
 </node>
