@@ -78,6 +78,8 @@ private Q_SLOTS:
     void updateFlipAnimation(qreal value);
 
 private:
+    void paintItems(QPainter &painter, QPaintEvent *event, QModelIndex &index);
+
     class Private;
     Private * const d;
 };

@@ -475,25 +475,13 @@ void FlipScrollView::keyPressEvent(QKeyEvent *event)
     QAbstractItemView::keyPressEvent(event);
 }
 
-void FlipScrollView::paintEvent(QPaintEvent * event)
+void FlipScrollView::paintItems(QPainter &painter, QPaintEvent *event, QModelIndex &root)
 {
-    QPainter painter(viewport());
-    painter.setRenderHint(QPainter::Antialiasing);
+    const int rows = model()->rowCount(root);
 
-    // draw items
-    QModelIndexList redrawIndexes;
+    for (int i = 0; i < rows; ++i) {
+        QModelIndex index = model()->index(i, 0, root);
 
-    int currentRootRows = model()->rowCount(d->currentRoot());
-    int previousRootRows = model()->rowCount(d->previousRoot());
-
-    for (int i=0;i<currentRootRows;i++) {
-        redrawIndexes << model()->index(i,0,d->currentRoot());
-    }
-    for (int i=0;i<previousRootRows && d->flipAnimTimeLine->currentValue() < 1.0;i++) {
-        redrawIndexes << model()->index(i,0,d->previousRoot());
-    }
-
-    foreach(const QModelIndex& index, redrawIndexes) {
         QStyleOptionViewItem option = viewOptions();
         option.rect = visualRect(index);
 
@@ -540,11 +528,27 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
             painter.restore();
         }
     }
+}
+
+void FlipScrollView::paintEvent(QPaintEvent * event)
+{
+    QPainter painter(viewport());
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    // draw items
+    QModelIndex currentRoot = d->currentRoot();
+    QModelIndex previousRoot = d->previousRoot();
+
+    paintItems(painter, event, currentRoot);
 
     const qreal timerValue = d->flipAnimTimeLine->currentValue();
 
+    if (timerValue < 1.0) {
+        paintItems(painter, event, previousRoot);
+    }
+
     // draw header for current view
-    QRect headerRect = d->headerRect(d->currentRoot());
+    QRect headerRect = d->headerRect(currentRoot);
     if (d->animLeftToRight) {
         headerRect.translate((int)(headerRect.width()*(1-timerValue)),0);
     } else {
@@ -552,11 +556,11 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
     }
 
     if (event->rect().intersects(headerRect)) {
-        d->drawHeader(&painter,headerRect,d->currentRoot());
+        d->drawHeader(&painter,headerRect,currentRoot);
     }
 
     // draw header for previous view
-    QRect prevHeaderRect = d->headerRect(d->previousRoot());
+    QRect prevHeaderRect = d->headerRect(previousRoot);
     if (d->animLeftToRight) {
         prevHeaderRect.translate((int)(-prevHeaderRect.width()*timerValue),0);
     } else {
@@ -564,12 +568,12 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
     }
 
     if (event->rect().intersects(prevHeaderRect) && timerValue < 1.0) {
-        d->drawHeader(&painter,prevHeaderRect,d->previousRoot());
+        d->drawHeader(&painter,prevHeaderRect,previousRoot);
     }
 
     // draw navigation
     QStyle::State state = 0;
-    if (d->currentRoot().isValid()) {
+    if (currentRoot.isValid()) {
         state |= QStyle::State_Enabled;
     }
 
@@ -577,11 +581,11 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
         state |= QStyle::State_MouseOver;
     }
 
-    if (d->currentRoot().isValid() || d->previousRoot().isValid()) {
+    if (currentRoot.isValid() || previousRoot.isValid()) {
         qreal opacity = 1.0;
-        if (!d->previousRoot().isValid()) {
+        if (!previousRoot.isValid()) {
             opacity = timerValue;   
-        } else if (!d->currentRoot().isValid()) {
+        } else if (!currentRoot.isValid()) {
             opacity = 1-timerValue;
         }
 
