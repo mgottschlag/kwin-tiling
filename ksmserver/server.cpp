@@ -107,7 +107,7 @@ void KSMServer::startApplication( QStringList& command, const QString& clientMac
             command.prepend( "--" );
             command.prepend( userId );
             command.prepend( "-u" );
-            command.prepend( "kdesu" );
+            command.prepend( KStandardDirs::findExe("kdesu") );
         }
     }
     if ( !clientMachine.isEmpty() && clientMachine != "localhost" ) {
