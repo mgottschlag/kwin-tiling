@@ -362,21 +362,12 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     QLabel *versionLabel = new QLabel(this);
 
-    int vmajor, vminor, vbugfix;
-#if 0 // enable after feature freeze, needs more testing
-    QString version = QString(KDE_VERSION_STRING);
-    int start = version.lastIndexOf('(');
-    if (start != -1)
-        version = version.mid(start + 1, version.length() - start - 2);
-    // Parse major/minor/bugfix numbers; set bugfix to -1 if not present.
-    // ...
-#else
-    vmajor = 4;
-    vminor = 0;
-    vbugfix = -1;
-#endif
+    int vmajor = KDE_VERSION_MAJOR;
+    int vminor = KDE_VERSION_MINOR;
+    int vbugfix = KDE_VERSION_RELEASE;
+
     QString vcomposed;
-    if (vbugfix >= 0) {
+    if (vbugfix > 0) {
         // Placeholders tagged <numid> to avoid treatment as amounts.
         vcomposed = i18nc("@label In corner of the logout dialog",
                           "KDE <numid>%1.%2.%3</numid>", vmajor, vminor, vbugfix);
