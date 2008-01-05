@@ -5,7 +5,7 @@ set(desktop_SRCS
     backgroundpackage.cpp
     renderthread.cpp)
 
-kde4_add_ui_files( desktop_SRCS config.ui )
+kde4_add_ui_files( desktop_SRCS BackgroundDialog.ui )
 
 set(krunner_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/org.kde.krunner.Interface.xml)
 QT4_ADD_DBUS_INTERFACE(desktop_SRCS ${krunner_xml} krunner_interface)

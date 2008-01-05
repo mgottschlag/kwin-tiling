@@ -337,58 +337,23 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     setCaption(i18n("Configure Desktop"));
     setButtons(Ok | Cancel | Apply);
 
-    QWidget *main = new QWidget(this);
-    QVBoxLayout *layout = new QVBoxLayout;
-    QHBoxLayout *backgroundLayout = new QHBoxLayout;
-    QVBoxLayout *leftLayout = new QVBoxLayout;
-    QVBoxLayout *rightLayout = new QVBoxLayout;
-    QHBoxLayout *iconLayout = new QHBoxLayout;
-    
+    QWidget * main = new QWidget(this);
+    setupUi(main);
+
     // static or slideshow?
-    m_mode = new QComboBox(main);
-    m_mode->addItem(i18n("Wallpaper Image"));
-    m_mode->addItem(i18n("Slideshow"));
-    leftLayout->addWidget(m_mode);
     connect(m_mode, SIGNAL(currentIndexChanged(int)),
             this, SLOT(changeBackgroundMode(int)));
-    
-    // stacked widget
-    QStackedWidget *stack = new QStackedWidget(main);
-    leftLayout->addWidget(stack);
-    connect(m_mode, SIGNAL(currentIndexChanged(int)),
-            stack, SLOT(setCurrentIndex(int)));
-    
+
     // static picture
-    QWidget *staticPictureWidget = new QWidget(stack);
-    stack->addWidget(staticPictureWidget);
-    QGridLayout *staticPictureLayout = new QGridLayout;
-    //staticPictureLayout->setColumnStretch(2, 10);
-    staticPictureWidget->setLayout(staticPictureLayout);
-    
-    // combo with backgrounds
-    QLabel *pictureLabel = new QLabel("&Picture:", staticPictureWidget);
-    QHBoxLayout *pictureLayout = new QHBoxLayout;    
-    m_view = new QComboBox(main);
     m_model = new BackgroundListModel(m_ratio, this);
     m_view->setModel(m_model);
     m_view->setItemDelegate(new BackgroundDelegate(m_view->view(), m_ratio, this));
     connect(m_view, SIGNAL(currentIndexChanged(int)),
             this, SLOT(update()));
-    pictureLabel->setBuddy(m_view);
-    QToolButton *pictureUrlButton = new QToolButton(this);
-    pictureUrlButton->setIcon(KIcon("document-open"));
-    pictureUrlButton->setToolTip(i18n("Browse"));
-    connect(pictureUrlButton, SIGNAL(clicked()), this, SLOT(browse()));
-    
-    pictureLayout->addWidget(m_view);
-    pictureLayout->addWidget(pictureUrlButton);
-    
-    staticPictureLayout->addWidget(pictureLabel, 0, 0, Qt::AlignRight);
-    staticPictureLayout->addLayout(pictureLayout, 0, 1, 1, 2);
+    m_pictureUrlButton->setIcon(KIcon("document-open"));
+    connect(m_pictureUrlButton, SIGNAL(clicked()), this, SLOT(browse()));
 
     // resize method
-    QLabel *resizeMethodLabel = new QLabel(i18n("P&ositioning:"), staticPictureWidget);
-    m_resizeMethod = new QComboBox(main);
     m_resizeMethod->addItem(i18n("Scale & Crop"),
                             Background::ScaleCrop);
     m_resizeMethod->addItem(i18n("Scaled"), 
@@ -401,82 +366,20 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
                             Background::CenterTiled);
     connect(m_resizeMethod, SIGNAL(currentIndexChanged(int)),
             this, SLOT(update()));
-    resizeMethodLabel->setBuddy(m_resizeMethod);
-    staticPictureLayout->addWidget(resizeMethodLabel, 1, 0, Qt::AlignRight);
-    staticPictureLayout->addWidget(m_resizeMethod, 1, 1);
 
     // color
-    QLabel *colorLabel = new QLabel(i18n("&Color:"), staticPictureWidget);
-    m_color = new KColorButton(this);
     m_color->setColor(palette().color(QPalette::Window));
     connect(m_color, SIGNAL(changed(QColor)), main, SLOT(update()));
-    colorLabel->setBuddy(m_color);
-    staticPictureLayout->addWidget(colorLabel, 2, 0, Qt::AlignRight);
-    staticPictureLayout->addWidget(m_color, 2, 1);
-
-    m_authorLabel = new QLabel(staticPictureWidget);
-    m_emailLabel = new QLabel(staticPictureWidget);
-    m_licenseLabel = new QLabel(staticPictureWidget);
-
-    m_authorLabel->setText("<qt><b> "+i18n("Author:")+" </b></qt>");
-    m_emailLabel->setText("<qt><b> "+i18n("E-Mail:")+" </b></qt>");
-    m_licenseLabel->setText("<qt><b> "+i18n("License:")+" </b></qt>");
-
-    m_authorLine = new QLabel(staticPictureWidget);
-    m_emailLine = new QLabel(staticPictureWidget);
-    m_licenseLine = new QLabel(staticPictureWidget);
-
-    staticPictureLayout->addWidget(m_authorLabel, 3, 0, Qt::AlignRight);
-    staticPictureLayout->addWidget(m_authorLine, 3, 1);
-    staticPictureLayout->addWidget(m_emailLabel, 4, 0, Qt::AlignRight);
-    staticPictureLayout->addWidget(m_emailLine, 4, 1);
-    staticPictureLayout->addWidget(m_licenseLabel, 5, 0, Qt::AlignRight);
-    staticPictureLayout->addWidget(m_licenseLine, 5, 1);
-    //staticPictureLayout->setRowStretch(7, 10);
 
     // slideshow
-    QWidget *slideshowWidget = new QWidget(stack);
-    stack->addWidget(slideshowWidget);
-    QVBoxLayout *slideshowLayout = new QVBoxLayout;
-    slideshowWidget->setLayout(slideshowLayout);
-        
-    QHBoxLayout *dirlistLayout = new QHBoxLayout;
-    m_dirlist = new QListWidget(slideshowWidget);
-    connect(m_dirlist, SIGNAL(currentRowChanged(int)), this, SLOT(updateSlideshow()));
-    QVBoxLayout *dirlistButtons = new QVBoxLayout;
-    m_addDir = new QPushButton(
-        KIcon("list-add"),
-        i18n("&Add Directory..."),
-        slideshowWidget);
+    m_addDir->setIcon(KIcon("list-add"));
     connect(m_addDir, SIGNAL(clicked()), this, SLOT(slotAddDir()));
-    m_removeDir = new QPushButton(
-        KIcon("list-remove"),
-        i18n("&Remove Directory"),
-        slideshowWidget);
+    m_removeDir->setIcon(KIcon("list-remove"));
     connect(m_removeDir, SIGNAL(clicked()), this, SLOT(slotRemoveDir()));
-    
-    QHBoxLayout *slideshowDelayLayout = new QHBoxLayout;
-    QLabel *slideshowDelayLabel = new QLabel(
-        i18n("&Change images every:"), 
-        slideshowWidget);
-    m_slideshowDelay = new QTimeEdit(slideshowWidget);
-    m_slideshowDelay->setDisplayFormat("hh:mm:ss");
+
     m_slideshowDelay->setMinimumTime(QTime(0, 0, 30));
-    slideshowDelayLabel->setBuddy(m_slideshowDelay);
-    slideshowDelayLayout->addWidget(slideshowDelayLabel);
-    slideshowDelayLayout->addWidget(m_slideshowDelay);
-    slideshowDelayLayout->addStretch();
-    
-    dirlistLayout->addWidget(m_dirlist);
-    dirlistLayout->addLayout(dirlistButtons);
-    dirlistButtons->addWidget(m_addDir);
-    dirlistButtons->addWidget(m_removeDir);
-    dirlistButtons->addStretch();
-    slideshowLayout->addLayout(dirlistLayout);
-    slideshowLayout->addLayout(slideshowDelayLayout);
-    
+
     // preview
-    QLabel *monitor = new QLabel(main);
     QString monitorPath = KStandardDirs::locate("data",  "kcontrol/pics/monitor.png");
     
     // Size of monitor image: 200x186
@@ -486,56 +389,24 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     QRect previewRect(23, int(14 * previewRatio), 151, int(115 * previewRatio));
     m_preview_renderer.setSize(previewRect.size());
     
-    monitor->setPixmap(QPixmap(monitorPath).scaled(monitorSize));
-    monitor->setWhatsThis(i18n(
+    m_monitor->setPixmap(QPixmap(monitorPath).scaled(monitorSize));
+    m_monitor->setWhatsThis(i18n(
         "This picture of a monitor contains a preview of "
         "what the current settings will look like on your desktop."));
-    m_preview = new QLabel(monitor);
+    m_preview = new QLabel(m_monitor);
     m_preview->setScaledContents(true);
     m_preview->setGeometry(previewRect);
-    
-    // get new stuff
-    QHBoxLayout *newStuffLayout = new QHBoxLayout;
-    m_newStuff = new QPushButton(i18n("&New Wallpaper..."), main);
+
     connect(m_newStuff, SIGNAL(clicked()), this, SLOT(getNewStuff()));
-    newStuffLayout->addStretch();
-    newStuffLayout->addWidget(m_newStuff);
-    newStuffLayout->addStretch();
 
-    //icon settings
-    QLabel *showIconsLabel = new QLabel(i18n("&Show icons"), main);
-    QLabel *alignToGridLabel = new QLabel(i18n("&Align to grid"), main);
-    m_showIcons = new QCheckBox(main);
-    m_alignToGrid = new QCheckBox(main);
-    showIconsLabel->setBuddy(m_showIcons);
-    alignToGridLabel->setBuddy(m_alignToGrid);
-    iconLayout->addWidget(showIconsLabel);
-    iconLayout->addWidget(m_showIcons);
-    iconLayout->addWidget(alignToGridLabel);
-    iconLayout->addWidget(m_alignToGrid);
-    iconLayout->addStretch();
-    
-    rightLayout->addWidget(monitor);
-    rightLayout->addStretch();
-    rightLayout->addLayout(newStuffLayout);
-    rightLayout->addStretch();
-    
-    backgroundLayout->addLayout(leftLayout, 1);
-    backgroundLayout->addLayout(rightLayout);
-
-    layout->addLayout(backgroundLayout);
-    layout->addLayout(iconLayout);
-    
-    main->setLayout(layout);
-    
     qRegisterMetaType<QImage>("QImage");
     connect(&m_preview_timer, SIGNAL(timeout()), this, SLOT(updateSlideshowPreview()));
     connect(&m_preview_renderer, SIGNAL(done(int, const QImage &)), 
             this, SLOT(previewRenderingDone(int, const QImage &)));
     connect(this, SIGNAL(finished(int)), this, SLOT(cleanup()));
-    
+
     setMainWidget(main);
-    
+
     reloadConfig(config);
 }
 

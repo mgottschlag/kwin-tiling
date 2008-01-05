@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>542</width>
+    <width>529</width>
     <height>355</height>
    </rect>
   </property>
@@ -16,6 +16,12 @@
       <layout class="QVBoxLayout" >
        <item>
         <widget class="QComboBox" name="m_mode" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <item>
           <property name="text" >
            <string>Wallpaper Image</string>
@@ -30,6 +36,12 @@
        </item>
        <item>
         <widget class="QStackedWidget" name="stackedWidget" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+           <horstretch>1</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize" >
           <size>
            <width>350</width>
@@ -45,6 +57,12 @@
             <layout class="QHBoxLayout" >
              <item>
               <widget class="QLabel" name="label" >
+               <property name="minimumSize" >
+                <size>
+                 <width>75</width>
+                 <height>0</height>
+                </size>
+               </property>
                <property name="text" >
                 <string>&amp;Picture:</string>
                </property>
@@ -57,7 +75,14 @@
               </widget>
              </item>
              <item>
-              <widget class="QComboBox" name="m_view" />
+              <widget class="QComboBox" name="m_view" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                 <horstretch>1</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
              </item>
              <item>
               <widget class="QToolButton" name="m_pictureUrlButton" >
@@ -82,6 +107,12 @@
              <layout class="QGridLayout" >
               <item row="0" column="0" >
                <widget class="QLabel" name="label_4" >
+                <property name="minimumSize" >
+                 <size>
+                  <width>75</width>
+                  <height>0</height>
+                 </size>
+                </property>
                 <property name="text" >
                  <string>P&amp;ositioning:</string>
                 </property>
@@ -93,8 +124,15 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="1" >
-               <widget class="QComboBox" name="m_resizeMethod" />
+              <item row="0" column="1" colspan="2" >
+               <widget class="QComboBox" name="m_resizeMethod" >
+                <property name="sizePolicy" >
+                 <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                  <horstretch>1</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
               </item>
               <item row="1" column="0" >
                <widget class="QLabel" name="label_5" >
@@ -127,11 +165,30 @@
                 </property>
                </widget>
               </item>
+              <item row="1" column="2" >
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
              </layout>
             </widget>
            </item>
            <item row="2" column="0" >
             <widget class="QLabel" name="m_authorLabel" >
+             <property name="minimumSize" >
+              <size>
+               <width>75</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="text" >
               <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
 p, li { white-space: pre-wrap; }
@@ -145,6 +202,12 @@ p, li { white-space: pre-wrap; }
            </item>
            <item row="2" column="1" >
             <widget class="QLabel" name="m_authorLine" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text" >
               <string>TextLabel</string>
              </property>
@@ -185,6 +248,12 @@ p, li { white-space: pre-wrap; }
            </item>
            <item row="4" column="1" >
             <widget class="QLabel" name="m_licenseLine" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text" >
               <string>TextLabel</string>
              </property>
@@ -197,7 +266,7 @@ p, li { white-space: pre-wrap; }
            <item>
             <layout class="QHBoxLayout" >
              <item>
-              <widget class="KListWidget" name="m_dirList" />
+              <widget class="KListWidget" name="m_dirlist" />
              </item>
              <item>
               <layout class="QVBoxLayout" >

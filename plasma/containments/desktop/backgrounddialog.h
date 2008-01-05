@@ -17,6 +17,8 @@
 #include "backgroundpackage.h"
 #include "renderthread.h"
 
+#include "ui_BackgroundDialog.h"
+
 class BackgroundContainer;
 class BackgroundListModel;
 class QComboBox;
@@ -28,7 +30,7 @@ class QCheckBox;
 class KColorButton;
 class KSeparator;
 
-class BackgroundDialog : public KDialog
+class BackgroundDialog : public KDialog, public Ui::BackgroundDialog
 {
 Q_OBJECT
 public:
@@ -48,27 +50,27 @@ public:
     QString path() const;
     int mode();
 private:
-    QComboBox *m_mode;
-    QComboBox *m_view;
+    //QComboBox *m_mode;
+    //QComboBox *m_view;
     BackgroundListModel *m_model;
     
-    QLabel *m_authorLabel;
-    QLabel *m_emailLabel;
-    QLabel *m_licenseLabel;
-    QLabel *m_authorLine;
-    QLabel *m_emailLine;
-    QLabel *m_licenseLine;
+    //QLabel *m_authorLabel;
+    //QLabel *m_emailLabel;
+    //QLabel *m_licenseLabel;
+    //QLabel *m_authorLine;
+    //QLabel *m_emailLine;
+    //QLabel *m_licenseLine;
     QLabel *m_preview;
     
-    QPushButton *m_newStuff;
+    //QPushButton *m_newStuff;
     
-    QComboBox *m_resizeMethod;
-    KColorButton *m_color;
+    //QComboBox *m_resizeMethod;
+    //KColorButton *m_color;
     
-    QListWidget *m_dirlist;
-    QPushButton *m_addDir;
-    QPushButton *m_removeDir;
-    QTimeEdit *m_slideshowDelay;
+    //QListWidget *m_dirlist;
+    //QPushButton *m_addDir;
+    //QPushButton *m_removeDir;
+    //QTimeEdit *m_slideshowDelay;
     
     QString m_img;
     QSize m_res;
@@ -83,8 +85,8 @@ private:
     RenderThread m_preview_renderer;
     int m_preview_token;
 
-    QCheckBox *m_alignToGrid;
-    QCheckBox *m_showIcons;
+    //QCheckBox *m_alignToGrid;
+    //QCheckBox *m_showIcons;
     
     bool setMetadata(QLabel *label,
                      const QString &text);
