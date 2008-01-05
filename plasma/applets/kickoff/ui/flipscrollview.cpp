@@ -69,6 +69,7 @@ public:
     {
         if (previousRootIndices.isEmpty() || previousRootIndices.top() != index) {
             // we're entering into a submenu
+            //kDebug() << "pushing" << currentRootIndex.data(Qt::DisplayRole).value<QString>();
             animLeftToRight = true;
             hoveredIndex = QModelIndex();
             previousRootIndices.push(currentRootIndex);
@@ -78,9 +79,13 @@ public:
             q->verticalScrollBar()->setValue(0);
         } else {
             // we're exiting to the parent menu
+            //kDebug() << "popping" << previousRootIndices.top().data(Qt::DisplayRole).value<QString>();
             animLeftToRight = false;
             hoveredIndex = currentRootIndex;
             previousRootIndices.pop();
+            //if (!previousRootIndices.isEmpty()) {
+            //    kDebug() << "now the previos root is" << previousRootIndices.top().data(Qt::DisplayRole).value<QString>();
+            //}
             currentRootIndex = index;
             updateScrollBarRange();
             q->verticalScrollBar()->setValue(previousVerticalOffsets.pop());
@@ -217,7 +222,7 @@ public:
     QTimeLine *flipAnimTimeLine;
     bool animLeftToRight;
 
-    static const int FLIP_ANIM_DURATION = 300;
+    static const int FLIP_ANIM_DURATION = 200;
 
 private:
      QPersistentModelIndex currentRootIndex;
@@ -282,7 +287,7 @@ QRect FlipScrollView::visualRect(const QModelIndex& index) const
     int topOffset = d->headerRect(index.parent()).height();
     int leftOffset = d->backArrowRect().width() + ItemDelegate::BACK_ARROW_SPACING;
 
-    if (index.parent() != d->currentRoot() && index.parent() != d->previousRoot()) {
+    if (index.parent() != d->currentRoot() && index.parent() != d->previousRoot() && index.parent() != (QModelIndex)d->hoveredIndex) {
         return QRect();
     }
 
@@ -478,6 +483,7 @@ void FlipScrollView::keyPressEvent(QKeyEvent *event)
 void FlipScrollView::paintItems(QPainter &painter, QPaintEvent *event, QModelIndex &root)
 {
     const int rows = model()->rowCount(root);
+    //kDebug() << "painting" << rows << "items";
 
     for (int i = 0; i < rows; ++i) {
         QModelIndex index = model()->index(i, 0, root);
@@ -537,13 +543,15 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
 
     // draw items
     QModelIndex currentRoot = d->currentRoot();
-    QModelIndex previousRoot = d->previousRoot();
+    QModelIndex previousRoot = d->animLeftToRight ? d->previousRoot() : (QModelIndex)d->hoveredIndex;
+    //kDebug() << "current root is" << currentRoot.data(Qt::DisplayRole).value<QString>();
 
     paintItems(painter, event, currentRoot);
 
     const qreal timerValue = d->flipAnimTimeLine->currentValue();
 
     if (timerValue < 1.0) {
+        //kDebug() << "previous root is" << previousRoot.data(Qt::DisplayRole).value<QString>();
         paintItems(painter, event, previousRoot);
     }
 
