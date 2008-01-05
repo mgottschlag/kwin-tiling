@@ -376,6 +376,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     connect(m_addDir, SIGNAL(clicked()), this, SLOT(slotAddDir()));
     m_removeDir->setIcon(KIcon("list-remove"));
     connect(m_removeDir, SIGNAL(clicked()), this, SLOT(slotRemoveDir()));
+    connect(m_dirlist, SIGNAL(currentRowChanged(int)), this, SLOT(updateSlideshow()));
 
     m_slideshowDelay->setMinimumTime(QTime(0, 0, 30));
 
