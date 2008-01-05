@@ -1,150 +1,227 @@
 <ui version="4.0" >
- <class>config</class>
- <widget class="QWidget" name="config" >
+ <class>BackgroundDialog</class>
+ <widget class="QWidget" name="BackgroundDialog" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
-    <height>390</height>
+    <width>542</width>
+    <height>355</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
    <item>
-    <widget class="QFrame" name="colorFrame" >
-     <property name="frameShape" >
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow" >
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QHBoxLayout" >
-      <item>
-       <widget class="QLabel" name="label" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-          <horstretch>1</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text" >
-         <string>&amp;Background Color</string>
-        </property>
-        <property name="buddy" >
-         <cstring>backgroundColor</cstring>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="KColorButton" name="backgroundColor" >
-        <property name="color" >
-         <color>
-          <red>70</red>
-          <green>90</green>
-          <blue>130</blue>
-         </color>
-        </property>
-        <property name="defaultColor" >
-         <color>
-          <red>70</red>
-          <green>90</green>
-          <blue>130</blue>
-         </color>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item>
-    <widget class="QFrame" name="frame_2" >
-     <property name="frameShape" >
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow" >
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QVBoxLayout" >
-      <item>
-       <widget class="QComboBox" name="pictureComboBox" >
-        <item>
-         <property name="text" >
-          <string>Static Picture</string>
-         </property>
-        </item>
-        <item>
-         <property name="text" >
-          <string>SlideShow</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="groupBox" >
-        <layout class="QVBoxLayout" >
+    <layout class="QHBoxLayout" >
+     <item>
+      <layout class="QVBoxLayout" >
+       <item>
+        <widget class="QComboBox" name="m_mode" >
          <item>
-          <widget class="QStackedWidget" name="stackedWidget" >
-           <property name="minimumSize" >
-            <size>
-             <width>350</width>
-             <height>51</height>
-            </size>
-           </property>
-           <property name="currentIndex" >
-            <number>0</number>
-           </property>
-           <widget class="QWidget" name="page" >
-            <layout class="QVBoxLayout" >
+          <property name="text" >
+           <string>Wallpaper Image</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Slideshow</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QStackedWidget" name="stackedWidget" >
+         <property name="minimumSize" >
+          <size>
+           <width>350</width>
+           <height>51</height>
+          </size>
+         </property>
+         <property name="currentIndex" >
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="page" >
+          <layout class="QGridLayout" >
+           <item row="0" column="0" colspan="2" >
+            <layout class="QHBoxLayout" >
              <item>
-              <widget class="KUrlComboRequester" name="picRequester" >
-               <property name="acceptDrops" >
-                <bool>true</bool>
+              <widget class="QLabel" name="label" >
+               <property name="text" >
+                <string>&amp;Picture:</string>
                </property>
-               <property name="filter" >
-                <string>*.png *.jpeg *.jpg *.svg *.svgz</string>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy" >
+                <cstring>m_view</cstring>
                </property>
               </widget>
              </item>
              <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Vertical</enum>
+              <widget class="QComboBox" name="m_view" />
+             </item>
+             <item>
+              <widget class="QToolButton" name="m_pictureUrlButton" >
+               <property name="toolTip" >
+                <string>Browse</string>
                </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>20</width>
-                 <height>0</height>
-                </size>
+               <property name="text" >
+                <string>...</string>
                </property>
-              </spacer>
+              </widget>
              </item>
             </layout>
-           </widget>
-           <widget class="QWidget" name="page_3" >
-            <layout class="QVBoxLayout" >
+           </item>
+           <item row="1" column="0" colspan="2" >
+            <widget class="QFrame" name="frame" >
+             <property name="frameShape" >
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="frameShadow" >
+              <enum>QFrame::Raised</enum>
+             </property>
+             <layout class="QGridLayout" >
+              <item row="0" column="0" >
+               <widget class="QLabel" name="label_4" >
+                <property name="text" >
+                 <string>P&amp;ositioning:</string>
+                </property>
+                <property name="alignment" >
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="buddy" >
+                 <cstring>m_resizeMethod</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" >
+               <widget class="QComboBox" name="m_resizeMethod" />
+              </item>
+              <item row="1" column="0" >
+               <widget class="QLabel" name="label_5" >
+                <property name="text" >
+                 <string>&amp;Color:</string>
+                </property>
+                <property name="alignment" >
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+                <property name="buddy" >
+                 <cstring>m_color</cstring>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1" >
+               <widget class="KColorButton" name="m_color" >
+                <property name="color" >
+                 <color>
+                  <red>70</red>
+                  <green>90</green>
+                  <blue>130</blue>
+                 </color>
+                </property>
+                <property name="defaultColor" >
+                 <color>
+                  <red>70</red>
+                  <green>90</green>
+                  <blue>130</blue>
+                 </color>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="2" column="0" >
+            <widget class="QLabel" name="m_authorLabel" >
+             <property name="text" >
+              <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Author:&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" >
+            <widget class="QLabel" name="m_authorLine" >
+             <property name="text" >
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0" >
+            <widget class="QLabel" name="m_emailLabel" >
+             <property name="text" >
+              <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">E-Mail:&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1" >
+            <widget class="QLabel" name="m_emailLine" >
+             <property name="text" >
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0" >
+            <widget class="QLabel" name="m_licenseLabel" >
+             <property name="text" >
+              <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:10pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">License:&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1" >
+            <widget class="QLabel" name="m_licenseLine" >
+             <property name="text" >
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_3" >
+          <layout class="QVBoxLayout" >
+           <item>
+            <layout class="QHBoxLayout" >
              <item>
-              <layout class="QGridLayout" >
-               <item rowspan="5" row="1" column="0" >
-                <widget class="KListWidget" name="slidePaths" />
-               </item>
-               <item row="1" column="1" >
-                <widget class="KPushButton" name="addSlidePathButton" >
+              <widget class="KListWidget" name="m_dirList" />
+             </item>
+             <item>
+              <layout class="QVBoxLayout" >
+               <item>
+                <widget class="KPushButton" name="m_addDir" >
                  <property name="text" >
-                  <string>&amp;Add...</string>
+                  <string>&amp;Add Directory...</string>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="1" >
-                <widget class="KPushButton" name="removeSlidePathButton" >
+               <item>
+                <widget class="KPushButton" name="m_removeDir" >
                  <property name="enabled" >
                   <bool>false</bool>
                  </property>
                  <property name="text" >
-                  <string>&amp;Remove...</string>
+                  <string>&amp;Remove Directory...</string>
                  </property>
                 </widget>
                </item>
-               <item row="5" column="1" >
+               <item>
+                <widget class="QWidget" native="1" name="widget" />
+               </item>
+               <item>
                 <spacer>
                  <property name="orientation" >
                   <enum>Qt::Vertical</enum>
@@ -157,119 +234,199 @@
                  </property>
                 </spacer>
                </item>
-               <item row="0" column="0" >
-                <widget class="QLabel" name="label_3" >
-                 <property name="text" >
-                  <string>Show images from:</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1" >
-                <widget class="KPushButton" name="moveUpButton" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>Move &amp;Up</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="1" >
-                <widget class="KPushButton" name="moveDownButton" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>Move &amp;Down</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QHBoxLayout" >
-               <item>
-                <widget class="QLabel" name="label_2" >
-                 <property name="text" >
-                  <string>Change images every:</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>271</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QTimeEdit" name="slideShowTime" >
-                 <property name="minimumTime" >
-                  <time>
-                   <hour>0</hour>
-                   <minute>0</minute>
-                   <second>0</second>
-                  </time>
-                 </property>
-                 <property name="currentSection" >
-                  <enum>QDateTimeEdit::HourSection</enum>
-                 </property>
-                 <property name="displayFormat" >
-                  <string>h:mm:ss</string>
-                 </property>
-                 <property name="time" >
-                  <time>
-                   <hour>0</hour>
-                   <minute>0</minute>
-                   <second>0</second>
-                  </time>
-                 </property>
-                </widget>
-               </item>
               </layout>
              </item>
             </layout>
-           </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" >
+             <item>
+              <widget class="QLabel" name="label_2" >
+               <property name="text" >
+                <string>&amp;Change images every:</string>
+               </property>
+               <property name="buddy" >
+                <cstring>m_slideshowDelay</cstring>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QTimeEdit" name="m_slideshowDelay" >
+               <property name="dateTime" >
+                <datetime>
+                 <hour>0</hour>
+                 <minute>0</minute>
+                 <second>0</second>
+                 <year>2000</year>
+                 <month>1</month>
+                 <day>1</day>
+                </datetime>
+               </property>
+               <property name="currentSection" >
+                <enum>QDateTimeEdit::HourSection</enum>
+               </property>
+               <property name="displayFormat" >
+                <string>hh:mm:ss</string>
+               </property>
+               <property name="time" >
+                <time>
+                 <hour>0</hour>
+                 <minute>0</minute>
+                 <second>0</second>
+                </time>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" >
+       <item>
+        <widget class="QLabel" name="m_monitor" >
+         <property name="text" >
+          <string>Monitor</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="m_newStuff" >
+           <property name="toolTip" >
+            <string>Download new wallpapers</string>
+           </property>
+           <property name="text" >
+            <string>New Wallpaper...</string>
+           </property>
           </widget>
          </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
         </layout>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item>
-         <widget class="QPushButton" name="getNewStuffButton" >
-          <property name="toolTip" >
-           <string>Download new wallpapers</string>
-          </property>
-          <property name="text" >
-           <string>New Wallpaper...</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <item>
+      <widget class="QLabel" name="label_7" >
+       <property name="text" >
+        <string>&amp;Show icons</string>
+       </property>
+       <property name="buddy" >
+        <cstring>m_showIcons</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="m_showIcons" >
+       <property name="text" >
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_6" >
+       <property name="text" >
+        <string>&amp;Align to grid</string>
+       </property>
+       <property name="buddy" >
+        <cstring>m_alignToGrid</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="m_alignToGrid" >
+       <property name="text" >
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
@@ -289,17 +446,11 @@
    <extends>QPushButton</extends>
    <header>kpushbutton.h</header>
   </customwidget>
-  <customwidget>
-   <class>KUrlComboRequester</class>
-   <extends>KUrlRequester</extends>
-   <header>kurlrequester.h</header>
-   <container>1</container>
-  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
   <connection>
-   <sender>pictureComboBox</sender>
+   <sender>m_mode</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>stackedWidget</receiver>
    <slot>setCurrentIndex(int)</slot>
