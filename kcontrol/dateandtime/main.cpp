@@ -88,10 +88,11 @@ void KclockModule::save()
 //  The order here is important
   dtime->save();
   tzone->save();
-
+#if 0
   // Tell the clock applet about the change so that it can update its timezone
   QDBusInterface clock("org.kde.kicker", "/Applets/Clock", "org.kde.kicker.ClockApplet");
   clock.call("reconfigure");
+#endif
 }
 
 void KclockModule::load()
