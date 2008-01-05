@@ -115,10 +115,11 @@ void SMServerConfig::save()
   group.writeEntry("excludeApps", dialog->excludeLineedit->text());
   c->sync();
   delete c;
-
+# if 0
   // update the k menu if necessary
   QDBusInterface kicker("org.kde.kicker", "/kicker", "org.kde.kicker");
   kicker.call("configure");
+#endif
 }
 
 void SMServerConfig::defaults()
