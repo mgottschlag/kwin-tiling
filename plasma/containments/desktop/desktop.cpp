@@ -125,7 +125,6 @@ void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
         // we need to update the menu items that have already been created
         bool locked = isImmutable();
         m_appletBrowserAction->setVisible(!locked);
-        m_setupDesktopAction->setVisible(!locked);
         if (locked) {
             m_lockDesktopAction->setIcon(KIcon("object-unlocked"));
             m_lockDesktopAction->setText(i18n("Unlock Widgets"));
