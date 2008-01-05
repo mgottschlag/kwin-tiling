@@ -113,7 +113,6 @@ void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
     if (constraints & ScreenConstraint) {
         if (screen() == 0 && !s_icons) {
             s_icons = new IconLoader(this);
-            s_icons->init(this);
         }
     }
 

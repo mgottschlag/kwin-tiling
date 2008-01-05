@@ -38,9 +38,8 @@ class IconLoader : public QObject
     Q_OBJECT
 
 public:
-    IconLoader(QObject *parent=0);
+    IconLoader(DefaultDesktop *parent);
     ~IconLoader();
-    void init(DefaultDesktop *desktop);
 
     /**
     * Get whether device icons will be displayed or not.
@@ -143,6 +142,7 @@ private:
     QSizeF m_gridSize;
 
 private Q_SLOTS:
+    void init();
     void newItems(const KFileItemList& items);
     void deleteItem(const KFileItem item);
     void appletDeleted(Plasma::Applet *applet);

@@ -31,30 +31,23 @@
 #include <KToggleAction>
 #include <KConfigGroup>
 
-IconLoader::IconLoader(QObject *parent)
+IconLoader::IconLoader(DefaultDesktop *parent)
     : QObject(parent),
-      m_desktop(0),
+      m_desktop(parent),
       m_verticalOrientation(true),
       m_iconShow(true),
       m_gridAlign(true),
       m_enableMedia(false)
 {
+    QTimer::singleShot(0, this, SLOT(init()));
 }
 
 IconLoader::~IconLoader()
 {
 }
 
-void IconLoader::init(DefaultDesktop *desktop)
+void IconLoader::init()
 {
-    if (!desktop) {
-        return;
-    }
-    //multiple initiation guard
-    if (desktop == m_desktop) {
-        return;
-    }
-    m_desktop = desktop;
     m_iconMap.clear();
 
     //load stored settings
