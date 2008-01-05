@@ -8,9 +8,8 @@ also useful sites for major applications like
 <A HREF="http://www.koffice.org/">KOffice</A> and
 <A HREF="http://www.kdevelop.org/">KDevelop</A>.
 </P>
-<br>
 <center>
-<img src="oxygen/48x48/places/user-desktop.png">
+<img src="oxygen/64x64/places/user-desktop.png">
 </center>
 </html>
 </tip>
@@ -24,9 +23,8 @@ language with the System Settings by selecting "Regional and Language".
 <p>For more information about KDE translations and translators, see <a
 href="http://l10n.kde.org/">http://l10n.kde.org</a>.
 </p>
-<br>
 <center>
-<img src="oxygen/48x48/apps/preferences-desktop-locale.png">
+<img src="oxygen/64x64/apps/preferences-desktop-locale.png">
 </center>
 </html>
 </tip>
@@ -44,9 +42,8 @@ URLs, for example) be executed.</p>
 
 <p>You can find more information about using Klipper in <a
 href="help:/klipper">the Klipper Handbook</a></p>
-<br>
 <center>
-<img src="oxygen/48x48/apps/klipper.png">
+<img src="oxygen/64x64/apps/klipper.png">
 </center>
 </html>
 </tip>
@@ -71,8 +68,8 @@ a look at <a href="help:/khelpcenter/userguide/windows-how-to-work.html">the KDE
 <html>
 <p>
 You can cycle through the windows on a virtual desktop by holding the
-Alt key and pressing Tab or Shift+Tab.</p><br>
-<center><img src="oxygen/48x48/places/user-desktop.png"></center></p>
+Alt key and pressing Tab or Shift+Tab.</p>
+<center><img src="oxygen/64x64/places/user-desktop.png"></center></p>
 
 <p>For more information, see 
 <a href="help:/khelpcenter/userguide/windows-how-to-work.html">the KDE
@@ -95,6 +92,9 @@ hardware donations. Please contact <a
 if you are interested in donating, or <a
 href="mailto:kde-quality@kde.org">kde-quality@kde.org</a> if you would
 like to contribute in other ways.</p>
+<center>
+<img src="oxygen/64x64/apps/kde.png">
+</center>
 </html>
 </tip>
 
@@ -119,8 +119,7 @@ like to contribute in other ways.</p>
 <p>You can stay up to date with new developments in KDE and releases
 by regularly checking the web site <A
  HREF="http://www.kde.org">http://www.kde.org</A>.</p>
-<BR>
-<center><img src="oxygen/48x48/apps/konqueror.png"></center></p>
+<center><img src="oxygen/64x64/apps/konqueror.png"></center></p>
 </html>
 </tip>
 
@@ -132,8 +131,8 @@ KDE is based on a well-designed C++ foundation. C++ is a programming
 language well suited to desktop development. The KDE object model
 extends the power of C++ even further. See
  <a href="http://techbase.kde.org/">http://techbase.kde.org/</a>
-for details.</p><br>
-<center><img src="oxygen/48x48/apps/konqueror.png"></center>
+for details.</p>
+<center><img src="oxygen/64x64/apps/konqueror.png"></center>
 </html>
 </tip>
 
@@ -143,6 +142,9 @@ for details.</p><br>
 You can use Konqueror to <strong>browse through tar archives</strong>,
 even compressed ones. You can extract files simply by dragging them
 to another place, e.g. another Konqueror window or the desktop.</p>
+<center>
+<img src="oxygen/64x64/apps/konqueror.png">
+</center>
 </html>
 </tip>
 
@@ -155,8 +157,6 @@ also info and man pages.</P>
 <p>For more ways of getting help, see <a
 href="help:/khelpcenter/userguide/getting-help.html">the KDE User
 Guide</a>.</p>
-
-<br>
 <center><img src="oxygen/48x48/actions/help-contents.png"></center>
 </html>
 </tip>
@@ -174,9 +174,9 @@ the remaining buttons.</P>
 <html>
 <p>
 If you need to kill some time, KDE comes with an extensive collection
-of games.</p><br>
+of games.</p>
 <center>
-<img src="oxygen/48x48/categories/applications-games.png">
+<img src="oxygen/64x64/categories/applications-games.png">
 </html>
 </tip>
 
@@ -188,9 +188,8 @@ of games.</p><br>
 If you know its name, you can <strong>execute any program</strong> by pressing
 <strong>Alt+F2</strong>
 and entering the program name in the command-line window provided.<p>
-<br>
 <center>
-<img src="oxygen/48x48/apps/kde.png">
+<img src="oxygen/64x64/apps/kde.png">
 </html>
 </tip>
 
@@ -200,9 +199,9 @@ and entering the program name in the command-line window provided.<p>
 You can <strong>browse any URL</strong> by pressing
 <strong>Alt+F2</strong> and entering the URL in the
 command-line window provided.
-</p><br>
+</p>
 <center>
-<img src="oxygen/48x48/places/network-workgroup.png">
+<img src="oxygen/64x64/places/network-workgroup.png">
 </html>
 </tip>
 
@@ -214,6 +213,9 @@ whole field very quickly with the black button with a white cross
 to the left of the "Location" label and start typing.</p>
 <p>You can also press Ctrl+L to clear the location field and place the
 text cursor there.</p>
+<center>
+<img src="oxygen/64x64/apps/konqueror.png">
+</center>
 </html>
 </tip>
 
@@ -282,6 +284,9 @@ You can change the color of the window titlebars by clicking on the title bar of
 example window in the <em>Appearance</em> module within the System Settings.
 </p>
 <p>You can use the other aspects of the example graphic to further customize the appearance of KDE on your computer.</p>
+<center>
+<img src="oxygen/64x64/apps/preferences-desktop-theme.png">
+</center>
 </html>
 </tip>
 
@@ -291,6 +296,9 @@ example window in the <em>Appearance</em> module within the System Settings.
 The difference between window manager styles and old-fashioned themes is
 that the former even reflect window titlebar color settings from the
 System Settings and might implement different features.</p>
+<center>
+<img src="oxygen/64x64/apps/preferences-desktop-theme.png">
+</center>
 </html>
 </tip>
 
@@ -300,8 +308,8 @@ System Settings and might implement different features.</p>
 look for the release schedule on <a
  href="http://techbase.kde.org/">http://techbase.kde.org</a>. If you only
 find old release schedules, there will probably be some weeks/months of
-intensive development left before the next release.</p><br>
-<center><img src="oxygen/48x48/apps/konqueror.png"></center>
+intensive development left before the next release.</p>
+<center><img src="oxygen/64x64/apps/konqueror.png"></center>
 </html>
 </tip>
 
@@ -347,6 +355,9 @@ will have the choice between pasting the URL or entering that folder.</p>
 <p>
 Choose the one you want, so you do not have to write the entire path
 in the terminal window.</p>
+<center>
+<img src="oxygen/64x64/apps/konqueror.png">
+</center>
 </html>
 </tip>
 
@@ -363,6 +374,9 @@ complete the fields.
 available with Web Shortcuts, see <a
 href="help:/konqueror/enhanced-browsing.html">the Konqueror Handbook</a>.</p>
 <p align="right"><em>Contributed by Michael Lachmann and Thomas Diehl</em></p>
+<center>
+<img src="oxygen/64x64/apps/preferences-desktop-keyboard.png">
+</center>
 </html>
 </tip>
 
@@ -375,6 +389,9 @@ files as well as user-dependent configuration files are saved. If you
 work in a Konsole window, you can easily change to your home folder
 by entering the <b>cd</b> command without any parameters.
 </p>
+<center>
+<img src="oxygen/64x64/places/user-home.png">
+</center>
 </html>
 </tip>
 
@@ -398,6 +415,9 @@ in Konqueror. In the Konsole window, they are often colored red
 If you want to make your desktop look more interesting, you can find
 additional themes, widget styles, window decorations and more at <a href="http://kde-look.org/">kde-look.org</a>.
 </p>
+<center>
+<img src="oxygen/64x64/apps/preferences-desktop-theme.png">
+</center>
 </html>
 </tip>
 
@@ -425,7 +445,7 @@ installation but needs to be installed separately. It might already be
 available on your distribution.) <em>kmag</em> works
 just like <em>xmag</em>, with the difference that it magnifies on the fly.
 </p>
-<p align="right"><em>Contributed by Jesper Pedersen</em></p><br>
+<p align="right"><em>Contributed by Jesper Pedersen</em></p>
 </html>
 </tip>
 
@@ -453,6 +473,9 @@ ftp://www.server.com/myfile in the KWrite Open dialog, and KWrite will
 open the file and save changes back to the FTP server when you click
 on 'Save.'
 </p>
+<center>
+<img src="oxygen/64x64/places/network-workgroup.png">
+</center>
 </html>
 </tip>
 
@@ -467,6 +490,9 @@ Konqueror's location bar.
 In fact, all KDE applications support fish:// URLs - try entering one
 in the Open dialog of KWrite, for instance.
 </p>
+<center>
+<img src="oxygen/64x64/places/network-workgroup.png">
+</center>
 </html>
 </tip>
 
@@ -491,6 +517,9 @@ Anti-Spam Wizard chapter</a>.
 <p>
 You can make a window go below other windows by middle-clicking on its titlebar.
 </p>
+<center>
+<img src="oxygen/64x64/apps/preferences-system-windows.png">
+</center>
 </html>
 </tip>
 
@@ -502,6 +531,9 @@ features. Just click on the question mark on the window titlebar, and
 then click on the item you need help on. (In some themes, the button
 is a lowercase "i" instead of a question mark).
 </p>
+<center>
+<img src="oxygen/48x48/actions/help-contextual.png">
+</center>
 </html>
 </tip>
 
@@ -512,6 +544,9 @@ KDE supports several different window focus modes: take a look in the
 System Settings under Window Behavior. For example, if you
 use the mouse a lot, you might prefer the "Focus follows mouse" setting.
 </p>
+<center>
+<img src="oxygen/64x64/apps/preferences-system-windows.png">
+</center>
 </html>
 </tip>
 
@@ -522,6 +557,9 @@ Konqueror can continuously scroll webpages up or down: just press
 Shift+Up Arrow or Shift+Down Arrow. Press the key combination again to
 increase the speed, or any other key to stop the scrolling.
 </p>
+<center>
+<img src="oxygen/64x64/apps/konqueror.png">
+</center>
 </html>
 </tip>
 
@@ -530,7 +568,10 @@ increase the speed, or any other key to stop the scrolling.
 <p>You can use Konqueror's help:/ kioslave to have quick and easy
 access to an application's handbook by typing <b>help:/</b>, directly
 followed by the application name, in the Location bar. So, for example
-to view the handbook for kwrite simply type help:/kwrite.</p> 
+to view the handbook for kwrite simply type help:/kwrite.</p>
+<center>
+<img src="oxygen/48x48/actions/help-contents.png">
+</center>
 </html>
 </tip>
 
@@ -546,6 +587,9 @@ pressing Enter will search Google for items relating to Konqueror.</p>
 own, from Konqueror just select Settings->Configure Konqueror... which
 will open the Settings dialog box, and then just click on the Web
 Shortcuts icon.</p>
+<center>
+<img src="oxygen/64x64/apps/konqueror.png">
+</center>
 </html>
 </tip>
 
@@ -604,6 +648,9 @@ comprehensive calender).</p>
 <html>
 <p>By pressing F4 in Konqueror you can open a terminal at your current
 location.</p>
+<center>
+<img src="oxygen/64x64/apps/konqueror.png">
+</center>
 </html>
 </tip>
 
@@ -652,6 +699,9 @@ Left/Right, depending upon your choice.</p>
 <p>This setting will also only apply to a particular tab, rather than
 all tabs you have, so you can choose to have the split view for only
 some of the tabs where you might think it is useful.</p>
+<center>
+<img src="oxygen/64x64/apps/konqueror.png">
+</center>
 </html>
 </tip>
 
@@ -664,10 +714,8 @@ You can let KDE turn the <b>NumLock</b> ON or OFF at startup.
 Open the System Settings, select Keyboard &amp; Mouse and make your
  choice.
 </p>
-<p>
-<hr><br><br>
-<i>This is the last tip in the tips database. Clicking "Next" will take you back to
- the first tip.</i>
-</p>
+<center>
+<img src="oxygen/64x64/apps/preferences-desktop-keyboard.png">
+</center>
 </html>
 </tip>
