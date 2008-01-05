@@ -43,7 +43,8 @@ QSizeF SystemTray::contentSizeHint() const
     if (!(m_systemTrayWidget && v)) {
         return QSizeF();
     }
-    QRect widgetRect(QPoint(0, 0), m_systemTrayWidget->minimumSizeHint());
+    QRect widgetRect(QPoint(0, 0), m_systemTrayWidget->minimumSizeHint() +
+            QSize(SystemTrayWidget::MARGIN * 2, SystemTrayWidget::MARGIN * 2));
     return mapFromView(v, widgetRect).size();
 }
 

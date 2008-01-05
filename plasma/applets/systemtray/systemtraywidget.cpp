@@ -49,7 +49,7 @@ SystemTrayWidget::SystemTrayWidget(QWidget *parent)
     m_mainLayout = new QGridLayout(this);
 
     // Override spacing set by the current style
-    m_mainLayout->setContentsMargins(4, 4, 4, 4);
+    m_mainLayout->setContentsMargins(0, 0, 0, 0);
     m_mainLayout->setSpacing(4);
 
     init();
@@ -116,7 +116,7 @@ void SystemTrayWidget::addWidgetToLayout(QWidget *widget)
         // Add down then across when horizontal
         if (m_nextRow == m_mainLayout->rowCount()
             && m_mainLayout->minimumSize().height() + m_mainLayout->spacing()
-               + widget->minimumHeight() > maximumHeight()) {
+               + widget->minimumHeight() > maximumHeight() - 2 * MARGIN) {
             m_nextColumn++;
             m_nextRow = 0;
         }
@@ -126,7 +126,7 @@ void SystemTrayWidget::addWidgetToLayout(QWidget *widget)
         // Add across then down when vertical
         if (m_nextColumn == m_mainLayout->columnCount()
             && m_mainLayout->minimumSize().width() + m_mainLayout->spacing()
-               + widget->minimumWidth() > maximumWidth()) {
+               + widget->minimumWidth() > maximumWidth() - 2 * MARGIN) {
             m_nextRow++;
             m_nextColumn = 0;
         }

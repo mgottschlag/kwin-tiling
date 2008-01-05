@@ -39,6 +39,8 @@ public:
 
     void setOrientation(Qt::Orientation);
 
+    static const int MARGIN = 4;
+
 protected:
     bool x11Event(XEvent *event);
 
