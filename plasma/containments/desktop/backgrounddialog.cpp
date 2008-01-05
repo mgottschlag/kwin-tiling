@@ -188,7 +188,7 @@ void BackgroundListModel::addBackground(const QString& path) {
 int BackgroundListModel::indexOf(const QString &path) const
 {
     for (int i = 0; i < m_packages.size(); i++) {
-        if (m_packages[i]->path() == path) {
+        if (path.startsWith(m_packages[i]->path())) {
             return i;
         }
     }

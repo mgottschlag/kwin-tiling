@@ -248,6 +248,7 @@ void DefaultDesktop::updateBackground()
         }
 
         kDebug() << "Setting wallpaper to default" << m_wallpaperPath;
+        emit configNeedsSaving();
     }
 
     m_current_renderer_token = 
