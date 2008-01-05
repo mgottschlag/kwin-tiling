@@ -75,7 +75,6 @@ MenuView::MenuView(QWidget *parent)
     : KMenu(parent)
     , d(new Private(this))
 {
-    connect(this,SIGNAL(triggered(QAction*)),this,SLOT(actionTriggered(QAction*)));
 }
 MenuView::~MenuView()
 {
