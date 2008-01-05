@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -138,19 +138,19 @@ void MenuLauncherApplet::showConfigurationInterface()
         d->dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
         connect(d->dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
         connect(d->dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    
+
         QVBoxLayout *layout = new QVBoxLayout(d->dialog->mainWidget());
         d->dialog->mainWidget()->setLayout(layout);
 
         d->showFavCheckBox = new QCheckBox(i18n("Favorites"), d->dialog->mainWidget());
         layout->addWidget(d->showFavCheckBox);
-    
-        d->showSwitchUserCheckBox = new QCheckBox(i18n("Switch User"), d->dialog->mainWidget());
+
+        d->showSwitchUserCheckBox = new QCheckBox(i18n("Switch user"), d->dialog->mainWidget());
         layout->addWidget(d->showSwitchUserCheckBox);
-    
+
         d->showLockCheckBox = new QCheckBox(i18n("Lock"), d->dialog->mainWidget());
         layout->addWidget(d->showLockCheckBox);
-    
+
         d->showLogoutCheckBox = new QCheckBox(i18n("Logout"), d->dialog->mainWidget());
         layout->addWidget(d->showLogoutCheckBox);
     }
