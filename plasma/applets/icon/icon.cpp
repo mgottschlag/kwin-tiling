@@ -69,6 +69,7 @@ void IconApplet::init()
     setDisplayLines(2);
 
     m_icon->installSceneEventFilter(this);
+    m_icon->resize(contentSize());
 }
 
 IconApplet::~IconApplet()
