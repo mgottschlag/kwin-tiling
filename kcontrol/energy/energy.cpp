@@ -368,7 +368,7 @@ void KEnergy::applySettings(bool enable, int standby, int suspend, int off)
     XSetErrorHandler(defaultHandler);
 
     // The screen saver depends on the DPMS settings
-    org::kde::screensaver kscreensaver("org.kde.screensaver", "/ScreenSaver", QDBusConnection::sessionBus());
+    org::kde::screensaver kscreensaver("org.freedesktop.ScreenSaver", "/ScreenSaver", QDBusConnection::sessionBus());
     kscreensaver.configure();
 #else
     /* keep gcc silent */
