@@ -289,7 +289,7 @@ Interface::Interface(QWidget* parent)
     m_searchTerm->setLineEdit(lineEdit);
     m_header->setBuddy(m_searchTerm);
     m_layout->addWidget(m_searchTerm);
-    connect(m_searchTerm, SIGNAL(textChanged(QString)),
+    connect(m_searchTerm, SIGNAL(editTextChanged(QString)),
             this, SLOT(queueMatch()));
     connect(m_searchTerm, SIGNAL(returnPressed()),
             this, SLOT(exec()));
