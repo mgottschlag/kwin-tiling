@@ -74,7 +74,7 @@ Regexp=^\\/.+\\.jpg$
 
 [Action_0/Command_0]
 Commandline=okular %s
-Description=Launch K&View
+Description=Launch o&kular
 Description[af]=Lanseer K-bekyk
 Description[ar]=نفّذ K&View
 Description[be]=Запусціць K&View
@@ -202,12 +202,12 @@ Description[wa]=Hårdêye waibe
 Description[x-test]=xxWeb-URLxx
 Description[zh_CN]=Web URL
 Description[zh_TW]=網頁 URL
-Number of commands=5
+Number of commands=6
 Regexp=^https?://.
 
 [Action_1/Command_0]
 Commandline=kfmclient exec %s
-Description=Open with &Konqueror
+Description=Open with &default Browser
 Description[af]=Maak oop met Konqueror
 Description[ar]=افتح بواسطة &كونكيورر
 Description[be]=Адкрыць у &Konqueror
@@ -279,6 +279,11 @@ Description[zh_TW]=使用 &Konqueror 開啟
 Enabled=true
 
 [Action_1/Command_1]
+Commandline=konqueror %s
+Description=Open with &Konqueror
+Enabled=true
+
+[Action_1/Command_2]
 Commandline=ps x |grep -q '[m]ozilla' && mozilla -remote openURL(%s, new-window) || mozilla %s
 Icon=mozilla
 Description=Open with &Mozilla
@@ -352,7 +357,7 @@ Description[zh_CN]=用 &Mozilla 打开
 Description[zh_TW]=使用 &Mozilla 開啟
 Enabled=true
 
-[Action_1/Command_2]
+[Action_1/Command_3]
 Commandline=kmail --body  %s
 Description=Send &URL
 Description[af]=Stuur URL
@@ -425,7 +430,7 @@ Description[zh_CN]=发送 &URL
 Description[zh_TW]=送出 &URL
 Enabled=true
 
-[Action_1/Command_3]
+[Action_1/Command_4]
 Commandline=ps x |grep -q '[f]irefox' && firefox -remote openURL(%s, new-window) || firefox %s
 Icon=firefox
 Description=Open with &Firefox
@@ -495,7 +500,7 @@ Description[zh_CN]=用 &Firefox 打开
 Description[zh_TW]=使用 &Firefox 開啟
 Enabled=true
 
-[Action_1/Command_4]
+[Action_1/Command_5]
 Commandline=kmail  --attach %s
 Description=Send &Page
 Description[af]=Stuur Bladsy
@@ -1397,12 +1402,12 @@ Description[vi]=URL FTP
 Description[wa]=Hårdêye FTP
 Description[x-test]=xxftp URLxx
 Description[zh_TW]=FTP URL
-Number of commands=4
+Number of commands=5
 Regexp=^ftp://.
 
 [Action_6/Command_0]
 Commandline=kfmclient exec %s
-Description=Open with &Konqueror
+Description=Open with &default Browser
 Description[af]=Maak oop met Konqueror
 Description[ar]=افتح بواسطة &كونكيورر
 Description[be]=Адкрыць у &Konqueror
@@ -1474,6 +1479,11 @@ Description[zh_TW]=使用 &Konqueror 開啟
 Enabled=true
 
 [Action_6/Command_1]
+Commandline=konqueror %s
+Description=Open with &Konqueror
+Enabled=true
+
+[Action_6/Command_2]
 Commandline=mozilla -remote openURL(%s, new-window)
 Description=Open with &Mozilla
 Description[af]=Maak oop met Mozilla
@@ -1546,7 +1556,7 @@ Description[zh_CN]=用 &Mozilla 打开
 Description[zh_TW]=使用 &Mozilla 開啟
 Enabled=true
 
-[Action_6/Command_2]
+[Action_6/Command_3]
 Commandline=kmail --body  %s
 Description=Send &URL
 Description[af]=Stuur URL
@@ -1619,7 +1629,7 @@ Description[zh_CN]=发送 &URL
 Description[zh_TW]=送出 &URL
 Enabled=true
 
-[Action_6/Command_3]
+[Action_6/Command_4]
 Commandline=kmail  --attach %s
 Description=Send &File
 Description[af]=Stuur Lêer
