@@ -124,6 +124,7 @@ Task::~Task()
         XFreePixmap(QX11Info::display(), d->windowPixmap);
     }
 #endif // THUMBNAILING_POSSIBLE
+    delete d;
 }
 
 // Task::findWindowFrameId()
