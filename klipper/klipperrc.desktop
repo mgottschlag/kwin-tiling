@@ -73,8 +73,8 @@ Number of commands=1
 Regexp=^\\/.+\\.jpg$
 
 [Action_0/Command_0]
-Commandline=okular %s
-Description=Launch o&kular
+Commandline=gwenview %s
+Description=Launch &Gwenview
 Description[af]=Lanseer K-bekyk
 Description[ar]=نفّذ K&View
 Description[be]=Запусціць K&View
