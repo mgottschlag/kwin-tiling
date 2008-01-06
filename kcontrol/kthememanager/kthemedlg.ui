@@ -200,6 +200,9 @@
                     <property name="name">
                         <cstring>btnBackground</cstring>
                     </property>
+                    <property name="enabled">
+                        <bool>false</bool>
+                    </property>
                     <property name="sizePolicy">
                         <sizepolicy>
                             <hsizetype>5</hsizetype>
