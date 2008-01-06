@@ -265,8 +265,12 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         devicetypes << I18N_NOOP("Storage Access");
         setData(name, I18N_NOOP("Accessible"), storageaccess->isAccessible());
         setData(name, I18N_NOOP("File Path"), storageaccess->filePath());
-        setData(name, I18N_NOOP("Free Space"), freeDiskSpace(storageaccess->filePath()));
-
+        QVariant freeDiskVar;
+        qlonglong freeDisk = freeDiskSpace(storageaccess->filePath());
+        if ( freeDisk != -1 ) {
+            freeDiskVar.setValue( freeDisk );
+        }
+        setData(name, I18N_NOOP("Free Space"), freeDiskVar );
         //signalmanager->mapDevice(storageaccess, device.udi());
     }
     if (storagedrivelist.contains(name)) {
@@ -694,7 +698,12 @@ bool SolidDeviceEngine::updateFreeSpace(const QString &udi)
 
         Solid::StorageAccess *storageaccess = device.as<Solid::StorageAccess>();
         if (storageaccess == 0) return false;
-        setData(udi, I18N_NOOP("Free Space"), freeDiskSpace(storageaccess->filePath()));
+        QVariant freeSpaceVar;
+        qlonglong freeSpace = freeDiskSpace(storageaccess->filePath());
+        if ( freeSpace != -1 ) {
+            freeSpaceVar.setValue( freeSpace );
+        }
+        setData(udi, I18N_NOOP("Free Space"), freeSpaceVar );
         return true;
     }
     return false;
