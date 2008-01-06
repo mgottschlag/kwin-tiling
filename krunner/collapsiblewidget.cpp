@@ -145,7 +145,8 @@ void CollapsibleWidget::setExpanded(bool expanded)
 
     d->timeline->setDirection( expanded ? QTimeLine::Forward
                                         : QTimeLine::Backward );
-    d->timeline->start();
+    if(d->timeline->state() != QTimeLine::Running)
+       d->timeline->start();
 }
 
 void CollapsibleWidget::animateCollapse( qreal showAmount )
