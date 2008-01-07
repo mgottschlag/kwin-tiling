@@ -1,3 +1,13 @@
+/*
+
+ This is original Qt QX11Embed* code, with some modifications (check history,
+ the first commit was the original unmodified code) to allow embedding window
+ with different visual/depths/whatever. QX11EmbedContainer should handle this
+ on its own, so this should be eventually done a bit more properly and
+ submitted to TT.
+
+*/
+
 /****************************************************************************
 **
 ** Copyright (C) 1992-2007 Trolltech ASA. All rights reserved.
@@ -39,9 +49,8 @@
 
 #include <QtGui/qwidget.h>
 
-QT_BEGIN_HEADER
-
-QT_MODULE(Gui)
+namespace PlasmaSystray
+{
 
 class QX11EmbedWidgetPrivate;
 class Q_GUI_EXPORT QX11EmbedWidget : public QWidget
@@ -82,7 +91,7 @@ class Q_GUI_EXPORT QX11EmbedContainer : public QWidget
 {
     Q_OBJECT
 public:
-    QX11EmbedContainer(QWidget *parent = 0);
+    QX11EmbedContainer(WId prepareid, QWidget *parent = 0);
     ~QX11EmbedContainer();
 
     void embedClient(WId id);
@@ -118,6 +127,8 @@ private:
     Q_DISABLE_COPY(QX11EmbedContainer)
 };
 
-QT_END_HEADER
+} // namespace
+
+typedef PlasmaSystray::QX11EmbedContainer KX11EmbedContainer;
 
 #endif // QX11EMBED_X11_H

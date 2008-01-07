@@ -32,18 +32,13 @@
 #include <X11/Xlib.h>
 
 SystemTrayContainer::SystemTrayContainer(WId clientId, QWidget *parent)
-    : QX11EmbedContainer(parent)
+    : KX11EmbedContainer(clientId, parent)
 {
     connect(this, SIGNAL(clientClosed()), SLOT(deleteLater()));
     connect(this, SIGNAL(error(QX11EmbedContainer::Error)), SLOT(handleError(QX11EmbedContainer::Error)));
 
     // Tray icons have a fixed size of 22x22
     setMinimumSize(22, 22);
-
-    // HACK: Tell the client to draw it's own black background rather than
-    // taking ours as things are broken with ARGB visuals it seems.
-    XSetWindowBackgroundPixmap(QX11Info::display(), clientId, None);
-    XSetWindowBackground(QX11Info::display(), clientId, 0 /* black */);
 
     kDebug() << "attempting to embed" << clientId;
     embedClient(clientId);

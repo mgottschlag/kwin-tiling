@@ -1,3 +1,13 @@
+/*
+
+ This is original Qt QX11Embed* code, with some modifications (check history,
+ the first commit was the original unmodified code) to allow embedding window
+ with different visual/depths/whatever. QX11EmbedContainer should handle this
+ on its own, so this should be eventually done a bit more properly and
+ submitted to TT.
+
+*/
+
 /****************************************************************************
 **
 ** Copyright (C) 1992-2007 Trolltech ASA. All rights reserved.
@@ -65,6 +75,9 @@
 #ifdef QX11EMBED_DEBUG
 #include <qdebug.h>
 #endif
+
+namespace PlasmaSystray
+{
 
 /*!
     \class QX11EmbedWidget
@@ -591,6 +604,11 @@ void QX11EmbedWidget::embedInto(WId id)
     d->data.fstrut_dirty = false;
 }
 
+} // namespace
+    extern bool qt_tab_all_widgets;
+namespace PlasmaSystray
+{
+
 /*! \internal
 
     Gets the first or last child widget that can get focus.
@@ -603,7 +621,6 @@ QWidget *QX11EmbedWidgetPrivate::getFocusWidget(FocusWidgets fw)
 
     QWidget *last = tlw;
 
-    extern bool qt_tab_all_widgets;
     uint focus_flag = qt_tab_all_widgets ? Qt::TabFocus : Qt::StrongFocus;
 
     while (w != tlw)
@@ -1064,17 +1081,31 @@ public:
     QX11EmbedContainer::Error lastError;
 };
 
+static WId prepareId( WId prepareid, QWidget* parent )
+{
+    Display* dpy = QX11Info::display();
+    XWindowAttributes ga;
+    XGetWindowAttributes( dpy, prepareid, &ga );
+    XSetWindowAttributes sa;
+    sa.background_pixel = WhitePixel( dpy, DefaultScreen( dpy ));
+    sa.border_pixel = BlackPixel( dpy, DefaultScreen( dpy ));
+    sa.colormap = ga.colormap;
+    return XCreateWindow( dpy, parent ? parent->winId() : DefaultRootWindow( dpy ),
+        1, 1, 1, 1, 0, ga.depth, InputOutput, ga.visual,
+        CWBackPixel | CWBorderPixel | CWColormap, &sa );
+}
+
 /*!
     Creates a QX11EmbedContainer object with the given \a parent.
 */
-QX11EmbedContainer::QX11EmbedContainer(QWidget *parent)
+QX11EmbedContainer::QX11EmbedContainer(WId prepareid, QWidget *parent)
     : QWidget(*new QX11EmbedContainerPrivate, parent, 0)
 {
     Q_D(QX11EmbedContainer);
     XSetErrorHandler(x11ErrorHandler);
     initXEmbedAtoms(x11Info().display());
 
-    createWinId();
+    create( prepareId( prepareid, parent ));
 
     setFocusPolicy(Qt::StrongFocus);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -1813,3 +1844,6 @@ void QX11EmbedContainer::discardClient()
 	d->rejectClient(d->client);
     }
 }
+
+} // namespace
+

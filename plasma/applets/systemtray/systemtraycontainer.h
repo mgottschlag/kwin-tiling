@@ -23,9 +23,9 @@
 #define SYSTEMTRAYCONTAINER_H
 
 // Qt
-#include <QX11EmbedContainer>
+#include "qx11embed_x11.h"
 
-class SystemTrayContainer: public QX11EmbedContainer
+class SystemTrayContainer: public KX11EmbedContainer
 {
 Q_OBJECT
 
