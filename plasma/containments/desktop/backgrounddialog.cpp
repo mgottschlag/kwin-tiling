@@ -444,11 +444,12 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config, const KConfigGro
         m_view->setCurrentIndex(index);
     }
 
-    bool showIcons = globalConfig.readEntry("showIcons",true);
+    KConfigGroup iconConfig(&globalConfig, "DesktopIcons");
+    bool showIcons = iconConfig.readEntry("showIcons",true);
     m_showIcons->setCheckState(showIcons ? Qt::Checked : Qt::Unchecked);
-    bool alignToGrid = globalConfig.readEntry("alignToGrid", true);
+    bool alignToGrid = iconConfig.readEntry("alignToGrid", true);
     m_alignToGrid->setCheckState(alignToGrid ? Qt::Checked : Qt::Unchecked);
-    
+
     if (mode == kSlideshowBackground) {
         updateSlideshow();
     }
@@ -478,8 +479,9 @@ void BackgroundDialog::saveConfig(KConfigGroup config, KConfigGroup globalConfig
         config.writeEntry("slideTimer", seconds);
     }
 
-    globalConfig.writeEntry("showIcons", (m_showIcons->checkState() == Qt::Checked ? true : false));
-    globalConfig.writeEntry("alignToGrid", (m_alignToGrid->checkState() == Qt::Checked ? true : false));
+    KConfigGroup iconConfig(&globalConfig, "DesktopIcons");
+    iconConfig.writeEntry("showIcons", (m_showIcons->checkState() == Qt::Checked ? true : false));
+    iconConfig.writeEntry("alignToGrid", (m_alignToGrid->checkState() == Qt::Checked ? true : false));
 }
 
 void BackgroundDialog::getNewStuff()

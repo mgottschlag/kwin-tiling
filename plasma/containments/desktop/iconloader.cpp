@@ -51,8 +51,9 @@ void IconLoader::init()
     m_iconMap.clear();
 
     //load stored settings
-    KConfigGroup cg = m_desktop->globalConfig();
-    m_iconShow = cg.readEntry("showIcons",m_iconShow);
+    KConfigGroup cg(m_desktop->globalConfig());
+    cg = KConfigGroup(&cg, "DesktopIcons");
+    m_iconShow = cg.readEntry("showIcons", m_iconShow);
     m_gridAlign = cg.readEntry(i18n("alignToGrid"),m_gridAlign);
     m_enableMedia = cg.readEntry(i18n("enableMedia"),m_enableMedia);
 

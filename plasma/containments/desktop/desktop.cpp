@@ -226,12 +226,6 @@ void DefaultDesktop::reloadConfig()
         m_currentSlide = -1;
         nextSlide();
     }
-
-    if (s_icons) {
-        KConfigGroup gcg = globalConfig();
-        s_icons->setShowIcons(gcg.readEntry("showIcons",true));
-        s_icons->setGridAligned(gcg.readEntry("alignToGrid",true));
-    }
 }
 
 void DefaultDesktop::updateBackground()
