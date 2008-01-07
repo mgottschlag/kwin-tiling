@@ -42,7 +42,7 @@ public slots:
 	void load();
 
 protected slots:
-	void activeStateChanged(int state);
+//	void activeStateChanged(int state);
 	
 	void updatePositionList(void);
 	void updateRotationList(void);
