@@ -387,7 +387,7 @@ kdeinit4_shutdown
 echo 'startkde: Running shutdown scripts...'  1>&2
 
 # Run scripts found in $KDEDIRS/shutdown
-for prefix in `echo "$exepath" | sed -n -e 's,/bin[^/]*/,/shutdown/,p'`; do
+for prefix in `echo "$libpath" | sed -n -e 's,/lib[^/]*/,/shutdown/,p'`; do
   for file in `ls "$prefix" 2> /dev/null | egrep -v '(~|\.bak)$'`; do
     test -x "$prefix$file" && "$prefix$file"
   done
