@@ -295,7 +295,6 @@ void UKMETIon::parseUnknownElement(QXmlStreamReader& xml)
 
 void UKMETIon::setup_slotRedirected(KIO::Job *job, const KUrl &url)
 {
-    Q_UNUSED(job);
     QString obsUrl;
     QString place;
     QString tmp;
