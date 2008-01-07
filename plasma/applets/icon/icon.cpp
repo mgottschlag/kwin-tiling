@@ -126,7 +126,7 @@ void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
             m_icon->setText(m_text);
             setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
         } else {
-            m_icon->setText(0);
+            m_icon->setText(QString());
             setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Panel)));
         }
     }
