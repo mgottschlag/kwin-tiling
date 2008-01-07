@@ -113,9 +113,13 @@ bool UKMETIon::updateIonSource(const QString& source)
         return true;
 
     } else if (sourceAction[1] == QString("weather")) {
-        d->m_place[QString("bbcukmet|%1").arg(sourceAction[2])].XMLurl = sourceAction[3];
-        getXMLData(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
-        return true;
+        if (sourceAction.count() >= 3) {
+            d->m_place[QString("bbcukmet|%1").arg(sourceAction[2])].XMLurl = sourceAction[3];
+            getXMLData(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
+            return true;
+	} else { 
+	    return false;
+	}
     }
     return false;
 }
@@ -153,6 +157,10 @@ void UKMETIon::findPlace(const QString& place, const QString& source)
         connect(d->m_job, SIGNAL(data(KIO::Job *, const QByteArray &)), this,
                 SLOT(setup_slotDataArrived(KIO::Job *, const QByteArray &)));
         connect(d->m_job, SIGNAL(result(KJob *)), this, SLOT(setup_slotJobFinished(KJob *)));
+
+	// Handle redirects for direct hit places.
+	connect(d->m_job, SIGNAL(redirection(KIO::Job *, const KUrl &)), this,
+		SLOT(setup_slotRedirected(KIO::Job *, const KUrl &)));
     }
 }
 
@@ -203,13 +211,28 @@ void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml
     QStringList tokens;
     QString tmp;
     int counter = 2;
+    int currentParagraph = 0;
+
     Q_ASSERT(xml.isStartElement() && xml.name() == "wml");
-    d->m_locations.clear();
+
     while (!xml.atEnd()) {
         xml.readNext();
 
         if (xml.isEndElement() && xml.name() == "wml") {
             break;
+        }
+
+        if (xml.isStartElement() && xml.name() == "p") {
+            currentParagraph++;
+        }
+
+        if (currentParagraph == 2) {
+           if (xml.isCharacters() && !xml.isWhitespace())  {
+	       QString dataText = xml.text().toString().trimmed();
+	       if (dataText.contains("No locations")) {
+		   break;
+	       }
+	   }
         }
 
         if (xml.isStartElement()) {
@@ -247,7 +270,7 @@ void UKMETIon::parseSearchLocations(const QString& source, QXmlStreamReader& xml
                         d->m_place[tmp].ukPlace = false;
                     }
                     d->m_locations.append(tmp);
-                }
+                } 
             }
         }
     }
@@ -267,6 +290,40 @@ void UKMETIon::parseUnknownElement(QXmlStreamReader& xml)
         if (xml.isStartElement()) {
             parseUnknownElement(xml);
         }
+    }
+}
+
+void UKMETIon::setup_slotRedirected(KIO::Job *job, const KUrl &url)
+{
+    Q_UNUSED(job);
+    QString obsUrl;
+    QString place;
+    QString tmp;
+    bool flag = false;
+    QStringList tokens = url.url().split("=");
+    if (url.url().contains("xhtml")) { // We dont care about the first redirection (there is two)
+        if (url.url().contains("world")) {
+	    obsUrl = "http://feeds.bbc.co.uk/weather/feeds/obs/world/" + tokens[2] + ".xml";
+	    flag = false;
+	} else {
+	    obsUrl = "http://feeds.bbc.co.uk/weather/feeds/obs/id/" + tokens[2] + ".xml";
+	    flag = true;
+	}
+	place = d->m_jobList[job].split("|")[2]; // Contains the source name (place in this case)
+	tmp = QString("bbcukmet|%1").arg(place);
+	place[0] = place[0].toUpper();
+
+	if (flag) { // This is a UK specific location
+	    d->m_place[tmp].XMLurl = obsUrl;
+	    d->m_place[tmp].place = place;
+	    d->m_place[tmp].ukPlace = true;
+	} else {
+	    d->m_place[tmp].XMLurl = obsUrl;
+	    d->m_place[tmp].place = place;
+	    d->m_place[tmp].ukPlace = false;
+	}
+	d->m_locations.append(tmp);
+        validate(d->m_jobList[job]);
     }
 }
 
@@ -296,7 +353,10 @@ void UKMETIon::setup_slotJobFinished(KJob *job)
         d->m_jobXml.remove(job);
         return;
     }
-    readSearchXMLData(d->m_jobList[job], *d->m_jobXml[job]);
+    // If Redirected, dont go to this routine
+    if (!d->m_locations.contains(QString("bbcukmet|%1").arg(d->m_jobList[job]))) {
+        readSearchXMLData(d->m_jobList[job], *d->m_jobXml[job]);
+    }
     d->m_jobList.remove(job);
     delete d->m_jobXml[job];
     d->m_jobXml.remove(job);
@@ -627,7 +687,10 @@ void UKMETIon::validate(const QString& source)
 
     if (!d->m_locations.count()) {
         QStringList invalidPlace = source.split('|');
-        setData(source, "validate", QString("bbcukmet|invalid|multiple|%1").arg(invalidPlace[2]));
+	if (d->m_place[QString("bbcukmet|%1").arg(invalidPlace[2])].place.isEmpty()) {
+            setData(source, "validate", QString("bbcukmet|invalid|multiple|%1").arg(invalidPlace[2]));
+	}
+	d->m_locations.clear();
         return;
     } else {
         QString placeList;
@@ -639,8 +702,14 @@ void UKMETIon::validate(const QString& source)
                 placeList.append(QString("|place|%1|extra|%2").arg(place.split("|")[1]).arg(d->m_place[place].XMLurl));
             }
         }
-        setData(source, "validate", QString("bbcukmet|valid|multiple|place|%1").arg(placeList));
+	if (d->m_locations.count() > 1) {
+            setData(source, "validate", QString("bbcukmet|valid|multiple|place|%1").arg(placeList));
+	} else {
+	    placeList[0] = placeList[0].toUpper();
+	    setData(source, "validate", QString("bbcukmet|valid|single|place|%1").arg(placeList));
+	}
     }
+    d->m_locations.clear();
 }
 
 void UKMETIon::updateWeather(const QString& source)
@@ -722,7 +791,7 @@ void UKMETIon::updateWeather(const QString& source)
 
 QString UKMETIon::place(const QString& source)
 {
-    return source.split("|")[1];
+    return d->m_weatherData[source].stationName;
 }
 
 QString UKMETIon::station(const QString& source)

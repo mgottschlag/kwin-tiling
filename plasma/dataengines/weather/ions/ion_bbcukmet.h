@@ -96,6 +96,7 @@ public:
 protected slots:
     void setup_slotDataArrived(KIO::Job *, const QByteArray &);
     void setup_slotJobFinished(KJob *);
+    void setup_slotRedirected(KIO::Job *, const KUrl &url);
     void observation_slotDataArrived(KIO::Job *, const QByteArray &);
     void observation_slotJobFinished(KJob *);
     void forecast_slotDataArrived(KIO::Job *, const QByteArray &);
