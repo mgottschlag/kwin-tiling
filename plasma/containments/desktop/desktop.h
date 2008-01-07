@@ -105,6 +105,7 @@ private:
     QAction *m_lockScreenAction;
     QAction *m_logoutAction;
     QAction *m_separator;
+    QAction *m_separator2;
 
     BackgroundDialog *m_configDialog;
 

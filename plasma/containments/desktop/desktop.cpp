@@ -226,7 +226,7 @@ void DefaultDesktop::reloadConfig()
         nextSlide();
     }
 
-    if(s_icons) {
+    if (s_icons) {
         s_icons->setShowIcons(cg.readEntry("showIcons",true));
         s_icons->setGridAligned(cg.readEntry("alignToGrid",true));
     }
@@ -326,6 +326,9 @@ QList<QAction*> DefaultDesktop::contextActions()
 
         m_separator = new QAction(this);
         m_separator->setSeparator(true);
+
+        m_separator2 = new QAction(this);
+        m_separator2->setSeparator(true);
     }
 
     QList<QAction*> actions;
@@ -339,10 +342,12 @@ QList<QAction*> DefaultDesktop::contextActions()
 
     actions.append(m_separator);
 
-    //icon actions
-    actions << s_icons->contextActions();
+    if (s_icons && s_icons->showIcons()) {
+        //icon actions
+        actions << s_icons->contextActions();
+        actions.append(m_separator2);
+    }
 
-    actions.append(m_separator);
     actions.append(m_lockDesktopAction);
 
     if (KAuthorized::authorizeKAction("lock_screen")) {

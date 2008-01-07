@@ -74,7 +74,6 @@ void IconLoader::init()
     connect(&m_desktopDir, SIGNAL(newItems(KFileItemList)), this, SLOT(newItems(KFileItemList)) );
     connect(&m_desktopDir, SIGNAL(deleteItem(KFileItem)), this, SLOT(deleteItem(KFileItem)));
     
-    createMenu();
     setShowIcons(m_iconShow);
 }
 
@@ -94,6 +93,11 @@ QList<QAction*> IconLoader::contextActions()
     if (!m_iconShow) {
         return QList<QAction*>();
     }
+
+    if (actions.isEmpty()) {
+        createMenu();
+    }
+
     return actions;
 }
 
