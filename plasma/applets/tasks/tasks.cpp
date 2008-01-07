@@ -36,12 +36,10 @@
 #include <plasma/layouts/layoutanimator.h>
 
 Tasks::Tasks(QObject* parent , const QVariantList &arguments)
- : Plasma::Applet(parent,arguments)
+ : Plasma::Applet(parent,arguments),
+   m_dialog(0)
 {
-    Plasma::BoxLayout *layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
-    layout->setMargin(0);
     setHasConfigurationInterface(true);
-    m_dialog = 0;
 }
 
 Tasks::~Tasks()
@@ -51,7 +49,10 @@ Tasks::~Tasks()
 
 void Tasks::init()
 {
+    Plasma::BoxLayout *layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
+    layout->setMargin(0);
     _rootTaskGroup = new TaskGroupItem(this, this);
+    _rootTaskGroup->resize(contentSize());
 
     // testing
         Plasma::LayoutAnimator* animator = new Plasma::LayoutAnimator;
@@ -63,9 +64,8 @@ void Tasks::init()
         animator->setEffect(Plasma::LayoutAnimator::RemovedState,
                             Plasma::LayoutAnimator::FadeOutMoveEffect);
         animator->setTimeLine(new QTimeLine(200, this));
-        _rootTaskGroup->layout()->setAnimator(animator);
 
-    layout()->addItem(_rootTaskGroup);
+    layout->addItem(_rootTaskGroup);
 
     // testing
         _rootTaskGroup->setBorderStyle(TaskGroupItem::NoBorder);
@@ -78,6 +78,9 @@ void Tasks::init()
     // add representations of existing running tasks
     registerWindowTasks();
     registerStartingTasks();
+
+    // add the animator once we're initialized to avoid animating like mad on start up
+    _rootTaskGroup->layout()->setAnimator(animator);
 }
 
 void Tasks::registerStartingTasks()
