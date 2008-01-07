@@ -55,8 +55,8 @@
 #include <qpointer.h>
 #include <qdebug.h>
 #include <qx11info_x11.h>
-#include <private/qt_x11_p.h>
-#include <private/qwidget_p.h>
+#include "qt_x11_p.h"
+#include "qwidget_p.h"
 
 #define XK_MISCELLANY
 #define XK_LATIN1
