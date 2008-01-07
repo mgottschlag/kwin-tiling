@@ -3,8 +3,7 @@ project(plasma-systemtray)
 set(systemtray_SRCS
     systemtray.cpp
     systemtraycontainer.cpp
-    systemtraywidget.cpp
-    qx11embed_x11.cpp)
+    systemtraywidget.cpp)
 
 kde4_add_plugin(plasma_applet_systemtray ${systemtray_SRCS})
 target_link_libraries(plasma_applet_systemtray ${KDE4_KDEUI_LIBS} plasma)

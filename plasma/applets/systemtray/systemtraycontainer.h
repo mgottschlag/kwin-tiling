@@ -23,7 +23,16 @@
 #define SYSTEMTRAYCONTAINER_H
 
 // Qt
-#include "qx11embed_x11.h"
+#include <QX11EmbedContainer>
+
+class KX11EmbedContainer : public QX11EmbedContainer
+{
+Q_OBJECT
+public:
+    KX11EmbedContainer( QWidget* parent = NULL )
+        : QX11EmbedContainer( parent ) {}
+    void prepareFor( WId id );
+};
 
 class SystemTrayContainer: public KX11EmbedContainer
 {

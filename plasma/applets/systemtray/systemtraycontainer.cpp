@@ -32,8 +32,9 @@
 #include <X11/Xlib.h>
 
 SystemTrayContainer::SystemTrayContainer(WId clientId, QWidget *parent)
-    : KX11EmbedContainer(clientId, parent)
+    : KX11EmbedContainer(parent)
 {
+    prepareFor( clientId ); // temporary hack, until QX11EmbedContainer gets fixed
     connect(this, SIGNAL(clientClosed()), SLOT(deleteLater()));
     connect(this, SIGNAL(error(QX11EmbedContainer::Error)), SLOT(handleError(QX11EmbedContainer::Error)));
 
@@ -56,4 +57,38 @@ void SystemTrayContainer::handleError(QX11EmbedContainer::Error error)
 {
     Q_UNUSED(error);
     deleteLater();
+}
+
+
+// Temporary hack to change X window used by QX11EmbedContainer so that it matches
+// the window embedded into it (#153193).
+void KX11EmbedContainer::prepareFor( WId w )
+{
+    Display* dpy = QX11Info::display();
+    XWindowAttributes ga;
+    XGetWindowAttributes( dpy, w, &ga );
+    XSetWindowAttributes sa;
+    sa.background_pixel = WhitePixel( dpy, DefaultScreen( dpy ));
+    sa.border_pixel = BlackPixel( dpy, DefaultScreen( dpy ));
+    sa.colormap = ga.colormap;
+    Window ww = XCreateWindow( dpy, parentWidget() ? parentWidget()->winId() : DefaultRootWindow( dpy ),
+        1, 1, 1, 1, 0, ga.depth, InputOutput, ga.visual,
+        CWBackPixel | CWBorderPixel | CWColormap, &sa );
+    create( ww, true, true );
+    // repeat everything from QX11EmbedContainer's ctor that might be relevant
+    setFocusPolicy(Qt::StrongFocus);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    setAcceptDrops(true);
+    setEnabled(false);
+    XSelectInput( dpy, ww,
+                 KeyPressMask | KeyReleaseMask
+                 | ButtonPressMask | ButtonReleaseMask | ButtonMotionMask
+                 | KeymapStateMask
+                 | PointerMotionMask
+                 | EnterWindowMask | LeaveWindowMask
+                 | FocusChangeMask
+                 | ExposureMask
+                 | StructureNotifyMask
+                 | SubstructureNotifyMask);
+    XFlush( dpy );
 }
