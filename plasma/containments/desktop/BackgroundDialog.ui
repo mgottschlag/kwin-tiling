@@ -445,7 +445,7 @@
       <item>
        <widget class="QCheckBox" name="m_showIcons" >
         <property name="text" >
-         <string>&amp;Show desktop cons</string>
+         <string>&amp;Show desktop icons</string>
         </property>
        </widget>
       </item>
