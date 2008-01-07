@@ -9,22 +9,7 @@ TODO:
 
 Notes
 ======
-Check out into workspace/plasma/engines/
-
-There's also a battery applet which uses this engine, find it in
-the
-
-Patch plasma/engines/CMakeLists.txt like this to enable building 
-of the battery engine:
+There's a battery applet (also in kdebase) which uses this engine
 
 -- sebas
 
-Index: CMakeLists.txt
-===================================================================
---- CMakeLists.txt      (revision 680923)
-+++ CMakeLists.txt      (working copy)
-@@ -1,4 +1,5 @@
- add_subdirectory("time")
-+add_subdirectory("powermanagement")
- add_subdirectory("soliddevice")
- add_subdirectory("systemmonitor")
