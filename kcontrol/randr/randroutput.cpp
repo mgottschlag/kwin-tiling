@@ -38,6 +38,8 @@ RandROutput::RandROutput(RandRScreen *parent, RROutput id)
 	m_rotations = 0;
 	m_connected = false;
 	m_currentCrtc = None;
+	m_relatedOutput = this;
+	m_relation = SameAs;
 	
 	loadSettings();
 }
@@ -49,6 +51,11 @@ RandROutput::~RandROutput()
 RROutput RandROutput::id() const
 {
 	return m_id;
+}
+
+RandRScreen *RandROutput::screen() const
+{
+	return m_screen;
 }
 
 void RandROutput::loadSettings(bool notify)
@@ -71,6 +78,7 @@ void RandROutput::loadSettings(bool notify)
 	//check if the crtc changed
 	if (info->crtc != m_currentCrtc)
 	{
+		kDebug() << "CRTC changed for " << m_name << ": " << info->crtc;
 		setCrtc(info->crtc);
 		changes |= RandR::ChangeCrtc;
 	}
@@ -110,13 +118,12 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 {
 	int changed = 0;
 
-#if 1
 	kDebug() << "[OUTPUT] Got event for " << m_name;
 	kDebug() << "       crtc: " << event->crtc;
 	kDebug() << "       mode: " << event->mode;
 	kDebug() << "       rotation: " << event->rotation;
 	kDebug() << "       connection: " << event->connection;
-#endif
+	
 	if (event->crtc != m_currentCrtc)
 	{
 		changed |= RandR::ChangeCrtc;
@@ -129,53 +136,58 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 	}
 
 	if (event->mode != mode())
-	{
 		changed |= RandR::ChangeMode;
-
-	}
+	
 	if (event->rotation != rotation())
-	{
 		changed |= RandR::ChangeRotation;
-	}
-	if ((event->connection == RR_Connected) != m_connected)
+	
+	if((event->connection == RR_Connected) != m_connected)
 	{
 		changed |= RandR::ChangeConnection;
-		m_connected = !m_connected;
+		m_connected = (event->connection == RR_Connected);
 		if (!m_connected && m_currentCrtc != None)
 			setCrtc(None);
 	}
 
 	// check if we are still connected, if not, release the crtc connection
-	if (!m_connected && m_currentCrtc != None)
+	if(!m_connected && m_currentCrtc != None)
 		setCrtc(None);
 
-	if (changed)
+	if(changed)
 		emit outputChanged(m_id, changed);
 }
 
 void RandROutput::handlePropertyEvent(XRROutputPropertyNotifyEvent *event)
 {
-	Q_UNUSED(event);
-	//TODO: implement
+	// TODO: Do something with this!
+	
+	char *name = XGetAtomName(QX11Info::display(), event->property);
+	kDebug() << "Got XRROutputPropertyNotifyEvent for property Atom " << name;
+	XFree(name);	
 }
 
 QString RandROutput::name() const
 {
 	return m_name;
 }
+
 QString RandROutput::icon() const
 {
 	// FIXME: check what names we should use and what kind of outputs randr can 
 	// report. It would also be interesting to be able to get the monitor name
 	// using EDID or something like that, just don't know if it is even possible.
 	if (m_name.contains("VGA"))
-		return "screen";
+		return "video-display";
 	else if (m_name.contains("LVDS"))
-		return "screen";
+		return "video-display";
+	
+	// I doubt this is a good choice; can't find anything better in the spec.
+	// video-x-generic might work, but that's a mimetype, which is inappropriate
+	// for an output connection type.
 	else if (m_name.contains("TV"))
-		return "video-television";
+		return "multimedia-player";
 
-	return "screen";
+	return "video-display";
 }
 
 CrtcList RandROutput::possibleCrtcs() const
@@ -223,7 +235,7 @@ SizeList RandROutput::sizes() const
 QRect RandROutput::rect() const
 {
 	if (m_currentCrtc == None)
-		return QRect(0,0,0,0);
+		return QRect(0, 0, 0, 0);
 
 	return m_screen->crtc(m_currentCrtc)->rect();
 }
@@ -361,6 +373,25 @@ void RandROutput::proposeRotation(int r)
 {
 	m_originalRotation = rotation();
 	m_proposedRotation = r;
+}
+
+void RandROutput::setRelation(RandROutput *output, Relation relation)
+{
+	if(!output)
+		return;
+	
+	m_relatedOutput = output;
+	m_relation = relation;
+}
+
+RandROutput *RandROutput::relation(Relation *rel) const
+{
+	Q_ASSERT(m_relatedOutput);
+	
+	if(rel)
+		*rel = m_relation;
+	
+	return m_relatedOutput;
 }
 
 void RandROutput::slotChangeSize(QAction *action)

@@ -22,17 +22,21 @@
 #include <QBrush>
 #include <QFont>
 #include <QGraphicsScene>
+#include <KGlobalSettings>
 #include "randroutput.h"
 #include "randr.h"
 
 OutputGraphicsItem::OutputGraphicsItem(RandROutput *output)
-: QGraphicsRectItem(output->rect())
+	: QGraphicsRectItem(output->rect())
 {
 	m_left = m_right = m_top = m_bottom = NULL;
 
 	setPen(QPen(Qt::black));
-	setBrush(QColor(0,255,0,128));
-	setFlag(QGraphicsItem::ItemIsMovable, true);
+	if(output->isActive())
+		setBrush(QColor(0, 255, 0, 128));
+	else setBrush(QColor(128, 128, 128, 0));
+
+	setFlag(QGraphicsItem::ItemIsMovable, false);
 	setFlag(QGraphicsItem::ItemIsSelectable, true);
 	
 	// An example of this description text with radeonhd on randr 1.2:
@@ -45,9 +49,9 @@ OutputGraphicsItem::OutputGraphicsItem(RandROutput *output)
 				
 	m_text = new QGraphicsTextItem(desc, this);
 	
-	QFont f = m_text->font();
-	f.setPixelSize(72);
-	m_text->setFont(f);
+	QFont font = KGlobalSettings::generalFont();
+	font.setPixelSize(72);
+	m_text->setFont(font);
 
 	QRectF textRect = m_text->boundingRect();
 	QRect  outRect  = output->rect();

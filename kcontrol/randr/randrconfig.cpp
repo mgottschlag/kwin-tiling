@@ -48,7 +48,6 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	m_container = new SettingsContainer(outputList);
 	l->addWidget(m_container);
 
-
 	// create the scene
 	m_scene = new QGraphicsScene(m_display->currentScreen()->rect());	
 	screenView->setScene(m_scene);
@@ -74,7 +73,6 @@ void RandRConfig::load()
 		m_scene->removeItem(i);
 
 	OutputMap outputs = m_display->currentScreen()->outputs();
-	OutputMap::iterator it;
 
 	// FIXME: adjust it to run on a multi screen system
 	CollapsibleWidget *w;
@@ -83,9 +81,9 @@ void RandRConfig::load()
 	{
 		o = new OutputGraphicsItem(output);
 		m_scene->addItem(o);
-
-		connect(o, SIGNAL(itemChanged(OutputGraphicsItem*)), 
-				this, SLOT(slotAdjustOutput(OutputGraphicsItem*)));
+		
+		connect(o,    SIGNAL(itemChanged(OutputGraphicsItem*)), 
+		        this, SLOT(slotAdjustOutput(OutputGraphicsItem*)));
 
 		OutputConfig *c = new OutputConfig(0, output, o);
 		w = m_container->insertWidget(c, output->name());
@@ -95,6 +93,7 @@ void RandRConfig::load()
 		
 		kDebug() << "Rect: " << output->rect();
 		connect(c, SIGNAL(updateView()), this, SLOT(slotUpdateView()));
+		connect(c, SIGNAL(optionChanged()), this, SIGNAL(changed()));
 	}		    
 	slotUpdateView();
 }
@@ -133,6 +132,7 @@ void RandRConfig::resizeEvent(QResizeEvent *event)
 
 void RandRConfig::slotAdjustOutput(OutputGraphicsItem *o)
 {
+	kDebug() << "Output changed: ";
 	// TODO: Implement
 }
 
@@ -160,8 +160,6 @@ void RandRConfig::slotUpdateView()
 	float scale = (scaleX < scaleY) ? scaleX : scaleY;
 	scale *= 0.80f;
 	
-	kDebug() << "Scaling by " << scale;
-	kDebug() << "ScreenView rect = " << screenView->rect() << " visible rect: " << r;
 	screenView->resetMatrix();
 	screenView->scale(scale,scale);
 	screenView->ensureVisible(r);

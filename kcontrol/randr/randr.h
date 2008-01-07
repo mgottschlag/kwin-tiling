@@ -82,17 +82,16 @@ public:
 
 	enum Changes 
 	{
-		ChangeCrtc       =  1,
-		ChangeOutputs    =  2,
-		ChangeMode       =  4,
-		ChangeRotation   =  8,
-		ChangeConnection = 16,
-		ChangeRect       = 32,
-		ChangeRate       = 64
+		ChangeCrtc       = 0x01,
+		ChangeOutputs    = 0x02,
+		ChangeMode       = 0x04,
+		ChangeRotation   = 0x08,
+		ChangeConnection = 0x10,
+		ChangeRect       = 0x20,
+		ChangeRate       = 0x40
 	};
 
 	static QString rotationName(int rotation, bool pastTense = false, bool capitalised = true);
-	
 	static QPixmap rotationIcon(int rotation, int currentRotation);
 
 	static bool confirm(const QRect &rect = QRect());

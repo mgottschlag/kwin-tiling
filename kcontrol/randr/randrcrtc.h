@@ -23,7 +23,7 @@
 #include <QRect>
 #include "randr.h"
 
-
+/** Class representing a CRT controller. */
 class RandRCrtc : public QObject
 {
 	Q_OBJECT

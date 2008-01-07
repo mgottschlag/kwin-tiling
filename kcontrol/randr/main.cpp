@@ -31,12 +31,13 @@
 static const char krandrtrayVersion[] = "0.5";
 int main(int argc, char **argv)
 {
-	KAboutData aboutData("randr", "krandr", ki18n("Resize and Rotate"), krandrtrayVersion, 
-			ki18n("Resize and Rotate System Tray App"), KAboutData::License_GPL, 
+	KAboutData aboutData("display-randr", "krandr", ki18n("Resize and Rotate"), krandrtrayVersion, 
+			ki18n("X Resize and Rotate System Tray App"), KAboutData::License_GPL, 
 			ki18n("(c) 2007 Gustavo Pichorim Boiko, 2002-2003 Hamish Rodda"), ki18n(0L));
 	aboutData.addAuthor(ki18n("Gustavo Pichorim Boiko"),ki18n("Maintainer"), "gustavo.boiko@kdemail.net");
 	aboutData.addAuthor(ki18n("Hamish Rodda"),ki18n("Original Author"), "rodda@kde.org");
 	aboutData.addCredit(ki18n("Lubos Lunak"),ki18n("Many fixes"), "l.lunak@suse.cz");
+	aboutData.addCredit(ki18n("Harry Bock"),ki18n("Many fixes, multi-head support"), "hbock@providence.edu");
 	aboutData.setProductName("krandr/krandrtray");
 
 	KCmdLineArgs::init(argc,argv,&aboutData);

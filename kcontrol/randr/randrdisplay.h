@@ -63,7 +63,7 @@ public:
 	void saveDisplay(KConfig& config, bool applyOnStartup, bool syncTrayApp);
 
 	static bool applyOnStartup(KConfig& config);
-	static bool	syncTrayApp(KConfig& config);
+	static bool syncTrayApp(KConfig& config);
 
 	void applyProposed(bool confirm = true);
 

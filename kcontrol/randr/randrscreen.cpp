@@ -30,7 +30,8 @@ RandRScreen::RandRScreen(int screenIndex)
 : m_resources(0L)
 {
 	m_index = screenIndex;
-	m_rect = QRect(0, 0, XDisplayWidth(QX11Info::display(), m_index), XDisplayHeight(QX11Info::display(), m_index));
+	m_rect = QRect(0, 0, XDisplayWidth(QX11Info::display(), m_index),
+				 XDisplayHeight(QX11Info::display(), m_index));
 
 	m_connectedCount = 0;
 	m_activeCount = 0;
@@ -40,7 +41,7 @@ RandRScreen::RandRScreen(int screenIndex)
 
 	// select for randr input events
 	int mask = RRScreenChangeNotifyMask | 
-		   RRCrtcChangeNotifyMask | 
+		   RRCrtcChangeNotifyMask   | 
 		   RROutputChangeNotifyMask | 
 		   RROutputPropertyNotifyMask;
 	XRRSelectInput(QX11Info::display(), rootWindow(), 0);
@@ -52,6 +53,9 @@ RandRScreen::~RandRScreen()
 	if (m_resources)
 		XRRFreeScreenResources(m_resources);
 
+	//qDeleteAll(m_crtcs);
+	//qDeleteAll(m_outputs);
+	//qDeleteAll(m_modes);
 }
 
 int RandRScreen::index() const
@@ -307,6 +311,14 @@ bool RandRScreen::outputsUnified() const
 	return m_outputsUnified;
 }
 
+void RandRScreen::setOutputsUnified(bool unified)
+{
+	m_outputsUnified = unified;
+	
+	// should this be called here?
+	slotUnifyOutputs(unified);
+}
+
 int RandRScreen::unifiedRotations() const
 {
 
@@ -370,7 +382,7 @@ QRect RandRScreen::rect() const
 void RandRScreen::load(KConfig &config)
 {
 	KConfigGroup group = config.group("Screen_" + QString::number(m_index));
-	m_outputsUnified = group.readEntry("OutputsUnified", true);
+	m_outputsUnified = group.readEntry("OutputsUnified", false);
 	m_unifiedRect = group.readEntry("UnifiedRect", QRect());
 	m_unifiedRotation = group.readEntry("UnifiedRotation", (int) RandR::Rotate0);
 
@@ -413,6 +425,44 @@ bool RandRScreen::applyProposed(bool confirm)
 {
 	bool succeed = true;
 	QRect r;
+	
+	foreach(RandROutput *output, m_outputs) {
+		r = output->rect();
+		
+		RandROutput::Relation outputRelation;
+		RandROutput *related = output->relation(&outputRelation);
+		
+		if(!related) {
+			r.setTopLeft(QPoint(0, 0));
+		}
+		QRect relativeRect = related->rect();
+	
+		switch(outputRelation) {
+		case RandROutput::LeftOf:
+			r.setTopLeft(QPoint(relativeRect.x() - r.x(),
+			                    relativeRect.y()));
+		case RandROutput::RightOf:
+			r.setTopLeft(QPoint(relativeRect.x() + r.x(),
+			                    relativeRect.y()));
+		case RandROutput::Over:
+			r.setTopLeft(QPoint(relativeRect.x(),
+			                    relativeRect.y() - r.y()));
+		case RandROutput::Under:
+			r.setTopLeft(QPoint(relativeRect.x(),
+			                    relativeRect.y() + r.y()));
+							
+		case RandROutput::SameAs:
+			r.setTopLeft(related->rect().topLeft());
+			break;
+		}
+		
+		output->proposeRect(r);
+		if(!output->applyProposed()) {
+			succeed = false;
+			break;
+		}
+	}
+	
 	foreach(RandROutput *output, m_outputs)
 	{
 		r = output->rect();
@@ -562,7 +612,8 @@ void RandRScreen::slotOutputChanged(RROutput id, int changes)
 
 	// wait some time before checking the output configuration as some randr 
 	// clients do operations in more than one step
-	unifyOutputs();
+	if(m_outputsUnified)
+		unifyOutputs();
 }
 
 #include "randrscreen.moc"

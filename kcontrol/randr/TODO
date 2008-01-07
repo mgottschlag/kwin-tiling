@@ -1,8 +1,8 @@
 Remaining known issues
 
 General
-	Not tested with multiple screens (but should support them)
-
+	Does not yet work with multi-monitor setup using RANDR 1.2 (not tested with legacy RANDR)
+	
 Qt
 	Font sizes on newly started apps after a resolution change are incorrect
 		This doesn't appear to happen with non-Xft font rendering, Xft/Qt interaction?
@@ -14,8 +14,12 @@ RandR programs
 	Support configuring different sized virtual desktops
 
 
----------------
-
+-------------
 RandR1.2 TODO
 
 --> port the legacy interface to share the populate* functions
+--> try to merge LegacyRandRConfig and RandRConfig
+--> Get relative outputs working
+--> Fix the apply/update methods so they actually work correctly
+    with the KCModule interface.
+--> Clean up the RandR* classes

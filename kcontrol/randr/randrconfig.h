@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2007 Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
- *
+ * Copyright (c) 2007 Harry Bock <hbock@providence.edu>
+ * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -48,10 +49,12 @@ public:
 
 public slots:
 	void slotUpdateView();
+
+protected slots:
 	void slotAdjustOutput(OutputGraphicsItem *o);
 
 signals:
-	void changed(bool c);
+	void changed(bool c = true);
 
 protected:
 	virtual void resizeEvent(QResizeEvent *event);

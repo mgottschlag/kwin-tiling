@@ -54,7 +54,13 @@ KRandRModule::KRandRModule(QWidget *parent, const QVariantList&)
 	if (!m_display->isValid())
 	{
 		QVBoxLayout *topLayout = new QVBoxLayout(this);
-		QLabel *label = new QLabel(i18n("Your X server does not support resizing and rotating the display. Please update to version 4.3 or greater. You need the X Resize And Rotate extension (RANDR) version 1.1 or greater to use this feature."), this);
+		QLabel *label =
+		    new QLabel(i18n("Your X server does not support resizing and "
+		                    "rotating the display. Please update to version 4.3 "
+						"or greater. You need the X Resize, Rotate, and Reflect "
+						"extension (RANDR) version 1.1 or greater to use this "
+						"feature."), this);
+						
 		label->setWordWrap(true);
 		topLayout->addWidget(label);
 		kWarning() << "Error: " << m_display->errorCode() ;
@@ -105,6 +111,8 @@ void KRandRModule::load()
 	else
 #endif
 		m_legacyConfig->load();
+
+	emit changed(false);
 }
 
 void KRandRModule::save()

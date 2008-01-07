@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Screen Resize and Rotate Configuration</string>
+   <string>Display Configuration (X11 Resize, Rotate and Reflect)</string>
   </property>
   <layout class="QHBoxLayout" >
    <item>

@@ -103,8 +103,8 @@ protected slots:
 private:
 	int m_index;
 	QSize m_minSize;
-	QRect m_rect;
 	QSize m_maxSize;
+	QRect m_rect;
 
 	bool m_outputsUnified;
 	QRect m_unifiedRect;
