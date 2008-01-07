@@ -1,6 +1,5 @@
 TODO:
 ======
-- some machines have more than one battery
 - find a way to compute remaining minutes
 - Sleepstates don't match what solidshell reports
 - ac plug state does not get updated
