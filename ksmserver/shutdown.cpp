@@ -482,6 +482,8 @@ void KSMServer::completeKilling()
 
 void KSMServer::killWM()
 {
+    if( state != Killing )
+        return;
     delete logoutEffectWidget;
     kDebug( 1218 ) << "Starting killing WM";
     state = KillingWM;
