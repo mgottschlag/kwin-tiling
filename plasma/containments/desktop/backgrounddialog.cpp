@@ -409,6 +409,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     setMainWidget(main);
 
     reloadConfig(config);
+    adjustSize();
 }
 
 void BackgroundDialog::reloadConfig(const KConfigGroup &config)
