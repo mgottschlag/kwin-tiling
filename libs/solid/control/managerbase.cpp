@@ -51,8 +51,8 @@ void Solid::Control::ManagerBasePrivate::loadBackend(const QString &description,
 
     foreach (KService::Ptr ptr, offers)
     {
-        int error = 0;
-        m_backend = KService::createInstance<QObject>(ptr, 0, QStringList(), &error);
+        QString error_string;
+        m_backend = ptr->createInstance<QObject>(0, QVariantList(), &error_string);
 
         if(m_backend!=0) {
             if (m_backend->inherits(backendClassName)) {
@@ -69,8 +69,7 @@ void Solid::Control::ManagerBasePrivate::loadBackend(const QString &description,
                 m_backend = 0;
             }
         } else {
-            QString error_string = KLibLoader::errorString(error);
-            kDebug() << "Error loading '" << ptr->name() << "', KLibLoader said: " << error_string;
+            kDebug() << "Error loading '" << ptr->name() << "', KService said: " << error_string;
             error_msg.append(error_string);
         }
     }
