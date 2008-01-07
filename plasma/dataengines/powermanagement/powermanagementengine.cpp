@@ -61,7 +61,6 @@ QStringList PowermanagementEngine::sources() const
 bool PowermanagementEngine::sourceRequested(const QString &name)
 {
     if (name == I18N_NOOP("Battery")) {
-        // TODO: some machines have more than one battery, right now we only catch the first
         QList<Solid::Device> list_battery =
                         Solid::Device::listFromType(Solid::DeviceInterface::Battery, QString());
         if (list_battery.count() == 0) {
