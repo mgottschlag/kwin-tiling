@@ -51,12 +51,11 @@ void IconLoader::init()
     m_iconMap.clear();
 
     //load stored settings
-    KConfigGroup cg = m_desktop->config();
+    KConfigGroup cg = m_desktop->globalConfig();
     m_iconShow = cg.readEntry("showIcons",m_iconShow);
     m_gridAlign = cg.readEntry(i18n("alignToGrid"),m_gridAlign);
-    m_enableMedia = cg.readEntry(i18n("EnableMedia"),m_enableMedia);
+    m_enableMedia = cg.readEntry(i18n("enableMedia"),m_enableMedia);
 
-    
     setGridSize(QSizeF(150, 150));
 
     connect(m_desktop, SIGNAL(appletRemoved(Plasma::Applet*)), this, SLOT(appletDeleted(Plasma::Applet*)));

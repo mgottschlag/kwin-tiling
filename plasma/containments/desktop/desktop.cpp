@@ -138,17 +138,18 @@ void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
 void DefaultDesktop::configure()
 {
     KConfigGroup cg = config();
+    KConfigGroup gcg = globalConfig();
     if (m_configDialog == 0) {
         const QSize resolution = 
             QApplication::desktop()->screenGeometry(screen()).size();
-        m_configDialog = new BackgroundDialog(resolution, cg, 0);
+        m_configDialog = new BackgroundDialog(resolution, cg, gcg, 0);
         connect(m_configDialog, SIGNAL(okClicked()), 
                 this, SLOT(applyConfig()));
         connect(m_configDialog, SIGNAL(applyClicked()), 
                 this, SLOT(applyConfig()));
     }
     else {
-        m_configDialog->reloadConfig(cg);
+        m_configDialog->reloadConfig(cg, gcg);
     }
 
     m_configDialog->show();
@@ -157,7 +158,7 @@ void DefaultDesktop::configure()
 void DefaultDesktop::applyConfig()
 {
     Q_ASSERT(m_configDialog);
-    m_configDialog->saveConfig(config());
+    m_configDialog->saveConfig(config(), globalConfig());
     emit configNeedsSaving();
 
     reloadConfig();
@@ -227,8 +228,9 @@ void DefaultDesktop::reloadConfig()
     }
 
     if (s_icons) {
-        s_icons->setShowIcons(cg.readEntry("showIcons",true));
-        s_icons->setGridAligned(cg.readEntry("alignToGrid",true));
+        KConfigGroup gcg = globalConfig();
+        s_icons->setShowIcons(gcg.readEntry("showIcons",true));
+        s_icons->setGridAligned(gcg.readEntry("alignToGrid",true));
     }
 }
 

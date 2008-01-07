@@ -43,10 +43,11 @@ public:
     // FIXME seems that we're leaking, make a distructor
     BackgroundDialog(const QSize &res, 
                      const KConfigGroup &config,
+                     const KConfigGroup &globalConfig,
                      QWidget *parent = 0);
     
-    void reloadConfig(const KConfigGroup &config);
-    void saveConfig(KConfigGroup config);
+    void reloadConfig(const KConfigGroup &config, const KConfigGroup &globalConfig);
+    void saveConfig(KConfigGroup config, KConfigGroup globalConfig);
     
     QString path() const;
     int mode();

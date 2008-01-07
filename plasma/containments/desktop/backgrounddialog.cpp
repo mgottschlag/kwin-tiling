@@ -325,7 +325,8 @@ QSize BackgroundDelegate::sizeHint(const QStyleOptionViewItem &,
 
 
 BackgroundDialog::BackgroundDialog(const QSize &res, 
-                                   const KConfigGroup &config, 
+                                   const KConfigGroup &config,
+                                   const KConfigGroup &globalConfig,
                                    QWidget *parent)
 : KDialog(parent)
 , m_res(res)
@@ -408,11 +409,11 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
 
     setMainWidget(main);
 
-    reloadConfig(config);
+    reloadConfig(config, globalConfig);
     adjustSize();
 }
 
-void BackgroundDialog::reloadConfig(const KConfigGroup &config)
+void BackgroundDialog::reloadConfig(const KConfigGroup &config, const KConfigGroup &globalConfig)
 {
     // initialize
     int mode = config.readEntry("backgroundmode", int(kStaticBackground));
@@ -443,9 +444,9 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config)
         m_view->setCurrentIndex(index);
     }
 
-    bool showIcons = config.readEntry("showIcons",true);
+    bool showIcons = globalConfig.readEntry("showIcons",true);
     m_showIcons->setCheckState(showIcons ? Qt::Checked : Qt::Unchecked);
-    bool alignToGrid = config.readEntry("alignToGrid", true);
+    bool alignToGrid = globalConfig.readEntry("alignToGrid", true);
     m_alignToGrid->setCheckState(alignToGrid ? Qt::Checked : Qt::Unchecked);
     
     if (mode == kSlideshowBackground) {
@@ -456,7 +457,7 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config)
     }
 }
 
-void BackgroundDialog::saveConfig(KConfigGroup config)
+void BackgroundDialog::saveConfig(KConfigGroup config, KConfigGroup globalConfig)
 {
     int mode = m_mode->currentIndex();
     config.writeEntry("backgroundmode", mode);
@@ -477,8 +478,8 @@ void BackgroundDialog::saveConfig(KConfigGroup config)
         config.writeEntry("slideTimer", seconds);
     }
 
-    config.writeEntry("showIcons", (m_showIcons->checkState() == Qt::Checked ? true : false));
-    config.writeEntry("alignToGrid", (m_alignToGrid->checkState() == Qt::Checked ? true : false));
+    globalConfig.writeEntry("showIcons", (m_showIcons->checkState() == Qt::Checked ? true : false));
+    globalConfig.writeEntry("alignToGrid", (m_alignToGrid->checkState() == Qt::Checked ? true : false));
 }
 
 void BackgroundDialog::getNewStuff()
