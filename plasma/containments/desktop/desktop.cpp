@@ -361,7 +361,8 @@ QList<QAction*> DefaultDesktop::contextActions()
     return actions;
 }
 
-void DefaultDesktop::toggleDesktopImmutability() {
+void DefaultDesktop::toggleDesktopImmutability()
+{
     if (corona()) {
         corona()->setImmutable(!corona()->isImmutable());
     } else {

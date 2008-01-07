@@ -79,11 +79,11 @@ void IconLoader::init()
 
 void IconLoader::createMenu()
 {
-    QAction* alignHorizontal = new QAction(i18n("Align Horizontally"), this);
+    QAction* alignHorizontal = new QAction(i18n("Align Icons Horizontally"), this);
     connect(alignHorizontal, SIGNAL(triggered(bool)), this , SLOT(slotAlignHorizontal()));
     actions.append(alignHorizontal);
 
-    QAction* alignVertical = new QAction(i18n("Align Vertically"), this);
+    QAction* alignVertical = new QAction(i18n("Align Icons Vertically"), this);
     connect(alignVertical, SIGNAL(triggered(bool)), this , SLOT(slotAlignVertical()));
     actions.append(alignVertical);
 }
