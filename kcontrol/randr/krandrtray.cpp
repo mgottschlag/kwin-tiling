@@ -17,6 +17,18 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "krandrtray.h"
+#include "krandrpassivepopup.h"
+#include "krandrtray.moc"
+#include "legacyrandrscreen.h"
+#ifdef HAS_RANDR_1_2
+#include "randrscreen.h"
+#include "randroutput.h"
+#include "randrmode.h"
+#endif
+
+#include <config-randr.h>
+
 #include <KActionCollection>
 #include <KApplication>
 #include <KCMultiDialog>
@@ -29,17 +41,6 @@
 #include <KAction>
 #include <QMouseEvent>
 #include <QVariant>
-
-#include <config-randr.h>
-#include "krandrtray.h"
-#include "krandrpassivepopup.h"
-#include "krandrtray.moc"
-#include "legacyrandrscreen.h"
-#ifdef HAS_RANDR_1_2
-#include "randrscreen.h"
-#include "randroutput.h"
-#include "randrmode.h"
-#endif
 
 KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
 : KSystemTrayIcon("preferences-desktop-display-randr", parent)
@@ -364,7 +365,7 @@ QActionGroup *KRandRSystemTray::populateRates(KMenu *menu, const RateList &rates
 
 	foreach(float r, rates)
 	{
-		action = menu->addAction(i18n("%1 Hz", QString::number(r, 'f', 1)));
+		action = menu->addAction(ki18n("%1 Hz").subs(r, 0, 'f', 1).toString());
 		action->setData(r);
 		if (r == rate)
 		{

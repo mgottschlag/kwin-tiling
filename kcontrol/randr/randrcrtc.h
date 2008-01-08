@@ -19,9 +19,12 @@
 #ifndef __RANDRCRTC_H__
 #define __RANDRCRTC_H__
 
+#include "randr.h"
+
+#include <QX11Info>
 #include <QObject>
 #include <QRect>
-#include "randr.h"
+
 
 /** Class representing a CRT controller. */
 class RandRCrtc : public QObject

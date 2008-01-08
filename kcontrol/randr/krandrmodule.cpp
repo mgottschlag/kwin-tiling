@@ -17,15 +17,16 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "krandrmodule.h"
 #include "legacyrandrconfig.h"
 #include <QTextStream>
-#include "krandrmodule.h"
 #include "legacyrandrscreen.h"
 #include "randrdisplay.h"
 #include "randrconfig.h"
-#include <kpluginfactory.h>
-#include <kpluginloader.h>
-#include <kdebug.h>
+
+#include <KPluginFactory>
+#include <KPluginLoader>
+#include <KDebug>
 #include <config-randr.h>
 
 #include "randr.h"

@@ -16,15 +16,15 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <KDebug>
-#include <KConfig>
-#include <KConfigGroup>
-#include <QX11Info>
-#include <QAction>
 #include "randroutput.h"
 #include "randrscreen.h"
 #include "randrcrtc.h"
 #include "randrmode.h"
+
+#include <KConfig>
+#include <KConfigGroup>
+#include <QX11Info>
+#include <QAction>
 
 RandROutput::RandROutput(RandRScreen *parent, RROutput id)
 : QObject(parent)
@@ -160,6 +160,10 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 void RandROutput::handlePropertyEvent(XRROutputPropertyNotifyEvent *event)
 {
 	// TODO: Do something with this!
+	// By perusing thru some XOrg drivers, some of the properties that can
+	// are configured through XRANDR are:
+	// - LVDS Backlights
+	// - TV output formats
 	
 	char *name = XGetAtomName(QX11Info::display(), event->property);
 	kDebug() << "Got XRROutputPropertyNotifyEvent for property Atom " << name;
@@ -204,6 +208,14 @@ ModeList RandROutput::modes() const
 {
 	return m_modes;
 }
+/*
+RandRMode RandROutput::mode() const
+{
+	if(!isConnected())
+		return RandRMode();
+	
+	return m_screen->mode(this->mode());
+}*/
 
 RRMode RandROutput::mode() const
 {
@@ -420,6 +432,17 @@ void RandROutput::slotDisable()
 	setCrtc(None);
 }
 
+void RandROutput::slotEnable()
+{
+	if(!m_connected)
+		return;
+	
+	kDebug() << "Attempting to enable " << m_name;
+	RandRCrtc *crtc = findEmptyCrtc();
+	
+	if(crtc)
+		setCrtc(crtc->id());
+}
 
 RandRCrtc *RandROutput::findEmptyCrtc()
 {

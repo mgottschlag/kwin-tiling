@@ -83,6 +83,7 @@ public:
 	
 	/** Returns the current RRMode for this output. */
 	RRMode mode() const;
+	//RandRMode mode() const;
 
 	/** The list of supported sizes */
 	SizeList sizes() const;
@@ -135,6 +136,7 @@ public slots:
 	void slotChangeRotation(QAction *action);
 	void slotChangeRefreshRate(QAction *action);
 	void slotDisable();
+	void slotEnable();
 
 private slots:
 	void slotCrtcChanged(RRCrtc c, int changes);

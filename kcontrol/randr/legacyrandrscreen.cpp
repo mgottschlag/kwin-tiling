@@ -242,7 +242,7 @@ QString LegacyRandRScreen::refreshRateIndirectDescription(int size, int index) c
 
 QString LegacyRandRScreen::refreshRateDescription(int size, int index) const
 {
-	return i18n("%1 Hz", QString::number(refreshRates(size)[index], 'f', 1));
+	return ki18n("%1 Hz").subs(refreshRates(size)[index], 0, 'f', 1).toString();
 }
 
 bool LegacyRandRScreen::proposeRefreshRate(int index)
@@ -316,7 +316,7 @@ const QSize& LegacyRandRScreen::mmSize(int index) const
 	return m_mmSizes[index];
 }
 
-int LegacyRandRScreen::sizeIndex(QSize pixelSize) const
+int LegacyRandRScreen::sizeIndex(const QSize &pixelSize) const
 {
 	for (int i = 0; i < m_pixelSizes.count(); i++)
 		if (m_pixelSizes[i] == pixelSize)

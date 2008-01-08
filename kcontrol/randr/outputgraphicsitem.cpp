@@ -17,14 +17,14 @@
  */
 
 #include "outputgraphicsitem.h"
+#include "randroutput.h"
+#include "randr.h"
 
 #include <QPen>
 #include <QBrush>
 #include <QFont>
 #include <QGraphicsScene>
 #include <KGlobalSettings>
-#include "randroutput.h"
-#include "randr.h"
 
 OutputGraphicsItem::OutputGraphicsItem(RandROutput *output)
 	: QGraphicsRectItem(output->rect())
@@ -44,7 +44,7 @@ OutputGraphicsItem::OutputGraphicsItem(RandROutput *output)
 	// 1680x1050 (60.0 Hz)
 	int w = output->rect().width(), h = output->rect().height();
 	QString refresh = QString::number(output->refreshRate(), 'f', 1);
-	QString desc = output->name() + "\n" + 
+	QString desc = output->name() + '\n' + 
 	               QString("%1x%2 (%3 Hz)").arg(w).arg(h).arg(refresh);
 				
 	m_text = new QGraphicsTextItem(desc, this);

@@ -20,15 +20,16 @@
 #ifndef __RANDRCONFIG_H__
 #define __RANDRCONFIG_H__
 
-#include <QWidget>
 #include "ui_randrconfigbase.h"
 #include "randr.h"
 
+#include <QWidget>
 
-class RandRDisplay;
+class QGraphicsScene;
 class SettingsContainer;
 class CollapsibleWidget;
-class QGraphicsScene;
+class RandRDisplay;
+class OutputConfig;
 class OutputGraphicsItem;
 class LayoutManager;
 
@@ -51,10 +52,11 @@ public slots:
 	void slotUpdateView();
 
 protected slots:
+	void slotChanged(void);
 	void slotAdjustOutput(OutputGraphicsItem *o);
 
 signals:
-	void changed(bool c = true);
+	void changed(bool change);
 
 protected:
 	virtual void resizeEvent(QResizeEvent *event);
@@ -62,6 +64,9 @@ protected:
 private:
 	RandRDisplay *m_display;
 	bool m_changed;
+	
+	QMap<RandROutput *, OutputConfig> outputConfigMap;
+	
 	SettingsContainer *m_container;
 	QList<CollapsibleWidget*> m_outputList;
 	QGraphicsScene *m_scene;

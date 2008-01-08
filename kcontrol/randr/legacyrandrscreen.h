@@ -94,7 +94,7 @@ public:
 	 * @param pixelSize dimensions of the screen in pixels
 	 * @returns the index of the requested screen size
 	 */
-	int sizeIndex(QSize pixelSize) const;
+	int sizeIndex(const QSize &pixelSize) const;
 
 	int rotations() const;
 

@@ -17,17 +17,16 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "collapsiblewidget.h"
+
 #include "outputconfig.h"
 #include "outputgraphicsitem.h"
+#include "collapsiblewidget.h"
+#include "layoutmanager.h"
+
 #include "randrconfig.h"
+#include "randroutput.h"
 #include "randrdisplay.h"
 #include "randrscreen.h"
-#include "randroutput.h"
-#include "layoutmanager.h"
-#include "randr.h"
-#include <kdebug.h>
-
 
 RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 : QWidget(parent), Ui::RandRConfigBase()
@@ -87,13 +86,13 @@ void RandRConfig::load()
 
 		OutputConfig *c = new OutputConfig(0, output, o);
 		w = m_container->insertWidget(c, output->name());
-		if(output->isActive())
+		if(output->isConnected())
 			w->setExpanded(true);
 		m_outputList.append(w);
 		
 		kDebug() << "Rect: " << output->rect();
 		connect(c, SIGNAL(updateView()), this, SLOT(slotUpdateView()));
-		connect(c, SIGNAL(optionChanged()), this, SIGNAL(changed()));
+		connect(c, SIGNAL(optionChanged()), this, SLOT(slotChanged()));
 	}		    
 	slotUpdateView();
 }
@@ -113,16 +112,30 @@ void RandRConfig::defaults()
 
 void RandRConfig::apply()
 {
+	kDebug() << "Applying settings... ";
+	foreach(CollapsibleWidget *w, m_outputList) {
+		OutputConfig *config = static_cast<OutputConfig *>(w->innerWidget());
+	}
+	/*
 	if (m_changed) {
 		m_display->applyProposed();
 
 		update();
-	}
+	} */
+}
+
+void RandRConfig::slotChanged(void)
+{
+	m_changed = true;
+	
+	emit changed(true);
 }
 
 void RandRConfig::update()
 {
 	// TODO: implement
+	m_changed = false;
+	emit changed(false);
 }
 
 void RandRConfig::resizeEvent(QResizeEvent *event)
@@ -133,6 +146,7 @@ void RandRConfig::resizeEvent(QResizeEvent *event)
 void RandRConfig::slotAdjustOutput(OutputGraphicsItem *o)
 {
 	kDebug() << "Output changed: ";
+	
 	// TODO: Implement
 }
 

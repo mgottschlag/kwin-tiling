@@ -16,15 +16,14 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <KDebug>
-#include <KConfig>
-#include <KConfigGroup>
-#include <QX11Info>
-#include <QAction>
 #include "randrscreen.h"
 #include "randrcrtc.h"
 #include "randroutput.h"
 #include "randrmode.h"
+
+#include <KConfig>
+#include <KConfigGroup>
+#include <QAction>
 
 RandRScreen::RandRScreen(int screenIndex)
 : m_resources(0L)
@@ -240,7 +239,7 @@ RandRMode RandRScreen::mode(RRMode id) const
 	return RandRMode(0);
 }
 
-bool RandRScreen::adjustSize(QRect minimumSize)
+bool RandRScreen::adjustSize(const QRect &minimumSize)
 {
 	//try to find a size in which all outputs fit
 	
@@ -271,7 +270,7 @@ bool RandRScreen::adjustSize(QRect minimumSize)
 	return setSize(rect.size());
 }
 
-bool RandRScreen::setSize(QSize s)
+bool RandRScreen::setSize(const QSize &s)
 {
 	if (s == m_rect.size())
 		return true;

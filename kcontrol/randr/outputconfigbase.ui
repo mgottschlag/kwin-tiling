@@ -20,13 +20,6 @@
   </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
-    <widget class="QCheckBox" name="activeCheck" >
-     <property name="text" >
-      <string>Active</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" >
     <layout class="QHBoxLayout" >
      <item>
       <widget class="QLabel" name="label_2" >
@@ -66,7 +59,7 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0" >
+   <item row="1" column="0" >
     <layout class="QVBoxLayout" >
      <item>
       <widget class="QLabel" name="orientationLabel" >
@@ -93,7 +86,7 @@
      </item>
     </layout>
    </item>
-   <item row="3" column="0" >
+   <item row="2" column="0" >
     <layout class="QHBoxLayout" name="positionLayout">
      <item>
       <widget class="QLabel" name="positionLabel" >

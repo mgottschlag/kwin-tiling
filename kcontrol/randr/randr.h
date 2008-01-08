@@ -20,9 +20,12 @@
 #ifndef __RANDR_H__
 #define __RANDR_H__
 
+#include <KDebug>
+#include <KLocale>
 #include <QString>
 #include <QPixmap>
 #include <config-randr.h>
+#include "ktimerdialog.h"
 
 extern "C"
 {

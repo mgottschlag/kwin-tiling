@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2007 Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
- * Copyright (c) 2007 Harry Bock <hbock@providence.edu>
+ * Copyright (c) 2007, 2008 Harry Bock <hbock@providence.edu>
  * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -36,14 +36,18 @@ OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsI
 	setupUi(this);
 
 	// connect signals
-	connect(activeCheck, SIGNAL(stateChanged(int)),
-	        this, SIGNAL(optionChanged()));
-	connect(sizeCombo, SIGNAL(currentIndexChanged(int)), 
-			this, SLOT(updateRateList(int)));
+	connect(sizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(updateRateList(int)));
 	//connect(m_output, SIGNAL(outputChanged(RROutput, int)), this, SLOT(load()));
 	connect(m_output, SIGNAL(outputChanged(RROutput, int)),
 	        this,     SLOT(outputChanged(RROutput, int)));
-		   
+		  
+	//connect(activeCheck,  SIGNAL(stateChanged(int)), this, SLOT(setConfigDirty()));
+	connect(sizeCombo,    SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
+	connect(refreshCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
+	connect(orientationCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
+	connect(positionCombo,    SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
+	connect(positionOutputCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
+	
 	load();
 }
 
@@ -75,7 +79,7 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 	
 	if(changes & RandR::ChangeCrtc) {
 		kDebug() << "Output CRTC changed";
-		activeCheck->setChecked(m_output->isActive());
+		//activeCheck->setChecked(m_output->isActive());
 		
 		updateSizeList();
 		updateRateList();
@@ -97,7 +101,7 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 	if(changes & RandR::ChangeConnection) {
 		kDebug() << "Output connection status changed";
 		setEnabled(m_output->isConnected());
-		activeCheck->setChecked(m_output->isActive());
+		//activeCheck->setChecked(m_output->isActive());
 	}
 	
 	if(changes & RandR::ChangeRate) {
@@ -119,8 +123,8 @@ QString OutputConfig::positionName(RandROutput::Relation position)
 	switch(position) {
 	case RandROutput::LeftOf:  return i18n("Left of");
 	case RandROutput::RightOf: return i18n("Right of");
-	case RandROutput::Over:    return i18n("Above");
-	case RandROutput::Under:   return i18n("Below");
+	case RandROutput::Over:    return i18nc("Output is placed above another one", "Above");
+	case RandROutput::Under:   return i18nc("Output is placed below another one", "Below");
 	case RandROutput::SameAs:  return i18n("Clone of");
 	}
 	
@@ -133,7 +137,7 @@ void OutputConfig::load()
 
 	kDebug() << "Output Load......";
 	setEnabled( m_output->isConnected() );
-	activeCheck->setChecked(m_output->isActive());
+	//activeCheck->setChecked(m_output->isActive());
 
 	sizeCombo->clear();
 	orientationCombo->clear();
@@ -155,6 +159,12 @@ void OutputConfig::load()
 	m_item->setPos( m_output->rect().topLeft() );
 
 	emit updateView();
+}
+
+void OutputConfig::setConfigDirty(void)
+{
+	m_changed = true;
+	emit optionChanged();
 }
 
 void OutputConfig::updatePositionList(void)
@@ -179,9 +189,9 @@ void OutputConfig::updatePositionList(void)
 		if(index != -1)
 			positionOutputCombo->setCurrentIndex(index);
 	} else if(m_output->screen()->activeCount() < 2) {
-		positionLabel->setVisible(false);
-		positionCombo->setVisible(false);
-		positionOutputCombo->setVisible(false);
+		positionLabel->setEnabled(false);
+		positionCombo->setEnabled(false);
+		positionOutputCombo->setEnabled(false);
 	}
 }
 
@@ -204,6 +214,7 @@ void OutputConfig::updateRotationList(void)
 void OutputConfig::updateSizeList(void)
 {	
 	SizeList sizes = m_output->sizes();
+	sizeCombo->addItem( i18n("Disabled"), QSize(0, 0) );
 	foreach (QSize s, sizes)	{
 		sizeCombo->addItem( QString("%1x%2").arg(s.width()).arg(s.height()), s );
 	}
@@ -220,19 +231,22 @@ void OutputConfig::updateSizeList(void)
 void OutputConfig::updateRateList(int resolutionIndex)
 {
 	QSize resolution = sizeCombo->itemData(resolutionIndex).toSize();
-	if(!resolution.isValid()) {
+	if((resolution == QSize(0, 0)) || !resolution.isValid()) {
 		kDebug() << "Error, invalid QSize passed to updateRateList!";
+		refreshCombo->setEnabled(false);
 		return;
 	}
 	
 	ModeList modeList = m_output->modes();
 	
 	refreshCombo->clear();
+	refreshCombo->addItem(i18nc("Automatic configuration", "Auto"), 0.0f);
+	refreshCombo->setEnabled(true);
 	foreach(RRMode m, modeList) {
 		RandRMode outMode = m_output->screen()->mode(m);
 		if(outMode.isValid() && outMode.size() == resolution) {
 			float rate = outMode.refreshRate();
-			refreshCombo->addItem(i18n("%1 Hz", QString::number(rate, 'f', 1)), rate);
+			refreshCombo->addItem(ki18n("%1 Hz").subs(rate, 0, 'f', 1).toString(), rate);
 		}
 	}
 }

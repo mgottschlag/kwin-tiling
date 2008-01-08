@@ -42,7 +42,7 @@ public slots:
 	void load();
 
 protected slots:
-//	void activeStateChanged(int state);
+	void setConfigDirty(void);
 	
 	void updatePositionList(void);
 	void updateRotationList(void);
@@ -59,6 +59,7 @@ signals:
 
 private:
 	int m_changes;
+	bool m_changed;
 	
 	RandROutput *m_output;
 	OutputGraphicsItem *m_item;

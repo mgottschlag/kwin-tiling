@@ -17,8 +17,9 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QRadioButton>
 #include "legacyrandrconfig.h"
+
+#include <QRadioButton>
 #include "randrdisplay.h"
 #include "legacyrandrscreen.h"
 
@@ -122,7 +123,7 @@ void LegacyRandRConfig::slotScreenChanged(int screenId)
 
 	// Add new resolutions
 	for (int i = 0; i < screen->numSizes(); i++) {
-		sizeCombo->addItem(i18n("%1 x %2", screen->pixelSize(i).width(), screen->pixelSize(i).height()));
+		sizeCombo->addItem(QString("%1 x %2").arg(screen->pixelSize(i).width()).arg(screen->pixelSize(i).height()));
 
 		// Aspect ratio
 		/* , aspect ratio %5)*/
@@ -265,7 +266,7 @@ void LegacyRandRConfig::populateRefreshRates()
 
 	foreach(float rate, rr)
 	{
-		rateCombo->addItem(i18n("%1 Hz", QString::number(rate, 'f', 1)), rate);
+		rateCombo->addItem(ki18n("%1 Hz").subs(rate, 0, 'f', 1).toString(), rate);
 	}
 }
 

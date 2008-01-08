@@ -16,12 +16,13 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QGraphicsScene>
-#include "outputgraphicsitem.h"
-#include "randr.h"
 #include "layoutmanager.h"
+#include "randr.h"
 #include "randrscreen.h"
 #include "randroutput.h"
+#include "outputgraphicsitem.h"
+
+#include <QGraphicsScene>
 #include <cmath>
 
 LayoutManager::LayoutManager(RandRScreen *screen, QGraphicsScene *scene)

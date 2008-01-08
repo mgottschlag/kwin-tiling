@@ -17,11 +17,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <KLocale>
-#include <KIconLoader>
-#include "ktimerdialog.h"
-
 #include "randr.h"
+#include <KIconLoader>
 
 bool RandR::has_1_2 = false;
 Time RandR::timestamp = 0;
@@ -31,7 +28,7 @@ QString RandR::rotationName(int rotation, bool pastTense, bool capitalised)
 	if (!pastTense)
 		switch (rotation) {
 			case RR_Rotate_0:
-				return i18n("Normal");
+				return i18n("No Rotation");
 			case RR_Rotate_90:
 				return i18n("Left (90 degrees)");
 			case RR_Rotate_180:
@@ -48,7 +45,7 @@ QString RandR::rotationName(int rotation, bool pastTense, bool capitalised)
 
 	switch (rotation) {
 		case RR_Rotate_0:
-			return i18n("Normal");
+			return i18n("Not rotated");
 		case RR_Rotate_90:
 			return i18n("Rotated 90 degrees counterclockwise");
 		case RR_Rotate_180:
@@ -123,25 +120,21 @@ bool RandR::confirm(const QRect &rect)
 {
 	// FIXME remember to put the dialog on the right screen
 
-	KTimerDialog acceptDialog(
-											15000,
-											KTimerDialog::CountDown,
-											0,
-											"mainKTimerDialog",
-											true,
-											i18n("Confirm Display Setting Change"),
-											KTimerDialog::Ok|KTimerDialog::Cancel,
-											KTimerDialog::Cancel);
+	KTimerDialog acceptDialog(15000, KTimerDialog::CountDown,
+	                          0, "mainKTimerDialog", true,
+	                          i18n("Confirm Display Setting Change"),
+	                          KTimerDialog::Ok|KTimerDialog::Cancel,
+	                          KTimerDialog::Cancel);
 
 	acceptDialog.setButtonGuiItem(KDialog::Ok, KGuiItem(i18n("&Accept Configuration"), "dialog-ok"));
-	acceptDialog.setButtonGuiItem(KDialog::Cancel, KGuiItem(i18n("&Return to Previous Configuration"), "dialog-cancel"));
+	acceptDialog.setButtonGuiItem(KDialog::Cancel, KGuiItem(i18n("&Revert to Previous Configuration"), "dialog-cancel"));
 
 	QLabel *label = new QLabel(i18n("Your screen configuration has been "
                     "changed to the requested settings. Please indicate whether you wish to keep "
                     "this configuration. In 15 seconds the display will revert to your previous "
                     "settings."), &acceptDialog);
 	label->setWordWrap( true );
-        acceptDialog.setMainWidget(label);
+	acceptDialog.setMainWidget(label);
 
 	//FIXME: this should be changed to use the rect instead of centerOnScreen
 	//KDialog::centerOnScreen(&acceptDialog, m_screen);

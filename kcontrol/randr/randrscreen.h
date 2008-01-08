@@ -19,12 +19,13 @@
 #ifndef __RANDRSCREEN_H__
 #define __RANDRSCREEN_H__
 
-#include <QObject>
-#include <QSize>
-#include <QMap>
 #include "randr.h"
 
+#include <QX11Info>
+#include <QObject>
+#include <QMap>
 
+class QSize;
 class QAction;
 class KConfig;
 
@@ -58,8 +59,8 @@ public:
 	ModeMap modes() const;
 	RandRMode mode(RRMode id) const;
 
-	bool adjustSize(QRect minimumSize = QRect(0,0,0,0));
-	bool setSize(QSize s);
+	bool adjustSize(const QRect &minimumSize = QRect(0,0,0,0));
+	bool setSize(const QSize &s);
 
 	/**
 	 * Return the number of connected outputs
