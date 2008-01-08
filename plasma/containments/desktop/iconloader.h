@@ -45,12 +45,17 @@ public:
     * Get whether device icons will be displayed or not.
     * @return whether device icons will be displayed
     */
-    bool showDeviceIcons();
+    bool showDeviceIcons() const;
     /**
     * Sets whether to display device icons or not.
     * @param show true sets device icons to be displayed.
     */
     void setShowDeviceIcons(bool show);
+
+    /**
+     * Reloads the configuration for the icon manager
+     */
+    void reloadConfig();
 
     bool isGridAligned() const;
     void setGridAligned(bool align);

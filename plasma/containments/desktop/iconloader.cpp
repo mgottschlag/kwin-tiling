@@ -55,7 +55,7 @@ void IconLoader::init()
     cg = KConfigGroup(&cg, "DesktopIcons");
     m_iconShow = cg.readEntry("showIcons", m_iconShow);
     m_gridAlign = cg.readEntry("alignToGrid", m_gridAlign);
-    m_enableMedia = cg.readEntry("enableMedia", m_enableMedia);
+    setShowDeviceIcons(cg.readEntry("enableMedia", m_enableMedia));
 
     setGridSize(QSizeF(150, 150));
 
@@ -75,6 +75,28 @@ void IconLoader::init()
     connect(&m_desktopDir, SIGNAL(deleteItem(KFileItem)), this, SLOT(deleteItem(KFileItem)));
     
     setShowIcons(m_iconShow);
+}
+
+void IconLoader::setShowDeviceIcons(bool show)
+{
+    if (m_enableMedia != show) {
+        m_enableMedia = show;
+        configureMedia();
+    }
+}
+
+bool IconLoader::showDeviceIcons() const
+{
+    return m_enableMedia;
+}
+
+void IconLoader::reloadConfig()
+{
+    KConfigGroup cg(m_desktop->globalConfig());
+    cg = KConfigGroup(&cg, "DesktopIcons");
+    setGridAligned(cg.readEntry("alignToGrid", m_gridAlign));
+    setShowIcons(cg.readEntry("showIcons", m_iconShow));
+    setShowDeviceIcons(cg.readEntry("enableMedia", m_enableMedia));
 }
 
 void IconLoader::createMenu()
@@ -156,7 +178,7 @@ void IconLoader::addIcon(Plasma::Applet *applet)
 {
     KConfigGroup cg = applet->config();
     KUrl url = cg.readEntry("Url", KUrl());
-    if (url != KUrl()) {
+    if (!url.isEmpty()) {
         m_iconMap[url.path()] = applet;
     }
 }
@@ -426,8 +448,14 @@ void IconLoader::setShowIcons(bool iconsVisible)
         m_desktopDir.openUrl(KGlobalSettings::desktopPath());
     } else {
         m_desktopDir.stop();
+        QString desktopDir = KGlobalSettings::desktopPath();
         foreach (Plasma::Applet *icon, m_iconMap.values()) {
-            icon->destroy();    //the icon will be taken out of m_iconMap by the appletDeleted Slot
+            KConfigGroup cg = icon->config();
+            KUrl url = cg.readEntry("Url", KUrl());
+
+            if (url.path().startsWith(desktopDir)) {
+                icon->destroy();    //the icon will be taken out of m_iconMap by the appletDeleted Slot
+            }
         }
     }
 }

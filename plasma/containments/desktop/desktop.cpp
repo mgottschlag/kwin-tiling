@@ -162,6 +162,7 @@ void DefaultDesktop::applyConfig()
     emit configNeedsSaving();
 
     reloadConfig();
+    s_icons->reloadConfig();
 }
 
 void DefaultDesktop::reloadConfig()
