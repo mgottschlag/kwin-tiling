@@ -344,22 +344,26 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
         // moved to different desktop or is on all or change in iconification/withdrawnnes
         emit windowChanged(t);
 
+#if 0
         if (KWindowSystem::compositingActive() && dirty & NET::WMState)
         {
             // update on restoring a minimized window
             updateWindowPixmap(w);
         }
+#endif
 
     }
     else if (dirty & NET::WMGeometry)
     {
         emit windowChangedGeometry(t);
 
+#if 0
         if (KWindowSystem::compositingActive())
         {
             // update on size changes, not on task drags
             updateWindowPixmap(w);
         }
+#endif
 
     }
 }
