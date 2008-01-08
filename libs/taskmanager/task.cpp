@@ -109,7 +109,7 @@ Task::Task(WId w, QObject *parent, const char *name)
     d->windowPixmap = 0;
     findWindowFrameId();
 
-    if (TaskManager::xCompositeEnabled())
+    if (KWindowSystem::compositingActive())
     {
         updateWindowPixmap();
     }
@@ -880,7 +880,7 @@ void Task::generateThumbnail()
 #ifdef THUMBNAILING_POSSIBLE
 QPixmap Task::thumbnail(int maxDimension)
 {
-    if (!TaskManager::xCompositeEnabled() || !d->windowPixmap)
+    if (!KWindowSystem::compositingActive() || !d->windowPixmap)
     {
         return QPixmap();
     }
@@ -973,7 +973,7 @@ QPixmap Task::thumbnail(int /* maxDimension */)
 void Task::updateWindowPixmap()
 {
 #ifdef THUMBNAILING_POSSIBLE
-    if (!TaskManager::xCompositeEnabled() || !isOnCurrentDesktop() ||
+    if (!KWindowSystem::compositingActive() || !isOnCurrentDesktop() ||
         isMinimized())
     {
         return;

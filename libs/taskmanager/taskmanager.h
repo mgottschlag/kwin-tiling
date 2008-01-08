@@ -48,6 +48,8 @@ class KDE_EXPORT TaskManager : public QObject
 
 public:
     static TaskManager* self();
+
+    TaskManager();
     ~TaskManager();
 
     /**
@@ -101,9 +103,6 @@ public:
     * Returns whether the Window with WId wid is on the screen screen
     */
     static bool isOnScreen( int screen, const WId wid );
-
-    void setXCompositeEnabled(bool state);
-    static bool xCompositeEnabled();
 
 Q_SIGNALS:
     /**
@@ -166,11 +165,6 @@ protected:
     void updateWindowPixmap(WId);
 
 private:
-    TaskManager();
-
-    static TaskManager* m_self;
-    static uint m_xCompositeEnabled;
-
     class Private;
     Private * const d;
 };

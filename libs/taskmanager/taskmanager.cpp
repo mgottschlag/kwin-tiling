@@ -30,22 +30,21 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KConfigGroup>
 #include <KGlobal>
 #include <KLocale>
-#include <K3StaticDeleter>
 
 namespace TaskManager
 {
 
-TaskManager* TaskManager::m_self = 0;
-static K3StaticDeleter<TaskManager> staticTaskManagerDeleter;
-uint TaskManager::m_xCompositeEnabled = 0;
+class TaskManagerSingleton
+{
+public:
+   TaskManager self;
+};
+
+K_GLOBAL_STATIC( TaskManagerSingleton, privateTaskManagerSelf )
 
 TaskManager* TaskManager::self()
 {
-    if (!m_self)
-    {
-        staticTaskManagerDeleter.setObject(m_self, new TaskManager());
-    }
-    return m_self;
+    return &privateTaskManagerSelf->self;
 }
 
 class TaskManager::Private
@@ -121,102 +120,6 @@ void TaskManager::configure_startup()
     c=KConfigGroup(&_c, "TaskbarButtonSettings");
     d->startupInfo->setTimeout( c.readEntry( "Timeout", 30 ));
 }
-
-#ifdef THUMBNAILING_POSSIBLE
-void TaskManager::setXCompositeEnabled(bool state)
-{
-    Display *dpy = QX11Info::display();
-
-    if (!state)
-    {
-        if (!--m_xCompositeEnabled)
-        {
-            // unredirecting windows
-            for (int i = 0; i < ScreenCount(dpy); i++)
-            {
-                XCompositeUnredirectSubwindows(dpy, RootWindow(dpy, i),
-                                                CompositeRedirectAutomatic);
-            }
-        }
-        return;
-    }
-
-    if (m_xCompositeEnabled)
-    {
-        // we don't unlearn riding bike ;)
-        m_xCompositeEnabled++;
-        return;
-    }
-
-    // XComposite extension check
-    int event_base, error_base;
-    if (!XCompositeQueryExtension(dpy, &event_base, &error_base))
-    {
-        return;
-    }
-
-    int major = 0, minor = 99; // The highest version we support
-    XCompositeQueryVersion(dpy, &major, &minor);
-
-    // We use XCompositeNameWindowPixmap(), i.e.  we need at least
-    // version 0.2.
-    if (major == 0 && minor < 2)
-    {
-        return;
-    }
-
-    // XRender extension check
-    if (!XRenderQueryExtension(dpy, &event_base, &error_base))
-    {
-        return;
-    }
-
-    major = 0, minor = 99; // The highest version we support
-    XRenderQueryVersion(dpy, &major, &minor);
-
-    // We use SetPictureTransform() and SetPictureFilter(), i.e. we
-    // need at least version 0.6.
-    if (major == 0 && minor < 6)
-    {
-        return;
-    }
-
-    // XFixes extension check
-    if (!XFixesQueryExtension(dpy, &event_base, &error_base))
-    {
-        return;
-    }
-
-    major = 3, minor = 99; // The highest version we support
-    XFixesQueryVersion(dpy, &major, &minor);
-
-    // We use Region objects, i.e. we need at least version 2.0.
-    if (major < 2)
-    {
-        return;
-    }
-
-    // if we get here, we've got usable extensions
-    m_xCompositeEnabled++;
-
-    // redirecting windows to backing pixmaps
-    for (int i = 0; i < ScreenCount(dpy); i++)
-    {
-        XCompositeRedirectSubwindows(dpy, RootWindow(dpy, i),
-                                     CompositeRedirectAutomatic);
-    }
-
-    TaskDict::iterator itEnd = d->tasksByWId.end();
-    for (TaskDict::iterator it = d->tasksByWId.begin(); it != itEnd; ++it)
-    {
-        it.value()->updateWindowPixmap();
-    }
-}
-#else // THUMBNAILING_POSSIBLE
-void TaskManager::setXCompositeEnabled(bool)
-{
-}
-#endif // !THUMBNAILING_POSSIBLE
 
 TaskPtr TaskManager::findTask(WId w)
 {
@@ -441,7 +344,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
         // moved to different desktop or is on all or change in iconification/withdrawnnes
         emit windowChanged(t);
 
-        if (m_xCompositeEnabled && dirty & NET::WMState)
+        if (KWindowSystem::compositingActive() && dirty & NET::WMState)
         {
             // update on restoring a minimized window
             updateWindowPixmap(w);
@@ -452,7 +355,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
     {
         emit windowChangedGeometry(t);
 
-        if (m_xCompositeEnabled)
+        if (KWindowSystem::compositingActive())
         {
             // update on size changes, not on task drags
             updateWindowPixmap(w);
@@ -463,7 +366,7 @@ void TaskManager::windowChanged(WId w, unsigned int dirty)
 
 void TaskManager::updateWindowPixmap(WId w)
 {
-    if (!m_xCompositeEnabled)
+    if (!KWindowSystem::compositingActive())
     {
         return;
     }
@@ -643,11 +546,6 @@ bool TaskManager::isOnScreen(int screen, const WId wid)
     QRect desktop = QApplication::desktop()->screenGeometry(screen);
     desktop.adjust(5, 5, -5, -5);
     return window.intersects(desktop);
-}
-
-bool TaskManager::xCompositeEnabled()
-{
-    return m_xCompositeEnabled != 0;
 }
 
 } // TaskManager namespace
