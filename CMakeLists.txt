@@ -9,6 +9,10 @@ find_package(KDE4 REQUIRED)
 find_package(Strigi REQUIRED)
 find_package(Blitz REQUIRED)
 
+macro_optional_find_package(USB)
+macro_optional_find_package(Fontconfig)
+macro_optional_find_package(OpenGL)
+
 include (MacroLibrary)
 include (KDE4Defaults)
 
@@ -86,3 +90,7 @@ SET(krunner_DEPENDS "plasma")
 
 ########### install files ###############
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/startkde DESTINATION ${BIN_INSTALL_DIR})
+
+if(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+  macro_display_feature_log()
+endif(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
