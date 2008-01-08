@@ -86,7 +86,7 @@ protected Q_SLOTS:
     void runCommand();
     void configure();
     void applyConfig();
-    void nextSlide();
+    void nextSlide(bool skipUpdates=false);
     
     void toggleDesktopImmutability();
     void lockScreen();
@@ -95,7 +95,7 @@ protected Q_SLOTS:
     void updateBackground();
     void updateBackground(int, const QImage &img);
 private:
-    void reloadConfig();
+    void reloadConfig(bool skipUpdates=false);
     QSize resolution() const;
 
     QAction *m_lockDesktopAction;

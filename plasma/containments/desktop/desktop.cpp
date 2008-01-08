@@ -87,11 +87,11 @@ DefaultDesktop::~DefaultDesktop()
 
 void DefaultDesktop::init()
 {
-    reloadConfig();
+    reloadConfig(true);
     Containment::init();
 }
 
-void DefaultDesktop::nextSlide()
+void DefaultDesktop::nextSlide(bool skipUpdates)
 {
     if (++m_currentSlide >= m_slideFiles.size()) {
         m_currentSlide = 0;
@@ -99,7 +99,9 @@ void DefaultDesktop::nextSlide()
 
     if (m_slideFiles.size() > 0) {
         m_wallpaperPath = m_slideFiles[m_currentSlide];
-        updateBackground();
+        if (!skipUpdates) {
+            updateBackground();
+        }
     }
 }
 
@@ -165,7 +167,7 @@ void DefaultDesktop::applyConfig()
     s_icons->reloadConfig();
 }
 
-void DefaultDesktop::reloadConfig()
+void DefaultDesktop::reloadConfig(bool skipUpdates)
 {
     qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
 
@@ -188,7 +190,7 @@ void DefaultDesktop::reloadConfig()
     if (m_backgroundMode == BackgroundDialog::kStaticBackground) {
         m_slideshowTimer.stop();
         // Only set the wallpaper if constraints have been loaded
-        if (screen() != -1) {
+        if (!skipUpdates) {
             updateBackground();
         }
     } else {
@@ -225,7 +227,7 @@ void DefaultDesktop::reloadConfig()
             m_slideshowTimer.start();
         }
         m_currentSlide = -1;
-        nextSlide();
+        nextSlide(true);
     }
 }
 
