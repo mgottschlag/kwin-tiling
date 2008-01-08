@@ -24,6 +24,11 @@
 #include "plasmaapp.h"
 
 #include <unistd.h>
+#if !defined(_SC_PHYS_PAGES) && defined(Q_OS_FREEBSD)
+// This is needed only in FreeBSD-6-STABLE, see below (grep _SC_PHYS_PAGES)
+#include <sys/types.h>
+#include <sys/sysctl.h>
+#endif
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -138,9 +143,33 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     }
     cacheSize += cacheSize / 10;
 
-    // Calculate the size of physical system memory
+    // Calculate the size of physical system memory; _SC_PHYS_PAGES *
+    // _SC_PAGESIZE is documented to be able to overflow 32-bit integers,
+    // so apply a 10-bit shift. FreeBSD 6-STABLE doesn't have _SC_PHYS_PAGES
+    // (it is documented in FreeBSD 7-STABLE as "Solaris and Linux extension")
+    // so use sysctl in those cases.
+#if defined(_SC_PHYS_PAGES)
     int memorySize = sysconf(_SC_PHYS_PAGES);
     memorySize *= sysconf(_SC_PAGESIZE) / 1024;
+#else
+#ifdef Q_OS_FREEBSD
+    int sysctlbuf[2];
+    size_t size = sizeof(sysctlbuf);
+    int memorySize;
+    // This could actually use hw.physmem instead, but I can't find
+    // reliable documentation on how to read the value (which may 
+    // not fit in a 32 bit integer).
+    if (!sysctlbyname("vm.stats.vm.v_page_size", sysctlbuf, &size, NULL, 0)) {
+	memorySize = sysctlbuf[0] / 1024;
+	size = sizeof(sysctlbuf);
+        if (!sysctlbyname("vm.stats.vm.v_page_count", sysctlbuf, &size, NULL, 0)) {
+            memorySize *= sysctlbuf[0];
+	}
+    }
+#endif
+    // If you have no suitable sysconf() interface and are not FreeBSD,
+    // then you are out of luck and get a compile error.
+#endif
 
     // Increase the pixmap cache size to 1% of system memory if it isn't already
     // larger so as to maximize cache usage. 1% of 1GB ~= 10MB.
