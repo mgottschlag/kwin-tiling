@@ -45,6 +45,7 @@ ServiceRunner::ServiceRunner( QObject* parent )
     : Plasma::AbstractRunner( parent )
 {
     setObjectName(i18n("Application"));
+    setPriority(AbstractRunner::HighestPriority);
 }
 
 ServiceRunner::~ServiceRunner()

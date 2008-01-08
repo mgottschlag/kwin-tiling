@@ -230,6 +230,9 @@ class FindMatchesJob : public Job
 {
 public:
     FindMatchesJob(const QString& term, Plasma::AbstractRunner* runner, Plasma::SearchContext* context, QObject* parent = 0);
+
+    int priority() const;
+
 protected:
     void run();
 private:
@@ -256,6 +259,10 @@ void FindMatchesJob::run()
     m_runner->performMatch(*m_context);
 }
 
+int FindMatchesJob::priority() const
+{
+    return m_runner->priority();
+}
 
 Interface::Interface(QWidget* parent)
     : KRunnerDialog( parent ),
