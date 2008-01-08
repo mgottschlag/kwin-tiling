@@ -94,8 +94,8 @@ void DashboardView::showAppletBrowser()
         m_appletBrowserWidget->setBackgroundRole(QPalette::Background);
         m_appletBrowserWidget->setAutoFillBackground(true);
         KWindowSystem::setState(m_appletBrowserWidget->winId(), NET::KeepAbove|NET::SkipTaskbar);
-        //TODO: provide a nice unobtrusive way to access the browser
-        m_appletBrowserWidget->move( 0, 0 );
+        m_appletBrowserWidget->move(0, 0);
+        m_appletBrowserWidget->installEventFilter(this);
     }
 
     m_appletBrowserWidget->setHidden(m_appletBrowserWidget->isVisible());
@@ -104,6 +104,49 @@ void DashboardView::showAppletBrowser()
 void DashboardView::appletBrowserDestroyed()
 {
     m_appletBrowserWidget = 0;
+}
+
+bool DashboardView::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched != m_appletBrowserWidget) {
+        return false;
+    }
+
+    if (event->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *me = static_cast<QMouseEvent *>(event);
+        m_appletBrowserDragStart = me->globalPos();
+    } else if (event->type() == QEvent::MouseMove && m_appletBrowserDragStart != QPoint()) {
+        QMouseEvent *me = static_cast<QMouseEvent *>(event);
+        QPoint newPos = me->globalPos();
+        QPoint curPos = m_appletBrowserWidget->pos();
+        int x = curPos.x();
+        int y = curPos.y();
+
+        if (curPos.y() == 0 || curPos.y() + m_appletBrowserWidget->height() >= height()) {
+           x = curPos.x() + (newPos.x() - m_appletBrowserDragStart.x());
+           if (x < 0) {
+               x = 0;
+           } else if (x + m_appletBrowserWidget->width() > width()) {
+               x = width() - m_appletBrowserWidget->width();
+           }
+        }
+
+        if (x == 0 || x + m_appletBrowserWidget->width() >= width()) {
+            y = m_appletBrowserWidget->y() + (newPos.y() - m_appletBrowserDragStart.y());
+
+            if (y < 0) {
+                y = 0;
+            } else if (y + m_appletBrowserWidget->height() > height()) {
+                y = height() - m_appletBrowserWidget->height();
+            }
+        }
+        m_appletBrowserWidget->move(x, y);
+        m_appletBrowserDragStart = newPos;
+    } else if (event->type() == QEvent::MouseButtonRelease) {
+        m_appletBrowserDragStart = QPoint();
+    }
+
+    return false;
 }
 
 void DashboardView::toggleVisibility()

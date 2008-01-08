@@ -49,9 +49,11 @@ protected slots:
     void appletBrowserDestroyed();
     void hideView();
     void suppressShowTimeout();
+    bool eventFilter(QObject *watched, QEvent *event);
 
 private:
     Plasma::AppletBrowserWidget *m_appletBrowserWidget;
+    QPoint m_appletBrowserDragStart;
     bool m_suppressShow;
     bool m_zoomIn;
     bool m_zoomOut;
