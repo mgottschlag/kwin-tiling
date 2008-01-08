@@ -54,8 +54,8 @@ void IconLoader::init()
     KConfigGroup cg(m_desktop->globalConfig());
     cg = KConfigGroup(&cg, "DesktopIcons");
     m_iconShow = cg.readEntry("showIcons", m_iconShow);
-    m_gridAlign = cg.readEntry(i18n("alignToGrid"),m_gridAlign);
-    m_enableMedia = cg.readEntry(i18n("enableMedia"),m_enableMedia);
+    m_gridAlign = cg.readEntry("alignToGrid", m_gridAlign);
+    m_enableMedia = cg.readEntry("enableMedia", m_enableMedia);
 
     setGridSize(QSizeF(150, 150));
 
@@ -155,7 +155,7 @@ void IconLoader::addIcon(const KUrl& url)
 void IconLoader::addIcon(Plasma::Applet *applet)
 {
     KConfigGroup cg = applet->config();
-    KUrl url = cg.readEntry(i18n("Url"), KUrl());
+    KUrl url = cg.readEntry("Url", KUrl());
     if (url != KUrl()) {
         m_iconMap[url.path()] = applet;
     }
