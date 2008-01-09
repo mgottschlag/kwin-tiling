@@ -61,7 +61,7 @@ RootWidget::RootWidget()
     KAction *showAction = new KAction( this );
     showAction->setText( i18n( "Show Dashboard" ) );
     showAction->setGlobalShortcut( KShortcut( Qt::CTRL + Qt::Key_F12 ) );
-    connect( showAction, SIGNAL( activated() ), this, SLOT( toggleDashboard() ) );
+    connect( showAction, SIGNAL( triggered() ), this, SLOT( toggleDashboard() ) );
 }
 
 void RootWidget::toggleDashboard()
