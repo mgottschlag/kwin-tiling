@@ -39,7 +39,7 @@ IconLoader::IconLoader(DefaultDesktop *parent)
       m_gridAlign(true),
       m_enableMedia(false)
 {
-    QTimer::singleShot(0, this, SLOT(init()));
+    init();
 }
 
 IconLoader::~IconLoader()
