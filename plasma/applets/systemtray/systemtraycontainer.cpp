@@ -28,6 +28,8 @@
 // Qt
 #include <QX11Info>
 
+#include <plasma/theme.h>
+
 // Xlib
 #include <X11/Xlib.h>
 
@@ -40,6 +42,13 @@ SystemTrayContainer::SystemTrayContainer(WId clientId, QWidget *parent)
 
     // Tray icons have a fixed size of 22x22
     setMinimumSize(22, 22);
+
+    // Qt's regular quasi-transparent background doesn't work so set it to the
+    // theme's background color instead.
+    QPalette p = palette();
+    p.setBrush(QPalette::Window, Plasma::Theme::self()->backgroundColor());
+    setPalette(p);
+    setBackgroundRole(QPalette::Window);
 
     kDebug() << "attempting to embed" << clientId;
     embedClient(clientId);
