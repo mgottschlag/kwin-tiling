@@ -341,7 +341,7 @@ QList<QAction*> DefaultDesktop::contextActions()
 
     actions.append(m_separator);
 
-    if (s_icons && s_icons->showIcons()) {
+    if (!isImmutable() && s_icons && s_icons->showIcons()) {
         //icon actions
         actions << s_icons->contextActions();
         actions.append(m_separator2);
