@@ -75,72 +75,6 @@ Regexp=^\\/.+\\.jpg$
 [Action_0/Command_0]
 Commandline=gwenview %s
 Description=Launch &Gwenview
-Description[af]=Lanseer K-bekyk
-Description[ar]=نفّذ K&View
-Description[be]=Запусціць K&View
-Description[bg]=&Стартиране на KView
-Description[bn]=কে-ভি&উ চালাও
-Description[br]=Lañsañ K&View
-Description[ca]=Engega el K&View
-Description[cs]=Spustit K&View
-Description[csb]=Zrëszë &Przezérnik òbrôzów
-Description[cy]=Cychwyn K&View
-Description[da]=Start K&View
-Description[de]=K&View starten
-Description[el]=Εκκίνηση K&View
-Description[eo]=Lanĉi &rigardilon
-Description[es]=Iniciar K&View
-Description[et]=K&View käivitamine
-Description[eu]=Abiarazi K&View 
-Description[fa]=راه‌اندازیK&View‌
-Description[fi]=Käynnistä K&View
-Description[fr]=Démarrer K&View
-Description[fy]=K&View útfiere
-Description[ga]=Tosaigh K&View
-Description[gl]=Executar K&View
-Description[he]=הפעל את &KView
-Description[hi]=के-व्यू चलाएँ (&V)
-Description[hr]=Pokreni K&View
-Description[hu]=A K&View indítása
-Description[is]=Ræsa K&View
-Description[it]=Avvia K&View
-Description[ja]=KView を起動(&V)
-Description[ka]=K&View გაშვება
-Description[kk]=K&View жегу
-Description[km]=ចាប់ផ្ដើម​ KView
-Description[ko]=KView 실행(&V)
-Description[lt]=Paleisti K&View
-Description[lv]=Palaist K&View
-Description[mk]=Стартувај K&View
-Description[ms]=Lancarkan K&View
-Description[nb]=Start K&View
-Description[nds]=K&View starten
-Description[ne]=केडीई दृश्य सुरुआत गर्नुहोस्
-Description[nl]=K&View opstarten
-Description[nn]=Start K&View
-Description[pa]=ਕੇ-ਵਿਊ ਚਲਾਓ(&V)
-Description[pl]=Uruchom &Przeglądarkę obrazków
-Description[pt]=Lançar o K&View
-Description[pt_BR]=Lançar K&View
-Description[ro]=Execută K&View
-Description[ru]=Запустить K&View
-Description[se]=Álggat K&View
-Description[sk]=Spustiť K&View
-Description[sl]=Zaženi K&View
-Description[sr]=Покрени &К‑приказ
-Description[sr@latin]=Pokreni &K‑prikaz
-Description[sv]=Starta K&view
-Description[ta]=KViewவை இறக்கு
-Description[tg]=Ба кор даровардани K&View
-Description[th]=เรียกใช้งาน K&View
-Description[tr]=K&View Çalıştır
-Description[uk]=Запустити K&View
-Description[uz]=K&View'ни ишга тушириш
-Description[vi]=Chạy K&View
-Description[wa]=Enonder K&View
-Description[x-test]=xxLaunch K&Viewxx
-Description[zh_CN]=调用 K&View
-Description[zh_TW]=啟動 K&View
 Enabled=true
 
 [Action_1]
@@ -160,7 +94,7 @@ Description[es]=URL Web
 Description[et]=Veebi-URL
 Description[eu]=Web URLa
 Description[fa]=نشانی وب وب
-Description[fr]=URL web
+Description[fr]=URL Web
 Description[fy]=Web-URL-adres
 Description[ga]=URL Gréasáin
 Description[he]=כתובת אינטרנט
@@ -208,6 +142,11 @@ Regexp=^https?://.
 [Action_1/Command_0]
 Commandline=kfmclient exec %s
 Description=Open with &default Browser
+Enabled=true
+
+[Action_1/Command_1]
+Commandline=konqueror %s
+Description=Open with &Konqueror
 Description[af]=Maak oop met Konqueror
 Description[ar]=افتح بواسطة &كونكيورر
 Description[be]=Адкрыць у &Konqueror
@@ -276,11 +215,6 @@ Description[x-test]=xxOpen with &Konquerorxx
 Description[xh]=Vula nge &Konqueror
 Description[zh_CN]=用 &Konqueror 打开
 Description[zh_TW]=使用 &Konqueror 開啟
-Enabled=true
-
-[Action_1/Command_1]
-Commandline=konqueror %s
-Description=Open with &Konqueror
 Enabled=true
 
 [Action_1/Command_2]
@@ -819,6 +753,7 @@ Description[ka]=ტექსტური ფაილი
 Description[kk]=Мәтін файлы
 Description[km]=ឯកសារ​អត្ថបទ
 Description[ko]=텍스트 파일
+Description[ku]=Pelê Nivîsê
 Description[lt]=Teksto failas
 Description[lv]=Teksta fails
 Description[mk]=Текстуална датотека
@@ -1111,6 +1046,7 @@ Description[ka]=&ფაილის გაგზავნა
 Description[kk]=&Файлды жіберу
 Description[km]=ផ្ញើ​ឯកសារ
 Description[ko]=파일 보내기(&F)
+Description[ku]=Pelî &Bişeyîne
 Description[lt]=Siųsti &failą
 Description[lv]=Sūtīt &failu
 Description[mk]=Испрати &датотека
@@ -1312,6 +1248,7 @@ Description[ka]=&ფაილის გაგზავნა
 Description[kk]=&Файлды жіберу
 Description[km]=ផ្ញើ​ឯកសារ
 Description[ko]=파일 보내기(&F)
+Description[ku]=Pelî &Bişeyîne
 Description[lt]=Siųsti &failą
 Description[lv]=Sūtīt &failu
 Description[mk]=Испрати &датотека
@@ -1408,6 +1345,11 @@ Regexp=^ftp://.
 [Action_6/Command_0]
 Commandline=kfmclient exec %s
 Description=Open with &default Browser
+Enabled=true
+
+[Action_6/Command_1]
+Commandline=konqueror %s
+Description=Open with &Konqueror
 Description[af]=Maak oop met Konqueror
 Description[ar]=افتح بواسطة &كونكيورر
 Description[be]=Адкрыць у &Konqueror
@@ -1476,11 +1418,6 @@ Description[x-test]=xxOpen with &Konquerorxx
 Description[xh]=Vula nge &Konqueror
 Description[zh_CN]=用 &Konqueror 打开
 Description[zh_TW]=使用 &Konqueror 開啟
-Enabled=true
-
-[Action_6/Command_1]
-Commandline=konqueror %s
-Description=Open with &Konqueror
 Enabled=true
 
 [Action_6/Command_2]
@@ -1666,6 +1603,7 @@ Description[ka]=&ფაილის გაგზავნა
 Description[kk]=&Файлды жіберу
 Description[km]=ផ្ញើ​ឯកសារ
 Description[ko]=파일 보내기(&F)
+Description[ku]=Pelî &Bişeyîne
 Description[lt]=Siųsti &failą
 Description[lv]=Sūtīt &failu
 Description[mk]=Испрати &датотека

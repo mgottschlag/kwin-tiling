@@ -1,6 +1,7 @@
 [Misc]
 Name=Motif
 Name[fa]=موتیف
+Name[is]=Mótíf
 Name[ne]=नमूना
 Name[sr]=Мотиф
 Name[x-test]=xxMotifxx
@@ -16,10 +17,12 @@ Comment[es]=Estilo Motif
 Comment[et]=Sisseehitatud teematu Motifi stiil
 Comment[eu]=Temarik gabeko Motif estiloa inkorporatua
 Comment[fi]=Sisäänrakennettu, teematon Motif-tyyli
+Comment[fr]=Style motif intégré
 Comment[fy]=Ynboude, temaleaze Motif-styl
 Comment[ga]=Stíl insuite Motif gan téamaí
 Comment[gl]=Estilo como Motif sen tema
 Comment[hu]=Beépített Motif stílus
+Comment[is]=Innbyggður óþemaður Mótíf stíll
 Comment[it]=Stile integrato Motif
 Comment[ja]=ビルトイン Motif スタイル (テーマなし)
 Comment[kk]=Құрамындағы нақыштарсыз Motif стилі
