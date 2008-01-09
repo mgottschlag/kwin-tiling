@@ -425,7 +425,7 @@ int main(int argc, char **argv)
       cout << i18n("             # Scan for bluetooth remote devices.\n") << endl;
 
       cout << "  solidshell bluetooth input listdevices" << endl;
-      cout << i18n("             # List configured input deviceses.\n") << endl;
+      cout << i18n("             # List configured input devices.\n") << endl;
 
       cout << "  solidshell bluetooth input (setup|remove|connect|disconnect) (device 'ubi')" << endl;
       cout << i18n("             # Setup bluetooth input device.\n"
