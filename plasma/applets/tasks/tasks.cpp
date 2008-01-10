@@ -40,6 +40,7 @@ Tasks::Tasks(QObject* parent , const QVariantList &arguments)
    m_dialog(0)
 {
     setHasConfigurationInterface(true);
+    setAspectRatioMode(Qt::IgnoreAspectRatio);
     setContentSize(500, 48);
 }
 
