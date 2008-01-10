@@ -37,6 +37,7 @@ private:
 
 private slots:
     void handleError(QX11EmbedContainer::Error error);
+    void updateBackground();
 };
 
 #endif // SYSTRAYCONTAINER_H
