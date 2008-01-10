@@ -25,21 +25,15 @@
 // Qt
 #include <QX11EmbedContainer>
 
-class KX11EmbedContainer : public QX11EmbedContainer
-{
-Q_OBJECT
-public:
-    KX11EmbedContainer( QWidget* parent = NULL )
-        : QX11EmbedContainer( parent ) {}
-    void prepareFor( WId id );
-};
-
-class SystemTrayContainer: public KX11EmbedContainer
+class SystemTrayContainer : public QX11EmbedContainer
 {
 Q_OBJECT
 
 public:
     SystemTrayContainer(WId client, QWidget *parent);
+
+private:
+    void prepareFor( WId id );
 
 private slots:
     void handleError(QX11EmbedContainer::Error error);
