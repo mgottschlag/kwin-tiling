@@ -140,7 +140,7 @@ QString USBDB::subclass(int cls, int sub)
 
 QString USBDB::protocol(int cls, int sub, int prot)
 {
-  QString *s = _classes[QString("%1-%2-%2").arg(cls).arg(sub).arg(prot)];
+  QString *s = _classes[QString("%1-%2-%3").arg(cls).arg(sub).arg(prot)];
   if (s)
     return *s;
   return QString();
