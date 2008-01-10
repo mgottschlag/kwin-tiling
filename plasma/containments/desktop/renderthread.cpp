@@ -97,6 +97,13 @@ void RenderThread::run()
             mode = m_mode;
         }
         
+        QImage result(size, QImage::Format_ARGB32_Premultiplied);
+        result.fill(color.rgb());
+
+        if (file.isEmpty()) {
+            emit done(token, result);
+        }
+        
         QPoint pos(0, 0);
         bool tiled = false;
         bool scalable = file.endsWith("svg") || file.endsWith("svgz");
@@ -162,9 +169,6 @@ void RenderThread::run()
             tiled = true;
             break;
         }
-        
-        QImage result(size, QImage::Format_ARGB32_Premultiplied);
-        result.fill(color.rgb());
         
         QPainter p(&result);
         if (scalable) {

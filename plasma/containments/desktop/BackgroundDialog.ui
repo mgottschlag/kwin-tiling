@@ -51,6 +51,11 @@
             <string>Slideshow</string>
            </property>
           </item>
+          <item>
+           <property name="text" >
+            <string>None</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item>
@@ -486,22 +491,6 @@
  </customwidgets>
  <resources/>
  <connections>
-  <connection>
-   <sender>m_mode</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>stackedWidget</receiver>
-   <slot>setCurrentIndex(int)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>234</x>
-     <y>69</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>204</x>
-     <y>218</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>m_showIcons</sender>
    <signal>toggled(bool)</signal>

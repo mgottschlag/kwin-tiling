@@ -187,7 +187,8 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
     m_wallpaperPosition = cg.readEntry("wallpaperposition", 0);
     m_wallpaperColor = cg.readEntry("wallpapercolor", QColor(Qt::black));
 
-    if (m_backgroundMode == BackgroundDialog::kStaticBackground) {
+    if (m_backgroundMode == BackgroundDialog::kStaticBackground ||
+        m_backgroundMode == BackgroundDialog::kNoBackground) {
         m_slideshowTimer.stop();
         // Only set the wallpaper if constraints have been loaded
         if (!skipUpdates) {
@@ -233,7 +234,7 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
 
 void DefaultDesktop::updateBackground()
 {
-    if (m_wallpaperPath.isEmpty()) {
+    if (m_wallpaperPath.isEmpty() && m_backgroundMode != BackgroundDialog::kNoBackground) {
         QString defaultPath = QString("EOS/contents/images/%1x%2.jpg");
 
         QString testPath = defaultPath.arg(geometry().width()).arg(geometry().height());

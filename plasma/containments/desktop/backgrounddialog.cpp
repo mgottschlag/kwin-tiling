@@ -341,7 +341,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     QWidget * main = new QWidget(this);
     setupUi(main);
 
-    // static or slideshow?
+    // static, slideshow or none?
     connect(m_mode, SIGNAL(currentIndexChanged(int)),
             this, SLOT(changeBackgroundMode(int)));
 
@@ -370,7 +370,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
 
     // color
     m_color->setColor(palette().color(QPalette::Window));
-    connect(m_color, SIGNAL(changed(QColor)), main, SLOT(update()));
+    connect(m_color, SIGNAL(changed(QColor)), this, SLOT(update()));
 
     // slideshow
     m_addDir->setIcon(KIcon("list-add"));
@@ -468,8 +468,10 @@ void BackgroundDialog::saveConfig(KConfigGroup config, KConfigGroup globalConfig
         config.writeEntry("wallpaperposition", 
             m_resizeMethod->itemData(m_resizeMethod->currentIndex()).toInt());
         config.writeEntry("selected", m_selected);
-    }
-    else {
+    } else if (mode == kNoBackground) {
+        config.writeEntry("wallpaper", QString());
+        config.writeEntry("wallpapercolor", m_color->color());
+    } else {
         QStringList dirs;
         for (int i = 0; i < m_dirlist->count(); i++) {
             dirs << m_dirlist->item(i)->text();
@@ -549,6 +551,11 @@ bool BackgroundDialog::setMetadata(QLabel *label,
 
 void BackgroundDialog::update()
 {
+    if (m_mode->currentIndex() == kNoBackground) {
+        m_img.clear();
+        setPreview(m_img, Background::Scale);
+        return;
+    }
     int index = m_view->currentIndex();
     if (index == -1) {
         return;
@@ -648,12 +655,29 @@ void BackgroundDialog::changeBackgroundMode(int mode)
     {
     case kStaticBackground:
         m_preview_timer.stop();
+        stackedWidget->setCurrentIndex(0);
+        enableButtons(true);
+        update();
+        break;
+    case kNoBackground:
+        m_preview_timer.stop();
+        stackedWidget->setCurrentIndex(0);
+        enableButtons(false);
         update();
         break;
     case kSlideshowBackground:
+        stackedWidget->setCurrentIndex(1);
         updateSlideshow();
+        enableButtons(true);
         break;
     }
+}
+
+void BackgroundDialog::enableButtons(bool enabled)
+{
+    m_view->setEnabled(enabled);
+    m_resizeMethod->setEnabled(enabled);
+    m_pictureUrlButton->setEnabled(enabled);
 }
 
 bool BackgroundDialog::contains(const QString &path) const

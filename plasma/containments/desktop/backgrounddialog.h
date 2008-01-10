@@ -37,7 +37,8 @@ Q_OBJECT
 public:
     enum BackgroundMode {
         kStaticBackground,
-        kSlideshowBackground
+        kSlideshowBackground,
+        kNoBackground
     };
     
     // FIXME seems that we're leaking, make a distructor
@@ -100,6 +101,7 @@ private slots:
     void getNewStuff();
     void browse();
     void showFileDialog();
+    void enableButtons(bool enabled);
     
     void slotAddDir();
     void slotRemoveDir();
