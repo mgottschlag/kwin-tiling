@@ -31,8 +31,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QResizeEvent>
-//Should have been added:
-#include <Q3ButtonGroup>
+#include <QButtonGroup>
 
 #include <kapplication.h>
 #include <kdebug.h>
@@ -138,12 +137,11 @@ void ShortcutsModule::initGUI()
 
 	QHBoxLayout *pHLayout = new QHBoxLayout();
 	pVLayout->addItem( pHLayout );
-	Q3ButtonGroup* pGroup = new Q3ButtonGroup( this );
-	pGroup->hide();
+	QButtonGroup* pGroup = new QButtonGroup( this );
 
 	m_prbPre = new QRadioButton( "", this );
 	connect( m_prbPre, SIGNAL(clicked()), SLOT(slotSchemeCur()) );
-	pGroup->insert( m_prbPre );
+	pGroup->addButton( m_prbPre );
 	pHLayout->addWidget( m_prbPre );
 
 	m_pcbSchemes = new QComboBox( this );
@@ -165,7 +163,7 @@ void ShortcutsModule::initGUI()
 
 	m_prbNew = new QRadioButton( i18n("New scheme"), this );
 	m_prbNew->setEnabled( false );
-	pGroup->insert( m_prbNew );
+	pGroup->addButton( m_prbNew );
 	pHLayout->addWidget( m_prbNew );
 
 	m_pbtnSave = new QPushButton( i18n("&Save..."), this );
