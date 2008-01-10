@@ -256,11 +256,9 @@ Qt::Orientations IconApplet::expandingDirections() const
 
 bool IconApplet::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
 {
-    switch (event->type())
-    {
-        case QEvent::GraphicsSceneMouseMove:
-        {
-            mouseMoveEvent(dynamic_cast<QGraphicsSceneMouseEvent*>(event));
+    switch (event->type()) {
+        case QEvent::GraphicsSceneMouseMove: {
+            mouseMoveEvent(static_cast<QGraphicsSceneMouseEvent*>(event));
             break;
         }
 
@@ -277,12 +275,16 @@ void IconApplet::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QPointF lastPos = transform().map(event->lastPos());
     QPointF delta = curPos-lastPos;
 
-    if(!isImmutable()) {
-        QGraphicsItem* appletHandle = parentItem();
+    if (!isImmutable() && formFactor() == Plasma::Planar) {
+        QGraphicsItem *parent = parentItem();
+        Plasma::Applet *applet = qgraphicsitem_cast<Plasma::Applet*>(parent);
 
-        if(appletHandle && (formFactor() == Plasma::Planar)) {
-            //don't move the icon as well because appletHandle will do it for us
-            appletHandle->moveBy(delta.x(),delta.y());
+        if (applet && applet->isContainment()) {
+            // our direct parent is a containment. just move ourselves.
+            moveBy(delta.x(),delta.y());
+        } else if (parent) {
+            //don't move the icon as well because our parent (usually an appletHandle) will do it for us
+            parent->moveBy(delta.x(),delta.y());
         }
     }
 }
