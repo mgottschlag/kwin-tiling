@@ -96,6 +96,8 @@ void IconApplet::setUrl(const KUrl& url)
             m_text = m_url.fileName();
         }
         m_icon->setIcon(f->readIcon());
+
+        m_genericName = f->readGenericName();
     } else {
         m_text = m_url.fileName();
         m_icon->setIcon(KMimeType::iconNameForUrl(url));
@@ -125,9 +127,15 @@ void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
             formFactor() == Plasma::MediaCenter) {
             m_icon->setText(m_text);
             setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
+            m_icon->setToolTip(Plasma::ToolTipData());
         } else {
             m_icon->setText(QString());
             setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Panel)));
+            Plasma::ToolTipData data;
+            data.mainText = m_text;
+            data.subText = m_genericName;
+            data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
+            m_icon->setToolTip(data);
         }
     }
 
