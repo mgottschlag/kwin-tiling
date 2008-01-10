@@ -75,6 +75,9 @@ Regexp=^\\/.+\\.jpg$
 [Action_0/Command_0]
 Commandline=gwenview %s
 Description=Launch &Gwenview
+Description[ga]=Tosaigh &Gwenview
+Description[km]=បើក​ដំណើរការ Gwenview
+Description[zh_CN]=调用 &Gwenview
 Enabled=true
 
 [Action_1]
@@ -142,6 +145,9 @@ Regexp=^https?://.
 [Action_1/Command_0]
 Commandline=kfmclient exec %s
 Description=Open with &default Browser
+Description[ga]=Oscail leis an mBrabhsálaí &réamhshocraithe
+Description[km]=បើក​ជាមួយ​កម្មវិធី​រុករក​លំនាំដើម
+Description[zh_CN]=用默认浏览器打开(&D)
 Enabled=true
 
 [Action_1/Command_1]
@@ -1345,6 +1351,9 @@ Regexp=^ftp://.
 [Action_6/Command_0]
 Commandline=kfmclient exec %s
 Description=Open with &default Browser
+Description[ga]=Oscail leis an mBrabhsálaí &réamhshocraithe
+Description[km]=បើក​ជាមួយ​កម្មវិធី​រុករក​លំនាំដើម
+Description[zh_CN]=用默认浏览器打开(&D)
 Enabled=true
 
 [Action_6/Command_1]
