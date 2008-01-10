@@ -385,7 +385,7 @@ void IconApplet::dropUrls(const KUrl::List& urls,
 
 void IconApplet::connectMouseSlots()
 {
-    if(KGlobalSettings::singleClick()) {
+    if (KGlobalSettings::singleClick()) {
         //kDebug() << "Single-Click initialized.";
         connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
     } else {
