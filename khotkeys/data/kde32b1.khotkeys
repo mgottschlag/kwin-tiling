@@ -257,37 +257,6 @@ TriggersCount=1
 Key=Ctrl+W
 Type=SHORTCUT
 
-[Data_1_5]
-Comment=By pressing Alt+Ctrl+W a DCOP call will be performed that will show the minicli. You can use any kind of DCOP call, just like using the command line 'dcop' tool.
-Comment[de]=Durch Drücken von Strg+Alt+W wird ein DCOP-Aufruf getätigt, der das Fenster "Befehl ausführen" anzeigt. Natürlich können Sie jede Art von DCOP-Aufruf verwenden, genauso als würden Sie das Kommandozeilenprogramm "dcop" verwenden.
-Comment[el]=Πατώντας το Alt+Ctrl+W θα εκτελεστεί μια κλήση DCOP η οποία θα εμφανίσει το minicli. Μπορείτε να χρησιμοποιήσετε οποιαδήποτε κλήση DCOP, όπως ακριβώς και με το εργαλείο της γραμμής εντολών 'dcop'.
-Comment[it]=Premendo Alt+Ctrl+W sarà eseguita una chiamata DCOP che mostrerà la minicli. Puoi usare qualsiasi tipo di chiamata DCOP, proprio come se usassi lo strumento "dcop" da riga di comando.
-Comment[ja]=Alt+Ctrl+W を押すと、「コマンドを実行」ダイアログを表示する DCOP 呼び出しが実行されます。コマンドラインの 'dcop' ツールと同様に、あらゆる DCOP 呼び出しが使えます。
-Comment[nds]=Dat Drücken vun Strg+Alt+W föhrt en DCOP-Oproop ut, de den Dialoog "Befehl utföhren" opröppt. Du kannst all DCOP-Oprööp bruken, jüst as mit dat Konsool-Programm "dcop".
-Comment[nl]=Door Alt+Ctrl+W in te drukken zal er een DCOP-aanroep uitgevoerd worden dat venster "Commando uitvoeren" laat zien. U kunt iedere andere DCOP-aanroep gebruiken, net zoals met de commandoregelvariant 'dcop'.
-Comment[x-test]=xxBy pressing Alt+Ctrl+W a DCOP call will be performed that will show the minicli. You can use any kind of DCOP call, just like using the command line 'dcop' tool.xx
-Comment[zh_TW]=按下 Alt+Ctrl+W 時，會產生一個 DCOP 呼叫來顯示 minicli。您可以使用任何種類的 DCOP 呼叫，就如同在命令列中使用 dcop 一樣。
-Enabled=false
-Name=Perform DCOP call 'kdesktop KDesktopIface popupExecuteCommand()'
-Name[de]=DCOP-Aufruf ausführen "kdesktop KDesktopIface popupExecuteCommand()"
-Name[el]=Εκτέλεση της κλήσης DCOP 'kdesktop KDesktopIface popupExecuteCommand()'
-Name[it]=Esegue la chiamata DCOP 'kdesktop KDesktopIface popupExecuteCommand()'
-Name[ja]=DCOP 呼び出し 'kdesktop KDesktopIface popupExecuteCommand()' を実行
-Name[nds]=DCOP-Oproop "kdesktop KDesktopIface popupExecuteCommand" utföhren
-Name[nl]=DCOP-aanroep uitvoeren: 'kdesktop KDesktopIface popupExecuteCommand()'
-Name[x-test]=xxPerform DCOP call 'kdesktop KDesktopIface popupExecuteCommand()'xx
-Name[zh_TW]=執行 DCOP 呼叫 'kdesktop KDesktopIface popupExecuteCommand()'
-Type=DCOP_SHORTCUT_ACTION_DATA
-
-[Data_1_5Actions]
-ActionsCount=1
-
-[Data_1_5Actions0]
-Arguments=
-Call=popupExecuteCommand
-RemoteApp=kdesktop
-RemoteObj=KDesktopIface
-Type=DCOP
 
 [Data_1_5Conditions]
 Comment=

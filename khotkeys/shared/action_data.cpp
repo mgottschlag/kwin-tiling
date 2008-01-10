@@ -91,8 +91,6 @@ Action_data_base* Action_data_base::create_cfg_read( KConfigGroup& cfg_P, Action
         return new Command_url_shortcut_action_data( cfg_P, parent_P );
     if( type == "MENUENTRY_SHORTCUT_ACTION_DATA" )
         return new Menuentry_shortcut_action_data( cfg_P, parent_P );
-    if( type == "DCOP_SHORTCUT_ACTION_DATA" )
-        return new Dcop_shortcut_action_data( cfg_P, parent_P );
     if( type == "KEYBOARD_INPUT_SHORTCUT_ACTION_DATA" )
         return new Keyboard_input_shortcut_action_data( cfg_P, parent_P );
     if( type == "KEYBOARD_INPUT_GESTURE_ACTION_DATA" )
@@ -316,16 +314,6 @@ void Simple_action_data< Shortcut_trigger, Menuentry_action >
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "MENUENTRY_SHORTCUT_ACTION_DATA" );
-    }
-
-// Dcop_shortcut_action_data
-
-template<> KDE_EXPORT
-void Simple_action_data< Shortcut_trigger, Dcop_action >
-    ::cfg_write( KConfigGroup& cfg_P ) const
-    {
-    base::cfg_write( cfg_P );
-    cfg_P.writeEntry( "Type", "DCOP_SHORTCUT_ACTION_DATA" );
     }
 
 // Keyboard_input_shortcut_action_data
