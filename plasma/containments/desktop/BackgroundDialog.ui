@@ -441,6 +441,9 @@
      <property name="flat" >
       <bool>true</bool>
      </property>
+     <property name="checkable" >
+      <bool>false</bool>
+     </property>
      <layout class="QVBoxLayout" >
       <item>
        <widget class="QCheckBox" name="m_showIcons" >
@@ -451,6 +454,9 @@
       </item>
       <item>
        <widget class="QCheckBox" name="m_alignToGrid" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
         <property name="text" >
          <string>&amp;Align to grid</string>
         </property>
@@ -487,12 +493,28 @@
    <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>204</x>
-     <y>121</y>
+     <x>234</x>
+     <y>69</y>
     </hint>
     <hint type="destinationlabel" >
      <x>204</x>
      <y>218</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>m_showIcons</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>m_alignToGrid</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>70</x>
+     <y>275</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>74</x>
+     <y>305</y>
     </hint>
    </hints>
   </connection>
