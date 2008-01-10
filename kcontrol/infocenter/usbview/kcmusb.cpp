@@ -8,7 +8,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <Qt3Support/Q3GroupBox>
+#include <QGroupBox>
 #include <Qt3Support/Q3Header>
 #include <QLayout>
 #include <Qt3Support/Q3CheckListItem>
@@ -44,12 +44,11 @@ USBViewer::USBViewer(QWidget *parent, const QVariantList &)
   vbox->setMargin(0);
   vbox->setSpacing(KDialog::spacingHint());
 
-  Q3GroupBox *gbox = new Q3GroupBox(i18n("USB Devices"), this);
-  gbox->setColumnLayout( 0, Qt::Horizontal );
+  QGroupBox *gbox = new QGroupBox(i18n("USB Devices"), this);
   vbox->addWidget(gbox);
 
   QVBoxLayout *vvbox = new QVBoxLayout();
-  gbox->layout()->addItem( vvbox );
+  gbox->setLayout( vvbox );
   vvbox->setSpacing(KDialog::spacingHint());
 
   QSplitter *splitter = new QSplitter(gbox);
