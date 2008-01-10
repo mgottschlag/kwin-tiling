@@ -14,7 +14,6 @@
 
 #include "keyboard_input_widget.h"
 
-#include <Qt3Support/Q3GroupBox>
 #include <QPushButton>
 #include <QRadioButton>
 
