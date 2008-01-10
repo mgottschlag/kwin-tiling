@@ -175,7 +175,7 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
 
     // If no wallpaper is set, a default will be set in updateBackground()
     // which is called as soon as constraints are updated.
-    m_wallpaperPath = cg.readEntry("wallpaper", "");
+    m_wallpaperPath = cg.readEntry("wallpaper", QString());
     if (!m_wallpaperPath.isEmpty()) {
         kDebug() << "Using configured wallpaper" << m_wallpaperPath;
     }
