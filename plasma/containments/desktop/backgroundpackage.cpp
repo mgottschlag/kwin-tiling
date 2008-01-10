@@ -185,7 +185,7 @@ QString BackgroundPackage::findBackground(const QSize &size,
     // choose the nearest resolution
     float best;
     QString bestImage;
-    foreach (QString entry, images) {
+    foreach (const QString &entry, images) {
         QSize candidate = resSize(QFileInfo(entry).baseName());
         if (candidate == QSize()) {
             continue;

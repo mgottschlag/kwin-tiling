@@ -521,16 +521,16 @@ void BackgroundDialog::browse()
     if (wallpaper.isEmpty()) {
         return;
     }
-    
+
     // add background to the model
     m_model->addBackground(wallpaper);
-    
+
     // select it
     int index = m_model->indexOf(wallpaper);
     if (index != -1) {
         m_view->setCurrentIndex(index);
     }
-    
+
     // save it
     m_selected << wallpaper;
 }
@@ -584,7 +584,9 @@ void BackgroundDialog::update()
 
 void BackgroundDialog::setPreview(const QString& img, Background::ResizeMethod method)
 {
-    m_preview_token = m_preview_renderer.render(img, m_color->color(), method, Qt::FastTransformation);
+    if (QFile::exists(img)) {
+        m_preview_token = m_preview_renderer.render(img, m_color->color(), method, Qt::FastTransformation);
+    }
 }
 
 void BackgroundDialog::slotAddDir()
