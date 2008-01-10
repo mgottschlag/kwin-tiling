@@ -19,7 +19,6 @@
 
 #include <klocale.h>
 #include <kdebug.h>
-#include <Qt3Support/Q3ColorDrag>
 
 #include <khlistview.h>
 #include <actions.h>
