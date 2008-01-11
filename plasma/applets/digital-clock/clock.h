@@ -82,7 +82,6 @@ class Clock : public Plasma::Applet
         bool m_showYear;
         bool m_showDay;
         bool m_showTimezone;
-        bool m_twentyFour;
 
         QString m_timezone;
         QString m_prettyTimezone;

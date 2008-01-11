@@ -54,7 +54,6 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_showYear(false),
       m_showDay(false),
       m_showTimezone(false),
-      m_twentyFour(false),
       m_dialog(0),
       m_calendar(0),
       m_layout(0)
@@ -78,7 +77,6 @@ void Clock::init()
     m_showYear = cg.readEntry("showYear", false);
 
     m_showDay = cg.readEntry("showDay", true);
-    m_twentyFour = cg.readEntry("twentyFour", true);
 
     m_plainClockFont = cg.readEntry("plainClockFont", m_plainClockFont);
     m_plainClockColor = cg.readEntry("plainClockColor", m_plainClockColor);
@@ -173,7 +171,6 @@ void Clock::showConfigurationInterface()
     ui.showDate->setChecked(m_showDate);
     ui.showYear->setChecked(m_showYear);
     ui.showDay->setChecked(m_showDay);
-    ui.twentyFour->setChecked(m_twentyFour);
     ui.showTimezone->setChecked(m_showTimezone);
     ui.plainClockFontBold->setChecked(m_plainClockFontBold);
     ui.plainClockFontItalic->setChecked(m_plainClockFontItalic);
@@ -224,8 +221,6 @@ void Clock::configAccepted()
     cg.writeEntry("showYear", m_showYear);
     m_showDay = ui.showDay->checkState() == Qt::Checked;
     cg.writeEntry("showDay", m_showDay);
-    m_twentyFour = ui.twentyFour->checkState() == Qt::Checked;
-    cg.writeEntry("twentyFour", m_twentyFour);
 
     if (m_showTimezone != (ui.showTimezone->checkState() == Qt::Checked)) {
         m_showTimezone = ui.showTimezone->checkState() == Qt::Checked;
@@ -335,26 +330,11 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                                 (contentsRect.width()),
                                 (contentsRect.height()));
         }
-        QString timeString;
-        // FIXME: 12/24-hr distinction makes no sense in many languages.
-        // Instead, possibly do this: use KLocale's formatTime() by default,
-        // with a checkbox "Custom time format" which would allow editing
-        // the KLocale time format string.
-        if (m_twentyFour) {
-            // i18n: WARNING: You cannot translate this string arbitrarily.
-            // See http://doc.trolltech.com/4.3/qtime.html#toString
-            // for possible elements of the format expression.
-            timeString = m_time.toString(i18nc("@item 24-hr clock format", "hh:mm"));
-        } else {
-            // i18n: WARNING: You cannot translate this string arbitrarily.
-            // See http://doc.trolltech.com/4.3/qtime.html#toString
-            // for possible elements of the format expression.
-            timeString = m_time.toString(i18nc("@item 12-hr clock format", "h:mm AP"));
-        }
+        QString timeString = KGlobal::locale()->formatTime(m_time);
 
         m_plainClockFont.setBold(m_plainClockFontBold);
         m_plainClockFont.setItalic(m_plainClockFontItalic);
- 
+
         // Choose a relatively big font size to start with
         m_plainClockFont.setPointSize(qMax((int)(contentsRect.height()/1.5), 1));
         preparePainter(p, timeRect, m_plainClockFont, timeString);
