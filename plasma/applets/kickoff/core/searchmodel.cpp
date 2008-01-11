@@ -108,13 +108,12 @@ void SearchModel::resultsAvailable(const ResultList& results)
 void SearchModel::setQuery(const QString& query)
 {
     d->clear();
-    
-    if (query.isEmpty())
+
+    if (query.isEmpty()) {
         return; 
+    }
 
-    
-
-    foreach(SearchInterface *iface,d->searchIfaces) {
+    foreach(SearchInterface *iface, d->searchIfaces) {
         iface->setQuery(query);
     }
 }
@@ -149,10 +148,11 @@ void ApplicationSearch::setQuery(const QString& query)
     QHash<QString,int> desktopNames;
     QSet<QString> execFields;
     for (int i=0;i<results.count();i++) {
-        KService::Ptr service = results[i]; 
+        KService::Ptr service = results[i];
+
         int existingPos = desktopNames.value(service->name(),-1);
         KService::Ptr existing = existingPos < 0 ? KService::Ptr(0) : results[existingPos]; 
-       
+
         if (!existing.isNull()) {
             if (isLaterVersion(existing,service)) {
                 results[i] = 0; 
@@ -174,7 +174,7 @@ void ApplicationSearch::setQuery(const QString& query)
 
     QStringList pathResults;
     foreach(KService::Ptr service,results) {
-        if (!service.isNull()) {
+        if (!service.isNull() && !service->noDisplay())  {
             pathResults << service->entryPath();
         }
     }
