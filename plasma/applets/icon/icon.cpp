@@ -63,7 +63,7 @@ void IconApplet::init()
     KConfigGroup cg = config();
     //setMinimumSize(QSize(48,68));
 
-    connectMouseSlots();
+    connect(m_icon, SIGNAL(activated()), this, SLOT(openUrl()));
     setUrl(cg.readEntry("Url", m_url));
     setDrawStandardBackground(false);
     setDisplayLines(2);
@@ -395,17 +395,6 @@ void IconApplet::dropUrls(const KUrl::List& urls,
 
     default:
         break;
-    }
-}
-
-void IconApplet::connectMouseSlots()
-{
-    if (KGlobalSettings::singleClick()) {
-        //kDebug() << "Single-Click initialized.";
-        connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
-    } else {
-        //kDebug() << "Double-Click initialized.";
-        connect(m_icon, SIGNAL(doubleClicked()), this, SLOT(openUrl()));
     }
 }
 
