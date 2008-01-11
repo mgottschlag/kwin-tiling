@@ -341,10 +341,14 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         // with a checkbox "Custom time format" which would allow editing
         // the KLocale time format string.
         if (m_twentyFour) {
-            // i18n: See http://doc.trolltech.com/4.3/qtime.html#toString
-            // for possible format expressions.
+            // i18n: WARNING: You cannot translate this string arbitrarily.
+            // See http://doc.trolltech.com/4.3/qtime.html#toString
+            // for possible elements of the format expression.
             timeString = m_time.toString(i18nc("@item 24-hr clock format", "hh:mm"));
         } else {
+            // i18n: WARNING: You cannot translate this string arbitrarily.
+            // See http://doc.trolltech.com/4.3/qtime.html#toString
+            // for possible elements of the format expression.
             timeString = m_time.toString(i18nc("@item 12-hr clock format", "h:mm AP"));
         }
 
