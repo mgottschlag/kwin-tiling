@@ -118,10 +118,12 @@ void WindowTaskItem::setStartupTask(TaskManager::StartupPtr task)
     setText(task->text());
     setIcon(KIcon(task->icon()));
 
-    Plasma::ToolTipData tip;
-    tip.mainText = task->text();
-    tip.image = task->icon();
-    setToolTip(tip);
+    if (_showTooltip) {
+        Plasma::ToolTipData tip;
+        tip.mainText = task->text();
+        tip.image = task->icon();
+        setToolTip(tip);
+    }
 }
 
 void WindowTaskItem::setWindowTask(TaskManager::TaskPtr task)
