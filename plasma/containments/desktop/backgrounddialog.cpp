@@ -584,9 +584,7 @@ void BackgroundDialog::update()
 
 void BackgroundDialog::setPreview(const QString& img, Background::ResizeMethod method)
 {
-    if (QFile::exists(img)) {
-        m_preview_token = m_preview_renderer.render(img, m_color->color(), method, Qt::FastTransformation);
-    }
+    m_preview_token = m_preview_renderer.render(img, m_color->color(), method, Qt::FastTransformation);
 }
 
 void BackgroundDialog::slotAddDir()

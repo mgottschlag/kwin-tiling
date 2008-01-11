@@ -10,6 +10,7 @@
 #include "renderthread.h"
 
 #include <QPainter>
+#include <QFile>
 #include <KDebug>
 #include <KSvgRenderer>
 
@@ -100,7 +101,7 @@ void RenderThread::run()
         QImage result(size, QImage::Format_ARGB32_Premultiplied);
         result.fill(color.rgb());
 
-        if (file.isEmpty()) {
+        if (file.isEmpty() || !QFile::exists(file)) {
             emit done(token, result);
         }
         
