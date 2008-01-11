@@ -70,7 +70,6 @@ class IconApplet : public Plasma::Applet
         void dropUrls(const KUrl::List& urls,
                       const KUrl& destination,
                       Qt::KeyboardModifiers modifier);
-        void connectMouseSlots();
 
         Plasma::Icon* m_icon;
         QString m_text;
