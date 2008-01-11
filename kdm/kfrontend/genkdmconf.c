@@ -2148,16 +2148,19 @@ upd_sessionsdirs( Entry *ce, Section *cs ATTR_UNUSED )
 			else if (!memcmp( sp->str, oldkde, olen ) &&
 			         !memcmp( sp->str + olen, "/kdm/", 5 ))
 			{
-				char newdir[PATH_MAX];
-				sprintf( newdir, KDMCONF "%s", sp->str + olen + 4 );
-				mkdirp( newdir, 0755, "sessions", False );
-				copyDir( sp->str, newdir );
-				sp->str = newdir;
+				char nd[PATH_MAX];
+				sprintf( nd, "%s%s", newdir, sp->str + olen + 4 );
+				mkdirp( nd, 0755, "sessions", False );
+				copyDir( sp->str, nd );
+				ASPrintf( (char **)&sp->str, KDMCONF "%s", sp->str + olen + 4 );
 			}
 		}
 		ce->value = joinList( sl );
-	} else
-		mkdirp( KDMCONF "/sessions", 0755, "sessions", False );
+	} else {
+		char nd[PATH_MAX];
+		sprintf( nd, "%s/sessions", newdir );
+		mkdirp( nd, 0755, "sessions", False );
+	}
 }
 
 static void
