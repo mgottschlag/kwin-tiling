@@ -42,6 +42,8 @@
 #include <plasma/svg.h>
 #include <plasma/theme.h>
 
+const int WINDOW_UPDATE_DELAY = 50;
+
 Pager::Pager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_dialog(0),
@@ -86,7 +88,7 @@ void Pager::init()
     connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
     connect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)), this, SLOT(numberOfDesktopsChanged(int)));
     connect(KWindowSystem::self(), SIGNAL(stackingOrderChanged()), this, SLOT(stackingOrderChanged()));
-    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId)), this, SLOT(windowChanged(WId)));
+    connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned int)), this, SLOT(windowChanged(WId,unsigned int)));
     connect(KWindowSystem::self(), SIGNAL(showingDesktopChanged(bool)), this, SLOT(showingDesktopChanged(bool)));
 
     m_desktopLayoutOwner = new KSelectionOwner( QString( "_NET_DESKTOP_LAYOUT_S%1" )
@@ -265,25 +267,37 @@ void Pager::configAccepted()
 void Pager::currentDesktopChanged(int desktop)
 {
     m_currentDesktop = desktop;
-    m_timer->start();
+
+    if (!m_timer->isActive()) {
+        m_timer->start(WINDOW_UPDATE_DELAY);
+    }
 }
 
 void Pager::windowAdded(WId id)
 {
     Q_UNUSED(id)
-    m_timer->start();
+
+    if (!m_timer->isActive()) {
+        m_timer->start(WINDOW_UPDATE_DELAY);
+    }
 }
 
 void Pager::windowRemoved(WId id)
 {
     Q_UNUSED(id)
-    m_timer->start();
+
+    if (!m_timer->isActive()) {
+        m_timer->start(WINDOW_UPDATE_DELAY);
+    }
 }
 
 void Pager::activeWindowChanged(WId id)
 {
     Q_UNUSED(id)
-    m_timer->start();
+
+    if (!m_timer->isActive()) {
+        m_timer->start(WINDOW_UPDATE_DELAY);
+    }
 }
 
 void Pager::numberOfDesktopsChanged(int num)
@@ -294,26 +308,37 @@ void Pager::numberOfDesktopsChanged(int num)
     }
     m_rects.clear();
     recalculateGeometry();
-    m_timer->start();
+
+    if (!m_timer->isActive()) {
+        m_timer->start(WINDOW_UPDATE_DELAY);
+    }
 }
 
 void Pager::stackingOrderChanged()
 {
-    m_timer->start();
+    if (!m_timer->isActive()) {
+        m_timer->start(WINDOW_UPDATE_DELAY);
+    }
 }
 
-void Pager::windowChanged(WId id)
+void Pager::windowChanged(WId id, unsigned int properties)
 {
     Q_UNUSED(id)
-    m_timer->start();
+
+    if (properties & NET::WMGeometry) {
+        if (!m_timer->isActive()) {
+            m_timer->start(WINDOW_UPDATE_DELAY);
+        }
+    }
 }
 
 void Pager::showingDesktopChanged(bool showing)
 {
     Q_UNUSED(showing)
-    m_timer->start();
+    if (!m_timer->isActive()) {
+        m_timer->start(WINDOW_UPDATE_DELAY);
+    }
 }
-
 
 void Pager::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {

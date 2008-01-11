@@ -67,7 +67,7 @@ class Pager : public Plasma::Applet
 	void activeWindowChanged(WId id);
 	void numberOfDesktopsChanged(int num);
 	void stackingOrderChanged();
-	void windowChanged(WId id);
+	void windowChanged(WId id, unsigned int properties);
   	void showingDesktopChanged(bool showing);
         void slotConfigureDesktop();
         void lostDesktopLayoutOwner();
