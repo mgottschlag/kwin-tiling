@@ -50,6 +50,7 @@ class IconApplet : public Plasma::Applet
         int displayLines();
         QSizeF sizeHint() const;
         Qt::Orientations expandingDirections() const;
+        QPainterPath shape() const;
 
     public slots:
         void openUrl();

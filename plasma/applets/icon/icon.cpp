@@ -70,6 +70,16 @@ void IconApplet::init()
 
     m_icon->installSceneEventFilter(this);
     m_icon->resize(contentSize());
+
+    // we do this right away since we may have our config
+    // read shortly by the containment. usually applets don't need
+    // this, but desktop icons requires some hacks.
+    //
+    // in particular, if we were created with a url passed into via
+    // the args parameter in the ctor, then there won't be an entry
+    // in our config, and desktop icons support banks on the fact
+    // that there will be
+    cg.writeEntry("Url", m_url);
 }
 
 IconApplet::~IconApplet()
@@ -260,6 +270,11 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
 Qt::Orientations IconApplet::expandingDirections() const
 {
     return 0;
+}
+
+QPainterPath IconApplet::shape() const
+{
+    return m_icon->shape();
 }
 
 bool IconApplet::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
