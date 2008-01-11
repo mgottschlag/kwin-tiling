@@ -73,7 +73,7 @@ void IconLoader::init()
 
     connect(&m_desktopDir, SIGNAL(newItems(KFileItemList)), this, SLOT(newItems(KFileItemList)) );
     connect(&m_desktopDir, SIGNAL(deleteItem(KFileItem)), this, SLOT(deleteItem(KFileItem)));
-    
+
     setShowIcons(m_iconShow);
 }
 
@@ -170,6 +170,7 @@ void IconLoader::addIcon(const KUrl& url)
     args << url.path();
     Plasma::Applet *newApplet = m_desktop->addApplet(QString("icon"),args,0);
     if (newApplet) {
+        //kDebug() << "putting" << url.path() << "into the map";
         m_iconMap[url.path()] =  newApplet;
     }
 }
@@ -186,6 +187,7 @@ void IconLoader::addIcon(Plasma::Applet *applet)
 void IconLoader::deleteIcon(const KUrl& url)
 {
     Plasma::Applet *applet = m_iconMap.value(url.path());
+
     if (applet) {
         m_iconMap.remove(url.path());
         applet->destroy();
@@ -205,8 +207,8 @@ void IconLoader::newItems(const KFileItemList& items)
         return;
     }
 
-
     foreach (KFileItem item, items) {
+        //kDebug() << "adding item" << item.url();
         if (!m_iconMap.contains(item.url().path())) {
             addIcon(item.url());
         }
@@ -217,7 +219,7 @@ void IconLoader::deleteItem(const KFileItem item)
 {
     QString path = item.url().path();
     if (!m_iconMap.contains(path)) {
-        kDebug() << "Icon " << path << " not found." << endl;
+        //kDebug() << "Icon " << path << " not found." << endl;
         return;
     }
     deleteIcon(item.url());
@@ -453,6 +455,7 @@ void IconLoader::setShowIcons(bool iconsVisible)
             KConfigGroup cg = icon->config();
             KUrl url = cg.readEntry("Url", KUrl());
 
+            //kDebug() << "checking" << url.path() << "against" << desktopDir;
             if (url.path().startsWith(desktopDir)) {
                 icon->destroy();    //the icon will be taken out of m_iconMap by the appletDeleted Slot
             }
