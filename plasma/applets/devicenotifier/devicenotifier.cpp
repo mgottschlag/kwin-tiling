@@ -163,7 +163,7 @@ void DeviceNotifier::initSysTray()
     m_layout->addWidget(m_notifierView);
     m_widget->setLayout(m_layout);
 
-    m_widget->setWindowFlags(m_notifierView->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
+    m_widget->setWindowFlags(m_notifierView->windowFlags()|Qt::WindowStaysOnTopHint|Qt::FramelessWindowHint|Qt::X11BypassWindowManagerHint);
     m_widget->adjustSize();
 
     //FIXME : For KDE4.1 need to use to KStyle to use correct click behaviour
@@ -378,7 +378,7 @@ void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if(!isOnDesktop)
     {
 	if (event->buttons () == Qt::LeftButton && contentRect().contains(event->pos())) {
-	    m_widget->show();
+	    !m_widget->isVisible() ? m_widget->show() : m_widget->hide();
 	    event->accept();
 	    return;
 	}
