@@ -205,5 +205,12 @@ void DashboardView::keyPressEvent(QKeyEvent *event)
     Plasma::View::keyPressEvent(event);
 }
 
+void DashboardView::showEvent(QShowEvent *event)
+{
+    KWindowSystem::setState(winId(), NET::SkipPager);
+
+    Plasma::View::showEvent(event);
+}
+
 #include "dashboardview.moc"
 

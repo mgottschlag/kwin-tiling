@@ -40,6 +40,7 @@ public:
 protected:
     void drawBackground(QPainter * painter, const QRectF & rect);
     void keyPressEvent(QKeyEvent *event);
+    void showEvent(QShowEvent *event);
 
 public slots:
     void toggleVisibility();
