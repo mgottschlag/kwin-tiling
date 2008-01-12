@@ -309,6 +309,9 @@ void IconApplet::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             //don't move the icon as well because our parent (usually an appletHandle) will do it for us
             parent->moveBy(delta.x(),delta.y());
         }
+
+        // We don't want any events on mouse release
+        m_icon->setUnpressed();
     }
 }
 
