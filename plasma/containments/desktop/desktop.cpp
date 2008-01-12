@@ -155,6 +155,8 @@ void DefaultDesktop::configure()
     }
 
     m_configDialog->show();
+    KWindowSystem::setOnDesktop(m_configDialog->winId(), KWindowSystem::currentDesktop());
+    KWindowSystem::activateWindow(m_configDialog->winId());
 }
 
 void DefaultDesktop::applyConfig()
