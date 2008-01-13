@@ -101,13 +101,21 @@ void TaskGroupItem::insertTask(AbstractTaskItem *item, int index)
 
 void TaskGroupItem::removeTask(AbstractTaskItem *item)
 {
+    bool found = false;
     for (int i = 0; i < _tasks.count(); i++) {
         if (_tasks[i].task == item) {
             _tasks.removeAt(i);
+            found = true;
+            break;
         }
     }
 
+    if (!found) {
+        return;
+    }
+
     layout()->removeItem(item);
+    item->setParentItem(0);
     queueGeometryUpdate();
 
     // if the group is now empty then ask the parent to remove it
@@ -121,7 +129,7 @@ void TaskGroupItem::removeTask(AbstractTaskItem *item)
     }
 
     disconnect(item, SIGNAL(activated(AbstractTaskItem *)),
-            this, SLOT(updateActive(AbstractTaskItem *)));
+               this, SLOT(updateActive(AbstractTaskItem *)));
 }
 
 void TaskGroupItem::updateActive(AbstractTaskItem *task)
