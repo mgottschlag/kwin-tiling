@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -25,6 +25,11 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QtDebug>
+
+#include <QGradient>
+#include <QLinearGradient>
+
+#include "plasma/plasma.h"
 
 using namespace Kickoff;
 
@@ -82,10 +87,7 @@ void TabBar::paintEvent(QPaintEvent *event)
         m_animStates.resize(numTabs);
     }
 
-    QBrush bgBrush = palette().button();
-    QColor bgColor = bgBrush.color();
-
-    for (int i=0 ; i<count() ; i++) {
+   for (int i=0 ; i<count() ; i++) {
         QRect rect = tabRect(i).adjusted(TAB_CONTENTS_MARGIN,TAB_CONTENTS_MARGIN,
                                         -TAB_CONTENTS_MARGIN,-TAB_CONTENTS_MARGIN);
 
@@ -97,16 +99,25 @@ void TabBar::paintEvent(QPaintEvent *event)
         }
 
         if (m_animStates[i] > 0) {
-            bgColor.setAlphaF(m_animStates[i] / qreal(m_animator.endFrame()));
-            bgBrush.setColor(bgColor);
-            painter.fillRect(tabRect(i), bgBrush);
+            // Draws the selected item with a gradient
+            qreal alpha = m_animStates[i] / qreal(m_animator.endFrame());
+            QLinearGradient g(0, 0, 0, tabRect(i).height());
+            QColor base(palette().highlight().color());
+            base.setAlphaF(alpha);
+            g.setColorAt(0, base);
+            g.setColorAt(0.3, base.lighter(110));
+            g.setColorAt(1, base.lighter(125));
+            QBrush bgBrush(g);
+            painter.save();
+            painter.setRenderHint(QPainter::Antialiasing);
+            painter.fillPath(Plasma::roundedRectangle(tabRect(i).adjusted(2, 0, -2, 0), 6), bgBrush);
         }
 
         // draw tab icon and text
         QFontMetrics metrics(painter.font());
         int textHeight = metrics.height();
         QRect iconRect = rect;
-        int delta = m_animStates[i] / m_animator.endFrame() * 4;
+        int delta = int(m_animStates[i] / qreal(m_animator.endFrame()) * 4);
         iconRect.setBottom(iconRect.bottom()-textHeight);
         iconRect.adjust(0, -delta, 0, -delta);
         tabIcon(i).paint(&painter,iconRect);
