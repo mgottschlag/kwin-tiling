@@ -40,8 +40,8 @@
 
 using namespace Kickoff;
 
-static KUrl homeUrl(getenv("HOME"));
-static KUrl remoteUrl("remote:/");
+static const KUrl homeUrl(getenv("HOME"));
+static const KUrl remoteUrl("remote:/");
 
 namespace Kickoff
 {

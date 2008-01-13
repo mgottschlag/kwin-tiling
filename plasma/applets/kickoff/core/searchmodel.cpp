@@ -218,7 +218,7 @@ QString IndexerSearch::name() const
 void IndexerSearch::setQuery(const QString& query)
 {
 #ifdef HAVE_STRIGIDBUS 
-    static StrigiClient searchClient;
+    static const StrigiClient searchClient;
 
     QList<QString> urls;
     QList<StrigiHit> hits = searchClient.getHits(query,10,0);
