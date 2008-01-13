@@ -294,20 +294,25 @@ bool IconApplet::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
 
 void IconApplet::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    QPointF curPos = transform().map(event->pos());
-    QPointF lastPos = transform().map(event->lastPos());
-    QPointF delta = curPos-lastPos;
-
     if (!isImmutable() && formFactor() == Plasma::Planar) {
         QGraphicsItem *parent = parentItem();
         Plasma::Applet *applet = qgraphicsitem_cast<Plasma::Applet*>(parent);
 
         if (applet && applet->isContainment()) {
             // our direct parent is a containment. just move ourselves.
+            QPointF curPos = transform().map(event->pos());
+            QPointF lastPos = transform().map(event->lastPos());
+            QPointF delta = curPos-lastPos;
+
             moveBy(delta.x(),delta.y());
         } else if (parent) {
             //don't move the icon as well because our parent (usually an appletHandle) will do it for us
-            parent->moveBy(delta.x(),delta.y());
+            //parent->moveBy(delta.x(),delta.y());
+            QPointF curPos = parent->transform().map(event->pos());
+            QPointF lastPos = parent->transform().map(event->lastPos());
+            QPointF delta = curPos-lastPos;
+
+            parent->setPos(parent->pos() + delta);
         }
 
         // We don't want any events on mouse release
