@@ -22,8 +22,6 @@ if (X11_Xft_FOUND)
 
   kde4_install_icons( ${ICON_INSTALL_DIR} )
 
-else (X11_Xft_FOUND)
-
-  message(STATUS "Missing Xft - disabling font installer and font previews")
-
 endif (X11_Xft_FOUND)
+
+macro_log_feature(X11_Xft_FOUND "libxft" "X FreeType interface library" "http://www.x.org" FALSE "" "Font installer and font previews")
