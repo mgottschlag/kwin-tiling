@@ -81,7 +81,9 @@ void LocationsRunner::match(Plasma::SearchContext *search)
             int idx = term.indexOf('/');
             url.clear();
             url.setHost(term.left(idx));
-            url.setPath(term.remove(0,idx));
+            if (idx != -1) {
+                url.setPath(term.mid(idx));
+            }
             url.setProtocol("http");
         }
 
