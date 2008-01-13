@@ -159,7 +159,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
     QAction *ejectAction = 0;
     if (device.isValid() && access) {
         ejectAction = new QAction(this);
-        ejectAction->setText("Eject");
+        ejectAction->setText(i18n("Eject"));
         actions << ejectAction;
     }
 
