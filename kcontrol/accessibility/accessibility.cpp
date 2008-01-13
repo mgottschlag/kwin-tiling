@@ -62,7 +62,11 @@ AccessibilityConfig::AccessibilityConfig(QWidget *parent, const QVariantList &ar
 {
    Q_UNUSED( args )
 
-   widget = new AccessibilityConfigWidget(parent, 0L);
+   QVBoxLayout *mainLayout = new QVBoxLayout( this );
+   widget = new AccessibilityConfigWidget(this, 0L);
+   mainLayout->addWidget(widget);
+   setLayout(mainLayout);
+
    KAboutData *about =
    new KAboutData(I18N_NOOP("kcmaccessiblity"), 0, ki18n("KDE Accessibility Tool"),
                   0, KLocalizedString(), KAboutData::License_GPL,
