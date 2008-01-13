@@ -767,8 +767,12 @@ void MouseSettings::apply(bool force)
   XChangePointerControl( QX11Info::display(),
                          true, true, int(qRound(accelRate*10)), 10, thresholdMove);
 
-  unsigned char map[20];
-  num_buttons = XGetPointerMapping(QX11Info::display(), map, 20);
+  // 256 might seems extreme, but X has already been known to return 32, 
+  // and we don't want to truncate things. Xlib limits the table to 256 bytes,
+  // so it's a good uper bound..
+  unsigned char map[256];
+  num_buttons = XGetPointerMapping(QX11Info::display(), map, 256);
+
   int remap=(num_buttons>=1);
   if (handedEnabled && (m_handedNeedsApply || force)) {
       if( num_buttons == 1 )
