@@ -144,7 +144,7 @@ BackgroundPackageStructure::BackgroundPackageStructure()
 
 const BackgroundPackageStructure &BackgroundPackageStructure::self()
 {
-    static BackgroundPackageStructure instance;
+    static const BackgroundPackageStructure instance;
     return instance;
 }
 
