@@ -157,6 +157,7 @@ void Tasks::addWindowTask(TaskPtr task)
     foreach (StartupPtr startup, _startupTaskItems.keys()) {
         if (startup->matchesWindow(task->window())) {
             item = dynamic_cast<WindowTaskItem *>(_startupTaskItems.take(startup));
+            break;
         }
     }
 
