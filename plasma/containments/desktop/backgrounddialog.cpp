@@ -515,8 +515,9 @@ void BackgroundDialog::showFileDialog()
 void BackgroundDialog::browse()
 {
     QString wallpaper = m_dialog->selectedFile();
+    disconnect(m_dialog, SIGNAL(okClicked()), this, SLOT(browse()));
 
-    delete m_dialog;
+    m_dialog->deleteLater();
 
     if (wallpaper.isEmpty()) {
         return;
