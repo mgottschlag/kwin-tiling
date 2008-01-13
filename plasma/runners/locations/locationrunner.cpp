@@ -52,7 +52,7 @@ LocationsRunner::~LocationsRunner()
 
 void LocationsRunner::match(Plasma::SearchContext *search)
 {
-    QString term = search->searchTerm().toLower();
+    QString term = search->searchTerm();
     m_type = search->type();
 
     if (m_type == Plasma::SearchContext::Directory ||
@@ -78,8 +78,10 @@ void LocationsRunner::match(Plasma::SearchContext *search)
         KUrl url(term);
 
         if (url.protocol().isEmpty()) {
+            int idx = term.indexOf('/');
             url.clear();
-            url.setHost(term);
+            url.setHost(term.left(idx));
+            url.setPath(term.remove(0,idx));
             url.setProtocol("http");
         }
 
