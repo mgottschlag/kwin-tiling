@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>644</width>
-    <height>328</height>
+    <height>313</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
@@ -360,7 +360,7 @@
                  <enum>QDateTimeEdit::HourSection</enum>
                 </property>
                 <property name="displayFormat" >
-                 <string>hh:mm:ss</string>
+                 <string>hh 'Hours' mm 'Mins' ss 'Secs'</string>
                 </property>
                 <property name="time" >
                  <time>
