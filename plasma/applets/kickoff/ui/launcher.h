@@ -74,8 +74,10 @@ protected:
 
 private Q_SLOTS:
     void focusSearchView(const QString& query);
-    void focusFavoritesView();
     void showViewContextMenu(const QPoint& pos);
+
+public Q_SLOTS:
+    void focusFavoritesView();
 
 private:
     class Private;

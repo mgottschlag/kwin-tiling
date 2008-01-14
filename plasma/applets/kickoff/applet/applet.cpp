@@ -176,6 +176,7 @@ void LauncherApplet::toggleMenu(bool pressed)
         d->launcher->setApplet(this);
         connect(d->launcher, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
     }
+    d->launcher->focusFavoritesView();
 
     // try to position the launcher alongside the top or bottom edge of the
     // applet with and aligned to the left or right of the applet
