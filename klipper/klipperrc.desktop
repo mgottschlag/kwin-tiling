@@ -75,6 +75,7 @@ Regexp=^\\/.+\\.jpg$
 [Action_0/Command_0]
 Commandline=gwenview %s
 Description=Launch &Gwenview
+Description[el]=Εκτέλεση &Gwenview
 Description[eo]=Lanĉi &Gwenview-rigardilon
 Description[ga]=Tosaigh &Gwenview
 Description[km]=បើក​ដំណើរការ Gwenview
@@ -149,6 +150,7 @@ Regexp=^https?://.
 [Action_1/Command_0]
 Commandline=kfmclient exec %s
 Description=Open with &default Browser
+Description[el]=Άνοιγμα με τον &προκαθορισμένο περιηγητή
 Description[eo]=Malfermi per &defaŭlta retumilo
 Description[ga]=Oscail leis an mBrabhsálaí &réamhshocraithe
 Description[km]=បើក​ជាមួយ​កម្មវិធី​រុករក​លំនាំដើម
@@ -1359,6 +1361,7 @@ Regexp=^ftp://.
 [Action_6/Command_0]
 Commandline=kfmclient exec %s
 Description=Open with &default Browser
+Description[el]=Άνοιγμα με τον &προκαθορισμένο περιηγητή
 Description[eo]=Malfermi per &defaŭlta retumilo
 Description[ga]=Oscail leis an mBrabhsálaí &réamhshocraithe
 Description[km]=បើក​ជាមួយ​កម្មវិធី​រុករក​លំនាំដើម
