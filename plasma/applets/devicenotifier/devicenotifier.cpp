@@ -352,9 +352,11 @@ void DeviceNotifier::performSourceRemovedInSystray(const QString& name)
 
 void DeviceNotifier::performSourceRemovedInDesktop(const QString& name)
 {
-    Plasma::Icon * icon=m_map_item.take(name).icon;
-    m_layout_list->removeItem(icon);
-    delete icon;
+    if	(m_map_item.contains(name)) {
+      Plasma::Icon * icon=m_map_item.take(name).icon;
+      m_layout_list->removeItem(icon);
+      delete icon;
+    }
 }
 
 QModelIndex DeviceNotifier::indexForUdi(const QString &udi) const
