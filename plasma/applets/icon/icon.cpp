@@ -300,8 +300,8 @@ void IconApplet::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
         if (applet && applet->isContainment()) {
             // our direct parent is a containment. just move ourselves.
-            QPointF curPos = transform().map(event->pos());
-            QPointF lastPos = transform().map(event->lastPos());
+            QPointF curPos = event->pos();
+            QPointF lastPos = event->lastPos();
             QPointF delta = curPos-lastPos;
 
             moveBy(delta.x(),delta.y());
