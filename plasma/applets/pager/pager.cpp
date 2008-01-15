@@ -247,8 +247,13 @@ void Pager::recalculateWindowRects()
 void Pager::configAccepted()
 {
     KConfigGroup cg = config();
-    m_showDesktopNumber = ui.showDesktopNumberCheckBox->isChecked();
-    cg.writeEntry("showDesktopNumber", m_showDesktopNumber);
+    bool changed = false;
+
+    if (m_showDesktopNumber != ui.showDesktopNumberCheckBox->isChecked()) {
+        m_showDesktopNumber = ui.showDesktopNumberCheckBox->isChecked();
+        cg.writeEntry("showDesktopNumber", m_showDesktopNumber);
+        changed = true;
+    }
 
     // we need to keep all pager applets consistent since this affects
     // the layout of the desktops as used by the window manager,
@@ -260,7 +265,11 @@ void Pager::configAccepted()
             m_rows = m_desktopCount;
         }
         globalcg.writeEntry("rows", m_rows);
-        // force an update of the column count in recalculateGeometry
+        changed = true;
+    }
+
+    if (changed) {
+        // force an update
         m_columns = 0;
         m_size = QSizeF(-1, -1);
         recalculateGeometry();
