@@ -53,6 +53,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_showDate(false),
       m_showYear(false),
       m_showDay(false),
+      m_showSeconds(false),
       m_showTimezone(false),
       m_dialog(0),
       m_calendar(0),
@@ -78,6 +79,8 @@ void Clock::init()
 
     m_showDay = cg.readEntry("showDay", true);
 
+    m_showSeconds = cg.readEntry("showSeconds", false);
+
     m_plainClockFont = cg.readEntry("plainClockFont", m_plainClockFont);
     m_plainClockColor = cg.readEntry("plainClockColor", m_plainClockColor);
 
@@ -88,7 +91,7 @@ void Clock::init()
 
     setContentSize(120, 60);
     setMinimumContentSize(80, 44);
-    dataEngine("time")->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
+    dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
 }
 
 Qt::Orientations Clock::expandingDirections() const
@@ -113,7 +116,7 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
     m_prettyTimezone = data["Timezone City"].toString();
 
     // avoid unnecessary repaints
-    if (m_time.minute() != m_lastTimeSeen.minute()) {
+    if (m_showSeconds || m_time.minute() != m_lastTimeSeen.minute()) {
         m_lastTimeSeen = m_time;
 
         update();
@@ -171,6 +174,7 @@ void Clock::showConfigurationInterface()
     ui.showDate->setChecked(m_showDate);
     ui.showYear->setChecked(m_showYear);
     ui.showDay->setChecked(m_showDay);
+    ui.secondsCheckbox->setChecked(m_showSeconds);
     ui.showTimezone->setChecked(m_showTimezone);
     ui.plainClockFontBold->setChecked(m_plainClockFontBold);
     ui.plainClockFontItalic->setChecked(m_plainClockFontItalic);
@@ -187,12 +191,16 @@ void Clock::showConfigurationInterface()
 void Clock::configAccepted()
 {
     KConfigGroup cg = config();
+    //We need this to happen before we disconnect/reconnect sources to ensure 
+    //that the update interval is set properly.
+    m_showSeconds = ui.secondsCheckbox->checkState() == Qt::Checked;
+    cg.writeEntry("showSeconds", m_showSeconds);
     //QGraphicsItem::update();
     QStringList tzs = ui.timeZones->selection();
     if (ui.localTimeZone->checkState() == Qt::Checked) {
         dataEngine("time")->disconnectSource(m_timezone, this);
         m_timezone = "Local";
-        dataEngine("time")->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
+        dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
         cg.writeEntry("timezone", m_timezone);
     } else if (tzs.count() > 0) {
         //TODO: support multiple timezones
@@ -203,13 +211,13 @@ void Clock::configAccepted()
             // setting hasn't been changed.
             ui.showTimezone->setCheckState(Qt::Checked);
             m_timezone = tz;
-            dataEngine("time")->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
+            dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
         }
         cg.writeEntry("timezone", m_timezone);
     } else if (m_timezone != "Local") {
         dataEngine("time")->disconnectSource(m_timezone, this);
         m_timezone = "Local";
-        dataEngine("time")->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
+        dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
         cg.writeEntry("timezone", m_timezone);
     } else {
         kDebug() << "Timezone unknown: " << tzs;
@@ -221,6 +229,8 @@ void Clock::configAccepted()
     cg.writeEntry("showYear", m_showYear);
     m_showDay = ui.showDay->checkState() == Qt::Checked;
     cg.writeEntry("showDay", m_showDay);
+    m_showSeconds = ui.secondsCheckbox->checkState() == Qt::Checked;
+    cg.writeEntry("showSeconds", m_showSeconds);
 
     if (m_showTimezone != (ui.showTimezone->checkState() == Qt::Checked)) {
         m_showTimezone = ui.showTimezone->checkState() == Qt::Checked;
@@ -330,7 +340,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                                 (contentsRect.width()),
                                 (contentsRect.height()));
         }
-        QString timeString = KGlobal::locale()->formatTime(m_time);
+        QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
 
         m_plainClockFont.setBold(m_plainClockFontBold);
         m_plainClockFont.setItalic(m_plainClockFontItalic);
@@ -361,6 +371,16 @@ QRect Clock::preparePainter(QPainter *p, const QRect &rect, const QFont &font, c
             tmpRect.height() > rect.height()));
 
     return tmpRect;
+}
+
+int Clock::updateInterval() const
+{
+    return m_showSeconds ? 1000 : 60000;
+}
+
+Plasma::IntervalAlignment Clock::intervalAlignment() const
+{
+    return m_showSeconds ? Plasma::NoAlignment : Plasma::AlignToMinute;
 }
 
 #include "clock.moc"

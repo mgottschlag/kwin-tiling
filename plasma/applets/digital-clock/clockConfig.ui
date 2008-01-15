@@ -107,6 +107,13 @@
          </property>
         </widget>
        </item>
+       <item row="8" column="0" >
+        <widget class="QCheckBox" name="secondsCheckbox" >
+         <property name="text" >
+          <string>Show &amp;seconds</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="TimezonesTab" >
