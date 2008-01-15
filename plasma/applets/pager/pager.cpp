@@ -100,6 +100,11 @@ void Pager::init()
     m_currentDesktop = KWindowSystem::currentDesktop();
 }
 
+QPainterPath Pager::shape() const
+{
+    return Plasma::Widget::shape();
+}
+
 void Pager::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::SizeConstraint) {

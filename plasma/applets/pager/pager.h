@@ -45,6 +45,7 @@ class Pager : public Plasma::Applet
 	Qt::Orientations expandingDirections() const;
         virtual QList<QAction*> contextActions();
         QSizeF contentSizeHint() const;
+        QPainterPath shape() const;
 
     public slots:
         void showConfigurationInterface();
