@@ -25,6 +25,8 @@
 #include <QMap>
 #include <QString>
 #include <QPointF>
+#include <QApplication>
+#include <QDesktopWidget>
 
 #include <KDirLister>
 #include <KFileItem>
@@ -62,8 +64,11 @@ public:
     QSizeF gridSize() const;
 
     QPointF findFreePlaceNear(QPointF p);
-    void alignToGrid(QGraphicsItem *item);
-    void alignToGrid(QGraphicsItem *item, const QPoint &pos);
+    /**
+     * Places an item on the desktop in the first available space.
+     */
+    void alignToGrid(Plasma::Applet *item);
+    void alignToGrid(Plasma::Applet *item, const QPoint &pos, bool moveIntersectingItems=false);
 
     /**
      * Get the grid square index where a point in local coordinates is located.
@@ -116,7 +121,6 @@ public:
     bool showIcons() const;
     void setShowIcons(bool iconsVisible);
 
-    void changeAlignment(bool horizontal);
     //inline const QList<Plasma::Applet*>& desktopItems();
 
 
@@ -128,9 +132,15 @@ private:
     void configureMedia();
     void createMenu();
 
-    void alignVertical(const QList<Plasma::Applet*> &items);
-    void alignHorizontal(const QList<Plasma::Applet*> &items);
+    void alignIcons();
+    void setToGrid(Plasma::Applet* icon, const QPoint p);
+    QRectF nextFreeRect(const QRectF itemRect);
+    QRectF nextFreeRect(const QRectF itemRect, QList<Plasma::Applet*> placedItems);
+    bool intersectsWithItems(const QRectF item, const QList<Plasma::Applet*> &items) const;
+    QRectF advanceAlongGrid(QRectF rect);
+    //bool shiftIcon(Plasma::Applet *icon, Plasma::Applet*);
     bool isFreePlace(const QPointF &p);
+    inline QRectF availableGeometry() const;
 
     KDirLister m_desktopDir;
     Plasma::DataEngine *m_solidEngine;
@@ -140,8 +150,8 @@ private:
 
     QList<QAction*> actions;
 
-    bool m_verticalOrientation;
-    bool m_iconShow;
+    Qt::Orientation m_orientation;
+    bool m_showIcons;
     bool m_gridAlign;
     bool m_enableMedia;
     QSizeF m_gridSize;
@@ -160,14 +170,19 @@ private Q_SLOTS:
 
 QPoint IconLoader::mapToGrid(const QPointF &pos) const
 {
-    return QPoint(int(pos.x()/m_gridSize.width()),
-                  int(pos.y()/m_gridSize.height()));
+    return QPoint(qRound(pos.x()/m_gridSize.width()),
+                  qRound(pos.y()/m_gridSize.height()));
 }
 
 QPointF IconLoader::mapFromGrid(const QPoint &pos) const
 {
-    return QPointF(pos.x()*m_gridSize.width() +m_gridSize.width()/2,
-                  pos.y()*m_gridSize.height() +m_gridSize.height()/2);
+    return QPointF(pos.x()*m_gridSize.width(),
+                  pos.y()*m_gridSize.height());
+}
+
+QRectF IconLoader::availableGeometry() const
+{
+    return QRectF(QApplication::desktop()->availableGeometry(0));
 }
 
 #endif

@@ -34,8 +34,8 @@
 IconLoader::IconLoader(DefaultDesktop *parent)
     : QObject(parent),
       m_desktop(parent),
-      m_verticalOrientation(true),
-      m_iconShow(true),
+      m_orientation(Qt::Vertical),
+      m_showIcons(true),
       m_gridAlign(true),
       m_enableMedia(false)
 {
@@ -53,8 +53,9 @@ void IconLoader::init()
     //load stored settings
     KConfigGroup cg(m_desktop->globalConfig());
     cg = KConfigGroup(&cg, "DesktopIcons");
-    m_iconShow = cg.readEntry("showIcons", m_iconShow);
+    m_showIcons = cg.readEntry("showIcons", m_showIcons);
     m_gridAlign = cg.readEntry("alignToGrid", m_gridAlign);
+    m_orientation = (Qt::Orientation)cg.readEntry("orientation", (int)m_orientation);
     setShowDeviceIcons(cg.readEntry("enableMedia", m_enableMedia));
 
     setGridSize(QSizeF(150, 150));
@@ -74,7 +75,7 @@ void IconLoader::init()
     connect(&m_desktopDir, SIGNAL(newItems(KFileItemList)), this, SLOT(newItems(KFileItemList)) );
     connect(&m_desktopDir, SIGNAL(deleteItem(KFileItem)), this, SLOT(deleteItem(KFileItem)));
 
-    setShowIcons(m_iconShow);
+    setShowIcons(m_showIcons);
 }
 
 void IconLoader::setShowDeviceIcons(bool show)
@@ -95,7 +96,8 @@ void IconLoader::reloadConfig()
     KConfigGroup cg(m_desktop->globalConfig());
     cg = KConfigGroup(&cg, "DesktopIcons");
     setGridAligned(cg.readEntry("alignToGrid", m_gridAlign));
-    setShowIcons(cg.readEntry("showIcons", m_iconShow));
+    setShowIcons(cg.readEntry("showIcons", m_showIcons));
+    m_orientation = (Qt::Orientation)cg.readEntry("orientation", (int)m_orientation);
     setShowDeviceIcons(cg.readEntry("enableMedia", m_enableMedia));
 }
 
@@ -112,7 +114,7 @@ void IconLoader::createMenu()
 
 QList<QAction*> IconLoader::contextActions()
 {
-    if (!m_iconShow) {
+    if (!m_showIcons) {
         return QList<QAction*>();
     }
 
@@ -125,24 +127,14 @@ QList<QAction*> IconLoader::contextActions()
 
 void IconLoader::slotAlignHorizontal()
 {
-    m_verticalOrientation = false;
-    alignHorizontal(m_iconMap.values());
+    m_orientation = Qt::Horizontal;
+    alignIcons();
 }
 
 void IconLoader::slotAlignVertical()
 {
-    m_verticalOrientation = true;
-    alignVertical(m_iconMap.values());
-}
-
-void IconLoader::changeAlignment(bool horizontal)
-{
-    m_verticalOrientation = !horizontal;
-    if (m_verticalOrientation) {
-        alignVertical(m_iconMap.values());
-    } else {
-        alignHorizontal(m_iconMap.values());
-    }
+    m_orientation = Qt::Vertical;
+    alignIcons();
 }
 
 void IconLoader::configureMedia()
@@ -171,6 +163,9 @@ void IconLoader::addIcon(const KUrl& url)
     Plasma::Applet *newApplet = m_desktop->addApplet(QString("icon"),args,0);
     if (newApplet) {
         //kDebug() << "putting" << url.path() << "into the map";
+        if (m_gridAlign) {
+            alignToGrid(newApplet);
+        }
         m_iconMap[url.path()] =  newApplet;
     }
 }
@@ -230,85 +225,95 @@ void IconLoader::appletDeleted(Plasma::Applet *applet)
     deleteIcon(applet);
 }
 
-void IconLoader::alignHorizontal(const QList<Plasma::Applet*> &items)
+void IconLoader::alignIcons()
 {
-    Plasma::Applet *icon;
-    int index = 0;
-    int itemCount = items.count();
-    if (itemCount == 0) {
+    QList<Plasma::Applet*> icons = m_iconMap.values();
+    if (icons.count() == 0 || !m_showIcons) {
         return;
-    } else {
-        icon = items[0];
     }
 
-    qreal desktopWidth = m_desktop->contentSizeHint().width();
-    qreal desktopHeight = m_desktop->contentSizeHint().height();
     qreal gridWidth = gridSize().width();
     qreal gridHeight = gridSize().height();
 
-    QPointF pos;
-    for(pos.ry() = gridHeight/2; pos.y() < desktopHeight; pos.ry() += gridHeight) {
-        for(pos.rx() = gridWidth/2; pos.x() < desktopWidth; pos.rx() += gridWidth) {
-            Plasma::Applet *existing = dynamic_cast<Plasma::Applet*>(m_desktop->scene()->itemAt(pos));
-            // If the existing index is in the items list with an index
-            // greater than icon index current we will have to move it.
-            // So ignore it
-            // If its equal then existing == icon
-            int existingIndex = items.indexOf(existing);
-            if (!existing || existing ==m_desktop || existingIndex >= index) {
-                alignToGrid(icon, mapToGrid(pos));
-                // get next
-                if (++index < itemCount) {
-                    icon = items[index];
-                } else {
-                    /* all items located */
-                    return;
-                }
-            }
+    QRectF candidateRect(0, 0, gridWidth, gridHeight);
+    QList<Plasma::Applet*> placedIcons;
+
+    foreach (Plasma::Applet* icon, icons) {
+        candidateRect = QRectF(QPointF(0.0,0.0),icon->boundingRect().size());
+        //check if any placed icons intersect with the icon placed at various grid locations
+
+        candidateRect = nextFreeRect(candidateRect, placedIcons);
+        if (!candidateRect.isValid()) {
+            return;
         }
+
+        //mapToGrid on the center spot to eliminate conversion error
+        setToGrid(icon, mapToGrid(candidateRect.topLeft()));
+        placedIcons << icon;
     }
-    // TODO What to do if we run out of space? make grid smaller?
 }
 
-void IconLoader::alignVertical(const QList<Plasma::Applet*> &items)
+QRectF IconLoader::nextFreeRect(const QRectF itemRect)
 {
-    Plasma::Applet *icon;
-    int index = 0;
-    int itemCount = items.count();
-    if (itemCount == 0) {
-        return;
-    } else {
-        icon = items[0];
-    }
+    return nextFreeRect(itemRect, m_iconMap.values());
+}
 
-    qreal desktopWidth = m_desktop->contentSizeHint().width();
-    qreal desktopHeight = m_desktop->contentSizeHint().height();
-    qreal gridWidth = gridSize().width();
-    qreal gridHeight = gridSize().height();
-
-    QPointF pos;
-    for(pos.rx() = gridWidth/2; pos.x() < desktopWidth; pos.rx() += gridWidth) {
-        for(pos.ry() = gridHeight/2; pos.y() < desktopHeight; pos.ry() += gridHeight) {
-            Plasma::Applet *existing = dynamic_cast<Plasma::Applet*>(m_desktop->scene()->itemAt(pos));
-            // If *existing is in items list with an index
-            // greater than current icon index, then we will have to move
-            // existing after.
-            // So ignore it
-            // If its equal then existing == icon then... we ignore it too
-            int existingIndex = items.indexOf(existing);
-            if (!existing || existing == m_desktop || existingIndex >= index) {
-                alignToGrid(icon, mapToGrid(pos));
-                // get next
-                if (++index < itemCount) {
-                    icon = items[index];
-                } else {
-                    /* all items located */
-                    return;
-                }
-            }
+QRectF IconLoader::nextFreeRect(const QRectF itemRect, QList<Plasma::Applet*> placedItems)
+{
+    QRectF newRect = itemRect;
+    while (intersectsWithItems(newRect, placedItems)) {
+        newRect = advanceAlongGrid(newRect);
+        if (!availableGeometry().contains(newRect)) {
+            //we've moved completely off the desktop so we should stop
+            return QRectF();
         }
     }
-    // TODO What to do if we run out of space? make grid smaller?
+    return newRect;
+}
+
+bool IconLoader::intersectsWithItems(const QRectF item, const QList<Plasma::Applet*> &items) const
+{
+    foreach (Plasma::Applet* testItem, items) {
+        if (item.intersects(testItem->sceneBoundingRect())) {
+            return true;
+        }
+    }
+    return false;
+}
+
+QRectF IconLoader::advanceAlongGrid(QRectF rect)
+{
+    QRectF newRect = rect;
+    qreal gridWidth = m_gridSize.width();
+    qreal gridHeight = m_gridSize.height();
+    
+    if (m_orientation == Qt::Horizontal) {
+        newRect.translate(gridWidth,0);
+    } else {
+        newRect.translate(0, gridHeight);
+    }
+    if (!availableGeometry().contains(newRect)) {
+        //we've moved off of the desktop and need to move back
+        if (m_orientation == Qt::Horizontal) {
+            newRect.moveTo(0,newRect.y()+gridHeight);
+        } else {
+            newRect.moveTo(newRect.x()+gridWidth,0);
+        }
+    }
+    return newRect;
+}
+
+void IconLoader::setToGrid(Plasma::Applet* icon, const QPoint p)
+{
+    //place the center of the icon in the center of the grid if it's smaller than the grid square
+    QPointF newPos = mapFromGrid(p);
+    if (m_gridSize.width() > icon->boundingRect().width()) {
+        newPos.setX(newPos.x() + (m_gridSize.width()/2 - icon->boundingRect().width()/2));
+    }
+    if (m_gridSize.height() > icon->boundingRect().height()) {
+        newPos.setY(newPos.y() + (m_gridSize.height()/2 - icon->boundingRect().height()/2));
+    }
+    icon->setPos(newPos);
 }
 
 QPointF IconLoader::findFreePlaceNear(QPointF point)
@@ -371,7 +376,8 @@ QPointF IconLoader::findFreePlaceNear(QPointF point)
 }
 
 
-bool IconLoader::isFreePlace(const QPointF &p) {
+bool IconLoader::isFreePlace(const QPointF &p)
+{
     QGraphicsItem *existing = m_desktop->scene()->itemAt(p);
     bool free = (!existing) || (existing == m_desktop);
     return free;
@@ -388,27 +394,26 @@ void IconLoader::setGridAligned(bool align)
     // to true then align all icons
     if (!m_gridAlign && align) {
         foreach (Plasma::Applet *applet, m_iconMap.values()) {
-            alignToGrid(applet);
+            alignToGrid(applet,mapToGrid(applet->scenePos()));
         }
     }
     m_gridAlign = align;
 }
 
-void IconLoader::alignToGrid(QGraphicsItem *item)
+void IconLoader::alignToGrid(Plasma::Applet *item)
 {
-    QPointF currentPos = item->pos();
-    QPoint currentGridPos = mapToGrid(currentPos);
+    QRectF freeRect = nextFreeRect(QRectF(QPointF(0.0,0.0),item->boundingRect().size()));
+    QPoint currentGridPos = mapToGrid(freeRect.topLeft());
     alignToGrid(item, currentGridPos);
 }
 
-void IconLoader::alignToGrid(QGraphicsItem *item, const QPoint &pos)
+void IconLoader::alignToGrid(Plasma::Applet *item, const QPoint &pos, bool moveIntersectingItems)
 {
-    qreal width = item->boundingRect().width();
-    qreal height = item->boundingRect().height();
-    QPointF scenePos = mapFromGrid(pos);
-    scenePos.rx() -= width/2;
-    scenePos.ry() -= height/2;
-    item->setPos(scenePos);
+    if (moveIntersectingItems) {
+        return;
+    } else {
+        setToGrid(item, pos);
+    }
 }
 
 QSizeF IconLoader::gridSize() const
@@ -440,13 +445,13 @@ void IconLoader::setGridSize(const QSizeF& gridSize)
 
 bool IconLoader::showIcons() const
 {
-    return m_iconShow;
+    return m_showIcons;
 }
 
 void IconLoader::setShowIcons(bool iconsVisible)
 {
-    m_iconShow = iconsVisible;
-    if (m_iconShow) {
+    m_showIcons = iconsVisible;
+    if (m_showIcons) {
         m_desktopDir.openUrl(KGlobalSettings::desktopPath());
     } else {
         m_desktopDir.stop();
