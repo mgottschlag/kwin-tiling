@@ -68,7 +68,7 @@ extern "C"
     else
         {
         QDBusInterface kded("org.kde.kded", "/kded", "org.kde.kded");
-		QDBusReply<bool> reply = kded.call("loadModule",QString( "khotkeys" ) );
+        QDBusReply<bool> reply = kded.call("loadModule",QString( "khotkeys" ) );
         if( !reply.isValid())
             {
             kWarning( 1217 ) << "Loading of khotkeys module failed." ;
@@ -110,10 +110,8 @@ Module::Module( QWidget* parent_P, const QVariantList & )
     connect( buttons_widget, SIGNAL( global_settings_pressed()), SLOT( global_settings()));
 //    listview_current_action_changed(); // init
 
-		KAboutData* about = new KAboutData("kcmkhotkeys", 0, ki18n("KHotKeys"), KHOTKEYS_VERSION,
-      KLocalizedString(),
-      KAboutData::License_GPL,
-      ki18n("(c) 1999-2005 Lubos Lunak"));
+    KAboutData* about = new KAboutData("kcmkhotkeys", 0, ki18n("KHotKeys"), KHOTKEYS_VERSION,
+        KLocalizedString(), KAboutData::License_GPL, ki18n("(c) 1999-2005 Lubos Lunak"));
     about->addAuthor(ki18n("Lubos Lunak"), ki18n("Maintainer"), "l.lunak@kde.org");
     setAboutData( about );
     load();
