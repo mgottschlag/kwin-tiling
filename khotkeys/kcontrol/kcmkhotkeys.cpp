@@ -166,8 +166,8 @@ void Module::save()
             }
         else
             {
-            org::kde::khotkeys* iface = new org::kde::khotkeys("org.kde.khotkeys", "/KHotKeys", bus, this);
-            iface->reread_configuration();
+            org::kde::khotkeys iface("org.kde.khotkeys", "/KHotKeys", bus);
+            iface.reread_configuration();
             kDebug( 1217 ) << "telling khotkeys daemon to reread configuration";
             }
         }

@@ -17,6 +17,9 @@
 #include <kstandarddirs.h>
 #include <kconfig.h>
 #include <kdebug.h>
+#include <QtDBus/QtDBus>
+
+#include "khotkeysiface.h"
 
 #include <settings.h>
 
@@ -49,9 +52,12 @@ int main( int argc, char* argv[] )
         return 2;
         }
     settings.write_settings();
-#ifdef __GNUC__
-#warning port to DBUS reread_configuration
-#endif
-    //kapp->dcopClient()->send( "khotkeys*", "khotkeys", "reread_configuration()", data );
+    QDBusConnection bus = QDBusConnection::sessionBus();
+    if( bus.interface()->isServiceRegistered( "org.kde.khotkeys" ))
+        {
+        org::kde::khotkeys iface("org.kde.khotkeys", "/KHotKeys", bus);
+        iface.reread_configuration();
+        kDebug( 1217 ) << "telling khotkeys daemon to reread configuration";
+        }
     return 0;
     }

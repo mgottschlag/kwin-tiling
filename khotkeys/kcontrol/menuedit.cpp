@@ -24,6 +24,7 @@
 #include <QLayout>
 //#include <kkeydialog.h>
 #include <QtDBus/QtDBus>
+#include "khotkeysiface.h"
 
 #include <settings.h>
 #include <action_data.h>
@@ -187,18 +188,16 @@ KService::Ptr khotkeys_find_menu_entry( const QString& shortcut_P )
 void khotkeys_send_reread_config()
     {
     QByteArray data;
-    if( !QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.khotkeys" ))
+    QDBusConnection bus = QDBusConnection::sessionBus();
+    if( !bus.interface()->isServiceRegistered( "org.kde.khotkeys" ))
         {
         kDebug( 1217 ) << "launching new khotkeys daemon";
         KToolInvocation::kdeinitExec( "khotkeys" );
         }
     else
         {
-#ifdef __GNUC__
-#warning port to DBUS signal reread_configuration
-#endif
-
-        //kapp->dcopClient()->send( "khotkeys*", "khotkeys", "reread_configuration()", data );
+        org::kde::khotkeys iface("org.kde.khotkeys", "/KHotKeys", bus);
+        iface.reread_configuration();
         kDebug( 1217 ) << "telling khotkeys daemon to reread configuration";
         }
     }
