@@ -166,7 +166,7 @@ int Settings::write_actions_recursively_v2( KConfigGroup& cfg_P, Action_data_gro
             ( *it )->cfg_write( itConfig );
             Action_data_group* grp = dynamic_cast< Action_data_group* >( *it );
             if( grp != NULL )
-                enabled_cnt += write_actions_recursively_v2( cfg_P, grp, enabled_P && (*it)->enabled( true ));
+                enabled_cnt += write_actions_recursively_v2( itConfig, grp, enabled_P && (*it)->enabled( true ));
             }
         }
     cfg_P.writeEntry( "DataCount", cnt );
