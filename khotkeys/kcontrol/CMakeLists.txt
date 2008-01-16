@@ -18,6 +18,7 @@ set(kcm_khotkeys_PART_SRCS ${libshared_SRCS}
    windowdef_list_widget.cpp 
    windowdef_simple_widget.cpp 
    triggers_tab.cpp 
+   dcop_widget.cpp 
    info_tab.cpp 
    action_list_widget.cpp 
    keyboard_input_widget.cpp 
@@ -42,6 +43,7 @@ kde4_add_ui3_files(kcm_khotkeys_PART_SRCS
 	ui/triggers_tab_ui.ui 
 	ui/general_tab_ui.ui 
 	ui/action_group_tab_ui.ui 
+	ui/dcop_widget_ui.ui 
 	ui/main_buttons_widget_ui.ui 
 	ui/info_tab_ui.ui 
 	ui/window_trigger_widget_ui.ui 

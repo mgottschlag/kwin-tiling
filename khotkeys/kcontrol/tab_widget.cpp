@@ -27,6 +27,7 @@
 #include "windowdef_list_widget.h"
 #include "menuentry_widget.h"
 #include "command_url_widget.h"
+#include "dcop_widget.h"
 #include "triggers_tab.h"
 #include "info_tab.h"
 #include "action_list_widget.h"
@@ -68,6 +69,7 @@ Tab_widget::Tab_widget( QWidget* parent_P, const char* name_P )
     pages[ TAB_GESTURE_TRIGGER ] = new Gesture_triggers_tab;
     pages[ TAB_COMMAND_URL ] = new Command_url_tab;
     pages[ TAB_MENUENTRY ] = new Menuentry_tab;
+    pages[ TAB_DCOP ] = new Dcop_tab;
     pages[ TAB_KEYBOARD_INPUT ] = new Keyboard_input_tab;
     pages[ TAB_WINDOW ] = new Windowdef_list_tab;
 	pages[ TAB_VOICE_SETTINGS ] = new Voice_settings_tab;
@@ -165,6 +167,18 @@ void Tab_widget::save_current_action_changes()
                     ->get_data( tmp ));
                 tmp->set_action(
                     static_cast< Menuentry_tab* >( pages[ TAB_MENUENTRY ] )->get_data( tmp ));
+                module->set_current_action_data( tmp );
+              break;
+                }
+            case TYPE_DCOP_SHORTCUT:
+                {
+                Dcop_shortcut_action_data* tmp = new Dcop_shortcut_action_data(
+                    module->current_action_data()->parent(), name, comment, enabled );
+                tmp->set_trigger(
+                    static_cast< Shortcut_trigger_tab* >( pages[ TAB_SHORTCUT_TRIGGER ] )
+                    ->get_data( tmp ));
+                tmp->set_action(
+                    static_cast< Dcop_tab* >( pages[ TAB_DCOP ] )->get_data( tmp ));
                 module->set_current_action_data( tmp );
               break;
                 }
@@ -268,6 +282,18 @@ void Tab_widget::load_current_action()
                     item->action());
               break;
                 }
+            case TYPE_DCOP_SHORTCUT:
+                {
+                kDebug( 1217 ) << "loading dcop_shortcut";
+                Dcop_shortcut_action_data* item
+                    = static_cast< Dcop_shortcut_action_data* >( tmp );
+                static_cast< General_tab* >( pages[ TAB_GENERAL ] )->set_data( item );
+                static_cast< Shortcut_trigger_tab* >( pages[ TAB_SHORTCUT_TRIGGER ] )
+                    ->set_data( item->trigger());
+                static_cast< Dcop_tab* >( pages[ TAB_DCOP ] )->set_data(
+                    item->action());
+              break;
+                }
             case TYPE_KEYBOARD_INPUT_SHORTCUT:
                 {
                 kDebug( 1217 ) << "loading keyboard_input_shortcut";
@@ -365,6 +391,9 @@ void Tab_widget::set_action_type( action_type_t type_P, bool force_P )
         case TYPE_MENUENTRY_SHORTCUT:
             show_pages(( TAB_GENERAL, TAB_SHORTCUT_TRIGGER, TAB_MENUENTRY ));
           break;
+        case TYPE_DCOP_SHORTCUT:
+            show_pages(( TAB_GENERAL, TAB_SHORTCUT_TRIGGER, TAB_DCOP ));
+          break;
         case TYPE_KEYBOARD_INPUT_SHORTCUT:
             show_pages(( TAB_GENERAL, TAB_SHORTCUT_TRIGGER, TAB_KEYBOARD_INPUT ));
           break;
@@ -396,6 +425,7 @@ const char* const Tab_widget::tab_labels[ Tab_widget::TAB_END ] = {
     I18N_NOOP( "Actions" ), // TAB_ACTIONS
     I18N_NOOP( "Command/URL Settings" ), // TAB_COMMAND_URL
     I18N_NOOP( "Menu Entry Settings" ), // TAB_MENUENTRY
+    I18N_NOOP( "DCOP Call Settings" ), // TAB_DCOP
     I18N_NOOP( "Keyboard Input Settings" ), // TAB_KEYBOARD_INPUT
     I18N_NOOP( "Window" ), // TAB_WINDOW
     I18N_NOOP( "Conditions" ),  // TAB_CONDITIONS
@@ -436,6 +466,8 @@ Tab_widget::action_type_t Tab_widget::type( const Action_data* data_P )
         ret = Tab_widget::TYPE_COMMAND_URL_SHORTCUT;
     else if( typeid( *data_P ) == typeid( Menuentry_shortcut_action_data ))
         ret = Tab_widget::TYPE_MENUENTRY_SHORTCUT;
+    else if( typeid( *data_P ) == typeid( Dcop_shortcut_action_data ))
+        ret = Tab_widget::TYPE_DCOP_SHORTCUT;
     else if( typeid( *data_P ) == typeid( Keyboard_input_shortcut_action_data ))
         ret = Tab_widget::TYPE_KEYBOARD_INPUT_SHORTCUT;
     else if( typeid( *data_P ) == typeid( Keyboard_input_gesture_action_data ))
