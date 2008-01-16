@@ -95,7 +95,7 @@
     the 'Browse' doesn't do anything useful yet ).
   - K-Menu entry tab settings - just like the Command/URL tab, only enter
     a .desktop file from the K-Menu to execute (e.g. 'System/konsole.desktop')
-  - DCOP call tab settings - enter the application, object, DCOP method and
+  - D-Bus call tab settings - enter the application, object, D-Bus method and
     arguments (e.g. 'kdesktop', 'KBackgroundIface',
     'setWallpaper(QString,int)' and '"/some/pic.jpg" 1')
   - Keyboard input tab settings - enter the keyboard input you want to be

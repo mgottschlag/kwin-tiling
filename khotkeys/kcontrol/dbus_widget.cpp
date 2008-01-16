@@ -8,11 +8,11 @@
  
 ****************************************************************************/
 
-#define _DCOP_WIDGET_CPP_
+#define _DBUS_WIDGET_CPP_
 
 
 
-#include "dcop_widget.h"
+#include "dbus_widget.h"
 
 #include <QLineEdit>
 #include <QPushButton>
@@ -28,8 +28,8 @@
 namespace KHotKeys
 {
 
-Dcop_widget::Dcop_widget( QWidget* parent_P, const char* name_P )
-    : Dcop_widget_ui( parent_P, name_P )
+Dbus_widget::Dbus_widget( QWidget* parent_P, const char* name_P )
+    : Dbus_widget_ui( parent_P, name_P )
     {
     clear_data();
     try_button->setText( i18nc( "to try", "&Try" )); // Qt designer can't do this
@@ -44,7 +44,7 @@ Dcop_widget::Dcop_widget( QWidget* parent_P, const char* name_P )
         module, SLOT( changed()));
     }
     
-void Dcop_widget::clear_data()
+void Dbus_widget::clear_data()
     {
     remote_app_lineedit->clear();
     remote_object_lineedit->clear();
@@ -53,7 +53,7 @@ void Dcop_widget::clear_data()
     // CHECKME nebo spis multilineedit ?
     }
 
-void Dcop_widget::set_data( const Dcop_action* data_P )
+void Dbus_widget::set_data( const Dbus_action* data_P )
     {
     if( data_P == NULL )
         {
@@ -67,27 +67,27 @@ void Dcop_widget::set_data( const Dcop_action* data_P )
     // CHECKME nebo spis multilineedit ?
     }
 
-Dcop_action* Dcop_widget::get_data( Action_data* data_P ) const
+Dbus_action* Dbus_widget::get_data( Action_data* data_P ) const
     {
-    return new Dcop_action( data_P, remote_app_lineedit->text().trimmed(),
+    return new Dbus_action( data_P, remote_app_lineedit->text().trimmed(),
         remote_object_lineedit->text().trimmed(),
         called_function_lineedit->text().trimmed(), arguments_lineedit->text());
     }
     
-// CHECKME later "steal" whole interfaces browsing from kdcop
-void Dcop_widget::run_kdcop_pressed()
+// CHECKME later "steal" whole interfaces browsing from dbus browser
+void Dbus_widget::run_dbus_browser_pressed()
     {
-    if( KRun::runCommand( "kdcop", topLevelWidget()) == 0 )
-        KMessageBox::sorry( topLevelWidget(), i18n( "Failed to run KDCOP" ));
+    if( KRun::runCommand( "qdbusviewer", topLevelWidget()) == 0 )
+        KMessageBox::sorry( topLevelWidget(), i18n( "Failed to run qdbusviewer" ));
     }
     
-void Dcop_widget::try_pressed()
+void Dbus_widget::try_pressed()
     {
-    Dcop_action* tmp = get_data( NULL ); // CHECKME
+    Dbus_action* tmp = get_data( NULL ); // CHECKME
     tmp->execute();
     delete tmp;
     }
     
 } // namespace KHotKeys
 
-#include "dcop_widget.moc"
+#include "dbus_widget.moc"

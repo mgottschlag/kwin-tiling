@@ -94,14 +94,14 @@ class KDE_EXPORT Menuentry_action
         KService::Ptr _service;
     };
     
-class KDE_EXPORT Dcop_action
+class KDE_EXPORT Dbus_action
     : public Action
     {
     typedef Action base;
     public:
-        Dcop_action( Action_data* data_P, const QString& app_P, const QString& obj_P,
+        Dbus_action( Action_data* data_P, const QString& app_P, const QString& obj_P,
             const QString& call_P, const QString& args_P );
-        Dcop_action( KConfigGroup& cfg_P, Action_data* data_P );
+        Dbus_action( KConfigGroup& cfg_P, Action_data* data_P );
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
         const QString& remote_application() const;
@@ -225,35 +225,35 @@ Menuentry_action::Menuentry_action( KConfigGroup& cfg_P, Action_data* data_P )
     {
     }
 
-// DCOP_action
+// DBus_action
 
 inline
-Dcop_action::Dcop_action( Action_data* data_P, const QString& app_P, const QString& obj_P,
+Dbus_action::Dbus_action( Action_data* data_P, const QString& app_P, const QString& obj_P,
     const QString& call_P, const QString& args_P )
     : Action( data_P ), app( app_P ), obj( obj_P ), call( call_P ), args( args_P )
     {
     }
 
 inline
-const QString& Dcop_action::remote_application() const
+const QString& Dbus_action::remote_application() const
     {
     return app;
     }
     
 inline
-const QString& Dcop_action::remote_object() const
+const QString& Dbus_action::remote_object() const
     {
     return obj;
     }
     
 inline
-const QString& Dcop_action::called_function() const
+const QString& Dbus_action::called_function() const
     {
     return call;
     }
     
 inline
-const QString& Dcop_action::arguments() const
+const QString& Dbus_action::arguments() const
     {
     return args;
     }

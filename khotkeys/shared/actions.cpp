@@ -47,8 +47,8 @@ Action* Action::create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P )
         return new Command_url_action( cfg_P, data_P );
     if( type == "MENUENTRY" )
         return new Menuentry_action( cfg_P, data_P );
-    if( type == "DCOP" )
-        return new Dcop_action( cfg_P, data_P );
+    if( type == "DCOP" || type == "DBUS" )
+        return new Dbus_action( cfg_P, data_P );
     if( type == "KEYBOARD_INPUT" )
         return new Keyboard_input_action( cfg_P, data_P );
     if( type == "ACTIVATE_WINDOW" )
@@ -224,9 +224,9 @@ Action* Menuentry_action::copy( Action_data* data_P ) const
     return new Menuentry_action( data_P, command_url());
     }
 
-// Dcop_action
+// Dbus_action
 
-Dcop_action::Dcop_action( KConfigGroup& cfg_P, Action_data* data_P )
+Dbus_action::Dbus_action( KConfigGroup& cfg_P, Action_data* data_P )
     : Action( cfg_P, data_P )
     {
     app = cfg_P.readEntry( "RemoteApp" );
@@ -235,17 +235,17 @@ Dcop_action::Dcop_action( KConfigGroup& cfg_P, Action_data* data_P )
     args = cfg_P.readEntry( "Arguments" );
     }
 
-void Dcop_action::cfg_write( KConfigGroup& cfg_P ) const
+void Dbus_action::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
-    cfg_P.writeEntry( "Type", "DCOP" ); // overwrites value set in base::cfg_write()
+    cfg_P.writeEntry( "Type", "DBUS" ); // overwrites value set in base::cfg_write()
     cfg_P.writeEntry( "RemoteApp", app );
     cfg_P.writeEntry( "RemoteObj", obj );
     cfg_P.writeEntry( "Call", call );
     cfg_P.writeEntry( "Arguments", args );
     }
 
-void Dcop_action::execute()
+void Dbus_action::execute()
     {
     if( app.isEmpty() || obj.isEmpty() || call.isEmpty())
         return;
@@ -292,21 +292,21 @@ void Dcop_action::execute()
             args_str = nxt_pos >= 0 ? args_str.mid( nxt_pos ) : "";
             }
         }
-    kDebug( 1217 ) << "DCOP call:" << app << ":" << obj << ":" << call << ":" << args_list;
+    kDebug( 1217 ) << "D-Bus call:" << app << ":" << obj << ":" << call << ":" << args_list;
     KProcess proc;
-    proc << "dcop" << app << obj << call << args_list;
+    proc << "qdbus" << app << obj << call << args_list;
     proc.startDetached();
     }
 
-const QString Dcop_action::description() const
+const QString Dbus_action::description() const
     {
-    return i18n( "DCOP : " ) + remote_application() + "::" + remote_object() + "::"
+    return i18n( "D-Bus : " ) + remote_application() + "::" + remote_object() + "::"
         + called_function();
     }
 
-Action* Dcop_action::copy( Action_data* data_P ) const
+Action* Dbus_action::copy( Action_data* data_P ) const
     {
-    return new Dcop_action( data_P, remote_application(), remote_object(),
+    return new Dbus_action( data_P, remote_application(), remote_object(),
         called_function(), arguments());
     }
 

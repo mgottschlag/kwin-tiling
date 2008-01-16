@@ -30,7 +30,7 @@
                 <cstring>warning_label</cstring>
             </property>
             <property name="text">
-                <string>&lt;p&gt;This module allows configuring input actions, like mouse gestures, keyboard shortcuts for performing commands, launching applications or DCOP calls, and similar.&lt;/p&gt;
+                <string>&lt;p&gt;This module allows configuring input actions, like mouse gestures, keyboard shortcuts for performing commands, launching applications or D-Bus calls, and similar.&lt;/p&gt;
 &lt;p&gt;&lt;b&gt;NOTE: &lt;/b&gt;If you are not an experienced user, you should be careful with modifying the actions, and should limit your changes mainly to enabling/disabling actions, and changing triggers.&lt;/p&gt;</string>
             </property>
             <property name="textFormat">

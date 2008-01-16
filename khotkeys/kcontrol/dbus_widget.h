@@ -8,33 +8,33 @@
  
 ****************************************************************************/
 
-#ifndef _DCOP_WIDGET_H_
-#define _DCOP_WIDGET_H_
+#ifndef _DBUS_WIDGET_H_
+#define _DBUS_WIDGET_H_
 
-#include <dcop_widget_ui.h>
+#include <dbus_widget_ui.h>
 
 namespace KHotKeys
 {
 
-class Dcop_action;
+class Dbus_action;
 class Action_data;
 
-class Dcop_widget
-    : public Dcop_widget_ui
+class Dbus_widget
+    : public Dbus_widget_ui
     {
     Q_OBJECT
     public:
-        Dcop_widget( QWidget* parent_P = NULL, const char* name_P = NULL );
-        void set_data( const Dcop_action* data_P );
-        Dcop_action* get_data( Action_data* data_P ) const;
+        Dbus_widget( QWidget* parent_P = NULL, const char* name_P = NULL );
+        void set_data( const Dbus_action* data_P );
+        Dbus_action* get_data( Action_data* data_P ) const;
     public Q_SLOTS:
         void clear_data();
     protected Q_SLOTS:
-        virtual void run_kdcop_pressed();
+        virtual void run_dbus_browser_pressed();
         virtual void try_pressed();
     };
     
-typedef Dcop_widget Dcop_tab;
+typedef Dbus_widget Dbus_tab;
         
 //***************************************************************************
 // Inline

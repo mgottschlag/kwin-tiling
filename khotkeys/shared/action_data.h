@@ -186,7 +186,7 @@ class KDE_EXPORT Menuentry_shortcut_action_data
         Menuentry_shortcut_action_data( KConfigGroup& cfg_P, Action_data_group* parent_P );
     };
 
-typedef Simple_action_data< Shortcut_trigger, Dcop_action > Dcop_shortcut_action_data;
+typedef Simple_action_data< Shortcut_trigger, Dbus_action > Dbus_shortcut_action_data;
 typedef Simple_action_data< Shortcut_trigger, Keyboard_input_action >
     Keyboard_input_shortcut_action_data;
 typedef Simple_action_data< Shortcut_trigger, Activate_window_action >

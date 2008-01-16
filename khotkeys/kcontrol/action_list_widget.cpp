@@ -27,7 +27,7 @@
 
 #include "command_url_widget.h"
 #include "menuentry_widget.h"
-#include "dcop_widget.h"
+#include "dbus_widget.h"
 #include "keyboard_input_widget.h"
 #include "activate_window_widget.h"
 #include "kcmkhotkeys.h"
@@ -45,8 +45,8 @@ Action_list_widget::Action_list_widget( QWidget* parent_P, const char* name_P )
     action->setData( TYPE_COMMAND_URL_ACTION );
     action = popup->addAction( i18n( "K-Menu Entry..." ) );
     action->setData( TYPE_MENUENTRY_ACTION );
-    action = popup->addAction( i18n( "DCOP Call..." ) );
-    action->setData( TYPE_DCOP_ACTION );
+    action = popup->addAction( i18n( "D-Bus Call..." ) );
+    action->setData( TYPE_DBUS_ACTION );
     action = popup->addAction( i18n( "Keyboard Input..." ) );
     action->setData( TYPE_KEYBOARD_INPUT_ACTION );
     action = popup->addAction( i18n( "Activate Window..." ) );
@@ -128,8 +128,8 @@ void Action_list_widget::new_selected( QAction *action )
         case TYPE_MENUENTRY_ACTION: // Menuentry_action_dialog
             dlg = new Menuentry_action_dialog( NULL );
           break;
-        case TYPE_DCOP_ACTION: // Dcop_action_dialog
-            dlg = new Dcop_action_dialog( NULL );
+        case TYPE_DBUS_ACTION: // Dbus_action_dialog
+            dlg = new Dbus_action_dialog( NULL );
           break;
         case TYPE_KEYBOARD_INPUT_ACTION: // Keyboard_input_action_dialog
             dlg = new Keyboard_input_action_dialog( NULL );
@@ -207,8 +207,8 @@ void Action_list_widget::edit_listview_item( Action_list_item* item_P )
         dlg = new Command_url_action_dialog( action );
     else if( Menuentry_action* action = dynamic_cast< Menuentry_action* >( item_P->action()))
         dlg = new Menuentry_action_dialog( action );
-    else if( Dcop_action* action = dynamic_cast< Dcop_action* >( item_P->action()))
-        dlg = new Dcop_action_dialog( action );
+    else if( Dbus_action* action = dynamic_cast< Dbus_action* >( item_P->action()))
+        dlg = new Dbus_action_dialog( action );
     else if( Keyboard_input_action* action
             = dynamic_cast< Keyboard_input_action* >( item_P->action()))
         dlg = new Keyboard_input_action_dialog( action );
@@ -287,25 +287,25 @@ void Menuentry_action_dialog::accept()
     action = widget->get_data( NULL ); // CHECKME NULL ?
     }
 
-// Dcop_action_dialog
+// Dbus_action_dialog
 
-Dcop_action_dialog::Dcop_action_dialog( Dcop_action* action_P )
+Dbus_action_dialog::Dbus_action_dialog( Dbus_action* action_P )
     : KDialog( 0 ), action( NULL ) // CHECKME caption
     {
     setModal( true );
     setButtons( Ok | Cancel );
-    widget = new Dcop_widget( this );
+    widget = new Dbus_widget( this );
     widget->set_data( action_P );
     setMainWidget( widget );
     }
 
-Action* Dcop_action_dialog::edit_action()
+Action* Dbus_action_dialog::edit_action()
     {
     exec();
     return action;
     }
 
-void Dcop_action_dialog::accept()
+void Dbus_action_dialog::accept()
     {
     KDialog::accept();
     action = widget->get_data( NULL ); // CHECKME NULL ?

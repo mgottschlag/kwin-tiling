@@ -50,9 +50,9 @@ General_tab::General_tab( QWidget* parent_P, const char* name_P )
                 action_type_combo->insertItem( i,
                     i18n( "K-Menu Entry (simple)" ) );
               break;
-            case Tab_widget::TYPE_DCOP_SHORTCUT:
+            case Tab_widget::TYPE_DBUS_SHORTCUT:
                 action_type_combo->insertItem( i,
-                    i18n( "Keyboard Shortcut -> DCOP Call (simple)" ) );
+                    i18n( "Keyboard Shortcut -> D-Bus Call (simple)" ) );
               break;
             case Tab_widget::TYPE_KEYBOARD_INPUT_SHORTCUT:
                 action_type_combo->insertItem( i,

@@ -1,8 +1,8 @@
 <!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>KHotKeys::Dcop_widget_ui</class>
+<class>KHotKeys::Dbus_widget_ui</class>
 <widget class="QWidget">
     <property name="name">
-        <cstring>Dcop_widget_ui</cstring>
+        <cstring>Dbus_widget_ui</cstring>
     </property>
     <property name="geometry">
         <rect>
@@ -215,7 +215,7 @@
                         <cstring>PushButton1</cstring>
                     </property>
                     <property name="text">
-                        <string>Run &amp;KDCOP</string>
+                        <string>Run &amp;D-Bus browser</string>
                     </property>
                 </widget>
                 <spacer>
@@ -243,14 +243,14 @@
     <connection>
         <sender>try_button</sender>
         <signal>clicked()</signal>
-        <receiver>Dcop_widget_ui</receiver>
+        <receiver>Dbus_widget_ui</receiver>
         <slot>try_pressed()</slot>
     </connection>
     <connection>
         <sender>PushButton1</sender>
         <signal>clicked()</signal>
-        <receiver>Dcop_widget_ui</receiver>
-        <slot>run_kdcop_pressed()</slot>
+        <receiver>Dbus_widget_ui</receiver>
+        <slot>run_dbus_browser_pressed()</slot>
     </connection>
 </connections>
 <tabstops>
@@ -262,7 +262,7 @@
     <tabstop>PushButton1</tabstop>
 </tabstops>
 <slots>
-    <slot access="protected" specifier="pure virtual">run_kdcop_pressed()</slot>
+    <slot access="protected" specifier="pure virtual">run_dbus_browser_pressed()</slot>
     <slot access="protected" specifier="pure virtual">try_pressed()</slot>
 </slots>
 <includes>

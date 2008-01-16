@@ -26,7 +26,7 @@ namespace KHotKeys
 class Action_data;
 class Command_url_widget;
 class Menuentry_widget;
-class Dcop_widget;
+class Dbus_widget;
 class Keyboard_input_widget;
 
 class Action_list_item;
@@ -46,7 +46,7 @@ class Action_list_widget
         Action_list_item* create_listview_item( Action* action_P, Q3ListView* parent1_P,
             Q3ListViewItem* parent2_P, Q3ListViewItem* after_P, bool copy_P );
         void edit_listview_item( Action_list_item* item_P );
-        enum type_t { TYPE_COMMAND_URL_ACTION, TYPE_MENUENTRY_ACTION, TYPE_DCOP_ACTION,
+        enum type_t { TYPE_COMMAND_URL_ACTION, TYPE_MENUENTRY_ACTION, TYPE_DBUS_ACTION,
             TYPE_KEYBOARD_INPUT_ACTION, TYPE_ACTIVATE_WINDOW_ACTION };
     protected Q_SLOTS:
         void new_selected( QAction* );
@@ -109,17 +109,17 @@ class Menuentry_action_dialog
         Menuentry_action* action;
     };
         
-class Dcop_action_dialog
+class Dbus_action_dialog
     : public KDialog, public Action_dialog
     {
     Q_OBJECT
     public:
-        Dcop_action_dialog( Dcop_action* action_P );
+        Dbus_action_dialog( Dbus_action* action_P );
         virtual Action* edit_action();
     protected:
         virtual void accept();
-        Dcop_widget* widget;
-        Dcop_action* action;
+        Dbus_widget* widget;
+        Dbus_action* action;
     };
         
 class Keyboard_input_action_dialog
