@@ -103,7 +103,7 @@ void LauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
             formFactor() == Plasma::MediaCenter) {
             setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
         } else {
-            setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Panel)));
+            setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
         }
     }
 
