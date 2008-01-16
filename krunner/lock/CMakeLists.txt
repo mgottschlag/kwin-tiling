@@ -45,7 +45,7 @@ if(HAVE_GLXCHOOSEVISUAL)
    target_link_libraries(krunner_lock ${OPENGL_gl_LIBRARY})
 endif(HAVE_GLXCHOOSEVISUAL)
 
-install(TARGETS krunner_lock DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS krunner_lock DESTINATION ${LIBEXEC_INSTALL_DIR})
 
 install_pam_service(kscreensaver)
 
