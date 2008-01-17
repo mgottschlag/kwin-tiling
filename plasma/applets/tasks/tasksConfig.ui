@@ -26,7 +26,7 @@
   <item row="1" column="0" >
     <widget class="QCheckBox" name="showOnlyCurrentDesktop" >
      <property name="text" >
-      <string>Show only task of the current desktop</string>
+      <string>Show only tasks from the current desktop</string>
      </property>
     </widget>
    </item>
