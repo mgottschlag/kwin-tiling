@@ -85,6 +85,8 @@ private slots:
 
         void addStartingTask(StartupPtr);
         void removeStartingTask(StartupPtr);
+		
+		void currentDesktopChanged(int);
 
 private:
         // creates task representations for existing windows
@@ -101,6 +103,9 @@ private:
 
         void addItemToRootGroup(AbstractTaskItem* item);
         void removeItemFromRootGroup(AbstractTaskItem* item);
+		
+		// remove all tasks from the taskbar
+		void removeAllTasks();
 
         TaskGroupItem* _rootTaskGroup;
 
@@ -108,6 +113,7 @@ private:
         QHash<StartupPtr,AbstractTaskItem*> _startupTaskItems;
 
         bool _showTooltip;
+	bool _showOnlyCurrentDesktop;
         KDialog *m_dialog;
         Ui::tasksConfig ui;
 };
