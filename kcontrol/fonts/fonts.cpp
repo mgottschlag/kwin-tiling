@@ -128,7 +128,7 @@ static const char *aa_vbgr_xpm[]={
 "aaaaaaaaaaaa",
 "aaaaaaaaaaaa"};
 
-static QPixmap aaPixmaps[]={ QPixmap(aa_rgb_xpm), QPixmap(aa_bgr_xpm), QPixmap(aa_vrgb_xpm), QPixmap(aa_vbgr_xpm) };
+static const char** aaPixmaps[]={ aa_rgb_xpm, aa_bgr_xpm, aa_vrgb_xpm, aa_vbgr_xpm };
 
 /**** DLL Interface ****/
 K_PLUGIN_FACTORY(FontFactory, registerPlugin<KFonts>(); )
@@ -264,7 +264,7 @@ FontAASettings::FontAASettings(QWidget *parent)
   subPixelType->setWhatsThis( subPixelWhatsThis );
 
   for(int t=KXftConfig::SubPixel::None+1; t<=KXftConfig::SubPixel::Vbgr; ++t)
-    subPixelType->addItem(aaPixmaps[t-1], i18n(KXftConfig::description((KXftConfig::SubPixel::Type)t).toUtf8()));
+    subPixelType->addItem(QPixmap(aaPixmaps[t-1]), i18n(KXftConfig::description((KXftConfig::SubPixel::Type)t).toUtf8()));
 
   QLabel *hintingLabel=new QLabel(i18n("Hinting style: "), mw);
   layout->addWidget(hintingLabel, 2, 0);
