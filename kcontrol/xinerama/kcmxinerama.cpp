@@ -213,7 +213,7 @@ void KCMXinerama::windowIndicator(int dpy) {
 }
 
 QWidget *KCMXinerama::indicator(int dpy) {
-	QLabel *si = new QLabel(QString::number(dpy+1), 0, "Screen Indicator", Qt::X11BypassWindowManagerHint);
+	QLabel *si = new QLabel(QString::number(dpy+1), 0, Qt::X11BypassWindowManagerHint);
 
 	QFont fnt = KGlobalSettings::generalFont();
 	fnt.setPixelSize(100);

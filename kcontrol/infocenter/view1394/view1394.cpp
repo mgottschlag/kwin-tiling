@@ -160,7 +160,8 @@ void View1394::rescanBus()
 {
    if (m_insideRescanBus)
    {
-      m_rescanTimer.start(100, true);
+      m_rescanTimer.setSingleShot(true);
+      m_rescanTimer.start(100);
       return;
    }
    m_insideRescanBus=true;

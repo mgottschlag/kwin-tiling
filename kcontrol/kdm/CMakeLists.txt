@@ -7,7 +7,7 @@ include_directories( ${BLITZ_INCLUDES} )
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/background/  )
 
-add_definitions (-DQT3_SUPPORT)
+add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 kde4_add_ui3_files(kcmbackgroundlib_SRCS ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/kdm/background/bgdialog_ui.ui ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/kdm/background/bgwallpaper_ui.ui ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/kdm/background/bgadvanced_ui.ui)
 

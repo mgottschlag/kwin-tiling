@@ -1,9 +1,6 @@
-
-
 add_subdirectory( pixmaps ) 
 
-
-add_definitions (-DQT3_SUPPORT)
+add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 set(kmenueditcommon_STAT_SRCS basictab.cpp treeview.cpp kmenuedit.cpp khotkeys.cpp menufile.cpp menuinfo.cpp )
 

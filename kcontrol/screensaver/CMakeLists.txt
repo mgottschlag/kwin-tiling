@@ -2,7 +2,7 @@
 check_library_exists(GL glXChooseVisual "" HAVE_GLXCHOOSEVISUAL)
 configure_file (config-screensaver.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-screensaver.h )
 
-add_definitions (-DQT3_SUPPORT)
+add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 ########### next target ###############
 

@@ -52,6 +52,5 @@ extern "C" int KDE_EXPORT kdemain( int argc, char **argv )
     KMenuEdit *menuEdit = new KMenuEdit(true);
     menuEdit->show();
 
-    app.setMainWidget(menuEdit);
     return  app.exec();
 }

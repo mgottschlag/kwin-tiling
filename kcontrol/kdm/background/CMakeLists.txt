@@ -6,7 +6,7 @@ add_subdirectory( pics )
 # But first KonqOperations must be redesigned to not use konq_iconviewwidget...
 include_directories( ${BLITZ_INCLUDES} )
 
-add_definitions (-DQT3_SUPPORT)
+add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 ########### next target ###############
 kde4_add_ui3_files(kcmbackgroundlib_SRCS

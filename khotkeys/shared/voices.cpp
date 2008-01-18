@@ -218,8 +218,8 @@ void Voice::slot_key_pressed()
 			_timer=new QTimer(this);
 			connect(_timer, SIGNAL(timeout()) , this, SLOT(slot_timeout()));
 		}
-
-		_timer->start(1000*20,true);
+		_timer->setSingleShot(true);
+		_timer->start(1000*20);
 	}
 }
 

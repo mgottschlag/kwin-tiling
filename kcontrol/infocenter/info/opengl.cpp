@@ -102,7 +102,7 @@ static int ReadPipe(QString FileName, QStringList &list)
 static bool get_dri_device()
 {
     QFile file;
-    file.setName(INFO_DRI);
+    file.setFileName(INFO_DRI);
     if (!file.exists() || !file.open(QIODevice::ReadOnly))
 	return false;
 

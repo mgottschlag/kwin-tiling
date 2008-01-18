@@ -1,6 +1,6 @@
 include_directories( ${X11_Xinerama_INCLUDE_PATH}   )
 
-add_definitions (-DQT3_SUPPORT)
+add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 ########### next target ###############
 set(kcm_xinerama_kwin_SRCS)

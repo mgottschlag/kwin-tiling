@@ -125,9 +125,9 @@ void Sound::save(const QString& filename) const
 	stream.setByteOrder( QDataStream::LittleEndian );
 
 
-	QByteArray SoundData(data.size()*2);
+	QByteArray SoundData(data.size()*2, '\0');
 	
-	for(unsigned long int f=0;f<data.size();f++)
+	for(long int f=0;f<data.size();f++)
 	{
 		Q_UINT16 val= (signed short int) ( (data.at(f) * ((double)(1<<13)/(signed)max)  ) );
         SoundData[ (uint)(2*f) ]=   val & 0x00FF;

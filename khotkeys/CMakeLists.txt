@@ -20,7 +20,7 @@ check_cxx_source_compiles("
 configure_file(config-khotkeys.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-khotkeys.h )
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_definitions (-DQT3_SUPPORT)
+add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 set(libshared_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/action_data.cpp

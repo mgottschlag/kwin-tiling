@@ -68,7 +68,7 @@ static QString catFile(QString fname)
 
       ::close(fd);
     }
-  return result.stripWhiteSpace();
+  return result.trimmed();
 }
 
 void USBDevice::parseSysDir(int bus, int parent, int level, const QString& dname)
@@ -100,7 +100,7 @@ void USBDevice::parseSysDir(int bus, int parent, int level, const QString& dname
   _verMinor = int(10*(version - floor(version)));
 
   QDir dir(dname);
-  dir.setNameFilter(QString("%1-*").arg(bus));
+  dir.setNameFilters(QStringList() << QString("%1-*").arg(bus));
   dir.setFilter(QDir::Dirs);
   QStringList list = dir.entryList();
 
@@ -301,7 +301,7 @@ bool USBDevice::parse(const QString &fname)
 bool USBDevice::parseSys(const QString &dname)
 {
    QDir d(dname);
-   d.setNameFilter("usb*");
+   d.setNameFilters(QStringList() << "usb*");
    QStringList list = d.entryList();
 
    for(QStringList::Iterator it = list.begin(); it != list.end(); ++it) {
@@ -309,11 +309,11 @@ bool USBDevice::parseSys(const QString &dname)
 
      int bus = 0;
      QRegExp bus_reg("[a-z]*([0-9]+)");
-     if (bus_reg.search(*it) != -1)
+     if (bus_reg.indexIn(*it) != -1)
          bus = bus_reg.cap(1).toInt();
 
 
-     device->parseSysDir(bus, 0, 0, d.absPath() + '/' + *it);
+     device->parseSysDir(bus, 0, 0, d.absolutePath() + '/' + *it);
   }
 
   return d.count();
