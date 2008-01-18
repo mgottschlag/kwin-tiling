@@ -102,6 +102,10 @@ void Pager::init()
 
 QPainterPath Pager::shape() const
 {
+    if (drawStandardBackground()) {
+        return Plasma::Applet::shape();
+    }
+
     return Plasma::Widget::shape();
 }
 
@@ -166,6 +170,8 @@ void Pager::showConfigurationInterface()
 void Pager::recalculateGeometry()
 {
     if (!m_rects.isEmpty() && contentSize() == m_size) {
+        //kDebug() << "leaving because" << !m_rects.isEmpty() << " and " << contentSize() << "==" <<
+            m_size;
         return;
     }
 
@@ -190,10 +196,10 @@ void Pager::recalculateGeometry()
                     ceil(m_rows * itemHeight + padding * (m_rows - 1)));
 
     updateGeometry();
-    //kDebug() << "new size set" << m_size << m_rows << m_columns << columns << itemWidth;
+    kDebug() << "new size set" << m_size << m_rows << m_columns << columns << itemWidth;
 
-    if (m_desktopLayoutOwner && columns != m_columns)
-    { // must own manager selection before setting global desktop layout
+    if (m_desktopLayoutOwner && columns != m_columns) {
+        // must own manager selection before setting global desktop layout
         m_columns = columns;
         NET::Orientation orient = NET::OrientationHorizontal;
         NETRootInfo i( QX11Info::display(), 0 );
