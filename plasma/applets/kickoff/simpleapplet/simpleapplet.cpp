@@ -22,14 +22,19 @@
 #include "simpleapplet/menuview.h"
 
 // Qt
-#include <QCheckBox>
-#include <QVBoxLayout>
+#include <QLabel>
+#include <QComboBox>
+#include <QGridLayout>
 #include <QGraphicsView>
 #include <QtDebug>
+#include <QMetaObject>
+#include <QMetaEnum>
+#include <QPointer>
 
 // KDE
 #include <KIcon>
 #include <KDialog>
+#include <KMenu>
 
 // Plasma
 #include <plasma/layouts/boxlayout.h>
@@ -41,29 +46,67 @@
 #include "core/models.h"
 #include "core/applicationmodel.h"
 #include "core/favoritesmodel.h"
+#include "core/systemmodel.h"
+#include "core/recentlyusedmodel.h"
 #include "core/leavemodel.h"
+#include "core/urlitemlauncher.h"
 
 class MenuLauncherApplet::Private
 {
 public:
-        QMenu *menuview;
+        KMenu *menuview;
         Plasma::Icon *icon;
-        Kickoff::MenuView *appview;
-        Kickoff::MenuView* favview;
+        QPointer<Kickoff::UrlItemLauncher> launcher;
 
-        bool showFavorites;
-        bool showLeaveSwitchUser;
-        bool showLeaveLock;
-        bool showLeaveLogout;
+        MenuLauncherApplet::ViewType viewtype;
+        MenuLauncherApplet::FormatType formattype;
 
         KDialog *dialog;
-        QCheckBox *showFavCheckBox;
-        QCheckBox *showSwitchUserCheckBox;
-        QCheckBox *showLockCheckBox;
-        QCheckBox *showLogoutCheckBox;
+        QComboBox *viewComboBox, *formatComboBox;
 
-        Private() : menuview(0), appview(0), favview(0), dialog(0) {}
-        ~Private() { delete dialog; delete menuview; delete appview; delete favview; }
+        Private() : menuview(0), launcher(0), dialog(0) {}
+        ~Private() { delete dialog; delete menuview; }
+
+        void addItem(QComboBox* combo, const QString& caption, int index) {
+            combo->addItem(caption, index);
+        }
+
+        void setCurrentItem(QComboBox* combo, int currentIndex) {
+            for(int i = combo->count() - 1; i >= 0; --i) {
+                if( combo->itemData(i).toInt() == currentIndex ) {
+                    combo->setCurrentIndex(i);
+                    return;
+                }
+            }
+            if( combo->count() > 0 )
+                combo->setCurrentIndex(0);
+        }
+
+        Kickoff::MenuView *createMenuView(QAbstractItemModel *model = 0) {
+            Kickoff::MenuView *view = new Kickoff::MenuView(menuview);
+            view->setFormatType( (Kickoff::MenuView::FormatType) formattype );
+            if( model ) {
+                model->setParent(view); //re-parent
+                view->setModel(model);
+            }
+            return view;
+        }
+
+        void addMenu(Kickoff::MenuView *view, bool mergeFirstLevel) {
+            QList<QAction*> actions = view->actions();
+            foreach(QAction *action, actions) {
+                if( action->menu() && mergeFirstLevel ) {
+                    QMetaObject::invokeMethod(action->menu(),"aboutToShow"); //fetch the children
+                    if( actions.count() > 1 )
+                        menuview->addTitle(action->text());
+                    foreach(QAction *a, action->menu()->actions())
+                        menuview->addAction(a);
+                }
+                else {
+                    menuview->addAction(action);
+                }
+            }
+        }
 };
 
 MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args)
@@ -76,10 +119,8 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
     d->icon->setFlag(ItemIsMovable, false);
     connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
 
-    d->showFavorites = true;
-    d->showLeaveSwitchUser = true;
-    d->showLeaveLock = true;
-    d->showLeaveLogout = true;
+    d->viewtype = Combined;
+    d->formattype = NameDescription;
 }
 
 MenuLauncherApplet::~MenuLauncherApplet()
@@ -94,10 +135,16 @@ void MenuLauncherApplet::init()
     d->icon->setIcon(KIcon(cg.readEntry("icon","start-here-kde")));
     //setMinimumContentSize(d->icon->iconSize()); //setSize(d->icon->iconSize())
 
-    d->showFavorites = cg.readEntry("showFavorites",d->showFavorites);
-    d->showLeaveSwitchUser = cg.readEntry("showLeaveSwitchUser",d->showLeaveSwitchUser);
-    d->showLeaveLock = cg.readEntry("showLeaveLock",d->showLeaveLock);
-    d->showLeaveLogout = cg.readEntry("showLeaveLogout",d->showLeaveLogout);
+    {
+        QMetaEnum e = metaObject()->enumerator(metaObject()->indexOfEnumerator("ViewType"));
+        QByteArray ba = cg.readEntry("view", QByteArray(e.valueToKey(d->viewtype)));
+        d->viewtype = (MenuLauncherApplet::ViewType) e.keyToValue(ba);
+    }
+    {
+        QMetaEnum e = metaObject()->enumerator(metaObject()->indexOfEnumerator("FormatType"));
+        QByteArray ba = cg.readEntry("format", QByteArray(e.valueToKey(d->formattype)));
+        d->formattype = (MenuLauncherApplet::FormatType) e.keyToValue(ba);
+    }
 
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ExtensionHandler,"desktop",new Kickoff::ServiceItemHandler);
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ProtocolHandler, "leave", new Kickoff::LeaveItemHandler);
@@ -139,44 +186,65 @@ void MenuLauncherApplet::showConfigurationInterface()
         connect(d->dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
         connect(d->dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
-        QVBoxLayout *layout = new QVBoxLayout(d->dialog->mainWidget());
-        d->dialog->mainWidget()->setLayout(layout);
+        QWidget *p = d->dialog->mainWidget();
+        QGridLayout *l = new QGridLayout(p);
+        p->setLayout(l);
 
-        d->showFavCheckBox = new QCheckBox(i18n("Favorites"), d->dialog->mainWidget());
-        layout->addWidget(d->showFavCheckBox);
+        l->addWidget(new QLabel(i18n("View:"), p), 0, 0);
+        d->viewComboBox = new QComboBox(p);
+        d->addItem(d->viewComboBox, i18n("Combined"), MenuLauncherApplet::Combined);
+        d->addItem(d->viewComboBox, i18n("Favorites"), MenuLauncherApplet::Favorites);
+        d->addItem(d->viewComboBox, i18n("Applications"), MenuLauncherApplet::Applications);
+        d->addItem(d->viewComboBox, i18n("Computer"), MenuLauncherApplet::Computer);
+        d->addItem(d->viewComboBox, i18n("Recently Used"), MenuLauncherApplet::RecentlyUsed);
+        d->addItem(d->viewComboBox, i18n("Leave"), MenuLauncherApplet::Leave);
+        l->addWidget(d->viewComboBox, 0, 1);
 
-        d->showSwitchUserCheckBox = new QCheckBox(i18n("Switch user"), d->dialog->mainWidget());
-        layout->addWidget(d->showSwitchUserCheckBox);
+        l->addWidget(new QLabel(i18n("Format:"), p), 1, 0);
+        d->formatComboBox = new QComboBox(p);
+        d->addItem(d->formatComboBox, i18n("Name only"), MenuLauncherApplet::Name);
+        d->addItem(d->formatComboBox, i18n("Description only"), MenuLauncherApplet::Description);
+        d->addItem(d->formatComboBox, i18n("Name Description"), MenuLauncherApplet::NameDescription);
+        d->addItem(d->formatComboBox, i18n("Description (Name)"), MenuLauncherApplet::DescriptionName);
+        l->addWidget(d->formatComboBox, 1, 1);
 
-        d->showLockCheckBox = new QCheckBox(i18n("Lock"), d->dialog->mainWidget());
-        layout->addWidget(d->showLockCheckBox);
-
-        d->showLogoutCheckBox = new QCheckBox(i18n("Logout"), d->dialog->mainWidget());
-        layout->addWidget(d->showLogoutCheckBox);
+        l->setColumnStretch(1,1);
     }
-    d->showFavCheckBox->setChecked(d->showFavorites);
-    d->showSwitchUserCheckBox->setChecked(d->showLeaveSwitchUser);
-    d->showLockCheckBox->setChecked(d->showLeaveLock);
-    d->showLogoutCheckBox->setChecked(d->showLeaveLogout);
+
+    d->setCurrentItem(d->viewComboBox, d->viewtype);
+    d->setCurrentItem(d->formatComboBox, d->formattype);
     d->dialog->show();
 }
 
 void MenuLauncherApplet::configAccepted()
 {
-    d->showFavorites = d->showFavCheckBox->isChecked();
-    d->showLeaveSwitchUser = d->showSwitchUserCheckBox->isChecked();
-    d->showLeaveLock = d->showLockCheckBox->isChecked();
-    d->showLeaveLogout = d->showLogoutCheckBox->isChecked();
-
+    bool needssaving = false;
     KConfigGroup cg = config();
-    cg.writeEntry("showFavorites", d->showFavorites);
-    cg.writeEntry("showLeaveSwitchUser", d->showLeaveSwitchUser);
-    cg.writeEntry("showLeaveLock", d->showLeaveLock);
-    cg.writeEntry("showLeaveLogout", d->showLeaveLogout);
-    emit configNeedsSaving();
 
-    delete d->menuview;
-    d->menuview = 0;
+    int vt = d->viewComboBox->itemData(d->viewComboBox->currentIndex()).toInt();
+    if( vt != d->viewtype ) {
+        d->viewtype = (MenuLauncherApplet::ViewType) vt;
+        needssaving = true;
+
+        QMetaEnum e = metaObject()->enumerator(metaObject()->indexOfEnumerator("ViewType"));
+        cg.writeEntry("view", QByteArray(e.valueToKey(d->viewtype)));
+    }
+
+    int ft = d->formatComboBox->itemData(d->formatComboBox->currentIndex()).toInt();
+    if( ft != d->formattype ) {
+        d->formattype = (MenuLauncherApplet::FormatType) ft;
+        needssaving = true;
+
+        QMetaEnum e = metaObject()->enumerator(metaObject()->indexOfEnumerator("FormatType"));
+        cg.writeEntry("format", QByteArray(e.valueToKey(d->formattype)));
+    }
+
+    if( needssaving ) {
+        emit configNeedsSaving();
+
+        delete d->menuview;
+        d->menuview = 0;
+    }
 }
 
 void MenuLauncherApplet::toggleMenu(bool pressed)
@@ -186,44 +254,51 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
     }
 
     if (!d->menuview) {
-        d->menuview = new QMenu();
+        d->menuview = new KMenu();
         connect(d->menuview,SIGNAL(triggered(QAction*)),this,SLOT(actionTriggered(QAction*)));
         connect(d->menuview,SIGNAL(aboutToHide()),d->icon,SLOT(setUnpressed()));
 
-        if(!d->appview) {
-            d->appview = new Kickoff::MenuView();
-            ApplicationModel *appModel = new ApplicationModel(d->appview);
-            appModel->setDuplicatePolicy(ApplicationModel::ShowLatestOnlyPolicy);
-            d->appview->setModel(appModel);
-        }
-        foreach (QAction *action, d->appview->actions())
-            d->menuview->addAction(action);
+        switch( d->viewtype ) {
+            case Combined: {
+                ApplicationModel *appModel = new ApplicationModel();
+                appModel->setDuplicatePolicy(ApplicationModel::ShowLatestOnlyPolicy);
+                Kickoff::MenuView *appview = d->createMenuView(appModel);
+                d->addMenu(appview, false);
 
-        if (d->showFavorites) {
-            if (!d->favview) {
-                d->favview = new Kickoff::MenuView();
-                Kickoff::FavoritesModel* favmodel = new Kickoff::FavoritesModel(d->favview);
-                d->favview->setModel(favmodel);
-            }
-            d->menuview->addSeparator();
-            foreach (QAction *action, d->favview->actions())
-                d->menuview->addAction(action);
-        }
+                d->menuview->addSeparator();
+                Kickoff::MenuView *favview = d->createMenuView(new Kickoff::FavoritesModel(d->menuview));
+                d->addMenu(favview, false);
 
-        if (d->showLeaveSwitchUser || d->showLeaveLock || d->showLeaveLogout) {
-            d->menuview->addSeparator();
-            if (d->showLeaveSwitchUser) {
-                QAction *lockaction = d->menuview->addAction(KIcon("system-switch-user"),i18n("Switch User"));
-                lockaction->setData(QUrl("leave:/switch"));
-            }
-            if (d->showLeaveLock) {
+                d->menuview->addSeparator();
+                QAction *switchaction = d->menuview->addAction(KIcon("system-switch-user"),i18n("Switch User"));
+                switchaction->setData(QUrl("leave:/switch"));
                 QAction *lockaction = d->menuview->addAction(KIcon("system-lock-screen"),i18n("Lock"));
                 lockaction->setData(QUrl("leave:/lock"));
-            }
-            if (d->showLeaveLogout) {
                 QAction *logoutaction = d->menuview->addAction(KIcon("system-log-out"),i18n("Logout"));
                 logoutaction->setData(QUrl("leave:/logout"));
-            }
+            } break;
+            case Favorites: {
+                Kickoff::MenuView *favview = d->createMenuView(new Kickoff::FavoritesModel(d->menuview));
+                d->addMenu(favview, true);
+            } break;
+            case Applications: {
+                ApplicationModel *appModel = new ApplicationModel();
+                appModel->setDuplicatePolicy(ApplicationModel::ShowLatestOnlyPolicy);
+                Kickoff::MenuView *appview = d->createMenuView(appModel);
+                d->addMenu(appview, false);
+            } break;
+            case Computer: {
+                Kickoff::MenuView *systemview = d->createMenuView(new Kickoff::SystemModel());
+                d->addMenu(systemview, true);
+            } break;
+            case RecentlyUsed: {
+                Kickoff::MenuView *recentlyview = d->createMenuView(new Kickoff::RecentlyUsedModel());
+                d->addMenu(recentlyview, true);
+            } break;
+            case Leave: {
+                Kickoff::MenuView *leaveview = d->createMenuView(new Kickoff::LeaveModel(d->menuview));
+                d->addMenu(leaveview, true);
+            } break;
         }
     }
 
@@ -250,9 +325,10 @@ void MenuLauncherApplet::actionTriggered(QAction *action)
     if (action->data().type() == QVariant::Url) {
         QUrl url = action->data().toUrl();
         if (url.scheme() == "leave") {
-            Kickoff::UrlItemLauncher *launcher = d->appview ? d->appview->launcher() : 0;
-            if (launcher)
-                launcher->openUrl(url.toString());
+            if ( ! d->launcher ) {
+                d->launcher = new Kickoff::UrlItemLauncher(d->menuview);
+            }
+            d->launcher->openUrl(url.toString());
         }
     }
     else {

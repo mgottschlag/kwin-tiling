@@ -35,14 +35,14 @@ using namespace Kickoff;
 class MenuView::Private
 {
 public:
-    Private(MenuView *parent) : q(parent) , model(0) , column(0), launcher(new UrlItemLauncher(parent)) {}
+    Private(MenuView *parent) : q(parent) , model(0) , column(0), launcher(new UrlItemLauncher(parent)), formattype(MenuView::DescriptionName) {}
 
     QAction *createActionForIndex(const QModelIndex& index,QWidget *parent)
     {
         Q_ASSERT(index.isValid());
 
         QAction *action = 0; 
-   
+
         if (model->hasChildren(index)) {
             QMenu *childMenu = new QMenu(parent);
             QObject::connect(childMenu,SIGNAL(aboutToShow()),q,SLOT(fillSubMenu()));
@@ -55,20 +55,21 @@ public:
 
         return action;
     }
-    
+
     void buildBranch(QMenu *menu,const QModelIndex& parent)
     {
         int rowCount = model->rowCount(parent);
         for (int i=0;i<rowCount;i++) {
             QAction *action = createActionForIndex(model->index(i,column,parent),menu);
             menu->addAction(action);
-        } 
+        }
     }
 
     MenuView * const q;
     QAbstractItemModel *model;
     int column;
     UrlItemLauncher *launcher;
+    MenuView::FormatType formattype;
 };
 
 MenuView::MenuView(QWidget *parent)
@@ -86,12 +87,48 @@ QAction *MenuView::createLeafAction(const QModelIndex&,QObject *parent)
 }
 void MenuView::updateAction(QAction *action,const QModelIndex& index)
 {
-    QString text = index.data(Qt::DisplayRole).value<QString>();
-    const QString name = index.data(Kickoff::SubTitleRole).value<QString>();
-    if (action->menu()==0 && name.contains(text,Qt::CaseInsensitive))
-        text = name;
-    action->setText(text.replace("&","&&"));
-
+    QString text = index.data(Qt::DisplayRole).value<QString>(); // describing text, e.g. "Spreadsheet" or "Rekall" (right, sometimes the text is also used for the generic app-name)
+    QString name = index.data(Kickoff::SubTitleRole).value<QString>(); // the generic name, e.g. "kspread" or "OpenOffice.org Spreadsheet" or just "" (right, it's a mess too)
+    if( action->menu()!=0 ) { // if its an item with sub-menuitems, we probably like to thread them another way...
+        action->setText(text.replace("&","&&"));
+    }
+    else {
+        switch( d->formattype ) {
+            case Name: {
+                if( name.isEmpty() ) {
+                    action->setText(text.replace("&","&&"));
+                }
+                else {
+                    action->setText(name.replace("&","&&"));
+                }
+            } break;
+            case Description: {
+                if( name.contains(text,Qt::CaseInsensitive) ) {
+                    text = name;
+                }
+                action->setText(text.replace("&","&&"));
+            } break;
+            case NameDescription: // fall through
+            case DescriptionName: {
+                if( ! name.isEmpty() ) { // seems we have a program, but some of them dont define a name at all
+                    if( name.contains(text,Qt::CaseInsensitive) ) {
+                        action->setText(name.replace("&","&&"));
+                    }
+                    else {
+                        if( d->formattype == NameDescription ) {
+                            action->setText(QString("%1 %2").arg(name).arg(text).replace("&","&&"));
+                        }
+                        else {
+                            action->setText(QString("%1 (%2)").arg(text).arg(name).replace("&","&&"));
+                        }
+                    }
+                }
+                else { // if there is no name, let's just use the describing text
+                    action->setText(text.replace("&","&&"));
+                }
+            } break;
+        }
+    }
     action->setIcon(index.data(Qt::DecorationRole).value<QIcon>());
 }
 void MenuView::setModel(QAbstractItemModel *model)
@@ -260,6 +297,14 @@ void MenuView::setColumn(int column)
 int MenuView::column() const
 {
     return d->column;
+}
+MenuView::FormatType MenuView::formatType() const
+{
+    return d->formattype;
+}
+void MenuView::setFormatType(MenuView::FormatType formattype)
+{
+    d->formattype = formattype;
 }
 void MenuView::actionTriggered(QAction *action)
 {

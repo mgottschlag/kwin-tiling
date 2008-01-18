@@ -50,8 +50,8 @@ class UrlItemLauncher;
 class MenuView : public KMenu 
 {
 Q_OBJECT
-
 public:
+
     /** Constructs a new menu with the specified @p parent */
     MenuView(QWidget *parent = 0);
     virtual ~MenuView();
@@ -79,6 +79,18 @@ public:
     void setColumn(int column);
     /** See setColumn() */
     int column() const;
+
+    /** The format type enumeration. */
+    enum FormatType {
+        Name = 0, ///< Name only
+        Description, ///< Description only
+        NameDescription, ///< Name (Description)
+        DescriptionName ///< Description (Name)
+    };
+    /** \return the format type. */
+    FormatType formatType() const;
+    /** Set the format type. */
+    void setFormatType(FormatType formattype);
 
 protected:
     /** 

@@ -28,8 +28,26 @@ class QAction;
 class MenuLauncherApplet : public Plasma::Applet
 {
 Q_OBJECT
-
+Q_ENUMS(ViewType)
+Q_ENUMS(FormatType)
 public:
+
+        enum ViewType {
+            Combined = 0,
+            Favorites,
+            Applications,
+            Computer,
+            RecentlyUsed,
+            Leave
+        };
+
+        enum FormatType {
+            Name = 0,
+            Description,
+            NameDescription,
+            DescriptionName
+        };
+
         MenuLauncherApplet(QObject *parent, const QVariantList &args);
         virtual ~MenuLauncherApplet();
 
