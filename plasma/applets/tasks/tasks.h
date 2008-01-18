@@ -87,7 +87,7 @@ private slots:
         void removeStartingTask(StartupPtr);
 
         void currentDesktopChanged(int);
-        void removeMovedWindow(TaskPtr task);
+        void taskMovedDesktop(TaskPtr task);
 
 private:
         // creates task representations for existing windows

@@ -100,7 +100,7 @@ void Tasks::init()
             this, SLOT(currentDesktopChanged(int)));
 
     connect(TaskManager::TaskManager::self(), SIGNAL(windowChanged(TaskPtr)),
-            this, SLOT(removeMovedWindow(TaskPtr)));
+            this, SLOT(taskMovedDesktop(TaskPtr)));
 
 
     // add the animator once we're initialized to avoid animating like mad on start up
@@ -226,10 +226,13 @@ void Tasks::currentDesktopChanged(int)
     registerWindowTasks();
 }
 
-void Tasks::removeMovedWindow(TaskPtr task)
+void Tasks::taskMovedDesktop(TaskPtr task)
 {
-    if (_showOnlyCurrentDesktop && !task->isOnCurrentDesktop()) {
-        removeWindowTask(task);
+    if (_showOnlyCurrentDesktop) {
+        if (!task->isOnCurrentDesktop())
+            removeWindowTask(task);
+        else if (!_windowTaskItems.contains(task))
+            addWindowTask(task);
     }
 }
 
