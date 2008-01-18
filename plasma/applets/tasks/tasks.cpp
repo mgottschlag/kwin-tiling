@@ -83,20 +83,20 @@ void Tasks::init()
     // add representations of existing running tasks
     registerWindowTasks();
     registerStartingTasks();
-	
-	// listen for addition and removal of window tasks
+
+    // listen for addition and removal of window tasks
     connect(TaskManager::TaskManager::self(), SIGNAL(taskAdded(TaskPtr)),
             this, SLOT(addWindowTask(TaskPtr)));
     connect(TaskManager::TaskManager::self(), SIGNAL(taskRemoved(TaskPtr)),
             this, SLOT(removeWindowTask(TaskPtr)));
-			
-	// listen for addition and removal of starting tasks
+
+    // listen for addition and removal of starting tasks
     connect(TaskManager::TaskManager::self(), SIGNAL(startupAdded(StartupPtr)),
-            this, SLOT(addStartingTask(StartupPtr)) );
+            this, SLOT(addStartingTask(StartupPtr)));
     connect(TaskManager::TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)),
             this, SLOT(removeStartingTask(StartupPtr)));
-			
-	connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
+
+    connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
             this, SLOT(currentDesktopChanged(int)));
 
     connect(TaskManager::TaskManager::self(), SIGNAL(windowChanged(TaskPtr)),
@@ -139,7 +139,6 @@ void Tasks::registerWindowTasks()
         iter.next();
         addWindowTask(iter.value());
     }
- 
 }
 
 void Tasks::addItemToRootGroup(AbstractTaskItem *item)
@@ -164,9 +163,10 @@ void Tasks::addWindowTask(TaskPtr task)
     if (!task->showInTaskbar()) {
         return;
     }
-	
-	if (_showOnlyCurrentDesktop && !task->isOnCurrentDesktop())
-		return;
+
+    if (_showOnlyCurrentDesktop && !task->isOnCurrentDesktop()) {
+        return;
+    }
     WindowTaskItem *item = 0;
     foreach (StartupPtr startup, _startupTaskItems.keys()) {
         if (startup->matchesWindow(task->window())) {
@@ -195,8 +195,9 @@ void Tasks::removeWindowTask(TaskPtr task)
 
 void Tasks::removeAllTasks()
 {
-	while (!_windowTaskItems.isEmpty()) 
-		removeItemFromRootGroup(_windowTaskItems.take(_windowTaskItems.constBegin().key()));
+    while (!_windowTaskItems.isEmpty()) {
+        removeItemFromRootGroup(_windowTaskItems.take(_windowTaskItems.constBegin().key()));
+    }
 }
 
 void Tasks::constraintsUpdated(Plasma::Constraints constraints)
@@ -216,13 +217,13 @@ void Tasks::wheelEvent(QGraphicsSceneWheelEvent *e)
      _rootTaskGroup->cycle(e->delta());
 }
 
-void Tasks::currentDesktopChanged( int )
+void Tasks::currentDesktopChanged(int)
 {
-	if (!_showOnlyCurrentDesktop)
-		return;
-	removeAllTasks();
-	registerWindowTasks();
-
+    if (!_showOnlyCurrentDesktop) {
+        return;
+    }
+    removeAllTasks();
+    registerWindowTasks();
 }
 
 void Tasks::removeMovedWindow(TaskPtr task)
@@ -253,7 +254,7 @@ void Tasks::showConfigurationInterface()
 void Tasks::configAccepted()
 {
     bool changed = false;
- 
+
     if (_showTooltip != (ui.showTooltip->checkState() == Qt::Checked)) {
         _showTooltip = !_showTooltip;
         foreach (AbstractTaskItem *taskItem, _windowTaskItems) {
@@ -264,25 +265,24 @@ void Tasks::configAccepted()
         }
         KConfigGroup cg = config();
         cg.writeEntry("showTooltip", _showTooltip);
-		changed = true;
-
+        changed = true;
     }
 
     if (_showOnlyCurrentDesktop != (ui.showOnlyCurrentDesktop->checkState() == Qt::Checked)) {
         _showOnlyCurrentDesktop = !_showOnlyCurrentDesktop;
-		
-		removeAllTasks();
-		registerWindowTasks();
 
-		KConfigGroup cg = config();
-   		cg.writeEntry("showOnlyCurrentDesktop", _showOnlyCurrentDesktop);
+        removeAllTasks();
+        registerWindowTasks();
 
-		changed = true;
+        KConfigGroup cg = config();
+        cg.writeEntry("showOnlyCurrentDesktop", _showOnlyCurrentDesktop);
+
+        changed = true;
     }
-    
+
     if(changed) {
-      	update();
-      	emit configNeedsSaving();
+        update();
+        emit configNeedsSaving();
     }
 }
 

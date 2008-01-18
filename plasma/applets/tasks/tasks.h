@@ -104,9 +104,9 @@ private:
 
         void addItemToRootGroup(AbstractTaskItem* item);
         void removeItemFromRootGroup(AbstractTaskItem* item);
-		
-		// remove all tasks from the taskbar
-		void removeAllTasks();
+
+        // remove all tasks from the taskbar
+        void removeAllTasks();
 
         TaskGroupItem* _rootTaskGroup;
 
@@ -114,7 +114,7 @@ private:
         QHash<StartupPtr,AbstractTaskItem*> _startupTaskItems;
 
         bool _showTooltip;
-	bool _showOnlyCurrentDesktop;
+        bool _showOnlyCurrentDesktop;
         KDialog *m_dialog;
         Ui::tasksConfig ui;
 };
