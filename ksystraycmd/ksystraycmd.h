@@ -3,7 +3,7 @@
 #ifndef KSYSTRAYCMD_H
 #define KSYSTRAYCMD_H
 
-#include <QLabel>
+#include <KSystemTrayIcon>
 
 class K3ShellProcess;
 
@@ -12,7 +12,7 @@ class K3ShellProcess;
  *
  * @author Richard Moore, rich@kde.org
  */
-class KSysTrayCmd : public QLabel
+class KSysTrayCmd : public KSystemTrayIcon
 {
   Q_OBJECT
 public:

@@ -2,14 +2,12 @@
 #include <QTextStream>
 #include <QImage>
 #include <QRegExp>
-//Added by qt3to4:
 #include <QMouseEvent>
-#include <QLabel>
 
 #include <kdebug.h>
 #include <kapplication.h>
 #include <kglobal.h>
-#include <kiconloader.h>
+#include <kicon.h>
 #include <klocale.h>
 #include <kmenu.h>
 #include <k3process.h>
@@ -26,12 +24,10 @@
 
 
 KSysTrayCmd::KSysTrayCmd()
-  : QLabel( 0 ),
+  : KSystemTrayIcon( 0 ),
     isVisible(true), lazyStart( false ), noquit( false ), quitOnHide( false ), onTop(false), ownIcon(false),
     win(0), client(0), top(0), left(0)
 {
-  setObjectName("systray_cmd" );
-  setAlignment( Qt::AlignCenter );
   refresh();
 }
 
@@ -47,9 +43,6 @@ KSysTrayCmd::~KSysTrayCmd()
 bool KSysTrayCmd::start()
 {
   // If we have no command we must catching an existing window
-#ifdef __GNUC__
-#warning !Qstring == QString.isEmpty ???
-#endif	
   if ( command.isEmpty() ) {
       if ( win ) {
 	  setTargetWindow( win );
@@ -144,21 +137,14 @@ void KSysTrayCmd::refresh()
 {
 //  KWindowSystem::setSystemTrayWindowFor( winId(), win ? win : winId() );
 
-  this->setToolTip( QString() );
   if ( win ) {
-    KSharedConfig::Ptr appCfg = KGlobal::config();
-    KConfigGroup configSaver(appCfg, "System Tray");
-    int iconWidth = configSaver.readEntry("systrayIconWidth", 22);
-
-    // ksystraycmd's icon or app's icon
     if (ownIcon)
     {
-      // Icefox ### double check after next kdelibs snapshot merge that this does it right
-      setWindowIcon( KSystemTrayIcon::loadIcon( qApp->applicationName() ) );
+      setIcon( KIcon( qApp->applicationName() ) );
     }
     else
     {
-      setWindowIcon( KWindowSystem::icon( win, iconWidth, iconWidth, true ) );
+      setIcon( KWindowSystem::icon( win, 22, 22, true ) );
     }
 
     this->setToolTip( KWindowSystem::windowInfo( win, NET::WMName ).name() );
@@ -171,8 +157,7 @@ void KSysTrayCmd::refresh()
     else
       this->setToolTip( window );
 
-    // Icefox ### double check after next kdelibs snapshot merge that this does it right
-    setIcon( KSystemTrayIcon::loadIcon( qApp->applicationName() ).pixmap() );
+    setIcon( KIcon( qApp->applicationName() ) );
   }
 }
 
@@ -216,9 +201,7 @@ void KSysTrayCmd::quitClient()
     // We didn't give command, so we didn't open an application.
     // That's why  when the application is closed we aren't informed.
     // So we quit now.
-#ifdef __GNUC__
-#warning !Qstring == QString.isEmpty ???
-#endif    
+ 
     if ( command.isEmpty() ) {
       qApp->quit();
     }
@@ -239,10 +222,10 @@ void KSysTrayCmd::quit()
 void KSysTrayCmd::execContextMenu( const QPoint &pos )
 {
     KMenu *menu = new KMenu();
-    menu->addTitle( *pixmap(), i18n( "KSysTrayCmd" ) );
+    menu->addTitle( icon(), i18n( "KSysTrayCmd" ) );
     QAction * hideShowId = menu->addAction( isVisible ? i18n( "&Hide" ) : i18n( "&Restore" ) );
-    QAction * undockId = menu->addAction( QIcon(SmallIcon("close")), i18n( "&Undock" ) );
-    QAction * quitId = menu->addAction( QIcon(SmallIcon("application-exit")), i18n( "&Quit" ) );
+    QAction * undockId = menu->addAction( KIcon("close"), i18n( "&Undock" ) );
+    QAction * quitId = menu->addAction( KIcon("application-exit"), i18n( "&Quit" ) );
 
     QAction * cmd = menu->exec( pos );
 
