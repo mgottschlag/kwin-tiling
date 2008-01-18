@@ -228,8 +228,9 @@ void Tasks::currentDesktopChanged(int)
 
 void Tasks::removeMovedWindow(TaskPtr task)
 {
-    if (_showOnlyCurrentDesktop && !task->isOnCurrentDesktop())
-    removeWindowTask(task);
+    if (_showOnlyCurrentDesktop && !task->isOnCurrentDesktop()) {
+        removeWindowTask(task);
+    }
 }
 
 void Tasks::showConfigurationInterface()
