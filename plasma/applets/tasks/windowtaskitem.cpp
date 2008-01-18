@@ -57,6 +57,7 @@ void WindowTaskItem::activate()
     // this needs to be implemented for Plasma's own panels.
     if (_task) {
         _task->activateRaiseOrIconify();
+        emit windowSelected(this);
     }
 }
 

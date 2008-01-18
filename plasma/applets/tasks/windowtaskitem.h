@@ -56,6 +56,10 @@ public:
     /** Overrided from LayoutItem */
     void setGeometry(const QRectF& geometry);
 
+signals:
+    /** Emitted when a window is selected for activation, minimization, iconification */
+    void windowSelected(AbstractTaskItem*);
+
 public slots:
     virtual void activate();
 

@@ -89,8 +89,10 @@ void TaskGroupItem::insertTask(AbstractTaskItem *item, int index)
         parentGroup->removeTask(item);
     }
 
-    connect(item, SIGNAL(activated(AbstractTaskItem *)),
-            this, SLOT(updateActive(AbstractTaskItem *)));
+    connect(item, SIGNAL(activated(AbstractTaskItem*)),
+            this, SLOT(updateActive(AbstractTaskItem*)));
+    connect(item, SIGNAL(windowSelected(AbstractTaskItem*)),
+            this, SIGNAL(activated(AbstractTaskItem*)));
 
     item->setParentItem(this);
     _tasks.insert(index, item);
@@ -128,8 +130,10 @@ void TaskGroupItem::removeTask(AbstractTaskItem *item)
         }
     }
 
-    disconnect(item, SIGNAL(activated(AbstractTaskItem *)),
-               this, SLOT(updateActive(AbstractTaskItem *)));
+    disconnect(item, SIGNAL(activated(AbstractTaskItem*)),
+               this, SIGNAL(activated(AbstractTaskItem*)));
+    disconnect(item, SIGNAL(windowSelected(AbstractTaskItem*)),
+               this, SIGNAL(activated(AbstractTaskItem*)));
 }
 
 void TaskGroupItem::updateActive(AbstractTaskItem *task)

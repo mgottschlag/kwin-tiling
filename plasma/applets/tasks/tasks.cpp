@@ -55,6 +55,8 @@ void Tasks::init()
     layout->setMargin(0);
     _rootTaskGroup = new TaskGroupItem(this, this);
     _rootTaskGroup->resize(contentSize());
+    connect(_rootTaskGroup, SIGNAL(activated(AbstractTaskItem*)),
+            this, SLOT(launchActivated()));
 
     // testing
         Plasma::LayoutAnimator* animator = new Plasma::LayoutAnimator;
