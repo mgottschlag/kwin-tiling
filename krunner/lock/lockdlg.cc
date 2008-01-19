@@ -173,13 +173,17 @@ void PasswordDlg::updateLabel()
 {
     if (mUnlockingFailed)
     {
-        mStatusLabel->setPaletteForegroundColor(Qt::black);
+        QPalette palette;
+        palette.setColor(mStatusLabel->foregroundRole(), Qt::black);
+        mStatusLabel->setPalette(palette);
         mStatusLabel->setText(i18n("<b>Unlocking failed</b>"));
     }
     else
     if (mCapsLocked)
     {
-        mStatusLabel->setPaletteForegroundColor(Qt::red);
+        QPalette palette;
+        palette.setColor(mStatusLabel->foregroundRole(), Qt::red);
+        mStatusLabel->setPalette(palette);
         mStatusLabel->setText(i18n("<b>Warning: Caps Lock on</b>"));
     }
     else
