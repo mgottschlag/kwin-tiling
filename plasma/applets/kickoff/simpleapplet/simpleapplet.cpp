@@ -103,10 +103,16 @@ public:
             foreach(QAction *action, actions) {
                 if( action->menu() && mergeFirstLevel ) {
                     QMetaObject::invokeMethod(action->menu(),"aboutToShow"); //fetch the children
-                    if( actions.count() > 1 ) {
+                    QList<QAction*> subactions;
+                    foreach(QAction *a, action->menu()->actions()) {
+                        if( !view->indexForAction(a).data(Kickoff::UrlRole).isNull() ) {
+                            subactions << a;
+                        }
+                    }
+                    if( actions.count() > 1 && subactions.count() > 0 ) {
                         menuview->addTitle(action->text());
                     }
-                    foreach(QAction *a, action->menu()->actions()) {
+                    foreach(QAction *a, subactions) {
                         menuview->addAction(a);
                     }
                 }
