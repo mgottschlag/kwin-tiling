@@ -77,14 +77,17 @@ MenuView::MenuView(QWidget *parent)
     , d(new Private(this))
 {
 }
+
 MenuView::~MenuView()
 {
     delete d;
 }
+
 QAction *MenuView::createLeafAction(const QModelIndex&,QObject *parent)
 {
     return new QAction(parent); 
 }
+
 void MenuView::updateAction(QAction *action,const QModelIndex& index)
 {
     QString text = index.data(Qt::DisplayRole).value<QString>(); // describing text, e.g. "Spreadsheet" or "Rekall" (right, sometimes the text is also used for the generic app-name)
@@ -131,6 +134,7 @@ void MenuView::updateAction(QAction *action,const QModelIndex& index)
     }
     action->setIcon(index.data(Qt::DecorationRole).value<QIcon>());
 }
+
 void MenuView::setModel(QAbstractItemModel *model)
 {
     d->model = model;
@@ -139,14 +143,17 @@ void MenuView::setModel(QAbstractItemModel *model)
         d->buildBranch(this,QModelIndex());
     }
 }
+
 QAbstractItemModel *MenuView::model() const
 {
     return d->model;
 }
+
 UrlItemLauncher *MenuView::launcher() const
 {
     return d->launcher;
 }
+
 QModelIndex MenuView::indexForAction(QAction *action) const
 {
     Q_ASSERT(d->model);
@@ -187,6 +194,7 @@ QModelIndex MenuView::indexForAction(QAction *action) const
 
     return index;
 }
+
 QAction *MenuView::actionForIndex(const QModelIndex& index) const
 {
     Q_ASSERT(d->model);
@@ -219,6 +227,7 @@ QAction *MenuView::actionForIndex(const QModelIndex& index) const
     }
     return menu->actions()[index.row()];
 }
+
 void MenuView::rowsInserted(const QModelIndex& parent,int start,int end)
 {
     QAction *menuAction = actionForIndex(parent);
@@ -238,6 +247,7 @@ void MenuView::rowsInserted(const QModelIndex& parent,int start,int end)
     Q_ASSERT(menu->actions().count() > start);
     insertActions(menu->actions()[start],newActions);
 }
+
 void MenuView::rowsRemoved(const QModelIndex& parent,int start,int end)
 {
     QAction *menuAction = actionForIndex(parent);
@@ -253,6 +263,7 @@ void MenuView::rowsRemoved(const QModelIndex& parent,int start,int end)
         menu->removeAction(actions[row]);
     }
 }
+
 void MenuView::dataChanged(const QModelIndex& topLeft,const QModelIndex& bottomRight)
 {
     QAction *menuAction = actionForIndex(topLeft.parent());
@@ -266,6 +277,7 @@ void MenuView::dataChanged(const QModelIndex& topLeft,const QModelIndex& bottomR
         updateAction(actions[row],d->model->index(row,d->column,topLeft.parent()));
     }
 }
+
 void MenuView::modelReset()
 {
     // force clearance of the menu
@@ -273,6 +285,7 @@ void MenuView::modelReset()
     // rebuild the menu from scratch
     setModel(d->model);
 }
+
 void MenuView::fillSubMenu()
 {
     QMenu *subMenu = qobject_cast<QMenu*>(sender());
@@ -289,23 +302,28 @@ void MenuView::fillSubMenu()
 
     disconnect(sender(),0,this,SLOT(fillSubMenu()));
 }
+
 void MenuView::setColumn(int column)
 {
     d->column = column;
     modelReset();
 }
+
 int MenuView::column() const
 {
     return d->column;
 }
+
 MenuView::FormatType MenuView::formatType() const
 {
     return d->formattype;
 }
+
 void MenuView::setFormatType(MenuView::FormatType formattype)
 {
     d->formattype = formattype;
 }
+
 void MenuView::actionTriggered(QAction *action)
 {
     QModelIndex index = indexForAction(action);

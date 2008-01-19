@@ -68,10 +68,12 @@ public:
         ~Private() { delete dialog; delete menuview; }
 
         void addItem(QComboBox* combo, const QString& caption, int index, const QString& icon = QString()) {
-            if( icon.isNull() )
+            if( icon.isNull() ) {
                 combo->addItem(caption, index);
-            else
+            }
+            else {
                 combo->addItem(KIcon(icon), caption, index);
+            }
         }
 
         void setCurrentItem(QComboBox* combo, int currentIndex) {
@@ -81,8 +83,9 @@ public:
                     return;
                 }
             }
-            if( combo->count() > 0 )
+            if( combo->count() > 0 ) {
                 combo->setCurrentIndex(0);
+            }
         }
 
         Kickoff::MenuView *createMenuView(QAbstractItemModel *model = 0) {
@@ -100,10 +103,12 @@ public:
             foreach(QAction *action, actions) {
                 if( action->menu() && mergeFirstLevel ) {
                     QMetaObject::invokeMethod(action->menu(),"aboutToShow"); //fetch the children
-                    if( actions.count() > 1 )
+                    if( actions.count() > 1 ) {
                         menuview->addTitle(action->text());
-                    foreach(QAction *a, action->menu()->actions())
+                    }
+                    foreach(QAction *a, action->menu()->actions()) {
                         menuview->addAction(a);
+                    }
                 }
                 else {
                     menuview->addAction(action);
