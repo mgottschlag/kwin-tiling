@@ -29,6 +29,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
+#include <kglobalsettings.h>
+#include <QDir>
+#include <krun.h>
 #include <config-workspace.h>
 #include <config-unix.h> // HAVE_LIMITS_H
 
@@ -285,8 +288,8 @@ void KSMServer::autoStart2()
 
     QDBusInterface kded( "org.kde.kded", "/kded", "org.kde.kded" );
     kded.call( "loadSecondPhase" );
-    //org::kde::kdesktop::Desktop desktop("org.kde.kdesktop", "/Desktop", QDBusConnection::sessionBus());
-    //desktop.runAutoStart();
+
+    runUserAutostart();
 
     connect( kcminitSignals, SIGNAL( phase2Done()), SLOT( kcmPhase2Done()));
     QTimer::singleShot( 10000, this, SLOT( kcmPhase2Timeout())); // protection
@@ -295,6 +298,30 @@ void KSMServer::autoStart2()
     if( !defaultSession())
         restoreLegacySession(KGlobal::config().data());
     KNotification::event( "startkde" , QString() , QPixmap() , 0l , KNotification::DefaultEvent  ); // this is the time KDE is up, more or less
+}
+
+void KSMServer::runUserAutostart()
+{
+    // now let's execute all the stuff in the autostart folder.
+    // the stuff will actually be really executed when the event loop is
+    // entered, since KRun internally uses a QTimer
+    QDir dir( KGlobalSettings::autostartPath() );
+    if (dir.exists()) {
+        const QStringList entries = dir.entryList( QDir::Files );
+        foreach (const QString& file, entries) {
+            // Don't execute backup files
+            if ( !file.endsWith('~') && !file.endsWith(".bak") &&
+                 ( file[0] != '%' || !file.endsWith('%') ) &&
+                 ( file[0] != '#' || !file.endsWith('#') ) )
+            {
+                KUrl url( dir.absolutePath() + '/' + file );
+                (void) new KRun( url, 0, true );
+            }
+        }
+    } else {
+        // Create dir so that users can find it :-)
+        dir.mkpath( KGlobalSettings::autostartPath() );
+    }
 }
 
 void KSMServer::autoStart2Done()

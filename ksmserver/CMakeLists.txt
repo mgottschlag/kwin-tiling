@@ -25,9 +25,6 @@ ADD_CUSTOM_COMMAND(OUTPUT ${kcminit_xml}
        DEPENDS ${kcminit_adaptor})
 QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${kcminit_xml} kcminit_interface )
 
-#set(kdesktop_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/kdesktop/org.kde.kdesktop.Desktop.xml)
-#QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${kdesktop_xml} kdesktop_interface )
-
 set(klauncher_xml  ${DBUS_INTERFACES_INSTALL_DIR}/org.kde.KLauncher.xml)
 QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${klauncher_xml} klauncher_interface )
 

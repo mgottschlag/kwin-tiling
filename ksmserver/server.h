@@ -135,6 +135,8 @@ private:
     void killingCompleted();
     void createLogoutEffectWidget();
 
+    void runUserAutostart();
+
     void discardSession();
     void storeSession();
 
@@ -222,7 +224,7 @@ private:
     QStringList excludeApps;
 
     WindowMap legacyWindows;
-    
+
     OrgKdeKLauncherInterface* klauncherSignals;
     QDBusInterface* kcminitSignals;
 };
