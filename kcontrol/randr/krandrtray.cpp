@@ -279,8 +279,6 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 
 void KRandRSystemTray::populateLegacyMenu(KMenu* menu)
 {
-	QAction *action;
-
 	menu->addTitle(SmallIcon("view-fullscreen"), i18n("Screen Size"));
 
 	LegacyRandRScreen *screen = m_display->currentLegacyScreen();

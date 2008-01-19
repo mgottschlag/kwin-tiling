@@ -177,11 +177,13 @@ void RandRConfig::update()
 
 void RandRConfig::resizeEvent(QResizeEvent *event)
 {
+    Q_UNUSED(event);
 	slotUpdateView();
 }
 
 void RandRConfig::slotAdjustOutput(OutputGraphicsItem *o)
 {
+    Q_UNUSED(o);
 	kDebug() << "Output graphics item changed: ";
 	
 	// TODO: Implement

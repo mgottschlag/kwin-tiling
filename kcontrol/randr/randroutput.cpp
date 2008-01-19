@@ -565,6 +565,7 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 
 bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
 {
+    Q_UNUSED(applyNow);
 	if( !crtc || (m_crtc && crtc->id() == m_crtc->id()) )
 		return false;
 	
