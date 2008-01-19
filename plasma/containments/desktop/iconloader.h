@@ -63,7 +63,6 @@ public:
     void setGridAligned(bool align);
     QSizeF gridSize() const;
 
-    QPointF findFreePlaceNear(QPointF p);
     /**
      * Places an item on the desktop in the first available space.
      */
@@ -156,6 +155,8 @@ private:
     bool m_enableMedia;
     QSizeF m_gridSize;
 
+    static const qreal topBorder=20.0;
+
 private Q_SLOTS:
     void init();
     void newItems(const KFileItemList& items);
@@ -182,7 +183,10 @@ QPointF IconLoader::mapFromGrid(const QPoint &pos) const
 
 QRectF IconLoader::availableGeometry() const
 {
-    return QRectF(QApplication::desktop()->availableGeometry(0));
+    QRectF desktop(QApplication::desktop()->availableGeometry(0));
+    //take this out once availableGeometry gives us the expected result
+    desktop.setBottom(desktop.bottom()-48.0);
+    return desktop;
 }
 
 #endif

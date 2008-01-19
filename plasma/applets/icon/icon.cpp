@@ -61,15 +61,14 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
 void IconApplet::init()
 {
     KConfigGroup cg = config();
-    //setMinimumSize(QSize(48,68));
 
     connect(m_icon, SIGNAL(activated()), this, SLOT(openUrl()));
     setUrl(cg.readEntry("Url", m_url));
-    setDrawStandardBackground(false);
     setDisplayLines(2);
 
     m_icon->installSceneEventFilter(this);
     m_icon->resize(contentSize());
+    m_icon->setDrawBackground(false);
 
     // we do this right away since we may have our config
     // read shortly by the containment. usually applets don't need

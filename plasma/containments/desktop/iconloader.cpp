@@ -58,7 +58,7 @@ void IconLoader::init()
     m_orientation = (Qt::Orientation)cg.readEntry("orientation", (int)m_orientation);
     setShowDeviceIcons(cg.readEntry("enableMedia", m_enableMedia));
 
-    setGridSize(QSizeF(150, 150));
+    setGridSize(QSizeF(150, 125));
 
     connect(m_desktop, SIGNAL(appletRemoved(Plasma::Applet*)), this, SLOT(appletDeleted(Plasma::Applet*)));
     //build list of current icons
@@ -311,76 +311,9 @@ void IconLoader::setToGrid(Plasma::Applet* icon, const QPoint p)
         newPos.setX(newPos.x() + (m_gridSize.width()/2 - icon->boundingRect().width()/2));
     }
     if (m_gridSize.height() > icon->boundingRect().height()) {
-        newPos.setY(newPos.y() + (m_gridSize.height()/2 - icon->boundingRect().height()/2));
+        newPos.setY(newPos.y() + topBorder);
     }
     icon->setPos(newPos);
-}
-
-QPointF IconLoader::findFreePlaceNear(QPointF point)
-{
-    // TODO make this faster
-    QPointF p = mapFromGrid(mapToGrid(point));
-    if (isFreePlace(p)) return p;
-    
-    int maxD = qMax(gridDimensions().width(),
-                       gridDimensions().height());
-    qreal gridWidth = gridSize().width();
-    qreal gridHeight = gridSize().height();
-    // d is the grid squares ahead to look from p
-    // each iteration we try to look d grid squares from p
-    // and store free places in freePlaces list
-    QList<QPointF> freePlaces;
-    for (int d=1; d<maxD && freePlaces.isEmpty(); ++d) {
-        // These variables control we do not look out of screen
-        qreal left = qMax(p.x() -d*gridWidth, gridWidth/2);
-        qreal right = qMin(p.x() +d*gridWidth,
-                           m_desktop->contentSizeHint().width() -gridWidth/2);
-        qreal top = qMax(p.y() -d*gridHeight, gridHeight/2);
-        qreal bottom = qMin(p.y() +d*gridHeight,
-                            m_desktop->contentSizeHint().height() -gridHeight/2);
-        QPointF pos;
-        for (qreal x=left; x<=right; x += gridWidth) {
-            pos = QPointF(x, top);
-            if (isFreePlace(pos)) {
-                freePlaces.append(pos);
-            }
-            pos = QPointF(x, bottom);
-            if (isFreePlace(pos)) {
-                freePlaces.append(pos);
-            }
-
-        }
-        for (qreal y=top; y<=bottom; y += gridHeight) {
-            pos = QPointF(left, y);
-            if (isFreePlace(pos)) {
-                freePlaces.append(pos);
-            }
-            pos = QPointF(right, y);
-            if (isFreePlace(pos)) {
-                freePlaces.append(pos);
-            }
-        }
-    }
-    double min = maxD * gridWidth * gridHeight;
-    // Take from freePlaces the nearest
-    // If freePlaces is empty, p is initialized in the first line as
-    // mapFromGrid(mapToGrid(point));
-    foreach (QPointF free, freePlaces) {
-        double d = qAbs(point.x() - free.x()) + qAbs(point.y() -free.y());
-        if (d < min) {
-            min = d;
-            p = free;
-        }
-    }
-    return p;
-}
-
-
-bool IconLoader::isFreePlace(const QPointF &p)
-{
-    QGraphicsItem *existing = m_desktop->scene()->itemAt(p);
-    bool free = (!existing) || (existing == m_desktop);
-    return free;
 }
 
 bool IconLoader::isGridAligned() const
