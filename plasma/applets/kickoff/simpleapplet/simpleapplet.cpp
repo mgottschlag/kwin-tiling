@@ -224,8 +224,10 @@ void MenuLauncherApplet::showConfigurationInterface()
         QGridLayout *l = new QGridLayout(p);
         p->setLayout(l);
 
-        l->addWidget(new QLabel(i18n("View:"), p), 0, 0);
+        QLabel *viewLabel = new QLabel(i18n("View:"), p);
+        l->addWidget(viewLabel, 0, 0);
         d->viewComboBox = new QComboBox(p);
+        viewLabel->setBuddy(d->viewComboBox);
         d->addItem(d->viewComboBox, i18n("Standard"), MenuLauncherApplet::Combined, "start-here-kde");
         d->addItem(d->viewComboBox, i18n("Favorites"), MenuLauncherApplet::Favorites, "bookmarks");
         d->addItem(d->viewComboBox, i18n("Applications"), MenuLauncherApplet::Applications, "applications-other");
@@ -234,8 +236,10 @@ void MenuLauncherApplet::showConfigurationInterface()
         d->addItem(d->viewComboBox, i18n("Leave"), MenuLauncherApplet::Leave, "application-exit");
         l->addWidget(d->viewComboBox, 0, 1);
 
-        l->addWidget(new QLabel(i18n("Format:"), p), 1, 0);
+        QLabel *formatLabel = new QLabel(i18n("Format:"), p);
+        l->addWidget(formatLabel, 1, 0);
         d->formatComboBox = new QComboBox(p);
+        formatLabel->setBuddy(d->formatComboBox);
         d->addItem(d->formatComboBox, i18n("Name only"), MenuLauncherApplet::Name);
         d->addItem(d->formatComboBox, i18n("Description only"), MenuLauncherApplet::Description);
         d->addItem(d->formatComboBox, i18n("Name Description"), MenuLauncherApplet::NameDescription);
