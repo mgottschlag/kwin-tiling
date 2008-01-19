@@ -170,8 +170,7 @@ void Pager::showConfigurationInterface()
 void Pager::recalculateGeometry()
 {
     if (!m_rects.isEmpty() && contentSize() == m_size) {
-        //kDebug() << "leaving because" << !m_rects.isEmpty() << " and " << contentSize() << "==" <<
-            m_size;
+        //kDebug() << "leaving because" << !m_rects.isEmpty() << " and " << contentSize() << "==" << m_size;
         return;
     }
 
