@@ -67,8 +67,11 @@ public:
         Private() : menuview(0), launcher(0), dialog(0) {}
         ~Private() { delete dialog; delete menuview; }
 
-        void addItem(QComboBox* combo, const QString& caption, int index) {
-            combo->addItem(caption, index);
+        void addItem(QComboBox* combo, const QString& caption, int index, const QString& icon = QString()) {
+            if( icon.isNull() )
+                combo->addItem(caption, index);
+            else
+                combo->addItem(KIcon(icon), caption, index);
         }
 
         void setCurrentItem(QComboBox* combo, int currentIndex) {
@@ -108,27 +111,22 @@ public:
             }
         }
 
-        void updateIcon() {
+        QString viewIcon() {
             switch( viewtype ) {
                 case Combined:
-                    icon->setIcon(KIcon("start-here-kde"));
-                    break;
+                    return "start-here-kde";
                 case Favorites:
-                    icon->setIcon(KIcon("bookmarks"));
-                    break;
+                    return "bookmarks";
                 case Applications:
-                    icon->setIcon(KIcon("applications-other"));
-                    break;
+                    return "applications-other";
                 case Computer:
-                    icon->setIcon(KIcon("computer"));
-                    break;
+                    return "computer";
                 case RecentlyUsed:
-                    icon->setIcon(KIcon("view-history"));
-                    break;
+                    return "view-history";
                 case Leave:
-                    icon->setIcon(KIcon("application-exit"));
-                    break;
+                    return "application-exit";
             }
+            return QString();
         }
 
 };
@@ -167,7 +165,7 @@ void MenuLauncherApplet::init()
         d->formattype = (MenuLauncherApplet::FormatType) e.keyToValue(ba);
     }
 
-    d->updateIcon();
+    d->icon->setIcon(KIcon(d->viewIcon()));
     //d->icon->setIcon(KIcon(cg.readEntry("icon","start-here-kde")));
     //setMinimumContentSize(d->icon->iconSize()); //setSize(d->icon->iconSize())
 
@@ -217,12 +215,12 @@ void MenuLauncherApplet::showConfigurationInterface()
 
         l->addWidget(new QLabel(i18n("View:"), p), 0, 0);
         d->viewComboBox = new QComboBox(p);
-        d->addItem(d->viewComboBox, i18n("Standard"), MenuLauncherApplet::Combined);
-        d->addItem(d->viewComboBox, i18n("Favorites"), MenuLauncherApplet::Favorites);
-        d->addItem(d->viewComboBox, i18n("Applications"), MenuLauncherApplet::Applications);
-        d->addItem(d->viewComboBox, i18n("Computer"), MenuLauncherApplet::Computer);
-        d->addItem(d->viewComboBox, i18n("Recently Used"), MenuLauncherApplet::RecentlyUsed);
-        d->addItem(d->viewComboBox, i18n("Leave"), MenuLauncherApplet::Leave);
+        d->addItem(d->viewComboBox, i18n("Standard"), MenuLauncherApplet::Combined, "start-here-kde");
+        d->addItem(d->viewComboBox, i18n("Favorites"), MenuLauncherApplet::Favorites, "bookmarks");
+        d->addItem(d->viewComboBox, i18n("Applications"), MenuLauncherApplet::Applications, "applications-other");
+        d->addItem(d->viewComboBox, i18n("Computer"), MenuLauncherApplet::Computer, "computer");
+        d->addItem(d->viewComboBox, i18n("Recently Used"), MenuLauncherApplet::RecentlyUsed, "view-history");
+        d->addItem(d->viewComboBox, i18n("Leave"), MenuLauncherApplet::Leave, "application-exit");
         l->addWidget(d->viewComboBox, 0, 1);
 
         l->addWidget(new QLabel(i18n("Format:"), p), 1, 0);
@@ -254,7 +252,7 @@ void MenuLauncherApplet::configAccepted()
         QMetaEnum e = metaObject()->enumerator(metaObject()->indexOfEnumerator("ViewType"));
         cg.writeEntry("view", QByteArray(e.valueToKey(d->viewtype)));
 
-        d->updateIcon();
+        d->icon->setIcon(KIcon(d->viewIcon()));
         d->icon->update();
     }
 
