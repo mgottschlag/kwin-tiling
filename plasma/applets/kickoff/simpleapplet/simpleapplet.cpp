@@ -217,7 +217,7 @@ void MenuLauncherApplet::showConfigurationInterface()
 
         l->addWidget(new QLabel(i18n("View:"), p), 0, 0);
         d->viewComboBox = new QComboBox(p);
-        d->addItem(d->viewComboBox, i18n("Combined"), MenuLauncherApplet::Combined);
+        d->addItem(d->viewComboBox, i18n("Standard"), MenuLauncherApplet::Combined);
         d->addItem(d->viewComboBox, i18n("Favorites"), MenuLauncherApplet::Favorites);
         d->addItem(d->viewComboBox, i18n("Applications"), MenuLauncherApplet::Applications);
         d->addItem(d->viewComboBox, i18n("Computer"), MenuLauncherApplet::Computer);
