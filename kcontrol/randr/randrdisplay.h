@@ -24,6 +24,7 @@
 #include <KConfig>
 #include "randr.h"
 
+#include <X11/Xlib.h>
 
 class RandRDisplay
 {
@@ -36,11 +37,11 @@ public:
 	const QString& version() const;
 
 	int eventBase() const;
-	int	errorBase() const;
+	int errorBase() const;
 
-	int	screenIndexOfWidget(QWidget* widget);
+	int screenIndexOfWidget(QWidget* widget);
 
-	int	numScreens() const;
+	int numScreens() const;
 	LegacyRandRScreen* legacyScreen(int index);
 	LegacyRandRScreen* currentLegacyScreen();
 #ifdef HAS_RANDR_1_2
@@ -71,6 +72,7 @@ public:
 	void handleEvent(XEvent *e);
 
 private:
+	Display *m_dpy;
 	int	m_numScreens;
 	int	m_currentScreenIndex;
 	LegacyScreenList m_legacyScreens;

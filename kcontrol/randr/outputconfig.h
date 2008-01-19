@@ -35,8 +35,26 @@ class OutputConfig : public QWidget, public Ui::OutputConfigBase
 public:
 	OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsItem *item);
 	~OutputConfig();
+	
+	/** Enumeration describing two related outputs (i.e. VGA LeftOf TMDS) */
+	enum Relation {
+		Absolute = -1,
+		SameAs = 0,
+		LeftOf = 1,
+		RightOf,
+		Over,
+		Under,
+	};
+	// NOTE: I'd love to have used Above and Below but Xlib already defines them
+	// and that confuses GCC.
 
-	static QString positionName(RandROutput::Relation position);
+	QPoint position(void) const;
+	QSize resolution(void) const;
+	float refreshRate(void) const;
+	int rotation(void) const;
+	
+	static QString positionName(Relation position);
+	RandROutput *output(void) const;
 	
 public slots:
 	void load();
@@ -50,6 +68,7 @@ protected slots:
 	void updateRateList(void);
 	void updateRateList(int resolutionIndex);
 	
+	void positionComboChanged(int item);	
 	void outputChanged(RROutput output, int changed);
 
 signals:
@@ -60,6 +79,7 @@ signals:
 private:
 	int m_changes;
 	bool m_changed;
+	QPoint m_pos;
 	
 	RandROutput *m_output;
 	OutputGraphicsItem *m_item;

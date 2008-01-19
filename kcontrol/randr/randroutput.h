@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2007 Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
- *
+ * Copyright (c) 2007, 2008 Harry Bock <hbock@providence.edu>
+ * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -22,8 +23,9 @@
 #include <QObject>
 #include <QString>
 #include <QRect>
-#include "randr.h"
 
+#include "randr.h"
+#include "randrmode.h"
 
 class QAction;
 class KConfig;
@@ -38,17 +40,6 @@ class RandROutput : public QObject
 public:
 	RandROutput(RandRScreen *parent, RROutput id);
 	~RandROutput();
-
-	/** Enumeration describing two related outputs (i.e. VGA LeftOf TMDS) */
-	enum Relation {
-		SameAs = 0,
-		LeftOf = 1,
-		RightOf,
-		Over,
-		Under
-	};
-	// NOTE: I'd love to have used Above and Below but Xlib already defines them
-	// and that confuses GCC.
 	
 	/** Returns the internal RANDR identifier for a particular output. */
 	RROutput id() const;
@@ -76,15 +67,17 @@ public:
 	CrtcList possibleCrtcs() const;
 	
 	/** Returns the current CRTC for this output. */
-	RRCrtc crtc() const;
+	RandRCrtc *crtc() const;
 
 	/** Returns a list of all RRModes supported by this output. */
 	ModeList modes() const;
-	
-	/** Returns the current RRMode for this output. */
-	RRMode mode() const;
-	//RandRMode mode() const;
 
+	/** Returns the current mode for this output. */
+	RandRMode mode() const;
+
+	/** Returns the preferred mode for this output. */
+	RandRMode preferredMode(void) const;
+	
 	/** The list of supported sizes */
 	SizeList sizes() const;
 	QRect rect() const;
@@ -112,20 +105,12 @@ public:
 	 * device. */
 	bool isActive() const;
 
-	/** Set the relationship of one output to another (e.g.,
-	 * DVI-I_2/digital is right of DVI-I_1/analog). To remove a relationship,
-	 * use setRelation(output, NoRelation); */
-	void setRelation(RandROutput *output, Relation relation);
-	
-	/** Get the relationship of this output to another, if one is set */
-	RandROutput *relation(Relation *rel) const;
-
 	bool applyProposed(int changes = 0xffffff, bool confirm = false);
 	void proposeOriginal();
 
 	// proposal functions
+	void proposeRefreshRate(float rate);
 	void proposeRect(const QRect &r);
-	void proposePosition(const QPoint &p);
 	void proposeRotation(int rotation);
 
 	void load(KConfig &config);
@@ -148,15 +133,19 @@ signals:
 	void outputChanged(RROutput o, int changes);
 
 protected:
+	/** Query Xrandr for information about this output, and set
+	 * up this instance accordingly. */
+	void queryOutputInfo(void);
+	
 	/** Find the first CRTC that is not controlling any
 	 * display devices. */
-	RandRCrtc *findEmptyCrtc();
+	RandRCrtc *findEmptyCrtc(void);
 	bool tryCrtc(RandRCrtc *crtc, int changes);
 
 	/** Set the current CRT controller for this output.
 	 * The CRTC should never be set directly; it should be added through 
 	 * this function to properly manage signals related to this output. */
-	void setCrtc(RRCrtc c);
+	bool setCrtc(RandRCrtc *crtc, bool applyNow = true);
 	
 private:	
 	RROutput m_id;
@@ -165,24 +154,23 @@ private:
 	QString m_alias;
 
 	CrtcList m_possibleCrtcs;
-	RRCrtc m_currentCrtc;
 
-	//proposed stuff (mostly to read from the configuration
+	RandRScreen *m_screen;
+	RandRCrtc *m_crtc;
+	
+	//proposed stuff (mostly to read from the configuration)
 	QRect m_proposedRect;
-	int m_proposedRotation;
+	int   m_proposedRotation;
 	float m_proposedRate;
 
 	QRect m_originalRect;
-	int m_originalRotation;
+	int   m_originalRotation;
 	float m_originalRate;
 
 	ModeList m_modes;
+	RandRMode m_preferredMode;
 
 	int m_rotations;
 	bool m_connected;
-
-	Relation m_relation;
-	RandROutput *m_relatedOutput;
-	RandRScreen *m_screen;
 };
 #endif

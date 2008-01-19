@@ -1,6 +1,6 @@
 /*
+ * Copyright (c) 2007, 2008 Harry Bock <hbock@providence.edu>
  * Copyright (c) 2007 Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
- * Copyright (c) 2007 Harry Bock <hbock@providence.edu>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -29,23 +29,29 @@
 #include "randrscreen.h"
 
 RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
-: QWidget(parent), Ui::RandRConfigBase()
+	: QWidget(parent), Ui::RandRConfigBase()
 {
 	m_display = display;
 	Q_ASSERT(m_display);
+	
 	m_changed = false;
+	m_firstLoad = true;
 
-	if (!m_display->isValid())
+	if (!m_display->isValid()) {
+		// FIXME: this needs much better handling of this error...
 		return;
+	}
 
 	setupUi(this);
 
 	// create the container for the settings widget
-	QHBoxLayout *l = new QHBoxLayout(outputList);
-	l->setSpacing(0);
-	l->setContentsMargins(0,0,0,0);
+	QHBoxLayout *layout = new QHBoxLayout(outputList);
+	layout->setSpacing(0);
+	layout->setContentsMargins(0,0,0,0);
 	m_container = new SettingsContainer(outputList);
-	l->addWidget(m_container);
+	m_container->setSizePolicy(QSizePolicy::Minimum,
+						  QSizePolicy::Minimum);
+	layout->addWidget(m_container);
 
 	// create the scene
 	m_scene = new QGraphicsScene(m_display->currentScreen()->rect());	
@@ -58,19 +64,26 @@ RandRConfig::~RandRConfig()
 {
 }
 
-void RandRConfig::load()
+void RandRConfig::load(void)
 {
-	kDebug() << "LOAD";
-	if (!m_display->isValid())
+	if (!m_display->isValid()) {
+		kDebug() << "Invalid display! Aborting config load.";
 		return;
-
-	qDeleteAll(m_outputList);
-	m_outputList.clear();
-
-	QList<QGraphicsItem*> items = m_scene->items();
-	foreach(QGraphicsItem *i, items)
-		m_scene->removeItem(i);
-
+	}
+	
+	if(!m_firstLoad) {
+		qDeleteAll(m_outputList);
+		m_outputList.clear();
+		
+		QList<QGraphicsItem*> items = m_scene->items();
+		foreach(QGraphicsItem *i, items) {
+			if(i->scene() == m_scene)
+				m_scene->removeItem(i);
+		}
+	}
+	
+	m_firstLoad = false;
+	
 	OutputMap outputs = m_display->currentScreen()->outputs();
 
 	// FIXME: adjust it to run on a multi screen system
@@ -84,15 +97,19 @@ void RandRConfig::load()
 		connect(o,    SIGNAL(itemChanged(OutputGraphicsItem*)), 
 		        this, SLOT(slotAdjustOutput(OutputGraphicsItem*)));
 
-		OutputConfig *c = new OutputConfig(0, output, o);
-		w = m_container->insertWidget(c, output->name());
-		if(output->isConnected())
+		OutputConfig *config = new OutputConfig(0, output, o);
+		
+		QString description = output->name() + 
+		                     (output->isConnected() ? " (Connected)" : "");
+		w = m_container->insertWidget(config, description);
+		if(output->isConnected()) {
 			w->setExpanded(true);
+			kDebug() << "Output rect: " << output->rect();
+		}
 		m_outputList.append(w);
 		
-		kDebug() << "Rect: " << output->rect();
-		connect(c, SIGNAL(updateView()), this, SLOT(slotUpdateView()));
-		connect(c, SIGNAL(optionChanged()), this, SLOT(slotChanged()));
+		connect(config, SIGNAL(updateView()), this, SLOT(slotUpdateView()));
+		connect(config, SIGNAL(optionChanged()), this, SLOT(slotChanged()));
 	}		    
 	slotUpdateView();
 }
@@ -115,13 +132,33 @@ void RandRConfig::apply()
 	kDebug() << "Applying settings... ";
 	foreach(CollapsibleWidget *w, m_outputList) {
 		OutputConfig *config = static_cast<OutputConfig *>(w->innerWidget());
+		RandROutput *output = config->output();
+		
+		if(!output->isConnected())
+			continue;
+		
+		QSize res = config->resolution();
+		QRect configuredRect(config->position(), res);
+		
+		if(!res.isNull()) {
+			if(output->rect() == configuredRect) {
+				kDebug() << "Ignoring identical config for " << output->name();
+				continue;
+			}
+			
+			kDebug() << "Output config: rect =" << configuredRect << ", rot = "
+			         << config->rotation() << ", rate =" << config->refreshRate();
+				    
+			output->proposeRect(configuredRect);
+			output->proposeRotation(config->rotation());
+			output->proposeRefreshRate(config->refreshRate());
+		} else { // user wants to disable this output
+			kDebug() << "Disabling " << output->name();
+			output->slotDisable();
+		}
 	}
-	/*
-	if (m_changed) {
-		m_display->applyProposed();
-
-		update();
-	} */
+	m_display->applyProposed();
+	update();
 }
 
 void RandRConfig::slotChanged(void)
@@ -145,7 +182,7 @@ void RandRConfig::resizeEvent(QResizeEvent *event)
 
 void RandRConfig::slotAdjustOutput(OutputGraphicsItem *o)
 {
-	kDebug() << "Output changed: ";
+	kDebug() << "Output graphics item changed: ";
 	
 	// TODO: Implement
 }

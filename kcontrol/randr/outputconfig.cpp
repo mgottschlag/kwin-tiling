@@ -25,7 +25,7 @@
 #include <kdebug.h>
 
 OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsItem *item)
-: QWidget(parent)
+	: QWidget(parent)
 {
 	m_output = output;
 	Q_ASSERT(output);
@@ -36,12 +36,13 @@ OutputConfig::OutputConfig(QWidget *parent, RandROutput *output, OutputGraphicsI
 	setupUi(this);
 
 	// connect signals
-	connect(sizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(updateRateList(int)));
-	//connect(m_output, SIGNAL(outputChanged(RROutput, int)), this, SLOT(load()));
+	connect(positionCombo, SIGNAL(currentIndexChanged(int)),
+	        this, SLOT(positionComboChanged(int)));
+	connect(sizeCombo, SIGNAL(currentIndexChanged(int)),
+	        this, SLOT(updateRateList(int)));
 	connect(m_output, SIGNAL(outputChanged(RROutput, int)),
 	        this,     SLOT(outputChanged(RROutput, int)));
 		  
-	//connect(activeCheck,  SIGNAL(stateChanged(int)), this, SLOT(setConfigDirty()));
 	connect(sizeCombo,    SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
 	connect(refreshCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
 	connect(orientationCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(setConfigDirty()));
@@ -55,34 +56,55 @@ OutputConfig::~OutputConfig()
 {
 }
 
-/*
-void OutputConfig::activeStateChanged(int)
+RandROutput *OutputConfig::output(void) const
 {
-	emit optionChanged(true);
+	return m_output;
 }
 
-	enum Changes 
-	{
-		ChangeCrtc       =  1,
-		ChangeOutputs    =  2,
-		ChangeMode       =  4,
-		ChangeRotation   =  8,
-		ChangeConnection = 16,
-		ChangeRect       = 32,
-		ChangeRate       = 64
-	};
-*/
+QPoint OutputConfig::position(void) const
+{
+	int index = positionCombo->currentIndex();
+	if((Relation)positionCombo->itemData(index).toInt() == Absolute)
+		return QPoint(absolutePosX->text().toInt(), absolutePosY->text().toInt());
+	
+	return QPoint(0, 0);
+}
+
+QSize OutputConfig::resolution(void) const
+{
+	return sizeCombo->itemData(sizeCombo->currentIndex()).toSize();
+}
+
+float OutputConfig::refreshRate(void) const
+{
+	float rate = float(refreshCombo->itemData(refreshCombo->currentIndex()).toDouble());
+	if(rate == 0.0f) {
+		RateList rates = m_output->refreshRates(resolution());
+		return rates.first();
+	}
+	return rate;
+}
+
+int OutputConfig::rotation(void) const
+{
+	return orientationCombo->itemData(orientationCombo->currentIndex()).toInt();
+}
+
 void OutputConfig::outputChanged(RROutput output, int changes)
 {
 	Q_ASSERT(m_output->id() == output);
 	kDebug() << "Output " << m_output->name() << " changed. (mask = " << changes << ")";
 	
+	if(changes & RandR::ChangeOutputs) {
+		kDebug() << "Outputs changed";
+	}
+	
 	if(changes & RandR::ChangeCrtc) {
 		kDebug() << "Output CRTC changed";
-		//activeCheck->setChecked(m_output->isActive());
 		
 		updateSizeList();
 		updateRateList();
+		updateRotationList();
 	}
 	
 	if(changes & RandR::ChangeRect) {
@@ -101,7 +123,6 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 	if(changes & RandR::ChangeConnection) {
 		kDebug() << "Output connection status changed";
 		setEnabled(m_output->isConnected());
-		//activeCheck->setChecked(m_output->isActive());
 	}
 	
 	if(changes & RandR::ChangeRate) {
@@ -112,20 +133,21 @@ void OutputConfig::outputChanged(RROutput output, int changes)
 	if(changes & RandR::ChangeMode) {
 		kDebug() << "Output mode changed.";
 		// This NEEDS to be fixed..
-		QSize modeSize = m_output->screen()->mode(m_output->mode()).size();
-		
+		//QSize modeSize = m_output->screen()->mode(m_output->mode()).size();
+		QSize modeSize = m_output->mode().size();
 		updateRateList(sizeCombo->findData(modeSize));
 	}
 }
 
-QString OutputConfig::positionName(RandROutput::Relation position)
+QString OutputConfig::positionName(Relation position)
 {
 	switch(position) {
-	case RandROutput::LeftOf:  return i18n("Left of");
-	case RandROutput::RightOf: return i18n("Right of");
-	case RandROutput::Over:    return i18nc("Output is placed above another one", "Above");
-	case RandROutput::Under:   return i18nc("Output is placed below another one", "Below");
-	case RandROutput::SameAs:  return i18n("Clone of");
+	case LeftOf:  return i18n("Left of");
+	case RightOf: return i18n("Right of");
+	case Over:    return i18nc("Output is placed above another one", "Above");
+	case Under:   return i18nc("Output is placed below another one", "Below");
+	case SameAs:  return i18n("Clone of");
+	case Absolute:  return i18nc("Fixed, abitrary position", "Absolute");
 	}
 	
 	return i18n("No relative position");
@@ -133,11 +155,8 @@ QString OutputConfig::positionName(RandROutput::Relation position)
 
 void OutputConfig::load()
 {
-	int index;
-
-	kDebug() << "Output Load......";
+	kDebug() << "Loading output configuration for " << m_output->name();
 	setEnabled( m_output->isConnected() );
-	//activeCheck->setChecked(m_output->isActive());
 
 	sizeCombo->clear();
 	orientationCombo->clear();
@@ -149,13 +168,13 @@ void OutputConfig::load()
 	/* Mode size configuration */
 	updateSizeList();
 	
-	/* Output Rotation Configuration */
+	/* Output rotation and relative position */
 	updateRotationList();
 	updatePositionList();
 	
 	// update the item
 	m_item->setRect( 0, 0, m_output->rect().width(), m_output->rect().height());
-	kDebug() << "      --> setting graphic pos " << m_output->rect().topLeft();
+	kDebug() << "  Setting graphic rect pos: " << m_output->rect().topLeft();
 	m_item->setPos( m_output->rect().topLeft() );
 
 	emit updateView();
@@ -167,28 +186,48 @@ void OutputConfig::setConfigDirty(void)
 	emit optionChanged();
 }
 
+void OutputConfig::positionComboChanged(int item)
+{
+	Relation rel;
+	rel = (Relation)positionCombo->itemData(item).toInt();
+	
+	bool isAbsolute = (rel == Absolute);
+	
+	positionOutputCombo->setVisible(!isAbsolute);
+	absolutePosX->setVisible(isAbsolute);
+	absolutePosY->setVisible(isAbsolute);
+	
+	if(isAbsolute) {
+		int posX = m_output->rect().topLeft().x();
+		int posY = m_output->rect().topLeft().y();
+		
+		absolutePosX->setText(QString::number(posX));
+		absolutePosY->setText(QString::number(posY));
+	}
+}
+
 void OutputConfig::updatePositionList(void)
 {
-	RandROutput::Relation rel;
-	m_output->relation(&rel);
-	for(int i = 0; i < 5; i++)
-		positionCombo->addItem(OutputConfig::positionName((RandROutput::Relation)i), i);
+	Relation rel = SameAs;
+	// FIXME: get default value from KConfig
+	for(int i = -1; i < 5; i++)
+		positionCombo->addItem(OutputConfig::positionName((Relation)i), i);
 	
 	int index = positionCombo->findData((int)rel);
 	if(index != -1)
 		positionCombo->setCurrentIndex(index);
 
-	/* Relative Output Name Configuration
-	 */
+	/* Relative Output Name Configuration */
 	OutputMap outputs = m_output->screen()->outputs();
 	foreach(RandROutput *output, outputs)
 		positionOutputCombo->addItem(QIcon(output->icon()), output->name(), (int)output->id());
 
-	if(m_output->relation(0) != m_output) {
+	// FIXME: get this from Kconfig again
+	/*if(m_output->relation(0) != m_output) {
 		index = positionOutputCombo->findData((int)m_output->relation(0)->id());
 		if(index != -1)
 			positionOutputCombo->setCurrentIndex(index);
-	} else if(m_output->screen()->activeCount() < 2) {
+	} else*/ if(m_output->screen()->activeCount() < 2) {
 		positionLabel->setEnabled(false);
 		positionCombo->setEnabled(false);
 		positionOutputCombo->setEnabled(false);
@@ -215,8 +254,13 @@ void OutputConfig::updateSizeList(void)
 {	
 	SizeList sizes = m_output->sizes();
 	sizeCombo->addItem( i18n("Disabled"), QSize(0, 0) );
-	foreach (QSize s, sizes)	{
-		sizeCombo->addItem( QString("%1x%2").arg(s.width()).arg(s.height()), s );
+	
+	foreach (QSize s, sizes) {
+		QString sizeDesc = QString("%1x%2").arg(s.width()).arg(s.height());		
+		if(s == m_output->preferredMode().size())
+			sizeDesc += i18nc("Automatic (native resolution)", " (Auto)");
+		
+		sizeCombo->addItem( sizeDesc, s );
 	}
 	
 	int index = sizeCombo->findData( m_output->rect().size() );
@@ -232,7 +276,6 @@ void OutputConfig::updateRateList(int resolutionIndex)
 {
 	QSize resolution = sizeCombo->itemData(resolutionIndex).toSize();
 	if((resolution == QSize(0, 0)) || !resolution.isValid()) {
-		kDebug() << "Error, invalid QSize passed to updateRateList!";
 		refreshCombo->setEnabled(false);
 		return;
 	}

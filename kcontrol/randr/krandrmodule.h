@@ -35,12 +35,11 @@ class KRandRModule : public KCModule
 
 public:
 	KRandRModule(QWidget *parent, const QVariantList& _args);
+	~KRandRModule(void);
 
 	virtual void load();
 	virtual void save();
 	virtual void defaults();
-
-	static void performApplyOnStartup();
 
 protected:
 	void apply();

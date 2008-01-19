@@ -45,7 +45,7 @@ KRandRApp::KRandRApp()
 	}
 	else
 #endif
-		m_tray = new KRandRSystemTray(m_display, 0L);
+	m_tray = new KRandRSystemTray(m_display, 0L);
 
 	m_tray->show();
 	m_tray->setObjectName("RANDRTray");

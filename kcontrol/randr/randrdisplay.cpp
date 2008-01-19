@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2008      Harry Bock <hbock@providence.edu>
  * Copyright (c) 2007      Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
  * Copyright (c) 2002,2003 Hamish Rodda <rodda@kde.org>
  *
@@ -32,29 +33,31 @@
 #include <config-randr.h>
 
 RandRDisplay::RandRDisplay()
-: m_valid(true)
+	: m_valid(true)
 {
+	m_dpy = QX11Info::display();
+	
 	// Check extension
-	Status s = XRRQueryExtension(QX11Info::display(), &m_eventBase, &m_errorBase);
-	if (!s) {
-		m_errorCode = QString("%1, base %1").arg(s).arg(m_errorBase);
+	if(XRRQueryExtension(m_dpy, &m_eventBase, &m_errorBase) == False) {
 		m_valid = false;
 		return;
 	}
 
 	int major_version, minor_version;
-	XRRQueryVersion(QX11Info::display(), &major_version, &minor_version);
+	XRRQueryVersion(m_dpy, &major_version, &minor_version);
 
-	m_version = i18n("X Resize and Rotate extension version %1.%2",major_version,minor_version);
+	m_version = i18n("X Resize and Rotate extension version %1.%2",
+	                 major_version,minor_version);
 
 	// check if we have the new version of the XRandR extension
-	if (major_version > 1 || (major_version == 1 && minor_version >= 2))
-		RandR::has_1_2 = true;
-	else
-		RandR::has_1_2 = false;
-
-	kDebug() << "Error base: " << m_errorBase;
-	m_numScreens = ScreenCount(QX11Info::display());
+	RandR::has_1_2 = (major_version > 1 || (major_version == 1 && minor_version >= 2));
+	
+	if(RandR::has_1_2)
+		kDebug() << "Using XRANDR extension 1.2 or greater.";
+	else kDebug() << "Using legacy XRANDR extension (1.1 or earlier).";
+	
+	kDebug() << "XRANDR error base: " << m_errorBase;
+	m_numScreens = ScreenCount(m_dpy);
 
 	// set the timestamp to 0
 	RandR::timestamp = 0;
@@ -71,7 +74,8 @@ RandRDisplay::RandRDisplay()
 			m_legacyScreens.append(new LegacyRandRScreen(i));
 	}
 
-#ifdef HAS_RANDR_1_2
+#if 0
+//#ifdef HAS_RANDR_1_2
 	// check if we have more than one output, if no, revert to the legacy behavior
 	if (RandR::has_1_2)
 	{
@@ -91,14 +95,13 @@ RandRDisplay::RandRDisplay()
 		}
 	}
 #endif
-
-	setCurrentScreen(QApplication::desktop()->primaryScreen());
+	setCurrentScreen(DefaultScreen(QX11Info::display()));
 }
 
 RandRDisplay::~RandRDisplay()
 {
 		qDeleteAll(m_legacyScreens);
-		m_legacyScreens.clear();
+		qDeleteAll(m_screens);
 }
 
 bool RandRDisplay::isValid() const
@@ -128,13 +131,20 @@ const QString& RandRDisplay::version() const
 
 void RandRDisplay::setCurrentScreen(int index)
 {
+	Q_ASSERT(index < ScreenCount(m_dpy));
 	m_currentScreenIndex = index;
 }
 
 int RandRDisplay::screenIndexOfWidget(QWidget* widget)
 {
-	int ret = QApplication::desktop()->screenNumber(widget);
-	return ret != -1 ? ret : QApplication::desktop()->primaryScreen();
+	//int ret = QApplication::desktop()->screenNumber(widget);
+	//return ret != -1 ? ret : QApplication::desktop()->primaryScreen();
+	
+	// get info from Qt's X11 info directly; QDesktopWidget seems to use
+	// Xinerama by default, which doesn't work properly with randr.
+	// It will return more screens than exist for the display, causing
+	// a crash in the screen/currentScreen methods.
+	return widget->x11Info().screen();
 }
 
 int RandRDisplay::currentScreenIndex() const
@@ -208,6 +218,7 @@ void RandRDisplay::handleEvent(XEvent *e)
 
 int RandRDisplay::numScreens() const
 {
+	Q_ASSERT(ScreenCount(QX11Info::display()) == m_numScreens);
 	return m_numScreens;
 }
 

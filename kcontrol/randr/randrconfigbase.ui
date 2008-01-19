@@ -16,7 +16,7 @@
    <item>
     <widget class="QWidget" native="1" name="outputList" >
      <property name="sizePolicy" >
-      <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
+      <sizepolicy vsizetype="Expanding" hsizetype="MinimumExpanding" >
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>

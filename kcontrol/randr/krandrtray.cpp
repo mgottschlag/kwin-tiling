@@ -43,9 +43,10 @@
 #include <QVariant>
 
 KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
-: KSystemTrayIcon("preferences-desktop-display-randr", parent)
-, m_help(new KHelpMenu(parent, KGlobal::mainComponent().aboutData(), false, actionCollection()))
-, m_popupUp(false), m_display(dpy)
+	: KSystemTrayIcon("preferences-desktop-display-randr", parent),
+	  m_help(new KHelpMenu(parent, KGlobal::mainComponent().aboutData(), false, actionCollection())),
+	  m_popupUp(false),
+	  m_display(dpy)
 {
 	setIcon(KSystemTrayIcon::loadIcon("preferences-desktop-display-randr"));
 	connect(this, SIGNAL(quitSelected()), kapp, SLOT(quit()));
@@ -82,17 +83,12 @@ void KRandRSystemTray::slotPrepareMenu()
 			} 
 			else 
 			{
-#ifdef HAS_RANDR_1_2
-			    if (RandR::has_1_2)
-				    m_display->screen(s)->loadSettings(true);
-#endif
-					
-                            KMenu* subMenu = new KMenu(i18n("Screen %1", s+1), m_menu );
-                            subMenu->setObjectName( QString("screen%1").arg(s+1) );
-                            m_screenPopups.append(subMenu);
-                            populateMenu(subMenu);
-                            action = m_menu->addMenu(subMenu);
-                            connect(subMenu, SIGNAL(activated(int)), SLOT(slotScreenActivated()));
+				KMenu* subMenu = new KMenu(i18n("Screen %1", s+1), m_menu );
+				subMenu->setObjectName( QString("screen%1").arg(s+1) );
+				m_screenPopups.append(subMenu);
+				populateMenu(subMenu);
+				action = m_menu->addMenu(subMenu);
+				connect(subMenu, SIGNAL(activated(int)), SLOT(slotScreenActivated()));
 			}
 		}
 
@@ -107,9 +103,10 @@ void KRandRSystemTray::slotPrepareMenu()
 	m_menu->addSeparator();
 
 	KAction *actPrefs = actionCollection()->addAction( QString() );
-        actPrefs->setIcon( KIcon( "configure" ) );
-        actPrefs->setText( i18n( "Configure Display..." ) );
-        connect( actPrefs, SIGNAL( triggered( bool ) ), SLOT( slotPrefs() ) );
+     actPrefs->setIcon( KIcon( "configure" ) );
+     actPrefs->setText( i18n( "Configure Display..." ) );
+     
+	connect( actPrefs, SIGNAL( triggered( bool ) ), SLOT( slotPrefs() ) );
 	m_menu->addAction( actPrefs );
 
 	m_menu->addMenu(/*SmallIcon("help-contents"),KStandardGuiItem::help().text(),*/ m_help->menu());
@@ -226,6 +223,7 @@ void KRandRSystemTray::populateMenu(KMenu* menu)
 					
 					// if there is only one output active, do not show the disable option
 					// this prevents the user from doing wrong things ;)
+					kDebug() << "Active outputs: " << screen->activeCount();
 					if (screen->activeCount() != 1)
 					{
 						action = outputMenu->addAction(i18n("Disable"));

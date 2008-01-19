@@ -42,7 +42,8 @@ public:
 	void loadSettings(bool notify = false);
 	void handleEvent(XRRCrtcChangeNotifyEvent *event);
 
-	RRMode mode() const;
+	bool isValid(void) const;
+	RandRMode mode() const;
 	QRect rect() const;
 	float refreshRate() const;
 
@@ -69,22 +70,23 @@ signals:
 private:
 	RRCrtc m_id;
 	RRMode m_currentMode;
+	
+	QRect m_currentRect;
+	float m_currentRate;
+	int m_currentRotation;
 
-	QRect m_proposedRect;
-	int m_proposedRotation;
-	float m_proposedRate;
 
 	QRect m_originalRect;
-	int m_originalRotation;
 	float m_originalRate;
+	int m_originalRotation;
 
+	QRect m_proposedRect;
+	float m_proposedRate;
+	int m_proposedRotation;
+	
 	OutputList m_connectedOutputs;
 	OutputList m_possibleOutputs;
 	int m_rotations;
-
-	int m_currentRotation;
-	QRect m_currentRect;
-	float m_currentRate;
 
 	RandRScreen *m_screen;
 };

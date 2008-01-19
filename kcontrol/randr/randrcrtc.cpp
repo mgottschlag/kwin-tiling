@@ -22,13 +22,20 @@
 #include "randrmode.h"
 
 RandRCrtc::RandRCrtc(RandRScreen *parent, RRCrtc id)
-: QObject(parent)
+	: QObject(parent),
+	  m_currentRect(0, 0, 0, 0),
+	  m_originalRect(m_currentRect),
+	  m_proposedRect(m_originalRect)
 {
 	m_screen = parent;
 	Q_ASSERT(m_screen);
 
+	m_currentRotation = m_originalRotation = m_proposedRotation = RandR::Rotate0;
+	m_currentRate = m_originalRate = m_proposedRate = 0;
+	m_currentMode = 0;
+	m_rotations = RandR::Rotate0;
+	
 	m_id = id;
-	loadSettings();
 }
 
 RandRCrtc::~RandRCrtc()
@@ -51,8 +58,16 @@ int RandRCrtc::rotation() const
 	return m_currentRotation;
 }
 
+bool RandRCrtc::isValid(void) const
+{
+	return m_id != None;
+}
+
 void RandRCrtc::loadSettings(bool notify)
 {
+	if(m_id == None)
+		return;
+	
 	int changes = 0;
 	XRRCrtcInfo *info = XRRGetCrtcInfo(QX11Info::display(), m_screen->resources(), m_id);
 	Q_ASSERT(info);
@@ -164,9 +179,9 @@ void RandRCrtc::handleEvent(XRRCrtcChangeNotifyEvent *event)
 		emit crtcChanged(m_id, changed);
 }
 
-RRMode RandRCrtc::mode() const
+RandRMode RandRCrtc::mode() const
 {
-	return m_currentMode;
+	return m_screen->mode(m_currentMode);
 }
 
 QRect RandRCrtc::rect() const
@@ -181,7 +196,6 @@ float RandRCrtc::refreshRate() const
 
 bool RandRCrtc::applyProposed()
 {
-#if 1
 	kDebug() << "[CRTC] Going to apply (" << m_id << ") ....";
 	kDebug() << "       Current Screen rect: " << m_screen->rect();
 	kDebug() << "       Current CRTC Rect: " << m_currentRect;
@@ -192,7 +206,7 @@ bool RandRCrtc::applyProposed()
 	kDebug() << "       Outputs: ";
 	for (int i = 0; i < m_connectedOutputs.count(); ++i)
 		kDebug() << "               - " << m_screen->output(m_connectedOutputs.at(i))->name();
-#endif
+
 	RandRMode mode;
 	if (m_proposedRect.size() == m_currentRect.size() && m_proposedRate == m_currentRate)
 	{
@@ -287,7 +301,9 @@ bool RandRCrtc::applyProposed()
 	Status s = XRRSetCrtcConfig(QX11Info::display(), m_screen->resources(), m_id, 
 				    RandR::timestamp, m_proposedRect.x(), m_proposedRect.y(), mode.id(),
 				    m_proposedRotation, outputs, m_connectedOutputs.count()); 
-
+	
+	delete[] outputs;
+	
 	bool ret;
 	if (s == RRSetConfigSuccess)
 	{

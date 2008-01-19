@@ -35,19 +35,6 @@
 K_PLUGIN_FACTORY(KSSFactory, registerPlugin<KRandRModule>();)
 K_EXPORT_PLUGIN(KSSFactory("krandr"))
 
-
-void KRandRModule::performApplyOnStartup()
-{
-	KConfig config("krandrrc");
-	if (RandRDisplay::applyOnStartup(config))
-	{
-		// Load settings and apply appropriate config
-		RandRDisplay display;
-		if (display.isValid() && display.loadDisplay(config))
-			display.applyProposed(false);
-	}
-}
-
 KRandRModule::KRandRModule(QWidget *parent, const QVariantList&)
     : KCModule(KSSFactory::componentData(), parent)
 {
@@ -91,7 +78,11 @@ KRandRModule::KRandRModule(QWidget *parent, const QVariantList&)
 
 	load();
 	setButtons(KCModule::Apply);
-	performApplyOnStartup();
+}
+
+KRandRModule::~KRandRModule(void)
+{
+	delete m_display;
 }
 
 void KRandRModule::defaults()
@@ -106,6 +97,8 @@ void KRandRModule::defaults()
 
 void KRandRModule::load()
 {
+	kDebug() << "Loading KRandRMode...";
+	
 #ifdef HAS_RANDR_1_2
 	if (RandR::has_1_2)
 		m_config->load();

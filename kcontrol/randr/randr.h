@@ -1,4 +1,5 @@
 /*
+ * Copyright (c) 2007,2008 Harry Bock <hbock@providence.edu>
  * Copyright (c) 2007      Gustavo Pichorim Boiko <gustavo.boiko@kdemail.net>
  * Copyright (c) 2002,2003 Hamish Rodda <rodda@kde.org>
  *
@@ -67,22 +68,22 @@ class RandR
 public:
 	static bool has_1_2;
 	static Time timestamp;
-
-	enum Orientations 
-	{
-		Rotate0			= 0x1,
-		Rotate90		= 0x2,
-		Rotate180		= 0x4,
-		Rotate270		= 0x8,
-		RotateMask		= 15,
-		RotationCount	= 4,
-		ReflectX		= 0x10,
-		ReflectY		= 0x20,
-		ReflectMask		= 48,
-		OrientationMask	= 63,
-		OrientationCount = 6
+	
+	static const int OrientationCount = 6;
+	static const int RotationCount    = 4;
+	
+	enum Orientations {
+		Rotate0        = RR_Rotate_0,
+		Rotate90       = RR_Rotate_90,
+		Rotate180      = RR_Rotate_180,
+		Rotate270      = RR_Rotate_270,
+		RotateMask     = (RR_Rotate_0 | RR_Rotate_90 | RR_Rotate_180 | RR_Rotate_270),
+		ReflectX       = RR_Reflect_X,
+		ReflectY       = RR_Reflect_Y,
+		ReflectMask    = (RR_Reflect_X | RR_Reflect_Y),
+		OrientationMask = (RotateMask | ReflectMask)
 	};
-
+	
 	enum Changes 
 	{
 		ChangeCrtc       = 0x01,

@@ -34,7 +34,6 @@ class OutputConfig;
 class OutputGraphicsItem;
 class LayoutManager;
 
-
 class RandRConfig : public QWidget, public Ui::RandRConfigBase
 {
 	Q_OBJECT
@@ -42,9 +41,9 @@ public:
 	RandRConfig(QWidget *parent, RandRDisplay *display);
 	virtual ~RandRConfig();
 
-	void load();
-	void save();
-	void defaults();
+	void load(void);
+	void save(void);
+	void defaults(void);
 
 	void apply();
 	void update();
@@ -65,8 +64,7 @@ protected:
 private:
 	RandRDisplay *m_display;
 	bool m_changed;
-	
-	QMap<RandROutput *, OutputConfig> outputConfigMap;
+	bool m_firstLoad;
 	
 	SettingsContainer *m_container;
 	QList<CollapsibleWidget*> m_outputList;

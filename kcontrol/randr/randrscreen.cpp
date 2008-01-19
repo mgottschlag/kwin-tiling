@@ -43,6 +43,7 @@ RandRScreen::RandRScreen(int screenIndex)
 		   RRCrtcChangeNotifyMask   | 
 		   RROutputChangeNotifyMask | 
 		   RROutputPropertyNotifyMask;
+	
 	XRRSelectInput(QX11Info::display(), rootWindow(), 0);
 	XRRSelectInput(QX11Info::display(), rootWindow(), mask); 
 }
@@ -111,6 +112,9 @@ void RandRScreen::loadSettings(bool notify)
 	}
 
 	//get all crtcs
+	RandRCrtc *c_none = new RandRCrtc(this, None);
+	m_crtcs[None] = c_none;
+	
 	for (int i = 0; i < m_resources->ncrtc; ++i)
 	{
 		if (m_crtcs.contains(m_resources->crtcs[i]))
@@ -129,11 +133,12 @@ void RandRScreen::loadSettings(bool notify)
 	for (int i = 0; i < m_resources->noutput; ++i)
 	{
 		if (m_outputs.contains(m_resources->outputs[i]))
-			m_outputs[m_resources->outputs[i]]->loadSettings(notify);
+			;//m_outputs[m_resources->outputs[i]]->loadSettings(notify);
 		else
 		{
 			RandROutput *o = new RandROutput(this, m_resources->outputs[i]);
-			connect(o, SIGNAL(outputChanged(RROutput, int)), this, SLOT(slotOutputChanged(RROutput, int)));
+			connect(o, SIGNAL(outputChanged(RROutput, int)), this,
+				      SLOT(slotOutputChanged(RROutput, int)));
 			m_outputs[m_resources->outputs[i]] = o;
 			if (o->isConnected())
 				m_connectedCount++;
@@ -210,7 +215,7 @@ RandRCrtc* RandRScreen::crtc(RRCrtc id) const
 	if (m_crtcs.contains(id))
 		return m_crtcs[id];
 
-	return NULL;
+	return 0;
 }
 
 OutputMap RandRScreen::outputs() const
@@ -223,7 +228,7 @@ RandROutput* RandRScreen::output(RROutput id) const
 	if (m_outputs.contains(id))
 		return m_outputs[id];
 
-	return NULL;
+	return 0;
 }
 
 ModeMap RandRScreen::modes() const
@@ -244,7 +249,7 @@ bool RandRScreen::adjustSize(const QRect &minimumSize)
 	//try to find a size in which all outputs fit
 	
 	//start with a given minimum rect
-	QRect rect = QRect(0,0,0,0).united(minimumSize);
+	QRect rect = QRect(0, 0, 0, 0).united(minimumSize);
 
 	foreach(RandROutput *output, m_outputs)
 	{
@@ -426,8 +431,8 @@ bool RandRScreen::applyProposed(bool confirm)
 	QRect r;
 	
 	foreach(RandROutput *output, m_outputs) {
+		/*
 		r = output->rect();
-		
 		RandROutput::Relation outputRelation;
 		RandROutput *related = output->relation(&outputRelation);
 		
@@ -454,14 +459,14 @@ bool RandRScreen::applyProposed(bool confirm)
 			r.setTopLeft(related->rect().topLeft());
 			break;
 		}
-		
 		output->proposeRect(r);
+		*/
 		if(!output->applyProposed()) {
 			succeed = false;
 			break;
 		}
 	}
-	
+	/*
 	foreach(RandROutput *output, m_outputs)
 	{
 		r = output->rect();
@@ -470,7 +475,7 @@ bool RandRScreen::applyProposed(bool confirm)
 			succeed = false;
 			break;
 		}
-	}
+	}*/
 
 	// if we could apply the config clean, ask for confirmation
 	if (succeed && confirm)

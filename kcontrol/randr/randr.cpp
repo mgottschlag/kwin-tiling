@@ -118,6 +118,7 @@ QPixmap RandR::rotationIcon(int rotation, int currentRotation)
 
 bool RandR::confirm(const QRect &rect)
 {
+	Q_UNUSED(rect);
 	// FIXME remember to put the dialog on the right screen
 
 	KTimerDialog acceptDialog(15000, KTimerDialog::CountDown,
