@@ -107,6 +107,30 @@ public:
                 }
             }
         }
+
+        void updateIcon() {
+            switch( viewtype ) {
+                case Combined:
+                    icon->setIcon(KIcon("start-here-kde"));
+                    break;
+                case Favorites:
+                    icon->setIcon(KIcon("bookmarks"));
+                    break;
+                case Applications:
+                    icon->setIcon(KIcon("applications-other"));
+                    break;
+                case Computer:
+                    icon->setIcon(KIcon("computer"));
+                    break;
+                case RecentlyUsed:
+                    icon->setIcon(KIcon("view-history"));
+                    break;
+                case Leave:
+                    icon->setIcon(KIcon("application-exit"));
+                    break;
+            }
+        }
+
 };
 
 MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args)
@@ -132,9 +156,6 @@ void MenuLauncherApplet::init()
 {
     KConfigGroup cg = config();
 
-    d->icon->setIcon(KIcon(cg.readEntry("icon","start-here-kde")));
-    //setMinimumContentSize(d->icon->iconSize()); //setSize(d->icon->iconSize())
-
     {
         QMetaEnum e = metaObject()->enumerator(metaObject()->indexOfEnumerator("ViewType"));
         QByteArray ba = cg.readEntry("view", QByteArray(e.valueToKey(d->viewtype)));
@@ -145,6 +166,10 @@ void MenuLauncherApplet::init()
         QByteArray ba = cg.readEntry("format", QByteArray(e.valueToKey(d->formattype)));
         d->formattype = (MenuLauncherApplet::FormatType) e.keyToValue(ba);
     }
+
+    d->updateIcon();
+    //d->icon->setIcon(KIcon(cg.readEntry("icon","start-here-kde")));
+    //setMinimumContentSize(d->icon->iconSize()); //setSize(d->icon->iconSize())
 
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ExtensionHandler,"desktop",new Kickoff::ServiceItemHandler);
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ProtocolHandler, "leave", new Kickoff::LeaveItemHandler);
@@ -228,6 +253,9 @@ void MenuLauncherApplet::configAccepted()
 
         QMetaEnum e = metaObject()->enumerator(metaObject()->indexOfEnumerator("ViewType"));
         cg.writeEntry("view", QByteArray(e.valueToKey(d->viewtype)));
+
+        d->updateIcon();
+        d->icon->update();
     }
 
     int ft = d->formatComboBox->itemData(d->formatComboBox->currentIndex()).toInt();
