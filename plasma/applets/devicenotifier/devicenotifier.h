@@ -46,22 +46,22 @@ class DeviceNotifier : public Plasma::Applet
     Q_OBJECT
 
     public:
-	struct ItemType
-	{
-	    Plasma::Icon *icon;
-	    QStringList predicateFiles;
-	    QString text;
-	    QString udi;
-	};
-    public:
+        struct ItemType
+        {
+            Plasma::Icon *icon;
+            QStringList predicateFiles;
+            QString text;
+            QString udi;
+        };
+
         DeviceNotifier(QObject *parent, const QVariantList &args);
         ~DeviceNotifier();
 
         void init();
-	 Qt::Orientations expandingDirections() const;
+        Qt::Orientations expandingDirections() const;
         QSizeF contentSizeHint() const;
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
-        void hoverEnterEvent ( QGraphicsSceneHoverEvent  *event);
+        void hoverEnterEvent (QGraphicsSceneHoverEvent *event);
         void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
     public slots:
         void onSourceAdded(const QString &name);
@@ -69,20 +69,20 @@ class DeviceNotifier : public Plasma::Applet
         void dataUpdated(const QString &source, Plasma::DataEngine::Data data);
         void showConfigurationInterface();
         void configAccepted();
-        void slotOnItemClicked(const QModelIndex & );
-	 void slotOnItemDesktopClicked(bool);
+        void slotOnItemClicked(const QModelIndex &);
+        void slotOnItemDesktopClicked(bool);
         void onTimerExpired();
 
     private:
         QModelIndex indexForUdi(const QString &udi) const;
         void initDesktop();
-	 void initSysTray();
-	 void performSourceAddedInSystray(const QString& name);
-	 void performSourceAddedInDesktop(const QString& name);
-	 void performSourceRemovedInSystray(const QString& name);
-	 void performSourceRemovedInDesktop(const QString& name);
-	 void performSourceUpdatedInSystray(const QString &source, Plasma::DataEngine::Data data,int nb_actions, const QString & last_action_label);
-	 void performSourceUpdatedInDesktop(const QString &source, Plasma::DataEngine::Data data,int nb_actions, const QString & last_action_label);
+        void initSysTray();
+        void performSourceAddedInSystray(const QString &name);
+        void performSourceAddedInDesktop(const QString &name);
+        void performSourceRemovedInSystray(const QString &name);
+        void performSourceRemovedInDesktop(const QString &name);
+        void performSourceUpdatedInSystray(const QString &source, Plasma::DataEngine::Data data, int nb_actions, const QString &last_action_label);
+        void performSourceUpdatedInDesktop(const QString &source, Plasma::DataEngine::Data data, int nb_actions, const QString &last_action_label);
 
         KIcon m_icon;
         Plasma::DataEngine *m_solidEngine;
@@ -93,12 +93,12 @@ class DeviceNotifier : public Plasma::Applet
         int m_displayTime;
         int m_numberItems;
         int m_itemsValidity;
-	 bool isOnDesktop;
-        QTimer * m_timer;
+        bool isOnDesktop;
+        QTimer *m_timer;
 
-	 //desktop view
-	 Plasma::VBoxLayout *m_layout_list;
-	 QMap<QString,ItemType> m_map_item;
+        //desktop view
+        Plasma::VBoxLayout *m_layout_list;
+        QMap<QString,ItemType> m_map_item;
         /// Designer Config file
         Ui::solidNotifierConfig ui;
 

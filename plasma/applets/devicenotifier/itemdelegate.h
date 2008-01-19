@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
     Copyright 2007 Alexis Menard <darktears31@gmail.com>
 
@@ -29,9 +29,9 @@ namespace Notifier
 {
 
     enum SpecificRoles {
-            SolidUdiRole = Qt::UserRole+1,
-            PredicateFilesRole = Qt::UserRole+2,
-	    ActionRole = Qt::UserRole+3
+            SolidUdiRole = Qt::UserRole + 1,
+            PredicateFilesRole = Qt::UserRole + 2,
+            ActionRole = Qt::UserRole + 3
     };
 
 
@@ -39,11 +39,11 @@ namespace Notifier
 class ItemDelegate : public QAbstractItemDelegate
 {
 public:
-    
+
     ItemDelegate();
-    
-    virtual void paint(QPainter *painter,const QStyleOptionViewItem& option,const QModelIndex& index) const;
-    virtual QSize sizeHint(const QStyleOptionViewItem& option , const QModelIndex& index) const;
+
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    virtual QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     // margin is equivalent to ItemDelegate::BACK_ARROW_WIDTH + ItemDelegate::BACK_ARROW_SPACING
     static const int HEADER_LEFT_MARGIN = 5;
@@ -64,9 +64,9 @@ public:
     static const int BACK_ARROW_SPACING = 5;
 
 private:
-    QPainterPath roundedRectangle(const QRectF& rect,qreal radius) const;
-    QFont fontForSubTitle(const QFont& titleFont) const;
+    QPainterPath roundedRectangle(const QRectF &rect, qreal radius) const;
+    QFont fontForSubTitle(const QFont &titleFont) const;
 };
 
 }
-#endif // ITEMDELEGATE_H 
+#endif // ITEMDELEGATE_H

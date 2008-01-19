@@ -1,5 +1,5 @@
 /*  Copyright 2007 by Alexis Ménard <darktears31@gmail.com>
-    
+
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -22,11 +22,11 @@
 #include <QListView>
 namespace Notifier
 {
-    
+
   class NotifierView : public QListView
   {
   Q_OBJECT
-  
+
   public:
       NotifierView(QWidget *parent = 0);
       virtual ~NotifierView();

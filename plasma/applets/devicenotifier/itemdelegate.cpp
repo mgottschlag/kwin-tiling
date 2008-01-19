@@ -3,7 +3,7 @@
     Copyright 2007 Kevin Ottens <ervin@kde.org>
     Copyright 2007 Alexis Menard <darktears31@gmail.com>
 
-  
+
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -38,14 +38,13 @@
 #include <KGlobal>
 #include <KGlobalSettings>
 
-
 using namespace Notifier;
 
 ItemDelegate::ItemDelegate()
 {
 }
 
-void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     const bool hover = option.state & (QStyle::State_Selected|QStyle::State_MouseOver|QStyle::State_HasFocus);
     QRect contentRect = option.rect;
@@ -59,7 +58,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
 
     Qt::Alignment textAlignment = option.decorationAlignment & Qt::AlignRight ? Qt::AlignLeft : Qt::AlignRight;
 
-    QRect textRect = QStyle::alignedRect(option.direction,textAlignment,textSize,contentRect.adjusted(0, 2, 0, 0));
+    QRect textRect = QStyle::alignedRect(option.direction, textAlignment, textSize, contentRect.adjusted(0, 2, 0, 0));
     QString titleText = index.data(Qt::DisplayRole).value<QString>();
     QString subTitleText = index.data(ActionRole).value<QString>();
 
@@ -119,17 +118,17 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
     painter->setFont(subTitleFont);
 
     if (!hover) {
-	painter->setPen(QPen(Qt::gray));
+        painter->setPen(QPen(Qt::gray));
     }
     textAreaRect.translate(0, textAreaRect.height());
-   
+
     painter->drawText(textAreaRect, Qt::AlignLeft|Qt::AlignVCenter, subTitleText);
-    
+
     painter->restore();
 
 }
 
-QFont ItemDelegate::fontForSubTitle(const QFont& titleFont) const
+QFont ItemDelegate::fontForSubTitle(const QFont &titleFont) const
 {
     QFont subTitleFont = titleFont;
     subTitleFont.setPointSize(qMax(subTitleFont.pointSize() - 2,
@@ -137,7 +136,7 @@ QFont ItemDelegate::fontForSubTitle(const QFont& titleFont) const
     return subTitleFont;
 }
 
-QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+QSize ItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_UNUSED(index)
     QFontMetrics metrics(option.font);
@@ -153,13 +152,13 @@ QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelInd
     QString subTitleText = index.data(ActionRole).value<QString>();
 
     int width = qMax(metrics.width(titleText), subMetrics.width(subTitleText));
-    width+=option.decorationSize.width()+ICON_TEXT_MARGIN;
+    width += option.decorationSize.width() + ICON_TEXT_MARGIN;
 
     return QSize(width, height);
 }
 
 // Taken from kdelibs/kio/kio/kfileitemdelegate.cpp
-QPainterPath ItemDelegate::roundedRectangle(const QRectF& rect, qreal radius) const
+QPainterPath ItemDelegate::roundedRectangle(const QRectF &rect, qreal radius) const
 {
     QPainterPath path(QPointF(rect.left(), rect.top() + radius));
     path.quadTo(rect.left(), rect.top(), rect.left() + radius, rect.top());         // Top left corner
