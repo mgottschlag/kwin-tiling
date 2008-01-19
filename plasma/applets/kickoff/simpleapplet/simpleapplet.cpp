@@ -105,7 +105,7 @@ public:
                     QMetaObject::invokeMethod(action->menu(),"aboutToShow"); //fetch the children
                     QList<QAction*> subactions;
                     foreach(QAction *a, action->menu()->actions()) {
-                        if( !view->indexForAction(a).data(Kickoff::UrlRole).isNull() ) {
+                        if( a->menu() || ! view->indexForAction(a).data(Kickoff::UrlRole).isNull() ) {
                             subactions << a;
                         }
                     }
