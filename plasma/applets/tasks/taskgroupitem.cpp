@@ -45,9 +45,10 @@ TaskGroupItem::TaskGroupItem(QGraphicsItem *parent, QObject *parentObject)
 {
    //setAcceptDrops(true);
 
-   new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
-   layout()->setMargin(0);
-   layout()->setSpacing(5);
+   Plasma::BoxLayout *layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
+   layout->setMargin(0);
+   layout->setSpacing(5);
+   layout->setMultiRow(true);
 }
 
 QSizeF TaskGroupItem::maximumSize() const
