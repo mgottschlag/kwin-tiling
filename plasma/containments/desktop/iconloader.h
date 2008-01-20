@@ -138,7 +138,6 @@ private:
     bool intersectsWithItems(const QRectF item, const QList<Plasma::Applet*> &items) const;
     QRectF advanceAlongGrid(QRectF rect);
     //bool shiftIcon(Plasma::Applet *icon, Plasma::Applet*);
-    bool isFreePlace(const QPointF &p);
     inline QRectF availableGeometry() const;
 
     KDirLister m_desktopDir;

@@ -163,9 +163,8 @@ void IconLoader::addIcon(const KUrl& url)
     Plasma::Applet *newApplet = m_desktop->addApplet(QString("icon"),args,0);
     if (newApplet) {
         //kDebug() << "putting" << url.path() << "into the map";
-        if (m_gridAlign) {
-            alignToGrid(newApplet);
-        }
+        //alignToGrid even if m_alignGrid is not set.  Otherwise all the applets appear at point 0,0
+        alignToGrid(newApplet);
         m_iconMap[url.path()] =  newApplet;
     }
 }
@@ -274,7 +273,9 @@ QRectF IconLoader::nextFreeRect(const QRectF itemRect, QList<Plasma::Applet*> pl
 bool IconLoader::intersectsWithItems(const QRectF item, const QList<Plasma::Applet*> &items) const
 {
     foreach (Plasma::Applet* testItem, items) {
-        if (item.intersects(testItem->sceneBoundingRect())) {
+        //do not use testItem->sceneBoundingRect().  If the item is not drawn yet a size of
+        //0x0 is returned which breaks the algorithm
+        if (item.intersects(QRectF(testItem->scenePos(), testItem->size()))) {
             return true;
         }
     }
