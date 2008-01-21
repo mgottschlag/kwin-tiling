@@ -101,7 +101,9 @@ RandRDisplay::RandRDisplay()
 RandRDisplay::~RandRDisplay()
 {
 		qDeleteAll(m_legacyScreens);
+#ifdef HAS_RANDR_1_2
 		qDeleteAll(m_screens);
+#endif
 }
 
 bool RandRDisplay::isValid() const
