@@ -154,7 +154,7 @@ private:
     bool m_enableMedia;
     QSizeF m_gridSize;
 
-    static const qreal topBorder=20.0;
+#define topBorder 20.0
 
 private Q_SLOTS:
     void init();
