@@ -43,7 +43,7 @@ public:
 		LeftOf = 1,
 		RightOf,
 		Over,
-		Under,
+		Under
 	};
 	// NOTE: I'd love to have used Above and Below but Xlib already defines them
 	// and that confuses GCC.
