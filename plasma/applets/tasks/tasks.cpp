@@ -78,7 +78,15 @@ void Tasks::init()
 
     KConfigGroup cg = config();
     m_showTooltip = cg.readEntry("showTooltip", true);
-    m_showOnlyCurrentDesktop = cg.readEntry("showOnlyCurrentDesktop", true);
+    m_showOnlyCurrentDesktop = cg.readEntry("showOnlyCurrentDesktop", false);
+
+    if (m_showOnlyCurrentDesktop) {
+        // listen to the relevant task manager signals
+        connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
+                this, SLOT(currentDesktopChanged(int)));
+        connect(TaskManager::TaskManager::self(), SIGNAL(windowChanged(TaskPtr)),
+                this, SLOT(taskMovedDesktop(TaskPtr)));
+    }
 
     // add representations of existing running tasks
     registerWindowTasks();
@@ -95,13 +103,6 @@ void Tasks::init()
             this, SLOT(addStartingTask(StartupPtr)));
     connect(TaskManager::TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)),
             this, SLOT(removeStartingTask(StartupPtr)));
-
-    connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
-            this, SLOT(currentDesktopChanged(int)));
-
-    connect(TaskManager::TaskManager::self(), SIGNAL(windowChanged(TaskPtr)),
-            this, SLOT(taskMovedDesktop(TaskPtr)));
-
 
     // add the animator once we're initialized to avoid animating like mad on start up
     m_rootTaskGroup->layout()->setAnimator(animator);
@@ -222,18 +223,21 @@ void Tasks::currentDesktopChanged(int)
     if (!m_showOnlyCurrentDesktop) {
         return;
     }
+
     removeAllTasks();
     registerWindowTasks();
 }
 
 void Tasks::taskMovedDesktop(TaskPtr task)
 {
-    if (m_showOnlyCurrentDesktop) {
-        if (!task->isOnCurrentDesktop()) {
-            removeWindowTask(task);
-        } else if (!m_windowTaskItems.contains(task)) {
-            addWindowTask(task);
-        }
+    if (!m_showOnlyCurrentDesktop) {
+        return;
+    }
+
+    if (!task->isOnCurrentDesktop()) {
+        removeWindowTask(task);
+    } else if (!m_windowTaskItems.contains(task)) {
+        addWindowTask(task);
     }
 }
 
@@ -274,15 +278,27 @@ void Tasks::configAccepted()
         changed = true;
     }
 
-    if (m_showOnlyCurrentDesktop != (m_ui.showOnlyCurrentDesktop->checkState() == Qt::Checked)) {
+    if (m_showOnlyCurrentDesktop != (m_ui.showOnlyCurrentDesktop->isChecked())) {
         m_showOnlyCurrentDesktop = !m_showOnlyCurrentDesktop;
+
+        if (m_showOnlyCurrentDesktop) {
+            // listen to the relevant task manager signals
+            connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
+                    this, SLOT(currentDesktopChanged(int)));
+            connect(TaskManager::TaskManager::self(), SIGNAL(windowChanged(TaskPtr)),
+                    this, SLOT(taskMovedDesktop(TaskPtr)));
+        } else {
+            disconnect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
+                       this, SLOT(currentDesktopChanged(int)));
+            disconnect(TaskManager::TaskManager::self(), SIGNAL(windowChanged(TaskPtr)),
+                       this, SLOT(taskMovedDesktop(TaskPtr)));
+        }
 
         removeAllTasks();
         registerWindowTasks();
 
         KConfigGroup cg = config();
         cg.writeEntry("showOnlyCurrentDesktop", m_showOnlyCurrentDesktop);
-
         changed = true;
     }
 
