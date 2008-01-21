@@ -173,8 +173,10 @@ void DashboardView::toggleVisibility()
 
         m_suppressShow = true;
         QTimer::singleShot(SUPPRESS_SHOW_TIMEOUT, this, SLOT(suppressShowTimeout()));
+        containment()->showToolbox();
     } else {
         hideView();
+        containment()->hideToolbox();
     }
 }
 
