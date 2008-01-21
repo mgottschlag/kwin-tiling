@@ -507,7 +507,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     Q_UNUSED( contentsRect );
 
     // paint desktop background
-    QBrush hoverBrush(QColor(255,255,255,50));
+    QBrush hoverBrush(QColor(255,255,255,50)); // FIXME: hardcoded colors == bad
     QBrush defaultBrush(Qt::NoBrush);
     painter->setPen(Qt::NoPen);
     for (int i = 0; i < m_desktopCount; i++) {
@@ -520,9 +520,9 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     }
 
     // draw window thumbnails
-    QPen windowPen(Qt::white);
-    QBrush windowBrush(QColor(200,200,200));
-    QBrush activeWindowBrush(QColor(100,100,255));
+    QPen windowPen(KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color());
+    QBrush windowBrush(QColor(200,200,200)); // FIXME: hardcoded color == bad // LinkBackground
+    QBrush activeWindowBrush(QColor(100,100,255)); // FIXME:: hardcoded colors == bad ActiveBackground
     painter->setPen(windowPen);
     for (int i = 0; i < m_windowRects.count(); i++) {
         for (int j = 0; j < m_windowRects[i].count(); j++) {
@@ -544,8 +544,8 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     // draw desktop foreground
     painter->setClipRect(option->exposedRect);
-    QPen activePen(Qt::white);
-    QPen defaultPen(QColor(120,120,120));
+    QPen activePen(KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color());
+    QPen defaultPen(QColor(120,120,120)); // FIXME: hardcoded color == bad
     painter->setBrush(Qt::NoBrush);
     for( int i = 0; i < m_desktopCount; i++) {
         if (i + 1 == m_currentDesktop || i == m_dragHighlightedDesktop) {
