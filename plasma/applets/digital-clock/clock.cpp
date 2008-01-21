@@ -47,7 +47,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_clockStyle(PlainClock),
       m_plainClockFont(KGlobalSettings::generalFont()),
-      m_plainClockColor(Qt::white),
+      m_plainClockColor(),
       m_plainClockFontBold(false),
       m_plainClockFontItalic(false),
       m_showDate(false),
@@ -60,9 +60,6 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_layout(0)
 {
     setHasConfigurationInterface(true);
-
-    // FIXME: Remove, currently, plasma's foreground seems to be black
-    //m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color(); 
 }
 
 void Clock::init()
@@ -80,7 +77,7 @@ void Clock::init()
     m_showDay = cg.readEntry("showDay", true);
 
     m_showSeconds = cg.readEntry("showSeconds", false);
-
+    m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color(); 
     m_plainClockFont = cg.readEntry("plainClockFont", m_plainClockFont);
     m_plainClockColor = cg.readEntry("plainClockColor", m_plainClockColor);
 
