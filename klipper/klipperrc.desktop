@@ -84,7 +84,7 @@ Description[nds]=&Gwenview opropen
 Description[sr]=Покрени &Гвенвју
 Description[sr@latin]=Pokreni &GwenView
 Description[sv]=Starta &Gwenview
-Description[zh_CN]=调用 &Gwenview
+Description[tr]=&Gwenview Uygulamasını Çalıştır
 Description[zh_TW]=啟動 Gwenview (&G)
 Enabled=true
 
@@ -162,7 +162,7 @@ Description[nds]=Mit Stan&dard-Nettkieker opmaken
 Description[sr]=Отвори &подразумеваним прегледачем
 Description[sr@latin]=Otvori &podrazumevanim pregledačem
 Description[sv]=Öppna med &förvald webbläsare
-Description[zh_CN]=用默认浏览器打开(&D)
+Description[tr]=&Öntanımlı tarayıcı ile aç
 Description[zh_TW]=使用預設瀏覽器開啟(&D)
 Enabled=true
 
@@ -1376,7 +1376,7 @@ Description[nds]=Mit Stan&dard-Nettkieker opmaken
 Description[sr]=Отвори &подразумеваним прегледачем
 Description[sr@latin]=Otvori &podrazumevanim pregledačem
 Description[sv]=Öppna med &förvald webbläsare
-Description[zh_CN]=用默认浏览器打开(&D)
+Description[tr]=&Öntanımlı tarayıcı ile aç
 Description[zh_TW]=使用預設瀏覽器開啟(&D)
 Enabled=true
 
