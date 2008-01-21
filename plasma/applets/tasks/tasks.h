@@ -108,15 +108,15 @@ private:
         // remove all tasks from the taskbar
         void removeAllTasks();
 
-        TaskGroupItem* _rootTaskGroup;
+        TaskGroupItem* m_rootTaskGroup;
 
-        QHash<TaskPtr,AbstractTaskItem*> _windowTaskItems;
-        QHash<StartupPtr,AbstractTaskItem*> _startupTaskItems;
+        QHash<TaskPtr,AbstractTaskItem*> m_windowTaskItems;
+        QHash<StartupPtr,AbstractTaskItem*> m_startupTaskItems;
 
-        bool _showTooltip;
-        bool _showOnlyCurrentDesktop;
+        bool m_showTooltip;
+        bool m_showOnlyCurrentDesktop;
         KDialog *m_dialog;
-        Ui::tasksConfig ui;
+        Ui::tasksConfig m_ui;
 };
 
 K_EXPORT_PLASMA_APPLET(tasks, Tasks)

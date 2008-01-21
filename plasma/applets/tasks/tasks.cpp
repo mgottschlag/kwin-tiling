@@ -35,8 +35,8 @@
 #include <plasma/layouts/boxlayout.h>
 #include <plasma/layouts/layoutanimator.h>
 
-Tasks::Tasks(QObject* parent , const QVariantList &arguments)
- : Plasma::Applet(parent,arguments),
+Tasks::Tasks(QObject* parent, const QVariantList &arguments)
+ : Plasma::Applet(parent, arguments),
    m_dialog(0)
 {
     setHasConfigurationInterface(true);
@@ -53,32 +53,32 @@ void Tasks::init()
 {
     Plasma::BoxLayout *layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
     layout->setMargin(0);
-    _rootTaskGroup = new TaskGroupItem(this, this);
-    _rootTaskGroup->resize(contentSize());
-    connect(_rootTaskGroup, SIGNAL(activated(AbstractTaskItem*)),
+    m_rootTaskGroup = new TaskGroupItem(this, this);
+    m_rootTaskGroup->resize(contentSize());
+    connect(m_rootTaskGroup, SIGNAL(activated(AbstractTaskItem*)),
             this, SLOT(launchActivated()));
 
-    // testing
-        Plasma::LayoutAnimator* animator = new Plasma::LayoutAnimator;
-        animator->setAutoDeleteOnRemoval(true);
-        animator->setEffect(Plasma::LayoutAnimator::InsertedState,
-                            Plasma::LayoutAnimator::FadeInMoveEffect);
-        animator->setEffect(Plasma::LayoutAnimator::StandardState,
-                            Plasma::LayoutAnimator::MoveEffect);
-        animator->setEffect(Plasma::LayoutAnimator::RemovedState,
-                            Plasma::LayoutAnimator::FadeOutMoveEffect);
-        animator->setTimeLine(new QTimeLine(200, this));
+    // set up the animator used in the root item
+    // TODO: this really should be moved to TaskGroupItem
+    Plasma::LayoutAnimator* animator = new Plasma::LayoutAnimator;
+    animator->setAutoDeleteOnRemoval(true);
+    animator->setEffect(Plasma::LayoutAnimator::InsertedState,
+                        Plasma::LayoutAnimator::FadeInMoveEffect);
+    animator->setEffect(Plasma::LayoutAnimator::StandardState,
+                        Plasma::LayoutAnimator::MoveEffect);
+    animator->setEffect(Plasma::LayoutAnimator::RemovedState,
+                        Plasma::LayoutAnimator::FadeOutMoveEffect);
+    animator->setTimeLine(new QTimeLine(200, this));
 
-    layout->addItem(_rootTaskGroup);
+    layout->addItem(m_rootTaskGroup);
 
-    // testing
-        _rootTaskGroup->setBorderStyle(TaskGroupItem::NoBorder);
-       // _rootTaskGroup->setColor( QColor(100,120,130) );
-        _rootTaskGroup->setText("Root Group");
+    m_rootTaskGroup->setBorderStyle(TaskGroupItem::NoBorder);
+    // m_rootTaskGroup->setColor( QColor(100,120,130) );
+    m_rootTaskGroup->setText("Root Group");
 
     KConfigGroup cg = config();
-    _showTooltip = cg.readEntry("showTooltip", true);
-    _showOnlyCurrentDesktop = cg.readEntry("showOnlyCurrentDesktop", true);
+    m_showTooltip = cg.readEntry("showTooltip", true);
+    m_showOnlyCurrentDesktop = cg.readEntry("showOnlyCurrentDesktop", true);
 
     // add representations of existing running tasks
     registerWindowTasks();
@@ -104,7 +104,7 @@ void Tasks::init()
 
 
     // add the animator once we're initialized to avoid animating like mad on start up
-    _rootTaskGroup->layout()->setAnimator(animator);
+    m_rootTaskGroup->layout()->setAnimator(animator);
 }
 
 void Tasks::registerStartingTasks()
@@ -113,17 +113,17 @@ void Tasks::registerStartingTasks()
 
 void Tasks::addStartingTask(StartupPtr task)
 {
-    WindowTaskItem* item = new WindowTaskItem(_rootTaskGroup, _rootTaskGroup, _showTooltip);
+    WindowTaskItem* item = new WindowTaskItem(m_rootTaskGroup, m_rootTaskGroup, m_showTooltip);
     item->setStartupTask(task);
-    _startupTaskItems.insert(task, item);
+    m_startupTaskItems.insert(task, item);
 
     addItemToRootGroup(item);
 }
 
 void Tasks::removeStartingTask(StartupPtr task)
 {
-    if (_startupTaskItems.contains(task)) {
-        removeItemFromRootGroup(_startupTaskItems[task]);
+    if (m_startupTaskItems.contains(task)) {
+        removeItemFromRootGroup(m_startupTaskItems[task]);
     }
 }
 
@@ -134,8 +134,7 @@ void Tasks::registerWindowTasks()
     TaskManager::TaskDict tasks = manager->tasks();
     QMapIterator<WId,TaskPtr> iter(tasks);
 
-    while (iter.hasNext())
-    {
+    while (iter.hasNext()) {
         iter.next();
         addWindowTask(iter.value());
     }
@@ -144,14 +143,14 @@ void Tasks::registerWindowTasks()
 void Tasks::addItemToRootGroup(AbstractTaskItem *item)
 {
     item->setFlag(QGraphicsItem::ItemIsSelectable);
-    _rootTaskGroup->insertTask(item);
+    m_rootTaskGroup->insertTask(item);
 }
 
 void Tasks::removeItemFromRootGroup(AbstractTaskItem *item)
 {
     Q_ASSERT( item );
 
-    _rootTaskGroup->removeTask(item);
+    m_rootTaskGroup->removeTask(item);
 
 // TEMPORARY
 //      scene()->removeItem(item);
@@ -164,46 +163,47 @@ void Tasks::addWindowTask(TaskPtr task)
         return;
     }
 
-    if (_showOnlyCurrentDesktop && !task->isOnCurrentDesktop()) {
+    if (m_showOnlyCurrentDesktop && !task->isOnCurrentDesktop()) {
         return;
     }
+
     WindowTaskItem *item = 0;
-    foreach (StartupPtr startup, _startupTaskItems.keys()) {
+    foreach (StartupPtr startup, m_startupTaskItems.keys()) {
         if (startup->matchesWindow(task->window())) {
-            item = dynamic_cast<WindowTaskItem *>(_startupTaskItems.take(startup));
+            item = dynamic_cast<WindowTaskItem *>(m_startupTaskItems.take(startup));
             break;
         }
     }
 
     if (!item) {
-        item = new WindowTaskItem(_rootTaskGroup, _rootTaskGroup, _showTooltip);
+        item = new WindowTaskItem(m_rootTaskGroup, m_rootTaskGroup, m_showTooltip);
     }
 
     item->setWindowTask(task);
-    _windowTaskItems.insert(task,item);
+    m_windowTaskItems.insert(task, item);
 
     addItemToRootGroup(item);
 }
 
 void Tasks::removeWindowTask(TaskPtr task)
 {
-    if (_windowTaskItems.contains(task)) {
-        removeItemFromRootGroup(_windowTaskItems[task]);
-        _windowTaskItems.remove(task);
+    if (m_windowTaskItems.contains(task)) {
+        removeItemFromRootGroup(m_windowTaskItems[task]);
+        m_windowTaskItems.remove(task);
     }
 }
 
 void Tasks::removeAllTasks()
 {
-    while (!_windowTaskItems.isEmpty()) {
-        removeItemFromRootGroup(_windowTaskItems.take(_windowTaskItems.constBegin().key()));
+    while (!m_windowTaskItems.isEmpty()) {
+        removeItemFromRootGroup(m_windowTaskItems.take(m_windowTaskItems.constBegin().key()));
     }
 }
 
 void Tasks::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::LocationConstraint) {
-        foreach (AbstractTaskItem *taskItem, _windowTaskItems) {
+        foreach (AbstractTaskItem *taskItem, m_windowTaskItems) {
             WindowTaskItem *windowTaskItem = dynamic_cast<WindowTaskItem *>(taskItem);
             if (windowTaskItem) {
                 windowTaskItem->publishIconGeometry();
@@ -214,12 +214,12 @@ void Tasks::constraintsUpdated(Plasma::Constraints constraints)
 
 void Tasks::wheelEvent(QGraphicsSceneWheelEvent *e)
 {
-     _rootTaskGroup->cycle(e->delta());
+     m_rootTaskGroup->cycle(e->delta());
 }
 
 void Tasks::currentDesktopChanged(int)
 {
-    if (!_showOnlyCurrentDesktop) {
+    if (!m_showOnlyCurrentDesktop) {
         return;
     }
     removeAllTasks();
@@ -228,11 +228,12 @@ void Tasks::currentDesktopChanged(int)
 
 void Tasks::taskMovedDesktop(TaskPtr task)
 {
-    if (_showOnlyCurrentDesktop) {
-        if (!task->isOnCurrentDesktop())
+    if (m_showOnlyCurrentDesktop) {
+        if (!task->isOnCurrentDesktop()) {
             removeWindowTask(task);
-        else if (!_windowTaskItems.contains(task))
+        } else if (!m_windowTaskItems.contains(task)) {
             addWindowTask(task);
+        }
     }
 }
 
@@ -243,15 +244,16 @@ void Tasks::showConfigurationInterface()
         m_dialog->setCaption(i18n("Configure Taskbar"));
 
         QWidget *widget = new QWidget;
-        ui.setupUi(widget);
+        m_ui.setupUi(widget);
         m_dialog->setMainWidget(widget);
-        m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+        m_dialog->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
 
-        connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
-        connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
+        connect(m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+        connect(m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()));
     }
-    ui.showTooltip->setChecked(_showTooltip);
-    ui.showOnlyCurrentDesktop->setChecked(_showOnlyCurrentDesktop);
+
+    m_ui.showTooltip->setChecked(m_showTooltip);
+    m_ui.showOnlyCurrentDesktop->setChecked(m_showOnlyCurrentDesktop);
     m_dialog->show();
 }
 
@@ -259,32 +261,32 @@ void Tasks::configAccepted()
 {
     bool changed = false;
 
-    if (_showTooltip != (ui.showTooltip->checkState() == Qt::Checked)) {
-        _showTooltip = !_showTooltip;
-        foreach (AbstractTaskItem *taskItem, _windowTaskItems) {
+    if (m_showTooltip != (m_ui.showTooltip->checkState() == Qt::Checked)) {
+        m_showTooltip = !m_showTooltip;
+        foreach (AbstractTaskItem *taskItem, m_windowTaskItems) {
             WindowTaskItem *windowTaskItem = dynamic_cast<WindowTaskItem *>(taskItem);
             if (windowTaskItem) {
-                windowTaskItem->setShowTooltip(_showTooltip);
+                windowTaskItem->setShowTooltip(m_showTooltip);
             }
         }
         KConfigGroup cg = config();
-        cg.writeEntry("showTooltip", _showTooltip);
+        cg.writeEntry("showTooltip", m_showTooltip);
         changed = true;
     }
 
-    if (_showOnlyCurrentDesktop != (ui.showOnlyCurrentDesktop->checkState() == Qt::Checked)) {
-        _showOnlyCurrentDesktop = !_showOnlyCurrentDesktop;
+    if (m_showOnlyCurrentDesktop != (m_ui.showOnlyCurrentDesktop->checkState() == Qt::Checked)) {
+        m_showOnlyCurrentDesktop = !m_showOnlyCurrentDesktop;
 
         removeAllTasks();
         registerWindowTasks();
 
         KConfigGroup cg = config();
-        cg.writeEntry("showOnlyCurrentDesktop", _showOnlyCurrentDesktop);
+        cg.writeEntry("showOnlyCurrentDesktop", m_showOnlyCurrentDesktop);
 
         changed = true;
     }
 
-    if(changed) {
+    if (changed) {
         update();
         emit configNeedsSaving();
     }
