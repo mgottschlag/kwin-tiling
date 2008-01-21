@@ -154,8 +154,6 @@ private:
     bool m_enableMedia;
     QSizeF m_gridSize;
 
-#define topBorder 20.0
-
 private Q_SLOTS:
     void init();
     void newItems(const KFileItemList& items);

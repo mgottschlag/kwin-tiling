@@ -31,6 +31,8 @@
 #include <KToggleAction>
 #include <KConfigGroup>
 
+static const int topBorder = 20;
+
 IconLoader::IconLoader(DefaultDesktop *parent)
     : QObject(parent),
       m_desktop(parent),
