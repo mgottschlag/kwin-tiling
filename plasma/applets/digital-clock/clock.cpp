@@ -181,7 +181,6 @@ void Clock::showConfigurationInterface()
     ui.timeZones->setEnabled(m_timezone != "Local");
     ui.localTimeZone->setChecked(m_timezone == "Local");
 
-    ui.timeZones->setSelected(m_timezone, true);
     m_dialog->show();
 }
 

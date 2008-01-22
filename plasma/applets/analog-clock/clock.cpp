@@ -50,7 +50,6 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     : Plasma::Containment(parent, args),
       m_showTimeString(false),
       m_showSecondHand(false),
-      m_timezone("Local"),
       m_dialog(0)
 {
     setHasConfigurationInterface(true);
@@ -149,6 +148,8 @@ void Clock::showConfigurationInterface() //TODO: Make the size settable
     }
 
     ui.timeZones->setSelected(m_timezone, true);
+    ui.timeZones->setEnabled(m_timezone != "Local");
+    ui.localTimeZone->setChecked(m_timezone == "Local");
     ui.showTimeStringCheckBox->setChecked(m_showTimeString);
     ui.showSecondHandCheckBox->setChecked(m_showSecondHand);
     m_dialog->show();
@@ -165,7 +166,11 @@ void Clock::configAccepted()
     update();
     QStringList tzs = ui.timeZones->selection();
 
-    if (tzs.count() > 0) {
+    if (ui.localTimeZone->checkState() == Qt::Checked) {
+        dataEngine("time")->disconnectSource(m_timezone, this);
+        m_timezone = "Local";
+        cg.writeEntry("timezone", m_timezone);
+    } else if (tzs.count() > 0) {
         //TODO: support multiple timezones
         QString tz = tzs.at(0);
         if (tz != m_timezone) {
@@ -176,6 +181,7 @@ void Clock::configAccepted()
     } else if (m_timezone != "Local") {
         dataEngine("time")->disconnectSource(m_timezone, this);
         m_timezone = "Local";
+        cg.writeEntry("timezone", m_timezone);
     }
 
     connectToEngine();
