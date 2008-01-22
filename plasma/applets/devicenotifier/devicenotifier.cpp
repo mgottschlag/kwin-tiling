@@ -275,7 +275,7 @@ void DeviceNotifier::performSourceUpdatedInSystray(const QString &source, Plasma
     } else {
         m_hotplugModel->setData(index,last_action_label, ActionRole);
     }
-    m_widget->position(view(), boundingRect(), mapToScene(boundingRect().topLeft()));
+    m_widget->move(popupPosition(m_widget->sizeHint()));
     m_widget->show();
     m_timer->start(m_displayTime*1000);
 }
@@ -366,7 +366,7 @@ void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void DeviceNotifier::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     if(!isOnDesktop) {
-        m_widget->position(event, boundingRect(), mapToScene(boundingRect().topLeft()));
+        m_widget->move(popupPosition(m_widget->sizeHint()));
     }
     Applet::hoverEnterEvent(event);
 }
