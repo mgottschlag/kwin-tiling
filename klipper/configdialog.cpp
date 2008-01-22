@@ -358,7 +358,8 @@ ActionList * ActionWidget::actionList()
             }
             action = new ClipAction((*it)->text(0), (*it)->text(1));
         } else {
-            action->addCommand((*it)->text(0), (*it)->text(1), true);
+            if (action)
+                action->addCommand((*it)->text(0), (*it)->text(1), true);
         }
         it++;
     }
