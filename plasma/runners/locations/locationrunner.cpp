@@ -50,6 +50,19 @@ LocationsRunner::~LocationsRunner()
 {
 }
 
+void processUrl(KUrl &url, const QString &term)
+{
+    if (url.protocol().isEmpty()) {
+        int idx = term.indexOf('/');
+        url.clear();
+        url.setHost(term.left(idx));
+        if (idx != -1) {
+            url.setPath(term.mid(idx));
+        }
+        url.setProtocol("http");
+    }
+}
+
 void LocationsRunner::match(Plasma::SearchContext *search)
 {
     QString term = search->searchTerm();
@@ -76,17 +89,7 @@ void LocationsRunner::match(Plasma::SearchContext *search)
     if (m_type == Plasma::SearchContext::NetworkLocation) {
         Plasma::SearchMatch *action = search->addPossibleMatch(this);
         KUrl url(term);
-
-        if (url.protocol().isEmpty()) {
-            int idx = term.indexOf('/');
-            url.clear();
-            url.setHost(term.left(idx));
-            if (idx != -1) {
-                url.setPath(term.mid(idx));
-            }
-            url.setProtocol("http");
-        }
-
+        processUrl(url, term);
         action->setText(i18n("Go to %1", url.prettyUrl()));
         action->setIcon(KIcon("internet-web-browser"));
         action->setData(url.url());
@@ -97,18 +100,19 @@ void LocationsRunner::match(Plasma::SearchContext *search)
 
 void LocationsRunner::exec(Plasma::SearchMatch *action)
 {
-    QString location = action->data().toString();
+    QString data = action->data().toString();
+    QString location = action->searchTerm();
 
-    if (location.isEmpty()) {
-        location = action->searchTerm();
-    }
-
-    //kDebug() << "command: " << action->term();
-    //kDebug() << "url: " << location;
-    if (m_type == Plasma::SearchContext::UnknownType ||
-        (m_type == Plasma::SearchContext::NetworkLocation &&
-         location.left(4) == "http")) {
+    //kDebug() << "command: " << action->searchTerm();
+    //kDebug() << "url: " << location << data;
+    if (m_type == Plasma::SearchContext::UnknownType) {
         KToolInvocation::invokeBrowser(location);
+    } else if (m_type == Plasma::SearchContext::NetworkLocation && data.left(4) == "http") {
+        // the text may have changed while we were running, so we have to refresh
+        // our content
+        KUrl url(location);
+        processUrl(url, location);
+        KToolInvocation::invokeBrowser(url.url());
     } else {
         new KRun(KShell::tildeExpand(location), 0);
     }
