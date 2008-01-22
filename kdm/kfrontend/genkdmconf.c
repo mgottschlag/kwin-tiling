@@ -2809,8 +2809,10 @@ fprintfLineWrap( FILE *f, const char *msg, ... )
 		col++;
 	}
 	free( txt );
-	fputs( ftxt, f );
-	free( ftxt );
+	if (ftxt) {
+		fputs( ftxt, f );
+		free( ftxt );
+	}
 }
 
 
