@@ -73,9 +73,9 @@ class SearchMatch : public QListWidgetItem
             setAction(action);
         }
 
-        void activate()
+        void activate(Plasma::SearchContext *context)
         {
-            m_action->exec();
+            m_action->exec(context);
         }
 
         bool actionEnabled()
@@ -430,7 +430,7 @@ void Interface::switchUser()
     m_header->setText(i18n("Switch users"));
     m_header->setPixmap("system-switch-user");
     m_defaultMatch = 0;
-    m_context.setSearchTerm("SESSIONS");
+    m_context.resetSearchTerm("SESSIONS");
     sessionrunner->match(&m_context);
 
     foreach (Plasma::SearchMatch *action, m_context.exactMatches()) {
@@ -470,7 +470,7 @@ void Interface::resetInterface()
     m_header->setText(i18n("Enter the name of an application, location or search term below."));
     m_header->setPixmap("system-search");
     m_defaultMatch = 0;
-    m_context.setSearchTerm(QString());
+    m_context.resetSearchTerm(QString());
     m_searchTerm->setCurrentItem(QString(), true, 0);
     m_matchList->clear();
     m_runButton->setEnabled( false );
@@ -504,7 +504,10 @@ void Interface::matchActivated(QListWidgetItem* item)
         m_searchTerm->setItemText(0, match->toString());
     } else {
         //kDebug() << "match activated! " << match->text();
-        match->activate();
+        QString term = m_searchTerm->currentText().trimmed();
+        m_context.setSearchTerm(term);
+
+        match->activate(&m_context);
         close();
     }
 }
@@ -543,7 +546,7 @@ void Interface::match()
         m_execQueued = false;
         return;
     }
-    m_context.setSearchTerm(term);
+    m_context.resetSearchTerm(term);
     m_context.addStringCompletions(m_searchTerm->historyItems());
 
     foreach (Plasma::AbstractRunner* runner, m_runners) {
