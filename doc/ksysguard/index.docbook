@@ -44,14 +44,15 @@
 <date>2000-12-14</date>
 <releaseinfo>1.00.00</releaseinfo>
 
-<abstract><para>&ksysguard; is a network enabled task manager and system monitor
-application, with the additional functionality of
-<application>top</application>.</para></abstract> 
+<abstract><para>&ksysguard; is a network enabled task and system monitor
+application.</para></abstract> 
 
 <keywordset>
 <keyword>KDE</keyword>
 <keyword>KSysGuard</keyword>
 <keyword>process monitor</keyword>
+<keyword>performance monitor</keyword>
+<keyword>system monitor</keyword>
 <keyword>top</keyword>
 <keyword>ps</keyword>
 </keywordset>
@@ -60,12 +61,15 @@ application, with the additional functionality of
 <chapter id="introduction">
 <title>Introduction</title>
 
-<para>&ksysguard; is the &kde; Task Manager and Performance Monitor. It features 
+<para>&ksysguard; is the &kde; Task  and Performance Monitor.
+</para>
+<para>
+It features 
 a client/server architecture that allows monitoring of local as well as remote
 hosts. The graphical front end uses so-called sensors to retrieve the
 information it displays. A sensor can return simple values or more complex
 information like tables. For each type of information, one or more displays are
-provided. Displays are organized in work sheets that can be saved and loaded
+provided. Displays are organized in worksheets that can be saved and loaded
 independently from each other. So, &ksysguard; is not only a simple task manager
 but also a very powerful tool to control large server farms.</para>
 
@@ -78,15 +82,22 @@ but also a very powerful tool to control large server farms.</para>
 <title>Getting started</title>
 
 <para>&ksysguard; can be started from the &kmenu;, using the entry 
-<guimenuitem>KDE System
-Guard</guimenuitem> in the <guimenu>Systems</guimenu> menu. Alternatively, you
+<guimenuitem>System Monitor</guimenuitem> in the
+<guimenu>System Tools</guimenu> menu. Alternatively, you
 can start it by typing <command>ksysguard</command> in a terminal.</para>
 
 <para>The &ksysguard; main window consists of a menu bar, an optional tool bar 
-and
-status bar, the sensor browser and the work space. When first started you see
-your local machine listed as <guilabel>localhost</guilabel> in the sensor
-browser and 2 pages in the work space area. This is the default setup.</para>
+and status bar, and the work space. Custom worksheets will also show the sensor
+browser.
+</para>
+<para>
+By default &ksysguard; shows two worksheets: "Process Table" and "Sensor Load".
+The Process Table lists the running processes and lets the user control them.
+Multiple processes can be selected and controlled at once.
+The Sensor Load worksheet shows graphs of system utilization: (clockwise from
+Top-Left) CPU Load, the system Load Average over the past minute, Physical
+Memory (RAM) usage, and finally Swap Memory usage.
+</para>
 
 <para>This default setup is sufficient enough for an inexperienced user to do
 some system management. An experienced user or even a system administrator of a
@@ -97,7 +108,9 @@ is highly flexible.</para>
 
 <sect1 id="the-sensor-browser">
 <title>The Sensor Browser</title>
-
+<para>The sensor browser exposes &ksysguard;'s advanced functionality. To
+use it, you must first go to the file menu and create a new worksheet.
+It is shown whenever a custom worksheet is selected.</para>
 <para>The sensor browser displays the registered hosts and their sensors in a
 tree form. Click on the tree handles to open or close a branch. Each sensor
 monitors a certain system value.</para>
@@ -105,7 +118,7 @@ monitors a certain system value.</para>
 <sect2 id="connectingtootherhosts">
 <title>Connecting to other hosts</title>
 
-<para>To connect to a new host use <guimenuitem>Connect Hosts</guimenuitem>
+<para>To connect to a new host use <guimenuitem>Monitor remote machine...</guimenuitem>
 from the <guimenu>File</guimenu> menu. A dialog box will appear and allows you 
 to enter the name of the host you want to connect to. Below the name you can choose
 the connection method. The default is <application>ssh</application>, the secure
@@ -128,7 +141,8 @@ argument. In this case, you have to select daemon mode at the connection
 dialog of <application>ksysguard</application>.
 A disadvantage of this connection type is that you won't be able to kill or
 renice a process with the <guilabel>Process Controller</guilabel> and
-the data exchange over network won't be encrypted.</para>
+the data exchange over network won't be encrypted. As a result, daemon
+mode is not recommended.</para>
 </listitem>
 </varlistentry>
 <varlistentry>
@@ -158,10 +172,12 @@ line similar to:</para>
 <tip><para>When using <application>ssh</application> you should make sure that
 you have your <filename>identity.pub</filename> installed on the remote machine
 and the host key of the remote machine is already registered on your machine.
-The easiest way to check this is to type <command>ssh <option>remotehost
+If you don't set up <filename>identity.pub</filename> correctly, you will be asked
+for your password every time you start ksysguard.
+The easiest way to make sure that everything is working is to run <command>ssh <option>remotehost
 ksysguardd</option></command> in a shell. If you are greeted by
-<application>ksysguardd</application> you can type <userinput>quit</userinput>
-and everything is in order.</para></tip>
+<application>ksysguardd</application>, then everything is working correctly
+and you can type <userinput>quit</userinput> to exit <application>ksysguardd</application>.</para></tip>
 </listitem>
 </varlistentry>
 </variablelist>
@@ -169,7 +185,9 @@ and everything is in order.</para></tip>
 <note><para>For experts: <application>ksysguardd</application> is a
 very small program that is only linked against the libc. So it can
 also be used on machines that do not have a full blown &kde;
-installed, such as servers. If you choose the custom command option in
+installed, such as servers. Many major distributions provide a separate
+<application>ksysguardd</application> package for your convenience.
+If you choose the custom command option in
 the host connector you need to specify the complete command to start
 <application>ksysguardd</application>.</para></note>
 
@@ -188,14 +206,14 @@ frames will be grayed and the displays won't update any longer.</para>
 <sect1 id="the-workspace">
 <title>The Work Space</title>
 
-<para>The work space is organized as work sheets. Select
-<guimenuitem>New</guimenuitem> from the <guimenu>File</guimenu> menu to create a
-new work sheet. A dialog will appear where you can set the name, the
-dimension and the update interval of the work sheet. To remove a work sheet 
+<para>The work space is organized as worksheets. Select
+<guimenuitem>New Worksheet...</guimenuitem> from the <guimenu>File</guimenu> menu to create a
+new worksheet. A dialog will appear where you can set the name, the
+dimension and the update interval of the worksheet. To remove a worksheet 
 again, select 
 <guimenuitem>Close</guimenuitem> from the <guimenu>File</guimenu> menu. Any
-modifications will be saved to the work sheet file. If a work sheet has
-never been saved, you will be asked for a file name. Work sheets consist of 
+modifications will be saved to the worksheet file. If a worksheet has
+never been saved, you will be asked for a file name. Worksheets consist of 
 cells
 organized as a grid.</para>
 
@@ -207,7 +225,7 @@ prefer to use. Certain types of displays can display more than one sensor. Add m
 sensors to a display by dragging them over from the sensor browser and dropping
 them over the already existing display.</para>
 
-<para>Work sheets can be configured by clicking <guimenuitem>Configure Worksheet
+<para>Worksheets can be configured by clicking <guimenuitem>Configure Worksheet
 </guimenuitem> at the <guimenu>Edit</guimenu> menu. In the appearing dialog
 you can set the dimension and the update interval. This update interval is
 used by all displays of the worksheet, which has the <guilabel>use update
@@ -219,7 +237,7 @@ global style attributes and apply them to the current active worksheet.</para>
 
 <para>Displays can be configured by clicking with the right mouse button on
 them. A popup menu appear where you can select whether you want to change the
-properties of that display, remove it from the work sheet, change its update
+properties of that display, remove it from the worksheet, change its update
 interval type and value or pause and restart its updating.</para>
 
 <sect2 id="signal-plotter">
