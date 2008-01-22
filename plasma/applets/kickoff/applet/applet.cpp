@@ -178,28 +178,9 @@ void LauncherApplet::toggleMenu(bool pressed)
     }
     d->launcher->focusFavoritesView();
 
-    // try to position the launcher alongside the top or bottom edge of the
-    // applet with and aligned to the left or right of the applet
     if (!d->launcher->isVisible()) {
-        QGraphicsView *viewWidget = view();
-        QDesktopWidget *desktop = QApplication::desktop();
-        if (viewWidget) {
-            QPoint viewPos = viewWidget->mapFromScene(scenePos());
-            QPoint globalPos = viewWidget->mapToGlobal(viewPos);
-            QRect desktopRect = desktop->availableGeometry(viewWidget);
-            QRect size = mapToView(viewWidget, contentRect());
-            // Prefer to open below the icon so as to act like a regular menu
-            if (globalPos.y() + size.height() + d->launcher->height()
-                < desktopRect.bottom()) {
-                globalPos.ry() += size.height();
-            } else {
-                globalPos.ry() -= d->launcher->height();
-            }
-            if (globalPos.x() + d->launcher->width() > desktopRect.right()) {
-                globalPos.rx() -= d->launcher->width() - size.width();
-            }
-            d->launcher->move(globalPos);
-        }
+        d->launcher->move(d->icon->popupPosition(d->launcher->size()));
+
         if (containment()) {
             containment()->emitLaunchActivated();
         }

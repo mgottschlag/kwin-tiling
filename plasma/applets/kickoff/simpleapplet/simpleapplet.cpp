@@ -343,21 +343,8 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
         }
     }
 
-    QGraphicsView *viewWidget = view();
-    QPoint globalPos;
-    if (viewWidget) {
-        const QPoint viewPos = viewWidget->mapFromScene(scenePos());
-        globalPos = viewWidget->mapToGlobal(viewPos);
-        int ypos = globalPos.ry() - d->menuview->sizeHint().height();
-        if( ypos < 0 ) {
-            const QRect size = mapToView(viewWidget, contentRect());
-            ypos = globalPos.ry() + size.height();
-        }
-        globalPos.ry() = ypos;
-    }
-
     d->menuview->setAttribute(Qt::WA_DeleteOnClose);
-    d->menuview->popup(globalPos);
+    d->menuview->popup(d->icon->popupPosition(d->menuview->sizeHint()));
     d->icon->setPressed();
 }
 
