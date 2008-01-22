@@ -86,8 +86,7 @@ void Clock::init()
     m_plainClockFont.setBold(m_plainClockFontBold);
     m_plainClockFont.setItalic(m_plainClockFontItalic);
 
-    setContentSize(120, 60);
-    setMinimumContentSize(80, 44);
+    setMinimumContentSize(70, 22);
     dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
 }
 
