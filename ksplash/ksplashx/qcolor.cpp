@@ -500,7 +500,7 @@ static int hex2int( QChar hexchar )
 static int hex2int( char hexchar )
 {
     int v;
-    if ( hexchar >= '0' & hexchar <= '9' )
+    if ( hexchar >= '0' && hexchar <= '9' )
 	v = hexchar - '0';
     else if ( hexchar >= 'A' && hexchar <= 'F' )
 	v = hexchar - 'A' + 10;
