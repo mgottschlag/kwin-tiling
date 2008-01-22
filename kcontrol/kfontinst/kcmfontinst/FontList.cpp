@@ -797,6 +797,7 @@ QVariant CFontList::headerData(int section, Qt::Orientation orientation,
                 if(COL_STATUS==section)
                     return i18n("This column shows the status of the font family, and of the "
                                 "individual font styles.");
+                break;
             case Qt::WhatsThisRole:
                 return whatsThis();
             default:
