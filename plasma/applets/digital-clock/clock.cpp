@@ -147,7 +147,7 @@ void Clock::showCalendar(QGraphicsSceneMouseEvent *event)
         m_calendar->hide();
     } else {
         kDebug(); 
-        m_calendar->position(event, boundingRect(), mapToScene(boundingRect().topLeft()));
+        m_calendar->move(popupPosition(m_calendar->sizeHint()));
         m_calendar->show();
     }
 }
