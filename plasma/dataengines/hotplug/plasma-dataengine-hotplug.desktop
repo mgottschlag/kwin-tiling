@@ -2,6 +2,7 @@
 Name=Hotplug Event Data Engine
 Name[ca]=Motor de dades d'esdeveniments de connexió en calent
 Name[csb]=Czérownik dlô Hotplug Event Data
+Name[da]=Datamotor for hotplug-hændelser
 Name[de]=Treiber für Hotplug-Ereignisse
 Name[el]=Μηχανή δεδομένων γεγονότων άμεσης σύνδεσης
 Name[eo]=Datuma motoro por dumkure permuteblaj eventoj
@@ -35,6 +36,7 @@ Name[sr]=мотор врућег укључивања
 Name[sr@latin]=motor vrućeg uključivanja
 Name[sv]=Datagränssnitt för inkopplingshändelse
 Name[tr]=Hotplug Olay Verisi Motoru
+Name[uk]=Рушій даних для подій гарячого підключення
 Name[wa]=Éndjin d' dinêyes d' evenmints Hotplug
 Name[x-test]=xxHotplug Event Data Enginexx
 Name[zh_CN]=热插拔事件数据引擎

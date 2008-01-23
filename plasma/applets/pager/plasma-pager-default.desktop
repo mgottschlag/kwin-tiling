@@ -2,6 +2,7 @@
 Name=Pager
 Name[bg]=Пейджър
 Name[ca]=Paginador
+Name[da]=Desktop-vælger
 Name[de]=Arbeitsflächen-Umschalter
 Name[el]=Πίνακας σελίδων
 Name[eo]=Paĝilo
@@ -32,6 +33,7 @@ Name[sr@latin]=pejdžer
 Name[sv]=Skrivbordsvisning
 Name[tg]=Пейҷер
 Name[tr]=Sayfalayıcı
+Name[uk]=Пейджер
 Name[x-test]=xxPagerxx
 Name[zh_CN]=分页器
 Name[zh_TW]=呼叫器
