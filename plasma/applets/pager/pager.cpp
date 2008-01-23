@@ -460,9 +460,14 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
                 // for the WM to do the move, there's a race condition with figuring out how much to move,
                 // so do it only as one move
                 dest += KWindowSystem::desktopToViewport( m_dragHighlightedDesktop+1, false );
+#if 1
+                QPoint d = dest.toPoint();
+#else // enable on monday
+                QPoint d = KWindowSystem::constrainViewportRelativePosition( dest.toPoint());
+#endif
                 NETRootInfo i( QX11Info::display(), 0 );
                 int flags = ( 0x20 << 12 ) | ( 0x03 << 8 ) | 1; // from tool, x/y, northwest gravity
-                i.moveResizeWindowRequest( m_dragId, flags, dest.toPoint().x(), dest.toPoint().y(), 0, 0 );
+                i.moveResizeWindowRequest( m_dragId, flags, d.x(), d.y(), 0, 0 );
             }
         }
         m_timer->start();
