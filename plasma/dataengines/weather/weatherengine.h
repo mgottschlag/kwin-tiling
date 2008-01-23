@@ -42,7 +42,7 @@ public:
      * @param parent The parent object.
      * @param args Argument list, unused.
      */
-    explicit WeatherEngine(QObject *parent, const QVariantList &args);
+    WeatherEngine(QObject *parent, const QVariantList &args);
 
     // Destructor
     ~WeatherEngine();

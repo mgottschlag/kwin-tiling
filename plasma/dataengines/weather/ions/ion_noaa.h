@@ -67,7 +67,7 @@ class KDE_EXPORT NOAAIon : public IonInterface
     Q_OBJECT
 
 public:
-    explicit NOAAIon(QObject *parent, const QVariantList &args);
+    NOAAIon(QObject *parent, const QVariantList &args);
     ~NOAAIon();
     void init(void);  // Setup the city location, fetching the correct URL name.
     bool options(const QString& source);
