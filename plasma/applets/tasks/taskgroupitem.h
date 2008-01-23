@@ -131,6 +131,8 @@ public slots:
 protected:
     /** Reimplemented **/
     virtual void timerEvent(QTimerEvent *event);
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 private:
     enum DropAction

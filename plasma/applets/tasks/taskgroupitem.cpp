@@ -308,4 +308,14 @@ void TaskGroupItem::timerEvent(QTimerEvent *event)
     }
 }
 
+void TaskGroupItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    Widget::hoverEnterEvent(event);
+}
+
+void TaskGroupItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    Widget::hoverLeaveEvent(event);
+}
+
 #include "taskgroupitem.moc"
