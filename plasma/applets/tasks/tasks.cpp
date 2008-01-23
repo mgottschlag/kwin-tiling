@@ -124,7 +124,8 @@ void Tasks::addStartingTask(StartupPtr task)
 void Tasks::removeStartingTask(StartupPtr task)
 {
     if (m_startupTaskItems.contains(task)) {
-        removeItemFromRootGroup(m_startupTaskItems[task]);
+        AbstractTaskItem *item = m_startupTaskItems.take(task);
+        removeItemFromRootGroup(item);
     }
 }
 
@@ -189,12 +190,12 @@ void Tasks::addWindowTask(TaskPtr task)
 void Tasks::removeWindowTask(TaskPtr task)
 {
     if (m_windowTaskItems.contains(task)) {
-        removeItemFromRootGroup(m_windowTaskItems[task]);
-        m_windowTaskItems.remove(task);
+        AbstractTaskItem *item = m_windowTaskItems.take(task);
+        removeItemFromRootGroup(item);
     }
 }
 
-void Tasks::removeAllTasks()
+void Tasks::removeAllWindowTasks()
 {
     while (!m_windowTaskItems.isEmpty()) {
         removeItemFromRootGroup(m_windowTaskItems.take(m_windowTaskItems.constBegin().key()));
@@ -224,7 +225,7 @@ void Tasks::currentDesktopChanged(int)
         return;
     }
 
-    removeAllTasks();
+    removeAllWindowTasks();
     registerWindowTasks();
 }
 
@@ -294,7 +295,7 @@ void Tasks::configAccepted()
                        this, SLOT(taskMovedDesktop(TaskPtr)));
         }
 
-        removeAllTasks();
+        removeAllWindowTasks();
         registerWindowTasks();
 
         KConfigGroup cg = config();

@@ -106,7 +106,7 @@ private:
         void removeItemFromRootGroup(AbstractTaskItem* item);
 
         // remove all tasks from the taskbar
-        void removeAllTasks();
+        void removeAllWindowTasks();
 
         TaskGroupItem* m_rootTaskGroup;
 
