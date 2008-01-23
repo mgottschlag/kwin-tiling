@@ -450,7 +450,10 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             QPointF dest = m_dragCurrentPos - m_rects[m_dragHighlightedDesktop].topLeft() - m_dragOriginalPos + m_dragOriginal.topLeft();
             dest = QPointF(dest.x()/m_scaleFactor, dest.y()/m_scaleFactor);
             KWindowSystem::setOnDesktop(m_dragId, m_dragHighlightedDesktop+1);
-            XMoveWindow(QX11Info::display(), m_dragId, dest.toPoint().x(), dest.toPoint().y());
+            // use _NET_MOVERESIZE_WINDOW rather than plain move, so that the WM knows this is a pager request
+            NETRootInfo i( QX11Info::display(), 0 );
+            int flags = ( 0x20 << 12 ) | ( 0x03 << 8 ) | 1; // from tool, x/y, northwest gravity
+            i.moveResizeWindowRequest( m_dragId, flags, dest.toPoint().x(), dest.toPoint().y(), 0, 0 );
         }
         m_timer->start();
     } else {
