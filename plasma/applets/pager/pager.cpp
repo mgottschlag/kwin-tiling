@@ -449,11 +449,21 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         if (m_dragHighlightedDesktop != -1) {
             QPointF dest = m_dragCurrentPos - m_rects[m_dragHighlightedDesktop].topLeft() - m_dragOriginalPos + m_dragOriginal.topLeft();
             dest = QPointF(dest.x()/m_scaleFactor, dest.y()/m_scaleFactor);
-            KWindowSystem::setOnDesktop(m_dragId, m_dragHighlightedDesktop+1);
-            // use _NET_MOVERESIZE_WINDOW rather than plain move, so that the WM knows this is a pager request
-            NETRootInfo i( QX11Info::display(), 0 );
-            int flags = ( 0x20 << 12 ) | ( 0x03 << 8 ) | 1; // from tool, x/y, northwest gravity
-            i.moveResizeWindowRequest( m_dragId, flags, dest.toPoint().x(), dest.toPoint().y(), 0, 0 );
+            if( !KWindowSystem::mapViewport()) {
+                KWindowSystem::setOnDesktop(m_dragId, m_dragHighlightedDesktop+1);
+                // use _NET_MOVERESIZE_WINDOW rather than plain move, so that the WM knows this is a pager request
+                NETRootInfo i( QX11Info::display(), 0 );
+                int flags = ( 0x20 << 12 ) | ( 0x03 << 8 ) | 1; // from tool, x/y, northwest gravity
+                i.moveResizeWindowRequest( m_dragId, flags, dest.toPoint().x(), dest.toPoint().y(), 0, 0 );
+            } else {
+                // setOnDesktop() with viewports is also moving a window, and since it takes a moment
+                // for the WM to do the move, there's a race condition with figuring out how much to move,
+                // so do it only as one move
+                dest += KWindowSystem::desktopToViewport( m_dragHighlightedDesktop+1, false );
+                NETRootInfo i( QX11Info::display(), 0 );
+                int flags = ( 0x20 << 12 ) | ( 0x03 << 8 ) | 1; // from tool, x/y, northwest gravity
+                i.moveResizeWindowRequest( m_dragId, flags, dest.toPoint().x(), dest.toPoint().y(), 0, 0 );
+            }
         }
         m_timer->start();
     } else {
