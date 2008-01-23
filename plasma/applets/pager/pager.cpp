@@ -235,6 +235,8 @@ void Pager::recalculateWindowRects()
                 continue;
             }
             QRect windowRect = info.frameGeometry();
+            if( KWindowSystem::mapViewport())
+                windowRect = fixViewportPosition( windowRect );
             windowRect = QRectF(windowRect.x() * m_scaleFactor,
                                 windowRect.y() * m_scaleFactor,
                                 windowRect.width() * m_scaleFactor, 
@@ -566,6 +568,20 @@ void Pager::lostDesktopLayoutOwner()
 {
     delete m_desktopLayoutOwner;
     m_desktopLayoutOwner = NULL;
+}
+
+// KWindowSystem does not translate position when mapping viewports
+// to virtual desktops (it'd probably break more things than fix),
+// so the offscreen coordinates need to be fixed
+QRect Pager::fixViewportPosition( const QRect& r )
+{
+    int x = r.center().x() % qApp->desktop()->width();
+    int y = r.center().y() % qApp->desktop()->height();
+    if( x < 0 )
+        x = x + qApp->desktop()->width();
+    if( y < 0 )
+        y = y + qApp->desktop()->height();
+    return QRect( x - r.width() / 2, y - r.height() / 2, r.width(), r.height());
 }
 
 #include "pager.moc"

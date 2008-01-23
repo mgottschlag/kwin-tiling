@@ -75,7 +75,7 @@ class Pager : public Plasma::Applet
 
     protected:
         void createMenu();
-
+        QRect fixViewportPosition( const QRect& r );
     private:
 	QTimer* m_timer;
         KDialog *m_dialog;
