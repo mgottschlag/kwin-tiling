@@ -346,7 +346,8 @@ void Pager::windowChanged(WId id, unsigned int properties)
 {
     Q_UNUSED(id)
 
-    if (properties & NET::WMGeometry) {
+    if (properties & NET::WMGeometry ||
+        properties & NET::WMDesktop) {
         if (!m_timer->isActive()) {
             m_timer->start(WINDOW_UPDATE_DELAY);
         }
