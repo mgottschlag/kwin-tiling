@@ -29,6 +29,7 @@ class QTimeLine;
 
 // Plasma
 #include <plasma/widgets/widget.h>
+#include <plasma/phase.h>
 
 /**
  * A graphical representation of a task, consisting of an icon
@@ -172,7 +173,7 @@ protected:
     void drawTextLayout(QPainter *painter, const QTextLayout &layout, const QRect &rect) const;
 
 private slots:
-    void animationUpdate();
+    void animationUpdate(qreal progress);
 
 private:
     // area of item occupied by task's icon
@@ -185,7 +186,9 @@ private:
     QIcon _icon;
     QString _text;
 
-    QTimeLine* _fadeTimer;
+    Plasma::Phase::AnimId m_animId;
+    qreal m_alpha;
+    bool m_fadeIn;
 
     QPointF _dragOffset;
     int m_updateTimerId;

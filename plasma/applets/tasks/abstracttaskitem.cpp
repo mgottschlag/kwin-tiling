@@ -33,32 +33,35 @@
 
 // KDE
 #include <KColorScheme>
+#include <KDebug>
 
 #include "plasma/plasma.h"
 
 AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
     : Widget(parent,parentObject),
       _flags(0),
-      _fadeTimer(0),
+      m_animId(-1),
+      m_alpha(1),
+      m_fadeIn(true),
       m_updateTimerId(-1)
 {
     setAcceptsHoverEvents(true);
     //setAcceptDrops(true);
-
-    _fadeTimer = new QTimeLine();
-    _fadeTimer->setCurveShape(QTimeLine::LinearCurve);
-
-    connect(_fadeTimer, SIGNAL(valueChanged(qreal)),
-            this, SLOT(animationUpdate()));
 }
 
 AbstractTaskItem::~AbstractTaskItem()
 {
-    delete _fadeTimer;
 }
 
-void AbstractTaskItem::animationUpdate()
+void AbstractTaskItem::animationUpdate(qreal progress)
 {
+    if (progress == 1) {
+        m_animId = -1;
+        m_fadeIn = true;
+    }
+
+    m_alpha = m_fadeIn ? progress : 1 - progress;
+
     // explicit update
     update();
 }
@@ -75,7 +78,7 @@ void AbstractTaskItem::setText(const QString &text)
     }
 
     _text = text;
-    
+
     //let some place for at least the icon and the first character
     QFontMetrics fm(font());
     setMinimumSize(QSizeF(fm.height() + fm.charWidth(text,0) + IconTextSpacing + 2, fm.height()));
@@ -132,28 +135,43 @@ AbstractTaskItem::TaskFlags AbstractTaskItem::taskFlags() const
 
 void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
+    if (taskFlags() & TaskHasFocus) {
+        Widget::hoverEnterEvent(event);
+        return;
+    }
+
     const int FadeInDuration = 100;
 
-    _fadeTimer->setDirection(QTimeLine::Forward);
-    _fadeTimer->setDuration(FadeInDuration);
-
-    if (_fadeTimer->state() != QTimeLine::Running) {
-        _fadeTimer->start();
+    if (m_animId != -1) {
+        Plasma::Phase::self()->stopCustomAnimation(m_animId);
     }
+
+    m_fadeIn = true;
+    m_animId = Plasma::Phase::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
+                                                      Plasma::Phase::LinearCurve, this,
+                                                      "animationUpdate");
+
     Widget::hoverEnterEvent(event);
 }
 
 void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    if (taskFlags() & TaskHasFocus) {
+        Widget::hoverLeaveEvent(event);
+        return;
+    }
+
     const int FadeOutDuration = 200;
 
-    _fadeTimer->setDirection(QTimeLine::Backward);
-    _fadeTimer->setDuration(FadeOutDuration);
-
-    if (_fadeTimer->state() != QTimeLine::Running) {
-        _fadeTimer->setCurrentTime(FadeOutDuration);
-        _fadeTimer->start();
+    if (m_animId != -1) {
+        Plasma::Phase::self()->stopCustomAnimation(m_animId);
     }
+
+    m_fadeIn = false;
+    m_animId = Plasma::Phase::self()->customAnimation(40 / (1000 / FadeOutDuration), FadeOutDuration,
+                                                      Plasma::Phase::LinearCurve, this,
+                                                      "animationUpdate");
+
     Widget::hoverLeaveEvent(event);
 }
 
@@ -193,7 +211,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     KColorScheme colorScheme(QPalette::Active);
 
     if (option->state & QStyle::State_MouseOver
-         || _fadeTimer->state() == QTimeLine::Running
+         || m_animId != -1
          || taskFlags() & TaskHasFocus)
     {
         QLinearGradient background(boundingRect().topLeft(),
@@ -221,7 +239,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
             alpha = hoverAlpha;
         }
 
-        alpha *= _fadeTimer->currentValue();
+        alpha *= m_alpha;
 
         startColor.setAlphaF(alpha);
         endColor.setAlphaF(qMin(1.0,startColor.alphaF()+0.2));
