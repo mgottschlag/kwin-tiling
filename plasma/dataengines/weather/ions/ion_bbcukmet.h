@@ -71,7 +71,7 @@ class KDE_EXPORT UKMETIon : public IonInterface
     Q_OBJECT
 
 public:
-    UKMETIon(QObject *parent, const QVariantList &args);
+    explicit UKMETIon(QObject *parent, const QVariantList &args);
     ~UKMETIon();
     void init();  // Setup the city location, fetching the correct URL name.
     bool options(const QString& source);

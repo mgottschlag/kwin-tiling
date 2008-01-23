@@ -126,7 +126,7 @@ class KDE_EXPORT EnvCanadaIon : public IonInterface
     Q_OBJECT
 
 public:
-    EnvCanadaIon(QObject *parent, const QVariantList &args);
+    explicit EnvCanadaIon(QObject *parent, const QVariantList &args);
     ~EnvCanadaIon();
     void init();  // Setup the city location, fetching the correct URL name.
     bool updateIonSource(const QString& source); // Sync data source with Applet

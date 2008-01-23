@@ -45,7 +45,7 @@ public:
      * Constructor for the ion
      * @param parent The parent object.
      */
-    IonInterface(QObject *parent = 0);
+    explicit IonInterface(QObject *parent = 0);
     /**
      * Destructor for the ion
      */
