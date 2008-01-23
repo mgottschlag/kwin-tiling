@@ -27,7 +27,6 @@
 namespace Plasma
 {
     class Corona;
-    class Containment;
 } // namespace Plasma
 
 class RootWidget;

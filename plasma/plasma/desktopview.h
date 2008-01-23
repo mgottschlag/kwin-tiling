@@ -23,12 +23,9 @@
 #include "plasma/plasma.h"
 #include "plasma/view.h"
 
-class QPixmap;
 
 namespace Plasma
 {
-    class Svg;
-    class Corona;
     class AppletBrowser;
 }
 
