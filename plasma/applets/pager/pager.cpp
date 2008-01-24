@@ -373,6 +373,8 @@ void Pager::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 if (m_dragOriginal.isEmpty()) {
                     m_dragOriginal = m_rects[i].toRect();
                 }
+                
+                update();
 
                 return;
             }
@@ -472,13 +474,10 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         }
         m_timer->start();
     } else {
-        for (int i = 0; i < m_desktopCount; i++) {
-            if (m_rects[i].contains(event->pos().toPoint()) && m_currentDesktop != i+1) {
-                KWindowSystem::setCurrentDesktop(i+1);
-                m_currentDesktop = i+1;
-                update();
-                break;
-            }
+        // only change the desktop if the user presses and releases the mouse on the same desktop
+        if (m_dragStartDesktop != -1 && m_rects[m_dragStartDesktop].contains(event->pos().toPoint()) && m_currentDesktop != m_dragStartDesktop + 1) {
+            KWindowSystem::setCurrentDesktop(m_dragStartDesktop + 1);
+            m_currentDesktop = m_dragStartDesktop + 1;
         }
     }
 
@@ -488,6 +487,7 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     m_dragStartDesktop = -1;
     m_dragOriginalPos = m_dragCurrentPos = QPointF();
 
+    update();
     Applet::mouseReleaseEvent(event);
 }
 
@@ -519,6 +519,21 @@ void Pager::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
         m_hoverRect = QRectF();
         update();
     }
+    
+    // The applet doesn't always get mouseReleaseEvents, for example when starting a drag
+    // on the panel and releasing the mouse on the desktop or another window. This can cause
+    // weird bugs because the pager still thinks a drag is going on.
+    // The only reliable event I found is the hoverLeaveEvent, so we just stop the drag
+    // on this event.
+    if (m_dragId || m_dragStartDesktop != -1) {
+        m_dragId = 0;
+        m_dragOriginal = QRect();
+        m_dragHighlightedDesktop = -1;
+        m_dragStartDesktop = -1;
+        m_dragOriginalPos = m_dragCurrentPos = QPointF();
+        update();
+    }
+    
     Applet::hoverLeaveEvent(event);
 }
 
