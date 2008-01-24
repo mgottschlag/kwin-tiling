@@ -2,7 +2,7 @@
 Exec=kcmshell4 khotkeys
 Icon=preferences-desktop-keyboard-khotkeys
 Type=Service
-X-KDE-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule,KCModuleInit
 X-KDE-Library=kcm_khotkeys
 X-KDE-Init-Symbol=khotkeys
 X-KDE-ParentApp=kcontrol
