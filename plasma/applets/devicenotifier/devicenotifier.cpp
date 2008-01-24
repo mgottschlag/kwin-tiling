@@ -184,7 +184,11 @@ DeviceNotifier::~DeviceNotifier()
 
 Qt::Orientations DeviceNotifier::expandingDirections() const
 {
-    return Qt::Vertical;
+    if (formFactor() == Plasma::Horizontal) {
+        return Qt::Vertical;
+    } else {
+        return Qt::Horizontal;
+    }
 }
 
 QSizeF DeviceNotifier::contentSizeHint() const

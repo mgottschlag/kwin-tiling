@@ -92,7 +92,11 @@ void Clock::init()
 
 Qt::Orientations Clock::expandingDirections() const
 {
-    return Qt::Vertical;
+    if (formFactor() == Plasma::Horizontal) {
+        return Qt::Vertical;
+    } else {
+        return Qt::Horizontal;
+    }
 }
 
 
