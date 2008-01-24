@@ -51,7 +51,6 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     setAcceptDrops(true);
     setHasConfigurationInterface(true);
     m_icon = new Plasma::Icon(this);
-    m_icon->setDrawBackground(true);
 
     if (args.count() > 2) {
         setUrl(args.at(2).toString());
@@ -68,7 +67,6 @@ void IconApplet::init()
 
     m_icon->installSceneEventFilter(this);
     m_icon->resize(contentSize());
-    m_icon->setDrawBackground(false);
 
     // we do this right away since we may have our config
     // read shortly by the containment. usually applets don't need
@@ -137,6 +135,7 @@ void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
             m_icon->setText(m_text);
             setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
             m_icon->setToolTip(Plasma::ToolTipData());
+            m_icon->setDrawBackground(true);
         } else {
             m_icon->setText(QString());
             setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Panel)));
@@ -145,6 +144,7 @@ void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
             data.subText = m_genericName;
             data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
             m_icon->setToolTip(data);
+            m_icon->setDrawBackground(false);
         }
     }
 
