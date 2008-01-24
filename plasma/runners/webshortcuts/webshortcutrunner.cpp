@@ -73,7 +73,7 @@ void WebshortcutRunner::match(Plasma::SearchContext *search)
                 action->setText(actionText);
                 QString url = getSearchQuery(service->property("Query").toString(), term);
                 //kDebug() << "url is" << url << "!!!!!!!!!!!!!!!!!!!!!!!";
-                action->setData(url);
+                action->setData(service->property("Query").toString());
 
                 // let's try if we can get a proper icon from the favicon cache
                 KIcon icon = getFavicon(url);
@@ -115,10 +115,10 @@ KIcon WebshortcutRunner::getFavicon(const KUrl &url) {
     }
 
     // locate the favicon
-    QString iconFile = KGlobal::dirs()->findResource("cache",reply.value()+".png");
+    QString iconFile = KGlobal::dirs()->findResource("cache", reply.value()+".png");
 
-    if(iconFile.isNull()) {
-	return KIcon();
+    if (iconFile.isNull()) {
+        return KIcon();
     }
     KIcon icon = KIcon(iconFile);
 
@@ -127,7 +127,7 @@ KIcon WebshortcutRunner::getFavicon(const KUrl &url) {
 
 void WebshortcutRunner::exec(Plasma::SearchMatch *action)
 {
-    QString location = action->data().toString();
+    QString location = getSearchQuery(action->data().toString(), action->searchTerm());
 
     if (!location.isEmpty()) {
         KToolInvocation::invokeBrowser(location);
