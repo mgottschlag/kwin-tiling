@@ -134,7 +134,7 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
 QSizeF Battery::contentSizeHint() const
 {
     QSizeF sizeHint = contentSize();
-    kDebug() << "SizeHintIn: " << sizeHint;
+    //kDebug() << "SizeHintIn: " << sizeHint;
     switch (formFactor()) {
         case Plasma::Vertical:
             if (m_numOfBattery > 1 && m_showMultipleBatteries) {
@@ -156,7 +156,7 @@ QSizeF Battery::contentSizeHint() const
         default:
             break;
     }
-    kDebug() << "SizeHintOut: " << sizeHint;
+    //kDebug() << "SizeHintOut: " << sizeHint;
     return sizeHint;
 }
 
@@ -172,8 +172,8 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
         int battery_percent = data[I18N_NOOP("Percent")].toInt();
         QString battery_state = data[I18N_NOOP("State")].toString();
         m_batteries_data[source] = qMakePair(battery_percent, battery_state);
-        kDebug() << source << "state:" << battery_state << ":" 
-                 << battery_percent << "%";
+        //kDebug() << source << "state:" << battery_state << ":" 
+        //         << battery_percent << "%";
     } else if (source == I18N_NOOP("AC Adapter")) {
         m_acadapter_plugged = data[I18N_NOOP("Plugged in")].toBool();
         kDebug() << source << "plugged:" << m_acadapter_plugged;
