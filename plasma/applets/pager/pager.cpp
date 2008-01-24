@@ -373,9 +373,8 @@ void Pager::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 if (m_dragOriginal.isEmpty()) {
                     m_dragOriginal = m_rects[i].toRect();
                 }
-                
-                update();
 
+                update();
                 return;
             }
         }
@@ -410,7 +409,7 @@ void Pager::wheelEvent(QGraphicsSceneWheelEvent *e)
 
 void Pager::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (m_dragId) {
+    if (m_dragId > 0) {
         m_dragCurrentPos = event->pos();
         m_dragHighlightedDesktop = -1;
         for (int i = 0; i < m_desktopCount; i++) {
@@ -429,7 +428,9 @@ void Pager::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         update();
         event->accept();
         return;
-    } else if (m_dragStartDesktop != -1 && (event->pos() - m_dragOriginalPos).toPoint().manhattanLength() > KGlobalSettings::dndEventDelay()) {
+    } else if (m_dragId != -1 && m_dragStartDesktop != -1 &&
+               (event->pos() - m_dragOriginalPos).toPoint().manhattanLength() > KGlobalSettings::dndEventDelay()) {
+        m_dragId = -1; // prevent us from going through this more than once
         for (int k = m_windowRects[m_dragStartDesktop].count() - 1; k >= 0 ; k--) {
             if (m_windowRects[m_dragStartDesktop][k].second.contains(m_dragOriginalPos.toPoint())) {
                 m_dragOriginal = m_windowRects[m_dragStartDesktop][k].second;
@@ -447,7 +448,7 @@ void Pager::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (m_dragId) {
+    if (m_dragId > 0) {
         if (m_dragHighlightedDesktop != -1) {
             QPointF dest = m_dragCurrentPos - m_rects[m_dragHighlightedDesktop].topLeft() - m_dragOriginalPos + m_dragOriginal.topLeft();
             dest = QPointF(dest.x()/m_scaleFactor, dest.y()/m_scaleFactor);
@@ -473,12 +474,11 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             }
         }
         m_timer->start();
-    } else {
+    } else if (m_dragStartDesktop != -1 && m_rects[m_dragStartDesktop].contains(event->pos().toPoint()) && 
+               m_currentDesktop != m_dragStartDesktop + 1) {
         // only change the desktop if the user presses and releases the mouse on the same desktop
-        if (m_dragStartDesktop != -1 && m_rects[m_dragStartDesktop].contains(event->pos().toPoint()) && m_currentDesktop != m_dragStartDesktop + 1) {
-            KWindowSystem::setCurrentDesktop(m_dragStartDesktop + 1);
-            m_currentDesktop = m_dragStartDesktop + 1;
-        }
+        KWindowSystem::setCurrentDesktop(m_dragStartDesktop + 1);
+        m_currentDesktop = m_dragStartDesktop + 1;
     }
 
     m_dragId = 0;
