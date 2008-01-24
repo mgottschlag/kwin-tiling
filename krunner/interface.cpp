@@ -501,7 +501,8 @@ void Interface::matchActivated(QListWidgetItem* item)
     m_searchTerm->addToHistory(searchTerm);
 
     if (match->actionType() == Plasma::SearchMatch::InformationalMatch) {
-        m_searchTerm->setItemText(0, match->toString());
+        //kDebug() << "informational match activated" << match->toString();
+        m_searchTerm->setItemText(m_searchTerm->currentIndex(), match->toString());
     } else {
         //kDebug() << "match activated! " << match->text();
         QString term = m_searchTerm->currentText().trimmed();
