@@ -83,6 +83,7 @@ Comment[zh_CN]=常规图标
 Comment[zh_TW]=一般圖示
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
+NoDisplay=true
 
 X-KDE-Library=plasma_applet_icon
 X-KDE-PluginInfo-Author=The Plasma Team
