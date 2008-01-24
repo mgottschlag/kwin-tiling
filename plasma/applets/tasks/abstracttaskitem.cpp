@@ -36,6 +36,7 @@
 #include <KDebug>
 
 #include "plasma/plasma.h"
+#include "plasma/theme.h"
 
 AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
     : Widget(parent,parentObject),
@@ -208,7 +209,16 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
 {
     // FIXME  Check the usage of KColorScheme here with various color schemes
 
-    KColorScheme colorScheme(QPalette::Active);
+    const qreal hoverAlpha = 0.4;
+
+    KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors());
+
+    if (taskFlags() & TaskWantsAttention) {
+        QColor background = colorScheme.background(KColorScheme::ActiveBackground).color();
+        background.setAlphaF(hoverAlpha+0.2);
+        painter->setBrush(QBrush(background));
+        painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
+    }
 
     if (option->state & QStyle::State_MouseOver
          || m_animId != -1
@@ -229,7 +239,6 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
         endColor = colorScheme.shade(startColor,KColorScheme::DarkShade);
 
         const qreal pressedAlpha = 0.2;
-        const qreal hoverAlpha = 0.4;
 
         qreal alpha = 0;
 
@@ -251,11 +260,13 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
             painter->setPen(QPen(QColor(100, 100, 100, startColor.alpha())));
 
         painter->setBrush(background);
-        painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
     } else {
-        painter->setBrush(QBrush(colorScheme.shade(KColorScheme::ShadowShade).darker(500)));
-        painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
+        QColor background = colorScheme.shade(colorScheme.background(KColorScheme::AlternateBackground).color(),
+                                              KColorScheme::DarkShade);
+        background.setAlphaF(0.2);
+        painter->setBrush(QBrush(background));
     }
+    painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
 }
 
 QSize AbstractTaskItem::layoutText(QTextLayout &layout, const QString &text,
@@ -402,8 +413,7 @@ void AbstractTaskItem::drawTask(QPainter *painter,
     }
 #endif
 
-    // FIXME HARDCODE testing
-    painter->setPen(QPen(QColor(255,255,255), 1.0));
+    painter->setPen(QPen(Plasma::Theme::self()->textColor(), 1.0));
 
     QRect rect = textRect().toRect();
     rect.adjust(2, 2, -2, -2); // Create a text margin
