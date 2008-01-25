@@ -21,19 +21,19 @@
 
 #include <QScriptValue>
 
-#include <plasma/scriptengine.h>
+#include <plasma/scripting/appletscript.h>
 #include <plasma/dataengine.h>
 
 class QScriptEngine;
 class QScriptContext;
 
-class QScript : public Plasma::ScriptEngine
+class QScriptApplet : public Plasma::AppletScript
 {
     Q_OBJECT
 
 public:
-    QScript( QObject *parent, const QVariantList &args );
-    ~QScript();
+    QScriptApplet( QObject *parent, const QVariantList &args );
+    ~QScriptApplet();
     bool init();
 
     void reportError();
@@ -66,7 +66,7 @@ private:
     QScriptValue m_self;
 };
 
-K_EXPORT_PLASMA_SCRIPTENGINE(qscript, QScript)
+K_EXPORT_PLASMA_APPLETSCRIPTENGINE(qscriptapplet, QScriptApplet)
 
 
 #endif // SCRIPT_H
