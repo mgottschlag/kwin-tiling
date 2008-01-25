@@ -54,6 +54,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
 {
     setHasConfigurationInterface(true);
     setContentSize(125, 125);
+    setRemainSquare(true);
 
     m_theme = new Plasma::Svg("widgets/clock", this);
     m_theme->setContentType(Plasma::Svg::SingleImage);
@@ -78,28 +79,6 @@ void Clock::connectToEngine()
     } else {
         timeEngine->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
     }
-}
-
-Qt::Orientations Clock::expandingDirections() const
-{
-    return 0;
-}
-
-QSizeF Clock::contentSizeHint() const
-{
-    QSizeF sizeHint = contentSize();
-    switch (formFactor()) {
-        case Plasma::Vertical:
-            sizeHint.setHeight(sizeHint.width());
-            break;
-        case Plasma::Horizontal:
-            sizeHint.setWidth(sizeHint.height());
-            break;
-        default:
-            break;
-    }
-
-    return sizeHint;
 }
 
 void Clock::constraintsUpdated(Plasma::Constraints constraints)
