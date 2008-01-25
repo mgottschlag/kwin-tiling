@@ -100,6 +100,17 @@ void DefaultDesktop::nextSlide(bool skipUpdates)
     }
 
     if (m_slideFiles.size() > 0) {
+        // do not change to the same background (same path)
+        if (m_wallpaperPath == m_slideFiles[m_currentSlide]) {
+            if (m_slideFiles.size() == 1) {
+                return;
+            }
+            // try next one, they can't be the same (at least the same path)
+            if (++m_currentSlide >= m_slideFiles.size()) {
+                m_currentSlide = 0;
+            }
+        }
+
         m_wallpaperPath = m_slideFiles[m_currentSlide];
         if (!skipUpdates) {
             updateBackground();
@@ -179,6 +190,7 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
 
     // If no wallpaper is set, a default will be set in updateBackground()
     // which is called as soon as constraints are updated.
+    QString oldWallpaperPath(m_wallpaperPath);
     m_wallpaperPath = cg.readEntry("wallpaper", QString());
     if (!m_wallpaperPath.isEmpty()) {
         kDebug() << "Using configured wallpaper" << m_wallpaperPath;
@@ -195,7 +207,8 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
         m_backgroundMode == BackgroundDialog::kNoBackground) {
         m_slideshowTimer.stop();
         // Only set the wallpaper if constraints have been loaded
-        if (!skipUpdates) {
+        // and background image has changed
+        if (!skipUpdates && oldWallpaperPath != m_wallpaperPath) {
             updateBackground();
         }
     } else {
