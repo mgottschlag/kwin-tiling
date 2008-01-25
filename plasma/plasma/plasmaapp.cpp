@@ -24,10 +24,17 @@
 #include "plasmaapp.h"
 
 #include <unistd.h>
-#if !defined(_SC_PHYS_PAGES) && defined(Q_OS_FREEBSD)
-// This is needed only in FreeBSD-6-STABLE, see below (grep _SC_PHYS_PAGES)
-#include <sys/types.h>
-#include <sys/sysctl.h>
+
+#ifndef _SC_PHYS_PAGES
+    #ifdef Q_OS_FREEBSD
+    #include <sys/types.h>
+    #include <sys/sysctl.h>
+    #endif
+
+    #ifdef Q_OS_NETBSD
+    #include <sys/param.h>
+    #include <sys/sysctl.h>
+    #endif
 #endif
 
 #include <QApplication>
@@ -160,12 +167,21 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     // reliable documentation on how to read the value (which may 
     // not fit in a 32 bit integer).
     if (!sysctlbyname("vm.stats.vm.v_page_size", sysctlbuf, &size, NULL, 0)) {
-	memorySize = sysctlbuf[0] / 1024;
-	size = sizeof(sysctlbuf);
+        memorySize = sysctlbuf[0] / 1024;
+        size = sizeof(sysctlbuf);
         if (!sysctlbyname("vm.stats.vm.v_page_count", sysctlbuf, &size, NULL, 0)) {
             memorySize *= sysctlbuf[0];
-	}
+        }
     }
+#endif
+#ifdef Q_OS_NETBSD
+    size_t memorySize;
+    size_t len;
+    static int mib[] = { CTL_HW, HW_PHYSMEM };
+
+    len = sizeof(memorySize);
+    sysctl(mib, 2, &memorySize, &len, NULL, 0);
+    memorySize /= 1024;
 #endif
     // If you have no suitable sysconf() interface and are not FreeBSD,
     // then you are out of luck and get a compile error.
