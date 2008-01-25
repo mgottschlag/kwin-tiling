@@ -46,7 +46,8 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_theme(0),
       m_dialog(0),
       m_isHovered(0),
-      m_numOfBattery(0)
+      m_numOfBattery(0),
+      old_battery_percent(0)
 {
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
@@ -135,6 +136,11 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
 {
     if (source.startsWith(I18N_NOOP("Battery"))) {
         int battery_percent = data[I18N_NOOP("Percent")].toInt();
+
+        if (battery_percent == old_battery_percent) {
+            return;
+        }
+
         QString battery_state = data[I18N_NOOP("State")].toString();
         m_batteries_data[source] = qMakePair(battery_percent, battery_state);
         //kDebug() << source << "state:" << battery_state << ":" 
