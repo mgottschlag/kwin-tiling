@@ -52,6 +52,7 @@
 
 #include <plasma/corona.h>
 #include <plasma/containment.h>
+#include <plasma/theme.h>
 
 #include "appadaptor.h"
 #include "rootwidget.h"
@@ -196,6 +197,12 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     kDebug() << "Setting the pixmap cache size to" << cacheSize << "kilobytes";
     QPixmapCache::setCacheLimit(cacheSize);
 
+    KConfigGroup cg(KGlobal::config(), "General");
+    Plasma::Theme::self()->setFont(cg.readEntry("desktopFont", font()));
+
+    // this line initializes the corona.
+    corona();
+
     m_root = new RootWidget();
     m_root->setAsDesktop(KCmdLineArgs::parsedArgs()->isSet("desktop"));
     m_root->show();
@@ -208,7 +215,6 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
 
 PlasmaApp::~PlasmaApp()
 {
-
 }
 
 void PlasmaApp::cleanup()

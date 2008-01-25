@@ -42,12 +42,6 @@ RootWidget::RootWidget()
 {
     setFocusPolicy(Qt::NoFocus);
 
-    // this line also initializes the corona.
-    KConfigGroup cg(KGlobal::config(), "General");
-    Plasma::Theme::self()->setFont(cg.readEntry("desktopFont", font()));
-
-    Plasma::Corona *corona = PlasmaApp::self()->corona();
-
     // create a containment for each screen
     QDesktopWidget *desktop = QApplication::desktop();
     int numScreens = desktop->numScreens();
@@ -55,6 +49,7 @@ RootWidget::RootWidget()
         createDesktopView(i);
     }
 
+    Plasma::Corona* corona = PlasmaApp::self()->corona();
     connect(corona, SIGNAL(newScreen(int)), this, SLOT(createDesktopView(int)));
 
     //TODO: Make the shortcut configurable
