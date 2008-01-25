@@ -150,7 +150,7 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
 
 void Battery::showConfigurationInterface()
 {
-     if (m_dialog == 0) {
+    if (m_dialog == 0) {
         m_dialog = new KDialog;
         m_dialog->setCaption(i18n("Configure Battery Monitor"));
 
