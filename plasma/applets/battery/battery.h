@@ -89,8 +89,7 @@ class Battery : public Plasma::Applet
         // Configuration dialog
         KDialog *m_dialog;
         Ui::batteryConfig ui;
-
-        int old_battery_percent;
+    
 
         // Internal data
         QList<QVariant> batterylist, acadapterlist;
