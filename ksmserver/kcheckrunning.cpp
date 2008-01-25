@@ -19,11 +19,15 @@
 
 #include <X11/Xlib.h>
 
+/*
+ Return 0 when KDE is running, 1 when KDE is not running but it is possible
+ to connect to X, 2 when it's not possible to connect to X.
+*/
 int main()
     {
     Display* dpy = XOpenDisplay( NULL );
     if( dpy == NULL )
-        return 1;
+        return 2;
     Atom atom = XInternAtom( dpy, "_KDE_RUNNING", False );
     return XGetSelectionOwner( dpy, atom ) != None ? 0 : 1;
     }
