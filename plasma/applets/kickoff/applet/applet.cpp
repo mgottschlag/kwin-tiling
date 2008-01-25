@@ -81,19 +81,9 @@ LauncherApplet::~LauncherApplet()
 void LauncherApplet::init()
 {
     KConfigGroup cg = config();
+    setRemainSquare(true);
     d->switchTabsOnHover = cg.readEntry("SwitchTabsOnHover",d->switchTabsOnHover);
     d->visibleItemsCount = cg.readEntry("VisibleItemsCount",d->visibleItemsCount);
-}
-
-Qt::Orientations LauncherApplet::expandingDirections() const
-{
-    return 0;
-}
-
-QSizeF LauncherApplet::sizeHint() const
-{
-    //ensure a square size in the panel
-    return QSizeF(size().height(), size().height());
 }
 
 void LauncherApplet::constraintsUpdated(Plasma::Constraints constraints)

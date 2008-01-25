@@ -164,6 +164,7 @@ MenuLauncherApplet::~MenuLauncherApplet()
 void MenuLauncherApplet::init()
 {
     KConfigGroup cg = config();
+    setRemainSquare(true);
 
     {
         QMetaEnum e = metaObject()->enumerator(metaObject()->indexOfEnumerator("ViewType"));
@@ -182,17 +183,6 @@ void MenuLauncherApplet::init()
 
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ExtensionHandler,"desktop",new Kickoff::ServiceItemHandler);
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ProtocolHandler, "leave", new Kickoff::LeaveItemHandler);
-}
-
-Qt::Orientations MenuLauncherApplet::expandingDirections() const
-{
-    return 0;
-}
-
-QSizeF MenuLauncherApplet::sizeHint() const
-{
-    //ensure a square size in the panel
-    return QSizeF(size().height(), size().height());
 }
 
 void MenuLauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
