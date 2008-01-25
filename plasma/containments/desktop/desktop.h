@@ -128,6 +128,9 @@ private:
 
     //Desktop icons
     static IconLoader *s_icons;
+
+    Plasma::Phase::AnimId m_fadeOutAnimId;
+    Plasma::Phase::AnimId m_fadeInAnimId;
 };
 
 #endif // PLASMA_PANEL_H
