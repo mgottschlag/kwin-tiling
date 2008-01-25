@@ -230,7 +230,7 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
             m_slideshowTimer.start();
         }
         m_currentSlide = -1;
-        nextSlide(true);
+        nextSlide(false);
     }
 }
 
