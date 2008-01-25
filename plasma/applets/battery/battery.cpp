@@ -84,13 +84,12 @@ void Battery::init()
     m_font = QApplication::font();
     m_font.setWeight(QFont::Bold);
 
-    m_textColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color();
-    m_boxColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).background().color();
-
     m_boxAlpha = 128;
     m_boxHoverAlpha = 192;
-    m_boxColor.setAlpha(m_boxAlpha);
-    
+
+    readColors();
+    connect(Plasma::Theme::self(), SIGNAL(changed()), SLOT(readColors()));
+
     const QStringList& battery_sources = dataEngine("powermanagement")->query(I18N_NOOP("Battery"))[I18N_NOOP("sources")].toStringList();
     m_numOfBattery = battery_sources.size();
 
@@ -219,6 +218,13 @@ void Battery::configAccepted()
     emit configNeedsSaving();
 }
 
+void Battery::readColors()
+{
+    m_textColor = Plasma::Theme::self()->textColor();
+    m_boxColor = Plasma::Theme::self()->backgroundColor();
+    m_boxColor.setAlpha(m_boxAlpha);
+}
+
 void Battery::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     m_isHovered = true;
@@ -276,6 +282,7 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
                             (int)(fm.height()*1.2));
 
     // Poor man's highlighting
+    p->setPen(m_boxColor);
     if (m_isHovered) {
         m_boxColor.setAlpha(m_boxHoverAlpha);
     }
@@ -288,7 +295,7 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
     int round_radius = 35;
     p->drawRoundRect(text_rect, (int)(round_radius/round_prop), round_radius);
 
-    p->setBrush(m_textColor);
+    p->setPen(m_textColor);
     p->drawText(text_rect, Qt::AlignCenter, labelText);
 
     // Reset font and box

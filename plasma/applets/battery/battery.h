@@ -61,6 +61,7 @@ class Battery : public Plasma::Applet
 
     //protected slots:
         void configAccepted();
+        void readColors();
     
     private:
         Q_ENUMS( m_batteryStyle )
