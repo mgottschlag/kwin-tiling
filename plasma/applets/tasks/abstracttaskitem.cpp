@@ -290,8 +290,10 @@ QSize AbstractTaskItem::layoutText(QTextLayout &layout, const QString &text,
         // Make the last line that will fit infinitely long.
         // drawTextLayout() will handle this by fading the line out
         // if it won't fit in the contraints.
-        if (height + 2 * lineSpacing > constraints.height())
-            maxWidth = INT_MAX;
+        if (height + 2 * lineSpacing > constraints.height()) {
+            line.setPosition(QPoint(0, height));
+            break;
+        }
 
         line.setLineWidth(maxWidth);
         line.setPosition(QPoint(0, height));
