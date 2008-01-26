@@ -73,7 +73,7 @@ class Battery : public Plasma::Applet
         void disconnectSources();
         int m_batteryStyle;
         /* Paint battery with proper charge level */
-        void paintBattery(QPainter *p, const QRect &contentsRect, int batteryPercent);
+        void paintBattery(QPainter *p, const QRect &contentsRect, const int batteryPercent, const bool plugState);
         /* Paint a label on top of the battery */
         void paintLabel(QPainter *p, const QRect &contentsRect, const QString& labelText);
         /* Show multiple batteries with individual icons and charge info? */
@@ -93,7 +93,7 @@ class Battery : public Plasma::Applet
 
         // Internal data
         QList<QVariant> batterylist, acadapterlist;
-        QMap<QString , QPair<int, QString> > m_batteries_data;
+        QHash<QString, QHash<QString, QVariant> > m_batteries_data;
         QFont m_font;
         bool m_isHovered;
         bool m_drawBackground;

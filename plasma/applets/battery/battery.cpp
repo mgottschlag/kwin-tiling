@@ -96,7 +96,7 @@ void Battery::init()
     //connect sources
     connectSources();
     
-    foreach(QString battery_source, battery_sources) {
+    foreach (QString battery_source, battery_sources) {
         dataUpdated(battery_source, dataEngine("powermanagement")->query(battery_source));
     }
     dataUpdated(I18N_NOOP("AC Adapter"), dataEngine("powermanagement")->query(I18N_NOOP("AC Adapter")));
@@ -126,7 +126,6 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::SizeConstraint && m_theme) {
-        kDebug() << "SizeChanged: " << contentSize();
         m_theme->resize(contentSize().toSize());
     }
 }
@@ -134,14 +133,9 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
 void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
     if (source.startsWith(I18N_NOOP("Battery"))) {
-        int battery_percent = data[I18N_NOOP("Percent")].toInt();
-        QString battery_state = data[I18N_NOOP("State")].toString();
-        m_batteries_data[source] = qMakePair(battery_percent, battery_state);
-        //kDebug() << source << "state:" << battery_state << ":" 
-        //         << battery_percent << "%";
+        m_batteries_data[source] = data;
     } else if (source == I18N_NOOP("AC Adapter")) {
         m_acadapter_plugged = data[I18N_NOOP("Plugged in")].toBool();
-        kDebug() << source << "plugged:" << m_acadapter_plugged;
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
     }
@@ -161,7 +155,6 @@ void Battery::showConfigurationInterface()
 
         connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
         connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
-
     }
 
     ui.styleGroup->setSelected(m_batteryStyle);
@@ -303,51 +296,52 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
     m_boxColor.setAlpha(m_boxAlpha);
 }
 
-void Battery::paintBattery(QPainter *p, const QRect &contentsRect, int batteryPercent)
+void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int batteryPercent, const bool plugState)
 {
-    if (m_theme->elementExists("Battery")) {
+    QString fill_element = QString();
+    if (plugState && m_theme->elementExists("Battery")) {
         m_theme->paint(p, contentsRect, "Battery");
+    
+        if (m_batteryStyle == OxygenBattery) {
+            if (batteryPercent > 95) {
+                fill_element = "Fill100";
+            } else if (batteryPercent > 80) {
+                fill_element = "Fill80";
+            } else if (batteryPercent > 50) {
+                fill_element = "Fill60";
+            } else if (batteryPercent > 20) {
+                fill_element = "Fill40";
+            } else if (batteryPercent > 10) {
+                fill_element = "Fill20";
+            } // Don't show a fillbar below 11% charged
+        } else { // OxyenStyle
+            if (batteryPercent > 95) {
+                fill_element = "Fill100";
+            } else if (batteryPercent > 90) {
+                fill_element = "Fill90";
+            } else if (batteryPercent > 80) {
+                fill_element = "Fill80";
+            } else if (batteryPercent > 70) {
+                fill_element = "Fill70";
+            } else if (batteryPercent > 55) {
+                fill_element = "Fill60";
+            } else if (batteryPercent > 40) {
+                fill_element = "Fill50";
+            } else if (batteryPercent > 30) {
+                fill_element = "Fill40";
+            } else if (batteryPercent > 20) {
+                fill_element = "Fill30";
+            } else if (batteryPercent > 10) {
+                fill_element = "Fill20";
+            } else if (batteryPercent >= 5) {
+                fill_element = "Fill10";
+            } // Lower than 5%? Show no fillbar.
+        }
     }
+    //kDebug() << "plugState:" << plugState;
 
     // Now let's find out which fillstate to show
-    QString fill_element = QString();
-
-    if (m_batteryStyle == OxygenBattery) {
-        if (batteryPercent > 95) {
-            fill_element = "Fill100";
-        } else if (batteryPercent > 80) {
-            fill_element = "Fill80";
-        } else if (batteryPercent > 50) {
-            fill_element = "Fill60";
-        } else if (batteryPercent > 20) {
-            fill_element = "Fill40";
-        } else if (batteryPercent > 10) {
-            fill_element = "Fill20";
-        } // Don't show a fillbar below 11% charged
-    } else { // OxyenStyle
-        if (batteryPercent > 95) {
-            fill_element = "Fill100";
-        } else if (batteryPercent > 90) {
-            fill_element = "Fill90";
-        } else if (batteryPercent > 80) {
-            fill_element = "Fill80";
-        } else if (batteryPercent > 70) {
-            fill_element = "Fill70";
-        } else if (batteryPercent > 55) {
-            fill_element = "Fill60";
-        } else if (batteryPercent > 40) {
-            fill_element = "Fill50";
-        } else if (batteryPercent > 30) {
-            fill_element = "Fill40";
-        } else if (batteryPercent > 20) {
-            fill_element = "Fill30";
-        } else if (batteryPercent > 10) {
-            fill_element = "Fill20";
-        } else if (batteryPercent >= 5) {
-            fill_element = "Fill10";
-        } // Lower than 5%? Show no fillbar.
-    }
-    if (!fill_element.isEmpty()) {
+    if (plugState && !fill_element.isEmpty()) {
         if (m_theme->elementExists(fill_element)) {
             m_theme->paint(p, contentsRect, fill_element);
         } else {
@@ -362,9 +356,11 @@ void Battery::paintBattery(QPainter *p, const QRect &contentsRect, int batteryPe
     // For small FormFactors, we're drawing a shadow
     if (formFactor() == Plasma::Vertical ||
         formFactor() == Plasma::Horizontal) {
-        m_theme->paint(p, contentsRect, "Shadow");
+        if (plugState) {
+            m_theme->paint(p, contentsRect, "Shadow");
+        }
     }
-    if (m_theme->elementExists("Overlay")) {
+    if (plugState && m_theme->elementExists("Overlay")) {
         m_theme->paint(p, contentsRect, "Overlay");
     }
 }
@@ -373,17 +369,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
 {
     Q_UNUSED( option );
 
-    bool showString = true;
-
-    if (formFactor() == Plasma::Vertical ||
-        formFactor() == Plasma::Horizontal) {
-        showString = false;
-    } else if (formFactor() == Plasma::Planar ||
-               formFactor() == Plasma::MediaCenter) {
-        // Only show batterystring when we're huge
-        showString = m_showBatteryString;
-    }
-
+    //bool showString = m_showBatteryString;
     p->setRenderHint(QPainter::SmoothPixmapTransform);
     p->setRenderHint(QPainter::Antialiasing);
 
@@ -401,53 +387,64 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         // paint each battery with own charge level
         int battery_num = 0;
         int width = contentsRect.width()/m_numOfBattery;
-        QMap<QString, QPair<int, QString > >::iterator it_battery_data;
-        for (it_battery_data = m_batteries_data.begin(); 
-             it_battery_data != m_batteries_data.end();
-             ++it_battery_data)
-        {
+        QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
+        while (battery_data.hasNext()) {
+            battery_data.next();
             QRect corect = QRect(contentsRect.left()+battery_num*width, 
                                  contentsRect.top(), 
                                  width, contentSize().toSize().height());
        
             // paint battery with appropriate charge level
-            paintBattery(p, corect, it_battery_data->first);
-
-            if (showString || m_isHovered) {
+            paintBattery(p, corect, battery_data.value()[I18N_NOOP("Percent")].toInt(), battery_data.value()[I18N_NOOP("Plugged in")].toBool());
+                
+            if (m_showBatteryString || m_isHovered) {
                 // Show the charge percentage with a box
                 // on top of the battery, but only for plasmoids bigger than ....
                 if (width >= 44) {
-                    QString batteryLabel = QVariant(it_battery_data->first).toString();
-                    batteryLabel.append("%");
+                    QString batteryLabel;
+                    if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
+                        batteryLabel = battery_data.value()[I18N_NOOP("Percent")].toString();
+                        batteryLabel.append("%");
+                    } else {
+                        batteryLabel = I18N_NOOP("No Battery");
+                    }
                     paintLabel(p, corect, batteryLabel);
                 }
             }
-            
-            ++battery_num;
+            if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
+                ++battery_num;
+            }
         }
     } else {
         // paint only one battery and show cumulative charge level
         int battery_num = 0;
         int battery_charge = 0;
-        QMap<QString, QPair<int, QString > >::iterator it_battery_data;
-        for (it_battery_data = m_batteries_data.begin(); 
-             it_battery_data != m_batteries_data.end();
-             ++it_battery_data)
-        {
-            battery_charge += it_battery_data->first;
+        bool has_battery = false;
+        QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
+        while (battery_data.hasNext()) {
+            battery_data.next();
+            battery_charge += battery_data.value()[I18N_NOOP("Percent")].toInt();
             ++battery_num;
+            if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
+                has_battery = true;
+            }
         }
-        battery_charge = battery_charge / battery_num;
-
+        if (battery_num > 0) {
+            battery_charge = battery_charge / battery_num;
+        }
         // paint battery with appropriate charge level
-        paintBattery(p, contentsRect, battery_charge);
-
-        if (showString || m_isHovered) {
+        paintBattery(p, contentsRect,  battery_charge, has_battery);
+        if (m_showBatteryString || m_isHovered) {
             // Show the charge percentage with a box
             // on top of the battery, but only for plasmoids bigger than ....
             if (contentsRect.width() >= 44) {
-                QString batteryLabel = QVariant(battery_charge).toString();
-                batteryLabel.append("%");
+                QString batteryLabel;
+                if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
+                    batteryLabel = battery_data.value()[I18N_NOOP("Percent")].toString();
+                    batteryLabel.append("%");
+                } else {
+                    batteryLabel = I18N_NOOP("No Battery");
+                }
                 paintLabel(p, contentsRect, batteryLabel);
             }
         }
@@ -457,9 +454,8 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
 void Battery::connectSources() {
     const QStringList& battery_sources = dataEngine("powermanagement")->query(I18N_NOOP("Battery"))[I18N_NOOP("sources")].toStringList();
     
-    foreach(QString battery_source ,battery_sources) {
+    foreach (QString battery_source, battery_sources) {
         dataEngine("powermanagement")->connectSource(battery_source, this);
-        kDebug() << "Battery Applet:: " << battery_source <<" connected";
     }
     
     dataEngine("powermanagement")->connectSource(I18N_NOOP("AC Adapter"), this);
@@ -469,9 +465,8 @@ void Battery::disconnectSources()
 {
     const QStringList& battery_sources = dataEngine("powermanagement")->query(I18N_NOOP("Battery"))[I18N_NOOP("sources")].toStringList();
     
-    foreach(QString battery_source ,battery_sources) {
+    foreach (QString battery_source ,battery_sources) {
         dataEngine("powermanagement")->disconnectSource(battery_source, this);
-        kDebug() << "Battery Applet:: " << battery_source <<" disconnected";
     }
     
     dataEngine("powermanagement")->disconnectSource(I18N_NOOP("AC Adapter"), this);
