@@ -176,10 +176,19 @@ void Pager::recalculateGeometry()
 
     const int padding = 2;
 
-    qreal itemHeight = (contentSize().height() - padding * (m_rows - 1)) / m_rows;
-    m_scaleFactor = itemHeight / QApplication::desktop()->height();
-    qreal itemWidth = QApplication::desktop()->width() * m_scaleFactor;
     int columns = m_desktopCount / m_rows + m_desktopCount % m_rows;
+    qreal itemHeight;
+    qreal itemWidth;
+
+    if (formFactor() == Plasma::Vertical) {
+        itemWidth = (contentSize().width() - padding * (columns - 1)) / columns;
+        m_scaleFactor = itemWidth / QApplication::desktop()->width();
+        itemHeight = QApplication::desktop()->height() * m_scaleFactor;
+    } else {
+        itemHeight = (contentSize().height() - padding * (m_rows - 1)) / m_rows;
+        m_scaleFactor = itemHeight / QApplication::desktop()->height();
+        itemWidth = QApplication::desktop()->width() * m_scaleFactor;
+    }
 
     m_rects.clear();
     QRectF itemRect;
