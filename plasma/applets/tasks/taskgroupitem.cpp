@@ -216,7 +216,7 @@ void TaskGroupItem::setDirection(Plasma::BoxLayout::Direction dir)
 
 Plasma::BoxLayout::Direction TaskGroupItem::direction()
 {
-    m_layout->direction();
+    return m_layout->direction();
 }
 
 void TaskGroupItem::paint(QPainter *painter,
