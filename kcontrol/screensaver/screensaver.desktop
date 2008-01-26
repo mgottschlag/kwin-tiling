@@ -1,6 +1,6 @@
 [Desktop Entry]
 Exec=kcmshell4 screensaver
-Icon=preferences-desktop-wallpaper
+Icon=preferences-desktop-screensaver
 Type=Service
 X-KDE-ServiceTypes=KCModule
 X-DocPath=kcontrol/screensaver/index.html
