@@ -50,6 +50,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kwindowsystem.h>
 #include <netwm.h>
 
+#include <stdio.h>
+#include <kxerrorhandler.h>
+
 #include <dmctl.h>
 
 #include "shutdowndlg.moc"
@@ -106,9 +109,24 @@ void KSMShutdownFeedback::slotPaintEffect()
 void KSMShutdownFeedback::start()
 {
     if( KWindowSystem::compositingActive()) {
-        // TODO there should be perhaps a more generic check
-        NETRootInfo i( QX11Info::display(), NET::SupportingWMCheck );
-        if( qstrcmp( i.wmName(), "KWin" ) == 0 )
+        // HACK do properly
+        Display* dpy = QX11Info::display();
+        char net_wm_cm_name[ 100 ];
+        sprintf( net_wm_cm_name, "_NET_WM_CM_S%d", DefaultScreen( dpy ));
+        Atom net_wm_cm = XInternAtom( dpy, net_wm_cm_name, False );
+        Window sel = XGetSelectionOwner( dpy, net_wm_cm );
+        Atom hack = XInternAtom( dpy, "_KWIN_LOGOUT_EFFECT", False );
+        bool wmsupport = false;
+        if( sel != None ) {
+            KXErrorHandler handler;
+            int cnt;
+            Atom* props = XListProperties( dpy, sel, &cnt );
+            if( !handler.error( false ) && props != NULL && qFind( props, props + cnt, hack ) != props + cnt )
+                wmsupport = true;
+            if( props != NULL )
+                XFree( props );
+        }
+        if( wmsupport )
             return;
     }
     s_pSelf = new KSMShutdownFeedback();
