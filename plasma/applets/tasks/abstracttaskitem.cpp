@@ -383,7 +383,10 @@ QTextOption AbstractTaskItem::textOption() const
 
 QRectF AbstractTaskItem::iconRect() const
 {
-    QSize iconSize = _icon.actualSize(boundingRect().size().toSize());
+    QSizeF bounds = boundingRect().size();
+    //leave enough space for the text. usefull in vertical panel   
+    bounds.setWidth(qMax(bounds.width() / 3, qMin(minimumSize().height(), bounds.width())));
+    QSize iconSize = _icon.actualSize(bounds.toSize());
 
     return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignLeft | Qt::AlignVCenter,
                                iconSize, boundingRect().toRect());
