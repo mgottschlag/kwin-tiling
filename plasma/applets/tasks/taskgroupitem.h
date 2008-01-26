@@ -23,6 +23,9 @@
 // Own
 #include "abstracttaskitem.h"
 
+// Plasma
+#include <plasma/layouts/boxlayout.h>
+
 /**
  * A graphics item which holds a group of tasks.
  * To add a task to a group, set the AbstractTaskItem's parent
@@ -99,6 +102,17 @@ public:
     QColor color() const;
 
     /**
+    * Sets the direction in which tasks are laid out.
+    * @param dir direction
+    */
+    void setDirection(Plasma::BoxLayout::Direction dir);
+
+   /**
+    * @returns direction in which tasks are laid out, default RightToLeft
+    */
+    Plasma::BoxLayout::Direction direction();
+
+    /**
      * Sets whether the task group is collapsed.
      * TODO: Document me
      */
@@ -173,6 +187,7 @@ private:
     int _caretIndex;
     bool _allowSubGroups;
     int m_geometryUpdateTimerId;
+    Plasma::BoxLayout *m_layout;
 
     static const int CaretWidth = 5;
     static const int GroupBorderWidth = 16;

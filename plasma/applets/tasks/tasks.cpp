@@ -205,6 +205,12 @@ void Tasks::removeAllWindowTasks()
 void Tasks::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::LocationConstraint) {
+        if (formFactor() == Plasma::Vertical) {
+            m_rootTaskGroup->setDirection(Plasma::BoxLayout::TopToBottom);
+        } else {
+            m_rootTaskGroup->setDirection(Plasma::BoxLayout::LeftToRight);
+        }
+
         foreach (AbstractTaskItem *taskItem, m_windowTaskItems) {
             WindowTaskItem *windowTaskItem = dynamic_cast<WindowTaskItem *>(taskItem);
             if (windowTaskItem) {
