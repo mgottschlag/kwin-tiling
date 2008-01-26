@@ -29,7 +29,7 @@
 
 /**
  * This class provides runtime information about the battery and AC status
- * for use in a simple batter monitor application.
+ * for use in a simple battery monitor Plasma applets.
  */
 class PowermanagementEngine : public Plasma::DataEngine
 {

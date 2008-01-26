@@ -112,8 +112,6 @@ bool PowermanagementEngine::sourceRequested(const QString &name)
     } else if (name == I18N_NOOP("Sleepstates")) {
         QSet<Solid::PowerManagement::SleepState> sleepstates =
                                 Solid::PowerManagement::supportedSleepStates();
-        kDebug() << sleepstates.count() << " sleepstates supported.";
-
         // We first set all possible sleepstates to false, then enable the ones that are available
         setData(I18N_NOOP("Sleepstates"), I18N_NOOP("Standby"), false);
         setData(I18N_NOOP("Sleepstates"), I18N_NOOP("Suspend"), false);
