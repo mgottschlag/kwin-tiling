@@ -46,14 +46,14 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_smallPixelSize(22),
       m_theme(0),
       m_dialog(0),
-      m_isHovered(0),
-      m_numOfBattery(0),
       m_animId(-1),
       m_alpha(1),
       m_fadeIn(true),
       m_acAnimId(-1),
       m_acAlpha(1),
-      m_acFadeIn(false)
+      m_acFadeIn(false),
+      m_isHovered(0),
+      m_numOfBattery(0)
 {
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
