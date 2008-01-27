@@ -38,6 +38,7 @@
 
 #include <plasma/svg.h>
 #include <plasma/theme.h>
+#include <plasma/phase.h>
 
 Battery::Battery(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
@@ -46,7 +47,10 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_theme(0),
       m_dialog(0),
       m_isHovered(0),
-      m_numOfBattery(0)
+      m_numOfBattery(0),
+      m_animId(-1),
+      m_alpha(1),
+      m_fadeIn(true)
 {
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
@@ -100,6 +104,7 @@ void Battery::init()
         dataUpdated(battery_source, dataEngine("powermanagement")->query(battery_source));
     }
     dataUpdated(I18N_NOOP("AC Adapter"), dataEngine("powermanagement")->query(I18N_NOOP("AC Adapter")));
+    showLabel(m_showBatteryString);
 }
 
 void Battery::constraintsUpdated(Plasma::Constraints constraints)
@@ -169,6 +174,7 @@ void Battery::configAccepted()
 {
     KConfigGroup cg = config();
     m_showBatteryString = ui.showBatteryStringCheckBox->checkState() == Qt::Checked;
+    showLabel(m_showBatteryString);
     cg.writeEntry("showBatteryString", m_showBatteryString);
 
     bool old_showMultipleBatteries = m_showMultipleBatteries;
@@ -220,20 +226,49 @@ void Battery::readColors()
 
 void Battery::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
+    showLabel(true);
     m_isHovered = true;
-    update();
     Applet::hoverEnterEvent(event);
 }
 
 void Battery::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    m_isHovered = false;
-    update();
+    if (!m_showBatteryString) {
+        showLabel(false);
+    }
     Applet::hoverLeaveEvent(event);
 }
 
 Battery::~Battery()
 {
+}
+
+void Battery::showLabel(const bool show)
+{
+    if (m_fadeIn == show) {
+        return;
+    }
+    m_fadeIn = show;
+    const int FadeInDuration = 150;
+
+    if (m_animId != -1) {
+        Plasma::Phase::self()->stopCustomAnimation(m_animId);
+    }
+
+    //m_fadeIn = false;
+    m_animId = Plasma::Phase::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
+                                                      Plasma::Phase::EaseOutCurve, this,
+                                                      "animationUpdate");
+}
+
+void Battery::animationUpdate(qreal progress)
+{
+    if (progress == 1) {
+        m_animId = -1;
+    }
+    m_alpha = m_fadeIn ? progress : 1 - progress;
+    // explicit update
+    update();
 }
 
 void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& labelText)
@@ -275,10 +310,9 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
                             (int)(fm.height()*1.2));
 
     // Poor man's highlighting
+    m_boxColor.setAlphaF(m_alpha);
     p->setPen(m_boxColor);
-    if (m_isHovered) {
-        m_boxColor.setAlpha(m_boxHoverAlpha);
-    }
+    m_boxColor.setAlphaF(m_alpha*0.5);
     p->setBrush(m_boxColor);
 
     // Find sensible proportions for the rounded corners
@@ -288,6 +322,7 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
     int round_radius = 35;
     p->drawRoundRect(text_rect, (int)(round_radius/round_prop), round_radius);
 
+    m_textColor.setAlphaF(m_alpha);
     p->setPen(m_textColor);
     p->drawText(text_rect, Qt::AlignCenter, labelText);
 

@@ -27,6 +27,7 @@
 #include <QMap>
 
 #include <plasma/applet.h>
+#include <plasma/phase.h>
 #include <plasma/dataengine.h>
 #include "ui_batteryConfig.h"
 
@@ -63,6 +64,9 @@ class Battery : public Plasma::Applet
         void configAccepted();
         void readColors();
     
+    private slots:
+        void animationUpdate(qreal progress);
+    
     private:
         Q_ENUMS( m_batteryStyle )
         enum ClockStyle {
@@ -76,6 +80,8 @@ class Battery : public Plasma::Applet
         void paintBattery(QPainter *p, const QRect &contentsRect, const int batteryPercent, const bool plugState);
         /* Paint a label on top of the battery */
         void paintLabel(QPainter *p, const QRect &contentsRect, const QString& labelText);
+        /* Fade in/out the label above the battery. */
+        void showLabel(const bool show);
         /* Show multiple batteries with individual icons and charge info? */
         bool m_showMultipleBatteries;
         /* Should the battery charge information be shown on top? */
@@ -89,8 +95,11 @@ class Battery : public Plasma::Applet
         // Configuration dialog
         KDialog *m_dialog;
         Ui::batteryConfig ui;
-    
 
+        Plasma::Phase::AnimId m_animId;
+        qreal m_alpha;
+        bool m_fadeIn;
+    
         // Internal data
         QList<QVariant> batterylist, acadapterlist;
         QHash<QString, QHash<QString, QVariant> > m_batteries_data;
