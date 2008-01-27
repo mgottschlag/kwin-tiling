@@ -266,7 +266,12 @@ void Battery::animationUpdate(qreal progress)
     if (progress == 1) {
         m_animId = -1;
     }
-    m_alpha = m_fadeIn ? progress : 1 - progress;
+    if (!m_fadeIn) {
+        qreal new_alpha = m_fadeIn ? progress : 1 - progress;
+        m_alpha = qMin(new_alpha, m_alpha);
+    } else {
+        m_alpha = m_fadeIn ? progress : 1 - progress;
+    }
     // explicit update
     update();
 }
