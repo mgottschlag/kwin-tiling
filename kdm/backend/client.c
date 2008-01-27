@@ -1406,6 +1406,7 @@ startClient( volatile int *pid )
 		reInitErrorLog();
 
 		setsid();
+		Signal( SIGINT, SIG_DFL );
 
 		sessreg( td, getpid(), curuser, curuid );
 
