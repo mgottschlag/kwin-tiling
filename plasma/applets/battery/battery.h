@@ -67,6 +67,7 @@ class Battery : public Plasma::Applet
     private slots:
         void animationUpdate(qreal progress);
         void acAnimationUpdate(qreal progress);
+        void batteryAnimationUpdate(qreal progress);
     
     private:
         Q_ENUMS( m_batteryStyle )
@@ -83,8 +84,12 @@ class Battery : public Plasma::Applet
         void paintLabel(QPainter *p, const QRect &contentsRect, const QString& labelText);
         /* Fade in/out the label above the battery. */
         void showLabel(const bool show);
+        /* Scale in/out Battery. */
+        void showBattery(const bool show);
         /* Scale in/out Ac Adapter. */
         void showAcAdapter(const bool show);
+        /* Scale in a QRectF */
+        QRectF scaleRectF(qreal progress, QRectF rect);
         /* Show multiple batteries with individual icons and charge info? */
         bool m_showMultipleBatteries;
         /* Should the battery charge information be shown on top? */
@@ -106,6 +111,10 @@ class Battery : public Plasma::Applet
         Plasma::Phase::AnimId m_acAnimId;
         qreal m_acAlpha;
         bool m_acFadeIn;
+    
+        Plasma::Phase::AnimId m_batteryAnimId;
+        qreal m_batteryAlpha;
+        bool m_batteryFadeIn;
     
         // Internal data
         QList<QVariant> batterylist, acadapterlist;

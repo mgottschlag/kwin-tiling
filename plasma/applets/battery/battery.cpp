@@ -52,6 +52,9 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_acAnimId(-1),
       m_acAlpha(1),
       m_acFadeIn(false),
+      m_batteryAnimId(-1),
+      m_batteryAlpha(1),
+      m_batteryFadeIn(true),
       m_isHovered(0),
       m_numOfBattery(0)
 {
@@ -200,12 +203,16 @@ void Battery::configAccepted()
         } else {
             svgFile = "widgets/battery";
         }
+        showAcAdapter(false);
+        showBattery(false);
         m_batteryStyle = ui.styleGroup->selected();
         delete m_theme;
         m_theme = new Plasma::Svg(svgFile, this);
         kDebug() << "Changing theme to " << svgFile;
         cg.writeEntry("style", m_batteryStyle);
         m_theme->resize(contentSize());
+        showAcAdapter(true);
+        showBattery(true);
     }
 
     if (m_numOfBattery > 1 && old_showMultipleBatteries != m_showMultipleBatteries) {
@@ -232,6 +239,7 @@ void Battery::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     showLabel(true);
     //showAcAdapter(false); // to test the animation without constant plugging
+    //showBattery(false); // to test the animation without constant plugging
     m_isHovered = true;
     Applet::hoverEnterEvent(event);
 }
@@ -242,6 +250,7 @@ void Battery::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
         showLabel(false);
     }
     //showAcAdapter(true); // to test the animation without constant plugging
+    //showBattery(true); // to test the animation without constant plugging
     Applet::hoverLeaveEvent(event);
 }
 
@@ -265,6 +274,24 @@ void Battery::showLabel(const bool show)
                                                       "animationUpdate");
 }
 
+QRectF Battery::scaleRectF(const qreal progress, QRectF rect) {
+    if (progress == 1) {
+        return rect;
+    }
+    // Scale
+    qreal w = rect.width()*progress;
+    qreal h = rect.width()*progress;
+    
+    // Position centered
+    rect.setX((rect.width() - w)/2);
+    rect.setY((rect.height() - h)/2);
+
+    rect.setWidth(w);
+    rect.setHeight(h);
+    
+    return rect;
+}
+
 void Battery::showAcAdapter(const bool show)
 {
     if (m_acFadeIn == show) {
@@ -278,9 +305,27 @@ void Battery::showAcAdapter(const bool show)
     }
 
     //m_fadeIn = false;
-    m_animId = Plasma::Phase::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
+    m_acAnimId = Plasma::Phase::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
                                                       Plasma::Phase::EaseOutCurve, this,
                                                       "acAnimationUpdate");
+}
+
+void Battery::showBattery(const bool show)
+{
+    if (m_batteryFadeIn == show) {
+        return;
+    }
+    m_batteryFadeIn = show;
+    const int FadeInDuration = 300;
+
+    if (m_batteryAnimId != -1) {
+        Plasma::Phase::self()->stopCustomAnimation(m_batteryAnimId);
+    }
+
+    //m_fadeIn = false;
+    m_batteryAnimId = Plasma::Phase::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
+                                                      Plasma::Phase::EaseOutCurve, this,
+                                                      "batteryAnimationUpdate");
 }
 
 void Battery::animationUpdate(qreal progress)
@@ -304,6 +349,16 @@ void Battery::acAnimationUpdate(qreal progress)
         m_acAnimId = -1;
     }
     m_acAlpha = m_acFadeIn ? progress : 1 - progress;
+    // explicit update
+    update();
+}
+
+void Battery::batteryAnimationUpdate(qreal progress)
+{
+    if (progress == 1) {
+        m_batteryAnimId = -1;
+    }
+    m_batteryAlpha = m_batteryFadeIn ? progress : 1 - progress;
     // explicit update
     update();
 }
@@ -372,7 +427,7 @@ void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int bat
 {
     QString fill_element = QString();
     if (plugState && m_theme->elementExists("Battery")) {
-        m_theme->paint(p, contentsRect, "Battery");
+        m_theme->paint(p, scaleRectF(m_batteryAlpha, contentsRect), "Battery");
     
         if (m_batteryStyle == OxygenBattery) {
             if (batteryPercent > 95) {
@@ -415,15 +470,15 @@ void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int bat
     // Now let's find out which fillstate to show
     if (plugState && !fill_element.isEmpty()) {
         if (m_theme->elementExists(fill_element)) {
-            m_theme->paint(p, contentsRect, fill_element);
+            m_theme->paint(p, scaleRectF(m_batteryAlpha, contentsRect), fill_element);
         } else {
             kDebug() << fill_element << " does not exist in svg";
         }
     }
 
     if (m_acadapter_plugged) {
-        QRectF ac_rect = QRectF(contentsRect.topLeft(), QSizeF(contentsRect.width()*m_acAlpha, contentsRect.height()*m_acAlpha));
-        m_theme->paint(p, ac_rect, "AcAdapter");
+        //QRectF ac_rect = QRectF(contentsRect.topLeft(), QSizeF(contentsRect.width()*m_acAlpha, contentsRect.height()*m_acAlpha));
+        m_theme->paint(p, scaleRectF(m_acAlpha, contentsRect), "AcAdapter");
     }
 
     // For small FormFactors, we're drawing a shadow
@@ -434,7 +489,7 @@ void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int bat
         }
     }
     if (plugState && m_theme->elementExists("Overlay")) {
-        m_theme->paint(p, contentsRect, "Overlay");
+        m_theme->paint(p, scaleRectF(m_batteryAlpha, contentsRect), "Overlay");
     }
 }
 
