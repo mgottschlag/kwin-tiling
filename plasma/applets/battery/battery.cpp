@@ -50,7 +50,10 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_numOfBattery(0),
       m_animId(-1),
       m_alpha(1),
-      m_fadeIn(true)
+      m_fadeIn(true),
+      m_acAnimId(-1),
+      m_acAlpha(1),
+      m_acFadeIn(false)
 {
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
@@ -104,7 +107,6 @@ void Battery::init()
         dataUpdated(battery_source, dataEngine("powermanagement")->query(battery_source));
     }
     dataUpdated(I18N_NOOP("AC Adapter"), dataEngine("powermanagement")->query(I18N_NOOP("AC Adapter")));
-    showLabel(m_showBatteryString);
 }
 
 void Battery::constraintsUpdated(Plasma::Constraints constraints)
@@ -137,10 +139,12 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
 
 void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
+    kDebug() << source;
     if (source.startsWith(I18N_NOOP("Battery"))) {
         m_batteries_data[source] = data;
     } else if (source == I18N_NOOP("AC Adapter")) {
         m_acadapter_plugged = data[I18N_NOOP("Plugged in")].toBool();
+        showAcAdapter(m_acadapter_plugged);
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
     }
@@ -227,6 +231,7 @@ void Battery::readColors()
 void Battery::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     showLabel(true);
+    //showAcAdapter(false); // to test the animation without constant plugging
     m_isHovered = true;
     Applet::hoverEnterEvent(event);
 }
@@ -236,6 +241,7 @@ void Battery::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     if (!m_showBatteryString) {
         showLabel(false);
     }
+    //showAcAdapter(true); // to test the animation without constant plugging
     Applet::hoverLeaveEvent(event);
 }
 
@@ -254,11 +260,27 @@ void Battery::showLabel(const bool show)
     if (m_animId != -1) {
         Plasma::Phase::self()->stopCustomAnimation(m_animId);
     }
+    m_animId = Plasma::Phase::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
+                                                      Plasma::Phase::EaseOutCurve, this,
+                                                      "animationUpdate");
+}
+
+void Battery::showAcAdapter(const bool show)
+{
+    if (m_acFadeIn == show) {
+        return;
+    }
+    m_acFadeIn = show;
+    const int FadeInDuration = 300;
+
+    if (m_acAnimId != -1) {
+        Plasma::Phase::self()->stopCustomAnimation(m_acAnimId);
+    }
 
     //m_fadeIn = false;
     m_animId = Plasma::Phase::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
                                                       Plasma::Phase::EaseOutCurve, this,
-                                                      "animationUpdate");
+                                                      "acAnimationUpdate");
 }
 
 void Battery::animationUpdate(qreal progress)
@@ -272,6 +294,16 @@ void Battery::animationUpdate(qreal progress)
     } else {
         m_alpha = m_fadeIn ? progress : 1 - progress;
     }
+    // explicit update
+    update();
+}
+
+void Battery::acAnimationUpdate(qreal progress)
+{
+    if (progress == 1) {
+        m_acAnimId = -1;
+    }
+    m_acAlpha = m_acFadeIn ? progress : 1 - progress;
     // explicit update
     update();
 }
@@ -390,7 +422,8 @@ void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int bat
     }
 
     if (m_acadapter_plugged) {
-        m_theme->paint(p, contentsRect, "AcAdapter");
+        QRectF ac_rect = QRectF(contentsRect.topLeft(), QSizeF(contentsRect.width()*m_acAlpha, contentsRect.height()*m_acAlpha));
+        m_theme->paint(p, ac_rect, "AcAdapter");
     }
 
     // For small FormFactors, we're drawing a shadow
@@ -409,12 +442,12 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
 {
     Q_UNUSED( option );
 
-    //bool showString = m_showBatteryString;
     p->setRenderHint(QPainter::SmoothPixmapTransform);
     p->setRenderHint(QPainter::Antialiasing);
 
     if (m_numOfBattery == 0) {
-        m_theme->paint(p, contentsRect, "AcAdapter");
+        QRectF ac_contentsRect(contentsRect.topLeft(), QSizeF(contentsRect.width() * m_acAlpha, contentsRect.height() * m_acAlpha));
+        m_theme->paint(p, ac_contentsRect, "AcAdapter");
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
             // Show that there's no battery
