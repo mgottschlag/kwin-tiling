@@ -593,7 +593,8 @@ void BackgroundDialog::setPreview(const QString& img, Background::ResizeMethod m
 
 void BackgroundDialog::slotAddDir()
 {
-    KDirSelectDialog dialog(KUrl(), true, this);
+    KUrl empty;
+    KDirSelectDialog dialog(empty, true, this);
     if (dialog.exec()) {
         m_dirlist->addItem(dialog.url().path());
         updateSlideshow();
