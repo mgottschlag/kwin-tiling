@@ -83,11 +83,11 @@ class Battery : public Plasma::Applet
         /* Paint a label on top of the battery */
         void paintLabel(QPainter *p, const QRect &contentsRect, const QString& labelText);
         /* Fade in/out the label above the battery. */
-        void showLabel(const bool show);
+        void showLabel(bool show);
         /* Scale in/out Battery. */
-        void showBattery(const bool show);
+        void showBattery(bool show);
         /* Scale in/out Ac Adapter. */
-        void showAcAdapter(const bool show);
+        void showAcAdapter(bool show);
         /* Scale in a QRectF */
         QRectF scaleRectF(qreal progress, QRectF rect);
         /* Show multiple batteries with individual icons and charge info? */

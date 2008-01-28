@@ -251,6 +251,7 @@ void Battery::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     }
     //showAcAdapter(true); // to test the animation without constant plugging
     //showBattery(true); // to test the animation without constant plugging
+    m_isHovered = false;
     Applet::hoverLeaveEvent(event);
 }
 
@@ -258,7 +259,7 @@ Battery::~Battery()
 {
 }
 
-void Battery::showLabel(const bool show)
+void Battery::showLabel(bool show)
 {
     if (m_fadeIn == show) {
         return;
@@ -292,7 +293,7 @@ QRectF Battery::scaleRectF(const qreal progress, QRectF rect) {
     return rect;
 }
 
-void Battery::showAcAdapter(const bool show)
+void Battery::showAcAdapter(bool show)
 {
     if (m_acFadeIn == show) {
         return;
@@ -310,7 +311,7 @@ void Battery::showAcAdapter(const bool show)
                                                       "acAnimationUpdate");
 }
 
-void Battery::showBattery(const bool show)
+void Battery::showBattery(bool show)
 {
     if (m_batteryFadeIn == show) {
         return;
@@ -534,14 +535,12 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                         batteryLabel = battery_data.value()[I18N_NOOP("Percent")].toString();
                         batteryLabel.append("%");
                     } else {
-                        batteryLabel = I18N_NOOP("No Battery");
+                        batteryLabel = I18N_NOOP("n/a");
                     }
                     paintLabel(p, corect, batteryLabel);
                 }
             }
-            if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
-                ++battery_num;
-            }
+            ++battery_num;
         }
     } else {
         // paint only one battery and show cumulative charge level
@@ -552,9 +551,9 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         while (battery_data.hasNext()) {
             battery_data.next();
             battery_charge += battery_data.value()[I18N_NOOP("Percent")].toInt();
-            ++battery_num;
             if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
                 has_battery = true;
+                ++battery_num;
             }
         }
         if (battery_num > 0) {
@@ -571,7 +570,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                     batteryLabel = battery_data.value()[I18N_NOOP("Percent")].toString();
                     batteryLabel.append("%");
                 } else {
-                    batteryLabel = I18N_NOOP("No Battery");
+                    batteryLabel = I18N_NOOP("n/a");
                 }
                 paintLabel(p, contentsRect, batteryLabel);
             }
