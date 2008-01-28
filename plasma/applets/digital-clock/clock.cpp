@@ -134,6 +134,8 @@ void Clock::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void Clock::showCalendar(QGraphicsSceneMouseEvent *event)
 {
+    Q_UNUSED(event);
+
     if (m_calendar == 0) {
         m_calendar = new Plasma::Dialog();
         //m_calendar->setStyleSheet("{ border : 0px }"); // FIXME: crashes
