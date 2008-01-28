@@ -541,7 +541,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
             // Show that there's no battery
-            paintLabel(p, contentsRect, I18N_NOOP("0"));
+            paintLabel(p, contentsRect, I18N_NOOP("n/a"));
         }
         return;
     }
