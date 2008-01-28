@@ -285,7 +285,7 @@ void Battery::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     }
     //showAcAdapter(true); // to test the animation without constant plugging
     //showBattery(true); // to test the animation without constant plugging
-    m_isHovered = false;
+    //m_isHovered = false;
     Applet::hoverLeaveEvent(event);
 }
 
