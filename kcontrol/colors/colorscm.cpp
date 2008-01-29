@@ -286,15 +286,18 @@ void KColorCm::on_schemeImportButton_clicked()
     // get the path to the scheme to import
     KUrl url = KFileDialog::getOpenUrl(KUrl(), QString(), this, i18n("Import Color Scheme"));
 
-    // TODO: possibly untar or uncompress it
-    // open it
+    if(url.isValid())
+    {
+        // TODO: possibly untar or uncompress it
+        // open it
 
-    // load the scheme
-    KSharedConfigPtr config = KSharedConfig::openConfig(url.path());
-    loadScheme(config);
+        // load the scheme
+        KSharedConfigPtr config = KSharedConfig::openConfig(url.path());
+        loadScheme(config);
 
-    // save it
-    saveScheme(url.fileName());
+        // save it
+        saveScheme(url.fileName());
+    }
 }
 
 void KColorCm::on_schemeSaveButton_clicked()
