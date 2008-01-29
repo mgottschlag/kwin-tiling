@@ -138,7 +138,7 @@ void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
             m_icon->setDrawBackground(true);
         } else {
             m_icon->setText(QString());
-            setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Panel)));
+            setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
             Plasma::ToolTipData data;
             data.mainText = m_text;
             data.subText = m_genericName;
