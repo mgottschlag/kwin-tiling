@@ -40,12 +40,11 @@
 
 using namespace Kickoff;
 
-static const KUrl homeUrl(getenv("HOME"));
-static const KUrl remoteUrl("remote:/");
-
 namespace Kickoff
 {
 
+Q_GLOBAL_STATIC_WITH_ARGS(KUrl, homeUrl, (getenv("HOME")))
+Q_GLOBAL_STATIC_WITH_ARGS(KUrl, remoteUrl, ("remote:/"))
 K_GLOBAL_STATIC(StandardItemFactoryData, factoryData)
 
 StandardItemFactoryData* deviceFactoryData()
@@ -116,10 +115,10 @@ QStandardItem *StandardItemFactory::createItemForUrl(const QString& urlString)
 void StandardItemFactory::setSpecialUrlProperties(const KUrl& url,QStandardItem *item)
 {
     // specially handled URLs
-    if (url == homeUrl) {
+    if (homeUrl() && url == *homeUrl()) {
         item->setText(i18n("Home Folder"));
         item->setIcon(KIcon("user-home"));
-    } else if (url == remoteUrl) {
+    } else if (remoteUrl() && url == *remoteUrl()) {
         item->setText(i18n("Network Folders"));
     }
 }
