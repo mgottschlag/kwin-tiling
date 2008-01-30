@@ -85,6 +85,7 @@ void GlobalShortcutsModule::load()
         }
         QDBusReply<QList<int> > shortcut = iface->call("shortcut", qVariantFromValue(actionid.value()));
         KAction *action = new KAction(actionlist.at(1), this);
+        action->setProperty("isConfigurationAction", QVariant(true));
         KActionCollection* col = actionCollections[actionlist.first()];
         QString actionname = QString("%1_%2").arg(actionlist.first()).arg(col->count());
         shortcuts[actionname] = shortcut.value().first();
