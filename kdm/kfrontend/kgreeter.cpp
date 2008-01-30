@@ -1031,7 +1031,7 @@ void
 KThemedGreeter::keyPressEvent( QKeyEvent *e )
 {
 	inherited::keyPressEvent( e );
-	if (!(e->modifiers() & Qt::KeyboardModifierMask) &&
+	if (!(e->modifiers() & ~Qt::KeypadModifier) &&
 	    (e->key() == Qt::Key_Return || e->key() == Qt::Key_Enter))
 		accept();
 }
