@@ -64,9 +64,7 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
       m_logoutAction(0),
       m_configDialog(0),
       m_wallpaperPath(0),
-      m_renderer(resolution(), 1.0),
-      m_fadeOutAnimId(0),
-      m_fadeInAnimId(0)
+      m_renderer(resolution(), 1.0)
 {
     qRegisterMetaType<QImage>("QImage");
     qRegisterMetaType<QPersistentModelIndex>("QPersistentModelIndex");
@@ -276,19 +274,7 @@ void DefaultDesktop::updateBackground()
 void DefaultDesktop::updateBackground(int token, const QImage &img)
 {
     if (m_current_renderer_token == token) {
-        QPixmap oldBitmapBackground;
-        if (!m_bitmapBackground.isNull()) {
-            oldBitmapBackground = m_bitmapBackground;
-        }
         m_bitmapBackground = QPixmap::fromImage(img);
-
-        if (!oldBitmapBackground.isNull()) {
-            m_fadeOutAnimId = Plasma::Phase::self()->animateElement(this, Plasma::Phase::ElementDisappear);
-            Plasma::Phase::self()->setAnimationPixmap(m_fadeOutAnimId, oldBitmapBackground);
-            m_fadeInAnimId = Plasma::Phase::self()->animateElement(this, Plasma::Phase::ElementAppear);
-            Plasma::Phase::self()->setAnimationPixmap(m_fadeInAnimId, m_bitmapBackground);
-        }
-
         update();
     }
 }
@@ -432,22 +418,13 @@ void DefaultDesktop::paintInterface(QPainter *painter,
         painter->resetTransform();
     }
 
-    if (m_fadeOutAnimId || m_fadeInAnimId) {
-        if (m_fadeOutAnimId) {
-            painter->drawPixmap(option->exposedRect, Plasma::Phase::self()->animationResult(m_fadeOutAnimId), option->exposedRect);
-        }
-        if (m_fadeInAnimId) {
-            painter->drawPixmap(option->exposedRect, Plasma::Phase::self()->animationResult(m_fadeInAnimId), option->exposedRect);
-        }
-    } else if (!m_bitmapBackground.isNull()) {
-        // blit the background (saves all the per-pixel-products that blending does)
-        painter->setCompositionMode(QPainter::CompositionMode_Source);
+    // blit the background (saves all the per-pixel-products that blending does)
+    painter->setCompositionMode(QPainter::CompositionMode_Source);
 
-        // for pixmaps we draw only the exposed part (untransformed since the
-        // bitmapBackground already has the size of the viewport)
-        painter->drawPixmap(option->exposedRect, m_bitmapBackground, option->exposedRect);
-        //kDebug() << "draw pixmap of background to" << option->exposedRect;
-    }
+    // for pixmaps we draw only the exposed part (untransformed since the
+    // bitmapBackground already has the size of the viewport)
+    painter->drawPixmap(option->exposedRect, m_bitmapBackground, option->exposedRect);
+    //kDebug() << "draw pixmap of background to" << option->exposedRect;
 
     // restore transformation and composition mode
     painter->restore();
