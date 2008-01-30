@@ -156,7 +156,7 @@ void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
 void IconApplet::showConfigurationInterface()
 {
     if (m_dialog == 0) {
-        m_dialog = new KPropertiesDialog(m_url);
+        m_dialog = new KPropertiesDialog(m_url, 0 /*no parent widget*/);
         connect(m_dialog, SIGNAL(applied()), this, SLOT(acceptedPropertiesDialog()));
         connect(m_dialog, SIGNAL(propertiesClosed()), this, SLOT(propertiesDialogClosed()));
     }

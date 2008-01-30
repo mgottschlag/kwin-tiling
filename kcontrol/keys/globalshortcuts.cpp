@@ -38,22 +38,22 @@ K_PLUGIN_FACTORY(GlobalShortcutsModuleFactory, registerPlugin<GlobalShortcutsMod
 K_EXPORT_PLUGIN(GlobalShortcutsModuleFactory("kcmkeys"))
 
 Q_DECLARE_METATYPE( QList<int> )
-        
+
 GlobalShortcutsModule::GlobalShortcutsModule( QWidget * parent, const QVariantList & args )
-    : KCModule(GlobalShortcutsModuleFactory::componentData(), parent, args), ui(0), 
+    : KCModule(GlobalShortcutsModuleFactory::componentData(), parent, args), ui(0),
       editor(0), saved(false)
 {
     ui = new Ui::GlobalShortcuts();
     ui->setupUi(this);
     layout()->setMargin(0);
-    
+
     KCModule::setButtons( KCModule::Buttons(KCModule::Default) );
-    
+
     editor = new KShortcutsEditor(this, KShortcutsEditor::GlobalAction);
     layout()->addWidget(editor);
-    
+
     connect(editor, SIGNAL(keyChange()), this, SLOT(changed()));
-    connect(ui->components, SIGNAL(activated(const QString&)), 
+    connect(ui->components, SIGNAL(activated(const QString&)),
             this, SLOT(componentChanged(const QString&)));
     load();
 }
@@ -72,36 +72,39 @@ void GlobalShortcutsModule::load()
     qDBusRegisterMetaType<QList<int> >();
     QDBusConnection bus = QDBusConnection::sessionBus();
     QDBusInterface* iface = new QDBusInterface( "org.kde.kded", "/KdedGlobalAccel", "org.kde.KdedGlobalAccel", bus, this );
-    
-    QDBusReply<QList<int> > l = iface->call("allKeys");
-    QHash<QString,int> shortcuts;
-    foreach( int i, l.value() )
-    {
-        QDBusReply<QStringList> actionid = iface->call("action", qVariantFromValue(i));
-        QStringList actionlist = actionid.value();
-        if( !actionCollections.contains( actionlist.first() ) ) 
-        {
-            actionCollections[actionlist.first()] = new KActionCollection(this);
-        }
-        QDBusReply<QList<int> > shortcut = iface->call("shortcut", qVariantFromValue(actionid.value()));
-        KAction *action = new KAction(actionlist.at(1), this);
-        action->setProperty("isConfigurationAction", QVariant(true));
-        KActionCollection* col = actionCollections[actionlist.first()];
-        QString actionname = QString("%1_%2").arg(actionlist.first()).arg(col->count());
-        shortcuts[actionname] = shortcut.value().first();
-        col->addAction(actionname, action);
-    }
+
+    QDBusReply<QStringList> components = iface->call("allComponents");
     KComponentData curcomp = KGlobal::mainComponent();
-    foreach(QString title, actionCollections.keys())
+    foreach(const QString &component, components.value() )
     {
-        KGlobalAccel::self()->overrideMainComponentData(KComponentData(title.toAscii()));
-        KActionCollection* ac = actionCollections[title];
-        foreach( QString s, shortcuts.keys() )
+        kDebug() << "component:" << component;
+        KGlobalAccel::self()->overrideMainComponentData(KComponentData(component.toAscii()));
+        KActionCollection* col = new KActionCollection(this);
+        actionCollections[component] = col;
+
+        QDBusReply<QStringList> actions = iface->call("allActionsForComponent", qVariantFromValue(component) );
+        foreach(const QString &actionText, actions.value() )
         {
-            if( s.startsWith(title) )
+            kDebug() << "- action:" << actionText;
+            QString actionName = QString("%1_%2").arg(component).arg(col->count());
+            KAction *action = col->addAction(actionName);
+            action->setProperty("isConfigurationAction", QVariant(true));
+            action->setText(actionText);
+            QStringList actionId;
+            actionId << component << actionText;
+            QDBusReply<QList<int> > defaultShortcut = iface->call("defaultShortcut", qVariantFromValue(actionId));
+            QDBusReply<QList<int> > shortcut = iface->call("shortcut", qVariantFromValue(actionId));
+            if (!defaultShortcut.value().empty())
             {
-                qobject_cast<KAction*>(ac->action(s))->setGlobalShortcut(KShortcut(shortcuts[s]));
-                qobject_cast<KAction*>(ac->action(s))->setGlobalShortcutAllowed(true,KAction::NoAutoloading);
+                int key = defaultShortcut.value().first();
+                kDebug() << "-- defaultShortcut" << KShortcut(key).toString();
+                action->setGlobalShortcut(KShortcut(key), KAction::DefaultShortcut, KAction::NoAutoloading);
+            }
+            if (!shortcut.value().empty())
+            {
+                int key = shortcut.value().first();
+                kDebug() << "-- shortcut" << KShortcut(key).toString();
+                action->setGlobalShortcut(KShortcut(key), KAction::ActiveShortcut, KAction::NoAutoloading);
             }
         }
     }
