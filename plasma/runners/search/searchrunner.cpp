@@ -84,7 +84,7 @@ void SearchRunner::match(Plasma::SearchContext *search)
 void SearchRunner::exec(Plasma::SearchMatch *action)
 {
     QString file = action->data().toString();
-    qDebug() << "openFile " << file;
+    kDebug() << "openFile " << file;
     if (file.isEmpty()) {
         KRun::runCommand("strigiclient", 0);
     } else {
