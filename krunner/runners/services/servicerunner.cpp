@@ -26,7 +26,6 @@
 #include <KActionCollection>
 #include <KService>
 #include <KServiceType>
-#include <KServiceTypeTrader>
 
 QString formattedName( KService::Ptr service )
 {
@@ -66,7 +65,7 @@ void ServiceRunner::match(Plasma::SearchContext *search)
     }
 
     QString query = QString("exist Exec and ('%1' ~in Keywords or '%2' ~~ GenericName or '%3' ~~ Name) and Name != '%4'").arg(term, term, term, term);
-    const KService::List services = KServiceTypeTrader::self()->query("Application", query);
+    const KService::List services = serviceQuery("Application", query);
 
     //kDebug() << "got " << services.count() << " services from " << query;
 
