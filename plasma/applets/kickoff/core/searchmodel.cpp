@@ -22,9 +22,9 @@
 
 #include "config-kickoff-applets.h" 
 // Qt
-#include <QtDebug>
 
 // KDE
+#include <KDebug>
 #include <KMimeType>
 #include <KServiceTypeTrader>
 #ifdef HAVE_STRIGIDBUS
@@ -87,7 +87,7 @@ void SearchModel::resultsAvailable(const QStringList& results)
     Q_ASSERT(iface);
 
     foreach(const QString& result,results) {
-        //qDebug() << "Search hit from" << iface->name() << result;
+        //kDebug() << "Search hit from" << iface->name() << result;
         QStandardItem *resultItem = StandardItemFactory::createItemForUrl(result);
         d->addItemForIface(iface,resultItem);
     }
@@ -185,7 +185,7 @@ QString ApplicationSearch::mimeNameForQuery(const QString& query) const
 {
     KMimeType::Ptr type = KMimeType::findByPath('.'+query,0,true);
     if (type) {
-        qDebug() << "Mime type name" << type->name();
+        kDebug() << "Mime type name" << type->name();
         return type->name();
     }
     return QString();

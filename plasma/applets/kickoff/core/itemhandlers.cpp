@@ -22,10 +22,10 @@
 
 // Qt
 #include <QUrl>
-#include <QtDebug>
 #include <QTimer>
 
 // KDE
+#include <KDebug>
 #include <KService>
 #include <KToolInvocation>
 #include <solid/powermanagement.h>
@@ -96,9 +96,9 @@ void LeaveItemHandler::logout()
     if (m_logoutAction == "logout") {
         type = KWorkSpace::ShutdownTypeNone;
     } else if (m_logoutAction == "lock") {
-        qDebug() << "Locking screen"; 
+        kDebug() << "Locking screen"; 
     } else if (m_logoutAction == "switch") {
-        qDebug() << "Switching user";
+        kDebug() << "Switching user";
     } else if (m_logoutAction == "restart") {
         type = KWorkSpace::ShutdownTypeReboot;
     } else if (m_logoutAction == "shutdown") {

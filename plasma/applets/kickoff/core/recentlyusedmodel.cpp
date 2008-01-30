@@ -53,7 +53,7 @@ public:
         }
 
         QStandardItem *existingItem = itemsByPath[path];
-        //qDebug() << "Removing existing item" << existingItem;
+        //kDebug() << "Removing existing item" << existingItem;
         Q_ASSERT(existingItem->parent());
         existingItem->parent()->removeRow(existingItem->row());
         itemsByPath.remove(path);
@@ -83,7 +83,7 @@ public:
         QStandardItem *documentItem = StandardItemFactory::createItemForUrl(desktopPath);   
         itemsByPath.insert(desktopPath,documentItem);
     
-        //qDebug() << "Document item" << documentItem << "text" << documentItem->text() << "url" << documentUrl.url();    
+        //kDebug() << "Document item" << documentItem << "text" << documentItem->text() << "url" << documentUrl.url();    
         if (append) {
             recentDocumentItem->appendRow(documentItem);
         } else {
@@ -144,12 +144,12 @@ RecentlyUsedModel::~RecentlyUsedModel()
 }
 void RecentlyUsedModel::recentDocumentAdded(const QString& path)
 {
-    qDebug() << "Recent document added" << path;
+    kDebug() << "Recent document added" << path;
     d->addRecentDocument(path,false);
 }
 void RecentlyUsedModel::recentDocumentRemoved(const QString& path)
 {
-    qDebug() << "Recent document removed" << path;
+    kDebug() << "Recent document removed" << path;
     d->removeExistingItem(path);
 }
 

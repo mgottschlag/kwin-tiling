@@ -26,7 +26,6 @@
 #include <QScrollBar>
 #include <QStack>
 #include <QTimeLine>
-#include <QtDebug>
 
 // KDE
 #include <KDebug>
@@ -349,7 +348,7 @@ QRegion FlipScrollView::visualRegionForSelection(const QItemSelection& selection
 QModelIndex FlipScrollView::moveCursor(CursorAction cursorAction,Qt::KeyboardModifiers)
 {
     QModelIndex index = currentIndex();
-   // qDebug() << "Moving cursor with current index" << index.data(Qt::DisplayRole);
+   // kDebug() << "Moving cursor with current index" << index.data(Qt::DisplayRole);
     switch (cursorAction) {
         case MoveUp:
                 if (currentIndex().row() > 0) {
@@ -387,7 +386,7 @@ QModelIndex FlipScrollView::moveCursor(CursorAction cursorAction,Qt::KeyboardMod
     update(d->hoveredIndex);
     d->hoveredIndex = index;
 
-     //qDebug() << "New index after move" << index.data(Qt::DisplayRole);
+     //kDebug() << "New index after move" << index.data(Qt::DisplayRole);
 
     return index;
 }

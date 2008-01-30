@@ -26,9 +26,9 @@
 #include <QHash>
 #include <QModelIndex>
 #include <QUrl>
-#include <QtDebug>
 
 // KDE
+#include <KDebug>
 #include <KRun>
 #include <Solid/Device>
 #include <Solid/StorageAccess>
@@ -65,7 +65,7 @@ public:
 
     static bool openUrl(const QString &urlString)
     {
-        qDebug() << "Opening item with URL" << urlString;
+        kDebug() << "Opening item with URL" << urlString;
 
         QUrl url(urlString);
         HandlerInfo protocolHandler = globalHandlers[url.scheme()];
@@ -114,7 +114,7 @@ bool UrlItemLauncher::openItem(const QModelIndex& index)
             }
         }
 
-        qDebug() << "Item" << index.data(Qt::DisplayRole) << "has no URL to open.";
+        kDebug() << "Item" << index.data(Qt::DisplayRole) << "has no URL to open.";
         return false;
     }
 

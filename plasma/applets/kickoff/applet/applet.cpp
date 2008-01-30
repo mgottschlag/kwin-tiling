@@ -27,10 +27,10 @@
 #include <QCheckBox>
 #include <QVBoxLayout>
 #include <QLabel>
-#include <QtDebug>
 
 // KDE
 #include <KIcon>
+#include <KDebug>
 #include <KDialog>
 #include <KNumInput>
 
@@ -155,7 +155,7 @@ void LauncherApplet::toggleMenu(bool pressed)
         return;
     }
 
-    //qDebug() << "Launcher button clicked";
+    //kDebug() << "Launcher button clicked";
     if (!d->launcher) {
         d->launcher = new Kickoff::Launcher(0);
         d->launcher->setWindowFlags(d->launcher->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);

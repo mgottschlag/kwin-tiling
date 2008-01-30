@@ -166,7 +166,7 @@ void TaskGroupItem::reorderTasks(int from, int to)
     Q_ASSERT( from >= 0 && from < _tasks.size() );
     Q_ASSERT( to >= 0 && to < _tasks.size() );
 
-    qDebug() << "Reordering from" << from << "to" << to;
+    kDebug() << "Reordering from" << from << "to" << to;
 
     AbstractTaskItem* task = _tasks.takeAt(from).task;
     _tasks.insert(to,TaskEntry(task));

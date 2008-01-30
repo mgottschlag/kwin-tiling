@@ -24,7 +24,6 @@
 #include <QIcon>
 #include <QMouseEvent>
 #include <QPainter>
-#include <QtDebug>
 
 #include <QGradient>
 #include <QLinearGradient>

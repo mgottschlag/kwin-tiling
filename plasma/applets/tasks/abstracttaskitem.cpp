@@ -188,7 +188,7 @@ QSizeF AbstractTaskItem::maximumSize() const
                   200);
 #endif
 
-   // qDebug() << "Task max size hint:" << sz;
+   // kDebug() << "Task max size hint:" << sz;
 
     return size;
 }

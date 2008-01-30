@@ -434,13 +434,13 @@ void UrlItemView::setItemStateProvider(ItemStateProvider *provider)
 
 void UrlItemView::startDrag(Qt::DropActions supportedActions) 
 {
-    qDebug() << "Starting UrlItemView drag with actions" << supportedActions;
+    kDebug() << "Starting UrlItemView drag with actions" << supportedActions;
     QAbstractItemView::startDrag(supportedActions);
 }
 
 void UrlItemView::dropEvent(QDropEvent *)
 {
-    qDebug() << "UrlItemView drop event";
+    kDebug() << "UrlItemView drop event";
 }
 
 ItemStateProvider *UrlItemView::itemStateProvider() const

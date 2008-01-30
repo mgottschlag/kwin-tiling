@@ -37,7 +37,7 @@ public:
                                           url,-1,
                                           Qt::MatchFlags(Qt::MatchStartsWith | Qt::MatchWrap | Qt::MatchRecursive));
 
-       qDebug() << "Removing item matches" << matches;
+       kDebug() << "Removing item matches" << matches;
 
        foreach(const QModelIndex& index,matches) {
          QStandardItem *item = q->itemFromIndex(index);

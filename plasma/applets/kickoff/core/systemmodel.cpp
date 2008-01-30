@@ -24,7 +24,6 @@
 // Qt
 #include <QFile>
 #include <QHash>
-#include <QtDebug>
 #include <QTimer>
 
 // KDE

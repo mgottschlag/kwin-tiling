@@ -26,7 +26,6 @@
 #include <QComboBox>
 #include <QGridLayout>
 #include <QGraphicsView>
-#include <QtDebug>
 #include <QMetaObject>
 #include <QMetaEnum>
 #include <QPointer>

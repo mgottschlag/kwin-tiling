@@ -30,8 +30,6 @@
 #include <QPainter>
 #include <QStyleOptionViewItem>
 
-#include <QtDebug>
-
 // KDE
 #include <KColorUtils>
 #include <KDebug>

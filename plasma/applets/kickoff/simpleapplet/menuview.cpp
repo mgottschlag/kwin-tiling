@@ -24,7 +24,6 @@
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QStack>
 #include <QtCore/QUrl>
-#include <QtDebug>
 
 // Local
 #include "core/models.h"
