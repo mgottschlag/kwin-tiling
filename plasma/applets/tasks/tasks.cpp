@@ -115,7 +115,14 @@ QList<QAction*> Tasks::contextActions()
     // provide to us. This allows us to e.g. display also the "Configure Panel" action
     // the panelcontainment does provide if we right-click on the task-applet that is
     // embedded within the panel.
-    return containment() ? containment()->contextActions() : QList<QAction*>();
+
+    //TODO we don't like to display e.g. the desktop's context-menu. This ugly hack
+    // does only show the context-actions if we are really inside a panel.
+    if (containment() && strcmp(containment()->metaObject()->className(),"Panel") == 0) {
+        return containment() ? containment()->contextActions() : QList<QAction*>();
+    }
+
+    return QList<QAction*>();
 }
 
 void Tasks::registerStartingTasks()
