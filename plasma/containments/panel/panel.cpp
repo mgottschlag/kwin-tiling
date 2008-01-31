@@ -29,6 +29,7 @@
 #include <KDebug>
 #include <KIcon>
 #include <KDialog>
+#include <KIntNumInput>
 
 #include <plasma/corona.h>
 #include <plasma/layouts/layout.h>
@@ -382,11 +383,15 @@ void Panel::configure()
         m_sizeCombo->addItem(i18n("Small"), QVariant(32));
         m_sizeCombo->addItem(i18n("Normal"), QVariant(48));
         m_sizeCombo->addItem(i18n("Large"), QVariant(64));
-        //TODO add also "custom" like at KDE3?
+        m_sizeCombo->addItem(i18n("Custom"));
+        m_sizeEdit = new KIntNumInput(p);
+        m_sizeEdit->setRange(16, 256);
+        m_sizeEdit->setValue(m_size);
+        l->addWidget(m_sizeEdit, 1, 1);
         l->setColumnStretch(1,1);
 
         bool found = false;
-        for (int i = 0; i < m_sizeCombo->count(); ++i) {
+        for (int i = 0; i < m_sizeCombo->count() - 1; ++i) {
             if (m_sizeCombo->itemData(i).toInt() == m_size) {
                 m_sizeCombo->setCurrentIndex(i);
                 found = true;
@@ -394,8 +399,10 @@ void Panel::configure()
             }
         }
         if (! found) {
-            m_sizeCombo->setCurrentIndex(m_sizeCombo->count() - 2); //TODO dont hard-code
+            m_sizeCombo->setCurrentIndex(m_sizeCombo->count() - 1);
         }
+        connect(m_sizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(sizeComboChanged()));
+        sizeComboChanged();
     }
     m_dialog->show();
 }
@@ -403,10 +410,17 @@ void Panel::configure()
 void Panel::applyConfig()
 {
     KConfigGroup cg = config();
-    m_size = m_sizeCombo->itemData(m_sizeCombo->currentIndex()).toInt();
+    const int size = m_sizeCombo->itemData(m_sizeCombo->currentIndex()).toInt();
+    m_size = size > 0 ? size : m_sizeEdit->value();
     cg.writeEntry("size", m_size);
 
     updateConstraints();
+}
+
+void Panel::sizeComboChanged()
+{
+    QVariant v = m_sizeCombo->itemData(m_sizeCombo->currentIndex());
+    m_sizeEdit->setEnabled(v.isNull());
 }
 
 K_EXPORT_PLASMA_APPLET(panel, Panel)

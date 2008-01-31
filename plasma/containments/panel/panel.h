@@ -21,9 +21,10 @@
 
 #include <plasma/containment.h>
 
-class KDialog;
 class QComboBox;
 class QAction;
+class KDialog;
+class KIntNumInput;
 
 namespace Plasma
 {
@@ -49,11 +50,13 @@ public:
 private slots:
     void configure();
     void applyConfig();
+    void sizeComboChanged();
 private:
     Plasma::Svg *m_background;
     QPixmap* m_cachedBackground;
     KDialog* m_dialog;
     QComboBox* m_sizeCombo;
+    KIntNumInput* m_sizeEdit;
     QAction* m_configureAction;
     bool m_drawTop : 1;
     bool m_drawLeft : 1;
