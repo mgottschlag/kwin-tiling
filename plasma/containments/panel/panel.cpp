@@ -382,6 +382,7 @@ void Panel::configure()
         m_sizeCombo->addItem(i18n("Small"), QVariant(32));
         m_sizeCombo->addItem(i18n("Normal"), QVariant(48));
         m_sizeCombo->addItem(i18n("Large"), QVariant(64));
+        //TODO add also "custom" like at KDE3?
         l->setColumnStretch(1,1);
 
         bool found = false;
@@ -393,7 +394,7 @@ void Panel::configure()
             }
         }
         if (! found) {
-            m_sizeCombo->setCurrentIndex(m_sizeCombo->count() - 1);
+            m_sizeCombo->setCurrentIndex(m_sizeCombo->count() - 2); //TODO dont hard-code
         }
     }
     m_dialog->show();
