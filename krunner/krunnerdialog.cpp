@@ -125,7 +125,7 @@ void KRunnerDialog::paintBackground(QPainter* painter, const QRect &exposedRect)
         //       svn image by 2 all around didn't resolve the issue. For now it resizes based on the border size.
         
         m_background->resize(contentWidth, contentHeight);
-        m_background->paint(&p, QRect(contentLeft, contentTop, contentWidth, contentHeight), "center");
+        m_background->paint(&p, QRect(leftOffset, topOffset, contentWidth, contentHeight), "center");
         m_background->resize();
 
         m_background->paint(&p, QRect(leftOffset, topOffset, leftWidth, topHeight), "topleft");
