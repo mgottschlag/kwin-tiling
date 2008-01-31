@@ -140,7 +140,7 @@ void USBDevice::parseLine(const QString& line)
     {
       char buffer[11];
       sscanf(line.toLocal8Bit().data(),
-	     "D:  Ver=%x.%x Cls=%x(%10s) Sub=%x Prot=%x MxPS=%d #Cfgs=%d",
+	     "D:  Ver=%x.%x Cls=%x(%10s) Sub=%x Prot=%x MxPS=%u #Cfgs=%u",
 	     &_verMajor, &_verMinor, &_class, buffer, &_sub, &_prot, &_maxPacketSize, &_configs);
       _className = buffer;
     }
