@@ -62,7 +62,7 @@ Panel::~Panel()
 void Panel::init()
 {
     KConfigGroup cg = config();
-    m_size = cg.readEntry("size", m_size);
+    m_size = qMax(16, cg.readEntry("size", m_size));
 
     Containment::init();
 }
