@@ -21,8 +21,14 @@
 #include <QApplication>
 #include <QPainter>
 #include <QDesktopWidget>
+#include <QGridLayout>
+#include <QLabel>
+#include <QComboBox>
+#include <QAction>
 
 #include <KDebug>
+#include <KIcon>
+#include <KDialog>
 
 #include <plasma/corona.h>
 #include <plasma/layouts/layout.h>
@@ -33,10 +39,13 @@ using namespace Plasma;
 Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_cachedBackground(0),
+      m_dialog(0),
+      m_configureAction(0),
       m_drawTop(true),
       m_drawLeft(true),
       m_drawRight(true),
-      m_drawBottom(true)
+      m_drawBottom(true),
+      m_size(48)
 {
     m_background = new Plasma::Svg("widgets/panel-background", this);
     setZValue(150);
@@ -45,7 +54,26 @@ Panel::Panel(QObject *parent, const QVariantList &args)
 
 Panel::~Panel()
 {
+    delete m_dialog;
     delete m_background;
+}
+
+void Panel::init()
+{
+    KConfigGroup cg = config();
+    m_size = cg.readEntry("size", m_size);
+
+    Containment::init();
+}
+
+QList<QAction*> Panel::contextActions()
+{
+    if (! m_configureAction) {
+        m_configureAction = new QAction(i18n("Configure Panel..."), this);
+        m_configureAction->setIcon(KIcon("configure"));
+        connect(m_configureAction, SIGNAL(triggered()), this, SLOT(configure()));
+    }
+    return QList<QAction*>() << m_configureAction;
 }
 
 void Panel::constraintsUpdated(Plasma::Constraints constraints)
@@ -79,8 +107,7 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
         if (loc == BottomEdge || loc == TopEdge) {
             setFormFactor(Plasma::Horizontal);
 
-            //FIXME: don't hardcode 48px
-            height = 48;
+            height = m_size;
             //FIXME: don't hardcode full width
             width = r.width();
 
@@ -108,8 +135,7 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
         } else if (loc == LeftEdge || loc == RightEdge) {
             setFormFactor(Plasma::Vertical);
 
-            //FIXME: don't hardcode 48px
-            width = 48;
+            width = m_size;
             //FIXME: don't hardcode full height
             height = r.height();
 
@@ -332,6 +358,54 @@ void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
     }
 
     painter->drawPixmap(contentsRect, *m_cachedBackground, contentsRect);
+}
+
+void Panel::configure()
+{
+    if (! m_dialog) {
+        m_dialog = new KDialog();
+        m_dialog->setCaption( i18nc("@title:window","Configure Panel") );
+        m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+        connect(m_dialog, SIGNAL(applyClicked()), this, SLOT(applyConfig()));
+        connect(m_dialog, SIGNAL(okClicked()), this, SLOT(applyConfig()));
+
+        QWidget *p = m_dialog->mainWidget();
+        QGridLayout *l = new QGridLayout(p);
+        p->setLayout(l);
+
+        QLabel *sizeLabel = new QLabel(i18n("Size:"), p);
+        l->addWidget(sizeLabel, 0, 0);
+        m_sizeCombo = new QComboBox(p);
+        sizeLabel->setBuddy(m_sizeCombo);
+        l->addWidget(m_sizeCombo, 0, 1);
+        m_sizeCombo->addItem(i18n("Tiny"), QVariant(24));
+        m_sizeCombo->addItem(i18n("Small"), QVariant(32));
+        m_sizeCombo->addItem(i18n("Normal"), QVariant(48));
+        m_sizeCombo->addItem(i18n("Large"), QVariant(64));
+        l->setColumnStretch(1,1);
+
+        bool found = false;
+        for (int i = 0; i < m_sizeCombo->count(); ++i) {
+            if (m_sizeCombo->itemData(i).toInt() == m_size) {
+                m_sizeCombo->setCurrentIndex(i);
+                found = true;
+                break;
+            }
+        }
+        if (! found) {
+            m_sizeCombo->setCurrentIndex(m_sizeCombo->count() - 1);
+        }
+    }
+    m_dialog->show();
+}
+
+void Panel::applyConfig()
+{
+    KConfigGroup cg = config();
+    m_size = m_sizeCombo->itemData(m_sizeCombo->currentIndex()).toInt();
+    cg.writeEntry("size", m_size);
+
+    updateConstraints();
 }
 
 K_EXPORT_PLASMA_APPLET(panel, Panel)
