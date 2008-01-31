@@ -111,6 +111,10 @@ void Tasks::init()
 
 QList<QAction*> Tasks::contextActions()
 {
+    // What we do here is to return the context-actions our parent containment does
+    // provide to us. This allows us to e.g. display also the "Configure Panel" action
+    // the panelcontainment does provide if we right-click on the task-applet that is
+    // embedded within the panel.
     return containment() ? containment()->contextActions() : QList<QAction*>();
 }
 
