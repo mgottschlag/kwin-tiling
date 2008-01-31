@@ -32,6 +32,7 @@
 #include <QTimeLine>
 
 // Plasma
+#include <plasma/containment.h>
 #include <plasma/layouts/boxlayout.h>
 #include <plasma/layouts/layoutanimator.h>
 
@@ -106,6 +107,11 @@ void Tasks::init()
 
     // add the animator once we're initialized to avoid animating like mad on start up
     m_rootTaskGroup->layout()->setAnimator(animator);
+}
+
+QList<QAction*> Tasks::contextActions()
+{
+    return containment() ? containment()->contextActions() : QList<QAction*>();
 }
 
 void Tasks::registerStartingTasks()

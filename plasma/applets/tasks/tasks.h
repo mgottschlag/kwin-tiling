@@ -56,6 +56,8 @@ public:
 
         void init();
 
+        QList<QAction*> contextActions();
+
         /**
          * TODO: Sets the strategy used to automatically group tasks
          * together.
