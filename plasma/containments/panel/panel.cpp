@@ -391,7 +391,7 @@ void Panel::configure()
         l->setColumnStretch(1,1);
 
         bool found = false;
-        for (int i = 0; i < m_sizeCombo->count() - 1; ++i) {
+        for (int i = 0; i <= m_sizeCombo->count() - 2; ++i) {
             if (m_sizeCombo->itemData(i).toInt() == m_size) {
                 m_sizeCombo->setCurrentIndex(i);
                 found = true;
