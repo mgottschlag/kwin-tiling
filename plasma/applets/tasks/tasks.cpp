@@ -118,8 +118,9 @@ QList<QAction*> Tasks::contextActions()
 
     //TODO we don't like to display e.g. the desktop's context-menu. This ugly hack
     // does only show the context-actions if we are really inside a panel.
+    //FIXME replace that ugly hack with something designed for such logic.
     if (containment() && strcmp(containment()->metaObject()->className(),"Panel") == 0) {
-        return containment() ? containment()->contextActions() : QList<QAction*>();
+        return containment()->contextActions();
     }
 
     return QList<QAction*>();
