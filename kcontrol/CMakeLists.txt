@@ -34,7 +34,6 @@ add_subdirectory( hardware )
 if(X11_Xaccess_FOUND)
     add_subdirectory( accessibility )
 endif(X11_Xaccess_FOUND)
-add_subdirectory( infocenter )
 add_subdirectory( access )
 
 if(FONTCONFIG_FOUND AND FREETYPE_FOUND)
