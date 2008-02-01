@@ -55,7 +55,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_batteryAnimId(-1),
       m_batteryAlpha(1),
       m_batteryFadeIn(true),
-      m_isHovered(0),
+      m_isHovered(false),
       m_numOfBattery(0)
 {
     kDebug() << "Loading applet battery";
@@ -176,7 +176,6 @@ Qt::Orientations Battery::expandingDirections() const
 
 void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
-    kDebug() << source;
     if (source.startsWith(I18N_NOOP("Battery"))) {
         m_batteries_data[source] = data;
     } else if (source == I18N_NOOP("AC Adapter")) {
@@ -431,9 +430,9 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
     p->setFont(m_font);
 
     // Let's find a good position for painting the background
-    QRect text_rect = QRect(contentsRect.left()+(contentsRect.width()-text_width)/2,
+    QRect text_rect = QRect(qMax(0, contentsRect.left()+(contentsRect.width()-text_width)/2),
                             (int)(contentsRect.top()+((contentsRect.height() - (int)fm.height())/2*0.9)),
-                            text_width,
+                            qMin((int)contentSize().width(), text_width),
                             (int)(fm.height()*1.2));
 
     // Poor man's highlighting
@@ -561,18 +560,15 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             paintBattery(p, corect, battery_data.value()[I18N_NOOP("Percent")].toInt(), battery_data.value()[I18N_NOOP("Plugged in")].toBool());
                 
             if (m_showBatteryString || m_isHovered) {
-                // Show the charge percentage with a box
-                // on top of the battery, but only for plasmoids bigger than ....
-                if (width >= 44) {
-                    QString batteryLabel;
-                    if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
-                        batteryLabel = battery_data.value()[I18N_NOOP("Percent")].toString();
-                        batteryLabel.append("%");
-                    } else {
-                        batteryLabel = I18N_NOOP("n/a");
-                    }
-                    paintLabel(p, corect, batteryLabel);
+                // Show the charge percentage with a box on top of the battery
+                QString batteryLabel;
+                if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
+                    batteryLabel = battery_data.value()[I18N_NOOP("Percent")].toString();
+                    batteryLabel.append("%");
+                } else {
+                    batteryLabel = I18N_NOOP("n/a");
                 }
+                paintLabel(p, corect, batteryLabel);
             }
             ++battery_num;
         }
@@ -596,18 +592,15 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         // paint battery with appropriate charge level
         paintBattery(p, contentsRect,  battery_charge, has_battery);
         if (m_showBatteryString || m_isHovered) {
-            // Show the charge percentage with a box
-            // on top of the battery, but only for plasmoids bigger than ....
-            if (contentsRect.width() >= 44) {
-                QString batteryLabel;
-                if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
-                    batteryLabel = battery_data.value()[I18N_NOOP("Percent")].toString();
-                    batteryLabel.append("%");
-                } else {
-                    batteryLabel = I18N_NOOP("n/a");
-                }
-                paintLabel(p, contentsRect, batteryLabel);
+            // Show the charge percentage with a box on top of the battery
+            QString batteryLabel;
+            if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
+                batteryLabel = battery_data.value()[I18N_NOOP("Percent")].toString();
+                batteryLabel.append("%");
+            } else {
+                batteryLabel = I18N_NOOP("n/a");
             }
+            paintLabel(p, contentsRect, batteryLabel);
         }
     }
 }
