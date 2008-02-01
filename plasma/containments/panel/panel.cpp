@@ -76,7 +76,7 @@ QList<QAction*> Panel::contextActions()
         connect(m_configureAction, SIGNAL(triggered()), this, SLOT(configure()));
     }
 */
-    return QList<QAction*>() << m_configureAction;
+    return QList<QAction*>();// << m_configureAction;
 }
 
 void Panel::constraintsUpdated(Plasma::Constraints constraints)
