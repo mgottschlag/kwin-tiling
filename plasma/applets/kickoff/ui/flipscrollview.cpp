@@ -248,7 +248,14 @@ FlipScrollView::~FlipScrollView()
 }
 void FlipScrollView::viewRoot()
 {
-    d->setCurrentRoot(QModelIndex());
+    QModelIndex index;
+    while(d->currentRoot().isValid()) {
+        index = d->currentRoot();
+        d->setCurrentRoot(d->currentRoot().parent());
+        setCurrentIndex(index);
+    }
+    update(d->hoveredIndex);
+    d->hoveredIndex = index;
 }
 QModelIndex FlipScrollView::indexAt(const QPoint& point) const
 {
