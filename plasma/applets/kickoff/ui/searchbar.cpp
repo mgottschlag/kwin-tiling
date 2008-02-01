@@ -26,6 +26,8 @@
 #include <QKeyEvent>
 #include <QLabel>
 #include <QTimer>
+#include <QDir>
+#include <QFileInfo>
 
 // KDE
 #include <KIcon>
@@ -63,7 +65,14 @@ SearchBar::SearchBar(QWidget *parent)
 
     QLabel *searchLabel = new QLabel(i18n("Search:"),this);
     QLabel *searchIcon = new QLabel(this);
-    searchIcon->setPixmap(KIcon("system-search").pixmap(ItemDelegate::ICON_SIZE, ItemDelegate::ICON_SIZE));
+
+    QFileInfo fi(QDir(getenv("HOME")), ".face.icon");
+    if (fi.exists()) {
+        searchIcon->setPixmap(QPixmap(fi.absoluteFilePath()).scaled(ItemDelegate::ICON_SIZE, ItemDelegate::ICON_SIZE));
+    }
+    else {
+        searchIcon->setPixmap(KIcon("system-search").pixmap(ItemDelegate::ICON_SIZE, ItemDelegate::ICON_SIZE));
+    }
 
     d->editWidget = new KLineEdit(this);
     d->editWidget->installEventFilter(this);
