@@ -325,6 +325,12 @@ void Launcher::setApplet(Plasma::Applet *applet)
     d->contextMenuFactory->setApplet(applet);
 }
 
+void Launcher::reset()
+{
+    d->searchBar->clear();
+    focusFavoritesView();
+}
+
 Launcher::~Launcher()
 {
     delete d;

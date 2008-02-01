@@ -166,7 +166,7 @@ void LauncherApplet::toggleMenu(bool pressed)
         d->launcher->setApplet(this);
         connect(d->launcher, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
     }
-    d->launcher->focusFavoritesView();
+    d->launcher->reset();
 
     if (!d->launcher->isVisible()) {
         d->launcher->move(d->icon->popupPosition(d->launcher->size()));

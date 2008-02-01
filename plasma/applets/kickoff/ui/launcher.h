@@ -62,6 +62,10 @@ public:
     virtual bool eventFilter(QObject *object, QEvent *event);
     virtual QSize sizeHint() const;
 
+    /** Reset the launcher. This is called e.g. by the Kickoff-applet before shown to be sure
+    we don't display old searches and switch back to the favorite-view. */
+    void reset();
+
 signals:
     void aboutToHide();
 
@@ -75,8 +79,6 @@ protected:
 private Q_SLOTS:
     void focusSearchView(const QString& query);
     void showViewContextMenu(const QPoint& pos);
-
-public Q_SLOTS:
     void focusFavoritesView();
 
 private:
