@@ -347,7 +347,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         m_plainClockFont.setItalic(m_plainClockFontItalic);
 
         // Choose a relatively big font size to start with
-        m_plainClockFont.setPointSize(qMax((int)(contentsRect.height()/1.5), 1));
+        m_plainClockFont.setPointSize(qMax((int)(contentsRect.height()/1.5), KGlobalSettings::smallestReadableFont().pointSize()));
         preparePainter(p, timeRect, m_plainClockFont, timeString);
 
         p->drawText(timeRect,
@@ -366,9 +366,10 @@ QRect Clock::preparePainter(QPainter *p, const QRect &rect, const QFont &font, c
     // given rect allowing wrapping where possible
     do {
         p->setFont(tmpFont);
-        tmpFont.setPointSize(tmpFont.pointSize() - 1);
+        tmpFont.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(), tmpFont.pointSize() - 1));
         tmpRect = p->boundingRect(rect, Qt::TextWordWrap, text);
-    } while (tmpFont.pointSize() >= 1 && (tmpRect.width() > rect.width() ||
+        kDebug() << tmpFont.pointSize() << " POINTSIZE";
+    } while (tmpFont.pointSize() > KGlobalSettings::smallestReadableFont().pointSize() && (tmpRect.width() > rect.width() ||
             tmpRect.height() > rect.height()));
 
     return tmpRect;
