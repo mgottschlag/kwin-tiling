@@ -43,7 +43,7 @@ using namespace Kickoff;
 namespace Kickoff
 {
 
-Q_GLOBAL_STATIC_WITH_ARGS(KUrl, homeUrl, (getenv("HOME")))
+Q_GLOBAL_STATIC_WITH_ARGS(KUrl, homeUrl, (qgetenv("HOME")))
 Q_GLOBAL_STATIC_WITH_ARGS(KUrl, remoteUrl, ("remote:/"))
 K_GLOBAL_STATIC(StandardItemFactoryData, factoryData)
 
