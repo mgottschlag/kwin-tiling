@@ -91,15 +91,10 @@ void SystemTray::updateWidgetGeometry()
     }
 
     if (!m_systemTrayWidget || m_systemTrayWidget->parentWidget() != parentView) {
-        if (m_systemTrayWidget) {
-            delete m_systemTrayWidget;
-            m_systemTrayWidget = 0;
-        }
-        if (! m_systemTrayWidget) {
-            m_systemTrayWidget = new SystemTrayWidget(parentView);
-            connect(m_systemTrayWidget, SIGNAL(sizeShouldChange()),
-                    this, SLOT(updateSize()));
-        }
+        delete m_systemTrayWidget;
+        m_systemTrayWidget = new SystemTrayWidget(parentView);
+        connect(m_systemTrayWidget, SIGNAL(sizeShouldChange()),
+                this, SLOT(updateSize()));
         updateWidgetOrientation();
         m_systemTrayWidget->setVisible(true);
     }
