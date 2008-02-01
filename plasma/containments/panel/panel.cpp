@@ -69,14 +69,12 @@ void Panel::init()
 
 QList<QAction*> Panel::contextActions()
 {
-/*
     if (! m_configureAction) {
         m_configureAction = new QAction(i18n("Configure Panel..."), this);
         m_configureAction->setIcon(KIcon("configure"));
         connect(m_configureAction, SIGNAL(triggered()), this, SLOT(configure()));
     }
-*/
-    return QList<QAction*>();// << m_configureAction;
+    return QList<QAction*>() << m_configureAction;
 }
 
 void Panel::constraintsUpdated(Plasma::Constraints constraints)
