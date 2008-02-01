@@ -31,6 +31,9 @@
 #include <KGlobalSettings>
 #include <QStyleOptionGraphicsItem>
 
+// Plasma
+#include "plasma/theme.h"
+
 TaskGroupItem::TaskGroupItem(QGraphicsItem *parent, QObject *parentObject)
     : AbstractTaskItem(parent, parentObject),
       _activeTask(-1),
@@ -285,9 +288,9 @@ void TaskGroupItem::drawBorder(QPainter *painter,
          // FIXME Check KColorScheme usage here
 
          QLinearGradient titleGradient(titleArea.topLeft(), titleArea.bottomLeft());
-
-         titleGradient.setColorAt(0, KColorScheme::shade(_color,KColorScheme::DarkShade));
-         titleGradient.setColorAt(1, KColorScheme::shade(_color,KColorScheme::MidShade));
+         KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors());        
+         titleGradient.setColorAt(0, colorScheme.shade(_color,KColorScheme::DarkShade));
+         titleGradient.setColorAt(1, colorScheme.shade(_color,KColorScheme::MidShade));
 
          painter->setBrush(titleGradient);
          painter->drawRect(titleArea);

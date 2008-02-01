@@ -256,15 +256,14 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
         background.setColorAt(0, startColor);
         background.setColorAt(1, endColor);
 
-        // FIXME HARDCODE
-            painter->setPen(QPen(QColor(100, 100, 100, startColor.alpha())));
-
         painter->setBrush(background);
+        painter->setPen(Plasma::Theme::self()->backgroundColor());
     } else {
         QColor background = colorScheme.shade(colorScheme.background(KColorScheme::AlternateBackground).color(),
                                               KColorScheme::DarkShade);
         background.setAlphaF(0.2);
         painter->setBrush(QBrush(background));
+        painter->setPen(Plasma::Theme::self()->backgroundColor());
     }
     painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
 }
