@@ -281,6 +281,7 @@ void Pager::configAccepted()
             m_rows = m_desktopCount;
         }
         globalcg.writeEntry("rows", m_rows);
+        globalcg.sync();
         changed = true;
     }
 
