@@ -333,6 +333,9 @@ void Battery::showAcAdapter(bool show)
     }
     m_acFadeIn = show;
     const int FadeInDuration = 300;
+    // As long as the animation is running, we fake it's still plugged in so it gets
+    // painted in paintInterface()
+    m_acadapter_plugged = true;
 
     if (m_acAnimId != -1) {
         Plasma::Phase::self()->stopCustomAnimation(m_acAnimId);
@@ -373,7 +376,6 @@ void Battery::animationUpdate(qreal progress)
     } else {
         m_alpha = m_fadeIn ? progress : 1 - progress;
     }
-    // explicit update
     update();
 }
 
@@ -383,7 +385,11 @@ void Battery::acAnimationUpdate(qreal progress)
         m_acAnimId = -1;
     }
     m_acAlpha = m_acFadeIn ? progress : 1 - progress;
-    // explicit update
+    // During the fadeout animation, we had set it to true (and lie)
+    // now the animation has ended, we _really_ set it to not show the adapter
+    if (!m_acFadeIn && (progress == 1)) {
+        m_acadapter_plugged = false;
+    }
     update();
 }
 
@@ -393,7 +399,6 @@ void Battery::batteryAnimationUpdate(qreal progress)
         m_batteryAnimId = -1;
     }
     m_batteryAlpha = m_batteryFadeIn ? progress : 1 - progress;
-    // explicit update
     update();
 }
 
