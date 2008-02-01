@@ -66,7 +66,7 @@ SearchBar::SearchBar(QWidget *parent)
     QLabel *searchLabel = new QLabel(i18n("Search:"),this);
     QLabel *searchIcon = new QLabel(this);
 
-    QFileInfo fi(QDir(qgetenv("HOME")), ".face.icon");
+    QFileInfo fi(QDir(QDir::homePath()), ".face.icon");
     if (fi.exists()) {
         searchIcon->setPixmap(QPixmap(fi.absoluteFilePath()).scaled(ItemDelegate::ICON_SIZE, ItemDelegate::ICON_SIZE));
     }
