@@ -50,6 +50,14 @@ TabBar::TabBar(QWidget *parent)
     setMouseTracking(true);
 }
 
+void TabBar::setCurrentIndexWithoutAnimation(int index)
+{
+    blockSignals(true);
+    setCurrentIndex(index);
+    blockSignals(false);
+    animationFinished();
+}
+
 void TabBar::setSwitchTabsOnHover(bool switchOnHover)
 {
     m_switchOnHover = switchOnHover;

@@ -35,6 +35,11 @@ Q_OBJECT
 public:
     TabBar(QWidget *parent);
 
+    /** Like the setCurrentIndex() method but switches the tab without using any
+    animation. This is used e.g. within Launcher::reset() to switch back to the
+    favorite tab before Kickoff got shown. */
+    void setCurrentIndexWithoutAnimation(int index);
+
     /** Specifies whether hovering switches between tabs or if a click is required to switch the tabs. */
     void setSwitchTabsOnHover(bool switchOnHover);
     bool switchTabsOnHover() const;

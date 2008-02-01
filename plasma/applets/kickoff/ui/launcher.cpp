@@ -328,8 +328,9 @@ void Launcher::setApplet(Plasma::Applet *applet)
 
 void Launcher::reset()
 {
+    d->contentSwitcher->setCurrentIndexWithoutAnimation(0);
+    d->contentArea->setCurrentWidget(d->favoritesView);
     d->searchBar->clear();
-    focusFavoritesView();
     d->applicationView->viewRoot();
 }
 
