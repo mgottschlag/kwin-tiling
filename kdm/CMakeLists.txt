@@ -26,7 +26,11 @@ build_confci()
 add_custom_target(config.ci DEPENDS ${confci})
 
 ### this is *only* for the kdm home page maintainer! ###
-ADD_CUSTOM_TARGET(hp scp README ChangeLog TODO devel-home:files/kdm)
+ADD_CUSTOM_TARGET(hp scp
+	${CMAKE_CURRENT_SOURCE_DIR}/README
+	${CMAKE_CURRENT_SOURCE_DIR}/ChangeLog
+	${CMAKE_CURRENT_SOURCE_DIR}/TODO
+	devel-home:files/kdm)
 
 # after build_confci is defined
 add_subdirectory(backend)
