@@ -50,6 +50,9 @@ public:
     FlipScrollView(QWidget *parent = 0);
     virtual ~FlipScrollView();
 
+    /** Go to the root item. */
+    void viewRoot();
+
     // reimplemented from QAbstractItemView 
     virtual QModelIndex indexAt(const QPoint& point) const;
     virtual void scrollTo(const QModelIndex& index, ScrollHint hint = EnsureVisible);

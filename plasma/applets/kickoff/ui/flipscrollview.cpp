@@ -246,6 +246,10 @@ FlipScrollView::~FlipScrollView()
 {
     delete d;
 }
+void FlipScrollView::viewRoot()
+{
+    d->setCurrentRoot(QModelIndex());
+}
 QModelIndex FlipScrollView::indexAt(const QPoint& point) const
 {
     int topOffset = d->headerRect(d->currentRoot()).height() - verticalOffset();

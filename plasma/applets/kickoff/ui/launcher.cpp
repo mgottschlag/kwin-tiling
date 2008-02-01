@@ -153,7 +153,7 @@ public:
         ApplicationModel *applicationModel = new ApplicationModel(q);
         applicationModel->setDuplicatePolicy(ApplicationModel::ShowLatestOnlyPolicy);
 
-        QAbstractItemView *applicationView = new FlipScrollView;
+        applicationView = new FlipScrollView();
         ItemDelegate *delegate = new ItemDelegate;
         applicationView->setItemDelegate(delegate);
 
@@ -235,6 +235,7 @@ public:
     SearchBar *searchBar;
     QStackedWidget *contentArea;
     TabBar *contentSwitcher;
+    FlipScrollView *applicationView;
     QAbstractItemView *searchView;
     QAbstractItemView *favoritesView;
     ContextMenuFactory *contextMenuFactory;
@@ -329,6 +330,7 @@ void Launcher::reset()
 {
     d->searchBar->clear();
     focusFavoritesView();
+    d->applicationView->viewRoot();
 }
 
 Launcher::~Launcher()
