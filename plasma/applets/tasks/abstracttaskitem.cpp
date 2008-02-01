@@ -33,8 +33,10 @@
 
 // KDE
 #include <KColorScheme>
+#include <KGlobalSettings>
 #include <KDebug>
 
+// Plasma
 #include "plasma/plasma.h"
 #include "plasma/theme.h"
 
@@ -81,7 +83,7 @@ void AbstractTaskItem::setText(const QString &text)
     _text = text;
 
     //let some place for at least the icon and the first character
-    QFontMetrics fm(font());
+    QFontMetrics fm(KGlobalSettings::taskbarFont());
     setMinimumSize(QSizeF(fm.height() + fm.charWidth(text,0) + IconTextSpacing + 2, fm.height()));
 
     TaskGroupItem *group = qobject_cast<TaskGroupItem*>(parent());
@@ -422,7 +424,7 @@ void AbstractTaskItem::drawTask(QPainter *painter,
     rect.adjust(2, 2, -2, -2); // Create a text margin
 
     QTextLayout layout;
-    layout.setFont(painter->font());
+    layout.setFont(KGlobalSettings::taskbarFont());
     layout.setTextOption(textOption());
 
     layoutText(layout, _text, rect.size());
