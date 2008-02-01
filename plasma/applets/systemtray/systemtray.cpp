@@ -91,9 +91,11 @@ void SystemTray::updateWidgetGeometry()
     }
 
     if (!m_systemTrayWidget || m_systemTrayWidget->parentWidget() != parentView) {
-        if (m_systemTrayWidget) {
-            m_systemTrayWidget->setParent(parentView);
-        } else {
+        if (m_systemTrayWidget && m_systemTrayWidget->parent() != parentView) {
+            delete m_systemTrayWidget;
+            m_systemTrayWidget = 0;
+        }
+        if (! m_systemTrayWidget) {
             m_systemTrayWidget = new SystemTrayWidget(parentView);
             connect(m_systemTrayWidget, SIGNAL(sizeShouldChange()),
                     this, SLOT(updateSize()));
