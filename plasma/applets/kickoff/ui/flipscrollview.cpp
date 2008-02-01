@@ -406,8 +406,8 @@ void FlipScrollView::setModel(QAbstractItemModel *model)
 {
     QAbstractItemView::setModel(model);
     if (model) {
-//        setCurrentIndex(model->index(0,0));
-//        d->itemHeight = sizeHintForIndex(model->index(0, 0)).height();
+        setCurrentIndex(model->index(0,0));
+        //d->itemHeight = sizeHintForIndex(model->index(0, 0)).height();
     }
 }
 
