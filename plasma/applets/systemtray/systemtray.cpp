@@ -91,7 +91,7 @@ void SystemTray::updateWidgetGeometry()
     }
 
     if (!m_systemTrayWidget || m_systemTrayWidget->parentWidget() != parentView) {
-        if (m_systemTrayWidget && m_systemTrayWidget->parent() != parentView) {
+        if (m_systemTrayWidget) {
             delete m_systemTrayWidget;
             m_systemTrayWidget = 0;
         }
