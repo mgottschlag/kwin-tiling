@@ -52,9 +52,9 @@ TabBar::TabBar(QWidget *parent)
 
 void TabBar::setCurrentIndexWithoutAnimation(int index)
 {
-    blockSignals(true);
+    disconnect(this, SIGNAL(currentChanged(int)), this, SLOT(startAnimation()));
     setCurrentIndex(index);
-    blockSignals(false);
+    connect(this, SIGNAL(currentChanged(int)), this, SLOT(startAnimation()));
     animationFinished();
 }
 
