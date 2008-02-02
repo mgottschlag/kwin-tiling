@@ -68,7 +68,7 @@ kthememanager::kthememanager( QWidget *parent, const QVariantList & )
     setQuickHelp( i18n("This control module handles installing, removing and "
                 "creating visual KDE themes."));
 
-    setButtons( KCModule::Default|KCModule::Apply|KCModule::Help );
+    setButtons( KCModule::Default|KCModule::Apply );
 
     setAcceptDrops( true );
     init();
