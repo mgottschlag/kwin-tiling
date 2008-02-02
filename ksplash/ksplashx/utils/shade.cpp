@@ -1,9 +1,10 @@
 // This tool makes the image grayscale and transparent.
 
+#include <QImage>
+
 #include <kcmdlineargs.h>
 #include <kapplication.h>
 #include <kdebug.h>
-#include <qimage.h>
 
 int main( int argc, char* argv[] )
     {

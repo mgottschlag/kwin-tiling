@@ -1,11 +1,11 @@
 #include <unistd.h>
-#include <qimage.h>
+#include <QImage>
+#include <QFile>
 #include <kcomponentdata.h>
 #include <kstandarddirs.h>
 #include <utime.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <qfile.h>
 
 int main( int argc, char* argv[] )
     {
