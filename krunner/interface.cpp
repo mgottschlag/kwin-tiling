@@ -425,8 +425,8 @@ void Interface::switchUser()
         kDebug() << "Could not find the Sessionrunner; not showing any sessions!";
         return;
     }
-
-    display();
+    //TODO: ugh, magic strings. See runners/sessions/sessionrunner.cpp
+    display("SESSIONS");
     m_header->setText(i18n("Switch users"));
     m_header->setPixmap("system-switch-user");
     m_defaultMatch = 0;

@@ -80,7 +80,18 @@ void SessionRunner::match(Plasma::SearchContext *search)
 void SessionRunner::exec(Plasma::SearchMatch * action)
 {
     if (!action->data().toString().isEmpty()) {
-        //TODO: implement session switching here!
+        QString sessionName = action->text();
+        DM dm;
+        SessList sessions;
+        if (dm.localSessions(sessions)) {
+            foreach (SessEnt session, sessions) {
+                if (sessionName == DM::sess2Str(session)) {
+                    dm.lockSwitchVT(session.vt);
+                    break;
+                }
+            }
+        }
+
         return;
     }
 
