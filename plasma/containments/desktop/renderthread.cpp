@@ -103,6 +103,7 @@ void RenderThread::run()
 
         if (file.isEmpty() || !QFile::exists(file)) {
             emit done(token, result);
+            continue;
         }
         
         QPoint pos(0, 0);
@@ -128,6 +129,10 @@ void RenderThread::run()
         }
         imgSize *= ratio;
         
+        // if any of them is zero we may run into a div-by-zero below.
+        Q_ASSERT(imgSize.width() > 0);
+        Q_ASSERT(imgSize.height() > 0);
+
         // set render parameters according to resize mode
         switch (method)
         {
