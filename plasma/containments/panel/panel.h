@@ -57,6 +57,7 @@ private:
     KDialog* m_dialog;
     QComboBox* m_sizeCombo;
     KIntNumInput* m_sizeEdit;
+    QComboBox* m_locationCombo;
     QAction* m_configureAction;
     bool m_drawTop : 1;
     bool m_drawLeft : 1;

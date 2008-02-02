@@ -389,6 +389,16 @@ void Panel::configure()
         l->addWidget(m_sizeEdit, 1, 1);
         l->setColumnStretch(1,1);
         connect(m_sizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(sizeComboChanged()));
+        
+        QLabel *locationLabel = new QLabel(i18n("Location:"), p);
+        l->addWidget(locationLabel, 2, 0);
+        m_locationCombo = new QComboBox(p);
+        locationLabel->setBuddy(m_locationCombo);
+        l->addWidget(m_locationCombo, 2, 1);
+        m_locationCombo->addItem(i18n("Bottom"), Plasma::BottomEdge);
+        m_locationCombo->addItem(i18n("Top"), Plasma::TopEdge);
+        m_locationCombo->addItem(i18n("Right"), Plasma::RightEdge);
+        m_locationCombo->addItem(i18n("Left"), Plasma::LeftEdge);
     }
 
     int idx = m_sizeCombo->count() - 1;
@@ -401,6 +411,14 @@ void Panel::configure()
     m_sizeCombo->setCurrentIndex(idx);
     m_sizeEdit->setValue(m_size);
     sizeComboChanged();
+    idx = 0;
+    for (int i = 0; i < m_locationCombo->count(); i++) {
+        if (m_locationCombo->itemData(i).toInt() == location()) {
+            idx = i;
+            break;
+        }
+    }
+    m_locationCombo->setCurrentIndex(idx);
 
     m_dialog->show();
 }
@@ -411,6 +429,8 @@ void Panel::applyConfig()
     const int size = m_sizeCombo->itemData(m_sizeCombo->currentIndex()).toInt();
     m_size = size > 0 ? size : m_sizeEdit->value();
     cg.writeEntry("size", m_size);
+    
+    setLocation((Plasma::Location)(m_locationCombo->itemData(m_locationCombo->currentIndex()).toInt()));
 
     updateConstraints();
 }
