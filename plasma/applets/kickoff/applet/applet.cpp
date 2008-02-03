@@ -81,7 +81,6 @@ LauncherApplet::~LauncherApplet()
 void LauncherApplet::init()
 {
     KConfigGroup cg = config();
-    setRemainSquare(true);
     d->switchTabsOnHover = cg.readEntry("SwitchTabsOnHover",d->switchTabsOnHover);
     d->visibleItemsCount = cg.readEntry("VisibleItemsCount",d->visibleItemsCount);
 }
@@ -128,6 +127,11 @@ void LauncherApplet::showConfigurationInterface()
     d->visibleCountEdit->setValue(d->visibleItemsCount);
     d->switchOnHoverCheckBox->setChecked(d->switchTabsOnHover);
     d->dialog->show();
+}
+
+Qt::Orientations LauncherApplet::expandingDirections() const
+{
+    return 0;
 }
 
 void LauncherApplet::configAccepted()

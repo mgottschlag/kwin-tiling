@@ -48,6 +48,8 @@ public:
 
         void constraintsUpdated(Plasma::Constraints constraints);
 
+        Qt::Orientations expandingDirections() const;
+
 public slots:
         void showConfigurationInterface();
 

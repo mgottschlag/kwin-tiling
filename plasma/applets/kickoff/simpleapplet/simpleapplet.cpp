@@ -163,7 +163,6 @@ MenuLauncherApplet::~MenuLauncherApplet()
 void MenuLauncherApplet::init()
 {
     KConfigGroup cg = config();
-    setRemainSquare(true);
 
     {
         QMetaEnum e = metaObject()->enumerator(metaObject()->indexOfEnumerator("ViewType"));
@@ -275,6 +274,11 @@ void MenuLauncherApplet::configAccepted()
         delete d->menuview;
         d->menuview = 0;
     }
+}
+
+Qt::Orientations MenuLauncherApplet::expandingDirections() const
+{
+    return 0;
 }
 
 void MenuLauncherApplet::toggleMenu(bool pressed)
