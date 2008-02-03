@@ -16,8 +16,6 @@ macro_optional_find_package(OpenGL)
 include (MacroLibrary)
 include (KDE4Defaults)
 
-macro_optional_find_package(OpenGL)
-
 include(ConfigureChecks.cmake)
 configure_file(config-unix.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-unix.h )
 configure_file(config-X11.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-X11.h )
