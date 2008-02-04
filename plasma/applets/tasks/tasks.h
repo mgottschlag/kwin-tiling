@@ -56,8 +56,6 @@ public:
 
         void init();
 
-        QList<QAction*> contextActions();
-
         /**
          * TODO: Sets the strategy used to automatically group tasks
          * together.
@@ -96,13 +94,6 @@ private:
         // and sets up connections to listen for addition or removal
         // of windows
         void registerWindowTasks();
-
-        // creates task representations for tasks which are in
-        // the process of being started
-        // this allows some indication that the task is loading
-        // to be displayed until the window associated with the task
-        // appears
-        void registerStartingTasks();
 
         void addItemToRootGroup(AbstractTaskItem* item);
         void removeItemFromRootGroup(AbstractTaskItem* item);

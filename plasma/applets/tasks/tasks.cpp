@@ -91,7 +91,6 @@ void Tasks::init()
 
     // add representations of existing running tasks
     registerWindowTasks();
-    registerStartingTasks();
 
     // listen for addition and removal of window tasks
     connect(TaskManager::TaskManager::self(), SIGNAL(taskAdded(TaskPtr)),
@@ -107,27 +106,6 @@ void Tasks::init()
 
     // add the animator once we're initialized to avoid animating like mad on start up
     m_rootTaskGroup->layout()->setAnimator(animator);
-}
-
-QList<QAction*> Tasks::contextActions()
-{
-    // What we do here is to return the context-actions our parent containment does
-    // provide to us. This allows us to e.g. display also the "Configure Panel" action
-    // the panelcontainment does provide if we right-click on the task-applet that is
-    // embedded within the panel.
-
-    //TODO we don't like to display e.g. the desktop's context-menu. This ugly hack
-    // does only show the context-actions if we are really inside a panel.
-    //FIXME replace that ugly hack with something designed for such logic.
-    if (containment() && strcmp(containment()->metaObject()->className(),"Panel") == 0) {
-        return containment()->contextActions();
-    }
-
-    return QList<QAction*>();
-}
-
-void Tasks::registerStartingTasks()
-{
 }
 
 void Tasks::addStartingTask(StartupPtr task)
