@@ -548,9 +548,35 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     Q_UNUSED( option );
     Q_UNUSED( contentsRect );
 
-    // paint desktop background
-    QBrush hoverBrush(QColor(255,255,255,50)); // FIXME: hardcoded colors == bad
+    KColorScheme plasmaColorTheme = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors());
+    painter->setFont(KGlobalSettings::taskbarFont());
+
+    // Desktop background
+    QColor textColor = Plasma::Theme::self()->textColor();
+    textColor.setAlpha(64);
+    QBrush hoverBrush(textColor);
     QBrush defaultBrush(Qt::NoBrush);
+
+    // Inactive windows
+    QColor drawingColor = plasmaColorTheme.foreground(KColorScheme::InactiveText).color();
+    drawingColor.setAlpha(192);
+    QBrush windowBrush(drawingColor);
+
+    // Inactive window borders
+    drawingColor = plasmaColorTheme.foreground(KColorScheme::NeutralText).color();
+    drawingColor.setAlpha(238);
+    QPen windowPen(drawingColor);
+
+    // Active window borders
+    QPen activeWindowPen(Plasma::Theme::self()->textColor());
+
+    // Active windows
+    drawingColor.setAlpha(238);
+    QBrush activeWindowBrush(drawingColor);
+
+    kDebug() << "InActive (brush, pen): " << windowBrush.color() << windowPen.color();
+    kDebug() << "Active (brush, pen)  : " << activeWindowBrush.color() << activeWindowPen.color();
+
     painter->setPen(Qt::NoPen);
     for (int i = 0; i < m_desktopCount; i++) {
         if (m_rects[i] == m_hoverRect) {
@@ -561,18 +587,17 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         painter->drawRect(m_rects[i]);
     }
 
-    // draw window thumbnails
-    QPen windowPen(KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color());
-    QBrush windowBrush(QColor(200,200,200)); // FIXME: hardcoded color == bad // LinkBackground
-    QBrush activeWindowBrush(QColor(100,100,255)); // FIXME:: hardcoded colors == bad ActiveBackground
     painter->setPen(windowPen);
+
     for (int i = 0; i < m_windowRects.count(); i++) {
         for (int j = 0; j < m_windowRects[i].count(); j++) {
             QRect rect = m_windowRects[i][j].second;
             if (m_activeWindows.contains(rect)) {
                 painter->setBrush(activeWindowBrush);
+                painter->setPen(activeWindowPen);
             } else {
                 painter->setBrush(windowBrush);
+                painter->setPen(windowPen);
             }
             if (m_dragId == m_windowRects[i][j].first) {
                 rect.translate((m_dragCurrentPos - m_dragOriginalPos).toPoint());
@@ -584,21 +609,23 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         }
     }
 
-    // draw desktop foreground
+    // draw desktop frame and number
     painter->setClipRect(option->exposedRect);
-    QPen activePen(KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color());
-    QPen defaultPen(QColor(120,120,120)); // FIXME: hardcoded color == bad
+    QPen activePen(Plasma::Theme::self()->textColor());
+    QPen drawingPen = QPen();
     painter->setBrush(Qt::NoBrush);
+
     for( int i = 0; i < m_desktopCount; i++) {
         if (i + 1 == m_currentDesktop || i == m_dragHighlightedDesktop) {
-            painter->setPen(activePen);
+            drawingPen = QPen(Plasma::Theme::self()->textColor());
         } else {
-            painter->setPen(defaultPen);
+            drawingPen = QPen(plasmaColorTheme.foreground(KColorScheme::InactiveText).color());
         }
-
+        painter->setPen(drawingPen);
         painter->drawRect(m_rects[i]);
 
         if (m_showDesktopNumber) {
+            painter->setPen(activePen);
             painter->drawText(m_rects[i], Qt::AlignCenter, QString::number(i+1));
         }
     }
