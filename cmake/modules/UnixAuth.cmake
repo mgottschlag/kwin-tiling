@@ -1,5 +1,9 @@
 find_package(PAM)
 
+include(CheckFunctionExists)
+include(CheckLibraryExists)
+include(CheckIncludeFiles)
+
 set(UNIXAUTH_LIBRARIES)
 set(UNIXAUTH_INCLUDE_DIRS)
 
