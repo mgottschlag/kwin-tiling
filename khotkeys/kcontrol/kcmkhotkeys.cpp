@@ -85,7 +85,7 @@ Module::Module( QWidget* parent_P, const QVariantList & )
     : KCModule( KHotKeysFactory::componentData(), parent_P ), _actions_root( NULL ), _current_action_data( NULL ),
         listview_is_changed( false ), deleting_action( false )
     {
-    setButtons( Help | Apply );
+    setButtons( Apply );
     module = this;
     init_global_data( false, this ); // don't grab keys
     init_arts();
