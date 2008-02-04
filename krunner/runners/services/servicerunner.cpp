@@ -76,6 +76,7 @@ void ServiceRunner::match(Plasma::SearchContext *search)
 
 void ServiceRunner::exec(Plasma::SearchMatch* action)
 {
+    QMutexLocker(bigLock());
     KService::Ptr service = KService::serviceByStorageId(action->data().toString());
     if (service) {
         KRun::run(*service, KUrl::List(), 0);
