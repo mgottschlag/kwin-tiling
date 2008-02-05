@@ -305,11 +305,11 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
 
                 d->menuview->addSeparator();
                 QAction *switchaction = d->menuview->addAction(KIcon("system-switch-user"),i18n("Switch User"));
-                switchaction->setData(QUrl("leave:/switch"));
+                switchaction->setData(KUrl("leave:/switch"));
                 QAction *lockaction = d->menuview->addAction(KIcon("system-lock-screen"),i18n("Lock"));
-                lockaction->setData(QUrl("leave:/lock"));
+                lockaction->setData(KUrl("leave:/lock"));
                 QAction *logoutaction = d->menuview->addAction(KIcon("system-log-out"),i18n("Logout"));
-                logoutaction->setData(QUrl("leave:/logout"));
+                logoutaction->setData(KUrl("leave:/logout"));
             } break;
             case Favorites: {
                 Kickoff::MenuView *favview = d->createMenuView(new Kickoff::FavoritesModel(d->menuview));
@@ -344,12 +344,12 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
 void MenuLauncherApplet::actionTriggered(QAction *action)
 {
     if (action->data().type() == QVariant::Url) {
-        QUrl url = action->data().toUrl();
+        KUrl url = action->data().toUrl();
         if (url.scheme() == "leave") {
             if ( ! d->launcher ) {
                 d->launcher = new Kickoff::UrlItemLauncher(d->menuview);
             }
-            d->launcher->openUrl(url.toString());
+            d->launcher->openUrl(url.url());
         }
     }
     else {

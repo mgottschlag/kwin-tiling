@@ -24,7 +24,6 @@
 // Qt
 #include <QFileInfo>
 #include <QStandardItem>
-#include <QUrl>
 #include <QDir>
 
 // KDE

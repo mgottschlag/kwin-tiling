@@ -39,7 +39,7 @@ class LeaveModel::Private
 
 QStandardItem* LeaveModel::createStandardItem(const QString& url)
 {
-    //Q_ASSERT(QUrl(url).scheme() == "leave");
+    //Q_ASSERT(KUrl(url).scheme() == "leave");
     QStandardItem *item = new QStandardItem();
     const QString basename = QFileInfo(url).baseName();
     if (basename == "logout") {

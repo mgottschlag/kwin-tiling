@@ -23,7 +23,9 @@
 // Qt
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QStack>
-#include <QtCore/QUrl>
+
+// KDE
+#include <KUrl>
 
 // Local
 #include "core/models.h"

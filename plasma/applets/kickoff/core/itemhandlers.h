@@ -30,13 +30,13 @@ namespace Kickoff
 class ServiceItemHandler : public UrlItemHandler
 {
 public:
-    virtual bool openUrl(const QUrl& url);
+    virtual bool openUrl(const KUrl& url);
 };
 class LeaveItemHandler : public QObject, public UrlItemHandler
 {
     Q_OBJECT
 public:
-    virtual bool openUrl(const QUrl& url);
+    virtual bool openUrl(const KUrl& url);
 
 private Q_SLOTS:
     void logout();

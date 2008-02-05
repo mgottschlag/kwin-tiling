@@ -25,11 +25,11 @@
 #include <QFileInfo>
 #include <QHash>
 #include <QModelIndex>
-#include <QUrl>
 
 // KDE
 #include <KDebug>
 #include <KRun>
+#include <KUrl>
 #include <Solid/Device>
 #include <Solid/StorageAccess>
 
@@ -50,7 +50,7 @@ public:
 class GenericItemHandler : public UrlItemHandler
 {
 public:
-    virtual bool openUrl(const QUrl& url)
+    virtual bool openUrl(const KUrl& url)
     {
         new KRun(url,0);
         return true;
@@ -67,7 +67,7 @@ public:
     {
         kDebug() << "Opening item with URL" << urlString;
 
-        QUrl url(urlString);
+        KUrl url(urlString);
         HandlerInfo protocolHandler = globalHandlers[url.scheme()];
         if (protocolHandler.type == ProtocolHandler && protocolHandler.handler != 0) {
             return protocolHandler.handler->openUrl(url);

@@ -21,13 +21,13 @@
 #include "core/itemhandlers.h"
 
 // Qt
-#include <QUrl>
 #include <QTimer>
 
 // KDE
 #include <KDebug>
 #include <KService>
 #include <KToolInvocation>
+#include <KUrl>
 #include <solid/powermanagement.h>
 
 // KDE Base
@@ -42,12 +42,12 @@
 
 using namespace Kickoff;
 
-bool ServiceItemHandler::openUrl(const QUrl& url)
+bool ServiceItemHandler::openUrl(const KUrl& url)
 {
-    int result = KToolInvocation::startServiceByDesktopPath(url.toString(),QStringList(),0,0,0,"",true);
+    int result = KToolInvocation::startServiceByDesktopPath(url.pathOrUrl(),QStringList(),0,0,0,"",true);
 
     if (result == 0) {
-        KService::Ptr service = KService::serviceByDesktopPath(url.toString());
+        KService::Ptr service = KService::serviceByDesktopPath(url.pathOrUrl());
 
         if (!service.isNull()) {
             RecentApplications::self()->add(service);
@@ -60,7 +60,7 @@ bool ServiceItemHandler::openUrl(const QUrl& url)
     return result == 0;
 }
 
-bool LeaveItemHandler::openUrl(const QUrl& url)
+bool LeaveItemHandler::openUrl(const KUrl& url)
 {
     m_logoutAction = url.path().remove('/');
 

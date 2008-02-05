@@ -25,7 +25,7 @@
 #include <solid/storageaccess.h>
 
 class QModelIndex;
-class QUrl;
+class KUrl;
 
 namespace Kickoff
 {
@@ -40,7 +40,7 @@ class UrlItemHandler
 {
 public:
     virtual ~UrlItemHandler() {}
-    virtual bool openUrl(const QUrl& url) = 0;
+    virtual bool openUrl(const KUrl& url) = 0;
 };
 
 /**
