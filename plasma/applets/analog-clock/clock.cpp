@@ -172,28 +172,17 @@ Clock::~Clock()
 {
 }
 
-void Clock::drawHand(QPainter *p, int rotation, const QString &handName)
+void Clock::drawHand(QPainter *p, qreal rotation, const QString &handName)
 {
-    Q_UNUSED(p);
-    Q_UNUSED(rotation);
-    Q_UNUSED(handName);
-// TODO: IMPLEMENT ME!
-//     p->save();
-//     QRectF tempRect(0, 0, 0, 0);
-//     QSizeF boundSize = boundingRect().size();
-//     QSize elementSize;
-// 
-//     p->translate(boundSize.width()/2, boundSize.height()/2);
-//     p->rotate(rotation);
-//     elementSize = m_theme->elementSize(handName);
-//     if (scaleFactor != 1) {
-//         elementSize = QSize(elementSize.width()*scaleFactor, elementSize.height()*scaleFactor);
-//     }
-//     p->translate(-elementSize.width()/2, -elementSize.width());
-//     m_theme->resize(elementSize);
-//     tempRect.setSize(elementSize);
-//     m_theme->paint(p, tempRect, handName);
-//     p->restore();
+    p->save();
+    const QSizeF boundSize = boundingRect().size();
+    const QSize elementSize = m_theme->elementSize(handName);
+
+    p->translate(boundSize.width() / 2, boundSize.height() / 2);
+    p->rotate(rotation);
+    p->translate(-elementSize.width() / 2, -elementSize.width());
+    m_theme->paint(p, QRect(QPoint(0, 0), elementSize), handName);
+    p->restore();
 }
 
 void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
@@ -208,43 +197,19 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     p->setRenderHint(QPainter::SmoothPixmapTransform);
 
-    qreal seconds = 6.0 * m_time.second() - 180;
-    qreal minutes = 6.0 * m_time.minute() - 180;
-    qreal hours = 30.0 * m_time.hour() - 180 + ((m_time.minute() / 59.0) * 30.0);
+    const qreal minutes = 6.0 * m_time.minute() - 180;
+    const qreal hours = 30.0 * m_time.hour() - 180 +
+                        ((m_time.minute() / 59.0) * 30.0);
 
     m_theme->paint(p, rect, "ClockFace");
 
-    p->save();
-    p->translate(boundSize.width()/2, boundSize.height()/2);
-    p->rotate(hours);
-    elementSize = m_theme->elementSize("HourHand");
-
-    p->translate(-elementSize.width()/2, -elementSize.width());
-    tempRect.setSize(elementSize);
-    m_theme->paint(p, tempRect, "HourHand");
-    p->restore();
-
-    p->save();
-    p->translate(boundSize.width()/2, boundSize.height()/2);
-    p->rotate(minutes);
-    elementSize = m_theme->elementSize("MinuteHand");
-    elementSize = QSize(elementSize.width(), elementSize.height());
-    p->translate(-elementSize.width()/2, -elementSize.width());
-    tempRect.setSize(elementSize);
-    m_theme->paint(p, tempRect, "MinuteHand");
-    p->restore();
+    drawHand(p, hours, "HourHand");
+    drawHand(p, minutes, "MinuteHand");
 
     //Make sure we paint the second hand on top of the others
     if (m_showSecondHand) {
-        p->save();
-        p->translate(boundSize.width()/2, boundSize.height()/2);
-        p->rotate(seconds);
-        elementSize = m_theme->elementSize("SecondHand");
-        elementSize = QSize(elementSize.width(), elementSize.height());
-        p->translate(-elementSize.width()/2, -elementSize.width());
-        tempRect.setSize(elementSize);
-        m_theme->paint(p, tempRect, "SecondHand");
-        p->restore();
+        const qreal seconds = 6.0 * m_time.second() - 180;
+        drawHand(p, seconds, "SecondHand");
     }
 
     p->save();

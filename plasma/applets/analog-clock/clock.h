@@ -68,7 +68,7 @@ class Clock : public Plasma::Containment
         void configAccepted();
 
     private:
-        void drawHand(QPainter *p, int rotation, const QString &handName);
+        void drawHand(QPainter *p, qreal rotation, const QString &handName);
         void connectToEngine();
 
         bool m_showTimeString;
