@@ -305,11 +305,11 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
 
                 d->menuview->addSeparator();
                 QAction *switchaction = d->menuview->addAction(KIcon("system-switch-user"),i18n("Switch User"));
-                switchaction->setData(KUrl("leave:/switch"));
+                switchaction->setData(QUrl("leave:/switch"));
                 QAction *lockaction = d->menuview->addAction(KIcon("system-lock-screen"),i18n("Lock"));
-                lockaction->setData(KUrl("leave:/lock"));
+                lockaction->setData(QUrl("leave:/lock"));
                 QAction *logoutaction = d->menuview->addAction(KIcon("system-log-out"),i18n("Logout"));
-                logoutaction->setData(KUrl("leave:/logout"));
+                logoutaction->setData(QUrl("leave:/logout"));
             } break;
             case Favorites: {
                 Kickoff::MenuView *favview = d->createMenuView(new Kickoff::FavoritesModel(d->menuview));
