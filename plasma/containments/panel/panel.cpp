@@ -175,10 +175,14 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
         setGeometry(geo);
 
         if (layout()) {
-            layout()->setMargin(Plasma::Layout::TopMargin, topHeight);
-            layout()->setMargin(Plasma::Layout::LeftMargin, leftWidth);
-            layout()->setMargin(Plasma::Layout::RightMargin, rightWidth);
-            layout()->setMargin(Plasma::Layout::BottomMargin, bottomHeight);
+            if (m_background->elementExists("hint-no-border-padding")) {
+                layout()->setMargin(0.0);
+            } else {
+                layout()->setMargin(Plasma::Layout::TopMargin, topHeight);
+                layout()->setMargin(Plasma::Layout::LeftMargin, leftWidth);
+                layout()->setMargin(Plasma::Layout::RightMargin, rightWidth);
+                layout()->setMargin(Plasma::Layout::BottomMargin, bottomHeight);
+            }
         }
 
         if (corona()) {
