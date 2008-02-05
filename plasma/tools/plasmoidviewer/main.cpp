@@ -27,8 +27,10 @@
 
 #include <KApplication>
 #include <KAboutData>
+#include <KAction>
 #include <KCmdLineArgs>
 #include <KLocale>
+#include <KStandardAction>
 
 using namespace Plasma;
 
@@ -68,6 +70,9 @@ int main(int argc, char **argv)
     FullView view( formfactor );
     view.addApplet( args->arg( args->count() - 1 ) );
     view.show();
+
+    QAction *action = KStandardAction::quit(&app, SLOT(quit()), &view);
+    view.addAction(action);
 
     return app.exec();
 }
