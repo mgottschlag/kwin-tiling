@@ -25,6 +25,8 @@
 
 #include "fullview.h"
 
+#include <QPixmapCache>
+
 #include <KApplication>
 #include <KAboutData>
 #include <KAction>
@@ -51,6 +53,8 @@ int main(int argc, char **argv)
     KCmdLineOptions options;
     options.add( "f" );
     options.add( "formfactor <name>", ki18n( "The formfactor to use (horizontal, vertical, mediacenter or planar)" ), "planar");
+    options.add( "p" );
+    options.add( "pixmapcache <size>", ki18n("The size in KB to set the pixmap cache to"));
     options.add( "+applet", ki18n( "Name of applet to add" ) );
     KCmdLineArgs::addCmdLineOptions( options );
 
@@ -63,7 +67,7 @@ int main(int argc, char **argv)
 
     QString formfactor;
     if (args->isSet("formfactor")) {
-//         kDebug() << "formfactor is set";
+        kDebug() << "setting FormFactor to" << args->getOption("formfactor");
         formfactor = args->getOption("formfactor");
     }
 
@@ -73,6 +77,11 @@ int main(int argc, char **argv)
 
     QAction *action = KStandardAction::quit(&app, SLOT(quit()), &view);
     view.addAction(action);
+
+    if (args->isSet("pixmapcache")) {
+        kDebug() << "setting pixmap cach to" << args->getOption("pixmapcache").toInt();
+        QPixmapCache::setCacheLimit(args->getOption("pixmapcache").toInt());
+    }
 
     return app.exec();
 }
