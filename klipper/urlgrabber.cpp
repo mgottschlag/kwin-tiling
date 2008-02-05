@@ -199,7 +199,7 @@ void URLGrabber::actionMenu( bool wm_class_check )
         {
             myMenu->addSeparator();
             QAction *disableAction = new QAction(i18n("Disable This Popup"), this);
-            connect(disableAction, SIGNAL(triggered()), SLOT(editData()));
+            connect(disableAction, SIGNAL(triggered()), SIGNAL(sigDisablePopup()));
             myMenu->addAction(disableAction);
         }
         myMenu->addSeparator();
