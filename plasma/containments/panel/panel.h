@@ -28,7 +28,7 @@ class KIntNumInput;
 
 namespace Plasma
 {
-    class Svg;
+    class SvgPanel;
 }
 
 class Panel : public Plasma::Containment
@@ -52,7 +52,7 @@ private slots:
     void applyConfig();
     void sizeComboChanged();
 private:
-    Plasma::Svg *m_background;
+    Plasma::SvgPanel *m_background;
     QPixmap* m_cachedBackground;
     KDialog* m_dialog;
     QComboBox* m_sizeCombo;

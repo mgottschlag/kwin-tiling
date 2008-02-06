@@ -33,7 +33,7 @@
 
 #include <plasma/corona.h>
 #include <plasma/layouts/layout.h>
-#include <plasma/svg.h>
+#include <plasma/svgpanel.h>
 
 using namespace Plasma;
 
@@ -48,7 +48,8 @@ Panel::Panel(QObject *parent, const QVariantList &args)
       m_drawBottom(true),
       m_size(48)
 {
-    m_background = new Plasma::Svg("widgets/panel-background", this);
+    m_background = new Plasma::SvgPanel("widgets/panel-background", this);
+    m_background->setBorderFlags(Plasma::SvgPanel::DrawAllBorders);
     setZValue(150);
     setContainmentType(Containment::PanelContainment);
 }
@@ -56,7 +57,6 @@ Panel::Panel(QObject *parent, const QVariantList &args)
 Panel::~Panel()
 {
     delete m_dialog;
-    delete m_background;
 }
 
 void Panel::init()
@@ -80,12 +80,13 @@ QList<QAction*> Panel::contextActions()
 void Panel::constraintsUpdated(Plasma::Constraints constraints)
 {
     //kDebug() << "constraints updated with" << constraints << "!!!!!!!!!!!!!!!!!";
+    if (constraints & Plasma::SizeConstraint) {
+        m_background->resize(size());
+    }
+
     if (constraints & Plasma::LocationConstraint || constraints & Plasma::ScreenConstraint) {
         Plasma::Location loc = location();
-        m_drawTop = true;
-        m_drawLeft = true;
-        m_drawRight = true;
-        m_drawBottom = true;
+        SvgPanel::BorderFlags bFlags = SvgPanel::DrawAllBorders;
 
         int s = screen();
         if (s < 0) {
@@ -100,10 +101,10 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
         int y = 0;
         int width = 0;
         int height = 0;
-        int topHeight = m_background->elementSize("top").height();
-        int leftWidth = m_background->elementSize("left").width();
-        int rightWidth = m_background->elementSize("right").width();
-        int bottomHeight = m_background->elementSize("bottom").height();
+        int topHeight = m_background->marginSize(Plasma::TopMargin);
+        int bottomHeight = m_background->marginSize(Plasma::BottomMargin);
+        int leftWidth = m_background->marginSize(Plasma::LeftMargin);
+        int rightWidth = m_background->marginSize(Plasma::RightMargin);
 
         if (loc == BottomEdge || loc == TopEdge) {
             setFormFactor(Plasma::Horizontal);
@@ -113,23 +114,23 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
             width = r.width();
 
             if (loc == BottomEdge) {
-                m_drawBottom = false;
+                bFlags ^= SvgPanel::DrawBottomBorder;
                 bottomHeight = 0;
                 height += topHeight;
                 y = r.bottom() - height + 1;
             } else {
-                m_drawTop = false;
+                bFlags ^= SvgPanel::DrawTopBorder;
                 topHeight = 0;
                 height += bottomHeight;
             }
 
             if (x <= r.x()) {
-                m_drawLeft = false;
+                bFlags ^= SvgPanel::DrawLeftBorder;
                 leftWidth = 0;
             }
 
             if (x + width >= r.right()) {
-                m_drawRight = false;
+                bFlags ^= SvgPanel::DrawRightBorder;
                 rightWidth = 0;
             }
             //kDebug() << "top/bottom: Width:" << width << ", height:" << height;
@@ -141,23 +142,23 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
             height = r.height();
 
             if (loc == RightEdge) {
-                m_drawRight = false;
+                bFlags ^= SvgPanel::DrawRightBorder;
                 rightWidth = 0;
                 width += leftWidth;
                 x = r.right() - width + 1;
             } else {
-                m_drawLeft = false;
+                bFlags ^= SvgPanel::DrawLeftBorder;
                 leftWidth = 0;
                 width += rightWidth;
             }
 
             if (y <= r.y()) {
-                m_drawTop = false;
+                bFlags ^= SvgPanel::DrawTopBorder;
                 topHeight = 0;
             }
 
             if (y + height >= r.bottom()) {
-                m_drawBottom = false;
+                bFlags ^= SvgPanel::DrawBottomBorder;
                 bottomHeight = 0;
             }
             //kDebug() << "left/right: Width:" << width << ", height:" << height;
@@ -175,15 +176,13 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
         setGeometry(geo);
 
         if (layout()) {
-            if (m_background->elementExists("hint-no-border-padding")) {
-                layout()->setMargin(0.0);
-            } else {
-                layout()->setMargin(Plasma::Layout::TopMargin, topHeight);
-                layout()->setMargin(Plasma::Layout::LeftMargin, leftWidth);
-                layout()->setMargin(Plasma::Layout::RightMargin, rightWidth);
-                layout()->setMargin(Plasma::Layout::BottomMargin, bottomHeight);
-            }
+            layout()->setMargin(Plasma::TopMargin, topHeight);
+            layout()->setMargin(Plasma::LeftMargin, leftWidth);
+            layout()->setMargin(Plasma::RightMargin, rightWidth);
+            layout()->setMargin(Plasma::BottomMargin, bottomHeight);
         }
+
+        m_background->setBorderFlags(bFlags);
 
         if (corona()) {
             foreach (Containment *c, corona()->containments()) {
@@ -227,142 +226,10 @@ void Panel::paintInterface(QPainter *painter,
     painter->setCompositionMode(QPainter::CompositionMode_Source);
     painter->setRenderHint(QPainter::Antialiasing);
 
-    paintBackground(painter, contentsRect);
+    m_background->paint(painter, contentsRect);
 
     // restore transformation and composition mode
     painter->restore();
-}
-
-void Panel::paintBackground(QPainter* painter, const QRect& contentsRect)
-{
-    QSize s = geometry().toRect().size();
-    m_background->resize();
-
-    if (!m_cachedBackground || m_cachedBackground->size() != s) {
-        const int topWidth = m_drawTop ? m_background->elementSize("top").width() : 0;
-        const int topHeight = m_drawTop ? m_background->elementSize("top").height() : 0;
-        const int leftWidth = m_drawLeft ? m_background->elementSize("left").width() : 0;
-        const int leftHeight = m_drawLeft ? m_background->elementSize("left").height(): 0;
-        const int rightWidth = m_drawRight ? m_background->elementSize("right").width() : 0;
-        const int rightHeight = m_drawRight ? m_background->elementSize("right").height() : 0;
-        const int bottomWidth = m_drawBottom ? m_background->elementSize("bottom").width() : 0;
-        const int bottomHeight = m_drawBottom ? m_background->elementSize("bottom").height() : 0;
-        //kDebug() << "********************************* " << topWidth << topHeight;
-        const int topOffset = 0;
-        const int leftOffset = 0;
-        const int contentWidth = s.width() - leftWidth - rightWidth;
-        const int contentHeight = s.height() - topHeight - bottomHeight;
-        const int rightOffset = s.width() - rightWidth;
-        const int bottomOffset = s.height() - bottomHeight;
-        const int contentTop = topHeight;
-        const int contentLeft = leftWidth;
-
-        delete m_cachedBackground;
-        m_cachedBackground = new QPixmap(s);
-
-        m_cachedBackground->fill(Qt::transparent);
-        QPainter p(m_cachedBackground);
-        p.setCompositionMode(QPainter::CompositionMode_Source);
-        p.setRenderHint(QPainter::SmoothPixmapTransform);
-
-        //FIXME: This is a hack to fix a drawing problems with svg files where a thin transparent border is drawn around the svg image.
-        //       the transparent border around the svg seems to vary in size depending on the size of the svg and as a result increasing the
-        //       svn image by 2 all around didn't resolve the issue. For now it resizes based on the border size.
-
-        if (contentWidth > 0 && contentHeight > 0) {
-            m_background->resize(s);
-            m_background->paint(&p, QRect(contentLeft-leftWidth*3-contentWidth, contentTop-topHeight*2, contentWidth*3+leftWidth*2, contentHeight*2+topHeight*2), "center");
-            m_background->resize();
-        }
-
-        if (m_drawTop) {
-            if (m_drawLeft) {
-                m_background->paint(&p, QRect(leftOffset, topOffset, leftWidth, topHeight), "topleft");
-            }
-
-            if (m_drawRight) {
-                m_background->paint(&p, QRect(rightOffset, topOffset, rightWidth, topHeight), "topright");
-            }
-        }
-
-        if (m_drawBottom) {
-            if (m_drawLeft) {
-                m_background->paint(&p, QRect(leftOffset, bottomOffset, leftWidth, bottomHeight), "bottomleft");
-            }
-
-            if (m_drawRight) {
-                m_background->paint(&p, QRect(rightOffset, bottomOffset, rightWidth, bottomHeight), "bottomright");
-            }
-        }
-
-        if (m_background->elementExists("hint-stretch-borders")) {
-            if (m_drawLeft) {
-                m_background->paint(&p, QRect(leftOffset, contentTop, leftWidth, contentHeight), "left");
-            }
-
-            if (m_drawRight) {
-                m_background->paint(&p, QRect(rightOffset, contentTop, rightWidth, contentHeight), "right");
-            }
-
-            if (m_drawTop) {
-                m_background->paint(&p, QRect(contentLeft, topOffset, contentWidth, topHeight), "top");
-            }
-
-            if (m_drawBottom) {
-                m_background->paint(&p, QRect(contentLeft, bottomOffset, contentWidth, bottomHeight), "bottom");
-            }
-        } else {
-            if (m_drawLeft) {
-                QPixmap left(leftWidth, leftHeight);
-                left.fill(Qt::transparent);
-                {
-                    QPainter sidePainter(&left);
-                    sidePainter.setCompositionMode(QPainter::CompositionMode_Source);
-                    m_background->paint(&sidePainter, QPoint(0, 0), "left");
-                }
-                p.drawTiledPixmap(QRect(leftOffset, contentTop, leftWidth, contentHeight), left);
-            }
-
-            if (m_drawRight) {
-                QPixmap right(rightWidth, rightHeight);
-                right.fill(Qt::transparent);
-                {
-                    QPainter sidePainter(&right);
-                    sidePainter.setCompositionMode(QPainter::CompositionMode_Source);
-                    m_background->paint(&sidePainter, QPoint(0, 0), "right");
-                }
-                p.drawTiledPixmap(QRect(rightOffset, contentTop, rightWidth, contentHeight), right);
-            }
-
-            if (m_drawTop) {
-                QPixmap top(topWidth, topHeight);
-                top.fill(Qt::transparent);
-                {
-                    QPainter sidePainter(&top);
-                    sidePainter.setCompositionMode(QPainter::CompositionMode_Source);
-                    m_background->paint(&sidePainter, QPoint(0, 0), "top");
-                }
-                p.drawTiledPixmap(QRect(contentLeft, topOffset, contentWidth, topHeight), top);
-            }
-
-            if (m_drawBottom) {
-                QPixmap bottom(bottomWidth, bottomHeight);
-                bottom.fill(Qt::transparent);
-                {
-                    QPainter sidePainter(&bottom);
-                    sidePainter.setCompositionMode(QPainter::CompositionMode_Source);
-                    m_background->paint(&sidePainter, QPoint(0, 0), "bottom");
-                }
-                p.drawTiledPixmap(QRect(contentLeft, bottomOffset, contentWidth, bottomHeight), bottom);
-            }
-        }
-
-        // re-enable this once Qt's svg rendering is un-buggered
-        //background->resize(contentWidth, contentHeight);
-        //background->paint(&p, QRect(contentLeft, contentTop, contentWidth, contentHeight), "center");
-    }
-
-    painter->drawPixmap(contentsRect, *m_cachedBackground, contentsRect);
 }
 
 void Panel::configure()
@@ -433,7 +300,7 @@ void Panel::applyConfig()
     const int size = m_sizeCombo->itemData(m_sizeCombo->currentIndex()).toInt();
     m_size = size > 0 ? size : m_sizeEdit->value();
     cg.writeEntry("size", m_size);
-    
+
     setLocation((Plasma::Location)(m_locationCombo->itemData(m_locationCombo->currentIndex()).toInt()));
 
     updateConstraints();
