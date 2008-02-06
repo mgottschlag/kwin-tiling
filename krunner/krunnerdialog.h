@@ -24,7 +24,7 @@
 
 namespace Plasma
 {
-    class Svg;
+    class SvgPanel;
 }
 
 class KRunnerDialog : public KDialog
@@ -43,7 +43,7 @@ class KRunnerDialog : public KDialog
 
     private:
         void paintBackground(QPainter* painter, const QRect &exposedRect);
-        Plasma::Svg *m_background;
+        Plasma::SvgPanel *m_background;
         QPixmap *m_cachedBackground;
 };
 
