@@ -14,11 +14,11 @@ set(solid_bluez_PART_SRCS
 
 
 kde4_add_library(solid_bluez_static STATIC ${solid_bluez_PART_SRCS})
-target_link_libraries(solid_bluez_static ${KDE4_KDECORE_LIBS} QtXml solidcontrolifaces)
+target_link_libraries(solid_bluez_static ${KDE4_KDECORE_LIBS} ${QT_QTXML_LIBRARY} solidcontrolifaces)
 
 kde4_add_plugin(solid_bluez module.cpp ${solid_bluez_PART_SRCS})
 
-target_link_libraries(solid_bluez ${KDE4_KDECORE_LIBS} QtXml solidcontrolifaces)
+target_link_libraries(solid_bluez ${KDE4_KDECORE_LIBS} ${QT_QTXML_LIBRARY} solidcontrolifaces)
 install(TARGETS solid_bluez DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install(FILES solid_bluez.desktop DESTINATION ${SERVICES_INSTALL_DIR}/solidbackends )
