@@ -113,6 +113,7 @@ private slots:
     
     void updateScreenshot(QPersistentModelIndex index);
     void cleanup();
+    void removeBackground(const QString &path);
 };
 
 #endif // BACKGROUNDDIALOG_H

@@ -29,6 +29,7 @@
 #include <KColorButton>
 #include <KDebug>
 #include <KDirSelectDialog>
+#include <KDirWatch>
 #include <KFileDialog>
 #include <KGlobalSettings>
 #include <KImageFilePreview>
@@ -118,11 +119,13 @@ public:
     void reload(const QStringList &selected);
     void addBackground(const QString &path);
     int indexOf(const QString &path) const;
+    void removeBackground(const QString &path);
     virtual bool contains(const QString &bg) const;
 private:
     QObject *m_listener;
     QList<Background*> m_packages;
     float m_ratio;
+    KDirWatch m_dirwatch;
 };
 
 class BackgroundDelegate : public QAbstractItemDelegate
@@ -151,6 +154,17 @@ BackgroundListModel::BackgroundListModel(float ratio, QObject *listener)
 : m_listener(listener)
 , m_ratio(ratio)
 {
+    connect(&m_dirwatch, SIGNAL(deleted(QString)), listener, SLOT(removeBackground(QString)));
+}
+
+void BackgroundListModel::removeBackground(const QString &path)
+{
+    int index;
+    while ((index = indexOf(path)) != -1) {
+        beginRemoveRows(QModelIndex(), index, index);
+        m_packages.removeAt(index);
+        endRemoveRows();
+    }
 }
 
 void BackgroundListModel::reload() 
@@ -163,12 +177,19 @@ void BackgroundListModel::reload(const QStringList& selected)
     QStringList dirs = KGlobal::dirs()->findDirs("wallpaper", "");
     QList<Background *> tmp;
     foreach (QString file, selected) {
-        if (!contains(file)) {
+        if (!contains(file) && QFile::exists(file)) {
             tmp << new BackgroundFile(file, m_ratio);
         }
     }
     foreach (QString dir, dirs) {
         tmp += findAllBackgrounds(this, dir, m_ratio);
+    }
+    
+    // add new files to dirwatch
+    foreach (Background *b, tmp) {
+        if (!m_dirwatch.contains(b->path())) {
+            m_dirwatch.addFile(b->path());
+        }
     }
     
     if (!tmp.isEmpty()) {
@@ -180,6 +201,9 @@ void BackgroundListModel::reload(const QStringList& selected)
 
 void BackgroundListModel::addBackground(const QString& path) {
     if (!contains(path)) {
+        if (!m_dirwatch.contains(path)) {
+            m_dirwatch.addFile(path);
+        }
         beginInsertRows(QModelIndex(), 0, 0);
         m_packages.prepend(new BackgroundFile(path, m_ratio));
         endInsertRows();
@@ -712,4 +736,9 @@ void BackgroundDialog::updateScreenshot(QPersistentModelIndex index)
 void BackgroundDialog::cleanup()
 {
     m_preview_timer.stop();
+}
+
+void BackgroundDialog::removeBackground(const QString &path)
+{
+    m_model->removeBackground(path);
 }
