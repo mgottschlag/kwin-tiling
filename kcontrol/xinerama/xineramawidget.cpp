@@ -29,7 +29,6 @@ XineramaWidget::XineramaWidget( QWidget* parent )
     connect(_enableXinerama, SIGNAL(toggled(bool)), _enableMaximize, SLOT(setEnabled(bool)));
     connect(_enableXinerama, SIGNAL(toggled(bool)), TextLabel2, SLOT(setEnabled(bool)));
     connect(_enableXinerama, SIGNAL(toggled(bool)), _unmanagedDisplay, SLOT(setEnabled(bool)));
-    connect(_enableXinerama, SIGNAL(clicked()), _unmanagedDisplay, SLOT(emitConfigChanged()));
     connect(_enableResistance,SIGNAL(clicked()), this, SLOT(emitConfigChanged()));
     connect(_enablePlacement,SIGNAL(clicked()), this, SLOT(emitConfigChanged()));
     connect(_enableMaximize,SIGNAL(clicked()), this, SLOT(emitConfigChanged()));
