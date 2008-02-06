@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <fstream>
 #include <time.h>
-#include <QtXml>
+#include <QtXml/QtXml>
 
 class KXftConfig
 {
