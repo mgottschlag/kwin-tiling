@@ -68,10 +68,24 @@ void ServiceRunner::match(Plasma::SearchContext *search)
     const KService::List services = serviceQuery("Application", query);
 
     //kDebug() << "got " << services.count() << " services from " << query;
-
+    QList<Plasma::SearchMatch*> possibilities;
     foreach (const KService::Ptr service, services) {
-        setupAction(service, search->addPossibleMatch(this));
+        Plasma::SearchMatch *match = new Plasma::SearchMatch(search, this);
+        setupAction(service, match);
+        qreal relevance(0.5);
+
+        if (service->name().contains(term)) {
+            relevance = 1;
+        } else if (service->genericName().contains(term)) {
+            relevance = .7;
+        }
+
+        match->setRelevance(relevance);
+        possibilities.append(match);
     }
+
+    QList<Plasma::SearchMatch*> empties;
+    search->addMatches(term, empties, possibilities, empties);
 }
 
 void ServiceRunner::exec(Plasma::SearchMatch* action)
