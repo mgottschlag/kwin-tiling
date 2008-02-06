@@ -137,6 +137,17 @@ class SearchMatch : public QListWidgetItem
             }
         }
 
+        bool operator<(const QListWidgetItem & other) const
+        {
+            const SearchMatch *otherMatch = dynamic_cast<const SearchMatch*>(&other);
+
+            if (!otherMatch) {
+                return QListWidgetItem::operator<(other);
+            }
+
+            return m_action->relevance() < otherMatch->m_action->relevance();
+        }
+
     private:
         bool m_default;
         Plasma::SearchMatch* m_action;
@@ -308,6 +319,7 @@ Interface::Interface(QWidget* parent)
 
     //TODO: temporary feedback, change later with the "icon parade" :)
     m_matchList = new QListWidget(w);
+    m_matchList->setSortingEnabled(true);
     connect( m_matchList, SIGNAL(itemActivated(QListWidgetItem*)),
              SLOT(matchActivated(QListWidgetItem*)) );
     connect( m_matchList, SIGNAL(itemClicked(QListWidgetItem*)),
