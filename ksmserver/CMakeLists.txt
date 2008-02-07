@@ -20,14 +20,14 @@ set(ksmserver_KDEINIT_SRCS
 
 set(kcminit_adaptor ${CMAKE_CURRENT_SOURCE_DIR}/../kcminit/main.h)
 set(kcminit_xml ${CMAKE_CURRENT_BINARY_DIR}/org.kde.KCMinit.xml)
-ADD_CUSTOM_COMMAND(OUTPUT ${kcminit_xml}
+add_custom_command(OUTPUT ${kcminit_xml}
        COMMAND ${QT_DBUSCPP2XML_EXECUTABLE} ${kcminit_adaptor} > ${kcminit_xml}
        DEPENDS ${kcminit_adaptor})
-QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${kcminit_xml} kcminit_interface )
+qt4_add_dbus_interface( ksmserver_KDEINIT_SRCS ${kcminit_xml} kcminit_interface )
 
 # KLauchner.xml is installed by kdelibs, so it is in KDE4_DBUS_INTERFACES_DIR
 set(klauncher_xml  ${KDE4_DBUS_INTERFACES_DIR}/org.kde.KLauncher.xml)
-QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${klauncher_xml} klauncher_interface )
+qt4_add_dbus_interface( ksmserver_KDEINIT_SRCS ${klauncher_xml} klauncher_interface )
 
 qt4_add_dbus_adaptor( ksmserver_KDEINIT_SRCS org.kde.KSMServerInterface.xml server.h KSMServer )
 
