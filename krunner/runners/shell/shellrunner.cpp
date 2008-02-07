@@ -35,6 +35,7 @@ ShellRunner::ShellRunner(QObject* parent)
 {
     setObjectName(i18n("Command"));
     setHasMatchOptions(true);
+    setPriority(AbstractRunner::HighestPriority);
     m_enabled = KAuthorized::authorizeKAction("shell_access");
 }
 

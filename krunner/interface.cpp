@@ -145,7 +145,11 @@ class SearchMatch : public QListWidgetItem
                 return QListWidgetItem::operator<(other);
             }
 
-            return m_action->relevance() < otherMatch->m_action->relevance();
+            if (m_default) {
+                return true;
+            }
+
+            return m_action->relevance() > otherMatch->m_action->relevance();
         }
 
     private:

@@ -74,9 +74,9 @@ void ServiceRunner::match(Plasma::SearchContext *search)
         setupAction(service, match);
         qreal relevance(0.5);
 
-        if (service->name().contains(term)) {
+        if (service->name().contains(term, Qt::CaseInsensitive)) {
             relevance = 1;
-        } else if (service->genericName().contains(term)) {
+        } else if (service->genericName().contains(term, Qt::CaseInsensitive)) {
             relevance = .7;
         }
 
