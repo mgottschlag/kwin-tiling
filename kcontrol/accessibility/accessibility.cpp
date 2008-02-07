@@ -63,7 +63,7 @@ AccessibilityConfig::AccessibilityConfig(QWidget *parent, const QVariantList &ar
    Q_UNUSED( args )
 
    QVBoxLayout *mainLayout = new QVBoxLayout( this );
-   widget = new AccessibilityConfigWidget(this, 0L);
+   widget = new AccessibilityConfigWidget(this);
    mainLayout->addWidget(widget);
    setLayout(mainLayout);
 
@@ -79,6 +79,35 @@ AccessibilityConfig::AccessibilityConfig(QWidget *parent, const QVariantList &ar
    kDebug() << "Running: AccessibilityConfig::AccessibilityConfig(QWidget *parent, const char *name, const QStringList &)";
    // TODO: set the KUrl Dialog to open just audio files
    connect( widget->mainTab, SIGNAL(currentChanged(QWidget*)), this, SIGNAL(quickHelpChanged()) );
+   connect( widget->systemBell, SIGNAL( toggled( bool ) ), this, SLOT( slotChanged() ) );
+   connect( widget->customBell, SIGNAL( toggled( bool ) ), this, SLOT( slotChanged() ) );
+   connect( widget->soundToPlay, SIGNAL( textChanged(const QString&) ), this, SLOT( slotChanged() ) );
+   connect( widget->visibleBell, SIGNAL( toggled( bool ) ), this, SLOT( slotChanged() ) );
+   connect( widget->invertScreen, SIGNAL( toggled( bool ) ), this, SLOT( slotChanged() ) );
+   connect( widget->flashScreen, SIGNAL( toggled( bool ) ), this, SLOT( slotChanged() ) );
+   connect( widget->flashScreenColor, SIGNAL( changed( QColor ) ), this, SLOT( slotChanged() ) );
+   connect( widget->visibleBellDuration, SIGNAL( valueChanged( int ) ), this, SLOT(slotChanged() ) );
+   connect( widget->visibleBellDurationSlider, SIGNAL( valueChanged( int ) ), this, SLOT( slotChanged() ) );
+   connect( widget->stickyKeys, SIGNAL( toggled( bool ) ), this, SLOT( slotChanged() ) );
+   connect( widget->lockWithStickyKeys, SIGNAL( toggled( bool ) ), this, SLOT( slotChanged() ) );
+   connect( widget->slowKeys, SIGNAL( toggled( bool ) ), this, SLOT( slotChanged() ) );
+   connect( widget->slowKeysDelay, SIGNAL( valueChanged( int ) ), this, SLOT( slotChanged() ) );
+   connect( widget->bounceKeys, SIGNAL( toggled( bool ) ), this, SLOT( slotChanged() ) );
+   connect( widget->bounceKeysDelay, SIGNAL( valueChanged( int ) ), this, SLOT( slotChanged() ) );
+   connect( widget->bounceKeysDelaySlider, SIGNAL( valueChanged( int ) ), this, SLOT( slotChanged() ) );
+   connect( widget->moveWithKeyboard, SIGNAL( toggled( bool ) ), this, SLOT( slotChanged() ) );
+   connect( widget->accelerationDelay, SIGNAL( valueChanged( int ) ), this, SLOT( slotChanged() ) );
+   connect( widget->accelerationDelaySlider, SIGNAL( valueChanged( int ) ), this, SLOT( slotChanged() ) );
+   connect( widget->repeatInterval, SIGNAL( valueChanged( int ) ), this, SLOT( slotChanged() ) );
+   connect( widget->repeatInternalSlider, SIGNAL( valueChanged( int ) ), this, SLOT( slotChanged() ) );
+   connect( widget->accelerationTime, SIGNAL( valueChanged( int ) ), this, SLOT( slotChanged() ) );
+   connect( widget->accelerationDelaySlider, SIGNAL( valueChanged( int ) ), this, SLOT( slotChanged() ) );
+   connect( widget->maximumSpeed, SIGNAL( valueChanged( int ) ), this, SLOT( slotChanged() ) );
+   connect( widget->maximumSpeedSlider, SIGNAL( valueChanged( int ) ), this, SLOT( slotChanged() ) );
+   connect( widget->accelerationProfile, SIGNAL( valueChanged(int ) ), this, SLOT( slotChanged() ) );
+   connect( widget->accelerationProfileSlider, SIGNAL( valueChanged(int ) ), this, SLOT( slotChanged() ) );
+   connect( widget->visibleBell, SIGNAL( toggled( bool ) ), this, SLOT( updateFlashScreenColor() ) );
+
    load();
 }
 
@@ -86,6 +115,18 @@ AccessibilityConfig::AccessibilityConfig(QWidget *parent, const QVariantList &ar
 AccessibilityConfig::~AccessibilityConfig(){
    kDebug() << "Running: AccessibilityConfig::~AccessibilityConfig()";
 }
+
+
+void AccessibilityConfig::updateFlashScreenColor(){
+   widget->flashScreenColor->setEnabled(widget->flashScreen->isChecked());
+}
+
+void AccessibilityConfig::slotChanged()
+{
+    emit changed( true );
+}
+
+
 
 void AccessibilityConfig::load(){
    kDebug() << "Running: AccessibilityConfig::load()";
