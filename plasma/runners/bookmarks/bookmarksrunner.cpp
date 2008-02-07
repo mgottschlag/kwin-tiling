@@ -62,7 +62,7 @@ void BookmarksRunner::match(Plasma::SearchContext *search)
     QList<Plasma::SearchMatch*> empty;
     QList<KBookmark> matchingBookmarks = searchBookmarks(bookmarkGrp, term);
     foreach (KBookmark bookmark, matchingBookmarks) {
-        kDebug() << "Found bookmark: " << bookmark.text() << " (" << bookmark.url().prettyUrl() << ")";
+        //kDebug() << "Found bookmark: " << bookmark.text() << " (" << bookmark.url().prettyUrl() << ")";
         Plasma::SearchMatch *action = new Plasma::SearchMatch(search, this);
 
         /*
