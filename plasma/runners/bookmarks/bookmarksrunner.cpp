@@ -50,18 +50,24 @@ BookmarksRunner::~BookmarksRunner()
 
 void BookmarksRunner::match(Plasma::SearchContext *search)
 {
-    if (search->searchTerm().length() < 3) {
+    QString term = search->searchTerm();
+    if (term.length() < 3) {
         return;
     }
 
     KBookmarkManager *bookmarkMgr = KBookmarkManager::userBookmarksManager();
     KBookmarkGroup bookmarkGrp = bookmarkMgr->root();
 
-    QList<KBookmark> matchingBookmarks = searchBookmarks(bookmarkGrp, search->searchTerm());
+    QList<Plasma::SearchMatch*> possibles;
+    QList<Plasma::SearchMatch*> empty;
+    QList<KBookmark> matchingBookmarks = searchBookmarks(bookmarkGrp, term);
     foreach (KBookmark bookmark, matchingBookmarks) {
         kDebug() << "Found bookmark: " << bookmark.text() << " (" << bookmark.url().prettyUrl() << ")";
-        Plasma::SearchMatch *action = search->addPossibleMatch(this);
+        Plasma::SearchMatch *action = new Plasma::SearchMatch(search, this);
 
+        /*
+        getting the favicon is too slow and can easily lead to starving the
+        thread pool out
         QIcon icon = getFavicon(bookmark.url());
         if (icon.isNull()) {
             action->setIcon(m_icon);
@@ -69,9 +75,13 @@ void BookmarksRunner::match(Plasma::SearchContext *search)
         else {
             action->setIcon(icon);
         }
+        */
         action->setText(bookmark.text());
         action->setData(bookmark.url().url());
+        possibles.append(action);
     }
+
+    search->addMatches(term, empty, possibles, empty);
 }
 
 QList<KBookmark> BookmarksRunner::searchBookmarks(const KBookmarkGroup &bookmarkGrp, const QString &query)
