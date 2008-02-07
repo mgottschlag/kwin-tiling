@@ -25,7 +25,8 @@ ADD_CUSTOM_COMMAND(OUTPUT ${kcminit_xml}
        DEPENDS ${kcminit_adaptor})
 QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${kcminit_xml} kcminit_interface )
 
-set(klauncher_xml  ${DBUS_INTERFACES_INSTALL_DIR}/org.kde.KLauncher.xml)
+# KLauchner.xml is installed by kdelibs, so it is in KDE4_DBUS_INTERFACES_DIR
+set(klauncher_xml  ${KDE4_DBUS_INTERFACES_DIR}/org.kde.KLauncher.xml)
 QT4_ADD_DBUS_INTERFACE( ksmserver_KDEINIT_SRCS ${klauncher_xml} klauncher_interface )
 
 qt4_add_dbus_adaptor( ksmserver_KDEINIT_SRCS org.kde.KSMServerInterface.xml server.h KSMServer )
