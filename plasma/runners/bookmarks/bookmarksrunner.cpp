@@ -76,8 +76,10 @@ void BookmarksRunner::match(Plasma::SearchContext *search)
             action->setIcon(icon);
         }
         */
+        action->setIcon(m_icon);
         action->setText(bookmark.text());
         action->setData(bookmark.url().url());
+        action->setRelevance(0.8);
         possibles.append(action);
     }
 
