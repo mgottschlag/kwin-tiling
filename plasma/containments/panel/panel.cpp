@@ -50,6 +50,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
 {
     m_background = new Plasma::SvgPanel("widgets/panel-background", this);
     m_background->setBorderFlags(Plasma::SvgPanel::DrawAllBorders);
+    connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(backgroundChanged()));
     setZValue(150);
     setContainmentType(Containment::PanelContainment);
 }
@@ -75,6 +76,11 @@ QList<QAction*> Panel::contextActions()
         connect(m_configureAction, SIGNAL(triggered()), this, SLOT(configure()));
     }
     return QList<QAction*>() << m_configureAction;
+}
+
+void Panel::backgroundChanged()
+{
+    constraintsUpdated(Plasma::LocationConstraint);
 }
 
 void Panel::constraintsUpdated(Plasma::Constraints constraints)

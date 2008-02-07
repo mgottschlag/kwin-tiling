@@ -47,10 +47,13 @@ public:
                         const QStyleOptionGraphicsItem *option,
                         const QRect &contentsRect);
     void paintBackground(QPainter *painter, const QRect &contentsRect);
+
 private slots:
     void configure();
     void applyConfig();
     void sizeComboChanged();
+    void backgroundChanged();
+
 private:
     Plasma::SvgPanel *m_background;
     QPixmap* m_cachedBackground;
