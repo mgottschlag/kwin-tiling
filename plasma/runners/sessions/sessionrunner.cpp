@@ -24,6 +24,7 @@
 #include <KAction>
 #include <KActionCollection>
 #include <KAuthorized>
+#include <KDebug>
 #include <KLocale>
 #include <KMessageBox>
 
@@ -44,10 +45,27 @@ SessionRunner::~SessionRunner()
 
 void SessionRunner::match(Plasma::SearchContext *search)
 {
-    //TODO: ugh, magic strings.
     QString term = search->searchTerm();
+
+    if (term.size() < 3) {
+        return;
+    }
+
+    //TODO: ugh, magic strings.
     bool listAll = (term == "SESSIONS");
 
+    if (!listAll && term.startsWith("switch")) {
+        // interestingly, this means that if one wants to switch to a
+        // session named "switch", they'd have to enter
+        // switch switch. ha!
+        term = term.right(term.size() - 6).trimmed();
+
+        if (term.isEmpty()) {
+            return;
+        }
+    }
+
+    //kDebug() << "session switching to" << (listAll ? "all sessions" : term);
 
     if (listAll &&
         KAuthorized::authorizeKAction("start_new_session") &&
