@@ -73,4 +73,4 @@ Comment[zh_TW]=檔案與網址開啟器
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_locations
-X-Krunner-ID=Locations runner
+X-Plasma-RunnerName=Locations

@@ -85,4 +85,4 @@ Comment[zh_TW]=開啟書籤
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_bookmarksrunner
-X-Krunner-ID=Bookmarks Runner
+X-Plasma-RunnerName=Bookmarks

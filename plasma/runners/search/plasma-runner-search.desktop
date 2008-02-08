@@ -104,5 +104,5 @@ Comment[zh_TW]=搜索檔案
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_searchrunner
-X-Krunner-ID=Search Runner
+X-Plasma-RunnerName=Search
 X-Plasma-RunnerPhase=last

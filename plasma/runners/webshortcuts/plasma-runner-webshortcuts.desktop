@@ -84,4 +84,4 @@ Comment[zh_TW]=網頁捷徑執行者
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_webshortcuts
-X-Krunner-ID=Webshortcut runner
+X-Plasma-RunnerName=Webshortcut
