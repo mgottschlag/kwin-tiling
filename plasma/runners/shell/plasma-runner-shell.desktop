@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Command line runner
+Comment=Executes shell commands
+X-KDE-ServiceTypes=Plasma/Runner
+Type=Service
+X-KDE-Library=krunner_shell
+X-Plasma-RunnerName=Shell
+X-Plasma-RunnerPhase=first

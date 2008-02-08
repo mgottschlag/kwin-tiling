@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Applications Runner
+Comment=Applications, control panels and services
+X-KDE-ServiceTypes=Plasma/Runner
+Type=Service
+X-KDE-Library=krunner_services
+X-Plasma-RunnerName=Services
+X-Plasma-RunnerPhase=first
