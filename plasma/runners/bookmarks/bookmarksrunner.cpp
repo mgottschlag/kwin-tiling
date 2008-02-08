@@ -36,7 +36,7 @@
 
 
 BookmarksRunner::BookmarksRunner( QObject* parent, const QVariantList &args )
-    : Plasma::AbstractRunner(parent)
+    : Plasma::AbstractRunner(parent, args)
 {
     KGlobal::locale()->insertCatalog("krunner_bookmarksrunner");
     Q_UNUSED(args)

@@ -28,7 +28,7 @@
 #include <KIcon>
 
 CalculatorRunner::CalculatorRunner( QObject* parent, const QVariantList &args )
-    : Plasma::AbstractRunner(parent)
+    : Plasma::AbstractRunner(parent, args)
 {
     KGlobal::locale()->insertCatalog("krunner_calculatorrunner");
     Q_UNUSED(args)

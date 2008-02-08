@@ -35,7 +35,7 @@
 
 
 WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
-    : Plasma::AbstractRunner(parent),
+    : Plasma::AbstractRunner(parent, args),
       m_type(Plasma::SearchContext::UnknownType)
 {
     KGlobal::locale()->insertCatalog("krunner_webshortcutsrunner");
