@@ -128,5 +128,12 @@ void Solid::Control::BluetoothPasskeyAgent::cancelAuthentication(const QString &
 {
     Q_UNUSED(ubi)
 }
+/****************************** BluetoothAuthorizationAgent implementation ******************************/
+
+Solid::Control::BluetoothAuthorizationAgent::BluetoothAuthorizationAgent(QObject * parent)
+    :QObject(parent)
+{
+
+}
 
 #include "bluetoothsecurity.moc"
