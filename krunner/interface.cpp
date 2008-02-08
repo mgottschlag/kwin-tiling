@@ -51,9 +51,6 @@
 
 #include <plasma/abstractrunner.h>
 
-#include "runners/services/servicerunner.h"
-#include "runners/sessions/sessionrunner.h"
-#include "runners/shell/shellrunner.h"
 #include "collapsiblewidget.h"
 #include "interfaceadaptor.h"
 
@@ -376,11 +373,8 @@ Interface::Interface(QWidget* parent)
     //        SLOT(setWidgetPalettes()));
 
     //TODO: how should we order runners, particularly ones loaded from plugins?
-    m_runners.append( new ShellRunner( this ) );
-    m_runners.append( new ServiceRunner( this ) );
-    m_runners.append( new SessionRunner( this ) );
-    QStringList whitelist = cg.readEntry( "runners",QStringList() );
-    m_runners += Plasma::AbstractRunner::loadRunners( this, whitelist );
+    QStringList whitelist = cg.readEntry("runners", QStringList());
+    m_runners += Plasma::AbstractRunner::loadRunners(this, whitelist);
 
     connect(&m_context, SIGNAL(matchesChanged()), this, SLOT(queueUpdates()));
 
@@ -441,7 +435,7 @@ void Interface::switchUser()
         kDebug() << "Could not find the Sessionrunner; not showing any sessions!";
         return;
     }
-    //TODO: ugh, magic strings. See runners/sessions/sessionrunner.cpp
+    //TODO: ugh, magic strings. See sessions/sessionrunner.cpp
     display("SESSIONS");
     m_header->setText(i18n("Switch users"));
     m_header->setPixmap("system-switch-user");

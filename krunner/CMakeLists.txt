@@ -20,9 +20,6 @@ set(krunner_SRCS
                  krunnerapp.cpp
                  restartingapplication.cpp
                  main.cpp
-                 runners/services/servicerunner.cpp
-                 runners/sessions/sessionrunner.cpp
-                 runners/shell/shellrunner.cpp
                  saverengine.cpp
                  startupid.cpp
                  xautolock.cpp
@@ -36,7 +33,6 @@ qt4_add_dbus_adaptor(krunner_SRCS ${krunner_dbusAppXML} krunnerapp.h KRunnerApp)
 qt4_add_dbus_adaptor(krunner_SRCS ${screensaver_dbusXML} saverengine.h SaverEngine)
 qt4_add_dbus_adaptor(krunner_SRCS ${kscreensaver_dbusXML} saverengine.h SaverEngine kscreensaveradaptor KScreenSaverAdaptor)
 
-kde4_add_ui_files(krunner_SRCS runners/shell/shellOptions.ui)
 kde4_add_kdeinit_executable(krunner ${krunner_SRCS})
 # needs qt3support for Q3ListView in lockdlg
 target_link_libraries(kdeinit_krunner plasma kworkspace processui ${KDE4_THREADWEAVER_LIBRARIES} ${X11_Xrender_LIB} ${KDE4_KDEUI_LIBS} 
