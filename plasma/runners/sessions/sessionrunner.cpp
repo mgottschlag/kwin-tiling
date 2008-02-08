@@ -27,8 +27,6 @@
 #include <KLocale>
 #include <KMessageBox>
 
-#include <dmctl.h>
-
 #include "screensaver_interface.h"
 
 SessionRunner::SessionRunner(QObject *parent, const QVariantList &args)
@@ -47,13 +45,12 @@ SessionRunner::~SessionRunner()
 void SessionRunner::match(Plasma::SearchContext *search)
 {
     //TODO: ugh, magic strings.
-    if (search->searchTerm() != "SESSIONS") {
-        return;
-    }
+    QString term = search->searchTerm();
+    bool listAll = (term == "SESSIONS");
 
-    DM dm;
 
-    if (KAuthorized::authorizeKAction("start_new_session") &&
+    if (listAll &&
+        KAuthorized::authorizeKAction("start_new_session") &&
         dm.isSwitchable() &&
         dm.numReserve() >= 0) {
         Plasma::SearchMatch *action = search->addExactMatch(this);
@@ -67,23 +64,45 @@ void SessionRunner::match(Plasma::SearchContext *search)
         return;
     }
 
+    QList<Plasma::SearchMatch*> exact;
+    QList<Plasma::SearchMatch*> possible;
+    QList<Plasma::SearchMatch*> info;
     foreach (const SessEnt& session, sessions) {
         if (!session.vt || session.self) {
             continue;
         }
 
-        Plasma::SearchMatch* action = search->addPossibleMatch(this);
-        action->setIcon(KIcon("user-identity"));
-        action->setText(DM::sess2Str(session));
-        action->setData(session.session);
+        QString name = DM::sess2Str(session);
+        Plasma::SearchMatch* action = 0;
+
+        if (listAll) {
+            action = new Plasma::SearchMatch(search, this);
+            exact.append(action);
+        } else if (name == term) {
+            // we need an elif branch here because we don't
+            // want the last conditional to be checked if !listAll
+            action = new Plasma::SearchMatch(search, this);
+            exact.append(action);
+        } else if (name.contains(term, Qt::CaseInsensitive)) {
+            action = new Plasma::SearchMatch(search, this);
+            possible.append(action);
+        }
+
+        if (action) {
+            action->setIcon(KIcon("user-identity"));
+            action->setText(name);
+            action->setData(session.session);
+        }
     }
+
+    search->addMatches(term, exact, possible, info);
 }
 
 void SessionRunner::exec(Plasma::SearchMatch * action)
 {
     if (!action->data().toString().isEmpty()) {
         QString sessionName = action->text();
-        DM dm;
+
         SessList sessions;
         if (dm.localSessions(sessions)) {
             foreach (SessEnt session, sessions) {

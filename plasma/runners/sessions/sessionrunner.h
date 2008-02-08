@@ -19,6 +19,7 @@
 #ifndef SESSIONRUNNER_H
 #define SESSIONRUNNER_H
 
+#include <kworkspace/dmctl.h>
 #include <plasma/abstractrunner.h>
 
 class QAction;
@@ -38,6 +39,9 @@ class SessionRunner : public Plasma::AbstractRunner
     protected:
         void match(Plasma::SearchContext *context);
         void exec(Plasma::SearchMatch* action);
+
+    private:
+        DM dm;
 };
 
 K_EXPORT_PLASMA_RUNNER(sessions, SessionRunner)
