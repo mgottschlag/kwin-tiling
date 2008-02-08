@@ -51,6 +51,7 @@ public:
 private slots:
     void configure();
     void applyConfig();
+    void themeUpdated();
     void sizeComboChanged();
     void backgroundChanged();
 

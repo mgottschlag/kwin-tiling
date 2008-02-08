@@ -28,6 +28,7 @@
 #include <NETRootInfo>
 
 #include <plasma/svgpanel.h>
+#include <plasma/theme.h>
 
 #include "krunnerapp.h"
 
@@ -40,17 +41,23 @@ KRunnerDialog::KRunnerDialog( QWidget * parent, Qt::WindowFlags f )
     m_background = new Plasma::SvgPanel("dialogs/background", this);
     m_background->setBorderFlags(Plasma::SvgPanel::DrawAllBorders);
 
+    connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(update()));
+
+    connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(themeUpdated()));
+    themeUpdated();
+}
+
+KRunnerDialog::~KRunnerDialog()
+{
+}
+
+void KRunnerDialog::themeUpdated()
+{
     const int topHeight = m_background->marginSize(Plasma::TopMargin);
     const int leftWidth = m_background->marginSize(Plasma::LeftMargin);
     const int rightWidth = m_background->marginSize(Plasma::RightMargin);
     const int bottomHeight = m_background->marginSize(Plasma::BottomMargin);
     setContentsMargins(leftWidth, topHeight, rightWidth, bottomHeight);
-
-    connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(update()));
-}
-
-KRunnerDialog::~KRunnerDialog()
-{
 }
 
 void KRunnerDialog::paintEvent(QPaintEvent *e)

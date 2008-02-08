@@ -34,6 +34,7 @@
 #include <plasma/corona.h>
 #include <plasma/layouts/layout.h>
 #include <plasma/svgpanel.h>
+#include <plasma/theme.h>
 
 using namespace Plasma;
 
@@ -53,6 +54,9 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(backgroundChanged()));
     setZValue(150);
     setContainmentType(Containment::PanelContainment);
+
+    connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(themeUpdated()));
+    themeUpdated();
 }
 
 Panel::~Panel()
@@ -208,6 +212,12 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
             }
         }
     }
+}
+
+void Panel::themeUpdated()
+{
+    //if the theme is changed all the calculations needs to be done again
+    constraintsUpdated(Plasma::LocationConstraint);
 }
 
 Qt::Orientations Panel::expandingDirections() const
