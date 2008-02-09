@@ -85,13 +85,6 @@ public:
      */
     virtual bool timezone(void) = 0;
 
-    /**
-     * Reimplement to read in any custom options an applet sets.
-     * @arg source the name of the datasource.
-     * @return true always.
-     */
-    virtual bool options(const QString& source) = 0;
-
 public slots:
 
     /**
