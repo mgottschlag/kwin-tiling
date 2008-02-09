@@ -10,6 +10,14 @@ TARGET_LINK_LIBRARIES (ion_envcan ${KDE4_KDEUI_LIBS} plasma weather_ion)
 TARGET_LINK_LIBRARIES (ion_noaa ${KDE4_KDEUI_LIBS} plasma weather_ion)
 TARGET_LINK_LIBRARIES (ion_bbcukmet ${KDE4_KDEUI_LIBS} plasma weather_ion)
 
+INSTALL (FILES ion.h
+               formulas.h
+	 DESTINATION ${INCLUDE_INSTALL_DIR}/plasma/weather)
+
+INSTALL (FILES includes/Ion
+               includes/Formulas
+	 DESTINATION ${INCLUDE_INSTALL_DIR}/KDE/Plasma/Weather)
+
 INSTALL (TARGETS ion_envcan DESTINATION ${PLUGIN_INSTALL_DIR})
 INSTALL (TARGETS ion_noaa DESTINATION ${PLUGIN_INSTALL_DIR})
 INSTALL (TARGETS ion_bbcukmet DESTINATION ${PLUGIN_INSTALL_DIR})

@@ -31,7 +31,7 @@
 #include <kdemacros.h>
 #include <plasma/dataengine.h>
 #include "ion.h"
-#include "weather_formula.h"
+#include "formulas.h"
 
 class WeatherData
 {

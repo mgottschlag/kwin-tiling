@@ -1,6 +1,6 @@
 ADD_SUBDIRECTORY(ions)
 
-SET (ionlib_SRCS ions/ion.cpp ions/weather_formula.cpp)
+SET (ionlib_SRCS ions/ion.cpp ions/formulas.cpp)
 kde4_add_library (weather_ion SHARED ${ionlib_SRCS})
 TARGET_LINK_LIBRARIES (weather_ion ${KDE4_KIO_LIBS} plasma)
 set_target_properties(weather_ion PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
