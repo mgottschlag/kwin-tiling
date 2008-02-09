@@ -247,11 +247,14 @@ WeatherEngine::~WeatherEngine()
  * Get dynamic Q_PROPERTY of a datasource for custom options
  * when given a data source as the property name.
  */
+
+/*
 QString WeatherEngine::getAppletOptions(const QString& source)
 {
     QByteArray str = source.toLocal8Bit();
     return this->property(str.data()).toString();
 }
+*/
 
 /**
  * SLOT: Set up each Ion for the first time and get any data
@@ -270,7 +273,7 @@ bool WeatherEngine::sourceRequested(const QString &source)
     }
 
     QByteArray str = source.toLocal8Bit();
-    ion->setProperty(str.data(), getAppletOptions(source));
+    //ion->setProperty(str.data(), getAppletOptions(source));
 
     ion->connectSource(source, this);
     if (!containerForSource(source)) {
@@ -291,7 +294,7 @@ bool WeatherEngine::updateSource(const QString& source)
     ion->setProperty("timezone", d->m_localTime.isUtc());
     ion->setProperty("unit", KGlobal::locale()->measureSystem());
     QByteArray str = source.toLocal8Bit();
-    ion->setProperty(str.data(), getAppletOptions(source));
+    //ion->setProperty(str.data(), getAppletOptions(source));
 
     kDebug() << "updateSource()";
     if (!ion) {
