@@ -101,13 +101,6 @@ protected slots:
     bool updateSource(const QString& source);
 
 private:
-    /**
-     * Read in any dynamic Q_PROPERTY values using the datasource as the property name. This is for custom options.
-     * @arg source The datasource namea
-     * @return The dynamic property() using the datasource as the property name
-     */
-    QString getAppletOptions(const QString& source);
-
     class Private;
     Private *const d;
 };
