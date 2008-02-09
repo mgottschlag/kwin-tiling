@@ -74,7 +74,6 @@ public:
     UKMETIon(QObject *parent, const QVariantList &args);
     ~UKMETIon();
     void init();  // Setup the city location, fetching the correct URL name.
-    bool options(const QString& source);
     bool metricUnit(void);
     bool timezone(void);
     void setMeasureUnit(const QString& unit);

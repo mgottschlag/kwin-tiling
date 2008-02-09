@@ -131,7 +131,6 @@ public:
     void init();  // Setup the city location, fetching the correct URL name.
     bool updateIonSource(const QString& source); // Sync data source with Applet
 
-    bool options(const QString& source);
     bool metricUnit(void);
     bool timezone(void);
     void setMeasureUnit(const QString& unit);
