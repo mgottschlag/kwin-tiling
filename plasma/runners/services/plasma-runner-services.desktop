@@ -1,6 +1,12 @@
 [Desktop Entry]
 Name=Applications Runner
+Name[ga]=Feidhmitheoir Feidhmchlár
+Name[pt]=Execução de Aplicações
+Name[pt_BR]=Execução de Aplicações
 Comment=Applications, control panels and services
+Comment[ga]=Feidhmchláir, painéil rialaithe agus seirbhísí
+Comment[pt]=Aplicações, painéis de controlo e serviços
+Comment[pt_BR]=Aplicações, painéis de controlo e serviços
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_services

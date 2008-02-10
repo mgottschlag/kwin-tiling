@@ -1,6 +1,12 @@
 [Desktop Entry]
 Name=Command line runner
+Name[ga]=Feidhmitheoir líne na n-orduithe
+Name[pt]=Execução da Linha de Comandos
+Name[pt_BR]=Execução da Linha de Comandos
 Comment=Executes shell commands
+Comment[ga]=Rith orduithe blaoisce
+Comment[pt]=Executa comandos da consola
+Comment[pt_BR]=Executa comandos da consola
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_shell
