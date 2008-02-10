@@ -33,7 +33,6 @@
 #include <QLayout>
 #include <QPushButton>
 // #include <QMessageBox>
-#include <Qt3Support/Q3SimpleRichText>
 #include <QLabel>
 #include <QFontMetrics>
 #include <QStyle>
