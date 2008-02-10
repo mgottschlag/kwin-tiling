@@ -44,9 +44,11 @@ TaskGroupItem::TaskGroupItem(QGraphicsItem *parent, QObject *parentObject)
       m_geometryUpdateTimerId(-1)
 {
    //setAcceptDrops(true);
-   m_layout = new Plasma::FlowLayout(this);
+
+   m_layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
    m_layout->setMargin(0);
    m_layout->setSpacing(5);
+   m_layout->setMultiRow(true);
 }
 
 QSizeF TaskGroupItem::maximumSize() const
@@ -155,7 +157,7 @@ void TaskGroupItem::cycle(int delta)
         //if _activeTask < _tasks.count() the new _activeTask
         //will be _activeTask+1, else it will be 1
         _tasks[(_activeTask+1)%_tasks.count()].task->activate();
-    } else {
+    }else{
         //if _activeTask > 1 the new _activeTask
         //will be _activeTask-1, else it will be _tasks.count()
         _tasks[(_tasks.count() + _activeTask -1 )%_tasks.count()].task->activate();
@@ -208,6 +210,18 @@ TaskGroupItem::BorderStyle TaskGroupItem::borderStyle() const
     return _borderStyle;
 }
 
+void TaskGroupItem::setDirection(Plasma::BoxLayout::Direction dir)
+{
+    m_layout->setDirection(dir);
+
+    m_layout->setMultiRow(dir != Plasma::BoxLayout::TopToBottom);
+}
+
+Plasma::BoxLayout::Direction TaskGroupItem::direction()
+{
+    return m_layout->direction();
+}
+
 void TaskGroupItem::paint(QPainter *painter,
                           const QStyleOptionGraphicsItem *option,
                           QWidget *)
@@ -244,8 +258,8 @@ void TaskGroupItem::drawBorder(QPainter *painter,
                                const QStyleOptionGraphicsItem *option,
                                const QRectF &area)
 {
-    const QFont smallFont = KGlobalSettings::smallestReadableFont();
-    const QFontMetrics smallFontMetrics(smallFont);
+    QFont smallFont = KGlobalSettings::smallestReadableFont();
+    QFontMetrics smallFontMetrics(smallFont);
 
     if (_color.isValid()) {
         painter->setPen(QPen(Qt::NoPen));
@@ -274,7 +288,7 @@ void TaskGroupItem::drawBorder(QPainter *painter,
          // FIXME Check KColorScheme usage here
 
          QLinearGradient titleGradient(titleArea.topLeft(), titleArea.bottomLeft());
-         KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors());
+         KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors());        
          titleGradient.setColorAt(0, colorScheme.shade(_color,KColorScheme::DarkShade));
          titleGradient.setColorAt(1, colorScheme.shade(_color,KColorScheme::MidShade));
 

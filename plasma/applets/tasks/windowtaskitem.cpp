@@ -94,7 +94,7 @@ void WindowTaskItem::updateTask()
     }
 
     // basic title and icon
-    const QPixmap iconPixmap = _task->icon(preferredIconSize().width(),
+    QPixmap iconPixmap = _task->icon(preferredIconSize().width(),
                                      preferredIconSize().height(),
                                      true);
     if (_showTooltip) {

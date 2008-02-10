@@ -183,11 +183,12 @@ QSizeF AbstractTaskItem::maximumSize() const
     // A fixed maximum size is used instead of calculating the content size
     // because overly-long task items make navigating around the task bar
     // more difficult
-    const QSizeF size(200, 200);
-
+    QSizeF size(200, 200);
+#if 0
     //FIXME HARDCODE
-    //QSizeF sz = QSizeF(MaxTaskIconSize + QFontMetricsF(QApplication::font()).width(text() + IconTextSpacing),
-    //              200);
+    QSizeF sz = QSizeF(MaxTaskIconSize + QFontMetricsF(QApplication::font()).width(text() + IconTextSpacing),
+                  200);
+#endif
 
    // kDebug() << "Task max size hint:" << sz;
 
@@ -223,15 +224,21 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
 
     if (option->state & QStyle::State_MouseOver
          || m_animId != -1
-         || taskFlags() & TaskHasFocus) {
-
+         || taskFlags() & TaskHasFocus)
+    {
         QLinearGradient background(boundingRect().topLeft(),
                                    boundingRect().bottomLeft());
 
-        QColor startColor = (taskFlags() & TaskHasFocus) ?
-                            colorScheme.background(KColorScheme::NormalBackground).color() :
-                            colorScheme.background(KColorScheme::AlternateBackground).color();
-        QColor endColor = colorScheme.shade(startColor,KColorScheme::DarkShade);
+        QColor startColor;
+        QColor endColor;
+
+        if (taskFlags() & TaskHasFocus) {
+            startColor = colorScheme.background(KColorScheme::NormalBackground).color();
+        } else {
+            startColor = colorScheme.background(KColorScheme::AlternateBackground).color();
+        }
+
+        endColor = colorScheme.shade(startColor,KColorScheme::DarkShade);
 
         const qreal pressedAlpha = 0.2;
 
@@ -266,18 +273,19 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
 QSize AbstractTaskItem::layoutText(QTextLayout &layout, const QString &text,
                                    const QSize &constraints) const
 {
-    const QFontMetrics metrics(layout.font());
-    const int leading     = metrics.leading();
+    QFontMetrics metrics(layout.font());
+    int leading     = metrics.leading();
     int height      = 0;
-    const int maxWidth    = constraints.width();
+    int maxWidth    = constraints.width();
     int widthUsed   = 0;
-    const int lineSpacing = metrics.lineSpacing();
+    int lineSpacing = metrics.lineSpacing();
     QTextLine line;
 
     layout.setText(text);
 
     layout.beginLayout();
-    while ((line = layout.createLine()).isValid()) {
+    while ((line = layout.createLine()).isValid())
+    {
         height += leading;
 
         // Make the last line that will fit infinitely long.
@@ -314,42 +322,46 @@ void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layo
     // Create the alpha gradient for the fade out effect
     QLinearGradient alphaGradient(0, 0, 1, 0);
     alphaGradient.setCoordinateMode(QGradient::ObjectBoundingMode);
-    if (layout.textOption().textDirection() == Qt::LeftToRight) {
+    if (layout.textOption().textDirection() == Qt::LeftToRight)
+    {
         alphaGradient.setColorAt(0, QColor(0, 0, 0, 255));
         alphaGradient.setColorAt(1, QColor(0, 0, 0, 0));
-    } else {
+    } else
+    {
         alphaGradient.setColorAt(0, QColor(0, 0, 0, 0));
         alphaGradient.setColorAt(1, QColor(0, 0, 0, 255));
     }
 
-    const QFontMetrics fm(layout.font());
-    const int textHeight = layout.lineCount() * fm.lineSpacing();
-    const QPointF position = textHeight < rect.height() ?
+    QFontMetrics fm(layout.font());
+    int textHeight = layout.lineCount() * fm.lineSpacing();
+    QPointF position = textHeight < rect.height() ?
             QPointF(0, (rect.height() - textHeight) / 2) : QPointF(0, 0);
     QList<QRect> fadeRects;
-    const int fadeWidth = 30;
+    int fadeWidth = 30;
 
     // Draw each line in the layout
-    for (int i = 0; i < layout.lineCount(); i++) {
-        const QTextLine line = layout.lineAt(i);
+    for (int i = 0; i < layout.lineCount(); i++)
+    {
+        QTextLine line = layout.lineAt(i);
         line.draw(&p, position);
 
         // Add a fade out rect to the list if the line is too long
-        if (line.naturalTextWidth() > rect.width()) {
-            const int x = int(qMin(line.naturalTextWidth(), (qreal)pixmap.width())) - fadeWidth;
-            const int y = int(line.position().y() + position.y());
-            const QRect r = QStyle::visualRect(layout.textOption().textDirection(), pixmap.rect(),
+        if (line.naturalTextWidth() > rect.width())
+        {
+            int x = int(qMin(line.naturalTextWidth(), (qreal)pixmap.width())) - fadeWidth;
+            int y = int(line.position().y() + position.y());
+            QRect r = QStyle::visualRect(layout.textOption().textDirection(), pixmap.rect(),
                                          QRect(x, y, fadeWidth, int(line.height())));
             fadeRects.append(r);
         }
     }
 
     // Reduce the alpha in each fade out rect using the alpha gradient
-    if (!fadeRects.isEmpty()) {
+    if (!fadeRects.isEmpty())
+    {
         p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-        foreach (const QRect &rect, fadeRects) {
+        foreach (const QRect &rect, fadeRects)
             p.fillRect(rect, alphaGradient);
-        }
     }
 
     p.end();
@@ -359,8 +371,8 @@ void AbstractTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layo
 
 QTextOption AbstractTaskItem::textOption() const
 {
-    const Qt::LayoutDirection direction = QApplication::layoutDirection();
-    const Qt::Alignment alignment = QStyle::visualAlignment(direction, Qt::AlignLeft | Qt::AlignVCenter);
+    Qt::LayoutDirection direction = QApplication::layoutDirection();
+    Qt::Alignment alignment = QStyle::visualAlignment(direction, Qt::AlignLeft | Qt::AlignVCenter);
 
     QTextOption option;
     option.setTextDirection(direction);
@@ -374,7 +386,7 @@ QRectF AbstractTaskItem::iconRect() const
     QSizeF bounds = boundingRect().size();
     //leave enough space for the text. usefull in vertical panel   
     bounds.setWidth(qMax(bounds.width() / 3, qMin(minimumSize().height(), bounds.width())));
-    const QSize iconSize = _icon.actualSize(bounds.toSize());
+    QSize iconSize = _icon.actualSize(bounds.toSize());
 
     return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignLeft | Qt::AlignVCenter,
                                iconSize, boundingRect().toRect());
