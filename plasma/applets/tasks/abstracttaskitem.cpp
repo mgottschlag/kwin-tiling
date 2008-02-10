@@ -186,8 +186,8 @@ QSizeF AbstractTaskItem::maximumSize() const
     const QSizeF size(200, 200);
 
     //FIXME HARDCODE
-    QSizeF sz = QSizeF(MaxTaskIconSize + QFontMetricsF(QApplication::font()).width(text() + IconTextSpacing),
-                  200);
+    //QSizeF sz = QSizeF(MaxTaskIconSize + QFontMetricsF(QApplication::font()).width(text() + IconTextSpacing),
+    //              200);
 
    // kDebug() << "Task max size hint:" << sz;
 
