@@ -127,9 +127,9 @@ void Tasks::removeStartingTask(StartupPtr task)
 
 void Tasks::registerWindowTasks()
 {
-    TaskManager::TaskManager *manager = TaskManager::TaskManager::self();
+    const TaskManager::TaskManager *manager = TaskManager::TaskManager::self();
 
-    TaskManager::TaskDict tasks = manager->tasks();
+    const TaskManager::TaskDict tasks = manager->tasks();
     QMapIterator<WId,TaskPtr> iter(tasks);
 
     while (iter.hasNext()) {
@@ -201,12 +201,6 @@ void Tasks::removeAllWindowTasks()
 void Tasks::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::LocationConstraint) {
-        if (formFactor() == Plasma::Vertical) {
-            m_rootTaskGroup->setDirection(Plasma::BoxLayout::TopToBottom);
-        } else {
-            m_rootTaskGroup->setDirection(Plasma::BoxLayout::LeftToRight);
-        }
-
         foreach (AbstractTaskItem *taskItem, m_windowTaskItems) {
             WindowTaskItem *windowTaskItem = dynamic_cast<WindowTaskItem *>(taskItem);
             if (windowTaskItem) {
