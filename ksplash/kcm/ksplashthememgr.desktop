@@ -9,7 +9,7 @@ X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_ksplashthemes
 X-KDE-ParentApp=kcontrol
 
-X-KDE-System-Settings-Parent-Category=look-and-feel
+X-KDE-System-Settings-Parent-Category=appearance
 
 Name=Splash Screen
 Name[af]=Spat Skerm
