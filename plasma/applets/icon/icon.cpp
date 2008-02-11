@@ -61,7 +61,6 @@ void IconApplet::init()
 {
     KConfigGroup cg = config();
 
-    connect(m_icon, SIGNAL(activated()), this, SLOT(openUrl()));
     setUrl(cg.readEntry("Url", m_url));
     setDisplayLines(2);
 
@@ -129,14 +128,20 @@ void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
 {
     setDrawStandardBackground(false);
 
+    disconnect(m_icon, SIGNAL(activated()), this, SLOT(openUrl()));
+    disconnect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
+
     if (constraints & Plasma::FormFactorConstraint) {
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
+            connect(m_icon, SIGNAL(activated()), this, SLOT(openUrl()));
             m_icon->setText(m_text);
             setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
             m_icon->setToolTip(Plasma::ToolTipData());
             m_icon->setDrawBackground(true);
         } else {
+            //in the panel the icon behaves like a button
+            connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
             m_icon->setText(QString());
             setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
             Plasma::ToolTipData data;
