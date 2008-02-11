@@ -33,9 +33,11 @@ if( NOT HAVE_XKLAVIER )
 
     if (NOT X11_Xkbfile_FOUND)
         MESSAGE (STATUS "Could not find xkbfile - kxkb won't be built!")
+        macro_log_feature (FALSE "libxklavier" "Could not find libxklavier or xkbfile - kxkb won't be built!" "http://freedesktop.org/wiki/Software/LibXklavier")
     else (NOT X11_Xkbfile_FOUND)
         SET(XKB_SUPPORT_LIB ${X11_Xkbfile_LIB})
         MESSAGE (STATUS "Using xkbfile for getting keyboard layouts is not well maintained, please consider installing libxklavier.")
+        macro_log_feature (TRUE "libxklavier" "Using xkbfile for getting keyboard layouts is not well maintained, please consider installing libxklavier." "http://freedesktop.org/wiki/Software/LibXklavier")
     endif (NOT X11_Xkbfile_FOUND)
 
 endif( NOT HAVE_XKLAVIER )
