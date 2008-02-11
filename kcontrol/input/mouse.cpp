@@ -710,7 +710,7 @@ void MouseSettings::load(KConfig *config)
   }
 
   KConfigGroup group = config->group("Mouse");
-  double a = group.readEntry("Acceleration",-1);
+  double a = group.readEntry("Acceleration",-1.0);
   if (a == -1)
     accelRate = accel;
   else
