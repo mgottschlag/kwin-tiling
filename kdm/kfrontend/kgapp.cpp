@@ -42,7 +42,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QDesktopWidget>
 #include <QX11Info>
-#include <QFile>
 
 #include <stdlib.h> // free(), exit()
 #include <unistd.h> // alarm()
@@ -203,14 +202,7 @@ kg_main( const char *argv0 )
 
 	Display *dpy = QX11Info::display();
 
-	const QString _configColorScheme = _colorScheme;
-
-	if (_useTheme && !_theme.isEmpty())
-		_colorScheme = _theme + "/theme.colors";
-
-	if (!QFile::exists(_colorScheme))
-		_colorScheme = locate( "data", "kdisplay/color-schemes/" + _configColorScheme + ".colors" );
-
+	_colorScheme = KStandardDirs::locate( "data", "color-schemes/" + _colorScheme + ".colors" );
 	if (!_colorScheme.isEmpty()) {
 		KSharedConfigPtr config = KSharedConfig::openConfig( _colorScheme, KConfig::SimpleConfig );
 		app.setPalette( KGlobalSettings::createApplicationPalette( config ) );
