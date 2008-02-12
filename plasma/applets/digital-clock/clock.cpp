@@ -60,6 +60,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_layout(0)
 {
     setHasConfigurationInterface(true);
+    setContentSize(70, 22);
 }
 
 void Clock::init()
@@ -77,7 +78,7 @@ void Clock::init()
     m_showDay = cg.readEntry("showDay", true);
 
     m_showSeconds = cg.readEntry("showSeconds", false);
-    m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color(); 
+    m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color();
     m_plainClockFont = cg.readEntry("plainClockFont", m_plainClockFont);
     m_plainClockColor = cg.readEntry("plainClockColor", m_plainClockColor);
 
@@ -86,7 +87,10 @@ void Clock::init()
     m_plainClockFont.setBold(m_plainClockFontBold);
     m_plainClockFont.setItalic(m_plainClockFontItalic);
 
-    setMinimumContentSize(70, 22);
+    QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
+    QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
+    setMinimumContentSize(metrics.size(Qt::TextSingleLine, timeString));
+
     dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
 }
 
@@ -152,7 +156,7 @@ void Clock::showCalendar(QGraphicsSceneMouseEvent *event)
     if (m_calendar->isVisible()) {
         m_calendar->hide();
     } else {
-        kDebug(); 
+        kDebug();
         m_calendar->move(popupPosition(m_calendar->sizeHint()));
         m_calendar->show();
     }
@@ -192,7 +196,7 @@ void Clock::showConfigurationInterface()
 void Clock::configAccepted()
 {
     KConfigGroup cg = config();
-    //We need this to happen before we disconnect/reconnect sources to ensure 
+    //We need this to happen before we disconnect/reconnect sources to ensure
     //that the update interval is set properly.
     m_showSeconds = ui.secondsCheckbox->checkState() == Qt::Checked;
     cg.writeEntry("showSeconds", m_showSeconds);
