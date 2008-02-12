@@ -1,10 +1,12 @@
 [Desktop Entry]
 Name=Desktop Sessions Runner
 Name[ga]=Feidhmitheoir Seisiún Deisce
+Name[km]=កម្មវិធី​រត់​សម័យ​ផ្ទៃតុ
 Name[pt]=Execução de Sessões do Ecrã
 Name[pt_BR]=Execução de Sessões do Ecrã
 Comment=Fast user switching
 Comment[ga]=Athraigh úsáideoirí go tapa
+Comment[km]=ការប្ដូរ​អ្នក​ប្រើ​យ៉ាង​លឿន
 Comment[pt]=Mudança rápida de utilizador
 Comment[pt_BR]=Mudança rápida de utilizador
 X-KDE-ServiceTypes=Plasma/Runner
