@@ -142,7 +142,7 @@ void WindowTaskItem::setWindowTask(TaskManager::TaskPtr task)
     updateTask();
     publishIconGeometry();
 
-    kDebug() << "Task added, isActive = " << task->isActive();
+    //kDebug() << "Task added, isActive = " << task->isActive();
 }
 
 TaskManager::TaskPtr WindowTaskItem::windowTask() const
