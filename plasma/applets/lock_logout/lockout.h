@@ -22,6 +22,9 @@
 
 #include <plasma/applet.h>
 
+namespace Plasma {
+    class BoxLayout;
+}
 
 class LockOut : public Plasma::Applet
 {
@@ -34,10 +37,16 @@ class LockOut : public Plasma::Applet
 
         QSizeF contentSizeHint() const;
         Qt::Orientations expandingDirections() const;
+        virtual void constraintsUpdated(Plasma::Constraints constraints);
 
     public slots:
         void clickLogout();
         void clickLock();
+
+    private:
+        Plasma::BoxLayout *m_layout;
+
+        void checkLayout();
 };
 
 K_EXPORT_PLASMA_APPLET(lockout, LockOut)

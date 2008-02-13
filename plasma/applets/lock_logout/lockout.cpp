@@ -33,32 +33,70 @@
 #include <ksmserver_interface.h>
 #include <screensaver_interface.h>
 
+#define MINSIZE 48
 
 LockOut::LockOut(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args)
-{ 
+{
 }
 
 void LockOut::init()
-{   
-    Plasma::VBoxLayout *layout = new Plasma::VBoxLayout(this);
-    layout->setMargin(0);
-    layout->setSpacing(0);
+{
+    m_layout = new Plasma::BoxLayout(Plasma::BoxLayout::TopToBottom, this);
+    m_layout->setMargin(0);
+    m_layout->setSpacing(0);
 
     Plasma::Icon *icon_lock = new Plasma::Icon(KIcon("system-lock-screen"), "", this);
-    layout->addItem(icon_lock);
+    m_layout->addItem(icon_lock);
     connect(icon_lock, SIGNAL(clicked()), this, SLOT(clickLock()));
 
     Plasma::Icon *icon_logout = new Plasma::Icon(KIcon("system-log-out"), "", this);
-    layout->addItem(icon_logout);
+    m_layout->addItem(icon_logout);
     connect(icon_logout, SIGNAL(clicked()), this, SLOT(clickLogout()));
 
     //It seems the layout geometry must be calculated by hand for the first time
-    layout->setGeometry(QRectF(0,0, contentSize().width(), contentSize().height()));
+    m_layout->setGeometry(QRectF(0,0, contentSize().width(), contentSize().height()));
+    checkLayout();
 }
 
 LockOut::~LockOut()
 {
+}
+
+void LockOut::checkLayout()
+{
+    Plasma::BoxLayout::Direction direction;
+
+    switch (formFactor()) {
+        case Plasma::Vertical:
+            if (contentSize().width() >= MINSIZE) {
+                direction = Plasma::BoxLayout::LeftToRight;
+            } else {
+                direction = Plasma::BoxLayout::TopToBottom;
+            }
+            break;
+        case Plasma::Horizontal:
+            if (contentSize().height() >= MINSIZE) {
+                direction = Plasma::BoxLayout::TopToBottom;
+            } else {
+                direction = Plasma::BoxLayout::LeftToRight;
+            }
+            break;
+        default:
+            direction = Plasma::BoxLayout::TopToBottom;
+    }
+    if (direction != m_layout->direction()) {
+        m_layout->setDirection(direction);
+        updateGeometry();
+    }
+}
+
+void LockOut::constraintsUpdated(Plasma::Constraints constraints)
+{
+    if (constraints & Plasma::FormFactorConstraint ||
+        constraints & Plasma::SizeConstraint) {
+        checkLayout();
+    }
 }
 
 QSizeF LockOut::contentSizeHint() const
@@ -66,10 +104,18 @@ QSizeF LockOut::contentSizeHint() const
     QSizeF sizeHint = contentSize();
     switch (formFactor()) {
         case Plasma::Vertical:
-            sizeHint.setHeight(sizeHint.width() * 2);
+            if (sizeHint.width() >= MINSIZE) {
+                sizeHint.setHeight(sizeHint.width() / 2);
+            } else {
+                sizeHint.setHeight(sizeHint.width() * 2);
+            }
             break;
         case Plasma::Horizontal:
-            sizeHint.setWidth(sizeHint.height() / 2);
+            if (sizeHint.height() >= MINSIZE) {
+                sizeHint.setHeight(sizeHint.height() / 2);
+            } else {
+                sizeHint.setHeight(sizeHint.height() * 2);
+            }
             break;
         default:
 	    //totally arbitrary size
@@ -78,7 +124,6 @@ QSizeF LockOut::contentSizeHint() const
             }
             break;
     }
-
     return sizeHint;
 }
 
@@ -90,7 +135,7 @@ Qt::Orientations LockOut::expandingDirections() const
 void LockOut::clickLock()
 {
     kDebug()<<"LockOut:: lock clicked ";
-	
+
     QString interface("org.freedesktop.ScreenSaver");
     org::freedesktop::ScreenSaver screensaver(interface, "/ScreenSaver",
                                               QDBusConnection::sessionBus());
