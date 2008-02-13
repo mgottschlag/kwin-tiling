@@ -128,10 +128,10 @@ void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
 {
     setDrawStandardBackground(false);
 
-    disconnect(m_icon, SIGNAL(activated()), this, SLOT(openUrl()));
-    disconnect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
-
     if (constraints & Plasma::FormFactorConstraint) {
+        disconnect(m_icon, SIGNAL(activated()), this, SLOT(openUrl()));
+        disconnect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
+
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
             connect(m_icon, SIGNAL(activated()), this, SLOT(openUrl()));
