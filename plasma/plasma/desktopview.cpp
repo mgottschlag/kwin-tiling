@@ -131,7 +131,7 @@ void DesktopView::showAppletBrowser()
     }
 
     if (!m_appletBrowser) {
-        m_appletBrowser = new Plasma::AppletBrowser(containment(), this);
+        m_appletBrowser = new Plasma::AppletBrowser(containment(), 0);
         m_appletBrowser->setApplication();
         m_appletBrowser->setAttribute(Qt::WA_DeleteOnClose);
         m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
