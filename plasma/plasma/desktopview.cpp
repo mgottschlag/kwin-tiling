@@ -84,6 +84,7 @@ void DesktopView::zoomIn()
     containment()->enableToolBoxTool("zoomOut", true);
     qreal s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
     if (m_zoomLevel == Plasma::GroupZoom) {
+        setDragMode(NoDrag);
         containment()->enableToolBoxTool("zoomIn", false);
         m_zoomLevel = Plasma::DesktopZoom;
         s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
@@ -93,8 +94,14 @@ void DesktopView::zoomIn()
         m_zoomLevel = Plasma::GroupZoom;
         qreal factor = Plasma::scalingFactor(m_zoomLevel);
         s = factor / matrix().m11();
-        setSceneRect(QRectF(0, 0, width() * 1.0/factor, height() * 1.0/factor));
+
+        setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom()));
+
+        if (containment()) {
+            ensureVisible(containment()->geometry());
+        }
     } else {
+        setDragMode(NoDrag);
         containment()->enableToolBoxTool("zoomIn", false);
         return;
     }
@@ -116,10 +123,15 @@ void DesktopView::zoomOut()
         return;
     }
 
+    setDragMode(ScrollHandDrag);
     qreal factor = Plasma::scalingFactor(m_zoomLevel);
     qreal s = factor / matrix().m11();
-    setSceneRect(QRectF(0, 0, width() * 1.0/factor, height() * 1.0/factor));
     scale(s, s);
+    setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom()));
+
+    if (containment()) {
+        ensureVisible(containment()->geometry());
+    }
 }
 
 void DesktopView::showAppletBrowser()
