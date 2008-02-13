@@ -23,12 +23,6 @@
 #include "plasma/plasma.h"
 #include "plasma/view.h"
 
-
-namespace Plasma
-{
-    class AppletBrowser;
-}
-
 class DashboardView;
 
 class DesktopView : public Plasma::View
@@ -43,7 +37,6 @@ public slots:
     void zoomIn();
     void zoomOut();
     void showAppletBrowser();
-    void appletBrowserDestroyed();
     void toggleDashboard();
     void adjustSize();
 
@@ -52,7 +45,6 @@ protected:
 
 private:
     Plasma::ZoomLevel m_zoomLevel;
-    Plasma::AppletBrowser *m_appletBrowser;
     DashboardView *m_dashboard;
 };
 

@@ -31,11 +31,17 @@
 #include <plasma/plasma.h>
 #include <plasma/svg.h>
 
+#include "plasmaapp.h"
+
 PanelView::PanelView(Plasma::Containment *panel, QWidget *parent)
     : Plasma::View(panel, parent)
 {
     Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
     updatePanelGeometry();
+
+    if (containment()) {
+        connect(containment(), SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
+    }
 
     connect(panel, SIGNAL(geometryChanged()), this, SLOT(updatePanelGeometry()));
     kDebug() << "Panel geometry is" << panel->geometry();
@@ -109,6 +115,11 @@ void PanelView::updatePanelGeometry()
 
     kDebug() << (QObject*)this << "thinks its panel is at " << geom;
     setGeometry(geom);
+}
+
+void PanelView::showAppletBrowser()
+{
+    PlasmaApp::self()->showAppletBrowser(containment());
 }
 
 void PanelView::updateStruts()

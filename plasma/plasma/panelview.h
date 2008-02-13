@@ -66,6 +66,7 @@ protected:
 
 private slots:
     void updatePanelGeometry();
+    void showAppletBrowser();
 
 private:
     Plasma::Svg *m_background;
