@@ -42,7 +42,6 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_cachedBackground(0),
       m_dialog(0),
-      m_configureAction(0),
       m_drawTop(true),
       m_drawLeft(true),
       m_drawRight(true),
@@ -74,12 +73,19 @@ void Panel::init()
 
 QList<QAction*> Panel::contextActions()
 {
-    if (! m_configureAction) {
-        m_configureAction = new QAction(i18n("Panel Settings"), this);
-        m_configureAction->setIcon(KIcon("configure"));
-        connect(m_configureAction, SIGNAL(triggered()), this, SLOT(configure()));
+    if (m_actions.isEmpty()) {
+        QAction *addWidgetsAction = new QAction(i18n("Add Widgets"), this);
+        addWidgetsAction->setIcon(KIcon("list-add"));
+        connect(addWidgetsAction, SIGNAL(triggered()), this, SIGNAL(showAddWidgets()));
+
+        QAction *configureAction = new QAction(i18n("Panel Settings"), this);
+        configureAction->setIcon(KIcon("configure"));
+        connect(configureAction, SIGNAL(triggered()), this, SLOT(configure()));
+
+        m_actions << configureAction << addWidgetsAction;
     }
-    return QList<QAction*>() << m_configureAction;
+
+    return m_actions;
 }
 
 void Panel::backgroundChanged()
