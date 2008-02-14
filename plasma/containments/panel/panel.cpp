@@ -2,7 +2,7 @@
 *   Copyright 2007 by Alex Merry <huntedhacker@tiscali.co.uk>
 *
 *   This program is free software; you can redistribute it and/or modify
-*   it under the terms of the GNU Library General Public License version 2, 
+*   it under the terms of the GNU Library General Public License version 2,
 *   or (at your option) any later version.
 *
 *   This program is distributed in the hope that it will be useful,
@@ -113,8 +113,8 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
 
         //kDebug() << "Setting location to" << loc << "on screen" << s << "with geom" << r;
         setMaximumSize(r.size());
-        int x = 0;
-        int y = 0;
+        int x = r.left();
+        int y = r.top();
         int width = 0;
         int height = 0;
         int topHeight = m_background->marginSize(Plasma::TopMargin);
@@ -282,7 +282,7 @@ void Panel::configure()
         l->addWidget(m_sizeEdit, 1, 1);
         l->setColumnStretch(1,1);
         connect(m_sizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(sizeComboChanged()));
-        
+
         QLabel *locationLabel = new QLabel(i18n("Location:"), p);
         l->addWidget(locationLabel, 2, 0);
         m_locationCombo = new QComboBox(p);
