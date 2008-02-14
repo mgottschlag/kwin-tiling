@@ -6,14 +6,26 @@
     <x>0</x>
     <y>0</y>
     <width>644</width>
-    <height>313</height>
+    <height>329</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" >
-   <item>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="baseSize" >
+   <size>
+    <width>200</width>
+    <height>700</height>
+   </size>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
     <widget class="QGroupBox" name="groupBox" >
      <property name="sizePolicy" >
-      <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+      <sizepolicy vsizetype="Maximum" hsizetype="Preferred" >
        <horstretch>0</horstretch>
        <verstretch>10</verstretch>
       </sizepolicy>
@@ -133,7 +145,7 @@
             <item row="1" column="2" colspan="2" >
              <widget class="QLabel" name="m_authorLine" >
               <property name="sizePolicy" >
-               <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                 <horstretch>1</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -155,6 +167,12 @@
             </item>
             <item row="2" column="2" colspan="2" >
              <widget class="QLabel" name="m_emailLine" >
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="text" >
                <string>TextLabel</string>
               </property>
@@ -173,7 +191,7 @@
             <item row="3" column="2" colspan="2" >
              <widget class="QLabel" name="m_licenseLine" >
               <property name="sizePolicy" >
-               <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                 <horstretch>1</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -208,7 +226,7 @@
             <item row="4" column="1" colspan="3" >
              <widget class="QComboBox" name="m_resizeMethod" >
               <property name="sizePolicy" >
-               <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -231,7 +249,7 @@
             <item row="5" column="1" colspan="2" >
              <widget class="KColorButton" name="m_color" >
               <property name="sizePolicy" >
-               <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -267,19 +285,6 @@
                <size>
                 <width>40</width>
                 <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="6" column="1" colspan="2" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>40</height>
                </size>
               </property>
              </spacer>
@@ -422,13 +427,10 @@
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
           </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Expanding</enum>
-          </property>
           <property name="sizeHint" >
            <size>
             <width>20</width>
-            <height>137</height>
+            <height>40</height>
            </size>
           </property>
          </spacer>
@@ -438,7 +440,7 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="2" column="0" >
     <widget class="QGroupBox" name="groupBox_2" >
      <property name="title" >
       <string>Desktop Icons</string>
@@ -469,6 +471,19 @@
       </item>
      </layout>
     </widget>
+   </item>
+   <item row="1" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
