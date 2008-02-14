@@ -50,7 +50,6 @@ class Clock : public Plasma::Applet
         void init();
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
         void setPath(const QString&);
-        void constraintsUpdated(Plasma::Constraints);
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
         // reimplemented

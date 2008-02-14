@@ -103,15 +103,6 @@ Qt::Orientations Clock::expandingDirections() const
     }
 }
 
-
-void Clock::constraintsUpdated(Plasma::Constraints)
-{
-    // I'm not sure why this is needed, since we don't actually change
-    // any geometry in this method, but it screws up the system tray
-    // without it.
-    updateGeometry();
-}
-
 void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
     Q_UNUSED(source);
