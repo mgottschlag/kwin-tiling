@@ -98,7 +98,7 @@ void DesktopView::zoomIn()
         setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom()));
 
         if (containment()) {
-            ensureVisible(containment()->geometry());
+            ensureVisible(containment()->sceneBoundingRect());
         }
     } else {
         setDragMode(NoDrag);
@@ -130,7 +130,7 @@ void DesktopView::zoomOut()
     setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom()));
 
     if (containment()) {
-        ensureVisible(containment()->geometry());
+        ensureVisible(containment()->sceneBoundingRect());
     }
 }
 
