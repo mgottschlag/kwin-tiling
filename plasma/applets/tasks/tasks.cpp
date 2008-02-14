@@ -60,16 +60,15 @@ void Tasks::init()
             this, SLOT(launchActivated()));
 
     // set up the animator used in the root item
-    // TODO: this really should be moved to TaskGroupItem
-    Plasma::LayoutAnimator* animator = new Plasma::LayoutAnimator;
-    animator->setAutoDeleteOnRemoval(true);
-    animator->setEffect(Plasma::LayoutAnimator::InsertedState,
-                        Plasma::LayoutAnimator::FadeInMoveEffect);
-    animator->setEffect(Plasma::LayoutAnimator::StandardState,
-                        Plasma::LayoutAnimator::MoveEffect);
-    animator->setEffect(Plasma::LayoutAnimator::RemovedState,
-                        Plasma::LayoutAnimator::FadeOutMoveEffect);
-    animator->setTimeLine(new QTimeLine(200, this));
+    m_animator = new Plasma::LayoutAnimator(this);
+    m_animator->setAutoDeleteOnRemoval(true);
+    m_animator->setEffect(Plasma::LayoutAnimator::InsertedState,
+                          Plasma::LayoutAnimator::FadeEffect);
+    m_animator->setEffect(Plasma::LayoutAnimator::StandardState,
+                          Plasma::LayoutAnimator::MoveEffect);
+    m_animator->setEffect(Plasma::LayoutAnimator::RemovedState,
+                          Plasma::LayoutAnimator::FadeEffect);
+    m_animator->setTimeLine(new QTimeLine(100, this));
 
     layout->addItem(m_rootTaskGroup);
 
@@ -105,7 +104,7 @@ void Tasks::init()
             this, SLOT(removeStartingTask(StartupPtr)));
 
     // add the animator once we're initialized to avoid animating like mad on start up
-    m_rootTaskGroup->layout()->setAnimator(animator);
+    m_rootTaskGroup->layout()->setAnimator(m_animator);
 }
 
 void Tasks::addStartingTask(StartupPtr task)

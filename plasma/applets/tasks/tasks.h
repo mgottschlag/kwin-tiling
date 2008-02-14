@@ -30,6 +30,11 @@
 // Plasma
 #include <plasma/applet.h>
 
+namespace Plasma
+{
+    class LayoutAnimator;
+} // namespace Plasma
+
 class AbstractTaskItem;
 class TaskGroupItem;
 
@@ -108,6 +113,7 @@ private:
 
         bool m_showTooltip;
         bool m_showOnlyCurrentDesktop;
+        Plasma::LayoutAnimator *m_animator;
         KDialog *m_dialog;
         Ui::tasksConfig m_ui;
 };
