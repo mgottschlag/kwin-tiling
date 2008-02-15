@@ -21,11 +21,10 @@
 #include <QWidget>
 #include <KIcon>
 
+#include <KDebug>
 #include <KLocale>
 #include <KRun>
-#include <KActionCollection>
 #include <KService>
-#include <KServiceType>
 
 QString formattedName( KService::Ptr service )
 {
@@ -62,16 +61,35 @@ void ServiceRunner::match(Plasma::SearchContext *search)
 
     KService::Ptr service = KService::serviceByName(term);
 
+    QList<Plasma::SearchMatch*> exact;
+    QList<Plasma::SearchMatch*> possibilities;
+    QList<Plasma::SearchMatch*> info;
+
     if (service && !service->exec().isEmpty()) {
-        setupAction(service, search->addExactMatch(this));
+        //kDebug() << service->name() << "is an exact match!";
+        Plasma::SearchMatch *match = new Plasma::SearchMatch(search, this);
+        setupAction(service, match);
+        match->setRelevance(1);
     }
 
-    QString query = QString("exist Exec and ('%1' ~in Keywords or '%2' ~~ GenericName or '%3' ~~ Name) and Name != '%4'").arg(term, term, term, term);
+    QString query = QString("exist Exec and ('%1' ~in Keywords or '%2' ~~ GenericName or '%3' ~~ Name) and Name !~ '%4'")
+                            .arg(term, term, term, term);
     const KService::List services = serviceQuery("Application", query);
 
     //kDebug() << "got " << services.count() << " services from " << query;
-    QList<Plasma::SearchMatch*> possibilities;
+    QHash<QString, bool> seen;
     foreach (const KService::Ptr service, services) {
+        QString id = service->storageId();
+        QString exec = service->exec();
+        if (seen.contains(id) || seen.contains(exec)) {
+            //kDebug() << "already seen" << id << exec;
+            continue;
+        }
+
+        //kDebug() << "haven't seen" << id << "so processing now";
+        seen[id] = true;
+        seen[exec] = true;
+
         Plasma::SearchMatch *match = new Plasma::SearchMatch(search, this);
         setupAction(service, match);
         qreal relevance(0.5);
@@ -82,12 +100,12 @@ void ServiceRunner::match(Plasma::SearchContext *search)
             relevance = .7;
         }
 
+        //kDebug() << service->name() << "is this relevant:" << relevance;
         match->setRelevance(relevance);
         possibilities.append(match);
     }
 
-    QList<Plasma::SearchMatch*> empties;
-    search->addMatches(term, empties, possibilities, empties);
+    search->addMatches(term, exact, possibilities, info);
 }
 
 void ServiceRunner::exec(Plasma::SearchMatch* action)
