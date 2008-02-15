@@ -120,7 +120,6 @@ int ThemeModel::indexOf(const QString &name) const
 {
     for (int i = 0; i < m_themes.size(); i++) {
         if (name == m_themes[i]) {
-            kDebug() << name << i;
             return i;
         }
     }
