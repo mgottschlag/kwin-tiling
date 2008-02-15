@@ -140,17 +140,30 @@ class SearchMatch : public QListWidgetItem
 
         bool operator<(const QListWidgetItem & other) const
         {
+            // Rules:
+            //      0. Default wins. Always.
+            //      1. Exact trumps informational
+            //      2. Informational trumps possible
+            //      3. Higher relevance wins
+
             const SearchMatch *otherMatch = dynamic_cast<const SearchMatch*>(&other);
 
             if (!otherMatch) {
                 return QListWidgetItem::operator<(other);
             }
 
-            if (m_default) {
+            if (otherMatch->m_default) {
                 return true;
             }
 
-            return m_action->relevance() > otherMatch->m_action->relevance();
+            Plasma::SearchMatch::Type myType = m_action->type();
+            Plasma::SearchMatch::Type otherType = otherMatch->m_action->type();
+
+            if (myType != otherType) {
+                return myType < otherType;
+            }
+
+            return m_action->relevance() < otherMatch->m_action->relevance();
         }
 
     private:
@@ -328,7 +341,8 @@ Interface::Interface(QWidget* parent)
 
     //TODO: temporary feedback, change later with the "icon parade" :)
     m_matchList = new QListWidget(w);
-    m_matchList->setSortingEnabled(true);
+    //m_matchList->setSortingEnabled(true);
+
     connect( m_matchList, SIGNAL(itemActivated(QListWidgetItem*)),
              SLOT(matchActivated(QListWidgetItem*)) );
     connect( m_matchList, SIGNAL(itemClicked(QListWidgetItem*)),
@@ -450,7 +464,7 @@ void Interface::switchUser()
     sessionrunner->match(&m_context);
 
     foreach (Plasma::SearchMatch *action, m_context.exactMatches()) {
-        bool makeDefault = action->type() != Plasma::SearchMatch::InformationalMatch;
+        bool makeDefault = !m_defaultMatch && action->type() != Plasma::SearchMatch::InformationalMatch;
 
         SearchMatch *match = new SearchMatch(action, m_matchList);
 
@@ -464,6 +478,8 @@ void Interface::switchUser()
 
     if (!m_defaultMatch) {
         m_matchList->addItem(i18n("No desktop sessions available"));
+    } else {
+        m_matchList->sortItems(Qt::DescendingOrder);
     }
 }
 
@@ -577,7 +593,6 @@ void Interface::updateMatches()
 {
     m_matchList->clear();
 
-    int matchCount = 0;
     m_defaultMatch = 0;
     QList<QList<Plasma::SearchMatch *> > matchLists;
     matchLists << m_context.informationalMatches()
@@ -588,8 +603,7 @@ void Interface::updateMatches()
         foreach (Plasma::SearchMatch *action, matchList) {
             bool makeDefault = !m_defaultMatch && action->isEnabled();
 
-            SearchMatch *match = new SearchMatch(action, 0);
-            m_matchList->insertItem(matchCount, match);
+            SearchMatch *match = new SearchMatch(action, m_matchList);
 
             if (makeDefault &&
                 action->relevance() > 0 &&
@@ -600,10 +614,10 @@ void Interface::updateMatches()
                 m_optionsButton->setEnabled(action->runner()->hasMatchOptions());
                 m_runButton->setEnabled(true);
             }
-
-            ++matchCount;
         }
     }
+
+    m_matchList->sortItems(Qt::DescendingOrder);
 
     if (!m_defaultMatch) {
         if (m_execQueued && Weaver::instance()->isIdle() ) {
