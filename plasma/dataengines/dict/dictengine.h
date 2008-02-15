@@ -36,9 +36,6 @@ class DictEngine : public Plasma::DataEngine
     public:
         DictEngine( QObject* parent, const QVariantList& args );
         ~DictEngine();
-        void setDict(const QString &dict);
-        void setServer(const QString &server);
-        QHash<QString, QString> *dictHash;
 
     protected:
         bool sourceRequested(const QString &word);
@@ -49,6 +46,10 @@ class DictEngine : public Plasma::DataEngine
         void getDicts();
 
     private:
+        void setDict(const QString &dict);
+        void setServer(const QString &server);
+
+        QHash<QString, QString> *dictHash;
 	QString parseToHtml(QByteArray &text);
 	QTcpSocket *tcpSocket;
 	QString currentWord;
