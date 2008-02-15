@@ -40,13 +40,165 @@
 #include <KSvgRenderer>
 #include <knewstuff2/engine.h>
 #include <ThreadWeaver/Weaver>
+#include <KColorScheme>
 
 #ifdef USE_BACKGROUND_PACKAGES
 
 #include <plasma/packagemetadata.h>
+#include <plasma/svgpanel.h>
 #include <plasma/package.h>
+#include <plasma/theme.h>
 
 #endif
+
+class ThemeModel : public QAbstractListModel
+{
+public:
+    ThemeModel(QObject *parent = 0);
+    virtual ~ThemeModel();
+
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    int indexOf(const QString &path) const;
+private:
+    QStringList m_themes;
+    QList<Plasma::SvgPanel *> m_svgs;
+};
+
+ThemeModel::ThemeModel( QObject *parent )
+: QAbstractListModel( parent )
+{
+    // get all desktop themes
+    KStandardDirs dirs;
+    QStringList themes = dirs.findAllResources("data", "desktoptheme/*/metadata.desktop", KStandardDirs::NoDuplicates);
+    int suffixLength = 17; // length of "/metadata.desktop"
+
+    foreach (const QString &theme, themes) {
+        int themeSepIndex = theme.lastIndexOf("/", -1);
+        QString themeRoot = theme.left(themeSepIndex);
+        int themeNameSepIndex = themeRoot.lastIndexOf("/", -1);
+        QString name = themeRoot.right(themeRoot.length() - themeNameSepIndex - 1);
+        m_themes << name;
+
+        Plasma::SvgPanel *svg = new Plasma::SvgPanel(themeRoot + "/widgets/background.svg", this );
+        svg->setBorderFlags(Plasma::SvgPanel::DrawAllBorders);
+        m_svgs.append( svg );
+    }
+}
+
+ThemeModel::~ThemeModel()
+{
+}
+
+int ThemeModel::rowCount(const QModelIndex &) const
+{
+    return m_themes.size();
+}
+
+QVariant ThemeModel::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid()) {
+        return QVariant();
+    }
+
+    if (index.row() >= m_themes.size()) {
+        return QVariant();
+    }
+
+
+    switch (role) {
+    case Qt::DisplayRole:
+        return m_themes[index.row()];
+    case Qt::UserRole:
+        return qVariantFromValue((void*)m_svgs[index.row()]);
+    default:
+        return QVariant();
+    }
+}
+
+int ThemeModel::indexOf(const QString &name) const
+{
+    for (int i = 0; i < m_themes.size(); i++) {
+        if (name == m_themes[i]) {
+            kDebug() << name << i;
+            return i;
+        }
+    }
+    return -1;
+}
+
+
+
+
+class ThemeDelegate : public QAbstractItemDelegate
+{
+public:
+    ThemeDelegate( QObject * parent = 0 );
+
+    virtual void paint(QPainter *painter, 
+                       const QStyleOptionViewItem &option,
+                       const QModelIndex &index) const;
+    virtual QSize sizeHint(const QStyleOptionViewItem &option,
+                           const QModelIndex &index) const;
+private:
+    static const int MARGIN = 5;
+};
+
+ThemeDelegate::ThemeDelegate( QObject * parent )
+: QAbstractItemDelegate( parent )
+{
+    kDebug();
+}
+
+void ThemeDelegate::paint(QPainter *painter,
+                               const QStyleOptionViewItem &option,
+                               const QModelIndex &index) const
+{
+    QString title = index.model()->data(index, Qt::DisplayRole).toString();
+
+    // highlight selected item
+    painter->save();
+    if (option.state & QStyle::State_Selected) {
+        painter->setBrush(option.palette.color(QPalette::Highlight));
+    } else {
+        painter->setBrush(Qt::gray);
+    }
+    painter->drawRect(option.rect);
+    painter->restore();
+
+    // draw image
+    Plasma::SvgPanel *svg = static_cast<Plasma::SvgPanel *>(index.model()->data(index, Qt::UserRole).value<void *>());
+    svg->resize(QSize(option.rect.width()-(2*MARGIN), 100-(2*MARGIN)));
+    svg->setPos(QPoint(option.rect.left() + MARGIN, option.rect.top() + MARGIN));
+    QRect imgRect = QRect(option.rect.topLeft(), QSize( option.rect.width()-(2*MARGIN), 100-(2*MARGIN) )).
+        translated(MARGIN, MARGIN);
+    svg->paint( painter, imgRect );
+
+    // draw text
+    painter->save();
+    QFont font = painter->font();
+    font.setWeight(QFont::Bold);
+    QString colorFile = KStandardDirs::locate("data", "desktoptheme/" + title + "/colors");
+    if( !colorFile.isEmpty() ) {
+        KSharedConfigPtr colors = KSharedConfig::openConfig(colorFile);
+        KColorScheme colorScheme(QPalette::Active, KColorScheme::View, colors);
+        painter->setPen( colorScheme.foreground().color() );
+    }
+    painter->setFont(font);
+    painter->drawText(option.rect, Qt::AlignCenter | Qt::TextWordWrap, title);
+    painter->restore();
+}
+
+
+
+QSize ThemeDelegate::sizeHint(const QStyleOptionViewItem &, 
+                                   const QModelIndex &) const
+{
+    return QSize(200, 100);
+}
+
+
+
 
 class BackgroundContainer
 {
@@ -432,6 +584,10 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
             this, SLOT(previewRenderingDone(int, const QImage &)));
     connect(this, SIGNAL(finished(int)), this, SLOT(cleanup()));
 
+    m_themeModel = new ThemeModel(this);
+    m_theme->setModel(m_themeModel);
+    m_theme->setItemDelegate(new ThemeDelegate(m_theme->view()));
+
     setMainWidget(main);
 
     reloadConfig(config, globalConfig);
@@ -475,6 +631,8 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config, const KConfigGro
     bool alignToGrid = iconConfig.readEntry("alignToGrid", true);
     m_alignToGrid->setCheckState(alignToGrid ? Qt::Checked : Qt::Unchecked);
 
+    m_theme->setCurrentIndex(m_themeModel->indexOf(Plasma::Theme::self()->themeName()));
+
     if (mode == kSlideshowBackground) {
         updateSlideshow();
     }
@@ -509,6 +667,8 @@ void BackgroundDialog::saveConfig(KConfigGroup config, KConfigGroup globalConfig
     KConfigGroup iconConfig(&globalConfig, "DesktopIcons");
     iconConfig.writeEntry("showIcons", (m_showIcons->checkState() == Qt::Checked ? true : false));
     iconConfig.writeEntry("alignToGrid", (m_alignToGrid->checkState() == Qt::Checked ? true : false));
+
+    Plasma::Theme::self()->setThemeName(m_theme->currentText());
 }
 
 void BackgroundDialog::getNewStuff()

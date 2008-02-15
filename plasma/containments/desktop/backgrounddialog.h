@@ -20,6 +20,7 @@
 #include "ui_BackgroundDialog.h"
 
 class BackgroundContainer;
+class ThemeModel;
 class BackgroundListModel;
 class QComboBox;
 class QLabel;
@@ -56,6 +57,7 @@ private:
     //QComboBox *m_mode;
     //QComboBox *m_view;
     BackgroundListModel *m_model;
+    ThemeModel *m_themeModel;
     
     //QLabel *m_authorLabel;
     //QLabel *m_emailLabel;
