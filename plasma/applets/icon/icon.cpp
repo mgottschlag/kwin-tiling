@@ -80,6 +80,7 @@ void IconApplet::init()
 
 IconApplet::~IconApplet()
 {
+    delete m_dialog;
 }
 
 void IconApplet::saveState(KConfigGroup *cg) const
@@ -95,15 +96,15 @@ void IconApplet::setUrl(const KUrl& url)
     m_mimetype = mime->name();
 
     if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
-        KDesktopFile *f= new KDesktopFile(m_url.toLocalFile());
-        m_text = f->readName();
+        KDesktopFile f(m_url.toLocalFile());
+        m_text = f.readName();
         //corrupted desktop file?
         if (m_text.isNull()) {
             m_text = m_url.fileName();
         }
-        m_icon->setIcon(f->readIcon());
+        m_icon->setIcon(f.readIcon());
 
-        m_genericName = f->readGenericName();
+        m_genericName = f.readGenericName();
     } else {
         m_text = m_url.fileName();
         m_icon->setIcon(KMimeType::iconNameForUrl(url));
@@ -255,17 +256,34 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
 
         //Command
         QString commandStr;
-        //Extract the commend from the Desktop file
+        //Extract the command from the Desktop file
         if (KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
-            KDesktopFile *f= new KDesktopFile(m_url.toLocalFile());
-            KConfigGroup config = f->desktopGroup();
+            KDesktopFile f(m_url.toLocalFile());
+            KConfigGroup config = f.desktopGroup();
             commandStr = config.readPathEntry( "Exec", QString() );
-        //Else just exec the local executable
+
+            if (commandStr.isEmpty()) {
+                QString path = f.readUrl();
+                if (path.isEmpty()) {
+                    path = f.readPath();
+                }
+
+                if (path.isEmpty()) {
+                    return;
+                }
+
+                KUrl dest(path);
+                KMimeType::Ptr mime = KMimeType::findByUrl(dest);
+                if (mime->name() == "inode/directory") {
+                    dropUrls(urls, dest, event->modifiers());
+                }
+            }
         } else {
+            //Else just exec the local executable
             commandStr = KShell::quoteArg(m_url.path());
         }
 
-        KRun::runCommand(commandStr+" "+params, 0);
+        KRun::runCommand(commandStr + " " + params, 0);
     } else if (m_mimetype == "inode/directory") {
         dropUrls(urls, m_url, event->modifiers());
     }
