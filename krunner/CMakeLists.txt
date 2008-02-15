@@ -7,7 +7,7 @@ ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/ksysguard/processcore/)
 
 configure_file(config-xautolock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-xautolock.h)
 
-set(krunner_KCFG_SRCS kscreensaversettings.kcfgc klaunchsettings.kcfgc)
+set(krunner_KCFG_SRCS krunnersettings.kcfgc kscreensaversettings.kcfgc klaunchsettings.kcfgc)
 set(krunner_dbusXML org.kde.krunner.Interface.xml)
 set(krunner_dbusAppXML org.kde.krunner.App.xml)
 set(screensaver_dbusXML org.freedesktop.ScreenSaver.xml)

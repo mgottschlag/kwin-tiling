@@ -46,6 +46,7 @@
 #include "interface.h"
 #include "startupid.h"
 #include "klaunchsettings.h"
+#include "krunnersettings.h"
 
 #include <X11/extensions/Xrender.h>
 
@@ -235,12 +236,12 @@ void KRunnerApp::showTaskManager()
         m_tasks->setInitialSize(QSize(650, 420));
         KConfigGroup cg = KGlobal::config()->group("TaskDialog");
         m_tasks->restoreDialogSize(cg);
-	w->loadSettings(cg);
+        w->loadSettings(cg);
         // Since we default to forcing the window to be KeepAbove, if the user turns this off, remember this
-        bool keepAbove = cg.readEntry("KeepAbove", true);
-	if(keepAbove) {
+        bool keepAbove = KRunnerSettings::keepTaskDialogAbove();
+        if (keepAbove) {
             KWindowSystem::setState( m_tasks->winId(), NET::KeepAbove );
-	}
+        }
 
     } else
         w = static_cast<KSysGuardProcessList *> (m_tasks->mainWidget());
@@ -251,7 +252,9 @@ void KRunnerApp::showTaskManager()
     KWindowSystem::setOnDesktop(m_tasks->winId(), KWindowSystem::currentDesktop());
     KWindowSystem::forceActiveWindow(m_tasks->winId());
 
-    if(w) w->filterLineEdit()->setFocus();
+    if (w) {
+        w->filterLineEdit()->setFocus();
+    }
 }
 
 void KRunnerApp::taskDialogFinished()
@@ -259,15 +262,15 @@ void KRunnerApp::taskDialogFinished()
     KConfigGroup cg = KGlobal::config()->group("TaskDialog");
     m_tasks->saveDialogSize(cg);
     KSysGuardProcessList *w = static_cast<KSysGuardProcessList *> (m_tasks->mainWidget());
-    if(w) w->saveSettings(cg);
+    if (w) {
+        w->saveSettings(cg);
+    }
+
     // Since we default to forcing the window to be KeepAbove, if the user turns this off, remember this
     bool keepAbove = KWindowSystem::windowInfo(m_tasks->winId(), NET::WMState).hasState(NET::KeepAbove);
-    if(keepAbove)
-        cg.revertToDefault("KeepAbove");
-    else
-        cg.writeEntry("KeepAbove", false);
-
+    KRunnerSettings::setKeepTaskDialogAbove(keepAbove);
     KGlobal::config()->sync();
+
     m_tasks->deleteLater();
     m_tasks = 0;
 }

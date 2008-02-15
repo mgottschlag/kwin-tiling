@@ -56,6 +56,7 @@
 
 #include "collapsiblewidget.h"
 #include "interfaceadaptor.h"
+#include "krunnersettings.h"
 
 using ThreadWeaver::Weaver;
 using ThreadWeaver::Job;
@@ -296,7 +297,7 @@ Interface::Interface(QWidget* parent)
     connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(updateMatches()));
 
     const int numProcs = Solid::Device::listFromType(Solid::DeviceInterface::Processor).count();
-    const int numThreads = qMin(12, 2 + ((numProcs - 1) * 2));
+    const int numThreads = qMin(KRunnerSettings::maxThreads(), 2 + ((numProcs - 1) * 2));
     //kDebug() << "setting up" << numThreads << "threads for" << numProcs << "processors";
     Weaver::instance()->setMaximumNumberOfThreads(numThreads);
 
@@ -321,8 +322,7 @@ Interface::Interface(QWidget* parent)
     connect(m_searchTerm, SIGNAL(returnPressed()),
             this, SLOT(exec()));
 
-    KConfigGroup cg(KGlobal::config(), "General");
-    QStringList executions = cg.readEntry("pastqueries", QStringList());
+    QStringList executions = KRunnerSettings::pastQueries();
     //Handle updates to the completion object as well
     m_searchTerm->setHistoryItems(executions, true);
 
@@ -381,7 +381,7 @@ Interface::Interface(QWidget* parent)
     //        SLOT(setWidgetPalettes()));
 
     //TODO: how should we order runners, particularly ones loaded from plugins?
-    QStringList whitelist = cg.readEntry("runners", QStringList());
+    QStringList whitelist = KRunnerSettings::runners();
     m_runners += Plasma::AbstractRunner::loadRunners(this, whitelist);
 
     connect(&m_context, SIGNAL(matchesChanged()), this, SLOT(queueUpdates()));
@@ -393,16 +393,14 @@ Interface::Interface(QWidget* parent)
 
 Interface::~Interface()
 {
-    KConfigGroup cg(KGlobal::config(), "General");
-    cg.writeEntry("pastqueries", m_searchTerm->historyItems());
+    KRunnerSettings::setPastQueries(m_searchTerm->historyItems());
     m_context.clearMatches();
 }
 
 void Interface::clearHistory()
 {
     m_searchTerm->clearHistory();
-    KConfigGroup cg(KGlobal::config(), "General");
-    cg.writeEntry("pastqueries", m_searchTerm->historyItems());
+    KRunnerSettings::setPastQueries(m_searchTerm->historyItems());
 }
 
 void Interface::display(const QString& term)
