@@ -42,6 +42,9 @@
 #include <KTitleWidget>
 #include <KWindowSystem>
 
+#include <Solid/Device>
+#include <Solid/DeviceInterface>
+
 // #include <threadweaver/DebuggingAids.h>
 // #include <ThreadWeaver/Thread>
 #include <ThreadWeaver/Job>
@@ -291,6 +294,11 @@ Interface::Interface(QWidget* parent)
 
     m_updateTimer.setSingleShot(true);
     connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(updateMatches()));
+
+    const int numProcs = Solid::Device::listFromType(Solid::DeviceInterface::Processor).count();
+    const int numThreads = qMin(12, 2 + ((numProcs - 1) * 2));
+    //kDebug() << "setting up" << numThreads << "threads for" << numProcs << "processors";
+    Weaver::instance()->setMaximumNumberOfThreads(numThreads);
 
     QWidget* w = mainWidget();
     m_layout = new QVBoxLayout(w);
@@ -569,7 +577,6 @@ void Interface::match()
 
 void Interface::updateMatches()
 {
-    //FIXME: this induces rediculously bad flicker
     m_matchList->clear();
 
     int matchCount = 0;
