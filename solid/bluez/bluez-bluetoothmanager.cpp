@@ -195,8 +195,8 @@ Solid::Control::Ifaces::BluetoothSecurity *BluezBluetoothManager::security(const
     } else {
         out = new BluezBluetoothSecurity(interface,this);
     }
-	new BluezBluetoothSecurityPasskeyAgentAdaptor(out);
-	new BluezBluetoothSecurityAuthorizationAgentAdaptor(out);
+    new BluezBluetoothSecurityPasskeyAgentAdaptor(out);
+    new BluezBluetoothSecurityAuthorizationAgentAdaptor(out);
     return out;
 }
 
