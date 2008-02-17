@@ -134,11 +134,22 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
     QAction *addToPanelAction = new QAction(this);
 
     if (d->applet) {
-        addToDesktopAction->setText(i18n("Add to Desktop"));
-        actions << addToDesktopAction;
+        Plasma::Containment *containment = d->applet->containment();
 
-        addToPanelAction->setText(i18n("Add to Panel"));
-        actions << addToPanelAction;
+        if (containment && containment->corona()) {
+            Plasma::Containment *desktop = containment->corona()->containmentForScreen(containment->screen());
+
+            if (desktop && !desktop->isImmutable()) {
+                addToDesktopAction->setText(i18n("Add to Desktop"));
+                actions << addToDesktopAction;
+            }
+        }
+
+        if (containment && !containment->isImmutable() &&
+            containment->containmentType() == Plasma::Containment::PanelContainment) {
+            addToPanelAction->setText(i18n("Add to Panel"));
+            actions << addToPanelAction;
+        }
     }
 
     // advanced item actions
