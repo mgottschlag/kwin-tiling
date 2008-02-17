@@ -95,7 +95,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 	} else
 #endif
 	{
-		QMatrix matrix;
+		QTransform matrix;
 		QPoint cp = contentsRect().center();
 		matrix.translate( cp.x(), cp.y() );
 		int d = qMin( contentsRect().width() - 15, contentsRect().height() - 15 );
@@ -106,7 +106,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 		// Hour
 		float h_angle = 30*(time.hour()%12-3) + time.minute()/2;
 		matrix.rotate( h_angle );
-		p.setMatrix( matrix );
+		p.setWorldTransform( matrix );
 		pts.setPoints( 4, -20,0, 0,-20, 300,0, 0,20 );
 		p.drawPolygon( pts );
 		matrix.rotate( -h_angle );
@@ -114,7 +114,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 		// Minute
 		float m_angle = (time.minute()-15)*6;
 		matrix.rotate( m_angle );
-		p.setMatrix( matrix );
+		p.setWorldTransform( matrix );
 		pts.setPoints( 4, -10,0, 0,-10, 400,0, 0,10 );
 		p.drawPolygon( pts );
 		matrix.rotate( -m_angle );
@@ -126,7 +126,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 		{
 			float s_angle = (time.second()-15)*6;
 			matrix.rotate( s_angle );
-			p.setMatrix( matrix );
+			p.setWorldTransform( matrix );
 			pts.setPoints( 4,0,0,0,0,400,0,0,0 );
 			p.drawPolygon( pts );
 			matrix.rotate( -s_angle );
@@ -134,7 +134,7 @@ void KdmClock::paintEvent( QPaintEvent * )
 
 		// quadrante
 		for (int i = 0; i < 60; i++) {
-			p.setMatrix( matrix );
+			p.setWorldTransform( matrix );
 			if ((i % 5) == 0)
 				p.drawLine( 450,0, 500,0 ); // draw hour lines
 			else
