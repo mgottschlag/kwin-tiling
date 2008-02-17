@@ -228,8 +228,8 @@ void MenuLauncherApplet::showConfigurationInterface()
         l->addWidget(formatLabel, 1, 0);
         d->formatComboBox = new QComboBox(p);
         formatLabel->setBuddy(d->formatComboBox);
-        d->addItem(d->formatComboBox, i18n("Name only"), MenuLauncherApplet::Name);
-        d->addItem(d->formatComboBox, i18n("Description only"), MenuLauncherApplet::Description);
+        d->addItem(d->formatComboBox, i18n("Name Only"), MenuLauncherApplet::Name);
+        d->addItem(d->formatComboBox, i18n("Description Only"), MenuLauncherApplet::Description);
         d->addItem(d->formatComboBox, i18n("Name Description"), MenuLauncherApplet::NameDescription);
         d->addItem(d->formatComboBox, i18n("Description (Name)"), MenuLauncherApplet::DescriptionName);
         l->addWidget(d->formatComboBox, 1, 1);
