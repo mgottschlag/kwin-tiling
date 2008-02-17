@@ -225,13 +225,13 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             //FIXME: temporary time output
             QString time = m_time.toString();
             QFontMetrics fm(QApplication::font());
-            p->drawText((int)(rect.width()/2 - fm.width(time) / 2),
-                        (int)((rect.height()/2) - fm.xHeight()*3), m_time.toString());
+            p->drawText((rect.width()/2 - fm.width(time) / 2),
+                        ((rect.height()/2) - fm.xHeight()*3), m_time.toString());
         } else {
             QString time = m_time.toString("hh:mm");
             QFontMetrics fm(QApplication::font());
-            p->drawText((int)(rect.width()/2 - fm.width(time) / 2),
-                        (int)((rect.height()/2) - fm.xHeight()*3), m_time.toString("hh:mm"));
+            p->drawText((rect.width()/2 - fm.width(time) / 2),
+                        ((rect.height()/2) - fm.xHeight()*3), m_time.toString("hh:mm"));
         }
     }
 
