@@ -309,9 +309,10 @@ Interface::Interface(QWidget* parent)
     m_updateTimer.setSingleShot(true);
     connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(updateMatches()));
 
-    const int numProcs = Solid::Device::listFromType(Solid::DeviceInterface::Processor).count();
+    const int numProcs = qMax(Solid::Device::listFromType(Solid::DeviceInterface::Processor).count(), 1);
     const int numThreads = qMin(KRunnerSettings::maxThreads(), 2 + ((numProcs - 1) * 2));
-    //kDebug() << "setting up" << numThreads << "threads for" << numProcs << "processors";
+    kDebug() << "setting up" << numThreads << "threads for" << numProcs << "processors"
+             << "mts" << KRunnerSettings::maxThreads();
     Weaver::instance()->setMaximumNumberOfThreads(numThreads);
 
     QWidget* w = mainWidget();
