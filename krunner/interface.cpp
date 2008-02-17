@@ -311,8 +311,7 @@ Interface::Interface(QWidget* parent)
 
     const int numProcs = qMax(Solid::Device::listFromType(Solid::DeviceInterface::Processor).count(), 1);
     const int numThreads = qMin(KRunnerSettings::maxThreads(), 2 + ((numProcs - 1) * 2));
-    kDebug() << "setting up" << numThreads << "threads for" << numProcs << "processors"
-             << "mts" << KRunnerSettings::maxThreads();
+    //kDebug() << "setting up" << numThreads << "threads for" << numProcs << "processors";
     Weaver::instance()->setMaximumNumberOfThreads(numThreads);
 
     QWidget* w = mainWidget();
