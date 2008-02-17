@@ -410,34 +410,34 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
     // Fonts smaller than smallestReadableFont don't make sense.
     m_font.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(), m_font.pointSize()));
     QFontMetrics fm(m_font);
-    int text_width = fm.width(labelText);
+    qreal text_width = fm.width(labelText);
 
     // Longer texts get smaller fonts
     if (labelText.length() > 4) {
         if (original_font_size/1.5 < KGlobalSettings::smallestReadableFont().pointSize()) {
-            m_font.setPointSize((int)(KGlobalSettings::smallestReadableFont().pointSize()));
+            m_font.setPointSize((KGlobalSettings::smallestReadableFont().pointSize()));
         } else {
-            m_font.setPointSize((int)(original_font_size/1.5));
+            m_font.setPointSizeF(original_font_size/1.5);
         }
         fm = QFontMetrics(m_font);
-        text_width = (int)(fm.width(labelText) * 1.2);
+        text_width = (fm.width(labelText) * 1.2);
     } else {
         // Smaller texts get a wider box
-        text_width = (int)(text_width * 1.4);
+        text_width = (text_width * 1.4);
     }
     if (formFactor() == Plasma::Horizontal ||
         formFactor() == Plasma::Vertical) {
         m_font = KGlobalSettings::smallestReadableFont();
         m_font.setWeight(QFont::Bold);
         fm = QFontMetrics(m_font);
-        text_width = (int)(fm.width(labelText)+8);
+        text_width = (fm.width(labelText)+8);
     } 
     p->setFont(m_font);
 
     // Let's find a good position for painting the background
-    QRect text_rect = QRect(qMax(0, contentsRect.left()+(contentsRect.width()-text_width)/2),
+    QRect text_rect = QRect((int)qMax(0.0, contentsRect.left()+(contentsRect.width()-text_width)/2),
                             (int)(contentsRect.top()+((contentsRect.height() - (int)fm.height())/2*0.9)),
-                            qMin((int)contentSize().width(), text_width),
+                            (int)qMin(contentSize().width(), text_width),
                             (int)(fm.height()*1.2));
 
     // Poor man's highlighting
@@ -450,8 +450,8 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
     float round_prop = text_rect.width() / text_rect.height();
 
     // Tweak the rounding edge a bit with the proportions of the textbox
-    int round_radius = 35;
-    p->drawRoundRect(text_rect, (int)(round_radius/round_prop), round_radius);
+    qreal round_radius = 35.0;
+    p->drawRoundedRect(text_rect, round_radius / round_prop, round_radius);
 
     m_textColor.setAlphaF(m_alpha);
     p->setPen(m_textColor);
