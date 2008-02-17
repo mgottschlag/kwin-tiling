@@ -65,19 +65,21 @@ void ServiceRunner::match(Plasma::SearchContext *search)
     QList<Plasma::SearchMatch*> possibilities;
     QList<Plasma::SearchMatch*> info;
 
+    QHash<QString, bool> seen;
     if (service && !service->exec().isEmpty()) {
         //kDebug() << service->name() << "is an exact match!";
         Plasma::SearchMatch *match = new Plasma::SearchMatch(search, this);
         setupAction(service, match);
         match->setRelevance(1);
+        exact << match;
+        seen[service->storageId()] = true;
+        seen[service->exec()] = true;
     }
 
-    QString query = QString("exist Exec and ('%1' ~in Keywords or '%2' ~~ GenericName or '%3' ~~ Name) and Name !~ '%4'")
-                            .arg(term, term, term, term);
+    QString query = QString("exist Exec and ('%1' ~in Keywords or '%2' ~~ GenericName or '%3' ~~ Name) and Name != '%4'").arg(term, term, term, term);
     const KService::List services = serviceQuery("Application", query);
 
     //kDebug() << "got " << services.count() << " services from " << query;
-    QHash<QString, bool> seen;
     foreach (const KService::Ptr service, services) {
         QString id = service->storageId();
         QString exec = service->exec();
