@@ -283,23 +283,25 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             if (m_showDate) {
                 QString day = m_date.toString("d");
                 QString month = m_date.toString("MMM");
+
                 if (m_showYear) {
                     QString year = m_date.toString("yyyy");
                     dateString = i18nc("@label Short date: "
                                        "%1 day in the month, %2 short month name, %3 year",
                                        "%1 %2 %3", day, month, year);
-                }
-                else {
+                } else {
                     dateString = i18nc("@label Short date: "
                                        "%1 day in the month, %2 short month name",
                                        "%1 %2", day, month);
                 }
+
                 if (m_showDay) {
                     QString weekday = QDate::shortDayName(m_date.dayOfWeek());
                     dateString = i18nc("@label Day of the week with date: "
                                        "%1 short day name, %2 short date",
                                        "%1, %2", weekday, dateString);
                 }
+
                 if (m_showTimezone) {
                     QString timezone = m_prettyTimezone;
                     timezone.replace("_", " ");
@@ -307,8 +309,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                                        "%1 day of the week with date, %2 timezone",
                                        "%1 %2", dateString, timezone);
                 }
-            }
-            else if (m_showTimezone) {
+            } else if (m_showTimezone) {
                 dateString = m_prettyTimezone;
                 dateString.replace("_", " ");
             }
@@ -336,13 +337,14 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                                 (contentsRect.width()),
                                 (contentsRect.height()));
         }
+
         QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
 
         m_plainClockFont.setBold(m_plainClockFontBold);
         m_plainClockFont.setItalic(m_plainClockFontItalic);
 
         // Choose a relatively big font size to start with
-        m_plainClockFont.setPointSize(qMax((int)(contentsRect.height()/1.5), KGlobalSettings::smallestReadableFont().pointSize()));
+        m_plainClockFont.setPointSizeF(qMax((contentsRect.height()/1.5), (qreal)KGlobalSettings::smallestReadableFont().pointSize()));
         preparePainter(p, timeRect, m_plainClockFont, timeString);
 
         p->drawText(timeRect,
