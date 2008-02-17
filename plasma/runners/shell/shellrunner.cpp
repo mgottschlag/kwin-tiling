@@ -56,6 +56,7 @@ void ShellRunner::match(Plasma::SearchContext *search)
         Plasma::SearchMatch* action = search->addExactMatch(this);
         action->setIcon(KIcon("system-run"));
         action->setText(i18n("Run %1", search->searchTerm()));
+        action->setRelevance(1);
     }
 }
 
