@@ -892,6 +892,7 @@ QPixmap Task::thumbnail(int maxDimension)
     XRenderPictFormat *format = XRenderFindVisualFormat(dpy, winAttr.visual);
 
     XRenderPictureAttributes picAttr;
+    ::memset(&picAttr, 0, sizeof(picAttr));
     picAttr.subwindow_mode = IncludeInferiors; // Don't clip child widgets
 
     Picture picture = XRenderCreatePicture(dpy, d->windowPixmap, format,
