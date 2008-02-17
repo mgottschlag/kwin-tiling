@@ -74,7 +74,7 @@ void Panel::init()
 QList<QAction*> Panel::contextActions()
 {
     if (m_actions.isEmpty()) {
-        QAction *addWidgetsAction = new QAction(i18n("Add Widgets"), this);
+        QAction *addWidgetsAction = new QAction(i18n("Add Widgets..."), this);
         addWidgetsAction->setIcon(KIcon("list-add"));
         connect(addWidgetsAction, SIGNAL(triggered()), this, SIGNAL(showAddWidgets()));
 
