@@ -16,7 +16,7 @@
 #include <kdialog.h>
 
 #include <windows.h>
-#include <windowdef_list_widget_ui.h>
+#include <ui_windowdef_list_widget_ui.h>
 
 namespace KHotKeys
 {
@@ -25,6 +25,14 @@ class Action_data;
 class Windowdef_simple_widget;
 
 class Windowdef_list_item;
+
+class Windowdef_list_widget_ui : public QWidget, public Ui::Windowdef_list_widget_ui
+{
+public:
+  Windowdef_list_widget_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 class Windowdef_list_widget
     : public Windowdef_list_widget_ui

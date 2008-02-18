@@ -16,7 +16,7 @@
 #include <khlistview.h>
 
 #include <triggers.h>
-#include <triggers_tab_ui.h>
+#include <ui_triggers_tab_ui.h>
 #include <kkeysequencewidget.h>
 #include <window_trigger_widget.h>
 
@@ -26,6 +26,14 @@ namespace KHotKeys
 
 class Action_data;
 class Trigger_list_item;
+
+class Triggers_tab_ui : public QWidget, public Ui::Triggers_tab_ui
+{
+public:
+  Triggers_tab_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 // A listbox here would do too, but unlike QListView, QListBox now even cannot be subclassed
 // to behave sanely WRT selecting and the current item

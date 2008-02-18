@@ -43,9 +43,9 @@ namespace KHotKeys
 // Triggers_tab
 
 Triggers_tab::Triggers_tab( QWidget* parent_P, const char* name_P )
-    : Triggers_tab_ui( parent_P, name_P ), selected_item( NULL )
+    : Triggers_tab_ui( parent_P ), selected_item( NULL )
     {
-
+    setObjectName(name_P);
     QMenu* popup = new QMenu; // CHECKME looks like setting parent doesn't work
     QAction *action = popup->addAction( i18n( "Shortcut Trigger..." ) );
     action->setData( TYPE_SHORTCUT_TRIGGER );
@@ -68,6 +68,10 @@ Triggers_tab::Triggers_tab( QWidget* parent_P, const char* name_P )
     connect( popup, SIGNAL( triggered( QAction* )), SLOT( new_selected( QAction* )));
     connect( triggers_listview, SIGNAL( doubleClicked ( Q3ListViewItem *, const QPoint &, int ) ),
              this, SLOT( modify_pressed() ) );
+    connect(modify_button, SIGNAL(clicked()),this,SLOT(modify_pressed()));
+    connect(delete_button, SIGNAL(clicked()),this,SLOT(delete_pressed()));
+    connect(copy_button, SIGNAL(clicked()),this,SLOT(copy_pressed()));
+    connect(triggers_listview,SIGNAL(current_changed(Q3ListViewItem*)),this,SLOT(current_changed(Q3ListViewItem*)));
 
     new_button->setMenu( popup );
     copy_button->setEnabled( false );

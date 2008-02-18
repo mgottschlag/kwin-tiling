@@ -36,9 +36,10 @@ namespace KHotKeys
 // Windowdef_list_widget
 
 Windowdef_list_widget::Windowdef_list_widget( QWidget* parent_P, const char* name_P )
-    : Windowdef_list_widget_ui( parent_P, name_P ), autodetect_object( NULL ),
+    : Windowdef_list_widget_ui( parent_P), autodetect_object( NULL ),
         autodetect_slot( NULL ), selected_item( NULL )
     {
+    setObjectName(name_P);
     layout()->setMargin(0);
     QMenu* popup = new QMenu; // CHECKME looks like setting parent doesn't work
     QAction *action = popup->addAction( i18n( "Simple Window..." ) );
@@ -46,6 +47,10 @@ Windowdef_list_widget::Windowdef_list_widget( QWidget* parent_P, const char* nam
 
     connect( windows_listview, SIGNAL( doubleClicked ( Q3ListViewItem *, const QPoint &, int ) ),
              this, SLOT( modify_pressed() ) );
+    connect(copy_button,SIGNAL(clicked()),this,SLOT(copy_pressed()));
+    connect(modify_button,SIGNAL(clicked()),this,SLOT(modify_pressed()));
+    connect(delete_button,SIGNAL(clicked()),this,SLOT(delete_pressed()));
+    connect(windows_listview,SIGNAL(current_changed(Q3ListViewItem*)),this,SLOT(current_changed(Q3ListViewItem*)));
     new_button->setMenu( popup );
     windows_listview->header()->hide();
     windows_listview->addColumn( "" );

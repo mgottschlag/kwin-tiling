@@ -30,8 +30,9 @@ namespace KHotKeys
 {
 
 Windowdef_simple_widget::Windowdef_simple_widget( QWidget* parent_P, const char* name_P )
-    : Windowdef_simple_widget_ui( parent_P, name_P )
+    : Windowdef_simple_widget_ui( parent_P )
     {
+    setObjectName(name_P);
     window_title_lineedit->setEnabled( false );
     window_class_lineedit->setEnabled( false );
     window_role_lineedit->setEnabled( false );

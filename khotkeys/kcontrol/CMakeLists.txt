@@ -36,15 +36,11 @@ set(kcm_khotkeys_PART_SRCS ${libshared_SRCS}
 
 
 kde4_add_ui3_files(kcm_khotkeys_PART_SRCS
-	ui/windowdef_simple_widget_ui.ui 
-	ui/windowdef_list_widget_ui.ui 
 	ui/menuentry_widget_ui.ui 
-	ui/triggers_tab_ui.ui 
 	ui/general_tab_ui.ui 
 	ui/dbus_widget_ui.ui 
 	ui/main_buttons_widget_ui.ui 
 	ui/info_tab_ui.ui 
-	ui/window_trigger_widget_ui.ui 
 	ui/keyboard_input_widget_ui.ui 
 	ui/condition_list_widget_ui.ui 
 	ui/gesture_triggers_tab_ui.ui 
@@ -54,6 +50,10 @@ kde4_add_ui3_files(kcm_khotkeys_PART_SRCS
     ui/voice_input_widget_ui.ui)
 
 kde4_add_ui_files(kcm_khotkeys_PART_SRCS
+        ui/windowdef_simple_widget_ui.ui
+        ui/windowdef_list_widget_ui.ui
+        ui/triggers_tab_ui.ui
+        ui/window_trigger_widget_ui.ui
         ui/command_url_widget_ui.ui
         ui/action_list_widget_ui.ui	
         ui/action_group_tab_ui.ui)

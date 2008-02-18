@@ -11,13 +11,22 @@
 #ifndef _WINDOW_TRIGGER_WIDGET_H_
 #define _WINDOW_TRIGGER_WIDGET_H_
 
-#include <window_trigger_widget_ui.h>
+#include <ui_window_trigger_widget_ui.h>
 
 namespace KHotKeys
 {
 
 class Window_trigger;
 class Action_data;
+
+
+class Window_trigger_widget_ui : public QWidget, public Ui::Window_trigger_widget_ui
+{
+public:
+  Window_trigger_widget_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 class Window_trigger_widget
     : public Window_trigger_widget_ui

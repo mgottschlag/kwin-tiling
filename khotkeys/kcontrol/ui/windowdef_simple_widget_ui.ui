@@ -1,476 +1,413 @@
-<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
-<class>KHotKeys::Windowdef_simple_widget_ui</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>Windowdef_simple_widget_ui</cstring>
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>KHotKeys::Windowdef_simple_widget_ui</class>
+  <widget class="QWidget" name="Windowdef_simple_widget_ui" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>588</width>
+        <height>497</height>
+      </rect>
     </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>588</width>
-            <height>497</height>
-        </rect>
-    </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
-            <number>11</number>
-        </property>
-        <property name="spacing">
+    <layout class="QVBoxLayout" >
+      <property name="margin" >
+        <number>11</number>
+      </property>
+      <property name="spacing" >
+        <number>6</number>
+      </property>
+      <item>
+        <widget class="QLabel" name="comment_label" >
+          <property name="text" >
+            <string>&amp;Comment:</string>
+          </property>
+          <property name="buddy" stdset="0" >
+            <cstring>comment_lineedit</cstring>
+          </property>
+          <property name="wordWrap" >
+            <bool>false</bool>
+          </property>
+        </widget>
+      </item>
+      <item>
+        <widget class="QLineEdit" name="comment_lineedit" />
+      </item>
+      <item>
+        <spacer name="Spacer3" >
+          <property name="sizeHint" >
+            <size>
+              <width>0</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Qt::Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <property name="spacing" >
             <number>6</number>
-        </property>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>comment_label</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Comment:</string>
-            </property>
-            <property name="buddy" stdset="0">
-                <cstring>comment_lineedit</cstring>
-            </property>
-        </widget>
-        <widget class="QLineEdit">
-            <property name="name">
-                <cstring>comment_lineedit</cstring>
-            </property>
-        </widget>
-        <spacer>
-            <property name="name">
-                <cstring>Spacer3</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>0</width>
-                    <height>20</height>
-                </size>
-            </property>
-        </spacer>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>Layout1</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>window_title_label</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Window &amp;title:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>window_title_lineedit</cstring>
-                    </property>
-                </widget>
-                <widget class="QComboBox">
-                    <item>
-                        <property name="text">
-                            <string>Is Not Important</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Contains</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Is</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Matches Regular Expression</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Does Not Contain</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Is Not</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Does Not Match Regular Expression</string>
-                        </property>
-                    </item>
-                    <property name="name">
-                        <cstring>window_title_combo</cstring>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
-        <widget class="QLineEdit">
-            <property name="name">
+          </property>
+          <item>
+            <widget class="QLabel" name="window_title_label" >
+              <property name="text" >
+                <string>Window &amp;title:</string>
+              </property>
+              <property name="buddy" stdset="0" >
                 <cstring>window_title_lineedit</cstring>
-            </property>
-        </widget>
-        <spacer>
-            <property name="name">
-                <cstring>Spacer5</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>0</width>
-                    <height>20</height>
-                </size>
-            </property>
+              </property>
+              <property name="wordWrap" >
+                <bool>false</bool>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QComboBox" name="window_title_combo" >
+              <item>
+                <property name="text" >
+                  <string>Is Not Important</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Contains</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Is</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Matches Regular Expression</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Does Not Contain</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Is Not</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Does Not Match Regular Expression</string>
+                </property>
+              </item>
+            </widget>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <widget class="QLineEdit" name="window_title_lineedit" />
+      </item>
+      <item>
+        <spacer name="Spacer5" >
+          <property name="sizeHint" >
+            <size>
+              <width>0</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Qt::Vertical</enum>
+          </property>
         </spacer>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>Layout2</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>window_class_label</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Window c&amp;lass:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>window_class_lineedit</cstring>
-                    </property>
-                </widget>
-                <widget class="QComboBox">
-                    <item>
-                        <property name="text">
-                            <string>Is Not Important</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Contains</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Is</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Matches Regular Expression</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Does Not Contain</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Is Not</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Does Not Match Regular Expression</string>
-                        </property>
-                    </item>
-                    <property name="name">
-                        <cstring>window_class_combo</cstring>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
-        <widget class="QLineEdit">
-            <property name="name">
+      </item>
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <property name="spacing" >
+            <number>6</number>
+          </property>
+          <item>
+            <widget class="QLabel" name="window_class_label" >
+              <property name="text" >
+                <string>Window c&amp;lass:</string>
+              </property>
+              <property name="buddy" stdset="0" >
                 <cstring>window_class_lineedit</cstring>
-            </property>
-        </widget>
-        <spacer>
-            <property name="name">
-                <cstring>Spacer7</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>0</width>
-                    <height>20</height>
-                </size>
-            </property>
+              </property>
+              <property name="wordWrap" >
+                <bool>false</bool>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QComboBox" name="window_class_combo" >
+              <item>
+                <property name="text" >
+                  <string>Is Not Important</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Contains</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Is</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Matches Regular Expression</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Does Not Contain</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Is Not</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Does Not Match Regular Expression</string>
+                </property>
+              </item>
+            </widget>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <widget class="QLineEdit" name="window_class_lineedit" />
+      </item>
+      <item>
+        <spacer name="Spacer7" >
+          <property name="sizeHint" >
+            <size>
+              <width>0</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Qt::Vertical</enum>
+          </property>
         </spacer>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>Layout3</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>window_role_label</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Window &amp;role:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>window_role_lineedit</cstring>
-                    </property>
-                </widget>
-                <widget class="QComboBox">
-                    <item>
-                        <property name="text">
-                            <string>Is Not Important</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Contains</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Is</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Matches Regular Expression</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Does Not Contain</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Is Not</string>
-                        </property>
-                    </item>
-                    <item>
-                        <property name="text">
-                            <string>Does Not Match Regular Expression</string>
-                        </property>
-                    </item>
-                    <property name="name">
-                        <cstring>window_role_combo</cstring>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
-        <widget class="QLineEdit">
-            <property name="name">
+      </item>
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <property name="spacing" >
+            <number>6</number>
+          </property>
+          <item>
+            <widget class="QLabel" name="window_role_label" >
+              <property name="text" >
+                <string>Window &amp;role:</string>
+              </property>
+              <property name="buddy" stdset="0" >
                 <cstring>window_role_lineedit</cstring>
-            </property>
-        </widget>
-        <spacer>
-            <property name="name">
-                <cstring>Spacer15</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>0</width>
-                    <height>20</height>
-                </size>
-            </property>
+              </property>
+              <property name="wordWrap" >
+                <bool>false</bool>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QComboBox" name="window_role_combo" >
+              <item>
+                <property name="text" >
+                  <string>Is Not Important</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Contains</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Is</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Matches Regular Expression</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Does Not Contain</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Is Not</string>
+                </property>
+              </item>
+              <item>
+                <property name="text" >
+                  <string>Does Not Match Regular Expression</string>
+                </property>
+              </item>
+            </widget>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <widget class="QLineEdit" name="window_role_lineedit" />
+      </item>
+      <item>
+        <spacer name="Spacer15" >
+          <property name="sizeHint" >
+            <size>
+              <width>0</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Qt::Vertical</enum>
+          </property>
         </spacer>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>Layout6</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <spacer>
-                    <property name="name">
-                        <cstring>Spacer13</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>autodetect_button</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Autodetect</string>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>Spacer14</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                </spacer>
-            </hbox>
-        </widget>
-        <spacer>
-            <property name="name">
-                <cstring>Spacer7_2</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
+      </item>
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <property name="spacing" >
+            <number>6</number>
+          </property>
+          <item>
+            <spacer name="Spacer13" >
+              <property name="sizeHint" >
                 <size>
-                    <width>0</width>
-                    <height>20</height>
+                  <width>20</width>
+                  <height>0</height>
                 </size>
-            </property>
+              </property>
+              <property name="sizeType" >
+                <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="orientation" >
+                <enum>Qt::Qt::Horizontal</enum>
+              </property>
+            </spacer>
+          </item>
+          <item>
+            <widget class="QPushButton" name="autodetect_button" >
+              <property name="text" >
+                <string>&amp;Autodetect</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <spacer name="Spacer14" >
+              <property name="sizeHint" >
+                <size>
+                  <width>20</width>
+                  <height>0</height>
+                </size>
+              </property>
+              <property name="sizeType" >
+                <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="orientation" >
+                <enum>Qt::Qt::Horizontal</enum>
+              </property>
+            </spacer>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <spacer name="Spacer7_2" >
+          <property name="sizeHint" >
+            <size>
+              <width>0</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Qt::Vertical</enum>
+          </property>
         </spacer>
-        <widget class="QGroupBox">
-            <property name="name">
-                <cstring>window_types_groupbox</cstring>
+      </item>
+      <item>
+        <widget class="Q3GroupBox" name="window_types_groupbox" >
+          <property name="title" >
+            <string>Window Types</string>
+          </property>
+          <layout class="QGridLayout" >
+            <property name="margin" >
+              <number>11</number>
             </property>
-            <property name="title">
-                <string>Window Types</string>
+            <property name="spacing" >
+              <number>6</number>
             </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
+            <item row="0" column="0" >
+              <widget class="QCheckBox" name="type_normal_checkbox" >
+                <property name="text" >
+                  <string>Normal</string>
                 </property>
-                <property name="margin">
-                    <number>11</number>
+              </widget>
+            </item>
+            <item row="1" column="0" >
+              <widget class="QCheckBox" name="type_dialog_checkbox" >
+                <property name="text" >
+                  <string>Dialog</string>
                 </property>
-                <property name="spacing">
-                    <number>6</number>
+              </widget>
+            </item>
+            <item row="1" column="1" >
+              <widget class="QCheckBox" name="type_desktop_checkbox" >
+                <property name="text" >
+                  <string>Desktop</string>
                 </property>
-                <widget class="QCheckBox" row="0" column="0">
-                    <property name="name">
-                        <cstring>type_normal_checkbox</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Normal</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="1" column="0">
-                    <property name="name">
-                        <cstring>type_dialog_checkbox</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Dialog</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="1" column="1">
-                    <property name="name">
-                        <cstring>type_desktop_checkbox</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Desktop</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="0" column="1">
-                    <property name="name">
-                        <cstring>type_dock_checkbox</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Dock</string>
-                    </property>
-                </widget>
-            </grid>
+              </widget>
+            </item>
+            <item row="0" column="1" >
+              <widget class="QCheckBox" name="type_dock_checkbox" >
+                <property name="text" >
+                  <string>Dock</string>
+                </property>
+              </widget>
+            </item>
+          </layout>
         </widget>
-    </vbox>
-</widget>
-<connections>
-    <connection>
-        <sender>window_class_combo</sender>
-        <signal>activated(int)</signal>
-        <receiver>Windowdef_simple_widget_ui</receiver>
-        <slot>window_class_combo_changed(int)</slot>
-    </connection>
-    <connection>
-        <sender>window_role_combo</sender>
-        <signal>activated(int)</signal>
-        <receiver>Windowdef_simple_widget_ui</receiver>
-        <slot>window_role_combo_changed(int)</slot>
-    </connection>
-    <connection>
-        <sender>window_title_combo</sender>
-        <signal>activated(int)</signal>
-        <receiver>Windowdef_simple_widget_ui</receiver>
-        <slot>window_title_combo_changed(int)</slot>
-    </connection>
-</connections>
-<tabstops>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <tabstops>
     <tabstop>comment_lineedit</tabstop>
     <tabstop>window_title_combo</tabstop>
     <tabstop>window_title_lineedit</tabstop>
@@ -479,15 +416,28 @@
     <tabstop>window_role_combo</tabstop>
     <tabstop>window_role_lineedit</tabstop>
     <tabstop>autodetect_button</tabstop>
-</tabstops>
-<slots>
-    <slot access="protected" specifier="pure virtual">window_class_combo_changed(int)</slot>
-    <slot access="protected" specifier="pure virtual">window_role_combo_changed(int)</slot>
-    <slot access="protected" specifier="pure virtual">window_title_combo_changed(int)</slot>
-</slots>
-<includes>
-    <include location="global" impldecl="in declaration">kdialog.h</include>
-</includes>
-<layoutdefaults spacing="6" margin="11"/>
-<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
-</UI>
+  </tabstops>
+  <includes>
+    <include location="global" >kdialog.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>window_class_combo</sender>
+      <signal>activated(int)</signal>
+      <receiver>Windowdef_simple_widget_ui</receiver>
+      <slot>window_class_combo_changed(int)</slot>
+    </connection>
+    <connection>
+      <sender>window_role_combo</sender>
+      <signal>activated(int)</signal>
+      <receiver>Windowdef_simple_widget_ui</receiver>
+      <slot>window_role_combo_changed(int)</slot>
+    </connection>
+    <connection>
+      <sender>window_title_combo</sender>
+      <signal>activated(int)</signal>
+      <receiver>Windowdef_simple_widget_ui</receiver>
+      <slot>window_title_combo_changed(int)</slot>
+    </connection>
+  </connections>
+</ui>

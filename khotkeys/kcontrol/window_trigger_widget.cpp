@@ -27,8 +27,9 @@ namespace KHotKeys
 {
 
 Window_trigger_widget::Window_trigger_widget( QWidget* parent_P, const char* name_P )
-    : Window_trigger_widget_ui( parent_P, name_P )
+    : Window_trigger_widget_ui( parent_P )
     {
+    setObjectName(name_P);
     clear_data();
     // KHotKeys::Module::changed()
     connect( window_appears_checkbox, SIGNAL( clicked()),

@@ -11,12 +11,20 @@
 #ifndef _WINDOWDEF_SIMPLE_WIDGET_H_
 #define _WINDOWDEF_SIMPLE_WIDGET_H_
 
-#include <windowdef_simple_widget_ui.h>
+#include <ui_windowdef_simple_widget_ui.h>
 
 namespace KHotKeys
 {
 
 class Windowdef_simple;
+
+class Windowdef_simple_widget_ui : public QWidget, public Ui::Windowdef_simple_widget_ui
+{
+public:
+   Windowdef_simple_widget_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 class Windowdef_simple_widget
     : public Windowdef_simple_widget_ui
