@@ -1,100 +1,79 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>KHotKeys::Menuentry_widget_ui</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>Menuentry_widget_ui</cstring>
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>KHotKeys::Menuentry_widget_ui</class>
+  <widget class="QWidget" name="Menuentry_widget_ui" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>580</width>
+        <height>480</height>
+      </rect>
     </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>580</width>
-            <height>480</height>
-        </rect>
-    </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
-            <number>11</number>
-        </property>
-        <property name="spacing">
+    <layout class="QVBoxLayout" >
+      <property name="margin" >
+        <number>11</number>
+      </property>
+      <property name="spacing" >
+        <number>6</number>
+      </property>
+      <item>
+        <widget class="QLabel" name="menuentry_label" >
+          <property name="text" >
+            <string>Menu entry to execute:</string>
+          </property>
+          <property name="buddy" stdset="0" >
+            <cstring>command_url_lineedit</cstring>
+          </property>
+          <property name="wordWrap" >
+            <bool>false</bool>
+          </property>
+        </widget>
+      </item>
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <property name="spacing" >
             <number>6</number>
-        </property>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>menuentry_label</cstring>
-            </property>
-            <property name="text">
-                <string>Menu entry to execute:</string>
-            </property>
-            <property name="buddy" stdset="0">
-                <cstring>command_url_lineedit</cstring>
-            </property>
-        </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>Layout7</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <property name="margin">
-                    <number>0</number>
-                </property>
-                <property name="spacing">
-                    <number>6</number>
-                </property>
-                <widget class="QLineEdit">
-                    <property name="name">
-                        <cstring>menuentry_lineedit</cstring>
-                    </property>
-                </widget>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>browse_button</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Browse...</string>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
-        <spacer>
-            <property name="name">
-                <cstring>Spacer16</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
-                    <width>0</width>
-                    <height>20</height>
-                </size>
-            </property>
+          </property>
+          <item>
+            <widget class="QLineEdit" name="menuentry_lineedit" />
+          </item>
+          <item>
+            <widget class="QPushButton" name="browse_button" >
+              <property name="text" >
+                <string>&amp;Browse...</string>
+              </property>
+            </widget>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <spacer name="Spacer16" >
+          <property name="sizeHint" >
+            <size>
+              <width>0</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Qt::Vertical</enum>
+          </property>
         </spacer>
-    </vbox>
-</widget>
-<connections>
-    <connection>
-        <sender>browse_button</sender>
-        <signal>clicked()</signal>
-        <receiver>Menuentry_widget_ui</receiver>
-        <slot>browse_pressed()</slot>
-    </connection>
-</connections>
-<slots>
-    <slot access="protected" specifier="pure virtual">browse_pressed()</slot>
-</slots>
-<includes>
-    <include location="global" impldecl="in declaration">kdialog.h</include>
-</includes>
-<layoutdefaults spacing="6" margin="11"/>
-<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
-</UI>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <includes>
+    <include location="global" >kdialog.h</include>
+  </includes>
+</ui>

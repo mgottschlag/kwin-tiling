@@ -32,8 +32,9 @@ namespace KHotKeys
 {
 
 General_tab::General_tab( QWidget* parent_P, const char* name_P )
-    : General_tab_ui( parent_P, name_P )
+    : General_tab_ui( parent_P)
     {
+    setObjectName(name_P);
     for( Tab_widget::action_type_t i = Tab_widget::TYPE_FIRST;
          i < Tab_widget::TYPE_END;
          ++i )

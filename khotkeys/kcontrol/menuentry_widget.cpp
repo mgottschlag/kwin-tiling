@@ -30,12 +30,14 @@ namespace KHotKeys
 {
 
 Menuentry_widget::Menuentry_widget( QWidget* parent_P, const char* name_P )
-    : Menuentry_widget_ui( parent_P, name_P )
+    : Menuentry_widget_ui( parent_P )
     {
+    setObjectName(name_P);
     clear_data();
     // KHotKeys::Module::changed()
     connect( menuentry_lineedit, SIGNAL( textChanged( const QString& )),
         module, SLOT( changed()));
+    connect(browse_button,SIGNAL(clicked()),this,SLOT(browse_pressed()));
     }
 
 void Menuentry_widget::clear_data()

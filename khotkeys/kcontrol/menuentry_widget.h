@@ -11,13 +11,21 @@
 #ifndef _MENUENTRY_WIDGET_H_
 #define _MENUENTRY_WIDGET_H_
 
-#include <menuentry_widget_ui.h>
+#include <ui_menuentry_widget_ui.h>
 
 namespace KHotKeys
 {
 
 class Menuentry_action;
 class Action_data;
+
+class Menuentry_widget_ui : public QWidget, public Ui::Menuentry_widget_ui
+{
+public:
+  Menuentry_widget_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 class Menuentry_widget
     : public Menuentry_widget_ui

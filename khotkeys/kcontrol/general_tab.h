@@ -11,12 +11,20 @@
 #ifndef _GENERAL_TAB_H_
 #define _GENERAL_TAB_H_
 
-#include <general_tab_ui.h>
+#include <ui_general_tab_ui.h>
 
 namespace KHotKeys
 {
 
 class Action_data;
+
+class General_tab_ui : public QWidget, public Ui::General_tab_ui
+{
+public:
+  General_tab_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 class General_tab
     : public General_tab_ui

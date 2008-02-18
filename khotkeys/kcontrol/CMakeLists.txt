@@ -36,17 +36,17 @@ set(kcm_khotkeys_PART_SRCS ${libshared_SRCS}
 
 
 kde4_add_ui3_files(kcm_khotkeys_PART_SRCS
-	ui/menuentry_widget_ui.ui 
-	ui/general_tab_ui.ui 
 	ui/dbus_widget_ui.ui 
 	ui/keyboard_input_widget_ui.ui 
 	ui/condition_list_widget_ui.ui 
 	ui/gesture_triggers_tab_ui.ui 
-	ui/gestures_settings_tab_ui.ui 
         ui/voice_settings_tab_ui.ui
         )
 
 kde4_add_ui_files(kcm_khotkeys_PART_SRCS
+        ui/gestures_settings_tab_ui.ui
+        ui/general_tab_ui.ui
+        ui/menuentry_widget_ui.ui
         ui/general_settings_tab_ui.ui
         ui/main_buttons_widget_ui.ui
         ui/info_tab_ui.ui

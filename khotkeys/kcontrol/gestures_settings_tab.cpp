@@ -26,8 +26,9 @@ namespace KHotKeys
 {
 
 Gestures_settings_tab::Gestures_settings_tab( QWidget* parent_P, const char* name_P )
-    : Gestures_settings_tab_ui( parent_P, name_P )
+    : Gestures_settings_tab_ui( parent_P )
     {
+    setObjectName(name_P);
     mouse_button_combo->insertItem( 0, i18n( "Button 2 (middle)" ) );
     mouse_button_combo->insertItem( 1, i18n( "Button 3 (secondary)" ) );
     mouse_button_combo->insertItem( 2, i18n( "Button 4 (often wheel up)" ) );
