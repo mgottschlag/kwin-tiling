@@ -219,7 +219,7 @@ void HighContrastStyle::drawRect (QPainter* p, QRect r, int offset, bool filled)
 {
 	addOffset (&r, offset, p->pen().width());
 	if (filled)
-		p->fillRect (r, p->backgroundColor());
+		p->fillRect (r, p->background().color());
 
 	p->drawRect (r);
 }
@@ -239,7 +239,7 @@ void HighContrastStyle::drawRoundRect (QPainter* p, QRect r, int offset, bool fi
 		p->save();
 		p->setPen (Qt::NoPen);
 		if (filled)
-			p->fillRect (r3, p->backgroundColor());
+			p->fillRect (r3, p->background().color());
 		p->drawRect (r3);
 		p->restore();
 		
@@ -262,7 +262,7 @@ void HighContrastStyle::drawEllipse (QPainter* p, QRect r, int offset, bool fill
 
 	if (filled) {
 		p->save();
-		p->setBrush (p->backgroundColor());
+		p->setBrush (p->background().color());
 		p->drawRoundedRect (r, 99.0, 99.0);
 		p->restore();
 	}
@@ -379,7 +379,7 @@ void HighContrastStyle::drawPrimitive (PrimitiveElement pe,
 		// -------------------------------------------------------------------
 		case PE_ScrollBarSlider: {
 			setColorsNormal (p, cg);
-			p->fillRect (r, p->backgroundColor());
+			p->fillRect (r, p->background().color());
 
 			if (flags & Style_Enabled) {
 				setColorsHighlight (p, cg, flags);
@@ -399,7 +399,7 @@ void HighContrastStyle::drawPrimitive (PrimitiveElement pe,
 		case PE_ScrollBarAddPage:
 		case PE_ScrollBarSubPage: {
 			setColorsNormal (p, cg);
-			p->fillRect (r, p->backgroundColor());
+			p->fillRect (r, p->background().color());
 
 			QRect r2 (r);
 			if (flags & Style_Horizontal)
@@ -426,7 +426,7 @@ void HighContrastStyle::drawPrimitive (PrimitiveElement pe,
 			else
 				r2.addCoords (basicLineWidth, 0, -basicLineWidth, 0);
 			QPen pen = p->pen();
-			pen.setColor (p->backgroundColor());
+			pen.setColor (p->background().color());
 			p->setPen (pen);
 			drawRect (p, r2);
 
@@ -438,7 +438,7 @@ void HighContrastStyle::drawPrimitive (PrimitiveElement pe,
 		case PE_ScrollBarFirst:
 		case PE_ScrollBarLast: {
 			setColorsNormal (p, cg);
-			p->fillRect (r, p->backgroundColor());
+			p->fillRect (r, p->background().color());
 
 			if (flags & Style_Enabled) {
 				setColorsButton (p, cg, flags);
@@ -480,7 +480,7 @@ void HighContrastStyle::drawPrimitive (PrimitiveElement pe,
 					p->drawLine (r2.left(), r2.top()+r2.width()/2, r2.right(), r2.top()+r2.width()/2);
 				}
 				QPen pen = p->pen();
-				pen.setColor (p->backgroundColor());
+				pen.setColor (p->background().color());
 				p->setPen (pen);
 				drawRect (p, r2, 0, false);
 			}
@@ -530,7 +530,7 @@ void HighContrastStyle::drawPrimitive (PrimitiveElement pe,
 		case PE_DockWindowResizeHandle:
 		case PE_Splitter: {
 			setColorsButton (p, cg, flags);
-			p->fillRect (r, p->backgroundColor());
+			p->fillRect (r, p->background().color());
 			
 			p->setPen (QPen (p->pen().color(), 1, Qt::DashLine));
 			if (flags & Style_Horizontal)
@@ -569,7 +569,7 @@ void HighContrastStyle::drawPrimitive (PrimitiveElement pe,
 			setColorsText (p, cg, flags, 0);
 			drawRoundRect (p, r);
 			if (flags & (Style_HasFocus | Style_Active))
-				drawPrimitive (PE_FocusRect, p, r, cg, flags, QStyleOption (p->backgroundColor()));
+				drawPrimitive (PE_FocusRect, p, r, cg, flags, QStyleOption (p->background().color()));
 			break;
 		}
 		case PE_PanelTabWidget:
@@ -593,7 +593,7 @@ void HighContrastStyle::drawPrimitive (PrimitiveElement pe,
 		// -------------------------------------------------------------------
 		case PE_Separator: {
 			setColorsNormal (p, cg);
-			p->fillRect (r, p->backgroundColor());
+			p->fillRect (r, p->background().color());
 			p->setPen (p->pen().color());
 			if (flags & Style_Horizontal)
 				p->drawLine (r.center().x(), r.top()+basicLineWidth, r.center().x(), r.bottom()-basicLineWidth + 1);
@@ -603,7 +603,7 @@ void HighContrastStyle::drawPrimitive (PrimitiveElement pe,
 		}
 		case PE_DockWindowSeparator: {
 			setColorsButton (p, cg);
-			p->fillRect (r, p->backgroundColor());
+			p->fillRect (r, p->background().color());
 			p->setPen (p->pen().color());
 			if (flags & Style_Horizontal)
 				p->drawLine (r.center().x(), r.top()+basicLineWidth, r.center().x(), r.bottom()-basicLineWidth);
@@ -655,7 +655,7 @@ void HighContrastStyle::drawKStylePrimitive (KStylePrimitive kpe,
 		case KPE_GeneralHandle:
 		{
 			setColorsButton (p, cg);
-			p->fillRect (r, p->backgroundColor());
+			p->fillRect (r, p->background().color());
 			p->setBrush (QBrush (p->pen().color(), Qt::BDiagPattern));
 			drawRoundRect (p, r);
 			break;
@@ -764,7 +764,7 @@ void HighContrastStyle::drawControl (ControlElement element,
 							 flags & Style_Selected ? basicLineWidth : 2*basicLineWidth,
 							 r.width()-2*basicLineWidth,
 							 basicLineWidth,
-							 p->backgroundColor());
+							 p->background().color());
 			} else {
 				p->fillRect (r.left(), r.bottom()-2*basicLineWidth+1, 
 							 r.width(), 2*basicLineWidth, 
@@ -773,7 +773,7 @@ void HighContrastStyle::drawControl (ControlElement element,
 						     r.bottom()-2*basicLineWidth+1, 
 							 r.width()-2*basicLineWidth,
 							 flags & Style_Selected ? 2*basicLineWidth : basicLineWidth,
-							 p->backgroundColor());
+							 p->background().color());
 			}
 			break;
 		}
@@ -881,7 +881,7 @@ void HighContrastStyle::drawControl (ControlElement element,
 
 			// Draw a focus rect if the button has focus
 			if (flags & Style_HasFocus)
-				drawPrimitive (PE_FocusRect, p, r, cg, flags, QStyleOption (p->backgroundColor()));
+				drawPrimitive (PE_FocusRect, p, r, cg, flags, QStyleOption (p->background().color()));
 
 			// Draw the label itself
 			QColor color = p->pen().color();
@@ -911,7 +911,7 @@ void HighContrastStyle::drawControl (ControlElement element,
 		// -------------------------------------------------------------------
 		case CE_MenuBarItem: {
 			setColorsNormal (p, cg, flags, Style_Active|Style_MouseOver);
-			p->fillRect (r, p->backgroundColor ());
+			p->fillRect (r, p->background().color());
 			if (!opt.isDefault()) {
 				QMenuItem *mi = opt.menuItem();
 
@@ -982,7 +982,7 @@ void HighContrastStyle::drawControl (ControlElement element,
 		// -------------------------------------------------------------------
 		case CE_PopupMenuItem: {
 			setColorsNormal (p, cg, flags, Style_Active|Style_MouseOver);
-			p->fillRect (r, p->backgroundColor ());
+			p->fillRect (r, p->background().color());
 
 			const QMenu *popupmenu = (const QMenu *) widget;
 			QMenuItem *mi = opt.menuItem();
@@ -1204,7 +1204,7 @@ void HighContrastStyle::drawComplexControl (ComplexControl control,
 				else
 					r3.setLeft (r2.right()-basicLineWidth+1);
 
-				drawPrimitive (PE_FocusRect, p, r3, cg, flags, QStyleOption (p->backgroundColor()));
+				drawPrimitive (PE_FocusRect, p, r3, cg, flags, QStyleOption (p->background().color()));
 			}
 			
 			setColorsButton (p, cg, flags);
@@ -1225,7 +1225,7 @@ void HighContrastStyle::drawComplexControl (ComplexControl control,
 				setColorsText (p, cg, flags);
 				drawRoundRect (p, r);
 				if (flags & Style_HasFocus)
-					drawPrimitive(PE_FocusRect, p, r, cg, flags, QStyleOption (p->backgroundColor()));
+					drawPrimitive(PE_FocusRect, p, r, cg, flags, QStyleOption (p->background().color()));
 			}
 			
 			setColorsButton (p, cg, flags);
@@ -1251,7 +1251,7 @@ void HighContrastStyle::drawComplexControl (ComplexControl control,
 			const QToolButton *toolbutton = (const QToolButton *) widget;
 
 			setColorsButton (p, cg, flags);
-			p->fillRect (r, p->backgroundColor ());
+			p->fillRect (r, p->background().color());
 
 			QRect button, menuarea;
 			button   = querySubControlMetrics(control, widget, SC_ToolButton, opt);
@@ -1292,7 +1292,7 @@ void HighContrastStyle::drawComplexControl (ComplexControl control,
 			if (toolbutton->hasFocus() && !toolbutton->focusProxy()) {
 				QRect fr = toolbutton->rect();
 				addOffset (&fr, 3);
-				drawPrimitive(PE_FocusRect, p, fr, cg, flags, QStyleOption (p->backgroundColor()));
+				drawPrimitive(PE_FocusRect, p, fr, cg, flags, QStyleOption (p->background().color()));
 			}
 
 			break;
