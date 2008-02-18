@@ -16,7 +16,7 @@
 #include <actions.h>
 #include <kdialog.h>
 
-#include <action_list_widget_ui.h>
+#include <ui_action_list_widget_ui.h>
 
 #include "activate_window_widget.h"
 
@@ -30,6 +30,14 @@ class Dbus_widget;
 class Keyboard_input_widget;
 
 class Action_list_item;
+
+class Action_list_widget_ui : public QWidget, public Ui::Action_list_widget_ui
+{
+public:
+  Action_list_widget_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 class Action_list_widget
     : public Action_list_widget_ui

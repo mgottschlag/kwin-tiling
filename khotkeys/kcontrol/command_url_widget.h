@@ -11,13 +11,21 @@
 #ifndef _COMMAND_URL_WIDGET_H_
 #define _COMMAND_URL_WIDGET_H_
 
-#include <command_url_widget_ui.h>
+#include <ui_command_url_widget_ui.h>
 
 namespace KHotKeys
 {
 
 class Command_url_action;
 class Action_data;
+
+class Command_url_widget_ui : public QWidget, public Ui::Command_url_widget_ui
+{
+public:
+  Command_url_widget_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 class Command_url_widget
     : public Command_url_widget_ui

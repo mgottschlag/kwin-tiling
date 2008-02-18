@@ -11,13 +11,21 @@
 #ifndef _ACTION_GROUP_TAB_H_
 #define _ACTION_GROUP_TAB_H_
 
-#include <action_group_tab_ui.h>
+#include <ui_action_group_tab_ui.h>
 #include <action_data.h>
 
 namespace KHotKeys
 {
 
 class Action_data_group;
+
+class Action_group_tab_ui : public QWidget, public Ui::Action_group_tab_ui
+{
+public:
+  Action_group_tab_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 class Action_group_tab
     : public Action_group_tab_ui

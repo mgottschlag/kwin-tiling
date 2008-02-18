@@ -30,8 +30,9 @@ namespace KHotKeys
 {
 
 Action_group_tab::Action_group_tab( QWidget* parent_P , const char* name_P )
-    : Action_group_tab_ui( parent_P, name_P )
+    : Action_group_tab_ui( parent_P )
     {
+    setObjectName(name_P);
     clear_data();
     // KHotKeys::Module::changed()
     connect( action_name_lineedit, SIGNAL( textChanged( const QString& )),

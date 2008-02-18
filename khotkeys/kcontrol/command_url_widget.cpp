@@ -30,8 +30,9 @@ namespace KHotKeys
 {
 
 Command_url_widget::Command_url_widget( QWidget* parent_P, const char* name_P )
-    : Command_url_widget_ui( parent_P, name_P )
+    : Command_url_widget_ui( parent_P )
     {
+    setObjectName(name_P);
     clear_data();
     // KHotKeys::Module::changed()
     connect( command_url_lineedit, SIGNAL( textChanged( const QString& )),

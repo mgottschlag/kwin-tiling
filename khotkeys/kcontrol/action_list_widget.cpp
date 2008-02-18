@@ -38,8 +38,9 @@ namespace KHotKeys
 // Action_list_widget
 
 Action_list_widget::Action_list_widget( QWidget* parent_P, const char* name_P )
-    : Action_list_widget_ui( parent_P, name_P ), selected_item( NULL )
+    : Action_list_widget_ui( parent_P ), selected_item( NULL )
     {
+    setObjectName(name_P);
     QMenu* popup = new QMenu; // CHECKME looks like setting parent doesn't work
     QAction *action = popup->addAction( i18n( "Command/URL..." ) );
     action->setData( TYPE_COMMAND_URL_ACTION );
@@ -63,6 +64,10 @@ Action_list_widget::Action_list_widget( QWidget* parent_P, const char* name_P )
     clear_data();
     connect( actions_listview, SIGNAL( doubleClicked ( Q3ListViewItem *, const QPoint &, int ) ),
              this, SLOT( modify_pressed() ) );
+    connect( copy_button,SIGNAL(clicked()),this,SLOT(copy_pressed()));
+    connect(modify_button ,SIGNAL(clicked()),this,SLOT(modify_pressed()));
+    connect(delete_button,SIGNAL(clicked()),this,SLOT(delete_pressed()));
+    connect(actions_listview,SIGNAL(current_changed(Q3ListViewItem*)),this,SLOT(current_changed(Q3ListViewItem*)));
 
     // KHotKeys::Module::changed()
     connect( new_button, SIGNAL( clicked()),
