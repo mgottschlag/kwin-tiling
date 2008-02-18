@@ -11,7 +11,15 @@
 #ifndef _GENERAL_SETTINGS_TAB_H_
 #define _GENERAL_SETTINGS_TAB_H_
 
-#include <general_settings_tab_ui.h>
+#include <ui_general_settings_tab_ui.h>
+
+class General_settings_tab_ui : public QWidget, public Ui::General_settings_tab_ui
+{
+public:
+   General_settings_tab_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 namespace KHotKeys
 {

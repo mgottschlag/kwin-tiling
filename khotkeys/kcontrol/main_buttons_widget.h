@@ -11,10 +11,18 @@
 #ifndef MAIN_BUTTONS_WIDGET_H
 #define MAIN_BUTTONS_WIDGET_H
 
-#include <main_buttons_widget_ui.h>
+#include <ui_main_buttons_widget_ui.h>
 
 namespace KHotKeys
 {
+
+class Main_buttons_widget_ui : public QWidget, public Ui::Main_buttons_widget_ui
+{
+public:
+   Main_buttons_widget_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 class Main_buttons_widget
     : public Main_buttons_widget_ui

@@ -11,10 +11,18 @@
 #ifndef _INFO_TAB_H_
 #define _INFO_TAB_H_
 
-#include <info_tab_ui.h>
+#include <ui_info_tab_ui.h>
 
 namespace KHotKeys
 {
+
+class Info_tab_ui : public QWidget, public Ui::Info_tab_ui
+{
+public:
+  Info_tab_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 class Info_tab
     : public Info_tab_ui

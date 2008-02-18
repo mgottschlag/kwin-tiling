@@ -22,11 +22,14 @@ namespace KHotKeys
 {
 
 General_settings_tab::General_settings_tab( QWidget* parent_P, const char* name_P )
-    : General_settings_tab_ui( parent_P, name_P )
+    : General_settings_tab_ui( parent_P )
     {
+    setObjectName(name_P);
     // KHotKeys::Module::changed()
     connect( disable_daemon_checkbox, SIGNAL( clicked()),
         module, SLOT( changed()));
+    connect( import_button,SIGNAL(clicked()),this,SLOT(import_clicked()));
+
     }
 
 void General_settings_tab::import_clicked()

@@ -12,7 +12,7 @@
 #define VOICE_RECORDER_H
 
 #include <QtGui/QFrame>
-#include "voice_input_widget_ui.h"
+#include <ui_voice_input_widget_ui.h>
 
 
 #include "sound.h"
@@ -20,10 +20,19 @@ class  KAudioRecordStream ;
 class KTemporaryFile;
 class KLibrary;
 
+
+class Voice_input_widget_ui : public QWidget, public Ui::Voice_input_widget_ui
+{
+public:
+   Voice_input_widget_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
+
+
 namespace KHotKeys
 {
-
-	class SoundRecorder;
+class SoundRecorder;
 	
 class VoiceRecorder : public Voice_input_widget_ui
     {

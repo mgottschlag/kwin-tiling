@@ -22,8 +22,9 @@ namespace KHotKeys
 {
 
 Main_buttons_widget::Main_buttons_widget( QWidget* parent_P, const char* name_P )
-    : Main_buttons_widget_ui( parent_P, name_P )
+    : Main_buttons_widget_ui( parent_P )
     {
+    setObjectName(name_P);
     connect( new_action_button, SIGNAL( clicked()), SIGNAL( new_action_pressed()));
     connect( new_action_group_button, SIGNAL( clicked()), SIGNAL( new_action_group_pressed()));
     connect( delete_action_button, SIGNAL( clicked()), SIGNAL( delete_action_pressed()));

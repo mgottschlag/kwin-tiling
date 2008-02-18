@@ -23,8 +23,9 @@ namespace KHotKeys
 {
 
 Info_tab::Info_tab( QWidget* parent_P, const char* name_P )
-    : Info_tab_ui( parent_P, name_P )
+    : Info_tab_ui( parent_P)
     {
+    setObjectName(name_P);
     warning_label->setWordWrap( true );
     clear_data();
     }

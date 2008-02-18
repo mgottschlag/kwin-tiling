@@ -44,13 +44,17 @@ bool VoiceRecorder::init( KLibrary* lib )
 }
 
 VoiceRecorder::VoiceRecorder(const Sound& sound_P, const QString &voiceId, QWidget *parent, const char *name)
-	: Voice_input_widget_ui(parent, name) , _recorder( SoundRecorder::create(this)) , _state(sNotModified), _tempFile(0L) ,  _voiceId(voiceId)
+	: Voice_input_widget_ui(parent) , _recorder( SoundRecorder::create(this)) , _state(sNotModified), _tempFile(0L) ,  _voiceId(voiceId)
 {
+        setObjectName(name);
 	_sound=sound_P;
 	buttonPlay->setEnabled(sound_P.size() > 50);
 	buttonStop->setEnabled(false);
 
 	connect (_recorder , SIGNAL(recorded(const Sound& )) , this , SLOT(slotSoundRecorded(const Sound& ) ));
+        connect(buttonRecord,SIGNAL(pressed()),this,SLOT(slotRecordPressed()));
+        connect(buttonStop,SIGNAL(pressed()),this,SLOT(slotStopPressed()));
+        connect(buttonPlay,SIGNAL(pressed()),this,SLOT(slotPlayPressed()));
 
 	//if(voiceid_P.isEmpty())
 	emit recorded(false);
