@@ -741,7 +741,7 @@ void KScreenSaver::slotSetup()
 //
 void KScreenSaver::slotAdvanced()
 {
-   KScreenSaverAdvancedDialog dlg( topLevelWidget() );
+   KScreenSaverAdvancedDialog dlg( window() );
    if ( dlg.exec() ) {
        mChanged = true;
        emit changed(true);

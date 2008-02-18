@@ -1003,7 +1003,7 @@ void BGDialog::slotSetupMulti()
 {
     KBackgroundRenderer *r = eRenderer();
 
-    BGMultiWallpaperDialog dlg(r, topLevelWidget());
+    BGMultiWallpaperDialog dlg(r, window());
     if (dlg.exec() == QDialog::Accepted) {
         r->stop();
         m_slideShowRandom = r->multiWallpaperMode();
@@ -1181,7 +1181,7 @@ void BGDialog::slotAdvanced()
     KBackgroundRenderer *r = eRenderer();
 
     m_previewUpdates = false;
-    BGAdvancedDialog dlg(r, topLevelWidget(), m_kdmMode);
+    BGAdvancedDialog dlg(r, window(), m_kdmMode);
 
     if (!m_pMonitorArrangement->isEnabled()) {
        dlg.makeReadOnly();

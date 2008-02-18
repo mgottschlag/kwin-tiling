@@ -496,8 +496,8 @@ void BasicTab::slotCapturedKeySequence(const QKeySequence& seq)
 #ifdef __GNUC__
 #warning the following lines can be implemented again using the new functions in KGlobalAccel
 #endif
-    /*if( KKeyChooser::checkGlobalShortcutsConflict( cut, true, topLevelWidget())
-        || KKeyChooser::checkStandardShortcutsConflict( cut, true, topLevelWidget()))
+    /*if( KKeyChooser::checkGlobalShortcutsConflict( cut, true, window())
+        || KKeyChooser::checkStandardShortcutsConflict( cut, true, window()))
         return;*/
 
     if ( KHotKeys::present() )

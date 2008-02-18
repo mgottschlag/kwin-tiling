@@ -251,8 +251,8 @@ void Shortcut_trigger_widget::clear_data()
 
 void Shortcut_trigger_widget::capturedShortcut( const QKeySequence& s_P )
     {
-    /*if( KKeyChooser::checkGlobalShortcutsConflict( s_P, true, topLevelWidget())
-        || KKeyChooser::checkStandardShortcutsConflict( s_P, true, topLevelWidget()))
+    /*if( KKeyChooser::checkGlobalShortcutsConflict( s_P, true, window())
+        || KKeyChooser::checkStandardShortcutsConflict( s_P, true, window()))
         return;*/
     // KHotKeys::Module::changed()
     module->changed();

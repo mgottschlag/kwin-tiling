@@ -77,8 +77,8 @@ Dbus_action* Dbus_widget::get_data( Action_data* data_P ) const
 // CHECKME later "steal" whole interfaces browsing from dbus browser
 void Dbus_widget::run_dbus_browser_pressed()
     {
-    if( KRun::runCommand( "qdbusviewer", topLevelWidget()) == 0 )
-        KMessageBox::sorry( topLevelWidget(), i18n( "Failed to run qdbusviewer" ));
+    if( KRun::runCommand( "qdbusviewer", window()) == 0 )
+        KMessageBox::sorry( window(), i18n( "Failed to run qdbusviewer" ));
     }
     
 void Dbus_widget::try_pressed()

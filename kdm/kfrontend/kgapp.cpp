@@ -142,7 +142,7 @@ GreeterApp::x11EventFilter( XEvent * ev )
 				    ev->xbutton.window != QX11Info::appRootWindow( _greeterScreen ) &&
 				    (dragWidget = QWidget::find( ev->xbutton.window )))
 				{
-					dragWidget = dragWidget->topLevelWidget();
+					dragWidget = dragWidget->window();
 					dialogStartPos = dragWidget->geometry().center();
 					mouseStartPos = QPoint( ev->xbutton.x_root, ev->xbutton.y_root );
 					setOverrideCursor( QCursor( Qt::SizeAllCursor ) );

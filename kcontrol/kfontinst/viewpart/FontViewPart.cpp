@@ -383,7 +383,7 @@ void CFontViewPart::install()
         else
             itsProc->kill();
 
-        args << "--embed" <<  QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
+        args << "--embed" <<  QString().sprintf("0x%x", (unsigned int)(itsFrame->window()->winId()))
              << "--caption" << KGlobal::caption().toUtf8()
              << "--icon" << "kfontview"
              << url().prettyUrl();
@@ -432,7 +432,7 @@ void CFontViewPart::print()
 
             CFcEngine::instance()->getInfo(url(), 0, info);
 
-            args << "--embed" << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
+            args << "--embed" << QString().sprintf("0x%x", (unsigned int)(itsFrame->window()->winId()))
                 << "--caption" << KGlobal::caption().toUtf8()
                 << "--icon" << "kfontview"
                 << "--size" << "0"
@@ -440,7 +440,7 @@ void CFontViewPart::print()
         }
 #ifdef KFI_PRINT_APP_FONTS
         else
-            args << "--embed" << QString().sprintf("0x%x", (unsigned int)(itsFrame->topLevelWidget()->winId()))
+            args << "--embed" << QString().sprintf("0x%x", (unsigned int)(itsFrame->window()->winId()))
                 << "--caption" << KGlobal::caption().toUtf8()
                 << "--icon" << "kfontview"
                 << "--size " << "0"
