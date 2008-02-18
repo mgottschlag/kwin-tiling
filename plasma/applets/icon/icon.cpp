@@ -274,7 +274,7 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
 
                 KUrl dest(path);
                 KMimeType::Ptr mime = KMimeType::findByUrl(dest);
-                if (mime->name() == "inode/directory") {
+                if (mime->is("inode/directory")) {
                     dropUrls(urls, dest, event->modifiers());
                 }
             }
