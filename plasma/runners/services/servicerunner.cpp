@@ -25,6 +25,7 @@
 #include <KLocale>
 #include <KRun>
 #include <KService>
+#include <KServiceTypeTrader>
 
 QString formattedName( KService::Ptr service )
 {
@@ -59,6 +60,7 @@ void ServiceRunner::match(Plasma::SearchContext *search)
         return;
     }
 
+    QMutexLocker lock(bigLock());
     KService::Ptr service = KService::serviceByName(term);
 
     QList<Plasma::SearchMatch*> matches;
@@ -76,7 +78,7 @@ void ServiceRunner::match(Plasma::SearchContext *search)
     }
 
     QString query = QString("exist Exec and ('%1' ~in Keywords or '%2' ~~ GenericName or '%3' ~~ Name) and Name != '%4'").arg(term, term, term, term);
-    const KService::List services = serviceQuery("Application", query);
+    const KService::List services = KServiceTypeTrader::self()->query("Application", query);
 
     //kDebug() << "got " << services.count() << " services from " << query;
     foreach (const KService::Ptr service, services) {
@@ -111,7 +113,7 @@ void ServiceRunner::match(Plasma::SearchContext *search)
 
 void ServiceRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
-    QMutexLocker(bigLock());
+    QMutexLocker lock(bigLock());
     KService::Ptr service = KService::serviceByStorageId(action->data().toString());
     if (service) {
         KRun::run(*service, KUrl::List(), 0);
