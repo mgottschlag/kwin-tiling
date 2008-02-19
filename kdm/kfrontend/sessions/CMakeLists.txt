@@ -14,7 +14,8 @@ install(FILES
 	cde.desktop
 	ctwm.desktop
 	cwwm.desktop
-	enlightenment.desktop
+	e16.desktop
+        enlightenment.desktop
 	evilwm.desktop
 	fluxbox.desktop
 	flwm.desktop
