@@ -674,7 +674,7 @@ qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
     } else {
         return (qlonglong)fs_obj.f_bfree*(qlonglong)fs_obj.f_frsize;
     }
-#elif defined(HAVE_STATFS) && !defined(Q_OS_SOLARIS)
+#elif defined(HAVE_STATFS) && !defined(USE_SOLARIS)
     struct statfs fs_obj;
     if (statfs(path,&fs_obj) < 0){
         return -1;
@@ -683,8 +683,10 @@ qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
         return (qlonglong)fs_obj.f_bfree*(qlonglong)fs_obj.f_bsize;
     }
 #else
+#ifdef __GNUC__
 #warning "This system does not support statfs or statvfs - freeDiskSpace() will return -1"
     return -1;
+#endif
 #endif
 }
 
