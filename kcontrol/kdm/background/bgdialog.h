@@ -23,13 +23,22 @@
 #include <Qt3Support/Q3PtrVector>
 #include <QMap>
 
-#include "bgdialog_ui.h"
+#include "ui_bgdialog_ui.h"
 #include "bgrender.h"
 #include "bgsettings.h"
 #include "bgdefaults.h"
 
 class BGMonitorArrangement;
 class KStandardDirs;
+class BGMultiWallpaperList;
+
+class BGDialog_UI : public QWidget, public Ui::BGDialog_UI
+{
+public:
+  BGDialog_UI( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 class BGDialog : public BGDialog_UI
 {

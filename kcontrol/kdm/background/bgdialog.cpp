@@ -65,7 +65,7 @@
 #define NR_PREDEF_PATTERNS 6
 
 BGDialog::BGDialog(QWidget* parent, const KSharedConfigPtr &_config, bool _kdmMode)
-  : BGDialog_UI(parent, "BGDialog")
+  : BGDialog_UI(parent)
 {
    m_pGlobals = new KGlobalBackgroundSettings(_config);
    m_pDirs = KGlobal::dirs();
