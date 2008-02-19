@@ -27,19 +27,6 @@
 #include <KService>
 #include <KServiceTypeTrader>
 
-QString formattedName( KService::Ptr service )
-{
-    QString name = service->name();
-
-    if ( !service->genericName().isEmpty() ) {
-        name = i18n( "%1 - %2", name, service->genericName() );
-    } else if ( !service->comment().isEmpty() ) {
-        name = i18n( "%1 - %2", name, service->comment() );
-    }
-
-    return name;
-}
-
 ServiceRunner::ServiceRunner(QObject *parent, const QVariantList &args)
     : Plasma::AbstractRunner( parent )
 {
@@ -126,8 +113,16 @@ void ServiceRunner::exec(const Plasma::SearchContext *search, const Plasma::Sear
 
 void ServiceRunner::setupAction(const KService::Ptr &service, Plasma::SearchMatch *action)
 {
-    action->setText(service->name());
+    const QString name = service->name();
+
+    action->setText(name);
     action->setData(service->storageId());
+
+    if (!service->genericName().isEmpty() && service->genericName() != name) {
+        action->setSubtext(service->genericName());
+    } else if (!service->comment().isEmpty()) {
+        action->setSubtext(service->comment());
+    }
 
     if (!service->icon().isEmpty()) {
         action->setIcon(KIcon(service->icon()));

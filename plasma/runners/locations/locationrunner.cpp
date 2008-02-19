@@ -25,7 +25,6 @@
 #include <KRun>
 #include <KLocale>
 #include <KMimeType>
-#include <KService>
 #include <KShell>
 #include <KToolInvocation>
 #include <KUrl>
