@@ -94,7 +94,6 @@ void HotplugEngine::onDeviceAdded(const QString &udi)
 void HotplugEngine::onDeviceRemoved(const QString &udi)
 {
     removeSource(udi);
-    Solid::Device device(udi);
 
     kDebug() << "remove hardware solid : " << udi;
 
