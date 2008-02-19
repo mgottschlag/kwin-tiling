@@ -595,14 +595,16 @@ void Interface::updateMatches()
     m_defaultMatch = 0;
 
     foreach (const Plasma::SearchMatch *action, m_context.matches()) {
-        bool makeDefault = !m_defaultMatch && action->isEnabled();
-
         SearchMatch *match = new SearchMatch(action, m_matchList);
 
-        if (makeDefault &&
-            action->relevance() > 0 &&
+        if (action->isEnabled() && action->relevance() > 0 &&
+            (!m_defaultMatch || *m_defaultMatch < *match) &&
             (action->type() != Plasma::SearchMatch::InformationalMatch ||
-            !action->data().toString().isEmpty())) {
+             !action->data().toString().isEmpty())) {
+            if (m_defaultMatch) {
+                m_defaultMatch->setDefault(false);
+            }
+
             match->setDefault(true);
             m_defaultMatch = match;
             m_optionsButton->setEnabled(action->runner()->hasMatchOptions());
@@ -613,7 +615,7 @@ void Interface::updateMatches()
     m_matchList->sortItems(Qt::DescendingOrder);
 
     if (!m_defaultMatch) {
-        if (m_execQueued && Weaver::instance()->isIdle() ) {
+        if (m_execQueued && Weaver::instance()->isIdle()) {
             m_execQueued = false;
         }
         showOptions(false);
