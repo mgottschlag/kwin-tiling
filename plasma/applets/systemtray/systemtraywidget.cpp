@@ -1,7 +1,7 @@
 /***************************************************************************
  *   systemtraywidget.h                                                    *
  *                                                                         *
- *   Copyright (C) 2007 Alexander Rodin                                    *
+ *   Copyright (C) 2007 Alexander Rodin <rodin.alexander@gmail.com>        *
  *   Copyright (C) 2007 Jason Stubbs <jasonbstubbs@gmail.com>              *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
