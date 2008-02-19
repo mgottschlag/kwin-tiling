@@ -18,8 +18,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#ifndef DMCTL_H
-#define DMCTL_H
+#ifndef KDISPLAYMANAGER_H
+#define KDISPLAYMANAGER_H
 
 #include <kworkspace.h>
 #include <kdemacros.h>
@@ -35,13 +35,13 @@ struct KDE_EXPORT SessEnt {
 
 typedef QList<SessEnt> SessList;
 
-class KDE_EXPORT DM {
+class KDE_EXPORT KDisplayManager {
 
 #ifdef Q_WS_X11
 
 public:
-	DM();
-	~DM();
+	KDisplayManager();
+	~KDisplayManager();
 
 	bool canShutdown();
 	void shutdown( KWorkSpace::ShutdownType shutdownType,
@@ -63,8 +63,6 @@ public:
 	static void sess2Str2( const SessEnt &se, QString &user, QString &loc );
 
 private:
-	int fd;
-
 	bool exec( const char *cmd, QByteArray &ret );
 	bool exec( const char *cmd );
 
@@ -73,7 +71,7 @@ private:
 #else // Q_WS_X11
 
 public:
-	DM() {}
+	KDisplayManager() {}
 
 	bool canShutdown() { return false; }
 	void shutdown( KWorkSpace::ShutdownType shutdownType,
@@ -92,6 +90,11 @@ public:
 
 #endif // Q_WS_X11
 
-}; // class DM
+private:
+    class Private;
+    Private * const d;
 
-#endif // DMCTL_H
+}; // class KDisplayManager
+
+#endif // KDISPLAYMANAGER_H
+

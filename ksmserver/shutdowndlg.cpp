@@ -53,7 +53,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <stdio.h>
 #include <kxerrorhandler.h>
 
-#include <dmctl.h>
+#include <kdisplaymanager.h>
 
 #include "shutdowndlg.moc"
 
@@ -465,7 +465,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
             btnReboot->setFocus();
 
         int def, cur;
-        if ( DM().bootOptions( rebootOptions, def, cur ) ) {
+        if ( KDisplayManager().bootOptions( rebootOptions, def, cur ) ) {
             if ( cur == -1 )
                 cur = def;
 

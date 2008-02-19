@@ -66,7 +66,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <ktemporaryfile.h>
 #include <kconfiggroup.h>
 #include <knotification.h>
-#include <dmctl.h>
+#include <kdisplaymanager.h>
 #include "server.h"
 #include "global.h"
 #include "client.h"
@@ -118,7 +118,7 @@ void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
     (confirm == KWorkSpace::ShutdownConfirmNo) ? true :
                 !cg.readEntry( "confirmLogout", true );
     bool maysd = false;
-    if (cg.readEntry( "offerShutdown", true ) && DM().canShutdown())
+    if (cg.readEntry( "offerShutdown", true ) && KDisplayManager().canShutdown())
         maysd = true;
     if (!maysd) {
         if (sdtype != KWorkSpace::ShutdownTypeNone &&

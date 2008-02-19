@@ -17,7 +17,7 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "dmctl.h"
+#include "kdisplaymanager.h"
 
 #ifdef Q_WS_X11
 
@@ -42,7 +42,19 @@
 static enum { Dunno, NoDM, NewKDM, OldKDM, GDM } DMType = Dunno;
 static const char *ctl, *dpy;
 
-DM::DM() : fd( -1 )
+class KDisplayManager::Private
+{
+public:
+	Private() : fd(-1) {}
+	~Private() {
+		if (fd >= 0)
+			close( fd );
+	}
+
+	int fd;
+};
+
+KDisplayManager::KDisplayManager() : d(new Private)
 {
 	const char *ptr;
 	struct sockaddr_un sa;
@@ -64,16 +76,16 @@ DM::DM() : fd( -1 )
 		return;
 	case NewKDM:
 	case GDM:
-		if ((fd = ::socket( PF_UNIX, SOCK_STREAM, 0 )) < 0)
+		if ((d->fd = ::socket( PF_UNIX, SOCK_STREAM, 0 )) < 0)
 			return;
 		sa.sun_family = AF_UNIX;
 		if (DMType == GDM) {
 			strcpy( sa.sun_path, "/var/run/gdm_socket" );
-			if (::connect( fd, (struct sockaddr *)&sa, sizeof(sa) )) {
+			if (::connect( d->fd, (struct sockaddr *)&sa, sizeof(sa) )) {
 				strcpy( sa.sun_path, "/tmp/.gdm_socket" );
-				if (::connect( fd, (struct sockaddr *)&sa, sizeof(sa) )) {
-					::close( fd );
-					fd = -1;
+				if (::connect( d->fd, (struct sockaddr *)&sa, sizeof(sa) )) {
+					::close( d->fd );
+					d->fd = -1;
 					break;
 				}
 			}
@@ -84,9 +96,9 @@ DM::DM() : fd( -1 )
 			snprintf( sa.sun_path, sizeof(sa.sun_path),
 			          "%s/dmctl-%.*s/socket",
 			          ctl, ptr ? int(ptr - dpy) : 512, dpy );
-			if (::connect( fd, (struct sockaddr *)&sa, sizeof(sa) )) {
-				::close( fd );
-				fd = -1;
+			if (::connect( d->fd, (struct sockaddr *)&sa, sizeof(sa) )) {
+				::close( d->fd );
+				d->fd = -1;
 			}
 		}
 		break;
@@ -94,20 +106,19 @@ DM::DM() : fd( -1 )
 		{
 			QString tf( ctl );
 			tf.truncate( tf.indexOf( ',' ) );
-			fd = ::open( tf.toLatin1(), O_WRONLY );
+			d->fd = ::open( tf.toLatin1(), O_WRONLY );
 		}
 		break;
 	}
 }
 
-DM::~DM()
+KDisplayManager::~KDisplayManager()
 {
-	if (fd >= 0)
-		close( fd );
+	delete d;
 }
 
 bool
-DM::exec( const char *cmd )
+KDisplayManager::exec( const char *cmd )
 {
 	QByteArray buf;
 
@@ -127,20 +138,20 @@ DM::exec( const char *cmd )
  *   from KDM.
  */
 bool
-DM::exec( const char *cmd, QByteArray &buf )
+KDisplayManager::exec( const char *cmd, QByteArray &buf )
 {
 	bool ret = false;
 	int tl;
 	int len = 0;
 
-	if (fd < 0)
+	if (d->fd < 0)
 		goto busted;
 
 	tl = strlen( cmd );
-	if (::write( fd, cmd, tl ) != tl) {
+	if (::write( d->fd, cmd, tl ) != tl) {
 	    bust:
-		::close( fd );
-		fd = -1;
+		::close( d->fd );
+		d->fd = -1;
 	    busted:
 		buf.resize( 0 );
 		return false;
@@ -154,7 +165,7 @@ DM::exec( const char *cmd, QByteArray &buf )
 			buf.resize( 128 );
 		else if (buf.size() < len * 2)
 			buf.resize( len * 2 );
-		if ((tl = ::read( fd, buf.data() + len, buf.size() - len)) <= 0) {
+		if ((tl = ::read( d->fd, buf.data() + len, buf.size() - len)) <= 0) {
 			if (tl < 0 && errno == EINTR)
 				continue;
 			goto bust;
@@ -172,7 +183,7 @@ DM::exec( const char *cmd, QByteArray &buf )
 }
 
 bool
-DM::canShutdown()
+KDisplayManager::canShutdown()
 {
 	if (DMType == OldKDM)
 		return strstr( ctl, ",maysd" ) != 0;
@@ -186,7 +197,7 @@ DM::canShutdown()
 }
 
 void
-DM::shutdown( KWorkSpace::ShutdownType shutdownType,
+KDisplayManager::shutdown( KWorkSpace::ShutdownType shutdownType,
               KWorkSpace::ShutdownMode shutdownMode, /* NOT Default */
               const QString &bootOption )
 {
@@ -228,7 +239,7 @@ DM::shutdown( KWorkSpace::ShutdownType shutdownType,
 }
 
 bool
-DM::bootOptions( QStringList &opts, int &defopt, int &current )
+KDisplayManager::bootOptions( QStringList &opts, int &defopt, int &current )
 {
 	if (DMType != NewKDM)
 		return false;
@@ -257,14 +268,14 @@ DM::bootOptions( QStringList &opts, int &defopt, int &current )
 }
 
 void
-DM::setLock( bool on )
+KDisplayManager::setLock( bool on )
 {
 	if (DMType != GDM)
 		exec( on ? "lock\n" : "unlock\n" );
 }
 
 bool
-DM::isSwitchable()
+KDisplayManager::isSwitchable()
 {
 	if (DMType == OldKDM)
 		return dpy[0] == ':';
@@ -278,7 +289,7 @@ DM::isSwitchable()
 }
 
 int
-DM::numReserve()
+KDisplayManager::numReserve()
 {
 	if (DMType == GDM)
 		return 1; /* Bleh */
@@ -295,7 +306,7 @@ DM::numReserve()
 }
 
 void
-DM::startReserve()
+KDisplayManager::startReserve()
 {
 	if (DMType == GDM)
 		exec("FLEXI_XSERVER\n");
@@ -304,7 +315,7 @@ DM::startReserve()
 }
 
 bool
-DM::localSessions( SessList &list )
+KDisplayManager::localSessions( SessList &list )
 {
 	if (DMType == OldKDM)
 		return false;
@@ -349,7 +360,7 @@ DM::localSessions( SessList &list )
 }
 
 void
-DM::sess2Str2( const SessEnt &se, QString &user, QString &loc )
+KDisplayManager::sess2Str2( const SessEnt &se, QString &user, QString &loc )
 {
 	if (se.tty) {
 		user = i18nc("user: ...", "%1: TTY login", se.user );
@@ -374,7 +385,7 @@ DM::sess2Str2( const SessEnt &se, QString &user, QString &loc )
 }
 
 QString
-DM::sess2Str( const SessEnt &se )
+KDisplayManager::sess2Str( const SessEnt &se )
 {
 	QString user, loc;
 
@@ -383,7 +394,7 @@ DM::sess2Str( const SessEnt &se )
 }
 
 bool
-DM::switchVT( int vt )
+KDisplayManager::switchVT( int vt )
 {
 	if (DMType == GDM)
 		return exec( QString("SET_VT %1\n").arg(vt).toLatin1() );
@@ -392,7 +403,7 @@ DM::switchVT( int vt )
 }
 
 void
-DM::lockSwitchVT( int vt )
+KDisplayManager::lockSwitchVT( int vt )
 {
 	if (switchVT( vt ))
         {
@@ -402,7 +413,7 @@ DM::lockSwitchVT( int vt )
 }
 
 void
-DM::GDMAuthenticate()
+KDisplayManager::GDMAuthenticate()
 {
 	FILE *fp;
 	const char *dpy, *dnum, *dne;

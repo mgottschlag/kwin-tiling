@@ -12,7 +12,7 @@
 #include "lockdlg.h"
 
 #include <kcheckpass-enums.h>
-#include <dmctl.h>
+#include <kdisplaymanager.h>
 
 #include <KApplication>
 #include <KLocale>
@@ -148,7 +148,7 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     connect(ok, SIGNAL(clicked()), SLOT(slotOK()));
     connect(mNewSessButton, SIGNAL(clicked()), SLOT(slotSwitchUser()));
 
-    if (!DM().isSwitchable() || !KAuthorized::authorizeKAction("switch_user"))
+    if (!KDisplayManager().isSwitchable() || !KAuthorized::authorizeKAction("switch_user"))
         mNewSessButton->hide();
 
     installEventFilter(this);
@@ -489,7 +489,7 @@ void PasswordDlg::setVisible( bool visible )
 void PasswordDlg::slotStartNewSession()
 {
     if (!KMessageBox::shouldBeShownContinue( ":confirmNewSession" )) {
-        DM().startReserve();
+        KDisplayManager().startReserve();
         return;
     }
 
@@ -531,7 +531,7 @@ void PasswordDlg::slotStartNewSession()
     if (ret == KDialog::Yes) {
         if (dontAskAgain)
             KMessageBox::saveDontShowAgainContinue( ":confirmNewSession" );
-        DM().startReserve();
+        KDisplayManager().startReserve();
     }
 
     mTimeoutTimerId = startTimer(PASSDLG_HIDE_TIMEOUT);
@@ -554,7 +554,7 @@ public:
 void PasswordDlg::slotSwitchUser()
 {
     int p = 0;
-    DM dm;
+    KDisplayManager dm;
 
     QDialog dialog( this, Qt::X11BypassWindowManagerHint );
     dialog.setModal( true );
@@ -587,7 +587,7 @@ void PasswordDlg::slotSwitchUser()
         QString user, loc;
         int ns = 0;
         for (SessList::ConstIterator it = sess.begin(); it != sess.end(); ++it) {
-            DM::sess2Str2( *it, user, loc );
+            KDisplayManager::sess2Str2( *it, user, loc );
             itm = new LockListViewItem( lv, user, loc, (*it).vt );
             if (!(*it).vt)
                 itm->setEnabled( false );
@@ -635,7 +635,7 @@ void PasswordDlg::slotSessionActivated()
 {
     LockListViewItem *itm = (LockListViewItem *)lv->currentItem();
     if (itm && itm->vt > 0)
-        DM().switchVT( itm->vt );
+        KDisplayManager().switchVT( itm->vt );
 }
 
 void PasswordDlg::capsLocked()

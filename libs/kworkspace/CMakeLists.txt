@@ -1,6 +1,6 @@
 
 
-set(kworkspace_LIB_SRCS dmctl.cpp
+set(kworkspace_LIB_SRCS kdisplaymanager.cpp
                         kworkspace.cpp
                         kwindowlistmenu.cpp
    )
@@ -19,6 +19,7 @@ target_link_libraries(kworkspace  ${KDE4_KIO_LIBS} ${X11_LIBRARIES} )
 set_target_properties(kworkspace PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 install(TARGETS kworkspace  DESTINATION ${LIB_INSTALL_DIR} )
 
-install( FILES kworkspace.h
+install( FILES kdisplaymanager.h
+               kworkspace.h
                kwindowlistmenu.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kworkspace )

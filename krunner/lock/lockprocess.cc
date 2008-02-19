@@ -23,7 +23,7 @@
 #include "autologout.h"
 #include "kscreensaversettings.h"
 
-#include <dmctl.h>
+#include <kdisplaymanager.h>
 
 #include <KStandardDirs>
 #include <KApplication>
@@ -714,7 +714,7 @@ void LockProcess::stopSaver()
     mVisibility = false;
     if (!child_saver) {
         if (mLocked)
-            DM().setLock( false );
+            KDisplayManager().setLock( false );
         ungrabInput();
         const char *out = "GOAWAY!";
         for (QList<int>::ConstIterator it = child_sockets.begin(); it != child_sockets.end(); ++it)
@@ -781,7 +781,7 @@ bool LockProcess::startLock()
         kDebug(1204) << "GreeterPlugin " << *it << " (" << plugin.info->method << ", " << plugin.info->name << ") loaded";
         greetPlugin = plugin;
 	mLocked = true;
-	DM().setLock( true );
+	KDisplayManager().setLock( true );
 	return true;
     }
     cantLock( i18n("No appropriate greeter plugin configured.") );

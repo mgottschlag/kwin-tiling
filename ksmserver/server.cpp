@@ -81,7 +81,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <kdebug.h>
 
-#include <dmctl.h>
+#include <kdisplaymanager.h>
 #include <QX11Info>
 #include <krandom.h>
 #include "klauncher_interface.h"
@@ -712,7 +712,7 @@ void KSMServer::cleanUp()
     signal(SIGTERM, SIG_DFL);
     signal(SIGINT, SIG_DFL);
 
-    DM().shutdown( shutdownType, shutdownMode, bootOption );
+    KDisplayManager().shutdown( shutdownType, shutdownMode, bootOption );
 }
 
 

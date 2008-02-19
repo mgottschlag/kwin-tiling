@@ -91,7 +91,7 @@ void SessionRunner::match(Plasma::SearchContext *search)
             continue;
         }
 
-        QString name = DM::sess2Str(session);
+        QString name = KDisplayManager::sess2Str(session);
         Plasma::SearchMatch* action = 0;
 
         if (listAll) {
@@ -127,7 +127,7 @@ void SessionRunner::exec(const Plasma::SearchContext *search, const Plasma::Sear
         SessList sessions;
         if (dm.localSessions(sessions)) {
             foreach (SessEnt session, sessions) {
-                if (sessionName == DM::sess2Str(session)) {
+                if (sessionName == KDisplayManager::sess2Str(session)) {
                     dm.lockSwitchVT(session.vt);
                     break;
                 }
@@ -168,7 +168,7 @@ void SessionRunner::exec(const Plasma::SearchContext *search, const Plasma::Sear
         screensaver.Lock();
     }
 
-    DM().startReserve();
+    dm.startReserve();
 }
 
 #include "sessionrunner.moc"
