@@ -77,7 +77,7 @@ void ServiceRunner::match(Plasma::SearchContext *search)
         seen[service->exec()] = true;
     }
 
-    QString query = QString("exist Exec and ('%1' ~in Keywords or '%2' ~~ GenericName or '%3' ~~ Name) and Name != '%4'").arg(term, term, term, term);
+    QString query = QString("exist Exec and ('%1' ~in Keywords or '%2' ~~ GenericName or '%3' ~~ Name)").arg(term, term, term);
     const KService::List services = KServiceTypeTrader::self()->query("Application", query);
 
     //kDebug() << "got " << services.count() << " services from " << query;
@@ -85,7 +85,7 @@ void ServiceRunner::match(Plasma::SearchContext *search)
         QString id = service->storageId();
         QString exec = service->exec();
         if (seen.contains(id) || seen.contains(exec)) {
-            kDebug() << "already seen" << id << exec;
+            //kDebug() << "already seen" << id << exec;
             continue;
         }
 
@@ -95,12 +95,16 @@ void ServiceRunner::match(Plasma::SearchContext *search)
 
         Plasma::SearchMatch *match = new Plasma::SearchMatch(this);
         setupAction(service, match);
-        qreal relevance(0.5);
+        qreal relevance(0.6);
 
         if (service->name().contains(term, Qt::CaseInsensitive)) {
-            relevance = .9;
+            relevance = .8;
         } else if (service->genericName().contains(term, Qt::CaseInsensitive)) {
             relevance = .7;
+        }
+
+        if (service->categories().contains("KDE")) {
+            relevance += .1;
         }
 
         //kDebug() << service->name() << "is this relevant:" << relevance;
