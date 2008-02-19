@@ -21,6 +21,7 @@
 #ifndef ICON_APPLET_H
 #define ICON_APPLET_H
 
+#include <KMimeType>
 #include <KUrl>
 
 #include <plasma/applet.h>
@@ -75,7 +76,7 @@ class IconApplet : public Plasma::Applet
         QString m_text;
         QString m_genericName;
         KPropertiesDialog *m_dialog;
-        QString m_mimetype;
+        KMimeType::Ptr m_mimetype;
         KUrl m_url;
         int m_displayLines;
 };

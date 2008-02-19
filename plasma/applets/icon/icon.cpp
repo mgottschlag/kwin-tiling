@@ -29,7 +29,6 @@
 #include <KDebug>
 #include <KLocale>
 #include <KIconLoader>
-#include <KMimeType>
 #include <KPropertiesDialog>
 #include <KRun>
 #include <KSharedConfig>
@@ -46,7 +45,8 @@
 
 IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
-      m_dialog(0)
+      m_dialog(0),
+      m_mimetype(0)
 {
     setAcceptDrops(true);
     setHasConfigurationInterface(true);
@@ -92,8 +92,7 @@ void IconApplet::setUrl(const KUrl& url)
 {
     m_url = url;
 
-    KMimeType::Ptr mime = KMimeType::findByUrl(url);
-    m_mimetype = mime->name();
+    m_mimetype = KMimeType::findByUrl(url);
 
     if (m_url.isLocalFile() && KDesktopFile::isDesktopFile(m_url.toLocalFile())) {
         KDesktopFile f(m_url.toLocalFile());
@@ -121,7 +120,7 @@ void IconApplet::openUrl()
         if (containment()) {
             containment()->emitLaunchActivated();
         }
-        KRun::runUrl(m_url, m_mimetype, 0);
+        KRun::runUrl(m_url, m_mimetype->name(), 0);
     }
 }
 
@@ -240,8 +239,9 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
         setUrl(urls.first());
         constraintsUpdated(Plasma::FormFactorConstraint);
     } else if (m_url.isLocalFile() &&
-              (m_mimetype == "application/x-executable" ||
-                m_mimetype == "application/x-shellscript" ||
+              (m_mimetype &&
+               m_mimetype->is("application/x-executable") ||
+               m_mimetype->is("application/x-shellscript") ||
                 KDesktopFile::isDesktopFile(m_url.toLocalFile()))) {
 
         //Parameters
@@ -274,7 +274,7 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
 
                 KUrl dest(path);
                 KMimeType::Ptr mime = KMimeType::findByUrl(dest);
-                if (mime->is("inode/directory")) {
+                if (m_mimetype->is("inode/directory")) {
                     dropUrls(urls, dest, event->modifiers());
                 }
             }
@@ -284,7 +284,7 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
         }
 
         KRun::runCommand(commandStr + ' ' + params, 0);
-    } else if (m_mimetype == "inode/directory") {
+    } else if (m_mimetype->is("inode/directory")) {
         dropUrls(urls, m_url, event->modifiers());
     }
 }
