@@ -30,7 +30,14 @@
      </property>
     </widget>
    </item>
-  </layout>
+   <item row="2" column="0" >
+   <widget class="QCheckBox" name="showOnlyCurrentScreen" >
+   <property name="text" >
+   <string>Show only tasks from the current screen</string>
+   </property>
+   </widget>
+   </item>
+   </layout>
  </widget>
  <resources/>
  <connections/>

@@ -27,6 +27,9 @@
 #include <taskmanager/taskmanager.h>
 #include <KDialog>
 
+// Qt
+#include <QTimer>
+
 // Plasma
 #include <plasma/applet.h>
 
@@ -93,6 +96,8 @@ private slots:
 
         void currentDesktopChanged(int);
         void taskMovedDesktop(TaskPtr task);
+        void windowChangedGeometry(TaskPtr task);
+        void checkScreenChange();
 
 private:
         // creates task representations for existing windows
@@ -106,6 +111,9 @@ private:
         // remove all tasks from the taskbar
         void removeAllWindowTasks();
 
+        bool isOnMyScreen(TaskPtr task);
+        void reconnect();
+
         TaskGroupItem* m_rootTaskGroup;
 
         QHash<TaskPtr,AbstractTaskItem*> m_windowTaskItems;
@@ -113,9 +121,12 @@ private:
 
         bool m_showTooltip;
         bool m_showOnlyCurrentDesktop;
+        bool m_showOnlyCurrentScreen;
         Plasma::LayoutAnimator *m_animator;
         KDialog *m_dialog;
         Ui::tasksConfig m_ui;
+        QList<TaskPtr> m_tasks;
+        QTimer m_screenTimer;
 };
 
 K_EXPORT_PLASMA_APPLET(tasks, Tasks)

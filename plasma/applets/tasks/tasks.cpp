@@ -43,6 +43,10 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
     setHasConfigurationInterface(true);
     setAspectRatioMode(Qt::IgnoreAspectRatio);
     setContentSize(500, 48);
+
+    m_screenTimer.setSingleShot(true);
+    m_screenTimer.setInterval(300);
+    connect(&m_screenTimer, SIGNAL(timeout()), this, SLOT(checkScreenChange()));
 }
 
 Tasks::~Tasks()
@@ -79,17 +83,9 @@ void Tasks::init()
     KConfigGroup cg = config();
     m_showTooltip = cg.readEntry("showTooltip", true);
     m_showOnlyCurrentDesktop = cg.readEntry("showOnlyCurrentDesktop", false);
+    m_showOnlyCurrentScreen = cg.readEntry("showOnlyCurrentScreen", false);
 
-    if (m_showOnlyCurrentDesktop) {
-        // listen to the relevant task manager signals
-        connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
-                this, SLOT(currentDesktopChanged(int)));
-        connect(TaskManager::TaskManager::self(), SIGNAL(windowChanged(TaskPtr)),
-                this, SLOT(taskMovedDesktop(TaskPtr)));
-    }
-
-    // add representations of existing running tasks
-    registerWindowTasks();
+    reconnect();
 
     // listen for addition and removal of window tasks
     connect(TaskManager::TaskManager::self(), SIGNAL(taskAdded(TaskPtr)),
@@ -161,6 +157,9 @@ void Tasks::addWindowTask(TaskPtr task)
     }
 
     if (m_showOnlyCurrentDesktop && !task->isOnCurrentDesktop()) {
+        return;
+    }
+    if (m_showOnlyCurrentScreen && !isOnMyScreen(task)) {
         return;
     }
 
@@ -243,6 +242,43 @@ void Tasks::taskMovedDesktop(TaskPtr task)
     }
 }
 
+void Tasks::windowChangedGeometry(TaskPtr task)
+{
+    if (!m_tasks.contains(task)) {
+        m_tasks.append(task);
+    }
+    if (!m_screenTimer.isActive()) {
+        m_screenTimer.start();
+    }
+}
+
+void Tasks::checkScreenChange()
+{
+    foreach (TaskPtr task, m_tasks) {
+        if (!isOnMyScreen(task)) {
+            removeWindowTask(task);
+        } else if (!m_windowTaskItems.contains(task)) {
+            addWindowTask(task);
+        }
+    }
+    m_tasks.clear();
+}
+
+bool Tasks::isOnMyScreen(TaskPtr task)
+{
+    Plasma::Containment* appletContainment = containment();
+
+    if (appletContainment) {
+        if (appletContainment->screen() != -1) {
+            if (!TaskManager::TaskManager::isOnScreen(appletContainment->screen(),
+                task->window())) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 void Tasks::showConfigurationInterface()
 {
     if (m_dialog == 0) {
@@ -260,12 +296,30 @@ void Tasks::showConfigurationInterface()
 
     m_ui.showTooltip->setChecked(m_showTooltip);
     m_ui.showOnlyCurrentDesktop->setChecked(m_showOnlyCurrentDesktop);
+    m_ui.showOnlyCurrentScreen->setChecked(m_showOnlyCurrentScreen);
     m_dialog->show();
 }
 
 void Tasks::configAccepted()
 {
     bool changed = false;
+
+    if (m_showOnlyCurrentDesktop != (m_ui.showOnlyCurrentDesktop->isChecked())) {
+        m_showOnlyCurrentDesktop = !m_showOnlyCurrentDesktop;
+        KConfigGroup cg = config();
+        cg.writeEntry("showOnlyCurrentDesktop", m_showOnlyCurrentDesktop);
+        changed = true;
+    }
+    if (m_showOnlyCurrentScreen != (m_ui.showOnlyCurrentScreen->isChecked())) {
+        m_showOnlyCurrentScreen = !m_showOnlyCurrentScreen;
+        KConfigGroup cg = config();
+        cg.writeEntry("showOnlyCurrentScreen", m_showOnlyCurrentScreen);
+        changed = true;
+    }
+
+    if (changed) {
+        reconnect();
+    }
 
     if (m_showTooltip != (m_ui.showTooltip->checkState() == Qt::Checked)) {
         m_showTooltip = !m_showTooltip;
@@ -280,35 +334,37 @@ void Tasks::configAccepted()
         changed = true;
     }
 
-    if (m_showOnlyCurrentDesktop != (m_ui.showOnlyCurrentDesktop->isChecked())) {
-        m_showOnlyCurrentDesktop = !m_showOnlyCurrentDesktop;
-
-        if (m_showOnlyCurrentDesktop) {
-            // listen to the relevant task manager signals
-            connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
-                    this, SLOT(currentDesktopChanged(int)));
-            connect(TaskManager::TaskManager::self(), SIGNAL(windowChanged(TaskPtr)),
-                    this, SLOT(taskMovedDesktop(TaskPtr)));
-        } else {
-            disconnect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
-                       this, SLOT(currentDesktopChanged(int)));
-            disconnect(TaskManager::TaskManager::self(), SIGNAL(windowChanged(TaskPtr)),
-                       this, SLOT(taskMovedDesktop(TaskPtr)));
-        }
-
-        removeAllWindowTasks();
-        registerWindowTasks();
-
-        KConfigGroup cg = config();
-        cg.writeEntry("showOnlyCurrentDesktop", m_showOnlyCurrentDesktop);
-        changed = true;
-    }
-
     if (changed) {
         update();
         emit configNeedsSaving();
     }
 }
 
+void Tasks::reconnect()
+{
+    disconnect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
+               this, SLOT(currentDesktopChanged(int)));
+    disconnect(TaskManager::TaskManager::self(), SIGNAL(windowChanged(TaskPtr)),
+               this, SLOT(taskMovedDesktop(TaskPtr)));
+    if (m_showOnlyCurrentDesktop) {
+        // listen to the relevant task manager signals
+        connect(TaskManager::TaskManager::self(), SIGNAL(desktopChanged(int)),
+                this, SLOT(currentDesktopChanged(int)));
+        connect(TaskManager::TaskManager::self(), SIGNAL(windowChanged(TaskPtr)),
+                this, SLOT(taskMovedDesktop(TaskPtr)));
+    }
+
+    disconnect(TaskManager::TaskManager::self(), SIGNAL(windowChangedGeometry(TaskPtr)),
+               this, SLOT(windowChangedGeometry(TaskPtr)));
+    if (m_showOnlyCurrentScreen) {
+        // listen to the relevant task manager signals
+        connect(TaskManager::TaskManager::self(), SIGNAL(windowChangedGeometry(TaskPtr)),
+                this, SLOT(windowChangedGeometry(TaskPtr)));
+        TaskManager::TaskManager::self()->trackGeometry();
+    }
+
+    removeAllWindowTasks();
+    registerWindowTasks();
+}
 
 #include "tasks.moc"
