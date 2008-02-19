@@ -50,7 +50,8 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     : Plasma::Containment(parent, args),
       m_showTimeString(false),
       m_showSecondHand(false),
-      m_dialog(0)
+      m_dialog(0),
+      m_secondHandUpdateTimer(0)
 {
     setHasConfigurationInterface(true);
     setContentSize(125, 125);
@@ -61,11 +62,16 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     m_theme->resize(size());
 }
 
+Clock::~Clock()
+{
+}
+
 void Clock::init()
 {
     KConfigGroup cg = config();
     m_showTimeString = cg.readEntry("showTimeString", false);
     m_showSecondHand = cg.readEntry("showSecondHand", false);
+    m_fancyHands = cg.readEntry("fancyHands", false);
     m_timezone = cg.readEntry("timezone", "Local");
 
     connectToEngine();
@@ -107,6 +113,11 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
         // avoid unnecessary repaints
         return;
     }
+
+    if (m_secondHandUpdateTimer) {
+        m_secondHandUpdateTimer->stop();
+    }
+
     m_lastTimeSeen = m_time;
     update();
 }
@@ -168,8 +179,10 @@ void Clock::configAccepted()
     emit configNeedsSaving();
 }
 
-Clock::~Clock()
+void Clock::moveSecondHand()
 {
+    //kDebug() << "moving second hand";
+    update();
 }
 
 void Clock::drawHand(QPainter *p, qreal rotation, const QString &handName)
@@ -208,7 +221,40 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     //Make sure we paint the second hand on top of the others
     if (m_showSecondHand) {
-        const qreal seconds = 6.0 * m_time.second() - 180;
+        static const double anglePerSec = 6;
+        qreal seconds = anglePerSec * m_time.second() - 180;
+
+        if (m_fancyHands) {
+            if (!m_secondHandUpdateTimer) {
+                m_secondHandUpdateTimer = new QTimer(this);
+                connect(m_secondHandUpdateTimer, SIGNAL(timeout()), this, SLOT(moveSecondHand()));
+            }
+
+            if (!m_secondHandUpdateTimer->isActive()) {
+                //kDebug() << "starting second hand movement";
+                m_secondHandUpdateTimer->start(50);
+                m_animationStart = QTime::currentTime().msec();
+            } else {
+                static const int runTime = 500;
+                static const double m = 1; // Mass
+                static const double b = 1; // Drag coefficient
+                static const double k = 1.5; // Spring constant
+                static const double PI = 3.141592653589793; // the universe is irrational
+                static const double gamma = b / (2 * m); // Dampening constant
+                static const double omega0 = sqrt(k / m);
+                static const double omega1 = sqrt(omega0 * omega0 - gamma * gamma);
+                const double elapsed = QTime::currentTime().msec() - m_animationStart;
+                const double t = (4 * PI) * (elapsed / runTime);
+                const double val = 1 + exp(-gamma * t) * -cos(omega1 * t);
+
+                if (elapsed > runTime) {
+                    m_secondHandUpdateTimer->stop();
+                } else {
+                    seconds += -anglePerSec + (anglePerSec * val);
+                }
+            }
+        }
+
         drawHand(p, seconds, "SecondHand");
     }
 

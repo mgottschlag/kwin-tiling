@@ -66,6 +66,7 @@ class Clock : public Plasma::Containment
     protected slots:
 //         void acceptedTimeStringState(bool);
         void configAccepted();
+        void moveSecondHand();
 
     private:
         void drawHand(QPainter *p, qreal rotation, const QString &handName);
@@ -73,11 +74,14 @@ class Clock : public Plasma::Containment
 
         bool m_showTimeString;
         bool m_showSecondHand;
+        bool m_fancyHands;
         QString m_timezone;
         Plasma::Svg* m_theme;
         QTime m_time;
         KDialog *m_dialog; //should we move this into another class?
         QTime m_lastTimeSeen;
+        QTimer *m_secondHandUpdateTimer;
+        int m_animationStart;
         /// Designer Config file
         Ui::clockConfig ui;
 };
