@@ -1,3 +1,9 @@
+SET (ionlib_SRCS ion.cpp formulas.cpp)
+kde4_add_library (weather_ion SHARED ${ionlib_SRCS})
+TARGET_LINK_LIBRARIES (weather_ion ${KDE4_KIO_LIBS} plasma)
+set_target_properties(weather_ion PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
+INSTALL (TARGETS weather_ion DESTINATION ${LIB_INSTALL_DIR})
+
 SET (ion_envcan_SRCS ion_envcan.cpp)
 SET (ion_noaa_SRCS ion_noaa.cpp)
 SET (ion_bbcukmet_SRCS ion_bbcukmet.cpp)

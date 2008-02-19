@@ -20,109 +20,104 @@
 #include "formulas.h"
 #include <math.h>
 
-WeatherFormula::WeatherFormula()
+namespace WeatherFormula
 {
-}
 
-WeatherFormula::~WeatherFormula()
-{
-}
-
-float WeatherFormula::celsiusToF(float temperature) const
+float celsiusToF(float temperature)
 {
     return (temperature * 9 / 5 + 32);
 }
 
-float WeatherFormula::fahrenheitToC(float temperature) const
+float fahrenheitToC(float temperature)
 {
     return (temperature - 32) * 5 / 9;
 }
 
-float WeatherFormula::milesToKM(float miles) const
+float milesToKM(float miles)
 {
     return (1.609344 * miles);
 }
 
-float WeatherFormula::kilometersToMI(float km) const
+float kilometersToMI(float km)
 {
     return (0.621371192 * km);
 }
 
-float WeatherFormula::kilopascalsToInches(float kpa) const
+float kilopascalsToInches(float kpa)
 {
     return ((0.02952997 * kpa) * 10);
 }
 
-float WeatherFormula::inchesToKilopascals(float inches) const
+float inchesToKilopascals(float inches)
 {
     return (inches * 3.386389);
 }
 
-float WeatherFormula::millibarsToInches(float millibar) const
+float millibarsToInches(float millibar)
 {
     return (millibar * 0.0295301);
 }
 
-float WeatherFormula::millibarsToKilopascals(float millibar) const
+float millibarsToKilopascals(float millibar)
 {
     return (millibar * 0.10);
 }
 
-float WeatherFormula::centimetersToIN(float cm) const
+float centimetersToIN(float cm)
 {
     return (cm * 0.393700787);
 }
 
-float WeatherFormula::inchesToCM(float inch) const
+float inchesToCM(float inch)
 {
     return (inch * 2.54);
 }
 
-float WeatherFormula::millimetersToIN(float mm) const
+float millimetersToIN(float mm)
 {
     return (mm * 0.0393700787);
 }
 
-float WeatherFormula::inchesToMM(float inch) const
+float inchesToMM(float inch)
 {
     return (inch * 25.4);
 }
 
-float WeatherFormula::kilometersToMS(float km) const
+float kilometersToMS(float km)
 {
     return (km * 0.277778);
 }
 
-float WeatherFormula::milesToMS(float miles) const
+float milesToMS(float miles)
 {
     return (miles * 0.44704);
 }
 
-float WeatherFormula::knotsToMS(float knots) const
+float knotsToMS(float knots)
 {
     return (knots * 1.9438);
 }
 
-float WeatherFormula::knotsToKM(float knots) const
+float knotsToKM(float knots)
 {
     return floor(knots * 1.852 + 0.5);
 }
 
-float WeatherFormula::kilometersToKT(float km) const
+float kilometersToKT(float km)
 {
     return (km * 0.539956803);
 }
 
-float WeatherFormula::milesToKT(float miles) const
+float milesToKT(float miles)
 {
     return (miles * 0.868976242);
 }
-float WeatherFormula::knotsToMI(float knots) const
+float knotsToMI(float knots)
 {
     return (knots * 1.507794);
 }
 
-int WeatherFormula::knotsToBF(float knots) const
+int knotsToBF(float knots)
 {
     if (knots < 1) {
         return 0;
@@ -153,13 +148,15 @@ int WeatherFormula::knotsToBF(float knots) const
     }
 }
 
-int WeatherFormula::milesToBF(float miles) const
+int milesToBF(float miles)
 {
     return knotsToBF(miles / 1.1507794);
 }
 
-int WeatherFormula::kilometersToBF(float km) const
+int kilometersToBF(float km)
 {
     return knotsToBF(km / 1.852);
 }
+
+} // namespace WeatherFormula
 

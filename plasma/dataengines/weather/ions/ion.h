@@ -21,9 +21,10 @@
 #define _ION_H
 
 #include <QObject>
-#include <kdemacros.h>
 #include <KGenericFactory>
 #include <plasma/dataengine.h>
+
+#include "ion_export.h"
 
 /**
 * @author Shawn Starr
@@ -32,7 +33,7 @@
 *
 * Basically an ion is a Plasma::DataEngine, which is queried by the WeatherEngine instead of some applet.
 */
-class KDE_EXPORT IonInterface : public Plasma::DataEngine
+class ION_EXPORT IonInterface : public Plasma::DataEngine
 {
     Q_OBJECT
     Q_PROPERTY(QString timezone READ timezone WRITE setTimezoneFormat)

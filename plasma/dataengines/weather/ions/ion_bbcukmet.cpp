@@ -62,7 +62,6 @@ public:
 
     int m_timezoneType;  // Ion option: Timezone may be local time or UTC time
     int m_measureType; // Ion option: Units may be Metric or Imperial
-    WeatherFormula m_formula;
 };
 
 
@@ -723,7 +722,7 @@ void UKMETIon::updateWeather(const QString& source)
     foreach(QString forecastItem, forecastList) {
         fieldList = forecastItem.split('|');
         if (metricUnit()) {
-                windSpeed = QString::number(d->m_formula.milesToKM(fieldList[4].toFloat()), 'f', 1);
+                windSpeed = QString::number(WeatherFormula::milesToKM(fieldList[4].toFloat()), 'f', 1);
                 windUnit = "km/h";
         } else {
                 windSpeed = fieldList[4];
@@ -781,7 +780,7 @@ QMap<QString, QString> UKMETIon::wind(const QString& source)
         windInfo.insert("windUnit", "N/A");
     } else {
         if (metricUnit()) {
-                windInfo.insert("windSpeed", QString::number(d->m_formula.milesToKM(d->m_weatherData[source].windSpeed_miles.toFloat()), 'f', 1));
+                windInfo.insert("windSpeed", QString::number(WeatherFormula::milesToKM(d->m_weatherData[source].windSpeed_miles.toFloat()), 'f', 1));
                 windInfo.insert("windUnit", "km/h");
         } else {
                 windInfo.insert("windSpeed", QString(d->m_weatherData[source].windSpeed_miles));
@@ -814,10 +813,10 @@ QMap<QString, QString> UKMETIon::pressure(const QString& source)
     }
 
     if (metricUnit()) {
-        pressureInfo.insert("pressure", QString::number(d->m_formula.millibarsToKilopascals(d->m_weatherData[source].pressure.toFloat()), 'f', 1));
+        pressureInfo.insert("pressure", QString::number(WeatherFormula::millibarsToKilopascals(d->m_weatherData[source].pressure.toFloat()), 'f', 1));
         pressureInfo.insert("pressureUnit", "kPa");
     } else {
-        pressureInfo.insert("pressure", QString::number(d->m_formula.millibarsToInches(d->m_weatherData[source].pressure.toFloat()), 'f', 2));
+        pressureInfo.insert("pressure", QString::number(WeatherFormula::millibarsToInches(d->m_weatherData[source].pressure.toFloat()), 'f', 2));
         pressureInfo.insert("pressureUnit", "in");
     }
 

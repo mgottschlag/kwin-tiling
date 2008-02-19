@@ -58,7 +58,6 @@ public:
     bool m_windInMeters; // Ion option: Display wind format in meters per second only
     bool m_windInKnots; // Ion option: Display wind format in knots
     bool m_windInBft; // ion option: Display wind by the beaufort scale model
-    WeatherFormula m_formula;
 };
 
 
@@ -534,7 +533,7 @@ QMap<QString, QString> NOAAIon::visibility(const QString& source)
         return visibilityInfo;
     }
     if (metricUnit()) {
-        visibilityInfo.insert("visibility", QString::number(d->m_formula.milesToKM(d->m_weatherData[source].visibility.toFloat()), 'f', 1));
+        visibilityInfo.insert("visibility", QString::number(WeatherFormula::milesToKM(d->m_weatherData[source].visibility.toFloat()), 'f', 1));
         visibilityInfo.insert("visibilityUnit", "km");
         return visibilityInfo;
     }
@@ -581,7 +580,7 @@ QMap<QString, QString> NOAAIon::pressure(const QString& source)
         return pressureInfo;
     }
     if (metricUnit()) {
-        pressureInfo.insert("pressure", QString::number(d->m_formula.inchesToKilopascals(d->m_weatherData[source].pressure.toFloat()), 'f', 1));
+        pressureInfo.insert("pressure", QString::number(WeatherFormula::inchesToKilopascals(d->m_weatherData[source].pressure.toFloat()), 'f', 1));
         pressureInfo.insert("pressureUnit", "kPa");
     } else {
         pressureInfo.insert("pressure", d->m_weatherData[source].pressure);
@@ -600,7 +599,7 @@ QMap<QString, QString> NOAAIon::wind(const QString& source)
         windInfo.insert("windUnit", "N/A");
     } else {
         if (metricUnit()) {
-                windInfo.insert("windSpeed", QString::number(d->m_formula.milesToKM(d->m_weatherData[source].windSpeed.toFloat()), 'f', 1));
+                windInfo.insert("windSpeed", QString::number(WeatherFormula::milesToKM(d->m_weatherData[source].windSpeed.toFloat()), 'f', 1));
                 windInfo.insert("windUnit", "km/h");
         } else {
                 windInfo.insert("windSpeed", QString::number(d->m_weatherData[source].windSpeed.toFloat(), 'f', 1));
@@ -614,7 +613,7 @@ QMap<QString, QString> NOAAIon::wind(const QString& source)
         windInfo.insert("windGustUnit", "N/A");
     } else {
         if (metricUnit()) {
-                windInfo.insert("windGust", QString::number(d->m_formula.milesToKM(d->m_weatherData[source].windGust.toFloat()), 'f', 1));
+                windInfo.insert("windGust", QString::number(WeatherFormula::milesToKM(d->m_weatherData[source].windGust.toFloat()), 'f', 1));
                 windInfo.insert("windGustUnit", "km/h");
         } else {
                 windInfo.insert("windGust", QString::number(d->m_weatherData[source].windGust.toFloat(), 'f', 1));

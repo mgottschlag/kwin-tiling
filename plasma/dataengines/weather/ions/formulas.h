@@ -22,42 +22,40 @@
 #ifndef _WEATHERFORMULA_H
 #define _WEATHERFORMULA_H
 
-#include <kdemacros.h>
+#include "ion_export.h"
 
-class KDE_EXPORT WeatherFormula
+namespace WeatherFormula
 {
-public:
-    WeatherFormula();
-    ~WeatherFormula();
     // Convert Temperatures, pressures
-    float celsiusToF(float temperature) const;
-    float fahrenheitToC(float temperature) const;
-    float milesToKM(float miles) const;
-    float kilometersToMI(float km) const;
-    float kilopascalsToInches(float kpa) const;
-    float inchesToKilopascals(float inches) const;
-    float millibarsToKilopascals(float milibar) const;
-    float millibarsToInches(float milibar) const;
-    float centimetersToIN(float cm) const;
-    float inchesToCM(float inch) const;
-    float millimetersToIN(float mm) const;
-    float inchesToMM(float inch) const;
+    ION_EXPORT float celsiusToF(float temperature);
+    ION_EXPORT float fahrenheitToC(float temperature);
+    ION_EXPORT float milesToKM(float miles);
+    ION_EXPORT float kilometersToMI(float km);
+    ION_EXPORT float kilopascalsToInches(float kpa);
+    ION_EXPORT float inchesToKilopascals(float inches);
+    ION_EXPORT float millibarsToKilopascals(float milibar);
+    ION_EXPORT float millibarsToInches(float milibar);
+    ION_EXPORT float centimetersToIN(float cm);
+    ION_EXPORT float inchesToCM(float inch);
+    ION_EXPORT float millimetersToIN(float mm);
+    ION_EXPORT float inchesToMM(float inch);
 
     // Winds measured in meters per second
-    float kilometersToMS(float km) const;
-    float milesToMS(float miles) const;
-    float knotsToMS(float knots) const;
+    ION_EXPORT float kilometersToMS(float km);
+    ION_EXPORT float milesToMS(float miles);
+    ION_EXPORT float knotsToMS(float knots);
 
     // Winds measured in knots
-    float kilometersToKT(float km) const;
-    float milesToKT(float miles) const;
-    float knotsToKM(float knots) const;
-    float knotsToMI(float knots) const;
+    ION_EXPORT float kilometersToKT(float km);
+    ION_EXPORT float milesToKT(float miles);
+    ION_EXPORT float knotsToKM(float knots);
+    ION_EXPORT float knotsToMI(float knots);
 
     // Winds measured in beaufort scale value
-    int knotsToBF(float knots) const;
-    int milesToBF(float miles) const;
-    int kilometersToBF(float km) const;
-};
+    ION_EXPORT int knotsToBF(float knots);
+    ION_EXPORT int milesToBF(float miles);
+    ION_EXPORT int kilometersToBF(float km);
+
+} // WeatherFormula namespace
 
 #endif
