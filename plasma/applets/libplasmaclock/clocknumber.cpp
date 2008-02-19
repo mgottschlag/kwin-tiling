@@ -16,23 +16,56 @@
 *   Free Software Foundation, Inc.,                                       *
 *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
 ***************************************************************************/
+
 #include "clocknumber.h"
+
+class Number::Private
+{
+    public:
+        char data;
+};
+
+Number::Number(QChar value)
+    : d(new Private)
+{
+    d->data = value.toAscii();
+}
+
+Number::~Number()
+{
+    delete d;
+}
 
 void Number::operator--()
 {
-    if (m_data == '0') {
-        m_data = '9';
+    if (d->data == '0') {
+        d->data = '9';
     } else {
-        m_data--;
+        d->data--;
     }
 }
 
 void Number::operator++()
 {
-    if (m_data == '9') {
-        m_data = '0';
+    if (d->data == '9') {
+        d->data = '0';
     } else {
-        m_data++;
+        d->data++;
     }
+}
+
+void Number::operator=(QChar value)
+{
+    d->data = value.toAscii();
+}
+
+bool Number::operator==(char value)
+{
+    return d->data == value;
+}
+
+Number::operator char()
+{
+    return d->data;
 }
 

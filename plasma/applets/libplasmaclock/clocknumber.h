@@ -23,16 +23,20 @@
 #include <QtCore/QChar>
 #include "plasmaclock_export.h" 
 
-class PLASMACLOCK_EXPORT Number {
+class PLASMACLOCK_EXPORT Number
+{
     public:
-        Number(QChar value) { m_data = value.toAscii(); }
+        Number(QChar value);
+        ~Number();
         void operator--();
         void operator++();
-        void operator=(QChar value) { m_data = value.toAscii(); }
-        bool operator==(char value) { return m_data == value; }
-        operator char() { return m_data; }
+        void operator=(QChar value);
+        bool operator==(char value);
+        operator char();
+
     private:
-        char m_data;
+        class Private;
+        Private * const d;
 };
 
 #endif
