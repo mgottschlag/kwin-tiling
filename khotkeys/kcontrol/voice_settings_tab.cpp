@@ -23,8 +23,9 @@ namespace KHotKeys
 {
 
 Voice_settings_tab::Voice_settings_tab( QWidget* parent_P, const char* name_P )
-    : Voice_settings_tab_ui( parent_P, name_P )
+    : Voice_settings_tab_ui( parent_P )
     {
+                setObjectName(name_P);
 		connect( keySequenceWidget , SIGNAL(keySequenceChanged(const QKeySequence &)) ,
 		         this, SLOT(slotCapturedKey( const QKeySequence& )));
     }

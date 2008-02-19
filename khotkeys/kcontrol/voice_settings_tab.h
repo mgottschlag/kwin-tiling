@@ -11,8 +11,16 @@
 #ifndef VOICE_SETTINGS_TAB_H_
 #define VOICE_SETTINGS_TAB_H_
 
-#include <voice_settings_tab_ui.h>
+#include <ui_voice_settings_tab_ui.h>
 
+
+class Voice_settings_tab_ui : public QWidget, public Ui::Voice_settings_tab_ui
+{
+public:
+   Voice_settings_tab_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 namespace KHotKeys
 {

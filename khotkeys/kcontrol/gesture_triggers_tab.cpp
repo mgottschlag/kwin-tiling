@@ -29,9 +29,14 @@ namespace KHotKeys
 {
 
 Gesture_triggers_tab::Gesture_triggers_tab( QWidget* parent_P, const char* name_P )
-    : Gesture_triggers_tab_ui( parent_P, name_P )
+    : Gesture_triggers_tab_ui( parent_P )
     {
+    setObjectName(name_P);
     clear_data();
+    connect(gesture_edit_button1,SIGNAL(clicked()),this,SLOT(edit_gesture_pressed1()));
+    connect(gesture_edit_button2,SIGNAL(clicked()),this,SLOT(edit_gesture_pressed2()));
+    connect(gesture_edit_button3,SIGNAL(clicked()),this,SLOT(edit_gesture_pressed3()));
+
     // KHotKeys::Module::changed()
     connect( gesture_edit_button1, SIGNAL( clicked()),
         module, SLOT( changed()));

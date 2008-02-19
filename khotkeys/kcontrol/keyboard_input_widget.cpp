@@ -29,9 +29,11 @@ namespace KHotKeys
 {
 
 Keyboard_input_widget::Keyboard_input_widget( QWidget* parent_P, const char* name_P )
-    : Keyboard_input_widget_ui( parent_P, name_P )
+    : Keyboard_input_widget_ui( parent_P )
     {
+    setObjectName(name_P);
     clear_data();
+    connect(modify_button,SIGNAL(clicked()),this,SLOT(modify_pressed()));
     // KHotKeys::Module::changed()
     connect( action_window_radio, SIGNAL( clicked()),
         module, SLOT( changed()));

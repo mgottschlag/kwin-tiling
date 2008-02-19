@@ -17,7 +17,7 @@
 #include <kdialog.h>
 
 #include <conditions.h>
-#include <condition_list_widget_ui.h>
+#include <ui_condition_list_widget_ui.h>
 
 namespace KHotKeys
 {
@@ -26,6 +26,14 @@ class Action_data;
 class Windowdef_list_widget;
 
 class Condition_list_item;
+
+class Condition_list_widget_ui : public QWidget, public Ui::Condition_list_widget_ui
+{
+public:
+   Condition_list_widget_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 class Condition_list_widget
     : public Condition_list_widget_ui

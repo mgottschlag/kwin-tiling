@@ -29,9 +29,13 @@ namespace KHotKeys
 {
 
 Dbus_widget::Dbus_widget( QWidget* parent_P, const char* name_P )
-    : Dbus_widget_ui( parent_P, name_P )
+    : Dbus_widget_ui( parent_P )
     {
+    setObjectName(name_P);
     clear_data();
+    connect(try_button,SIGNAL(clicked()),this,SLOT(try_pressed()));
+    connect(PushButton1,SIGNAL(clicked()),this,SLOT(run_dbus_browser_pressed()));
+
     try_button->setText( i18nc( "to try", "&Try" )); // Qt designer can't do this
     // KHotKeys::Module::changed()
     connect( remote_app_lineedit, SIGNAL( textChanged( const QString& )),

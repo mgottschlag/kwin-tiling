@@ -38,8 +38,9 @@ namespace KHotKeys
 // Condition_list_widget
 
 Condition_list_widget::Condition_list_widget( QWidget* parent_P, const char* name_P )
-    : Condition_list_widget_ui( parent_P, name_P ), selected_item( NULL )
+    : Condition_list_widget_ui( parent_P ), selected_item( NULL )
     {
+    setObjectName(name_P);
     conditions.setAutoDelete( true );
     QMenu* popup = new QMenu; // CHECKME looks like setting parent doesn't work
     QAction *action = popup->addAction( i18n( "Active Window..." ) );
@@ -54,6 +55,10 @@ Condition_list_widget::Condition_list_widget( QWidget* parent_P, const char* nam
     action->setData( TYPE_OR );
     connect( conditions_listview, SIGNAL( doubleClicked ( Q3ListViewItem *, const QPoint &, int ) ),
              this, SLOT( modify_pressed() ) );
+    connect(copy_button,SIGNAL(clicked()), this,SLOT(copy_pressed()));
+    connect(modify_button,SIGNAL(clicked()), this,SLOT(modify_pressed()));
+    connect(delete_button,SIGNAL(clicked()), this,SLOT(delete_pressed()));
+    connect(conditions_listview,SIGNAL(current_changed(Q3ListViewItem*)),this,SLOT(current_changed(Q3ListViewItem*)));
 
     connect( popup, SIGNAL( triggered( QAction* )), SLOT( new_selected( QAction* )));
     new_button->setMenu( popup );

@@ -11,13 +11,21 @@
 #ifndef _KEYBOARD_INPUT_WIDGET_H_
 #define _KEYBOARD_INPUT_WIDGET_H_
 
-#include <keyboard_input_widget_ui.h>
+#include <ui_keyboard_input_widget_ui.h>
 
 namespace KHotKeys
 {
 
 class Keyboard_input_action;
 class Action_data;
+
+class Keyboard_input_widget_ui : public QWidget, public Ui::Keyboard_input_widget_ui
+{
+public:
+   Keyboard_input_widget_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 class Keyboard_input_widget
     : public Keyboard_input_widget_ui

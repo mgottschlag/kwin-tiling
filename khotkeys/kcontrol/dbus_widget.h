@@ -11,13 +11,21 @@
 #ifndef _DBUS_WIDGET_H_
 #define _DBUS_WIDGET_H_
 
-#include <dbus_widget_ui.h>
+#include <ui_dbus_widget_ui.h>
 
 namespace KHotKeys
 {
 
 class Dbus_action;
 class Action_data;
+
+class Dbus_widget_ui : public QWidget, public Ui::Dbus_widget_ui
+{
+public:
+   Dbus_widget_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 class Dbus_widget
     : public Dbus_widget_ui

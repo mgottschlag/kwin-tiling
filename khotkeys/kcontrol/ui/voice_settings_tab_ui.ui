@@ -1,104 +1,99 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>Voice_settings_tab_ui</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>Voice_settings_tab_ui</cstring>
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>Voice_settings_tab_ui</class>
+  <widget class="QWidget" name="Voice_settings_tab_ui" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>473</width>
+        <height>380</height>
+      </rect>
     </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>473</width>
-            <height>380</height>
-        </rect>
-    </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel2</cstring>
-            </property>
-            <property name="text">
-                <string>In order to trigger a spoken action, you have to press the key (or combination of keys) configured below, speak the command and then press the same key again once you have finished speaking.</string>
-            </property>
-            <property name="alignment">
-                <set>WordBreak|AlignVCenter</set>
-            </property>
+    <layout class="QVBoxLayout" >
+      <item>
+        <widget class="QLabel" name="textLabel2" >
+          <property name="text" >
+            <string>In order to trigger a spoken action, you have to press the key (or combination of keys) configured below, speak the command and then press the same key again once you have finished speaking.</string>
+          </property>
+          <property name="alignment" >
+            <set>Qt::AlignVCenter</set>
+          </property>
+          <property name="wordWrap" >
+            <bool>true</bool>
+          </property>
+          <property name="wordWrap" >
+            <bool>false</bool>
+          </property>
         </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout4</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Shortcut:</string>
-                    </property>
-                </widget>
-                <widget class="KKeySequenceWidget">
-                    <property name="name">
-                        <cstring>keySequenceWidget</cstring>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>241</width>
-                            <height>21</height>
-                        </size>
-                    </property>
-                </spacer>
-            </hbox>
-        </widget>
-        <spacer>
-            <property name="name">
-                <cstring>spacer3</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
+      </item>
+      <item>
+        <layout class="QHBoxLayout" >
+          <item>
+            <widget class="QLabel" name="textLabel1" >
+              <property name="text" >
+                <string>Shortcut:</string>
+              </property>
+              <property name="wordWrap" >
+                <bool>false</bool>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="KKeySequenceWidget" name="keySequenceWidget" />
+          </item>
+          <item>
+            <spacer name="spacer2" >
+              <property name="sizeHint" >
                 <size>
-                    <width>31</width>
-                    <height>90</height>
+                  <width>241</width>
+                  <height>21</height>
                 </size>
-            </property>
+              </property>
+              <property name="sizeType" >
+                <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+              </property>
+            </spacer>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <spacer name="spacer3" >
+          <property name="sizeHint" >
+            <size>
+              <width>31</width>
+              <height>90</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+          </property>
         </spacer>
-        <widget class="QLabel">
-            <property name="name">
-                <cstring>textLabel1_2</cstring>
-            </property>
-            <property name="text">
-                <string>&lt;b&gt;Note:&lt;/b&gt; To get voice recognition working correctly and in full duplex mode: 
-make sure &lt;i&gt;Full duplex&lt;/i&gt; is checked in your &lt;i&gt;Sound System&lt;/i&gt; options.</string>
-            </property>
+      </item>
+      <item>
+        <widget class="QLabel" name="textLabel1_2" >
+          <property name="text" >
+            <string>&lt;b>Note:&lt;/b> To get voice recognition working correctly and in full duplex mode: 
+make sure &lt;i>Full duplex&lt;/i> is checked in your &lt;i>Sound System&lt;/i> options.</string>
+          </property>
+          <property name="wordWrap" >
+            <bool>false</bool>
+          </property>
         </widget>
-    </vbox>
-</widget>
-<customwidgets>
-</customwidgets>
-<layoutdefaults spacing="6" margin="11"/>
-<includehints>
-    <includehint>kkeysequencewidget.h</includehint>
-</includehints>
-</UI>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <includes>
+    <include location="local" >kkeysequencewidget.h</include>
+  </includes>
+</ui>

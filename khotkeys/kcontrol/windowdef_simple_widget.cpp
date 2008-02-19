@@ -37,6 +37,10 @@ Windowdef_simple_widget::Windowdef_simple_widget( QWidget* parent_P, const char*
     window_class_lineedit->setEnabled( false );
     window_role_lineedit->setEnabled( false );
     connect( autodetect_button, SIGNAL( clicked()), SLOT( autodetect_clicked()));
+    connect(window_class_combo,SIGNAL(activated(int)),this,SLOT(window_class_combo_changed(int)));
+    connect(window_role_combo,SIGNAL(activated(int)),this,SLOT(window_role_combo_changed(int)));
+    connect(window_title_combo,SIGNAL(activated(int)),this,SLOT(window_title_combo_changed(int)));
+
     clear_data();
     // KHotKeys::Module::changed()
     connect( window_title_combo, SIGNAL( activated( int )),

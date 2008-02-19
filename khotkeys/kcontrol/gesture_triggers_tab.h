@@ -11,7 +11,7 @@
 #ifndef _GESTURE_TRIGGERS_TAB_H_
 #define _GESTURE_TRIGGERS_TAB_H_
 
-#include <gesture_triggers_tab_ui.h>
+#include <ui_gesture_triggers_tab_ui.h>
 
 
 
@@ -23,6 +23,14 @@ namespace KHotKeys
 class Trigger_list;
 class Action_data;
 
+class Gesture_triggers_tab_ui : public QWidget, public Ui::Gesture_triggers_tab_ui
+{
+public:
+   Gesture_triggers_tab_ui( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
+
 class Gesture_triggers_tab
     : public Gesture_triggers_tab_ui
     {
@@ -31,7 +39,7 @@ class Gesture_triggers_tab
         Gesture_triggers_tab( QWidget* parent_P = NULL, const char* name_P = NULL );
         void set_data( const Trigger_list* triggers_P );
         Trigger_list* get_data( Action_data* data_P ) const;
-    protected:
+    protected slots:
         virtual void edit_gesture_pressed1();
         virtual void edit_gesture_pressed2();
         virtual void edit_gesture_pressed3();

@@ -420,24 +420,4 @@
   <includes>
     <include location="global" >kdialog.h</include>
   </includes>
-  <connections>
-    <connection>
-      <sender>window_class_combo</sender>
-      <signal>activated(int)</signal>
-      <receiver>Windowdef_simple_widget_ui</receiver>
-      <slot>window_class_combo_changed(int)</slot>
-    </connection>
-    <connection>
-      <sender>window_role_combo</sender>
-      <signal>activated(int)</signal>
-      <receiver>Windowdef_simple_widget_ui</receiver>
-      <slot>window_role_combo_changed(int)</slot>
-    </connection>
-    <connection>
-      <sender>window_title_combo</sender>
-      <signal>activated(int)</signal>
-      <receiver>Windowdef_simple_widget_ui</receiver>
-      <slot>window_title_combo_changed(int)</slot>
-    </connection>
-  </connections>
 </ui>
