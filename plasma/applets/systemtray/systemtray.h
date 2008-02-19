@@ -37,7 +37,7 @@ class SystemTray: public Plasma::Applet
 Q_OBJECT
 
 public:
-    SystemTray(QObject *parent, const QVariantList &arguments = QVariantList());
+    explicit SystemTray(QObject *parent, const QVariantList &arguments = QVariantList());
     ~SystemTray();
 
     QSizeF contentSizeHint() const;

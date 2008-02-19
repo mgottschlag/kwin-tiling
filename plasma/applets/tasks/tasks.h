@@ -56,7 +56,7 @@ public:
          * Constructs a new tasks applet
          * With the specified parent.
          */
-        Tasks(QObject *parent, const QVariantList &args = QVariantList());
+        explicit Tasks(QObject *parent, const QVariantList &args = QVariantList());
         ~Tasks();
 
         void init();

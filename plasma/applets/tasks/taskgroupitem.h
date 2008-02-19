@@ -168,8 +168,8 @@ private:
     class TaskEntry
     {
     public:
-        TaskEntry(AbstractTaskItem *taskItem,
-                  const QRectF &taskArea = QRectF())
+        explicit TaskEntry(AbstractTaskItem *taskItem,
+                           const QRectF &taskArea = QRectF())
         : task(taskItem),
           rect(taskArea)
         {}
