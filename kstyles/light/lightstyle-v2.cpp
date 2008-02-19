@@ -121,9 +121,9 @@ static void drawLightBevel(QPainter *p, const QRect &r, const QColorGroup &cg,
 	p->drawLine(r.x() + 1, r.y() + r.height() - 2,
 		    r.x() + r.width() - 2, r.y() + r.height() - 2); // bottom
 
-	br.addCoords(2, 2, -2, -2);
+	br.adjust(2, 2, -2, -2);
     } else
-	br.addCoords(1, 1, -1, -1);
+	br.adjust(1, 1, -1, -1);
 
     // fill
     if (fill) p->fillRect(br, *fill);
@@ -261,9 +261,9 @@ void LightStyleV2::drawPrimitive( PrimitiveElement pe,
 	    QRect br = r, // bevel rect
 		  cr = r, // contents rect
 		  ir = r; // indicator rect
-	    br.addCoords(1, 1, -1, -1);
-	    cr.addCoords(2, 2, -2, -2);
-	    ir.addCoords(3, 3, -3, -3);
+	    br.adjust(1, 1, -1, -1);
+	    cr.adjust(2, 2, -2, -2);
+	    ir.adjust(3, 3, -3, -3);
 
 	    p->fillRect(r, cg.brush(QPalette::Background));
 
@@ -449,13 +449,13 @@ void LightStyleV2::drawPrimitive( PrimitiveElement pe,
 	    p->setPen(cg.dark());
 	    if (flags & Style_Horizontal) {
 		p->drawLine(r.topLeft(), r.topRight());
-		fr.addCoords(0, 1, 0, 0);
-		ar.addCoords(0, 1, 0, 0);
+		fr.adjust(0, 1, 0, 0);
+		ar.adjust(0, 1, 0, 0);
 		pe = PE_ArrowLeft;
 	    } else {
 		p->drawLine(r.topLeft(), r.bottomLeft());
-		fr.addCoords(1, 0, 0, 0);
-		ar.addCoords(2, 0, 0, 0);
+		fr.adjust(1, 0, 0, 0);
+		ar.adjust(2, 0, 0, 0);
 		pe = PE_ArrowUp;
 	    }
 
@@ -474,13 +474,13 @@ void LightStyleV2::drawPrimitive( PrimitiveElement pe,
 	    p->setPen(cg.dark());
 	    if (flags & Style_Horizontal) {
 		p->drawLine(r.topLeft(), r.topRight());
-		fr.addCoords(0, 1, 0, 0);
-		ar.addCoords(0, 1, 0, 0);
+		fr.adjust(0, 1, 0, 0);
+		ar.adjust(0, 1, 0, 0);
 		pe = PE_ArrowRight;
 	    } else {
 		p->drawLine(r.topLeft(), r.bottomLeft());
-		fr.addCoords(1, 0, 0, 0);
-		ar.addCoords(2, 0, 0, 0);
+		fr.adjust(1, 0, 0, 0);
+		ar.adjust(2, 0, 0, 0);
 		pe = PE_ArrowDown;
 	    }
 
@@ -501,12 +501,12 @@ void LightStyleV2::drawPrimitive( PrimitiveElement pe,
 		p->drawLine(r.topLeft(), r.topRight());
 		p->setPen(cg.background());
 		p->drawLine(r.left(), r.top() + 1, r.right(), r.top() + 1);
-		fr.addCoords(0, 2, 0, 0);
+		fr.adjust(0, 2, 0, 0);
 	    } else {
 		p->drawLine(r.topLeft(), r.bottomLeft());
 		p->setPen(cg.background());
 		p->drawLine(r.left() + 1, r.top(), r.left() + 1, r.bottom());
-		fr.addCoords(2, 0, 0, 0);
+		fr.adjust(2, 0, 0, 0);
 	    }
 
 	    p->fillRect(fr, cg.brush((flags & Style_Down) ?
@@ -524,12 +524,12 @@ void LightStyleV2::drawPrimitive( PrimitiveElement pe,
 		p->drawLine(r.topLeft(), r.topRight());
 		p->setPen(cg.background());
 		p->drawLine(r.left(), r.top() + 1, r.right(), r.top() + 1);
-		fr.addCoords(0, 2, 0, -1);
+		fr.adjust(0, 2, 0, -1);
 	    } else {
 		p->drawLine(r.topLeft(), r.bottomLeft());
 		p->setPen(cg.background());
 		p->drawLine(r.left() + 1, r.top(), r.left() + 1, r.bottom());
-		fr.addCoords(2, 0, -1, 0);
+		fr.adjust(2, 0, -1, 0);
 	    }
 
 	    drawLightBevel(p, fr, cg, ((flags | Style_Down) ^ Style_Down) |
@@ -628,22 +628,22 @@ void LightStyleV2::drawControl( ControlElement control,
 	    QRect tr(r);
 	    QRect fr(r);
 
-	    tr.addCoords(0, 0,  0, -1);
-	    fr.addCoords(2, 2, -2, -2);
+	    tr.adjust(0, 0,  0, -1);
+	    fr.adjust(2, 2, -2, -2);
 	    
 	    if ( tb->shape() == QTabBar:: RoundedSouth || tb->shape() == QTabBar:: TriangularSouth) {
-		tr = r; tr.addCoords(0, 1, 0, 0);
-		fr = r; fr.addCoords(2, 2,-2, -4);
+		tr = r; tr.adjust(0, 1, 0, 0);
+		fr = r; fr.adjust(2, 2,-2, -4);
 		below = true;
 	    }
 		
 	    if (! (flags & Style_Selected)) {
 		if (below) {
-		    tr.addCoords(0, 0, 0, -1);
-		    tr.addCoords(0, 0, 0, -1);
+		    tr.adjust(0, 0, 0, -1);
+		    tr.adjust(0, 0, 0, -1);
 		} else {
-		    tr.addCoords(0, 1, 0, 0);
-		    fr.addCoords(0, 1, 0, 0);
+		    tr.adjust(0, 1, 0, 0);
+		    fr.adjust(0, 1, 0, 0);
 		}
 
 		p->setPen(cg.dark());
@@ -895,9 +895,9 @@ void LightStyleV2::drawControl( ControlElement control,
 		    alignFlag |= ( reverse ? Qt::AlignLeft : Qt::AlignRight );
 		    if (! (flags & Style_Enabled)) {
 			p->setPen(embosscolor);
-			tr.moveBy(1, 1);
+			tr.translate(1, 1);
 			p->drawText(tr, alignFlag, text.mid(t + 1));
-			tr.moveBy(-1, -1);
+			tr.translate(-1, -1);
 			p->setPen(textcolor);
 		    }
 
@@ -909,9 +909,9 @@ void LightStyleV2::drawControl( ControlElement control,
 
 		if (! (flags & Style_Enabled)) {
 		    p->setPen(embosscolor);
-		    ir.moveBy(1, 1);
+		    ir.translate(1, 1);
 		    p->drawText(ir, alignFlag, text, t);
-		    ir.moveBy(-1, -1);
+		    ir.translate(-1, -1);
 		    p->setPen(textcolor);
 		}
 
@@ -1050,14 +1050,14 @@ void LightStyleV2::drawComplexControl( ComplexControl control,
 	    if ((controls & SC_ComboBoxArrow) && arrow.isValid()) {
 		if (active == SC_ComboBoxArrow)
 		    p->fillRect(arrow, cg.brush(QPalette::Mid));
-		arrow.addCoords(4, 2, -2, -2);
+		arrow.adjust(4, 2, -2, -2);
 		drawPrimitive(PE_ArrowDown, p, arrow, cg, flags);
 	    }
 
 	    if ((controls & SC_ComboBoxEditField) && field.isValid()) {
 		p->setPen(cg.dark());
 		if (combobox->editable()) {
-		    field.addCoords(-1, -1, 1, 1);
+		    field.adjust(-1, -1, 1, 1);
 		    p->drawRect(field);
 		} else
 		    p->drawLine(field.right() + 1, field.top(),
@@ -1104,7 +1104,7 @@ void LightStyleV2::drawComplexControl( ComplexControl control,
 		p->setPen(cg.dark());
 		p->drawLine(up.topLeft(), up.bottomLeft());
 
-		up.addCoords(1, 0, 0, 0);
+		up.adjust(1, 0, 0, 0);
 		p->fillRect(up, cg.brush(QPalette::Button));
 		if (active == SC_SpinWidgetUp)
 		    p->setPen(cg.mid());
@@ -1123,7 +1123,7 @@ void LightStyleV2::drawComplexControl( ComplexControl control,
 		p->drawLine(up.left(), up.bottom(),
 			    up.right() - 1, up.bottom());
 
-		up.addCoords(1, 0, 0, 0);
+		up.adjust(1, 0, 0, 0);
 		drawPrimitive(pe, p, up, cg, flags |
 			      ((active == SC_SpinWidgetUp) ?
 			       Style_On | Style_Sunken : Style_Raised));
@@ -1137,7 +1137,7 @@ void LightStyleV2::drawComplexControl( ComplexControl control,
 		p->setPen(cg.dark());
 		p->drawLine(down.topLeft(), down.bottomLeft());
 
-		down.addCoords(1, 0, 0, 0);
+		down.adjust(1, 0, 0, 0);
 		p->fillRect(down, cg.brush(QPalette::Button));
 		if (active == SC_SpinWidgetDown)
 		    p->setPen(cg.mid());
@@ -1156,7 +1156,7 @@ void LightStyleV2::drawComplexControl( ComplexControl control,
 		p->drawLine(down.left(), down.bottom(),
 			    down.right() - 1, down.bottom());
 
-		down.addCoords(1, 0, 0, 0);
+		down.adjust(1, 0, 0, 0);
 		drawPrimitive(pe, p, down, cg, flags |
 			      ((active == SC_SpinWidgetDown) ?
 			       Style_On | Style_Sunken : Style_Raised));
@@ -1181,9 +1181,9 @@ void LightStyleV2::drawComplexControl( ComplexControl control,
 
 	    subline2 = addline;
 	    if (scrollbar->orientation() == Qt::Horizontal)
-		subline2.moveBy(-addline.width(), 0);
+		subline2.translate(-addline.width(), 0);
 	    else
-		subline2.moveBy(0, -addline.height());
+		subline2.translate(0, -addline.height());
 
        	    if ((controls & SC_ScrollBarSubLine) && subline.isValid()) {
 		drawPrimitive(PE_ScrollBarSubLine, p, subline, cg,
@@ -1262,10 +1262,10 @@ void LightStyleV2::drawComplexControl( ComplexControl control,
 
 		if (slider->orientation() == Qt::Horizontal) {
 		    int dh = (groove.height() - 5) / 2;
-		    groove.addCoords(0, dh, 0, -dh);
+		    groove.adjust(0, dh, 0, -dh);
 		} else {
 		    int dw = (groove.width() - 5) / 2;
-		    groove.addCoords(dw, 0, -dw, 0);
+		    groove.adjust(dw, 0, -dw, 0);
 		}
 
 		drawLightBevel(p, groove, cg, ((flags | Style_Raised) ^ Style_Raised) |

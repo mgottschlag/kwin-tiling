@@ -260,7 +260,7 @@ void HighColorStyle::drawPrimitive( PrimitiveElement pe,
 		case PE_ButtonDefault: {
 			if ( type != HighColor ) {
 				int x1, y1, x2, y2;
-				r.coords( &x1, &y1, &x2, &y2 );
+				r.getCoords( &x1, &y1, &x2, &y2 );
 				
 				// Button default indicator
 				p->setPen( cg.shadow() );
@@ -1116,7 +1116,7 @@ void HighColorStyle::drawControl( ControlElement element,
 				if ( btnDefault || button->autoDefault() ) {
 					// Compensate for default indicator
 					static int di = pixelMetric( PM_ButtonDefaultIndicator );
-					br.addCoords( di, di, -di, -di );
+					br.adjust( di, di, -di, -di );
 				}
 
 				if ( btnDefault )
@@ -1219,7 +1219,7 @@ void HighColorStyle::drawControl( ControlElement element,
 			bool pressed = flags & Style_Down;
 			bool selected = flags & Style_Selected;
 			int x, y, x2, y2;
-			r.coords( &x, &y, &x2, &y2 );
+			r.getCoords( &x, &y, &x2, &y2 );
 
 			p->setPen( pressed ? cg.shadow() : cg.light() );
 			p->drawLine( x, y, x2-1, y );
@@ -1497,7 +1497,7 @@ void HighColorStyle::drawControlMask( ControlElement element,
 		// ----------------------------------------------------------------------
 		case CE_PushButton: {
 			int x1, y1, x2, y2;
-			r.coords( &x1, &y1, &x2, &y2 );
+			r.getCoords( &x1, &y1, &x2, &y2 );
 			QCOORD corners[] = { x1,y1, x2,y1, x1,y2, x2,y2 };
 			p->fillRect( r, Qt::color1 );
 			p->setPen( Qt::color0 );
@@ -1684,7 +1684,7 @@ void HighColorStyle::drawComplexControl( ComplexControl control,
 
 			if (toolbutton->hasFocus() && !toolbutton->focusProxy()) {
 				QRect fr = toolbutton->rect();
-				fr.addCoords(3, 3, -3, -3);
+				fr.adjust(3, 3, -3, -3);
 				drawPrimitive(PE_FocusRect, p, fr, cg);
 			}
 
@@ -1713,7 +1713,7 @@ void HighColorStyle::drawComplexControlMask( ComplexControl control,
 		case CC_ComboBox:
 		case CC_ToolButton: {
 			int x1, y1, x2, y2;
-			r.coords( &x1, &y1, &x2, &y2 );
+			r.getCoords( &x1, &y1, &x2, &y2 );
 			QCOORD corners[] = { x1,y1, x2,y1, x1,y2, x2,y2 };
 			p->fillRect( r, Qt::color1 );
 			p->setPen( Qt::color0 );

@@ -336,7 +336,7 @@ KdmItem::paint( QPainter *p, const QRect &rect, bool background )
 	if (myWidget)
 		return;
 
-	QRect contentsRect = area.intersect( rect );
+	QRect contentsRect = area.intersected( rect );
 	if (!contentsRect.isEmpty() && (!background || isBackground)) {
 		drawContents( p, contentsRect );
 		if (debugLevel & DEBUG_THEMING) {

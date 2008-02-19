@@ -86,7 +86,7 @@ void addOffset (QRect* r, int offset, int lineWidth = 0)
 	int offset1 = offset;
 	int offset2 = offset;
 
-	*r = r->normalize();
+	*r = r->normalized();
 
 	if (lineWidth > 0)
 	{
@@ -95,14 +95,14 @@ void addOffset (QRect* r, int offset, int lineWidth = 0)
 	}
 
 	if (offset1 + offset2 > r->width())
-		r->addCoords (r->width()/2, 0, - (r->width() - r->width()/2), 0);
+		r->adjust (r->width()/2, 0, - (r->width() - r->width()/2), 0);
 	else
-		r->addCoords (offset1, 0, -offset2, 0);
+		r->adjust (offset1, 0, -offset2, 0);
 
 	if (offset1 + offset2 > r->height())
-		r->addCoords (0, r->height()/2, 0, - (r->height() - r->height()/2));
+		r->adjust (0, r->height()/2, 0, - (r->height() - r->height()/2));
 	else
-		r->addCoords (0, offset1, 0, -offset2);
+		r->adjust (0, offset1, 0, -offset2);
 }
 
 
@@ -422,9 +422,9 @@ void HighContrastStyle::drawPrimitive (PrimitiveElement pe,
 			drawRect (p, r2);
 			
 			if (flags & Style_Horizontal)
-				r2.addCoords (0, basicLineWidth, 0, -basicLineWidth);
+				r2.adjust (0, basicLineWidth, 0, -basicLineWidth);
 			else
-				r2.addCoords (basicLineWidth, 0, -basicLineWidth, 0);
+				r2.adjust (basicLineWidth, 0, -basicLineWidth, 0);
 			QPen pen = p->pen();
 			pen.setColor (p->background().color());
 			p->setPen (pen);
