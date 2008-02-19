@@ -248,9 +248,9 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
         QString params;
         foreach (KUrl url, urls) {
             if (url.isLocalFile()) {
-                params += " " + KShell::quoteArg(url.path());
+                params += ' ' + KShell::quoteArg(url.path());
             } else {
-                params += " " + KShell::quoteArg(url.prettyUrl());
+                params += ' ' + KShell::quoteArg(url.prettyUrl());
             }
         }
 
@@ -283,7 +283,7 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
             commandStr = KShell::quoteArg(m_url.path());
         }
 
-        KRun::runCommand(commandStr + " " + params, 0);
+        KRun::runCommand(commandStr + ' ' + params, 0);
     } else if (m_mimetype == "inode/directory") {
         dropUrls(urls, m_url, event->modifiers());
     }

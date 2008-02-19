@@ -60,7 +60,7 @@ void WebshortcutRunner::match(Plasma::SearchContext *search)
         //TODO: how about getting the keys for the localized sites?
         foreach (QString key, service->property("Keys").toStringList()) {
             // FIXME? should we look for the used separator from the konqi's settings?
-            key = key.toLower() + ":";
+            key = key.toLower() + ':';
             if (term.size() > key.size() &&
                 term.startsWith(key, Qt::CaseInsensitive)) {
                 QString actionText = QString("Search %1 for %2");

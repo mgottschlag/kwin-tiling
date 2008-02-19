@@ -478,7 +478,7 @@ void BackgroundDelegate::paint(QPainter *painter,
                    maxheight);
     QString text = title.replace("_", " ");
     if (!author.isEmpty()) {
-        text += "\n" + author;
+        text += '\n' + author;
     }
     QRect boundingRect = painter->boundingRect(
         textRect, Qt::AlignVCenter | Qt::TextWordWrap, text);
