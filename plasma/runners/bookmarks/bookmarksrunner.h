@@ -39,10 +39,9 @@ class BookmarksRunner : public Plasma::AbstractRunner
         ~BookmarksRunner();
 
         void match(Plasma::SearchContext *context);
-        void exec(Plasma::SearchMatch *action);
+        void exec(const Plasma::SearchContext *context, const Plasma::SearchMatch *action);
 
     private:
-        QList<KBookmark> searchBookmarks(const KBookmarkGroup &bookmarkGrp, const QString &query);
         KIcon getFavicon(const KUrl &url);
 
     private:

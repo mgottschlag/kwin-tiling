@@ -53,10 +53,13 @@ void ShellRunner::match(Plasma::SearchContext *search)
 
     if (search->type() == Plasma::SearchContext::Executable ||
         search->type() == Plasma::SearchContext::ShellCommand)  {
-        Plasma::SearchMatch* action = search->addExactMatch(this);
-        action->setIcon(KIcon("system-run"));
-        action->setText(i18n("Run %1", search->searchTerm()));
-        action->setRelevance(1);
+        const QString term = search->searchTerm();
+        Plasma::SearchMatch* match = new Plasma::SearchMatch(this);
+        match->setType(Plasma::SearchMatch::ExactMatch);
+        match->setIcon(KIcon("system-run"));
+        match->setText(i18n("Run %1", term));
+        match->setRelevance(1);
+        search->addMatch(term, match);
     }
 }
 
@@ -66,12 +69,13 @@ void ShellRunner::createMatchOptions(QWidget* parent)
     ui.setupUi(parent);
 }
 
-void ShellRunner::exec(Plasma::SearchMatch* action)
+void ShellRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
     if (!m_enabled) {
         return;
     }
-    KRun::runCommand(action->searchTerm(), NULL);
+
+    KRun::runCommand(search->searchTerm(), NULL);
 }
 
 #include "shellrunner.moc"

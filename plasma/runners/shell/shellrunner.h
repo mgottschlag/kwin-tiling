@@ -37,10 +37,8 @@ class ShellRunner : public Plasma::AbstractRunner
         ~ShellRunner();
 
         void createMatchOptions(QWidget* parent);
-
-    protected:
         void match(Plasma::SearchContext *search);
-        void exec(Plasma::SearchMatch *action);
+        void exec(const Plasma::SearchContext *context, const Plasma::SearchMatch *action);
 
     private:
         bool m_enabled;

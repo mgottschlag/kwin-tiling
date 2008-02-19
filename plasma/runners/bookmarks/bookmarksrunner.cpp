@@ -20,13 +20,12 @@
 #include "bookmarksrunner.h"
 
 #include <QAction>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QWidget>
-#include <QScriptEngine>
-#include <QList>
 #include <QDBusInterface>
 #include <QDBusReply>
+#include <QLabel>
+#include <QList>
+#include <QStack>
+#include <QWidget>
 
 #include <KIcon>
 #include <KBookmarkManager>
@@ -50,60 +49,80 @@ BookmarksRunner::~BookmarksRunner()
 
 void BookmarksRunner::match(Plasma::SearchContext *search)
 {
-    QString term = search->searchTerm();
+    const QString term = search->searchTerm();
     if (term.length() < 3) {
         return;
     }
 
-    KBookmarkManager *bookmarkMgr = KBookmarkManager::userBookmarksManager();
-    KBookmarkGroup bookmarkGrp = bookmarkMgr->root();
+    KBookmarkManager *bookmarkManager = KBookmarkManager::userBookmarksManager();
+    KBookmarkGroup bookmarkGroup = bookmarkManager->root();
 
-    QList<Plasma::SearchMatch*> possibles;
-    QList<Plasma::SearchMatch*> empty;
-    QList<KBookmark> matchingBookmarks = searchBookmarks(bookmarkGrp, term);
-    foreach (KBookmark bookmark, matchingBookmarks) {
-        //kDebug() << "Found bookmark: " << bookmark.text() << " (" << bookmark.url().prettyUrl() << ")";
-        Plasma::SearchMatch *action = new Plasma::SearchMatch(search, this);
+    QList<Plasma::SearchMatch*> matches;
+    QStack<KBookmarkGroup> groups;
 
-        /*
-        getting the favicon is too slow and can easily lead to starving the
-        thread pool out
-        QIcon icon = getFavicon(bookmark.url());
-        if (icon.isNull()) {
-            action->setIcon(m_icon);
-        }
-        else {
-            action->setIcon(icon);
-        }
-        */
-        action->setIcon(m_icon);
-        action->setText(bookmark.text());
-        action->setData(bookmark.url().url());
-        action->setRelevance(0.8);
-        possibles.append(action);
-    }
+    KBookmark bookmark = bookmarkGroup.first();
+    while (!bookmark.isNull()) {
+        if (bookmark.isGroup()) { // descend
+            //kDebug () << "descending into" << bookmark.text();
+            groups.push(bookmarkGroup);
+            bookmarkGroup = bookmark.toGroup();
+            bookmark = bookmarkGroup.first();
 
-    search->addMatches(term, empty, possibles, empty);
-}
-
-QList<KBookmark> BookmarksRunner::searchBookmarks(const KBookmarkGroup &bookmarkGrp, const QString &query)
-{
-    QList<KBookmark> matchingBookmarks;
-    KBookmark currentBookmark = bookmarkGrp.first();
-    while(!currentBookmark.isNull()) {
-        if(currentBookmark.isGroup()) { //recurse
-            matchingBookmarks += searchBookmarks(currentBookmark.toGroup(), query);
-        } else {
-            if(currentBookmark.text().contains(query, Qt::CaseInsensitive) || currentBookmark.url().prettyUrl().contains(query, Qt::CaseInsensitive)) {
-                matchingBookmarks.append(currentBookmark);
+            while (bookmark.isNull() && !groups.isEmpty()) {
+                bookmark = bookmarkGroup;
+                bookmarkGroup = groups.pop();
+                bookmark = bookmarkGroup.next(bookmark);
             }
+
+            continue;
         }
-        currentBookmark = bookmarkGrp.next(currentBookmark);
+
+        Plasma::SearchMatch *match = 0;
+        if (bookmark.text().toLower() == term.toLower()) {
+            match = new Plasma::SearchMatch(this);
+            match->setType(Plasma::SearchMatch::ExactMatch);
+            match->setRelevance(1);
+        } else if (bookmark.text().contains(term, Qt::CaseInsensitive)) {
+            match = new Plasma::SearchMatch(this);
+            match->setRelevance(0.9);
+        } else if (bookmark.url().prettyUrl().contains(term, Qt::CaseInsensitive)) {
+            match = new Plasma::SearchMatch(this);
+            match->setRelevance(0.8);
+        }
+
+        if (match) {
+            //kDebug() << "Found bookmark: " << bookmark.text() << " (" << bookmark.url().prettyUrl() << ")";
+            // getting the favicon is too slow and can easily lead to starving the thread pool out
+            /*
+            QIcon icon = getFavicon(bookmark.url());
+            if (icon.isNull()) {
+                match->setIcon(m_icon);
+            }
+            else {
+                match->setIcon(icon);
+            }
+            */
+
+            match->setIcon(m_icon);
+            match->setText(bookmark.text());
+            match->setData(bookmark.url().url());
+            matches << match;
+        }
+
+        bookmark = bookmarkGroup.next(bookmark);
+        while (bookmark.isNull() && !groups.isEmpty()) {
+            bookmark = bookmarkGroup;
+            bookmarkGroup = groups.pop();
+            //kDebug() << "ascending from" << bookmark.text() << "to" << bookmarkGroup.text();
+            bookmark = bookmarkGroup.next(bookmark);
+        }
     }
-    return matchingBookmarks;
+
+    search->addMatches(term, matches);
 }
 
-KIcon BookmarksRunner::getFavicon(const KUrl &url) {
+KIcon BookmarksRunner::getFavicon(const KUrl &url)
+{
     // query the favicons module
     QDBusInterface favicon("org.kde.kded", "/modules/favicons", "org.kde.FavIcon");
     QDBusReply<QString> reply = favicon.call("iconForUrl", url.url());
@@ -123,10 +142,10 @@ KIcon BookmarksRunner::getFavicon(const KUrl &url) {
     return icon;
 }
 
-void BookmarksRunner::exec(Plasma::SearchMatch *action)
+void BookmarksRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
     KUrl url = (KUrl)action->data().toString();
-    kDebug() << "BookmarksRunner::exec opening: " << url.url();
+    //kDebug() << "BookmarksRunner::exec opening: " << url.url();
     KToolInvocation::invokeBrowser(url.url());
 }
 

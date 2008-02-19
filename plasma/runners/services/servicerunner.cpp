@@ -54,24 +54,23 @@ ServiceRunner::~ServiceRunner()
 
 void ServiceRunner::match(Plasma::SearchContext *search)
 {
-    QString term = search->searchTerm();
+    const QString term = search->searchTerm();
     if (term.length() <  3) {
         return;
     }
 
     KService::Ptr service = KService::serviceByName(term);
 
-    QList<Plasma::SearchMatch*> exact;
-    QList<Plasma::SearchMatch*> possibilities;
-    QList<Plasma::SearchMatch*> info;
+    QList<Plasma::SearchMatch*> matches;
 
     QHash<QString, bool> seen;
     if (service && !service->exec().isEmpty()) {
         //kDebug() << service->name() << "is an exact match!";
-        Plasma::SearchMatch *match = new Plasma::SearchMatch(search, this);
+        Plasma::SearchMatch *match = new Plasma::SearchMatch(this);
+        match->setType(Plasma::SearchMatch::ExactMatch);
         setupAction(service, match);
         match->setRelevance(1);
-        exact << match;
+        matches << match;
         seen[service->storageId()] = true;
         seen[service->exec()] = true;
     }
@@ -84,7 +83,7 @@ void ServiceRunner::match(Plasma::SearchContext *search)
         QString id = service->storageId();
         QString exec = service->exec();
         if (seen.contains(id) || seen.contains(exec)) {
-            //kDebug() << "already seen" << id << exec;
+            kDebug() << "already seen" << id << exec;
             continue;
         }
 
@@ -92,25 +91,25 @@ void ServiceRunner::match(Plasma::SearchContext *search)
         seen[id] = true;
         seen[exec] = true;
 
-        Plasma::SearchMatch *match = new Plasma::SearchMatch(search, this);
+        Plasma::SearchMatch *match = new Plasma::SearchMatch(this);
         setupAction(service, match);
         qreal relevance(0.5);
 
         if (service->name().contains(term, Qt::CaseInsensitive)) {
-            relevance = 1;
+            relevance = .9;
         } else if (service->genericName().contains(term, Qt::CaseInsensitive)) {
             relevance = .7;
         }
 
         //kDebug() << service->name() << "is this relevant:" << relevance;
         match->setRelevance(relevance);
-        possibilities.append(match);
+        matches << match;
     }
 
-    search->addMatches(term, exact, possibilities, info);
+    search->addMatches(term, matches);
 }
 
-void ServiceRunner::exec(Plasma::SearchMatch* action)
+void ServiceRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
     QMutexLocker(bigLock());
     KService::Ptr service = KService::serviceByStorageId(action->data().toString());

@@ -37,7 +37,6 @@ class CalculatorRunner : public Plasma::AbstractRunner
         ~CalculatorRunner();
 
         void match(Plasma::SearchContext *context);
-//         bool exec(QAction* action, const QString& term);
 
     private:
         QString calculate(const QString& term);

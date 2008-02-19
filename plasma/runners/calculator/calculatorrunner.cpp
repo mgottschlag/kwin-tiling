@@ -42,9 +42,10 @@ CalculatorRunner::~CalculatorRunner()
 
 void CalculatorRunner::match(Plasma::SearchContext *search)
 {
-    QString cmd = search->searchTerm();
+    const QString term = search->searchTerm();
+    QString cmd = term;
 
-    if (cmd[0] != '=') {
+    if (cmd.length() < 3 || cmd[0] != '=') {
         return;
     }
 
@@ -58,10 +59,12 @@ void CalculatorRunner::match(Plasma::SearchContext *search)
     QString result = calculate(cmd);
 
     if (!result.isEmpty() && result != cmd) {
-        Plasma::SearchMatch *action = search->addInformationalMatch(this);
-        action->setIcon(KIcon("accessories-calculator"));
-        action->setText(QString("%1 = %2").arg(cmd, result));
-        action->setData("= " + result);
+        Plasma::SearchMatch *match = new Plasma::SearchMatch(this);
+        match->setType(Plasma::SearchMatch::InformationalMatch);
+        match->setIcon(KIcon("accessories-calculator"));
+        match->setText(QString("%1 = %2").arg(cmd, result));
+        match->setData("= " + result);
+        search->addMatch(term, match);
     }
 }
 

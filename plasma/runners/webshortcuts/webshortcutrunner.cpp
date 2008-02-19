@@ -53,7 +53,7 @@ WebshortcutRunner::~WebshortcutRunner()
 
 void WebshortcutRunner::match(Plasma::SearchContext *search)
 {
-    QString term = search->searchTerm().toLower();
+    const QString term = search->searchTerm().toLower();
     m_type = search->type();
 
     foreach (KService::Ptr service, m_offers) {
@@ -66,21 +66,24 @@ void WebshortcutRunner::match(Plasma::SearchContext *search)
                 QString actionText = QString("Search %1 for %2");
                 actionText = actionText.arg(service->name(),
                                             term.right(term.length() - term.indexOf(':') - 1));
-
-                Plasma::SearchMatch *action = search->addExactMatch(this);
-                action->setText(actionText);
                 QString url = getSearchQuery(service->property("Query").toString(), term);
                 //kDebug() << "url is" << url << "!!!!!!!!!!!!!!!!!!!!!!!";
-                action->setData(service->property("Query").toString());
+
+                Plasma::SearchMatch *match = new Plasma::SearchMatch(this);
+                match->setType(Plasma::SearchMatch::ExactMatch);
+                match->setText(actionText);
+                match->setData(service->property("Query").toString());
+                match->setRelevance(0.9);
 
                 // let's try if we can get a proper icon from the favicon cache
                 KIcon icon = getFavicon(url);
                 if (icon.isNull()){
-                    action->setIcon(m_icon);
+                    match->setIcon(m_icon);
                 } else {
-                    action->setIcon(icon);
+                    match->setIcon(icon);
                 }
 
+                search->addMatch(term, match);
                 return;
             }
         }
@@ -123,9 +126,9 @@ KIcon WebshortcutRunner::getFavicon(const KUrl &url) {
     return icon;
 }
 
-void WebshortcutRunner::exec(Plasma::SearchMatch *action)
+void WebshortcutRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
-    QString location = getSearchQuery(action->data().toString(), action->searchTerm());
+    QString location = getSearchQuery(action->data().toString(), search->searchTerm());
 
     if (!location.isEmpty()) {
         KToolInvocation::invokeBrowser(location);

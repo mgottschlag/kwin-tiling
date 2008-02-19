@@ -36,9 +36,8 @@ class SessionRunner : public Plasma::AbstractRunner
         SessionRunner(QObject *parent, const QVariantList &args);
         ~SessionRunner();
 
-    protected:
         void match(Plasma::SearchContext *context);
-        void exec(Plasma::SearchMatch* action);
+        void exec(const Plasma::SearchContext *context, const Plasma::SearchMatch *action);
 
     private:
         DM dm;

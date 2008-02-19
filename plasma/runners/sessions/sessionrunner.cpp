@@ -67,13 +67,17 @@ void SessionRunner::match(Plasma::SearchContext *search)
 
     //kDebug() << "session switching to" << (listAll ? "all sessions" : term);
 
+    QList<Plasma::SearchMatch*> matches;
     if (listAll &&
         KAuthorized::authorizeKAction("start_new_session") &&
         dm.isSwitchable() &&
         dm.numReserve() >= 0) {
-        Plasma::SearchMatch *action = search->addExactMatch(this);
+        Plasma::SearchMatch *action = new Plasma::SearchMatch(this);
+        action->setType(Plasma::SearchMatch::ExactMatch);
         action->setIcon(KIcon("system-switch-user"));
         action->setText(i18n("New Session"));
+
+        matches << action;
     }
 
     // now add the active sessions
@@ -82,9 +86,6 @@ void SessionRunner::match(Plasma::SearchContext *search)
         return;
     }
 
-    QList<Plasma::SearchMatch*> exact;
-    QList<Plasma::SearchMatch*> possible;
-    QList<Plasma::SearchMatch*> info;
     foreach (const SessEnt& session, sessions) {
         if (!session.vt || session.self) {
             continue;
@@ -94,29 +95,31 @@ void SessionRunner::match(Plasma::SearchContext *search)
         Plasma::SearchMatch* action = 0;
 
         if (listAll) {
-            action = new Plasma::SearchMatch(search, this);
-            exact.append(action);
+            action = new Plasma::SearchMatch(this);
+            action->setType(Plasma::SearchMatch::ExactMatch);
+            action->setRelevance(1);
         } else if (name == term) {
             // we need an elif branch here because we don't
             // want the last conditional to be checked if !listAll
-            action = new Plasma::SearchMatch(search, this);
-            exact.append(action);
+            action = new Plasma::SearchMatch(this);
+            action->setType(Plasma::SearchMatch::ExactMatch);
+            action->setRelevance(1);
         } else if (name.contains(term, Qt::CaseInsensitive)) {
-            action = new Plasma::SearchMatch(search, this);
-            possible.append(action);
+            action = new Plasma::SearchMatch(this);
         }
 
         if (action) {
+            matches << action;
             action->setIcon(KIcon("user-identity"));
             action->setText(name);
             action->setData(session.session);
         }
     }
 
-    search->addMatches(term, exact, possible, info);
+    search->addMatches(term, matches);
 }
 
-void SessionRunner::exec(Plasma::SearchMatch * action)
+void SessionRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
     if (!action->data().toString().isEmpty()) {
         QString sessionName = action->text();

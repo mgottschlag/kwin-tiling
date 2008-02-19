@@ -67,41 +67,42 @@ void LocationsRunner::match(Plasma::SearchContext *search)
 {
     QString term = search->searchTerm();
     m_type = search->type();
+    Plasma::SearchMatch *action = 0;
 
     if (m_type == Plasma::SearchContext::Directory ||
         m_type == Plasma::SearchContext::File) {
-        Plasma::SearchMatch *action = search->addExactMatch(this);
+        action = new Plasma::SearchMatch(this);
+        action->setType(Plasma::SearchMatch::ExactMatch);
         action->setText(i18n("Open %1", term));
         action->setIcon(KIcon("system-file-manager"));
-        action->setRelevance(1);
-        return;
-    }
-
-    if (m_type == Plasma::SearchContext::Help) {
-        kDebug() << "Locations matching because of" << m_type;
-        Plasma::SearchMatch *action = search->addExactMatch(this);
+    } else if (m_type == Plasma::SearchContext::Help) {
+        //kDebug() << "Locations matching because of" << m_type;
+        action = new Plasma::SearchMatch(this);
+        action->setType(Plasma::SearchMatch::ExactMatch);
         action->setText(i18n("Open %1", term));
         action->setIcon(KIcon("system-help"));
         action->setRelevance(1);
-        return;
-    }
-
-    if (m_type == Plasma::SearchContext::NetworkLocation) {
-        Plasma::SearchMatch *action = search->addPossibleMatch(this);
+    } else if (m_type == Plasma::SearchContext::NetworkLocation) {
         KUrl url(term);
         processUrl(url, term);
+
+        action = new Plasma::SearchMatch(this);
         action->setText(i18n("Go to %1", url.prettyUrl()));
         action->setIcon(KIcon("internet-web-browser"));
         action->setData(url.url());
-        return;
     }
 
+    if (action) {
+        action->setRelevance(1);
+        action->setType(Plasma::SearchMatch::ExactMatch);
+        search->addMatch(term, action);
+    }
 }
 
-void LocationsRunner::exec(Plasma::SearchMatch *action)
+void LocationsRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
     QString data = action->data().toString();
-    QString location = action->searchTerm();
+    const QString location = search->searchTerm();
 
     //kDebug() << "command: " << action->searchTerm();
     //kDebug() << "url: " << location << data;
