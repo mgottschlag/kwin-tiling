@@ -96,7 +96,7 @@ void TaskGroupItem::insertTask(AbstractTaskItem *item, int index)
             this, SIGNAL(activated(AbstractTaskItem*)));
 
     item->setParentItem(this);
-    _tasks.insert(index, item);
+    _tasks.insert(index, TaskEntry(item));
 
     layout()->addItem(item);
     queueGeometryUpdate();
