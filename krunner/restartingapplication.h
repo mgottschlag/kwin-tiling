@@ -27,9 +27,9 @@ class RestartingApplication : public KUniqueApplication
     Q_OBJECT
 
     public:
-        RestartingApplication(Display *display,
-                              Qt::HANDLE visual = 0,
-                              Qt::HANDLE colormap = 0);
+        explicit RestartingApplication(Display *display,
+                                       Qt::HANDLE visual = 0,
+                                       Qt::HANDLE colormap = 0);
         RestartingApplication() : KUniqueApplication() {}
     private slots:
         void setCrashHandler();
