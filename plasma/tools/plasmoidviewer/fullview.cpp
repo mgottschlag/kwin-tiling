@@ -68,10 +68,6 @@ void FullView::addApplet(const QString &a)
     m_containment->setFormFactor(m_formfactor);
     m_applet = m_containment->addApplet(a, QVariantList(), 0, QRectF(0, 0, -1, -1));
     m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
-    if (m_applet->failedToLaunch()) {
-        // TODO Can we give a better error message somehow?
-        m_applet->setFailedToLaunch(true, i18n("The applet '%1' could not be loaded", a));
-    }
 
     setSceneRect(m_corona.sceneRect());
     setWindowTitle(m_applet->name());
