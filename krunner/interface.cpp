@@ -66,7 +66,7 @@ using ThreadWeaver::Job;
 class SearchMatch : public QListWidgetItem
 {
     public:
-        SearchMatch(Plasma::SearchMatch* action, QListWidget* parent)
+        SearchMatch(const Plasma::SearchMatch* action, QListWidget* parent)
             : QListWidgetItem( parent ),
               m_default(false),
               m_action(0)
@@ -74,7 +74,7 @@ class SearchMatch : public QListWidgetItem
             setAction(action);
         }
 
-        void activate(Plasma::SearchContext *context)
+        void activate(const Plasma::SearchContext *context)
         {
             m_action->exec(context);
         }
@@ -89,7 +89,7 @@ class SearchMatch : public QListWidgetItem
             return m_action->runner()->hasMatchOptions();
         }
 
-        void setAction(Plasma::SearchMatch* action)
+        void setAction(const Plasma::SearchMatch* action)
         {
             m_action = action;
             setIcon(m_action->icon());
@@ -168,7 +168,7 @@ class SearchMatch : public QListWidgetItem
 
     private:
         bool m_default;
-        Plasma::SearchMatch* m_action;
+        const Plasma::SearchMatch* m_action;
 };
 
 // Restricts simultaneous jobs of the same type
@@ -463,7 +463,7 @@ void Interface::switchUser()
     m_context.resetSearchTerm("SESSIONS");
     sessionrunner->match(&m_context);
 
-    foreach (Plasma::SearchMatch *action, m_context.exactMatches()) {
+    foreach (const Plasma::SearchMatch *action, m_context.matches()) {
         bool makeDefault = !m_defaultMatch && action->type() != Plasma::SearchMatch::InformationalMatch;
 
         SearchMatch *match = new SearchMatch(action, m_matchList);
@@ -592,28 +592,21 @@ void Interface::match()
 void Interface::updateMatches()
 {
     m_matchList->clear();
-
     m_defaultMatch = 0;
-    QList<QList<Plasma::SearchMatch *> > matchLists;
-    matchLists << m_context.informationalMatches()
-                      << m_context.exactMatches()
-                      << m_context.possibleMatches();
 
-    foreach (QList<Plasma::SearchMatch *> matchList, matchLists) {
-        foreach (Plasma::SearchMatch *action, matchList) {
-            bool makeDefault = !m_defaultMatch && action->isEnabled();
+    foreach (const Plasma::SearchMatch *action, m_context.matches()) {
+        bool makeDefault = !m_defaultMatch && action->isEnabled();
 
-            SearchMatch *match = new SearchMatch(action, m_matchList);
+        SearchMatch *match = new SearchMatch(action, m_matchList);
 
-            if (makeDefault &&
-                action->relevance() > 0 &&
-                (action->type() != Plasma::SearchMatch::InformationalMatch ||
-                 !action->data().toString().isEmpty())) {
-                match->setDefault(true);
-                m_defaultMatch = match;
-                m_optionsButton->setEnabled(action->runner()->hasMatchOptions());
-                m_runButton->setEnabled(true);
-            }
+        if (makeDefault &&
+            action->relevance() > 0 &&
+            (action->type() != Plasma::SearchMatch::InformationalMatch ||
+            !action->data().toString().isEmpty())) {
+            match->setDefault(true);
+            m_defaultMatch = match;
+            m_optionsButton->setEnabled(action->runner()->hasMatchOptions());
+            m_runButton->setEnabled(true);
         }
     }
 
