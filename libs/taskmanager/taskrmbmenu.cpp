@@ -92,7 +92,7 @@ void TaskRMBMenu::fillMenu(TaskPtr t)
         }
     }
 
-    a = addAction(KIcon("move"), i18n("&Move"), t.data(), SLOT(move()));
+    a = addAction(KIcon("transform-move"), i18n("&Move"), t.data(), SLOT(move()));
     a->setEnabled(!checkActions || t->info().actionSupported(NET::ActionMove));
 
     a = addAction(i18n("Re&size"), t.data(), SLOT(resize()));
