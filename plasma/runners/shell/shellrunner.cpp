@@ -71,6 +71,7 @@ void ShellRunner::createMatchOptions(QWidget* parent)
 
 void ShellRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
+    Q_UNUSED(action);
     if (!m_enabled) {
         return;
     }

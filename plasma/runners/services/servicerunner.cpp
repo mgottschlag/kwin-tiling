@@ -104,6 +104,7 @@ void ServiceRunner::match(Plasma::SearchContext *search)
 
 void ServiceRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
+    Q_UNUSED(search);
     QMutexLocker lock(bigLock());
     KService::Ptr service = KService::serviceByStorageId(action->data().toString());
     if (service) {

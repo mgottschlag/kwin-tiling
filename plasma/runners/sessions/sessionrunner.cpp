@@ -121,6 +121,7 @@ void SessionRunner::match(Plasma::SearchContext *search)
 
 void SessionRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
+    Q_UNUSED(search);
     if (!action->data().toString().isEmpty()) {
         QString sessionName = action->text();
 

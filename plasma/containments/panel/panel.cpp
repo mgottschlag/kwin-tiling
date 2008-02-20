@@ -113,14 +113,14 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
 
         //kDebug() << "Setting location to" << loc << "on screen" << s << "with geom" << r;
         setMaximumSize(r.size());
-        int x = r.left();
-        int y = r.top();
-        int width = 0;
-        int height = 0;
-        int topHeight = m_background->marginSize(Plasma::TopMargin);
-        int bottomHeight = m_background->marginSize(Plasma::BottomMargin);
-        int leftWidth = m_background->marginSize(Plasma::LeftMargin);
-        int rightWidth = m_background->marginSize(Plasma::RightMargin);
+        qreal x = r.left();
+        qreal y = r.top();
+        qreal width = 0;
+        qreal height = 0;
+        qreal topHeight = m_background->marginSize(Plasma::TopMargin);
+        qreal bottomHeight = m_background->marginSize(Plasma::BottomMargin);
+        qreal leftWidth = m_background->marginSize(Plasma::LeftMargin);
+        qreal rightWidth = m_background->marginSize(Plasma::RightMargin);
 
         if (loc == BottomEdge || loc == TopEdge) {
             setFormFactor(Plasma::Horizontal);

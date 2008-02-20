@@ -71,7 +71,7 @@ ThemeModel::ThemeModel( QObject *parent )
     // get all desktop themes
     KStandardDirs dirs;
     QStringList themes = dirs.findAllResources("data", "desktoptheme/*/metadata.desktop", KStandardDirs::NoDuplicates);
-    int suffixLength = 17; // length of "/metadata.desktop"
+    //int suffixLength = 17; // length of "/metadata.desktop"
 
     foreach (const QString &theme, themes) {
         int themeSepIndex = theme.lastIndexOf("/", -1);
