@@ -1,18 +1,26 @@
 [Desktop Entry]
 Name=Desktop Sessions Runner
+Name[es]=Lanzador de sesiones de escritorio
 Name[ga]=Feidhmitheoir Seisiún Deisce
 Name[gu]=ડેસ્કટોપ સત્રો ચલાવનાર
+Name[ja]=デスクトップセッション Runner
 Name[km]=កម្មវិធី​រត់​សម័យ​ផ្ទៃតុ
 Name[ko]=데스크톱 세션 실행기
 Name[pt]=Execução de Sessões do Ecrã
 Name[pt_BR]=Execução de Sessões do Ecrã
+Name[zh_CN]=桌面会话启动器
+Name[zh_TW]=桌面工座階段執行器
 Comment=Fast user switching
+Comment[es]=Cambio rápido de usuario
 Comment[ga]=Athraigh úsáideoirí go tapa
 Comment[gu]=ઝડપી વપરાશકર્તા બદલનાર
+Comment[ja]=ユーザを素早く切り替えます
 Comment[km]=ការប្ដូរ​អ្នក​ប្រើ​យ៉ាង​លឿន
 Comment[ko]=빠른 사용자 전환
 Comment[pt]=Mudança rápida de utilizador
 Comment[pt_BR]=Mudança rápida de utilizador
+Comment[zh_CN]=快速用户切换
+Comment[zh_TW]=快速切換使用者
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_sessions
