@@ -24,6 +24,11 @@
 #include <QList>
 #include <QMap>
 
+#include <solid/devicenotifier.h>
+#include <solid/device.h>
+#include <solid/deviceinterface.h>
+#include <solid/predicate.h>
+
 #include "plasma/dataengine.h"
 #include "devicesignalmapmanager.h"
 #include "devicesignalmapper.h"
@@ -47,29 +52,17 @@ private:
     bool populateDeviceData(const QString &name);
     qlonglong freeDiskSpace(const QString &mountPoint);
     bool updateFreeSpace(const QString &udi);
-    void fillDevices();
+    void listenForNewDevices();
 
     QStringList devicelist;
-    //setup lists for devicetypes
-    QStringList processorlist;
-    QStringList blocklist;
-    QStringList storageaccesslist;
-    QStringList storagedrivelist;
-    QStringList opticaldrivelist;
-    QStringList storagevolumelist;
-    QStringList opticaldisclist;
-    QStringList cameralist;
-    QStringList portablemediaplayerlist;
-    QStringList networkinterfacelist;
-    QStringList acadapterlist;
-    QStringList batterylist;
-    QStringList buttonlist;
-    QStringList audiointerfacelist;
-    QStringList dvbinterfacelist;
-    QStringList unknownlist;
 
+    //predicate in string form, list of devices by udi
+    QMap<QString, QStringList> predicatemap;
+    //udi, corresponding device
     QMap<QString, Solid::Device> devicemap;
     DeviceSignalMapManager *signalmanager;
+
+    Solid::DeviceNotifier *notifier;
 
 private Q_SLOTS:
     void deviceAdded(const QString &udi);
