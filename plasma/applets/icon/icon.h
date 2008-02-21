@@ -59,8 +59,6 @@ class IconApplet : public Plasma::Applet
     protected:
         void dropEvent(QGraphicsSceneDragDropEvent *event);
         void saveState(KConfigGroup *cg) const;
-        bool sceneEventFilter ( QGraphicsItem * watched, QEvent * event );
-        void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
     protected slots:
         void acceptedPropertiesDialog();

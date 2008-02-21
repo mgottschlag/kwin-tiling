@@ -64,7 +64,7 @@ void IconApplet::init()
     setUrl(cg.readEntry("Url", m_url));
     setDisplayLines(2);
 
-    m_icon->installSceneEventFilter(this);
+    watchForMouseMove(m_icon, true);
     m_icon->resize(contentSize());
 
     // we do this right away since we may have our config
@@ -298,50 +298,6 @@ QPainterPath IconApplet::shape() const
 {
     return m_icon->shape();
 }
-
-bool IconApplet::sceneEventFilter( QGraphicsItem * watched, QEvent * event )
-{
-    switch (event->type()) {
-        case QEvent::GraphicsSceneMouseMove: {
-            mouseMoveEvent(static_cast<QGraphicsSceneMouseEvent*>(event));
-            break;
-        }
-
-        default:
-            break;
-    }
-
-    return QGraphicsItem::sceneEventFilter(watched, event);
-}
-
-void IconApplet::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-    if (!isImmutable() && formFactor() == Plasma::Planar) {
-        QGraphicsItem *parent = parentItem();
-        Plasma::Applet *applet = qgraphicsitem_cast<Plasma::Applet*>(parent);
-
-        if (applet && applet->isContainment()) {
-            // our direct parent is a containment. just move ourselves.
-            QPointF curPos = event->pos();
-            QPointF lastPos = event->lastPos();
-            QPointF delta = curPos-lastPos;
-
-            moveBy(delta.x(),delta.y());
-        } else if (parent) {
-            //don't move the icon as well because our parent (usually an appletHandle) will do it for us
-            //parent->moveBy(delta.x(),delta.y());
-            QPointF curPos = parent->transform().map(event->pos());
-            QPointF lastPos = parent->transform().map(event->lastPos());
-            QPointF delta = curPos-lastPos;
-
-            parent->setPos(parent->pos() + delta);
-        }
-
-        // We don't want any events on mouse release
-        m_icon->setUnpressed();
-    }
-}
-
 
 //dropUrls from DolphinDropController
 void IconApplet::dropUrls(const KUrl::List& urls,
