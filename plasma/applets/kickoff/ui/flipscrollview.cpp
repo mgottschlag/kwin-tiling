@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -44,7 +44,7 @@ public:
           , animLeftToRight(true)
     {
     }
-    ~Private() 
+    ~Private()
     {
         delete flipAnimTimeLine;
     }
@@ -53,8 +53,8 @@ public:
     {
         if (currentRootIndex.isValid()) {
             return currentRootIndex;
-        } else { 
-            return q->rootIndex(); 
+        } else {
+            return q->rootIndex();
         }
     }
     QModelIndex previousRoot() const
@@ -96,17 +96,17 @@ public:
     {
         return previousVerticalOffsets.isEmpty() ? 0 : previousVerticalOffsets.top();
     }
-    int treeDepth(const QModelIndex& headerIndex) const 
+    int treeDepth(const QModelIndex& headerIndex) const
     {
         int depth = 0;
-        QModelIndex index = headerIndex; 
+        QModelIndex index = headerIndex;
         while (index.isValid()) {
             index = index.parent();
             depth++;
-        }   
+        }
         return depth;
     }
-    QRect headerRect(const QModelIndex& headerIndex = QModelIndex()) const 
+    QRect headerRect(const QModelIndex& headerIndex = QModelIndex()) const
     {
         QFontMetrics metrics(q->font());
         int depth = treeDepth(headerIndex);
@@ -132,7 +132,7 @@ public:
          while (branchIndex.isValid()) {
              QFont font = painter->font();
              if (first) {
-                font.setBold(true); 
+                font.setBold(true);
                 first = false;
              } else {
                 font.setBold(false);
@@ -177,7 +177,7 @@ public:
         // centre triangle
         if (state & QStyle::State_Enabled) {
             painter->setPen(Qt::NoPen);
-       
+
             if (state & QStyle::State_MouseOver) {
                 painter->setBrush(q->palette().highlightedText());
             } else {
@@ -260,7 +260,7 @@ void FlipScrollView::viewRoot()
 QModelIndex FlipScrollView::indexAt(const QPoint& point) const
 {
     int topOffset = d->headerRect(d->currentRoot()).height() - verticalOffset();
-    int items = model()->rowCount(d->currentRoot());   
+    int items = model()->rowCount(d->currentRoot());
 
     int rowIndex = (point.y() - topOffset) / d->itemHeight;
 
@@ -280,12 +280,12 @@ void FlipScrollView::scrollTo(const QModelIndex& index , ScrollHint hint)
     QRect itemRect = visualRect(index);
     if (itemRect.isValid() && hint == EnsureVisible) {
         if (itemRect.top() < 0) {
-            verticalScrollBar()->setValue(verticalScrollBar()->value() + 
+            verticalScrollBar()->setValue(verticalScrollBar()->value() +
                                           itemRect.top());
         } else if (itemRect.bottom() > height()) {
-            verticalScrollBar()->setValue(verticalScrollBar()->value() + 
+            verticalScrollBar()->setValue(verticalScrollBar()->value() +
                                           (itemRect.bottom()-height()));
-        } 
+        }
     }
 }
 bool FlipScrollView::isIndexHidden(const QModelIndex&) const
@@ -318,7 +318,7 @@ QRect FlipScrollView::visualRect(const QModelIndex& index) const
     QRect itemRect(leftOffset, topOffset + index.row() * height,
                    width() - leftOffset - scrollBarWidth, height);
     */
-    int scrollBarWidth = verticalScrollBar()->isVisible() ? 
+    int scrollBarWidth = verticalScrollBar()->isVisible() ?
                                     verticalScrollBar()->width() : 0;
     QRect itemRect(leftOffset, topOffset + index.row() * d->itemHeight,
                    width() - leftOffset - scrollBarWidth - ItemDelegate::BACK_ARROW_SPACING,
@@ -364,15 +364,15 @@ QModelIndex FlipScrollView::moveCursor(CursorAction cursorAction,Qt::KeyboardMod
         case MoveUp:
                 if (currentIndex().row() > 0) {
                     index = currentIndex().sibling(currentIndex().row()-1,
-                                                   currentIndex().column());     
+                                                   currentIndex().column());
                 }
             break;
         case MoveDown:
-                if (currentIndex().row() < 
+                if (currentIndex().row() <
                         model()->rowCount(currentIndex().parent())-1 ) {
                     index = currentIndex().sibling(currentIndex().row()+1,
                                                    currentIndex().column());
-                } 
+                }
             break;
         case MoveLeft:
                 if (d->currentRoot().isValid()) {
@@ -407,7 +407,7 @@ void FlipScrollView::setModel(QAbstractItemModel *model)
     QAbstractItemView::setModel(model);
     if (model) {
         setCurrentIndex(model->index(0,0));
-        //d->itemHeight = sizeHintForIndex(model->index(0, 0)).height();
+        d->itemHeight = sizeHintForIndex(model->index(0, 0)).height();
     }
 }
 
@@ -450,7 +450,7 @@ void FlipScrollView::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-void FlipScrollView::mouseMoveEvent(QMouseEvent *event) 
+void FlipScrollView::mouseMoveEvent(QMouseEvent *event)
 {
     bool mouseOverBackArrow = d->backArrowRect().contains(event->pos());
 
@@ -602,7 +602,7 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
     if (currentRoot.isValid() || previousRoot.isValid()) {
         qreal opacity = 1.0;
         if (!previousRoot.isValid()) {
-            opacity = timerValue;   
+            opacity = timerValue;
         } else if (!currentRoot.isValid()) {
             opacity = 1-timerValue;
         }
