@@ -263,11 +263,11 @@ void HighContrastStyle::drawEllipse (QPainter* p, QRect r, int offset, bool fill
 	if (filled) {
 		p->save();
 		p->setBrush (p->background().color());
-		p->drawRoundedRect (r, 99.0, 99.0);
+		p->drawRoundRect (r, 99.0, 99.0);
 		p->restore();
 	}
 	
-	p->drawRoundedRect (r, 99.0, 99.0);
+	p->drawRoundRect (r, 99.0, 99.0);
 }
 
 void HighContrastStyle::drawArrow (QPainter* p, QRect r, PrimitiveElement arrow, int offset) const

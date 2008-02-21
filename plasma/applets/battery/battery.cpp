@@ -451,7 +451,7 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
 
     // Tweak the rounding edge a bit with the proportions of the textbox
     qreal round_radius = 35.0;
-    p->drawRoundedRect(text_rect, round_radius / round_prop, round_radius);
+    p->drawRoundRect(text_rect, round_radius / round_prop, round_radius);
 
     m_textColor.setAlphaF(m_alpha);
     p->setPen(m_textColor);
