@@ -183,7 +183,7 @@ void KGlobalShortcutsEditor::undo()
     kDebug() << "Undo the changes";
     Q_FOREACH (KShortcutsEditor *editor, d->components.values())
         {
-        editor->undo();
+        editor->undoChanges();
         }
     }
 
