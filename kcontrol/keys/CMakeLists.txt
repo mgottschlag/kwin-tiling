@@ -3,13 +3,10 @@
 ########### next target ###############
 
 set(kcm_keys_PART_SRCS 
+   kglobalshortcutseditor.cpp
    globalshortcuts.cpp )
-#shortcuts.cpp 
-#  main.cpp 
-#  khotkeys.cpp 
-#  treeview.cpp )
 
-kde4_add_ui_files( kcm_keys_PART_SRCS globalshortcuts.ui )
+kde4_add_ui_files( kcm_keys_PART_SRCS kglobalshortcutseditor.ui )
 
 kde4_add_plugin(kcm_keys ${kcm_keys_PART_SRCS})
 

@@ -22,13 +22,8 @@
 #include <kcmodule.h>
 #include <QtCore/QHash>
 
-namespace Ui
-{
-class GlobalShortcuts;
-}
-
 class KActionCollection;
-class KShortcutsEditor;
+class KGlobalShortcutsEditor;
 
 class GlobalShortcutsModule : public KCModule
 {
@@ -36,17 +31,12 @@ class GlobalShortcutsModule : public KCModule
 public:
     GlobalShortcutsModule(QWidget *parent, const QVariantList &args);
     ~GlobalShortcutsModule();
-    
-    virtual void load();
+
     virtual void save();
+    virtual void load();
     virtual void defaults();
-private slots:
-    void componentChanged(const QString &);
 private:
-    Ui::GlobalShortcuts *ui;
-    KShortcutsEditor *editor;
-    bool saved;
-    QHash<QString,KActionCollection*> actionCollections;
+    KGlobalShortcutsEditor *editor;
 };
 
 

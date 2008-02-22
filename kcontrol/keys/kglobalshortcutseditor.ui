@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>GlobalShortcuts</class>
- <widget class="QWidget" name="GlobalShortcuts" >
+ <class>KGlobalShortcutsEditor</class>
+ <widget class="QWidget" name="KGlobalShortcutsEditor" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -42,3 +42,4 @@
  <resources/>
  <connections/>
 </ui>
+
