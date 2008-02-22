@@ -118,6 +118,7 @@ void TabBar::paintEvent(QPaintEvent *event)
             painter.save();
             painter.setRenderHint(QPainter::Antialiasing);
             painter.fillPath(Plasma::roundedRectangle(tabRect(i).adjusted(2, 0, -2, 0), 6), bgBrush);
+            painter.restore();
         }
 
         // draw tab icon and text
