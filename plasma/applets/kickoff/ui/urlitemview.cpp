@@ -29,7 +29,9 @@
 #include <QtGui/QPaintEvent>
 #include <QtGui/QScrollBar>
 
+// KDE
 #include <KDebug>
+#include <KGlobalSettings>
 
 // Local
 #include "core/models.h"
@@ -125,16 +127,29 @@ public:
                     const QModelIndex& index,
                     const QStyleOptionViewItem& option)
     {
+        const bool notFirst = index.row() > 0;
+        const int rightMargin = q->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 18;
+        const int dy = (notFirst ? ItemDelegate::HEADER_HEIGHT / 4.0 : 0) + 4;
+
         painter->save();
-        QFont font = option.font;
-        font.setBold(true);
-        font.setPointSize(font.pointSize()+1);
-        painter->setFont(font);
-        painter->setPen(QPen(option.palette.text(),0));
+        painter->setRenderHint(QPainter::Antialiasing, false);
+
+        if (notFirst) {
+            QLinearGradient gradient(option.rect.topLeft(), option.rect.topRight());
+            gradient.setColorAt(0.0, option.palette.mid().color());
+            gradient.setColorAt(0.5, option.palette.midlight().color());
+            gradient.setColorAt(1.0, option.palette.mid().color());
+            painter->setPen(QPen(gradient, 1));
+
+            painter->drawLine(option.rect.x() + 6, option.rect.y() + dy + 2,
+                              option.rect.right() - rightMargin + 12, option.rect.y() + dy + 2);
+        }
+
+        painter->setFont(KGlobalSettings::smallestReadableFont());
+        painter->setPen(QPen(option.palette.dark(), 0));
         QString text = index.data(Qt::DisplayRole).value<QString>();
-        int dy = (int)(index.row() > 0 ? ItemDelegate::HEADER_HEIGHT / 4.0 : 0);
-        painter->drawText(option.rect.adjusted(0, dy, 0, 0),
-                          Qt::AlignVCenter|Qt::AlignLeft, text);
+        painter->drawText(option.rect.adjusted(0, dy + 4, -rightMargin, 0),
+                          Qt::AlignVCenter|Qt::AlignRight, text);
         painter->restore();
     }
 

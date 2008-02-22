@@ -29,6 +29,7 @@
 
 // KDE
 #include <KDebug>
+#include <KGlobalSettings>
 
 #include "ui/itemdelegate.h"
 
@@ -64,6 +65,7 @@ public:
         }
         return previousRootIndices.top();
     }
+
     void setCurrentRoot(const QModelIndex& index)
     {
         if (previousRootIndices.isEmpty() || previousRootIndices.top() != index) {
@@ -90,8 +92,10 @@ public:
             q->verticalScrollBar()->setValue(previousVerticalOffsets.pop());
         }
 
-        flipAnimTimeLine->start();
+        flipAnimTimeLine->setCurrentTime(0);
+        q->update();
     }
+
     int previousVerticalOffset()
     {
         return previousVerticalOffsets.isEmpty() ? 0 : previousVerticalOffsets.top();
@@ -106,59 +110,82 @@ public:
         }
         return depth;
     }
+
     QRect headerRect(const QModelIndex& headerIndex = QModelIndex()) const
     {
         QFontMetrics metrics(q->font());
-        int depth = treeDepth(headerIndex);
+        QFontMetrics small(KGlobalSettings::smallestReadableFont());
+        int depth = qMax(1, treeDepth(headerIndex));
 
         int top = -q->verticalScrollBar()->value();
         return QRect(backArrowRect().right() + ItemDelegate::BACK_ARROW_SPACING,top,
                      q->width() - backArrowRect().width() - 1 - ItemDelegate::BACK_ARROW_SPACING,
-                     depth * metrics.height() +
-                          ((depth > 0) ? ItemDelegate::HEADER_BOTTOM_MARGIN + ItemDelegate::HEADER_TOP_MARGIN
-                                       : 1));
+                     (depth - 1) * small.height() + metrics.height() +
+                     ItemDelegate::HEADER_BOTTOM_MARGIN + ItemDelegate::HEADER_TOP_MARGIN);
     }
+
     void drawHeader(QPainter *painter,const QRect& rect,const QModelIndex& headerIndex)
     {
+        QFontMetrics metrics(q->font());
+        int top = rect.bottom() - metrics.height() - ItemDelegate::HEADER_BOTTOM_MARGIN;
+        QModelIndex branchIndex = headerIndex;
+        bool first = true;
+        bool second = false;
+        int firstHeight = metrics.height();
+        int secondHeight = QFontMetrics(KGlobalSettings::smallestReadableFont()).height();
+        QPen notFirstPen(q->palette().mid(), 1);
+
         painter->save();
-         painter->setPen(QPen(q->palette().text(),0));
-         painter->setFont(q->font());
+        painter->setFont(q->font());
+        painter->setPen(QPen(q->palette().text(),0));
 
-         QFontMetrics metrics(q->font());
+        while (branchIndex.isValid()) {
+            int textHeight = secondHeight;
 
-         int top = rect.bottom() - metrics.height() - ItemDelegate::HEADER_BOTTOM_MARGIN;
-         QModelIndex branchIndex = headerIndex;
-         bool first = true;
-         while (branchIndex.isValid()) {
-             QFont font = painter->font();
-             if (first) {
-                font.setBold(true);
+            if (first) {
                 first = false;
-             } else {
-                font.setBold(false);
-             }
-             painter->setFont(font);
+                textHeight = firstHeight;
+            } else if (!second) {
+                painter->setFont(KGlobalSettings::smallestReadableFont());
+                painter->setPen(notFirstPen);
+                second = true;
+            }
 
-             painter->drawText(QRect(rect.left(),top,rect.width(),metrics.height()),
-                               Qt::AlignLeft,
-                               branchIndex.data(Qt::DisplayRole).value<QString>());
-             branchIndex = branchIndex.parent();
+            painter->drawText(QRect(rect.left(), top,rect.width(), textHeight),
+                              Qt::AlignLeft,
+                              branchIndex.data(Qt::DisplayRole).value<QString>());
+            branchIndex = branchIndex.parent();
 
-             top -= metrics.height();// + metrics.lineSpacing();
-         }
+            top -= second ? secondHeight : firstHeight;// + metrics.lineSpacing();
+        }
 
-/*         if (!first) {
-             painter->setPen(QPen(q->palette().mid(),2));
-             int dividerY = rect.bottom() - ItemDelegate::HEADER_BOTTOM_MARGIN/2;
-             painter->drawLine(rect.left(),dividerY,rect.right(),dividerY);
-         }*/
+        if (first) {
+            // no items, just paint an Applications header
+            painter->drawText(QRect(rect.left(), top, rect.width(), metrics.height()),
+                    Qt::AlignLeft, i18n("Applications"));
+        }
+
+        QLinearGradient gradient(rect.topLeft(), rect.topRight());
+        gradient.setColorAt(0.0, q->palette().mid().color());
+        gradient.setColorAt(0.5, q->palette().midlight().color());
+        gradient.setColorAt(1.0, q->palette().mid().color());
+        painter->setPen(QPen(gradient, 1));
+
+        int dividerY = rect.bottom() - ItemDelegate::HEADER_BOTTOM_MARGIN/2;
+        painter->setRenderHint(QPainter::Antialiasing, false);
+        int dividerX = ItemDelegate::ITEM_RIGHT_MARGIN + 
+                       (q->verticalScrollBar()->isVisible() ?
+                        q->style()->pixelMetric(QStyle::PM_ScrollBarExtent) : 0);
+        painter->drawLine(rect.left(), dividerY, rect.right() - dividerX, dividerY);
+
         painter->restore();
     }
+
     void drawBackArrow(QPainter *painter,QStyle::State state)
     {
         painter->save();
         if (state & QStyle::State_MouseOver &&
-            state & QStyle::State_Enabled) {
+                state & QStyle::State_Enabled) {
             painter->setBrush(q->palette().highlight());
         } else {
             painter->setBrush(q->palette().mid());
@@ -189,7 +216,9 @@ public:
         }
         painter->restore();
     }
-    QPainterPath trianglePath(qreal width = 5,qreal height = 10) {
+
+    QPainterPath trianglePath(qreal width = 5,qreal height = 10)
+    {
         QPainterPath path(QPointF(-width/2,0.0));
         path.lineTo(width,-height/2);
         path.lineTo(width,height/2);
@@ -197,10 +226,12 @@ public:
 
         return path;
     }
+
     QRect backArrowRect() const
     {
         return QRect(0, 0, ItemDelegate::BACK_ARROW_WIDTH, q->height());
     }
+
     void updateScrollBarRange()
     {
         int childCount = q->model()->rowCount(currentRootIndex);
@@ -233,9 +264,8 @@ FlipScrollView::FlipScrollView(QWidget *parent)
     : QAbstractItemView(parent)
     , d(new Private(this))
 {
-    connect(this,SIGNAL(clicked(QModelIndex)),this,SLOT(openItem(QModelIndex)));
-    connect(d->flipAnimTimeLine,SIGNAL(valueChanged(qreal)),this,
-            SLOT(updateFlipAnimation(qreal)));
+    connect(this, SIGNAL(clicked(QModelIndex)), this, SLOT(openItem(QModelIndex)));
+    connect(d->flipAnimTimeLine, SIGNAL(valueChanged(qreal)), this, SLOT(updateFlipAnimation(qreal)));
     d->flipAnimTimeLine->setDuration(Private::FLIP_ANIM_DURATION);
     d->flipAnimTimeLine->setCurrentTime(Private::FLIP_ANIM_DURATION);
     setIconSize(QSize(d->itemHeight,d->itemHeight));
@@ -563,6 +593,10 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
     if (timerValue < 1.0) {
         //kDebug() << "previous root is" << previousRoot.data(Qt::DisplayRole).value<QString>();
         paintItems(painter, event, previousRoot);
+
+        if (d->flipAnimTimeLine->state() != QTimeLine::Running) {
+            d->flipAnimTimeLine->start();
+        }
     }
 
     // draw header for current view
