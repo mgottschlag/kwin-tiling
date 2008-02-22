@@ -18,6 +18,9 @@
     Boston, MA 02110-1301, USA.
 */
 
+// System
+#include <unistd.h>
+
 // Own
 #include "ui/launcher.h"
 
@@ -25,15 +28,21 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QKeyEvent>
+#include <QLabel>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QStackedWidget>
 #include <QTabBar>
+#include <QToolButton>
 #include <QVBoxLayout>
 
 // KDE
 #include <KLocalizedString>
 #include <KIcon>
+#include <KStandardDirs>
+#include <ktoolinvocation.h>
+#include <kuser.h>
+#include <plasma/theme.h>
 #include <solid/device.h>
 #include <solid/deviceinterface.h>
 
@@ -62,6 +71,7 @@ public:
         : q(launcher)
         , urlLauncher(new UrlItemLauncher(launcher))
         , searchBar(0)
+        , footer(0)
         , contentArea(0)
         , contentSwitcher(0)
         , searchView(0)
@@ -233,6 +243,7 @@ public:
     Launcher * const q;
     UrlItemLauncher *urlLauncher;
     SearchBar *searchBar;
+    QWidget *footer;
     QStackedWidget *contentArea;
     TabBar *contentSwitcher;
     FlipScrollView *applicationView;
@@ -269,6 +280,42 @@ Launcher::Launcher(QWidget *parent)
     layout->addWidget(d->contentArea);
     layout->addWidget(d->contentSwitcher);
 
+    // Add status information footer
+    d->footer = new QWidget;
+    d->footer->setBackgroundRole(QPalette::AlternateBase);
+    d->footer->setAutoFillBackground(true);
+
+    char hostname[256];
+    hostname[0] = '\0';
+    if (!gethostname( hostname, sizeof(hostname) )) {
+       hostname[sizeof(hostname)-1] = '\0';
+    }
+    QLabel *userinfo = new QLabel(i18n( "User&nbsp;<b>%1</b>&nbsp;on&nbsp;<b>%2</b>", KUser().loginName(), hostname ) );
+    userinfo->setForegroundRole(QPalette::Dark);
+
+    QToolButton *branding = new QToolButton;
+    QString iconname = KStandardDirs::locate("data", "desktoptheme/" + Plasma::Theme::self()->themeName()+"/kickoff-branding.png");
+    if (iconname.isEmpty()) {
+       iconname = KStandardDirs::locate("data", "desktoptheme/default/kickoff-branding.png");
+    }
+    QPixmap icon = QPixmap(iconname);
+    branding->setAutoRaise(false);
+    branding->setIcon(icon);
+    branding->setIconSize(icon.size());
+    connect( branding, SIGNAL(clicked()), SLOT(openHomepage()));
+
+    QHBoxLayout *footerlayout = new QHBoxLayout;
+    footerlayout->insertSpacing(0, 2);
+    footerlayout->setMargin(0);
+    footerlayout->addWidget(userinfo);
+    footerlayout->insertStretch(2);
+    footerlayout->addWidget(branding);
+    footerlayout->insertSpacing(2, 10);
+    d->footer->setLayout(footerlayout);
+
+    layout->addWidget(d->footer);
+
+
     setLayout(layout);
 }
 
@@ -285,7 +332,7 @@ QSize Launcher::sizeHint() const
 
     //size.rheight() += 102;
     size.rheight() = d->searchBar->sizeHint().height() +
-                     d->contentSwitcher->sizeHint().height() +
+                     d->contentSwitcher->sizeHint().height() + d->footer->sizeHint().height() +
                      ItemDelegate::ITEM_HEIGHT * d->visibleItemCount;
 
     return size;
@@ -493,6 +540,12 @@ void Launcher::paintEvent(QPaintEvent*)
     QPainter p(this);
     p.setPen(QPen(palette().mid(), 0));
     p.drawRect(rect().adjusted(0, 0, -1, -1));
+}
+
+void Launcher::openHomepage()
+{ 
+    hide();
+    KToolInvocation::invokeBrowser("http://www.kde.org/");
 }
 
 #include "launcher.moc"
