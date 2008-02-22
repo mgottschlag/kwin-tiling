@@ -146,6 +146,9 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
       d(new Private)
 {
     setHasConfigurationInterface(true);
+    setRemainSquare(true);
+    setDrawStandardBackground(false);
+    setContentSize(1, 1); // this will be upped to the minimum size later
 
     d->icon = new Plasma::Icon(QString(), this);
     d->icon->setFlag(ItemIsMovable, false);
@@ -185,6 +188,7 @@ void MenuLauncherApplet::init()
 
 void MenuLauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
 {
+    setDrawStandardBackground(false);
     if (constraints & Plasma::FormFactorConstraint) {
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
