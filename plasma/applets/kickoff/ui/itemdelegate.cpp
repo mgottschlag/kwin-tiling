@@ -35,6 +35,9 @@
 #include <KGlobal>
 #include <KGlobalSettings>
 
+// plasma
+#include <plasma/plasma.h>
+
 using namespace Kickoff;
 
 ItemDelegate::ItemDelegate()
@@ -98,7 +101,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
         // for the background
         backgroundColor.setAlphaF(0.5);
         painter->setBrush(QBrush(backgroundColor));
-        painter->drawPath(roundedRectangle(textAreaRect, 5));
+        painter->drawPath(Plasma::roundedRectangle(textAreaRect, 5));
         painter->restore();
     }
 
@@ -224,18 +227,3 @@ bool ItemDelegate::isVisible(const QModelIndex& index) const
     return !index.data(UrlRole).isNull();
 }
 
-// Taken from kdelibs/kio/kio/kfileitemdelegate.cpp
-QPainterPath ItemDelegate::roundedRectangle(const QRectF& rect, qreal radius) const
-{
-    QPainterPath path(QPointF(rect.left(), rect.top() + radius));
-    path.quadTo(rect.left(), rect.top(), rect.left() + radius, rect.top());         // Top left corner
-    path.lineTo(rect.right() - radius, rect.top());                                 // Top side
-    path.quadTo(rect.right(), rect.top(), rect.right(), rect.top() + radius);       // Top right corner
-    path.lineTo(rect.right(), rect.bottom() - radius);                              // Right side
-    path.quadTo(rect.right(), rect.bottom(), rect.right() - radius, rect.bottom()); // Bottom right corner
-    path.lineTo(rect.left() + radius, rect.bottom());                               // Bottom side
-    path.quadTo(rect.left(), rect.bottom(), rect.left(), rect.bottom() - radius);   // Bottom left corner
-    path.closeSubpath();
-
-    return path;
-}
