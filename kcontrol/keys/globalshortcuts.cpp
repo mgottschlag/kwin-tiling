@@ -56,7 +56,7 @@ GlobalShortcutsModule::~GlobalShortcutsModule()
 void GlobalShortcutsModule::load()
 {
     // Undo all changes not yet applied
-    editor->undo();
+    editor->clear();
 
     qRegisterMetaType<QList<int> >();
     qDBusRegisterMetaType<QList<int> >();

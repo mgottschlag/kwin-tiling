@@ -166,6 +166,18 @@ void KGlobalShortcutsEditor::allDefault()
     }
 
 
+void KGlobalShortcutsEditor::clear()
+    {
+    // Remove all components and their associated editors
+    Q_FOREACH (KShortcutsEditor *editor, d->components.values())
+        {
+        delete editor;
+        }
+    d->components.clear();
+    d->ui.components->clear();
+    }
+
+
 void KGlobalShortcutsEditor::save()
     {
     // The editors are responsible for the saving

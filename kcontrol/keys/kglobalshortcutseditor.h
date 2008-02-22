@@ -60,6 +60,11 @@ class KGlobalShortcutsEditor : public QWidget
          */
         void undo();
 
+        /**
+         * Clear all collections were currently hosting.
+         */
+        void clear();
+
     Q_SIGNALS:
 
         /**
