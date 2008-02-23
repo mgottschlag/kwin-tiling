@@ -211,15 +211,23 @@ int SystemModel::columnCount(const QModelIndex &/*parent*/) const
 
 QVariant SystemModel::data(const QModelIndex &index, int role) const
 {
-    if (index.internalId()==0) {
-        if (role==Qt::DisplayRole) {
+    if (!index.isValid()) {
+        return QVariant();
+    }
+
+    if (index.internalId() == 0) {
+        if (role == Qt::DisplayRole) {
             return d->topLevelSections[index.row()];
         } else {
             return QVariant();
         }
     }
 
-    if (index.internalId()-1==APPLICATIONS_ROW) {
+    if (index.internalId() - 1 == APPLICATIONS_ROW) {
+        if (d->appsList.count() >= index.row()) {
+            return QVariant();
+        }
+
         KService::Ptr service = KService::serviceByStorageId(d->appsList[index.row()]);
 
         if (!service) {
