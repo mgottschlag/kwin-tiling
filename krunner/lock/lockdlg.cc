@@ -118,7 +118,9 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     }
 
     QHBoxLayout *layStatus = new QHBoxLayout();
+    layStatus->addStretch();
     layStatus->addWidget( mStatusLabel );
+    layStatus->addStretch();
 
     if( kxkbComponent )
         layStatus->addWidget( kxkbComponent, 0, Qt::AlignRight );
