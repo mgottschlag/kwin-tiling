@@ -265,6 +265,7 @@ Launcher::Launcher(QWidget *parent)
     d->searchBar = new SearchBar(this);
     d->searchBar->installEventFilter(this);
     d->contentArea = new QStackedWidget(this);
+    //d->contentArea->setStyleSheet("QStackedWidget { border-top: 1px solid palette(mid); border-bottom: 1px solid palette(mid); }");
     d->contentSwitcher = new TabBar(this);
     d->contentSwitcher->installEventFilter(this);
     d->contentSwitcher->setIconSize(QSize(48,48));
@@ -276,21 +277,15 @@ Launcher::Launcher(QWidget *parent)
     d->initTabs();
     d->registerUrlHandlers();
 
-    layout->addWidget(d->searchBar);
-    layout->addWidget(d->contentArea);
-    layout->addWidget(d->contentSwitcher);
-
     // Add status information footer
     d->footer = new QWidget;
-    d->footer->setBackgroundRole(QPalette::AlternateBase);
-    d->footer->setAutoFillBackground(true);
 
     char hostname[256];
     hostname[0] = '\0';
     if (!gethostname( hostname, sizeof(hostname) )) {
        hostname[sizeof(hostname)-1] = '\0';
     }
-    QLabel *userinfo = new QLabel(i18n( "User&nbsp;<b>%1</b>&nbsp;on&nbsp;<b>%2</b>", KUser().loginName(), hostname ) );
+    QLabel *userinfo = new QLabel(i18n("User&nbsp;<b>%1</b>&nbsp;on&nbsp;<b>%2</b>", KUser().loginName(), hostname));
     userinfo->setForegroundRole(QPalette::Dark);
 
     QToolButton *branding = new QToolButton;
@@ -304,19 +299,23 @@ Launcher::Launcher(QWidget *parent)
     branding->setIconSize(icon.size());
     connect( branding, SIGNAL(clicked()), SLOT(openHomepage()));
 
-    QHBoxLayout *footerlayout = new QHBoxLayout;
-    footerlayout->insertSpacing(0, 2);
-    footerlayout->setMargin(0);
-    footerlayout->addWidget(userinfo);
-    footerlayout->insertStretch(2);
-    footerlayout->addWidget(branding);
-    footerlayout->insertSpacing(2, 10);
-    d->footer->setLayout(footerlayout);
+    QHBoxLayout *brandingLayout = new QHBoxLayout;
+    brandingLayout->setMargin(3);
+    brandingLayout->addSpacing(ItemDelegate::ITEM_LEFT_MARGIN - 3);
+    brandingLayout->addWidget(userinfo);
+    brandingLayout->insertStretch(2);
+    brandingLayout->addWidget(branding);
+    brandingLayout->insertSpacing(2, 10);
+    d->footer->setLayout(brandingLayout);
 
     layout->addWidget(d->footer);
-
+    layout->addWidget(d->searchBar);
+    layout->addWidget(d->contentArea);
+    layout->addWidget(d->contentSwitcher);
 
     setLayout(layout);
+    setBackgroundRole(QPalette::AlternateBase);
+    setAutoFillBackground(true);
 }
 
 QSize Launcher::sizeHint() const

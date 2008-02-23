@@ -22,12 +22,13 @@
 
 // Qt
 #include <QCoreApplication>
+#include <QDir>
+#include <QFileInfo>
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLabel>
+#include <QPainter>
 #include <QTimer>
-#include <QDir>
-#include <QFileInfo>
 
 // KDE
 #include <KIcon>
@@ -88,14 +89,17 @@ SearchBar::SearchBar(QWidget *parent)
 
     setFocusProxy(d->editWidget);
 }
+
 void SearchBar::updateTimerExpired()
 {
     emit queryChanged(d->editWidget->text());
 }
+
 SearchBar::~SearchBar()
 {
     delete d;
 }
+
 bool SearchBar::eventFilter(QObject *watched,QEvent *event)
 {
     // left and right arrow key presses in the search edit when the
@@ -111,6 +115,13 @@ bool SearchBar::eventFilter(QObject *watched,QEvent *event)
         }
     }
     return false; 
+}
+
+void SearchBar::paintEvent(QPaintEvent *event)
+{
+    QPainter p(this);
+    p.setPen(QPen(palette().mid(), 1));
+    p.drawLine(0, height() - 1, width() - 1, height() - 1);
 }
 
 void SearchBar::clear()

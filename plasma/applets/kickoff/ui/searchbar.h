@@ -35,14 +35,16 @@ public:
     virtual ~SearchBar();
 
     bool eventFilter(QObject *watched, QEvent *event);
-    
     void clear();
 
 Q_SIGNALS:
     void queryChanged(const QString& newQuery);
-    
+
     // internal
     void startUpdateTimer();
+
+protected:
+    void paintEvent(QPaintEvent *event);
 
 private Q_SLOTS:
     void updateTimerExpired();

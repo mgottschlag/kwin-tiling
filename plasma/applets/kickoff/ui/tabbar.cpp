@@ -98,14 +98,27 @@ void TabBar::paintEvent(QPaintEvent *event)
         QRect rect = tabRect(i).adjusted(TAB_CONTENTS_MARGIN,TAB_CONTENTS_MARGIN,
                                         -TAB_CONTENTS_MARGIN,-TAB_CONTENTS_MARGIN);
 
-        // draw background for selected tab
+        // draw background and top line for tabs
         if (i == currentTab) {
             m_animStates[i] = qMin(m_animator.endFrame(), ++m_animStates[i]);
-        } else if (m_animStates[i] > 0) {
-            m_animStates[i] = qMax(0, m_animStates[i] - 2);
+        } else {
+            QPen p = painter.pen();
+            painter.setPen(QPen(palette().mid(), 1));
+            QPoint left = tabRect(i).topLeft();
+
+            if (i - 1 == currentTab) {
+                left += QPoint(2, 0);
+            }
+
+            painter.drawLine(left, tabRect(i).topRight());
+            painter.setPen(p);
+
+            if (m_animStates[i] > 0) {
+                m_animStates[i] = qMax(0, m_animStates[i] - 2);
+            }
         }
 
-        if (m_animStates[i] > 0) {
+        if (i == currentTab) { //m_animStates[i] > 0) {
             // Draws the selected item with a gradient
             qreal alpha = m_animStates[i] / qreal(m_animator.endFrame());
             QLinearGradient g(0, 0, 0, tabRect(i).height());
@@ -115,9 +128,31 @@ void TabBar::paintEvent(QPaintEvent *event)
             g.setColorAt(0.3, base.lighter(110));
             g.setColorAt(1, base.lighter(125));
             QBrush bgBrush(g);
+
+            const int radius = 6;
+            QRect rect = tabRect(i).adjusted(0, 0, 0, -3);
+
+            QPainterPath path(rect.topLeft());
+            // Top side
+            path.moveTo(rect.topRight() + QPoint(radius, 0));
+            // Top right corner
+            path.quadTo(rect.right(), rect.top(), rect.right(), rect.top() + radius);
+            path.lineTo(rect.right(), rect.bottom() - radius);
+            // Bottom right corner
+            path.quadTo(rect.right(), rect.bottom(), rect.right() - radius, rect.bottom());
+            path.lineTo(rect.left() + radius, rect.bottom());
+            // Bottom left corner
+            path.quadTo(rect.left(), rect.bottom(), rect.left(), rect.bottom() - radius);
+            path.lineTo(rect.left(), rect.top() + radius);
+            // Top left corner
+            path.quadTo(rect.left(), rect.top(), rect.left() - radius, rect.top());
+//            path.closeSubpath();
+
             painter.save();
             painter.setRenderHint(QPainter::Antialiasing);
-            painter.fillPath(Plasma::roundedRectangle(tabRect(i).adjusted(2, 0, -2, 0), 6), bgBrush);
+            painter.fillPath(path, palette().base());
+            painter.setPen(QPen(palette().mid(), 1));
+            painter.drawPath(path);
             painter.restore();
         }
 
