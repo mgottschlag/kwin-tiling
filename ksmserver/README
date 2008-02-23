@@ -21,6 +21,16 @@ now.
 
 Here's a short overview on how session management works.
 
+Contents
+--------
+
+Starting the server
+KDE startup sequence
+Establishing the connection
+Authorization
+Requesting a shutdown
+
+
 Starting the server
 -------------------
 
@@ -77,10 +87,10 @@ the window manager, as the WM is necessary before any windows are possibly
 shown. When the WM is ready, ksmserver tells klauncher to perform autostart
 phase 0 ($KDEHOME/share/autostart). There are 3 autostart phases, 0, 1 and 2,
 defined by X-KDE-autostart-phase, defaulting to 2. Phase 0 is reserved only
-for the actual visible base components of KDE, i.e. KDesktop and Kicker,
-in order to make the startup appear visually faster. Both KDesktop and Kicker
-use DCOP calls suspendStartup() and resumeStartup() to make ksmserver stay
-waiting for autostart phase 0 until both KDesktop and Kicker are ready.
+for the actual visible base components of KDE, i.e. Plasma and KRunner,
+in order to make the startup appear visually faster. Both Plasma and KRunner
+use D-Bus calls suspendStartup() and resumeStartup() to make ksmserver stay
+waiting for autostart phase 0 until both Plasma and KRunner are ready.
 
 Next step is telling the waiting kcminit to perform phase 1 - all kcminit
 modules that should be executed before KDE startup is considered done.
@@ -95,7 +105,7 @@ ksmserver does the knotify startkde event (i.e. plays the login sound).
 It also tells klauncher to perform autostart phase 2, kded to load all
 remaining autoload (i.e. kded phase 2) modules, kcminit to execute
 kcminit phase 2 (kcontrol modules that do initialization that can wait,
-like launching daemons) and kdesktop to execute the user Autostart folder.
+like launching daemons) and it itself executes the user Autostart folder.
 
 Technical note: There's a reason why kded modules and items in autostart
 default to the latest phase. Before you explicitly use a different phase,
@@ -123,22 +133,21 @@ bogus value.
 
 In addition, ksmserver propagates both its network address and its
 process id in ~/.kde/socket-$HOSTNAME/KSMserver-$DISPLAY. A
-utility function KApplication::propagateSessionManager() reads this
+utility function KWorkSpace::propagateSessionManager() reads this
 setting and sets SESSION_MANAGER accordingly, so that child processes
 can pick it up.  The function is called by clients that are started
-outside the session ( i.e. before ksmserver is started), but want to
+outside the session (i.e. before ksmserver is started), but want to
 launch other processes that should participate in the session.
-Examples are kdesktop or kicker, see below.
 
 Authorization
 -------------
 
-XSMP is, just like DCOP, built on top of the Inter Client Exchange
-(ICE) protocol, which comes standard as a part of X11R6 and later.
+XSMP is built on top of the Inter Client Exchange (ICE) protocol,
+which comes standard as a part of X11R6 and later.
 Authorization is done using 'iceauth', with MIT-MAGIC-COOKIE as used
 by X. In order to be able to access the session management server, you
 need to be able to read ~/.ICEauthority. For security reasons, we do
-not provide any host-based authorization (neither does DCOP, btw.).
+not provide any host-based authorization.
 
 
 Requesting a shutdown
@@ -146,32 +155,6 @@ Requesting a shutdown
 
 If an application wants to request a shutdown (i.e. a logout), it does
 this via an SmcRequestSaveYourself message to the server. In KDE, a
-utility function KApplication::requestShutDown() does exactly
+utility function KWorkSpace::requestShutDown() does exactly
 this. It's for example called by KDE's panel or by the context menu of
 the desktop.
-
-
-User Interface
---------------
-
-ksmserver has a very straight-forward user interface.  It mainly asks
-the question "Shutdown KDE Session?" and provides two obvious command
-buttons "Yes" and "Cancel". The interesting bit is the additonal
-checkbox that says "Restore session when logging in next time". The
-checkbox remembers state within session, so simply use whatever you
-prefer.  For those who remember, this was one of the main questions
-with KDE-1.x ("How to get rid of session managment?"). With KDE-2.x,
-most users will probably prepare a session once, store it with the
-checkbox enabled and keep the checkbox disabled in the future. This
-way you get a proper and clean 'homesession' each time.
-
-
-Troubleshooting
----------------
-
-If you experience trouble like 'logout does not work anymore' or 'I
-cannot start new applications', as a result of a previous crash,
-ensure that ksmserver is indeed not running anymore and remove the
-file ~/.kde/socket-$HOSTNAME/KSMserver-$DISPLAY. Shouldn't be necessry, 
-but one never knows.
-
