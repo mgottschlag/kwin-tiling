@@ -71,6 +71,18 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
                                          contentRect.adjusted(0, 2, 0, 0));
     QString titleText = index.data(Qt::DisplayRole).value<QString>();
     QString subTitleText = index.data(SubTitleRole).value<QString>();
+    bool uniqueTitle = true;
+    QModelIndex sib = index.sibling(index.row() + 1, index.column());
+    if (sib.isValid()) {
+        uniqueTitle = sib.data(Qt::DisplayRole).value<QString>() != titleText;
+    }
+
+    if (uniqueTitle) {
+        sib = index.sibling(index.row() + -1, index.column());
+        if (sib.isValid()) {
+            uniqueTitle = sib.data(Qt::DisplayRole).value<QString>() != titleText;
+        }
+    }
 
     QRect titleRect = textRect;
 
@@ -115,8 +127,11 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
     painter->setFont(titleFont);
     painter->drawText(titleRect, Qt::AlignLeft|Qt::AlignVCenter, titleText);
 
-    if (hover) {
+    if (hover || !uniqueTitle) {
         // draw sub-title
+        if (!hover) {
+            painter->setPen(option.palette.color(QPalette::Mid));
+        }
         painter->setFont(subTitleFont);
         painter->drawText(subTitleRect, Qt::AlignLeft|Qt::AlignVCenter, subTitleText);
     }
