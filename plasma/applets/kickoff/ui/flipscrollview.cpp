@@ -602,9 +602,9 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
     // draw header for current view
     QRect headerRect = d->headerRect(currentRoot);
     if (d->animLeftToRight) {
-        headerRect.translate((int)(headerRect.width()*(1-timerValue)),0);
+        headerRect.translate((int)(headerRect.width()*(1-timerValue)), 0);
     } else {
-        headerRect.translate((int)(-headerRect.width()*(1-timerValue)),0);
+        headerRect.translate((int)(-headerRect.width()*(1-timerValue)), 0);
     }
 
     if (event->rect().intersects(headerRect)) {
@@ -614,9 +614,9 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
     // draw header for previous view
     QRect prevHeaderRect = d->headerRect(previousRoot);
     if (d->animLeftToRight) {
-        prevHeaderRect.translate((int)(-prevHeaderRect.width()*timerValue),0);
+        prevHeaderRect.translate((int)(-prevHeaderRect.width()*timerValue), ItemDelegate::HEADER_TOP_MARGIN);
     } else {
-        prevHeaderRect.translate((int)(prevHeaderRect.width()*timerValue),0);
+        prevHeaderRect.translate((int)(prevHeaderRect.width()*timerValue), ItemDelegate::HEADER_TOP_MARGIN);
     }
 
     if (event->rect().intersects(prevHeaderRect) && timerValue < 1.0) {
