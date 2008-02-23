@@ -118,16 +118,12 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     }
 
     QHBoxLayout *layStatus = new QHBoxLayout();
-    layStatus->setSpacing( KDialog::spacingHint() );
-    layStatus->setMargin( 0 );
     layStatus->addWidget( mStatusLabel );
 
     if( kxkbComponent )
         layStatus->addWidget( kxkbComponent, 0, Qt::AlignRight );
 
     QHBoxLayout *layButtons = new QHBoxLayout();
-    layButtons->setSpacing( KDialog::spacingHint() );
-    layButtons->setMargin( 0 );
     layButtons->addWidget( mNewSessButton );
     layButtons->addStretch();
     layButtons->addWidget( ok );
@@ -565,10 +561,8 @@ void PasswordDlg::slotSwitchUser()
 
     QBoxLayout *vbox1 = new QVBoxLayout( );
     hbox->addItem( vbox1 );
-    vbox1->setSpacing( KDialog::spacingHint() );
     QBoxLayout *vbox2 = new QVBoxLayout( );
     hbox->addItem( vbox2 );
-    vbox2->setSpacing( KDialog::spacingHint() );
 
     KPushButton *btn;
 
