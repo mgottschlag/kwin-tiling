@@ -23,7 +23,7 @@
 
     <entry name="MaxThreads" key="maxthreads" type="Int">
       <default>12</default>
-      <label>Maximum number of query matching threads able run simultaneously.</label>
+      <label>Maximum number of threads to use for searches.</label>
       <whatsthis>The number of threads used scales with the number of processors. This entry allows you to define a hard upper limit independant of the number of processors.</whatsthis>
       <min>1</min>
     </entry>
