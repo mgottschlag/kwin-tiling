@@ -44,7 +44,7 @@
 #include <plasma/phase.h>
 
 //use for desktop view
-#include <plasma/layouts/vboxlayout.h>
+#include <plasma/layouts/boxlayout.h>
 #include <plasma/widgets/icon.h>
 
 #include <solid/device.h>
@@ -54,7 +54,6 @@ using namespace Notifier;
 
 DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
-      m_icon(""),
       m_solidEngine(0),
       m_hotplugModel(0),
       m_widget(0),
@@ -83,56 +82,11 @@ void DeviceNotifier::init()
     connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(onSourceRemoved(const QString&)));
 
-    kDebug() << "I'm in containment : " << containment()->containmentType();
-    if (containment()->containmentType() == Containment::DesktopContainment) {
-        initDesktop();
-        isOnDesktop = true;
-    } else {
-        setContentSize(128, 128);
-        initSysTray();
-        isOnDesktop = false;
-    }
-}
-
-void DeviceNotifier::initDesktop()
-{
-    Plasma::VBoxLayout *layout = new Plasma::VBoxLayout(this);
-    layout->setMargin(0);
-    layout->setSpacing(0);
-    m_layout_list = new Plasma::VBoxLayout(layout);
-    m_layout_list->setMargin(0);
-    m_layout_list->setSpacing(0);
-    Plasma::Icon *icon_top = new Plasma::Icon(KIcon("emblem-mounted"), QString(i18n("Recently plugged devices :")), this);
-    icon_top->setMaximumSize(QSize(275,48));
-    icon_top->setAcceptsHoverEvents(false);
-    icon_top->setAcceptedMouseButtons(0);
-    icon_top->setOrientation(Qt::Horizontal);
-    layout->addItem(icon_top);
-    layout->addItem(m_layout_list);
-
-    setContentSize(275, 275);
-}
-
-void DeviceNotifier::initSysTray()
-{
-    //we display the icon corresponding to the computer
-    QList<Solid::Device> list = Solid::Device::allDevices();
-    if (list.size() > 0) {
-        Solid::Device device=list[0];
-
-        while (device.parent().isValid()) {
-            device = device.parent();
-        }
-        m_icon = KIcon(device.icon());
-    } else {
-        //default icon if problem
-        m_icon = KIcon("computer");
-    }
     m_widget = new Dialog();
 
-    QVBoxLayout *m_layout = new QVBoxLayout();
-    m_layout->setSpacing(0);
-    m_layout->setMargin(0);
+    QVBoxLayout *l_layout = new QVBoxLayout();
+    l_layout->setSpacing(0);
+    l_layout->setMargin(0);
 
     m_hotplugModel = new QStandardItemModel(this);
 
@@ -141,27 +95,44 @@ void DeviceNotifier::initSysTray()
     icon->setPixmap(KIcon("emblem-mounted").pixmap(ItemDelegate::ICON_SIZE, ItemDelegate::ICON_SIZE));
     icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    QHBoxLayout *m_layout2 = new QHBoxLayout();
-    m_layout2->setSpacing(0);
-    m_layout2->setMargin(0);
+    QHBoxLayout *l_layout2 = new QHBoxLayout();
+    l_layout2->setSpacing(0);
+    l_layout2->setMargin(0);
 
-    m_layout2->addWidget(icon);
-    m_layout2->addWidget(label);
+    l_layout2->addWidget(icon);
+    l_layout2->addWidget(label);
 
     Notifier::NotifierView *m_notifierView= new NotifierView(m_widget);
     m_notifierView->setModel(m_hotplugModel);
     ItemDelegate *delegate = new ItemDelegate;
     m_notifierView->setItemDelegate(delegate);
+    
+    l_layout->addLayout(l_layout2);
+    l_layout->addWidget(m_notifierView);
+    m_widget->setLayout(l_layout);
+
+    m_widget->setWindowFlags(Qt::Popup);
     m_widget->setFocusPolicy(Qt::NoFocus);
-
-    m_layout->addLayout(m_layout2);
-    m_layout->addWidget(m_notifierView);
-    m_widget->setLayout(m_layout);
-
-    m_widget->setWindowFlags(m_notifierView->windowFlags() | Qt::WindowStaysOnTopHint |
-                             Qt::FramelessWindowHint | Qt::X11BypassWindowManagerHint);
     m_widget->adjustSize();
-
+    
+    kDebug() << "I'm in containment : " << containment()->containmentType();
+    if (containment()->containmentType() != Containment::DesktopContainment) {
+        initSysTray();
+	isOnDesktop=false;
+    }
+    else
+    {
+	m_layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
+	//m_layout = new QGraphicsGridLayout();
+	//m_layout->setMargin(0);
+	m_layout->setSpacing(0);
+	m_proxy= new QGraphicsProxyWidget(this);
+	m_proxy->setWidget(m_widget);
+        m_proxy->show();
+	//m_layout->addItem(m_proxy);
+    	isOnDesktop=true;
+    }
+        
     //FIXME : For KDE4.1 need to use to KStyle to use correct click behaviour
     if (KGlobalSettings::singleClick()) {
         connect(m_notifierView, SIGNAL(clicked (const QModelIndex &)), this, SLOT(slotOnItemClicked(const QModelIndex &)));
@@ -169,7 +140,30 @@ void DeviceNotifier::initSysTray()
         connect(m_notifierView, SIGNAL(doubleClicked (const QModelIndex &)), this, SLOT(slotOnItemClicked(const QModelIndex &)));
     }
     connect(m_timer, SIGNAL(timeout()), this, SLOT(onTimerExpired()));
+}
 
+
+void DeviceNotifier::initSysTray()
+{
+     setDrawStandardBackground(false);
+    //we display the icon corresponding to the computer
+    QList<Solid::Device> list = Solid::Device::allDevices();
+    
+    if (list.size() > 0) {
+        Solid::Device device=list[0];
+
+        while (device.parent().isValid()) {
+            device = device.parent();
+        }
+        m_icon = new Plasma::Icon(KIcon(device.icon()), QString(), this);
+    } else {
+        //default icon if problem
+        m_icon = new Plasma::Icon(KIcon("computer"), QString(), this);
+    }
+    setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Panel)));
+    connect(m_icon, SIGNAL(clicked()), this, SLOT(onClickNotifier()));
+    setContentSize(size());
+    m_icon->resize(size());
     updateGeometry();
     update();
 }
@@ -177,6 +171,10 @@ void DeviceNotifier::initSysTray()
 DeviceNotifier::~DeviceNotifier()
 {
     delete m_widget;
+    if(!isOnDesktop) {
+        delete m_icon;
+    }
+    delete m_layout;
     delete m_dialog;
     delete m_hotplugModel;
     delete m_timer;
@@ -210,12 +208,7 @@ QSizeF DeviceNotifier::contentSizeHint() const
 
 void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
 {
-    Q_UNUSED(option)
-    Q_UNUSED(rect)
-    if(!isOnDesktop) {
-        p->setRenderHint(QPainter::SmoothPixmapTransform);
-        p->drawPixmap(rect, m_icon.pixmap(rect.size()));
-    }
+    Applet::paintInterface(p,option,rect);
 }
 
 void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data data)
@@ -231,110 +224,51 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
                 last_action_label = QString(services[0].text());
             }
         }
-        if (!isOnDesktop) {
-            performSourceUpdatedInSystray(source, data, nb_actions, last_action_label);
-        } else {
-            performSourceUpdatedInDesktop(source, data, nb_actions, last_action_label);
-        }
-    }
-}
-
-void DeviceNotifier::performSourceUpdatedInDesktop(const QString &source, Plasma::DataEngine::Data data, int nb_actions, const QString &last_action_label)
-{
-    QString s;
-    if (nb_actions > 1) {
-        s = i18np("1 action for this device", "%1 actions for this device", nb_actions);
-    } else {
-        s = last_action_label;
-    }
-    QString display=data["text"].toString();
-    display = display + " - " + s;
-    Plasma::Icon *icon_item = new Plasma::Icon(KIcon(data["icon"].toString()), display, this);
-    icon_item->setMaximumSize(QSize(275,48));
-    m_layout_list->addItem(icon_item);
-    icon_item->setOrientation(Qt::Horizontal);
-    ItemType type;
-    type.icon = icon_item;
-    type.predicateFiles = data["predicateFiles"].toStringList();
-    type.text = data["text"].toString();
-    type.udi = source;
-    connect(icon_item, SIGNAL(pressed(bool)), this, SLOT(slotOnItemDesktopClicked(bool)));
-    m_map_item.insert(source, type);
-}
-
-void DeviceNotifier::performSourceUpdatedInSystray(const QString &source, Plasma::DataEngine::Data data,int nb_actions, const QString &last_action_label)
-{
-    QModelIndex index = indexForUdi(source);
-    Q_ASSERT(index.isValid());
-
-    m_hotplugModel->setData(index, data["predicateFiles"], PredicateFilesRole);
-    m_hotplugModel->setData(index, data["text"], Qt::DisplayRole);
-    m_hotplugModel->setData(index, KIcon(data["icon"].toString()), Qt::DecorationRole);
-
-    if (nb_actions > 1) {
-        QString s = i18np("1 action for this device",
-                          "%1 actions for this device",
-                          nb_actions);
-        m_hotplugModel->setData(index, s, ActionRole);
-    } else {
-        m_hotplugModel->setData(index,last_action_label, ActionRole);
-    }
-    m_widget->move(popupPosition(m_widget->sizeHint()));
-    m_widget->show();
-    m_timer->start(m_displayTime*1000);
+        QModelIndex index = indexForUdi(source);
+	Q_ASSERT(index.isValid());
+    
+	m_hotplugModel->setData(index, data["predicateFiles"], PredicateFilesRole);
+	m_hotplugModel->setData(index, data["text"], Qt::DisplayRole);
+	m_hotplugModel->setData(index, KIcon(data["icon"].toString()), Qt::DecorationRole);
+    
+	if (nb_actions > 1) {
+	    QString s = i18np("1 action for this device",
+			      "%1 actions for this device",
+			      nb_actions);
+	    m_hotplugModel->setData(index, s, ActionRole);
+	} else {
+	    m_hotplugModel->setData(index,last_action_label, ActionRole);
+	}
+	if(!isOnDesktop) {
+	    m_widget->move(popupPosition(m_widget->sizeHint()));
+	    m_widget->show();
+	    m_widget->clearFocus();
+	    m_timer->start(m_displayTime*1000);
+	}
+   }
 }
 
 void DeviceNotifier::onSourceAdded(const QString &name)
 {
     kDebug() << "DeviceNotifier:: source added" << name;
-    if(!isOnDesktop) {
-        performSourceAddedInSystray(name);
-    } else {
-        performSourceAddedInDesktop(name);
-    }
-    m_solidEngine->connectSource(name, this);
-}
-
-void DeviceNotifier::performSourceAddedInSystray(const QString &name)
-{
     if (m_hotplugModel->rowCount() == m_numberItems && m_numberItems != 0) {
         m_hotplugModel->removeRow(m_hotplugModel->rowCount() - 1);
     }
     QStandardItem *item = new QStandardItem();
     item->setData(name, SolidUdiRole);
     m_hotplugModel->insertRow(0, item);
-}
-
-void DeviceNotifier::performSourceAddedInDesktop(const QString &name)
-{
-    Q_UNUSED(name);
+    m_solidEngine->connectSource(name, this);
 }
 
 void DeviceNotifier::onSourceRemoved(const QString &name)
-{
-    if(!isOnDesktop) {
-        performSourceRemovedInSystray(name);
-    } else {
-        performSourceRemovedInDesktop(name);
-    }
-
-}
-void DeviceNotifier::performSourceRemovedInSystray(const QString &name)
 {
     QModelIndex index = indexForUdi(name);
     Q_ASSERT(index.isValid());
     m_hotplugModel->removeRow(index.row());
     if (m_hotplugModel->rowCount() == 0) {
-        m_widget->hide();
-    }
-}
-
-void DeviceNotifier::performSourceRemovedInDesktop(const QString &name)
-{
-    if (m_map_item.contains(name)) {
-        Plasma::Icon *icon = m_map_item.take(name).icon;
-        m_layout_list->removeItem(icon);
-        delete icon;
+         if(!isOnDesktop) {
+	    m_widget->hide();
+	 }
     }
 }
 
@@ -353,18 +287,10 @@ QModelIndex DeviceNotifier::indexForUdi(const QString &udi) const
     return QModelIndex();
 }
 
-void DeviceNotifier::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void DeviceNotifier::onClickNotifier()
 {
-    Q_UNUSED(event)
-    if(!isOnDesktop) {
-        if (event->buttons () == Qt::LeftButton &&
-            contentRect().contains(event->pos())) {
-            m_widget->isVisible() ? m_widget->hide() : m_widget->show();
-            event->accept();
-            return;
-        }
-        Applet::mousePressEvent(event);
-    }
+    m_widget->isVisible() ? m_widget->hide() : m_widget->show();
+    m_widget->clearFocus(); 
 }
 
 void DeviceNotifier::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
@@ -413,44 +339,16 @@ void DeviceNotifier::configAccepted()
 
 void DeviceNotifier::slotOnItemClicked(const QModelIndex &index)
 {
-    m_widget->hide();
-    m_timer->stop();
+    if(!isOnDesktop) {
+       m_widget->hide();
+       m_timer->stop();
+    }
     QString udi = QString(m_hotplugModel->data(index, SolidUdiRole).toString());
     QStringList desktop_files = m_hotplugModel->data(index, PredicateFilesRole).toStringList();
     kDebug() << "DeviceNotifier:: call Solid Ui Server with params :" << udi \
              << "," << desktop_files;
     QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
     QDBusReply<void> reply = soliduiserver.call("showActionsDialog", udi, desktop_files);
-}
-
-void DeviceNotifier::slotOnItemDesktopClicked(bool pressed)
-{
-    if (!pressed) {
-        return;
-    }
-    QObject *obj = sender();
-    if (obj) {
-        Plasma::Icon *icon = dynamic_cast<Plasma::Icon *>(obj);
-        if (icon) {
-            bool find = false;
-            ItemType object;
-            foreach (ItemType item, m_map_item) {
-                if (item.icon == icon) {
-                    find = true;
-                    object = item;
-                    break;
-                }
-            }
-            if (find) {
-                QString udi = object.udi;
-                QStringList desktop_files = object.predicateFiles;
-                kDebug() << "DeviceNotifier:: call Solid Ui Server with params :" << udi \
-                         << "," << desktop_files;
-                QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
-                QDBusReply<void> reply = soliduiserver.call("showActionsDialog", udi, desktop_files);
-            }
-        }
-    }
 }
 
 void DeviceNotifier::onTimerExpired()
