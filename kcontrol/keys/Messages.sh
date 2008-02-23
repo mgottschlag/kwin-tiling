@@ -1,3 +1,4 @@
 #! /usr/bin/env bash
-customkeys=`grep "^.include .\.\." keyconfig.cpp | sed -e "s#.*\"\(.*\)\"#\1#"`
-$XGETTEXT *.cpp $customkeys -o $podir/kcmkeys.pot
+# customkeys=`grep "^.include .\.\." keyconfig.cpp | sed -e "s#.*\"\(.*\)\"#\1#"`
+# $XGETTEXT *.cpp $customkeys -o $podir/kcmkeys.pot
+$XGETTEXT *.cpp -o $podir/kcmkeys.pot
