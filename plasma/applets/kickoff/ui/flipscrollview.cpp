@@ -113,70 +113,48 @@ public:
 
     QRect headerRect(const QModelIndex& headerIndex = QModelIndex()) const
     {
-        QFontMetrics metrics(q->font());
-        QFontMetrics small(KGlobalSettings::smallestReadableFont());
-        int depth = qMax(1, treeDepth(headerIndex));
+        Q_UNUSED(headerIndex)
+        QFontMetrics fm(KGlobalSettings::smallestReadableFont());
+        const int top = -q->verticalScrollBar()->value() - 1;
+        int minHeight = ItemDelegate::FIRST_HEADER_HEIGHT;
 
-        int top = -q->verticalScrollBar()->value();
-        return QRect(backArrowRect().right() + ItemDelegate::BACK_ARROW_SPACING,top,
-                     q->width() - backArrowRect().width() - 1 - ItemDelegate::BACK_ARROW_SPACING,
-                     (depth - 1) * small.height() + metrics.height() +
-                     ItemDelegate::HEADER_BOTTOM_MARGIN + ItemDelegate::HEADER_TOP_MARGIN);
+        return QRect(backArrowRect().right() + ItemDelegate::BACK_ARROW_SPACING, top,
+                     q->width() - backArrowRect().width() - ItemDelegate::BACK_ARROW_SPACING + 1,
+                     qMax(fm.height() + 4, minHeight) + ItemDelegate::HEADER_TOP_MARGIN);
     }
 
     void drawHeader(QPainter *painter,const QRect& rect,const QModelIndex& headerIndex)
     {
-        QFontMetrics metrics(q->font());
-        int top = rect.bottom() - metrics.height() - ItemDelegate::HEADER_BOTTOM_MARGIN;
+        QFontMetrics fm(KGlobalSettings::smallestReadableFont());
+        int top = rect.bottom() - fm.height() - ItemDelegate::HEADER_BOTTOM_MARGIN;
         QModelIndex branchIndex = headerIndex;
-        bool first = true;
-        bool second = false;
-        int firstHeight = metrics.height();
-        int secondHeight = QFontMetrics(KGlobalSettings::smallestReadableFont()).height();
-        QPen notFirstPen(q->palette().mid(), 1);
 
         painter->save();
-        painter->setFont(q->font());
+        painter->setFont(KGlobalSettings::smallestReadableFont());
         painter->setPen(QPen(q->palette().text(),0));
 
-        while (branchIndex.isValid()) {
-            int textHeight = secondHeight;
+        QString currentText = i18n("All Applications");
+        QString previousText;
 
-            if (first) {
-                first = false;
-                textHeight = firstHeight;
-            } else if (!second) {
-                painter->setFont(KGlobalSettings::smallestReadableFont());
-                painter->setPen(notFirstPen);
-                second = true;
-            }
-
-            painter->drawText(QRect(rect.left(), top,rect.width(), textHeight),
-                              Qt::AlignLeft,
-                              branchIndex.data(Qt::DisplayRole).value<QString>());
+        if (branchIndex.isValid()) {
+            currentText = branchIndex.data(Qt::DisplayRole).value<QString>();
             branchIndex = branchIndex.parent();
 
-            top -= second ? secondHeight : firstHeight;// + metrics.lineSpacing();
+            while (branchIndex.isValid()) {
+                previousText += branchIndex.data(Qt::DisplayRole).value<QString>() + " > ";
+                branchIndex = branchIndex.parent();
+            }
         }
 
-        if (first) {
-            // no items, just paint an Applications header
-            painter->drawText(QRect(rect.left(), top, rect.width(), metrics.height()),
-                    Qt::AlignLeft, i18n("Applications"));
+        const int rightMargin = q->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 18;
+        QRect textRect(rect.left(), rect.bottom() - fm.height() - 1, rect.width() - rightMargin, fm.height());
+        painter->setPen(QPen(q->palette().dark(), 1));
+        painter->drawText(textRect, Qt::AlignRight, currentText);
+
+        if (!previousText.isEmpty()) {
+            textRect.adjust(0, 0, - fm.width(" " + currentText), 0);
+            painter->drawText(textRect, Qt::AlignRight, previousText);
         }
-
-        QLinearGradient gradient(rect.topLeft(), rect.topRight());
-        gradient.setColorAt(0.0, q->palette().mid().color());
-        gradient.setColorAt(0.5, q->palette().midlight().color());
-        gradient.setColorAt(1.0, q->palette().mid().color());
-        painter->setPen(QPen(gradient, 1));
-
-        int dividerY = rect.bottom() - ItemDelegate::HEADER_BOTTOM_MARGIN/2;
-        painter->setRenderHint(QPainter::Antialiasing, false);
-        int dividerX = ItemDelegate::ITEM_RIGHT_MARGIN + 
-                       (q->verticalScrollBar()->isVisible() ?
-                        q->style()->pixelMetric(QStyle::PM_ScrollBarExtent) : 0);
-        painter->drawLine(rect.left(), dividerY, rect.right() - dividerX, dividerY);
 
         painter->restore();
     }
@@ -608,15 +586,15 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
     }
 
     if (event->rect().intersects(headerRect)) {
-        d->drawHeader(&painter,headerRect,currentRoot);
+        d->drawHeader(&painter, headerRect, currentRoot);
     }
 
     // draw header for previous view
     QRect prevHeaderRect = d->headerRect(previousRoot);
     if (d->animLeftToRight) {
-        prevHeaderRect.translate((int)(-prevHeaderRect.width()*timerValue), ItemDelegate::HEADER_TOP_MARGIN);
+        prevHeaderRect.translate((int)(-prevHeaderRect.width()*timerValue), 0);
     } else {
-        prevHeaderRect.translate((int)(prevHeaderRect.width()*timerValue), ItemDelegate::HEADER_TOP_MARGIN);
+        prevHeaderRect.translate((int)(prevHeaderRect.width()*timerValue), 0);
     }
 
     if (event->rect().intersects(prevHeaderRect) && timerValue < 1.0) {
