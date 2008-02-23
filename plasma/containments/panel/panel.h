@@ -62,7 +62,8 @@ private:
     QComboBox* m_sizeCombo;
     KIntNumInput* m_sizeEdit;
     QComboBox* m_locationCombo;
-    QList<QAction*> m_actions;
+    QAction* m_appletBrowserAction;
+    QAction* m_configureAction;
     bool m_drawTop : 1;
     bool m_drawLeft : 1;
     bool m_drawRight : 1;

@@ -42,6 +42,8 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_cachedBackground(0),
       m_dialog(0),
+      m_appletBrowserAction(0),
+      m_configureAction(0),
       m_drawTop(true),
       m_drawLeft(true),
       m_drawRight(true),
@@ -73,19 +75,20 @@ void Panel::init()
 
 QList<QAction*> Panel::contextActions()
 {
-    if (m_actions.isEmpty()) {
-        QAction *addWidgetsAction = new QAction(i18n("Add Widgets..."), this);
-        addWidgetsAction->setIcon(KIcon("list-add"));
-        connect(addWidgetsAction, SIGNAL(triggered()), this, SIGNAL(showAddWidgets()));
+    if (!m_appletBrowserAction) {
+        m_appletBrowserAction = new QAction(i18n("Add Widgets..."), this);
+        m_appletBrowserAction->setIcon(KIcon("list-add"));
+        m_appletBrowserAction->setVisible(!isImmutable());
+        connect(m_appletBrowserAction, SIGNAL(triggered()), this, SIGNAL(showAddWidgets()));
 
-        QAction *configureAction = new QAction(i18n("Panel Settings"), this);
-        configureAction->setIcon(KIcon("configure"));
-        connect(configureAction, SIGNAL(triggered()), this, SLOT(configure()));
-
-        m_actions << configureAction << addWidgetsAction;
+        m_configureAction = new QAction(i18n("Panel Settings"), this);
+        m_configureAction->setIcon(KIcon("configure"));
+        connect(m_configureAction, SIGNAL(triggered()), this, SLOT(configure()));
     }
 
-    return m_actions;
+    QList<QAction*> actions;
+    actions << m_configureAction << m_appletBrowserAction;
+    return actions;
 }
 
 void Panel::backgroundChanged()
@@ -98,6 +101,12 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
     //kDebug() << "constraints updated with" << constraints << "!!!!!!!!!!!!!!!!!";
     if (constraints & Plasma::SizeConstraint) {
         m_background->resize(size());
+    }
+
+    if (constraints & Plasma::ImmutableConstraint && m_appletBrowserAction) {
+        // we need to update the menu items that have already been created
+        bool locked = isImmutable();
+        m_appletBrowserAction->setVisible(!locked);
     }
 
     if (constraints & Plasma::LocationConstraint || constraints & Plasma::ScreenConstraint) {
