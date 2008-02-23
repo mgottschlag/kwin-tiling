@@ -22,7 +22,7 @@
 
 
 #include <QList>
-#include <QPushButton>
+#include <QToolButton>
 
 #include <ksystemtrayicon.h>
 
@@ -126,7 +126,7 @@ protected slots:
 
 private:
     int m_displayMode;
-    QPushButton* m_indicatorWidget;
+    QToolButton* m_indicatorWidget;
     QMenu* m_menu;
 };
 

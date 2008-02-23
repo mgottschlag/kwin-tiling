@@ -166,9 +166,9 @@ KxkbLabel::KxkbLabel(int controlType, QWidget* parent):
 		KxkbWidget(controlType),
 		m_displayMode(ICON)
 {
-    m_indicatorWidget = new QPushButton(parent);
+    m_indicatorWidget = new QToolButton(parent);
 
-    m_indicatorWidget->setFlat(true);
+    m_indicatorWidget->setAutoRaise(true);
     m_indicatorWidget->setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum));
 
     connect( m_indicatorWidget, SIGNAL(clicked(bool)), this, SIGNAL(iconToggled()) );
