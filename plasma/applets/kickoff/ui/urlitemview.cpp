@@ -83,7 +83,7 @@ public:
 
             if (q->model()->hasChildren(child)) {
                 QSize childSize = calculateHeaderSize(child);
-                itemRects.insert(child,QRect(QPoint(ItemDelegate::HEADER_LEFT_MARGIN,verticalOffset),childSize));
+                itemRects.insert(child, QRect(QPoint(ItemDelegate::HEADER_LEFT_MARGIN, verticalOffset), childSize));
 
                 verticalOffset += childSize.height();
                 horizontalOffset = 0; 
@@ -127,14 +127,14 @@ public:
                     const QModelIndex& index,
                     const QStyleOptionViewItem& option)
     {
-        const bool notFirst = index.row() > 0;
+        const bool first = isFirstHeader(index);
         const int rightMargin = q->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 18;
-        const int dy = (notFirst ? ItemDelegate::HEADER_HEIGHT / 4.0 : 0) + 4;
+        const int dy = (first ? 4 : ItemDelegate::HEADER_TOP_MARGIN);
 
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing, false);
 
-        if (notFirst) {
+        if (!first) {
             QLinearGradient gradient(option.rect.topLeft(), option.rect.topRight());
             gradient.setColorAt(0.0, option.palette.mid().color());
             gradient.setColorAt(0.5, option.palette.midlight().color());
@@ -175,15 +175,40 @@ public:
         }
     }
 
+    bool isFirstHeader(const QModelIndex &index) const
+    {
+        if (index.row() == 0) {
+            return q->model()->hasChildren(index);
+        }
+
+        QModelIndex prevHeader = index.sibling(index.row() - 1, index.column());
+        while (prevHeader.isValid()) {
+            //kDebug() << "checking" << prevHeader.data(Qt::DisplayRole).value<QString>();
+            if (q->model()->hasChildren(prevHeader)) {
+                //kDebug() << "it has children";
+                return false;
+            }
+
+            prevHeader = prevHeader.sibling(prevHeader.row() - 1, prevHeader.column());
+        }
+
+        return true;
+    }
+
     QSize calculateHeaderSize(const QModelIndex& index) const
     {
+        const QFontMetrics fm(KGlobalSettings::smallestReadableFont());
+        int minHeight = ItemDelegate::HEADER_HEIGHT;
+        const bool isFirst = isFirstHeader(index);
+
         if (itemStateProvider && !itemStateProvider->isVisible(index)) {
             return QSize();
-        } else if (index.row() == 0) {
-            return QSize(q->width() - ItemDelegate::HEADER_LEFT_MARGIN, ItemDelegate::FIRST_HEADER_HEIGHT);
-        } else {
-            return QSize(q->width() - ItemDelegate::HEADER_LEFT_MARGIN, ItemDelegate::HEADER_HEIGHT);
+        } else if (isFirst) {
+            minHeight = ItemDelegate::FIRST_HEADER_HEIGHT;
         }
+
+        return QSize(q->width() - ItemDelegate::HEADER_LEFT_MARGIN,
+                qMax(fm.height() + (isFirst ? 4 : ItemDelegate::HEADER_TOP_MARGIN), minHeight));
     }
 
     QPoint mapFromViewport(const QPoint& point) const
@@ -411,7 +436,7 @@ void UrlItemView::paintEvent(QPaintEvent *event)
             }
 
             if (model()->hasChildren(index)) {
-                d->drawHeader(&painter,index,option);
+                d->drawHeader(&painter, index, option);
             } else {
                 if (option.rect.left() == 0) {
                     option.rect.setLeft(option.rect.left() + ItemDelegate::ITEM_LEFT_MARGIN);
