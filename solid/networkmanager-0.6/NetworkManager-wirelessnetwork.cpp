@@ -259,9 +259,9 @@ void NMWirelessNetwork::setActivated(bool activated)
     QString devicePath = uni().left(uni().indexOf("/Networks"));
     kDebug(1441) << devicePath << " - " << d->essid;
     QDBusObjectPath op(devicePath);
-#warning fixme hardcoded false fallback bool in setActiveDevice
+#warning fixme hardcoded false fallback bool in setActiveDevice - fixed, i think
     QList<QVariant> args;
-    args << qVariantFromValue(op) << d->essid << false;
+    args << qVariantFromValue(op) << d->essid;// << false;
     bool error;
     args = NMDBusHelper::serialize(d->authentication, d->essid, args, &error);
     kDebug(1441) << " " << args;

@@ -27,7 +27,7 @@
 #define IW_AUTH_WPA_VERSION_WPA2        0x00000004
 #define IW_AUTH_KEY_MGMT_802_1X 1
 #define IW_AUTH_KEY_MGMT_PSK    2
-
+#define IW_AUTH_CIPHER_NONE 0x00000001
 
 #include <NetworkManager/NetworkManager.h>
 #include <NetworkManager/cipher.h>
@@ -47,7 +47,9 @@ QList<QVariant> NMDBusHelper::serialize(Solid::Control::Authentication * auth, c
 {
     if (auth)
     {
-
+        Solid::Control::AuthenticationNone * none = dynamic_cast<Solid::Control::AuthenticationNone *>(auth) ;
+        if (none)
+            return doSerialize(none, essid, args, error);
         Solid::Control::AuthenticationWep * wep = dynamic_cast<Solid::Control::AuthenticationWep *>(auth) ;
         if (wep)
             return doSerialize(wep, essid, args, error);
@@ -60,6 +62,13 @@ QList<QVariant> NMDBusHelper::serialize(Solid::Control::Authentication * auth, c
     }
     *error = true;
     return QList<QVariant>();
+}
+
+QList<QVariant> NMDBusHelper::doSerialize(Solid::Control::AuthenticationNone * none, const QString  & essid, QList<QVariant>  & args, bool * error)
+{
+    *error = false;
+    args << QVariant(IW_AUTH_CIPHER_NONE);
+    return args;
 }
 
 QList<QVariant> NMDBusHelper::doSerialize(Solid::Control::AuthenticationWep * auth, const QString  & essid, QList<QVariant>  & args, bool * error)
