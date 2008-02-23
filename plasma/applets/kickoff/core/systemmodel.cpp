@@ -28,6 +28,7 @@
 
 // KDE
 #include <KConfigGroup>
+#include <KDebug>
 #include <KDiskFreeSpace>
 #include <KLocalizedString>
 #include <KIcon>
@@ -35,6 +36,7 @@
 #include <KUrl>
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
+#include <KSycoca>
 #include <kfileplacesmodel.h>
 #include <solid/device.h>
 #include <solid/deviceinterface.h>
@@ -96,6 +98,7 @@ public:
                 q, SLOT(startRefreshingUsageInfo()));
         refreshTimer.start(10000);
         QTimer::singleShot(0, q, SLOT(startRefreshingUsageInfo()));
+        connect(KSycoca::self(), SIGNAL(databaseChanged()), q, SLOT(reloadApplications()));
     }
 
     void queryFreeSpace(const QString& mountPoint)
@@ -107,16 +110,28 @@ public:
 
     void loadApplications()
     {
-       KConfigGroup appsGroup = componentData().config()->group("SystemApplications");
-       QStringList defaultApps;
-       defaultApps << "kde4-systemsettings.desktop";
-       appsList = appsGroup.readEntry("DesktopFiles", defaultApps);
+        KConfigGroup appsGroup = componentData().config()->group("SystemApplications");
+        QStringList apps;
+        apps << "kde4-systemsettings.desktop";
+        apps = appsGroup.readEntry("DesktopFiles", apps);
+        appsList.clear();
+
+        foreach (const QString &app, apps) {
+            KService::Ptr service = KService::serviceByStorageId(app);
+
+            if (!service) {
+                continue;
+            }
+
+            appsList << service;
+        }
+        //kDebug() << "*************" << appsList;
     }
 
     SystemModel * const q;
     KFilePlacesModel *placesModel;
     QStringList topLevelSections;
-    QStringList appsList;
+    KService::List appsList;
     QList<QString> mountPointsQueue;
     QMap<QString, UsageInfo> usageByMountpoint;
     QTimer refreshTimer;
@@ -192,16 +207,24 @@ QModelIndex SystemModel::parent(const QModelIndex &item) const
 int SystemModel::rowCount(const QModelIndex &parent) const
 {
     if (!parent.isValid()) {
-        return LAST_ROW+1;
+        return LAST_ROW + 1;
     } else if (!parent.parent().isValid()) {
-        if (parent.row()==APPLICATIONS_ROW) {
-            return d->appsList.size();
-        } else {
-            return d->placesModel->rowCount();
+        switch (parent.row()) {
+            case APPLICATIONS_ROW:
+                return d->appsList.size();
+                break;
+            case BOOKMARKS_ROW:
+                return d->placesModel->rowCount();
+                break;
+            case REMOVABLE_ROW:
+                return 0; //FIXME
+                break;
+            default:
+                return 0;
         }
-    } else {
-        return 0;
     }
+
+    return 0;
 }
 
 int SystemModel::columnCount(const QModelIndex &/*parent*/) const
@@ -224,15 +247,11 @@ QVariant SystemModel::data(const QModelIndex &index, int role) const
     }
 
     if (index.internalId() - 1 == APPLICATIONS_ROW) {
-        if (d->appsList.count() >= index.row()) {
+        if (d->appsList.count() <= index.row()) {
             return QVariant();
         }
 
-        KService::Ptr service = KService::serviceByStorageId(d->appsList[index.row()]);
-
-        if (!service) {
-            return QVariant();
-        }
+        KService::Ptr service = d->appsList[index.row()];
 
         switch(role) {
         case Qt::DisplayRole:
@@ -355,6 +374,11 @@ void SystemModel::startRefreshingUsageInfo()
     if (!d->mountPointsQueue.isEmpty()) {
         d->queryFreeSpace(d->mountPointsQueue.takeFirst());
     }
+}
+
+void SystemModel::reloadApplications()
+{
+    d->loadApplications();
 }
 
 void SystemModel::freeSpaceInfoAvailable(const QString& mountPoint, quint64,

@@ -50,6 +50,7 @@ public:
 
 private Q_SLOTS:
     void startRefreshingUsageInfo();
+    void reloadApplications();
     void freeSpaceInfoAvailable(const QString& mountPoint, quint64 kbSize,
                                 quint64 kbUsed, quint64 kbAvailable);
 
