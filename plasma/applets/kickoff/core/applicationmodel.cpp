@@ -86,44 +86,45 @@ public:
     QList<AppNode*> children;
 };
 
-static bool AppNodeLessThan(AppNode *n1, AppNode *n2)
-{
-    if (n1->isDir) {
-        if (n2->isDir) {
-            return n1->appName.compare(n2->appName, Qt::CaseInsensitive) < 0;
-        } else {
-            return true;
-        }
-    } else {
-        if (n2->isDir) {
-            return false;
-        } else {
-            return n1->appName.compare(n2->appName, Qt::CaseInsensitive) < 0;
-        }
-    }
-    return true;
-}
-
 class ApplicationModelPrivate
 {
 public:
     ApplicationModelPrivate(ApplicationModel *qq)
-        : q(qq), root(new AppNode()) 
-          , duplicatePolicy(ApplicationModel::ShowDuplicatesPolicy)
+        : q(qq),
+          root(new AppNode()),
+          duplicatePolicy(ApplicationModel::ShowDuplicatesPolicy),
+          sortOrder(Qt::AscendingOrder),
+          sortColumn(Qt::DisplayRole)
     {
     }
+
     ~ApplicationModelPrivate()
     {
         delete root;
     }
 
+    static bool AppNodeLessThan(AppNode *n1, AppNode *n2);
     void fillNode(const QString &relPath, AppNode *node);
     static QHash<QString,QString> iconNameMap(); 
 
     ApplicationModel *q;
     AppNode *root;
     ApplicationModel::DuplicatePolicy duplicatePolicy;
+    Qt::SortOrder sortOrder;
+    int sortColumn;
 };
+
+bool ApplicationModelPrivate::AppNodeLessThan(AppNode *n1, AppNode *n2)
+{
+    if (n1->isDir != n2->isDir) {
+        return n1->isDir;
+    }
+
+    const QString s1 = n1->genericName.isEmpty() ? n1->appName : n1->genericName;
+    const QString s2 = n2->genericName.isEmpty() ? n2->appName : n2->genericName;
+
+    return s1.compare(s2, Qt::CaseInsensitive) < 0;
+}
 
 void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
 {
@@ -134,8 +135,8 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
 
    // application name <-> service map for detecting duplicate entries
    QHash<QString,KService::Ptr> existingServices;
-   for( KServiceGroup::List::ConstIterator it = list.begin();
-       it != list.end(); ++it)
+   for (KServiceGroup::List::ConstIterator it = list.begin();
+        it != list.end(); ++it)
    {
       QString icon;
       QString appName;
@@ -210,10 +211,9 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
       newnode->parent = node;
       node->children.append(newnode);
    }
-   qStableSort(node->children.begin(), node->children.end(), AppNodeLessThan);
+
+   qStableSort(node->children.begin(), node->children.end(), ApplicationModelPrivate::AppNodeLessThan);
 }
-
-
 
 ApplicationModel::ApplicationModel(QObject *parent)
     : QAbstractItemModel(parent), d(new ApplicationModelPrivate(this))

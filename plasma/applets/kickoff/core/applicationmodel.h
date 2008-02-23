@@ -59,6 +59,7 @@ class ApplicationModel : public QAbstractItemModel
              */
             ShowLatestOnlyPolicy
         };
+
         /** 
          * Sets the policy for handling duplicate applications.
          * See DuplicatePolicy
