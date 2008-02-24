@@ -141,9 +141,11 @@ public:
 
         if (!first) {
             QLinearGradient gradient(option.rect.topLeft(), option.rect.topRight());
-            gradient.setColorAt(0.0, option.palette.mid().color());
-            gradient.setColorAt(0.5, option.palette.midlight().color());
-            gradient.setColorAt(1.0, option.palette.mid().color());
+            gradient.setColorAt(0.0, Qt::transparent);
+            gradient.setColorAt(0.1, option.palette.midlight().color());
+            gradient.setColorAt(0.5, option.palette.mid().color());
+            gradient.setColorAt(0.9, option.palette.midlight().color());
+            gradient.setColorAt(1.0, Qt::transparent);
             painter->setPen(QPen(gradient, 1));
 
             painter->drawLine(option.rect.x() + 6, option.rect.y() + dy + 2,
