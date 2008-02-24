@@ -102,8 +102,6 @@ private:
     int         mPriority;
     bool        mBusy;
     K3Process    mHackProc;
-    int         mRootWidth;
-    int         mRootHeight;
     QString     mSaverExec;
     QString     mSaver;
     bool        mOpenGLVisual;

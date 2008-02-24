@@ -124,10 +124,9 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     QX11Info info;
     XGetWindowAttributes(QX11Info::display(), RootWindow(QX11Info::display(),
                                                          info.screen()), &rootAttr);
-    mRootWidth = rootAttr.width;
-    mRootHeight = rootAttr.height;
     XSelectInput( QX11Info::display(), QX11Info::appRootWindow(),
                   SubstructureNotifyMask | rootAttr.your_event_mask );
+    setGeometry(0, 0, rootAttr.width, rootAttr.height);
 
     // virtual root property
     gXA_VROOT = XInternAtom (QX11Info::display(), "__SWM_VROOT", False);
@@ -461,7 +460,7 @@ void LockProcess::createSaverWindow()
     Window w = XCreateWindow( x11Info().display(), RootWindow( x11Info().display(), x11Info().screen()),
         x(), y(), width(), height(), 0, depth, InputOutput, visual, flags, &attrs );
 
-    create( w );
+    create( w, false, true );
 
     // Some xscreensaver hacks check for this property
     const char *version = "KDE 4.0";
@@ -485,7 +484,6 @@ void LockProcess::createSaverWindow()
     setAttribute(Qt::WA_PaintOutsidePaintEvent, true); // for bitBlt in resume()
 
     setCursor( Qt::BlankCursor );
-    setGeometry(0, 0, mRootWidth, mRootHeight);
 
     kDebug(1204) << "Saver window Id: " << winId();
 }
