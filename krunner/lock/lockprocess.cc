@@ -1119,7 +1119,7 @@ void LockProcess::lockXF86()
     {
         int major, minor;
         if( XF86MiscQueryVersion( QX11Info::display(), &major, &minor )
-            && major >= 0 && minor >= 5 )
+            && (major > 0 || minor >= 5) )
             can_do_xf86_lock = Yes;
         else
             can_do_xf86_lock = No;
