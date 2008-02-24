@@ -40,6 +40,7 @@ FullView::FullView(const QString &ff, QWidget *parent)
       m_containment(0),
       m_applet(0)
 {
+    setFrameStyle(QFrame::NoFrame);
     QString formfactor = ff.toLower();
     if (formfactor.isEmpty() || formfactor == "planar") {
         m_formfactor = Plasma::Planar;
