@@ -355,14 +355,17 @@ QRect FlipScrollView::visualRect(const QModelIndex& index) const
     }
     return itemRect;
 }
+
 int FlipScrollView::horizontalOffset() const
 {
     return 0;
 }
+
 int FlipScrollView::verticalOffset() const
 {
     return verticalScrollBar()->value();
 }
+
 QRegion FlipScrollView::visualRegionForSelection(const QItemSelection& selection) const
 {
     QRegion region;

@@ -50,7 +50,7 @@ public:
     // margin is equivalent to ItemDelegate::BACK_ARROW_WIDTH + ItemDelegate::BACK_ARROW_SPACING
     static const int HEADER_LEFT_MARGIN = 5;
     static const int HEADER_TOP_MARGIN = 15;
-    static const int HEADER_BOTTOM_MARGIN = 10;
+    static const int HEADER_BOTTOM_MARGIN = 4;
     static const int HEADER_HEIGHT = 35;
     static const int FIRST_HEADER_HEIGHT = 20;
 

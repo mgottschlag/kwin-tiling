@@ -94,6 +94,9 @@ public:
                 visualColumn = 0;
             } else {
                 QSize childSize = calculateItemSize(child);
+                kDebug() <<  QRect(QPoint(horizontalOffset,verticalOffset),
+                                             childSize);
+
                 itemRects.insert(child,QRect(QPoint(horizontalOffset,verticalOffset),
                                              childSize));
 
@@ -114,10 +117,11 @@ public:
                 }
 
                 if (visualColumn >= MAX_COLUMNS || wasLastRow || nextItemIsBranch) {
-                    verticalOffset += childSize.height();
                     horizontalOffset = 0; 
                     visualColumn = 0;
                 }
+
+                verticalOffset += childSize.height();
             }
         }
         contentsHeight = verticalOffset;
@@ -150,7 +154,7 @@ public:
         painter->setFont(KGlobalSettings::smallestReadableFont());
         painter->setPen(QPen(option.palette.dark(), 0));
         QString text = index.data(Qt::DisplayRole).value<QString>();
-        painter->drawText(option.rect.adjusted(0, dy + 4, -rightMargin, 0),
+        painter->drawText(option.rect.adjusted(0, dy, -rightMargin, 0),
                           Qt::AlignVCenter|Qt::AlignRight, text);
         painter->restore();
     }
@@ -210,7 +214,8 @@ public:
         }
 
         return QSize(q->width() - ItemDelegate::HEADER_LEFT_MARGIN,
-                     qMax(fm.height() + (isFirst ? 4 : ItemDelegate::HEADER_TOP_MARGIN), minHeight));
+                     qMax(fm.height() + (isFirst ? 4 : ItemDelegate::HEADER_TOP_MARGIN), minHeight)
+                     + ItemDelegate::HEADER_BOTTOM_MARGIN) ;
     }
 
     QPoint mapFromViewport(const QPoint& point) const
