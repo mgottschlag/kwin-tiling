@@ -173,8 +173,10 @@ int kScreenSaverMain( int argc, char** argv, KScreenSaverInterface& screenSaverI
     {
         demoWidget = new DemoWindow();
         demoWidget->setAttribute(Qt::WA_NoSystemBackground);
-        saveWin = demoWidget->winId();
+        demoWidget->setAttribute(Qt::WA_PaintOnScreen);
+        demoWidget->show();
         app.processEvents();
+        saveWin = demoWidget->winId();
     }
 
     target = screenSaverInterface.create( saveWin );
