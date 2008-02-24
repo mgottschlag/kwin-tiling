@@ -26,12 +26,12 @@
 #include <unistd.h>
 
 #ifndef _SC_PHYS_PAGES
-    #ifdef USE_FREEBSD
+    #ifdef Q_OS_FREEBSD
     #include <sys/types.h>
     #include <sys/sysctl.h>
     #endif
 
-    #ifdef USE_NETBSD
+    #ifdef Q_OS_NETBSD
     #include <sys/param.h>
     #include <sys/sysctl.h>
     #endif
@@ -162,7 +162,7 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     int memorySize = sysconf(_SC_PHYS_PAGES);
     memorySize *= sysconf(_SC_PAGESIZE) / 1024;
 #else
-#ifdef USE_FREEBSD
+#ifdef Q_OS_FREEBSD
     int sysctlbuf[2];
     size_t size = sizeof(sysctlbuf);
     int memorySize;
@@ -177,7 +177,7 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
         }
     }
 #endif
-#ifdef USE_NETBSD
+#ifdef Q_OS_NETBSD
     size_t memorySize;
     size_t len;
     static int mib[] = { CTL_HW, HW_PHYSMEM };
