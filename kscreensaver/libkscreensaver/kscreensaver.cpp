@@ -69,7 +69,6 @@ KScreenSaver::KScreenSaver( WId id ) : QWidget()
     if ( h == 0 ) h = 420;
     resize( w, h );
     QApplication::sendPostedEvents();
-    show();
 }
 
 KScreenSaver::~KScreenSaver()
@@ -93,7 +92,7 @@ bool KScreenSaver::eventFilter( QObject *o, QEvent *e )
     // make sure events get to the original window owner
     if ( d->owner && o == this && QEvent::Paint != e->type()  ) {
 	QApplication::sendEvent( d->owner, e );
-	return false;
+	return true;
     }
 
     return QWidget::eventFilter( o, e );
