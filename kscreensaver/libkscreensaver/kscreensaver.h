@@ -62,8 +62,6 @@ protected:
      */
     void embed( QWidget *widget );
 
-    bool eventFilter( QObject *o, QEvent * );
-
 private:
     KScreenSaverPrivate *d;
 };

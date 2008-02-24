@@ -35,12 +35,6 @@ typedef WId Window;
 
 //-----------------------------------------------------------------------------
 
-class KScreenSaverPrivate
-{
-public:
-    QWidget *owner;
-};
-
 KScreenSaver::KScreenSaver( WId id ) : QWidget()
 {
     Window root;
@@ -48,11 +42,6 @@ KScreenSaver::KScreenSaver( WId id ) : QWidget()
     unsigned int au;
     unsigned int w = 0;
     unsigned int h = 0;
-
-    d = new KScreenSaverPrivate;
-    d->owner = QWidget::find( id );
-    if ( d->owner )
-	installEventFilter( this );
 
     if ( id )
     {
@@ -74,7 +63,6 @@ KScreenSaver::KScreenSaver( WId id ) : QWidget()
 KScreenSaver::~KScreenSaver()
 {
     destroy( false, false );
-    delete d;
 }
 
 void KScreenSaver::embed( QWidget *w )
@@ -85,17 +73,6 @@ void KScreenSaver::embed( QWidget *w )
 #endif
     w->setGeometry( 0, 0, width(), height() );
     QApplication::sendPostedEvents();
-}
-
-bool KScreenSaver::eventFilter( QObject *o, QEvent *e )
-{
-    // make sure events get to the original window owner
-    if ( d->owner && o == this && QEvent::Paint != e->type()  ) {
-	QApplication::sendEvent( d->owner, e );
-	return true;
-    }
-
-    return QWidget::eventFilter( o, e );
 }
 
 KScreenSaverInterface::~KScreenSaverInterface()
