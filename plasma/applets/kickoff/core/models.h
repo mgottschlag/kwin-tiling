@@ -55,14 +55,15 @@ namespace Kickoff
         SubTitleRole = Qt::UserRole+1,
         FirstDataRole = SubTitleRole,
         /** The URL to be opened when executing the item. */
-        UrlRole = Qt::UserRole+2,
+        UrlRole = Qt::UserRole + 2,
         /** The Solid device identifier for items which represent devices. */
-        DeviceUdiRole = Qt::UserRole+3,
+        DeviceUdiRole = Qt::UserRole + 3,
         /** The amount of space (in Kilobytes) used for items which represent storage. */
-        DiskUsedSpaceRole = Qt::UserRole+4,
+        DiskUsedSpaceRole = Qt::UserRole + 4,
         /** The amount of free space (in Kilobytes) for items which represent storage. */
-        DiskFreeSpaceRole = Qt::UserRole+5,
-        LastDataRole = DiskFreeSpaceRole
+        DiskFreeSpaceRole = Qt::UserRole + 5,
+        SubTitleMandatoryRole = Qt::UserRole + 6,
+        LastDataRole = SubTitleMandatoryRole
     };
 
     /**

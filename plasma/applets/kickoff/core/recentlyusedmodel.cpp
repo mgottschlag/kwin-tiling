@@ -77,12 +77,13 @@ public:
         // remove existing item if any
         KDesktopFile desktopFile(desktopPath);
         KUrl documentUrl = desktopFile.readUrl();
-        
+
         removeExistingItem(documentUrl.url());
-       
+
         QStandardItem *documentItem = StandardItemFactory::createItemForUrl(desktopPath);   
+        documentItem->setData(true, Kickoff::SubTitleMandatoryRole);
         itemsByPath.insert(desktopPath,documentItem);
-    
+
         //kDebug() << "Document item" << documentItem << "text" << documentItem->text() << "url" << documentUrl.url();    
         if (append) {
             recentDocumentItem->appendRow(documentItem);

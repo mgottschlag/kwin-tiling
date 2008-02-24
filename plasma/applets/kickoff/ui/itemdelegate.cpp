@@ -71,16 +71,18 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
                                          contentRect.adjusted(0, 2, 0, 0));
     QString titleText = index.data(Qt::DisplayRole).value<QString>();
     QString subTitleText = index.data(SubTitleRole).value<QString>();
-    bool uniqueTitle = true;
-    QModelIndex sib = index.sibling(index.row() + 1, index.column());
-    if (sib.isValid()) {
-        uniqueTitle = sib.data(Qt::DisplayRole).value<QString>() != titleText;
-    }
-
+    bool uniqueTitle = !index.data(SubTitleMandatoryRole).value<bool>();// true;
     if (uniqueTitle) {
-        sib = index.sibling(index.row() + -1, index.column());
+        QModelIndex sib = index.sibling(index.row() + 1, index.column());
         if (sib.isValid()) {
             uniqueTitle = sib.data(Qt::DisplayRole).value<QString>() != titleText;
+        }
+
+        if (uniqueTitle) {
+            sib = index.sibling(index.row() + -1, index.column());
+            if (sib.isValid()) {
+                uniqueTitle = sib.data(Qt::DisplayRole).value<QString>() != titleText;
+            }
         }
     }
 
@@ -129,9 +131,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
 
     if (hover || !uniqueTitle) {
         // draw sub-title
-        if (!hover) {
-            painter->setPen(option.palette.color(QPalette::Mid));
-        }
+        painter->setPen(QPen(option.palette.dark(), 1));
         painter->setFont(subTitleFont);
         painter->drawText(subTitleRect, Qt::AlignLeft|Qt::AlignVCenter, subTitleText);
     }

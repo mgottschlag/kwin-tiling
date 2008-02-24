@@ -94,8 +94,7 @@ public:
                 visualColumn = 0;
             } else {
                 QSize childSize = calculateItemSize(child);
-                kDebug() <<  QRect(QPoint(horizontalOffset,verticalOffset),
-                                             childSize);
+                //kDebug() <<  QRect(QPoint(horizontalOffset,verticalOffset), childSize);
 
                 itemRects.insert(child,QRect(QPoint(horizontalOffset,verticalOffset),
                                              childSize));
