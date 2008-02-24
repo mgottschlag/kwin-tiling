@@ -38,6 +38,8 @@
 #include <KAuthorized>
 #include <KDesktopFile>
 #include <kservicetypetrader.h>
+#include <kmacroexpander.h>
+#include <kshell.h>
 
 #include <QtGui/QFrame>
 #include <QLabel>
@@ -796,42 +798,26 @@ bool LockProcess::startLock()
 
 bool LockProcess::startHack()
 {
+    kDebug(1204) << "Starting hack:" << mSaverExec;
+
     if (mSaverExec.isEmpty() || mForbidden)
     {
         hackExited();
         return false;
     }
 
-    QTextStream ts(&mSaverExec, QIODevice::ReadOnly);
-    QString word;
-    ts >> word;
-    QString path = KStandardDirs::findExe(word);
+    QHash<QChar, QString> keyMap;
+    keyMap.insert('w', QString::number(winId()));
+    mHackProc << KShell::splitArgs(KMacroExpander::expandMacrosShellQuote(mSaverExec, keyMap));
 
-    if (!path.isEmpty())
+    if (mHackProc.start())
     {
-        mHackProc << path;
-
-        kDebug(1204) << "Starting hack: " << path;
-
-        while (!ts.atEnd())
-        {
-            ts >> word;
-            if (word == "%w")
-            {
-                word = word.setNum(winId());
-            }
-            mHackProc << word;
-        }
-
-            if (mHackProc.start() == true)
-            {
 #ifdef HAVE_SETPRIORITY
-                setpriority(PRIO_PROCESS, mHackProc.pid(), mPriority);
+        setpriority(PRIO_PROCESS, mHackProc.pid(), mPriority);
 #endif
-                //bitBlt(this, 0, 0, &mOriginal);
-                return true;
-            }
+        return true;
     }
+
     hackExited();
     return false;
 }
