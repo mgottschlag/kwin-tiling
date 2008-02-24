@@ -115,18 +115,20 @@ public:
     {
         Q_UNUSED(headerIndex)
         QFontMetrics fm(KGlobalSettings::smallestReadableFont());
-        const int top = -q->verticalScrollBar()->value() - 1;
+        const int top = q->verticalScrollBar()->value() + ItemDelegate::TOP_OFFSET;
         int minHeight = ItemDelegate::FIRST_HEADER_HEIGHT;
 
-        return QRect(backArrowRect().right() + ItemDelegate::BACK_ARROW_SPACING, top,
-                     q->width() - backArrowRect().width() - ItemDelegate::BACK_ARROW_SPACING + 1,
-                     qMax(fm.height() + 4, minHeight) + ItemDelegate::HEADER_TOP_MARGIN);
+        QRect rect(backArrowRect().right() + ItemDelegate::BACK_ARROW_SPACING, top,
+                   q->width() - backArrowRect().width() - ItemDelegate::BACK_ARROW_SPACING + 1,
+                   qMax(fm.height(), minHeight) + 4 + ItemDelegate::HEADER_BOTTOM_MARGIN);
+
+        //kDebug() << "flip header is" << rect;
+        return rect;
     }
 
     void drawHeader(QPainter *painter,const QRect& rect,const QModelIndex& headerIndex)
     {
         QFontMetrics fm(KGlobalSettings::smallestReadableFont());
-        int top = rect.bottom() - fm.height() - ItemDelegate::HEADER_BOTTOM_MARGIN;
         QModelIndex branchIndex = headerIndex;
 
         painter->save();
@@ -146,10 +148,11 @@ public:
             }
         }
 
-        const int rightMargin = q->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 18;
-        QRect textRect(rect.left(), rect.bottom() - fm.height() - 1, rect.width() - rightMargin, fm.height());
+        const int rightMargin = q->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 6;
+        const int top = rect.bottom() - fm.height() - 1 - ItemDelegate::HEADER_BOTTOM_MARGIN;
+        QRect textRect(rect.left(), top, rect.width() - rightMargin, fm.height());
         painter->setPen(QPen(q->palette().dark(), 1));
-        painter->drawText(textRect, Qt::AlignRight, currentText);
+        painter->drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, currentText);
 
         if (!previousText.isEmpty()) {
             textRect.adjust(0, 0, - fm.width(" " + currentText), 0);
@@ -296,16 +299,20 @@ void FlipScrollView::scrollTo(const QModelIndex& index , ScrollHint hint)
         }
     }
 }
+
 bool FlipScrollView::isIndexHidden(const QModelIndex&) const
 {
     return false;
 }
+
 QRect FlipScrollView::visualRect(const QModelIndex& index) const
 {
     int topOffset = d->headerRect(index.parent()).height();
     int leftOffset = d->backArrowRect().width() + ItemDelegate::BACK_ARROW_SPACING;
 
-    if (index.parent() != d->currentRoot() && index.parent() != d->previousRoot() && index.parent() != (QModelIndex)d->hoveredIndex) {
+    if (index.parent() != d->currentRoot() &&
+        index.parent() != d->previousRoot() &&
+        index.parent() != (QModelIndex)d->hoveredIndex) {
         return QRect();
     }
 

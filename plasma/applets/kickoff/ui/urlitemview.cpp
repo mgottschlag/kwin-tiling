@@ -83,7 +83,9 @@ public:
 
             if (q->model()->hasChildren(child)) {
                 QSize childSize = calculateHeaderSize(child);
-                itemRects.insert(child, QRect(QPoint(ItemDelegate::HEADER_LEFT_MARGIN, verticalOffset), childSize));
+                QRect rect(QPoint(ItemDelegate::HEADER_LEFT_MARGIN, verticalOffset), childSize);
+                //kDebug() << "header is" << rect;
+                itemRects.insert(child, rect);
 
                 verticalOffset += childSize.height();
                 horizontalOffset = 0; 
@@ -128,7 +130,7 @@ public:
                     const QStyleOptionViewItem& option)
     {
         const bool first = isFirstHeader(index);
-        const int rightMargin = q->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 18;
+        const int rightMargin = q->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 6;
         const int dy = (first ? 4 : ItemDelegate::HEADER_TOP_MARGIN);
 
         painter->save();
@@ -142,7 +144,7 @@ public:
             painter->setPen(QPen(gradient, 1));
 
             painter->drawLine(option.rect.x() + 6, option.rect.y() + dy + 2,
-                              option.rect.right() - rightMargin + 12, option.rect.y() + dy + 2);
+                              option.rect.right() - rightMargin , option.rect.y() + dy + 2);
         }
 
         painter->setFont(KGlobalSettings::smallestReadableFont());
@@ -208,7 +210,7 @@ public:
         }
 
         return QSize(q->width() - ItemDelegate::HEADER_LEFT_MARGIN,
-                qMax(fm.height() + (isFirst ? 4 : ItemDelegate::HEADER_TOP_MARGIN), minHeight));
+                     qMax(fm.height() + (isFirst ? 4 : ItemDelegate::HEADER_TOP_MARGIN), minHeight));
     }
 
     QPoint mapFromViewport(const QPoint& point) const

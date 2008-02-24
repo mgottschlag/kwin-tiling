@@ -262,10 +262,12 @@ Launcher::Launcher(QWidget *parent)
     layout->setSpacing(0);
     layout->setMargin(0);
 
+    const int rightHeaderMargin = style()->pixelMetric(QStyle::PM_ScrollBarExtent);
+
     d->searchBar = new SearchBar(this);
+    d->searchBar->setContentsMargins(0, 0, rightHeaderMargin, 0);
     d->searchBar->installEventFilter(this);
     d->contentArea = new QStackedWidget(this);
-    //d->contentArea->setStyleSheet("QStackedWidget { border-top: 1px solid palette(mid); border-bottom: 1px solid palette(mid); }");
     d->contentSwitcher = new TabBar(this);
     d->contentSwitcher->installEventFilter(this);
     d->contentSwitcher->setIconSize(QSize(48,48));
@@ -303,9 +305,9 @@ Launcher::Launcher(QWidget *parent)
     brandingLayout->setMargin(3);
     brandingLayout->addSpacing(ItemDelegate::ITEM_LEFT_MARGIN - 3);
     brandingLayout->addWidget(userinfo);
-    brandingLayout->insertStretch(2);
+    brandingLayout->addStretch(2);
     brandingLayout->addWidget(branding);
-    brandingLayout->insertSpacing(2, 10);
+    brandingLayout->addSpacing(rightHeaderMargin);
     d->footer->setLayout(brandingLayout);
 
     layout->addWidget(d->footer);
