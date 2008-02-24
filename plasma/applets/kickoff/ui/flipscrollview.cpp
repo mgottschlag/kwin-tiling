@@ -115,7 +115,7 @@ public:
     {
         Q_UNUSED(headerIndex)
         QFontMetrics fm(KGlobalSettings::smallestReadableFont());
-        const int top = q->verticalScrollBar()->value() + ItemDelegate::TOP_OFFSET;
+        const int top = ItemDelegate::TOP_OFFSET - q->verticalScrollBar()->value();
         int minHeight = ItemDelegate::FIRST_HEADER_HEIGHT;
 
         QRect rect(backArrowRect().right() + ItemDelegate::BACK_ARROW_SPACING, top,
