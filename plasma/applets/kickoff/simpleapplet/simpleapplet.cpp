@@ -115,7 +115,7 @@ public:
                         menuview->addAction(a);
                     }
                 }
-                else {
+                else if( action->menu() || ! view->indexForAction(action).data(Kickoff::UrlRole).isNull() ) {
                     menuview->addAction(action);
                 }
             }
