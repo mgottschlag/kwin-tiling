@@ -64,7 +64,7 @@ void ServiceRunner::match(Plasma::SearchContext *search)
         seen[service->exec()] = true;
     }
 
-    QString query = QString("exist Exec and ('%1' ~in Keywords or '%2' ~~ GenericName or '%3' ~~ Name)").arg(term, term, term);
+    QString query = QString("exist Exec and ('%1' ~subin Keywords or '%2' ~~ GenericName or '%3' ~~ Name)").arg(term, term, term);
     const KService::List services = KServiceTypeTrader::self()->query("Application", query);
 
     //kDebug() << "got " << services.count() << " services from " << query;
