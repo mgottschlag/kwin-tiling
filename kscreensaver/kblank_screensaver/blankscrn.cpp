@@ -151,9 +151,9 @@ void KBlankSaver::readSettings()
 
 void KBlankSaver::blank()
 {
+	setAttribute( Qt::WA_NoSystemBackground, false );
 	QPalette palette;
 	palette.setColor( backgroundRole(), color );
 	setPalette(palette);
-	update();
 }
 
