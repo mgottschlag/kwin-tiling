@@ -297,6 +297,7 @@ Launcher::Launcher(QWidget *parent)
     }
     QPixmap icon = QPixmap(iconname);
     branding->setAutoRaise(false);
+    branding->setToolButtonStyle(Qt::ToolButtonIconOnly);
     branding->setIcon(icon);
     branding->setIconSize(icon.size());
     connect( branding, SIGNAL(clicked()), SLOT(openHomepage()));
