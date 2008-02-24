@@ -104,13 +104,13 @@ void TabBar::paintEvent(QPaintEvent *event)
         } else {
             QPen p = painter.pen();
             painter.setPen(QPen(palette().mid(), 1));
-            QPoint left = tabRect(i).topLeft();
+            QPoint left = tabRect(i).topLeft() + QPoint(0, 1);
 
             if (i - 1 == currentTab) {
                 left += QPoint(2, 0);
             }
 
-            painter.drawLine(left, tabRect(i).topRight());
+            painter.drawLine(left, tabRect(i).topRight() + QPoint(0, 1));
             painter.setPen(p);
 
             if (m_animStates[i] > 0) {
@@ -118,19 +118,10 @@ void TabBar::paintEvent(QPaintEvent *event)
             }
         }
 
-        if (i == currentTab) { //m_animStates[i] > 0) {
+        if (i == currentTab) {
             // Draws the selected item with a gradient
-            qreal alpha = m_animStates[i] / qreal(m_animator.endFrame());
-            QLinearGradient g(0, 0, 0, tabRect(i).height());
-            QColor base(palette().highlight().color());
-            base.setAlphaF(alpha);
-            g.setColorAt(0, base);
-            g.setColorAt(0.3, base.lighter(110));
-            g.setColorAt(1, base.lighter(125));
-            QBrush bgBrush(g);
-
             const int radius = 6;
-            QRect rect = tabRect(i).adjusted(0, 0, 0, -3);
+            QRect rect = tabRect(i).adjusted(1, 0, 0, -3);
 
             QPainterPath path(rect.topLeft());
             // Top side
@@ -167,9 +158,12 @@ void TabBar::paintEvent(QPaintEvent *event)
         tabIcon(i).paint(&painter,iconRect);
 
         QRect textRect = rect;
-        textRect.setTop(textRect.bottom()-textHeight);
-        painter.drawText(textRect,Qt::AlignCenter|Qt::TextHideMnemonic,tabText(i));
+        textRect.setTop(textRect.bottom() - textHeight);
+        painter.drawText(textRect, Qt::AlignCenter|Qt::TextHideMnemonic, tabText(i));
     }
+
+    painter.setPen(QPen(palette().base(), 1));
+    painter.drawLine(rect().topLeft(), rect().topRight());
 }
 
 void TabBar::leaveEvent(QEvent *event)
