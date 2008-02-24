@@ -27,6 +27,8 @@
 #include <QPushButton>
 #include <QSlider>
 #include <QTimer>
+#include <kmacroexpander.h>
+#include <kshell.h>
 
 //Added by qt3to4:
 #include <QPixmap>
@@ -327,9 +329,8 @@ KScreenSaver::~KScreenSaver()
     {
         if (mPreviewProc->isRunning())
         {
-            int pid = mPreviewProc->pid();
             mPreviewProc->kill( );
-            waitpid(pid, (int *) 0,0);
+            mPreviewProc->wait( );
         }
         delete mPreviewProc;
     }
@@ -590,28 +591,11 @@ void KScreenSaver::slotPreviewExited(K3Process *)
         mPreviewProc->clearArguments();
 
         QString saver = mSaverList.at(mSelected)->saver();
-        QTextStream ts(&saver, QIODevice::ReadOnly);
+        QHash<QChar, QString> keyMap;
+        keyMap.insert('w', QString::number(mMonitor->winId()));
+        *mPreviewProc << KShell::splitArgs(KMacroExpander::expandMacrosShellQuote(saver, keyMap));
 
-        QString word;
-        ts >> word;
-        QString path = findExe(word);
-
-        if (!path.isEmpty())
-        {
-            (*mPreviewProc) << path;
-
-            while (!ts.atEnd())
-            {
-                ts >> word;
-                if (word == "%w")
-                {
-                    word = word.setNum(mMonitor->winId());
-                }
-                (*mPreviewProc) << word;
-            }
-
-            mPreviewProc->start();
-        }
+        mPreviewProc->start();
     }
 
     mPrevSelected = mSelected;
@@ -757,53 +741,39 @@ void KScreenSaver::slotTest()
 
     if (!mTestProc) {
         mTestProc = new K3Process;
+    } else {
+        mPreviewProc->kill();
+        mPreviewProc->wait();
+        mTestProc->clearArguments();
     }
 
-    mTestProc->clearArguments();
-    QString saver = mSaverList.at(mSelected)->saver();
-    QTextStream ts(&saver, QIODevice::ReadOnly);
-
-    QString word;
-    ts >> word;
-    QString path = findExe(word);
-
-    if (!path.isEmpty())
+    if (!mTestWin)
     {
-        (*mTestProc) << path;
+        mTestWin = new TestWin();
+        mTestWin->setAttribute(Qt::WA_NoSystemBackground, true);
+        mTestWin->setAttribute(Qt::WA_PaintOnScreen, true);
+        mTestWin->setGeometry(qApp->desktop()->geometry());
+    }
 
-        if (!mTestWin)
-        {
-            mTestWin = new TestWin();
-            mTestWin->setAttribute(Qt::WA_NoSystemBackground, true);
-            mTestWin->setAttribute(Qt::WA_PaintOnScreen, true);
-            mTestWin->setGeometry(qApp->desktop()->geometry());
-        }
-
-        mTestWin->show();
-        mTestWin->raise();
-        mTestWin->setFocus();
+    mTestWin->show();
+    mTestWin->raise();
+    mTestWin->setFocus();
 	// So that hacks can XSelectInput ButtonPressMask
 	XSelectInput(QX11Info::display(), mTestWin->winId(), widgetEventMask );
 
 	grabMouse();
 	grabKeyboard();
 
-        mTestBt->setEnabled( false );
-	mPreviewProc->kill();
+    mTestBt->setEnabled( false );
 
-        while (!ts.atEnd())
-        {
-            ts >> word;
-            if (word == "%w")
-            {
-                word = word.setNum(mTestWin->winId());
-            }
-            (*mTestProc) << word;
-        }
+    QString saver = mSaverList.at(mSelected)->saver();
+    QHash<QChar, QString> keyMap;
+    keyMap.insert('w', QString::number(mTestWin->winId()));
+    *mTestProc << KShell::splitArgs(KMacroExpander::expandMacrosShellQuote(saver, keyMap));
 
-	mTesting = true;
-        mTestProc->start(K3Process::NotifyOnExit);
-    }
+    mTestProc->start(K3Process::NotifyOnExit);
+
+    mTesting = true;
 }
 
 //---------------------------------------------------------------------------
@@ -812,6 +782,7 @@ void KScreenSaver::slotStopTest()
 {
     if (mTestProc->isRunning()) {
         mTestProc->kill();
+        mTestProc->wait();
     }
     releaseMouse();
     releaseKeyboard();
