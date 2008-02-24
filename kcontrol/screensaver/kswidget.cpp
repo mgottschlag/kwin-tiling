@@ -17,7 +17,7 @@ KSWidget::KSWidget( QWidget* parent, Qt::WindowFlags wf )
     Visual* visual = CopyFromParent;
     int depth = CopyFromParent;
     XSetWindowAttributes attrs;
-    int flags = 0;
+    int flags = parentWidget() ? 0 : CWOverrideRedirect;
     if( true /*mOpenGLVisual*/ )
     {
         static int attribs[][ 15 ] =
@@ -57,11 +57,12 @@ KSWidget::KSWidget( QWidget* parent, Qt::WindowFlags wf )
             }
         }
     }
+    attrs.override_redirect = 1;
     Window w = XCreateWindow( x11Info().display(), RootWindow( x11Info().display(), x11Info().screen()),
         x(), y(), width(), height(), 0, depth, InputOutput, visual, flags, &attrs );
     if( parentWidget())
         XReparentWindow( x11Info().display(), w, parentWidget()->winId(), 0, 0 );
-    create( w );
+    create( w, false, true );
 #endif
 }
 
