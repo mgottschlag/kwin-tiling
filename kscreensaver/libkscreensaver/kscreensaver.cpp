@@ -18,46 +18,27 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include "kscreensaver.h"
+
 #include <QPainter>
 #include <QTimer>
 #include <QtGui/QX11Info>
 #include <QApplication>
 #include <krandom.h>
-#include "kscreensaver.h"
+
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
-#else
-typedef WId Window;
 #endif
-
-#undef KeyPress
-#undef KeyRelease
 
 //-----------------------------------------------------------------------------
 
 KScreenSaver::KScreenSaver( WId id ) : QWidget()
 {
-    Window root;
-    int ai;
-    unsigned int au;
-    unsigned int w = 0;
-    unsigned int h = 0;
-
     if ( id )
     {
-#ifdef Q_WS_X11 //FIXME
-        XGetGeometry(QX11Info::display(), (Drawable)id, &root, &ai, &ai,
-            &w, &h, &au, &au);
-#endif
-
         create( id, false, true );
         setAttribute( Qt::WA_NoSystemBackground );
     }
-
-    if ( w == 0 ) w = 600;
-    if ( h == 0 ) h = 420;
-    resize( w, h );
-    QApplication::sendPostedEvents();
 }
 
 KScreenSaver::~KScreenSaver()
