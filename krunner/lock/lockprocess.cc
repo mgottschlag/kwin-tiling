@@ -132,7 +132,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     gXA_SCREENSAVER_VERSION = XInternAtom (QX11Info::display(), "_SCREENSAVER_VERSION", False);
 
     connect(&mHackProc, SIGNAL(processExited(K3Process *)),
-            SLOT(hackExited(K3Process *)));
+            SLOT(hackExited()));
 
     mSuspendTimer.setSingleShot(true);
     connect(&mSuspendTimer, SIGNAL(timeout()), SLOT(suspend()));
@@ -478,7 +478,9 @@ void LockProcess::createSaverWindow()
 
     // set NoBackground so that the saver can capture the current
     // screen state if necessary
+    setAttribute(Qt::WA_PaintOnScreen, true);
     setAttribute(Qt::WA_NoSystemBackground, true);
+    setAttribute(Qt::WA_PaintOutsidePaintEvent, true); // for bitBlt in resume()
 
     setCursor( Qt::BlankCursor );
     setGeometry(0, 0, mRootWidth, mRootHeight);
@@ -794,17 +796,11 @@ bool LockProcess::startLock()
 
 bool LockProcess::startHack()
 {
-    if (mSaverExec.isEmpty())
+    if (mSaverExec.isEmpty() || mForbidden)
     {
+        hackExited();
         return false;
     }
-
-    if (mHackProc.isRunning())
-    {
-        stopHack();
-    }
-
-    mHackProc.clearArguments();
 
     QTextStream ts(&mSaverExec, QIODevice::ReadOnly);
     QString word;
@@ -827,9 +823,6 @@ bool LockProcess::startHack()
             mHackProc << word;
         }
 
-        if (!mForbidden)
-        {
-
             if (mHackProc.start() == true)
             {
 #ifdef HAVE_SETPRIORITY
@@ -838,16 +831,8 @@ bool LockProcess::startHack()
                 //bitBlt(this, 0, 0, &mOriginal);
                 return true;
             }
-        }
-        else
-        {
-            // we aren't allowed to start the specified screensaver either because it didn't run for some reason
-	    // according to the kiosk restrictions forbid it
-            QPalette palette;
-            palette.setColor(backgroundRole(), Qt::black);
-            setPalette(palette);
-        }
     }
+    hackExited();
     return false;
 }
 
@@ -867,13 +852,15 @@ void LockProcess::stopHack()
 
 //---------------------------------------------------------------------------
 //
-void LockProcess::hackExited(K3Process *)
+void LockProcess::hackExited()
 {
 	// Hack exited while we're supposed to be saving the screen.
 	// Make sure the saver window is black.
+    setAttribute(Qt::WA_NoSystemBackground, false);
     QPalette palette;
     palette.setColor(backgroundRole(), Qt::black);
     setPalette(palette);
+    XClearWindow(QX11Info::display(), winId()); // repaint() doesn't work for some reason
 }
 
 void LockProcess::suspend()
@@ -895,6 +882,7 @@ void LockProcess::resume( bool force )
     {
         XForceScreenSaver(QX11Info::display(), ScreenSaverReset );
         bitBlt( this, 0, 0, &mSavedScreen );
+        mSavedScreen = QPixmap();
         QApplication::syncX();
         mHackProc.kill(SIGCONT);
     }

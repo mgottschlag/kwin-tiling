@@ -65,7 +65,7 @@ protected:
     virtual void timerEvent(QTimerEvent *);
 
 private Q_SLOTS:
-    void hackExited(K3Process *);
+    void hackExited();
     void signalPipeSignal();
     bool startLock();
     void suspend();
