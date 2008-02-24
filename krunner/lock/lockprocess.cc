@@ -842,11 +842,8 @@ void LockProcess::hackExited()
 {
 	// Hack exited while we're supposed to be saving the screen.
 	// Make sure the saver window is black.
-    setAttribute(Qt::WA_NoSystemBackground, false);
-    QPalette palette;
-    palette.setColor(backgroundRole(), Qt::black);
-    setPalette(palette);
-    XClearWindow(QX11Info::display(), winId()); // repaint() doesn't work for some reason
+    XSetWindowBackground(QX11Info::display(), winId(), 0);
+    XClearWindow(QX11Info::display(), winId());
 }
 
 void LockProcess::suspend()
