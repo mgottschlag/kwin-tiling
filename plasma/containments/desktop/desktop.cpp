@@ -309,9 +309,7 @@ void DefaultDesktop::lockScreen()
 
 QList<QAction*> DefaultDesktop::contextActions()
 {
-    //FIXME: several items here ... probably all junior jobs =)
-    //  - pretty up the menu with separators
-    //  - should we offer "Switch User" here?
+    //TODO: should we offer "Switch User" here?
 
     if (!m_appletBrowserAction) {
         m_appletBrowserAction = new QAction(i18n("Add Widgets..."), this);
