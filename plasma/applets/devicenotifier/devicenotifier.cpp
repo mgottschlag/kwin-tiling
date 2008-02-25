@@ -160,7 +160,7 @@ void DeviceNotifier::initSysTray()
         //default icon if problem
         m_icon = new Plasma::Icon(KIcon("computer"), QString(), this);
     }
-    setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Panel)));
+    setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
     connect(m_icon, SIGNAL(clicked()), this, SLOT(onClickNotifier()));
     setContentSize(size());
     m_icon->resize(size());
