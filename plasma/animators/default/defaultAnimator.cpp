@@ -97,11 +97,9 @@ QPixmap DefaultAnimator::elementAppear(qreal progress, const QPixmap& pixmap)
         QColor alpha;
         alpha.setAlphaF(progress);
 
-        QPainter painter;
-        painter.begin(&pix);
+        QPainter painter(&pix);
         painter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
         painter.fillRect(pix.rect(), alpha);
-        painter.end();
     }
 
     return pix;
@@ -116,11 +114,9 @@ QPixmap DefaultAnimator::elementDisappear(qreal progress, const QPixmap& pixmap)
         QColor alpha;
         alpha.setAlphaF(1 - progress);
 
-        QPainter painter;
-        painter.begin(&pix);
+        QPainter painter(&pix);
         painter.setCompositionMode(QPainter::CompositionMode_DestinationIn);
         painter.fillRect(pix.rect(), alpha);
-        painter.end();
     }
 
     return pix;
