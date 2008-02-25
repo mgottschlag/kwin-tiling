@@ -435,10 +435,10 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
     p->setFont(m_font);
 
     // Let's find a good position for painting the background
-    QRect text_rect = QRect((int)qMax(0.0, contentsRect.left()+(contentsRect.width()-text_width)/2),
-                            (int)(contentsRect.top()+((contentsRect.height() - (int)fm.height())/2*0.9)),
-                            (int)qMin(contentSize().width(), text_width),
-                            (int)(fm.height()*1.2));
+    QRectF text_rect = QRectF(qMax(0.0, contentsRect.left() + (contentsRect.width() - text_width) / 2),
+                            contentsRect.top() + ((contentsRect.height() - (int)fm.height()) / 2 * 0.9),
+                            qMin(contentSize().width(), text_width),
+                            fm.height() * 1.2 );
 
     // Poor man's highlighting
     m_boxColor.setAlphaF(m_alpha);
@@ -451,7 +451,7 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
 
     // Tweak the rounding edge a bit with the proportions of the textbox
     qreal round_radius = 35.0;
-    p->drawRoundRect(text_rect, round_radius / round_prop, round_radius);
+    p->drawRoundedRect(text_rect, round_radius / round_prop, round_radius, Qt::RelativeSize);
 
     m_textColor.setAlphaF(m_alpha);
     p->setPen(m_textColor);

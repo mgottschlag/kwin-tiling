@@ -126,7 +126,7 @@ public:
         return rect;
     }
 
-    void drawHeader(QPainter *painter,const QRect& rect,const QModelIndex& headerIndex)
+    void drawHeader(QPainter *painter,const QRectF& rect,const QModelIndex& headerIndex)
     {
         QFontMetrics fm(KGlobalSettings::smallestReadableFont());
         QModelIndex branchIndex = headerIndex;
@@ -148,9 +148,9 @@ public:
             }
         }
 
-        const int rightMargin = q->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 6;
-        const int top = rect.bottom() - fm.height() - 1 - ItemDelegate::HEADER_BOTTOM_MARGIN;
-        QRect textRect(rect.left(), top, rect.width() - rightMargin, fm.height());
+        const qreal rightMargin = q->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 6;
+        const qreal top = rect.bottom() - fm.height() - 1 - ItemDelegate::HEADER_BOTTOM_MARGIN;
+        QRectF textRect(rect.left(), top, rect.width() - rightMargin, fm.height());
         painter->setPen(QPen(q->palette().dark(), 1));
         painter->drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, currentText);
 
@@ -335,25 +335,25 @@ QRect FlipScrollView::visualRect(const QModelIndex& index) const
     */
     int scrollBarWidth = verticalScrollBar()->isVisible() ?
                                     verticalScrollBar()->width() : 0;
-    QRect itemRect(leftOffset, topOffset + index.row() * d->itemHeight,
+    QRectF itemRect(leftOffset, topOffset + index.row() * d->itemHeight,
                    width() - leftOffset - scrollBarWidth - ItemDelegate::BACK_ARROW_SPACING,
                    d->itemHeight);
 
     const qreal timeValue = d->flipAnimTimeLine->currentValue();
     if ( index.parent() == d->currentRoot() ) {
        if (d->animLeftToRight) {
-           itemRect.translate((int)(itemRect.width()*(1-timeValue)),0);
+           itemRect.translate(itemRect.width() * (1 - timeValue),0);
        } else {
-           itemRect.translate((int)(-itemRect.width()*(1-timeValue)),0);
+           itemRect.translate(-itemRect.width() * (1 - timeValue),0);
        }
     } else {
        if (d->animLeftToRight) {
-        itemRect.translate((int)(-timeValue*itemRect.width()),0);
+        itemRect.translate((-timeValue*itemRect.width()),0);
        } else {
-        itemRect.translate((int)(timeValue*itemRect.width()),0);
+        itemRect.translate((timeValue*itemRect.width()),0);
        }
     }
-    return itemRect;
+    return itemRect.toRect();
 }
 
 int FlipScrollView::horizontalOffset() const
@@ -587,27 +587,29 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
         }
     }
 
+    QRectF eventRect = event->rect();
+
     // draw header for current view
-    QRect headerRect = d->headerRect(currentRoot);
+    QRectF headerRect = d->headerRect(currentRoot);
     if (d->animLeftToRight) {
-        headerRect.translate((int)(headerRect.width()*(1-timerValue)), 0);
+        headerRect.translate(headerRect.width() * (1 - timerValue), 0);
     } else {
-        headerRect.translate((int)(-headerRect.width()*(1-timerValue)), 0);
+        headerRect.translate(-headerRect.width() * (1 - timerValue), 0);
     }
 
-    if (event->rect().intersects(headerRect)) {
+    if (eventRect.intersects(headerRect)) {
         d->drawHeader(&painter, headerRect, currentRoot);
     }
 
     // draw header for previous view
-    QRect prevHeaderRect = d->headerRect(previousRoot);
+    QRectF prevHeaderRect = d->headerRect(previousRoot);
     if (d->animLeftToRight) {
-        prevHeaderRect.translate((int)(-prevHeaderRect.width()*timerValue), 0);
+        prevHeaderRect.translate(-prevHeaderRect.width() * timerValue, 0);
     } else {
-        prevHeaderRect.translate((int)(prevHeaderRect.width()*timerValue), 0);
+        prevHeaderRect.translate(prevHeaderRect.width() * timerValue, 0);
     }
 
-    if (event->rect().intersects(prevHeaderRect) && timerValue < 1.0) {
+    if (eventRect.intersects(prevHeaderRect) && timerValue < 1.0) {
         d->drawHeader(&painter,prevHeaderRect,previousRoot);
     }
 

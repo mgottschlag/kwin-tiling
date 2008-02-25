@@ -70,11 +70,11 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
 
     QFontMetrics titleMetrics(titleFont);
     QFontMetrics subTitleMetrics(subTitleFont);
-    QRect textAreaRect = contentRect;
+    QRectF textAreaRect = contentRect;
     qreal actualTextWidth = qMax(titleMetrics.width(titleText), subTitleMetrics.width(subTitleText));
     textAreaRect.adjust(decorationRect.width() + ICON_TEXT_MARGIN - 3,
                         0,
-                        (int)(-(textRect.width() - actualTextWidth) + 3),
+                        (-(textRect.width() - actualTextWidth) + 3),
                         1);
 
     if (hover) {
