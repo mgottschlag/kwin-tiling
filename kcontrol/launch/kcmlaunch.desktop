@@ -143,7 +143,8 @@ Comment[x-test]=xxChoose application-launch feedback stylexx
 Comment[xh]=Khetha isicelo-yenza uhlobo lwesiphumo seLaunch
 Comment[zh_CN]=选择程序启动反馈风格
 Comment[zh_TW]=選擇程式啟動時的回饋風格
-X-KDE-Keywords=application,start,launch,busy,cursor,feedback,mouse,pointer,rotating,spinning,disk,startup,program,report
+
+X-KDE-Keywords=application,start,launch,busy,cursor,feedback,mouse,pointer,bouncing,rotating,spinning,disk,startup,program,report,taskbar
 X-KDE-Keywords[be]=Праграма,Запуск,Выкананне,Заняты,Курсор,Мыш,Указальнік,Перагортванне,Дыск,Запуск,Дастасаванне,Справаздача,application,start,launch,busy,cursor,feedback,mouse,pointer,rotating,spinning,disk,startup,program,report
 X-KDE-Keywords[bg]=Keywords=програма, приложение, стартиране, зает, показалец, курсор, мишка, показалеца, application, start, launch, busy, cursor, feedback, mouse, pointer, rotating, spinning, disk, startup, program, report
 X-KDE-Keywords[ca]=aplicació,iniciar,carregar,ocupat,cursor,notificació,ratolí,punter,rotació,gir,disc,arrencar,programa,informe

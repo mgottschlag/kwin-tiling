@@ -154,7 +154,7 @@ Comment[xh]=Izicwangciso zoboniso lophatho lwamandla
 Comment[zh_CN]=显示器电源管理设置
 Comment[zh_TW]=顯示器電源管理的設定值
 
-X-KDE-Keywords=energy,saver,apm,acpi,dpms,timeout,blanking,stand by,suspend,power
+X-KDE-Keywords=energy,saver,apm,acpi,dpms,timeout,blanking,stand by,standby,suspend,power,off
 X-KDE-Keywords[be]=энергія,зберагальнік,збераганне,тэрмін чакання,ачышчэнне,выключэнне,сілкаванне,сон,energy,saver,apm,acpi,dpms,timeout,blanking,stand by,suspend,power
 X-KDE-Keywords[bg]=Keywords=ток, захранване, прекъсване, батерия, батерии, контакт, energy, saver, apm, acpi, dpms, timeout, blanking, stand by, suspend, power
 X-KDE-Keywords[ca]=energia,salva,apm,acpi,dpms,expiració,en blanc,en espera, suspès,corrent

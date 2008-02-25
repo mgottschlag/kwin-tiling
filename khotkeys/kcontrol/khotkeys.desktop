@@ -139,3 +139,6 @@ Comment[x-test]=xxConfigure Hotkey settingsxx
 Comment[zh_CN]=配置热键设置
 Comment[zh_TW]=設定熱鍵設定值
 Categories=Qt;KDE;X-KDE-settings-accessibility;
+
+X-KDE-Keywords=global,keyboard shortcuts,hot keys,hotkeys,KHotKeys,input actions,mouse gestures,actions,triggers,launch
+

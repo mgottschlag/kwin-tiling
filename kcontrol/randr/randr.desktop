@@ -146,7 +146,7 @@ Comment[x-test]=xxResize and Rotate your displayxx
 Comment[zh_CN]=更改显示大小和旋转显示
 Comment[zh_TW]=調整大小及旋轉你的螢幕
 
-X-KDE-Keywords=resize,rotate,display,color,depth,size,horizontal,vertical
+X-KDE-Keywords=screen,resolution,resize,rotate,orientation,display,color depth,size,horizontal,vertical,refresh rate
 X-KDE-Keywords[be]=Змена памеру,Перагортванне,Дысплей,Экран,Колер,Глыбіня,Памер,Гарызантальны,Вертыкальны,resize,rotate,display,color,depth,size,horizontal,vertical
 X-KDE-Keywords[bg]=Keywords=ротация, завъртане, екран, размер, промяна, resize, rotate, display, color, depth, size, horizontal, vertical
 X-KDE-Keywords[ca]=amida,gira,pantalla,color,profunditat,mida,horitzontal,vertical
