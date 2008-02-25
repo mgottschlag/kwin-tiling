@@ -74,12 +74,13 @@ IMAGE_REL screen_ref x_rel y_xrel image_ref name
 # animation is specified in a non-animated file as a sequence of images in rows,
 # images wrap at 10 columns 
 # image contains 'frames' frames and there's 'delay' pause between each frame
-ANIM number x y frames name delay
+# the animation repeats 'repeat' times, with 0 for infinite (optional field defaulting to 0)
+ANIM number x y frames name delay [repeat]
 
 # place animation
-# see description of ANIM for number, frames, name and delay
+# see description of ANIM for number, frames, name, delay and repeat
 # see description of GEOMETRY_REL for screen_ref, x_rel, y_rel and image_ref (=window_ref)
-ANIM_REL number screen_ref x_rel y_rel image_ref frames name delay
+ANIM_REL number screen_ref x_rel y_rel image_ref frames name delay [repeat]
 
 # stop animation with the given id
 # this also clears the animation from the window

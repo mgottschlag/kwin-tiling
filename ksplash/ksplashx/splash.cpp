@@ -54,7 +54,7 @@ const int LAST_STATE = 6;
 
 struct AnimData
     {
-    AnimData( int x, int y, PixmapData* frames, int num_frames, int delay );
+    AnimData( int x, int y, PixmapData* frames, int num_frames, int delay, int repeat );
     ~AnimData();
     bool updateFrame( int change );
     int x, y;
@@ -63,10 +63,20 @@ struct AnimData
     int current_frame;
     int delay;
     int remaining_delay;
+    int repeat;
+    int remaining_repeat;
     };
 
-AnimData::AnimData( int x, int y, PixmapData* frames, int num_frames, int delay )
-    : x( x ), y( y ), frames( frames ), num_frames( num_frames ), current_frame( 0 ), delay( delay ), remaining_delay( delay )
+AnimData::AnimData( int x, int y, PixmapData* frames, int num_frames, int delay, int repeat )
+    : x( x )
+    , y( y )
+    , frames( frames )
+    , num_frames( num_frames )
+    , current_frame( 0 )
+    , delay( delay )
+    , remaining_delay( delay )
+    , repeat( repeat )
+    , remaining_repeat( repeat )
     {
     }
 
@@ -89,7 +99,15 @@ bool AnimData::updateFrame( int change )
     while( remaining_delay <= 0 )
         {
         if( ++current_frame == num_frames )
+            {
+            if( repeat > 0 && --remaining_repeat <= 0 ) // non-infinite and finished
+                { // stay at the last frame
+                --current_frame;
+                remaining_delay = 100000000;
+                return false;
+                }
             current_frame = 0;
+            }
         remaining_delay += delay;
         ret = true;
         }
@@ -767,14 +785,16 @@ void runSplash( const char* them, bool t, int p )
             break;
         strip_whitespace( line );
         char buf[ 1024 ];
-        int number, x, y, w, h, x_rel, y_rel, frames, delay;
+        int number, x, y, w, h, x_rel, y_rel, frames, delay, repeat, items;
         char screen_ref[ 3 ];
         char window_ref[ 3 ];
         char image_ref[ 3 ];
+        bool handled = false;
         if( line[ 0 ] == '#' || line[ 0 ] == '\0' )
             continue;
         else if( sscanf( line, "SCALE %1023s", buf ) == 1 )
             {
+            handled = true;
             if( strcmp( buf, "ON" ) == 0 )
                 scale_on = true;
             else if( strcmp( buf, "OFF" ) == 0 )
@@ -787,6 +807,7 @@ void runSplash( const char* them, bool t, int p )
             }
         else if( sscanf( line, "GEOMETRY %d %d %d %d", &x, &y, &w, &h ) == 4 )
             {
+            handled = true;
             if( scale_on )
                 {
                 x = round( x / ratiox );
@@ -821,6 +842,7 @@ void runSplash( const char* them, bool t, int p )
         else if( sscanf( line, "GEOMETRY_REL %2s %d %d %2s %d %d",
             screen_ref, &x_rel, &y_rel, window_ref, &w, &h ) == 6 )
             {
+            handled = true;
             if( scale_on )
                 {
                 x_rel = round( x_rel / ratiox );
@@ -858,6 +880,7 @@ void runSplash( const char* them, bool t, int p )
             }
         else if( sscanf( line, "BACKGROUND %1023s", buf ) == 1 )
             {
+            handled = true;
             QColor background = QColor( buf );
             if( !background.isValid())
                 {
@@ -876,6 +899,7 @@ void runSplash( const char* them, bool t, int p )
             }
         else if( sscanf( line, "IMAGE %d %d %1023s", &x, &y, buf ) == 3 )
             {
+            handled = true;
             if( scale_on )
                 {
                 x = round( x / ratiox );
@@ -905,6 +929,7 @@ void runSplash( const char* them, bool t, int p )
         else if( sscanf( line, "IMAGE_REL %2s %d %d %2s %1023s",
             window_ref, &x_rel, &y_rel, image_ref, buf ) == 5 )
             {
+            handled = true;
             if( scale_on )
                 {
                 x_rel = round( x_rel / ratiox );
@@ -939,8 +964,12 @@ void runSplash( const char* them, bool t, int p )
                 exit( 3 );
                 }
             }
-        else if( sscanf( line, "ANIM %d %d %d %d %1023s %d", &number, &x, &y, &frames, buf, &delay ) == 6 )
+        items = sscanf( line, "ANIM %d %d %d %d %1023s %d %d", &number, &x, &y, &frames, buf, &delay, &repeat );
+        if( items == 6 )
+            repeat = 0; // default
+        if( items == 6 || items == 7 )
             {
+            handled = true;
             if( scale_on )
                 {
                 x = round( x / ratiox );
@@ -964,12 +993,16 @@ void runSplash( const char* them, bool t, int p )
                 blendAnim( imgs, x, y, frames );
                 PixmapData* pixs = imageAnimToPixmaps( imgs, frames );
                 delete animations[ number ];
-                animations[ number ] = new AnimData( x, y, pixs, frames, delay );
+                animations[ number ] = new AnimData( x, y, pixs, frames, delay, repeat );
                 }
             }
-        else if( sscanf( line, "ANIM_REL %d %2s %d %d %2s %d %1023s %d",
-            &number, window_ref, &x_rel, &y_rel, image_ref, &frames, buf, &delay ) == 8 )
+        items = sscanf( line, "ANIM_REL %d %2s %d %d %2s %d %1023s %d %d",
+            &number, window_ref, &x_rel, &y_rel, image_ref, &frames, buf, &delay, &repeat );
+        if( items == 8 )
+            repeat = 0; // default
+        if( items == 8 || items == 9 )
             {
+            handled = true;
             if( scale_on )
                 {
                 x_rel = round( x_rel / ratiox );
@@ -1003,11 +1036,12 @@ void runSplash( const char* them, bool t, int p )
                 blendAnim( imgs, x, y, frames );
                 PixmapData* pixs = imageAnimToPixmaps( imgs, frames );
                 delete animations[ number ];
-                animations[ number ] = new AnimData( x, y, pixs, frames, delay );
+                animations[ number ] = new AnimData( x, y, pixs, frames, delay, repeat );
                 }
             }
         else if( sscanf( line, "STOP_ANIM %d", &number ) == 1 )
             {
+            handled = true;
             if( number <= 0 || number >= MAX_ITEMS || animations[ number ] == NULL )
                 {
                 fprintf( stderr,"Bad number: %s\n", line );
@@ -1020,6 +1054,7 @@ void runSplash( const char* them, bool t, int p )
             }
         else if( sscanf( line, "WAIT_STATE %s", buf ) == 1 )
             {
+            handled = true;
             int new_state = 0;
             for( int i = 1;
                  i <= LAST_STATE;
@@ -1042,7 +1077,7 @@ void runSplash( const char* them, bool t, int p )
                     break; // exiting
                 }
             }
-        else
+        if( !handled )
             {
             fprintf( stderr, "Unknown line: %s\n", line );
             exit( 3 );
