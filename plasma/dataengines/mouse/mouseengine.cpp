@@ -29,7 +29,7 @@
 
 
 MouseEngine::MouseEngine(QObject* parent, const QVariantList& args)
-    : Plasma::DataEngine(parent), timerId(0), handler(0)
+    : Plasma::DataEngine(parent, args), timerId(0), handler(0)
 {
     Q_UNUSED(args)
 }

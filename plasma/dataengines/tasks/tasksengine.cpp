@@ -26,7 +26,7 @@
 using namespace Plasma;
 
 TasksEngine::TasksEngine(QObject* parent, const QVariantList& args)
-    : Plasma::DataEngine(parent)
+    : Plasma::DataEngine(parent, args)
 {
     Q_UNUSED(args);
 }

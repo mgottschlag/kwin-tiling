@@ -27,8 +27,8 @@
 // KDE includes
 #include <KDiskFreeSpace>
 
-PlacesEngine::PlacesEngine(QObject* parent, const QVariantList&)
-    : Plasma::DataEngine(parent)
+PlacesEngine::PlacesEngine(QObject *parent, const QVariantList &args)
+    : Plasma::DataEngine(parent, args)
 {
     // dataChanged(), rowsRemoved() and setupDone() signals from
     // KFilePlacesModel are not propagated between applications.

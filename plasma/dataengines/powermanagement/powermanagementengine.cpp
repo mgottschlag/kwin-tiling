@@ -33,7 +33,7 @@
 #include "plasma/datacontainer.h"
 
 PowermanagementEngine::PowermanagementEngine(QObject* parent, const QVariantList& args)
-        : Plasma::DataEngine(parent)
+        : Plasma::DataEngine(parent, args)
         , m_acadapter(0)
         , m_sources(0)
 {

@@ -32,7 +32,7 @@
 #include "plasma/datacontainer.h"
 
 TimeEngine::TimeEngine(QObject* parent, const QVariantList& args)
-    : Plasma::DataEngine(parent)
+    : Plasma::DataEngine(parent, args)
 {
     Q_UNUSED(args)
     setMinimumUpdateInterval(333);

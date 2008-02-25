@@ -49,7 +49,7 @@
 #endif
 
 SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QVariantList& args)
-        : Plasma::DataEngine(parent),
+        : Plasma::DataEngine(parent, args),
           notifier(0)
 {
     Q_UNUSED(args)

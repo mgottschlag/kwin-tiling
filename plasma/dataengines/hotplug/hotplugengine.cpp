@@ -35,7 +35,7 @@
 
 
 HotplugEngine::HotplugEngine(QObject* parent, const QVariantList& args)
-    : Plasma::DataEngine(parent)
+    : Plasma::DataEngine(parent, args)
 {
     Q_UNUSED(args)
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)),

@@ -26,7 +26,7 @@
 #include <plasma/datacontainer.h>
 
 DictEngine::DictEngine(QObject* parent, const QVariantList& args)
-    : Plasma::DataEngine(parent),
+    : Plasma::DataEngine(parent, args),
       dictHash(0),
       tcpSocket(0)
 {
