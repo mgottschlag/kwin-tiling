@@ -492,7 +492,6 @@ void UrlItemView::startDrag(Qt::DropActions supportedActions)
         return;
     }
 
-    mimeData->setText(mimeData->text());
     drag->setMimeData(mimeData);
 
     QModelIndex idx = selectionModel()->selectedIndexes().first();
