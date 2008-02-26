@@ -27,9 +27,9 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 
+class BGMultiWallpaperBase;
 #include <kdialog.h>
 
-class BGMultiWallpaperBase;
 class KBackgroundSettings;
 
 class BGMultiWallpaperList : public QListWidget

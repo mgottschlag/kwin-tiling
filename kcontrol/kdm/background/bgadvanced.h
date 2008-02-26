@@ -28,12 +28,21 @@
 
 #include <kdialog.h>
 
+#include "ui_bgadvanced_ui.h"
+
 class QLineEdit;
 class QSpinBox;
 
-class BGAdvancedBase;
 class KBackgroundRenderer;
 class KBackgroundProgram;
+
+class BGAdvancedBase : public QWidget, public Ui::BGAdvancedBase
+{
+public:
+  BGAdvancedBase( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 class BGAdvancedDialog : public KDialog
 {

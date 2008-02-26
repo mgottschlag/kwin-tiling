@@ -1,173 +1,151 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>BGMultiWallpaperBase</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>BGMultiWallpaperBase</cstring>
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>BGMultiWallpaperBase</class>
+  <widget class="QWidget" name="BGMultiWallpaperBase" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>410</width>
+        <height>196</height>
+      </rect>
     </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>410</width>
-            <height>196</height>
-        </rect>
-    </property>
-    <grid>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <widget class="QLabel" row="2" column="0">
-            <property name="name">
-                <cstring>textLabel2</cstring>
-            </property>
-            <property name="text">
-                <string>Show the following pictures:</string>
-            </property>
+    <layout class="QGridLayout" >
+      <property name="margin" >
+        <number>0</number>
+      </property>
+      <item row="2" column="0" >
+        <widget class="QLabel" name="textLabel2" >
+          <property name="text" >
+            <string>Show the following pictures:</string>
+          </property>
+          <property name="wordWrap" >
+            <bool>false</bool>
+          </property>
         </widget>
-        <widget class="QCheckBox" row="1" column="0">
-            <property name="name">
-                <cstring>m_cbRandom</cstring>
-            </property>
-            <property name="text">
-                <string>&amp;Show pictures in random order</string>
-            </property>
+      </item>
+      <item row="1" column="0" >
+        <widget class="QCheckBox" name="m_cbRandom" >
+          <property name="text" >
+            <string>&amp;Show pictures in random order</string>
+          </property>
         </widget>
-        <widget class="QLayoutWidget" row="0" column="0">
-            <property name="name">
-                <cstring>layout3</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>textLabel1</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Change &amp;picture after:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_spinInterval</cstring>
-                    </property>
-                </widget>
-                <widget class="QSpinBox">
-                    <property name="name">
-                        <cstring>m_spinInterval</cstring>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer4</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-            </hbox>
-        </widget>
-        <widget class="QLayoutWidget" row="3" column="0">
-            <property name="name">
-                <cstring>layout4</cstring>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <widget class="BGMultiWallpaperList" row="0" column="0" rowspan="5" colspan="1">
-                    <property name="name">
-                        <cstring>m_listImages</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>3</hsizetype>
-                            <vsizetype>3</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>300</width>
-                            <height>100</height>
-                        </size>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="0" column="1">
-                    <property name="name">
-                        <cstring>m_buttonAdd</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Add...</string>
-                    </property>
-                </widget>
-                <spacer row="4" column="1">
-                    <property name="name">
-                        <cstring>spacer5</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QPushButton" row="1" column="1">
-                    <property name="name">
-                        <cstring>m_buttonRemove</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Remove</string>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="3" column="1">
-                    <property name="name">
-                        <cstring>m_buttonMoveDown</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Move &amp;Down</string>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="2" column="1">
-                    <property name="name">
-                        <cstring>m_buttonMoveUp</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Move &amp;Up</string>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-    </grid>
-</widget>
-<customwidgets>
+      </item>
+      <item row="0" column="0" >
+        <layout class="QHBoxLayout" >
+          <item>
+            <widget class="QLabel" name="textLabel1" >
+              <property name="text" >
+                <string>Change &amp;picture after:</string>
+              </property>
+              <property name="buddy" stdset="0" >
+                <cstring>m_spinInterval</cstring>
+              </property>
+              <property name="wordWrap" >
+                <bool>false</bool>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QSpinBox" name="m_spinInterval" />
+          </item>
+          <item>
+            <spacer name="spacer4" >
+              <property name="sizeHint" >
+                <size>
+                  <width>20</width>
+                  <height>20</height>
+                </size>
+              </property>
+              <property name="sizeType" >
+                <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="orientation" >
+                <enum>Qt::Qt::Horizontal</enum>
+              </property>
+            </spacer>
+          </item>
+        </layout>
+      </item>
+      <item row="3" column="0" >
+        <layout class="QGridLayout" >
+          <item rowspan="5" row="0" column="0" colspan="1" >
+            <widget class="BGMultiWallpaperList" name="m_listImages" >
+              <property name="sizePolicy" >
+                <sizepolicy>
+                  <hsizetype>3</hsizetype>
+                  <vsizetype>3</vsizetype>
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+                <size>
+                  <width>300</width>
+                  <height>100</height>
+                </size>
+              </property>
+            </widget>
+          </item>
+          <item row="0" column="1" >
+            <widget class="QPushButton" name="m_buttonAdd" >
+              <property name="text" >
+                <string>&amp;Add...</string>
+              </property>
+            </widget>
+          </item>
+          <item row="4" column="1" >
+            <spacer name="spacer5" >
+              <property name="sizeHint" >
+                <size>
+                  <width>20</width>
+                  <height>20</height>
+                </size>
+              </property>
+              <property name="sizeType" >
+                <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="orientation" >
+                <enum>Qt::Qt::Vertical</enum>
+              </property>
+            </spacer>
+          </item>
+          <item row="1" column="1" >
+            <widget class="QPushButton" name="m_buttonRemove" >
+              <property name="text" >
+                <string>&amp;Remove</string>
+              </property>
+            </widget>
+          </item>
+          <item row="3" column="1" >
+            <widget class="QPushButton" name="m_buttonMoveDown" >
+              <property name="text" >
+                <string>Move &amp;Down</string>
+              </property>
+            </widget>
+          </item>
+          <item row="2" column="1" >
+            <widget class="QPushButton" name="m_buttonMoveUp" >
+              <property name="text" >
+                <string>Move &amp;Up</string>
+              </property>
+            </widget>
+          </item>
+        </layout>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="3" margin="6" />
+  <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
     <customwidget>
-        <class>BGMultiWallpaperList</class>
-        <header location="local">bgwallpaper.h</header>
-        <container>0</container>
+      <class>BGMultiWallpaperList</class>
+      <extends>QWidget</extends>
+      <header location="local" >background/bgwallpaper.h</header>
+      <container>0</container>
     </customwidget>
-</customwidgets>
-<includes>
-    <include location="local" impldecl="in implementation">kdialog.h</include>
-</includes>
-<layoutdefaults spacing="3" margin="6"/>
-<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
-</UI>
+  </customwidgets>
+</ui>

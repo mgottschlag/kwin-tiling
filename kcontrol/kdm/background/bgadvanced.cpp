@@ -41,7 +41,6 @@
 
 #include "bgrender.h"
 #include "bgadvanced.h"
-#include "bgadvanced_ui.h"
 
 #include <X11/Xlib.h>
 #include <QX11Info>

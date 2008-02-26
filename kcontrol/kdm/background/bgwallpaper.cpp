@@ -38,9 +38,18 @@
 
 #include "bgsettings.h"
 #include "bgwallpaper.h"
-#include "bgwallpaper_ui.h"
+#include "ui_bgwallpaper_ui.h"
+
 
 /**** BGMultiWallpaperList ****/
+
+class BGMultiWallpaperBase : public QWidget, public Ui::BGMultiWallpaperBase
+{
+public:
+  BGMultiWallpaperBase( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 BGMultiWallpaperList::BGMultiWallpaperList(QWidget *parent, const char *name)
 	: QListWidget(parent)

@@ -1,444 +1,390 @@
-<!DOCTYPE UI><UI version="3.3" stdsetdef="1">
-<class>BGAdvancedBase</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>BGAdvancedBase</cstring>
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>BGAdvancedBase</class>
+  <widget class="QWidget" name="BGAdvancedBase" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>511</width>
+        <height>454</height>
+      </rect>
     </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>511</width>
-            <height>454</height>
-        </rect>
-    </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <property name="margin">
-            <number>0</number>
-        </property>
-        <widget class="QButtonGroup">
-            <property name="name">
-                <cstring>m_groupProgram</cstring>
+    <layout class="QVBoxLayout" >
+      <property name="margin" >
+        <number>0</number>
+      </property>
+      <item>
+        <widget class="Q3ButtonGroup" name="m_groupProgram" >
+          <property name="title" >
+            <string>Background Program</string>
+          </property>
+          <layout class="QGridLayout" >
+            <property name="margin" >
+              <number>11</number>
             </property>
-            <property name="title">
-                <string>Background Program</string>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
+            <item row="1" column="1" >
+              <widget class="QPushButton" name="m_buttonAdd" >
+                <property name="enabled" >
+                  <bool>false</bool>
                 </property>
-                <property name="margin">
-                    <number>11</number>
+                <property name="text" >
+                  <string>&amp;Add...</string>
                 </property>
-                <widget class="QPushButton" row="1" column="1">
-                    <property name="name">
-                        <cstring>m_buttonAdd</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Add...</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>&lt;qt&gt;
-&lt;p&gt;Click here if you want to add a program to the listbox. This button opens a dialog where you are asked to give details about the program you want to run. To successfully add a program, you must know if it is compatible, the name of the executable file and, if necessary, its options.&lt;/p&gt;
-&lt;p&gt;You usually can get the available options to a suitable program by typing in a terminal emulator the name of the executable file plus --help (foobar --help).&lt;/p&gt;
-&lt;/qt&gt;</string>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="2" column="1">
-                    <property name="name">
-                        <cstring>m_buttonRemove</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Remove</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Click here to remove programs from this list. Please note that it does not remove the program from your system, it only removes it from the available options in the background drawing programs list.</string>
-                    </property>
-                </widget>
-                <widget class="QPushButton" row="3" column="1">
-                    <property name="name">
-                        <cstring>m_buttonModify</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Modify...</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>&lt;qt&gt;
-&lt;p&gt;Click here to modify the programs options. You usually can get the available options to a suitable program by typing in a terminal emulator the name of the executable file plus --help. (example: kwebdesktop --help).&lt;/p&gt;
-&lt;p&gt;One useful example is the program kwebdesktop. It draws a web page on the background of your desktop.  You can use this program by selecting it on the listbox on the right, but it will draw a predefined web page. To change the web page it renders, select the kwebdesktop program on the listbox, then click here. A dialog will appear, allowing you to change the web page by replacing the old address (URL) with a new one.&lt;/p&gt;
-&lt;/qt&gt;</string>
-                    </property>
-                </widget>
-                <spacer row="4" column="1">
-                    <property name="name">
-                        <cstring>spacer</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Qt::Vertical</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="QListView" row="1" column="0" rowspan="4" colspan="1">
-                    <column>
-                        <property name="text">
-                            <string>Program</string>
-                        </property>
-                        <property name="clickable">
-                            <bool>true</bool>
-                        </property>
-                        <property name="resizable">
-                            <bool>true</bool>
-                        </property>
-                    </column>
-                    <column>
-                        <property name="text">
-                            <string>Comment</string>
-                        </property>
-                        <property name="clickable">
-                            <bool>true</bool>
-                        </property>
-                        <property name="resizable">
-                            <bool>true</bool>
-                        </property>
-                    </column>
-                    <column>
-                        <property name="text">
-                            <string>Refresh</string>
-                        </property>
-                        <property name="clickable">
-                            <bool>true</bool>
-                        </property>
-                        <property name="resizable">
-                            <bool>true</bool>
-                        </property>
-                    </column>
-                    <property name="name">
-                        <cstring>m_listPrograms</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="minimumSize">
-                        <size>
-                            <width>400</width>
-                            <height>0</height>
-                        </size>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>&lt;qt&gt;
-&lt;p&gt;Select from this listbox the program you want to use to draw your desktop background.&lt;/p&gt;
-&lt;p&gt;The &lt;b&gt;Program&lt;/b&gt; column shows the name of the program.&lt;br&gt;
-The &lt;b&gt;Comment&lt;/b&gt; column brings a short description.&lt;br&gt;
-The &lt;b&gt;Refresh&lt;/b&gt; column indicates the time interval between redraws of the desktop.&lt;/p&gt;
-&lt;p&gt;The &lt;b&gt;K Web Desktop&lt;/b&gt; program (kwebdesktop) is worth noting: it draws a specified page of the web in your desktop. You can modify it, and the webpage it draws by selecting it here, then clicking on the &lt;b&gt;Modify&lt;/b&gt; button.&lt;br&gt;
-You can also add new compliant programs. To do that, click on the &lt;b&gt;Add&lt;/b&gt; button.&lt;br&gt;
-You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/b&gt; button. Please note that it does not remove the program from your system, it only removes it from the available options in this listbox.&lt;/p&gt;
-&lt;/qt&gt;</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="0" column="0" rowspan="1" colspan="2">
-                    <property name="name">
-                        <cstring>m_cbProgram</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Use the following program for drawing the background:</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Check here if you want to allow a program to draw your desktop background. Below you can find the list of programs currently available for drawing the background. You may use one of the available programs, add new ones or modify the existing ones to fit your needs.</string>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <widget class="QGroupBox">
-            <property name="name">
-                <cstring>m_groupIconText</cstring>
-            </property>
-            <property name="title">
-                <string>Background Icon Text</string>
-            </property>
-            <grid>
-                <property name="name">
-                    <cstring>unnamed</cstring>
+                <property name="whatsThis" stdset="0" >
+                  <string>&lt;qt>
+&lt;p>Click here if you want to add a program to the listbox. This button opens a dialog where you are asked to give details about the program you want to run. To successfully add a program, you must know if it is compatible, the name of the executable file and, if necessary, its options.&lt;/p>
+&lt;p>You usually can get the available options to a suitable program by typing in a terminal emulator the name of the executable file plus --help (foobar --help).&lt;/p>
+&lt;/qt></string>
                 </property>
-                <widget class="KColorButton" row="0" column="1">
-                    <property name="name">
-                        <cstring>m_colorText</cstring>
-                    </property>
-                    <property name="sizePolicy">
-                        <sizepolicy>
-                            <hsizetype>1</hsizetype>
-                            <vsizetype>0</vsizetype>
-                            <horstretch>0</horstretch>
-                            <verstretch>0</verstretch>
-                        </sizepolicy>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Click here to change the color of the desktop font.</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="0" column="0">
-                    <property name="name">
-                        <cstring>textLabel6</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Text color:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_colorText</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Click here to change the color of the desktop font.</string>
-                    </property>
-                </widget>
-                <spacer row="0" column="2" rowspan="2" colspan="1">
-                    <property name="name">
-                        <cstring>spacer7</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>220</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-                <widget class="KColorButton" row="1" column="1">
-                    <property name="name">
-                        <cstring>m_colorTextBackground</cstring>
-                    </property>
-                    <property name="enabled">
-                        <bool>false</bool>
-                    </property>
-                    <property name="text">
-                        <string></string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Click here to select the solid background color. Choose a different color from the background text color to assure readability.</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="1" column="0">
-                    <property name="name">
-                        <cstring>m_cbSolidTextBackground</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Use solid color behind text:</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Check here if you want to use a solid background color. This is useful to ensure that the desktop text will be identifiable against all background colors and wallpapers, or in other words, that a background or wallpaper will not make a desktop text of a similar color difficult to read.</string>
-                    </property>
-                </widget>
-                <widget class="QCheckBox" row="2" column="0">
-                    <property name="name">
-                        <cstring>m_cbShadow</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Enable shadow</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Check here to enable a shadow outline around the desktop font. This also improves the readability of the desktop text against backgrounds of a similar color.</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="3" column="0">
-                    <property name="name">
-                        <cstring>textLabel6_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Lines for icon text:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_colorText</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Choose here the maximum number of text lines below an icon on the desktop. Longer text will be truncated at the end of the last line.</string>
-                    </property>
-                </widget>
-                <widget class="QSpinBox" row="3" column="1">
-                    <property name="name">
-                        <cstring>m_spinTextLines</cstring>
-                    </property>
-                    <property name="suffix">
-                        <string></string>
-                    </property>
-                    <property name="value">
-                        <number>0</number>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Choose here the maximum number of text lines below an icon on the desktop. Longer text will be truncated at the end of the last line.</string>
-                    </property>
-                </widget>
-                <widget class="QSpinBox" row="4" column="1">
-                    <property name="name">
-                        <cstring>m_spinTextWidth</cstring>
-                    </property>
-                    <property name="suffix">
-                        <string></string>
-                    </property>
-                    <property name="specialValueText">
-                        <string>Auto</string>
-                    </property>
-                    <property name="maximum">
-                        <number>99999</number>
-                    </property>
-                    <property name="value">
-                        <number>0</number>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Choose here the maximum width of text lines (in pixel) below an icon on the desktop. If set to 'Auto' a default width based on the current font is used.</string>
-                    </property>
-                </widget>
-                <widget class="QLabel" row="4" column="0">
-                    <property name="name">
-                        <cstring>textLabel6_2_2</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Width for icon text:</string>
-                    </property>
-                    <property name="buddy" stdset="0">
-                        <cstring>m_colorText</cstring>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>Choose here the maximum width of text lines (in pixel) below an icon on the desktop. If set to 'Auto' a default width based on the current font is used.</string>
-                    </property>
-                </widget>
-            </grid>
-        </widget>
-        <widget class="QButtonGroup">
-            <property name="name">
-                <cstring>m_groupCache</cstring>
-            </property>
-            <property name="title">
-                <string>Memory Usage</string>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
+              </widget>
+            </item>
+            <item row="2" column="1" >
+              <widget class="QPushButton" name="m_buttonRemove" >
+                <property name="enabled" >
+                  <bool>false</bool>
                 </property>
-                <property name="margin">
-                    <number>11</number>
+                <property name="text" >
+                  <string>&amp;Remove</string>
                 </property>
-                <widget class="QLabel">
-                    <property name="name">
-                        <cstring>m_lblCache</cstring>
-                    </property>
-                    <property name="text">
-                        <string>Size of background cache:</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>In this box you can enter how much memory KDE should use for caching the background(s). If you have different backgrounds for the different desktops caching can make switching desktops smoother at the expense of higher memory use.</string>
-                    </property>
-                </widget>
-                <widget class="QSpinBox">
-                    <property name="name">
-                        <cstring>m_spinCache</cstring>
-                    </property>
-                    <property name="suffix">
-                        <string> k</string>
-                    </property>
-                    <property name="whatsThis" stdset="0">
-                        <string>In this box you can enter how much memory KDE should use for caching the background(s). If you have different backgrounds for the different desktops caching can make switching desktops smoother at the expense of higher memory use.</string>
-                    </property>
-                </widget>
-                <spacer>
-                    <property name="name">
-                        <cstring>spacer2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                    <property name="sizeHint">
-                        <size>
-                            <width>20</width>
-                            <height>20</height>
-                        </size>
-                    </property>
-                </spacer>
-            </hbox>
-        </widget>
-        <spacer>
-            <property name="name">
-                <cstring>spacer4</cstring>
-            </property>
-            <property name="orientation">
-                <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-                <enum>Expanding</enum>
-            </property>
-            <property name="sizeHint">
-                <size>
+                <property name="whatsThis" stdset="0" >
+                  <string>Click here to remove programs from this list. Please note that it does not remove the program from your system, it only removes it from the available options in the background drawing programs list.</string>
+                </property>
+              </widget>
+            </item>
+            <item row="3" column="1" >
+              <widget class="QPushButton" name="m_buttonModify" >
+                <property name="enabled" >
+                  <bool>false</bool>
+                </property>
+                <property name="text" >
+                  <string>&amp;Modify...</string>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>&lt;qt>
+&lt;p>Click here to modify the programs options. You usually can get the available options to a suitable program by typing in a terminal emulator the name of the executable file plus --help. (example: kwebdesktop --help).&lt;/p>
+&lt;p>One useful example is the program kwebdesktop. It draws a web page on the background of your desktop.  You can use this program by selecting it on the listbox on the right, but it will draw a predefined web page. To change the web page it renders, select the kwebdesktop program on the listbox, then click here. A dialog will appear, allowing you to change the web page by replacing the old address (URL) with a new one.&lt;/p>
+&lt;/qt></string>
+                </property>
+              </widget>
+            </item>
+            <item row="4" column="1" >
+              <spacer name="spacer" >
+                <property name="sizeHint" >
+                  <size>
                     <width>20</width>
-                    <height>16</height>
-                </size>
+                    <height>20</height>
+                  </size>
+                </property>
+                <property name="sizeType" >
+                  <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="orientation" >
+                  <enum>Qt::Qt::Vertical</enum>
+                </property>
+              </spacer>
+            </item>
+            <item rowspan="4" row="1" column="0" colspan="1" >
+              <widget class="Q3ListView" name="m_listPrograms" >
+                <property name="enabled" >
+                  <bool>false</bool>
+                </property>
+                <property name="minimumSize" >
+                  <size>
+                    <width>400</width>
+                    <height>0</height>
+                  </size>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>&lt;qt>
+&lt;p>Select from this listbox the program you want to use to draw your desktop background.&lt;/p>
+&lt;p>The &lt;b>Program&lt;/b> column shows the name of the program.&lt;br>
+The &lt;b>Comment&lt;/b> column brings a short description.&lt;br>
+The &lt;b>Refresh&lt;/b> column indicates the time interval between redraws of the desktop.&lt;/p>
+&lt;p>The &lt;b>K Web Desktop&lt;/b> program (kwebdesktop) is worth noting: it draws a specified page of the web in your desktop. You can modify it, and the webpage it draws by selecting it here, then clicking on the &lt;b>Modify&lt;/b> button.&lt;br>
+You can also add new compliant programs. To do that, click on the &lt;b>Add&lt;/b> button.&lt;br>
+You can also remove programs from this list clicking on the &lt;b>Remove&lt;/b> button. Please note that it does not remove the program from your system, it only removes it from the available options in this listbox.&lt;/p>
+&lt;/qt></string>
+                </property>
+                <column>
+                  <property name="text" >
+                    <string>Program</string>
+                  </property>
+                  <property name="clickable" >
+                    <bool>true</bool>
+                  </property>
+                  <property name="resizable" >
+                    <bool>true</bool>
+                  </property>
+                </column>
+                <column>
+                  <property name="text" >
+                    <string>Comment</string>
+                  </property>
+                  <property name="clickable" >
+                    <bool>true</bool>
+                  </property>
+                  <property name="resizable" >
+                    <bool>true</bool>
+                  </property>
+                </column>
+                <column>
+                  <property name="text" >
+                    <string>Refresh</string>
+                  </property>
+                  <property name="clickable" >
+                    <bool>true</bool>
+                  </property>
+                  <property name="resizable" >
+                    <bool>true</bool>
+                  </property>
+                </column>
+              </widget>
+            </item>
+            <item rowspan="1" row="0" column="0" colspan="2" >
+              <widget class="QCheckBox" name="m_cbProgram" >
+                <property name="text" >
+                  <string>Use the following program for drawing the background:</string>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>Check here if you want to allow a program to draw your desktop background. Below you can find the list of programs currently available for drawing the background. You may use one of the available programs, add new ones or modify the existing ones to fit your needs.</string>
+                </property>
+              </widget>
+            </item>
+          </layout>
+        </widget>
+      </item>
+      <item>
+        <widget class="Q3GroupBox" name="m_groupIconText" >
+          <property name="title" >
+            <string>Background Icon Text</string>
+          </property>
+          <layout class="QGridLayout" >
+            <item row="0" column="1" >
+              <widget class="KColorButton" name="m_colorText" >
+                <property name="sizePolicy" >
+                  <sizepolicy>
+                    <hsizetype>1</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                  </sizepolicy>
+                </property>
+                <property name="text" >
+                  <string/>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>Click here to change the color of the desktop font.</string>
+                </property>
+              </widget>
+            </item>
+            <item row="0" column="0" >
+              <widget class="QLabel" name="textLabel6" >
+                <property name="text" >
+                  <string>&amp;Text color:</string>
+                </property>
+                <property name="buddy" stdset="0" >
+                  <cstring>m_colorText</cstring>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>Click here to change the color of the desktop font.</string>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item rowspan="2" row="0" column="2" colspan="1" >
+              <spacer name="spacer7" >
+                <property name="sizeHint" >
+                  <size>
+                    <width>220</width>
+                    <height>20</height>
+                  </size>
+                </property>
+                <property name="sizeType" >
+                  <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="orientation" >
+                  <enum>Qt::Qt::Horizontal</enum>
+                </property>
+              </spacer>
+            </item>
+            <item row="1" column="1" >
+              <widget class="KColorButton" name="m_colorTextBackground" >
+                <property name="enabled" >
+                  <bool>false</bool>
+                </property>
+                <property name="text" >
+                  <string/>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>Click here to select the solid background color. Choose a different color from the background text color to assure readability.</string>
+                </property>
+              </widget>
+            </item>
+            <item row="1" column="0" >
+              <widget class="QCheckBox" name="m_cbSolidTextBackground" >
+                <property name="text" >
+                  <string>&amp;Use solid color behind text:</string>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>Check here if you want to use a solid background color. This is useful to ensure that the desktop text will be identifiable against all background colors and wallpapers, or in other words, that a background or wallpaper will not make a desktop text of a similar color difficult to read.</string>
+                </property>
+              </widget>
+            </item>
+            <item row="2" column="0" >
+              <widget class="QCheckBox" name="m_cbShadow" >
+                <property name="text" >
+                  <string>&amp;Enable shadow</string>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>Check here to enable a shadow outline around the desktop font. This also improves the readability of the desktop text against backgrounds of a similar color.</string>
+                </property>
+              </widget>
+            </item>
+            <item row="3" column="0" >
+              <widget class="QLabel" name="textLabel6_2" >
+                <property name="text" >
+                  <string>&amp;Lines for icon text:</string>
+                </property>
+                <property name="buddy" stdset="0" >
+                  <cstring>m_colorText</cstring>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>Choose here the maximum number of text lines below an icon on the desktop. Longer text will be truncated at the end of the last line.</string>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item row="3" column="1" >
+              <widget class="QSpinBox" name="m_spinTextLines" >
+                <property name="suffix" >
+                  <string/>
+                </property>
+                <property name="value" >
+                  <number>0</number>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>Choose here the maximum number of text lines below an icon on the desktop. Longer text will be truncated at the end of the last line.</string>
+                </property>
+              </widget>
+            </item>
+            <item row="4" column="1" >
+              <widget class="QSpinBox" name="m_spinTextWidth" >
+                <property name="suffix" >
+                  <string/>
+                </property>
+                <property name="specialValueText" >
+                  <string>Auto</string>
+                </property>
+                <property name="maximum" >
+                  <number>99999</number>
+                </property>
+                <property name="value" >
+                  <number>0</number>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>Choose here the maximum width of text lines (in pixel) below an icon on the desktop. If set to 'Auto' a default width based on the current font is used.</string>
+                </property>
+              </widget>
+            </item>
+            <item row="4" column="0" >
+              <widget class="QLabel" name="textLabel6_2_2" >
+                <property name="text" >
+                  <string>&amp;Width for icon text:</string>
+                </property>
+                <property name="buddy" stdset="0" >
+                  <cstring>m_colorText</cstring>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>Choose here the maximum width of text lines (in pixel) below an icon on the desktop. If set to 'Auto' a default width based on the current font is used.</string>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+          </layout>
+        </widget>
+      </item>
+      <item>
+        <widget class="Q3ButtonGroup" name="m_groupCache" >
+          <property name="title" >
+            <string>Memory Usage</string>
+          </property>
+          <layout class="QHBoxLayout" >
+            <property name="margin" >
+              <number>11</number>
             </property>
+            <item>
+              <widget class="QLabel" name="m_lblCache" >
+                <property name="text" >
+                  <string>Size of background cache:</string>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>In this box you can enter how much memory KDE should use for caching the background(s). If you have different backgrounds for the different desktops caching can make switching desktops smoother at the expense of higher memory use.</string>
+                </property>
+                <property name="wordWrap" >
+                  <bool>false</bool>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="QSpinBox" name="m_spinCache" >
+                <property name="suffix" >
+                  <string> k</string>
+                </property>
+                <property name="whatsThis" stdset="0" >
+                  <string>In this box you can enter how much memory KDE should use for caching the background(s). If you have different backgrounds for the different desktops caching can make switching desktops smoother at the expense of higher memory use.</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <spacer name="spacer2" >
+                <property name="sizeHint" >
+                  <size>
+                    <width>20</width>
+                    <height>20</height>
+                  </size>
+                </property>
+                <property name="sizeType" >
+                  <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="orientation" >
+                  <enum>Qt::Qt::Horizontal</enum>
+                </property>
+              </spacer>
+            </item>
+          </layout>
+        </widget>
+      </item>
+      <item>
+        <spacer name="spacer4" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>16</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Qt::Qt::Vertical</enum>
+          </property>
         </spacer>
-    </vbox>
-</widget>
-<customwidgets>
-</customwidgets>
-<connections>
-    <connection>
-        <sender>m_cbProgram</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_buttonAdd</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>m_cbProgram</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_buttonRemove</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>m_cbProgram</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_buttonModify</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>m_cbProgram</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_listPrograms</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-        <sender>m_cbSolidTextBackground</sender>
-        <signal>toggled(bool)</signal>
-        <receiver>m_colorTextBackground</receiver>
-        <slot>setEnabled(bool)</slot>
-    </connection>
-</connections>
-<tabstops>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="3" margin="6" />
+  <layoutfunction spacing="KDialog::spacingHint" margin="KDialog::marginHint" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <tabstops>
     <tabstop>m_cbProgram</tabstop>
     <tabstop>m_listPrograms</tabstop>
     <tabstop>m_buttonAdd</tabstop>
@@ -449,14 +395,41 @@ You can also remove programs from this list clicking on the &lt;b&gt;Remove&lt;/
     <tabstop>m_colorTextBackground</tabstop>
     <tabstop>m_cbShadow</tabstop>
     <tabstop>m_spinCache</tabstop>
-</tabstops>
-<includes>
-    <include location="global" impldecl="in implementation">kdialog.h</include>
-</includes>
-<layoutdefaults spacing="3" margin="6"/>
-<layoutfunctions spacing="KDialog::spacingHint" margin="KDialog::marginHint"/>
-<includehints>
-    <includehint>kcolorbutton.h</includehint>
-    <includehint>kcolorbutton.h</includehint>
-</includehints>
-</UI>
+  </tabstops>
+  <includes>
+    <include location="local" >kcolorbutton.h</include>
+    <include location="local" >kcolorbutton.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>m_cbProgram</sender>
+      <signal>toggled(bool)</signal>
+      <receiver>m_buttonAdd</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+      <sender>m_cbProgram</sender>
+      <signal>toggled(bool)</signal>
+      <receiver>m_buttonRemove</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+      <sender>m_cbProgram</sender>
+      <signal>toggled(bool)</signal>
+      <receiver>m_buttonModify</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+      <sender>m_cbProgram</sender>
+      <signal>toggled(bool)</signal>
+      <receiver>m_listPrograms</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+      <sender>m_cbSolidTextBackground</sender>
+      <signal>toggled(bool)</signal>
+      <receiver>m_colorTextBackground</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+  </connections>
+</ui>
