@@ -121,6 +121,7 @@ private:
 	QCheckBox* cbEnableEffects;
 
 	QFrame* containerFrame;
+	QComboBox* comboGraphicEffectsLevel;
 	QGridLayout* containerLayout;
 	QComboBox* comboTooltipEffect;
 	QComboBox* comboComboEffect;

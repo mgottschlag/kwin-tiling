@@ -233,6 +233,19 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 
 	// Add Page2 (Effects)
 	// -------------------
+	gbWidgetStyle = new QGroupBox( i18n("Graphical User Interface"), page2 );
+	QVBoxLayout *effectsLayout = new QVBoxLayout(gbWidgetStyle);
+	comboGraphicEffectsLevel = new KComboBox( page2 );
+	comboGraphicEffectsLevel->setObjectName( "cbGraphicEffectsLevel" );
+	comboGraphicEffectsLevel->setEditable( false );
+	comboGraphicEffectsLevel->addItem(i18n("Low display resolution and Low CPU"), KGlobalSettings::NoEffects);
+	comboGraphicEffectsLevel->addItem(i18n("High display resolution and Low CPU"), KGlobalSettings::GradientEffects);
+	comboGraphicEffectsLevel->addItem(i18n("Low display resolution and High CPU"), KGlobalSettings::SimpleAnimationEffects);
+	comboGraphicEffectsLevel->addItem(i18n("High display resolution and High CPU"), (int) (KGlobalSettings::SimpleAnimationEffects | KGlobalSettings::GradientEffects));
+	comboGraphicEffectsLevel->addItem(i18n("Low display resolution and Very High CPU"), KGlobalSettings::ComplexAnimationEffects);
+	comboGraphicEffectsLevel->addItem(i18n("High display resolution and Very High CPU"), (int) (KGlobalSettings::ComplexAnimationEffects | KGlobalSettings::GradientEffects));
+	effectsLayout->addWidget( comboGraphicEffectsLevel );
+
 	cbEnableEffects = new QCheckBox( i18n("&Enable GUI effects"), page2 );
 	containerFrame = new QFrame( page2 );
 	containerFrame->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
@@ -334,6 +347,7 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	menuContainerLayout->addWidget( menuPreview, 0, 1, 4, 1);
 
 	// Layout page2.
+    page2Layout->addWidget( gbWidgetStyle );
 	page2Layout->addWidget( cbEnableEffects );
 	page2Layout->addWidget( containerFrame );
 	page2Layout->addWidget( hline );
@@ -401,6 +415,7 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	connect( cbTransparentToolbars, SIGNAL(toggled(bool)),   this, SLOT(setToolbarsDirty()));
 	connect( cbEnableTooltips,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
 	connect( cbIconsOnButtons,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
+	connect( comboGraphicEffectsLevel, SIGNAL(activated(int)),   this, SLOT(setEffectsDirty()));
 	connect( cbTearOffHandles,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
 	connect( comboToolbarIcons,    SIGNAL(activated(int)), this, SLOT(setToolbarsDirty()));
 
@@ -614,6 +629,8 @@ void KCMStyle::save()
 
 	// Misc page
 	config.writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), KConfig::Normal|KConfig::Global);
+    KConfigGroup g( &_config, "KDE-Global GUI Settings" );
+    g.writeEntry( "GraphicEffectsLevel", comboGraphicEffectsLevel->itemData(comboGraphicEffectsLevel->currentIndex()), KConfig::Normal|KConfig::Global);
 	config.writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), KConfig::Normal|KConfig::Global);
 
     KConfigGroup generalGroup(&_config, "General");
@@ -734,6 +751,7 @@ void KCMStyle::defaults()
 	cbEnableTooltips->setChecked(true);
 	comboToolbarIcons->setCurrentIndex(0);
 	cbIconsOnButtons->setChecked(true);
+	comboGraphicEffectsLevel->setCurrentIndex(comboGraphicEffectsLevel->findData(((int) KGlobalSettings::graphicEffectsLevelDefault())));
 	cbTearOffHandles->setChecked(false);
 }
 
@@ -1068,6 +1086,9 @@ void KCMStyle::loadMisc( KConfig& config )
 	cbEnableTooltips->setChecked(!configGroup.readEntry("EffectNoTooltip", false));
 	cbTearOffHandles->setChecked(configGroup.readEntry("InsertTearOffHandle", false));
 
+	KConfigGroup graphicConfigGroup = config.group("KDE-Global GUI Settings");
+	comboGraphicEffectsLevel->setCurrentIndex(comboGraphicEffectsLevel->findData(graphicConfigGroup.readEntry("GraphicEffectsLevel", ((int) KGlobalSettings::graphicEffectsLevel()))));
+
 	m_bToolbarsDirty = false;
 }
 
@@ -1123,6 +1144,8 @@ void KCMStyle::addWhatsThis()
 							"Text is aligned below the icon.") );
 	cbIconsOnButtons->setWhatsThis( i18n( "If you enable this option, KDE Applications will "
 							"show small icons alongside some important buttons.") );
+	comboGraphicEffectsLevel->setWhatsThis( i18n( "If you enable this option, KDE Applications will "
+							"run internal animations.") );
 	cbTearOffHandles->setWhatsThis( i18n( "If you enable this option some pop-up menus will "
 							"show so called tear-off handles. If you click them, you get the menu "
 							"inside a widget. This can be very helpful when performing "
