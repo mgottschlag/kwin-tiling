@@ -61,7 +61,8 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
       m_displayTime(0),
       m_numberItems(0),
       m_itemsValidity(0),
-      m_timer(0)
+      m_timer(0),
+      m_layout(0)
 {
     setHasConfigurationInterface(true);
 }
@@ -175,6 +176,7 @@ DeviceNotifier::~DeviceNotifier()
         delete m_icon;
     }
     delete m_layout;
+    m_layout = 0;
     delete m_dialog;
     delete m_hotplugModel;
     delete m_timer;
