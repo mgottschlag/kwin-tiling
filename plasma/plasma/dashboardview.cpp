@@ -85,7 +85,7 @@ void DashboardView::drawBackground(QPainter * painter, const QRectF & rect)
 void DashboardView::showAppletBrowser()
 {
     if (!m_appletBrowserWidget) {
-        m_appletBrowserWidget = new Plasma::AppletBrowserWidget(containment(), true, this, Qt::FramelessWindowHint );
+        m_appletBrowserWidget = new Plasma::AppletBrowserWidget(containment(), this, Qt::FramelessWindowHint );
         m_appletBrowserWidget->setApplication();
         m_appletBrowserWidget->setWindowTitle(i18n("Add Widgets"));
         QPalette p = m_appletBrowserWidget->palette();
