@@ -21,15 +21,18 @@
 #ifndef APPLICATIONMODEL_H 
 #define APPLICATIONMODEL_H 
 
-#include <QtCore/QAbstractItemModel>
+#include "core/kickoffabstractmodel.h"
 
 class ApplicationModelPrivate;
+
+namespace Kickoff
+{
 
 /**
  * ApplicationModel provides a tree model containing all of the user's installed graphical programs.
  * The applications are arranged into categories, based on the information in their .desktop files.
  */
-class ApplicationModel : public QAbstractItemModel
+class ApplicationModel : public KickoffAbstractModel
 {
     Q_OBJECT
 
@@ -85,5 +88,7 @@ class ApplicationModel : public QAbstractItemModel
 
         Q_DISABLE_COPY(ApplicationModel)
 };
+
+}
 
 #endif

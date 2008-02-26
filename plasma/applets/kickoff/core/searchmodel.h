@@ -21,7 +21,7 @@
 #define SEARCHMODEL_H 
 
 // Qt
-#include <QStandardItemModel>
+#include "core/kickoffmodel.h"
 
 namespace Kickoff 
 {
@@ -35,7 +35,7 @@ public:
 };
 typedef QList<SearchResult> ResultList;
 
-class SearchModel : public QStandardItemModel
+class SearchModel : public KickoffModel
 {
 Q_OBJECT
 

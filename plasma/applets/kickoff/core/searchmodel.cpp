@@ -60,7 +60,7 @@ public:
 };
 
 SearchModel::SearchModel(QObject *parent)
-    : QStandardItemModel(parent)
+    : KickoffModel(parent)
     , d(new Private(this))
 {
     d->searchIfaces << new ApplicationSearch(this);

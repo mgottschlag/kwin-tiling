@@ -75,6 +75,7 @@ protected:
     virtual QRegion visualRegionForSelection(const QItemSelection& selection) const;
     virtual QModelIndex moveCursor(CursorAction cursorAction,Qt::KeyboardModifiers modifiers);
     virtual void setSelection(const QRect& rect , QItemSelectionModel::SelectionFlags flags);
+    virtual void startDrag(Qt::DropActions supportedActions);
 
 private Q_SLOTS:
     void openItem(const QModelIndex& index);

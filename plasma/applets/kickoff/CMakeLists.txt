@@ -5,6 +5,9 @@ endif(STRIGI_STRIGIQTDBUSCLIENT_LIBRARY)
 configure_file(core/config-kickoff-applets.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-kickoff-applets.h )
 
 set( Kickoff_SRCS
+       core/kickoffmodel.cpp
+       core/kickoffabstractmodel.cpp
+       core/kickoffproxymodel.cpp
        core/applicationmodel.cpp
        core/favoritesmodel.cpp
        core/leavemodel.cpp

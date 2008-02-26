@@ -138,7 +138,7 @@ public:
 };
 
 SystemModel::SystemModel(QObject *parent)
-    : QAbstractProxyModel(parent)
+    : KickoffProxyModel(parent)
     , d(new Private(this))
 {
 }

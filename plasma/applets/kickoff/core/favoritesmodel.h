@@ -20,8 +20,8 @@
 #ifndef FAVORITESMODEL_H
 #define FAVORITESMODEL_H
 
-// Qt
-#include <QStandardItemModel>
+
+#include "core/kickoffmodel.h"
 
 namespace Kickoff
 {
@@ -33,7 +33,7 @@ namespace Kickoff
  *
  * The information persists between sessions.
  */
-class FavoritesModel : public QStandardItemModel 
+class FavoritesModel : public KickoffModel 
 {
 Q_OBJECT
 

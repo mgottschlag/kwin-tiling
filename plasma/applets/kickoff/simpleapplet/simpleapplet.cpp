@@ -298,8 +298,8 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
 
         switch( d->viewtype ) {
             case Combined: {
-                ApplicationModel *appModel = new ApplicationModel();
-                appModel->setDuplicatePolicy(ApplicationModel::ShowLatestOnlyPolicy);
+                Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel();
+                appModel->setDuplicatePolicy(Kickoff::ApplicationModel::ShowLatestOnlyPolicy);
                 Kickoff::MenuView *appview = d->createMenuView(appModel);
                 d->addMenu(appview, false);
 
@@ -320,8 +320,8 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
                 d->addMenu(favview, true);
             } break;
             case Applications: {
-                ApplicationModel *appModel = new ApplicationModel();
-                appModel->setDuplicatePolicy(ApplicationModel::ShowLatestOnlyPolicy);
+                Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel();
+                appModel->setDuplicatePolicy(Kickoff::ApplicationModel::ShowLatestOnlyPolicy);
                 Kickoff::MenuView *appview = d->createMenuView(appModel);
                 d->addMenu(appview, false);
             } break;

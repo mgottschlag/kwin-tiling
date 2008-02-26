@@ -30,6 +30,7 @@
 // KDE
 #include <KDebug>
 #include <KGlobalSettings>
+#include <KIconLoader>
 
 #include "ui/itemdelegate.h"
 
@@ -636,6 +637,28 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
         d->drawBackArrow(&painter,state);
         painter.restore();
     }
+}
+
+void FlipScrollView::startDrag(Qt::DropActions supportedActions) 
+{
+    kDebug() << "Starting UrlItemView drag with actions" << supportedActions;
+
+    QDrag *drag = new QDrag(this);
+    QMimeData *mimeData = model()->mimeData(selectionModel()->selectedIndexes());
+
+    if (mimeData->text().isNull()) {
+        return;
+    }
+
+    mimeData->setText(mimeData->text());
+    drag->setMimeData(mimeData);
+
+    QModelIndex idx = selectionModel()->selectedIndexes().first();
+    QIcon icon = idx.data(Qt::DecorationRole).value<QIcon>();
+    drag->setPixmap(icon.pixmap(IconSize(KIconLoader::Desktop)));
+
+    Qt::DropAction dropAction = drag->exec();
+    QAbstractItemView::startDrag(supportedActions);
 }
 
 void FlipScrollView::updateFlipAnimation(qreal)

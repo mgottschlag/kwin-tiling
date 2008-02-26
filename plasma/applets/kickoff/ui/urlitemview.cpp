@@ -32,6 +32,7 @@
 // KDE
 #include <KDebug>
 #include <KGlobalSettings>
+#include <KIconLoader>
 
 // Local
 #include "core/models.h"
@@ -483,6 +484,22 @@ void UrlItemView::setItemStateProvider(ItemStateProvider *provider)
 void UrlItemView::startDrag(Qt::DropActions supportedActions) 
 {
     kDebug() << "Starting UrlItemView drag with actions" << supportedActions;
+
+    QDrag *drag = new QDrag(this);
+    QMimeData *mimeData = model()->mimeData(selectionModel()->selectedIndexes());
+
+    if (mimeData->text().isNull()) {
+        return;
+    }
+
+    mimeData->setText(mimeData->text());
+    drag->setMimeData(mimeData);
+
+    QModelIndex idx = selectionModel()->selectedIndexes().first();
+    QIcon icon = idx.data(Qt::DecorationRole).value<QIcon>();
+    drag->setPixmap(icon.pixmap(IconSize(KIconLoader::Desktop)));
+
+    Qt::DropAction dropAction = drag->exec();
     QAbstractItemView::startDrag(supportedActions);
 }
 

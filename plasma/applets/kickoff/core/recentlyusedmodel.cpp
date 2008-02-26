@@ -119,7 +119,7 @@ public:
 };
 
 RecentlyUsedModel::RecentlyUsedModel(QObject *parent)
-    : QStandardItemModel(parent)
+    : KickoffModel(parent)
     , d(new Private(this))
 {
     d->loadRecentApplications();

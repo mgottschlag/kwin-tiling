@@ -114,7 +114,7 @@ QSet<QString> FavoritesModel::Private::globalFavoriteSet;
 QSet<FavoritesModel*> FavoritesModel::Private::models;
 
 FavoritesModel::FavoritesModel(QObject *parent)
-    : QStandardItemModel(parent)
+    : KickoffModel(parent)
     , d(new Private(this))
 {
     Private::models << this;

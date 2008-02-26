@@ -211,6 +211,7 @@ public:
         view->setFrameStyle(QFrame::NoFrame);
         // prevent view from stealing focus from the search bar
         view->setFocusPolicy(Qt::NoFocus);
+        view->setDragEnabled(true);
         setupEventHandler(view);
 
         connect(searchBar, SIGNAL(queryChanged(QString)), model, SLOT(setQuery(QString)));

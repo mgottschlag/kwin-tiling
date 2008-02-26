@@ -53,6 +53,8 @@
 // Local
 #include "core/models.h"
 
+using namespace Kickoff;
+
 template <> inline
 void KConfigGroup::writeEntry( const char *pKey,
                               const KGlobalSettings::Completion& aValue,
@@ -216,7 +218,7 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
 }
 
 ApplicationModel::ApplicationModel(QObject *parent)
-    : QAbstractItemModel(parent), d(new ApplicationModelPrivate(this))
+    : KickoffAbstractModel(parent), d(new ApplicationModelPrivate(this))
 {
     d->fillNode(QString(), d->root);
 }

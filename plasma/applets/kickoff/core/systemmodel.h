@@ -21,8 +21,7 @@
 #ifndef SYSTEMMODEL_H
 #define SYSTEMMODEL_H
 
-// Qt
-#include <QAbstractProxyModel>
+#include "core/kickoffproxymodel.h"
 
 namespace Kickoff
 {
@@ -31,7 +30,7 @@ namespace Kickoff
  * Model which provides a tree of items for important system setup tools (eg. System Settings) ,
  * folders (eg. the user's home folder and the local network) and fixed and removable storage.
  */
-class SystemModel : public QAbstractProxyModel
+class SystemModel : public KickoffProxyModel
 {
 Q_OBJECT
 

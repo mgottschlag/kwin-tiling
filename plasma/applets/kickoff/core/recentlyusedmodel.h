@@ -21,7 +21,7 @@
 #define RECENTLYUSEDMODEL_H
 
 // Qt
-#include <QStandardItemModel>
+#include "core/kickoffmodel.h"
 
 // KDE
 #include <KService>
@@ -33,7 +33,7 @@ namespace Kickoff
  * Model for the Recently Used view which provides a tree of recently used 
  * applications and documents.
  */
-class RecentlyUsedModel : public QStandardItemModel
+class RecentlyUsedModel : public KickoffModel
 {
 Q_OBJECT 
 
