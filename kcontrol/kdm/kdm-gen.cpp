@@ -47,7 +47,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	ml->setSpacing( KDialog::spacingHint() );
 	ml->setMargin( KDialog::marginHint() );
 
-	QGroupBox *box = new QGroupBox( "Appearance", this );
+	QGroupBox *box = new QGroupBox( i18n("Appearance"), this );
 	ml->addWidget( box );
 	QGridLayout *grid = new QGridLayout( box );
 	grid->setSpacing( KDialog::spacingHint() );
@@ -87,7 +87,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	label->setWhatsThis( wtstr );
 	colcombo->setWhatsThis( wtstr );
 
-	box = new QGroupBox( "Locale", this );
+	box = new QGroupBox( i18n("Locale"), this );
 	ml->addWidget( box );
 	grid = new QGridLayout( box );
 	grid->setSpacing( KDialog::spacingHint() );
@@ -108,7 +108,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	label->setWhatsThis( wtstr );
 	langcombo->setWhatsThis( wtstr );
 
-	box = new QGroupBox( "Fonts", this );
+	box = new QGroupBox( i18n("Fonts"), this );
 	ml->addWidget( box );
 	grid = new QGridLayout( box );
 	grid->setSpacing( KDialog::spacingHint() );
