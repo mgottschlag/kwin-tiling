@@ -26,7 +26,7 @@
 
 namespace Plasma
 {
-    class AppletBrowserWidget;
+    class AppletBrowser;
 }
 
 class DashboardView : public Plasma::View
@@ -53,7 +53,7 @@ protected slots:
     bool eventFilter(QObject *watched, QEvent *event);
 
 private:
-    Plasma::AppletBrowserWidget *m_appletBrowserWidget;
+    Plasma::AppletBrowser *m_appletBrowser;
     QPoint m_appletBrowserDragStart;
     bool m_suppressShow;
     bool m_zoomIn;

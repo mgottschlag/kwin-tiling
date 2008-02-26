@@ -40,7 +40,7 @@ static const int SUPPRESS_SHOW_TIMEOUT = 500; // Number of millis to prevent res
 
 DashboardView::DashboardView(int screen, QWidget *parent)
     : Plasma::View(screen, PlasmaApp::self()->corona(), parent),
-      m_appletBrowserWidget(0),
+      m_appletBrowser(0),
       m_suppressShow(false),
       m_zoomIn(false),
       m_zoomOut(false)
@@ -67,7 +67,7 @@ DashboardView::DashboardView(int screen, QWidget *parent)
 
 DashboardView::~DashboardView()
 {
-    delete m_appletBrowserWidget;
+    delete m_appletBrowser;
 }
 
 void DashboardView::drawBackground(QPainter * painter, const QRectF & rect)
@@ -84,31 +84,31 @@ void DashboardView::drawBackground(QPainter * painter, const QRectF & rect)
 
 void DashboardView::showAppletBrowser()
 {
-    if (!m_appletBrowserWidget) {
-        m_appletBrowserWidget = new Plasma::AppletBrowserWidget(containment(), this, Qt::FramelessWindowHint );
-        m_appletBrowserWidget->setApplication();
-        m_appletBrowserWidget->setWindowTitle(i18n("Add Widgets"));
-        QPalette p = m_appletBrowserWidget->palette();
+    if (!m_appletBrowser) {
+        m_appletBrowser = new Plasma::AppletBrowser(containment(), this, Qt::FramelessWindowHint );
+        m_appletBrowser->setApplication();
+        m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
+        QPalette p = m_appletBrowser->palette();
         p.setBrush(QPalette::Background, QBrush(QColor(0, 0, 0, 180)));
-        m_appletBrowserWidget->setPalette(p);
-        m_appletBrowserWidget->setBackgroundRole(QPalette::Background);
-        m_appletBrowserWidget->setAutoFillBackground(true);
-        KWindowSystem::setState(m_appletBrowserWidget->winId(), NET::KeepAbove|NET::SkipTaskbar);
-        m_appletBrowserWidget->move(0, 0);
-        m_appletBrowserWidget->installEventFilter(this);
+        m_appletBrowser->setPalette(p);
+        m_appletBrowser->setBackgroundRole(QPalette::Background);
+        m_appletBrowser->setAutoFillBackground(true);
+        KWindowSystem::setState(m_appletBrowser->winId(), NET::KeepAbove|NET::SkipTaskbar);
+        m_appletBrowser->move(0, 0);
+        m_appletBrowser->installEventFilter(this);
     }
 
-    m_appletBrowserWidget->setHidden(m_appletBrowserWidget->isVisible());
+    m_appletBrowser->setHidden(m_appletBrowser->isVisible());
 }
 
 void DashboardView::appletBrowserDestroyed()
 {
-    m_appletBrowserWidget = 0;
+    m_appletBrowser = 0;
 }
 
 bool DashboardView::eventFilter(QObject *watched, QEvent *event)
 {
-    if (watched != m_appletBrowserWidget) {
+    if (watched != m_appletBrowser) {
         return false;
     }
 
@@ -118,29 +118,29 @@ bool DashboardView::eventFilter(QObject *watched, QEvent *event)
     } else if (event->type() == QEvent::MouseMove && m_appletBrowserDragStart != QPoint()) {
         QMouseEvent *me = static_cast<QMouseEvent *>(event);
         QPoint newPos = me->globalPos();
-        QPoint curPos = m_appletBrowserWidget->pos();
+        QPoint curPos = m_appletBrowser->pos();
         int x = curPos.x();
         int y = curPos.y();
 
-        if (curPos.y() == 0 || curPos.y() + m_appletBrowserWidget->height() >= height()) {
+        if (curPos.y() == 0 || curPos.y() + m_appletBrowser->height() >= height()) {
            x = curPos.x() + (newPos.x() - m_appletBrowserDragStart.x());
            if (x < 0) {
                x = 0;
-           } else if (x + m_appletBrowserWidget->width() > width()) {
-               x = width() - m_appletBrowserWidget->width();
+           } else if (x + m_appletBrowser->width() > width()) {
+               x = width() - m_appletBrowser->width();
            }
         }
 
-        if (x == 0 || x + m_appletBrowserWidget->width() >= width()) {
-            y = m_appletBrowserWidget->y() + (newPos.y() - m_appletBrowserDragStart.y());
+        if (x == 0 || x + m_appletBrowser->width() >= width()) {
+            y = m_appletBrowser->y() + (newPos.y() - m_appletBrowserDragStart.y());
 
             if (y < 0) {
                 y = 0;
-            } else if (y + m_appletBrowserWidget->height() > height()) {
-                y = height() - m_appletBrowserWidget->height();
+            } else if (y + m_appletBrowser->height() > height()) {
+                y = height() - m_appletBrowser->height();
             }
         }
-        m_appletBrowserWidget->move(x, y);
+        m_appletBrowser->move(x, y);
         m_appletBrowserDragStart = newPos;
     } else if (event->type() == QEvent::MouseButtonRelease) {
         m_appletBrowserDragStart = QPoint();
@@ -181,8 +181,8 @@ void DashboardView::toggleVisibility()
 
 void DashboardView::hideView()
 {
-    if (m_appletBrowserWidget) {
-        m_appletBrowserWidget->hide();
+    if (m_appletBrowser) {
+        m_appletBrowser->hide();
     }
 
     containment()->hideToolbox();
