@@ -42,6 +42,7 @@
 #include <kservicegroup.h>
 #include <kstandarddirs.h>
 #include <k3urldrag.h>
+#include <krun.h>
 
 #include "kthememanager.h"
 #include "knewthemedlg.h"
@@ -100,6 +101,14 @@ kthememanager::kthememanager( QWidget *parent, const QVariantList & )
     connect( ( QObject * )dlg->lvThemes, SIGNAL( clicked( Q3ListViewItem * ) ),
              this, SLOT( updateButton() ) );
 
+    connect( dlg->lbGet, SIGNAL(leftClickedUrl(QString)),SLOT(startKonqui(QString) ) );
+    connect( dlg->btnBackground, SIGNAL(clicked()),SLOT(startBackground()) );
+    connect( dlg->btnColors, SIGNAL(clicked()),SLOT(startColors()) );
+    connect( dlg->btnStyle, SIGNAL(clicked()),SLOT(startStyle()) );
+    connect( dlg->btnIcons, SIGNAL(clicked()),SLOT(startIcons()) );
+    connect( dlg->btnFonts, SIGNAL(clicked()),SLOT(startFonts()) );
+    connect( dlg->btnSaver, SIGNAL(clicked()),SLOT(startSaver()) );
+
     m_origTheme = new KTheme( this, true ); // stores the defaults to get back to
     m_origTheme->setName( ORIGINAL_THEME );
     m_origTheme->createYourself();
@@ -113,6 +122,42 @@ kthememanager::~kthememanager()
 {
     delete m_theme;
     delete m_origTheme;
+}
+
+
+void kthememanager::startKonqui( const QString & url )
+{
+    (void) new KRun(url,this);
+}
+
+void kthememanager::startBackground()
+{
+    KRun::runCommand("kcmshell4 background", this);
+}
+
+void kthememanager::startColors()
+{
+    KRun::runCommand("kcmshell4 colors", this);
+}
+
+void kthememanager::startStyle()
+{
+    KRun::runCommand("kcmshell4 style", this);
+}
+
+void kthememanager::startIcons()
+{
+    KRun::runCommand("kcmshell4 icons", this);
+}
+
+void kthememanager::startFonts()
+{
+   KRun::runCommand("kcmshell4 fonts", this);
+}
+
+void kthememanager::startSaver()
+{
+    KRun::runCommand("kcmshell4 screensaver", this);
 }
 
 void kthememanager::init()

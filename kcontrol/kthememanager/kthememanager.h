@@ -24,7 +24,7 @@
 #include <kservice.h>
 #include <kurl.h>
 
-#include "kthemedlg.h"
+#include "ui_kthemedlg.h"
 #include "ktheme.h"
 
 class QString;
@@ -50,6 +50,15 @@ private:
     QString m_exec;
 };
 */
+
+
+class KThemeDlg : public QWidget, public Ui::KThemeDlg
+{
+public:
+  KThemeDlg( QWidget *parent ) : QWidget( parent ) {
+    setupUi( this );
+  }
+};
 
 /**
  *
@@ -116,6 +125,16 @@ private Q_SLOTS:
      */
     void slotFilesDropped( const KUrl::List & urls );
     void updateButton();
+
+
+    void startKonqui( const QString & url );
+    void startBackground();
+    void startColors();
+    void startStyle();
+    void startIcons();
+    void startFonts();
+    void startSaver();
+
 
 private:
     /**

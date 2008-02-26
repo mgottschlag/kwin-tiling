@@ -14,8 +14,7 @@ QT4_ADD_DBUS_INTERFACE( kcm_kthememanager_PART_SRCS ${plasma_xml} plasma_interfa
 
 
 
-kde4_add_ui_files(kcm_kthememanager_PART_SRCS newthemewidget.ui)
-kde4_add_ui3_files(kcm_kthememanager_PART_SRCS kthemedlg.ui )
+kde4_add_ui_files(kcm_kthememanager_PART_SRCS kthemedlg.ui newthemewidget.ui)
 
 kde4_add_plugin(kcm_kthememanager ${kcm_kthememanager_PART_SRCS})
 
