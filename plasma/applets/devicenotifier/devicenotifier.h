@@ -78,7 +78,7 @@ class DeviceNotifier : public Plasma::Applet
         QModelIndex indexForUdi(const QString &udi) const;
         void initDesktop();
         void initSysTray();
-        
+
         Plasma::DataEngine *m_solidEngine;
         QStandardItemModel *m_hotplugModel;
 
@@ -93,7 +93,8 @@ class DeviceNotifier : public Plasma::Applet
         int m_itemsValidity;
         QTimer *m_timer;
 	bool isOnDesktop;
- 
+        bool isNotificationEnabled;
+
 	/// Designer Config file
         Ui::solidNotifierConfig ui;
 

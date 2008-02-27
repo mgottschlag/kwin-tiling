@@ -42,7 +42,6 @@ class HotplugEngine : public Plasma::DataEngine
         void onDeviceRemoved(const QString &udi);
     private :
         QStringList files;
-        bool new_device;
 };
 
 K_EXPORT_PLASMA_DATAENGINE(hotplug, HotplugEngine)

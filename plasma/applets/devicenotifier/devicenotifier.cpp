@@ -77,12 +77,6 @@ void DeviceNotifier::init()
 
     m_solidEngine = dataEngine("hotplug");
 
-    //connect to engine when a device is plug
-    connect(m_solidEngine, SIGNAL(newSource(const QString&)),
-            this, SLOT(onSourceAdded(const QString&)));
-    connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
-            this, SLOT(onSourceRemoved(const QString&)));
-
     m_widget = new Dialog();
 
     QVBoxLayout *l_layout = new QVBoxLayout();
@@ -107,7 +101,7 @@ void DeviceNotifier::init()
     m_notifierView->setModel(m_hotplugModel);
     ItemDelegate *delegate = new ItemDelegate;
     m_notifierView->setItemDelegate(delegate);
-    
+
     l_layout->addLayout(l_layout2);
     l_layout->addWidget(m_notifierView);
     m_widget->setLayout(l_layout);
@@ -115,7 +109,7 @@ void DeviceNotifier::init()
     m_widget->setWindowFlags(Qt::Popup);
     m_widget->setFocusPolicy(Qt::NoFocus);
     m_widget->adjustSize();
-    
+
     kDebug() << "I'm in containment : " << containment()->containmentType();
     if (containment()->containmentType() != Containment::DesktopContainment) {
         initSysTray();
@@ -133,7 +127,20 @@ void DeviceNotifier::init()
 	//m_layout->addItem(m_proxy);
     	isOnDesktop=true;
     }
-        
+
+    //feed the list with what is already reported by the engine
+    isNotificationEnabled = false;
+    foreach (const QString &source, m_solidEngine->sources()) {
+        onSourceAdded(source);
+    }
+    isNotificationEnabled = true;
+
+    //connect to engine when a device is plug
+    connect(m_solidEngine, SIGNAL(newSource(const QString&)),
+            this, SLOT(onSourceAdded(const QString&)));
+    connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
+            this, SLOT(onSourceRemoved(const QString&)));
+
     //FIXME : For KDE4.1 need to use to KStyle to use correct click behaviour
     if (KGlobalSettings::singleClick()) {
         connect(m_notifierView, SIGNAL(clicked (const QModelIndex &)), this, SLOT(slotOnItemClicked(const QModelIndex &)));
@@ -149,7 +156,7 @@ void DeviceNotifier::initSysTray()
      setDrawStandardBackground(false);
     //we display the icon corresponding to the computer
     QList<Solid::Device> list = Solid::Device::allDevices();
-    
+
     if (list.size() > 0) {
         Solid::Device device=list[0];
 
@@ -228,11 +235,11 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
         }
         QModelIndex index = indexForUdi(source);
 	Q_ASSERT(index.isValid());
-    
+
 	m_hotplugModel->setData(index, data["predicateFiles"], PredicateFilesRole);
 	m_hotplugModel->setData(index, data["text"], Qt::DisplayRole);
 	m_hotplugModel->setData(index, KIcon(data["icon"].toString()), Qt::DecorationRole);
-    
+
 	if (nb_actions > 1) {
 	    QString s = i18np("1 action for this device",
 			      "%1 actions for this device",
@@ -241,7 +248,7 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
 	} else {
 	    m_hotplugModel->setData(index,last_action_label, ActionRole);
 	}
-	if(!isOnDesktop) {
+	if(!isOnDesktop && isNotificationEnabled) {
 	    m_widget->move(popupPosition(m_widget->sizeHint()));
 	    m_widget->show();
 	    m_widget->clearFocus();
@@ -292,7 +299,7 @@ QModelIndex DeviceNotifier::indexForUdi(const QString &udi) const
 void DeviceNotifier::onClickNotifier()
 {
     m_widget->isVisible() ? m_widget->hide() : m_widget->show();
-    m_widget->clearFocus(); 
+    m_widget->clearFocus();
 }
 
 void DeviceNotifier::hoverEnterEvent(QGraphicsSceneHoverEvent *event)

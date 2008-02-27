@@ -38,13 +38,16 @@ HotplugEngine::HotplugEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent, args)
 {
     Q_UNUSED(args)
+    files = KGlobal::dirs()->findAllResources("data", "solid/actions/");
+
+    foreach (const Solid::Device &dev, Solid::Device::allDevices()) {
+        onDeviceAdded(dev.udi());
+    }
+
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(const QString &)),
             this, SLOT(onDeviceAdded(const QString &)));
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(const QString &)),
             this, SLOT(onDeviceRemoved(const QString &)));
-    files = KGlobal::dirs()->findAllResources("data", "solid/actions/");
-    //kDebug() <<files.size();
-    new_device=false;
 }
 
 HotplugEngine::~HotplugEngine()
@@ -54,6 +57,7 @@ HotplugEngine::~HotplugEngine()
 
 void HotplugEngine::onDeviceAdded(const QString &udi)
 {
+    bool new_device = false;
     Solid::Device device(udi);
 
     QStringList interestingDesktopFiles;
@@ -87,8 +91,6 @@ void HotplugEngine::onDeviceAdded(const QString &udi)
         kDebug() << "add hardware solid : " << udi;
         checkForUpdates();
     }
-
-    new_device=false;
 }
 
 void HotplugEngine::onDeviceRemoved(const QString &udi)
