@@ -69,6 +69,7 @@ class Launcher::Private
 public:
     Private(Launcher *launcher)
         : q(launcher)
+        , applet(0)
         , urlLauncher(new UrlItemLauncher(launcher))
         , searchBar(0)
         , footer(0)
@@ -242,6 +243,7 @@ public:
     }
 
     Launcher * const q;
+    Plasma::Applet *applet;
     UrlItemLauncher *urlLauncher;
     SearchBar *searchBar;
     QWidget *footer;
@@ -258,6 +260,19 @@ public:
 Launcher::Launcher(QWidget *parent)
     : QWidget(parent, Qt::Window)
     , d(new Private(this))
+{
+    init();
+}
+
+Launcher::Launcher(Plasma::Applet *applet)
+    : QWidget(0, Qt::Window)
+    , d(new Private(this))
+{
+    init();
+    setApplet(applet);
+}
+
+void Launcher::init()
 {
     QVBoxLayout *layout = new QVBoxLayout;
     layout->setSpacing(0);
@@ -377,7 +392,12 @@ int Launcher::visibleItemCount() const
 
 void Launcher::setApplet(Plasma::Applet *applet)
 {
+    d->applet = applet;
     d->contextMenuFactory->setApplet(applet);
+
+    KConfigGroup cg = applet->config();
+    setSwitchTabsOnHover(cg.readEntry("SwitchTabsOnHover", switchTabsOnHover()));
+    setVisibleItemCount(cg.readEntry("VisibleItemsCount", visibleItemCount()));
 }
 
 void Launcher::reset()

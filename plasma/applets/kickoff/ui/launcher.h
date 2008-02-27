@@ -40,7 +40,9 @@ Q_OBJECT
 
 public:
     /** Construct a new Launcher with the specified parent. */
-    Launcher(QWidget *parent = 0);
+    explicit Launcher(QWidget *parent = 0);
+    /** Construct a new Launcher associated with the specified Plasma::Applet. */
+    explicit Launcher(Plasma::Applet *applet = 0);
     ~Launcher();
 
     /** Specifies whether the launcher should hide itself when an item is activated. */
@@ -83,6 +85,8 @@ private Q_SLOTS:
     void openHomepage();
 
 private:
+    void init();
+
     class Private;
     Private * const d;
 };

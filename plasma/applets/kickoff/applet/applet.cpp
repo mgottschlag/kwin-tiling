@@ -47,16 +47,24 @@ class LauncherApplet::Private
 public:
     Plasma::Icon *icon;
     Kickoff::Launcher *launcher;
-    bool switchTabsOnHover;
-    int visibleItemsCount;
-    
+
     KDialog *dialog;
     QCheckBox *switchOnHoverCheckBox;
     KIntNumInput *visibleCountEdit;
 
     Private() : launcher(0), dialog(0) {}
     ~Private() { delete dialog; delete launcher; }
+    void createLauncher(LauncherApplet *q);
 };
+
+void LauncherApplet::Private::createLauncher(LauncherApplet *q)
+{
+    launcher = new Kickoff::Launcher(q);
+    launcher->setWindowFlags(launcher->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
+    launcher->setAutoHide(true);
+    launcher->adjustSize();
+    QObject::connect(launcher, SIGNAL(aboutToHide()), icon, SLOT(setUnpressed()));
+}
 
 LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent,args),
@@ -71,9 +79,6 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
     d->icon = new Plasma::Icon(KIcon("start-here-kde"), QString(), this);
     d->icon->setFlag(ItemIsMovable, false);
     connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
-
-    d->switchTabsOnHover = true;
-    d->visibleItemsCount = 10;
 }
 
 LauncherApplet::~LauncherApplet()
@@ -83,9 +88,6 @@ LauncherApplet::~LauncherApplet()
 
 void LauncherApplet::init()
 {
-    KConfigGroup cg = config();
-    d->switchTabsOnHover = cg.readEntry("SwitchTabsOnHover",d->switchTabsOnHover);
-    d->visibleItemsCount = cg.readEntry("VisibleItemsCount",d->visibleItemsCount);
 }
 
 void LauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
@@ -128,8 +130,13 @@ void LauncherApplet::showConfigurationInterface()
         d->switchOnHoverCheckBox = new QCheckBox(i18n("Switch tabs on hover"), d->dialog->mainWidget());
         layout->addWidget(d->switchOnHoverCheckBox);
     }
-    d->visibleCountEdit->setValue(d->visibleItemsCount);
-    d->switchOnHoverCheckBox->setChecked(d->switchTabsOnHover);
+
+    if (!d->launcher) {
+        d->createLauncher(this);
+    }
+
+    d->visibleCountEdit->setValue(d->launcher->visibleItemCount());
+    d->switchOnHoverCheckBox->setChecked(d->launcher->switchTabsOnHover());
     d->dialog->show();
 }
 
@@ -140,20 +147,23 @@ Qt::Orientations LauncherApplet::expandingDirections() const
 
 void LauncherApplet::configAccepted()
 {
-    d->switchTabsOnHover = d->switchOnHoverCheckBox->isChecked();
-    d->visibleItemsCount = d->visibleCountEdit->value();
+    bool switchTabsOnHover = d->switchOnHoverCheckBox->isChecked();
+    int visibleItemsCount = d->visibleCountEdit->value();
 
+    // TODO: should this be moved into Launcher as well? perhaps even the config itself?
     KConfigGroup cg = config();
-    cg.writeEntry("SwitchTabsOnHover",d->switchTabsOnHover);
-    cg.writeEntry("VisibleItemsCount",d->visibleItemsCount);
+    cg.writeEntry("SwitchTabsOnHover", switchTabsOnHover);
+    cg.writeEntry("VisibleItemsCount", visibleItemsCount);
     emit configNeedsSaving();
 
-    if (d->launcher) {
-        d->launcher->setSwitchTabsOnHover(d->switchTabsOnHover);
-        if (d->launcher->visibleItemCount() != d->visibleItemsCount) {
-            d->launcher->setVisibleItemCount(d->visibleItemsCount);
-            d->launcher->adjustSize();
-        }
+    if (!d->launcher) {
+        d->createLauncher(this);
+    }
+
+    d->launcher->setSwitchTabsOnHover(switchTabsOnHover);
+    if (d->launcher->visibleItemCount() != visibleItemsCount) {
+        d->launcher->setVisibleItemCount(visibleItemsCount);
+        d->launcher->adjustSize();
     }
 }
 
@@ -165,14 +175,7 @@ void LauncherApplet::toggleMenu(bool pressed)
 
     //kDebug() << "Launcher button clicked";
     if (!d->launcher) {
-        d->launcher = new Kickoff::Launcher(0);
-        d->launcher->setWindowFlags(d->launcher->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
-        d->launcher->setAutoHide(true);
-        d->launcher->setSwitchTabsOnHover(d->switchTabsOnHover);
-        d->launcher->setVisibleItemCount(d->visibleItemsCount);
-        d->launcher->adjustSize();
-        d->launcher->setApplet(this);
-        connect(d->launcher, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
+        d->createLauncher(this);
     }
     d->launcher->reset();
 
