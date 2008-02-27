@@ -266,7 +266,11 @@ Launcher::Launcher(QWidget *parent)
     const int rightHeaderMargin = style()->pixelMetric(QStyle::PM_ScrollBarExtent);
 
     d->searchBar = new SearchBar(this);
-    d->searchBar->setContentsMargins(0, 0, rightHeaderMargin, 0);
+    if (layoutDirection() == Qt::LeftToRight) {
+        d->searchBar->setContentsMargins(0, 0, rightHeaderMargin, 0);
+    } else {
+        d->searchBar->setContentsMargins(rightHeaderMargin, 0, 0, 0);
+    }
     d->searchBar->installEventFilter(this);
     d->contentArea = new QStackedWidget(this);
     d->contentSwitcher = new TabBar(this);
