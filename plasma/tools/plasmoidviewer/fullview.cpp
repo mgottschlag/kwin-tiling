@@ -34,9 +34,10 @@
 
 using namespace Plasma;
 
-FullView::FullView(const QString &ff, QWidget *parent)
+FullView::FullView(const QString &ff, const QString &loc, QWidget *parent)
     : QGraphicsView(parent),
       m_formfactor(Plasma::Planar),
+      m_location(Plasma::Floating),
       m_containment(0),
       m_applet(0)
 {
@@ -50,6 +51,23 @@ FullView::FullView(const QString &ff, QWidget *parent)
         m_formfactor = Plasma::Horizontal;
     } else if (formfactor == "mediacenter") {
         m_formfactor = Plasma::MediaCenter;
+    }
+
+    QString location = loc.toLower();
+    if (loc.isEmpty() || loc == "floating") {
+        m_location = Plasma::Floating;
+    } else if (loc == "desktop") {
+        m_location = Plasma::Desktop;
+    } else if (loc == "fullscreen") {
+        m_location = Plasma::FullScreen;
+    } else if (loc == "top") {
+        m_location = Plasma::TopEdge;
+    } else if (loc == "bottom") {
+        m_location = Plasma::BottomEdge;
+    } else if (loc == "right") {
+        m_location = Plasma::RightEdge;
+    } else if (loc == "left") {
+        m_location = Plasma::LeftEdge;
     }
 
     setScene(&m_corona);
@@ -67,6 +85,7 @@ void FullView::addApplet(const QString &a)
 {
     m_containment = m_corona.addContainment("null");
     m_containment->setFormFactor(m_formfactor);
+    m_containment->setLocation(m_location);
     m_applet = m_containment->addApplet(a, QVariantList(), 0, QRectF(0, 0, -1, -1));
     m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
 

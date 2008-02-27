@@ -53,6 +53,8 @@ int main(int argc, char **argv)
     KCmdLineOptions options;
     options.add( "f" );
     options.add( "formfactor <name>", ki18n( "The formfactor to use (horizontal, vertical, mediacenter or planar)" ), "planar");
+    options.add( "l" );
+    options.add( "location <name>", ki18n( "The location constraint to start the Containment with (floating, desktop, fullscreen, top, bottom, left, right)" ), "floating");
     options.add( "p" );
     options.add( "pixmapcache <size>", ki18n("The size in KB to set the pixmap cache to"));
     options.add( "+applet", ki18n( "Name of applet to add" ) );
@@ -71,7 +73,13 @@ int main(int argc, char **argv)
         formfactor = args->getOption("formfactor");
     }
 
-    FullView view( formfactor );
+    QString location;
+    if (args->isSet("location")) {
+        kDebug() << "setting Location to" << args->getOption("location");
+        location = args->getOption("location");
+    }
+
+    FullView view( formfactor, location );
     view.addApplet( args->arg( args->count() - 1 ) );
     view.show();
 

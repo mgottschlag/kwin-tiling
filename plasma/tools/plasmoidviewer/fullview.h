@@ -35,7 +35,7 @@ class FullView : public QGraphicsView
     Q_OBJECT
 
 public:
-    explicit FullView(const QString &formfactor = "planar", QWidget *parent = 0);
+    explicit FullView(const QString &formfactor = "planar", const QString &location = "floating", QWidget *parent = 0);
 
     void addApplet(const QString &a);
 
@@ -46,6 +46,7 @@ protected slots:
 private:
     Plasma::Corona m_corona;
     Plasma::FormFactor m_formfactor;
+    Plasma::Location m_location;
     Plasma::Containment *m_containment;
     Plasma::Applet *m_applet;
 };
