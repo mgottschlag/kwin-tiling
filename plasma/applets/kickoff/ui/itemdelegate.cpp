@@ -88,8 +88,8 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
 
     QRect titleRect = textRect;
 
-    if (subTitleText.isEmpty()) {
-        subTitleText = " ";
+    if (subTitleText == titleText) {
+        subTitleText = QString();
     }
 
     titleRect.setHeight(titleRect.height() / 2);
@@ -106,7 +106,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
         QFontMetrics titleMetrics(titleFont);
         QFontMetrics subTitleMetrics(subTitleFont);
         QRect textAreaRect = contentRect;
-        int actualTextWidth = qMax(titleMetrics.width(titleText), subTitleMetrics.width(subTitleText));
+        int actualTextWidth = qMax(titleMetrics.width(titleText), subTitleMetrics.width("  " + subTitleText));
         if (option.direction == Qt::LeftToRight) {
             textAreaRect.adjust(decorationRect.width() + ICON_TEXT_MARGIN - 3, 0,
                                 -(titleRect.width() - actualTextWidth) + 3, 1);
@@ -118,7 +118,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
         // for the background
         backgroundColor.setAlphaF(0.5);
         painter->setBrush(QBrush(backgroundColor));
-        painter->drawPath(Plasma::roundedRectangle(textAreaRect, 5));
+        painter->drawPath(Plasma::roundedRectangle(option.rect, 5));
         painter->restore();
     }
 
@@ -136,7 +136,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
         // draw sub-title
         painter->setPen(QPen(option.palette.dark(), 1));
         painter->setFont(subTitleFont);
-        painter->drawText(subTitleRect, Qt::AlignLeft|Qt::AlignVCenter, subTitleText);
+        painter->drawText(subTitleRect, Qt::AlignLeft|Qt::AlignVCenter, "  " + subTitleText);
     }
 
     painter->restore();
