@@ -89,12 +89,13 @@ void TabBar::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     int numTabs = count();
     int currentTab = currentIndex();
+    bool ltr = painter.layoutDirection() == Qt::LeftToRight;
 
     if (m_animStates.size() != numTabs) {
         m_animStates.resize(numTabs);
     }
 
-   for (int i=0 ; i<count() ; i++) {
+    for (int i=0 ; i<count() ; i++) {
         QRect rect = tabRect(i).adjusted(TAB_CONTENTS_MARGIN,TAB_CONTENTS_MARGIN,
                                         -TAB_CONTENTS_MARGIN,-TAB_CONTENTS_MARGIN);
 
@@ -105,12 +106,16 @@ void TabBar::paintEvent(QPaintEvent *event)
             QPen p = painter.pen();
             painter.setPen(QPen(palette().mid(), 1));
             QPoint left = tabRect(i).topLeft() + QPoint(0, 1);
-
+            QPoint right = tabRect(i).topRight() +  QPoint(0, 1);
             if (i - 1 == currentTab) {
-                left += QPoint(2, 0);
+                if (ltr) {
+                    left += QPoint(2, 0);
+                } else {
+                    right += QPoint(-2, 0);
+                }
             }
 
-            painter.drawLine(left, tabRect(i).topRight() + QPoint(0, 1));
+            painter.drawLine(left, right);
             painter.setPen(p);
 
             if (m_animStates[i] > 0) {

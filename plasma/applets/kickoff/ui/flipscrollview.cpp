@@ -93,6 +93,10 @@ public:
             q->verticalScrollBar()->setValue(previousVerticalOffsets.pop());
         }
 
+        if (q->viewOptions().direction == Qt::RightToLeft) {
+            animLeftToRight = !animLeftToRight;
+        }
+
         flipAnimTimeLine->setCurrentTime(0);
         q->update();
     }
@@ -127,7 +131,8 @@ public:
         return rect;
     }
 
-    void drawHeader(QPainter *painter,const QRectF& rect,const QModelIndex& headerIndex)
+    void drawHeader(QPainter *painter, const QRectF& rect,
+                    const QModelIndex& headerIndex, QStyleOptionViewItem options)
     {
         QFontMetrics fm(KGlobalSettings::smallestReadableFont());
         QModelIndex branchIndex = headerIndex;
@@ -138,13 +143,14 @@ public:
 
         QString currentText = i18n("All Applications");
         QString previousText;
-
+        bool ltr = options.direction == Qt::LeftToRight;
+        QString sep = ltr ? " > " : " < "; //TODO: this is very lame; use a graphical arrow instead
         if (branchIndex.isValid()) {
             currentText = branchIndex.data(Qt::DisplayRole).value<QString>();
             branchIndex = branchIndex.parent();
 
             while (branchIndex.isValid()) {
-                previousText += branchIndex.data(Qt::DisplayRole).value<QString>() + " > ";
+                previousText.append(branchIndex.data(Qt::DisplayRole).value<QString>()).append(sep);
                 branchIndex = branchIndex.parent();
             }
         }
@@ -156,7 +162,13 @@ public:
         painter->drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, currentText);
 
         if (!previousText.isEmpty()) {
-            textRect.adjust(0, 0, - fm.width(" " + currentText), 0);
+            int textWidth = fm.width(currentText) + fm.width(' ');
+            if (ltr) {
+                textRect.adjust(0, 0, -textWidth, 0);
+            } else {
+                textRect.adjust(textWidth, 0, 0, 0);
+            }
+
             painter->drawText(textRect, Qt::AlignRight, previousText);
         }
 
@@ -193,6 +205,9 @@ public:
                 painter->setBrush(q->palette().dark());
             }
             painter->translate(rect.center());
+            if (painter->layoutDirection() == Qt::RightToLeft) {
+                painter->rotate(180);
+            }
             painter->drawPath(trianglePath());
             painter->resetTransform();
         }
@@ -555,9 +570,18 @@ void FlipScrollView::paintItems(QPainter &painter, QPaintEvent *event, QModelInd
 
             QRect triRect = option.rect;
             QPainterPath tPath = d->trianglePath();
-            triRect.setLeft(triRect.right() - ItemDelegate::ITEM_RIGHT_MARGIN);
+            if (option.direction == Qt::LeftToRight) {
+                triRect.setLeft(triRect.right() - ItemDelegate::ITEM_RIGHT_MARGIN);
+            } else {
+                triRect.setRight(triRect.left() + ItemDelegate::ITEM_RIGHT_MARGIN);
+            }
+
             painter.translate(triRect.center().x(), triRect.y() + (tPath.boundingRect().height() / 2)  + 3);
-            painter.rotate(180);
+
+            if (option.direction == Qt::LeftToRight) {
+                painter.rotate(180);
+            }
+
             painter.drawPath(tPath);
             painter.resetTransform();
             painter.restore();
@@ -599,7 +623,7 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
     }
 
     if (eventRect.intersects(headerRect)) {
-        d->drawHeader(&painter, headerRect, currentRoot);
+        d->drawHeader(&painter, headerRect, currentRoot, viewOptions());
     }
 
     // draw header for previous view
@@ -611,7 +635,7 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
     }
 
     if (eventRect.intersects(prevHeaderRect) && timerValue < 1.0) {
-        d->drawHeader(&painter,prevHeaderRect,previousRoot);
+        d->drawHeader(&painter, prevHeaderRect, previousRoot, viewOptions());
     }
 
     // draw navigation
