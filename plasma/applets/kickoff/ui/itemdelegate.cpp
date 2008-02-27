@@ -221,7 +221,7 @@ QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelInd
     subTitleFont.setPointSize(qMax(subTitleFont.pointSize() - 2,
                                    KGlobalSettings::smallestReadableFont().pointSize()));
     QFontMetrics subMetrics(subTitleFont);
-    size.setHeight(qMax(option.decorationSize.height(), qMax(size.height(), metrics.height() + subMetrics.ascent()) + 3));
+    size.setHeight(qMax(option.decorationSize.height(), qMax(size.height(), metrics.height() + subMetrics.ascent()) + 3) + 4);
 //    kDebug() << "size hint is" << size << (metrics.height() + subMetrics.ascent());
 
     return size;
