@@ -477,8 +477,11 @@ void BackgroundDelegate::paint(QPainter *painter,
                    option.rect.width() - x - MARGIN * 2,
                    maxheight);
     QString text = title.replace("_", " ");
+    QString authorCaption;
     if (!author.isEmpty()) {
-        text += '\n' + author;
+        authorCaption = i18nc("Caption to wallpaper preview, %1 author name",
+                              "by %1", author);
+        text += '\n' + authorCaption;
     }
     QRect boundingRect = painter->boundingRect(
         textRect, Qt::AlignVCenter | Qt::TextWordWrap, text);
@@ -487,7 +490,7 @@ void BackgroundDelegate::paint(QPainter *painter,
         QRect titleRect = painter->boundingRect(boundingRect, Qt::TextWordWrap, title);
         QRect authorRect(titleRect.bottomLeft(), textRect.size());
         painter->setFont(KGlobalSettings::smallestReadableFont());
-        painter->drawText(authorRect, Qt::TextWordWrap, "by " + author);
+        painter->drawText(authorRect, Qt::TextWordWrap, authorCaption);
     }
 
     painter->restore();
