@@ -80,6 +80,7 @@ void GlobalShortcutsModule::load()
             // kDebug() << "- action:" << actionText;
             QString actionName = QString("%1_%2").arg(component).arg(col->count());
             KAction *action = col->addAction(actionName);
+            // see KAction::~KAction
             action->setProperty("isConfigurationAction", QVariant(true));
             action->setText(actionText);
             QStringList actionId;
