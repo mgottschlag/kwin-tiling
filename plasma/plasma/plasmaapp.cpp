@@ -129,9 +129,9 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     if (!KCrash::crashHandler())
     {
         // this means we've most likely crashed once. so let's see if we
-        // stay up for more than 2 minutes time, and if so reset the
+        // stay up for more than 10s time, and if so reset the
         // crash handler since the crash isn't a frequent offender
-        QTimer::singleShot(120000, this, SLOT(setCrashHandler()));
+        QTimer::singleShot(10000, this, SLOT(setCrashHandler()));
     }
     else
     {
@@ -142,7 +142,6 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     }
 
     // Enlarge application pixmap cache
-    
     // Calculate the size required to hold background pixmaps for all screens.
     // Add 10% so that other (smaller) pixmaps can also be cached.
     int cacheSize = 0;
