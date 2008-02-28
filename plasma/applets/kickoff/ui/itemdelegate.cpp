@@ -118,7 +118,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
         // for the background
         backgroundColor.setAlphaF(0.5);
         painter->setBrush(QBrush(backgroundColor));
-        painter->drawPath(Plasma::roundedRectangle(option.rect, 5));
+        painter->drawPath(Plasma::roundedRectangle(textAreaRect, 5));
         painter->restore();
     }
 
