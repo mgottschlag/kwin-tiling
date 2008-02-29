@@ -53,8 +53,9 @@ public:
     QCheckBox *switchOnHoverCheckBox;
     KIntNumInput *visibleCountEdit;
     QList<QAction*> actions;
+    QAction* switcher;
 
-    Private() : launcher(0), dialog(0) {}
+    Private() : launcher(0), dialog(0), switcher(0) {}
     ~Private() { delete dialog; delete launcher; }
     void createLauncher(LauncherApplet *q);
 };
@@ -91,9 +92,11 @@ LauncherApplet::~LauncherApplet()
 
 void LauncherApplet::init()
 {
-    QAction* switcher = new QAction(i18n("Switch to Classic Menu Style"), this);
-    d->actions.append(switcher);
-    connect(switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
+    Q_ASSERT( ! d->switcher );
+    d->switcher = new QAction(i18n("Switch to Classic Menu Style"), this);
+    d->switcher->setVisible(! isImmutable());
+    d->actions.append(d->switcher);
+    connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
 }
 
 void LauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
@@ -111,14 +114,18 @@ void LauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
     if (constraints & Plasma::SizeConstraint) {
         d->icon->resize(contentSize());
     }
+
+    if (constraints & Plasma::ImmutableConstraint) {
+        d->switcher->setVisible(! isImmutable());
+    }
 }
 
 void LauncherApplet::switchMenuStyle()
 {
-        if (containment()) {
-            containment()->addApplet("simplelauncher", QVariantList(), 0, geometry());
-            destroy();
-        }
+    if (containment()) {
+        containment()->addApplet("simplelauncher", QVariantList(), 0, geometry());
+        destroy();
+    }
 }
 
 void LauncherApplet::showConfigurationInterface()

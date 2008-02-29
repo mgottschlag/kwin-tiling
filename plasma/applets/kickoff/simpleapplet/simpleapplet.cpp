@@ -64,8 +64,9 @@ public:
         QComboBox *viewComboBox, *formatComboBox;
 
         QList<QAction*> actions;
+        QAction* switcher;
 
-        Private() : menuview(0), launcher(0), dialog(0) {}
+        Private() : menuview(0), launcher(0), dialog(0), switcher(0) {}
         ~Private() { delete dialog; delete menuview; }
 
         void addItem(QComboBox* combo, const QString& caption, int index, const QString& icon = QString()) {
@@ -187,9 +188,11 @@ void MenuLauncherApplet::init()
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ExtensionHandler,"desktop",new Kickoff::ServiceItemHandler);
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ProtocolHandler, "leave", new Kickoff::LeaveItemHandler);
 
-    QAction* switcher = new QAction(i18n("Switch to Kickoff Menu Style"), this);
-    d->actions.append(switcher);
-    connect(switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
+    Q_ASSERT( ! d->switcher );
+    d->switcher = new QAction(i18n("Switch to Kickoff Menu Style"), this);
+    d->switcher->setVisible(! isImmutable());
+    d->actions.append(d->switcher);
+    connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
 }
 
 void MenuLauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
@@ -206,6 +209,10 @@ void MenuLauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
 
     if (constraints & Plasma::SizeConstraint) {
         d->icon->resize(contentSize());
+    }
+
+    if (constraints & Plasma::ImmutableConstraint) {
+        d->switcher->setVisible(! isImmutable());
     }
 }
 
