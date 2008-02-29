@@ -22,14 +22,13 @@ install(TARGETS kcm_keys  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 install( FILES keys.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES
-    kde3.kksrc
-    kde4.kksrc
-    mac4.kksrc
-    test.kksrc
-    unix3.kksrc
-    win3.kksrc
-    win4.kksrc
-    wm3.kksrc
+    schemes/kde3.kksrc
+    schemes/kde4.kksrc
+    schemes/mac4.kksrc
+    schemes/unix3.kksrc
+    schemes/win3.kksrc
+    schemes/win4.kksrc
+    schemes/wm3.kksrc
     DESTINATION  ${DATA_INSTALL_DIR}/kcmkeys )
 
 
