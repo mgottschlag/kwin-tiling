@@ -66,6 +66,7 @@ void LauncherApplet::Private::createLauncher(LauncherApplet *q)
     launcher->setAutoHide(true);
     launcher->adjustSize();
     QObject::connect(launcher, SIGNAL(aboutToHide()), icon, SLOT(setUnpressed()));
+    QObject::connect(launcher, SIGNAL(configNeedsSaving()), q, SIGNAL(configNeedsSaving()));
 }
 
 LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
@@ -136,7 +137,7 @@ void LauncherApplet::showConfigurationInterface()
         layout->addLayout(vl);
         vl->addWidget(new QLabel(i18n("Number of visible items:"), d->dialog->mainWidget()));
         d->visibleCountEdit = new KIntNumInput(d->dialog->mainWidget());
-        d->visibleCountEdit->setMinimum(1);
+        d->visibleCountEdit->setMinimum(3);
         d->visibleCountEdit->setSliderEnabled(false);
         vl->addWidget(d->visibleCountEdit);
 
