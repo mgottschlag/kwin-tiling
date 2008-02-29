@@ -1,5 +1,6 @@
 /*
  *  Copyright 2007 Andreas Pakulat <apaku@gmx.de>
+ *  Copyright 2008 Michael Jansen <kde@michael-jansen.biz>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,22 +17,27 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "globalshortcuts.h"
+#include "kglobalshortcutseditor.h"
+#include "select_scheme_dialog.h"
+#include <kdebug.h>
 
 #include <QDBusConnection>
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QDBusMetaType>
-#include <QMetaType>
-#include <QVBoxLayout>
+#include <QLayout>
 #include <QPointer>
 
-#include <kpluginfactory.h>
-#include <kactioncollection.h>
-#include <kaction.h>
-#include <kglobalshortcutseditor.h>
-#include <kdebug.h>
-#include <qcombobox.h>
-#include <kglobalaccel.h>
+#include <KAction>
+#include <KActionCollection>
+#include <KConfig>
+#include <KConfigGroup>
+#include <KDirSelectDialog>
+#include <KGlobalAccel>
+#include <KLocale>
+#include <KMessageBox>
+#include <KPluginFactory>
+#include <KPushButton>
 
 K_PLUGIN_FACTORY(GlobalShortcutsModuleFactory, registerPlugin<GlobalShortcutsModule>();)
 K_EXPORT_PLUGIN(GlobalShortcutsModuleFactory("kcmkeys"))
@@ -43,10 +49,37 @@ GlobalShortcutsModule::GlobalShortcutsModule( QWidget * parent, const QVariantLi
       editor(0)
 {
     KCModule::setButtons( KCModule::Buttons(KCModule::Default|KCModule::Apply) );
+
+    // Add import scheme button
+    KPushButton *importButton = new KPushButton(this);
+    importButton->setText(i18n("Import scheme ..."));
+    connect( 
+        importButton, SIGNAL(clicked()),
+        this,SLOT(importScheme()) );
+
+    // Add export scheme button
+    KPushButton *exportButton = new KPushButton(this);
+    exportButton->setText(i18n("Export scheme ..."));
+    connect( 
+        exportButton, SIGNAL(clicked()),
+        this,SLOT(exportScheme()) );
+
+    // Layout for the buttons
+    QHBoxLayout *hbox = new QHBoxLayout;
+    hbox->addWidget(exportButton);
+    hbox->addWidget(importButton);
+
+    // Create the kglobaleditor
     editor = new KGlobalShortcutsEditor(this, KShortcutsEditor::GlobalAction);
-    setLayout( new QVBoxLayout );
-    layout()->addWidget(editor);
-    connect(editor, SIGNAL(changed()), this, SLOT(changed()) );
+    connect(editor, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)) );
+
+    // Layout the hole bunch
+    QVBoxLayout *global = new QVBoxLayout;
+    global->addLayout(hbox);
+    global->addWidget(editor);
+    setLayout(global);
+
+    // Initialize our content
     load();
 }
 
@@ -77,9 +110,9 @@ void GlobalShortcutsModule::load()
         QDBusReply<QStringList> actions = iface->call("allActionsForComponent", qVariantFromValue(component) );
         foreach(const QString &actionText, actions.value() )
         {
-            // kDebug() << "- action:" << actionText;
-            QString actionName = QString("%1_%2").arg(component).arg(col->count());
-            KAction *action = col->addAction(actionName);
+            kWarning() << "FIXME: Get a real objectName from iface!";
+            QString objectName = actionText;
+            KAction *action = col->addAction(objectName);
             // see KAction::~KAction
             action->setProperty("isConfigurationAction", QVariant(true));
             action->setText(actionText);
@@ -120,6 +153,46 @@ void GlobalShortcutsModule::defaults()
 void GlobalShortcutsModule::save()
 {
     editor->save();
+}
+
+
+void GlobalShortcutsModule::importScheme()
+{
+    // Check for unsaved modifications
+    if (editor->isModified()) {
+        int choice = KMessageBox::warningContinueCancel(
+            parentWidget(),
+            i18n("Your current changes will be lost if you load another scheme before saving this one"),
+            i18n("Load shortcurt scheme"),
+            KGuiItem(i18n("Load")) );
+        if (choice != KMessageBox::Continue)
+            {
+            return;
+            }
+    }
+
+    SelectSchemeDialog dialog(this);
+    if (dialog.exec() != KDialog::Accepted) {
+        return;
+    }
+
+    KUrl url = dialog.selectedScheme();
+    Q_ASSERT(url.isLocalFile());
+    kDebug() << url.path();
+    KConfig config(url.path());
+    editor->importConfiguration(&config);
+}
+
+
+void GlobalShortcutsModule::exportScheme()
+{
+    KUrl url = KDirSelectDialog::selectDirectory( KUrl(), true, parentWidget() );
+    if (!url.isEmpty()) {
+        KConfig config(url.path());
+        config.deleteGroup( "Shortcuts" );
+        config.deleteGroup( "Global Shortcuts" );
+        editor->exportConfiguration(&config);
+    }
 }
 
 #include "globalshortcuts.moc"

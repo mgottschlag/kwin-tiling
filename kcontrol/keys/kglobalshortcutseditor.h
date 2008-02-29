@@ -24,6 +24,7 @@
 
 class KActionCollection;
 class KShortcut;
+class KConfig;
 
 /**
  * Combine a KShortcutsEditor with a KComboBox.
@@ -56,25 +57,42 @@ class KGlobalShortcutsEditor : public QWidget
         void addCollection( KActionCollection *, const QString &component, const QString &title = QString() );
 
         /**
+         * Clear all collections were currently hosting.
+         */
+        void clear();
+
+
+        /**
          * Revert all changes made since the last save.
          */
         void undo();
 
+
         /**
-         * Clear all collections were currently hosting.
+         * Load the shortcuts from the configuration.
          */
-        void clear();
+        void importConfiguration( KConfig *config );
+
+
+        /**
+         * Save the shortcuts to the configuration.
+         */
+        void exportConfiguration( KConfig *config ) const;
+
+
+        /**
+         * Are the unsaved changes?
+         */
+        bool isModified() const;
 
     Q_SIGNALS:
 
         /**
          * Indicate that state of the modules contents has changed.
          *
-         * There is currently no way to tell if the contents is really changed :-( .
-         *
-         * @param state changes or not
+         * @param state changed or not
          */
-        void changed();
+        void changed(bool);
 
 
     public Q_SLOTS:
@@ -106,7 +124,7 @@ class KGlobalShortcutsEditor : public QWidget
 
     private:
 
-	    friend class KGlobalShortcutsEditorPrivate;
+        friend class KGlobalShortcutsEditorPrivate;
         class KGlobalShortcutsEditorPrivate;
         KGlobalShortcutsEditorPrivate *const d;
         Q_DISABLE_COPY(KGlobalShortcutsEditor)

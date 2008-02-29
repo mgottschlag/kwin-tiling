@@ -178,6 +178,7 @@ void KGlobalShortcutsEditor::clear()
     }
 
 
+
 void KGlobalShortcutsEditor::save()
     {
     // The editors are responsible for the saving
@@ -185,6 +186,25 @@ void KGlobalShortcutsEditor::save()
     Q_FOREACH (KShortcutsEditor *editor, d->components.values())
         {
         editor->save();
+        }
+    }
+
+
+void KGlobalShortcutsEditor::importConfiguration( KConfig *config )
+    {
+    // The editors are responsible for the writing of the scheme
+    Q_FOREACH (KShortcutsEditor *editor, d->components.values())
+        {
+        editor->importConfiguration(config);
+        }
+    }
+
+void KGlobalShortcutsEditor::exportConfiguration( KConfig *config ) const
+    {
+    // The editors are responsible for the writing of the scheme
+    Q_FOREACH (KShortcutsEditor *editor, d->components.values())
+        {
+        editor->exportConfiguration(config);
         }
     }
 
@@ -200,9 +220,22 @@ void KGlobalShortcutsEditor::undo()
     }
 
 
+bool KGlobalShortcutsEditor::isModified() const
+    {
+    Q_FOREACH (KShortcutsEditor *editor, d->components.values())
+        {
+        if (editor->isModified()) 
+            {
+            return true;
+            }
+        }
+    return false;
+    }
+
+
 void KGlobalShortcutsEditor::_k_key_changed()
     {
-    changed();
+    emit changed(isModified());
     }
 
 #include "kglobalshortcutseditor.moc"

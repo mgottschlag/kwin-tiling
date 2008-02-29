@@ -1,6 +1,5 @@
 /*
- * Copyright 2007 Andreas Pakulat <apaku@gmx.de>
- * Copyright 2008 Michael Jansen <kde@michael-jansen.biz>
+ *  Copyright 2008 Michael Jansen <kde@michael-jansen.biz>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,33 +15,34 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
+#ifndef SELECT_SCHEME_DIALOG_H
+#define SELECT_SCHEME_DIALOG_H
 
-#ifndef SHORTCUTS_MODULE_H
-#define SHORTCUTS_MODULE_H
+#include "KDialog"
 
-#include <kcmodule.h>
-#include <QtCore/QHash>
+#include "ui_select_scheme_dialog.h"
 
-class KActionCollection;
-class KGlobalShortcutsEditor;
 
-class GlobalShortcutsModule : public KCModule
-{
-    Q_OBJECT
-public:
-    GlobalShortcutsModule(QWidget *parent, const QVariantList &args);
-    ~GlobalShortcutsModule();
+class SelectSchemeDialog : public KDialog
+    {
+    Q_OBJECT;
 
-    virtual void save();
-    virtual void load();
-    virtual void defaults();
+    public:
 
-public slots:
-    virtual void importScheme();
-    virtual void exportScheme();
-private:
-    KGlobalShortcutsEditor *editor;
-};
+        SelectSchemeDialog( QWidget *parent = 0 );
+
+        KUrl selectedScheme() const;
+
+    private slots:
+
+        void schemeActivated(int index);
+
+    private:
+
+        Ui::SelectSchemeDialog ui;
+        QStringList m_schemes;
+    }; // SelectSchemeDialog
+
 
 
 #endif
