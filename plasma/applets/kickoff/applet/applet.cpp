@@ -21,6 +21,7 @@
 #include "applet/applet.h"
 
 // Qt
+#include <QAction>
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QGraphicsView>
@@ -51,6 +52,7 @@ public:
     KDialog *dialog;
     QCheckBox *switchOnHoverCheckBox;
     KIntNumInput *visibleCountEdit;
+    QList<QAction*> actions;
 
     Private() : launcher(0), dialog(0) {}
     ~Private() { delete dialog; delete launcher; }
@@ -88,6 +90,9 @@ LauncherApplet::~LauncherApplet()
 
 void LauncherApplet::init()
 {
+    QAction* switcher = new QAction(i18n("Switch to Classic Menu Style"), this);
+    d->actions.append(switcher);
+    connect(switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
 }
 
 void LauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
@@ -105,6 +110,14 @@ void LauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
     if (constraints & Plasma::SizeConstraint) {
         d->icon->resize(contentSize());
     }
+}
+
+void LauncherApplet::switchMenuStyle()
+{
+        if (containment()) {
+            containment()->addApplet("simplelauncher", QVariantList(), 0, geometry());
+            destroy();
+        }
 }
 
 void LauncherApplet::showConfigurationInterface()
@@ -189,6 +202,11 @@ void LauncherApplet::toggleMenu(bool pressed)
 
     d->launcher->setVisible(!d->launcher->isVisible());
     d->icon->setPressed();
+}
+
+QList<QAction*> LauncherApplet::contextActions()
+{
+  return d->actions;
 }
 
 #include "applet.moc"
