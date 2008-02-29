@@ -40,7 +40,7 @@ class FlipScrollView::Private
 {
 public:
     Private(FlipScrollView *view)
-        : q(view) , itemHeight(32)
+        : q(view)
           , backArrowHover(false)
           , flipAnimTimeLine(new QTimeLine())
           , animLeftToRight(true)
@@ -235,14 +235,13 @@ public:
         int pageSize = q->height();
         int headerHeight = headerRect(currentRoot()).height();
         int itemH = q->sizeHintForIndex(q->model()->index(0, 0)).height();
-        q->verticalScrollBar()->setRange(0, (childCount * itemH) + //itemHeight) +
+        q->verticalScrollBar()->setRange(0, (childCount * itemH) +
                                              headerHeight - pageSize);
         q->verticalScrollBar()->setPageStep(pageSize);
         q->verticalScrollBar()->setSingleStep(itemH);
     }
 
     FlipScrollView * const q;
-    int itemHeight;
     bool backArrowHover;
     QPersistentModelIndex hoveredIndex;
 
@@ -265,7 +264,7 @@ FlipScrollView::FlipScrollView(QWidget *parent)
     connect(d->flipAnimTimeLine, SIGNAL(valueChanged(qreal)), this, SLOT(updateFlipAnimation(qreal)));
     d->flipAnimTimeLine->setDuration(Private::FLIP_ANIM_DURATION);
     d->flipAnimTimeLine->setCurrentTime(Private::FLIP_ANIM_DURATION);
-    setIconSize(QSize(d->itemHeight,d->itemHeight));
+    setIconSize(QSize(ItemDelegate::ICON_SIZE,ItemDelegate::ICON_SIZE));
     setMouseTracking(true);
     setAutoScroll(true);
 }
@@ -289,7 +288,7 @@ QModelIndex FlipScrollView::indexAt(const QPoint& point) const
     int topOffset = d->headerRect(d->currentRoot()).height() - verticalOffset();
     int items = model()->rowCount(d->currentRoot());
 
-    int rowIndex = (point.y() - topOffset) / d->itemHeight;
+    int rowIndex = (point.y() - topOffset) / ItemDelegate::ITEM_HEIGHT;
 
     QRect itemRect = rect();
     itemRect.setLeft(d->backArrowRect().right() + ItemDelegate::BACK_ARROW_SPACING);
@@ -351,9 +350,9 @@ QRect FlipScrollView::visualRect(const QModelIndex& index) const
     */
     int scrollBarWidth = verticalScrollBar()->isVisible() ?
                                     verticalScrollBar()->width() : 0;
-    QRectF itemRect(leftOffset, topOffset + index.row() * d->itemHeight,
+    QRectF itemRect(leftOffset, topOffset + index.row() * ItemDelegate::ITEM_HEIGHT,
                    width() - leftOffset - scrollBarWidth - ItemDelegate::BACK_ARROW_SPACING,
-                   d->itemHeight);
+                   ItemDelegate::ITEM_HEIGHT);
 
     const qreal timeValue = d->flipAnimTimeLine->currentValue();
     if ( index.parent() == d->currentRoot() ) {
@@ -441,7 +440,6 @@ void FlipScrollView::setModel(QAbstractItemModel *model)
     QAbstractItemView::setModel(model);
     if (model) {
         setCurrentIndex(model->index(0,0));
-        d->itemHeight = sizeHintForIndex(model->index(0, 0)).height();
     }
 }
 
@@ -576,7 +574,7 @@ void FlipScrollView::paintItems(QPainter &painter, QPaintEvent *event, QModelInd
                 triRect.setRight(triRect.left() + ItemDelegate::ITEM_RIGHT_MARGIN);
             }
 
-            painter.translate(triRect.center().x(), triRect.y() + (tPath.boundingRect().height() / 2)  + 3);
+            painter.translate(triRect.center().x()-6, triRect.y() + (option.rect.height() / 2));
 
             if (option.direction == Qt::LeftToRight) {
                 painter.rotate(180);

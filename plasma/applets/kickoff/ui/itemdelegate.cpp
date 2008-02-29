@@ -68,7 +68,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
     QRect textRect = QStyle::alignedRect(option.direction,
                                          textAlignment,
                                          textSize,
-                                         contentRect.adjusted(0, 2, 0, 0));
+                                         contentRect.adjusted(0, 2, -6, 0));
     QString titleText = index.data(Qt::DisplayRole).value<QString>();
     QString subTitleText = index.data(SubTitleRole).value<QString>();
     bool uniqueTitle = !index.data(SubTitleMandatoryRole).value<bool>();// true;
@@ -101,34 +101,30 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
 
     if (hover) {
         painter->save();
-        painter->setPen(Qt::NoPen);
-        QColor backgroundColor = option.palette.color(QPalette::Highlight);
-        QFontMetrics titleMetrics(titleFont);
-        QFontMetrics subTitleMetrics(subTitleFont);
-        QRect textAreaRect = contentRect;
-        int actualTextWidth = qMax(titleMetrics.width(titleText), subTitleMetrics.width("  " + subTitleText));
-        if (option.direction == Qt::LeftToRight) {
-            textAreaRect.adjust(decorationRect.width() + ICON_TEXT_MARGIN - 3, 0,
-                                -(titleRect.width() - actualTextWidth) + 3, 1);
-        } else {
-            textAreaRect.adjust((titleRect.width() - actualTextWidth) - 3, 1,
-                                - decorationRect.width() - ICON_TEXT_MARGIN + 3, 0);
-        }
         // use a slightly translucent version of the palette's highlight color
         // for the background
+        QColor backgroundColor = option.palette.color(QPalette::Highlight);
         backgroundColor.setAlphaF(0.5);
-        painter->setBrush(QBrush(backgroundColor));
-        painter->drawPath(Plasma::roundedRectangle(textAreaRect, 5));
+        QPen outlinePen(backgroundColor, 2);
+        painter->setPen(outlinePen);
+        painter->drawPath(Plasma::roundedRectangle(option.rect.adjusted(3, 3, -2, -1), 5));
         painter->restore();
     }
 
     // draw icon
     QIcon decorationIcon = index.data(Qt::DecorationRole).value<QIcon>();
+    decorationRect.translate(5, 5);
+    if (!hover) {
+      decorationRect.adjust(2, 2, -4, -4);
+    }
     decorationIcon.paint(painter, decorationRect, option.decorationAlignment);
 
     painter->save();
 
     // draw title
+    if (hover) {
+      titleFont.setBold(true);
+    }
     painter->setFont(titleFont);
     painter->drawText(titleRect, Qt::AlignLeft|Qt::AlignVCenter, titleText);
 
@@ -223,6 +219,8 @@ QSize ItemDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelInd
     QFontMetrics subMetrics(subTitleFont);
     size.setHeight(qMax(option.decorationSize.height(), qMax(size.height(), metrics.height() + subMetrics.ascent()) + 3) + 4);
 //    kDebug() << "size hint is" << size << (metrics.height() + subMetrics.ascent());
+
+    size*=1.1;
 
     return size;
 }

@@ -171,7 +171,7 @@ public:
 
     int contentWidth() const
     {
-        return q->width();
+        return q->width() - q->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 2;
     }
 
     QSize calculateItemSize(const QModelIndex& index) const 
@@ -258,7 +258,7 @@ UrlItemView::UrlItemView(QWidget *parent)
     : QAbstractItemView(parent)
     , d(new Private(this))
 {
-    setIconSize(QSize(ItemDelegate::ITEM_HEIGHT,ItemDelegate::ITEM_HEIGHT));
+    setIconSize(QSize(ItemDelegate::ICON_SIZE,ItemDelegate::ICON_SIZE));
     setMouseTracking(true);
 }
 
