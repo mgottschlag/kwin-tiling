@@ -86,6 +86,7 @@ public:
 protected slots:
         void configAccepted();
         virtual void wheelEvent(QGraphicsSceneWheelEvent *);
+        void themeRefresh();
 
 private slots:
         void addWindowTask(TaskPtr);

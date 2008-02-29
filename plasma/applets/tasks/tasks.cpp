@@ -33,6 +33,7 @@
 
 // Plasma
 #include <plasma/containment.h>
+#include <plasma/theme.h>
 #include <plasma/layouts/boxlayout.h>
 #include <plasma/layouts/layoutanimator.h>
 
@@ -47,6 +48,7 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
     m_screenTimer.setSingleShot(true);
     m_screenTimer.setInterval(300);
     connect(&m_screenTimer, SIGNAL(timeout()), this, SLOT(checkScreenChange()));
+    connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(themeRefresh()));      
 }
 
 Tasks::~Tasks()
@@ -365,6 +367,14 @@ void Tasks::reconnect()
 
     removeAllWindowTasks();
     registerWindowTasks();
+}
+
+void Tasks::themeRefresh()
+{
+    foreach (AbstractTaskItem *taskItem, m_windowTaskItems) {
+        taskItem->update();
+    }
+
 }
 
 #include "tasks.moc"
