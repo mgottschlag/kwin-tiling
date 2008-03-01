@@ -25,7 +25,7 @@
 
 class SelectSchemeDialog : public KDialog
     {
-    Q_OBJECT;
+    Q_OBJECT
 
     public:
 
