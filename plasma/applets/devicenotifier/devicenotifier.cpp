@@ -57,12 +57,14 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
       m_solidEngine(0),
       m_hotplugModel(0),
       m_widget(0),
+      m_icon(0),
+      m_layout(0),
+      m_proxy(0),
       m_dialog(0),
       m_displayTime(0),
       m_numberItems(0),
       m_itemsValidity(0),
-      m_timer(0),
-      m_layout(0)
+      m_timer(0)
 {
     setHasConfigurationInterface(true);
 }
