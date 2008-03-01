@@ -68,7 +68,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
     QRect textRect = QStyle::alignedRect(option.direction,
                                          textAlignment,
                                          textSize,
-                                         contentRect.adjusted(0, 2, -6, 0));
+                                         contentRect.adjusted(4, 3, -6, 0));
     QString titleText = index.data(Qt::DisplayRole).value<QString>();
     QString subTitleText = index.data(SubTitleRole).value<QString>();
     bool uniqueTitle = !index.data(SubTitleMandatoryRole).value<bool>();// true;
@@ -113,7 +113,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
 
     // draw icon
     QIcon decorationIcon = index.data(Qt::DecorationRole).value<QIcon>();
-    decorationRect.translate(5, 5);
+    decorationRect.translate(4, 4);
     if (!hover) {
       decorationRect.adjust(2, 2, -4, -4);
     }
