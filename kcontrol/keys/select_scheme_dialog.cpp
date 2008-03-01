@@ -16,44 +16,58 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 #include "select_scheme_dialog.h"
+#include "ui_select_scheme_dialog.h"
+
 
 #include "KDialog"
 #include "KStandardDirs"
 
 SelectSchemeDialog::SelectSchemeDialog( QWidget *parent )
     : KDialog( parent )
+     ,ui(new Ui::SelectSchemeDialog)
     {
     m_schemes = KGlobal::dirs()->findAllResources("data", "kcmkeys/*.kksrc");
 
-    ui.setupUi(this);
-    setMainWidget( ui.layoutWidget );
+    ui->setupUi(this);
+    setMainWidget( ui->widget );
 
     Q_FOREACH( QString res, m_schemes )
         {
         KConfig config( res, KConfig::SimpleConfig );
         KConfigGroup group( &config, "Settings" );
-        ui.kcombobox->addItem( group.readEntry( "Name" ));
+        QString name = group.readEntry( "Name" );
+
+        if (name.isEmpty())
+            {
+            name = res;
+            }
+        ui->m_schemes->addItem( name );
         }
 
-    ui.kcombobox->setCurrentIndex(-1);
+    ui->m_schemes->setCurrentIndex(-1);
 
-    ui.kurlrequester->setMode(KFile::LocalOnly|KFile::ExistingOnly);
+    ui->m_url->setMode(KFile::LocalOnly|KFile::ExistingOnly);
 
     connect( 
-        ui.kcombobox, SIGNAL(activated(int)),
+        ui->m_schemes, SIGNAL(activated(int)),
         this, SLOT(schemeActivated(int)));
     }
 
 
+SelectSchemeDialog::~SelectSchemeDialog()
+    {
+    delete ui;
+    }
+
 void SelectSchemeDialog::schemeActivated(int index)
     {
-    ui.kurlrequester->setPath(m_schemes[index]);
+    ui->m_url->setPath(m_schemes[index]);
     }
 
 
 KUrl SelectSchemeDialog::selectedScheme() const
     {
-    return ui.kurlrequester->url();
+    return ui->m_url->url();
     }
 
 #include "moc_select_scheme_dialog.cpp"

@@ -20,8 +20,10 @@
 
 #include "KDialog"
 
-#include "ui_select_scheme_dialog.h"
-
+namespace Ui
+    {
+    class SelectSchemeDialog;
+    }
 
 class SelectSchemeDialog : public KDialog
     {
@@ -30,6 +32,7 @@ class SelectSchemeDialog : public KDialog
     public:
 
         SelectSchemeDialog( QWidget *parent = 0 );
+        ~SelectSchemeDialog();
 
         KUrl selectedScheme() const;
 
@@ -39,7 +42,7 @@ class SelectSchemeDialog : public KDialog
 
     private:
 
-        Ui::SelectSchemeDialog ui;
+        Ui::SelectSchemeDialog *ui;
         QStringList m_schemes;
     }; // SelectSchemeDialog
 
