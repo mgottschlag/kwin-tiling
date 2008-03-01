@@ -68,17 +68,31 @@ bool TabBar::switchTabsOnHover() const
     return m_switchOnHover;
 }
 
-QSize TabBar::tabSizeHint(int index) const
+QSize TabBar::tabSize(int index) const
 {
     QSize hint;
     const QFontMetrics metrics(font());
     const QSize textSize = metrics.size(Qt::TextHideMnemonic,tabText(index));
-
     hint.rwidth() = qMax(iconSize().width(),textSize.width());
     hint.rheight() = iconSize().height() + textSize.height();
+    hint.rwidth() += 2 * TAB_CONTENTS_MARGIN;
+    hint.rheight() += 2 * TAB_CONTENTS_MARGIN;
+    return hint;
+}
 
-    hint.rwidth() += 2*TAB_CONTENTS_MARGIN;
-    hint.rheight() += 2*TAB_CONTENTS_MARGIN;
+QSize TabBar::tabSizeHint(int index) const
+{
+    QSize hint = tabSize(index);
+
+    if (count() > 0) {
+        int w = width() / count();
+        for (int i = count() - 1; i >= 0; i--) {
+            if (tabSize(i).rwidth() >= w) {
+                return hint;
+            }
+        }
+        hint.rwidth() = w;
+    }
 
     return hint;
 }

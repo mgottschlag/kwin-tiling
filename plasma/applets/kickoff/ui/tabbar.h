@@ -63,6 +63,8 @@ private:
     QTimeLine m_animator;
     QVector<int> m_animStates;
     bool m_switchOnHover;
+
+    QSize tabSize(int index) const;
 };
 
 }
