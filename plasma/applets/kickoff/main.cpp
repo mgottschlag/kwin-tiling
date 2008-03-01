@@ -36,7 +36,7 @@ int main(int argc,char** argv)
 
     KApplication app;
 
-    Kickoff::Launcher *launcher = new Kickoff::Launcher(0);
+    Kickoff::Launcher *launcher = new Kickoff::Launcher((QObject*)0);
     launcher->setWindowTitle("Kickoff KDE 4 Test Application");
     // ensure launcher gets deleted when the app closes so that favorites, 
     // recent applications etc. are saved
