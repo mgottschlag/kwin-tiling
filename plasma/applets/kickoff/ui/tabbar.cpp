@@ -85,13 +85,13 @@ QSize TabBar::tabSizeHint(int index) const
     QSize hint = tabSize(index);
 
     if (count() > 0) {
-        int w = width() / count();
+        int minwidth = 0;
         for (int i = count() - 1; i >= 0; i--) {
-            if (tabSize(i).rwidth() >= w) {
-                return hint;
-            }
+            minwidth += tabSize(i).rwidth();
         }
-        hint.rwidth() = w;
+        if (minwidth < width()) {
+            hint.rwidth() += (width() - minwidth) / count();
+        }
     }
 
     return hint;
