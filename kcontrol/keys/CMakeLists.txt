@@ -13,7 +13,7 @@ kde4_add_ui_files( kcm_keys_PART_SRCS
 kde4_add_plugin(kcm_keys ${kcm_keys_PART_SRCS})
 
 
-target_link_libraries(kcm_keys  ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${X11_X11_LIB})
+target_link_libraries(kcm_keys  ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${X11_X11_LIB})
 
 install(TARGETS kcm_keys  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

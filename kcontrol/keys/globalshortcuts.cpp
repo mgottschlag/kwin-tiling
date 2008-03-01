@@ -32,7 +32,7 @@
 #include <KActionCollection>
 #include <KConfig>
 #include <KConfigGroup>
-#include <KDirSelectDialog>
+#include <KFileDialog>
 #include <KGlobalAccel>
 #include <KLocale>
 #include <KMessageBox>
@@ -186,7 +186,7 @@ void GlobalShortcutsModule::importScheme()
 
 void GlobalShortcutsModule::exportScheme()
 {
-    KUrl url = KDirSelectDialog::selectDirectory( KUrl(), true, parentWidget() );
+    KUrl url = KFileDialog::getSaveFileName( KUrl(), "*.kksrc", parentWidget() );
     if (!url.isEmpty()) {
         KConfig config(url.path());
         config.deleteGroup( "Shortcuts" );
