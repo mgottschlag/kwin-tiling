@@ -820,6 +820,7 @@ Type=SHORTCUT
 
 [Data_1_5]
 Comment=By pressing Alt+Ctrl+W a D-Bus call will be performed that will show the minicli. You can use any kind of D-Bus call, just like using the command line 'qdbus' tool.
+Comment[ca]=Prement Alt+Ctrl+W s'executarà una crida D-Bus que mostrarà el «minicli». Podeu usar qualsevol classe de crida D-Bus, com si estiguéssiu usant l'eina 'qdbus' de la línia d'ordres.
 Comment[da]=Ved at trykke Alt+Ctrl+W vil et D-Bus-kald blive udført som vil vise minicli. Du kan bruge ethvert D-Bus-kald, ligesom at bruge kommandolinjeværktøjet 'qdbus'.
 Comment[el]=Πατώντας το Alt+Ctrl+W θα εκτελεστεί μια κλήση D-Bus η οποία θα εμφανίσει το minicli. Μπορείτε να χρησιμοποιήσετε οποιαδήποτε κλήση D-Bus, όπως ακριβώς και με το εργαλείο της γραμμής εντολών 'qdbus'.
 Comment[es]=Pulsando Alt+Ctrl+W se ejecutará una llamada de D-Bus que mostrará el minicli. Puede usar cualquier tipo de llamada D-Bus, igual que con la herramienta 'qdbus' de la línea de comandos.
@@ -836,6 +837,7 @@ Comment[zh_CN]=通过按下 Alt+Ctrl+W，将会执行一个 D-Bus 调用显示 m
 Comment[zh_TW]=按下 Alt+Ctrl+W 時，會產生一個 D-Bus 呼叫來顯示 minicli。您可以使用任何種類的 D-Bus 呼叫，就如同在命令列中使用 qdbus 一樣。
 Enabled=false
 Name=Perform D-Bus call 'kdesktop KDesktopIface popupExecuteCommand()'
+Name[ca]=Executa la crida D-Bus 'kdesktop KDesktopIface popupExecuteCommand()'
 Name[da]=Udfør D-Bus-kaldet 'kdesktop KDesktopIface popupExecuteCommand()'
 Name[el]=Εκτέλεση της κλήσης D-Bus 'kdesktop KDesktopIface popupExecuteCommand()'
 Name[es]=Realiza una llamada 'kdesktop KDesktopIface popupExecuteCommand()' de D-Bus

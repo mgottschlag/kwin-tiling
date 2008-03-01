@@ -77,6 +77,7 @@ Regexp=^\\/.+\\.jpg$
 [Action_0/Command_0]
 Commandline=gwenview %s
 Description=Launch &Gwenview
+Description[ca]=Engega el &Gwenview
 Description[el]=Εκτέλεση &Gwenview
 Description[eo]=Lanĉi &Gwenview-rigardilon
 Description[es]=Iniciar &Gwenview
@@ -165,6 +166,7 @@ Regexp=^https?://.
 [Action_1/Command_0]
 Commandline=kfmclient exec %s
 Description=Open with &default Browser
+Description[ca]=Obre amb el navega&dor per omissió
 Description[el]=Άνοιγμα με τον &προκαθορισμένο περιηγητή
 Description[eo]=Malfermi per &defaŭlta retumilo
 Description[es]=Abrir con el navega&dor predeterminado
@@ -1407,6 +1409,7 @@ Regexp=^ftp://.
 [Action_6/Command_0]
 Commandline=kfmclient exec %s
 Description=Open with &default Browser
+Description[ca]=Obre amb el navega&dor per omissió
 Description[el]=Άνοιγμα με τον &προκαθορισμένο περιηγητή
 Description[eo]=Malfermi per &defaŭlta retumilo
 Description[es]=Abrir con el navega&dor predeterminado

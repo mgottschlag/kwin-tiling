@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Applications Runner
+Name[ca]=Engegador d'aplicacions
 Name[el]=Εκτελεστής εφαρμογών
 Name[es]=Lanzador de aplicaciones
 Name[ga]=Feidhmitheoir Feidhmchlár
@@ -13,6 +14,7 @@ Name[pt_BR]=Execução de Aplicativos
 Name[zh_CN]=程序运行器
 Name[zh_TW]=應用程式啟動器
 Comment=Applications, control panels and services
+Comment[ca]=Aplicacions, plafons de control i serveis
 Comment[el]=Εφαρμογές, πίνακες ελέγχου και υπηρεσίες
 Comment[es]=Aplicaciones, paneles de control y servicios
 Comment[ga]=Feidhmchláir, painéil rialaithe agus seirbhísí

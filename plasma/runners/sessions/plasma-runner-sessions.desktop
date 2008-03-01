@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Desktop Sessions Runner
+Name[ca]=Engegador de sessions d'escriptori
 Name[es]=Lanzador de sesiones de escritorio
 Name[ga]=Feidhmitheoir Seisiún Deisce
 Name[gu]=ડેસ્કટોપ સત્રો ચલાવનાર
@@ -12,6 +13,7 @@ Name[pt_BR]=Execução de Sessões de Área de Trabalho
 Name[zh_CN]=桌面会话启动器
 Name[zh_TW]=桌面工座階段執行器
 Comment=Fast user switching
+Comment[ca]=Commutador ràpid d'usuari
 Comment[el]=Γρήγορη αλλαγή χρήστη
 Comment[es]=Cambio rápido de usuario
 Comment[ga]=Athraigh úsáideoirí go tapa
