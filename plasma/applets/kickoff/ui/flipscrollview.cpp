@@ -44,6 +44,7 @@ public:
           , backArrowHover(false)
           , flipAnimTimeLine(new QTimeLine())
           , animLeftToRight(true)
+          , itemHeight(-1)
     {
     }
     ~Private()
@@ -248,6 +249,7 @@ public:
     QTimeLine *flipAnimTimeLine;
     bool animLeftToRight;
 
+    int itemHeight;
     static const int FLIP_ANIM_DURATION = 200;
 
 private:
@@ -283,12 +285,13 @@ void FlipScrollView::viewRoot()
     update(d->hoveredIndex);
     d->hoveredIndex = index;
 }
+
 QModelIndex FlipScrollView::indexAt(const QPoint& point) const
 {
     int topOffset = d->headerRect(d->currentRoot()).height() - verticalOffset();
     int items = model()->rowCount(d->currentRoot());
 
-    int rowIndex = (point.y() - topOffset) / ItemDelegate::ITEM_HEIGHT;
+    int rowIndex = (point.y() - topOffset) / itemHeight();
 
     QRect itemRect = rect();
     itemRect.setLeft(d->backArrowRect().right() + ItemDelegate::BACK_ARROW_SPACING);
@@ -299,6 +302,18 @@ QModelIndex FlipScrollView::indexAt(const QPoint& point) const
        return QModelIndex();
     }
 }
+
+int FlipScrollView::itemHeight() const
+{
+    //TODO: reset on font change
+    if (d->itemHeight < 1) {
+        QModelIndex index = model()->index(0, 0, d->currentRoot());
+        d->itemHeight = sizeHintForIndex(index).height();
+    }
+
+    return d->itemHeight;
+}
+
 void FlipScrollView::scrollTo(const QModelIndex& index , ScrollHint hint)
 {
     Q_ASSERT(index.isValid());
@@ -350,9 +365,9 @@ QRect FlipScrollView::visualRect(const QModelIndex& index) const
     */
     int scrollBarWidth = verticalScrollBar()->isVisible() ?
                                     verticalScrollBar()->width() : 0;
-    QRectF itemRect(leftOffset, topOffset + index.row() * ItemDelegate::ITEM_HEIGHT,
-                   width() - leftOffset - scrollBarWidth - ItemDelegate::BACK_ARROW_SPACING,
-                   ItemDelegate::ITEM_HEIGHT);
+    QRectF itemRect(leftOffset, topOffset + index.row() * itemHeight(),
+                    width() - leftOffset - scrollBarWidth - ItemDelegate::BACK_ARROW_SPACING,
+                    itemHeight());
 
     const qreal timeValue = d->flipAnimTimeLine->currentValue();
     if ( index.parent() == d->currentRoot() ) {

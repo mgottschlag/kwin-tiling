@@ -50,7 +50,8 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
     QRect contentRect = option.rect;
     contentRect.setBottom(contentRect.bottom() - 1);
     QRect decorationRect = QStyle::alignedRect(option.direction,
-                                               option.decorationPosition == QStyleOptionViewItem::Left ? Qt::AlignLeft : Qt::AlignRight,
+                                               option.decorationPosition == QStyleOptionViewItem::Left ?
+                                                                        Qt::AlignLeft : Qt::AlignRight,
                                                option.decorationSize,
                                                contentRect);
     QSize textSize(option.rect.width() - decorationRect.width() - ICON_TEXT_MARGIN,
@@ -68,7 +69,7 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
     QRect textRect = QStyle::alignedRect(option.direction,
                                          textAlignment,
                                          textSize,
-                                         contentRect.adjusted(4, 3, -6, 0));
+                                         contentRect.adjusted(5, 3, -5, 0));
     QString titleText = index.data(Qt::DisplayRole).value<QString>();
     QString subTitleText = index.data(SubTitleRole).value<QString>();
     bool uniqueTitle = !index.data(SubTitleMandatoryRole).value<bool>();// true;
@@ -104,10 +105,20 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
         // use a slightly translucent version of the palette's highlight color
         // for the background
         QColor backgroundColor = option.palette.color(QPalette::Highlight);
+        backgroundColor.setAlphaF(0.2);
+
+        QColor backgroundColor2 = option.palette.color(QPalette::Highlight);
         backgroundColor.setAlphaF(0.5);
-        QPen outlinePen(backgroundColor, 2);
+
+        QRect highlightRect = option.rect.adjusted(2, 2, -2, -1);
+        QLinearGradient gradient(highlightRect.topLeft(), highlightRect.topRight());
+        gradient.setColorAt(0, backgroundColor);
+        gradient.setColorAt(decorationRect.left() / (qreal)highlightRect.width(),
+                            backgroundColor2);
+        gradient.setColorAt(0.7, backgroundColor);
+        QPen outlinePen(gradient, 2);
         painter->setPen(outlinePen);
-        painter->drawPath(Plasma::roundedRectangle(option.rect.adjusted(3, 3, -2, -1), 5));
+        painter->drawPath(Plasma::roundedRectangle(highlightRect, 5));
         painter->restore();
     }
 

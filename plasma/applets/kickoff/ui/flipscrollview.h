@@ -59,6 +59,7 @@ public:
     virtual QRect visualRect(const QModelIndex& index) const;
 
     virtual void setModel(QAbstractItemModel *model);
+    int itemHeight() const;
 
 protected:
     // reimplemented from QWidget

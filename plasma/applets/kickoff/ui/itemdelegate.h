@@ -59,7 +59,7 @@ public:
 
     static const int ITEM_LEFT_MARGIN = 25;
     static const int ITEM_RIGHT_MARGIN = 7;
-    static const int ITEM_HEIGHT = ICON_SIZE + 4 /* give some space between icons */;
+    static const int ITEM_HEIGHT = ICON_SIZE + 8 /* give some space between icons */;
     static const int TOP_OFFSET = 5;
 
     static const int BACK_ARROW_WIDTH = 20;
