@@ -23,6 +23,8 @@
 #include <KPluginLoader>
 #include <KDebug>
 
+#include <kshortcut.h>
+
 #include "kxkb_part.h"
 #include "kxkbwidget.h"
 #include "kxkbcore.h"
@@ -81,4 +83,16 @@ QStringList
 KxkbPart::getLayoutsList()
 {
     return m_kxkbCore->getLayoutsList();
+}
+
+void
+KxkbPart::toggled()
+{
+    m_kxkbCore->toggled();
+}
+
+const KShortcut* 
+KxkbPart::getKDEShortcut()
+{
+    return m_kxkbCore->getKDEShortcut();
 }

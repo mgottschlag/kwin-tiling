@@ -39,6 +39,7 @@ class KActionCollection;
 class LayoutMap;
 class KxkbWidget;
 class QAction;
+class KShortcut;
 
 //typedef KxkbWidget* (*KxkbWidgetCreateFn(KxkbWidget*));
 
@@ -62,16 +63,17 @@ public:
     bool x11EventFilter ( XEvent * event );
     void setWidget(KxkbWidget* kxkbWidet);
     void cleanup();
+    const KShortcut* getKDEShortcut();
 
 // DBUS:
 public slots:
     bool setLayout(const QString& layoutPair);
     QString getCurrentLayout() { return m_kxkbConfig.m_layouts[m_currentLayout].toPair(); }
     QStringList getLayoutsList() { return m_kxkbConfig.getLayoutStringList(); }
+    void toggled();
 
 protected slots:
     void iconMenuTriggered(QAction*);
-    void toggled();
     void windowChanged(WId winId);
     void desktopChanged(int desktop);
 

@@ -165,6 +165,16 @@ void KxkbCore::initKDEShortcut()
     }
 }
 
+const KShortcut* KxkbCore::getKDEShortcut() {
+    if( actionCollection == NULL )
+        return NULL;
+    KAction* kAction = static_cast<KAction*>(actionCollection->action(0));
+    if (kAction == NULL) 
+        return NULL;
+        
+    return &kAction->globalShortcut();
+}
+
 void KxkbCore::stopKDEShortcut()
 {
     if( actionCollection != NULL ) {

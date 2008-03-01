@@ -19,27 +19,31 @@
 #ifndef __kxkb_part_h
 #define __kxkb_part_h
 
+#include <QString>
 #include <QWidget>
 #include <QList>
 #include <QVariant>
 
-class QString;
+class KShortcut;
 class KxkbCore;
 
 class KxkbPart : public QWidget
 {
   Q_OBJECT
- public:
+
+public:
   KxkbPart( QWidget* parent,
                const QList<QVariant>& args = QList<QVariant>() );
   virtual ~KxkbPart();
 
- protected slots:
+public slots:
   bool setLayout(const QString& layoutPair);
   QString getCurrentLayout();
   QStringList getLayoutsList();
+  void toggled();
+  const KShortcut* getKDEShortcut();
 
- private:
+private:
     KxkbCore* m_kxkbCore;
 };
 
