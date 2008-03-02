@@ -511,7 +511,7 @@ MenuFile::ActionAtom *MenuFile::pushAction(MenuFile::ActionType action, const QS
 
 void MenuFile::popAction(ActionAtom *atom)
 {
-   if (m_actionList.getLast() != atom)
+   if (m_actionList.last() != atom)
    {
       qWarning("MenuFile::popAction Error, action not last in list.");
       return;
@@ -522,7 +522,7 @@ void MenuFile::popAction(ActionAtom *atom)
 
 bool MenuFile::performAllActions()
 {
-   for(ActionAtom *atom; (atom = m_actionList.getFirst()); m_actionList.removeFirst())
+   for(ActionAtom *atom; (atom = m_actionList.first()); m_actionList.removeFirst())
    {
       performAction(atom);
       delete atom;
