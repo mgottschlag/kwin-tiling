@@ -34,6 +34,7 @@
 #include <kstandardaction.h>
 #include <kstandardshortcut.h>
 #include <kxmlguifactory.h>
+#include <sonnet/configdialog.h>
 #include "treeview.h"
 #include "basictab.h"
 #include "kmenuedit.h"
@@ -84,6 +85,19 @@ void KMenuEdit::setupActions()
     actionCollection()->addAction(KStandardAction::Cut);
     actionCollection()->addAction(KStandardAction::Copy);
     actionCollection()->addAction(KStandardAction::Paste);
+
+
+    action = new KAction( i18n("&Spellchecker..."), this );
+    action->setIconText( i18n("Spellchecker") );
+    actionCollection()->addAction( "setup_spellchecker", action );
+    connect( action, SIGNAL(triggered(bool) ), SLOT(slotSpellcheckConfig()) );
+}
+
+void KMenuEdit::slotSpellcheckConfig()
+{
+    Sonnet::ConfigDialog dialog(&(*KGlobal::config()), this);
+    dialog.setWindowIcon( KIcon( "internet-mail" ) );
+    dialog.exec();
 }
 
 void KMenuEdit::setupView()

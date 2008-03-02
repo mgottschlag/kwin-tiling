@@ -34,6 +34,7 @@
 #include <kdialog.h>
 #include <kkeysequencewidget.h>
 #include <klineedit.h>
+#include <klinespellchecking.h>
 #include <kmessagebox.h>
 #include <kicondialog.h>
 #include <kdesktopfile.h>
@@ -71,9 +72,9 @@ BasicTab::BasicTab( QWidget *parent )
     // setup line inputs
     _nameEdit = new KLineEdit(general_group);
     _nameEdit->setAcceptDrops(false);
-    _descriptionEdit = new KLineEdit(general_group);
+    _descriptionEdit = new KLineSpellChecking(general_group);
     _descriptionEdit->setAcceptDrops(false);
-    _commentEdit = new KLineEdit(general_group);
+    _commentEdit = new KLineSpellChecking(general_group);
     _commentEdit->setAcceptDrops(false);
     _execEdit = new KUrlRequester(general_group);
     _execEdit->lineEdit()->setAcceptDrops(false);

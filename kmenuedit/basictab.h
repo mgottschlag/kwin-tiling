@@ -35,6 +35,7 @@ class QGroupBox;
 class QLabel;
 class KUrlRequester;
 class KService;
+class KLineSpellChecking;
 
 class MenuFolderInfo;
 class MenuEntryInfo;
@@ -69,8 +70,9 @@ protected:
     void enableWidgets(bool isDF, bool isDeleted);
 
 protected:
-    KLineEdit    *_nameEdit, *_commentEdit;
-    KLineEdit	 *_descriptionEdit;
+    KLineEdit    *_nameEdit;
+    KLineSpellChecking*_commentEdit;
+    KLineSpellChecking	 *_descriptionEdit;
     KKeySequenceWidget *_keyEdit;
     KUrlRequester *_execEdit, *_pathEdit;
     KLineEdit    *_termOptEdit, *_uidEdit;

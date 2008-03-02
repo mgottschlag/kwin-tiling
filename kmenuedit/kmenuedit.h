@@ -48,6 +48,8 @@ protected Q_SLOTS:
     void slotSave();
     void slotChangeView();
     void slotConfigureToolbars();
+    void slotSpellcheckConfig();
+
 protected:
     TreeView           *m_tree;
     BasicTab           *m_basicTab;
