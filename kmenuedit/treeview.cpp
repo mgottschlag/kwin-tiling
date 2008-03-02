@@ -24,7 +24,6 @@
 #include <QCursor>
 #include <QDataStream>
 #include <QDir>
-#include <Qt3Support/Q3ColorDrag>
 #include <QEvent>
 #include <QFileInfo>
 #include <Qt3Support/Q3Header>
@@ -193,7 +192,7 @@ TreeView::TreeView( bool controlCenter, KActionCollection *ac, QWidget *parent, 
     m_rootFolder = new MenuFolderInfo;
     m_separator = new MenuSeparatorInfo;
     m_drag = 0;
-
+#if 0
     //	Read menu format configuration information
     KSharedConfig::Ptr pConfig = KSharedConfig::openConfig("kickerrc");
     KConfigGroup cg(pConfig, "menus");
@@ -202,6 +201,7 @@ TreeView::TreeView( bool controlCenter, KActionCollection *ac, QWidget *parent, 
     {
         m_detailedEntriesNamesFirst = cg.readEntry("DetailedEntriesNamesFirst", false);
     }
+#endif
 }
 
 TreeView::~TreeView() {
