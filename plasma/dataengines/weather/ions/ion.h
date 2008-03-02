@@ -20,8 +20,8 @@
 #ifndef _ION_H
 #define _ION_H
 
-#include <QObject>
-#include <KGenericFactory>
+#include <QtCore/QObject>
+#include <KDE/KGenericFactory>
 #include <plasma/dataengine.h>
 
 #include "ion_export.h"
@@ -86,7 +86,7 @@ public:
      */
     virtual bool timezone(void) = 0;
 
-public slots:
+public Q_SLOTS:
 
     /**
      * Reimplemented from Plasma::DataEngine
