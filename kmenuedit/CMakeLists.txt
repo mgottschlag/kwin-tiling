@@ -21,17 +21,16 @@ install(TARGETS kmenuedit DESTINATION ${BIN_INSTALL_DIR})
 
 ########### next target ###############
 
-set(kcontroledit_KDEINIT_SRCS kcontrol_main.cpp ${kmenueditcommon_STAT_SRCS})
+#set(kcontroledit_KDEINIT_SRCS kcontrol_main.cpp ${kmenueditcommon_STAT_SRCS})
 
+#kde4_add_kdeinit_executable( kcontroledit ${kcontroledit_KDEINIT_SRCS})
 
-kde4_add_kdeinit_executable( kcontroledit ${kcontroledit_KDEINIT_SRCS})
+#target_link_libraries(kdeinit_kcontroledit  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY} )
 
-target_link_libraries(kdeinit_kcontroledit  ${KDE4_KDE3SUPPORT_LIBS} ${QT_QTXML_LIBRARY} )
+#install(TARGETS kdeinit_kcontroledit  DESTINATION ${LIB_INSTALL_DIR} )
 
-install(TARGETS kdeinit_kcontroledit  DESTINATION ${LIB_INSTALL_DIR} )
-
-target_link_libraries( kcontroledit kdeinit_kcontroledit )
-install(TARGETS kcontroledit DESTINATION ${BIN_INSTALL_DIR})
+#target_link_libraries( kcontroledit kdeinit_kcontroledit )
+#install(TARGETS kcontroledit DESTINATION ${BIN_INSTALL_DIR})
 
 ########### next target ###############
 
@@ -39,7 +38,7 @@ install(TARGETS kcontroledit DESTINATION ${BIN_INSTALL_DIR})
 ########### install files ###############
 
 install( FILES kmenuedit.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
-install( FILES kcontroleditui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kcontroledit )
+#install( FILES kcontroleditui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kcontroledit )
 install( FILES kmenueditui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kmenuedit )
 
 
