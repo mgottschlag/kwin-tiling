@@ -44,6 +44,7 @@ const int LAST_STATE = 6;
 #include <string.h>
 #include <assert.h>
 #include <dirent.h>
+#include <libgen.h>
 
 #include <X11/Xutil.h>
 
@@ -233,11 +234,55 @@ static const char* findFileWithDepth( const char* name, int* w, int* h, bool loc
     }
 
 // returns a pointer to a static !
+static const char* findLocalizedFileWithDepth( const char* name, int* w, int* h, bool locolor )
+    {
+    const int bufsz = 1024;
+
+    // Split name into dirname and basename.
+    char name2[ bufsz ];
+    strncpy( name2, name, bufsz );
+    name2[ bufsz - 1 ] = '\0';
+    char* basn = basename( name2 ); // must preceed dirname
+    char* dirn = dirname( name2 ); // modifies name2
+
+    // Check for localized file by parsing languages from KLOCALE_LANGUAGES,
+    // as provided by startkde via kstartupconfig4. It contains list of
+    // language codes, colon-separated and ordered by decreasing priority.
+    const char* lvarname = "KLOCALE_LANGUAGES";
+    if( getenv( lvarname ) && getenv( lvarname )[ 0 ] )
+        {
+        char lvar[ bufsz ];
+        strncpy( lvar, getenv( lvarname ), bufsz );
+        lvar[ bufsz - 1 ] = '\0';
+
+        // Go through colon-separated list of languages.
+        char* lang = strtok( lvar, ":" );
+        while( 1 )
+            {
+            char locname[ bufsz ];
+            snprintf( locname, bufsz, "%s/l10n/%s/%s", dirn, lang, basn );
+            locname[ bufsz - 1 ] = '\0';
+
+            // Check if this path exists.
+            const char* path = findFileWithDepth( locname, w, h, locolor );
+            if( path[ 0 ] )
+                return path;
+
+            if( ( lang = strtok( 0, ":" ) ) == 0 )
+                break;
+            }
+        }
+
+    // Fall back to unlocalized file.
+    return findFileWithDepth( name, w, h, locolor );
+    }
+
+// returns a pointer to a static !
 static const char* findFile( const char* name, int* w = NULL, int* h = NULL, bool* locolor = NULL )
     {
     if( x11Depth() <= 8 )
         {
-        if( const char* ret = findFileWithDepth( name, w, h, true )) // try locolor
+        if( const char* ret = findLocalizedFileWithDepth( name, w, h, true )) // try locolor
             {
             if( locolor != NULL )
                 *locolor = true;
@@ -246,7 +291,7 @@ static const char* findFile( const char* name, int* w = NULL, int* h = NULL, boo
         }
     if( locolor != NULL )
         *locolor = false;
-    return findFileWithDepth( name, w, h, false ); // no locolor
+    return findLocalizedFileWithDepth( name, w, h, false ); // no locolor
     }
 
 // If a properly sized image doesn't exist save it in the cache location

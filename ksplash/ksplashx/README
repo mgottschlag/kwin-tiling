@@ -8,9 +8,8 @@ Please see file LICENSE for the licensing terms.
 
 LIMITATIONS:
 This implementation can only draw images and animations. This means that
-e.g. texts need to be pre-rendered into images. There is currently no
-support for i18n but if needed it could be easily added by first trying
-images in a certain locale-named directory.
+e.g. texts need to be pre-rendered into images. i18n support is however
+provided by mimicking KLocale's mechanism for localizing non-text resources.
 
 
 USAGE:

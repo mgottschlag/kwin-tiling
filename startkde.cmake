@@ -78,6 +78,7 @@ kcmrandrrc [Screen1]
 kcmrandrrc [Screen2]
 kcmrandrrc [Screen3]
 kcmfonts General forceFontDPI 0
+kdeglobals Locale Language '' # trigger requesting languages from KLocale
 EOF
 kstartupconfig4
 if test $? -ne 0; then
@@ -159,6 +160,9 @@ unset DESKTOP_LOCKED # Don't want it in the environment
 
 ksplash_pid=
 if test -z "$dl"; then
+  # languages as resolved by KLocale, for the splash screens use
+  # klocale_languages is assembled by kdostartupconfig4 calling KLocale
+  export KLOCALE_LANGUAGES="$klocale_languages"
   # the splashscreen and progress indicator
   case "$ksplashrc_ksplash_engine" in
     KSplashX)
@@ -172,6 +176,8 @@ if test -z "$dl"; then
     *)
       ;;
   esac
+  # no longer needed in the environment
+  unset KLOCALE_LANGUAGES
 fi
 
 # Source scripts found in <localprefix>/env/*.sh and <prefixes>/env/*.sh
