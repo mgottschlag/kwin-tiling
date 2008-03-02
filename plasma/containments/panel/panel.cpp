@@ -40,14 +40,9 @@ using namespace Plasma;
 
 Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
-      m_cachedBackground(0),
       m_dialog(0),
       m_appletBrowserAction(0),
-      m_configureAction(0),
-      m_drawTop(true),
-      m_drawLeft(true),
-      m_drawRight(true),
-      m_drawBottom(true) //FIXME *five* unused vars?
+      m_configureAction(0)
 {
     m_background = new Plasma::SvgPanel("widgets/panel-background", this);
     m_background->setBorderFlags(Plasma::SvgPanel::DrawAllBorders);
