@@ -1,0 +1,20 @@
+[Desktop Entry]
+Name=Trashcan
+Name[sv]=Papperskorg
+Comment=A trashcan button
+Comment[sv]=En papperskorgsknapp
+Type=Service
+Icon=user-trash
+X-KDE-ServiceTypes=Plasma/Applet
+
+X-KDE-Library=plasma_applet_trash
+X-KDE-PluginInfo-Author=Marco Martin
+X-KDE-PluginInfo-Email=martkive@gmail.com
+X-KDE-PluginInfo-Name=trash
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=File System
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
+
