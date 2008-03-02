@@ -47,6 +47,19 @@ public:
                         const QStyleOptionGraphicsItem *option,
                         const QRect &contentsRect);
     void paintBackground(QPainter *painter, const QRect &contentsRect);
+    /**
+     * resize the appropriate dimension to newSize
+     * if the panel is horizontal this changes the height
+     * if it's vertical this changes the width
+     * the other dimension will be resized to the screen width/height.
+     */
+    void updateSize(qreal newSize);
+    /**
+     * resize to newSize
+     * the usual size functions won't work, because normally we don't want the panel to change size.
+     * so when you really do want to change the panel size, use this or the previous function.
+     */
+    void updateSize(QSizeF newSize);
 
 private slots:
     void configure();
@@ -56,6 +69,22 @@ private slots:
     void backgroundChanged();
 
 private:
+    /**
+     * update the formfactor based on the location
+     */
+    void setFormFactorFromLocation();
+    /**
+     * give a kick to the view so it updates our position
+     */
+    void updatePos();
+    /**
+     * recalculate which borders to show
+     */
+    void updateBorders();
+    /**
+     * check for other panels overlapping with us
+     */
+    void checkForConflict();
     Plasma::SvgPanel *m_background;
     QPixmap* m_cachedBackground;
     KDialog* m_dialog;
@@ -68,7 +97,6 @@ private:
     bool m_drawLeft : 1;
     bool m_drawRight : 1;
     bool m_drawBottom : 1;
-    int m_size;
 };
 
 
