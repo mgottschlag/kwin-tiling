@@ -29,6 +29,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
+#include "server.h"
+#include "global.h"
+#include "client.h"
+#include "ksmserverinterfaceadaptor.h"
 
 #include <config-workspace.h>
 #include <config-unix.h> // HAVE_LIMITS_H
@@ -72,14 +76,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kprocess.h>
 #include <kdebug.h>
 
-#include "server.h"
-#include "global.h"
-#include "client.h"
-#include "ksmserverinterfaceadaptor.h"
-
 #include "server.moc"
-
-#include <kdebug.h>
 
 #include <kdisplaymanager.h>
 #include <QX11Info>

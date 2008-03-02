@@ -23,8 +23,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#include <config-workspace.h>
-
 #include "shutdowndlg.h"
 #include "plasma/svg.h"
 
@@ -54,6 +52,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kxerrorhandler.h>
 
 #include <kdisplaymanager.h>
+
+#include <config-workspace.h>
 
 #include "shutdowndlg.moc"
 
@@ -338,7 +338,8 @@ Q_DECLARE_METATYPE(Solid::Control::PowerManager::SuspendMethod)
 
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
                                 bool maysd, KWorkSpace::ShutdownType sdtype )
-  : QDialog( parent, Qt::Popup )
+  : QDialog( parent, Qt::Popup ), //krazy:exclude=qclasses
+    m_automaticallyDoSeconds(60)
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
 {
@@ -364,7 +365,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
 
-    mainLayout->setContentsMargins(9, 9, 12, 7);
+    mainLayout->setContentsMargins(12, 9, 12, 7);
     QVBoxLayout *buttonLayout = new QVBoxLayout();
     buttonLayout->addStretch();
     QHBoxLayout *buttonMainLayout = new QHBoxLayout();
@@ -377,6 +378,9 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     QFont fnt;
     fnt.setPixelSize(16);
+
+    QPalette palette;
+    palette.setColor(QPalette::WindowText, QColor(FONTCOLOR));
 
     QLabel *versionLabel = new QLabel(this);
 
@@ -394,13 +398,19 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         vcomposed = i18nc("@label In corner of the logout dialog",
                           "KDE <numid>%1.%2</numid>", vmajor, vminor);
     }
-    versionLabel->setText("<font color='" + QString(FONTCOLOR) + "'>" + vcomposed + "</font>");
+    versionLabel->setPalette(palette);
+    versionLabel->setText(vcomposed);
     versionLabel->setFont(fnt);
 
     KUser userInformation;
     QString logoutMsg;
     QString userName = userInformation.property( KUser::FullName ).toString();
     QString loginName = userInformation.loginName();
+
+    QFontMetrics fm(fnt);
+    if (fm.width(userName) > width() / 2) { // cut the text if it is really long in order to not use more than two lines
+        userName = fm.elidedText(userName, Qt::ElideRight, width() / 2);
+    }
 
     if (userName.isEmpty()) {
         logoutMsg = i18n( "End Session for %1", loginName );
@@ -410,7 +420,8 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     QLabel *logoutMessageLabel = new QLabel(this);
     // FIXME Made the color picked from the user's one
-    logoutMessageLabel->setText("<font color='" + QString(FONTCOLOR) + "'>" + logoutMsg + "</font>");
+    logoutMessageLabel->setPalette(palette);
+    logoutMessageLabel->setText(logoutMsg);
     logoutMessageLabel->setAlignment(Qt::AlignRight);
     fnt.setPixelSize(12);
     logoutMessageLabel->setFont(fnt);
@@ -420,6 +431,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     topLayout->addWidget(logoutMessageLabel, 1, Qt::AlignBottom);
 
     KSMPushButton* btnLogout = new KSMPushButton( i18n("Logout"), this );
+    btnLogout->setObjectName("btnLogout");
     btnLogout->setPixmap(KIconLoader::global()->loadIcon("system-log-out", KIconLoader::NoGroup, 32));
     btnLogout->setFocus();
     connect(btnLogout, SIGNAL(clicked()), SLOT(slotLogout()));
@@ -429,6 +441,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     if (maysd) {
         // Shutdown
         KSMPushButton* btnHalt = new KSMPushButton( i18n("Turn Off Computer"), this );
+        btnHalt->setObjectName("btnHalt");
         btnHalt->setPixmap(KIconLoader::global()->loadIcon("system-shutdown", KIconLoader::NoGroup, 32));
         buttonLayout->addWidget(btnHalt);
         buttonLayout->addStretch();
@@ -457,6 +470,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
         // Reboot
         KSMPushButton* btnReboot = new KSMPushButton( i18n("Restart Computer"), this );
+        btnReboot->setObjectName("btnReboot");
         btnReboot->setPixmap(KIconLoader::global()->loadIcon("system-restart", KIconLoader::NoGroup, 32));
         connect(btnReboot, SIGNAL(clicked()), SLOT(slotReboot()));
         buttonLayout->addWidget(btnReboot);
@@ -490,15 +504,53 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     KSMPushButton* btnBack = new KSMPushButton(i18n("Cancel"), this, true);
     btnBack->setPixmap(KIconLoader::global()->loadIcon( "dialog-cancel", KIconLoader::NoGroup, 16));
-    bottomLayout->addStretch();
+
+    m_automaticallyDoLabel = new QLabel(this);
+    m_automaticallyDoLabel->setPalette(palette);
+    fnt.setPixelSize(11);
+    m_automaticallyDoLabel->setFont(fnt);
+    m_automaticallyDoLabel->setWordWrap(true);
+    automaticallyDoTimeout();
+
+    QTimer *automaticallyDoTimer = new QTimer(this);
+    connect(automaticallyDoTimer, SIGNAL(timeout()), this, SLOT(automaticallyDoTimeout()));
+    automaticallyDoTimer->start(1000);
+
+    bottomLayout->addWidget(m_automaticallyDoLabel, 1, Qt::AlignBottom);
     bottomLayout->addWidget(btnBack);
     connect(btnBack, SIGNAL(clicked()), SLOT(reject()));
 
     mainLayout->addLayout(topLayout);
+    mainLayout->addSpacing(5);
     mainLayout->addLayout(buttonMainLayout);
+    mainLayout->addSpacing(9);
     mainLayout->addLayout(bottomLayout);
 
     setLayout( mainLayout );
+}
+
+void KSMShutdownDlg::automaticallyDoTimeout()
+{
+    QPushButton *focusedButton = qobject_cast<QPushButton *>(focusWidget());
+    if (focusedButton) {
+        if (m_automaticallyDoSeconds <= 0) { // timeout is at 0, do selected action
+                focusedButton->click();
+        // following code is required to provide a clean way to translate strings
+        } else if (!focusedButton->objectName().isEmpty()) { // one of the action buttons; not cancel
+            if (focusedButton->objectName() == "btnLogout")
+                m_automaticallyDoLabel->setText(i18np("Log out in 1 second.",
+                                                      "Log out in %1 seconds.", m_automaticallyDoSeconds));
+            else if (focusedButton->objectName() == "btnHalt")
+                m_automaticallyDoLabel->setText(i18np("Turn off computer in 1 second.",
+                                                      "Turn off computer in %1 seconds.", m_automaticallyDoSeconds));
+            else if (focusedButton->objectName() == "btnReboot")
+                m_automaticallyDoLabel->setText(i18np("Reboot computer in 1 second.",
+                                                      "Reboot computer in %1 seconds.", m_automaticallyDoSeconds));
+            m_automaticallyDoSeconds--; // only decrease time if a valid actions button is selected
+        } else {
+            m_automaticallyDoLabel->setText(QString());
+        }
+    }
 }
 
 void KSMShutdownDlg::paintEvent(QPaintEvent *e)

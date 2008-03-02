@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 class QMenu;
 class QTimer;
 class QTimeLine;
+class QLabel;
 
 namespace Plasma
 {
@@ -122,6 +123,11 @@ private:
     QStringList rebootOptions;
     QPixmap m_renderedSvg;
     Plasma::Svg* m_svg;
+    QLabel *m_automaticallyDoLabel;
+    int m_automaticallyDoSeconds;
+
+private Q_SLOTS:
+    void automaticallyDoTimeout();
 };
 
 #endif
