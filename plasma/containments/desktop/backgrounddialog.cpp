@@ -405,9 +405,7 @@ QVariant BackgroundListModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
     case Qt::DisplayRole:
-        return b->title().replace(QString("_"), QString(" "));;
-//         temp.replace(QString("_"), QString(" ")); // Look better
-//         return temp;
+        return b->title();
     case BackgroundDelegate::ScreenshotRole: {
         QPixmap pix = b->screenshot();
         if (pix.isNull() && !b->screenshotGenerationStarted()) {
@@ -476,7 +474,7 @@ void BackgroundDelegate::paint(QPainter *painter,
                    option.rect.top() + MARGIN,
                    option.rect.width() - x - MARGIN * 2,
                    maxheight);
-    QString text = title.replace("_", " ");
+    QString text = title;
     QString authorCaption;
     if (!author.isEmpty()) {
         authorCaption = i18nc("Caption to wallpaper preview, %1 author name",

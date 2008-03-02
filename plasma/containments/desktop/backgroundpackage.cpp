@@ -280,7 +280,12 @@ void BackgroundPackage::generateScreenshot(QPersistentModelIndex) const
 
 QString BackgroundPackage::title() const
 {
-    return metadata()->name();
+    QString title = metadata()->name();
+    if (title.isEmpty()) {
+        title = metadata()->pluginName();
+        title.replace("_", " ");
+    }
+    return title;
 }
 
 QString BackgroundPackage::author() const
