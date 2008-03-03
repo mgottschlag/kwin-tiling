@@ -50,7 +50,7 @@ void Action_group_tab::clear_data()
     action_name_lineedit->clear();
     action_name_lineedit->setReadOnly( false );
     disable_checkbox->setChecked( false );
-    disable_checkbox->setText( i18n( "&Disable" ));
+    disable_label->setText( i18n( "&Disable" ));
     comment_multilineedit->clear();
     system_group = Action_data_group::SYSTEM_NONE;
     }
@@ -67,9 +67,9 @@ void Action_group_tab::set_data( const Action_data_group* data_P )
     disable_checkbox->setChecked( !data_P->enabled( true ));
 
     if( data_P->parent() && !data_P->parent()->enabled( false ))
-        disable_checkbox->setText( i18n( "&Disable (group is disabled)" ));
+        disable_label->setText( i18n( "&Disable (group is disabled)" ));
     else
-        disable_checkbox->setText( i18n( "&Disable" ));
+        disable_label->setText( i18n( "&Disable" ));
     comment_multilineedit->setPlainText( data_P->comment());
     connect( action_name_lineedit, SIGNAL( textChanged( const QString& )), this,
         SLOT( action_group_name_changed( const QString& )));
