@@ -298,7 +298,7 @@ void Action_data_group::add_child( Action_data_base* child_P )
 inline
 void Action_data_group::remove_child( Action_data_base* child_P )
     {
-    list.remove( child_P ); // is not auto-delete
+    list.removeAll( child_P ); // is not auto-delete
     }
     
 // Action_data
