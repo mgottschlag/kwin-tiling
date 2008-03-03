@@ -26,6 +26,7 @@ Comment[sv]=Ett inställningsverktyg för att hantera vilka program som startas 
 Comment[xx]=xxA Configuration tool for managing what programs start up with KDE.xx
 
 Keywords=Autostart Manager
+Keywords[de]=Autostart Verwaltung
 Keywords[es]=Administrador de inicio automático
 Keywords[et]=Autostardi haldur
 Keywords[ja]=自動起動マネージャ
