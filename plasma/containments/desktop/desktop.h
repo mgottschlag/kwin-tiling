@@ -88,7 +88,6 @@ protected Q_SLOTS:
     void applyConfig();
     void nextSlide(bool skipUpdates=false);
     
-    void toggleDesktopImmutability();
     void lockScreen();
     void logout();
 

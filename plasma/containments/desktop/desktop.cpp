@@ -374,15 +374,6 @@ QList<QAction*> DefaultDesktop::contextActions()
     return actions;
 }
 
-void DefaultDesktop::toggleDesktopImmutability()
-{
-    if (corona()) {
-        corona()->setImmutable(!corona()->isImmutable());
-    } else {
-        setImmutable(!isImmutable());
-    }
-}
-
 void DefaultDesktop::logout()
 {
     if (!KAuthorized::authorizeKAction("logout")) {
