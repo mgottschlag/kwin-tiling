@@ -117,6 +117,7 @@ void Actions_listview_widget::delete_action()
 //    if( nw == NULL )
 //        nw = current_action()->itemBelow();
     delete saved_current_item;
+    saved_current_item = NULL;
     recent_item = NULL;
 //    if( nw != NULL )
 //        {
