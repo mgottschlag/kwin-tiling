@@ -231,10 +231,14 @@ void Condition_list_widget::copy_pressed()
     }
 
 void Condition_list_widget::delete_pressed()
+{
+    if ( selected_item )
     {
-    conditions.remove( selected_item->condition()); // we own it
-    delete selected_item; // CHECKME snad vyvola signaly pro enable()
+        conditions.remove( selected_item->condition()); // we own it
+        delete selected_item; // CHECKME snad vyvola signaly pro enable()
+        selected_item = NULL;
     }
+}
 
 void Condition_list_widget::modify_pressed()
     {
