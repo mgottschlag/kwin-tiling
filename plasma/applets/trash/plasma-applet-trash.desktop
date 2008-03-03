@@ -1,8 +1,6 @@
 [Desktop Entry]
 Name=Trashcan
-Name[sv]=Papperskorg
 Comment=A trashcan button
-Comment[sv]=En papperskorgsknapp
 Type=Service
 Icon=user-trash
 X-KDE-ServiceTypes=Plasma/Applet
