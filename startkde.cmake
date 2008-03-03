@@ -41,6 +41,13 @@ if [ -n "$bindir" ]; then
     $bindir|$bindir:*|*:$bindir|*:$bindir:*) ;;
     *) PATH=$bindir:$PATH; export PATH;;
   esac
+  bindir=`$bindir/kde4-config --qt-binaries`
+  if [ -n "$bindir" ]; then
+    case $PATH in
+      $bindir|$bindir:*|*:$bindir|*:$bindir:*) ;;
+      *) PATH=$bindir:$PATH; export PATH;;
+    esac
+  fi
 fi
 
 # Boot sequence:
