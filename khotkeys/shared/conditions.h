@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
-
+ 
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
-
+ 
 ****************************************************************************/
 
 #ifndef _CONDITIONS_H_
@@ -19,10 +19,8 @@
 #include "khotkeysglobal.h"
 #include "windows.h"
 
-// Needed for None below
 #include <X11/Xlib.h>
 #include <fixx11h.h>
-
 
 class KConfig;
 
@@ -51,7 +49,7 @@ class KDE_EXPORT Condition
         Condition_list_base* const _parent;
     KHOTKEYS_DISABLE_COPY( Condition );
     };
-
+        
 class KDE_EXPORT Condition_list_base
     : public Condition, public Q3PtrList< Condition > // inheritance ?
     {
@@ -113,7 +111,7 @@ class KDE_EXPORT Active_window_condition
         Windowdef_list* _window;
         bool is_match;
     };
-
+            
 class KDE_EXPORT Existing_window_condition
     : public QObject, public Condition
     {
@@ -156,7 +154,7 @@ class KDE_EXPORT Not_condition
         const Condition* condition() const;
         virtual bool accepts_children() const;
     };
-
+            
 class KDE_EXPORT And_condition
     : public Condition_list_base
     {
@@ -169,7 +167,7 @@ class KDE_EXPORT And_condition
         virtual And_condition* copy( Condition_list_base* parent_P ) const;
         virtual const QString description() const;
     };
-
+            
 class KDE_EXPORT Or_condition
     : public Condition_list_base
     {
@@ -182,7 +180,7 @@ class KDE_EXPORT Or_condition
         virtual Or_condition* copy( Condition_list_base* parent_P ) const;
         virtual const QString description() const;
     };
-
+            
 //***************************************************************************
 // Inline
 //***************************************************************************
@@ -194,13 +192,13 @@ const Condition_list_base* Condition::parent() const
     {
     return _parent;
     }
-
+    
 inline
 Condition_list_base* Condition::parent()
     {
     return _parent;
     }
-
+    
 // Condition_list_base
 
 inline
@@ -240,7 +238,7 @@ Active_window_condition::Active_window_condition( Windowdef_list* window_P,
     init();
     set_match();
     }
-
+    
 inline
 const Windowdef_list* Active_window_condition::window() const
     {
@@ -257,7 +255,7 @@ Existing_window_condition::Existing_window_condition( Windowdef_list* window_P,
     init();
     set_match();
     }
-
+    
 inline
 const Windowdef_list* Existing_window_condition::window() const
     {
@@ -271,7 +269,7 @@ Not_condition::Not_condition( Condition_list_base* parent_P )
     : Condition_list_base( parent_P )
     {
     }
-
+    
 inline
 const Condition* Not_condition::condition() const
     {
@@ -285,7 +283,7 @@ And_condition::And_condition( Condition_list_base* parent_P )
     : Condition_list_base( parent_P )
     {
     }
-
+    
 // Or_condition
 
 inline
@@ -293,7 +291,7 @@ Or_condition::Or_condition( Condition_list_base* parent_P )
     : Condition_list_base( parent_P )
     {
     }
-
+    
 } // namespace KHotKeys
 
 #endif
