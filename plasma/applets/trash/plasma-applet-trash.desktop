@@ -1,6 +1,10 @@
 [Desktop Entry]
 Name=Trashcan
+Name[pt]=Lixo
+Name[pt_BR]=Lixo
 Comment=A trashcan button
+Comment[pt]=Um botão de caixote do lixo
+Comment[pt_BR]=Um botão de caixote do lixo
 Type=Service
 Icon=user-trash
 X-KDE-ServiceTypes=Plasma/Applet
