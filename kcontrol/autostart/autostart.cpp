@@ -117,9 +117,9 @@ void Autostart::load()
 		if (! KStandardDirs::exists(path))
 			KStandardDirs::makeDir(path);
 
-		QDir *autostartdir = new QDir( path );
-		autostartdir->setFilter( QDir::Files );
-		QFileInfoList list = autostartdir->entryInfoList();
+		QDir autostartdir( path );
+		autostartdir.setFilter( QDir::Files );
+		const QFileInfoList list = autostartdir.entryInfoList();
 		for (int i = 0; i < list.size(); ++i) {
 			QFileInfo fi = list.at(i);
 			QString filename = fi.fileName();
