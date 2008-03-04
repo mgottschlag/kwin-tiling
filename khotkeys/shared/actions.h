@@ -1,11 +1,11 @@
 /****************************************************************************
 
  KHotKeys
- 
+
  Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
 
  Distributed under the terms of the GNU General Public License version 2.
- 
+
 ****************************************************************************/
 
 #ifndef _ACTIONS_H_
@@ -77,7 +77,7 @@ class KDE_EXPORT Command_url_action
     private:
         QString _command_url;
     };
-    
+
 class KDE_EXPORT Menuentry_action
     : public Command_url_action
     {
@@ -93,7 +93,7 @@ class KDE_EXPORT Menuentry_action
     private:
         KService::Ptr _service;
     };
-    
+
 class KDE_EXPORT Dbus_action
     : public Action
     {
@@ -116,13 +116,13 @@ class KDE_EXPORT Dbus_action
         QString call;
         QString args;
     };
-        
+
 class KDE_EXPORT Keyboard_input_action
     : public Action
     {
     typedef Action base;
     public:
-        Keyboard_input_action( Action_data* data_P, const QString& input_P, 
+        Keyboard_input_action( Action_data* data_P, const QString& input_P,
             const Windowdef_list* dest_window_P, bool active_window_P );
         Keyboard_input_action( KConfigGroup& cfg_P, Action_data* data_P );
         virtual ~Keyboard_input_action();
@@ -158,32 +158,32 @@ class KDE_EXPORT Activate_window_action
     private:
         const Windowdef_list* _window;
     };
-        
+
 //***************************************************************************
 // Inline
 //***************************************************************************
 
 // Action
-    
+
 inline
 Action::Action( Action_data* data_P )
     : data( data_P )
     {
     }
-    
+
 inline
 Action::Action( KConfigGroup&, Action_data* data_P )
     : data( data_P )
     {
     }
-    
+
 inline
 Action::~Action()
     {
     }
 
 // Action_list
-        
+
 inline
 Action_list::Action_list( const QString& comment_P )
     : Q3PtrList< Action >(), _comment( comment_P )
@@ -198,7 +198,7 @@ const QString& Action_list::comment() const
     }
 
 // Command_url_action
-    
+
 inline
 Command_url_action::Command_url_action( Action_data* data_P, const QString& command_url_P )
     : Action( data_P ), _command_url( command_url_P )
@@ -210,7 +210,7 @@ const QString& Command_url_action::command_url() const
     {
     return _command_url;
     }
-    
+
 // Menuentry_action
 
 inline
@@ -218,7 +218,7 @@ Menuentry_action::Menuentry_action( Action_data* data_P, const QString& menuentr
     : Command_url_action( data_P, menuentry_P )
     {
     }
-    
+
 inline
 Menuentry_action::Menuentry_action( KConfigGroup& cfg_P, Action_data* data_P )
     : Command_url_action( cfg_P, data_P )
@@ -239,19 +239,19 @@ const QString& Dbus_action::remote_application() const
     {
     return app;
     }
-    
+
 inline
 const QString& Dbus_action::remote_object() const
     {
     return obj;
     }
-    
+
 inline
 const QString& Dbus_action::called_function() const
     {
     return call;
     }
-    
+
 inline
 const QString& Dbus_action::arguments() const
     {
@@ -266,13 +266,13 @@ Keyboard_input_action::Keyboard_input_action( Action_data* data_P, const QString
     : Action( data_P ), _input( input_P ), _dest_window( dest_window_P ), _active_window( active_window_P )
     {
     }
-    
+
 inline
 const QString& Keyboard_input_action::input() const
     {
     return _input;
     }
-    
+
 inline
 const Windowdef_list* Keyboard_input_action::dest_window() const
     {
@@ -293,7 +293,7 @@ Activate_window_action::Activate_window_action( Action_data* data_P,
     : Action( data_P ), _window( window_P )
     {
     }
-    
+
 inline
 const Windowdef_list* Activate_window_action::window() const
     {
@@ -301,5 +301,5 @@ const Windowdef_list* Activate_window_action::window() const
     }
 
 } // namespace KHotKeys
-    
+
 #endif
