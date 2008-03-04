@@ -167,19 +167,23 @@ void Triggers_tab::new_selected( QAction *action )
 
 void Triggers_tab::copy_pressed()
     {
-    triggers_listview->setSelected( create_listview_item( selected_item->trigger(),
-        triggers_listview, selected_item, true ), true );
+        if ( selected_item )
+        {
+            triggers_listview->setSelected( create_listview_item( selected_item->trigger(),triggers_listview, selected_item, true ), true );
+        }
     }
 
 void Triggers_tab::delete_pressed()
     {
     delete selected_item; // CHECKME snad vyvola signaly pro enable()
+    selected_item = NULL;
     }
 
 void Triggers_tab::modify_pressed()
-    {
-    edit_listview_item( selected_item );
-    }
+{
+    if ( selected_item )
+        edit_listview_item( selected_item );
+}
 
 void Triggers_tab::current_changed( Q3ListViewItem* item_P )
     {
