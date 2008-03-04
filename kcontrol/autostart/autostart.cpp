@@ -112,7 +112,7 @@ void Autostart::load()
 			 << i18n("Pre-KDE startup")
 			 ;
 	widget->cmbStartOn->addItems(pathName);
-
+        widget->listCMD->clear();
 	foreach (const QString& path, paths) {
 		if (! KStandardDirs::exists(path))
 			KStandardDirs::makeDir(path);
@@ -150,7 +150,8 @@ void Autostart::addCMD() {
 	int result = addDialog->exec();
 
 	if (result == QDialog::Rejected) {
-		return;
+            delete addDialog;
+            return;
 	} else if (result == 3) {
 		if (addDialog->symLink())
 			KIO::link(addDialog->importUrl(), paths[0]);
@@ -170,8 +171,10 @@ void Autostart::addCMD() {
 
 		Q_ASSERT(service);
 		if (!service)
+                {
+                    delete addDialog;
 			return; // Don't crash if KOpenWith wasn't able to create service.
-
+                }
 
 		KUrl desktopTemplate;
 
@@ -197,7 +200,7 @@ void Autostart::addCMD() {
 			if ( dlg.exec() != QDialog::Accepted )
 				return;
 		}
-
+                delete addDialog;
 		Desktop * item = new Desktop( kgs->autostartPath() + service->name() + ".desktop", widget->listCMD );
 		item->setText( 0, service->name() );
 		item->setText( 1, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
