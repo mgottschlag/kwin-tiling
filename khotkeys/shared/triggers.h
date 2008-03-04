@@ -1,18 +1,26 @@
-/****************************************************************************
+/*
+   Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
+   Copyright (C) 2008 Michael Jansen <kde@michael-jansen.biz>
 
- KHotKeys
- 
- Copyright (C) 1999-2001 Lubos Lunak <l.lunak@kde.org>
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public
+   License version 2 as published by the Free Software Foundation.
 
- Distributed under the terms of the GNU General Public License version 2.
- 
-****************************************************************************/
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with this library; see the file COPYING.LIB.  If not, write to
+   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+   Boston, MA 02110-1301, USA.
+*/
 
 #ifndef _TRIGGERS_H_
 #define _TRIGGERS_H_
 
 #include <Qt3Support/Q3PtrList>
-#include <QTimer>
 #include <QMap>
 #include <kdemacros.h>
 
@@ -20,6 +28,8 @@
 #include "voicesignature.h"
 
 #include "input.h"
+#include "config-khotkeys.h"
+
 
 class KConfig;
 
@@ -60,7 +70,7 @@ class KDE_EXPORT Trigger_list
         QString _comment;
     KHOTKEYS_DISABLE_COPY( Trigger_list );
     };
-    
+
 class KDE_EXPORT Shortcut_trigger
     : public Trigger, public Kbd_receiver
     {
@@ -80,7 +90,7 @@ class KDE_EXPORT Shortcut_trigger
     };
 
 class KDE_EXPORT Window_trigger
-    : public QObject, public Trigger        
+    : public QObject, public Trigger
     {
     Q_OBJECT
     typedef Trigger base;
@@ -148,7 +158,7 @@ class KDE_EXPORT Voice_trigger
     Q_OBJECT
     typedef Trigger base;
     public:
-		Voice_trigger( Action_data* data_P, const QString& Voice_P, const VoiceSignature & signature1_P, const VoiceSignature & signature2_P );
+        Voice_trigger( Action_data* data_P, const QString& Voice_P, const VoiceSignature & signature1_P, const VoiceSignature & signature2_P );
         Voice_trigger( KConfigGroup& cfg_P, Action_data* data_P );
         virtual ~Voice_trigger();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
@@ -156,12 +166,12 @@ class KDE_EXPORT Voice_trigger
         virtual const QString description() const;
         const QString& voicecode() const;
         virtual void activate( bool activate_P );
-		VoiceSignature voicesignature( int ech ) const;
+        VoiceSignature voicesignature( int ech ) const;
     public slots:
         void handle_Voice(  );
     private:
         QString _voicecode;
-		VoiceSignature _voicesignature[2];
+        VoiceSignature _voicesignature[2];
     };
 
 
@@ -182,14 +192,14 @@ Trigger::Trigger( KConfigGroup&, Action_data* data_P )
     : data( data_P )
     {
     }
-        
+
 inline
 Trigger::~Trigger()
     {
     }
 
 // Trigger_list
-    
+
 inline
 Trigger_list::Trigger_list( const QString& comment_P )
     : Q3PtrList< Trigger >(), _comment( comment_P )
@@ -202,7 +212,7 @@ const QString& Trigger_list::comment() const
     {
     return _comment;
     }
-    
+
 // Shortcut_trigger
 
 inline
@@ -221,13 +231,13 @@ Window_trigger::Window_trigger( Action_data* data_P, Windowdef_list* windows_P,
     {
     init();
     }
-    
+
 inline
 const Windowdef_list* Window_trigger::windows() const
     {
     return _windows;
     }
-    
+
 inline
 bool Window_trigger::triggers_on( window_action_t w_action_P ) const
     {
@@ -245,16 +255,16 @@ const QString& Gesture_trigger::gesturecode() const
 // Voice_trigger
 inline
 const QString& Voice_trigger::voicecode() const
-	{
-		return _voicecode;
-	}
+    {
+    return _voicecode;
+    }
 
 inline
 VoiceSignature Voice_trigger::voicesignature(int ech) const
-	{
-		return _voicesignature[ech-1];
-	}
+    {
+    return _voicesignature[ech-1];
+    }
 
 } // namespace KHotKeys
-    
+
 #endif

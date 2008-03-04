@@ -33,9 +33,18 @@ set(libkhotkeys_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/keyboard_input_action.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/menuentry_action.cpp
 
+    # TRIGGERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/gesture_trigger.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/shortcut_trigger.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/trigger.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/trigger_list.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/triggers.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/voice_trigger.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/window_trigger.cpp
+
+    # Rest
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/action_data.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/khotkeysglobal.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/triggers.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/windows.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/settings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/input.cpp

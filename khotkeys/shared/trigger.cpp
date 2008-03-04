@@ -17,4 +17,34 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "moc_triggers.cpp"
+#include "triggers.h"
+
+#include <KDE/KConfigGroup>
+#include <KDE/KDebug>
+
+namespace KHotKeys {
+
+void Trigger::cfg_write( KConfigGroup& cfg_P ) const
+    {
+    cfg_P.writeEntry( "Type", "ERROR" );
+    }
+
+Trigger* Trigger::create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P )
+    {
+    QString type = cfg_P.readEntry( "Type" );
+    if( type == "SHORTCUT" || type == "SINGLE_SHORTCUT" )
+        return new Shortcut_trigger( cfg_P, data_P );
+    if( type == "WINDOW" )
+        return new Window_trigger( cfg_P, data_P );
+    if( type == "GESTURE" )
+        return new Gesture_trigger(cfg_P, data_P );
+    if( type == "VOICE" )
+        return new Voice_trigger (cfg_P, data_P );
+
+    kWarning( 1217 ) << "Unknown Trigger type read from cfg file\n";
+    return NULL;
+    }
+
+
+} // namespace KHotKeys
+
