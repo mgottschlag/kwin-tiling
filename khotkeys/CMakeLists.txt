@@ -22,13 +22,22 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
-set(libshared_SRCS
+set(libkhotkeys_SRCS
+
+    # ACTIONS
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/action.cpp       
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/action_list.cpp  
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/activate_window_action.cpp  
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/command_url_action.cpp      
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/dbus_action.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/keyboard_input_action.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/menuentry_action.cpp
+
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/action_data.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/khotkeysglobal.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/triggers.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/windows.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/settings.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/actions.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/conditions.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/khlistview.cpp
@@ -40,8 +49,21 @@ set(libshared_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/voices.cpp
 )
 
+# Convenience library for kdeinit, kpart etc.
+# We have a khotkeys executable target, so we have to do some cmake magic here
+# to get a libkhotkeys
+kde4_add_library( 
+    libkhotkeys 
+    SHARED
+    ${libkhotkeys_SRCS} )
+set_target_properties(
+    libkhotkeys 
+    PROPERTIES OUTPUT_NAME "khotkeys")
+target_link_libraries( 
+    libkhotkeys 
+    kworkspace 
+    ${KDE4_KDE3SUPPORT_LIBS} )
 
-add_subdirectory( shared )
 add_subdirectory( kcontrol )
 add_subdirectory( app )
 add_subdirectory( data )
@@ -51,5 +73,6 @@ add_subdirectory( update )
 
 ########### install files ###############
 
+install( TARGETS libkhotkeys DESTINATION ${LIB_INSTALL_DIR} )
 install( FILES khotkeys.desktop DESTINATION ${AUTOSTART_INSTALL_DIR} )
 
