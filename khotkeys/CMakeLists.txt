@@ -33,6 +33,17 @@ set(libkhotkeys_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/keyboard_input_action.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/menuentry_action.cpp
 
+    # CONDITIONS
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/active_window_condition.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/and_condition.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/condition.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/conditions.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/conditions_list_base.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/conditions_list.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/existing_window_condition.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/not_condition.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/shared/or_condition.cpp
+
     # TRIGGERS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/gesture_trigger.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/shortcut_trigger.cpp
@@ -48,7 +59,6 @@ set(libkhotkeys_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/windows.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/settings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/input.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/conditions.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/khlistview.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/khlistbox.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/shared/gestures.cpp
