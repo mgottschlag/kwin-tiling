@@ -123,7 +123,7 @@ void Autostart::load()
 		for (int i = 0; i < list.size(); ++i) {
 			QFileInfo fi = list.at(i);
 			QString filename = fi.fileName();
-			Desktop * item = new Desktop( fi.absoluteFilePath(), widget->listCMD );
+			Desktop *item = new Desktop( fi.absoluteFilePath(), widget->listCMD );
 			if ( ! item->isDesktop() ) {
 				if ( fi.isSymLink() ) {
 					QString link = fi.readLink();
@@ -136,10 +136,10 @@ void Autostart::load()
 					item->setText( 2, filename );
 				}
 			} else {
-				KService * service = new KService(fi.absoluteFilePath());
-				item->setText( 0, service->name() );
+				KService  service(fi.absoluteFilePath());
+				item->setText( 0, service.name() );
 				item->setText( 1, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
-				item->setText( 2, service->exec() );
+				item->setText( 2, service.exec() );
 			}
 		}
 	}
