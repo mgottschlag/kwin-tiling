@@ -211,22 +211,11 @@ void IconApplet::propertiesDialogClosed()
 
 void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-   if (!KUrl::List::canDecode(event->mimeData())) {
-       return;
-   }
-
-    //FIXME: this hacky workaround must go away when KUrl::List::fromMimeData(event->mimeData()); will be fixed
-    QString payload = event->mimeData()->text();
-    if (payload.isEmpty()) {
+    if (!KUrl::List::canDecode(event->mimeData())) {
         return;
     }
-    KUrl::List urls(payload.split("\n"));
 
-    //if there are more than one the last is junk
-    if (urls.count() > 1) {
-        urls.removeLast();
-    }
-    //KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
+    KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
 
     if (urls.count() > 0) {
         event->accept();
