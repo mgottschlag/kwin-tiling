@@ -53,8 +53,6 @@
 // Local
 #include "core/models.h"
 
-using namespace Kickoff;
-
 template <> inline
 void KConfigGroup::writeEntry( const char *pKey,
                               const KGlobalSettings::Completion& aValue,
@@ -62,6 +60,9 @@ void KConfigGroup::writeEntry( const char *pKey,
 {
   writeEntry(pKey, int(aValue), flags);
 }
+
+namespace Kickoff
+{
 
 class AppNode
 {
@@ -396,5 +397,8 @@ QHash<QString,QString> ApplicationModelPrivate::iconNameMap()
     }
     return map;
 }
+
+} // namespace Kickoff
+
 
 #include "applicationmodel.moc"

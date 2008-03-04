@@ -23,10 +23,10 @@
 
 #include "core/kickoffabstractmodel.h"
 
-class ApplicationModelPrivate;
-
 namespace Kickoff
 {
+
+class ApplicationModelPrivate;
 
 /**
  * ApplicationModel provides a tree model containing all of the user's installed graphical programs.
