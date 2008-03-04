@@ -239,10 +239,10 @@ void Autostart::editCMD(QTreeWidgetItem* ent) {
 	if (! editCMD( kfi )) return;
 
 	if (((Desktop*)entry)->isDesktop()) {
-		KService * service = new KService(entry->fileName.path());
-		entry->setText( 0, service->name() );
+		KService service(entry->fileName.path());
+		entry->setText( 0, service.name() );
 		entry->setText( 1, pathName.value(paths.indexOf((entry->fileName.directory()+'/') )) );
-		entry->setText( 2, service->exec() );
+		entry->setText( 2, service.exec() );
 	}
 }
 
