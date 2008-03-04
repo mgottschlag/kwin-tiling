@@ -1,10 +1,7 @@
 
-include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/khotkeys/shared ui/  )
-
-
 ########### next target ###############
 
-set(kcm_khotkeys_PART_SRCS ${libshared_SRCS}
+set(kcm_khotkeys_PART_SRCS 
    menuedit.cpp 
    window_trigger_widget.cpp 
    tab_widget.cpp 
@@ -63,9 +60,9 @@ qt4_add_dbus_interface(kcm_khotkeys_PART_SRCS ../app/org.kde.khotkeys.xml khotke
 kde4_add_plugin(kcm_khotkeys ${kcm_khotkeys_PART_SRCS})
 
 
-target_link_libraries(kcm_khotkeys kworkspace ${KDE4_KDE3SUPPORT_LIBS} )
+target_link_libraries(kcm_khotkeys hotkeys kworkspace ${KDE4_KDE3SUPPORT_LIBS} )
 if(X11_XTest_FOUND)
-  target_link_libraries(kcm_khotkeys  ${X11_XTest_LIB} )
+  target_link_libraries(kcm_khotkeys hotkeys  ${X11_XTest_LIB} )
 endif(X11_XTest_FOUND)
 
 install(TARGETS kcm_khotkeys  DESTINATION ${PLUGIN_INSTALL_DIR} )
