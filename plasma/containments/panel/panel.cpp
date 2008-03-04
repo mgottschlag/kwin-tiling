@@ -42,7 +42,8 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_dialog(0),
       m_appletBrowserAction(0),
-      m_configureAction(0)
+      m_configureAction(0),
+      m_currentSize(56)
 {
     m_background = new Plasma::SvgPanel("widgets/panel-background", this);
     m_background->setBorderFlags(Plasma::SvgPanel::DrawAllBorders);
@@ -52,29 +53,12 @@ Panel::Panel(QObject *parent, const QVariantList &args)
 
     connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(themeUpdated()));
     themeUpdated();
+    updateSize(m_currentSize);
 }
 
 Panel::~Panel()
 {
     delete m_dialog;
-}
-
-void Panel::init()
-{
-    KConfigGroup cg = config();
-    QRectF geo = cg.readEntry("geometry", QRectF());
-    Plasma::Location loc = (Plasma::Location)cg.readEntry("location", (int)Plasma::BottomEdge);
-    //setFormFactor((Plasma::FormFactor)cg.readEntry("formfactor", (int)Plasma::Horizontal));
-    int s = cg.readEntry("screen", 0);
-
-    setScreen(s);
-    setLocation(loc);
-    if (geo.isValid()) {
-        updateSize(geo.size());
-    } else {
-        updateSize(56);
-    }
-    Containment::init();
 }
 
 QList<QAction*> Panel::contextActions()
@@ -105,8 +89,7 @@ void Panel::updateBorders()
     Plasma::Location loc = location();
     SvgPanel::BorderFlags bFlags = SvgPanel::DrawAllBorders;
 
-    int s = qMax(0, screen());
-    QRect r = QApplication::desktop()->screenGeometry(s);
+    int s = screen();
     //kDebug() << loc << s << formFactor() << geometry();
 
     qreal topHeight = m_background->marginSize(Plasma::TopMargin);
@@ -115,7 +98,11 @@ void Panel::updateBorders()
     qreal rightWidth = m_background->marginSize(Plasma::RightMargin);
 
     //remove unwanted borders
-    if (loc == BottomEdge || loc == TopEdge) {
+    if (s < 0) {
+        // do nothing in this case, we want all the borders
+    } else if (loc == BottomEdge || loc == TopEdge) {
+        QRect r = QApplication::desktop()->screenGeometry(s);
+
         if (loc == BottomEdge) {
             bFlags ^= SvgPanel::DrawBottomBorder;
             bottomHeight = 0;
@@ -123,9 +110,7 @@ void Panel::updateBorders()
             bFlags ^= SvgPanel::DrawTopBorder;
             topHeight = 0;
         }
-        //FIXME I think these tests may always return true
-        //but it won't really be tested until we have non-fullwidth panels
-        //FIXME! yes, it *is* broken. just not visibly so, yet.
+
         if (geometry().x() <= r.x()) {
             bFlags ^= SvgPanel::DrawLeftBorder;
             leftWidth = 0;
@@ -136,6 +121,8 @@ void Panel::updateBorders()
         }
         //kDebug() << "top/bottom: Width:" << width << ", height:" << height;
     } else if (loc == LeftEdge || loc == RightEdge) {
+        QRect r = QApplication::desktop()->screenGeometry(s);
+
         if (loc == RightEdge) {
             bFlags ^= SvgPanel::DrawRightBorder;
             rightWidth = 0;
@@ -164,6 +151,7 @@ void Panel::updateBorders()
     }
 
     m_background->setBorderFlags(bFlags);
+    update();
 }
 
 void Panel::checkForConflict()
@@ -190,20 +178,25 @@ void Panel::checkForConflict()
 void Panel::constraintsUpdated(Plasma::Constraints constraints)
 {
     //kDebug() << "constraints updated with" << constraints << "!!!!!!";
-/*
     if (constraints & Plasma::LocationConstraint) {
         setFormFactorFromLocation();
     }
-*/
-    if (constraints & Plasma::ScreenConstraint || constraints & Plasma::LocationConstraint || 
-            constraints & Plasma::SizeConstraint) {
-        updatePos();
-        updateBorders();
-        checkForConflict();
+
+    if (constraints & Plasma::ScreenConstraint ||
+        constraints & Plasma::LocationConstraint) {
+        updateSize(m_currentSize);
     }
 
     if (constraints & Plasma::SizeConstraint) {
+        m_currentSize = (formFactor() == Vertical) ? size().width() : size().height();
         m_background->resize(size());
+    }
+
+    if (constraints & Plasma::ScreenConstraint ||
+        constraints & Plasma::LocationConstraint ||
+        constraints & Plasma::SizeConstraint) {
+        updateBorders();
+        checkForConflict();
     }
 
     if (constraints & Plasma::ImmutableConstraint && m_appletBrowserAction) {
@@ -319,25 +312,29 @@ void Panel::applyConfig()
     }
     Plasma::Location newLoc = (Plasma::Location)(m_locationCombo->itemData(m_locationCombo->currentIndex()).toInt());
 
-    qreal oldSize = (formFactor() == Plasma::Horizontal) ? size().height() : size().width();
-    if (newLoc != location() || newSize != oldSize) {
-        setLocation(newLoc);
+    if (newSize != m_currentSize) {
         updateSize(newSize);
+    }
+
+    if (newLoc != location()) {
+        setLocation(newLoc);
     }
 }
 
 void Panel::setFormFactorFromLocation() {
     switch (location()) {
-    case BottomEdge:
-    case TopEdge:
-        setFormFactor(Plasma::Horizontal);
-        break;
-    case RightEdge:
-    case LeftEdge:
-        setFormFactor(Plasma::Vertical);
-        break;
-    default:
-        kDebug() << "invalid location!!";
+        case BottomEdge:
+        case TopEdge:
+            kDebug() << "setting horizontal form factor";
+            setFormFactor(Plasma::Horizontal);
+            break;
+        case RightEdge:
+        case LeftEdge:
+            kDebug() << "setting vertical form factor";
+            setFormFactor(Plasma::Vertical);
+            break;
+        default:
+            kDebug() << "invalid location!!";
     }
 }
 
@@ -345,56 +342,35 @@ void Panel::setFormFactorFromLocation() {
 //TODO handle floating location too
 void Panel::updateSize(qreal newSize)
 {
-    QRect screenRect = QApplication::desktop()->screenGeometry(screen());
+    QRectF screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) :
+                                        geometry();
     QSizeF s;
     switch (location()) {
     case BottomEdge:
     case TopEdge:
-        //FIXME: don't hardcode full width/height
+        //FIXME: don't hardcode full width
         s.setWidth(screenRect.width());
         s.setHeight(newSize);
         break;
     case RightEdge:
     case LeftEdge:
         s.setWidth(newSize);
+        //FIXME: don't hardcode full height
         s.setHeight(screenRect.height());
+        break;
+    case Floating:
+        break;
     default:
-        kDebug() << "can't happen!";
+        kDebug() << "shouldn't happen!" << location();
+        return;
     }
-    updateSize(s);
-}
 
-void Panel::updateSize(QSizeF newSize)
-{
-    //formfactor *must* be set first. why? beats me...
-    setFormFactorFromLocation();
     // Lock the size so that stray applets don't cause the panel to grow
     // or the removal of applets to cause the panel to shrink
     //TODO change this once panels aren't fullwidth
-    setMinimumSize(newSize);
-    setMaximumSize(newSize);
-}
-
-void Panel::updatePos()
-{
-    //the view actually ignores our pos() and handles positioning itself.
-    //we just have to give it a kick here so it updates
-    //TODO change this when we get floating panels
-    emit geometryChanged();
-    /*
-    QPointF pos;
-    switch (location()) {
-    case BottomEdge:
-        //pos.setY(screenRect.height() - size().height());
-        //note: screenRect.height() == (screenRect.bottom() + 1) (if screen is at 0,0)
-        break;
-    case RightEdge:
-        //pos.setX(screenRect.width() - size().width());
-        break;
-    default:
-        break;
-    }
-    */
+    resize(s);
+    setMinimumSize(s);
+    setMaximumSize(s);
 }
 
 void Panel::sizeComboChanged()

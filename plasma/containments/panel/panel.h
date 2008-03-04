@@ -37,7 +37,6 @@ class Panel : public Plasma::Containment
 public:
     Panel(QObject *parent, const QVariantList &args);
     ~Panel();
-    void init();
     QList<QAction*> contextActions();
 
     void constraintsUpdated(Plasma::Constraints constraints);
@@ -54,12 +53,6 @@ public:
      * the other dimension will be resized to the screen width/height.
      */
     void updateSize(qreal newSize);
-    /**
-     * resize to newSize
-     * the usual size functions won't work, because normally we don't want the panel to change size.
-     * so when you really do want to change the panel size, use this or the previous function.
-     */
-    void updateSize(QSizeF newSize);
 
 private slots:
     void configure();
@@ -73,18 +66,17 @@ private:
      * update the formfactor based on the location
      */
     void setFormFactorFromLocation();
-    /**
-     * give a kick to the view so it updates our position
-     */
-    void updatePos();
+
     /**
      * recalculate which borders to show
      */
     void updateBorders();
+
     /**
      * check for other panels overlapping with us
      */
     void checkForConflict();
+
     Plasma::SvgPanel *m_background;
     KDialog* m_dialog;
     QComboBox* m_sizeCombo;
@@ -92,6 +84,7 @@ private:
     QComboBox* m_locationCombo;
     QAction* m_appletBrowserAction;
     QAction* m_configureAction;
+    int m_currentSize;
 };
 
 
