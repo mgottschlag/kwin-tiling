@@ -179,7 +179,7 @@ void Trash::slotEmpty()
         containment()->emitLaunchActivated();
     }
     const QString text(i18nc("@info", "Do you really want to empty the Trash? All items will get deleted."));
-    const bool del = KMessageBox::warningContinueCancel(&m_menu,
+    const bool del = KMessageBox::warningContinueCancel(0,
                                                         text,
                                                         QString(),
                                                         KGuiItem(i18nc("@action:button", "Empty Trash"),
@@ -288,7 +288,7 @@ void Trash::dropEvent(QGraphicsSceneDragDropEvent *event)
             //finally, try to trash a file
             if (!specialOperation) {
                 KIO::Job* job = KIO::trash(urls);
-                job->ui()->setWindow(&m_menu);
+                job->ui()->setWindow(0);
                 job->ui()->setAutoErrorHandlingEnabled(true);
             }
         }
