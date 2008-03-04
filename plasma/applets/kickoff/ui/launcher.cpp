@@ -35,6 +35,7 @@
 #include <QTabBar>
 #include <QToolButton>
 #include <QVBoxLayout>
+#include <QStyleOptionSizeGrip>
 
 // KDE
 #include <KLocalizedString>
@@ -67,6 +68,8 @@ using namespace Kickoff;
 class Launcher::Private
 {
 public:
+    class ResizeHandle;
+
     Private(Launcher *launcher)
         : q(launcher)
         , applet(0)
@@ -247,7 +250,7 @@ public:
     Launcher * const q;
     Plasma::Applet *applet;
     UrlItemLauncher *urlLauncher;
-    QLabel *resizeHandle;
+    ResizeHandle *resizeHandle;
     SearchBar *searchBar;
     QWidget *footer;
     QStackedWidget *contentArea;
@@ -259,6 +262,31 @@ public:
     bool autoHide;
     int visibleItemCount;
     bool isResizing;
+};
+
+class Launcher::Private::ResizeHandle
+    : public QWidget
+{
+public:
+    ResizeHandle(QWidget *parent = 0)
+        : QWidget(parent)
+    {
+    }
+
+    ~ResizeHandle()
+    {
+    }
+
+protected:
+    void paintEvent(QPaintEvent *event)
+    {
+        QPainter p(this);
+        QStyleOptionSizeGrip opt;
+        opt.initFrom(this);
+        opt.corner = Qt::TopRightCorner;
+        style()->drawControl(QStyle::CE_SizeGrip, &opt, &p);
+        p.end();
+    }
 };
 
 Launcher::Launcher(QWidget *parent)
@@ -326,9 +354,7 @@ void Launcher::init()
     branding->setIconSize(icon.size());
     connect( branding, SIGNAL(clicked()), SLOT(openHomepage()));
 
-    d->resizeHandle = new QLabel(this);
-    d->resizeHandle->setBackgroundRole(QPalette::Window);
-    d->resizeHandle->setAutoFillBackground(true);
+    d->resizeHandle = new Private::ResizeHandle(this);
     d->resizeHandle->setFixedSize(16, 16);
     d->resizeHandle->setCursor(Qt::SizeBDiagCursor);
     setMouseTracking(true);
