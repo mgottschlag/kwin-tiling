@@ -39,7 +39,7 @@ class SelectSchemeDialog : public KDialog
     private slots:
 
         void schemeActivated(int index);
-
+        void slotUrlChanged( const QString& );
     private:
 
         Ui::SelectSchemeDialog *ui;

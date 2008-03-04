@@ -21,6 +21,7 @@
 
 #include "KDialog"
 #include "KStandardDirs"
+#include <KLineEdit>
 
 SelectSchemeDialog::SelectSchemeDialog( QWidget *parent )
     : KDialog( parent )
@@ -48,9 +49,12 @@ SelectSchemeDialog::SelectSchemeDialog( QWidget *parent )
 
     ui->m_url->setMode(KFile::LocalOnly|KFile::ExistingOnly);
 
-    connect( 
+    connect(
         ui->m_schemes, SIGNAL(activated(int)),
         this, SLOT(schemeActivated(int)));
+    connect( ui->m_url->lineEdit(), SIGNAL( textChanged( const QString& ) ),
+             this, SLOT( slotUrlChanged( const QString& ) ) );
+    enableButtonOk( false );
     }
 
 
@@ -67,7 +71,12 @@ void SelectSchemeDialog::schemeActivated(int index)
 
 KUrl SelectSchemeDialog::selectedScheme() const
     {
-    return ui->m_url->url();
+        return ui->m_url->url();
     }
+
+void SelectSchemeDialog::slotUrlChanged( const QString & _text )
+{
+    enableButtonOk( !_text.isEmpty() );
+}
 
 #include "moc_select_scheme_dialog.cpp"

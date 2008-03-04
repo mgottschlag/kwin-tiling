@@ -53,14 +53,14 @@ GlobalShortcutsModule::GlobalShortcutsModule( QWidget * parent, const QVariantLi
     // Add import scheme button
     KPushButton *importButton = new KPushButton(this);
     importButton->setText(i18n("Import scheme ..."));
-    connect( 
+    connect(
         importButton, SIGNAL(clicked()),
         this,SLOT(importScheme()) );
 
     // Add export scheme button
     KPushButton *exportButton = new KPushButton(this);
     exportButton->setText(i18n("Export scheme ..."));
-    connect( 
+    connect(
         exportButton, SIGNAL(clicked()),
         this,SLOT(exportScheme()) );
 
@@ -177,7 +177,11 @@ void GlobalShortcutsModule::importScheme()
     }
 
     KUrl url = dialog.selectedScheme();
-    Q_ASSERT(url.isLocalFile());
+    if ( !url.isLocalFile() )
+    {
+        KMessageBox::sorry( this, i18n( "This file (%1) does not exist. You can just select local file.", url.url()  ) );
+        return;
+    }
     kDebug() << url.path();
     KConfig config(url.path());
     editor->importConfiguration(&config);
