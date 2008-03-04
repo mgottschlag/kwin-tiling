@@ -113,6 +113,9 @@ protected:
      */
     virtual void updateAction(QAction *action, const QModelIndex& index);
 
+    //Reimplemented
+    virtual bool eventFilter(QObject * watched, QEvent *event);
+
 public Q_SLOTS:
     // an item in the menu got triggered
     void actionTriggered(QAction* action);

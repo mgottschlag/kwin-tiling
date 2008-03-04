@@ -23,9 +23,11 @@
 // Qt
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QStack>
+#include <QtGui/QMouseEvent>
 
 // KDE
 #include <KUrl>
+#include <kiconloader.h>
 
 // Local
 #include "core/models.h"
@@ -46,6 +48,8 @@ public:
 
         if (model->hasChildren(index)) {
             QMenu *childMenu = new QMenu(parent);
+            childMenu->installEventFilter(q);
+
             QObject::connect(childMenu,SIGNAL(aboutToShow()),q,SLOT(fillSubMenu()));
             action = childMenu->menuAction();
         } else {
@@ -77,6 +81,7 @@ MenuView::MenuView(QWidget *parent)
     : KMenu(parent)
     , d(new Private(this))
 {
+    installEventFilter(this);
 }
 
 MenuView::~MenuView()
@@ -133,7 +138,48 @@ void MenuView::updateAction(QAction *action,const QModelIndex& index)
             } break;
         }
     }
+
+    action->setData(index.data(UrlRole));
     action->setIcon(index.data(Qt::DecorationRole).value<QIcon>());
+}
+
+
+bool MenuView::eventFilter(QObject *watched, QEvent *event)
+{
+
+    if (event->type() == QEvent::MouseMove) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+        QMenu *watchedMenu = qobject_cast<QMenu*>(watched);
+
+        if (watchedMenu && mouseEvent->buttons() & Qt::LeftButton) {
+            QAction *action = watchedMenu->actionAt(mouseEvent->pos());
+
+            if (!action) {
+                return KMenu::eventFilter(watched, event);
+            }
+
+            QMimeData *mimeData = new QMimeData();
+            QString urlString = action->data().toString();
+            mimeData->setData("text/uri-list", urlString.toAscii());
+
+            if (urlString.isNull()) {
+                return KMenu::eventFilter(watched, event);
+            }
+
+            mimeData->setText(mimeData->text());
+            QDrag *drag = new QDrag(this);
+            drag->setMimeData(mimeData);
+
+            QIcon icon = action->icon();
+            drag->setPixmap(icon.pixmap(IconSize(KIconLoader::Desktop)));
+
+            Qt::DropAction dropAction = drag->exec();
+
+            return true;
+        }
+    }
+
+    return KMenu::eventFilter(watched, event);
 }
 
 void MenuView::setModel(QAbstractItemModel *model)
@@ -328,8 +374,9 @@ void MenuView::setFormatType(MenuView::FormatType formattype)
 void MenuView::actionTriggered(QAction *action)
 {
     QModelIndex index = indexForAction(action);
-    if (index.isValid())
+    if (index.isValid()) {
         d->launcher->openItem(index);
+    }
 }
 
 #include "menuview.moc"

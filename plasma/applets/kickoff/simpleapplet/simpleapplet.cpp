@@ -53,7 +53,7 @@
 class MenuLauncherApplet::Private
 {
 public:
-        KMenu *menuview;
+        Kickoff::MenuView *menuview;
         Plasma::Icon *icon;
         QPointer<Kickoff::UrlItemLauncher> launcher;
 
@@ -313,7 +313,7 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
     }
 
     if (!d->menuview) {
-        d->menuview = new KMenu();
+        d->menuview = new Kickoff::MenuView();
         connect(d->menuview,SIGNAL(triggered(QAction*)),this,SLOT(actionTriggered(QAction*)));
         connect(d->menuview,SIGNAL(aboutToHide()),d->icon,SLOT(setUnpressed()));
 
