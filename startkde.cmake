@@ -37,17 +37,17 @@ export MALLOC_CHECK_
 # in case we have been started with full pathname spec without being in PATH
 bindir=`echo "$0" | sed -n 's,^\(/.*\)/[^/][^/]*$,\1,p'`
 if [ -n "$bindir" ]; then
+  qbindir=`$bindir/kde4-config --qt-binaries`
+  if [ -n "$qbindir" ]; then
+    case $PATH in
+      $qbindir|$qbindir:*|*:$qbindir|*:$qbindir:*) ;;
+      *) PATH=$qbindir:$PATH; export PATH;;
+    esac
+  fi
   case $PATH in
     $bindir|$bindir:*|*:$bindir|*:$bindir:*) ;;
     *) PATH=$bindir:$PATH; export PATH;;
   esac
-  bindir=`$bindir/kde4-config --qt-binaries`
-  if [ -n "$bindir" ]; then
-    case $PATH in
-      $bindir|$bindir:*|*:$bindir|*:$bindir:*) ;;
-      *) PATH=$bindir:$PATH; export PATH;;
-    esac
-  fi
 fi
 
 # Boot sequence:
