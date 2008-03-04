@@ -223,6 +223,8 @@ void Condition_list_widget::new_selected( QAction *action )
 
 void Condition_list_widget::copy_pressed()
     {
+        if ( !selected_item )
+            return;
     conditions_listview->setSelected( create_listview_item(
         selected_item->condition()->copy( selected_item->condition()->parent()),
         selected_item->parent() ? NULL : conditions_listview,
@@ -242,6 +244,8 @@ void Condition_list_widget::delete_pressed()
 
 void Condition_list_widget::modify_pressed()
     {
+        if ( !selected_item )
+            return;
     edit_listview_item( selected_item );
     }
 
