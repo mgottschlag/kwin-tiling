@@ -22,16 +22,20 @@
 #include <KLineEdit>
 #include <QCheckBox>
 
-AddDialog::AddDialog (QWidget* parent) : QDialog( parent ) {
-	widget = new Ui_AddDialog();
-	widget->setupUi(this);
+AddDialog::AddDialog (QWidget* parent)
+    : KDialog( parent ) {
+    setButtons( None );
+    QWidget *w = new QWidget( this );
+    widget = new Ui_AddDialog();
+    widget->setupUi(w);
 
-	connect( widget->btnImport, SIGNAL(clicked()), SLOT(importPrg()) );
-	connect( widget->btnAdd, SIGNAL(clicked()), SLOT(addPrg()) );
-	connect( widget->btnCancel, SIGNAL(clicked()), SLOT(reject()) );
-	connect( widget->kurlfrScript, SIGNAL(textChanged(const QString&)), SLOT(textChanged(const QString&)) );
+    connect( widget->btnImport, SIGNAL(clicked()), SLOT(importPrg()) );
+    connect( widget->btnAdd, SIGNAL(clicked()), SLOT(addPrg()) );
+    connect( widget->btnCancel, SIGNAL(clicked()), SLOT(reject()) );
+    connect( widget->kurlfrScript, SIGNAL(textChanged(const QString&)), SLOT(textChanged(const QString&)) );
 
-	widget->btnImport->setEnabled(false);
+    widget->btnImport->setEnabled(false);
+    setMainWidget( w );
 }
 
 AddDialog::~AddDialog()
@@ -41,11 +45,11 @@ void AddDialog::textChanged(const QString &text) {
 	widget->btnImport->setEnabled(!text.isNull());
 }
 
-KUrl AddDialog::importUrl() {
+KUrl AddDialog::importUrl() const {
 	return widget->kurlfrScript->lineEdit()->text();
 }
 
-bool AddDialog::symLink() {
+bool AddDialog::symLink() const {
 	return (widget->chkSymlink->checkState() == Qt::Checked);
 }
 

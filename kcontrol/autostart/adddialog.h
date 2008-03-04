@@ -24,7 +24,7 @@
 #include "ui_addDialog.h"
 #include <KUrlRequester>
 
-class AddDialog : public QDialog
+class AddDialog : public KDialog
 {
     Q_OBJECT
 
@@ -32,8 +32,8 @@ public:
 	AddDialog(QWidget* parent=0);
 	~AddDialog();
 	// Returns the Url of the script to be imported
-	KUrl importUrl();
-	bool symLink();
+	KUrl importUrl() const;
+	bool symLink() const;
 
 public slots:
 	void addPrg();
