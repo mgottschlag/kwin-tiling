@@ -166,14 +166,17 @@ void Autostart::addCMD() {
 		KService::Ptr service;
 		KOpenWithDialog owdlg( this );
 		if (owdlg.exec() != QDialog::Accepted)
-			return;
+                {
+                    delete addDialog;
+                    return;
+                }
 		service = owdlg.service();
 
 		Q_ASSERT(service);
 		if (!service)
                 {
                     delete addDialog;
-			return; // Don't crash if KOpenWith wasn't able to create service.
+                    return; // Don't crash if KOpenWith wasn't able to create service.
                 }
 
 		KUrl desktopTemplate;
@@ -192,21 +195,26 @@ void Autostart::addCMD() {
 
 			KPropertiesDialog dlg( desktopTemplate, this );
 			if ( dlg.exec() != QDialog::Accepted )
-				return;
+                        {
+                            delete addDialog;
+                            return;
+                        }
 		} else {
 			desktopTemplate = KUrl( KStandardDirs::locate("apps", service->entryPath()) );
 
 			KPropertiesDialog dlg( desktopTemplate, KUrl(kgs->autostartPath()), service->name() + ".desktop", this );
 			if ( dlg.exec() != QDialog::Accepted )
-				return;
+                        {
+                            delete addDialog;
+                            return;
+                        }
 		}
-                delete addDialog;
 		Desktop * item = new Desktop( kgs->autostartPath() + service->name() + ".desktop", widget->listCMD );
 		item->setText( 0, service->name() );
 		item->setText( 1, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
 		item->setText( 2, service->exec() );
 	}
-
+        delete addDialog;
 	emit changed(true);
 }
 
