@@ -68,7 +68,6 @@ PanelView::PanelView(Plasma::Containment *panel, QWidget *parent)
 void PanelView::setLocation(Plasma::Location loc)
 {
     containment()->setLocation(loc);
-    updatePanelGeometry();
 }
 
 Plasma::Location PanelView::location() const
