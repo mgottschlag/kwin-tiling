@@ -376,8 +376,8 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
         //_keyEdit->setShortcut( entryInfo->shortcut() );
     }
 
-    QString temp = df->desktopGroup().readPathEntry("Exec", QString());
-    if (temp.left(12) == "ksystraycmd ")
+    QString temp = df->desktopGroup().readEntry("Exec");
+    if (temp.startsWith("ksystraycmd "))
     {
       _execEdit->lineEdit()->setText(temp.right(temp.length()-12));
       _systrayCB->setChecked(true);
@@ -421,9 +421,9 @@ void BasicTab::apply()
         KConfigGroup dg = df->desktopGroup();
         dg.writeEntry("Comment", _commentEdit->text());
         if (_systrayCB->isChecked())
-          dg.writePathEntry("Exec", _execEdit->lineEdit()->text().prepend("ksystraycmd "));
+          dg.writeEntry("Exec", _execEdit->lineEdit()->text().prepend("ksystraycmd "));
         else
-          dg.writePathEntry("Exec", _execEdit->lineEdit()->text());
+          dg.writeEntry("Exec", _execEdit->lineEdit()->text());
 
         dg.writePathEntry("Path", _pathEdit->lineEdit()->text());
 
