@@ -18,6 +18,8 @@
  ***************************************************************************/
 
 #include "trash.h"
+#include <kstandarddirs.h>
+#include <kprocess.h>
 
 //QT
 #include <QGraphicsSceneDragDropEvent>
@@ -34,8 +36,9 @@
 #include <KSharedConfig>
 #include <KMessageBox>
 #include <KUrl>
-#include <konq_operations.h>
 #include <kfileplacesmodel.h>
+#include <KIO/CopyJob>
+#include <KIO/JobUiDelegate>
 
 //Plasma
 #include <plasma/widgets/icon.h>
@@ -183,7 +186,12 @@ void Trash::slotEmpty()
                                                                   KIcon("user-trash"))
                                                         ) == KMessageBox::Continue;
     if (del) {
-        KonqOperations::emptyTrash(&m_menu);
+        // We can't use KonqOperations here. To avoid duplicating its code (small, though),
+        // we can simply call ktrash.
+        //KonqOperations::emptyTrash(&m_menu);
+        KProcess process;
+        process << KStandardDirs::findExe("ktrash") << "--empty";
+        process.execute();
     }
 }
 
@@ -242,30 +250,19 @@ QList<QAction*> Trash::contextActions()
 void Trash::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     if (KUrl::List::canDecode(event->mimeData())) {
-        //FIXME: this hacky workaround must go away when KUrl::List::fromMimeData(event->mimeData()); will be fixed
-        QString payload = event->mimeData()->text();
-        if (payload.isEmpty()) {
-            return;
-        }
-        KUrl::List urls(payload.split("\n"));
-
-        //if there are more than one the last is junk
-        if (urls.count() > 1) {
-            urls.removeLast();
-        }
-        //KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
+        const KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
 
         if (urls.count() > 0) {
             event->accept();
 
-            //some spacial operation was done instead of simply deleting a file
+            //some special operation was done instead of simply deleting a file
             bool specialOperation = false;
 
-            foreach (KUrl url, urls) {
-                Solid::Predicate predicate = Solid::Predicate(Solid::DeviceInterface::StorageAccess, "filePath", url.path());
+            foreach (const KUrl& url, urls) {
+                const Solid::Predicate predicate(Solid::DeviceInterface::StorageAccess, "filePath", url.path());
 
                 //query for mounted devices
-                QList<Solid::Device> devList = Solid::Device::listFromQuery(predicate, QString());
+                const QList<Solid::Device> devList = Solid::Device::listFromQuery(predicate, QString());
 
                 //seek for an item in the places (e.g. Dolphin sidebar)
                 const QModelIndex index = m_places->closestItem(url);
@@ -290,7 +287,9 @@ void Trash::dropEvent(QGraphicsSceneDragDropEvent *event)
 
             //finally, try to trash a file
             if (!specialOperation) {
-                KonqOperations::del( &m_menu, KonqOperations::TRASH, urls );
+                KIO::Job* job = KIO::trash(urls);
+                job->ui()->setWindow(&m_menu);
+                job->ui()->setAutoErrorHandlingEnabled(true);
             }
         }
     }
