@@ -93,9 +93,17 @@ class SearchMatch : public QListWidgetItem
         {
             m_action = action;
             setIcon(m_action->icon());
-            setText(i18n("%1 (%2)",
-                    m_action->text(),
-                    m_action->runner()->objectName()));
+
+            if (action->subtext().isEmpty()) {
+                setText(i18n("%1 (%2)",
+                        m_action->text(),
+                        m_action->runner()->objectName()));
+            } else {
+                setText(i18n("%1 (%2, %3)",
+                        m_action->text(),
+                        m_action->subtext(),
+                        m_action->runner()->objectName()));
+            }
 
             // in case our new action is now enabled and the old one wasn't, or
             // vice versa
