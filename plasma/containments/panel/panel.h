@@ -72,11 +72,6 @@ private:
      */
     void updateBorders();
 
-    /**
-     * check for other panels overlapping with us
-     */
-    void checkForConflict();
-
     Plasma::SvgPanel *m_background;
     KDialog* m_dialog;
     QComboBox* m_sizeCombo;

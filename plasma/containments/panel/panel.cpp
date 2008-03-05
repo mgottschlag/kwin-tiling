@@ -156,27 +156,6 @@ void Panel::updateBorders()
     update();
 }
 
-void Panel::checkForConflict()
-{
-    if (corona()) {
-        foreach (Containment *c, corona()->containments()) {
-            if (c->type() != PanelContainment || c == this) {
-                continue;
-            }
-
-            if (c->geometry().intersects(geometry())) {
-                //TODO: here is where we need to schedule a negotiation for where to show the
-                //      panel on the scene
-                //
-                //      we also probably need to direct whether to allow this containment to
-                //      be resized before moved, or moved only
-                kDebug() << "conflict!";
-            }
-            kDebug() << "panel containment with geometry of" << c->geometry() << "but really" << c->transform().map(geometry());
-        }
-    }
-}
-
 void Panel::constraintsUpdated(Plasma::Constraints constraints)
 {
     //kDebug() << "constraints updated with" << constraints << "!!!!!!";
@@ -200,7 +179,6 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
         constraints & Plasma::LocationConstraint ||
         constraints & Plasma::SizeConstraint) {
         updateBorders();
-        checkForConflict();
     }
 
     if (constraints & Plasma::ImmutableConstraint && m_appletBrowserAction) {
