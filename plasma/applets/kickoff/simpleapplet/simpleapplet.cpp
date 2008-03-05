@@ -105,20 +105,16 @@ public:
             foreach(QAction *action, actions) {
                 if( action->menu() && mergeFirstLevel ) {
                     QMetaObject::invokeMethod(action->menu(),"aboutToShow"); //fetch the children
-                    QList<QAction*> subactions;
-                    foreach(QAction *a, action->menu()->actions()) {
-                        if( a->menu() || ! view->indexForAction(a).data(Kickoff::UrlRole).isNull() ) {
-                            subactions << a;
-                        }
-                    }
-                    if( actions.count() > 1 && subactions.count() > 0 ) {
+                    if( actions.count() > 1 && action->menu()->actions().count() > 0 ) {
                         menuview->addTitle(action->text());
                     }
-                    foreach(QAction *a, subactions) {
+                    foreach(QAction *a, action->menu()->actions()) {
+                        a->setVisible(a->menu() || ! view->indexForAction(a).data(Kickoff::UrlRole).isNull());
                         menuview->addAction(a);
                     }
                 }
-                else if( action->menu() || ! view->indexForAction(action).data(Kickoff::UrlRole).isNull() ) {
+                else {
+                    action->setVisible(action->menu() || ! view->indexForAction(action).data(Kickoff::UrlRole).isNull());
                     menuview->addAction(action);
                 }
             }
@@ -190,9 +186,10 @@ void MenuLauncherApplet::init()
 
     Q_ASSERT( ! d->switcher );
     d->switcher = new QAction(i18n("Switch to Kickoff Menu Style"), this);
-    d->switcher->setVisible(! isImmutable());
     d->actions.append(d->switcher);
     connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
+
+    constraintsUpdated(Plasma::ImmutableConstraint);
 }
 
 void MenuLauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
@@ -213,6 +210,9 @@ void MenuLauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
 
     if (constraints & Plasma::ImmutableConstraint) {
         d->switcher->setVisible(! isImmutable());
+        if (d->menuview) {
+            d->menuview->setImmutable(isImmutable());
+        }
     }
 }
 
@@ -314,6 +314,7 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
 
     if (!d->menuview) {
         d->menuview = new Kickoff::MenuView();
+        d->menuview->setImmutable(isImmutable());
         connect(d->menuview,SIGNAL(triggered(QAction*)),this,SLOT(actionTriggered(QAction*)));
         connect(d->menuview,SIGNAL(aboutToHide()),d->icon,SLOT(setUnpressed()));
 

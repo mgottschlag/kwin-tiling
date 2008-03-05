@@ -77,8 +77,16 @@ public:
 
     /** Sets the column from the model which is used to construct the actions in the menu. */
     void setColumn(int column);
-    /** See setColumn() */
+    /** Returns the column from the model which is used to construct the actions in the menu. */
     int column() const;
+
+    /**
+     * Sets the immutable state of the menu. If the menu is immutable things
+     * like for example drag and drop are disabled.
+     */
+    void setImmutable(bool immutable);
+    /** Returns true if the menu is immutable aka read-only. */
+    bool isImmutable() const;
 
     /** The format type enumeration. */
     enum FormatType {

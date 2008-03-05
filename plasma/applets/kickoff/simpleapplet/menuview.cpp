@@ -38,7 +38,7 @@ using namespace Kickoff;
 class MenuView::Private
 {
 public:
-    Private(MenuView *parent) : q(parent) , model(0) , column(0), launcher(new UrlItemLauncher(parent)), formattype(MenuView::DescriptionName) {}
+    Private(MenuView *parent) : q(parent) , model(0) , column(0), immutable(true), launcher(new UrlItemLauncher(parent)), formattype(MenuView::DescriptionName) {}
 
     QAction *createActionForIndex(const QModelIndex& index,QWidget *parent)
     {
@@ -73,6 +73,7 @@ public:
     MenuView * const q;
     QAbstractItemModel *model;
     int column;
+    bool immutable;
     UrlItemLauncher *launcher;
     MenuView::FormatType formattype;
 };
@@ -96,44 +97,44 @@ QAction *MenuView::createLeafAction(const QModelIndex&,QObject *parent)
 
 void MenuView::updateAction(QAction *action,const QModelIndex& index)
 {
-    QString text = index.data(Qt::DisplayRole).value<QString>(); // describing text, e.g. "Spreadsheet" or "Rekall" (right, sometimes the text is also used for the generic app-name)
-    QString name = index.data(Kickoff::SubTitleRole).value<QString>(); // the generic name, e.g. "kspread" or "OpenOffice.org Spreadsheet" or just "" (right, it's a mess too)
+    QString text = index.data(Qt::DisplayRole).value<QString>().replace("&","&&"); // describing text, e.g. "Spreadsheet" or "Rekall" (right, sometimes the text is also used for the generic app-name)
+    QString name = index.data(Kickoff::SubTitleRole).value<QString>().replace("&","&&"); // the generic name, e.g. "kspread" or "OpenOffice.org Spreadsheet" or just "" (right, it's a mess too)
     if( action->menu()!=0 ) { // if its an item with sub-menuitems, we probably like to thread them another way...
-        action->setText(text.replace("&","&&"));
+        action->setText(text);
     }
     else {
         switch( d->formattype ) {
             case Name: {
                 if( name.isEmpty() ) {
-                    action->setText(text.replace("&","&&"));
+                    action->setText(text);
                 }
                 else {
-                    action->setText(name.replace("&","&&"));
+                    action->setText(name);
                 }
             } break;
             case Description: {
                 if( name.contains(text,Qt::CaseInsensitive) ) {
                     text = name;
                 }
-                action->setText(text.replace("&","&&"));
+                action->setText(text);
             } break;
             case NameDescription: // fall through
             case DescriptionName: {
                 if( ! name.isEmpty() ) { // seems we have a program, but some of them dont define a name at all
                     if( name.contains(text,Qt::CaseInsensitive) ) {
-                        action->setText(name.replace("&","&&"));
+                        action->setText(name);
                     }
                     else {
                         if( d->formattype == NameDescription ) {
-                            action->setText(QString("%1 %2").arg(name).arg(text).replace("&","&&"));
+                            action->setText(QString("%1 %2").arg(name).arg(text));
                         }
                         else {
-                            action->setText(QString("%1 (%2)").arg(text).arg(name).replace("&","&&"));
+                            action->setText(QString("%1 (%2)").arg(text).arg(name));
                         }
                     }
                 }
                 else { // if there is no name, let's just use the describing text
-                    action->setText(text.replace("&","&&"));
+                    action->setText(text);
                 }
             } break;
         }
@@ -151,7 +152,7 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
         QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
         QMenu *watchedMenu = qobject_cast<QMenu*>(watched);
 
-        if (watchedMenu && mouseEvent->buttons() & Qt::LeftButton) {
+        if (watchedMenu && mouseEvent->buttons() & Qt::LeftButton && ! d->immutable) {
             QAction *action = watchedMenu->actionAt(mouseEvent->pos());
 
             if (!action) {
@@ -245,10 +246,10 @@ QModelIndex MenuView::indexForAction(QAction *action) const
 QAction *MenuView::actionForIndex(const QModelIndex& index) const
 {
     Q_ASSERT(d->model);
-   
+
     if (!index.isValid()) {
-        return this->menuAction(); 
-    } 
+        return this->menuAction();
+    }
 
     // navigate up the model to get the rows of each index along the path
     // to the specified index
@@ -359,6 +360,16 @@ void MenuView::setColumn(int column)
 int MenuView::column() const
 {
     return d->column;
+}
+
+void MenuView::setImmutable(bool immutable)
+{
+    d->immutable = immutable;
+}
+
+bool MenuView::isImmutable() const
+{
+    return d->immutable;
 }
 
 MenuView::FormatType MenuView::formatType() const
