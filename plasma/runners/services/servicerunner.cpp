@@ -54,7 +54,7 @@ void ServiceRunner::match(Plasma::SearchContext *search)
 
     QHash<QString, bool> seen;
     if (service && !service->exec().isEmpty()) {
-        //kDebug() << service->name() << "is an exact match!";
+        //kDebug() << service->name() << "is an exact match!" << service->storageId() << service->exec();
         Plasma::SearchMatch *match = new Plasma::SearchMatch(this);
         match->setType(Plasma::SearchMatch::ExactMatch);
         setupAction(service, match);
@@ -91,7 +91,17 @@ void ServiceRunner::match(Plasma::SearchContext *search)
         }
 
         if (service->categories().contains("KDE")) {
-            relevance += .1;
+            if (id.startsWith("kde-")) {
+                // This is an older version, let's disambiguate it
+                QString subtext("KDE3");
+                if (!match->subtext().isEmpty()) {
+                    subtext.append(", " + match->subtext());
+                }
+
+                match->setSubtext(subtext);
+            } else {
+                relevance += .1;
+            }
         }
 
         //kDebug() << service->name() << "is this relevant:" << relevance;
