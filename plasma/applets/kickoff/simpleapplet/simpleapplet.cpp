@@ -209,9 +209,6 @@ void MenuLauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
 
     if (constraints & Plasma::ImmutableConstraint) {
         d->switcher->setVisible(! isImmutable());
-        if (d->menuview) {
-            d->menuview->setImmutable(isImmutable());
-        }
     }
 }
 
@@ -313,7 +310,6 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
 
     if (!d->menuview) {
         d->menuview = new Kickoff::MenuView();
-        d->menuview->setImmutable(isImmutable());
         connect(d->menuview,SIGNAL(triggered(QAction*)),this,SLOT(actionTriggered(QAction*)));
         connect(d->menuview,SIGNAL(aboutToHide()),d->icon,SLOT(setUnpressed()));
 

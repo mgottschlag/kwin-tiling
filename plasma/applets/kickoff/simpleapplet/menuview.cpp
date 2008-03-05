@@ -38,7 +38,7 @@ using namespace Kickoff;
 class MenuView::Private
 {
 public:
-    Private(MenuView *parent) : q(parent) , model(0) , column(0), immutable(true), launcher(new UrlItemLauncher(parent)), formattype(MenuView::DescriptionName) {}
+    Private(MenuView *parent) : q(parent) , model(0) , column(0), launcher(new UrlItemLauncher(parent)), formattype(MenuView::DescriptionName) {}
 
     QAction *createActionForIndex(const QModelIndex& index,QWidget *parent)
     {
@@ -73,7 +73,6 @@ public:
     MenuView * const q;
     QAbstractItemModel *model;
     int column;
-    bool immutable;
     UrlItemLauncher *launcher;
     MenuView::FormatType formattype;
 };
@@ -152,7 +151,7 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
         QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
         QMenu *watchedMenu = qobject_cast<QMenu*>(watched);
 
-        if (watchedMenu && mouseEvent->buttons() & Qt::LeftButton && ! d->immutable) {
+        if (watchedMenu && mouseEvent->buttons() & Qt::LeftButton) {
             QAction *action = watchedMenu->actionAt(mouseEvent->pos());
 
             if (!action) {
@@ -360,16 +359,6 @@ void MenuView::setColumn(int column)
 int MenuView::column() const
 {
     return d->column;
-}
-
-void MenuView::setImmutable(bool immutable)
-{
-    d->immutable = immutable;
-}
-
-bool MenuView::isImmutable() const
-{
-    return d->immutable;
 }
 
 MenuView::FormatType MenuView::formatType() const
