@@ -39,11 +39,11 @@ PanelView::PanelView(Plasma::Containment *panel, QWidget *parent)
     Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
     updatePanelGeometry();
 
-    if (containment()) {
-        connect(containment(), SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
+    if (panel) {
+        connect(panel, SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
+        connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
     }
 
-    connect(panel, SIGNAL(geometryChanged()), this, SLOT(updatePanelGeometry()));
     kDebug() << "Panel geometry is" << panel->geometry();
 
     // Graphics view setup
