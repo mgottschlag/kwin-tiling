@@ -49,6 +49,8 @@ Name[ru]=Mac
 Name[se]=Mac-coakkáldat
 Name[sk]=Mac schéma
 Name[sl]=Shema Mac
+Name[sr]=Мекинтошева шема
+Name[sr@latin]=Macintosheva šema
 Name[sv]=Mac schema
 Name[th]=ใช้แบบของ MAC
 Name[tr]=Mac Şeması
@@ -58,6 +60,7 @@ Name[wa]=Djeu d' rascourtis Mac
 Name[x-test]=xxMac Schemexx
 Name[xh]=Udweliso lwe Mac
 Name[zh_CN]=Mac 方案
+Name[zh_TW]=Mac 機制
 Uses Win Modifier=true
 
 [Global Shortcuts]

@@ -49,6 +49,8 @@ Name[ru]=Windows (поддержка клавиши Win)
 Name[se]=Windows-čoakkáldat (Windows-boaluin)
 Name[sk]=Windows schéma (s klávesom Win)
 Name[sl]=Shema Windows (s tipko Win)
+Name[sr]=Виндоузова шема (са тастером вин)
+Name[sr@latin]=Windowsova šema (sa tasterom Win)
 Name[sv]=Windows schema (med Win-tangent)
 Name[tg]=Нақшаи тирезаҳо (Бо калиди Win)
 Name[th]=ใช้แบบของวินโดวส์ (ใช้ปุ่ม Win)
@@ -59,6 +61,7 @@ Name[wa]=Djeu Windows (avou tape Win)
 Name[x-test]=xxWindows Scheme (With Win Key)xx
 Name[xh]=Windows Ezingagqibekanga (Nge Win-key)
 Name[zh_CN]=Windows 方案(有 Win 键)
+Name[zh_TW]=Windows 機制（有 Win 鍵）
 Uses Win Modifier=true
 
 [Global Shortcuts]

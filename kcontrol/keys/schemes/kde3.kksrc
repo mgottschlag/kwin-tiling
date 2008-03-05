@@ -46,6 +46,8 @@ Name[ru]=KDE с тремя клавишами-модификаторами
 Name[se]=KDE-standárda mas leat golbma válljeboalu
 Name[sk]=KDE nastavenia pre 3 modifikačné klávesy
 Name[sl]=Privzeto za 3 spremenilne tipke
+Name[sr]=КДЕ‑ово подразумевано за три модификаторска тастера
+Name[sr@latin]=KDE‑ovo podrazumevano za tri modifikatorska tastera
 Name[sv]=KDE-förinställt med 3 väljartangenter
 Name[tg]=Пешфарзи KDE барои 3 калидҳои ислоҳӣ
 Name[th]=ค่าปริยายของ KDE สำหรับปุ่มเปลี่ยนหน้าที่ 3 ปุ่ม
@@ -55,6 +57,7 @@ Name[wa]=Prémetou KDE (3 tapes modifieueses)
 Name[x-test]=xxKDE Default for 3 Modifier Keysxx
 Name[xh]=KDE Engagqibekanga ye 3 Izitsixo Mofifier
 Name[zh_CN]=三个修饰键的 KDE 默认值
+Name[zh_TW]=KDE 預設 3 個變更鍵
 Uses Win Modifier=false
 
 [Global Shortcuts]

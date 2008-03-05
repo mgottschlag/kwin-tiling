@@ -49,6 +49,8 @@ Name[ru]=UNIX
 Name[se]=UNIX-čoahkkáldat
 Name[sk]=UNIX schéma
 Name[sl]=Shema UNIX
+Name[sr]=Униксовска шема
+Name[sr@latin]=Unixovska šema
 Name[sv]=Unix schema
 Name[tg]=Нақшаи UNIX
 Name[th]=ใช้แบบของ UNIX
@@ -59,6 +61,7 @@ Name[wa]=Djeu d' rascourtis Unix
 Name[x-test]=xxUNIX Schemexx
 Name[xh]=Udweliso lwe UNIX
 Name[zh_CN]=Unix 方案
+Name[zh_TW]=UNIX 機制
 Uses Win Modifier=false
 
 [Global Shortcuts]

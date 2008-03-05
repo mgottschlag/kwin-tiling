@@ -49,6 +49,8 @@ Name[ru]=Windows (без клавиши Win)
 Name[se]=Windows-čoakkáldat (Windows-boalu haga)
 Name[sk]=Windows schéma (bez klávesu Win)
 Name[sl]=Shema Windows (brez tipke Win)
+Name[sr]=Виндоузова шема (без тастера вин)
+Name[sr@latin]=Windowsova šema (bez tastera Win)
 Name[sv]=Windows schema (utan Win-tangent)
 Name[tg]=Нақшаи тирезаҳо (Бе калиди Win)
 Name[th]=ใช้แบบของวินโดวส์ (โดยไม่ใช้ปุ่ม Win)
@@ -59,6 +61,7 @@ Name[wa]=Djeu Windows (sins tape Win)
 Name[x-test]=xxWindows Scheme (Without Win Key)xx
 Name[xh]=Window Yodweliso (Ngaphandle kwe Win key)
 Name[zh_CN]=Windows 方案(无 Win 键)
+Name[zh_TW]=Windows 機制（沒有 Win 鍵）
 Uses Win Modifier=false
 
 [Global Shortcuts]

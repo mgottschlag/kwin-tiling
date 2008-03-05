@@ -47,6 +47,8 @@ Name[ru]=WindowMaker (3 клавиши-модификатора)
 Name[se]=WindowMaker (golbma válljenboaluiguin)
 Name[sk]=WindowMaker (3 modifikačné klávesy)
 Name[sl]=WindowMaker (3 spremenilne tipke)
+Name[sr]=Виндоумејкер (три модификаторска тастера)
+Name[sr@latin]=WindowMaker (tri modifikatorska tastera)
 Name[sv]=Windowmaker (3 väljartangenter)
 Name[tg]=СозандаиТиреза (3 калиди ислоҳ)
 Name[th]=วินโดว์เมคเกอร์ (ใช้ปุ่มเปลี่ยนหน้าที่ 3ปุ่ม)
@@ -55,6 +57,7 @@ Name[vi]=WindowMaker (3 Phím Bổ trợ)
 Name[wa]=Djeu WindowMaker (3 tapes modifieuses)
 Name[x-test]=xxWindowMaker (3 Modifier Keys)xx
 Name[zh_CN]=WindowMaker (三个修饰键)
+Name[zh_TW]=WindowMaker（3 個變更鍵）
 
 [Global Shortcuts]
 Desktop Screenshot=Ctrl+Print
