@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=JavaScript Engine
+Name=JavaScript Widget
 Name[bg]=JavaScript
 Name[ca]=Motor JavaScript
 Name[da]=JavaScript-motor
@@ -40,7 +40,7 @@ Name[wa]=Éndjin JavaScript
 Name[x-test]=xxJavaScript Enginexx
 Name[zh_CN]=JavaScript 引擎
 Name[zh_TW]=JavaScript 引擎
-Comment=JavaScript Plasmoids Using QScript
+Comment=Native Plasma widget written in JavaScript
 Comment[bg]=JavaScript Plasmoids с QScript
 Comment[ca]=Plasmoides JavaScript que usen el QScript
 Comment[da]=JavaScript plasmoids med brug af QScript
