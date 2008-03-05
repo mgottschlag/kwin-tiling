@@ -44,21 +44,29 @@
 
 class Desktop : public QTreeWidgetItem {
 public:
-bool bisDesktop;
-KUrl fileName;
+    bool bisDesktop;
+    KUrl fileName;
 
-Desktop( const QString &service, QTreeWidget *parent ): QTreeWidgetItem( parent, 1 ) {
-	fileName = KUrl(service);
-	bisDesktop = service.endsWith(".desktop");
-}
-bool isDesktop() { return bisDesktop; }
-void setPath(const QString &path) {
-	if (path == fileName.directory(KUrl::AppendTrailingSlash)) return;
+    Desktop( const QString &service, QTreeWidget *parent )
+        : QTreeWidgetItem( parent, 1 )
+    {
+        fileName = KUrl(service);
+        bisDesktop = service.endsWith(".desktop");
+    }
+    bool isDesktop() const
+    {
+        return bisDesktop;
+    }
+
+    void setPath(const QString &path) {
+	if (path == fileName.directory(KUrl::AppendTrailingSlash))
+            return;
 	KIO::move(fileName, KUrl( path + '/' + fileName.fileName() ));
 	fileName = KUrl(path + fileName.fileName());
-}
-~Desktop() {
-}
+    }
+    ~Desktop()
+    {
+    }
 };
 
 K_PLUGIN_FACTORY(AutostartFactory, registerPlugin<Autostart>();)
@@ -238,7 +246,7 @@ void Autostart::editCMD(QTreeWidgetItem* ent) {
 	const KFileItem kfi = KFileItem( KFileItem::Unknown, KFileItem::Unknown, KUrl( entry->fileName ), true );
 	if (! editCMD( kfi )) return;
 
-	if (((Desktop*)entry)->isDesktop()) {
+	if (entry->isDesktop()) {
 		KService service(entry->fileName.path());
 		entry->setText( 0, service.name() );
 		entry->setText( 1, pathName.value(paths.indexOf((entry->fileName.directory()+'/') )) );
