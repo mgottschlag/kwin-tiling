@@ -18,6 +18,8 @@
 
 #include "panel.h"
 
+#include <limits>
+
 #include <QApplication>
 #include <QPainter>
 #include <QDesktopWidget>
@@ -178,8 +180,9 @@ void Panel::checkForConflict()
 void Panel::constraintsUpdated(Plasma::Constraints constraints)
 {
     //kDebug() << "constraints updated with" << constraints << "!!!!!!";
+
     if (constraints & Plasma::LocationConstraint) {
-        setFormFactorFromLocation();
+        setFormFactorFromLocation(location());
     }
 
     if (constraints & Plasma::ScreenConstraint ||
@@ -188,7 +191,8 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::SizeConstraint) {
-        m_currentSize = (formFactor() == Vertical) ? size().width() : size().height();
+        bool isHorizontal = location() == Plasma::TopEdge || location() == Plasma::BottomEdge;
+        m_currentSize = isHorizontal ? size().height() : size().width();
         m_background->resize(size());
     }
 
@@ -312,26 +316,30 @@ void Panel::applyConfig()
     }
     Plasma::Location newLoc = (Plasma::Location)(m_locationCombo->itemData(m_locationCombo->currentIndex()).toInt());
 
-    if (newSize != m_currentSize) {
-        updateSize(newSize);
-    }
-
     if (newLoc != location()) {
+        m_currentSize = newSize;
+        setFormFactorFromLocation(newLoc);
         setLocation(newLoc);
+    } else if (newSize != m_currentSize) {
+        updateSize(newSize);
     }
 }
 
-void Panel::setFormFactorFromLocation() {
-    switch (location()) {
+void Panel::setFormFactorFromLocation(Plasma::Location loc) {
+    switch (loc) {
         case BottomEdge:
         case TopEdge:
-            kDebug() << "setting horizontal form factor";
+            //kDebug() << "setting horizontal form factor";
             setFormFactor(Plasma::Horizontal);
             break;
         case RightEdge:
         case LeftEdge:
-            kDebug() << "setting vertical form factor";
+            //kDebug() << "setting vertical form factor";
             setFormFactor(Plasma::Vertical);
+            break;
+        case Floating:
+            //TODO: implement a form factor for floating panels
+            kWarning() << "unimplemented.";
             break;
         default:
             kDebug() << "invalid location!!";
@@ -342,6 +350,7 @@ void Panel::setFormFactorFromLocation() {
 //TODO handle floating location too
 void Panel::updateSize(qreal newSize)
 {
+    //kDebug() << "updating size to" << newSize << "at" << location();
     QRectF screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) :
                                         geometry();
     QSizeF s;
@@ -367,10 +376,15 @@ void Panel::updateSize(qreal newSize)
 
     // Lock the size so that stray applets don't cause the panel to grow
     // or the removal of applets to cause the panel to shrink
-    //TODO change this once panels aren't fullwidth
+    //TODO change this once panels aren't fullwidth to allow for auto-grow
+    //kDebug() << "resizing to" << s;
+    setMinimumSize(QSizeF(0, 0));
+    setMaximumSize(QSizeF(std::numeric_limits<qreal>::infinity(),
+                          std::numeric_limits<qreal>::infinity()));
     resize(s);
     setMinimumSize(s);
     setMaximumSize(s);
+    //kDebug( )<< "geometry is now" << geometry() << sceneBoundingRect();
 }
 
 void Panel::sizeComboChanged()

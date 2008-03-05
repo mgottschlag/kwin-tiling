@@ -65,7 +65,7 @@ private:
     /**
      * update the formfactor based on the location
      */
-    void setFormFactorFromLocation();
+    void setFormFactorFromLocation(Plasma::Location loc);
 
     /**
      * recalculate which borders to show
