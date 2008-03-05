@@ -94,14 +94,7 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="0" colspan="2" >
-        <widget class="QCheckBox" name="showTimezone" >
-         <property name="text" >
-          <string>Show &amp;timezone</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0" >
+       <item row="7" column="0" >
         <widget class="QCheckBox" name="secondsCheckbox" >
          <property name="toolTip" >
           <string>Show the seconds</string>
@@ -114,7 +107,7 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="0" >
+       <item row="7" column="0" >
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
@@ -138,6 +131,13 @@
         <widget class="QCheckBox" name="localTimeZone" >
          <property name="text" >
           <string>Use &amp;local timezone</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="showTimezone" >
+         <property name="text" >
+          <string>Show &amp;timezone</string>
          </property>
         </widget>
        </item>
@@ -231,6 +231,22 @@
     <hint type="destinationlabel" >
      <x>209</x>
      <y>239</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>localTimeZone</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>showTimezone</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>209</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>209</x>
+     <y>255</y>
     </hint>
    </hints>
   </connection>

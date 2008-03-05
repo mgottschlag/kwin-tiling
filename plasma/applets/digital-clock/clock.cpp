@@ -173,6 +173,7 @@ void Clock::showConfigurationInterface()
     ui.showDay->setChecked(m_showDay);
     ui.secondsCheckbox->setChecked(m_showSeconds);
     ui.showTimezone->setChecked(m_showTimezone);
+    ui.showTimezone->setEnabled(m_timezone != "Local");
     ui.plainClockFontBold->setChecked(m_plainClockFontBold);
     ui.plainClockFontItalic->setChecked(m_plainClockFontItalic);
     ui.plainClockFont->setCurrentFont(m_plainClockFont);
@@ -278,7 +279,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
         // Paint the date, conditionally, and let us know afterwards how much
         // space is left for painting the time on top of it.
-        if (m_showDate || m_showTimezone) {
+        if (m_showDate || (m_showTimezone && (m_timezone != "Local"))) {
             QString dateString;
             if (m_showDate) {
                 QString day = m_date.toString("d");
@@ -302,14 +303,14 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                                        "%1, %2", weekday, dateString);
                 }
 
-                if (m_showTimezone) {
+                if (m_showTimezone && (m_timezone != "Local")) {
                     QString timezone = m_prettyTimezone;
                     timezone.replace("_", " ");
                     dateString = i18nc("@label Date with timezone: "
                                        "%1 day of the week with date, %2 timezone",
                                        "%1 %2", dateString, timezone);
                 }
-            } else if (m_showTimezone) {
+            } else if (m_showTimezone && (m_timezone != "Local")) {
                 dateString = m_prettyTimezone;
                 dateString.replace("_", " ");
             }
