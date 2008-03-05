@@ -94,7 +94,6 @@ public:
             Kickoff::MenuView *view = new Kickoff::MenuView(menuview);
             view->setFormatType( (Kickoff::MenuView::FormatType) formattype );
             if( model ) {
-                model->setParent(view); //re-parent
                 view->setModel(model);
             }
             return view;
@@ -320,7 +319,7 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
 
         switch( d->viewtype ) {
             case Combined: {
-                Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel();
+                Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel(d->menuview);
                 appModel->setDuplicatePolicy(Kickoff::ApplicationModel::ShowLatestOnlyPolicy);
                 Kickoff::MenuView *appview = d->createMenuView(appModel);
                 d->addMenu(appview, false);
@@ -342,17 +341,17 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
                 d->addMenu(favview, true);
             } break;
             case Applications: {
-                Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel();
+                Kickoff::ApplicationModel *appModel = new Kickoff::ApplicationModel(d->menuview);
                 appModel->setDuplicatePolicy(Kickoff::ApplicationModel::ShowLatestOnlyPolicy);
                 Kickoff::MenuView *appview = d->createMenuView(appModel);
                 d->addMenu(appview, false);
             } break;
             case Computer: {
-                Kickoff::MenuView *systemview = d->createMenuView(new Kickoff::SystemModel());
+                Kickoff::MenuView *systemview = d->createMenuView(new Kickoff::SystemModel(d->menuview));
                 d->addMenu(systemview, true);
             } break;
             case RecentlyUsed: {
-                Kickoff::MenuView *recentlyview = d->createMenuView(new Kickoff::RecentlyUsedModel());
+                Kickoff::MenuView *recentlyview = d->createMenuView(new Kickoff::RecentlyUsedModel(d->menuview));
                 d->addMenu(recentlyview, true);
             } break;
             case Leave: {
