@@ -62,6 +62,8 @@ DashboardView::DashboardView(int screen, QWidget *parent)
     Plasma::Widget *tool = containment()->addToolBoxTool("hideDashboard", "preferences-desktop-display", i18n("Hide Dashboard"));
     containment()->enableToolBoxTool("hideDashboard", false);
     connect(tool, SIGNAL(clicked()), this, SLOT(hideView()));
+
+    installEventFilter(this);
 }
 
 DashboardView::~DashboardView()
@@ -110,6 +112,12 @@ void DashboardView::appletBrowserDestroyed()
 bool DashboardView::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched != m_appletBrowser) {
+        if (event->type() == QEvent::MouseButtonPress) {
+            QMouseEvent *me = static_cast<QMouseEvent *>(event);
+            if (me->button() == Qt::LeftButton) {
+                hideView();
+            }
+        }
         return false;
     }
 
