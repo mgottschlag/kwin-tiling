@@ -76,9 +76,6 @@ FullView::FullView(const QString &ff, const QString &loc, QWidget *parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setAlignment(Qt::AlignLeft | Qt::AlignTop);
-
-    QPixmap bg(KStandardDirs::locate("appdata", "checker.png"));
-    m_corona.setBackgroundBrush(bg);
 }
 
 void FullView::addApplet(const QString &a)
