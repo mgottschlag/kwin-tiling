@@ -28,6 +28,8 @@
 #include <KLocale>
 #include <KMessageBox>
 
+#include "kworkspace/kworkspace.h"
+
 #include "screensaver_interface.h"
 
 SessionRunner::SessionRunner(QObject *parent, const QVariantList &args)
@@ -45,7 +47,8 @@ SessionRunner::~SessionRunner()
 
 void SessionRunner::match(Plasma::SearchContext *search)
 {
-    QString term = search->searchTerm();
+    const QString term = search->searchTerm();
+    QString user;
 
     if (term.size() < 3) {
         return;
@@ -54,13 +57,13 @@ void SessionRunner::match(Plasma::SearchContext *search)
     //TODO: ugh, magic strings.
     bool listAll = (term == "SESSIONS");
 
-    if (!listAll && term.startsWith("switch")) {
+    if (!listAll && term.startsWith("switch", Qt::CaseInsensitive)) {
         // interestingly, this means that if one wants to switch to a
         // session named "switch", they'd have to enter
         // switch switch. ha!
-        term = term.right(term.size() - 6).trimmed();
+        user = term.right(term.size() - 6).trimmed();
 
-        if (term.isEmpty()) {
+        if (user.isEmpty()) {
             return;
         }
     }
@@ -68,7 +71,10 @@ void SessionRunner::match(Plasma::SearchContext *search)
     //kDebug() << "session switching to" << (listAll ? "all sessions" : term);
 
     QList<Plasma::SearchMatch*> matches;
-    if (listAll &&
+    bool switchUser = listAll ||
+                      term.compare("switch user", Qt::CaseInsensitive) == 0 ||
+                      term.compare("new session", Qt::CaseInsensitive) == 0;
+    if (switchUser &&
         KAuthorized::authorizeKAction("start_new_session") &&
         dm.isSwitchable() &&
         dm.numReserve() >= 0) {
@@ -98,13 +104,13 @@ void SessionRunner::match(Plasma::SearchContext *search)
             action = new Plasma::SearchMatch(this);
             action->setType(Plasma::SearchMatch::ExactMatch);
             action->setRelevance(1);
-        } else if (name == term) {
+        } else if (name.compare(user, Qt::CaseInsensitive) == 0) {
             // we need an elif branch here because we don't
             // want the last conditional to be checked if !listAll
             action = new Plasma::SearchMatch(this);
             action->setType(Plasma::SearchMatch::ExactMatch);
             action->setRelevance(1);
-        } else if (name.contains(term, Qt::CaseInsensitive)) {
+        } else if (name.contains(user, Qt::CaseInsensitive)) {
             action = new Plasma::SearchMatch(this);
         }
 
@@ -116,12 +122,68 @@ void SessionRunner::match(Plasma::SearchContext *search)
         }
     }
 
+    Plasma::SearchMatch *match = 0;
+    if (term.compare("logout", Qt::CaseInsensitive) == 0 ||
+        term.compare("log out", Qt::CaseInsensitive) == 0) {
+        match = new Plasma::SearchMatch(this);
+        match->setText(i18n("Logout"));
+        match->setIcon(KIcon("system-log-out"));
+        match->setData(LogoutAction);
+    } else if (term.compare("restart", Qt::CaseInsensitive) == 0) {
+        match = new Plasma::SearchMatch(this);
+        match->setText(i18n("Restart the computer"));
+        match->setIcon(KIcon("system-restart"));
+        match->setData(RestartAction);
+    } else if (term.compare("shutdown", Qt::CaseInsensitive) == 0){
+        match = new Plasma::SearchMatch(this);
+        match->setText(i18n("Shutdown the computer"));
+        match->setIcon(KIcon("system-shutdown"));
+        match->setData(ShutdownAction);
+    } else if (term.compare("lock", Qt::CaseInsensitive) == 0){
+        match = new Plasma::SearchMatch(this);
+        match->setText(i18n("Lock the screen"));
+        match->setIcon(KIcon("system-lock-screen"));
+        match->setData(LockAction);
+    }
+
+    if (match) {
+        match->setType(Plasma::SearchMatch::ExactMatch);
+        match->setRelevance(0.9);
+        matches << match;
+    }
+
     search->addMatches(term, matches);
 }
 
 void SessionRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
     Q_UNUSED(search);
+    if (action->data().type() == QVariant::Int) {
+        KWorkSpace::ShutdownType type = KWorkSpace::ShutdownTypeDefault;
+
+        switch (action->data().toInt()) {
+            case LogoutAction:
+                type = KWorkSpace::ShutdownTypeNone;
+                break;
+            case RestartAction:
+                type = KWorkSpace::ShutdownTypeReboot;
+                break;
+            case ShutdownAction:
+                type = KWorkSpace::ShutdownTypeHalt;
+                break;
+            case LockAction:
+                lock();
+                return;
+                break;
+        }
+
+        if (type != KWorkSpace::ShutdownTypeDefault) {
+            KWorkSpace::ShutdownConfirm confirm = KWorkSpace::ShutdownConfirmDefault;
+            KWorkSpace::requestShutDown(confirm, type);
+            return;
+        }
+    }
+
     if (!action->data().toString().isEmpty()) {
         QString sessionName = action->text();
 
@@ -162,14 +224,18 @@ void SessionRunner::exec(const Plasma::SearchContext *search, const Plasma::Sear
         return;
     }
 
+    lock();
+    dm.startReserve();
+}
+
+void SessionRunner::lock()
+{
     QString interface("org.freedesktop.ScreenSaver");
     org::freedesktop::ScreenSaver screensaver(interface, "/ScreenSaver",
                                               QDBusConnection::sessionBus());
     if (screensaver.isValid()) {
         screensaver.Lock();
     }
-
-    dm.startReserve();
 }
 
 #include "sessionrunner.moc"
