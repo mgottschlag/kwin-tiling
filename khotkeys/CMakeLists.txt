@@ -18,54 +18,57 @@ check_cxx_source_compiles("
   B* B::me() { return this; }
 " HAVE_COVARIANT_RETURN )
 configure_file(config-khotkeys.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-khotkeys.h )
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${KDEBASE_WORKSPACE_SOURCE_DIR}/khotkeys/libkhotkeys 
+    )
 
 add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 set(libkhotkeys_SRCS
 
     # ACTIONS
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/action.cpp       
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/action_list.cpp  
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/activate_window_action.cpp  
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/command_url_action.cpp      
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/dbus_action.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/keyboard_input_action.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/menuentry_action.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/action.cpp       
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/action_list.cpp  
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/activate_window_action.cpp  
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/command_url_action.cpp      
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/dbus_action.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/keyboard_input_action.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/menuentry_action.cpp
 
     # CONDITIONS
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/active_window_condition.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/and_condition.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/condition.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/conditions.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/conditions_list_base.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/conditions_list.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/existing_window_condition.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/not_condition.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/or_condition.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/active_window_condition.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/and_condition.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/condition.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/conditions.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/conditions_list_base.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/conditions_list.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/existing_window_condition.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/not_condition.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/or_condition.cpp
 
     # TRIGGERS
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/gesture_trigger.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/shortcut_trigger.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/trigger.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/trigger_list.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/triggers.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/voice_trigger.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/window_trigger.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/gesture_trigger.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/shortcut_trigger.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/trigger.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/trigger_list.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/triggers.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/voice_trigger.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/window_trigger.cpp
 
     # Rest
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/action_data.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/khotkeysglobal.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/windows.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/settings.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/input.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/khlistview.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/khlistbox.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/gestures.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/soundrecorder.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/voicesignature.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/sound.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/shared/voices.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/action_data.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/khotkeysglobal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/windows.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/settings.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/input.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/khlistview.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/khlistbox.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/gestures.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/soundrecorder.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/voicesignature.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/sound.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeys/voices.cpp
 )
 
 # Convenience library for kdeinit, kpart etc.

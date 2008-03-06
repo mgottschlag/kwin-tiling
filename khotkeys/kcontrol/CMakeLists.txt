@@ -1,6 +1,5 @@
 
-include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/khotkeys/shared ui/  )
-
+include_directories( ui  )
 
 ########### next target ###############
 
