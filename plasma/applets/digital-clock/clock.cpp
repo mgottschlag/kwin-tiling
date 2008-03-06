@@ -91,6 +91,8 @@ void Clock::init()
     QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
     setMinimumContentSize(metrics.size(Qt::TextSingleLine, timeString));
 
+    m_toolTipIcon = KIcon("chronometer").pixmap(IconSize(KIconLoader::Desktop));
+
     dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
 }
 
@@ -109,6 +111,15 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
     m_time = data["Time"].toTime();
     m_date = data["Date"].toDate();
     m_prettyTimezone = data["Timezone City"].toString();
+
+    QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
+
+    Plasma::ToolTipData tipData;
+    tipData.mainText = m_time.toString(timeString);
+    tipData.subText = m_date.toString();
+    tipData.image = m_toolTipIcon;
+
+    setToolTip(tipData);
 
     // avoid unnecessary repaints
     if (m_showSeconds || m_time.minute() != m_lastTimeSeen.minute()) {

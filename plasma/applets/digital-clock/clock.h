@@ -94,6 +94,7 @@ class Clock : public Plasma::Applet
         Plasma::Dialog *m_calendar;
         QVBoxLayout *m_layout;
         QTime m_lastTimeSeen;
+        QPixmap m_toolTipIcon;
         /// Designer Config files
         Ui::clockConfig ui;
         Ui::calendar m_calendarUi;
