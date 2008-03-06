@@ -83,6 +83,47 @@ void DashboardView::drawBackground(QPainter * painter, const QRectF & rect)
     }
 }
 
+void DashboardView::paintEvent(QPaintEvent *event)
+{
+    Plasma::View::paintEvent(event);
+
+    // now draw a little label saying "this is your friendly neighbourhood dashboard"
+    const QRect r = rect();
+    const QString text = i18n("Plasma Dashboard");
+    QFont f = font();
+    f.bold();
+    const QFontMetrics fm(f);
+    const int margin = 6;
+    const int textWidth = fm.width(text);
+    const QPoint centered(r.width() / 2 - textWidth / 2 - margin, r.y());
+    const QRect boundingBox(centered, QSize(margin * 2 + textWidth, fm.height() + margin * 2));
+
+    if (!viewport() || !event->rect().intersects(boundingBox)) {
+        return;
+    }
+
+    QPainterPath box;
+    box.moveTo(boundingBox.topLeft());
+    box.lineTo(boundingBox.bottomLeft() + QPoint(0, -margin * 2));
+    box.quadTo(boundingBox.bottomLeft(), boundingBox.bottomLeft() + QPoint(margin * 2, 0));
+    box.lineTo(boundingBox.bottomRight() + QPoint(-margin * 2, 0));
+    box.quadTo(boundingBox.bottomRight(), boundingBox.bottomRight() + QPoint(0, -margin * 2));
+    box.lineTo(boundingBox.topRight());
+    box.closeSubpath();
+
+    QPainter painter(viewport());
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setFont(f);
+    //kDebug() << "******************** painting from" << centered << boundingBox << rect() << event->rect();
+    QColor highlight = palette().highlight().color();
+    highlight.setAlphaF(0.7);
+    painter.setPen(highlight.darker());
+    painter.setBrush(highlight);
+    painter.drawPath(box);
+    painter.setPen(palette().highlightedText().color());
+    painter.drawText(boundingBox, Qt::AlignCenter | Qt::AlignVCenter, text);
+}
+
 void DashboardView::showAppletBrowser()
 {
     if (!m_appletBrowser) {
