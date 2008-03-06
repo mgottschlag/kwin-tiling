@@ -77,7 +77,7 @@ Autostart::Autostart( QWidget* parent, const QVariantList& )
 {
 	widget = new Ui_AutostartConfig();
 	widget->setupUi(this);
-
+        setButtons(Apply);
 	connect( widget->btnAdd, SIGNAL(clicked()), SLOT(addCMD()) );
 	connect( widget->btnRemove, SIGNAL(clicked()), SLOT(removeCMD()) );
 	connect( widget->listCMD, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), SLOT(editCMD(QTreeWidgetItem*)) );
@@ -99,7 +99,9 @@ Autostart::Autostart( QWidget* parent, const QVariantList& )
 
 
 Autostart::~Autostart()
-{}
+{
+   delete widget;
+}
 
 
 void Autostart::load()
