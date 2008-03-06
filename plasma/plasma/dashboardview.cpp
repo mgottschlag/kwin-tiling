@@ -58,7 +58,6 @@ DashboardView::DashboardView(int screen, QWidget *parent)
     setDrawWallpaper(!PlasmaApp::hasComposite());
 
     connect(scene(), SIGNAL(launchActivated()), SLOT(hideView()));
-    connect(containment(), SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
     Plasma::Widget *tool = containment()->addToolBoxTool("hideDashboard", "preferences-desktop-display", i18n("Hide Dashboard"));
     containment()->enableToolBoxTool("hideDashboard", false);
     connect(tool, SIGNAL(clicked()), this, SLOT(hideView()));
@@ -236,6 +235,7 @@ void DashboardView::hideView()
     }
 
     disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
+    disconnect(containment(), SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
 
     containment()->hideToolbox();
     containment()->enableToolBoxTool("zoomOut", m_zoomOut);
@@ -271,6 +271,7 @@ void DashboardView::showEvent(QShowEvent *event)
 {
     KWindowSystem::setState(winId(), NET::SkipPager);
     connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
+    connect(containment(), SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
     Plasma::View::showEvent(event);
 }
 
