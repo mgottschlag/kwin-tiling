@@ -444,4 +444,4 @@ int Stroke::bin( int x, int y )
 
 } // namespace KHotKeys
 
-#include "gestures.moc"
+#include "moc_gestures.cpp"
