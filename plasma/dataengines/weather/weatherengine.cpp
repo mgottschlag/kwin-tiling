@@ -123,6 +123,7 @@ IonInterface* WeatherEngine::loadIon(const QString& plugName)
     }
 
     // Increment counter of ion.
+    ion->init();
     ion->ref();
 
     connect(ion, SIGNAL(newSource(QString)), this, SLOT(newIonSource(QString)));

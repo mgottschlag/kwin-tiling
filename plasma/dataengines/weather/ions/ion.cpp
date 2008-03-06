@@ -32,8 +32,8 @@ public:
     bool initialized;
 };
 
-IonInterface::IonInterface(QObject *parent)
-        : Plasma::DataEngine(parent, KService::Ptr(0)),
+IonInterface::IonInterface(QObject *parent, const QVariantList &args)
+        : Plasma::DataEngine(parent, args),
         d(new Private(this))
 {
 // Initialize the loaded ion with a reference count of 0.

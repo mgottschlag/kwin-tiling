@@ -46,17 +46,11 @@ public:
      * Constructor for the ion
      * @param parent The parent object.
      */
-    explicit IonInterface(QObject *parent = 0);
+    explicit IonInterface(QObject *parent = 0, const QVariantList &args = QVariantList());
     /**
      * Destructor for the ion
      */
     virtual ~IonInterface() {}
-
-    /**
-     * Reimplement to do the initialization of the ion.
-     * For example fetching the list of available cities or weather data sources should be fetched here.
-     */
-    virtual void init(void) = 0;
 
     /**
      * Increment ion counter. This is used to check if the ion is being used.

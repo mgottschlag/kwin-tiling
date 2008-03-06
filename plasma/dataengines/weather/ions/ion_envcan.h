@@ -128,7 +128,6 @@ class KDE_EXPORT EnvCanadaIon : public IonInterface
 public:
     EnvCanadaIon(QObject *parent, const QVariantList &args);
     ~EnvCanadaIon();
-    void init();  // Setup the city location, fetching the correct URL name.
     bool updateIonSource(const QString& source); // Sync data source with Applet
 
     bool metricUnit(void);
@@ -139,6 +138,9 @@ public:
     void updateWeather(const QString& source);
 
     static const int MAX_WARNINGS = 4;
+
+protected:
+    void init();  // Setup the city location, fetching the correct URL name.
 
 protected slots:
     void setup_slotDataArrived(KIO::Job *, const QByteArray &);

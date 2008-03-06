@@ -67,7 +67,7 @@ public:
 
 // ctor, dtor
 UKMETIon::UKMETIon(QObject *parent, const QVariantList &args)
-        : IonInterface(parent), d(new Private())
+        : IonInterface(parent, args), d(new Private())
 
 {
     Q_UNUSED(args)
