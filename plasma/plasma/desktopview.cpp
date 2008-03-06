@@ -82,19 +82,22 @@ void DesktopView::adjustSize()
 void DesktopView::zoomIn()
 {
     containment()->enableToolBoxTool("zoomOut", true);
-    qreal s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
     if (m_zoomLevel == Plasma::GroupZoom) {
         setDragMode(NoDrag);
-        containment()->enableToolBoxTool("zoomIn", false);
         m_zoomLevel = Plasma::DesktopZoom;
-        s = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
+        qreal factor = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
+        scale(factor, factor);
         setSceneRect(geometry());
+        if (containment()) {
+            containment()->hideToolbox();
+            containment()->enableToolBoxTool("zoomIn", false);
+        }
     } else if (m_zoomLevel == Plasma::OverviewZoom) {
         containment()->enableToolBoxTool("zoomIn", true);
         m_zoomLevel = Plasma::GroupZoom;
         qreal factor = Plasma::scalingFactor(m_zoomLevel);
-        s = factor / matrix().m11();
-
+        factor = factor / matrix().m11();
+        scale(factor, factor);
         setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom()));
 
         if (containment()) {
@@ -102,11 +105,11 @@ void DesktopView::zoomIn()
         }
     } else {
         setDragMode(NoDrag);
-        containment()->enableToolBoxTool("zoomIn", false);
-        return;
+        if (containment()) {
+            containment()->hideToolbox();
+            containment()->enableToolBoxTool("zoomIn", false);
+        }
     }
-
-    scale(s, s);
 }
 
 void DesktopView::zoomOut()

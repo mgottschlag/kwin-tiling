@@ -266,7 +266,6 @@ Plasma::Corona* PlasmaApp::corona()
     if (!m_corona) {
         m_corona = new Plasma::Corona(this);
         m_corona->setItemIndexMethod(QGraphicsScene::NoIndex);
-        //TODO: Figure out a way to use rubberband and ScrollHandDrag
         m_corona->loadApplets();
     }
 
