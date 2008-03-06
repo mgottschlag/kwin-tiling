@@ -45,7 +45,7 @@ DashboardView::DashboardView(int screen, QWidget *parent)
       m_zoomIn(false),
       m_zoomOut(false)
 {
-    setContextMenuPolicy(Qt::NoContextMenu);
+    //setContextMenuPolicy(Qt::NoContextMenu);
     setWindowFlags(Qt::FramelessWindowHint);
     if (!PlasmaApp::hasComposite()) {
         setAutoFillBackground(false);
@@ -56,7 +56,6 @@ DashboardView::DashboardView(int screen, QWidget *parent)
     setGeometry(desktop->screenGeometry(screen));
 
     setDrawWallpaper(!PlasmaApp::hasComposite());
-    hide();
 
     connect(scene(), SIGNAL(launchActivated()), SLOT(hideView()));
     connect(containment(), SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
@@ -86,6 +85,8 @@ void DashboardView::showAppletBrowser()
 {
     if (!m_appletBrowser) {
         m_appletBrowser = new Plasma::AppletBrowser(containment(), this, Qt::FramelessWindowHint );
+        //TODO: make this proportional to the screen
+        m_appletBrowser->setInitialSize(QSize(400, 400));
         m_appletBrowser->setApplication();
         m_appletBrowser->setWindowTitle(i18n("Add Widgets"));
         QPalette p = m_appletBrowser->palette();
@@ -185,6 +186,8 @@ void DashboardView::hideView()
         m_appletBrowser->hide();
     }
 
+    disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
+
     containment()->hideToolbox();
     containment()->enableToolBoxTool("zoomOut", m_zoomOut);
     containment()->enableToolBoxTool("zoomIn", m_zoomIn);
@@ -207,10 +210,18 @@ void DashboardView::keyPressEvent(QKeyEvent *event)
     Plasma::View::keyPressEvent(event);
 }
 
+void DashboardView::activeWindowChanged(WId id)
+{
+    if (id != winId() &&
+        (!m_appletBrowser || id != m_appletBrowser->winId())) {
+        hideView();
+    }
+}
+
 void DashboardView::showEvent(QShowEvent *event)
 {
     KWindowSystem::setState(winId(), NET::SkipPager);
-
+    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
     Plasma::View::showEvent(event);
 }
 

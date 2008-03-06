@@ -49,6 +49,7 @@ protected slots:
     void showAppletBrowser();
     void appletBrowserDestroyed();
     void hideView();
+    void activeWindowChanged(WId id);
     void suppressShowTimeout();
     bool eventFilter(QObject *watched, QEvent *event);
 
