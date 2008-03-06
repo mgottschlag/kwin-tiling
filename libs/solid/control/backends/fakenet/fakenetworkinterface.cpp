@@ -128,6 +128,11 @@ QStringList FakeNetworkInterface::networks() const
 {
     return mNetworks.keys();
 }
+
+QString FakeNetworkInterface::activeNetwork() const
+{
+    return "/org/freedesktop/NetworkManager/Devices/eth0";
+}
 void FakeNetworkInterface::setActive(bool active)
 {
     mPropertyMap.insert("active", QVariant(active));

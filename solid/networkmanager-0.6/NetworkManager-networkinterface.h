@@ -65,6 +65,7 @@ public:
     Solid::Control::NetworkInterface::Capabilities capabilities() const;
     QObject *createNetwork(const QString  & uni);
     QStringList networks() const;
+    QString activeNetwork() const;
     // These setters are used to update the interface by the manager
     // in response to DBus signals
     void setProperties(const NMDBusDeviceProperties  &);

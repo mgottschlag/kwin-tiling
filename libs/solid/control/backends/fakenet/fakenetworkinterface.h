@@ -50,6 +50,7 @@ public:
         Solid::Control::NetworkInterface::Capabilities capabilities() const;
         QObject * createNetwork(const QString  & uni);
         QStringList networks() const;
+        QString activeNetwork() const;
     Q_SIGNALS:
         void activeChanged(bool);
         void linkUpChanged(bool);

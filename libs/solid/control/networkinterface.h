@@ -203,6 +203,14 @@ namespace Control
          */
         NetworkList networks() const;
 
+        /**
+         * Retrieves the active network on the device
+         *
+         * For wired network interfaces this will always be the same network,
+         * but for wireless networks this will be the associated AP.
+         */
+        QString activeNetwork() const;
+
     Q_SIGNALS:
         /**
          * This signal is emitted when the device's activation status changed.

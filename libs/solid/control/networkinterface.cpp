@@ -176,6 +176,11 @@ Solid::Control::NetworkList Solid::Control::NetworkInterface::networks() const
     return list;
 }
 
+QString Solid::Control::NetworkInterface::activeNetwork() const
+{
+    return_SOLID_CALL(Ifaces::NetworkInterface *, d->backendObject(), QString(), activeNetwork());
+}
+
 void Solid::Control::NetworkInterfacePrivate::_k_destroyed(QObject *object)
 {
     if (object == backendObject())

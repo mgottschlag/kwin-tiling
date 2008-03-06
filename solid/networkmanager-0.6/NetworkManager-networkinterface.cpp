@@ -53,27 +53,27 @@ void deserialize(const QDBusMessage &message, NMDBusDeviceProperties  & device, 
 {
     //kDebug(1441) << /*"deserialize args: " << message.arguments() << */"signature: " << message.signature();
     QList<QVariant> args = message.arguments();
-    device.path.setPath(args.takeFirst().toString());
-    device.interface = args.takeFirst().toString();
-    device.type = args.takeFirst().toUInt();
-    device.udi = args.takeFirst().toString();
-    device.active = args.takeFirst().toBool();
-    device.activationStage = args.takeFirst().toUInt();
-    network.ipv4Address = args.takeFirst().toString();
-    network.subnetMask = args.takeFirst().toString();
-    network.broadcast = args.takeFirst().toString();
-    device.hardwareAddress = args.takeFirst().toString();
-    network.route = args.takeFirst().toString();
-    network.primaryDNS = args.takeFirst().toString();
-    network.secondaryDNS = args.takeFirst().toString();
-    device.mode = args.takeFirst().toInt();
-    device.strength = args.takeFirst().toInt();
-    device.linkActive = args.takeFirst().toBool();
-    device.speed = args.takeFirst().toInt();
-    device.capabilities = args.takeFirst().toUInt();
-    device.capabilitiesType = args.takeFirst().toUInt();
-    device.activeNetPath = args.takeFirst().toString();
-    device.networks = args.takeFirst().toStringList();
+    device.path.setPath((args.size() != 0) ? args.takeFirst().toString() : QString());
+    device.interface = (args.size() != 0) ? args.takeFirst().toString() : QString();
+    device.type = (args.size() != 0) ? args.takeFirst().toUInt() : 0;
+    device.udi = (args.size() != 0) ? args.takeFirst().toString() : QString();
+    device.active = (args.size() != 0) ? args.takeFirst().toBool() : false;
+    device.activationStage = (args.size() != 0) ? args.takeFirst().toUInt() : 0;
+    network.ipv4Address = (args.size() != 0) ? args.takeFirst().toString() : QString();
+    network.subnetMask = (args.size() != 0) ? args.takeFirst().toString() : QString();
+    network.broadcast = (args.size() != 0) ? args.takeFirst().toString() : QString();
+    device.hardwareAddress = (args.size() != 0) ? args.takeFirst().toString() : QString();
+    network.route = (args.size() != 0) ? args.takeFirst().toString() : QString();
+    network.primaryDNS = (args.size() != 0) ? args.takeFirst().toString() : QString();
+    network.secondaryDNS = (args.size() != 0) ? args.takeFirst().toString() : QString();
+    device.mode = (args.size() != 0) ? args.takeFirst().toInt() : 0;
+    device.strength = (args.size() != 0) ? args.takeFirst().toInt() : 0;
+    device.linkActive = (args.size() != 0) ? args.takeFirst().toBool() : false;
+    device.speed = (args.size() != 0) ? args.takeFirst().toInt() : 0;
+    device.capabilities = (args.size() != 0) ? args.takeFirst().toUInt() : 0;
+    device.capabilitiesType = (args.size() != 0) ? args.takeFirst().toUInt() : 0;
+    device.activeNetPath = (args.size() != 0) ? args.takeFirst().toString() : QString();
+    device.networks = (args.size() != 0) ? args.takeFirst().toStringList() : QStringList();
 }
 
 class NMNetworkInterfacePrivate
@@ -183,7 +183,7 @@ QObject * NMNetworkInterface::createNetwork(const QString  & uni)
         if (d->type == Solid::Control::NetworkInterface::Ieee8023)
         {
             net = new NMNetwork(uni);
-            net->setActivated(true);
+            //net->setActivated(true);
         }
         else if (d->type == Solid::Control::NetworkInterface::Ieee80211)
         {
@@ -199,6 +199,11 @@ QObject * NMNetworkInterface::createNetwork(const QString  & uni)
 QStringList NMNetworkInterface::networks() const
 {
     return d->networks.keys();
+}
+
+QString NMNetworkInterface::activeNetwork() const
+{
+    return d->activeNetPath;
 }
 
 void NMNetworkInterface::setProperties(const NMDBusDeviceProperties  & props)

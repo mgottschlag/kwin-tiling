@@ -137,6 +137,14 @@ namespace Ifaces
          */
         virtual QStringList networks() const = 0;
 
+        /**
+         * Retrieves the active network on the device
+         *
+         * For wired network interfaces this will always be the same network,
+         * but for wireless networks this will be the associated AP.
+         */
+        virtual QString activeNetwork() const = 0;
+
     Q_SIGNALS:
 
         /**
