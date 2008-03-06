@@ -24,7 +24,6 @@
 
 #include <KCModule>
 #include <KAboutData>
-#include <KGlobalSettings>
 #include <KFileItem>
 
 #include <QComboBox>
@@ -60,8 +59,6 @@ public slots:
 
 private:
 	Ui_AutostartConfig *widget;
-	KAboutData *myAboutData;
-	KGlobalSettings *kgs;
 };
 
 #endif

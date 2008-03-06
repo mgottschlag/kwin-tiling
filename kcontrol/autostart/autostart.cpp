@@ -73,7 +73,7 @@ K_PLUGIN_FACTORY(AutostartFactory, registerPlugin<Autostart>();)
 K_EXPORT_PLUGIN(AutostartFactory( "kcmautostart" ))
 
 Autostart::Autostart( QWidget* parent, const QVariantList& )
-    : KCModule( AutostartFactory::componentData(), parent ), myAboutData(0)
+    : KCModule( AutostartFactory::componentData(), parent )
 {
 	widget = new Ui_AutostartConfig();
 	widget->setupUi(this);
@@ -190,9 +190,8 @@ void Autostart::addCMD() {
                 }
 
 		KUrl desktopTemplate;
-
 		if ( service->desktopEntryName().isNull() ) {
-			desktopTemplate = KUrl( kgs->autostartPath() + service->name() + ".desktop" );
+			desktopTemplate = KUrl( KGlobalSettings::autostartPath() + service->name() + ".desktop" );
 			KConfig kc(desktopTemplate.path(), KConfig::SimpleConfig);
 			KConfigGroup kcg = kc.group("Desktop Entry");
 			kcg.writeEntry("Encoding","UTF-8");
@@ -212,14 +211,14 @@ void Autostart::addCMD() {
 		} else {
 			desktopTemplate = KUrl( KStandardDirs::locate("apps", service->entryPath()) );
 
-			KPropertiesDialog dlg( desktopTemplate, KUrl(kgs->autostartPath()), service->name() + ".desktop", this );
+			KPropertiesDialog dlg( desktopTemplate, KUrl(KGlobalSettings::autostartPath()), service->name() + ".desktop", this );
 			if ( dlg.exec() != QDialog::Accepted )
                         {
                             delete addDialog;
                             return;
                         }
 		}
-		Desktop * item = new Desktop( kgs->autostartPath() + service->name() + ".desktop", widget->listCMD );
+		Desktop * item = new Desktop( KGlobalSettings::autostartPath() + service->name() + ".desktop", widget->listCMD );
 		item->setText( 0, service->name() );
 		item->setText( 1, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
 		item->setText( 2, service->exec() );
