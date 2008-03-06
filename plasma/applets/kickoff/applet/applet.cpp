@@ -39,6 +39,7 @@
 #include <plasma/layouts/boxlayout.h>
 #include <plasma/widgets/icon.h>
 #include <plasma/containment.h>
+#include <plasma/view.h>
 
 // Local
 #include "ui/launcher.h"
@@ -201,7 +202,22 @@ void LauncherApplet::toggleMenu(bool pressed)
     d->launcher->reset();
 
     if (!d->launcher->isVisible()) {
-        d->launcher->move(d->icon->popupPosition(d->launcher->size()));
+        // It's risky to calculate the popupPosition based on the size before
+        // calling setLauncherOrigin, which can change the size
+        // Probably just a problem on screens with strange aspect ratio or smaller than
+        // kickoff's size.
+        QPoint popupPosition = d->icon->popupPosition(d->launcher->size());
+        d->launcher->move( popupPosition );
+        QPoint iconPosition = d->icon->view()->mapToGlobal( 
+                d->icon->view()->mapFromScene( d->icon->scenePos() ) );
+
+        Plasma::View *pv = dynamic_cast<Plasma::View *>(view());
+        Plasma::Location loc = Plasma::Floating;
+        if (pv) {
+            loc = pv->containment()->location();
+        }
+
+        d->launcher->setLauncherOrigin( iconPosition, loc );
 
         if (containment()) {
             containment()->emitLaunchActivated();

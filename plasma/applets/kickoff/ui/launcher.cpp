@@ -38,6 +38,7 @@
 #include <QStyleOptionSizeGrip>
 
 // KDE
+#include <KDebug>
 #include <KLocalizedString>
 #include <KIcon>
 #include <KStandardDirs>
@@ -69,6 +70,7 @@ class Launcher::Private
 {
 public:
     class ResizeHandle;
+    enum CompassDirection { North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest };
 
     Private(Launcher *launcher)
         : q(launcher)
@@ -85,11 +87,15 @@ public:
         , autoHide(false)
         , visibleItemCount(10)
         , isResizing(false)
+        , resizePlacement( NorthEast )
+        , panelEdge( Plasma::LeftEdge )
     {
     }
     ~Private()
     {
     }
+
+    enum TabOrder { NormalTabOrder, ReverseTabOrder };
 
     void setupEventHandler(QAbstractItemView *view)
     {
@@ -247,6 +253,143 @@ public:
        }
     }
 
+    void setNorthLayout(TabOrder tabOrder)
+    {
+        contentSwitcher->setShape( QTabBar::RoundedNorth );
+        QLayout * layout = q->layout();
+        delete layout;
+        layout = new QVBoxLayout();
+        layout->addWidget(contentSwitcher);
+        layout->addWidget(contentArea);
+        layout->addWidget(searchBar);
+        layout->addWidget(footer);
+        layout->setSpacing(0);
+        layout->setMargin(0);
+        q->setLayout(layout);
+        setTabOrder( tabOrder );
+    }
+
+    void setSouthLayout(TabOrder tabOrder)
+    {
+        contentSwitcher->setShape( QTabBar::RoundedSouth );
+        QLayout * layout = q->layout();
+        delete layout;
+        layout = new QVBoxLayout();
+        layout->addWidget(footer);
+        layout->addWidget(searchBar);
+        layout->addWidget(contentArea);
+        layout->addWidget(contentSwitcher);
+        layout->setSpacing(0);
+        layout->setMargin(0);
+        q->setLayout(layout);
+        setTabOrder( tabOrder );
+    }
+
+    void setWestLayout(TabOrder tabOrder)
+    {
+        contentSwitcher->setShape( QTabBar::RoundedWest );
+        QLayout * layout = q->layout();
+        delete layout;
+        layout = new QHBoxLayout();
+        layout->addWidget(contentSwitcher);
+        layout->addWidget(contentArea);
+        QBoxLayout * layout2 = new QVBoxLayout();
+        if ( tabOrder == NormalTabOrder ) {
+            layout2->addLayout(layout);
+            layout2->addWidget(searchBar);
+            layout2->addWidget(footer);
+        } else {
+            layout2->addWidget(footer);
+            layout2->addWidget(searchBar);
+            layout2->addLayout(layout);
+        }
+        layout->setSpacing(0);
+        layout->setMargin(0);
+        layout2->setSpacing(0);
+        layout2->setMargin(0);
+        q->setLayout(layout2);
+        setTabOrder( tabOrder );
+    }
+
+    void setEastLayout(TabOrder tabOrder)
+    {
+        contentSwitcher->setShape( QTabBar::RoundedEast );
+        QLayout * layout = q->layout();
+        delete layout;
+        layout = new QHBoxLayout();
+        layout->addWidget(contentArea);
+        layout->addWidget(contentSwitcher);
+        QBoxLayout * layout2 = new QVBoxLayout();
+        if ( tabOrder == NormalTabOrder ) {
+            layout2->addLayout(layout);
+            layout2->addWidget(searchBar);
+            layout2->addWidget(footer);
+        } else {
+            layout2->addWidget(footer);
+            layout2->addWidget(searchBar);
+            layout2->addLayout(layout);
+        }
+        layout->setSpacing(0);
+        layout->setMargin(0);
+        layout2->setSpacing(0);
+        layout2->setMargin(0);
+        q->setLayout(layout2);
+        setTabOrder(tabOrder);
+    }
+
+    void setTabOrder(TabOrder newOrder)
+    {
+        // identify current TabOrder, assumes favoritesView is first in normal order
+        TabOrder oldOrder;
+        if ( contentArea->widget( 0 ) == favoritesView  ) {
+            oldOrder = NormalTabOrder;
+        } else {
+            oldOrder = ReverseTabOrder;
+        }
+        if ( newOrder == oldOrder ) {
+            return;
+        }
+        // remove the and widgets and store their data in a separate structure
+        // remove this first so we can cleanly remove the widgets controlled by contentSwitcher
+        contentArea->removeWidget( searchView );
+        Q_ASSERT( contentArea->count() == contentSwitcher->count() );
+
+        QList<WidgetTabData> removedTabs;
+        for ( int i = contentSwitcher->count() - 1; i >= 0 ; i-- ) {
+            WidgetTabData wtd;
+            wtd.tabText = contentSwitcher->tabText( i );
+            wtd.tabToolTip = contentSwitcher->tabToolTip( i );
+            wtd.tabWhatsThis = contentSwitcher->tabWhatsThis( i );
+            wtd.tabIcon = contentSwitcher->tabIcon( i );
+            wtd.widget = contentArea->widget( i );
+            removedTabs.append( wtd );
+
+            contentSwitcher->removeTab( i );
+            contentArea->removeWidget( contentArea->widget( i ) );
+        }
+        // then reinsert them in reversed order
+        int i = 0;
+        foreach (WidgetTabData wtd, removedTabs) {
+            contentSwitcher->addTab( wtd.tabIcon, wtd.tabText );
+            contentSwitcher->setTabToolTip( i, wtd.tabToolTip );
+            contentSwitcher->setTabWhatsThis( i, wtd.tabWhatsThis );
+            contentArea->addWidget( wtd.widget );
+            ++i;
+        }
+        //finally replace the searchView
+        contentArea->addWidget( searchView );
+    }
+
+    inline void adjustResizeHandlePosition();
+
+    struct WidgetTabData
+    {
+        QString tabText;
+        QString tabToolTip;
+        QString tabWhatsThis;
+        QIcon tabIcon;
+        QWidget * widget;
+    };
     Launcher * const q;
     Plasma::Applet *applet;
     UrlItemLauncher *urlLauncher;
@@ -261,7 +404,10 @@ public:
     ContextMenuFactory *contextMenuFactory;
     bool autoHide;
     int visibleItemCount;
+    QPoint launcherOrigin;
     bool isResizing;
+    CompassDirection resizePlacement;
+    Plasma::Location panelEdge;
 };
 
 class Launcher::Private::ResizeHandle
@@ -288,6 +434,33 @@ protected:
         p.end();
     }
 };
+
+void Launcher::Private::adjustResizeHandlePosition()
+{
+    const int margin = 1;
+    switch (resizePlacement) {
+        case NorthEast:
+            resizeHandle->move(q->width()-resizeHandle->width() - margin,
+                    margin);
+            resizeHandle->setCursor(Qt::SizeBDiagCursor);
+            break;
+        case SouthEast:
+            resizeHandle->move(q->width()-resizeHandle->width() - margin,
+                    q->height()-resizeHandle->height() - margin);
+            resizeHandle->setCursor(Qt::SizeFDiagCursor);
+            break;
+        case SouthWest:
+            resizeHandle->move(margin, q->height()-resizeHandle->height() - margin);
+            resizeHandle->setCursor(Qt::SizeBDiagCursor);
+            break;
+        case NorthWest:
+            resizeHandle->move(margin, margin);
+            resizeHandle->setCursor(Qt::SizeFDiagCursor);
+            break;
+        default:
+            break;
+    }
+}
 
 Launcher::Launcher(QWidget *parent)
     : QWidget(parent, Qt::Window)
@@ -376,6 +549,7 @@ void Launcher::init()
     setLayout(layout);
     setBackgroundRole(QPalette::AlternateBase);
     setAutoFillBackground(true);
+    d->resizePlacement = Private::NorthEast;
 }
 
 QSize Launcher::minimumSizeHint() const
@@ -383,12 +557,25 @@ QSize Launcher::minimumSizeHint() const
     QSize size = QWidget::sizeHint();
 
     // the extra 2 pixels are to make room for the content margins; see moveEvent
-    size.rwidth() += 2;
+    const int CONTENT_MARGIN_WIDTH = 2;
 
-    size.rheight() = d->searchBar->sizeHint().height() +
+    size.rwidth() += CONTENT_MARGIN_WIDTH;
+
+    switch ( d->panelEdge ) {
+        case Plasma::LeftEdge:
+        case Plasma::RightEdge:
+            size.rheight() = d->searchBar->sizeHint().height() +
+                     d->footer->sizeHint().height() +
+                     qMax( ItemDelegate::ITEM_HEIGHT * 3, d->contentSwitcher->sizeHint().height() );
+            break;
+        case Plasma::TopEdge:
+        case Plasma::BottomEdge:
+        default:
+            size.rheight() = d->searchBar->sizeHint().height() +
                      d->contentSwitcher->sizeHint().height() + d->footer->sizeHint().height() +
                      ItemDelegate::ITEM_HEIGHT * 3;
-
+            break;
+    }
     return size;
 }
 
@@ -454,7 +641,7 @@ void Launcher::setApplet(Plasma::Applet *applet)
 
 void Launcher::reset()
 {
-    d->contentSwitcher->setCurrentIndexWithoutAnimation(0);
+    d->contentSwitcher->setCurrentIndexWithoutAnimation(d->contentArea->indexOf(d->favoritesView));
     d->contentArea->setCurrentWidget(d->favoritesView);
     d->searchBar->clear();
     d->applicationView->viewRoot();
@@ -476,7 +663,7 @@ void Launcher::focusSearchView(const QString& query)
 
 void Launcher::focusFavoritesView()
 {
-    d->contentSwitcher->setCurrentIndex(0);
+    d->contentSwitcher->setCurrentIndex(d->contentArea->indexOf(d->favoritesView));
     d->contentArea->setCurrentWidget(d->favoritesView);
 }
 
@@ -604,7 +791,6 @@ void Launcher::moveEvent(QMoveEvent *e)
 void Launcher::showEvent(QShowEvent *e)
 {
     d->searchBar->setFocus();
-    d->resizeHandle->move(width()-d->resizeHandle->width() - 1, 1);
     d->resizeHandle->raise();
     QWidget::showEvent(e);
 }
@@ -629,16 +815,114 @@ void Launcher::openHomepage()
     KToolInvocation::invokeBrowser("http://www.kde.org/");
 }
 
+void Launcher::setLauncherOrigin( QPoint origin, Plasma::Location location )
+{
+/* 8 interesting positions for the menu to popup, depending where
+ * the launcher and panel it is on are sited:
+ *
+ * K3PANELPANELPANEL4K
+ * 2                 5
+ * P                 P
+ * A                 A
+ * N                 N
+ * E                 E
+ * L                 L
+ * 1                 6
+ * K8PANELPANELPANEL7K
+ *
+ * Position determines optimum layout according to Fitt's Law:
+ * Assumption 1: The hardcoded tab order defines a desirable priority order
+ * Goal 1: TabBar perpendicular to direction of mouse travel from launcher to target, to prevent
+ * mousing over non-target tabs and potential unnecessary tab switches
+ * Goal 2 the movie: Tabs are ordered by decreasing priority along the mouse travel vector away
+ * from the launcher
+ * Constraint: The search widget is different to the tabs and footer is of lowest priority so 
+ * these should always be situated furthest away from the origin
+ *
+ * | Position | TabLayout | TabOrder   | rx | ry
+ * |    1     |  South    | left2right | =  | -
+ * |    2     |  North    | l2r        | =  | +
+ * |    3     |  West     | top2bottom | +  | =
+ * |    4     |  East     | t2b        | -  | =
+ * |    5     |  North    | r2l        | -  | +
+ * |    6     |  South    | r2l        | -  | -
+ * |    7     |  East     | b2t        | -  | -
+ * |    8     |  West     | b2t        | +  | +
+ */
+    if (d->launcherOrigin == origin ) {
+        return;
+    }
+    d->launcherOrigin = origin;
+    d->panelEdge = location;
+    QPoint relativePosition = pos() - d->launcherOrigin;
+    int rx = relativePosition.x();
+    int ry = relativePosition.y();
+    if ( rx < 0 ) {
+        if ( ry < 0 ) {
+            if ( location == Plasma::RightEdge ) {
+                // Position 7
+                kDebug() << "menu position " << 7;
+                d->resizePlacement = Private::NorthWest;
+                d->setEastLayout( Private::ReverseTabOrder );
+            } else { // Plasma::BottomEdge
+                // Position 6
+                kDebug() << "menu position " << 6;
+                d->resizePlacement = Private::NorthWest;
+                d->setSouthLayout( Private::ReverseTabOrder );
+            }
+        } else if ( ry == 0 ) {
+            // Position 4
+            kDebug() << "menu position " << 4;
+            d->resizePlacement = Private::SouthWest;
+            d->setEastLayout( Private::NormalTabOrder );
+        } else {
+            // Position 5
+            kDebug() << "menu position " << 5;
+            d->resizePlacement = Private::SouthWest;
+            d->setNorthLayout( Private::ReverseTabOrder );
+        }
+    } else if ( rx == 0 ) {
+        if ( ry < 0 ) {
+            // Position 1
+            kDebug() << "menu position " << 1;
+            d->resizePlacement = Private::NorthEast;
+            d->setSouthLayout( Private::NormalTabOrder );
+        } else {
+            // Position 2
+            kDebug() << "menu position " << 2;
+            d->resizePlacement = Private::SouthEast;
+            d->setNorthLayout( Private::NormalTabOrder );
+        }
+    } else { // rx > 0
+        if ( ry == 0 ) {
+            // Position 3
+            kDebug() << "menu position " << 3;
+            d->resizePlacement = Private::SouthEast;
+            d->setWestLayout( Private::NormalTabOrder );
+        } else { //ry > 0
+            // Position 8
+            kDebug() << "menu position " << 8;
+            d->resizePlacement = Private::NorthEast;
+            d->setWestLayout( Private::ReverseTabOrder );
+        }
+    }
+    d->adjustResizeHandlePosition();
+}
+
+QPoint Launcher::launcherOrigin() const
+{
+    return d->launcherOrigin;
+}
+
 void Launcher::resizeEvent(QResizeEvent *e)
 {
-    d->resizeHandle->move(width()-d->resizeHandle->width() - 1, 1);
+    d->adjustResizeHandlePosition();
     QWidget::resizeEvent(e);
 }
 
 void Launcher::mousePressEvent(QMouseEvent *e)
 {
-    if (e->x() > width() - d->resizeHandle->width() &&
-        e->y() < d->resizeHandle->height() ) {
+    if ( d->resizeHandle->geometry().contains( e->pos() ) ) {
         d->isResizing = true;
     }
     QWidget::mousePressEvent(e);
@@ -663,11 +947,46 @@ void Launcher::mouseReleaseEvent(QMouseEvent *e)
 
 void Launcher::mouseMoveEvent(QMouseEvent *e)
 {
+    /* I'm not sure what the magic 10 below is for, if you do, please comment - Will */
     if ( hasMouseTracking() && d->isResizing ) {
-       const int newWidth = qMax( e->x() - x(), minimumSizeHint().width() );
-       const int newHeight = qMax( height() - e->y(), minimumSizeHint().height() + 10 );
-       const int newY = y() + height() - newHeight;
-       setGeometry( x(), newY, newWidth, newHeight);
+        int newX, newY, newWidth, newHeight;
+        kDebug() << "x: " << x() << " y: " << y();
+        kDebug() << "width: " << width() << " height: " << height();
+        kDebug() << "e-x: " << e->x() << " e->y: " << e->y();
+        switch (d->resizePlacement) {
+            case Private::NorthEast:
+                newWidth = qMax( e->x(), minimumSizeHint().width() );
+                newHeight = qMax( height() - e->y(), minimumSizeHint().height()/* + 10*/ );
+                newX = x();
+                newY = y() + height() - newHeight;
+                kDebug() << "Foot of menu to newY + newHeight";
+                kDebug() << "= " << newY << " + " << newHeight << " = " << (newY + newHeight);
+                break;
+            case Private::SouthEast:
+                newWidth = qMax( e->x(), minimumSizeHint().width() );
+                newHeight = qMax( e->y(), minimumSizeHint().height()/* + 10*/ );
+                newX = x();
+                newY = y();
+                break;
+            case Private::SouthWest:
+                newWidth = qMax( width() - e->x(), minimumSizeHint().width() );
+                newHeight = qMax( e->y(), minimumSizeHint().height()/* + 10*/ );
+                newX = x() + width() - newWidth;
+                newY = y();
+                break;
+            case Private::NorthWest:
+                newWidth = qMax( width() - e->x(), minimumSizeHint().width() );
+                newHeight = qMax( height() - e->y(), minimumSizeHint().height()/* + 10*/ );
+                newX = x() + width() - newWidth;
+                newY = y() + height() - newHeight;
+                kDebug() << "Foot of menu to newY + newHeight";
+                kDebug() << "= " << newY << " + " << newHeight << " = " << (newY + newHeight);
+                break;
+            default:
+                break;
+        }
+        kDebug() << "newX: " << newX << "newY: " << newY << "newW: " << newWidth << "newH: " << newHeight;
+        setGeometry( newX, newY, newWidth, newHeight);
     }
     QWidget::mouseMoveEvent(e);
 }

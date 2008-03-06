@@ -60,6 +60,10 @@ public:
     /** Specifies the plasma applet the launcher is working on. */
     void setApplet(Plasma::Applet *applet);
 
+    /** Specifies the direction the launcher is popping up in relative to its icon */
+    void setLauncherOrigin( QPoint pos, Plasma::Location location );
+    QPoint launcherOrigin() const;
+
     // reimplemented
     virtual bool eventFilter(QObject *object, QEvent *event);
     virtual QSize minimumSizeHint() const;
