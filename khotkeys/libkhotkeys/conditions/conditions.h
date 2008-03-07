@@ -13,7 +13,6 @@
 
 #include "config-khotkeys.h"
 #include <QObject>
-#include <Qt3Support/Q3PtrList>
 
 
 #include "khotkeysglobal.h"

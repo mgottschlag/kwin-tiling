@@ -80,7 +80,8 @@ void KHotKeysModule::reread_configuration()
     KHotKeys::gesture_handler->set_timeout( settings.gesture_timeout );
     KHotKeys::gesture_handler->enable( !settings.gestures_disabled_globally );
     KHotKeys::gesture_handler->set_exclude( settings.gestures_exclude );
-    KHotKeys::voice_handler->set_shortcut( settings.voice_shortcut );
+    // FIXME: SOUND
+    // KHotKeys::voice_handler->set_shortcut( settings.voice_shortcut );
 #if 0 // TEST CHECKME
     settings.write_settings();
 #endif

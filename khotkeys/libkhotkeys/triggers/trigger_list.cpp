@@ -24,9 +24,8 @@
 namespace KHotKeys {
 
 Trigger_list::Trigger_list( KConfigGroup& cfg_P, Action_data* data_P )
-    : Q3PtrList< Trigger >()
+    : QList< Trigger* >()
     {
-    setAutoDelete( true );
     _comment = cfg_P.readEntry( "Comment" );
     int cnt = cfg_P.readEntry( "TriggersCount", 0 );
     for( int i = 0;
@@ -40,16 +39,24 @@ Trigger_list::Trigger_list( KConfigGroup& cfg_P, Action_data* data_P )
         }
     }
 
+Trigger_list::~Trigger_list()
+    {
+    while (!isEmpty())
+        {
+        delete takeFirst();
+        }
+    }
+
 void Trigger_list::cfg_write( KConfigGroup& cfg_P ) const
     {
     cfg_P.writeEntry( "Comment", comment());
     int i = 0;
-    for( Iterator it( *this );
-         it;
-         ++it, ++i )
+    for( Trigger_list::ConstIterator it = begin();
+         it != end();
+         ++it )
         {
         KConfigGroup triggerConfig( cfg_P.config(), cfg_P.name() + QString::number( i ));
-        it.current()->cfg_write( triggerConfig );
+        (*it)->cfg_write( triggerConfig );
         }
     cfg_P.writeEntry( "TriggersCount", i );
     }
@@ -57,19 +64,23 @@ void Trigger_list::cfg_write( KConfigGroup& cfg_P ) const
 Trigger_list* Trigger_list::copy( Action_data* data_P ) const
     {
     Trigger_list* ret = new Trigger_list( comment());
-    for( Iterator it( *this );
-         it;
+    for( Trigger_list::ConstIterator it = begin();
+         it != end();
          ++it )
-        ret->append( it.current()->copy( data_P ));
+        {
+        ret->append( (*it)->copy( data_P ));
+        }
     return ret;
     }
 
 void Trigger_list::activate( bool activate_P )
     {
-    for( Iterator it( *this );
-         it;
+    for( Trigger_list::Iterator it = begin();
+         it != end();
          ++it )
+        {
         ( *it )->activate( activate_P );
+        }
     }
 
 } // namespace KHotKeys

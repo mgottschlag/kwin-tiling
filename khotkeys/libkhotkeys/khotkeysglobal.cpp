@@ -22,7 +22,9 @@
 #include "triggers.h"
 #include "gestures.h"
 #include "voices.h"
-#include "soundrecorder.h"
+
+// FIXME: SOUND
+// #include "soundrecorder.h"
 
 namespace KHotKeys
 {
@@ -39,7 +41,8 @@ void init_global_data( bool active_P, QObject* owner_P )
     static_cast< void >( new Kbd( active_P, owner_P ));
     static_cast< void >( new Windows( active_P, owner_P ));
     static_cast< void >( new Gesture( active_P, owner_P ));
-    static_cast< void >( new Voice( active_P, owner_P ));
+// FIXME: SOUND
+//    static_cast< void >( new Voice( active_P, owner_P ));
     khotkeys_set_active( false );
     }
     
@@ -76,6 +79,9 @@ static int have_arts = -1;
 
 bool haveArts()
     {
+    return false;
+// FIXME: SOUND
+#if 0
     if( have_arts == -1 )
         {
         have_arts = 0;
@@ -86,6 +92,7 @@ bool haveArts()
             have_arts = 1;
         }
     return have_arts != 0;
+#endif
     }
 
 void disableArts()

@@ -78,6 +78,7 @@ void Actions_listview_widget::current_changed( Q3ListViewItem* item_P )
 
 void Actions_listview_widget::set_current_action( Action_listview_item* item_P )
     {
+    Q_ASSERT( item_P != 0 );
     if( item_P == saved_current_item )
         return;
     recent_item = saved_current_item;

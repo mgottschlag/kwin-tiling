@@ -103,10 +103,12 @@ void Action_list_widget::set_data( const Action_list* data_P )
     comment_lineedit->setText( data_P->comment());
     Action_list_item* after = NULL;
     actions_listview->clear();
-    for( Action_list::Iterator it( *data_P );
-         *it;
+    for( Action_list::ConstIterator it = data_P->begin();
+         it != data_P->end();
          ++it )
+        {
         after = create_listview_item( *it, actions_listview, NULL, after, true );
+        }
     }
 
 Action_list* Action_list_widget::get_data( Action_data* data_P ) const

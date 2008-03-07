@@ -59,42 +59,43 @@ void Gesture_triggers_tab::clear_data()
     
 void Gesture_triggers_tab::set_data( const Trigger_list* triggers_P )
     {
-    if( triggers_P == NULL )
+    // FIXME: Rework this code
+    if( triggers_P == 0 )
         {
         clear_data();
         return;
         }
-    Gesture_trigger* trig = NULL;
-    Trigger_list::Iterator it( *triggers_P );
-    if( it )
+    Gesture_trigger* trig = 0;
+    Trigger_list::ConstIterator it = triggers_P->begin();
+    if ( trig != 0 && it != triggers_P->end() )
         {
         assert( dynamic_cast< Gesture_trigger* >( *it ));
         trig = static_cast< Gesture_trigger* >( *it );
         }
     else
-        trig = NULL;
+        trig = 0;
     gesture1 = trig ? trig->gesturecode() : QString();
     gesture_lineedit1->setText( gesture1 );
     gesture_drawer1->setData( gesture1 );
     ++it;
-    if( it )
+    if ( trig != 0 && it != triggers_P->end() )
         {
         assert( dynamic_cast< Gesture_trigger* >( *it ));
         trig = static_cast< Gesture_trigger* >( *it );
         }
     else
-        trig = NULL;
+        trig = 0;
     gesture2 = trig ? trig->gesturecode() : QString();
     gesture_lineedit2->setText( gesture2 );
     gesture_drawer2->setData( gesture2 );
     ++it;
-    if( it )
+    if ( trig != 0 && it != triggers_P->end() )
         {
         assert( dynamic_cast< Gesture_trigger* >( *it ));
         trig = static_cast< Gesture_trigger* >( *it );
         }
     else
-        trig = NULL;
+        trig = 0;
     gesture3 = trig ? trig->gesturecode() : QString();
     gesture_lineedit3->setText( gesture3 );
     gesture_drawer3->setData( gesture3 );
@@ -140,7 +141,7 @@ void Gesture_triggers_tab::edit_gesture_pressed3()
 
 Gesture_edit_dialog::Gesture_edit_dialog( const QString& gesture_P )
     : KDialog( 0 ), // CHECKME caption
-        _gesture( gesture_P ), _page( NULL )
+        _gesture( gesture_P ), _page( 0 )
     {
     setModal( true );
     setButtons( Ok | Cancel );

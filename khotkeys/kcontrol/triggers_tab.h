@@ -144,6 +144,7 @@ class Gesture_trigger_dialog
     };        
 
 
+#ifdef VOICE_PORTED
 class VoiceRecordPage;
 
 class Voice_trigger_dialog
@@ -158,6 +159,7 @@ class Voice_trigger_dialog
 		Voice_trigger* _trigger;
 		VoiceRecordPage *_page;
 };
+#endif
 
 	
             

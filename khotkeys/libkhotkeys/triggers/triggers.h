@@ -20,10 +20,10 @@
 #ifndef _TRIGGERS_H_
 #define _TRIGGERS_H_
 
-#include <Qt3Support/Q3PtrList>
-#include <QMap>
-#include <kdemacros.h>
+#include <QtCore/QMap>
+#include <QtCore/QList>
 
+#include <kdemacros.h>
 #include "khotkeysglobal.h"
 #include "voicesignature.h"
 
@@ -56,14 +56,17 @@ class KDE_EXPORT Trigger
     };
 
 class KDE_EXPORT Trigger_list
-    : public Q3PtrList< Trigger >
+    : public QList< Trigger* >
     {
     public:
         Trigger_list( const QString& comment_P ); // CHECKME nebo i data ?
         Trigger_list( KConfigGroup& cfg_P, Action_data* data_P );
+        ~Trigger_list();
         void activate( bool activate_P );
         void cfg_write( KConfigGroup& cfg_P ) const;
-        typedef Q3PtrListIterator< Trigger > Iterator;
+        //! Some convenience typedef
+        typedef QList< Trigger* >::Iterator Iterator;
+        typedef QList< Trigger* >::ConstIterator ConstIterator;
         const QString& comment() const;
         Trigger_list* copy( Action_data* data_P ) const;
     private:
@@ -152,6 +155,8 @@ class KDE_EXPORT Gesture_trigger
     };
 
 
+// FIXME: SOUND
+#if 0
 class KDE_EXPORT Voice_trigger
     : public QObject, public Trigger
     {
@@ -173,7 +178,7 @@ class KDE_EXPORT Voice_trigger
         QString _voicecode;
         VoiceSignature _voicesignature[2];
     };
-
+#endif
 
 //***************************************************************************
 // Inline
@@ -202,9 +207,8 @@ Trigger::~Trigger()
 
 inline
 Trigger_list::Trigger_list( const QString& comment_P )
-    : Q3PtrList< Trigger >(), _comment( comment_P )
+    : QList< Trigger* >(), _comment( comment_P )
     {
-    setAutoDelete( true );
     }
 
 inline
@@ -252,6 +256,8 @@ const QString& Gesture_trigger::gesturecode() const
     return _gesturecode;
     }
 
+// FIXME: SOUND
+#if 0
 // Voice_trigger
 inline
 const QString& Voice_trigger::voicecode() const
@@ -264,7 +270,7 @@ VoiceSignature Voice_trigger::voicesignature(int ech) const
     {
     return _voicesignature[ech-1];
     }
-
+#endif 
 } // namespace KHotKeys
 
 #endif

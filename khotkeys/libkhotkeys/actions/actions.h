@@ -12,9 +12,8 @@
 #define _ACTIONS_H_
 
 
-
-#include <Qt3Support/Q3PtrList>
-#include <QTimer>
+#include <QtCore/QList>
+#include <QtCore/QTimer>
 
 #include <kservice.h>
 
@@ -47,13 +46,16 @@ class KDE_EXPORT Action
     };
 
 class KDE_EXPORT Action_list
-    : public Q3PtrList< Action >
+    : public QList< Action* >
     {
     public:
         Action_list( const QString& comment_P ); // CHECKME nebo i data ?
         Action_list( KConfigGroup& cfg_P, Action_data* data_P );
+        ~Action_list();
         void cfg_write( KConfigGroup& cfg_P ) const;
-        typedef Q3PtrListIterator< Action > Iterator;
+        //! Some convenience typedef
+        typedef QList<Action*>::Iterator Iterator;
+        typedef QList<Action*>::ConstIterator ConstIterator;
         const QString& comment() const;
     private:
         QString _comment;
@@ -186,10 +188,8 @@ Action::~Action()
 
 inline
 Action_list::Action_list( const QString& comment_P )
-    : Q3PtrList< Action >(), _comment( comment_P )
-    {
-    setAutoDelete( true );
-    }
+    : QList< Action* >(), _comment( comment_P )
+    {}
 
 inline
 const QString& Action_list::comment() const

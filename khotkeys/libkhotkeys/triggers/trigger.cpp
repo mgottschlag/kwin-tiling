@@ -38,8 +38,11 @@ Trigger* Trigger::create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P )
         return new Window_trigger( cfg_P, data_P );
     if( type == "GESTURE" )
         return new Gesture_trigger(cfg_P, data_P );
+// FIXME: SOUND
+#if 0
     if( type == "VOICE" )
         return new Voice_trigger (cfg_P, data_P );
+#endif
 
     kWarning( 1217 ) << "Unknown Trigger type read from cfg file\n";
     return NULL;

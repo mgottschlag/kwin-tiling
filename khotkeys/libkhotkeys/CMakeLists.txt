@@ -57,7 +57,7 @@ set(libkhotkeys_SRCS
     triggers/trigger.cpp
     triggers/trigger_list.cpp
     triggers/triggers.cpp
-    triggers/voice_trigger.cpp
+    # triggers/voice_trigger.cpp
     triggers/window_trigger.cpp
 
     # Rest
@@ -66,10 +66,11 @@ set(libkhotkeys_SRCS
     khlistview.cpp
     khotkeysglobal.cpp
     settings.cpp
-    sound.cpp
-    soundrecorder.cpp
-    voices.cpp
-    voicesignature.cpp
+    # search for FIXME: SOUND
+    # sound.cpp
+    # soundrecorder.cpp
+    # voices.cpp
+    # voicesignature.cpp
     windows.cpp
 )
 

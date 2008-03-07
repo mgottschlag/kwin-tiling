@@ -116,10 +116,12 @@ void Triggers_tab::set_data( const Trigger_list* data_P )
     comment_lineedit->setText( data_P->comment());
     Trigger_list_item* after = NULL;
     triggers_listview->clear();
-    for( Trigger_list::Iterator it( *data_P );
-         *it;
+    for( Trigger_list::ConstIterator it = data_P->begin();
+         it != data_P->end();
          ++it )
+        {
         after = create_listview_item( *it, triggers_listview, after, true );
+        }
     }
 
 Trigger_list* Triggers_tab::get_data( Action_data* data_P ) const
@@ -151,9 +153,12 @@ void Triggers_tab::new_selected( QAction *action )
             dlg = new Window_trigger_dialog( new Window_trigger( NULL, new Windowdef_list( "" ),
                 0 )); // CHECKME NULL ?
           break;
+// FIXME: SOUND
+#if 0
         case TYPE_VOICE_TRIGGER: // Voice trigger
 			dlg = new Voice_trigger_dialog( new Voice_trigger(NULL,QString(),VoiceSignature(),VoiceSignature())); // CHECKME NULL ?
 			break;
+#endif
         }
     if( dlg != NULL )
         {
@@ -215,8 +220,11 @@ void Triggers_tab::edit_listview_item( Trigger_list_item* item_P )
         dlg = new Gesture_trigger_dialog( trg );
     else if( Window_trigger* trg = dynamic_cast< Window_trigger* >( item_P->trigger()))
         dlg = new Window_trigger_dialog( trg );
+// FIXME: SOUND
+#if 0
     else if( Voice_trigger* trg = dynamic_cast< Voice_trigger* >( item_P->trigger()))
         dlg = new Voice_trigger_dialog( trg );
+#endif
 // CHECKME TODO dalsi
     else
         assert( false );
@@ -358,6 +366,8 @@ Trigger* Gesture_trigger_dialog::edit_trigger()
     }
 
 
+// FIXME: SOUND
+#if 0
 // Voice_trigger_dialog
 
 Voice_trigger_dialog::Voice_trigger_dialog( Voice_trigger* trigger_P )
@@ -383,7 +393,7 @@ Trigger* Voice_trigger_dialog::edit_trigger()
 	else
 		return NULL;
 }
-
+#endif 
 
 
 

@@ -24,9 +24,8 @@
 namespace KHotKeys {
 
 Action_list::Action_list( KConfigGroup& cfg_P, Action_data* data_P )
-    : Q3PtrList< Action >()
+    : QList< Action* >()
     {
-    setAutoDelete( true );
     int cnt = cfg_P.readEntry( "ActionsCount", 0 );
     QString save_cfg_group = cfg_P.name();
     for( int i = 0;
@@ -40,16 +39,26 @@ Action_list::Action_list( KConfigGroup& cfg_P, Action_data* data_P )
         }
     }
 
+
+Action_list::~Action_list()
+    {
+    while (!isEmpty())
+        {
+        delete takeFirst();
+        }
+    }
+
+
 void Action_list::cfg_write( KConfigGroup& cfg_P ) const
     {
     QString save_cfg_group = cfg_P.name();
     int i = 0;
-    for( Iterator it( *this );
-         it;
-         ++it, ++i )
+    for( Action_list::ConstIterator it = begin();
+         it != end();
+         ++it )
         {
         KConfigGroup group( cfg_P.config(), save_cfg_group + QString::number( i ) );
-        it.current()->cfg_write( group );
+        (*it)->cfg_write( group );
         }
     cfg_P.writeEntry( "ActionsCount", i );
     }

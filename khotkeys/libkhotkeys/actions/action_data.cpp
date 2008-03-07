@@ -193,10 +193,10 @@ void Action_data::cfg_write( KConfigGroup& cfg_P ) const
 
 void Action_data::execute()
     {
-    for( Action_list::Iterator it( *_actions );
-         it;
+    for( Action_list::Iterator it = _actions->begin();
+         it != _actions->end();
          ++it )
-        it.current()->execute();
+        (*it)->execute();
 // CHECKME nebo nejak zpozdeni ?
     }
 
@@ -207,14 +207,14 @@ void Action_data::add_trigger( Trigger* trigger_P )
 
 void Action_data::add_triggers( Trigger_list* triggers_P )
     {
-    for( Trigger_list::Iterator it = *triggers_P;
-         it;
-         ++it )
-        _triggers->append( *it );
-    triggers_P->setAutoDelete( false );
+    while (!triggers_P->isEmpty())
+        {
+        _triggers->append( triggers_P->takeFirst() );
+        }
+    Q_ASSERT( triggers_P->isEmpty());
     delete triggers_P;
     }
-    
+
 void Action_data::set_triggers( Trigger_list* triggers_P )
     {
     assert( _triggers == NULL );
@@ -224,8 +224,8 @@ void Action_data::set_triggers( Trigger_list* triggers_P )
 void Action_data::add_action( Action* action_P, Action* after_P )
     {
     int index = 0;
-    for( Action_list::Iterator it = *_actions;
-         it;
+    for( Action_list::Iterator it = _actions->begin();
+         it != _actions->end();
          ++it )
         {
         ++index;
@@ -238,19 +238,22 @@ void Action_data::add_action( Action* action_P, Action* after_P )
 void Action_data::add_actions( Action_list* actions_P, Action* after_P )
     {
     int index = 0;
-    for( Action_list::Iterator it = *_actions;
-         it;
+    for( Action_list::Iterator it = _actions->begin();
+         it != _actions->end();
          ++it )
         {
         ++index;
         if( *it == after_P )
             break;
         }
-    for( Action_list::Iterator it = *actions_P;
-         it;
-         ++it )
-        _actions->insert( index++, *it );
-    actions_P->setAutoDelete( false );
+
+    while (!actions_P->empty())
+        {
+        // Insert the actions to _actions after removing them from actions_P
+        // to prevent their deletion upon delete actions_P below.
+        _actions->insert( ++index, actions_P->takeFirst() );
+        }
+    Q_ASSERT( actions_P->isEmpty());
     delete actions_P;
     }
 
@@ -264,10 +267,12 @@ void Action_data::update_triggers()
     {
     bool activate = conditions_match() && enabled( false );
     kDebug( 1217 ) << "Update triggers: " << name() << ":" << activate;
-    for( Trigger_list::Iterator it = ( *triggers());
-         it;
+    for( Trigger_list::Iterator it = _triggers->begin();
+         it != _triggers->end();
          ++it )
-        ( *it )->activate( activate );
+        {
+        (*it)->activate( activate );
+        }
     }
         
 // Generic_action_data

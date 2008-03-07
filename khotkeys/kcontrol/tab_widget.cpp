@@ -72,13 +72,23 @@ Tab_widget::Tab_widget( QWidget* parent_P, const char* name_P )
     pages[ TAB_DBUS ] = new Dbus_tab;
     pages[ TAB_KEYBOARD_INPUT ] = new Keyboard_input_tab;
     pages[ TAB_WINDOW ] = new Windowdef_list_tab;
-	pages[ TAB_VOICE_SETTINGS ] = new Voice_settings_tab;
+// FIXME: SOUND
+    pages[ TAB_VOICE_SETTINGS ] = 0;
+// pages[ TAB_VOICE_SETTINGS ] = new Voice_settings_tab;
     for( tab_pos_t i = TAB_FIRST;
          i < TAB_END;
          ++i )
-        connect( this, SIGNAL( clear_pages_signal()), pages[ i ], SLOT( clear_data()));
+        {
+        // FIXME: SOUND
+        // As long as TAB_VOICE_SETTINGS is 0
+        if (pages[i])
+            {
+            connect( this, SIGNAL( clear_pages_signal()), pages[ i ], SLOT( clear_data()));
+            }
+        }
 #ifdef HAVE_ARTS
     if( haveArts())
+        show_pages(( TAB_INFO, TAB_GENERAL_SETTINGS, TAB_GESTURES_SETTINGS ));
         show_pages(( TAB_INFO, TAB_GENERAL_SETTINGS, TAB_GESTURES_SETTINGS, TAB_VOICE_SETTINGS ));
     else
 #endif
@@ -104,7 +114,8 @@ void Tab_widget::save_current_action_changes()
         {
         static_cast< Gestures_settings_tab* >( pages[ TAB_GESTURES_SETTINGS ] )->write_data(); // saves
         static_cast< General_settings_tab* >( pages[ TAB_GENERAL_SETTINGS ] )->write_data(); // saves
-        static_cast< Voice_settings_tab* >( pages[ TAB_VOICE_SETTINGS ] )->write_data(); // saves
+        // FIXME: SOUND
+        // static_cast< Voice_settings_tab* >( pages[ TAB_VOICE_SETTINGS ] )->write_data(); // saves
         }
     else if( current_type == GROUP )
         {
@@ -234,7 +245,8 @@ void Tab_widget::load_current_action()
     if( current_type == NONE ) // info, global settings
         {
         static_cast< Gestures_settings_tab* >( pages[ TAB_GESTURES_SETTINGS ] )->read_data(); // loads
-        static_cast< Voice_settings_tab* >( pages[ TAB_VOICE_SETTINGS ] )->read_data(); // loads
+        // FIXME: SOUND
+        // static_cast< Voice_settings_tab* >( pages[ TAB_VOICE_SETTINGS ] )->read_data(); // loads
         static_cast< General_settings_tab* >( pages[ TAB_GENERAL_SETTINGS ] )->read_data(); // loads
         }
     else if( current_type == GROUP )

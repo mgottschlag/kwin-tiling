@@ -29,9 +29,11 @@ set(kcm_khotkeys_PART_SRCS
    windowselector.cpp 
    gestures_settings_tab.cpp 
    general_settings_tab.cpp
-    voice_settings_tab.cpp
-    voicerecorder.cpp
-    voicerecordpage.cpp)
+   # FIXME: SOUND
+   # voice_settings_tab.cpp
+   # voicerecorder.cpp
+   # voicerecordpage.cpp
+   )
 
 
 kde4_add_ui_files(kcm_khotkeys_PART_SRCS
