@@ -23,6 +23,7 @@
 #include <QResizeEvent>
 #include <QMouseEvent>
 #include <QX11Info>
+#include <QBitmap>
 
 #include <KDebug>
 #include <NETRootInfo>
@@ -79,6 +80,7 @@ void KRunnerDialog::paintEvent(QPaintEvent *e)
 void KRunnerDialog::resizeEvent(QResizeEvent *e)
 {
     m_background->resize(e->size());
+    setMask(m_background->mask());
     KDialog::resizeEvent(e);
 }
 
