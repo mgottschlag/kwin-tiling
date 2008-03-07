@@ -1,5 +1,6 @@
 
-include_directories( 
+include_directories(
+    ${CMAKE_CURRENT_BINARY_DIR}/libkhotkeys
     ${KDEBASE_WORKSPACE_SOURCE_DIR}/khotkeys/libkhotkeys/actions
     ${KDEBASE_WORKSPACE_SOURCE_DIR}/khotkeys/libkhotkeys/conditions
     ${KDEBASE_WORKSPACE_SOURCE_DIR}/khotkeys/libkhotkeys/triggers

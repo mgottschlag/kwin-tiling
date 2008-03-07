@@ -25,7 +25,6 @@ configure_file(config-khotkeys.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-khotke
 # - Trigger
 # - Conditions
 # - Some gui stuff
-include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 
 set(libkhotkeys_SRCS
 
