@@ -136,7 +136,7 @@ QString ApplicationSearch::name() const
 void ApplicationSearch::setQuery(const QString& query)
 {
     //QString mimeName = mimeNameForQuery(query);
-    QString traderQuery = QString("((exist GenericName) and ('%1' ~~ GenericName)) or ('%1' ~~ Name) or ((exist Keywords) and ('%1' ~in Keywords))"
+    QString traderQuery = QString("((exist GenericName) and ('%1' ~~ GenericName)) or ('%1' ~~ Name) or ('%1' ~~ Exec) or ((exist Keywords) and ('%1' ~in Keywords))"
                                   //" or ('%2' in MimeType)"
                                  )
                             .arg(query); //.arg(mimeName);
