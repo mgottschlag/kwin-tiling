@@ -67,6 +67,8 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
       m_timer(0)
 {
     setHasConfigurationInterface(true);
+    int iconSize = IconSize(KIconLoader::Desktop);
+    resize(iconSize, iconSize);
 }
 
 void DeviceNotifier::init()
@@ -108,27 +110,7 @@ void DeviceNotifier::init()
     l_layout->addWidget(m_notifierView);
     m_widget->setLayout(l_layout);
 
-    m_widget->setWindowFlags(Qt::Popup);
-    m_widget->setFocusPolicy(Qt::NoFocus);
     m_widget->adjustSize();
-
-    kDebug() << "I'm in containment : " << containment()->containmentType();
-    if (containment()->containmentType() != Containment::DesktopContainment) {
-        initSysTray();
-	isOnDesktop=false;
-    }
-    else
-    {
-	m_layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
-	//m_layout = new QGraphicsGridLayout();
-	//m_layout->setMargin(0);
-	m_layout->setSpacing(0);
-	m_proxy= new QGraphicsProxyWidget(this);
-	m_proxy->setWidget(m_widget);
-        m_proxy->show();
-	//m_layout->addItem(m_proxy);
-    	isOnDesktop=true;
-    }
 
     //feed the list with what is already reported by the engine
     isNotificationEnabled = false;
@@ -155,7 +137,12 @@ void DeviceNotifier::init()
 
 void DeviceNotifier::initSysTray()
 {
-     setDrawStandardBackground(false);
+    if (m_icon) {
+        return;
+    }
+
+    m_widget->setWindowFlags(Qt::Popup);
+
     //we display the icon corresponding to the computer
     QList<Solid::Device> list = Solid::Device::allDevices();
 
@@ -172,20 +159,16 @@ void DeviceNotifier::initSysTray()
     }
     setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
     connect(m_icon, SIGNAL(clicked()), this, SLOT(onClickNotifier()));
-    setContentSize(size());
-    m_icon->resize(size());
+    m_icon->resize(contentSize());
     updateGeometry();
-    update();
 }
 
 DeviceNotifier::~DeviceNotifier()
 {
     delete m_widget;
-    if(!isOnDesktop) {
-        delete m_icon;
-    }
+    delete m_icon;
     delete m_layout;
-    m_layout = 0;
+    delete m_proxy;
     delete m_dialog;
     delete m_hotplugModel;
     delete m_timer;
@@ -215,6 +198,45 @@ QSizeF DeviceNotifier::contentSizeHint() const
     }
 
     return sizeHint;
+}
+
+void DeviceNotifier::constraintsUpdated(Plasma::Constraints constraints)
+{
+    // on the panel we don't want a background, and our proxy widget in Planar has one
+    setDrawStandardBackground(false);
+
+    bool isSizeConstrained = formFactor() != Plasma::Planar && formFactor() != Plasma::MediaCenter;
+
+    if (isSizeConstrained && constraints & Plasma::FormFactorConstraint) {
+        delete m_layout;
+        m_layout = 0;
+
+        if (m_proxy) {
+            m_proxy->setWidget(0);
+            delete m_proxy;
+            m_proxy = 0;
+        }
+
+        initSysTray();
+    } else {
+        delete m_icon;
+        m_icon = 0;
+
+        m_widget->setWindowFlags(Qt::Widget);
+        //TODO: this is a bit messy .. it should size to the proper content size, perhaps?
+        m_layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
+        //m_layout = new QGraphicsGridLayout();
+        //m_layout->setMargin(0);
+        m_layout->setSpacing(0);
+        m_proxy = new QGraphicsProxyWidget(this);
+        m_proxy->setWidget(m_widget);
+        m_proxy->show();
+        //m_layout->addItem(m_proxy);
+    }
+
+    if (m_icon && constraints & Plasma::SizeConstraint) {
+        m_icon->resize(contentSize());
+    }
 }
 
 void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
@@ -250,7 +272,7 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
 	} else {
 	    m_hotplugModel->setData(index,last_action_label, ActionRole);
 	}
-	if(!isOnDesktop && isNotificationEnabled) {
+	if (m_icon && isNotificationEnabled) {
 	    m_widget->move(popupPosition(m_widget->sizeHint()));
 	    m_widget->show();
 	    m_widget->clearFocus();
@@ -276,10 +298,8 @@ void DeviceNotifier::onSourceRemoved(const QString &name)
     QModelIndex index = indexForUdi(name);
     Q_ASSERT(index.isValid());
     m_hotplugModel->removeRow(index.row());
-    if (m_hotplugModel->rowCount() == 0) {
-         if(!isOnDesktop) {
-	    m_widget->hide();
-	 }
+    if (m_icon && m_hotplugModel->rowCount() == 0) {
+        m_widget->hide();
     }
 }
 
@@ -300,16 +320,14 @@ QModelIndex DeviceNotifier::indexForUdi(const QString &udi) const
 
 void DeviceNotifier::onClickNotifier()
 {
-    m_widget->isVisible() ? m_widget->hide() : m_widget->show();
-    m_widget->clearFocus();
-}
-
-void DeviceNotifier::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    if(!isOnDesktop) {
+    if (m_widget->isVisible()) {
+        m_widget->hide();
+    } else {
         m_widget->move(popupPosition(m_widget->sizeHint()));
+        m_widget->show();
     }
-    Applet::hoverEnterEvent(event);
+
+    m_widget->clearFocus();
 }
 
 void DeviceNotifier::showConfigurationInterface()
@@ -350,10 +368,11 @@ void DeviceNotifier::configAccepted()
 
 void DeviceNotifier::slotOnItemClicked(const QModelIndex &index)
 {
-    if(!isOnDesktop) {
-       m_widget->hide();
-       m_timer->stop();
+    if (m_icon) {
+        m_widget->hide();
+        m_timer->stop();
     }
+
     QString udi = QString(m_hotplugModel->data(index, SolidUdiRole).toString());
     QStringList desktop_files = m_hotplugModel->data(index, PredicateFilesRole).toStringList();
     kDebug() << "DeviceNotifier:: call Solid Ui Server with params :" << udi \
@@ -364,8 +383,10 @@ void DeviceNotifier::slotOnItemClicked(const QModelIndex &index)
 
 void DeviceNotifier::onTimerExpired()
 {
-    m_timer->stop();
-    m_widget->hide();
+    if (m_icon) {
+        m_timer->stop();
+        m_widget->hide();
+    }
 }
 
 #include "devicenotifier.moc"

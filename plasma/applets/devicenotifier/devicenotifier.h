@@ -62,8 +62,8 @@ class DeviceNotifier : public Plasma::Applet
         void init();
         Qt::Orientations expandingDirections() const;
         QSizeF contentSizeHint() const;
-        void hoverEnterEvent (QGraphicsSceneHoverEvent *event);
         void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
+        void constraintsUpdated(Plasma::Constraints constraints);
     public slots:
         void onSourceAdded(const QString &name);
         void onSourceRemoved(const QString &name);
@@ -92,7 +92,6 @@ class DeviceNotifier : public Plasma::Applet
         int m_numberItems;
         int m_itemsValidity;
         QTimer *m_timer;
-	bool isOnDesktop;
         bool isNotificationEnabled;
 
 	/// Designer Config file
