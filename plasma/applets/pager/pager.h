@@ -81,6 +81,7 @@ class Pager : public Plasma::Applet
         KDialog *m_dialog;
         Ui::pagerConfig ui;
 	bool m_showDesktopNumber;
+        bool m_showWindowIcons;
 	int m_rows;
 	int m_columns;
 	

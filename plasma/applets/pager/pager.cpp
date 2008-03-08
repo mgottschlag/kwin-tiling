@@ -48,6 +48,7 @@ Pager::Pager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_dialog(0),
       m_showDesktopNumber(true),
+      m_showWindowIcons(true),
       m_rows(2),
       m_columns(0),
       m_dragId(0),
@@ -68,6 +69,7 @@ void Pager::init()
 
     KConfigGroup cg = config();
     m_showDesktopNumber = cg.readEntry("showDesktopNumber", m_showDesktopNumber);
+    m_showWindowIcons = cg.readEntry("showWindowIcons", m_showWindowIcons);
     m_rows = globalConfig().readEntry("rows", m_rows);
 
     if (m_rows < 1) {
@@ -161,6 +163,7 @@ void Pager::showConfigurationInterface()
 
     }
     ui.showDesktopNumberCheckBox->setChecked(m_showDesktopNumber);
+    ui.showWindowIconsCheckBox->setChecked(m_showWindowIcons);
 
     ui.spinRows->setValue(m_rows);
     ui.spinRows->setMaximum(m_desktopCount);
@@ -268,6 +271,12 @@ void Pager::configAccepted()
     if (m_showDesktopNumber != ui.showDesktopNumberCheckBox->isChecked()) {
         m_showDesktopNumber = ui.showDesktopNumberCheckBox->isChecked();
         cg.writeEntry("showDesktopNumber", m_showDesktopNumber);
+        changed = true;
+    }
+
+    if (m_showWindowIcons != ui.showWindowIconsCheckBox->isChecked()) {
+        m_showWindowIcons = ui.showWindowIconsCheckBox->isChecked();
+        cg.writeEntry("showWindowIcons", m_showWindowIcons);
         changed = true;
     }
 
@@ -603,6 +612,10 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
                 painter->setClipRect(m_rects[i]);
             }
             painter->drawRect(rect);
+            if ((rect.width() > 16) && (rect.height() > 16) && m_showWindowIcons){
+                painter->drawPixmap(rect.x() + (rect.width() - 16) / 2, rect.y() + (rect.height() - 16) / 2, 16, 16,
+                                    KWindowSystem::icon(m_windowRects[i][j].first, 16, 16, true));
+            }
         }
     }
 
