@@ -2,6 +2,8 @@
 Name=Trashcan
 Name[eo]=Rubujo
 Name[ga]=Bruscar
+Name[gu]=કચરાપેટી
+Name[ja]=ごみ箱
 Name[pt]=Lixo
 Name[pt_BR]=Lixo
 Name[sr]=корпа за смеће
@@ -11,6 +13,8 @@ Name[zh_TW]=資源回收筒
 Comment=A trashcan button
 Comment[eo]=Rubuja butono
 Comment[ga]=Cnaipe bruscair
+Comment[gu]=કચરાપેટી બટન
+Comment[ja]=ごみ箱ボタン
 Comment[pt]=Um botão de caixote do lixo
 Comment[pt_BR]=Um botão de caixote do lixo
 Comment[sr]=Дугме корпе за смеће
