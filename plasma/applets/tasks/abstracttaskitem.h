@@ -31,6 +31,11 @@ class QTimeLine;
 #include <plasma/widgets/widget.h>
 #include <plasma/phase.h>
 
+namespace Plasma
+{
+    class Svg;
+}
+
 /**
  * A graphical representation of a task, consisting of an icon
  * and a caption.
@@ -116,6 +121,7 @@ public:
     // reimplemented from LayoutItem
     virtual QSizeF maximumSize() const;
 
+
 signals:
     void activated(AbstractTaskItem *);
 
@@ -193,6 +199,8 @@ private:
     QPointF _dragOffset;
     int m_updateTimerId;
     QTime m_lastUpdate;
+
+    Plasma::Svg* m_taskItemBackground;
 
     // minimum size (in pixels) of a task's icon
     static const int MinTaskIconSize = 48;
