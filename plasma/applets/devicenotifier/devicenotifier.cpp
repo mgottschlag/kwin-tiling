@@ -207,31 +207,33 @@ void DeviceNotifier::constraintsUpdated(Plasma::Constraints constraints)
 
     bool isSizeConstrained = formFactor() != Plasma::Planar && formFactor() != Plasma::MediaCenter;
 
-    if (isSizeConstrained && constraints & Plasma::FormFactorConstraint) {
-        delete m_layout;
-        m_layout = 0;
+    if (constraints & FormFactorConstraint) {
+        if (isSizeConstrained) {
+            delete m_layout;
+            m_layout = 0;
 
-        if (m_proxy) {
-            m_proxy->setWidget(0);
-            delete m_proxy;
-            m_proxy = 0;
+            if (m_proxy) {
+                m_proxy->setWidget(0);
+                delete m_proxy;
+                m_proxy = 0;
+            }
+
+            initSysTray();
+        } else {
+            delete m_icon;
+            m_icon = 0;
+
+            m_widget->setWindowFlags(Qt::Widget);
+            //TODO: this is a bit messy .. it should size to the proper content size, perhaps?
+            m_layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
+            //m_layout = new QGraphicsGridLayout();
+            //m_layout->setMargin(0);
+            m_layout->setSpacing(0);
+            m_proxy = new QGraphicsProxyWidget(this);
+            m_proxy->setWidget(m_widget);
+            m_proxy->show();
+            //m_layout->addItem(m_proxy);
         }
-
-        initSysTray();
-    } else {
-        delete m_icon;
-        m_icon = 0;
-
-        m_widget->setWindowFlags(Qt::Widget);
-        //TODO: this is a bit messy .. it should size to the proper content size, perhaps?
-        m_layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
-        //m_layout = new QGraphicsGridLayout();
-        //m_layout->setMargin(0);
-        m_layout->setSpacing(0);
-        m_proxy = new QGraphicsProxyWidget(this);
-        m_proxy->setWidget(m_widget);
-        m_proxy->show();
-        //m_layout->addItem(m_proxy);
     }
 
     if (m_icon && constraints & Plasma::SizeConstraint) {
