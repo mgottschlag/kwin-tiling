@@ -1,3 +1,3 @@
 #! /usr/bin/env bash
-$EXTRACTRC kcontrol/ui/*.ui data/*.khotkeys >> rc.cpp || exit 11
-$XGETTEXT rc.cpp app/*.cpp shared/*.cpp shared/*.h kcontrol/*.cpp -o $podir/khotkeys.pot
+$EXTRACTRC `find . -name \*.ui -o -name \*.khotkeys` >> rc.cpp || exit 11
+$XGETTEXT rc.cpp `find . -name \*.cpp -o -name \*.h` -o $podir/khotkeys.pot
