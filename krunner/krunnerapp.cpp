@@ -136,8 +136,8 @@ void KRunnerApp::initialize()
         connect( a, SIGNAL(triggered(bool)), m_interface, SLOT(display()) );
     }
 
-    a = m_actionCollection->addAction( I18N_NOOP( "Show Taskmanager" ) );
-    a->setText( i18n( I18N_NOOP( "Show Taskmanager" ) ) );
+    a = m_actionCollection->addAction( I18N_NOOP( "Show System Activity" ) );
+    a->setText( i18n( I18N_NOOP( "Show System Activity" ) ) );
     a->setGlobalShortcut( KShortcut( Qt::CTRL+Qt::Key_Escape ) );
     connect( a, SIGNAL(triggered(bool)), SLOT(showTaskManager()) );
 
