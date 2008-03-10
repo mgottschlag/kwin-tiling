@@ -23,60 +23,57 @@
 #include "KStandardDirs"
 #include <KLineEdit>
 
-SelectSchemeDialog::SelectSchemeDialog( QWidget *parent )
-    : KDialog( parent )
-     ,ui(new Ui::SelectSchemeDialog)
-    {
+SelectSchemeDialog::SelectSchemeDialog(QWidget *parent)
+ : KDialog(parent),
+   ui(new Ui::SelectSchemeDialog)
+{
     m_schemes = KGlobal::dirs()->findAllResources("data", "kcmkeys/*.kksrc");
 
     ui->setupUi(this);
-    setMainWidget( ui->widget );
+    setMainWidget(ui->widget);
 
-    Q_FOREACH( QString res, m_schemes )
-        {
-        KConfig config( res, KConfig::SimpleConfig );
-        KConfigGroup group( &config, "Settings" );
-        QString name = group.readEntry( "Name" );
+    foreach (const QString &res, m_schemes) {
+        KConfig config(res, KConfig::SimpleConfig);
+        KConfigGroup group(&config, "Settings");
+        QString name = group.readEntry("Name");
 
-        if (name.isEmpty())
-            {
+        if (name.isEmpty()) {
             name = res;
-            }
-        ui->m_schemes->addItem( name );
         }
+        ui->m_schemes->addItem(name);
+    }
 
     ui->m_schemes->setCurrentIndex(-1);
 
-    ui->m_url->setMode(KFile::LocalOnly|KFile::ExistingOnly);
+    ui->m_url->setMode(KFile::LocalOnly | KFile::ExistingOnly);
 
-    connect(
-        ui->m_schemes, SIGNAL(activated(int)),
-        this, SLOT(schemeActivated(int)));
-    connect( ui->m_url->lineEdit(), SIGNAL( textChanged( const QString& ) ),
-             this, SLOT( slotUrlChanged( const QString& ) ) );
-    enableButtonOk( false );
-    }
+    connect(ui->m_schemes, SIGNAL(activated(int)),
+            this, SLOT(schemeActivated(int)));
+    connect(ui->m_url->lineEdit(), SIGNAL(textChanged(const QString&)),
+            this, SLOT(slotUrlChanged(const QString&)));
+    enableButtonOk(false);
+}
 
 
 SelectSchemeDialog::~SelectSchemeDialog()
-    {
+{
     delete ui;
-    }
+}
 
 void SelectSchemeDialog::schemeActivated(int index)
-    {
+{
     ui->m_url->setPath(m_schemes[index]);
-    }
+}
 
 
 KUrl SelectSchemeDialog::selectedScheme() const
-    {
-        return ui->m_url->url();
-    }
-
-void SelectSchemeDialog::slotUrlChanged( const QString & _text )
 {
-    enableButtonOk( !_text.isEmpty() );
+    return ui->m_url->url();
+}
+
+void SelectSchemeDialog::slotUrlChanged(const QString &_text)
+{
+    enableButtonOk(!_text.isEmpty());
 }
 
 #include "moc_select_scheme_dialog.cpp"

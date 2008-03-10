@@ -33,101 +33,102 @@ class KConfig;
  * @author Michael Jansen <kde@michael-jansen.biz>
  */
 class KGlobalShortcutsEditor : public QWidget
-    {
+{
     Q_OBJECT
 
-    public:
+public:
 
-        /**
-         * Constructor
-         *
-         * @param parent parent widget
-         */
-        KGlobalShortcutsEditor( QWidget *parent, KShortcutsEditor::ActionTypes actionTypes = KShortcutsEditor::AllActions);
-        ~KGlobalShortcutsEditor();
+    /**
+     * Constructor
+     *
+     * @param parent parent widget
+     */
+    KGlobalShortcutsEditor(QWidget *parent,
+                           KShortcutsEditor::ActionTypes actionTypes = KShortcutsEditor::AllActions);
+    ~KGlobalShortcutsEditor();
 
-        /**
-         * Insert an action collection, i.e. add all it's actions to the ones already associated
-         * with the KShortcutsEditor object.
-         *
-         * @param collection  the collection to add
-         * @param component   title for the component
-         * @param title       title for the subtree in the component
-         */
-        void addCollection( KActionCollection *, const QString &component, const QString &title = QString() );
+    /**
+     * Insert an action collection, i.e. add all it's actions to the ones already associated
+     * with the KShortcutsEditor object.
+     *
+     * @param collection  the collection to add
+     * @param component   title for the component
+     * @param title       title for the subtree in the component
+     */
+    void addCollection(KActionCollection *, const QString &component, const QString &title = QString());
 
-        /**
-         * Clear all collections were currently hosting.
-         */
-        void clear();
-
-
-        /**
-         * Revert all changes made since the last save.
-         */
-        void undo();
+    /**
+     * Clear all collections were currently hosting.
+     */
+    void clear();
 
 
-        /**
-         * Load the shortcuts from the configuration.
-         */
-        void importConfiguration( KConfig *config );
+    /**
+     * Revert all changes made since the last save.
+     */
+    void undo();
 
 
-        /**
-         * Save the shortcuts to the configuration.
-         */
-        void exportConfiguration( KConfig *config ) const;
+    /**
+     * Load the shortcuts from the configuration.
+     */
+    void importConfiguration(KConfig *config);
 
 
-        /**
-         * Are the unsaved changes?
-         */
-        bool isModified() const;
-
-    Q_SIGNALS:
-
-        /**
-         * Indicate that state of the modules contents has changed.
-         *
-         * @param state changed or not
-         */
-        void changed(bool);
+    /**
+     * Save the shortcuts to the configuration.
+     */
+    void exportConfiguration(KConfig *config) const;
 
 
-    public Q_SLOTS:
+    /**
+     * Are the unsaved changes?
+     */
+    bool isModified() const;
 
-        /**
-         * Activate the component \a component.
-         *
-         * @param component the component
-         */
-        void activateComponent( const QString &component );
+Q_SIGNALS:
 
-
-        /**
-         * Make the changes persistent.
-         *
-         * That's function is not really saving. Global shortcuts are saved immediately. This
-         * prevent the undo on deleting the editor.
-         */
-        void save();
-
-        /**
-         * Reset all \a components to default values.
-         */
-        void allDefault();
+    /**
+     * Indicate that state of the modules contents has changed.
+     *
+     * @param state changed or not
+     */
+    void changed(bool);
 
 
-    private Q_SLOTS:
-        void _k_key_changed();
+public Q_SLOTS:
 
-    private:
+    /**
+     * Activate the component \a component.
+     *
+     * @param component the component
+     */
+    void activateComponent(const QString &component);
 
-        friend class KGlobalShortcutsEditorPrivate;
-        class KGlobalShortcutsEditorPrivate;
-        KGlobalShortcutsEditorPrivate *const d;
-        Q_DISABLE_COPY(KGlobalShortcutsEditor)
-    }; // class KGlobalShortcutsEditor
+
+    /**
+     * Make the changes persistent.
+     *
+     * That's function is not really saving. Global shortcuts are saved immediately. This
+     * prevent the undo on deleting the editor.
+     */
+    void save();
+
+    /**
+     * Reset all \a components to default values.
+     */
+    void allDefault();
+
+
+private Q_SLOTS:
+    void _k_key_changed();
+
+private:
+
+    friend class KGlobalShortcutsEditorPrivate;
+    class KGlobalShortcutsEditorPrivate;
+    KGlobalShortcutsEditorPrivate *const d;
+    Q_DISABLE_COPY(KGlobalShortcutsEditor)
+}; // class KGlobalShortcutsEditor
 
 #endif // KGLOBALSHORTCUTSEDITOR_H

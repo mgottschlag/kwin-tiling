@@ -44,198 +44,176 @@
  */
 
 class KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate
-    {
-    public:
+{
+public:
 
-        KGlobalShortcutsEditorPrivate( KGlobalShortcutsEditor *q )
-            :   q(q)
-                ,stack(0)
-            {}
+    KGlobalShortcutsEditorPrivate(KGlobalShortcutsEditor *q)
+     : q(q),
+       stack(0)
+    {}
 
-        void initGUI();
+    void initGUI();
 
-        KGlobalShortcutsEditor *q;
-        Ui::KGlobalShortcutsEditor ui;
-        QStackedWidget *stack;
-        KShortcutsEditor::ActionTypes actionTypes;
-        QHash<QString,KShortcutsEditor*> components;
-    };
+    KGlobalShortcutsEditor *q;
+    Ui::KGlobalShortcutsEditor ui;
+    QStackedWidget *stack;
+    KShortcutsEditor::ActionTypes actionTypes;
+    QHash<QString, KShortcutsEditor *> components;
+};
 
 
 void KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate::initGUI()
-    {
+{
     ui.setupUi(q);
     // Create a stacked widget.
     stack = new QStackedWidget(q);
     q->layout()->addWidget(stack);
     // Connect our components
-    connect(
-            ui.components, SIGNAL(activated(const QString&)),
-            q, SLOT(activateComponent(const QString&))
-            );
-    }
+    connect(ui.components, SIGNAL(activated(const QString&)),
+            q, SLOT(activateComponent(const QString&)));
+}
 
 
-KGlobalShortcutsEditor::KGlobalShortcutsEditor(
-        QWidget *parent,
-        KShortcutsEditor::ActionTypes actionTypes
-    )
-    :   QWidget(parent),
-        d(new KGlobalShortcutsEditorPrivate(this))
-    {
+KGlobalShortcutsEditor::KGlobalShortcutsEditor(QWidget *parent, KShortcutsEditor::ActionTypes actionTypes)
+ : QWidget(parent),
+   d(new KGlobalShortcutsEditorPrivate(this))
+{
     d->actionTypes = actionTypes;
     // Setup the ui
     d->initGUI();
-    }
+}
 
 
 KGlobalShortcutsEditor::~KGlobalShortcutsEditor()
-    {
+{
     // Before closing the door, undo all changes
     undo();
     delete d;
-    }
+}
 
 
 void KGlobalShortcutsEditor::activateComponent(const QString &component)
-    {
-    QHash<QString,KShortcutsEditor*>::Iterator iter = d->components.find( component );
-    if (iter==d->components.end())
-        {
+{
+    QHash<QString, KShortcutsEditor *>::Iterator iter = d->components.find(component);
+    if (iter == d->components.end()) {
         // Unknown component. Its a bad bad world
         kWarning() << "The component " << component << " is unknown";
-        Q_ASSERT(iter!=d->components.end());
+        Q_ASSERT(iter != d->components.end());
         return;
-        }
-    else
-        {
+    } else {
         // Known component. Get it.
         d->stack->setCurrentWidget(iter.value());
         KGlobalAccel::self()->overrideMainComponentData(KComponentData(component.toAscii()));
-        }
     }
+}
 
 
-void KGlobalShortcutsEditor::addCollection(
-        KActionCollection *collection,
-        const QString &component,
-        const QString &title )
-    {
+void KGlobalShortcutsEditor::addCollection(KActionCollection *collection, const QString &component,
+                                           const QString &title)
+{
     kDebug() << "adding collection " << component;
     KShortcutsEditor *editor;
     // Check if this component is known
-    QHash<QString,KShortcutsEditor*>::Iterator iter = d->components.find( component );
-    if (iter==d->components.end())
-        {
+    QHash<QString, KShortcutsEditor *>::Iterator iter = d->components.find(component);
+    if (iter == d->components.end()) {
         // Unknown component. Create a editor.
-        editor = new KShortcutsEditor( this, d->actionTypes );
-        d->stack->addWidget( editor );
+        editor = new KShortcutsEditor(this, d->actionTypes);
+        d->stack->addWidget(editor);
         // Add it to the combobox
         d->ui.components->addItem(component);
         // And to our registry
-        d->components.insert(component, editor );
+        d->components.insert(component, editor);
         // And now connect.
-        connect( editor, SIGNAL(keyChange()), this, SLOT(_k_key_changed()) );
-        }
-    else
-        {
+        connect(editor, SIGNAL(keyChange()), this, SLOT(_k_key_changed()));
+    } else {
         // Known component. Get it.
         editor = iter.value();
-        }
+    }
 
     // Add the collection to the editor of the component
-    editor->addCollection( collection, title );
+    editor->addCollection(collection, title);
 
-    if (d->ui.components->count()>-1)
-        {
+    if (d->ui.components->count() > -1) {
         kDebug() << "Activate item " << d->ui.components->itemText(0);
         d->ui.components->setCurrentIndex(0);
-        activateComponent( d->ui.components->itemText(0) );
-        }
+        activateComponent(d->ui.components->itemText(0));
     }
+}
 
 
 void KGlobalShortcutsEditor::allDefault()
-    {
+{
     // The editors are responsible for the reset
     kDebug() << "Reset";
-    Q_FOREACH (KShortcutsEditor *editor, d->components.values())
-        {
+    foreach (KShortcutsEditor *editor, d->components.values()) {
         editor->allDefault();
-        }
     }
+}
 
 
 void KGlobalShortcutsEditor::clear()
-    {
+{
     // Remove all components and their associated editors
-    Q_FOREACH (KShortcutsEditor *editor, d->components.values())
-        {
+    foreach (KShortcutsEditor *editor, d->components.values()) {
         delete editor;
-        }
+    }
     d->components.clear();
     d->ui.components->clear();
-    }
+}
 
 
 
 void KGlobalShortcutsEditor::save()
-    {
+{
     // The editors are responsible for the saving
     kDebug() << "Save the changes";
-    Q_FOREACH (KShortcutsEditor *editor, d->components.values())
-        {
+    foreach (KShortcutsEditor *editor, d->components.values()) {
         editor->save();
-        }
     }
+}
 
 
-void KGlobalShortcutsEditor::importConfiguration( KConfig *config )
-    {
+void KGlobalShortcutsEditor::importConfiguration(KConfig *config)
+{
     // The editors are responsible for the writing of the scheme
-    Q_FOREACH (KShortcutsEditor *editor, d->components.values())
-        {
+    foreach (KShortcutsEditor *editor, d->components.values()) {
         editor->importConfiguration(config);
-        }
     }
+}
 
-void KGlobalShortcutsEditor::exportConfiguration( KConfig *config ) const
-    {
+void KGlobalShortcutsEditor::exportConfiguration(KConfig *config) const
+{
     // The editors are responsible for the writing of the scheme
-    Q_FOREACH (KShortcutsEditor *editor, d->components.values())
-        {
+    foreach (KShortcutsEditor *editor, d->components.values()) {
         editor->exportConfiguration(config);
-        }
     }
+}
 
 
 void KGlobalShortcutsEditor::undo()
-    {
+{
     // The editors are responsible for the undo
     kDebug() << "Undo the changes";
-    Q_FOREACH (KShortcutsEditor *editor, d->components.values())
-        {
+    foreach (KShortcutsEditor *editor, d->components.values()) {
         editor->undoChanges();
-        }
     }
+}
 
 
 bool KGlobalShortcutsEditor::isModified() const
-    {
-    Q_FOREACH (KShortcutsEditor *editor, d->components.values())
-        {
-        if (editor->isModified()) 
-            {
+{
+    foreach (KShortcutsEditor *editor, d->components.values()) {
+        if (editor->isModified()) {
             return true;
-            }
         }
-    return false;
     }
+    return false;
+}
 
 
 void KGlobalShortcutsEditor::_k_key_changed()
-    {
+{
     emit changed(isModified());
-    }
+}
 
 #include "kglobalshortcutseditor.moc"

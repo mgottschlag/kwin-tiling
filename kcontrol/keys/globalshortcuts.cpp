@@ -42,27 +42,23 @@
 K_PLUGIN_FACTORY(GlobalShortcutsModuleFactory, registerPlugin<GlobalShortcutsModule>();)
 K_EXPORT_PLUGIN(GlobalShortcutsModuleFactory("kcmkeys"))
 
-Q_DECLARE_METATYPE( QList<int> )
+Q_DECLARE_METATYPE(QList<int>)
 
-GlobalShortcutsModule::GlobalShortcutsModule( QWidget * parent, const QVariantList & args )
-    : KCModule(GlobalShortcutsModuleFactory::componentData(), parent, args),
-      editor(0)
+GlobalShortcutsModule::GlobalShortcutsModule(QWidget *parent, const QVariantList &args)
+ : KCModule(GlobalShortcutsModuleFactory::componentData(), parent, args),
+   editor(0)
 {
-    KCModule::setButtons( KCModule::Buttons(KCModule::Default|KCModule::Apply) );
+    KCModule::setButtons(KCModule::Buttons(KCModule::Default | KCModule::Apply));
 
     // Add import scheme button
     KPushButton *importButton = new KPushButton(this);
     importButton->setText(i18n("Import scheme ..."));
-    connect(
-        importButton, SIGNAL(clicked()),
-        this,SLOT(importScheme()) );
+    connect(importButton, SIGNAL(clicked()), this, SLOT(importScheme()));
 
     // Add export scheme button
     KPushButton *exportButton = new KPushButton(this);
     exportButton->setText(i18n("Export scheme ..."));
-    connect(
-        exportButton, SIGNAL(clicked()),
-        this,SLOT(exportScheme()) );
+    connect(exportButton, SIGNAL(clicked()), this, SLOT(exportScheme()));
 
     // Layout for the buttons
     QHBoxLayout *hbox = new QHBoxLayout;
@@ -71,7 +67,7 @@ GlobalShortcutsModule::GlobalShortcutsModule( QWidget * parent, const QVariantLi
 
     // Create the kglobaleditor
     editor = new KGlobalShortcutsEditor(this, KShortcutsEditor::GlobalAction);
-    connect(editor, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)) );
+    connect(editor, SIGNAL(changed(bool)), this, SIGNAL(changed(bool)));
 
     // Layout the hole bunch
     QVBoxLayout *global = new QVBoxLayout;
@@ -94,22 +90,20 @@ void GlobalShortcutsModule::load()
     qRegisterMetaType<QList<int> >();
     qDBusRegisterMetaType<QList<int> >();
     QDBusConnection bus = QDBusConnection::sessionBus();
-    QPointer<QDBusInterface> iface = new QDBusInterface( "org.kde.kded", "/KdedGlobalAccel", "org.kde.KdedGlobalAccel", bus, this );
+    QPointer<QDBusInterface> iface = new QDBusInterface("org.kde.kded", "/KdedGlobalAccel", "org.kde.KdedGlobalAccel", bus, this);
 
     QDBusReply<QStringList> components = iface->call("allComponents");
 
-    QHash<QString,KActionCollection*> actionCollections;
+    QHash<QString, KActionCollection*> actionCollections;
 
-    foreach(const QString &component, components.value() )
-    {
+    foreach (const QString &component, components.value()) {
         // kDebug() << "component:" << component;
         KGlobalAccel::self()->overrideMainComponentData(KComponentData(component.toAscii()));
         KActionCollection* col = new KActionCollection(this);
         actionCollections[component] = col;
 
-        QDBusReply<QStringList> actions = iface->call("allActionsForComponent", qVariantFromValue(component) );
-        foreach(const QString &actionText, actions.value() )
-        {
+        QDBusReply<QStringList> actions = iface->call("allActionsForComponent", qVariantFromValue(component));
+        foreach (const QString &actionText, actions.value()) {
             kWarning() << "FIXME: Get a real objectName from iface!";
             QString objectName = actionText;
             KAction *action = col->addAction(objectName);
@@ -120,14 +114,12 @@ void GlobalShortcutsModule::load()
             actionId << component << actionText;
             QDBusReply<QList<int> > defaultShortcut = iface->call("defaultShortcut", qVariantFromValue(actionId));
             QDBusReply<QList<int> > shortcut = iface->call("shortcut", qVariantFromValue(actionId));
-            if (!defaultShortcut.value().empty())
-            {
+            if (!defaultShortcut.value().empty()) {
                 int key = defaultShortcut.value().first();
                 // kDebug() << "-- defaultShortcut" << KShortcut(key).toString();
                 action->setGlobalShortcut(KShortcut(key), KAction::DefaultShortcut, KAction::NoAutoloading);
             }
-            if (!shortcut.value().empty())
-            {
+            if (!shortcut.value().empty()) {
                 int key = shortcut.value().first();
                 // kDebug() << "-- shortcut" << KShortcut(key).toString();
                 action->setGlobalShortcut(KShortcut(key), KAction::ActiveShortcut, KAction::NoAutoloading);
@@ -136,10 +128,9 @@ void GlobalShortcutsModule::load()
     }
 
     // Add components and their keys to the editor
-    Q_FOREACH (QString component, actionCollections.keys() )
-    {
+    foreach (const QString &component, actionCollections.keys()) {
         // kDebug() << "Adding collection " << component;
-        editor->addCollection( actionCollections[component], component );
+        editor->addCollection(actionCollections[component], component);
     }
 
 }
@@ -161,14 +152,13 @@ void GlobalShortcutsModule::importScheme()
     // Check for unsaved modifications
     if (editor->isModified()) {
         int choice = KMessageBox::warningContinueCancel(
-            parentWidget(),
-            i18n("Your current changes will be lost if you load another scheme before saving this one"),
-            i18n("Load shortcurt scheme"),
-            KGuiItem(i18n("Load")) );
-        if (choice != KMessageBox::Continue)
-            {
+                         parentWidget(),
+                         i18n("Your current changes will be lost if you load another scheme before saving this one"),
+                         i18n("Load shortcurt scheme"),
+                         KGuiItem(i18n("Load")));
+        if (choice != KMessageBox::Continue) {
             return;
-            }
+        }
     }
 
     SelectSchemeDialog dialog(this);
@@ -177,9 +167,9 @@ void GlobalShortcutsModule::importScheme()
     }
 
     KUrl url = dialog.selectedScheme();
-    if ( !url.isLocalFile() )
-    {
-        KMessageBox::sorry( this, i18n( "This file (%1) does not exist. You can just select local file.", url.url()  ) );
+    if (!url.isLocalFile()) {
+        KMessageBox::sorry(this, i18n("This file (%1) does not exist. You can just select local file.",
+                           url.url()));
         return;
     }
     kDebug() << url.path();
@@ -190,11 +180,11 @@ void GlobalShortcutsModule::importScheme()
 
 void GlobalShortcutsModule::exportScheme()
 {
-    KUrl url = KFileDialog::getSaveFileName( KUrl(), "*.kksrc", parentWidget() );
+    KUrl url = KFileDialog::getSaveFileName(KUrl(), "*.kksrc", parentWidget());
     if (!url.isEmpty()) {
         KConfig config(url.path());
-        config.deleteGroup( "Shortcuts" );
-        config.deleteGroup( "Global Shortcuts" );
+        config.deleteGroup("Shortcuts");
+        config.deleteGroup("Global Shortcuts");
         editor->exportConfiguration(&config);
     }
 }
