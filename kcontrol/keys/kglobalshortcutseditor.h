@@ -55,7 +55,7 @@ public:
      * @param component   title for the component
      * @param title       title for the subtree in the component
      */
-    void addCollection(KActionCollection *, const QString &component, const QString &title = QString());
+    void addCollection(KActionCollection *, const QStringList &componentId);
 
     /**
      * Clear all collections were currently hosting.

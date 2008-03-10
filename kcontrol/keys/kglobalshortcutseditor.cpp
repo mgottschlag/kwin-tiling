@@ -26,6 +26,15 @@
 #include "kdebug.h"
 #include <kglobalaccel.h>
 
+//### copied over from kdedglobalaccel.cpp (figure out a header file to put it in!)
+enum actionIdFields
+{
+    ComponentUnique = 0,
+    ActionUnique = 1,
+    ComponentFriendly = 2,
+    ActionFriendly = 3
+};
+
 /*
  * README
  *
@@ -43,6 +52,12 @@
  * model.
  */
 
+struct componentData
+{
+    KShortcutsEditor *editor;
+    QString uniqueName;
+};
+
 class KGlobalShortcutsEditor::KGlobalShortcutsEditorPrivate
 {
 public:
@@ -58,7 +73,7 @@ public:
     Ui::KGlobalShortcutsEditor ui;
     QStackedWidget *stack;
     KShortcutsEditor::ActionTypes actionTypes;
-    QHash<QString, KShortcutsEditor *> components;
+    QHash<QString, componentData> components;
 };
 
 
@@ -94,7 +109,7 @@ KGlobalShortcutsEditor::~KGlobalShortcutsEditor()
 
 void KGlobalShortcutsEditor::activateComponent(const QString &component)
 {
-    QHash<QString, KShortcutsEditor *>::Iterator iter = d->components.find(component);
+    QHash<QString, componentData>::Iterator iter = d->components.find(component);
     if (iter == d->components.end()) {
         // Unknown component. Its a bad bad world
         kWarning() << "The component " << component << " is unknown";
@@ -102,36 +117,38 @@ void KGlobalShortcutsEditor::activateComponent(const QString &component)
         return;
     } else {
         // Known component. Get it.
-        d->stack->setCurrentWidget(iter.value());
-        KGlobalAccel::self()->overrideMainComponentData(KComponentData(component.toAscii()));
+        d->stack->setCurrentWidget((*iter).editor);
+        KGlobalAccel::self()->overrideMainComponentData(KComponentData((*iter).uniqueName.toAscii()));
     }
 }
 
 
-void KGlobalShortcutsEditor::addCollection(KActionCollection *collection, const QString &component,
-                                           const QString &title)
+void KGlobalShortcutsEditor::addCollection(KActionCollection *collection, const QStringList &componentId)
 {
-    kDebug() << "adding collection " << component;
+    kDebug() << "adding collection " << componentId;
     KShortcutsEditor *editor;
+    const QString &friendlyName = componentId[ComponentFriendly];
     // Check if this component is known
-    QHash<QString, KShortcutsEditor *>::Iterator iter = d->components.find(component);
+    QHash<QString, componentData>::Iterator iter = d->components.find(friendlyName);
     if (iter == d->components.end()) {
-        // Unknown component. Create a editor.
+        // Unknown component. Create an editor.
         editor = new KShortcutsEditor(this, d->actionTypes);
         d->stack->addWidget(editor);
-        // Add it to the combobox
-        d->ui.components->addItem(component);
-        // And to our registry
-        d->components.insert(component, editor);
-        // And now connect.
+        // Add to the component combobox
+        d->ui.components->addItem(friendlyName);
+        // Add to our component registry
+        componentData cd;
+        cd.editor = editor;
+        cd.uniqueName = componentId[ComponentUnique];
+        d->components.insert(friendlyName, cd);
         connect(editor, SIGNAL(keyChange()), this, SLOT(_k_key_changed()));
     } else {
-        // Known component. Get it.
-        editor = iter.value();
+        // Known component.
+        editor = (*iter).editor;
     }
 
     // Add the collection to the editor of the component
-    editor->addCollection(collection, title);
+    editor->addCollection(collection, friendlyName);
 
     if (d->ui.components->count() > -1) {
         kDebug() << "Activate item " << d->ui.components->itemText(0);
@@ -145,8 +162,8 @@ void KGlobalShortcutsEditor::allDefault()
 {
     // The editors are responsible for the reset
     kDebug() << "Reset";
-    foreach (KShortcutsEditor *editor, d->components.values()) {
-        editor->allDefault();
+    foreach (const componentData &cd, d->components.values()) {
+        cd.editor->allDefault();
     }
 }
 
@@ -154,8 +171,8 @@ void KGlobalShortcutsEditor::allDefault()
 void KGlobalShortcutsEditor::clear()
 {
     // Remove all components and their associated editors
-    foreach (KShortcutsEditor *editor, d->components.values()) {
-        delete editor;
+    foreach (const componentData &cd, d->components.values()) {
+        delete cd.editor;
     }
     d->components.clear();
     d->ui.components->clear();
@@ -167,8 +184,8 @@ void KGlobalShortcutsEditor::save()
 {
     // The editors are responsible for the saving
     kDebug() << "Save the changes";
-    foreach (KShortcutsEditor *editor, d->components.values()) {
-        editor->save();
+    foreach (const componentData &cd, d->components.values()) {
+        cd.editor->save();
     }
 }
 
@@ -176,16 +193,16 @@ void KGlobalShortcutsEditor::save()
 void KGlobalShortcutsEditor::importConfiguration(KConfig *config)
 {
     // The editors are responsible for the writing of the scheme
-    foreach (KShortcutsEditor *editor, d->components.values()) {
-        editor->importConfiguration(config);
+    foreach (const componentData &cd, d->components.values()) {
+        cd.editor->importConfiguration(config);
     }
 }
 
 void KGlobalShortcutsEditor::exportConfiguration(KConfig *config) const
 {
     // The editors are responsible for the writing of the scheme
-    foreach (KShortcutsEditor *editor, d->components.values()) {
-        editor->exportConfiguration(config);
+    foreach (const componentData &cd, d->components.values()) {
+        cd.editor->exportConfiguration(config);
     }
 }
 
@@ -194,16 +211,16 @@ void KGlobalShortcutsEditor::undo()
 {
     // The editors are responsible for the undo
     kDebug() << "Undo the changes";
-    foreach (KShortcutsEditor *editor, d->components.values()) {
-        editor->undoChanges();
+    foreach (const componentData &cd, d->components.values()) {
+        cd.editor->undoChanges();
     }
 }
 
 
 bool KGlobalShortcutsEditor::isModified() const
 {
-    foreach (KShortcutsEditor *editor, d->components.values()) {
-        if (editor->isModified()) {
+    foreach (const componentData &cd, d->components.values()) {
+        if (cd.editor->isModified()) {
             return true;
         }
     }

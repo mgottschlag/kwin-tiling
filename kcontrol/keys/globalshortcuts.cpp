@@ -39,6 +39,16 @@
 #include <KPluginFactory>
 #include <KPushButton>
 
+//### copied over from kdedglobalaccel.cpp (figure out a header file to put it in!)
+enum actionIdFields
+{
+    ComponentUnique = 0,
+    ActionUnique = 1,
+    ComponentFriendly = 2,
+    ActionFriendly = 3
+};
+
+
 K_PLUGIN_FACTORY(GlobalShortcutsModuleFactory, registerPlugin<GlobalShortcutsModule>();)
 K_EXPORT_PLUGIN(GlobalShortcutsModuleFactory("kcmkeys"))
 
@@ -90,28 +100,28 @@ void GlobalShortcutsModule::load()
     qRegisterMetaType<QList<int> >();
     qDBusRegisterMetaType<QList<int> >();
     QDBusConnection bus = QDBusConnection::sessionBus();
-    QPointer<QDBusInterface> iface = new QDBusInterface("org.kde.kded", "/KdedGlobalAccel", "org.kde.KdedGlobalAccel", bus, this);
+    QPointer<QDBusInterface> iface = new QDBusInterface("org.kde.kded", "/KdedGlobalAccel",
+                                                        "org.kde.KdedGlobalAccel", bus, this);
 
-    QDBusReply<QStringList> components = iface->call("allComponents");
+    KGlobalAccel *kga = KGlobalAccel::self();
+    QList<QStringList> components = kga->allMainComponents();
 
-    QHash<QString, KActionCollection*> actionCollections;
+    QHash<QString, KActionCollection *> actionCollections;
 
-    foreach (const QString &component, components.value()) {
-        // kDebug() << "component:" << component;
-        KGlobalAccel::self()->overrideMainComponentData(KComponentData(component.toAscii()));
+    foreach (const QStringList &componentId, components) {
+        // kDebug() << "component:" << componentId;
+        const QString &componentUnique = componentId[ComponentUnique];
+        KGlobalAccel::self()->overrideMainComponentData(KComponentData(componentUnique.toAscii()));
         KActionCollection* col = new KActionCollection(this);
-        actionCollections[component] = col;
+        actionCollections[componentUnique] = col;
 
-        QDBusReply<QStringList> actions = iface->call("allActionsForComponent", qVariantFromValue(component));
-        foreach (const QString &actionText, actions.value()) {
-            kWarning() << "FIXME: Get a real objectName from iface!";
-            QString objectName = actionText;
+        QList<QStringList> actions = kga->allActionsForComponent(componentId);
+        foreach (const QStringList &actionId, actions) {
+            const QString &objectName = actionId[ActionUnique];
             KAction *action = col->addAction(objectName);
-            // see KAction::~KAction
-            action->setProperty("isConfigurationAction", QVariant(true));
-            action->setText(actionText);
-            QStringList actionId;
-            actionId << component << actionText;
+            action->setProperty("isConfigurationAction", QVariant(true)); // see KAction::~KAction
+            action->setText(actionId[ActionFriendly]);
+
             QDBusReply<QList<int> > defaultShortcut = iface->call("defaultShortcut", qVariantFromValue(actionId));
             QDBusReply<QList<int> > shortcut = iface->call("shortcut", qVariantFromValue(actionId));
             if (!defaultShortcut.value().empty()) {
@@ -128,11 +138,10 @@ void GlobalShortcutsModule::load()
     }
 
     // Add components and their keys to the editor
-    foreach (const QString &component, actionCollections.keys()) {
+    foreach (const QStringList &componentId, components) {
         // kDebug() << "Adding collection " << component;
-        editor->addCollection(actionCollections[component], component);
+        editor->addCollection(actionCollections[componentId[ComponentUnique]], componentId);
     }
-
 }
 
 void GlobalShortcutsModule::defaults()
