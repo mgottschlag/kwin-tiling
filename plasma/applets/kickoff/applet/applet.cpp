@@ -34,6 +34,7 @@
 #include <KDebug>
 #include <KDialog>
 #include <KNumInput>
+#include <KProcess>
 
 // Plasma
 #include <plasma/layouts/boxlayout.h>
@@ -93,6 +94,12 @@ LauncherApplet::~LauncherApplet()
 
 void LauncherApplet::init()
 {
+    if (KService::serviceByStorageId("kde4-kmenuedit.desktop")) {
+        QAction* menueditor = new QAction(i18n("Menu Editor"), this);
+        d->actions.append(menueditor);
+        connect(menueditor, SIGNAL(triggered(bool)), this, SLOT(startMenuEditor()));
+    }
+
     Q_ASSERT( ! d->switcher );
     d->switcher = new QAction(i18n("Switch to Classic Menu Style"), this);
     d->switcher->setVisible(! isImmutable());
@@ -127,6 +134,11 @@ void LauncherApplet::switchMenuStyle()
         containment()->addApplet("simplelauncher", QVariantList(), 0, geometry());
         destroy();
     }
+}
+
+void LauncherApplet::startMenuEditor()
+{
+    KProcess::execute("kmenuedit");
 }
 
 void LauncherApplet::showConfigurationInterface()

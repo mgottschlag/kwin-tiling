@@ -55,6 +55,7 @@ public:
 public slots:
         void showConfigurationInterface();
         void switchMenuStyle();
+        void startMenuEditor();
 
 protected slots:
         void configAccepted();

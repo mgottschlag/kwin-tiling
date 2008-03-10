@@ -34,6 +34,7 @@
 #include <KIcon>
 #include <KDialog>
 #include <KMenu>
+#include <KProcess>
 
 // Plasma
 #include <plasma/layouts/boxlayout.h>
@@ -183,6 +184,12 @@ void MenuLauncherApplet::init()
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ExtensionHandler,"desktop",new Kickoff::ServiceItemHandler);
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ProtocolHandler, "leave", new Kickoff::LeaveItemHandler);
 
+    if (KService::serviceByStorageId("kde4-kmenuedit.desktop")) {
+        QAction* menueditor = new QAction(i18n("Menu Editor"), this);
+        d->actions.append(menueditor);
+        connect(menueditor, SIGNAL(triggered(bool)), this, SLOT(startMenuEditor()));
+    }
+
     Q_ASSERT( ! d->switcher );
     d->switcher = new QAction(i18n("Switch to Kickoff Menu Style"), this);
     d->actions.append(d->switcher);
@@ -218,6 +225,11 @@ void MenuLauncherApplet::switchMenuStyle()
         containment()->addApplet("launcher", QVariantList(), 0, geometry());
         destroy();
     }
+}
+
+void MenuLauncherApplet::startMenuEditor()
+{
+    KProcess::execute("kmenuedit");
 }
 
 void MenuLauncherApplet::showConfigurationInterface()

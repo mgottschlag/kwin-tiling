@@ -108,6 +108,8 @@ public Q_SLOTS:
          */
         void switchMenuStyle();
 
+        void startMenuEditor();
+
 private Q_SLOTS:
         void configAccepted();
         void toggleMenu(bool pressed);
