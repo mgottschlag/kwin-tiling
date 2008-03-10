@@ -1351,11 +1351,10 @@ void CKioFonts::put(const KUrl &u, int mode, KIO::JobFlags flags)
     //    2. Check with FreeType that the file is a font, or that it is
     //       an AFM or PFM file
     KTemporaryFile tmpFile;
-    QByteArray     tmpFileC(QFile::encodeName(tmpFile.fileName()));
 
     tmpFile.setAutoRemove(true);
 
-    if(putReal(tmpFile.fileName(), tmpFileC, destExists, mode, flags))
+    if(putReal(tmpFile))
     {
         EFileType type(checkFile(tmpFile.fileName(), u));  // error logged in checkFile
 
@@ -1399,7 +1398,7 @@ void CKioFonts::put(const KUrl &u, int mode, KIO::JobFlags flags)
             tmpFile.setAutoRemove(false);
             if(!Misc::dExists(destFolderReal))
                 Misc::createDir(destFolderReal);
-            if(0==::rename(tmpFileC.constData(), destC.constData()))
+            if(0==::rename(QFile::encodeName(tmpFile.fileName()).constData(), destC.constData()))
             {
                 Misc::setFilePerms(destC);
                 if(FILE_FONT==type)
@@ -1610,67 +1609,11 @@ bool CKioFonts::createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name,
     return false;
 }
 
-bool CKioFonts::putReal(const QString &destOrig, const QByteArray &destOrigC, bool origExists,
-                        int mode, KIO::JobFlags flags)
+bool CKioFonts::putReal(KTemporaryFile &dest)
 {
-    bool    markPartial=config()->readEntry("MarkPartial", true);
-    QString dest;
-
-    if (markPartial)
+    if (!dest.open())
     {
-        QString    destPart(destOrig+QString::fromLatin1(".part"));
-        QByteArray destPartC(QFile::encodeName(destPart));
-
-        dest = destPart;
-
-        KDE_struct_stat buffPart;
-        bool            partExists=(-1!=KDE_stat(destPartC.constData(), &buffPart));
-
-        if (partExists && !(flags & KIO::Resume) && buffPart.st_size>0)
-        {
-             // Maybe we can use this partial file for resuming
-             // Tell about the size we have, and the app will tell us
-             // if it's ok to resume or not.
-             flags |=canResume(buffPart.st_size) ? KIO::Resume : KIO::DefaultFlags;
-
-             if (!(flags & KIO::Resume))
-                 if (!::remove(destPartC.constData()))
-                     partExists = false;
-                 else
-                 {
-                     error(KIO::ERR_CANNOT_DELETE_PARTIAL, destPart);
-                     return false;
-                 }
-        }
-    }
-    else
-    {
-        dest = destOrig;
-        if (origExists && !(flags & KIO::Resume))
-            ::remove(destOrigC.constData());
-            // Catch errors when we try to open the file.
-    }
-
-    QByteArray destC(QFile::encodeName(dest));
-
-    int fd;
-
-    if (flags & KIO::Resume)
-    {
-        fd = KDE_open(destC.constData(), O_RDWR);  // append if resuming
-        KDE_lseek(fd, 0, SEEK_END); // Seek to end
-    }
-    else
-    {
-        // WABA: Make sure that we keep writing permissions ourselves,
-        // otherwise we can be in for a surprise on NFS.
-        fd = KDE_open(destC.constData(), O_CREAT | O_TRUNC | O_WRONLY,
-                      -1==mode ? 0666: mode | S_IWUSR | S_IRUSR);
-    }
-
-    if (fd < 0)
-    {
-        error(EACCES==errno ? KIO::ERR_WRITE_ACCESS_DENIED : KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest);
+        error(EACCES==errno ? KIO::ERR_WRITE_ACCESS_DENIED : KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.fileName());
         return false;
     }
 
@@ -1682,16 +1625,16 @@ bool CKioFonts::putReal(const QString &destOrig, const QByteArray &destOrigC, bo
 
         dataReq(); // Request for data
         result = readData(buffer);
-        if(result > 0 && !writeAll(fd, buffer.constData(), buffer.size()))
+        if(result > 0 && !writeAll(dest.handle(), buffer.constData(), buffer.size()))
         {
             if(ENOSPC==errno) // disk full
             {
-                error(KIO::ERR_DISK_FULL, destOrig);
+                error(KIO::ERR_DISK_FULL, dest.fileName());
                 result = -2; // means: remove dest file
             }
             else
             {
-                error(KIO::ERR_COULD_NOT_WRITE, destOrig);
+                error(KIO::ERR_COULD_NOT_WRITE, dest.fileName());
                 result = -1;
             }
         }
@@ -1700,37 +1643,8 @@ bool CKioFonts::putReal(const QString &destOrig, const QByteArray &destOrigC, bo
 
     if (result<0)
     {
-        ::close(fd);
-        if (-1==result)
-           ::remove(destC.constData());
-        else if (markPartial)
-        {
-           KDE_struct_stat buff;
-
-           if ((-1==KDE_stat(destC.constData(), &buff)) ||
-               (buff.st_size<config()->readEntry("MinimumKeepSize", DEFAULT_MINIMUM_KEEP_SIZE)))
-               ::remove(destC.constData());
-        }
+        dest.close();
         ::exit(255);
-    }
-
-    if (-1==fd) // we got nothing to write out, so we never opened the file
-    {
-        finished();
-        return false;
-    }
-
-    if (::close(fd))
-    {
-        error(KIO::ERR_COULD_NOT_WRITE, destOrig);
-        return false;
-    }
-
-    // after full download rename the file back to original name
-    if (markPartial && ::rename(destC.constData(), destOrigC.constData()))
-    {
-        error(KIO::ERR_CANNOT_RENAME_PARTIAL, destOrig);
-        return false;
     }
 
     return true;

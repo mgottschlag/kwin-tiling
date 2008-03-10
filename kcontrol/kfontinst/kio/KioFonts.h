@@ -41,6 +41,8 @@
 #include "Server.h"
 #include "Helper.h"
 
+class KTemporaryFile;
+
 namespace KFI
 {
 
@@ -145,8 +147,7 @@ class CKioFonts : public KIO::SlaveBase
                                           bool sys, bool hidden=false);
     bool               createFolderUDSEntry(KIO::UDSEntry &entry, const QString &name, const QString &path,
                                             bool sys);
-    bool               putReal(const QString &destOrig, const QByteArray &destOrigC, bool origExists,
-                               int mode, KIO::JobFlags flags);
+    bool               putReal(KTemporaryFile &dest);
     void               modified(int timeout, EFolder folder, bool clearList=true,
                                 const CDirList &dirs=CDirList());
     void               special(const QByteArray &a);
