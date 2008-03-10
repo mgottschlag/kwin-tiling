@@ -21,30 +21,27 @@
 #include "KDialog"
 
 namespace Ui
-    {
-    class SelectSchemeDialog;
-    }
+{
+class SelectSchemeDialog;
+}
 
 class SelectSchemeDialog : public KDialog
-    {
+{
     Q_OBJECT
+public:
+    SelectSchemeDialog(QWidget *parent = 0);
+    ~SelectSchemeDialog();
 
-    public:
+    KUrl selectedScheme() const;
 
-        SelectSchemeDialog( QWidget *parent = 0 );
-        ~SelectSchemeDialog();
+private slots:
+    void schemeActivated(int index);
+    void slotUrlChanged(const QString &);
 
-        KUrl selectedScheme() const;
-
-    private slots:
-
-        void schemeActivated(int index);
-        void slotUrlChanged( const QString& );
-    private:
-
-        Ui::SelectSchemeDialog *ui;
-        QStringList m_schemes;
-    }; // SelectSchemeDialog
+private:
+    Ui::SelectSchemeDialog *ui;
+    QStringList m_schemes;
+}; // SelectSchemeDialog
 
 
 
