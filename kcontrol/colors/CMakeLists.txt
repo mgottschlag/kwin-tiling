@@ -13,5 +13,3 @@ install( FILES colors.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 # built-in color schemes
 FILE(GLOB schemefiles schemes/*.colors)
 install( FILES ${schemefiles} DESTINATION ${DATA_INSTALL_DIR}/color-schemes )
-
-kde4_install_icons( ${ICON_INSTALL_DIR}  )

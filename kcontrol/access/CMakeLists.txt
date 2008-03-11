@@ -33,6 +33,3 @@ install(TARGETS kaccess DESTINATION ${BIN_INSTALL_DIR})
 install( FILES kcmaccess.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES kaccess.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install( FILES kaccess.notifyrc  DESTINATION  ${DATA_INSTALL_DIR}/kaccess/ )
-
-kde4_install_icons( ${ICON_INSTALL_DIR}  )
-

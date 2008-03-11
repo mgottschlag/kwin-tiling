@@ -28,5 +28,3 @@ install(TARGETS kcm_kthememanager  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 install( FILES kthememanager.desktop installktheme.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 install(PROGRAMS kdeinstallktheme DESTINATION ${BIN_INSTALL_DIR})
-
-kde4_install_icons( ${ICON_INSTALL_DIR}  )

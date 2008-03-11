@@ -36,7 +36,5 @@ install(TARGETS kcm_kdm  DESTINATION ${PLUGIN_INSTALL_DIR})
 
 install( FILES kdm.desktop  DESTINATION  ${SERVICES_INSTALL_DIR} )
 
-kde4_install_icons( ${ICON_INSTALL_DIR}  )
-
 install( FILES anchor.png  DESTINATION  ${DATA_INSTALL_DIR}/kcontrol/pics )
 install( FILES kdm.knsrc DESTINATION ${CONFIG_INSTALL_DIR} )
