@@ -37,7 +37,6 @@ class ItemDelegate : public QAbstractItemDelegate
         QString secondLine(const QModelIndex &index) const;
         QPixmap decoration(const QModelIndex &index) const;
         QPalette::ColorRole foregroundRole(const QStyleOptionViewItem &option, const QModelIndex &index) const;
-        QPalette::ColorRole backgroundRole(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
 #endif

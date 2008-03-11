@@ -20,6 +20,7 @@
 #include "itemdelegate.h"
 #include "cursortheme.h"
 
+#include <QApplication>
 #include <QModelIndex>
 #include <QPainter>
 
@@ -108,21 +109,6 @@ QPalette::ColorRole ItemDelegate::foregroundRole(const QStyleOptionViewItem &opt
 }
 
 
-QPalette::ColorRole ItemDelegate::backgroundRole(const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-    if (option.state & QStyle::State_Selected)
-        return QPalette::Highlight;
-
-    const QStyleOptionViewItemV2 *option2 = qstyleoption_cast<const QStyleOptionViewItemV2*>(&option);
-
-    if (option2)
-        return option2->features & QStyleOptionViewItemV2::Alternate ?
-                QPalette::AlternateBase : QPalette::Base;
-    else
-        return index.row() % 2 ? QPalette::AlternateBase : QPalette::Base;
-}
-
-
 void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     if (!index.isValid())
@@ -139,10 +125,11 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
     QPixmap pixmap    = decoration(index);
 
     QColor textcol = option.palette.color(foregroundRole(option, index));
-    QBrush bgbrush = option.palette.brush(backgroundRole(option, index));
 
     // Draw the background
-    painter->fillRect(option.rect, bgbrush);
+    QStyleOptionViewItemV4 opt = option;
+    QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
+    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);
 
     // Draw the icon
     int x = option.rect.left() + (option.decorationSize.width() - pixmap.width() + decorationMargin) / 2;
