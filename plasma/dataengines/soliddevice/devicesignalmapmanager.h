@@ -42,7 +42,6 @@ class DeviceSignalMapManager : public QObject
         void unmapDevice(Solid::StorageAccess *storageaccess);
         
     private:
-        QMap<QString, Solid::DeviceInterface*> devicemap;
         QMap<Solid::DeviceInterface::Type, DeviceSignalMapper*> signalmap;
         QObject *user;
 };
