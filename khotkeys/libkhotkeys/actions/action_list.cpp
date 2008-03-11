@@ -57,7 +57,7 @@ void Action_list::cfg_write( KConfigGroup& cfg_P ) const
          it != end();
          ++it )
         {
-        KConfigGroup group( cfg_P.config(), save_cfg_group + QString::number( i ) );
+        KConfigGroup group( cfg_P.config(), save_cfg_group + QString::number( i++ ) );
         (*it)->cfg_write( group );
         }
     cfg_P.writeEntry( "ActionsCount", i );

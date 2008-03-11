@@ -55,7 +55,7 @@ void Trigger_list::cfg_write( KConfigGroup& cfg_P ) const
          it != end();
          ++it )
         {
-        KConfigGroup triggerConfig( cfg_P.config(), cfg_P.name() + QString::number( i ));
+        KConfigGroup triggerConfig( cfg_P.config(), cfg_P.name() + QString::number( i++ ));
         (*it)->cfg_write( triggerConfig );
         }
     cfg_P.writeEntry( "TriggersCount", i );
