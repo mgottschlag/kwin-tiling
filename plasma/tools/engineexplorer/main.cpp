@@ -36,11 +36,51 @@ int main(int argc, char **argv)
                         ki18n( "Author and maintainer" ),
                         "aseigo@kde.org");
 
-
     KCmdLineArgs::init(argc, argv, &aboutData);
+
+    KCmdLineOptions options;
+    options.add("height <pixels>", ki18n("The desired height in pixels"));
+    options.add("width <pixels>", ki18n("The desired width in pixels"));
+    options.add("x <pixels>", ki18n("The desired x position in pixels"));
+    options.add("y <pixels>", ki18n("The desired y position in pixels"));
+    options.add("engine <data engine>", ki18n("The data engine to use"));
+    options.add("interval <ms>", ki18n("Update Interval in milliseconds.  Default: 50ms"), "50");
+    KCmdLineArgs::addCmdLineOptions(options);
+
+    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
     KApplication app;
     EngineExplorer* w = new EngineExplorer;
+
+    bool ok1,ok2 = false;
+    //get pos if available
+    int x = args->getOption("height").toInt(&ok1);
+    int y = args->getOption("width").toInt(&ok2);
+    if (ok1 & ok2) {
+        w->resize(x,y);
+    }
+
+    //get size
+    x = args->getOption("x").toInt(&ok1);
+    y = args->getOption("y").toInt(&ok2);
+    if (ok1 & ok2) {
+        w->move(x,y);
+    }
+
+    //set interval
+    int interval = args->getOption("interval").toInt(&ok1);
+    if (ok1) {
+        w->setInterval(interval);
+    }
+
+    //set engine
+    QString engine = args->getOption("engine");
+    if (!engine.isEmpty()) {
+        w->setEngine(engine);
+    }
+
+    args->clear();
+
     w->show();
     return app.exec();
 }

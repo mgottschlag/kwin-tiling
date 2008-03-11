@@ -41,6 +41,9 @@ class EngineExplorer : public KDialog, public Ui::EngineExplorer
         explicit EngineExplorer(QWidget *parent = 0);
         ~EngineExplorer();
 
+        void setEngine(const QString &engine);
+        void setInterval(const int interval);
+
     public slots:
         void dataUpdated(const QString& source, const Plasma::DataEngine::Data& data);
 

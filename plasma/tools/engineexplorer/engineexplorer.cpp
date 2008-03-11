@@ -62,6 +62,22 @@ EngineExplorer::~EngineExplorer()
 {
 }
 
+void EngineExplorer::setEngine(const QString &engine)
+{
+    //find the engine in the combo box
+    int index = m_engines->findText(engine);
+    if (index != -1) {
+        kDebug() << "Engine found!";
+        m_engines->setCurrentIndex(index);
+        showEngine(engine);
+    }
+}
+
+void EngineExplorer::setInterval(const int interval)
+{
+    m_updateInterval->setValue(interval);
+}
+
 void EngineExplorer::dataUpdated(const QString& source, const Plasma::DataEngine::Data& data)
 {
     QList<QStandardItem*> items = m_dataModel->findItems(source, 0);
