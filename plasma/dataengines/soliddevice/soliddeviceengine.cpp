@@ -54,6 +54,8 @@ SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QVariantList& args)
 {
     Q_UNUSED(args)
     signalmanager = new DeviceSignalMapManager(this);
+
+    listenForNewDevices();
 }
 
 SolidDeviceEngine::~SolidDeviceEngine()
@@ -83,26 +85,29 @@ bool SolidDeviceEngine::sourceRequested(const QString &name)
 
     //create a predicate to check for validity
     Solid::Predicate predicate = Solid::Predicate::fromString(name);
+    Solid::Device device(name);
     if(predicate.isValid()  && !predicatemap.contains(name)) {
         foreach (Solid::Device device, Solid::Device::listFromQuery(predicate)) {
             predicatemap[name] << device.udi();
-            if (!devicemap.contains(device.udi())) {
-                devicemap[device.udi()] = device;
-            }
         }
         setData(name, predicatemap[name]);
-        listenForNewDevices();
         return true;
-    } else if (devicemap.contains(name) ) {
+    } else if (device.isValid()) {
+        if (devicemap.contains(name) ) {
+            return true;
+        } else {
+            devicemap[name] = device;
             return populateDeviceData(name);
-    } else {
-            return false;
+        }
     }
+
+    kDebug() << "Source is not a predicate or a device.";
+    return false;
 }
 
 bool SolidDeviceEngine::populateDeviceData(const QString &name)
 {
-    Solid::Device device = devicemap[name];
+    Solid::Device device = devicemap.value(name);
     if (!device.isValid()) {
         return false;
     }
@@ -148,7 +153,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
             freeDiskVar.setValue( freeDisk );
         }
         setData(name, I18N_NOOP("Free Space"), freeDiskVar );
-        //signalmanager->mapDevice(storageaccess, device.udi());
+        signalmanager->mapDevice(storageaccess, device.udi());
     }
     if (device.is<Solid::StorageDrive>()) {
         Solid::StorageDrive *storagedrive = device.as<Solid::StorageDrive>();
@@ -461,9 +466,6 @@ void SolidDeviceEngine::deviceAdded(const QString& udi)
         if (predicate.matches(device)) {
             predicatemap[query] << udi;
             setData(query, predicatemap[query]);
-            if (!devicemap.contains(udi)) {
-                devicemap[udi] = device;
-            }
         }
     }
 
@@ -500,7 +502,7 @@ qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
 
 bool SolidDeviceEngine::updateFreeSpace(const QString &udi)
 {
-    Solid::Device device = devicemap[udi];
+    Solid::Device device = devicemap.value(udi);
     if (!device.is<Solid::StorageAccess>()) {
         return false;
     }
@@ -526,10 +528,10 @@ void SolidDeviceEngine::deviceRemoved(const QString& udi)
 {
     foreach (QString query, predicatemap.keys()) {
         predicatemap[query].removeAll(udi);
-        devicemap.remove(udi);
         setData(query, predicatemap[query]);
     }
-    
+
+    devicemap.remove(udi);
     removeSource(udi);
     checkForUpdates();
 }
