@@ -111,9 +111,9 @@ class KDE_EXPORT Action_data
         virtual void add_triggers(
             Trigger_list* triggers_P ); // Trigger_list instance will be deleted
         virtual void set_triggers( Trigger_list* triggers_P );
-        virtual void add_action( Action* action_P, Action* after_P = NULL );
+        virtual void add_action( Action* action_P, Action* after_P = 0 );
         virtual void add_actions( Action_list* actions_P,
-            Action* after_P = NULL ); // Action_list will be deleted
+            Action* after_P = 0 ); // Action_list will be deleted
         virtual void set_actions( Action_list* actions_P );
     private:
         Trigger_list* _triggers;
@@ -218,7 +218,7 @@ class KDE_EXPORT Keyboard_input_gesture_action_data
 inline
 const Condition_list* Action_data_base::conditions() const
     {
-//    assert( _conditions != NULL );
+//    assert( _conditions != 0 );
     return _conditions;
     }
     
@@ -315,14 +315,14 @@ Action_data::Action_data( Action_data_group* parent_P, const QString& name_P,
 inline
 const Trigger_list* Action_data::triggers() const
     {
-//    assert( _triggers != NULL );
+//    assert( _triggers != 0 );
     return _triggers;
     }
     
 inline
 const Action_list* Action_data::actions() const
     {
-//    assert( _actions != NULL );
+//    assert( _actions != 0 );
     return _actions;
     }
 
@@ -348,8 +348,8 @@ template< typename T, typename A >
 inline
 Simple_action_data< T, A >::Simple_action_data( Action_data_group* parent_P,
     const QString& name_P, const QString& comment_P, bool enabled_P )
-    : Action_data( parent_P, name_P, comment_P, NULL,
-        new Condition_list( "", this ), NULL, enabled_P )
+    : Action_data( parent_P, name_P, comment_P, 0,
+        new Condition_list( "", this ), 0, enabled_P )
     {
     }
 
@@ -379,16 +379,16 @@ void Simple_action_data< T, A >::set_trigger( T* trigger_P )
 template< typename T, typename A >
 const A* Simple_action_data< T, A >::action() const
     {
-    if( actions() == NULL || actions()->count() == 0 ) // CHECKME tohle poradne zkontrolovat
-        return NULL;
+    if( actions() == 0 || actions()->isEmpty() ) // CHECKME tohle poradne zkontrolovat
+        return 0;
     return static_cast< A* >( const_cast< Action_list* >( actions())->first());
     }
 
 template< typename T, typename A >
 const T* Simple_action_data< T, A >::trigger() const
     {
-    if( triggers() == NULL || triggers()->count() == 0 ) // CHECKME tohle poradne zkontrolovat
-        return NULL;
+    if( triggers() == 0 || triggers()->isEmpty() ) // CHECKME tohle poradne zkontrolovat
+        return 0;
     return static_cast< T* >( const_cast< Trigger_list* >( triggers())->first());
     }
     
@@ -431,8 +431,8 @@ Menuentry_shortcut_action_data::Menuentry_shortcut_action_data( KConfigGroup& cf
 inline
 Keyboard_input_gesture_action_data::Keyboard_input_gesture_action_data(
     Action_data_group* parent_P, const QString& name_P, const QString& comment_P, bool enabled_P )
-    : Action_data( parent_P, name_P, comment_P, NULL,
-        new Condition_list( "", this ), NULL, enabled_P )
+    : Action_data( parent_P, name_P, comment_P, 0,
+        new Condition_list( "", this ), 0, enabled_P )
     {
     }
 

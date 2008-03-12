@@ -29,7 +29,7 @@ Action_data_base::Action_data_base( Action_data_group* parent_P, const QString& 
     {
     if( parent())
         parent()->add_child( this );
-    if( _conditions != NULL )
+    if( _conditions != 0 )
         _conditions->set_data( this );
     }
     
@@ -60,7 +60,7 @@ void Action_data_base::cfg_write( KConfigGroup& cfg_P ) const
     cfg_P.writeEntry( "Comment", comment());
     cfg_P.writeEntry( "Enabled", enabled( true ));
     KConfigGroup conditionsConfig( cfg_P.config(), cfg_P.name() + "Conditions" );
-    assert( conditions() != NULL );
+    assert( conditions() != 0 );
     conditions()->cfg_write( conditionsConfig );
     }
 
@@ -100,7 +100,7 @@ Action_data_base* Action_data_base::create_cfg_read( KConfigGroup& cfg_P, Action
     if( type == "ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA" )
         return new Activate_window_shortcut_action_data( cfg_P, parent_P );
     kWarning( 1217 ) << "Unknown Action_data_base type read from cfg file\n";
-    return NULL;
+    return 0;
     }
     
 bool Action_data_base::cfg_is_enabled( KConfigGroup& cfg_P )
@@ -122,12 +122,12 @@ bool Action_data_base::enabled( bool ignore_group_P ) const
     if( ignore_group_P )
         return _enabled;
     else
-        return _enabled && ( parent() == NULL || parent()->enabled( false ));
+        return _enabled && ( parent() == 0 || parent()->enabled( false ));
     }
 
 void Action_data_base::set_conditions( Condition_list* conditions_P )
     {
-    assert( _conditions == NULL );
+    assert( _conditions == 0 );
     _conditions = conditions_P;
     }
 
@@ -217,7 +217,7 @@ void Action_data::add_triggers( Trigger_list* triggers_P )
 
 void Action_data::set_triggers( Trigger_list* triggers_P )
     {
-    assert( _triggers == NULL );
+    assert( _triggers == 0 );
     _triggers = triggers_P;
     }
 
@@ -259,7 +259,7 @@ void Action_data::add_actions( Action_list* actions_P, Action* after_P )
 
 void Action_data::set_actions( Action_list* actions_P )
     {
-    assert( _actions == NULL );
+    assert( _actions == 0 );
     _actions = actions_P;
     }
 
@@ -364,8 +364,8 @@ void Keyboard_input_gesture_action_data::set_action( Keyboard_input_action* acti
 
 const Keyboard_input_action* Keyboard_input_gesture_action_data::action() const
     {
-    if( actions() == NULL ) // CHECKME tohle poradne zkontrolovat
-        return NULL;
+    if( actions() == 0 || actions()->isEmpty() ) // CHECKME tohle poradne zkontrolovat
+        return 0;
     return static_cast< Keyboard_input_action* >( const_cast< Action_list* >( actions())->first());
     }
 
