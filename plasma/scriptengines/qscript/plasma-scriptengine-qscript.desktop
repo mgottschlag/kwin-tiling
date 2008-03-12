@@ -2,6 +2,7 @@
 Name=JavaScript Widget
 Name[ga]=Giuirléid JavaScript
 Name[gu]=જાવાસ્ક્રિપ્ટ વિજેટ
+Name[km]=ធាតុ​ក្រាហ្វិក JavaScript
 Name[pt]=Elemento de JavaScript
 Name[pt_BR]=Elemento de JavaScript
 Name[sr]=конрола јаваскрипта
@@ -11,6 +12,7 @@ Name[zh_TW]=JavaScript 元件
 Comment=Native Plasma widget written in JavaScript
 Comment[ga]=Giuirléid dhúchasach Plasma, scríofa i JavaScript
 Comment[gu]=જાવાસ્ક્રિપ્ટમાં લખાયેલ મૂળભૂત પ્લાઝમા વિજેટ
+Comment[km]=ធាតុ​ក្រាហ្វិក​ប្លាស្មា​ដើម ដែល​សរសេរ​ក្នុង JavaScript
 Comment[pt]=Elemento nativo do Plasma feito em JavaScript
 Comment[pt_BR]=Elemento nativo do Plasma feito em JavaScript
 Comment[sr]=Сопствена плазма контрола написана у јаваскрипту
