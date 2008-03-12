@@ -41,6 +41,7 @@ PanelView::PanelView(Plasma::Containment *panel, QWidget *parent)
 
     if (panel) {
         connect(panel, SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
+        connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));
         connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
     }
 
@@ -125,28 +126,38 @@ void PanelView::updateStruts()
 {
     NETExtendedStrut strut;
 
+    QRect thisScreen = QApplication::desktop()->screenGeometry(containment()->screen());
+    QRect wholeScreen = QApplication::desktop()->screenGeometry();
+
+    // extended struts are to the combined screen geoms, not the single screen
+    int leftOffset = wholeScreen.x() - thisScreen.x();
+    int rightOffset = wholeScreen.right() - thisScreen.right();
+    int bottomOffset = wholeScreen.bottom() - thisScreen.bottom();
+    int topOffset = wholeScreen.top() - thisScreen.top();
+    kDebug() << "screen l/r/b/t offsets are:" << leftOffset << rightOffset << bottomOffset << topOffset;
+
     switch (location())
     {
         case Plasma::TopEdge:
-            strut.top_width = height();
+            strut.top_width = height() + topOffset;
             strut.top_start = x();
             strut.top_end = x() + width() - 1;
             break;
 
         case Plasma::BottomEdge:
-            strut.bottom_width = height();
+            strut.bottom_width = height() + bottomOffset;
             strut.bottom_start = x();
             strut.bottom_end = x() + width() - 1;
             break;
 
         case Plasma::RightEdge:
-            strut.right_width = width();
+            strut.right_width = width() + rightOffset;
             strut.right_start = y();
             strut.right_end = y() + height() - 1;
             break;
 
         case Plasma::LeftEdge:
-            strut.left_width = width();
+            strut.left_width = width() + leftOffset;
             strut.left_start = y();
             strut.left_end = y() + height() - 1;
             break;

@@ -23,6 +23,11 @@
 #include <QList>
 #include <QWidget>
 
+namespace Plasma
+{
+    class Containment;
+}
+
 class DesktopView;
 
 /**
@@ -54,12 +59,22 @@ class RootWidget : public QWidget
          */
         bool isDesktop() const;
 
+        /**
+         * Creates a view for the given screen
+         */
+        void createDesktopView(int screen);
+
+        /**
+         * Returns the view, if any, for the given screen
+         */
+        DesktopView* viewForScreen(int screen) const;
+
     public slots:
         void toggleDashboard();
 
     protected slots:
         void adjustSize(int screen);
-        void createDesktopView(int screen);
+        void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
 
     private:
         QList<DesktopView*> m_desktops;

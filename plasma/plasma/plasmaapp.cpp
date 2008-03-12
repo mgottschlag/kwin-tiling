@@ -201,17 +201,16 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     KConfigGroup cg(KGlobal::config(), "General");
     Plasma::Theme::self()->setFont(cg.readEntry("desktopFont", font()));
 
+    m_root = new RootWidget();
+    m_root->setAsDesktop(KCmdLineArgs::parsedArgs()->isSet("desktop"));
+
     // this line initializes the corona.
     corona();
 
-    m_root = new RootWidget();
-    m_root->setAsDesktop(KCmdLineArgs::parsedArgs()->isSet("desktop"));
-    m_root->show();
-
-    createPanels();
     notifyStartup(true);
 
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
+    m_root->show();
 }
 
 PlasmaApp::~PlasmaApp()
@@ -221,12 +220,16 @@ PlasmaApp::~PlasmaApp()
 
 void PlasmaApp::cleanup()
 {
-    corona()->saveApplets();
+    if (m_corona) {
+        m_corona->saveApplets();
+    }
+
     delete m_root;
     m_root = 0;
-    qDeleteAll(m_panels);
+    QList<PanelView*> panels = m_panels;
     m_panels.clear();
-    delete corona();
+    qDeleteAll(panels);
+    delete m_corona;
 }
 
 void PlasmaApp::initializeWallpaper()
@@ -263,8 +266,15 @@ void PlasmaApp::crashHandler(int signal)
 
 Plasma::Corona* PlasmaApp::corona()
 {
+    Q_ASSERT(m_root);
+
     if (!m_corona) {
         m_corona = new Plasma::Corona(this);
+        connect(m_corona, SIGNAL(containmentAdded(Plasma::Containment*)),
+                this, SLOT(createView(Plasma::Containment*)));
+        connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
+                m_root, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
+
         m_corona->setItemIndexMethod(QGraphicsScene::NoIndex);
         m_corona->loadApplets();
     }
@@ -316,21 +326,33 @@ void PlasmaApp::notifyStartup(bool completed)
     }
 }
 
-void PlasmaApp::createPanels()
+void PlasmaApp::createView(Plasma::Containment *containment)
 {
-    foreach (Plasma::Containment *containment, corona()->containments()) {
-        kDebug() << "Containment name:" << containment->name()
-                 << "| type" << containment->containmentType()
-                 << "| screen:" << containment->screen()
-                 << "| geometry:" << containment->geometry()
-                 << "| zValue:" << containment->zValue();
-        if (containment->containmentType() == Plasma::Containment::PanelContainment) {
-            kDebug() << "we have a panel!";
+    kDebug() << "Containment name:" << containment->name()
+             << "| type" << containment->containmentType()
+             <<  "| screen:" << containment->screen()
+             << "| geometry:" << containment->geometry()
+             << "| zValue:" << containment->zValue();
+
+    switch (containment->containmentType()) {
+        case Plasma::Containment::PanelContainment: {
             PanelView *panelView = new PanelView(containment);
+            connect(panelView, SIGNAL(destroyed(QObject*)), this, SLOT(panelRemoved(QObject*)));
             m_panels << panelView;
             panelView->show();
+            break;
         }
+        default:
+            if (containment->screen() > -1) {
+                m_root->createDesktopView(containment->screen());
+            }
+            break;
     }
+}
+
+void PlasmaApp::panelRemoved(QObject* panel)
+{
+    m_panels.removeAll((PanelView*)panel);
 }
 
 #include "plasmaapp.moc"

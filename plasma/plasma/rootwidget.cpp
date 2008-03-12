@@ -27,6 +27,7 @@
 #include <KAction>
 #include <KShortcut>
 
+#include "plasma/containment.h"
 #include "plasma/corona.h"
 #include "plasma/plasma.h"
 #include "plasma/svg.h"
@@ -42,16 +43,6 @@ RootWidget::RootWidget()
 {
     setFocusPolicy(Qt::NoFocus);
 
-    // create a containment for each screen
-    QDesktopWidget *desktop = QApplication::desktop();
-    int numScreens = desktop->numScreens();
-    for (int i = 0; i < numScreens; ++i) {
-        createDesktopView(i);
-    }
-
-    Plasma::Corona* corona = PlasmaApp::self()->corona();
-    connect(corona, SIGNAL(newScreen(int)), this, SLOT(createDesktopView(int)));
-
     //TODO: Make the shortcut configurable
     KAction *showAction = new KAction( this );
     showAction->setText( i18n( "Show Dashboard" ) );
@@ -66,12 +57,13 @@ void RootWidget::toggleDashboard()
         currentScreen = QApplication::desktop()->screenNumber(QCursor::pos());
     }
 
-    if (currentScreen > m_desktops.count() - 1) {
+    DesktopView *view = viewForScreen(currentScreen);
+    if (!view) {
         kWarning() << "we don't have a DesktopView for the current screen!";
         return;
     }
 
-    m_desktops[currentScreen]->toggleDashboard();
+    view->toggleDashboard();
 }
 
 void RootWidget::setAsDesktop(bool setAsDesktop)
@@ -113,20 +105,60 @@ void RootWidget::adjustSize(int screen)
 {
     QDesktopWidget *desktop = QApplication::desktop();
     setGeometry(desktop->geometry());
+    DesktopView *view = viewForScreen(screen);
 
+    if (view) {
+        view->adjustSize();
+    }
+}
+
+DesktopView* RootWidget::viewForScreen(int screen) const
+{
     foreach (DesktopView *view, m_desktops) {
         if (view->screen() == screen) {
-            view->adjustSize();
+            return view;
         }
     }
+
+    return 0;
 }
 
 void RootWidget::createDesktopView(int screen)
 {
+    if (viewForScreen(screen)) {
+        // we already have a view for this screen
+        return;
+    }
+
     // we have a new screen. neat.
     DesktopView *view = new DesktopView(screen, this);
     view->setGeometry(QApplication::desktop()->screenGeometry(screen));
     m_desktops.append(view);
+}
+
+void RootWidget::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment)
+{
+    kDebug() << "was, is, containment:" << wasScreen << isScreen << (QObject*)containment;
+    if (containment->containmentType() == Plasma::Containment::PanelContainment) {
+        // we don't care about panel containments changing screens on us
+        return;
+    }
+
+    if (wasScreen > -1) {
+        DesktopView *view = viewForScreen(isScreen);
+        if (view) {
+            view->setContainment(0);
+        }
+    }
+
+    if (isScreen > -1) {
+        DesktopView *view = viewForScreen(isScreen);
+        if (view) {
+            view->setContainment(containment);
+        } else {
+            createDesktopView(isScreen);
+        }
+    }
 }
 
 #include "rootwidget.moc"

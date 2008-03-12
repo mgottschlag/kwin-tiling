@@ -45,7 +45,7 @@ public:
 
     void notifyStartup(bool completed);
     Plasma::Corona* corona();
-    void showAppletBrowser(Plasma::Containment* containment);
+    void showAppletBrowser(Plasma::Containment *containment);
 
 public Q_SLOTS:
     // DBUS interface. if you change these methods, you MUST run:
@@ -57,11 +57,12 @@ private Q_SLOTS:
     void setCrashHandler();
     void cleanup();
     void appletBrowserDestroyed();
+    void createView(Plasma::Containment *containment);
+    void panelRemoved(QObject* panel);
 
 private:
     PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap);
     static void crashHandler(int signal);
-    void createPanels();
 
     RootWidget *m_root;
     Plasma::Corona *m_corona;
