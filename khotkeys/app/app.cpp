@@ -61,16 +61,16 @@ void KHotKeysApp::reread_configuration()
     khotkeys_set_active( false );
     Settings settings;
     settings.read_settings( false );
-    gesture_handler->set_mouse_button( settings.gesture_mouse_button );
-    gesture_handler->set_timeout( settings.gesture_timeout );
-    gesture_handler->enable( !settings.gestures_disabled_globally );
-    gesture_handler->set_exclude( settings.gestures_exclude );
+    gesture_handler->set_mouse_button( settings.gestureMouseButton() );
+    gesture_handler->set_timeout( settings.gestureTimeOut() );
+    gesture_handler->enable( !settings.areGesturesDisabled() );
+    gesture_handler->set_exclude( settings.gesturesExclude() );
     // SOUND: FIXME
     // voice_handler->set_shortcut( settings.voice_shortcut );
 #if 0 // TEST CHECKME
     settings.write_settings();
 #endif
-    actions_root = settings.actions;
+    actions_root = settings.takeActions();
     khotkeys_set_active( true );
     actions_root->update_triggers();
     }

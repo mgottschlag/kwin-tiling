@@ -102,68 +102,74 @@ Action_data_base* Module::current_action_data()
 inline
 void Module::set_gestures_disabled( bool set )
     {
-    settings.gestures_disabled_globally = set;
+    if (set)
+        settings.disableGestures();
+    else
+        settings.enableGestures();
     }
 
 inline
 bool Module::gestures_disabled() const
     {
-    return settings.gestures_disabled_globally;
+    return settings.areGesturesDisabled();
     }
 
 inline
 void Module::set_gesture_button( int button )
     {
-    settings.gesture_mouse_button = button;
+    settings.setGestureMouseButton( button );    
     }
 
 inline
 int Module::gesture_button() const
     {
-    return settings.gesture_mouse_button;
+    return settings.gestureMouseButton();
     }
 
 inline
 void Module::set_gesture_timeout( int time )
     {
-    settings.gesture_timeout = time;
+    settings.setGestureTimeOut( time );
     }
 
 inline
 int Module::gesture_timeout() const
     {
-    return settings.gesture_timeout;
+    return settings.gestureTimeOut();
     }
 
 inline
 const Windowdef_list* Module::gestures_exclude() const
     {
-    return settings.gestures_exclude;
+    return settings.gesturesExclude();
     }
 
 inline
 void Module::set_daemon_disabled( bool disabled_P )
     {
-    settings.daemon_disabled = disabled_P;
+    if (disabled_P)
+        settings.disableDaemon();
+    else
+        settings.enableDaemon();
     }
 
 inline
 bool Module::daemon_disabled() const
     {
-    return settings.daemon_disabled;
+    return settings.isDaemonDisabled();
     }
 
 
 inline
 void Module::set_voice_shortcut( const KShortcut& cut)
    {
-    settings.voice_shortcut=cut;
+    settings.setVoiceShortcut(cut);
    }
 
 inline 
 KShortcut Module::voice_shortcut() const
    {
-	return settings.voice_shortcut;
+   return settings.voiceShortcut();
    }
 
 

@@ -29,12 +29,133 @@ namespace KHotKeys
 // Settings
 
 Settings::Settings()
-    : actions( NULL ), gestures_exclude( NULL )
+    : m_actions( NULL ), gestures_exclude( NULL )
     {
     }
 
+
+Settings::~Settings()
+    {
+    delete m_actions; m_actions = 0;
+    }
+
+
+Action_data_group *Settings::actions()
+    {
+    return m_actions;
+    }
+
+
+bool Settings::areGesturesDisabled() const
+    {
+    return gestures_disabled;
+    }
+
+
+void Settings::disableDaemon()
+    {
+    daemon_disabled = true;
+    }
+
+
+void Settings::disableGestures()
+    {
+    gestures_disabled = true;
+    }
+
+
+void Settings::enableDaemon()
+    {
+    daemon_disabled = false;
+    }
+
+
+void Settings::enableGestures()
+    {
+    gestures_disabled = false;
+    }
+
+
+int Settings::gestureMouseButton() const
+    {
+    return gesture_mouse_button;
+    }
+
+
+Windowdef_list *Settings::gesturesExclude()
+    {
+    return gestures_exclude;
+    }
+
+
+const Windowdef_list *Settings::gesturesExclude() const
+    {
+    return gestures_exclude;
+    }
+
+
+int Settings::gestureTimeOut() const
+    {
+    return gesture_timeout;
+    }
+
+
+bool Settings::isDaemonDisabled() const
+    {
+    return daemon_disabled;
+    }
+
+
+void Settings::setActions( Action_data_group *actions )
+    {
+    delete m_actions;
+    m_actions = actions;
+    }
+
+
+void Settings::setGesturesExclude( Windowdef_list *gestures )
+    {
+    delete gestures_exclude;
+    gestures_exclude = gestures;
+    }
+
+
+void Settings::setGestureMouseButton( int mouse_button )
+    {
+    gesture_mouse_button = mouse_button;
+    }
+
+
+void Settings::setGestureTimeOut(int timeout)
+    {
+    gesture_timeout = timeout;
+    }
+
+
+void Settings::setVoiceShortcut( const KShortcut &shortcut )
+    {
+    voice_shortcut = shortcut;
+    }
+
+
+Action_data_group *Settings::takeActions()
+    {
+    Action_data_group *res = m_actions;
+    m_actions = 0;
+    return res;
+    }
+
+
+KShortcut Settings::voiceShortcut() const
+    {
+    return voice_shortcut;
+    }
+
+
 bool Settings::read_settings( bool include_disabled_P )
     {
+    delete m_actions; m_actions = 0;
+
     KConfig cfg( KHOTKEYS_CONFIG_FILE );
     return read_settings( cfg, include_disabled_P, ImportNone );
     }
@@ -46,8 +167,8 @@ bool Settings::import( KConfig& cfg_P, bool ask_P )
 
 bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportType import_P )
     {
-    if( actions == NULL )
-        actions = new Action_data_group( NULL, "should never see", "should never see",
+    if( m_actions == NULL )
+        m_actions = new Action_data_group( NULL, "should never see", "should never see",
             NULL, Action_data_group::SYSTEM_ROOT, true );
     if( cfg_P.groupList().count() == 0 ) // empty
         return false;
@@ -101,7 +222,7 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
         return true; // don't read global settings
     daemon_disabled = mainGroup.readEntry( "Disabled", false);
     KConfigGroup gesturesConfig( &cfg_P, "Gestures" );
-    gestures_disabled_globally = gesturesConfig.readEntry( "Disabled", true);
+    gestures_disabled = gesturesConfig.readEntry( "Disabled", true);
     gesture_mouse_button = gesturesConfig.readEntry( "MouseButton", 2 );
     gesture_mouse_button = qBound( 2, gesture_mouse_button, 9 );
     gesture_timeout = gesturesConfig.readEntry( "Timeout", 300 );
@@ -113,9 +234,15 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
     return true;
     }
 
-void Settings::write_settings()
+void Settings::write_settings( Action_data_group *action_list )
     {
     KConfig cfg( KHOTKEYS_CONFIG_FILE );
+
+    if (action_list==0)
+        {
+        action_list = m_actions;
+        }
+
 // CHECKME    smazat stare sekce ?
     QStringList groups = cfg.groupList();
     for( QStringList::ConstIterator it = groups.begin();
@@ -126,11 +253,11 @@ void Settings::write_settings()
     mainGroup.writeEntry( "Version", 2 ); // now it's version 2 cfg. file
     mainGroup.writeEntry( "AlreadyImported", already_imported );
     KConfigGroup dataGroup( &cfg,  "Data" );
-    int cnt = write_actions_recursively_v2( dataGroup, actions, true );
+    int cnt = write_actions_recursively_v2( dataGroup, action_list, true );
     mainGroup.writeEntry( "Autostart", cnt != 0 && !daemon_disabled );
     mainGroup.writeEntry( "Disabled", daemon_disabled );
     KConfigGroup gesturesConfig( &cfg, "Gestures" );
-    gesturesConfig.writeEntry( "Disabled", gestures_disabled_globally );
+    gesturesConfig.writeEntry( "Disabled", gestures_disabled );
     gesturesConfig.writeEntry( "MouseButton", gesture_mouse_button );
     gesturesConfig.writeEntry( "Timeout", gesture_timeout );
     if( gestures_exclude != NULL )
@@ -176,7 +303,7 @@ int Settings::write_actions_recursively_v2( KConfigGroup& cfg_P, Action_data_gro
 void Settings::read_settings_v2( KConfig& cfg_P, bool include_disabled_P  )
     {
     KConfigGroup dataGroup( &cfg_P, "Data" );
-    read_actions_recursively_v2( dataGroup, actions, include_disabled_P );
+    read_actions_recursively_v2( dataGroup, m_actions, include_disabled_P );
     }
 
 void Settings::read_actions_recursively_v2( KConfigGroup& cfg_P, Action_data_group* parent_P,
@@ -205,8 +332,8 @@ void Settings::read_settings_v1( KConfig& cfg_P )
     KConfigGroup mainGroup( &cfg_P, "Main" );
     int sections = mainGroup.readEntry( "Num_Sections", 0 );
     Action_data_group* menuentries = NULL;
-    for( Action_data_group::ConstIterator it = actions->first_child();
-         it != actions->after_last_child();
+    for( Action_data_group::ConstIterator it = m_actions->first_child();
+         it != m_actions->after_last_child();
          ++it )
         {
         Action_data_group* tmp = dynamic_cast< Action_data_group* >( *it );
@@ -241,7 +368,7 @@ void Settings::read_settings_v1( KConfig& cfg_P )
             {
             if( menuentries == NULL )
                 {
-                menuentries = new Action_data_group( actions,
+                menuentries = new Action_data_group( m_actions,
                     i18n( MENU_EDITOR_ENTRIES_GROUP_NAME ),
                     i18n( "These entries were created using Menu Editor." ), NULL,
                     Action_data_group::SYSTEM_MENUENTRIES, true );
@@ -252,7 +379,7 @@ void Settings::read_settings_v1( KConfig& cfg_P )
             }
         else
             {
-            ( void ) new Command_url_shortcut_action_data( actions, name, "",
+            ( void ) new Command_url_shortcut_action_data( m_actions, name, "",
                 KShortcut( shortcut ), run );
             }
         }

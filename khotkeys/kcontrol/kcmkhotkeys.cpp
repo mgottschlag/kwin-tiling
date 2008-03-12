@@ -121,18 +121,16 @@ Module::~Module()
     {
     _current_action_data = NULL;
     tab_widget->load_current_action(); // clear tab_widget
-    delete _actions_root;
     module = NULL;
     }
 
 void Module::load()
     {
     actions_listview_widget->clear();
-    delete _actions_root;
-    settings.actions = NULL;
+    settings.setActions(0);
     _current_action_data = NULL;
     settings.read_settings( true );
-    _actions_root = settings.actions;
+    _actions_root = settings.actions();
     kDebug( 1217 ) << "actions_root:" << _actions_root;
     actions_listview_widget->build_up();
     tab_widget->load_current_action();
@@ -142,7 +140,6 @@ void Module::load()
 void Module::save()
     {
     tab_widget->save_current_action_changes();
-    settings.actions = _actions_root;
     kDebug(1217) << "Storing actions" << _actions_root;
     settings.write_settings();
     QDBusConnection bus = QDBusConnection::sessionBus();
@@ -298,8 +295,7 @@ void Module::global_settings()
 
 void Module::set_gestures_exclude( Windowdef_list* windows )
     {
-    delete settings.gestures_exclude;
-    settings.gestures_exclude = windows;
+    settings.setGesturesExclude( windows );
     }
 
 void Module::import()

@@ -76,16 +76,16 @@ void KHotKeysModule::reread_configuration()
     KHotKeys::khotkeys_set_active( false );
     KHotKeys::Settings settings;
     settings.read_settings( false );
-    KHotKeys::gesture_handler->set_mouse_button( settings.gesture_mouse_button );
-    KHotKeys::gesture_handler->set_timeout( settings.gesture_timeout );
-    KHotKeys::gesture_handler->enable( !settings.gestures_disabled_globally );
-    KHotKeys::gesture_handler->set_exclude( settings.gestures_exclude );
+    KHotKeys::gesture_handler->set_mouse_button( settings.gestureMouseButton() );
+    KHotKeys::gesture_handler->set_timeout( settings.gestureTimeOut() );
+    KHotKeys::gesture_handler->enable( !settings.areGesturesDisabled() );
+    KHotKeys::gesture_handler->set_exclude( settings.gesturesExclude() );
     // FIXME: SOUND
     // KHotKeys::voice_handler->set_shortcut( settings.voice_shortcut );
 #if 0 // TEST CHECKME
     settings.write_settings();
 #endif
-    actions_root = settings.actions;
+    actions_root = settings.takeActions();
     KHotKeys::khotkeys_set_active( true );
     actions_root->update_triggers();
     }

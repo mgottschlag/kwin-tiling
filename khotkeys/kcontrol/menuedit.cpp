@@ -138,7 +138,7 @@ QStringList khotkeys_get_all_shortcuts( )
     Settings settings;
     settings.read_settings( true );
 
-    khotkeys_get_all_shortcuts_internal(settings.actions, result);
+    khotkeys_get_all_shortcuts_internal(settings.actions(), result);
     
     return result;
     }
@@ -181,7 +181,7 @@ KService::Ptr khotkeys_find_menu_entry( const QString& shortcut_P )
     Settings settings;
     settings.read_settings( true );
 
-    return khotkeys_find_menu_entry_internal(settings.actions, shortcut_P);
+    return khotkeys_find_menu_entry_internal(settings.actions(), shortcut_P);
     }
 
         
@@ -207,26 +207,23 @@ QString khotkeys_get_menu_entry_shortcut( const QString& entry_P )
     Settings settings;
     settings.read_settings( true );
     Menuentry_shortcut_action_data* entry
-        = khotkeys_get_menu_entry_internal( settings.actions, entry_P );
+        = khotkeys_get_menu_entry_internal( settings.actions(), entry_P );
     if( entry == NULL )
         {
-        delete settings.actions;
         return "";
         }
     QString shortcut = khotkeys_get_menu_shortcut( entry );
-    delete settings.actions;
     return shortcut;
-    }    
+    }
     
 bool khotkeys_menu_entry_moved( const QString& new_P, const QString& old_P )
     {
     Settings settings;
     settings.read_settings( true );
     Menuentry_shortcut_action_data* entry
-        = khotkeys_get_menu_entry_internal( settings.actions, old_P );
+        = khotkeys_get_menu_entry_internal( settings.actions(), old_P );
     if( entry == NULL )
         {
-        delete settings.actions;
         return false;
         }
     Action_data_group* parent = entry->parent();
@@ -239,7 +236,6 @@ bool khotkeys_menu_entry_moved( const QString& new_P, const QString& old_P )
     new_entry->set_action( new Menuentry_action( new_entry, new_P ));
     delete entry;
     settings.write_settings();
-    delete settings.actions;
     khotkeys_send_reread_config();
     return true;
     }
@@ -249,15 +245,13 @@ void khotkeys_menu_entry_deleted( const QString& entry_P )
     Settings settings;
     settings.read_settings( true );
     Menuentry_shortcut_action_data* entry
-        = khotkeys_get_menu_entry_internal( settings.actions, entry_P );
+        = khotkeys_get_menu_entry_internal( settings.actions(), entry_P );
     if( entry == NULL )
         {
-        delete settings.actions;
         return;
         }
     delete entry;
     settings.write_settings();
-    delete settings.actions;
     khotkeys_send_reread_config();
     }
 
@@ -267,7 +261,7 @@ QString khotkeys_change_menu_entry_shortcut( const QString& entry_P,
     Settings settings;
     settings.read_settings( true );
     Menuentry_shortcut_action_data* entry
-        = khotkeys_get_menu_entry_internal( settings.actions, entry_P );
+        = khotkeys_get_menu_entry_internal( settings.actions(), entry_P );
     bool new_entry = ( entry == NULL );
     if( new_entry )
         {
@@ -297,11 +291,10 @@ QString khotkeys_change_menu_entry_shortcut( const QString& entry_P,
             settings.write_settings();
             khotkeys_send_reread_config();
             }
-        delete settings.actions;
         return "";
         }
-    entry->reparent( khotkeys_get_menu_root( settings.actions ));
-    settings.daemon_disabled = false; // #91782
+    entry->reparent( khotkeys_get_menu_root( settings.actions() ));
+    settings.disableDaemon(); // #91782
     settings.write_settings();
     khotkeys_send_reread_config();
     return shortcut;
