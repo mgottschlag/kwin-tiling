@@ -275,6 +275,7 @@ void Tab_widget::load_current_action()
                 kDebug( 1217 ) << "loading command_url_shortcut";
                 Command_url_shortcut_action_data* item
                     = static_cast< Command_url_shortcut_action_data* >( tmp );
+                Q_ASSERT(item);
                 static_cast< General_tab* >( pages[ TAB_GENERAL ] )->set_data( item );
                 static_cast< Shortcut_trigger_tab* >( pages[ TAB_SHORTCUT_TRIGGER ] )
                     ->set_data( item->trigger());
@@ -287,6 +288,7 @@ void Tab_widget::load_current_action()
                 kDebug( 1217 ) << "loading menuentry_shortcut";
                 Menuentry_shortcut_action_data* item
                     = static_cast< Menuentry_shortcut_action_data* >( tmp );
+                Q_ASSERT(item);
                 static_cast< General_tab* >( pages[ TAB_GENERAL ] )->set_data( item );
                 static_cast< Shortcut_trigger_tab* >( pages[ TAB_SHORTCUT_TRIGGER ] )
                     ->set_data( item->trigger());
@@ -299,6 +301,7 @@ void Tab_widget::load_current_action()
                 kDebug( 1217 ) << "loading dbus_shortcut";
                 Dbus_shortcut_action_data* item
                     = static_cast< Dbus_shortcut_action_data* >( tmp );
+                Q_ASSERT(item);
                 static_cast< General_tab* >( pages[ TAB_GENERAL ] )->set_data( item );
                 static_cast< Shortcut_trigger_tab* >( pages[ TAB_SHORTCUT_TRIGGER ] )
                     ->set_data( item->trigger());
@@ -311,6 +314,7 @@ void Tab_widget::load_current_action()
                 kDebug( 1217 ) << "loading keyboard_input_shortcut";
                 Keyboard_input_shortcut_action_data* item
                     = static_cast< Keyboard_input_shortcut_action_data* >( tmp );
+                Q_ASSERT(item);
                 static_cast< General_tab* >( pages[ TAB_GENERAL ] )->set_data( item );
                 static_cast< Shortcut_trigger_tab* >( pages[ TAB_SHORTCUT_TRIGGER ] )
                     ->set_data( item->trigger());
@@ -323,6 +327,7 @@ void Tab_widget::load_current_action()
                 kDebug( 1217 ) << "loading keyboard_input_gesture";
                 Keyboard_input_gesture_action_data* item
                     = static_cast< Keyboard_input_gesture_action_data* >( tmp );
+                Q_ASSERT(item);
                 static_cast< General_tab* >( pages[ TAB_GENERAL ] )->set_data( item );
                 static_cast< Gesture_triggers_tab* >( pages[ TAB_GESTURE_TRIGGER ] )
                     ->set_data( item->triggers());
@@ -335,11 +340,19 @@ void Tab_widget::load_current_action()
                 kDebug( 1217 ) << "loading activate_window_shortcut";
                 Activate_window_shortcut_action_data* item
                     = static_cast< Activate_window_shortcut_action_data* >( tmp );
+                Q_ASSERT(item);
                 static_cast< General_tab* >( pages[ TAB_GENERAL ] )->set_data( item );
                 static_cast< Shortcut_trigger_tab* >( pages[ TAB_SHORTCUT_TRIGGER ] )
                     ->set_data( item->trigger());
-                static_cast< Windowdef_list_tab* >( pages[ TAB_WINDOW ] )->set_data(
-                    item->action()->window());
+                if (item->action())
+                    {
+                    static_cast< Windowdef_list_tab* >( pages[ TAB_WINDOW ] )->set_data(
+                        item->action()->window());
+                    }
+                else
+                    {
+                    static_cast< Windowdef_list_tab* >( pages[ TAB_WINDOW ] )->set_data(0);
+                    }
               break;
                 }
             case TYPE_END:
