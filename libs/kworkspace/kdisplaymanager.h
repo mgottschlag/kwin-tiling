@@ -21,11 +21,11 @@
 #ifndef KDISPLAYMANAGER_H
 #define KDISPLAYMANAGER_H
 
-#include <kworkspace.h>
+#include "kworkspace.h"
 #include <kdemacros.h>
-#include <QString>
-#include <QList>
-#include <QByteArray>
+#include <QtCore/QString>
+#include <QtCore/QList>
+#include <QtCore/QByteArray>
 
 struct KDE_EXPORT SessEnt {
 	QString display, from, user, session;
