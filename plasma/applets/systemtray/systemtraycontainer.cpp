@@ -35,7 +35,10 @@
 SystemTrayContainer::SystemTrayContainer(WId clientId, QWidget *parent)
     : QX11EmbedContainer(parent)
 {
-    prepareFor(clientId); // temporary hack, until QX11EmbedContainer gets fixed
+    if( !prepareFor(clientId)) { // temporary hack, until QX11EmbedContainer gets fixed
+        deleteLater();
+        return;
+    }
 
     connect(this, SIGNAL(clientClosed()), SLOT(deleteLater()));
     connect(this, SIGNAL(error(QX11EmbedContainer::Error)), SLOT(handleError(QX11EmbedContainer::Error)));
@@ -76,12 +79,13 @@ void SystemTrayContainer::handleError(QX11EmbedContainer::Error error)
 
 // Temporary hack to change X window used by QX11EmbedContainer so that it matches
 // the window embedded into it (#153193).
-void SystemTrayContainer::prepareFor(WId w)
+bool SystemTrayContainer::prepareFor(WId w)
 {
     Display* dpy = QX11Info::display();
 
     XWindowAttributes ga;
-    XGetWindowAttributes(dpy, w, &ga);
+    if( !XGetWindowAttributes(dpy, w, &ga))
+        return false;
 
     XSetWindowAttributes sa;
     sa.background_pixel = WhitePixel(dpy, DefaultScreen(dpy));
@@ -110,4 +114,5 @@ void SystemTrayContainer::prepareFor(WId w)
             StructureNotifyMask |
             SubstructureNotifyMask);
     XFlush(dpy);
+    return true;
 }

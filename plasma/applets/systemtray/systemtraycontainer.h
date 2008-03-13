@@ -33,7 +33,7 @@ public:
     SystemTrayContainer(WId client, QWidget *parent);
 
 private:
-    void prepareFor( WId id );
+    bool prepareFor( WId id );
 
 private slots:
     void handleError(QX11EmbedContainer::Error error);
