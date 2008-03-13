@@ -522,6 +522,7 @@ bool MenuFile::performAllActions()
 {
     Q_FOREACH(ActionAtom *atom, m_actionList) {
         performAction( atom );
+        delete atom;
     }
     m_actionList.clear();
 
