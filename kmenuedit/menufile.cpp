@@ -520,12 +520,12 @@ void MenuFile::popAction(ActionAtom *atom)
 
 bool MenuFile::performAllActions()
 {
-   for(ActionAtom *atom; !m_actionList.isEmpty() &&  (atom = m_actionList.first()); m_actionList.removeFirst())
-   {
-      performAction(atom);
-      delete atom;
-   }
-   // Entries that have been removed from the menu are added to .hidden
+    Q_FOREACH(ActionAtom *atom, m_actionList) {
+        performAction( atom );
+    }
+    m_actionList.clear();
+
+    // Entries that have been removed from the menu are added to .hidden
    // so that they don't re-appear in Lost & Found
    QStringList removed = m_removedEntries;
    m_removedEntries.clear();
