@@ -205,9 +205,9 @@ void Trash::setIcon()
         }
     } else {
         m_icon->setIcon(KIcon("user-trash"));
-        m_data.subText = i18n("Empty");
+        m_data.subText = i18nc("The trash is empty. This is not an action, but a state", "Empty");
         if (m_showText){
-            m_icon->setInfoText(i18n("Empty"));
+            m_icon->setInfoText(i18nc("The trash is empty. This is not an action, but a state", "Empty"));
         }
     }
 
