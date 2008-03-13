@@ -32,6 +32,7 @@
 #include <KIcon>
 #include <KDialog>
 #include <KIntNumInput>
+#include <KMessageBox>
 
 #include <plasma/corona.h>
 #include <plasma/layouts/layout.h>
@@ -45,6 +46,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
       m_dialog(0),
       m_appletBrowserAction(0),
       m_configureAction(0),
+      m_removeAction(0),
       m_currentSize(56)
 {
     m_background = new Plasma::SvgPanel("widgets/panel-background", this);
@@ -74,10 +76,14 @@ QList<QAction*> Panel::contextActions()
         m_configureAction = new QAction(i18n("Panel Settings"), this);
         m_configureAction->setIcon(KIcon("configure"));
         connect(m_configureAction, SIGNAL(triggered()), this, SLOT(configure()));
+
+        m_removeAction = new QAction(i18n("Remove this Panel"), this);
+        m_removeAction->setIcon(KIcon("edit-delete"));
+        connect(m_removeAction, SIGNAL(triggered()), this, SLOT(remove()));
     }
 
     QList<QAction*> actions;
-    actions << m_configureAction << m_appletBrowserAction;
+    actions << m_configureAction << m_appletBrowserAction << m_removeAction;
     return actions;
 }
 
@@ -284,6 +290,16 @@ void Panel::configure()
     m_locationCombo->setCurrentIndex(idx);
 
     m_dialog->show();
+}
+
+void Panel::remove()
+{
+    if ( KMessageBox::warningContinueCancel( 0, i18n( "Do you really want to remove this panel?" ),
+       i18n("Remove Panel"), KStandardGuiItem::del() ) == KMessageBox::Continue ) {
+         clearApplets();
+         corona()->destroyContainment(this);
+         delete this;
+    }
 }
 
 void Panel::applyConfig()

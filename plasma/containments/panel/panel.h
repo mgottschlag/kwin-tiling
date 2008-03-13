@@ -56,6 +56,7 @@ public:
 
 private slots:
     void configure();
+    void remove();
     void applyConfig();
     void themeUpdated();
     void sizeComboChanged();
@@ -79,6 +80,7 @@ private:
     QComboBox* m_locationCombo;
     QAction* m_appletBrowserAction;
     QAction* m_configureAction;
+    QAction* m_removeAction;
     int m_currentSize;
 };
 

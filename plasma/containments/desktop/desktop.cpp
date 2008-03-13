@@ -40,6 +40,7 @@
 
 #include "plasma/corona.h"
 #include "plasma/appletbrowser.h"
+#include "plasma/layouts/layout.h"
 #include "plasma/phase.h"
 #include "plasma/theme.h"
 #include "kworkspace/kworkspace.h"
@@ -59,6 +60,7 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_lockDesktopAction(0),
       m_appletBrowserAction(0),
+      m_addPanelAction(0),
       m_runCommandAction(0),
       m_lockScreenAction(0),
       m_logoutAction(0),
@@ -279,6 +281,25 @@ void DefaultDesktop::updateBackground(int token, const QImage &img)
     }
 }
 
+void DefaultDesktop::addPanel()
+{
+    if (corona()) {
+        // make a panel at the top
+        Containment* panel = corona()->addContainment("panel");
+        panel->showConfigurationInterface();
+
+        panel->setScreen(screen());
+        panel->setLocation(Plasma::TopEdge);
+
+        // trigger an instant layout so we immediately have a proper geometry 
+        // rather than waiting around for the event loop
+        panel->updateConstraints(Plasma::StartupCompletedConstraint);
+        panel->flushUpdatedConstraints();
+
+        corona()->scheduleConfigSync();
+    }
+}
+
 void DefaultDesktop::runCommand()
 {
     if (!KAuthorized::authorizeKAction("run_command")) {
@@ -316,6 +337,10 @@ QList<QAction*> DefaultDesktop::contextActions()
         connect(m_appletBrowserAction, SIGNAL(triggered(bool)), this, SIGNAL(showAddWidgets()));
         m_appletBrowserAction->setIcon(KIcon("list-add"));
 
+        m_addPanelAction = new QAction(i18n("Add Panel"), this);
+        connect(m_addPanelAction, SIGNAL(triggered(bool)), this, SLOT(addPanel()));
+        m_addPanelAction->setIcon(KIcon("list-add"));
+
         m_runCommandAction = new QAction(i18n("Run Command..."), this);
         connect(m_runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
         m_runCommandAction->setIcon(KIcon("system-run"));
@@ -351,6 +376,7 @@ QList<QAction*> DefaultDesktop::contextActions()
     }
 
     actions.append(m_appletBrowserAction);
+    actions.append(m_addPanelAction);
     actions.append(m_setupDesktopAction);
 
     actions.append(m_separator);

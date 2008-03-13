@@ -93,12 +93,16 @@ protected Q_SLOTS:
 
     void updateBackground();
     void updateBackground(int, const QImage &img);
+
+    void addPanel();
+
 private:
     void reloadConfig(bool skipUpdates=false);
     QSize resolution() const;
 
     QAction *m_lockDesktopAction;
     QAction *m_appletBrowserAction;
+    QAction *m_addPanelAction;
     QAction *m_runCommandAction;
     QAction *m_setupDesktopAction;
     QAction *m_lockScreenAction;
