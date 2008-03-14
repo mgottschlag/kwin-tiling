@@ -1,6 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2007 by Stephen Leaf                                    *
  *   smileaf@gmail.com                                                     *
+ *   Copyright (C) 2008 by Montel Laurent <montel@kde.org>                 *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *

@@ -1,6 +1,7 @@
 /***************************************************************************
  *   Copyright (C) 2006-2007 by Stephen Leaf                               *
  *   smileaf@gmail.com                                                     *
+ *   Copyright (C) 2008 by Montel Laurent <montel@kde.org>                 *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -230,18 +231,14 @@ void Autostart::slotAddCMD() {
 }
 
 void Autostart::slotRemoveCMD() {
-	QList<QTreeWidgetItem *> list = widget->listCMD->selectedItems();
-	if (list.isEmpty()) return;
+	QTreeWidgetItem* item = widget->listCMD->currentItem();
+	if (!item) return;
+        widget->listCMD->takeTopLevelItem( widget->listCMD->indexOfTopLevelItem( item ) );
 
-	QStringList delList;
-	foreach (QTreeWidgetItem *itm, list) {
-		widget->listCMD->takeTopLevelItem( widget->listCMD->indexOfTopLevelItem( itm ) );
-		delList.append( ((Desktop*)itm)->fileName().path() );
-	}
-	KIO::del( KUrl::List( delList ) );
-
-	emit changed(true);
+        KIO::del(((Desktop*)item)->fileName().path() );
+        emit changed(true);
 }
+
 void Autostart::slotEditCMD(QTreeWidgetItem* ent) {
 	if (!ent) return;
 	Desktop *entry = (Desktop*)ent;

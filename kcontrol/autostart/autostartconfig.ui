@@ -12,6 +12,9 @@
   <layout class="QGridLayout" name="gridLayout" >
    <item rowspan="7" row="0" column="0" >
     <widget class="QTreeWidget" name="listCMD" >
+     <property name="rootIsDecorated" >
+      <bool>false</bool>
+     </property>
      <column>
       <property name="text" >
        <string>Name</string>
