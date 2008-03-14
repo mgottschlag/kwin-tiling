@@ -100,6 +100,7 @@ Autostart::Autostart( QWidget* parent, const QVariantList& )
 		ki18n("(c) 2006-2007 Stephen Leaf"));
 	about->addAuthor(ki18n("Stephen Leaf"), KLocalizedString(), "smileaf@gmail.com");
 	setAboutData( about );
+
 }
 
 
@@ -158,6 +159,8 @@ void Autostart::load()
 			}
 		}
 	}
+        //Update button
+        selectionChanged();
 }
 
 void Autostart::addCMD() {
@@ -199,7 +202,6 @@ void Autostart::addCMD() {
 			desktopTemplate = KUrl( KGlobalSettings::autostartPath() + service->name() + ".desktop" );
 			KConfig kc(desktopTemplate.path(), KConfig::SimpleConfig);
 			KConfigGroup kcg = kc.group("Desktop Entry");
-			kcg.writeEntry("Encoding","UTF-8");
 			kcg.writeEntry("Exec",service->exec());
 			kcg.writeEntry("Icon","system-run");
 			kcg.writeEntry("Path","");
@@ -268,28 +270,28 @@ bool Autostart::editCMD( const KFileItem &item) {
 }
 
 void Autostart::editCMD() {
-	if ( widget->listCMD->selectedItems().size() == 0 )
+	if ( widget->listCMD->currentItem() == 0 )
 		return;
-	editCMD( (Desktop*)widget->listCMD->selectedItems().first() );
+	editCMD( (Desktop*)widget->listCMD->currentItem() );
 }
 
 void Autostart::setStartOn( int index ) {
-	if ( widget->listCMD->selectedItems().size() == 0 )
+	if ( widget->listCMD->currentItem() == 0 )
 		return;
-	Desktop* entry = (Desktop*)widget->listCMD->selectedItems().first();
+	Desktop* entry = (Desktop*)widget->listCMD->currentItem();
 	entry->setPath(paths.value(index));
 	entry->setText(1, pathName[index]);
 }
 
 void Autostart::selectionChanged() {
-	bool hasItems = (widget->listCMD->selectedItems().size() != 0 );
+	bool hasItems = (widget->listCMD->currentItem()!= 0 );
 	widget->cmbStartOn->setEnabled(hasItems);
 	widget->btnRemove->setEnabled(hasItems);
 	widget->btnProperties->setEnabled(hasItems);
 	if (!hasItems)
 		return;
 
-	Desktop* entry = (Desktop*)widget->listCMD->selectedItems().first();
+	Desktop* entry = (Desktop*)widget->listCMD->currentItem();
 	widget->cmbStartOn->setCurrentIndex( paths.indexOf(entry->fileName().directory()+'/') );
 }
 
