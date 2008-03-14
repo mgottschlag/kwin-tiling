@@ -1,9 +1,8 @@
 [Desktop Entry]
-Encoding=UTF-8
 Exec=kcmshell4 autostart
 Icon=launch
 Type=Service
-ServiceTypes=KCModule
+X-KDE-ServiceTypes=KCModule
 
 X-KDE-Library=kcm_autostart
 X-KDE-ParentApp=kcontrol
@@ -25,14 +24,12 @@ Comment[pt_BR]=Uma ferramenta do KControl para gerir os programas que arrancam c
 Comment[sv]=Ett inställningsverktyg för att hantera vilka program som startas tillsammans med KDE.
 Comment[xx]=xxA Configuration tool for managing what programs start up with KDE.xx
 
-Keywords=Autostart Manager
-Keywords[de]=Autostart Verwaltung
-Keywords[es]=Administrador de inicio automático
-Keywords[et]=Autostardi haldur
-Keywords[ja]=自動起動マネージャ
-Keywords[pt]=Gestor do Arranque
-Keywords[pt_BR]=Gestor do Arranque
-Keywords[sv]=Autostart hantering
-Keywords[xx]=xxAutostart Managerxx
-
-Categories=Qt;KDE;X-KDE-settings-components;
+X-KDE-Keywords=Autostart Manager
+X-KDE-Keywords[de]=Autostart Verwaltung
+X-KDE-Keywords[es]=Administrador de inicio automático
+X-KDE-Keywords[et]=Autostardi haldur
+X-KDE-Keywords[ja]=自動起動マネージャ
+X-KDE-Keywords[pt]=Gestor do Arranque
+X-KDE-Keywords[pt_BR]=Gestor do Arranque
+X-KDE-Keywords[sv]=Autostart hantering
+X-KDE-Keywords[xx]=xxAutostart Managerxx
