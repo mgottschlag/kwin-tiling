@@ -83,12 +83,13 @@ Autostart::Autostart( QWidget* parent, const QVariantList& )
 	widget = new Ui_AutostartConfig();
 	widget->setupUi(this);
         setButtons(Apply);
-	connect( widget->btnAdd, SIGNAL(clicked()), SLOT(addCMD()) );
-	connect( widget->btnRemove, SIGNAL(clicked()), SLOT(removeCMD()) );
-	connect( widget->listCMD, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), SLOT(editCMD(QTreeWidgetItem*)) );
-	connect( widget->btnProperties, SIGNAL(clicked()), SLOT(editCMD()) );
-	connect( widget->cmbStartOn, SIGNAL(activated(int)), SLOT(setStartOn(int)) );
-	connect( widget->listCMD, SIGNAL(itemSelectionChanged()), SLOT(selectionChanged()) );
+	connect( widget->btnAddScript, SIGNAL(clicked()), SLOT(slotAddCMD()) );
+	connect( widget->btnAddProgram, SIGNAL(clicked()), SLOT(slotAddProgram()) );
+	connect( widget->btnRemove, SIGNAL(clicked()), SLOT(slotRemoveCMD()) );
+	connect( widget->listCMD, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), SLOT(slotEditCMD(QTreeWidgetItem*)) );
+	connect( widget->btnProperties, SIGNAL(clicked()), SLOT(slotEditCMD()) );
+	connect( widget->cmbStartOn, SIGNAL(activated(int)), SLOT(slotSetStartOn(int)) );
+	connect( widget->listCMD, SIGNAL(itemSelectionChanged()), SLOT(slotSelectionChanged()) );
 
 	widget->listCMD->setFocus();
 
@@ -160,17 +161,60 @@ void Autostart::load()
 		}
 	}
         //Update button
-        selectionChanged();
+        slotSelectionChanged();
 }
 
-void Autostart::addCMD() {
+void Autostart::slotAddProgram()
+{
+    KService::Ptr service;
+    KOpenWithDialog owdlg( this );
+    if (owdlg.exec() != QDialog::Accepted)
+        return;
+    service = owdlg.service();
+
+    Q_ASSERT(service);
+    if (!service)
+    {
+        return; // Don't crash if KOpenWith wasn't able to create service.
+    }
+
+    KUrl desktopTemplate;
+    if ( service->desktopEntryName().isEmpty() ) {
+        desktopTemplate = KUrl( KGlobalSettings::autostartPath() + service->name() + ".desktop" );
+        KConfig kc(desktopTemplate.path(), KConfig::SimpleConfig);
+        KConfigGroup kcg = kc.group("Desktop Entry");
+        kcg.writeEntry("Exec",service->exec());
+        kcg.writeEntry("Icon","system-run");
+        kcg.writeEntry("Path","");
+        kcg.writeEntry("Terminal",false);
+        kcg.writeEntry("Type","Application");
+        kc.sync();
+
+        KPropertiesDialog dlg( desktopTemplate, this );
+        if ( dlg.exec() != QDialog::Accepted )
+        {
+            return;
+        }
+    }
+    else
+    {
+        desktopTemplate = KUrl( KStandardDirs::locate("apps", service->entryPath()) );
+
+        KPropertiesDialog dlg( desktopTemplate, KUrl(KGlobalSettings::autostartPath()), service->name() + ".desktop", this );
+        if ( dlg.exec() != QDialog::Accepted )
+            return;
+    }
+    Desktop * item = new Desktop( KGlobalSettings::autostartPath() + service->name() + ".desktop", widget->listCMD );
+    item->setText( 0, service->name() );
+    item->setText( 1, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
+    item->setText( 2, service->exec() );
+    emit changed(true);
+}
+
+void Autostart::slotAddCMD() {
 	AddDialog * addDialog = new AddDialog(this);
 	int result = addDialog->exec();
-
-	if (result == QDialog::Rejected) {
-            delete addDialog;
-            return;
-	} else if (result == 3) {
+	if (result == QDialog::Accepted) {
 		if (addDialog->symLink())
 			KIO::link(addDialog->importUrl(), paths[0]);
 		else
@@ -180,61 +224,12 @@ void Autostart::addCMD() {
 		item->setText( 0, addDialog->importUrl().fileName() );
 		item->setText( 1, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
 		item->setText( 2, addDialog->importUrl().fileName() );
-	} else if (result == 4) {
-		KService::Ptr service;
-		KOpenWithDialog owdlg( this );
-		if (owdlg.exec() != QDialog::Accepted)
-                {
-                    delete addDialog;
-                    return;
-                }
-		service = owdlg.service();
-
-		Q_ASSERT(service);
-		if (!service)
-                {
-                    delete addDialog;
-                    return; // Don't crash if KOpenWith wasn't able to create service.
-                }
-
-		KUrl desktopTemplate;
-		if ( service->desktopEntryName().isNull() ) {
-			desktopTemplate = KUrl( KGlobalSettings::autostartPath() + service->name() + ".desktop" );
-			KConfig kc(desktopTemplate.path(), KConfig::SimpleConfig);
-			KConfigGroup kcg = kc.group("Desktop Entry");
-			kcg.writeEntry("Exec",service->exec());
-			kcg.writeEntry("Icon","system-run");
-			kcg.writeEntry("Path","");
-			kcg.writeEntry("Terminal",false);
-			kcg.writeEntry("Type","Application");
-			kc.sync();
-
-			KPropertiesDialog dlg( desktopTemplate, this );
-			if ( dlg.exec() != QDialog::Accepted )
-                        {
-                            delete addDialog;
-                            return;
-                        }
-		} else {
-			desktopTemplate = KUrl( KStandardDirs::locate("apps", service->entryPath()) );
-
-			KPropertiesDialog dlg( desktopTemplate, KUrl(KGlobalSettings::autostartPath()), service->name() + ".desktop", this );
-			if ( dlg.exec() != QDialog::Accepted )
-                        {
-                            delete addDialog;
-                            return;
-                        }
-		}
-		Desktop * item = new Desktop( KGlobalSettings::autostartPath() + service->name() + ".desktop", widget->listCMD );
-		item->setText( 0, service->name() );
-		item->setText( 1, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
-		item->setText( 2, service->exec() );
 	}
         delete addDialog;
 	emit changed(true);
 }
 
-void Autostart::removeCMD() {
+void Autostart::slotRemoveCMD() {
 	QList<QTreeWidgetItem *> list = widget->listCMD->selectedItems();
 	if (list.isEmpty()) return;
 
@@ -247,12 +242,12 @@ void Autostart::removeCMD() {
 
 	emit changed(true);
 }
-void Autostart::editCMD(QTreeWidgetItem* ent) {
+void Autostart::slotEditCMD(QTreeWidgetItem* ent) {
 	if (!ent) return;
 	Desktop *entry = (Desktop*)ent;
 
 	const KFileItem kfi = KFileItem( KFileItem::Unknown, KFileItem::Unknown, KUrl( entry->fileName() ), true );
-	if (! editCMD( kfi )) return;
+	if (! slotEditCMD( kfi )) return;
 
 	if (entry->isDesktop()) {
 		KService service(entry->fileName().path());
@@ -262,20 +257,20 @@ void Autostart::editCMD(QTreeWidgetItem* ent) {
 	}
 }
 
-bool Autostart::editCMD( const KFileItem &item) {
+bool Autostart::slotEditCMD( const KFileItem &item) {
 	KPropertiesDialog dlg( item, this );
 	bool c = ( dlg.exec() == QDialog::Accepted );
 	emit changed(c);
 	return c;
 }
 
-void Autostart::editCMD() {
+void Autostart::slotEditCMD() {
 	if ( widget->listCMD->currentItem() == 0 )
 		return;
-	editCMD( (Desktop*)widget->listCMD->currentItem() );
+	slotEditCMD( (Desktop*)widget->listCMD->currentItem() );
 }
 
-void Autostart::setStartOn( int index ) {
+void Autostart::slotSetStartOn( int index ) {
 	if ( widget->listCMD->currentItem() == 0 )
 		return;
 	Desktop* entry = (Desktop*)widget->listCMD->currentItem();
@@ -283,7 +278,7 @@ void Autostart::setStartOn( int index ) {
 	entry->setText(1, pathName[index]);
 }
 
-void Autostart::selectionChanged() {
+void Autostart::slotSelectionChanged() {
 	bool hasItems = (widget->listCMD->currentItem()!= 0 );
 	widget->cmbStartOn->setEnabled(hasItems);
 	widget->btnRemove->setEnabled(hasItems);

@@ -49,13 +49,14 @@ public:
     QStringList pathName;
 
 public slots:
-	void addCMD();
-	void removeCMD();
-	void editCMD(QTreeWidgetItem*);
-	bool editCMD(const KFileItem&);
-	void editCMD();
-	void setStartOn(int);
-	void selectionChanged();
+    void slotAddProgram();
+    void slotAddCMD();
+    void slotRemoveCMD();
+    void slotEditCMD(QTreeWidgetItem*);
+    bool slotEditCMD(const KFileItem&);
+    void slotEditCMD();
+    void slotSetStartOn(int);
+    void slotSelectionChanged();
 
 private:
 	Ui_AutostartConfig *widget;

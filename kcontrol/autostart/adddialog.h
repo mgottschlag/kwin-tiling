@@ -21,8 +21,9 @@
 #ifndef _ADDDIALOG_H_
 #define _ADDDIALOG_H_
 
-#include "ui_addDialog.h"
-#include <KUrlRequester>
+#include <KDialog>
+class KUrlRequester;
+class QCheckBox;
 
 class AddDialog : public KDialog
 {
@@ -36,12 +37,11 @@ public:
 	bool symLink() const;
 
 public slots:
-	void addPrg();
-	void importPrg();
 	void textChanged(const QString &text);
 
 private:
-	Ui_AddDialog * widget;
+    KUrlRequester *m_url;
+    QCheckBox* m_symlink;
 };
 
 #endif

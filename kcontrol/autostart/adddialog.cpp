@@ -21,20 +21,27 @@
 #include "adddialog.h"
 #include <KLineEdit>
 #include <QCheckBox>
+#include <QVBoxLayout>
+#include <klocale.h>
+#include <KUrlRequester>
+#include <QLabel>
 
 AddDialog::AddDialog (QWidget* parent)
     : KDialog( parent ) {
-    setButtons( None );
     QWidget *w = new QWidget( this );
-    widget = new Ui_AddDialog();
-    widget->setupUi(w);
+    setButtons( Cancel|Ok );
+    setDefaultButton( Cancel );
+    QVBoxLayout *lay= new QVBoxLayout;
+    w->setLayout( lay );
+    QLabel *lab = new QLabel( i18n( "Path:" ), w );//TODO fix text
+    lay->addWidget( lab );
+    m_url = new KUrlRequester( w );
+    lay->addWidget( m_url );
+    m_symlink = new QCheckBox( i18n( "Create as symlink" ), w ); //TODO fix text
+    lay->addWidget( m_symlink );
+    connect( m_url->lineEdit(), SIGNAL(textChanged(const QString&)), SLOT(textChanged(const QString&)) );
 
-    connect( widget->btnImport, SIGNAL(clicked()), SLOT(importPrg()) );
-    connect( widget->btnAdd, SIGNAL(clicked()), SLOT(addPrg()) );
-    connect( widget->btnCancel, SIGNAL(clicked()), SLOT(reject()) );
-    connect( widget->kurlfrScript, SIGNAL(textChanged(const QString&)), SLOT(textChanged(const QString&)) );
-
-    widget->btnImport->setEnabled(false);
+    enableButtonOk(false);
     setMainWidget( w );
 }
 
@@ -42,22 +49,15 @@ AddDialog::~AddDialog()
 {}
 
 void AddDialog::textChanged(const QString &text) {
-	widget->btnImport->setEnabled(!text.isEmpty());
+    enableButtonOk(!text.isEmpty());
 }
 
 KUrl AddDialog::importUrl() const {
-	return widget->kurlfrScript->lineEdit()->text();
+	return m_url->lineEdit()->text();
 }
 
 bool AddDialog::symLink() const {
-	return (widget->chkSymlink->checkState() == Qt::Checked);
-}
-
-void AddDialog::importPrg() {
-	done(3);
-}
-void AddDialog::addPrg() {
-	done(4);
+	return (m_symlink->checkState() == Qt::Checked);
 }
 
 #include "adddialog.moc"

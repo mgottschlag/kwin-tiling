@@ -12,7 +12,7 @@ SET(kcm_autostart_PART_SRCS
    adddialog.cpp
    autostart.cpp )
 
-KDE4_ADD_UI_FILES(kcm_autostart_PART_SRCS autostartconfig.ui addDialog.ui )
+KDE4_ADD_UI_FILES(kcm_autostart_PART_SRCS autostartconfig.ui )
 
 KDE4_ADD_PLUGIN(kcm_autostart ${kcm_autostart_PART_SRCS})
 
