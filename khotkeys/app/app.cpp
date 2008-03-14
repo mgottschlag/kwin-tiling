@@ -8,27 +8,15 @@
  
 ****************************************************************************/
 
-#define _KHOTKEYS_APP_CPP_
-
-#include <config-workspace.h>
-
 #include "app.h"
+
+#include "settings.h"
+#include "action_data.h"
+#include "gestures.h"
 
 #include <kcmdlineargs.h>
 #include <kconfig.h>
-#include <klocale.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-#include <X11/Xlib.h>
-
-#include <settings.h>
-#include <input.h>
-#include <action_data.h>
-#include <gestures.h>
-#include <voices.h>
+#include <kdebug.h>
 
 namespace KHotKeys
 {

@@ -8,30 +8,18 @@
 
 ****************************************************************************/
 
-#define _KHOTKEYS_KDED_CPP_
-
-#include <config-workspace.h>
-
 #include "kded.h"
+
+#include "action_data.h"
+#include "gestures.h"
+#include "khotkeysadaptor.h"
+#include "settings.h"
+
+#include <kdebug.h>
 
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
-#include <klocale.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-
-#include <X11/Xlib.h>
-#include <fixx11h.h>
-
-#include <settings.h>
-#include <input.h>
-#include <action_data.h>
-#include <gestures.h>
-#include <voices.h>
-
-#include "khotkeysadaptor.h"
 
 K_PLUGIN_FACTORY(KHotKeysModuleFactory,
                  registerPlugin<KHotKeysModule>();
