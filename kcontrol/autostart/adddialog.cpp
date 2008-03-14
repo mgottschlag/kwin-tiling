@@ -42,7 +42,7 @@ AddDialog::~AddDialog()
 {}
 
 void AddDialog::textChanged(const QString &text) {
-	widget->btnImport->setEnabled(!text.isNull());
+	widget->btnImport->setEnabled(!text.isEmpty());
 }
 
 KUrl AddDialog::importUrl() const {
