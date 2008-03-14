@@ -47,10 +47,21 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
     const bool hover = option.state & (QStyle::State_Selected|QStyle::State_MouseOver|QStyle::State_HasFocus);
     QRect contentRect = option.rect;
 
+    QSize decorationSize;
+
+    if (index.data(ScopeRole).toInt() == OpenAction ||
+        option.decorationSize.height() < SECOND_ACTION_ICON_SIZE) {
+        decorationSize = option.decorationSize;
+    } else {
+        decorationSize = QSize(SECOND_ACTION_ICON_SIZE, SECOND_ACTION_ICON_SIZE);
+    }
+
     QRect decorationRect = QStyle::alignedRect(option.direction,
                                                option.decorationPosition == QStyleOptionViewItem::Left ? Qt::AlignLeft : Qt::AlignRight,
-                                               option.decorationSize,
+                                               decorationSize,
                                                contentRect);
+    decorationRect.moveCenter(QPoint(decorationRect.center().x(), contentRect.center().y()));
+
     QSize textSize(option.rect.width() - decorationRect.width() - ICON_TEXT_MARGIN,
                    option.rect.height() - 2);
 
@@ -59,35 +70,6 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
     QRect textRect = QStyle::alignedRect(option.direction, textAlignment, textSize, contentRect.adjusted(0, 2, 0, 0));
     QString titleText = index.data(Qt::DisplayRole).value<QString>();
     QString subTitleText = index.data(ActionRole).value<QString>();
-
-    if (subTitleText.isEmpty()) {
-        subTitleText = " ";
-    }
-
-    QFont subTitleFont = fontForSubTitle(option.font);
-
-    QFont titleFont(option.font);
-
-    QFontMetrics titleMetrics(titleFont);
-    QFontMetrics subTitleMetrics(subTitleFont);
-    QRectF textAreaRect = contentRect;
-    qreal actualTextWidth = qMax(titleMetrics.width(titleText), subTitleMetrics.width(subTitleText));
-    textAreaRect.adjust(decorationRect.width() + ICON_TEXT_MARGIN - 3,
-                        0,
-                        (-(textRect.width() - actualTextWidth) + 3),
-                        1);
-
-    if (hover) {
-        painter->save();
-        painter->setPen(Qt::NoPen);
-        QColor backgroundColor = option.palette.color(QPalette::Highlight);
-        // use a slightly translucent version of the palette's highlight color
-        // for the background
-        backgroundColor.setAlphaF(0.5);
-        painter->setBrush(QBrush(backgroundColor));
-        painter->drawPath(roundedRectangle(textAreaRect, 5));
-        painter->restore();
-    }
 
     // draw icon
     QIcon decorationIcon = index.data(Qt::DecorationRole).value<QIcon>();
@@ -103,26 +85,56 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
         painter->restore();
     }
 
-    painter->save();
 
-    // draw title
-    painter->setFont(titleFont);
+    if (!subTitleText.isEmpty()) {
+        //draw highlight
+        QFont subTitleFont = fontForSubTitle(option.font);
 
-    textAreaRect.setHeight(textAreaRect.height()/2);
+        QFont titleFont(option.font);
 
-    painter->drawText(textAreaRect, Qt::AlignLeft|Qt::AlignVCenter, titleText);
+        QFontMetrics titleMetrics(titleFont);
+        QFontMetrics subTitleMetrics(subTitleFont);
+        QRectF textAreaRect = contentRect;
+        qreal actualTextWidth = qMax(titleMetrics.width(titleText), subTitleMetrics.width(subTitleText));
+        textAreaRect.adjust(decorationRect.width() + ICON_TEXT_MARGIN - 3,
+                            0,
+                            (-(textRect.width() - actualTextWidth) + 3),
+                            1);
 
-    // draw sub-title
-    painter->setFont(subTitleFont);
+        if (hover) {
+            painter->save();
+            painter->setPen(Qt::NoPen);
+            QColor backgroundColor = option.palette.color(QPalette::Highlight);
+            // use a slightly translucent version of the palette's highlight color
+            // for the background
+            backgroundColor.setAlphaF(0.5);
+            painter->setBrush(QBrush(backgroundColor));
+            painter->drawPath(roundedRectangle(textAreaRect, 5));
+            painter->restore();
+        }
 
-    if (!hover) {
-        painter->setPen(QPen(Qt::gray));
+        //draw text
+        painter->save();
+
+        // draw title
+        painter->setFont(titleFont);
+
+        textAreaRect.setHeight(textAreaRect.height()/2);
+
+        painter->drawText(textAreaRect, Qt::AlignLeft|Qt::AlignVCenter, titleText);
+
+        // draw sub-title
+        painter->setFont(subTitleFont);
+
+        if (!hover) {
+            painter->setPen(QPen(Qt::gray));
+        }
+        textAreaRect.translate(0, textAreaRect.height());
+
+        painter->drawText(textAreaRect, Qt::AlignLeft|Qt::AlignVCenter, subTitleText);
+
+        painter->restore();
     }
-    textAreaRect.translate(0, textAreaRect.height());
-
-    painter->drawText(textAreaRect, Qt::AlignLeft|Qt::AlignVCenter, subTitleText);
-
-    painter->restore();
 
 }
 

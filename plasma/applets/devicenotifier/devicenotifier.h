@@ -36,6 +36,11 @@
 class QStandardItemModel;
 class KDialog;
 
+namespace Notifier
+{
+    class NotifierView;
+}
+
 //desktop view
 namespace Plasma
 {
@@ -80,6 +85,7 @@ class DeviceNotifier : public Plasma::Applet
         void initSysTray();
 
         Plasma::DataEngine *m_solidEngine;
+        Plasma::DataEngine *m_solidDeviceEngine;
         QStandardItemModel *m_hotplugModel;
 
         Plasma::Dialog *m_widget;
@@ -91,6 +97,7 @@ class DeviceNotifier : public Plasma::Applet
         int m_displayTime;
         int m_numberItems;
         int m_itemsValidity;
+        Notifier::NotifierView *m_notifierView;
         QTimer *m_timer;
         bool isNotificationEnabled;
 

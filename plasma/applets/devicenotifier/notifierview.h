@@ -19,17 +19,20 @@
 #define NOTIFIERVIEW_H
 
 // Qt
-#include <QListView>
+#include <QTreeView>
 namespace Notifier
 {
 
-  class NotifierView : public QListView
+  class NotifierView : public QTreeView
   {
   Q_OBJECT
 
   public:
       NotifierView(QWidget *parent = 0);
       virtual ~NotifierView();
+
+  protected:
+      void resizeEvent(QResizeEvent * event);
   };
 
 }

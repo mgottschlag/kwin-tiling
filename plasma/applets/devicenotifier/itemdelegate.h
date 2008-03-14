@@ -31,10 +31,15 @@ namespace Notifier
     enum SpecificRoles {
             SolidUdiRole = Qt::UserRole + 1,
             PredicateFilesRole = Qt::UserRole + 2,
-            ActionRole = Qt::UserRole + 3
+            ActionRole = Qt::UserRole + 3,
+            IconNameRole = Qt::UserRole + 4,
+            ScopeRole = Qt::UserRole + 5
     };
 
-
+    enum ColumnScope {
+            OpenAction = 1,
+            DeactivateAction = 2
+    };
 
 class ItemDelegate : public QAbstractItemDelegate
 {
@@ -54,6 +59,7 @@ public:
 
     static const int ICON_TEXT_MARGIN = 10;
     static const int ICON_SIZE = 32;
+    static const int SECOND_ACTION_ICON_SIZE = 22;
 
     static const int ITEM_LEFT_MARGIN = 5;
     static const int ITEM_RIGHT_MARGIN = 7;

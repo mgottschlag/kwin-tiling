@@ -26,20 +26,32 @@
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QScrollBar>
+#include <QtGui/QHeaderView>
 
 #include <KDebug>
 
 using namespace Notifier;
 
 NotifierView::NotifierView(QWidget *parent)
-    : QListView(parent)
+    : QTreeView(parent)
 {
     setIconSize(QSize(ItemDelegate::ITEM_HEIGHT, ItemDelegate::ITEM_HEIGHT));
+    setRootIsDecorated(false);
+    setHeaderHidden(true);
 }
 
 NotifierView::~NotifierView()
 {
 
+}
+
+void NotifierView::resizeEvent(QResizeEvent * event)
+{
+    //the columns after the first are squares ItemDelegate::ITEM_HEIGHT x ItemDelegate::ITEM_HEIGHT,
+    //the first column takes all the remaining space
+    if (header()->count() > 0) {
+        header()->resizeSection(0, event->size().width() - (header()->count()-1)*ItemDelegate::ITEM_HEIGHT);
+    }
 }
 
 #include "notifierview.moc"

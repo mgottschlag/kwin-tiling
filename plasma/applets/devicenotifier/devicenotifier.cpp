@@ -48,6 +48,9 @@
 #include <plasma/widgets/icon.h>
 
 #include <solid/device.h>
+#include <solid/opticaldisc.h>
+#include <solid/storageaccess.h>
+#include <solid/opticaldrive.h>
 
 using namespace Plasma;
 using namespace Notifier;
@@ -80,6 +83,7 @@ void DeviceNotifier::init()
     m_itemsValidity = cg.readEntry("ItemsValidity", 5);
 
     m_solidEngine = dataEngine("hotplug");
+    m_solidDeviceEngine = dataEngine("soliddevice");
 
     m_widget = new Dialog();
 
@@ -101,7 +105,7 @@ void DeviceNotifier::init()
     l_layout2->addWidget(icon);
     l_layout2->addWidget(label);
 
-    Notifier::NotifierView *m_notifierView= new NotifierView(m_widget);
+    m_notifierView= new NotifierView(m_widget);
     m_notifierView->setModel(m_hotplugModel);
     ItemDelegate *delegate = new ItemDelegate;
     m_notifierView->setItemDelegate(delegate);
@@ -249,37 +253,63 @@ void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
 void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data data)
 {
     if (data.size() > 0) {
-        int nb_actions = 0;
-        QString last_action_label;
-        foreach (QString desktop, data["predicateFiles"].toStringList()) {
-            QString filePath = KStandardDirs::locate("data", "solid/actions/" + desktop);
-            QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
-            nb_actions += services.size();
-            if (services.size() > 0) {
-                last_action_label = QString(services[0].text());
+        //data from hotplug engine
+        if (!data["predicateFiles"].isNull()) {
+            int nb_actions = 0;
+            QString last_action_label;
+            foreach (QString desktop, data["predicateFiles"].toStringList()) {
+                QString filePath = KStandardDirs::locate("data", "solid/actions/" + desktop);
+                QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
+                nb_actions += services.size();
+                if (services.size() > 0) {
+                    last_action_label = QString(services[0].text());
+                }
+            }
+            QModelIndex index = indexForUdi(source);
+            Q_ASSERT(index.isValid());
+
+            m_hotplugModel->setData(index, data["predicateFiles"], PredicateFilesRole);
+            m_hotplugModel->setData(index, data["text"], Qt::DisplayRole);
+
+            //icon name
+            m_hotplugModel->setData(index, data["icon"], IconNameRole);
+            //icon data
+            m_hotplugModel->setData(index, KIcon(data["icon"].toString()), Qt::DecorationRole);
+
+            if (nb_actions > 1) {
+                QString s = i18np("1 action for this device",
+                                  "%1 actions for this device",
+                                  nb_actions);
+                m_hotplugModel->setData(index, s, ActionRole);
+            } else {
+                m_hotplugModel->setData(index,last_action_label, ActionRole);
+            }
+            if (m_icon && isNotificationEnabled) {
+                m_widget->move(popupPosition(m_widget->sizeHint()));
+                m_widget->show();
+                m_widget->clearFocus();
+                m_timer->start(m_displayTime*1000);
+            }
+        //data from soliddevice engine
+        } else {
+            QModelIndex index = indexForUdi(source);
+            Q_ASSERT(index.isValid());
+            QModelIndex actionIndex = m_hotplugModel->index(index.row(), 1, QModelIndex());
+
+            if (data["Accessible"].toBool() == true) {
+                m_hotplugModel->setData(actionIndex, KIcon("media-eject"), Qt::DecorationRole);
+
+                //set icon to mounted device
+                QStringList overlays;
+                overlays << "emblem-mounted";
+                m_hotplugModel->setData(index, KIcon(index.data(IconNameRole).toString(), NULL, overlays), Qt::DecorationRole);
+            } else {
+                m_hotplugModel->setData(actionIndex, KIcon(), Qt::DecorationRole);
+
+                //set icon to unmounted device
+                m_hotplugModel->setData(index, KIcon(index.data(IconNameRole).toString()), Qt::DecorationRole);
             }
         }
-        QModelIndex index = indexForUdi(source);
-	Q_ASSERT(index.isValid());
-
-	m_hotplugModel->setData(index, data["predicateFiles"], PredicateFilesRole);
-	m_hotplugModel->setData(index, data["text"], Qt::DisplayRole);
-	m_hotplugModel->setData(index, KIcon(data["icon"].toString()), Qt::DecorationRole);
-
-	if (nb_actions > 1) {
-	    QString s = i18np("1 action for this device",
-			      "%1 actions for this device",
-			      nb_actions);
-	    m_hotplugModel->setData(index, s, ActionRole);
-	} else {
-	    m_hotplugModel->setData(index,last_action_label, ActionRole);
-	}
-	if (m_icon && isNotificationEnabled) {
-	    m_widget->move(popupPosition(m_widget->sizeHint()));
-	    m_widget->show();
-	    m_widget->clearFocus();
-	    m_timer->start(m_displayTime*1000);
-	}
    }
 }
 
@@ -291,8 +321,20 @@ void DeviceNotifier::onSourceAdded(const QString &name)
     }
     QStandardItem *item = new QStandardItem();
     item->setData(name, SolidUdiRole);
+    item->setData(OpenAction, ScopeRole);
+
     m_hotplugModel->insertRow(0, item);
     m_solidEngine->connectSource(name, this);
+
+    m_solidDeviceEngine->connectSource(name, this);
+
+    //sets the "action" column
+    QStandardItem *actionItem = new QStandardItem();
+    actionItem->setData(name, SolidUdiRole);
+    actionItem->setData(DeactivateAction, ScopeRole);
+
+    m_hotplugModel->setItem(0, 1, actionItem);
+
 }
 
 void DeviceNotifier::onSourceRemoved(const QString &name)
@@ -303,6 +345,7 @@ void DeviceNotifier::onSourceRemoved(const QString &name)
     if (m_icon && m_hotplugModel->rowCount() == 0) {
         m_widget->hide();
     }
+
 }
 
 QModelIndex DeviceNotifier::indexForUdi(const QString &udi) const
@@ -376,11 +419,25 @@ void DeviceNotifier::slotOnItemClicked(const QModelIndex &index)
     }
 
     QString udi = QString(m_hotplugModel->data(index, SolidUdiRole).toString());
-    QStringList desktop_files = m_hotplugModel->data(index, PredicateFilesRole).toStringList();
-    kDebug() << "DeviceNotifier:: call Solid Ui Server with params :" << udi \
-             << "," << desktop_files;
-    QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
-    QDBusReply<void> reply = soliduiserver.call("showActionsDialog", udi, desktop_files);
+
+    //unmount (probably in the future different action types for different device types)
+    if (index.data(ScopeRole).toInt() == DeactivateAction) {
+        Solid::Device device(udi);
+
+        if (device.is<Solid::OpticalDisc>()) {
+            device.parent().as<Solid::OpticalDrive>()->eject();
+        } else if (device.is<Solid::StorageVolume>()) {
+            device.as<Solid::StorageAccess>()->teardown();
+        }
+    //open  (index.data(ScopeRole).toInt() == OpenAction)
+    } else {
+        QStringList desktop_files = m_hotplugModel->data(index, PredicateFilesRole).toStringList();
+
+        kDebug() << "DeviceNotifier:: call Solid Ui Server with params :" << udi \
+                << "," << desktop_files;
+        QDBusInterface soliduiserver("org.kde.kded", "/modules/soliduiserver", "org.kde.SolidUiServer");
+        QDBusReply<void> reply = soliduiserver.call("showActionsDialog", udi, desktop_files);
+    }
 }
 
 void DeviceNotifier::onTimerExpired()
