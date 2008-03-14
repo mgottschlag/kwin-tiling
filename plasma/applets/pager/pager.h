@@ -67,6 +67,7 @@ class Pager : public Plasma::Applet
 	void windowRemoved(WId id);
 	void activeWindowChanged(WId id);
 	void numberOfDesktopsChanged(int num);
+	void desktopNamesChanged();
 	void stackingOrderChanged();
 	void windowChanged(WId id, unsigned int properties);
   	void showingDesktopChanged(bool showing);
@@ -80,14 +81,21 @@ class Pager : public Plasma::Applet
 	QTimer* m_timer;
         KDialog *m_dialog;
         Ui::pagerConfig ui;
-	bool m_showDesktopNumber;
+	enum DisplayedText
+	{
+	Number,
+	Name,
+	None
+	};
+	DisplayedText m_displayedText;
         bool m_showWindowIcons;
 	int m_rows;
 	int m_columns;
 	
 	int m_desktopCount;
 	int m_currentDesktop;
-	qreal m_scaleFactor;
+	qreal m_widthScaleFactor;
+	qreal m_heightScaleFactor;
 	QSizeF m_size;
 	QList<QRectF> m_rects;
 	QRectF m_hoverRect;

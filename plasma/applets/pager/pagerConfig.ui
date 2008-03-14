@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>199</width>
+    <width>250</width>
     <height>52</height>
    </rect>
   </property>
@@ -16,24 +16,18 @@
    <string>Configure Pager</string>
   </property>
   <layout class="QGridLayout" >
-   <property name="leftMargin" >
+   <property name="margin" >
     <number>0</number>
    </property>
-   <property name="topMargin" >
-    <number>0</number>
-   </property>
-   <property name="rightMargin" >
-    <number>0</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>0</number>
-   </property>
-   <item row="0" column="0" colspan="3" >
-    <widget class="QCheckBox" name="showDesktopNumberCheckBox" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="labelText" >
      <property name="text" >
-      <string>Display the desktop &amp;number</string>
+      <string>Displayed text</string>
      </property>
     </widget>
+   </item>
+   <item row="0" column="1" colspan="2" >
+    <widget class="QComboBox" name="displayedTextComboBox" />
    </item>
    <item row="1" column="0" colspan="3" >
     <widget class="QCheckBox" name="showWindowIconsCheckBox" >

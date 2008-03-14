@@ -47,7 +47,7 @@ const int WINDOW_UPDATE_DELAY = 50;
 Pager::Pager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_dialog(0),
-      m_showDesktopNumber(true),
+      m_displayedText(Number),
       m_showWindowIcons(true),
       m_rows(2),
       m_columns(0),
@@ -68,7 +68,7 @@ void Pager::init()
     createMenu();
 
     KConfigGroup cg = config();
-    m_showDesktopNumber = cg.readEntry("showDesktopNumber", m_showDesktopNumber);
+    m_displayedText = (DisplayedText)cg.readEntry("displayedText", (int)m_displayedText);
     m_showWindowIcons = cg.readEntry("showWindowIcons", m_showWindowIcons);
     m_rows = globalConfig().readEntry("rows", m_rows);
 
@@ -89,6 +89,7 @@ void Pager::init()
     connect(KWindowSystem::self(), SIGNAL(windowRemoved(WId)), this, SLOT(windowRemoved(WId)));
     connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
     connect(KWindowSystem::self(), SIGNAL(numberOfDesktopsChanged(int)), this, SLOT(numberOfDesktopsChanged(int)));
+    connect(KWindowSystem::self(), SIGNAL(desktopNamesChanged()), this, SLOT(desktopNamesChanged()));
     connect(KWindowSystem::self(), SIGNAL(stackingOrderChanged()), this, SLOT(stackingOrderChanged()));
     connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned int)), this, SLOT(windowChanged(WId,unsigned int)));
     connect(KWindowSystem::self(), SIGNAL(showingDesktopChanged(bool)), this, SLOT(showingDesktopChanged(bool)));
@@ -162,7 +163,12 @@ void Pager::showConfigurationInterface()
         connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
 
     }
-    ui.showDesktopNumberCheckBox->setChecked(m_showDesktopNumber);
+    ui.displayedTextComboBox->clear();
+    ui.displayedTextComboBox->addItem(i18n("Desktop number"));
+    ui.displayedTextComboBox->addItem(i18n("Desktop name"));
+    ui.displayedTextComboBox->addItem(i18n("None"));
+    ui.displayedTextComboBox->setCurrentIndex((int)m_displayedText);
+
     ui.showWindowIconsCheckBox->setChecked(m_showWindowIcons);
 
     ui.spinRows->setValue(m_rows);
@@ -177,20 +183,34 @@ void Pager::recalculateGeometry()
         return;
     }
 
-    const int padding = 2;
+    const int padding = 2; // Space between miniatures of desktops
+    const int textMargin = 3; // Space between name of desktop and border
 
     int columns = m_desktopCount / m_rows + m_desktopCount % m_rows;
     qreal itemHeight;
     qreal itemWidth;
 
-    if (formFactor() == Plasma::Vertical) {
+    if (formFactor() == Plasma::Vertical) { // Panel is on left or right
         itemWidth = (contentSize().width() - padding * (columns - 1)) / columns;
-        m_scaleFactor = itemWidth / QApplication::desktop()->width();
-        itemHeight = QApplication::desktop()->height() * m_scaleFactor;
-    } else {
+        m_widthScaleFactor = itemWidth / QApplication::desktop()->width();
+        itemHeight = QApplication::desktop()->height() * m_widthScaleFactor;
+        m_heightScaleFactor = m_widthScaleFactor;
+    } else { // Panel is on top or bottom
         itemHeight = (contentSize().height() - padding * (m_rows - 1)) / m_rows;
-        m_scaleFactor = itemHeight / QApplication::desktop()->height();
-        itemWidth = QApplication::desktop()->width() * m_scaleFactor;
+        m_heightScaleFactor = itemHeight / QApplication::desktop()->height();
+        itemWidth = QApplication::desktop()->width() * m_heightScaleFactor;
+        if (m_displayedText==Name) {
+            // When panel is in this position we are not limited by low width and we can
+            // afford increasing width of applet to be able to display every name of desktops
+            for (int i = 0; i < m_desktopCount; i++) {
+                QFontMetricsF metrics(KGlobalSettings::taskbarFont());
+                QSizeF textSize = metrics.size(Qt::TextSingleLine, KWindowSystem::desktopName(i+1));
+                if (textSize.width() + textMargin * 2 > itemWidth) {
+                     itemWidth = textSize.width() + textMargin * 2;
+                }
+            }
+        }
+        m_widthScaleFactor = itemWidth / QApplication::desktop()->width();
     }
 
     m_rects.clear();
@@ -249,10 +269,10 @@ void Pager::recalculateWindowRects()
             QRect windowRect = info.frameGeometry();
             if( KWindowSystem::mapViewport())
                 windowRect = fixViewportPosition( windowRect );
-            windowRect = QRectF(windowRect.x() * m_scaleFactor,
-                                windowRect.y() * m_scaleFactor,
-                                windowRect.width() * m_scaleFactor, 
-                                windowRect.height() * m_scaleFactor).toRect();
+            windowRect = QRectF(windowRect.x() * m_widthScaleFactor,
+                                windowRect.y() * m_heightScaleFactor,
+                                windowRect.width() * m_widthScaleFactor, 
+                                windowRect.height() * m_heightScaleFactor).toRect();
             windowRect.translate(m_rects[i].topLeft().toPoint());
             m_windowRects[i].append(QPair<WId, QRect>(window, windowRect));
             if (window == KWindowSystem::activeWindow()) {
@@ -268,9 +288,9 @@ void Pager::configAccepted()
     KConfigGroup cg = config();
     bool changed = false;
 
-    if (m_showDesktopNumber != ui.showDesktopNumberCheckBox->isChecked()) {
-        m_showDesktopNumber = ui.showDesktopNumberCheckBox->isChecked();
-        cg.writeEntry("showDesktopNumber", m_showDesktopNumber);
+    if ((int)m_displayedText != ui.displayedTextComboBox->currentIndex()) {
+        m_displayedText = (DisplayedText)ui.displayedTextComboBox->currentIndex();
+        cg.writeEntry("displayedText", (int)m_displayedText);
         changed = true;
     }
 
@@ -346,6 +366,16 @@ void Pager::numberOfDesktopsChanged(int num)
     if (m_rows > m_desktopCount) {
         m_rows = m_desktopCount;
     }
+    m_rects.clear();
+    recalculateGeometry();
+
+    if (!m_timer->isActive()) {
+        m_timer->start(WINDOW_UPDATE_DELAY);
+    }
+}
+
+void Pager::desktopNamesChanged()
+{
     m_rects.clear();
     recalculateGeometry();
 
@@ -470,7 +500,7 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     if (m_dragId > 0) {
         if (m_dragHighlightedDesktop != -1) {
             QPointF dest = m_dragCurrentPos - m_rects[m_dragHighlightedDesktop].topLeft() - m_dragOriginalPos + m_dragOriginal.topLeft();
-            dest = QPointF(dest.x()/m_scaleFactor, dest.y()/m_scaleFactor);
+            dest = QPointF(dest.x()/m_widthScaleFactor, dest.y()/m_heightScaleFactor);
             if( !KWindowSystem::mapViewport()) {
                 KWindowSystem::setOnDesktop(m_dragId, m_dragHighlightedDesktop+1);
                 // use _NET_MOVERESIZE_WINDOW rather than plain move, so that the WM knows this is a pager request
@@ -583,6 +613,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     drawingColor.setAlpha(238);
     QBrush activeWindowBrush(drawingColor);
 
+    // Draw backgrounds of desktops
     painter->setPen(Qt::NoPen);
     for (int i = 0; i < m_desktopCount; i++) {
         if (m_rects[i] == m_hoverRect) {
@@ -593,8 +624,8 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         painter->drawRect(m_rects[i]);
     }
 
+    // Draw miniatures of windows from each desktop
     painter->setPen(windowPen);
-
     for (int i = 0; i < m_windowRects.count(); i++) {
         for (int j = 0; j < m_windowRects[i].count(); j++) {
             QRect rect = m_windowRects[i][j].second;
@@ -619,7 +650,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         }
     }
 
-    // draw desktop frame and number
+    // Draw desktop frame and possibly text over it
     painter->setClipRect(option->exposedRect);
     QPen activePen(Plasma::Theme::self()->textColor());
     QPen drawingPen = QPen();
@@ -634,9 +665,12 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         painter->setPen(drawingPen);
         painter->drawRect(m_rects[i]);
 
-        if (m_showDesktopNumber) {
+        if (m_displayedText==Number) { // Display number of desktop
             painter->setPen(activePen);
             painter->drawText(m_rects[i], Qt::AlignCenter, QString::number(i+1));
+        } else if (m_displayedText==Name) { // Display name of desktop
+            painter->setPen(activePen);
+            painter->drawText(m_rects[i], Qt::AlignCenter, KWindowSystem::desktopName(i+1));
         }
     }
 }
