@@ -280,6 +280,7 @@ void Autostart::slotSelectionChanged() {
 	widget->cmbStartOn->setEnabled(hasItems);
 	widget->btnRemove->setEnabled(hasItems);
 	widget->btnProperties->setEnabled(hasItems);
+        widget->cboxEnabled->setEnabled( hasItems );
 	if (!hasItems)
 		return;
 
