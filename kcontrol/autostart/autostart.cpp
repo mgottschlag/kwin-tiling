@@ -44,29 +44,34 @@
 
 class Desktop : public QTreeWidgetItem {
 public:
-    bool bisDesktop;
-    KUrl fileName;
-
     Desktop( const QString &service, QTreeWidget *parent )
         : QTreeWidgetItem( parent, 1 )
     {
-        fileName = KUrl(service);
-        bisDesktop = service.endsWith(".desktop");
+        m_fileName = KUrl(service);
+        m_isDesktop = service.endsWith(".desktop");
     }
     bool isDesktop() const
     {
-        return bisDesktop;
+        return m_isDesktop;
+    }
+
+    KUrl fileName() const
+    {
+        return m_fileName;
     }
 
     void setPath(const QString &path) {
-	if (path == fileName.directory(KUrl::AppendTrailingSlash))
+	if (path == m_fileName.directory(KUrl::AppendTrailingSlash))
             return;
-	KIO::move(fileName, KUrl( path + '/' + fileName.fileName() ));
-	fileName = KUrl(path + fileName.fileName());
+	KIO::move(m_fileName, KUrl( path + '/' + m_fileName.fileName() ));
+	m_fileName = KUrl(path + m_fileName.fileName());
     }
     ~Desktop()
     {
     }
+private:
+    bool m_isDesktop;
+    KUrl m_fileName;
 };
 
 K_PLUGIN_FACTORY(AutostartFactory, registerPlugin<Autostart>();)
@@ -138,17 +143,17 @@ void Autostart::load()
 				if ( fi.isSymLink() ) {
 					QString link = fi.readLink();
 					item->setText( 0, filename );
-					item->setText( 1, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
+					item->setText( 1, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
 					item->setText( 2, link );
 				} else {
 					item->setText( 0, filename );
-					item->setText( 1, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
+					item->setText( 1, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
 					item->setText( 2, filename );
 				}
 			} else {
 				KService  service(fi.absoluteFilePath());
 				item->setText( 0, service.name() );
-				item->setText( 1, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
+				item->setText( 1, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
 				item->setText( 2, service.exec() );
 			}
 		}
@@ -170,7 +175,7 @@ void Autostart::addCMD() {
 
 		Desktop * item = new Desktop( paths[0] + addDialog->importUrl().fileName(), widget->listCMD );
 		item->setText( 0, addDialog->importUrl().fileName() );
-		item->setText( 1, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
+		item->setText( 1, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
 		item->setText( 2, addDialog->importUrl().fileName() );
 	} else if (result == 4) {
 		KService::Ptr service;
@@ -220,7 +225,7 @@ void Autostart::addCMD() {
 		}
 		Desktop * item = new Desktop( KGlobalSettings::autostartPath() + service->name() + ".desktop", widget->listCMD );
 		item->setText( 0, service->name() );
-		item->setText( 1, pathName.value(paths.indexOf((item->fileName.directory()+'/') )) );
+		item->setText( 1, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
 		item->setText( 2, service->exec() );
 	}
         delete addDialog;
@@ -234,7 +239,7 @@ void Autostart::removeCMD() {
 	QStringList delList;
 	foreach (QTreeWidgetItem *itm, list) {
 		widget->listCMD->takeTopLevelItem( widget->listCMD->indexOfTopLevelItem( itm ) );
-		delList.append( ((Desktop*)itm)->fileName.path() );
+		delList.append( ((Desktop*)itm)->fileName().path() );
 	}
 	KIO::del( KUrl::List( delList ) );
 
@@ -244,13 +249,13 @@ void Autostart::editCMD(QTreeWidgetItem* ent) {
 	if (!ent) return;
 	Desktop *entry = (Desktop*)ent;
 
-	const KFileItem kfi = KFileItem( KFileItem::Unknown, KFileItem::Unknown, KUrl( entry->fileName ), true );
+	const KFileItem kfi = KFileItem( KFileItem::Unknown, KFileItem::Unknown, KUrl( entry->fileName() ), true );
 	if (! editCMD( kfi )) return;
 
 	if (entry->isDesktop()) {
-		KService service(entry->fileName.path());
+		KService service(entry->fileName().path());
 		entry->setText( 0, service.name() );
-		entry->setText( 1, pathName.value(paths.indexOf((entry->fileName.directory()+'/') )) );
+		entry->setText( 1, pathName.value(paths.indexOf((entry->fileName().directory()+'/') )) );
 		entry->setText( 2, service.exec() );
 	}
 }
@@ -285,7 +290,7 @@ void Autostart::selectionChanged() {
 		return;
 
 	Desktop* entry = (Desktop*)widget->listCMD->selectedItems().first();
-	widget->cmbStartOn->setCurrentIndex( paths.indexOf(entry->fileName.directory()+'/') );
+	widget->cmbStartOn->setCurrentIndex( paths.indexOf(entry->fileName().directory()+'/') );
 }
 
 void Autostart::defaults()
