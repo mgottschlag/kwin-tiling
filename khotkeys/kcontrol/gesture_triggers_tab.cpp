@@ -69,7 +69,7 @@ void Gesture_triggers_tab::set_data( const Trigger_list* triggers_P )
     Trigger_list::ConstIterator it = triggers_P->begin();
     if ( trig != 0 && it != triggers_P->end() )
         {
-        assert( dynamic_cast< Gesture_trigger* >( *it ));
+        Q_ASSERT( dynamic_cast< Gesture_trigger* >( *it ));
         trig = static_cast< Gesture_trigger* >( *it );
         }
     else
@@ -80,7 +80,7 @@ void Gesture_triggers_tab::set_data( const Trigger_list* triggers_P )
     ++it;
     if ( trig != 0 && it != triggers_P->end() )
         {
-        assert( dynamic_cast< Gesture_trigger* >( *it ));
+        Q_ASSERT( dynamic_cast< Gesture_trigger* >( *it ));
         trig = static_cast< Gesture_trigger* >( *it );
         }
     else
@@ -91,7 +91,7 @@ void Gesture_triggers_tab::set_data( const Trigger_list* triggers_P )
     ++it;
     if ( trig != 0 && it != triggers_P->end() )
         {
-        assert( dynamic_cast< Gesture_trigger* >( *it ));
+        Q_ASSERT( dynamic_cast< Gesture_trigger* >( *it ));
         trig = static_cast< Gesture_trigger* >( *it );
         }
     else

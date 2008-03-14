@@ -63,7 +63,7 @@ void Actions_listview_widget::set_action_data( Action_data_base* data_P, bool re
     {
     if( recent_action_P )
         {
-        assert( recent_item != NULL );
+        Q_ASSERT( recent_item != NULL );
         recent_item->set_data( data_P );
         }
     else

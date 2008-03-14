@@ -67,12 +67,17 @@ public:
     Action_data_group *actions();
 
     /**
-     * Take the actions. Ownership is transfered.
+     * Take the actions. 
+     *
+     * \note Ownership is transfered to you. Subsequent calls to action() will
+     * return 0
      */
     Action_data_group *takeActions();
 
     /**
-     * Set the actions. The current action list will be deleted.
+     * Set the actions. 
+     *
+     * \note Ownership is taken. The current action list will be deleted.
      */
     void setActions( Action_data_group *actions );
 

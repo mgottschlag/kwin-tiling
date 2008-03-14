@@ -31,6 +31,7 @@ void Menuentry_action::cfg_write( KConfigGroup& cfg_P ) const
     cfg_P.writeEntry( "Type", "MENUENTRY" ); // overwrites value set in base::cfg_write()
     }
 
+
 KService::Ptr Menuentry_action::service() const
     {
     if (!_service)
@@ -39,6 +40,7 @@ KService::Ptr Menuentry_action::service() const
     }
     return _service;
     }
+
 
 void Menuentry_action::execute()
     {
@@ -50,16 +52,19 @@ void Menuentry_action::execute()
     timeout.start( 1000 ); // 1sec timeout
     }
 
+
 const QString Menuentry_action::description() const
     {
     (void) service();
     return i18n( "Menuentry : " ) + (_service ? _service->name() : QString());
     }
 
+
 Action* Menuentry_action::copy( Action_data* data_P ) const
     {
     return new Menuentry_action( data_P, command_url());
     }
+
 
 } // namespace KHotKeys
 

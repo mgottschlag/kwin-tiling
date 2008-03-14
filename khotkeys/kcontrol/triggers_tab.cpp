@@ -13,6 +13,7 @@
 #include <config-khotkeys.h>
 
 #include "triggers_tab.h"
+#include "action_data.h"
 
 #include <assert.h>
 #include <QPushButton>
@@ -143,7 +144,7 @@ void Triggers_tab::new_selected( QAction *action )
         {
         case TYPE_SHORTCUT_TRIGGER: // Shortcut_trigger
             dlg = new Shortcut_trigger_dialog(
-                new Shortcut_trigger( NULL, KShortcut())); // CHECKME NULL ?
+                new Shortcut_trigger( NULL, i18n("TODO: Correct Behaviour" ), KShortcut())); // CHECKME NULL ?
           break;
         case TYPE_GESTURE_TRIGGER: // Gesture trigger
             dlg = new Gesture_trigger_dialog(
@@ -287,7 +288,7 @@ void Shortcut_trigger_widget::set_data( const Shortcut_trigger* data_P )
 
 Shortcut_trigger* Shortcut_trigger_widget::get_data( Action_data* data_P ) const
     {
-    return new Shortcut_trigger( data_P, KShortcut( ksw->keySequence() ) );
+    return new Shortcut_trigger( data_P, data_P->name(), KShortcut( ksw->keySequence() ) );
     }
 
 // Shortcut_trigger_dialog

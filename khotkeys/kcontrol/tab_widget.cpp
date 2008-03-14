@@ -234,7 +234,7 @@ void Tab_widget::save_current_action_changes()
               break;
                 }
             case TYPE_END:
-              assert( false );
+              Q_ASSERT( false );
             }
         }
     }
@@ -356,7 +356,7 @@ void Tab_widget::load_current_action()
               break;
                 }
             case TYPE_END:
-              assert( false );
+              Q_ASSERT( false );
             }
         }
     }
@@ -401,7 +401,7 @@ void Tab_widget::check_action_type()
     
 void Tab_widget::set_action_type( action_type_t type_P, bool force_P )
     {
-    assert( current_type == DATA );
+    Q_ASSERT( current_type == DATA );
     if( current_data_type == type_P && !force_P )
         return;
     current_data_type = type_P;
@@ -429,7 +429,7 @@ void Tab_widget::set_action_type( action_type_t type_P, bool force_P )
             show_pages(( TAB_GENERAL, TAB_SHORTCUT_TRIGGER, TAB_WINDOW ));
           break;
         case TYPE_END:
-          assert( false );
+          Q_ASSERT( false );
         }
     }
 
@@ -500,7 +500,7 @@ Tab_widget::action_type_t Tab_widget::type( const Action_data* data_P )
     else if( typeid( *data_P ) == typeid( Activate_window_shortcut_action_data ))
         ret = Tab_widget::TYPE_ACTIVATE_WINDOW_SHORTCUT;
     else
-        assert( false );
+        Q_ASSERT( false );
     return ret;
     }
 

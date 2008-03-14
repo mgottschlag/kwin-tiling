@@ -12,7 +12,6 @@
 
 #include "khotkeysglobal.h"
 
-#include <assert.h>
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <klibloader.h>
@@ -22,6 +21,7 @@
 #include "triggers.h"
 #include "gestures.h"
 #include "voices.h"
+#include "shortcuts_handler.h"
 
 // FIXME: SOUND
 // #include "soundrecorder.h"
@@ -29,16 +29,16 @@
 namespace KHotKeys
 {
 
-Kbd* keyboard_handler;
+ShortcutsHandler* keyboard_handler;
 Windows* windows_handler;
 static bool _khotkeys_active = false;
 
 void init_global_data( bool active_P, QObject* owner_P )
     {
-    assert( keyboard_handler == NULL );
-    assert( windows_handler == NULL );
-    assert( gesture_handler == NULL );
-    static_cast< void >( new Kbd( active_P, owner_P ));
+    Q_ASSERT( keyboard_handler == NULL );
+    Q_ASSERT( windows_handler == NULL );
+    Q_ASSERT( gesture_handler == NULL );
+    static_cast< void >( new ShortcutsHandler( active_P ? ShortcutsHandler::Active : ShortcutsHandler::Configuration, owner_P ));
     static_cast< void >( new Windows( active_P, owner_P ));
     static_cast< void >( new Gesture( active_P, owner_P ));
 // FIXME: SOUND

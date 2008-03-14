@@ -27,10 +27,10 @@ class QObject;
 namespace KHotKeys
 {
 
-class Kbd;
 class Windows;
+class ShortcutsHandler;
 
-extern Kbd* keyboard_handler;
+extern ShortcutsHandler* keyboard_handler;
 extern Windows* windows_handler;
 
 #define KHOTKEYS_DISABLE_COPY( cls ) private: cls( const cls& ); cls& operator=( const cls& )

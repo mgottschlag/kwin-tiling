@@ -20,8 +20,9 @@
 #ifndef _TRIGGERS_H_
 #define _TRIGGERS_H_
 
-#include <QtCore/QMap>
 #include <QtCore/QList>
+#include <QtCore/QMap>
+#include <QtCore/QUuid>
 
 #include <kdemacros.h>
 #include "khotkeysglobal.h"
@@ -75,21 +76,40 @@ class KDE_EXPORT Trigger_list
     };
 
 class KDE_EXPORT Shortcut_trigger
-    : public Trigger, public Kbd_receiver
+    : public QObject, public Trigger
     {
+    Q_OBJECT
+
     typedef Trigger base;
     public:
-        Shortcut_trigger( Action_data* data_P, const KShortcut& shortcut_P );
-        Shortcut_trigger( KConfigGroup& cfg_P, Action_data* data_P );
+        Shortcut_trigger( 
+            Action_data* data_P,
+            const QString &text,
+            const KShortcut& shortcut_P,
+            const QUuid &uuid = QUuid::createUuid() );
+
+        Shortcut_trigger( 
+            KConfigGroup& cfg_P,
+            Action_data* data_P );
+
         virtual ~Shortcut_trigger();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual Shortcut_trigger* copy( Action_data* data_P ) const;
         virtual const QString description() const;
         const KShortcut& shortcut() const;
-        virtual bool handle_key( const KShortcut& shortcut_P );
         virtual void activate( bool activate_P );
+
+    public Q_SLOTS:
+
+        void trigger();
+
     private:
+
+        //! The shortcut
         KShortcut _shortcut;
+
+        //! A persistent identifier for this shortcut
+        QUuid _uuid;
     };
 
 class KDE_EXPORT Window_trigger

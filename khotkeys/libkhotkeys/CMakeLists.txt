@@ -30,13 +30,22 @@ set(libkhotkeys_SRCS
 
     # ACTIONS
     actions/action.cpp
-    actions/action_data.cpp
     actions/action_list.cpp
     actions/activate_window_action.cpp
     actions/command_url_action.cpp
     actions/dbus_action.cpp
     actions/keyboard_input_action.cpp
     actions/menuentry_action.cpp
+
+    # ACTION DATA
+    actions/action_data.cpp
+    actions/action_data_base.cpp
+    actions/action_data_group.cpp
+    actions/command_url_shortcut_action_data.cpp
+    actions/generic_action_data.cpp
+    actions/keyboard_input_gesture_action_data.cpp
+    actions/menuentry_shortcut_action_data.cpp
+    actions/simple_action_data.cpp
 
     # CONDITIONS
     conditions/active_window_condition.cpp
@@ -60,11 +69,11 @@ set(libkhotkeys_SRCS
     triggers/window_trigger.cpp
 
     # Rest
-    input.cpp
     khlistbox.cpp
     khlistview.cpp
     khotkeysglobal.cpp
     settings.cpp
+    shortcuts_handler.cpp
     # search for FIXME: SOUND
     # sound.cpp
     # soundrecorder.cpp

@@ -11,21 +11,11 @@
 #ifndef _ACTION_DATA_H_
 #define _ACTION_DATA_H_
 
-#include <assert.h>
-
-#include <QtCore/QList>
-#include <QtCore/QListIterator>
-
-#include <kdebug.h>
-
-class KConfig;
-
-#include "khotkeysglobal.h"
-
-#include "windows.h"
 #include "conditions.h"
 #include "triggers.h"
 #include "actions.h"
+
+#include <QtCore/QList>
 
 namespace KHotKeys
 {
@@ -186,6 +176,7 @@ class KDE_EXPORT Menuentry_shortcut_action_data
         Menuentry_shortcut_action_data( KConfigGroup& cfg_P, Action_data_group* parent_P );
     };
 
+// See simple_action_data.cpp
 typedef Simple_action_data< Shortcut_trigger, Dbus_action > Dbus_shortcut_action_data;
 typedef Simple_action_data< Shortcut_trigger, Keyboard_input_action >
     Keyboard_input_shortcut_action_data;
@@ -209,143 +200,7 @@ class KDE_EXPORT Keyboard_input_gesture_action_data
     };
 
 
-//***************************************************************************
-// Inline
-//***************************************************************************
-
-// Action_data_base
-
-inline
-const Condition_list* Action_data_base::conditions() const
-    {
-//    assert( _conditions != 0 );
-    return _conditions;
-    }
-    
-inline
-Action_data_group* Action_data_base::parent() const
-    {
-    return _parent;
-    }
-
-inline
-void Action_data_base::set_name( const QString& name_P )
-    {
-    _name = name_P;
-    }
-    
-inline
-const QString& Action_data_base::name() const
-    {
-    return _name;
-    }
-
-inline
-const QString& Action_data_base::comment() const
-    {
-    return _comment;
-    }
-    
-// Action_data_group
-
-inline
-Action_data_group::Action_data_group( Action_data_group* parent_P, const QString& name_P,
-    const QString& comment_P, Condition_list* conditions_P, system_group_t system_group_P,
-    bool enabled_P )
-    : Action_data_base( parent_P, name_P, comment_P, conditions_P, enabled_P ),
-        _system_group( system_group_P )
-    {
-    }
-    
-inline
-Action_data_group::~Action_data_group()
-    {
-//    kDebug( 1217 ) << "~Action_data_group() :" << list.count();
-    qDeleteAll(list);
-    list.clear();
-    }
-    
-inline
-Action_data_group::ConstIterator Action_data_group::first_child() const
-    {
-    return list.begin();
-    }
-
-inline
-Action_data_group::ConstIterator Action_data_group::after_last_child() const
-    {
-    return list.end();
-    }
-
-inline
-bool Action_data_group::is_system_group() const
-    {
-    return _system_group != SYSTEM_NONE;
-    }
-
-inline
-Action_data_group::system_group_t Action_data_group::system_group() const
-    {
-    return _system_group;
-    }
-
-inline
-void Action_data_group::add_child( Action_data_base* child_P )
-    {
-    list.append( child_P ); // CHECKME tohle asi znemozni je mit nejak rucne serazene
-    }
-    
-inline
-void Action_data_group::remove_child( Action_data_base* child_P )
-    {
-    list.removeAll( child_P ); // is not auto-delete
-    }
-    
-// Action_data
-
-inline
-Action_data::Action_data( Action_data_group* parent_P, const QString& name_P,
-    const QString& comment_P, Trigger_list* triggers_P, Condition_list* conditions_P,
-    Action_list* actions_P, bool enabled_P )
-    : Action_data_base( parent_P, name_P, comment_P, conditions_P, enabled_P ),
-    _triggers( triggers_P ), _actions( actions_P )
-    {
-    }
-    
-inline
-const Trigger_list* Action_data::triggers() const
-    {
-//    assert( _triggers != 0 );
-    return _triggers;
-    }
-    
-inline
-const Action_list* Action_data::actions() const
-    {
-//    assert( _actions != 0 );
-    return _actions;
-    }
-
-// Generic_action_data
-
-inline
-Generic_action_data::Generic_action_data( Action_data_group* parent_P, const QString& name_P,
-    const QString& comment_P, Trigger_list* triggers_P, Condition_list* conditions_P,
-    Action_list* actions_P, bool enabled_P )
-    : Action_data( parent_P, name_P, comment_P, triggers_P, conditions_P, actions_P, enabled_P )
-    {
-    }
-    
-inline
-Generic_action_data::Generic_action_data( KConfigGroup& cfg_P, Action_data_group* parent_P )
-    : Action_data( cfg_P, parent_P )
-    { // CHECKME do nothing ?
-    }
-    
-// Simple_action_data
-
 template< typename T, typename A >
-inline
 Simple_action_data< T, A >::Simple_action_data( Action_data_group* parent_P,
     const QString& name_P, const QString& comment_P, bool enabled_P )
     : Action_data( parent_P, name_P, comment_P, 0,
@@ -354,7 +209,6 @@ Simple_action_data< T, A >::Simple_action_data( Action_data_group* parent_P,
     }
 
 template< typename T, typename A >
-inline    
 Simple_action_data< T, A >::Simple_action_data( KConfigGroup& cfg_P, Action_data_group* parent_P )
     : Action_data( cfg_P, parent_P )
     { // CHECKME nothing ?
@@ -391,57 +245,7 @@ const T* Simple_action_data< T, A >::trigger() const
         return 0;
     return static_cast< T* >( const_cast< Trigger_list* >( triggers())->first());
     }
-    
-// Command_url_action_data
 
-inline
-Command_url_shortcut_action_data::Command_url_shortcut_action_data( Action_data_group* parent_P,
-    const QString& name_P, const QString& comment_P, bool enabled_P )
-    : Simple_action_data< Shortcut_trigger, Command_url_action >( parent_P, name_P,
-        comment_P, enabled_P )
-    {
-    }
-
-inline    
-Command_url_shortcut_action_data::Command_url_shortcut_action_data( KConfigGroup& cfg_P,
-    Action_data_group* parent_P )
-    : Simple_action_data< Shortcut_trigger, Command_url_action >( cfg_P, parent_P )
-    {
-    } 
-
-// Menuentry_action_data
-
-inline
-Menuentry_shortcut_action_data::Menuentry_shortcut_action_data( Action_data_group* parent_P,
-    const QString& name_P, const QString& comment_P, bool enabled_P )
-    : Simple_action_data< Shortcut_trigger, Menuentry_action >( parent_P, name_P,
-        comment_P, enabled_P )
-    {
-    }
-    
-inline
-Menuentry_shortcut_action_data::Menuentry_shortcut_action_data( KConfigGroup& cfg_P,
-    Action_data_group* parent_P )
-    : Simple_action_data< Shortcut_trigger, Menuentry_action >( cfg_P, parent_P )
-    {
-    } 
-
-// Keyboard_input_gesture_action_data
-
-inline
-Keyboard_input_gesture_action_data::Keyboard_input_gesture_action_data(
-    Action_data_group* parent_P, const QString& name_P, const QString& comment_P, bool enabled_P )
-    : Action_data( parent_P, name_P, comment_P, 0,
-        new Condition_list( "", this ), 0, enabled_P )
-    {
-    }
-
-inline    
-Keyboard_input_gesture_action_data::Keyboard_input_gesture_action_data( KConfigGroup& cfg_P,
-    Action_data_group* parent_P )
-    : Action_data( cfg_P, parent_P )
-    { // CHECKME nothing ?
-    } 
 
 } // namespace KHotKeys
 

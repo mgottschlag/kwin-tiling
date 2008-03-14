@@ -10,25 +10,15 @@
 
 // BEWARE ! unbelievably messy code
 
-#define _MENUEDIT_CPP_
-
-
-
 #include "menuedit.h"
 
-#include <kglobal.h>
-#include <klocale.h>
-#include <kapplication.h>
-#include <QLabel>
-#include <QLineEdit>
-#include <QLayout>
-//#include <kkeydialog.h>
-#include <QtDBus/QtDBus>
+#include "action_data.h"
 #include "khotkeysiface.h"
+#include "settings.h"
 
-#include <settings.h>
-#include <action_data.h>
+#include <kdebug.h>
 #include <ktoolinvocation.h>
+
 
 namespace KHotKeys
 {
@@ -40,7 +30,7 @@ void khotkeys_init()
     // I hope this works
     KGlobal::locale()->insertCatalog("khotkeys");
     // CHECKME hack
-    assert( owner == NULL );
+    Q_ASSERT( owner == NULL );
     owner = new QObject;
     init_global_data( false, owner );
     }
@@ -282,7 +272,7 @@ QString khotkeys_change_menu_entry_shortcut( const QString& entry_P,
     // make sure the shortcut is valid
     shortcut = (KShortcut( shortcut_P )).toString();
     if( !shortcut.isEmpty())
-        entry->set_trigger( new Shortcut_trigger( entry, KShortcut( shortcut )));
+        entry->set_trigger( new Shortcut_trigger( entry, entry->name(), KShortcut( shortcut )));
     if( shortcut.isEmpty())
         {
         delete entry;            

@@ -68,7 +68,7 @@ General_tab::General_tab( QWidget* parent_P, const char* name_P )
                     i18n( "Keyboard Shortcut -> Activate Window (simple)" ) );
               break;
             case Tab_widget::TYPE_END:
-              assert( false );
+              Q_ASSERT( false );
             }
     clear_data();
     // KHotKeys::Module::changed()

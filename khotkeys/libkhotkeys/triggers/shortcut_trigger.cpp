@@ -21,26 +21,41 @@
 #include "action_data.h"
 #include "windows.h"
 
+#include <KDE/KAction>
 #include <KDE/KConfigGroup>
 #include <KDE/KDebug>
 
 namespace KHotKeys {
 
-Shortcut_trigger::Shortcut_trigger( Action_data* data_P, const KShortcut& shortcut_P )
-    : Trigger( data_P ), _shortcut( shortcut_P )
+Shortcut_trigger::Shortcut_trigger( 
+        Action_data* data_P,
+        const QString &text,
+        const KShortcut& shortcut_P,
+        const QUuid &uuid )
+    : Trigger( data_P ), _shortcut( shortcut_P ), _uuid(uuid)
     {
-    keyboard_handler->insert_item( shortcut(), this );
+    KAction *act = keyboard_handler->addAction( _uuid, text, _shortcut );
+    connect(
+        act, SIGNAL(triggered(bool)),
+        this, SLOT(trigger()) );
     }
 
-Shortcut_trigger::Shortcut_trigger( KConfigGroup& cfg_P, Action_data* data_P )
-    : Trigger( cfg_P, data_P ), _shortcut( cfg_P.readEntry( "Key", QString() ))
+Shortcut_trigger::Shortcut_trigger( 
+        KConfigGroup& cfg_P
+       ,Action_data* data_P )
+    : Trigger( cfg_P, data_P )
+     ,_shortcut( cfg_P.readEntry( "Key", QString() ))
+     ,_uuid( cfg_P.readEntry( "Uuid", QUuid::createUuid().toString()))
     {
-    keyboard_handler->insert_item( shortcut(), this );
+    KAction *act = keyboard_handler->addAction( _uuid, data_P->name(), _shortcut );
+    connect(
+        act, SIGNAL(triggered(bool)),
+        this, SLOT(trigger()) );
     }
 
 Shortcut_trigger::~Shortcut_trigger()
     {
-    keyboard_handler->remove_item( shortcut(), this );
+    keyboard_handler->removeAction( _uuid );
     }
 
 void Shortcut_trigger::cfg_write( KConfigGroup& cfg_P ) const
@@ -48,12 +63,13 @@ void Shortcut_trigger::cfg_write( KConfigGroup& cfg_P ) const
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Key", _shortcut.toString());
     cfg_P.writeEntry( "Type", "SHORTCUT" ); // overwrites value set in base::cfg_write()
+    cfg_P.writeEntry( "Uuid", _uuid.toString() );
     }
 
 Shortcut_trigger* Shortcut_trigger::copy( Action_data* data_P ) const
     {
     kDebug( 1217 ) << "Shortcut_trigger::copy()";
-    return new Shortcut_trigger( data_P ? data_P : data, shortcut());
+    return new Shortcut_trigger( data_P ? data_P : data, i18n("Copy of ") + data_P->name(), shortcut(), QUuid::createUuid());
     }
 
 const QString Shortcut_trigger::description() const
@@ -63,23 +79,24 @@ const QString Shortcut_trigger::description() const
     // CHECKME i18n pro toString() ?
     }
 
-bool Shortcut_trigger::handle_key( const KShortcut& shortcut_P )
+void Shortcut_trigger::trigger()
     {
-    if( shortcut() == shortcut_P )
-        {
-        windows_handler->set_action_window( 0 ); // use active window
-        data->execute();
-        return true;
-        }
-    return false;
+    kDebug() << data->name() << " was triggered";
+    windows_handler->set_action_window( 0 ); // use active window
+    data->execute();
     }
 
 void Shortcut_trigger::activate( bool activate_P )
     {
     if( activate_P && khotkeys_active())
-        keyboard_handler->activate_receiver( this );
+        {
+        kDebug() << "TODO implement activate";
+        }
     else
-        keyboard_handler->deactivate_receiver( this );
+        {
+        kDebug() << "TODO implement activate";
+        }
     }
 
 } // namespace KHotKeys
+
