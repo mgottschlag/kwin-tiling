@@ -164,7 +164,7 @@ void Autostart::load()
             bool desktopFile = filename.endsWith(".desktop");
             if ( desktopFile )
             {
-                DesktopStartItem *item = new DesktopStartItem( fi.absoluteFilePath(), m_programItem );
+                DesktopStartItem *item = new DesktopStartItem( fi.absoluteFilePath(), m_programItem, this );
                 KDesktopFile config(fi.absoluteFilePath());
                 const KConfigGroup grp = config.desktopGroup();
                 bool status = grp.readEntry("Hidden", false);
@@ -172,7 +172,7 @@ void Autostart::load()
             }
             else
             {
-                ScriptStartItem *item = new ScriptStartItem( fi.absoluteFilePath(), m_scriptItem );
+                ScriptStartItem *item = new ScriptStartItem( fi.absoluteFilePath(), m_scriptItem,this );
                 int typeOfStartup = paths.indexOf((item->fileName().directory()+'/') );
                 ScriptStartItem::ENV type = ScriptStartItem::START;
                 switch( typeOfStartup )
@@ -242,7 +242,7 @@ void Autostart::slotAddProgram()
         if ( dlg.exec() != QDialog::Accepted )
             return;
     }
-    DesktopStartItem * item = new DesktopStartItem( KGlobalSettings::autostartPath() + service->name() + ".desktop", m_programItem );
+    DesktopStartItem * item = new DesktopStartItem( KGlobalSettings::autostartPath() + service->name() + ".desktop", m_programItem,this );
     addItem( item, service->name(), pathName.value(paths.indexOf((item->fileName().directory()+'/') )),  service->exec() );
     emit changed(true);
 }
@@ -256,7 +256,7 @@ void Autostart::slotAddCMD() {
         else
             KIO::copy(addDialog->importUrl(), paths[2]);
 
-        ScriptStartItem * item = new ScriptStartItem( paths[0] + addDialog->importUrl().fileName(), m_scriptItem );
+        ScriptStartItem * item = new ScriptStartItem( paths[0] + addDialog->importUrl().fileName(), m_scriptItem,this );
         addItem( item,  addDialog->importUrl().fileName(), addDialog->importUrl().fileName(),ScriptStartItem::START );
     }
     delete addDialog;
@@ -304,18 +304,14 @@ void Autostart::slotEditCMD() {
     slotEditCMD( (AutoStartItem*)widget->listCMD->currentItem() );
 }
 
-#if 0
-void Autostart::slotSetStartOn( int index ) {
+void Autostart::slotChangeStartup( int index )
+{
     if ( widget->listCMD->currentItem() == 0 )
         return;
-    Desktop* entry = (Desktop*)widget->listCMD->currentItem();
-    if ( !entry->isDesktop() )
-    {
+    ScriptStartItem* entry = dynamic_cast<ScriptStartItem*>( widget->listCMD->currentItem() );
+    if ( entry )
         entry->setPath(paths.value(index));
-        entry->setText(COL_COMMAND, pathName[index]);
-    }
 }
-#endif
 
 void Autostart::slotSelectionChanged() {
     bool hasItems = ( dynamic_cast<AutoStartItem*>( widget->listCMD->currentItem() )!=0 ) ;

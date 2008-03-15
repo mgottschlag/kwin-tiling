@@ -48,6 +48,9 @@ public:
     void defaults();
     QStringList paths;
     QStringList pathName;
+public slots:
+    void slotChangeStartup( int index );
+
 protected:
     void addItem(DesktopStartItem *item, const QString& name, const QString& run, const QString& command, bool status=true );
     void addItem(ScriptStartItem *item, const QString& name, const QString& command, ScriptStartItem::ENV type );

@@ -25,11 +25,12 @@
 
 class QComboBox;
 class QTreeWidget;
+class Autostart;
 
 class AutoStartItem : public QTreeWidgetItem
 {
 public:
-    AutoStartItem( const QString &service, QTreeWidgetItem *parent );
+    AutoStartItem( const QString &service, QTreeWidgetItem *parent, Autostart* );
     ~AutoStartItem();
 
     KUrl fileName() const;
@@ -43,7 +44,7 @@ private:
 class DesktopStartItem : public AutoStartItem
 {
 public:
-    DesktopStartItem( const QString &service, QTreeWidgetItem *parent );
+    DesktopStartItem( const QString &service, QTreeWidgetItem *parent, Autostart* );
     ~DesktopStartItem();
 };
 
@@ -52,7 +53,7 @@ class ScriptStartItem : public AutoStartItem
 {
 public:
     enum ENV { START=0, SHUTDOWN=1}; //rename
-    ScriptStartItem( const QString &service, QTreeWidgetItem *parent );
+    ScriptStartItem( const QString &service, QTreeWidgetItem *parent, Autostart* );
     ~ScriptStartItem();
 
     void changeStartup( ScriptStartItem::ENV type );

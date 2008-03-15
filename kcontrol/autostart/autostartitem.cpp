@@ -29,7 +29,7 @@
 #include <klocale.h>
 #include <KDebug>
 
-AutoStartItem::AutoStartItem( const QString &service, QTreeWidgetItem *parent )
+AutoStartItem::AutoStartItem( const QString &service, QTreeWidgetItem *parent, Autostart* )
     : QTreeWidgetItem( parent )
 {
     m_fileName = KUrl(service);
@@ -53,8 +53,8 @@ void AutoStartItem::setPath(const QString &path) {
 }
 
 
-DesktopStartItem::DesktopStartItem( const QString &service, QTreeWidgetItem *parent )
-    : AutoStartItem( service, parent )
+DesktopStartItem::DesktopStartItem( const QString &service, QTreeWidgetItem *parent, Autostart*autostart )
+    : AutoStartItem( service, parent,autostart )
 {
     setCheckState ( Autostart::COL_STATUS,Qt::Checked );
 }
@@ -63,14 +63,15 @@ DesktopStartItem::~DesktopStartItem()
 {
 }
 
-ScriptStartItem::ScriptStartItem( const QString &service, QTreeWidgetItem *parent )
-    : AutoStartItem( service, parent )
+ScriptStartItem::ScriptStartItem( const QString &service, QTreeWidgetItem *parent, Autostart* autostart )
+    : AutoStartItem( service, parent,autostart )
 {
     m_comboBoxStartup = new QComboBox;
     QStringList startupLst;
     startupLst<<i18n( "Startup" )<<i18n( "Shutdown" );
     m_comboBoxStartup->addItems( startupLst );
     setText( 2, i18n( "Enabled" ) );
+    QObject::connect( m_comboBoxStartup, SIGNAL(activated ( int ) ),autostart,SLOT( slotChangeStartup( int ) ) );
     treeWidget()->setItemWidget ( this, Autostart::COL_RUN, m_comboBoxStartup );
 }
 
