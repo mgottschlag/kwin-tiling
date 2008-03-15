@@ -50,8 +50,8 @@ public:
     {
         m_fileName = KUrl(service);
         m_isDesktop = service.endsWith(".desktop");
-        setCheckState ( 3,Qt::Unchecked );
-        setText( 3, i18n( "Disabled" ) );
+        if ( m_isDesktop )
+            setCheckState ( 3,Qt::Checked );
     }
     bool isDesktop() const
     {
@@ -122,10 +122,14 @@ void Autostart::slotItemClicked( QTreeWidgetItem *item, int col)
 {
     if ( item && col == COL_STATUS )
     {
-        if ( item->checkState( col ) == Qt::Checked )
-            item->setText( COL_STATUS, i18n( "Enabled" ) );
-        else
-            item->setText( COL_STATUS, i18n( "Disabled" ) );
+        Desktop *entry = static_cast<Desktop*>( item );
+        if ( entry->isDesktop() )
+        {
+            if ( item->checkState( col ) == Qt::Checked )
+                item->setText( COL_STATUS, i18n( "Enabled" ) );
+            else
+                item->setText( COL_STATUS, i18n( "Disabled" ) );
+        }
     }
 }
 
@@ -135,7 +139,9 @@ void Autostart::addItem( QTreeWidgetItem*item, const QString& name, const QStrin
     item->setText( COL_NAME, name );
     item->setText( COL_RUN, run );
     item->setText( COL_COMMAND, command );
-    item->setText( COL_STATUS, status ? i18n( "Enabled" ) : i18n( "Disabled" ) );
+    Desktop *entry = static_cast<Desktop*>( item );
+    if ( entry->isDesktop() )
+        item->setText( COL_STATUS, status ? i18n( "Enabled" ) : i18n( "Disabled" ) );
 }
 
 void Autostart::load()
@@ -257,7 +263,7 @@ void Autostart::slotRemoveCMD() {
 
 void Autostart::slotEditCMD(QTreeWidgetItem* ent) {
     if (!ent) return;
-    Desktop *entry = (Desktop*)ent;
+    Desktop *entry = static_cast<Desktop*>( ent );
 
     const KFileItem kfi = KFileItem( KFileItem::Unknown, KFileItem::Unknown, KUrl( entry->fileName() ), true );
     if (! slotEditCMD( kfi )) return;
@@ -297,7 +303,7 @@ void Autostart::slotSelectionChanged() {
     if (!hasItems)
         return;
 
-    Desktop* entry = (Desktop*)widget->listCMD->currentItem();
+    Desktop* entry = static_cast<Desktop*>( widget->listCMD->currentItem() );
     widget->cmbStartOn->setCurrentIndex( paths.indexOf(entry->fileName().directory()+'/') );
 }
 
