@@ -76,35 +76,35 @@ private:
 };
 
 K_PLUGIN_FACTORY(AutostartFactory, registerPlugin<Autostart>();)
-K_EXPORT_PLUGIN(AutostartFactory( "kcmautostart" ))
+    K_EXPORT_PLUGIN(AutostartFactory( "kcmautostart" ))
 
-Autostart::Autostart( QWidget* parent, const QVariantList& )
-    : KCModule( AutostartFactory::componentData(), parent )
+    Autostart::Autostart( QWidget* parent, const QVariantList& )
+        : KCModule( AutostartFactory::componentData(), parent )
 {
-	widget = new Ui_AutostartConfig();
-	widget->setupUi(this);
-        QStringList lstHeader;
-        lstHeader<<i18n( "Name" )<<i18n( "Run On" )<< i18n( "Command" )<< i18n( "Status" );
-        widget->listCMD->setHeaderLabels(lstHeader);
-        setButtons(Apply);
-	connect( widget->btnAddScript, SIGNAL(clicked()), SLOT(slotAddCMD()) );
-	connect( widget->btnAddProgram, SIGNAL(clicked()), SLOT(slotAddProgram()) );
-	connect( widget->btnRemove, SIGNAL(clicked()), SLOT(slotRemoveCMD()) );
-	connect( widget->listCMD, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), SLOT(slotEditCMD(QTreeWidgetItem*)) );
-	connect( widget->btnProperties, SIGNAL(clicked()), SLOT(slotEditCMD()) );
-	connect( widget->cmbStartOn, SIGNAL(activated(int)), SLOT(slotSetStartOn(int)) );
-	connect( widget->listCMD, SIGNAL(itemSelectionChanged()), SLOT(slotSelectionChanged()) );
+    widget = new Ui_AutostartConfig();
+    widget->setupUi(this);
+    QStringList lstHeader;
+    lstHeader<<i18n( "Name" )<<i18n( "Run On" )<< i18n( "Command" )<< i18n( "Status" );
+    widget->listCMD->setHeaderLabels(lstHeader);
+    setButtons(Apply);
+    connect( widget->btnAddScript, SIGNAL(clicked()), SLOT(slotAddCMD()) );
+    connect( widget->btnAddProgram, SIGNAL(clicked()), SLOT(slotAddProgram()) );
+    connect( widget->btnRemove, SIGNAL(clicked()), SLOT(slotRemoveCMD()) );
+    connect( widget->listCMD, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), SLOT(slotEditCMD(QTreeWidgetItem*)) );
+    connect( widget->btnProperties, SIGNAL(clicked()), SLOT(slotEditCMD()) );
+    connect( widget->cmbStartOn, SIGNAL(activated(int)), SLOT(slotSetStartOn(int)) );
+    connect( widget->listCMD, SIGNAL(itemSelectionChanged()), SLOT(slotSelectionChanged()) );
 
-	widget->listCMD->setFocus();
+    widget->listCMD->setFocus();
 
     load();
 
-	KAboutData* about = new KAboutData("Autostart", 0, ki18n("KDE Autostart Manager"), "1.0",
-		ki18n("KDE Autostart Manager Control Panel Module"),
-		KAboutData::License_GPL,
-		ki18n("(c) 2006-2007 Stephen Leaf"));
-	about->addAuthor(ki18n("Stephen Leaf"), KLocalizedString(), "smileaf@gmail.com");
-	setAboutData( about );
+    KAboutData* about = new KAboutData("Autostart", 0, ki18n("KDE Autostart Manager"), "1.0",
+                                       ki18n("KDE Autostart Manager Control Panel Module"),
+                                       KAboutData::License_GPL,
+                                       ki18n("(c) 2006-2007 Stephen Leaf"));
+    about->addAuthor(ki18n("Stephen Leaf"), KLocalizedString(), "smileaf@gmail.com");
+    setAboutData( about );
 
 }
 
@@ -117,55 +117,55 @@ Autostart::~Autostart()
 
 void Autostart::load()
 {
-	// share/autostart may *only* contain .desktop files
-	// shutdown and env may *only* contain scripts, links or binaries
-	// autostart on the otherhand may contain all of the above.
-	// share/autostart is special as it overrides entries found in $KDEDIR/share/autostart
-	paths << KGlobalSettings::autostartPath()	// All new entries sholud go here
-		  << componentData().dirs()->localkdedir() + "shutdown/"
-		  << componentData().dirs()->localkdedir() + "env/"
-		  << componentData().dirs()->localkdedir() + "share/autostart"	// For Importing purposes
-		;
+    // share/autostart may *only* contain .desktop files
+    // shutdown and env may *only* contain scripts, links or binaries
+    // autostart on the otherhand may contain all of the above.
+    // share/autostart is special as it overrides entries found in $KDEDIR/share/autostart
+    paths << KGlobalSettings::autostartPath()	// All new entries sholud go here
+          << componentData().dirs()->localkdedir() + "shutdown/"
+          << componentData().dirs()->localkdedir() + "env/"
+          << componentData().dirs()->localkdedir() + "share/autostart"	// For Importing purposes
+        ;
 
-	// share/autostart shouldn't be an option as this should be reserved for global autostart entries
-	pathName << i18n("Startup")
-			 << i18n("Shutdown")
-			 << i18n("Pre-KDE startup")
-			 ;
-	widget->cmbStartOn->addItems(pathName);
-        widget->listCMD->clear();
-	foreach (const QString& path, paths) {
-		if (! KStandardDirs::exists(path))
-			KStandardDirs::makeDir(path);
+    // share/autostart shouldn't be an option as this should be reserved for global autostart entries
+    pathName << i18n("Startup")
+             << i18n("Shutdown")
+             << i18n("Pre-KDE startup")
+        ;
+    widget->cmbStartOn->addItems(pathName);
+    widget->listCMD->clear();
+    foreach (const QString& path, paths) {
+        if (! KStandardDirs::exists(path))
+            KStandardDirs::makeDir(path);
 
-		QDir autostartdir( path );
-		autostartdir.setFilter( QDir::Files );
-		const QFileInfoList list = autostartdir.entryInfoList();
-		for (int i = 0; i < list.size(); ++i) {
-			QFileInfo fi = list.at(i);
-			QString filename = fi.fileName();
-			Desktop *item = new Desktop( fi.absoluteFilePath(), widget->listCMD );
-			if ( ! item->isDesktop() ) {
-				if ( fi.isSymLink() ) {
-					QString link = fi.readLink();
-					item->setText( COL_NAME, filename );
-					item->setText( COL_RUN, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
-					item->setText( COL_COMMAND, link );
-				} else {
-					item->setText( COL_NAME, filename );
-					item->setText( COL_RUN, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
-					item->setText( COL_COMMAND, filename );
-				}
-			} else {
-				KService  service(fi.absoluteFilePath());
-				item->setText( COL_NAME, service.name() );
-				item->setText( COL_RUN, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
-				item->setText( COL_COMMAND, service.exec() );
-			}
-		}
-	}
-        //Update button
-        slotSelectionChanged();
+        QDir autostartdir( path );
+        autostartdir.setFilter( QDir::Files );
+        const QFileInfoList list = autostartdir.entryInfoList();
+        for (int i = 0; i < list.size(); ++i) {
+            QFileInfo fi = list.at(i);
+            QString filename = fi.fileName();
+            Desktop *item = new Desktop( fi.absoluteFilePath(), widget->listCMD );
+            if ( ! item->isDesktop() ) {
+                if ( fi.isSymLink() ) {
+                    QString link = fi.readLink();
+                    item->setText( COL_NAME, filename );
+                    item->setText( COL_RUN, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
+                    item->setText( COL_COMMAND, link );
+                } else {
+                    item->setText( COL_NAME, filename );
+                    item->setText( COL_RUN, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
+                    item->setText( COL_COMMAND, filename );
+                }
+            } else {
+                KService  service(fi.absoluteFilePath());
+                item->setText( COL_NAME, service.name() );
+                item->setText( COL_RUN, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
+                item->setText( COL_COMMAND, service.exec() );
+            }
+        }
+    }
+    //Update button
+    slotSelectionChanged();
 }
 
 void Autostart::slotAddProgram()
@@ -216,79 +216,79 @@ void Autostart::slotAddProgram()
 }
 
 void Autostart::slotAddCMD() {
-	AddDialog * addDialog = new AddDialog(this);
-	int result = addDialog->exec();
-	if (result == QDialog::Accepted) {
-		if (addDialog->symLink())
-			KIO::link(addDialog->importUrl(), paths[0]);
-		else
-			KIO::copy(addDialog->importUrl(), paths[0]);
+    AddDialog * addDialog = new AddDialog(this);
+    int result = addDialog->exec();
+    if (result == QDialog::Accepted) {
+        if (addDialog->symLink())
+            KIO::link(addDialog->importUrl(), paths[0]);
+        else
+            KIO::copy(addDialog->importUrl(), paths[0]);
 
-		Desktop * item = new Desktop( paths[0] + addDialog->importUrl().fileName(), widget->listCMD );
-		item->setText( COL_NAME, addDialog->importUrl().fileName() );
-		item->setText( COL_RUN, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
-		item->setText( COL_COMMAND, addDialog->importUrl().fileName() );
-	}
-        delete addDialog;
-	emit changed(true);
+        Desktop * item = new Desktop( paths[0] + addDialog->importUrl().fileName(), widget->listCMD );
+        item->setText( COL_NAME, addDialog->importUrl().fileName() );
+        item->setText( COL_RUN, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
+        item->setText( COL_COMMAND, addDialog->importUrl().fileName() );
+    }
+    delete addDialog;
+    emit changed(true);
 }
 
 void Autostart::slotRemoveCMD() {
-	QTreeWidgetItem* item = widget->listCMD->currentItem();
-	if (!item) return;
-        widget->listCMD->takeTopLevelItem( widget->listCMD->indexOfTopLevelItem( item ) );
+    QTreeWidgetItem* item = widget->listCMD->currentItem();
+    if (!item) return;
+    widget->listCMD->takeTopLevelItem( widget->listCMD->indexOfTopLevelItem( item ) );
 
-        KIO::del(((Desktop*)item)->fileName().path() );
-        emit changed(true);
+    KIO::del(((Desktop*)item)->fileName().path() );
+    emit changed(true);
 }
 
 void Autostart::slotEditCMD(QTreeWidgetItem* ent) {
-	if (!ent) return;
-	Desktop *entry = (Desktop*)ent;
+    if (!ent) return;
+    Desktop *entry = (Desktop*)ent;
 
-	const KFileItem kfi = KFileItem( KFileItem::Unknown, KFileItem::Unknown, KUrl( entry->fileName() ), true );
-	if (! slotEditCMD( kfi )) return;
+    const KFileItem kfi = KFileItem( KFileItem::Unknown, KFileItem::Unknown, KUrl( entry->fileName() ), true );
+    if (! slotEditCMD( kfi )) return;
 
-	if (entry->isDesktop()) {
-		KService service(entry->fileName().path());
-		entry->setText( COL_NAME, service.name() );
-		entry->setText( COL_RUN, pathName.value(paths.indexOf((entry->fileName().directory()+'/') )) );
-		entry->setText( COL_COMMAND, service.exec() );
-	}
+    if (entry->isDesktop()) {
+        KService service(entry->fileName().path());
+        entry->setText( COL_NAME, service.name() );
+        entry->setText( COL_RUN, pathName.value(paths.indexOf((entry->fileName().directory()+'/') )) );
+        entry->setText( COL_COMMAND, service.exec() );
+    }
 }
 
 bool Autostart::slotEditCMD( const KFileItem &item) {
-	KPropertiesDialog dlg( item, this );
-	bool c = ( dlg.exec() == QDialog::Accepted );
-	emit changed(c);
-	return c;
+    KPropertiesDialog dlg( item, this );
+    bool c = ( dlg.exec() == QDialog::Accepted );
+    emit changed(c);
+    return c;
 }
 
 void Autostart::slotEditCMD() {
-	if ( widget->listCMD->currentItem() == 0 )
-		return;
-	slotEditCMD( (Desktop*)widget->listCMD->currentItem() );
+    if ( widget->listCMD->currentItem() == 0 )
+        return;
+    slotEditCMD( (Desktop*)widget->listCMD->currentItem() );
 }
 
 void Autostart::slotSetStartOn( int index ) {
-	if ( widget->listCMD->currentItem() == 0 )
-		return;
-	Desktop* entry = (Desktop*)widget->listCMD->currentItem();
-	entry->setPath(paths.value(index));
-	entry->setText(COL_COMMAND, pathName[index]);
+    if ( widget->listCMD->currentItem() == 0 )
+        return;
+    Desktop* entry = (Desktop*)widget->listCMD->currentItem();
+    entry->setPath(paths.value(index));
+    entry->setText(COL_COMMAND, pathName[index]);
 }
 
 void Autostart::slotSelectionChanged() {
-	bool hasItems = (widget->listCMD->currentItem()!= 0 );
-	widget->cmbStartOn->setEnabled(hasItems);
-	widget->btnRemove->setEnabled(hasItems);
-	widget->btnProperties->setEnabled(hasItems);
-        widget->cboxEnabled->setEnabled( hasItems );
-	if (!hasItems)
-		return;
+    bool hasItems = (widget->listCMD->currentItem()!= 0 );
+    widget->cmbStartOn->setEnabled(hasItems);
+    widget->btnRemove->setEnabled(hasItems);
+    widget->btnProperties->setEnabled(hasItems);
+    widget->cboxEnabled->setEnabled( hasItems );
+    if (!hasItems)
+        return;
 
-	Desktop* entry = (Desktop*)widget->listCMD->currentItem();
-	widget->cmbStartOn->setCurrentIndex( paths.indexOf(entry->fileName().directory()+'/') );
+    Desktop* entry = (Desktop*)widget->listCMD->currentItem();
+    widget->cmbStartOn->setCurrentIndex( paths.indexOf(entry->fileName().directory()+'/') );
 }
 
 void Autostart::defaults()
