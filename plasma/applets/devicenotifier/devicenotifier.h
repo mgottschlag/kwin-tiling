@@ -20,6 +20,7 @@
 #ifndef DEVICENOTIFIER_H
 #define DEVICENOTIFIER_H
 
+#include <solid/solidnamespace.h>
 #include <plasma/applet.h>
 #include <plasma/dataengine.h>
 #include <plasma/phase.h>
@@ -78,6 +79,9 @@ class DeviceNotifier : public Plasma::Applet
         void slotOnItemClicked(const QModelIndex &);
         void onTimerExpired();
 	void onClickNotifier();
+    private slots:
+        void storageEjectDone(Solid::ErrorType error, QVariant errorData);
+        void storageTeardownDone(Solid::ErrorType error, QVariant errorData);
 
     private:
         QModelIndex indexForUdi(const QString &udi) const;

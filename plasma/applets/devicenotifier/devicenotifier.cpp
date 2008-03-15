@@ -31,6 +31,7 @@
 #include <QtDBus/QDBusReply>
 
 #include <KDialog>
+#include <KMessageBox>
 #include <KRun>
 #include <KStandardDirs>
 #include <KDesktopFile>
@@ -296,19 +297,22 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
             Q_ASSERT(index.isValid());
             QModelIndex actionIndex = m_hotplugModel->index(index.row(), 1, QModelIndex());
 
-            if (data["Accessible"].toBool() == true) {
-                m_hotplugModel->setData(actionIndex, KIcon("media-eject"), Qt::DecorationRole);
+            if (data["Device Types"].toStringList().contains("Storage Access")) {
+                if (data["Accessible"].toBool() == true) {
+                    m_hotplugModel->setData(actionIndex, KIcon("media-eject"), Qt::DecorationRole);
 
-                //set icon to mounted device
-                QStringList overlays;
-                overlays << "emblem-mounted";
-                m_hotplugModel->setData(index, KIcon(index.data(IconNameRole).toString(), NULL, overlays), Qt::DecorationRole);
-            } else {
-                m_hotplugModel->setData(actionIndex, KIcon(), Qt::DecorationRole);
+                    //set icon to mounted device
+                    QStringList overlays;
+                    overlays << "emblem-mounted";
+                    m_hotplugModel->setData(index, KIcon(index.data(IconNameRole).toString(), NULL, overlays), Qt::DecorationRole);
+                } else {
+                    m_hotplugModel->setData(actionIndex, KIcon(), Qt::DecorationRole);
 
-                //set icon to unmounted device
-                m_hotplugModel->setData(index, KIcon(index.data(IconNameRole).toString()), Qt::DecorationRole);
+                    //set icon to unmounted device
+                    m_hotplugModel->setData(index, KIcon(index.data(IconNameRole).toString()), Qt::DecorationRole);
+                }
             }
+            // actions specific for other types of devices will go here
         }
    }
 }
@@ -425,9 +429,16 @@ void DeviceNotifier::slotOnItemClicked(const QModelIndex &index)
         Solid::Device device(udi);
 
         if (device.is<Solid::OpticalDisc>()) {
-            device.parent().as<Solid::OpticalDrive>()->eject();
+            Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
+            connect(drive, SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
+                    this, SLOT(storageEjectDone(Solid::ErrorType, QVariant)));
+            drive->eject();
         } else if (device.is<Solid::StorageVolume>()) {
-            device.as<Solid::StorageAccess>()->teardown();
+            Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
+
+            connect(access, SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
+                this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant)));
+            access->teardown();
         }
     //open  (index.data(ScopeRole).toInt() == OpenAction)
     } else {
@@ -446,6 +457,28 @@ void DeviceNotifier::onTimerExpired()
         m_timer->stop();
         m_widget->hide();
     }
+}
+
+void DeviceNotifier::storageTeardownDone(Solid::ErrorType error, QVariant errorData)
+{
+    if (error && errorData.isValid()) {
+        KMessageBox::error(0, i18n("Cannot unmount the device.\nOne or more files on this device are open within an application."), QString());
+    }
+
+    //show the message only one time
+    disconnect(sender(), SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
+               this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant)));
+}
+
+void DeviceNotifier::storageEjectDone(Solid::ErrorType error, QVariant errorData)
+{
+    if (error && errorData.isValid()) {
+        KMessageBox::error(0, i18n("Cannot eject the disc.\nOne or more files on this disc are open within an application."), QString());
+    }
+
+    //show the message only one time
+    disconnect(sender(), SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
+               this, SLOT(storageEjectDone(Solid::ErrorType, QVariant)));
 }
 
 #include "devicenotifier.moc"
