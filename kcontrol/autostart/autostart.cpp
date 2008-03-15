@@ -31,6 +31,7 @@
 #include <KUrlRequester>
 #include <KOpenWithDialog>
 #include <KPropertiesDialog>
+#include <KDesktopFile>
 #include <KIO/NetAccess>
 #include <KIO/DeleteJob>
 #include <KIO/CopyJob>
@@ -125,10 +126,15 @@ void Autostart::slotItemClicked( QTreeWidgetItem *item, int col)
         Desktop *entry = static_cast<Desktop*>( item );
         if ( entry->isDesktop() )
         {
-            if ( item->checkState( col ) == Qt::Checked )
-                item->setText( COL_STATUS, i18n( "Enabled" ) );
-            else
+            bool disable = ( item->checkState( col ) == Qt::Unchecked );
+            KDesktopFile kc(entry->fileName().path());
+            KConfigGroup grp = kc.desktopGroup();
+            grp.writeEntry("Hidden", !disable);
+            kc.sync();
+            if ( disable )
                 item->setText( COL_STATUS, i18n( "Disabled" ) );
+            else
+                item->setText( COL_STATUS, i18n( "Enabled" ) );
         }
     }
 }
@@ -141,7 +147,10 @@ void Autostart::addItem( QTreeWidgetItem*item, const QString& name, const QStrin
     item->setText( COL_COMMAND, command );
     Desktop *entry = static_cast<Desktop*>( item );
     if ( entry->isDesktop() )
+    {
+        item->setCheckState( COL_STATUS, status ? Qt::Checked : Qt::Unchecked );
         item->setText( COL_STATUS, status ? i18n( "Enabled" ) : i18n( "Disabled" ) );
+    }
 }
 
 void Autostart::load()
@@ -182,8 +191,10 @@ void Autostart::load()
                     addItem( item, filename, pathName.value(paths.indexOf((item->fileName().directory()+'/') )), filename );
                 }
             } else {
-                KService  service(fi.absoluteFilePath());
-                addItem(item, service.name(), pathName.value(paths.indexOf((item->fileName().directory()+'/') )),  service.exec() );
+                KDesktopFile config(fi.absoluteFilePath());
+                const KConfigGroup grp = config.desktopGroup();
+                bool status = grp.readEntry("Hidden", false);
+                addItem(item, config.readName(), pathName.value(paths.indexOf((item->fileName().directory()+'/') )),  grp.readEntry("Exec"),status );
             }
         }
     }
