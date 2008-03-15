@@ -76,6 +76,7 @@ K_PLUGIN_FACTORY(AutostartFactory, registerPlugin<Autostart>();)
                                        KAboutData::License_GPL,
                                        ki18n("(c) 2006-2007 Stephen Leaf"));
     about->addAuthor(ki18n("Stephen Leaf"), KLocalizedString(), "smileaf@gmail.com");
+    about->addAuthor(ki18n("Montel Laurent"), KLocalizedString(), "montel@kde.org");
     setAboutData( about );
 
 }
@@ -286,18 +287,19 @@ void Autostart::slotRemoveCMD() {
 }
 
 void Autostart::slotEditCMD(QTreeWidgetItem* ent) {
-#if 0
     if (!ent) return;
-    Desktop *entry = static_cast<Desktop*>( ent );
-
-    const KFileItem kfi = KFileItem( KFileItem::Unknown, KFileItem::Unknown, KUrl( entry->fileName() ), true );
-    if (! slotEditCMD( kfi )) return;
-
-    if (entry->isDesktop()) {
-        KService service(entry->fileName().path());
-        addItem( entry, service.name(), pathName.value(paths.indexOf((entry->fileName().directory()+'/') )), service.exec() );
+    AutoStartItem *entry = dynamic_cast<AutoStartItem*>( ent );
+    if ( entry )
+    {
+        const KFileItem kfi = KFileItem( KFileItem::Unknown, KFileItem::Unknown, KUrl( entry->fileName() ), true );
+        if (! slotEditCMD( kfi ))
+            return;
+        DesktopStartItem *desktopEntry = dynamic_cast<DesktopStartItem*>( entry );
+        if (desktopEntry) {
+            KService service(desktopEntry->fileName().path());
+            addItem( desktopEntry, service.name(), pathName.value(paths.indexOf((desktopEntry->fileName().directory()+'/') )), service.exec() );
+        }
     }
-#endif
 }
 
 bool Autostart::slotEditCMD( const KFileItem &item) {
