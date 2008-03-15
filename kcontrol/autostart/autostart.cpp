@@ -50,6 +50,8 @@ public:
     {
         m_fileName = KUrl(service);
         m_isDesktop = service.endsWith(".desktop");
+        setCheckState ( 3,Qt::Unchecked );
+        setText( 3, i18n( "Disabled" ) );
     }
     bool isDesktop() const
     {
@@ -91,6 +93,7 @@ K_PLUGIN_FACTORY(AutostartFactory, registerPlugin<Autostart>();)
     connect( widget->btnAddProgram, SIGNAL(clicked()), SLOT(slotAddProgram()) );
     connect( widget->btnRemove, SIGNAL(clicked()), SLOT(slotRemoveCMD()) );
     connect( widget->listCMD, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), SLOT(slotEditCMD(QTreeWidgetItem*)) );
+    connect( widget->listCMD, SIGNAL(itemClicked(QTreeWidgetItem *, int) ),this,SLOT( slotItemClicked( QTreeWidgetItem *, int) ) );
     connect( widget->btnProperties, SIGNAL(clicked()), SLOT(slotEditCMD()) );
     connect( widget->cmbStartOn, SIGNAL(activated(int)), SLOT(slotSetStartOn(int)) );
     connect( widget->listCMD, SIGNAL(itemSelectionChanged()), SLOT(slotSelectionChanged()) );
@@ -114,6 +117,17 @@ Autostart::~Autostart()
    delete widget;
 }
 
+
+void Autostart::slotItemClicked( QTreeWidgetItem *item, int col)
+{
+    if ( item && col == COL_STATUS )
+    {
+        if ( item->checkState( col ) == Qt::Checked )
+            item->setText( COL_STATUS, i18n( "Enabled" ) );
+        else
+            item->setText( COL_STATUS, i18n( "Disabled" ) );
+    }
+}
 
 void Autostart::load()
 {
@@ -283,7 +297,6 @@ void Autostart::slotSelectionChanged() {
     widget->cmbStartOn->setEnabled(hasItems);
     widget->btnRemove->setEnabled(hasItems);
     widget->btnProperties->setEnabled(hasItems);
-    widget->cboxEnabled->setEnabled( hasItems );
     if (!hasItems)
         return;
 
