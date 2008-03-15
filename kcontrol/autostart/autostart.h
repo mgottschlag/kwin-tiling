@@ -48,6 +48,8 @@ public:
     void defaults();
     QStringList paths;
     QStringList pathName;
+protected:
+    void addItem(QTreeWidgetItem *item, const QString& name, const QString& run, const QString& command, bool status=true );
 
 public slots:
     void slotAddProgram();
