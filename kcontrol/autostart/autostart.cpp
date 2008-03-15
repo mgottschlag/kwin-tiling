@@ -148,10 +148,13 @@ void Autostart::load()
 
     m_programItem = new QTreeWidgetItem( widget->listCMD );
     m_programItem->setText( 0, i18n( "Desktop file" ));
+    m_programItem->setFlags(m_programItem->flags()^Qt::ItemIsSelectable );
     m_scriptItem = new QTreeWidgetItem( widget->listCMD );
     m_scriptItem->setText( 0, i18n( "Script file" ));
+    m_scriptItem->setFlags(m_scriptItem->flags()^Qt::ItemIsSelectable);
     widget->listCMD->expandItem( m_programItem );
     widget->listCMD->expandItem( m_scriptItem );
+
     foreach (const QString& path, paths) {
         if (! KStandardDirs::exists(path))
             KStandardDirs::makeDir(path);
