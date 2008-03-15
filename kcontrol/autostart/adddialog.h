@@ -31,14 +31,15 @@ class AddDialog : public KDialog
     Q_OBJECT
 
 public:
-	AddDialog(QWidget* parent=0);
-	~AddDialog();
-	// Returns the Url of the script to be imported
-	KUrl importUrl() const;
-	bool symLink() const;
+    AddDialog(QWidget* parent=0);
+    ~AddDialog();
+    // Returns the Url of the script to be imported
+    KUrl importUrl() const;
+    bool symLink() const;
 
 public slots:
-	void textChanged(const QString &text);
+    void textChanged(const QString &text);
+    void accept();
 
 private:
     KUrlRequester *m_url;

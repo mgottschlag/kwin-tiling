@@ -26,6 +26,7 @@
 #include <klocale.h>
 #include <KUrlRequester>
 #include <QLabel>
+#include <KMessageBox>
 
 AddDialog::AddDialog (QWidget* parent)
     : KDialog( parent ) {
@@ -33,7 +34,7 @@ AddDialog::AddDialog (QWidget* parent)
     setButtons( Cancel|Ok );
     QVBoxLayout *lay= new QVBoxLayout;
     w->setLayout( lay );
-    QLabel *lab = new QLabel( i18n( "Script:" ), w );//TODO fix text
+    QLabel *lab = new QLabel( i18n( "Shell script:" ), w );
     lay->addWidget( lab );
     m_url = new KUrlRequester( w );
     m_url->setFilter( "*.sh" );
@@ -42,8 +43,9 @@ AddDialog::AddDialog (QWidget* parent)
     m_symlink->setChecked( true );
     lay->addWidget( m_symlink );
     connect( m_url->lineEdit(), SIGNAL(textChanged(const QString&)), SLOT(textChanged(const QString&)) );
-
+    m_url->lineEdit()->setFocus();
     enableButtonOk(false);
+
     setMainWidget( w );
 }
 
@@ -55,11 +57,19 @@ void AddDialog::textChanged(const QString &text) {
 }
 
 KUrl AddDialog::importUrl() const {
-	return m_url->lineEdit()->text();
+    return m_url->lineEdit()->text();
 }
 
 bool AddDialog::symLink() const {
-	return m_symlink->isChecked();
+    return m_symlink->isChecked();
+}
+
+void AddDialog::accept()
+{
+    if ( !m_url->lineEdit()->text().endsWith( ".sh" ) )
+        KMessageBox::error( this, i18n( "KDE can autostart just script file with sh extension." ) );
+    else
+        KDialog::accept();
 }
 
 #include "adddialog.moc"
