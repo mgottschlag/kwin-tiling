@@ -33,11 +33,13 @@ AddDialog::AddDialog (QWidget* parent)
     setButtons( Cancel|Ok );
     QVBoxLayout *lay= new QVBoxLayout;
     w->setLayout( lay );
-    QLabel *lab = new QLabel( i18n( "Path:" ), w );//TODO fix text
+    QLabel *lab = new QLabel( i18n( "Script:" ), w );//TODO fix text
     lay->addWidget( lab );
     m_url = new KUrlRequester( w );
+    m_url->setFilter( "*.sh" );
     lay->addWidget( m_url );
     m_symlink = new QCheckBox( i18n( "Create as symlink" ), w ); //TODO fix text
+    m_symlink->setChecked( true );
     lay->addWidget( m_symlink );
     connect( m_url->lineEdit(), SIGNAL(textChanged(const QString&)), SLOT(textChanged(const QString&)) );
 
@@ -57,7 +59,7 @@ KUrl AddDialog::importUrl() const {
 }
 
 bool AddDialog::symLink() const {
-	return (m_symlink->checkState() == Qt::Checked);
+	return m_symlink->isChecked();
 }
 
 #include "adddialog.moc"

@@ -1,6 +1,4 @@
 /***************************************************************************
- *   Copyright (C) 2006-2007 by Stephen Leaf                               *
- *   smileaf@gmail.com                                                     *
  *   Copyright (C) 2008 by Montel Laurent <montel@kde.org>                 *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -19,51 +17,48 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
+#ifndef _AUTOSTARTITEM_H_
+#define _AUTOSTARTITEM_H_
 
-#ifndef _AUTOSTART_H_
-#define _AUTOSTART_H_
+#include <QTreeWidgetItem>
+#include <KUrl>
 
-#include <KCModule>
-#include <KAboutData>
-#include <KFileItem>
+class QComboBox;
+class QTreeWidget;
 
-#include <QComboBox>
-#include <QPushButton>
-#include <QTreeWidget>
-
-#include "ui_autostartconfig.h"
-#include "adddialog.h"
-#include "autostartitem.h"
-
-class Autostart: public KCModule
+class AutoStartItem : public QTreeWidgetItem
 {
-    Q_OBJECT
-
 public:
-    Autostart( QWidget* parent, const QVariantList&  );
-    ~Autostart();
-    enum COL_TYPE { COL_NAME = 0, COL_COMMAND=1, COL_STATUS=2,COL_RUN=3 };
-    void load();
-    void save();
-    void defaults();
-    QStringList paths;
-    QStringList pathName;
-protected:
-    void addItem(DesktopStartItem *item, const QString& name, const QString& run, const QString& command, bool status=true );
-    void addItem(ScriptStartItem *item, const QString& name, const QString& command, ScriptStartItem::ENV type );
-public slots:
-    void slotAddProgram();
-    void slotAddCMD();
-    void slotRemoveCMD();
-    void slotEditCMD(QTreeWidgetItem*);
-    bool slotEditCMD(const KFileItem&);
-    void slotEditCMD();
-    void slotSelectionChanged();
-    void slotItemClicked( QTreeWidgetItem *, int);
-private:
-    QTreeWidgetItem *m_programItem, *m_scriptItem;
+    AutoStartItem( const QString &service, QTreeWidgetItem *parent );
+    ~AutoStartItem();
 
-    Ui_AutostartConfig *widget;
+    KUrl fileName() const;
+
+    void setPath(const QString &path);
+
+private:
+    KUrl m_fileName;
+};
+
+class DesktopStartItem : public AutoStartItem
+{
+public:
+    DesktopStartItem( const QString &service, QTreeWidgetItem *parent );
+    ~DesktopStartItem();
+};
+
+
+class ScriptStartItem : public AutoStartItem
+{
+public:
+    enum ENV { START=0, SHUTDOWN=1}; //rename
+    ScriptStartItem( const QString &service, QTreeWidgetItem *parent );
+    ~ScriptStartItem();
+
+    void changeStartup( ScriptStartItem::ENV type );
+
+private:
+    QComboBox *m_comboBoxStartup;
 };
 
 #endif

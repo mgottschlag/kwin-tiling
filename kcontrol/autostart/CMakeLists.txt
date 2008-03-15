@@ -9,6 +9,7 @@ INCLUDE_DIRECTORIES (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
 ########### next target ###############
 
 SET(kcm_autostart_PART_SRCS
+   autostartitem.cpp
    adddialog.cpp
    autostart.cpp )
 
