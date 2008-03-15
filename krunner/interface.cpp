@@ -530,10 +530,12 @@ void Interface::matchActivated(QListWidgetItem* item)
     SearchMatch* match = dynamic_cast<SearchMatch*>(item);
 
     if (!match) {
+        //kDebug() << "not a SearchMatch object";
         return;
     }
 
     if (!match->actionEnabled()) {
+        //kDebug() << "item not enabled";
         return;
     }
 
@@ -643,17 +645,27 @@ void Interface::exec()
     QListWidgetItem* currentMatch = m_matchList->currentItem();
     if (!currentMatch) {
         if (m_defaultMatch) {
+            //kDebug() << "exec'ing default match";
             currentMatch = m_defaultMatch;
-        } else if (m_matchList->count() < 2) {
-            //TODO: the < 2 is a bit of a hack; we *always* get a search option returned,
-            //      so if we only have 1 item and it's not selected, guess what it is? ;)
-            //      we might be able to do better here.
+        } else if (m_matchList->count() < 1) {
             m_execQueued = true;
             match();
             return;
+        } else {
+            for (int i = 0; i < m_matchList->count(); ++i) {
+                SearchMatch* match = dynamic_cast<SearchMatch*>(m_matchList->item(i));
+                if (match && match->actionEnabled()) {
+                    currentMatch = match;
+                    break;
+                }
+            }
+            //kDebug() << "exec'ing first item" << currentMatch;
         }
     }
-    matchActivated(currentMatch);
+
+    if (currentMatch) {
+        matchActivated(currentMatch);
+    }
 }
 
 void Interface::showOptions(bool show)
