@@ -71,26 +71,6 @@ class SearchMatch : public QListWidgetItem
               m_default(false),
               m_action(0)
         {
-            setAction(action);
-        }
-
-        void activate(const Plasma::SearchContext *context)
-        {
-            m_action->exec(context);
-        }
-
-        bool actionEnabled()
-        {
-            return m_action->isEnabled();
-        }
-
-        bool hasMatchOptions()
-        {
-            return m_action->runner()->hasMatchOptions();
-        }
-
-        void setAction(const Plasma::SearchMatch* action)
-        {
             m_action = action;
             setIcon(m_action->icon());
 
@@ -104,45 +84,59 @@ class SearchMatch : public QListWidgetItem
                         m_action->subtext(),
                         m_action->runner()->objectName()));
             }
-
-            // in case our new action is now enabled and the old one wasn't, or
-            // vice versa
-            setDefault(m_default);
         }
 
-        QString toString()
+        void activate(const Plasma::SearchContext *context) const
+        {
+            m_action->exec(context);
+        }
+
+        bool actionEnabled() const
+        {
+            return m_action->isEnabled();
+        }
+
+        bool hasMatchOptions() const
+        {
+            return m_action->runner()->hasMatchOptions();
+        }
+
+        QString toString() const
         {
             return m_action->data().toString();
         }
 
-        Plasma::SearchMatch::Type actionType()
+        Plasma::SearchMatch::Type actionType() const
         {
             return m_action->type();
         }
 
-        /*Plasma::SearchMatch* action()
+        qreal actionRelevance() const
         {
-            return m_action;
-        }*/
+            return m_action->relevance();
+        }
 
-        void createMatchOptions(QWidget* parent)
+        void createMatchOptions(QWidget* parent) const
         {
             m_action->runner()->createMatchOptions(parent);
         }
 
-        void setDefault( bool def ) {
-            if ( m_default == def ) {
+        void setDefault(bool def)
+        {
+            if (m_default == def) {
                 return;
             }
 
             m_default = def;
 
-            if ( m_default ) {
-                if ( m_action->isEnabled() ) {
-                    setText( text().prepend( i18n("Default: ") ) );
+            if (m_default) {
+                if (m_action->isEnabled()) {
+                    setText(text().prepend(i18n("Default: ")));
+                } else {
+                    m_default = false;
                 }
             } else {
-                setText( text().mid( 9 ) );
+                setText(text().mid(9));
             }
         }
 
@@ -589,6 +583,12 @@ void Interface::match()
         m_execQueued = false;
         return;
     }
+
+    if (m_context.searchTerm() == term) {
+        // we already are searching for this!
+        return;
+    }
+
     m_context.resetSearchTerm(term);
     m_context.addStringCompletions(m_searchTerm->historyItems());
 
@@ -640,26 +640,30 @@ void Interface::exec()
         return;
     }
 
-    kDebug() << "match list has" << m_matchList->count() << "items";
+    //kDebug() << "match list has" << m_matchList->count() << "items";
+    if (m_matchList->count() < 1) {
+        if (m_searchTerm->currentText().length() > 0) {
+            m_execQueued = true;
+            match();
+        }
+        return;
+    }
 
     QListWidgetItem* currentMatch = m_matchList->currentItem();
     if (!currentMatch) {
         if (m_defaultMatch) {
             //kDebug() << "exec'ing default match";
             currentMatch = m_defaultMatch;
-        } else if (m_matchList->count() < 1) {
-            m_execQueued = true;
-            match();
-            return;
         } else {
             for (int i = 0; i < m_matchList->count(); ++i) {
                 SearchMatch* match = dynamic_cast<SearchMatch*>(m_matchList->item(i));
-                if (match && match->actionEnabled()) {
+                if (match && match->actionEnabled() && match->actionRelevance() > 0 /* &&
+                    match->actionType() != Plasma::SearchMatch::HelperMatch */) {
                     currentMatch = match;
                     break;
                 }
             }
-            //kDebug() << "exec'ing first item" << currentMatch;
+            //kDebug() << "exec'ing first plausable item" << currentMatch;
         }
     }
 
