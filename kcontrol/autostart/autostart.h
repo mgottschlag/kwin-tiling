@@ -60,7 +60,8 @@ public slots:
     void slotSelectionChanged();
 
 private:
-	Ui_AutostartConfig *widget;
+    enum COL_TYPE { COL_NAME = 0, COL_RUN=1, COL_COMMAND=2, COL_STATUS=3};
+    Ui_AutostartConfig *widget;
 };
 
 #endif

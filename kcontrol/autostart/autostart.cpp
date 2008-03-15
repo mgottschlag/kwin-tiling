@@ -83,6 +83,9 @@ Autostart::Autostart( QWidget* parent, const QVariantList& )
 {
 	widget = new Ui_AutostartConfig();
 	widget->setupUi(this);
+        QStringList lstHeader;
+        lstHeader<<i18n( "Name" )<<i18n( "Run On" )<< i18n( "Command" )<< i18n( "Status" );
+        widget->listCMD->setHeaderLabels(lstHeader);
         setButtons(Apply);
 	connect( widget->btnAddScript, SIGNAL(clicked()), SLOT(slotAddCMD()) );
 	connect( widget->btnAddProgram, SIGNAL(clicked()), SLOT(slotAddProgram()) );
@@ -145,19 +148,19 @@ void Autostart::load()
 			if ( ! item->isDesktop() ) {
 				if ( fi.isSymLink() ) {
 					QString link = fi.readLink();
-					item->setText( 0, filename );
-					item->setText( 1, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
-					item->setText( 2, link );
+					item->setText( COL_NAME, filename );
+					item->setText( COL_RUN, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
+					item->setText( COL_COMMAND, link );
 				} else {
-					item->setText( 0, filename );
-					item->setText( 1, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
-					item->setText( 2, filename );
+					item->setText( COL_NAME, filename );
+					item->setText( COL_RUN, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
+					item->setText( COL_COMMAND, filename );
 				}
 			} else {
 				KService  service(fi.absoluteFilePath());
-				item->setText( 0, service.name() );
-				item->setText( 1, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
-				item->setText( 2, service.exec() );
+				item->setText( COL_NAME, service.name() );
+				item->setText( COL_RUN, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
+				item->setText( COL_COMMAND, service.exec() );
 			}
 		}
 	}
@@ -206,9 +209,9 @@ void Autostart::slotAddProgram()
             return;
     }
     Desktop * item = new Desktop( KGlobalSettings::autostartPath() + service->name() + ".desktop", widget->listCMD );
-    item->setText( 0, service->name() );
-    item->setText( 1, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
-    item->setText( 2, service->exec() );
+    item->setText( COL_NAME, service->name() );
+    item->setText( COL_RUN, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
+    item->setText( COL_COMMAND, service->exec() );
     emit changed(true);
 }
 
@@ -222,9 +225,9 @@ void Autostart::slotAddCMD() {
 			KIO::copy(addDialog->importUrl(), paths[0]);
 
 		Desktop * item = new Desktop( paths[0] + addDialog->importUrl().fileName(), widget->listCMD );
-		item->setText( 0, addDialog->importUrl().fileName() );
-		item->setText( 1, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
-		item->setText( 2, addDialog->importUrl().fileName() );
+		item->setText( COL_NAME, addDialog->importUrl().fileName() );
+		item->setText( COL_RUN, pathName.value(paths.indexOf((item->fileName().directory()+'/') )) );
+		item->setText( COL_COMMAND, addDialog->importUrl().fileName() );
 	}
         delete addDialog;
 	emit changed(true);
@@ -248,9 +251,9 @@ void Autostart::slotEditCMD(QTreeWidgetItem* ent) {
 
 	if (entry->isDesktop()) {
 		KService service(entry->fileName().path());
-		entry->setText( 0, service.name() );
-		entry->setText( 1, pathName.value(paths.indexOf((entry->fileName().directory()+'/') )) );
-		entry->setText( 2, service.exec() );
+		entry->setText( COL_NAME, service.name() );
+		entry->setText( COL_RUN, pathName.value(paths.indexOf((entry->fileName().directory()+'/') )) );
+		entry->setText( COL_COMMAND, service.exec() );
 	}
 }
 
@@ -272,7 +275,7 @@ void Autostart::slotSetStartOn( int index ) {
 		return;
 	Desktop* entry = (Desktop*)widget->listCMD->currentItem();
 	entry->setPath(paths.value(index));
-	entry->setText(1, pathName[index]);
+	entry->setText(COL_COMMAND, pathName[index]);
 }
 
 void Autostart::slotSelectionChanged() {
