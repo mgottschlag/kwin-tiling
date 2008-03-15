@@ -302,8 +302,11 @@ void Autostart::slotSetStartOn( int index ) {
     if ( widget->listCMD->currentItem() == 0 )
         return;
     Desktop* entry = (Desktop*)widget->listCMD->currentItem();
-    entry->setPath(paths.value(index));
-    entry->setText(COL_COMMAND, pathName[index]);
+    if ( !entry->isDesktop() )
+    {
+        entry->setPath(paths.value(index));
+        entry->setText(COL_COMMAND, pathName[index]);
+    }
 }
 
 void Autostart::slotSelectionChanged() {
