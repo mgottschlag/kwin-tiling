@@ -265,14 +265,23 @@ void Autostart::slotAddCMD() {
 
 void Autostart::slotRemoveCMD() {
     QTreeWidgetItem* item = widget->listCMD->currentItem();
-    if (!item) return;
-    AutoStartItem *startItem = dynamic_cast<AutoStartItem*>( item );
+    if (!item)
+        return;
+    DesktopStartItem *startItem = dynamic_cast<DesktopStartItem*>( item );
     if ( startItem )
     {
-        widget->listCMD->takeTopLevelItem( widget->listCMD->indexOfTopLevelItem( item ) );
-
+        m_programItem->takeChild( m_programItem->indexOfChild( startItem ) );
         KIO::del(startItem->fileName().path() );
         emit changed(true);
+    }
+    else
+    {
+        ScriptStartItem * scriptItem = dynamic_cast<ScriptStartItem*>( item );
+        if ( scriptItem )
+        {
+            m_scriptItem->takeChild( m_scriptItem->indexOfChild( scriptItem ) );
+            KIO::del(scriptItem->fileName().path() );
+        }
     }
 }
 
@@ -310,7 +319,7 @@ void Autostart::slotChangeStartup( int index )
         return;
     ScriptStartItem* entry = dynamic_cast<ScriptStartItem*>( widget->listCMD->currentItem() );
     if ( entry )
-        entry->setPath(paths.value(index));
+        entry->setPath(paths.value(index+1));
 }
 
 void Autostart::slotSelectionChanged() {
