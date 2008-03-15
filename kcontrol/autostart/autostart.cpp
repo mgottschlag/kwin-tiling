@@ -252,9 +252,9 @@ void Autostart::slotAddCMD() {
     int result = addDialog->exec();
     if (result == QDialog::Accepted) {
         if (addDialog->symLink())
-            KIO::link(addDialog->importUrl(), paths[0]);
+            KIO::link(addDialog->importUrl(), paths[2]);
         else
-            KIO::copy(addDialog->importUrl(), paths[0]);
+            KIO::copy(addDialog->importUrl(), paths[2]);
 
         Desktop * item = new Desktop( paths[0] + addDialog->importUrl().fileName(), widget->listCMD );
         addItem( item,  addDialog->importUrl().fileName(), pathName.value(paths.indexOf((item->fileName().directory()+'/') ) ), addDialog->importUrl().fileName() );

@@ -13,7 +13,7 @@
    <item rowspan="6" row="0" column="0" >
     <widget class="QTreeWidget" name="listCMD" >
      <property name="rootIsDecorated" >
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <column>
       <property name="text" >

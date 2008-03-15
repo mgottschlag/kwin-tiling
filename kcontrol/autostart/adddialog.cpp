@@ -31,7 +31,6 @@ AddDialog::AddDialog (QWidget* parent)
     : KDialog( parent ) {
     QWidget *w = new QWidget( this );
     setButtons( Cancel|Ok );
-    setDefaultButton( Cancel );
     QVBoxLayout *lay= new QVBoxLayout;
     w->setLayout( lay );
     QLabel *lab = new QLabel( i18n( "Path:" ), w );//TODO fix text
