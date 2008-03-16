@@ -293,6 +293,7 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
             }
         //data from soliddevice engine
         } else {
+            kDebug() << "DeviceNotifier::solidDeviceEngine updated" << source;
             QModelIndex index = indexForUdi(source);
             Q_ASSERT(index.isValid());
             QModelIndex actionIndex = m_hotplugModel->index(index.row(), 1, QModelIndex());
@@ -343,13 +344,15 @@ void DeviceNotifier::onSourceAdded(const QString &name)
 
 void DeviceNotifier::onSourceRemoved(const QString &name)
 {
+    m_solidEngine->disconnectSource(name, this);
+    m_solidDeviceEngine->disconnectSource(name, this);
+
     QModelIndex index = indexForUdi(name);
     Q_ASSERT(index.isValid());
     m_hotplugModel->removeRow(index.row());
     if (m_icon && m_hotplugModel->rowCount() == 0) {
         m_widget->hide();
     }
-
 }
 
 QModelIndex DeviceNotifier::indexForUdi(const QString &udi) const
