@@ -41,6 +41,9 @@
 #include "plasma/theme.h"
 #include "plasma/svg.h"
 
+bool AbstractTaskItem::s_backgroundCreated = false;
+Plasma::Svg* AbstractTaskItem::s_taskItemBackground = 0;
+
 AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
     : Widget(parent,parentObject),
       _flags(0),
@@ -50,20 +53,35 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
       m_updateTimerId(-1)
 {
     setAcceptsHoverEvents(true);
+    setupBackgroundSvg(parentObject);
     //setAcceptDrops(true);
-
-    QString tasksThemePath = Plasma::Theme::self()->image("widgets/tasks");
-    m_taskItemBackground = 0;
-    if (!tasksThemePath.isEmpty()) {
-        m_taskItemBackground = new Plasma::Svg(tasksThemePath, this);
-        m_taskItemBackground->resize();
-        connect (m_taskItemBackground, SIGNAL(repaintNeeded()), this, SLOT(update()));
+    if (s_taskItemBackground) {
+        connect(s_taskItemBackground, SIGNAL(repaintNeeded()), this, SLOT(update()));
     }
-
 }
 
 AbstractTaskItem::~AbstractTaskItem()
 {
+}
+
+void AbstractTaskItem::setupBackgroundSvg(QObject *parent)
+{
+    if (s_backgroundCreated) {
+        return;
+    }
+
+    //TODO: we should probably reset this when the theme changes
+    s_backgroundCreated = true;
+    QString tasksThemePath = Plasma::Theme::self()->image("widgets/tasks");
+    s_taskItemBackground = 0;
+    if (!tasksThemePath.isEmpty()) {
+        while (parent && parent->parent()) {
+            parent = parent->parent();
+        }
+
+        s_taskItemBackground = new Plasma::Svg(tasksThemePath, parent);
+        s_taskItemBackground->resize();
+    }
 }
 
 void AbstractTaskItem::animationUpdate(qreal progress)
@@ -226,13 +244,13 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors());
 
     if (taskFlags() & TaskWantsAttention) {
-        if (m_taskItemBackground) {
+        if (s_taskItemBackground) {
             //Draw task background from theme svg "attention" element
             QPixmap attention(option->rect.width(), option->rect.height());
             attention.fill(Qt::transparent);
             {
                 QPainter attentionPainter(&attention);
-                m_taskItemBackground->paint(&attentionPainter, option->rect, "attention");
+                s_taskItemBackground->paint(&attentionPainter, option->rect, "attention");
             }
             painter->drawPixmap(option->rect, attention);
         } else {
@@ -249,14 +267,14 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
          || taskFlags() & TaskHasFocus)
     {
 
-        if (m_taskItemBackground) {
+        if (s_taskItemBackground) {
             if (taskFlags() & TaskHasFocus) {
                //Draw task background from theme svg "focus" element
                 QPixmap focus(option->rect.width(), option->rect.height());
                 focus.fill(Qt::transparent);
                 {
                     QPainter focusPainter(&focus);
-                    m_taskItemBackground->paint(&focusPainter, option->rect, "focus");
+                    s_taskItemBackground->paint(&focusPainter, option->rect, "focus");
                 }
                 painter->drawPixmap(option->rect, focus);
             } else { 
@@ -265,7 +283,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
                 hover.fill(Qt::transparent);
                 {
                     QPainter hoverPainter(&hover);
-                    m_taskItemBackground->paint(&hoverPainter, option->rect, "hover");
+                    s_taskItemBackground->paint(&hoverPainter, option->rect, "hover");
                 }
                 painter->drawPixmap(option->rect, hover);
             }
@@ -308,13 +326,13 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
             painter->setPen(Plasma::Theme::self()->backgroundColor());
         }
     } else {
-        if (m_taskItemBackground) {
+        if (s_taskItemBackground) {
             //Draw task background from theme svg "normal" element
             QPixmap normal(option->rect.width(), option->rect.height());
             normal.fill(Qt::transparent);
             {
                QPainter normalPainter(&normal);
-               m_taskItemBackground->paint(&normalPainter, option->rect, "normal");
+               s_taskItemBackground->paint(&normalPainter, option->rect, "normal");
             }
             painter->drawPixmap(option->rect, normal);
         } else {
@@ -326,7 +344,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
             painter->setPen(Plasma::Theme::self()->backgroundColor());
         }
     }
-    if (!m_taskItemBackground) {
+    if (!s_taskItemBackground) {
         painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
     }
 }

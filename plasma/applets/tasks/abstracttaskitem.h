@@ -182,6 +182,7 @@ private slots:
     void animationUpdate(qreal progress);
 
 private:
+    static void setupBackgroundSvg(QObject *parent);
     // area of item occupied by task's icon
     QRectF iconRect() const;
     // area of item occupied by task's text
@@ -200,7 +201,8 @@ private:
     int m_updateTimerId;
     QTime m_lastUpdate;
 
-    Plasma::Svg* m_taskItemBackground;
+    static bool s_backgroundCreated;
+    static Plasma::Svg* s_taskItemBackground;
 
     // minimum size (in pixels) of a task's icon
     static const int MinTaskIconSize = 48;
