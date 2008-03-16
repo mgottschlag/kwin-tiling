@@ -98,7 +98,6 @@ KDMShutdownBase::complete( QWidget *prevWidget )
 		                          KGreeterPlugin::Shutdown );
 		verify->selectPlugin( curPlugin );
 		box->addLayout( verify->getLayout() );
-		verify->getLayout()->setParent( box );
 		QAction *action = new QAction( this );
 		action->setShortcut( Qt::ALT+Qt::Key_A );
 		connect( action, SIGNAL(triggered( bool )), SLOT(slotActivatePlugMenu()) );
@@ -108,7 +107,6 @@ KDMShutdownBase::complete( QWidget *prevWidget )
 
 	QBoxLayout *hlay = new QHBoxLayout();
 	box->addLayout( hlay );
-	hlay->setParent( box );
 	hlay->addStretch( 1 );
 	if (mayOk) {
 		okButton = new KPushButton( KStandardGuiItem::ok(), this );
@@ -246,7 +244,6 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 
 	QHBoxLayout *hlay = new QHBoxLayout();
 	box->addLayout( hlay );
-	hlay->setParent( box );
 
 	howGroup = new QGroupBox( i18n("Shutdown Type"), this );
 	hlay->addWidget( howGroup, 0, Qt::AlignTop );
@@ -278,7 +275,6 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 		targets->setCurrentIndex( oldTarget == -1 ? defaultTarget : oldTarget );
 		QHBoxLayout *hb = new QHBoxLayout();
 		hwlay->addLayout( hb );
-		hb->setParent( hwlay );
 		hb->addSpacing(
 			style()->pixelMetric( QStyle::PM_ExclusiveIndicatorWidth )
 			+ hb->spacing() );
@@ -485,7 +481,6 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 
 	QVBoxLayout *buttonlay = new QVBoxLayout();
 	hbox->addLayout( buttonlay );
-	buttonlay->setParent( hbox );
 
 	buttonlay->addStretch( 1 );
 

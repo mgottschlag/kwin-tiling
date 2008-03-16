@@ -78,7 +78,6 @@ ChooserDlg::ChooserDlg()
 	connect( addButton, SIGNAL(clicked()), SLOT(addHostname()) );
 	QBoxLayout *hibox = new QHBoxLayout();
 	vbox->addLayout( hibox );
-	hibox->setParent( vbox );
 	hibox->addWidget( itxt );
 	hibox->addWidget( iline );
 	hibox->addWidget( addButton );
@@ -90,7 +89,6 @@ ChooserDlg::ChooserDlg()
 
 	QBoxLayout *hbox = new QHBoxLayout();
 	vbox->addLayout( hbox );
-	hbox->setParent( vbox );
 	hbox->setSpacing( 20 );
 	hbox->addWidget( acceptButton );
 	hbox->addWidget( pingButton );

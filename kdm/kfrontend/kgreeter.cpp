@@ -664,7 +664,6 @@ KStdGreeter::KStdGreeter()
 		QBoxLayout *ex_box = new QVBoxLayout( this );
 		main_box = new QHBoxLayout();
 		ex_box->addLayout( main_box );
-		main_box->setParent( ex_box );
 		ex_box->addWidget( consoleView );
 	} else
 #endif
@@ -679,7 +678,6 @@ KStdGreeter::KStdGreeter()
 
 	QBoxLayout *inner_box = new QVBoxLayout();
 	main_box->addLayout( inner_box );
-	inner_box->setParent( main_box );
 	inner_box->setSpacing( rs );
 
 	if (!_authorized && _authComplain) {
@@ -757,7 +755,6 @@ KStdGreeter::KStdGreeter()
 		                 pluginList, KGreeterPlugin::Authenticate,
 		                 KGreeterPlugin::Login );
 	inner_box->addLayout( sverify->getLayout() );
-	sverify->getLayout()->setParent( inner_box );
 	QMenu *plugMenu = sverify->getPlugMenu();
 	sverify->selectPlugin( curPlugin );
 	verify = sverify;
@@ -766,7 +763,6 @@ KStdGreeter::KStdGreeter()
 
 	QBoxLayout *hbox2 = new QHBoxLayout();
 	inner_box->addLayout( hbox2 );
-	hbox2->setParent( inner_box );
 	hbox2->addWidget( goButton );
 	hbox2->addStretch( 1 );
 	hbox2->addWidget( menuButton );
