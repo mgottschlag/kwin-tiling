@@ -625,6 +625,7 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config, const KConfigGro
         m_view->setCurrentIndex(index);
     }
 
+    m_color->setColor(config.readEntry("wallpapercolor", m_color->color()));
     KConfigGroup iconConfig(&globalConfig, "DesktopIcons");
     bool showIcons = iconConfig.readEntry("showIcons",true);
     m_showIcons->setCheckState(showIcons ? Qt::Checked : Qt::Unchecked);
