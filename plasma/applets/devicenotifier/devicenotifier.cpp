@@ -322,6 +322,12 @@ void DeviceNotifier::onSourceAdded(const QString &name)
 {
     kDebug() << "DeviceNotifier:: source added" << name;
     if (m_hotplugModel->rowCount() == m_numberItems && m_numberItems != 0) {
+        QModelIndex index = m_hotplugModel->index(m_hotplugModel->rowCount() - 1, 0);
+        QString itemUdi = m_hotplugModel->data(index, SolidUdiRole).toString();
+
+        //disconnect sources and after (important) remove the row
+        m_solidDeviceEngine->disconnectSource(itemUdi, this);
+        m_solidEngine->disconnectSource(itemUdi, this);
         m_hotplugModel->removeRow(m_hotplugModel->rowCount() - 1);
     }
     QStandardItem *item = new QStandardItem();
