@@ -99,7 +99,7 @@ void RenderThread::run()
         }
         
         QImage result(size, QImage::Format_ARGB32_Premultiplied);
-        result.fill(color.rgb());
+        result.fill(color.rgba());
 
         if (file.isEmpty() || !QFile::exists(file)) {
             emit done(token, result);
