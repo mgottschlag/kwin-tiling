@@ -862,6 +862,7 @@ Name[sl]=Izvede klic D-Bus »kdesktop KDesktopIface popupExecuteCommand()«
 Name[sr]=Д‑бус позив „kdesktop KDesktopIface popupExecuteCommand()“
 Name[sr@latin]=D‑Bus poziv „kdesktop KDesktopIface popupExecuteCommand()“
 Name[sv]=Utför D-Bus anropet 'kdesktop KDesktopIface popupExecuteCommand()'
+Name[tr]=D-Bus komutunu çağır 'kdesktop KDesktopIface popupExecuteCommand()'
 Name[zh_CN]=执行 D-Bus 调用“kdesktop KDesktopIface popupExecuteCommand()”
 Name[zh_TW]=執行 D-Bus 呼叫 'kdesktop KDesktopIface popupExecuteCommand()'
 Type=DCOP_SHORTCUT_ACTION_DATA
