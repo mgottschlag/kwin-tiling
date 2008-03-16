@@ -46,6 +46,7 @@ RootWidget::RootWidget()
     //TODO: Make the shortcut configurable
     KAction *showAction = new KAction( this );
     showAction->setText( i18n( "Show Dashboard" ) );
+    showAction->setObjectName( "Show Dashboard" ); // NO I18N
     showAction->setGlobalShortcut( KShortcut( Qt::CTRL + Qt::Key_F12 ) );
     connect( showAction, SIGNAL( triggered() ), this, SLOT( toggleDashboard() ) );
 }
