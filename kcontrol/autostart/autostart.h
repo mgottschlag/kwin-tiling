@@ -32,7 +32,6 @@
 #include <QTreeWidget>
 
 #include "ui_autostartconfig.h"
-#include "adddialog.h"
 #include "autostartitem.h"
 
 class Autostart: public KCModule
@@ -46,8 +45,9 @@ public:
     void load();
     void save();
     void defaults();
-    QStringList paths;
-    QStringList pathName;
+
+    QStringList listPathName() const { return m_pathName;}
+
 public slots:
     void slotChangeStartup( int index );
 
@@ -65,6 +65,8 @@ public slots:
     void slotItemClicked( QTreeWidgetItem *, int);
 private:
     QTreeWidgetItem *m_programItem, *m_scriptItem;
+    QStringList m_paths;
+    QStringList m_pathName;
 
     Ui_AutostartConfig *widget;
 };

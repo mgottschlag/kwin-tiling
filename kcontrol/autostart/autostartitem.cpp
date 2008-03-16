@@ -67,9 +67,8 @@ ScriptStartItem::ScriptStartItem( const QString &service, QTreeWidgetItem *paren
     : AutoStartItem( service, parent,autostart )
 {
     m_comboBoxStartup = new QComboBox;
-    QStringList startupLst;
-    startupLst<<i18n( "Startup" )<<i18n( "Shutdown" );
-    m_comboBoxStartup->addItems( startupLst );
+    m_comboBoxStartup->addItems( autostart->listPathName() );
+
     setText( 2, i18n( "Enabled" ) );
     QObject::connect( m_comboBoxStartup, SIGNAL(activated ( int ) ),autostart,SLOT( slotChangeStartup( int ) ) );
     treeWidget()->setItemWidget ( this, Autostart::COL_RUN, m_comboBoxStartup );
@@ -88,6 +87,9 @@ void ScriptStartItem::changeStartup(ScriptStartItem::ENV type )
         break;
     case ScriptStartItem::SHUTDOWN:
         m_comboBoxStartup->setCurrentIndex( 1 );
+        break;
+    case ScriptStartItem::PRE_START:
+        m_comboBoxStartup->setCurrentIndex( 2 );
         break;
     default:
         kDebug()<<" type is not defined :"<<type;

@@ -19,31 +19,47 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-#ifndef _ADDDIALOG_H_
-#define _ADDDIALOG_H_
+#include "addscriptdialog.h"
+#include <KLineEdit>
+#include <QCheckBox>
+#include <QVBoxLayout>
+#include <klocale.h>
+#include <KUrlRequester>
+#include <QLabel>
 
-#include <KDialog>
-class KUrlRequester;
-class QCheckBox;
+AddScriptDialog::AddScriptDialog (QWidget* parent)
+    : KDialog( parent ) {
+    QWidget *w = new QWidget( this );
+    setButtons( Cancel|Ok );
+    QVBoxLayout *lay= new QVBoxLayout;
+    w->setLayout( lay );
+    QLabel *lab = new QLabel( i18n( "Shell script:" ), w );
+    lay->addWidget( lab );
+    m_url = new KUrlRequester( w );
+    lay->addWidget( m_url );
+    m_symlink = new QCheckBox( i18n( "Create as symlink" ), w ); //TODO fix text
+    m_symlink->setChecked( true );
+    lay->addWidget( m_symlink );
+    connect( m_url->lineEdit(), SIGNAL(textChanged(const QString&)), SLOT(textChanged(const QString&)) );
+    m_url->lineEdit()->setFocus();
+    enableButtonOk(false);
 
-class AddDialog : public KDialog
-{
-    Q_OBJECT
+    setMainWidget( w );
+}
 
-public:
-    AddDialog(QWidget* parent=0);
-    ~AddDialog();
-    // Returns the Url of the script to be imported
-    KUrl importUrl() const;
-    bool symLink() const;
+AddScriptDialog::~AddScriptDialog()
+{}
 
-public slots:
-    void textChanged(const QString &text);
-    void accept();
+void AddScriptDialog::textChanged(const QString &text) {
+    enableButtonOk(!text.isEmpty());
+}
 
-private:
-    KUrlRequester *m_url;
-    QCheckBox* m_symlink;
-};
+KUrl AddScriptDialog::importUrl() const {
+    return m_url->lineEdit()->text();
+}
 
-#endif
+bool AddScriptDialog::symLink() const {
+    return m_symlink->isChecked();
+}
+
+#include "addscriptdialog.moc"

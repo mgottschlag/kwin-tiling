@@ -52,7 +52,7 @@ public:
 class ScriptStartItem : public AutoStartItem
 {
 public:
-    enum ENV { START=0, SHUTDOWN=1}; //rename
+    enum ENV { START=0, SHUTDOWN=1, PRE_START=2}; //rename
     ScriptStartItem( const QString &service, QTreeWidgetItem *parent, Autostart* );
     ~ScriptStartItem();
 

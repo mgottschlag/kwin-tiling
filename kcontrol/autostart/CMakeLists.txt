@@ -10,7 +10,7 @@ INCLUDE_DIRECTORIES (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
 
 SET(kcm_autostart_PART_SRCS
    autostartitem.cpp
-   adddialog.cpp
+   addscriptdialog.cpp
    autostart.cpp )
 
 KDE4_ADD_UI_FILES(kcm_autostart_PART_SRCS autostartconfig.ui )

@@ -21,6 +21,7 @@
 
 #include "autostart.h"
 #include "autostartitem.h"
+#include "addscriptdialog.h"
 
 #include <KGenericFactory>
 #include <KLocale>
@@ -33,6 +34,7 @@
 #include <KOpenWithDialog>
 #include <KPropertiesDialog>
 #include <KDesktopFile>
+#include <KMessageBox>
 #include <KIO/NetAccess>
 #include <KIO/DeleteJob>
 #include <KIO/CopyJob>
@@ -133,14 +135,14 @@ void Autostart::load()
     // shutdown and env may *only* contain scripts, links or binaries
     // autostart on the otherhand may contain all of the above.
     // share/autostart is special as it overrides entries found in $KDEDIR/share/autostart
-    paths << KGlobalSettings::autostartPath()	// All new entries sholud go here
+    m_paths << KGlobalSettings::autostartPath()	// All new entries should go here
           << componentData().dirs()->localkdedir() + "shutdown/"
           << componentData().dirs()->localkdedir() + "env/"
           << componentData().dirs()->localkdedir() + "share/autostart"	// For Importing purposes
         ;
 
     // share/autostart shouldn't be an option as this should be reserved for global autostart entries
-    pathName << i18n("Startup")
+    m_pathName << i18n("Startup")
              << i18n("Shutdown")
              << i18n("Pre-KDE startup")
         ;
@@ -157,7 +159,7 @@ void Autostart::load()
     widget->listCMD->expandItem( m_programItem );
     widget->listCMD->expandItem( m_scriptItem );
 
-    foreach (const QString& path, paths) {
+    foreach (const QString& path, m_paths) {
         if (! KStandardDirs::exists(path))
             KStandardDirs::makeDir(path);
 
@@ -174,21 +176,23 @@ void Autostart::load()
                 KDesktopFile config(fi.absoluteFilePath());
                 const KConfigGroup grp = config.desktopGroup();
                 bool status = grp.readEntry("Hidden", false);
-                addItem(item, config.readName(), pathName.value(paths.indexOf((item->fileName().directory()+'/') )),  grp.readEntry("Exec"),status );
+                addItem(item, config.readName(), m_pathName.value(m_paths.indexOf((item->fileName().directory()+'/') )),  grp.readEntry("Exec"),status );
             }
             else
             {
                 ScriptStartItem *item = new ScriptStartItem( fi.absoluteFilePath(), m_scriptItem,this );
-                int typeOfStartup = paths.indexOf((item->fileName().directory()+'/') );
+                int typeOfStartup = m_paths.indexOf((item->fileName().directory()+'/') );
                 ScriptStartItem::ENV type = ScriptStartItem::START;
                 switch( typeOfStartup )
                 {
-                case 1:
+                case 0:
                     type =ScriptStartItem::START;
                     break;
-                case 2:
+                case 1:
                     type = ScriptStartItem::SHUTDOWN;
                     break;
+                case 2:
+                    type = ScriptStartItem::PRE_START;
                 default:
                     kDebug()<<" type is not defined :"<<type;
                     break;
@@ -249,20 +253,20 @@ void Autostart::slotAddProgram()
             return;
     }
     DesktopStartItem * item = new DesktopStartItem( KGlobalSettings::autostartPath() + service->name() + ".desktop", m_programItem,this );
-    addItem( item, service->name(), pathName.value(paths.indexOf((item->fileName().directory()+'/') )),  service->exec() );
+    addItem( item, service->name(), m_pathName.value(m_paths.indexOf((item->fileName().directory()+'/') )),  service->exec() );
     emit changed(true);
 }
 
 void Autostart::slotAddCMD() {
-    AddDialog * addDialog = new AddDialog(this);
+    AddScriptDialog * addDialog = new AddScriptDialog(this);
     int result = addDialog->exec();
     if (result == QDialog::Accepted) {
         if (addDialog->symLink())
-            KIO::link(addDialog->importUrl(), paths[2]);
+            KIO::link(addDialog->importUrl(), m_paths[0]);
         else
-            KIO::copy(addDialog->importUrl(), paths[2]);
+            KIO::copy(addDialog->importUrl(), m_paths[0]);
 
-        ScriptStartItem * item = new ScriptStartItem( paths[0] + addDialog->importUrl().fileName(), m_scriptItem,this );
+        ScriptStartItem * item = new ScriptStartItem( m_paths[0] + addDialog->importUrl().fileName(), m_scriptItem,this );
         addItem( item,  addDialog->importUrl().fileName(), addDialog->importUrl().fileName(),ScriptStartItem::START );
     }
     delete addDialog;
@@ -302,7 +306,7 @@ void Autostart::slotEditCMD(QTreeWidgetItem* ent) {
         DesktopStartItem *desktopEntry = dynamic_cast<DesktopStartItem*>( entry );
         if (desktopEntry) {
             KService service(desktopEntry->fileName().path());
-            addItem( desktopEntry, service.name(), pathName.value(paths.indexOf((desktopEntry->fileName().directory()+'/') )), service.exec() );
+            addItem( desktopEntry, service.name(), m_pathName.value(m_paths.indexOf((desktopEntry->fileName().directory()+'/') )), service.exec() );
         }
     }
 }
@@ -326,7 +330,11 @@ void Autostart::slotChangeStartup( int index )
         return;
     ScriptStartItem* entry = dynamic_cast<ScriptStartItem*>( widget->listCMD->currentItem() );
     if ( entry )
-        entry->setPath(paths.value(index+1));
+    {
+        entry->setPath(m_paths.value(index));
+        if ( ( index != 0 ) && !entry->fileName().path().endsWith( ".sh" ))
+            KMessageBox::information( this, i18n( "KDE only reads files with sh extensions for setting up the environment." ) );
+    }
 }
 
 void Autostart::slotSelectionChanged() {

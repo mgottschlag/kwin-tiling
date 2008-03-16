@@ -19,57 +19,30 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-#include "adddialog.h"
-#include <KLineEdit>
-#include <QCheckBox>
-#include <QVBoxLayout>
-#include <klocale.h>
-#include <KUrlRequester>
-#include <QLabel>
-#include <KMessageBox>
+#ifndef _ADDSCRIPTDIALOG_H_
+#define _ADDSCRIPTDIALOG_H_
 
-AddDialog::AddDialog (QWidget* parent)
-    : KDialog( parent ) {
-    QWidget *w = new QWidget( this );
-    setButtons( Cancel|Ok );
-    QVBoxLayout *lay= new QVBoxLayout;
-    w->setLayout( lay );
-    QLabel *lab = new QLabel( i18n( "Shell script:" ), w );
-    lay->addWidget( lab );
-    m_url = new KUrlRequester( w );
-    m_url->setFilter( "*.sh" );
-    lay->addWidget( m_url );
-    m_symlink = new QCheckBox( i18n( "Create as symlink" ), w ); //TODO fix text
-    m_symlink->setChecked( true );
-    lay->addWidget( m_symlink );
-    connect( m_url->lineEdit(), SIGNAL(textChanged(const QString&)), SLOT(textChanged(const QString&)) );
-    m_url->lineEdit()->setFocus();
-    enableButtonOk(false);
+#include <KDialog>
+class KUrlRequester;
+class QCheckBox;
 
-    setMainWidget( w );
-}
-
-AddDialog::~AddDialog()
-{}
-
-void AddDialog::textChanged(const QString &text) {
-    enableButtonOk(!text.isEmpty());
-}
-
-KUrl AddDialog::importUrl() const {
-    return m_url->lineEdit()->text();
-}
-
-bool AddDialog::symLink() const {
-    return m_symlink->isChecked();
-}
-
-void AddDialog::accept()
+class AddScriptDialog : public KDialog
 {
-    if ( !m_url->lineEdit()->text().endsWith( ".sh" ) )
-        KMessageBox::error( this, i18n( "KDE can autostart just script file with sh extension." ) );
-    else
-        KDialog::accept();
-}
+    Q_OBJECT
 
-#include "adddialog.moc"
+public:
+    AddScriptDialog(QWidget* parent=0);
+    ~AddScriptDialog();
+    // Returns the Url of the script to be imported
+    KUrl importUrl() const;
+    bool symLink() const;
+
+public slots:
+    void textChanged(const QString &text);
+
+private:
+    KUrlRequester *m_url;
+    QCheckBox* m_symlink;
+};
+
+#endif
