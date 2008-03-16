@@ -60,9 +60,9 @@ class RootWidget : public QWidget
         bool isDesktop() const;
 
         /**
-         * Creates a view for the given screen
+         * Creates a view for the given containment
          */
-        void createDesktopView(int screen);
+        void createDesktopView(Plasma::Containment *containment);
 
         /**
          * Returns the view, if any, for the given screen

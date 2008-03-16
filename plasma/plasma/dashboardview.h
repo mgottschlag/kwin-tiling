@@ -27,6 +27,7 @@
 namespace Plasma
 {
     class AppletBrowser;
+    class Containment;
 }
 
 class DashboardView : public Plasma::View
@@ -34,7 +35,7 @@ class DashboardView : public Plasma::View
     Q_OBJECT
 
 public:
-    DashboardView(int screen, QWidget *parent);
+    DashboardView(Plasma::Containment* containment, QWidget *parent);
     ~DashboardView();
 
 protected:

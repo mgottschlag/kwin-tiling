@@ -38,8 +38,8 @@
 
 static const int SUPPRESS_SHOW_TIMEOUT = 500; // Number of millis to prevent reshow of dashboard
 
-DashboardView::DashboardView(int screen, QWidget *parent)
-    : Plasma::View(screen, PlasmaApp::self()->corona(), parent),
+DashboardView::DashboardView(Plasma::Containment *containment, QWidget *parent)
+    : Plasma::View(containment, parent),
       m_appletBrowser(0),
       m_suppressShow(false),
       m_zoomIn(false),
@@ -53,13 +53,13 @@ DashboardView::DashboardView(int screen, QWidget *parent)
     }
 
     QDesktopWidget *desktop = QApplication::desktop();
-    setGeometry(desktop->screenGeometry(screen));
+    setGeometry(desktop->screenGeometry(containment->screen()));
 
     setDrawWallpaper(!PlasmaApp::hasComposite());
 
     connect(scene(), SIGNAL(launchActivated()), SLOT(hideView()));
-    Plasma::Widget *tool = containment()->addToolBoxTool("hideDashboard", "preferences-desktop-display", i18n("Hide Dashboard"));
-    containment()->enableToolBoxTool("hideDashboard", false);
+    Plasma::Widget *tool = containment->addToolBoxTool("hideDashboard", "preferences-desktop-display", i18n("Hide Dashboard"));
+    containment->enableToolBoxTool("hideDashboard", false);
     connect(tool, SIGNAL(clicked()), this, SLOT(hideView()));
 
     installEventFilter(this);

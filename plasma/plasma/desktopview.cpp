@@ -39,16 +39,16 @@
 #include "dashboardview.h"
 #include "plasmaapp.h"
 
-DesktopView::DesktopView(int screen, QWidget *parent)
-    : Plasma::View(screen, PlasmaApp::self()->corona(), parent),
+DesktopView::DesktopView(Plasma::Containment *containment, QWidget *parent)
+    : Plasma::View(containment, parent),
       m_zoomLevel(Plasma::DesktopZoom),
       m_dashboard(0)
 {
-    if (containment()) {
-        connect(containment(), SIGNAL(zoomIn()), this, SLOT(zoomIn()));
-        connect(containment(), SIGNAL(zoomOut()), this, SLOT(zoomOut()));
-        connect(containment(), SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
-        containment()->enableToolBoxTool("zoomIn", false);
+    if (containment) {
+        connect(containment, SIGNAL(zoomIn()), this, SLOT(zoomIn()));
+        connect(containment, SIGNAL(zoomOut()), this, SLOT(zoomOut()));
+        connect(containment, SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
+        containment->enableToolBoxTool("zoomIn", false);
     }
 }
 
@@ -60,7 +60,11 @@ DesktopView::~DesktopView()
 void DesktopView::toggleDashboard()
 {
     if (!m_dashboard) {
-        m_dashboard = new DashboardView(screen(), 0);
+        if (!containment()) {
+            return;
+        }
+
+        m_dashboard = new DashboardView(containment(), 0);
     }
 
     m_dashboard->toggleVisibility();
@@ -87,8 +91,8 @@ void DesktopView::zoomIn()
         m_zoomLevel = Plasma::DesktopZoom;
         qreal factor = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
         scale(factor, factor);
-        setSceneRect(geometry());
         if (containment()) {
+            setSceneRect(containment()->geometry());
             containment()->hideToolbox();
             containment()->enableToolBoxTool("zoomIn", false);
         }

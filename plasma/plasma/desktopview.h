@@ -23,6 +23,11 @@
 #include "plasma/plasma.h"
 #include "plasma/view.h"
 
+namespace Plasma
+{
+    class Containment;
+} // namespace Plasma
+
 class DashboardView;
 
 class DesktopView : public Plasma::View
@@ -30,7 +35,7 @@ class DesktopView : public Plasma::View
     Q_OBJECT
 
 public:
-    DesktopView(int screen, QWidget *parent);
+    DesktopView(Plasma::Containment *containment, QWidget *parent);
     ~DesktopView();
 
 public slots:

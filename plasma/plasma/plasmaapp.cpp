@@ -343,8 +343,9 @@ void PlasmaApp::createView(Plasma::Containment *containment)
             break;
         }
         default:
-            if (containment->screen() > -1) {
-                m_root->createDesktopView(containment->screen());
+            if (containment->screen() > -1 &&
+                containment->screen() < QApplication::desktop()->numScreens()) {
+                m_root->createDesktopView(containment);
             }
             break;
     }

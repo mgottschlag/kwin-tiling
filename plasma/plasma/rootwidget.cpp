@@ -123,16 +123,19 @@ DesktopView* RootWidget::viewForScreen(int screen) const
     return 0;
 }
 
-void RootWidget::createDesktopView(int screen)
+void RootWidget::createDesktopView(Plasma::Containment *containment)
 {
-    if (viewForScreen(screen)) {
+    if (viewForScreen(containment->screen())) {
         // we already have a view for this screen
         return;
     }
 
+    kDebug() << "creating a view for" << containment->screen() << "and we have"
+        << QApplication::desktop()->numScreens() << "screens";
+
     // we have a new screen. neat.
-    DesktopView *view = new DesktopView(screen, this);
-    view->setGeometry(QApplication::desktop()->screenGeometry(screen));
+    DesktopView *view = new DesktopView(containment, this);
+    view->setGeometry(QApplication::desktop()->screenGeometry(containment->screen()));
     m_desktops.append(view);
 }
 
@@ -151,12 +154,12 @@ void RootWidget::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Contain
         }
     }
 
-    if (isScreen > -1) {
+    if (isScreen > -1 && isScreen < QApplication::desktop()->numScreens()) {
         DesktopView *view = viewForScreen(isScreen);
         if (view) {
             view->setContainment(containment);
         } else {
-            createDesktopView(isScreen);
+            createDesktopView(containment);
         }
     }
 }
