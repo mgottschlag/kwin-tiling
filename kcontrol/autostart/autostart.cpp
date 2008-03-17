@@ -60,7 +60,7 @@ K_PLUGIN_FACTORY(AutostartFactory, registerPlugin<Autostart>();)
     lstHeader<<i18n( "Name" )<< i18n( "Command" )<< i18n( "Status" )<<i18n( "Run On" );
     widget->listCMD->setHeaderLabels(lstHeader);
 
-    setButtons(Apply);
+    setButtons(None);
     connect( widget->btnAddScript, SIGNAL(clicked()), SLOT(slotAddCMD()) );
     connect( widget->btnAddProgram, SIGNAL(clicked()), SLOT(slotAddProgram()) );
     connect( widget->btnRemove, SIGNAL(clicked()), SLOT(slotRemoveCMD()) );
