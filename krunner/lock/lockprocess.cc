@@ -97,6 +97,23 @@ static Window gVRootData = 0;
 static Atom   gXA_VROOT;
 static Atom   gXA_SCREENSAVER_VERSION;
 
+//#define CHECK_XSELECTINPUT
+#ifdef CHECK_XSELECTINPUT
+#include <dlfcn.h>
+static bool check_xselectinput = false;
+extern "C"
+int XSelectInput( Display* dpy, Window w, long e )
+{
+    typedef int (*ptr)(Display*, Window, long);
+    static ptr fun = NULL;
+    if( fun == NULL )
+        fun = (ptr)dlsym( RTLD_NEXT, "XSelectInput" );
+    if( check_xselectinput && w == DefaultRootWindow( dpy ))
+        kDebug() << kBacktrace();
+    return fun( dpy, w, e );
+}
+#endif
+
 //===========================================================================
 //
 // Screen saver handling process.  Handles screensaver window,
@@ -124,8 +141,12 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     QX11Info info;
     XGetWindowAttributes(QX11Info::display(), RootWindow(QX11Info::display(),
                                                          info.screen()), &rootAttr);
+    kapp->desktop(); // make Qt set its event mask on the root window first
     XSelectInput( QX11Info::display(), QX11Info::appRootWindow(),
                   SubstructureNotifyMask | rootAttr.your_event_mask );
+#ifdef CHECK_XSELECTINPUT
+    check_xselectinput = true;
+#endif
     setGeometry(0, 0, rootAttr.width, rootAttr.height);
 
     // virtual root property
