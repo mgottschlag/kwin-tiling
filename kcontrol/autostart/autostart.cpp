@@ -136,11 +136,11 @@ void Autostart::load()
     // autostart on the otherhand may contain all of the above.
     // share/autostart is special as it overrides entries found in $KDEDIR/share/autostart
     m_paths << KGlobalSettings::autostartPath()	// All new entries should go here
-          << componentData().dirs()->localkdedir() + "shutdown/"
-          << componentData().dirs()->localkdedir() + "env/"
-          << componentData().dirs()->localkdedir() + "share/autostart"	// For Importing purposes
-        ;
-
+            << componentData().dirs()->localkdedir() + "shutdown/"
+            << componentData().dirs()->localkdedir() + "env/"
+            << componentData().dirs()->localkdedir() + "share/autostart/"	// For Importing purposes
+            << componentData().dirs()->localxdgconfdir() + "autostart/" ; //xdg-config autostart dir
+    //kDebug()<<"  path "<<m_paths;
     // share/autostart shouldn't be an option as this should be reserved for global autostart entries
     m_pathName << i18n("Startup")
              << i18n("Shutdown")
