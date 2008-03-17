@@ -100,7 +100,7 @@ void Autostart::slotItemClicked( QTreeWidgetItem *item, int col)
             bool disable = ( item->checkState( col ) == Qt::Unchecked );
             KDesktopFile kc(entry->fileName().path());
             KConfigGroup grp = kc.desktopGroup();
-            grp.writeEntry("Hidden", !disable);
+            grp.writeEntry("Hidden", disable);
             kc.sync();
             if ( disable )
                 item->setText( COL_STATUS, i18n( "Disabled" ) );
@@ -116,8 +116,8 @@ void Autostart::addItem( DesktopStartItem*item, const QString& name, const QStri
     item->setText( COL_NAME, name );
     item->setText( COL_RUN, run );
     item->setText( COL_COMMAND, command );
-    item->setCheckState( COL_STATUS, status ? Qt::Checked : Qt::Unchecked );
-    item->setText( COL_STATUS, status ? i18n( "Enabled" ) : i18n( "Disabled" ) );
+    item->setCheckState( COL_STATUS, status ? Qt::Unchecked : Qt::Checked );
+    item->setText( COL_STATUS, status ? i18n( "Disabled" ) : i18n( "Enabled" ));
 }
 
 void Autostart::addItem(ScriptStartItem *item, const QString& name, const QString& command, ScriptStartItem::ENV type )
@@ -253,7 +253,7 @@ void Autostart::slotAddProgram()
             return;
     }
     DesktopStartItem * item = new DesktopStartItem( KGlobalSettings::autostartPath() + service->name() + ".desktop", m_programItem,this );
-    addItem( item, service->name(), m_pathName.value(m_paths.indexOf((item->fileName().directory()+'/') )),  service->exec() );
+    addItem( item, service->name(), m_pathName.value(m_paths.indexOf((item->fileName().directory()+'/') )),  service->exec() , false);
     emit changed(true);
 }
 
@@ -306,7 +306,7 @@ void Autostart::slotEditCMD(QTreeWidgetItem* ent) {
         DesktopStartItem *desktopEntry = dynamic_cast<DesktopStartItem*>( entry );
         if (desktopEntry) {
             KService service(desktopEntry->fileName().path());
-            addItem( desktopEntry, service.name(), m_pathName.value(m_paths.indexOf((desktopEntry->fileName().directory()+'/') )), service.exec() );
+            addItem( desktopEntry, service.name(), m_pathName.value(m_paths.indexOf((desktopEntry->fileName().directory()+'/') )), service.exec(),false );
         }
     }
 }

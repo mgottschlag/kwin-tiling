@@ -52,7 +52,7 @@ public slots:
     void slotChangeStartup( int index );
 
 protected:
-    void addItem(DesktopStartItem *item, const QString& name, const QString& run, const QString& command, bool status=true );
+    void addItem(DesktopStartItem *item, const QString& name, const QString& run, const QString& command, bool disable );
     void addItem(ScriptStartItem *item, const QString& name, const QString& command, ScriptStartItem::ENV type );
 public slots:
     void slotAddProgram();
