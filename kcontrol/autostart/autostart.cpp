@@ -196,6 +196,7 @@ void Autostart::load()
                     break;
                 case 2:
                     type = ScriptStartItem::PRE_START;
+                    break;
                 default:
                     kDebug()<<" type is not defined :"<<type;
                     break;
