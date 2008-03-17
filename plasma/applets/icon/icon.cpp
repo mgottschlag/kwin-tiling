@@ -51,6 +51,9 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     setAcceptDrops(true);
     setHasConfigurationInterface(true);
     m_icon = new Plasma::Icon(this);
+    setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
+    setContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
+    kDebug() << "sized to:" << contentSize();
 
     if (args.count() > 2) {
         setUrl(args.at(2).toString());
@@ -65,7 +68,6 @@ void IconApplet::init()
     setDisplayLines(2);
 
     watchForMouseMove(m_icon, true);
-    m_icon->resize(contentSize());
 
     // we do this right away since we may have our config
     // read shortly by the containment. usually applets don't need
@@ -136,14 +138,12 @@ void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
             formFactor() == Plasma::MediaCenter) {
             connect(m_icon, SIGNAL(activated()), this, SLOT(openUrl()));
             m_icon->setText(m_text);
-            setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
             m_icon->setToolTip(Plasma::ToolTipData());
             m_icon->setDrawBackground(true);
         } else {
             //in the panel the icon behaves like a button
             connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
             m_icon->setText(QString());
-            setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
             Plasma::ToolTipData data;
             data.mainText = m_text;
             data.subText = m_genericName;
@@ -167,14 +167,6 @@ void IconApplet::showConfigurationInterface()
     }
 
     m_dialog->show();
-}
-
-QSizeF IconApplet::sizeHint() const
-{
-    QSizeF iconSize = m_icon->sizeHint();
-    qreal width = qBound(minimumSize().width(), iconSize.width(), maximumSize().width());
-    qreal height = qBound(minimumSize().height(), iconSize.height(), maximumSize().height());
-    return QSizeF(width,height);
 }
 
 void IconApplet::setDisplayLines(int displayLines)
