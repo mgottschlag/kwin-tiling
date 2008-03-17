@@ -258,7 +258,6 @@ void Autostart::slotAddProgram()
     }
     DesktopStartItem * item = new DesktopStartItem( m_paths[0] + service->name() + ".desktop", m_programItem,this );
     addItem( item, service->name(), m_pathName.value(m_paths.indexOf((item->fileName().directory()+'/') )),  service->exec() , false);
-    emit changed(true);
 }
 
 void Autostart::slotAddCMD() {
@@ -274,7 +273,6 @@ void Autostart::slotAddCMD() {
         addItem( item,  addDialog->importUrl().fileName(), addDialog->importUrl().fileName(),ScriptStartItem::START );
     }
     delete addDialog;
-    emit changed(true);
 }
 
 void Autostart::slotRemoveCMD() {
@@ -286,7 +284,6 @@ void Autostart::slotRemoveCMD() {
     {
         m_programItem->takeChild( m_programItem->indexOfChild( startItem ) );
         KIO::del(startItem->fileName().path() );
-        emit changed(true);
     }
     else
     {
@@ -318,7 +315,6 @@ void Autostart::slotEditCMD(QTreeWidgetItem* ent) {
 bool Autostart::slotEditCMD( const KFileItem &item) {
     KPropertiesDialog dlg( item, this );
     bool c = ( dlg.exec() == QDialog::Accepted );
-    emit changed(c);
     return c;
 }
 
