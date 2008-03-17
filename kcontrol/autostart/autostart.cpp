@@ -176,7 +176,10 @@ void Autostart::load()
                 KDesktopFile config(fi.absoluteFilePath());
                 const KConfigGroup grp = config.desktopGroup();
                 bool status = grp.readEntry("Hidden", false);
-                addItem(item, config.readName(), m_pathName.value(m_paths.indexOf((item->fileName().directory()+'/') )),  grp.readEntry("Exec"),status );
+                int indexPath = m_paths.indexOf((item->fileName().directory()+'/' ) );
+                if ( indexPath > 2 )
+                    indexPath = 0; //.kde/share/autostart and .config/autostart load destkop at startup
+                addItem(item, config.readName(), m_pathName.value(indexPath),  grp.readEntry("Exec"),status );
             }
             else
             {
