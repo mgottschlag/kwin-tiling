@@ -76,9 +76,9 @@ K_PLUGIN_FACTORY(AutostartFactory, registerPlugin<Autostart>();)
     KAboutData* about = new KAboutData("Autostart", 0, ki18n("KDE Autostart Manager"), "1.0",
                                        ki18n("KDE Autostart Manager Control Panel Module"),
                                        KAboutData::License_GPL,
-                                       ki18n("(c) 2006-2007 Stephen Leaf"));
+                                       ki18n("(c) 2006-2007-2008 Autostart Manager team"));
     about->addAuthor(ki18n("Stephen Leaf"), KLocalizedString(), "smileaf@gmail.com");
-    about->addAuthor(ki18n("Montel Laurent"), KLocalizedString(), "montel@kde.org");
+    about->addAuthor(ki18n("Montel Laurent"), ki18n( "Maintainer" ), "montel@kde.org");
     setAboutData( about );
 
 }
