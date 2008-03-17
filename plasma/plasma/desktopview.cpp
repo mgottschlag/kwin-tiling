@@ -45,7 +45,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, QWidget *parent)
       m_dashboard(0)
 {
     if (containment) {
-        connect(containment, SIGNAL(zoomIn()), this, SLOT(zoomIn()));
+        connect(containment, SIGNAL(zoomIn(Plasma::Containment *)), this, SLOT(zoomIn(Plasma::Containment *)));
         connect(containment, SIGNAL(zoomOut()), this, SLOT(zoomOut()));
         connect(containment, SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
         containment->enableToolBoxTool("zoomIn", false);
@@ -83,21 +83,39 @@ void DesktopView::adjustSize()
     }
 }
 
-void DesktopView::zoomIn()
+void DesktopView::zoomIn(Plasma::Containment *toContainment)
 {
-    containment()->enableToolBoxTool("zoomOut", true);
+    if (containment()) {
+        containment()->enableToolBoxTool("zoomOut", true);
+    }
+    if (toContainment && containment() != toContainment) {
+        setContainment(toContainment);
+        if (m_dashboard) {
+            m_dashboard->setContainment(toContainment);
+        }
+    }
     if (m_zoomLevel == Plasma::GroupZoom) {
         setDragMode(NoDrag);
         m_zoomLevel = Plasma::DesktopZoom;
         qreal factor = Plasma::scalingFactor(m_zoomLevel) / matrix().m11();
         scale(factor, factor);
         if (containment()) {
+            //disconnect from other containments
+            Plasma::Corona *corona = containment()->corona();
+            if (corona) {
+                QList<Plasma::Containment*> containments = corona->containments();
+                foreach (Plasma::Containment *c, containments) {
+                    if (c == containment() || c->containmentType() == Plasma::Containment::PanelContainment) {
+                        continue;
+                    }
+                    disconnect(c, 0, this, 0);
+                }
+            }
             setSceneRect(containment()->geometry());
             containment()->hideToolbox();
             containment()->enableToolBoxTool("zoomIn", false);
         }
     } else if (m_zoomLevel == Plasma::OverviewZoom) {
-        containment()->enableToolBoxTool("zoomIn", true);
         m_zoomLevel = Plasma::GroupZoom;
         qreal factor = Plasma::scalingFactor(m_zoomLevel);
         factor = factor / matrix().m11();
@@ -105,6 +123,7 @@ void DesktopView::zoomIn()
         setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom()));
 
         if (containment()) {
+            containment()->enableToolBoxTool("zoomIn", true);
             ensureVisible(containment()->sceneBoundingRect());
         }
     } else {
@@ -122,6 +141,20 @@ void DesktopView::zoomOut()
     if (m_zoomLevel == Plasma::DesktopZoom) {
         containment()->enableToolBoxTool("zoomOut", true);
         m_zoomLevel = Plasma::GroupZoom;
+        //connect to other containments
+        //FIXME if some other view is zoomed out, a little madness will ensue
+        Plasma::Corona *corona = containment()->corona();
+        if (corona) {
+            QList<Plasma::Containment*> containments = corona->containments();
+            foreach (Plasma::Containment *c, containments) {
+                if (c == containment() || c->containmentType() == Plasma::Containment::PanelContainment || c->screen() > -1) {
+                    continue;
+                }
+                connect(c, SIGNAL(zoomIn(Plasma::Containment *)), this, SLOT(zoomIn(Plasma::Containment *)));
+                connect(c, SIGNAL(zoomOut()), this, SLOT(zoomOut()));
+                connect(c, SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
+            }
+        }
     } else if (m_zoomLevel == Plasma::GroupZoom) {
         containment()->enableToolBoxTool("zoomOut", false);
         m_zoomLevel = Plasma::OverviewZoom;

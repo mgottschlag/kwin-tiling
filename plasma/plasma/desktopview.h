@@ -39,7 +39,12 @@ public:
     ~DesktopView();
 
 public slots:
-    void zoomIn();
+    /**
+     * zoom in towards the given containment.
+     * if toContainment is null, the current containment is used instead.
+     * zooming in all the way sets toContainment as current.
+     */
+    void zoomIn(Plasma::Containment *toContainment = 0);
     void zoomOut();
     void showAppletBrowser();
     void toggleDashboard();
