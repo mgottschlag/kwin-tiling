@@ -77,7 +77,7 @@ QList<QAction*> Panel::contextActions()
         m_configureAction->setIcon(KIcon("configure"));
         connect(m_configureAction, SIGNAL(triggered()), this, SLOT(configure()));
 
-        m_removeAction = new QAction(i18n("Remove this Panel"), this);
+        m_removeAction = new QAction(i18n("Remove this panel"), this);
         m_removeAction->setIcon(KIcon("edit-delete"));
         connect(m_removeAction, SIGNAL(triggered()), this, SLOT(remove()));
     }
@@ -294,8 +294,8 @@ void Panel::configure()
 
 void Panel::remove()
 {
-    if ( KMessageBox::warningContinueCancel( 0, i18n( "Do you really want to remove this panel?" ),
-       i18n("Remove Panel"), KStandardGuiItem::del() ) == KMessageBox::Continue ) {
+    if (KMessageBox::warningContinueCancel(0, i18n( "Do you really want to remove this panel?"),
+                     i18n("Remove Panel"), KStandardGuiItem::remove()) == KMessageBox::Continue ) {
          clearApplets();
          corona()->destroyContainment(this);
          delete this;
