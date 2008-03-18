@@ -657,8 +657,8 @@ void Interface::exec()
         } else {
             for (int i = 0; i < m_matchList->count(); ++i) {
                 SearchMatch* match = dynamic_cast<SearchMatch*>(m_matchList->item(i));
-                if (match && match->actionEnabled() && match->actionRelevance() > 0 /* &&
-                    match->actionType() != Plasma::SearchMatch::HelperMatch */) {
+                if (match && match->actionEnabled() && match->actionRelevance() > 0 &&
+                    match->actionType() != Plasma::SearchMatch::HelperMatch) {
                     currentMatch = match;
                     break;
                 }
