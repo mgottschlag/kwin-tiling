@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE">
+]>
+<article>
+<articleinfo>
+<authorgroup>
+<author>&Anne-Marie.Mahfouf;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2008-03-18</date>
+<releaseinfo>1.0</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>System Settings</keyword>
+<keyword>autostart</keyword>
+<keyword>desktop file</keyword>
+<keyword>script file</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="kcm_autostart">
+<title><guilabel>Autostart manager</guilabel></title>
+
+<para>This module is a configuration tool for managing what programs start up with KDE. It allows you to add programs or scripts so they can be loaded when KDE starts.</para>
+
+<para>
+The main part of the module displays the programs and scripts that are loaded when KDE starts.
+</para>
+
+<para>
+On the right you have some buttons to change the way Autostart is configure. You can add programs or scripts, remove them or change their properties.
+</para>
+
+<variablelist>
+<varlistentry><term><guilabel>Add Program</guilabel></term>
+<listitem>
+<para>
+ -
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><guilabel>Add Script</guilabel></term>
+<listitem>
+<para>
+ -
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guilabel>Remove</guilabel></term>
+<listitem>
+<para>
+ -
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guilabel>Properties</guilabel></term>
+<listitem>
+<para>
+ -
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+</article>
+
+<!--
+Local Variables:
+mode: xml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+vim:tabstop=2:shiftwidth=2:expandtab
+kate: space-indent on; indent-width 2; tab-width 2; indent-mode none;
+-->

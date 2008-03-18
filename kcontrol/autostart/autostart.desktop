@@ -3,6 +3,7 @@ Exec=kcmshell4 autostart
 Icon=launch
 Type=Service
 X-KDE-ServiceTypes=KCModule
+X-DocPath=kcontrol/autostart/index.html
 
 X-KDE-Library=kcm_autostart
 X-KDE-ParentApp=kcontrol
