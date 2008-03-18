@@ -91,8 +91,10 @@ public:
 #endif // Q_WS_X11
 
 private:
+#ifdef Q_WS_X11
     class Private;
     Private * const d;
+#endif // Q_WS_X11
 
 }; // class KDisplayManager
 
