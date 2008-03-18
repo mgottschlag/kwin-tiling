@@ -1,9 +1,10 @@
 
 ########### next target ###############
 
-#set(solid-hardware_SRCS solid-hardware.cpp)
-#kde4_add_executable(solid-hardware ${solid-hardware_SRCS})
-#install(TARGETS solid-hardware DESTINATION ${BIN_INSTALL_DIR})
+set(solid-hardware_SRCS solid-hardware.cpp)
+kde4_add_executable(solid-hardware ${solid-hardware_SRCS})
+target_link_libraries(solid-hardware ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS})
+install(TARGETS solid-hardware DESTINATION ${BIN_INSTALL_DIR})
 
 IF("${CMAKE_SYSTEM}" MATCHES "Linux")
     include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../control )
