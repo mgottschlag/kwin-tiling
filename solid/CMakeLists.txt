@@ -6,11 +6,11 @@ macro_optional_find_package(BlueZ)
 macro_log_feature(BLUEZ_FOUND "BlueZ" "BlueZ is the linux bluetooth subsystem" "http://www.bluez.org")
 
 add_subdirectory( kcm )
-add_subdirectory( solidshell )
 
 IF("${CMAKE_SYSTEM}" MATCHES "Linux")
     add_subdirectory( hal )
     add_subdirectory( networking )
+    add_subdirectory( solidshell )
 ENDIF("${CMAKE_SYSTEM}" MATCHES "Linux")
 
 if (NETWORKMANAGER_FOUND)
