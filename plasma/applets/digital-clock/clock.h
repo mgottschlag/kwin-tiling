@@ -23,7 +23,6 @@
 
 #include <QtCore/QTime>
 #include <QtCore/QDate>
-#include <QtGui/QX11Info>
 
 #include <plasma/applet.h>
 #include <plasma/dataengine.h>

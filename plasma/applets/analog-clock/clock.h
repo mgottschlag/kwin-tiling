@@ -29,7 +29,6 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QTime>
-#include <QX11Info>
 #include <QGraphicsItem>
 #include <QColor>
 
