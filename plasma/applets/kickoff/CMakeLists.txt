@@ -25,6 +25,7 @@ set( Kickoff_SRCS
        ui/searchbar.cpp
        ui/tabbar.cpp
        ui/urlitemview.cpp )
+qt4_add_dbus_adaptor(Kickoff_SRCS core/org.kde.kickoff.xml core/applicationmodel.h Kickoff::ApplicationModel)
 
 set(screensaver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/org.freedesktop.ScreenSaver.xml)
 QT4_ADD_DBUS_INTERFACE(Kickoff_SRCS ${screensaver_xml} screensaver_interface)

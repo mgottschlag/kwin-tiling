@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Pino Toscano <pino@kde.org>
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
@@ -49,7 +49,7 @@
 #include <stdlib.h>
 #include <kbuildsycocaprogressdialog.h>
 #include <kconfiggroup.h>
-
+#include "kickoffadaptor.h"
 // Local
 #include "core/models.h"
 
@@ -108,7 +108,7 @@ public:
 
     static bool AppNodeLessThan(AppNode *n1, AppNode *n2);
     void fillNode(const QString &relPath, AppNode *node);
-    static QHash<QString,QString> iconNameMap(); 
+    static QHash<QString,QString> iconNameMap();
 
     ApplicationModel *q;
     AppNode *root;
@@ -162,15 +162,15 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
 
          // check for duplicates (eg. KDE 3 and KDE 4 versions of application
          // both present)
-         if (duplicatePolicy == ApplicationModel::ShowLatestOnlyPolicy && 
+         if (duplicatePolicy == ApplicationModel::ShowLatestOnlyPolicy &&
              existingServices.contains(appName)
             ) {
                 if (Kickoff::isLaterVersion(existingServices[appName],service)) {
                     continue;
                 } else {
                     // find and remove the existing entry with the same name
-                    for (int i = 0 ; i < node->children.count() ; i++) { 
-                        if ( node->children[i]->appName == appName ) { 
+                    for (int i = 0 ; i < node->children.count() ; i++) {
+                        if ( node->children[i]->appName == appName ) {
                             delete node->children.takeAt(i);
                         }
                     }
@@ -221,6 +221,10 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
 ApplicationModel::ApplicationModel(QObject *parent)
     : KickoffAbstractModel(parent), d(new ApplicationModelPrivate(this))
 {
+    QDBusConnection dbus = QDBusConnection::sessionBus();
+    (void)new KickoffAdaptor(this);
+    QDBusConnection::sessionBus().registerObject("/kickoff", this);
+    dbus.connect(QString(), "/kickoff", "org.kde.plasma", "reloadMenu", this, SLOT(slotReloadMenu()));
     d->fillNode(QString(), d->root);
 }
 
@@ -267,7 +271,7 @@ QVariant ApplicationModel::data(const QModelIndex &index, int role) const
     case Kickoff::UrlRole:
         return node->desktopEntry;
     case Qt::DecorationRole:
-        return node->icon; 
+        return node->icon;
         break;
     default:
         ;
@@ -363,7 +367,16 @@ void ApplicationModel::setDuplicatePolicy(DuplicatePolicy policy)
     d->fillNode(QString(), d->root);
     reset();
 }
-ApplicationModel::DuplicatePolicy ApplicationModel::duplicatePolicy() const 
+
+void ApplicationModel::slotReloadMenu()
+{
+    delete d->root;
+    d->root = new AppNode();
+    d->fillNode(QString(), d->root);
+    reset();
+}
+
+ApplicationModel::DuplicatePolicy ApplicationModel::duplicatePolicy() const
 {
     return d->duplicatePolicy;
 }
@@ -386,7 +399,7 @@ QHash<QString,QString> ApplicationModelPrivate::iconNameMap()
         map.insert("gnome-util","applications-accessories");
         // accessibility Oxygen icon was missing when this list was compiled
         map.insert("accessibility-directory","applications-other");
-        map.insert("gnome-devel","applications-development"); 
+        map.insert("gnome-devel","applications-development");
         map.insert("package_edutainment","applications-education");
         map.insert("gnome-joystick","applications-games");
         map.insert("gnome-graphics","applications-graphics");

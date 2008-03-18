@@ -1,4 +1,4 @@
-/* 
+/*
     Copyright 2007 Pino Toscano <pino@kde.org>
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
@@ -18,8 +18,8 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef APPLICATIONMODEL_H 
-#define APPLICATIONMODEL_H 
+#ifndef APPLICATIONMODEL_H
+#define APPLICATIONMODEL_H
 
 #include "core/kickoffabstractmodel.h"
 
@@ -40,8 +40,8 @@ class ApplicationModel : public KickoffAbstractModel
         ApplicationModel(QObject *parent = 0);
         virtual ~ApplicationModel();
 
-        /** 
-         * This enum describes the policy for 
+        /**
+         * This enum describes the policy for
          * handling duplicate applications (that is,
          * two applications with the same name in the same group)
          */
@@ -49,7 +49,7 @@ class ApplicationModel : public KickoffAbstractModel
         {
             /** Display duplicate entries. */
             ShowDuplicatesPolicy,
-            /** 
+            /**
              * Show only the entry for the most recent
              * version of the application.
              *
@@ -63,7 +63,7 @@ class ApplicationModel : public KickoffAbstractModel
             ShowLatestOnlyPolicy
         };
 
-        /** 
+        /**
          * Sets the policy for handling duplicate applications.
          * See DuplicatePolicy
          */
@@ -81,6 +81,9 @@ class ApplicationModel : public KickoffAbstractModel
         virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
         virtual QModelIndex parent(const QModelIndex &index) const;
         virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+
+    public slots:
+        void slotReloadMenu();
 
     private:
         friend class ApplicationModelPrivate;

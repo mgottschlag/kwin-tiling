@@ -172,6 +172,7 @@ void KMenuEdit::slotChangeView()
 void KMenuEdit::slotSave()
 {
     m_tree->save();
+
 }
 
 bool KMenuEdit::queryClose()
