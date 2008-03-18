@@ -75,35 +75,35 @@ bool writeTest(QByteArray path)
    return true;
 }
 
-void sanity_check( int argc, char* argv[] )
+void sanity_check( int argc, char* argv[], KAboutData* aboutDataPtr )
 {
-    QByteArray msg;
+    QString msg;
     QByteArray path = getenv("HOME");
     QByteArray readOnly = getenv("KDE_HOME_READONLY");
     if (path.isEmpty())
     {
-        msg = "$HOME not set!";
+        msg = QLatin1String("$HOME not set!");
     }
     if (msg.isEmpty() && access(path.data(), W_OK))
     {
         if (errno == ENOENT)
-            msg = "$HOME directory (%s) does not exist.";
+            msg = QLatin1String("$HOME directory (%1) does not exist.");
         else if (readOnly.isEmpty())
-            msg = "No write access to $HOME directory (%s).";
+            msg = QLatin1String("No write access to $HOME directory (%1).");
     }
     if (msg.isEmpty() && access(path.data(), R_OK))
     {
         if (errno == ENOENT)
-            msg = "$HOME directory (%s) does not exist.";
+            msg = "$HOME directory (%1) does not exist.";
         else
-            msg = "No read access to $HOME directory (%s).";
+            msg = "No read access to $HOME directory (%1).";
     }
     if (msg.isEmpty() && readOnly.isEmpty() && !writeTest(path))
     {
         if (errno == ENOSPC)
-            msg = "$HOME directory (%s) is out of disk space.";
+            msg = "$HOME directory (%1) is out of disk space.";
         else
-            msg = QByteArray("Writing to the $HOME directory (%s) failed with\n    "
+            msg = QByteArray("Writing to the $HOME directory (%1) failed with\n    "
                 "the error '")+QByteArray(strerror(errno))+QByteArray("'");
     }
     if (msg.isEmpty())
@@ -116,9 +116,9 @@ void sanity_check( int argc, char* argv[] )
         }
     
         if (access(path.data(), W_OK) && (errno != ENOENT))
-            msg = "No write access to '%s'.";
+            msg = "No write access to '%1'.";
         else if (access(path.data(), R_OK) && (errno != ENOENT))
-            msg = "No read access to '%s'.";
+            msg = "No read access to '%1'.";
     }
     if (msg.isEmpty())
     {
@@ -143,9 +143,9 @@ void sanity_check( int argc, char* argv[] )
         if (!writeTest(path))
         {
             if (errno == ENOSPC)
-            msg = "Temp directory (%s) is out of disk space.";
+            msg = "Temp directory (%1) is out of disk space.";
             else
-            msg = "Writing to the temp directory (%s) failed with\n    "
+            msg = "Writing to the temp directory (%1) failed with\n    "
                     "the error '"+QByteArray(strerror(errno))+QByteArray("'");
         }
     }
@@ -155,9 +155,9 @@ void sanity_check( int argc, char* argv[] )
         if (!writeTest(path))
         {
             if (errno == ENOSPC)
-            msg = "Temp directory (%s) is out of disk space.";
+            msg = "Temp directory (%1) is out of disk space.";
             else
-            msg = "Writing to the temp directory (%s) failed with\n    "
+            msg = "Writing to the temp directory (%1) failed with\n    "
                     "the error '"+QByteArray(strerror(errno))+QByteArray("'");
         }
     }
@@ -165,9 +165,9 @@ void sanity_check( int argc, char* argv[] )
     {
         path += ".ICE-unix";
         if (access(path.data(), W_OK) && (errno != ENOENT))
-            msg = "No write access to '%s'.";
+            msg = "No write access to '%1'.";
         else if (access(path.data(), R_OK) && (errno != ENOENT))
-            msg = "No read access to '%s'.";
+            msg = "No read access to '%1'.";
     }
     if (!msg.isEmpty())
     {
@@ -177,27 +177,26 @@ void sanity_check( int argc, char* argv[] )
                 "\n\n    ";
         const char *msg_post = "\n\nKDE is unable to start.\n";
         fputs(msg_pre, stderr);
-        fprintf(stderr, msg.data(), path.data());
+        fprintf(stderr, "%s", qPrintable(msg.arg(QFile::decodeName(path))));
         fputs(msg_post, stderr);
 
         QApplication a(argc, argv);
-        QString qmsg = QString::fromLatin1(msg); // no translations possible yet...
-        qmsg.replace("%s", path);
-        qmsg = msg_pre+qmsg+msg_post;
-        KMessageBox::error(0, "KDE Installation Problem!", qmsg);
+        KComponentData i(aboutDataPtr);
+        QString qmsg = msg_pre+msg.arg(QFile::decodeName(path))+msg_post;
+        KMessageBox::error(0, qmsg, "KDE Installation Problem!");
         exit(255);
     }
 }
 
 extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
 {
-    sanity_check(argc, argv);
-
     KAboutData aboutData( "ksmserver", 0, ki18n("The KDE Session Manager"),
        version, ki18n(description), KAboutData::License_BSD,
        ki18n("(C) 2000, The KDE Developers"));
     aboutData.addAuthor(ki18n("Matthias Ettrich"),KLocalizedString(), "ettrich@kde.org");
     aboutData.addAuthor(ki18n("Luboš Luňák"), ki18n( "Maintainer" ), "l.lunak@kde.org" );
+
+    sanity_check(argc, argv, &aboutData);
 
     KCmdLineArgs::init(argc, argv, &aboutData);
 
