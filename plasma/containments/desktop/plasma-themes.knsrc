@@ -1,0 +1,4 @@
+[KNewStuff2]
+ProvidersUrl=http://download.kde.org/khotnewstuff/plasmathemes-providers.xml
+TargetDir=desktoptheme
+Uncompress=true

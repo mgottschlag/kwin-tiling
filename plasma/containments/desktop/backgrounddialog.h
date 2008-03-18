@@ -100,7 +100,8 @@ private:
     virtual bool contains(const QString &path) const;
 private slots:
     void update();
-    void getNewStuff();
+    void getNewWallpaper();
+    void getNewThemes();
     void browse();
     void showFileDialog();
     void enableButtons(bool enabled);

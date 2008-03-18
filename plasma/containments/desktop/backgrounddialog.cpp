@@ -60,6 +60,7 @@ public:
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     int indexOf(const QString &path) const;
+    void reload();
 private:
     QStringList m_themes;
     QList<Plasma::SvgPanel *> m_svgs;
@@ -68,6 +69,18 @@ private:
 ThemeModel::ThemeModel( QObject *parent )
 : QAbstractListModel( parent )
 {
+    reload();
+}
+
+ThemeModel::~ThemeModel()
+{
+}
+
+void ThemeModel::reload()
+{
+    m_themes.clear();
+    m_svgs.clear();
+
     // get all desktop themes
     KStandardDirs dirs;
     QStringList themes = dirs.findAllResources("data", "desktoptheme/*/metadata.desktop", KStandardDirs::NoDuplicates);
@@ -84,10 +97,6 @@ ThemeModel::ThemeModel( QObject *parent )
         svg->setBorderFlags(Plasma::SvgPanel::DrawAllBorders);
         m_svgs.append( svg );
     }
-}
-
-ThemeModel::~ThemeModel()
-{
 }
 
 int ThemeModel::rowCount(const QModelIndex &) const
@@ -576,7 +585,8 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     m_preview->setScaledContents(true);
     m_preview->setGeometry(previewRect);
 
-    connect(m_newStuff, SIGNAL(clicked()), this, SLOT(getNewStuff()));
+    connect(m_newStuff, SIGNAL(clicked()), this, SLOT(getNewWallpaper()));
+    connect(m_newThemeButton, SIGNAL(clicked()), this, SLOT(getNewThemes()));
 
     qRegisterMetaType<QImage>("QImage");
     connect(&m_preview_timer, SIGNAL(timeout()), this, SLOT(updateSlideshowPreview()));
@@ -672,15 +682,27 @@ void BackgroundDialog::saveConfig(KConfigGroup config, KConfigGroup globalConfig
     Plasma::Theme::self()->setThemeName(m_theme->currentText());
 }
 
-void BackgroundDialog::getNewStuff()
+void BackgroundDialog::getNewWallpaper()
 {
-    
     KNS::Engine engine(0);
     if (engine.init("wallpaper.knsrc")) {
         KNS::Entry::List entries = engine.downloadDialogModal(this);
 
         if (entries.size() > 0) {
             m_model->reload();
+        }
+    }
+}
+
+void BackgroundDialog::getNewThemes()
+{
+    KNS::Engine engine(0);
+    if (engine.init("plasma-themes.knsrc")) {
+        KNS::Entry::List entries = engine.downloadDialogModal(this);
+
+        if (entries.size() > 0) {
+            // FIXME: do something to reload the list of themes
+            m_themeModel->reload();
         }
     }
 }
