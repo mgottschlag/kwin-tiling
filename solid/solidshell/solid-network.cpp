@@ -17,7 +17,7 @@
 
 */
 
-#include "main.h"
+#include "solid-network.h"
 
 
 #include <QString>
@@ -1587,4 +1587,4 @@ void SolidShell::slotStorageResult(Solid::ErrorType error, const QVariant &error
     m_loop.exit();
 }
 
-#include "main.moc"
+#include "solid-network.moc"

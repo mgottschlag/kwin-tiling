@@ -7,8 +7,12 @@ macro_log_feature(BLUEZ_FOUND "BlueZ" "BlueZ is the linux bluetooth subsystem" "
 
 add_subdirectory( kcm )
 add_subdirectory( solidshell )
-add_subdirectory( hal )
-add_subdirectory( networking )
+
+IF("${CMAKE_SYSTEM}" MATCHES "Linux")
+    add_subdirectory( hal )
+    add_subdirectory( networking )
+ENDIF("${CMAKE_SYSTEM}" MATCHES "Linux")
+
 if (NETWORKMANAGER_FOUND)
    macro_ensure_version_range( "0.6.5" ${NETWORKMANAGER_VERSION} "0.7.0" NM_0_6)
    if (NM_0_6)
