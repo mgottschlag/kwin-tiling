@@ -333,7 +333,7 @@ void Panel::setFormFactorFromLocation(Plasma::Location loc) {
             break;
         case Floating:
             //TODO: implement a form factor for floating panels
-            kWarning() << "unimplemented.";
+            kDebug() << "Floating is unimplemented.";
             break;
         default:
             kDebug() << "invalid location!!";
