@@ -26,6 +26,21 @@ target_link_libraries(kgreet_winbind  ${KDE4_KDEUI_LIBS} ${KDE4_KDE3SUPPORT_LIBS
 
 install(TARGETS kgreet_winbind  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
+########### next target ###############
+
+set(kgreet_generic_PART_SRCS kgreet_generic.cpp )
+
+
+kde4_add_plugin(kgreet_generic ${kgreet_generic_PART_SRCS})
+
+
+target_link_libraries(kgreet_generic  ${KDE4_KDEUI_LIBS} ${KDE4_KDE3SUPPORT_LIBS} )
+
+install(TARGETS kgreet_generic  DESTINATION ${PLUGIN_INSTALL_DIR} )
+
+
+
+
 
 ########### install files ###############
 
