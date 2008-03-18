@@ -18,7 +18,6 @@
 */
 
 #include "notifierview.h"
-#include "itemdelegate.h"
 
 // Qt
 
@@ -28,16 +27,21 @@
 #include <QtGui/QScrollBar>
 #include <QtGui/QHeaderView>
 
+//KDE
 #include <KDebug>
+
+//Plasma
+#include <plasma/delegate.h>
 
 using namespace Notifier;
 
 NotifierView::NotifierView(QWidget *parent)
     : QTreeView(parent)
 {
-    setIconSize(QSize(ItemDelegate::ITEM_HEIGHT, ItemDelegate::ITEM_HEIGHT));
+    setIconSize(QSize(Plasma::Delegate::ICON_SIZE, Plasma::Delegate::ICON_SIZE));
     setRootIsDecorated(false);
     setHeaderHidden(true);
+    setMouseTracking(true);
 }
 
 NotifierView::~NotifierView()
@@ -47,10 +51,87 @@ NotifierView::~NotifierView()
 
 void NotifierView::resizeEvent(QResizeEvent * event)
 {
-    //the columns after the first are squares ItemDelegate::ITEM_HEIGHT x ItemDelegate::ITEM_HEIGHT,
+    //the columns after the first are squares Plasma::Delegate::ITEM_HEIGHT x Plasma::Delegate::ITEM_HEIGHT,
     //the first column takes all the remaining space
     if (header()->count() > 0) {
-        header()->resizeSection(0, event->size().width() - (header()->count()-1)*ItemDelegate::ITEM_HEIGHT);
+        const int newWidth = event->size().width() -
+                             (header()->count()-1)*(Plasma::Delegate::ICON_SIZE + Plasma::Delegate::ITEM_RIGHT_MARGIN + Plasma::Delegate::ITEM_LEFT_MARGIN) -
+                             Plasma::Delegate::ITEM_RIGHT_MARGIN*2;
+        header()->resizeSection(0, newWidth);
+    }
+}
+
+void NotifierView::mouseMoveEvent(QMouseEvent *event)
+{
+    const QModelIndex itemUnderMouse = indexAt(event->pos());
+    if (itemUnderMouse != m_hoveredIndex && itemUnderMouse.isValid() &&
+        state() == NoState) {
+        update(itemUnderMouse);
+        update(m_hoveredIndex);
+
+        m_hoveredIndex = itemUnderMouse;
+        setCurrentIndex(m_hoveredIndex);
+    } else if (!itemUnderMouse.isValid()) {
+        m_hoveredIndex = QModelIndex();
+        setCurrentIndex(m_hoveredIndex);
+    }
+
+    QAbstractItemView::mouseMoveEvent(event);
+}
+
+void NotifierView::leaveEvent(QEvent *event)
+{
+    const QModelIndex oldHoveredIndex = m_hoveredIndex;
+    m_hoveredIndex = QModelIndex();
+    setCurrentIndex(m_hoveredIndex);
+    update(oldHoveredIndex);
+}
+
+QModelIndex NotifierView::moveCursor(CursorAction cursorAction,Qt::KeyboardModifiers modifiers )
+{
+    m_hoveredIndex = QModelIndex();
+
+    return QTreeView::moveCursor(cursorAction, modifiers );
+}
+
+void NotifierView::paintEvent(QPaintEvent *event)
+{
+    if (!model()) {
+        return;
+    }
+
+    QPainter painter(viewport());
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    const int rows = model()->rowCount(rootIndex());
+    const int cols = header()->count();
+    //kDebug() << "painting" << rows << "rows" << cols << "columns";
+
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            const QModelIndex index = model()->index(i, j, rootIndex());
+            const QRect itemRect = visualRect(index);
+
+            if (event->region().contains(itemRect)) {
+                QStyleOptionViewItem option = viewOptions();
+                option.rect = itemRect;
+
+                if (selectionModel()->isSelected(index)) {
+                    option.state |= QStyle::State_Selected;
+                }
+                if (index == m_hoveredIndex) {
+                    option.state |= QStyle::State_MouseOver;
+                }
+                if (index == currentIndex()) {
+                    option.state |= QStyle::State_HasFocus;
+                }
+
+                option.rect.setLeft(option.rect.left() + Plasma::Delegate::ITEM_LEFT_MARGIN);
+                option.rect.setRight(option.rect.right() - Plasma::Delegate::ITEM_RIGHT_MARGIN);
+
+                itemDelegate(index)->paint(&painter,option,index);
+            }
+        }
     }
 }
 

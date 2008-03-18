@@ -2,7 +2,6 @@ project(plasma-devicenotifier)
 
 set(devicenotifier_SRCS
     devicenotifier.cpp
-    itemdelegate.cpp
     notifierview.cpp)
 
 kde4_add_ui_files(devicenotifier_SRCS deviceNotifierConfig.ui )

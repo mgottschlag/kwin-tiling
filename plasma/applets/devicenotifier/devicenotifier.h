@@ -62,6 +62,14 @@ class DeviceNotifier : public Plasma::Applet
             QString udi;
         };
 
+        enum SpecificRoles {
+            SolidUdiRole = Qt::UserRole + 1,
+            PredicateFilesRole = Qt::UserRole + 2,
+            ActionRole = Qt::UserRole + 3,
+            IconNameRole = Qt::UserRole + 4,
+            ScopeRole = Qt::UserRole + 5
+        };
+
         DeviceNotifier(QObject *parent, const QVariantList &args);
         ~DeviceNotifier();
 

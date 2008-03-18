@@ -20,6 +20,9 @@
 
 // Qt
 #include <QTreeView>
+
+class QModelIndex;
+
 namespace Notifier
 {
 
@@ -33,6 +36,13 @@ namespace Notifier
 
   protected:
       void resizeEvent(QResizeEvent * event);
+      void mouseMoveEvent(QMouseEvent *event);
+      void leaveEvent(QEvent *event);
+      QModelIndex moveCursor(CursorAction cursorAction,Qt::KeyboardModifiers );
+      void paintEvent(QPaintEvent *event);
+
+  private:
+      QModelIndex m_hoveredIndex;
   };
 
 }

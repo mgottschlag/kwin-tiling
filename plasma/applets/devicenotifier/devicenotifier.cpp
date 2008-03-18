@@ -18,7 +18,6 @@
  ***************************************************************************/
 
 #include "devicenotifier.h"
-#include "itemdelegate.h"
 #include "notifierview.h"
 
 #include <QPainter>
@@ -43,6 +42,7 @@
 #include <plasma/containment.h>
 #include <plasma/dialog.h>
 #include <plasma/phase.h>
+#include <plasma/delegate.h>
 
 //use for desktop view
 #include <plasma/layouts/boxlayout.h>
@@ -96,7 +96,7 @@ void DeviceNotifier::init()
 
     QLabel *label = new QLabel(i18n("<font color=\"white\">Recently plugged devices:</font>"));
     QLabel *icon = new QLabel();
-    icon->setPixmap(KIcon("emblem-mounted").pixmap(ItemDelegate::ICON_SIZE, ItemDelegate::ICON_SIZE));
+    icon->setPixmap(KIcon("emblem-mounted").pixmap(Plasma::Delegate::ICON_SIZE, Plasma::Delegate::ICON_SIZE));
     icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     QHBoxLayout *l_layout2 = new QHBoxLayout();
@@ -108,7 +108,10 @@ void DeviceNotifier::init()
 
     m_notifierView= new NotifierView(m_widget);
     m_notifierView->setModel(m_hotplugModel);
-    ItemDelegate *delegate = new ItemDelegate;
+    Plasma::Delegate *delegate = new Delegate;
+    //map the roles of m_hotplugModel into the standard Plasma::Delegate roles
+    delegate->setRole(Plasma::Delegate::SubTitleRole, ActionRole);
+    delegate->setRole(Plasma::Delegate::ColumnTypeRole, ScopeRole);
     m_notifierView->setItemDelegate(delegate);
 
     l_layout->addLayout(l_layout2);
@@ -332,7 +335,7 @@ void DeviceNotifier::onSourceAdded(const QString &name)
     }
     QStandardItem *item = new QStandardItem();
     item->setData(name, SolidUdiRole);
-    item->setData(OpenAction, ScopeRole);
+    item->setData(Plasma::Delegate::MainColumn, ScopeRole);
 
     m_hotplugModel->insertRow(0, item);
     m_solidEngine->connectSource(name, this);
@@ -342,7 +345,7 @@ void DeviceNotifier::onSourceAdded(const QString &name)
     //sets the "action" column
     QStandardItem *actionItem = new QStandardItem();
     actionItem->setData(name, SolidUdiRole);
-    actionItem->setData(DeactivateAction, ScopeRole);
+    actionItem->setData(Plasma::Delegate::SecondaryActionColumn, ScopeRole);
 
     m_hotplugModel->setItem(0, 1, actionItem);
 
@@ -434,7 +437,7 @@ void DeviceNotifier::slotOnItemClicked(const QModelIndex &index)
     QString udi = QString(m_hotplugModel->data(index, SolidUdiRole).toString());
 
     //unmount (probably in the future different action types for different device types)
-    if (index.data(ScopeRole).toInt() == DeactivateAction) {
+    if (index.data(ScopeRole).toInt() == Plasma::Delegate::SecondaryActionColumn) {
         Solid::Device device(udi);
 
         if (device.is<Solid::OpticalDisc>()) {
