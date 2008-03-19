@@ -93,6 +93,7 @@ void ScriptStartItem::changeStartup(ScriptStartItem::ENV type )
         break;
     default:
         kDebug()<<" type is not defined :"<<type;
+        break;
     }
 }
 

@@ -28,7 +28,7 @@ class AdvancedDialog : public KDialog
     Q_OBJECT
 
 public:
-    AdvancedDialog(QWidget* parent=0);
+    AdvancedDialog(QWidget* parent, bool status);
     ~AdvancedDialog();
 
     bool onlyInKde() const;

@@ -21,7 +21,7 @@
 #include <QCheckBox>
 #include <QVBoxLayout>
 
-AdvancedDialog::AdvancedDialog( QWidget *parent )
+AdvancedDialog::AdvancedDialog( QWidget *parent, bool status )
     :KDialog( parent )
 {
     QWidget *w = new QWidget( this );
@@ -29,6 +29,7 @@ AdvancedDialog::AdvancedDialog( QWidget *parent )
     QVBoxLayout *lay= new QVBoxLayout;
     w->setLayout( lay );
     m_onlyInKde = new QCheckBox( i18n( "Autostart only in KDE" ), w );
+    m_onlyInKde->setChecked( status );
     lay->addWidget( m_onlyInKde );
     setMainWidget( w );
 }

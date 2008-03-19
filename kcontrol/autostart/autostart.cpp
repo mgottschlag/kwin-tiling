@@ -329,10 +329,30 @@ void Autostart::slotEditCMD() {
 void Autostart::slotAdvanced() {
     if ( widget->listCMD->currentItem() == 0 )
         return;
-    AdvancedDialog *dlg = new AdvancedDialog( this );
+    DesktopStartItem *entry = static_cast<DesktopStartItem *>( widget->listCMD->currentItem() );
+    KDesktopFile kc(entry->fileName().path());
+    KConfigGroup grp = kc.desktopGroup();
+    bool status = false;
+    QStringList lstEntry;
+    if (grp.hasKey("OnlyShowIn"))
+    {
+        lstEntry = grp.readXdgListEntry("OnlyShowIn");
+        status = lstEntry.contains("KDE");
+    }
+    AdvancedDialog *dlg = new AdvancedDialog( this,status );
     if ( dlg->exec() )
     {
-        //TODO
+        status = dlg->onlyInKde();
+        if ( lstEntry.contains( "KDE" ) && !status )
+        {
+            lstEntry.removeAll( "KDE" );
+            grp.writeXdgListEntry( "OnlyShowIn", lstEntry );
+        }
+        else if ( !lstEntry.contains( "KDE" ) && status )
+        {
+            lstEntry.append( "KDE" );
+            grp.writeXdgListEntry( "OnlyShowIn", lstEntry );
+        }
     }
     delete dlg;
 }
