@@ -58,6 +58,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(themeUpdated()));
     themeUpdated();
     updateSize(m_currentSize);
+    setFlag(ItemClipsChildrenToShape, true);
 }
 
 Panel::~Panel()
