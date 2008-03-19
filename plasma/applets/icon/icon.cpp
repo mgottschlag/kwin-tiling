@@ -50,6 +50,7 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
 {
     setAcceptDrops(true);
     setHasConfigurationInterface(true);
+    setDrawStandardBackground(false);
     m_icon = new Plasma::Icon(this);
     setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
     setContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
