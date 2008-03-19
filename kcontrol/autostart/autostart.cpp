@@ -22,6 +22,7 @@
 #include "autostart.h"
 #include "autostartitem.h"
 #include "addscriptdialog.h"
+#include "advanceddialog.h"
 
 #include <KGenericFactory>
 #include <KLocale>
@@ -64,6 +65,7 @@ K_PLUGIN_FACTORY(AutostartFactory, registerPlugin<Autostart>();)
     connect( widget->btnAddScript, SIGNAL(clicked()), SLOT(slotAddCMD()) );
     connect( widget->btnAddProgram, SIGNAL(clicked()), SLOT(slotAddProgram()) );
     connect( widget->btnRemove, SIGNAL(clicked()), SLOT(slotRemoveCMD()) );
+    connect( widget->btnAdvanced, SIGNAL(clicked()), SLOT(slotAdvanced()) );
     connect( widget->listCMD, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), SLOT(slotEditCMD(QTreeWidgetItem*)) );
     connect( widget->listCMD, SIGNAL(itemClicked(QTreeWidgetItem *, int) ),this,SLOT( slotItemClicked( QTreeWidgetItem *, int) ) );
     connect( widget->btnProperties, SIGNAL(clicked()), SLOT(slotEditCMD()) );
@@ -324,6 +326,17 @@ void Autostart::slotEditCMD() {
     slotEditCMD( (AutoStartItem*)widget->listCMD->currentItem() );
 }
 
+void Autostart::slotAdvanced() {
+    if ( widget->listCMD->currentItem() == 0 )
+        return;
+    AdvancedDialog *dlg = new AdvancedDialog( this );
+    if ( dlg->exec() )
+    {
+        //TODO
+    }
+    delete dlg;
+}
+
 void Autostart::slotChangeStartup( int index )
 {
     if ( widget->listCMD->currentItem() == 0 )
@@ -341,6 +354,7 @@ void Autostart::slotSelectionChanged() {
     bool hasItems = ( dynamic_cast<AutoStartItem*>( widget->listCMD->currentItem() )!=0 ) ;
     widget->btnRemove->setEnabled(hasItems);
     widget->btnProperties->setEnabled(hasItems);
+    widget->btnAdvanced->setEnabled( dynamic_cast<DesktopStartItem*>( widget->listCMD->currentItem() )!=0 ) ;
 }
 
 void Autostart::defaults()

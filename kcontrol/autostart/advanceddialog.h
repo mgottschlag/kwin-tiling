@@ -1,6 +1,4 @@
 /***************************************************************************
- *   Copyright (C) 2006-2007 by Stephen Leaf                               *
- *   smileaf@gmail.com                                                     *
  *   Copyright (C) 2008 by Montel Laurent <montel@kde.org>                 *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -19,59 +17,24 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
+#ifndef _ADVANCEDDIALOG_H_
+#define _ADVANCEDDIALOG_H_
 
-#ifndef _AUTOSTART_H_
-#define _AUTOSTART_H_
+#include <KDialog>
+class QCheckBox;
 
-#include <KCModule>
-#include <KAboutData>
-#include <KFileItem>
-
-#include <QComboBox>
-#include <QPushButton>
-#include <QTreeWidget>
-
-#include "ui_autostartconfig.h"
-#include "autostartitem.h"
-
-class Autostart: public KCModule
+class AdvancedDialog : public KDialog
 {
     Q_OBJECT
 
 public:
-    Autostart( QWidget* parent, const QVariantList&  );
-    ~Autostart();
-    enum COL_TYPE { COL_NAME = 0, COL_COMMAND=1, COL_STATUS=2,COL_RUN=3 };
-    void load();
-    void save();
-    void defaults();
+    AdvancedDialog(QWidget* parent=0);
+    ~AdvancedDialog();
 
-    QStringList listPathName() const { return m_pathName;}
-
-public slots:
-    void slotChangeStartup( int index );
-
-protected:
-    void addItem(DesktopStartItem *item, const QString& name, const QString& run, const QString& command, bool disable );
-    void addItem(ScriptStartItem *item, const QString& name, const QString& command, ScriptStartItem::ENV type );
-
-public slots:
-    void slotAddProgram();
-    void slotAddCMD();
-    void slotRemoveCMD();
-    void slotEditCMD(QTreeWidgetItem*);
-    bool slotEditCMD(const KFileItem&);
-    void slotEditCMD();
-    void slotSelectionChanged();
-    void slotItemClicked( QTreeWidgetItem *, int);
-    void slotAdvanced();
+    bool onlyInKde() const;
 
 private:
-    QTreeWidgetItem *m_programItem, *m_scriptItem;
-    QStringList m_paths;
-    QStringList m_pathName;
-
-    Ui_AutostartConfig *widget;
+    QCheckBox *m_onlyInKde;
 };
 
 #endif
