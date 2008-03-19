@@ -34,11 +34,11 @@ namespace Control {
 }
 }
 
-class SolidShell : public QCoreApplication
+class SolidPowermanagement : public QCoreApplication
 {
     Q_OBJECT
 public:
-    SolidShell(int &argc, char **argv) : QCoreApplication(argc, argv), m_error(0) {}
+    SolidPowermanagement(int &argc, char **argv) : QCoreApplication(argc, argv), m_error(0) {}
 
     static bool doIt();
 

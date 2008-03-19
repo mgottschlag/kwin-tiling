@@ -34,11 +34,11 @@ namespace Control {
 }
 }
 
-class SolidShell : public QCoreApplication
+class SolidBluetooth : public QCoreApplication
 {
     Q_OBJECT
 public:
-    SolidShell(int &argc, char **argv) : QCoreApplication(argc, argv), m_error(0) {}
+    SolidBluetooth(int &argc, char **argv) : QCoreApplication(argc, argv), m_error(0) {}
 
     static bool doIt();
 
