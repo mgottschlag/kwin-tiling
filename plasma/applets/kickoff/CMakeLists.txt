@@ -18,9 +18,10 @@ set( Kickoff_SRCS
        core/systemmodel.cpp
        core/urlitemlauncher.cpp
        core/itemhandlers.cpp
-       ui/itemdelegate.cpp
+       ui/brandingbutton.cpp
        ui/contextmenufactory.cpp
        ui/flipscrollview.cpp
+       ui/itemdelegate.cpp
        ui/launcher.cpp
        ui/searchbar.cpp
        ui/tabbar.cpp
@@ -68,4 +69,3 @@ kde4_add_plugin(plasma_applet_simplelauncher ${SimpleApplet_SRCS})
 target_link_libraries(plasma_applet_simplelauncher plasma ${Kickoff_LIBS}) 
 install(TARGETS plasma_applet_simplelauncher DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES simpleapplet/plasma-applet-simplelauncher.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-install(FILES ui/kickoff-branding.png DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/)

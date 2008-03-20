@@ -58,6 +58,7 @@
 #include "core/systemmodel.h"
 
 #include "ui/itemdelegate.h"
+#include "ui/brandingbutton.h"
 #include "ui/contextmenufactory.h"
 #include "ui/urlitemview.h"
 #include "ui/flipscrollview.h"
@@ -515,16 +516,9 @@ void Launcher::init()
     QLabel *userinfo = new QLabel(i18n("User&nbsp;<b>%1</b>&nbsp;on&nbsp;<b>%2</b>", KUser().loginName(), hostname));
     userinfo->setForegroundRole(QPalette::Dark);
 
-    QToolButton *branding = new QToolButton;
-    QString iconname = KStandardDirs::locate("data", "desktoptheme/" + Plasma::Theme::self()->themeName()+"/kickoff-branding.png");
-    if (iconname.isEmpty()) {
-       iconname = KStandardDirs::locate("data", "desktoptheme/default/kickoff-branding.png");
-    }
-    QPixmap icon = QPixmap(iconname);
+    QToolButton *branding = new BrandingButton(this);
     branding->setAutoRaise(false);
     branding->setToolButtonStyle(Qt::ToolButtonIconOnly);
-    branding->setIcon(icon);
-    branding->setIconSize(icon.size());
     connect( branding, SIGNAL(clicked()), SLOT(openHomepage()));
 
     d->resizeHandle = new Private::ResizeHandle(this);
