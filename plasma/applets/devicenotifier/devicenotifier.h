@@ -93,7 +93,6 @@ class DeviceNotifier : public Plasma::Applet
 
     private:
         QModelIndex indexForUdi(const QString &udi) const;
-        void initDesktop();
         void initSysTray();
 
         Plasma::DataEngine *m_solidEngine;
