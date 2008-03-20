@@ -38,7 +38,7 @@
 <varlistentry><term><guilabel>Name</guilabel></term>
 <listitem>
 <para>
- -
+You cannot amend this column. It states the name of the program or script you want to start with &kde;.
 </para>
 </listitem>
 </varlistentry>
@@ -46,7 +46,7 @@
 <varlistentry><term><guilabel>Command</guilabel></term>
 <listitem>
 <para>
- -
+This column lists the commands that are run to start the program. Commands can be modified through the <guibutton>Properties</guibutton> button or by double clicking the program/scrip row.
 </para>
 </listitem>
 </varlistentry>
@@ -54,10 +54,7 @@
 <varlistentry><term><guilabel>Status</guilabel></term>
 <listitem>
 <para>
-This setting is only available for programs through Desktop files. You can keep a program in the <filename class="directory">Autostart</filename> folder but disable it from starting. Settings the program to Disabled will not run it on start.
-</para>
-<para>
-For advanced users, setting the program to <guilabel>Disabled</guilabel> sets the Desktop file Hidden property to true.
+This setting is only available for programs through Desktop files. You can keep a program in the <filename class="directory">Autostart</filename> folder but disable it from being run at &kde; start. Setting the program to <guilabel>Disabled</guilabel> will not run it on start.
 </para>
 </listitem>
 </varlistentry>
@@ -65,8 +62,11 @@ For advanced users, setting the program to <guilabel>Disabled</guilabel> sets th
 <varlistentry><term><guilabel>Run On</guilabel></term>
 <listitem>
 <para>
-Programs (Desktop files) can only be run on startup. Scripts can be run on startup, shutdown or pre-KDE startup. This column allows you to change when your script is run. Startup is when &kde; starts, shutdown is when you log out of &kde; and pre-KDE startup is before &kde; starts.
+Programs (Desktop files) can only be run on startup. Scripts can be run on startup, shutdown or pre-KDE startup. This column allows you to change when your script is run. Startup is when &kde; starts, shutdown is when you log out of &kde; and pre-KDE startup is before &kde; starts. 
 </para>
+<note><para>
+Only scripts with the <filename>sh</filename> extension can be read by &kde; to set up the environment.
+</para></note>
 </listitem>
 </varlistentry>
 </variablelist>
@@ -78,15 +78,14 @@ Programs (Desktop files) can only be run on startup. Scripts can be run on start
 On the right you have some buttons to change the way Autostart is configure. You can add programs or scripts, remove them or change their properties.
 </para>
 
-<para>
-Advanced: By placing an application's .desktop file in one of the Autostart directories the application will be automatically launched during startup of the user's desktop environment after the user has logged in.
-</para>
-
 <variablelist>
 <varlistentry><term><guilabel>Add Program</guilabel></term>
 <listitem>
 <para>
-Clicking this button displays the standard &kde; <guilabel>Choose Application</guilabel> dialog and allows you to choose which program you want to start. After choosing the program, clicking <guibutton>OK</guibutton> brings you the properties for this program.
+Clicking this button displays the standard &kde; <guilabel>Choose Application</guilabel> dialog and allows you to choose which program you want to start. After choosing the program, clicking <guibutton>OK</guibutton> brings you the properties for this program. 
+</para>
+<para>
+This will copy the program Desktop file in your <filename class="directory">Autostart</filename> folder. 
 </para>
 </listitem>
 </varlistentry>
@@ -94,25 +93,37 @@ Clicking this button displays the standard &kde; <guilabel>Choose Application</g
 <varlistentry><term><guilabel>Add Script</guilabel></term>
 <listitem>
 <para>
- -
+This button opens a dialog which asks you for the location of the script you want to add. If you keep <guilabel>Create as symlink</guilabel> checked (default) then the script will be added as a symlink. If you uncheck this option then the script will be copied in the corresponding local folder.
 </para>
 </listitem>
 </varlistentry>
 <varlistentry><term><guilabel>Remove</guilabel></term>
 <listitem>
 <para>
-Remove will immediately remove the Desktop file for the program or the script copy or symbolic link in the Autostart folder.
+Remove will immediately remove the Desktop file for the program or the script or symbolic link in the <filename class="directory">Autostart</filename> folder.
 </para>
 </listitem>
 </varlistentry>
 <varlistentry><term><guilabel>Properties</guilabel></term>
 <listitem>
 <para>
- -
+This button allows you to change the properties of the program or script. You have general properties, permissions properties, a preview when applicable and properties related to the application for programs.
 </para>
 </listitem>
 </varlistentry>
 </variablelist>
+</sect2>
+<sect2 id="advanced">
+<title>Advanced</title>
+<para>
+Scripts in <filename class="directory">$KDEHOME/env</filename> are sourced during &kde; startup (the <filename>startkde</filename> script will look for scripts here) and scripts and desktop files in <filename class="directory">$KDEHOME/Autostart</filename> will be run during &kde; startup. This is the same than settings programs to run on startup or scripts to run on pre-KDE startup in the Autostart Manager.
+</para>
+<para>
+By placing a script in the shutdown directory <filename class="directory">$KDEHOME/shutdown</filename> this script will be automatically run during &kde; shutdown after the user has logged out. This is the same than setting a script to run on shutdown in the Autostart Manager. 
+</para>
+<para>
+Setting a program to <guilabel>Disabled</guilabel> sets the Desktop file Hidden property to true in the <filename class="directory">Autostart</filename> folder.
+</para>
 </sect2>
 </sect1>
 </article>
