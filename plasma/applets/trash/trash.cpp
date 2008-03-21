@@ -137,16 +137,13 @@ void Trash::constraintsUpdated(Plasma::Constraints constraints)
 {
     setDrawStandardBackground(false);
     if (constraints & Plasma::FormFactorConstraint) {
-        if (formFactor() == Plasma::Planar ||
-            formFactor() == Plasma::MediaCenter) {
-            setRemainSquare(false);
-            m_icon->setText(i18n("Trash"));
-            m_showText = true;
-            m_icon->setDrawBackground(true);
+        disconnect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
+        disconnect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));
 
-            //Adding an arbitrary width to make room for a larger count of items
-            setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop))+=QSizeF(20,0));
-        } else {
+        if (formFactor() == Plasma::Horizontal ||
+            formFactor() == Plasma::Vertical) {
+            //in a panel the icon always behaves like a button
+            connect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));
             setRemainSquare(true);
             m_icon->setText(0);
             m_icon->setInfoText(0);
@@ -154,7 +151,17 @@ void Trash::constraintsUpdated(Plasma::Constraints constraints)
             m_icon->setDrawBackground(false);
 
             setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
-	}
+        } else {
+            connect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
+            setRemainSquare(false);
+            m_icon->setText(i18n("Trash"));
+            m_showText = true;
+            m_icon->setDrawBackground(true);
+
+            //Adding an arbitrary width to make room for a larger count of items
+            setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop))+=QSizeF(20,0));
+        }
+
         setIcon();
     }
     if (constraints & Plasma::SizeConstraint && m_icon) {
