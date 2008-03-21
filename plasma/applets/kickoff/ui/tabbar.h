@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -22,15 +22,13 @@
 
 #include <QTabBar>
 #include <QTimer>
-#include <QTimeLine>
-#include <QVector>
 
 namespace Kickoff
 {
 
 class TabBar : public QTabBar
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     TabBar(QWidget *parent);
@@ -43,31 +41,41 @@ public:
     /** Specifies whether hovering switches between tabs or if a click is required to switch the tabs. */
     void setSwitchTabsOnHover(bool switchOnHover);
     bool switchTabsOnHover() const;
+    void setAnimateSwitch(bool animateSwitch);
+    bool animateSwitch();
 
 protected:
+    int lastIndex() const;
+
     // reimplemented from QTabBar
     virtual QSize tabSizeHint(int index) const;
     virtual void paintEvent(QPaintEvent *event);
     virtual void leaveEvent(QEvent *event);
     virtual void mouseMoveEvent(QMouseEvent *event);
+    virtual void resizeEvent(QResizeEvent* event);
 
 protected slots:
     void switchToHoveredTab();
     void animationFinished();
     void startAnimation();
+    void onValueChanged(qreal val);
 
 private:
-    static const int TAB_CONTENTS_MARGIN = 5;
+    QPainterPath tabPath(const QRect &r);
+
+    static const int TAB_CONTENTS_MARGIN = 6;
     int m_hoveredTabIndex;
     QTimer m_tabSwitchTimer;
-    QTimeLine m_animator;
-    QVector<int> m_animStates;
     bool m_switchOnHover;
+    bool m_animateSwitch;
+    QRect m_currentAnimRect;
+    int m_lastIndex[2];
+    qreal m_animProgress;
 
     QSize tabSize(int index) const;
+    void storeLastIndex();
 };
 
 }
 
 #endif // TABBAR_H
-
