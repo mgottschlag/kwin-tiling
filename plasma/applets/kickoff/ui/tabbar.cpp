@@ -29,20 +29,17 @@
 #include <QLinearGradient>
 
 #include "plasma/plasma.h"
+#include "plasma/phase.h"
 
 using namespace Kickoff;
 
 TabBar::TabBar(QWidget *parent)
-    : QTabBar(parent),
-      m_hoveredTabIndex(-1),
-      m_switchOnHover(true)
+        : QTabBar(parent),
+        m_hoveredTabIndex(-1),
+        m_switchOnHover(true),
+        m_animateSwitch(true)
 {
-    //FIXME: should be replaced with a Phase custom animation
-    m_animator.setDuration(150);
-    m_animator.setCurveShape(QTimeLine::EaseInOutCurve);
-    m_animator.setFrameRange(0, 10);
-    connect(&m_animator, SIGNAL(frameChanged(int)), this, SLOT(update()));
-    connect(&m_animator, SIGNAL(finished()), this, SLOT(animationFinished()));
+    m_lastIndex[0] = -1;
     connect(this, SIGNAL(currentChanged(int)), this, SLOT(startAnimation()));
 
     m_tabSwitchTimer.setSingleShot(true);
@@ -54,6 +51,7 @@ void TabBar::setCurrentIndexWithoutAnimation(int index)
 {
     disconnect(this, SIGNAL(currentChanged(int)), this, SLOT(startAnimation()));
     setCurrentIndex(index);
+    storeLastIndex();
     connect(this, SIGNAL(currentChanged(int)), this, SLOT(startAnimation()));
     animationFinished();
 }
@@ -68,16 +66,41 @@ bool TabBar::switchTabsOnHover() const
     return m_switchOnHover;
 }
 
+void TabBar::setAnimateSwitch(bool animateSwitch)
+{
+    m_animateSwitch = animateSwitch;
+}
+
+bool TabBar::animateSwitch()
+{
+    return m_animateSwitch;
+}
+
 QSize TabBar::tabSize(int index) const
 {
     QSize hint;
     const QFontMetrics metrics(font());
-    const QSize textSize = metrics.size(Qt::TextHideMnemonic,tabText(index));
-    hint.rwidth() = qMax(iconSize().width(),textSize.width());
+    const QSize textSize = metrics.size(Qt::TextHideMnemonic, tabText(index));
+    hint.rwidth() = qMax(iconSize().width(), textSize.width());
     hint.rheight() = iconSize().height() + textSize.height();
     hint.rwidth() += 2 * TAB_CONTENTS_MARGIN;
     hint.rheight() += 2 * TAB_CONTENTS_MARGIN;
     return hint;
+}
+
+void TabBar::storeLastIndex()
+{
+    // if first run
+    if (m_lastIndex[0] == -1) {
+        m_lastIndex[1] = currentIndex();
+    }
+    m_lastIndex[0] = m_lastIndex[1];
+    m_lastIndex[1] = currentIndex();
+}
+
+int TabBar::lastIndex() const
+{
+    return m_lastIndex[0];
 }
 
 QSize TabBar::tabSizeHint(int index) const
@@ -93,96 +116,145 @@ QSize TabBar::tabSizeHint(int index) const
             hint.rwidth() += (width() - minwidth) / count();
         }
     }
-
     return hint;
+}
+
+QPainterPath TabBar::tabPath(const QRect &_r)
+{
+    const int radius = 6;
+    Shape s = shape();
+    QPainterPath path;
+    QRect r = _r;
+
+    switch (s) {
+        case RoundedSouth:
+        case TriangularSouth:
+            r.adjust(3, 0, -3, -3);
+            path.moveTo(rect().topLeft());
+            path.lineTo(r.topLeft());
+            // Top left corner
+            path.quadTo(r.topLeft() + QPoint(radius, 0), r.topLeft() + QPoint(radius, radius));
+            path.lineTo(r.bottomLeft() + QPoint(radius, -radius));
+            // Bottom left corner
+            path.quadTo(r.bottomLeft() + QPoint(radius, 0), r.bottomLeft() + QPoint(radius * 2, 0));
+            path.lineTo(r.bottomRight() + QPoint(-radius * 2, 0));
+            // Bottom right corner
+            path.quadTo(r.bottomRight() + QPoint(-radius, 0), r.bottomRight() + QPoint(-radius, -radius));
+            path.lineTo(r.topRight() + QPoint(-radius, radius));
+            // Top right corner
+            path.quadTo(r.topRight() + QPoint(-radius, 0), r.topRight());
+            path.lineTo(rect().topRight());
+            break;
+        case RoundedNorth:
+        case TriangularNorth:
+            r.adjust(3, 3, -3, 0);
+            path.moveTo(rect().bottomLeft());
+            // Bottom left corner
+            path.lineTo(r.bottomLeft());
+            path.quadTo(r.bottomLeft() + QPoint(radius, 0), r.bottomLeft() + QPoint(radius, -radius));
+            // Top left corner
+            path.lineTo(r.topLeft() + QPoint(radius, radius));
+            path.quadTo(r.topLeft() + QPoint(radius, 0), r.topLeft() + QPoint(radius * 2, 0));
+            // Top right corner
+            path.lineTo(r.topRight() + QPoint(-radius * 2, 0));
+            path.quadTo(r.topRight() + QPoint(-radius, 0), r.topRight() + QPoint(-radius, radius));
+            // Bottom right corner
+            path.lineTo(r.bottomRight() + QPoint(-radius, -radius));
+            path.quadTo(r.bottomRight() + QPoint(-radius, 0), r.bottomRight());
+            path.lineTo(rect().bottomRight());
+            break;
+        case RoundedWest:
+        case TriangularWest:
+            r.adjust(3, 0, 0, 0);
+            path.moveTo(rect().topRight());
+            // Top right corner
+            path.lineTo(r.topRight());
+            path.quadTo(r.topRight() + QPoint(0, radius), r.topRight() + QPoint(-radius, radius));
+            // Top left corner
+            path.lineTo(r.topLeft() + QPoint(radius, radius));
+            path.quadTo(r.topLeft() + QPoint(0, radius), r.topLeft() + QPoint(0, radius * 2));
+            // Bottom left corner
+            path.lineTo(r.bottomLeft() + QPoint(0, -radius * 2));
+            path.quadTo(r.bottomLeft() + QPoint(0, -radius), r.bottomLeft() + QPoint(radius, -radius));
+            // Bottom right corner
+            path.lineTo(r.bottomRight() + QPoint(-radius, -radius));
+            path.quadTo(r.bottomRight() + QPoint(0, -radius), r.bottomRight());
+            path.lineTo(rect().bottomRight());
+        case RoundedEast:
+        case TriangularEast:
+            r.adjust(0, 0, -3, 0);
+            path.moveTo(rect().topLeft());
+            // Top left corner
+            path.lineTo(r.topLeft());
+            path.quadTo(r.topLeft() + QPoint(0, radius), r.topLeft() + QPoint(radius, radius));
+            // Top right corner
+            path.lineTo(r.topRight() + QPoint(-radius, radius));
+            path.quadTo(r.topRight() + QPoint(0, radius), r.topRight() + QPoint(0, radius * 2));
+            // Bottom right corner
+            path.lineTo(r.bottomRight() + QPoint(0, -radius * 2));
+            path.quadTo(r.bottomRight() + QPoint(0, -radius), r.bottomRight() + QPoint(-radius, -radius));
+            // Bottom left corner
+            path.lineTo(r.bottomLeft() + QPoint(radius, -radius));
+            path.quadTo(r.bottomLeft() + QPoint(radius, 0), r.bottomLeft());
+            path.lineTo(rect().bottomLeft());
+            break;
+    }
+
+    return path;
 }
 
 void TabBar::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event)
     QPainter painter(this);
-    int numTabs = count();
+    //int numTabs = count();
     int currentTab = currentIndex();
-    bool ltr = painter.layoutDirection() == Qt::LeftToRight;
+    //bool ltr = painter.layoutDirection() == Qt::LeftToRight; // Not yet used
 
-    if (m_animStates.size() != numTabs) {
-        m_animStates.resize(numTabs);
+    // Drawing Tabborders
+    QRect movingRect;
+
+    if (m_currentAnimRect.isNull()) {
+        movingRect = tabRect(currentIndex());
+    } else {
+        movingRect = m_currentAnimRect;
     }
+    QPainterPath path = tabPath(movingRect);
 
-    for (int i=0 ; i<count() ; i++) {
-        QRect rect = tabRect(i).adjusted(TAB_CONTENTS_MARGIN,TAB_CONTENTS_MARGIN,
-                                        -TAB_CONTENTS_MARGIN,-TAB_CONTENTS_MARGIN);
+    painter.save();
+    painter.translate(0.5, 0.5);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.fillPath(path, palette().base());
+    painter.setPen(QPen(palette().mid(), 1));
+    painter.drawPath(path);
+    painter.restore();
 
-        // draw background and top line for tabs
+    QFontMetrics metrics(painter.font());
+    int textHeight = metrics.height();
+    int delta;
+
+    for (int i = 0; i < count(); i++) {
         if (i == currentTab) {
-            m_animStates[i] = qMin(m_animator.endFrame(), ++m_animStates[i]);
+            delta = m_animProgress * TAB_CONTENTS_MARGIN;
+        } else if (i == lastIndex()) {
+            delta = TAB_CONTENTS_MARGIN - m_animProgress * TAB_CONTENTS_MARGIN;
         } else {
-            QPen p = painter.pen();
-            painter.setPen(QPen(palette().mid(), 1));
-            QPoint left = tabRect(i).topLeft() + QPoint(0, 1);
-            QPoint right = tabRect(i).topRight() +  QPoint(0, 1);
-            if (i - 1 == currentTab) {
-                if (ltr) {
-                    left += QPoint(2, 0);
-                } else {
-                    right += QPoint(-2, 0);
-                }
-            }
-
-            painter.drawLine(left, right);
-            painter.setPen(p);
-
-            if (m_animStates[i] > 0) {
-                m_animStates[i] = qMax(0, m_animStates[i] - 2);
-            }
+            delta = 0;
         }
 
-        if (i == currentTab) {
-            // Draws the selected item with a gradient
-            const int radius = 6;
-            QRect rect = tabRect(i).adjusted(1, 0, 0, -3);
-
-            QPainterPath path(rect.topLeft());
-            // Top side
-            path.moveTo(rect.topRight() + QPoint(radius, 0));
-            // Top right corner
-            path.quadTo(rect.right(), rect.top(), rect.right(), rect.top() + radius);
-            path.lineTo(rect.right(), rect.bottom() - radius);
-            // Bottom right corner
-            path.quadTo(rect.right(), rect.bottom(), rect.right() - radius, rect.bottom());
-            path.lineTo(rect.left() + radius, rect.bottom());
-            // Bottom left corner
-            path.quadTo(rect.left(), rect.bottom(), rect.left(), rect.bottom() - radius);
-            path.lineTo(rect.left(), rect.top() + radius);
-            // Top left corner
-            path.quadTo(rect.left(), rect.top(), rect.left() - radius, rect.top());
-//            path.closeSubpath();
-
-            painter.save();
-            painter.setRenderHint(QPainter::Antialiasing);
-            painter.fillPath(path, palette().base());
-            painter.setPen(QPen(palette().mid(), 1));
-            painter.translate(0.5, 0.5);
-            painter.drawPath(path);
-            painter.restore();
-        }
-
-        // draw tab icon and text
-        QFontMetrics metrics(painter.font());
-        int textHeight = metrics.height();
+        QRect rect = tabRect(i).adjusted(TAB_CONTENTS_MARGIN, TAB_CONTENTS_MARGIN,
+                                         -TAB_CONTENTS_MARGIN, -TAB_CONTENTS_MARGIN);
+        // draw tab icon
         QRect iconRect = rect;
-        int delta = int(m_animStates[i] / qreal(m_animator.endFrame()) * 4);
-        iconRect.setBottom(iconRect.bottom()-textHeight);
+        iconRect.setBottom(iconRect.bottom() - textHeight);
         iconRect.adjust(0, -delta, 0, -delta);
-        tabIcon(i).paint(&painter,iconRect);
+        tabIcon(i).paint(&painter, iconRect);
 
+        // draw tab text
         QRect textRect = rect;
         textRect.setTop(textRect.bottom() - textHeight);
-        painter.drawText(textRect, Qt::AlignCenter|Qt::TextHideMnemonic, tabText(i));
+        painter.drawText(textRect, Qt::AlignCenter | Qt::TextHideMnemonic, tabText(i));
     }
-
-    painter.setPen(QPen(palette().base(), 1));
-    painter.drawLine(rect().topLeft(), rect().topRight());
 }
 
 void TabBar::leaveEvent(QEvent *event)
@@ -200,37 +272,67 @@ void TabBar::mouseMoveEvent(QMouseEvent *event)
     }
 }
 
+void TabBar::resizeEvent(QResizeEvent* event)
+{
+    QTabBar::resizeEvent(event);
+    m_currentAnimRect = tabRect(currentIndex());
+    update();
+}
+
 void TabBar::switchToHoveredTab()
 {
     if (m_hoveredTabIndex < 0 || m_hoveredTabIndex == currentIndex()) {
         return;
     }
 
-    setCurrentIndex(m_hoveredTabIndex);
+    if (m_animateSwitch) {
+        setCurrentIndex(m_hoveredTabIndex);
+    }
+    else {
+        setCurrentIndexWithoutAnimation(m_hoveredTabIndex);
+    }
 }
 
 void TabBar::startAnimation()
 {
-    m_animator.start();
+    storeLastIndex();
+    Plasma::Phase::self()->customAnimation(10, 150, Plasma::Phase::EaseInOutCurve, this, "onValueChanged");
+
+}
+
+void TabBar::onValueChanged(qreal value)
+{
+    if ((m_animProgress = value) == 1.0) {
+        animationFinished();
+        return;
+    }
+
+    bool horiz = true;
+
+    switch (shape()) {
+        case RoundedWest:
+        case RoundedEast:
+        case TriangularWest:
+        case TriangularEast:
+            horiz = false;
+            break;
+        default:
+            // we're horizontal
+            break;
+    }
+    // animation rect
+    QRect rect = tabRect(currentIndex());
+    QRect lastRect = tabRect(lastIndex());
+    int x = horiz ? lastRect.x() - value * (lastRect.x() - rect.x()) : rect.x();
+    int y = horiz ? rect.y() : lastRect.y() - value * (lastRect.y() - rect.y());
+    QSizeF sz = lastRect.size() - value * (lastRect.size() - rect.size());
+    m_currentAnimRect = QRect(x, y, sz.width(), sz.height());
+    update();
 }
 
 void TabBar::animationFinished()
 {
-    int currentTab = currentIndex();
-    update();
-
-    int numTabs = count();
-
-    if (m_animStates.size() != numTabs)
-       return;
-
-    for (int i = 0; i < numTabs; ++i) {
-        if (i == currentTab) {
-            m_animStates[i] = m_animator.endFrame();
-        } else {
-            m_animStates[i] = 0;
-        }
-    }
+    m_currentAnimRect = QRect();
     update();
 }
 
