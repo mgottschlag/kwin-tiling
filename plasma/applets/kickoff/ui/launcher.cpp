@@ -416,12 +416,33 @@ class Launcher::Private::ResizeHandle
 {
 public:
     ResizeHandle(QWidget *parent = 0)
-        : QWidget(parent)
+        : QWidget(parent),
+          m_placement(NorthEast)
     {
     }
 
     ~ResizeHandle()
     {
+    }
+
+    void setPlacement(CompassDirection dir)
+    {
+        m_placement = dir;
+        switch (m_placement) {
+            case NorthEast:
+            default:
+                setCursor(Qt::SizeBDiagCursor);
+                break;
+            case SouthEast:
+                setCursor(Qt::SizeFDiagCursor);
+                break;
+            case SouthWest:
+                setCursor(Qt::SizeBDiagCursor);
+                break;
+            case NorthWest:
+                setCursor(Qt::SizeFDiagCursor);
+                break;
+        }
     }
 
 protected:
@@ -430,10 +451,27 @@ protected:
         QPainter p(this);
         QStyleOptionSizeGrip opt;
         opt.initFrom(this);
-        opt.corner = Qt::TopRightCorner;
+        switch (m_placement) {
+            case NorthEast:
+            default:
+                opt.corner = Qt::TopRightCorner;
+                break;
+            case SouthEast:
+                opt.corner = Qt::BottomRightCorner;
+                break;
+            case SouthWest:
+                opt.corner = Qt::BottomLeftCorner;
+                break;
+            case NorthWest:
+                opt.corner = Qt::TopLeftCorner;
+                break;
+        }
         style()->drawControl(QStyle::CE_SizeGrip, &opt, &p);
         p.end();
     }
+
+private:
+    CompassDirection m_placement;
 };
 
 void Launcher::Private::adjustResizeHandlePosition()
@@ -442,25 +480,23 @@ void Launcher::Private::adjustResizeHandlePosition()
     switch (resizePlacement) {
         case NorthEast:
             resizeHandle->move(q->width()-resizeHandle->width() - margin,
-                    margin);
-            resizeHandle->setCursor(Qt::SizeBDiagCursor);
+                               margin);
             break;
         case SouthEast:
             resizeHandle->move(q->width()-resizeHandle->width() - margin,
-                    q->height()-resizeHandle->height() - margin);
-            resizeHandle->setCursor(Qt::SizeFDiagCursor);
+                               q->height()-resizeHandle->height() - margin);
             break;
         case SouthWest:
             resizeHandle->move(margin, q->height()-resizeHandle->height() - margin);
-            resizeHandle->setCursor(Qt::SizeBDiagCursor);
             break;
         case NorthWest:
             resizeHandle->move(margin, margin);
-            resizeHandle->setCursor(Qt::SizeFDiagCursor);
             break;
         default:
             break;
     }
+
+    resizeHandle->setPlacement(resizePlacement);
 }
 
 Launcher::Launcher(QWidget *parent)
