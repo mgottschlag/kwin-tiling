@@ -42,35 +42,6 @@ public:
 
     static bool doIt();
 
-    bool hwList(bool interfaces, bool system);
-    bool hwCapabilities(const QString &udi);
-    bool hwProperties(const QString &udi);
-    bool hwQuery(const QString &parentUdi, const QString &query);
-
-    enum VolumeCallType { Mount, Unmount, Eject };
-    bool hwVolumeCall(VolumeCallType type, const QString &udi);
-
-
-    bool powerQuerySuspendMethods();
-    bool powerSuspend(const QString &method);
-
-    bool powerQuerySchemes();
-    bool powerChangeScheme(const QString &schemeName);
-
-    bool powerQueryCpuPolicies();
-    bool powerChangeCpuPolicy(const QString &policyName);
-
-    bool netmgrList();
-    bool netmgrNetworkingEnabled();
-    bool netmgrWirelessEnabled();
-    bool netmgrChangeNetworkingEnabled(bool enabled);
-    bool netmgrChangeWirelessEnabled(bool enabled);
-    bool netmgrListNetworks(const QString &device);
-    bool netmgrQueryNetworkInterface(const QString  &);
-    bool netmgrQueryNetwork(const QString  & device, const QString  &);
-    bool netmgrActivateNetwork(const QString  & device, const QString  & uni, Solid::Control::Authentication * auth = 0);
-    //bool netmgrCapabilities(const QString &udi);
-
     bool bluetoothListAdapters();
     bool bluetoothDefaultAdapter();
     bool bluetoothAdapterAddress(const QString &ubi);
