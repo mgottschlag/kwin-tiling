@@ -9,6 +9,9 @@ set(ksmserver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerIn
 QT4_ADD_DBUS_INTERFACE( kworkspace_LIB_SRCS ${ksmserver_xml} ksmserver_interface )
 
 set(kwin_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/kwin/org.kde.KWin.xml)
+
+SET_SOURCE_FILES_PROPERTIES(${kwin_xml} PROPERTIES INCLUDE "interface_util.h")
+
 QT4_ADD_DBUS_INTERFACE( kworkspace_LIB_SRCS ${kwin_xml} kwin_interface )
 
 
