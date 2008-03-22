@@ -56,8 +56,8 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     setContainmentType(Containment::PanelContainment);
 
     connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(themeUpdated()));
-    themeUpdated();
-    updateSize(m_currentSize);
+    //make sure the default size is picked up
+    resize(m_currentSize, m_currentSize);
     setFlag(ItemClipsChildrenToShape, true);
 }
 
@@ -174,15 +174,15 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
         setFormFactorFromLocation(location());
     }
 
-    if (constraints & Plasma::ScreenConstraint ||
-        constraints & Plasma::LocationConstraint) {
-        updateSize(m_currentSize);
-    }
-
     if (constraints & Plasma::SizeConstraint) {
         bool isHorizontal = location() == Plasma::TopEdge || location() == Plasma::BottomEdge;
         m_currentSize = isHorizontal ? size().height() : size().width();
         m_background->resize(size());
+    }
+
+    if (constraints & Plasma::ScreenConstraint ||
+        constraints & Plasma::LocationConstraint) {
+        updateSize(m_currentSize);
     }
 
     if (constraints & Plasma::ScreenConstraint ||
@@ -352,6 +352,7 @@ void Panel::updateSize(qreal newSize)
     //kDebug() << "updating size to" << newSize << "at" << location();
     QRectF screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) :
                                         geometry();
+    //kDebug() << screenRect;
     QSizeF s;
     switch (location()) {
     case BottomEdge:
