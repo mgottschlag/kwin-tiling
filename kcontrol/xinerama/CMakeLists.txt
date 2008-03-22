@@ -7,8 +7,10 @@ set(kcm_xinerama_kwin_SRCS)
 
 
 set(kwin_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/kwin/org.kde.KWin.xml)
+SET_SOURCE_FILES_PROPERTIES(${kwin_xml} PROPERTIES INCLUDE "interface_util.h")
 
 QT4_ADD_DBUS_INTERFACE( kcm_xinerama_kwin_SRCS ${kwin_xml} kwin_interface )
+
 
 set(kcm_xinerama_PART_SRCS kcmxinerama.cpp xineramawidget.cpp ${kcm_xinerama_kwin_SRCS})
 
