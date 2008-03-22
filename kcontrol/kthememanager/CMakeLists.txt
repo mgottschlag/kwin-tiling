@@ -7,6 +7,7 @@ add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 set(kcm_kthememanager_PART_SRCS knewthemedlg.cpp ktheme.cpp kthememanager.cpp )
 
 set(kwin_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/kwin/org.kde.KWin.xml)
+SET_SOURCE_FILES_PROPERTIES(${kwin_xml} PROPERTIES INCLUDE "ktheme.h")
 QT4_ADD_DBUS_INTERFACE( kcm_kthememanager_PART_SRCS ${kwin_xml} kwin_interface )
 
 set(plasma_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/plasma/plasma/org.kde.plasma.App.xml)

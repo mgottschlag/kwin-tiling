@@ -29,6 +29,8 @@
 
 class KStandardDirs;
 class KConfig;
+// needed by the DBUS interface
+Q_DECLARE_METATYPE(QList<int>)
 
 /// defines the syntax version used by the XML
 #define SYNTAX_VERSION 1
