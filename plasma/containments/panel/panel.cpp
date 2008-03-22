@@ -58,12 +58,17 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(themeUpdated()));
     //make sure the default size is picked up
     resize(m_currentSize, m_currentSize);
-    setFlag(ItemClipsChildrenToShape, true);
 }
 
 Panel::~Panel()
 {
     delete m_dialog;
+}
+
+void Panel::init()
+{
+    Containment::init();
+    setFlag(ItemClipsChildrenToShape, true);
 }
 
 QList<QAction*> Panel::contextActions()

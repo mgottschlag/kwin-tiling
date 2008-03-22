@@ -37,6 +37,7 @@ class Panel : public Plasma::Containment
 public:
     Panel(QObject *parent, const QVariantList &args);
     ~Panel();
+    void init();
     QList<QAction*> contextActions();
 
     void constraintsUpdated(Plasma::Constraints constraints);
