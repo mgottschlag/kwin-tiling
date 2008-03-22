@@ -30,8 +30,10 @@
 
 <para>Please note that in this module all changes are immediately applied.</para>
 
-<para>The program scans your <filename class="directory">$KDEHOME/Autostart</filename>, <filename class="directory">$KDEHOME/env</filename> and <filename class="directory">$KDEHOME/shutdown</filename> to check what programs and scripts are already there and displays them. I allows you to manage them easily.
+<para>The program scans your <filename class="directory">Autostart</filename>, <filename class="directory">$KDEHOME/env</filename> and <filename class="directory">$KDEHOME/shutdown</filename> folders to check what programs and scripts are already there and displays them. It allows you to manage them easily. 
 </para>
+
+<para>Note that you can change the location of the <filename class="directory">Autostart</filename> folder in the <guilabel>About Me</guilabel> tab in &systemsettings; and set a different folder than <filename class="directory">$KDEHOME/Autostart</filename>.</para>
 
 <sect2 id="current">
 <title>Files display</title>
