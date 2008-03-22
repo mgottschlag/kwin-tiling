@@ -39,17 +39,6 @@
 
 #include <solid/control/powermanager.h>
 
-#include <solid/control/ifaces/authentication.h>
-#include <solid/control/networkmanager.h>
-#include <solid/control/networkinterface.h>
-#include <solid/control/network.h>
-#include <solid/control/wirelessnetwork.h>
-
-#include <solid/control/bluetoothmanager.h>
-#include <solid/control/bluetoothinterface.h>
-#include <solid/control/bluetoothremotedevice.h>
-#include <solid/control/bluetoothinputdevice.h>
-
 #include <kjob.h>
 
 
@@ -59,7 +48,7 @@ using namespace std;
 static const char appName[] = "solid-powermanagement";
 static const char programName[] = I18N_NOOP("solid-powermanagement");
 
-static const char description[] = I18N_NOOP("KDE tool for querying and controlling your hardware from the command line");
+static const char description[] = I18N_NOOP("KDE tool for querying and controlling your power management options from the command line");
 
 static const char version[] = "0.1";
 
@@ -165,113 +154,6 @@ std::ostream &operator<<(std::ostream &out, const QMap<QString,QVariant> &proper
     return out;
 }
 
-std::ostream &operator<<(std::ostream &out, const Solid::Control::NetworkInterface &networkdevice)
-{
-    out << "  UNI =                " << QVariant(networkdevice.uni()) << endl;
-    out << "  Type =               " << (networkdevice.type() == Solid::Control::NetworkInterface::Ieee8023 ? "Wired" : "802.11 Wireless") << endl;
-    out << "  Active =             " << (networkdevice.isActive() ? "Yes" : "No") << endl;
-    //out << "  HW Address =         " << networkdevice.  // TODO add to solid API.
-    out << "\n  Capabilities:" << endl;
-    out << "    Supported =        " << (networkdevice.capabilities()  & Solid::Control::NetworkInterface::IsManageable ? "Yes" : "No") << endl;
-    out << "    Speed =            " << networkdevice.designSpeed() << endl;
-    if (networkdevice.type() == Solid::Control::NetworkInterface::Ieee8023)
-        out << "    Carrier Detect =   " << (networkdevice.capabilities()  & Solid::Control::NetworkInterface::SupportsCarrierDetect ? "Yes" : "No") << endl;
-    else
-        out << "    Wireless Scan =    " << (networkdevice.capabilities()  & Solid::Control::NetworkInterface::SupportsWirelessScan ? "Yes" : "No") << endl;
-    out << "    Link Up =          " << (networkdevice.isLinkUp() ? "Yes" : "No") << endl;
-
-    return out;
-}
-
-std::ostream &operator<<(std::ostream &out, const Solid::Control::Network &network)
-{
-    out << "  UNI =                " << QVariant(network.uni()) << endl;
-    out << "  Addresses:" << endl;
-    foreach (QNetworkAddressEntry addr, network.addressEntries())
-    {
-        out << "    (" << addr.ip().toString() << "," << addr.broadcast().toString() << "," << addr.ip().toString() << ")" << endl;
-    }
-    if (network.addressEntries().isEmpty())
-        out << "    none" << endl;
-    out << "  Route:               " << QVariant(network.route()) <<  endl;
-    out << "  DNS Servers:" << endl;
-    int i = 1;
-    foreach (QHostAddress addr, network.dnsServers())
-    {
-        out << "  " << i++ << ": " << addr.toString() << endl;
-    }
-    if (network.dnsServers().isEmpty())
-        out << "    none" << endl;
-    out << "  Active =             " << (network.isActive() ? "Yes" : "No") << endl;
-
-    return out;
-}
-
-std::ostream &operator<<(std::ostream &out, const Solid::Control::WirelessNetwork &network)
-{
-    out << "  ESSID =                " << QVariant(network.essid()) << endl;
-    out << "  Mode =                 ";
-    switch (network.mode())
-    {
-    case Solid::Control::WirelessNetwork::Unassociated:
-        cout << "Unassociated" << endl;
-        break;
-    case Solid::Control::WirelessNetwork::Adhoc:
-        cout << "Ad-hoc" << endl;
-        break;
-    case Solid::Control::WirelessNetwork::Managed:
-        cout << "Infrastructure" << endl;
-        break;
-    case Solid::Control::WirelessNetwork::Master:
-        cout << "Master" << endl;
-        break;
-    case Solid::Control::WirelessNetwork::Repeater:
-        cout << "Repeater" << endl;
-        break;
-    default:
-        cout << "Unknown" << endl;
-        cerr << "Unknown network operation mode: " << network.mode() << endl;
-        break;
-    }
-    out << "  Frequency =            " << network.frequency() << endl;
-    out << "  Rate =                 " << network.bitrate() << endl;
-    out << "  Strength =             " << network.signalStrength() << endl;
-    if (network.isEncrypted())
-    {
-        out << "  Encrypted =            Yes (";
-        Solid::Control::WirelessNetwork::Capabilities cap = network.capabilities();
-        if (cap  & Solid::Control::WirelessNetwork::Wep)
-            out << "WEP,";
-        if (cap  & Solid::Control::WirelessNetwork::Wpa)
-            out << "WPA,";
-        if (cap  & Solid::Control::WirelessNetwork::Wpa2)
-            out << "WPA2,";
-        if (cap  & Solid::Control::WirelessNetwork::Psk)
-            out << "PSK,";
-        if (cap  & Solid::Control::WirelessNetwork::Ieee8021x)
-            out << "Ieee8021x,";
-        if (cap  & Solid::Control::WirelessNetwork::Wep40)
-            out << "WEP40,";
-        if (cap  & Solid::Control::WirelessNetwork::Wep104)
-            out << "WEP104,";
-        if (cap  & Solid::Control::WirelessNetwork::Wep192)
-            out << "WEP192,";
-        if (cap  & Solid::Control::WirelessNetwork::Wep256)
-            out << "WEP256,";
-        if (cap  & Solid::Control::WirelessNetwork::WepOther)
-            out << "WEP-Other,";
-        if (cap  & Solid::Control::WirelessNetwork::Tkip)
-            out << "TKIP";
-        if (cap  & Solid::Control::WirelessNetwork::Ccmp)
-            out << "CCMP";
-        out << ")" << endl;
-    }
-    else
-        out << "  Encrypted =            No" << endl;
-
-    return out;
-}
-
 void checkArgumentCount(int min, int max)
 {
     int count = KCmdLineArgs::parsedArgs()->count();
@@ -296,9 +178,7 @@ int main(int argc, char **argv)
 
   KCmdLineOptions options;
 
-  options.add("commands", ki18n("Show available commands by domains"));
-
-  options.add("+domain", ki18n("Domain (see --commands)"));
+  options.add("commands", ki18n("Show available commands"));
 
   options.add("+command", ki18n("Command (see --commands)"));
 
@@ -316,44 +196,7 @@ int main(int argc, char **argv)
 
       cout << endl << i18n("Syntax:") << endl << endl;
 
-      cout << "  solid-powermanagement hardware list [details|nonportableinfo]" << endl;
-      cout << i18n("             # List the hardware available in the system.\n"
-                    "             # - If the 'nonportableinfo' option is specified, the device\n"
-                    "             # properties are listed (be careful, in this case property names\n"
-                    "             # are backend dependent),\n"
-                    "             # - If the 'details' option is specified, the device interfaces\n"
-                    "             # and the corresponding properties are listed in a platform\n"
-                    "             # neutral fashion,\n"
-                    "             # - Otherwise only device UDIs are listed.\n") << endl;
-
-      cout << "  solid-powermanagement hardware details 'udi'" << endl;
-      cout << i18n("             # Display all the interfaces and properties of the device\n"
-                    "             # corresponding to 'udi' in a platform neutral fashion.\n") << endl;
-
-      cout << "  solid-powermanagement hardware nonportableinfo 'udi'" << endl;
-      cout << i18n("             # Display all the properties of the device corresponding to 'udi'\n"
-                    "             # (be careful, in this case property names are backend dependent).\n") << endl;
-
-      cout << "  solid-powermanagement hardware query 'predicate' ['parentUdi']" << endl;
-      cout << i18n("             # List the UDI of devices corresponding to 'predicate'.\n"
-                    "             # - If 'parentUdi' is specified, the search is restricted to the\n"
-                    "             # branch of the corresponding device,\n"
-                    "             # - Otherwise the search is done on all the devices.\n") << endl;
-
-      cout << "  solid-powermanagement hardware mount 'udi'" << endl;
-      cout << i18n("             # If applicable, mount the device corresponding to 'udi'.\n") << endl;
-
-      cout << "  solid-powermanagement hardware unmount 'udi'" << endl;
-      cout << i18n("             # If applicable, unmount the device corresponding to 'udi'.\n") << endl;
-
-      cout << "  solid-powermanagement hardware eject 'udi'" << endl;
-      cout << i18n("             # If applicable, eject the device corresponding to 'udi'.\n") << endl;
-
-
-      cout << endl;
-
-
-      cout << "  solid-powermanagement power query (suspend|scheme|cpufreq)" << endl;
+      cout << "  solid-powermanagement query (suspend|scheme|cpufreq)" << endl;
       cout << i18n("             # List a particular set of information regarding power management.\n"
                     "             # - If the 'suspend' option is specified, give the list of suspend\n"
                     "             # method supported by the system\n"
@@ -362,80 +205,17 @@ int main(int argc, char **argv)
                     "             # - If the 'cpufreq' option is specified, give the list of\n"
                     "             # supported CPU frequency policy\n") << endl;
 
-      cout << "  solid-powermanagement power set (scheme|cpufreq) 'value'" << endl;
+      cout << "  solid-powermanagement set (scheme|cpufreq) 'value'" << endl;
       cout << i18n("             # Set power management options of the system.\n"
                     "             # - If the 'scheme' option is specified, the power management\n"
                     "             # scheme set corresponds to 'value'\n"
                     "             # - If the 'cpufreq' option is specified, the CPU frequency policy\n"
                     "             # set corresponds to 'value'\n") << endl;
 
-      cout << "  solid-powermanagement power suspend 'method'" << endl;
+      cout << "  solid-powermanagement suspend 'method'" << endl;
       cout << i18n("             # Suspend the computer using the given 'method'.\n") << endl;
 
       cout << endl;
-
-      cout << "  solid-powermanagement network listdevices" << endl;
-      cout << i18n("             # List the network devices present.\n") << endl;
-
-      cout << "  solid-powermanagement network listnetworks 'uni'" << endl;
-      cout << i18n("             # List the networks known to the device specified by 'uni'.\n") << endl;
-
-      cout << "  solid-powermanagement network query (status|wireless)|(interface 'uni')|(network 'device-uni' 'network-uni')" << endl;
-      cout << i18n("             # Query whether networking features are active or not.\n"
-                    "             # - If the 'status' option is given, return whether\n"
-                    "             # networking is enabled for the system\n"
-                    "             # - If the 'wireless' option is is given, return whether\n"
-                    "             # wireless is enabled for the system\n"
-                    "             # - If the 'interface' option is given, print the\n"
-                    "             # properties of the network interface that 'uni' refers to.\n"
-                    "             # - If the 'network' option is given, print the\n"
-                    "             # properties of the network on 'device-uni' that 'network-uni' refers to.\n") << endl;
-
-      cout << "  solid-powermanagement network set wireless (enabled|disabled)" << endl;
-      cout << i18n("             # Enable or disable networking on this system.\n") << endl;
-
-      cout << "  solid-powermanagement network set networking (enabled|disabled)" << endl;
-      cout << i18n("             # Enable or disable networking on this system.\n") << endl;
-
-      cout << "  solid-powermanagement network set network 'device-uni' 'network-uni' [authentication 'key']" << endl;
-      cout << i18n("             # Activate the network 'network-uni' on 'device-uni'.\n"
-                    "             # Optionally, use WEP128, open-system encryption with hex key 'key'. (Hardcoded)\n"
-                    "             # Where 'authentication' is one of:\n"
-                    "             # wep hex64|ascii64|hex128|ascii128|passphrase64|passphrase128 'key' [open|shared]\n"
-                    "             # wpapsk wpa|wpa2 tkip|ccmp-aes password\n"
-                    "             # wpaeap UNIMPLEMENTED IN SOLIDSHELL\n") << endl;
-
-      cout << endl;
-
-      cout << "  solid-powermanagement bluetooth listadapters" << endl;
-      cout << i18n("             # List bluetooth adapters/interfaces\n") << endl;
-
-      cout << "  solid-powermanagement bluetooth defaultadapter" << endl;
-      cout << i18n("             # List bluetooth default adapter/interface\n") << endl;
-
-      cout << "  solid-powermanagement bluetooth query (address|bondings|connections|name) (interface 'ubi')" << endl;
-      cout << i18n("             # Query information about the bluetooth adapter/interface with 'ubi'\n") << endl;
-
-      cout << "  solid-powermanagement bluetooth set (mode|name) (interface 'ubi') 'value'" << endl;
-      cout << i18n("             # Set the bluetooth adapter name.\n"
-                    "             # Set the bluetooth adapter mode. Where 'value' is one of:\n"
-                    "             # off|connectable|discoverable\n") << endl;
-
-      cout << "  solid-powermanagement bluetooth scan (interface 'ubi')" << endl;
-      cout << i18n("             # Scan for bluetooth remote devices.\n") << endl;
-
-      cout << "  solid-powermanagement bluetooth input listdevices" << endl;
-      cout << i18n("             # List configured input devices.\n") << endl;
-
-      cout << "  solid-powermanagement bluetooth input (setup|remove|connect|disconnect) (device 'ubi')" << endl;
-      cout << i18n("             # Setup bluetooth input device.\n"
-                    "             # Remove configuration of remote input device.\n"
-                    "             # Connect or disconnect bluetooth input device.\n") << endl;
-
-      cout << "  solid-powermanagement bluetooth remote (createbonding|removebonding|hasbonding) (device 'ubi')" << endl;
-      cout << i18n("             # Create bonding (pairing) with bluetooth remote device.\n"
-                    "             # Remove bonding of bluetooth remote device.\n"
-                    "             # Check for bonding of bluetooth remote device.\n") << endl;
 
       return 0;
   }
@@ -446,566 +226,68 @@ int main(int argc, char **argv)
 bool SolidPowermanagement::doIt()
 {
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    checkArgumentCount(2, 0);
+    checkArgumentCount(1, 0);
 
-    QString domain(args->arg(0));
-    QString command(args->arg(1));
+    QString command(args->arg(0));
 
     int fake_argc = 0;
     char **fake_argv = 0;
     SolidPowermanagement shell(fake_argc, fake_argv);
 
-    if (domain == "hardware")
+    if (command == "suspend")
     {
-        if (command == "list")
-        {
-            checkArgumentCount(2, 3);
-            QByteArray extra(args->count()==3 ? args->arg(2).toLocal8Bit() : "");
-            return shell.hwList(extra=="details", extra=="nonportableinfo");
-        }
-        else if (command == "details")
-        {
-            checkArgumentCount(3, 3);
-            QString udi(args->arg(2));
-            return shell.hwCapabilities(udi);
-        }
-        else if (command == "nonportableinfo")
-        {
-            checkArgumentCount(3, 3);
-            QString udi(args->arg(2));
-            return shell.hwProperties(udi);
-        }
-        else if (command == "query")
-        {
-            checkArgumentCount(3, 4);
+        checkArgumentCount(2, 2);
+        QString method(args->arg(1));
 
-            QString query = args->arg(2);
-            QString parent;
+        return shell.powerSuspend(method);
+    }
+    else if (command == "query")
+    {
+        checkArgumentCount(2, 2);
+        QString type(args->arg(1));
 
-            if (args->count() == 4)
-            {
-                parent = args->arg(3);
-            }
-
-            return shell.hwQuery(parent, query);
-        }
-        else if (command == "mount")
+        if (type == "suspend")
         {
-            checkArgumentCount(3, 3);
-            QString udi(args->arg(2));
-            return shell.hwVolumeCall(Mount, udi);
+            return shell.powerQuerySuspendMethods();
         }
-        else if (command == "unmount")
+        else if (type == "scheme")
         {
-            checkArgumentCount(3, 3);
-            QString udi(args->arg(2));
-            return shell.hwVolumeCall(Unmount, udi);
+            return shell.powerQuerySchemes();
         }
-        else if (command == "eject")
+        else if (type == "cpufreq")
         {
-            checkArgumentCount(3, 3);
-            QString udi(args->arg(2));
-            return shell.hwVolumeCall(Eject, udi);
+            return shell.powerQueryCpuPolicies();
         }
         else
         {
-            cerr << i18n("Syntax Error: Unknown command '%1'" ,command) << endl;
+            cerr << i18n("Syntax Error: Unknown option '%1'" , type) << endl;
         }
     }
-    else if (domain == "power")
+    else if (command == "set")
     {
-        if (command == "suspend")
+        checkArgumentCount(3, 3);
+        QString type(args->arg(1));
+        QString value(args->arg(2));
+    
+        if (type == "scheme")
         {
-            checkArgumentCount(3, 3);
-            QString method(args->arg(2));
-
-            return shell.powerSuspend(method);
+            return shell.powerChangeScheme(value);
         }
-        else if (command == "query")
+        else if (type == "cpufreq")
         {
-            checkArgumentCount(3, 3);
-            QString type(args->arg(2));
-
-            if (type == "suspend")
-            {
-                return shell.powerQuerySuspendMethods();
-            }
-            else if (type == "scheme")
-            {
-                return shell.powerQuerySchemes();
-            }
-            else if (type == "cpufreq")
-            {
-                return shell.powerQueryCpuPolicies();
-            }
-            else
-            {
-                cerr << i18n("Syntax Error: Unknown option '%1'" , type) << endl;
-            }
-        }
-        else if (command == "set")
-        {
-            checkArgumentCount(4, 4);
-            QString type(args->arg(2));
-            QString value(args->arg(3));
-
-            if (type == "scheme")
-            {
-                return shell.powerChangeScheme(value);
-            }
-            else if (type == "cpufreq")
-            {
-                return shell.powerChangeCpuPolicy(value);
-            }
-            else
-            {
-                cerr << i18n("Syntax Error: Unknown option '%1'" , type) << endl;
-            }
+            return shell.powerChangeCpuPolicy(value);
         }
         else
         {
-            cerr << i18n("Syntax Error: Unknown command '%1'" , command) << endl;
+            cerr << i18n("Syntax Error: Unknown option '%1'" , type) << endl;
         }
-    }
-    else if (domain == "network")
-    {
-        if (command == "query")
-        {
-            checkArgumentCount(3, 5);
-            QString what(args->arg(2));
-            if (what == "status")
-                return shell.netmgrNetworkingEnabled();
-            else if (what == "wireless")
-                return shell.netmgrWirelessEnabled();
-            else if (what == "interface")
-            {
-                checkArgumentCount(4, 4);
-                QString uni(args->arg(3));
-                return shell.netmgrQueryNetworkInterface(uni);
-            }
-            else if (what == "network")
-            {
-                checkArgumentCount(5, 5);
-                QString dev(args->arg(3));
-                QString uni(args->arg(4));
-                return shell.netmgrQueryNetwork(dev, uni);
-            }
-            else
-                cerr << i18n("Syntax Error: Unknown option '%1'", what) << endl;
-        }
-        else if (command == "set")
-        {
-            checkArgumentCount(4, 10);
-            QString what(args->arg(2));
-            QString how(args->arg(3));
-            if (what == "networking")
-            {
-                bool enabled;
-                if (how == "enabled")
-                {
-                    enabled = true;
-                }
-                else if (how == "disabled")
-                {
-                    enabled = false;
-                }
-                else
-                {
-                    cerr << i18n("Syntax Error: Unknown option '%1'", how) << endl;
-                    return false;
-                }
-                shell.netmgrChangeNetworkingEnabled(enabled);
-                return true;
-            }
-            else if (what == "wireless")
-            {
-                bool enabled;
-                if (how == "enabled")
-                {
-                    enabled = true;
-                }
-                else if (how == "disabled")
-                {
-                    enabled = false;
-                }
-                else
-                {
-                    cerr << i18n("Syntax Error: Unknown option '%1'", how) << endl;
-                    return false;
-                }
-                shell.netmgrChangeWirelessEnabled(enabled);
-                return true;
-            }
-      /*cout << "  solid-powermanagement network set network 'device-uni' 'network-uni' [authentication 'key']" << endl; */
-            /*wep hex64|ascii64|hex128|ascii128|passphrase 'key' [open|shared] */
-            /* wpaeap UNIMPLEMENTED */
-            else if (what == "network")
-            {
-                checkArgumentCount(5, 10);
-                QString dev(args->arg(3));
-                QString uni(args->arg(4));
-                Solid::Control::Authentication * auth = 0;
-                QMap<QString,QString> secrets;
-
-                if (KCmdLineArgs::parsedArgs()->count() > 5)
-                {
-                QString hasAuth = args->arg(5);
-                if (hasAuth == "authentication")
-                {
-                    //encrypted network
-                    QString authScheme = args->arg(6);
-                    if (authScheme == "wep")
-                    {
-                        Solid::Control::AuthenticationWep *wepAuth = new Solid::Control::AuthenticationWep();
-                        QString keyType = args->arg(7);
-                        if (keyType == "hex64")
-                        {
-                            wepAuth->setType(Solid::Control::AuthenticationWep::WepHex);
-                            wepAuth->setKeyLength(64);
-                        }
-                        else if (keyType == "ascii64")
-                        {
-                            wepAuth->setType(Solid::Control::AuthenticationWep::WepAscii);
-                            wepAuth->setKeyLength(64);
-                        }
-                        else if (keyType == "hex128")
-                        {
-                            wepAuth->setType(Solid::Control::AuthenticationWep::WepHex);
-                            wepAuth->setKeyLength(128);
-                        }
-                        else if (keyType == "ascii128")
-                        {
-                            wepAuth->setType(Solid::Control::AuthenticationWep::WepAscii);
-                            wepAuth->setKeyLength(128);
-                        }
-                        else if (keyType == "passphrase64")
-                        {
-                            wepAuth->setType(Solid::Control::AuthenticationWep::WepPassphrase);
-                            wepAuth->setKeyLength(64);
-                        }
-                        else if (keyType == "passphrase128")
-                        {
-                            wepAuth->setType(Solid::Control::AuthenticationWep::WepPassphrase);
-                            wepAuth->setKeyLength(128);
-                        }
-                        else
-                        {
-                            cerr << i18n("Unrecognised WEP type '%1'", keyType) << endl;
-                            delete wepAuth;
-                            return false;
-                        }
-
-                        QString key = args->arg(8);
-                        secrets.insert("key", key);
-                        wepAuth->setSecrets(secrets);
-
-                        QString method = args->arg(9);
-                        if (method == "open")
-                            wepAuth->setMethod(Solid::Control::AuthenticationWep::WepOpenSystem);
-                        else if (method == "shared")
-                            wepAuth->setMethod(Solid::Control::AuthenticationWep::WepSharedKey);
-                        else
-                        {
-                            cerr << i18n("Unrecognised WEP method '%1'", method) << endl;
-                            delete wepAuth;
-                            return false;
-                        }
-                        auth = wepAuth;
-                    }
-                    else if (authScheme == "wpapsk")
-                    {
-                        /* wpapsk wpa|wpa2 tkip|ccmp-aes password */
-                        Solid::Control::AuthenticationWpaPersonal *wpapAuth = new Solid::Control::AuthenticationWpaPersonal();
-                        QString version = args->arg(7);
-                        if (version == "wpa")
-                            wpapAuth->setVersion(Solid::Control::AuthenticationWpaPersonal::Wpa1);
-                        else if (version == "wpa2")
-                            wpapAuth->setVersion(Solid::Control::AuthenticationWpaPersonal::Wpa1);
-                        else
-                        {
-                            cerr << i18n("Unrecognised WPA version '%1'", version) << endl;
-                            delete wpapAuth;
-                            return false;
-                        }
-                        QString protocol = args->arg(8);
-                        if (protocol == "tkip")
-                            wpapAuth->setProtocol(Solid::Control::AuthenticationWpaPersonal::WpaTkip);
-                        else if (protocol == "ccmp-aes")
-                            wpapAuth->setProtocol(Solid::Control::AuthenticationWpaPersonal::WpaCcmpAes);
-                        else
-                        {
-                            cerr << i18n("Unrecognised WPA encryption protocol '%1'", protocol) << endl;
-                            delete wpapAuth;
-                            return false;
-                        }
-                        QString key = args->arg(9);
-                        secrets.insert("key", key);
-                        wpapAuth->setSecrets(secrets);
-                        auth = wpapAuth;
-                    }
-                    else
-                    {
-                        cerr << i18n("Unimplemented auth scheme '%1'", args->arg(6)) << endl;
-                        return false;
-                    }
-                }
-                }
-                else
-                {
-                    //unencrypted network
-                    auth = new Solid::Control::AuthenticationNone;
-                }
-
-                return shell.netmgrActivateNetwork(dev, uni, auth);
-                delete auth;
-            }
-            else
-            {
-                cerr << i18n("Syntax Error: Unknown object '%1'", what) << endl;
-                return false;
-            }
-        }
-        else if (command == "listdevices")
-        {
-            return shell.netmgrList();
-        }
-        else if (command == "listnetworks")
-        {
-            checkArgumentCount(3, 3);
-            QString device(args->arg(2));
-            return shell.netmgrListNetworks(device);
-        }
-        else
-        {
-            cerr << i18n("Syntax Error: Unknown command '%1'" , command) << endl;
-        }
-    } else if (domain == "bluetooth")
-    {
-        if (command == "listadapters")
-        {
-            return shell.bluetoothListAdapters();
-        }
-        else if (command == "defaultadapter")
-        {
-            return shell.bluetoothDefaultAdapter();
-        }
-        else if (command == "set")
-        {
-            QString what(args->arg(2));
-            QString ubi(args->arg(3));
-            QString value(args->arg(4));
-
-            if (what == "name")
-            {
-                return shell.bluetoothAdapterSetName(ubi, value);
-            }
-            else if (what == "mode")
-            {
-                return shell.bluetoothAdapterSetMode(ubi, value);
-            }
-
-        }
-        else if (command == "query")
-        {
-            QString what(args->arg(2));
-            QString ubi(args->arg(3));
-
-            if (what == "mode")
-            {
-                return shell.bluetoothAdapterMode(ubi);
-            }
-            else if (what == "address")
-            {
-                return shell.bluetoothAdapterAddress(ubi);
-            }
-            else if (what == "name")
-            {
-                return shell.bluetoothAdapterName(ubi);
-            }
-            else if (what == "connections")
-            {
-                return shell.bluetoothAdapterListConnections(ubi);
-            }
-            else if (what == "bondings")
-            {
-                return shell.bluetoothAdapterListBondings(ubi);
-            }
-
-        }
-        else if (command == "scan")
-        {
-            QString ubi (args->arg(2));
-            return shell.bluetoothAdapterScan(ubi);
-        }
-        else if (command == "input")
-        {
-            QString what (args->arg(2));
-
-            if (what == "listdevices")
-            {
-                return shell.bluetoothInputListDevices();
-            }
-
-            QString ubi (args->arg(3));
-
-            if (what == "setup")
-            {
-                return shell.bluetoothInputSetup(ubi);
-            }
-            else if (what == "remove")
-            {
-                return shell.bluetoothInputRemoveSetup(ubi);
-            }
-            else if (what == "connect")
-            {
-                return shell.bluetoothInputConnect(ubi);
-            }
-            else if (what == "disconnect")
-            {
-                return shell.bluetoothInputDisconnect(ubi);
-            }
-        }
-        else if (command == "remote" && args->count() >= 4)
-        {
-            QString what (args->arg(2));
-            QString adapter (args->arg(3));
-            QString remote (args->arg(4));
-
-            if (what == "createbonding")
-            {
-                return shell.bluetoothRemoteCreateBonding(adapter, remote);
-            }
-            else if (what == "removebonding")
-            {
-                return shell.bluetoothRemoteRemoveBonding(adapter, remote);
-            }
-            else if (what == "hasbonding")
-            {
-                return shell.bluetoothRemoteHasBonding(adapter, remote);
-            }
-
-        }
-        else
-        {
-            cerr << i18n("Syntax Error: Unknown command '%1'" , command) << endl;
-        }
-
     }
     else
     {
-        cerr << i18n("Syntax Error: Unknown command group '%1'" , domain) << endl;
+        cerr << i18n("Syntax Error: Unknown command '%1'" , command) << endl;
     }
 
     return false;
-}
-
-bool SolidPowermanagement::hwList(bool interfaces, bool system)
-{
-    const QList<Solid::Device> all = Solid::Device::allDevices();
-
-    foreach (const Solid::Device device, all)
-    {
-        cout << "udi = '" << device.udi() << "'" << endl;
-
-        if (interfaces)
-        {
-            cout << device << endl;
-        }
-        else if (system && device.is<Solid::GenericInterface>())
-        {
-            QMap<QString,QVariant> properties = device.as<Solid::GenericInterface>()->allProperties();
-            cout << properties << endl;
-        }
-    }
-
-    return true;
-}
-
-bool SolidPowermanagement::hwCapabilities(const QString &udi)
-{
-    const Solid::Device device(udi);
-
-    cout << "udi = '" << device.udi() << "'" << endl;
-    cout << device << endl;
-
-    return true;
-}
-
-bool SolidPowermanagement::hwProperties(const QString &udi)
-{
-    const Solid::Device device(udi);
-
-    cout << "udi = '" << device.udi() << "'" << endl;
-    if (device.is<Solid::GenericInterface>()) {
-        QMap<QString,QVariant> properties = device.as<Solid::GenericInterface>()->allProperties();
-        cout << properties << endl;
-    }
-
-    return true;
-}
-
-bool SolidPowermanagement::hwQuery(const QString &parentUdi, const QString &query)
-{
-    const QList<Solid::Device> devices
-        = Solid::Device::listFromQuery(query, parentUdi);
-
-    foreach (const Solid::Device device, devices)
-    {
-        cout << "udi = '" << device.udi() << "'" << endl;
-    }
-
-    return true;
-}
-
-bool SolidPowermanagement::hwVolumeCall(SolidPowermanagement::VolumeCallType type, const QString &udi)
-{
-    Solid::Device device(udi);
-
-    if (!device.is<Solid::StorageAccess>() && type!=Eject)
-    {
-        cerr << i18n("Error: %1 does not have the interface StorageAccess." , udi) << endl;
-        return false;
-    }
-    else if (!device.is<Solid::OpticalDrive>() && type==Eject)
-    {
-        cerr << i18n("Error: %1 does not have the interface OpticalDrive." , udi) << endl;
-        return false;
-    }
-
-    switch(type)
-    {
-    case Mount:
-        connect(device.as<Solid::StorageAccess>(),
-                SIGNAL(setupDone(Solid::ErrorType, QVariant, const QString &)),
-                this,
-                SLOT(slotStorageResult(Solid::ErrorType, QVariant)));
-        device.as<Solid::StorageAccess>()->setup();
-        break;
-    case Unmount:
-        connect(device.as<Solid::StorageAccess>(),
-                SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
-                this,
-                SLOT(slotStorageResult(Solid::ErrorType, QVariant)));
-        device.as<Solid::StorageAccess>()->teardown();
-        break;
-    case Eject:
-        connect(device.as<Solid::OpticalDrive>(),
-                SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
-                this,
-                SLOT(slotStorageResult(Solid::ErrorType, QVariant)));
-        device.as<Solid::OpticalDrive>()->eject();
-        break;
-    }
-
-    m_loop.exec();
-
-    if (m_error)
-    {
-        cerr << i18n("Error: %1" , m_errorString) << endl;
-        return false;
-    }
-
-    return true;
 }
 
 bool SolidPowermanagement::powerQuerySuspendMethods()
@@ -1123,7 +405,8 @@ bool SolidPowermanagement::powerQueryCpuPolicies()
     all_policies << Solid::Control::PowerManager::OnDemand
                  << Solid::Control::PowerManager::Userspace
                  << Solid::Control::PowerManager::Powersave
-                 << Solid::Control::PowerManager::Performance;
+                 << Solid::Control::PowerManager::Performance
+                 << Solid::Control::PowerManager::Conservative;
 
     foreach (Solid::Control::PowerManager::CpuFreqPolicy policy, all_policies)
     {
@@ -1142,6 +425,9 @@ bool SolidPowermanagement::powerQueryCpuPolicies()
                 break;
             case Solid::Control::PowerManager::Performance:
                 cout << "performance";
+                break;
+            case Solid::Control::PowerManager::Conservative:
+                cout << "conservative";
                 break;
             case Solid::Control::PowerManager::UnknownCpuFreqPolicy:
                 break;
@@ -1184,6 +470,10 @@ bool SolidPowermanagement::powerChangeCpuPolicy(const QString &policyName)
     {
         policy = Solid::Control::PowerManager::Powersave;
     }
+    else if (policyName == "conservative" && (supported  & Solid::Control::PowerManager::Conservative))
+    {
+        policy = Solid::Control::PowerManager::Conservative;
+    }
     else
     {
         cerr << i18n("Unsupported cpufreq policy: %1" , policyName) << endl;
@@ -1191,358 +481,6 @@ bool SolidPowermanagement::powerChangeCpuPolicy(const QString &policyName)
     }
 
     return Solid::Control::PowerManager::setCpuFreqPolicy(policy);
-}
-
-bool SolidPowermanagement::netmgrNetworkingEnabled()
-{
-    if (Solid::Control::NetworkManager::isNetworkingEnabled())
-        cout << i18n("networking: is enabled")<< endl;
-    else
-        cout << i18n("networking: is not enabled")<< endl;
-    return Solid::Control::NetworkManager::isNetworkingEnabled();
-}
-
-bool SolidPowermanagement::netmgrWirelessEnabled()
-{
-    if (Solid::Control::NetworkManager::isWirelessEnabled())
-        cout << i18n("wireless: is enabled")<< endl;
-    else
-        cout << i18n("wireless: is not enabled")<< endl;
-    return Solid::Control::NetworkManager::isWirelessEnabled();
-}
-
-bool SolidPowermanagement::netmgrChangeNetworkingEnabled(bool enabled)
-{
-    Solid::Control::NetworkManager::setNetworkingEnabled(enabled);
-    return true;
-}
-
-bool SolidPowermanagement::netmgrChangeWirelessEnabled(bool enabled)
-{
-    Solid::Control::NetworkManager::setWirelessEnabled(enabled);
-    return true;
-}
-
-bool SolidPowermanagement::netmgrList()
-{
-    const Solid::Control::NetworkInterfaceList all = Solid::Control::NetworkManager::networkInterfaces();
-
-    cerr << "debug: network interface list contains: " << all.count() << " entries" << endl;
-    foreach (const Solid::Control::NetworkInterface device, all)
-    {
-        cout << "UNI = '" << device.uni() << "'" << endl;
-    }
-    return true;
-}
-
-bool SolidPowermanagement::netmgrListNetworks(const QString  & deviceUni)
-{
-    Solid::Control::NetworkInterface device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
-
-    Solid::Control::NetworkList networks = device.networks();
-    foreach (const Solid::Control::Network * net, networks)
-    {
-        cout << "NETWORK UNI = '" << net->uni() << "'" << endl;
-    }
-
-    return true;
-}
-
-bool SolidPowermanagement::netmgrQueryNetworkInterface(const QString  & deviceUni)
-{
-    cerr << "SolidPowermanagement::netmgrQueryNetworkInterface()" << endl;
-    Solid::Control::NetworkInterface device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
-    cout << device << endl;
-    return true;
-}
-
-bool SolidPowermanagement::netmgrQueryNetwork(const QString  & deviceUni, const QString  & networkUni)
-{
-    cerr << "SolidPowermanagement::netmgrQueryNetwork()" << endl;
-    Solid::Control::NetworkInterface device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
-    Solid::Control::Network * network = device.findNetwork(networkUni);
-    cout << *network << endl;
-    Solid::Control::WirelessNetwork * wlan = qobject_cast<Solid::Control::WirelessNetwork *>(network);
-    if (wlan)
-    {
-        cout << *wlan << endl;
-    }
-    return true;
-}
-
-bool SolidPowermanagement::netmgrActivateNetwork(const QString  & deviceUni, const QString  & networkUni, Solid::Control::Authentication * auth)
-{
-    Solid::Control::NetworkInterface device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
-    Solid::Control::Network * network = device.findNetwork(networkUni);
-    Solid::Control::WirelessNetwork * wlan = 0;
-    if (( wlan = qobject_cast<Solid::Control::WirelessNetwork *>(network)))
-    {
-        wlan->setAuthentication(auth);
-        wlan->setActivated(true);
-    }
-    else
-        network->setActivated(true);
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothListAdapters()
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-
-    const Solid::Control::BluetoothInterfaceList all = manager.bluetoothInterfaces();
-
-    foreach (const Solid::Control::BluetoothInterface device, all)
-    {
-        cout << "UBI = '" << device.ubi() << "'" << endl;
-    }
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothDefaultAdapter()
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-
-    cout << "UBI = '" <<  manager.defaultInterface() << "'" << endl;
-
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothAdapterAddress(const QString &ubi)
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface(ubi);
-
-    cout << "'" <<  adapter.address() << "'" << endl;
-
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothAdapterName(const QString &ubi)
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface(ubi);
-
-    cout << "'" <<  adapter.name() << "'" << endl;
-
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothAdapterSetName(const QString &ubi, const QString &name)
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface(ubi);
-
-    adapter.setName(name);
-
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothAdapterMode(const QString &ubi)
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface(ubi);
-
-    cout << "'" <<  adapter.mode() << "'" << endl;
-
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothAdapterSetMode(const QString &ubi, const QString &mode)
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface(ubi);
-    Solid::Control::BluetoothInterface::Mode modeEnum(Solid::Control::BluetoothInterface::Off);
-    if (mode == "off")
-    {
-        modeEnum = Solid::Control::BluetoothInterface::Off;
-    }
-    else if (mode == "connectable")
-    {
-        modeEnum = Solid::Control::BluetoothInterface::Connectable;
-    }
-    else if (mode == "discoverable")
-    {
-        modeEnum = Solid::Control::BluetoothInterface::Discoverable;
-    }
-    adapter.setMode(modeEnum);
-
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothAdapterListConnections(const QString &ubi)
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface(ubi);
-
-    const Solid::Control::BluetoothRemoteDeviceList all = adapter.listConnections();
-
-    cout << "Current connections of Bluetooth Adapter: " << ubi << endl;
-    foreach (const Solid::Control::BluetoothRemoteDevice device, all)
-    {
-        cout << "UBI = '" << device.ubi() << "'" << endl;
-    }
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothAdapterListBondings(const QString &ubi)
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface(ubi);
-
-    const QStringList all = adapter.listBondings();
-
-    cout << "Current bonded/paired remote bluetooth devices of Bluetooth Adapter: " << ubi << endl;
-    foreach (const QString device, all)
-    {
-        cout << "UBI = '" << device << "'" << endl;
-    }
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothAdapterScan(const QString &ubi)
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface(ubi);
-
-    connect(&adapter, SIGNAL(remoteDeviceFound(const QString &, int, int)),
-           this, SLOT(slotBluetoothDeviceFound(const QString &, int, int)));
-    connect(&adapter, SIGNAL(discoveryCompleted()),
-           this, SLOT(slotBluetoothDiscoveryCompleted()));
-
-    adapter.discoverDevices();
-    // Workaround for the fakebluetooth backend... quit the discovery after 30 seconds
-    QTimer::singleShot(30000, this, SLOT(slotBluetoothDiscoveryCompleted()));
-    cout << "Searching ..." << endl;
-    m_loop.exec();
-
-    return true;
-}
-
-void SolidPowermanagement::slotBluetoothDeviceFound(const QString &ubi, int deviceClass, int rssi)
-{
-    cout << QString("['%1','%2','%3']").arg(ubi).arg(deviceClass).arg(rssi) << endl;
-}
-
-void SolidPowermanagement::slotBluetoothDiscoveryCompleted()
-{
-    kDebug() ;
-    m_loop.exit();
-}
-
-bool SolidPowermanagement::bluetoothInputListDevices()
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-    const Solid::Control::BluetoothInputDeviceList all = manager.bluetoothInputDevices();
-
-    foreach (const Solid::Control::BluetoothInputDevice device, all)
-    {
-        cout << "UBI = '" << device.ubi() << "'" << endl;
-    }
-
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothInputSetup(const QString &deviceUbi)
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-    KJob *job = manager.setupInputDevice(deviceUbi);
-
-    if (job==0)
-    {
-        cerr << i18n("Error: unsupported operation!") << endl;
-        return false;
-    }
-
-    connectJob(job);
-
-    job->start();
-    m_loop.exec();
-
-    if (m_error)
-    {
-        cerr << i18n("Error: %1" , m_errorString) << endl;
-        return false;
-    }
-
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothInputRemoveSetup(const QString &deviceUbi)
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-
-    manager.removeInputDevice(deviceUbi);
-
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothInputConnect(const QString &deviceUbi)
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-    Solid::Control::BluetoothInputDevice device = manager.findBluetoothInputDevice(deviceUbi);
-
-    device.slotConnect();
-
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothInputDisconnect(const QString &deviceUbi)
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-    Solid::Control::BluetoothInputDevice device = manager.findBluetoothInputDevice(deviceUbi);
-
-    device.slotDisconnect();
-
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothRemoteCreateBonding(const QString &adapterUbi, const QString &deviceUbi)
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface(adapterUbi);
-    Solid::Control::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice(deviceUbi);
-
-    KJob *job = device.createBonding();
-
-    connectJob(job);
-
-    job->start();
-    m_loop.exec();
-
-    if (m_error)
-    {
-        cerr << i18n("Error: %1" , m_errorString) << endl;
-        return false;
-    }
-
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothRemoteRemoveBonding(const QString &adapterUbi, const QString &deviceUbi)
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface(adapterUbi);
-    Solid::Control::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice(deviceUbi);
-
-    device.removeBonding();
-
-    return true;
-}
-
-bool SolidPowermanagement::bluetoothRemoteHasBonding(const QString &adapterUbi, const QString &deviceUbi)
-{
-    Solid::Control::BluetoothManager &manager = Solid::Control::BluetoothManager::self();
-    Solid::Control::BluetoothInterface adapter = manager.findBluetoothInterface(adapterUbi);
-    Solid::Control::BluetoothRemoteDevice device = adapter.findBluetoothRemoteDevice(deviceUbi);
-
-    if (device.hasBonding())
-    {
-        cout << "'" << deviceUbi << "' is bonded/paired." << endl;
-    } else {
-        cout << "'" << deviceUbi << "' is not bonded/paired." << endl;
-    }
-
-    return true;
 }
 
 void SolidPowermanagement::connectJob(KJob *job)

@@ -251,6 +251,10 @@ Solid::Control::PowerManager::CpuFreqPolicies HalPower::supportedCpuFreqPolicies
             {
                 policies|= Solid::Control::PowerManager::Performance;
             }
+            else if (governor == "conservative")
+            {
+                policies|= Solid::Control::PowerManager::Conservative;
+            }
             else
             {
                 kWarning() << "Unknown governor: " << governor ;
@@ -289,6 +293,10 @@ Solid::Control::PowerManager::CpuFreqPolicy HalPower::cpuFreqPolicy() const
         {
             return Solid::Control::PowerManager::Performance;
         }
+        else if (governor == "conservative")
+        {
+            return Solid::Control::PowerManager::Conservative;
+        }
         else
         {
             return Solid::Control::PowerManager::UnknownCpuFreqPolicy;
@@ -313,6 +321,9 @@ bool HalPower::setCpuFreqPolicy(Solid::Control::PowerManager::CpuFreqPolicy newP
         break;
     case Solid::Control::PowerManager::Performance:
         governor = "performance";
+        break;
+    case Solid::Control::PowerManager::Conservative:
+        governor = "conservative";
         break;
     default:
         return false;

@@ -94,11 +94,12 @@ namespace Control
          *
          * - UnknownCpuFreqPolicy: The name says it all
          * - OnDemand: Frequency is changed by the kernel depending on the processor load
+         * - Conservative: Frequency is changed by the kernel depending on the processor load; the stepping is less aggressive than OnDemand.  This may be equivalent to OnDemand depending on the operating system.
          * - Userspace: Frequency is changed by a userspace agent depending on the processor load
          * - Powersave: Frequency is always set to the lowest available
          * - Performance: Frequency is always set to the highest available
          */
-        enum CpuFreqPolicy{ UnknownCpuFreqPolicy = 0, OnDemand = 1, Userspace = 2, Powersave = 4, Performance = 8 };
+        enum CpuFreqPolicy{ UnknownCpuFreqPolicy = 0, OnDemand = 1, Userspace = 2, Powersave = 4, Performance = 8, Conservative = 16 };
 
         /**
          * This type stores an OR combination of CpuFreqPolicy values.
