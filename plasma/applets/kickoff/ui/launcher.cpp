@@ -45,6 +45,7 @@
 #include <ktoolinvocation.h>
 #include <kuser.h>
 #include <plasma/theme.h>
+#include <plasma/delegate.h>
 #include <solid/device.h>
 #include <solid/deviceinterface.h>
 
@@ -152,6 +153,8 @@ public:
         LeaveModel *model = new LeaveModel(q);
         UrlItemView *view = new UrlItemView;
         ItemDelegate *delegate = new ItemDelegate;
+        delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
+        delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
         addView(i18n("Leave"), KIcon("application-exit"), model, view);
@@ -162,6 +165,8 @@ public:
         FavoritesModel *model = new FavoritesModel(q);
         UrlItemView *view = new UrlItemView;
         ItemDelegate *delegate = new ItemDelegate;
+        delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
+        delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
         addView(i18n("Favorites"), KIcon("bookmarks"), model, view);
@@ -178,6 +183,8 @@ public:
 
         applicationView = new FlipScrollView();
         ItemDelegate *delegate = new ItemDelegate;
+        delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
+        delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         applicationView->setItemDelegate(delegate);
 
         addView(i18n("Applications"), KIcon("applications-other"),
@@ -189,6 +196,8 @@ public:
         RecentlyUsedModel *model = new RecentlyUsedModel(q);
         UrlItemView *view = new UrlItemView;
         ItemDelegate *delegate = new ItemDelegate;
+        delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
+        delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
         addView(i18n("Recently Used"), KIcon("view-history"), model, view);
@@ -207,6 +216,8 @@ public:
         SystemModel *model = new SystemModel(q);
         UrlItemView *view = new UrlItemView;
         ItemDelegate *delegate = new ItemDelegate;
+        delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
+        delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
 
@@ -218,6 +229,8 @@ public:
         SearchModel *model = new SearchModel(q);
         UrlItemView *view = new UrlItemView;
         ItemDelegate *delegate = new ItemDelegate;
+        delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
+        delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
         view->setModel(model);

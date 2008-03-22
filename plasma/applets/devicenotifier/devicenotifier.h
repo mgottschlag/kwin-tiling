@@ -67,7 +67,8 @@ class DeviceNotifier : public Plasma::Applet
             PredicateFilesRole = Qt::UserRole + 2,
             ActionRole = Qt::UserRole + 3,
             IconNameRole = Qt::UserRole + 4,
-            ScopeRole = Qt::UserRole + 5
+            ScopeRole = Qt::UserRole + 5,
+            SubTitleMandatoryRole = Qt::UserRole + 6
         };
 
         DeviceNotifier(QObject *parent, const QVariantList &args);
