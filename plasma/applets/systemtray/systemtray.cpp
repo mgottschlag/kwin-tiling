@@ -56,12 +56,22 @@ Qt::Orientations SystemTray::expandingDirections() const
 
 void SystemTray::constraintsUpdated(Plasma::Constraints constraints)
 {
-    if (constraints & (Plasma::LocationConstraint | Plasma::SizeConstraint)) {
+    if (constraints & Plasma::SizeConstraint) {
         updateWidgetGeometry();
     }
-    if (constraints & Plasma::FormFactorConstraint) {
+
+    if (constraints & (Plasma::LocationConstraint | Plasma::FormFactorConstraint)) {
         updateWidgetOrientation();
     }
+}
+
+QVariant SystemTray::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if (change == ItemPositionHasChanged) {
+        updateWidgetGeometry();
+    }
+
+    return Applet::itemChange(change, value);
 }
 
 void SystemTray::updateSize()

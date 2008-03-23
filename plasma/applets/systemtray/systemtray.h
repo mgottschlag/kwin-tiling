@@ -44,6 +44,9 @@ public:
     Qt::Orientations expandingDirections() const;
     void constraintsUpdated(Plasma::Constraints constraints);
 
+protected:
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+
 private slots:
     void updateSize();
 
