@@ -82,3 +82,4 @@ Name[zh_TW]=選單編輯器
 
 X-DBUS-StartupType=Unique
 Categories=Qt;KDE;Settings;
+NoDisplay=true
