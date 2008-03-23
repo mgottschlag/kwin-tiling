@@ -37,7 +37,7 @@ class FullView : public QGraphicsView
 public:
     explicit FullView(const QString &formfactor = "planar", const QString &location = "floating", QWidget *parent = 0);
 
-    void addApplet(const QString &a);
+    void addApplet(const QString &a, const QVariantList &args = QVariantList());
 
 protected slots:
     void sceneRectChanged(const QRectF &rect);

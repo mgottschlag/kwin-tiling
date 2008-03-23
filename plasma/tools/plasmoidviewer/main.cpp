@@ -57,14 +57,15 @@ int main(int argc, char **argv)
     options.add( "location <name>", ki18n( "The location constraint to start the Containment with (floating, desktop, fullscreen, top, bottom, left, right)" ), "floating");
     options.add( "p" );
     options.add( "pixmapcache <size>", ki18n("The size in KB to set the pixmap cache to"));
-    options.add( "+applet", ki18n( "Name of applet to add" ) );
+    options.add( "!+applet", ki18n( "Name of applet to add (required)" ) );
+    options.add( "+[args]", ki18n( "Optional arguments of the applet to add" ) );
     KCmdLineArgs::addCmdLineOptions( options );
 
     KApplication app;
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs() ;
     if ( args->count() == 0 ) {
-        return 1;
+        KCmdLineArgs::usageError(i18n("No applet name specified"));
     }
 
     QString formfactor;
@@ -79,8 +80,14 @@ int main(int argc, char **argv)
         location = args->getOption("location");
     }
 
+    QVariantList appletArgs;
+    for ( int i = 1; i < args->count(); ++i ) {
+        appletArgs << args->arg(i);
+    }
+
     FullView view( formfactor, location );
-    view.addApplet( args->arg( args->count() - 1 ) );
+    //At this point arg(0) is always set
+    view.addApplet( args->arg(0), appletArgs );
     view.show();
 
     QAction *action = KStandardAction::quit(&app, SLOT(quit()), &view);

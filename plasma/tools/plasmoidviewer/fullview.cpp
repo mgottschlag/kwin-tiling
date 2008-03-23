@@ -78,12 +78,12 @@ FullView::FullView(const QString &ff, const QString &loc, QWidget *parent)
     setAlignment(Qt::AlignLeft | Qt::AlignTop);
 }
 
-void FullView::addApplet(const QString &a)
+void FullView::addApplet(const QString &a, const QVariantList &args)
 {
     m_containment = m_corona.addContainment("null");
     m_containment->setFormFactor(m_formfactor);
     m_containment->setLocation(m_location);
-    m_applet = m_containment->addApplet(a, QVariantList(), 0, QRectF(0, 0, -1, -1));
+    m_applet = m_containment->addApplet(a, args, 0, QRectF(0, 0, -1, -1));
     m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
 
     setSceneRect(m_corona.sceneRect());
