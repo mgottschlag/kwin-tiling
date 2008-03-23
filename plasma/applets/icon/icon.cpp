@@ -65,7 +65,9 @@ void IconApplet::init()
 {
     KConfigGroup cg = config();
 
-    setUrl(cg.readEntry("Url", m_url));
+    if (!m_url.isValid()) {
+        setUrl(cg.readEntry("Url", m_url));
+    }
     setDisplayLines(2);
 
     watchForMouseMove(m_icon, true);
