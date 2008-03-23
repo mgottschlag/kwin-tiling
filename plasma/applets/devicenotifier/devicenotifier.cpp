@@ -174,19 +174,11 @@ void DeviceNotifier::initSysTray()
 
 DeviceNotifier::~DeviceNotifier()
 {
-    if (m_icon != 0) {
-        delete m_icon;
-    }
-    if (m_layout != 0) {
-        delete m_layout;
-    }
-    if (m_proxy != 0) {
-        m_proxy->setWidget(0);
-        delete m_proxy;
-    }
-    if (m_widget != 0) {
-        delete m_widget;
-    }
+    delete m_icon;
+    delete m_layout;
+    m_proxy->setWidget(0);
+    delete m_proxy;
+    delete m_widget;
     delete m_dialog;
     delete m_hotplugModel;
     delete m_timer;
