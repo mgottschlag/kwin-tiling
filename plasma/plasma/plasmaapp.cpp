@@ -51,11 +51,11 @@
 #include <ksmserver_interface.h>
 
 #include "plasma/appletbrowser.h"
-#include <plasma/corona.h>
 #include <plasma/containment.h>
 #include <plasma/theme.h>
 
 #include "appadaptor.h"
+#include "desktopcorona.h"
 #include "rootwidget.h"
 #include "desktopview.h"
 #include "panelview.h"
@@ -269,14 +269,16 @@ Plasma::Corona* PlasmaApp::corona()
     Q_ASSERT(m_root);
 
     if (!m_corona) {
-        m_corona = new Plasma::Corona(this);
-        connect(m_corona, SIGNAL(containmentAdded(Plasma::Containment*)),
+        DesktopCorona *c = new DesktopCorona(this);
+        connect(c, SIGNAL(containmentAdded(Plasma::Containment*)),
                 this, SLOT(createView(Plasma::Containment*)));
-        connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
+        connect(c, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
                 m_root, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
 
-        m_corona->setItemIndexMethod(QGraphicsScene::NoIndex);
-        m_corona->loadApplets();
+        c->setItemIndexMethod(QGraphicsScene::NoIndex);
+        c->loadApplets();
+        c->checkScreens();
+        m_corona = c;
     }
 
     return m_corona;

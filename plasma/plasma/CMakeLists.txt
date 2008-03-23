@@ -1,6 +1,7 @@
 include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs)
 
 set(plasma_SRCS
+    desktopcorona.cpp
     desktopview.cpp
     main.cpp
     plasmaapp.cpp
