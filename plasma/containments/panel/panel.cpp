@@ -76,7 +76,7 @@ QList<QAction*> Panel::contextActions()
     if (!m_appletBrowserAction) {
         m_appletBrowserAction = new QAction(i18n("Add Widgets..."), this);
         m_appletBrowserAction->setIcon(KIcon("list-add"));
-        
+
         bool locked = isImmutable();
         m_appletBrowserAction->setVisible(!locked);
         connect(m_appletBrowserAction, SIGNAL(triggered()), this, SIGNAL(showAddWidgets()));
@@ -177,6 +177,7 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
 
     if (constraints & Plasma::LocationConstraint) {
         setFormFactorFromLocation(location());
+        m_background->setLocation(location());
     }
 
     if (constraints & Plasma::SizeConstraint) {
