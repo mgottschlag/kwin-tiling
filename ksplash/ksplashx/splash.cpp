@@ -599,7 +599,7 @@ static bool waitState( int expected_state )
 #endif
                 int new_state = 0;
                 for( int i = 1;
-                     i < sizeof( states ) / sizeof( states[ 0 ] );
+                     i < int( sizeof( states ) / sizeof( states[ 0 ] ));
                      ++i )
                     {
                     if( strcmp( s, states[ i ] ) == 0 )
@@ -1102,7 +1102,7 @@ void runSplash( const char* them, bool t, int p )
             handled = true;
             int new_state = 0;
             for( int i = 1;
-                 i < sizeof( states ) / sizeof( states[ 0 ] );
+                 i < int( sizeof( states ) / sizeof( states[ 0 ] ));
                  ++i )
                 {
                 if( strcmp( buf, states[ i ] ) == 0 )
