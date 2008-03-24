@@ -11,9 +11,18 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Autostart
+Name[km]=ចាប់ផ្ដើម​ដោយ​ស្វ័យ​ប្រវត្តិ
+Name[pt]=Arranque
+Name[pt_BR]=Arranque
+Name[uk]=Автоматичний запуск
+Name[zh_TW]=自動啟動
 
 Comment=A Configuration tool for managing what programs start up with KDE.
-Comment[sv]=Ett inställningsverktyg för att hantera vilka program som startas tillsammans med KDE.
+Comment[km]=ឧបករណ៍​កំណត់​រចនាសម្ព័ន្ធ ដើម្បី​គ្រប់គ្រង​កម្មវិធី​អ្វី​ត្រូវ​ចាប់ផ្ដើម​ជា​មួយ KDE ។
+Comment[pt]=Uma ferramenta de configuração para gerir os programas que arrancam com o KDE.
+Comment[pt_BR]=Uma ferramenta de configuração para gerir os programas que arrancam com o KDE.
+Comment[uk]=Інструмент налаштування для керування програмами, які запускаються разом з KDE.
+Comment[zh_TW]=管理在 KDE 啟動時要跟著啟動的程式的設定工具。
 
 X-KDE-Keywords=Autostart Manager
 X-KDE-Keywords[de]=Autostart Verwaltung
