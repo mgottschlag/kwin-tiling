@@ -48,6 +48,7 @@
 
 #include "krunner_interface.h"
 #include "screensaver_interface.h"
+#include "ksmserver_interface.h"
 
 #include "backgrounddialog.h"
 
@@ -271,6 +272,7 @@ void DefaultDesktop::updateBackground()
                           m_wallpaperColor,
                           (Background::ResizeMethod)m_wallpaperPosition,
                           Qt::SmoothTransformation);                       
+    suspendStartup( true ); // during KDE startup, make ksmserver until the wallpaper is ready
 }
 
 void DefaultDesktop::updateBackground(int token, const QImage &img)
@@ -278,6 +280,7 @@ void DefaultDesktop::updateBackground(int token, const QImage &img)
     if (m_current_renderer_token == token) {
         m_bitmapBackground = QPixmap::fromImage(img);
         update();
+        suspendStartup( false );
     }
 }
 
@@ -311,6 +314,17 @@ void DefaultDesktop::runCommand()
                                          QDBusConnection::sessionBus());
     if (krunner.isValid()) {
         krunner.display();
+    }
+}
+
+void DefaultDesktop::suspendStartup(bool suspend)
+{
+    org::kde::KSMServerInterface ksmserver("org.kde.ksmserver", "/KSMServer", QDBusConnection::sessionBus());
+    const QString startupID("desktop wallaper");
+    if (suspend) {
+        ksmserver.suspendStartup(startupID);
+    } else {
+        ksmserver.resumeStartup(startupID);
     }
 }
 

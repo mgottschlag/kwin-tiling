@@ -90,7 +90,8 @@ defined by X-KDE-autostart-phase, defaulting to 2. Phase 0 is reserved only
 for the actual visible base components of KDE, i.e. Plasma, in order to make
 the startup appear visually faster. Plasma uses D-Bus calls suspendStartup()
 and resumeStartup() to make ksmserver stay waiting for autostart phase 0
-until Plasma is ready.
+until Plasma is ready (note: suspendStartup() needs to be called before
+the application registers with ksmserver, i.e. before KApplication ctor is called).
 
 Next step is telling the waiting kcminit to perform phase 1 - all kcminit
 modules that should be executed before KDE startup is considered done.

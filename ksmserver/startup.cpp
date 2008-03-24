@@ -382,12 +382,6 @@ bool KSMServer::checkStartupSuspend()
 
 void KSMServer::suspendStartup( const QString &app )
 {
-#if KDE_IS_VERSION( 3, 90, 0 )
-#ifdef __GNUC__
-#warning Re-enable suspend/resume startup and check it works properly.
-#endif
-#endif
-    return;
     if( !startupSuspendCount.contains( app ))
         startupSuspendCount[ app ] = 0;
     ++startupSuspendCount[ app ];
@@ -395,7 +389,6 @@ void KSMServer::suspendStartup( const QString &app )
 
 void KSMServer::resumeStartup( const QString &app )
 {
-    return;
     if( !startupSuspendCount.contains( app ))
         return;
     if( --startupSuspendCount[ app ] == 0 ) {

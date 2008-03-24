@@ -99,6 +99,7 @@ protected Q_SLOTS:
 private:
     void reloadConfig(bool skipUpdates=false);
     QSize resolution() const;
+    void suspendStartup(bool suspend); // for ksmserver
 
     QAction *m_lockDesktopAction;
     QAction *m_appletBrowserAction;
