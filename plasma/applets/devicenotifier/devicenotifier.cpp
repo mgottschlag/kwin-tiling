@@ -176,8 +176,10 @@ DeviceNotifier::~DeviceNotifier()
 {
     delete m_icon;
     delete m_layout;
-    m_proxy->setWidget(0);
-    delete m_proxy;
+    if (m_proxy) {
+        m_proxy->setWidget(0);
+        delete m_proxy;
+    }
     delete m_widget;
     delete m_dialog;
     delete m_hotplugModel;
