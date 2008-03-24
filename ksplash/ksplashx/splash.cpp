@@ -26,7 +26,7 @@ const int ANIM_IMAGES_ROW = 10;
 // for converting from startup states to (internal) numbers
 // these are also in the simple splash and in krunner
 const char states[][ 12 ] =
-    { "initial", "kded", "confupdate", "kcminit", "ksmserver", "wm", "desktop" };
+    { "initial", "kded", "confupdate", "kcminit", "ksmserver", "wm", "desktop", "ready" };
 // State "ready" isn't used, make splash go away as soon as desktop is ready.
 const int LAST_STATE = 6;
 
@@ -599,7 +599,7 @@ static bool waitState( int expected_state )
 #endif
                 int new_state = 0;
                 for( int i = 1;
-                     i <= LAST_STATE;
+                     i < sizeof( states ) / sizeof( states[ 0 ] );
                      ++i )
                     {
                     if( strcmp( s, states[ i ] ) == 0 )
@@ -617,7 +617,7 @@ static bool waitState( int expected_state )
                 else if( new_state > state )
                     {
                     state = new_state;
-                    if( state == LAST_STATE )
+                    if( state >= LAST_STATE )
                         final_time = time( NULL ) + 1; // quit after short time
                     }
                 }
@@ -1102,7 +1102,7 @@ void runSplash( const char* them, bool t, int p )
             handled = true;
             int new_state = 0;
             for( int i = 1;
-                 i <= LAST_STATE;
+                 i < sizeof( states ) / sizeof( states[ 0 ] );
                  ++i )
                 {
                 if( strcmp( buf, states[ i ] ) == 0 )
