@@ -17,7 +17,7 @@ set(ksmserver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInt
 QT4_ADD_DBUS_INTERFACE(desktop_SRCS ${ksmserver_xml} ksmserver_interface)
 
 kde4_add_plugin(plasma_containment_desktop ${desktop_SRCS})
-target_link_libraries(plasma_containment_desktop plasma  ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_THREADWEAVER_LIBRARY})
+target_link_libraries(plasma_containment_desktop plasma kworkspace ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_THREADWEAVER_LIBRARY})
 
 install(TARGETS plasma_containment_desktop DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-containment-desktop.desktop DESTINATION ${SERVICES_INSTALL_DIR})

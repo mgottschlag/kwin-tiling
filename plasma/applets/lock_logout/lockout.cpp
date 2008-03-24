@@ -30,7 +30,6 @@
 // KDE
 #include <KIcon>
 #include <kworkspace/kworkspace.h>
-#include <ksmserver_interface.h>
 #include <screensaver_interface.h>
 
 #define MINSIZE 48
@@ -147,14 +146,9 @@ void LockOut::clickLock()
 void LockOut::clickLogout()
 {
     kDebug()<<"LockOut:: logout clicked ";
-    QString interface("org.kde.ksmserver");
-    org::kde::KSMServerInterface smserver(interface, "/KSMServer",
-                                          QDBusConnection::sessionBus());
-    if (smserver.isValid()) {
-        smserver.logout(KWorkSpace::ShutdownConfirmDefault,
-                        KWorkSpace::ShutdownTypeDefault,
-                        KWorkSpace::ShutdownModeDefault);
-    }
+    KWorkSpace::requestShutDown( KWorkSpace::ShutdownConfirmDefault,
+                                 KWorkSpace::ShutdownTypeDefault,
+                                 KWorkSpace::ShutdownModeDefault);
 }
 
 

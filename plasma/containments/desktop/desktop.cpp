@@ -47,7 +47,6 @@
 #include "knewstuff2/engine.h"
 
 #include "krunner_interface.h"
-#include "ksmserver_interface.h"
 #include "screensaver_interface.h"
 
 #include "backgrounddialog.h"
@@ -406,15 +405,9 @@ void DefaultDesktop::logout()
     if (!KAuthorized::authorizeKAction("logout")) {
         return;
     }
-
-    QString interface("org.kde.ksmserver");
-    org::kde::KSMServerInterface smserver(interface, "/KSMServer",
-                                          QDBusConnection::sessionBus());
-    if (smserver.isValid()) {
-        smserver.logout(KWorkSpace::ShutdownConfirmDefault,
-                        KWorkSpace::ShutdownTypeDefault,
-                        KWorkSpace::ShutdownModeDefault);
-    }
+    KWorkSpace::requestShutDown(KWorkSpace::ShutdownConfirmDefault,
+                                KWorkSpace::ShutdownTypeDefault,
+                                KWorkSpace::ShutdownModeDefault);
 }
 
 void DefaultDesktop::paintInterface(QPainter *painter,
