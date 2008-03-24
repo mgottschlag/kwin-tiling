@@ -24,8 +24,8 @@ WAIT_STATE ksmserver
 STOP_ANIM 4
 IMAGE 215 78 icon4.png
 ANIM 5 290 46 14 icon5_anim.png 60
-WAIT_STATE wm
+WAIT_STATE desktop
 
 STOP_ANIM 5
 IMAGE 290 46 icon5.png
-WAIT_STATE desktop
+WAIT_STATE ready
