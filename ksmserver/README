@@ -87,10 +87,10 @@ the window manager, as the WM is necessary before any windows are possibly
 shown. When the WM is ready, ksmserver tells klauncher to perform autostart
 phase 0 ($KDEHOME/share/autostart). There are 3 autostart phases, 0, 1 and 2,
 defined by X-KDE-autostart-phase, defaulting to 2. Phase 0 is reserved only
-for the actual visible base components of KDE, i.e. Plasma and KRunner,
-in order to make the startup appear visually faster. Both Plasma and KRunner
-use D-Bus calls suspendStartup() and resumeStartup() to make ksmserver stay
-waiting for autostart phase 0 until both Plasma and KRunner are ready.
+for the actual visible base components of KDE, i.e. Plasma, in order to make
+the startup appear visually faster. Plasma uses D-Bus calls suspendStartup()
+and resumeStartup() to make ksmserver stay waiting for autostart phase 0
+until Plasma is ready.
 
 Next step is telling the waiting kcminit to perform phase 1 - all kcminit
 modules that should be executed before KDE startup is considered done.
