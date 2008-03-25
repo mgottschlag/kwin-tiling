@@ -19,6 +19,7 @@
 
 #include "advanceddialog.h"
 #include <QCheckBox>
+#include <KLocale>
 #include <QVBoxLayout>
 
 AdvancedDialog::AdvancedDialog( QWidget *parent, bool status )
