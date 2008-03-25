@@ -88,6 +88,7 @@ public:
         , contextMenuFactory(0)
         , autoHide(false)
         , visibleItemCount(10)
+        , launcherOrigin(QPoint(-1, -1))
         , isResizing(false)
         , resizePlacement( NorthEast )
         , panelEdge( Plasma::LeftEdge )
@@ -892,7 +893,7 @@ void Launcher::setLauncherOrigin( QPoint origin, Plasma::Location location )
  * |    7     |  East     | b2t        | -  | -
  * |    8     |  West     | b2t        | +  | +
  */
-    if (d->launcherOrigin == origin ) {
+    if (d->launcherOrigin == origin && d->panelEdge == location) {
         return;
     }
     d->launcherOrigin = origin;
