@@ -20,6 +20,9 @@
 // Own
 #include "ui/tabbar.h"
 
+// KDE
+#include <KGlobalSettings>
+
 // Qt
 #include <QIcon>
 #include <QMouseEvent>
@@ -79,7 +82,7 @@ bool TabBar::animateSwitch()
 QSize TabBar::tabSize(int index) const
 {
     QSize hint;
-    const QFontMetrics metrics(font());
+    const QFontMetrics metrics(KGlobalSettings::smallestReadableFont());
     const QSize textSize = metrics.size(Qt::TextHideMnemonic, tabText(index));
     hint.rwidth() = qMax(iconSize().width(), textSize.width());
     hint.rheight() = iconSize().height() + textSize.height();
@@ -210,6 +213,7 @@ void TabBar::paintEvent(QPaintEvent *event)
     //int numTabs = count();
     int currentTab = currentIndex();
     //bool ltr = painter.layoutDirection() == Qt::LeftToRight; // Not yet used
+    painter.setFont(KGlobalSettings::smallestReadableFont());
 
     // Drawing Tabborders
     QRect movingRect;
