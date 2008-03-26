@@ -239,9 +239,9 @@ void TabBar::paintEvent(QPaintEvent *event)
 
     for (int i = 0; i < count(); i++) {
         if (i == currentTab) {
-            delta = m_animProgress * TAB_CONTENTS_MARGIN;
+            delta = (int)(m_animProgress * TAB_CONTENTS_MARGIN);
         } else if (i == lastIndex()) {
-            delta = TAB_CONTENTS_MARGIN - m_animProgress * TAB_CONTENTS_MARGIN;
+            delta = TAB_CONTENTS_MARGIN - (int)(m_animProgress * TAB_CONTENTS_MARGIN);
         } else {
             delta = 0;
         }
@@ -327,10 +327,10 @@ void TabBar::onValueChanged(qreal value)
     // animation rect
     QRect rect = tabRect(currentIndex());
     QRect lastRect = tabRect(lastIndex());
-    int x = horiz ? lastRect.x() - value * (lastRect.x() - rect.x()) : rect.x();
-    int y = horiz ? rect.y() : lastRect.y() - value * (lastRect.y() - rect.y());
+    int x = horiz ? (int)(lastRect.x() - value * (lastRect.x() - rect.x())) : rect.x();
+    int y = horiz ? rect.y() : (int)(lastRect.y() - value * (lastRect.y() - rect.y()));
     QSizeF sz = lastRect.size() - value * (lastRect.size() - rect.size());
-    m_currentAnimRect = QRect(x, y, sz.width(), sz.height());
+    m_currentAnimRect = QRect(x, y, (int)(sz.width()), (int)(sz.height()));
     update();
 }
 
