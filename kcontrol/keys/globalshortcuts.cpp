@@ -107,8 +107,7 @@ void GlobalShortcutsModule::load()
         QString errorString;
         QDBusError error = iface->lastError();
         if (error.isValid()) {
-            errorString  = i18n("Message:") + error.message() + "\n";
-            errorString += i18n("Error:") + error.name();
+            errorString = i18n("Message: %1\nError: %2", error.message(), error.name());
         }
         KMessageBox::sorry(
             this,
