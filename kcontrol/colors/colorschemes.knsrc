@@ -1,0 +1,3 @@
+[KNewStuff2]
+ProvidersUrl=http://download.kde.org/khotnewstuff/kde4colorschemes-providers.xml
+TargetDir=color-schemes

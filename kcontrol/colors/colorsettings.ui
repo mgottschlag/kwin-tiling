@@ -5,21 +5,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>560</width>
+    <width>783</width>
     <height>455</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="leftMargin" >
-    <number>0</number>
-   </property>
-   <property name="topMargin" >
-    <number>0</number>
-   </property>
-   <property name="rightMargin" >
-    <number>0</number>
-   </property>
-   <property name="bottomMargin" >
+   <property name="margin" >
     <number>0</number>
    </property>
    <item>
@@ -28,6 +19,14 @@
       <number>0</number>
      </property>
      <widget class="QWidget" name="schemePage" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>771</width>
+        <height>415</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>&amp;Scheme</string>
       </attribute>
@@ -54,7 +53,7 @@
           <string>Color Scheme</string>
          </property>
          <layout class="QGridLayout" >
-          <item row="0" column="0" colspan="3" >
+          <item row="0" column="0" colspan="4" >
            <widget class="KListWidget" name="schemeList" >
             <property name="sizePolicy" >
              <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
@@ -100,6 +99,13 @@
             </property>
             <property name="text" >
              <string>I&amp;mport...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="3" >
+           <widget class="QPushButton" name="schemeKnsButton" >
+            <property name="text" >
+             <string>Get &amp;New Schemes...</string>
             </property>
            </widget>
           </item>
@@ -166,7 +172,7 @@
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>20</width>
            <height>40</height>
@@ -187,6 +193,14 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>771</width>
+        <height>415</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>Colors</string>
       </attribute>
@@ -244,6 +258,14 @@
           <number>0</number>
          </property>
          <widget class="QWidget" name="commonColorsPage" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>763</width>
+            <height>360</height>
+           </rect>
+          </property>
           <layout class="QGridLayout" >
            <item row="0" column="0" >
             <widget class="QTableWidget" name="commonColorTable" >
@@ -517,6 +539,14 @@
           </layout>
          </widget>
          <widget class="QWidget" name="otherPage" >
+          <property name="geometry" >
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>100</width>
+            <height>30</height>
+           </rect>
+          </property>
           <layout class="QGridLayout" >
            <item row="0" column="0" >
             <widget class="QTableWidget" name="colorTable" >
@@ -546,6 +576,14 @@
       </layout>
      </widget>
      <widget class="QWidget" name="effectsPage" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>771</width>
+        <height>415</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>&amp;Effects</string>
       </attribute>
@@ -617,7 +655,7 @@
             <property name="sizeType" >
              <enum>QSizePolicy::Minimum</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>61</width>
               <height>22</height>
@@ -744,7 +782,7 @@
             <property name="sizeType" >
              <enum>QSizePolicy::Minimum</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>40</width>
               <height>20</height>
@@ -832,7 +870,7 @@
             <property name="sizeType" >
              <enum>QSizePolicy::Minimum</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>61</width>
               <height>22</height>
@@ -959,7 +997,7 @@
             <property name="sizeType" >
              <enum>QSizePolicy::Minimum</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>40</width>
               <height>20</height>
@@ -985,7 +1023,7 @@
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>20</width>
            <height>40</height>

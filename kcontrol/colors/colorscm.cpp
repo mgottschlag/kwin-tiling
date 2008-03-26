@@ -41,6 +41,7 @@
 #include <KMessageBox>
 #include <KStandardDirs>
 #include <kio/netaccess.h>
+#include <knewstuff2/engine.h>
 
 K_PLUGIN_FACTORY( KolorFactory, registerPlugin<KColorCm>(); )
 K_EXPORT_PLUGIN( KolorFactory("kcmcolors") )
@@ -297,6 +298,20 @@ void KColorCm::on_schemeImportButton_clicked()
 
         // save it
         saveScheme(url.fileName());
+    }
+}
+
+void KColorCm::on_schemeKnsButton_clicked()
+{
+    KNS::Engine engine(this);
+    if (engine.init("colorschemes.knsrc")) {
+            
+
+        KNS::Entry::List entries = engine.downloadDialogModal(this);
+        if (entries.size() > 0)
+        {
+            populateSchemeList();
+        }
     }
 }
 
