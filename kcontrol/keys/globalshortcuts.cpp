@@ -21,7 +21,9 @@
 #include "select_scheme_dialog.h"
 #include <kdebug.h>
 
+#include <QCoreApplication>
 #include <QDBusConnection>
+#include <QDBusError>
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QDBusMetaType>
@@ -84,24 +86,36 @@ GlobalShortcutsModule::GlobalShortcutsModule(QWidget *parent, const QVariantList
     global->addLayout(hbox);
     global->addWidget(editor);
     setLayout(global);
-
-    // Initialize our content
-    load();
 }
 
 GlobalShortcutsModule::~GlobalShortcutsModule()
 {}
+
 
 void GlobalShortcutsModule::load()
 {
     // Undo all changes not yet applied
     editor->clear();
 
+    // Connect to kdedglobalaccel. If that fails there is no need to continue.
     qRegisterMetaType<QList<int> >();
     qDBusRegisterMetaType<QList<int> >();
     QDBusConnection bus = QDBusConnection::sessionBus();
     QPointer<QDBusInterface> iface = new QDBusInterface("org.kde.kded", "/KdedGlobalAccel",
                                                         "org.kde.KdedGlobalAccel", bus, this);
+    if (!iface->isValid()) {
+        QString errorString;
+        QDBusError error = iface->lastError();
+        if (error.isValid()) {
+            errorString  = i18n("Message:") + error.message() + "\n";
+            errorString += i18n("Error:") + error.name();
+        }
+        KMessageBox::sorry(
+            this,
+            i18n("Failed to contact the kde global shortcuts daemon\n")
+                + errorString );
+        return;
+    }
 
     KGlobalAccel *kga = KGlobalAccel::self();
     QList<QStringList> components = kga->allMainComponents();
