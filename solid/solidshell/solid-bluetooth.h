@@ -44,6 +44,7 @@ public:
 
     bool bluetoothListAdapters();
     bool bluetoothDefaultAdapter();
+    bool bluetoothGetRemoteName(const QString &adapterUbi, const QString &mac);
     bool bluetoothAdapterAddress(const QString &ubi);
     bool bluetoothAdapterName(const QString &ubi);
     bool bluetoothAdapterSetName(const QString &ubi, const QString &name);
