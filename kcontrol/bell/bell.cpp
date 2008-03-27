@@ -158,8 +158,6 @@ KBellConfig::KBellConfig(QWidget *parent, const QVariantList &args):
   about->addAuthor(ki18n("Matthias Elter"), ki18n("Current maintainer"), "elter@kde.org");
   about->addAuthor(ki18n("Carsten Pfeiffer"), KLocalizedString(), "pfeiffer@kde.org");
   setAboutData(about);
-
-  load();
 }
 
 void KBellConfig::load()
@@ -175,6 +173,7 @@ void KBellConfig::load()
   KConfigGroup cfg(&_cfg, "General");
   m_useBell->setChecked(cfg.readEntry("UseSystemBell", false));
   useBell(m_useBell->isChecked());
+  emit changed(false);
 }
 
 void KBellConfig::save()
