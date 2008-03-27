@@ -623,8 +623,6 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   vbox->addStretch();
 
   tab->addTab(features, i18n("Activation Gestures"));
-
-  load();
 }
 
 
