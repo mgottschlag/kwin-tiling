@@ -219,6 +219,10 @@ void Autostart::load()
     }
     //Update button
     slotSelectionChanged();
+    widget->listCMD->resizeColumnToContents(COL_NAME);
+    //widget->listCMD->resizeColumnToContents(COL_COMMAND);
+    widget->listCMD->resizeColumnToContents(COL_STATUS);
+    widget->listCMD->resizeColumnToContents(COL_RUN);
 }
 
 void Autostart::slotAddProgram()
