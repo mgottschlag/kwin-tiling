@@ -108,6 +108,10 @@ public:
     {
         return mName;
     }
+    QString getRemoteName(const QString &mac)
+    {
+	return "";
+    }
     QStringList listBondings() const
     {
         return mBondings;

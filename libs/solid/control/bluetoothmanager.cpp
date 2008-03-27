@@ -180,14 +180,12 @@ Solid::Control::BluetoothInputDeviceList Solid::Control::BluetoothManager::bluet
     QStringList ubis = backend->bluetoothInputDevices();
 
     foreach (const QString &ubi, ubis) {
-        QPair<BluetoothInputDevice *, Ifaces::BluetoothInputDevice *> pair =
-            d->findRegisteredBluetoothInputDevice(ubi);
-
+        QPair<BluetoothInputDevice *, Ifaces::BluetoothInputDevice *> pair = d->findRegisteredBluetoothInputDevice(ubi);
+		
         if (pair.first != 0) {
             list.append(*pair.first);
         }
     }
-
     return list;
 }
 
@@ -326,6 +324,7 @@ QPair<Solid::Control::BluetoothInterface *, Solid::Control::Ifaces::BluetoothInt
 
 QPair<Solid::Control::BluetoothInputDevice *, Solid::Control::Ifaces::BluetoothInputDevice *> Solid::Control::BluetoothManagerPrivate::findRegisteredBluetoothInputDevice(const QString &ubi) const
 {
+
     if (bluetoothInputDeviceMap.contains(ubi)) {
         return bluetoothInputDeviceMap[ubi];
     } else {
@@ -333,7 +332,9 @@ QPair<Solid::Control::BluetoothInputDevice *, Solid::Control::Ifaces::BluetoothI
         Ifaces::BluetoothInputDevice *iface = 0;
 
         if (backend != 0) {
-            iface = qobject_cast<Ifaces::BluetoothInputDevice *>(backend->createBluetoothInputDevice(ubi));
+//            iface = qobject_cast<Ifaces::BluetoothInputDevice *>(backend->createBluetoothInputDevice(ubi));
+	    iface = (Ifaces::BluetoothInputDevice *) backend->createBluetoothInputDevice(ubi);	    
+	    
         }
 
         if (iface != 0) {

@@ -175,6 +175,13 @@ public:
     virtual QString name() const = 0;
 
     /**
+     * Returns the name of the remote device, given its mac address (mac).
+     *
+     * @return the name of the remote device
+     */
+    virtual QString getRemoteName(const QString & mac) = 0;
+
+    /**
      * List UBIs of bonded/paired remote bluetooth devices with this bluetooth
      * interface/adapter.
      *

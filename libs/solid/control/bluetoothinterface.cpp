@@ -200,6 +200,11 @@ QString Solid::Control::BluetoothInterface::name() const
     return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), name());
 }
 
+QString Solid::Control::BluetoothInterface::getRemoteName(const QString &mac)
+{
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QString(), getRemoteName(mac));
+}
+
 QStringList Solid::Control::BluetoothInterface::listBondings() const
 {
     return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), QStringList(), listBondings());
