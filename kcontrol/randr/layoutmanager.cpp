@@ -24,6 +24,7 @@
 
 #include <QGraphicsScene>
 #include <cmath>
+#include <math.h>
 
 LayoutManager::LayoutManager(RandRScreen *screen, QGraphicsScene *scene)
 : QObject(screen)

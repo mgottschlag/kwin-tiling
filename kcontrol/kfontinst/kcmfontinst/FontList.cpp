@@ -644,8 +644,8 @@ bool CFamilyItem::updateRegularFont(CFontItem *font)
     {
         if(itsRegularFont)
         {
-            int regDiff=abs(itsRegularFont->styleInfo()-constRegular),
-                fontDiff=abs(font->styleInfo()-constRegular);
+            int regDiff=abs((long)(itsRegularFont->styleInfo()-constRegular)),
+                fontDiff=abs((long)(font->styleInfo()-constRegular));
 
             if(fontDiff<regDiff)
                 itsRegularFont=font;
@@ -662,7 +662,7 @@ bool CFamilyItem::updateRegularFont(CFontItem *font)
         for(; it!=end; ++it)
             if(usable(*it, root))
             {
-                quint32 diff=abs((*it)->styleInfo()-constRegular);
+                quint32 diff=abs((long) ((*it)->styleInfo()-constRegular));
 
                 if(diff<current)
                 {
