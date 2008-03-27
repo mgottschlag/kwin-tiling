@@ -57,8 +57,6 @@ SMServerConfig::SMServerConfig( QWidget *parent, const QVariantList & )
     connect(dialog, SIGNAL(changed()), SLOT(changed()));
 
     topLayout->addWidget(dialog);
-    load();
-
 }
 
 void SMServerConfig::load()

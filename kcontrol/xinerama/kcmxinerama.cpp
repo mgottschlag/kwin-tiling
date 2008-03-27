@@ -110,8 +110,6 @@ KCMXinerama::KCMXinerama(QWidget *parent, const QVariantList &)
 	}
 
 	grid->activate();
-
-	load();
 }
 
 KCMXinerama::~KCMXinerama() {

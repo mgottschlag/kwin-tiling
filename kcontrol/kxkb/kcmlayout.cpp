@@ -469,8 +469,6 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
     refreshRulesUI();
 
     makeOptionsTab();
-
-    load();
 }
 
 

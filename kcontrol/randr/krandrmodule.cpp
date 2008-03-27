@@ -76,7 +76,6 @@ KRandRModule::KRandRModule(QWidget *parent, const QVariantList&)
 
 	//topLayout->addStretch(1);
 
-	load();
 	setButtons(KCModule::Apply);
 }
 

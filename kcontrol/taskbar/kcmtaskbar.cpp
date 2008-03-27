@@ -179,9 +179,6 @@ TaskbarConfig::TaskbarConfig(QWidget *parent, const char* name, const QStringLis
     about->addCredit(ki18n("Stefan Nikolaus"), ki18n("KConfigXT conversion"),
                      "stefan.nikolaus@kdemail.net");
     setAboutData(about);
-
-    load();
-    QTimer::singleShot(0, this, SLOT(notChanged()));
 }
 
 void TaskbarConfig::slotUpdateComboBox()

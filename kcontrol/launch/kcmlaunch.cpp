@@ -137,8 +137,6 @@ LaunchConfig::LaunchConfig(QWidget * parent, const QVariantList &)
             SLOT( checkChanged() ) );
 
     Form1Layout->addStretch();
-
-    load();
 }
 
 LaunchConfig::~LaunchConfig()

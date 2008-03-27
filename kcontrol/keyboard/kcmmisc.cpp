@@ -97,7 +97,6 @@ KeyboardConfig::KeyboardConfig(QWidget *parent, const QVariantList &)
 //  rate->setDisabled( true );
 #endif
 //  lay->addStretch();
-  load();
 }
 
 int  KeyboardConfig::getClick()

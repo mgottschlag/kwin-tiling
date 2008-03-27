@@ -250,7 +250,6 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 	connect( this, SIGNAL(delUsers( const QMap<QString,int> & )), convenience, SLOT(slotDelUsers( const QMap<QString,int> & )) );
 	connect( this, SIGNAL(clearUsers()), convenience, SLOT(slotClearUsers()) );
 
-	load();
 	if (getuid() != 0 || !config->isConfigWritable( true )) {
 		general->makeReadOnly();
 		dialog->makeReadOnly();

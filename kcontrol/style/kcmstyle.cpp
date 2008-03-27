@@ -395,9 +395,6 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	QSpacerItem* sp3 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
 	page3Layout->addItem( sp3 );
 
-	// Load settings
-	load();
-
 	// Do all the setDirty connections.
 	connect(cbStyle, SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
 	// Page2
