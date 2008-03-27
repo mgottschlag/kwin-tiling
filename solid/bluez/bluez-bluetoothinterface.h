@@ -55,6 +55,7 @@ public:
     bool isPeriodicDiscoveryNameResolvingActive() const;
     QStringList listRemoteDevices() const;
     QStringList listRecentRemoteDevices(const QDateTime &) const;
+    QString getRemoteName(const QString &);
 
     QObject *createBluetoothRemoteDevice(const QString &);
 
@@ -83,7 +84,7 @@ private:
     BluezBluetoothInterfacePrivate * d;
 
     QStringList listReply(const QString &method) const;
-    QString stringReply(const QString &method) const;
+    QString stringReply(const QString &method,const QString &param = 0) const;
     bool boolReply(const QString &method) const;
 };
 

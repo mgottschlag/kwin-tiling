@@ -165,6 +165,11 @@ QString BluezBluetoothInterface::name() const
     return stringReply("GetName");
 }
 
+QString BluezBluetoothInterface::getRemoteName(const QString &mac)
+{
+    return stringReply("GetRemoteName",mac);
+}
+
 QStringList BluezBluetoothInterface::listBondings() const
 {
     return listReply("ListBondings");
@@ -323,9 +328,9 @@ QStringList BluezBluetoothInterface::listReply(const QString &method) const
     return list.value();
 }
 
-QString BluezBluetoothInterface::stringReply(const QString &method) const
+QString BluezBluetoothInterface::stringReply(const QString &method, const QString &param) const
 {
-    QDBusReply< QString > reply = d->iface.call(method);
+    QDBusReply< QString > reply = d->iface.call(method, param);
     if (reply.isValid()) {
         return reply.value();
     }
