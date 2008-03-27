@@ -18,6 +18,8 @@
 #include <kconfig.h>
 #include <kdebug.h>
 
+#include <unistd.h>
+
 namespace KHotKeys
 {
 

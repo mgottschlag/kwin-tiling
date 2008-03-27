@@ -20,6 +20,7 @@
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
 
+#include <unistd.h>
 
 K_PLUGIN_FACTORY(KHotKeysModuleFactory,
                  registerPlugin<KHotKeysModule>();
