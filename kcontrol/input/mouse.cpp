@@ -430,8 +430,6 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
 
 #endif
 
-  load();
-
   KAboutData* about = new KAboutData("kcmmouse", 0, ki18n("Mouse"), 0, KLocalizedString(),
         KAboutData::License_GPL, ki18n("(c) 1997 - 2005 Mouse developers"));
   about->addAuthor(ki18n("Patrick Dowler"));
