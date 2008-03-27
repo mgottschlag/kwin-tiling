@@ -1,0 +1,37 @@
+<ui version="4.0" >
+ <class>CommandUrlActionWidget</class>
+ <widget class="QWidget" name="CommandUrlActionWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout" >
+   <item>
+    <widget class="QLabel" name="commandLabel" >
+     <property name="text" >
+      <string>Command/URL</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="KUrlRequester" name="command" />
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KUrlRequester</class>
+   <extends>QFrame</extends>
+   <header>kurlrequester.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

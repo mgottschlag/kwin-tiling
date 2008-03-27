@@ -12,9 +12,13 @@
 
 #include "settings.h"
 
+#include "menuentry_shortcut_action_data.h"
+#include "command_url_shortcut_action_data.h"
+
 #include <kconfig.h>
 #include <kconfiggroup.h>
 #include <kdebug.h>
+#include <khotkeysglobal.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kmessagebox.h>

@@ -8,7 +8,7 @@
  
 ****************************************************************************/
 
-#include "action_data.h"
+#include "generic_action_data.h"
 #include "actions.h"
 
 #include <kconfiggroup.h>

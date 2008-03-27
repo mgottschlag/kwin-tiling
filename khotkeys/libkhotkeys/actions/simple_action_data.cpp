@@ -8,10 +8,11 @@
  
 ****************************************************************************/
 
-#include "action_data.h"
+#include "simple_action_data.h"
 #include "actions.h"
 
 #include <kconfiggroup.h>
+#include <kdebug.h>
 
 
 namespace KHotKeys

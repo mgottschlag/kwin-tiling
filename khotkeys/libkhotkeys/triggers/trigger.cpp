@@ -24,10 +24,28 @@
 
 namespace KHotKeys {
 
+Trigger::Trigger( Action_data* data_P )
+    : data( data_P )
+    {
+    }
+
+
+Trigger::Trigger( KConfigGroup&, Action_data* data_P )
+    : data( data_P )
+    {
+    }
+
+
+Trigger::~Trigger()
+    {
+    }
+
+
 void Trigger::cfg_write( KConfigGroup& cfg_P ) const
     {
     cfg_P.writeEntry( "Type", "ERROR" );
     }
+
 
 Trigger* Trigger::create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P )
     {

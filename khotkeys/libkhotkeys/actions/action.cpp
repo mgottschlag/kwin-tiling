@@ -24,6 +24,24 @@
 
 namespace KHotKeys {
 
+
+Action::Action( Action_data* data_P )
+    : data( data_P )
+    {
+    }
+
+
+Action::~Action()
+    {
+    }
+
+
+Action::Action( KConfigGroup&, Action_data* data_P )
+    : data( data_P )
+    {
+    }
+
+
 Action* Action::create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P )
     {
     QString type = cfg_P.readEntry( "Type" );
@@ -41,10 +59,12 @@ Action* Action::create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P )
     return NULL;
     }
 
+
 void Action::cfg_write( KConfigGroup& cfg_P ) const
     {
     cfg_P.writeEntry( "Type", "ERROR" ); // derived classes should call with their type
     }
+
 
 } // namespace KHotKeys
 

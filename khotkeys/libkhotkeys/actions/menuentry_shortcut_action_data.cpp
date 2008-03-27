@@ -8,10 +8,12 @@
  
 ****************************************************************************/
 
-#include "action_data.h"
+#include "menuentry_shortcut_action_data.h"
 #include "actions.h"
+#include "conditions.h"
 
 #include <kconfiggroup.h>
+#include <kdebug.h>
 
 namespace KHotKeys
 {
@@ -40,7 +42,7 @@ Menuentry_shortcut_action_data::Menuentry_shortcut_action_data(
         enabled_P )
     {
     set_action( new Menuentry_action( this, menuentry_P ));
-    set_trigger( new Shortcut_trigger( this, name(), shortcut_P ));
+    set_trigger( new Shortcut_trigger( this, shortcut_P ));
     }
 
 

@@ -28,6 +28,15 @@
 
 namespace KHotKeys {
 
+Window_trigger::Window_trigger( Action_data* data_P, Windowdef_list* windows_P,
+     int window_actions_P )
+    : Trigger( data_P ), _windows( windows_P ), window_actions( window_actions_P ),
+      last_active_window( None ), active( false )
+    {
+    init();
+    }
+
+
 Window_trigger::Window_trigger( KConfigGroup& cfg_P, Action_data* data_P )
     : Trigger( cfg_P, data_P ), active( false )
     {
@@ -37,6 +46,7 @@ Window_trigger::Window_trigger( KConfigGroup& cfg_P, Action_data* data_P )
     window_actions = cfg_P.readEntry( "WindowActions",0 );
     init();
     }
+
 
 Window_trigger::~Window_trigger()
     {
@@ -57,40 +67,12 @@ void Window_trigger::init()
         this, SLOT( window_changed( WId, unsigned int )));
     }
 
+
 void Window_trigger::activate( bool activate_P )
     {
     active = activate_P && khotkeys_active();
     }
 
-void Window_trigger::window_added( WId window_P )
-    {
-    bool matches = windows()->match( Window_data( window_P ));
-    existing_windows[ window_P ] = matches;
-    kDebug( 1217 ) << "Window_trigger::w_added() : " << matches;
-    if( active && matches && ( window_actions & WINDOW_APPEARS ))
-        {
-        windows_handler->set_action_window( window_P );
-        data->execute();
-        }
-    }
-
-void Window_trigger::window_removed( WId window_P )
-    {
-    if( existing_windows.contains( window_P ))
-        {
-        bool matches = existing_windows[ window_P ];
-        kDebug( 1217 ) << "Window_trigger::w_removed() : " << matches;
-        if( active && matches && ( window_actions & WINDOW_DISAPPEARS ))
-            {
-            windows_handler->set_action_window( window_P );
-            data->execute();
-            }
-        existing_windows.remove( window_P );
-        // CHECKME jenze co kdyz se window_removed zavola pred active_window_changed ?
-        }
-    else
-        kDebug( 1217 ) << "Window_trigger::w_removed()";
-    }
 
 void Window_trigger::active_window_changed( WId window_P )
     {
@@ -114,6 +96,61 @@ void Window_trigger::active_window_changed( WId window_P )
     kDebug( 1217 ) << "Window_trigger::a_w_changed() : " << was_match << "|" << matches;
     last_active_window = window_P;
     }
+
+
+void Window_trigger::cfg_write( KConfigGroup& cfg_P ) const
+    {
+    base::cfg_write( cfg_P );
+    KConfigGroup windowsConfig( cfg_P.config(), cfg_P.name() + "Windows" );
+    windows()->cfg_write( windowsConfig );
+    cfg_P.writeEntry( "WindowActions", window_actions );
+    cfg_P.writeEntry( "Type", "WINDOW" ); // overwrites value set in base::cfg_write()
+    }
+
+
+const QString Window_trigger::description() const
+    {
+    return i18n( "Window trigger: " ) + windows()->comment();
+    }
+
+
+bool Window_trigger::triggers_on( window_action_t w_action_P ) const
+    {
+    return window_actions & w_action_P;
+    }
+
+
+void Window_trigger::window_added( WId window_P )
+    {
+    bool matches = windows()->match( Window_data( window_P ));
+    existing_windows[ window_P ] = matches;
+    kDebug( 1217 ) << "Window_trigger::w_added() : " << matches;
+    if( active && matches && ( window_actions & WINDOW_APPEARS ))
+        {
+        windows_handler->set_action_window( window_P );
+        data->execute();
+        }
+    }
+
+
+void Window_trigger::window_removed( WId window_P )
+    {
+    if( existing_windows.contains( window_P ))
+        {
+        bool matches = existing_windows[ window_P ];
+        kDebug( 1217 ) << "Window_trigger::w_removed() : " << matches;
+        if( active && matches && ( window_actions & WINDOW_DISAPPEARS ))
+            {
+            windows_handler->set_action_window( window_P );
+            data->execute();
+            }
+        existing_windows.remove( window_P );
+        // CHECKME jenze co kdyz se window_removed zavola pred active_window_changed ?
+        }
+    else
+        kDebug( 1217 ) << "Window_trigger::w_removed()";
+    }
+
 
 void Window_trigger::window_changed( WId window_P, unsigned int dirty_P )
     { // CHECKME snad nebude mit vliv, kdyz budu kaslat na properties_P a zkratka
@@ -141,14 +178,12 @@ void Window_trigger::window_changed( WId window_P, unsigned int dirty_P )
     kDebug( 1217 ) << "Window_trigger::w_changed() : " << was_match << "|" << matches;
     }
 
-void Window_trigger::cfg_write( KConfigGroup& cfg_P ) const
+
+const Windowdef_list* Window_trigger::windows() const
     {
-    base::cfg_write( cfg_P );
-    KConfigGroup windowsConfig( cfg_P.config(), cfg_P.name() + "Windows" );
-    windows()->cfg_write( windowsConfig );
-    cfg_P.writeEntry( "WindowActions", window_actions );
-    cfg_P.writeEntry( "Type", "WINDOW" ); // overwrites value set in base::cfg_write()
+    return _windows;
     }
+
 
 #ifdef HAVE_COVARIANT_RETURN    // stupid gcc, it doesn't even warn it can't do this
 Window_trigger* Window_trigger::copy( Action_data* data_P ) const
@@ -160,11 +195,6 @@ Trigger* Window_trigger::copy( Action_data* data_P ) const
         window_actions );
     ret->existing_windows = existing_windows; // CHECKME je tohle vazne treba ?
     return ret;
-    }
-
-const QString Window_trigger::description() const
-    {
-    return i18n( "Window trigger: " ) + windows()->comment();
     }
 
 } // namespace KHotKeys

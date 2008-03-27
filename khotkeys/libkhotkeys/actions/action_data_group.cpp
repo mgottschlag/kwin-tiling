@@ -8,15 +8,15 @@
  
 ****************************************************************************/
 
-#include "action_data.h"
+#include "action_data_group.h"
 #include "actions.h"
 
 #include <kconfiggroup.h>
+#include <kdebug.h>
 
 
 namespace KHotKeys
 {
-
 
 Action_data_group::Action_data_group( KConfigGroup& cfg_P, Action_data_group* parent_P )
     : Action_data_base( cfg_P, parent_P )
@@ -39,7 +39,7 @@ Action_data_group::Action_data_group( Action_data_group* parent_P, const QString
 
 Action_data_group::~Action_data_group()
     {
-//    kDebug( 1217 ) << "~Action_data_group() :" << list.count();
+    kDebug( 1217 ) << "~Action_data_group() :" << list.count();
     qDeleteAll(list);
     list.clear();
     }
@@ -74,6 +74,11 @@ void Action_data_group::add_child( Action_data_base* child_P )
     list.append( child_P ); // CHECKME tohle asi znemozni je mit nejak rucne serazene
     }
 
+int Action_data_group::child_count() const
+    {
+    return list.size();
+    }
+
 
 void Action_data_group::remove_child( Action_data_base* child_P )
     {
@@ -83,6 +88,7 @@ void Action_data_group::remove_child( Action_data_base* child_P )
 
 void Action_data_group::cfg_write( KConfigGroup& cfg_P ) const
     {
+    kDebug() << "Writing group " << cfg_P.name();
     Action_data_base::cfg_write( cfg_P );
     cfg_P.writeEntry( "SystemGroup", int(system_group()));
     cfg_P.writeEntry( "Type", "ACTION_DATA_GROUP" );

@@ -26,6 +26,14 @@
 
 namespace KHotKeys {
 
+
+Activate_window_action::Activate_window_action( Action_data* data_P,
+    const Windowdef_list* window_P )
+    : Action( data_P ), _window( window_P )
+    {
+    }
+
+
 Activate_window_action::Activate_window_action( KConfigGroup& cfg_P, Action_data* data_P )
     : Action( cfg_P, data_P )
     {
@@ -34,10 +42,18 @@ Activate_window_action::Activate_window_action( KConfigGroup& cfg_P, Action_data
     _window = new Windowdef_list( windowGroup );
     }
 
+
+const Windowdef_list* Activate_window_action::window() const
+    {
+    return _window;
+    }
+
+
 Activate_window_action::~Activate_window_action()
     {
     delete _window;
     }
+
 
 void Activate_window_action::cfg_write( KConfigGroup& cfg_P ) const
     {
@@ -46,6 +62,7 @@ void Activate_window_action::cfg_write( KConfigGroup& cfg_P ) const
     KConfigGroup windowGroup( cfg_P.config(), cfg_P.name() + "Window" );
     window()->cfg_write( windowGroup );
     }
+
 
 void Activate_window_action::execute()
     {
@@ -56,10 +73,12 @@ void Activate_window_action::execute()
         windows_handler->activate_window( win_id );
     }
 
+
 const QString Activate_window_action::description() const
     {
     return i18n( "Activate window : " ) + window()->comment();
     }
+
 
 Action* Activate_window_action::copy( Action_data* data_P ) const
     {

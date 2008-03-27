@@ -8,8 +8,9 @@
  
 ****************************************************************************/
 
-#include "action_data.h"
+#include "command_url_shortcut_action_data.h"
 #include "actions.h"
+#include "conditions.h"
 
 #include <kconfiggroup.h>
 
@@ -38,7 +39,7 @@ Command_url_shortcut_action_data::Command_url_shortcut_action_data(
         comment_P, enabled_P )
     {
     set_action( new Command_url_action( this, command_url_P ));
-    set_trigger( new Shortcut_trigger( this, name(), shortcut_P ));
+    set_trigger( new Shortcut_trigger( this, shortcut_P ));
     }
 
 

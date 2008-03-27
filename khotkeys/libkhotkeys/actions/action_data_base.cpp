@@ -8,8 +8,16 @@
  
 ****************************************************************************/
 
-#include "action_data.h"
-#include "actions.h"
+#include "action_data_base.h"
+
+#include "generic_action_data.h"
+#include "command_url_shortcut_action_data.h"
+#include "menuentry_shortcut_action_data.h"
+#include "keyboard_input_gesture_action_data.h"
+
+#include "triggers.h"
+#include "conditions.h"
+
 
 #include <kconfiggroup.h>
 #include <kdebug.h>
@@ -32,12 +40,19 @@ Action_data_base::Action_data_base( Action_data_group* parent_P, const QString& 
 
 Action_data_base::Action_data_base( KConfigGroup& cfg_P, Action_data_group* parent_P )
     : _parent( parent_P )
+     ,_conditions(0)
     {
     _name = cfg_P.readEntry( "Name" );
     _comment = cfg_P.readEntry( "Comment" );
     _enabled = cfg_P.readEntry( "Enabled", true);
     KConfigGroup conditionsConfig( cfg_P.config(), cfg_P.name() + "Conditions" );
-    _conditions = new Condition_list( conditionsConfig, this );
+
+    // Load the conditions if they exist
+    if ( conditionsConfig.exists() )
+        {
+        kDebug() << "Reading conditions";
+        _conditions = new Condition_list( conditionsConfig, this );
+        }
     if( parent())
         parent()->add_child( this );
     }
@@ -52,34 +67,9 @@ Action_data_base::~Action_data_base()
     }
 
 
-const Condition_list* Action_data_base::conditions() const
+bool Action_data_base::cfg_is_enabled( KConfigGroup& cfg_P )
     {
-//    Q_ASSERT( _conditions != 0 );
-    return _conditions;
-    }
-
-
-Action_data_group* Action_data_base::parent() const
-    {
-    return _parent;
-    }
-
-
-void Action_data_base::set_name( const QString& name_P )
-    {
-    _name = name_P;
-    }
-
-
-const QString& Action_data_base::name() const
-    {
-    return _name;
-    }
-
-
-const QString& Action_data_base::comment() const
-    {
-    return _comment;
+    return cfg_P.readEntry( "Enabled", true);
     }
 
 
@@ -89,9 +79,33 @@ void Action_data_base::cfg_write( KConfigGroup& cfg_P ) const
     cfg_P.writeEntry( "Name", name());
     cfg_P.writeEntry( "Comment", comment());
     cfg_P.writeEntry( "Enabled", enabled( true ));
-    KConfigGroup conditionsConfig( cfg_P.config(), cfg_P.name() + "Conditions" );
-    Q_ASSERT( conditions() != 0 );
-    conditions()->cfg_write( conditionsConfig );
+
+    if ( conditions() != 0 )
+        {
+        kDebug() << "writing conditions";
+        KConfigGroup conditionsConfig( cfg_P.config(), cfg_P.name() + "Conditions" );
+        conditions()->cfg_write( conditionsConfig );
+        }
+    }
+
+
+QString Action_data_base::comment() const
+    {
+    return _comment;
+    }
+
+
+const Condition_list* Action_data_base::conditions() const
+    {
+//    Q_ASSERT( _conditions != 0 );
+    return _conditions;
+    }
+
+
+bool Action_data_base::conditions_match() const
+    {
+    return ( conditions() ? conditions()->match() : true )
+        && ( parent() ? parent()->conditions_match() : true );
     }
 
 
@@ -117,26 +131,56 @@ Action_data_base* Action_data_base::create_cfg_read( KConfigGroup& cfg_P, Action
         }
     if( type == "GENERIC_ACTION_DATA" )
         return new Generic_action_data( cfg_P, parent_P );
-    if( type == "COMMAND_URL_SHORTCUT_ACTION_DATA" )
-        return new Command_url_shortcut_action_data( cfg_P, parent_P );
-    if( type == "MENUENTRY_SHORTCUT_ACTION_DATA" )
-        return new Menuentry_shortcut_action_data( cfg_P, parent_P );
-    if( type == "DCOP_SHORTCUT_ACTION_DATA" || type == "DBUS_SHORTCUT_ACTION_DATA" )
-        return new Dbus_shortcut_action_data( cfg_P, parent_P );
-    if( type == "KEYBOARD_INPUT_SHORTCUT_ACTION_DATA" )
-        return new Keyboard_input_shortcut_action_data( cfg_P, parent_P );
-    if( type == "KEYBOARD_INPUT_GESTURE_ACTION_DATA" )
+    else if( type == "KEYBOARD_INPUT_GESTURE_ACTION_DATA" )
         return new Keyboard_input_gesture_action_data( cfg_P, parent_P );
-    if( type == "ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA" )
-        return new Activate_window_shortcut_action_data( cfg_P, parent_P );
+    else if( type == "SIMPLE_ACTION_DATA"
+          || type == "DCOP_SHORTCUT_ACTION_DATA" || type == "DBUS_SHORTCUT_ACTION_DATA"
+          || type == "MENUENTRY_SHORTCUT_ACTION_DATA"
+          || type == "COMMAND_URL_SHORTCUT_ACTION_DATA"
+          || type == "KEYBOARD_INPUT_SHORTCUT_ACTION_DATA"
+          || type == "ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA" )
+        return new Simple_action_data_base( cfg_P, parent_P );
     kWarning( 1217 ) << "Unknown Action_data_base type read from cfg file\n";
     return 0;
     }
 
 
-bool Action_data_base::cfg_is_enabled( KConfigGroup& cfg_P )
+bool Action_data_base::enabled( bool ignore_group_P ) const
     {
-    return cfg_P.readEntry( "Enabled", true);
+    if( ignore_group_P )
+        return _enabled;
+    else
+        return _enabled && ( parent() == 0 || parent()->enabled( false ));
+    }
+
+
+QString Action_data_base::name() const
+    {
+    return _name;
+    }
+
+
+Action_data_group* Action_data_base::parent() const
+    {
+    return _parent;
+    }
+
+
+void Action_data_base::set_comment( const QString &comment )
+    {
+    _comment = comment;
+    }
+
+
+void Action_data_base::set_enabled( bool enabled )
+    {
+    _enabled = enabled;
+    }
+
+
+void Action_data_base::set_name( const QString& name_P )
+    {
+    _name = name_P;
     }
 
 
@@ -150,26 +194,11 @@ void Action_data_base::reparent( Action_data_group* new_parent_P )
     }
 
 
-bool Action_data_base::enabled( bool ignore_group_P ) const
-    {
-    if( ignore_group_P )
-        return _enabled;
-    else
-        return _enabled && ( parent() == 0 || parent()->enabled( false ));
-    }
-
-
 void Action_data_base::set_conditions( Condition_list* conditions_P )
     {
     Q_ASSERT( _conditions == 0 );
     _conditions = conditions_P;
     }
 
-
-bool Action_data_base::conditions_match() const
-    {
-    return ( conditions() ? conditions()->match() : true )
-        && ( parent() ? parent()->conditions_match() : true );
-    }
 
 } // namespace KHotKeys

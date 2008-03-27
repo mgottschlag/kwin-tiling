@@ -12,16 +12,16 @@
 #define _CONDITIONS_H_
 
 #include "config-khotkeys.h"
-#include <QObject>
 
+#include "action_data_group.h"
 
-#include "khotkeysglobal.h"
 #include "windows.h"
 
 // Needed for None below
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 
+#include <QtCore/QObject>
 
 class KConfig;
 
@@ -34,6 +34,8 @@ class Condition_list_base;
 
 class KDE_EXPORT Condition
     {
+    Q_DISABLE_COPY( Condition );
+
     public:
         Condition( Condition_list_base* parent_P );
         Condition( KConfigGroup& cfg_P, Condition_list_base* parent_P );
@@ -48,7 +50,6 @@ class KDE_EXPORT Condition
         static Condition* create_cfg_read( KConfigGroup& cfg_P, Condition_list_base* parent_P );
     protected:
         Condition_list_base* const _parent;
-    KHOTKEYS_DISABLE_COPY( Condition );
     };
 
 class KDE_EXPORT Condition_list_base

@@ -27,10 +27,12 @@
 
 namespace KHotKeys {
 
+
 Gesture_trigger::Gesture_trigger( Action_data* data_P, const QString &gesturecode_P )
     : Trigger( data_P ), _gesturecode( gesturecode_P )
     {
     }
+
 
 Gesture_trigger::Gesture_trigger( KConfigGroup& cfg_P, Action_data* data_P )
     : Trigger( cfg_P, data_P )
@@ -38,10 +40,21 @@ Gesture_trigger::Gesture_trigger( KConfigGroup& cfg_P, Action_data* data_P )
     _gesturecode = cfg_P.readEntry( "Gesture" );
     }
 
+
 Gesture_trigger::~Gesture_trigger()
     {
     gesture_handler->unregister_handler( this, SLOT( handle_gesture( const QString&, WId )));
     }
+
+
+void Gesture_trigger::activate( bool activate_P )
+    {
+    if( activate_P )
+        gesture_handler->register_handler( this, SLOT( handle_gesture( const QString&, WId )));
+    else
+        gesture_handler->unregister_handler( this, SLOT( handle_gesture( const QString&, WId )));
+    }
+
 
 void Gesture_trigger::cfg_write( KConfigGroup& cfg_P ) const
     {
@@ -50,16 +63,25 @@ void Gesture_trigger::cfg_write( KConfigGroup& cfg_P ) const
     cfg_P.writeEntry( "Type", "GESTURE" ); // overwrites value set in base::cfg_write()
     }
 
+
 Trigger* Gesture_trigger::copy( Action_data* data_P ) const
     {
     kDebug( 1217 ) << "Gesture_trigger::copy()";
     return new Gesture_trigger( data_P ? data_P : data, gesturecode());
     }
 
+
 const QString Gesture_trigger::description() const
     {
     return i18n( "Gesture trigger: " ) + gesturecode();
     }
+
+
+const QString& Gesture_trigger::gesturecode() const
+    {
+    return _gesturecode;
+    }
+
 
 void Gesture_trigger::handle_gesture( const QString &gesture_P, WId window_P )
     {
@@ -70,13 +92,6 @@ void Gesture_trigger::handle_gesture( const QString &gesture_P, WId window_P )
         }
     }
 
-void Gesture_trigger::activate( bool activate_P )
-    {
-    if( activate_P )
-        gesture_handler->register_handler( this, SLOT( handle_gesture( const QString&, WId )));
-    else
-        gesture_handler->unregister_handler( this, SLOT( handle_gesture( const QString&, WId )));
-    }
 
 } // namespace KHotKeys
 

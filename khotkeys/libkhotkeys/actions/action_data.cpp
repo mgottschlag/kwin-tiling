@@ -9,7 +9,9 @@
 ****************************************************************************/
 
 #include "action_data.h"
+
 #include "actions.h"
+#include "triggers.h"
 
 #include <kconfiggroup.h>
 #include <kdebug.h>
@@ -64,10 +66,19 @@ const Action_list* Action_data::actions() const
 void Action_data::cfg_write( KConfigGroup& cfg_P ) const
     {
     Action_data_base::cfg_write( cfg_P );
-    KConfigGroup triggersGroup( cfg_P.config(), cfg_P.name() + "Triggers" );
-    triggers()->cfg_write( triggersGroup );
-    KConfigGroup actionsGroup( cfg_P.config(), cfg_P.name() + "Actions" );
-    actions()->cfg_write( actionsGroup );
+
+    // Write triggers if available
+    if (triggers())
+        {
+        KConfigGroup triggersGroup( cfg_P.config(), cfg_P.name() + "Triggers" );
+        triggers()->cfg_write( triggersGroup );
+        }
+    // Write actions if available
+    if (actions())
+        {
+        KConfigGroup actionsGroup( cfg_P.config(), cfg_P.name() + "Actions" );
+        actions()->cfg_write( actionsGroup );
+        }
     }
 
 
@@ -153,11 +164,12 @@ void Action_data::set_actions( Action_list* actions_P )
 void Action_data::update_triggers()
     {
     bool activate = conditions_match() && enabled( false );
-    kDebug( 1217 ) << "Update triggers: " << name() << ":" << activate;
+    kDebug( 1217 ) << "### Update triggers: " << name() << ":" << activate;
     for( Trigger_list::Iterator it = _triggers->begin();
          it != _triggers->end();
          ++it )
         {
+        kDebug() << "Going over the triggers";
         (*it)->activate( activate );
         }
     }

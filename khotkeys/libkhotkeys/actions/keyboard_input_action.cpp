@@ -29,6 +29,13 @@
 
 namespace KHotKeys {
 
+Keyboard_input_action::Keyboard_input_action( Action_data* data_P, const QString& input_P,
+    const Windowdef_list* dest_window_P, bool active_window_P )
+    : Action( data_P ), _input( input_P ), _dest_window( dest_window_P ), _active_window( active_window_P )
+    {
+    }
+
+
 Keyboard_input_action::Keyboard_input_action( KConfigGroup& cfg_P, Action_data* data_P )
     : Action( cfg_P, data_P )
     {
@@ -46,10 +53,30 @@ Keyboard_input_action::Keyboard_input_action( KConfigGroup& cfg_P, Action_data* 
         }
     }
 
+
 Keyboard_input_action::~Keyboard_input_action()
     {
     delete _dest_window;
     }
+
+
+const QString& Keyboard_input_action::input() const
+    {
+    return _input;
+    }
+
+
+const Windowdef_list* Keyboard_input_action::dest_window() const
+    {
+    return _dest_window;
+    }
+
+
+bool Keyboard_input_action::activeWindow() const
+    {
+    return _active_window;
+    }
+
 
 void Keyboard_input_action::cfg_write( KConfigGroup& cfg_P ) const
     {
@@ -66,6 +93,7 @@ void Keyboard_input_action::cfg_write( KConfigGroup& cfg_P ) const
         cfg_P.writeEntry( "IsDestinationWindow", false );
     cfg_P.writeEntry( "ActiveWindow", _active_window );
     }
+
 
 void Keyboard_input_action::execute()
     {
@@ -98,6 +126,7 @@ void Keyboard_input_action::execute()
     XFlush( QX11Info::display());
     }
 
+
 const QString Keyboard_input_action::description() const
     {
     QString tmp = input();
@@ -105,6 +134,7 @@ const QString Keyboard_input_action::description() const
     tmp.truncate( 30 );
     return i18n( "Keyboard input : " ) + tmp;
     }
+
 
 Action* Keyboard_input_action::copy( Action_data* data_P ) const
     {

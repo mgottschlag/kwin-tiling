@@ -11,7 +11,7 @@ add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 # Convenience library
 add_subdirectory( libkhotkeys )
 # kcm module to configure hotkeys
-add_subdirectory( kcontrol )
+add_subdirectory( kcm_hotkeys )
 # kdedmodule and standalone demon for hotkeys
 add_subdirectory( app )
 add_subdirectory( data )

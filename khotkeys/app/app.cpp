@@ -10,9 +10,9 @@
 
 #include "app.h"
 
-#include "settings.h"
-#include "action_data.h"
+#include "action_data_group.h"
 #include "gestures.h"
+#include "settings.h"
 
 #include <kcmdlineargs.h>
 #include <kconfig.h>

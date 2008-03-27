@@ -40,6 +40,17 @@ Action_list::Action_list( KConfigGroup& cfg_P, Action_data* data_P )
     }
 
 
+Action_list::Action_list( const QString& comment_P )
+    : QList< Action* >(), _comment( comment_P )
+    {}
+
+
+const QString& Action_list::comment() const
+    {
+    return _comment;
+    }
+
+
 Action_list::~Action_list()
     {
     while (!isEmpty())

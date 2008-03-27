@@ -1,0 +1,36 @@
+<ui version="4.0" >
+ <class>SimpleActionDataWidget</class>
+ <widget class="QWidget" name="SimpleActionDataWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <widget class="QGroupBox" name="triggerBox" >
+     <property name="title" >
+      <string>Trigger</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3" />
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="actionBox" >
+     <property name="title" >
+      <string>Action</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_5" />
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

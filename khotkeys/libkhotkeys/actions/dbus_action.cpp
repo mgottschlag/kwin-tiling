@@ -28,28 +28,61 @@ namespace KHotKeys {
 Dbus_action::Dbus_action( KConfigGroup& cfg_P, Action_data* data_P )
     : Action( cfg_P, data_P )
     {
-    app = cfg_P.readEntry( "RemoteApp" );
-    obj = cfg_P.readEntry( "RemoteObj" );
-    call = cfg_P.readEntry( "Call" );
-    args = cfg_P.readEntry( "Arguments" );
+    _application = cfg_P.readEntry( "RemoteApp" );
+    _object = cfg_P.readEntry( "RemoteObj" );
+    _function = cfg_P.readEntry( "Call" );
+    _arguments = cfg_P.readEntry( "Arguments" );
     }
+
+
+Dbus_action::Dbus_action( Action_data* data_P, const QString& app_P, const QString& obj_P,
+    const QString& call_P, const QString& args_P )
+    : Action( data_P ), _application( app_P ), _object( obj_P ), _function( call_P ), _arguments( args_P )
+    {
+    }
+
+
+const QString Dbus_action::remote_application() const
+    {
+    return _application;
+    }
+
+
+const QString Dbus_action::remote_object() const
+    {
+    return _object;
+    }
+
+
+const QString Dbus_action::called_function() const
+    {
+    return _function;
+    }
+
+
+const QString Dbus_action::arguments() const
+    {
+    return _arguments;
+    }
+
 
 void Dbus_action::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "DBUS" ); // overwrites value set in base::cfg_write()
-    cfg_P.writeEntry( "RemoteApp", app );
-    cfg_P.writeEntry( "RemoteObj", obj );
-    cfg_P.writeEntry( "Call", call );
-    cfg_P.writeEntry( "Arguments", args );
+    cfg_P.writeEntry( "RemoteApp", _application );
+    cfg_P.writeEntry( "RemoteObj", _object );
+    cfg_P.writeEntry( "Call", _function );
+    cfg_P.writeEntry( "Arguments", _arguments );
     }
+
 
 void Dbus_action::execute()
     {
-    if( app.isEmpty() || obj.isEmpty() || call.isEmpty())
+    if( _application.isEmpty() || _object.isEmpty() || _function.isEmpty())
         return;
     QStringList args_list;
-    QString args_str = args;
+    QString args_str = _arguments;
     while( !args_str.isEmpty())
         {
         int pos = 0;
@@ -91,11 +124,12 @@ void Dbus_action::execute()
             args_str = nxt_pos >= 0 ? args_str.mid( nxt_pos ) : "";
             }
         }
-    kDebug( 1217 ) << "D-Bus call:" << app << ":" << obj << ":" << call << ":" << args_list;
+    kDebug( 1217 ) << "D-Bus call:" << _application << ":" << _object << ":" << _function << ":" << args_list;
     KProcess proc;
-    proc << "qdbus" << app << obj << call << args_list;
+    proc << "qdbus" << _application << _object << _function << args_list;
     proc.startDetached();
     }
+
 
 const QString Dbus_action::description() const
     {
@@ -103,11 +137,36 @@ const QString Dbus_action::description() const
         + called_function();
     }
 
+
 Action* Dbus_action::copy( Action_data* data_P ) const
     {
     return new Dbus_action( data_P, remote_application(), remote_object(),
         called_function(), arguments());
     }
+
+void Dbus_action::set_arguments( const QString &arguments )
+    {
+    _arguments = arguments;
+    }
+
+
+void Dbus_action::set_called_function( const QString &function )
+    {
+    _function = function;
+    }
+
+
+void Dbus_action::set_remote_application( const QString &application )
+    {
+    _application = application;
+    }
+
+
+void Dbus_action::set_remote_object( const QString &object )
+    {
+    _object = object;
+    }
+
 
 } // namespace KHotKeys
 

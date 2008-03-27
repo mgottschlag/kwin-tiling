@@ -33,8 +33,6 @@ class ShortcutsHandler;
 extern ShortcutsHandler* keyboard_handler;
 extern Windows* windows_handler;
 
-#define KHOTKEYS_DISABLE_COPY( cls ) private: cls( const cls& ); cls& operator=( const cls& )
-
 // CHECKME hmms :(
 KDE_EXPORT bool khotkeys_active();
 KDE_EXPORT void khotkeys_set_active( bool active_P );

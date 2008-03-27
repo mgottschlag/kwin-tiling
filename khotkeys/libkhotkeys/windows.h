@@ -77,6 +77,8 @@ struct KDE_EXPORT Window_data
     
 class KDE_EXPORT Windowdef
     {
+    Q_DISABLE_COPY( Windowdef )
+
     public:
         Windowdef( const QString& comment_P );
         Windowdef( KConfigGroup& cfg_P );
@@ -89,12 +91,13 @@ class KDE_EXPORT Windowdef
         virtual const QString description() const = 0;
     private:
         QString _comment;
-    KHOTKEYS_DISABLE_COPY( Windowdef ); // CHECKME asi pak udelat i pro vsechny potomky, at se nezapomene
     };
 
 class KDE_EXPORT Windowdef_list
     : public Q3PtrList< Windowdef >
     {
+    Q_DISABLE_COPY( Windowdef_list );
+
     public:
         Windowdef_list( const QString& comment_P );
         Windowdef_list( KConfigGroup& cfg_P/*, Action_data_base* data_P*/ );
@@ -105,7 +108,6 @@ class KDE_EXPORT Windowdef_list
         const QString& comment() const;
     private:
         QString _comment;
-    KHOTKEYS_DISABLE_COPY( Windowdef_list );
     };
 
 class KDE_EXPORT Windowdef_simple

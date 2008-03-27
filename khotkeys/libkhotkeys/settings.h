@@ -39,6 +39,8 @@ enum ImportType
  */
 class KDE_EXPORT Settings
 {
+    Q_DISABLE_COPY( Settings );
+
 public:
 
     Settings();
@@ -209,7 +211,7 @@ private:
      */
     QStringList already_imported;
 
-    KHOTKEYS_DISABLE_COPY( Settings );
+
 };
 
 } // namespace KHotKeys

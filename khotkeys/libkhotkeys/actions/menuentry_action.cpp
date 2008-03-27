@@ -20,10 +20,23 @@
 #include "actions.h"
 
 #include <KDE/KConfigGroup>
+#include <KDE/KDebug>
 #include <KDE/KUrl>
 #include <KDE/KRun>
 
 namespace KHotKeys {
+
+Menuentry_action::Menuentry_action( Action_data* data_P, const QString& menuentry_P )
+    : Command_url_action( data_P, menuentry_P )
+    {
+    }
+
+
+Menuentry_action::Menuentry_action( KConfigGroup& cfg_P, Action_data* data_P )
+    : Command_url_action( cfg_P, data_P )
+    {
+    }
+
 
 void Menuentry_action::cfg_write( KConfigGroup& cfg_P ) const
     {
@@ -42,14 +55,30 @@ KService::Ptr Menuentry_action::service() const
     }
 
 
+void Menuentry_action::set_service( KService::Ptr service )
+    {
+    Q_ASSERT( service );
+    if (!service) return;
+    _service = service;
+    set_command_url(service->name());
+    }
+
+
 void Menuentry_action::execute()
     {
     (void) service();
     if (!_service)
         return;
+    kDebug() << "Starting service " << _service->desktopEntryName();
     KRun::run( *_service, KUrl::List(), 0 );
     timeout.setSingleShot( true );
     timeout.start( 1000 ); // 1sec timeout
+    }
+
+
+Action* Menuentry_action::copy( Action_data* data_P ) const
+    {
+    return new Menuentry_action( data_P, command_url());
     }
 
 
@@ -57,12 +86,6 @@ const QString Menuentry_action::description() const
     {
     (void) service();
     return i18n( "Menuentry : " ) + (_service ? _service->name() : QString());
-    }
-
-
-Action* Menuentry_action::copy( Action_data* data_P ) const
-    {
-    return new Menuentry_action( data_P, command_url());
     }
 
 

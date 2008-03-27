@@ -46,6 +46,7 @@ set(libkhotkeys_SRCS
     actions/keyboard_input_gesture_action_data.cpp
     actions/menuentry_shortcut_action_data.cpp
     actions/simple_action_data.cpp
+    actions/simple_action_data_base.cpp
 
     # CONDITIONS
     conditions/active_window_condition.cpp
