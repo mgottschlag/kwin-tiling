@@ -238,8 +238,6 @@ KEnergy::KEnergy(QWidget *parent, const QVariantList &args)
        setButtons( KCModule::Help );
 
     m_pConfig = new KConfig("kcmdisplayrc", KConfig::NoGlobals);
-
-    load();
 }
 
 
