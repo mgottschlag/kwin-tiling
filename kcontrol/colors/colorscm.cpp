@@ -91,8 +91,6 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
 
     // only needs to be called once
     setupColorTable();
-
-    load();
 }
 
 KColorCm::~KColorCm()
