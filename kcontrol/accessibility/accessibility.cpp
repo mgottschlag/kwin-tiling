@@ -107,8 +107,6 @@ AccessibilityConfig::AccessibilityConfig(QWidget *parent, const QVariantList &ar
    connect( widget->accelerationProfile, SIGNAL( valueChanged(int ) ), this, SLOT( slotChanged() ) );
    connect( widget->accelerationProfileSlider, SIGNAL( valueChanged(int ) ), this, SLOT( slotChanged() ) );
    connect( widget->visibleBell, SIGNAL( toggled( bool ) ), this, SLOT( updateFlashScreenColor() ) );
-
-   load();
 }
 
 
