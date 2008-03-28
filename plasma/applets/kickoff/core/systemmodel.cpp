@@ -217,7 +217,7 @@ int SystemModel::rowCount(const QModelIndex &parent) const
                 return d->placesModel->rowCount();
                 break;
             case REMOVABLE_ROW:
-                return 0; //FIXME
+                return d->placesModel->rowCount();
                 break;
             default:
                 return 0;
