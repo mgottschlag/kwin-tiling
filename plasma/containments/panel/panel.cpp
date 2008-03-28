@@ -269,7 +269,7 @@ void Panel::configure()
         l->setColumnStretch(1,1);
         connect(m_sizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(sizeComboChanged()));
 
-        QLabel *lengthLabel = new QLabel(i18n("Lenght:"), p);
+        QLabel *lengthLabel = new QLabel(i18n("Length:"), p);
         l->addWidget(lengthLabel, 2, 0);
         m_lengthEdit = new KIntNumInput(p);
         QRectF screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) : geometry();
