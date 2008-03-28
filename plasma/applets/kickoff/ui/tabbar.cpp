@@ -48,6 +48,15 @@ TabBar::TabBar(QWidget *parent)
     m_tabSwitchTimer.setSingleShot(true);
     connect(&m_tabSwitchTimer, SIGNAL(timeout()), this, SLOT(switchToHoveredTab()));
     setMouseTracking(true);
+    setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred );
+}
+
+void TabBar::setShape( Shape shape )
+{
+  resize( 0, 0 );  // This is required, so that the custom implementation of tabSizeHint, 
+                   // which expands the tabs to the full width of the widget does not pick up 
+                   // the previous width, e.g. if the panel is moved from the bottom to the left
+  QTabBar::setShape( shape );
 }
 
 void TabBar::setCurrentIndexWithoutAnimation(int index)
@@ -109,15 +118,38 @@ int TabBar::lastIndex() const
 QSize TabBar::tabSizeHint(int index) const
 {
     QSize hint = tabSize(index);
+    int minwidth = 0;
+    int minheight = 0;
 
-    if (count() > 0) {
-        int minwidth = 0;
-        for (int i = count() - 1; i >= 0; i--) {
-            minwidth += tabSize(i).rwidth();
-        }
-        if (minwidth < width()) {
-            hint.rwidth() += (width() - minwidth) / count();
-        }
+    Shape s = shape();
+    switch (s) {
+        case RoundedSouth:
+        case TriangularSouth:
+        case RoundedNorth:
+        case TriangularNorth:
+            if (count() > 0) {
+                for (int i = count() - 1; i >= 0; i--) {
+                    minwidth += tabSize(i).width();
+                }
+                if (minwidth < width()) {
+                    hint.rwidth() += (width() - minwidth) / count();
+                }
+            }
+            break;
+        case RoundedWest:
+        case TriangularWest:
+        case RoundedEast:
+        case TriangularEast:
+            if (count() > 0) {
+                for (int i = count() - 1; i >= 0; i--) {
+                    minheight += tabSize(i).height();
+                }
+                if (minheight < height()) {
+                    hint.rheight() += (height() - minheight) / count();
+                }
+            }
+            hint.rwidth() = qMax( hint.width(), width() );
+            break;
     }
     return hint;
 }
@@ -168,7 +200,7 @@ QPainterPath TabBar::tabPath(const QRect &_r)
             break;
         case RoundedWest:
         case TriangularWest:
-            r.adjust(3, 0, 0, 0);
+            r.adjust(3, 3, 0, -3);
             path.moveTo(rect().topRight());
             // Top right corner
             path.lineTo(r.topRight());
@@ -183,9 +215,10 @@ QPainterPath TabBar::tabPath(const QRect &_r)
             path.lineTo(r.bottomRight() + QPoint(-radius, -radius));
             path.quadTo(r.bottomRight() + QPoint(0, -radius), r.bottomRight());
             path.lineTo(rect().bottomRight());
+            break;
         case RoundedEast:
         case TriangularEast:
-            r.adjust(0, 0, -3, 0);
+            r.adjust(0, 3, -3, -3);
             path.moveTo(rect().topLeft());
             // Top left corner
             path.lineTo(r.topLeft());

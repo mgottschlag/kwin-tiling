@@ -43,6 +43,7 @@ public:
     bool switchTabsOnHover() const;
     void setAnimateSwitch(bool animateSwitch);
     bool animateSwitch();
+    void setShape( Shape shape );
 
 protected:
     int lastIndex() const;
