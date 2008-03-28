@@ -48,6 +48,7 @@
 #include <plasma/delegate.h>
 #include <solid/device.h>
 #include <solid/deviceinterface.h>
+#include <KColorScheme>
 
 // Local
 #include "core/favoritesmodel.h"
@@ -564,7 +565,9 @@ void Launcher::init()
        hostname[sizeof(hostname)-1] = '\0';
     }
     QLabel *userinfo = new QLabel(i18n("User&nbsp;<b>%1</b>&nbsp;on&nbsp;<b>%2</b>", KUser().loginName(), hostname));
-    userinfo->setForegroundRole(QPalette::Dark);
+    QPalette palette;
+    palette.setColor( QPalette::Foreground, KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText).color() );
+    userinfo->setPalette( palette );
 
     QToolButton *branding = new BrandingButton(this);
     branding->setAutoRaise(false);
