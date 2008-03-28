@@ -226,6 +226,8 @@ void TabBar::paintEvent(QPaintEvent *event)
     QPainterPath path = tabPath(movingRect);
 
     painter.save();
+    painter.setPen(QPen(palette().base(), 1));
+    painter.drawLine(rect().topLeft(), rect().topRight());
     painter.translate(0.5, 0.5);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.fillPath(path, palette().base());
