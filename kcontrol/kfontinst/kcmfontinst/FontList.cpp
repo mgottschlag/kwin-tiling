@@ -42,7 +42,7 @@
 #include <QtCore/QDateTime>
 #include <QtGui/QX11Info>
 #include <QtGui/QHeaderView>
-#include <QtGui/QItemDelegate>
+#include <QtGui/QStyledItemDelegate>
 #include <QtGui/QPainter>
 #include <QtGui/QMenu>
 #include <QtCore/QTimer>
@@ -1538,16 +1538,16 @@ void CFontListSortFilterProxy::fcResults()
     }
 }
 
-class CFontListViewDelegate : public QItemDelegate
+class CFontListViewDelegate : public QStyledItemDelegate 
 {
     public:
 
-    CFontListViewDelegate(QObject *p, QSortFilterProxyModel *px) : QItemDelegate(p), itsProxy(px) { }
+    CFontListViewDelegate(QObject *p, QSortFilterProxyModel *px) : QStyledItemDelegate(p), itsProxy(px) { }
     virtual ~CFontListViewDelegate() { }
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &idx) const
     {
-        QItemDelegate::paint(painter, option, idx);
+        QStyledItemDelegate::paint(painter, option, idx);
 
         QModelIndex index(itsProxy->mapToSource(idx));
 
@@ -1576,7 +1576,7 @@ class CFontListViewDelegate : public QItemDelegate
 
         return (index.isValid() && (static_cast<CFontModelItem *>(index.internalPointer()))->isFamily())
             ? QSize(CFontList::previewSize(), CFontList::previewSize())
-            : QItemDelegate::sizeHint(option, index);
+            : QStyledItemDelegate::sizeHint(option, index);
     }
 
     private:
