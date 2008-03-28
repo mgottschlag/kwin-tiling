@@ -33,6 +33,7 @@
 #include <KDebug>
 #include <KGlobalSettings>
 #include <KIconLoader>
+#include <KColorScheme>
 
 // Local
 #include "core/models.h"
@@ -154,7 +155,7 @@ public:
         }
 
         painter->setFont(KGlobalSettings::smallestReadableFont());
-        painter->setPen(QPen(option.palette.dark(), 0));
+        painter->setPen(QPen(KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText), 0));
         QString text = index.data(Qt::DisplayRole).value<QString>();
         painter->drawText(option.rect.adjusted(0, dy, -rightMargin, 0),
                           Qt::AlignVCenter|Qt::AlignRight, text);

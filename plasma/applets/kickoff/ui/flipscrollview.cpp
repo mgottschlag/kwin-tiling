@@ -31,6 +31,7 @@
 #include <KDebug>
 #include <KGlobalSettings>
 #include <KIconLoader>
+#include <KColorScheme>
 
 #include "ui/itemdelegate.h"
 
@@ -159,7 +160,7 @@ public:
         const qreal rightMargin = q->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 6;
         const qreal top = rect.bottom() - fm.height() - 1 - ItemDelegate::HEADER_BOTTOM_MARGIN;
         QRectF textRect(rect.left(), top, rect.width() - rightMargin, fm.height());
-        painter->setPen(QPen(q->palette().dark(), 1));
+        painter->setPen(QPen(KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText), 1));
         painter->drawText(textRect, Qt::AlignRight | Qt::AlignVCenter, currentText);
 
         if (!previousText.isEmpty()) {
