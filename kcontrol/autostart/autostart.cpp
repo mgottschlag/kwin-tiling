@@ -72,7 +72,6 @@ K_PLUGIN_FACTORY(AutostartFactory, registerPlugin<Autostart>();)
 
     widget->listCMD->setFocus();
 
-    load();
 
     KAboutData* about = new KAboutData("Autostart", 0, ki18n("KDE Autostart Manager"), "1.0",
                                        ki18n("KDE Autostart Manager Control Panel Module"),
