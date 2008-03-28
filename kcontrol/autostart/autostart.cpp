@@ -240,7 +240,7 @@ void Autostart::slotAddProgram()
 
     KUrl desktopTemplate;
     if ( service->desktopEntryName().isEmpty() ) {
-        desktopTemplate = KUrl( m_paths[0] + service->name() + ".desktop" );
+        desktopTemplate = KUrl( m_paths[4] + service->name() + ".desktop" );
         KConfig kc(desktopTemplate.path(), KConfig::SimpleConfig);
         KConfigGroup kcg = kc.group("Desktop Entry");
         kcg.writeEntry("Exec",service->exec());
@@ -260,12 +260,12 @@ void Autostart::slotAddProgram()
     {
         desktopTemplate = KUrl( KStandardDirs::locate("apps", service->entryPath()) );
 
-        KPropertiesDialog dlg( desktopTemplate, KUrl(m_paths[0]), service->name() + ".desktop", this );
+        KPropertiesDialog dlg( desktopTemplate, KUrl(m_paths[4]), service->name() + ".desktop", this );
         if ( dlg.exec() != QDialog::Accepted )
             return;
     }
-    DesktopStartItem * item = new DesktopStartItem( m_paths[0] + service->name() + ".desktop", m_programItem,this );
-    addItem( item, service->name(), m_pathName.value(m_paths.indexOf((item->fileName().directory()+'/') )),  service->exec() , false);
+    DesktopStartItem * item = new DesktopStartItem( m_paths[4] + service->name() + ".desktop", m_programItem,this );
+    addItem( item, service->name(), m_pathName[0],  service->exec() , false);
 }
 
 void Autostart::slotAddCMD() {
