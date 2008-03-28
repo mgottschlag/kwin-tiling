@@ -379,7 +379,7 @@ void Autostart::slotChangeStartup( int index )
 void Autostart::slotSelectionChanged() {
     bool hasItems = ( dynamic_cast<AutoStartItem*>( widget->listCMD->currentItem() )!=0 ) ;
     widget->btnRemove->setEnabled(hasItems);
-    widget->btnProperties->setEnabled(hasItems);
+    widget->btnProperties->setEnabled(dynamic_cast<DesktopStartItem*>( widget->listCMD->currentItem() )!=0);
     widget->btnAdvanced->setEnabled( dynamic_cast<DesktopStartItem*>( widget->listCMD->currentItem() )!=0 ) ;
 }
 
