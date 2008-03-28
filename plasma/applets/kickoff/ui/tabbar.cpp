@@ -198,7 +198,7 @@ QPainterPath TabBar::tabPath(const QRect &_r)
             path.quadTo(r.bottomRight() + QPoint(0, -radius), r.bottomRight() + QPoint(-radius, -radius));
             // Bottom left corner
             path.lineTo(r.bottomLeft() + QPoint(radius, -radius));
-            path.quadTo(r.bottomLeft() + QPoint(radius, 0), r.bottomLeft());
+            path.quadTo(r.bottomLeft() + QPoint(0, -radius), r.bottomLeft());
             path.lineTo(rect().bottomLeft());
             break;
     }
