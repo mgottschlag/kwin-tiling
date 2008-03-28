@@ -27,7 +27,9 @@
 #include <QIcon>
 #include <QModelIndex>
 #include <QPainter>
+#include <QStyle>
 #include <QStyleOptionViewItem>
+#include <QStyleOptionProgressBar>
 
 // KDE
 #include <KColorUtils>
@@ -74,24 +76,21 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
             QRectF spaceRect = QStyle::alignedRect(option.direction,
                                                    Qt::AlignRight, barSize, emptyRect);
 
-            // add spacing between item text and free-space bar and tweak the position slightly
-            // to give a sharp outline when drawn with anti-aliasing enabled
-            spaceRect.translate(0.5, 0.5);
+            QStyleOptionProgressBar optionPBar;
 
-            QColor fillBrush = KColorUtils::mix(Qt::green, Qt::yellow, (usedSpace / (freeSpace+usedSpace)));
-            QColor penColor = option.palette.mid().color();
-
-            //if not mouse over
             if (!(option.state & (QStyle::State_Selected|QStyle::State_MouseOver|QStyle::State_HasFocus))) {
-                fillBrush.setAlpha(75);
-                penColor.setAlpha(75);
+                painter->setOpacity(painter->opacity()/2.5);
+                optionPBar.state = QStyle::State_None;
+            } else {
+                optionPBar.state = QStyle::State_Enabled;
             }
 
-            qreal width = (usedSpace / (freeSpace + usedSpace)) * spaceRect.width();
-            painter->setPen(QPen(penColor, 0));
-            painter->fillRect(QRectF(spaceRect.left(), spaceRect.top(), width, spaceRect.height()), fillBrush);
-            painter->setBrush(QBrush(Qt::NoBrush));
-            painter->drawRect(spaceRect);
+            optionPBar.rect = spaceRect.toRect();
+            optionPBar.minimum = 0;
+            optionPBar.maximum = 100;
+            optionPBar.progress = (usedSpace / (freeSpace + usedSpace))*100;
+
+            QApplication::style()->drawControl(QStyle::CE_ProgressBar, &optionPBar, painter);
 
             // -- Removed the free space text because it added too much 'visual noise' to the item
             //
