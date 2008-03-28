@@ -53,7 +53,7 @@ public:
      * if it's vertical this changes the width
      * the other dimension will be resized to the screen width/height.
      */
-    void updateSize(qreal newSize);
+    void updateSize(const QSize &newSize);
 
 private slots:
     void configure();
@@ -78,11 +78,12 @@ private:
     KDialog* m_dialog;
     QComboBox* m_sizeCombo;
     KIntNumInput* m_sizeEdit;
+    KIntNumInput* m_lengthEdit;
     QComboBox* m_locationCombo;
     QAction* m_appletBrowserAction;
     QAction* m_configureAction;
     QAction* m_removeAction;
-    int m_currentSize;
+    QSize m_currentSize;
 };
 
 

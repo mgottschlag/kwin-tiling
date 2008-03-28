@@ -47,7 +47,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
       m_appletBrowserAction(0),
       m_configureAction(0),
       m_removeAction(0),
-      m_currentSize(56)
+      m_currentSize(QSize(QApplication::desktop()->screenGeometry(screen()).width(), 56))
 {
     m_background = new Plasma::SvgPanel("widgets/panel-background", this);
     m_background->setBorderFlags(Plasma::SvgPanel::DrawAllBorders);
@@ -57,7 +57,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
 
     connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(themeUpdated()));
     //make sure the default size is picked up
-    resize(m_currentSize, m_currentSize);
+    resize(m_currentSize);
 }
 
 Panel::~Panel()
@@ -182,7 +182,7 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
 
     if (constraints & Plasma::SizeConstraint) {
         bool isHorizontal = location() == Plasma::TopEdge || location() == Plasma::BottomEdge;
-        m_currentSize = isHorizontal ? size().height() : size().width();
+        m_currentSize = size().toSize();
         m_background->resize(size());
     }
 
@@ -269,11 +269,37 @@ void Panel::configure()
         l->setColumnStretch(1,1);
         connect(m_sizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(sizeComboChanged()));
 
+        QLabel *lengthLabel = new QLabel(i18n("Lenght:"), p);
+        l->addWidget(lengthLabel, 2, 0);
+        m_lengthEdit = new KIntNumInput(p);
+        QRectF screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) : geometry();
+        int screenlength = 0;
+        int currentlength = 0;
+        switch (location()) {
+            case BottomEdge:
+            case TopEdge:
+            case Floating:
+                screenlength = screenRect.width();
+                currentlength = m_currentSize.width();
+                break;
+            case RightEdge:
+            case LeftEdge:
+                screenlength = screenRect.height();
+                currentlength = m_currentSize.height();
+                break;
+            default:
+                kDebug() << "shouldn't happen!" << location();
+            return;
+        }
+        m_lengthEdit->setRange(0, screenlength);
+        m_lengthEdit->setValue(currentlength);
+        l->addWidget(m_lengthEdit, 2, 1);
+
         QLabel *locationLabel = new QLabel(i18n("Location:"), p);
-        l->addWidget(locationLabel, 2, 0);
+        l->addWidget(locationLabel, 3, 0);
         m_locationCombo = new QComboBox(p);
         locationLabel->setBuddy(m_locationCombo);
-        l->addWidget(m_locationCombo, 2, 1);
+        l->addWidget(m_locationCombo, 3, 1);
         m_locationCombo->addItem(i18n("Bottom"), Plasma::BottomEdge);
         m_locationCombo->addItem(i18n("Top"), Plasma::TopEdge);
         m_locationCombo->addItem(i18n("Right"), Plasma::RightEdge);
@@ -315,9 +341,9 @@ void Panel::remove()
 
 void Panel::applyConfig()
 {
-    qreal newSize = m_sizeCombo->itemData(m_sizeCombo->currentIndex()).toInt();
-    if (newSize == 0) {
-        newSize = m_sizeEdit->value();
+    QSize newSize = QSize(m_lengthEdit->value(), m_sizeCombo->itemData(m_sizeCombo->currentIndex()).toInt());
+    if (newSize.height() == 0) {
+        newSize = QSize(m_lengthEdit->value(), m_sizeEdit->value());
     }
     Plasma::Location newLoc = (Plasma::Location)(m_locationCombo->itemData(m_locationCombo->currentIndex()).toInt());
 
@@ -353,7 +379,7 @@ void Panel::setFormFactorFromLocation(Plasma::Location loc) {
 
 //assumes location is an edge and screen is valid
 //TODO handle floating location too
-void Panel::updateSize(qreal newSize)
+void Panel::updateSize(const QSize &newSize)
 {
     //kDebug() << "updating size to" << newSize << "at" << location();
     QRectF screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) :
@@ -363,15 +389,13 @@ void Panel::updateSize(qreal newSize)
     switch (location()) {
     case BottomEdge:
     case TopEdge:
-        //FIXME: don't hardcode full width
-        s.setWidth(screenRect.width());
-        s.setHeight(newSize);
+        s.setWidth(newSize.width());
+        s.setHeight(newSize.height());
         break;
     case RightEdge:
     case LeftEdge:
-        s.setWidth(newSize);
-        //FIXME: don't hardcode full height
-        s.setHeight(screenRect.height());
+        s.setWidth(newSize.height());
+        s.setHeight(newSize.width());
         break;
     case Floating:
         break;
