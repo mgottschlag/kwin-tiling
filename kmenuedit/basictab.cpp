@@ -93,6 +93,7 @@ BasicTab::BasicTab( QWidget *parent )
 
     _launchCB = new QCheckBox(i18n("Enable &launch feedback"), general_group);
     _systrayCB = new QCheckBox(i18n("&Place in system tray"), general_group);
+    _onlyShowInKdeCB = new QCheckBox( i18n( "Only show in KDE" ), general_group );
 
     // setup labels
     _nameLabel = new QLabel(i18n("&Name:"),general_group);
@@ -121,7 +122,7 @@ BasicTab::BasicTab( QWidget *parent )
             SLOT(slotExecSelected()));
     connect(_launchCB, SIGNAL(clicked()), SLOT(launchcb_clicked()));
     connect(_systrayCB, SIGNAL(clicked()), SLOT(systraycb_clicked()));
-
+    connect(_onlyShowInKdeCB, SIGNAL( clicked() ), SLOT( onlyshowcb_clicked() ) );
     // add line inputs to the grid
     grid->addWidget(_nameEdit, 0, 1, 1, 1);
     grid->addWidget(_descriptionEdit, 1, 1, 1, 1);
@@ -129,6 +130,7 @@ BasicTab::BasicTab( QWidget *parent )
     grid->addWidget(_execEdit, 3, 1, 1, 2);
     grid->addWidget(_launchCB, 4, 0, 1, 3 );
     grid->addWidget(_systrayCB, 5, 0, 1, 3 );
+    grid->addWidget(_onlyShowInKdeCB, 6, 0, 1, 3 );
 
     // setup icon button
     _iconButton = new KIconButton(general_group);
@@ -264,6 +266,7 @@ void BasicTab::slotDisableAction()
     _execEdit->setEnabled(false);
     _launchCB->setEnabled(false);
     _systrayCB->setEnabled(false);
+    _onlyShowInKdeCB->setEnabled( false );
     _nameLabel->setEnabled(false);
     _descriptionLabel->setEnabled(false);
     _commentLabel->setEnabled(false);
@@ -286,6 +289,7 @@ void BasicTab::enableWidgets(bool isDF, bool isDeleted)
     _execEdit->setEnabled(isDF && !isDeleted);
     _launchCB->setEnabled(isDF && !isDeleted);
     _systrayCB->setEnabled(isDF && !isDeleted);
+    _onlyShowInKdeCB->setEnabled( isDF && !isDeleted );
     _nameLabel->setEnabled(!isDeleted);
     _descriptionLabel->setEnabled(!isDeleted);
     _commentLabel->setEnabled(!isDeleted);
@@ -317,10 +321,10 @@ void BasicTab::setFolderInfo(MenuFolderInfo *folderInfo)
     _iconButton->setIcon(folderInfo->icon);
 
     // clean all disabled fields and return
-    _execEdit->lineEdit()->setText("");
-    _pathEdit->lineEdit()->setText("");
-    _termOptEdit->setText("");
-    _uidEdit->setText("");
+    _execEdit->lineEdit()->clear();
+    _pathEdit->lineEdit()->clear();
+    _termOptEdit->clear();
+    _uidEdit->clear();
     _launchCB->setChecked(false);
     _systrayCB->setChecked(false);
     _terminalCB->setChecked(false);
@@ -346,12 +350,13 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
 
        // key binding part
        //_keyEdit->setShortcut( KShortcut() );
-       _execEdit->lineEdit()->setText(QString());
+       _execEdit->lineEdit()->clear();
        _systrayCB->setChecked(false);
+       _onlyShowInKdeCB->setChecked( false );
 
-       _pathEdit->lineEdit()->setText(QString());
-       _termOptEdit->setText(QString());
-       _uidEdit->setText(QString());
+       _pathEdit->lineEdit()->clear();
+       _termOptEdit->clear();
+       _uidEdit->clear();
 
        _launchCB->setChecked(false);
        _terminalCB->setChecked(false);
@@ -397,6 +402,13 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
     else // backwards comp.
         _launchCB->setChecked(df->desktopGroup().readEntry("X-KDE-StartupNotify", true));
 
+    _onlyShowInKdeCB->setChecked( false );
+    if ( df->desktopGroup().hasKey( "OnlyShowIn") )
+    {
+        if ( df->desktopGroup().readXdgListEntry("OnlyShowIn").contains( "KDE" ) )
+            _onlyShowInKdeCB->setChecked( true );
+
+    }
     if(df->desktopGroup().readEntry("Terminal", 0) == 1)
         _terminalCB->setChecked(true);
     else
@@ -436,6 +448,8 @@ void BasicTab::apply()
         dg.writeEntry("X-KDE-SubstituteUID", _uidCB->isChecked());
         dg.writeEntry("X-KDE-Username", _uidEdit->text());
         dg.writeEntry("StartupNotify", _launchCB->isChecked());
+        if ( _onlyShowInKdeCB->isChecked() )
+            dg.writeXdgListEntry( "OnlyShowIn", QStringList()<<"KDE" );
     }
     else
     {
