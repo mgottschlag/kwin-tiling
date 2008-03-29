@@ -527,11 +527,13 @@ void BasicTab::slotCapturedKeySequence(const QKeySequence& seq)
           if (service)
           {
              KMessageBox::sorry(this, i18n("<qt>The key <b>%1</b> can not be used here because it is already used to activate <b>%2</b>.</qt>", cut.toString(), service->name()));
+             _keyEdit->clearKeySequence();
              return;
           }
           else
           {
              KMessageBox::sorry(this, i18n("<qt>The key <b>%1</b> can not be used here because it is already in use.</qt>", cut.toString()));
+             _keyEdit->clearKeySequence();
              return;
           }
        }
