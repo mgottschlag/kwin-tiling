@@ -65,6 +65,7 @@ protected Q_SLOTS:
     void uidcb_clicked();
     void slotCapturedKeySequence(const QKeySequence&);
     void slotExecSelected();
+    void onlyshowcb_clicked();
 
 protected:
     void enableWidgets(bool isDF, bool isDeleted);

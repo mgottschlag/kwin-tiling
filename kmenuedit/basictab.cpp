@@ -481,6 +481,11 @@ void BasicTab::systraycb_clicked()
     slotChanged();
 }
 
+void BasicTab::onlyshowcb_clicked()
+{
+    slotChanged();
+}
+
 void BasicTab::termcb_clicked()
 {
     _termOptEdit->setEnabled(_terminalCB->isChecked());
