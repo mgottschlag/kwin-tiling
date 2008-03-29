@@ -20,6 +20,7 @@
 #include <QtDBus/QtDBus>
 
 #include "khotkeysiface.h"
+#include "kglobalaccel.h"
 
 #include <settings.h>
 
@@ -42,6 +43,7 @@ int main( int argc, char* argv[] )
         kWarning() << "File " << id << " not found!" ;
         return 1;
         }
+    KGlobalAccel::self()->overrideMainComponentData(KComponentData("khotkeys"));
     init_global_data( false, &app );
     Settings settings;
     settings.read_settings( true );
