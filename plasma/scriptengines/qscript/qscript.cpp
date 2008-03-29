@@ -37,6 +37,7 @@ using namespace Plasma;
 #include "qscript.h"
 
 Q_DECLARE_METATYPE(QPainter*)
+Q_DECLARE_METATYPE(QStyleOptionGraphicsItem*)
 Q_DECLARE_METATYPE(QScriptApplet*)
 Q_DECLARE_METATYPE(Layout*)
 Q_DECLARE_METATYPE(Widget*)
@@ -107,6 +108,7 @@ QScriptApplet::QScriptApplet( QObject *parent, const QVariantList &args )
     kDebug() << "Script applet launched, args" << args;
 
     m_engine = new QScriptEngine( this );
+    importExtensions();
     setupObjects();
 }
 
@@ -197,6 +199,8 @@ void QScriptApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *
 
     QScriptValueList args;
     args << m_engine->toScriptValue( p );
+    args << m_engine->toScriptValue( const_cast<QStyleOptionGraphicsItem*>(option) );
+    args << m_engine->toScriptValue( contentsRect );
 
     QScriptContext *ctx = m_engine->pushContext();
     ctx->setActivationObject( m_self );
@@ -230,6 +234,20 @@ bool QScriptApplet::init()
     }
 
     return true;
+}
+
+void QScriptApplet::importExtensions()
+{
+    QStringList extensions;
+    extensions << "qt.core" << "qt.gui" << "qt.svg" << "qt.xml" << "qt.plasma";
+    for (int i = 0; i < extensions.size(); ++i) {
+        QString ext = extensions.at(i);
+        kDebug() << "importing " << ext << "...";
+        QScriptValue ret = m_engine->importExtension(ext);
+        if (ret.isError())
+            kDebug() << "failed to import extension" << ext << ":" << ret.toString();
+    }
+    kDebug() << "done importing extensions.";
 }
 
 void QScriptApplet::setupObjects()

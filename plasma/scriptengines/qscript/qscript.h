@@ -50,6 +50,7 @@ public slots:
     void configAccepted();
 
 private:
+    void importExtensions();
     void setupObjects();
 
     //static QScriptValue dataEngine(QScriptContext *context, QScriptEngine *engine);
