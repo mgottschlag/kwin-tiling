@@ -347,13 +347,19 @@ void Panel::applyConfig()
     }
     Plasma::Location newLoc = (Plasma::Location)(m_locationCombo->itemData(m_locationCombo->currentIndex()).toInt());
 
+    //swap width and height if the panel is vertical
+    if (newLoc == LeftEdge || newLoc == RightEdge) {
+        newSize = QSize(newSize.height(), newSize.width());
+    }
+
     if (newLoc != location()) {
         m_currentSize = newSize;
-        setFormFactorFromLocation(newLoc);
         setLocation(newLoc);
+        setFormFactorFromLocation(newLoc);
     } else if (newSize != m_currentSize) {
         updateSize(newSize);
     }
+
 }
 
 void Panel::setFormFactorFromLocation(Plasma::Location loc) {
@@ -389,13 +395,11 @@ void Panel::updateSize(const QSize &newSize)
     switch (location()) {
     case BottomEdge:
     case TopEdge:
-        s.setWidth(newSize.width());
-        s.setHeight(newSize.height());
+        s = newSize;
         break;
     case RightEdge:
     case LeftEdge:
-        s.setWidth(newSize.height());
-        s.setHeight(newSize.width());
+        s = newSize;
         break;
     case Floating:
         break;
