@@ -40,7 +40,7 @@ static bool khotkeys_inited = false;
 bool KHotKeys::init()
 {
     khotkeys_inited = true;
-    KLibrary* lib = KLibLoader::self()->library( QLatin1String("kcm_khotkeys.la") );
+    KLibrary* lib = KLibLoader::self()->library( QLatin1String("kcm_khotkeys.so") );
     if( lib == NULL ) return false;
 
     khotkeys_init_2 = lib->resolveFunction( "khotkeys_init" );

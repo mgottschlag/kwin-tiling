@@ -235,12 +235,6 @@ BasicTab::BasicTab( QWidget *parent )
     grid_keybind->setMargin( KDialog::marginHint() );
     grid_keybind->setSpacing( KDialog::spacingHint());
 
-    //_keyEdit = new KLineEdit(general_group_keybind);
-    //_keyEdit->setReadOnly( true );
-    //_keyEdit->setText( "" );
-    //QPushButton* _keyButton = new QPushButton( i18n( "Change" ),
-    //                                           general_group_keybind );
-    //connect( _keyButton, SIGNAL( clicked()), this, SLOT( keyButtonPressed()));
     _keyEdit = new KKeySequenceWidget(general_group_keybind);
     QLabel *l = new QLabel( i18n("Current shortcut &key:"), general_group_keybind);
     l->setBuddy( _keyEdit );
@@ -248,10 +242,9 @@ BasicTab::BasicTab( QWidget *parent )
     connect( _keyEdit, SIGNAL(keySequenceChanged(const QKeySequence&)),
              this, SLOT(slotCapturedKeySequence(const QKeySequence&)));
     grid_keybind->addWidget(_keyEdit, 0, 1);
-    //grid_keybind->addWidget(_keyButton, 0, 2 );
 
     if (!KHotKeys::present())
-       general_group_keybind->hide();
+        general_group_keybind->hide();
 
     slotDisableAction();
 }
