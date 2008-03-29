@@ -49,6 +49,7 @@ TabBar::TabBar(QWidget *parent)
     connect(&m_tabSwitchTimer, SIGNAL(timeout()), this, SLOT(switchToHoveredTab()));
     setMouseTracking(true);
     setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred );
+    setUsesScrollButtons( false );
 }
 
 void TabBar::setShape( Shape shape )
