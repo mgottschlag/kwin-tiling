@@ -19,6 +19,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QRegExp>
+#include <QFileInfo>
 
 #include <kdebug.h>
 #include <kglobal.h>
@@ -190,7 +191,7 @@ static QString entryToDirId(const QString &path)
 {
    // See also KDesktopFile::locateLocal
    QString local;
-   if (path.startsWith('/'))
+   if (QFileInfo(path).isAbsolute())
    {
       // XDG Desktop menu items come with absolute paths, we need to
       // extract their relative path and then build a local path.
