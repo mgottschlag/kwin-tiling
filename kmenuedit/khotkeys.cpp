@@ -21,8 +21,10 @@
 #include <klibloader.h>
 #include "khotkeys.h"
 
+#ifndef Q_WS_WIN
 extern "C"
 {
+#endif
     static void (*khotkeys_init_2)( void );
     static void (*khotkeys_cleanup_2)( void );
     static QString (*khotkeys_get_menu_entry_shortcut_2)( const QString& entry_P );
@@ -32,7 +34,9 @@ extern "C"
     static void (*khotkeys_menu_entry_deleted_2)( const QString& entry_P );
     static QStringList (*khotkeys_get_all_shortcuts_2)( );
     static KService::Ptr (*khotkeys_find_menu_entry_2)( const QString& shortcut_P );
+#ifndef Q_WS_WIN
 }
+#endif
 
 static bool khotkeys_present = false;
 static bool khotkeys_inited = false;
