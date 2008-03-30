@@ -186,8 +186,7 @@ TreeView::TreeView( KActionCollection *ac, QWidget *parent, const char *name )
     // connect actions
     connect(m_ac->action("newitem"), SIGNAL(activated()), SLOT(newitem()));
     connect(m_ac->action("newsubmenu"), SIGNAL(activated()), SLOT(newsubmenu()));
-    if (m_ac->action("newsep"))
-        connect(m_ac->action("newsep"), SIGNAL(activated()), SLOT(newsep()));
+    connect(m_ac->action("newsep"), SIGNAL(activated()), SLOT(newsep()));
 
     m_menuFile = new MenuFile( KStandardDirs::locateLocal("xdgconf-menu", "applications-kmenuedit.menu"));
     m_rootFolder = new MenuFolderInfo;
