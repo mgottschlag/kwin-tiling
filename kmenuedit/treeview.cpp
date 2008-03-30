@@ -1393,6 +1393,9 @@ void TreeView::del(TreeItem *item, bool deleteInfo)
     // is file a .directory or a .desktop file
     if(item->isDirectory())
     {
+        if ( KMessageBox::warningYesNo(this, i18n("All submenus of '%1' will be removed. Do you want to continue?", item->name() ) ) == KMessageBox::No )
+             return;
+
         MenuFolderInfo *folderInfo = item->folderInfo();
 
         // Remove MenuFolderInfo
