@@ -111,9 +111,9 @@ QSizeF LockOut::contentSizeHint() const
             break;
         case Plasma::Horizontal:
             if (sizeHint.height() >= MINSIZE) {
-                sizeHint.setHeight(sizeHint.height() / 2);
+                sizeHint.setWidth(sizeHint.height() / 2);
             } else {
-                sizeHint.setHeight(sizeHint.height() * 2);
+                sizeHint.setWidth(sizeHint.height() * 2);
             }
             break;
         default:
