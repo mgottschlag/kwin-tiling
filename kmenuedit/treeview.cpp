@@ -55,6 +55,7 @@
 #include <kstandarddirs.h>
 #include <k3multipledrag.h>
 #include <k3urldrag.h>
+#include <kio/netaccess.h>
 
 #include "treeview.h"
 #include "treeview.moc"
@@ -1589,11 +1590,30 @@ void TreeView::findServiceShortcut(const KShortcut&cut, KService::Ptr &service)
 
 void TreeView::restoreMenuSystem()
 {
+    if ( KMessageBox::warningYesNo( this, i18n( "Do you want to restore system menu? You will remove all custom menu." ) )==KMessageBox::No )
+        return;
+    QString kmenueditfile = KStandardDirs::locateLocal("xdgconf-menu", "applications-kmenuedit.menu");
+    if ( QFile::exists( kmenueditfile ) )
+    {
+        if ( !QFile::remove( kmenueditfile ) )
+            qWarning()<<"Could not delete "<<kmenueditfile;
+    }
+
+    QString xdgdir = KGlobal::dirs()->KStandardDirs::localxdgdatadir();
+    if ( !KIO::NetAccess::del( xdgdir + "/applications" , this) )
+        qWarning()<<"Could not delete dir :"<<xdgdir;
+    if ( !KIO::NetAccess::del( xdgdir +"/desktop-directories" , this) )
+        qWarning()<<"Could not delete dir :"<<xdgdir;
+    KBuildSycocaProgressDialog::rebuildKSycoca(this);
     m_rmb = 0;
     m_clipboard = 0;
     m_clipboardFolderInfo = 0;
     m_clipboardEntryInfo = 0;
     m_layoutDirty = false;
+    m_newMenuIds.clear();
+    m_newDirectoryList.clear();
+    m_menuFile->restoreMenuSystem(kmenueditfile);
     clear();
-    m_menuFile->restoreMenuSystem();
+    readMenuFolderInfo();
+    fill();
 }

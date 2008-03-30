@@ -549,10 +549,11 @@ bool MenuFile::dirty()
    return (m_actionList.count() != 0) || m_bDirty;
 }
 
-void MenuFile::restoreMenuSystem()
+void MenuFile::restoreMenuSystem( const QString &filename)
 {
     m_error.clear();
-    m_fileName = KStandardDirs::locateLocal("xdgconf-menu", "applications-kmenuedit.menu");
+
+    m_fileName = filename;
     m_doc.clear();
     m_bDirty = false;
     Q_FOREACH(ActionAtom *atom, m_actionList) {

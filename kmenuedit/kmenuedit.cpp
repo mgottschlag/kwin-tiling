@@ -88,6 +88,11 @@ void KMenuEdit::setupActions()
     action->setIconText( i18n("Spellchecker") );
     actionCollection()->addAction( "setup_spellchecker", action );
     connect( action, SIGNAL(triggered(bool) ), SLOT(slotSpellcheckConfig()) );
+
+    //action = new KAction( i18n("Restore to system menu"), this );
+    //actionCollection()->addAction( "restore_system_menu", action );
+    //connect( action, SIGNAL(triggered(bool) ), SLOT(slotRestoreMenu()) );
+
 }
 
 void KMenuEdit::slotSpellcheckConfig()
@@ -199,4 +204,9 @@ void KMenuEdit::slotConfigureToolbars()
 {
     KEditToolBar dlg( factory() );
     dlg.exec();
+}
+
+void KMenuEdit::slotRestoreMenu()
+{
+    m_tree->restoreMenuSystem();
 }

@@ -35,7 +35,7 @@ public:
    void create();
    QString error() const { return m_error; } // Returns the last error message
 
-    void restoreMenuSystem();
+    void restoreMenuSystem(const QString &);
 
    enum ActionType {
        ADD_ENTRY = 0,

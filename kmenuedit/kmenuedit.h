@@ -49,6 +49,7 @@ protected Q_SLOTS:
     void slotChangeView();
     void slotConfigureToolbars();
     void slotSpellcheckConfig();
+    void slotRestoreMenu();
 
 protected:
     TreeView           *m_tree;

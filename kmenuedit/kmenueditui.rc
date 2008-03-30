@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="kmenuedit" version="7">
+<kpartgui name="kmenuedit" version="8">
 
 <MenuBar>
 
@@ -19,6 +19,8 @@
  <Action name="edit_paste"/>
  <Separator/>
  <Action name="delete"/>
+ <Separator/>
+ <Action name="restore_system_menu"/>
 </Menu>
 
 <Menu name="settings">
