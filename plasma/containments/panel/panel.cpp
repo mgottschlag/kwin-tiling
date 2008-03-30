@@ -354,8 +354,8 @@ void Panel::applyConfig()
 
     if (newLoc != location()) {
         m_currentSize = newSize;
-        setLocation(newLoc);
         setFormFactorFromLocation(newLoc);
+        setLocation(newLoc);
     } else if (newSize != m_currentSize) {
         updateSize(newSize);
     }
