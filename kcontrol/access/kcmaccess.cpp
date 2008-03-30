@@ -570,7 +570,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
 					  "Sticky keys: Press Shift key 5 consecutive times\n"
 					  "Slow keys: Hold down Shift for 8 seconds", shortcut));
 
-  timeout = new QCheckBox(i18n("Turn sticky keys and slow keys off after a certain time of inactivity"), grp);
+  timeout = new QCheckBox(i18n("Turn sticky keys and slow keys off after a certain period of inactivity."), grp);
   vvbox->addWidget(timeout);
 
   hbox = new QHBoxLayout();
@@ -597,7 +597,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
 
   gestureConfirmation = new QCheckBox(i18n("Show a confirmation dialog whenever a keyboard accessibility feature is turned on or off"), grp);
   vvbox->addWidget(gestureConfirmation);
-  gestureConfirmation->setWhatsThis( i18n("If this option is checked, KDE will show a confirmation dialog whenever a keyboard accessibility feature is turned on or off.\nBe carefull to know what you are doing if you uncheck it as then the keyboard accessibility settings will always be applied without confirmation.") );
+  gestureConfirmation->setWhatsThis( i18n("If this option is checked, KDE will show a confirmation dialog whenever a keyboard accessibility feature is turned on or off.\nEnsure you know what you are doing if you uncheck it, as the keyboard accessibility settings will then always be applied without confirmation.") );
 
   kNotifyAccessX = new QCheckBox(i18n("Use KDE's system notification mechanism whenever a keyboard accessibility feature is turned on or off"), grp);
   vvbox->addWidget(kNotifyAccessX);
