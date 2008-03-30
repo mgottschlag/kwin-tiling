@@ -336,10 +336,10 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
 
     if (!entryInfo)
     {
-       _nameEdit->setText(QString());
-       _descriptionEdit->setText(QString());
-       _commentEdit->setText(QString());
-       _iconButton->setIcon(QString());
+       _nameEdit->clear();
+       _descriptionEdit->clear();
+       _commentEdit->clear();
+       _iconButton->setIcon( QString() );
 
        // key binding part
        _keyEdit->clearKeySequence();
