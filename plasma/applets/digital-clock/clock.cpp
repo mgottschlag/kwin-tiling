@@ -29,6 +29,7 @@
 #include <QtCore/QTimeLine>
 #include <QtGui/QGraphicsView>
 #include <QtGui/QGraphicsSceneMouseEvent>
+#include <QtCore/QDate>
 
 #include <KDebug>
 #include <KLocale>
@@ -159,6 +160,7 @@ void Clock::showCalendar(QGraphicsSceneMouseEvent *event)
         m_calendar->hide();
     } else {
         kDebug();
+        m_calendarUi.kdatepicker->setDate(QDate::currentDate());
         m_calendar->move(popupPosition(m_calendar->sizeHint()));
         m_calendar->show();
     }
