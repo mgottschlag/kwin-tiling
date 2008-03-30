@@ -57,6 +57,7 @@ class Clock : public Plasma::Applet
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
         void showConfigurationInterface();
+        void updateColors();
 
     protected slots:
         void configAccepted();
@@ -72,6 +73,7 @@ class Clock : public Plasma::Applet
 
         ClockStyle m_clockStyle;
         QFont m_plainClockFont;
+        bool m_useCustomColor;
         QColor m_plainClockColor;
         bool m_plainClockFontBold;
         bool m_plainClockFontItalic;

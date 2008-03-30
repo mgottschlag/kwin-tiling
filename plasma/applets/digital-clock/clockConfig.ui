@@ -57,14 +57,17 @@
         </widget>
        </item>
        <item row="3" column="0" >
-        <widget class="QLabel" name="plainClockColorLabel" >
+        <widget class="QCheckBox" name="useCustomColor" >
          <property name="text" >
-          <string>Plain clock color:</string>
+          <string>Custom color</string>
          </property>
         </widget>
        </item>
        <item row="3" column="1" >
         <widget class="KColorCombo" name="plainClockColor" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
         </widget>
        </item>
        <item row="4" column="0" colspan="2" >
@@ -186,6 +189,12 @@
  </customwidgets>
  <resources/>
  <connections>
+  <connection>
+   <sender>useCustomColor</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>plainClockColor</receiver>
+   <slot>setEnabled(bool)</slot>
+  </connection>
   <connection>
    <sender>showDate</sender>
    <signal>toggled(bool)</signal>

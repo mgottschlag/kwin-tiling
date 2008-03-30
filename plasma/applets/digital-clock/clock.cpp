@@ -48,6 +48,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_clockStyle(PlainClock),
       m_plainClockFont(KGlobalSettings::generalFont()),
+      m_useCustomColor(false),
       m_plainClockColor(),
       m_plainClockFontBold(false),
       m_plainClockFontItalic(false),
@@ -79,10 +80,13 @@ void Clock::init()
     m_showDay = cg.readEntry("showDay", true);
 
     m_showSeconds = cg.readEntry("showSeconds", false);
-    m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color();
     m_plainClockFont = cg.readEntry("plainClockFont", m_plainClockFont);
-    m_plainClockColor = cg.readEntry("plainClockColor", m_plainClockColor);
-
+    m_useCustomColor = cg.readEntry("useCustomColor", false);
+    if (m_useCustomColor) {
+        m_plainClockColor = cg.readEntry("plainClockColor", m_plainClockColor);
+    } else {
+        m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color();
+    }
     m_plainClockFontBold = cg.readEntry("plainClockFontBold", true);
     m_plainClockFontItalic = cg.readEntry("plainClockFontItalic", false);
     m_plainClockFont.setBold(m_plainClockFontBold);
@@ -95,6 +99,7 @@ void Clock::init()
     m_toolTipIcon = KIcon("chronometer").pixmap(IconSize(KIconLoader::Desktop));
 
     dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
+    connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(updateColors()));      
 }
 
 Qt::Orientations Clock::expandingDirections() const
@@ -189,6 +194,7 @@ void Clock::showConfigurationInterface()
     ui.plainClockFontBold->setChecked(m_plainClockFontBold);
     ui.plainClockFontItalic->setChecked(m_plainClockFontItalic);
     ui.plainClockFont->setCurrentFont(m_plainClockFont);
+    ui.useCustomColor->setChecked(m_useCustomColor);
     ui.plainClockColor->setColor(m_plainClockColor);
     ui.timeZones->setSelected(m_timezone, true);
     ui.timeZones->setEnabled(m_timezone != "Local");
@@ -248,7 +254,12 @@ void Clock::configAccepted()
     }
 
     m_plainClockFont = ui.plainClockFont->currentFont();
-    m_plainClockColor = ui.plainClockColor->color();
+    m_useCustomColor = ui.useCustomColor->checkState() == Qt::Checked;
+    if (m_useCustomColor) {
+        m_plainClockColor = ui.plainClockColor->color();
+    } else {
+        m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color();
+    }
     m_plainClockFontBold = ui.plainClockFontBold->checkState() == Qt::Checked;
     m_plainClockFontItalic = ui.plainClockFontItalic->checkState() == Qt::Checked;
 
@@ -257,6 +268,7 @@ void Clock::configAccepted()
 
     cg.writeEntry("plainClock", m_clockStyle == PlainClock);
     cg.writeEntry("plainClockFont", m_plainClockFont);
+    cg.writeEntry("useCustomColor", m_useCustomColor);
     cg.writeEntry("plainClockColor", m_plainClockColor);
     cg.writeEntry("plainClockFontBold", m_plainClockFontBold);
     cg.writeEntry("plainClockFontItalic", m_plainClockFontItalic);
@@ -394,4 +406,11 @@ Plasma::IntervalAlignment Clock::intervalAlignment() const
     return m_showSeconds ? Plasma::NoAlignment : Plasma::AlignToMinute;
 }
 
+void Clock::updateColors()
+{
+    if (!m_useCustomColor) {
+        m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color();
+        update();
+    }
+}
 #include "clock.moc"
