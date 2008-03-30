@@ -790,12 +790,12 @@ void KAccessApp::notifyChanges() {
    unsigned int disabled = features & ~requestedFeatures;
 
    if (enabled & XkbSlowKeysMask)
-      KNotification::event ("slowkeys", i18n("Slow keys has been enabled. From now on, you need to press each key a certain time before it gets accepted."));
+      KNotification::event ("slowkeys", i18n("Slow keys has been enabled. From now on, you need to press each key for a certain length of time before it gets accepted."));
    else if (disabled & XkbSlowKeysMask)
       KNotification::event ("slowkeys", i18n("Slow keys has been disabled."));
 
    if (enabled & XkbBounceKeysMask)
-      KNotification::event ("bouncekeys", i18n("Bounce keys has been enabled. From now on, each key will be blocked a certain time after it was used."));
+      KNotification::event ("bouncekeys", i18n("Bounce keys has been enabled. From now on, each key will be blocked for a certain length of time after it was used."));
    else if (disabled & XkbBounceKeysMask)
       KNotification::event ("bouncekeys", i18n("Bounce keys has been disabled."));
 
