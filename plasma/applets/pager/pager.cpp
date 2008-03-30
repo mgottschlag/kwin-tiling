@@ -164,8 +164,8 @@ void Pager::showConfigurationInterface()
 
     }
     ui.displayedTextComboBox->clear();
-    ui.displayedTextComboBox->addItem(i18n("Desktop number"));
-    ui.displayedTextComboBox->addItem(i18n("Desktop name"));
+    ui.displayedTextComboBox->addItem(i18n("Desktop Number"));
+    ui.displayedTextComboBox->addItem(i18n("Desktop Name"));
     ui.displayedTextComboBox->addItem(i18n("None"));
     ui.displayedTextComboBox->setCurrentIndex((int)m_displayedText);
 

@@ -85,7 +85,7 @@ QList<QAction*> Panel::contextActions()
         m_configureAction->setIcon(KIcon("configure"));
         connect(m_configureAction, SIGNAL(triggered()), this, SLOT(configure()));
 
-        m_removeAction = new QAction(i18n("Remove this panel"), this);
+        m_removeAction = new QAction(i18n("Remove this Panel"), this);
         m_removeAction->setIcon(KIcon("edit-delete"));
         connect(m_removeAction, SIGNAL(triggered()), this, SLOT(remove()));
         m_removeAction->setVisible(!locked);
