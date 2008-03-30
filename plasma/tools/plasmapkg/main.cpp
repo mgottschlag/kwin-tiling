@@ -70,7 +70,7 @@ int main(int argc, char **argv)
     options.add("r");
     options.add("remove <name>", ki18n("Remove the package named <name>"));
     options.add("p");
-    options.add("pakcageroot <path>", ki18n("Absolute path to the package root. If not supplied, then the standard data directories for this KDE session will be searched instead."));
+    options.add("packageroot <path>", ki18n("Absolute path to the package root. If not supplied, then the standard data directories for this KDE session will be searched instead."));
     KCmdLineArgs::addCmdLineOptions( options );
 
     //KApplication app;
