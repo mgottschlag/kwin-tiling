@@ -33,7 +33,7 @@ class KMenuEdit : public KXmlGuiWindow
     Q_OBJECT
 
 public:
-    KMenuEdit( bool controlCenter);
+    KMenuEdit();
     ~KMenuEdit();
 
     void selectMenu(const QString &menu) { m_tree->selectMenu(menu); }
@@ -58,7 +58,6 @@ protected:
     QAction *m_actionDelete;
     KToggleAction *m_actionShowHidden;
     bool m_showHidden;
-    bool m_controlCenter;
 };
 
 #endif

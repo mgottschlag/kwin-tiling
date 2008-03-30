@@ -40,8 +40,8 @@
 #include "kmenuedit.h"
 #include "kmenuedit.moc"
 
-KMenuEdit::KMenuEdit (bool controlCenter)
-  : KXmlGuiWindow (0), m_tree(0), m_basicTab(0), m_splitter(0), m_controlCenter(controlCenter)
+KMenuEdit::KMenuEdit ()
+  : KXmlGuiWindow (0), m_tree(0), m_basicTab(0), m_splitter(0)
 {
 #if 0
     m_showHidden = config->readEntry("ShowHidden", QVariant(false)).toBool();
@@ -71,12 +71,9 @@ void KMenuEdit::setupActions()
     action->setIcon(KIcon("document-new")) ;
     action->setText(i18n("New &Item..."));
     action->setShortcuts(KStandardShortcut::openNew());
-    if (!m_controlCenter)
-    {
-       QAction *action = actionCollection()->addAction("newsep");
-       action->setIcon(KIcon("menu_new_sep"));
-       action->setText(i18n("New S&eparator"));
-    }
+    action = actionCollection()->addAction("newsep");
+    action->setIcon(KIcon("menu_new_sep"));
+    action->setText(i18n("New S&eparator"));
 
     m_actionDelete = 0;
 
@@ -104,7 +101,7 @@ void KMenuEdit::setupView()
 {
     m_splitter = new QSplitter;
     m_splitter->setOrientation(Qt::Horizontal);
-    m_tree = new TreeView(m_controlCenter, actionCollection());
+    m_tree = new TreeView(actionCollection());
     m_splitter->addWidget(m_tree);
     m_basicTab = new BasicTab;
     m_splitter->addWidget(m_basicTab);
@@ -161,10 +158,7 @@ void KMenuEdit::slotChangeView()
 
     if (!m_splitter)
        setupView();
-    if (m_controlCenter)
-       setupGUI(KXmlGuiWindow::ToolBar|Keys|Save|Create, "kcontroleditui.rc");
-    else
-       setupGUI(KXmlGuiWindow::ToolBar|Keys|Save|Create, "kmenueditui.rc");
+    setupGUI(KXmlGuiWindow::ToolBar|Keys|Save|Create, "kmenueditui.rc");
 
     m_tree->setViewMode(m_showHidden);
 }
@@ -181,22 +175,11 @@ bool KMenuEdit::queryClose()
 
 
     int result;
-    if (m_controlCenter)
-    {
-       result = KMessageBox::warningYesNoCancel(this,
-                    i18n("You have made changes to the Control Center.\n"
+    result = KMessageBox::warningYesNoCancel(this,
+                                             i18n("You have made changes to the menu.\n"
                          "Do you want to save the changes or discard them?"),
-                    i18n("Save Control Center Changes?"),
-                    KStandardGuiItem::save(), KStandardGuiItem::discard() );
-    }
-    else
-    {
-       result = KMessageBox::warningYesNoCancel(this,
-                    i18n("You have made changes to the menu.\n"
-                         "Do you want to save the changes or discard them?"),
-                    i18n("Save Menu Changes?"),
-                    KStandardGuiItem::save(), KStandardGuiItem::discard() );
-    }
+                                             i18n("Save Menu Changes?"),
+                                             KStandardGuiItem::save(), KStandardGuiItem::discard() );
 
     switch(result)
     {

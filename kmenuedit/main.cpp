@@ -1,6 +1,7 @@
 /*
  *   Copyright (C) 2000 Matthias Elter <elter@kde.org>
  *   Copyright (C) 2001-2002 Raffaele Sandrini <sandrini@kde.org)
+ *   Copyright (C) 2008 Montel Laurent <montel@kde.org)
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@
 #include "khotkeys.h"
 
 static const char description[] = I18N_NOOP("KDE menu editor");
-static const char version[] = "0.7";
+static const char version[] = "0.8";
 
 static KMenuEdit *menuEdit = 0;
 
@@ -38,7 +39,7 @@ class KMenuApplication : public KUniqueApplication
 public:
    KMenuApplication() { }
    virtual ~KMenuApplication() { KHotKeys::cleanup(); }
-   
+
    virtual int newInstance()
    {
       KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
@@ -64,6 +65,7 @@ extern "C" int KDE_EXPORT kdemain( int argc, char **argv )
     aboutData.addAuthor(ki18n("Waldo Bastian"), ki18n("Maintainer"), "bastian@kde.org");
     aboutData.addAuthor(ki18n("Raffaele Sandrini"), ki18n("Previous Maintainer"), "sandrini@kde.org");
     aboutData.addAuthor(ki18n("Matthias Elter"), ki18n("Original Author"), "elter@kde.org");
+    aboutData.addAuthor(ki18n("Montel Laurent"), KLocalizedString(), "montel@kde.org");
 
     KCmdLineArgs::init( argc, argv, &aboutData );
     KUniqueApplication::addCmdLineOptions();
@@ -73,12 +75,12 @@ extern "C" int KDE_EXPORT kdemain( int argc, char **argv )
     options.add("+[menu-id]", ki18n("Menu entry to pre-select"));
     KCmdLineArgs::addCmdLineOptions( options );
 
-    if (!KUniqueApplication::start()) 
+    if (!KUniqueApplication::start())
 	return 1;
 
     KMenuApplication app;
 
-    menuEdit = new KMenuEdit(false);
+    menuEdit = new KMenuEdit();
     menuEdit->show();
 
     return  app.exec();

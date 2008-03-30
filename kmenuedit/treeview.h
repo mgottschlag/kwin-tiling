@@ -93,7 +93,7 @@ class TreeView : public K3ListView
     friend class TreeItem;
     Q_OBJECT
 public:
-    TreeView(bool controlCenter, KActionCollection *ac, QWidget *parent=0, const char *name=0);
+    TreeView(KActionCollection *ac, QWidget *parent=0, const char *name=0);
     ~TreeView();
 
     void readMenuFolderInfo(MenuFolderInfo *folderInfo=0, KServiceGroup::Ptr folder=KServiceGroup::Ptr(), const QString &prefix=QString());
@@ -104,7 +104,7 @@ public:
 
     void selectMenu(const QString &menu);
     void selectMenuEntry(const QString &menuEntry);
-    
+
 public Q_SLOTS:
     void currentChanged(MenuFolderInfo *folderInfo);
     void currentChanged(MenuEntryInfo *entryInfo);
@@ -144,7 +144,7 @@ protected:
     void copy( bool moving );
 
     void cleanupClipboard();
-    
+
     bool isLayoutDirty();
     void setLayoutDirty(TreeItem *);
     void saveLayout();
@@ -167,7 +167,6 @@ private:
     TreeItem          *m_dragItem;
     QString            m_dragPath;
     bool               m_showHidden;
-    bool               m_controlCenter;
     MenuFile          *m_menuFile;
     MenuFolderInfo    *m_rootFolder;
     MenuSeparatorInfo *m_separator;
