@@ -105,6 +105,8 @@ public:
     void selectMenu(const QString &menu);
     void selectMenuEntry(const QString &menuEntry);
 
+    void restoreMenuSystem();
+
 public Q_SLOTS:
     void currentChanged(MenuFolderInfo *folderInfo);
     void currentChanged(MenuEntryInfo *entryInfo);

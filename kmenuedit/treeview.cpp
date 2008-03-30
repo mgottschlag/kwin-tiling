@@ -1587,3 +1587,13 @@ void TreeView::findServiceShortcut(const KShortcut&cut, KService::Ptr &service)
     service = m_rootFolder->findServiceShortcut(cut);
 }
 
+void TreeView::restoreMenuSystem()
+{
+    m_rmb = 0;
+    m_clipboard = 0;
+    m_clipboardFolderInfo = 0;
+    m_clipboardEntryInfo = 0;
+    m_layoutDirty = false;
+    clear();
+    m_menuFile->restoreMenuSystem();
+}

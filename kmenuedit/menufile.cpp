@@ -548,3 +548,18 @@ bool MenuFile::dirty()
 {
    return (m_actionList.count() != 0) || m_bDirty;
 }
+
+void MenuFile::restoreMenuSystem()
+{
+    m_error.clear();
+    m_fileName = KStandardDirs::locateLocal("xdgconf-menu", "applications-kmenuedit.menu");
+    m_doc.clear();
+    m_bDirty = false;
+    Q_FOREACH(ActionAtom *atom, m_actionList) {
+        delete atom;
+    }
+    m_actionList.clear();
+
+    m_removedEntries.clear();
+    create();
+}
