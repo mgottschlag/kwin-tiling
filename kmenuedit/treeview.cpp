@@ -2,6 +2,7 @@
  *   Copyright (C) 2000 Matthias Elter <elter@kde.org>
  *   Copyright (C) 2001-2002 Raffaele Sandrini <sandrini@kde.org>
  *   Copyright (C) 2003 Waldo Bastian <bastian@kde.org>
+ *   Copyright (C) 2008 Laurent Montel <montel@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -1604,16 +1605,27 @@ void TreeView::restoreMenuSystem()
         qWarning()<<"Could not delete dir :"<<xdgdir;
     if ( !KIO::NetAccess::del( xdgdir +"/desktop-directories" , this) )
         qWarning()<<"Could not delete dir :"<<xdgdir;
+
     KBuildSycocaProgressDialog::rebuildKSycoca(this);
+
+    clear();
+    cleanupClipboard();
     m_rmb = 0;
-    m_clipboard = 0;
-    m_clipboardFolderInfo = 0;
-    m_clipboardEntryInfo = 0;
+    delete m_rootFolder;
+    delete m_separator;
+
     m_layoutDirty = false;
     m_newMenuIds.clear();
     m_newDirectoryList.clear();
     m_menuFile->restoreMenuSystem(kmenueditfile);
-    clear();
+
+    m_rootFolder = new MenuFolderInfo;
+    m_separator = new MenuSeparatorInfo;
+
     readMenuFolderInfo();
     fill();
+
+    QDBusMessage message =
+        QDBusMessage::createSignal("/kickoff", "org.kde.plasma", "reloadMenu");
+    QDBusConnection::sessionBus().send(message);
 }

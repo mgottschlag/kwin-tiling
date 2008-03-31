@@ -2,6 +2,7 @@
  *   Copyright (C) 2000 Matthias Elter <elter@kde.org>
  *   Copyright (C) 2001-2002 Raffaele Sandrini <sandrini@kde.org>
  *   Copyright (C) 2003 Waldo Bastian <bastian@kde.org>
+ *   Copyright (C) 2008 Laurent Montel <montel@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by

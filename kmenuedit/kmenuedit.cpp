@@ -89,9 +89,9 @@ void KMenuEdit::setupActions()
     actionCollection()->addAction( "setup_spellchecker", action );
     connect( action, SIGNAL(triggered(bool) ), SLOT(slotSpellcheckConfig()) );
 
-    //action = new KAction( i18n("Restore to system menu"), this );
-    //actionCollection()->addAction( "restore_system_menu", action );
-    //connect( action, SIGNAL(triggered(bool) ), SLOT(slotRestoreMenu()) );
+    action = new KAction( i18n("Restore to system menu"), this );
+    actionCollection()->addAction( "restore_system_menu", action );
+    connect( action, SIGNAL(triggered(bool) ), SLOT(slotRestoreMenu()) );
 
 }
 
