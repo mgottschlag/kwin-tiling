@@ -100,7 +100,12 @@ void Autostart::slotItemClicked( QTreeWidgetItem *item, int col)
             bool disable = ( item->checkState( col ) == Qt::Unchecked );
             KDesktopFile kc(entry->fileName().path());
             KConfigGroup grp = kc.desktopGroup();
-            grp.writeEntry("Hidden", disable);
+            if ( grp.hasKey( "Hidden" ) && !disable)
+            {
+                grp.deleteEntry( "Hidden" );
+            }
+            else
+                grp.writeEntry("Hidden", disable);
             kc.sync();
             if ( disable )
                 item->setText( COL_STATUS, i18n( "Disabled" ) );
