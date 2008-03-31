@@ -1624,6 +1624,7 @@ void TreeView::restoreMenuSystem()
     readMenuFolderInfo();
     fill();
     sendReloadMenu();
+    emit disableAction();
 }
 
 void TreeView::sendReloadMenu()
