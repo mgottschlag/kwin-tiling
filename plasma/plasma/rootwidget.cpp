@@ -107,9 +107,18 @@ void RootWidget::adjustSize(int screen)
     QDesktopWidget *desktop = QApplication::desktop();
     setGeometry(desktop->geometry());
     DesktopView *view = viewForScreen(screen);
-
+    
     if (view) {
-        view->adjustSize();
+        if (screen < desktop->numScreens()) {
+            view->adjustSize();
+        } else {
+            // the screen was removed, so we'll destroy the
+            // corresponding view
+            kDebug() << "removing the view for screen" << screen;
+            view->setContainment(0);
+            m_desktops.removeAll(view);
+            delete view;
+        }
     }
 }
 
@@ -138,6 +147,7 @@ void RootWidget::createDesktopView(Plasma::Containment *containment)
     DesktopView *view = new DesktopView(containment, this);
     view->setGeometry(QApplication::desktop()->screenGeometry(containment->screen()));
     m_desktops.append(view);
+    view->show();
 }
 
 void RootWidget::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment)

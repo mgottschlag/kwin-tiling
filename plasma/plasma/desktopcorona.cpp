@@ -63,19 +63,17 @@ void DesktopCorona::checkScreens()
             c->setScreen(i);
             c->setFormFactor(Plasma::Planar);
             c->flushUpdatedConstraints();
+        } else if (i >= m_numScreens) {
+            // now ensure that if our screen count changed we actually get views
+            // for them, even if the Containment already existed for that screen
+            // so we "lie" and emit a containmentAdded signal for every new screen
+            // regardless of whether it actually already existed, or just got added
+            // and therefore had this signal emitted. plasma can handle such
+            // multiple emissions of the signal, and this is simply the most
+            // straightforward way of accomplishing this
+            kDebug() << "Notifying of new screen: " << i;
+            emit containmentAdded(containmentForScreen(i));
         }
-    }
-
-    // now ensure that if our screen count changed we actually get views
-    // for them, even if the Containment already existed for that screen
-    // so we "lie" and emit a containmentAdded signal for every new screen
-    // regardless of whether it actually already existed, or just got added
-    // and therefore had this signal emitted. plasma can handle such
-    // multiple emissions of the signal, and this is simply the most
-    // straightforward way of accomplishing this
-    for (int i = m_numScreens; i < numScreens; ++i) {
-        kDebug() << "Notifying of new screen: " << i;
-        emit containmentAdded(containmentForScreen(i));
     }
 
     m_numScreens = numScreens;
@@ -131,18 +129,19 @@ void DesktopCorona::loadDefaultSetup()
 
 void DesktopCorona::screenResized(int screen)
 {
-    bool desktopFound = false;
-    foreach (Plasma::Containment *c, containments()) {
-        if (c->screen() == screen) {
-            // trigger a relayout
-            c->setScreen(screen);
-            desktopFound = desktopFound ||
-                           c->containmentType() == Plasma::Containment::DesktopContainment ||
-                           c->containmentType() == Plasma::Containment::CustomContainment;
+    int numScreens = QApplication::desktop()->numScreens();
+    if (screen < numScreens) {
+        foreach (Plasma::Containment *c, containments()) {
+            if (c->screen() == screen) {
+                // trigger a relayout
+                c->setScreen(screen);
+            }
         }
+    
+        checkScreens(); // ensure we have containments for every screen
+    } else {
+        m_numScreens = numScreens;
     }
-
-    checkScreens(); // ensure we have containments for every screen
 }
 
 #include "desktopcorona.moc"
