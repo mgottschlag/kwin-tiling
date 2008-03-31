@@ -1609,7 +1609,6 @@ void TreeView::restoreMenuSystem()
 
     clear();
     cleanupClipboard();
-    m_rmb = 0;
     delete m_rootFolder;
     delete m_separator;
 
