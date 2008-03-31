@@ -43,6 +43,7 @@ protected:
     void keyPressEvent(QKeyEvent *event);
     void showEvent(QShowEvent *event);
     void paintEvent(QPaintEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event);
 
 public slots:
     void toggleVisibility();
@@ -53,7 +54,6 @@ protected slots:
     void hideView();
     void activeWindowChanged(WId id);
     void suppressShowTimeout();
-    bool eventFilter(QObject *watched, QEvent *event);
 
 private:
     Plasma::AppletBrowser *m_appletBrowser;
