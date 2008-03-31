@@ -20,6 +20,7 @@
 #define KHOTKEYSMODEL_H
 
 #include "libkhotkeysfwd.h"
+#include "settings.h"
 
 #include <QtCore/QAbstractItemModel>
 
@@ -49,7 +50,7 @@ class KHotkeysModel : public QAbstractItemModel
      *
      * @param 
      */
-    KHotkeysModel( KHotKeys::ActionDataGroup *group, QObject *parent = 0 );
+    KHotkeysModel( QObject *parent = 0 );
 
     /**
      * Destructor
@@ -88,9 +89,22 @@ class KHotkeysModel : public QAbstractItemModel
      */
     KHotKeys::ActionDataGroup *indexToActionDataGroup( const QModelIndex &index ) const;
 
+    /**
+     * Load the settings from the file
+     */
+    void load();
+
+    /**
+     * Save the settings to the file
+     */
+    void save();
+
+    void emitChanged( KHotKeys::ActionDataBase *item );
+
   private:
 
 
+    KHotKeys::Settings _settings;
     KHotKeys::ActionDataGroup *_actions;
 };
 

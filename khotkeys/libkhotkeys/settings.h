@@ -56,7 +56,7 @@ public:
     /**
      * Write the settings.
      */
-    void write_settings( Action_data_group *action_list = 0 );
+    void write_settings();
 
     /**
      * Import settings from \a cfg_P.

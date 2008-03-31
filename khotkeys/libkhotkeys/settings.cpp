@@ -171,6 +171,7 @@ bool Settings::import( KConfig& cfg_P, bool ask_P )
 
 bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportType import_P )
     {
+    setActions(0);
     if( m_actions == NULL )
         m_actions = new Action_data_group( NULL, "should never see", "should never see",
             NULL, Action_data_group::SYSTEM_ROOT, true );
@@ -238,14 +239,9 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
     return true;
     }
 
-void Settings::write_settings( Action_data_group *action_list )
+void Settings::write_settings()
     {
     KConfig cfg( KHOTKEYS_CONFIG_FILE );
-
-    if (action_list==0)
-        {
-        action_list = m_actions;
-        }
 
 // CHECKME    smazat stare sekce ?
     QStringList groups = cfg.groupList();
@@ -257,7 +253,7 @@ void Settings::write_settings( Action_data_group *action_list )
     mainGroup.writeEntry( "Version", 2 ); // now it's version 2 cfg. file
     mainGroup.writeEntry( "AlreadyImported", already_imported );
     KConfigGroup dataGroup( &cfg,  "Data" );
-    int cnt = write_actions_recursively_v2( dataGroup, action_list, true );
+    int cnt = write_actions_recursively_v2( dataGroup, m_actions, true );
     mainGroup.writeEntry( "Autostart", cnt != 0 && !daemon_disabled );
     mainGroup.writeEntry( "Disabled", daemon_disabled );
     KConfigGroup gesturesConfig( &cfg, "Gestures" );

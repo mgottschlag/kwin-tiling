@@ -48,7 +48,6 @@ SimpleActionDataWidget::~SimpleActionDataWidget()
 
 bool SimpleActionDataWidget::isChanged() const
     {
-    kDebug() << "HERE";
     return ( currentTrigger && currentTrigger->isChanged() )
         || ( currentAction && currentAction->isChanged() )
         || Base::isChanged();

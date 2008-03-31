@@ -32,6 +32,10 @@ HotkeysWidgetBase::HotkeysWidgetBase( QWidget *parent )
     connect(
         ui.comment, SIGNAL(textChanged()),
         _changedSignals, SLOT(map()) );
+    _changedSignals->setMapping(ui.enabled, "enabled" );
+    connect(
+        ui.enabled, SIGNAL(stateChanged(int)),
+        _changedSignals, SLOT(map()) );
     _changedSignals->setMapping(ui.comment, "comment" );
     }
 
@@ -43,12 +47,26 @@ HotkeysWidgetBase::~HotkeysWidgetBase()
 
 bool HotkeysWidgetBase::isChanged() const
     {
-    return _data->comment() != ui.comment->toPlainText();
+    return _data->comment() != ui.comment->toPlainText()
+        || _data->enabled() != ui.enabled->isChecked();
     }
 
 
 void HotkeysWidgetBase::doCopyFromObject()
     {
+    ui.enabled->setChecked( _data->enabled() );
+    if ( _data->parent() && !_data->parent()->enabled() )
+        {
+        // The parent is disabled. Don't allow changing the enabled state for
+        // this action because it wouldn't have any effect
+        ui.enabled->setEnabled(false);
+        ui.enabled_comment->setText( i18n( "Parent group is disabled" ) );
+        }
+    else
+        {
+        ui.enabled->setEnabled(true);
+        ui.enabled_comment->setText( QString() );
+        }
     ui.title->setText( title() + " " + _data->name() );
     ui.comment->setText( _data->comment() );
     }
@@ -56,6 +74,7 @@ void HotkeysWidgetBase::doCopyFromObject()
 
 void HotkeysWidgetBase::doCopyToObject()
     {
+    _data->set_enabled( ui.enabled->isChecked() );
     _data->set_comment( ui.comment->toPlainText() );
     }
 

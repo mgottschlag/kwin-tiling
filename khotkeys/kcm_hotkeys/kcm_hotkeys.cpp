@@ -31,7 +31,6 @@
 #include "hotkeys_proxy_model.h"
 #include "hotkeys_tree_view.h"
 #include "khotkeysglobal.h"
-#include "settings.h"
 
 #include <typeinfo>
 
@@ -64,14 +63,8 @@ class KCMHotkeysPrivate
 
         KCMHotkeysPrivate( KCMHotkeys *host );
 
-        //! Load the settings
-        void setModel( KHotkeysModel *model);
-
         // Treeview displaying the shortcuts
         QTreeView *treeView;
-
-        //! The shortcut settings
-        KHotKeys::Settings settings;
 
         /** The model holding the shortcut settings. Beware! There a proxy
          * between us and that model */
@@ -104,6 +97,9 @@ class KCMHotkeysPrivate
          * Save the currentely shown item
          */
         void saveCurrentItem();
+
+        void load();
+        void save();
     };
 
 
@@ -164,7 +160,7 @@ void KCMHotkeys::currentChanged( const QModelIndex &pCurrent, const QModelIndex 
         return;
         }
 
-    // Current and previous differ. Ask user if there are unsave changes
+    // Current and previous differ. Ask user if there are unsaved changes
     if ( !d->maybeShowWidget() )
         {
         return;
@@ -231,101 +227,21 @@ void KCMHotkeys::defaults()
     }
 
 
+void KCMHotkeys::load()
+    {
+    d->load();
+    }
+
+
 void KCMHotkeys::slotChanged()
     {
     emit changed(true);
     }
 
-void KCMHotkeys::load()
-    {
-    // disconnect the signals
-    if (d->treeView->selectionModel())
-        {
-        disconnect(
-            d->treeView->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
-            this, SLOT(currentChanged(QModelIndex,QModelIndex)) );
-        }
-
-    d->settings.setActions(0);
-    d->settings.read_settings(true);
-    KHotkeysModel *model = new KHotkeysModel( d->settings.actions(), this );
-    d->setModel(model);
-
-    connect(
-        model, SIGNAL( rowsRemoved( QModelIndex, int, int )),
-        this,  SLOT( slotChanged() ));
-    connect(
-        model, SIGNAL( rowsInserted( QModelIndex, int, int )),
-        this,  SLOT( slotChanged() ));
-    connect(
-        model, SIGNAL( dataChanged( QModelIndex, QModelIndex )),
-        this,  SLOT( slotChanged() ));
-
-    // reconnect the signals
-    connect(
-        d->treeView->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
-        this, SLOT(currentChanged(QModelIndex,QModelIndex)) );
-
-    }
-
 
 void KCMHotkeys::save()
     {
-    if ( d->current && d->current->isChanged() )
-        {
-        d->current->copyToObject();
-        }
-
-    // Write the settings
-    d->settings.write_settings();
-
-    // Inform kdedkhotkeys demon to reload settings
-    QDBusConnection bus = QDBusConnection::sessionBus();
-    QPointer<QDBusInterface> iface = new QDBusInterface("org.kde.kded", "/KHotKeys",
-                                                        "org.kde.khotkeys", bus, this);
-    if(!iface->isValid())
-        {
-        QDBusError err = iface->lastError();
-        if (err.isValid())
-            {
-            kError() << err.name() << ":" << err.message();
-            }
-        QDBusInterface kdedInterface( "org.kde.kded", "/kded","org.kde.kded" );
-        QDBusReply<bool> reply = kdedInterface.call( "loadModule", "khotkeys"  );
-        err = iface->lastError();
-        if (err.isValid())
-            {
-            kError() << err.name() << ":" << err.message();
-            }
-
-        if ( reply.isValid() )
-            {
-            if ( reply.value() )
-                KMessageBox::error(this, "<qt>" + i18n("Started server <em>service</em>.") + "</qt>");
-            else
-                KMessageBox::error(this, "<qt>" + i18n("Unable to start server <em>service</em>.") + "</qt>");
-            }
-        else
-            {
-            KMessageBox::error(
-                this,
-                "<qt>" + i18n("Unable to start service <em>service</em>.<br /><br /><i>Error: %1</i>",
-                              reply.error().message()) + "</qt>" );
-            }
-
-        // kDebug() << "Starting khotkeys demon";
-        // KToolInvocation::kdeinitExec( "khotkeys" );
-        }
-    else
-        {
-        kDebug() << "Pinging khotkeys demon";
-        QDBusMessage reply = iface->call("reread_configuration");
-        QDBusError err = iface->lastError();
-        if (err.isValid())
-            {
-            kError() << err.name() << ":" << err.message();
-            }
-        }
+    d->save();
     }
 
 
@@ -335,8 +251,7 @@ void KCMHotkeys::save()
 
 KCMHotkeysPrivate::KCMHotkeysPrivate( KCMHotkeys *host )
     : treeView( new HotkeysTreeView )
-     ,settings()
-     ,model(0)
+     ,model(new KHotkeysModel)
      ,q(host)
      ,stack(0)
      ,action_group(0)
@@ -350,8 +265,8 @@ KCMHotkeysPrivate::KCMHotkeysPrivate( KCMHotkeys *host )
 
     // Setup the stack
     stack = new QStackedWidget;
-    stack->addWidget( action_group );
     stack->addWidget( global_settings );
+    stack->addWidget( action_group );
     stack->addWidget( simple_action );
 
     // A splitter for the treeview and the stack
@@ -366,6 +281,37 @@ KCMHotkeysPrivate::KCMHotkeysPrivate( KCMHotkeys *host )
 
     // Initialize the global part of the khotkeys lib ( handler ... )
     KHotKeys::init_global_data(false, q);
+
+    treeView->setModel(model);
+    }
+
+
+void KCMHotkeysPrivate::load()
+    {
+    // disconnect the signals
+    if (treeView->selectionModel())
+        {
+        QObject::disconnect(
+            treeView->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+            q, SLOT(currentChanged(QModelIndex,QModelIndex)) );
+        }
+
+    model->load();
+
+    QObject::connect(
+        model, SIGNAL( rowsRemoved( QModelIndex, int, int )),
+        q,  SLOT( slotChanged() ));
+    QObject::connect(
+        model, SIGNAL( rowsInserted( QModelIndex, int, int )),
+        q,  SLOT( slotChanged() ));
+    QObject::connect(
+        model, SIGNAL( dataChanged( QModelIndex, QModelIndex )),
+        q,  SLOT( slotChanged() ));
+
+    // reconnect the signals
+    QObject::connect(
+        treeView->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)),
+        q, SLOT(currentChanged(QModelIndex,QModelIndex)) );
     }
 
 
@@ -389,6 +335,67 @@ bool KCMHotkeysPrivate::maybeShowWidget()
     }
 
 
+void KCMHotkeysPrivate::save()
+    {
+    if ( current && current->isChanged() )
+        {
+        saveCurrentItem();
+        }
+
+    // Write the settings
+    model->save();
+
+    // Inform kdedkhotkeys demon to reload settings
+    QDBusConnection bus = QDBusConnection::sessionBus();
+    QPointer<QDBusInterface> iface = new QDBusInterface("org.kde.kded", "/KHotKeys",
+                                                        "org.kde.khotkeys", bus, q);
+    if(!iface->isValid())
+        {
+        QDBusError err = iface->lastError();
+        if (err.isValid())
+            {
+            kError() << err.name() << ":" << err.message();
+            }
+        QDBusInterface kdedInterface( "org.kde.kded", "/kded","org.kde.kded" );
+        QDBusReply<bool> reply = kdedInterface.call( "loadModule", "khotkeys"  );
+        err = iface->lastError();
+        if (err.isValid())
+            {
+            kError() << err.name() << ":" << err.message();
+            }
+
+        if ( reply.isValid() )
+            {
+            if ( reply.value() )
+                KMessageBox::error(q, "<qt>" + i18n("Started server <em>org.kde.khotkeys</em>.") + "</qt>");
+            else
+                KMessageBox::error(q, "<qt>" + i18n("Unable to start server <em>org.kde.khotkeys</em>.") + "</qt>");
+            }
+        else
+            {
+            KMessageBox::error(
+                q,
+                "<qt>" + i18n("Unable to start service <em>org.kde.khotkeys</em>.<br /><br /><i>Error: %1</i>",
+                              reply.error().message()) + "</qt>" );
+            }
+
+        // kDebug() << "Starting khotkeys demon";
+        // KToolInvocation::kdeinitExec( "khotkeys" );
+        }
+    else
+        {
+        kDebug() << "Pinging khotkeys demon";
+        QDBusMessage reply = iface->call("reread_configuration");
+        QDBusError err = iface->lastError();
+        if (err.isValid())
+            {
+            kError() << err.name() << ":" << err.message();
+            }
+        }
+    }
+
+
+
 void KCMHotkeysPrivate::saveCurrentItem()
     {
     Q_ASSERT( current );
@@ -396,18 +403,9 @@ void KCMHotkeysPrivate::saveCurrentItem()
     if (current->isChanged())
         {
         current->copyToObject();
-        q->save();
+        model->emitChanged(current->data());
+        save();
         }
-    }
-
-
-void KCMHotkeysPrivate::setModel( KHotkeysModel* new_model )
-    {
-    delete model; model = 0;
-    // model = new KHotkeysProxyModel(q);
-    // model->setSourceModel( new_model );
-    model = new_model;
-    treeView->setModel( new_model );
     }
 
 

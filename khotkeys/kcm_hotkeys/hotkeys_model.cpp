@@ -28,9 +28,10 @@
 #include <KDE/KLocale>
 
 
-KHotkeysModel::KHotkeysModel( KHotKeys::ActionDataGroup *actions, QObject *parent )
+KHotkeysModel::KHotkeysModel( QObject *parent )
     : QAbstractItemModel(parent)
-     ,_actions(actions)
+     ,_settings()
+     ,_actions(0)
     {}
 
 
@@ -94,19 +95,29 @@ int KHotkeysModel::columnCount( const QModelIndex & ) const
 
 QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
     {
+    // Check that the index is valid
     if (!index.isValid())
         {
         return QVariant();
         }
 
+    // Get the item behind the index
     KHotKeys::ActionDataBase *action = indexToActionDataBase(index);
+    Q_ASSERT(action);
 
+    // Handle CheckStateRole
     if (role==Qt::CheckStateRole)
         {
         switch(index.column())
             {
             case 1:
-                return action->enabled() 
+                // If the parent is enabled we display the state of the object.
+                // If the parent is disabled this object is disabled too.
+                if (action->parent() && !action->parent()->enabled())
+                    {
+                    return Qt::Unchecked;
+                    }
+                return action->enabled()
                     ? Qt::Checked
                     : Qt::Unchecked;
 
@@ -115,36 +126,62 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
             }
         }
 
-    if (role!=Qt::DisplayRole && role!=Qt::ToolTipRole)
+    // Display and Tooltip. Tooltip displays the complete name. That's nice if
+    // there is not enough space 
+    if (role==Qt::DisplayRole || role==Qt::ToolTipRole)
         {
-        return QVariant();
-        }
-
-    switch (index.column())
-        {
-        case 0:
-            return action->name();
-
-        case 1:
-            return QVariant();
-
-        case 2:
-            return indexToActionDataGroup(index)!=0;
-
-        case 3:
+        switch (index.column())
             {
-            const std::type_info &ti = typeid(*action);
-            if (ti==typeid(KHotKeys::SimpleActionData))
-                return KHotkeysModel::SimpleActionData;
-            else if (ti==typeid(KHotKeys::Action_data_group))
-                return KHotkeysModel::ActionDataGroup;
-            else
-                return KHotkeysModel::Other;
-            }
+            case 0:
+                return action->name();
 
-        default:
-            return QVariant();
+            case 1:
+                return QVariant();
+
+            case 2:
+                return indexToActionDataGroup(index)!=0;
+
+            case 3:
+                {
+                const std::type_info &ti = typeid(*action);
+                if (ti==typeid(KHotKeys::SimpleActionData))
+                    return KHotkeysModel::SimpleActionData;
+                else if (ti==typeid(KHotKeys::Action_data_group))
+                    return KHotkeysModel::ActionDataGroup;
+                else
+                    return KHotkeysModel::Other;
+                }
+
+            default:
+                return QVariant();
+            }
         }
+
+        // For everything else
+        return QVariant();
+    }
+
+
+void KHotkeysModel::emitChanged(KHotKeys::ActionDataBase *item)
+    {
+    Q_ASSERT( item );
+
+    KHotKeys::ActionDataGroup *parent = item->parent();
+    QModelIndex topLeft;
+    QModelIndex bottomRight;
+    if (!parent)
+        {
+        topLeft = createIndex( 0, 0, _actions );
+        bottomRight = createIndex( 0, 0, _actions );
+        }
+    else
+        {
+        int row = parent->list.indexOf(item);
+        topLeft = createIndex( row, 0, parent );
+        bottomRight = createIndex( row, columnCount(topLeft), parent );
+        }
+
+    emit dataChanged( topLeft, bottomRight );
     }
 
 
@@ -152,13 +189,17 @@ Qt::ItemFlags KHotkeysModel::flags( const QModelIndex &index ) const
     {
     if (!index.isValid())
         {
-        return Qt::ItemIsEnabled;
+        return QAbstractItemModel::flags(index);
         }
+
+    // Get the item behind the index
+    KHotKeys::ActionDataBase *action = indexToActionDataBase(index);
+    Q_ASSERT(action);
 
     switch (index.column())
         {
         case 1:
-            return QAbstractItemModel::flags(index) | Qt::ItemIsEditable | Qt::ItemIsUserCheckable;
+            return QAbstractItemModel::flags(index) | Qt::ItemIsUserCheckable;
 
         default:
             return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
@@ -224,6 +265,14 @@ KHotKeys::ActionDataGroup *KHotkeysModel::indexToActionDataGroup( const QModelIn
         return _actions;
         }
     return dynamic_cast<KHotKeys::ActionDataGroup*>( indexToActionDataBase(index) );
+    }
+
+
+void KHotkeysModel::load()
+    {
+    _settings.read_settings(true);
+    _actions = _settings.actions();
+    reset();
     }
 
 
@@ -294,20 +343,28 @@ int KHotkeysModel::rowCount( const QModelIndex &index ) const
     }
 
 
+void KHotkeysModel::save()
+    {
+    _settings.write_settings();
+    }
+
+
 // Set data
 bool KHotkeysModel::setData( const QModelIndex &index, const QVariant &value, int role )
     {
+
     if ( !index.isValid() || role != Qt::EditRole )
         {
         return false;
         }
 
+    KHotKeys::ActionDataBase *action = indexToActionDataBase(index);
+    Q_ASSERT( action );
+
     switch ( index.column() )
         {
         case NameColumn:
             {
-            KHotKeys::ActionDataBase *action = indexToActionDataBase( index );
-            Q_ASSERT( action );
             action->set_name( value.toString() );
             }
             break;
