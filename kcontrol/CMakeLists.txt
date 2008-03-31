@@ -32,6 +32,7 @@ endif(X11_Xinerama_FOUND)
 add_subdirectory( kthememanager )
 add_subdirectory( hardware )
 add_subdirectory( access )
+add_subdirectory(autostart)
 
 if(FONTCONFIG_FOUND AND FREETYPE_FOUND)
     add_subdirectory( kfontinst )
