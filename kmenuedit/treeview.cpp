@@ -1552,9 +1552,8 @@ bool TreeView::save()
        KMessageBox::sorry(this, "<qt>"+i18n("Menu changes could not be saved because of the following problem:")+"<br><br>"+
                                 m_menuFile->error()+"</qt>");
     }
-    QDBusMessage message =
-        QDBusMessage::createSignal("/kickoff", "org.kde.plasma", "reloadMenu");
-    QDBusConnection::sessionBus().send(message);
+
+    sendReloadMenu();
 
     return success;
 }
@@ -1624,7 +1623,11 @@ void TreeView::restoreMenuSystem()
 
     readMenuFolderInfo();
     fill();
+    sendReloadMenu();
+}
 
+void TreeView::sendReloadMenu()
+{
     QDBusMessage message =
         QDBusMessage::createSignal("/kickoff", "org.kde.plasma", "reloadMenu");
     QDBusConnection::sessionBus().send(message);

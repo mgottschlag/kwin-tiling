@@ -159,6 +159,8 @@ protected:
     virtual Q3DragObject *dragObject();
     virtual void startDrag();
 
+    void sendReloadMenu();
+
 private:
     KActionCollection *m_ac;
     QMenu        *m_rmb;
