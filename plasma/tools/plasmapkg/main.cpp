@@ -126,7 +126,7 @@ int main(int argc, char **argv)
         }
 
         if (args->isSet("packageroot")) {
-            packageRoot == args->getOption("packageroot");
+            packageRoot = args->getOption("packageroot");
         } else if (args->isSet("global")) {
             packageRoot = KStandardDirs::locate("data", packageRoot);
         } else {
