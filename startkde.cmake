@@ -340,6 +340,10 @@ fi
 # of the user running the KDE session. It should be rarely needed (e.g.
 # after sudo to prevent desktop-wide functionality in the new user's kded).
 #
+# Since KDE4 there is also KDE_SESSION_VERSION, containing the major version number.
+# Note that this didn't exist in KDE3, which can be detected by its absense and
+# the presence of KDE_FULL_SESSION.
+#
 KDE_FULL_SESSION=true
 export KDE_FULL_SESSION
 xprop -root -f KDE_FULL_SESSION 8t -set KDE_FULL_SESSION true
