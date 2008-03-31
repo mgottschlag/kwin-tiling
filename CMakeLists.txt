@@ -79,7 +79,6 @@ add_subdirectory( ksystraycmd )
 add_subdirectory( doc )
 add_subdirectory( wallpapers )
 endif (NOT WIN32)
-add_subdirectory( menu )
 
 if (NOT WIN32)
 if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
