@@ -60,6 +60,10 @@ Trash::Trash(QObject *parent, const QVariantList &args)
       m_trashUrl(KUrl("trash:/")),
       m_count(0)
 {
+    m_icon = new Plasma::Icon(KIcon("user-trash"),QString(),this);
+    setDrawStandardBackground(false);
+    setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
+    setContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
 }
 
 Trash::~Trash()
@@ -68,7 +72,6 @@ Trash::~Trash()
 
 void Trash::init()
 {
-    m_icon = new Plasma::Icon(KIcon("user-trash"),QString(),this);
     m_icon->setNumDisplayLines(2);
 
     m_places = new  KFilePlacesModel(this);
@@ -91,7 +94,6 @@ void Trash::init()
              this, SLOT( slotDeleteItem( const KFileItem & ) ) );
 
     m_dirLister->openUrl(m_trashUrl);
-    setDrawStandardBackground(false);
     m_icon->setDrawBackground(true);
     watchForMouseMove(m_icon, true);
 
@@ -144,32 +146,22 @@ void Trash::constraintsUpdated(Plasma::Constraints constraints)
             formFactor() == Plasma::Vertical) {
             //in a panel the icon always behaves like a button
             connect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));
-            setRemainSquare(true);
             m_icon->setText(0);
             m_icon->setInfoText(0);
             m_showText = false;
             m_icon->setDrawBackground(false);
-
-            setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
         } else {
             connect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
-            setRemainSquare(false);
             m_icon->setText(i18n("Trash"));
             m_showText = true;
             m_icon->setDrawBackground(true);
-
-            //Adding an arbitrary width to make room for a larger count of items
-            setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop))+=QSizeF(20,0));
         }
 
         setIcon();
     }
     if (constraints & Plasma::SizeConstraint && m_icon) {
-        setContentSize(size());
-        m_icon->resize(size());
+        m_icon->resize(contentSize());
     }
-
-    updateGeometry();
 }
 
 void Trash::slotOpen()
