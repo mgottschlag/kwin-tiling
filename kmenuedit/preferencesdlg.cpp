@@ -23,6 +23,7 @@
 #include <sonnet/configwidget.h>
 #include <QCheckBox>
 #include <KConfigGroup>
+#include <QGroupBox>
 
 PreferencesDialog::PreferencesDialog( QWidget *parent )
     : KPageDialog( parent )
@@ -68,8 +69,12 @@ MiscPage::MiscPage( QWidget *parent )
     : QWidget( parent )
 {
     QHBoxLayout *lay = new QHBoxLayout( this );
-    m_showHiddenEntries = new QCheckBox( i18n( "Show hidden entries" ), this );
-    lay->addWidget( m_showHiddenEntries );
+    QGroupBox *group = new QGroupBox(i18n( "General" ) ) ;
+    lay->addWidget( group );
+    QVBoxLayout *vbox = new QVBoxLayout;
+    m_showHiddenEntries = new QCheckBox( i18n( "Show hidden entries" ) );
+    vbox->addWidget( m_showHiddenEntries );
+    group->setLayout( vbox );
     KConfigGroup grp( KGlobal::config(), "General" );
     m_showHiddenEntries->setChecked(  grp.readEntry( "ShowHidden", false ) );
     setLayout( lay );
