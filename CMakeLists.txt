@@ -46,10 +46,10 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/kworkspace
 )
 # libs
-if (NOT WIN32)
 add_subdirectory(cmake)
 add_subdirectory(libs)
 
+if (NOT WIN32)
 # system settings (kcontrol replacement)
 add_subdirectory( systemsettings )
 
