@@ -30,7 +30,7 @@ link_directories(lib)
 # kde4_add_kdeinit_executable(kxkb_aplt ${kxkb_aplt_KDEINIT_SRCS})
 # 
 # target_link_libraries(kdeinit_kxkb_aplt ${KDE4_KDE3SUPPORT_LIBS} ${XKBSUPPORT_LIB})
-# install(TARGETS kdeinit_kxkb_aplt  DESTINATION ${LIB_INSTALL_DIR} )
+# install(TARGETS kdeinit_kxkb_aplt ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 #target_link_libraries( kxkb_aplt kdeinit_kxkb_aplt )
 #install(TARGETS kxkb_aplt DESTINATION ${BIN_INSTALL_DIR})

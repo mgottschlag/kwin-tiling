@@ -100,7 +100,7 @@ kde4_add_kdeinit_executable( kxkb ${kxkb_KDEINIT_SRCS})
 target_link_libraries(kdeinit_kxkb ${X11_X11_LIB} ${X11_Xext_LIB} ${KDE4_KDEUI_LIBS}
      ${XKB_SUPPORT_LIB})
 
-install(TARGETS kdeinit_kxkb  DESTINATION ${LIB_INSTALL_DIR} )
+install(TARGETS kdeinit_kxkb ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 target_link_libraries( kxkb kdeinit_kxkb )
 install(TARGETS kxkb DESTINATION ${BIN_INSTALL_DIR})

@@ -44,7 +44,7 @@ target_link_libraries( krunner kdeinit_krunner )
 
 add_subdirectory( lock )
 
-install(TARGETS kdeinit_krunner  DESTINATION ${LIB_INSTALL_DIR} )
+install(TARGETS kdeinit_krunner ${INSTALL_TARGETS_DEFAULT_ARGS} )
 install(TARGETS krunner DESTINATION ${BIN_INSTALL_DIR})
 install(FILES krunner.desktop  DESTINATION  ${AUTOSTART_INSTALL_DIR})
 install(FILES kscreensaversettings.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})

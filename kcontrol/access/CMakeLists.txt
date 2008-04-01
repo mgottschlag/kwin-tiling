@@ -23,7 +23,7 @@ kde4_add_kdeinit_executable( kaccess ${kaccess_KDEINIT_SRCS})
 
 target_link_libraries(kdeinit_kaccess  ${KDE4_KDEUI_LIBS} ${KDE4_PHONON_LIBS})
 
-install(TARGETS kdeinit_kaccess  DESTINATION ${LIB_INSTALL_DIR} )
+install(TARGETS kdeinit_kaccess ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 target_link_libraries( kaccess kdeinit_kaccess )
 install(TARGETS kaccess DESTINATION ${BIN_INSTALL_DIR})

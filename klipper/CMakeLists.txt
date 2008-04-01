@@ -23,7 +23,7 @@ if (X11_Xfixes_FOUND)
   target_link_libraries(kdeinit_klipper ${X11_Xfixes_LIB})
 endif (X11_Xfixes_FOUND)
 
-install(TARGETS kdeinit_klipper DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS kdeinit_klipper ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 target_link_libraries(klipper kdeinit_klipper)
 
