@@ -108,6 +108,8 @@ public:
 
     void restoreMenuSystem();
 
+    void updateTreeView(bool showHidden);
+
 public Q_SLOTS:
     void currentChanged(MenuFolderInfo *folderInfo);
     void currentChanged(MenuEntryInfo *entryInfo);

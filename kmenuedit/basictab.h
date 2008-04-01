@@ -48,6 +48,9 @@ public:
     BasicTab( QWidget *parent=0 );
 
     void apply();
+
+    void updateHiddenEntry( bool _hidden );
+
 Q_SIGNALS:
     void changed( MenuFolderInfo * );
     void changed( MenuEntryInfo * );

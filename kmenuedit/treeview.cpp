@@ -1606,7 +1606,6 @@ void TreeView::restoreMenuSystem()
         qWarning()<<"Could not delete dir :"<<( xdgdir + "/desktop-directories");
 
     KBuildSycocaProgressDialog::rebuildKSycoca(this);
-
     clear();
     cleanupClipboard();
     delete m_rootFolder;
@@ -1616,6 +1615,28 @@ void TreeView::restoreMenuSystem()
     m_newMenuIds.clear();
     m_newDirectoryList.clear();
     m_menuFile->restoreMenuSystem(kmenueditfile);
+
+    m_rootFolder = new MenuFolderInfo;
+    m_separator = new MenuSeparatorInfo;
+
+    readMenuFolderInfo();
+    fill();
+    sendReloadMenu();
+    emit disableAction();
+    emit entrySelected(( MenuEntryInfo* ) 0 );
+}
+
+void TreeView::updateTreeView(bool showHidden)
+{
+    m_showHidden = showHidden;
+    clear();
+    cleanupClipboard();
+    delete m_rootFolder;
+    delete m_separator;
+
+    m_layoutDirty = false;
+    m_newMenuIds.clear();
+    m_newDirectoryList.clear();
 
     m_rootFolder = new MenuFolderInfo;
     m_separator = new MenuSeparatorInfo;

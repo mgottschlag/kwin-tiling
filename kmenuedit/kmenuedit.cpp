@@ -44,12 +44,8 @@
 KMenuEdit::KMenuEdit ()
   : KXmlGuiWindow (0), m_tree(0), m_basicTab(0), m_splitter(0)
 {
-#if 0
     KConfigGroup grp( KGlobal::config(), "General" );
     m_showHidden = grp.readEntry("ShowHidden", false);
-#else
-    m_showHidden = false;
-#endif
 
     // setup GUI
     setupActions();
@@ -94,7 +90,17 @@ void KMenuEdit::setupActions()
 void KMenuEdit::slotConfigure()
 {
     PreferencesDialog dlg( this );
-    dlg.exec();
+    if ( dlg.exec() )
+    {
+        KConfigGroup grp( KGlobal::config(), "General" );
+        bool newShowHiddenValue = grp.readEntry("ShowHidden", false);
+        if ( newShowHiddenValue != m_showHidden )
+        {
+            m_showHidden = newShowHiddenValue;
+            m_tree->updateTreeView(m_showHidden);
+            m_basicTab->updateHiddenEntry( m_showHidden );
+        }
+    }
 }
 
 void KMenuEdit::setupView()
@@ -157,6 +163,7 @@ void KMenuEdit::slotChangeView()
     setupGUI(KXmlGuiWindow::ToolBar|Keys|Save|Create, "kmenueditui.rc");
 
     m_tree->setViewMode(m_showHidden);
+    m_basicTab->updateHiddenEntry( m_showHidden );
 }
 
 void KMenuEdit::slotSave()

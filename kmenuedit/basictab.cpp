@@ -416,8 +416,8 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
             _onlyShowInKdeCB->setChecked( true );
 
     }
-    if ( df->desktopGroup().hasKey( "Hidden" ) )
-        _hiddenEntryCB->setChecked( df->desktopGroup().readEntry( "Hidden", true ) );
+    if ( df->desktopGroup().hasKey( "NoDisplay" ) )
+        _hiddenEntryCB->setChecked( df->desktopGroup().readEntry( "NoDisplay", true ) );
     else
         _hiddenEntryCB->setChecked( false );
 
@@ -460,6 +460,7 @@ void BasicTab::apply()
         dg.writeEntry("X-KDE-SubstituteUID", _uidCB->isChecked());
         dg.writeEntry("X-KDE-Username", _uidEdit->text());
         dg.writeEntry("StartupNotify", _launchCB->isChecked());
+        dg.writeEntry( "NoDisplay", _hiddenEntryCB->isChecked() );
         if ( _onlyShowInKdeCB->isChecked() )
             dg.writeXdgListEntry( "OnlyShowIn", QStringList()<<"KDE" );
     }
@@ -564,3 +565,11 @@ void BasicTab::slotCapturedKeySequence(const QKeySequence& seq)
        emit changed( _menuEntryInfo );
 }
 
+
+void BasicTab::updateHiddenEntry( bool _hidden )
+{
+    if ( _hidden )
+        _hiddenEntryCB->show();
+    else
+        _hiddenEntryCB->hide();
+}
