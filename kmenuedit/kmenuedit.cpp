@@ -45,7 +45,7 @@ KMenuEdit::KMenuEdit ()
   : KXmlGuiWindow (0), m_tree(0), m_basicTab(0), m_splitter(0)
 {
 #if 0
-    m_showHidden = config->readEntry("ShowHidden", QVariant(false)).toBool();
+    m_showHidden = config->readEntry("ShowHidden", false);
 #else
     m_showHidden = false;
 #endif

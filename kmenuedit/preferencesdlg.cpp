@@ -30,8 +30,9 @@ PreferencesDialog::PreferencesDialog( QWidget *parent )
     setDefaultButton( Ok );
 
     m_pageSpellChecking = new SpellCheckingPage( this );
-    KPageWidgetItem *page = new KPageWidgetItem( m_pageSpellChecking , i18n( "spell" ) );
+    KPageWidgetItem *page = new KPageWidgetItem( m_pageSpellChecking , i18n( "Spell Checking" ) );
     page->setHeader( i18n( "Spell checking Options" ) );
+    page->setIcon( KIcon( "tools-check-spelling" ) );
     addPage(page);
 
     connect( this, SIGNAL( okClicked() ), this, SLOT( slotSave() ) );
