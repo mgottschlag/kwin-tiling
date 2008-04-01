@@ -40,8 +40,13 @@ class ShellRunner : public Plasma::AbstractRunner
         void match(Plasma::SearchContext *search);
         void exec(const Plasma::SearchContext *context, const Plasma::SearchMatch *action);
 
+
+    public slots:
+        void setRunInTerminal(bool inTerminal);
+
     private:
         bool m_enabled;
+        bool m_inTerminal;
 };
 
 K_EXPORT_PLASMA_RUNNER(shell, ShellRunner)

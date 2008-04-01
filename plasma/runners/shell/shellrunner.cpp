@@ -23,15 +23,18 @@
 #include <QPushButton>
 
 #include <KAuthorized>
+#include <KDebug>
 #include <KIcon>
 #include <KLocale>
 #include <KRun>
 #include <KStandardDirs>
+#include <KToolInvocation>
 
 #include "ui_shellOptions.h"
 
 ShellRunner::ShellRunner(QObject *parent, const QVariantList &args)
-    : Plasma::AbstractRunner(parent, args)
+    : Plasma::AbstractRunner(parent, args),
+      m_inTerminal(false)
 {
     Q_UNUSED(args)
 
@@ -67,6 +70,14 @@ void ShellRunner::createMatchOptions(QWidget* parent)
 {
     Ui::shellOptions ui;
     ui.setupUi(parent);
+
+    //TODO: connect rest of UI up too!
+    connect(ui.cbRunInTerminal, SIGNAL(toggled(bool)), this, SLOT(setRunInTerminal(bool)));
+}
+
+void ShellRunner::setRunInTerminal(bool inTerminal)
+{
+    m_inTerminal = inTerminal;
 }
 
 void ShellRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
@@ -76,7 +87,11 @@ void ShellRunner::exec(const Plasma::SearchContext *search, const Plasma::Search
         return;
     }
 
-    KRun::runCommand(search->searchTerm(), NULL);
+    if (m_inTerminal) {
+        KToolInvocation::invokeTerminal(search->searchTerm());
+    } else {
+        KRun::runCommand(search->searchTerm(), NULL);
+    }
 }
 
 #include "shellrunner.moc"
