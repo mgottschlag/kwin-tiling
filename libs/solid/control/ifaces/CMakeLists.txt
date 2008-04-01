@@ -21,7 +21,7 @@ kde4_add_library(solidcontrolifaces SHARED ${solidcontrolifaces_LIB_SRCS})
 target_link_libraries(solidcontrolifaces  ${KDE4_KDECORE_LIBS} )
 
 set_target_properties(solidcontrolifaces PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
-install(TARGETS solidcontrolifaces DESTINATION ${LIB_INSTALL_DIR}  )
+install(TARGETS solidcontrolifaces ${INSTALL_TARGETS_DEFAULT_ARGS}  )
 
 
 ########### install files ###############
