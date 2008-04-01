@@ -21,6 +21,8 @@
 #include <QHBoxLayout>
 #include <klocale.h>
 #include <sonnet/configwidget.h>
+#include <QCheckBox>
+#include <KConfigGroup>
 
 PreferencesDialog::PreferencesDialog( QWidget *parent )
     : KPageDialog( parent )
@@ -35,12 +37,17 @@ PreferencesDialog::PreferencesDialog( QWidget *parent )
     page->setIcon( KIcon( "tools-check-spelling" ) );
     addPage(page);
 
+    m_pageMisc = new MiscPage( this );
+    page = new KPageWidgetItem( m_pageMisc , i18n( "Misc" ) );
+    addPage(page);
+
     connect( this, SIGNAL( okClicked() ), this, SLOT( slotSave() ) );
 }
 
 void PreferencesDialog::slotSave()
 {
     m_pageSpellChecking->saveOptions();
+    m_pageMisc->saveOptions();
 }
 
 SpellCheckingPage::SpellCheckingPage( QWidget *parent )
@@ -55,6 +62,24 @@ SpellCheckingPage::SpellCheckingPage( QWidget *parent )
 void SpellCheckingPage::saveOptions()
 {
     m_confPage->save();
+}
+
+MiscPage::MiscPage( QWidget *parent )
+    : QWidget( parent )
+{
+    QHBoxLayout *lay = new QHBoxLayout( this );
+    m_showHiddenEntries = new QCheckBox( i18n( "Show hidden entries" ), this );
+    lay->addWidget( m_showHiddenEntries );
+    KConfigGroup grp( KGlobal::config(), "General" );
+    m_showHiddenEntries->setChecked(  grp.readEntry( "ShowHidden", false ) );
+    setLayout( lay );
+}
+
+void MiscPage::saveOptions()
+{
+    KConfigGroup grp( KGlobal::config(), "General" );
+    grp.writeEntry( "ShowHidden", m_showHiddenEntries->isChecked() );
+    grp.sync();
 }
 
 #include "preferencesdlg.moc"

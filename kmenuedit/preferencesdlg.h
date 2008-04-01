@@ -23,6 +23,8 @@
 #include <kpagedialog.h>
 
 class SpellCheckingPage;
+class MiscPage;
+class QCheckBox;
 
 namespace Sonnet {
     class ConfigWidget;
@@ -39,6 +41,7 @@ protected slots:
 
 private:
     SpellCheckingPage *m_pageSpellChecking;
+    MiscPage *m_pageMisc;
 };
 
 class SpellCheckingPage : public QWidget
@@ -49,6 +52,16 @@ public:
     void saveOptions();
 private:
     Sonnet::ConfigWidget *m_confPage;
+};
+
+class MiscPage : public QWidget
+{
+    Q_OBJECT
+public:
+    MiscPage( QWidget * );
+    void saveOptions();
+private:
+    QCheckBox *m_showHiddenEntries;
 };
 
 

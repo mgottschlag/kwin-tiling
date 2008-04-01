@@ -45,7 +45,8 @@ KMenuEdit::KMenuEdit ()
   : KXmlGuiWindow (0), m_tree(0), m_basicTab(0), m_splitter(0)
 {
 #if 0
-    m_showHidden = config->readEntry("ShowHidden", false);
+    KConfigGroup grp( KGlobal::config(), "General" );
+    m_showHidden = grp.readEntry("ShowHidden", false);
 #else
     m_showHidden = false;
 #endif
@@ -136,11 +137,7 @@ void KMenuEdit::setupView()
 
 void KMenuEdit::slotChangeView()
 {
-#if 0
-    m_showHidden = m_actionShowHidden->isChecked();
-#else
-    m_showHidden = false;
-#endif
+
 #ifdef __GNUC__
 #warning "kde4: comment setUpdatesEnabled otherwise we can't see layout"
 #endif
