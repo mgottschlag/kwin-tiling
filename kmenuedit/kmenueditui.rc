@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="kmenuedit" version="9">
+<kpartgui name="kmenuedit" version="10">
 
 <MenuBar>
 
@@ -23,10 +23,6 @@
  <Action name="restore_system_menu"/>
 </Menu>
 
-<Menu name="settings">
- <Action name="show_removed"/>
- <Action name="show_hidden"/>
-</Menu>
 </MenuBar>
 
 <ToolBar name="mainToolBar" noMerge="1" fullWidth="true"><text>Main Toolbar</text>
