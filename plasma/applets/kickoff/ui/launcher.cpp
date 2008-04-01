@@ -203,7 +203,7 @@ public:
         delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
-        addView(i18n("Recently Used"), KIcon("view-history"), model, view);
+        addView(i18n("Recently Used"), KIcon("document-open-recent"), model, view);
 
         QAction *clearApplications = new QAction(KIcon("edit-clear-history"), i18n("Clear Recent Applications"), q);
         QAction *clearDocuments = new QAction(KIcon("edit-clear-history"), i18n("Clear Recent Documents"), q);

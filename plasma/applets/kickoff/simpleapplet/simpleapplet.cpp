@@ -253,7 +253,7 @@ void MenuLauncherApplet::showConfigurationInterface()
         d->addItem(d->viewComboBox, i18n("Favorites"), MenuLauncherApplet::Favorites, "bookmarks");
         d->addItem(d->viewComboBox, i18n("Applications"), MenuLauncherApplet::Applications, "applications-other");
         d->addItem(d->viewComboBox, i18n("Computer"), MenuLauncherApplet::Computer, "computer");
-        d->addItem(d->viewComboBox, i18n("Recently Used"), MenuLauncherApplet::RecentlyUsed, "view-history");
+        d->addItem(d->viewComboBox, i18n("Recently Used"), MenuLauncherApplet::RecentlyUsed, "document-open-recent");
         d->addItem(d->viewComboBox, i18n("Leave"), MenuLauncherApplet::Leave, "application-exit");
         l->addWidget(d->viewComboBox, 0, 1);
 
