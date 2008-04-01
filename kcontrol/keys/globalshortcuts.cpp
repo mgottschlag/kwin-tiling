@@ -64,12 +64,12 @@ GlobalShortcutsModule::GlobalShortcutsModule(QWidget *parent, const QVariantList
 
     // Add import scheme button
     KPushButton *importButton = new KPushButton(this);
-    importButton->setText(i18n("Import scheme ..."));
+    importButton->setText(i18n("Import scheme..."));
     connect(importButton, SIGNAL(clicked()), this, SLOT(importScheme()));
 
     // Add export scheme button
     KPushButton *exportButton = new KPushButton(this);
-    exportButton->setText(i18n("Export scheme ..."));
+    exportButton->setText(i18n("Export scheme..."));
     connect(exportButton, SIGNAL(clicked()), this, SLOT(exportScheme()));
 
     // Layout for the buttons
@@ -111,7 +111,7 @@ void GlobalShortcutsModule::load()
         }
         KMessageBox::sorry(
             this,
-            i18n("Failed to contact the kde global shortcuts daemon\n")
+            i18n("Failed to contact the KDE global shortcuts daemon\n")
                 + errorString );
         return;
     }

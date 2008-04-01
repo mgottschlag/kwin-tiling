@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle" >
-   <string>Select a schortcut scheme</string>
+   <string>Select a shortcut scheme</string>
   </property>
   <property name="modal" >
    <bool>true</bool>
@@ -44,7 +44,7 @@
        </size>
       </property>
       <property name="whatsThis" >
-       <string>Select one of the standard shortcut schemes of KDE</string>
+       <string>Select one of the standard KDE shortcut schemes</string>
       </property>
       <property name="text" >
        <string>&amp;Standard Scheme</string>
