@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="kmenuedit" version="8">
+<kpartgui name="kmenuedit" version="9">
 
 <MenuBar>
 
@@ -26,7 +26,6 @@
 <Menu name="settings">
  <Action name="show_removed"/>
  <Action name="show_hidden"/>
- <Action name="setup_spellchecker"/>
 </Menu>
 </MenuBar>
 

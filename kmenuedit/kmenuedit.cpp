@@ -17,6 +17,7 @@
  *   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+#include "kmenuedit.h"
 
 #include <QSplitter>
 
@@ -37,7 +38,7 @@
 #include <sonnet/configdialog.h>
 #include "treeview.h"
 #include "basictab.h"
-#include "kmenuedit.h"
+#include "preferencesdlg.h"
 #include "kmenuedit.moc"
 
 KMenuEdit::KMenuEdit ()
@@ -83,23 +84,16 @@ void KMenuEdit::setupActions()
     actionCollection()->addAction(KStandardAction::Copy);
     actionCollection()->addAction(KStandardAction::Paste);
 
-
-    action = new KAction( i18n("&Spellchecker..."), this );
-    action->setIconText( i18n("Spellchecker") );
-    actionCollection()->addAction( "setup_spellchecker", action );
-    connect( action, SIGNAL(triggered(bool) ), SLOT(slotSpellcheckConfig()) );
-
     action = new KAction( i18n("Restore to system menu"), this );
     actionCollection()->addAction( "restore_system_menu", action );
     connect( action, SIGNAL(triggered(bool) ), SLOT(slotRestoreMenu()) );
-
+    KStandardAction::preferences( this, SLOT( slotConfigure() ), actionCollection() );
 }
 
-void KMenuEdit::slotSpellcheckConfig()
+void KMenuEdit::slotConfigure()
 {
-    Sonnet::ConfigDialog dialog(&(*KGlobal::config()), this);
-    dialog.setWindowIcon( KIcon( "internet-mail" ) );
-    dialog.exec();
+    PreferencesDialog dlg( this );
+    dlg.exec();
 }
 
 void KMenuEdit::setupView()

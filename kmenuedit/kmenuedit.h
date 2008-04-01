@@ -48,8 +48,8 @@ protected Q_SLOTS:
     void slotSave();
     void slotChangeView();
     void slotConfigureToolbars();
-    void slotSpellcheckConfig();
     void slotRestoreMenu();
+    void slotConfigure();
 
 protected:
     TreeView           *m_tree;
