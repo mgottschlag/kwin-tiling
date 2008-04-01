@@ -68,6 +68,7 @@ void ShellRunner::match(Plasma::SearchContext *search)
 
 void ShellRunner::createMatchOptions(QWidget* parent)
 {
+    m_inTerminal = false;
     Ui::shellOptions ui;
     ui.setupUi(parent);
 
@@ -89,6 +90,9 @@ void ShellRunner::exec(const Plasma::SearchContext *search, const Plasma::Search
 
     if (m_inTerminal) {
         KToolInvocation::invokeTerminal(search->searchTerm());
+
+        // reset for the next run!
+        m_inTerminal = false;
     } else {
         KRun::runCommand(search->searchTerm(), NULL);
     }
