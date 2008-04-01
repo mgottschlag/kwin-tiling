@@ -131,7 +131,7 @@ public:
                 case Computer:
                     return "computer";
                 case RecentlyUsed:
-                    return "view-history";
+                    return "document-open-recent";
                 case Leave:
                     return "application-exit";
             }
