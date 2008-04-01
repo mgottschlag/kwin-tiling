@@ -1,5 +1,6 @@
 /*
  *   Copyright (C) 2000 Matthias Elter <elter@kde.org>
+ *   Copyright (C) 2008 Laurent Montel <montel@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -52,7 +53,7 @@
 #include "basictab.moc"
 
 BasicTab::BasicTab( QWidget *parent )
-  : QWidget(parent)
+    : QWidget(parent)
 {
     _menuFolderInfo = 0;
     _menuEntryInfo = 0;
@@ -79,21 +80,23 @@ BasicTab::BasicTab( QWidget *parent )
     _execEdit = new KUrlRequester(general_group);
     _execEdit->lineEdit()->setAcceptDrops(false);
     _execEdit->setWhatsThis(i18n(
-    "Following the command, you can have several place holders which will be replaced "
-    "with the actual values when the actual program is run:\n"
-    "%f - a single file name\n"
-    "%F - a list of files; use for applications that can open several local files at once\n"
-    "%u - a single URL\n"
-    "%U - a list of URLs\n"
-    "%d - the folder of the file to open\n"
-    "%D - a list of folders\n"
-    "%i - the icon\n"
-    "%m - the mini-icon\n"
-    "%c - the caption"));
+                                "Following the command, you can have several place holders which will be replaced "
+                                "with the actual values when the actual program is run:\n"
+                                "%f - a single file name\n"
+                                "%F - a list of files; use for applications that can open several local files at once\n"
+                                "%u - a single URL\n"
+                                "%U - a list of URLs\n"
+                                "%d - the folder of the file to open\n"
+                                "%D - a list of folders\n"
+                                "%i - the icon\n"
+                                "%m - the mini-icon\n"
+                                "%c - the caption"));
 
     _launchCB = new QCheckBox(i18n("Enable &launch feedback"), general_group);
     _systrayCB = new QCheckBox(i18n("&Place in system tray"), general_group);
     _onlyShowInKdeCB = new QCheckBox( i18n( "Only show in KDE" ), general_group );
+    _hiddenEntryCB = new QCheckBox( i18n( "Hidden entry" ), general_group );
+    _hiddenEntryCB->hide();
 
     // setup labels
     _nameLabel = new QLabel(i18n("&Name:"),general_group);
@@ -123,6 +126,7 @@ BasicTab::BasicTab( QWidget *parent )
     connect(_launchCB, SIGNAL(clicked()), SLOT(launchcb_clicked()));
     connect(_systrayCB, SIGNAL(clicked()), SLOT(systraycb_clicked()));
     connect(_onlyShowInKdeCB, SIGNAL( clicked() ), SLOT( onlyshowcb_clicked() ) );
+    connect( _hiddenEntryCB, SIGNAL( clicked() ), SLOT( hiddenentrycb_clicked() ) );
     // add line inputs to the grid
     grid->addWidget(_nameEdit, 0, 1, 1, 1);
     grid->addWidget(_descriptionEdit, 1, 1, 1, 1);
@@ -131,6 +135,7 @@ BasicTab::BasicTab( QWidget *parent )
     grid->addWidget(_launchCB, 4, 0, 1, 3 );
     grid->addWidget(_systrayCB, 5, 0, 1, 3 );
     grid->addWidget(_onlyShowInKdeCB, 6, 0, 1, 3 );
+    grid->addWidget(_hiddenEntryCB, 7, 0, 1, 3 );
 
     // setup icon button
     _iconButton = new KIconButton(general_group);
@@ -154,9 +159,9 @@ BasicTab::BasicTab( QWidget *parent )
     hboxLayout1->setSpacing(KDialog::spacingHint());
 
     _pathLabel = new QLabel(i18n("&Work path:"), hbox);
-	hboxLayout1->addWidget(_pathLabel);
+    hboxLayout1->addWidget(_pathLabel);
     _pathEdit = new KUrlRequester(hbox);
-	hboxLayout1->addWidget(_pathEdit);
+    hboxLayout1->addWidget(_pathEdit);
     _pathEdit->setMode(KFile::Directory | KFile::LocalOnly);
     _pathEdit->lineEdit()->setAcceptDrops(false);
 
@@ -182,9 +187,9 @@ BasicTab::BasicTab( QWidget *parent )
     hbox->setLayout(hboxLayout2);
     hboxLayout2->setSpacing(KDialog::spacingHint());
     _termOptLabel = new QLabel(i18n("Terminal &options:"), hbox);
-	hboxLayout2->addWidget(_termOptLabel);
+    hboxLayout2->addWidget(_termOptLabel);
     _termOptEdit = new KLineEdit(hbox);
-	hboxLayout2->addWidget(_termOptEdit);
+    hboxLayout2->addWidget(_termOptEdit);
     _termOptEdit->setAcceptDrops(false);
     _termOptLabel->setBuddy(_termOptEdit);
 
@@ -210,9 +215,9 @@ BasicTab::BasicTab( QWidget *parent )
     hbox->setLayout(hboxLayout3);
     hboxLayout3->setSpacing(KDialog::spacingHint());
     _uidLabel = new QLabel(i18n("&Username:"), hbox);
-	hboxLayout3->addWidget(_uidLabel);
+    hboxLayout3->addWidget(_uidLabel);
     _uidEdit = new KLineEdit(hbox);
-	hboxLayout3->addWidget(_uidEdit);
+    hboxLayout3->addWidget(_uidEdit);
     _uidEdit->setAcceptDrops(false);
     _uidLabel->setBuddy(_uidEdit);
 
@@ -260,6 +265,7 @@ void BasicTab::slotDisableAction()
     _launchCB->setEnabled(false);
     _systrayCB->setEnabled(false);
     _onlyShowInKdeCB->setEnabled( false );
+    _hiddenEntryCB->setEnabled( false );
     _nameLabel->setEnabled(false);
     _descriptionLabel->setEnabled(false);
     _commentLabel->setEnabled(false);
@@ -283,6 +289,7 @@ void BasicTab::enableWidgets(bool isDF, bool isDeleted)
     _launchCB->setEnabled(isDF && !isDeleted);
     _systrayCB->setEnabled(isDF && !isDeleted);
     _onlyShowInKdeCB->setEnabled( isDF && !isDeleted );
+    _hiddenEntryCB->setEnabled( isDF && !isDeleted );
     _nameLabel->setEnabled(!isDeleted);
     _descriptionLabel->setEnabled(!isDeleted);
     _commentLabel->setEnabled(!isDeleted);
@@ -321,6 +328,8 @@ void BasicTab::setFolderInfo(MenuFolderInfo *folderInfo)
     _launchCB->setChecked(false);
     _systrayCB->setChecked(false);
     _terminalCB->setChecked(false);
+    _onlyShowInKdeCB->setChecked( false );
+    _hiddenEntryCB->setChecked( false );
     _uidCB->setChecked(false);
     _keyEdit->clearKeySequence();
 
@@ -343,9 +352,11 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
 
        // key binding part
        _keyEdit->clearKeySequence();
+
        _execEdit->lineEdit()->clear();
        _systrayCB->setChecked(false);
        _onlyShowInKdeCB->setChecked( false );
+       _hiddenEntryCB->setChecked( false );
 
        _pathEdit->lineEdit()->clear();
        _termOptEdit->clear();
@@ -405,6 +416,11 @@ void BasicTab::setEntryInfo(MenuEntryInfo *entryInfo)
             _onlyShowInKdeCB->setChecked( true );
 
     }
+    if ( df->desktopGroup().hasKey( "Hidden" ) )
+        _hiddenEntryCB->setChecked( df->desktopGroup().readEntry( "Hidden", true ) );
+    else
+        _hiddenEntryCB->setChecked( false );
+
     if(df->desktopGroup().readEntry("Terminal", 0) == 1)
         _terminalCB->setChecked(true);
     else
@@ -478,6 +494,11 @@ void BasicTab::systraycb_clicked()
 }
 
 void BasicTab::onlyshowcb_clicked()
+{
+    slotChanged();
+}
+
+void BasicTab::hiddenentrycb_clicked()
 {
     slotChanged();
 }
