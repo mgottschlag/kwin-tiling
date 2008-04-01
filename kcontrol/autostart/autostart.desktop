@@ -10,10 +10,24 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=advanced-user-settings
 
 Name=Autostart
+Name[af]=Outomatiese begin
+Name[be]=Аўтаматычны запуск
+Name[bn]=অটো-স্টার্ট
+Name[br]=Emloc'h
+Name[cy]=Hunan-gychwyn
+Name[ga]=Tosú uathoibríoch
+Name[hr]=Automatsko pokretanje
+Name[ka]=ავტოგაშვება
+Name[lt]=Autostartas
+Name[mk]=Автостарт
+Name[ms]=Automula
+Name[ru]=Автозапуск
+Name[sk]=Autoštart
+Name[uz]=Авто-бошлаш
+Name[vi]=Tự khởi chạy
+Name[xh]=Isiqalo esizenzekelayo
 
 Comment=A Configuration tool for managing what programs start up with KDE.
-Comment[et]=Seadistamistööriist, mis aitab määrata, millised programmid käivitada KDE käivitamisel.
-Comment[sv]=Ett inställningsverktyg för att hantera vilka program som startas tillsammans med KDE.
 
 X-KDE-Keywords=Autostart Manager
 X-KDE-Keywords[de]=Autostart Verwaltung
