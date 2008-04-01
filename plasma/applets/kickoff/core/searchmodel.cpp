@@ -74,6 +74,10 @@ SearchModel::SearchModel(QObject *parent)
                 this,SLOT(resultsAvailable(QStringList)));
         connect(iface,SIGNAL(resultsAvailable(ResultList)),
                 this,SLOT(resultsAvailable(ResultList)));
+        connect(iface,SIGNAL(resultsAvailable(QStringList)),
+                this,SIGNAL(resultsAvailable()));
+        connect(iface,SIGNAL(resultsAvailable(ResultList)),
+                this,SIGNAL(resultsAvailable()));
     }
 }
 SearchModel::~SearchModel()

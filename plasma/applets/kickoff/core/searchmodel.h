@@ -50,6 +50,9 @@ private Q_SLOTS:
     void resultsAvailable(const QStringList& results);
     void resultsAvailable(const ResultList& results);
 
+Q_SIGNALS:
+    void resultsAvailable();
+
 private:
     class Private;
     Private * const d;

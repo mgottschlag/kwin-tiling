@@ -93,6 +93,7 @@ private Q_SLOTS:
     void showViewContextMenu(const QPoint& pos);
     void focusFavoritesView();
     void openHomepage();
+    void resultsAvailable();
 
 private:
     void init();

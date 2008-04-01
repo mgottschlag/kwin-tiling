@@ -80,6 +80,7 @@ public:
         , applet(0)
         , urlLauncher(new UrlItemLauncher(launcher))
         , resizeHandle(0)
+        , searchModel(0)
         , searchBar(0)
         , footer(0)
         , contentArea(0)
@@ -228,21 +229,23 @@ public:
 
     void setupSearchView()
     {
-        SearchModel *model = new SearchModel(q);
+        searchModel = new SearchModel(q);
         UrlItemView *view = new UrlItemView;
         ItemDelegate *delegate = new ItemDelegate;
         delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
         delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
-        view->setModel(model);
+        view->setModel(searchModel);
         view->setFrameStyle(QFrame::NoFrame);
         // prevent view from stealing focus from the search bar
         view->setFocusPolicy(Qt::NoFocus);
         view->setDragEnabled(true);
         setupEventHandler(view);
 
-        connect(searchBar, SIGNAL(queryChanged(QString)), model, SLOT(setQuery(QString)));
+        connect(searchModel, SIGNAL(resultsAvailable()), q, SLOT(resultsAvailable()));
+
+        connect(searchBar, SIGNAL(queryChanged(QString)), searchModel, SLOT(setQuery(QString)));
         connect(searchBar, SIGNAL(queryChanged(QString)), q, SLOT(focusSearchView(QString)));
 
         view->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -410,6 +413,7 @@ public:
     Plasma::Applet *applet;
     UrlItemLauncher *urlLauncher;
     ResizeHandle *resizeHandle;
+    SearchModel *searchModel;
     SearchBar *searchBar;
     QWidget *footer;
     QStackedWidget *contentArea;
@@ -701,7 +705,11 @@ Launcher::~Launcher()
 
 void Launcher::focusSearchView(const QString& query)
 {
-    if (!query.isEmpty()) {
+    bool queryEmpty = query.isEmpty();
+
+    d->contentSwitcher->setVisible(queryEmpty);
+
+    if (!queryEmpty) {
         d->contentArea->setCurrentWidget(d->searchView);
     } else {
         focusFavoritesView();
@@ -860,6 +868,12 @@ void Launcher::openHomepage()
 { 
     hide();
     KToolInvocation::invokeBrowser("http://www.kde.org/");
+}
+
+void Launcher::resultsAvailable()
+{
+    const QModelIndex root = d->searchModel->index(0, 0);
+    d->searchView->setCurrentIndex(d->searchModel->index(0, 0, root));
 }
 
 void Launcher::setLauncherOrigin( QPoint origin, Plasma::Location location )

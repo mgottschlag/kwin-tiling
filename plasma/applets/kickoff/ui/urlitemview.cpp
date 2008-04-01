@@ -301,11 +301,6 @@ void UrlItemView::updateLayout()
 {
     d->doLayout();
 
-    if (!d->visualOrder.contains(currentIndex())) {
-        // select the first valid index
-        setCurrentIndex(moveCursor(MoveDown,0)); 
-    }
-
     if (viewport()->isVisible()) {
         viewport()->update();
     }
@@ -376,24 +371,30 @@ QModelIndex UrlItemView::moveCursor(CursorAction cursorAction,Qt::KeyboardModifi
 
     switch (cursorAction) {
         case MoveUp:
-                visualIndex = qMax(0,visualIndex-1); 
+                if (!currentIndex().isValid()) {
+                    const QModelIndex root = model()->index(0, 0);
+                    index = model()->index(model()->rowCount(root) - 1, 0, root);
+                } else {
+                    visualIndex = qMax(0,visualIndex-1);
+                }
             break;
         case MoveDown:
-                visualIndex = qMin(d->visualOrder.count()-1,visualIndex+1);
-            break;
-        case MoveLeft:
-        case MoveRight:
-                // do nothing
+                if (!currentIndex().isValid()) {
+                    const QModelIndex root = model()->index(0, 0);
+                    index = model()->index(0, 0, root);
+                } else {
+                    visualIndex = qMin(d->visualOrder.count()-1,visualIndex+1);
+                }
             break;
         default:
-
+                // Do nothing
             break;
     }
 
-    // when changing the current item with the keyboard, clear the mouse-over item
     d->hoveredIndex = QModelIndex();
 
-    return d->visualOrder.value(visualIndex,QModelIndex());
+    return currentIndex().isValid() ? d->visualOrder.value(visualIndex,QModelIndex())
+                                    : index;
 }
 
 void UrlItemView::setSelection(const QRect& rect,QItemSelectionModel::SelectionFlags flags)
@@ -466,8 +467,7 @@ void UrlItemView::resizeEvent(QResizeEvent *)
 void UrlItemView::mouseMoveEvent(QMouseEvent *event)
 {
     const QModelIndex itemUnderMouse = indexAt(event->pos());
-    if (itemUnderMouse != d->hoveredIndex && itemUnderMouse.isValid() &&
-        state() == NoState) {
+    if (itemUnderMouse != d->hoveredIndex && state() == NoState) {
         update(itemUnderMouse);
         update(d->hoveredIndex);
 
@@ -506,6 +506,12 @@ void UrlItemView::startDrag(Qt::DropActions supportedActions)
 void UrlItemView::dropEvent(QDropEvent *)
 {
     kDebug() << "UrlItemView drop event";
+}
+
+void UrlItemView::leaveEvent(QEvent *event)
+{
+    d->hoveredIndex = QModelIndex();
+    setCurrentIndex(QModelIndex());
 }
 
 ItemStateProvider *UrlItemView::itemStateProvider() const

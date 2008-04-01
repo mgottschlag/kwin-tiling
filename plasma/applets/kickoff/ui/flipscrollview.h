@@ -58,7 +58,6 @@ public:
     virtual void scrollTo(const QModelIndex& index, ScrollHint hint = EnsureVisible);
     virtual QRect visualRect(const QModelIndex& index) const;
 
-    virtual void setModel(QAbstractItemModel *model);
     int itemHeight() const;
 
 protected:
@@ -68,6 +67,7 @@ protected:
     virtual void mouseReleaseEvent(QMouseEvent *event);
     virtual void resizeEvent(QResizeEvent *event);
     virtual void keyPressEvent(QKeyEvent *event);
+    virtual void leaveEvent(QEvent *event);
 
     // reimplemented from QAbstractItemView 
     virtual bool isIndexHidden(const QModelIndex& index) const;

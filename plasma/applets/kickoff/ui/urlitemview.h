@@ -58,6 +58,7 @@ protected:
     virtual void resizeEvent(QResizeEvent *event);
     virtual void mouseMoveEvent(QMouseEvent *event);
     virtual void dropEvent(QDropEvent *event);
+    virtual void leaveEvent(QEvent *event);
 
 private Q_SLOTS:
     // lays out all items in the view and sets the current index to the first

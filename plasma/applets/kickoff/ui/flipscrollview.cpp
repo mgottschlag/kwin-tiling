@@ -180,8 +180,7 @@ public:
     void drawBackArrow(QPainter *painter,QStyle::State state)
     {
         painter->save();
-        if (state & QStyle::State_MouseOver &&
-                state & QStyle::State_Enabled) {
+        if (state & QStyle::State_MouseOver) {
             painter->setBrush(q->palette().highlight());
         } else {
             painter->setBrush(q->palette().mid());
@@ -295,6 +294,7 @@ QModelIndex FlipScrollView::indexAt(const QPoint& point) const
     int rowIndex = (point.y() - topOffset) / itemHeight();
 
     QRect itemRect = rect();
+    itemRect.setTop(itemRect.top() + topOffset);
     itemRect.setLeft(d->backArrowRect().right() + ItemDelegate::BACK_ARROW_SPACING);
 
     if (rowIndex < items && itemRect.contains(point)) {
@@ -411,13 +411,17 @@ QModelIndex FlipScrollView::moveCursor(CursorAction cursorAction,Qt::KeyboardMod
    // kDebug() << "Moving cursor with current index" << index.data(Qt::DisplayRole);
     switch (cursorAction) {
         case MoveUp:
-                if (currentIndex().row() > 0) {
+                if (!currentIndex().isValid()) {
+                    index = model()->index(model()->rowCount(d->currentRoot()) - 1, 0, d->currentRoot());
+                } else if (currentIndex().row() > 0) {
                     index = currentIndex().sibling(currentIndex().row()-1,
                                                    currentIndex().column());
                 }
             break;
         case MoveDown:
-                if (currentIndex().row() <
+                if (!currentIndex().isValid()) {
+                    index = model()->index(0, 0, d->currentRoot());
+                } else if (currentIndex().row() <
                         model()->rowCount(currentIndex().parent())-1 ) {
                     index = currentIndex().sibling(currentIndex().row()+1,
                                                    currentIndex().column());
@@ -449,14 +453,6 @@ QModelIndex FlipScrollView::moveCursor(CursorAction cursorAction,Qt::KeyboardMod
      //kDebug() << "New index after move" << index.data(Qt::DisplayRole);
 
     return index;
-}
-
-void FlipScrollView::setModel(QAbstractItemModel *model)
-{
-    QAbstractItemView::setModel(model);
-    if (model) {
-        setCurrentIndex(model->index(0,0));
-    }
 }
 
 void FlipScrollView::setSelection(const QRect& rect , QItemSelectionModel::SelectionFlags flags)
@@ -507,7 +503,7 @@ void FlipScrollView::mouseMoveEvent(QMouseEvent *event)
         setDirtyRegion(d->backArrowRect());
     } else {
         const QModelIndex itemUnderMouse = indexAt(event->pos());
-        if (itemUnderMouse != d->hoveredIndex && itemUnderMouse.isValid()) {
+        if (itemUnderMouse != d->hoveredIndex) {
             update(itemUnderMouse);
             update(d->hoveredIndex);
 
@@ -536,6 +532,12 @@ void FlipScrollView::keyPressEvent(QKeyEvent *event)
     }
 
     QAbstractItemView::keyPressEvent(event);
+}
+
+void FlipScrollView::leaveEvent(QEvent *event)
+{
+    d->hoveredIndex = QModelIndex();
+    setCurrentIndex(QModelIndex());
 }
 
 void FlipScrollView::paintItems(QPainter &painter, QPaintEvent *event, QModelIndex &root)
@@ -572,12 +574,11 @@ void FlipScrollView::paintItems(QPainter &painter, QPaintEvent *event, QModelInd
         if (model()->hasChildren(index)) {
             painter.save();
             painter.setPen(Qt::NoPen);
-
             // there is an assumption made here that the delegate will fill the background
             // with the selected color or some similar color which contrasts well with the
             // highlighted text color
-            if (option.state & (QStyle::State_Selected|QStyle::State_MouseOver)) {
-                painter.setBrush(palette().highlight());
+            if (option.state & QStyle::State_MouseOver) {
+                painter.setBrush(palette().highlightedText());
             } else {
                 painter.setBrush(palette().text());
             }
