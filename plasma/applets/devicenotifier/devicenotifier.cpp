@@ -36,6 +36,7 @@
 #include <KDesktopFile>
 #include <kdesktopfileactions.h>
 #include <KGlobalSettings>
+#include <KColorScheme>
 
 #include <plasma/svg.h>
 #include <plasma/widgets/widget.h>
@@ -47,6 +48,7 @@
 //use for desktop view
 #include <plasma/layouts/boxlayout.h>
 #include <plasma/widgets/icon.h>
+#include <plasma/theme.h>
 
 #include <solid/device.h>
 #include <solid/opticaldisc.h>
@@ -94,7 +96,9 @@ void DeviceNotifier::init()
 
     m_hotplugModel = new QStandardItemModel(this);
 
-    QLabel *label = new QLabel(i18n("<font color=\"white\">Recently plugged devices:</font>"));
+    KColorScheme colorTheme = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors());
+    QLabel *label = new QLabel(i18n("<font color=\"%1\">Recently plugged devices:</font>",
+                            colorTheme.foreground(KColorScheme::NormalText).color().name()));
     QLabel *icon = new QLabel();
     icon->setPixmap(KIcon("emblem-mounted").pixmap(Plasma::Delegate::ICON_SIZE, Plasma::Delegate::ICON_SIZE));
     icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
