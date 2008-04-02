@@ -332,9 +332,7 @@ QPair<Solid::Control::BluetoothInputDevice *, Solid::Control::Ifaces::BluetoothI
         Ifaces::BluetoothInputDevice *iface = 0;
 
         if (backend != 0) {
-//            iface = qobject_cast<Ifaces::BluetoothInputDevice *>(backend->createBluetoothInputDevice(ubi));
-	    iface = (Ifaces::BluetoothInputDevice *) backend->createBluetoothInputDevice(ubi);	    
-	    
+	    iface = qobject_cast<Ifaces::BluetoothInputDevice *>(backend->createBluetoothInputDevice(ubi));
         }
 
         if (iface != 0) {

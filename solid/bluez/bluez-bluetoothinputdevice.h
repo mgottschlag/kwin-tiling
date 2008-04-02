@@ -29,6 +29,7 @@
 class KDE_EXPORT BluezBluetoothInputDevice : public Solid::Control::Ifaces::BluetoothInputDevice
 {
     Q_OBJECT
+    Q_INTERFACES(Solid::Control::Ifaces::BluetoothInputDevice)
 public:
     BluezBluetoothInputDevice(const QString &objectPath, const QString &dest);
     virtual ~BluezBluetoothInputDevice();

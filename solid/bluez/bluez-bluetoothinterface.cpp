@@ -25,6 +25,7 @@
 
 #include "bluez-bluetoothremotedevice.h"
 #include "bluez-bluetoothinterface.h"
+#include <KDebug>
 
 
 class BluezBluetoothInterfacePrivate
@@ -330,7 +331,13 @@ QStringList BluezBluetoothInterface::listReply(const QString &method) const
 
 QString BluezBluetoothInterface::stringReply(const QString &method, const QString &param) const
 {
-    QDBusReply< QString > reply = d->iface.call(method, param);
+    QDBusReply< QString > reply;
+
+    if (param.isEmpty())
+	    reply = d->iface.call(method);
+    else
+	    reply = d->iface.call(method, param);
+	    	
     if (reply.isValid()) {
         return reply.value();
     }

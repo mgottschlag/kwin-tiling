@@ -84,7 +84,7 @@ private:
     BluezBluetoothInterfacePrivate * d;
 
     QStringList listReply(const QString &method) const;
-    QString stringReply(const QString &method,const QString &param = 0) const;
+    QString stringReply(const QString &method, const QString &param = "") const;
     bool boolReply(const QString &method) const;
 };
 
