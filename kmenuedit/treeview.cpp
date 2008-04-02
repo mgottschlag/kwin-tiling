@@ -515,11 +515,15 @@ void TreeView::selectMenuEntry(const QString &menuEntry)
    while(item)
    {
       MenuEntryInfo *entry = item->entryInfo();
-      if (entry && (entry->menuId() == menuEntry))
+      if (entry )
       {
-         setCurrentItem(item);
-         ensureItemVisible(item);
-         return;
+          kDebug()<<" entry->menuId() :"<<entry->menuId();
+          if ( entry->menuId() == menuEntry )
+          {
+              setCurrentItem(item);
+              ensureItemVisible(item);
+              return;
+          }
       }
       item = (TreeItem*) item->nextSibling();
    }
