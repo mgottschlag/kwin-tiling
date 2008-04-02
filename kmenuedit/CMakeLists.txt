@@ -6,8 +6,9 @@ set(kmenueditcommon_STAT_SRCS preferencesdlg.cpp klinespellchecking.cpp basictab
 
 ########### next target ###############
 
-set(kmenuedit_KDEINIT_SRCS main.cpp ${kmenueditcommon_STAT_SRCS})
+qt4_add_dbus_adaptor( kmenueditcommon_STAT_SRCS org.kde.kmenuedit.xml kmenuedit.h KMenuEdit)
 
+set(kmenuedit_KDEINIT_SRCS main.cpp ${kmenueditcommon_STAT_SRCS})
 
 kde4_add_kdeinit_executable( kmenuedit ${kmenuedit_KDEINIT_SRCS})
 

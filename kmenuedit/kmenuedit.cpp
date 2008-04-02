@@ -39,11 +39,15 @@
 #include "treeview.h"
 #include "basictab.h"
 #include "preferencesdlg.h"
+#include "kmenueditadaptor.h"
+
 #include "kmenuedit.moc"
 
 KMenuEdit::KMenuEdit ()
   : KXmlGuiWindow (0), m_tree(0), m_basicTab(0), m_splitter(0)
 {
+    ( void )new KmenueditAdaptor(this);
+    QDBusConnection::sessionBus().registerObject("/KMenuEdit", this);
     KConfigGroup grp( KGlobal::config(), "General" );
     m_showHidden = grp.readEntry("ShowHidden", false);
 
