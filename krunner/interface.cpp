@@ -28,6 +28,7 @@
 #include <QShortcut>
 #include <QTimer>
 #include <QHideEvent>
+#include <QClipboard>
 
 #include <KActionCollection>
 #include <KHistoryComboBox>
@@ -441,6 +442,12 @@ void Interface::display(const QString& term)
     KDialog::centerOnScreen(this, screen);
     show();
     KWindowSystem::forceActiveWindow(winId());
+}
+
+void Interface::displayWithClipboardContents()
+{
+   QString clipboardData = QApplication::clipboard()->text(QClipboard::Selection);
+   display(clipboardData);
 }
 
 void Interface::switchUser()

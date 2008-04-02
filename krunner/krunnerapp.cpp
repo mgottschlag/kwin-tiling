@@ -134,6 +134,11 @@ void KRunnerApp::initialize()
         a->setText( i18n( I18N_NOOP( "Run Command" ) ) );
         a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::Key_F2));
         connect( a, SIGNAL(triggered(bool)), m_interface, SLOT(display()) );
+
+        a = m_actionCollection->addAction( I18N_NOOP("Run Command on clipboard contents") );
+        a->setText( i18n( I18N_NOOP( "Run Command on clipboard contents" ) ) );
+        a->setGlobalShortcut(KShortcut(Qt::ALT+Qt::SHIFT+Qt::Key_F2));
+        connect( a, SIGNAL(triggered(bool)), m_interface, SLOT(displayWithClipboardContents()) );
     }
 
     a = m_actionCollection->addAction( I18N_NOOP( "Show System Activity" ) );
