@@ -59,7 +59,7 @@ void SessionRunner::match(Plasma::SearchContext *search)
     bool listAll = (term == "SESSIONS");
 
     if (!listAll) {
-        if (term.startsWith("switch", Qt::CaseInsensitive)) {
+        if (term.startsWith(i18n("switch"), Qt::CaseInsensitive)) {
             // interestingly, this means that if one wants to switch to a
             // session named "switch", they'd have to enter
             // switch switch. ha!
@@ -77,8 +77,8 @@ void SessionRunner::match(Plasma::SearchContext *search)
 
     QList<Plasma::SearchMatch*> matches;
     bool switchUser = listAll ||
-                      term.compare("switch user", Qt::CaseInsensitive) == 0 ||
-                      term.compare("new session", Qt::CaseInsensitive) == 0;
+                      term.compare(i18n("switch user"), Qt::CaseInsensitive) == 0 ||
+                      term.compare(i18n("new session"), Qt::CaseInsensitive) == 0;
     if (switchUser &&
         KAuthorized::authorizeKAction("start_new_session") &&
         dm.isSwitchable() &&
@@ -129,23 +129,23 @@ void SessionRunner::match(Plasma::SearchContext *search)
         // we know it's not SESSION or "switch <something>", so let's
         // try some other possibilities
         Plasma::SearchMatch *match = 0;
-        if (term.compare("logout", Qt::CaseInsensitive) == 0 ||
-            term.compare("log out", Qt::CaseInsensitive) == 0) {
+        if (term.compare(i18n("logout"), Qt::CaseInsensitive) == 0 ||
+            term.compare(i18n("log out"), Qt::CaseInsensitive) == 0) {
             match = new Plasma::SearchMatch(this);
             match->setText(i18n("Logout"));
             match->setIcon(KIcon("system-log-out"));
             match->setData(LogoutAction);
-        } else if (term.compare("restart", Qt::CaseInsensitive) == 0) {
+        } else if (term.compare(i18n("restart"), Qt::CaseInsensitive) == 0) {
             match = new Plasma::SearchMatch(this);
             match->setText(i18n("Restart the computer"));
             match->setIcon(KIcon("system-restart"));
             match->setData(RestartAction);
-        } else if (term.compare("shutdown", Qt::CaseInsensitive) == 0){
+        } else if (term.compare(i18n("shutdown"), Qt::CaseInsensitive) == 0){
             match = new Plasma::SearchMatch(this);
             match->setText(i18n("Shutdown the computer"));
             match->setIcon(KIcon("system-shutdown"));
             match->setData(ShutdownAction);
-        } else if (term.compare("lock", Qt::CaseInsensitive) == 0){
+        } else if (term.compare(i18n("lock"), Qt::CaseInsensitive) == 0){
             match = new Plasma::SearchMatch(this);
             match->setText(i18n("Lock the screen"));
             match->setIcon(KIcon("system-lock-screen"));
