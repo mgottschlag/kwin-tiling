@@ -27,7 +27,7 @@ Name[uz]=Авто-бошлаш
 Name[vi]=Tự khởi chạy
 Name[xh]=Isiqalo esizenzekelayo
 
-Comment=A Configuration tool for managing what programs start up with KDE.
+Comment=A configuration tool for managing which programs start up with KDE.
 
 X-KDE-Keywords=Autostart Manager
 X-KDE-Keywords[de]=Autostart Verwaltung
