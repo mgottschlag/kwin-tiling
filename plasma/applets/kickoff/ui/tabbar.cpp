@@ -165,7 +165,7 @@ QPainterPath TabBar::tabPath(const QRect &_r)
     switch (s) {
         case RoundedSouth:
         case TriangularSouth:
-            r.adjust(3, 0, -3, -3);
+            r.adjust(0, 0, 0, -3);
             path.moveTo(rect().topLeft());
             path.lineTo(r.topLeft());
             // Top left corner
@@ -183,7 +183,7 @@ QPainterPath TabBar::tabPath(const QRect &_r)
             break;
         case RoundedNorth:
         case TriangularNorth:
-            r.adjust(3, 3, -3, 0);
+            r.adjust(0, 3, 0, 0);
             path.moveTo(rect().bottomLeft());
             // Bottom left corner
             path.lineTo(r.bottomLeft());
@@ -201,7 +201,7 @@ QPainterPath TabBar::tabPath(const QRect &_r)
             break;
         case RoundedWest:
         case TriangularWest:
-            r.adjust(3, 3, 0, -3);
+            r.adjust(3, 0, 0, 0);
             path.moveTo(rect().topRight());
             // Top right corner
             path.lineTo(r.topRight());
@@ -219,7 +219,7 @@ QPainterPath TabBar::tabPath(const QRect &_r)
             break;
         case RoundedEast:
         case TriangularEast:
-            r.adjust(0, 3, -3, -3);
+            r.adjust(0, 0, -3, 0);
             path.moveTo(rect().topLeft());
             // Top left corner
             path.lineTo(r.topLeft());
@@ -307,7 +307,7 @@ void TabBar::paintEvent(QPaintEvent *event)
         // draw tab icon
         QRect iconRect = rect;
         iconRect.setBottom(iconRect.bottom() - textHeight);
-        iconRect.adjust(0, -delta, 0, -delta);
+        iconRect.adjust(0, (isVertical() ? 1 : 0) * TAB_CONTENTS_MARGIN + 3 - delta, 0, -delta);
         tabIcon(i).paint(&painter, iconRect);
 
         // draw tab text
@@ -394,6 +394,23 @@ void TabBar::animationFinished()
 {
     m_currentAnimRect = QRect();
     update();
+}
+
+bool TabBar::isVertical() const
+{
+    Shape s = shape();
+    if( s == RoundedWest ||
+        s == RoundedEast ||
+        s == TriangularWest ||
+        s == TriangularEast ) {
+        return true;
+    }
+    return false;
+}
+
+bool TabBar::isHorizontal() const
+{
+  return !isVertical();
 }
 
 #include "tabbar.moc"

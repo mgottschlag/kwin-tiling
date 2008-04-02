@@ -55,6 +55,9 @@ protected:
     virtual void mouseMoveEvent(QMouseEvent *event);
     virtual void resizeEvent(QResizeEvent* event);
 
+    bool isHorizontal() const;
+    bool isVertical() const;
+
 protected slots:
     void switchToHoveredTab();
     void animationFinished();
