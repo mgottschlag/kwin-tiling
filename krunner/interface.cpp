@@ -623,12 +623,13 @@ void Interface::updateMatches()
     }
 
     m_matchList->sortItems(Qt::DescendingOrder);
-    m_execQueued = false;
 
     if (!m_defaultMatch) {
+        m_execQueued = false;
         showOptions(false);
         m_runButton->setEnabled(false);
     } else if (m_execQueued) {
+        m_execQueued = false;
         exec();
     }
 }
