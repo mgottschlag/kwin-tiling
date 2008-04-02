@@ -92,10 +92,11 @@ void SessionRunner::match(Plasma::SearchContext *search)
     if (term.size() < 3) {
         return;
     }
-    
-    //TODO: ugh, magic strings.
-    //first compare with this 
-    bool listAll = (term == i18nc("command to show sessions","SESSIONS"));
+
+    // first compare with SESSIONS. this must *NOT* be translated (i18n)
+    // as it is used as an internal command trigger (e.g. via d-bus),
+    // not as a user supplied query. and yes, "Ugh, magic strings"
+    bool listAll = (term == "SESSIONS");
 
     if (!listAll) {
         //no luck, try switch user command
@@ -114,18 +115,15 @@ void SessionRunner::match(Plasma::SearchContext *search)
            if (matchUser && user.isEmpty()) {       
                 return;
            }
-      // we know it's not SESSION or "switch <something>", so let's
-      // try some other possibilities
         } else {
+            // we know it's not SESSION or "switch <something>", so let's
+            // try some other possibilities
             Plasma::SearchMatch *commandMatch;
             commandMatch = matchCommands(term);
             if (commandMatch) {
                 matches << commandMatch;
-                search->addMatches(term, matches);
-                return;
             }
         }
-
     }
 
     //kDebug() << "session switching to" << (listAll ? "all sessions" : term);
@@ -133,11 +131,6 @@ void SessionRunner::match(Plasma::SearchContext *search)
     bool switchUser = listAll ||
                       term.compare(i18n("switch user"), Qt::CaseInsensitive) == 0 ||
                       term.compare(i18n("new session"), Qt::CaseInsensitive) == 0;
-
-    // The only thing left is a switch user command 
-    if (!switchUser && !matchUser){
-        return;
-    }
 
     if (switchUser &&
         KAuthorized::authorizeKAction("start_new_session") &&
@@ -148,7 +141,7 @@ void SessionRunner::match(Plasma::SearchContext *search)
         action->setIcon(KIcon("system-switch-user"));
         action->setText(i18n("New Session"));
 
-        matches << action;      
+        matches << action;
     }
 
     // now add the active sessions
@@ -176,7 +169,7 @@ void SessionRunner::match(Plasma::SearchContext *search)
                 } else if (name.contains(user, Qt::CaseInsensitive)) {
                     match = new Plasma::SearchMatch(this);
                 }
-            } 
+            }
 
             if (match) {
                 matches << match;
