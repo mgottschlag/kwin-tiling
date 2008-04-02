@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -35,6 +35,7 @@
 // Local
 #include "core/models.h"
 #include "core/recentapplications.h"
+#include "recentadaptor.h"
 
 using namespace Kickoff;
 
@@ -46,7 +47,7 @@ public:
         , recentDocumentItem(0)
     {
     }
-    void removeExistingItem(const QString& path) 
+    void removeExistingItem(const QString& path)
     {
         if (!itemsByPath.contains(path)) {
             return;
@@ -58,12 +59,12 @@ public:
         existingItem->parent()->removeRow(existingItem->row());
         itemsByPath.remove(path);
     }
-    void addRecentApplication(KService::Ptr service,bool append) 
+    void addRecentApplication(KService::Ptr service,bool append)
     {
         // remove existing item if any
         removeExistingItem(service->entryPath());
 
-        QStandardItem *appItem = StandardItemFactory::createItemForService(service); 
+        QStandardItem *appItem = StandardItemFactory::createItemForService(service);
         itemsByPath.insert(service->entryPath(),appItem);
 
         if (append) {
@@ -80,11 +81,11 @@ public:
 
         removeExistingItem(documentUrl.url());
 
-        QStandardItem *documentItem = StandardItemFactory::createItemForUrl(desktopPath);   
+        QStandardItem *documentItem = StandardItemFactory::createItemForUrl(desktopPath);
         documentItem->setData(true, Kickoff::SubTitleMandatoryRole);
         itemsByPath.insert(desktopPath,documentItem);
 
-        //kDebug() << "Document item" << documentItem << "text" << documentItem->text() << "url" << documentUrl.url();    
+        //kDebug() << "Document item" << documentItem << "text" << documentItem->text() << "url" << documentUrl.url();
         if (append) {
             recentDocumentItem->appendRow(documentItem);
         } else {
@@ -122,6 +123,11 @@ RecentlyUsedModel::RecentlyUsedModel(QObject *parent)
     : KickoffModel(parent)
     , d(new Private(this))
 {
+    QDBusConnection dbus = QDBusConnection::sessionBus();
+    (void)new RecentAdaptor(this);
+    QDBusConnection::sessionBus().registerObject("/kickoff/RecentAppDoc", this);
+    dbus.connect(QString(), "/kickoff/RecentAppDoc", "org.kde.plasma", "cleanRecentDocumentsAndDocuments", this, SLOT(clearRecentDocumentsAndApplications()));
+
     d->loadRecentApplications();
     d->loadRecentDocuments();
 
@@ -193,6 +199,13 @@ void RecentlyUsedModel::clearRecentDocuments()
 {
     KRecentDocument::clear();
 }
+
+void RecentlyUsedModel::clearRecentDocumentsAndApplications()
+{
+    clearRecentDocuments();
+    clearRecentApplications();
+}
+
 
 #include "recentlyusedmodel.moc"
 

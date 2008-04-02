@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -29,13 +29,13 @@
 namespace Kickoff
 {
 
-/** 
- * Model for the Recently Used view which provides a tree of recently used 
+/**
+ * Model for the Recently Used view which provides a tree of recently used
  * applications and documents.
  */
 class RecentlyUsedModel : public KickoffModel
 {
-Q_OBJECT 
+Q_OBJECT
 
 public:
     /** Construct a new RecentlyUsedModel with the specified parent. */
@@ -45,7 +45,7 @@ public:
 public Q_SLOTS:
     void clearRecentApplications();
     void clearRecentDocuments();
-
+        void clearRecentDocumentsAndApplications();
 private Q_SLOTS:
     void recentDocumentAdded(const QString& path);
     void recentDocumentRemoved(const QString& path);
