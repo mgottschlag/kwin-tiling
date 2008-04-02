@@ -466,9 +466,11 @@ void TreeView::selectMenu(const QString &menu)
       return; // Root menu
    }
 
-   QString restMenu = menu.mid(1);
+   QString restMenu = menu;
+   if ( menu.startsWith( '/' ) )
+       restMenu = menu.mid(1);
    if (!restMenu.endsWith('/'))
-      restMenu += '/';
+       restMenu += '/';
 
    TreeItem *item = 0;
    do
