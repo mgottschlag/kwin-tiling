@@ -366,25 +366,12 @@ void TabBar::onValueChanged(qreal value)
         animationFinished();
         return;
     }
-
-    bool horiz = true;
-
-    switch (shape()) {
-        case RoundedWest:
-        case RoundedEast:
-        case TriangularWest:
-        case TriangularEast:
-            horiz = false;
-            break;
-        default:
-            // we're horizontal
-            break;
-    }
+    
     // animation rect
     QRect rect = tabRect(currentIndex());
     QRect lastRect = tabRect(lastIndex());
-    int x = horiz ? (int)(lastRect.x() - value * (lastRect.x() - rect.x())) : rect.x();
-    int y = horiz ? rect.y() : (int)(lastRect.y() - value * (lastRect.y() - rect.y()));
+    int x = isHorizontal() ? (int)(lastRect.x() - value * (lastRect.x() - rect.x())) : rect.x();
+    int y = isHorizontal() ? rect.y() : (int)(lastRect.y() - value * (lastRect.y() - rect.y()));
     QSizeF sz = lastRect.size() - value * (lastRect.size() - rect.size());
     m_currentAnimRect = QRect(x, y, (int)(sz.width()), (int)(sz.height()));
     update();
