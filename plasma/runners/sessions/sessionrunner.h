@@ -43,6 +43,7 @@ class SessionRunner : public Plasma::AbstractRunner
 
     private:
         void lock();
+        Plasma::SearchMatch* matchCommands(const QString& term);
 
         KDisplayManager dm;
 };

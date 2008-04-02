@@ -45,40 +45,100 @@ SessionRunner::~SessionRunner()
 {
 }
 
+
+  
+Plasma::SearchMatch* SessionRunner::matchCommands(const QString& term)
+{
+      Plasma::SearchMatch *match = 0;
+      if (term.compare(i18nc("log out command","logout"), Qt::CaseInsensitive) == 0 ||
+          term.compare(i18n("log out"), Qt::CaseInsensitive) == 0) {
+          match = new Plasma::SearchMatch(this);
+          match->setText(i18nc("log out command","Logout"));
+          match->setIcon(KIcon("system-log-out"));
+          match->setData(LogoutAction);
+      } else if (term.compare(i18nc("restart computer command","restart"), Qt::CaseInsensitive) == 0) {
+          match = new Plasma::SearchMatch(this);
+          match->setText(i18n("Restart the computer"));
+          match->setIcon(KIcon("system-restart"));
+          match->setData(RestartAction);
+      } else if (term.compare(i18nc("shutdown computer command","shutdown"), Qt::CaseInsensitive) == 0){
+          match = new Plasma::SearchMatch(this);
+          match->setText(i18n("Shutdown the computer"));
+          match->setIcon(KIcon("system-shutdown"));
+          match->setData(ShutdownAction);
+      } else if (term.compare(i18nc("lock screen command","lock"), Qt::CaseInsensitive) == 0){
+          match = new Plasma::SearchMatch(this);
+          match->setText(i18n("Lock the screen"));
+          match->setIcon(KIcon("system-lock-screen"));
+          match->setData(LockAction);
+      }
+
+      if (match) {
+          match->setType(Plasma::SearchMatch::ExactMatch);
+          match->setRelevance(0.9);
+      }
+      return match;
+  }
+
+
 void SessionRunner::match(Plasma::SearchContext *search)
 {
     const QString term = search->searchTerm();
     QString user;
     bool matchUser = false;
 
+    QList<Plasma::SearchMatch*> matches;
+
     if (term.size() < 3) {
         return;
     }
-
+    
     //TODO: ugh, magic strings.
-    bool listAll = (term == "SESSIONS");
+    //first compare with this 
+    bool listAll = (term == i18nc("command to show sessions","SESSIONS"));
 
     if (!listAll) {
-        if (term.startsWith(i18n("switch"), Qt::CaseInsensitive)) {
+        //no luck, try switch user command
+        if (term.startsWith(i18nc("switch user command","switch"), Qt::CaseInsensitive)) {
             // interestingly, this means that if one wants to switch to a
             // session named "switch", they'd have to enter
             // switch switch. ha!
-            user = term.right(term.size() - 6).trimmed();
+
+            // we don't know the size of 'switch' translated to your language, do we?
+            QStringList words = term.split(" ");
+            int switchCmdSize = words.at(0).size();
+
+            user = term.right(term.size() - switchCmdSize).trimmed();
             matchUser = true;
+            // can't match anything below, since it's just "switch"
+           if (matchUser && user.isEmpty()) {       
+                return;
+           }
+      // we know it's not SESSION or "switch <something>", so let's
+      // try some other possibilities
+        } else {
+            Plasma::SearchMatch *commandMatch;
+            commandMatch = matchCommands(term);
+            if (commandMatch) {
+                matches << commandMatch;
+                search->addMatches(term, matches);
+                return;
+            }
         }
 
-        if (matchUser && user.isEmpty()) {
-            // can't match anything below, since it's just "switch"
-            return;
-        }
     }
 
     //kDebug() << "session switching to" << (listAll ? "all sessions" : term);
 
-    QList<Plasma::SearchMatch*> matches;
     bool switchUser = listAll ||
                       term.compare(i18n("switch user"), Qt::CaseInsensitive) == 0 ||
                       term.compare(i18n("new session"), Qt::CaseInsensitive) == 0;
+
+    // The only thing left is a switch user command 
+    if (!switchUser && !matchUser){
+        return;
+    }
+
     if (switchUser &&
         KAuthorized::authorizeKAction("start_new_session") &&
         dm.isSwitchable() &&
@@ -88,7 +148,7 @@ void SessionRunner::match(Plasma::SearchContext *search)
         action->setIcon(KIcon("system-switch-user"));
         action->setText(i18n("New Session"));
 
-        matches << action;
+        matches << action;      
     }
 
     // now add the active sessions
@@ -125,40 +185,7 @@ void SessionRunner::match(Plasma::SearchContext *search)
                 match->setData(session.session);
             }
         }
-    } else {
-        // we know it's not SESSION or "switch <something>", so let's
-        // try some other possibilities
-        Plasma::SearchMatch *match = 0;
-        if (term.compare(i18n("logout"), Qt::CaseInsensitive) == 0 ||
-            term.compare(i18n("log out"), Qt::CaseInsensitive) == 0) {
-            match = new Plasma::SearchMatch(this);
-            match->setText(i18n("Logout"));
-            match->setIcon(KIcon("system-log-out"));
-            match->setData(LogoutAction);
-        } else if (term.compare(i18n("restart"), Qt::CaseInsensitive) == 0) {
-            match = new Plasma::SearchMatch(this);
-            match->setText(i18n("Restart the computer"));
-            match->setIcon(KIcon("system-restart"));
-            match->setData(RestartAction);
-        } else if (term.compare(i18n("shutdown"), Qt::CaseInsensitive) == 0){
-            match = new Plasma::SearchMatch(this);
-            match->setText(i18n("Shutdown the computer"));
-            match->setIcon(KIcon("system-shutdown"));
-            match->setData(ShutdownAction);
-        } else if (term.compare(i18n("lock"), Qt::CaseInsensitive) == 0){
-            match = new Plasma::SearchMatch(this);
-            match->setText(i18n("Lock the screen"));
-            match->setIcon(KIcon("system-lock-screen"));
-            match->setData(LockAction);
-        }
-
-        if (match) {
-            match->setType(Plasma::SearchMatch::ExactMatch);
-            match->setRelevance(0.9);
-            matches << match;
-        }
     }
-
     search->addMatches(term, matches);
 }
 
