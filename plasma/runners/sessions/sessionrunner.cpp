@@ -49,7 +49,7 @@ void SessionRunner::match(Plasma::SearchContext *search)
 {
     const QString term = search->searchTerm();
     QString user;
-    bool cmdNeedUser;
+    bool matchUser = false;
 
     if (term.size() < 3) {
         return;
@@ -64,10 +64,11 @@ void SessionRunner::match(Plasma::SearchContext *search)
             // session named "switch", they'd have to enter
             // switch switch. ha!
             user = term.right(term.size() - 6).trimmed();
-            cmdNeedUser=true;
+            matchUser = true;
         }
 
-        if (cmdNeedUser && user.isEmpty()) {
+        if (matchUser && user.isEmpty()) {
+            // can't match anything below, since it's just "switch"
             return;
         }
     }
@@ -91,71 +92,71 @@ void SessionRunner::match(Plasma::SearchContext *search)
     }
 
     // now add the active sessions
-    SessList sessions;
-    if (!dm.localSessions(sessions)) {
-        return;
-    }
-
-    foreach (const SessEnt& session, sessions) {
-        if (!session.vt || session.self) {
-            continue;
-        }
-
-        QString name = KDisplayManager::sess2Str(session);
-        Plasma::SearchMatch* action = 0;
-
-        if (listAll) {
-            action = new Plasma::SearchMatch(this);
-            action->setType(Plasma::SearchMatch::ExactMatch);
-            action->setRelevance(1);
-        } else if (cmdNeedUser) {
-            if (name.compare(user, Qt::CaseInsensitive) == 0) {
-                // we need an elif branch here because we don't
-                // want the last conditional to be checked if !listAll
-                action = new Plasma::SearchMatch(this);
-                action->setType(Plasma::SearchMatch::ExactMatch);
-                action->setRelevance(1);
-            } else if (name.contains(user, Qt::CaseInsensitive)) {
-                action = new Plasma::SearchMatch(this);
+    if (listAll || matchUser) {
+        SessList sessions;
+        foreach (const SessEnt& session, sessions) {
+            if (!session.vt || session.self) {
+                continue;
             }
-        } 
 
-        if (action) {
-            matches << action;
-            action->setIcon(KIcon("user-identity"));
-            action->setText(name);
-            action->setData(session.session);
+            QString name = KDisplayManager::sess2Str(session);
+            Plasma::SearchMatch* match = 0;
+
+            if (listAll) {
+                match = new Plasma::SearchMatch(this);
+                match->setType(Plasma::SearchMatch::ExactMatch);
+                match->setRelevance(1);
+            } else if (matchUser) {
+                if (name.compare(user, Qt::CaseInsensitive) == 0) {
+                    // we need an elif branch here because we don't
+                    // want the last conditional to be checked if !listAll
+                    match = new Plasma::SearchMatch(this);
+                    match->setType(Plasma::SearchMatch::ExactMatch);
+                    match->setRelevance(1);
+                } else if (name.contains(user, Qt::CaseInsensitive)) {
+                    match = new Plasma::SearchMatch(this);
+                }
+            } 
+
+            if (match) {
+                matches << match;
+                match->setIcon(KIcon("user-identity"));
+                match->setText(name);
+                match->setData(session.session);
+            }
         }
-    }
+    } else {
+        // we know it's not SESSION or "switch <something>", so let's
+        // try some other possibilities
+        Plasma::SearchMatch *match = 0;
+        if (term.compare("logout", Qt::CaseInsensitive) == 0 ||
+            term.compare("log out", Qt::CaseInsensitive) == 0) {
+            match = new Plasma::SearchMatch(this);
+            match->setText(i18n("Logout"));
+            match->setIcon(KIcon("system-log-out"));
+            match->setData(LogoutAction);
+        } else if (term.compare("restart", Qt::CaseInsensitive) == 0) {
+            match = new Plasma::SearchMatch(this);
+            match->setText(i18n("Restart the computer"));
+            match->setIcon(KIcon("system-restart"));
+            match->setData(RestartAction);
+        } else if (term.compare("shutdown", Qt::CaseInsensitive) == 0){
+            match = new Plasma::SearchMatch(this);
+            match->setText(i18n("Shutdown the computer"));
+            match->setIcon(KIcon("system-shutdown"));
+            match->setData(ShutdownAction);
+        } else if (term.compare("lock", Qt::CaseInsensitive) == 0){
+            match = new Plasma::SearchMatch(this);
+            match->setText(i18n("Lock the screen"));
+            match->setIcon(KIcon("system-lock-screen"));
+            match->setData(LockAction);
+        }
 
-    Plasma::SearchMatch *match = 0;
-    if (term.compare("logout", Qt::CaseInsensitive) == 0 ||
-        term.compare("log out", Qt::CaseInsensitive) == 0) {
-        match = new Plasma::SearchMatch(this);
-        match->setText(i18n("Logout"));
-        match->setIcon(KIcon("system-log-out"));
-        match->setData(LogoutAction);
-    } else if (term.compare("restart", Qt::CaseInsensitive) == 0) {
-        match = new Plasma::SearchMatch(this);
-        match->setText(i18n("Restart the computer"));
-        match->setIcon(KIcon("system-restart"));
-        match->setData(RestartAction);
-    } else if (term.compare("shutdown", Qt::CaseInsensitive) == 0){
-        match = new Plasma::SearchMatch(this);
-        match->setText(i18n("Shutdown the computer"));
-        match->setIcon(KIcon("system-shutdown"));
-        match->setData(ShutdownAction);
-    } else if (term.compare("lock", Qt::CaseInsensitive) == 0){
-        match = new Plasma::SearchMatch(this);
-        match->setText(i18n("Lock the screen"));
-        match->setIcon(KIcon("system-lock-screen"));
-        match->setData(LockAction);
-    }
-
-    if (match) {
-        match->setType(Plasma::SearchMatch::ExactMatch);
-        match->setRelevance(0.9);
-        matches << match;
+        if (match) {
+            match->setType(Plasma::SearchMatch::ExactMatch);
+            match->setRelevance(0.9);
+            matches << match;
+        }
     }
 
     search->addMatches(term, matches);
