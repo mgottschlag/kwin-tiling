@@ -57,11 +57,13 @@ void SessionRunner::match(Plasma::SearchContext *search)
     //TODO: ugh, magic strings.
     bool listAll = (term == "SESSIONS");
 
-    if (!listAll && term.startsWith("switch", Qt::CaseInsensitive)) {
-        // interestingly, this means that if one wants to switch to a
-        // session named "switch", they'd have to enter
-        // switch switch. ha!
-        user = term.right(term.size() - 6).trimmed();
+    if (!listAll) {
+        if (term.startsWith("switch", Qt::CaseInsensitive)) {
+            // interestingly, this means that if one wants to switch to a
+            // session named "switch", they'd have to enter
+            // switch switch. ha!
+            user = term.right(term.size() - 6).trimmed();
+        }
 
         if (user.isEmpty()) {
             return;
