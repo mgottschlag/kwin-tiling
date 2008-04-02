@@ -49,6 +49,7 @@ void SessionRunner::match(Plasma::SearchContext *search)
 {
     const QString term = search->searchTerm();
     QString user;
+    bool cmdNeedUser;
 
     if (term.size() < 3) {
         return;
@@ -63,9 +64,10 @@ void SessionRunner::match(Plasma::SearchContext *search)
             // session named "switch", they'd have to enter
             // switch switch. ha!
             user = term.right(term.size() - 6).trimmed();
+            cmdNeedUser=true;
         }
 
-        if (user.isEmpty()) {
+        if (cmdNeedUser && user.isEmpty()) {
             return;
         }
     }
@@ -106,15 +108,17 @@ void SessionRunner::match(Plasma::SearchContext *search)
             action = new Plasma::SearchMatch(this);
             action->setType(Plasma::SearchMatch::ExactMatch);
             action->setRelevance(1);
-        } else if (name.compare(user, Qt::CaseInsensitive) == 0) {
-            // we need an elif branch here because we don't
-            // want the last conditional to be checked if !listAll
-            action = new Plasma::SearchMatch(this);
-            action->setType(Plasma::SearchMatch::ExactMatch);
-            action->setRelevance(1);
-        } else if (name.contains(user, Qt::CaseInsensitive)) {
-            action = new Plasma::SearchMatch(this);
-        }
+        } else if (cmdNeedUser) {
+            if (name.compare(user, Qt::CaseInsensitive) == 0) {
+                // we need an elif branch here because we don't
+                // want the last conditional to be checked if !listAll
+                action = new Plasma::SearchMatch(this);
+                action->setType(Plasma::SearchMatch::ExactMatch);
+                action->setRelevance(1);
+            } else if (name.contains(user, Qt::CaseInsensitive)) {
+                action = new Plasma::SearchMatch(this);
+            }
+        } 
 
         if (action) {
             matches << action;
