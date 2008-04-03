@@ -43,11 +43,11 @@ CalculatorRunner::~CalculatorRunner()
 
 void CalculatorRunner::powSubstitutions(QString& cmd)
 {
-     if (cmd.contains("e+", Qt::CaseInsensitive)){
+     if (cmd.contains("e+", Qt::CaseInsensitive)) {
          cmd=cmd.replace("e+", "^", Qt::CaseInsensitive);
      }
 
-     if (cmd.contains("e-", Qt::CaseInsensitive)){
+     if (cmd.contains("e-", Qt::CaseInsensitive)) {
          cmd=cmd.replace("e-", "^-", Qt::CaseInsensitive);
      }
 
@@ -59,52 +59,51 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
         int preIndex=where-1;
         int postIndex=where+1;
         int count=0;
-           
+
+        QChar decimalSymbol=KGlobal::locale()->decimalSymbol().at(0);     
         //avoid out of range on weird commands 
         preIndex=qMax(0, preIndex);
         postIndex=qMin(postIndex, cmd.length()-1); 
       
         //go backwards looking for the end of the number or expresion
-        while (preIndex!=0){
+        while (preIndex!=0) {
             QChar current=cmd.at(preIndex);
             QChar next=cmd.at(preIndex-1);
             //kDebug() << "index " << preIndex << " char " << current;
-            if (current == ')'){
+            if (current == ')') {
                 count++;
-            }
-            else if (current == '('){
+            } else if (current == '(') {
                 count--;
-            }
-            else {
-                if ((next <'9' ) && (next>'0')|| next=='.'|| next==',' ){
+            } else {
+                if (((next <'9' ) && (next>'0')) || next==decimalSymbol) {
                     preIndex--;
                     continue;
                 }
             }
-            if (count==0)
+            if (count==0) {
                 break;
+            }
             preIndex--;
         }   
 
        //go forwards looking for the end of the number or expresion
         count=0;
-        while (postIndex!=cmd.size()-1){
+        while (postIndex!=cmd.size()-1) {
             QChar current=cmd.at(postIndex);
             QChar next=cmd.at(postIndex+1);
-            if (current == '('){
+            if (current == '(') {
                 count++;
-            }
-            else if (current == ')'){
+            } else if (current == ')') {
                 count--;
-            }
-            else {
-                if ((next <'9' ) && (next>'0')|| next=='.'|| next==',' ){
+            } else {
+                if (((next <'9' ) && (next>'0')) || next==decimalSymbol) {
                     postIndex++;
                     continue;
                  }
             }
-            if (count==0)
+            if (count==0) {
                 break;
+            }
             postIndex++;
         }   
        
@@ -120,20 +119,23 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
 
 void CalculatorRunner::userFriendlySubstitutions(QString& cmd)
 {
-    if (cmd.contains(KGlobal::locale()->decimalSymbol(), Qt::CaseInsensitive)){
+    if (cmd.contains(KGlobal::locale()->decimalSymbol(), Qt::CaseInsensitive)) {
          cmd=cmd.replace(KGlobal::locale()->decimalSymbol(), ".", Qt::CaseInsensitive);
     }
-    
+
+    //no meanless space between friendly guys: helps simplify below code
+    cmd.replace(" ","");
+
     powSubstitutions(cmd);
 
-    if (cmd.contains("and", Qt::CaseInsensitive)){
-         cmd=cmd.replace("and", "&", Qt::CaseInsensitive);
+    if (cmd.contains(QRegExp("\\d+and\\d+"))) {
+         cmd=cmd.replace(QRegExp("(\\d+)and(\\d+)"), "\\1&\\2");
     }
-    if (cmd.contains("or", Qt::CaseInsensitive)){
-         cmd=cmd.replace("or", "|", Qt::CaseInsensitive);
+    if (cmd.contains(QRegExp("\\d+or\\d+"))) {
+         cmd=cmd.replace(QRegExp("(\\d+)or(\\d+)"), "\\1|\\2");
     }
-    if (cmd.contains("xor", Qt::CaseInsensitive)){
-         cmd=cmd.replace("xor", "^", Qt::CaseInsensitive);
+    if (cmd.contains(QRegExp("\\d+xor\\d+"))) {
+         cmd=cmd.replace(QRegExp("(\\d+)xor(\\d+)"), "\\1^\\2");
     }
 }
 
