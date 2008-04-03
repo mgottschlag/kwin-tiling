@@ -21,13 +21,21 @@ Name[ka]=ავტოგაშვება
 Name[lt]=Autostartas
 Name[mk]=Автостарт
 Name[ms]=Automula
+Name[pt]=Arranque
+Name[pt_BR]=Arranque
 Name[ru]=Автозапуск
 Name[sk]=Autoštart
+Name[uk]=Автозапуск
 Name[uz]=Авто-бошлаш
 Name[vi]=Tự khởi chạy
 Name[xh]=Isiqalo esizenzekelayo
+Name[zh_CN]=自动启动
 
 Comment=A configuration tool for managing which programs start up with KDE.
+Comment[pt]=Uma ferramenta de configuração para gerir os programas que iniciam com o KDE.
+Comment[pt_BR]=Uma ferramenta de configuração para gerir os programas que iniciam com o KDE.
+Comment[uk]=Засіб налаштування для вказування програмам, які будуть запускатися з KDE.
+Comment[zh_CN]=管理随 KDE 自动启动的程序的配置工具。
 
 X-KDE-Keywords=Autostart Manager
 X-KDE-Keywords[de]=Autostart Verwaltung
