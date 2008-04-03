@@ -257,7 +257,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
 
   KAboutData aboutData( "kcminit", "kcontrol", ki18n("KCMInit"),
 	"",
-	ki18n("KCMInit - runs startups initialization for Control Modules."));
+	ki18n("KCMInit - runs startup initialization for Control Modules."));
 
   KCmdLineArgs::init(argc, argv, &aboutData);
 
