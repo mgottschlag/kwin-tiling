@@ -40,6 +40,8 @@ class CalculatorRunner : public Plasma::AbstractRunner
 
     private:
         QString calculate(const QString& term);
+        void userFriendlySubstitutions(QString& cmd);
+        void powSubstitutions(QString& cmd);
 };
 
 K_EXPORT_PLASMA_RUNNER(calculatorrunner, CalculatorRunner)

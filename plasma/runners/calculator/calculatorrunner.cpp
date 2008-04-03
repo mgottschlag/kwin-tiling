@@ -27,6 +27,7 @@
 
 #include <KIcon>
 
+
 CalculatorRunner::CalculatorRunner( QObject* parent, const QVariantList &args )
     : Plasma::AbstractRunner(parent, args)
 {
@@ -40,12 +41,109 @@ CalculatorRunner::~CalculatorRunner()
 {
 }
 
+void CalculatorRunner::powSubstitutions(QString& cmd)
+{
+     if (cmd.contains("e+", Qt::CaseInsensitive)){
+         cmd=cmd.replace("e+", "^", Qt::CaseInsensitive);
+     }
+
+     if (cmd.contains("e-", Qt::CaseInsensitive)){
+         cmd=cmd.replace("e-", "^-", Qt::CaseInsensitive);
+     }
+
+    // the below code is scary mainly because we have to honor priority
+   // honor decimal numbers and parenthesis. 
+    if (cmd.contains('^')){
+        int where=cmd.indexOf('^');
+        cmd=cmd.replace('^', ',');
+        int preIndex=where-1;
+        int postIndex=where+1;
+        int count=0;
+           
+        //avoid out of range on weird commands 
+        preIndex=qMax(0, preIndex);
+        postIndex=qMin(postIndex, cmd.length()-1); 
+      
+        //go backwards looking for the end of the number or expresion
+        while (preIndex!=0){
+            QChar current=cmd.at(preIndex);
+            QChar next=cmd.at(preIndex-1);
+            //kDebug() << "index " << preIndex << " char " << current;
+            if (current == ')'){
+                count++;
+            }
+            else if (current == '('){
+                count--;
+            }
+            else {
+                if ((next <'9' ) && (next>'0')|| next=='.'|| next==',' ){
+                    preIndex--;
+                    continue;
+                }
+            }
+            if (count==0)
+                break;
+            preIndex--;
+        }   
+
+       //go forwards looking for the end of the number or expresion
+        count=0;
+        while (postIndex!=cmd.size()-1){
+            QChar current=cmd.at(postIndex);
+            QChar next=cmd.at(postIndex+1);
+            if (current == '('){
+                count++;
+            }
+            else if (current == ')'){
+                count--;
+            }
+            else {
+                if ((next <'9' ) && (next>'0')|| next=='.'|| next==',' ){
+                    postIndex++;
+                    continue;
+                 }
+            }
+            if (count==0)
+                break;
+            postIndex++;
+        }   
+       
+        preIndex=qMax(0, preIndex);
+        postIndex=qMin(postIndex, cmd.length()); 
+
+        cmd.insert(preIndex,"pow(");
+        // +1 +4 == next position to the last number after we add 4 new characters pow(
+        cmd.insert(postIndex+1+4, ')'); 
+        //kDebug() << "from" << preIndex << " to " << postIndex << " got: " << cmd;
+    }
+}
+
+void CalculatorRunner::userFriendlySubstitutions(QString& cmd)
+{
+    if (cmd.contains(KGlobal::locale()->decimalSymbol(), Qt::CaseInsensitive)){
+         cmd=cmd.replace(KGlobal::locale()->decimalSymbol(), ".", Qt::CaseInsensitive);
+    }
+    
+    powSubstitutions(cmd);
+
+    if (cmd.contains("and", Qt::CaseInsensitive)){
+         cmd=cmd.replace("and", "&", Qt::CaseInsensitive);
+    }
+    if (cmd.contains("or", Qt::CaseInsensitive)){
+         cmd=cmd.replace("or", "|", Qt::CaseInsensitive);
+    }
+    if (cmd.contains("xor", Qt::CaseInsensitive)){
+         cmd=cmd.replace("xor", "^", Qt::CaseInsensitive);
+    }
+}
+
+
 void CalculatorRunner::match(Plasma::SearchContext *search)
 {
     const QString term = search->searchTerm();
     QString cmd = term;
 
-    if (cmd.length() < 3 || cmd[0] != '=') {
+    if (cmd.length() < 4 || cmd[0] != '=') {
         return;
     }
 
@@ -55,6 +153,8 @@ void CalculatorRunner::match(Plasma::SearchContext *search)
         return;
     }
 
+    userFriendlySubstitutions(cmd);
+ 
     cmd.replace(QRegExp("([a-zA-Z]+)"), "Math.\\1");
     QString result = calculate(cmd);
 
