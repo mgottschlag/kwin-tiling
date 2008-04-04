@@ -212,3 +212,8 @@ void KMenuEdit::slotRestoreMenu()
 {
     m_tree->restoreMenuSystem();
 }
+
+void KMenuEdit::restoreSystemMenu()
+{
+    m_tree->restoreMenuSystem();
+}

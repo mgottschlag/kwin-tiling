@@ -8,5 +8,6 @@
     <method name="selectMenuEntry">
       <arg type="s" direction="in" name="menu"/>
     </method>
+    <method name="restoreSystemMenu"/>
   </interface>
 </node>

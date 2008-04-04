@@ -38,6 +38,7 @@ public:
 
     void selectMenu(const QString &menu) { m_tree->selectMenu(menu); }
     void selectMenuEntry(const QString &menuEntry) { m_tree->selectMenuEntry(menuEntry); }
+    void restoreSystemMenu();
 
 protected:
     void setupView();
