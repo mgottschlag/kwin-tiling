@@ -65,9 +65,10 @@ bool MenuFile::load()
    QFile file( m_fileName );
    if (!file.open( QIODevice::ReadOnly ))
    {
-      kWarning() << "Could not read " << m_fileName ;
-      create();
-      return false;
+       if ( file.exists() )
+           kWarning() << "Could not read " << m_fileName ;
+       create();
+       return false;
    }
 
    QString errorMsg;

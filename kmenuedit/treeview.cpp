@@ -221,43 +221,32 @@ void TreeView::setViewMode(bool showHidden)
     QAction *action;
 
     action = m_ac->action("edit_cut");
-    if(action) {
-        m_rmb->addAction( action );
-        action->setEnabled(false);
-        connect(action, SIGNAL(activated()), SLOT(cut()));
-    }
+    m_rmb->addAction( action );
+    action->setEnabled(false);
+    connect(action, SIGNAL(activated()), SLOT(cut()));
 
     action = m_ac->action("edit_copy");
-    if(action) {
-        m_rmb->addAction( action );
-        action->setEnabled(false);
-        connect(action, SIGNAL(activated()), SLOT(copy()));
-    }
+    m_rmb->addAction( action );
+    action->setEnabled(false);
+    connect(action, SIGNAL(activated()), SLOT(copy()));
 
     action = m_ac->action("edit_paste");
-    if(action) {
-        m_rmb->addAction( action );
-        action->setEnabled(false);
-        connect(action, SIGNAL(activated()), SLOT(paste()));
-    }
+    m_rmb->addAction( action );
+    action->setEnabled(false);
+    connect(action, SIGNAL(activated()), SLOT(paste()));
 
     m_rmb->addSeparator();
 
     action = m_ac->action("delete");
-    if(action) {
-        m_rmb->addAction( action );
-        action->setEnabled(false);
-        connect(action, SIGNAL(activated()), SLOT(del()));
-    }
+    m_rmb->addAction( action );
+    action->setEnabled(false);
+    connect(action, SIGNAL(activated()), SLOT(del()));
 
     m_rmb->addSeparator();
 
-    if(m_ac->action("newitem"))
-	m_rmb->addAction( m_ac->action("newitem") );
-    if(m_ac->action("newsubmenu"))
-	m_rmb->addAction( m_ac->action("newsubmenu") );
-    if(m_ac->action("newsep"))
-	m_rmb->addAction( m_ac->action("newsep") );
+    m_rmb->addAction( m_ac->action("newitem") );
+    m_rmb->addAction( m_ac->action("newsubmenu") );
+    m_rmb->addAction( m_ac->action("newsep") );
 
     m_showHidden = showHidden;
     readMenuFolderInfo();
@@ -1254,7 +1243,7 @@ void TreeView::paste()
    // is there content in the clipboard?
    if (!m_clipboard) return;
 
-   // get destination folder
+  // get destination folder
    QString folder;
 
    if(item->isDirectory())
