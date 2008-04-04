@@ -289,12 +289,12 @@ public Q_SLOTS:
     virtual void setPeriodicDiscoveryNameResolving(bool resolveNames) = 0;
 
     /**
-     * Instantiates a new BluetoothRemoteDevice object from this backend given its UBI.
+     * Instantiates a new BluetoothRemoteDevice object from this backend given its address.
      *
      * @param ubi the identifier of the bluetooth remote device instantiated
      * @returns a new BluetoothRemoteDevice object if there's a device having the given UBI, 0 otherwise
      */
-    virtual QObject *createBluetoothRemoteDevice(const QString &ubi) = 0;
+    virtual QObject *createBluetoothRemoteDevice(const QString &address) = 0;
 
 Q_SIGNALS:
 

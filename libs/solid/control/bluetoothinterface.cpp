@@ -112,8 +112,14 @@ Solid::Control::BluetoothRemoteDevice Solid::Control::BluetoothInterface::findBl
     }
 }
 
-Solid::Control::BluetoothRemoteDevice * Solid::Control::BluetoothInterface::createBluetoothRemoteDevice(const QString & ubi)
+Solid::Control::BluetoothRemoteDevice * Solid::Control::BluetoothInterface::createBluetoothRemoteDevice(const QString &address)
 {
+    QString ubi;
+    if (address.startsWith("/org/bluez"))
+	ubi = address;
+    else
+    	ubi = this->ubi() + "/" + address;
+    
     QPair<BluetoothRemoteDevice *, Ifaces::BluetoothRemoteDevice *> pair = d->findRegisteredBluetoothRemoteDevice(ubi);
     return pair.first;
 

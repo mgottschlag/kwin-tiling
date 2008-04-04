@@ -104,12 +104,12 @@ public:
     QString ubi() const;
 
     /**
-     * Create new BluetoothRemoteDevice object from this interface given its UBI.
+     * Create new BluetoothRemoteDevice object from this interface given its address.
      *
      * @param ubi the identifier of the bluetooth device to instantiate
      * @returns a bluetooth object, if a bluetooth device having the given UBI, for this interface exists, 0 otherwise
      */
-    BluetoothRemoteDevice *createBluetoothRemoteDevice(const QString  & ubi);
+    BluetoothRemoteDevice *createBluetoothRemoteDevice(const QString &address);
 
     /**
      * Finds a BluetoothRemoteDevice object given its UBI.

@@ -165,6 +165,23 @@ Solid::Control::BluetoothInputDevice Solid::Control::BluetoothManager::findBluet
     }
 }
 
+Solid::Control::BluetoothInputDevice* Solid::Control::BluetoothManager::createBluetoothInputDevice(const QString &ubi)
+{
+        Ifaces::BluetoothManager *backend = qobject_cast<Ifaces::BluetoothManager *>(d->managerBackend());
+        Ifaces::BluetoothInputDevice *iface = 0;
+	if (backend != 0) {
+	    iface = qobject_cast<Ifaces::BluetoothInputDevice *>(backend->createBluetoothInputDevice(ubi));
+        }
+	if (iface != 0) {
+            BluetoothInputDevice *device = new BluetoothInputDevice(iface);
+	    return device;
+
+	} else {
+	    return &d->invalidInputDevice;
+	}
+
+}
+
 KJob *Solid::Control::BluetoothManager::setupInputDevice(const QString &ubi)
 {
     return_SOLID_CALL(Ifaces::BluetoothManager *, d->managerBackend(), 0, setupInputDevice(ubi));
@@ -347,6 +364,8 @@ QPair<Solid::Control::BluetoothInputDevice *, Solid::Control::Ifaces::BluetoothI
         }
     }
 }
+
+
 
 
 #include "bluetoothmanager.moc"
