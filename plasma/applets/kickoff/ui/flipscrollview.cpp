@@ -578,7 +578,7 @@ void FlipScrollView::paintItems(QPainter &painter, QPaintEvent *event, QModelInd
             // with the selected color or some similar color which contrasts well with the
             // highlighted text color
             if (option.state & QStyle::State_MouseOver) {
-                painter.setBrush(palette().highlightedText());
+                painter.setBrush(palette().highlight());
             } else {
                 painter.setBrush(palette().text());
             }
