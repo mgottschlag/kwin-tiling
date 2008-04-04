@@ -291,23 +291,14 @@ void TabBar::paintEvent(QPaintEvent *event)
 
     QFontMetrics metrics(painter.font());
     int textHeight = metrics.height();
-    int delta;
 
     for (int i = 0; i < count(); i++) {
-        if (i == currentTab) {
-            delta = (int)(m_animProgress * TAB_CONTENTS_MARGIN);
-        } else if (i == lastIndex()) {
-            delta = TAB_CONTENTS_MARGIN - (int)(m_animProgress * TAB_CONTENTS_MARGIN);
-        } else {
-            delta = 0;
-        }
-
         QRect rect = tabRect(i).adjusted(TAB_CONTENTS_MARGIN, TAB_CONTENTS_MARGIN,
                                          -TAB_CONTENTS_MARGIN, -TAB_CONTENTS_MARGIN);
         // draw tab icon
         QRect iconRect = rect;
         iconRect.setBottom(iconRect.bottom() - textHeight);
-        iconRect.adjust(0, (isVertical() ? 1 : 0) * TAB_CONTENTS_MARGIN + 3 - delta, 0, -delta);
+        iconRect.adjust(0, (isVertical() ? 1 : 0) * TAB_CONTENTS_MARGIN + 3, 0, 0);
         tabIcon(i).paint(&painter, iconRect);
 
         // draw tab text
@@ -366,7 +357,7 @@ void TabBar::onValueChanged(qreal value)
         animationFinished();
         return;
     }
-    
+
     // animation rect
     QRect rect = tabRect(currentIndex());
     QRect lastRect = tabRect(lastIndex());
