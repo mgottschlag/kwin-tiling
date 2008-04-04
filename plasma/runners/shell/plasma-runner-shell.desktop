@@ -1,27 +1,5 @@
 [Desktop Entry]
 Name=Command-line runner
-Name[ca]=Engegador de la línia d'ordres
-Name[de]=Kommandozeilenprogramm-Ausführung
-Name[el]=Εκτελεστής εντολών γραμμής εντολών
-Name[eo]=Komandlinia lanĉilo
-Name[es]=Ejecución de órdenes
-Name[ga]=Feidhmitheoir líne na n-orduithe
-Name[gu]=આદેશ વાક્ય ચલાવનાર
-Name[ja]=コマンドライン Runner
-Name[km]=កម្មវិធីរត់​បន្ទាត់​ពាក្យ​បញ្ជា
-Name[ko]=명령줄 실행기
-Name[nds]=Befehlreegdreger
-Name[pt]=Execução da Linha de Comandos
-Name[pt_BR]=Execução de linha de comando
-Name[ro]=Executor Linie de comandă
-Name[sr]=извођач командне линије
-Name[sr@latin]=izvođač komandne linije
-Name[th]=ตัวเรียกคำสั่งบนบรรทัดคำสั่งทำงาน
-Name[tr]=Komut satırı çalıştırıcı
-Name[uk]=Запуск команд командного рядка
-Name[x-test]=xxCommand line runnerxx
-Name[zh_CN]=命令行运行器
-Name[zh_TW]=命令列執行者
 Comment=Executes shell commands
 Comment[ca]=Executa ordres de la shell
 Comment[de]=Führt Shell-Kommandos aus

@@ -18,6 +18,7 @@ Name[cy]=Hunan-gychwyn
 Name[ga]=Tosú uathoibríoch
 Name[hr]=Automatsko pokretanje
 Name[ka]=ავტოგაშვება
+Name[km]=ចាប់ផ្ដើម​ស្វ័យប្រវត្តិ
 Name[lt]=Autostartas
 Name[mk]=Автостарт
 Name[ms]=Automula
@@ -30,12 +31,9 @@ Name[uz]=Авто-бошлаш
 Name[vi]=Tự khởi chạy
 Name[xh]=Isiqalo esizenzekelayo
 Name[zh_CN]=自动启动
+Name[zh_TW]=自動啟動
 
 Comment=A configuration tool for managing which programs start up with KDE.
-Comment[pt]=Uma ferramenta de configuração para gerir os programas que iniciam com o KDE.
-Comment[pt_BR]=Uma ferramenta de configuração para gerir os programas que iniciam com o KDE.
-Comment[uk]=Засіб налаштування для вказування програмам, які будуть запускатися з KDE.
-Comment[zh_CN]=管理随 KDE 自动启动的程序的配置工具。
 
 X-KDE-Keywords=Autostart Manager
 X-KDE-Keywords[de]=Autostart Verwaltung
