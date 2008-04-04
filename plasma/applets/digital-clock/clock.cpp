@@ -354,13 +354,10 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             // Now find out how much space is left for painting the time
             timeRect = QRect(   contentsRect.left(),
                                 contentsRect.top(),
-                                (contentsRect.width()),
-                                (contentsRect.height()-subtitleHeight));
+                                contentsRect.width(),
+                                (contentsRect.height()-subtitleHeight+4));
         } else {
-            timeRect = QRect(   contentsRect.left(),
-                                (contentsRect.top()),
-                                (contentsRect.width()),
-                                (contentsRect.height()));
+            timeRect = contentsRect;
         }
 
         QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
@@ -369,7 +366,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         m_plainClockFont.setItalic(m_plainClockFontItalic);
 
         // Choose a relatively big font size to start with
-        m_plainClockFont.setPointSizeF(qMax((contentsRect.height()/1.5), (qreal)KGlobalSettings::smallestReadableFont().pointSize()));
+        m_plainClockFont.setPointSizeF(qMax(timeRect.height(), KGlobalSettings::smallestReadableFont().pointSize()));
         preparePainter(p, timeRect, m_plainClockFont, timeString);
 
         p->drawText(timeRect,
