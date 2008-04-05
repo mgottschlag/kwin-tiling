@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node  name="/">
+  <interface name="org.freedesktop.NetworkManagerSettings.Connection">
+    <method name="GetID">
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_connection_settings_get_id"/>
+      <arg name="id" type="s" direction="out"/>
+    </method>
+    <method name="GetSettings">
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_connection_settings_get_settings"/>
+      <arg name="settings" type="a{sa{sv}}" direction="out"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMapMap"/>
+      </method>
+    <signal name="Updated">
+       <arg name="settings" type="a{sa{sv}}"/>
+       <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QVariantMapMap"/>
+    </signal>
+    <signal name="Removed"/>
+  </interface>
+  <interface name="org.freedesktop.NetworkManagerSettings.Connection.Secrets">
+    <method name="GetSecrets">
+      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_connection_settings_get_secrets"/>
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <arg name="setting_name" type="s" direction="in"/>
+      <arg name="hints" type="as" direction="in"/>
+      <arg name="request_new" type="b" direction="in"/>
+      <arg name="secrets" type="a{sv}" direction="out"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+    </method>
+  </interface>
+</node>
