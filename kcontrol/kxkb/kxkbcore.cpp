@@ -73,6 +73,7 @@ KxkbCore::KxkbCore(int mode):
     m_mode(mode),
     m_currentLayout(0),
     m_eventsHandled(false),
+    m_error(false),
     m_layoutOwnerMap(NULL),
     m_rules(NULL),
     m_kxkbWidget(NULL),
@@ -333,10 +334,19 @@ bool KxkbCore::setLayout(int layout)
 
 void KxkbCore::updateIndicator(int layout, int res)
 {
-    if( layout >= GROUP_LIMIT || layout > m_kxkbConfig.m_layouts.count() ) {
-        kError() << "group is out of my range";
+    if( layout >= GROUP_LIMIT || layout >= m_kxkbConfig.m_layouts.count() ) {
+        m_error = true;
+        
+        if( m_kxkbWidget ) {
+            LayoutUnit lu( i18n("Group %1", layout+1), "" );
+            lu.setDisplayName( QString("%1").arg(layout+1) );
+            m_kxkbWidget->setCurrentLayout(lu);
+        }
+        kWarning() << "group is out of my range, seems like old style groups are used";
         return;
     }
+
+    m_error = ( res > 0 );
 
     if( res ) {
   	m_currentLayout = layout;
@@ -350,7 +360,7 @@ void KxkbCore::updateIndicator(int layout, int res)
 	if( res )
 	    m_kxkbWidget->setCurrentLayout(lu);
 	else
-	    m_kxkbWidget->setError(lu.toPair());
+            m_kxkbWidget->setError(lu.toPair());
     }
 }
 
@@ -435,14 +445,9 @@ bool KxkbCore::x11EventFilter ( XEvent * event )
     if( XKBExtension::isGroupSwitchEvent(event) ) {
       // group changed
   	  int group = m_extension->getGroup();
-	  if( group != m_currentLayout ) {
-	    kDebug() << "got event: group chagned to " << group;
-	    if( group < m_kxkbConfig.m_layouts.count() ) {
+	  if( group != m_currentLayout || m_error ) {
+	        kDebug() << "got event: group chagned to " << group;
 		updateIndicator(group, 1);
-	    }
-	    else {
-		kWarning() << "new group is out of my layouts list range";
-	    }
 	  }
     }
     else if( XKBExtension::isLayoutSwitchEvent(event) ) {

@@ -43,7 +43,10 @@ KxkbWidget::KxkbWidget(int controlType):
 
 void KxkbWidget::setCurrentLayout(const LayoutUnit& layoutUnit)
 {
-	setToolTip(m_descriptionMap[layoutUnit.toPair()]);
+        QString tip = m_descriptionMap[layoutUnit.toPair()];
+        if( tip == NULL || tip.length() == 0 )
+            tip = layoutUnit.toPair();
+	setToolTip(tip);
 	const QPixmap& icon = 
             LayoutIcon::getInstance().findPixmap(layoutUnit.layout, m_showFlag, layoutUnit.getDisplayName());
 //	kDebug() << "setting pixmap: " << icon.width();
