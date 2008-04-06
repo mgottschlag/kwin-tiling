@@ -303,7 +303,7 @@
                 <item>
                  <widget class="KPushButton" name="m_addDir" >
                   <property name="text" >
-                   <string>&amp;Add Directory...</string>
+                   <string>&amp;Add Folder...</string>
                   </property>
                  </widget>
                 </item>
@@ -313,7 +313,7 @@
                    <bool>false</bool>
                   </property>
                   <property name="text" >
-                   <string>&amp;Remove Directory</string>
+                   <string>&amp;Remove Folder</string>
                   </property>
                  </widget>
                 </item>
