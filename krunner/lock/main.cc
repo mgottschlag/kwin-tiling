@@ -61,8 +61,8 @@ int main( int argc, char **argv )
 
     KCmdLineOptions options;
     options.add("forcelock", ki18n("Force session locking"));
-    options.add("dontlock", ki18n("Only start screensaver"));
-    options.add("blank", ki18n("Only use the blank screensaver"));
+    options.add("dontlock", ki18n("Only start screen saver"));
+    options.add("blank", ki18n("Only use the blank screen saver"));
     KCmdLineArgs::addCmdLineOptions( options );
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 

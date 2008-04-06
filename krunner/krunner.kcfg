@@ -17,7 +17,7 @@
 
     <entry name="PastQueries" key="pastqueries" type="StringList">
       <default></default>
-      <label>History if past queries succesfully completed</label>
+      <label>History if past queries successfully completed</label>
       <whatsthis></whatsthis>
     </entry>
 
