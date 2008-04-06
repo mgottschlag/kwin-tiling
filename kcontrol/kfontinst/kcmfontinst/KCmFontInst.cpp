@@ -219,7 +219,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     KIconLoader::global()->addAppDir(KFI_NAME);
 
     KAboutData *about = new KAboutData("fontinst", 0, ki18n("KDE Font Installer"), 0, KLocalizedString(),
-                                       KAboutData::License_GPL, ki18n("GUI front end to the fonts:/ ioslave.\n"
+                                       KAboutData::License_GPL, ki18n("GUI front-end to the fonts:/ ioslave.\n"
                                                                       "(c) Craig Drummond, 2000 - 2007"));
     about->addAuthor(ki18n("Craig Drummond"), ki18n("Developer and maintainer"), "craig@kde.org");
     setAboutData(about);
@@ -1156,8 +1156,8 @@ void CKCmFontInst::addFonts(const QSet<KUrl> &src)
                 case CGroupListItem::UNCLASSIFIED:
                     switch(KMessageBox::questionYesNoCancel(this,
                            i18n("Do you wish to install the font(s) for personal use "
-                                "(only usable by you), or "
-                                "system-wide (usable by all users)?"),
+                                "(only available to you), or "
+                                "system-wide (available to all users)?"),
                            i18n("Where to Install"), KGuiItem(i18n(KFI_KIO_FONTS_USER)),
                                 KGuiItem(i18n(KFI_KIO_FONTS_SYS))))
                     {
@@ -1411,7 +1411,7 @@ return false;
     if(NULL!=itsJob || itsFontList->active())
     {
         if(displayMsg)
-            KMessageBox::error(this, i18n("Sorry, the installer is currently busy. Please wait for the "
+            KMessageBox::error(this, i18n("The installer is currently busy. Please wait for the "
                                           "current operation to terminate."));
         return true;
     }

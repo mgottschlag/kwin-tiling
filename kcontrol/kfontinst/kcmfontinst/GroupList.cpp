@@ -743,7 +743,7 @@ bool CGroupList::exists(const QString &name)
     if(NULL!=find(name))
     {
         KMessageBox::error(itsParent, i18n("<qt>A group named <b>\'%1\'</b> already "
-                                           "exists!</qt>", name));
+                                           "exists.</qt>", name));
         return true;
     }
 
@@ -891,7 +891,7 @@ void CGroupListView::dragMoveEvent(QDragMoveEvent *event)
                     else if(CGroupListItem::CUSTOM==type && dest->isAll())
                         emit info(i18n("Drop here to remove the selected fonts from the current group."));
                     else if(!Misc::root() && dest->isPersonal() && CGroupListItem::SYSTEM==type)
-                        emit info(i18n("Drop here to copy, or move, the selected fonts to your peronal folder."));
+                        emit info(i18n("Drop here to copy, or move, the selected fonts to your personal folder."));
                     else if(!Misc::root() && dest->isSystem() && CGroupListItem::PERSONAL==type)
                         emit info(i18n("Drop here to copy, or move, the selected fonts to the system folder."));
                     else

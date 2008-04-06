@@ -2011,7 +2011,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, KIO::JobFlags flags)
                             error(KIO::ERR_DOES_NOT_EXIST, src.prettyUrl());
                     return;
                 }
-                error(KIO::ERR_SLAVE_DEFINED, i18n("Sorry, internal error - could not find font."));
+                error(KIO::ERR_SLAVE_DEFINED, i18n("Internal error - could not find font."));
                 return;
             }
             else if(enable || disable)
@@ -2428,12 +2428,12 @@ bool CKioFonts::getRootPasswd(bool askPasswd)
 
     authInfo.url=KUrl(KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS"/");
     authInfo.keepPassword=false;
-    authInfo.caption=i18n("Authorisation Required");
+    authInfo.caption=i18n("Authorization Required");
     authInfo.username=i18n(KFI_AUTHINF_USER);
 
     if(proc.useUsersOwnPassword())
         authInfo.prompt=i18n("The requested action requires administrator privileges.\n"
-                             "If you have these privileges, then please enter your password.");
+                             "If you have these privileges then please enter your password.");
     else
         authInfo.prompt=i18n("The requested action requires administrator privileges.\n"
                              "Please enter the system administrator's password.");
@@ -3166,19 +3166,19 @@ bool CKioFonts::confirmMultiple(const KUrl &url, const CDisabledFonts::TFileList
         {
             case OP_MOVE:
                 question=i18n("<p>You are attempting to move a font that is located in a file alongside "
-                              "other fonts; in order to proceed with the moving they will "
+                              "other fonts; in order to proceed with the move they will "
                               "all have to be moved. The affected fonts are:</p>"
                               "<ul>%1</ul><p>\n Do you wish to move all of these?</p>", out);
                 break;
             case OP_COPY:
                 question=i18n("<p>You are attempting to copy a font that is located in a file alongside "
-                              "other fonts; in order to proceed with the copying they will "
+                              "other fonts; in order to proceed with the copy they will "
                               "all have to be copied. The affected fonts are:</p>"
                               "<ul>%1</ul><p>\n Do you wish to copy all of these?</p>", out);
                 break;
             case OP_DELETE:
                 question=i18n("<p>You are attempting to delete a font that is located in a file alongside "
-                              "other fonts; in order to proceed with the deleting they will "
+                              "other fonts; in order to proceed with the deletion they will "
                               "all have to be deleted. The affected fonts are:</p>"
                               "<ul>%1</ul><p>\n Do you wish to delete all of these?</p>", out);
                 break;
@@ -3258,7 +3258,7 @@ bool CKioFonts::checkAllowed(const KUrl &u)
            ds==QString(QChar('/')+QString::fromLatin1(KFI_KIO_FONTS_SYS)+QChar('/')))
         {
             error(KIO::ERR_SLAVE_DEFINED,
-                  i18n("Sorry, you cannot rename, move, copy, or delete either \"%1\" or \"%2\".",
+                  i18n("You cannot rename, move, copy, or delete either \"%1\" or \"%2\".",
                    i18n(KFI_KIO_FONTS_USER), i18n(KFI_KIO_FONTS_SYS))); \
             return false;
         }

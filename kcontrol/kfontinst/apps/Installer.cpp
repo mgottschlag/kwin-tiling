@@ -49,8 +49,8 @@ int CInstaller::install(const QSet<KUrl> &urls)
     {
         switch(KMessageBox::questionYesNoCancel(itsParent,
                                        i18n("Do you wish to install the font(s) for personal use "
-                                            "(only usable by you), or "
-                                            "system-wide (usable by all users)?"),
+                                            "(only available to you), or "
+                                            "system-wide (available to all users)?"),
                                        i18n("Where to Install"), KGuiItem(i18n(KFI_KIO_FONTS_USER)),
                                        KGuiItem(i18n(KFI_KIO_FONTS_SYS))))
         {
@@ -187,7 +187,7 @@ int main(int argc, char **argv)
 
         KCmdLineOptions options;
         options.add("x <folder>", ki18n("Configure folder for X11 - create fonts.dir and fonts.scale, plus remove hidden entries."
-                                 " (NOTE: Use this option on its own)"));
+                                 " (NOTE: Use this option on its own.)"));
         options.add("embed <winid>", ki18n("Makes the dialog transient for an X app specified by winid"));
         options.add("+[URL]", ki18n("URL to install"));
         KCmdLineArgs::addCmdLineOptions(options);

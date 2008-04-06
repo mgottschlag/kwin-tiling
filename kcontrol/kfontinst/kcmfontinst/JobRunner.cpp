@@ -119,11 +119,11 @@ class CPasswordDialog : public KPasswordDialog
         : KPasswordDialog(parent),
           itsSuProc(KFI_SYS_USER)
     {
-        setCaption(i18n("Authorisation Required"));
+        setCaption(i18n("Authorization Required"));
 
         if(itsSuProc.useUsersOwnPassword())
             setPrompt(i18n("The requested action requires administrator privileges.\n"
-                           "If you have these privileges, then please enter your password."));
+                           "If you have these privileges then please enter your password."));
         else
             setPrompt(i18n("The requested action requires administrator privileges.\n"
                            "Please enter the system administrator's password."));

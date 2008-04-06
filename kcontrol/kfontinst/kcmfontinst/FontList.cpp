@@ -929,8 +929,8 @@ void CFontList::getFoundries(QSet<QString> &foundries) const
 QString CFontList::whatsThis() const
 {
     return i18n("<p>This list shows your installed fonts. The fonts are grouped by family, and the"
-                  " number in square brackets represents the number of styles that the family is"
-                  " available in. e.g.</p>"
+                  " number in square brackets represents the number of styles in which the family is"
+                  " available. e.g.</p>"
                   "<ul>"
                     "<li>Times [4]"
                         "<ul><li>Regular</li>"
@@ -939,7 +939,7 @@ QString CFontList::whatsThis() const
                             "<li>Italic</li>"
                         "</ul>"
                     "</li>"
-                    "</ul>");
+                  "</ul>");
 }
 
 void CFontList::listingCompleted()
