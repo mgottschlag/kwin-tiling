@@ -88,6 +88,7 @@ private:
     int m_currentLayout;
     int m_status;
     bool m_eventsHandled;
+    bool m_error;
 
     KxkbConfig m_kxkbConfig;
     LayoutMap* m_layoutOwnerMap;
