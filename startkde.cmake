@@ -98,12 +98,15 @@ fi
 if test -n "$kcminputrc_mouse_cursortheme" -o -n "$kcminputrc_mouse_cursorsize" ; then
     kapplymousetheme "$kcminputrc_mouse_cursortheme" "$kcminputrc_mouse_cursorsize"
     if test $? -eq 10; then
-        export XCURSOR_THEME=default
+        XCURSOR_THEME=default
+        export XCURSOR_THEME
     elif test -n "$kcminputrc_mouse_cursortheme"; then
-        export XCURSOR_THEME="$kcminputrc_mouse_cursortheme"
+        XCURSOR_THEME="$kcminputrc_mouse_cursortheme"
+        export XCURSOR_THEME
     fi
     if test -n "$kcminputrc_mouse_cursorsize"; then
-        export XCURSOR_SIZE="$kcminputrc_mouse_cursorsize"
+        XCURSOR_SIZE="$kcminputrc_mouse_cursorsize"
+        export XCURSOR_SIZE
     fi
 fi
 
@@ -169,7 +172,8 @@ ksplash_pid=
 if test -z "$dl"; then
   # languages as resolved by KLocale, for the splash screens use
   # klocale_languages is assembled by kdostartupconfig4 calling KLocale
-  export KLOCALE_LANGUAGES="$klocale_languages"
+  KLOCALE_LANGUAGES="$klocale_languages"
+  export KLOCALE_LANGUAGES
   # the splashscreen and progress indicator
   case "$ksplashrc_ksplash_engine" in
     KSplashX)
