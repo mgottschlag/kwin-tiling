@@ -7,7 +7,7 @@ set(khotkeys_KDEINIT_SRCS app.cpp )
 
 kde4_add_kdeinit_executable( khotkeys ${khotkeys_KDEINIT_SRCS})
 
-target_link_libraries(kdeinit_khotkeys libkhotkeysprivate kworkspace ${KDE4_KDE3SUPPORT_LIBS} )
+target_link_libraries(kdeinit_khotkeys khotkeysprivate kworkspace ${KDE4_KDE3SUPPORT_LIBS} )
 if(X11_XTest_FOUND)
   target_link_libraries(kdeinit_khotkeys  ${X11_XTest_LIB}  )
 endif(X11_XTest_FOUND)
@@ -26,7 +26,7 @@ qt4_add_dbus_adaptor(kded_khotkeys_PART_SRCS org.kde.khotkeys.xml kded.h KHotKey
 kde4_add_plugin(kded_khotkeys ${kded_khotkeys_PART_SRCS})
 install(FILES org.kde.khotkeys.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR})
 
-target_link_libraries(kded_khotkeys libkhotkeysprivate kworkspace ${KDE4_KDE3SUPPORT_LIBS} )
+target_link_libraries(kded_khotkeys khotkeysprivate kworkspace ${KDE4_KDE3SUPPORT_LIBS} )
 if(X11_XTest_FOUND)
     target_link_libraries(kded_khotkeys ${X11_XTest_LIB} )
 endif(X11_XTest_FOUND)
