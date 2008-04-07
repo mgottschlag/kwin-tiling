@@ -9,7 +9,7 @@ qt4_add_dbus_interface(khotkeys_update_SRCS ../app/org.kde.khotkeys.xml khotkeys
 
 kde4_add_executable( khotkeys_update ${khotkeys_update_SRCS})
 
-target_link_libraries( khotkeys_update libkhotkeys kworkspace ${KDE4_KDE3SUPPORT_LIBS} )
+target_link_libraries( khotkeys_update libkhotkeysprivate kworkspace ${KDE4_KDE3SUPPORT_LIBS} )
 if(X11_XTest_FOUND)
   target_link_libraries( khotkeys_update ${X11_XTest_LIB} )
 endif(X11_XTest_FOUND)
