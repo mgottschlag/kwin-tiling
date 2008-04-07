@@ -115,6 +115,8 @@ Name[x-test]=xxA modifier key has become activexx
 Name[zh_CN]=修饰键已经激活
 Name[zh_TW]=組合鍵已啟動
 Comment=A modifier key (e.g. Shift or Ctrl) has changed its state and is now active
+Comment[fi]=Muunnosnäppäin (esim. Shift tai Ctrl) on vaihtanut tilaa ja on nyt aktiivinen
+Comment[ga]=Athraíodh staid eochrach mionathraithe (m.sh. Shift nó Control) agus tá sí gníomhach anois
 Sound=KDE-Sys-Special.ogg
 
 nopresentation=236
@@ -173,6 +175,8 @@ Name[x-test]=xxA modifier key has become inactivexx
 Name[zh_CN]=修饰键现未激活
 Name[zh_TW]=組合鍵已放開
 Comment=A modifier key (e.g. Shift or Ctrl) has changed its state and is now inactive
+Comment[fi]=Muunnosnäppäin (esim. Shift tai Ctrl) on vaihtanut tilaa eikä ole enää aktiivinen
+Comment[ga]=Athraíodh staid eochrach mionathraithe (m.sh. Shift nó Control) agus tá sí neamhghníomhach anois
 Sound=KDE-Sys-Special.ogg
 
 nopresentation=236
@@ -231,6 +235,8 @@ Name[x-test]=xxA modifier key has been lockedxx
 Name[zh_CN]=修饰键现已锁定
 Name[zh_TW]=組合鍵已鎖定
 Comment=A modifier key (e.g. Shift or Ctrl) has been locked and is now active for all of the following keypresses
+Comment[fi]=Muunnosnäppäin (esim. Shift tai Ctrl) on lukittu ja on nyt aktiivinen kaikille seuraaville näppäinpainalluksille
+Comment[ga]=Cuireadh eochair mhionathraithe (m.sh., Shift nó Control) faoi ghlas tá sí gníomhach anois le haghaidh na n-eochairbhrúnna seo a leanas
 Sound=KDE-Sys-Special.ogg
 
 nopresentation=236
@@ -289,6 +295,8 @@ Name[x-test]=xxA lock key has been activatedxx
 Name[zh_CN]=锁定键现已激活
 Name[zh_TW]=已啟動鎖定鍵
 Comment=A lock key (e.g. Caps Lock or Num Lock) has changed its state and is now active
+Comment[fi]=Lukitusnäppäin (esim. CapsLock tai NumLock) on vaihtanut tilaansa ja on nyt aktiivinen
+Comment[ga]=Athraíodh staid eochrach glasála (m.sh. Caps Lock nó Num Lock) agus tá sí gníomhach anois
 Sound=KDE-Sys-Special.ogg
 
 nopresentation=236
@@ -347,6 +355,8 @@ Name[x-test]=xxA lock key has been deactivatedxx
 Name[zh_CN]=锁定键现未激活
 Name[zh_TW]=已解除鎖定鍵
 Comment=A lock key (e.g. Caps Lock or Num Lock) has changed its state and is now inactive
+Comment[fi]=Lukitusnäppäin (esim. CapsLock tai NumLock) on vaihtanut tilaansa ja ei ole enää aktiivinen
+Comment[ga]=Athraíodh staid eochrach glasála (m.sh. Caps Lock nó Num Lock) agus tá sí neamhghníomhach anois
 Sound=KDE-Sys-Special.ogg
 
 nopresentation=236

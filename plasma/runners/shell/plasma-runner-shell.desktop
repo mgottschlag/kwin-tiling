@@ -1,11 +1,14 @@
 [Desktop Entry]
 Name=Command-line runner
+Name[fi]=Komentorivi-liitännäinen
+Name[ga]=Feidhmitheoir líne na n-orduithe
 Comment=Executes shell commands
 Comment[ca]=Executa ordres de la shell
 Comment[de]=Führt Shell-Kommandos aus
 Comment[el]=Εκτελεί εντολές του κελύφους
 Comment[eo]=Plenumas ŝel-komandojn
 Comment[es]=Ejecuta comandos de la consola
+Comment[fi]=Suorittaa komentorivikomentoja
 Comment[ga]=Rith orduithe blaoisce
 Comment[gu]=શૅલ આદેશ ચલાવો
 Comment[ja]=シェルコマンドを実行します

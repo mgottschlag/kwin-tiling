@@ -15,6 +15,7 @@ Name[be]=Аўтаматычны запуск
 Name[bn]=অটো-স্টার্ট
 Name[br]=Emloc'h
 Name[cy]=Hunan-gychwyn
+Name[fi]=Automaattikäynnistys
 Name[ga]=Tosú uathoibríoch
 Name[hr]=Automatsko pokretanje
 Name[ka]=ავტოგაშვება
@@ -34,6 +35,7 @@ Name[zh_CN]=自动启动
 Name[zh_TW]=自動啟動
 
 Comment=A configuration tool for managing which programs start up with KDE.
+Comment[fi]=Työkalu KDE:n käynnistyksessä käynnistettävien ohjelmien hallintaan.
 
 X-KDE-Keywords=Autostart Manager
 X-KDE-Keywords[de]=Autostart Verwaltung
