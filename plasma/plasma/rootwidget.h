@@ -62,7 +62,7 @@ class RootWidget : public QWidget
         /**
          * Creates a view for the given containment
          */
-        void createDesktopView(Plasma::Containment *containment);
+        void createDesktopView(Plasma::Containment *containment, int id = 0);
 
         /**
          * Returns the view, if any, for the given screen

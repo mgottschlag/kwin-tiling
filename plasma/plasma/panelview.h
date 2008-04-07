@@ -41,7 +41,7 @@ public:
     * Constructs a new panelview.
     * @arg parent the QWidget this panel is parented to
     */
-    explicit PanelView(Plasma::Containment *panel, QWidget *parent = 0);
+    explicit PanelView(Plasma::Containment *panel, int id = 0, QWidget *parent = 0);
 
     /**
      * Sets the location (screen edge) where this panel is positioned.

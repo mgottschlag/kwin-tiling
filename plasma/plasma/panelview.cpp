@@ -33,8 +33,8 @@
 
 #include "plasmaapp.h"
 
-PanelView::PanelView(Plasma::Containment *panel, QWidget *parent)
-    : Plasma::View(panel, parent)
+PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
+    : Plasma::View(panel, id, parent)
 {
     Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
     updatePanelGeometry();

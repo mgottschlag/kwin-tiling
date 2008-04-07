@@ -224,6 +224,25 @@ void PlasmaApp::cleanup()
         m_corona->saveApplets();
     }
 
+    // save the mapping of Views to Containments at the moment
+    // of application exit so we can restore that when we start again.
+    KConfigGroup viewIds(KGlobal::config(), "ViewIds");
+    viewIds.deleteGroup();
+
+    foreach (PanelView *v, m_panels) {
+        if (v->containment()) {
+            viewIds.writeEntry(QString::number(v->containment()->id()), v->id());
+        }
+    }
+
+    int numScreens = QApplication::desktop()->numScreens();
+    for (int i = 0; i < numScreens; ++i) {
+        DesktopView *v = m_root->viewForScreen(i);
+        if (v && v->containment()) {
+            viewIds.writeEntry(QString::number(v->containment()->id()), v->id());
+        }
+    }
+
     delete m_root;
     m_root = 0;
     QList<PanelView*> panels = m_panels;
@@ -336,9 +355,14 @@ void PlasmaApp::createView(Plasma::Containment *containment)
              << "| geometry:" << containment->geometry()
              << "| zValue:" << containment->zValue();
 
+    // find the mapping of View to Containment, if any,
+    // so we can restore things on start.
+    KConfigGroup viewIds(KGlobal::config(), "ViewIds");
+    int id = viewIds.readEntry(QString::number(containment->id()), 0);
+
     switch (containment->containmentType()) {
         case Plasma::Containment::PanelContainment: {
-            PanelView *panelView = new PanelView(containment);
+            PanelView *panelView = new PanelView(containment, id);
             connect(panelView, SIGNAL(destroyed(QObject*)), this, SLOT(panelRemoved(QObject*)));
             m_panels << panelView;
             panelView->show();
@@ -347,7 +371,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         default:
             if (containment->screen() > -1 &&
                 containment->screen() < QApplication::desktop()->numScreens()) {
-                m_root->createDesktopView(containment);
+                m_root->createDesktopView(containment, id);
             }
             break;
     }

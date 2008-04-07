@@ -133,7 +133,7 @@ DesktopView* RootWidget::viewForScreen(int screen) const
     return 0;
 }
 
-void RootWidget::createDesktopView(Plasma::Containment *containment)
+void RootWidget::createDesktopView(Plasma::Containment *containment, int id)
 {
     if (viewForScreen(containment->screen())) {
         // we already have a view for this screen
@@ -144,7 +144,7 @@ void RootWidget::createDesktopView(Plasma::Containment *containment)
         << QApplication::desktop()->numScreens() << "screens";
 
     // we have a new screen. neat.
-    DesktopView *view = new DesktopView(containment, this);
+    DesktopView *view = new DesktopView(containment, id, this);
     view->setGeometry(QApplication::desktop()->screenGeometry(containment->screen()));
     m_desktops.append(view);
     view->show();

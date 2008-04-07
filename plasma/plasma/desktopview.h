@@ -35,7 +35,7 @@ class DesktopView : public Plasma::View
     Q_OBJECT
 
 public:
-    DesktopView(Plasma::Containment *containment, QWidget *parent);
+    DesktopView(Plasma::Containment *containment, int id, QWidget *parent);
     ~DesktopView();
 
 public slots:

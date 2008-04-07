@@ -39,8 +39,8 @@
 #include "dashboardview.h"
 #include "plasmaapp.h"
 
-DesktopView::DesktopView(Plasma::Containment *containment, QWidget *parent)
-    : Plasma::View(containment, parent),
+DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *parent)
+    : Plasma::View(containment, id, parent),
       m_zoomLevel(Plasma::DesktopZoom),
       m_dashboard(0)
 {
