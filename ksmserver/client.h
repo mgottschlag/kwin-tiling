@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kapplication.h>
 #include <kworkspace.h>
 
-#include "server2.h"
+#include "server.h"
 
 
 class KSMClient

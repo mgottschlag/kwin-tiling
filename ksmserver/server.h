@@ -35,7 +35,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QTimer>
 #include <QTime>
 #include <QMap>
-#include "server2.h"
+
+#define INT32 QINT32
+#include <X11/Xlib.h>
+#include <X11/Xmd.h>
+#include <X11/ICE/ICElib.h>
+extern "C" {
+#include <X11/ICE/ICEutil.h>
+#include <X11/ICE/ICEmsg.h>
+#include <X11/ICE/ICEproto.h>
+#include <X11/SM/SM.h>
+#include <X11/SM/SMlib.h>
+}
+
+#include <fixx11h.h>
 
 #define SESSION_PREVIOUS_LOGOUT "saved at previous logout"
 #define SESSION_BY_USER  "saved by user"
