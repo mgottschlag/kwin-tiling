@@ -156,6 +156,13 @@ QString AbstractTaskItem::text() const
 
 void AbstractTaskItem::setTaskFlags(TaskFlags flags)
 {
+    if (_flags & TaskWantsAttention != flags & TaskWantsAttention) {
+        if (flags & TaskWantsAttention) {
+            // start attention getting
+        } else {
+            // stop attention getting
+        }
+    }
     _flags = flags;
 }
 

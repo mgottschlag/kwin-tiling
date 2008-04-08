@@ -37,6 +37,7 @@
 #include <QPushButton>
 #include <QSpinBox>
 
+#include <KConfigDialog>
 #include <KDebug>
 #include <KLocale>
 #include <KIcon>
@@ -122,27 +123,21 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
     update();
 }
 
-void Clock::showConfigurationInterface() //TODO: Make the size settable
+void Clock::createConfigurationInterface(KConfigDialog *parent)
 {
-     if (m_dialog == 0) {
-        m_dialog = new KDialog;
-        m_dialog->setCaption( i18nc("@title:window","Configure Clock") );
-
-        QWidget *widget = new QWidget;
-        ui.setupUi(widget);
-        m_dialog->setMainWidget(widget);
-        m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
-        connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
-        connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
-
-    }
+    //TODO: Make the size settable
+    QWidget *widget = new QWidget();
+    ui.setupUi(widget);
+    parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    parent->addPage(widget, parent->windowTitle(), "chronometer");
 
     ui.timeZones->setSelected(m_timezone, true);
     ui.timeZones->setEnabled(m_timezone != "Local");
     ui.localTimeZone->setChecked(m_timezone == "Local");
     ui.showTimeStringCheckBox->setChecked(m_showTimeString);
     ui.showSecondHandCheckBox->setChecked(m_showSecondHand);
-    m_dialog->show();
 }
 
 void Clock::configAccepted()

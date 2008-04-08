@@ -60,12 +60,13 @@ class Clock : public Plasma::Containment
 
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
-        void showConfigurationInterface();
 
     protected slots:
 //         void acceptedTimeStringState(bool);
         void configAccepted();
         void moveSecondHand();
+        void createConfigurationInterface(KConfigDialog *parent);
+
 
     private:
         void drawHand(QPainter *p, qreal rotation, const QString &handName);
