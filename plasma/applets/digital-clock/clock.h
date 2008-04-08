@@ -88,6 +88,7 @@ class Clock : public Plasma::Applet
         Plasma::IntervalAlignment intervalAlignment() const;
 
         QString m_timezone;
+        QStringList m_timeZones;
         QString m_prettyTimezone;
         QTime m_time;
         QDate m_date;

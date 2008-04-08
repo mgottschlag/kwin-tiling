@@ -57,6 +57,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_showDay(false),
       m_showSeconds(false),
       m_showTimezone(false),
+      m_timeZones(),
       m_dialog(0),
       m_calendar(0),
       m_layout(0)
@@ -69,6 +70,7 @@ void Clock::init()
 {
     KConfigGroup cg = config();
     m_timezone = cg.readEntry("timezone", "Local");
+    m_timeZones = cg.readEntry("timeZones", QStringList());
 
     m_showTimezone = cg.readEntry("showTimezone", (m_timezone != "Local"));
 
@@ -111,7 +113,7 @@ Qt::Orientations Clock::expandingDirections() const
     }
 }
 
-void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
+void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
 {
     Q_UNUSED(source);
     m_time = data["Time"].toTime();
@@ -196,9 +198,11 @@ void Clock::showConfigurationInterface()
     ui.plainClockFont->setCurrentFont(m_plainClockFont);
     ui.useCustomColor->setChecked(m_useCustomColor);
     ui.plainClockColor->setColor(m_plainClockColor);
-    ui.timeZones->setSelected(m_timezone, true);
     ui.timeZones->setEnabled(m_timezone != "Local");
     ui.localTimeZone->setChecked(m_timezone == "Local");
+    foreach (QString str, m_timeZones) {
+        ui.timeZones->setSelected(str, true);
+    }
 
     m_dialog->show();
 }
@@ -211,15 +215,15 @@ void Clock::configAccepted()
     m_showSeconds = ui.secondsCheckbox->checkState() == Qt::Checked;
     cg.writeEntry("showSeconds", m_showSeconds);
     //QGraphicsItem::update();
-    QStringList tzs = ui.timeZones->selection();
+    m_timeZones = ui.timeZones->selection();
+    cg.writeEntry("timeZones", m_timeZones);
     if (ui.localTimeZone->checkState() == Qt::Checked) {
         dataEngine("time")->disconnectSource(m_timezone, this);
         m_timezone = "Local";
         dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
         cg.writeEntry("timezone", m_timezone);
-    } else if (tzs.count() > 0) {
-        //TODO: support multiple timezones
-        QString tz = tzs.at(0);
+    } else if (m_timeZones.count() > 0) {
+        QString tz = m_timeZones.at(0);
         if (tz != m_timezone) {
             dataEngine("time")->disconnectSource(m_timezone, this);
             // We have changed the timezone, show that in the clock, but only if this
@@ -235,7 +239,7 @@ void Clock::configAccepted()
         dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
         cg.writeEntry("timezone", m_timezone);
     } else {
-        kDebug() << "Timezone unknown: " << tzs;
+        kDebug() << "User didn't use local timezone but also didn't select any other.";
     }
 
     m_showDate = ui.showDate->checkState() == Qt::Checked;
