@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Openbox
+Exec=openbox
+TryExec=openbox
+

@@ -221,8 +221,6 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
     }
 
     QString wm = args->getOption("windowmanager");
-    if ( wm.isEmpty() )
-        wm = "kwin";
 
     bool only_local = args->isSet("local");
 #ifndef HAVE__ICETRANSNOLISTEN

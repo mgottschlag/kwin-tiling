@@ -99,17 +99,18 @@ void KSMServer::restoreSession( const QString &sessionName )
     int count =  configSessionGroup.readEntry( "count", 0 );
     appsToStart = count;
 
-    QList<QStringList> wmCommands;
+    // it's a list because of multihead (with one kwin per head)
+    QList<QStringList> wmStartCommands;
     if ( !wm.isEmpty() ) {
 	for ( int i = 1; i <= count; i++ ) {
 	    QString n = QString::number(i);
 	    if ( wm == configSessionGroup.readEntry( QString("program")+n, QString() ) ) {
-		wmCommands << configSessionGroup.readEntry( QString("restartCommand")+n, QStringList() );
+		wmStartCommands << configSessionGroup.readEntry( QString("restartCommand")+n, QStringList() );
 	    }
 	}
     }
-    if ( wmCommands.isEmpty() )
-        wmCommands << ( QStringList() << wm );
+    if( wmStartCommands.isEmpty())
+        wmStartCommands << wmCommands;
 
     publishProgress( appsToStart, true );
     connect( klauncherSignals, SIGNAL( autoStart0Done()), SLOT( autoStart0Done()));
@@ -117,16 +118,12 @@ void KSMServer::restoreSession( const QString &sessionName )
     connect( klauncherSignals, SIGNAL( autoStart2Done()), SLOT( autoStart2Done()));
     upAndRunning( "ksmserver" );
 
-    if ( !wmCommands.isEmpty() ) {
-        // when we have a window manager, we start it first and give
-        // it some time before launching other processes. Results in a
-        // visually more appealing startup.
-        for (int i = 0; i < wmCommands.count(); i++)
-            startApplication( wmCommands[i] );
-        QTimer::singleShot( 4000, this, SLOT( autoStart0() ) );
-    } else {
-        autoStart0();
-    }
+    // when we have a window manager, we start it first and give
+    // it some time before launching other processes. Results in a
+    // visually more appealing startup.
+    for (int i = 0; i < wmStartCommands.count(); i++)
+        startApplication( wmStartCommands[i] );
+    QTimer::singleShot( 4000, this, SLOT( autoStart0() ) );
 }
 
 /*!
@@ -146,13 +143,13 @@ void KSMServer::startDefaultSession()
     connect( klauncherSignals, SIGNAL( autoStart0Done()), SLOT( autoStart0Done()));
     connect( klauncherSignals, SIGNAL( autoStart1Done()), SLOT( autoStart1Done()));
     connect( klauncherSignals, SIGNAL( autoStart2Done()), SLOT( autoStart2Done()));
-    startApplication( QStringList() << wm );
+    startApplication( wmCommands );
     QTimer::singleShot( 4000, this, SLOT( autoStart0() ) );
 }
 
 void KSMServer::clientSetProgram( KSMClient* client )
 {
-    if ( !wm.isEmpty() && client->program() == wm )
+    if( client->program() == wm )
         autoStart0();
 }
 

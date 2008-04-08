@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=Compiz custom (create wrapper script 'compiz-kde-launcher' to launch it)
+Exec=compiz-kde-launcher
+TryExec=compiz
+X-KDE-WindowManagerId=compiz

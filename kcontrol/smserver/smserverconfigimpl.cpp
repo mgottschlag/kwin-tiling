@@ -28,6 +28,7 @@ SMServerConfigImpl::SMServerConfigImpl(QWidget *parent ) : SMServerConfigDlg(par
     connect(rebootRadio,SIGNAL(toggled(bool)), SLOT(configChanged()));
     connect(excludeLineedit,SIGNAL(textChanged(QString)),SLOT(configChanged()));
     connect(offerShutdownCheck,SIGNAL(toggled(bool)),SLOT(configChanged()));
+    connect(windowManagerCombo,SIGNAL(activated(int)),SLOT(configChanged()));
 }
 SMServerConfigImpl::~SMServerConfigImpl(){
 }

@@ -1,0 +1,4 @@
+[Desktop Entry]
+Name=Compiz
+Exec=compiz ccp
+TryExec=compiz

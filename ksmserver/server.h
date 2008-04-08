@@ -162,6 +162,7 @@ private:
 
     bool isWM( const KSMClient* client ) const;
     bool isWM( const QString& command ) const;
+    void selectWm( const QString& kdewm );
     bool defaultSession() const; // empty session
     void setupXIOErrorHandler();
 
@@ -210,6 +211,7 @@ private:
     bool clean;
     KSMClient* clientInteracting;
     QString wm;
+    QStringList wmCommands;
     QString sessionGroup;
     QString sessionName;
     QTimer protectionTimer;

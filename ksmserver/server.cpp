@@ -69,12 +69,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <klocale.h>
 #include <kglobal.h>
 #include <kconfig.h>
+#include <kdesktopfile.h>
 #include <kstandarddirs.h>
 #include <kapplication.h>
 #include <ktemporaryfile.h>
 #include <kconfiggroup.h>
 #include <kprocess.h>
 #include <kdebug.h>
+#include <kshell.h>
 
 #include "server.moc"
 
@@ -586,7 +588,6 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     kcminitSignals = NULL;
     the_server = this;
     clean = false;
-    wm = windowManager;
 
     shutdownType = KWorkSpace::ShutdownTypeNone;
 
@@ -597,6 +598,9 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
     KConfigGroup config(KGlobal::config(), "General");
     clientInteracting = 0;
     xonCommand = config.readEntry( "xonCommand", "xon" );
+
+    KGlobal::dirs()->addResourceType( "windowmanagers", "data", "ksmserver/windowmanagers" );
+    selectWm( windowManager );
 
     connect( &startupSuspendTimeoutTimer, SIGNAL( timeout()), SLOT( startupSuspendTimeout()));
     connect( &pendingShutdown, SIGNAL( timeout()), SLOT( pendingShutdownTimeout()));
@@ -852,15 +856,13 @@ void KSMServer::storeSession()
 	KConfigGroup cg( config, sessionGroup);
     count =  0;
 
-    if ( !wm.isEmpty() ) {
-        // put the wm first
-        foreach ( KSMClient *c, clients )
-            if ( c->program() == wm ) {
-                clients.removeAll( c );
-                clients.prepend( c );
-                break;
-            }
-    }
+    // put the wm first
+    foreach ( KSMClient *c, clients )
+        if ( c->program() == wm ) {
+            clients.removeAll( c );
+            clients.prepend( c );
+            break;
+        }
 
     foreach ( KSMClient *c, clients ) {
         int restartHint = c->restartStyleHint();
@@ -910,14 +912,48 @@ bool KSMServer::isWM( const KSMClient* client ) const
 
 bool KSMServer::isWM( const QString& command ) const
 {
-    // KWin relies on ksmserver's special treatment in phase1,
-    // therefore make sure it's recognized even if ksmserver
-    // was initially started with different WM, and kwin replaced
-    // it later
-    return command == wm || command == "kwin";
+    return command == wm;
 }
 
 bool KSMServer::defaultSession() const
 {
     return sessionGroup.isEmpty();
+}
+
+// selection logic:
+// - $KDEWM is set - use that
+// - a wm is selected using the kcm - use that
+// - if that fails, just use KWin
+void KSMServer::selectWm( const QString& kdewm )
+{
+    wm = "kwin"; // defaults
+    wmCommands = ( QStringList() << "kwin" ); 
+    if( !kdewm.isEmpty())
+    {
+        wmCommands = ( QStringList() << kdewm );
+        wm = kdewm;
+        return;
+    }
+    KConfigGroup config(KGlobal::config(), "General");
+    QString cfgwm = config.readEntry( "windowManager", "kwin" );
+    KDesktopFile file( "windowmanagers", cfgwm + ".desktop" );
+    if( file.noDisplay())
+        return;
+    if( !file.tryExec())
+        return;
+    QString testexec = file.desktopGroup().readEntry( "X-KDE-WindowManagerTestExec" );
+    if( !testexec.isEmpty())
+    {
+        KProcess proc;
+        proc.setShellCommand( testexec );
+        if( proc.execute() != 0 )
+            return;
+    }
+    QStringList cfgWmCommands = KShell::splitArgs( file.desktopGroup().readEntry( "Exec" ));
+    if( cfgWmCommands.isEmpty())
+        return;
+    QString smname = file.desktopGroup().readEntry( "X-KDE-WindowManagerId" );
+    // ok
+    wm = smname.isEmpty() ? cfgwm : smname;
+    wmCommands = cfgWmCommands;
 }

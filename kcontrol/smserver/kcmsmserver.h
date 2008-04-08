@@ -40,8 +40,11 @@ public:
   void defaults();
 
 private:
+  void loadWMs( const QString& current );
+  QString currentWM() const;
+  QHash< QString, QString > wms; // i18n text -> internal name
+  QString oldwm; // the original value
   SMServerConfigImpl* dialog;
-
 };
 
 #endif
