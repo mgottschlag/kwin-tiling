@@ -881,6 +881,7 @@ void KSMServer::storeSession()
         cg.writePathEntry( QString("discardCommand")+n, c->discardCommand() );
         cg.writeEntry( QString("restartStyleHint")+n, restartHint );
         cg.writeEntry( QString("userId")+n, c->userId() );
+        cg.writeEntry( QString("wasWm")+n, isWM( c ));
     }
     cg.writeEntry( "count", count );
 

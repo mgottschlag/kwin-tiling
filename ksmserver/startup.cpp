@@ -255,7 +255,9 @@ void KSMServer::tryRestoreNext()
             continue;
         }
         if ( wm == config.readEntry( QString("program")+n, QString() ) )
-            continue;
+            continue; // wm already started
+        if( config.readEntry( QString( "wasWm" )+n, false ))
+            continue; // it was wm before, but not now, don't run it (some have --replace in command :(  )
         startApplication( restartCommand,
                           config.readEntry( QString("clientMachine")+n, QString() ),
                           config.readEntry( QString("userId")+n, QString() ));
