@@ -78,8 +78,6 @@ void Pager::init()
         m_rows = m_desktopCount;
     }
 
-    recalculateGeometry();
-
     m_timer = new QTimer(this);
     m_timer->setSingleShot(true);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(recalculateWindowRects()));
@@ -99,6 +97,8 @@ void Pager::init()
     connect( m_desktopLayoutOwner, SIGNAL( lostOwnership()), SLOT( lostDesktopLayoutOwner()));
     if ( !m_desktopLayoutOwner->claim( false ))
         lostDesktopLayoutOwner();
+
+    recalculateGeometry();
 
     m_currentDesktop = KWindowSystem::currentDesktop();
 }
