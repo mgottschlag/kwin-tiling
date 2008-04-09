@@ -29,6 +29,7 @@
 #include <KToolInvocation>
 #include <KUrl>
 #include <KIcon>
+#include <KProtocolInfo>
 
 #include <kservicetypetrader.h>
 
@@ -84,11 +85,23 @@ void LocationsRunner::match(Plasma::SearchContext *search)
     } else if (m_type == Plasma::SearchContext::NetworkLocation) {
         KUrl url(term);
         processUrl(url, term);
+        QMutexLocker lock(bigLock());
+        if (!KProtocolInfo::isKnownProtocol(url.protocol())) {
+            return;
+        }
 
         action = new Plasma::SearchMatch(this);
         action->setText(i18n("Go to %1", url.prettyUrl()));
-        action->setIcon(KIcon("internet-web-browser"));
+        action->setIcon(KIcon(KProtocolInfo::icon(url.protocol())));
         action->setData(url.url());
+ 
+        if (KProtocolInfo::isHelperProtocol(url.protocol())) {
+            //kDebug() << "helper protocol" << url.protocol() <<"call external application" ; 
+            action->setText(i18n("Launch with %1", KProtocolInfo::exec(url.protocol())));
+        } else {
+            //kDebug() << "protocol managed by browser" << url.protocol();
+            action->setText(i18n("Go to %1", url.prettyUrl()));
+        }
     }
 
     if (action) {
