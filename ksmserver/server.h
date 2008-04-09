@@ -53,6 +53,8 @@ extern "C" {
 #define SESSION_PREVIOUS_LOGOUT "saved at previous logout"
 #define SESSION_BY_USER  "saved by user"
 
+class KProcess;
+
 class KSMListener;
 class KSMConnection;
 class KSMClient;
@@ -108,6 +110,8 @@ public:
     virtual void suspendStartup( const QString &app );
     virtual void resumeStartup( const QString &app );
 
+    void launchWM( const QList< QStringList >& wmStartCommands );
+
 public Q_SLOTS:
     void cleanUp();
 
@@ -127,7 +131,7 @@ private Q_SLOTS:
     void autoStart2();
     void tryRestoreNext();
     void startupSuspendTimeout();
-
+    void wmProcessChange();
     void logoutSoundFinished();
     void autoStart0Done();
     void autoStart1Done();
@@ -155,7 +159,7 @@ private:
     void startProtection();
     void endProtection();
 
-    void startApplication( QStringList& command,
+    KProcess* startApplication( const QStringList& command,
         const QString& clientMachine = QString(),
         const QString& userId = QString() );
     void executeCommand( const QStringList& command );
@@ -212,6 +216,7 @@ private:
     KSMClient* clientInteracting;
     QString wm;
     QStringList wmCommands;
+    KProcess* wmProcess;
     QString sessionGroup;
     QString sessionName;
     QTimer protectionTimer;

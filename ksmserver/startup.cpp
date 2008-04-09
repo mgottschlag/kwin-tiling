@@ -69,6 +69,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <ktemporaryfile.h>
 #include <knotification.h>
 #include <kconfiggroup.h>
+#include <kprocess.h>
 
 #include "global.h"
 #include "server.h"
@@ -98,8 +99,13 @@ void KSMServer::restoreSession( const QString &sessionName )
 
     int count =  configSessionGroup.readEntry( "count", 0 );
     appsToStart = count;
+    publishProgress( appsToStart, true );
+    upAndRunning( "ksmserver" );
+    connect( klauncherSignals, SIGNAL( autoStart0Done()), SLOT( autoStart0Done()));
+    connect( klauncherSignals, SIGNAL( autoStart1Done()), SLOT( autoStart1Done()));
+    connect( klauncherSignals, SIGNAL( autoStart2Done()), SLOT( autoStart2Done()));
 
-    // it's a list because of multihead (with one kwin per head)
+    // find all commands to launch the wm in the session
     QList<QStringList> wmStartCommands;
     if ( !wm.isEmpty() ) {
 	for ( int i = 1; i <= count; i++ ) {
@@ -108,22 +114,11 @@ void KSMServer::restoreSession( const QString &sessionName )
 		wmStartCommands << configSessionGroup.readEntry( QString("restartCommand")+n, QStringList() );
 	    }
 	}
-    }
-    if( wmStartCommands.isEmpty())
+    } 
+    if( wmStartCommands.isEmpty()) // otherwise use the configured default
         wmStartCommands << wmCommands;
 
-    publishProgress( appsToStart, true );
-    connect( klauncherSignals, SIGNAL( autoStart0Done()), SLOT( autoStart0Done()));
-    connect( klauncherSignals, SIGNAL( autoStart1Done()), SLOT( autoStart1Done()));
-    connect( klauncherSignals, SIGNAL( autoStart2Done()), SLOT( autoStart2Done()));
-    upAndRunning( "ksmserver" );
-
-    // when we have a window manager, we start it first and give
-    // it some time before launching other processes. Results in a
-    // visually more appealing startup.
-    for (int i = 0; i < wmStartCommands.count(); i++)
-        startApplication( wmStartCommands[i] );
-    QTimer::singleShot( 4000, this, SLOT( autoStart0() ) );
+    launchWM( wmStartCommands );
 }
 
 /*!
@@ -135,7 +130,6 @@ void KSMServer::startDefaultSession()
 {
     if( state != Idle )
         return;
-
     state = LaunchingWM;
     sessionGroup = "";
     publishProgress( 0, true );
@@ -143,7 +137,24 @@ void KSMServer::startDefaultSession()
     connect( klauncherSignals, SIGNAL( autoStart0Done()), SLOT( autoStart0Done()));
     connect( klauncherSignals, SIGNAL( autoStart1Done()), SLOT( autoStart1Done()));
     connect( klauncherSignals, SIGNAL( autoStart2Done()), SLOT( autoStart2Done()));
-    startApplication( wmCommands );
+
+    launchWM( QList< QStringList >() << wmCommands );
+}
+
+void KSMServer::launchWM( const QList< QStringList >& wmStartCommands )
+{
+    assert( state == LaunchingWM );
+
+    // when we have a window manager, we start it first and give
+    // it some time before launching other processes. Results in a
+    // visually more appealing startup.
+    wmProcess = startApplication( wmStartCommands[ 0 ] );
+    connect( wmProcess, SIGNAL( error( QProcess::ProcessError )), SLOT( wmProcessChange()));
+    connect( wmProcess, SIGNAL( finished( int, QProcess::ExitStatus )), SLOT( wmProcessChange()));
+    // there can be possibly more wm's (because of forking for multihead),
+    // but in such case care only about the process of the first one
+    for (int i = 1; i < wmStartCommands.count(); i++)
+        startApplication( wmStartCommands[i] );
     QTimer::singleShot( 4000, this, SLOT( autoStart0() ) );
 }
 
@@ -151,6 +162,27 @@ void KSMServer::clientSetProgram( KSMClient* client )
 {
     if( client->program() == wm )
         autoStart0();
+}
+
+void KSMServer::wmProcessChange()
+{
+    if( state != LaunchingWM )
+    { // don't care about the process when not in the wm-launching state anymore
+        wmProcess = NULL;
+        return;
+    }
+    if( wmProcess->state() == QProcess::NotRunning )
+    { // wm failed to launch for some reason, go with kwin instead
+        kWarning( 1218 ) << "Window manager" << wm << "failed to launch";
+        if( wm == "kwin" )
+            return; // uhoh, kwin itself failed
+        kDebug( 1218 ) << "Launching KWin";
+        wm = "kwin";
+        wmCommands = ( QStringList() << "kwin" ); 
+        // launch it
+        launchWM( QList< QStringList >() << wmCommands );
+        return;
+    }
 }
 
 void KSMServer::autoStart0()

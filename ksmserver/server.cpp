@@ -77,6 +77,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kprocess.h>
 #include <kdebug.h>
 #include <kshell.h>
+#include <kprocess.h>
 
 #include "server.moc"
 
@@ -95,11 +96,12 @@ KSMServer* KSMServer::self()
 /*! Utility function to execute a command on the local machine. Used
  * to restart applications.
  */
-void KSMServer::startApplication( QStringList& command, const QString& clientMachine,
+KProcess* KSMServer::startApplication( const QStringList& cmd, const QString& clientMachine,
     const QString& userId )
 {
+    QStringList command = cmd;
     if ( command.isEmpty() )
-        return;
+        return NULL;
     if ( !userId.isEmpty()) {
         struct passwd* pw = getpwuid( getuid());
         if( pw != NULL && userId != QString::fromLocal8Bit( pw->pw_name )) {
@@ -113,13 +115,13 @@ void KSMServer::startApplication( QStringList& command, const QString& clientMac
         command.prepend( clientMachine );
         command.prepend( xonCommand ); // "xon" by default
     }
-    int n = command.count();
-    org::kde::KLauncher klauncher("org.kde.klauncher", "/KLauncher", QDBusConnection::sessionBus());
-    QString app = command[0];
-    QStringList argList;
-    for ( int i=1; i < n; i++)
-       argList.append( command[i]);
-    klauncher.exec_blind(app, argList );
+    KProcess* process = new KProcess( this );
+    *process << command;
+    // make it auto-delete
+    connect( process, SIGNAL( error( QProcess::ProcessError )), process, SLOT( deleteLater()));
+    connect( process, SIGNAL( finished( int, QProcess::ExitStatus )), process, SLOT( deleteLater()));
+    process->start();
+    return process;
 }
 
 /*! Utility function to execute a command on the local machine. Used
@@ -579,6 +581,7 @@ extern "C" int _IceTransNoListen(const char * protocol);
 
 KSMServer::KSMServer( const QString& windowManager, bool _only_local )
   : sessionGroup( "" )
+  , wmProcess( NULL )
   , logoutEffectWidget( NULL )
 {
     new KSMServerInterfaceAdaptor( this );
