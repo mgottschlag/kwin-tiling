@@ -1,3 +1,4 @@
+add_subdirectory( kcm )
 add_subdirectory( windowmanagers )
 add_subdirectory( tests )
 
