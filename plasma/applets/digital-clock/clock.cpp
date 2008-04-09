@@ -69,6 +69,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
 void Clock::init()
 {
     KConfigGroup cg = config();
+    m_localTimeZone = cg.readEntry("localTimeZone", true);
     m_timezone = cg.readEntry("timezone", "Local");
     m_timeZones = cg.readEntry("timeZones", QStringList());
 
@@ -78,7 +79,6 @@ void Clock::init()
 
     m_showDate = cg.readEntry("showDate", false);
     m_showYear = cg.readEntry("showYear", false);
-
     m_showDay = cg.readEntry("showDay", true);
 
     m_showSeconds = cg.readEntry("showSeconds", false);
@@ -113,27 +113,35 @@ Qt::Orientations Clock::expandingDirections() const
     }
 }
 
+void Clock::updateToolTipContent() {
+    QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
+    Plasma::ToolTipData tipData;
+
+    tipData.mainText = m_time.toString(timeString);
+    tipData.subText = m_date.toString();
+    tipData.image = m_toolTipIcon;
+
+    setToolTip(tipData);
+}
+
 void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
 {
     Q_UNUSED(source);
     m_time = data["Time"].toTime();
     m_date = data["Date"].toDate();
     m_prettyTimezone = data["Timezone City"].toString();
+    m_prettyTimezone.replace("_", " ");
 
-    QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
-
-    Plasma::ToolTipData tipData;
-    tipData.mainText = m_time.toString(timeString);
-    tipData.subText = m_date.toString();
-    tipData.image = m_toolTipIcon;
-
-    setToolTip(tipData);
+    updateToolTipContent();
 
     // avoid unnecessary repaints
     if (m_showSeconds || m_time.minute() != m_lastTimeSeen.minute()) {
         m_lastTimeSeen = m_time;
 
         update();
+    }
+    else {
+        kDebug() << "Oh, our avoiding code is usefully!";
     }
 }
 
@@ -198,41 +206,44 @@ void Clock::showConfigurationInterface()
     ui.plainClockFont->setCurrentFont(m_plainClockFont);
     ui.useCustomColor->setChecked(m_useCustomColor);
     ui.plainClockColor->setColor(m_plainClockColor);
-    ui.timeZones->setEnabled(m_timezone != "Local");
-    ui.localTimeZone->setChecked(m_timezone == "Local");
+    ui.localTimeZone->setChecked(m_localTimeZone);
+    ui.timeZones->setEnabled(!m_localTimeZone);
     foreach (QString str, m_timeZones) {
         ui.timeZones->setSelected(str, true);
     }
-
     m_dialog->show();
 }
 
 void Clock::configAccepted()
 {
     KConfigGroup cg = config();
+
     //We need this to happen before we disconnect/reconnect sources to ensure
     //that the update interval is set properly.
     m_showSeconds = ui.secondsCheckbox->checkState() == Qt::Checked;
     cg.writeEntry("showSeconds", m_showSeconds);
-    //QGraphicsItem::update();
+
+    m_localTimeZone = ui.localTimeZone->checkState() == Qt::Checked;
+    cg.writeEntry("localTimeZone", m_localTimeZone);
+
     m_timeZones = ui.timeZones->selection();
     cg.writeEntry("timeZones", m_timeZones);
-    if (ui.localTimeZone->checkState() == Qt::Checked) {
+
+    //QGraphicsItem::update();
+
+    if (m_localTimeZone) {
         dataEngine("time")->disconnectSource(m_timezone, this);
         m_timezone = "Local";
         dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
         cg.writeEntry("timezone", m_timezone);
     } else if (m_timeZones.count() > 0) {
-        QString tz = m_timeZones.at(0);
-        if (tz != m_timezone) {
-            dataEngine("time")->disconnectSource(m_timezone, this);
-            // We have changed the timezone, show that in the clock, but only if this
-            // setting hasn't been changed.
-            ui.showTimezone->setCheckState(Qt::Checked);
-            m_timezone = tz;
-            dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
-        }
+        dataEngine("time")->disconnectSource(m_timezone, this);
+        // We have changed the timezone, show that in the clock, but only if this
+        // setting hasn't been changed.
+        ui.showTimezone->setCheckState(Qt::Checked);
+        m_timezone = m_timeZones.at(0);
         cg.writeEntry("timezone", m_timezone);
+        dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
     } else if (m_timezone != "Local") {
         dataEngine("time")->disconnectSource(m_timezone, this);
         m_timezone = "Local";
@@ -333,14 +344,12 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
                 if (m_showTimezone) {
                     QString timezone = m_prettyTimezone;
-                    timezone.replace("_", " ");
                     dateString = i18nc("@label Date with timezone: "
                                        "%1 day of the week with date, %2 timezone",
                                        "%1 %2", dateString, timezone);
                 }
             } else if (m_showTimezone) {
                 dateString = m_prettyTimezone;
-                dateString.replace("_", " ");
             }
 
             // Check sizes

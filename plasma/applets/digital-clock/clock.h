@@ -64,6 +64,7 @@ class Clock : public Plasma::Applet
         void showCalendar(QGraphicsSceneMouseEvent *event);
 
     private:
+	void updateToolTipContent();
         QRect preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text);
 
         Q_ENUMS( m_clockStyle )
@@ -87,6 +88,7 @@ class Clock : public Plasma::Applet
         int updateInterval() const;
         Plasma::IntervalAlignment intervalAlignment() const;
 
+        bool m_localTimeZone;
         QString m_timezone;
         QStringList m_timeZones;
         QString m_prettyTimezone;
