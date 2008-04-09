@@ -580,8 +580,8 @@ extern "C" int _IceTransNoListen(const char * protocol);
 #endif
 
 KSMServer::KSMServer( const QString& windowManager, bool _only_local )
-  : sessionGroup( "" )
-  , wmProcess( NULL )
+  : wmProcess( NULL )
+  , sessionGroup( "" )
   , logoutEffectWidget( NULL )
 {
     new KSMServerInterfaceAdaptor( this );
