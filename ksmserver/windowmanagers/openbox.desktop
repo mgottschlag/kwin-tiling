@@ -1,5 +1,17 @@
 [Desktop Entry]
 Name=Openbox
+Name[bn]=ওপেনবক্স
+Name[cy]=Blwchagored (Openbox)
+Name[gu]=ઓપનબોક્સ
+Name[hi]=ओपनबाक्स
+Name[km]=បើក​ប្រអប់​
+Name[ne]=खुला बाकस
+Name[pa]=ਓਪਨ-ਬਾਕਸੇ
+Name[sr]=Опенбокс
+Name[ta]=திறப்பு பெட்டி
+Name[te]=ఒపెన్ బాక్స్
+Name[tg]=Кушодани қуттӣ
+Name[x-test]=xxOpenboxxx
 Exec=openbox
 TryExec=openbox
 

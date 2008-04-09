@@ -2,6 +2,11 @@
 Name=Command-line runner
 Name[fi]=Komentorivi-liitännäinen
 Name[ga]=Feidhmitheoir líne na n-orduithe
+Name[gu]=આદેશ - ચલાવનાર
+Name[km]=កម្មវិធីរត់​បន្ទាត់​ពាក្យ​បញ្ជា
+Name[pt_BR]=Execução de linha de comando
+Name[th]=ตัวเรียกคำสั่งบนบรรทัดคำสั่งให้ทำงาน
+Name[zh_TW]=命令列執行者
 Comment=Executes shell commands
 Comment[ca]=Executa ordres de la shell
 Comment[de]=Führt Shell-Kommandos aus
