@@ -6,13 +6,13 @@ set(kworkspace_LIB_SRCS kdisplaymanager.cpp
    )
 
 set(ksmserver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
-QT4_ADD_DBUS_INTERFACE( kworkspace_LIB_SRCS ${ksmserver_xml} ksmserver_interface )
+qt4_add_dbus_interface( kworkspace_LIB_SRCS ${ksmserver_xml} ksmserver_interface )
 
 set(kwin_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/kwin/org.kde.KWin.xml)
 
-SET_SOURCE_FILES_PROPERTIES(${kwin_xml} PROPERTIES INCLUDE "interface_util.h")
+set_source_files_properties(${kwin_xml} PROPERTIES INCLUDE "interface_util.h")
 
-QT4_ADD_DBUS_INTERFACE( kworkspace_LIB_SRCS ${kwin_xml} kwin_interface )
+qt4_add_dbus_interface( kworkspace_LIB_SRCS ${kwin_xml} kwin_interface )
 
 
 kde4_add_library(kworkspace SHARED ${kworkspace_LIB_SRCS})
