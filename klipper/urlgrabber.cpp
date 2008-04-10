@@ -83,8 +83,7 @@ URLGrabber::URLGrabber(const KSharedConfigPtr &config)
 
 URLGrabber::~URLGrabber()
 {
-    if (myMenu)
-        delete myMenu;
+    delete myMenu;
     delete myActions;
     qDeleteAll(myMatches);
 }
@@ -280,7 +279,8 @@ void URLGrabber::editData()
     }
     else
     {
-        delete myMenu;
+        myMenu->deleteLater();
+        myMenu = 0;
     }
     delete dlg;
 }
@@ -380,7 +380,8 @@ void URLGrabber::slotKillPopupMenu()
         }
     }
 
-    delete myMenu;
+    myMenu->deleteLater();
+    myMenu = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////
