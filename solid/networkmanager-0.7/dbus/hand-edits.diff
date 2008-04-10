@@ -1,0 +1,111 @@
+--- nm-ip4-configinterface.cpp	2008-04-10 10:32:44.000000000 +0200
++++ /space/kde/builds/trunk/KDE/kdebase/workspace/solid/networkmanager-0.7/dbus/nm-ip4-configinterface.cpp	2008-04-10 10:44:48.000000000 +0200
+@@ -9,9 +9,6 @@
+  * before re-generating it.
+  */
+ 
+-//HAND-EDIT
+-#include "generic-types.h"
+-
+ #include "nm-ip4-configinterface.h"
+ 
+ /*
+--- nm-manager-clientinterface.cpp	2008-04-10 10:32:44.000000000 +0200
++++ /space/kde/builds/trunk/KDE/kdebase/workspace/solid/networkmanager-0.7/dbus/nm-manager-clientinterface.cpp	2008-04-10 10:44:48.000000000 +0200
+@@ -9,9 +9,6 @@
+  * before re-generating it.
+  */
+ 
+-//HAND-EDIT
+-#include "activeconnection.h"
+-
+ #include "nm-manager-clientinterface.h"
+ 
+ /*
+--- nm-access-pointinterface.h	2008-04-10 10:37:02.000000000 +0200
++++ /space/kde/builds/trunk/KDE/kdebase/workspace/solid/networkmanager-0.7/dbus/nm-access-pointinterface.h	2008-04-10 10:44:48.000000000 +0200
+@@ -8,8 +8,8 @@
+  * Do not edit! All changes made to it will be lost.
+  */
+ 
+-#ifndef NM_ACCESS_POINTINTERFACE_H_1207683005
+-#define NM_ACCESS_POINTINTERFACE_H_1207683005
++#ifndef NM-ACCESS-POINTINTERFACE_H_1207817088
++#define NM-ACCESS-POINTINTERFACE_H_1207817088
+ 
+ #include <QtCore/QObject>
+ #include <QtCore/QByteArray>
+--- nm-device-802-11-wirelessinterface.h	2008-04-10 10:32:48.000000000 +0200
++++ /space/kde/builds/trunk/KDE/kdebase/workspace/solid/networkmanager-0.7/dbus/nm-device-802-11-wirelessinterface.h	2008-04-10 10:44:48.000000000 +0200
+@@ -8,8 +8,8 @@
+  * Do not edit! All changes made to it will be lost.
+  */
+ 
+-#ifndef NM_DEVICE_802_11_WIRELESSINTERFACE_H_1207426619
+-#define NM_DEVICE_802_11_WIRELESSINTERFACE_H_1207426619
++#ifndef NM-DEVICE-802-11-WIRELESSINTERFACE_H_1207817088
++#define NM-DEVICE-802-11-WIRELESSINTERFACE_H_1207817088
+ 
+ #include <QtCore/QObject>
+ #include <QtCore/QByteArray>
+--- nm-device-802-3-ethernetinterface.h	2008-04-10 10:32:48.000000000 +0200
++++ /space/kde/builds/trunk/KDE/kdebase/workspace/solid/networkmanager-0.7/dbus/nm-device-802-3-ethernetinterface.h	2008-04-10 10:44:48.000000000 +0200
+@@ -8,8 +8,8 @@
+  * Do not edit! All changes made to it will be lost.
+  */
+ 
+-#ifndef NM_DEVICE_WIRED_ETHERNETINTERFACE_H
+-#define NM_DEVICE_WIRED_ETHERNETINTERFACE_H
++#ifndef NM-DEVICE-802-3-ETHERNETINTERFACE_H_1207817088
++#define NM-DEVICE-802-3-ETHERNETINTERFACE_H_1207817088
+ 
+ #include <QtCore/QObject>
+ #include <QtCore/QByteArray>
+--- nm-deviceinterface.h	2008-04-10 10:32:48.000000000 +0200
++++ /space/kde/builds/trunk/KDE/kdebase/workspace/solid/networkmanager-0.7/dbus/nm-deviceinterface.h	2008-04-10 10:44:48.000000000 +0200
+@@ -8,8 +8,8 @@
+  * Do not edit! All changes made to it will be lost.
+  */
+ 
+-#ifndef NM_DEVICEINTERFACE_H_1207426519
+-#define NM_DEVICEINTERFACE_H_1207426519
++#ifndef NM-DEVICEINTERFACE_H_1207817088
++#define NM-DEVICEINTERFACE_H_1207817088
+ 
+ #include <QtCore/QObject>
+ #include <QtCore/QByteArray>
+--- nm-ip4-configinterface.h	2008-04-10 10:37:34.000000000 +0200
++++ /space/kde/builds/trunk/KDE/kdebase/workspace/solid/networkmanager-0.7/dbus/nm-ip4-configinterface.h	2008-04-10 10:44:48.000000000 +0200
+@@ -8,8 +8,8 @@
+  * Do not edit! All changes made to it will be lost.
+  */
+ 
+-#ifndef NM_IP4_CONFIGINTERFACE_H_1207427199
+-#define NM_IP4_CONFIGINTERFACE_H_1207427199
++#ifndef NM-IP4-CONFIGINTERFACE_H_1207817088
++#define NM-IP4-CONFIGINTERFACE_H_1207817088
+ 
+ #include <QtCore/QObject>
+ #include <QtCore/QByteArray>
+--- nm-manager-clientinterface.h	2008-04-10 10:32:48.000000000 +0200
++++ /space/kde/builds/trunk/KDE/kdebase/workspace/solid/networkmanager-0.7/dbus/nm-manager-clientinterface.h	2008-04-10 10:44:48.000000000 +0200
+@@ -8,8 +8,8 @@
+  * Do not edit! All changes made to it will be lost.
+  */
+ 
+-#ifndef NM_MANAGER_CLIENTINTERFACE_H_1207426518
+-#define NM_MANAGER_CLIENTINTERFACE_H_1207426518
++#ifndef NM-MANAGER-CLIENTINTERFACE_H_1207817088
++#define NM-MANAGER-CLIENTINTERFACE_H_1207817088
+ 
+ #include <QtCore/QObject>
+ #include <QtCore/QByteArray>
+@@ -20,8 +20,6 @@
+ #include <QtCore/QVariant>
+ #include <QtDBus/QtDBus>
+ 
+-#include "activeconnection.h"
+-
+ /*
+  * Proxy class for interface org.freedesktop.NetworkManager
+  */
