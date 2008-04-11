@@ -598,6 +598,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     m_theme->setItemDelegate(new ThemeDelegate(m_theme->view()));
 
     setMainWidget(main);
+    m_emailLine->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
     reloadConfig(config, globalConfig);
     adjustSize();
@@ -779,9 +780,9 @@ void BackgroundDialog::update()
     bool someMetadata = setMetadata(m_authorLine, b->author());
     someMetadata = setMetadata(m_licenseLine, b->license()) || someMetadata;
     someMetadata = setMetadata(m_emailLine, b->email()) || someMetadata;
-    m_authorLabel->setVisible(someMetadata);
-    m_emailLabel->setVisible(someMetadata);
-    m_licenseLabel->setVisible(someMetadata);
+    //m_authorLabel->setVisible(someMetadata);
+    //m_emailLabel->setVisible(someMetadata);
+    //m_licenseLabel->setVisible(someMetadata);
 //     m_metadataSeparator->setVisible(someMetadata);
 
     

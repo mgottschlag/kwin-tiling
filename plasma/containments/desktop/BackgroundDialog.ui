@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>645</width>
-    <height>458</height>
+    <width>654</width>
+    <height>445</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -88,7 +88,27 @@
            <number>0</number>
           </property>
           <widget class="QWidget" name="page" >
+           <property name="geometry" >
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>490</width>
+             <height>179</height>
+            </rect>
+           </property>
            <layout class="QGridLayout" >
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>6</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
             <item row="0" column="0" >
              <widget class="QLabel" name="label" >
               <property name="minimumSize" >
@@ -151,7 +171,7 @@
                </sizepolicy>
               </property>
               <property name="text" >
-               <string>TextLabel</string>
+               <string/>
               </property>
              </widget>
             </item>
@@ -174,7 +194,7 @@
                </sizepolicy>
               </property>
               <property name="text" >
-               <string>TextLabel</string>
+               <string/>
               </property>
              </widget>
             </item>
@@ -197,7 +217,7 @@
                </sizepolicy>
               </property>
               <property name="text" >
-               <string>TextLabel</string>
+               <string/>
               </property>
               <property name="alignment" >
                <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -260,14 +280,14 @@
                 <height>30</height>
                </size>
               </property>
-              <property name="color" >
+              <property name="color" stdset="0" >
                <color>
                 <red>70</red>
                 <green>90</green>
                 <blue>130</blue>
                </color>
               </property>
-              <property name="defaultColor" >
+              <property name="defaultColor" stdset="0" >
                <color>
                 <red>70</red>
                 <green>90</green>
@@ -281,7 +301,7 @@
               <property name="orientation" >
                <enum>Qt::Horizontal</enum>
               </property>
-              <property name="sizeHint" >
+              <property name="sizeHint" stdset="0" >
                <size>
                 <width>40</width>
                 <height>20</height>
@@ -289,10 +309,43 @@
               </property>
              </spacer>
             </item>
+            <item row="6" column="0" colspan="2" >
+             <spacer name="verticalSpacer_2" >
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0" >
+               <size>
+                <width>1</width>
+                <height>1</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
            </layout>
           </widget>
           <widget class="QWidget" name="page_3" >
+           <property name="geometry" >
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>490</width>
+             <height>179</height>
+            </rect>
+           </property>
            <layout class="QVBoxLayout" >
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>6</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
             <item>
              <layout class="QHBoxLayout" >
               <item>
@@ -325,7 +378,7 @@
                   <property name="orientation" >
                    <enum>Qt::Vertical</enum>
                   </property>
-                  <property name="sizeHint" >
+                  <property name="sizeHint" stdset="0" >
                    <size>
                     <width>20</width>
                     <height>40</height>
@@ -381,7 +434,7 @@
                 <property name="orientation" >
                  <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="sizeHint" >
+                <property name="sizeHint" stdset="0" >
                  <size>
                   <width>40</width>
                   <height>20</height>
@@ -427,7 +480,7 @@
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
           </property>
-          <property name="sizeHint" >
+          <property name="sizeHint" stdset="0" >
            <size>
             <width>20</width>
             <height>40</height>
@@ -445,7 +498,7 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" >
+     <property name="sizeHint" stdset="0" >
       <size>
        <width>636</width>
        <height>0</height>
