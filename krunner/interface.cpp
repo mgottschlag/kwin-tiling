@@ -327,10 +327,17 @@ Interface::Interface(QWidget* parent)
 
     m_searchTerm = new KHistoryComboBox(false,w);
     m_searchTerm->setDuplicatesEnabled(false);
+
     KLineEdit *lineEdit = new KLineEdit(m_searchTerm);
-    lineEdit->setCompletionObject(m_context.completionObject());
-    lineEdit->setClearButtonShown(true);
+
+    // the order of these next few lines if very important.
+    // QComboBox::setLineEdit sets the autoComplete flag on the lineedit,
+    // and KComboBox::setAutoComplete resets the autocomplete mode! ugh!
     m_searchTerm->setLineEdit(lineEdit);
+    lineEdit->setCompletionObject(m_context.completionObject());
+    lineEdit->setCompletionMode(static_cast<KGlobalSettings::Completion>(KRunnerSettings::queryTextCompletionMode()));
+    lineEdit->setClearButtonShown(true);
+
     m_header->setBuddy(m_searchTerm);
     m_layout->addWidget(m_searchTerm);
     connect(m_searchTerm, SIGNAL(editTextChanged(QString)),
@@ -411,6 +418,7 @@ Interface::Interface(QWidget* parent)
 Interface::~Interface()
 {
     KRunnerSettings::setPastQueries(m_searchTerm->historyItems());
+    KRunnerSettings::setQueryTextCompletionMode(m_searchTerm->completionMode());
     m_context.clearMatches();
 }
 
