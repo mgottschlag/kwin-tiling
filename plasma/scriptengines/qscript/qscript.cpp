@@ -239,7 +239,7 @@ bool QScriptApplet::init()
 void QScriptApplet::importExtensions()
 {
     QStringList extensions;
-    extensions << "qt.core" << "qt.gui" << "qt.svg" << "qt.xml" << "qt.plasma";
+    extensions << "qt.core" << "qt.gui" << "qt.svg" << "qt.xml" << "org.kde.plasma";
     for (int i = 0; i < extensions.size(); ++i) {
         QString ext = extensions.at(i);
         kDebug() << "importing " << ext << "...";
