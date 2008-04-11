@@ -101,9 +101,7 @@ target_link_libraries(kdeinit_kxkb ${X11_X11_LIB} ${X11_Xext_LIB} ${KDE4_KDEUI_L
      ${XKB_SUPPORT_LIB})
 
 install(TARGETS kdeinit_kxkb ${INSTALL_TARGETS_DEFAULT_ARGS} )
-
-target_link_libraries( kxkb kdeinit_kxkb )
-install(TARGETS kxkb DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS kxkb         ${INSTALL_TARGETS_DEFAULT_ARGS} )
 #install(FILES kxkb_component.h DESTINATION ${INCLUDE_INSTALL_DIR})
 
 

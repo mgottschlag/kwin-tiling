@@ -24,10 +24,8 @@ if (X11_Xfixes_FOUND)
 endif (X11_Xfixes_FOUND)
 
 install(TARGETS kdeinit_klipper ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS klipper         ${INSTALL_TARGETS_DEFAULT_ARGS})
 
-target_link_libraries(klipper kdeinit_klipper)
-
-install(TARGETS klipper DESTINATION ${BIN_INSTALL_DIR})
 install(FILES klipper.desktop DESTINATION ${XDG_APPS_INSTALL_DIR})
 install(FILES klipper.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
 install(FILES klipperrc.desktop DESTINATION ${CONFIG_INSTALL_DIR} RENAME klipperrc)

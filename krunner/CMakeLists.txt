@@ -36,16 +36,17 @@ qt4_add_dbus_adaptor(krunner_SRCS ${kscreensaver_dbusXML} saverengine.h SaverEng
 kde4_add_kdeinit_executable(krunner ${krunner_SRCS})
 # needs qt3support for Q3ListView in lockdlg
 target_link_libraries(kdeinit_krunner plasma kworkspace processui ${KDE4_SOLID_LIBRARIES} ${KDE4_THREADWEAVER_LIBRARIES} ${X11_Xrender_LIB} ${KDE4_KDEUI_LIBS} 
-${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDE3SUPPORT_LIBRARY} )
+                      ${QT_QT3SUPPORT_LIBRARY} ${KDE4_KDE3SUPPORT_LIBRARY} )
+
 if(X11_Xss_LIB)
   target_link_libraries(kdeinit_krunner ${X11_Xss_LIB})
 endif(X11_Xss_LIB)
-target_link_libraries( krunner kdeinit_krunner )
 
 add_subdirectory( lock )
 
 install(TARGETS kdeinit_krunner ${INSTALL_TARGETS_DEFAULT_ARGS} )
-install(TARGETS krunner DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS krunner         ${INSTALL_TARGETS_DEFAULT_ARGS} )
+
 install(FILES krunner.desktop  DESTINATION  ${AUTOSTART_INSTALL_DIR})
 install(FILES kscreensaversettings.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
 install(FILES klaunch.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})

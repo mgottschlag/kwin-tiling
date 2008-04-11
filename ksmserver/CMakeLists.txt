@@ -39,8 +39,7 @@ target_link_libraries(kdeinit_ksmserver plasma solidcontrol kworkspace ${KDE4_KD
 
 install(TARGETS kdeinit_ksmserver ${INSTALL_TARGETS_DEFAULT_ARGS})
 
-target_link_libraries( ksmserver kdeinit_ksmserver )
-install(TARGETS ksmserver DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS ksmserver ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### next target ###############
 
@@ -51,7 +50,7 @@ kde4_add_executable( kcheckrunning ${kcheckrunning_SRCS})
 
 target_link_libraries(kcheckrunning ${X11_LIBRARIES})
 
-install(TARGETS kcheckrunning DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS kcheckrunning ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### install files ###############
 
