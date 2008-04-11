@@ -56,10 +56,10 @@ class Clock : public Plasma::Applet
 
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
-        void showConfigurationInterface();
         void updateColors();
 
     protected slots:
+        void createConfigurationInterface(KConfigDialog *parent);
         void configAccepted();
         void showCalendar(QGraphicsSceneMouseEvent *event);
 

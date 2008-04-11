@@ -39,6 +39,7 @@
 #include <KDialog>
 #include <KColorScheme>
 #include <KGlobalSettings>
+#include <KConfigDialog>
 #include <KDatePicker>
 #include <plasma/theme.h>
 #include <plasma/dialog.h>
@@ -181,21 +182,16 @@ void Clock::showCalendar(QGraphicsSceneMouseEvent *event)
     }
 }
 
-void Clock::showConfigurationInterface()
+void Clock::createConfigurationInterface(KConfigDialog *parent)
 {
-    if (m_dialog == 0) {
-        m_dialog = new KDialog;
+    //TODO: Make the size settable
+    QWidget *widget = new QWidget();
+    ui.setupUi(widget);
+    parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+    parent->addPage(widget, parent->windowTitle(), "chronometer");
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
-        m_dialog->setCaption(i18n("Configure Clock"));
-
-        QWidget *widget = new QWidget;
-        ui.setupUi(widget);
-        m_dialog->setMainWidget(widget);
-        m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
-
-        connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
-        connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
-    }
     ui.showDate->setChecked(m_showDate);
     ui.showYear->setChecked(m_showYear);
     ui.showDay->setChecked(m_showDay);
@@ -211,7 +207,6 @@ void Clock::showConfigurationInterface()
     foreach (QString str, m_timeZones) {
         ui.timeZones->setSelected(str, true);
     }
-    m_dialog->show();
 }
 
 void Clock::configAccepted()
