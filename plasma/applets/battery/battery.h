@@ -109,15 +109,15 @@ class Battery : public Plasma::Applet
         Plasma::Phase::AnimId m_animId;
         qreal m_alpha;
         bool m_fadeIn;
-    
+
         Plasma::Phase::AnimId m_acAnimId;
         qreal m_acAlpha;
         bool m_acFadeIn;
-    
+
         Plasma::Phase::AnimId m_batteryAnimId;
         qreal m_batteryAlpha;
         bool m_batteryFadeIn;
-    
+
         // Internal data
         QList<QVariant> batterylist, acadapterlist;
         QHash<QString, QHash<QString, QVariant> > m_batteries_data;

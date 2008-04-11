@@ -236,7 +236,9 @@ void Battery::configAccepted()
         } else {
             svgFile = "widgets/battery";
         }
-        showAcAdapter(false);
+        if (m_acadapter_plugged) {
+            showAcAdapter(false);
+        }
         showBattery(false);
         m_batteryStyle = ui.styleGroup->selected();
         delete m_theme;
@@ -244,7 +246,9 @@ void Battery::configAccepted()
         kDebug() << "Changing theme to " << svgFile;
         cg.writeEntry("style", m_batteryStyle);
         m_theme->resize(contentSize());
-        showAcAdapter(true);
+        if (m_acadapter_plugged) {
+            showAcAdapter(true);
+        }
         showBattery(true);
     }
 
@@ -340,8 +344,6 @@ void Battery::showAcAdapter(bool show)
     if (m_acAnimId != -1) {
         Plasma::Phase::self()->stopCustomAnimation(m_acAnimId);
     }
-
-    //m_fadeIn = false;
     m_acAnimId = Plasma::Phase::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
                                                       Plasma::Phase::EaseOutCurve, this,
                                                       "acAnimationUpdate");
@@ -358,8 +360,6 @@ void Battery::showBattery(bool show)
     if (m_batteryAnimId != -1) {
         Plasma::Phase::self()->stopCustomAnimation(m_batteryAnimId);
     }
-
-    //m_fadeIn = false;
     m_batteryAnimId = Plasma::Phase::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
                                                       Plasma::Phase::EaseOutCurve, this,
                                                       "batteryAnimationUpdate");
@@ -541,7 +541,9 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
 
     if (m_numOfBattery == 0) {
         QRectF ac_contentsRect(contentsRect.topLeft(), QSizeF(contentsRect.width() * m_acAlpha, contentsRect.height() * m_acAlpha));
-        m_theme->paint(p, ac_contentsRect, "AcAdapter");
+        if (m_acadapter_plugged) {
+            m_theme->paint(p, ac_contentsRect, "AcAdapter");
+        }
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
             // Show that there's no battery
