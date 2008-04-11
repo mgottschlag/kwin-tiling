@@ -579,6 +579,7 @@ void Interface::queueUpdates()
         return;
     }
     //Wait 100ms between updating matches
+    m_matchList->clear();
     m_updateTimer.start(100);
 }
 
