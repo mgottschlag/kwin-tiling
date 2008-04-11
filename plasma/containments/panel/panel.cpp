@@ -38,6 +38,7 @@
 #include <plasma/layouts/layout.h>
 #include <plasma/svgpanel.h>
 #include <plasma/theme.h>
+#include <plasma/view.h>
 
 using namespace Plasma;
 
@@ -47,7 +48,8 @@ Panel::Panel(QObject *parent, const QVariantList &args)
       m_appletBrowserAction(0),
       m_configureAction(0),
       m_removeAction(0),
-      m_currentSize(QSize(QApplication::desktop()->screenGeometry(screen()).width(), 56))
+      m_currentSize(QSize(QApplication::desktop()->screenGeometry(screen()).width(), 56)),
+      m_lastViewGeom()
 {
     m_background = new Plasma::SvgPanel("widgets/panel-background", this);
     m_background->setBorderFlags(Plasma::SvgPanel::DrawAllBorders);
@@ -101,7 +103,7 @@ void Panel::backgroundChanged()
     constraintsUpdated(Plasma::LocationConstraint);
 }
 
-void Panel::updateBorders()
+void Panel::updateBorders(const QRect &geom)
 {
     Plasma::Location loc = location();
     SvgPanel::BorderFlags bFlags = SvgPanel::DrawAllBorders;
@@ -128,11 +130,11 @@ void Panel::updateBorders()
             topHeight = 0;
         }
 
-        if (geometry().x() <= r.x()) {
+        if (geom.x() <= r.x()) {
             bFlags ^= SvgPanel::DrawLeftBorder;
             leftWidth = 0;
         }
-        if (geometry().right() >= r.right()) {
+        if (geom.right() >= r.right()) {
             bFlags ^= SvgPanel::DrawRightBorder;
             rightWidth = 0;
         }
@@ -147,11 +149,11 @@ void Panel::updateBorders()
             bFlags ^= SvgPanel::DrawLeftBorder;
             leftWidth = 0;
         }
-        if (geometry().y() <= r.y()) {
+        if (geom.y() <= r.y()) {
             bFlags ^= SvgPanel::DrawTopBorder;
             topHeight = 0;
         }
-        if (geometry().bottom() >= r.bottom()) {
+        if (geom.bottom() >= r.bottom()) {
             bFlags ^= SvgPanel::DrawBottomBorder;
             bottomHeight = 0;
         }
@@ -160,11 +162,13 @@ void Panel::updateBorders()
         kDebug() << "no location!?";
     }
 
+    //invalidate the layout and set again
     if (layout()) {
         layout()->setMargin(Plasma::TopMargin, topHeight);
         layout()->setMargin(Plasma::LeftMargin, leftWidth);
         layout()->setMargin(Plasma::RightMargin, rightWidth);
         layout()->setMargin(Plasma::BottomMargin, bottomHeight);
+        layout()->invalidate();
     }
 
     m_background->setBorderFlags(bFlags);
@@ -181,7 +185,6 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::SizeConstraint) {
-        bool isHorizontal = location() == Plasma::TopEdge || location() == Plasma::BottomEdge;
         m_currentSize = size().toSize();
         m_background->resize(size());
     }
@@ -189,12 +192,6 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
     if (constraints & Plasma::ScreenConstraint ||
         constraints & Plasma::LocationConstraint) {
         updateSize(m_currentSize);
-    }
-
-    if (constraints & Plasma::ScreenConstraint ||
-        constraints & Plasma::LocationConstraint ||
-        constraints & Plasma::SizeConstraint) {
-        updateBorders();
     }
 
     if (constraints & Plasma::ImmutableConstraint && m_appletBrowserAction) {
@@ -222,7 +219,7 @@ Qt::Orientations Panel::expandingDirections() const
 }
 
 void Panel::paintInterface(QPainter *painter,
-                           const QStyleOptionGraphicsItem *,
+                           const QStyleOptionGraphicsItem *option,
                            const QRect& contentsRect)
 {
     //FIXME: this background drawing is bad and ugly =)
@@ -230,6 +227,18 @@ void Panel::paintInterface(QPainter *painter,
     painter->save();
     painter->resetTransform();
 
+    const Containment::StyleOption *containmentOpt = qstyleoption_cast<const Containment::StyleOption *>(option);
+    
+    QRect viewGeom;
+    if (containmentOpt) {
+        viewGeom = containmentOpt->view->geometry();
+    }
+
+    if (viewGeom != m_lastViewGeom) {
+        m_lastViewGeom = viewGeom;
+        updateBorders(viewGeom);
+    }
+    
     // blit the background (saves all the per-pixel-products that blending does)
     painter->setCompositionMode(QPainter::CompositionMode_Source);
     painter->setRenderHint(QPainter::Antialiasing);
@@ -272,7 +281,7 @@ void Panel::configure()
         QLabel *lengthLabel = new QLabel(i18n("Length:"), p);
         l->addWidget(lengthLabel, 2, 0);
         m_lengthEdit = new KIntNumInput(p);
-        QRectF screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) : geometry();
+        QRect screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) : geometry().toRect();
         int screenlength = 0;
         int currentlength = 0;
         switch (location()) {
@@ -306,7 +315,7 @@ void Panel::configure()
         m_locationCombo->addItem(i18n("Left"), Plasma::LeftEdge);
     }
 
-    int panelSize = (formFactor() == Plasma::Horizontal) ? size().height() : size().width();
+    int panelSize = (formFactor() == Plasma::Horizontal) ? size().toSize().height() : size().toSize().width();
     int idx = m_sizeCombo->count() - 1;
     for (int i = 0; i <= m_sizeCombo->count() - 2; ++i) {
         if (m_sizeCombo->itemData(i).toInt() == panelSize) {

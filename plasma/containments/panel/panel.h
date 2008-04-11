@@ -72,7 +72,7 @@ private:
     /**
      * recalculate which borders to show
      */
-    void updateBorders();
+    void updateBorders(const QRect &geom);
 
     Plasma::SvgPanel *m_background;
     KDialog* m_dialog;
@@ -83,7 +83,10 @@ private:
     QAction* m_appletBrowserAction;
     QAction* m_configureAction;
     QAction* m_removeAction;
+
+    //cached values
     QSize m_currentSize;
+    QRect m_lastViewGeom;
 };
 
 

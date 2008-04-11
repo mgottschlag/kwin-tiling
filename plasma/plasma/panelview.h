@@ -20,6 +20,8 @@
 #ifndef PLASMA_PANELVIEW_H
 #define PLASMA_PANELVIEW_H
 
+#include <kconfiggroup.h>
+
 #include <plasma/plasma.h>
 #include <plasma/view.h>
 
@@ -42,6 +44,7 @@ public:
     * @arg parent the QWidget this panel is parented to
     */
     explicit PanelView(Plasma::Containment *panel, int id = 0, QWidget *parent = 0);
+    
 
     /**
      * Sets the location (screen edge) where this panel is positioned.
@@ -59,6 +62,39 @@ public:
      */
     Plasma::Corona *corona() const;
 
+    /**
+     * Sets the offset the left border, the offset is the distance of the left
+     * border of the panel from the left border of the screen when the alignment is
+     * Qt::AlignLeft, right border and right edge if the alignment is Qt::alignRight
+     * and the distance between the center of the panel and the center of the screen if
+     * the alignment is Qt::AlignCenter.
+     * Similar way for vertical panels.
+     * @param newOffset the offset of the panel
+     */
+    void setOffset(int newOffset);
+
+    /**
+     * @return the offset of the panel from the left screen edge
+     */
+    int offset() const;
+
+    /**
+     * Sets the edge of the screen the panel will be aligned and will grow
+     * @param align the direction (for instance Qt::AlignLeft) means the panel will start
+     * from the left of the screen and grow to the right
+     */
+    void setAlignment(Qt::Alignment align);
+
+    /**
+     * @return the panel alignment
+     */
+    Qt::Alignment alignment() const;
+
+    /**
+     * Saves the view settings
+     */
+     void saveConfig();
+
 protected:
     void updateStruts();
     virtual void moveEvent(QMoveEvent *event);
@@ -69,7 +105,14 @@ private slots:
     void showAppletBrowser();
 
 private:
+    Qt::Alignment alignmentFilter(Qt::Alignment align) const;
+
     Plasma::Svg *m_background;
+
+    KConfigGroup m_viewConfig;
+
+    int m_offset;
+    Qt::Alignment m_alignment;
 };
 
 #endif
