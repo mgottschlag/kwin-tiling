@@ -34,11 +34,11 @@ using namespace Plasma;
 
 #include "bind_dataengine.h"
 
-#include "qscript.h"
+#include "appletscriptqscript.h"
 
 Q_DECLARE_METATYPE(QPainter*)
 Q_DECLARE_METATYPE(QStyleOptionGraphicsItem*)
-Q_DECLARE_METATYPE(QScriptApplet*)
+Q_DECLARE_METATYPE(AppletScriptQScript*)
 Q_DECLARE_METATYPE(Layout*)
 Q_DECLARE_METATYPE(Widget*)
 
@@ -424,6 +424,6 @@ QScriptValue AppletScriptQScript::createPrototype( QScriptEngine *engine, const 
     return proto;
 }
 
-#include "appletscript_qscript.moc"
+#include "appletscriptqscript.moc"
 
 
