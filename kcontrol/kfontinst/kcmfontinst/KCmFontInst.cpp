@@ -980,8 +980,8 @@ void CKCmFontInst::changeText()
         bool             status;
         QRegExpValidator validator(QRegExp(".*"), 0L);
         QString          oldStr(CFcEngine::instance()->getPreviewString()),
-                         newStr(KInputDialog::getText(i18n("Preview String"),
-                                                      i18n("Please enter new string:"),
+                         newStr(KInputDialog::getText(i18n("Preview Text"),
+                                                      i18n("Please enter new text:"),
                                                       oldStr, &status, this, &validator));
 
         if(status && oldStr!=newStr)
