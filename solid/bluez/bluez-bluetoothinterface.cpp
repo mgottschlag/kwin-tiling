@@ -136,7 +136,7 @@ QStringList BluezBluetoothInterface::listConnections() const
 {
     QStringList list = listReply("ListConnections");
     for (int i = 0; i < list.size(); i++) {
-        list[i] = ubi() + "/" + list[i];
+        list[i] = ubi() + '/' + list[i];
     }
     return list;
 }
@@ -190,7 +190,7 @@ QStringList BluezBluetoothInterface::listRemoteDevices() const
 {
     QStringList list = listReply("ListRemoteDevices");
     for (int i = 0; i < list.size(); i++) {
-        list[i] = ubi() + "/" + list[i];
+        list[i] = ubi() + '/' + list[i];
     }
     return list;
 }
