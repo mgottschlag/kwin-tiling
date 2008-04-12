@@ -1,5 +1,5 @@
 /*
- *   Copyright 2007 Richard J. Moore <rich@kde.org>
+ *   Copyright 2007-2008 Richard J. Moore <rich@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -27,13 +27,13 @@
 class QScriptEngine;
 class QScriptContext;
 
-class QScriptApplet : public Plasma::AppletScript
+class AppletScriptQScript : public Plasma::AppletScript
 {
     Q_OBJECT
 
 public:
-    QScriptApplet( QObject *parent, const QVariantList &args );
-    ~QScriptApplet();
+    AppletScriptQScript( QObject *parent, const QVariantList &args );
+    ~AppletScriptQScript();
     bool init();
 
     void reportError();
@@ -69,7 +69,7 @@ private:
     QScriptValue m_self;
 };
 
-K_EXPORT_PLASMA_APPLETSCRIPTENGINE(qscriptapplet, QScriptApplet)
+K_EXPORT_PLASMA_APPLETSCRIPTENGINE(qscriptapplet, AppletScriptQScript)
 
 
 #endif // SCRIPT_H

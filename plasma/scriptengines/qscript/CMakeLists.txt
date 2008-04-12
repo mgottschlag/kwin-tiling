@@ -1,5 +1,5 @@
 set(qscript_engine_SRCS
-    qscript.cpp
+    appletscript_qscript.cpp
     qtgui/font.cpp
     qtgui/graphicsitem.cpp
     qtgui/painter.cpp
