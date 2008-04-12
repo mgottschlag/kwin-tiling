@@ -764,7 +764,7 @@ void LockProcess::cantLock( const QString &txt)
 
 #if 0 // placeholders for later
 i18n("Cannot start <i>kcheckpass</i>.");
-i18n("<i>kcheckpass</i> is unable to operate. Possibly it is not SetUID root.");
+i18n("<i>kcheckpass</i> is unable to operate. Possibly it is not setuid root.");
 #endif
 
 //---------------------------------------------------------------------------
