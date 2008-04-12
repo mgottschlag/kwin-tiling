@@ -40,6 +40,8 @@ public:
 
     void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
 
+    void constraintsUpdated(Plasma::Constraints constraints);
+
     Q_INVOKABLE QString findDataResource( const QString &filename );
     Q_INVOKABLE void debug( const QString &msg );
 //    Q_INVOKABLE void update( const QRectF & rect = QRectF() ) { Applet::update(rect); }

@@ -212,6 +212,28 @@ void QScriptApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *
     }
 }
 
+void QScriptApplet::constraintsUpdated(Plasma::Constraints constraints)
+{
+    Q_UNUSED(constraints);
+    QScriptValue fun = m_self.property( "constraintsUpdated" );
+    if ( !fun.isFunction() ) {
+	kDebug() << "Script: constraintsUpdated is not a function, " << fun.toString();
+	return;
+    }
+
+    QScriptValueList args;
+    // args << m_engine->toScriptValue( constraints ); // Hack - fix me
+
+    QScriptContext *ctx = m_engine->pushContext();
+    ctx->setActivationObject( m_self );
+    fun.call( m_self, args );
+    m_engine->popContext();
+
+    if ( m_engine->hasUncaughtException() ) {
+	reportError();
+    }
+}
+
 bool QScriptApplet::init()
 {
     kDebug() << "ScriptName:" << applet()->name();
