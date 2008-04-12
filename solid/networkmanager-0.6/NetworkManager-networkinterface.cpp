@@ -17,6 +17,8 @@
 
 */
 
+#include "NetworkManager-networkinterface.h"
+
 #include <NetworkManager/NetworkManager.h>
 #include <QtDBus>
 
@@ -26,8 +28,6 @@
 
 #include "NetworkManager-network.h"
 #include "NetworkManager-wirelessnetwork.h"
-
-#include "NetworkManager-networkinterface.h"
 
 void dump(const NMDBusDeviceProperties &device)
 {

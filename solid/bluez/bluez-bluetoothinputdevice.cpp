@@ -19,11 +19,11 @@
 
 */
 
+#include "bluez-bluetoothinputdevice.h"
+
 #include <QtDBus>
 
 #include <kdebug.h>
-
-#include "bluez-bluetoothinputdevice.h"
 
 BluezBluetoothInputDevice::BluezBluetoothInputDevice(const QString &objectPath,
         const QString &dest) : BluetoothInputDevice(0), m_objectPath(objectPath)

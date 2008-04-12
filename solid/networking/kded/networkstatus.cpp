@@ -20,6 +20,7 @@
     without including the source code for Qt in the source distribution.
 */
 
+#include "networkstatus.h"
 
 #include <QMap>
 
@@ -29,7 +30,6 @@
 #include "network.h"
 #include "clientadaptor.h"
 #include "serviceadaptor.h"
-#include "networkstatus.h"
 
 #include <kpluginfactory.h>
 

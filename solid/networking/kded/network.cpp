@@ -20,9 +20,9 @@
     without including the source code for Qt in the source distribution.
 */
 
-#include <KDebug>
-
 #include "network.h"
+
+#include <KDebug>
 
 Network::Network( const QString & name, int status, const QString & serviceName )
 	: m_name( name ), m_status( (Solid::Networking::Status)status ), m_service( serviceName )

@@ -19,12 +19,13 @@
 
 */
 
+#include "bluez-bluetoothinterface.h"
+
 #include <QtDBus>
 
 #include <solid/control/bluetoothinterface.h>
 
 #include "bluez-bluetoothremotedevice.h"
-#include "bluez-bluetoothinterface.h"
 #include <KDebug>
 
 

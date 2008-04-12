@@ -26,6 +26,8 @@
 
 #include <solid/control/ifaces/bluetoothinputdevice.h>
 
+class QDBusInterface;
+
 class KDE_EXPORT BluezBluetoothInputDevice : public Solid::Control::Ifaces::BluetoothInputDevice
 {
     Q_OBJECT

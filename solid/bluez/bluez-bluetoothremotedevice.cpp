@@ -19,6 +19,8 @@
 
 */
 
+#include "bluez-bluetoothremotedevice.h"
+
 #include <QQueue>
 #include <QTimer>
 
@@ -27,7 +29,6 @@
 #include <solid/control/bluetoothremotedevice.h>
 
 #include "bluezcalljob.h"
-#include "bluez-bluetoothremotedevice.h"
 
 Q_DECLARE_METATYPE(QList<uint>)
 

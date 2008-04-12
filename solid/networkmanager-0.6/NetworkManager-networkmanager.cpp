@@ -17,6 +17,8 @@
 
 */
 
+#include "NetworkManager-networkmanager.h"
+
 #include <NetworkManager/NetworkManager.h>
 
 #include <QtDBus>
@@ -24,7 +26,6 @@
 #include <kdebug.h>
 
 #include "NetworkManager-networkinterface.h"
-#include "NetworkManager-networkmanager.h"
 
 class NMNetworkManagerPrivate
 {

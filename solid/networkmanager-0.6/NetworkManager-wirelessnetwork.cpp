@@ -17,6 +17,8 @@
 
 */
 
+#include "NetworkManager-wirelessnetwork.h"
+
 // Copied from wireless.h
 /* Modes of operation */
 #define IW_MODE_AUTO    0   /* Let the driver decides */
@@ -33,7 +35,6 @@
 #include <solid/control/ifaces/authentication.h>
 
 #include "NetworkManager-dbushelper.h"
-#include "NetworkManager-wirelessnetwork.h"
 
 void dump(const Solid::Control::WirelessNetwork::Capabilities  & cap)
 {

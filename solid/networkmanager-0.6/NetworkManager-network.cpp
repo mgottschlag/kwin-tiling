@@ -17,12 +17,12 @@
 
 */
 
+#include "NetworkManager-network.h"
+
 #include <QtDBus>
 #include <kdebug.h>
 
 #include "NetworkManager-wirelessnetwork.h"
-
-#include "NetworkManager-network.h"
 
 class NMNetworkPrivate
 {

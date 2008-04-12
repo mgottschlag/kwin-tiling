@@ -19,13 +19,14 @@
 
 */
 
+#include "bluez-bluetoothmanager.h"
+
 #include <QtDBus>
 
 #include <kdebug.h>
 
 #include "bluez-bluetoothinterface.h"
 #include "bluez-bluetoothinputdevice.h"
-#include "bluez-bluetoothmanager.h"
 #include "bluez-bluetoothsecurity.h"
 #include "bluez-bluetoothsecurityadaptor.h"
 #include "bluezcalljob.h"

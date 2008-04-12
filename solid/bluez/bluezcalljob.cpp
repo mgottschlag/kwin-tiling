@@ -20,11 +20,11 @@
 */
 
 
+#include "bluezcalljob.h"
+
 #include <QTimer>
 #include <QStringList>
 #include <kdebug.h>
-
-#include "bluezcalljob.h"
 
 
 BluezCallJob::BluezCallJob(const QDBusConnection &connection, const QString &dest,

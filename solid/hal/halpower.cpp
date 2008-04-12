@@ -17,11 +17,12 @@
 
 */
 
+#include "halpower.h"
+
 #include <QtDBus/QDBusReply>
 
 #include <kdebug.h>
 
-#include "halpower.h"
 #include "halsuspendjob.h"
 
 #include <solid/deviceinterface.h>

@@ -17,6 +17,8 @@
 
 */
 
+#include "NetworkManager-dbushelper.h"
+
 #include <stdlib.h>
 //#include <wireless.h>
 // stuff copied from wireless.h so we don't have to include it.
@@ -40,8 +42,6 @@
 
 #include <kdebug.h>
 #include <solid/control/ifaces/authentication.h>
-
-#include "NetworkManager-dbushelper.h"
 
 QList<QVariant> NMDBusHelper::serialize(Solid::Control::Authentication * auth, const QString  & essid, QList<QVariant>  & args, bool * error)
 {
