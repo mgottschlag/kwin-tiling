@@ -61,11 +61,7 @@ Trash::Trash(QObject *parent, const QVariantList &args)
       m_trashUrl(KUrl("trash:/")),
       m_count(0)
 {
-    m_icon = new Plasma::Icon(KIcon("user-trash"),QString(),this);
     setDrawStandardBackground(false);
-    setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
-    resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
-
 }
 
 Trash::~Trash()
@@ -100,7 +96,8 @@ void Trash::init()
     setDrawStandardBackground(false);
     m_icon->setDrawBackground(true);
     watchForMouseMove(m_icon, true);
-
+    //setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
+    resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
     m_data.mainText = i18n("Trash");
 }
 
