@@ -40,7 +40,6 @@
 
 #include "plasma/corona.h"
 #include "plasma/appletbrowser.h"
-#include "plasma/layouts/layout.h"
 #include "plasma/phase.h"
 #include "plasma/theme.h"
 #include "kworkspace/kworkspace.h"

@@ -37,7 +37,6 @@
 #include <KProcess>
 
 // Plasma
-#include <plasma/layouts/boxlayout.h>
 #include <plasma/widgets/icon.h>
 #include <plasma/containment.h>
 #include <plasma/view.h>

@@ -37,7 +37,6 @@
 #include <KMessageBox>
 
 #include <plasma/corona.h>
-#include <plasma/layouts/layout.h>
 #include <plasma/svgpanel.h>
 #include <plasma/theme.h>
 #include <plasma/view.h>

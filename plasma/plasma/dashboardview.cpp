@@ -32,8 +32,6 @@
 #include "plasma/containment.h"
 #include "plasma/svg.h"
 #include "plasma/appletbrowser.h"
-#include "plasma/widgets/pushbutton.h"
-
 #include "plasmaapp.h"
 
 static const int SUPPRESS_SHOW_TIMEOUT = 500; // Number of millis to prevent reshow of dashboard
@@ -58,7 +56,7 @@ DashboardView::DashboardView(Plasma::Containment *containment, QWidget *parent)
     setDrawWallpaper(!PlasmaApp::hasComposite());
 
     connect(scene(), SIGNAL(launchActivated()), SLOT(hideView()));
-    Plasma::Widget *tool = containment->addToolBoxTool("hideDashboard", "preferences-desktop-display", i18n("Hide Dashboard"));
+    Plasma::Applet *tool = containment->addToolBoxTool("hideDashboard", "preferences-desktop-display", i18n("Hide Dashboard"));
     containment->enableToolBoxTool("hideDashboard", false);
     connect(tool, SIGNAL(clicked()), this, SLOT(hideView()));
 

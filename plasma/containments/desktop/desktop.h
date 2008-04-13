@@ -30,7 +30,6 @@
 
 #include <plasma/containment.h>
 #include <plasma/phase.h>
-#include <plasma/widgets/widget.h>
 
 #include "iconloader.h"
 

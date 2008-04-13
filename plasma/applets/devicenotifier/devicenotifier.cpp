@@ -39,14 +39,12 @@
 #include <KColorScheme>
 
 #include <plasma/svg.h>
-#include <plasma/widgets/widget.h>
 #include <plasma/containment.h>
 #include <plasma/dialog.h>
 #include <plasma/phase.h>
 #include <plasma/delegate.h>
 
 //use for desktop view
-#include <plasma/layouts/boxlayout.h>
 #include <plasma/widgets/icon.h>
 #include <plasma/theme.h>
 

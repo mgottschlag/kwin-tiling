@@ -27,8 +27,6 @@
 #include <plasma/applet.h>
 #include <plasma/svg.h>
 #include <plasma/uiloader.h>
-#include <plasma/layouts/layout.h>
-#include <plasma/widgets/widget.h>
 
 using namespace Plasma;
 
@@ -40,7 +38,7 @@ Q_DECLARE_METATYPE(QPainter*)
 Q_DECLARE_METATYPE(QStyleOptionGraphicsItem*)
 Q_DECLARE_METATYPE(QScriptApplet*)
 Q_DECLARE_METATYPE(Layout*)
-Q_DECLARE_METATYPE(Widget*)
+Q_DECLARE_METATYPE(Applet*)
 
 QScriptValue constructPainterClass(QScriptEngine *engine);
 QScriptValue constructGraphicsItemClass(QScriptEngine *engine);
@@ -371,9 +369,9 @@ QScriptValue QScriptApplet::createWidget(QScriptContext *context, QScriptEngine 
     if ( context->argumentCount() > 1 )
 	return context->throwError("Create widget takes one argument");
 
-    Widget *parent = 0;
+    Applet *parent = 0;
     if ( context->argumentCount() ) {
-	parent = qscriptvalue_cast<Widget*>(context->argument(0));
+	parent = qscriptvalue_cast<Applet*>(context->argument(0));
 
 	if ( !parent )
 	    return context->throwError("The parent must be a Widget");
@@ -381,7 +379,7 @@ QScriptValue QScriptApplet::createWidget(QScriptContext *context, QScriptEngine 
 
     QString self = context->callee().property( "functionName" ).toString();
     UiLoader loader;
-    Widget *w = loader.createWidget( self, parent );
+    Applet *w = loader.createWidget( self, parent );
 
     if (!w)
 	return QScriptValue();
