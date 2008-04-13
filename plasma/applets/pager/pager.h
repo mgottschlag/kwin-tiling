@@ -42,35 +42,35 @@ class Pager : public Plasma::Applet
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option,
                             const QRect &contents);
         void constraintsUpdated(Plasma::Constraints);
-	Qt::Orientations expandingDirections() const;
+        Qt::Orientations expandingDirections() const;
         virtual QList<QAction*> contextActions();
         QSizeF contentSizeHint() const;
         QPainterPath shape() const;
 
     public slots:
-	void recalculateGeometry();
-	void recalculateWindowRects();
- 
+        void recalculateGeometry();
+        void recalculateWindowRects();
+
     protected slots:
-	virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
-	virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-	virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+        virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+        virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+        virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
         virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-	virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
+        virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
         virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
         virtual void wheelEvent(QGraphicsSceneWheelEvent *);
         void createConfigurationInterface(KConfigDialog *parent);
 
         void configAccepted();
-	void currentDesktopChanged(int desktop);
-	void windowAdded(WId id);
-	void windowRemoved(WId id);
-	void activeWindowChanged(WId id);
-	void numberOfDesktopsChanged(int num);
-	void desktopNamesChanged();
-	void stackingOrderChanged();
-	void windowChanged(WId id, unsigned int properties);
-  	void showingDesktopChanged(bool showing);
+        void currentDesktopChanged(int desktop);
+        void windowAdded(WId id);
+        void windowRemoved(WId id);
+        void activeWindowChanged(WId id);
+        void numberOfDesktopsChanged(int num);
+        void desktopNamesChanged();
+        void stackingOrderChanged();
+        void windowChanged(WId id, unsigned int properties);
+        void showingDesktopChanged(bool showing);
         void slotConfigureDesktop();
         void lostDesktopLayoutOwner();
 
@@ -78,40 +78,39 @@ class Pager : public Plasma::Applet
         void createMenu();
         QRect fixViewportPosition( const QRect& r );
     private:
-	QTimer* m_timer;
+        QTimer* m_timer;
         KDialog *m_dialog;
         Ui::pagerConfig ui;
-	enum DisplayedText
-	{
-	Number,
-	Name,
-	None
-	};
-	DisplayedText m_displayedText;
+        enum DisplayedText
+        {
+            Number,
+            Name,
+            None
+        };
+        DisplayedText m_displayedText;
         bool m_showWindowIcons;
-	int m_rows;
-	int m_columns;
-	
-	int m_desktopCount;
-	int m_currentDesktop;
-	qreal m_widthScaleFactor;
-	qreal m_heightScaleFactor;
-	QSizeF m_size;
-	QList<QRectF> m_rects;
-	QRectF m_hoverRect;
-	QList<QList<QPair<WId, QRect> > > m_windowRects;
-	QList<QRect> m_activeWindows;
+        int m_rows;
+        int m_columns;
+        int m_desktopCount;
+        int m_currentDesktop;
+        qreal m_widthScaleFactor;
+        qreal m_heightScaleFactor;
+        QSizeF m_size;
+        QList<QRectF> m_rects;
+        QRectF m_hoverRect;
+        QList<QList<QPair<WId, QRect> > > m_windowRects;
+        QList<QRect> m_activeWindows;
         QList<QAction*> actions;
         KSelectionOwner* m_desktopLayoutOwner;
-	
-	// dragging of windows
-	QRect m_dragOriginal;
-	QPointF m_dragOriginalPos;
-	QPointF m_dragCurrentPos;
-	WId m_dragId;
-	int m_dragStartDesktop;
-	int m_dragHighlightedDesktop;
-};
+
+        // dragging of windows
+        QRect m_dragOriginal;
+        QPointF m_dragOriginalPos;
+        QPointF m_dragCurrentPos;
+        WId m_dragId;
+        int m_dragStartDesktop;
+        int m_dragHighlightedDesktop;
+    };
 
 K_EXPORT_PLASMA_APPLET(pager, Pager)
 
