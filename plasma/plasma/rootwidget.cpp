@@ -160,7 +160,7 @@ void RootWidget::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Contain
 
     if (wasScreen > -1) {
         DesktopView *view = viewForScreen(isScreen);
-        if (view) {
+        if (view && view->containment() == containment) {
             view->setContainment(0);
         }
     }
