@@ -57,6 +57,52 @@ K_PLUGIN_FACTORY(
 K_EXPORT_PLUGIN(KCMHotkeysFactory("kcm_khotkeys"));
 
 
+extern "C"
+{
+    KDE_EXPORT void kcminit_khotkeys()
+    {
+    kDebug() << "Starting khotkeys daemon";
+
+    KConfig _cfg( "khotkeysrc" );
+    KConfigGroup cfg(&_cfg, "Main" );
+    if( !cfg.readEntry( "Autostart", false))
+        return;
+
+#if 0 
+    // BUG: 2008-04-13 mjansen
+    // KGlobalAccel is currently unable to handle components correctly.
+    //
+    // 1. A action in a kded module allways belongs to the component kded. The
+    // ActionCollections component is ignored. Our actions belong to khotkeys
+    // and are known to khotkeys under that component.
+    // 2. KGlobalAccel::overrideMainComponentData disables all actions
+    // So we disable the kded module for now.
+
+    // Non-xinerama multhead support in KDE is just a hack
+    // involving forking apps per-screen. Don't bother with
+    // kded modules in such case.
+    QByteArray multiHead = getenv("KDE_MULTIHEAD");
+    if (multiHead.toLower() == "true") 
+        {
+#endif
+        KToolInvocation::kdeinitExec( "khotkeys" );
+#if 0
+        }
+    else
+        {
+        QDBusInterface kded("org.kde.kded", "/kded", "org.kde.kded");
+        QDBusReply<bool> reply = kded.call("loadModule",QString( "khotkeys" ) );
+        if( !reply.isValid())
+            {
+            kWarning( 1217 ) << "Loading of khotkeys module failed." ;
+            KToolInvocation::kdeinitExec( "khotkeys" );
+            }
+        }
+#endif
+    } // kcminit_khotkeys()
+}
+
+
 class KCMHotkeysPrivate
     {
     public:
