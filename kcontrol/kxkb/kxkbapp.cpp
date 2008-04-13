@@ -40,6 +40,8 @@ DESCRIPTION
 KXKBApp::KXKBApp(bool allowStyles, bool GUIenabled)
     : KUniqueApplication(allowStyles, GUIenabled)
 {
+    setQuitOnLastWindowClosed(false);
+
     m_kxkbCore = new KxkbCore( KxkbCore::KXKB_MAIN );
 
     if( isError() ) {
