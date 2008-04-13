@@ -27,6 +27,8 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QAction>
+#include <QGraphicsLayout>
+
 
 #include <KDebug>
 #include <KIcon>
@@ -164,10 +166,7 @@ void Panel::updateBorders(const QRect &geom)
 
     //invalidate the layout and set again
     if (layout()) {
-        layout()->setMargin(Plasma::TopMargin, topHeight);
-        layout()->setMargin(Plasma::LeftMargin, leftWidth);
-        layout()->setMargin(Plasma::RightMargin, rightWidth);
-        layout()->setMargin(Plasma::BottomMargin, bottomHeight);
+        layout()->setContentsMargins(leftWidth, topHeight, rightWidth, bottomHeight);
         layout()->invalidate();
     }
 
@@ -177,7 +176,7 @@ void Panel::updateBorders(const QRect &geom)
 
 void Panel::constraintsUpdated(Plasma::Constraints constraints)
 {
-    //kDebug() << "constraints updated with" << constraints << "!!!!!!";
+    kDebug() << "constraints updated with" << constraints << "!!!!!!";
 
     if (constraints & Plasma::LocationConstraint) {
         setFormFactorFromLocation(location());

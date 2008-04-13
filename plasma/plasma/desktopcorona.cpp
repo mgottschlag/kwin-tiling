@@ -21,6 +21,7 @@
 
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QGraphicsLayout>
 
 #include <KDebug>
 

@@ -35,6 +35,7 @@
 #include "ui_deviceNotifierConfig.h"
 
 class QStandardItemModel;
+class QGraphicsLinearLayout;
 class KDialog;
 
 namespace Notifier
@@ -45,7 +46,6 @@ namespace Notifier
 //desktop view
 namespace Plasma
 {
-    class BoxLayout;
     class Icon;
 }
 
@@ -76,7 +76,7 @@ class DeviceNotifier : public Plasma::Applet
 
         void init();
         Qt::Orientations expandingDirections() const;
-        QSizeF contentSizeHint() const;
+        //QSizeF contentSizeHint() const;
         void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
         void constraintsUpdated(Plasma::Constraints constraints);
     public slots:
@@ -103,7 +103,7 @@ class DeviceNotifier : public Plasma::Applet
         Plasma::Dialog *m_widget;
 	Plasma::Icon *m_icon;
 	//QGraphicsGridLayout *m_layout;
-	Plasma::BoxLayout *m_layout;
+	QGraphicsLinearLayout *m_layout;
 	QGraphicsProxyWidget * m_proxy;
         KDialog *m_dialog;
         int m_displayTime;

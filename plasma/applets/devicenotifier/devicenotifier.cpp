@@ -25,7 +25,7 @@
 #include <QTreeView>
 #include <QApplication>
 #include <QStandardItemModel>
-#include <QGraphicsView>
+#include <QGraphicsLinearLayout>
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
 
@@ -75,6 +75,7 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     int iconSize = IconSize(KIconLoader::Desktop);
     resize(iconSize, iconSize);
+    resize(40,40);
 }
 
 void DeviceNotifier::init()
@@ -170,10 +171,10 @@ void DeviceNotifier::initSysTray()
         //default icon if problem
         m_icon = new Plasma::Icon(KIcon("computer"), QString(), this);
     }
-    setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
     connect(m_icon, SIGNAL(clicked()), this, SLOT(onClickNotifier()));
-    m_icon->resize(contentSize());
+    m_icon->resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
     updateGeometry();
+    kDebug()<<geometry();
 }
 
 DeviceNotifier::~DeviceNotifier()
@@ -198,24 +199,6 @@ Qt::Orientations DeviceNotifier::expandingDirections() const
         return Qt::Horizontal;
     }
 }
-
-QSizeF DeviceNotifier::contentSizeHint() const
-{
-    QSizeF sizeHint = contentSize();
-    switch (formFactor()) {
-    case Plasma::Vertical:
-        sizeHint.setHeight(sizeHint.width());
-        break;
-    case Plasma::Horizontal:
-        sizeHint.setWidth(sizeHint.height());
-        break;
-    default:
-        break;
-    }
-
-    return sizeHint;
-}
-
 void DeviceNotifier::constraintsUpdated(Plasma::Constraints constraints)
 {
     // on the panel we don't want a background, and our proxy widget in Planar has one
@@ -241,21 +224,22 @@ void DeviceNotifier::constraintsUpdated(Plasma::Constraints constraints)
 
             m_widget->setWindowFlags(Qt::Widget);
             //TODO: this is a bit messy .. it should size to the proper content size, perhaps?
-            m_layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
-            //m_layout = new QGraphicsGridLayout();
-            //m_layout->setMargin(0);
+            //m_layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
+            /*m_layout = new QGraphicsLinearLayout();
+            m_layout->setContentsMargins(0,0,0,0);
             m_layout->setSpacing(0);
             m_proxy = new QGraphicsProxyWidget(this);
             m_proxy->setWidget(m_widget);
             m_proxy->show();
-            //m_layout->addItem(m_proxy);
+            m_layout->addItem(m_proxy);
+	    setLayout(m_layout);*/
         }
     }
 
     if (m_icon && constraints & Plasma::SizeConstraint) {
-        m_icon->resize(contentSize());
+        m_icon->resize(geometry().size());
     }
-}
+ }
 
 void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
 {

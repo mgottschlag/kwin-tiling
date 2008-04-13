@@ -52,6 +52,7 @@ Plasma::AbstractRunner* RunnerScriptQScript::runner() const
 
 bool RunnerScriptQScript::init()
 {
+    #ifdef TODO
     QFile file(mainScript());
     if ( !file.open(QIODevice::ReadOnly | QIODevice::Text) ) {
         kWarning() << "Unable to load script file";
@@ -66,8 +67,10 @@ bool RunnerScriptQScript::init()
         reportError();
         return false;
     }
-
+    
     return true;
+  #endif
+    return false;
 }
 
 void RunnerScriptQScript::match(Plasma::SearchContext *search)

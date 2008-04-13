@@ -1,5 +1,5 @@
 /*
- *   Copyright 2007-2008 Richard J. Moore <rich@kde.org>
+ *   Copyright 2007 Richard J. Moore <rich@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -16,8 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef APPLETSCRIPTQSCRIPT_H
-#define APPLETSCRIPTQSCRIPT_H
+#ifndef SCRIPT_H
+#define SCRIPT_H
 
 #include <QScriptValue>
 
@@ -27,20 +27,18 @@
 class QScriptEngine;
 class QScriptContext;
 
-class AppletScriptQScript : public Plasma::AppletScript
+class QScriptApplet : public Plasma::AppletScript
 {
     Q_OBJECT
 
 public:
-    AppletScriptQScript( QObject *parent, const QVariantList &args );
-    ~AppletScriptQScript();
+    QScriptApplet( QObject *parent, const QVariantList &args );
+    ~QScriptApplet();
     bool init();
 
     void reportError();
 
     void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
-
-    void constraintsUpdated(Plasma::Constraints constraints);
 
     Q_INVOKABLE QString findDataResource( const QString &filename );
     Q_INVOKABLE void debug( const QString &msg );
@@ -69,8 +67,8 @@ private:
     QScriptValue m_self;
 };
 
-K_EXPORT_PLASMA_APPLETSCRIPTENGINE(qscriptapplet, AppletScriptQScript)
+K_EXPORT_PLASMA_APPLETSCRIPTENGINE(qscriptapplet, QScriptApplet)
 
 
-#endif // APPLETSCRIPTQSCRIPT_H
+#endif // SCRIPT_H
 

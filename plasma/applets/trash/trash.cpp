@@ -18,8 +18,6 @@
  ***************************************************************************/
 
 #include "trash.h"
-#include <kstandarddirs.h>
-#include <kprocess.h>
 
 //QT
 #include <QGraphicsSceneDragDropEvent>
@@ -36,6 +34,9 @@
 #include <KSharedConfig>
 #include <KMessageBox>
 #include <KUrl>
+#include <KProcess>
+#include <KStandardDirs>
+
 #include <kfileplacesmodel.h>
 #include <KIO/CopyJob>
 #include <KIO/JobUiDelegate>
@@ -64,6 +65,7 @@ Trash::Trash(QObject *parent, const QVariantList &args)
     setDrawStandardBackground(false);
     setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
     setContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
+
 }
 
 Trash::~Trash()
@@ -72,6 +74,7 @@ Trash::~Trash()
 
 void Trash::init()
 {
+    m_icon = new Plasma::Icon(KIcon("user-trash"),QString(),this);
     m_icon->setNumDisplayLines(2);
 
     m_places = new  KFilePlacesModel(this);
@@ -94,6 +97,7 @@ void Trash::init()
              this, SLOT( slotDeleteItem( const KFileItem & ) ) );
 
     m_dirLister->openUrl(m_trashUrl);
+    setDrawStandardBackground(false);
     m_icon->setDrawBackground(true);
     watchForMouseMove(m_icon, true);
 
@@ -141,27 +145,35 @@ void Trash::constraintsUpdated(Plasma::Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint) {
         disconnect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
         disconnect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));
-
-        if (formFactor() == Plasma::Horizontal ||
-            formFactor() == Plasma::Vertical) {
-            //in a panel the icon always behaves like a button
+	if (formFactor() == Plasma::Planar ||
+            formFactor() == Plasma::MediaCenter) {
+           
+	    //in a panel the icon always behaves like a button
             connect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));
+	    setRemainSquare(false);
             m_icon->setText(0);
             m_icon->setInfoText(0);
             m_showText = false;
             m_icon->setDrawBackground(false);
+            //Adding an arbitrary width to make room for a larger count of items
+            setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop))+=QSizeF(20,0));
         } else {
-            connect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
-            m_icon->setText(i18n("Trash"));
-            m_showText = true;
-            m_icon->setDrawBackground(true);
-        }
+            setRemainSquare(true);
+            m_icon->setText(0);
+            m_icon->setInfoText(0);
+            m_showText = false;
+            m_icon->setDrawBackground(false);
 
+            setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
+	}
         setIcon();
     }
     if (constraints & Plasma::SizeConstraint && m_icon) {
-        m_icon->resize(contentSize());
+        setContentSize(size());
+        m_icon->resize(size());
     }
+
+    updateGeometry();
 }
 
 void Trash::slotOpen()
@@ -178,19 +190,20 @@ void Trash::slotEmpty()
         containment()->emitLaunchActivated();
     }
     const QString text(i18nc("@info", "Do you really want to empty the Trash? All items will get deleted."));
-    const bool del = KMessageBox::warningContinueCancel(0,
+    const bool del = KMessageBox::warningContinueCancel(&m_menu,
                                                         text,
                                                         QString(),
                                                         KGuiItem(i18nc("@action:button", "Empty Trash"),
                                                                   KIcon("user-trash"))
                                                         ) == KMessageBox::Continue;
     if (del) {
-        // We can't use KonqOperations here. To avoid duplicating its code (small, though),
+         // We can't use KonqOperations here. To avoid duplicating its code (small, though),
         // we can simply call ktrash.
         //KonqOperations::emptyTrash(&m_menu);
         KProcess process;
         process << KStandardDirs::findExe("ktrash") << "--empty";
         process.execute();
+
     }
 }
 
@@ -250,18 +263,18 @@ void Trash::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
     if (KUrl::List::canDecode(event->mimeData())) {
         const KUrl::List urls = KUrl::List::fromMimeData(event->mimeData());
-
         if (urls.count() > 0) {
             event->accept();
 
             //some special operation was done instead of simply deleting a file
             bool specialOperation = false;
 
-            foreach (const KUrl& url, urls) {
+             foreach (const KUrl& url, urls) {
                 const Solid::Predicate predicate(Solid::DeviceInterface::StorageAccess, "filePath", url.path());
 
                 //query for mounted devices
                 const QList<Solid::Device> devList = Solid::Device::listFromQuery(predicate, QString());
+
 
                 //seek for an item in the places (e.g. Dolphin sidebar)
                 const QModelIndex index = m_places->closestItem(url);
@@ -285,11 +298,12 @@ void Trash::dropEvent(QGraphicsSceneDragDropEvent *event)
             }
 
             //finally, try to trash a file
-            if (!specialOperation) {
+             if (!specialOperation) {
                 KIO::Job* job = KIO::trash(urls);
                 job->ui()->setWindow(0);
                 job->ui()->setAutoErrorHandlingEnabled(true);
             }
+
         }
     }
 

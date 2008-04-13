@@ -131,9 +131,9 @@ void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
             s_icons = new IconLoader(this);
         }
     }
-
     if (constraints & Plasma::SizeConstraint) {
         m_renderer.setSize(resolution()); 
+	resize(resolution());
         updateBackground();
     }
 

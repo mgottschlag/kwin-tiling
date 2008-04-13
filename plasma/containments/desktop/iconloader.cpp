@@ -359,14 +359,14 @@ QSizeF IconLoader::gridSize() const
 
 QSize IconLoader::gridDimensions() const
 {
-    QSizeF thisSize = m_desktop->contentSizeHint();
+    QSizeF thisSize = m_desktop->geometry().size();
     return QSize( int(thisSize.width() / m_gridSize.width()),
                   int(thisSize.height() / m_gridSize.height()) );
 }
 
 void IconLoader::setGridSize(const QSizeF& gridSize)
 {
-    QSizeF desktopSize = m_desktop->contentSizeHint();
+    QSizeF desktopSize = m_desktop->geometry().size();
     qreal bestMatchWidth = desktopSize.width()
                         / qRound(desktopSize.width()/gridSize.width());
     qreal bestMatchHeight = desktopSize.height()
