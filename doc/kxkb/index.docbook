@@ -26,14 +26,14 @@
 </authorgroup>
 
 <copyright>
-<year>2003</year>
+<year>2003,2008</year>
 <holder>&Andriy.Rysin;</holder>
 </copyright>
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2003-08-23</date>
-<releaseinfo>1.01.00</releaseinfo>
+<date>2008-04-12</date>
+<releaseinfo>2.00.00</releaseinfo>
 
 <abstract><para>&kxkb; is a keyboard layout switching 
 utility based on X11 xkb extension.</para></abstract> 
@@ -68,18 +68,16 @@ than one layout is defined or <guilabel>Show indicator for single
 layout</guilabel> option is turned on.</para>
 
 <para>When &kxkb; is running you can change layouts by clicking on its
-tray icon with the mouse or pressing its keyboard shortcut. Keyboard
+tray icon with the mouse or pressing keyboard shortcut. Keyboard
 shortcut or mouse click will switch to the next layout or alternatively you
 can &RMB; click the &kxkb; icon and select layout from the
 list.</para>
 
 <para>&RMB; clicking on the &kxkb; icon you can start its
 configuration by selecting <guimenuitem>Configure...</guimenuitem> or
-by opening <application>Control Center</application> and selecting
-Localization/Keyboard Layout. Alternatively, you can start it by
-typing <command>kcmshell keyboard_layout</command> in a
-terminal.</para>
-
+by opening <application>System Settings</application> and selecting
+Regional &amp; Language/Keyboard Layout. Alternatively, you can start it by
+typing <command>kcmshell4 keyboard_layout</command> from the terminal.</para>
 </sect1>
 </chapter>
 
@@ -89,41 +87,48 @@ terminal.</para>
 <sect1 id="general-config">
 <title>General Information</title>
 <para>
-KXKB Configuration consists of two tabs: Layout Configuration and 
-XKB Options which are mutually independent. The first one defines 
-layouts you want to use and their options and second defines parameters 
-for Xkb extension on which &kxkb; is based.
-Xkb options are property of X and are not handled in any way by kxkb - 
-it just sets it up.
+&kxkb; configuration consists of thre tabs: Layout, Switching Options, and 
+Advanced. The first one defines layouts you want to use and their options 
+(variant, display label etc.), second defines how the layout switching is done, 
+including which shortcut is used and wether the layout should be remembered for
+each window, application etc. Third tab allows to set options for Xkb extension.
+These options are properties of X.org and are not handled in any way by &kxkb; - 
+it just sets them up.
+</para>
+<para>
+&kxkb; can work in two modes: full switching support and indicator only.
+First mode allows user to configure layouts, shortcuts and other options, while
+in the second mode &kxkb; just displays current layout, assuming configuring and 
+switching is done by X itself.
 </para>
 <note><para>
-&kxkb; configuration does not change anything in XFree86 configuration 
-files and Layout settings from XFree86 configuration are overridden 
-by &kxkb; if <option>Enable keyboard layout</option> option is turned on.
+&kxkb; configuration does not change anything in X.org configuration 
+files. If <option>Enable keyboard layouts</option> is selected Layout settings 
+from X.org configuration will be overridden and if <option>Reset old options</option> 
+is turned on Xkb options will be overriden too.
 </para></note>
 <note><para>
-To make your XFree86 configuration work you have to turn off both 
-<option>Enable keyboard layout</option> in layout configuration tab 
-<emphasis>and</emphasis> <option>Enable xkb options</option> in 
-Xkb options configuration tab (for the latter the same effect can be 
-reached if <option>Reset Old Options</option> is turned off and 
-none of xkb options are set).
+If <option>Reset Old Options</option> is turned off, xkb options selected 
+in the configuration will be merged with currently active ones, &ie;
+the ones from the X.org configuration file plus any set later.
 </para></note>
 <para>
-&kxkb; does most of its actions through <command>setxkbmap</command> command. 
-You can see the command line to be executed for each active layout 
-when you select it and, on the xkb options tab, its available xkb option set.
+If <option>Enable keyboard layouts</option> is selected &kxkb; initializes 
+the layouts with <command>setxkbmap</command> command. In the configuration window
+you can see the command line to be executed during initialization. The same is true
+for xkb options. These commands can be useful for troubleshooting or customizing
+xkb configuration.
 </para>
 </sect1>
 
 <sect1 id="layout-config">
 <title>Layout Configuration</title>
 <para>
-In layout configuration dialog the list of available layouts on your left. 
+In layout configuration the list of available layouts is on your left. 
 You have to choose each layout you want to use and add them (one by one) 
 to the list of active layouts on the right. You can also change the order 
 in which active layouts will be switched when toggled by keyboard shortcut 
-or mouse button. The first layout in the list becomes default layout.
+or mouse button. The first layout in the list becomes the default layout.
 </para>
 <para>
 Some layouts have several variants. Layout variants usually represent 
@@ -134,24 +139,15 @@ transliterated Latin one). If your layout is a multi-variant one you can choose
 the variant in the combo box below the active layouts list.
 </para>
 <para>
+You can also change the label you want on the indicator when layout selected 
+if you don't like default one.
+</para>
+<para>
 Keyboard model setting is independent of your keyboard layout and refers 
 to the "hardware" model, &ie; the way your keyboard is manufactured. 
 Modern keyboards that come with your computer usually have two extra keys 
 and are referred to as "104-key" models, which is probably what you want 
 if you don't know what kind of keyboard you have.
-</para>
-<para>
-You can also choose a switching policy for keyboard layout. By default it's 
-<option>Global</option>, meaning all applications will share the same current
-layout. <option>Application</option> means each application will have its own
-layout and switching layout while you are working with one application will not
-affect the layout for any others. <option>Window</option> will make every window
-have its own layout even if they belong to the same program.
-</para>
-<para>
-If you set only one active layout, at startup kxkb configures the keyboard and 
-exits, thus its indicator will not appear. If you still want a kxkb indicator,
-select the <option>Show indicator for single layout</option> option.
 </para>
 <note>
 <para>
@@ -159,12 +155,59 @@ If you leave the active layout list empty, keyboard layouts will be disabled
 </para>
 </note>
 </sect1>
+<sect1 id="switching-config">
+<title>Switching Options</title>
+<para>
+Here you can choose a switching policy for keyboard layout. By default it's 
+<option>Global</option>, meaning all applications will share the same current
+layout. <option>Application</option> means each application will have its own
+layout and switching layout while you are working with one application will not
+affect the layout for any others. <option>Window</option> will make every window
+have its own layout even if they belong to the same program and <option>Desktop</option> 
+allows you to have one layout per desktop.
+</para>
+<para>
+In shortcuts section you can choose which shortcut is used for switching layouts.
+Shortcut can be modifier-only key combination (&ie; Ctrl+Shift), non-modifier keys
+(&ie; Ctrl+Shift+K) or you can use both. 
+</para>
+<sect2 id="modifier-only-keys">
+<title>Modifier-only shortcuts</title>
+<para>
+These shortcuts are handled by X.org (not Qt/KDE) and are configured in Advanced tab. 
+Availabe list of shortcuts is fixed but you can define your own if you know how to 
+change xkb rules and maps. Just note if you hack xkb maps don't forget to change xorg.xml
+rules file as that's where &kxkb; takes the configuration information from.
+</para>
+<note>
+<para>
+The disadvantage of this approach is that the switching is done on key press not 
+key release so &eg; if you configure shortcut to be <keycombo action="simul">&Ctrl;&Shift;</keycombo> your other shortcuts wich start with this combination may stop working. See <ulink url="http://bugs.freedesktop.org/show_bug.cgi?id=865">X.org bug 865</ulink>
+</para>
+</note>
+<para>
+If your layout has 3d level of characters you can also configure the shortcut for it here.
+</para>
+</sect2>
+<sect2 id="non-modifier-only-keys">
+<title>Standard shortcuts</title>
+<para>
+These shortcuts are handled by &Qt;/&kde; and allow more flexible key combinations.
+</para>
+<note>
+<para>
+The disadvantage of this approach is that the standard shortcuts won't work if
+you have some popup window (like drop-down combobox) open.
+</para>
+</note>
+</sect2>
+</sect1>
 
 <sect1 id="xkboptions-config">
-<title>XKB Options Configuration</title>
+<title>Advanced</title>
 <para>
 Xkb options allow you to select behavior of your keyboard. These options are not 
-handled by &kxkb; but may help tune your keyboard to your needs.
+handled by &kxkb; and just passed to xkb extension.
 </para>
 </sect1>
 
@@ -177,43 +220,13 @@ handled by &kxkb; but may help tune your keyboard to your needs.
 <title>Common Problems</title>
 
 <para>If you switch to some layout and you cannot see some characters
-from your layout as you type, please check your local settings.  &eg;
+from your layout as you type, please check your local settings. &eg;
 <filename>~/.i18n</filename> or
 <filename>/etc/sysconfig/i18n</filename>, locale you have before
-starting kde applications must have an encoding which contains
-characters from your layout.  For example, to enter Ukrainian symbols
-you must have encoding KOI8-U, CP1251 or UTF-8. The last one is a good
-choice to try for most of the languages if you have such a problem.
+starting &kde; applications must have an encoding which contains
+characters from your layout. Recommended encodning is UTF-8 which should 
+work for most languages.
 </para>
-
-<para>If kxkb does not switch with keyboard shortcut when you switch
-it to some layout, but switching with mouse is OK, may mean that your layout
-does not contain the key assigned in shortcut.</para>
-
-<para>In XFree86 prior to version 4.3.0 non-Latin layouts mutually included
-Latin group  and this group was the default thus pressing 
-<keycombo action="simul">&Ctrl;&Alt;<keycap>k</keycap></keycombo>
-always yielded the right combination. From version 4.3.0 by default
-all layouts contain only one group thus non-Latin layouts may not work
-here.</para>
-
-<para>Possible solutions are:</para>
-
-<orderedlist>
-<listitem>
-<para>add your layout to $nonlatin or $oldlayouts lists in
-<filename>/etc/X11/xkb/rules/xfree86</filename> or the location of the
-xkb rules on your computer.</para>
-</listitem>
-<listitem>
-<para>Change the shortcut to something language neutral, &eg;
-<keycombo action="simul">&Ctrl;<keycap>Menu</keycap></keycombo></para>
-</listitem>
-<listitem>
-<para>Turn on the option to include the <quote>us</quote> group in
-your layout (effectively the same as solution 1).</para>
-</listitem>
-</orderedlist>
 
 </sect1>
 </chapter>
@@ -223,26 +236,13 @@ your layout (effectively the same as solution 1).</para>
 <sect1 id="xkb-files-and-layouts">
 <title><application>xkb</application> Files and Layouts</title>
 
-<para>All available keyboard layouts are described in
-<filename>/etc/X11/xkb/rules/xfree86.lst</filename> (and
-<filename>/etc/X11/xkb/rules/xfree86.xml</filename> since XFree86
-4.3.0), the layouts themselves can be found in
-<filename>/etc/X11/xkb/symbols/pc</filename> (or
-<filename>/etc/X11/xkb/symbols</filename> for XFree86 4.2.x and
-older). Note that the location of these files may differ depending on
+<para>All available keyboard layouts, variants and options 
+are described in
+<filename>/usr/share/X11/rules/xorg.xml</filename>, 
+and the layouts themselves can be found in
+<filename>/usr/share/X11/symbols</filename>. 
+Note that the location of these files may depend on
 your operating system and distribution.</para>
-
-<para>&kxkb; now uses the xkb extension instead of xmodmap, so to
-define your own layout you have to get one from <filename
-class="directory">/etc/X11/xkb/symbols</filename> which is closest to
-what you want to get (or <filename
-class="directory">/etc/X11/xkb/symbold/pc</filename> for XFree86
-4.3.0), rename it to something you like and edit it. Then just add the
-name to <filename>/etc/X11/xkb/rules/xfree86.lst</filename> (and for
-XFree86 4.3.0 or later it is a good idea to add the name also to
-<filename>/etc/X11/xkb/rules/xfree86.xml</filename> - some packages
-already use it, not &kxkb; though yet) kxkb will pick it up on
-restart. Note: you have to be root to edit those files.</para>
 
 </sect1>
 
