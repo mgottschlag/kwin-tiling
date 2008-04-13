@@ -370,7 +370,7 @@ void MenuLauncherApplet::toggleMenu(bool pressed)
     }
 
     d->menuview->setAttribute(Qt::WA_DeleteOnClose);
-    d->menuview->popup(d->icon->popupPosition(d->menuview->sizeHint()));
+    d->menuview->popup(popupPosition(d->menuview->sizeHint()));
     d->icon->setPressed();
 }
 

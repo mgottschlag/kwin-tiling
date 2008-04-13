@@ -218,10 +218,10 @@ void LauncherApplet::toggleMenu(bool pressed)
         // calling setLauncherOrigin, which can change the size
         // Probably just a problem on screens with strange aspect ratio or smaller than
         // kickoff's size.
-        QPoint popupPosition = d->icon->popupPosition(d->launcher->size());
+        QPoint popupPosition = Applet::popupPosition(d->launcher->size());
         d->launcher->move( popupPosition );
-        QPoint iconPosition = d->icon->view()->mapToGlobal( 
-                d->icon->view()->mapFromScene( d->icon->scenePos() ) );
+        QPoint iconPosition = view()->mapToGlobal( 
+                view()->mapFromScene( d->icon->scenePos() ) );
 
         Plasma::View *pv = dynamic_cast<Plasma::View *>(view());
         Plasma::Location loc = Plasma::Floating;
