@@ -154,6 +154,8 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
 
     d->viewtype = Combined;
     d->formattype = NameDescription;
+
+    resize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
 }
 
 MenuLauncherApplet::~MenuLauncherApplet()
