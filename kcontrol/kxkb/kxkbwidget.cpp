@@ -25,6 +25,9 @@
 #include <klocale.h>
 #include <kiconloader.h>
 #include <kaction.h>
+#include <khelpmenu.h>
+#include <kcmdlineargs.h>
+#include <kmenu.h>
 
 #include "pixmap.h"
 #include "rules.h"
@@ -119,10 +122,9 @@ void KxkbWidget::initLayoutList(const QList<LayoutUnit>& layouts, const XkbRules
 		configAction->setData(CONFIG_MENU_ID);
 		menu->addAction(configAction);
 
-//		if( menu->indexOf(HELP_MENU_ID) == -1 )
-		QAction* helpAction = new QAction(SmallIcon("help-contents"), i18n("Help"), menu);
-		helpAction->setData(HELP_MENU_ID);
-		menu->addAction(helpAction);
+                KHelpMenu* helpmenu = new KHelpMenu( NULL, KCmdLineArgs::aboutData(), false );
+
+		menu->addMenu(helpmenu->menu());
 	}
 //	else {
 //	    kDebug() << "indicator with menu 'layouts only' requested";

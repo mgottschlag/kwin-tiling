@@ -43,7 +43,7 @@ class KxkbWidget : public QObject
     Q_OBJECT
 			
 public:
-    enum { START_MENU_ID = 100, CONFIG_MENU_ID = 130, HELP_MENU_ID = 131 };
+    enum { START_MENU_ID = 100, CONFIG_MENU_ID = 130 };
     enum { INDICATOR_ONLY=1, NO_MENU = 2, MENU_LAYOUTS_ONLY = 3, MENU_FULL=4 };
     enum { WIDGET_TRAY=0, WIDGET_LABEL=1 };
 

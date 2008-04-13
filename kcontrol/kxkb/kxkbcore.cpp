@@ -393,14 +393,6 @@ void KxkbCore::iconMenuTriggered(QAction* action)
         lst << "keyboard_layout";
 	QProcess::startDetached("kcmshell4", lst);
     }
-    else if (id == KxkbWidget::HELP_MENU_ID)
-    {
-        KToolInvocation::invokeHelp(0, "kxkb");
-    }
-    else
-    {
-//        quit;
-    }
 }
 
 void KxkbCore::desktopChanged(int desktop)
