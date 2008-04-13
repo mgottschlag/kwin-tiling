@@ -38,6 +38,11 @@ public:
     DesktopView(Plasma::Containment *containment, int id, QWidget *parent);
     ~DesktopView();
 
+    /**
+     * hook up all needed signals to a containment
+     */
+    void connectContainment(Plasma::Containment *containment);
+
 public slots:
     /**
      * zoom in towards the given containment.
@@ -49,6 +54,11 @@ public slots:
     void showAppletBrowser();
     void toggleDashboard();
     void adjustSize();
+
+    /**
+     * create a new containment based on fromContainment
+     */
+    void addContainment(Plasma::Containment *fromContainment = 0);
 
 protected:
     void wheelEvent(QWheelEvent *event);
