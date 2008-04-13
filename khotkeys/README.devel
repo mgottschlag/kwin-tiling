@@ -1,0 +1,20 @@
+
+Some information for developers
+
+-----------------------------------
+
+Daemons
+-------
+
+There are two version of the khotkeys daemon. The kded module and the
+standalone version. The kdedmodule is the preferred solution. The standalone
+version is for KDE_MULTIHEAD environments.
+
+The code automatically changes between both version. It works:
+
+kcm_hotkeys/kcm_hotkeys.cpp: class KCMHotkeys implements the KCModule and
+KCModuleInit ServiceType. KCModuleInit means it get's called from kcminit
+during the desktop startup. It checks the environment variable KDE_MULTIHEAD
+and the either starts the kded module or standalone daemon.
+
+
