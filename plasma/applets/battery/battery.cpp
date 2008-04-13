@@ -64,7 +64,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     // TODO: minimum size causes size on panel to be huge (do not use for now)
     //setMinimumContentSize(m_smallPixelSize, m_smallPixelSize);
-    setContentSize(64, 64);
+    resize(64, 64);
 }
 
 void Battery::init()
@@ -89,7 +89,7 @@ void Battery::init()
     }
     m_theme = new Plasma::Svg(svgFile, this);
     m_theme->setContentType(Plasma::Svg::SingleImage);
-    m_theme->resize(contentSize());
+    m_theme->resize(geometry().size());
 
     m_font = QApplication::font();
     m_font.setWeight(QFont::Bold);
@@ -136,13 +136,13 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::SizeConstraint && m_theme) {
-        m_theme->resize(contentSize().toSize());
+        m_theme->resize(geometry().size().toSize());
     }
 }
 
 QSizeF Battery::contentSizeHint() const
 {
-    QSizeF sizeHint = contentSize();
+    QSizeF sizeHint = geometry().size();
     //kDebug() << "SizeHintIn: " << sizeHint;
     switch (formFactor()) {
         case Plasma::Vertical:
@@ -237,7 +237,7 @@ void Battery::configAccepted()
         m_theme = new Plasma::Svg(svgFile, this);
         kDebug() << "Changing theme to " << svgFile;
         cg.writeEntry("style", m_batteryStyle);
-        m_theme->resize(contentSize());
+        m_theme->resize(geometry().size());
         if (m_acadapter_plugged) {
             showAcAdapter(true);
         }
@@ -429,7 +429,7 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
     // Let's find a good position for painting the background
     QRectF text_rect = QRectF(qMax(0.0, contentsRect.left() + (contentsRect.width() - text_width) / 2),
                             contentsRect.top() + ((contentsRect.height() - (int)fm.height()) / 2 * 0.9),
-                            qMin(contentSize().width(), text_width),
+                            qMin(geometry().width(), text_width),
                             fm.height() * 1.2 );
 
     // Poor man's highlighting
@@ -553,7 +553,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             battery_data.next();
             QRect corect = QRect(contentsRect.left()+battery_num*width, 
                                  contentsRect.top(), 
-                                 width, contentSize().toSize().height());
+                                 width, geometry().size().toSize().height());
        
             // paint battery with appropriate charge level
             paintBattery(p, corect, battery_data.value()[I18N_NOOP("Percent")].toInt(), battery_data.value()[I18N_NOOP("Plugged in")].toBool());
