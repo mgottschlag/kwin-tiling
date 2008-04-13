@@ -190,7 +190,7 @@ void GlobalShortcutsModule::importScheme()
 
     KUrl url = dialog.selectedScheme();
     if (!url.isLocalFile()) {
-        KMessageBox::sorry(this, i18n("This file (%1) does not exist. You can just select local file.",
+        KMessageBox::sorry(this, i18n("This file (%1) does not exist. You can only select local files.",
                            url.url()));
         return;
     }
