@@ -48,7 +48,6 @@ class Pager : public Plasma::Applet
         QPainterPath shape() const;
 
     public slots:
-        void showConfigurationInterface();
 	void recalculateGeometry();
 	void recalculateWindowRects();
  
@@ -60,6 +59,7 @@ class Pager : public Plasma::Applet
 	virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
         virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
         virtual void wheelEvent(QGraphicsSceneWheelEvent *);
+        void createConfigurationInterface(KConfigDialog *parent);
 
         void configAccepted();
 	void currentDesktopChanged(int desktop);

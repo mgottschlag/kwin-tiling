@@ -32,6 +32,7 @@
 
 #include <KDialog>
 #include <KColorScheme>
+#include <KConfigDialog>
 #include <KGlobalSettings>
 #include <KSharedConfig>
 #include <KWindowSystem>
@@ -148,32 +149,23 @@ void Pager::slotConfigureDesktop()
   KToolInvocation::startServiceByDesktopName("desktop", QStringList(), &error);
 }
 
-void Pager::showConfigurationInterface()
+void Pager::createConfigurationInterface(KConfigDialog *parent)
 {
-     if (m_dialog == 0) {
-        m_dialog = new KDialog;
-        m_dialog->setCaption(i18n("Configure Pager"));
+    QWidget *widget = new QWidget();
+    ui.setupUi(widget);
+    parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+    parent->addPage(widget, parent->windowTitle(), "pager");
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
-        QWidget *widget = new QWidget;
-        ui.setupUi(widget);
-        m_dialog->setMainWidget(widget);
-        m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
-
-        connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
-        connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
-
-    }
     ui.displayedTextComboBox->clear();
     ui.displayedTextComboBox->addItem(i18n("Desktop Number"));
     ui.displayedTextComboBox->addItem(i18n("Desktop Name"));
     ui.displayedTextComboBox->addItem(i18n("None"));
     ui.displayedTextComboBox->setCurrentIndex((int)m_displayedText);
-
     ui.showWindowIconsCheckBox->setChecked(m_showWindowIcons);
-
     ui.spinRows->setValue(m_rows);
     ui.spinRows->setMaximum(m_desktopCount);
-    m_dialog->show();
 }
 
 void Pager::recalculateGeometry()

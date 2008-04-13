@@ -187,6 +187,7 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     }
     update();
 }
+
 void Battery::createConfigurationInterface(KConfigDialog *parent)
 {
     QWidget *widget = new QWidget();
