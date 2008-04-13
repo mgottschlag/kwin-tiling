@@ -52,7 +52,7 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     setDrawStandardBackground(false);
     m_icon = new Plasma::Icon(this);
-    setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
+    //setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
     resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
     kDebug() << "sized to:" << geometry();
 

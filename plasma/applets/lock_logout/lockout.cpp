@@ -52,6 +52,8 @@ void LockOut::init()
     Plasma::Icon *icon_logout = new Plasma::Icon(KIcon("system-log-out"), "", this);
     m_layout->addItem(icon_logout);
     connect(icon_logout, SIGNAL(clicked()), this, SLOT(clickLogout()));
+
+    resize(MINSIZE,MINSIZE*2);
 }
 
 LockOut::~LockOut()
