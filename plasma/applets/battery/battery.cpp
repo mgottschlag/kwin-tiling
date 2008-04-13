@@ -579,8 +579,8 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
         while (battery_data.hasNext()) {
             battery_data.next();
-            battery_charge += battery_data.value()[I18N_NOOP("Percent")].toInt();
             if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
+                battery_charge += battery_data.value()[I18N_NOOP("Percent")].toInt();
                 has_battery = true;
                 ++battery_num;
             }
@@ -593,8 +593,8 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         if (m_showBatteryString || m_isHovered) {
             // Show the charge percentage with a box on top of the battery
             QString batteryLabel;
-            if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
-                batteryLabel = battery_data.value()[I18N_NOOP("Percent")].toString();
+            if(has_battery) {
+                batteryLabel = QString::number(battery_charge);
                 batteryLabel.append("%");
             } else {
                 batteryLabel = I18N_NOOP("n/a");
