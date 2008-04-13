@@ -64,7 +64,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_layout(0)
 {
     setHasConfigurationInterface(true);
-    setContentSize(70, 22);
+    resize(70, 22);
 }
 
 void Clock::init()
@@ -97,7 +97,7 @@ void Clock::init()
 
     QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
     QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
-    setMinimumContentSize(metrics.size(Qt::TextSingleLine, timeString));
+    setMinimumSize(metrics.size(Qt::TextSingleLine, timeString));
 
     m_toolTipIcon = KIcon("chronometer").pixmap(IconSize(KIconLoader::Desktop));
 
@@ -148,7 +148,7 @@ void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &d
 
 void Clock::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->buttons() == Qt::LeftButton && contentRect().contains(event->pos())) {
+    if (event->buttons() == Qt::LeftButton && geometry().contains(event->pos())) {
         showCalendar(event);
     } else {
         event->ignore();

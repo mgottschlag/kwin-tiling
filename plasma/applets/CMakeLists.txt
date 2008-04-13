@@ -1,7 +1,7 @@
 add_subdirectory(libplasmaclock)
 add_subdirectory(analog-clock)
 add_subdirectory(battery)
-#add_subdirectory(digital-clock)
+add_subdirectory(digital-clock)
 add_subdirectory(kickoff)
 #add_subdirectory(icon)
 #add_subdirectory(pager)
