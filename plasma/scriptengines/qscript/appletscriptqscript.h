@@ -16,8 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef SCRIPT_H
-#define SCRIPT_H
+#ifndef APPLETSCRIPTQSCRIPT_H
+#define APPLETSCRIPTQSCRIPT_H
 
 #include <QScriptValue>
 
@@ -72,5 +72,5 @@ private:
 K_EXPORT_PLASMA_APPLETSCRIPTENGINE(qscriptapplet, AppletScriptQScript)
 
 
-#endif // SCRIPT_H
+#endif // APPLETSCRIPTQSCRIPT_H
 

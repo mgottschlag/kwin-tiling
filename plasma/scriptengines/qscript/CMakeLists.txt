@@ -9,9 +9,23 @@ set(qscript_engine_SRCS
     qtgui/timer.cpp
 )
 
-kde4_add_plugin(plasma_scriptengine_qscript ${qscript_engine_SRCS})
-target_link_libraries(plasma_scriptengine_qscript ${KDE4_KDECORE_LIBS} plasma ${QT_QTSCRIPT_LIBRARY} ${QT_QTUITOOLS_LIBRARY})
+kde4_add_plugin(plasma_scriptengine_qscript
+	        ${qscript_engine_SRCS})
 
-install(TARGETS plasma_scriptengine_qscript DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES plasma-scriptengine-qscript.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
+target_link_libraries(plasma_scriptengine_qscript
+                       ${KDE4_KDECORE_LIBS} plasma ${QT_QTSCRIPT_LIBRARY} ${QT_QTUITOOLS_LIBRARY})
 
+install(TARGETS plasma_scriptengine_qscript
+        DESTINATION ${PLUGIN_INSTALL_DIR})
+install(FILES plasma-scriptengine-qscript.desktop
+        DESTINATION ${SERVICES_INSTALL_DIR} )
+
+set(qscript_runner_engine_SRCS
+    runnerscriptqscript.cpp
+)
+
+kde4_add_plugin(plasma_runner_scriptengine_qscript
+	        ${qscript_runner_engine_SRCS})
+
+target_link_libraries(plasma_runner_scriptengine_qscript
+                       ${KDE4_KDECORE_LIBS} plasma ${QT_QTSCRIPT_LIBRARY} ${QT_QTUITOOLS_LIBRARY})
