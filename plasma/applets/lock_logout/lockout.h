@@ -22,9 +22,7 @@
 
 #include <plasma/applet.h>
 
-namespace Plasma {
-    class BoxLayout;
-}
+class QGraphicsLinearLayout;
 
 class LockOut : public Plasma::Applet
 {
@@ -44,7 +42,7 @@ class LockOut : public Plasma::Applet
         void clickLock();
 
     private:
-        Plasma::BoxLayout *m_layout;
+        QGraphicsLinearLayout *m_layout;
 
         void checkLayout();
 };

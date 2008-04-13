@@ -63,8 +63,8 @@ Trash::Trash(QObject *parent, const QVariantList &args)
 {
     m_icon = new Plasma::Icon(KIcon("user-trash"),QString(),this);
     setDrawStandardBackground(false);
-    setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
-    setContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
+    setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
+    resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
 
 }
 
@@ -156,7 +156,7 @@ void Trash::constraintsUpdated(Plasma::Constraints constraints)
             m_showText = false;
             m_icon->setDrawBackground(false);
             //Adding an arbitrary width to make room for a larger count of items
-            setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop))+=QSizeF(20,0));
+            setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop))+=QSizeF(20,0));
         } else {
             setRemainSquare(true);
             m_icon->setText(0);
@@ -164,12 +164,12 @@ void Trash::constraintsUpdated(Plasma::Constraints constraints)
             m_showText = false;
             m_icon->setDrawBackground(false);
 
-            setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
+            setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
 	}
         setIcon();
     }
     if (constraints & Plasma::SizeConstraint && m_icon) {
-        setContentSize(size());
+        resize(size());
         m_icon->resize(size());
     }
 
@@ -227,11 +227,12 @@ void Trash::setIcon()
 
     m_data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
 
-    if (!m_showText) {
+    //FIXME TOOLTIP MANAGER
+    /*if (!m_showText) {
         m_icon->setToolTip(m_data);
     } else {
         m_icon->setToolTip(Plasma::ToolTipData());
-    }
+    }*/
 
     emptyTrash->setEnabled(m_count>0);
 }

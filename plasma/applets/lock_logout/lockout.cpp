@@ -20,12 +20,12 @@
 #include "lockout.h"
 
 // Plasma
-#include <plasma/layouts/vboxlayout.h>
 #include <plasma/widgets/icon.h>
 
 // Qt
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
+#include <QGraphicsLinearLayout>
 
 // KDE
 #include <KIcon>
@@ -41,8 +41,8 @@ LockOut::LockOut(QObject *parent, const QVariantList &args)
 
 void LockOut::init()
 {
-    m_layout = new Plasma::BoxLayout(Plasma::BoxLayout::TopToBottom, this);
-    m_layout->setMargin(0);
+    m_layout = new QGraphicsLinearLayout(this);
+    m_layout->setContentsMargins(0,0,0,0);
     m_layout->setSpacing(0);
 
     Plasma::Icon *icon_lock = new Plasma::Icon(KIcon("system-lock-screen"), "", this);
@@ -52,10 +52,6 @@ void LockOut::init()
     Plasma::Icon *icon_logout = new Plasma::Icon(KIcon("system-log-out"), "", this);
     m_layout->addItem(icon_logout);
     connect(icon_logout, SIGNAL(clicked()), this, SLOT(clickLogout()));
-
-    //It seems the layout geometry must be calculated by hand for the first time
-    m_layout->setGeometry(QRectF(0,0, contentSize().width(), contentSize().height()));
-    checkLayout();
 }
 
 LockOut::~LockOut()
@@ -64,29 +60,28 @@ LockOut::~LockOut()
 
 void LockOut::checkLayout()
 {
-    Plasma::BoxLayout::Direction direction;
+    Qt::Orientation direction;
 
     switch (formFactor()) {
         case Plasma::Vertical:
-            if (contentSize().width() >= MINSIZE) {
-                direction = Plasma::BoxLayout::LeftToRight;
+            if (geometry().width() >= MINSIZE) {
+                direction = Qt::Horizontal;
             } else {
-                direction = Plasma::BoxLayout::TopToBottom;
+                direction = Qt::Vertical;
             }
             break;
         case Plasma::Horizontal:
-            if (contentSize().height() >= MINSIZE) {
-                direction = Plasma::BoxLayout::TopToBottom;
+            if (geometry().height() >= MINSIZE) {
+                direction = Qt::Vertical;
             } else {
-                direction = Plasma::BoxLayout::LeftToRight;
+                direction = Qt::Horizontal;
             }
             break;
         default:
-            direction = Plasma::BoxLayout::TopToBottom;
+            direction = Qt::Vertical;
     }
-    if (direction != m_layout->direction()) {
-        m_layout->setDirection(direction);
-        updateGeometry();
+    if (direction != m_layout->orientation()) {
+        m_layout->setOrientation(direction);
     }
 }
 
@@ -100,7 +95,7 @@ void LockOut::constraintsUpdated(Plasma::Constraints constraints)
 
 QSizeF LockOut::contentSizeHint() const
 {
-    QSizeF sizeHint = contentSize();
+    QSizeF sizeHint = geometry().size();
     switch (formFactor()) {
         case Plasma::Vertical:
             if (sizeHint.width() >= MINSIZE) {

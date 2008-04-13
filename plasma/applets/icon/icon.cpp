@@ -52,9 +52,9 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     setDrawStandardBackground(false);
     m_icon = new Plasma::Icon(this);
-    setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
-    setContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
-    kDebug() << "sized to:" << contentSize();
+    setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
+    resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
+    kDebug() << "sized to:" << geometry();
 
     if (args.count() > 2) {
         setUrl(args.at(2).toString());
@@ -141,7 +141,8 @@ void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
             formFactor() == Plasma::MediaCenter) {
             connect(m_icon, SIGNAL(activated()), this, SLOT(openUrl()));
             m_icon->setText(m_text);
-            m_icon->setToolTip(Plasma::ToolTipData());
+            //FIXME TOOL TIP MANAGER
+	    //m_icon->setToolTip(Plasma::ToolTipData());
             m_icon->setDrawBackground(true);
         } else {
             //in the panel the icon behaves like a button
@@ -151,13 +152,14 @@ void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
             data.mainText = m_text;
             data.subText = m_genericName;
             data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
-            m_icon->setToolTip(data);
+            //FIXME TOOL TIP MANAGER
+	    //m_icon->setToolTip(data);
             m_icon->setDrawBackground(false);
         }
     }
 
     if (constraints & Plasma::SizeConstraint) {
-        m_icon->resize(contentSize());
+        m_icon->resize(geometry().size());
     }
 }
 
