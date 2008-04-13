@@ -1,5 +1,9 @@
 [Desktop Entry]
 Name=Compiz custom (create wrapper script 'compiz-kde-launcher' to launch it)
+Name[ca]=Compiz personalitzat (crea un script embolcall 'compiz-kde-launcher' per a engegar-lo)
+Name[el]=Προσαρμοσμένο Compiz (δημιουργία σεναρίου 'compiz-kde-launcher' για την εκκίνησή του)
+Name[pt]=Personalizado do Compiz (criar um programa de interface 'compiz-kde-launcher' para o invocar)
+Name[pt_BR]=Personalizado do Compiz (criar um programa de interface 'compiz-kde-launcher' para o invocar)
 Exec=compiz-kde-launcher
 TryExec=compiz
 X-KDE-WindowManagerId=compiz

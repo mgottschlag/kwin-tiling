@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=JavaScript Widget
+Name[ca]=Estri del JavaScript
 Name[de]=JavaScript-Programm
+Name[el]=Συστατικό JavaScript
 Name[es]=Elemento gráfico javascript
 Name[fi]=JavaScript-Plasmoid
 Name[ga]=Giuirléid JavaScript
@@ -19,7 +21,9 @@ Name[x-test]=xxJavaScript Widgetxx
 Name[zh_CN]=JavaScript 部件
 Name[zh_TW]=JavaScript 元件
 Comment=Native Plasma widget written in JavaScript
+Comment[ca]=Estri nadiu del Plasma escrit en JavaScript
 Comment[de]=Echtes Plasma-Programm, geschrieben in JavaScript
+Comment[el]=Εγγενές συστατικό Plasma γραμμένο σε JavaScript
 Comment[es]=Elemento gráfico nativo de Plasma escrito en JavaScript
 Comment[fi]=Natiivi, JavaScript-pohjainen Plasmoid
 Comment[ga]=Giuirléid dhúchasach Plasma, scríofa i JavaScript

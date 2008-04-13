@@ -1,14 +1,17 @@
 [Desktop Entry]
 Name=Command-line runner
+Name[ca]=Engegador de la línia d'ordres
+Name[el]=Εκτελεστής γραμμής εντολών
 Name[fi]=Komentorivi-liitännäinen
 Name[ga]=Feidhmitheoir líne na n-orduithe
 Name[gu]=આદેશ - ચલાવનાર
 Name[km]=កម្មវិធីរត់​បន្ទាត់​ពាក្យ​បញ្ជា
+Name[pt]=Execução da linha de comandos
 Name[pt_BR]=Execução de linha de comando
 Name[th]=ตัวเรียกคำสั่งบนบรรทัดคำสั่งให้ทำงาน
 Name[zh_TW]=命令列執行者
 Comment=Executes shell commands
-Comment[ca]=Executa ordres de la shell
+Comment[ca]=Executa ordres de l'intèrpret d'ordres
 Comment[de]=Führt Shell-Kommandos aus
 Comment[el]=Εκτελεί εντολές του κελύφους
 Comment[eo]=Plenumas ŝel-komandojn
