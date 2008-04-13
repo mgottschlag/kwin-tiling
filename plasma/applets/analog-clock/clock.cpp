@@ -55,7 +55,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_secondHandUpdateTimer(0)
 {
     setHasConfigurationInterface(true);
-    setContentSize(125, 125);
+    resize(125, 125);
     setRemainSquare(true);
 
     m_theme = new Plasma::Svg("widgets/clock", this);
@@ -200,7 +200,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     QRectF tempRect(0, 0, 0, 0);
 
-    QSizeF boundSize = contentSize();
+    QSizeF boundSize = geometry().size();
     QSize elementSize;
 
     p->setRenderHint(QPainter::SmoothPixmapTransform);

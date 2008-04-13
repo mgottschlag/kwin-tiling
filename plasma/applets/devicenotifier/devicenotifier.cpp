@@ -75,7 +75,6 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     int iconSize = IconSize(KIconLoader::Desktop);
     resize(iconSize, iconSize);
-    resize(40,40);
 }
 
 void DeviceNotifier::init()
@@ -173,7 +172,6 @@ void DeviceNotifier::initSysTray()
     }
     connect(m_icon, SIGNAL(clicked()), this, SLOT(onClickNotifier()));
     m_icon->resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
-    updateGeometry();
     kDebug()<<geometry();
 }
 
@@ -225,14 +223,14 @@ void DeviceNotifier::constraintsUpdated(Plasma::Constraints constraints)
             m_widget->setWindowFlags(Qt::Widget);
             //TODO: this is a bit messy .. it should size to the proper content size, perhaps?
             //m_layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
-            /*m_layout = new QGraphicsLinearLayout();
+            m_layout = new QGraphicsLinearLayout();
             m_layout->setContentsMargins(0,0,0,0);
             m_layout->setSpacing(0);
             m_proxy = new QGraphicsProxyWidget(this);
             m_proxy->setWidget(m_widget);
             m_proxy->show();
             m_layout->addItem(m_proxy);
-	    setLayout(m_layout);*/
+	    setLayout(m_layout);
         }
     }
 
