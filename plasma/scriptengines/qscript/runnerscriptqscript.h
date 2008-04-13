@@ -48,6 +48,7 @@ public:
     void exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action);
 
 protected:
+    void setupObjects();
     void importExtensions();
     void reportError();
 

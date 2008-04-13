@@ -52,7 +52,8 @@ Plasma::AbstractRunner* RunnerScriptQScript::runner() const
 
 bool RunnerScriptQScript::init()
 {
-    #ifdef TODO
+    setupObjects();
+
     QFile file(mainScript());
     if ( !file.open(QIODevice::ReadOnly | QIODevice::Text) ) {
         kWarning() << "Unable to load script file";
@@ -67,10 +68,8 @@ bool RunnerScriptQScript::init()
         reportError();
         return false;
     }
-    
+
     return true;
-  #endif
-    return false;
 }
 
 void RunnerScriptQScript::match(Plasma::SearchContext *search)
@@ -114,6 +113,17 @@ void RunnerScriptQScript::exec(const Plasma::SearchContext *search, const Plasma
     if ( m_engine->hasUncaughtException() ) {
 	reportError();
     }
+}
+
+void RunnerScriptQScript::setupObjects()
+{
+    QScriptValue global = m_engine->globalObject();
+
+    // Expose an applet
+    m_self = m_engine->newQObject( this );
+    m_self.setScope( global );    
+
+    global.setProperty("runner", m_self);
 }
 
 void RunnerScriptQScript::importExtensions()

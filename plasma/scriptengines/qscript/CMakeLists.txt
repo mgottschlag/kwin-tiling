@@ -29,3 +29,8 @@ kde4_add_plugin(plasma_runner_scriptengine_qscript
 
 target_link_libraries(plasma_runner_scriptengine_qscript
                        ${KDE4_KDECORE_LIBS} plasma ${QT_QTSCRIPT_LIBRARY} ${QT_QTUITOOLS_LIBRARY})
+
+install(TARGETS plasma_runner_scriptengine_qscript
+        DESTINATION ${PLUGIN_INSTALL_DIR})
+install(FILES plasma-scriptengine-qscriptrunner.desktop
+        DESTINATION ${SERVICES_INSTALL_DIR} )
