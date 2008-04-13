@@ -61,7 +61,7 @@ Pager::Pager(QObject *parent, const QVariantList &args)
     // initialize with a decent default
     m_desktopCount = KWindowSystem::numberOfDesktops();
     m_size = QSizeF(88, 44);
-    setContentSize(m_size);
+    resize(m_size);
 }
 
 void Pager::init()
@@ -170,7 +170,7 @@ void Pager::createConfigurationInterface(KConfigDialog *parent)
 
 void Pager::recalculateGeometry()
 {
-    if (!m_rects.isEmpty() && contentSize() == m_size) {
+    if (!m_rects.isEmpty() && geometry().size() == m_size) {
         //kDebug() << "leaving because" << !m_rects.isEmpty() << " and " << contentSize() << "==" << m_size;
         return;
     }
@@ -183,12 +183,12 @@ void Pager::recalculateGeometry()
     qreal itemWidth;
 
     if (formFactor() == Plasma::Vertical) { // Panel is on left or right
-        itemWidth = (contentSize().width() - padding * (columns - 1)) / columns;
+        itemWidth = (geometry().width() - padding * (columns - 1)) / columns;
         m_widthScaleFactor = itemWidth / QApplication::desktop()->width();
         itemHeight = QApplication::desktop()->height() * m_widthScaleFactor;
         m_heightScaleFactor = m_widthScaleFactor;
     } else { // Panel is on top or bottom
-        itemHeight = (contentSize().height() - padding * (m_rows - 1)) / m_rows;
+        itemHeight = (geometry().height() - padding * (m_rows - 1)) / m_rows;
         m_heightScaleFactor = itemHeight / QApplication::desktop()->height();
         itemWidth = QApplication::desktop()->width() * m_heightScaleFactor;
         if (m_displayedText==Name) {
