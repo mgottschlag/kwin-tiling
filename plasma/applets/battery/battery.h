@@ -56,21 +56,19 @@ class Battery : public Plasma::Applet
 
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
-        void showConfigurationInterface();
 
     protected Q_SLOTS:
         virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
         virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
-
-    //protected slots:
+        void createConfigurationInterface(KConfigDialog *parent);
         void configAccepted();
         void readColors();
-    
+
     private slots:
         void animationUpdate(qreal progress);
         void acAnimationUpdate(qreal progress);
         void batteryAnimationUpdate(qreal progress);
-    
+
     private:
         Q_ENUMS( m_batteryStyle )
         enum ClockStyle {

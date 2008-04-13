@@ -34,6 +34,7 @@
 #include <KSharedConfig>
 #include <KDialog>
 #include <KColorScheme>
+#include <KConfigDialog>
 #include <KGlobalSettings>
 
 #include <plasma/svg.h>
@@ -186,28 +187,18 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     }
     update();
 }
-
-void Battery::showConfigurationInterface()
+void Battery::createConfigurationInterface(KConfigDialog *parent)
 {
-    if (m_dialog == 0) {
-        m_dialog = new KDialog;
-        m_dialog->setCaption(i18n("Configure Battery Monitor"));
-
-        QWidget *widget = new QWidget;
-        ui.setupUi(widget);
-        m_dialog->setMainWidget(widget);
-        m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
-
-        connect( m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()) );
-        connect( m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()) );
-    }
-
+    QWidget *widget = new QWidget();
+    ui.setupUi(widget);
+    parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+    parent->addPage(widget, parent->windowTitle(), "battery");
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
     ui.styleGroup->setSelected(m_batteryStyle);
-
     ui.showBatteryStringCheckBox->setChecked(m_showBatteryString ? Qt::Checked : Qt::Unchecked);
     ui.showMultipleBatteriesCheckBox->setChecked(m_showMultipleBatteries ? Qt::Checked : Qt::Unchecked);
     ui.drawBackgroundCheckBox->setChecked(m_drawBackground ? Qt::Checked : Qt::Unchecked);
-    m_dialog->show();
 }
 
 void Battery::configAccepted()
