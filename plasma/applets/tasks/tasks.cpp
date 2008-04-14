@@ -30,12 +30,11 @@
 // Qt
 #include <QGraphicsSceneWheelEvent>
 #include <QTimeLine>
+#include <QGraphicsLinearLayout>
 
 // Plasma
 #include <plasma/containment.h>
 #include <plasma/theme.h>
-#include <plasma/layouts/boxlayout.h>
-#include <plasma/layouts/layoutanimator.h>
 
 Tasks::Tasks(QObject* parent, const QVariantList &arguments)
  : Plasma::Applet(parent, arguments),
@@ -43,7 +42,7 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
 {
     setHasConfigurationInterface(true);
     setAspectRatioMode(Qt::IgnoreAspectRatio);
-    setContentSize(500, 48);
+    resize(500, 48);
 
     m_screenTimer.setSingleShot(true);
     m_screenTimer.setInterval(300);
@@ -58,13 +57,15 @@ Tasks::~Tasks()
 
 void Tasks::init()
 {
-    Plasma::BoxLayout *layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
-    layout->setMargin(0);
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
+    //layout->setMargin(0);
+    layout->setOrientation(Qt::Horizontal); // FIXME: vertical panel
     m_rootTaskGroup = new TaskGroupItem(this, this);
-    m_rootTaskGroup->resize(contentSize());
+    m_rootTaskGroup->resize(geometry().size());
     connect(m_rootTaskGroup, SIGNAL(activated(AbstractTaskItem*)),
             this, SLOT(launchActivated()));
 
+    /*
     // set up the animator used in the root item
     m_animator = new Plasma::LayoutAnimator(this);
     m_animator->setAutoDeleteOnRemoval(true);
@@ -75,7 +76,7 @@ void Tasks::init()
     m_animator->setEffect(Plasma::LayoutAnimator::RemovedState,
                           Plasma::LayoutAnimator::FadeEffect);
     m_animator->setTimeLine(new QTimeLine(100, this));
-
+    */
     layout->addItem(m_rootTaskGroup);
 
     m_rootTaskGroup->setBorderStyle(TaskGroupItem::NoBorder);
@@ -102,7 +103,7 @@ void Tasks::init()
             this, SLOT(removeStartingTask(StartupPtr)));
 
     // add the animator once we're initialized to avoid animating like mad on start up
-    m_rootTaskGroup->layout()->setAnimator(m_animator);
+    //m_rootTaskGroup->layout()->setAnimator(m_animator);
 }
 
 void Tasks::addStartingTask(StartupPtr task)
@@ -201,11 +202,13 @@ void Tasks::removeAllWindowTasks()
 void Tasks::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::LocationConstraint) {
-        if (formFactor() == Plasma::Vertical) {
-            m_rootTaskGroup->setDirection(Plasma::BoxLayout::TopToBottom);
-        } else {
-            m_rootTaskGroup->setDirection(Plasma::BoxLayout::LeftToRight);
-        }
+        // FIXME: vertical panels
+        //if (formFactor() == Plasma::Vertical) {
+        //    m_rootTaskGroup->setDirection(QGraphicsLinearLayout::TopToBottom);
+        //} else {
+            QGraphicsLinearLayout * mylayout = dynamic_cast<QGraphicsLinearLayout *>(m_rootTaskGroup->layout());
+            mylayout->setOrientation(Qt::Horizontal);
+        //}
 
         foreach (AbstractTaskItem *taskItem, m_windowTaskItems) {
             WindowTaskItem *windowTaskItem = dynamic_cast<WindowTaskItem *>(taskItem);

@@ -24,6 +24,7 @@
 #include <QIcon>
 #include <QTextLayout>
 #include <QTime>
+#include <QGraphicsLinearLayout>
 
 class QTimeLine;
 

@@ -30,6 +30,7 @@
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QTimeLine>
+#include <QGraphicsLinearLayout>
 
 // KDE
 #include <KColorScheme>
@@ -521,7 +522,7 @@ void AbstractTaskItem::paint(QPainter *painter,
                              const QStyleOptionGraphicsItem *option,
                              QWidget *widget)
 {
-    painter->setOpacity(opacity());
+    //painter->setOpacity(opacity());
     painter->setRenderHint(QPainter::Antialiasing);
 
     // draw background

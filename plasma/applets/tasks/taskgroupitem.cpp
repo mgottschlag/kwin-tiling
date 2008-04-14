@@ -24,6 +24,7 @@
 // Qt
 #include <QPainter>
 #include <QGraphicsScene>
+#include <QGraphicsLinearLayout>
 
 // KDE
 #include <KColorScheme>
@@ -45,10 +46,10 @@ TaskGroupItem::TaskGroupItem(QGraphicsItem *parent, QObject *parentObject)
 {
    //setAcceptDrops(true);
 
-   m_layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
-   m_layout->setMargin(0);
+   m_layout = new QGraphicsLinearLayout(this);
+   //m_layout->setMargin(0);
    m_layout->setSpacing(5);
-   m_layout->setMultiRow(true);
+   //m_layout->setMultiRow(true);
 }
 
 QSizeF TaskGroupItem::maximumSize() const
@@ -98,7 +99,10 @@ void TaskGroupItem::insertTask(AbstractTaskItem *item, int index)
     item->setParentItem(this);
     _tasks.insert(index, TaskEntry(item));
 
-    layout()->addItem(item);
+    QGraphicsLinearLayout * mylayout = dynamic_cast<QGraphicsLinearLayout *>(layout());
+    if (mylayout) {
+        mylayout->addItem(item);
+    }
     queueGeometryUpdate();
 }
 
@@ -117,7 +121,10 @@ void TaskGroupItem::removeTask(AbstractTaskItem *item)
         return;
     }
 
-    layout()->removeItem(item);
+    QGraphicsLinearLayout * mylayout = dynamic_cast<QGraphicsLinearLayout *>(layout());
+    if (mylayout) {
+        mylayout->removeItem(item);
+    }
     item->setParentItem(0);
     queueGeometryUpdate();
 
@@ -210,17 +217,18 @@ TaskGroupItem::BorderStyle TaskGroupItem::borderStyle() const
     return _borderStyle;
 }
 
-void TaskGroupItem::setDirection(Plasma::BoxLayout::Direction dir)
+/*
+void TaskGroupItem::setOrientation(Qt::Orientation dir)
 {
-    m_layout->setDirection(dir);
+    m_layout->setOrientation(dir);
 
-    m_layout->setMultiRow(dir != Plasma::BoxLayout::TopToBottom);
+    //m_layout->setMultiRow(dir != Plasma::BoxLayout::TopToBottom);
 }
-
-Plasma::BoxLayout::Direction TaskGroupItem::direction()
+Qt::Orientation TaskGroupItem::orientation()
 {
-    return m_layout->direction();
+    return m_layout->orientation();
 }
+*/
 
 void TaskGroupItem::paint(QPainter *painter,
                           const QStyleOptionGraphicsItem *option,
