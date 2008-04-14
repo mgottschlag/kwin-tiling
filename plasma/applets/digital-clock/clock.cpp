@@ -114,13 +114,14 @@ Qt::Orientations Clock::expandingDirections() const
 
 void Clock::updateToolTipContent() {
     QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
-    Plasma::ToolTipData tipData;
+    //FIXME Port to future tooltip manager
+    /*Plasma::ToolTipData tipData;
 
     tipData.mainText = m_time.toString(timeString);
     tipData.subText = m_date.toString();
     tipData.image = m_toolTipIcon;
 
-    setToolTip(tipData);
+    setToolTip(tipData);*/
 }
 
 void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)

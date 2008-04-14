@@ -98,7 +98,8 @@ void Trash::init()
     watchForMouseMove(m_icon, true);
     //setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
     resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
-    m_data.mainText = i18n("Trash");
+    //FIXME PORT TO TOOLTIP MANAGER
+    //m_data.mainText = i18n("Trash");
 }
 
 Qt::Orientations Trash::expandingDirections() const
@@ -208,24 +209,26 @@ void Trash::setIcon()
 {
     if (m_count > 0) {
         m_icon->setIcon(KIcon("user-trash-full"));
-        m_data.subText = i18np("One item", "%1 items", m_count);
+	//FIXME PORT TO TOOLTIP MANAGER
+        //m_data.subText = i18np("One item", "%1 items", m_count);
         if (m_showText) {
             m_icon->setInfoText(i18np("One item", "%1 items", m_count));
         }
     } else {
         m_icon->setIcon(KIcon("user-trash"));
-        m_data.subText = i18nc("The trash is empty. This is not an action, but a state", "Empty");
+        //FIXME PORT TO TOOLTIP MANAGER
+	//m_data.subText = i18nc("The trash is empty. This is not an action, but a state", "Empty");
         if (m_showText){
             m_icon->setInfoText(i18nc("The trash is empty. This is not an action, but a state", "Empty"));
         }
     }
 
     m_icon->update();
-
-    m_data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
-
+    
     //FIXME TOOLTIP MANAGER
-    /*if (!m_showText) {
+    /*m_data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
+
+    if (!m_showText) {
         m_icon->setToolTip(m_data);
     } else {
         m_icon->setToolTip(Plasma::ToolTipData());

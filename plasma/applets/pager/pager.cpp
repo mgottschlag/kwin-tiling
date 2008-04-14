@@ -110,7 +110,7 @@ QPainterPath Pager::shape() const
         return Plasma::Applet::shape();
     }
 
-    return Plasma::Widget::shape();
+    return Plasma::Applet::shape();
 }
 
 void Pager::constraintsUpdated(Plasma::Constraints constraints)

@@ -76,7 +76,8 @@ class Trash : public Plasma::Applet
         QAction *emptyTrash;
         int m_count;
         bool m_showText;
-        Plasma::ToolTipData m_data;
+        //FIXME PORT TO TOOLTIP MANAGER
+	//Plasma::ToolTipData m_data;
         KFilePlacesModel *m_places;
 };
 

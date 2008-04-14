@@ -147,12 +147,12 @@ void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
             //in the panel the icon behaves like a button
             connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
             m_icon->setText(QString());
-            Plasma::ToolTipData data;
+	    //FIXME PORT TO TOOL TIP MANAGER
+	    /*Plasma::ToolTipData data;
             data.mainText = m_text;
             data.subText = m_genericName;
             data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
-            //FIXME TOOL TIP MANAGER
-	    //m_icon->setToolTip(data);
+            m_icon->setToolTip(data);*/
             m_icon->setDrawBackground(false);
         }
     }

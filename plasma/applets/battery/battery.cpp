@@ -78,6 +78,7 @@ void Battery::init()
     if (formFactor() != Plasma::Vertical && formFactor() != Plasma::Horizontal) {
         setDrawStandardBackground(m_drawBackground);
     }
+    setWindowFlags(Qt::Window);
 
     QString svgFile = QString();
     if (cg.readEntry("style", 0) == 0) {
