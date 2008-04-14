@@ -217,19 +217,6 @@ TaskGroupItem::BorderStyle TaskGroupItem::borderStyle() const
     return _borderStyle;
 }
 
-/*
-void TaskGroupItem::setOrientation(Qt::Orientation dir)
-{
-    m_layout->setOrientation(dir);
-
-    //m_layout->setMultiRow(dir != Plasma::BoxLayout::TopToBottom);
-}
-Qt::Orientation TaskGroupItem::orientation()
-{
-    return m_layout->orientation();
-}
-*/
-
 void TaskGroupItem::paint(QPainter *painter,
                           const QStyleOptionGraphicsItem *option,
                           QWidget *)

@@ -59,24 +59,16 @@ void Tasks::init()
 {
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
     //layout->setMargin(0);
-    layout->setOrientation(Qt::Horizontal); // FIXME: vertical panel
+    if (formFactor() == Plasma::Vertical) {
+        layout->setOrientation(Qt::Vertical);
+    } else {
+        layout->setOrientation(Qt::Horizontal);
+    }
+
     m_rootTaskGroup = new TaskGroupItem(this, this);
     m_rootTaskGroup->resize(geometry().size());
     connect(m_rootTaskGroup, SIGNAL(activated(AbstractTaskItem*)),
             this, SLOT(launchActivated()));
-
-    /*
-    // set up the animator used in the root item
-    m_animator = new Plasma::LayoutAnimator(this);
-    m_animator->setAutoDeleteOnRemoval(true);
-    m_animator->setEffect(Plasma::LayoutAnimator::InsertedState,
-                          Plasma::LayoutAnimator::FadeEffect);
-    m_animator->setEffect(Plasma::LayoutAnimator::StandardState,
-                          Plasma::LayoutAnimator::MoveEffect);
-    m_animator->setEffect(Plasma::LayoutAnimator::RemovedState,
-                          Plasma::LayoutAnimator::FadeEffect);
-    m_animator->setTimeLine(new QTimeLine(100, this));
-    */
     layout->addItem(m_rootTaskGroup);
 
     m_rootTaskGroup->setBorderStyle(TaskGroupItem::NoBorder);
@@ -202,13 +194,12 @@ void Tasks::removeAllWindowTasks()
 void Tasks::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::LocationConstraint) {
-        // FIXME: vertical panels
-        //if (formFactor() == Plasma::Vertical) {
-        //    m_rootTaskGroup->setDirection(QGraphicsLinearLayout::TopToBottom);
-        //} else {
-            QGraphicsLinearLayout * mylayout = dynamic_cast<QGraphicsLinearLayout *>(m_rootTaskGroup->layout());
-            mylayout->setOrientation(Qt::Horizontal);
-        //}
+        QGraphicsLinearLayout * taskslayout = dynamic_cast<QGraphicsLinearLayout *>(m_rootTaskGroup->layout());
+        if (formFactor() == Plasma::Vertical) {
+            taskslayout->setOrientation(Qt::Vertical);
+        } else {
+            taskslayout->setOrientation(Qt::Horizontal);
+        }
 
         foreach (AbstractTaskItem *taskItem, m_windowTaskItems) {
             WindowTaskItem *windowTaskItem = dynamic_cast<WindowTaskItem *>(taskItem);
