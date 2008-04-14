@@ -253,7 +253,10 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
 
   readThemesList();
   mThemesList->setCurrentRow(findTheme(themeName));
-  mThemesList->currentItem()->setSelected(true);
+  if (mThemesList->currentItem())
+  {
+    mThemesList->currentItem()->setSelected(true);
+  }
 }
 
 //-----------------------------------------------------------------------------
