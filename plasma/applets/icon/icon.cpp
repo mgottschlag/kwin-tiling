@@ -39,7 +39,6 @@
 #include <kio/copyjob.h>
 
 #include <plasma/theme.h>
-#include <plasma/layouts/boxlayout.h>
 #include <plasma/widgets/icon.h>
 #include <plasma/containment.h>
 

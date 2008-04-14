@@ -26,7 +26,6 @@
 #include <KDebug>
 
 #include <plasma/containment.h>
-#include <plasma/layouts/layout.h>
 
 DesktopCorona::DesktopCorona(QObject *parent)
     : Plasma::Corona(parent)
