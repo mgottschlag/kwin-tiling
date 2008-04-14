@@ -51,7 +51,6 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     : Plasma::Containment(parent, args),
       m_showTimeString(false),
       m_showSecondHand(false),
-      m_dialog(0),
       m_secondHandUpdateTimer(0)
 {
     setHasConfigurationInterface(true);
