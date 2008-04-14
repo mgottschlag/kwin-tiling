@@ -366,6 +366,7 @@ void QScriptApplet::installWidgets( QScriptEngine *engine )
 
 QScriptValue QScriptApplet::createWidget(QScriptContext *context, QScriptEngine *engine)
 {
+#if 0 // FIXME: Broken by WoC
     if ( context->argumentCount() > 1 )
 	return context->throwError("Create widget takes one argument");
 
@@ -388,6 +389,8 @@ QScriptValue QScriptApplet::createWidget(QScriptContext *context, QScriptEngine 
     fun.setPrototype( context->callee().property("prototype") );
 
     return fun;
+#endif
+    return QScriptValue();
 }
 
 QScriptValue QScriptApplet::createPrototype( QScriptEngine *engine, const QString &name )
