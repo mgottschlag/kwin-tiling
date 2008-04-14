@@ -30,7 +30,7 @@
 
 #include "xesamrunner.h"
 
-Q_DECLARE_METATYPE(QList<QList<QVariant> >);
+Q_DECLARE_METATYPE(QList<QList<QVariant> >)
 static int typeId = qDBusRegisterMetaType<QList<QList<QVariant> > >();
 
 XesamRunner::XesamRunner(QObject *parent, const QVariantList& args)
