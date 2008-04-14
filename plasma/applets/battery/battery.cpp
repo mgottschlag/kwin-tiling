@@ -92,6 +92,7 @@ void Battery::init()
     m_theme->setContentType(Plasma::Svg::SingleImage);
     m_theme->resize(geometry().size());
 
+    setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     m_font = QApplication::font();
     m_font.setWeight(QFont::Bold);
 
@@ -213,14 +214,12 @@ void Battery::configAccepted()
 
     if (m_numOfBattery > 1 && old_showMultipleBatteries != m_showMultipleBatteries) {
         kDebug() << "Show multiple battery changed: " << m_showMultipleBatteries;
-        updateGeometry();
     }
 
     //reconnect sources
     disconnectSources();
     connectSources();
 
-    update();
     emit configNeedsSaving();
 }
 

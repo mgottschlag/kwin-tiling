@@ -42,8 +42,7 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
 {
     setHasConfigurationInterface(true);
     setAspectRatioMode(Qt::IgnoreAspectRatio);
-    resize(500, 48);
-
+ 
     m_screenTimer.setSingleShot(true);
     m_screenTimer.setInterval(300);
     connect(&m_screenTimer, SIGNAL(timeout()), this, SLOT(checkScreenChange()));
@@ -64,8 +63,11 @@ void Tasks::init()
     } else {
         layout->setOrientation(Qt::Horizontal);
     }
+    setLayout(layout);
 
-    m_rootTaskGroup = new TaskGroupItem(this, this);
+    resize(500, 48);
+
+    m_rootTaskGroup = new TaskGroupItem(this,this);
     m_rootTaskGroup->resize(geometry().size());
     connect(m_rootTaskGroup, SIGNAL(activated(AbstractTaskItem*)),
             this, SLOT(launchActivated()));

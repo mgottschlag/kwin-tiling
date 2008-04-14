@@ -23,9 +23,6 @@
 // Own
 #include "abstracttaskitem.h"
 
-// Plasma
-#include <plasma/layouts/boxlayout.h>
-
 /**
  * A graphics item which holds a group of tasks.
  * To add a task to a group, set the AbstractTaskItem's parent
