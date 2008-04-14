@@ -175,7 +175,7 @@ AbstractTaskItem::TaskFlags AbstractTaskItem::taskFlags() const
 void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     if (taskFlags() & TaskHasFocus) {
-        Widget::hoverEnterEvent(event);
+        Applet::hoverEnterEvent(event);
         return;
     }
 
@@ -190,13 +190,13 @@ void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
                                                       Plasma::Phase::LinearCurve, this,
                                                       "animationUpdate");
 
-    Widget::hoverEnterEvent(event);
+    Applet::hoverEnterEvent(event);
 }
 
 void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     if (taskFlags() & TaskHasFocus) {
-        Widget::hoverLeaveEvent(event);
+        Applet::hoverLeaveEvent(event);
         return;
     }
 
@@ -211,7 +211,7 @@ void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
                                                       Plasma::Phase::LinearCurve, this,
                                                       "animationUpdate");
 
-    Widget::hoverLeaveEvent(event);
+    Applet::hoverLeaveEvent(event);
 }
 
 QSizeF AbstractTaskItem::maximumSize() const

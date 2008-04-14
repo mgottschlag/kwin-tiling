@@ -54,7 +54,7 @@ TaskGroupItem::TaskGroupItem(QGraphicsItem *parent, QObject *parentObject)
 
 QSizeF TaskGroupItem::maximumSize() const
 {
-    return Widget::maximumSize();
+    return Applet::maximumSize();
 }
 
 void TaskGroupItem::setAllowSubGroups(bool allow)
@@ -317,12 +317,12 @@ void TaskGroupItem::timerEvent(QTimerEvent *event)
 
 void TaskGroupItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    Widget::hoverEnterEvent(event);
+    Applet::hoverEnterEvent(event);
 }
 
 void TaskGroupItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    Widget::hoverLeaveEvent(event);
+    Applet::hoverLeaveEvent(event);
 }
 
 #include "taskgroupitem.moc"
