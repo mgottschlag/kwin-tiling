@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright 2005,2006,2007 by Siraj Razick <siraj@kdemail.net>          *
+ *   Copyright 2007 by Aaron Seigo <aseigo@kde.org>                        *
  *   Copyright 2007 by Riccardo Iaconelli <riccardo@kde.org>               *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *

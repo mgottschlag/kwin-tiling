@@ -1,7 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2005,2006,2007 by Siraj Razick <siraj@kdemail.net>      *
- *   Copyright (C) 2007 by Riccardo Iaconelli <riccardo@kde.org>           *
- *   Copyright (C) 2007 by Sebastian Kuegler <sebas@kde.org>               *
+ *   Copyright (C) 2007-2008 by Riccardo Iaconelli <riccardo@kde.org>      *
+ *   Copyright (C) 2007-2008 by Sebastian Kuegler <sebas@kde.org>          *
  *   Copyright (C) 2007 by Luka Renko <lure@kubuntu.org>                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
