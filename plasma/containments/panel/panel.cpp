@@ -1,5 +1,6 @@
 /*
 *   Copyright 2007 by Alex Merry <huntedhacker@tiscali.co.uk>
+*   Copyright 2008 by Ménard Alexis <darktears31@gmail.com>
 *
 *   This program is free software; you can redistribute it and/or modify
 *   it under the terms of the GNU Library General Public License version 2,
@@ -59,8 +60,6 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     setContainmentType(Containment::PanelContainment);
 
     connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(themeUpdated()));
-    //make sure the default size is picked up
-    resize(m_currentSize);
 }
 
 Panel::~Panel()
@@ -183,8 +182,8 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::SizeConstraint) {
-        m_currentSize = size().toSize();
-        m_background->resize(size());
+        m_currentSize = geometry().size().toSize();
+        m_background->resize(m_currentSize);
     }
 
     if (constraints & Plasma::ScreenConstraint ||
