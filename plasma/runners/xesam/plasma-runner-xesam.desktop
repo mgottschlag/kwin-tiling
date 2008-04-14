@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Xesam Search runner
+Comment=Allows user to use a Xesam compatible indexer for desktop search
+X-KDE-ServiceTypes=Plasma/Runner
+Type=Service
+X-KDE-Library=krunner_xesam
+X-Plasma-RunnerName=Xesam
