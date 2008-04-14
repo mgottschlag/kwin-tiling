@@ -76,7 +76,9 @@ void Tasks::init()
     m_rootTaskGroup->setText("Root Group");
 
     KConfigGroup cg = config();
+#ifdef TOOLTIP_MANAGER
     m_showTooltip = cg.readEntry("showTooltip", true);
+#endif
     m_showOnlyCurrentDesktop = cg.readEntry("showOnlyCurrentDesktop", false);
     m_showOnlyCurrentScreen = cg.readEntry("showOnlyCurrentScreen", false);
 
@@ -289,8 +291,9 @@ void Tasks::showConfigurationInterface()
         connect(m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
         connect(m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()));
     }
-
+#ifdef TOOLTIP_MANAGER
     m_ui.showTooltip->setChecked(m_showTooltip);
+#endif
     m_ui.showOnlyCurrentDesktop->setChecked(m_showOnlyCurrentDesktop);
     m_ui.showOnlyCurrentScreen->setChecked(m_showOnlyCurrentScreen);
     m_dialog->show();
@@ -316,7 +319,7 @@ void Tasks::configAccepted()
     if (changed) {
         reconnect();
     }
-
+#ifdef TOOLTIP_MANAGER
     if (m_showTooltip != (m_ui.showTooltip->checkState() == Qt::Checked)) {
         m_showTooltip = !m_showTooltip;
         foreach (AbstractTaskItem *taskItem, m_windowTaskItems) {
@@ -329,7 +332,7 @@ void Tasks::configAccepted()
         cg.writeEntry("showTooltip", m_showTooltip);
         changed = true;
     }
-
+#endif
     if (changed) {
         update();
         emit configNeedsSaving();

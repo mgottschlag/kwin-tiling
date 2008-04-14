@@ -97,6 +97,7 @@ void WindowTaskItem::updateTask()
     QPixmap iconPixmap = _task->icon(preferredIconSize().width(),
                                      preferredIconSize().height(),
                                      true);
+#ifdef TOOLTIP_MANAGER
     if (_showTooltip) {
       Plasma::ToolTipData data;
       data.mainText = _task->visibleName();
@@ -108,6 +109,7 @@ void WindowTaskItem::updateTask()
         Plasma::ToolTipData data;
         setToolTip(data); // Clear
     }
+#endif
     setIcon(QIcon(iconPixmap));
     setText(_task->visibleName());
     //redraw
@@ -118,13 +120,14 @@ void WindowTaskItem::setStartupTask(TaskManager::StartupPtr task)
 {
     setText(task->text());
     setIcon(KIcon(task->icon()));
-
+#ifdef TOOLTIP_MANAGER
     if (_showTooltip) {
         Plasma::ToolTipData tip;
         tip.mainText = task->text();
         tip.image = task->icon();
         setToolTip(tip);
     }
+#endif
 }
 
 void WindowTaskItem::setWindowTask(TaskManager::TaskPtr task)
