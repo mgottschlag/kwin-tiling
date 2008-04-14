@@ -47,7 +47,6 @@
 
 Clock::Clock(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
-      m_clockStyle(PlainClock),
       m_plainClockFont(KGlobalSettings::generalFont()),
       m_useCustomColor(false),
       m_plainClockColor(),
@@ -59,7 +58,6 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_showSeconds(false),
       m_showTimezone(false),
       m_timeZones(),
-      m_dialog(0),
       m_calendar(0),
       m_layout(0)
 {
@@ -276,7 +274,6 @@ void Clock::configAccepted()
     m_plainClockFont.setBold(m_plainClockFontBold);
     m_plainClockFont.setItalic(m_plainClockFontItalic);
 
-    cg.writeEntry("plainClock", m_clockStyle == PlainClock);
     cg.writeEntry("plainClockFont", m_plainClockFont);
     cg.writeEntry("useCustomColor", m_useCustomColor);
     cg.writeEntry("plainClockColor", m_plainClockColor);
@@ -290,11 +287,6 @@ void Clock::configAccepted()
 Clock::~Clock()
 {
     delete m_calendar;
-    delete m_dialog;
-    //delete m_layout;
-    // deleting m_layout isn't necessary. it is owned by the dialog
-    // (setLayout transfers ownership) and so will be deleted when the dialog is.
-    // thnx aseigo
 }
 
 void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
@@ -302,6 +294,9 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     Q_UNUSED(option);
 
     if (m_time.isValid() && m_date.isValid()) {
+        // debugging painting ...
+        p->setBrush(QColor(255, 0, 0, 127));
+        p->drawRect(contentsRect);
 
         p->setFont(KGlobalSettings::smallestReadableFont());
 
@@ -348,7 +343,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             }
 
             // Check sizes
-            QRect dateRect = preparePainter(p, contentsRect, KGlobalSettings::smallestReadableFont(), dateString);
+            QRect dateRect = preparePainter(p, geometry().toRect(), KGlobalSettings::smallestReadableFont(), dateString);
             int subtitleHeight = dateRect.height();
 
             p->drawText(QRectF(0,

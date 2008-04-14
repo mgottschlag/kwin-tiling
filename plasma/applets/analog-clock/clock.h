@@ -38,8 +38,6 @@
 
 class QTimer;
 
-class KDialog;
-
 namespace Plasma
 {
     class Svg;
@@ -78,7 +76,6 @@ class Clock : public Plasma::Containment
         QString m_timezone;
         Plasma::Svg* m_theme;
         QTime m_time;
-        KDialog *m_dialog; //should we move this into another class?
         QTime m_lastTimeSeen;
         QTimer *m_secondHandUpdateTimer;
         int m_animationStart;

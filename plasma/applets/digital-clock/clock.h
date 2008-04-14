@@ -32,8 +32,6 @@
 #include <KDatePicker>
 
 
-class KDialog;
-
 namespace Plasma
 {
     class Svg;
@@ -52,7 +50,7 @@ class Clock : public Plasma::Applet
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
         // reimplemented
-        Qt::Orientations expandingDirections() const;
+        Qt::Orientations expandingDirections() const; // FIXME: delete
 
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
@@ -64,15 +62,9 @@ class Clock : public Plasma::Applet
         void showCalendar(QGraphicsSceneMouseEvent *event);
 
     private:
-	void updateToolTipContent();
+        void updateToolTipContent();
         QRect preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text);
 
-        Q_ENUMS( m_clockStyle )
-        enum ClockStyle {
-            PlainClock, FancyClock
-        };
-
-        ClockStyle m_clockStyle;
         QFont m_plainClockFont;
         bool m_useCustomColor;
         QColor m_plainClockColor;
@@ -94,7 +86,6 @@ class Clock : public Plasma::Applet
         QString m_prettyTimezone;
         QTime m_time;
         QDate m_date;
-        KDialog *m_dialog; //should we move this into another class?
         Plasma::Dialog *m_calendar;
         QVBoxLayout *m_layout;
         QTime m_lastTimeSeen;
