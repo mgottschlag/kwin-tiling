@@ -46,7 +46,7 @@ bool AbstractTaskItem::s_backgroundCreated = false;
 Plasma::Svg* AbstractTaskItem::s_taskItemBackground = 0;
 
 AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
-    : Widget(parent,parentObject),
+    : Applet(parent,0),
       _flags(0),
       m_animId(-1),
       m_alpha(1),

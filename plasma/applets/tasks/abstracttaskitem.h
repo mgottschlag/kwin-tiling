@@ -29,7 +29,7 @@
 class QTimeLine;
 
 // Plasma
-#include <plasma/widgets/widget.h>
+#include <plasma/applet.h>
 #include <plasma/phase.h>
 
 namespace Plasma
@@ -52,7 +52,7 @@ namespace Plasma
  * setText() and setIcon() methods.  They can also set flags
  * to indicate the task's state using setTaskFlags().
  */
-class AbstractTaskItem : public Plasma::Widget
+class AbstractTaskItem : public Plasma::Applet
 {
     Q_OBJECT
 
