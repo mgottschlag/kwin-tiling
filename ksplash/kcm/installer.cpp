@@ -210,6 +210,7 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
   if (!tarFile.open(QIODevice::ReadOnly))
   {
     kWarning() << "Unable to open archive: " << url.path();
+    KIO::NetAccess::del( url, 0 );
     return;
   }
   KArchiveDirectory const *ad = tarFile.directory();
@@ -228,32 +229,31 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
   if (themeName.isNull())
   {
     kWarning() << "No directory in archive: " << url.path();
+    tarFile.close();
+    KIO::NetAccess::del( url, 0 );
     return;
   }
 
   const QString themepath = QFileInfo(dir, themeName).absolutePath();
   if (QDir(themepath).exists())
   {
-     if (KMessageBox::warningContinueCancel(this,i18n("Overwrite folder %1 and its contents?", themepath),"",KGuiItem(i18n("&Overwrite")))==KMessageBox::Continue)
+     if (KMessageBox::warningContinueCancel(this,i18n("Overwrite folder %1 and its contents?", themepath),"",KGuiItem(i18n("&Overwrite")))!=KMessageBox::Continue)
      {
-       // copy the theme into the "ksplashthemes" directory
-       ad->copyTo(themepath);
-     }
-     else
-     {
-       themeName = QString();
+       tarFile.close();
+       KIO::NetAccess::del( url, 0 );
+       return;
      }
   }
+
+  // copy the theme into the "ksplashthemes" directory
+  ad->copyTo(themepath);
 
   tarFile.close();
   KIO::NetAccess::del( url, 0 );
 
-  if (! themeName.isNull())
-  {
-    readThemesList();
-    mThemesList->setCurrentRow(findTheme(themeName));
-    mThemesList->currentItem()->setSelected(true);
-  }
+  readThemesList();
+  mThemesList->setCurrentRow(findTheme(themeName));
+  mThemesList->currentItem()->setSelected(true);
 }
 
 //-----------------------------------------------------------------------------
