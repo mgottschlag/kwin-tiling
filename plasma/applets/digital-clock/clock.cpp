@@ -286,10 +286,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     Q_UNUSED(option);
 
     if (m_time.isValid() && m_date.isValid()) {
-        // debugging painting ...
-        p->setBrush(QColor(255, 0, 0, 127));
-        p->drawRect(contentsRect);
-
         p->setFont(KGlobalSettings::smallestReadableFont());
 
         p->setPen(QPen(m_plainClockColor));
