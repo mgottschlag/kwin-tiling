@@ -103,15 +103,6 @@ void Clock::init()
     connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(updateColors()));      
 }
 
-Qt::Orientations Clock::expandingDirections() const
-{
-    if (formFactor() == Plasma::Horizontal) {
-        return Qt::Vertical;
-    } else {
-        return Qt::Horizontal;
-    }
-}
-
 void Clock::updateToolTipContent() {
     QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
     //FIXME Port to future tooltip manager

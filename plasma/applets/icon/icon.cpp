@@ -274,11 +274,6 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
     }
 }
 
-Qt::Orientations IconApplet::expandingDirections() const
-{
-    return 0;
-}
-
 QPainterPath IconApplet::shape() const
 {
     return m_icon->shape();

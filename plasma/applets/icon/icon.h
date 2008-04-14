@@ -49,7 +49,6 @@ class IconApplet : public Plasma::Applet
         void showConfigurationInterface();
         void setDisplayLines(int displayLines);
         int displayLines();
-        Qt::Orientations expandingDirections() const;
         QPainterPath shape() const;
 
     public slots:

@@ -95,39 +95,6 @@ void LockOut::constraintsUpdated(Plasma::Constraints constraints)
     }
 }
 
-QSizeF LockOut::contentSizeHint() const
-{
-    QSizeF sizeHint = geometry().size();
-    switch (formFactor()) {
-        case Plasma::Vertical:
-            if (sizeHint.width() >= MINSIZE) {
-                sizeHint.setHeight(sizeHint.width() / 2);
-            } else {
-                sizeHint.setHeight(sizeHint.width() * 2);
-            }
-            break;
-        case Plasma::Horizontal:
-            if (sizeHint.height() >= MINSIZE) {
-                sizeHint.setWidth(sizeHint.height() / 2);
-            } else {
-                sizeHint.setWidth(sizeHint.height() * 2);
-            }
-            break;
-        default:
-	    //totally arbitrary size
-            if (sizeHint.width() < 10) {
-                sizeHint = QSizeF(48,96);
-            }
-            break;
-    }
-    return sizeHint;
-}
-
-Qt::Orientations LockOut::expandingDirections() const
-{
-    return 0;
-}
-
 void LockOut::clickLock()
 {
     kDebug()<<"LockOut:: lock clicked ";

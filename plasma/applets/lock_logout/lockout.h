@@ -32,9 +32,6 @@ class LockOut : public Plasma::Applet
         LockOut(QObject *parent, const QVariantList &args);
         ~LockOut();
         void init();
-
-        QSizeF contentSizeHint() const;
-        Qt::Orientations expandingDirections() const;
         virtual void constraintsUpdated(Plasma::Constraints constraints);
 
     public slots:
@@ -43,7 +40,6 @@ class LockOut : public Plasma::Applet
 
     private:
         QGraphicsLinearLayout *m_layout;
-
         void checkLayout();
 };
 

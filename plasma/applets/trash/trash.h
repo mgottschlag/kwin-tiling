@@ -49,8 +49,7 @@ class Trash : public Plasma::Applet
 
         void init();
         void constraintsUpdated(Plasma::Constraints constraints);
-        Qt::Orientations expandingDirections() const;
-
+        
     public slots:
         void slotOpen();
         void slotEmpty();

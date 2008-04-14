@@ -38,23 +38,6 @@ SystemTray::~SystemTray()
     delete m_systemTrayWidget;
 }
 
-QSizeF SystemTray::contentSizeHint() const
-{
-    QGraphicsView *v = view();
-    if (!(m_systemTrayWidget && v)) {
-        return QSizeF();
-    }
-    QRect widgetRect(QPoint(0, 0), m_systemTrayWidget->minimumSizeHint() +
-            QSize(SystemTrayWidget::MARGIN * 2, SystemTrayWidget::MARGIN * 2));
-    return mapFromView(v, widgetRect).size();
-}
-
-Qt::Orientations SystemTray::expandingDirections() const
-{
-    // Extra space isn't useful in either direction
-    return 0;
-}
-
 void SystemTray::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::SizeConstraint) {

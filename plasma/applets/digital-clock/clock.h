@@ -49,9 +49,6 @@ class Clock : public Plasma::Applet
         void setPath(const QString&);
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
-        // reimplemented
-        Qt::Orientations expandingDirections() const; // FIXME: delete
-
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
         void updateColors();

@@ -84,13 +84,6 @@ class MenuLauncherApplet : public Plasma::Applet
         void constraintsUpdated(Plasma::Constraints constraints);
 
         /**
-         * This method is used by Plasma::Layout to determine which directions the
-         * widget naturally expands.
-         * @return bitmask with the directions that this Widget can be expanded.
-         */
-        Qt::Orientations expandingDirections() const;
-
-        /**
          * Returns a list of context-related QAction instances.
          */
         virtual QList<QAction*> contextActions();

@@ -75,8 +75,6 @@ class DeviceNotifier : public Plasma::Applet
         ~DeviceNotifier();
 
         void init();
-        Qt::Orientations expandingDirections() const;
-        //QSizeF contentSizeHint() const;
         void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
         void constraintsUpdated(Plasma::Constraints constraints);
     public slots:
@@ -102,7 +100,6 @@ class DeviceNotifier : public Plasma::Applet
 
         Plasma::Dialog *m_widget;
 	Plasma::Icon *m_icon;
-	//QGraphicsGridLayout *m_layout;
 	QGraphicsLinearLayout *m_layout;
 	QGraphicsProxyWidget * m_proxy;
         KDialog *m_dialog;

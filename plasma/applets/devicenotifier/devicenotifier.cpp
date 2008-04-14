@@ -170,7 +170,6 @@ void DeviceNotifier::initSysTray()
     }
     connect(m_icon, SIGNAL(clicked()), this, SLOT(onClickNotifier()));
     m_icon->resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
-    kDebug()<<geometry();
 }
 
 DeviceNotifier::~DeviceNotifier()
@@ -187,14 +186,6 @@ DeviceNotifier::~DeviceNotifier()
     delete m_timer;
 }
 
-Qt::Orientations DeviceNotifier::expandingDirections() const
-{
-    if (formFactor() == Plasma::Horizontal) {
-        return Qt::Vertical;
-    } else {
-        return Qt::Horizontal;
-    }
-}
 void DeviceNotifier::constraintsUpdated(Plasma::Constraints constraints)
 {
     // on the panel we don't want a background, and our proxy widget in Planar has one

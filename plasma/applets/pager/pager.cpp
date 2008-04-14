@@ -104,15 +104,6 @@ void Pager::init()
     m_currentDesktop = KWindowSystem::currentDesktop();
 }
 
-QPainterPath Pager::shape() const
-{
-    if (drawStandardBackground()) {
-        return Plasma::Applet::shape();
-    }
-
-    return Plasma::Applet::shape();
-}
-
 void Pager::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::SizeConstraint) {
@@ -131,16 +122,6 @@ void Pager::createMenu()
 QList<QAction*> Pager::contextActions()
 {
   return actions;
-}
-
-Qt::Orientations Pager::expandingDirections() const
-{
-    return 0;
-}
-
-QSizeF Pager::contentSizeHint() const
-{
-    return m_size;
 }
 
 void Pager::slotConfigureDesktop()

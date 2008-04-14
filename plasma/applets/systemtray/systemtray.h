@@ -40,8 +40,6 @@ public:
     explicit SystemTray(QObject *parent, const QVariantList &arguments = QVariantList());
     ~SystemTray();
 
-    QSizeF contentSizeHint() const;
-    Qt::Orientations expandingDirections() const;
     void constraintsUpdated(Plasma::Constraints constraints);
 
 protected:

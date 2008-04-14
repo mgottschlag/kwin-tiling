@@ -102,11 +102,6 @@ void Trash::init()
     //m_data.mainText = i18n("Trash");
 }
 
-Qt::Orientations Trash::expandingDirections() const
-{
-    return 0;
-}
-
 void Trash::createMenu()
 {
     QAction* open = new QAction(SmallIcon("document-open"),i18n("&Open"), this);

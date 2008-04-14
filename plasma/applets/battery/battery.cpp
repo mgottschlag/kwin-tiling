@@ -62,7 +62,8 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
-    setMinimumSize(m_smallPixelSize, m_smallPixelSize);
+    // TODO: minimum size causes size on panel to be huge (do not use for now)
+    //setMinimumContentSize(m_smallPixelSize, m_smallPixelSize);
     resize(64, 64);
 }
 
@@ -105,7 +106,7 @@ void Battery::init()
 
     //connect sources
     connectSources();
-
+    
     foreach (QString battery_source, battery_sources) {
         dataUpdated(battery_source, dataEngine("powermanagement")->query(battery_source));
     }
@@ -140,40 +141,6 @@ void Battery::constraintsUpdated(Plasma::Constraints constraints)
     }
 }
 
-QSizeF Battery::contentSizeHint() const
-{
-    QSizeF sizeHint = geometry().size();
-    //kDebug() << "SizeHintIn: " << sizeHint;
-    switch (formFactor()) {
-        case Plasma::Vertical:
-            if (m_numOfBattery > 1 && m_showMultipleBatteries) {
-                sizeHint.setHeight(sizeHint.width()*m_numOfBattery);
-            }
-            else {
-                sizeHint.setHeight(sizeHint.width());
-            }
-            break;
-        case Plasma::Horizontal:
-        case Plasma::Planar:
-        case Plasma::MediaCenter:
-            if (m_numOfBattery > 1 && m_showMultipleBatteries) {
-                sizeHint.setWidth(sizeHint.height()*m_numOfBattery);
-            } else {
-                sizeHint.setWidth(sizeHint.height());
-            }
-            break;
-        default:
-            break;
-    }
-    //kDebug() << "SizeHintOut: " << sizeHint;
-    return sizeHint;
-}
-
-Qt::Orientations Battery::expandingDirections() const
-{
-    // no use of additional space in any direction
-    return 0;
-}
 
 void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {

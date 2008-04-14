@@ -113,7 +113,7 @@ void LauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
 	    //FIXME set correct size
-	    //setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
+	    setMinimumSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
         } else {
             //setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
         }
@@ -172,11 +172,6 @@ void LauncherApplet::showConfigurationInterface()
     d->visibleCountEdit->setValue(d->launcher->visibleItemCount());
     d->switchOnHoverCheckBox->setChecked(d->launcher->switchTabsOnHover());
     d->dialog->show();
-}
-
-Qt::Orientations LauncherApplet::expandingDirections() const
-{
-    return 0;
 }
 
 void LauncherApplet::configAccepted()
