@@ -47,13 +47,14 @@ ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
 
 void ClockApplet::updateToolTipContent() {
     QString timeString = "";//KGlobal::locale()->formatTime(m_time, m_showSeconds);
-    Plasma::ToolTipData tipData;
+    //TODO port to TOOLTIP manager
+    /*Plasma::ToolTipData tipData;
 
     tipData.mainText = "";//m_time.toString(timeString);
     tipData.subText = "";//m_date.toString();
     //tipData.image = m_toolTipIcon;
 
-    setToolTip(tipData);
+    setToolTip(tipData);*/
 }
 
 void ClockApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)
