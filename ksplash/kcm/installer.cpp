@@ -184,6 +184,7 @@ int SplashInstaller::addTheme(const QString &path, const QString &name)
 void SplashInstaller::addNewTheme(const KUrl &srcURL)
 {
   QString dir = KGlobal::dirs()->saveLocation("ksplashthemes");
+
   KUrl url;
   QString filename = srcURL.fileName();
   int i = filename.lastIndexOf('.');
@@ -208,34 +209,51 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
   KTar tarFile(url.path());
   if (!tarFile.open(QIODevice::ReadOnly))
   {
-    kDebug() << "Unable to open archive: " << url.path();
+    kWarning() << "Unable to open archive: " << url.path();
     return;
   }
   KArchiveDirectory const *ad = tarFile.directory();
+
   // Find first directory entry.
   QStringList entries = ad->entries();
-  QString themeName( entries.first() );
-#if 0
-  // The isDirectory() call always returns false; why?
-  for ( QStringList::Iterator it = entries.begin(); it != entries.end(); ++it )
+  QString themeName;
+  foreach(QString s, entries)
   {
-    if ( ad->entry( *it )->isDirectory() )
+    if( ad->entry(s)->isDirectory() )
     {
-      themeName = *it;
+      themeName = s;
       break;
     }
   }
-#endif
-  // TODO: Make sure we put the entries into a subdirectory if the tarball does not.
-  // TODO: Warn the user if we overwrite something.
-  ad->copyTo(KStandardDirs::locate("ksplashthemes","/"));
+  if (themeName.isNull())
+  {
+    kWarning() << "No directory in archive: " << url.path();
+    return;
+  }
+
+  const QString themepath = QFileInfo(dir, themeName).absolutePath();
+  if (QDir(themepath).exists())
+  {
+     if (KMessageBox::warningContinueCancel(this,i18n("Overwrite folder %1 and its contents?", themepath),"",KGuiItem(i18n("&Overwrite")))==KMessageBox::Continue)
+     {
+       // copy the theme into the "ksplashthemes" directory
+       ad->copyTo(themepath);
+     }
+     else
+     {
+       themeName = QString();
+     }
+  }
+
   tarFile.close();
   KIO::NetAccess::del( url, 0 );
 
-  // TODO: Update only the entries from this installation.
-  readThemesList();
-  mThemesList->setCurrentRow(findTheme(themeName));
-  mThemesList->currentItem()->setSelected(true);
+  if (! themeName.isNull())
+  {
+    readThemesList();
+    mThemesList->setCurrentRow(findTheme(themeName));
+    mThemesList->currentItem()->setSelected(true);
+  }
 }
 
 //-----------------------------------------------------------------------------
