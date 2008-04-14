@@ -62,8 +62,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
-    // TODO: minimum size causes size on panel to be huge (do not use for now)
-    //setMinimumContentSize(m_smallPixelSize, m_smallPixelSize);
+    setMinimumSize(m_smallPixelSize, m_smallPixelSize);
     resize(64, 64);
 }
 
@@ -106,7 +105,7 @@ void Battery::init()
 
     //connect sources
     connectSources();
-    
+
     foreach (QString battery_source, battery_sources) {
         dataUpdated(battery_source, dataEngine("powermanagement")->query(battery_source));
     }
