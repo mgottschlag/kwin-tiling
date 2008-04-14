@@ -100,6 +100,7 @@ void DeviceNotifier::init()
     QLabel *icon = new QLabel();
     icon->setPixmap(KIcon("emblem-mounted").pixmap(Plasma::Delegate::ICON_SIZE, Plasma::Delegate::ICON_SIZE));
     icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    setSizePolicy(QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed));
 
     QHBoxLayout *l_layout2 = new QHBoxLayout();
     l_layout2->setSpacing(0);
@@ -122,7 +123,7 @@ void DeviceNotifier::init()
     m_widget->setLayout(l_layout);
 
     m_widget->adjustSize();
-
+    
     //feed the list with what is already reported by the engine
     isNotificationEnabled = false;
     foreach (const QString &source, m_solidEngine->sources()) {

@@ -164,6 +164,8 @@ MenuLauncherApplet::~MenuLauncherApplet()
 
 void MenuLauncherApplet::init()
 {
+    setSizePolicy(QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed));
+
     KConfigGroup cg = config();
 
     {

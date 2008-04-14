@@ -199,9 +199,9 @@ void Pager::recalculateGeometry()
     m_size = QSizeF(ceil(columns * itemWidth + padding * (columns - 1)),
                     ceil(m_rows * itemHeight + padding * (m_rows - 1)));
 
-    updateGeometry();
-    kDebug() << "new size set" << m_size << m_rows << m_columns << columns << itemWidth;
-
+    //kDebug() << "new size set" << m_size << m_rows << m_columns << columns << itemWidth;
+    setMinimumSize(m_size);
+    resize(m_size);
     if (m_desktopLayoutOwner && columns != m_columns) {
         // must own manager selection before setting global desktop layout
         m_columns = columns;

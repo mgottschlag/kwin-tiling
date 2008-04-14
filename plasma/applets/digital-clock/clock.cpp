@@ -96,11 +96,11 @@ void Clock::init()
     QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
     QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
     setMinimumSize(metrics.size(Qt::TextSingleLine, timeString));
-
+    
     m_toolTipIcon = KIcon("chronometer").pixmap(IconSize(KIconLoader::Desktop));
 
     dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
-    connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(updateColors()));      
+    connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(updateColors()));    
 }
 
 void Clock::updateToolTipContent() {

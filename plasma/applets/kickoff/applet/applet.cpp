@@ -104,6 +104,8 @@ void LauncherApplet::init()
     connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
     resize(IconSize(KIconLoader::Desktop),IconSize(KIconLoader::Desktop));
     d->icon->resize(geometry().size());
+    setSizePolicy(QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed));
+
 }
 
 void LauncherApplet::constraintsUpdated(Plasma::Constraints constraints)

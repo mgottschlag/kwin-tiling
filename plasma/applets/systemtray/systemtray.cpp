@@ -30,6 +30,7 @@ SystemTray::SystemTray(QObject *parent, const QVariantList &arguments)
     : Plasma::Applet(parent, arguments)
 {
     resize(40,60);
+    setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
 }
 
 SystemTray::~SystemTray()
