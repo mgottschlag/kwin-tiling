@@ -85,7 +85,7 @@ class DeviceNotifier : public Plasma::Applet
         void configAccepted();
         void slotOnItemClicked(const QModelIndex &);
         void onTimerExpired();
-	void onClickNotifier();
+        void onClickNotifier();
     private slots:
         void storageEjectDone(Solid::ErrorType error, QVariant errorData);
         void storageTeardownDone(Solid::ErrorType error, QVariant errorData);
@@ -99,9 +99,9 @@ class DeviceNotifier : public Plasma::Applet
         QStandardItemModel *m_hotplugModel;
 
         Plasma::Dialog *m_widget;
-	Plasma::Icon *m_icon;
-	QGraphicsLinearLayout *m_layout;
-	QGraphicsProxyWidget * m_proxy;
+        Plasma::Icon *m_icon;
+        QGraphicsLinearLayout *m_layout;
+        QGraphicsProxyWidget * m_proxy;
         KDialog *m_dialog;
         int m_displayTime;
         int m_numberItems;
@@ -110,7 +110,7 @@ class DeviceNotifier : public Plasma::Applet
         QTimer *m_timer;
         bool isNotificationEnabled;
 
-	/// Designer Config file
+        /// Designer Config file
         Ui::solidNotifierConfig ui;
 
 };
