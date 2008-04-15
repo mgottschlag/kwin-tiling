@@ -138,6 +138,9 @@ void Panel::updateBorders(const QRect &geom)
             bFlags ^= SvgPanel::DrawRightBorder;
             rightWidth = 0;
         }
+
+        //hardcoded extra margin for the toolbox right now
+        rightWidth += 20;
         //kDebug() << "top/bottom: Width:" << width << ", height:" << height;
     } else if (loc == LeftEdge || loc == RightEdge) {
         QRect r = QApplication::desktop()->screenGeometry(s);
@@ -157,6 +160,9 @@ void Panel::updateBorders(const QRect &geom)
             bFlags ^= SvgPanel::DrawBottomBorder;
             bottomHeight = 0;
         }
+
+        //hardcoded extra margin for the toolbox right now
+        bottomHeight += 20;
         //kDebug() << "left/right: Width:" << width << ", height:" << height;
     } else {
         kDebug() << "no location!?";
