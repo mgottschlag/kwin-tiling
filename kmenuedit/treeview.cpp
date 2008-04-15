@@ -1585,7 +1585,7 @@ void TreeView::findServiceShortcut(const KShortcut&cut, KService::Ptr &service)
 
 void TreeView::restoreMenuSystem()
 {
-    if ( KMessageBox::warningYesNo( this, i18n( "Do you want to restore system menu? You will remove all custom menu." ) )==KMessageBox::No )
+    if ( KMessageBox::warningYesNo( this, i18n( "Do you want to restore the system menu? Warning: This will remove all custom menus." ) )==KMessageBox::No )
         return;
     QString kmenueditfile = KStandardDirs::locateLocal("xdgconf-menu", "applications-kmenuedit.menu");
     if ( QFile::exists( kmenueditfile ) )

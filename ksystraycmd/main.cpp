@@ -47,7 +47,7 @@ int main( int argc, char *argv[] )
   options.add("tooltip <text>", ki18n( "Sets the initial tooltip for the tray icon" ));
   options.add("keeprunning", ki18n( "Keep the tray icon even if the client exits. This option\n"
 			 "has no effect unless startonshow is specified." ));
-  options.add("ownicon", ki18n( "Do not use window's icon in systray, but ksystraycmd one's\n"
+  options.add("ownicon", ki18n( "Use ksystraycmd's icon instead of the window's icon in the systray\n"
              "(should be used with --icon to specify ksystraycmd icon)" ));
   options.add("ontop", ki18n( "Try to keep the window above other windows"));
   options.add("quitonhide", ki18n( "Quit the client when we are told to hide the window.\n"
