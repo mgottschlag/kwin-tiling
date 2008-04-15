@@ -56,6 +56,7 @@ Comment[km]=អនុញ្ញាត​ឲ្យ​អ្នក​ប្រើ�
 Comment[pt]=Permite ao utilizador bloquear o ecrã ou terminar a sessão
 Comment[pt_BR]=Permite que o usuário bloqueie a tela ou termine a sessão
 Comment[th]=ให้ผู้ใช้ได้ทำการล็อคหน้าจอหรือจบวาระงาน
+Comment[zh_CN]=让用户锁定屏幕或结束会话
 Comment[zh_TW]=讓使用者鎖定螢幕或結束工作階段
 Icon=system-log-out
 Type=Service

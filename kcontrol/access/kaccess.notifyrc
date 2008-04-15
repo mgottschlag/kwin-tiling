@@ -124,6 +124,7 @@ Comment[km]=គ្រាប់ចុច​កែប្រែ (ឧ. ប្ដូ�
 Comment[pt]=Uma tecla modificadora (p.ex., o Shift ou o Control) mudou o seu estado e ficou agora activa
 Comment[pt_BR]=Uma tecla modificadora (p.ex. Shift ou Ctrl) teve seu estado alterado e agora está ativa
 Comment[th]=ปุ่มแปลงหน้าที่ (เช่น Shift หรือ Ctrl) มีการเปลี่ยนสถานะของตัวมัน และตอนนี้กำลังทำงานอยู่
+Comment[zh_CN]=修饰键(如 Shift 或 Ctrl)更改了其状态，现已激活
 Comment[zh_TW]=一個組合鍵（如 Shift 或 Ctrl 等）已改變了它的狀態成為啟動
 Sound=KDE-Sys-Special.ogg
 
@@ -192,6 +193,7 @@ Comment[km]=គ្រាប់​ចុច​កែប្រែ (ឧ. ប្ដ�
 Comment[pt]=Uma tecla modificadora (p.ex., o Shift ou o Control) mudou o seu estado e ficou agora inactiva
 Comment[pt_BR]=Uma tecla modificadora (p.ex. Shift ou Ctrl) teve seu estado alterado e agora está inativa
 Comment[th]=ปุ่มแปลงหน้าที่ (เช่น Shift หรือ Ctrl) มีการเปลี่ยนสถานะของตัวมัน และตอนนี้ได้ปิดการทำงาน
+Comment[zh_CN]=修饰键(如 Shift 或 Ctrl)更改了其状态，现未激活
 Comment[zh_TW]=一個組合鍵（如 Shift 或 Ctrl 等）已改變了它的狀態成為放開
 Sound=KDE-Sys-Special.ogg
 
@@ -260,6 +262,7 @@ Comment[km]=គ្រាប់​ចុច​កែប្រែ (ឧ. ប្ដ�
 Comment[pt]=Uma tecla modificadora (p.ex., o Shift ou o Control) foi bloqueada e ficou agora activa para todas as combinações de teclas seguintes
 Comment[pt_BR]=Uma tecla modificadora (p.ex. Shift ou Ctrl) foi bloqueada e agora está ativa, para todos os pressionamentos de tecla seguintes
 Comment[th]=ปุ่มเปลี่ยนหน้าที่ (เช่น Shift หรือ Cntrl) ถูกล็อค และขณะนี้อยู่ในสถานะทำงาน สำหรับการกดแป้นต่อจากนี้
+Comment[zh_CN]=修饰键(如 Shift 或 Ctrl)已被锁定，现在将适用于后续按键
 Comment[zh_TW]=一個組合鍵（如 Shift 或 Ctrl 等）已被鎖定，現在再按任何鍵都視為快捷鍵組合
 Sound=KDE-Sys-Special.ogg
 
@@ -328,6 +331,7 @@ Comment[km]=គ្រាប់ចុច​ចាក់សោ (ឧ. ប្ដូ�
 Comment[pt]=Uma tecla de bloqueio (p.ex., a Caps Lock ou a Num Lock) alterou o seu estado e ficou agora activa
 Comment[pt_BR]=Uma tecla de bloqueio (p.ex. Caps Lock ou Num Lock) teve seu estado alterado e agora está ativa
 Comment[th]=ปุ่มล็อค (เช่น Caps Lock หรือ Num Lock) ได้มีการเปลี่ยนสถานะของมันและขณะนี้กำลังทำงานอยู่
+Comment[zh_CN]=锁定键(如 Caps Lock 或 Num Lock)更改了其状态，现已激活
 Comment[zh_TW]=一個鎖定鍵（如 CapsLock 或 NumLock）已改變它的狀態為啟用
 Sound=KDE-Sys-Special.ogg
 
@@ -396,6 +400,7 @@ Comment[km]=គ្រាប់​ចុច​ចាក់​សោ (ឧ. ប្�
 Comment[pt]=Uma tecla de bloqueio (p.ex., a Caps Lock ou a Num Lock) alterou o seu estado e ficou agora inactiva
 Comment[pt_BR]=Uma tecla de bloqueio (p.ex. Caps Lock ou Num Lock) teve seu estado alterado e agora está inativa
 Comment[th]=ปุ่มล็อค (เช่น Caps Lock หรือ Num Lock) ได้มีการเปลี่ยนสถานะของมันและขณะนี้ได้ปิดการทำงาน
+Comment[zh_CN]=锁定键(如 Caps Lock 或 Num Lock)更改了其状态，现未激活
 Comment[zh_TW]=一個鎖定鍵（如 CapsLock 或 NumLock）已改變它的狀態成為未啟用
 Sound=KDE-Sys-Special.ogg
 

@@ -9,6 +9,7 @@ Name[km]=កម្មវិធីរត់​បន្ទាត់​ពាក�
 Name[pt]=Execução da linha de comandos
 Name[pt_BR]=Execução de linha de comando
 Name[th]=ตัวเรียกคำสั่งบนบรรทัดคำสั่งให้ทำงาน
+Name[zh_CN]=命令行运行器
 Name[zh_TW]=命令列執行者
 Comment=Executes shell commands
 Comment[ca]=Executa ordres de l'intèrpret d'ordres

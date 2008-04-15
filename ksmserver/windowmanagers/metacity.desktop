@@ -1,4 +1,7 @@
 [Desktop Entry]
 Name=Metacity (GNOME)
+Name[gu]=મેટાસિટી (GNOME)
+Name[zh_CN]=Metacity(GNOME)
+Name[zh_TW]=Metacity（GNOME）
 Exec=metacity
 TryExec=metacity
