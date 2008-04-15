@@ -56,7 +56,7 @@ void Menuentry_action::execute()
 const QString Menuentry_action::description() const
     {
     (void) service();
-    return i18n( "Menuentry : " ) + (_service ? _service->name() : QString());
+    return i18n( "Menu entry: " ) + (_service ? _service->name() : QString());
     }
 
 

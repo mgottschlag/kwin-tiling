@@ -452,7 +452,7 @@ KGVerify::vrfMsgBox( QWidget *parent, const QString &user,
                      QMessageBox::Icon type, const QString &mesg )
 {
 	KFMsgBox::box( parent, type, user.isEmpty() ?
-	               mesg : i18n("Logging in %1 ...\n\n", user ) + mesg );
+	               mesg : i18n("Logging in %1...\n\n", user ) + mesg );
 }
 
 static const char *msgs[]= {
@@ -1016,8 +1016,8 @@ KGStdVerify::updateStatus()
 		failedLabelState = nfls;
 		QPalette p;
 		if (nfls < 0) {
-			failedLabel->setText( i18np( "Automatic login in 1 second ...",
-			                             "Automatic login in %1 seconds ...",
+			failedLabel->setText( i18np( "Automatic login in 1 second...",
+			                             "Automatic login in %1 seconds...",
 			                             timedLeft ) );
 		} else {
 			switch (nfls) {

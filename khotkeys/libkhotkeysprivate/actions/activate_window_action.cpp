@@ -58,7 +58,7 @@ void Activate_window_action::execute()
 
 const QString Activate_window_action::description() const
     {
-    return i18n( "Activate window : " ) + window()->comment();
+    return i18n( "Activate window: " ) + window()->comment();
     }
 
 Action* Activate_window_action::copy( Action_data* data_P ) const

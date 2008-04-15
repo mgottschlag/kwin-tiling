@@ -111,7 +111,7 @@ void Command_url_action::execute()
 
 const QString Command_url_action::description() const
     {
-    return i18n( "Command/URL : " ) + command_url();
+    return i18n( "Command/URL: " ) + command_url();
     }
 
 Action* Command_url_action::copy( Action_data* data_P ) const

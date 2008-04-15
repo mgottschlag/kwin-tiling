@@ -89,7 +89,7 @@
              </sizepolicy>
             </property>
             <property name="toolTip" >
-             <string>prefer the selected backend</string>
+             <string>Prefer the selected backend.</string>
             </property>
             <property name="text" >
              <string>move up</string>
@@ -113,7 +113,7 @@
              </sizepolicy>
             </property>
             <property name="toolTip" >
-             <string>no preference for the selected backend</string>
+             <string>No preference for the selected backend.</string>
             </property>
             <property name="text" >
              <string>move down</string>
