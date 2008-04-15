@@ -200,7 +200,7 @@ void WindowTaskItem::setGeometry(const QRectF& geometry)
 
 void WindowTaskItem::publishIconGeometry()
 {
-    QGraphicsView *parentView;
+    QGraphicsView *parentView = 0L;
     // The following was taken from Plasma::Applet, it doesn't make sense to make the item an applet, and this was the easiest way around it.
     foreach (QGraphicsView *view, scene()->views()) {
         if (view->sceneRect().intersects(sceneBoundingRect()) ||
