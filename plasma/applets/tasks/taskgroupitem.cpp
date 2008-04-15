@@ -49,11 +49,12 @@ TaskGroupItem::TaskGroupItem(QGraphicsItem *parent, QObject *parentObject)
    //m_layout->setMargin(0);
    m_layout->setSpacing(5);
    //m_layout->setMultiRow(true);
+    setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum,QSizePolicy::DefaultType);
 }
 
 QSizeF TaskGroupItem::maximumSize() const
 {
-    return Applet::maximumSize();
+    return QGraphicsWidget::maximumSize();
 }
 
 void TaskGroupItem::setAllowSubGroups(bool allow)
@@ -316,12 +317,12 @@ void TaskGroupItem::timerEvent(QTimerEvent *event)
 
 void TaskGroupItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    Applet::hoverEnterEvent(event);
+    QGraphicsWidget::hoverEnterEvent(event);
 }
 
 void TaskGroupItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    Applet::hoverLeaveEvent(event);
+    QGraphicsWidget::hoverLeaveEvent(event);
 }
 
 #include "taskgroupitem.moc"

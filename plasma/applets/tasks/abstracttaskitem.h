@@ -25,11 +25,11 @@
 #include <QTextLayout>
 #include <QTime>
 #include <QGraphicsLinearLayout>
+#include <QGraphicsWidget>
 
 class QTimeLine;
 
 // Plasma
-#include <plasma/applet.h>
 #include <plasma/phase.h>
 
 namespace Plasma
@@ -52,7 +52,7 @@ namespace Plasma
  * setText() and setIcon() methods.  They can also set flags
  * to indicate the task's state using setTaskFlags().
  */
-class AbstractTaskItem : public Plasma::Applet
+class AbstractTaskItem : public QGraphicsWidget
 {
     Q_OBJECT
 
@@ -119,10 +119,6 @@ public:
      */
     virtual void close();
 
-    // reimplemented from LayoutItem
-    virtual QSizeF maximumSize() const;
-
-
 signals:
     void activated(AbstractTaskItem *);
 
@@ -181,6 +177,7 @@ protected:
 
 private slots:
     void animationUpdate(qreal progress);
+    void slotUpdate();
 
 private:
     static void setupBackgroundSvg(QObject *parent);

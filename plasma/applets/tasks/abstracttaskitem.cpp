@@ -46,18 +46,19 @@ bool AbstractTaskItem::s_backgroundCreated = false;
 Plasma::Svg* AbstractTaskItem::s_taskItemBackground = 0;
 
 AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
-    : Applet(parent,0),
+    : QGraphicsWidget(parent),
       _flags(0),
       m_animId(-1),
       m_alpha(1),
       m_fadeIn(true),
       m_updateTimerId(-1)
 {
+    setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding,QSizePolicy::DefaultType);
     setAcceptsHoverEvents(true);
     setupBackgroundSvg(parentObject);
     //setAcceptDrops(true);
     if (s_taskItemBackground) {
-        connect(s_taskItemBackground, SIGNAL(repaintNeeded()), this, SLOT(update()));
+        connect(s_taskItemBackground, SIGNAL(repaintNeeded()), this, SLOT(slotUpdate()));
     }
 }
 
@@ -113,7 +114,7 @@ void AbstractTaskItem::setText(const QString &text)
 
     //let some place for at least the icon and the first character
     QFontMetrics fm(KGlobalSettings::taskbarFont());
-    setMinimumSize(QSizeF(fm.height() + fm.charWidth(text,0) + IconTextSpacing + 2, fm.height()));
+//     setMinimumSize(QSizeF(fm.height() + fm.charWidth(text,0) + IconTextSpacing + 2, fm.height()));
 
     TaskGroupItem *group = qobject_cast<TaskGroupItem*>(parent());
     if (group) {
@@ -172,10 +173,15 @@ AbstractTaskItem::TaskFlags AbstractTaskItem::taskFlags() const
     return _flags;
 }
 
+void AbstractTaskItem::slotUpdate()
+{
+    QGraphicsItem::update();
+}
+
 void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     if (taskFlags() & TaskHasFocus) {
-        Applet::hoverEnterEvent(event);
+        QGraphicsWidget::hoverEnterEvent(event);
         return;
     }
 
@@ -190,13 +196,13 @@ void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
                                                       Plasma::Phase::LinearCurve, this,
                                                       "animationUpdate");
 
-    Applet::hoverEnterEvent(event);
+    QGraphicsWidget::hoverEnterEvent(event);
 }
 
 void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     if (taskFlags() & TaskHasFocus) {
-        Applet::hoverLeaveEvent(event);
+        QGraphicsWidget::hoverLeaveEvent(event);
         return;
     }
 
@@ -211,24 +217,7 @@ void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
                                                       Plasma::Phase::LinearCurve, this,
                                                       "animationUpdate");
 
-    Applet::hoverLeaveEvent(event);
-}
-
-QSizeF AbstractTaskItem::maximumSize() const
-{
-    // A fixed maximum size is used instead of calculating the content size
-    // because overly-long task items make navigating around the task bar
-    // more difficult
-    QSizeF size(200, 200);
-#if 0
-    //FIXME HARDCODE
-    QSizeF sz = QSizeF(MaxTaskIconSize + QFontMetricsF(QApplication::font()).width(text() + IconTextSpacing),
-                  200);
-#endif
-
-   // kDebug() << "Task max size hint:" << sz;
-
-    return size;
+    QGraphicsWidget::hoverLeaveEvent(event);
 }
 
 void AbstractTaskItem::setIcon(const QIcon &icon)
@@ -285,7 +274,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
                     s_taskItemBackground->paint(&focusPainter, option->rect, "focus");
                 }
                 painter->drawPixmap(option->rect, focus);
-            } else { 
+            } else {
                 //Draw task background from theme svg "hover" element
                 QPixmap hover(option->rect.width(), option->rect.height());
                 hover.fill(Qt::transparent);
@@ -471,7 +460,7 @@ QTextOption AbstractTaskItem::textOption() const
 QRectF AbstractTaskItem::iconRect() const
 {
     QSizeF bounds = boundingRect().size();
-    //leave enough space for the text. usefull in vertical panel   
+    //leave enough space for the text. usefull in vertical panel
     bounds.setWidth(qMax(bounds.width() / 3, qMin(minimumSize().height(), bounds.width())));
     QSize iconSize = _icon.actualSize(bounds.toSize());
 
@@ -546,5 +535,5 @@ void AbstractTaskItem::close()
 {
     finished();
 }
- 
+
 #include "abstracttaskitem.moc"

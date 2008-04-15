@@ -41,11 +41,12 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
 {
     setHasConfigurationInterface(true);
     setAspectRatioMode(Qt::IgnoreAspectRatio);
- 
+
     m_screenTimer.setSingleShot(true);
     m_screenTimer.setInterval(300);
     connect(&m_screenTimer, SIGNAL(timeout()), this, SLOT(checkScreenChange()));
-    connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(themeRefresh()));      
+    connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(themeRefresh()));
+    setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum,QSizePolicy::DefaultType);
 }
 
 Tasks::~Tasks()
@@ -64,10 +65,8 @@ void Tasks::init()
     }
     setLayout(layout);
 
-    resize(500, 48);
-
     m_rootTaskGroup = new TaskGroupItem(this,this);
-    m_rootTaskGroup->resize(geometry().size());
+//     m_rootTaskGroup->resize(geometry().size());
     connect(m_rootTaskGroup, SIGNAL(activated(AbstractTaskItem*)),
             this, SLOT(launchActivated()));
     layout->addItem(m_rootTaskGroup);
@@ -210,6 +209,9 @@ void Tasks::constraintsUpdated(Plasma::Constraints constraints)
                 windowTaskItem->publishIconGeometry();
             }
         }
+    }
+    else if (constraints & Plasma::SizeConstraint) {
+        m_rootTaskGroup->resize(effectiveSizeHint(Qt::MaximumSize));
     }
 }
 

@@ -200,11 +200,24 @@ void WindowTaskItem::setGeometry(const QRectF& geometry)
 
 void WindowTaskItem::publishIconGeometry()
 {
-    QGraphicsView *parentView = view();
+    QGraphicsView *parentView;
+    // The following was taken from Plasma::Applet, it doesn't make sense to make the item an applet, and this was the easiest way around it.
+    foreach (QGraphicsView *view, scene()->views()) {
+        if (view->sceneRect().intersects(sceneBoundingRect()) ||
+            view->sceneRect().contains(scenePos())) {
+            parentView = view;
+        }
+    }
     if (!parentView || !_task) {
         return;
     }
-    QRect rect = mapToView(parentView, boundingRect());
+    if( !boundingRect().isValid() )
+        return;
+    QPolygonF sceneRect = mapToScene(boundingRect());
+    QPolygonF viewPgon = parentView->mapFromScene(sceneRect);
+    QRectF viewRect = viewPgon.boundingRect();
+
+    QRect rect = parentView->mapFromScene(mapToScene(boundingRect())).boundingRect().adjusted(0, 0, 1, 1);
     rect.moveTopLeft(parentView->mapToGlobal(rect.topLeft()));
     _task->publishIconGeometry(rect);
 }

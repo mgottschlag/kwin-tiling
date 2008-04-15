@@ -111,7 +111,7 @@ void DesktopCorona::loadDefaultSetup()
 
     // some default applets to get a usable UI
     panel->addApplet("launcher");
-    //panel->addApplet("tasks");
+    panel->addApplet("tasks");
     panel->addApplet("pager");
     panel->addApplet("systemtray");
     panel->addApplet("notifier");
@@ -137,7 +137,7 @@ void DesktopCorona::screenResized(int screen)
                 c->setScreen(screen);
             }
         }
-    
+
         checkScreens(); // ensure we have containments for every screen
     } else {
         m_numScreens = numScreens;
