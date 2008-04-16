@@ -84,7 +84,7 @@ void Clock::init()
     if (m_useCustomColor) {
         m_plainClockColor = cg.readEntry("plainClockColor", m_plainClockColor);
     } else {
-        m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color();
+        m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colorScheme()).foreground().color();
     }
 
     QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
@@ -249,7 +249,7 @@ void Clock::configAccepted()
     if (m_useCustomColor) {
         m_plainClockColor = ui.plainClockColor->color();
     } else {
-        m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color();
+        m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colorScheme()).foreground().color();
     }
 
     m_plainClockFont.setBold(ui.plainClockFontBold->checkState() == Qt::Checked);
@@ -379,7 +379,7 @@ Plasma::IntervalAlignment Clock::intervalAlignment() const
 void Clock::updateColors()
 {
     if (!m_useCustomColor) {
-        m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color();
+        m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colorScheme()).foreground().color();
         update();
     }
 }

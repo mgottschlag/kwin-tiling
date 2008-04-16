@@ -73,7 +73,7 @@ void AbstractTaskItem::setupBackgroundSvg(QObject *parent)
 
     //TODO: we should probably reset this when the theme changes
     s_backgroundCreated = true;
-    QString tasksThemePath = Plasma::Theme::self()->image("widgets/tasks");
+    QString tasksThemePath = Plasma::Theme::self()->imagePath("widgets/tasks");
     s_taskItemBackground = 0;
     if (!tasksThemePath.isEmpty()) {
         while (parent && parent->parent()) {
@@ -237,7 +237,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
 
     const qreal hoverAlpha = 0.4;
 
-    KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors());
+    KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colorScheme());
 
     if (taskFlags() & TaskWantsAttention) {
         if (s_taskItemBackground) {

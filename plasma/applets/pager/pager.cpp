@@ -560,7 +560,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     Q_UNUSED( option );
     Q_UNUSED( contentsRect );
 
-    KColorScheme plasmaColorTheme = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors());
+    KColorScheme plasmaColorTheme = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colorScheme());
     painter->setFont(KGlobalSettings::taskbarFont());
 
     // Desktop background

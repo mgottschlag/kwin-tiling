@@ -94,7 +94,7 @@ void DeviceNotifier::init()
 
     m_hotplugModel = new QStandardItemModel(this);
 
-    KColorScheme colorTheme = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors());
+    KColorScheme colorTheme = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colorScheme());
     QLabel *label = new QLabel(i18n("<font color=\"%1\">Recently plugged devices:</font>",
                             colorTheme.foreground(KColorScheme::NormalText).color().name()));
     QLabel *icon = new QLabel();
