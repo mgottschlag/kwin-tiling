@@ -57,7 +57,7 @@ int main(void)
 }
 " PAM_MESSAGE_CONST)
 	endif (NOT DEFINED PAM_MESSAGE_CONST)
-	set(PAM_MESSAGE_CONST ${PAM_MESSAGE_CONST} CACHE BOOL "PAM expects a conversation function with const pam_message")
+	set(PAM_MESSAGE_CONST ${PAM_MESSAGE_CONST})
 
 endif (PAM_INCLUDE_DIR AND PAM_LIBRARY)
 
