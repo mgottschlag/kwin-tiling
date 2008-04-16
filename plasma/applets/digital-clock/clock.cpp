@@ -286,8 +286,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     Q_UNUSED(option);
 
     if (m_time.isValid() && m_date.isValid()) {
-        p->setFont(KGlobalSettings::smallestReadableFont());
-
         p->setPen(QPen(m_plainClockColor));
         p->setRenderHint(QPainter::SmoothPixmapTransform);
         p->setRenderHint(QPainter::Antialiasing);
@@ -331,7 +329,8 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             }
 
             // Check sizes
-            QRect dateRect = preparePainter(p, geometry().toRect(), KGlobalSettings::smallestReadableFont(), dateString);
+            m_plainClockFont.setPointSizeF(KGlobalSettings::smallestReadableFont().pointSize());
+            QRect dateRect = preparePainter(p, geometry().toRect(), m_plainClockFont, dateString);
             int subtitleHeight = dateRect.height();
 
             p->drawText(QRectF(0,
@@ -352,9 +351,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         }
 
         QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
-
-        m_plainClockFont.setBold(m_plainClockFontBold);
-        m_plainClockFont.setItalic(m_plainClockFontItalic);
 
         // Choose a relatively big font size to start with
         m_plainClockFont.setPointSizeF(qMax(timeRect.height(), KGlobalSettings::smallestReadableFont().pointSize()));
