@@ -44,11 +44,10 @@ public:
     void constraintsUpdated(Plasma::Constraints constraints);
 
 private slots:
-    void updateSize();
+    void updateWidgetGeometry();
 
 private:
     void updateWidgetOrientation();
-    void updateWidgetGeometry();
 
     QGraphicsProxyWidget *m_proxyWidget;
     // The parent widget might delete this so we guard it

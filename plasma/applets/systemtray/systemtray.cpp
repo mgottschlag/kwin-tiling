@@ -33,7 +33,7 @@ SystemTray::SystemTray(QObject *parent, const QVariantList &arguments)
     m_systemTrayWidget = new SystemTrayWidget(0);
     m_proxyWidget->setWidget(m_systemTrayWidget);
     connect(m_systemTrayWidget, SIGNAL(sizeShouldChange()),
-            this, SLOT(updateSize()));
+            this, SLOT(updateWidgetGeometry()));
     setPreferredSize(m_systemTrayWidget->size());
     updateWidgetOrientation();
     m_systemTrayWidget->setVisible(true);
@@ -54,12 +54,6 @@ void SystemTray::constraintsUpdated(Plasma::Constraints constraints)
     if (constraints & (Plasma::LocationConstraint | Plasma::FormFactorConstraint)) {
         updateWidgetOrientation();
     }
-}
-
-void SystemTray::updateSize()
-{
-    // contentSizeHint() will return a new size so let the layout know
-    updateGeometry();
 }
 
 void SystemTray::updateWidgetOrientation()
