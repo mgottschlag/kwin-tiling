@@ -50,8 +50,6 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_plainClockFont(KGlobalSettings::generalFont()),
       m_useCustomColor(false),
       m_plainClockColor(),
-      m_plainClockFontBold(false),
-      m_plainClockFontItalic(false),
       m_showDate(false),
       m_showYear(false),
       m_showDay(false),
@@ -88,10 +86,6 @@ void Clock::init()
     } else {
         m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color();
     }
-    m_plainClockFontBold = cg.readEntry("plainClockFontBold", true);
-    m_plainClockFontItalic = cg.readEntry("plainClockFontItalic", false);
-    m_plainClockFont.setBold(m_plainClockFontBold);
-    m_plainClockFont.setItalic(m_plainClockFontItalic);
 
     QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
     QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
@@ -184,8 +178,8 @@ void Clock::createConfigurationInterface(KConfigDialog *parent)
     ui.showDay->setChecked(m_showDay);
     ui.secondsCheckbox->setChecked(m_showSeconds);
     ui.showTimezone->setChecked(m_showTimezone);
-    ui.plainClockFontBold->setChecked(m_plainClockFontBold);
-    ui.plainClockFontItalic->setChecked(m_plainClockFontItalic);
+    ui.plainClockFontBold->setChecked(m_plainClockFont.bold());
+    ui.plainClockFontItalic->setChecked(m_plainClockFont.italic());
     ui.plainClockFont->setCurrentFont(m_plainClockFont);
     ui.useCustomColor->setChecked(m_useCustomColor);
     ui.plainClockColor->setColor(m_plainClockColor);
@@ -257,17 +251,13 @@ void Clock::configAccepted()
     } else {
         m_plainClockColor = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors()).foreground().color();
     }
-    m_plainClockFontBold = ui.plainClockFontBold->checkState() == Qt::Checked;
-    m_plainClockFontItalic = ui.plainClockFontItalic->checkState() == Qt::Checked;
 
-    m_plainClockFont.setBold(m_plainClockFontBold);
-    m_plainClockFont.setItalic(m_plainClockFontItalic);
+    m_plainClockFont.setBold(ui.plainClockFontBold->checkState() == Qt::Checked);
+    m_plainClockFont.setItalic(ui.plainClockFontItalic->checkState() == Qt::Checked);
 
     cg.writeEntry("plainClockFont", m_plainClockFont);
     cg.writeEntry("useCustomColor", m_useCustomColor);
     cg.writeEntry("plainClockColor", m_plainClockColor);
-    cg.writeEntry("plainClockFontBold", m_plainClockFontBold);
-    cg.writeEntry("plainClockFontItalic", m_plainClockFontItalic);
 
     update();
     emit configNeedsSaving();
@@ -283,8 +273,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     Q_UNUSED(option);
 
     if (m_time.isValid() && m_date.isValid()) {
-        p->setFont(KGlobalSettings::smallestReadableFont());
-
         p->setPen(QPen(m_plainClockColor));
         p->setRenderHint(QPainter::SmoothPixmapTransform);
         p->setRenderHint(QPainter::Antialiasing);
@@ -349,9 +337,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         }
 
         QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
-
-        m_plainClockFont.setBold(m_plainClockFontBold);
-        m_plainClockFont.setItalic(m_plainClockFontItalic);
 
         // Choose a relatively big font size to start with
         m_plainClockFont.setPointSizeF(qMax(timeRect.height(), KGlobalSettings::smallestReadableFont().pointSize()));

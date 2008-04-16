@@ -65,8 +65,6 @@ class Clock : public Plasma::Applet
         QFont m_plainClockFont;
         bool m_useCustomColor;
         QColor m_plainClockColor;
-        bool m_plainClockFontBold;
-        bool m_plainClockFontItalic;
 
         bool m_showDate;
         bool m_showYear;
