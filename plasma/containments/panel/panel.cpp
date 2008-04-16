@@ -54,7 +54,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
       m_lastViewGeom()
 {
     m_background = new Plasma::PanelSvg("widgets/panel-background", this);
-    m_background->setBorderFlags(Plasma::PanelSvg::DrawAllBorders);
+    m_background->setEnabledBorders(Plasma::PanelSvg::AllBorders);
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(backgroundChanged()));
     setZValue(150);
     setContainmentType(Containment::PanelContainment);
@@ -106,7 +106,7 @@ void Panel::backgroundChanged()
 void Panel::updateBorders(const QRect &geom)
 {
     Plasma::Location loc = location();
-    PanelSvg::BorderFlags bFlags = PanelSvg::DrawAllBorders;
+    PanelSvg::EnabledBorders enabledBorders = PanelSvg::AllBorders;
 
     int s = screen();
     //kDebug() << loc << s << formFactor() << geometry();
@@ -123,19 +123,19 @@ void Panel::updateBorders(const QRect &geom)
         QRect r = QApplication::desktop()->screenGeometry(s);
 
         if (loc == BottomEdge) {
-            bFlags ^= PanelSvg::DrawBottomBorder;
+            enabledBorders ^= PanelSvg::BottomBorder;
             bottomHeight = 0;
         } else {
-            bFlags ^= PanelSvg::DrawTopBorder;
+            enabledBorders ^= PanelSvg::TopBorder;
             topHeight = 0;
         }
 
         if (geom.x() <= r.x()) {
-            bFlags ^= PanelSvg::DrawLeftBorder;
+            enabledBorders ^= PanelSvg::LeftBorder;
             leftWidth = 0;
         }
         if (geom.right() >= r.right()) {
-            bFlags ^= PanelSvg::DrawRightBorder;
+            enabledBorders ^= PanelSvg::RightBorder;
             rightWidth = 0;
         }
 
@@ -146,18 +146,18 @@ void Panel::updateBorders(const QRect &geom)
         QRect r = QApplication::desktop()->screenGeometry(s);
 
         if (loc == RightEdge) {
-            bFlags ^= PanelSvg::DrawRightBorder;
+            enabledBorders ^= PanelSvg::RightBorder;
             rightWidth = 0;
         } else {
-            bFlags ^= PanelSvg::DrawLeftBorder;
+            enabledBorders ^= PanelSvg::LeftBorder;
             leftWidth = 0;
         }
         if (geom.y() <= r.y()) {
-            bFlags ^= PanelSvg::DrawTopBorder;
+            enabledBorders ^= PanelSvg::TopBorder;
             topHeight = 0;
         }
         if (geom.bottom() >= r.bottom()) {
-            bFlags ^= PanelSvg::DrawBottomBorder;
+            enabledBorders ^= PanelSvg::BottomBorder;
             bottomHeight = 0;
         }
 
@@ -174,7 +174,7 @@ void Panel::updateBorders(const QRect &geom)
         layout()->invalidate();
     }
 
-    m_background->setBorderFlags(bFlags);
+    m_background->setEnabledBorders(enabledBorders);
     update();
 }
 
@@ -184,7 +184,7 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
 
     if (constraints & Plasma::LocationConstraint) {
         setFormFactorFromLocation(location());
-        m_background->setLocation(location());
+        m_background->setElementPrefix(location());
     }
 
     if (constraints & Plasma::SizeConstraint) {

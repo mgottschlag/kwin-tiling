@@ -93,7 +93,7 @@ void ThemeModel::reload()
         m_themes << name;
 
         Plasma::PanelSvg *svg = new Plasma::PanelSvg(themeRoot + "/widgets/background.svg", this );
-        svg->setBorderFlags(Plasma::PanelSvg::DrawAllBorders);
+        svg->setEnabledBorders(Plasma::PanelSvg::AllBorders);
         m_svgs.append( svg );
     }
 }
@@ -176,10 +176,9 @@ void ThemeDelegate::paint(QPainter *painter,
     // draw image
     Plasma::PanelSvg *svg = static_cast<Plasma::PanelSvg *>(index.model()->data(index, Qt::UserRole).value<void *>());
     svg->resize(QSize(option.rect.width()-(2*MARGIN), 100-(2*MARGIN)));
-    svg->setPos(QPoint(option.rect.left() + MARGIN, option.rect.top() + MARGIN));
     QRect imgRect = QRect(option.rect.topLeft(), QSize( option.rect.width()-(2*MARGIN), 100-(2*MARGIN) )).
         translated(MARGIN, MARGIN);
-    svg->paint( painter, imgRect );
+    svg->paint( painter, imgRect, QPoint(option.rect.left() + MARGIN, option.rect.top() + MARGIN) );
 
     // draw text
     painter->save();
