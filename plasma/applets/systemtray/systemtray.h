@@ -28,6 +28,7 @@
 
 // Qt
 #include <QPointer>
+#include <QGraphicsProxyWidget>
 
 // Plasma
 #include <plasma/applet.h>
@@ -42,9 +43,6 @@ public:
 
     void constraintsUpdated(Plasma::Constraints constraints);
 
-protected:
-    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-
 private slots:
     void updateSize();
 
@@ -52,6 +50,7 @@ private:
     void updateWidgetOrientation();
     void updateWidgetGeometry();
 
+    QGraphicsProxyWidget *m_proxyWidget;
     // The parent widget might delete this so we guard it
     QPointer<SystemTrayWidget> m_systemTrayWidget;
 };
