@@ -30,7 +30,7 @@ class KIntNumInput;
 
 namespace Plasma
 {
-    class SvgPanel;
+    class PanelSvg;
 }
 
 class Panel : public Plasma::Containment
@@ -76,7 +76,7 @@ private:
      */
     void updateBorders(const QRect &geom);
 
-    Plasma::SvgPanel *m_background;
+    Plasma::PanelSvg *m_background;
     KDialog* m_dialog;
     QComboBox* m_sizeCombo;
     KIntNumInput* m_sizeEdit;

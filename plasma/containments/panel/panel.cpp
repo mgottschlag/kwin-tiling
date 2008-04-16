@@ -38,7 +38,7 @@
 #include <KMessageBox>
 
 #include <plasma/corona.h>
-#include <plasma/svgpanel.h>
+#include <plasma/panelsvg.h>
 #include <plasma/theme.h>
 #include <plasma/view.h>
 
@@ -53,8 +53,8 @@ Panel::Panel(QObject *parent, const QVariantList &args)
       m_currentSize(QSize(QApplication::desktop()->screenGeometry(screen()).width(), 56)),
       m_lastViewGeom()
 {
-    m_background = new Plasma::SvgPanel("widgets/panel-background", this);
-    m_background->setBorderFlags(Plasma::SvgPanel::DrawAllBorders);
+    m_background = new Plasma::PanelSvg("widgets/panel-background", this);
+    m_background->setBorderFlags(Plasma::PanelSvg::DrawAllBorders);
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(backgroundChanged()));
     setZValue(150);
     setContainmentType(Containment::PanelContainment);
@@ -106,7 +106,7 @@ void Panel::backgroundChanged()
 void Panel::updateBorders(const QRect &geom)
 {
     Plasma::Location loc = location();
-    SvgPanel::BorderFlags bFlags = SvgPanel::DrawAllBorders;
+    PanelSvg::BorderFlags bFlags = PanelSvg::DrawAllBorders;
 
     int s = screen();
     //kDebug() << loc << s << formFactor() << geometry();
@@ -123,19 +123,19 @@ void Panel::updateBorders(const QRect &geom)
         QRect r = QApplication::desktop()->screenGeometry(s);
 
         if (loc == BottomEdge) {
-            bFlags ^= SvgPanel::DrawBottomBorder;
+            bFlags ^= PanelSvg::DrawBottomBorder;
             bottomHeight = 0;
         } else {
-            bFlags ^= SvgPanel::DrawTopBorder;
+            bFlags ^= PanelSvg::DrawTopBorder;
             topHeight = 0;
         }
 
         if (geom.x() <= r.x()) {
-            bFlags ^= SvgPanel::DrawLeftBorder;
+            bFlags ^= PanelSvg::DrawLeftBorder;
             leftWidth = 0;
         }
         if (geom.right() >= r.right()) {
-            bFlags ^= SvgPanel::DrawRightBorder;
+            bFlags ^= PanelSvg::DrawRightBorder;
             rightWidth = 0;
         }
 
@@ -146,18 +146,18 @@ void Panel::updateBorders(const QRect &geom)
         QRect r = QApplication::desktop()->screenGeometry(s);
 
         if (loc == RightEdge) {
-            bFlags ^= SvgPanel::DrawRightBorder;
+            bFlags ^= PanelSvg::DrawRightBorder;
             rightWidth = 0;
         } else {
-            bFlags ^= SvgPanel::DrawLeftBorder;
+            bFlags ^= PanelSvg::DrawLeftBorder;
             leftWidth = 0;
         }
         if (geom.y() <= r.y()) {
-            bFlags ^= SvgPanel::DrawTopBorder;
+            bFlags ^= PanelSvg::DrawTopBorder;
             topHeight = 0;
         }
         if (geom.bottom() >= r.bottom()) {
-            bFlags ^= SvgPanel::DrawBottomBorder;
+            bFlags ^= PanelSvg::DrawBottomBorder;
             bottomHeight = 0;
         }
 

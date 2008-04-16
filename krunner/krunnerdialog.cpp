@@ -28,7 +28,7 @@
 #include <KDebug>
 #include <NETRootInfo>
 
-#include <plasma/svgpanel.h>
+#include <plasma/panelsvg.h>
 #include <plasma/theme.h>
 
 #include "krunnerapp.h"
@@ -39,8 +39,8 @@ KRunnerDialog::KRunnerDialog( QWidget * parent, Qt::WindowFlags f )
     : KDialog(parent, f)
 {
     setButtons(0);
-    m_background = new Plasma::SvgPanel("dialogs/krunner", this);
-    m_background->setBorderFlags(Plasma::SvgPanel::DrawAllBorders);
+    m_background = new Plasma::PanelSvg("dialogs/krunner", this);
+    m_background->setBorderFlags(Plasma::PanelSvg::DrawAllBorders);
 
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(update()));
 

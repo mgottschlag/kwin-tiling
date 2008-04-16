@@ -45,7 +45,7 @@
 #ifdef USE_BACKGROUND_PACKAGES
 
 #include <plasma/packagemetadata.h>
-#include <plasma/svgpanel.h>
+#include <plasma/panelsvg.h>
 #include <plasma/package.h>
 #include <plasma/theme.h>
 
@@ -63,7 +63,7 @@ public:
     void reload();
 private:
     QStringList m_themes;
-    QList<Plasma::SvgPanel *> m_svgs;
+    QList<Plasma::PanelSvg *> m_svgs;
 };
 
 ThemeModel::ThemeModel( QObject *parent )
@@ -92,8 +92,8 @@ void ThemeModel::reload()
         QString name = themeRoot.right(themeRoot.length() - themeNameSepIndex - 1);
         m_themes << name;
 
-        Plasma::SvgPanel *svg = new Plasma::SvgPanel(themeRoot + "/widgets/background.svg", this );
-        svg->setBorderFlags(Plasma::SvgPanel::DrawAllBorders);
+        Plasma::PanelSvg *svg = new Plasma::PanelSvg(themeRoot + "/widgets/background.svg", this );
+        svg->setBorderFlags(Plasma::PanelSvg::DrawAllBorders);
         m_svgs.append( svg );
     }
 }
@@ -174,7 +174,7 @@ void ThemeDelegate::paint(QPainter *painter,
     painter->restore();
 
     // draw image
-    Plasma::SvgPanel *svg = static_cast<Plasma::SvgPanel *>(index.model()->data(index, Qt::UserRole).value<void *>());
+    Plasma::PanelSvg *svg = static_cast<Plasma::PanelSvg *>(index.model()->data(index, Qt::UserRole).value<void *>());
     svg->resize(QSize(option.rect.width()-(2*MARGIN), 100-(2*MARGIN)));
     svg->setPos(QPoint(option.rect.left() + MARGIN, option.rect.top() + MARGIN));
     QRect imgRect = QRect(option.rect.topLeft(), QSize( option.rect.width()-(2*MARGIN), 100-(2*MARGIN) )).
