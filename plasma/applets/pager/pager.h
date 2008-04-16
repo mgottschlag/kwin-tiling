@@ -97,7 +97,7 @@ class Pager : public Plasma::Applet
         QRectF m_hoverRect;
         QList<QList<QPair<WId, QRect> > > m_windowRects;
         QList<QRect> m_activeWindows;
-        QList<QAction*> actions;
+        QList<QAction*> m_actions;
         KSelectionOwner* m_desktopLayoutOwner;
 
         // dragging of windows

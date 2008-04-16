@@ -115,13 +115,13 @@ void Pager::constraintsUpdated(Plasma::Constraints constraints)
 void Pager::createMenu()
 {
     QAction* configureDesktop = new QAction(SmallIcon("configure"),i18n("&Configure Desktops..."), this);
-    actions.append(configureDesktop);
+    m_actions.append(configureDesktop);
     connect(configureDesktop, SIGNAL(triggered(bool)), this , SLOT(slotConfigureDesktop()));
 }
 
 QList<QAction*> Pager::contextActions()
 {
-  return actions;
+  return m_actions;
 }
 
 void Pager::slotConfigureDesktop()
