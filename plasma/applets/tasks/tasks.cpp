@@ -46,7 +46,6 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
     m_screenTimer.setInterval(300);
     connect(&m_screenTimer, SIGNAL(timeout()), this, SLOT(checkScreenChange()));
     connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(themeRefresh()));
-    setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum,QSizePolicy::DefaultType);
 }
 
 Tasks::~Tasks()
@@ -57,7 +56,7 @@ Tasks::~Tasks()
 void Tasks::init()
 {
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
-    //layout->setMargin(0);
+    layout->setContentsMargins(0,0,0,0);
     if (formFactor() == Plasma::Vertical) {
         layout->setOrientation(Qt::Vertical);
     } else {

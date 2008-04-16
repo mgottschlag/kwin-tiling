@@ -46,15 +46,8 @@ TaskGroupItem::TaskGroupItem(QGraphicsItem *parent, QObject *parentObject)
    //setAcceptDrops(true);
 
    m_layout = new QGraphicsLinearLayout(this);
-   //m_layout->setMargin(0);
-   m_layout->setSpacing(5);
-   //m_layout->setMultiRow(true);
-    setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum,QSizePolicy::DefaultType);
-}
-
-QSizeF TaskGroupItem::maximumSize() const
-{
-    return QGraphicsWidget::maximumSize();
+   m_layout->setContentsMargins(0,0,0,0);
+   m_layout->setSpacing(2);
 }
 
 void TaskGroupItem::setAllowSubGroups(bool allow)
@@ -283,7 +276,7 @@ void TaskGroupItem::drawBorder(QPainter *painter,
          // FIXME Check KColorScheme usage here
 
          QLinearGradient titleGradient(titleArea.topLeft(), titleArea.bottomLeft());
-         KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors());        
+         KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colors());
          titleGradient.setColorAt(0, colorScheme.shade(_color,KColorScheme::DarkShade));
          titleGradient.setColorAt(1, colorScheme.shade(_color,KColorScheme::MidShade));
 

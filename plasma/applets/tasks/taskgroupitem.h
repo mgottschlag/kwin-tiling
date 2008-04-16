@@ -131,7 +131,6 @@ public:
 
     virtual void activate();
     virtual void close();
-    virtual QSizeF maximumSize() const;
 
     /** Event compression **/
     void queueGeometryUpdate();

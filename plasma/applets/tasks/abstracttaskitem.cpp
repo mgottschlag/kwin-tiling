@@ -53,7 +53,6 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
       m_fadeIn(true),
       m_updateTimerId(-1)
 {
-    setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding,QSizePolicy::DefaultType);
     setAcceptsHoverEvents(true);
     setupBackgroundSvg(parentObject);
     //setAcceptDrops(true);

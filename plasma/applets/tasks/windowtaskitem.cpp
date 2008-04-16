@@ -213,9 +213,6 @@ void WindowTaskItem::publishIconGeometry()
     }
     if( !boundingRect().isValid() )
         return;
-    QPolygonF sceneRect = mapToScene(boundingRect());
-    QPolygonF viewPgon = parentView->mapFromScene(sceneRect);
-    QRectF viewRect = viewPgon.boundingRect();
 
     QRect rect = parentView->mapFromScene(mapToScene(boundingRect())).boundingRect().adjusted(0, 0, 1, 1);
     rect.moveTopLeft(parentView->mapToGlobal(rect.topLeft()));
