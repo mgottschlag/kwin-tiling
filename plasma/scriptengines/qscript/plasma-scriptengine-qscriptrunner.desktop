@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=JavaScript Runner
+Name[ga]=Feidhmitheoir JavaScript
 Comment=JavaScript Runner
+Comment[ga]=Feidhmitheoir JavaScript
 X-KDE-ServiceTypes=Plasma/ScriptEngine
 Type=Service
 Icon=text-x-script
