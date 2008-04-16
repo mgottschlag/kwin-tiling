@@ -131,9 +131,6 @@ void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &d
 
         update();
     }
-    else {
-        kDebug() << "Oh, our avoiding code is usefully!";
-    }
 }
 
 void Clock::mousePressEvent(QGraphicsSceneMouseEvent *event)
