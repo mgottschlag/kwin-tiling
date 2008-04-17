@@ -123,6 +123,7 @@ static Window window = None;
 static QRect geometry;
 static bool scale_on = true;
 static Atom kde_splash_progress;
+static char kdehome[ 1024 ];
 static char theme_name[ 1024 ];
 static char theme_dir[ 1024 ];
 static bool test;
@@ -192,11 +193,6 @@ static const char* findFileWithDepth( const char* name, int* w, int* h, bool loc
     if( access( tmp, R_OK ) != 0 )
         {
         // ksplash/<theme>-<resolution>-<file> in 'kde-config --path cache'
-        static char kdehome[ 1024 ];
-        if( getenv( "KDEHOME" ) && getenv( "KDEHOME" )[ 0 ] )
-            snprintf( kdehome, 1024, "%s", getenv( "KDEHOME" ));
-        else
-            snprintf( kdehome, 1024, "%s/.kde", getenv( "HOME" ) ? getenv( "HOME" ) : "" );
         static char hostname[ 1024 ];
         if( getenv("XAUTHLOCALHOSTNAME"))
             strncpy( hostname, getenv("XAUTHLOCALHOSTNAME"), 1023 );
@@ -796,8 +792,18 @@ static void updateSplashImage( const QImage& img, int x_pos, int y_pos )
 void runSplash( const char* them, bool t, int p )
     {
     geometry = screenGeometry();
+
+    // fetch the $KDEHOME environment variable that may point to e.g. "~/.kde4"
+    if( getenv( "KDEHOME" ) && getenv( "KDEHOME" )[ 0 ] )
+        snprintf( kdehome, 1024, "%s", getenv( "KDEHOME" ));
+    else
+        snprintf( kdehome, 1024, "%s/.kde", getenv( "HOME" ) ? getenv( "HOME" ) : "" );
+
+    // fetch the name of the theme which is also used as directory name.
     snprintf( theme_name, 1024, "%s", them );
+    // fetch the theme-directory,e.g. "/opt/kde4/share/apps/ksplash/Themes/MyKSplashXThemeName"
     snprintf( theme_dir, 1024, "%s/ksplash/Themes/%s", KDE_DATADIR, them );
+
     test = t;
     parent_pipe = p;
     anim_count = 0;
@@ -807,9 +813,25 @@ void runSplash( const char* them, bool t, int p )
     splash_pixmap = None;
     final_time = time( NULL ) + 60;
     int desc_w, desc_h;
+
+    // try to load the themes description.txt file from within the theme_dir
     FILE* datafile = fopen( findFile( "description.txt", &desc_w, &desc_h ), "r" );
+    if( datafile == NULL )
+        {
+            // if we failed to read it, try it with $KDEHOME as theme_dir. This
+            // is needed to be able to load local (aka by the user in his local
+            // home-directory) installed themes.
+            snprintf( theme_dir, 1024, "%s/share/apps/ksplash/Themes/%s", kdehome, them );
+            datafile = fopen( findFile( "description.txt", &desc_w, &desc_h ), "r" );
+            if( datafile == NULL )
+                {
+                fprintf( stderr, "Cannot find description.txt file.\n" );
+                exit( 2 );
+                }
+        }
+
     struct stat stat_buf;
-    if( datafile == NULL || fstat( fileno( datafile ), &stat_buf ) != 0 )
+    if( fstat( fileno( datafile ), &stat_buf ) != 0 )
         {
         fprintf( stderr, "Cannot read description.txt file.\n" );
         exit( 2 );
