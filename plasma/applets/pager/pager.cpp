@@ -200,7 +200,7 @@ void Pager::recalculateGeometry()
                     ceil(m_rows * itemHeight + padding * (m_rows - 1)));
 
     //kDebug() << "new size set" << m_size << m_rows << m_columns << columns << itemWidth;
-    setMinimumSize(m_size);
+
     resize(m_size);
     if (m_desktopLayoutOwner && columns != m_columns) {
         // must own manager selection before setting global desktop layout
