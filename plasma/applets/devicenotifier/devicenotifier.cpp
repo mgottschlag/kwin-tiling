@@ -99,9 +99,7 @@ void DeviceNotifier::init()
                             colorTheme.foreground(KColorScheme::NormalText).color().name()));
     QLabel *icon = new QLabel();
     icon->setPixmap(KIcon("emblem-mounted").pixmap(Plasma::Delegate::ICON_SIZE, Plasma::Delegate::ICON_SIZE));
-    icon->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    setSizePolicy(QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed));
-
+    
     QHBoxLayout *l_layout2 = new QHBoxLayout();
     l_layout2->setSpacing(0);
     l_layout2->setMargin(0);

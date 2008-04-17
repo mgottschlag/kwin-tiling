@@ -43,7 +43,6 @@ public:
     QList<QAction*> contextActions();
 
     void constraintsUpdated(Plasma::Constraints constraints);
-    Qt::Orientations expandingDirections() const;
 
     void paintInterface(QPainter *painter,
                         const QStyleOptionGraphicsItem *option,

@@ -212,15 +212,6 @@ void Panel::themeUpdated()
     constraintsUpdated(Plasma::LocationConstraint);
 }
 
-Qt::Orientations Panel::expandingDirections() const
-{
-    if (formFactor() == Plasma::Horizontal) {
-        return Qt::Horizontal;
-    } else {
-        return Qt::Vertical;
-    }
-}
-
 void Panel::paintInterface(QPainter *painter,
                            const QStyleOptionGraphicsItem *option,
                            const QRect& contentsRect)
@@ -420,16 +411,8 @@ void Panel::updateSize(const QSize &newSize)
         return;
     }
 
-    // Lock the size so that stray applets don't cause the panel to grow
-    // or the removal of applets to cause the panel to shrink
-    //TODO change this once panels aren't fullwidth to allow for auto-grow
-    //kDebug() << "resizing to" << s;
-    setMinimumSize(QSizeF(0, 0));
-    setMaximumSize(QSizeF(std::numeric_limits<qreal>::infinity(),
-                          std::numeric_limits<qreal>::infinity()));
     resize(s);
     setMinimumSize(s);
-    setMaximumSize(s);
     //kDebug( )<< "geometry is now" << geometry() << sceneBoundingRect();
 }
 

@@ -104,8 +104,6 @@ void LauncherApplet::init()
     connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
     resize(IconSize(KIconLoader::Desktop),IconSize(KIconLoader::Desktop));
     d->icon->resize(geometry().size());
-    setSizePolicy(QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed));
-
 }
 
 void LauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
@@ -114,10 +112,9 @@ void LauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint) {
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
-	    //FIXME set correct size
-	    setMinimumSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
+	        setMinimumSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
         } else {
-            //setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
+            setMinimumSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
         }
     }
 

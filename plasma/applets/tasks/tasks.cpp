@@ -62,6 +62,7 @@ void Tasks::init()
     } else {
         layout->setOrientation(Qt::Horizontal);
     }
+    setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setLayout(layout);
     m_rootTaskGroup = new TaskGroupItem(this,this);
     connect(m_rootTaskGroup, SIGNAL(activated(AbstractTaskItem*)),
