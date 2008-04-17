@@ -63,9 +63,7 @@ void Tasks::init()
         layout->setOrientation(Qt::Horizontal);
     }
     setLayout(layout);
-
     m_rootTaskGroup = new TaskGroupItem(this,this);
-//     m_rootTaskGroup->resize(geometry().size());
     connect(m_rootTaskGroup, SIGNAL(activated(AbstractTaskItem*)),
             this, SLOT(launchActivated()));
     layout->addItem(m_rootTaskGroup);

@@ -48,6 +48,7 @@ TaskGroupItem::TaskGroupItem(QGraphicsItem *parent, QObject *parentObject)
    m_layout = new QGraphicsLinearLayout(this);
    m_layout->setContentsMargins(0,0,0,0);
    m_layout->setSpacing(2);
+   setLayout(m_layout);
 }
 
 void TaskGroupItem::setAllowSubGroups(bool allow)
