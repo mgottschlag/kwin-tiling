@@ -42,6 +42,7 @@ Q_SIGNALS:
   void changed( bool state );
 
 protected Q_SLOTS:
+  virtual void slotNew();
   virtual void slotAdd();
   virtual void slotRemove();
   virtual void slotTest();
@@ -60,7 +61,7 @@ private:
   bool mGui;
   ThemeListBox *mThemesList;
   QString mEngineOfSelected;
-  QPushButton *mBtnAdd, *mBtnRemove, *mBtnTest;
+  QPushButton *mBtnNew, *mBtnAdd, *mBtnRemove, *mBtnTest;
   QTextEdit *mText;
   QLabel *mPreview;
 };
