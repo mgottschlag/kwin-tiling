@@ -88,7 +88,7 @@ void Battery::init()
         svgFile = "widgets/battery";
     }
     m_theme = new Plasma::Svg(svgFile, this);
-    m_theme->setContentType(Plasma::Svg::SingleImage);
+    m_theme->setContainsMultipleImages(false);
     m_theme->resize(geometry().size());
 
     setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
