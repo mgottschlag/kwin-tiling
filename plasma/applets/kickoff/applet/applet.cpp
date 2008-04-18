@@ -154,11 +154,6 @@ void LauncherApplet::showConfigurationInterface()
 
         QHBoxLayout *vl = new QHBoxLayout(d->dialog->mainWidget());
         layout->addLayout(vl);
-        vl->addWidget(new QLabel(i18n("Number of visible items:"), d->dialog->mainWidget()));
-        d->visibleCountEdit = new KIntNumInput(d->dialog->mainWidget());
-        d->visibleCountEdit->setMinimum(3);
-        d->visibleCountEdit->setSliderEnabled(false);
-        vl->addWidget(d->visibleCountEdit);
 
         d->switchOnHoverCheckBox = new QCheckBox(i18n("Switch tabs on hover"), d->dialog->mainWidget());
         layout->addWidget(d->switchOnHoverCheckBox);
@@ -168,7 +163,6 @@ void LauncherApplet::showConfigurationInterface()
         d->createLauncher(this);
     }
 
-    d->visibleCountEdit->setValue(d->launcher->visibleItemCount());
     d->switchOnHoverCheckBox->setChecked(d->launcher->switchTabsOnHover());
     d->dialog->show();
 }
