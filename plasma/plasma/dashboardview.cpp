@@ -53,7 +53,7 @@ DashboardView::DashboardView(Plasma::Containment *containment, QWidget *parent)
     QDesktopWidget *desktop = QApplication::desktop();
     setGeometry(desktop->screenGeometry(containment->screen()));
 
-    setDrawWallpaper(!PlasmaApp::hasComposite());
+    setWallpaperEnabled(!PlasmaApp::hasComposite());
 
     connect(scene(), SIGNAL(launchActivated()), SLOT(hideView()));
     QGraphicsWidget *tool = containment->addToolBoxTool("hideDashboard", "preferences-desktop-display", i18n("Hide Dashboard"));
@@ -71,11 +71,11 @@ DashboardView::~DashboardView()
 void DashboardView::drawBackground(QPainter * painter, const QRectF & rect)
 {
     if (PlasmaApp::hasComposite()) {
-        setDrawWallpaper(false);
+        setWallpaperEnabled(false);
         painter->setCompositionMode(QPainter::CompositionMode_Source);
         painter->fillRect(geometry(), QColor(0, 0, 0, 180));
     } else {
-        setDrawWallpaper(true);
+        setWallpaperEnabled(true);
         Plasma::View::drawBackground(painter, rect);
     }
 }
