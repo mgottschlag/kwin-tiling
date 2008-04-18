@@ -185,7 +185,7 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
     
     //we need to know if the width or height is 100%
     QRectF screenRect;
-    bool fullSize;
+    bool fullSize = false;
     if (constraints & Plasma::LocationConstraint ||
         constraints & Plasma::SizeConstraint) {
         m_currentSize = geometry().size().toSize();
@@ -202,7 +202,7 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
 
     if (constraints & Plasma::LocationConstraint) {
         setFormFactorFromLocation(location());
-        if (!fullSize) {
+        if (fullSize) {
             m_background->setElementPrefix(location());
         } else {
             m_background->setElementPrefix(QString());
