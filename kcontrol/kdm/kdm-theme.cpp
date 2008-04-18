@@ -309,7 +309,7 @@ void KDMThemeWidget::removeSelectedThemes()
 
 void KDMThemeWidget::getNewStuff()
 {
-	KNS::Engine engine;
+	KNS::Engine engine(this);
 	engine.init("kdm.knsrc");
 	KNS::Entry::List entries = engine.downloadDialogModal(this);
 }
