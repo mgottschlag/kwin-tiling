@@ -977,12 +977,14 @@ void runSplash( const char* them, bool t, int p )
             QImage img = loadImage( buf );
             if( !img.isNull())
                 {
+#if 0
                 if( !QRect( 0, 0, geometry.width(), geometry.height())
                     .contains( QRect( x, y, img.width(), img.height())))
                     {
                     fprintf( stderr, "Image outside of geometry: %s\n", line );
                     exit( 3 );
                     }
+#endif
                 blend( img, x, y );
                 updateSplashImage( img, x, y );
                 doPaint( QRect( x, y, img.width(), img.height()));
@@ -1015,12 +1017,14 @@ void runSplash( const char* them, bool t, int p )
                 {
                 x = makeAbsoluteX( window_ref, x_rel, image_ref, img.width());
                 y = makeAbsoluteY( window_ref, y_rel, image_ref, img.height());
+#if 0
                 if( !QRect( 0, 0, geometry.width(), geometry.height())
                     .contains( QRect( x, y, img.width(), img.height())))
                     {
                     fprintf( stderr, "Image outside of geometry: %s\n", line );
                     exit( 3 );
                     }
+#endif
                 blend( img, x, y );
                 updateSplashImage( img, x, y );
                 doPaint( QRect( x, y, img.width(), img.height()));
