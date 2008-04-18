@@ -171,10 +171,9 @@ int main( int argc, char* argv[])
                 }
             if( ev.type == ConfigureNotify && ev.xconfigure.event == DefaultRootWindow( dpy ))
                 {
-                for( int i = 0;
-                     i < wins_count;
-                     ++i )
-                    XRaiseWindow( dpy, wins[ i ] );
+                XRaiseWindow( dpy, wins[ 0 ] );
+                if( wins_count > 1 )
+                    XRestackWindows( dpy, wins, wins_count );
                 }
             if( ev.type == ClientMessage && ev.xclient.window == DefaultRootWindow( dpy )
                 && ev.xclient.message_type == kde_splash_progress )
