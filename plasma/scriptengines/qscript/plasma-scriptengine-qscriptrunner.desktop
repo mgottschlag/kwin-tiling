@@ -1,8 +1,16 @@
 [Desktop Entry]
 Name=JavaScript Runner
 Name[ga]=Feidhmitheoir JavaScript
+Name[km]=កម្មវិធី​រត់ JavaScript
+Name[sv]=Kör Javascript
+Name[tr]=JavaScript Çalıştırıcı
+Name[zh_TW]=JavaScript 執行器
 Comment=JavaScript Runner
 Comment[ga]=Feidhmitheoir JavaScript
+Comment[km]=កម្មវិធី​រត់ JavaScript
+Comment[sv]=Kör Javascript
+Comment[tr]=JavaScript Çalıştırıcı
+Comment[zh_TW]=JavaScript 執行器
 X-KDE-ServiceTypes=Plasma/ScriptEngine
 Type=Service
 Icon=text-x-script

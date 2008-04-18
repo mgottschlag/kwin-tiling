@@ -1,7 +1,16 @@
 [Desktop Entry]
 Name=Xesam Search runner
 Name[ga]=Feidhmitheoir Cuardaigh Xesam
+Name[ja]=Xesam 検索 Runner
+Name[km]=កម្មវិធី​រត់​ការ​ស្វែងរក Xesam
+Name[sv]=Utför sökning med Xesam
+Name[tr]=Xesam Arama çalıştırıcı
+Name[zh_TW]=Xesam 搜索引擎
 Comment=Allows user to use a Xesam compatible indexer for desktop search
+Comment[ja]=デスクトップ検索に Xesam 互換のインデクサが使えるようになります
+Comment[km]=អនុញ្ញាត​ឲ្យ​អ្នកប្រើ ប្រើកម្មវិធី​បង្កើត​លិបិក្រម​ដែល​ឆបគ្នា Xesam សម្រាប់​ការ​ស្វែងរក​ផ្ទៃតុ
+Comment[sv]=Låter användaren använda indexering som fungerar med Xesam för skrivbordssökning
+Comment[zh_TW]=允許使用者使用 Xesam 相容的搜尋引擎來做桌面搜尋
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_xesam
