@@ -1,0 +1,55 @@
+<ui version="4.0" >
+ <class>Form</class>
+ <widget class="QWidget" name="Form" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>560</width>
+    <height>228</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Printer Status</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset>/usr/share/system-config-printer/printer-128.png</iconset>
+  </property>
+  <layout class="QGridLayout" >
+   <property name="leftMargin" >
+    <number>0</number>
+   </property>
+   <property name="topMargin" >
+    <number>0</number>
+   </property>
+   <property name="rightMargin" >
+    <number>0</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>0</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QTreeWidget" name="treeWidget" >
+     <property name="alternatingRowColors" >
+      <bool>true</bool>
+     </property>
+     <property name="indentation" >
+      <number>0</number>
+     </property>
+     <column>
+      <property name="text" >
+       <string>Printer</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Message</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

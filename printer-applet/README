@@ -1,0 +1,26 @@
+printer-applet is a system tray utility.  It shows current print jobs, shows printer warnings and errors and shows when printers that have been plugged in for the first time are being auto-configured by hal-cups-utils.
+
+It replaces kjobviewer in KDE 3.
+
+It is a Qt port of system-config-printer by Tim Waugh from Red Hat.
+
+Dependencies are...
+
+PyQt4: http://www.riverbankcomputing.co.uk/pyqt/
+
+python-cups:  http://cyberelk.net/tim/software/pycups/
+
+hal-cups-utils:  svn co http://svn.fedorahosted.org/svn/hal-cups-utils/trunk/
+
+hal-cups-utils needs the common parts of system-config-printer (cupshelpers.py, ppds.py, probe_printer.py):
+svn co http://svn.fedorahosted.org/svn/system-config-printer/trunk
+
+hal-cups-utils and system-config-printer like to install to
+/usr/share/system-config-printer, if you put it elsewhere change the
+SYSTEM_CONFIG_PRINTER_DIR variable in printer-applet.py
+
+
+Unfortunately it does not currently use PyKDE4 because KApplication loads QtDbus which freezes when we use python-dbus.
+
+
+Jonathan Riddell <jriddell@ubuntu.com>, Canonical Ltd, March 2008
