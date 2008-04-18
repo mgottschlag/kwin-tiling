@@ -23,6 +23,7 @@
 
 #include <QApplication>
 #include <QPainter>
+#include <QBitmap>
 #include <QDesktopWidget>
 #include <QGridLayout>
 #include <QLabel>
@@ -181,14 +182,34 @@ void Panel::updateBorders(const QRect &geom)
 void Panel::constraintsUpdated(Plasma::Constraints constraints)
 {
     kDebug() << "constraints updated with" << constraints << "!!!!!!";
+    
+    //we need to know if the width or height is 100%
+    QRectF screenRect;
+    bool fullSize;
+    if (constraints & Plasma::LocationConstraint ||
+        constraints & Plasma::SizeConstraint) {
+        m_currentSize = geometry().size().toSize();
+        screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) :
+                                     geometry();
+
+        if ((formFactor() == Horizontal && m_currentSize.width() >= screenRect.width()) || 
+            (formFactor() == Vertical && m_currentSize.height() >= screenRect.height())) {
+            fullSize = true;
+        } else {
+            fullSize = false;
+        }
+    }
 
     if (constraints & Plasma::LocationConstraint) {
         setFormFactorFromLocation(location());
-        m_background->setElementPrefix(location());
+        if (!fullSize) {
+            m_background->setElementPrefix(location());
+        } else {
+            m_background->setElementPrefix(QString());
+        }
     }
 
     if (constraints & Plasma::SizeConstraint) {
-        m_currentSize = geometry().size().toSize();
         m_background->resize(m_currentSize);
     }
 
@@ -238,6 +259,10 @@ void Panel::paintInterface(QPainter *painter,
     painter->setRenderHint(QPainter::Antialiasing);
 
     m_background->paint(painter, contentsRect);
+
+    if (containmentOpt && containmentOpt->view) {
+        containmentOpt->view->setMask(m_background->mask());
+    }
 
     // restore transformation and composition mode
     painter->restore();
