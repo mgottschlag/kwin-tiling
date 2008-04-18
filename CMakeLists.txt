@@ -67,6 +67,7 @@ add_subdirectory( krunner )
 add_subdirectory( kwin )
 add_subdirectory( plasma )
 add_subdirectory( kstartupconfig )
+add_subdirectory( printer-applet )
 
 
 add_subdirectory( khotkeys )
