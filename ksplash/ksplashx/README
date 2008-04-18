@@ -44,7 +44,12 @@ FORMAT:
 # and current resolution size (e.g. a 80x80 image at 100,0 in 1600x1200
 # is scaled to 40x40 at 50,0 for 800x600)
 # defaults to ON, it's suggested to always explicitly specify
+# it is possible to toggle scaling also several times (e.g. scale background image, not scale the rest)
 SCALE ON/OFF
+
+# like SCALE, for only one dimension
+SCALEX ON/OFF
+SCALEY ON/OFF
 
 # x y w h - geometry of the splash window (screen size by default)
 # if x or y are negative, they're relative to the right/bottom side

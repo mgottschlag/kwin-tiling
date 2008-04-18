@@ -121,7 +121,8 @@ static AnimData* animations[ MAX_ITEMS ];
 static int anim_count;
 static Window window = None;
 static QRect geometry;
-static bool scale_on = true;
+static bool scalex = true;
+static bool scaley = true;
 static Atom kde_splash_progress;
 static char kdehome[ 1024 ];
 static char theme_name[ 1024 ];
@@ -356,10 +357,10 @@ static QImage loadImage( const char* file )
         fprintf( stderr, "Not 32bpp: %s\n", file );
         exit( 3 );
         }
-    if( scale_on && ( w != screenGeometry().width() || h != screenGeometry().height()))
+    if(( scalex && w != screenGeometry().width()) || ( scaley && h != screenGeometry().height()))
         {
-        double ratiox = double( w ) / screenGeometry().width();
-        double ratioy = double( h ) / screenGeometry().height();
+        double ratiox = scalex ? double( w ) / screenGeometry().width() : 1;
+        double ratioy = scaley ? double( h ) / screenGeometry().height() : 1;
 #ifdef DEBUG
         fprintf( stderr, "PIXMAP SCALING: %f %f\n", ratiox, ratioy );
 #endif
@@ -418,10 +419,10 @@ static QImage loadAnimImage( const char* file, int frames )
             }
         }
     frameSize( img, frames, framew, frameh );
-    if( scale_on && ( w != screenGeometry().width() || h != screenGeometry().height()))
+    if(( scalex && w != screenGeometry().width()) || ( scaley && h != screenGeometry().height()))
         {
-        double ratiox = double( w ) / screenGeometry().width();
-        double ratioy = double( h ) / screenGeometry().height();
+        double ratiox = scalex ? double( w ) / screenGeometry().width() : 1;
+        double ratioy = scaley ? double( h ) / screenGeometry().height() : 1;
 #ifdef DEBUG
         fprintf( stderr, "ANIM SCALING: %f %f\n", ratiox, ratioy );
 #endif
@@ -859,13 +860,39 @@ void runSplash( const char* them, bool t, int p )
         bool handled = false;
         if( line[ 0 ] == '#' || line[ 0 ] == '\0' )
             continue;
+        else if( sscanf( line, "SCALEX %1023s", buf ) == 1 )
+            {
+            handled = true;
+            if( strcmp( buf, "ON" ) == 0 )
+                scalex = true;
+            else if( strcmp( buf, "OFF" ) == 0 )
+                scalex = false;
+            else
+                {
+                fprintf( stderr, "Bad scale x: %s\n", line );
+                exit( 3 );
+                }
+            }
+        else if( sscanf( line, "SCALEY %1023s", buf ) == 1 )
+            {
+            handled = true;
+            if( strcmp( buf, "ON" ) == 0 )
+                scaley = true;
+            else if( strcmp( buf, "OFF" ) == 0 )
+                scaley = false;
+            else
+                {
+                fprintf( stderr, "Bad scale y: %s\n", line );
+                exit( 3 );
+                }
+            }
         else if( sscanf( line, "SCALE %1023s", buf ) == 1 )
             {
             handled = true;
             if( strcmp( buf, "ON" ) == 0 )
-                scale_on = true;
+                scalex = scaley = true;
             else if( strcmp( buf, "OFF" ) == 0 )
-                scale_on = false;
+                scalex = scaley = false;
             else
                 {
                 fprintf( stderr, "Bad scale: %s\n", line );
@@ -875,12 +902,12 @@ void runSplash( const char* them, bool t, int p )
         else if( sscanf( line, "GEOMETRY %d %d %d %d", &x, &y, &w, &h ) == 4 )
             {
             handled = true;
-            if( scale_on )
+            if( scalex || scaley )
                 {
-                x = round( x / ratiox );
-                y = round( y / ratioy );
-                w = round( w / ratiox );
-                h = round( h / ratioy );
+                x = scalex ? round( x / ratiox ) : x;
+                y = scaley ? round( y / ratioy ) : y;
+                w = scalex ? round( w / ratiox ) : w;
+                h = scaley ? round( h / ratioy ) : h;
                 }
             if( x < 0 )
                 x += screenGeometry().width();
@@ -910,12 +937,12 @@ void runSplash( const char* them, bool t, int p )
             screen_ref, &x_rel, &y_rel, window_ref, &w, &h ) == 6 )
             {
             handled = true;
-            if( scale_on )
+            if( scalex || scaley )
                 {
-                x_rel = round( x_rel / ratiox );
-                y_rel = round( y_rel / ratioy );
-                w = round( w / ratiox );
-                h = round( h / ratioy );
+                x_rel = scalex ? round( x_rel / ratiox ) : x_rel;
+                y_rel = scaley ? round( y_rel / ratioy ) : y_rel;
+                w = scalex ? round( w / ratiox ) : w;
+                h = scaley ? round( h / ratioy ) : h;
                 }
             if( !checkRelative( screen_ref )
                 || !checkRelative( window_ref ))
@@ -967,10 +994,10 @@ void runSplash( const char* them, bool t, int p )
         else if( sscanf( line, "IMAGE %d %d %1023s", &x, &y, buf ) == 3 )
             {
             handled = true;
-            if( scale_on )
+            if( scalex || scaley )
                 {
-                x = round( x / ratiox );
-                y = round( y / ratioy );
+                x = scalex ? round( x / ratiox ) : x;
+                y = scaley ? round( y / ratioy ) : y;
                 }
             if( splash_image.isNull())
                 createSplashImage();
@@ -999,10 +1026,10 @@ void runSplash( const char* them, bool t, int p )
             window_ref, &x_rel, &y_rel, image_ref, buf ) == 5 )
             {
             handled = true;
-            if( scale_on )
+            if( scalex || scaley )
                 {
-                x_rel = round( x_rel / ratiox );
-                y_rel = round( y_rel / ratioy );
+                x_rel = scalex ? round( x_rel / ratiox ) : x_rel;
+                y_rel = scaley ? round( y_rel / ratioy ) : y_rel;
                 }
             if( !checkRelative( window_ref )
                 || !checkRelative( window_ref ))
@@ -1041,10 +1068,10 @@ void runSplash( const char* them, bool t, int p )
         if( items == 6 || items == 7 )
             {
             handled = true;
-            if( scale_on )
+            if( scalex || scaley )
                 {
-                x = round( x / ratiox );
-                y = round( y / ratioy );
+                x = scalex ? round( x / ratiox ) : x;
+                y = scaley ? round( y / ratioy ) : y;
                 }
             if( number <= 0 || number >= MAX_ITEMS )
                 {
@@ -1074,10 +1101,10 @@ void runSplash( const char* them, bool t, int p )
         if( items == 8 || items == 9 )
             {
             handled = true;
-            if( scale_on )
+            if( scalex || scaley )
                 {
-                x_rel = round( x_rel / ratiox );
-                y_rel = round( y_rel / ratioy );
+                x_rel = scalex ? round( x_rel / ratiox ) : x_rel;
+                y_rel = scaley ? round( y_rel / ratioy ) : y_rel;
                 }
             if( number <= 0 || number >= MAX_ITEMS )
                 {
