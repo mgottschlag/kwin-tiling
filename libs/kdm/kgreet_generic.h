@@ -4,6 +4,10 @@ Conversation widget for kdm greeter
 
 Copyright (C) 2008 Dirk Mueller <mueller@kde.org>
 
+based on classic kdm greeter:
+
+  Copyright (C) 1997, 1998, 2000 Steffen Hansen <hansen@kde.org>
+  Copyright (C) 2000-2003 Oswald Buddenhagen <ossi@kde.org>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -40,8 +44,8 @@ class KGenericGreeter : public QObject, public KGreeterPlugin {
 
   public:
 	KGenericGreeter( KGreeterPluginHandler *handler,
-                QWidget *parent, const QString &fixedEntitiy,
-                Function func, Context ctx );
+	                 QWidget *parent, const QString &fixedEntitiy,
+	                 Function func, Context ctx );
 	~KGenericGreeter();
 	virtual void loadUsers( const QStringList &users );
 	virtual void presetEntity( const QString &entity, int field );
@@ -61,7 +65,7 @@ class KGenericGreeter : public QObject, public KGreeterPlugin {
 	virtual void revive();
 	virtual void clear();
 
-        QGridLayout *getLayoutItem() const { return m_grid; }
+	QGridLayout *getLayoutItem() const { return m_grid; }
 
   public slots:
 	void slotLoginLostFocus();
@@ -72,18 +76,18 @@ class KGenericGreeter : public QObject, public KGreeterPlugin {
 	void setAllActive( bool enable );
 	void returnData();
 
-        QGridLayout* m_grid;
-        QLabel *loginLabel;
-        QList<QLabel*> authLabel;
+	QGridLayout* m_grid;
+	QLabel *loginLabel;
+	QList<QLabel*> authLabel;
 	KLineEdit *loginEdit;
-        QWidget* m_parentWidget;
-        QList<KLineEdit*> authEdit;
+	QWidget* m_parentWidget;
+	QList<KLineEdit*> authEdit;
 	KSimpleConfig *stsFile;
 	QString fixedUser, curUser;
 	Function func;
 	Context ctx;
 	int exp, pExp, has;
-        unsigned state;
+	unsigned state;
 	bool running, authTok;
 };
 
