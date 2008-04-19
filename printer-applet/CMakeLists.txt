@@ -1,7 +1,7 @@
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}  ${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules )
 
 MACRO(PYKDE4_ADD_EXECUTABLE _pyname _exename)
-    INSTALL(CODE "EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -DTARGET=${DATA_INSTALL_DIR}/printer-applet/${_pyname} -DLINK_NAME=${BIN_INSTALL_DIR}/${_exename} -P ${CMAKE_SOURCE_DIR}/workspace/printer-applet/cmake-modules/create_exe_symlink.cmake)" )
+    INSTALL(CODE "EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -DTARGET=${DATA_INSTALL_DIR}/printer-applet/${_pyname} -DLINK_NAME=${BIN_INSTALL_DIR}/${_exename} -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules/create_exe_symlink.cmake)" )
 ENDMACRO(PYKDE4_ADD_EXECUTABLE)
 
 macro_optional_find_package(PythonLibrary)
