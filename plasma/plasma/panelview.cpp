@@ -38,7 +38,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     : Plasma::View(panel, id, parent)
 {
     Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
-    
+
     m_viewConfig =  config();
 
     m_offset = m_viewConfig.readEntry("Offset", 0);
@@ -111,11 +111,13 @@ void PanelView::updatePanelGeometry()
         m_offset = qMax(m_offset, 0);
     }
 
-
     //Sanity controls
     switch (location()) {
     case Plasma::TopEdge:
     case Plasma::BottomEdge:
+        if (m_alignment != Qt::AlignCenter) {
+            m_offset = qMax(m_offset, screenGeom.left());
+        }
         //resize the panel if is too large
         if (geom.width() > screenGeom.width()) {
             geom.setWidth(screenGeom.width());
@@ -141,6 +143,9 @@ void PanelView::updatePanelGeometry()
 
     case Plasma::LeftEdge:
     case Plasma::RightEdge:
+        if (m_alignment != Qt::AlignCenter) {
+            m_offset = qMax(m_offset, screenGeom.top());
+        }
         //resize the panel if is too tall
         if (geom.height() > screenGeom.height()) {
             geom.setHeight(screenGeom.height());
@@ -229,7 +234,7 @@ void PanelView::updatePanelGeometry()
     kDebug() << (QObject*)this << "thinks its panel is at " << geom;
 
     setGeometry(geom);
-    
+
 }
 
 void PanelView::setOffset(int newOffset)
