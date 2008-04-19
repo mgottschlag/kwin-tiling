@@ -34,11 +34,12 @@ K_EXPORT_PLUGIN(KHotKeysModuleFactory("khotkeys"))
 
 KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
     : KDEDModule(parent)
+    , actions_root(NULL)
+    , dbus_adaptor(NULL)
     {
-    kDebug() << "Old Module Name " << moduleName();
     setModuleName("khotkeys");
 
-    new KhotkeysAdaptor(this);
+    dbus_adaptor = new KhotkeysAdaptor(this);
 
     // Stop the khotkeys executable if it is running
     for( int i = 0;
@@ -58,14 +59,13 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
     KHotKeys::init_global_data( true, this );
 
     // Read the configuration from file khotkeysrc
-    actions_root = NULL;
     reread_configuration();
     }
 
 
 KHotKeysModule::~KHotKeysModule()
     {
-    // CHECKME triggery a dalsi rusit uz tady pred cleanupem
+    delete dbus_adaptor;
     delete actions_root;
     }
 

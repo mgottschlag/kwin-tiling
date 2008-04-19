@@ -15,6 +15,7 @@
 #include <QtCore/QObject>
 #include <QtDBus/QtDBus>
 
+class KhotkeysAdaptor;
 
 namespace KHotKeys
 {
@@ -34,6 +35,7 @@ class KHotKeysModule
         virtual ~KHotKeysModule();
     private:
         KHotKeys::Action_data_group* actions_root;
+        KhotkeysAdaptor *dbus_adaptor;
     };
 
 //***************************************************************************
