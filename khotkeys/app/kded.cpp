@@ -38,6 +38,8 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
     , dbus_adaptor(NULL)
     {
     setModuleName("khotkeys");
+    kError() << "Does not work currently!";
+    return;
 
     dbus_adaptor = new KhotkeysAdaptor(this);
 
@@ -96,7 +98,6 @@ void KHotKeysModule::reread_configuration()
 
 void KHotKeysModule::quit()
     {
-    kDebug() << "stopping service";
     delete this;
     }
 
