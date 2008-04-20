@@ -96,6 +96,7 @@ void TaskGroupItem::insertTask(AbstractTaskItem *item, int index)
     QGraphicsLinearLayout * mylayout = dynamic_cast<QGraphicsLinearLayout *>(layout());
     if (mylayout) {
         mylayout->addItem(item);
+        item->show();
     }
     queueGeometryUpdate();
 }
@@ -121,6 +122,10 @@ void TaskGroupItem::removeTask(AbstractTaskItem *item)
     }
     item->setParentItem(0);
     queueGeometryUpdate();
+
+    //FIXME: only hides it, this is good for cases like hiding tasks of other virtual desktops,
+    //when closing windows the item should be deleted somewhere
+    item->hide();
 
     // if the group is now empty then ask the parent to remove it
     if (_tasks.count() == 0) {
