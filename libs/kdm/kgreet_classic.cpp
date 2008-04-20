@@ -486,7 +486,7 @@ create( KGreeterPluginHandler *handler,
 }
 
 KDE_EXPORT kgreeterplugin_info kgreeterplugin_info = {
-	I18N_NOOP("Username + password (classic)"), "classic",
+	I18N_NOOP2("@item:inmenu authentication method", "Username + password (classic)"), "classic",
 	kgreeterplugin_info::Local | kgreeterplugin_info::Presettable,
 	init, done, create
 };

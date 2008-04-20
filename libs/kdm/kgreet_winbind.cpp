@@ -629,7 +629,7 @@ create( KGreeterPluginHandler *handler,
 }
 
 KDE_EXPORT kgreeterplugin_info kgreeterplugin_info = {
-	I18N_NOOP("Winbind / Samba"), "classic",
+	I18N_NOOP2("@item:inmenu authentication method", "Winbind / Samba"), "classic",
 	kgreeterplugin_info::Local | kgreeterplugin_info::Fielded | kgreeterplugin_info::Presettable,
 	init, done, create
 };

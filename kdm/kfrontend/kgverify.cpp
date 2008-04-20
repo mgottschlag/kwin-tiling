@@ -112,7 +112,9 @@ KGVerify::getPlugMenu()
 			         SLOT(slotPluginSelected( QAction * )) );
 			for (uint i = 0; i < np; i++) {
 				int pid = pluginList[i];
-				greetPlugins[pid].action = plugMenu->addAction( i18n(greetPlugins[pid].info->name) );
+				greetPlugins[pid].action = plugMenu->addAction(
+					i18nc("@item:inmenu authentication method",
+					      greetPlugins[pid].info->name) );
 				greetPlugins[pid].action->setData( i );
 				greetPlugins[pid].action->setCheckable( true );
 			}

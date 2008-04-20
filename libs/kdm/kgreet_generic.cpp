@@ -634,13 +634,13 @@ static bool init( const QString &,
                   void *ctx )
 {
 	echoMode = getConf( ctx, "EchoMode", QVariant( -1 ) ).toInt();
-	KGlobal::locale()->insertCatalog( "kgreet_pam" );
+	KGlobal::locale()->insertCatalog( "kgreet_generic" );
 	return true;
 }
 
 static void done( void )
 {
-	KGlobal::locale()->removeCatalog( "kgreet_pam" );
+	KGlobal::locale()->removeCatalog( "kgreet_generic" );
 	if (log && log != stderr)
 		fclose( log );
 	log = 0;
@@ -657,7 +657,7 @@ create( KGreeterPluginHandler *handler,
 }
 
 KDE_EXPORT kgreeterplugin_info kgreeterplugin_info = {
-	I18N_NOOP("Generic conversation plugin"), "generic",
+	I18N_NOOP2("@item:inmenu authentication method", "Generic"), "generic",
 	kgreeterplugin_info::Local | kgreeterplugin_info::Presettable,
 	init, done, create
 };
