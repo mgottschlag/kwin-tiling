@@ -23,6 +23,7 @@
 #include <QString>
 #include <QList>
 #include <QMap>
+#include <QPair>
 
 #include <solid/devicenotifier.h>
 #include <solid/device.h>
@@ -32,6 +33,7 @@
 #include "plasma/dataengine.h"
 #include "devicesignalmapmanager.h"
 #include "devicesignalmapper.h"
+#include "hddtemp.h"
 
 /**
  * This class evaluates the basic expressions given in the interface.
@@ -52,9 +54,8 @@ private:
     bool populateDeviceData(const QString &name);
     qlonglong freeDiskSpace(const QString &mountPoint);
     bool updateFreeSpace(const QString &udi);
+    bool updateHardDiskTemperature(const QString &udi);
     void listenForNewDevices();
-
-    QStringList devicelist;
 
     //predicate in string form, list of devices by udi
     QMap<QString, QStringList> predicatemap;
@@ -62,6 +63,7 @@ private:
     QMap<QString, Solid::Device> devicemap;
     DeviceSignalMapManager *signalmanager;
 
+    HddTemp *temperature;
     Solid::DeviceNotifier *notifier;
 
 private Q_SLOTS:

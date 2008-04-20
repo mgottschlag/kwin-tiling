@@ -4,6 +4,7 @@ set(soliddevice_engine_SRCS
     soliddeviceengine.cpp
     devicesignalmapper.cpp
     devicesignalmapmanager.cpp
+    hddtemp.cpp
 )
 
 kde4_add_plugin(plasma_engine_soliddevice ${soliddevice_engine_SRCS})

@@ -50,12 +50,15 @@
 
 SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QVariantList& args)
         : Plasma::DataEngine(parent, args),
+          temperature(0),
           notifier(0)
 {
     Q_UNUSED(args)
     signalmanager = new DeviceSignalMapManager(this);
 
     listenForNewDevices();
+    temperature = new HddTemp();
+    setMinimumUpdateInterval(1000);
 }
 
 SolidDeviceEngine::~SolidDeviceEngine()
@@ -65,6 +68,7 @@ SolidDeviceEngine::~SolidDeviceEngine()
     disconnect(notifier, SIGNAL(deviceRemoved(const QString&)),
             this, SLOT(deviceRemoved(const QString&)));
     delete signalmanager;
+    delete temperature;
 }
 
 void SolidDeviceEngine::listenForNewDevices()
@@ -153,6 +157,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
             freeDiskVar.setValue( freeDisk );
         }
         setData(name, I18N_NOOP("Free Space"), freeDiskVar );
+
         signalmanager->mapDevice(storageaccess, device.udi());
     }
     if (device.is<Solid::StorageDrive>()) {
@@ -172,6 +177,8 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         setData(name, I18N_NOOP("Drive Type"), drivetype.at((int)storagedrive->driveType()));
         setData(name, I18N_NOOP("Removable"), storagedrive->isRemovable());
         setData(name, I18N_NOOP("Hotpluggable"), storagedrive->isHotpluggable());
+
+        updateHardDiskTemperature(name);
     }
     if (device.is<Solid::OpticalDrive>()) {
         Solid::OpticalDrive *opticaldrive = device.as<Solid::OpticalDrive>();
@@ -453,6 +460,24 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         setData(name, I18N_NOOP("DVB Device Type"), dvbdevicetypes.at((int)dvbinterface->deviceType()));
         setData(name, I18N_NOOP("Device Index"), dvbinterface->deviceIndex());
     }
+    if (device.is<Solid::Video>()) {
+        Solid::Video *video = device.as<Solid::Video>();
+        if (video == 0) {
+            return false;
+        }
+        
+        devicetypes << I18N_NOOP("Video");
+
+        setData(name, I18N_NOOP("Supported Protocols"), video->supportedProtocols());
+        setData(name, I18N_NOOP("Supported Drivers"), video->supportedDrivers());
+
+        QStringList handles;
+        foreach (QString driver, video->supportedDrivers()) {
+            handles << video->driverHandle(driver).toString();
+        }
+        setData(name, I18N_NOOP("Driver Handles"), handles);
+    }
+    
     setData(name, I18N_NOOP("Device Types"), devicetypes);
     return true;
 }
@@ -519,9 +544,24 @@ bool SolidDeviceEngine::updateFreeSpace(const QString &udi)
     return true;
 }
 
+bool SolidDeviceEngine::updateHardDiskTemperature(const QString &udi)
+{
+    Solid::Device device = devicemap.value(udi);
+    Solid::Block *block = device.as<Solid::Block>();
+    if (block != 0 && temperature->sources().contains(block->device())) {
+        setData(udi, I18N_NOOP("Temperature"), temperature->data(block->device(), HddTemp::Temperature));
+        setData(udi, I18N_NOOP("Temperature Unit"), temperature->data(block->device(), HddTemp::Unit));
+        return true;
+    }
+    return false;
+}
+
 bool SolidDeviceEngine::updateSource(const QString& source)
 {
-    return updateFreeSpace(source);
+    bool update1 = updateFreeSpace(source);
+    bool update2 = updateHardDiskTemperature(source);
+
+    return (update1 || update2);
 }
 
 void SolidDeviceEngine::deviceRemoved(const QString& udi)
