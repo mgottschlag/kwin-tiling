@@ -37,16 +37,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 class KDMPasswordEdit : public KLineEdit {
 public:
-	KDMPasswordEdit( QWidget *parent ) : KLineEdit( parent ) 
+	KDMPasswordEdit( int echoMode, QWidget *parent ) : KLineEdit( parent )
 	{
-		setPasswordMode(true);
+		if (echoMode == -1)
+			setPasswordMode(true);
+		else
+			setEchoMode( echoMode ? Password : NoEcho );
+		setContextMenuPolicy( Qt::NoContextMenu );
 	}
-	KDMPasswordEdit( bool em, QWidget *parent ) : KLineEdit( parent )
-	{
-		setEchoMode( em ? Password : NoEcho );
-	}
-protected:
-	virtual void contextMenuEvent( QContextMenuEvent * ) {}
 };
 
 static int echoMode;
@@ -104,10 +102,7 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 			grid->addWidget( loginLabel, line, 0 );
 			grid->addWidget( new QLabel( fixedUser, parent ), line++, 1 );
 		}
-		if (echoMode == -1)
-			passwdEdit = new KDMPasswordEdit( parent );
-		else
-			passwdEdit = new KDMPasswordEdit( (bool)echoMode,  parent );
+		passwdEdit = new KDMPasswordEdit( echoMode, parent );
 		connect( passwdEdit, SIGNAL(textChanged( const QString & )),
 		         SLOT(slotChanged()) );
 		connect( passwdEdit, SIGNAL(editingFinished()), SLOT(slotChanged()) );
@@ -129,15 +124,10 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 			passwdEdit->setFocus();
 	}
 	if (func != Authenticate) {
-		if (echoMode == -1) {
-			passwd1Edit = new KDMPasswordEdit( echoMode, parent );
-			passwd2Edit = new KDMPasswordEdit( echoMode, parent );
-		} else {
-			passwd1Edit = new KDMPasswordEdit( parent );
-			passwd2Edit = new KDMPasswordEdit( parent );
-		}
+		passwd1Edit = new KDMPasswordEdit( echoMode, parent );
 		passwd1Label = new QLabel( i18n("&New password:"), parent );
 		passwd1Label->setBuddy( passwd1Edit );
+		passwd2Edit = new KDMPasswordEdit( echoMode, parent );
 		passwd2Label = new QLabel( i18n("Con&firm password:"), parent );
 		passwd2Label->setBuddy( passwd2Edit );
 		if (grid) {
