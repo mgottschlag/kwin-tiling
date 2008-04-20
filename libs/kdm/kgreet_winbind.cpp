@@ -116,7 +116,7 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			connect( domainCombo, SIGNAL(activated( const QString & )),
 			         SLOT(slotLoginLostFocus()) );
 			connect( domainCombo, SIGNAL(activated( const QString & )),
-			         SLOT(slotActivity()) );
+			         SLOT(slotChanged()) );
 			// should handle loss of focus
 			loginEdit = new KLineEdit( parent );
 			loginEdit->setContextMenuPolicy( Qt::NoContextMenu );
@@ -136,9 +136,9 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 				grid->addWidget( loginEdit, line++, 1 );
 			}
 			connect( loginEdit, SIGNAL(editingFinished()), SLOT(slotLoginLostFocus()) );
-			connect( loginEdit, SIGNAL(editingFinished()), SLOT(slotActivity()) );
-			connect( loginEdit, SIGNAL(textChanged( const QString & )), SLOT(slotActivity()) );
-			connect( loginEdit, SIGNAL(selectionChanged()), SLOT(slotActivity()) );
+			connect( loginEdit, SIGNAL(editingFinished()), SLOT(slotChanged()) );
+			connect( loginEdit, SIGNAL(textChanged( const QString & )), SLOT(slotChanged()) );
+			connect( loginEdit, SIGNAL(selectionChanged()), SLOT(slotChanged()) );
 			domainCombo->addItems( staticDomains );
 			QTimer::singleShot( 0, this, SLOT(slotStartDomainList()) );
 		} else if (ctx != Login && ctx != Shutdown && grid) {
@@ -155,8 +155,8 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			passwdEdit = new KDMPasswordEdit( (bool)echoMode,
 			                                  parent );
 		connect( passwdEdit, SIGNAL(textChanged( const QString & )),
-		         SLOT(slotActivity()) );
-		connect( passwdEdit, SIGNAL(editingFinished()), SLOT(slotActivity()) );
+		         SLOT(slotChanged()) );
+		connect( passwdEdit, SIGNAL(editingFinished()), SLOT(slotChanged()) );
 
 		if (!grid) {
 			passwdEdit->setObjectName( "pw-entry" );
@@ -537,10 +537,10 @@ KWinbindGreeter::slotLoginLostFocus()
 }
 
 void
-KWinbindGreeter::slotActivity()
+KWinbindGreeter::slotChanged()
 {
 	if (running)
-		handler->gplugActivity();
+		handler->gplugChanged();
 }
 
 void

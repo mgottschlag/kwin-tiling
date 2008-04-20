@@ -67,7 +67,7 @@ class KWinbindGreeter : public QObject, public KGreeterPlugin {
   public Q_SLOTS:
 	void slotLoginLostFocus();
 	void slotChangedDomain( const QString &dom );
-	void slotActivity();
+	void slotChanged();
 	void slotStartDomainList();
 	void slotEndDomainList();
 

@@ -455,6 +455,10 @@ void PasswordDlg::gplugStart()
     handleVerify();
 }
 
+void PasswordDlg::gplugChanged()
+{
+}
+
 void PasswordDlg::gplugActivity()
 {
     slotActivity();

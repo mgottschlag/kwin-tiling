@@ -46,6 +46,7 @@ public:
     virtual void gplugReturnBinary( const char *data );
     virtual void gplugSetUser( const QString & );
     virtual void gplugStart();
+    virtual void gplugChanged();
     virtual void gplugActivity();
     virtual void gplugMsgBox( QMessageBox::Icon type, const QString &text );
     virtual bool gplugHasNode( const QString &id );

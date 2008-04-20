@@ -67,8 +67,13 @@ genkdmconf:
 - write modern conv plugin. or maybe this should be a parallel vs. serial
   setting of the classic plugin? (#148110)
 - change conversation plugin interface:
-  - make interactions that are not part of the main data flow signal/slot based
-  - make Activity and Changed seperate notifications
+  - make gplugActivity() and gplugChanged() signals
+    - how to handle the meta object? don't want a lib. probably include
+      in every plugin (build system for external plugins?)
+  - introduce signal userPresent() - equivalent to mouse motion. should
+    prevent unlocker from going away, possibly should make unlocker pop up
+    (would need to be emitted even if not running). should not prevent timed
+    login.
 
 - actually implement the libpam_client support
 

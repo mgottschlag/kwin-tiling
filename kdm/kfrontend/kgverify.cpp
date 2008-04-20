@@ -287,7 +287,7 @@ KGVerify::setUser( const QString &user )
 	curUser = user;
 	debug( "%s->setUser(%\"s)\n", pName.data(), qPrintable( user ) );
 	greet->setUser( user );
-	gplugActivity();
+	gplugChanged();
 }
 
 void
@@ -414,7 +414,7 @@ KGVerify::slotTimeout()
 			debug( "%s->start()\n", pName.data() );
 			greet->start();
 			slotActivity();
-			gplugActivity();
+			gplugChanged();
 			if (cont)
 				handleVerify();
 		}
@@ -436,6 +436,7 @@ void
 KGVerify::slotActivity()
 {
 	if (timedLeft) {
+		// timed login countdown running. cancel and reschedule it.
 		debug( "%s->revive()\n", pName.data() );
 		greet->revive();
 		debug( "%s->start()\n", pName.data() );
@@ -445,6 +446,7 @@ KGVerify::slotActivity()
 		updateStatus();
 		timer.start( TIMED_GREET_TO * SECONDS );
 	} else if (timeable)
+		// timed login is possible and thus scheduled. reschedule it.
 		timer.start( TIMED_GREET_TO * SECONDS );
 }
 
@@ -817,9 +819,9 @@ KGVerify::gplugStart()
 }
 
 void
-KGVerify::gplugActivity()
+KGVerify::gplugChanged()
 {
-	debug( "%s: gplugActivity()\n", pName.data() );
+	debug( "%s: gplugChanged()\n", pName.data() );
 	if (func == KGreeterPlugin::Authenticate &&
 	    ctx == KGreeterPlugin::Login)
 	{
@@ -827,6 +829,13 @@ KGVerify::gplugActivity()
 		if (!timeable)
 			timer.start( FULL_GREET_TO * SECONDS );
 	}
+}
+
+void
+KGVerify::gplugActivity()
+{
+	debug( "%s: gplugActivity()\n", pName.data() );
+	slotActivity();
 }
 
 void

@@ -124,9 +124,9 @@ KGenericGreeter::KGenericGreeter( KGreeterPluginHandler *_handler,
 			loginEdit = new KLineEdit( parent );
 			loginEdit->setContextMenuEnabled( false );
 			connect( loginEdit, SIGNAL(lostFocus()), SLOT(slotLoginLostFocus()) );
-			connect( loginEdit, SIGNAL(lostFocus()), SLOT(slotActivity()) );
-			connect( loginEdit, SIGNAL(textChanged( const QString & )), SLOT(slotActivity()) );
-			connect( loginEdit, SIGNAL(selectionChanged()), SLOT(slotActivity()) );
+			connect( loginEdit, SIGNAL(lostFocus()), SLOT(slotChanged()) );
+			connect( loginEdit, SIGNAL(textChanged( const QString & )), SLOT(slotChanged()) );
+			connect( loginEdit, SIGNAL(selectionChanged()), SLOT(slotChanged()) );
 			if (!getLayoutItem()) {
 				loginEdit->adjustSize();
 				user_entry->setWidget( loginEdit );
@@ -149,8 +149,8 @@ KGenericGreeter::KGenericGreeter( KGreeterPluginHandler *_handler,
 			passwdEdit = new KDMPasswordEdit( echoMode,
 			                                  parent );
 		connect( passwdEdit, SIGNAL(textChanged( const QString & )),
-		         SLOT(slotActivity()) );
-		connect( passwdEdit, SIGNAL(lostFocus()), SLOT(slotActivity()) );
+		         SLOT(slotChanged()) );
+		connect( passwdEdit, SIGNAL(lostFocus()), SLOT(slotChanged()) );
 		if (pred) {
 			parent->setTabOrder( pred, passwdEdit );
 			pred = passwdEdit;
@@ -365,8 +365,8 @@ KGenericGreeter::textPrompt( const char *prompt, bool echo, bool nonBlocking )
 		else
 			passwdEdit = new KDMPasswordEdit( echoMode, m_parentWidget );
 		connect( passwdEdit, SIGNAL(textChanged( const QString & )),
-		         SLOT(slotActivity()) );
-		connect( passwdEdit, SIGNAL(lostFocus()), SLOT(slotActivity()) );
+		         SLOT(slotChanged()) );
+		connect( passwdEdit, SIGNAL(lostFocus()), SLOT(slotChanged()) );
 		authEdit << passwdEdit;
 
 #if 1
@@ -619,12 +619,12 @@ KGenericGreeter::slotLoginLostFocus()
 }
 
 void
-KGenericGreeter::slotActivity()
+KGenericGreeter::slotChanged()
 {
-	debug( "slotActivity" );
+	debug( "slotChanged" );
 
 	if (running)
-		handler->gplugActivity();
+		handler->gplugChanged();
 }
 
 // factory

@@ -168,6 +168,7 @@ class KGVerify : public QObject, public KGreeterPluginHandler {
 	virtual void gplugReturnBinary( const char *data );
 	virtual void gplugSetUser( const QString &user );
 	virtual void gplugStart();
+	virtual void gplugChanged();
 	virtual void gplugActivity();
 	virtual void gplugMsgBox( QMessageBox::Icon type, const QString &text );
 

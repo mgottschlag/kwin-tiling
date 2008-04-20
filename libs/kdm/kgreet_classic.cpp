@@ -87,9 +87,9 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 			loginEdit = new KLineEdit( parent );
 			loginEdit->setContextMenuPolicy( Qt::NoContextMenu );
 			connect( loginEdit, SIGNAL(editingFinished()), SLOT(slotLoginLostFocus()) );
-			connect( loginEdit, SIGNAL(editingFinished()), SLOT(slotActivity()) );
-			connect( loginEdit, SIGNAL(textChanged( const QString & )), SLOT(slotActivity()) );
-			connect( loginEdit, SIGNAL(selectionChanged()), SLOT(slotActivity()) );
+			connect( loginEdit, SIGNAL(editingFinished()), SLOT(slotChanged()) );
+			connect( loginEdit, SIGNAL(textChanged( const QString & )), SLOT(slotChanged()) );
+			connect( loginEdit, SIGNAL(selectionChanged()), SLOT(slotChanged()) );
 			if (!grid) {
 				loginEdit->setObjectName( "user-entry" );
 				widgetList << loginEdit;
@@ -109,8 +109,8 @@ KClassicGreeter::KClassicGreeter( KGreeterPluginHandler *_handler,
 		else
 			passwdEdit = new KDMPasswordEdit( (bool)echoMode,  parent );
 		connect( passwdEdit, SIGNAL(textChanged( const QString & )),
-		         SLOT(slotActivity()) );
-		connect( passwdEdit, SIGNAL(editingFinished()), SLOT(slotActivity()) );
+		         SLOT(slotChanged()) );
+		connect( passwdEdit, SIGNAL(editingFinished()), SLOT(slotChanged()) );
 		if (!grid) {
 			passwdEdit->setObjectName( "pw-entry" );
 			widgetList << passwdEdit;
@@ -453,10 +453,10 @@ KClassicGreeter::slotLoginLostFocus()
 }
 
 void
-KClassicGreeter::slotActivity()
+KClassicGreeter::slotChanged()
 {
 	if (running)
-		handler->gplugActivity();
+		handler->gplugChanged();
 }
 
 // factory

@@ -63,7 +63,7 @@ class KClassicGreeter : public QObject, public KGreeterPlugin {
 
   public Q_SLOTS:
 	void slotLoginLostFocus();
-	void slotActivity();
+	void slotChanged();
 
   private:
 	void setActive( bool enable );

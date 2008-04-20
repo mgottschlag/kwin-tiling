@@ -62,6 +62,12 @@ public:
      */
     virtual void gplugStart() = 0;
     /**
+     * This should be called each time the talker changes in any way from the
+     * pristine state after an authentication cycle starts, so the greeter
+     * knows it must reset the fields after some time of inactivity.
+     */
+    virtual void gplugChanged() = 0;
+    /**
      * Plugins that expect user input from a different device than the mouse or
      * keyboard must call this when user activity is detected to prevent the
      * greeter from resetting/going away. Events should be compressed to no
