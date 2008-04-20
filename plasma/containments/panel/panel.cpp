@@ -59,6 +59,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(backgroundChanged()));
     setZValue(150);
     setContainmentType(Containment::PanelContainment);
+    resize(m_currentSize);
 
     connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(themeUpdated()));
 }
