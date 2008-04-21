@@ -152,7 +152,7 @@ bool Solid::Control::PowerManager::setBrightness(float brightness, const QString
         {
             foreach(const QString &device, controls.keys())
             {
-                SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(), setBrightness(brightness, device)))
+                SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(), setBrightness(brightness, device));
             }
             return true; //TODO - This should be done better, it will return true even if one of the calls returns false. SOLID_CALL does not allow 
 us to get the return value.
