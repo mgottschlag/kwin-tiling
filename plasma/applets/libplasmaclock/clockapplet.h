@@ -18,8 +18,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef CLOCK_H
-#define CLOCK_H
+#ifndef CLOCKAPPLET_H
+#define CLOCKAPPLET_H
 
 #include <QtCore/QTime>
 #include <QtCore/QDate>
@@ -30,6 +30,8 @@
 #include "ui_calendar.h"
 #include <KDatePicker>
 
+#include "plasmaclock_export.h"
+
 
 class KDialog;
 
@@ -38,7 +40,7 @@ namespace Plasma
     class Svg;
 }
 
-class ClockApplet : public Plasma::Applet
+class PLASMA_EXPORT ClockApplet : public Plasma::Applet
 {
     Q_OBJECT
     public:
@@ -57,5 +59,6 @@ class ClockApplet : public Plasma::Applet
         Ui::calendar m_calendarUi;
         QVBoxLayout *m_layout;
 };
+
 
 #endif
