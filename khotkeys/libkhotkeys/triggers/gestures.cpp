@@ -38,25 +38,29 @@
 namespace KHotKeys
 {
 
-Gesture* gesture_handler = NULL;
+QPointer<Gesture> gesture_handler = NULL;
 
 Gesture::Gesture( bool /*enabled_P*/, QObject* parent_P )
-    : _enabled( false ), recording( false ), button( 0 ), exclude( NULL )
+        : QWidget(NULL)
+        , _enabled( false )
+        , recording( false )
+        , button( 0 )
+        , exclude( NULL )
     {
     (void) new DeleteObject( this, parent_P );
-    assert( gesture_handler == NULL );
-    gesture_handler = this;
     nostroke_timer.setSingleShot( true );
     connect( &nostroke_timer, SIGNAL( timeout()), SLOT( stroke_timeout()));
     connect( windows_handler, SIGNAL( active_window_changed( WId )),
         SLOT( active_window_changed( WId )));
     }
-      
+
+
 Gesture::~Gesture()
     {
+    qDebug() << "Deleting Gesture";
     enable( false );
-    gesture_handler = NULL;
     }
+
 
 void Gesture::enable( bool enabled_P )
     {

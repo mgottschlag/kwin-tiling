@@ -29,8 +29,9 @@
 namespace KHotKeys
 {
 
-ShortcutsHandler* keyboard_handler;
-Windows* windows_handler;
+QPointer<ShortcutsHandler> keyboard_handler = NULL;
+QPointer<Windows> windows_handler = NULL;
+
 static bool _khotkeys_active = false;
 
 void init_global_data( bool active_P, QObject* owner_P )
@@ -39,15 +40,15 @@ void init_global_data( bool active_P, QObject* owner_P )
     // Make these singletons.
     if (!keyboard_handler)
         {
-        static_cast< void >( new ShortcutsHandler( active_P ? ShortcutsHandler::Active : ShortcutsHandler::Configuration, owner_P ));
+        keyboard_handler = new ShortcutsHandler( active_P ? ShortcutsHandler::Active : ShortcutsHandler::Configuration, owner_P );
         }
     if (!windows_handler)
         {
-        static_cast< void >( new Windows( active_P, owner_P ));
+        windows_handler = new Windows( active_P, owner_P );
         }
     if (!gesture_handler)
         {
-        static_cast< void >( new Gesture( active_P, owner_P ));
+        gesture_handler = new Gesture( active_P, owner_P );
         }
 // FIXME: SOUND
 //    static_cast< void >( new Voice( active_P, owner_P ));
