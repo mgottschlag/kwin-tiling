@@ -140,16 +140,16 @@ int main(int argc, char **argv)
             }
 
             if (installer->installPackage(package, packageRoot)) {
-                kDebug() << i18n("Successfully installed %1", package);
+                kDebug() << "Successfully installed " << package;
             } else {
-                kFatal() << i18n("Installation of %1 failed!", package);
+                kFatal() << "Installation of " << package << " failed!";
             }
         } else if (args->isSet("remove")) {
             QString package = args->getOption("remove");
             if (installer->uninstallPackage(package, packageRoot)) {
-                kDebug() << i18n("Successfully removed %1", package);
+                kDebug() << "Successfully removed " << package;
             } else {
-                kFatal() << i18n("Removal of %1 failed!", package);
+                kFatal() << "Removal of " << package << " failed!";
             }
         } else {
             KCmdLineArgs::usageError(i18n("One of install, remove or list is required."));
