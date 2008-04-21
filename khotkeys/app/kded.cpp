@@ -51,11 +51,10 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
         if( QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.khotkeys" ))
             {
             // wait for it to finish
-            QDBusConnection::sessionBus().send( QDBusMessage::createMethodCall( "org.kde.khotkeys", "/KHotKeys", "", "quit" ));
+            QDBusConnection::sessionBus().send( QDBusMessage::createMethodCall( "org.kde.khotkeys", "/modules/khotkeys", "", "quit" ));
             sleep( 1 );
             }
         }
-    QDBusConnection::sessionBus().registerObject("/KHotKeys", this);
 
     // Initialize the global data, grab keys
     KHotKeys::init_global_data( true, this );
