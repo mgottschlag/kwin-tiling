@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -74,7 +74,6 @@ void LauncherApplet::Private::createLauncher(LauncherApplet *q)
 LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent,args),
       d(new Private)
-      
 {
     setHasConfigurationInterface(true);
     setRemainSquare(true);
@@ -170,12 +169,10 @@ void LauncherApplet::showConfigurationInterface()
 void LauncherApplet::configAccepted()
 {
     bool switchTabsOnHover = d->switchOnHoverCheckBox->isChecked();
-    int visibleItemsCount = d->visibleCountEdit->value();
 
     // TODO: should this be moved into Launcher as well? perhaps even the config itself?
     KConfigGroup cg = config();
     cg.writeEntry("SwitchTabsOnHover", switchTabsOnHover);
-    cg.writeEntry("VisibleItemsCount", visibleItemsCount);
     emit configNeedsSaving();
 
     if (!d->launcher) {
@@ -183,10 +180,6 @@ void LauncherApplet::configAccepted()
     }
 
     d->launcher->setSwitchTabsOnHover(switchTabsOnHover);
-    if (d->launcher->visibleItemCount() != visibleItemsCount) {
-        d->launcher->setVisibleItemCount(visibleItemsCount);
-        d->launcher->adjustSize();
-    }
 }
 
 void LauncherApplet::toggleMenu(bool pressed)
@@ -208,7 +201,7 @@ void LauncherApplet::toggleMenu(bool pressed)
         // kickoff's size.
         QPoint popupPosition = Applet::popupPosition(d->launcher->size());
         d->launcher->move( popupPosition );
-        QPoint iconPosition = view()->mapToGlobal( 
+        QPoint iconPosition = view()->mapToGlobal(
                 view()->mapFromScene( d->icon->scenePos() ) );
 
         Plasma::View *pv = dynamic_cast<Plasma::View *>(view());
