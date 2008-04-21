@@ -11,6 +11,7 @@
 #include "kded.h"
 
 #include "action_data_group.h"
+#include "daemon/stand_alone.h"
 #include "gestures.h"
 #include "khotkeysadaptor.h"
 #include "settings.h"
@@ -43,17 +44,9 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
 
     dbus_adaptor = new KhotkeysAdaptor(this);
 
-    // Stop the khotkeys executable if it is running
-    for( int i = 0;
-         i < 5;
-         ++i )
+    if (KHotKeys::StandAloneDaemon::isRunning())
         {
-        if( QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.khotkeys" ))
-            {
-            // wait for it to finish
-            QDBusConnection::sessionBus().send( QDBusMessage::createMethodCall( "org.kde.khotkeys", "/modules/khotkeys", "", "quit" ));
-            sleep( 1 );
-            }
+        KHotKeys::StandAloneDaemon::stop();
         }
 
     // Initialize the global data, grab keys
