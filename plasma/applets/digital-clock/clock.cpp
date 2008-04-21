@@ -60,7 +60,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_layout(0)
 {
     setHasConfigurationInterface(true);
-    resize(70, 22);
+    resize(90, 44);
 }
 
 void Clock::init()
