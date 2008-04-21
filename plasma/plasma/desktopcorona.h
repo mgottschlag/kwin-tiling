@@ -42,7 +42,7 @@ public:
     void loadDefaultSetup();
 
     /**
-     * Ensures we have a corona for every screen
+     * Ensures we have a desktop containment for every screen
      */
     void checkScreens();
 
