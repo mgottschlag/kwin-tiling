@@ -215,6 +215,13 @@ int main(int argc, char **argv)
       cout << "  solid-powermanagement suspend 'method'" << endl;
       cout << i18n("             # Suspend the computer using the given 'method'.\n") << endl;
 
+      cout << "  solid-powermanagement brightness (set|get) 'value'" << endl;
+      cout << i18n("             # Set and get brightness options of the system.\n"
+                    "             # - If the 'set' option is specified, the brightness is\n"
+                    "             # set to 'value' (as a percentage)\n"
+                    "             # - If the 'get' option is specified, the current brightness\n"
+                    "             # is returned (as a percentage)'\n") << endl;
+
       cout << endl;
 
       return 0;
@@ -280,6 +287,18 @@ bool SolidPowermanagement::doIt()
         else
         {
             cerr << i18n("Syntax Error: Unknown option '%1'" , type) << endl;
+        }
+    }
+    else if (command == "brightness")
+    {
+        QString request(args->arg(1));
+        if (request == "get")
+        {
+            cout << endl << "Brightness is " << shell.powerGetBrightness() << "%" << endl;
+        }
+        else if (request == "set")
+        {
+            return shell.powerSetBrightness(args->arg(2).toInt());
         }
     }
     else
@@ -482,6 +501,18 @@ bool SolidPowermanagement::powerChangeCpuPolicy(const QString &policyName)
 
     return Solid::Control::PowerManager::setCpuFreqPolicy(policy);
 }
+
+int SolidPowermanagement::powerGetBrightness()
+{
+    return Solid::Control::PowerManager::brightness();
+}
+
+bool SolidPowermanagement::powerSetBrightness(int brightness)
+{
+    cout << "Setting brightness to " << brightness << "%" << endl;
+    return Solid::Control::PowerManager::setBrightness(brightness);
+}
+
 
 void SolidPowermanagement::connectJob(KJob *job)
 {

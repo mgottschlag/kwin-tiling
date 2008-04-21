@@ -21,6 +21,7 @@
 #define SOLID_POWERMANAGER_H
 
 #include <QtCore/QObject>
+#include <QtCore/QHash>
 
 #include <solid/control/solid_control_export.h>
 
@@ -106,6 +107,16 @@ namespace Control
          */
         Q_DECLARE_FLAGS(CpuFreqPolicies, CpuFreqPolicy)
 
+        /**
+         * This enum defines the different types of brightness controls.
+         *
+         * - UnkownBrightnessControl: Unknown
+         * - Screen: Brightness control for a monitor or laptop panel
+         * - Keyboard: Brightness control for a keyboard backlight
+         */
+        enum BrightnessControlType{ UnkownBrightnessControl = 0, Screen = 1, Keyboard = 2 };
+
+        typedef QHash<QString, BrightnessControlType> BrightnessControlsList;
 
 
         /**
@@ -225,6 +236,30 @@ namespace Control
          */
         SOLIDCONTROL_EXPORT bool setCpuEnabled(int cpuNum, bool enabled);
 
+        /**
+         * Checks if brightness controls are enabled on this system.
+         *
+         * @return a list of the devices available to control
+         */
+        SOLIDCONTROL_EXPORT BrightnessControlsList brightnessControlsAvailable();
+
+        /**
+         * Gets the screen brightness.
+         *
+         * @param device the name of the device that you would like to control
+         * @return the brightness of the device, as a percentage
+         */
+        SOLIDCONTROL_EXPORT float brightness(const QString &device = QString());
+
+        /**
+         * Sets the screen brightness.
+         *
+         * @param brightness the desired screen brightness, as a percentage
+         * @param device the name of the device that you would like to control
+         * @return true if the brightness change succeeded, false otherwise
+         */
+        SOLIDCONTROL_EXPORT bool setBrightness(float brightness, const QString &device = QString());
+
         class SOLIDCONTROL_EXPORT Notifier : public QObject
         {
             Q_OBJECT
@@ -259,6 +294,13 @@ namespace Control
              * type @see Solid::Control::PowerManager::ButtonType
              */
             void buttonPressed(int buttonType);
+
+            /**
+             * This signal is emitted when the brightness changes.
+             *
+             * @param brightness the new brightness level
+             */
+             void brightnessChanged(float brightness);
         };
 
         SOLIDCONTROL_EXPORT Notifier *notifier();

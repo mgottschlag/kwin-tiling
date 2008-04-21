@@ -175,6 +175,30 @@ namespace Ifaces
          */
         virtual bool setCpuEnabled(int cpuNum, bool enabled) = 0;
 
+        /**
+         * Checks if brightness controls are enabled on this system.
+         *
+         * @return a list of the devices available to control
+         */
+        virtual Solid::Control::PowerManager::BrightnessControlsList brightnessControlsAvailable() = 0;
+
+        /**
+         * Gets the screen brightness.
+         *
+         * @param device the name of the device that you would like to control
+         * @return the brightness of the device, as a percentage
+         */
+        virtual float brightness(const QString &device = QString()) = 0;
+
+        /**
+         * Sets the screen brightness.
+         *
+         * @param brightness the desired screen brightness, as a percentage
+         * @param device the name of the device that you would like to control, as given by brightnessControlsAvailable
+         * @return true if the brightness change succeeded, false otherwise
+         */
+        virtual bool setBrightness(float brightness, const QString &panel = QString()) = 0;
+
     Q_SIGNALS:
         /**
          * This signal is emitted when the power management scheme has changed.
@@ -206,6 +230,13 @@ namespace Ifaces
          * type @see Solid::Control::PowerManager::ButtonType
          */
         void buttonPressed(int buttonType);
+
+        /**
+         * This signal is emitted when the brightness changes.
+         *
+         * @param brightness the new brightness level
+         */
+        void brightnessChanged(float brightness);
     };
 }
 }

@@ -41,6 +41,8 @@ Solid::Control::PowerManagerPrivate::PowerManagerPrivate()
                 this, SIGNAL(batteryStateChanged(int)));
         connect(managerBackend(), SIGNAL(buttonPressed(int)),
                 this, SIGNAL(buttonPressed(int)));
+        connect(managerBackend(), SIGNAL(brightnessChanged(float)),
+                this, SIGNAL(brightnessChanged(float)));
     }
 }
 
@@ -129,6 +131,60 @@ bool Solid::Control::PowerManager::setCpuEnabled(int cpuNum, bool enabled)
 {
     return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
                       false, setCpuEnabled(cpuNum, enabled));
+}
+
+Solid::Control::PowerManager::BrightnessControlsList Solid::Control::PowerManager::brightnessControlsAvailable()
+{
+    return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
+                      Solid::Control::PowerManager::BrightnessControlsList(), brightnessControlsAvailable());
+}
+
+bool Solid::Control::PowerManager::setBrightness(float brightness, const QString &device)
+{
+    if(device.isEmpty())
+    {
+        Solid::Control::PowerManager::BrightnessControlsList controls = brightnessControlsAvailable();
+        if(controls.size() == 0)
+        {
+            return false;
+        }
+        else
+        {
+            foreach(const QString &device, controls.keys())
+            {
+                SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(), setBrightness(brightness, device)))
+            }
+            return true; //TODO - This should be done better, it will return true even if one of the calls returns false. SOLID_CALL does not allow 
+us to get the return value.
+        }
+    }
+    else
+    {
+        return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
+                      false, setBrightness(brightness, device));
+    }
+}
+
+float Solid::Control::PowerManager::brightness(const QString &device)
+{
+    if(device.isEmpty())
+    {
+        Solid::Control::PowerManager::BrightnessControlsList controls = brightnessControlsAvailable();
+        if(controls.size() == 0)
+        {
+            return false;
+        }
+        else
+        {
+            return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
+                      false, brightness(controls.keys().at(0)));
+        }
+    }
+    else
+    {
+        return_SOLID_CALL(Ifaces::PowerManager *, globalPowerManager->managerBackend(),
+                      false, brightness(device));
+    }
 }
 
 Solid::Control::PowerManager::Notifier *Solid::Control::PowerManager::notifier()

@@ -51,6 +51,9 @@ public:
     bool powerQueryCpuPolicies();
     bool powerChangeCpuPolicy(const QString &policyName);
 
+    int powerGetBrightness();
+    bool powerSetBrightness(int brightness);
+
 private:
     void connectJob(KJob *job);
 

@@ -57,6 +57,10 @@ public:
     virtual bool canDisableCpu(int cpuNum) const;
     virtual bool setCpuEnabled(int cpuNum, bool enabled);
 
+    virtual Solid::Control::PowerManager::BrightnessControlsList brightnessControlsAvailable();
+    virtual float brightness(const QString &device);
+    virtual bool setBrightness(float brightness, const QString &device);
+
 private:
     void computeAcAdapters();
     void computeBatteries();
@@ -85,6 +89,7 @@ private:
     mutable QDBusInterface m_halComputer;
     mutable QDBusInterface m_halPowerManagement;
     mutable QDBusInterface m_halCpuFreq;
+    mutable QDBusInterface m_halManager;
 };
 
 #endif
