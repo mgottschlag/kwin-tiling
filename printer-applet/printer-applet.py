@@ -918,9 +918,9 @@ class NewPrinterNotification(dbus.service.Object):
             title = i18n("Missing printer driver")
 
         if status == self.STATUS_SUCCESS:
-            text = i18n("`%s' is ready for printing.") % name
+            text = i18n("'%s' is ready for printing.") % name
         else: # Model mismatch
-            text = ki18n("`%1' has been added, using the `%2' driver.").subs(name).subs(driver).toString()
+            text = ki18n("'%1' has been added, using the '%2' driver.").subs(name).subs(driver).toString()
 
         self.jobmanager.notify_new_printer (name, title, text)
 
