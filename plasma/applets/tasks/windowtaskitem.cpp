@@ -92,6 +92,12 @@ void WindowTaskItem::updateTask()
         setTaskFlags(taskFlags() & ~TaskWantsAttention);
     }
 
+    if (_task->isMinimized()) {
+        setTaskFlags(taskFlags() | TaskIsMinimized);
+    } else {
+        setTaskFlags(taskFlags() & ~TaskIsMinimized);
+    }
+
     // basic title and icon
     QPixmap iconPixmap = _task->icon(preferredIconSize().width(),
                                      preferredIconSize().height(),

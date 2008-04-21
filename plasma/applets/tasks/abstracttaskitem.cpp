@@ -34,16 +34,18 @@
 
 // KDE
 #include <KColorScheme>
+#include <KColorUtils>
 #include <KGlobalSettings>
 #include <KDebug>
 
 // Plasma
 #include "plasma/plasma.h"
 #include "plasma/theme.h"
-#include "plasma/svg.h"
+#include "plasma/panelsvg.h"
 
 bool AbstractTaskItem::s_backgroundCreated = false;
-Plasma::Svg* AbstractTaskItem::s_taskItemBackground = 0;
+Plasma::PanelSvg* AbstractTaskItem::s_taskItemBackground = 0;
+
 
 AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
     : QGraphicsWidget(parent),
@@ -56,9 +58,12 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
     setAcceptsHoverEvents(true);
     setupBackgroundSvg(parentObject);
     //setAcceptDrops(true);
-    if (s_taskItemBackground) {
+
+    //FIXME:sometimes the last task is a little bit less wide than the others, so using this connection
+    //causes an update frenzy and the sucking up of the cpu
+    /*if (s_taskItemBackground) {
         connect(s_taskItemBackground, SIGNAL(repaintNeeded()), this, SLOT(slotUpdate()));
-    }
+    }*/
 }
 
 AbstractTaskItem::~AbstractTaskItem()
@@ -75,13 +80,14 @@ void AbstractTaskItem::setupBackgroundSvg(QObject *parent)
     s_backgroundCreated = true;
     QString tasksThemePath = Plasma::Theme::self()->imagePath("widgets/tasks");
     s_taskItemBackground = 0;
+
     if (!tasksThemePath.isEmpty()) {
         while (parent && parent->parent()) {
             parent = parent->parent();
         }
 
-        s_taskItemBackground = new Plasma::Svg(tasksThemePath, parent);
-        s_taskItemBackground->resize();
+        s_taskItemBackground = new Plasma::PanelSvg(tasksThemePath, parent);
+        s_taskItemBackground->setCacheAllRenderedPanels(true);
     }
 }
 
@@ -179,11 +185,6 @@ void AbstractTaskItem::slotUpdate()
 
 void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    if (taskFlags() & TaskHasFocus) {
-        QGraphicsWidget::hoverEnterEvent(event);
-        return;
-    }
-
     const int FadeInDuration = 100;
 
     if (m_animId != -1) {
@@ -200,11 +201,6 @@ void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    if (taskFlags() & TaskHasFocus) {
-        QGraphicsWidget::hoverLeaveEvent(event);
-        return;
-    }
-
     const int FadeOutDuration = 200;
 
     if (m_animId != -1) {
@@ -242,19 +238,32 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
     if (taskFlags() & TaskWantsAttention) {
         if (s_taskItemBackground) {
             //Draw task background from theme svg "attention" element
-            QPixmap attention(option->rect.width(), option->rect.height());
-            attention.fill(Qt::transparent);
-            {
-                QPainter attentionPainter(&attention);
-                s_taskItemBackground->paint(&attentionPainter, option->rect, "attention");
-            }
-            painter->drawPixmap(option->rect, attention);
+            s_taskItemBackground->setElementPrefix("attention");
+            s_taskItemBackground->resize(option->rect.size());
+            s_taskItemBackground->paint(painter, option->rect);
         } else {
             //Draw task background without svg theming
             QColor background = colorScheme.background(KColorScheme::ActiveBackground).color();
             background.setAlphaF(hoverAlpha+0.2);
             painter->setBrush(QBrush(background));
             painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
+        }
+    } else if (taskFlags() & TaskIsMinimized) {
+            //Not painting anything for iconified tasks for now
+            painter->setBrush(QBrush());
+    } else {
+        if (s_taskItemBackground) {
+            //Draw task background from theme svg "normal" element
+            s_taskItemBackground->setElementPrefix("normal");
+            s_taskItemBackground->resize(option->rect.size());
+            s_taskItemBackground->paint(painter, option->rect);
+        } else {
+            //Draw task background without svg theming
+            QColor background = colorScheme.shade(colorScheme.background(KColorScheme::AlternateBackground).color(),
+                                              KColorScheme::DarkShade);
+            background.setAlphaF(0.2);
+            painter->setBrush(QBrush(background));
+            painter->setPen(Plasma::Theme::self()->backgroundColor());
         }
     }
 
@@ -265,23 +274,22 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
 
         if (s_taskItemBackground) {
             if (taskFlags() & TaskHasFocus) {
-               //Draw task background from theme svg "focus" element
-                QPixmap focus(option->rect.width(), option->rect.height());
-                focus.fill(Qt::transparent);
-                {
-                    QPainter focusPainter(&focus);
-                    s_taskItemBackground->paint(&focusPainter, option->rect, "focus");
-                }
-                painter->drawPixmap(option->rect, focus);
-            } else {
+                //Draw task background from theme svg "focus" element
+                s_taskItemBackground->setElementPrefix("focus");
+                s_taskItemBackground->resize(option->rect.size());
+                s_taskItemBackground->paint(painter, option->rect);
+            }
+
+            if (option->state & QStyle::State_MouseOver && m_alpha > 0) {
                 //Draw task background from theme svg "hover" element
-                QPixmap hover(option->rect.width(), option->rect.height());
-                hover.fill(Qt::transparent);
-                {
-                    QPainter hoverPainter(&hover);
-                    s_taskItemBackground->paint(&hoverPainter, option->rect, "hover");
-                }
-                painter->drawPixmap(option->rect, hover);
+                painter->save();
+                painter->setOpacity(m_alpha);
+
+                s_taskItemBackground->setElementPrefix("hover");
+                s_taskItemBackground->resize(option->rect.size());
+                s_taskItemBackground->paint(painter, option->rect);
+
+                painter->restore();
             }
 
         } else {
@@ -310,7 +318,9 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
                 alpha = hoverAlpha;
             }
 
-            alpha *= m_alpha;
+            if (!(taskFlags() & TaskHasFocus)) {
+                alpha *= m_alpha;
+            }
 
             startColor.setAlphaF(alpha);
             endColor.setAlphaF(qMin(1.0,startColor.alphaF()+0.2));
@@ -321,25 +331,8 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
             painter->setBrush(background);
             painter->setPen(Plasma::Theme::self()->backgroundColor());
         }
-    } else {
-        if (s_taskItemBackground) {
-            //Draw task background from theme svg "normal" element
-            QPixmap normal(option->rect.width(), option->rect.height());
-            normal.fill(Qt::transparent);
-            {
-               QPainter normalPainter(&normal);
-               s_taskItemBackground->paint(&normalPainter, option->rect, "normal");
-            }
-            painter->drawPixmap(option->rect, normal);
-        } else {
-            //Draw task background without svg theming
-            QColor background = colorScheme.shade(colorScheme.background(KColorScheme::AlternateBackground).color(),
-                                              KColorScheme::DarkShade);
-            background.setAlphaF(0.2);
-            painter->setBrush(QBrush(background));
-            painter->setPen(Plasma::Theme::self()->backgroundColor());
-        }
     }
+
     if (!s_taskItemBackground) {
         painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
     }

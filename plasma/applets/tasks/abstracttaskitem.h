@@ -34,7 +34,7 @@ class QTimeLine;
 
 namespace Plasma
 {
-    class Svg;
+    class PanelSvg;
 }
 
 /**
@@ -79,7 +79,11 @@ public:
         /**
          * Indicates that the task's window has the focus
          */
-        TaskHasFocus       = 2
+        TaskHasFocus       = 2,
+        /**
+         * Indicates that the task is iconified
+         */
+        TaskIsMinimized    = 4
     };
     Q_DECLARE_FLAGS(TaskFlags, TaskFlag)
 
@@ -200,7 +204,7 @@ private:
     QTime m_lastUpdate;
 
     static bool s_backgroundCreated;
-    static Plasma::Svg* s_taskItemBackground;
+    static Plasma::PanelSvg* s_taskItemBackground;
 
     // minimum size (in pixels) of a task's icon
     static const int MinTaskIconSize = 48;
