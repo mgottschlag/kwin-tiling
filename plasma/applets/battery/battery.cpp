@@ -147,7 +147,7 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     if (source.startsWith(I18N_NOOP("Battery"))) {
         m_batteries_data[source] = data;
     } else if (source == I18N_NOOP("AC Adapter")) {
-        m_acadapter_plugged = data[I18N_NOOP("Plugged in")].toBool();
+        m_acadapter_plugged = data[I18N_NOOP("Mains connected")].toBool();
         showAcAdapter(m_acadapter_plugged);
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
@@ -521,12 +521,12 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
                                  width, geometry().size().toSize().height());
        
             // paint battery with appropriate charge level
-            paintBattery(p, corect, battery_data.value()[I18N_NOOP("Percent")].toInt(), battery_data.value()[I18N_NOOP("Plugged in")].toBool());
+            paintBattery(p, corect, battery_data.value()[I18N_NOOP("Percent")].toInt(), battery_data.value()[I18N_NOOP("Mains connected")].toBool());
                 
             if (m_showBatteryString || m_isHovered) {
                 // Show the charge percentage with a box on top of the battery
                 QString batteryLabel;
-                if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
+                if (battery_data.value()[I18N_NOOP("Mains connected")].toBool()) {
                     batteryLabel = battery_data.value()[I18N_NOOP("Percent")].toString();
                     batteryLabel.append("%");
                 } else {
@@ -544,7 +544,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
         while (battery_data.hasNext()) {
             battery_data.next();
-            if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
+            if (battery_data.value()[I18N_NOOP("Mains connected")].toBool()) {
                 battery_charge += battery_data.value()[I18N_NOOP("Percent")].toInt();
                 has_battery = true;
                 ++battery_num;

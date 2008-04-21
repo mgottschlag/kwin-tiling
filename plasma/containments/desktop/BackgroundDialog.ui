@@ -178,7 +178,7 @@
             <item row="2" column="1" >
              <widget class="QLabel" name="m_emailLabel" >
               <property name="text" >
-               <string>E-Mail:</string>
+               <string>Email:</string>
               </property>
               <property name="alignment" >
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

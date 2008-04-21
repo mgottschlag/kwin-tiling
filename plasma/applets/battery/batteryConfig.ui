@@ -22,7 +22,7 @@
       <string/>
      </property>
      <property name="text" >
-      <string>Show the &amp;charge percentage on the battery</string>
+      <string>Show the percentage of &amp;charge on the battery</string>
      </property>
     </widget>
    </item>
