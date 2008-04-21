@@ -15,10 +15,9 @@
 #include <QtCore/QObject>
 #include <QtDBus/QtDBus>
 
-namespace KHotKeys
-{
-
-class Action_data_group;
+namespace KHotKeys {
+    class Action_data_group;
+}
 
 class KHotKeysApp
     : public KUniqueApplication
@@ -31,14 +30,8 @@ class KHotKeysApp
         KHotKeysApp();
         virtual ~KHotKeysApp();
     private:
-        Action_data_group* actions_root;
         QObject* delete_helper;
+        KHotKeys::Action_data_group* actions_root;
     };
-
-//***************************************************************************
-// Inline
-//***************************************************************************
-
-} // namespace KHotKeys
 
 #endif

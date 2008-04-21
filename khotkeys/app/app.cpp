@@ -9,34 +9,41 @@
 ****************************************************************************/
 
 #include "app.h"
+#include "daemon/kded_module.h"
 
 #include "action_data_group.h"
 #include "gestures.h"
 #include "settings.h"
 
-#include <kcmdlineargs.h>
-#include <kconfig.h>
-#include <kdebug.h>
+#include <KDE/KAboutData>
+#include <KDE/KCmdLineArgs>
+#include <KDE/KDebug>
 
 #include <unistd.h>
 
-namespace KHotKeys
-{
-
-// KhotKeysApp
-
 KHotKeysApp::KHotKeysApp()
-    :   delete_helper( new QObject )
-    {
-    init_global_data( true, delete_helper ); // grab keys
-    // CHECKME triggery a dalsi vytvaret az tady za inicializaci
-    actions_root = NULL;
+    : delete_helper(new QObject)
+    , actions_root(NULL)
+{
+    KHotKeys::init_global_data( true, delete_helper );
+
     reread_configuration();
+
+    QByteArray multiHead = getenv("KDE_MULTIHEAD");
+    if (multiHead.toLower() == "true") {
+        kError() << "Sorry, KDE_MULTIHEAD is not supported by khotkeys.";
     }
+
+    if (KHotKeys::KdedModuleDaemon::isRunning()) {
+        kWarning() << "stopping khotkeys kded module.";
+        KHotKeys::KdedModuleDaemon::stop();
+    }
+
+}
+
 
 KHotKeysApp::~KHotKeysApp()
     {
-    // CHECKME triggery a dalsi rusit uz tady pred cleanupem
     delete actions_root;
 // Many global data should be destroyed while the QApplication object still
 // exists, and therefore 'this' cannot be the parent, as ~Object
@@ -44,103 +51,56 @@ KHotKeysApp::~KHotKeysApp()
     delete delete_helper;
     }
 
+
 void KHotKeysApp::reread_configuration()
-    { // TODO
+    {
     kDebug( 1217 ) << "reading configuration";
     delete actions_root;
-    khotkeys_set_active( false );
-    Settings settings;
+
+    // Stop listening
+    KHotKeys::khotkeys_set_active( false );
+
+    // Load the settings
+    KHotKeys::Settings settings;
     settings.read_settings( false );
-    gesture_handler->set_mouse_button( settings.gestureMouseButton() );
-    gesture_handler->set_timeout( settings.gestureTimeOut() );
-    gesture_handler->enable( !settings.areGesturesDisabled() );
-    gesture_handler->set_exclude( settings.gesturesExclude() );
+    KHotKeys::gesture_handler->set_mouse_button( settings.gestureMouseButton() );
+    KHotKeys::gesture_handler->set_timeout( settings.gestureTimeOut() );
+    KHotKeys::gesture_handler->enable( !settings.areGesturesDisabled() );
+    KHotKeys::gesture_handler->set_exclude( settings.gesturesExclude() );
     // SOUND: FIXME
-    // voice_handler->set_shortcut( settings.voice_shortcut );
+    // KHotKeys::voice_handler->set_shortcut( settings.voice_shortcut );
 #if 0 // TEST CHECKME
     settings.write_settings();
 #endif
     actions_root = settings.takeActions();
-    khotkeys_set_active( true );
+    KHotKeys::khotkeys_set_active( true );
     actions_root->update_triggers();
     }
+
 
 void KHotKeysApp::quit()
     {
     kapp->quit();
     }
 
-} // namespace KHotKeys
-
-
-
-using namespace KHotKeys;
-
-// for multihead
-static int khotkeys_screen_number = 0;
 
 extern "C"
 int KDE_EXPORT kdemain( int argc, char** argv )
-    {
-        {
-	// multiheaded hotkeys
-        QByteArray multiHead = getenv("KDE_MULTIHEAD");
-        if (multiHead.toLower() == "true") {
-	    Display *dpy = XOpenDisplay(NULL);
-	    if (! dpy) {
-		fprintf(stderr, "%s: FATAL ERROR while trying to open display %s\n",
-			argv[0], XDisplayName(NULL));
-		exit(1);
-	    }
+{
+    KAboutData aboutData(
+        "khotkeys",
+        "khotkeys",
+        ki18n( "KHotKeys Standalone Daemon" ),
+        KHOTKEYS_VERSION,
+        ki18n( "KHotKeys standalone daemon catches mouse gesture and global shortcut events." ),
+        KAboutData::License_GPL );
 
-	    int number_of_screens = ScreenCount(dpy);
-	    khotkeys_screen_number = DefaultScreen(dpy);
-	    int pos;
-	    QByteArray displayname = XDisplayString(dpy);
-	    XCloseDisplay(dpy);
-	    dpy = 0;
+    KCmdLineArgs::init( argc, argv, &aboutData );
 
-	    if ((pos = displayname.lastIndexOf('.')) != -1)
-		displayname.remove(pos, 10);
-
-	    QByteArray env;
-	    if (number_of_screens != 1) {
-		for (int i = 0; i < number_of_screens; i++) {
-		    if (i != khotkeys_screen_number && fork() == 0) {
-			khotkeys_screen_number = i;
-			// break here because we are the child process, we don't
-			// want to fork() anymore
-			break;
-		    }
-		}
-
-		env = "DISPLAY= " + displayname + QByteArray::number(khotkeys_screen_number);
-		if (putenv(strdup(env.data()))) {
-		    fprintf(stderr,
-			    "%s: WARNING: unable to set DISPLAY environment variable\n",
-			    argv[0]);
-		    perror("putenv()");
-		}
-	    }
-	}
-        }
-
-    QByteArray appname;
-    if (khotkeys_screen_number == 0)
-	appname = "khotkeys";
-    else
-	appname = "khotkeys-screen-" + QByteArray::number(khotkeys_screen_number);
-
-                             // no need to i18n these, no GUI
-    KCmdLineArgs::init( argc, argv, appname, 0, ki18n( "KHotKeys" ), KHOTKEYS_VERSION ,
-        ki18n( "KHotKeys daemon" ));
-    KUniqueApplication::addCmdLineOptions();
-    if( !KHotKeysApp::start()) // already running
-        return 0;
     KHotKeysApp app;
     app.disableSessionManagement();
-    return app.exec();
-    }
 
+    return app.exec();
+}
 
 #include "app.moc"
