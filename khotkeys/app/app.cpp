@@ -22,13 +22,9 @@
 #include <unistd.h>
 
 KHotKeysApp::KHotKeysApp()
-    : delete_helper(new QObject)
+    : delete_helper(NULL)
     , actions_root(NULL)
 {
-    KHotKeys::init_global_data( true, delete_helper );
-
-    reread_configuration();
-
     QByteArray multiHead = getenv("KDE_MULTIHEAD");
     if (multiHead.toLower() == "true") {
         kError() << "Sorry, KDE_MULTIHEAD is not supported by khotkeys.";
@@ -39,6 +35,9 @@ KHotKeysApp::KHotKeysApp()
         KHotKeys::KdedModuleDaemon::stop();
     }
 
+    KHotKeys::init_global_data( true, delete_helper );
+
+    reread_configuration();
 }
 
 
