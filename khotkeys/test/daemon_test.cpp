@@ -61,8 +61,6 @@ void Test::testDaemonController()
 
     // Ensure that the standalone daemon stops the kded module when starting
     QVERIFY(KHotKeys::StandAloneDaemon::start());
-    // sleep because khotkeys needs some time to start
-    sleep(1);
     QVERIFY(!KHotKeys::KdedModuleDaemon::isRunning());
 
     // Check that isRunning catches the standalone daemon

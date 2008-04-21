@@ -32,13 +32,13 @@ bool isRunning()
 
 bool reload()
     {
-    if (StandAloneDaemon::isRunning())
+    if (KdedModuleDaemon::isRunning())
         {
-        return StandAloneDaemon::reload();
+        return KdedModuleDaemon::reload();
         }
     else if (KdedModuleDaemon::isRunning())
         {
-        return KdedModuleDaemon::reload();
+        return StandAloneDaemon::reload();
         }
     return false;
     }
@@ -54,9 +54,9 @@ bool start()
 
 bool stop()
     {
-    return StandAloneDaemon::isRunning()
-        ? StandAloneDaemon::stop()
-        : KdedModuleDaemon::stop();
+    return KdedModuleDaemon::isRunning()
+        ? KdedModuleDaemon::stop()
+        : StandAloneDaemon::stop();
     }
 
 

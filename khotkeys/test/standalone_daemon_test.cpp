@@ -50,26 +50,19 @@ void Test::cleanupTestCase()
 
 void Test::testStandAloneDaemonController()
     {
-    // The sleeps are necessary. If not present the isRunning call will fail.
-    sleep(1);
     QVERIFY(!KHotKeys::StandAloneDaemon::isRunning());
     // 1st round
     QVERIFY(KHotKeys::StandAloneDaemon::start());
-    sleep(1);
     QVERIFY(KHotKeys::StandAloneDaemon::isRunning());
     QVERIFY(KHotKeys::StandAloneDaemon::stop());
-    sleep(1);
     QVERIFY(!KHotKeys::StandAloneDaemon::isRunning());
     // 2nd round
     QVERIFY(KHotKeys::StandAloneDaemon::start());
-    sleep(1);
     QVERIFY(KHotKeys::StandAloneDaemon::isRunning());
     QVERIFY(KHotKeys::StandAloneDaemon::stop());
-    sleep(1);
     QVERIFY(!KHotKeys::StandAloneDaemon::isRunning());
     // 3nd round
     QVERIFY(KHotKeys::StandAloneDaemon::start());
-    sleep(1);
     QVERIFY(KHotKeys::StandAloneDaemon::isRunning());
     // Ensure kded is still there
     QVERIFY(QDBusInterface( "org.kde.kded", "/kded","org.kde.kded" ).isValid());

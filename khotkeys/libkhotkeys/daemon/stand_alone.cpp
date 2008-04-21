@@ -29,6 +29,7 @@ namespace KHotKeys { namespace StandAloneDaemon {
 
 bool isRunning()
     {
+    sleep(1);
     return QDBusConnection::sessionBus().interface()->isServiceRegistered( "org.kde.khotkeys" );
     }
 
@@ -66,7 +67,8 @@ bool start()
     int rc = KToolInvocation::kdeinitExec( "khotkeys" );
     if ( rc == 0 )
         {
-        kDebug() << "Started server org.kde.khotkeys (standalone)";
+        // Sleep a second so kdeinit can finish the starting
+        sleep(1);
         return true;
         }
     else
