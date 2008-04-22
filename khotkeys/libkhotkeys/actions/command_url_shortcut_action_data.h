@@ -16,17 +16,17 @@
 
 namespace KHotKeys {
 
-class KDE_EXPORT Command_url_shortcut_action_data
+class KDE_EXPORT CommandUrlShortcutActionData
     : public Simple_action_data< Shortcut_trigger, CommandUrlAction >
     {
         typedef Simple_action_data< Shortcut_trigger, CommandUrlAction > base;
     public:
-        Command_url_shortcut_action_data( ActionDataGroup* parent_P, const QString& name_P,
+        CommandUrlShortcutActionData( ActionDataGroup* parent_P, const QString& name_P,
             const QString& comment_P, bool enabled_P = true );
-        Command_url_shortcut_action_data( ActionDataGroup* parent_P, const QString& name_P,
+        CommandUrlShortcutActionData( ActionDataGroup* parent_P, const QString& name_P,
             const QString& comment_P, const KShortcut& shortcut_P, const QString& command_url_P,
             bool enabled_P = true );
-        Command_url_shortcut_action_data( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
+        CommandUrlShortcutActionData( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
     };
 
 

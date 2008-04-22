@@ -26,7 +26,7 @@ namespace KHotKeys
     class ActionDataGroup;
     class Action_list;
     class CommandUrlAction;
-    class Command_url_shortcut_action_data;
+    class CommandUrlShortcutActionData;
     class Dbus_action;
     class MenuEntryAction;
     class Menuentry_shortcut_action_data;
@@ -34,7 +34,6 @@ namespace KHotKeys
     class SimpleActionData;
     class Trigger;
     typedef Action_list ActionList;
-    typedef Command_url_shortcut_action_data CommandUrlShortcutActionData;
     typedef Dbus_action DbusAction;
     typedef Menuentry_shortcut_action_data MenuentryShortcutActionData;
     typedef Shortcut_trigger ShortcutTrigger;

@@ -377,7 +377,7 @@ void Settings::read_settings_v1( KConfig& cfg_P )
             }
         else
             {
-            ( void ) new Command_url_shortcut_action_data( m_actions, name, "",
+            ( void ) new CommandUrlShortcutActionData( m_actions, name, "",
                 KShortcut( shortcut ), run );
             }
         }

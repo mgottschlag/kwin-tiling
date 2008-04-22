@@ -28,7 +28,7 @@ void Simple_action_data< Shortcut_trigger, CommandUrlAction >
     }
 
 
-Command_url_shortcut_action_data::Command_url_shortcut_action_data( 
+CommandUrlShortcutActionData::CommandUrlShortcutActionData( 
         ActionDataGroup* parent_P,
         const QString& name_P,
         const QString& comment_P,
@@ -43,7 +43,7 @@ Command_url_shortcut_action_data::Command_url_shortcut_action_data(
     }
 
 
-Command_url_shortcut_action_data::Command_url_shortcut_action_data( ActionDataGroup* parent_P,
+CommandUrlShortcutActionData::CommandUrlShortcutActionData( ActionDataGroup* parent_P,
     const QString& name_P, const QString& comment_P, bool enabled_P )
     : Simple_action_data< Shortcut_trigger, CommandUrlAction >( parent_P, name_P,
         comment_P, enabled_P )
@@ -51,7 +51,7 @@ Command_url_shortcut_action_data::Command_url_shortcut_action_data( ActionDataGr
     }
 
 
-Command_url_shortcut_action_data::Command_url_shortcut_action_data( 
+CommandUrlShortcutActionData::CommandUrlShortcutActionData( 
         KConfigGroup& cfg_P,
         ActionDataGroup* parent_P )
     : Simple_action_data< Shortcut_trigger, CommandUrlAction >( cfg_P, parent_P )
