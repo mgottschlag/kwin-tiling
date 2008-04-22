@@ -28,7 +28,7 @@ void Simple_action_data< Shortcut_trigger, MenuEntryAction >
     }
 
 
-Menuentry_shortcut_action_data::Menuentry_shortcut_action_data( 
+MenuEntryShortcutActionData::MenuEntryShortcutActionData( 
         ActionDataGroup* parent_P,
         const QString& name_P,
         const QString& comment_P,
@@ -46,7 +46,7 @@ Menuentry_shortcut_action_data::Menuentry_shortcut_action_data(
     }
 
 
-Menuentry_shortcut_action_data::Menuentry_shortcut_action_data( ActionDataGroup* parent_P,
+MenuEntryShortcutActionData::MenuEntryShortcutActionData( ActionDataGroup* parent_P,
     const QString& name_P, const QString& comment_P, bool enabled_P )
     : Simple_action_data< Shortcut_trigger, MenuEntryAction >( parent_P, name_P,
         comment_P, enabled_P )
@@ -54,7 +54,7 @@ Menuentry_shortcut_action_data::Menuentry_shortcut_action_data( ActionDataGroup*
     }
 
 
-Menuentry_shortcut_action_data::Menuentry_shortcut_action_data( KConfigGroup& cfg_P,
+MenuEntryShortcutActionData::MenuEntryShortcutActionData( KConfigGroup& cfg_P,
     ActionDataGroup* parent_P )
     : Simple_action_data< Shortcut_trigger, MenuEntryAction >( cfg_P, parent_P )
     {

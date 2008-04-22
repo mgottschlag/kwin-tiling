@@ -18,7 +18,7 @@
 
 namespace KHotKeys {
 
-class KDE_EXPORT Menuentry_shortcut_action_data
+class KDE_EXPORT MenuEntryShortcutActionData
     : public Simple_action_data< Shortcut_trigger, MenuEntryAction >
     {
 
@@ -26,14 +26,14 @@ class KDE_EXPORT Menuentry_shortcut_action_data
 
     public:
 
-        Menuentry_shortcut_action_data( ActionDataGroup* parent_P, const QString& name_P,
+        MenuEntryShortcutActionData( ActionDataGroup* parent_P, const QString& name_P,
             const QString& comment_P, bool enabled_P = true );
 
-        Menuentry_shortcut_action_data( ActionDataGroup* parent_P, const QString& name_P,
+        MenuEntryShortcutActionData( ActionDataGroup* parent_P, const QString& name_P,
             const QString& comment_P, const KShortcut& shortcut_P, const QString& command_url_P,
             bool enabled_P = true );
 
-        Menuentry_shortcut_action_data( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
+        MenuEntryShortcutActionData( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
     };
 
 

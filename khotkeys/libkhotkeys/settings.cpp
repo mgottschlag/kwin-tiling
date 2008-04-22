@@ -372,7 +372,7 @@ void Settings::read_settings_v1( KConfig& cfg_P )
                     ActionDataGroup::SYSTEM_MENUENTRIES, true );
                 menuentries->set_conditions( new Condition_list( "", menuentries ));
                 }
-            ( void ) new Menuentry_shortcut_action_data( menuentries, name, "",
+            ( void ) new MenuEntryShortcutActionData( menuentries, name, "",
                 KShortcut( shortcut ), run );
             }
         else
