@@ -93,7 +93,7 @@ class KDE_EXPORT Simple_action_data
 // TYPEDEFS
 
 //! A keyboard shortcut to dbus call action
-typedef Simple_action_data< ShortcutTrigger, Dbus_action > Dbus_shortcut_action_data;
+typedef Simple_action_data< ShortcutTrigger, DBusAction > Dbus_shortcut_action_data;
 
 //! A keyboard shortcut to keyboard input action
 typedef Simple_action_data< ShortcutTrigger, Keyboard_input_action >

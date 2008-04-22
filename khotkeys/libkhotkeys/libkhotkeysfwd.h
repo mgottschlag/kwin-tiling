@@ -27,13 +27,12 @@ namespace KHotKeys
     class ActionList;
     class CommandUrlAction;
     class CommandUrlShortcutActionData;
-    class Dbus_action;
+    class DBusAction;
     class MenuEntryAction;
     class MenuEntryShortcutActionData;
     class ShortcutTrigger;
     class SimpleActionData;
     class Trigger;
-    typedef Dbus_action DbusAction;
     };
 
 

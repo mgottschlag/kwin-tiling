@@ -39,15 +39,15 @@ public:
     /**
      * Default constructor
      */
-    DbusActionWidget( KHotKeys::DbusAction *action, QWidget *parent = 0 );
+    DbusActionWidget( KHotKeys::DBusAction *action, QWidget *parent = 0 );
 
     /**
      * Destructor
      */
     virtual ~DbusActionWidget();
 
-    KHotKeys::DbusAction *action();
-    const KHotKeys::DbusAction *action() const;
+    KHotKeys::DBusAction *action();
+    const KHotKeys::DBusAction *action() const;
 
     virtual bool isChanged() const;
 

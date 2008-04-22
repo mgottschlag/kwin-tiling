@@ -22,7 +22,7 @@ namespace KHotKeys
 // Dbus_shortcut_action_data
 
 template<> KDE_EXPORT
-void Simple_action_data< ShortcutTrigger, Dbus_action >
+void Simple_action_data< ShortcutTrigger, DBusAction >
     ::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );

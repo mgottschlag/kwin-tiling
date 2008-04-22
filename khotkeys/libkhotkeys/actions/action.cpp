@@ -50,7 +50,7 @@ Action* Action::create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P )
     if( type == "MENUENTRY" )
         return new MenuEntryAction( cfg_P, data_P );
     if( type == "DCOP" || type == "DBUS" )
-        return new Dbus_action( cfg_P, data_P );
+        return new DBusAction( cfg_P, data_P );
     if( type == "KEYBOARD_INPUT" )
         return new Keyboard_input_action( cfg_P, data_P );
     if( type == "ACTIVATE_WINDOW" )

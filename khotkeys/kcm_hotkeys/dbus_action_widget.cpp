@@ -22,7 +22,7 @@
 #include <KDE/KRun>
 
 DbusActionWidget::DbusActionWidget(
-    KHotKeys::DbusAction *action,
+    KHotKeys::DBusAction *action,
     QWidget *parent )
         : Base(action, parent)
     {
@@ -59,15 +59,15 @@ DbusActionWidget::~DbusActionWidget()
     }
 
 
-KHotKeys::DbusAction *DbusActionWidget::action()
+KHotKeys::DBusAction *DbusActionWidget::action()
     {
-    return static_cast<KHotKeys::DbusAction*>(_action);
+    return static_cast<KHotKeys::DBusAction*>(_action);
     }
 
 
-const KHotKeys::DbusAction *DbusActionWidget::action() const
+const KHotKeys::DBusAction *DbusActionWidget::action() const
     {
-    return static_cast<const KHotKeys::DbusAction*>(_action);
+    return static_cast<const KHotKeys::DBusAction*>(_action);
     }
 
 
@@ -93,7 +93,7 @@ void DbusActionWidget::doCopyToObject()
 
 void DbusActionWidget::execCommand() const
     {
-    KHotKeys::DbusAction action(
+    KHotKeys::DBusAction action(
         0,
         ui.application->text(),
         ui.object->text(),

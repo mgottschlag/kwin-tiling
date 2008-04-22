@@ -57,7 +57,7 @@ HotkeysTreeViewContextMenu::HotkeysTreeViewContextMenu( const QModelIndex &index
 
     mapper->setMapping(
         globalShortcut->addAction( i18n("Dbus Command"), mapper, SLOT(map()) ),
-        KHotKeys::Action::DbusAction );
+        KHotKeys::Action::DBusActionType );
 
     mapper->setMapping(
         globalShortcut->addAction( i18n("K-Menu Entry"), mapper, SLOT(map()) ),
@@ -103,8 +103,8 @@ void HotkeysTreeViewContextMenu::newGlobalShortcutActionAction( int actionType )
             data->set_action( new KHotKeys::CommandUrlAction( data ));
             break;
 
-        case KHotKeys::Action::DbusAction:
-            data->set_action( new KHotKeys::DbusAction( data ));
+        case KHotKeys::Action::DBusActionType:
+            data->set_action( new KHotKeys::DBusAction( data ));
             break;
 
         default:

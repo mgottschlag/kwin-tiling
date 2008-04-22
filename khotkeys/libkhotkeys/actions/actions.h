@@ -39,7 +39,7 @@ class KDE_EXPORT Action
             {
             ActivateWindowAction,
             CommandUrlActionType,
-            DbusAction,
+            DBusActionType,
             KeyboardInputAction,
             MenuEntryActionType
             };
@@ -119,19 +119,19 @@ class KDE_EXPORT MenuEntryAction
         KService::Ptr _service;
     };
 
-class KDE_EXPORT Dbus_action
+class KDE_EXPORT DBusAction
     : public Action
     {
     typedef Action base;
     public:
-        Dbus_action( 
+        DBusAction( 
             Action_data* data_P,
             const QString& app_P = QString(),
             const QString& obj_P = QString(),
             const QString& call_P= QString(),
             const QString& args_P= QString() );
 
-        Dbus_action( KConfigGroup& cfg_P, Action_data* data_P );
+        DBusAction( KConfigGroup& cfg_P, Action_data* data_P );
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
         const QString remote_application() const;
@@ -146,7 +146,7 @@ class KDE_EXPORT Dbus_action
 
         virtual const QString description() const;
         virtual Action* copy( Action_data* data_P ) const;
-        virtual Type type() { return DbusAction; }
+        virtual Type type() { return DBusActionType; }
     private:
         QString _application; // CHECKME QCString ?
         QString _object;
