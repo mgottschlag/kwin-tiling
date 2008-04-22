@@ -19,10 +19,10 @@
 namespace KHotKeys {
 
 class KDE_EXPORT MenuEntryShortcutActionData
-    : public Simple_action_data< Shortcut_trigger, MenuEntryAction >
+    : public Simple_action_data< ShortcutTrigger, MenuEntryAction >
     {
 
-        typedef Simple_action_data< Shortcut_trigger, MenuEntryAction > base;
+        typedef Simple_action_data< ShortcutTrigger, MenuEntryAction > base;
 
     public:
 

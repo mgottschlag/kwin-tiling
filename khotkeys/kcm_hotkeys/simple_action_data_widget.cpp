@@ -98,7 +98,7 @@ void SimpleActionDataWidget::setActionData( KHotKeys::SimpleActionData* pData )
         {
         switch ( trg->type() )
             {
-            case KHotKeys::Trigger::ShortcutTrigger:
+            case KHotKeys::Trigger::ShortcutTriggerType:
                 currentTrigger = new ShortcutTriggerWidget( static_cast<KHotKeys::ShortcutTrigger*>(trg) );
                 break;
 

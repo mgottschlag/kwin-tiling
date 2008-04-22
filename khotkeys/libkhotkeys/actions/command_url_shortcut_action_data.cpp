@@ -20,7 +20,7 @@ namespace KHotKeys
 
 
 template<> KDE_EXPORT
-void Simple_action_data< Shortcut_trigger, CommandUrlAction >
+void Simple_action_data< ShortcutTrigger, CommandUrlAction >
     ::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
@@ -35,17 +35,17 @@ CommandUrlShortcutActionData::CommandUrlShortcutActionData(
         const KShortcut& shortcut_P,
         const QString& command_url_P,
         bool enabled_P )
-    : Simple_action_data< Shortcut_trigger, CommandUrlAction >( parent_P, name_P,
+    : Simple_action_data< ShortcutTrigger, CommandUrlAction >( parent_P, name_P,
         comment_P, enabled_P )
     {
     set_action( new CommandUrlAction( this, command_url_P ));
-    set_trigger( new Shortcut_trigger( this, shortcut_P ));
+    set_trigger( new ShortcutTrigger( this, shortcut_P ));
     }
 
 
 CommandUrlShortcutActionData::CommandUrlShortcutActionData( ActionDataGroup* parent_P,
     const QString& name_P, const QString& comment_P, bool enabled_P )
-    : Simple_action_data< Shortcut_trigger, CommandUrlAction >( parent_P, name_P,
+    : Simple_action_data< ShortcutTrigger, CommandUrlAction >( parent_P, name_P,
         comment_P, enabled_P )
     {
     }
@@ -54,7 +54,7 @@ CommandUrlShortcutActionData::CommandUrlShortcutActionData( ActionDataGroup* par
 CommandUrlShortcutActionData::CommandUrlShortcutActionData( 
         KConfigGroup& cfg_P,
         ActionDataGroup* parent_P )
-    : Simple_action_data< Shortcut_trigger, CommandUrlAction >( cfg_P, parent_P )
+    : Simple_action_data< ShortcutTrigger, CommandUrlAction >( cfg_P, parent_P )
     {
     }
 
