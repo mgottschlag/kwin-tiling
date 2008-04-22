@@ -131,7 +131,7 @@ void SimpleActionDataWidget::setActionData( KHotKeys::SimpleActionData* pData )
                 currentAction = new DbusActionWidget( static_cast<KHotKeys::DbusAction*>(act) );
                 break;
 
-            case KHotKeys::Action::CommandUrlAction:
+            case KHotKeys::Action::CommandUrlActionType:
                 currentAction = new CommandUrlActionWidget( static_cast<KHotKeys::CommandUrlAction*>(act) );
                 break;
 
