@@ -126,7 +126,7 @@ class KDE_EXPORT ShortcutTrigger
         QUuid _uuid;
     };
 
-class KDE_EXPORT Window_trigger
+class KDE_EXPORT WindowTrigger
     : public QObject, public Trigger
     {
     Q_OBJECT
@@ -139,12 +139,12 @@ class KDE_EXPORT Window_trigger
             WINDOW_ACTIVATES       = ( 1 << 2 ),
             WINDOW_DEACTIVATES     = ( 1 << 3 )
             };
-        Window_trigger( Action_data* data_P, Windowdef_list* windows_P, int window_actions_P );
-        Window_trigger( KConfigGroup& cfg_P, Action_data* data_P );
-        virtual ~Window_trigger();
+        WindowTrigger( Action_data* data_P, Windowdef_list* windows_P, int window_actions_P );
+        WindowTrigger( KConfigGroup& cfg_P, Action_data* data_P );
+        virtual ~WindowTrigger();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
 #ifdef HAVE_COVARIANT_RETURN    // stupid gcc, it doesn't even warn it can't do this
-        virtual Window_trigger* copy( Action_data* data_P ) const;
+        virtual WindowTrigger* copy( Action_data* data_P ) const;
 #else
         virtual Trigger* copy( Action_data* data_P ) const;
 #endif

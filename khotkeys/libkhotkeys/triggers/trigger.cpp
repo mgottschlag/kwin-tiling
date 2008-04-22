@@ -53,7 +53,7 @@ Trigger* Trigger::create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P )
     if( type == "SHORTCUT" || type == "SINGLE_SHORTCUT" )
         return new ShortcutTrigger( cfg_P, data_P );
     if( type == "WINDOW" )
-        return new Window_trigger( cfg_P, data_P );
+        return new WindowTrigger( cfg_P, data_P );
     if( type == "GESTURE" )
         return new Gesture_trigger(cfg_P, data_P );
 // FIXME: SOUND
