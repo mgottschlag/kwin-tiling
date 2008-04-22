@@ -170,15 +170,15 @@ class KDE_EXPORT WindowTrigger
         bool active;
     };
 
-class KDE_EXPORT Gesture_trigger
+class KDE_EXPORT GestureTrigger
     : public QObject, public Trigger
     {
     Q_OBJECT
     typedef Trigger base;
     public:
-        Gesture_trigger( Action_data* data_P, const QString& gesture_P );
-        Gesture_trigger( KConfigGroup& cfg_P, Action_data* data_P );
-        virtual ~Gesture_trigger();
+        GestureTrigger( Action_data* data_P, const QString& gesture_P );
+        GestureTrigger( KConfigGroup& cfg_P, Action_data* data_P );
+        virtual ~GestureTrigger();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual Trigger* copy( Action_data* data_P ) const;
         virtual const QString description() const;
