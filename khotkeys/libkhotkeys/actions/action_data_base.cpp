@@ -139,7 +139,7 @@ ActionDataBase* ActionDataBase::create_cfg_read( KConfigGroup& cfg_P, ActionData
           || type == "COMMAND_URL_SHORTCUT_ACTION_DATA"
           || type == "KEYBOARD_INPUT_SHORTCUT_ACTION_DATA"
           || type == "ACTIVATE_WINDOW_SHORTCUT_ACTION_DATA" )
-        return new Simple_action_data_base( cfg_P, parent_P );
+        return new SimpleActionData( cfg_P, parent_P );
     kWarning( 1217 ) << "Unknown ActionDataBase type read from cfg file\n";
     return 0;
     }

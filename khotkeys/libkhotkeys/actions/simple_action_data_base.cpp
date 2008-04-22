@@ -27,7 +27,7 @@
 namespace KHotKeys {
 
 
-Simple_action_data_base::Simple_action_data_base(
+SimpleActionData::SimpleActionData(
         ActionDataGroup* parent_P,
         const QString& name_P,
         const QString& comment_P,
@@ -43,19 +43,19 @@ Simple_action_data_base::Simple_action_data_base(
     {}
 
 
-Simple_action_data_base::Simple_action_data_base( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
+SimpleActionData::SimpleActionData( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
     : Action_data( cfg_P, parent_P )
     {}
 
 
-void Simple_action_data_base::cfg_write( KConfigGroup& cfg_P ) const
+void SimpleActionData::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "SIMPLE_ACTION_DATA" );
     }
 
 
-void Simple_action_data_base::set_action( Action* action_P )
+void SimpleActionData::set_action( Action* action_P )
     {
     Action_list* tmp = new Action_list( "Simple_action_data" );
     tmp->append( action_P );
@@ -63,7 +63,7 @@ void Simple_action_data_base::set_action( Action* action_P )
     }
 
 
-void Simple_action_data_base::set_trigger( Trigger* trigger_P )
+void SimpleActionData::set_trigger( Trigger* trigger_P )
     {
     Trigger_list* tmp = new Trigger_list( "Simple_action" );
     tmp->append( trigger_P );
@@ -71,7 +71,7 @@ void Simple_action_data_base::set_trigger( Trigger* trigger_P )
     }
 
 
-const Action* Simple_action_data_base::action() const
+const Action* SimpleActionData::action() const
     {
     if( actions() == 0 || actions()->isEmpty() )
         return 0;
@@ -79,7 +79,7 @@ const Action* Simple_action_data_base::action() const
     }
 
 
-Action* Simple_action_data_base::action()
+Action* SimpleActionData::action()
     {
     if( actions() == 0 || actions()->isEmpty() )
         return 0;
@@ -87,7 +87,7 @@ Action* Simple_action_data_base::action()
     }
 
 
-const Trigger* Simple_action_data_base::trigger() const
+const Trigger* SimpleActionData::trigger() const
     {
     if( triggers() == 0 || triggers()->isEmpty() )
         return 0;
@@ -95,7 +95,7 @@ const Trigger* Simple_action_data_base::trigger() const
     }
 
 
-Trigger* Simple_action_data_base::trigger()
+Trigger* SimpleActionData::trigger()
     {
     if( triggers() == 0 || triggers()->isEmpty() )
         return 0;

@@ -31,14 +31,13 @@ namespace KHotKeys
     class MenuEntryAction;
     class Menuentry_shortcut_action_data;
     class Shortcut_trigger;
-    class Simple_action_data_base;
+    class SimpleActionData;
     class Trigger;
     typedef Action_list ActionList;
     typedef Command_url_shortcut_action_data CommandUrlShortcutActionData;
     typedef Dbus_action DbusAction;
     typedef Menuentry_shortcut_action_data MenuentryShortcutActionData;
     typedef Shortcut_trigger ShortcutTrigger;
-    typedef Simple_action_data_base SimpleActionData;
     };
 
 

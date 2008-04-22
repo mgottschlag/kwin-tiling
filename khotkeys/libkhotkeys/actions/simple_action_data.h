@@ -19,19 +19,19 @@
 namespace KHotKeys {
 
 
-class KDE_EXPORT Simple_action_data_base : public Action_data
+class KDE_EXPORT SimpleActionData : public Action_data
     {
     typedef Action_data base;
 
 public:
 
-    Simple_action_data_base(
+    SimpleActionData(
         ActionDataGroup* parent_P,
         const QString& name_P,
         const QString& comment_P,
         bool enabled_P = true );
 
-    Simple_action_data_base(
+    SimpleActionData(
         KConfigGroup& cfg_P,
         ActionDataGroup* parent_P );
 
@@ -47,17 +47,17 @@ public:
     void set_trigger( Trigger* trigger_P );
 
     virtual void cfg_write( KConfigGroup& cfg_P ) const;
-    }; // class Simple_action_data_base
+    }; // class SimpleActionData
 
 
 /**
- * A template adding convenience methods to Simple_action_data_base.
+ * A template adding convenience methods to SimpleActionData.
  */
 template< typename T, typename A >
 class KDE_EXPORT Simple_action_data
-    : public Simple_action_data_base
+    : public SimpleActionData
     {
-        typedef Simple_action_data_base base;
+        typedef SimpleActionData base;
 
     public:
 
