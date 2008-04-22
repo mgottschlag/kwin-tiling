@@ -64,6 +64,8 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
     /*if (s_taskItemBackground) {
         connect(s_taskItemBackground, SIGNAL(repaintNeeded()), this, SLOT(slotUpdate()));
     }*/
+
+    connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(slotUpdate()));
 }
 
 AbstractTaskItem::~AbstractTaskItem()
@@ -180,6 +182,7 @@ AbstractTaskItem::TaskFlags AbstractTaskItem::taskFlags() const
 
 void AbstractTaskItem::slotUpdate()
 {
+    setupBackgroundSvg(parent());
     QGraphicsItem::update();
 }
 
