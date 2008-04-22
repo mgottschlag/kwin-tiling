@@ -57,7 +57,7 @@ void SimpleActionData::cfg_write( KConfigGroup& cfg_P ) const
 
 void SimpleActionData::set_action( Action* action_P )
     {
-    Action_list* tmp = new Action_list( "Simple_action_data" );
+    ActionList* tmp = new ActionList( "Simple_action_data" );
     tmp->append( action_P );
     set_actions( tmp );
     }

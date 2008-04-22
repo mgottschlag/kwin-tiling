@@ -57,14 +57,14 @@ class KDE_EXPORT Action
         Action_data* const data;
     };
 
-class KDE_EXPORT Action_list
+class KDE_EXPORT ActionList
     : public QList< Action* >
     {
-    Q_DISABLE_COPY( Action_list )
+    Q_DISABLE_COPY( ActionList )
     public:
-        Action_list( const QString& comment_P ); // CHECKME nebo i data ?
-        Action_list( KConfigGroup& cfg_P, Action_data* data_P );
-        ~Action_list();
+        ActionList( const QString& comment_P ); // CHECKME nebo i data ?
+        ActionList( KConfigGroup& cfg_P, Action_data* data_P );
+        ~ActionList();
         void cfg_write( KConfigGroup& cfg_P ) const;
         //! Some convenience typedef
         typedef QList<Action*>::Iterator Iterator;

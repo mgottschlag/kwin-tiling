@@ -27,7 +27,7 @@ void Generic_action_data::cfg_write( KConfigGroup& cfg_P ) const
 
 Generic_action_data::Generic_action_data( ActionDataGroup* parent_P, const QString& name_P,
     const QString& comment_P, Trigger_list* triggers_P, Condition_list* conditions_P,
-    Action_list* actions_P, bool enabled_P )
+    ActionList* actions_P, bool enabled_P )
     : Action_data( parent_P, name_P, comment_P, triggers_P, conditions_P, actions_P, enabled_P )
     {
     }

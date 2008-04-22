@@ -27,7 +27,7 @@ Action_data::Action_data( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
     KConfigGroup triggersGroup( cfg_P.config(), cfg_P.name() + "Triggers" );
     _triggers = new Trigger_list( triggersGroup, this );
     KConfigGroup actionsGroup( cfg_P.config(), cfg_P.name() + "Actions" );
-    _actions = new Action_list( actionsGroup, this );
+    _actions = new ActionList( actionsGroup, this );
     }
 
 
@@ -42,7 +42,7 @@ Action_data::~Action_data()
 
 Action_data::Action_data( ActionDataGroup* parent_P, const QString& name_P,
     const QString& comment_P, Trigger_list* triggers_P, Condition_list* conditions_P,
-    Action_list* actions_P, bool enabled_P )
+    ActionList* actions_P, bool enabled_P )
     : ActionDataBase( parent_P, name_P, comment_P, conditions_P, enabled_P ),
     _triggers( triggers_P ), _actions( actions_P )
     {
@@ -56,7 +56,7 @@ const Trigger_list* Action_data::triggers() const
     }
 
 
-const Action_list* Action_data::actions() const
+const ActionList* Action_data::actions() const
     {
 //    Q_ASSERT( _actions != 0 );
     return _actions;
@@ -84,7 +84,7 @@ void Action_data::cfg_write( KConfigGroup& cfg_P ) const
 
 void Action_data::execute()
     {
-    for( Action_list::Iterator it = _actions->begin();
+    for( ActionList::Iterator it = _actions->begin();
          it != _actions->end();
          ++it )
         (*it)->execute();
@@ -119,7 +119,7 @@ void Action_data::set_triggers( Trigger_list* triggers_P )
 void Action_data::add_action( Action* action_P, Action* after_P )
     {
     int index = 0;
-    for( Action_list::Iterator it = _actions->begin();
+    for( ActionList::Iterator it = _actions->begin();
          it != _actions->end();
          ++it )
         {
@@ -131,10 +131,10 @@ void Action_data::add_action( Action* action_P, Action* after_P )
     }
 
 
-void Action_data::add_actions( Action_list* actions_P, Action* after_P )
+void Action_data::add_actions( ActionList* actions_P, Action* after_P )
     {
     int index = 0;
-    for( Action_list::Iterator it = _actions->begin();
+    for( ActionList::Iterator it = _actions->begin();
          it != _actions->end();
          ++it )
         {
@@ -154,7 +154,7 @@ void Action_data::add_actions( Action_list* actions_P, Action* after_P )
     }
 
 
-void Action_data::set_actions( Action_list* actions_P )
+void Action_data::set_actions( ActionList* actions_P )
     {
     Q_ASSERT( _actions == 0 );
     _actions = actions_P;

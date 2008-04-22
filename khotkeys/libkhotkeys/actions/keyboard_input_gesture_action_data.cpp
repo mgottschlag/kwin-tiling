@@ -20,7 +20,7 @@ namespace KHotKeys
 
 void Keyboard_input_gesture_action_data::set_action( Keyboard_input_action* action_P )
     {
-    Action_list* tmp = new Action_list( "Keyboard_input_gesture_action_data" );
+    ActionList* tmp = new ActionList( "Keyboard_input_gesture_action_data" );
     tmp->append( action_P );
     set_actions( tmp );
     }
@@ -30,7 +30,7 @@ const Keyboard_input_action* Keyboard_input_gesture_action_data::action() const
     {
     if( actions() == 0 || actions()->isEmpty() ) // CHECKME tohle poradne zkontrolovat
         return 0;
-    return static_cast< Keyboard_input_action* >( const_cast< Action_list* >( actions())->first());
+    return static_cast< Keyboard_input_action* >( const_cast< ActionList* >( actions())->first());
     }
 
 

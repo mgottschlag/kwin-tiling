@@ -27,7 +27,7 @@ class KDE_EXPORT Generic_action_data
 
         Generic_action_data( ActionDataGroup* parent_P, const QString& name_P,
             const QString& comment_P, Trigger_list* triggers_P, Condition_list* conditions_P,
-            Action_list* actions_P, bool enabled_P = true );
+            ActionList* actions_P, bool enabled_P = true );
 
         Generic_action_data( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
 
