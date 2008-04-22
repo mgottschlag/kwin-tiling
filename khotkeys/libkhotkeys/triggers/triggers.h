@@ -48,9 +48,9 @@ class KDE_EXPORT Trigger
     public:
         enum Type
             {
-            GestureTrigger,
+            GestureTriggerType,
             ShortcutTriggerType,
-            WindowTrigger
+            WindowTriggerType
             };
 
         Trigger( Action_data* data_P );
@@ -153,7 +153,7 @@ class KDE_EXPORT Window_trigger
         bool triggers_on( window_action_t w_action_P ) const;
         virtual void activate( bool activate_P );
 
-        virtual Type type() const { return WindowTrigger; }
+        virtual Type type() const { return WindowTriggerType; }
     protected: // CHECKME neco private ?
         Windowdef_list* _windows;
         int window_actions;
@@ -185,7 +185,7 @@ class KDE_EXPORT Gesture_trigger
         const QString& gesturecode() const;
         virtual void activate( bool activate_P );
 
-        virtual Type type() const { return GestureTrigger; }
+        virtual Type type() const { return GestureTriggerType; }
     protected Q_SLOTS:
         void handle_gesture( const QString& gesture_P, WId window_P );
     private:

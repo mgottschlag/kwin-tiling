@@ -40,7 +40,7 @@ class KDE_EXPORT Action
             ActivateWindowAction,
             CommandUrlActionType,
             DBusActionType,
-            KeyboardInputAction,
+            KeyboardInputActionType,
             MenuEntryActionType
             };
 
@@ -173,7 +173,7 @@ class KDE_EXPORT Keyboard_input_action
         bool activeWindow() const;
         virtual const QString description() const;
         virtual Action* copy( Action_data* data_P ) const;
-        virtual Type type() { return KeyboardInputAction; }
+        virtual Type type() { return KeyboardInputActionType; }
     private:
         QString _input;
         const Windowdef_list* _dest_window;
