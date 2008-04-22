@@ -314,9 +314,9 @@ void Settings::read_actions_recursively_v2( KConfigGroup& cfg_P, Action_data_gro
          ++i )
         {
         KConfigGroup itConfig( cfg_P.config(), save_cfg_group + '_' + QString::number( i ));
-        if( include_disabled_P || Action_data_base::cfg_is_enabled( itConfig ))
+        if( include_disabled_P || ActionDataBase::cfg_is_enabled( itConfig ))
             {
-            Action_data_base* new_action = Action_data_base::create_cfg_read( itConfig, parent_P );
+            ActionDataBase* new_action = ActionDataBase::create_cfg_read( itConfig, parent_P );
             Action_data_group* grp = dynamic_cast< Action_data_group* >( new_action );
             if( grp != NULL )
                 read_actions_recursively_v2( itConfig, grp, include_disabled_P );
