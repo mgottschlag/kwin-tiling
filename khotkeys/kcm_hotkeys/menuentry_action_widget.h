@@ -39,15 +39,15 @@ public:
     /**
      * Default constructor
      */
-    MenuentryActionWidget( KHotKeys::MenuentryAction *action, QWidget *parent = 0 );
+    MenuentryActionWidget( KHotKeys::MenuEntryAction *action, QWidget *parent = 0 );
 
     /**
      * Destructor
      */
     virtual ~MenuentryActionWidget();
 
-    KHotKeys::MenuentryAction *action();
-    const KHotKeys::MenuentryAction *action() const;
+    KHotKeys::MenuEntryAction *action();
+    const KHotKeys::MenuEntryAction *action() const;
 
     virtual bool isChanged() const;
 

@@ -26,36 +26,36 @@
 
 namespace KHotKeys {
 
-Menuentry_action::Menuentry_action( Action_data* data_P, const QString& menuentry_P )
+MenuEntryAction::MenuEntryAction( Action_data* data_P, const QString& menuentry_P )
     : CommandUrlAction( data_P, menuentry_P )
     {
     }
 
 
-Menuentry_action::Menuentry_action( KConfigGroup& cfg_P, Action_data* data_P )
+MenuEntryAction::MenuEntryAction( KConfigGroup& cfg_P, Action_data* data_P )
     : CommandUrlAction( cfg_P, data_P )
     {
     }
 
 
-void Menuentry_action::cfg_write( KConfigGroup& cfg_P ) const
+void MenuEntryAction::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "MENUENTRY" ); // overwrites value set in base::cfg_write()
     }
 
 
-KService::Ptr Menuentry_action::service() const
+KService::Ptr MenuEntryAction::service() const
     {
     if (!_service)
     {
-        const_cast<Menuentry_action *>(this)->_service = KService::serviceByStorageId(command_url());
+        const_cast<MenuEntryAction *>(this)->_service = KService::serviceByStorageId(command_url());
     }
     return _service;
     }
 
 
-void Menuentry_action::set_service( KService::Ptr service )
+void MenuEntryAction::set_service( KService::Ptr service )
     {
     Q_ASSERT( service );
     if (!service) return;
@@ -64,7 +64,7 @@ void Menuentry_action::set_service( KService::Ptr service )
     }
 
 
-void Menuentry_action::execute()
+void MenuEntryAction::execute()
     {
     (void) service();
     if (!_service)
@@ -76,13 +76,13 @@ void Menuentry_action::execute()
     }
 
 
-Action* Menuentry_action::copy( Action_data* data_P ) const
+Action* MenuEntryAction::copy( Action_data* data_P ) const
     {
-    return new Menuentry_action( data_P, command_url());
+    return new MenuEntryAction( data_P, command_url());
     }
 
 
-const QString Menuentry_action::description() const
+const QString MenuEntryAction::description() const
     {
     (void) service();
     return i18n( "Menuentry : " ) + (_service ? _service->name() : QString());

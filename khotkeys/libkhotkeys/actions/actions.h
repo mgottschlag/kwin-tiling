@@ -41,7 +41,7 @@ class KDE_EXPORT Action
             CommandUrlActionType,
             DbusAction,
             KeyboardInputAction,
-            MenuentryAction
+            MenuEntryActionType
             };
 
         Action( Action_data* data_P );
@@ -98,13 +98,13 @@ class KDE_EXPORT CommandUrlAction
         QString _command_url;
     };
 
-class KDE_EXPORT Menuentry_action
+class KDE_EXPORT MenuEntryAction
     : public CommandUrlAction
     {
     typedef CommandUrlAction base;
     public:
-        Menuentry_action( Action_data* data_P, const QString& menuentry_P = QString() );
-        Menuentry_action( KConfigGroup& cfg_P, Action_data* data_P );
+        MenuEntryAction( Action_data* data_P, const QString& menuentry_P = QString() );
+        MenuEntryAction( KConfigGroup& cfg_P, Action_data* data_P );
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
 
@@ -114,7 +114,7 @@ class KDE_EXPORT Menuentry_action
 
         virtual const QString description() const;
         virtual Action* copy( Action_data* data_P ) const;
-        virtual Type type() { return MenuentryAction; }
+        virtual Type type() { return Action::MenuEntryActionType; }
     private:
         KService::Ptr _service;
     };

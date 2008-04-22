@@ -24,7 +24,7 @@
 
 
 
-MenuentryActionWidget::MenuentryActionWidget( KHotKeys::MenuentryAction *action, QWidget *parent )
+MenuentryActionWidget::MenuentryActionWidget( KHotKeys::MenuEntryAction *action, QWidget *parent )
         : ActionWidgetBase(action, parent )
     {
     ui.setupUi(this);
@@ -39,15 +39,15 @@ MenuentryActionWidget::~MenuentryActionWidget()
     {}
 
 
-KHotKeys::MenuentryAction *MenuentryActionWidget::action()
+KHotKeys::MenuEntryAction *MenuentryActionWidget::action()
     {
-    return static_cast<KHotKeys::MenuentryAction*>(_action);
+    return static_cast<KHotKeys::MenuEntryAction*>(_action);
     }
 
 
-const KHotKeys::MenuentryAction *MenuentryActionWidget::action() const
+const KHotKeys::MenuEntryAction *MenuentryActionWidget::action() const
     {
-    return static_cast<const KHotKeys::MenuentryAction*>(_action);
+    return static_cast<const KHotKeys::MenuEntryAction*>(_action);
     }
 
 

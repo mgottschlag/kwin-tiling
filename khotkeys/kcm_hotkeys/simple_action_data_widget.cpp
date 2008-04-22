@@ -123,8 +123,8 @@ void SimpleActionDataWidget::setActionData( KHotKeys::SimpleActionData* pData )
         {
         switch ( act->type() )
             {
-            case KHotKeys::Action::MenuentryAction:
-                currentAction = new MenuentryActionWidget( static_cast<KHotKeys::MenuentryAction*>(act) );
+            case KHotKeys::Action::MenuEntryActionType:
+                currentAction = new MenuentryActionWidget( static_cast<KHotKeys::MenuEntryAction*>(act) );
                 break;
 
             case KHotKeys::Action::DbusAction:

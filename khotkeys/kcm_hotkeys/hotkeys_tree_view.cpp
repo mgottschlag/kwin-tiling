@@ -61,7 +61,7 @@ HotkeysTreeViewContextMenu::HotkeysTreeViewContextMenu( const QModelIndex &index
 
     mapper->setMapping(
         globalShortcut->addAction( i18n("K-Menu Entry"), mapper, SLOT(map()) ),
-        KHotKeys::Action::MenuentryAction );
+        KHotKeys::Action::MenuEntryActionType );
 
     addMenu( globalShortcut );
     addAction( i18n("New Group") , this, SLOT(newGroupAction()) );
@@ -95,8 +95,8 @@ void HotkeysTreeViewContextMenu::newGlobalShortcutActionAction( int actionType )
 
     switch (actionType)
         {
-        case KHotKeys::Action::MenuentryAction:
-            data->set_action( new KHotKeys::MenuentryAction( data ));
+        case KHotKeys::Action::MenuEntryActionType:
+            data->set_action( new KHotKeys::MenuEntryAction( data ));
             break;
 
         case KHotKeys::Action::CommandUrlActionType:

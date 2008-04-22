@@ -20,7 +20,7 @@ namespace KHotKeys
 
 
 template<> KDE_EXPORT
-void Simple_action_data< Shortcut_trigger, Menuentry_action >
+void Simple_action_data< Shortcut_trigger, MenuEntryAction >
     ::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
@@ -35,20 +35,20 @@ Menuentry_shortcut_action_data::Menuentry_shortcut_action_data(
         const KShortcut& shortcut_P,
         const QString& menuentry_P,
         bool enabled_P )
-    : Simple_action_data< Shortcut_trigger, Menuentry_action >(
+    : Simple_action_data< Shortcut_trigger, MenuEntryAction >(
         parent_P,
         name_P,
         comment_P,
         enabled_P )
     {
-    set_action( new Menuentry_action( this, menuentry_P ));
+    set_action( new MenuEntryAction( this, menuentry_P ));
     set_trigger( new Shortcut_trigger( this, shortcut_P ));
     }
 
 
 Menuentry_shortcut_action_data::Menuentry_shortcut_action_data( ActionDataGroup* parent_P,
     const QString& name_P, const QString& comment_P, bool enabled_P )
-    : Simple_action_data< Shortcut_trigger, Menuentry_action >( parent_P, name_P,
+    : Simple_action_data< Shortcut_trigger, MenuEntryAction >( parent_P, name_P,
         comment_P, enabled_P )
     {
     }
@@ -56,7 +56,7 @@ Menuentry_shortcut_action_data::Menuentry_shortcut_action_data( ActionDataGroup*
 
 Menuentry_shortcut_action_data::Menuentry_shortcut_action_data( KConfigGroup& cfg_P,
     ActionDataGroup* parent_P )
-    : Simple_action_data< Shortcut_trigger, Menuentry_action >( cfg_P, parent_P )
+    : Simple_action_data< Shortcut_trigger, MenuEntryAction >( cfg_P, parent_P )
     {
     }
 
