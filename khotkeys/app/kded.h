@@ -19,7 +19,7 @@ class KhotkeysAdaptor;
 
 namespace KHotKeys
 {
-class Action_data_group;
+class ActionDataGroup;
 }
 
 class KHotKeysModule
@@ -34,7 +34,7 @@ class KHotKeysModule
         KHotKeysModule(QObject* parent, const QList<QVariant>&);
         virtual ~KHotKeysModule();
     private:
-        KHotKeys::Action_data_group* actions_root;
+        KHotKeys::ActionDataGroup* actions_root;
         KhotkeysAdaptor *dbus_adaptor;
     };
 

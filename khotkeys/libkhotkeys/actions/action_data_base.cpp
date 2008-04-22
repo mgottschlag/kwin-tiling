@@ -26,7 +26,7 @@
 namespace KHotKeys
 {
 
-ActionDataBase::ActionDataBase( Action_data_group* parent_P, const QString& name_P,
+ActionDataBase::ActionDataBase( ActionDataGroup* parent_P, const QString& name_P,
     const QString& comment_P, Condition_list* conditions_P, bool enabled_P )
     : _parent( parent_P ), _conditions( conditions_P ), _name( name_P ), _comment( comment_P ),
         _enabled( enabled_P )
@@ -38,7 +38,7 @@ ActionDataBase::ActionDataBase( Action_data_group* parent_P, const QString& name
     }
 
 
-ActionDataBase::ActionDataBase( KConfigGroup& cfg_P, Action_data_group* parent_P )
+ActionDataBase::ActionDataBase( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
     : _parent( parent_P )
      ,_conditions(0)
     {
@@ -109,25 +109,25 @@ bool ActionDataBase::conditions_match() const
     }
 
 
-ActionDataBase* ActionDataBase::create_cfg_read( KConfigGroup& cfg_P, Action_data_group* parent_P )
+ActionDataBase* ActionDataBase::create_cfg_read( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
     {
     QString type = cfg_P.readEntry( "Type" );
     if( type == "ACTION_DATA_GROUP" )
         {
         if( cfg_P.readEntry( "AllowMerge", false ))
             {
-            for( Action_data_group::ConstIterator it = parent_P->first_child();
+            for( ActionDataGroup::ConstIterator it = parent_P->first_child();
                  it != parent_P->after_last_child();
                  ++it )
                 {
-                if( Action_data_group* existing = dynamic_cast< Action_data_group* >( *it ))
+                if( ActionDataGroup* existing = dynamic_cast< ActionDataGroup* >( *it ))
                     {
                     if( cfg_P.readEntry( "Name" ) == existing->name())
                         return existing;
                     }
                 }
             }
-        return new Action_data_group( cfg_P, parent_P );
+        return new ActionDataGroup( cfg_P, parent_P );
         }
     if( type == "GENERIC_ACTION_DATA" )
         return new Generic_action_data( cfg_P, parent_P );
@@ -160,7 +160,7 @@ QString ActionDataBase::name() const
     }
 
 
-Action_data_group* ActionDataBase::parent() const
+ActionDataGroup* ActionDataBase::parent() const
     {
     return _parent;
     }
@@ -184,7 +184,7 @@ void ActionDataBase::set_name( const QString& name_P )
     }
 
 
-void ActionDataBase::reparent( Action_data_group* new_parent_P )
+void ActionDataBase::reparent( ActionDataGroup* new_parent_P )
     {
     if( parent())
         parent()->remove_child( this );

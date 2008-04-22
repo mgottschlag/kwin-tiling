@@ -146,7 +146,7 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
                 const std::type_info &ti = typeid(*action);
                 if (ti==typeid(KHotKeys::SimpleActionData))
                     return KHotkeysModel::SimpleActionData;
-                else if (ti==typeid(KHotKeys::Action_data_group))
+                else if (ti==typeid(KHotKeys::ActionDataGroup))
                     return KHotkeysModel::ActionDataGroup;
                 else
                     return KHotkeysModel::Other;

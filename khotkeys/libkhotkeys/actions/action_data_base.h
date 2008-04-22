@@ -21,7 +21,7 @@ class KConfigGroup;
 
 namespace KHotKeys {
 
-class Action_data_group;
+class ActionDataGroup;
 class Condition_list;
 
 /**
@@ -36,7 +36,7 @@ class KDE_EXPORT ActionDataBase
         /**
          * Create a action data base object.
          *
-         * \param parent_P  A Action_data_group or 0. If provided this action is
+         * \param parent_P  A ActionDataGroup or 0. If provided this action is
          *        registered with the group.
          * \param name_P    Name for the object.
          * \param comment_P Comment for the object.
@@ -44,7 +44,7 @@ class KDE_EXPORT ActionDataBase
          * \param enabled_P Is the action enabled?
          */
         ActionDataBase( 
-            Action_data_group* parent_P,
+            ActionDataGroup* parent_P,
             const QString& name_P,
             const QString& comment_P,
             Condition_list* condition_P,
@@ -55,10 +55,10 @@ class KDE_EXPORT ActionDataBase
          * cfg_P configuration object.
          *
          * \param cfg_P KConfigGroup to read from
-         * \param parent_P  A Action_data_group or 0. If provided the object is
+         * \param parent_P  A ActionDataGroup or 0. If provided the object is
          *        registered with the group.
          */
-        ActionDataBase( KConfigGroup& cfg_P, Action_data_group* parent_P );
+        ActionDataBase( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
 
         /**
          * Destructor
@@ -78,10 +78,10 @@ class KDE_EXPORT ActionDataBase
         const Condition_list* conditions() const;
 
         /**
-         * Get the \c Action_data_group this object belongs to or 0 if it
+         * Get the \c ActionDataGroup this object belongs to or 0 if it
          * does not belong to a group.
          */
-        Action_data_group* parent() const;
+        ActionDataGroup* parent() const;
 
         /**
          * Put this action into the group \a new_parent_P. If the action
@@ -90,7 +90,7 @@ class KDE_EXPORT ActionDataBase
          *
          * \param new_parent_P New group or 0.
          */
-        void reparent( Action_data_group* new_parent_P );
+        void reparent( ActionDataGroup* new_parent_P );
 
         /**
          *
@@ -130,7 +130,7 @@ class KDE_EXPORT ActionDataBase
         /**
          * Factory method.
          */
-        static ActionDataBase* create_cfg_read( KConfigGroup& cfg_P, Action_data_group* parent_P );
+        static ActionDataBase* create_cfg_read( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
 
         /**
          * See if it the config group is enabled.
@@ -142,7 +142,7 @@ class KDE_EXPORT ActionDataBase
         void set_conditions( Condition_list* conditions_P );
 
     private:
-        Action_data_group* _parent;
+        ActionDataGroup* _parent;
         Condition_list* _conditions;
         QString _name;
         QString _comment;

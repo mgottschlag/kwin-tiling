@@ -29,7 +29,7 @@ namespace KHotKeys {
  * # The group can contain actions or action groups.
  * # The group has its own list of conditions. These conditions apply to all children.
  */
-class KDE_EXPORT Action_data_group
+class KDE_EXPORT ActionDataGroup
     : public ActionDataBase
     {
     public:
@@ -42,9 +42,9 @@ class KDE_EXPORT Action_data_group
             }; // don't remove entries
 
         /**
-         * Create a \c Action_data_group object.
+         * Create a \c ActionDataGroup object.
          *
-         * \param parent_P  A Action_data_group or 0. If provided this action is
+         * \param parent_P  A ActionDataGroup or 0. If provided this action is
          *        registered with the group.
          * \param name_P    Name for the object.
          * \param comment_P Comment for the object.
@@ -52,16 +52,16 @@ class KDE_EXPORT Action_data_group
          * \param system_group_t Group type
          * \param enabled_P Is the action enabled?
          */
-        Action_data_group( 
-            Action_data_group* parent_P,
+        ActionDataGroup( 
+            ActionDataGroup* parent_P,
             const QString& name_P,
             const QString& comment_P,
             Condition_list* conditions_P = 0,
             system_group_t system_group_P = SYSTEM_NONE,
             bool enabled_P = false );
 
-        Action_data_group( KConfigGroup& cfg_P, Action_data_group* parent_P );
-        virtual ~Action_data_group();
+        ActionDataGroup( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
+        virtual ~ActionDataGroup();
         virtual void update_triggers();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         typedef QList< ActionDataBase* >::iterator Iterator; // CHECKME neni const :(

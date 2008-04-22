@@ -23,7 +23,7 @@ namespace KHotKeys
     {
     class Action;
     class ActionDataBase;
-    class Action_data_group;
+    class ActionDataGroup;
     class Action_list;
     class Command_url_action;
     class Command_url_shortcut_action_data;
@@ -33,7 +33,6 @@ namespace KHotKeys
     class Shortcut_trigger;
     class Simple_action_data_base;
     class Trigger;
-    typedef Action_data_group ActionDataGroup;
     typedef Action_list ActionList;
     typedef Command_url_action CommandUrlAction;
     typedef Command_url_shortcut_action_data CommandUrlShortcutActionData;

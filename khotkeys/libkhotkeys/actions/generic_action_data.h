@@ -16,7 +16,7 @@
 
 namespace KHotKeys {
 
-class Action_data_group;
+class ActionDataGroup;
 
 class KDE_EXPORT Generic_action_data
     : public Action_data
@@ -25,11 +25,11 @@ class KDE_EXPORT Generic_action_data
 
     public:
 
-        Generic_action_data( Action_data_group* parent_P, const QString& name_P,
+        Generic_action_data( ActionDataGroup* parent_P, const QString& name_P,
             const QString& comment_P, Trigger_list* triggers_P, Condition_list* conditions_P,
             Action_list* actions_P, bool enabled_P = true );
 
-        Generic_action_data( KConfigGroup& cfg_P, Action_data_group* parent_P );
+        Generic_action_data( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
 
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
 

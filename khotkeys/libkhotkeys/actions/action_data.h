@@ -16,7 +16,7 @@
 namespace KHotKeys {
 
 class Action;
-class Action_data_group;
+class ActionDataGroup;
 class Action_list;
 class Trigger_list;
 class Trigger;
@@ -31,11 +31,11 @@ class KDE_EXPORT Action_data
 
     public:
 
-        Action_data( Action_data_group* parent_P, const QString& name_P,
+        Action_data( ActionDataGroup* parent_P, const QString& name_P,
             const QString& comment_P, Trigger_list* triggers_P, Condition_list* conditions_P,
             Action_list* actions_P, bool enabled_P = true );
 
-        Action_data( KConfigGroup& cfg_P, Action_data_group* parent_P );
+        Action_data( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
 
         virtual ~Action_data();
 

@@ -21,7 +21,7 @@ namespace KHotKeys
 {
 
 
-Action_data::Action_data( KConfigGroup& cfg_P, Action_data_group* parent_P )
+Action_data::Action_data( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
     : ActionDataBase( cfg_P, parent_P )
     {
     KConfigGroup triggersGroup( cfg_P.config(), cfg_P.name() + "Triggers" );
@@ -40,7 +40,7 @@ Action_data::~Action_data()
     }
 
 
-Action_data::Action_data( Action_data_group* parent_P, const QString& name_P,
+Action_data::Action_data( ActionDataGroup* parent_P, const QString& name_P,
     const QString& comment_P, Trigger_list* triggers_P, Condition_list* conditions_P,
     Action_list* actions_P, bool enabled_P )
     : ActionDataBase( parent_P, name_P, comment_P, conditions_P, enabled_P ),

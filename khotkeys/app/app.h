@@ -16,7 +16,7 @@
 #include <QtDBus/QtDBus>
 
 namespace KHotKeys {
-    class Action_data_group;
+    class ActionDataGroup;
 }
 
 class KHotKeysApp
@@ -31,7 +31,7 @@ class KHotKeysApp
         virtual ~KHotKeysApp();
     private:
         QObject* delete_helper;
-        KHotKeys::Action_data_group* actions_root;
+        KHotKeys::ActionDataGroup* actions_root;
     };
 
 #endif
