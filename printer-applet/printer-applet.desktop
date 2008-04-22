@@ -1,7 +1,13 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Printer Applet
+Name[km]=អាប់ភ្លេត​ម៉ាស៊ីន​បោះពុម្ព
+Name[sv]=Miniprogram för skrivare
+Name[zh_TW]=印表機小程式
 Comment=System tray icon for managing print jobs
+Comment[km]=រូបតំណាង​ថាស​ប្រព័ន្ធ​សម្រាប់គ្រប់គ្រង​ការងារ​បោះពុម្ព
+Comment[sv]=Ikon i systembrickan för att hantera skrivarjobb
+Comment[zh_TW]=管理印表工作的系統匣圖示
 Exec=printer-applet
 Terminal=false
 Type=Application
