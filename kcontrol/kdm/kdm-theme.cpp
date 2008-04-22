@@ -285,7 +285,13 @@ void KDMThemeWidget::themeSelected()
 		updateInfoView( (ThemeData *)(themeWidget->selectedItems().first()) );
 	else
 		updateInfoView( 0 );
+        updateButton();
 	emit changed();
+}
+
+void KDMThemeWidget::updateButton()
+{
+    bRemoveTheme->setEnabled( !themeWidget->selectedItems().isEmpty() );
 }
 
 void KDMThemeWidget::removeSelectedThemes()
