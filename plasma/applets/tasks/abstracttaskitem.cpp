@@ -65,7 +65,7 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
         connect(s_taskItemBackground, SIGNAL(repaintNeeded()), this, SLOT(slotUpdate()));
     }*/
 
-    connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(slotUpdate()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(changed()), this, SLOT(slotUpdate()));
 }
 
 AbstractTaskItem::~AbstractTaskItem()
@@ -80,7 +80,7 @@ void AbstractTaskItem::setupBackgroundSvg(QObject *parent)
 
     //TODO: we should probably reset this when the theme changes
     s_backgroundCreated = true;
-    QString tasksThemePath = Plasma::Theme::self()->imagePath("widgets/tasks");
+    QString tasksThemePath = Plasma::Theme::defaultTheme()->imagePath("widgets/tasks");
     s_taskItemBackground = 0;
 
     if (!tasksThemePath.isEmpty()) {
@@ -236,7 +236,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
 
     const qreal hoverAlpha = 0.4;
 
-    KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colorScheme());
+    KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme());
 
     if (taskFlags() & TaskWantsAttention) {
         if (s_taskItemBackground) {
@@ -266,7 +266,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
                                               KColorScheme::DarkShade);
             background.setAlphaF(0.2);
             painter->setBrush(QBrush(background));
-            painter->setPen(Plasma::Theme::self()->backgroundColor());
+            painter->setPen(Plasma::Theme::defaultTheme()->backgroundColor());
         }
     }
 
@@ -332,7 +332,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
             background.setColorAt(1, endColor);
 
             painter->setBrush(background);
-            painter->setPen(Plasma::Theme::self()->backgroundColor());
+            painter->setPen(Plasma::Theme::defaultTheme()->backgroundColor());
         }
     }
 
@@ -489,7 +489,7 @@ void AbstractTaskItem::drawTask(QPainter *painter,
     }
 #endif
 
-    painter->setPen(QPen(Plasma::Theme::self()->textColor(), 1.0));
+    painter->setPen(QPen(Plasma::Theme::defaultTheme()->textColor(), 1.0));
 
     QRect rect = textRect().toRect();
     rect.adjust(2, 2, -2, -2); // Create a text margin

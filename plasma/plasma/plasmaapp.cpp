@@ -199,7 +199,7 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     QPixmapCache::setCacheLimit(cacheSize);
 
     KConfigGroup cg(KGlobal::config(), "General");
-    Plasma::Theme::self()->setFont(cg.readEntry("desktopFont", font()));
+    Plasma::Theme::defaultTheme()->setFont(cg.readEntry("desktopFont", font()));
 
     m_root = new RootWidget();
     m_root->setAsDesktop(KCmdLineArgs::parsedArgs()->isSet("desktop"));

@@ -641,7 +641,7 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config, const KConfigGro
     bool alignToGrid = iconConfig.readEntry("alignToGrid", true);
     m_alignToGrid->setCheckState(alignToGrid ? Qt::Checked : Qt::Unchecked);
 
-    m_theme->setCurrentIndex(m_themeModel->indexOf(Plasma::Theme::self()->themeName()));
+    m_theme->setCurrentIndex(m_themeModel->indexOf(Plasma::Theme::defaultTheme()->themeName()));
 
     if (mode == kSlideshowBackground) {
         updateSlideshow();
@@ -678,7 +678,7 @@ void BackgroundDialog::saveConfig(KConfigGroup config, KConfigGroup globalConfig
     iconConfig.writeEntry("showIcons", (m_showIcons->checkState() == Qt::Checked ? true : false));
     iconConfig.writeEntry("alignToGrid", (m_alignToGrid->checkState() == Qt::Checked ? true : false));
 
-    Plasma::Theme::self()->setThemeName(m_theme->currentText());
+    Plasma::Theme::defaultTheme()->setThemeName(m_theme->currentText());
 }
 
 void BackgroundDialog::getNewWallpaper()

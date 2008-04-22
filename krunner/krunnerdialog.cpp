@@ -44,7 +44,7 @@ KRunnerDialog::KRunnerDialog( QWidget * parent, Qt::WindowFlags f )
 
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(update()));
 
-    connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(themeUpdated()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(changed()), this, SLOT(themeUpdated()));
     themeUpdated();
 }
 

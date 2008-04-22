@@ -282,7 +282,7 @@ void TaskGroupItem::drawBorder(QPainter *painter,
          // FIXME Check KColorScheme usage here
 
          QLinearGradient titleGradient(titleArea.topLeft(), titleArea.bottomLeft());
-         KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colorScheme());
+         KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme());
          titleGradient.setColorAt(0, colorScheme.shade(_color,KColorScheme::DarkShade));
          titleGradient.setColorAt(1, colorScheme.shade(_color,KColorScheme::MidShade));
 

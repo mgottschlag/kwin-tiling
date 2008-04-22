@@ -43,7 +43,7 @@ SystemTrayContainer::SystemTrayContainer(WId clientId, QWidget *parent)
     connect(this, SIGNAL(clientClosed()), SLOT(deleteLater()));
     connect(this, SIGNAL(error(QX11EmbedContainer::Error)), SLOT(handleError(QX11EmbedContainer::Error)));
 
-    connect(Plasma::Theme::self(), SIGNAL(changed()), this, SLOT(updateBackground()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(changed()), this, SLOT(updateBackground()));
     updateBackground();
 
     // Tray icons have a fixed size of 22x22
@@ -66,7 +66,7 @@ void SystemTrayContainer::updateBackground()
     // Qt's regular quasi-transparent background doesn't work so set it to the
     // theme's background color instead.
     QPalette p = palette();
-    p.setBrush(QPalette::Window, Plasma::Theme::self()->backgroundColor());
+    p.setBrush(QPalette::Window, Plasma::Theme::defaultTheme()->backgroundColor());
     setPalette(p);
     setBackgroundRole(QPalette::Window);
 }

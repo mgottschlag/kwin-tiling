@@ -560,11 +560,11 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     Q_UNUSED( option );
     Q_UNUSED( contentsRect );
 
-    KColorScheme plasmaColorTheme = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::self()->colorScheme());
+    KColorScheme plasmaColorTheme = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme());
     painter->setFont(KGlobalSettings::taskbarFont());
 
     // Desktop background
-    QColor textColor = Plasma::Theme::self()->textColor();
+    QColor textColor = Plasma::Theme::defaultTheme()->textColor();
     textColor.setAlpha(64);
     QBrush hoverBrush(textColor);
     QBrush defaultBrush(Qt::NoBrush);
@@ -580,7 +580,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     QPen windowPen(drawingColor);
 
     // Active window borders
-    QPen activeWindowPen(Plasma::Theme::self()->textColor());
+    QPen activeWindowPen(Plasma::Theme::defaultTheme()->textColor());
 
     // Active windows
     drawingColor.setAlpha(238);
@@ -625,13 +625,13 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     // Draw desktop frame and possibly text over it
     painter->setClipRect(option->exposedRect);
-    QPen activePen(Plasma::Theme::self()->textColor());
+    QPen activePen(Plasma::Theme::defaultTheme()->textColor());
     QPen drawingPen = QPen();
     painter->setBrush(Qt::NoBrush);
 
     for( int i = 0; i < m_desktopCount; i++) {
         if (i + 1 == m_currentDesktop || i == m_dragHighlightedDesktop) {
-            drawingPen = QPen(Plasma::Theme::self()->textColor());
+            drawingPen = QPen(Plasma::Theme::defaultTheme()->textColor());
         } else {
             drawingPen = QPen(plasmaColorTheme.foreground(KColorScheme::InactiveText).color());
         }
