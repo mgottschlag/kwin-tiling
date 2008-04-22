@@ -36,7 +36,7 @@
 #include <X11/Xlib.h>
 
 KRunnerDialog::KRunnerDialog( QWidget * parent, Qt::WindowFlags f )
-    : KDialog(parent, f)
+    : KDialog(parent, f | Qt::WindowStaysOnTopHint )
 {
     setButtons(0);
     m_background = new Plasma::PanelSvg("dialogs/krunner", this);
