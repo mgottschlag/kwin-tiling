@@ -185,6 +185,8 @@ int kScreenSaverMain( int argc, char** argv, KScreenSaverInterface& screenSaverI
     }
 
     target = screenSaverInterface.create( saveWin );
+    target->setAttribute(Qt::WA_NoSystemBackground);
+    target->setAttribute(Qt::WA_PaintOnScreen);
     target->show();
 
     if (demoWidget)
