@@ -24,12 +24,15 @@
 #include <QtCore/QMap>
 #include <QtCore/QUuid>
 
+#include <KDE/KShortcut>
+
 #include <kdemacros.h>
 #include "khotkeysglobal.h"
 #include "voicesignature.h"
 
 #include "input.h"
 #include "config-khotkeys.h"
+#include "windows.h"
 
 
 class KConfig;

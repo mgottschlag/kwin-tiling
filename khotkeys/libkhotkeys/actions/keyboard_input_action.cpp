@@ -18,14 +18,18 @@
 */
 
 #include "actions.h"
+
 #include "input.h"
+#include <KDE/KConfigGroup>
+
 #include "windows.h"
 
+#include "shortcuts_handler.h"
 
-#include <KDE/KConfigGroup>
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <QX11Info>
+
 
 namespace KHotKeys {
 

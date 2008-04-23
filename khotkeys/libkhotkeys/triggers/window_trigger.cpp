@@ -26,6 +26,8 @@
 #include <KDE/KConfigGroup>
 #include <KDE/KDebug>
 
+#include <X11/X.h>
+
 namespace KHotKeys {
 
 WindowTrigger::WindowTrigger( ActionData* data_P, Windowdef_list* windows_P,

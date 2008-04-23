@@ -25,6 +25,8 @@
 #include <KDE/KConfigGroup>
 #include <KDE/KDebug>
 
+#include "shortcuts_handler.h"
+
 namespace KHotKeys {
 
 ShortcutTrigger::ShortcutTrigger( 
