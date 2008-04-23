@@ -57,6 +57,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "shutdowndlg.moc"
 
+#include <kjob.h>
+
 #define FONTCOLOR "#bfbfbf"
 
 KSMShutdownFeedback * KSMShutdownFeedback::s_pSelf = 0L;
@@ -610,7 +612,9 @@ void KSMShutdownDlg::slotSuspend(QAction* action)
 {
     m_bootOption.clear();
     Solid::Control::PowerManager::SuspendMethod spdMethod = action->data().value<Solid::Control::PowerManager::SuspendMethod>();
-    Solid::Control::PowerManager::suspend( spdMethod );
+    KJob *job = Solid::Control::PowerManager::suspend( spdMethod );
+    if (job != 0)
+       job->start();
     reject();
 }
 
