@@ -30,7 +30,7 @@
 
 namespace KHotKeys {
 
-CommandUrlAction::CommandUrlAction( Action_data* data_P, const QString& command_url_P )
+CommandUrlAction::CommandUrlAction( ActionData* data_P, const QString& command_url_P )
     : Action( data_P ), _command_url( command_url_P )
     {
     }
@@ -42,7 +42,7 @@ QString CommandUrlAction::command_url() const
     }
 
 
-CommandUrlAction::CommandUrlAction( KConfigGroup& cfg_P, Action_data* data_P )
+CommandUrlAction::CommandUrlAction( KConfigGroup& cfg_P, ActionData* data_P )
     : Action( cfg_P, data_P )
     {
     _command_url = cfg_P.readEntry( "CommandURL" );
@@ -57,7 +57,7 @@ void CommandUrlAction::cfg_write( KConfigGroup& cfg_P ) const
     }
 
 
-Action* CommandUrlAction::copy( Action_data* data_P ) const
+Action* CommandUrlAction::copy( ActionData* data_P ) const
     {
     return new CommandUrlAction( data_P, command_url());
     }

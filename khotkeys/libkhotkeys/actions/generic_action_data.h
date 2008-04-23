@@ -19,9 +19,9 @@ namespace KHotKeys {
 class ActionDataGroup;
 
 class KDE_EXPORT Generic_action_data
-    : public Action_data
+    : public ActionData
     {
-    typedef Action_data base;
+    typedef ActionData base;
 
     public:
 
@@ -35,12 +35,12 @@ class KDE_EXPORT Generic_action_data
 
         // CHECKME: Why this?
         using ActionDataBase::set_conditions; // make public
-        using Action_data::add_trigger; // make public
-        using Action_data::add_triggers; // make public
-        using Action_data::set_triggers; // make public
-        using Action_data::add_action; // make public
-        using Action_data::add_actions; // make public
-        using Action_data::set_actions; // make public
+        using ActionData::add_trigger; // make public
+        using ActionData::add_triggers; // make public
+        using ActionData::set_triggers; // make public
+        using ActionData::add_action; // make public
+        using ActionData::add_actions; // make public
+        using ActionData::set_actions; // make public
     };
 
 } // namespace KHotKeys

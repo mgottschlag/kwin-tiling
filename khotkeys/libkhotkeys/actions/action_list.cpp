@@ -23,7 +23,7 @@
 
 namespace KHotKeys {
 
-ActionList::ActionList( KConfigGroup& cfg_P, Action_data* data_P )
+ActionList::ActionList( KConfigGroup& cfg_P, ActionData* data_P )
     : QList< Action* >()
     {
     int cnt = cfg_P.readEntry( "ActionsCount", 0 );

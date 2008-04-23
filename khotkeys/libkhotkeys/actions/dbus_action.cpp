@@ -25,7 +25,7 @@
 
 namespace KHotKeys {
 
-DBusAction::DBusAction( KConfigGroup& cfg_P, Action_data* data_P )
+DBusAction::DBusAction( KConfigGroup& cfg_P, ActionData* data_P )
     : Action( cfg_P, data_P )
     {
     _application = cfg_P.readEntry( "RemoteApp" );
@@ -35,7 +35,7 @@ DBusAction::DBusAction( KConfigGroup& cfg_P, Action_data* data_P )
     }
 
 
-DBusAction::DBusAction( Action_data* data_P, const QString& app_P, const QString& obj_P,
+DBusAction::DBusAction( ActionData* data_P, const QString& app_P, const QString& obj_P,
     const QString& call_P, const QString& args_P )
     : Action( data_P ), _application( app_P ), _object( obj_P ), _function( call_P ), _arguments( args_P )
     {
@@ -138,7 +138,7 @@ const QString DBusAction::description() const
     }
 
 
-Action* DBusAction::copy( Action_data* data_P ) const
+Action* DBusAction::copy( ActionData* data_P ) const
     {
     return new DBusAction( data_P, remote_application(), remote_object(),
         called_function(), arguments());

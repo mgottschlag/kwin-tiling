@@ -26,13 +26,13 @@
 
 namespace KHotKeys {
 
-MenuEntryAction::MenuEntryAction( Action_data* data_P, const QString& menuentry_P )
+MenuEntryAction::MenuEntryAction( ActionData* data_P, const QString& menuentry_P )
     : CommandUrlAction( data_P, menuentry_P )
     {
     }
 
 
-MenuEntryAction::MenuEntryAction( KConfigGroup& cfg_P, Action_data* data_P )
+MenuEntryAction::MenuEntryAction( KConfigGroup& cfg_P, ActionData* data_P )
     : CommandUrlAction( cfg_P, data_P )
     {
     }
@@ -76,7 +76,7 @@ void MenuEntryAction::execute()
     }
 
 
-Action* MenuEntryAction::copy( Action_data* data_P ) const
+Action* MenuEntryAction::copy( ActionData* data_P ) const
     {
     return new MenuEntryAction( data_P, command_url());
     }

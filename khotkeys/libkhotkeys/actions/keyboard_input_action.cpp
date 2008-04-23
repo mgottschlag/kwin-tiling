@@ -29,14 +29,14 @@
 
 namespace KHotKeys {
 
-KeyboardInputAction::KeyboardInputAction( Action_data* data_P, const QString& input_P,
+KeyboardInputAction::KeyboardInputAction( ActionData* data_P, const QString& input_P,
     const Windowdef_list* dest_window_P, bool active_window_P )
     : Action( data_P ), _input( input_P ), _dest_window( dest_window_P ), _active_window( active_window_P )
     {
     }
 
 
-KeyboardInputAction::KeyboardInputAction( KConfigGroup& cfg_P, Action_data* data_P )
+KeyboardInputAction::KeyboardInputAction( KConfigGroup& cfg_P, ActionData* data_P )
     : Action( cfg_P, data_P )
     {
     _input = cfg_P.readEntry( "Input" );
@@ -136,7 +136,7 @@ const QString KeyboardInputAction::description() const
     }
 
 
-Action* KeyboardInputAction::copy( Action_data* data_P ) const
+Action* KeyboardInputAction::copy( ActionData* data_P ) const
     {
     return new KeyboardInputAction( data_P, input(),
         dest_window() ? dest_window()->copy() : NULL, _active_window );

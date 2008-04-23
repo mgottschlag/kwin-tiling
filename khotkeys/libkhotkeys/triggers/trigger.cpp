@@ -24,13 +24,13 @@
 
 namespace KHotKeys {
 
-Trigger::Trigger( Action_data* data_P )
+Trigger::Trigger( ActionData* data_P )
     : data( data_P )
     {
     }
 
 
-Trigger::Trigger( KConfigGroup&, Action_data* data_P )
+Trigger::Trigger( KConfigGroup&, ActionData* data_P )
     : data( data_P )
     {
     }
@@ -47,7 +47,7 @@ void Trigger::cfg_write( KConfigGroup& cfg_P ) const
     }
 
 
-Trigger* Trigger::create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P )
+Trigger* Trigger::create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P )
     {
     QString type = cfg_P.readEntry( "Type" );
     if( type == "SHORTCUT" || type == "SINGLE_SHORTCUT" )

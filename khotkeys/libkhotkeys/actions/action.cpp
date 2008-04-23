@@ -25,7 +25,7 @@
 namespace KHotKeys {
 
 
-Action::Action( Action_data* data_P )
+Action::Action( ActionData* data_P )
     : data( data_P )
     {
     }
@@ -36,13 +36,13 @@ Action::~Action()
     }
 
 
-Action::Action( KConfigGroup&, Action_data* data_P )
+Action::Action( KConfigGroup&, ActionData* data_P )
     : data( data_P )
     {
     }
 
 
-Action* Action::create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P )
+Action* Action::create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P )
     {
     QString type = cfg_P.readEntry( "Type" );
     if( type == "COMMAND_URL" )

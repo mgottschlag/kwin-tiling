@@ -32,7 +32,7 @@ SimpleActionData::SimpleActionData(
         const QString& name_P,
         const QString& comment_P,
         bool enabled_P )
-    : Action_data(
+    : ActionData(
         parent_P,
         name_P,
         comment_P,
@@ -44,7 +44,7 @@ SimpleActionData::SimpleActionData(
 
 
 SimpleActionData::SimpleActionData( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
-    : Action_data( cfg_P, parent_P )
+    : ActionData( cfg_P, parent_P )
     {}
 
 

@@ -43,7 +43,7 @@ void Keyboard_input_gesture_action_data::cfg_write( KConfigGroup& cfg_P ) const
 
 Keyboard_input_gesture_action_data::Keyboard_input_gesture_action_data(
     ActionDataGroup* parent_P, const QString& name_P, const QString& comment_P, bool enabled_P )
-    : Action_data( parent_P, name_P, comment_P, 0,
+    : ActionData( parent_P, name_P, comment_P, 0,
         new Condition_list( "", this ), 0, enabled_P )
     {
     }
@@ -51,7 +51,7 @@ Keyboard_input_gesture_action_data::Keyboard_input_gesture_action_data(
 
 Keyboard_input_gesture_action_data::Keyboard_input_gesture_action_data( KConfigGroup& cfg_P,
     ActionDataGroup* parent_P )
-    : Action_data( cfg_P, parent_P )
+    : ActionData( cfg_P, parent_P )
     { // CHECKME nothing ?
     }
 

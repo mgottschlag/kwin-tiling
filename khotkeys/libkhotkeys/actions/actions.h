@@ -24,11 +24,11 @@ class KConfig;
 namespace KHotKeys
 {
 
-class Action_data;
+class ActionData;
 class Windowdef_list;
 
 // this one is a base for all "real" resulting actions, e.g. running a command,
-// Action_data instances usually contain at least one Action
+// ActionData instances usually contain at least one Action
 class KDE_EXPORT Action
     {
     Q_DISABLE_COPY( Action );
@@ -44,17 +44,17 @@ class KDE_EXPORT Action
             MenuEntryActionType
             };
 
-        Action( Action_data* data_P );
-        Action( KConfigGroup& cfg_P, Action_data* data_P );
+        Action( ActionData* data_P );
+        Action( KConfigGroup& cfg_P, ActionData* data_P );
         virtual ~Action();
         virtual void execute() = 0;
         virtual Type type() = 0;
         virtual const QString description() const = 0;
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
-        virtual Action* copy( Action_data* data_P ) const = 0;
-        static Action* create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P );
+        virtual Action* copy( ActionData* data_P ) const = 0;
+        static Action* create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P );
     protected:
-        Action_data* const data;
+        ActionData* const data;
     };
 
 class KDE_EXPORT ActionList
@@ -63,7 +63,7 @@ class KDE_EXPORT ActionList
     Q_DISABLE_COPY( ActionList )
     public:
         ActionList( const QString& comment_P ); // CHECKME nebo i data ?
-        ActionList( KConfigGroup& cfg_P, Action_data* data_P );
+        ActionList( KConfigGroup& cfg_P, ActionData* data_P );
         ~ActionList();
         void cfg_write( KConfigGroup& cfg_P ) const;
         //! Some convenience typedef
@@ -80,8 +80,8 @@ class KDE_EXPORT CommandUrlAction
     {
     typedef Action base;
     public:
-        CommandUrlAction( Action_data* data_P, const QString& command_url_P = QString() );
-        CommandUrlAction( KConfigGroup& cfg_P, Action_data* data_P );
+        CommandUrlAction( ActionData* data_P, const QString& command_url_P = QString() );
+        CommandUrlAction( KConfigGroup& cfg_P, ActionData* data_P );
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
         virtual const QString description() const;
@@ -91,7 +91,7 @@ class KDE_EXPORT CommandUrlAction
         QString command_url() const;
 
         virtual Type type() { return CommandUrlActionType; }
-        virtual Action* copy( Action_data* data_P ) const;
+        virtual Action* copy( ActionData* data_P ) const;
     protected:
         QTimer timeout;
     private:
@@ -103,8 +103,8 @@ class KDE_EXPORT MenuEntryAction
     {
     typedef CommandUrlAction base;
     public:
-        MenuEntryAction( Action_data* data_P, const QString& menuentry_P = QString() );
-        MenuEntryAction( KConfigGroup& cfg_P, Action_data* data_P );
+        MenuEntryAction( ActionData* data_P, const QString& menuentry_P = QString() );
+        MenuEntryAction( KConfigGroup& cfg_P, ActionData* data_P );
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
 
@@ -113,7 +113,7 @@ class KDE_EXPORT MenuEntryAction
         void set_service( KService::Ptr );
 
         virtual const QString description() const;
-        virtual Action* copy( Action_data* data_P ) const;
+        virtual Action* copy( ActionData* data_P ) const;
         virtual Type type() { return Action::MenuEntryActionType; }
     private:
         KService::Ptr _service;
@@ -125,13 +125,13 @@ class KDE_EXPORT DBusAction
     typedef Action base;
     public:
         DBusAction( 
-            Action_data* data_P,
+            ActionData* data_P,
             const QString& app_P = QString(),
             const QString& obj_P = QString(),
             const QString& call_P= QString(),
             const QString& args_P= QString() );
 
-        DBusAction( KConfigGroup& cfg_P, Action_data* data_P );
+        DBusAction( KConfigGroup& cfg_P, ActionData* data_P );
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
         const QString remote_application() const;
@@ -145,7 +145,7 @@ class KDE_EXPORT DBusAction
         void set_arguments( const QString &args );
 
         virtual const QString description() const;
-        virtual Action* copy( Action_data* data_P ) const;
+        virtual Action* copy( ActionData* data_P ) const;
         virtual Type type() { return DBusActionType; }
     private:
         QString _application; // CHECKME QCString ?
@@ -159,9 +159,9 @@ class KDE_EXPORT KeyboardInputAction
     {
     typedef Action base;
     public:
-        KeyboardInputAction( Action_data* data_P, const QString& input_P,
+        KeyboardInputAction( ActionData* data_P, const QString& input_P,
             const Windowdef_list* dest_window_P, bool active_window_P );
-        KeyboardInputAction( KConfigGroup& cfg_P, Action_data* data_P );
+        KeyboardInputAction( KConfigGroup& cfg_P, ActionData* data_P );
         virtual ~KeyboardInputAction();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
@@ -172,7 +172,7 @@ class KDE_EXPORT KeyboardInputAction
         const Windowdef_list* dest_window() const;
         bool activeWindow() const;
         virtual const QString description() const;
-        virtual Action* copy( Action_data* data_P ) const;
+        virtual Action* copy( ActionData* data_P ) const;
         virtual Type type() { return KeyboardInputActionType; }
     private:
         QString _input;
@@ -185,14 +185,14 @@ class KDE_EXPORT ActivateWindowAction
     {
     typedef Action base;
     public:
-        ActivateWindowAction( Action_data* data_P, const Windowdef_list* window_P );
-        ActivateWindowAction( KConfigGroup& cfg_P, Action_data* data_P );
+        ActivateWindowAction( ActionData* data_P, const Windowdef_list* window_P );
+        ActivateWindowAction( KConfigGroup& cfg_P, ActionData* data_P );
         virtual ~ActivateWindowAction();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
         const Windowdef_list* window() const;
         virtual const QString description() const;
-        virtual Action* copy( Action_data* data_P ) const;
+        virtual Action* copy( ActionData* data_P ) const;
         virtual Type type() { return ActivateWindowActionType; }
     private:
         const Windowdef_list* _window;

@@ -21,7 +21,7 @@ namespace KHotKeys
 {
 
 
-Action_data::Action_data( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
+ActionData::ActionData( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
     : ActionDataBase( cfg_P, parent_P )
     {
     KConfigGroup triggersGroup( cfg_P.config(), cfg_P.name() + "Triggers" );
@@ -31,16 +31,16 @@ Action_data::Action_data( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
     }
 
 
-Action_data::~Action_data()
+ActionData::~ActionData()
     {
-//    kDebug( 1217 ) << "~Action_data" << this;
+//    kDebug( 1217 ) << "~ActionData" << this;
     delete _triggers;
     delete _actions;
     // CHECKME jeste remove z parenta ?
     }
 
 
-Action_data::Action_data( ActionDataGroup* parent_P, const QString& name_P,
+ActionData::ActionData( ActionDataGroup* parent_P, const QString& name_P,
     const QString& comment_P, Trigger_list* triggers_P, Condition_list* conditions_P,
     ActionList* actions_P, bool enabled_P )
     : ActionDataBase( parent_P, name_P, comment_P, conditions_P, enabled_P ),
@@ -49,21 +49,21 @@ Action_data::Action_data( ActionDataGroup* parent_P, const QString& name_P,
     }
 
 
-const Trigger_list* Action_data::triggers() const
+const Trigger_list* ActionData::triggers() const
     {
 //    Q_ASSERT( _triggers != 0 );
     return _triggers;
     }
 
 
-const ActionList* Action_data::actions() const
+const ActionList* ActionData::actions() const
     {
 //    Q_ASSERT( _actions != 0 );
     return _actions;
     }
 
 
-void Action_data::cfg_write( KConfigGroup& cfg_P ) const
+void ActionData::cfg_write( KConfigGroup& cfg_P ) const
     {
     ActionDataBase::cfg_write( cfg_P );
 
@@ -82,7 +82,7 @@ void Action_data::cfg_write( KConfigGroup& cfg_P ) const
     }
 
 
-void Action_data::execute()
+void ActionData::execute()
     {
     for( ActionList::Iterator it = _actions->begin();
          it != _actions->end();
@@ -92,13 +92,13 @@ void Action_data::execute()
     }
 
 
-void Action_data::add_trigger( Trigger* trigger_P )
+void ActionData::add_trigger( Trigger* trigger_P )
     {
     _triggers->append( trigger_P );
     }
 
 
-void Action_data::add_triggers( Trigger_list* triggers_P )
+void ActionData::add_triggers( Trigger_list* triggers_P )
     {
     while (!triggers_P->isEmpty())
         {
@@ -109,14 +109,14 @@ void Action_data::add_triggers( Trigger_list* triggers_P )
     }
 
 
-void Action_data::set_triggers( Trigger_list* triggers_P )
+void ActionData::set_triggers( Trigger_list* triggers_P )
     {
     Q_ASSERT( _triggers == 0 );
     _triggers = triggers_P;
     }
 
 
-void Action_data::add_action( Action* action_P, Action* after_P )
+void ActionData::add_action( Action* action_P, Action* after_P )
     {
     int index = 0;
     for( ActionList::Iterator it = _actions->begin();
@@ -131,7 +131,7 @@ void Action_data::add_action( Action* action_P, Action* after_P )
     }
 
 
-void Action_data::add_actions( ActionList* actions_P, Action* after_P )
+void ActionData::add_actions( ActionList* actions_P, Action* after_P )
     {
     int index = 0;
     for( ActionList::Iterator it = _actions->begin();
@@ -154,14 +154,14 @@ void Action_data::add_actions( ActionList* actions_P, Action* after_P )
     }
 
 
-void Action_data::set_actions( ActionList* actions_P )
+void ActionData::set_actions( ActionList* actions_P )
     {
     Q_ASSERT( _actions == 0 );
     _actions = actions_P;
     }
 
 
-void Action_data::update_triggers()
+void ActionData::update_triggers()
     {
     bool activate = conditions_match() && enabled( false );
     kDebug( 1217 ) << "### Update triggers: " << name() << ":" << activate;

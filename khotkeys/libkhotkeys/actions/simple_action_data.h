@@ -19,9 +19,9 @@
 namespace KHotKeys {
 
 
-class KDE_EXPORT SimpleActionData : public Action_data
+class KDE_EXPORT SimpleActionData : public ActionData
     {
-    typedef Action_data base;
+    typedef ActionData base;
 
 public:
 

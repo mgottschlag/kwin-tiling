@@ -27,14 +27,14 @@
 namespace KHotKeys {
 
 
-ActivateWindowAction::ActivateWindowAction( Action_data* data_P,
+ActivateWindowAction::ActivateWindowAction( ActionData* data_P,
     const Windowdef_list* window_P )
     : Action( data_P ), _window( window_P )
     {
     }
 
 
-ActivateWindowAction::ActivateWindowAction( KConfigGroup& cfg_P, Action_data* data_P )
+ActivateWindowAction::ActivateWindowAction( KConfigGroup& cfg_P, ActionData* data_P )
     : Action( cfg_P, data_P )
     {
     QString save_cfg_group = cfg_P.name();
@@ -80,7 +80,7 @@ const QString ActivateWindowAction::description() const
     }
 
 
-Action* ActivateWindowAction::copy( Action_data* data_P ) const
+Action* ActivateWindowAction::copy( ActionData* data_P ) const
     {
     return new ActivateWindowAction( data_P, window()->copy());
     }

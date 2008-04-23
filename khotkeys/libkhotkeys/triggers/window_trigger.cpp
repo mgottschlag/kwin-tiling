@@ -28,7 +28,7 @@
 
 namespace KHotKeys {
 
-WindowTrigger::WindowTrigger( Action_data* data_P, Windowdef_list* windows_P,
+WindowTrigger::WindowTrigger( ActionData* data_P, Windowdef_list* windows_P,
      int window_actions_P )
     : Trigger( data_P ), _windows( windows_P ), window_actions( window_actions_P ),
       last_active_window( None ), active( false )
@@ -37,7 +37,7 @@ WindowTrigger::WindowTrigger( Action_data* data_P, Windowdef_list* windows_P,
     }
 
 
-WindowTrigger::WindowTrigger( KConfigGroup& cfg_P, Action_data* data_P )
+WindowTrigger::WindowTrigger( KConfigGroup& cfg_P, ActionData* data_P )
     : Trigger( cfg_P, data_P ), active( false )
     {
 //    kDebug( 1217 ) << "WindowTrigger";
@@ -186,9 +186,9 @@ const Windowdef_list* WindowTrigger::windows() const
 
 
 #ifdef HAVE_COVARIANT_RETURN    // stupid gcc, it doesn't even warn it can't do this
-WindowTrigger* WindowTrigger::copy( Action_data* data_P ) const
+WindowTrigger* WindowTrigger::copy( ActionData* data_P ) const
 #else
-Trigger* WindowTrigger::copy( Action_data* data_P ) const
+Trigger* WindowTrigger::copy( ActionData* data_P ) const
 #endif
     {
     WindowTrigger* ret = new WindowTrigger( data_P ? data_P : data, windows()->copy(),

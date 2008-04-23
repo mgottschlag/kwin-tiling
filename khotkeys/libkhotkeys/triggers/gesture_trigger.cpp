@@ -28,13 +28,13 @@
 namespace KHotKeys {
 
 
-GestureTrigger::GestureTrigger( Action_data* data_P, const QString &gesturecode_P )
+GestureTrigger::GestureTrigger( ActionData* data_P, const QString &gesturecode_P )
     : Trigger( data_P ), _gesturecode( gesturecode_P )
     {
     }
 
 
-GestureTrigger::GestureTrigger( KConfigGroup& cfg_P, Action_data* data_P )
+GestureTrigger::GestureTrigger( KConfigGroup& cfg_P, ActionData* data_P )
     : Trigger( cfg_P, data_P )
     {
     _gesturecode = cfg_P.readEntry( "Gesture" );
@@ -64,7 +64,7 @@ void GestureTrigger::cfg_write( KConfigGroup& cfg_P ) const
     }
 
 
-Trigger* GestureTrigger::copy( Action_data* data_P ) const
+Trigger* GestureTrigger::copy( ActionData* data_P ) const
     {
     kDebug( 1217 ) << "GestureTrigger::copy()";
     return new GestureTrigger( data_P ? data_P : data, gesturecode());

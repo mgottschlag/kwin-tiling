@@ -29,7 +29,7 @@ namespace KHotKeys
 {
 
 class ActionDataBase;
-class Action_data;
+class ActionData;
 class Condition_list_base;
 
 class KDE_EXPORT Condition

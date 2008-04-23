@@ -28,7 +28,7 @@
 namespace KHotKeys {
 
 ShortcutTrigger::ShortcutTrigger( 
-        Action_data* data_P,
+        ActionData* data_P,
         const KShortcut& shortcut_P,
         const QUuid &uuid )
     : Trigger( data_P ), _shortcut( shortcut_P ), _uuid(uuid)
@@ -51,7 +51,7 @@ ShortcutTrigger::ShortcutTrigger(
 
 ShortcutTrigger::ShortcutTrigger( 
         KConfigGroup& cfg_P
-       ,Action_data* data_P )
+       ,ActionData* data_P )
     : Trigger( cfg_P, data_P )
      ,_shortcut( cfg_P.readEntry( "Key", QString() ))
      ,_uuid( cfg_P.readEntry( "Uuid", QUuid::createUuid().toString()))
@@ -92,7 +92,7 @@ void ShortcutTrigger::cfg_write( KConfigGroup& cfg_P ) const
     }
 
 
-ShortcutTrigger* ShortcutTrigger::copy( Action_data* data_P ) const
+ShortcutTrigger* ShortcutTrigger::copy( ActionData* data_P ) const
     {
     kDebug( 1217 ) << "ShortcutTrigger::copy()";
     return new ShortcutTrigger( data_P ? data_P : data, shortcut(), QUuid::createUuid());

@@ -23,7 +23,7 @@ class Trigger;
 
 
 // TODO : code documentation
-class KDE_EXPORT Action_data
+class KDE_EXPORT ActionData
     : public ActionDataBase
     {
 
@@ -31,13 +31,13 @@ class KDE_EXPORT Action_data
 
     public:
 
-        Action_data( ActionDataGroup* parent_P, const QString& name_P,
+        ActionData( ActionDataGroup* parent_P, const QString& name_P,
             const QString& comment_P, Trigger_list* triggers_P, Condition_list* conditions_P,
             ActionList* actions_P, bool enabled_P = true );
 
-        Action_data( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
+        ActionData( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
 
-        virtual ~Action_data();
+        virtual ~ActionData();
 
         virtual void update_triggers();
 
