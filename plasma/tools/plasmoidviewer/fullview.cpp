@@ -93,31 +93,34 @@ void FullView::addApplet(const QString &a, const QVariantList &args)
 
 void FullView::resizeEvent(QResizeEvent *event)
 {
+    QGraphicsView::resizeEvent(event);
+
     if (!m_applet) {
         kDebug() << "no applet";
         return;
     }
 
     // The applet always keeps its aspect ratio, so let's respect it.
-    float ratio = event->oldSize().width() / event->oldSize().height();
-    float newPossibleWidth = size().height()*ratio;
-    qreal newWidth;
-    qreal newHeight;
-    if (newPossibleWidth > size().width()) {
-        newHeight = size().width() / ratio;
-        newWidth = newHeight * ratio;
+    qreal newWidth = 0;
+    qreal newHeight = 0;
+
+    if (m_applet->aspectRatioMode() == Qt::KeepAspectRatio) {
+        float ratio = event->oldSize().width() / event->oldSize().height();
+        float newPossibleWidth = size().height() * ratio;
+        if (newPossibleWidth > size().width()) {
+            newHeight = size().width() / ratio;
+            newWidth = newHeight * ratio;
+        } else {
+            newWidth = newPossibleWidth;
+            newHeight = newWidth / ratio;
+        }
     } else {
-        newWidth = newPossibleWidth;
-        newHeight = newWidth / ratio;
+        newWidth = size().width();
+        newHeight = size().height();
     }
-    m_containment->resize(QSizeF(newWidth, newHeight));
-    m_applet->setGeometry(QRectF(QPoint(0, 0), QSizeF(newWidth, newHeight)));
-//    kDebug() << "oooooooooooooooooo";
 
-    event->accept();
-
-//     m_containment->resize(size());
-//     m_applet->setGeometry(QRectF(QPoint(0, 0), size()));
+    m_containment->resize(size());
+    m_applet->resize(QSizeF(newWidth, newHeight));
 }
 
 void FullView::sceneRectChanged(const QRectF &rect)
