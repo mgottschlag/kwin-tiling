@@ -267,7 +267,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
                                               KColorScheme::DarkShade);
             background.setAlphaF(0.2);
             painter->setBrush(QBrush(background));
-            painter->setPen(Plasma::Theme::defaultTheme()->backgroundColor());
+            painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
         }
     }
 
@@ -333,7 +333,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
             background.setColorAt(1, endColor);
 
             painter->setBrush(background);
-            painter->setPen(Plasma::Theme::defaultTheme()->backgroundColor());
+            painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
         }
     }
 
@@ -490,7 +490,7 @@ void AbstractTaskItem::drawTask(QPainter *painter,
     }
 #endif
 
-    painter->setPen(QPen(Plasma::Theme::defaultTheme()->textColor(), 1.0));
+    painter->setPen(QPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor), 1.0));
 
     QRect rect = textRect().toRect();
     rect.adjust(2, 2, -2, -2); // Create a text margin

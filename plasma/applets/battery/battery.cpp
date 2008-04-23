@@ -226,8 +226,8 @@ void Battery::configAccepted()
 
 void Battery::readColors()
 {
-    m_textColor = Plasma::Theme::defaultTheme()->textColor();
-    m_boxColor = Plasma::Theme::defaultTheme()->backgroundColor();
+    m_textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    m_boxColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
     m_boxColor.setAlpha(m_boxAlpha);
 }
 
