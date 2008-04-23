@@ -342,7 +342,8 @@ QScriptValue QScriptApplet::newPlasmaSvg(QScriptContext *context, QScriptEngine 
     if ( context->argumentCount() == 2 )
 	parent = qscriptvalue_cast<QObject *>(context->argument(1));
 
-    Svg *svg = new Svg( filename, parent );
+    Svg *svg = new Svg( parent );
+    svg->setImagePath(filename);
     return engine->newQObject( svg );
 }
 

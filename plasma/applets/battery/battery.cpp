@@ -87,7 +87,8 @@ void Battery::init()
         m_batteryStyle = ClassicBattery;
         svgFile = "widgets/battery";
     }
-    m_theme = new Plasma::Svg(svgFile, this);
+    m_theme = new Plasma::Svg(this);
+    m_theme->setImagePath(svgFile);
     m_theme->setContainsMultipleImages(false);
     m_theme->resize(geometry().size());
 
@@ -201,7 +202,8 @@ void Battery::configAccepted()
         showBattery(false);
         m_batteryStyle = ui.styleGroup->selected();
         delete m_theme;
-        m_theme = new Plasma::Svg(svgFile, this);
+        m_theme = new Plasma::Svg(this);
+        m_theme->setImagePath(svgFile);
         kDebug() << "Changing theme to " << svgFile;
         cg.writeEntry("style", m_batteryStyle);
         m_theme->resize(geometry().size());

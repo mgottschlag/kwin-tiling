@@ -58,7 +58,8 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     resize(125, 125);
     setRemainSquare(true);
 
-    m_theme = new Plasma::Svg("widgets/clock", this);
+    m_theme = new Plasma::Svg(this);
+    m_theme->setImagePath("widgets/clock");
     m_theme->setContainsMultipleImages(false);
     m_theme->resize(size());
 }

@@ -54,7 +54,8 @@ Panel::Panel(QObject *parent, const QVariantList &args)
       m_currentSize(QSize(QApplication::desktop()->screenGeometry(screen()).width(), 56)),
       m_lastViewGeom()
 {
-    m_background = new Plasma::PanelSvg("widgets/panel-background", this);
+    m_background = new Plasma::PanelSvg(this);
+    m_background->setImagePath("widgets/panel-background");
     m_background->setEnabledBorders(Plasma::PanelSvg::AllBorders);
     connect(m_background, SIGNAL(repaintNeeded()), this, SLOT(backgroundChanged()));
     setZValue(150);

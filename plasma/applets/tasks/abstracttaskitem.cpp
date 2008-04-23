@@ -88,7 +88,8 @@ void AbstractTaskItem::setupBackgroundSvg(QObject *parent)
             parent = parent->parent();
         }
 
-        s_taskItemBackground = new Plasma::PanelSvg(tasksThemePath, parent);
+        s_taskItemBackground = new Plasma::PanelSvg(parent);
+        s_taskItemBackground->setImagePath(tasksThemePath);
         s_taskItemBackground->setCacheAllRenderedPanels(true);
     }
 }

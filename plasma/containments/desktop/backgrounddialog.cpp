@@ -92,7 +92,8 @@ void ThemeModel::reload()
         QString name = themeRoot.right(themeRoot.length() - themeNameSepIndex - 1);
         m_themes << name;
 
-        Plasma::PanelSvg *svg = new Plasma::PanelSvg(themeRoot + "/widgets/background.svg", this );
+        Plasma::PanelSvg *svg = new Plasma::PanelSvg(this);
+        svg->setImagePath(themeRoot + "/widgets/background.svg");
         svg->setEnabledBorders(Plasma::PanelSvg::AllBorders);
         m_svgs.append( svg );
     }
