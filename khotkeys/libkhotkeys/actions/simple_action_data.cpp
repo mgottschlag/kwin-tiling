@@ -32,7 +32,7 @@ void Simple_action_data< ShortcutTrigger, DBusAction >
 // Keyboard_input_shortcut_action_data
 
 template<> KDE_EXPORT
-void Simple_action_data< ShortcutTrigger, Keyboard_input_action >
+void Simple_action_data< ShortcutTrigger, KeyboardInputAction >
     ::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );

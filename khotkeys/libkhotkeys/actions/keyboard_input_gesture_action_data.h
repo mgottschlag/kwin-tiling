@@ -16,7 +16,7 @@
 
 namespace KHotKeys {
 
-class Keyboard_input_action;
+class KeyboardInputAction;
 
 class KDE_EXPORT Keyboard_input_gesture_action_data
     : public Action_data
@@ -26,9 +26,9 @@ class KDE_EXPORT Keyboard_input_gesture_action_data
         Keyboard_input_gesture_action_data( ActionDataGroup* parent_P, const QString& name_P,
             const QString& comment_P, bool enabled_P = true );
         Keyboard_input_gesture_action_data( KConfigGroup& cfg_P, ActionDataGroup* parent_P );
-        const Keyboard_input_action* action() const;
+        const KeyboardInputAction* action() const;
         // CHECKME kontrola, ze se dava jen jedna akce ?
-        void set_action( Keyboard_input_action* action_P );
+        void set_action( KeyboardInputAction* action_P );
         enum { NUM_TRIGGERS = 3 }; // needs changing code elsewhere
         using Action_data::set_triggers; // make public // CHECKME kontrola poctu?
         virtual void cfg_write( KConfigGroup& cfg_P ) const;

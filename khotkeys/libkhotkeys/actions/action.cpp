@@ -52,7 +52,7 @@ Action* Action::create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P )
     if( type == "DCOP" || type == "DBUS" )
         return new DBusAction( cfg_P, data_P );
     if( type == "KEYBOARD_INPUT" )
-        return new Keyboard_input_action( cfg_P, data_P );
+        return new KeyboardInputAction( cfg_P, data_P );
     if( type == "ACTIVATE_WINDOW" )
         return new Activate_window_action( cfg_P, data_P );
     kWarning( 1217 ) << "Unknown Action type read from cfg file\n";

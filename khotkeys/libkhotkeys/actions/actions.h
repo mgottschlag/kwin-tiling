@@ -154,15 +154,15 @@ class KDE_EXPORT DBusAction
         QString _arguments;
     };
 
-class KDE_EXPORT Keyboard_input_action
+class KDE_EXPORT KeyboardInputAction
     : public Action
     {
     typedef Action base;
     public:
-        Keyboard_input_action( Action_data* data_P, const QString& input_P,
+        KeyboardInputAction( Action_data* data_P, const QString& input_P,
             const Windowdef_list* dest_window_P, bool active_window_P );
-        Keyboard_input_action( KConfigGroup& cfg_P, Action_data* data_P );
-        virtual ~Keyboard_input_action();
+        KeyboardInputAction( KConfigGroup& cfg_P, Action_data* data_P );
+        virtual ~KeyboardInputAction();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
         const QString& input() const;
