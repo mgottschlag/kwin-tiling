@@ -99,7 +99,7 @@ void EngineExplorer::listEngines()
 {
     m_engines->clear();
     m_engines->addItem("");
-    QStringList engines = m_engineManager->knownEngines();
+    QStringList engines = m_engineManager->listAllEngines();
     qSort(engines);
     m_engines->addItems(engines);
 }
