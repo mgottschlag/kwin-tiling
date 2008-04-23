@@ -37,7 +37,7 @@ class KDE_EXPORT Action
 
         enum Type
             {
-            ActivateWindowAction,
+            ActivateWindowActionType,
             CommandUrlActionType,
             DBusActionType,
             KeyboardInputActionType,
@@ -180,20 +180,20 @@ class KDE_EXPORT KeyboardInputAction
         bool _active_window;
     };
 
-class KDE_EXPORT Activate_window_action
+class KDE_EXPORT ActivateWindowAction
     : public Action
     {
     typedef Action base;
     public:
-        Activate_window_action( Action_data* data_P, const Windowdef_list* window_P );
-        Activate_window_action( KConfigGroup& cfg_P, Action_data* data_P );
-        virtual ~Activate_window_action();
+        ActivateWindowAction( Action_data* data_P, const Windowdef_list* window_P );
+        ActivateWindowAction( KConfigGroup& cfg_P, Action_data* data_P );
+        virtual ~ActivateWindowAction();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual void execute();
         const Windowdef_list* window() const;
         virtual const QString description() const;
         virtual Action* copy( Action_data* data_P ) const;
-        virtual Type type() { return ActivateWindowAction; }
+        virtual Type type() { return ActivateWindowActionType; }
     private:
         const Windowdef_list* _window;
     };

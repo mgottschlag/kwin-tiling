@@ -42,7 +42,7 @@ void Simple_action_data< ShortcutTrigger, KeyboardInputAction >
 // Activate_window_shortcut_action_data
 
 template<> KDE_EXPORT
-void Simple_action_data< ShortcutTrigger, Activate_window_action >
+void Simple_action_data< ShortcutTrigger, ActivateWindowAction >
     ::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );

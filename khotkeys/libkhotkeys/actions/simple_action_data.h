@@ -100,7 +100,7 @@ typedef Simple_action_data< ShortcutTrigger, KeyboardInputAction >
     Keyboard_input_shortcut_action_data;
 
 //! A keyboard shortcut to activate window action
-typedef Simple_action_data< ShortcutTrigger, Activate_window_action >
+typedef Simple_action_data< ShortcutTrigger, ActivateWindowAction >
     Activate_window_shortcut_action_data;
 
 
