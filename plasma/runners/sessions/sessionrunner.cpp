@@ -56,17 +56,18 @@ Plasma::SearchMatch* SessionRunner::matchCommands(const QString& term)
           match->setText(i18nc("log out command","Logout"));
           match->setIcon(KIcon("system-log-out"));
           match->setData(LogoutAction);
-      } else if (term.compare(i18nc("restart computer command","restart"), Qt::CaseInsensitive) == 0) {
+      } else if (term.compare(i18nc("restart computer command", "restart"), Qt::CaseInsensitive) == 0 ||
+                 term.compare(i18nc("restart computer command", "reboot"), Qt::CaseInsensitive) == 0) {
           match = new Plasma::SearchMatch(this);
           match->setText(i18n("Restart the computer"));
           match->setIcon(KIcon("system-restart"));
           match->setData(RestartAction);
-      } else if (term.compare(i18nc("shutdown computer command","shutdown"), Qt::CaseInsensitive) == 0){
+      } else if (term.compare(i18nc("shutdown computer command","shutdown"), Qt::CaseInsensitive) == 0) {
           match = new Plasma::SearchMatch(this);
           match->setText(i18n("Shutdown the computer"));
           match->setIcon(KIcon("system-shutdown"));
           match->setData(ShutdownAction);
-      } else if (term.compare(i18nc("lock screen command","lock"), Qt::CaseInsensitive) == 0){
+      } else if (term.compare(i18nc("lock screen command","lock"), Qt::CaseInsensitive) == 0) {
           match = new Plasma::SearchMatch(this);
           match->setText(i18n("Lock the screen"));
           match->setIcon(KIcon("system-lock-screen"));
