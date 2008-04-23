@@ -43,7 +43,7 @@ SystemTrayContainer::SystemTrayContainer(WId clientId, QWidget *parent)
     connect(this, SIGNAL(clientClosed()), SLOT(deleteLater()));
     connect(this, SIGNAL(error(QX11EmbedContainer::Error)), SLOT(handleError(QX11EmbedContainer::Error)));
 
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(changed()), this, SLOT(updateBackground()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateBackground()));
     updateBackground();
 
     // Tray icons have a fixed size of 22x22

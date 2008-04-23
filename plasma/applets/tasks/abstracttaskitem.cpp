@@ -65,7 +65,7 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
         connect(s_taskItemBackground, SIGNAL(repaintNeeded()), this, SLOT(slotUpdate()));
     }*/
 
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(changed()), this, SLOT(slotUpdate()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(slotUpdate()));
 }
 
 AbstractTaskItem::~AbstractTaskItem()

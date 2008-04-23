@@ -100,7 +100,7 @@ void Battery::init()
     m_boxHoverAlpha = 192;
 
     readColors();
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(changed()), SLOT(readColors()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(readColors()));
 
     const QStringList& battery_sources = dataEngine("powermanagement")->query(I18N_NOOP("Battery"))[I18N_NOOP("sources")].toStringList();
     m_numOfBattery = battery_sources.size();

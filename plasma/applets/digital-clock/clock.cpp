@@ -94,7 +94,7 @@ void Clock::init()
     m_toolTipIcon = KIcon("chronometer").pixmap(IconSize(KIconLoader::Desktop));
 
     dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(changed()), this, SLOT(updateColors()));    
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));    
 }
 
 void Clock::updateToolTipContent() {

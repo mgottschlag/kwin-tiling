@@ -45,7 +45,7 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
     m_screenTimer.setSingleShot(true);
     m_screenTimer.setInterval(300);
     connect(&m_screenTimer, SIGNAL(timeout()), this, SLOT(checkScreenChange()));
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(changed()), this, SLOT(themeRefresh()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeRefresh()));
 }
 
 Tasks::~Tasks()
