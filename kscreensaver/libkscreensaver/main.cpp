@@ -77,6 +77,11 @@ protected:
         if (e->type() == QEvent::KeyPress) {
             keyPressEvent( (QKeyEvent *)e );
             return true;
+        } else if( e->type() == QEvent::Close ) {
+            // In demo mode, screensaver's QWidget does create()
+            // with winId of the DemoWidget, which results in two QWidget's
+            // sharing the same winId and Qt delivering events only to one of them.
+            qApp->quit();
         }
         return false;
     }
