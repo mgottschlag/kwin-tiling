@@ -212,7 +212,7 @@ void Panel::constraintsUpdated(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::SizeConstraint) {
-        m_background->resize(m_currentSize);
+        m_background->resizePanel(m_currentSize);
     }
 
     if (constraints & Plasma::ScreenConstraint ||

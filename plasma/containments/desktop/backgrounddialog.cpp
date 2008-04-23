@@ -176,7 +176,7 @@ void ThemeDelegate::paint(QPainter *painter,
 
     // draw image
     Plasma::PanelSvg *svg = static_cast<Plasma::PanelSvg *>(index.model()->data(index, Qt::UserRole).value<void *>());
-    svg->resize(QSize(option.rect.width()-(2*MARGIN), 100-(2*MARGIN)));
+    svg->resizePanel(QSize(option.rect.width()-(2*MARGIN), 100-(2*MARGIN)));
     QRect imgRect = QRect(option.rect.topLeft(), QSize( option.rect.width()-(2*MARGIN), 100-(2*MARGIN) )).
         translated(MARGIN, MARGIN);
     svg->paint( painter, imgRect, QPoint(option.rect.left() + MARGIN, option.rect.top() + MARGIN) );

@@ -243,7 +243,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
         if (s_taskItemBackground) {
             //Draw task background from theme svg "attention" element
             s_taskItemBackground->setElementPrefix("attention");
-            s_taskItemBackground->resize(option->rect.size());
+            s_taskItemBackground->resizePanel(option->rect.size());
             s_taskItemBackground->paint(painter, option->rect);
         } else {
             //Draw task background without svg theming
@@ -259,7 +259,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
         if (s_taskItemBackground) {
             //Draw task background from theme svg "normal" element
             s_taskItemBackground->setElementPrefix("normal");
-            s_taskItemBackground->resize(option->rect.size());
+            s_taskItemBackground->resizePanel(option->rect.size());
             s_taskItemBackground->paint(painter, option->rect);
         } else {
             //Draw task background without svg theming
@@ -280,7 +280,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
             if (taskFlags() & TaskHasFocus) {
                 //Draw task background from theme svg "focus" element
                 s_taskItemBackground->setElementPrefix("focus");
-                s_taskItemBackground->resize(option->rect.size());
+                s_taskItemBackground->resizePanel(option->rect.size());
                 s_taskItemBackground->paint(painter, option->rect);
             }
 
@@ -290,7 +290,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
                 painter->setOpacity(m_alpha);
 
                 s_taskItemBackground->setElementPrefix("hover");
-                s_taskItemBackground->resize(option->rect.size());
+                s_taskItemBackground->resizePanel(option->rect.size());
                 s_taskItemBackground->paint(painter, option->rect);
 
                 painter->restore();
