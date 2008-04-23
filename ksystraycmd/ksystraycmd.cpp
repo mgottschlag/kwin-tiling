@@ -15,6 +15,7 @@
 #include <kconfig.h>
 #include <ksystemtrayicon.h>
 #include <kconfiggroup.h>
+#include <kaboutdata.h>
 
 #include <netwm.h>
 
@@ -28,6 +29,7 @@ KSysTrayCmd::KSysTrayCmd()
     isVisible(true), lazyStart( false ), noquit( false ), quitOnHide( false ), onTop(false), ownIcon(false),
     win(0), client(0), top(0), left(0)
 {
+  connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(mousePressEvent(QSystemTrayIcon::ActivationReason)));
   refresh();
 }
 
@@ -140,7 +142,7 @@ void KSysTrayCmd::refresh()
   if ( win ) {
     if (ownIcon)
     {
-      setIcon( KIcon( qApp->applicationName() ) );
+      setIcon( KIcon( KGlobal::activeComponent().aboutData()->programIconName() ) );
     }
     else
     {
@@ -224,7 +226,7 @@ void KSysTrayCmd::execContextMenu( const QPoint &pos )
     KMenu *menu = new KMenu();
     menu->addTitle( icon(), i18n( "KSysTrayCmd" ) );
     QAction * hideShowId = menu->addAction( isVisible ? i18n( "&Hide" ) : i18n( "&Restore" ) );
-    QAction * undockId = menu->addAction( KIcon("close"), i18n( "&Undock" ) );
+    QAction * undockId = menu->addAction( KIcon("dialog-close"), i18n( "&Undock" ) );
     QAction * quitId = menu->addAction( KIcon("application-exit"), i18n( "&Quit" ) );
 
     QAction * cmd = menu->exec( pos );
@@ -281,10 +283,10 @@ void KSysTrayCmd::windowChanged( WId w )
 // Tray icon event handlers
 //
 
-void KSysTrayCmd::mousePressEvent( QMouseEvent *e )
+void KSysTrayCmd::mousePressEvent( QSystemTrayIcon::ActivationReason reason )
 {
-  if ( e->button() == Qt::RightButton )
-    execContextMenu( e->globalPos() );
+  if ( reason == QSystemTrayIcon::Context )
+    execContextMenu( QCursor::pos() );
   else if ( lazyStart && ( !hasRunningClient() ) )
   {
     start();
@@ -296,7 +298,7 @@ void KSysTrayCmd::mousePressEvent( QMouseEvent *e )
     ri.closeWindowRequest( win );
     isVisible=false;
   }
-  else
+  else if ( reason == QSystemTrayIcon::Trigger )
     toggleWindow();
 }
 

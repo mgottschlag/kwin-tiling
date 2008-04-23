@@ -54,12 +54,11 @@ protected Q_SLOTS:
 
   void windowAdded(WId w);
   void windowChanged(WId w);
+  void mousePressEvent(QSystemTrayIcon::ActivationReason reason);
 
 protected:
   bool startClient();
   void checkExistingWindows();
-
-  void mousePressEvent( QMouseEvent *e );
 
 private:
   QString command;
