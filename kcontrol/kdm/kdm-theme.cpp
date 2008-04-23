@@ -35,6 +35,7 @@
 #include <KUrlRequester>
 #include <KUrlRequesterDialog>
 #include <knewstuff2/engine.h>
+#include <KDebug>
 
 #include <QDir>
 #include <QGridLayout>
@@ -114,6 +115,7 @@ KDMThemeWidget::KDMThemeWidget( QWidget *parent )
 	connect( bGetNewThemes, SIGNAL(clicked()), SLOT(getNewStuff()) );
 
 	themeDir = KGlobal::dirs()->resourceDirs( "data" ).last() + "kdm/themes/";
+        kDebug()<<" themeDir :"<<KGlobal::dirs()->resourceDirs( "data" );
 	defaultTheme = 0;
 	QDir testDir( themeDir );
 	if (!testDir.exists() && !testDir.mkdir( testDir.absolutePath() ) && !geteuid())
@@ -325,8 +327,26 @@ void KDMThemeWidget::getNewStuff()
                      QString name = entries.at(i)->installedFiles().at(0).section('/', -2, -2);
                      insertTheme( themeDir + name );
                 }
+                else if ( entries.at(i)->status() == KNS::Entry::Deleted) {
+                    if ( !entries.at(i)->uninstalledFiles().isEmpty() )
+                    {
+                        QString name = entries.at(i)->uninstalledFiles().at(0).section('/', -2, -2);
+                        removeTheme( themeDir + name );
+                    }
+                }
             }
         }
+}
+
+void KDMThemeWidget::removeTheme( const QString &name )
+{
+    if(name.isEmpty())
+        return;
+
+    QList<QTreeWidgetItem *>ls = themeWidget->findItems(name, Qt::MatchExactly);
+    if(ls.size()) {
+        delete ls.at(0);
+    }
 }
 
 #include "kdm-theme.moc"
