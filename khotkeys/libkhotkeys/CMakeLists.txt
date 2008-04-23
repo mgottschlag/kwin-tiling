@@ -78,8 +78,6 @@ set(libkhotkeys_SRCS
     daemon/stand_alone.h
 
     # OTHER
-    khlistbox.cpp
-    khlistview.cpp
     khotkeysglobal.cpp
     settings.cpp
     shortcuts_handler.cpp
