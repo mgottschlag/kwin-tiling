@@ -14,12 +14,6 @@
 #define KHOTKEYS_VERSION "2.1"
 #define KHOTKEYS_CONFIG_FILE "khotkeysrc"
 
-//#ifndef NDEBUG
-//#define KHOTKEYS_DEBUG
-//#endif
-
-
-
 #include <klocale.h>
 
 #include <QtCore/QPointer>
