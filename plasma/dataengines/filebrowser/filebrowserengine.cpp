@@ -89,7 +89,7 @@ void FileBrowserEngine::updateData(const QString &path, EventType event)
         type = FILE;
     }
 
-    DataEngine::SourceDict sources = sourceDict();
+    DataEngine::SourceDict sources = containerDict();
 
     QDir dir(path);
     clearData(path);
@@ -155,7 +155,7 @@ void FileBrowserEngine::updateData(const QString &path, EventType event)
 void FileBrowserEngine::clearData(const QString &path)
 {
     QDir dir(path);
-    DataEngine::SourceDict sources = sourceDict();
+    DataEngine::SourceDict sources = containerDict();
     for (DataEngine::SourceDict::iterator it = sources.begin(); it
             != sources.end(); it++) {
         if (dir == QDir(it.key())) {
