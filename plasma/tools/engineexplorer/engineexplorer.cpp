@@ -117,7 +117,7 @@ void EngineExplorer::showEngine(const QString& name)
     m_sourceCount = 0;
 
     if (!m_engineName.isEmpty()) {
-        m_engineManager->unload(m_engineName);
+        m_engineManager->unloadEngine(m_engineName);
     }
 
     m_engineName = name;
@@ -126,7 +126,7 @@ void EngineExplorer::showEngine(const QString& name)
         return;
     }
 
-    m_engine = m_engineManager->load(m_engineName);
+    m_engine = m_engineManager->loadEngine(m_engineName);
     if (!m_engine) {
         m_engineName.clear();
         updateTitle();
