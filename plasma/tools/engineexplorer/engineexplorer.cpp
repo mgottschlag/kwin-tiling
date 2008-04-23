@@ -43,7 +43,7 @@ EngineExplorer::EngineExplorer(QWidget* parent)
     setMainWidget(mainWidget);
     setupUi(mainWidget);
 
-    m_engineManager = new Plasma::DataEngineManager();
+    m_engineManager = Plasma::DataEngineManager::self();
     m_dataModel = new QStandardItemModel(this);
     KIcon pix("plasma");
     int size = IconSize(KIconLoader::Dialog);
