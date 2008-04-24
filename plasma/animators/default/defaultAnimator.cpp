@@ -30,7 +30,7 @@ DefaultAnimator::DefaultAnimator(QObject *parent, const QVariantList& list)
     Q_UNUSED(list)
 }
 
-int DefaultAnimator::framesPerSecond(Plasma::Phase::Animation animation) const
+int DefaultAnimator::animationFramesPerSecond(Plasma::Phase::Animation animation) const
 {
     switch (animation) {
         case Plasma::Phase::Appear:
@@ -43,14 +43,14 @@ int DefaultAnimator::framesPerSecond(Plasma::Phase::Animation animation) const
     }
 }
 
-int DefaultAnimator::framesPerSecond(Plasma::Phase::Movement movement) const
+int DefaultAnimator::animationFramesPerSecond(Plasma::Phase::Movement movement) const
 {
-    // not making this explecit confuses some compilers as the three framesPerSecond method signatures
+    // not making this explecit confuses some compilers as the three animationFramesPerSecond method signatures
     // are too vague, resulting in unintended hiding of methods
-    return Plasma::Animator::framesPerSecond(movement);
+    return Plasma::Animator::animationFramesPerSecond(movement);
 }
 
-int DefaultAnimator::framesPerSecond(Plasma::Phase::ElementAnimation animation) const
+int DefaultAnimator::animationFramesPerSecond(Plasma::Phase::ElementAnimation animation) const
 {
     switch (animation) {
         case Plasma::Phase::ElementAppear:
