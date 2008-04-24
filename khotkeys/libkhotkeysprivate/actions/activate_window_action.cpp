@@ -76,7 +76,7 @@ void ActivateWindowAction::execute()
 
 const QString ActivateWindowAction::description() const
     {
-    return i18n( "Activate window : " ) + window()->comment();
+    return i18n( "Activate window: " ) + window()->comment();
     }
 
 

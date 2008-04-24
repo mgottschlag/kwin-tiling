@@ -85,7 +85,7 @@ Action* MenuEntryAction::copy( ActionData* data_P ) const
 const QString MenuEntryAction::description() const
     {
     (void) service();
-    return i18n( "Menuentry : " ) + (_service ? _service->name() : QString());
+    return i18n( "Menu entry: " ) + (_service ? _service->name() : QString());
     }
 
 

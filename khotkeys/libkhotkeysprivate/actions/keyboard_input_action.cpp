@@ -136,7 +136,7 @@ const QString KeyboardInputAction::description() const
     QString tmp = input();
     tmp.replace( '\n', ' ' );
     tmp.truncate( 30 );
-    return i18n( "Keyboard input : " ) + tmp;
+    return i18n( "Keyboard input: " ) + tmp;
     }
 
 

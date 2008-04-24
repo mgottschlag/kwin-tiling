@@ -26,7 +26,7 @@ configure_file(config-khotkeys.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-khotke
 # - Conditions
 # - Some gui stuff
 
-set(libkhotkeys_SRCS
+set(khotkeysprivate_SRCS
 
     # ACTIONS
     actions/action.cpp
@@ -89,21 +89,8 @@ set(libkhotkeys_SRCS
     windows.cpp
 )
 
-# We have a khotkeys executable target, so we have to do some cmake magic here
-# to get a libkhotkeys
-kde4_add_library(
-    libkhotkeys
-    SHARED
-    ${libkhotkeys_SRCS} )
-set_target_properties(
-    libkhotkeys
-    PROPERTIES OUTPUT_NAME "khotkeys")
-target_link_libraries(
-    libkhotkeys
-    kworkspace
-    ${KDE4_KDE3SUPPORT_LIBS} )
-
-########### install files ###############
-
-install( TARGETS libkhotkeys DESTINATION ${LIB_INSTALL_DIR} )
+kde4_add_library(khotkeysprivate SHARED ${khotkeysprivate_SRCS})
+target_link_libraries(khotkeysprivate kworkspace ${KDE4_KDE3SUPPORT_LIBS})
+set_target_properties(khotkeysprivate PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
+install(TARGETS khotkeysprivate DESTINATION ${LIB_INSTALL_DIR})
 

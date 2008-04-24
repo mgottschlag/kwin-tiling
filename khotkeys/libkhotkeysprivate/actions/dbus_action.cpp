@@ -133,7 +133,7 @@ void DBusAction::execute()
 
 const QString DBusAction::description() const
     {
-    return i18n( "D-Bus : " ) + remote_application() + "::" + remote_object() + "::"
+    return i18n( "D-Bus: " ) + remote_application() + "::" + remote_object() + "::"
         + called_function();
     }
 

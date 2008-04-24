@@ -29,7 +29,7 @@
 
 namespace KHotKeys {
 
-ShortcutTrigger::ShortcutTrigger( 
+ShortcutTrigger::ShortcutTrigger(
         ActionData* data_P,
         const KShortcut& shortcut_P,
         const QUuid &uuid )
@@ -51,13 +51,16 @@ ShortcutTrigger::ShortcutTrigger(
     }
 
 
-ShortcutTrigger::ShortcutTrigger( 
+ShortcutTrigger::ShortcutTrigger(
         KConfigGroup& cfg_P
        ,ActionData* data_P )
     : Trigger( cfg_P, data_P )
-     ,_shortcut( cfg_P.readEntry( "Key", QString() ))
+     ,_shortcut()
      ,_uuid( cfg_P.readEntry( "Uuid", QUuid::createUuid().toString()))
     {
+        QString shortcutString = cfg_P.readEntry( "Key" );
+        shortcutString.replace("Win+", "Meta+"); // Qt4 doesn't parse Win+, avoid a shortcut without modifier
+        _shortcut = KShortcut(shortcutString);
     KAction *act = keyboard_handler->addAction( _uuid, data_P->name(), _shortcut );
     connect(
         act, SIGNAL(triggered(bool)),
