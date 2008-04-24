@@ -28,8 +28,8 @@
 #include <KDebug>
 #include <NETRootInfo>
 
-#include <plasma/panelsvg.h>
-#include <plasma/theme.h>
+#include "plasma/panelsvg.h"
+#include "plasma/theme.h"
 
 #include "krunnerapp.h"
 
