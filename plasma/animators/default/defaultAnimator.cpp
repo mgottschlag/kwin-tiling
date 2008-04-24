@@ -63,7 +63,7 @@ int DefaultAnimator::framesPerSecond(Plasma::Phase::ElementAnimation animation) 
     }
 }
 
-void DefaultAnimator::appear(qreal progress, QGraphicsItem* item)
+void DefaultAnimator::itemAppear(qreal progress, QGraphicsItem* item)
 {
     //kDebug() << "DefaultAnimator::appear(" << progress << ", " << item << ")";
     if (progress >= 1) {
@@ -76,7 +76,7 @@ void DefaultAnimator::appear(qreal progress, QGraphicsItem* item)
     item->translate(r.width() / 2 * progress, r.height() / 2 * progress);
 }
 
-void DefaultAnimator::disappear(qreal progress, QGraphicsItem* item)
+void DefaultAnimator::itemDisappear(qreal progress, QGraphicsItem* item)
 {
     if (progress >= 1) {
         //item->resetTransform();

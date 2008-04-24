@@ -33,8 +33,8 @@ public:
     int framesPerSecond(Plasma::Phase::Movement movement) const;
     int framesPerSecond(Plasma::Phase::ElementAnimation animation) const;
 
-    void appear(qreal progress, QGraphicsItem* item);
-    void disappear(qreal progress, QGraphicsItem* item);
+    void itemAppear(qreal progress, QGraphicsItem* item);
+    void itemDisappear(qreal progress, QGraphicsItem* item);
 
 
     QPixmap elementAppear(qreal progress, const QPixmap& pixmap);
