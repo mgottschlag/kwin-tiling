@@ -33,9 +33,9 @@ DefaultAnimator::DefaultAnimator(QObject *parent, const QVariantList& list)
 int DefaultAnimator::animationFPS(Plasma::Phase::Animation animation) const
 {
     switch (animation) {
-        case Plasma::Phase::Appear:
+        case Plasma::Phase::AppearAnimation:
             return 20;
-        case Plasma::Phase::Disappear:
+        case Plasma::Phase::DisappearAnimation:
             return 20;
 
         default:
@@ -43,12 +43,12 @@ int DefaultAnimator::animationFPS(Plasma::Phase::Animation animation) const
     }
 }
 
-int DefaultAnimator::elementAnimationFPS(Plasma::Phase::ElementAnimation animation) const
+int DefaultAnimator::elementAnimationFPS(Plasma::Phase::Animation animation) const
 {
     switch (animation) {
-        case Plasma::Phase::ElementAppear:
+        case Plasma::Phase::AppearAnimation:
             return 20;
-        case Plasma::Phase::ElementDisappear:
+        case Plasma::Phase::DisappearAnimation:
             return 20;
 
         default:

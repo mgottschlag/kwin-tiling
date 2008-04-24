@@ -30,7 +30,7 @@ public:
     explicit DefaultAnimator(QObject *parent = 0, const QVariantList& list = QVariantList());
 
     int animationFPS(Plasma::Phase::Animation animation) const;
-    int elementAnimationFPS(Plasma::Phase::ElementAnimation animation) const;
+    int elementAnimationFPS(Plasma::Phase::Animation animation) const;
 
     void itemAppear(qreal progress, QGraphicsItem* item);
     void itemDisappear(qreal progress, QGraphicsItem* item);
