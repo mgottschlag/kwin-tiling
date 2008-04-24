@@ -35,7 +35,7 @@ TimeEngine::TimeEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent, args)
 {
     Q_UNUSED(args)
-    setMinimumUpdateInterval(333);
+    setMinimumPollingInterval(333);
 
     // To have translated timezone names
     // (effectively a noop if the catalog is already present).

@@ -58,7 +58,7 @@ SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QVariantList& args)
 
     listenForNewDevices();
     temperature = new HddTemp();
-    setMinimumUpdateInterval(1000);
+    setMinimumPollingInterval(1000);
 }
 
 SolidDeviceEngine::~SolidDeviceEngine()
