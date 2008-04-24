@@ -43,14 +43,7 @@ int DefaultAnimator::animationFramesPerSecond(Plasma::Phase::Animation animation
     }
 }
 
-int DefaultAnimator::animationFramesPerSecond(Plasma::Phase::Movement movement) const
-{
-    // not making this explecit confuses some compilers as the three animationFramesPerSecond method signatures
-    // are too vague, resulting in unintended hiding of methods
-    return Plasma::Animator::animationFramesPerSecond(movement);
-}
-
-int DefaultAnimator::animationFramesPerSecond(Plasma::Phase::ElementAnimation animation) const
+int DefaultAnimator::elementAnimationFramesPerSecond(Plasma::Phase::ElementAnimation animation) const
 {
     switch (animation) {
         case Plasma::Phase::ElementAppear:
