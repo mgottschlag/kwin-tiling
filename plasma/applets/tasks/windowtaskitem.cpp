@@ -206,6 +206,10 @@ void WindowTaskItem::setGeometry(const QRectF& geometry)
 
 void WindowTaskItem::publishIconGeometry()
 {
+    if (!scene()) {
+        return;
+    }
+
     QGraphicsView *parentView = 0L;
     // The following was taken from Plasma::Applet, it doesn't make sense to make the item an applet, and this was the easiest way around it.
     foreach (QGraphicsView *view, scene()->views()) {
