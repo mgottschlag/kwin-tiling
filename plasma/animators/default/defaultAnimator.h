@@ -29,8 +29,8 @@ class DefaultAnimator : public Plasma::Animator
 public:
     explicit DefaultAnimator(QObject *parent = 0, const QVariantList& list = QVariantList());
 
-    int animationFPS(Plasma::Phase::Animation animation) const;
-    int elementAnimationFPS(Plasma::Phase::Animation animation) const;
+    int animationFPS(Plasma::AnimationDriver::Animation animation) const;
+    int elementAnimationFPS(Plasma::AnimationDriver::Animation animation) const;
 
     void itemAppear(qreal progress, QGraphicsItem* item);
     void itemDisappear(qreal progress, QGraphicsItem* item);

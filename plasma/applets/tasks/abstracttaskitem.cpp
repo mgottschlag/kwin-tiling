@@ -192,12 +192,12 @@ void AbstractTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
     const int FadeInDuration = 100;
 
     if (m_animId != -1) {
-        Plasma::Phase::self()->stopCustomAnimation(m_animId);
+        Plasma::AnimationDriver::self()->stopCustomAnimation(m_animId);
     }
 
     m_fadeIn = true;
-    m_animId = Plasma::Phase::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
-                                                      Plasma::Phase::LinearCurve, this,
+    m_animId = Plasma::AnimationDriver::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
+                                                      Plasma::AnimationDriver::LinearCurve, this,
                                                       "animationUpdate");
 
     QGraphicsWidget::hoverEnterEvent(event);
@@ -208,12 +208,12 @@ void AbstractTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     const int FadeOutDuration = 200;
 
     if (m_animId != -1) {
-        Plasma::Phase::self()->stopCustomAnimation(m_animId);
+        Plasma::AnimationDriver::self()->stopCustomAnimation(m_animId);
     }
 
     m_fadeIn = false;
-    m_animId = Plasma::Phase::self()->customAnimation(40 / (1000 / FadeOutDuration), FadeOutDuration,
-                                                      Plasma::Phase::LinearCurve, this,
+    m_animId = Plasma::AnimationDriver::self()->customAnimation(40 / (1000 / FadeOutDuration), FadeOutDuration,
+                                                      Plasma::AnimationDriver::LinearCurve, this,
                                                       "animationUpdate");
 
     QGraphicsWidget::hoverLeaveEvent(event);
