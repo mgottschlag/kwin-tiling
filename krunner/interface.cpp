@@ -419,7 +419,7 @@ Interface::~Interface()
 {
     KRunnerSettings::setPastQueries(m_searchTerm->historyItems());
     KRunnerSettings::setQueryTextCompletionMode(m_searchTerm->completionMode());
-    m_context.clearMatches();
+    m_context.removeAllMatches();
 }
 
 void Interface::clearHistory()
@@ -477,7 +477,8 @@ void Interface::switchUser()
     m_header->setText(i18n("Switch users"));
     m_header->setPixmap("system-switch-user");
     m_defaultMatch = 0;
-    m_context.resetSearchTerm("SESSIONS");
+    m_context.reset();
+    m_context.setSearchTerm("SESSIONS");
     sessionrunner->match(&m_context);
 
     foreach (const Plasma::SearchMatch *action, m_context.matches()) {
@@ -519,7 +520,7 @@ void Interface::resetInterface()
     m_header->setText(i18n("Enter the name of an application, location or search term below."));
     m_header->setPixmap("system-search");
     m_defaultMatch = 0;
-    m_context.resetSearchTerm(QString());
+    m_context.reset();
     m_searchTerm->setCurrentItem(QString(), true, 0);
     m_matchList->clear();
     m_runButton->setEnabled( false );
@@ -605,7 +606,8 @@ void Interface::match()
         return;
     }
 
-    m_context.resetSearchTerm(term);
+    m_context.reset();
+    m_context.setSearchTerm(term);
     m_context.addStringCompletions(m_searchTerm->historyItems());
 
     foreach (Plasma::AbstractRunner* runner, m_runners) {
