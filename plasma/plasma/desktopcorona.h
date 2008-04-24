@@ -33,8 +33,6 @@ class PLASMA_EXPORT DesktopCorona : public Plasma::Corona
 
 public:
     explicit DesktopCorona(QObject * parent = 0);
-    explicit DesktopCorona(const QRectF & sceneRect, QObject * parent = 0);
-    DesktopCorona(qreal x, qreal y, qreal width, qreal height, QObject * parent = 0);
 
     /**
      * Loads the default (system wide) layout for this user

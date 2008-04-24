@@ -33,18 +33,6 @@ DesktopCorona::DesktopCorona(QObject *parent)
     init();
 }
 
-DesktopCorona::DesktopCorona(const QRectF & sceneRect, QObject * parent )
-    : Plasma::Corona(sceneRect, parent)
-{
-    init();
-}
-
-DesktopCorona::DesktopCorona(qreal x, qreal y, qreal width, qreal height, QObject * parent)
-    : Plasma::Corona(x, y, width, height, parent)
-{
-    init();
-}
-
 void DesktopCorona::init()
 {
     QDesktopWidget *desktop = QApplication::desktop();
