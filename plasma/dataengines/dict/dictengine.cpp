@@ -204,7 +204,7 @@ void DictEngine::socketClosed()
     tcpSocket = 0;
 }
 
-bool DictEngine::sourceRequested(const QString &word)
+bool DictEngine::sourceRequestEvent(const QString &word)
 {
       if (tcpSocket && currentWord != word)
       {

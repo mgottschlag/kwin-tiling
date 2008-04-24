@@ -247,13 +247,13 @@ WeatherEngine::~WeatherEngine()
 /**
  * SLOT: Set up each Ion for the first time and get any data
  */
-bool WeatherEngine::sourceRequested(const QString &source)
+bool WeatherEngine::sourceRequestEvent(const QString &source)
 {
-    kDebug() << "sourceRequested()" << source;
+    kDebug() << "sourceRequestEvent()" << source;
     IonInterface *ion = d->ionForSource(source);
 
     if (!ion) {
-        kDebug() << "sourceRequested(): No Ion Found, load it up!";
+        kDebug() << "sourceRequestEvent(): No Ion Found, load it up!";
         ion = loadIon(d->ionNameForSource(source));
         if (!ion) {
             return false;
@@ -274,7 +274,7 @@ bool WeatherEngine::sourceRequested(const QString &source)
 /**
  * SLOT: update the Applet with new data from all ions loaded.
  */
-bool WeatherEngine::updateSource(const QString& source)
+bool WeatherEngine::updateSourceEvent(const QString& source)
 {
     IonInterface *ion = d->ionForSource(source);
 
@@ -282,12 +282,12 @@ bool WeatherEngine::updateSource(const QString& source)
     ion->setProperty("unit", KGlobal::locale()->measureSystem());
     QByteArray str = source.toLocal8Bit();
 
-    kDebug() << "updateSource()";
+    kDebug() << "updateSourceEvent()";
     if (!ion) {
         return false;
     }
 
-    if (ion->updateSource(source)) {
+    if (ion->updateSourceEvent(source)) {
         return true;
     } else {
         return false;

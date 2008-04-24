@@ -46,16 +46,15 @@ TimeEngine::~TimeEngine()
 {
 }
 
-bool TimeEngine::sourceRequested(const QString &name)
+bool TimeEngine::sourceRequestEvent(const QString &name)
 {
-    //kDebug() << "TimeEngine::sourceRequested " << name;
-
-    return updateSource(name);
+    kDebug() << "TimeEngine::sourceRequested " << name;
+    return updateSourceEvent(name);
 }
 
-bool TimeEngine::updateSource(const QString &tz)
+bool TimeEngine::updateSourceEvent(const QString &tz)
 {
-    //kDebug() << "TimeEngine::updateTime()";
+    kDebug() << "TimeEngine::updateTime()";
 
     QString timezone;
 

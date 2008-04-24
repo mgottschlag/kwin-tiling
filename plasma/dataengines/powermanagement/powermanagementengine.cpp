@@ -43,7 +43,7 @@ PowermanagementEngine::PowermanagementEngine(QObject* parent, const QVariantList
     
     // This following call can be removed, but if we do, the
     // data is not shown in the plasmaengineexplorer.
-    // sourceRequested("Battery");
+    // sourceRequestEvent("Battery");
 }
 
 PowermanagementEngine::~PowermanagementEngine()
@@ -58,7 +58,7 @@ QStringList PowermanagementEngine::sources() const
     return m_sources;
 }
 
-bool PowermanagementEngine::sourceRequested(const QString &name)
+bool PowermanagementEngine::sourceRequestEvent(const QString &name)
 {
     if (name == I18N_NOOP("Battery")) {
         QList<Solid::Device> list_battery =

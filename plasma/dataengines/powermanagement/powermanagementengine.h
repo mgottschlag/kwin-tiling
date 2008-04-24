@@ -41,7 +41,7 @@ public:
     QStringList sources() const;
 
 protected:
-    bool sourceRequested(const QString &name);
+    bool sourceRequestEvent(const QString &name);
     void init();
 
 protected slots:

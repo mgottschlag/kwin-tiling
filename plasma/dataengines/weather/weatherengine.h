@@ -75,7 +75,7 @@ protected:
      * Reimplemented from Plasma::DataEngine. We use it to communicate to the Ion plugins to set the data sources.
      * @param source The datasource name.
      */
-    bool sourceRequested(const QString &source);
+    bool sourceRequestEvent(const QString &source);
 
 protected slots:
     /**
@@ -98,7 +98,7 @@ protected slots:
      * Reimplemented from Plasma::DataEngine.
      * @param source The datasource to update.
      */
-    bool updateSource(const QString& source);
+    bool updateSourceEvent(const QString& source);
 
 private:
     class Private;

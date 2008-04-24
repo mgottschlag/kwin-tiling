@@ -54,7 +54,7 @@ void FileBrowserEngine::init()
     kDebug() << "init() called";
 }
 
-bool FileBrowserEngine::sourceRequested(const QString &path)
+bool FileBrowserEngine::sourceRequestEvent(const QString &path)
 {
     kDebug() << "source requested() called: "<< path;
     m_dirWatch->addDir(path);

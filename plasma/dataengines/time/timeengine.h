@@ -36,8 +36,8 @@ class TimeEngine : public Plasma::DataEngine
         ~TimeEngine();
 
     protected:
-        bool sourceRequested(const QString &name);
-        bool updateSource(const QString& source);
+        bool sourceRequestEvent(const QString &name);
+        bool updateSourceEvent(const QString& source);
 };
 
 K_EXPORT_PLASMA_DATAENGINE(time, TimeEngine)

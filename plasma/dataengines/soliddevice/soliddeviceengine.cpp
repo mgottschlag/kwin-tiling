@@ -84,7 +84,7 @@ void SolidDeviceEngine::listenForNewDevices()
             this, SLOT(deviceRemoved(const QString&)));
 }
 
-bool SolidDeviceEngine::sourceRequested(const QString &name)
+bool SolidDeviceEngine::sourceRequestEvent(const QString &name)
 {
 
     //create a predicate to check for validity
@@ -556,7 +556,7 @@ bool SolidDeviceEngine::updateHardDiskTemperature(const QString &udi)
     return false;
 }
 
-bool SolidDeviceEngine::updateSource(const QString& source)
+bool SolidDeviceEngine::updateSourceEvent(const QString& source)
 {
     bool update1 = updateFreeSpace(source);
     bool update2 = updateHardDiskTemperature(source);

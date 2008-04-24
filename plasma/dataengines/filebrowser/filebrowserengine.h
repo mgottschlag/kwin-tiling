@@ -37,7 +37,7 @@ public:
     ~FileBrowserEngine();
 
 protected:
-    bool sourceRequested(const QString &path);
+    bool sourceRequestEvent(const QString &path);
     void init();
 
 protected slots:

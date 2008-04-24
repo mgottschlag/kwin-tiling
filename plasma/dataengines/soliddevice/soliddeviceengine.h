@@ -47,8 +47,8 @@ public:
     ~SolidDeviceEngine();
 
 protected:
-    bool sourceRequested(const QString &name);
-    bool updateSource(const QString& source);
+    bool sourceRequestEvent(const QString &name);
+    bool updateSourceEvent(const QString& source);
 
 private:
     bool populateDeviceData(const QString &name);
