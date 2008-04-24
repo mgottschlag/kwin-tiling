@@ -69,6 +69,13 @@ public:
     bool isUsed() const;
 
     /**
+     * Returns whether there is a unused KJob from a previous connect.
+     * @return true if the job in queue is still waiting the reused KJob will
+     * be used instead.
+     */
+    bool hasWaitingJob() const;
+
+    /**
      * Reimplement to check whether the measurement is metric or not.
      * @return true if metric is used, false if not.
      */
@@ -96,6 +103,12 @@ protected:
      * @arg initialized whether or not the ion is currently ready to fetch data
      */
     void setInitialized(bool initialized);
+
+    /**
+     * Call this method within ion to indicate any pending jobs are started. This is
+     * to prevent another job from being allocated if it is not used on first go.
+     */
+    void setJobState(bool state);
 
     /**
      * Reimplemented from Plasma::DataEngine

@@ -30,6 +30,7 @@ public:
     int ref;
     IonInterface *ion;
     bool initialized;
+    bool waitingJob;
 };
 
 IonInterface::IonInterface(QObject *parent, const QVariantList &args)
@@ -63,6 +64,7 @@ bool IonInterface::isUsed() const
  */
 bool IonInterface::sourceRequested(const QString &source)
 {
+    kDebug() << "sourceRequested()";
     if (d->initialized) {
         return updateIonSource(source);
     } else {
@@ -97,4 +99,17 @@ void IonInterface::setInitialized(bool initialized)
             updateSource(source);
         }
     }
+}
+
+void IonInterface::setJobState(bool state)
+{
+    d->waitingJob = state;
+}
+
+bool IonInterface::hasWaitingJob() const {
+    if (d->waitingJob) {
+        return true;
+    }
+ 
+    return false;
 }
