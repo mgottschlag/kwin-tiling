@@ -146,7 +146,7 @@ void EngineExplorer::showEngine(const QString& name)
     m_updateInterval->setEnabled(true);
     m_sourceRequester->setEnabled(true);
     m_sourceRequester->setFocus();
-    connect(m_engine, SIGNAL(newSource(QString)), this, SLOT(addSource(QString)));
+    connect(m_engine, SIGNAL(sourceAdded(QString)), this, SLOT(addSource(QString)));
     connect(m_engine, SIGNAL(sourceRemoved(QString)), this, SLOT(removeSource(QString)));
     updateTitle();
 }
