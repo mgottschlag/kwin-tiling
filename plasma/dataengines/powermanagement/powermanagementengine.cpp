@@ -147,27 +147,27 @@ void PowermanagementEngine::updateBatteryChargeState(int newState, const QString
     }
     const QString& source = m_batterySources[udi];
     setData(source, I18N_NOOP("State"), state);
-    checkForUpdates();
+    scheduleSourcesUpdated();
 }
 
 void PowermanagementEngine::updateBatteryPlugState(bool newState, const QString& udi)
 {
     const QString& source = m_batterySources[udi];
     setData(source, I18N_NOOP("Plugged in"), newState);
-    checkForUpdates();
+    scheduleSourcesUpdated();
 }
 
 void PowermanagementEngine::updateBatteryChargePercent(int newValue, const QString& udi)
 {
     const QString& source = m_batterySources[udi];
     setData(source, I18N_NOOP("Percent"), newValue);
-    checkForUpdates();
+    scheduleSourcesUpdated();
 }
 
 void PowermanagementEngine::updateAcPlugState(bool newState)
 {
     setData(I18N_NOOP("AC Adapter"), I18N_NOOP("Plugged in"), newState);
-    checkForUpdates();
+    scheduleSourcesUpdated();
 }
 
 #include "powermanagementengine.moc"

@@ -494,7 +494,7 @@ void SolidDeviceEngine::deviceAdded(const QString& udi)
         }
     }
 
-    checkForUpdates();
+    scheduleSourcesUpdated();
 }
 
 qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
@@ -573,13 +573,13 @@ void SolidDeviceEngine::deviceRemoved(const QString& udi)
 
     devicemap.remove(udi);
     removeSource(udi);
-    checkForUpdates();
+    scheduleSourcesUpdated();
 }
 
 void SolidDeviceEngine::deviceChanged(const QString& udi, const QString &property, const QVariant &value)
 {
     setData(udi, property, value);
-    checkForUpdates();
+    scheduleSourcesUpdated();
 }
 
 #include "soliddeviceengine.moc"

@@ -89,7 +89,7 @@ void HotplugEngine::onDeviceAdded(const QString &udi)
         setData(udi, "predicateFiles", interestingDesktopFiles);
 
         kDebug() << "add hardware solid : " << udi;
-        checkForUpdates();
+        scheduleSourcesUpdated();
     }
 }
 
@@ -99,7 +99,7 @@ void HotplugEngine::onDeviceRemoved(const QString &udi)
 
     kDebug() << "remove hardware solid : " << udi;
 
-    checkForUpdates();
+    scheduleSourcesUpdated();
 }
 
 #include "hotplugengine.moc"

@@ -148,7 +148,7 @@ void FileBrowserEngine::updateData(const QString &path, EventType event)
         }
     };
 
-    checkForUpdates();
+    scheduleSourcesUpdated();
 
 }
 

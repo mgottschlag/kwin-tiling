@@ -74,7 +74,7 @@ void MouseEngine::init()
     setData(QLatin1String("Name"), QVariant(handler->cursorName()));
 #endif
 
-    checkForUpdates();
+    scheduleSourcesUpdated();
 }
 
 
@@ -87,7 +87,7 @@ void MouseEngine::timerEvent(QTimerEvent *)
         setData(QLatin1String("Position"), QVariant(pos));
         lastPosition = pos;
 
-        checkForUpdates();
+        scheduleSourcesUpdated();
     }
 }
 
@@ -95,6 +95,6 @@ void MouseEngine::timerEvent(QTimerEvent *)
 void MouseEngine::updateCursorName(const QString &name)
 {
     setData(QLatin1String("Name"), QVariant(name));
-    checkForUpdates();
+    scheduleSourcesUpdated();
 }
 
