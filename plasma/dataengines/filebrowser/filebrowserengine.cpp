@@ -160,7 +160,7 @@ void FileBrowserEngine::clearData(const QString &path)
             != sources.end(); it++) {
         if (dir == QDir(it.key())) {
             kDebug() << "matched: "<< path << " "<< it.key();
-            it.value()->clearData();
+            it.value()->removeAllData();
 
         } else {
             kDebug() << "didn't match: "<< path << " "<< it.key();
