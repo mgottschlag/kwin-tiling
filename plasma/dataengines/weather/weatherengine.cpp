@@ -126,7 +126,7 @@ IonInterface* WeatherEngine::loadIon(const QString& plugName)
     ion->init();
     ion->ref();
 
-    connect(ion, SIGNAL(newSource(QString)), this, SLOT(newIonSource(QString)));
+    connect(ion, SIGNAL(sourceAdded(QString)), this, SLOT(newIonSource(QString)));
 
     /* Set system related properties for the ion
      * timezone is displaying the time/date in UTC or user's local time

@@ -144,7 +144,7 @@ void IconLoader::configureMedia()
     if (m_enableMedia) {
        if (!m_solidEngine) {
            //m_solidEngine = m_desktop->dataEngine("solidnotifierengine");
-           //connect(m_solidEngine, SIGNAL(newSource(const QString&)),
+           //connect(m_solidEngine, SIGNAL(sourceAdded(const QString&)),
            //          this, SLOT(sourceAdded(const QString&)));
            //TODO update it.
        }

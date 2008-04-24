@@ -130,7 +130,7 @@ void DeviceNotifier::init()
     isNotificationEnabled = true;
 
     //connect to engine when a device is plug
-    connect(m_solidEngine, SIGNAL(newSource(const QString&)),
+    connect(m_solidEngine, SIGNAL(sourceAdded(const QString&)),
             this, SLOT(onSourceAdded(const QString&)));
     connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(onSourceRemoved(const QString&)));
