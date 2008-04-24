@@ -29,6 +29,7 @@
 // Qt
 #include <QGraphicsSceneWheelEvent>
 #include <QTimeLine>
+#include <QGraphicsScene>
 #include <QGraphicsLinearLayout>
 
 // Plasma
@@ -41,7 +42,6 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
 {
     setHasConfigurationInterface(true);
     setAspectRatioMode(Qt::IgnoreAspectRatio);
-
     m_screenTimer.setSingleShot(true);
     m_screenTimer.setInterval(300);
     connect(&m_screenTimer, SIGNAL(timeout()), this, SLOT(checkScreenChange()));
@@ -55,32 +55,29 @@ Tasks::~Tasks()
 
 void Tasks::init()
 {
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
-    layout->setContentsMargins(0,0,0,0);
-    if (formFactor() == Plasma::Vertical) {
-        layout->setOrientation(Qt::Vertical);
-    } else {
-        layout->setOrientation(Qt::Horizontal);
-    }
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
-    setLayout(layout);
-    m_rootTaskGroup = new TaskGroupItem(this,this);
-    connect(m_rootTaskGroup, SIGNAL(activated(AbstractTaskItem*)),
-            this, SLOT(launchActivated()));
-    layout->addItem(m_rootTaskGroup);
-
-    m_rootTaskGroup->setBorderStyle(TaskGroupItem::NoBorder);
-    // m_rootTaskGroup->setColor( QColor(100,120,130) );
-    m_rootTaskGroup->setText("Root Group");
-
+    //like in Qt's designer
+    setMaximumSize(99999999,99999999);
+   
+    m_layout = new QGraphicsLinearLayout(this);
+    m_layout->setContentsMargins(0,0,0,0);
+    m_layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+    m_layout->setMaximumSize(99999999,99999999);
+   
+   
+    if (formFactor() == Plasma::Vertical) {
+        m_layout->setOrientation(Qt::Vertical);
+    } else {
+        m_layout->setOrientation(Qt::Horizontal);
+    }
+    setLayout(m_layout);
+    
     KConfigGroup cg = config();
 #ifdef TOOLTIP_MANAGER
     m_showTooltip = cg.readEntry("showTooltip", true);
 #endif
     m_showOnlyCurrentDesktop = cg.readEntry("showOnlyCurrentDesktop", false);
     m_showOnlyCurrentScreen = cg.readEntry("showOnlyCurrentScreen", false);
-
-    reconnect();
 
     // listen for addition and removal of window tasks
     connect(TaskManager::TaskManager::self(), SIGNAL(taskAdded(TaskPtr)),
@@ -94,24 +91,23 @@ void Tasks::init()
     connect(TaskManager::TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)),
             this, SLOT(removeStartingTask(StartupPtr)));
 
-    // add the animator once we're initialized to avoid animating like mad on start up
-    //m_rootTaskGroup->layout()->setAnimator(m_animator);
+    reconnect();
 }
 
 void Tasks::addStartingTask(StartupPtr task)
 {
-    WindowTaskItem* item = new WindowTaskItem(m_rootTaskGroup, m_rootTaskGroup, m_showTooltip);
+    WindowTaskItem* item = new WindowTaskItem(this, this, m_showTooltip);
     item->setStartupTask(task);
     m_startupTaskItems.insert(task, item);
-
-    addItemToRootGroup(item);
+    m_layout->addItem(item);
 }
 
 void Tasks::removeStartingTask(StartupPtr task)
 {
     if (m_startupTaskItems.contains(task)) {
         AbstractTaskItem *item = m_startupTaskItems.take(task);
-        removeItemFromRootGroup(item);
+        m_layout->removeItem(item);
+        scene()->removeItem(item);
     }
 }
 
@@ -126,23 +122,6 @@ void Tasks::registerWindowTasks()
         iter.next();
         addWindowTask(iter.value());
     }
-}
-
-void Tasks::addItemToRootGroup(AbstractTaskItem *item)
-{
-    item->setFlag(QGraphicsItem::ItemIsSelectable);
-    m_rootTaskGroup->insertTask(item);
-}
-
-void Tasks::removeItemFromRootGroup(AbstractTaskItem *item)
-{
-    Q_ASSERT( item );
-
-    m_rootTaskGroup->removeTask(item);
-
-// TEMPORARY
-//      scene()->removeItem(item);
-//    item->deleteLater();
 }
 
 void Tasks::addWindowTask(TaskPtr task)
@@ -162,60 +141,55 @@ void Tasks::addWindowTask(TaskPtr task)
     foreach (StartupPtr startup, m_startupTaskItems.keys()) {
         if (startup->matchesWindow(task->window())) {
             item = dynamic_cast<WindowTaskItem *>(m_startupTaskItems.take(startup));
+            m_layout->addItem(item);
             break;
         }
     }
 
     if (!item) {
-        item = new WindowTaskItem(m_rootTaskGroup, m_rootTaskGroup, m_showTooltip);
+        item = new WindowTaskItem(this,this, m_showTooltip);
     }
 
     item->setWindowTask(task);
     m_windowTaskItems.insert(task, item);
-
-    addItemToRootGroup(item);
+    m_layout->addItem(item);
 }
 
 void Tasks::removeWindowTask(TaskPtr task)
 {
     if (m_windowTaskItems.contains(task)) {
         AbstractTaskItem *item = m_windowTaskItems.take(task);
-        removeItemFromRootGroup(item);
+        m_layout->removeItem(item);
+        scene()->removeItem(item);
     }
 }
 
 void Tasks::removeAllWindowTasks()
 {
-    while (!m_windowTaskItems.isEmpty()) {
-        removeItemFromRootGroup(m_windowTaskItems.take(m_windowTaskItems.constBegin().key()));
+    for (int i = 0; i < m_layout->count();i++)
+    {
+        scene()->removeItem(dynamic_cast<QGraphicsWidget *>(m_layout->itemAt(i)));
+        m_layout->removeAt(i);
     }
+    m_windowTaskItems.clear();
+    
 }
 
 void Tasks::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::LocationConstraint) {
-        QGraphicsLinearLayout * taskslayout = dynamic_cast<QGraphicsLinearLayout *>(m_rootTaskGroup->layout());
         if (formFactor() == Plasma::Vertical) {
-            taskslayout->setOrientation(Qt::Vertical);
+            m_layout->setOrientation(Qt::Vertical);
         } else {
-            taskslayout->setOrientation(Qt::Horizontal);
+            m_layout->setOrientation(Qt::Horizontal);
         }
-
-        foreach (AbstractTaskItem *taskItem, m_windowTaskItems) {
-            WindowTaskItem *windowTaskItem = dynamic_cast<WindowTaskItem *>(taskItem);
-            if (windowTaskItem) {
-                windowTaskItem->publishIconGeometry();
-            }
-        }
-    }
-    else if (constraints & Plasma::SizeConstraint) {
-        m_rootTaskGroup->resize(effectiveSizeHint(Qt::MaximumSize));
     }
 }
 
 void Tasks::wheelEvent(QGraphicsSceneWheelEvent *e)
 {
-     m_rootTaskGroup->cycle(e->delta());
+     //TODO PORT THIS : we don't need a root, iteration with QGraphicsLayoutItem * itemAt in the layout and give the focus. 
+     //m_rootTaskGroup->cycle(e->delta());
 }
 
 void Tasks::currentDesktopChanged(int)

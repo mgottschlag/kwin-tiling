@@ -29,6 +29,7 @@
 
 // Qt
 #include <QTimer>
+#include <QGraphicsLinearLayout>
 
 // Plasma
 #include <plasma/applet.h>
@@ -106,9 +107,6 @@ private:
         // of windows
         void registerWindowTasks();
 
-        void addItemToRootGroup(AbstractTaskItem* item);
-        void removeItemFromRootGroup(AbstractTaskItem* item);
-
         // remove all tasks from the taskbar
         void removeAllWindowTasks();
 
@@ -124,6 +122,7 @@ private:
         bool m_showOnlyCurrentDesktop;
         bool m_showOnlyCurrentScreen;
         Plasma::LayoutAnimator *m_animator;
+        QGraphicsLinearLayout *m_layout;
         KDialog *m_dialog;
         Ui::tasksConfig m_ui;
         QList<TaskPtr> m_tasks;

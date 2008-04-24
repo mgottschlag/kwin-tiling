@@ -222,7 +222,10 @@ void WindowTaskItem::publishIconGeometry()
 
     QRect rect = parentView->mapFromScene(mapToScene(boundingRect())).boundingRect().adjusted(0, 0, 1, 1);
     rect.moveTopLeft(parentView->mapToGlobal(rect.topLeft()));
-    _task->publishIconGeometry(rect);
+    if (_task)
+    {
+        _task->publishIconGeometry(rect);
+    }
 }
 
 #include "windowtaskitem.moc"

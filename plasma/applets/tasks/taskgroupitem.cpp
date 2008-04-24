@@ -43,12 +43,6 @@ TaskGroupItem::TaskGroupItem(QGraphicsItem *parent, QObject *parentObject)
       _allowSubGroups(true),
       m_geometryUpdateTimerId(-1)
 {
-   //setAcceptDrops(true);
-
-   m_layout = new QGraphicsLinearLayout(this);
-   m_layout->setContentsMargins(0,0,0,0);
-   m_layout->setSpacing(2);
-   setLayout(m_layout);
 }
 
 void TaskGroupItem::setAllowSubGroups(bool allow)
@@ -126,7 +120,7 @@ void TaskGroupItem::removeTask(AbstractTaskItem *item)
     //FIXME: only hides it, this is good for cases like hiding tasks of other virtual desktops,
     //when closing windows the item should be deleted somewhere
     item->hide();
-
+ 
     // if the group is now empty then ask the parent to remove it
     if (_tasks.count() == 0) {
         TaskGroupItem* parentGroup = dynamic_cast<TaskGroupItem*>(parentItem());
