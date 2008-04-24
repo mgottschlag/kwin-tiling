@@ -224,7 +224,7 @@ PlasmaApp::~PlasmaApp()
 void PlasmaApp::cleanup()
 {
     if (m_corona) {
-        m_corona->saveApplets();
+        m_corona->saveLayout();
     }
 
     // save the mapping of Views to Containments at the moment
@@ -298,7 +298,7 @@ Plasma::Corona* PlasmaApp::corona()
                 m_root, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
 
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
-        c->loadApplets();
+        c->loadLayout();
         c->checkScreens();
         m_corona = c;
     }
