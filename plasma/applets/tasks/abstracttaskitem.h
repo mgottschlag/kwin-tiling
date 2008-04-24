@@ -195,7 +195,7 @@ private:
     QIcon _icon;
     QString _text;
 
-    Plasma::Phase::AnimId m_animId;
+    int m_animId;
     qreal m_alpha;
     bool m_fadeIn;
 

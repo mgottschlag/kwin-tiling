@@ -103,15 +103,15 @@ class Battery : public Plasma::Applet
         KDialog *m_dialog;
         Ui::batteryConfig ui;
 
-        Plasma::Phase::AnimId m_animId;
+        int m_animId;
         qreal m_alpha;
         bool m_fadeIn;
 
-        Plasma::Phase::AnimId m_acAnimId;
+        int m_acAnimId;
         qreal m_acAlpha;
         bool m_acFadeIn;
 
-        Plasma::Phase::AnimId m_batteryAnimId;
+        int m_batteryAnimId;
         qreal m_batteryAlpha;
         bool m_batteryFadeIn;
 
