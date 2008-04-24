@@ -12,28 +12,30 @@
 #define _CONDITIONS_H_
 
 #include "config-khotkeys.h"
-#include <QObject>
 
+#include "action_data_group.h"
 
-#include "khotkeysglobal.h"
 #include "windows.h"
 
 // Needed for None below
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 
+#include <QtCore/QObject>
 
 class KConfig;
 
 namespace KHotKeys
 {
 
-class Action_data_base;
-class Action_data;
+class ActionDataBase;
+class ActionData;
 class Condition_list_base;
 
 class KDE_EXPORT Condition
     {
+    Q_DISABLE_COPY( Condition );
+
     public:
         Condition( Condition_list_base* parent_P );
         Condition( KConfigGroup& cfg_P, Condition_list_base* parent_P );
@@ -48,7 +50,6 @@ class KDE_EXPORT Condition
         static Condition* create_cfg_read( KConfigGroup& cfg_P, Condition_list_base* parent_P );
     protected:
         Condition_list_base* const _parent;
-    KHOTKEYS_DISABLE_COPY( Condition );
     };
 
 class KDE_EXPORT Condition_list_base
@@ -71,19 +72,19 @@ class KDE_EXPORT Condition_list
     {
     typedef Condition_list_base base;
     public:
-        Condition_list( const QString& comment_P, Action_data_base* data_P );
-        Condition_list( KConfigGroup& cfg_P, Action_data_base* data_P );
+        Condition_list( const QString& comment_P, ActionDataBase* data_P );
+        Condition_list( KConfigGroup& cfg_P, ActionDataBase* data_P );
         void cfg_write( KConfigGroup& cfg_P ) const;
-        Condition_list* copy( Action_data_base* data_P ) const;
+        Condition_list* copy( ActionDataBase* data_P ) const;
         virtual bool match() const;
         const QString& comment() const;
-        void set_data( Action_data_base* data_P );
+        void set_data( ActionDataBase* data_P );
         virtual void updated() const;
         virtual Condition_list* copy( Condition_list_base* parent_P ) const;
         virtual const QString description() const;
     private:
         QString _comment;
-        Action_data_base* data;
+        ActionDataBase* data;
     };
 
 class KDE_EXPORT Active_window_condition
@@ -218,7 +219,7 @@ Condition_list_base::Condition_list_base( const Q3PtrList< Condition >& children
 // Condition_list
 
 inline
-Condition_list::Condition_list( const QString& comment_P, Action_data_base* data_P )
+Condition_list::Condition_list( const QString& comment_P, ActionDataBase* data_P )
     : Condition_list_base( NULL ), _comment( comment_P ), data( data_P )
     {
     }

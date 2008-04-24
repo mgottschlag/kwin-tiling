@@ -40,16 +40,12 @@ ShortcutsHandler::ShortcutsHandler( HandlerType type, QObject *parent )
         : QObject(parent)
          ,_type(type)
          ,_actions(new KActionCollection(this))
-    {
-    kDebug() << "Initializing shortcuts_handler";
-    Q_ASSERT( keyboard_handler == 0 );
-    keyboard_handler = this;
-    }
-
+    {}
 
 ShortcutsHandler::~ShortcutsHandler()
     {
-    kDebug() << "Goodbye from shortcuts_handler";
+    kDebug() << "Destroying ShortcutsHandler";
+    delete _actions;
     }
 
 

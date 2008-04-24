@@ -24,20 +24,38 @@
 
 namespace KHotKeys {
 
+Trigger::Trigger( ActionData* data_P )
+    : data( data_P )
+    {
+    }
+
+
+Trigger::Trigger( KConfigGroup&, ActionData* data_P )
+    : data( data_P )
+    {
+    }
+
+
+Trigger::~Trigger()
+    {
+    }
+
+
 void Trigger::cfg_write( KConfigGroup& cfg_P ) const
     {
     cfg_P.writeEntry( "Type", "ERROR" );
     }
 
-Trigger* Trigger::create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P )
+
+Trigger* Trigger::create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P )
     {
     QString type = cfg_P.readEntry( "Type" );
     if( type == "SHORTCUT" || type == "SINGLE_SHORTCUT" )
-        return new Shortcut_trigger( cfg_P, data_P );
+        return new ShortcutTrigger( cfg_P, data_P );
     if( type == "WINDOW" )
-        return new Window_trigger( cfg_P, data_P );
+        return new WindowTrigger( cfg_P, data_P );
     if( type == "GESTURE" )
-        return new Gesture_trigger(cfg_P, data_P );
+        return new GestureTrigger(cfg_P, data_P );
 // FIXME: SOUND
 #if 0
     if( type == "VOICE" )

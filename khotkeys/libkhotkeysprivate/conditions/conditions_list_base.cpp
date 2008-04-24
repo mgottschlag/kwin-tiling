@@ -21,10 +21,6 @@
 
 #include <KDE/KConfigGroup>
 
-#ifdef KHOTKEYS_DEBUG
-#include <typeinfo>
-#endif
-
 namespace KHotKeys {
 
 Condition_list_base::Condition_list_base( KConfigGroup& cfg_P, Condition_list_base* parent_P )
@@ -68,20 +64,6 @@ bool Condition_list_base::accepts_children() const
     return true;
     }
 
-#ifdef KHOTKEYS_DEBUG
-void Condition_list_base::debug( int depth_P )
-    {
-    char tmp[ 1024 ];
-    int i;
-    for( i = 0;
-         i < depth_P;
-         ++i )
-        tmp[ i ] = ' ';
-    tmp[ i ] = '\0';
-    kDebug( 1217 ) << tmp << typeid( *this ).name() << ":(" << this << ")";
-    debug_list( *this, depth_P + 1 );
-    }
-#endif
 
 } // namespace KHotKeys
 

@@ -30,20 +30,46 @@
 
 namespace KHotKeys {
 
-Command_url_action::Command_url_action( KConfigGroup& cfg_P, Action_data* data_P )
+CommandUrlAction::CommandUrlAction( ActionData* data_P, const QString& command_url_P )
+    : Action( data_P ), _command_url( command_url_P )
+    {
+    }
+
+
+QString CommandUrlAction::command_url() const
+    {
+    return _command_url;
+    }
+
+
+CommandUrlAction::CommandUrlAction( KConfigGroup& cfg_P, ActionData* data_P )
     : Action( cfg_P, data_P )
     {
     _command_url = cfg_P.readEntry( "CommandURL" );
     }
 
-void Command_url_action::cfg_write( KConfigGroup& cfg_P ) const
+
+void CommandUrlAction::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "CommandURL", command_url());
     cfg_P.writeEntry( "Type", "COMMAND_URL" ); // overwrites value set in base::cfg_write()
     }
 
-void Command_url_action::execute()
+
+Action* CommandUrlAction::copy( ActionData* data_P ) const
+    {
+    return new CommandUrlAction( data_P, command_url());
+    }
+
+
+const QString CommandUrlAction::description() const
+    {
+    return i18n( "Command/URL : " ) + command_url();
+    }
+
+
+void CommandUrlAction::execute()
     {
     if( command_url().isEmpty())
         return;
@@ -109,14 +135,10 @@ void Command_url_action::execute()
 
     }
 
-const QString Command_url_action::description() const
-    {
-    return i18n( "Command/URL: " ) + command_url();
-    }
 
-Action* Command_url_action::copy( Action_data* data_P ) const
+void CommandUrlAction::set_command_url( const QString &command )
     {
-    return new Command_url_action( data_P, command_url());
+    _command_url = command;
     }
 
 } // namespace KHotKeys

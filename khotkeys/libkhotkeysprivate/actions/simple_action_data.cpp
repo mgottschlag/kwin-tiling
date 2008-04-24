@@ -8,10 +8,11 @@
  
 ****************************************************************************/
 
-#include "action_data.h"
+#include "simple_action_data.h"
 #include "actions.h"
 
 #include <kconfiggroup.h>
+#include <kdebug.h>
 
 
 namespace KHotKeys
@@ -21,7 +22,7 @@ namespace KHotKeys
 // Dbus_shortcut_action_data
 
 template<> KDE_EXPORT
-void Simple_action_data< Shortcut_trigger, Dbus_action >
+void Simple_action_data< ShortcutTrigger, DBusAction >
     ::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
@@ -31,7 +32,7 @@ void Simple_action_data< Shortcut_trigger, Dbus_action >
 // Keyboard_input_shortcut_action_data
 
 template<> KDE_EXPORT
-void Simple_action_data< Shortcut_trigger, Keyboard_input_action >
+void Simple_action_data< ShortcutTrigger, KeyboardInputAction >
     ::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
@@ -41,7 +42,7 @@ void Simple_action_data< Shortcut_trigger, Keyboard_input_action >
 // Activate_window_shortcut_action_data
 
 template<> KDE_EXPORT
-void Simple_action_data< Shortcut_trigger, Activate_window_action >
+void Simple_action_data< ShortcutTrigger, ActivateWindowAction >
     ::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );

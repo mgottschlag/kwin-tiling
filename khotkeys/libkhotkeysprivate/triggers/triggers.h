@@ -24,81 +24,98 @@
 #include <QtCore/QMap>
 #include <QtCore/QUuid>
 
+#include <KDE/KShortcut>
+
 #include <kdemacros.h>
 #include "khotkeysglobal.h"
 #include "voicesignature.h"
 
 #include "input.h"
 #include "config-khotkeys.h"
+#include "windows.h"
 
 
 class KConfig;
+class QKeySequence;
 
 namespace KHotKeys
 {
 
 class Windowdef_list;
-class Action_data;
+class ActionData;
 
 class KDE_EXPORT Trigger
     {
+    Q_DISABLE_COPY( Trigger )
+
     public:
-        Trigger( Action_data* data_P );
-        Trigger( KConfigGroup& cfg_P, Action_data* data_P );
+        enum Type
+            {
+            GestureTriggerType,
+            ShortcutTriggerType,
+            WindowTriggerType
+            };
+
+        Trigger( ActionData* data_P );
+        Trigger( KConfigGroup& cfg_P, ActionData* data_P );
         virtual ~Trigger();
         virtual void cfg_write( KConfigGroup& cfg_P ) const = 0;
-        virtual Trigger* copy( Action_data* data_P ) const = 0;
+        virtual Trigger* copy( ActionData* data_P ) const = 0;
         virtual const QString description() const = 0;
-        static Trigger* create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P );
+        static Trigger* create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P );
         virtual void activate( bool activate_P ) = 0;
+
+        virtual Type type() const = 0;
     protected:
-        Action_data* const data;
-    KHOTKEYS_DISABLE_COPY( Trigger );
+        ActionData* const data;
     };
 
 class KDE_EXPORT Trigger_list
     : public QList< Trigger* >
     {
+    Q_DISABLE_COPY( Trigger_list )
+
     public:
         Trigger_list( const QString& comment_P ); // CHECKME nebo i data ?
-        Trigger_list( KConfigGroup& cfg_P, Action_data* data_P );
+        Trigger_list( KConfigGroup& cfg_P, ActionData* data_P );
         ~Trigger_list();
         void activate( bool activate_P );
         void cfg_write( KConfigGroup& cfg_P ) const;
         //! Some convenience typedef
         typedef QList< Trigger* >::Iterator Iterator;
         typedef QList< Trigger* >::ConstIterator ConstIterator;
-        const QString& comment() const;
-        Trigger_list* copy( Action_data* data_P ) const;
+        const QString comment() const;
+        Trigger_list* copy( ActionData* data_P ) const;
     private:
         QString _comment;
-    KHOTKEYS_DISABLE_COPY( Trigger_list );
     };
 
-class KDE_EXPORT Shortcut_trigger
+class KDE_EXPORT ShortcutTrigger
     : public QObject, public Trigger
     {
     Q_OBJECT
 
     typedef Trigger base;
     public:
-        Shortcut_trigger( 
-            Action_data* data_P,
-            const QString &text,
+        ShortcutTrigger( 
+            ActionData* data_P,
             const KShortcut& shortcut_P,
             const QUuid &uuid = QUuid::createUuid() );
 
-        Shortcut_trigger( 
+        ShortcutTrigger( 
             KConfigGroup& cfg_P,
-            Action_data* data_P );
+            ActionData* data_P );
 
-        virtual ~Shortcut_trigger();
+        virtual ~ShortcutTrigger();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
-        virtual Shortcut_trigger* copy( Action_data* data_P ) const;
+        virtual ShortcutTrigger* copy( ActionData* data_P ) const;
         virtual const QString description() const;
         const KShortcut& shortcut() const;
         virtual void activate( bool activate_P );
 
+        void set_key_sequence( const QKeySequence &seq );
+
+        virtual Type type() const { return ShortcutTriggerType; }
     public Q_SLOTS:
 
         void trigger();
@@ -112,7 +129,7 @@ class KDE_EXPORT Shortcut_trigger
         QUuid _uuid;
     };
 
-class KDE_EXPORT Window_trigger
+class KDE_EXPORT WindowTrigger
     : public QObject, public Trigger
     {
     Q_OBJECT
@@ -125,19 +142,21 @@ class KDE_EXPORT Window_trigger
             WINDOW_ACTIVATES       = ( 1 << 2 ),
             WINDOW_DEACTIVATES     = ( 1 << 3 )
             };
-        Window_trigger( Action_data* data_P, Windowdef_list* windows_P, int window_actions_P );
-        Window_trigger( KConfigGroup& cfg_P, Action_data* data_P );
-        virtual ~Window_trigger();
+        WindowTrigger( ActionData* data_P, Windowdef_list* windows_P, int window_actions_P );
+        WindowTrigger( KConfigGroup& cfg_P, ActionData* data_P );
+        virtual ~WindowTrigger();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
 #ifdef HAVE_COVARIANT_RETURN    // stupid gcc, it doesn't even warn it can't do this
-        virtual Window_trigger* copy( Action_data* data_P ) const;
+        virtual WindowTrigger* copy( ActionData* data_P ) const;
 #else
-        virtual Trigger* copy( Action_data* data_P ) const;
+        virtual Trigger* copy( ActionData* data_P ) const;
 #endif
         virtual const QString description() const;
         const Windowdef_list* windows() const;
         bool triggers_on( window_action_t w_action_P ) const;
         virtual void activate( bool activate_P );
+
+        virtual Type type() const { return WindowTriggerType; }
     protected: // CHECKME neco private ?
         Windowdef_list* _windows;
         int window_actions;
@@ -154,20 +173,22 @@ class KDE_EXPORT Window_trigger
         bool active;
     };
 
-class KDE_EXPORT Gesture_trigger
+class KDE_EXPORT GestureTrigger
     : public QObject, public Trigger
     {
     Q_OBJECT
     typedef Trigger base;
     public:
-        Gesture_trigger( Action_data* data_P, const QString& gesture_P );
-        Gesture_trigger( KConfigGroup& cfg_P, Action_data* data_P );
-        virtual ~Gesture_trigger();
+        GestureTrigger( ActionData* data_P, const QString& gesture_P );
+        GestureTrigger( KConfigGroup& cfg_P, ActionData* data_P );
+        virtual ~GestureTrigger();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
-        virtual Trigger* copy( Action_data* data_P ) const;
+        virtual Trigger* copy( ActionData* data_P ) const;
         virtual const QString description() const;
         const QString& gesturecode() const;
         virtual void activate( bool activate_P );
+
+        virtual Type type() const { return GestureTriggerType; }
     protected Q_SLOTS:
         void handle_gesture( const QString& gesture_P, WId window_P );
     private:
@@ -183,15 +204,17 @@ class KDE_EXPORT Voice_trigger
     Q_OBJECT
     typedef Trigger base;
     public:
-        Voice_trigger( Action_data* data_P, const QString& Voice_P, const VoiceSignature & signature1_P, const VoiceSignature & signature2_P );
-        Voice_trigger( KConfigGroup& cfg_P, Action_data* data_P );
+        Voice_trigger( ActionData* data_P, const QString& Voice_P, const VoiceSignature & signature1_P, const VoiceSignature & signature2_P );
+        Voice_trigger( KConfigGroup& cfg_P, ActionData* data_P );
         virtual ~Voice_trigger();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
-        virtual Trigger* copy( Action_data* data_P ) const;
+        virtual Trigger* copy( ActionData* data_P ) const;
         virtual const QString description() const;
         const QString& voicecode() const;
         virtual void activate( bool activate_P );
         VoiceSignature voicesignature( int ech ) const;
+        
+        virtual Type type() const { return SoundTrigger; }
     public slots:
         void handle_Voice(  );
     private:
@@ -199,82 +222,6 @@ class KDE_EXPORT Voice_trigger
         VoiceSignature _voicesignature[2];
     };
 #endif
-
-//***************************************************************************
-// Inline
-//***************************************************************************
-
-// Trigger
-
-inline
-Trigger::Trigger( Action_data* data_P )
-    : data( data_P )
-    {
-    }
-
-inline
-Trigger::Trigger( KConfigGroup&, Action_data* data_P )
-    : data( data_P )
-    {
-    }
-
-inline
-Trigger::~Trigger()
-    {
-    }
-
-// Trigger_list
-
-inline
-Trigger_list::Trigger_list( const QString& comment_P )
-    : QList< Trigger* >(), _comment( comment_P )
-    {
-    }
-
-inline
-const QString& Trigger_list::comment() const
-    {
-    return _comment;
-    }
-
-// Shortcut_trigger
-
-inline
-const KShortcut& Shortcut_trigger::shortcut() const
-    {
-    return _shortcut;
-    }
-
-// Window_trigger
-
-inline
-Window_trigger::Window_trigger( Action_data* data_P, Windowdef_list* windows_P,
-     int window_actions_P )
-    : Trigger( data_P ), _windows( windows_P ), window_actions( window_actions_P ),
-      last_active_window( None ), active( false )
-    {
-    init();
-    }
-
-inline
-const Windowdef_list* Window_trigger::windows() const
-    {
-    return _windows;
-    }
-
-inline
-bool Window_trigger::triggers_on( window_action_t w_action_P ) const
-    {
-    return window_actions & w_action_P;
-    }
-
-// Gesture_trigger
-
-inline
-const QString& Gesture_trigger::gesturecode() const
-    {
-    return _gesturecode;
-    }
 
 // FIXME: SOUND
 #if 0

@@ -27,14 +27,14 @@
 
 namespace KHotKeys {
 
-Voice_trigger::Voice_trigger( Action_data* data_P, const QString &Voicecode_P, const VoiceSignature& signature1_P, const VoiceSignature& signature2_P )
+Voice_trigger::Voice_trigger( ActionData* data_P, const QString &Voicecode_P, const VoiceSignature& signature1_P, const VoiceSignature& signature2_P )
 : Trigger( data_P ), _voicecode( Voicecode_P )
     {
     _voicesignature[0]=signature1_P;
     _voicesignature[1]=signature2_P;
     }
 
-Voice_trigger::Voice_trigger( KConfigGroup& cfg_P, Action_data* data_P )
+Voice_trigger::Voice_trigger( KConfigGroup& cfg_P, ActionData* data_P )
     : Trigger( cfg_P, data_P )
     {
     _voicecode = cfg_P.readEntry( "Name" );
@@ -56,7 +56,7 @@ void Voice_trigger::cfg_write( KConfigGroup& cfg_P ) const
     _voicesignature[1].write( cfg_P , "Signature2" );
     }
 
-Trigger* Voice_trigger::copy( Action_data* data_P ) const
+Trigger* Voice_trigger::copy( ActionData* data_P ) const
     {
     kDebug( 1217 ) << "Voice_trigger::copy()";
     return new Voice_trigger( data_P ? data_P : data, voicecode(), voicesignature(1) , voicesignature(2) );

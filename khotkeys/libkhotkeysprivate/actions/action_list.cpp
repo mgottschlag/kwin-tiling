@@ -23,7 +23,7 @@
 
 namespace KHotKeys {
 
-Action_list::Action_list( KConfigGroup& cfg_P, Action_data* data_P )
+ActionList::ActionList( KConfigGroup& cfg_P, ActionData* data_P )
     : QList< Action* >()
     {
     int cnt = cfg_P.readEntry( "ActionsCount", 0 );
@@ -40,7 +40,18 @@ Action_list::Action_list( KConfigGroup& cfg_P, Action_data* data_P )
     }
 
 
-Action_list::~Action_list()
+ActionList::ActionList( const QString& comment_P )
+    : QList< Action* >(), _comment( comment_P )
+    {}
+
+
+const QString& ActionList::comment() const
+    {
+    return _comment;
+    }
+
+
+ActionList::~ActionList()
     {
     while (!isEmpty())
         {
@@ -49,11 +60,11 @@ Action_list::~Action_list()
     }
 
 
-void Action_list::cfg_write( KConfigGroup& cfg_P ) const
+void ActionList::cfg_write( KConfigGroup& cfg_P ) const
     {
     QString save_cfg_group = cfg_P.name();
     int i = 0;
-    for( Action_list::ConstIterator it = begin();
+    for( ActionList::ConstIterator it = begin();
          it != end();
          ++it )
         {

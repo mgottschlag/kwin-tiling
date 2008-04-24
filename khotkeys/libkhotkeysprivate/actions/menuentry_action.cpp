@@ -20,49 +20,72 @@
 #include "actions.h"
 
 #include <KDE/KConfigGroup>
+#include <KDE/KDebug>
 #include <KDE/KUrl>
 #include <KDE/KRun>
 
 namespace KHotKeys {
 
-void Menuentry_action::cfg_write( KConfigGroup& cfg_P ) const
+MenuEntryAction::MenuEntryAction( ActionData* data_P, const QString& menuentry_P )
+    : CommandUrlAction( data_P, menuentry_P )
+    {
+    }
+
+
+MenuEntryAction::MenuEntryAction( KConfigGroup& cfg_P, ActionData* data_P )
+    : CommandUrlAction( cfg_P, data_P )
+    {
+    }
+
+
+void MenuEntryAction::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "MENUENTRY" ); // overwrites value set in base::cfg_write()
     }
 
 
-KService::Ptr Menuentry_action::service() const
+KService::Ptr MenuEntryAction::service() const
     {
     if (!_service)
     {
-        const_cast<Menuentry_action *>(this)->_service = KService::serviceByStorageId(command_url());
+        const_cast<MenuEntryAction *>(this)->_service = KService::serviceByStorageId(command_url());
     }
     return _service;
     }
 
 
-void Menuentry_action::execute()
+void MenuEntryAction::set_service( KService::Ptr service )
+    {
+    Q_ASSERT( service );
+    if (!service) return;
+    _service = service;
+    set_command_url(service->name());
+    }
+
+
+void MenuEntryAction::execute()
     {
     (void) service();
     if (!_service)
         return;
+    kDebug() << "Starting service " << _service->desktopEntryName();
     KRun::run( *_service, KUrl::List(), 0 );
     timeout.setSingleShot( true );
     timeout.start( 1000 ); // 1sec timeout
     }
 
 
-const QString Menuentry_action::description() const
+Action* MenuEntryAction::copy( ActionData* data_P ) const
     {
-    (void) service();
-    return i18n( "Menu entry: " ) + (_service ? _service->name() : QString());
+    return new MenuEntryAction( data_P, command_url());
     }
 
 
-Action* Menuentry_action::copy( Action_data* data_P ) const
+const QString MenuEntryAction::description() const
     {
-    return new Menuentry_action( data_P, command_url());
+    (void) service();
+    return i18n( "Menuentry : " ) + (_service ? _service->name() : QString());
     }
 
 

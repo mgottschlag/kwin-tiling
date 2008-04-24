@@ -22,10 +22,6 @@
 #include <KDE/KConfigGroup>
 #include <KDE/KDebug>
 
-#ifdef KHOTKEYS_DEBUG
-#include <typeinfo>
-#endif
-
 namespace KHotKeys {
 
 Condition::Condition( Condition_list_base* parent_P )
@@ -79,33 +75,5 @@ void Condition::updated() const
     _parent->updated();
     }
 
-#ifdef KHOTKEYS_DEBUG
-void Condition::debug( int depth_P )
-    {
-    char tmp[ 1024 ];
-    int i;
-    for( i = 0;
-         i < depth_P;
-         ++i )
-        tmp[ i ] = ' ';
-    tmp[ i ] = '\0';
-    kDebug( 1217 ) << tmp << description() << ":(" << this << ")";
-    }
-
-void Condition::debug_list( const Q3PtrList< Condition >& list_P, int depth_P )
-    {
-    char tmp[ 1024 ];
-    int i;
-    for( i = 0;
-         i < depth_P;
-         ++i )
-        tmp[ i ] = ' ';
-    tmp[ i ] = '\0';
-    for( Q3PtrListIterator< Condition > it( list_P );
-         it;
-         ++it )
-        (*it)->debug( depth_P + 1 );
-    }
-#endif
 
 } // namespace KHotKeys

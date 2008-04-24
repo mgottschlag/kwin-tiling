@@ -14,6 +14,8 @@
 #include <QWidget>
 #include <QTimer>
 #include <QMap>
+#include <QtCore/QPointer>
+
 
 #include <X11/Xlib.h>
 #include <fixx11h.h>
@@ -24,7 +26,7 @@ namespace KHotKeys
 {
 
 class Gesture;
-KDE_EXPORT extern Gesture* gesture_handler;
+KDE_EXPORT extern QPointer<Gesture> gesture_handler;
 
 class KDE_EXPORT Stroke
     {
@@ -112,7 +114,7 @@ class DeleteObject
     private:
         QWidget* widget;
     };
-    
+
 
 //***************************************************************************
 // Inline

@@ -37,8 +37,6 @@ Windows::Windows( bool enable_signal_P, QObject* parent_P )
     : QObject( parent_P ), signals_enabled( enable_signal_P ),
         _action_window( 0 )
     {
-    assert( windows_handler == NULL );
-    windows_handler = this;
     if( signals_enabled )
         {
         connect( KWindowSystem::self(), SIGNAL( windowAdded( WId )), SLOT( window_added_slot( WId )));
@@ -50,7 +48,7 @@ Windows::Windows( bool enable_signal_P, QObject* parent_P )
 
 Windows::~Windows()
     {
-    windows_handler = NULL;
+    kDebug() << "Destroying Windows";
     }
 
 void Windows::window_added_slot( WId window_P )

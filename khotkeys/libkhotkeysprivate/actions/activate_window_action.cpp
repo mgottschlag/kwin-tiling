@@ -26,7 +26,15 @@
 
 namespace KHotKeys {
 
-Activate_window_action::Activate_window_action( KConfigGroup& cfg_P, Action_data* data_P )
+
+ActivateWindowAction::ActivateWindowAction( ActionData* data_P,
+    const Windowdef_list* window_P )
+    : Action( data_P ), _window( window_P )
+    {
+    }
+
+
+ActivateWindowAction::ActivateWindowAction( KConfigGroup& cfg_P, ActionData* data_P )
     : Action( cfg_P, data_P )
     {
     QString save_cfg_group = cfg_P.name();
@@ -34,12 +42,20 @@ Activate_window_action::Activate_window_action( KConfigGroup& cfg_P, Action_data
     _window = new Windowdef_list( windowGroup );
     }
 
-Activate_window_action::~Activate_window_action()
+
+const Windowdef_list* ActivateWindowAction::window() const
+    {
+    return _window;
+    }
+
+
+ActivateWindowAction::~ActivateWindowAction()
     {
     delete _window;
     }
 
-void Activate_window_action::cfg_write( KConfigGroup& cfg_P ) const
+
+void ActivateWindowAction::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "ACTIVATE_WINDOW" ); // overwrites value set in base::cfg_write()
@@ -47,7 +63,8 @@ void Activate_window_action::cfg_write( KConfigGroup& cfg_P ) const
     window()->cfg_write( windowGroup );
     }
 
-void Activate_window_action::execute()
+
+void ActivateWindowAction::execute()
     {
     if( window()->match( windows_handler->active_window()))
         return; // is already active
@@ -56,14 +73,16 @@ void Activate_window_action::execute()
         windows_handler->activate_window( win_id );
     }
 
-const QString Activate_window_action::description() const
+
+const QString ActivateWindowAction::description() const
     {
-    return i18n( "Activate window: " ) + window()->comment();
+    return i18n( "Activate window : " ) + window()->comment();
     }
 
-Action* Activate_window_action::copy( Action_data* data_P ) const
+
+Action* ActivateWindowAction::copy( ActionData* data_P ) const
     {
-    return new Activate_window_action( data_P, window()->copy());
+    return new ActivateWindowAction( data_P, window()->copy());
     }
 
 } // namespace KHotKeys

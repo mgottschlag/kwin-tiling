@@ -26,7 +26,7 @@ configure_file(config-khotkeys.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-khotke
 # - Conditions
 # - Some gui stuff
 
-set(khotkeysprivate_SRCS
+set(libkhotkeys_SRCS
 
     # ACTIONS
     actions/action.cpp
@@ -46,6 +46,7 @@ set(khotkeysprivate_SRCS
     actions/keyboard_input_gesture_action_data.cpp
     actions/menuentry_shortcut_action_data.cpp
     actions/simple_action_data.cpp
+    actions/simple_action_data_base.cpp
 
     # CONDITIONS
     conditions/active_window_condition.cpp
@@ -68,9 +69,15 @@ set(khotkeysprivate_SRCS
     # triggers/voice_trigger.cpp
     triggers/window_trigger.cpp
 
-    # Rest
-    khlistbox.cpp
-    khlistview.cpp
+    # DAEMON
+    daemon/daemon.cpp
+    daemon/daemon.h
+    daemon/kded_module.cpp
+    daemon/kded_module.h
+    daemon/stand_alone.cpp
+    daemon/stand_alone.h
+
+    # OTHER
     khotkeysglobal.cpp
     settings.cpp
     shortcuts_handler.cpp
@@ -82,8 +89,21 @@ set(khotkeysprivate_SRCS
     windows.cpp
 )
 
-kde4_add_library(khotkeysprivate SHARED ${khotkeysprivate_SRCS})
-target_link_libraries(khotkeysprivate kworkspace ${KDE4_KDE3SUPPORT_LIBS})
-set_target_properties(khotkeysprivate PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
-install(TARGETS khotkeysprivate DESTINATION ${LIB_INSTALL_DIR})
+# We have a khotkeys executable target, so we have to do some cmake magic here
+# to get a libkhotkeys
+kde4_add_library(
+    libkhotkeys
+    SHARED
+    ${libkhotkeys_SRCS} )
+set_target_properties(
+    libkhotkeys
+    PROPERTIES OUTPUT_NAME "khotkeys")
+target_link_libraries(
+    libkhotkeys
+    kworkspace
+    ${KDE4_KDE3SUPPORT_LIBS} )
+
+########### install files ###############
+
+install( TARGETS libkhotkeys DESTINATION ${LIB_INSTALL_DIR} )
 

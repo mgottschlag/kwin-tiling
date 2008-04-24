@@ -23,7 +23,7 @@
 
 namespace KHotKeys {
 
-Trigger_list::Trigger_list( KConfigGroup& cfg_P, Action_data* data_P )
+Trigger_list::Trigger_list( KConfigGroup& cfg_P, ActionData* data_P )
     : QList< Trigger* >()
     {
     _comment = cfg_P.readEntry( "Comment" );
@@ -38,6 +38,14 @@ Trigger_list::Trigger_list( KConfigGroup& cfg_P, Action_data* data_P )
             append( trigger );
         }
     }
+
+
+
+Trigger_list::Trigger_list( const QString& comment_P )
+    : QList< Trigger* >(), _comment( comment_P )
+    {
+    }
+
 
 Trigger_list::~Trigger_list()
     {
@@ -61,7 +69,14 @@ void Trigger_list::cfg_write( KConfigGroup& cfg_P ) const
     cfg_P.writeEntry( "TriggersCount", i );
     }
 
-Trigger_list* Trigger_list::copy( Action_data* data_P ) const
+
+const QString Trigger_list::comment() const
+    {
+    return _comment;
+    }
+
+
+Trigger_list* Trigger_list::copy( ActionData* data_P ) const
     {
     Trigger_list* ret = new Trigger_list( comment());
     for( Trigger_list::ConstIterator it = begin();

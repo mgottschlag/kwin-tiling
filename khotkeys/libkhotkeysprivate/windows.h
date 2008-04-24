@@ -32,7 +32,7 @@ const int SUPPORTED_WINDOW_TYPES_MASK = NET::NormalMask | NET::DesktopMask | NET
     | NET::UtilityMask | NET::SplashMask;
 
 class Windowdef_list;
-/*class Action_data_base;*/
+/*class ActionDataBase;*/
 
 class KDE_EXPORT Windows
     : public QObject
@@ -77,35 +77,37 @@ struct KDE_EXPORT Window_data
     
 class KDE_EXPORT Windowdef
     {
+    Q_DISABLE_COPY( Windowdef )
+
     public:
         Windowdef( const QString& comment_P );
         Windowdef( KConfigGroup& cfg_P );
         virtual ~Windowdef();
         const QString& comment() const;
         virtual bool match( const Window_data& window_P ) = 0;
-        static Windowdef* create_cfg_read( KConfigGroup& cfg_P/*, Action_data_base* data_P*/ );
+        static Windowdef* create_cfg_read( KConfigGroup& cfg_P/*, ActionDataBase* data_P*/ );
         virtual void cfg_write( KConfigGroup& cfg_P ) const = 0;
-        virtual Windowdef* copy( /*Action_data_base* data_P*/ ) const = 0;
+        virtual Windowdef* copy( /*ActionDataBase* data_P*/ ) const = 0;
         virtual const QString description() const = 0;
     private:
         QString _comment;
-    KHOTKEYS_DISABLE_COPY( Windowdef ); // CHECKME asi pak udelat i pro vsechny potomky, at se nezapomene
     };
 
 class KDE_EXPORT Windowdef_list
     : public Q3PtrList< Windowdef >
     {
+    Q_DISABLE_COPY( Windowdef_list );
+
     public:
         Windowdef_list( const QString& comment_P );
-        Windowdef_list( KConfigGroup& cfg_P/*, Action_data_base* data_P*/ );
+        Windowdef_list( KConfigGroup& cfg_P/*, ActionDataBase* data_P*/ );
         void cfg_write( KConfigGroup& cfg_P ) const;
         bool match( const Window_data& window_P ) const;
-        Windowdef_list* copy( /*Action_data_base* data_P*/ ) const;
+        Windowdef_list* copy( /*ActionDataBase* data_P*/ ) const;
         typedef Q3PtrListIterator< Windowdef > Iterator;
         const QString& comment() const;
     private:
         QString _comment;
-    KHOTKEYS_DISABLE_COPY( Windowdef_list );
     };
 
 class KDE_EXPORT Windowdef_simple
@@ -147,7 +149,7 @@ class KDE_EXPORT Windowdef_simple
         int window_types() const;
         bool type_match( window_type_t type_P ) const;
         bool type_match( NET::WindowType type_P ) const;
-        virtual Windowdef* copy( /*Action_data_base* data_P*/ ) const;
+        virtual Windowdef* copy( /*ActionDataBase* data_P*/ ) const;
         virtual const QString description() const;
     protected:
         bool is_substr_match( const QString& str1_P, const QString& str2_P,

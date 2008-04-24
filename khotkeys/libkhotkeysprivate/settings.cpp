@@ -12,9 +12,13 @@
 
 #include "settings.h"
 
+#include "menuentry_shortcut_action_data.h"
+#include "command_url_shortcut_action_data.h"
+
 #include <kconfig.h>
 #include <kconfiggroup.h>
 #include <kdebug.h>
+#include <khotkeysglobal.h>
 #include <klocale.h>
 #include <kglobal.h>
 #include <kmessagebox.h>
@@ -40,7 +44,7 @@ Settings::~Settings()
     }
 
 
-Action_data_group *Settings::actions()
+ActionDataGroup *Settings::actions()
     {
     return m_actions;
     }
@@ -106,7 +110,7 @@ bool Settings::isDaemonDisabled() const
     }
 
 
-void Settings::setActions( Action_data_group *actions )
+void Settings::setActions( ActionDataGroup *actions )
     {
     delete m_actions;
     m_actions = actions;
@@ -138,9 +142,9 @@ void Settings::setVoiceShortcut( const KShortcut &shortcut )
     }
 
 
-Action_data_group *Settings::takeActions()
+ActionDataGroup *Settings::takeActions()
     {
-    Action_data_group *res = m_actions;
+    ActionDataGroup *res = m_actions;
     m_actions = 0;
     return res;
     }
@@ -154,8 +158,6 @@ KShortcut Settings::voiceShortcut() const
 
 bool Settings::read_settings( bool include_disabled_P )
     {
-    delete m_actions; m_actions = 0;
-
     KConfig cfg( KHOTKEYS_CONFIG_FILE );
     return read_settings( cfg, include_disabled_P, ImportNone );
     }
@@ -167,9 +169,10 @@ bool Settings::import( KConfig& cfg_P, bool ask_P )
 
 bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportType import_P )
     {
+    setActions(0);
     if( m_actions == NULL )
-        m_actions = new Action_data_group( NULL, "should never see", "should never see",
-            NULL, Action_data_group::SYSTEM_ROOT, true );
+        m_actions = new ActionDataGroup( NULL, "should never see", "should never see",
+            NULL, ActionDataGroup::SYSTEM_ROOT, true );
     if( cfg_P.groupList().count() == 0 ) // empty
         return false;
     KConfigGroup mainGroup( &cfg_P, "Main" ); // main group
@@ -234,14 +237,9 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
     return true;
     }
 
-void Settings::write_settings( Action_data_group *action_list )
+void Settings::write_settings()
     {
     KConfig cfg( KHOTKEYS_CONFIG_FILE );
-
-    if (action_list==0)
-        {
-        action_list = m_actions;
-        }
 
 // CHECKME    smazat stare sekce ?
     QStringList groups = cfg.groupList();
@@ -253,7 +251,7 @@ void Settings::write_settings( Action_data_group *action_list )
     mainGroup.writeEntry( "Version", 2 ); // now it's version 2 cfg. file
     mainGroup.writeEntry( "AlreadyImported", already_imported );
     KConfigGroup dataGroup( &cfg,  "Data" );
-    int cnt = write_actions_recursively_v2( dataGroup, action_list, true );
+    int cnt = write_actions_recursively_v2( dataGroup, m_actions, true );
     mainGroup.writeEntry( "Autostart", cnt != 0 && !daemon_disabled );
     mainGroup.writeEntry( "Disabled", daemon_disabled );
     KConfigGroup gesturesConfig( &cfg, "Gestures" );
@@ -275,14 +273,14 @@ void Settings::write_settings( Action_data_group *action_list )
 
 // return value means the number of enabled actions written in the cfg file
 // i.e. 'Autostart' for value > 0 should be on
-int Settings::write_actions_recursively_v2( KConfigGroup& cfg_P, Action_data_group* parent_P, bool enabled_P )
+int Settings::write_actions_recursively_v2( KConfigGroup& cfg_P, ActionDataGroup* parent_P, bool enabled_P )
     {
     int enabled_cnt = 0;
     QString save_cfg_group = cfg_P.name();
     int cnt = 0;
     if( parent_P )
         {
-        for( Action_data_group::ConstIterator it = parent_P->first_child();
+        for( ActionDataGroup::ConstIterator it = parent_P->first_child();
             it != parent_P->after_last_child();
              ++it )
             {
@@ -291,7 +289,7 @@ int Settings::write_actions_recursively_v2( KConfigGroup& cfg_P, Action_data_gro
                 ++enabled_cnt;
             KConfigGroup itConfig( cfg_P.config(), save_cfg_group + '_' + QString::number( cnt ));
             ( *it )->cfg_write( itConfig );
-            Action_data_group* grp = dynamic_cast< Action_data_group* >( *it );
+            ActionDataGroup* grp = dynamic_cast< ActionDataGroup* >( *it );
             if( grp != NULL )
                 enabled_cnt += write_actions_recursively_v2( itConfig, grp, enabled_P && (*it)->enabled( true ));
             }
@@ -306,7 +304,7 @@ void Settings::read_settings_v2( KConfig& cfg_P, bool include_disabled_P  )
     read_actions_recursively_v2( dataGroup, m_actions, include_disabled_P );
     }
 
-void Settings::read_actions_recursively_v2( KConfigGroup& cfg_P, Action_data_group* parent_P,
+void Settings::read_actions_recursively_v2( KConfigGroup& cfg_P, ActionDataGroup* parent_P,
     bool include_disabled_P )
     {
     QString save_cfg_group = cfg_P.name();
@@ -316,10 +314,10 @@ void Settings::read_actions_recursively_v2( KConfigGroup& cfg_P, Action_data_gro
          ++i )
         {
         KConfigGroup itConfig( cfg_P.config(), save_cfg_group + '_' + QString::number( i ));
-        if( include_disabled_P || Action_data_base::cfg_is_enabled( itConfig ))
+        if( include_disabled_P || ActionDataBase::cfg_is_enabled( itConfig ))
             {
-            Action_data_base* new_action = Action_data_base::create_cfg_read( itConfig, parent_P );
-            Action_data_group* grp = dynamic_cast< Action_data_group* >( new_action );
+            ActionDataBase* new_action = ActionDataBase::create_cfg_read( itConfig, parent_P );
+            ActionDataGroup* grp = dynamic_cast< ActionDataGroup* >( new_action );
             if( grp != NULL )
                 read_actions_recursively_v2( itConfig, grp, include_disabled_P );
             }
@@ -331,15 +329,15 @@ void Settings::read_settings_v1( KConfig& cfg_P )
     {
     KConfigGroup mainGroup( &cfg_P, "Main" );
     int sections = mainGroup.readEntry( "Num_Sections", 0 );
-    Action_data_group* menuentries = NULL;
-    for( Action_data_group::ConstIterator it = m_actions->first_child();
+    ActionDataGroup* menuentries = NULL;
+    for( ActionDataGroup::ConstIterator it = m_actions->first_child();
          it != m_actions->after_last_child();
          ++it )
         {
-        Action_data_group* tmp = dynamic_cast< Action_data_group* >( *it );
+        ActionDataGroup* tmp = dynamic_cast< ActionDataGroup* >( *it );
         if( tmp == NULL )
             continue;
-        if( tmp->system_group() == Action_data_group::SYSTEM_MENUENTRIES )
+        if( tmp->system_group() == ActionDataGroup::SYSTEM_MENUENTRIES )
             {
             menuentries = tmp;
             break;
@@ -368,18 +366,18 @@ void Settings::read_settings_v1( KConfig& cfg_P )
             {
             if( menuentries == NULL )
                 {
-                menuentries = new Action_data_group( m_actions,
+                menuentries = new ActionDataGroup( m_actions,
                     i18n( MENU_EDITOR_ENTRIES_GROUP_NAME ),
                     i18n( "These entries were created using Menu Editor." ), NULL,
-                    Action_data_group::SYSTEM_MENUENTRIES, true );
+                    ActionDataGroup::SYSTEM_MENUENTRIES, true );
                 menuentries->set_conditions( new Condition_list( "", menuentries ));
                 }
-            ( void ) new Menuentry_shortcut_action_data( menuentries, name, "",
+            ( void ) new MenuEntryShortcutActionData( menuentries, name, "",
                 KShortcut( shortcut ), run );
             }
         else
             {
-            ( void ) new Command_url_shortcut_action_data( m_actions, name, "",
+            ( void ) new CommandUrlShortcutActionData( m_actions, name, "",
                 KShortcut( shortcut ), run );
             }
         }

@@ -8,8 +8,9 @@
  
 ****************************************************************************/
 
-#include "action_data.h"
+#include "command_url_shortcut_action_data.h"
 #include "actions.h"
+#include "conditions.h"
 
 #include <kconfiggroup.h>
 
@@ -19,7 +20,7 @@ namespace KHotKeys
 
 
 template<> KDE_EXPORT
-void Simple_action_data< Shortcut_trigger, Command_url_action >
+void Simple_action_data< ShortcutTrigger, CommandUrlAction >
     ::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
@@ -27,33 +28,33 @@ void Simple_action_data< Shortcut_trigger, Command_url_action >
     }
 
 
-Command_url_shortcut_action_data::Command_url_shortcut_action_data( 
-        Action_data_group* parent_P,
+CommandUrlShortcutActionData::CommandUrlShortcutActionData( 
+        ActionDataGroup* parent_P,
         const QString& name_P,
         const QString& comment_P,
         const KShortcut& shortcut_P,
         const QString& command_url_P,
         bool enabled_P )
-    : Simple_action_data< Shortcut_trigger, Command_url_action >( parent_P, name_P,
+    : Simple_action_data< ShortcutTrigger, CommandUrlAction >( parent_P, name_P,
         comment_P, enabled_P )
     {
-    set_action( new Command_url_action( this, command_url_P ));
-    set_trigger( new Shortcut_trigger( this, name(), shortcut_P ));
+    set_action( new CommandUrlAction( this, command_url_P ));
+    set_trigger( new ShortcutTrigger( this, shortcut_P ));
     }
 
 
-Command_url_shortcut_action_data::Command_url_shortcut_action_data( Action_data_group* parent_P,
+CommandUrlShortcutActionData::CommandUrlShortcutActionData( ActionDataGroup* parent_P,
     const QString& name_P, const QString& comment_P, bool enabled_P )
-    : Simple_action_data< Shortcut_trigger, Command_url_action >( parent_P, name_P,
+    : Simple_action_data< ShortcutTrigger, CommandUrlAction >( parent_P, name_P,
         comment_P, enabled_P )
     {
     }
 
 
-Command_url_shortcut_action_data::Command_url_shortcut_action_data( 
+CommandUrlShortcutActionData::CommandUrlShortcutActionData( 
         KConfigGroup& cfg_P,
-        Action_data_group* parent_P )
-    : Simple_action_data< Shortcut_trigger, Command_url_action >( cfg_P, parent_P )
+        ActionDataGroup* parent_P )
+    : Simple_action_data< ShortcutTrigger, CommandUrlAction >( cfg_P, parent_P )
     {
     }
 

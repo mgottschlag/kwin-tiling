@@ -14,13 +14,9 @@
 #define KHOTKEYS_VERSION "2.1"
 #define KHOTKEYS_CONFIG_FILE "khotkeysrc"
 
-//#ifndef NDEBUG
-//#define KHOTKEYS_DEBUG
-//#endif
-
-
-
 #include <klocale.h>
+
+#include <QtCore/QPointer>
 
 class QObject;
 
@@ -30,10 +26,8 @@ namespace KHotKeys
 class Windows;
 class ShortcutsHandler;
 
-extern ShortcutsHandler* keyboard_handler;
-extern Windows* windows_handler;
-
-#define KHOTKEYS_DISABLE_COPY( cls ) private: cls( const cls& ); cls& operator=( const cls& )
+extern QPointer<ShortcutsHandler> keyboard_handler;
+extern QPointer<Windows> windows_handler;
 
 // CHECKME hmms :(
 KDE_EXPORT bool khotkeys_active();

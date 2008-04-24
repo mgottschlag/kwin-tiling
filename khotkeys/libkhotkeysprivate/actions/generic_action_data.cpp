@@ -8,7 +8,7 @@
  
 ****************************************************************************/
 
-#include "action_data.h"
+#include "generic_action_data.h"
 #include "actions.h"
 
 #include <kconfiggroup.h>
@@ -25,16 +25,16 @@ void Generic_action_data::cfg_write( KConfigGroup& cfg_P ) const
     }
 
 
-Generic_action_data::Generic_action_data( Action_data_group* parent_P, const QString& name_P,
+Generic_action_data::Generic_action_data( ActionDataGroup* parent_P, const QString& name_P,
     const QString& comment_P, Trigger_list* triggers_P, Condition_list* conditions_P,
-    Action_list* actions_P, bool enabled_P )
-    : Action_data( parent_P, name_P, comment_P, triggers_P, conditions_P, actions_P, enabled_P )
+    ActionList* actions_P, bool enabled_P )
+    : ActionData( parent_P, name_P, comment_P, triggers_P, conditions_P, actions_P, enabled_P )
     {
     }
 
 
-Generic_action_data::Generic_action_data( KConfigGroup& cfg_P, Action_data_group* parent_P )
-    : Action_data( cfg_P, parent_P )
+Generic_action_data::Generic_action_data( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
+    : ActionData( cfg_P, parent_P )
     { // CHECKME do nothing ?
     }
 

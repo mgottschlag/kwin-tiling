@@ -19,7 +19,7 @@ class KConfig;
 namespace KHotKeys
 {
 
-class Action_data_group;
+class ActionDataGroup;
 
 /**
  * How to handle imports.
@@ -39,6 +39,8 @@ enum ImportType
  */
 class KDE_EXPORT Settings
 {
+    Q_DISABLE_COPY( Settings );
+
 public:
 
     Settings();
@@ -54,7 +56,7 @@ public:
     /**
      * Write the settings.
      */
-    void write_settings( Action_data_group *action_list = 0 );
+    void write_settings();
 
     /**
      * Import settings from \a cfg_P.
@@ -64,7 +66,7 @@ public:
     /**
      * Get all actions
      */
-    Action_data_group *actions();
+    ActionDataGroup *actions();
 
     /**
      * Take the actions. 
@@ -72,14 +74,14 @@ public:
      * \note Ownership is transfered to you. Subsequent calls to action() will
      * return 0
      */
-    Action_data_group *takeActions();
+    ActionDataGroup *takeActions();
 
     /**
      * Set the actions. 
      *
      * \note Ownership is taken. The current action list will be deleted.
      */
-    void setActions( Action_data_group *actions );
+    void setActions( ActionDataGroup *actions );
 
     /**
      * @name KHotkeys Daemon
@@ -151,7 +153,7 @@ protected:
      */
     int write_actions_recursively_v2(
         KConfigGroup& cfg_P,
-        Action_data_group* parent_P,
+        ActionDataGroup* parent_P,
         bool enabled_P );
 
     /**
@@ -159,7 +161,7 @@ protected:
      */
     void read_actions_recursively_v2(
         KConfigGroup& cfg_P,
-        Action_data_group* parent_P,
+        ActionDataGroup* parent_P,
         bool include_disabled_P );
 
 private:
@@ -167,7 +169,7 @@ private:
     /**
      * TODO
      */
-    Action_data_group* m_actions;
+    ActionDataGroup* m_actions;
 
     /**
      * @name Gestures
@@ -209,7 +211,7 @@ private:
      */
     QStringList already_imported;
 
-    KHOTKEYS_DISABLE_COPY( Settings );
+
 };
 
 } // namespace KHotKeys

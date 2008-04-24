@@ -24,27 +24,47 @@
 
 namespace KHotKeys {
 
-Action* Action::create_cfg_read( KConfigGroup& cfg_P, Action_data* data_P )
+
+Action::Action( ActionData* data_P )
+    : data( data_P )
+    {
+    }
+
+
+Action::~Action()
+    {
+    }
+
+
+Action::Action( KConfigGroup&, ActionData* data_P )
+    : data( data_P )
+    {
+    }
+
+
+Action* Action::create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P )
     {
     QString type = cfg_P.readEntry( "Type" );
     if( type == "COMMAND_URL" )
-        return new Command_url_action( cfg_P, data_P );
+        return new CommandUrlAction( cfg_P, data_P );
     if( type == "MENUENTRY" )
-        return new Menuentry_action( cfg_P, data_P );
+        return new MenuEntryAction( cfg_P, data_P );
     if( type == "DCOP" || type == "DBUS" )
-        return new Dbus_action( cfg_P, data_P );
+        return new DBusAction( cfg_P, data_P );
     if( type == "KEYBOARD_INPUT" )
-        return new Keyboard_input_action( cfg_P, data_P );
+        return new KeyboardInputAction( cfg_P, data_P );
     if( type == "ACTIVATE_WINDOW" )
-        return new Activate_window_action( cfg_P, data_P );
+        return new ActivateWindowAction( cfg_P, data_P );
     kWarning( 1217 ) << "Unknown Action type read from cfg file\n";
     return NULL;
     }
+
 
 void Action::cfg_write( KConfigGroup& cfg_P ) const
     {
     cfg_P.writeEntry( "Type", "ERROR" ); // derived classes should call with their type
     }
+
 
 } // namespace KHotKeys
 

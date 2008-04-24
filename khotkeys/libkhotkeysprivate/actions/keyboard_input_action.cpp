@@ -18,18 +18,29 @@
 */
 
 #include "actions.h"
+
 #include "input.h"
+#include <KDE/KConfigGroup>
+
 #include "windows.h"
 
+#include "shortcuts_handler.h"
 
-#include <KDE/KConfigGroup>
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <QX11Info>
 
+
 namespace KHotKeys {
 
-Keyboard_input_action::Keyboard_input_action( KConfigGroup& cfg_P, Action_data* data_P )
+KeyboardInputAction::KeyboardInputAction( ActionData* data_P, const QString& input_P,
+    const Windowdef_list* dest_window_P, bool active_window_P )
+    : Action( data_P ), _input( input_P ), _dest_window( dest_window_P ), _active_window( active_window_P )
+    {
+    }
+
+
+KeyboardInputAction::KeyboardInputAction( KConfigGroup& cfg_P, ActionData* data_P )
     : Action( cfg_P, data_P )
     {
     _input = cfg_P.readEntry( "Input" );
@@ -46,12 +57,32 @@ Keyboard_input_action::Keyboard_input_action( KConfigGroup& cfg_P, Action_data* 
         }
     }
 
-Keyboard_input_action::~Keyboard_input_action()
+
+KeyboardInputAction::~KeyboardInputAction()
     {
     delete _dest_window;
     }
 
-void Keyboard_input_action::cfg_write( KConfigGroup& cfg_P ) const
+
+const QString& KeyboardInputAction::input() const
+    {
+    return _input;
+    }
+
+
+const Windowdef_list* KeyboardInputAction::dest_window() const
+    {
+    return _dest_window;
+    }
+
+
+bool KeyboardInputAction::activeWindow() const
+    {
+    return _active_window;
+    }
+
+
+void KeyboardInputAction::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
     cfg_P.writeEntry( "Type", "KEYBOARD_INPUT" ); // overwrites value set in base::cfg_write()
@@ -67,7 +98,8 @@ void Keyboard_input_action::cfg_write( KConfigGroup& cfg_P ) const
     cfg_P.writeEntry( "ActiveWindow", _active_window );
     }
 
-void Keyboard_input_action::execute()
+
+void KeyboardInputAction::execute()
     {
     if( input().isEmpty())
         return;
@@ -98,17 +130,19 @@ void Keyboard_input_action::execute()
     XFlush( QX11Info::display());
     }
 
-const QString Keyboard_input_action::description() const
+
+const QString KeyboardInputAction::description() const
     {
     QString tmp = input();
     tmp.replace( '\n', ' ' );
     tmp.truncate( 30 );
-    return i18n( "Keyboard input: " ) + tmp;
+    return i18n( "Keyboard input : " ) + tmp;
     }
 
-Action* Keyboard_input_action::copy( Action_data* data_P ) const
+
+Action* KeyboardInputAction::copy( ActionData* data_P ) const
     {
-    return new Keyboard_input_action( data_P, input(),
+    return new KeyboardInputAction( data_P, input(),
         dest_window() ? dest_window()->copy() : NULL, _active_window );
     }
 

@@ -24,7 +24,7 @@
 
 namespace KHotKeys {
 
-Condition_list::Condition_list( KConfigGroup& cfg_P, Action_data_base* data_P )
+Condition_list::Condition_list( KConfigGroup& cfg_P, ActionDataBase* data_P )
     : Condition_list_base( cfg_P, NULL ), data( data_P )
     {
     _comment = cfg_P.readEntry( "Comment" );
@@ -36,7 +36,7 @@ void Condition_list::cfg_write( KConfigGroup& cfg_P ) const
     cfg_P.writeEntry( "Comment", comment());
     }
 
-Condition_list* Condition_list::copy( Action_data_base* data_P ) const
+Condition_list* Condition_list::copy( ActionDataBase* data_P ) const
     {
     Condition_list* ret = new Condition_list( comment(), data_P );
     for( Iterator it( *this );
@@ -68,7 +68,7 @@ void Condition_list::updated() const
     }
 
 // CHECKME tohle je drobet hack, jeste to zvazit
-void Condition_list::set_data( Action_data_base* data_P )
+void Condition_list::set_data( ActionDataBase* data_P )
     {
     Q_ASSERT( data == NULL || data == data_P );
     data = data_P;
