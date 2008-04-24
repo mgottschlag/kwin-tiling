@@ -49,7 +49,7 @@ void PlacesEngine::modelReset()
 {
     kDebug() << "Model reset";
 
-    clearSources();
+    removeAllSources();
 }
 
 void PlacesEngine::placesAdded(const QModelIndex &parent, int start, int end)
