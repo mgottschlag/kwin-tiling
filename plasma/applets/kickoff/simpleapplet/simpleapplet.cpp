@@ -218,7 +218,7 @@ void MenuLauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::ImmutableConstraint) {
-        d->switcher->setVisible(! isImmutable());
+        d->switcher->setVisible(immutability() == Plasma::NotImmutable);
     }
 }
 

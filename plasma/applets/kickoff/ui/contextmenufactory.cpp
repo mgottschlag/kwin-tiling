@@ -139,13 +139,13 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
         if (containment && containment->corona()) {
             Plasma::Containment *desktop = containment->corona()->containmentForScreen(containment->screen());
 
-            if (desktop && !desktop->isImmutable()) {
+            if (desktop && desktop->immutability() == Plasma::NotImmutable) {
                 addToDesktopAction->setText(i18n("Add to Desktop"));
                 actions << addToDesktopAction;
             }
         }
 
-        if (containment && !containment->isImmutable() &&
+        if (containment && containment->immutability() == Plasma::NotImmutable &&
             containment->containmentType() == Plasma::Containment::PanelContainment) {
             addToPanelAction->setText(i18n("Add to Panel"));
             actions << addToPanelAction;
