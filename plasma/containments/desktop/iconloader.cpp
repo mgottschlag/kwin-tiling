@@ -162,7 +162,7 @@ void IconLoader::addIcon(const KUrl& url)
 {
     QVariantList args;
     args << url.path();
-    Plasma::Applet *newApplet = m_desktop->addApplet(QString("icon"),args,0);
+    Plasma::Applet *newApplet = m_desktop->addApplet(QString("icon"), args);
     if (newApplet) {
         //kDebug() << "putting" << url.path() << "into the map";
         //alignToGrid even if m_alignGrid is not set.  Otherwise all the applets appear at point 0,0

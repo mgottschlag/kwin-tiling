@@ -129,7 +129,7 @@ void LauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
 void LauncherApplet::switchMenuStyle()
 {
     if (containment()) {
-        containment()->addApplet("simplelauncher", QVariantList(), 0, geometry());
+        containment()->addApplet("simplelauncher", QVariantList(), geometry());
         destroy();
     }
 }

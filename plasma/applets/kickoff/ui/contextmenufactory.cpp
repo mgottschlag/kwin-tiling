@@ -221,8 +221,7 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
 
                 // move it to the middle of the panel
                 QRectF rect(panel->geometry().width()/2, 0, 150, panel->boundingRect().height());
-
-                panel->addApplet("icon", args, 0, rect);
+                panel->addApplet("icon", args, rect);
             }
         }
     }
