@@ -520,7 +520,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
 , m_preview_renderer(QSize(128, 101), (float) 128 / res.width())
 {
     setWindowIcon(KIcon("preferences-desktop-wallpaper"));
-    setCaption(i18n("Configure Desktop"));
+    setCaption(i18n("Desktop Settings"));
     setButtons(Ok | Cancel | Apply);
 
     QWidget * main = new QWidget(this);

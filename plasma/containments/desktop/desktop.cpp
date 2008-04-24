@@ -367,7 +367,7 @@ QList<QAction*> DefaultDesktop::contextActions()
         connect(m_runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
         m_runCommandAction->setIcon(KIcon("system-run"));
 
-        m_setupDesktopAction = new QAction(i18n("Configure Desktop..."), this);
+        m_setupDesktopAction = new QAction(i18n("Desktop Settings..."), this);
         m_setupDesktopAction->setIcon(KIcon("configure"));
         connect(m_setupDesktopAction, SIGNAL(triggered()), this, SLOT(configure()));
 

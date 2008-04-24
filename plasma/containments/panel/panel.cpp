@@ -274,7 +274,7 @@ void Panel::configure()
 {
     if (! m_dialog) {
         m_dialog = new KDialog();
-        m_dialog->setCaption( i18nc("@title:window","Configure Panel") );
+        m_dialog->setCaption( i18nc("@title:window","Panel Settings") );
         m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
         connect(m_dialog, SIGNAL(applyClicked()), this, SLOT(applyConfig()));
         connect(m_dialog, SIGNAL(okClicked()), this, SLOT(applyConfig()));
