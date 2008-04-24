@@ -63,6 +63,7 @@ private slots:
     void themeUpdated();
     void sizeComboChanged();
     void backgroundChanged();
+    void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
 
 private:
     /**

@@ -22,6 +22,7 @@
 #include <limits>
 
 #include <QApplication>
+#include <QGraphicsLinearLayout>
 #include <QPainter>
 #include <QBitmap>
 #include <QDesktopWidget>
@@ -63,6 +64,8 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     resize(m_currentSize);
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
+    connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
+            this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
 }
 
 Panel::~Panel()
@@ -104,6 +107,47 @@ QList<QAction*> Panel::contextActions()
 void Panel::backgroundChanged()
 {
     constraintsUpdated(Plasma::LocationConstraint);
+}
+
+void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
+{
+    // this gets called whenever an applet is added, and we add it to our layout
+    QGraphicsLinearLayout *lay = dynamic_cast<QGraphicsLinearLayout*>(layout());
+
+    if (!lay) {
+        return;
+    }
+
+    Plasma::FormFactor f = formFactor();
+    int insertIndex = -1;
+    for (int i = 0; i < lay->count(); ++i) {
+        QRectF siblingGeometry = lay->itemAt(i)->geometry();
+        if (f == Plasma::Horizontal) {
+            qreal middle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
+            if (pos.x() < middle) {
+                insertIndex = i;
+                break;
+            } else if (pos.x() <= siblingGeometry.right()) {
+                insertIndex = i + 1;
+                break;
+            }
+        } else { // Plasma::Vertical
+            qreal middle = (siblingGeometry.top() + siblingGeometry.bottom()) / 2.0;
+            if (pos.y() < middle) {
+                insertIndex = i;
+                break;
+            } else if (pos.y() <= siblingGeometry.bottom()) {
+                insertIndex = i + 1;
+                break;
+            }
+        }
+    }
+
+    if (insertIndex == -1) {
+        lay->addItem(applet);
+    } else {
+        lay->insertItem(insertIndex, applet);
+    }
 }
 
 void Panel::updateBorders(const QRect &geom)
