@@ -208,8 +208,8 @@ void DashboardView::toggleVisibility()
         KWindowSystem::setOnAllDesktops(winId(), true);
         KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
 
-        m_zoomOut = containment()->isToolboxToolEnabled("zoomOut");
-        m_zoomIn = containment()->isToolboxToolEnabled("zoomIn");
+        m_zoomOut = containment()->isToolBoxToolEnabled("zoomOut");
+        m_zoomIn = containment()->isToolBoxToolEnabled("zoomIn");
 
         containment()->enableToolBoxTool("hideDashboard", true);
         containment()->enableToolBoxTool("zoomOut", false);
@@ -220,7 +220,7 @@ void DashboardView::toggleVisibility()
 
         m_suppressShow = true;
         QTimer::singleShot(SUPPRESS_SHOW_TIMEOUT, this, SLOT(suppressShowTimeout()));
-        containment()->showToolbox();
+        containment()->openToolBox();
     } else {
         hideView();
     }
@@ -235,7 +235,7 @@ void DashboardView::hideView()
     disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
     disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
 
-    containment()->hideToolbox();
+    containment()->closeToolBox();
     containment()->enableToolBoxTool("zoomOut", m_zoomOut);
     containment()->enableToolBoxTool("zoomIn", m_zoomIn);
     containment()->enableToolBoxTool("hideDashboard", false);
