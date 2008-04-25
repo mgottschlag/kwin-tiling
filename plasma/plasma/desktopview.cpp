@@ -59,8 +59,8 @@ DesktopView::~DesktopView()
 void DesktopView::connectContainment(Plasma::Containment *containment)
 {
     if (containment) {
-        connect(containment, SIGNAL(zoomIn(Plasma::Containment *)), this, SLOT(zoomIn(Plasma::Containment *)));
-        connect(containment, SIGNAL(zoomOut()), this, SLOT(zoomOut()));
+        connect(containment, SIGNAL(zoomRequested(Plasma::Containment*,Plasma::ZoomDirecton)),
+                this, SLOT(zoom(Plasma::Containment*,Plasma::ZoomDirection)));
         connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
         connect(containment, SIGNAL(addSiblingContainment(Plasma::Containment *)), this, SLOT(addContainment(Plasma::Containment *)));
     }
@@ -109,18 +109,29 @@ void DesktopView::addContainment(Plasma::Containment *fromContainment)
     }
 }
 
+void DesktopView::zoom(Plasma::Containment *containment, Plasma::ZoomDirection direction)
+{
+    if (direction == Plasma::ZoomIn) {
+        zoomIn(containment);
+    } else if (direction == Plasma::ZoomOut) {
+        zoomOut(containment);
+    }
+}
+
 void DesktopView::zoomIn(Plasma::Containment *toContainment)
 {
     kDebug();
     if (containment()) {
         containment()->enableToolBoxTool("zoomOut", true);
     }
+
     if (toContainment && containment() != toContainment) {
         setContainment(toContainment);
         if (m_dashboard) {
             m_dashboard->setContainment(toContainment);
         }
     }
+
     if (m_zoomLevel == Plasma::GroupZoom) {
         setDragMode(NoDrag);
         m_zoomLevel = Plasma::DesktopZoom;
@@ -165,12 +176,16 @@ void DesktopView::zoomIn(Plasma::Containment *toContainment)
     }
 }
 
-void DesktopView::zoomOut()
+void DesktopView::zoomOut(Plasma::Containment *fromContainment)
 {
-    containment()->enableToolBoxTool("zoomIn", true);
-    containment()->enableToolBoxTool("addSiblingContainment", true);
+    if (fromContainment != containment()) {
+        return;
+    }
+
+    fromContainment->enableToolBoxTool("zoomIn", true);
+    fromContainment->enableToolBoxTool("addSiblingContainment", true);
     if (m_zoomLevel == Plasma::DesktopZoom) {
-        containment()->enableToolBoxTool("zoomOut", true);
+        fromContainment->enableToolBoxTool("zoomOut", true);
         m_zoomLevel = Plasma::GroupZoom;
         //connect to other containments
         //FIXME if some other view is zoomed out, a little madness will ensue
@@ -178,17 +193,19 @@ void DesktopView::zoomOut()
         if (corona) {
             QList<Plasma::Containment*> containments = corona->containments();
             foreach (Plasma::Containment *c, containments) {
-                if (c == containment() || c->containmentType() == Plasma::Containment::PanelContainment || c->screen() > -1) {
+                if (c == fromContainment ||
+                    c->containmentType() == Plasma::Containment::PanelContainment ||
+                    c->screen() > -1) {
                     continue;
                 }
                 connectContainment(c);
             }
         }
     } else if (m_zoomLevel == Plasma::GroupZoom) {
-        containment()->enableToolBoxTool("zoomOut", false);
+        fromContainment->enableToolBoxTool("zoomOut", false);
         m_zoomLevel = Plasma::OverviewZoom;
     } else {
-        containment()->enableToolBoxTool("zoomOut", false);
+        fromContainment->enableToolBoxTool("zoomOut", false);
         return;
     }
 
@@ -198,9 +215,7 @@ void DesktopView::zoomOut()
     scale(s, s);
     setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom()));
 
-    if (containment()) {
-        ensureVisible(containment()->sceneBoundingRect());
-    }
+    ensureVisible(fromContainment->sceneBoundingRect());
 }
 
 void DesktopView::showAppletBrowser()
@@ -221,9 +236,9 @@ void DesktopView::wheelEvent(QWheelEvent* event)
 
     if (event->modifiers() & Qt::ControlModifier) {
         if (event->delta() < 0) {
-            zoomOut();
+            zoomOut(containment());
         } else {
-            zoomIn();
+            zoomIn(containment());
         }
     }
 }
