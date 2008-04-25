@@ -103,15 +103,17 @@ void Battery::init()
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(readColors()));
 
     const QStringList& battery_sources = dataEngine("powermanagement")->query(I18N_NOOP("Battery"))[I18N_NOOP("sources")].toStringList();
-    m_numOfBattery = battery_sources.size();
 
     //connect sources
     connectSources();
     
     foreach (QString battery_source, battery_sources) {
+        kDebug() << "BatterySource:" << battery_source;
         dataUpdated(battery_source, dataEngine("powermanagement")->query(battery_source));
     }
     dataUpdated(I18N_NOOP("AC Adapter"), dataEngine("powermanagement")->query(I18N_NOOP("AC Adapter")));
+    m_numOfBattery = battery_sources.size();
+    kDebug() << battery_sources.size();
 }
 
 void Battery::constraintsUpdated(Plasma::Constraints constraints)
@@ -148,7 +150,7 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     if (source.startsWith(I18N_NOOP("Battery"))) {
         m_batteries_data[source] = data;
     } else if (source == I18N_NOOP("AC Adapter")) {
-        m_acadapter_plugged = data[I18N_NOOP("Mains connected")].toBool();
+        m_acadapter_plugged = data[I18N_NOOP("Plugged in")].toBool();
         showAcAdapter(m_acadapter_plugged);
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
@@ -518,17 +520,18 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
         while (battery_data.hasNext()) {
             battery_data.next();
+            //p->drawRect();
             QRect corect = QRect(contentsRect.left()+battery_num*width, 
                                  contentsRect.top(), 
                                  width, geometry().size().toSize().height());
        
             // paint battery with appropriate charge level
-            paintBattery(p, corect, battery_data.value()[I18N_NOOP("Percent")].toInt(), battery_data.value()[I18N_NOOP("Mains connected")].toBool());
+            paintBattery(p, corect, battery_data.value()[I18N_NOOP("Percent")].toInt(), battery_data.value()[I18N_NOOP("Plugged in")].toBool());
                 
             if (m_showBatteryString || m_isHovered) {
                 // Show the charge percentage with a box on top of the battery
                 QString batteryLabel;
-                if (battery_data.value()[I18N_NOOP("Mains connected")].toBool()) {
+                if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
                     batteryLabel = battery_data.value()[I18N_NOOP("Percent")].toString();
                     batteryLabel.append("%");
                 } else {
@@ -546,7 +549,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
         while (battery_data.hasNext()) {
             battery_data.next();
-            if (battery_data.value()[I18N_NOOP("Mains connected")].toBool()) {
+            if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
                 battery_charge += battery_data.value()[I18N_NOOP("Percent")].toInt();
                 has_battery = true;
                 ++battery_num;
