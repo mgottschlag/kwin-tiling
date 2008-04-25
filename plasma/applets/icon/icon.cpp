@@ -121,9 +121,7 @@ void IconApplet::setUrl(const KUrl& url)
 void IconApplet::openUrl()
 {
     if (m_url.isValid()) {
-        if (containment()) {
-            containment()->emitLaunchActivated();
-        }
+        emit launchActivated();
         KRun::runUrl(m_url, m_mimetype->name(), 0);
     }
 }

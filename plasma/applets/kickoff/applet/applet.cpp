@@ -211,10 +211,7 @@ void LauncherApplet::toggleMenu(bool pressed)
         }
 
         d->launcher->setLauncherOrigin( iconPosition, loc );
-
-        if (containment()) {
-            containment()->emitLaunchActivated();
-        }
+        emit launchActivated();
     }
 
     d->launcher->setVisible(!d->launcher->isVisible());
