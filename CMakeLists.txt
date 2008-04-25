@@ -21,6 +21,7 @@ if (NOT WIN32)
     configure_file(config-unix.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-unix.h )
     configure_file(config-X11.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-X11.h )
     configure_file (startkde.cmake ${CMAKE_CURRENT_BINARY_DIR}/startkde  @ONLY)
+    configure_file (safestartkde.cmake ${CMAKE_CURRENT_BINARY_DIR}/safestartkde  @ONLY)
 endif (NOT WIN32)
 configure_file (config-workspace.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-workspace.h )
 
@@ -88,6 +89,7 @@ SET(krunner_DEPENDS "plasma")
 ########### install files ###############
 if (NOT WIN32)
     install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/startkde DESTINATION ${BIN_INSTALL_DIR})
+    install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/safestartkde DESTINATION ${BIN_INSTALL_DIR})
 endif (NOT WIN32)
 
 if(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
