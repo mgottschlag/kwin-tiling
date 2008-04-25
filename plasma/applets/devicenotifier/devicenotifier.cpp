@@ -111,9 +111,9 @@ void DeviceNotifier::init()
     m_notifierView->setModel(m_hotplugModel);
     Plasma::Delegate *delegate = new Delegate(this);
     //map the roles of m_hotplugModel into the standard Plasma::Delegate roles
-    delegate->setRole(Plasma::Delegate::SubTitleRole, ActionRole);
-    delegate->setRole(Plasma::Delegate::ColumnTypeRole, ScopeRole);
-    delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
+    delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, ActionRole);
+    delegate->setRoleMapping(Plasma::Delegate::ColumnTypeRole, ScopeRole);
+    delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
     m_notifierView->setItemDelegate(delegate);
 
     l_layout->addLayout(l_layout2);

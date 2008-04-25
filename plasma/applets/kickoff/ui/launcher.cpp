@@ -156,8 +156,8 @@ public:
         LeaveModel *model = new LeaveModel(q);
         UrlItemView *view = new UrlItemView;
         ItemDelegate *delegate = new ItemDelegate(q);
-        delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
-        delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
+        delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
+        delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
         addView(i18n("Leave"), KIcon("application-exit"), model, view);
@@ -168,8 +168,8 @@ public:
         FavoritesModel *model = new FavoritesModel(q);
         UrlItemView *view = new UrlItemView;
         ItemDelegate *delegate = new ItemDelegate(q);
-        delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
-        delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
+        delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
+        delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
         addView(i18n("Favorites"), KIcon("bookmarks"), model, view);
@@ -186,8 +186,8 @@ public:
 
         applicationView = new FlipScrollView();
         ItemDelegate *delegate = new ItemDelegate(q);
-        delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
-        delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
+        delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
+        delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         applicationView->setItemDelegate(delegate);
 
         addView(i18n("Applications"), KIcon("applications-other"),
@@ -199,8 +199,8 @@ public:
         RecentlyUsedModel *model = new RecentlyUsedModel(q);
         UrlItemView *view = new UrlItemView;
         ItemDelegate *delegate = new ItemDelegate(q);
-        delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
-        delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
+        delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
+        delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
         addView(i18n("Recently Used"), KIcon("document-open-recent"), model, view);
@@ -219,8 +219,8 @@ public:
         SystemModel *model = new SystemModel(q);
         UrlItemView *view = new UrlItemView;
         ItemDelegate *delegate = new ItemDelegate(q);
-        delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
-        delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
+        delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
+        delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
 
@@ -232,8 +232,8 @@ public:
         searchModel = new SearchModel(q);
         UrlItemView *view = new UrlItemView;
         ItemDelegate *delegate = new ItemDelegate(q);
-        delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
-        delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
+        delegate->setRoleMapping(Plasma::Delegate::SubTitleRole, SubTitleRole);
+        delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
         view->setModel(searchModel);
