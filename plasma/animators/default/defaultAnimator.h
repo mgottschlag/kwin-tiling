@@ -20,7 +20,7 @@
 #ifndef DEFAULTANIMATOR_H
 #define DEFAULTANIMATOR_H
 
-#include <plasma/animator.h>
+#include <plasma/animationdriver.h>
 
 class DefaultAnimator : public Plasma::AnimationDriver
 {
