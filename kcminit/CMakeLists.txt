@@ -1,7 +1,3 @@
-
-
-
-
 ########### next target ###############
 
 set(kcminit_KDEINIT_SRCS main.cpp)

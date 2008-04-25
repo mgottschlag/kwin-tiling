@@ -3,7 +3,7 @@ macro_bool_to_01(X11_Xscreensaver_FOUND HAVE_XSCREENSAVER)
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=1207)
 
 include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/ksysguard
-${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/ksysguard/processcore/)
+                    ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/ksysguard/processcore/)
 
 configure_file(config-xautolock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-xautolock.h)
 

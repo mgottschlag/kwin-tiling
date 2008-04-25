@@ -1,4 +1,4 @@
-KDE4_NO_ENABLE_FINAL(klipper)
+kde4_no_enable_final(klipper)
 
 set(libklipper_common_SRCS
     klipper.cpp

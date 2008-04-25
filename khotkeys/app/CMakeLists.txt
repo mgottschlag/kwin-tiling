@@ -1,5 +1,3 @@
-
-
 ########### next target ###############
 
 set(khotkeys_KDEINIT_SRCS app.cpp )
