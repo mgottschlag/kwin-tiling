@@ -179,7 +179,7 @@ void ThemeDelegate::paint(QPainter *painter,
     svg->resizePanel(QSize(option.rect.width()-(2*MARGIN), 100-(2*MARGIN)));
     QRect imgRect = QRect(option.rect.topLeft(), QSize( option.rect.width()-(2*MARGIN), 100-(2*MARGIN) )).
         translated(MARGIN, MARGIN);
-    svg->paint( painter, imgRect, QPoint(option.rect.left() + MARGIN, option.rect.top() + MARGIN) );
+    svg->paintPanel( painter, imgRect, QPoint(option.rect.left() + MARGIN, option.rect.top() + MARGIN) );
 
     // draw text
     painter->save();

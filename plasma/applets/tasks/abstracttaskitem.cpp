@@ -245,7 +245,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
             //Draw task background from theme svg "attention" element
             s_taskItemBackground->setElementPrefix("attention");
             s_taskItemBackground->resizePanel(option->rect.size());
-            s_taskItemBackground->paint(painter, option->rect);
+            s_taskItemBackground->paintPanel(painter, option->rect);
         } else {
             //Draw task background without svg theming
             QColor background = colorScheme.background(KColorScheme::ActiveBackground).color();
@@ -261,7 +261,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
             //Draw task background from theme svg "normal" element
             s_taskItemBackground->setElementPrefix("normal");
             s_taskItemBackground->resizePanel(option->rect.size());
-            s_taskItemBackground->paint(painter, option->rect);
+            s_taskItemBackground->paintPanel(painter, option->rect);
         } else {
             //Draw task background without svg theming
             QColor background = colorScheme.shade(colorScheme.background(KColorScheme::AlternateBackground).color(),
@@ -282,7 +282,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
                 //Draw task background from theme svg "focus" element
                 s_taskItemBackground->setElementPrefix("focus");
                 s_taskItemBackground->resizePanel(option->rect.size());
-                s_taskItemBackground->paint(painter, option->rect);
+                s_taskItemBackground->paintPanel(painter, option->rect);
             }
 
             if (option->state & QStyle::State_MouseOver && m_alpha > 0) {
@@ -292,7 +292,7 @@ void AbstractTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraph
 
                 s_taskItemBackground->setElementPrefix("hover");
                 s_taskItemBackground->resizePanel(option->rect.size());
-                s_taskItemBackground->paint(painter, option->rect);
+                s_taskItemBackground->paintPanel(painter, option->rect);
 
                 painter->restore();
             }

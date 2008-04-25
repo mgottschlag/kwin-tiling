@@ -299,12 +299,12 @@ void Panel::paintInterface(QPainter *painter,
         m_lastViewGeom = viewGeom;
         updateBorders(viewGeom);
     }
-    
+
     // blit the background (saves all the per-pixel-products that blending does)
     painter->setCompositionMode(QPainter::CompositionMode_Source);
     painter->setRenderHint(QPainter::Antialiasing);
 
-    m_background->paint(painter, contentsRect);
+    m_background->paintPanel(painter, contentsRect);
 
     if (containmentOpt && containmentOpt->view) {
         containmentOpt->view->setMask(m_background->mask());
