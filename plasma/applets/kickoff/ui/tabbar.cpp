@@ -347,7 +347,7 @@ void TabBar::switchToHoveredTab()
 void TabBar::startAnimation()
 {
     storeLastIndex();
-    Plasma::AnimationDriver::self()->customAnimation(10, 150, Plasma::AnimationDriver::EaseInOutCurve, this, "onValueChanged");
+    Plasma::Animator::self()->customAnimation(10, 150, Plasma::Animator::EaseInOutCurve, this, "onValueChanged");
 
 }
 

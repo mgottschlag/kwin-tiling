@@ -264,10 +264,10 @@ void Battery::showLabel(bool show)
     const int FadeInDuration = 150;
 
     if (m_animId != -1) {
-        Plasma::AnimationDriver::self()->stopCustomAnimation(m_animId);
+        Plasma::Animator::self()->stopCustomAnimation(m_animId);
     }
-    m_animId = Plasma::AnimationDriver::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
-                                                      Plasma::AnimationDriver::EaseOutCurve, this,
+    m_animId = Plasma::Animator::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
+                                                      Plasma::Animator::EaseOutCurve, this,
                                                       "animationUpdate");
 }
 
@@ -301,10 +301,10 @@ void Battery::showAcAdapter(bool show)
     m_acadapter_plugged = true;
 
     if (m_acAnimId != -1) {
-        Plasma::AnimationDriver::self()->stopCustomAnimation(m_acAnimId);
+        Plasma::Animator::self()->stopCustomAnimation(m_acAnimId);
     }
-    m_acAnimId = Plasma::AnimationDriver::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
-                                                      Plasma::AnimationDriver::EaseOutCurve, this,
+    m_acAnimId = Plasma::Animator::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
+                                                      Plasma::Animator::EaseOutCurve, this,
                                                       "acAnimationUpdate");
 }
 
@@ -317,10 +317,10 @@ void Battery::showBattery(bool show)
     const int FadeInDuration = 300;
 
     if (m_batteryAnimId != -1) {
-        Plasma::AnimationDriver::self()->stopCustomAnimation(m_batteryAnimId);
+        Plasma::Animator::self()->stopCustomAnimation(m_batteryAnimId);
     }
-    m_batteryAnimId = Plasma::AnimationDriver::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
-                                                      Plasma::AnimationDriver::EaseOutCurve, this,
+    m_batteryAnimId = Plasma::Animator::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,
+                                                      Plasma::Animator::EaseOutCurve, this,
                                                       "batteryAnimationUpdate");
 }
 

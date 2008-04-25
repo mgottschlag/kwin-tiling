@@ -22,15 +22,15 @@
 
 #include <plasma/animator.h>
 
-class DefaultAnimator : public Plasma::Animator
+class DefaultAnimator : public Plasma::AnimationDriver
 {
     Q_OBJECT
 
 public:
     explicit DefaultAnimator(QObject *parent = 0, const QVariantList& list = QVariantList());
 
-    int animationFPS(Plasma::AnimationDriver::Animation animation) const;
-    int elementAnimationFPS(Plasma::AnimationDriver::Animation animation) const;
+    int animationFPS(Plasma::Animator::Animation animation) const;
+    int elementAnimationFPS(Plasma::Animator::Animation animation) const;
 
     void itemAppear(qreal progress, QGraphicsItem* item);
     void itemDisappear(qreal progress, QGraphicsItem* item);

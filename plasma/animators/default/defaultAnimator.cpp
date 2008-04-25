@@ -25,17 +25,17 @@
 #include <KDebug>
 
 DefaultAnimator::DefaultAnimator(QObject *parent, const QVariantList& list)
-    : Plasma::Animator(parent)
+    : Plasma::AnimationDriver(parent)
 {
     Q_UNUSED(list)
 }
 
-int DefaultAnimator::animationFPS(Plasma::AnimationDriver::Animation animation) const
+int DefaultAnimator::animationFPS(Plasma::Animator::Animation animation) const
 {
     switch (animation) {
-        case Plasma::AnimationDriver::AppearAnimation:
+        case Plasma::Animator::AppearAnimation:
             return 20;
-        case Plasma::AnimationDriver::DisappearAnimation:
+        case Plasma::Animator::DisappearAnimation:
             return 20;
 
         default:
@@ -43,12 +43,12 @@ int DefaultAnimator::animationFPS(Plasma::AnimationDriver::Animation animation) 
     }
 }
 
-int DefaultAnimator::elementAnimationFPS(Plasma::AnimationDriver::Animation animation) const
+int DefaultAnimator::elementAnimationFPS(Plasma::Animator::Animation animation) const
 {
     switch (animation) {
-        case Plasma::AnimationDriver::AppearAnimation:
+        case Plasma::Animator::AppearAnimation:
             return 20;
-        case Plasma::AnimationDriver::DisappearAnimation:
+        case Plasma::Animator::DisappearAnimation:
             return 20;
 
         default:
