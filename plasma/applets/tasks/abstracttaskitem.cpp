@@ -462,9 +462,6 @@ QRectF AbstractTaskItem::iconRect() const
 
     //add the margins in the svg if the icon wouldn't become too small
     if (s_taskItemBackground) {
-        //using always the "normal" element to not make the icon size jump
-        s_taskItemBackground->setElementPrefix("normal");
-
         const int height = bounds.height() - s_taskItemBackground->marginSize(Plasma::TopMargin) - s_taskItemBackground->marginSize(Plasma::BottomMargin);
         const int width = bounds.width() - s_taskItemBackground->marginSize(Plasma::LeftMargin) - s_taskItemBackground->marginSize(Plasma::RightMargin);
 
