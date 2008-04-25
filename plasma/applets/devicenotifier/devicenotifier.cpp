@@ -218,7 +218,7 @@ void DeviceNotifier::constraintsUpdated(Plasma::Constraints constraints)
             m_proxy->setWidget(m_widget);
             m_proxy->show();
             m_layout->addItem(m_proxy);
-	    setLayout(m_layout);
+            setLayout(m_layout);
         }
     }
 
