@@ -80,7 +80,7 @@ void KRunnerDialog::paintEvent(QPaintEvent *e)
 
 void KRunnerDialog::resizeEvent(QResizeEvent *e)
 {
-    m_background->resize(e->size());
+    m_background->resizePanel(e->size());
     setMask(m_background->mask());
     KDialog::resizeEvent(e);
 }
