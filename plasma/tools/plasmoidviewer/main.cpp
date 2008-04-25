@@ -44,6 +44,7 @@ int main(int argc, char **argv)
     KAboutData aboutData( "plasmoidviewer", 0, ki18n( "Plasma Applet Viewer" ),
                           version, ki18n( description ), KAboutData::License_BSD,
                          ki18n( "(C) 2007, The KDE Team" ) );
+    aboutData.setProgramIconName( "plasma" );
     aboutData.addAuthor( ki18n( "Frerich Raabe" ),
                          ki18n( "Original author" ),
                         "raabe@kde.org" );
