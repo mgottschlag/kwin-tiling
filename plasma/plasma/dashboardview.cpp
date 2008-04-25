@@ -233,7 +233,7 @@ void DashboardView::hideView()
     }
 
     disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
-    disconnect(containment(), SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
+    disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
 
     containment()->hideToolbox();
     containment()->enableToolBoxTool("zoomOut", m_zoomOut);
@@ -269,7 +269,7 @@ void DashboardView::showEvent(QShowEvent *event)
 {
     KWindowSystem::setState(winId(), NET::SkipPager);
     connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
-    connect(containment(), SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
+    connect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
     Plasma::View::showEvent(event);
 }
 

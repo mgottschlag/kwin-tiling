@@ -87,7 +87,7 @@ QList<QAction*> Panel::contextActions()
 
         bool locked = immutability() != NotImmutable;
         m_appletBrowserAction->setVisible(!locked);
-        connect(m_appletBrowserAction, SIGNAL(triggered()), this, SIGNAL(showAddWidgets()));
+        connect(m_appletBrowserAction, SIGNAL(triggered()), this, SLOT(showAddWidgets()));
 
         m_configureAction = new QAction(i18n("Panel Settings"), this);
         m_configureAction->setIcon(KIcon("configure"));
@@ -312,6 +312,11 @@ void Panel::paintInterface(QPainter *painter,
 
     // restore transformation and composition mode
     painter->restore();
+}
+
+void Panel::showAddWidgets()
+{
+    emit showAddWidgetsInterface(QPointF());
 }
 
 void Panel::configure()

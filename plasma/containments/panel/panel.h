@@ -64,6 +64,7 @@ private slots:
     void sizeComboChanged();
     void backgroundChanged();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
+    void showAddWidgets();
 
 private:
     /**

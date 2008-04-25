@@ -292,6 +292,11 @@ void DefaultDesktop::updateBackground(int token, const QImage &img)
     }
 }
 
+void DefaultDesktop::showAddWidgets()
+{
+    emit showAddWidgetsInterface(QPointF());
+}
+
 void DefaultDesktop::addPanel()
 {
     if (corona()) {
@@ -356,7 +361,7 @@ QList<QAction*> DefaultDesktop::contextActions()
 
     if (!m_appletBrowserAction) {
         m_appletBrowserAction = new QAction(i18n("Add Widgets..."), this);
-        connect(m_appletBrowserAction, SIGNAL(triggered(bool)), this, SIGNAL(showAddWidgets()));
+        connect(m_appletBrowserAction, SIGNAL(triggered(bool)), this, SLOT(showAddWidgets()));
         m_appletBrowserAction->setIcon(KIcon("list-add"));
 
         m_addPanelAction = new QAction(i18n("Add Panel"), this);

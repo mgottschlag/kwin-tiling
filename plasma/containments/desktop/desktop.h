@@ -95,6 +95,7 @@ protected Q_SLOTS:
     void updateBackground();
     void updateBackground(int, const QImage &img);
 
+    void showAddWidgets();
     void addPanel();
 
 private:

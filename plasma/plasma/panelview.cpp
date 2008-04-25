@@ -47,7 +47,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     updatePanelGeometry();
 
     if (panel) {
-        connect(panel, SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
+        connect(panel, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
         connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));
         connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
     }
