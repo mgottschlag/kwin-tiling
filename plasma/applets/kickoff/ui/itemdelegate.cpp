@@ -42,7 +42,8 @@
 
 using namespace Kickoff;
 
-ItemDelegate::ItemDelegate()
+ItemDelegate::ItemDelegate(QObject *parent)
+    : Plasma::Delegate(parent)
 {
 }
 

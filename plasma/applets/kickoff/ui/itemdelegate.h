@@ -43,7 +43,7 @@ namespace Kickoff
 class ItemDelegate : public Plasma::Delegate , public ItemStateProvider
 {
 public:
-    ItemDelegate();
+    ItemDelegate(QObject *parent = 0);
     virtual void paint(QPainter *painter,const QStyleOptionViewItem& option,const QModelIndex& index) const;
 
     // reimplemented from ItemStateProvider

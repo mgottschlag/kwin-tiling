@@ -155,7 +155,7 @@ public:
     {
         LeaveModel *model = new LeaveModel(q);
         UrlItemView *view = new UrlItemView;
-        ItemDelegate *delegate = new ItemDelegate;
+        ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
         delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
@@ -167,7 +167,7 @@ public:
     {
         FavoritesModel *model = new FavoritesModel(q);
         UrlItemView *view = new UrlItemView;
-        ItemDelegate *delegate = new ItemDelegate;
+        ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
         delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
@@ -185,7 +185,7 @@ public:
         applicationModel->setDuplicatePolicy(ApplicationModel::ShowLatestOnlyPolicy);
 
         applicationView = new FlipScrollView();
-        ItemDelegate *delegate = new ItemDelegate;
+        ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
         delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         applicationView->setItemDelegate(delegate);
@@ -198,7 +198,7 @@ public:
     {
         RecentlyUsedModel *model = new RecentlyUsedModel(q);
         UrlItemView *view = new UrlItemView;
-        ItemDelegate *delegate = new ItemDelegate;
+        ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
         delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
@@ -218,7 +218,7 @@ public:
     {
         SystemModel *model = new SystemModel(q);
         UrlItemView *view = new UrlItemView;
-        ItemDelegate *delegate = new ItemDelegate;
+        ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
         delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
@@ -231,7 +231,7 @@ public:
     {
         searchModel = new SearchModel(q);
         UrlItemView *view = new UrlItemView;
-        ItemDelegate *delegate = new ItemDelegate;
+        ItemDelegate *delegate = new ItemDelegate(q);
         delegate->setRole(Plasma::Delegate::SubTitleRole, SubTitleRole);
         delegate->setRole(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
