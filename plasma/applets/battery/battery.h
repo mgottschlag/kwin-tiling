@@ -26,7 +26,7 @@
 #include <QMap>
 
 #include <plasma/applet.h>
-#include <plasma/phase.h>
+#include <plasma/animator.h>
 #include <plasma/dataengine.h>
 #include "ui_batteryConfig.h"
 

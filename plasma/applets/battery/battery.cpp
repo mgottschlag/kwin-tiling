@@ -38,7 +38,7 @@
 
 #include <plasma/svg.h>
 #include <plasma/theme.h>
-#include <plasma/phase.h>
+#include <plasma/animator.h>
 
 Battery::Battery(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),

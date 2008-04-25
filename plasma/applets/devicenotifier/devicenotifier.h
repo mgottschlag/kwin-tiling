@@ -23,7 +23,7 @@
 #include <solid/solidnamespace.h>
 #include <plasma/applet.h>
 #include <plasma/dataengine.h>
-#include <plasma/phase.h>
+#include <plasma/animator.h>
 #include <plasma/dialog.h>
 #include <KIcon>
 #include <QModelIndex>

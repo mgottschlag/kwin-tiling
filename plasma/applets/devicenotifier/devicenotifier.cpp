@@ -41,7 +41,7 @@
 #include <plasma/svg.h>
 #include <plasma/containment.h>
 #include <plasma/dialog.h>
-#include <plasma/phase.h>
+#include <plasma/animator.h>
 #include <plasma/delegate.h>
 
 //use for desktop view

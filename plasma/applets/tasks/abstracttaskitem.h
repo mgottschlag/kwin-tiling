@@ -30,7 +30,7 @@
 class QTimeLine;
 
 // Plasma
-#include <plasma/phase.h>
+#include <plasma/animator.h>
 
 namespace Plasma
 {

@@ -31,7 +31,7 @@
 #include <KIcon>
 
 #include <plasma/containment.h>
-#include <plasma/phase.h>
+#include <plasma/animator.h>
 
 #include "iconloader.h"
 

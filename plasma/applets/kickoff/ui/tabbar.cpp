@@ -32,7 +32,7 @@
 #include <QLinearGradient>
 
 #include "plasma/plasma.h"
-#include "plasma/phase.h"
+#include "plasma/animator.h"
 
 using namespace Kickoff;
 
