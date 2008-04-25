@@ -37,6 +37,7 @@
 #include <KColorUtils>
 #include <KGlobalSettings>
 #include <KDebug>
+#include <KIconLoader>
 
 // Plasma
 #include "plasma/plasma.h"
@@ -458,6 +459,22 @@ QRectF AbstractTaskItem::iconRect() const
     QSizeF bounds = boundingRect().size();
     //leave enough space for the text. usefull in vertical panel
     bounds.setWidth(qMax(bounds.width() / 3, qMin(minimumSize().height(), bounds.width())));
+
+    //add the margins in the svg if the icon wouldn't become too small
+    if (s_taskItemBackground) {
+        //using always the "normal" element to not make the icon size jump
+        s_taskItemBackground->setElementPrefix("normal");
+
+        const int height = bounds.height() - s_taskItemBackground->marginSize(Plasma::TopMargin) - s_taskItemBackground->marginSize(Plasma::BottomMargin);
+        const int width = bounds.width() - s_taskItemBackground->marginSize(Plasma::LeftMargin) - s_taskItemBackground->marginSize(Plasma::RightMargin);
+
+        const int minIconSize = IconSize(KIconLoader::Small);
+
+        if (height > minIconSize && width > minIconSize) {
+            bounds = QSize(width, height);
+        }
+    }
+
     QSize iconSize = _icon.actualSize(bounds.toSize());
 
     return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignLeft | Qt::AlignVCenter,
