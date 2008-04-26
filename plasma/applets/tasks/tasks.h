@@ -65,22 +65,6 @@ public:
 
         void init();
 
-        /**
-         * TODO: Sets the strategy used to automatically group tasks
-         * together.
-         *
-         * In addition to manual grouping of tasks which the user can
-         * do by dragging tasks on top of one another, the Tasks
-         * applet supports automatic grouping of tasks.
-         */
-        //void setGroupingStrategy(AbstractGroupingStrategy* strategy);
-
-        // we re-implement boundingRect() instead of contentSizeHint() because
-        // of issues with using childrenBoundingRect().size().  It shouldn't
-        // cause a problem as long as we don't ask Plasma::Applet to draw
-        // a background
-        //QRectF boundingRect() const;
-
         void constraintsUpdated(Plasma::Constraints constraints);
         void showConfigurationInterface();
 
@@ -112,8 +96,6 @@ private:
 
         bool isOnMyScreen(TaskPtr task);
         void reconnect();
-
-        TaskGroupItem* m_rootTaskGroup;
 
         QHash<TaskPtr,AbstractTaskItem*> m_windowTaskItems;
         QHash<StartupPtr,AbstractTaskItem*> m_startupTaskItems;

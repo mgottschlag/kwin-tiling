@@ -48,7 +48,7 @@ bool AbstractTaskItem::s_backgroundCreated = false;
 Plasma::PanelSvg* AbstractTaskItem::s_taskItemBackground = 0;
 
 
-AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
+AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent)
     : QGraphicsWidget(parent),
       _flags(0),
       m_animId(-1),
@@ -57,7 +57,7 @@ AbstractTaskItem::AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject)
       m_updateTimerId(-1)
 {
     setAcceptsHoverEvents(true);
-    setupBackgroundSvg(parentObject);
+    setupBackgroundSvg(0);
     //setAcceptDrops(true);
 
     //FIXME:sometimes the last task is a little bit less wide than the others, so using this connection

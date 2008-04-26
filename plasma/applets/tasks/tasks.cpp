@@ -98,7 +98,7 @@ void Tasks::init()
 
 void Tasks::addStartingTask(StartupPtr task)
 {
-    WindowTaskItem* item = new WindowTaskItem(this, this, m_showTooltip);
+    WindowTaskItem* item = new WindowTaskItem(this, m_showTooltip);
     item->setStartupTask(task);
     m_startupTaskItems.insert(task, item);
     m_layout->addItem(item);
@@ -149,7 +149,7 @@ void Tasks::addWindowTask(TaskPtr task)
     }
 
     if (!item) {
-        item = new WindowTaskItem(this,this, m_showTooltip);
+        item = new WindowTaskItem(this, m_showTooltip);
     }
 
     item->setWindowTask(task);

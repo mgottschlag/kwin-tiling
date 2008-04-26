@@ -128,7 +128,7 @@ signals:
 
 protected:
     /** Constructs a new task item. */
-    AbstractTaskItem(QGraphicsItem *parent, QObject *parentObject);
+    AbstractTaskItem(QGraphicsItem *parentd);
 
     /** Sub-classes should call this method when the task closes. */
     void finished();

@@ -34,8 +34,8 @@
 // Plasma
 #include "plasma/theme.h"
 
-TaskGroupItem::TaskGroupItem(QGraphicsItem *parent, QObject *parentObject)
-    : AbstractTaskItem(parent, parentObject),
+TaskGroupItem::TaskGroupItem(QGraphicsItem *parent)
+    : AbstractTaskItem(parent),
       _activeTask(-1),
       _borderStyle(NoBorder),
       //_potentialDropAction(NoAction),

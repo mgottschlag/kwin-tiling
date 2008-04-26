@@ -36,7 +36,7 @@ class TaskGroupItem : public AbstractTaskItem
 
 public:
     /** Constructs a new task group with the specified parent. */
-    TaskGroupItem(QGraphicsItem *parent, QObject *parentObject);
+    TaskGroupItem(QGraphicsItem *parent);
 
     /**
      * Specifies whether this group may contain sub-groups.

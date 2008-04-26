@@ -32,8 +32,8 @@
 #include <KLocalizedString>
 #include <taskmanager/taskrmbmenu.h>
 
-WindowTaskItem::WindowTaskItem(QGraphicsItem *parent, QObject *parentObject, const bool showTooltip)
-    : AbstractTaskItem(parent, parentObject),
+WindowTaskItem::WindowTaskItem(QGraphicsItem *parent, const bool showTooltip)
+    : AbstractTaskItem(parent),
     _activateTimer(0)
 {
     setAcceptDrops(true);
