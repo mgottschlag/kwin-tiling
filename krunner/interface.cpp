@@ -97,9 +97,9 @@ class SearchMatch : public QListWidgetItem
             return m_action->isEnabled();
         }
 
-        bool hasMatchOptions() const
+        bool hasRunOptions() const
         {
-            return m_action->runner()->hasMatchOptions();
+            return m_action->runner()->hasRunOptions();
         }
 
         QString toString() const
@@ -490,7 +490,7 @@ void Interface::switchUser()
             m_defaultMatch = match;
             m_defaultMatch->setDefault(true);
             m_runButton->setEnabled(true);
-            m_optionsButton->setEnabled(sessionrunner->hasMatchOptions());
+            m_optionsButton->setEnabled(sessionrunner->hasRunOptions());
         }
     }
 
@@ -635,7 +635,7 @@ void Interface::updateMatches()
 
             match->setDefault(true);
             m_defaultMatch = match;
-            m_optionsButton->setEnabled(action->runner()->hasMatchOptions());
+            m_optionsButton->setEnabled(action->runner()->hasRunOptions());
             m_runButton->setEnabled(true);
         }
     }
@@ -696,7 +696,7 @@ void Interface::showOptions(bool show)
     //TODO: in the case where we are no longer showing options
     //      should we have the runner delete it's options?
     if (show) {
-        if (!m_defaultMatch || !m_defaultMatch->hasMatchOptions()) {
+        if (!m_defaultMatch || !m_defaultMatch->hasRunOptions()) {
             // in this case, there is nothing to show
             return;
         }
@@ -749,7 +749,7 @@ void Interface::setDefaultItem( QListWidgetItem* item )
         if (!m_defaultMatch) {
             return;
         }
-        hasOptions = m_defaultMatch && m_defaultMatch->hasMatchOptions();
+        hasOptions = m_defaultMatch && m_defaultMatch->hasRunOptions();
     }
 
     m_optionsButton->setEnabled(hasOptions);
