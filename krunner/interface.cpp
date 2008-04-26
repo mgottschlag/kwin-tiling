@@ -406,7 +406,7 @@ Interface::Interface(QWidget* parent)
 
     //TODO: how should we order runners, particularly ones loaded from plugins?
     QStringList whitelist = KRunnerSettings::runners();
-    m_runners += Plasma::AbstractRunner::load(this, whitelist);
+    m_runners += Plasma::AbstractRunner::loadAll(this, whitelist);
 
     connect(&m_context, SIGNAL(matchesChanged()), this, SLOT(queueUpdates()));
 
