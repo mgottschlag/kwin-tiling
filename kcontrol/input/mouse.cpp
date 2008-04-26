@@ -101,18 +101,18 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
     tabwidget = new QTabWidget(this);
     top->addWidget(tabwidget);
 
-    tab1 = new KMouseDlg(this);
-    QButtonGroup *group = new QButtonGroup( tab1 );
+    generalTab = new KMouseDlg(this);
+    QButtonGroup *group = new QButtonGroup( generalTab );
     group->setExclusive( true );
-    group->addButton( tab1->singleClick );
-    group->addButton( tab1->doubleClick );
+    group->addButton( generalTab->singleClick );
+    group->addButton( generalTab->doubleClick );
 
-    tabwidget->addTab(tab1, i18n("&General"));
+    tabwidget->addTab(generalTab, i18n("&General"));
 
-    group = new QButtonGroup( tab1 );
+    group = new QButtonGroup( generalTab );
     group->setExclusive( true );
-    group->addButton( tab1->rightHanded,RIGHT_HANDED );
-    group->addButton( tab1->leftHanded,LEFT_HANDED );
+    group->addButton( generalTab->rightHanded,RIGHT_HANDED );
+    group->addButton( generalTab->leftHanded,LEFT_HANDED );
 
     connect(group, SIGNAL(buttonClicked(int)), this, SLOT(changed()));
     connect(group, SIGNAL(buttonClicked(int)), this, SLOT(slotHandedChanged(int)));
@@ -123,9 +123,9 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
          " has more than two buttons, only those that function as the"
          " left and right buttons are affected. For example, if you have"
          " a three-button mouse, the middle button is unaffected.");
-    tab1->handedBox->setWhatsThis( wtstr );
+    generalTab->handedBox->setWhatsThis( wtstr );
 
-    connect(tab1->doubleClick, SIGNAL(clicked()), SLOT(changed()));
+    connect(generalTab->doubleClick, SIGNAL(clicked()), SLOT(changed()));
 
     wtstr = i18n("The default behavior in KDE is to select and activate"
          " icons with a single click of the left button on your pointing"
@@ -133,59 +133,59 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
          " when you click links in most web browsers. If you would prefer"
          " to select with a single click, and activate with a double click,"
          " check this option.");
-    tab1->doubleClick->setWhatsThis( wtstr );
+    generalTab->doubleClick->setWhatsThis( wtstr );
 
     wtstr = i18n("Activates and opens a file or folder with a single click.");
-    tab1->singleClick->setWhatsThis( wtstr );
+    generalTab->singleClick->setWhatsThis( wtstr );
 
 
-    connect(tab1->cbAutoSelect, SIGNAL(clicked()), this, SLOT(changed()));
+    connect(generalTab->cbAutoSelect, SIGNAL(clicked()), this, SLOT(changed()));
 
     wtstr = i18n("If you check this option, pausing the mouse pointer"
          " over an icon on the screen will automatically select that icon."
          " This may be useful when single clicks activate icons, and you"
          " want only to select the icon without activating it.");
-    tab1->cbAutoSelect->setWhatsThis( wtstr );
+    generalTab->cbAutoSelect->setWhatsThis( wtstr );
 
-//    slAutoSelect = new QSlider(0, 2000, 10, 0, QSlider::Horizontal, tab1);
-    tab1->slAutoSelect->setSingleStep( 125 );
-    tab1->slAutoSelect->setPageStep( 125 );
-    tab1->slAutoSelect->setTickPosition( QSlider::TicksBelow );
-    tab1->slAutoSelect->setTickInterval( 250 );
-    tab1->slAutoSelect->setTracking( true );
+//    slAutoSelect = new QSlider(0, 2000, 10, 0, QSlider::Horizontal, generalTab);
+    generalTab->slAutoSelect->setSingleStep( 125 );
+    generalTab->slAutoSelect->setPageStep( 125 );
+    generalTab->slAutoSelect->setTickPosition( QSlider::TicksBelow );
+    generalTab->slAutoSelect->setTickInterval( 250 );
+    generalTab->slAutoSelect->setTracking( true );
 
     wtstr = i18n("If you have checked the option to automatically select"
          " icons, this slider allows you to select how long the mouse pointer"
          " must be paused over the icon before it is selected.");
-    tab1->slAutoSelect->setWhatsThis( wtstr );
+    generalTab->slAutoSelect->setWhatsThis( wtstr );
 
-    connect(tab1->slAutoSelect, SIGNAL(valueChanged(int)), this, SLOT(changed()));
+    connect(generalTab->slAutoSelect, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
-    connect(tab1->cb_pointershape, SIGNAL(clicked()), this, SLOT(changed()));
+    connect(generalTab->cb_pointershape, SIGNAL(clicked()), this, SLOT(changed()));
 
-    connect(tab1->singleClick, SIGNAL(clicked()), this, SLOT(changed()));
-    connect(tab1->singleClick, SIGNAL(clicked()), this, SLOT(slotClick()));
-    connect(tab1->singleClick, SIGNAL(clicked()), this, SLOT(slotSmartSliderEnabling()));
+    connect(generalTab->singleClick, SIGNAL(clicked()), this, SLOT(changed()));
+    connect(generalTab->singleClick, SIGNAL(clicked()), this, SLOT(slotClick()));
+    connect(generalTab->singleClick, SIGNAL(clicked()), this, SLOT(slotSmartSliderEnabling()));
 
-    connect( tab1->doubleClick, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
-    connect( tab1->cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
-    connect(tab1->cbAutoSelect, SIGNAL(clicked()), this, SLOT(slotSmartSliderEnabling()));
+    connect( generalTab->doubleClick, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
+    connect( generalTab->cbAutoSelect, SIGNAL( clicked() ), this, SLOT( slotClick() ) );
+    connect(generalTab->cbAutoSelect, SIGNAL(clicked()), this, SLOT(slotSmartSliderEnabling()));
 
 
     // Only allow setting reversing scroll polarity if we have scroll buttons
     unsigned char map[20];
     if ( XGetPointerMapping(QX11Info::display(), map, 20) >= 5 )
     {
-      tab1->cbScrollPolarity->setEnabled( true );
-      tab1->cbScrollPolarity->show();
+      generalTab->cbScrollPolarity->setEnabled( true );
+      generalTab->cbScrollPolarity->show();
     }
     else
     {
-      tab1->cbScrollPolarity->setEnabled( false );
-      tab1->cbScrollPolarity->hide();
+      generalTab->cbScrollPolarity->setEnabled( false );
+      generalTab->cbScrollPolarity->hide();
     }
-    connect(tab1->cbScrollPolarity, SIGNAL(clicked()), this, SLOT(changed()));
-    connect(tab1->cbScrollPolarity, SIGNAL(clicked()), this, SLOT(slotScrollPolarityChanged()));
+    connect(generalTab->cbScrollPolarity, SIGNAL(clicked()), this, SLOT(changed()));
+    connect(generalTab->cbScrollPolarity, SIGNAL(clicked()), this, SLOT(slotScrollPolarityChanged()));
 
     // Cursor theme tab
     themetab = new ThemePage(this);
@@ -193,15 +193,15 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
     tabwidget->addTab(themetab, i18n("&Cursor Theme"));
 
     // Advanced tab
-    tab2 = new QWidget(0);
-    tab2->setObjectName("Advanced Tab");
-    tabwidget->addTab(tab2, i18n("Advanced"));
+    advancedTab = new QWidget(0);
+    advancedTab->setObjectName("Advanced Tab");
+    tabwidget->addTab(advancedTab, i18n("Advanced"));
 
-    QBoxLayout *lay = new QVBoxLayout(tab2);
+    QBoxLayout *lay = new QVBoxLayout(advancedTab);
     lay->setMargin(KDialog::marginHint());
     lay->setSpacing(KDialog::spacingHint());
 
-    accel = new KDoubleNumInput(0.1, 20, 2, tab2, 0.1, 1);
+    accel = new KDoubleNumInput(0.1, 20, 2, advancedTab, 0.1, 1);
     accel->setLabel(i18n("Pointer acceleration:"));
     accel->setSuffix("x");
     lay->addWidget(accel);
@@ -219,7 +219,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
          " flying across the screen, making it hard to control.</p>");
     accel->setWhatsThis( wtstr );
 
-    thresh = new KIntNumInput(20, tab2);
+    thresh = new KIntNumInput(20, advancedTab);
     thresh->setLabel(i18n("Pointer threshold:"));
     thresh->setRange(0,20,1);
     thresh->setSteps(1,1);
@@ -241,7 +241,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
 
     // It would be nice if the user had a test field.
     // Selecting such values in milliseconds is not intuitive
-    doubleClickInterval = new KIntNumInput(2000, tab2);
+    doubleClickInterval = new KIntNumInput(2000, advancedTab);
     doubleClickInterval->setLabel(i18n("Double click interval:"));
     doubleClickInterval->setRange(0, 2000, 100);
     doubleClickInterval->setSuffix(i18n(" msec"));
@@ -259,7 +259,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
 
     lay->addSpacing(15);
 
-    dragStartTime = new KIntNumInput(2000, tab2);
+    dragStartTime = new KIntNumInput(2000, advancedTab);
     dragStartTime->setLabel(i18n("Drag start time:"));
     dragStartTime->setRange(0, 2000, 100);
     dragStartTime->setSuffix(i18n(" msec"));
@@ -272,7 +272,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
          " drag start time, a drag operation will be initiated.");
     dragStartTime->setWhatsThis( wtstr );
 
-    dragStartDist = new KIntNumInput(20, tab2);
+    dragStartDist = new KIntNumInput(20, advancedTab);
     dragStartDist->setLabel(i18n("Drag start distance:"));
     dragStartDist->setRange(1, 20, 1);
     dragStartDist->setSteps(1,1);
@@ -286,7 +286,7 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
          " operation will be initiated.");
     dragStartDist->setWhatsThis( wtstr );
 
-    wheelScrollLines = new KIntNumInput(3, tab2);
+    wheelScrollLines = new KIntNumInput(3, advancedTab);
     wheelScrollLines->setLabel(i18n("Mouse wheel scrolls by:"));
     wheelScrollLines->setRange(1, 12, 1);
     wheelScrollLines->setSteps(1,1);
@@ -481,7 +481,7 @@ void MouseConfig::setThreshold(int val)
 
 int MouseConfig::getHandedness()
 {
-  if (tab1->rightHanded->isChecked())
+  if (generalTab->rightHanded->isChecked())
     return RIGHT_HANDED;
   else
     return LEFT_HANDED;
@@ -489,15 +489,15 @@ int MouseConfig::getHandedness()
 
 void MouseConfig::setHandedness(int val)
 {
-  tab1->rightHanded->setChecked(false);
-  tab1->leftHanded->setChecked(false);
+  generalTab->rightHanded->setChecked(false);
+  generalTab->leftHanded->setChecked(false);
   if (val == RIGHT_HANDED){
-    tab1->rightHanded->setChecked(true);
-    tab1->mousePix->setPixmap(KStandardDirs::locate("data", "kcminput/pics/mouse_rh.png"));
+    generalTab->rightHanded->setChecked(true);
+    generalTab->mousePix->setPixmap(KStandardDirs::locate("data", "kcminput/pics/mouse_rh.png"));
   }
   else{
-    tab1->leftHanded->setChecked(true);
-    tab1->mousePix->setPixmap(KStandardDirs::locate("data", "kcminput/pics/mouse_lh.png"));
+    generalTab->leftHanded->setChecked(true);
+    generalTab->mousePix->setPixmap(KStandardDirs::locate("data", "kcminput/pics/mouse_lh.png"));
   }
 }
 
@@ -506,11 +506,11 @@ void MouseConfig::load()
   KConfig config( "kcminputrc" );
   settings->load(&config);
 
-  tab1->rightHanded->setEnabled(settings->handedEnabled);
-  tab1->leftHanded->setEnabled(settings->handedEnabled);
-  if ( tab1->cbScrollPolarity->isEnabled() )
-    tab1->cbScrollPolarity->setEnabled(settings->handedEnabled);
-  tab1->cbScrollPolarity->setChecked( settings->reverseScrollPolarity );
+  generalTab->rightHanded->setEnabled(settings->handedEnabled);
+  generalTab->leftHanded->setEnabled(settings->handedEnabled);
+  if ( generalTab->cbScrollPolarity->isEnabled() )
+    generalTab->cbScrollPolarity->setEnabled(settings->handedEnabled);
+  generalTab->cbScrollPolarity->setChecked( settings->reverseScrollPolarity );
 
   setAccel(settings->accelRate);
   setThreshold(settings->thresholdMove);
@@ -521,14 +521,14 @@ void MouseConfig::load()
   dragStartDist->setValue(settings->dragStartDist);
   wheelScrollLines->setValue(settings->wheelScrollLines);
 
-  tab1->singleClick->setChecked( settings->singleClick );
-  tab1->doubleClick->setChecked(!settings->singleClick);
-  tab1->cb_pointershape->setChecked(settings->changeCursor);
-  tab1->cbAutoSelect->setChecked( settings->autoSelectDelay >= 0 );
+  generalTab->singleClick->setChecked( settings->singleClick );
+  generalTab->doubleClick->setChecked(!settings->singleClick);
+  generalTab->cb_pointershape->setChecked(settings->changeCursor);
+  generalTab->cbAutoSelect->setChecked( settings->autoSelectDelay >= 0 );
   if ( settings->autoSelectDelay < 0 )
-     tab1->slAutoSelect->setValue( 0 );
+     generalTab->slAutoSelect->setValue( 0 );
   else
-     tab1->slAutoSelect->setValue( settings->autoSelectDelay );
+     generalTab->slAutoSelect->setValue( settings->autoSelectDelay );
   slotClick();
 
 
@@ -574,11 +574,11 @@ void MouseConfig::save()
   settings->dragStartTime = dragStartTime->value();
   settings->dragStartDist = dragStartDist->value();
   settings->wheelScrollLines = wheelScrollLines->value();
-  settings->singleClick = !tab1->doubleClick->isChecked();
-  settings->autoSelectDelay = tab1->cbAutoSelect->isChecked()? tab1->slAutoSelect->value():-1;
-//  settings->changeCursor = tab1->singleClick->isChecked();
-  settings->changeCursor = tab1->cb_pointershape->isChecked();
-  settings->reverseScrollPolarity = tab1->cbScrollPolarity->isChecked();
+  settings->singleClick = !generalTab->doubleClick->isChecked();
+  settings->autoSelectDelay = generalTab->cbAutoSelect->isChecked()? generalTab->slAutoSelect->value():-1;
+//  settings->changeCursor = generalTab->singleClick->isChecked();
+  settings->changeCursor = generalTab->cb_pointershape->isChecked();
+  settings->reverseScrollPolarity = generalTab->cbScrollPolarity->isChecked();
 
   settings->apply();
   KConfig config( "kcminputrc" );
@@ -616,16 +616,16 @@ void MouseConfig::defaults()
     setThreshold(2);
     setAccel(2);
     setHandedness(RIGHT_HANDED);
-    tab1->cbScrollPolarity->setChecked( false );
+    generalTab->cbScrollPolarity->setChecked( false );
     doubleClickInterval->setValue(400);
     dragStartTime->setValue(500);
     dragStartDist->setValue(4);
     wheelScrollLines->setValue(3);
-    tab1->doubleClick->setChecked( !KDE_DEFAULT_SINGLECLICK );
-    tab1->cbAutoSelect->setChecked( KDE_DEFAULT_AUTOSELECTDELAY != -1 );
-    tab1->slAutoSelect->setValue( KDE_DEFAULT_AUTOSELECTDELAY == -1 ? 50 : KDE_DEFAULT_AUTOSELECTDELAY );
-    tab1->singleClick->setChecked( KDE_DEFAULT_SINGLECLICK );
-    tab1->cb_pointershape->setChecked(KDE_DEFAULT_CHANGECURSOR);
+    generalTab->doubleClick->setChecked( !KDE_DEFAULT_SINGLECLICK );
+    generalTab->cbAutoSelect->setChecked( KDE_DEFAULT_AUTOSELECTDELAY != -1 );
+    generalTab->slAutoSelect->setValue( KDE_DEFAULT_AUTOSELECTDELAY == -1 ? 50 : KDE_DEFAULT_AUTOSELECTDELAY );
+    generalTab->singleClick->setChecked( KDE_DEFAULT_SINGLECLICK );
+    generalTab->cb_pointershape->setChecked(KDE_DEFAULT_CHANGECURSOR);
     slotClick();
 
   mouseKeys->setChecked(false);
@@ -643,22 +643,22 @@ void MouseConfig::defaults()
 void MouseConfig::slotClick()
 {
   // Autoselect has a meaning only in single-click mode
-  tab1->cbAutoSelect->setEnabled(!tab1->doubleClick->isChecked() || tab1->singleClick->isChecked());
+  generalTab->cbAutoSelect->setEnabled(!generalTab->doubleClick->isChecked() || generalTab->singleClick->isChecked());
   // Delay has a meaning only for autoselect
-  bool bDelay = tab1->cbAutoSelect->isChecked() && ! tab1->doubleClick->isChecked();
-   tab1->slAutoSelect->setEnabled( bDelay );
-   tab1->lDelay->setEnabled( bDelay );
-   tab1->lb_short->setEnabled( bDelay );
-   tab1->lb_long->setEnabled( bDelay );
+  bool bDelay = generalTab->cbAutoSelect->isChecked() && ! generalTab->doubleClick->isChecked();
+   generalTab->slAutoSelect->setEnabled( bDelay );
+   generalTab->lDelay->setEnabled( bDelay );
+   generalTab->lb_short->setEnabled( bDelay );
+   generalTab->lb_long->setEnabled( bDelay );
 
 }
 
 /** No descriptions */
 void MouseConfig::slotHandedChanged(int val){
   if(val==RIGHT_HANDED)
-    tab1->mousePix->setPixmap(KStandardDirs::locate("data", "kcminput/pics/mouse_rh.png"));
+    generalTab->mousePix->setPixmap(KStandardDirs::locate("data", "kcminput/pics/mouse_rh.png"));
   else
-    tab1->mousePix->setPixmap(KStandardDirs::locate("data", "kcminput/pics/mouse_lh.png"));
+    generalTab->mousePix->setPixmap(KStandardDirs::locate("data", "kcminput/pics/mouse_lh.png"));
   settings->m_handedNeedsApply = true;
 }
 
@@ -876,11 +876,11 @@ void MouseConfig::slotScrollPolarityChanged()
 
 void MouseConfig::slotSmartSliderEnabling()
 {
-  bool enabled = tab1->singleClick->isChecked() ? tab1->cbAutoSelect->isChecked() : false;
-  tab1->lDelay->setEnabled(enabled);
-  tab1->slAutoSelect->setEnabled(enabled);
-  tab1->lb_short->setEnabled(enabled);
-  tab1->lb_long->setEnabled(enabled);
+  bool enabled = generalTab->singleClick->isChecked() ? generalTab->cbAutoSelect->isChecked() : false;
+  generalTab->lDelay->setEnabled(enabled);
+  generalTab->slAutoSelect->setEnabled(enabled);
+  generalTab->lb_short->setEnabled(enabled);
+  generalTab->lb_long->setEnabled(enabled);
 }
 
 #include "mouse.moc"

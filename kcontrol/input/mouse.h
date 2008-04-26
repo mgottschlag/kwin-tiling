@@ -146,8 +146,8 @@ private:
 //  QCheckBox *cbLargeCursor;
 
   QTabWidget *tabwidget;
-  QWidget *tab2;
-  KMouseDlg* tab1;
+  QWidget *advancedTab;
+  KMouseDlg* generalTab;
   ThemePage* themetab;
   MouseSettings *settings;
 
