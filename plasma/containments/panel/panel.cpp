@@ -120,25 +120,29 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
 
     Plasma::FormFactor f = formFactor();
     int insertIndex = -1;
-    for (int i = 0; i < lay->count(); ++i) {
-        QRectF siblingGeometry = lay->itemAt(i)->geometry();
-        if (f == Plasma::Horizontal) {
-            qreal middle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
-            if (pos.x() < middle) {
-                insertIndex = i;
-                break;
-            } else if (pos.x() <= siblingGeometry.right()) {
-                insertIndex = i + 1;
-                break;
-            }
-        } else { // Plasma::Vertical
-            qreal middle = (siblingGeometry.top() + siblingGeometry.bottom()) / 2.0;
-            if (pos.y() < middle) {
-                insertIndex = i;
-                break;
-            } else if (pos.y() <= siblingGeometry.bottom()) {
-                insertIndex = i + 1;
-                break;
+
+    //if pos is (-1,-1) insert at the end of the panel
+    if (pos != QPoint(-1, -1)) {
+        for (int i = 0; i < lay->count(); ++i) {
+            QRectF siblingGeometry = lay->itemAt(i)->geometry();
+            if (f == Plasma::Horizontal) {
+                qreal middle = (siblingGeometry.left() + siblingGeometry.right()) / 2.0;
+                if (pos.x() < middle) {
+                    insertIndex = i;
+                    break;
+                } else if (pos.x() <= siblingGeometry.right()) {
+                    insertIndex = i + 1;
+                    break;
+                }
+            } else { // Plasma::Vertical
+                qreal middle = (siblingGeometry.top() + siblingGeometry.bottom()) / 2.0;
+                if (pos.y() < middle) {
+                    insertIndex = i;
+                    break;
+                } else if (pos.y() <= siblingGeometry.bottom()) {
+                    insertIndex = i + 1;
+                    break;
+                }
             }
         }
     }
