@@ -50,7 +50,7 @@ void DesktopCorona::checkScreens()
             Plasma::Containment* c = addContainment("desktop");
             c->setScreen(i);
             c->setFormFactor(Plasma::Planar);
-            c->flushUpdatedConstraints();
+            c->flushPendingConstraintsEvents();
         } else if (i >= m_numScreens) {
             // now ensure that if our screen count changed we actually get views
             // for them, even if the Containment already existed for that screen
@@ -83,7 +83,7 @@ void DesktopCorona::loadDefaultLayout()
         Plasma::Containment* c = addContainment("desktop");
         c->setScreen(i);
         c->setFormFactor(Plasma::Planar);
-        c->flushUpdatedConstraints();
+        c->flushPendingConstraintsEvents();
 
         if (g.x() <= topLeftCorner.x() && g.y() >= topLeftCorner.y()) {
             topLeftCorner = g.topLeft();
@@ -95,7 +95,7 @@ void DesktopCorona::loadDefaultLayout()
     Plasma::Containment* panel = addContainment("panel");
     panel->setScreen(topLeftScreen);
     panel->setLocation(Plasma::BottomEdge);
-    panel->flushUpdatedConstraints();
+    panel->flushPendingConstraintsEvents();
 
     // some default applets to get a usable UI
     panel->addApplet("launcher");
