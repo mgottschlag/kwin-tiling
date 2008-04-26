@@ -61,7 +61,7 @@ Trash::Trash(QObject *parent, const QVariantList &args)
       m_trashUrl(KUrl("trash:/")),
       m_count(0)
 {
-    setDrawStandardBackground(false);
+    setBackgroundHints(NoBackground);
 }
 
 Trash::~Trash()
@@ -93,7 +93,6 @@ void Trash::init()
              this, SLOT( slotDeleteItem( const KFileItem & ) ) );
 
     m_dirLister->openUrl(m_trashUrl);
-    setDrawStandardBackground(false);
     m_icon->setDrawBackground(true);
     watchForMouseMove(m_icon, true);
     //setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
@@ -134,7 +133,8 @@ void Trash::popup()
 
 void Trash::constraintsUpdated(Plasma::Constraints constraints)
 {
-    setDrawStandardBackground(false);
+    setBackgroundHints(NoBackground);
+
     if (constraints & Plasma::FormFactorConstraint) {
         disconnect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
         disconnect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));

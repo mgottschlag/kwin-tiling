@@ -92,7 +92,7 @@ void Clock::connectToEngine()
 void Clock::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {
-        setDrawStandardBackground(false);
+        setBackgroundHints(NoBackground);
     }
 }
 

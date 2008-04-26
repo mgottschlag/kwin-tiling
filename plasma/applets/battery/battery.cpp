@@ -75,7 +75,11 @@ void Battery::init()
 
     // TODO: set background on panel causes 0 height, so do not use it
     if (formFactor() != Plasma::Vertical && formFactor() != Plasma::Horizontal) {
-        setDrawStandardBackground(m_drawBackground);
+        if (m_drawBackground) {
+            setBackgroundHints(DefaultBackground);
+        } else {
+            setBackgroundHints(NoBackground);
+        }
     }
     setWindowFlags(Qt::Window);
 
@@ -119,24 +123,26 @@ void Battery::init()
 void Battery::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {
+        BackgroundHints background = NoBackground;
+
         if (formFactor() == Plasma::Vertical) {
             kDebug() << "Vertical FormFactor";
             // TODO: set background(true) on panel causes 0 height, so do not use it
-            setDrawStandardBackground(false);
         } else if (formFactor() == Plasma::Horizontal) {
             kDebug() << "Horizontal FormFactor";
             // TODO: set background(true) on panel causes 0 height, so do not use it
-            setDrawStandardBackground(false);
         } else if (formFactor() == Plasma::Planar) {
             kDebug() << "Planar FormFactor";
-            setDrawStandardBackground(m_drawBackground);
+            background = (m_drawBackground?DefaultBackground:NoBackground);
         } else if (formFactor() == Plasma::MediaCenter) {
             kDebug() << "MediaCenter FormFactor";
-            setDrawStandardBackground(m_drawBackground);
+            background = (m_drawBackground?DefaultBackground:NoBackground);
         } else {
             kDebug() << "Other FormFactor" << formFactor();
-            setDrawStandardBackground(m_drawBackground);
+            background = (m_drawBackground?DefaultBackground:NoBackground);
         }
+        
+        setBackgroundHints(background);
     }
 
     if (constraints & Plasma::SizeConstraint && m_theme) {
@@ -188,7 +194,7 @@ void Battery::configAccepted()
 
     // TODO: set background on panel causes 0 height, so do not use it
     if (formFactor() != Plasma::Vertical && formFactor() != Plasma::Horizontal) {
-        setDrawStandardBackground(m_drawBackground);
+        setBackgroundHints(m_drawBackground?DefaultBackground:NoBackground);
     }
 
     if (ui.styleGroup->selected() != m_batteryStyle) {

@@ -49,7 +49,7 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
 {
     setAcceptDrops(true);
     setHasConfigurationInterface(true);
-    setDrawStandardBackground(false);
+    setBackgroundHints(NoBackground);
     m_icon = new Plasma::Icon(this);
     //setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
     resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
@@ -128,7 +128,7 @@ void IconApplet::openUrl()
 
 void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
 {
-    setDrawStandardBackground(false);
+    setBackgroundHints(NoBackground);
 
     if (constraints & Plasma::FormFactorConstraint) {
         disconnect(m_icon, SIGNAL(activated()), this, SLOT(openUrl()));

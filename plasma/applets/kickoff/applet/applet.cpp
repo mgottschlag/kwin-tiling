@@ -77,7 +77,7 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
 {
     setHasConfigurationInterface(true);
     setRemainSquare(true);
-    setDrawStandardBackground(true);
+    setBackgroundHints(DefaultBackground);
     d->icon = new Plasma::Icon(KIcon("start-here-kde"), QString(), this);
     d->icon->setFlag(ItemIsMovable, false);
     connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
@@ -107,7 +107,7 @@ void LauncherApplet::init()
 
 void LauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
 {
-    setDrawStandardBackground(false);
+    setBackgroundHints(NoBackground);
     if (constraints & Plasma::FormFactorConstraint) {
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {

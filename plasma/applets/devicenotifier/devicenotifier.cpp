@@ -188,7 +188,7 @@ DeviceNotifier::~DeviceNotifier()
 void DeviceNotifier::constraintsUpdated(Plasma::Constraints constraints)
 {
     // on the panel we don't want a background, and our proxy widget in Planar has one
-    setDrawStandardBackground(false);
+    setBackgroundHints(NoBackground);
 
     bool isSizeConstrained = formFactor() != Plasma::Planar && formFactor() != Plasma::MediaCenter;
 
