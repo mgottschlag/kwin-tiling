@@ -48,6 +48,7 @@
  */
 
 #include <QCheckBox>
+#include <QFormLayout>
 #undef Below
 #undef Above
 #include <QSlider>
@@ -197,14 +198,15 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
     advancedTab->setObjectName("Advanced Tab");
     tabwidget->addTab(advancedTab, i18n("Advanced"));
 
-    QBoxLayout *lay = new QVBoxLayout(advancedTab);
+    QFormLayout *lay = new QFormLayout(advancedTab);
     lay->setMargin(KDialog::marginHint());
     lay->setSpacing(KDialog::spacingHint());
 
     accel = new KDoubleNumInput(0.1, 20, 2, advancedTab, 0.1, 1);
-    accel->setLabel(i18n("Pointer acceleration:"));
-    accel->setSuffix("x");
-    lay->addWidget(accel);
+    accel->setSuffix(i18n(" x"));
+    QLabel* lbl = new QLabel(i18n("Pointer acceleration:"), advancedTab);
+    lbl->setBuddy(accel);
+    lay->addRow(lbl, accel);
     connect(accel, SIGNAL(valueChanged(double)), this, SLOT(changed()));
 
     wtstr = i18n("<p>This option allows you to change the relationship"
@@ -220,10 +222,11 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
     accel->setWhatsThis( wtstr );
 
     thresh = new KIntNumInput(20, advancedTab);
-    thresh->setLabel(i18n("Pointer threshold:"));
     thresh->setRange(0,20,1);
     thresh->setSteps(1,1);
-    lay->addWidget(thresh);
+    lbl = new QLabel(i18n("Pointer threshold:"), advancedTab);
+    lbl->setBuddy(thresh);
+    lay->addRow(lbl, thresh);
     connect(thresh, SIGNAL(valueChanged(int)), this, SLOT(changed()));
     connect(thresh, SIGNAL(valueChanged(int)), this, SLOT(slotThreshChanged(int)));
     slotThreshChanged(thresh->value());
@@ -242,11 +245,12 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
     // It would be nice if the user had a test field.
     // Selecting such values in milliseconds is not intuitive
     doubleClickInterval = new KIntNumInput(2000, advancedTab);
-    doubleClickInterval->setLabel(i18n("Double click interval:"));
     doubleClickInterval->setRange(0, 2000, 100);
     doubleClickInterval->setSuffix(i18n(" msec"));
     doubleClickInterval->setSteps(100, 100);
-    lay->addWidget(doubleClickInterval);
+    lbl = new QLabel(i18n("Double click interval:"), advancedTab);
+    lbl->setBuddy(doubleClickInterval);
+    lay->addRow(lbl, doubleClickInterval);
     connect(doubleClickInterval, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
     wtstr = i18n("The double click interval is the maximal time"
@@ -257,14 +261,13 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
          " separate clicks.");
     doubleClickInterval->setWhatsThis( wtstr );
 
-    lay->addSpacing(15);
-
     dragStartTime = new KIntNumInput(2000, advancedTab);
-    dragStartTime->setLabel(i18n("Drag start time:"));
     dragStartTime->setRange(0, 2000, 100);
     dragStartTime->setSuffix(i18n(" msec"));
     dragStartTime->setSteps(100, 100);
-    lay->addWidget(dragStartTime);
+    lbl = new QLabel(i18n("Drag start time:"), advancedTab);
+    lbl->setBuddy(dragStartTime);
+    lay->addRow(lbl, dragStartTime);
     connect(dragStartTime, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 
     wtstr = i18n("If you click with the mouse (e.g. in a multi-line"
@@ -273,10 +276,11 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
     dragStartTime->setWhatsThis( wtstr );
 
     dragStartDist = new KIntNumInput(20, advancedTab);
-    dragStartDist->setLabel(i18n("Drag start distance:"));
     dragStartDist->setRange(1, 20, 1);
     dragStartDist->setSteps(1,1);
-    lay->addWidget(dragStartDist);
+    lbl = new QLabel(i18n("Drag start distance:"), advancedTab);
+    lbl->setBuddy(dragStartDist);
+    lay->addRow(lbl, dragStartDist);
     connect(dragStartDist, SIGNAL(valueChanged(int)), this, SLOT(changed()));
     connect(dragStartDist, SIGNAL(valueChanged(int)), this, SLOT(slotDragStartDistChanged(int)));
     slotDragStartDistChanged(dragStartDist->value());
@@ -287,17 +291,17 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
     dragStartDist->setWhatsThis( wtstr );
 
     wheelScrollLines = new KIntNumInput(3, advancedTab);
-    wheelScrollLines->setLabel(i18n("Mouse wheel scrolls by:"));
     wheelScrollLines->setRange(1, 12, 1);
     wheelScrollLines->setSteps(1,1);
-    lay->addWidget(wheelScrollLines);
+    lbl = new QLabel(i18n("Mouse wheel scrolls by:"), advancedTab);
+    lbl->setBuddy(wheelScrollLines);
+    lay->addRow(lbl, wheelScrollLines);
     connect(wheelScrollLines, SIGNAL(valueChanged(int)), this, SLOT(changed()));
     connect(wheelScrollLines, SIGNAL(valueChanged(int)), SLOT(slotWheelScrollLinesChanged(int)));
     slotWheelScrollLinesChanged(wheelScrollLines->value());
 
     wtstr = i18n("If you use the wheel of a mouse, this value determines the number of lines to scroll for each wheel movement. Note that if this number exceeds the number of visible lines, it will be ignored and the wheel movement will be handled as a page up/down movement.");
     wheelScrollLines->setWhatsThis(wtstr);
-    lay->addStretch();
 
 {
   QWidget *mouse = new QWidget(this);
@@ -315,54 +319,43 @@ MouseConfig::MouseConfig(QWidget *parent, const QVariantList &args)
   mouseKeys = new QCheckBox(i18n("&Move pointer with keyboard (using the num pad)"), mouse);
   vvbox->addWidget(mouseKeys);
 
-  QBoxLayout *hbox = new QHBoxLayout();
-  vvbox->addItem( hbox );
-  hbox->setSpacing(KDialog::spacingHint());
-  hbox->addSpacing(24);
+  QFormLayout *form = new QFormLayout();
+  vvbox->addItem( form );
+  form->setSpacing(KDialog::spacingHint());
+
   mk_delay = new KIntNumInput(mouse);
-  mk_delay->setLabel(i18n("&Acceleration delay:"), Qt::AlignVCenter);
   mk_delay->setSuffix(i18n(" msec"));
   mk_delay->setRange(1, 1000, 50);
-  hbox->addWidget(mk_delay);
+  lbl = new QLabel(i18n("&Acceleration delay:"), mouse);
+  lbl->setBuddy(mk_delay);
+  form->addRow(lbl, mk_delay);
 
-  hbox = new QHBoxLayout();
-  vvbox->addItem(hbox);
-  hbox->setSpacing(KDialog::spacingHint());
-  hbox->addSpacing(24);
   mk_interval = new KIntNumInput(0, mouse);
-  mk_interval->setLabel(i18n("R&epeat interval:"), Qt::AlignVCenter);
   mk_interval->setSuffix(i18n(" msec"));
   mk_interval->setRange(1, 1000, 10);
-  hbox->addWidget(mk_interval);
+  lbl = new QLabel(i18n("R&epeat interval:"), mouse);
+  lbl->setBuddy(mk_interval);
+  form->addRow(lbl, mk_interval);
 
-  hbox = new QHBoxLayout();
-  vvbox->addItem(hbox);
-  hbox->setSpacing(KDialog::spacingHint());
-  hbox->addSpacing(24);
   mk_time_to_max = new KIntNumInput(0, mouse);
-  mk_time_to_max->setLabel(i18n("Acceleration &time:"), Qt::AlignVCenter);
   mk_time_to_max->setRange(100, 10000, 200);
   mk_time_to_max->setSuffix(i18n(" msec"));
-  hbox->addWidget(mk_time_to_max);
+  lbl = new QLabel(i18n("Acceleration &time:"), mouse);
+  lbl->setBuddy(mk_time_to_max);
+  form->addRow(lbl, mk_time_to_max);
 
-  hbox = new QHBoxLayout();
-  vvbox->addItem(hbox);
-  hbox->setSpacing(KDialog::spacingHint());
-  hbox->addSpacing(24);
   mk_max_speed = new KIntNumInput(0, mouse);
-  mk_max_speed->setLabel(i18n("Ma&ximum speed:"), Qt::AlignVCenter);
   mk_max_speed->setRange(1, 2000, 20);
   mk_max_speed->setSuffix(i18n(" pixel/sec"));
-  hbox->addWidget(mk_max_speed);
+  lbl = new QLabel(i18n("Ma&ximum speed:"), mouse);
+  lbl->setBuddy(mk_max_speed);
+  form->addRow(lbl, mk_max_speed);
 
-  hbox = new QHBoxLayout();
-  vvbox->addItem(hbox);
-  hbox->setSpacing(KDialog::spacingHint());
-  hbox->addSpacing(24);
   mk_curve = new KIntNumInput(0, mouse);
-  mk_curve->setLabel(i18n("Acceleration &profile:"), Qt::AlignVCenter);
   mk_curve->setRange(-1000, 1000, 100);
-  hbox->addWidget(mk_curve);
+  lbl = new QLabel(i18n("Acceleration &profile:"), mouse);
+  lbl->setBuddy(mk_curve);
+  form->addRow(lbl, mk_curve);
 
   connect(mouseKeys, SIGNAL(clicked()), this, SLOT(checkAccess()));
   connect(mouseKeys, SIGNAL(clicked()), this, SLOT(changed()));
