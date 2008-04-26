@@ -32,14 +32,9 @@
 // Xlib
 #include <X11/Xlib.h>
 
-SystemTrayContainer::SystemTrayContainer(WId clientId, QWidget *parent)
+SystemTrayContainer::SystemTrayContainer(QWidget *parent)
     : QX11EmbedContainer(parent)
 {
-    if( !prepareFor(clientId)) { // temporary hack, until QX11EmbedContainer gets fixed
-        deleteLater();
-        return;
-    }
-
     connect(this, SIGNAL(clientClosed()), SLOT(deleteLater()));
     connect(this, SIGNAL(error(QX11EmbedContainer::Error)), SLOT(handleError(QX11EmbedContainer::Error)));
 
@@ -48,17 +43,16 @@ SystemTrayContainer::SystemTrayContainer(WId clientId, QWidget *parent)
 
     // Tray icons have a fixed size of 22x22
     setMinimumSize(22, 22);
+}
 
+void SystemTrayContainer::embedSystemTrayClient( WId clientId )
+{
     kDebug() << "attempting to embed" << clientId;
-    embedClient(clientId);
-
-#if 0
-    // BUG: error() sometimes return Unknown even on success
-    if (error() == Unknown || error() == InvalidWindowID) {
-        kDebug() << "embedding failed for" << clientId;
+    if( !prepareFor(clientId)) { // temporary hack, until QX11EmbedContainer gets fixed
         deleteLater();
+        return;
     }
-#endif
+    embedClient( clientId );
 }
 
 void SystemTrayContainer::updateBackground()

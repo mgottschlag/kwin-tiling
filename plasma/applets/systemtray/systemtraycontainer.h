@@ -30,7 +30,10 @@ class SystemTrayContainer : public QX11EmbedContainer
 Q_OBJECT
 
 public:
-    SystemTrayContainer(WId client, QWidget *parent);
+    explicit SystemTrayContainer(QWidget *parent);
+
+public:
+    void embedSystemTrayClient( WId clientId );
 
 private:
     bool prepareFor( WId id );
