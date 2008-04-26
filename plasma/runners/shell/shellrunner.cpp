@@ -39,7 +39,7 @@ ShellRunner::ShellRunner(QObject *parent, const QVariantList &args)
     Q_UNUSED(args)
 
     setObjectName(i18n("Command"));
-    setHasMatchOptions(true);
+    setHasRunOptions(true);
     setPriority(AbstractRunner::HighestPriority);
     m_enabled = KAuthorized::authorizeKAction("shell_access");
 }
