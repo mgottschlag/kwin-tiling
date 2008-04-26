@@ -121,7 +121,7 @@ void KWindowListMenu::init()
 
     QList<KWindowInfo*> list;
 
-    foreach (KWindowInfo wi, windows) {
+    foreach (const KWindowInfo &wi, windows) {
       if ( (wi.desktop() == j) || (onAllDesktops && wi.onAllDesktops())
            || (!showAllDesktopsGroup && wi.onAllDesktops()) ) {
         list.append( new KWindowInfo( wi.win(),

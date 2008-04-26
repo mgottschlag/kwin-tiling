@@ -49,7 +49,7 @@ void Solid::Control::ManagerBasePrivate::loadBackend(const QString &description,
 
     KService::List offers = KServiceTypeTrader::self()->query(serviceName, "(Type == 'Service')");
 
-    foreach (KService::Ptr ptr, offers)
+    foreach (const KService::Ptr &ptr, offers)
     {
         QString error_string;
         m_backend = ptr->createInstance<QObject>(0, QVariantList(), &error_string);
