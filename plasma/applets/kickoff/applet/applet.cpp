@@ -218,7 +218,7 @@ void LauncherApplet::toggleMenu(bool pressed)
     d->icon->setPressed();
 }
 
-QList<QAction*> LauncherApplet::contextActions()
+QList<QAction*> LauncherApplet::contextualActions()
 {
   return d->actions;
 }

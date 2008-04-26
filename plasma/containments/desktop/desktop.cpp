@@ -355,7 +355,7 @@ void DefaultDesktop::lockScreen()
     }
 }
 
-QList<QAction*> DefaultDesktop::contextActions()
+QList<QAction*> DefaultDesktop::contextualActions()
 {
     //TODO: should we offer "Switch User" here?
 
@@ -410,7 +410,7 @@ QList<QAction*> DefaultDesktop::contextActions()
 
     if (immutability() == NotImmutable && s_icons && s_icons->showIcons()) {
         //icon actions
-        actions << s_icons->contextActions();
+        actions << s_icons->contextualActions();
         actions.append(m_separator2);
     }
 

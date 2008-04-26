@@ -73,7 +73,7 @@ public:
     void init();
     void constraintsUpdated(Plasma::Constraints constraints);
 
-    QList<QAction*> contextActions();
+    QList<QAction*> contextualActions();
 
     /**
      * Paints a default background image. Nothing fancy, but that's what plugins

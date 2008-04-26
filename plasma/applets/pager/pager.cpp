@@ -119,7 +119,7 @@ void Pager::createMenu()
     connect(configureDesktop, SIGNAL(triggered(bool)), this , SLOT(slotConfigureDesktop()));
 }
 
-QList<QAction*> Pager::contextActions()
+QList<QAction*> Pager::contextualActions()
 {
   return m_actions;
 }

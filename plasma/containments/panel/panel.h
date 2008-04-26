@@ -40,7 +40,7 @@ public:
     Panel(QObject *parent, const QVariantList &args);
     ~Panel();
     void init();
-    QList<QAction*> contextActions();
+    QList<QAction*> contextualActions();
 
     void constraintsUpdated(Plasma::Constraints constraints);
 

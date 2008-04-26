@@ -390,7 +390,7 @@ void MenuLauncherApplet::actionTriggered(QAction *action)
     }
 }
 
-QList<QAction*> MenuLauncherApplet::contextActions()
+QList<QAction*> MenuLauncherApplet::contextualActions()
 {
   return d->actions;
 }

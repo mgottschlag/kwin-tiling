@@ -79,7 +79,7 @@ void Panel::init()
     setFlag(ItemClipsChildrenToShape, true);
 }
 
-QList<QAction*> Panel::contextActions()
+QList<QAction*> Panel::contextualActions()
 {
     if (!m_appletBrowserAction) {
         m_appletBrowserAction = new QAction(i18n("Add Widgets..."), this);

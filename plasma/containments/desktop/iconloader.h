@@ -115,7 +115,7 @@ public:
      * The actions associated with the menu.
      * @return The menu items relating to icons.
      */
-    virtual QList<QAction*> contextActions();
+    virtual QList<QAction*> contextualActions();
 
     bool showIcons() const;
     void setShowIcons(bool iconsVisible);

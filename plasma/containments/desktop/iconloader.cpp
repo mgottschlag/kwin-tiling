@@ -114,7 +114,7 @@ void IconLoader::createMenu()
     actions.append(alignVertical);
 }
 
-QList<QAction*> IconLoader::contextActions()
+QList<QAction*> IconLoader::contextualActions()
 {
     if (!m_showIcons) {
         return QList<QAction*>();

@@ -48,7 +48,7 @@ public:
 
         void constraintsUpdated(Plasma::Constraints constraints);
 
-        virtual QList<QAction*> contextActions();
+        virtual QList<QAction*> contextualActions();
 
 public slots:
         void showConfigurationInterface();

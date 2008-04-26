@@ -44,7 +44,7 @@ class Trash : public Plasma::Applet
     Q_OBJECT
     public:
         Trash(QObject *parent, const QVariantList &args);
-        virtual QList<QAction*> contextActions();
+        virtual QList<QAction*> contextualActions();
         ~Trash();
 
         void init();

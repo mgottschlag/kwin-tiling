@@ -86,7 +86,7 @@ class MenuLauncherApplet : public Plasma::Applet
         /**
          * Returns a list of context-related QAction instances.
          */
-        virtual QList<QAction*> contextActions();
+        virtual QList<QAction*> contextualActions();
 
 public Q_SLOTS:
 

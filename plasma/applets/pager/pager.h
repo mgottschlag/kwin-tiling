@@ -42,7 +42,7 @@ class Pager : public Plasma::Applet
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option,
                             const QRect &contents);
         void constraintsUpdated(Plasma::Constraints);
-        virtual QList<QAction*> contextActions();
+        virtual QList<QAction*> contextualActions();
         
     public slots:
         void recalculateGeometry();

@@ -246,7 +246,7 @@ void Trash::slotDeleteItem(const KFileItem &)
     setIcon();
 }
 
-QList<QAction*> Trash::contextActions()
+QList<QAction*> Trash::contextualActions()
 {
     return actions;
 }
