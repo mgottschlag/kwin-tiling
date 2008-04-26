@@ -38,7 +38,7 @@ void TasksEngine::connectTask(TaskPtr task)
 
 void TasksEngine::init()
 {
-    foreach(TaskPtr task , TaskManager::TaskManager::self()->tasks().values() ) {
+    foreach(const TaskPtr &task , TaskManager::TaskManager::self()->tasks().values() ) {
         connectTask(task);
         setDataForTask(task);
     }

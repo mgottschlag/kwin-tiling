@@ -226,7 +226,7 @@ findAllBackgrounds(const BackgroundContainer *container,
 
     // get all packages in this directory
     QStringList packages = Plasma::Package::knownPackages(path);
-    foreach (QString packagePath, packages)
+    foreach (const QString &packagePath, packages)
     {
         kDebug() << packagePath;
         std::auto_ptr<Background> pkg(
@@ -249,7 +249,7 @@ findAllBackgrounds(const BackgroundContainer *container,
     dir.setNameFilters(filters);
     dir.setFilter(QDir::Files | QDir::Hidden);
     QFileInfoList files = dir.entryInfoList();
-    foreach (QFileInfo wp, files)
+    foreach (const QFileInfo &wp, files)
     {
         if (!container || !container->contains(wp.filePath())) {
             res.append(new BackgroundFile(wp.filePath(), ratio));
@@ -335,12 +335,12 @@ void BackgroundListModel::reload(const QStringList& selected)
 {
     QStringList dirs = KGlobal::dirs()->findDirs("wallpaper", "");
     QList<Background *> tmp;
-    foreach (QString file, selected) {
+    foreach (const QString &file, selected) {
         if (!contains(file) && QFile::exists(file)) {
             tmp << new BackgroundFile(file, m_ratio);
         }
     }
-    foreach (QString dir, dirs) {
+    foreach (const QString &dir, dirs) {
         tmp += findAllBackgrounds(this, dir, m_ratio);
     }
     
@@ -619,7 +619,7 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config, const KConfigGro
     if (dirs.isEmpty()) {
         dirs << KStandardDirs::installPath("wallpaper");
     }
-    foreach (QString dir, dirs) {
+    foreach (const QString &dir, dirs) {
         m_dirlist->addItem(dir);
     }
     m_selected = config.readEntry("selected", QStringList());

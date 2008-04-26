@@ -388,7 +388,7 @@ public:
         }
         // then reinsert them in reversed order
         int i = 0;
-        foreach (WidgetTabData wtd, removedTabs) {
+        foreach (const WidgetTabData &wtd, removedTabs) {
             contentSwitcher->addTab( wtd.tabIcon, wtd.tabText );
             contentSwitcher->setTabToolTip( i, wtd.tabToolTip );
             contentSwitcher->setTabWhatsThis( i, wtd.tabWhatsThis );

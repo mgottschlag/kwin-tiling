@@ -441,7 +441,7 @@ void Pager::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
             }
         }
         m_hoverRect = QRectF();
-        foreach (QRectF rect, m_rects) {
+        foreach (const QRectF &rect, m_rects) {
             if (rect.contains(event->pos())) {
                 m_hoverRect = rect;
                 break;
@@ -517,7 +517,7 @@ void Pager::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 void Pager::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
-    foreach (QRectF rect, m_rects) {
+    foreach (const QRectF &rect, m_rects) {
         if (rect.contains(event->pos())) {
             if (m_hoverRect != rect) {
                 m_hoverRect = rect;

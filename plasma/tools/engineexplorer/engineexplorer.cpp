@@ -225,7 +225,7 @@ void EngineExplorer::showData(QStandardItem* parent, Plasma::DataEngine::Data da
         it.next();
         parent->setChild(rowCount, 1, new QStandardItem(it.key()));
         if (it.value().canConvert(QVariant::List)) {
-            foreach(QVariant var, it.value().toList()) {
+            foreach(const QVariant &var, it.value().toList()) {
                 parent->setChild(rowCount, 2, new QStandardItem(convertToString(var)));
                 ++rowCount;
             }

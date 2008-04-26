@@ -76,7 +76,7 @@ UKMETIon::UKMETIon(QObject *parent, const QVariantList &args)
 UKMETIon::~UKMETIon()
 {
     // Destroy each forecast stored in a QVector
-    foreach(WeatherData item, d->m_weatherData) {
+    foreach(const WeatherData &item, d->m_weatherData) {
         foreach(WeatherData::ForecastInfo *forecast, item.forecasts) {
             if (forecast) {
                 delete forecast;
@@ -663,7 +663,7 @@ void UKMETIon::validate(const QString& source)
         return;
     } else {
         QString placeList;
-        foreach(QString place, d->m_locations) {
+        foreach(const QString &place, d->m_locations) {
             if (beginflag) {
                 placeList.append(QString("%1|extra|%2").arg(place.split("|")[1]).arg(d->m_place[place].XMLurl));
                 beginflag = false;
@@ -719,7 +719,7 @@ void UKMETIon::updateWeather(const QString& source)
 
     QString windSpeed;
     QString windUnit;
-    foreach(QString forecastItem, forecastList) {
+    foreach(const QString &forecastItem, forecastList) {
         fieldList = forecastItem.split('|');
         if (metricUnit()) {
                 windSpeed = QString::number(WeatherFormula::milesToKM(fieldList[4].toFloat()), 'f', 1);

@@ -84,7 +84,7 @@ void XesamRunner::match(Plasma::SearchContext *context)
 
     xesam.call("CloseSession", session);
 
-    foreach (QList<QVariant> hit, hits) {
+    foreach (const QList<QVariant> &hit, hits) {
         if (hit.isEmpty()) continue;
 
         QString url = hit[0].toString();

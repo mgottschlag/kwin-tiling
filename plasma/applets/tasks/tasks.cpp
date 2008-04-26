@@ -20,7 +20,6 @@
 
 // Own
 #include "tasks.h"
-#include "taskgroupitem.h"
 #include "windowtaskitem.h"
 #include "ui_tasksConfig.h"
 
@@ -143,7 +142,7 @@ void Tasks::addWindowTask(TaskPtr task)
     }
 
     WindowTaskItem *item = 0;
-    foreach (StartupPtr startup, m_startupTaskItems.keys()) {
+    foreach (const StartupPtr &startup, m_startupTaskItems.keys()) {
         if (startup->matchesWindow(task->window())) {
             item = dynamic_cast<WindowTaskItem *>(m_startupTaskItems.take(startup));
             break;
@@ -169,7 +168,7 @@ void Tasks::removeWindowTask(TaskPtr task)
 
 void Tasks::removeAllWindowTasks()
 {
-    foreach (TaskPtr task, m_windowTaskItems.keys()) {
+    foreach (const TaskPtr &task, m_windowTaskItems.keys()) {
         removeWindowTask(task);
     }
     m_windowTaskItems.clear();
@@ -227,7 +226,7 @@ void Tasks::windowChangedGeometry(TaskPtr task)
 
 void Tasks::checkScreenChange()
 {
-    foreach (TaskPtr task, m_tasks) {
+    foreach (const TaskPtr &task, m_tasks) {
         if (!isOnMyScreen(task)) {
             removeWindowTask(task);
         } else if (!m_windowTaskItems.contains(task)) {

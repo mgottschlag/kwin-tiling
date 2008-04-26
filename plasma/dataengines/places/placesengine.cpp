@@ -69,7 +69,7 @@ void PlacesEngine::diskFreeSpaceFound(const QString &mountPoint,
         << "avail =" << kBAvailable;
     QString source;
 
-    foreach (QString testsource, sources()) {
+    foreach (const QString &testsource, sources()) {
         kDebug() << "Testing" << query(testsource)["url"];
         KUrl url(query(testsource)["url"].toString());
         if (url.isLocalFile() && url.path() == mountPoint) {

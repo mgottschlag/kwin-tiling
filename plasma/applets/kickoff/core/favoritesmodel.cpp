@@ -78,7 +78,7 @@ public:
            favoriteList = defaultFavorites();
        }
 
-       foreach(QString favorite,favoriteList) {
+       foreach(const QString &favorite,favoriteList) {
            FavoritesModel::add(favorite);
        }
     }
@@ -121,7 +121,7 @@ FavoritesModel::FavoritesModel(QObject *parent)
     if (Private::models.count() == 1 && Private::globalFavoriteList.isEmpty()) {
         Private::loadFavorites();
     } else {
-        foreach (QString url, Private::globalFavoriteList) {
+        foreach (const QString &url, Private::globalFavoriteList) {
             d->addFavoriteItem(url);
         }
     }

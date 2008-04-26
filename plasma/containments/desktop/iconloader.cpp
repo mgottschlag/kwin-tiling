@@ -203,7 +203,7 @@ void IconLoader::newItems(const KFileItemList& items)
         return;
     }
 
-    foreach (KFileItem item, items) {
+    foreach (const KFileItem &item, items) {
         //kDebug() << "adding item" << item.url();
         if (!m_iconMap.contains(item.url().path())) {
             addIcon(item.url());

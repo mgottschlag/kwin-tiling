@@ -185,7 +185,7 @@ void Clock::createConfigurationInterface(KConfigDialog *parent)
     ui.plainClockColor->setColor(m_plainClockColor);
     ui.localTimeZone->setChecked(m_localTimeZone);
     ui.timeZones->setEnabled(!m_localTimeZone);
-    foreach (QString str, m_timeZones) {
+    foreach (const QString &str, m_timeZones) {
         ui.timeZones->setSelected(str, true);
     }
 }

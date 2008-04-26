@@ -229,7 +229,7 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
 
         //Parameters
         QString params;
-        foreach (KUrl url, urls) {
+        foreach (const KUrl &url, urls) {
             if (url.isLocalFile()) {
                 params += ' ' + KShell::quoteArg(url.path());
             } else {

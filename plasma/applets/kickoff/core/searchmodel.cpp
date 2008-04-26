@@ -177,7 +177,7 @@ void ApplicationSearch::setQuery(const QString& query)
     }
 
     QStringList pathResults;
-    foreach(KService::Ptr service,results) {
+    foreach(const KService::Ptr &service,results) {
         if (!service.isNull() && !service->noDisplay())  {
             pathResults << service->entryPath();
         }

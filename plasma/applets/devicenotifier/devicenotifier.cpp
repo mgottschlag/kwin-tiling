@@ -239,7 +239,7 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
         if (!data["predicateFiles"].isNull()) {
             int nb_actions = 0;
             QString last_action_label;
-            foreach (QString desktop, data["predicateFiles"].toStringList()) {
+            foreach (const QString &desktop, data["predicateFiles"].toStringList()) {
                 QString filePath = KStandardDirs::locate("data", "solid/actions/" + desktop);
                 QList<KServiceAction> services = KDesktopFileActions::userDefinedServices(filePath, true);
                 nb_actions += services.size();

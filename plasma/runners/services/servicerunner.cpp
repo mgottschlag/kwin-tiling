@@ -68,7 +68,7 @@ void ServiceRunner::match(Plasma::SearchContext *search)
     const KService::List services = KServiceTypeTrader::self()->query("Application", query);
 
     //kDebug() << "got " << services.count() << " services from " << query;
-    foreach (const KService::Ptr service, services) {
+    foreach (const KService::Ptr &service, services) {
         QString id = service->storageId();
         QString exec = service->exec();
         if (seen.contains(id) || seen.contains(exec)) {

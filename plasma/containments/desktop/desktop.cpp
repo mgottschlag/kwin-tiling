@@ -235,7 +235,7 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
             dir.setFilter(QDir::Files | QDir::Hidden);
 
             QFileInfoList files = dir.entryInfoList();
-            foreach (QFileInfo wp, files) {
+            foreach (const QFileInfo &wp, files) {
                 int position = m_slideFiles.size() == 0 ? 0 : qrand() % m_slideFiles.size();
                 m_slideFiles.insert(position, wp.filePath());
             }
@@ -243,7 +243,7 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
             // now make it look in sub-dirs
             dir.setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
             QFileInfoList subdirs = dir.entryInfoList();
-            foreach (QFileInfo wp, subdirs) {
+            foreach (const QFileInfo &wp, subdirs) {
                 dirs.append(wp.filePath());
             }
         }

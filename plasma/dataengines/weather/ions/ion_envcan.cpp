@@ -67,7 +67,7 @@ EnvCanadaIon::EnvCanadaIon(QObject *parent, const QVariantList &args)
 EnvCanadaIon::~EnvCanadaIon()
 {
     // Destroy each warning stored in a QVector
-    foreach(WeatherData item, d->m_weatherData) {
+    foreach(const WeatherData &item, d->m_weatherData) {
         foreach(WeatherData::WarningInfo *warning, item.warnings) {
             if (warning) {
                 delete warning;
@@ -990,7 +990,7 @@ void EnvCanadaIon::updateWeather(const QString& source)
     }
 
     forecastList = forecasts(source);
-    foreach(QString forecastItem, forecastList) {
+    foreach(const QString &forecastItem, forecastList) {
         fieldList = forecastItem.split('|');
 
         // TODO: We don't convert the wind format (Knots, meteres per second, bft) for the Long Forecast yet. These are not used in the applet (for now).

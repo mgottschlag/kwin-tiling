@@ -217,7 +217,7 @@ void SessionRunner::exec(const Plasma::SearchContext *search, const Plasma::Sear
 
         SessList sessions;
         if (dm.localSessions(sessions)) {
-            foreach (SessEnt session, sessions) {
+            foreach (const SessEnt &session, sessions) {
                 if (sessionName == KDisplayManager::sess2Str(session)) {
                     dm.lockSwitchVT(session.vt);
                     break;

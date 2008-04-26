@@ -62,7 +62,7 @@ void HotplugEngine::onDeviceAdded(const QString &udi)
 
     QStringList interestingDesktopFiles;
     //search in all desktop configuration file if the device inserted is a correct device
-    foreach (QString path, files) {
+    foreach (const QString &path, files) {
         KDesktopFile cfg(path);
         QString string_predicate = cfg.desktopGroup().readEntry("X-KDE-Solid-Predicate");
         //kDebug()<<string_predicate;

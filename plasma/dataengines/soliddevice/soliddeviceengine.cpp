@@ -91,7 +91,7 @@ bool SolidDeviceEngine::sourceRequestEvent(const QString &name)
     Solid::Predicate predicate = Solid::Predicate::fromString(name);
     Solid::Device device(name);
     if(predicate.isValid()  && !predicatemap.contains(name)) {
-        foreach (Solid::Device device, Solid::Device::listFromQuery(predicate)) {
+        foreach (const Solid::Device &device, Solid::Device::listFromQuery(predicate)) {
             predicatemap[name] << device.udi();
         }
         setData(name, predicatemap[name]);
@@ -472,7 +472,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         setData(name, I18N_NOOP("Supported Drivers"), video->supportedDrivers());
 
         QStringList handles;
-        foreach (QString driver, video->supportedDrivers()) {
+        foreach (const QString &driver, video->supportedDrivers()) {
             handles << video->driverHandle(driver).toString();
         }
         setData(name, I18N_NOOP("Driver Handles"), handles);
@@ -486,7 +486,7 @@ void SolidDeviceEngine::deviceAdded(const QString& udi)
 {
     Solid::Device device(udi);
 
-    foreach (QString query, predicatemap.keys()) {
+    foreach (const QString &query, predicatemap.keys()) {
         Solid::Predicate predicate = Solid::Predicate::fromString(query);
         if (predicate.matches(device)) {
             predicatemap[query] << udi;
@@ -566,7 +566,7 @@ bool SolidDeviceEngine::updateSourceEvent(const QString& source)
 
 void SolidDeviceEngine::deviceRemoved(const QString& udi)
 {
-    foreach (QString query, predicatemap.keys()) {
+    foreach (const QString &query, predicatemap.keys()) {
         predicatemap[query].removeAll(udi);
         setData(query, predicatemap[query]);
     }

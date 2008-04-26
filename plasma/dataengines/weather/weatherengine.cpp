@@ -91,7 +91,7 @@ IonInterface* WeatherEngine::loadIon(const QString& plugName)
     IonInterface *ion = 0;
     KService::Ptr foundPlugin;
 
-    foreach(KService::Ptr service, d->m_ionServices) {
+    foreach(const KService::Ptr &service, d->m_ionServices) {
         if (service->property("X-IonName").toString() == plugName) {
             foundPlugin = service;
             break;
@@ -174,7 +174,7 @@ KService::List WeatherEngine::knownIons()
         return KService::List();
     }
 
-    foreach(KService::Ptr service, offers) {
+    foreach(const KService::Ptr &service, offers) {
         setData("ions", service->property("X-IonName").toString(), QString("%1|%2").arg(service->property("Name").toString()).arg(service->property("X-IonName").toString()));
     }
 

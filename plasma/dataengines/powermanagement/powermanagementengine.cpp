@@ -71,8 +71,8 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
         uint index = 0;
         QStringList battery_sources;
         
-        foreach (Solid::Device device_battery, list_battery) {
-            Solid::Battery* battery = device_battery.as<Solid::Battery>();
+        foreach (const Solid::Device &device_battery, list_battery) {
+            const Solid::Battery* battery = device_battery.as<Solid::Battery>();
 
             if(battery != 0) {
                 QString source = QString(I18N_NOOP("Battery%1")).arg(index++);

@@ -111,7 +111,7 @@ void Battery::init()
     //connect sources
     connectSources();
     
-    foreach (QString battery_source, battery_sources) {
+    foreach (const QString &battery_source, battery_sources) {
         kDebug() << "BatterySource:" << battery_source;
         dataUpdated(battery_source, dataEngine("powermanagement")->query(battery_source));
     }
@@ -583,7 +583,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
 void Battery::connectSources() {
     const QStringList& battery_sources = dataEngine("powermanagement")->query(I18N_NOOP("Battery"))[I18N_NOOP("sources")].toStringList();
     
-    foreach (QString battery_source, battery_sources) {
+    foreach (const QString &battery_source, battery_sources) {
         dataEngine("powermanagement")->connectSource(battery_source, this);
     }
     
@@ -594,7 +594,7 @@ void Battery::disconnectSources()
 {
     const QStringList& battery_sources = dataEngine("powermanagement")->query(I18N_NOOP("Battery"))[I18N_NOOP("sources")].toStringList();
     
-    foreach (QString battery_source ,battery_sources) {
+    foreach (const QString &battery_source ,battery_sources) {
         dataEngine("powermanagement")->disconnectSource(battery_source, this);
     }
     
