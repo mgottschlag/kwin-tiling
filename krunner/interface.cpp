@@ -117,9 +117,9 @@ class SearchMatch : public QListWidgetItem
             return m_action->relevance();
         }
 
-        void createMatchOptions(QWidget* parent) const
+        void createRunOptions(QWidget* parent) const
         {
-            m_action->runner()->createMatchOptions(parent);
+            m_action->runner()->createRunOptions(parent);
         }
 
         void setDefault(bool def)
@@ -713,7 +713,7 @@ void Interface::showOptions(bool show)
         //kDebug() << "set inner widget to " << m_defaultMatch->runner()->options();
         delete m_optionsWidget;
         m_optionsWidget = new QWidget(this);
-        m_defaultMatch->createMatchOptions(m_optionsWidget);
+        m_defaultMatch->createRunOptions(m_optionsWidget);
         m_optionsButton->setText( i18n( "Hide Options" ) );
     } else {
         delete m_optionsWidget;
