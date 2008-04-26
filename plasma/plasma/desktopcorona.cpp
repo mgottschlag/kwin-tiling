@@ -67,7 +67,7 @@ void DesktopCorona::checkScreens()
     m_numScreens = numScreens;
 }
 
-void DesktopCorona::loadDefaultSetup()
+void DesktopCorona::loadDefaultLayout()
 {
     //FIXME: implement support for system-wide defaults
     QDesktopWidget *desktop = QApplication::desktop();

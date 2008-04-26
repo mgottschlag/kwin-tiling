@@ -37,7 +37,7 @@ public:
     /**
      * Loads the default (system wide) layout for this user
      **/
-    void loadDefaultSetup();
+    void loadDefaultLayout();
 
     /**
      * Ensures we have a desktop containment for every screen
