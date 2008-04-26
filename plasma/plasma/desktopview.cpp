@@ -59,7 +59,7 @@ DesktopView::~DesktopView()
 void DesktopView::connectContainment(Plasma::Containment *containment)
 {
     if (containment) {
-        connect(containment, SIGNAL(zoomRequested(Plasma::Containment*,Plasma::ZoomDirecton)),
+        connect(containment, SIGNAL(zoomRequested(Plasma::Containment*,Plasma::ZoomDirection)),
                 this, SLOT(zoom(Plasma::Containment*,Plasma::ZoomDirection)));
         connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
         connect(containment, SIGNAL(addSiblingContainment(Plasma::Containment *)), this, SLOT(addContainment(Plasma::Containment *)));
