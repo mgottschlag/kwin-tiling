@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2007 by Robert Knight <robertknight@gmail.com>          *
+ *   Copyright (C) 2008 by Alexis Ménard <darktears31@gmail.com>           *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -21,16 +22,30 @@
 #ifndef WINDOWTASKITEM_H
 #define WINDOWTASKITEM_H
 
-// Own
-#include "abstracttaskitem.h"
-
 // KDE
 #include <taskmanager/taskmanager.h>
+
+// Qt
+#include <QIcon>
+#include <QTextLayout>
+#include <QTime>
+#include <QGraphicsLinearLayout>
+#include <QGraphicsWidget>
+
+class QTimeLine;
+
+// Plasma
+#include <plasma/animator.h>
+
+namespace Plasma
+{
+    class PanelSvg;
+}
 
 /**
  * A task item for a task which represents a window on the desktop.
  */
-class WindowTaskItem : public AbstractTaskItem
+class WindowTaskItem : public QGraphicsWidget
 {
     Q_OBJECT
 
@@ -52,6 +67,46 @@ public:
     /** Switch on/off tooltips above tasks */
     void setShowTooltip(const bool showit);
 
+    /** Sets the text for this task item. */
+    void setText(const QString &text);
+
+    /** Sets the icon for this task item. */
+    void setIcon(const QIcon &icon);
+
+    /**
+     * This enum describes the generic flags which are currently
+     * set by the task.
+     */
+    enum TaskFlag
+    {
+        /**
+         * This flag is set by the task to indicate that it wants
+         * the user's attention.
+         */
+        TaskWantsAttention = 1,
+        /**
+         * Indicates that the task's window has the focus
+         */
+        TaskHasFocus       = 2,
+        /**
+         * Indicates that the task is iconified
+         */
+        TaskIsMinimized    = 4
+    };
+    Q_DECLARE_FLAGS(TaskFlags, TaskFlag)
+
+    /** Sets the task flags for this item. */
+    void setTaskFlags(TaskFlags flags);
+
+    /** Returns the task's current flags. */
+    TaskFlags taskFlags() const;
+
+    /** Returns current text for this task. */
+    QString text() const;
+
+    /** Returns the current icon for this task. */
+    QIcon icon() const;
+
     virtual void close();
 
     /** Overrided from LayoutItem */
@@ -59,7 +114,9 @@ public:
 
 signals:
     /** Emitted when a window is selected for activation, minimization, iconification */
-    void windowSelected(AbstractTaskItem*);
+    void windowSelected(WindowTaskItem *);
+
+    void activated(WindowTaskItem *);
 
 public slots:
     virtual void activate();
@@ -70,13 +127,89 @@ protected:
     virtual void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
     virtual void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
 
+    /** Event compression **/
+    void queueUpdate();
+
+    // reimplemented
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    virtual void timerEvent(QTimerEvent *event);
+    virtual void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget);
+
+    /** TODO: Document me. */
+    QSize preferredIconSize() const;
+  
+    /** Draws the background for the task item. */
+    virtual void drawBackground(QPainter *painter,const QStyleOptionGraphicsItem *option,
+                                QWidget *widget);
+    /** Draws the icon and text which represent the task item. */
+    virtual void drawTask(QPainter *painter,const QStyleOptionGraphicsItem *option,
+                          QWidget *widget);
+
+    /** Returns a QTextOption object for the icon label QTtextLayout.*/
+    QTextOption textOption() const;
+
+    /**
+    * Lays the text out in the text layout using the constraints, and returns the actual
+    * size required. The returned size may be wider than the constraints if the text
+    * contains a non-breakable word that is wider than the maximum width.
+    * If more height is needed than what's available, the last line that will fit will be
+    * extended to hold the remainder of the text.
+    */
+    QSize layoutText(QTextLayout &layout, const QString &text, const QSize &constraints) const;
+
+    /**
+    * Draws the text layout (which must already have the text layed out) in the rect using
+    * the supplied painter. If the layout contains text lines that are longer than the rect
+    * is wide, they will be elided by fading the text out.
+    */
+    void drawTextLayout(QPainter *painter, const QTextLayout &layout, const QRect &rect) const;
+
+
 private slots:
     void updateTask();
+    void animationUpdate(qreal progress);
+    void slotUpdate();
 
 private:
     TaskManager::TaskPtr _task;
     QTimer* _activateTimer;
+
     bool _showTooltip;
+    static void setupBackgroundSvg(QObject *parent);
+    // area of item occupied by task's icon
+    QRectF iconRect() const;
+    // area of item occupied by task's text
+    QRectF textRect() const;
+
+    TaskFlags _flags;
+
+    QIcon _icon;
+    QString _text;
+
+    int m_animId;
+    qreal m_alpha;
+    bool m_fadeIn;
+
+    QPointF _dragOffset;
+    int m_updateTimerId;
+    QTime m_lastUpdate;
+
+    static bool s_backgroundCreated;
+    static Plasma::PanelSvg* s_taskItemBackground;
+
+    // minimum size (in pixels) of a task's icon
+    static const int MinTaskIconSize = 48;
+    // maximum size (in pixels) of a task's icon
+    static const int MaxTaskIconSize = 48;
+
+    // distance (in pixels) between a task's icon and its text
+    static const int IconTextSpacing = 4;
+
+    static const int TaskItemHorizontalMargin = 4;
+    static const int TaskItemVerticalMargin = 4;
 };
 
 #endif

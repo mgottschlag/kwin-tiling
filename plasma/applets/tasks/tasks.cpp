@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2007 by Robert Knight <robertknight@gmail.com>          *
+ *   Copyright (C) 2008 by Alexis Ménard <darktears31@gmail.com>           *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -65,6 +66,7 @@ void Tasks::init()
     m_layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     //TODO : Qt's bug??
     m_layout->setMaximumSize(INT_MAX,INT_MAX);
+    m_layout->addStretch();
    
    
     if (formFactor() == Plasma::Vertical) {
@@ -101,13 +103,14 @@ void Tasks::addStartingTask(StartupPtr task)
     WindowTaskItem* item = new WindowTaskItem(this, m_showTooltip);
     item->setStartupTask(task);
     m_startupTaskItems.insert(task, item);
-    m_layout->addItem(item);
+    insertItemBeforeSpacer(item);
 }
 
 void Tasks::removeStartingTask(StartupPtr task)
 {
     if (m_startupTaskItems.contains(task)) {
-        AbstractTaskItem *item = m_startupTaskItems.take(task);
+        WindowTaskItem *item = m_startupTaskItems.take(task);
+        
         m_layout->removeItem(item);
         scene()->removeItem(item);
     }
@@ -143,24 +146,22 @@ void Tasks::addWindowTask(TaskPtr task)
     foreach (StartupPtr startup, m_startupTaskItems.keys()) {
         if (startup->matchesWindow(task->window())) {
             item = dynamic_cast<WindowTaskItem *>(m_startupTaskItems.take(startup));
-            m_layout->addItem(item);
             break;
         }
     }
 
     if (!item) {
         item = new WindowTaskItem(this, m_showTooltip);
+        insertItemBeforeSpacer(item);
     }
-
     item->setWindowTask(task);
     m_windowTaskItems.insert(task, item);
-    m_layout->addItem(item);
 }
 
 void Tasks::removeWindowTask(TaskPtr task)
 {
     if (m_windowTaskItems.contains(task)) {
-        AbstractTaskItem *item = m_windowTaskItems.take(task);
+        WindowTaskItem *item = m_windowTaskItems.take(task);
         m_layout->removeItem(item);
         scene()->removeItem(item);
     }
@@ -168,13 +169,10 @@ void Tasks::removeWindowTask(TaskPtr task)
 
 void Tasks::removeAllWindowTasks()
 {
-    for (int i = 0; i < m_layout->count();i++)
-    {
-        scene()->removeItem(dynamic_cast<QGraphicsWidget *>(m_layout->itemAt(i)));
-        m_layout->removeAt(i);
+    foreach (TaskPtr task, m_windowTaskItems.keys()) {
+        removeWindowTask(task);
     }
     m_windowTaskItems.clear();
-    
 }
 
 void Tasks::constraintsUpdated(Plasma::Constraints constraints)
@@ -237,6 +235,16 @@ void Tasks::checkScreenChange()
         }
     }
     m_tasks.clear();
+}
+
+void Tasks::insertItemBeforeSpacer(QGraphicsWidget * item)
+{
+    if (m_layout->count() == 1) {
+        m_layout->insertItem(0,item);
+    }
+    else {
+        m_layout->insertItem(m_layout->count()-1,item);
+    }
 }
 
 bool Tasks::isOnMyScreen(TaskPtr task)
@@ -345,7 +353,7 @@ void Tasks::reconnect()
 
 void Tasks::themeRefresh()
 {
-    foreach (AbstractTaskItem *taskItem, m_windowTaskItems) {
+    foreach (WindowTaskItem *taskItem, m_windowTaskItems) {
         taskItem->update();
     }
 

@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2007 by Robert Knight <robertknight@gmail.com>          *
+ *   Copyright (C) 2008 by Alexis Ménard <darktears31@gmail.com>           *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -39,8 +40,7 @@ namespace Plasma
     class LayoutAnimator;
 } // namespace Plasma
 
-class AbstractTaskItem;
-class TaskGroupItem;
+class WindowTaskItem;
 
 using TaskManager::StartupPtr;
 using TaskManager::TaskPtr;
@@ -94,11 +94,13 @@ private:
         // remove all tasks from the taskbar
         void removeAllWindowTasks();
 
+        void insertItemBeforeSpacer(QGraphicsWidget * item);
+
         bool isOnMyScreen(TaskPtr task);
         void reconnect();
 
-        QHash<TaskPtr,AbstractTaskItem*> m_windowTaskItems;
-        QHash<StartupPtr,AbstractTaskItem*> m_startupTaskItems;
+        QHash<TaskPtr,WindowTaskItem*> m_windowTaskItems;
+        QHash<StartupPtr,WindowTaskItem*> m_startupTaskItems;
 
         bool m_showTooltip;
         bool m_showOnlyCurrentDesktop;
