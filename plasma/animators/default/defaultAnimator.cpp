@@ -30,7 +30,7 @@ DefaultAnimator::DefaultAnimator(QObject *parent, const QVariantList& list)
     Q_UNUSED(list)
 }
 
-int DefaultAnimator::animationFPS(Plasma::Animator::Animation animation) const
+int DefaultAnimator::animationFps(Plasma::Animator::Animation animation) const
 {
     switch (animation) {
         case Plasma::Animator::AppearAnimation:
@@ -43,7 +43,7 @@ int DefaultAnimator::animationFPS(Plasma::Animator::Animation animation) const
     }
 }
 
-int DefaultAnimator::elementAnimationFPS(Plasma::Animator::Animation animation) const
+int DefaultAnimator::elementAnimationFps(Plasma::Animator::Animation animation) const
 {
     switch (animation) {
         case Plasma::Animator::AppearAnimation:
