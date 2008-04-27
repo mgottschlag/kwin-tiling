@@ -266,7 +266,7 @@ FlipScrollView::FlipScrollView(QWidget *parent)
     connect(d->flipAnimTimeLine, SIGNAL(valueChanged(qreal)), this, SLOT(updateFlipAnimation(qreal)));
     d->flipAnimTimeLine->setDuration(Private::FLIP_ANIM_DURATION);
     d->flipAnimTimeLine->setCurrentTime(Private::FLIP_ANIM_DURATION);
-    setIconSize(QSize(ItemDelegate::ICON_SIZE,ItemDelegate::ICON_SIZE));
+    setIconSize(QSize(KIconLoader::SizeMedium,KIconLoader::SizeMedium));
     setMouseTracking(true);
     setAutoScroll(true);
 }

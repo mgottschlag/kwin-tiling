@@ -29,6 +29,7 @@
 
 //KDE
 #include <KDebug>
+#include <KIconLoader>
 
 //Plasma
 #include <plasma/delegate.h>
@@ -38,7 +39,7 @@ using namespace Notifier;
 NotifierView::NotifierView(QWidget *parent)
     : QTreeView(parent)
 {
-    setIconSize(QSize(Plasma::Delegate::ICON_SIZE, Plasma::Delegate::ICON_SIZE));
+    setIconSize(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     setRootIsDecorated(false);
     setHeaderHidden(true);
     setMouseTracking(true);
@@ -51,12 +52,11 @@ NotifierView::~NotifierView()
 
 void NotifierView::resizeEvent(QResizeEvent * event)
 {
-    //the columns after the first are squares Plasma::Delegate::ITEM_HEIGHT x Plasma::Delegate::ITEM_HEIGHT,
+    //the columns after the first are squares KIconLoader::SizeMedium x KIconLoader::SizeMedium,
     //the first column takes all the remaining space
     if (header()->count() > 0) {
         const int newWidth = event->size().width() -
-                             (header()->count()-1)*(Plasma::Delegate::ICON_SIZE + Plasma::Delegate::ITEM_RIGHT_MARGIN + Plasma::Delegate::ITEM_LEFT_MARGIN) -
-                             Plasma::Delegate::ITEM_RIGHT_MARGIN*2;
+                             (header()->count()-1)*(sizeHintForRow(0));
         header()->resizeSection(0, newWidth);
     }
 }
@@ -125,9 +125,6 @@ void NotifierView::paintEvent(QPaintEvent *event)
                 if (index == currentIndex()) {
                     option.state |= QStyle::State_HasFocus;
                 }
-
-                option.rect.setLeft(option.rect.left() + Plasma::Delegate::ITEM_LEFT_MARGIN);
-                option.rect.setRight(option.rect.right() - Plasma::Delegate::ITEM_RIGHT_MARGIN);
 
                 itemDelegate(index)->paint(&painter,option,index);
             }

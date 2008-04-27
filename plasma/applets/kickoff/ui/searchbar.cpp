@@ -32,6 +32,7 @@
 
 // KDE
 #include <KIcon>
+#include <KIconLoader>
 #include <KLineEdit>
 #include <KLocalizedString>
 
@@ -69,10 +70,10 @@ SearchBar::SearchBar(QWidget *parent)
 
     QFileInfo fi(QDir(QDir::homePath()), ".face.icon");
     if (fi.exists()) {
-        searchIcon->setPixmap(QPixmap(fi.absoluteFilePath()).scaled(ItemDelegate::ICON_SIZE, ItemDelegate::ICON_SIZE));
+        searchIcon->setPixmap(QPixmap(fi.absoluteFilePath()).scaled(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     }
     else {
-        searchIcon->setPixmap(KIcon("system-search").pixmap(ItemDelegate::ICON_SIZE, ItemDelegate::ICON_SIZE));
+        searchIcon->setPixmap(KIcon("system-search").pixmap(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     }
 
     d->editWidget = new KLineEdit(this);
@@ -80,9 +81,10 @@ SearchBar::SearchBar(QWidget *parent)
     d->editWidget->setClearButtonShown(true);
     connect(d->editWidget,SIGNAL(textChanged(QString)),this,SIGNAL(startUpdateTimer()));
 
-    layout->addSpacing(ItemDelegate::ITEM_LEFT_MARGIN - 3);
+    //add arbitrary spacing
+    layout->addSpacing(2);
     layout->addWidget(searchIcon);
-    layout->addSpacing(ItemDelegate::ICON_TEXT_MARGIN);
+    layout->addSpacing(5);
     layout->addWidget(searchLabel);
     layout->addWidget(d->editWidget);
     setLayout(layout);

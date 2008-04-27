@@ -167,7 +167,7 @@ public:
         int pageSize = q->height();
         q->verticalScrollBar()->setRange(0,contentsHeight-pageSize);
         q->verticalScrollBar()->setPageStep(pageSize);
-        q->verticalScrollBar()->setSingleStep(ItemDelegate::ITEM_HEIGHT);
+        q->verticalScrollBar()->setSingleStep(q->sizeHintForRow(0));
     }
 
     int contentWidth() const
@@ -259,7 +259,7 @@ UrlItemView::UrlItemView(QWidget *parent)
     : QAbstractItemView(parent)
     , d(new Private(this))
 {
-    setIconSize(QSize(ItemDelegate::ICON_SIZE,ItemDelegate::ICON_SIZE));
+    setIconSize(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     setMouseTracking(true);
 }
 

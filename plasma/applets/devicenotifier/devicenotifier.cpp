@@ -98,7 +98,7 @@ void DeviceNotifier::init()
     QLabel *label = new QLabel(i18n("<font color=\"%1\">Devices recently plugged in:</font>",
                             colorTheme.foreground(KColorScheme::NormalText).color().name()));
     QLabel *icon = new QLabel();
-    icon->setPixmap(KIcon("emblem-mounted").pixmap(Plasma::Delegate::ICON_SIZE, Plasma::Delegate::ICON_SIZE));
+    icon->setPixmap(KIcon("emblem-mounted").pixmap(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     
     QHBoxLayout *l_layout2 = new QHBoxLayout();
     l_layout2->setSpacing(0);
