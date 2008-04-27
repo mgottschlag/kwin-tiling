@@ -76,7 +76,7 @@ class DeviceNotifier : public Plasma::Applet
 
         void init();
         void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
-        void constraintsUpdated(Plasma::Constraints constraints);
+        void constraintsEvent(Plasma::Constraints constraints);
     public slots:
         void onSourceAdded(const QString &name);
         void onSourceRemoved(const QString &name);

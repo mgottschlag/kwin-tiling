@@ -32,7 +32,7 @@ class LockOut : public Plasma::Applet
         LockOut(QObject *parent, const QVariantList &args);
         ~LockOut();
         void init();
-        virtual void constraintsUpdated(Plasma::Constraints constraints);
+        virtual void constraintsEvent(Plasma::Constraints constraints);
 
     public slots:
         void clickLogout();

@@ -53,7 +53,7 @@ class Clock : public Plasma::Containment
         void init();
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
         void setPath(const QString&);
-        void constraintsUpdated(Plasma::Constraints constraints);
+        void constraintsEvent(Plasma::Constraints constraints);
         QPainterPath shape() const;
 
     public slots:

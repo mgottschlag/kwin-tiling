@@ -87,7 +87,7 @@ void LockOut::checkLayout()
     }
 }
 
-void LockOut::constraintsUpdated(Plasma::Constraints constraints)
+void LockOut::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint ||
         constraints & Plasma::SizeConstraint) {

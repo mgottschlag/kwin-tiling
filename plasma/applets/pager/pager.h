@@ -41,7 +41,7 @@ class Pager : public Plasma::Applet
         void init();
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option,
                             const QRect &contents);
-        void constraintsUpdated(Plasma::Constraints);
+        void constraintsEvent(Plasma::Constraints);
         virtual QList<QAction*> contextualActions();
         
     public slots:

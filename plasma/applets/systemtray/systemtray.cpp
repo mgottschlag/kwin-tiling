@@ -45,7 +45,7 @@ SystemTray::~SystemTray()
     delete m_systemTrayWidget;
 }
 
-void SystemTray::constraintsUpdated(Plasma::Constraints constraints)
+void SystemTray::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::SizeConstraint) {
         updateWidgetGeometry();

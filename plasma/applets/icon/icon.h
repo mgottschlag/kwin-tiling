@@ -44,7 +44,7 @@ class IconApplet : public Plasma::Applet
 
         void init();
         void setUrl(const KUrl& url);
-        void constraintsUpdated(Plasma::Constraints constraints);
+        void constraintsEvent(Plasma::Constraints constraints);
         void showConfigurationInterface();
         void setDisplayLines(int displayLines);
         int displayLines();

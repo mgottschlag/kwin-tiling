@@ -120,7 +120,7 @@ void Battery::init()
     kDebug() << battery_sources.size();
 }
 
-void Battery::constraintsUpdated(Plasma::Constraints constraints)
+void Battery::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {
         BackgroundHints background = NoBackground;

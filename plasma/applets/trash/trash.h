@@ -48,7 +48,7 @@ class Trash : public Plasma::Applet
         ~Trash();
 
         void init();
-        void constraintsUpdated(Plasma::Constraints constraints);
+        void constraintsEvent(Plasma::Constraints constraints);
         
     public slots:
         void slotOpen();

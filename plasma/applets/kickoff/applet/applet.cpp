@@ -105,7 +105,7 @@ void LauncherApplet::init()
     d->icon->resize(geometry().size());
 }
 
-void LauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
+void LauncherApplet::constraintsEvent(Plasma::Constraints constraints)
 {
     setBackgroundHints(NoBackground);
     if (constraints & Plasma::FormFactorConstraint) {

@@ -174,7 +174,7 @@ void Tasks::removeAllWindowTasks()
     m_windowTaskItems.clear();
 }
 
-void Tasks::constraintsUpdated(Plasma::Constraints constraints)
+void Tasks::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::LocationConstraint) {
         if (formFactor() == Plasma::Vertical) {

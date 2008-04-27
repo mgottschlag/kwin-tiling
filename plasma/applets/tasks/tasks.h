@@ -65,7 +65,7 @@ public:
 
         void init();
 
-        void constraintsUpdated(Plasma::Constraints constraints);
+        void constraintsEvent(Plasma::Constraints constraints);
         void showConfigurationInterface();
 
 protected slots:

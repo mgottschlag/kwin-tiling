@@ -41,7 +41,7 @@ public:
     explicit SystemTray(QObject *parent, const QVariantList &arguments = QVariantList());
     ~SystemTray();
 
-    void constraintsUpdated(Plasma::Constraints constraints);
+    void constraintsEvent(Plasma::Constraints constraints);
 
 private slots:
     void updateWidgetGeometry();

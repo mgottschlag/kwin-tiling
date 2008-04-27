@@ -51,7 +51,7 @@ class Battery : public Plasma::Applet
         QSizeF contentSizeHint() const;
         Qt::Orientations expandingDirections() const;
 
-        void constraintsUpdated(Plasma::Constraints constraints);
+        void constraintsEvent(Plasma::Constraints constraints);
 
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);

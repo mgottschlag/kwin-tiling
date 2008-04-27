@@ -89,7 +89,7 @@ void Clock::connectToEngine()
     }
 }
 
-void Clock::constraintsUpdated(Plasma::Constraints constraints)
+void Clock::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {
         setBackgroundHints(NoBackground);
@@ -171,7 +171,8 @@ void Clock::configAccepted()
     }
 
     connectToEngine();
-    constraintsUpdated(Plasma::AllConstraints);
+    //TODO: why we don't call updateConstraints()?
+    constraintsEvent(Plasma::AllConstraints);
     emit configNeedsSaving();
 }
 

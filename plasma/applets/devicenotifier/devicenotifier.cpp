@@ -185,7 +185,7 @@ DeviceNotifier::~DeviceNotifier()
     delete m_timer;
 }
 
-void DeviceNotifier::constraintsUpdated(Plasma::Constraints constraints)
+void DeviceNotifier::constraintsEvent(Plasma::Constraints constraints)
 {
     // on the panel we don't want a background, and our proxy widget in Planar has one
     setBackgroundHints(NoBackground);

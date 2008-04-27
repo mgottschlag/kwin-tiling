@@ -131,7 +131,7 @@ void Trash::popup()
     m_icon->setPressed();
 }
 
-void Trash::constraintsUpdated(Plasma::Constraints constraints)
+void Trash::constraintsEvent(Plasma::Constraints constraints)
 {
     setBackgroundHints(NoBackground);
 

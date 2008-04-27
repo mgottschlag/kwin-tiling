@@ -126,7 +126,7 @@ void IconApplet::openUrl()
     }
 }
 
-void IconApplet::constraintsUpdated(Plasma::Constraints constraints)
+void IconApplet::constraintsEvent(Plasma::Constraints constraints)
 {
     setBackgroundHints(NoBackground);
 
@@ -220,7 +220,8 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
 
     if (m_url.isEmpty()) {
         setUrl(urls.first());
-        constraintsUpdated(Plasma::FormFactorConstraint);
+        //TODO: why we don't call updateConstraints()?
+        constraintsEvent(Plasma::FormFactorConstraint);
     } else if (m_url.isLocalFile() &&
               (m_mimetype &&
                m_mimetype->is("application/x-executable") ||

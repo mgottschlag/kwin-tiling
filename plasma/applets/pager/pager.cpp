@@ -104,7 +104,7 @@ void Pager::init()
     m_currentDesktop = KWindowSystem::currentDesktop();
 }
 
-void Pager::constraintsUpdated(Plasma::Constraints constraints)
+void Pager::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::SizeConstraint) {
         recalculateGeometry();
