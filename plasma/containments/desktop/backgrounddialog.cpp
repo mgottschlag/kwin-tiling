@@ -225,7 +225,7 @@ findAllBackgrounds(const BackgroundContainer *container,
 #ifdef USE_BACKGROUND_PACKAGES
 
     // get all packages in this directory
-    QStringList packages = Plasma::Package::knownPackages(path);
+    QStringList packages = Plasma::Package::listInstalled(path);
     foreach (const QString &packagePath, packages)
     {
         kDebug() << packagePath;
