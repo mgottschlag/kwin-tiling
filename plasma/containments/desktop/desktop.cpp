@@ -125,7 +125,7 @@ QSize DefaultDesktop::resolution() const
     return QApplication::desktop()->screenGeometry(screen()).size();
 }
 
-void DefaultDesktop::constraintsUpdated(Plasma::Constraints constraints)
+void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & StartupCompletedConstraint) {
         if (screen() == 0 && !s_icons) {
@@ -387,7 +387,7 @@ QList<QAction*> DefaultDesktop::contextualActions()
         m_logoutAction = new QAction(i18n("Leave..."), this);
         m_logoutAction->setIcon(KIcon("system-log-out"));
         connect(m_logoutAction, SIGNAL(triggered(bool)), this, SLOT(logout()));
-        constraintsUpdated(Plasma::ImmutableConstraint);
+        constraintsEvent(Plasma::ImmutableConstraint);
 
         m_separator = new QAction(this);
         m_separator->setSeparator(true);

@@ -106,7 +106,7 @@ QList<QAction*> Panel::contextualActions()
 
 void Panel::backgroundChanged()
 {
-    constraintsUpdated(Plasma::LocationConstraint);
+    constraintsEvent(Plasma::LocationConstraint);
 }
 
 void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
@@ -229,7 +229,7 @@ void Panel::updateBorders(const QRect &geom)
     update();
 }
 
-void Panel::constraintsUpdated(Plasma::Constraints constraints)
+void Panel::constraintsEvent(Plasma::Constraints constraints)
 {
     kDebug() << "constraints updated with" << constraints << "!!!!!!";
     
@@ -280,7 +280,7 @@ void Panel::themeUpdated()
 {
     //if the theme is changed all the calculations needs to be done again
     //TODO resize based on the change in theme bordersize
-    constraintsUpdated(Plasma::LocationConstraint);
+    constraintsEvent(Plasma::LocationConstraint);
 }
 
 void Panel::paintInterface(QPainter *painter,

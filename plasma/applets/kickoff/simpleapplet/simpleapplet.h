@@ -81,7 +81,7 @@ class MenuLauncherApplet : public Plasma::Applet
          *
          * @param constraints the type of constraints that were updated
          */
-        void constraintsUpdated(Plasma::Constraints constraints);
+        void constraintsEvent(Plasma::Constraints constraints);
 
         /**
          * Returns a list of context-related QAction instances.

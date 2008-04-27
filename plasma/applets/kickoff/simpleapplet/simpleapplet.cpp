@@ -197,10 +197,10 @@ void MenuLauncherApplet::init()
     d->actions.append(d->switcher);
     connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
 
-    constraintsUpdated(Plasma::ImmutableConstraint);
+    constraintsEvent(Plasma::ImmutableConstraint);
 }
 
-void MenuLauncherApplet::constraintsUpdated(Plasma::Constraints constraints)
+void MenuLauncherApplet::constraintsEvent(Plasma::Constraints constraints)
 {
     setBackgroundHints(NoBackground);
     if (constraints & Plasma::FormFactorConstraint) {

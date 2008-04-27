@@ -71,7 +71,7 @@ public:
     DefaultDesktop(QObject *parent, const QVariantList &args);
     ~DefaultDesktop();
     void init();
-    void constraintsUpdated(Plasma::Constraints constraints);
+    void constraintsEvent(Plasma::Constraints constraints);
 
     QList<QAction*> contextualActions();
 

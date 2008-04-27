@@ -42,7 +42,7 @@ public:
     void init();
     QList<QAction*> contextualActions();
 
-    void constraintsUpdated(Plasma::Constraints constraints);
+    void constraintsEvent(Plasma::Constraints constraints);
 
     void paintInterface(QPainter *painter,
                         const QStyleOptionGraphicsItem *option,
