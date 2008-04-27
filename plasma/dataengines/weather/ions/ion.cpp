@@ -30,7 +30,6 @@ public:
     int ref;
     IonInterface *ion;
     bool initialized;
-    bool waitingJob;
 };
 
 IonInterface::IonInterface(QObject *parent, const QVariantList &args)
@@ -62,7 +61,7 @@ bool IonInterface::isUsed() const
 /**
  * If the ion is not initialized just set the initial data source up even if it's empty, we'll retry once the initialization is done
  */
-bool IonInterface::sourceRequested(const QString &source)
+bool IonInterface::sourceRequestEvent(const QString &source)
 {
     kDebug() << "sourceRequested()";
     if (d->initialized) {
@@ -77,7 +76,7 @@ bool IonInterface::sourceRequested(const QString &source)
 /**
  * Update the ion's datasource. Triggered when a Plasma::DataEngine::connectSource() timeout occurs.
  */
-bool IonInterface::updateSource(const QString& source)
+bool IonInterface::updateSourceEvent(const QString& source)
 {
     kDebug() << "updateSource()";
     if (d->initialized) {
@@ -96,20 +95,7 @@ void IonInterface::setInitialized(bool initialized)
 
     if (d->initialized) {
         foreach(const QString &source, sources()) {
-            updateSource(source);
+            updateSourceEvent(source);
         }
     }
-}
-
-void IonInterface::setJobState(bool state)
-{
-    d->waitingJob = state;
-}
-
-bool IonInterface::hasWaitingJob() const {
-    if (d->waitingJob) {
-        return true;
-    }
- 
-    return false;
 }
