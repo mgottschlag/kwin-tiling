@@ -102,11 +102,6 @@ void PanelView::updatePanelGeometry()
 
     QRect screenGeom = QApplication::desktop()->screenGeometry(screen);
 
-    // Don't change the geometry again if a same one was asked
-    if (geom == screenGeom) {
-        return;
-    }
-
     if (m_alignment != Qt::AlignCenter) {
         m_offset = qMax(m_offset, 0);
     }
@@ -232,9 +227,13 @@ void PanelView::updatePanelGeometry()
     }
 
     kDebug() << (QObject*)this << "thinks its panel is at " << geom;
-
-    setGeometry(geom);
-
+    if (geom == geometry()) {
+        // our geometry is the same, but the panel moved around
+        // so make sure our struts are still valid
+        updateStruts();
+    } else {
+        setGeometry(geom);
+    }
 }
 
 void PanelView::setOffset(int newOffset)
@@ -304,6 +303,8 @@ void PanelView::updateStruts()
             strut.bottom_width = height() + bottomOffset;
             strut.bottom_start = x();
             strut.bottom_end = x() + width() - 1;
+            //kDebug() << "setting bottom edge to" << strut.bottom_width
+            //         << strut.bottom_start << strut.bottom_end;
             break;
 
         case Plasma::RightEdge:
@@ -319,6 +320,7 @@ void PanelView::updateStruts()
             break;
 
         default:
+            //kDebug() << "where are we?";
             break;
     }
 
