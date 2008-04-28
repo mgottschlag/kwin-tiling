@@ -55,6 +55,6 @@ install(
     )
 
 install(
-    FILES kcm_hotkeys.desktop
+    FILES khotkeys.desktop
     DESTINATION ${SERVICES_INSTALL_DIR}
     )
