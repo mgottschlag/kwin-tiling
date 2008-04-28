@@ -105,12 +105,6 @@ void DesktopCorona::loadDefaultLayout()
     panel->addApplet("notifier");
     panel->addApplet("digital-clock");
 
-    // trigger an instant layout so we immediately have a proper geometry rather than waiting around
-    // for the event loop
-    if (panel->layout()) {
-        panel->layout()->invalidate();
-    }
-
     // in case something goes bad during runtime, let's at least save this to disk soonish
     scheduleConfigSync();
 }
