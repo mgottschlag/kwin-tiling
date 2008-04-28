@@ -24,19 +24,13 @@
 #include "systemtray.h"
 
 // Qt
-#include <QGraphicsProxyWidget>
+#include <QGraphicsView>
 
 SystemTray::SystemTray(QObject *parent, const QVariantList &arguments)
     : Plasma::Applet(parent, arguments)
 {
-    m_proxyWidget = new QGraphicsProxyWidget(this);
-    m_systemTrayWidget = new SystemTrayWidget(0);
-    m_proxyWidget->setWidget(m_systemTrayWidget);
-    connect(m_systemTrayWidget, SIGNAL(sizeShouldChange()),
-            this, SLOT(updateWidgetGeometry()));
-    setPreferredSize(m_systemTrayWidget->size());
-    updateWidgetOrientation();
-    m_systemTrayWidget->setVisible(true);
+    resize(40,60);
+    setSizePolicy(QSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred));
 }
 
 SystemTray::~SystemTray()
@@ -46,7 +40,7 @@ SystemTray::~SystemTray()
 }
 
 void SystemTray::constraintsEvent(Plasma::Constraints constraints)
-{
+{   
     if (constraints & Plasma::SizeConstraint) {
         updateWidgetGeometry();
     }
@@ -54,6 +48,12 @@ void SystemTray::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & (Plasma::LocationConstraint | Plasma::FormFactorConstraint)) {
         updateWidgetOrientation();
     }
+}
+
+void SystemTray::updateSize()
+{
+    setPreferredSize(m_systemTrayWidget->sizeHint());
+    resize(m_systemTrayWidget->sizeHint());
 }
 
 void SystemTray::updateWidgetOrientation()
@@ -71,8 +71,30 @@ void SystemTray::updateWidgetOrientation()
 
 void SystemTray::updateWidgetGeometry()
 {
-    setPreferredSize(m_systemTrayWidget->size());
-    m_proxyWidget->resize(effectiveSizeHint(Qt::PreferredSize));
+    QGraphicsView *parentView = view();
+    if (!parentView) {
+        kDebug()<<"Problem view is NULL";
+        return;
+    }
+
+    if (!m_systemTrayWidget || m_systemTrayWidget->parentWidget() != parentView) {
+        delete m_systemTrayWidget;
+        m_systemTrayWidget = new SystemTrayWidget(parentView);
+        m_systemTrayWidget->setOrientation(Qt::Horizontal);
+        connect(m_systemTrayWidget, SIGNAL(sizeShouldChange()),
+                this, SLOT(updateSize()));
+        updateWidgetOrientation();
+        m_systemTrayWidget->setVisible(true);
+
+    }
+    
+    // Set the system tray to its minimum size and centre it above the item
+    QRect itemRect = mapToView(parentView, geometry());
+    QRect widgetRect = QRect(QPoint(0, 0), m_systemTrayWidget->minimumSizeHint());
+    widgetRect.moveTop(itemRect.top() + (itemRect.height() - widgetRect.height()) / 2);
+    widgetRect.moveLeft(itemRect.left() + (itemRect.width() - widgetRect.width()) / 2);
+    m_systemTrayWidget->setMaximumSize(itemRect.size());
+    m_systemTrayWidget->setGeometry(geometry().toRect());
 }
 
 #include "systemtray.moc"

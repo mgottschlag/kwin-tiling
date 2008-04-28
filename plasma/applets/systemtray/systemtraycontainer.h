@@ -31,8 +31,6 @@ Q_OBJECT
 
 public:
     explicit SystemTrayContainer(QWidget *parent);
-
-public:
     void embedSystemTrayClient( WId clientId );
 
 private:

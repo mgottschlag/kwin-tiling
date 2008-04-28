@@ -49,10 +49,10 @@ void SystemTrayContainer::embedSystemTrayClient( WId clientId )
 {
     kDebug() << "attempting to embed" << clientId;
     if( !prepareFor(clientId)) { // temporary hack, until QX11EmbedContainer gets fixed
-        deleteLater();
-        return;
+         deleteLater();
+         return;
     }
-    embedClient( clientId );
+    embedClient(clientId);
 }
 
 void SystemTrayContainer::updateBackground()

@@ -51,7 +51,6 @@ SystemTrayWidget::SystemTrayWidget(QWidget *parent)
     // Override spacing set by the current style
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
     m_mainLayout->setSpacing(4);
-
     init();
 }
 
@@ -90,12 +89,10 @@ bool SystemTrayWidget::x11Event(XEvent *event)
             // Set up a SystemTrayContainer for the client
             SystemTrayContainer *container = new SystemTrayContainer(this);
             addWidgetToLayout(container);
-
             connect(container, SIGNAL(clientIsEmbedded()), this, SIGNAL(sizeShouldChange()));
             connect(container, SIGNAL(destroyed(QObject *)), this, SLOT(relayoutContainers(QObject *)));
 
             const WId systemTrayClientId = (WId)event->xclient.data.l[2];
-
             container->embedSystemTrayClient(systemTrayClientId);
 
             return true;
@@ -115,7 +112,7 @@ void SystemTrayWidget::setOrientation(Qt::Orientation orientation)
 void SystemTrayWidget::addWidgetToLayout(QWidget *widget)
 {
     // Figure out where it should go and add it to our layout
-
+    widget->setMaximumSize(22, 22);
     if (m_orientation == Qt::Horizontal) {
         // Add down then across when horizontal
         if (m_nextRow == m_mainLayout->rowCount()
@@ -137,6 +134,7 @@ void SystemTrayWidget::addWidgetToLayout(QWidget *widget)
         m_mainLayout->addWidget(widget, m_nextRow, m_nextColumn);
         m_nextColumn++;
     }
+    emit sizeShouldChange();
 }
 
 void SystemTrayWidget::relayoutContainers(QObject *removeContainer)
