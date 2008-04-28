@@ -117,7 +117,6 @@ bool start()
 
     if ( reply.value() )
         {
-        kDebug() << "Started server org.kde.khotkeys (kded module)";
         return true;
         }
     else
@@ -155,14 +154,11 @@ bool stop()
 
     if ( reply.value() )
         {
-        kDebug() << "Stopped server org.kde.khotkeys (kded module)";
-        QDBusReply<QStringList> rc = kded->call( "loadedModules" );
-        kDebug() << rc.value();
         return true;
         }
     else
         {
-        kDebug() << "Failed to stop server org.kde.khotkeys (kded module)";
+        kError() << "Failed to stop server org.kde.khotkeys (kded module)";
         return false;
         }
     }
