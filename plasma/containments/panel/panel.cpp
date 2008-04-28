@@ -232,18 +232,43 @@ void Panel::updateBorders(const QRect &geom)
 void Panel::constraintsEvent(Plasma::Constraints constraints)
 {
     kDebug() << "constraints updated with" << constraints << "!!!!!!";
-    
+
+    if (constraints & Plasma::FormFactorConstraint) {
+        Plasma::FormFactor form = formFactor();
+
+        // create our layout!
+        if (form == Plasma::Horizontal || Plasma::Vertical) {
+            if (layout()) {
+                QGraphicsLayout *lay = layout();
+                QGraphicsLinearLayout * linearLay = dynamic_cast<QGraphicsLinearLayout *>(lay);
+                if (linearLay) {
+                    linearLay->setOrientation(form == Plasma::Horizontal ? Qt::Horizontal :
+                                                                           Qt::Vertical);
+                }
+            } else {
+                QGraphicsLinearLayout *lay = new QGraphicsLinearLayout();
+                lay->setOrientation(form == Plasma::Horizontal ? Qt::Horizontal : Qt::Vertical);
+                lay->setContentsMargins(0, 0, 0, 0);
+                lay->setSpacing(4);
+                lay->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+                setLayout(lay);
+
+                foreach (Applet *applet, applets()) {
+                    lay->addItem(applet);
+                }
+            }
+        }
+    }
+
     //we need to know if the width or height is 100%
-    QRectF screenRect;
     bool fullSize = false;
-    if (constraints & Plasma::LocationConstraint ||
-        constraints & Plasma::SizeConstraint) {
+    if (constraints & Plasma::LocationConstraint || constraints & Plasma::SizeConstraint) {
         m_currentSize = geometry().size().toSize();
-        screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) :
-                                     geometry();
+        QRectF screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) :
+            geometry();
 
         if ((formFactor() == Horizontal && m_currentSize.width() >= screenRect.width()) || 
-            (formFactor() == Vertical && m_currentSize.height() >= screenRect.height())) {
+                (formFactor() == Vertical && m_currentSize.height() >= screenRect.height())) {
             fullSize = true;
         } else {
             fullSize = false;
