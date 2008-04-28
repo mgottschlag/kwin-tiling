@@ -490,9 +490,9 @@ void Panel::setFormFactorFromLocation(Plasma::Location loc) {
 //TODO handle floating location too
 void Panel::updateSize(const QSize &newSize)
 {
-    resize(s);
-    setMinimumSize(s);
-    setMaximumSize(s);
+    resize(newSize);
+    setMinimumSize(newSize);
+    setMaximumSize(newSize);
     //kDebug( )<< "geometry is now" << geometry() << sceneBoundingRect();
 }
 
