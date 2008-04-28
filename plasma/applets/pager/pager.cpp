@@ -202,6 +202,7 @@ void Pager::recalculateGeometry()
     //kDebug() << "new size set" << m_size << m_rows << m_columns << columns << itemWidth;
 
     resize(m_size);
+    setPreferredSize(m_size);
     if (m_desktopLayoutOwner && columns != m_columns) {
         // must own manager selection before setting global desktop layout
         m_columns = columns;
