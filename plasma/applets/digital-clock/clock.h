@@ -56,6 +56,7 @@ class Clock : public Plasma::Applet
     protected slots:
         void configAccepted();
         void showCalendar(QGraphicsSceneMouseEvent *event);
+        void constraintsEvent(Plasma::Constraints constraints);
 
     protected:
         void createConfigurationInterface(KConfigDialog *parent);

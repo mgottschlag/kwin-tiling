@@ -90,11 +90,24 @@ void Clock::init()
     QFontMetricsF metrics(KGlobalSettings::smallestReadableFont());
     QString timeString = KGlobal::locale()->formatTime(QTime(23, 59), m_showSeconds);
     setMinimumSize(metrics.size(Qt::TextSingleLine, timeString));
-    
+
     m_toolTipIcon = KIcon("chronometer").pixmap(IconSize(KIconLoader::Desktop));
 
     dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));    
+}
+
+void Clock::constraintsEvent(Plasma::Constraints constraints)
+{
+    if (constraints & Plasma::SizeConstraint) {
+        if (formFactor() == Plasma::Horizontal) {
+            // We have a fixed height, set some sensible width
+            setMinimumWidth(geometry().height() * 2);
+        } else {
+            // We have a fixed height, set some sensible height
+            setMinimumWidth((int)geometry().width() / 2);
+        }
+    }
 }
 
 void Clock::updateToolTipContent() {
