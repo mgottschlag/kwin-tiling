@@ -168,6 +168,13 @@ HotkeysTreeView::contextMenuEvent( QContextMenuEvent *event )
     }
 
 
+void
+HotkeysTreeView::modelReset()
+    {
+    resizeColumnToContents(0);
+    }
+
+
 KHotkeysModel *HotkeysTreeView::model()
     {
     return dynamic_cast<KHotkeysModel*>( QTreeView::model() );
@@ -184,15 +191,15 @@ HotkeysTreeView::setModel( QAbstractItemModel *model )
         }
     QTreeView::setModel(model);
 
-
-
-    resizeColumnToContents(0);
-    resizeColumnToContents(1);
     setAllColumnsShowFocus(true);
     setAlternatingRowColors(true);
 
     setSelectionBehavior( QAbstractItemView::SelectRows );
     setSelectionMode( QAbstractItemView::SingleSelection );
+
+    connect(
+        model, SIGNAL(modelReset()),
+        this, SLOT(modelReset()));
     }
 
 #include "moc_hotkeys_tree_view.cpp"

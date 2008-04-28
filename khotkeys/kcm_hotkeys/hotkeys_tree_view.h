@@ -59,6 +59,10 @@ public:
     void setModel( QAbstractItemModel *model );
     KHotkeysModel *model();
 
+private Q_SLOTS:
+
+    void modelReset();
+
 };
 
 
