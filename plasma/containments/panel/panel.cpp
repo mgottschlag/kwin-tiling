@@ -263,11 +263,6 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
         m_background->resizePanel(m_currentSize);
     }
 
-    if (constraints & Plasma::ScreenConstraint ||
-        constraints & Plasma::LocationConstraint) {
-        updateSize(m_currentSize);
-    }
-
     if (constraints & Plasma::ImmutableConstraint && m_appletBrowserAction) {
         // we need to update the menu items that have already been created
         bool locked = immutability() != NotImmutable;
@@ -470,29 +465,9 @@ void Panel::setFormFactorFromLocation(Plasma::Location loc) {
 //TODO handle floating location too
 void Panel::updateSize(const QSize &newSize)
 {
-    //kDebug() << "updating size to" << newSize << "at" << location();
-    QRectF screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) :
-                                        geometry();
-    //kDebug() << screenRect;
-    QSizeF s;
-    switch (location()) {
-    case BottomEdge:
-    case TopEdge:
-        s = newSize;
-        break;
-    case RightEdge:
-    case LeftEdge:
-        s = newSize;
-        break;
-    case Floating:
-        break;
-    default:
-        kDebug() << "shouldn't happen!" << location();
-        return;
-    }
-
     resize(s);
     setMinimumSize(s);
+    setMaximumSize(s);
     //kDebug( )<< "geometry is now" << geometry() << sceneBoundingRect();
 }
 
