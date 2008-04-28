@@ -39,9 +39,6 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
     , dbus_adaptor(NULL)
     {
     setModuleName("khotkeys");
-    kError() << "Does not work currently!";
-    return;
-
     dbus_adaptor = new KhotkeysAdaptor(this);
 
     if (KHotKeys::StandAloneDaemon::isRunning())
