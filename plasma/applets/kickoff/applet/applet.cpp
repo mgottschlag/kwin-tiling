@@ -153,7 +153,7 @@ void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    parent->addPage(widget, parent->windowTitle());
+    parent->addPage(widget, parent->windowTitle(), icon());
 
     if (!d->launcher) {
         d->createLauncher(this);

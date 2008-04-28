@@ -266,7 +266,7 @@ void Tasks::createConfigurationInterface(KConfigDialog *parent)
      parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
      connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
      connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-     parent->addPage(widget, parent->windowTitle());
+     parent->addPage(widget, parent->windowTitle(), icon());
 
 #ifdef TOOLTIP_MANAGER
     m_ui.showTooltip->setChecked(m_showTooltip);

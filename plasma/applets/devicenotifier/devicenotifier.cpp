@@ -375,7 +375,7 @@ void DeviceNotifier::createConfigurationInterface(KConfigDialog *parent)
     parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    parent->addPage(widget, parent->windowTitle(), "drive-removable-media-usb-pendrive");
+    parent->addPage(widget, parent->windowTitle(), icon());
 
     ui.spinTime->setValue(m_displayTime);
     ui.spinItems->setValue(m_numberItems);

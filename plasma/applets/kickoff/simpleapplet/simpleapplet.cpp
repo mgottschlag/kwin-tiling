@@ -270,7 +270,7 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    parent->addPage(p, parent->windowTitle());
+    parent->addPage(p, parent->windowTitle(), icon());
 }
 
 void MenuLauncherApplet::configAccepted()

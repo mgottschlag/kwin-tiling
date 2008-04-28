@@ -132,7 +132,7 @@ void Clock::createConfigurationInterface(KConfigDialog *parent)
     parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    parent->addPage(widget, parent->windowTitle(), "chronometer");
+    parent->addPage(widget, parent->windowTitle(), icon());
 
     ui.timeZones->setSelected(m_timezone, true);
     ui.timeZones->setEnabled(m_timezone != "Local");
