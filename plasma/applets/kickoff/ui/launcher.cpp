@@ -617,14 +617,14 @@ QSize Launcher::minimumSizeHint() const
         case Plasma::RightEdge:
             size.rheight() = d->searchBar->sizeHint().height() +
                      d->footer->sizeHint().height() +
-                     qMax( d->favoritesView->sizeHintForRow(0), d->contentSwitcher->sizeHint().height() );
+                     qMax( d->favoritesView->sizeHintForRow(0)*3 + ItemDelegate::HEADER_HEIGHT, d->contentSwitcher->sizeHint().height() );
             break;
         case Plasma::TopEdge:
         case Plasma::BottomEdge:
         default:
             size.rheight() = d->searchBar->sizeHint().height() +
                      d->contentSwitcher->sizeHint().height() + d->footer->sizeHint().height() +
-                     d->favoritesView->sizeHintForRow(0);
+                     d->favoritesView->sizeHintForRow(0)*3 + ItemDelegate::HEADER_HEIGHT;
             break;
     }
     return size;
