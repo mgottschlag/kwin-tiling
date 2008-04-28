@@ -53,7 +53,6 @@ bool HddTemp::updateData()
 
     socket.connectToHost("localhost", 7634);
     if (socket.waitForConnected(500)) {
-        m_failCount = 0;
         while (data.length() < 1024) {
             if (!socket.waitForReadyRead(500)) {
                 if (data.length() > 0) {
@@ -66,6 +65,8 @@ bool HddTemp::updateData()
             data += QString(socket.readAll());
         }
         socket.disconnectFromHost();
+        //on success retry fail count
+        m_failCount = 0;
     } else {
         m_failCount++;
         kDebug() << socket.errorString();
