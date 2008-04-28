@@ -104,7 +104,7 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
             // We have a fixed height, set some sensible width
             setMinimumWidth(geometry().height() * 2);
         } else if (formFactor() == Plasma::Vertical) {
-            // We have a fixed height, set some sensible height
+            // We have a fixed width, set some sensible height
             setMinimumHeight((int)geometry().width() / 2);
         }
     }
