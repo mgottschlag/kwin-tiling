@@ -67,13 +67,13 @@ public:
 
         void constraintsEvent(Plasma::Constraints constraints);
 
-public slots:
-        void createConfigurationInterface(KConfigDialog *parent);
-
 protected slots:
         void configAccepted();
         virtual void wheelEvent(QGraphicsSceneWheelEvent *);
         void themeRefresh();
+
+protected:
+        void createConfigurationInterface(KConfigDialog *parent);
 
 private slots:
         void addWindowTask(TaskPtr);

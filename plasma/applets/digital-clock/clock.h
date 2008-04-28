@@ -54,9 +54,11 @@ class Clock : public Plasma::Applet
         void updateColors();
 
     protected slots:
-        void createConfigurationInterface(KConfigDialog *parent);
         void configAccepted();
         void showCalendar(QGraphicsSceneMouseEvent *event);
+
+    protected:
+        void createConfigurationInterface(KConfigDialog *parent);
 
     private:
         void updateToolTipContent();

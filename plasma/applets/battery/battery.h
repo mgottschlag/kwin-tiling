@@ -59,9 +59,11 @@ class Battery : public Plasma::Applet
     protected Q_SLOTS:
         virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
         virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
-        void createConfigurationInterface(KConfigDialog *parent);
         void configAccepted();
         void readColors();
+
+    protected:
+        void createConfigurationInterface(KConfigDialog *parent);
 
     private slots:
         void animationUpdate(qreal progress);

@@ -89,12 +89,6 @@ class MenuLauncherApplet : public Plasma::Applet
         virtual QList<QAction*> contextualActions();
 
 public Q_SLOTS:
-
-        /**
-         * Create a configuration dialog.
-         */
-        void createConfigurationInterface(KConfigDialog *parent);
-
         /**
          * Switch the menu style from the traditional aka classic KDE3 like
          * KMenu to the new Kickoff menu.
@@ -102,6 +96,12 @@ public Q_SLOTS:
         void switchMenuStyle();
 
         void startMenuEditor();
+
+protected:
+        /**
+         * Create a configuration dialog.
+         */
+        void createConfigurationInterface(KConfigDialog *parent);
 
 private Q_SLOTS:
         void configAccepted();

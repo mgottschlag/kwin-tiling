@@ -56,7 +56,6 @@ class Pager : public Plasma::Applet
         virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
         virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
         virtual void wheelEvent(QGraphicsSceneWheelEvent *);
-        void createConfigurationInterface(KConfigDialog *parent);
 
         void configAccepted();
         void currentDesktopChanged(int desktop);
@@ -74,6 +73,8 @@ class Pager : public Plasma::Applet
     protected:
         void createMenu();
         QRect fixViewportPosition( const QRect& r );
+        void createConfigurationInterface(KConfigDialog *parent);
+
     private:
         QTimer* m_timer;
         KDialog *m_dialog;

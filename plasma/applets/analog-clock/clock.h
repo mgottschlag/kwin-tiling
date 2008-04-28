@@ -63,6 +63,8 @@ class Clock : public Plasma::Containment
 //         void acceptedTimeStringState(bool);
         void configAccepted();
         void moveSecondHand();
+
+    protected:
         void createConfigurationInterface(KConfigDialog *parent);
 
 

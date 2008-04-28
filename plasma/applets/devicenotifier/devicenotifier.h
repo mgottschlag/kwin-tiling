@@ -80,11 +80,14 @@ class DeviceNotifier : public Plasma::Applet
         void onSourceAdded(const QString &name);
         void onSourceRemoved(const QString &name);
         void dataUpdated(const QString &source, Plasma::DataEngine::Data data);
-        void createConfigurationInterface(KConfigDialog *parent);
         void configAccepted();
         void slotOnItemClicked(const QModelIndex &);
         void onTimerExpired();
         void onClickNotifier();
+
+    protected:
+        void createConfigurationInterface(KConfigDialog *parent);
+
     private slots:
         void storageEjectDone(Solid::ErrorType error, QVariant errorData);
         void storageTeardownDone(Solid::ErrorType error, QVariant errorData);
