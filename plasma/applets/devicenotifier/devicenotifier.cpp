@@ -370,17 +370,16 @@ void DeviceNotifier::onClickNotifier()
 
 void DeviceNotifier::createConfigurationInterface(KConfigDialog *parent)
 {
-        kDebug() << "DeviceNotifier:: Enter in configuration interface";
-        QWidget *widget = new QWidget;
-        ui.setupUi(widget);
-        parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
-        connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-        connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-        parent->addPage(widget, parent->windowTitle(), "drive-removable-media-usb-pendrive");
+    QWidget *widget = new QWidget;
+    ui.setupUi(widget);
+    parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    parent->addPage(widget, parent->windowTitle(), "drive-removable-media-usb-pendrive");
 
-        ui.spinTime->setValue(m_displayTime);
-        ui.spinItems->setValue(m_numberItems);
-        ui.spinTimeItems->setValue(m_itemsValidity);
+    ui.spinTime->setValue(m_displayTime);
+    ui.spinItems->setValue(m_numberItems);
+    ui.spinTimeItems->setValue(m_itemsValidity);
 }
 
 void DeviceNotifier::configAccepted()
