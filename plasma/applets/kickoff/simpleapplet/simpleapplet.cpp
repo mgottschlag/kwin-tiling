@@ -236,33 +236,33 @@ void MenuLauncherApplet::startMenuEditor()
 
 void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 {
-        QWidget *p = new QWidget;
-        QGridLayout *l = new QGridLayout(p);
-        p->setLayout(l);
+    QWidget *p = new QWidget;
+    QGridLayout *l = new QGridLayout(p);
+    p->setLayout(l);
 
-        QLabel *viewLabel = new QLabel(i18n("View:"), p);
-        l->addWidget(viewLabel, 0, 0);
-        d->viewComboBox = new QComboBox(p);
-        viewLabel->setBuddy(d->viewComboBox);
-        d->addItem(d->viewComboBox, i18n("Standard"), MenuLauncherApplet::Combined, "start-here-kde");
-        d->addItem(d->viewComboBox, i18n("Favorites"), MenuLauncherApplet::Favorites, "bookmarks");
-        d->addItem(d->viewComboBox, i18n("Applications"), MenuLauncherApplet::Applications, "applications-other");
-        d->addItem(d->viewComboBox, i18n("Computer"), MenuLauncherApplet::Computer, "computer");
-        d->addItem(d->viewComboBox, i18n("Recently Used"), MenuLauncherApplet::RecentlyUsed, "document-open-recent");
-        d->addItem(d->viewComboBox, i18n("Leave"), MenuLauncherApplet::Leave, "application-exit");
-        l->addWidget(d->viewComboBox, 0, 1);
+    QLabel *viewLabel = new QLabel(i18n("View:"), p);
+    l->addWidget(viewLabel, 0, 0);
+    d->viewComboBox = new QComboBox(p);
+    viewLabel->setBuddy(d->viewComboBox);
+    d->addItem(d->viewComboBox, i18n("Standard"), MenuLauncherApplet::Combined, "start-here-kde");
+    d->addItem(d->viewComboBox, i18n("Favorites"), MenuLauncherApplet::Favorites, "bookmarks");
+    d->addItem(d->viewComboBox, i18n("Applications"), MenuLauncherApplet::Applications, "applications-other");
+    d->addItem(d->viewComboBox, i18n("Computer"), MenuLauncherApplet::Computer, "computer");
+    d->addItem(d->viewComboBox, i18n("Recently Used"), MenuLauncherApplet::RecentlyUsed, "document-open-recent");
+    d->addItem(d->viewComboBox, i18n("Leave"), MenuLauncherApplet::Leave, "application-exit");
+    l->addWidget(d->viewComboBox, 0, 1);
 
-        QLabel *formatLabel = new QLabel(i18n("Format:"), p);
-        l->addWidget(formatLabel, 1, 0);
-        d->formatComboBox = new QComboBox(p);
-        formatLabel->setBuddy(d->formatComboBox);
-        d->addItem(d->formatComboBox, i18n("Name Only"), MenuLauncherApplet::Name);
-        d->addItem(d->formatComboBox, i18n("Description Only"), MenuLauncherApplet::Description);
-        d->addItem(d->formatComboBox, i18n("Name Description"), MenuLauncherApplet::NameDescription);
-        d->addItem(d->formatComboBox, i18n("Description (Name)"), MenuLauncherApplet::DescriptionName);
-        l->addWidget(d->formatComboBox, 1, 1);
+    QLabel *formatLabel = new QLabel(i18n("Format:"), p);
+    l->addWidget(formatLabel, 1, 0);
+    d->formatComboBox = new QComboBox(p);
+    formatLabel->setBuddy(d->formatComboBox);
+    d->addItem(d->formatComboBox, i18n("Name Only"), MenuLauncherApplet::Name);
+    d->addItem(d->formatComboBox, i18n("Description Only"), MenuLauncherApplet::Description);
+    d->addItem(d->formatComboBox, i18n("Name Description"), MenuLauncherApplet::NameDescription);
+    d->addItem(d->formatComboBox, i18n("Description (Name)"), MenuLauncherApplet::DescriptionName);
+    l->addWidget(d->formatComboBox, 1, 1);
 
-        l->setColumnStretch(1,1);
+    l->setColumnStretch(1,1);
 
     d->setCurrentItem(d->viewComboBox, d->viewtype);
     d->setCurrentItem(d->formatComboBox, d->formattype);
