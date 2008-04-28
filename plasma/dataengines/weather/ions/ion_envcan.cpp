@@ -209,6 +209,7 @@ void EnvCanadaIon::slotJobFinished(KJob *job)
 {
     // Dual use method, if we're fetching location data to parse we need to do this first
     kDebug() << "WE FINISHED JOB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+    setData(d->m_jobList[job], Data());
     readXMLData(d->m_jobList[job], *d->m_jobXml[job]);
     d->m_jobList.remove(job);
     delete d->m_jobXml[job];
@@ -302,7 +303,10 @@ bool EnvCanadaIon::readXMLData(const QString& source, QXmlStreamReader& xml)
     data.comforttemp = "N/A";
     data.recordHigh = 0.0;
     data.recordLow = 0.0;
-    data.shortTerritoryName = d->m_place[source].territoryName;
+   
+    QString dataKey = source;
+    dataKey.replace("|weather", "");
+    data.shortTerritoryName = d->m_place[dataKey].territoryName;
     while (!xml.atEnd()) {
         xml.readNext();
 
