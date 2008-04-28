@@ -45,7 +45,6 @@ class IconApplet : public Plasma::Applet
         void init();
         void setUrl(const KUrl& url);
         void constraintsEvent(Plasma::Constraints constraints);
-        void showConfigurationInterface();
         void setDisplayLines(int displayLines);
         int displayLines();
         QPainterPath shape() const;

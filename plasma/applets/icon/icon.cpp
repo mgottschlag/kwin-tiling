@@ -160,6 +160,7 @@ void IconApplet::constraintsEvent(Plasma::Constraints constraints)
     }
 }
 
+#if 0
 void IconApplet::showConfigurationInterface()
 {
     if (m_dialog == 0) {
@@ -170,6 +171,7 @@ void IconApplet::showConfigurationInterface()
 
     m_dialog->show();
 }
+#endif
 
 void IconApplet::setDisplayLines(int displayLines)
 {
