@@ -37,7 +37,7 @@ class SessionRunner : public Plasma::AbstractRunner
         ~SessionRunner();
 
         void match(Plasma::SearchContext *context);
-        void exec(const Plasma::SearchContext *context, const Plasma::SearchMatch *action);
+        void run(const Plasma::SearchContext *context, const Plasma::SearchMatch *action);
 
         enum { LogoutAction = 1, ShutdownAction, RestartAction, LockAction };
 

@@ -127,7 +127,7 @@ KIcon WebshortcutRunner::getFavicon(const KUrl &url) {
     return icon;
 }
 
-void WebshortcutRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
+void WebshortcutRunner::run(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
     QString location = getSearchQuery(action->data().toString(), search->searchTerm());
 

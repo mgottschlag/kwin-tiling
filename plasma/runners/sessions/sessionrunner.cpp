@@ -183,7 +183,7 @@ void SessionRunner::match(Plasma::SearchContext *search)
     search->addMatches(term, matches);
 }
 
-void SessionRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
+void SessionRunner::run(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
     Q_UNUSED(search);
     if (action->data().type() == QVariant::Int) {

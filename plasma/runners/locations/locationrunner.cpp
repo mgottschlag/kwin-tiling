@@ -111,7 +111,7 @@ void LocationsRunner::match(Plasma::SearchContext *search)
     }
 }
 
-void LocationsRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
+void LocationsRunner::run(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
     QString data = action->data().toString();
     const QString location = search->searchTerm();

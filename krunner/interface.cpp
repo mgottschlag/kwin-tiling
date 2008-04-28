@@ -89,7 +89,7 @@ class SearchMatch : public QListWidgetItem
 
         void activate(const Plasma::SearchContext *context) const
         {
-            m_action->exec(context);
+            m_action->run(context);
         }
 
         bool actionEnabled() const
@@ -652,7 +652,7 @@ void Interface::updateMatches()
     }
 }
 
-void Interface::exec()
+void Interface::run()
 {
     if (!m_execQueued && m_searchTerm->completionBox() && m_searchTerm->completionBox()->isVisible()) {
         queueMatch();

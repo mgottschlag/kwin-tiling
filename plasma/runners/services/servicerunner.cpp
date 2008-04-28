@@ -112,7 +112,7 @@ void ServiceRunner::match(Plasma::SearchContext *search)
     search->addMatches(term, matches);
 }
 
-void ServiceRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
+void ServiceRunner::run(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
     Q_UNUSED(search);
     QMutexLocker lock(bigLock());

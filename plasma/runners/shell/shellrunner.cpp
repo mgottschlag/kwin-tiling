@@ -81,7 +81,7 @@ void ShellRunner::setRunInTerminal(bool inTerminal)
     m_inTerminal = inTerminal;
 }
 
-void ShellRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
+void ShellRunner::run(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
     Q_UNUSED(action);
     if (!m_enabled) {

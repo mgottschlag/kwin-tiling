@@ -31,7 +31,7 @@ class XesamRunner : public Plasma::AbstractRunner {
         ~XesamRunner();
 
         void match(Plasma::SearchContext *context);
-        void exec(const Plasma::SearchContext *context,
+        void run(const Plasma::SearchContext *context,
                   const Plasma::SearchMatch *match);
 };
 

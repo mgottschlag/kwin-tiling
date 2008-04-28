@@ -142,11 +142,11 @@ KIcon BookmarksRunner::getFavicon(const KUrl &url)
     return icon;
 }
 
-void BookmarksRunner::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
+void BookmarksRunner::run(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
 {
     Q_UNUSED(search);
     KUrl url = (KUrl)action->data().toString();
-    //kDebug() << "BookmarksRunner::exec opening: " << url.url();
+    //kDebug() << "BookmarksRunner::run opening: " << url.url();
     KToolInvocation::invokeBrowser(url.url());
 }
 

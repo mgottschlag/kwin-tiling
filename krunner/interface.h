@@ -70,7 +70,7 @@ class Interface : public KRunnerDialog
         void queueUpdates();
         void updateMatches();
         void setWidgetPalettes();
-        void exec();
+        void run();
         void matchActivated( QListWidgetItem* );
         void showOptions(bool show);
         void setDefaultItem( QListWidgetItem* );
