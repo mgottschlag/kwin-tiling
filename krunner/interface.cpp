@@ -343,7 +343,7 @@ Interface::Interface(QWidget* parent)
     connect(m_searchTerm, SIGNAL(editTextChanged(QString)),
             this, SLOT(queueMatch()));
     connect(m_searchTerm, SIGNAL(returnPressed()),
-            this, SLOT(exec()));
+            this, SLOT(run()));
 
     QStringList executions = KRunnerSettings::pastQueries();
     //Handle updates to the completion object as well
@@ -383,7 +383,7 @@ Interface::Interface(QWidget* parent)
                                   w);
     m_runButton->setEnabled( false );
     m_runButton->setDefault(true);
-    connect( m_runButton, SIGNAL( clicked(bool) ), SLOT(exec()) );
+    connect( m_runButton, SIGNAL( clicked(bool) ), SLOT(run()) );
     bottomLayout->addWidget( m_runButton );
 
     m_cancelButton = new KPushButton(KStandardGuiItem::cancel(), w);
@@ -648,7 +648,7 @@ void Interface::updateMatches()
         m_runButton->setEnabled(false);
     } else if (m_execQueued) {
         m_execQueued = false;
-        exec();
+        run();
     }
 }
 
