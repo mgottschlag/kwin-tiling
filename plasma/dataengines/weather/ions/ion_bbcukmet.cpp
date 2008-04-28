@@ -401,7 +401,7 @@ void UKMETIon::forecast_slotDataArrived(KIO::Job *job, const QByteArray &data)
 
 void UKMETIon::forecast_slotJobFinished(KJob *job)
 {
-    setData(d->m_forecastJobList[job], Data())
+    setData(d->m_forecastJobList[job], Data());
     readFiveDayForecastXMLData(d->m_forecastJobList[job], *d->m_forecastJobXml[job]);
     d->m_forecastJobList.remove(job);
     delete d->m_forecastJobXml[job];
