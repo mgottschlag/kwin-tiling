@@ -48,7 +48,6 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
       m_mimetype(0)
 {
     setAcceptDrops(true);
-    setHasConfigurationInterface(true);
     setBackgroundHints(NoBackground);
     m_icon = new Plasma::Icon(this);
     //setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
@@ -160,8 +159,18 @@ void IconApplet::constraintsEvent(Plasma::Constraints constraints)
     }
 }
 
-#if 0
-void IconApplet::showConfigurationInterface()
+QList<QAction*> IconApplet::contextualActions()
+{
+        m_propertiesAction = new QAction(i18n("Properties"), this);
+        connect(m_propertiesAction, SIGNAL(triggered(bool)), this, SLOT(showPropertiesDialog()));
+
+        QList<QAction*> actions;
+        actions.append(m_propertiesAction);
+
+        return actions;
+}
+
+void IconApplet::showPropertiesDialog()
 {
     if (m_dialog == 0) {
         m_dialog = new KPropertiesDialog(m_url, 0 /*no parent widget*/);
@@ -171,7 +180,6 @@ void IconApplet::showConfigurationInterface()
 
     m_dialog->show();
 }
-#endif
 
 void IconApplet::setDisplayLines(int displayLines)
 {
