@@ -145,7 +145,6 @@ KGreeter::KGreeter( bool framed )
   , nNormals( 0 )
   , nSpecials( 0 )
   , curPrev( 0 )
-  , curSel( 0 )
   , prevValid( true )
   , needLoad( false )
 {
@@ -166,7 +165,9 @@ KGreeter::KGreeter( bool framed )
 
 	sessMenu = new QMenu( this );
 	connect( sessMenu, SIGNAL(triggered( QAction * )),
-	         SLOT(slotSessionSelected( QAction * )) );
+	         SLOT(slotSessionSelected()) );
+
+	sessGroup = new QActionGroup( this );
 	insertSessions();
 
 	if (curPlugin < 0) {
@@ -419,7 +420,7 @@ KGreeter::insertSessions()
 	putSession( "failsafe", i18n("Failsafe"), false, "failsafe" );
 	qSort( sessionTypes );
 	for (int i = 0; i < sessionTypes.size() && !sessionTypes[i].hid; i++) {
-		sessionTypes[i].action = sessMenu->addAction( sessionTypes[i].name );
+		sessionTypes[i].action = sessGroup->addAction( sessionTypes[i].name );
 		sessionTypes[i].action->setData( i );
 		sessionTypes[i].action->setCheckable( true );
 		switch (sessionTypes[i].prio) {
@@ -427,6 +428,7 @@ KGreeter::insertSessions()
 		case 2: nNormals++; break;
 		}
 	}
+	sessMenu->addActions( sessGroup->actions() );
 }
 
 void
@@ -466,16 +468,9 @@ KGreeter::slotUserClicked( QListWidgetItem *item )
 }
 
 void
-KGreeter::slotSessionSelected( QAction *action )
+KGreeter::slotSessionSelected()
 {
-	if (action != curSel) {
-		if (curSel)
-			curSel->setChecked( false );
-		if (action)
-			action->setChecked( true );
-		curSel = action;
-		verify->gplugActivity();
-	}
+	verify->gplugChanged();
 }
 
 void
@@ -558,7 +553,7 @@ KGreeter::slotLoadPrevWM()
 					setPrevWM( sessionTypes[i].action );
 					return;
 				}
-			if (!curSel)
+			if (!sessGroup->checkedAction())
 				KFMsgBox::box( this, sorrybox,
 				               i18n("Your saved session type '%1' is not valid any more.\n"
 				                    "Please select a new one, otherwise 'default' will be used.", sess ) );
@@ -606,7 +601,7 @@ KGreeter::verifyClear()
 {
 	curUser.clear();
 	slotUserEntered();
-	slotSessionSelected( 0 );
+	slotSessionSelected();
 }
 
 void
@@ -617,7 +612,7 @@ KGreeter::verifyOk()
 		                         dName :
 		                         dName + '_' + verify->pluginName(),
 		                      verify->getEntity() );
-	if (curSel) {
+	if (QAction *curSel = sessGroup->checkedAction()) {
 		gSendInt( G_PutDmrc );
 		gSendStr( "Session" );
 		gSendStr( sessionTypes[curSel->data().toInt()].type.toUtf8() );

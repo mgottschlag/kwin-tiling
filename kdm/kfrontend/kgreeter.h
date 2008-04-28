@@ -35,6 +35,7 @@ class KdmItem;
 
 class KConfigGroup;
 class QListWidgetItem;
+class QActionGroup;
 
 struct SessType {
 	QString name, type;
@@ -64,7 +65,7 @@ class KGreeter : public KGDialog, public KGVerifyHandler {
 	void accept();
 	void reject();
 	void slotUserClicked( QListWidgetItem * );
-	void slotSessionSelected( QAction * );
+	void slotSessionSelected();
 	void slotUserEntered();
 
   protected:
@@ -81,9 +82,10 @@ class KGreeter : public KGDialog, public KGVerifyHandler {
 	UserListView *userView;
 	QStringList *userList;
 	QMenu *sessMenu;
+	QActionGroup *sessGroup;
 	QVector<SessType> sessionTypes;
 	int nNormals, nSpecials;
-	QAction *curPrev, *curSel;
+	QAction *curPrev;
 	bool prevValid;
 	bool needLoad;
 
