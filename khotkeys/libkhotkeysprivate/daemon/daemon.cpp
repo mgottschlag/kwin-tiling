@@ -20,8 +20,21 @@
 
 #include "stand_alone.h"
 #include "kded_module.h"
+#include "khotkeysglobal.h"
+
+#include <KDE/KConfigGroup>
+#include <KDE/KConfig>
 
 namespace KHotKeys { namespace Daemon {
+
+
+bool isEnabled()
+    {
+    KConfig khotkeysrc( KHOTKEYS_CONFIG_FILE );
+    KConfigGroup main( &khotkeysrc, "Main" );
+    return ! main.readEntry( "Disabled", false );
+    }
+
 
 bool isRunning()
     {

@@ -51,6 +51,11 @@ namespace KHotKeys { namespace Daemon {
      */
     KDE_EXPORT bool stop();
 
+    /**
+     * Is the daemon enabled by the user?
+     */
+    KDE_EXPORT bool isEnabled();
+
 }} // namespace KHotKeys::Daemon
 
 #endif /* #ifndef DAEMON_H */

@@ -32,7 +32,7 @@ int main( int argc, char* argv[] )
 	ki18n("KHotKeys update utility"));
 
     KCmdLineOptions options;
-    options.add("id <id>", ki18n("Id of the script to add to khotkeysrc."));
+    options.add("id <id>", ki18n("Id of the script to add to %1."), KHOTKEYS_CONFIG_FILE);
     KCmdLineArgs::addCmdLineOptions( options );
     KApplication app( true ); // X11 connection is necessary for KKey* stuff :-/
     KCmdLineArgs* args = KCmdLineArgs::parsedArgs();
