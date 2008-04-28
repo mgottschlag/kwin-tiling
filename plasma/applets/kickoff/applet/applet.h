@@ -51,7 +51,7 @@ public:
         virtual QList<QAction*> contextualActions();
 
 public slots:
-        void showConfigurationInterface();
+        void createConfigurationInterface(KConfigDialog *parent);
         void switchMenuStyle();
         void startMenuEditor();
 

@@ -91,9 +91,9 @@ class MenuLauncherApplet : public Plasma::Applet
 public Q_SLOTS:
 
         /**
-         * Show a configuration dialog.
+         * Create a configuration dialog.
          */
-        void showConfigurationInterface();
+        void createConfigurationInterface(KConfigDialog *parent);
 
         /**
          * Switch the menu style from the traditional aka classic KDE3 like

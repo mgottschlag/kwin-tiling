@@ -32,7 +32,7 @@
 // KDE
 #include <KIcon>
 #include <KDebug>
-#include <KDialog>
+#include <KConfigDialog>
 #include <KNumInput>
 #include <KProcess>
 
@@ -50,14 +50,13 @@ public:
     Plasma::Icon *icon;
     Kickoff::Launcher *launcher;
 
-    KDialog *dialog;
     QCheckBox *switchOnHoverCheckBox;
     KIntNumInput *visibleCountEdit;
     QList<QAction*> actions;
     QAction* switcher;
 
-    Private() : launcher(0), dialog(0), switcher(0) {}
-    ~Private() { delete dialog; delete launcher; }
+    Private() : launcher(0), switcher(0) {}
+    ~Private() { delete launcher; }
     void createLauncher(LauncherApplet *q);
 };
 
@@ -139,31 +138,28 @@ void LauncherApplet::startMenuEditor()
     KProcess::execute("kmenuedit");
 }
 
-void LauncherApplet::showConfigurationInterface()
+void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 {
-    if (! d->dialog) {
-        d->dialog = new KDialog();
-        d->dialog->setCaption( i18nc("@title:window","Configure Launcher") );
-        d->dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
-        connect(d->dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-        connect(d->dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    QWidget *widget = new QWidget;
+    QVBoxLayout *layout = new QVBoxLayout(widget);
+    widget->setLayout(layout);
 
-        QVBoxLayout *layout = new QVBoxLayout(d->dialog->mainWidget());
-        d->dialog->mainWidget()->setLayout(layout);
+    QHBoxLayout *vl = new QHBoxLayout(widget);
+    layout->addLayout(vl);
 
-        QHBoxLayout *vl = new QHBoxLayout(d->dialog->mainWidget());
-        layout->addLayout(vl);
+    d->switchOnHoverCheckBox = new QCheckBox(i18n("Switch tabs on hover"), widget);
+    layout->addWidget(d->switchOnHoverCheckBox);
 
-        d->switchOnHoverCheckBox = new QCheckBox(i18n("Switch tabs on hover"), d->dialog->mainWidget());
-        layout->addWidget(d->switchOnHoverCheckBox);
-    }
+    parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    parent->addPage(widget, parent->windowTitle());
 
     if (!d->launcher) {
         d->createLauncher(this);
     }
 
     d->switchOnHoverCheckBox->setChecked(d->launcher->switchTabsOnHover());
-    d->dialog->show();
 }
 
 void LauncherApplet::configAccepted()

@@ -32,7 +32,7 @@
 
 // KDE
 #include <KIcon>
-#include <KDialog>
+#include <KConfigDialog>
 #include <KMenu>
 #include <KProcess>
 
@@ -60,14 +60,13 @@ public:
         MenuLauncherApplet::ViewType viewtype;
         MenuLauncherApplet::FormatType formattype;
 
-        KDialog *dialog;
         QComboBox *viewComboBox, *formatComboBox;
 
         QList<QAction*> actions;
         QAction* switcher;
 
-        Private() : menuview(0), launcher(0), dialog(0), switcher(0) {}
-        ~Private() { delete dialog; delete menuview; }
+        Private() : menuview(0), launcher(0), switcher(0) {}
+        ~Private() { delete menuview; }
 
         void addItem(QComboBox* combo, const QString& caption, int index, const QString& icon = QString()) {
             if( icon.isNull() ) {
@@ -235,16 +234,9 @@ void MenuLauncherApplet::startMenuEditor()
     KProcess::execute("kmenuedit");
 }
 
-void MenuLauncherApplet::showConfigurationInterface()
+void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 {
-    if (! d->dialog) {
-        d->dialog = new KDialog();
-        d->dialog->setCaption( i18nc("@title:window","Configure Menu") );
-        d->dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
-        connect(d->dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-        connect(d->dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-
-        QWidget *p = d->dialog->mainWidget();
+        QWidget *p = new QWidget;
         QGridLayout *l = new QGridLayout(p);
         p->setLayout(l);
 
@@ -271,11 +263,14 @@ void MenuLauncherApplet::showConfigurationInterface()
         l->addWidget(d->formatComboBox, 1, 1);
 
         l->setColumnStretch(1,1);
-    }
 
     d->setCurrentItem(d->viewComboBox, d->viewtype);
     d->setCurrentItem(d->formatComboBox, d->formattype);
-    d->dialog->show();
+
+    parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    parent->addPage(p, parent->windowTitle());
 }
 
 void MenuLauncherApplet::configAccepted()
