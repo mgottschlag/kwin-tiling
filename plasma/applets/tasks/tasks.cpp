@@ -24,7 +24,7 @@
 #include "ui_tasksConfig.h"
 
 // KDE
-#include <KDialog>
+#include <KConfigDialog>
 
 // Qt
 #include <QGraphicsSceneWheelEvent>
@@ -37,8 +37,7 @@
 #include <plasma/theme.h>
 
 Tasks::Tasks(QObject* parent, const QVariantList &arguments)
- : Plasma::Applet(parent, arguments),
-   m_dialog(0)
+ : Plasma::Applet(parent, arguments)
 {
     setHasConfigurationInterface(true);
     setAspectRatioMode(Qt::IgnoreAspectRatio);
@@ -50,7 +49,6 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
 
 Tasks::~Tasks()
 {
-    delete m_dialog;
 }
 
 void Tasks::init()
@@ -261,26 +259,20 @@ bool Tasks::isOnMyScreen(TaskPtr task)
     return true;
 }
 
-void Tasks::showConfigurationInterface()
+void Tasks::createConfigurationInterface(KConfigDialog *parent)
 {
-    if (m_dialog == 0) {
-        m_dialog = new KDialog;
-        m_dialog->setCaption(i18n("Configure Taskbar"));
+     QWidget *widget = new QWidget;
+     m_ui.setupUi(widget);
+     parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
+     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+     parent->addPage(widget, parent->windowTitle());
 
-        QWidget *widget = new QWidget;
-        m_ui.setupUi(widget);
-        m_dialog->setMainWidget(widget);
-        m_dialog->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
-
-        connect(m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-        connect(m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    }
 #ifdef TOOLTIP_MANAGER
     m_ui.showTooltip->setChecked(m_showTooltip);
 #endif
     m_ui.showOnlyCurrentDesktop->setChecked(m_showOnlyCurrentDesktop);
     m_ui.showOnlyCurrentScreen->setChecked(m_showOnlyCurrentScreen);
-    m_dialog->show();
 }
 
 void Tasks::configAccepted()

@@ -66,7 +66,9 @@ public:
         void init();
 
         void constraintsEvent(Plasma::Constraints constraints);
-        void showConfigurationInterface();
+
+public slots:
+        void createConfigurationInterface(KConfigDialog *parent);
 
 protected slots:
         void configAccepted();
@@ -107,7 +109,6 @@ private:
         bool m_showOnlyCurrentScreen;
         Plasma::LayoutAnimator *m_animator;
         QGraphicsLinearLayout *m_layout;
-        KDialog *m_dialog;
         Ui::tasksConfig m_ui;
         QList<TaskPtr> m_tasks;
         QTimer m_screenTimer;

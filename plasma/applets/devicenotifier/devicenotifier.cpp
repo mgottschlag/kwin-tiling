@@ -29,7 +29,7 @@
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusReply>
 
-#include <KDialog>
+#include <KConfigDialog>
 #include <KMessageBox>
 #include <KRun>
 #include <KStandardDirs>
@@ -64,7 +64,6 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
       m_icon(0),
       m_layout(0),
       m_proxy(0),
-      m_dialog(0),
       m_displayTime(0),
       m_numberItems(0),
       m_itemsValidity(0),
@@ -180,7 +179,6 @@ DeviceNotifier::~DeviceNotifier()
         delete m_proxy;
     }
     delete m_widget;
-    delete m_dialog;
     delete m_hotplugModel;
     delete m_timer;
 }
@@ -370,25 +368,19 @@ void DeviceNotifier::onClickNotifier()
     m_widget->clearFocus();
 }
 
-void DeviceNotifier::showConfigurationInterface()
+void DeviceNotifier::createConfigurationInterface(KConfigDialog *parent)
 {
-    if (m_dialog == 0) {
         kDebug() << "DeviceNotifier:: Enter in configuration interface";
-        m_dialog = new KDialog;
-        m_dialog->setCaption(i18n("Configure New Device Notifier"));
-
         QWidget *widget = new QWidget;
         ui.setupUi(widget);
-        m_dialog->setMainWidget(widget);
-        m_dialog->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
-        connect(m_dialog, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-        connect(m_dialog, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+        parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
+        connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+        connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+        parent->addPage(widget, parent->windowTitle(), "drive-removable-media-usb-pendrive");
+
         ui.spinTime->setValue(m_displayTime);
         ui.spinItems->setValue(m_numberItems);
         ui.spinTimeItems->setValue(m_itemsValidity);
-    }
-
-    m_dialog->show();
 }
 
 void DeviceNotifier::configAccepted()

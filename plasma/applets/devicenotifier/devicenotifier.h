@@ -36,7 +36,6 @@
 
 class QStandardItemModel;
 class QGraphicsLinearLayout;
-class KDialog;
 
 namespace Notifier
 {
@@ -81,7 +80,7 @@ class DeviceNotifier : public Plasma::Applet
         void onSourceAdded(const QString &name);
         void onSourceRemoved(const QString &name);
         void dataUpdated(const QString &source, Plasma::DataEngine::Data data);
-        void showConfigurationInterface();
+        void createConfigurationInterface(KConfigDialog *parent);
         void configAccepted();
         void slotOnItemClicked(const QModelIndex &);
         void onTimerExpired();
@@ -102,7 +101,6 @@ class DeviceNotifier : public Plasma::Applet
         Plasma::Icon *m_icon;
         QGraphicsLinearLayout *m_layout;
         QGraphicsProxyWidget * m_proxy;
-        KDialog *m_dialog;
         int m_displayTime;
         int m_numberItems;
         int m_itemsValidity;
