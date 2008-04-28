@@ -48,13 +48,13 @@ TimeEngine::~TimeEngine()
 
 bool TimeEngine::sourceRequestEvent(const QString &name)
 {
-    kDebug() << "TimeEngine::sourceRequested " << name;
+    //kDebug() << "TimeEngine::sourceRequested " << name;
     return updateSourceEvent(name);
 }
 
 bool TimeEngine::updateSourceEvent(const QString &tz)
 {
-    kDebug() << "TimeEngine::updateTime()";
+    //kDebug() << "TimeEngine::updateTime()";
 
     QString timezone;
 
