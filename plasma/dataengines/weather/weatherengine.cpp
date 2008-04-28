@@ -278,14 +278,15 @@ bool WeatherEngine::updateSourceEvent(const QString& source)
 {
     IonInterface *ion = d->ionForSource(source);
 
-    ion->setProperty("timezone", d->m_localTime.isUtc());
-    ion->setProperty("unit", KGlobal::locale()->measureSystem());
     QByteArray str = source.toLocal8Bit();
 
     kDebug() << "updateSourceEvent()";
     if (!ion) {
         return false;
     }
+
+    ion->setProperty("timezone", d->m_localTime.isUtc());
+    ion->setProperty("unit", KGlobal::locale()->measureSystem());
 
     if (ion->updateSourceEvent(source)) {
         return true;
