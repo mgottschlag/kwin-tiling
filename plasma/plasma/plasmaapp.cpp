@@ -313,7 +313,8 @@ void PlasmaApp::showAppletBrowser(Plasma::Containment *containment)
     }
 
     if (!m_appletBrowser) {
-        m_appletBrowser = new Plasma::AppletBrowser(containment);
+        m_appletBrowser = new Plasma::AppletBrowser();
+        m_appletBrowser->setContainment(containment);
         m_appletBrowser->setApplication();
         m_appletBrowser->setAttribute(Qt::WA_DeleteOnClose);
         m_appletBrowser->setWindowTitle(i18n("Add Widgets"));

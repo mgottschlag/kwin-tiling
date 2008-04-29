@@ -124,7 +124,8 @@ void DashboardView::paintEvent(QPaintEvent *event)
 void DashboardView::showAppletBrowser()
 {
     if (!m_appletBrowser) {
-        m_appletBrowser = new Plasma::AppletBrowser(containment(), this, Qt::FramelessWindowHint );
+        m_appletBrowser = new Plasma::AppletBrowser(this, Qt::FramelessWindowHint );
+        m_appletBrowser->setContainment(containment());
         //TODO: make this proportional to the screen
         m_appletBrowser->setInitialSize(QSize(400, 400));
         m_appletBrowser->setApplication();
