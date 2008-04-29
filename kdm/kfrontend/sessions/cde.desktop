@@ -4,6 +4,7 @@ Exec=/usr/dt/bin/Xsession
 TryExec=/usr/dt/bin/Xsession
 Name=CDE
 Name[hi]=सीडीई
+Name[ml]=സിഡിഇ
 Name[sr]=ЦДЕ
 Name[te]=సిడిఈ
 Name[tg]=Муҳити графикии муштарак (CDE)

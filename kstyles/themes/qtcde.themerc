@@ -1,6 +1,7 @@
 [Misc]
 Name=CDE
 Name[hi]=सीडीई
+Name[ml]=സിഡിഇ
 Name[sr]=ЦДЕ
 Name[te]=సిడిఈ
 Name[tg]=Муҳити графикии муштарак (CDE)
@@ -33,6 +34,7 @@ Comment[km]=រចនាប័ទ្ម​ជាប់​ជាមួយ CDE ដ
 Comment[ko]=내장된 테마를 적용하지 않은 CDE 스타일
 Comment[lt]=Įtaisytas betemis CDE stilius
 Comment[lv]=Iebūvētais, netēmotais CDE stils
+Comment[ml]=രംഗവിതാനമൊന്നും തെരഞ്ഞെടുക്കാത്ത സിഡിഇയുടെ തനതു് രീതി
 Comment[nb]=Innebygd CDE-stil uten drakter
 Comment[nds]=Inbuut Stil "CDE" ahn Muster
 Comment[ne]=ढाँचाबद्ध नगरिएको सीडीई शैलीमा निर्माण गरिएको

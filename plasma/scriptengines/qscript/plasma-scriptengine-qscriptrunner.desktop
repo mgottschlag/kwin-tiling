@@ -1,13 +1,17 @@
 [Desktop Entry]
 Name=JavaScript Runner
+Name[el]=Εκτελεστής JavaScript
 Name[ga]=Feidhmitheoir JavaScript
+Name[gu]=જાવાસ્ક્રિપ્ટ ચલાવનાર
 Name[km]=កម្មវិធី​រត់ JavaScript
 Name[sv]=Kör Javascript
 Name[tr]=JavaScript Çalıştırıcı
 Name[zh_CN]=JavaScript 运行器
 Name[zh_TW]=JavaScript 執行器
 Comment=JavaScript Runner
+Comment[el]=Εκτελεστής JavaScript
 Comment[ga]=Feidhmitheoir JavaScript
+Comment[gu]=જાવાસ્ક્રિપ્ટ ચલાવનાર
 Comment[km]=កម្មវិធី​រត់ JavaScript
 Comment[sv]=Kör Javascript
 Comment[tr]=JavaScript Çalıştırıcı
