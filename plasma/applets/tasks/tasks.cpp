@@ -40,7 +40,7 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
  : Plasma::Applet(parent, arguments)
 {
     setHasConfigurationInterface(true);
-    setAspectRatioMode(Qt::IgnoreAspectRatio);
+    setAspectRatioMode(Plasma::IgnoreAspectRatio);
     m_screenTimer.setSingleShot(true);
     m_screenTimer.setInterval(300);
     connect(&m_screenTimer, SIGNAL(timeout()), this, SLOT(checkScreenChange()));

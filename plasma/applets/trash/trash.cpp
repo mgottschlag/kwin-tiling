@@ -138,12 +138,12 @@ void Trash::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint) {
         disconnect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
         disconnect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));
-	if (formFactor() == Plasma::Planar ||
+        if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
            
-	    //in a panel the icon always behaves like a button
+            //in a panel the icon always behaves like a button
             connect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));
-	    setRemainSquare(false);
+
             m_icon->setText(0);
             m_icon->setInfoText(0);
             m_showText = false;
@@ -151,7 +151,6 @@ void Trash::constraintsEvent(Plasma::Constraints constraints)
             //Adding an arbitrary width to make room for a larger count of items
             setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop))+=QSizeF(20,0));
         } else {
-            setRemainSquare(true);
             m_icon->setText(0);
             m_icon->setInfoText(0);
             m_showText = false;

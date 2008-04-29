@@ -75,7 +75,7 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
       d(new Private)
 {
     setHasConfigurationInterface(true);
-    setRemainSquare(true);
+    setAspectRatioMode(Plasma::Square);
     setBackgroundHints(DefaultBackground);
     d->icon = new Plasma::Icon(KIcon("start-here-kde"), QString(), this);
     d->icon->setFlag(ItemIsMovable, false);

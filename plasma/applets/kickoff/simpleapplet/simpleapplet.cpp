@@ -143,7 +143,7 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
       d(new Private)
 {
     setHasConfigurationInterface(true);
-    setRemainSquare(true);
+    setAspectRatioMode(Plasma::Square);
     setBackgroundHints(NoBackground);
 
     d->icon = new Plasma::Icon(QString(), this);

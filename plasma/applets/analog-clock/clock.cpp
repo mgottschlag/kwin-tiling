@@ -56,7 +56,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
 {
     setHasConfigurationInterface(true);
     resize(125, 125);
-    setRemainSquare(true);
+    setAspectRatioMode(Plasma::Square);
 
     m_theme = new Plasma::Svg(this);
     m_theme->setImagePath("widgets/clock");
