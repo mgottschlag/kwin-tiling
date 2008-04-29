@@ -22,5 +22,5 @@ Type=Service
 Icon=text-x-script
 X-KDE-Library=plasma_runner_scriptengine_qscript
 X-EngineName=qscriptrunner
-X-Plasma-Language=javascript
+X-Plasma-API=javascript
 X-Plasma-ComponentTypes=Runner

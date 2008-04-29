@@ -49,5 +49,5 @@ Type=Service
 Icon=text-x-script
 X-KDE-Library=plasma_scriptengine_qscript
 X-EngineName=qscriptapplet
-X-Plasma-Language=javascript
+X-Plasma-API=javascript
 X-Plasma-ComponentTypes=Applet
