@@ -100,12 +100,16 @@ void Clock::init()
 void Clock::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::SizeConstraint) {
+        int aspect = 2;
+        if (m_showSeconds) {
+            aspect = 3;
+        }
         if (formFactor() == Plasma::Horizontal) {
             // We have a fixed height, set some sensible width
-            setMinimumWidth(geometry().height() * 2);
+            setMinimumWidth(geometry().height() * aspect);
         } else if (formFactor() == Plasma::Vertical) {
             // We have a fixed width, set some sensible height
-            setMinimumHeight((int)geometry().width() / 2);
+            setMinimumHeight((int)geometry().width() / aspect);
         }
     }
 }
@@ -272,6 +276,7 @@ void Clock::configAccepted()
     cg.writeEntry("useCustomColor", m_useCustomColor);
     cg.writeEntry("plainClockColor", m_plainClockColor);
 
+    constraintsEvent(Plasma::SizeConstraint);
     update();
     emit configNeedsSaving();
 }
