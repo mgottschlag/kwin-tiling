@@ -104,9 +104,6 @@ void DesktopCorona::loadDefaultLayout()
     panel->addApplet("systemtray");
     panel->addApplet("notifier");
     panel->addApplet("digital-clock");
-
-    // in case something goes bad during runtime, let's at least save this to disk soonish
-    scheduleConfigSync();
 }
 
 void DesktopCorona::screenResized(int screen)

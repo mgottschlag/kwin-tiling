@@ -312,7 +312,7 @@ void DefaultDesktop::addPanel()
         panel->updateConstraints(Plasma::StartupCompletedConstraint);
         panel->flushPendingConstraintsEvents();
 
-        corona()->scheduleConfigSync();
+        emit configNeedsSaving();
     }
 }
 
