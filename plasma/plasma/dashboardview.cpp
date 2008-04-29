@@ -55,7 +55,7 @@ DashboardView::DashboardView(Plasma::Containment *containment, QWidget *parent)
 
     setWallpaperEnabled(!PlasmaApp::hasComposite());
 
-    connect(scene(), SIGNAL(launchActivated()), SLOT(hideView()));
+    connect(scene(), SIGNAL(releaseVisualFocus()), SLOT(hideView()));
     QGraphicsWidget *tool = containment->addToolBoxTool("hideDashboard", "preferences-desktop-display", i18n("Hide Dashboard"));
     containment->enableToolBoxTool("hideDashboard", false);
     connect(tool, SIGNAL(clicked()), this, SLOT(hideView()));

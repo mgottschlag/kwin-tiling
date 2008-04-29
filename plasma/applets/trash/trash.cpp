@@ -171,13 +171,13 @@ void Trash::constraintsEvent(Plasma::Constraints constraints)
 
 void Trash::slotOpen()
 {
-    emit launchActivated();
+    emit releaseVisualFocus();
     KRun::runUrl(m_trashUrl, "inode/directory", 0);
 }
 
 void Trash::slotEmpty()
 {
-    emit launchActivated();
+    emit releaseVisualFocus();
     const QString text(i18nc("@info", "Do you really want to empty the trash? All items will be deleted."));
     const bool del = KMessageBox::warningContinueCancel(&m_menu,
                                                         text,

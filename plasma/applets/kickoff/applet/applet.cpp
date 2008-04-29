@@ -207,7 +207,7 @@ void LauncherApplet::toggleMenu(bool pressed)
         }
 
         d->launcher->setLauncherOrigin( iconPosition, loc );
-        emit launchActivated();
+        emit releaseVisualFocus();
     }
 
     d->launcher->setVisible(!d->launcher->isVisible());

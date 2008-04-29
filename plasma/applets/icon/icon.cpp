@@ -120,7 +120,7 @@ void IconApplet::setUrl(const KUrl& url)
 void IconApplet::openUrl()
 {
     if (m_url.isValid()) {
-        emit launchActivated();
+        emit releaseVisualFocus();
         KRun::runUrl(m_url, m_mimetype->name(), 0);
     }
 }
