@@ -1,0 +1,18 @@
+[Desktop Entry]
+Exec=kcmshell4 gestures
+Icon=preferences-desktop-keyboard-khotkeys
+Type=Service
+X-KDE-ServiceTypes=KCModule
+X-KDE-Library=kcm_hotkeys
+X-KDE-PluginKeyword=gestures
+X-KDE-System-Settings-Parent-Category=input-actions
+
+Name=Mouse Gestures
+
+Comment=Configure Mouse Gestures
+
+Categories=Qt;KDE;X-KDE-settings-accessibility;
+
+X-KDE-Keywords=global,keyboard shortcuts,hot keys,hotkeys,KHotKeys,input actions,mouse gestures,actions,triggers,launch
+
+

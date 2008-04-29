@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Service
+X-KDE-ServiceTypes=SystemSettingsCategory
+X-KDE-System-Settings-Category=input-actions
+X-KDE-System-Settings-Parent-Category=computer-administration
+Icon=preferences-desktop-keyboard-khotkeys
+
+Name=Input Actions
+

@@ -1,12 +1,12 @@
 [Desktop Entry]
-Exec=kcmshell4 kcm_hotkeys
+Exec=kcmshell4 khotkeys
 Icon=preferences-desktop-keyboard-khotkeys
 Type=Service
 X-KDE-ServiceTypes=KCModule,KCModuleInit
 X-KDE-Library=kcm_hotkeys
+X-KDE-PluginKeyword=khotkeys
 X-KDE-Init-Symbol=khotkeys
-X-KDE-ParentApp=kcontrol
-X-KDE-System-Settings-Parent-Category=advanced-user-settings
+X-KDE-System-Settings-Parent-Category=input-actions
 
 Name=Input Actions
 Name[af]=Inset Aksies

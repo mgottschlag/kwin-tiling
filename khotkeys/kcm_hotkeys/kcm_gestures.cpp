@@ -17,7 +17,7 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "kcm_hotkeys.h"
+#include "kcm_gestures.h"
 #include "kcm_module_factory.h"
 
 
@@ -27,7 +27,6 @@
 #include "action_group_widget.h"
 #include "simple_action_data_widget.h"
 // REST
-#include "daemon/daemon.h"
 #include "hotkeys_model.h"
 #include "hotkeys_proxy_model.h"
 #include "hotkeys_tree_view.h"
@@ -45,16 +44,12 @@
 #include <KDE/KGlobalAccel>
 #include <KDE/KLocale>
 #include <KDE/KMessageBox>
-#include <KDE/KPluginLoader>
-#include <KDE/KToolInvocation>
 
-
-
-class KCMHotkeysPrivate
+class KCMGesturesPrivate
     {
     public:
 
-        KCMHotkeysPrivate( KCMHotkeys *host );
+        KCMGesturesPrivate( KCMGestures *host );
 
         // Treeview displaying the shortcuts
         QTreeView *treeView;
@@ -64,7 +59,7 @@ class KCMHotkeysPrivate
         KHotkeysModel *model;
 
         //! Our host
-        KCMHotkeys *q;
+        KCMGestures *q;
 
         //! Container for all editing widgets
         QStackedWidget *stack;
@@ -93,9 +88,9 @@ class KCMHotkeysPrivate
     };
 
 
-KCMHotkeys::KCMHotkeys( QWidget *parent, const QVariantList & /* args */ )
+KCMGestures::KCMGestures( QWidget *parent, const QVariantList & /* args */ )
     : KCModule( KCMModuleFactory::componentData(), parent )
-     ,d( new KCMHotkeysPrivate(this) )
+     ,d( new KCMGesturesPrivate(this) )
     {
     // Inform KCModule of the buttons we support
     KCModule::setButtons(KCModule::Buttons(KCModule::Default | KCModule::Apply));
@@ -132,7 +127,7 @@ KCMHotkeys::KCMHotkeys( QWidget *parent, const QVariantList & /* args */ )
     }
 
 
-void KCMHotkeys::currentChanged( const QModelIndex &pCurrent, const QModelIndex &pPrevious )
+void KCMGestures::currentChanged( const QModelIndex &pCurrent, const QModelIndex &pPrevious )
     {
     // We're not interested in changes of columns. Just compare the rows
     QModelIndex current =
@@ -203,41 +198,41 @@ void KCMHotkeys::currentChanged( const QModelIndex &pCurrent, const QModelIndex 
     }
 
 
-KCMHotkeys::~KCMHotkeys()
+KCMGestures::~KCMGestures()
     {
     delete d; d=0;
     }
 
 
-void KCMHotkeys::defaults()
+void KCMGestures::defaults()
     {
     kWarning() << "not yet implemented!";
     }
 
 
-void KCMHotkeys::load()
+void KCMGestures::load()
     {
     d->load();
     }
 
 
-void KCMHotkeys::slotChanged()
+void KCMGestures::slotChanged()
     {
     emit changed(true);
     }
 
 
-void KCMHotkeys::save()
+void KCMGestures::save()
     {
     d->save();
     }
 
 
 // ==========================================================================
-// KCMHotkeysPrivate
+// KCMGesturesPrivate
 
 
-KCMHotkeysPrivate::KCMHotkeysPrivate( KCMHotkeys *host )
+KCMGesturesPrivate::KCMGesturesPrivate( KCMGestures *host )
     : treeView( new HotkeysTreeView )
      ,model(new KHotkeysModel)
      ,q(host)
@@ -271,7 +266,7 @@ KCMHotkeysPrivate::KCMHotkeysPrivate( KCMHotkeys *host )
     }
 
 
-void KCMHotkeysPrivate::load()
+void KCMGesturesPrivate::load()
     {
     // disconnect the signals
     if (treeView->selectionModel())
@@ -300,7 +295,7 @@ void KCMHotkeysPrivate::load()
     }
 
 
-bool KCMHotkeysPrivate::maybeShowWidget()
+bool KCMGesturesPrivate::maybeShowWidget()
     {
     // If the current widget is changed, ask user if switch is ok
     if (current && current->isChanged())
@@ -320,7 +315,7 @@ bool KCMHotkeysPrivate::maybeShowWidget()
     }
 
 
-void KCMHotkeysPrivate::save()
+void KCMGesturesPrivate::save()
     {
     if ( current && current->isChanged() )
         {
@@ -381,7 +376,7 @@ void KCMHotkeysPrivate::save()
 
 
 
-void KCMHotkeysPrivate::saveCurrentItem()
+void KCMGesturesPrivate::saveCurrentItem()
     {
     Q_ASSERT( current );
     // Only save when really changed
@@ -394,4 +389,5 @@ void KCMHotkeysPrivate::saveCurrentItem()
     }
 
 
-#include "moc_kcm_hotkeys.cpp"
+#include "moc_kcm_gestures.cpp"
+
