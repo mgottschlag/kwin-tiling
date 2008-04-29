@@ -39,6 +39,8 @@ Q_OBJECT
 public:
     explicit SystemTray(QObject *parent, const QVariantList &arguments = QVariantList());
     ~SystemTray();
+  
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
     void constraintsEvent(Plasma::Constraints constraints);
 

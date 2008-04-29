@@ -39,6 +39,15 @@ SystemTray::~SystemTray()
     delete m_systemTrayWidget;
 }
 
+QVariant SystemTray::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if (change == ItemPositionHasChanged) {
+        updateWidgetGeometry();
+    }
+
+    return Applet::itemChange(change, value);
+}
+
 void SystemTray::constraintsEvent(Plasma::Constraints constraints)
 {   
     if (constraints & Plasma::SizeConstraint) {
@@ -54,6 +63,7 @@ void SystemTray::updateSize()
 {
     setPreferredSize(m_systemTrayWidget->sizeHint());
     resize(m_systemTrayWidget->sizeHint());
+    updateWidgetGeometry();
 }
 
 void SystemTray::updateWidgetOrientation()
