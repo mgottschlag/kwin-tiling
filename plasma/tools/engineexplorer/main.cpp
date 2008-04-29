@@ -44,7 +44,7 @@ int main(int argc, char **argv)
     options.add("x <pixels>", ki18n("The desired x position in pixels"));
     options.add("y <pixels>", ki18n("The desired y position in pixels"));
     options.add("engine <data engine>", ki18n("The data engine to use"));
-    options.add("interval <ms>", ki18n("Update Interval in milliseconds.  Default: 50ms"), "50");
+    options.add("interval <ms>", ki18n("Update Interval in milliseconds."));
     KCmdLineArgs::addCmdLineOptions(options);
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();

@@ -10,9 +10,9 @@
    </rect>
   </property>
   <layout class="QVBoxLayout" >
-      <property name="margin">
-          <number>0</number>
-      </property>
+   <property name="margin" >
+    <number>0</number>
+   </property>
    <item>
     <widget class="KTitleWidget" name="m_title" >
      <property name="text" >
@@ -43,11 +43,14 @@
        <property name="enabled" >
         <bool>false</bool>
        </property>
+       <property name="specialValueText" >
+        <string>Update on demand</string>
+       </property>
        <property name="suffix" >
         <string>ms</string>
        </property>
        <property name="prefix" >
-        <string>update every </string>
+        <string>Update every </string>
        </property>
        <property name="minimum" >
         <number>0</number>
@@ -59,7 +62,7 @@
         <number>50</number>
        </property>
        <property name="value" >
-        <number>50</number>
+        <number>0</number>
        </property>
       </widget>
      </item>
@@ -99,6 +102,7 @@
  <tabstops>
   <tabstop>m_engines</tabstop>
   <tabstop>m_sourceRequester</tabstop>
+  <tabstop>m_updateInterval</tabstop>
   <tabstop>m_sourceRequesterButton</tabstop>
   <tabstop>m_data</tabstop>
  </tabstops>
