@@ -456,10 +456,11 @@ void Panel::applyConfig()
     }
 
     if (newLoc != location()) {
-        m_currentSize = newSize;
+        //m_currentSize = newSize;
         setFormFactorFromLocation(newLoc);
         setLocation(newLoc);
-    } else if (newSize != m_currentSize) {
+    }
+    if (newSize != m_currentSize) {
         updateSize(newSize);
     }
 
@@ -493,6 +494,7 @@ void Panel::updateSize(const QSize &newSize)
     resize(newSize);
     setMinimumSize(newSize);
     setMaximumSize(newSize);
+    m_currentSize = newSize;
     //kDebug( )<< "geometry is now" << geometry() << sceneBoundingRect();
 }
 
