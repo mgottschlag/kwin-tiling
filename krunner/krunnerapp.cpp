@@ -61,7 +61,7 @@ void checkComposite()
     dpy = XOpenDisplay(0); // open default display
     if (!dpy)
     {
-        kError() << "Cannot connect to the X server" << endl;
+        kError() << "Cannot connect to the X server";
         return;
     }
 
