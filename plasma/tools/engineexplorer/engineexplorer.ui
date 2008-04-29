@@ -105,22 +105,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>m_sourceRequester</sender>
-   <signal>returnPressed(QString)</signal>
-   <receiver>m_sourceRequesterButton</receiver>
-   <slot>animateClick()</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>266</x>
-     <y>92</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>502</x>
-     <y>109</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>m_updateInterval</sender>
    <signal>editingFinished()</signal>
    <receiver>m_sourceRequesterButton</receiver>

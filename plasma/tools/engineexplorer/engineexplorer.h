@@ -64,6 +64,7 @@ class EngineExplorer : public KDialog, public Ui::EngineExplorer
         QString m_engineName;
         Plasma::DataEngine* m_engine;
         int m_sourceCount;
+        bool m_requestingSource;
 };
 
 #endif // multiple inclusion guard

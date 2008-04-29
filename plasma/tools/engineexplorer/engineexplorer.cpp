@@ -35,7 +35,8 @@
 EngineExplorer::EngineExplorer(QWidget* parent)
     : KDialog(parent),
       m_engine(0),
-      m_sourceCount(0)
+      m_sourceCount(0),
+      m_requestingSource(false)
 {
     setButtons(0);
     setWindowTitle(i18n("Plasma Engine Explorer"));
@@ -159,7 +160,10 @@ void EngineExplorer::addSource(const QString& source)
     //kDebug() << "getting data for source " << source;
     Plasma::DataEngine::Data data = m_engine->query(source);
     showData(parent, data);
-    m_engine->connectSource(source, this);
+
+    if (!m_requestingSource || m_sourceRequester->text() != source) {
+        m_engine->connectSource(source, this);
+    }
 
     ++m_sourceCount;
     updateTitle();
@@ -193,7 +197,10 @@ void EngineExplorer::requestSource()
         return;
     }
 
+    kDebug() << "request source" << source;
+    m_requestingSource = true;
     m_engine->connectSource(source, this, (uint)m_updateInterval->value());
+    m_requestingSource = false;
 }
 
 QString EngineExplorer::convertToString(const QVariant &value) const
