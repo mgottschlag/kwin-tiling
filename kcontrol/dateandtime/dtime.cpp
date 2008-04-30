@@ -352,11 +352,6 @@ void Dtime::save()
       KMessageBox::error( this, i18n("Can not set date."));
       return;
     }
-
-    // try to set hardware clock. We do not care if it fails
-    KProcess hwc_proc;
-    hwc_proc << "hwclock" << "--systohc";
-    hwc_proc.execute();
   }
 
   // restart time
