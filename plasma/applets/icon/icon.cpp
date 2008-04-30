@@ -68,7 +68,7 @@ void IconApplet::init()
     }
     setDisplayLines(2);
 
-    watchForMouseMove(m_icon, true);
+    registerAsDragHandle(m_icon);
 
     // we do this right away since we may have our config
     // read shortly by the containment. usually applets don't need

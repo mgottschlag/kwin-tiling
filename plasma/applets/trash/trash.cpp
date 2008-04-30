@@ -94,7 +94,7 @@ void Trash::init()
 
     m_dirLister->openUrl(m_trashUrl);
     m_icon->setDrawBackground(true);
-    watchForMouseMove(m_icon, true);
+    registerAsDragHandle(m_icon);
     //setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
     resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
     //FIXME PORT TO TOOLTIP MANAGER
