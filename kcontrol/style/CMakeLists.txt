@@ -5,7 +5,7 @@ include_directories( ${BLITZ_INCLUDES} )
 
 ########### next target ###############
 
-set(kcm_style_PART_SRCS ../krdb/krdb.cpp menupreview.cpp styleconfdialog.cpp kcmstyle.cpp)
+set(kcm_style_PART_SRCS ../krdb/krdb.cpp styleconfdialog.cpp kcmstyle.cpp)
 
 
 kde4_add_ui_files(kcm_style_PART_SRCS stylepreview.ui)

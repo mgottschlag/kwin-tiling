@@ -151,9 +151,8 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 			"of user interface elements, such as the widget style "
 			"and effects."));
 
-	m_bEffectsDirty = false;
 	m_bStyleDirty= false;
-	m_bToolbarsDirty = false;
+	m_bEffectsDirty = false;
 
 	KGlobal::dirs()->addResourceType("themes", "data", "kstyle/themes");
 
@@ -179,8 +178,6 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	page1Layout = new QVBoxLayout( page1 );
 	page2 = new QWidget;
 	page2Layout = new QVBoxLayout( page2 );
-	page3 = new QWidget;
-	page3Layout = new QVBoxLayout( page3 );
 
 	// Add Page1 (Style)
 	// -----------------
@@ -212,9 +209,6 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	gbWidgetStyleLayout->addWidget( cbIconsOnButtons );
 	cbEnableTooltips = new QCheckBox( i18n("E&nable tooltips"), gbWidgetStyle );
 	gbWidgetStyleLayout->addWidget( cbEnableTooltips );
-	cbTearOffHandles = new QCheckBox( i18n("Show tear-off handles in &popup menus"), gbWidgetStyle );
-	gbWidgetStyleLayout->addWidget( cbTearOffHandles );
-	cbTearOffHandles->hide(); // reenable when the corresponding Qt method is virtual and properly reimplemented
 
 	QGroupBox *gbPreview = new QGroupBox( i18n( "Preview" ), page1 );
 	QVBoxLayout *previewLayout = new QVBoxLayout(gbPreview);
@@ -226,15 +220,14 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	page1Layout->addWidget( gbPreview );
 	page1Layout->addStretch();
 
-	// Connect all required stuff
 	connect( cbStyle, SIGNAL(activated(int)), this, SLOT(styleChanged()) );
 	connect( cbStyle, SIGNAL(activated(int)), this, SLOT(updateConfigButton()));
 	connect( pbConfigStyle, SIGNAL(clicked()), this, SLOT(styleSpecificConfig()));
 
 	// Add Page2 (Effects)
 	// -------------------
-	gbWidgetStyle = new QGroupBox( i18n("Graphical User Interface"), page2 );
-	QVBoxLayout *effectsLayout = new QVBoxLayout(gbWidgetStyle);
+	QGridLayout *effectsLayout = new QGridLayout( );
+	QLabel* lbl = new QLabel( i18n("Graphical User Interface:"), page2 );
 	comboGraphicEffectsLevel = new KComboBox( page2 );
 	comboGraphicEffectsLevel->setObjectName( "cbGraphicEffectsLevel" );
 	comboGraphicEffectsLevel->setEditable( false );
@@ -244,137 +237,11 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	comboGraphicEffectsLevel->addItem(i18n("High display resolution and High CPU"), (int) (KGlobalSettings::SimpleAnimationEffects | KGlobalSettings::GradientEffects));
 	comboGraphicEffectsLevel->addItem(i18n("Low display resolution and Very High CPU"), KGlobalSettings::ComplexAnimationEffects);
 	comboGraphicEffectsLevel->addItem(i18n("High display resolution and Very High CPU"), (int) (KGlobalSettings::ComplexAnimationEffects | KGlobalSettings::GradientEffects));
-	effectsLayout->addWidget( comboGraphicEffectsLevel );
+	effectsLayout->addWidget( lbl, 0, 0 );
+	effectsLayout->addWidget( comboGraphicEffectsLevel, 0, 1 );
 
-	cbEnableEffects = new QCheckBox( i18n("&Enable GUI effects"), page2 );
-	containerFrame = new QFrame( page2 );
-	containerFrame->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
-	containerLayout = new QGridLayout( containerFrame );
-
-	comboComboEffect = new QComboBox( containerFrame );
-	comboComboEffect->setEditable( false );
-	comboComboEffect->addItem( i18n("Disable") );
-	comboComboEffect->addItem( i18n("Animate") );
-	lblComboEffect = new QLabel( i18n("Combobo&x effect:"), containerFrame );
-	lblComboEffect->setBuddy( comboComboEffect );
-	containerLayout->addWidget( lblComboEffect, 0, 0 );
-	containerLayout->addWidget( comboComboEffect, 0, 1 );
-
-	comboTooltipEffect = new QComboBox( containerFrame );
-	comboTooltipEffect->setEditable( false );
-	comboTooltipEffect->addItem( i18n("Disable") );
-	comboTooltipEffect->addItem( i18n("Animate") );
-	comboTooltipEffect->addItem( i18n("Fade") );
-	lblTooltipEffect = new QLabel( i18n("&Tool tip effect:"), containerFrame );
-	lblTooltipEffect->setBuddy( comboTooltipEffect );
-	containerLayout->addWidget( lblTooltipEffect, 1, 0 );
-	containerLayout->addWidget( comboTooltipEffect, 1, 1 );
-
-	comboMenuEffect = new QComboBox( containerFrame );
-	comboMenuEffect->setEditable( false );
-	comboMenuEffect->addItem( i18n("Disable") );
-	comboMenuEffect->addItem( i18n("Animate") );
-	comboMenuEffect->addItem( i18n("Fade") );
-	comboMenuEffect->addItem( i18n("Make Translucent") );
-	lblMenuEffect = new QLabel( i18n("&Menu effect:"), containerFrame );
-	lblMenuEffect->setBuddy( comboMenuEffect );
-	containerLayout->addWidget( lblMenuEffect, 2, 0 );
-	containerLayout->addWidget( comboMenuEffect, 2, 1 );
-
-	comboMenuHandle = new QComboBox( containerFrame );
-	comboMenuHandle->setEditable( false );
-	comboMenuHandle->addItem( i18n("Disable") );
-	comboMenuHandle->addItem( i18n("Application Level") );
-//	comboMenuHandle->addItem( i18n("Enable") );
-	lblMenuHandle = new QLabel( i18n("Me&nu tear-off handles:"), containerFrame );
-	lblMenuHandle->setBuddy( comboMenuHandle );
-	containerLayout->addWidget( lblMenuHandle, 3, 0 );
-	containerLayout->addWidget( comboMenuHandle, 3, 1 );
-
-	cbMenuShadow = new QCheckBox( i18n("Menu &drop shadow"), containerFrame );
-	containerLayout->addWidget( cbMenuShadow, 4, 0 );
-
-	// Push the [label combo] to the left.
-	comboSpacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-	containerLayout->addItem( comboSpacer, 1, 2 );
-
-	// Separator.
-	QFrame* hline = new QFrame ( page2 );
-	hline->setFrameStyle( QFrame::HLine | QFrame::Sunken );
-
-	// Now implement the Menu Transparency container.
-	menuContainer = new QFrame( page2 );
-	menuContainer->setFrameStyle( QFrame::NoFrame | QFrame::Plain );
-	menuContainerLayout = new QGridLayout( menuContainer );
-
-	menuPreview = new MenuPreview( menuContainer, /* opacity */ 90, MenuPreview::Blend );
-
-	comboMenuEffectType = new QComboBox( menuContainer );
-	comboMenuEffectType->setEditable( false );
-	comboMenuEffectType->addItem( i18n("Software Tint") );
-	comboMenuEffectType->addItem( i18n("Software Blend") );
-#ifdef HAVE_XRENDER
-	comboMenuEffectType->addItem( i18n("XRender Blend") );
-#endif
-
-	// So much stuffing around for a simple slider..
-	sliderBox = new KVBox( menuContainer );
-	slOpacity = new QSlider( Qt::Horizontal, sliderBox );
-	slOpacity->setMinimum( 0 );
-	slOpacity->setMaximum( 100 );
-	slOpacity->setPageStep( 5 );
-	slOpacity->setTickPosition( QSlider::TicksBelow );
-	slOpacity->setTickInterval( 10 );
-	KHBox* box1 = new KHBox( sliderBox );
-	QLabel* lbl = new QLabel( i18n("0%"), box1 );
-	lbl->setAlignment( Qt::AlignLeft );
-	lbl = new QLabel( i18n("50%"), box1 );
-	lbl->setAlignment( Qt::AlignHCenter );
-	lbl = new QLabel( i18n("100%"), box1 );
-	lbl->setAlignment( Qt::AlignRight );
-
-	lblMenuEffectType = new QLabel( i18n("Menu trans&lucency type:"), menuContainer );
-	lblMenuEffectType->setBuddy( comboMenuEffectType );
-	lblMenuEffectType->setAlignment( Qt::AlignBottom | Qt::AlignLeft );
-	lblMenuOpacity = new QLabel( i18n("Menu &opacity:"), menuContainer );
-	lblMenuOpacity->setBuddy( slOpacity );
-	lblMenuOpacity->setAlignment( Qt::AlignBottom | Qt::AlignLeft );
-
-	menuContainerLayout->addWidget( lblMenuEffectType, 0, 0 );
-	menuContainerLayout->addWidget( comboMenuEffectType, 1, 0 );
-	menuContainerLayout->addWidget( lblMenuOpacity, 2, 0 );
-	menuContainerLayout->addWidget( sliderBox, 3, 0 );
-	menuContainerLayout->addWidget( menuPreview, 0, 1, 4, 1);
-
-	// Layout page2.
-    page2Layout->addWidget( gbWidgetStyle );
-	page2Layout->addWidget( cbEnableEffects );
-	page2Layout->addWidget( containerFrame );
-	page2Layout->addWidget( hline );
-	page2Layout->addWidget( menuContainer );
-
-	QSpacerItem* sp1 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
-	page2Layout->addItem( sp1 );
-
-	// Data flow stuff.
-	connect( cbEnableEffects,    SIGNAL(toggled(bool)), containerFrame, SLOT(setEnabled(bool)) );
-	connect( cbEnableEffects,    SIGNAL(toggled(bool)), this, SLOT(menuEffectChanged(bool)) );
-	connect( slOpacity,          SIGNAL(valueChanged(int)),menuPreview, SLOT(setOpacity(int)) );
-	connect( comboMenuEffect,    SIGNAL(activated(int)), this, SLOT(menuEffectChanged()) );
-	connect( comboMenuEffect,    SIGNAL(highlighted(int)), this, SLOT(menuEffectChanged()) );
-	connect( comboMenuEffectType, SIGNAL(activated(int)), this, SLOT(menuEffectTypeChanged()) );
-	connect( comboMenuEffectType, SIGNAL(highlighted(int)), this, SLOT(menuEffectTypeChanged()) );
-
-	// Add Page3 (Miscellaneous)
-	// -------------------------
-	cbHoverButtons = new QCheckBox( i18n("High&light buttons under mouse"), page3 );
-	cbTransparentToolbars = new QCheckBox( i18n("Transparent tool&bars when moving"), page3 );
-
-	QWidget * dummy = new QWidget( page3 );
-
-	QHBoxLayout* box2 = new QHBoxLayout( dummy );
-	lbl = new QLabel( i18n("Text pos&ition:"), dummy );
-	comboToolbarIcons = new QComboBox( dummy );
+	lbl = new QLabel( i18n("Text pos&ition:"), page2 );
+	comboToolbarIcons = new QComboBox( page2 );
 	comboToolbarIcons->setEditable( false );
 	comboToolbarIcons->addItem( i18n("Icons Only") );
 	comboToolbarIcons->addItem( i18n("Text Only") );
@@ -382,46 +249,31 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	comboToolbarIcons->addItem( i18n("Text Under Icons") );
 	lbl->setBuddy( comboToolbarIcons );
 
-	box2->addWidget( lbl );
-	box2->addWidget( comboToolbarIcons );
-	QSpacerItem* sp2 = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-	box2->addItem( sp2 );
+	effectsLayout->addWidget( lbl, 1, 0 );
+	effectsLayout->addWidget( comboToolbarIcons, 1, 1 );
 
-	page3Layout->addWidget( cbHoverButtons );
-	page3Layout->addWidget( cbTransparentToolbars );
-	page3Layout->addWidget( dummy );
+        // Push the [label combo] to the left.
+        comboSpacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
+        effectsLayout->addItem( comboSpacer, 1, 2 );
 
-	// Layout page3.
-	QSpacerItem* sp3 = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Expanding );
-	page3Layout->addItem( sp3 );
+	cbHoverButtons = new QCheckBox( i18n("High&light buttons under mouse"), page2 );
 
-	// Do all the setDirty connections.
+	page2Layout->addLayout( effectsLayout );
+	page2Layout->addWidget( cbHoverButtons );
+	page2Layout->addStretch();
+
 	connect(cbStyle, SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
-	// Page2
-	connect( cbEnableEffects,    SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
-	connect( cbEnableEffects,    SIGNAL(toggled(bool)),   this, SLOT(setStyleDirty()));
-	connect( comboTooltipEffect, SIGNAL(activated(int)), this, SLOT(setEffectsDirty()));
-	connect( comboComboEffect,   SIGNAL(activated(int)), this, SLOT(setEffectsDirty()));
-	connect( comboMenuEffect,    SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
-	connect( comboMenuHandle,    SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
-	connect( comboMenuEffectType, SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
-	connect( slOpacity,          SIGNAL(valueChanged(int)),this, SLOT(setStyleDirty()));
-	connect( cbMenuShadow,       SIGNAL(toggled(bool)),   this, SLOT(setStyleDirty()));
-	// Page3
-	connect( cbHoverButtons,       SIGNAL(toggled(bool)),   this, SLOT(setToolbarsDirty()));
-	connect( cbTransparentToolbars, SIGNAL(toggled(bool)),   this, SLOT(setToolbarsDirty()));
+	connect( cbHoverButtons,       SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
 	connect( cbEnableTooltips,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
 	connect( cbIconsOnButtons,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
 	connect( comboGraphicEffectsLevel, SIGNAL(activated(int)),   this, SLOT(setEffectsDirty()));
-	connect( cbTearOffHandles,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
-	connect( comboToolbarIcons,    SIGNAL(activated(int)), this, SLOT(setToolbarsDirty()));
+	connect( comboToolbarIcons,    SIGNAL(activated(int)), this, SLOT(setEffectsDirty()));
 
 	addWhatsThis();
 
 	// Insert the pages into the tabWidget
 	tabWidget->addTab( page1, i18n("&Style"));
 	tabWidget->addTab( page2, i18n("&Effects"));
-	tabWidget->addTab( page3, i18n("&Toolbar"));
 
 	//Enable/disable the button for the initial style
 	updateConfigButton();
@@ -518,18 +370,12 @@ void KCMStyle::changeEvent( QEvent *event )
 void KCMStyle::load()
 {
 	KConfig config( "kdeglobals", KConfig::FullConfig );
-	// Page1 - Build up the Style ListBox
-	loadStyle( config );
 
-	// Page2 - Effects
+	loadStyle( config );
 	loadEffects( config );
 
-	// Page3 - Misc.
-	loadMisc( config );
-
-	m_bEffectsDirty = false;
 	m_bStyleDirty= false;
-	m_bToolbarsDirty = false;
+	m_bEffectsDirty = false;
 
 	emit changed( false );
 }
@@ -538,93 +384,14 @@ void KCMStyle::load()
 void KCMStyle::save()
 {
 	// Don't do anything if we don't need to.
-	if ( !(m_bToolbarsDirty | m_bEffectsDirty | m_bStyleDirty ) )
+	if ( !( m_bStyleDirty | m_bEffectsDirty ) )
 		return;
-
-	bool allowMenuTransparency = false;
-	bool allowMenuDropShadow   = false;
-
-	// Read the KStyle flags to see if the style writer
-	// has enabled menu translucency in the style.
-	if (appliedStyle && appliedStyle->inherits("KStyle"))
-	{
-		allowMenuDropShadow = true;
-/*		KStyle* style = dynamic_cast<KStyle*>(appliedStyle);
-		if (style) {
-			KStyle::KStyleFlags flags = style->styleFlags();
-			if (flags & KStyle::AllowMenuTransparency)
-				allowMenuTransparency = true;
-		}*/
-	}
-
-	//### KDE4: not at all clear whether this will come back
-	allowMenuTransparency = false;
-
-	QString warn_string( i18n("<qt>Selected style: <b>%1</b><br /><br />"
-		"One or more effects that you have chosen could not be applied because the selected "
-		"style does not support them; they have therefore been disabled.<br />"
-		"<br /></qt>", cbStyle->currentText()) );
-	bool show_warning = false;
-
-	// Warn the user if they're applying a style that doesn't support
-	// menu translucency and they enabled it.
-    if ( (!allowMenuTransparency) &&
-		(cbEnableEffects->isChecked()) &&
-		(comboMenuEffect->currentIndex() == 3) )	// Make Translucent
-    {
-		warn_string += i18n("Menu translucency is not available.<br />");
-		comboMenuEffect->setCurrentIndex(0);    // Disable menu effect.
-		show_warning = true;
-	}
-
-	if (!allowMenuDropShadow && cbMenuShadow->isChecked())
-	{
-		warn_string += i18n("Menu drop-shadows are not available.");
-		cbMenuShadow->setChecked(false);
-		show_warning = true;
-	}
-
-	// Tell the user what features we could not apply on their behalf.
-	if (show_warning)
-		KMessageBox::information(this, warn_string);
-
 
 	// Save effects.
 	KConfig _config( "kdeglobals" );
 	KConfigGroup config(&_config, "KDE");
 
-	config.writeEntry( "EffectsEnabled", cbEnableEffects->isChecked());
-	int item = comboComboEffect->currentIndex();
-	config.writeEntry( "EffectAnimateCombo", item == 1 );
-	item = comboTooltipEffect->currentIndex();
-	config.writeEntry( "EffectAnimateTooltip", item == 1);
-	config.writeEntry( "EffectFadeTooltip", item == 2 );
-	item = comboMenuHandle->currentIndex();
-	config.writeEntry( "InsertTearOffHandle", item );
-	item = comboMenuEffect->currentIndex();
-	config.writeEntry( "EffectAnimateMenu", item == 1 );
-	config.writeEntry( "EffectFadeMenu", item == 2 );
-
-	// Handle KStyle's menu effects
-	QString engine("Disabled");
-	if (item == 3 && cbEnableEffects->isChecked())	// Make Translucent
-		switch( comboMenuEffectType->currentIndex())
-		{
-			case 1: engine = "SoftwareBlend"; break;
-			case 2: engine = "XRender"; break;
-			default:
-			case 0: engine = "SoftwareTint"; break;
-		}
-
-	{	// Braces force a QSettings::sync()
-		QSettings settings;	// Only for KStyle stuff
-		settings.setValue("/KStyle/Settings/MenuTransparencyEngine", engine);
-		settings.setValue("/KStyle/Settings/MenuOpacity", slOpacity->value()/100.0);
- 		settings.setValue("/KStyle/Settings/MenuDropShadow",
-					cbEnableEffects->isChecked() && cbMenuShadow->isChecked() );
-	}
-
-	// Misc page
+	// Effects page
 	config.writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), KConfig::Normal|KConfig::Global);
     KConfigGroup g( &_config, "KDE-Global GUI Settings" );
     g.writeEntry( "GraphicEffectsLevel", comboGraphicEffectsLevel->itemData(comboGraphicEffectsLevel->currentIndex()), KConfig::Normal|KConfig::Global);
@@ -635,7 +402,6 @@ void KCMStyle::save()
 
     KConfigGroup toolbarStyleGroup(&_config, "Toolbar style");
     toolbarStyleGroup.writeEntry("Highlighting", cbHoverButtons->isChecked(), KConfig::Normal|KConfig::Global);
-    toolbarStyleGroup.writeEntry("TransparentMoving", cbTransparentToolbars->isChecked(), KConfig::Normal|KConfig::Global);
 	QString tbIcon;
 	switch( comboToolbarIcons->currentIndex() )
 	{
@@ -666,25 +432,23 @@ void KCMStyle::save()
 	if ( m_bStyleDirty )
 		KGlobalSettings::self()->emitChange(KGlobalSettings::StyleChanged);
 
-	if ( m_bToolbarsDirty )
+	if ( m_bEffectsDirty ) {
+		KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
 		// ##### FIXME - Doesn't apply all settings correctly due to bugs in
 		// KApplication/KToolbar
 		KGlobalSettings::self()->emitChange(KGlobalSettings::ToolbarStyleChanged);
 
-	if (m_bEffectsDirty) {
-		KGlobalSettings::self()->emitChange(KGlobalSettings::SettingsChanged);
 #ifdef Q_WS_X11
-        // Send signal to all kwin instances
-        QDBusMessage message =
-           QDBusMessage::createSignal("/KWin", "org.kde.KWin", "reloadConfig");
-        QDBusConnection::sessionBus().send(message);
+		// Send signal to all kwin instances
+		QDBusMessage message =
+		QDBusMessage::createSignal("/KWin", "org.kde.KWin", "reloadConfig");
+		QDBusConnection::sessionBus().send(message);
 #endif
 	}
 
 	// Clean up
-	m_bEffectsDirty  = false;
-	m_bToolbarsDirty = false;
 	m_bStyleDirty    = false;
+	m_bEffectsDirty  = false;
 	emit changed( false );
 }
 
@@ -732,35 +496,17 @@ void KCMStyle::defaults()
 	m_bStyleDirty = true;
 	switchStyle( currentStyle() );	// make resets visible
 
-	// Effects..
-	cbEnableEffects->setChecked(false);
-	comboTooltipEffect->setCurrentIndex(0);
-	comboComboEffect->setCurrentIndex(0);
-	comboMenuEffect->setCurrentIndex(0);
-	comboMenuHandle->setCurrentIndex(0);
-	comboMenuEffectType->setCurrentIndex(0);
-	slOpacity->setValue(90);
-	cbMenuShadow->setChecked(false);
-
-	// Miscellaneous
+	// Effects
 	cbHoverButtons->setChecked(true);
-	cbTransparentToolbars->setChecked(true);
 	cbEnableTooltips->setChecked(true);
 	comboToolbarIcons->setCurrentIndex(0);
 	cbIconsOnButtons->setChecked(true);
 	comboGraphicEffectsLevel->setCurrentIndex(comboGraphicEffectsLevel->findData(((int) KGlobalSettings::graphicEffectsLevelDefault())));
-	cbTearOffHandles->setChecked(false);
 }
 
 void KCMStyle::setEffectsDirty()
 {
 	m_bEffectsDirty = true;
-	emit changed(true);
-}
-
-void KCMStyle::setToolbarsDirty()
-{
-	m_bToolbarsDirty = true;
 	emit changed(true);
 }
 
@@ -943,130 +689,15 @@ void KCMStyle::setStyleRecursive(QWidget* w, QStyle* s)
 	}
 }
 
-
 // ----------------------------------------------------------------
 // All the Effects stuff
 // ----------------------------------------------------------------
 
 void KCMStyle::loadEffects( KConfig& config )
 {
-	// Load effects.
-	KConfigGroup configGroup = config.group("KDE");
-
-	cbEnableEffects->setChecked( configGroup.readEntry( "EffectsEnabled", false) );
-
-	if ( configGroup.readEntry( "EffectAnimateCombo", false) )
-		comboComboEffect->setCurrentIndex( 1 );
-	else
-		comboComboEffect->setCurrentIndex( 0 );
-
-	if ( configGroup.readEntry( "EffectAnimateTooltip", false) )
-		comboTooltipEffect->setCurrentIndex( 1 );
-	else if ( configGroup.readEntry( "EffectFadeTooltip", false) )
-		comboTooltipEffect->setCurrentIndex( 2 );
-	else
-		comboTooltipEffect->setCurrentIndex( 0 );
-
-	if ( configGroup.readEntry( "EffectAnimateMenu", false) )
-		comboMenuEffect->setCurrentIndex( 1 );
-	else if ( configGroup.readEntry( "EffectFadeMenu", false) )
-		comboMenuEffect->setCurrentIndex( 2 );
-	else
-		comboMenuEffect->setCurrentIndex( 0 );
-
-	comboMenuHandle->setCurrentIndex(configGroup.readEntry("InsertTearOffHandle", 0));
-
-	// KStyle Menu transparency and drop-shadow options...
-	QSettings settings;
-	QString effectEngine = settings.value("/KStyle/Settings/MenuTransparencyEngine", "Disabled" ).toString();
-
-#ifdef HAVE_XRENDER
-	if (effectEngine == "XRender") {
-		comboMenuEffectType->setCurrentIndex(2);
-		comboMenuEffect->setCurrentIndex(3);
-	} else if (effectEngine == "SoftwareBlend") {
-		comboMenuEffectType->setCurrentIndex(1);
-		comboMenuEffect->setCurrentIndex(3);
-#else
-	if (effectEngine == "XRender" || effectEngine == "SoftwareBlend") {
-		comboMenuEffectType->setCurrentIndex(1);	// Software Blend
-		comboMenuEffect->setCurrentIndex(3);
-#endif
-	} else if (effectEngine == "SoftwareTint") {
-		comboMenuEffectType->setCurrentIndex(0);
-		comboMenuEffect->setCurrentIndex(3);
-	} else
-		comboMenuEffectType->setCurrentIndex(0);
-
-	if (comboMenuEffect->currentIndex() != 3)	// If not translucency...
-		menuPreview->setPreviewMode( MenuPreview::Tint );
-	else if (comboMenuEffectType->currentIndex() == 0)
-		menuPreview->setPreviewMode( MenuPreview::Tint );
-	else
-		menuPreview->setPreviewMode( MenuPreview::Blend );
-
-	slOpacity->setValue( (int)(100 * settings.value("/KStyle/Settings/MenuOpacity", 0.90).toDouble()) );
-
-	// Menu Drop-shadows...
-	cbMenuShadow->setChecked( settings.value("/KStyle/Settings/MenuDropShadow", false).toBool() );
-
-	if (cbEnableEffects->isChecked()) {
-		containerFrame->setEnabled( true );
-		menuContainer->setEnabled( comboMenuEffect->currentIndex() == 3 );
-	} else {
-		menuContainer->setEnabled( false );
-		containerFrame->setEnabled( false );
-	}
-
-	m_bEffectsDirty = false;
-}
-
-
-void KCMStyle::menuEffectTypeChanged()
-{
-	MenuPreview::PreviewMode mode;
-
-	if (comboMenuEffect->currentIndex() != 3)
-		mode = MenuPreview::Tint;
-	else if (comboMenuEffectType->currentIndex() == 0)
-		mode = MenuPreview::Tint;
-	else
-		mode = MenuPreview::Blend;
-
-	menuPreview->setPreviewMode(mode);
-
-	m_bEffectsDirty = true;
-}
-
-
-void KCMStyle::menuEffectChanged()
-{
-	menuEffectChanged( cbEnableEffects->isChecked() );
-	m_bEffectsDirty = true;
-}
-
-
-void KCMStyle::menuEffectChanged( bool enabled )
-{
-	if (enabled &&
-		comboMenuEffect->currentIndex() == 3) {
-		menuContainer->setEnabled(true);
-	} else
-		menuContainer->setEnabled(false);
-	m_bEffectsDirty = true;
-}
-
-
-// ----------------------------------------------------------------
-// All the Miscellaneous stuff
-// ----------------------------------------------------------------
-
-void KCMStyle::loadMisc( KConfig& config )
-{
 	// KDE's Part via KConfig
 	KConfigGroup configGroup = config.group("Toolbar style");
 	cbHoverButtons->setChecked(configGroup.readEntry("Highlighting", true));
-	cbTransparentToolbars->setChecked(configGroup.readEntry("TransparentMoving", true));
 
 	QString tbIcon = configGroup.readEntry("ToolButtonStyle", "TextUnderIcon");
 	if (tbIcon == "TextOnly")
@@ -1081,12 +712,11 @@ void KCMStyle::loadMisc( KConfig& config )
 	configGroup = config.group("KDE");
 	cbIconsOnButtons->setChecked(configGroup.readEntry("ShowIconsOnPushButtons", true));
 	cbEnableTooltips->setChecked(!configGroup.readEntry("EffectNoTooltip", false));
-	cbTearOffHandles->setChecked(configGroup.readEntry("InsertTearOffHandle", false));
 
 	KConfigGroup graphicConfigGroup = config.group("KDE-Global GUI Settings");
 	comboGraphicEffectsLevel->setCurrentIndex(comboGraphicEffectsLevel->findData(graphicConfigGroup.readEntry("GraphicEffectsLevel", ((int) KGlobalSettings::graphicEffectsLevel()))));
 
-	m_bToolbarsDirty = false;
+	m_bEffectsDirty = false;
 }
 
 void KCMStyle::addWhatsThis()
@@ -1098,38 +728,11 @@ void KCMStyle::addWhatsThis()
 							" like a marble texture or a gradient).") );
 	stylePreview->setWhatsThis( i18n("This area shows a preview of the currently selected style "
 							"without having to apply it to the whole desktop.") );
-
 	// Page2
 	page2->setWhatsThis( i18n("This page allows you to enable various widget style effects. "
 							"For best performance, it is advisable to disable all effects.") );
-	cbEnableEffects->setWhatsThis( i18n( "If you check this box, you can select several effects "
-							"for different widgets like combo boxes, menus or tooltips.") );
-	comboComboEffect->setWhatsThis( i18n( "<p><b>Disable: </b>do not use any combo box effects.</p>\n"
-							"<b>Animate: </b>Do some animation.") );
-	comboTooltipEffect->setWhatsThis( i18n( "<p><b>Disable: </b>do not use any tooltip effects.</p>\n"
-							"<p><b>Animate: </b>Do some animation.</p>\n"
-							"<b>Fade: </b>Fade in tooltips using alpha-blending.") );
-	comboMenuEffect->setWhatsThis( i18n( "<p><b>Disable: </b>do not use any menu effects.</p>\n"
-							"<p><b>Animate: </b>Do some animation.</p>\n"
-							"<p><b>Fade: </b>Fade in menus using alpha-blending.</p>\n"
-							"<b>Make Translucent: </b>Alpha-blend menus for a see-through effect. (KDE styles only)") );
-	cbMenuShadow->setWhatsThis( i18n( "When enabled, all popup menus will have a drop-shadow, otherwise "
-							"drop-shadows will not be displayed. At present, only KDE styles can have this "
-							"effect enabled.") );
-	comboMenuEffectType->setWhatsThis( i18n( "<p><b>Software Tint: </b>Alpha-blend using a flat color.</p>\n"
-							"<p><b>Software Blend: </b>Alpha-blend using an image.</p>\n"
-							"<p><b>XRender Blend: </b>Use the XFree RENDER extension for image blending (if available). "
-							"This method may be slower than the Software routines on non-accelerated displays, "
-							"but may however improve performance on remote displays.</p>\n") );
-	slOpacity->setWhatsThis( i18n("By adjusting this slider you can control the menu effect opacity.") );
-
-	// Page3
-	page3->setWhatsThis( i18n("<b>Note:</b> that all widgets in this combobox "
-							"do not apply to Qt-only applications.") );
 	cbHoverButtons->setWhatsThis( i18n("If this option is selected, toolbar buttons will change "
 							"their color when the mouse cursor is moved over them." ) );
-	cbTransparentToolbars->setWhatsThis( i18n("If you check this box, the toolbars will be "
-							"transparent when moving them around.") );
 	cbEnableTooltips->setWhatsThis( i18n( "If you check this option, the KDE application "
 							"will offer tooltips when the cursor remains over items in the toolbar." ) );
 	comboToolbarIcons->setWhatsThis( i18n( "<p><b>Icons only:</b> Shows only icons on toolbar buttons. "
@@ -1143,10 +746,6 @@ void KCMStyle::addWhatsThis()
 							"show small icons alongside some important buttons.") );
 	comboGraphicEffectsLevel->setWhatsThis( i18n( "If you enable this option, KDE Applications will "
 							"run internal animations.") );
-	cbTearOffHandles->setWhatsThis( i18n( "If you enable this option some pop-up menus will "
-							"show so called tear-off handles. If you click them, you get the menu "
-							"inside a widget. This can be very helpful when performing "
-							"the same action multiple times.") );
 }
 
 #include "kcmstyle.moc"

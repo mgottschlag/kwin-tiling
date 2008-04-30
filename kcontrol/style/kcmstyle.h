@@ -35,8 +35,6 @@
 #include <kcmodule.h>
 #include <kvbox.h>
 
-#include "menupreview.h"
-
 class KComboBox;
 class KConfig;
 class QCheckBox;
@@ -74,7 +72,6 @@ protected:
 
 	void loadStyle( KConfig& config );
 	void loadEffects( KConfig& config );
-	void loadMisc( KConfig& config );
 	void addWhatsThis();
 
 	virtual void changeEvent( QEvent *event );
@@ -83,28 +80,23 @@ protected Q_SLOTS:
 	void styleSpecificConfig();
 	void updateConfigButton();
 
-	void setEffectsDirty();
-	void setToolbarsDirty();
 	void setStyleDirty();
+	void setEffectsDirty();
 
 	void styleChanged();
-	void menuEffectChanged( bool enabled );
-	void menuEffectChanged();
-	void menuEffectTypeChanged();
 
 private:
 	QString currentStyle();
 
-	bool m_bEffectsDirty, m_bStyleDirty, m_bToolbarsDirty;
+	bool m_bStyleDirty, m_bEffectsDirty;
 	QHash <QString,StyleEntry*> styleEntries;
 	QMap  <QString,QString>     nameToStyleKey;
 
 	QVBoxLayout* mainLayout;
 	QTabWidget* tabWidget;
-	QWidget *page1, *page2, *page3;
+	QWidget *page1, *page2;
 	QVBoxLayout* page1Layout;
 	QVBoxLayout* page2Layout;
-	QVBoxLayout* page3Layout;
 
 	// Page1 widgets
 	QGroupBox* gbWidgetStyle;
@@ -118,42 +110,14 @@ private:
 	QPalette palette;
 
 	// Page2 widgets
-	QCheckBox* cbEnableEffects;
-
-	QFrame* containerFrame;
 	QComboBox* comboGraphicEffectsLevel;
-	QGridLayout* containerLayout;
-	QComboBox* comboTooltipEffect;
-	QComboBox* comboComboEffect;
-	QComboBox* comboMenuEffect;
-	QComboBox* comboMenuHandle;
-
-	QLabel* lblTooltipEffect;
-	QLabel* lblComboEffect;
-	QLabel* lblMenuEffect;
-	QLabel* lblMenuHandle;
 	QSpacerItem* comboSpacer;
 
-	QFrame* menuContainer;
-	QGridLayout* menuContainerLayout;
-	MenuPreview* menuPreview;
-	KVBox* sliderBox;
-	QSlider* slOpacity;
-	QComboBox* comboMenuEffectType;
-	QLabel* lblMenuEffectType;
-	QLabel* lblMenuOpacity;
-	QCheckBox* cbMenuShadow;
-
-	// Page3 widgets
-	QGroupBox* gbVisualAppearance;
-
 	QCheckBox* cbHoverButtons;
-	QCheckBox* cbTransparentToolbars;
 	QCheckBox* cbEnableTooltips;
 	QComboBox* comboToolbarIcons;
 
 	QCheckBox* cbIconsOnButtons;
-	QCheckBox* cbTearOffHandles;
 };
 
 #endif // __KCMSTYLE_H
