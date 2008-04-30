@@ -24,6 +24,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QSpinBox>
+#include <QBitmap>
 
 #include <KAction>
 #include <KIconLoader>
@@ -110,9 +111,9 @@ void EngineExplorer::showEngine(const QString& name)
     m_sourceRequester->setEnabled(false);
     m_sourceRequesterButton->setEnabled(false);
     m_dataModel->clear();
-    m_dataModel->setColumnCount(3);
+    m_dataModel->setColumnCount(4);
     QStringList headers;
-    headers << i18n("DataSource") << i18n("Key") << i18n("Value");
+    headers << i18n("DataSource") << i18n("Key") << i18n("Value") << i18n("Type");
     m_dataModel->setHorizontalHeaderLabels(headers);
     m_engine = 0;
     m_sourceCount = 0;
@@ -211,13 +212,68 @@ QString EngineExplorer::convertToString(const QVariant &value) const
 
     switch (value.type())
     {
+        case QVariant::Bitmap: {
+            QBitmap bitmap = value.value<QBitmap>();
+            return QString("<%1x%2px - %3bpp>").arg(bitmap.width()).arg(bitmap.height()).arg(bitmap.depth());
+        }
+        case QVariant::Image: {
+            QImage image = value.value<QImage>();
+            return QString("<%1x%2px - %3bpp>").arg(image.width()).arg(image.height()).arg(image.depth());
+        }
+        case QVariant::Line: {
+           QLine line = value.toLine();
+           return QString("<x1:%1, y1:%2, x2:%3, y2:%4>").arg(line.x1()).arg(line.y1()).arg(line.x2()).arg(line.y2());
+        }
+        case QVariant::LineF: {
+           QLineF lineF = value.toLineF();
+           return QString("<x1:%1, y1:%2, x2:%3, y2:%4>").arg(lineF.x1()).arg(lineF.y1()).arg(lineF.x2()).arg(lineF.y2());
+        }
+        case QVariant::Locale: {
+            return QString("%1").arg(value.toLocale().name());
+        }
+        case QVariant::Map: {
+            return QString("<%1 items>").arg(value.toMap().size());
+        }
+        case QVariant::Pixmap: {
+            QPixmap pixmap = value.value<QPixmap>();
+            return QString("<%1x%2px - %3bpp>").arg(pixmap.width()).arg(pixmap.height()).arg(pixmap.depth());
+        }
         case QVariant::Point: {
            QPoint point = value.toPoint();
-           return QString("(%1, %2)").arg(point.x()).arg(point.y());
+           return QString("<x:%1, y:%2>").arg(point.x()).arg(point.y());
         }
-
+        case QVariant::PointF: {
+           QPointF pointF = value.toPointF();
+           return QString("<x:%1, y:%2>").arg(pointF.x()).arg(pointF.y());
+        }
+        case QVariant::Rect: {
+            QRect rect = value.toRect();
+            return QString("<x:%1, y:%2, w:%3, h:%4>").arg(rect.x()).arg(rect.y()).arg(rect.width()).arg(rect.height());
+        }
+        case QVariant::RectF: {
+            QRectF rectF = value.toRectF();
+            return QString("<x:%1, y:%2, w:%3, h:%4>").arg(rectF.x()).arg(rectF.y()).arg(rectF.width()).arg(rectF.height());
+        }
+        case QVariant::RegExp: {
+            return QString("%1").arg(value.toRegExp().pattern());
+        }
+        case QVariant::Region: {
+            QRect region = value.value<QRegion>().boundingRect();
+            return QString("<x:%1, y:%2, w:%3, h:%4>").arg(region.x()).arg(region.y()).arg(region.width()).arg(region.height());
+        }
+        case QVariant::Size: {
+            QSize size = value.toSize();
+            return QString("<w:%1, h:%2>").arg(size.width()).arg(size.height());
+        }
+        case QVariant::SizeF: {
+            QSizeF sizeF = value.toSizeF();
+            return QString("<w:%1, h:%2>").arg(sizeF.width()).arg(sizeF.height());
+        }
+        case QVariant::Url: {
+            return QString("%1").arg(value.toUrl().toString());
+        }
         default: {
-            return "<unknown>";
+            return "<not displayable>";
         }
     }
 }
@@ -234,11 +290,13 @@ void EngineExplorer::showData(QStandardItem* parent, Plasma::DataEngine::Data da
         if (it.value().canConvert(QVariant::List)) {
             foreach(const QVariant &var, it.value().toList()) {
                 parent->setChild(rowCount, 2, new QStandardItem(convertToString(var)));
+                parent->setChild(rowCount, 3, new QStandardItem(var.typeName()));
                 ++rowCount;
             }
         }
         else {
             parent->setChild(rowCount, 2, new QStandardItem(convertToString(it.value())));
+            parent->setChild(rowCount, 3, new QStandardItem(it.value().typeName()));
             ++rowCount;
         }
     }
