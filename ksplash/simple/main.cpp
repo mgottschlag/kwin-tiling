@@ -155,7 +155,7 @@ int main( int argc, char* argv[])
     int pos = 0;
     int state = 1; // cannot check dcop connection - make this state initial
     const int delay = 200; // ms
-    time_t final_time = time( NULL ) + 60;
+    time_t final_time = time( NULL ) + 300;
     time_t test_time = time( NULL ) + 1;
     Atom kde_splash_progress = XInternAtom( dpy, "_KDE_SPLASH_PROGRESS", False );
     for(;;)
@@ -214,7 +214,6 @@ int main( int argc, char* argv[])
 #ifdef DEBUG
                 fprintf( stderr, "POS: %d\n", pos );
 #endif
-                final_time = time( NULL ) + 60;
                 XFillRectangle( dpy, pix, gc, px + frame + pos * segment, py + frame, segment, ph - 2 * frame );
                 XSetWindowBackgroundPixmap( dpy, win, pix );
                 XClearWindow( dpy, win );

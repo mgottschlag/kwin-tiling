@@ -812,7 +812,7 @@ void runSplash( const char* them, bool t, int p )
     window = None;
     splash_image = QImage();
     splash_pixmap = None;
-    final_time = time( NULL ) + 60;
+    final_time = time( NULL ) + 300;
     int desc_w, desc_h;
 
     // try to load the themes description.txt file from within the theme_dir
