@@ -44,6 +44,9 @@ LocationsRunner::LocationsRunner(QObject *parent, const QVariantList& args)
     Q_UNUSED(args);
     // set the name shown after the result in krunner window
     setObjectName(i18n("Locations"));
+    setIgnoredTypes(Plasma::SearchContext::Executable | Plasma::SearchContext::ShellCommand |
+                    Plasma::SearchContext::UnknownType);
+
 }
 
 LocationsRunner::~LocationsRunner()
