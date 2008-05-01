@@ -214,7 +214,7 @@ QString EngineExplorer::convertToString(const QVariant &value) const
     switch (value.type())
     {
         case QVariant::BitArray: {
-            return i18nc("<%1 bit>", "<%1 bits>", QString::number(value.toBitArray().size()));
+            return i18np("<1 bit>", "<%1 bits>", value.toBitArray().size());
         }
         case QVariant::Bitmap: {
             QBitmap bitmap = value.value<QBitmap>();
@@ -223,7 +223,7 @@ QString EngineExplorer::convertToString(const QVariant &value) const
         case QVariant::ByteArray: {
             // Return the array size if it is not displayable
             if (value.toString().isEmpty()) {
-                return i18nc("<%1 byte>", "<%1 bytes>", QString::number(value.toByteArray().size()));
+                return i18np("<1 byte>", "<%1 bytes>", value.toByteArray().size());
             }
             else {
                 return value.toString();
@@ -245,7 +245,7 @@ QString EngineExplorer::convertToString(const QVariant &value) const
             return QString("%1").arg(value.toLocale().name());
         }
         case QVariant::Map: {
-            return i18np("<%1 item>", "<%1 items>", QString::number(value.toMap().size()));
+            return i18np("<1 item>", "<%1 items>", value.toMap().size());
         }
         case QVariant::Pixmap: {
             QPixmap pixmap = value.value<QPixmap>();
@@ -323,8 +323,11 @@ void EngineExplorer::updateTitle()
         return;
     }
 
-    m_title->setText(i18nc("The name of the engine followed by the number of data sources",
-                           "%1 - %2 data sources", m_engine->objectName(), m_sourceCount));
+    m_title->setText(ki18ncp("The name of the engine followed by the number of data sources",
+                             "%1 Engine - 1 data source", "%1 - %2 data sources")
+                              .subs(m_engine->objectName().isEmpty() ? i18n("Unnamed")
+                                                                     : m_engine->objectName())
+                              .subs(m_sourceCount).toString());
     if (m_engine->icon().isEmpty()) {
         m_title->setPixmap(KIcon("plasma").pixmap(IconSize(KIconLoader::Dialog)));
     } else {
