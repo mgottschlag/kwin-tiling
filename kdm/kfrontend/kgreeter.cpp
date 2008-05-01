@@ -601,7 +601,8 @@ KGreeter::verifyClear()
 {
 	curUser.clear();
 	slotUserEntered();
-	slotSessionSelected();
+	if (QAction *curSel = sessGroup->checkedAction())
+		curSel->setChecked( false );
 }
 
 void
