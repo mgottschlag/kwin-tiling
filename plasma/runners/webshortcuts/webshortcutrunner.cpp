@@ -16,6 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "webshortcutrunner.h"
+
 #include <QAction>
 #include <QStringList>
 #include <QDBusInterface>
@@ -25,18 +27,12 @@
 #include <KRun>
 #include <KLocale>
 #include <KMimeType>
-#include <KService>
 #include <KStandardDirs>
 #include <KToolInvocation>
 #include <KUrl>
-#include <KIcon>
-
-#include "webshortcutrunner.h"
-
 
 WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
-    : Plasma::AbstractRunner(parent, args),
-      m_type(Plasma::SearchContext::UnknownType)
+    : Plasma::AbstractRunner(parent, args)
 {
     KGlobal::locale()->insertCatalog("krunner_webshortcutsrunner");
     Q_UNUSED(args);
@@ -45,6 +41,7 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
     // query ktrader for all available searchproviders and preload the default icon
     m_offers = serviceQuery("SearchProvider");
     m_icon = KIcon("internet-web-browser");
+    setIgnoredTypes(Plasma::SearchContext::FileSystem);
 }
 
 WebshortcutRunner::~WebshortcutRunner()
@@ -53,15 +50,21 @@ WebshortcutRunner::~WebshortcutRunner()
 
 void WebshortcutRunner::match(Plasma::SearchContext *search)
 {
-    const QString term = search->searchTerm().toLower();
-    m_type = search->type();
+    const QString term = search->searchTerm();
+    const char separator = ':';
+
+    if (term.length() < 3 || !term.contains(separator)) {
+        return;
+    }
+
+    //kDebug() << "checking with" << term;
 
     QMutexLocker lock(bigLock());
     foreach (const KService::Ptr &service, m_offers) {
         //TODO: how about getting the keys for the localized sites?
         foreach (QString key, service->property("Keys").toStringList()) {
             // FIXME? should we look for the used separator from the konqi's settings?
-            key = key.toLower() + ':';
+            key = key.toLower() + separator;
             if (term.size() > key.size() &&
                 term.startsWith(key, Qt::CaseInsensitive)) {
                 QString actionText = QString("Search %1 for %2");

@@ -21,6 +21,9 @@
 
 #include <plasma/abstractrunner.h>
 
+#include <KIcon>
+#include <KService>
+
 class QAction;
 
 class WebshortcutRunner : public Plasma::AbstractRunner {
@@ -40,7 +43,6 @@ class WebshortcutRunner : public Plasma::AbstractRunner {
     private:
         KService::List m_offers;
         KIcon m_icon;
-        Plasma::SearchContext::Type m_type;
 };
 
 K_EXPORT_PLASMA_RUNNER(webshortcuts, WebshortcutRunner)
