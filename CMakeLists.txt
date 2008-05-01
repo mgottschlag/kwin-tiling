@@ -67,7 +67,6 @@ macro_optional_add_subdirectory( krunner )
 macro_optional_add_subdirectory( kwin )
 macro_optional_add_subdirectory( plasma )
 macro_optional_add_subdirectory( kstartupconfig )
-macro_optional_add_subdirectory( printer-applet )
 
 macro_optional_add_subdirectory( khotkeys )
 
