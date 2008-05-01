@@ -25,13 +25,13 @@
 #include <QListWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QShortcut>
-#include <QTimer>
 #include <QHideEvent>
+#include <QShortcut>
 #include <QClipboard>
 
 #include <KActionCollection>
 #include <KHistoryComboBox>
+#include <KCompletion>
 #include <KCompletionBox>
 #include <KDebug>
 #include <KDialog>
@@ -43,27 +43,16 @@
 #include <KTitleWidget>
 #include <KWindowSystem>
 
-#include <Solid/Device>
-#include <Solid/DeviceInterface>
-
-// #include <threadweaver/DebuggingAids.h>
-// #include <ThreadWeaver/Thread>
-#include <ThreadWeaver/Job>
-#include <ThreadWeaver/QueuePolicy>
-#include <ThreadWeaver/Weaver>
-#include <QMutex>
-
 #include <plasma/abstractrunner.h>
+#include <plasma/runnermanager.h>
+#include <plasma/searchmatch.h>
 
 #include "collapsiblewidget.h"
 #include "interfaceadaptor.h"
 #include "krunnersettings.h"
 
-using ThreadWeaver::Weaver;
-using ThreadWeaver::Job;
 
 // A little hack of a class to let us easily activate a match
-
 class SearchMatch : public QListWidgetItem
 {
     public:
@@ -74,7 +63,10 @@ class SearchMatch : public QListWidgetItem
         {
             m_action = action;
             setIcon(m_action->icon());
-
+            if (!action) {
+                kDebug() << "empty action got on the interface, something is rotten";
+                return;
+            }
             if (action->subtext().isEmpty()) {
                 setText(i18n("%1 (%2)",
                         m_action->text(),
@@ -87,9 +79,9 @@ class SearchMatch : public QListWidgetItem
             }
         }
 
-        void activate(const Plasma::SearchContext *context) const
+        void activate(Plasma::RunnerManager *manager) const
         {
-            m_action->run(context);
+            manager->run(m_action);
         }
 
         bool actionEnabled() const
@@ -174,128 +166,6 @@ class SearchMatch : public QListWidgetItem
         const Plasma::SearchMatch* m_action;
 };
 
-// Restricts simultaneous jobs of the same type
-// Similar to ResourceRestrictionPolicy but check the object type first
-class RunnerRestrictionPolicy : public ThreadWeaver::QueuePolicy
-{
-public:
-    ~RunnerRestrictionPolicy();
-
-    static RunnerRestrictionPolicy& instance();
-
-    void setCap(int cap)
-    {
-        m_cap = cap;
-    }
-    int cap() const
-    {
-        return m_cap;
-    }
-
-    bool canRun(Job* job);
-    void free(Job* job);
-    void release(Job* job);
-    void destructed(Job* job);
-private:
-    RunnerRestrictionPolicy();
-
-//     QHash<QString, int> m_runCounts;
-    int m_count;
-    int m_cap;
-    QMutex m_mutex;
-};
-
-RunnerRestrictionPolicy::RunnerRestrictionPolicy()
-    : QueuePolicy(),
-      m_cap(2)
-{
-}
-
-RunnerRestrictionPolicy::~RunnerRestrictionPolicy()
-{
-}
-
-RunnerRestrictionPolicy& RunnerRestrictionPolicy::instance()
-{
-    static RunnerRestrictionPolicy policy;
-    return policy;
-}
-
-bool RunnerRestrictionPolicy::canRun(Job* job)
-{
-    Q_UNUSED(job)
-    QMutexLocker l(&m_mutex);
-//     QString type = job->objectName();
-    if (m_count/*m_runCounts.value(type)*/ > m_cap) {
-//         kDebug() << "Denying job " << type << " because of " << m_count/*m_runCounts[type]*/ << " current jobs" << endl;
-        return false;
-    } else {
-//         m_runCounts[type]++;
-        ++m_count;
-        return true;
-    }
-}
-
-void RunnerRestrictionPolicy::free(Job* job)
-{
-    Q_UNUSED(job)
-    QMutexLocker l(&m_mutex);
-//     QString type = job->objectName();
-    --m_count;
-//     if (m_runCounts.value(type)) {
-//         m_runCounts[type]--;
-//     }
-}
-
-void RunnerRestrictionPolicy::release(Job* job)
-{
-    free(job);
-}
-
-void RunnerRestrictionPolicy::destructed(Job* job)
-{
-    Q_UNUSED(job)
-}
-
-// Class to run queries in different threads
-class FindMatchesJob : public Job
-{
-public:
-    FindMatchesJob(const QString& term, Plasma::AbstractRunner* runner, Plasma::SearchContext* context, QObject* parent = 0);
-
-    int priority() const;
-
-protected:
-    void run();
-private:
-    QString m_term;
-    Plasma::SearchContext* m_context;
-    Plasma::AbstractRunner* m_runner;
-};
-
-FindMatchesJob::FindMatchesJob( const QString& term, Plasma::AbstractRunner* runner, Plasma::SearchContext* context, QObject* parent )
-    : ThreadWeaver::Job(parent),
-      m_term(term),
-      m_context(context),
-      m_runner(runner)
-{
-//     setObjectName( runner->objectName() );
-    if (runner->speed() == Plasma::AbstractRunner::SlowSpeed) {
-        assignQueuePolicy(&RunnerRestrictionPolicy::instance());
-    }
-}
-
-void FindMatchesJob::run()
-{
-//     kDebug() << "Running match for " << m_runner->objectName() << " in Thread " << thread()->id() << endl;
-    m_runner->performMatch(*m_context);
-}
-
-int FindMatchesJob::priority() const
-{
-    return m_runner->priority();
-}
-
 Interface::Interface(QWidget* parent)
     : KRunnerDialog( parent ),
       m_expander(0),
@@ -306,16 +176,7 @@ Interface::Interface(QWidget* parent)
     setWindowTitle( i18n("Run Command") );
     setWindowIcon(KIcon("system-run"));
 
-    m_matchTimer.setSingleShot(true);
-    connect(&m_matchTimer, SIGNAL(timeout()), this, SLOT(match()));
-
-    m_updateTimer.setSingleShot(true);
-    connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(updateMatches()));
-
-    const int numProcs = qMax(Solid::Device::listFromType(Solid::DeviceInterface::Processor).count(), 1);
-    const int numThreads = qMin(KRunnerSettings::maxThreads(), 2 + ((numProcs - 1) * 2));
-    //kDebug() << "setting up" << numThreads << "threads for" << numProcs << "processors";
-    Weaver::instance()->setMaximumNumberOfThreads(numThreads);
+    m_runnerManager=new Plasma::RunnerManager(this);
 
     QWidget* w = mainWidget();
     m_layout = new QVBoxLayout(w);
@@ -334,20 +195,24 @@ Interface::Interface(QWidget* parent)
     // QComboBox::setLineEdit sets the autoComplete flag on the lineedit,
     // and KComboBox::setAutoComplete resets the autocomplete mode! ugh!
     m_searchTerm->setLineEdit(lineEdit);
-    lineEdit->setCompletionObject(m_context.completionObject());
+    
+    m_completion=new KCompletion();
+    lineEdit->setCompletionObject(m_completion);
     lineEdit->setCompletionMode(static_cast<KGlobalSettings::Completion>(KRunnerSettings::queryTextCompletionMode()));
     lineEdit->setClearButtonShown(true);
 
     m_header->setBuddy(m_searchTerm);
     m_layout->addWidget(m_searchTerm);
     connect(m_searchTerm, SIGNAL(editTextChanged(QString)),
-            this, SLOT(queueMatch()));
+            this, SLOT(match()));
     connect(m_searchTerm, SIGNAL(returnPressed()),
             this, SLOT(run()));
 
+   //Handle updates to the completion object as well
     QStringList executions = KRunnerSettings::pastQueries();
-    //Handle updates to the completion object as well
-    m_searchTerm->setHistoryItems(executions, true);
+
+    //FIXME: decomenting this line makes krunner crash, why?
+    //m_searchTerm->setHistoryItems(executions, true);
 
     //TODO: temporary feedback, change later with the "icon parade" :)
     m_matchList = new QListWidget(w);
@@ -404,22 +269,16 @@ Interface::Interface(QWidget* parent)
     //connect(KGlobalSettings::self(), SIGNAL(kdisplayPaletteChanged()),
     //        SLOT(setWidgetPalettes()));
 
-    //TODO: how should we order runners, particularly ones loaded from plugins?
-    QStringList whitelist = KRunnerSettings::runners();
-    m_runners += Plasma::AbstractRunner::loadAll(this, whitelist);
 
-    connect(&m_context, SIGNAL(matchesChanged()), this, SLOT(queueUpdates()));
+    connect(m_runnerManager, SIGNAL(matchesChanged()), this, SLOT(updateMatches()));
 
     resetInterface();
-
-//     ThreadWeaver::setDebugLevel(true, 4);
 }
 
 Interface::~Interface()
 {
     KRunnerSettings::setPastQueries(m_searchTerm->historyItems());
     KRunnerSettings::setQueryTextCompletionMode(m_searchTerm->completionMode());
-    m_context.removeAllMatches();
 }
 
 void Interface::clearHistory()
@@ -436,10 +295,12 @@ void Interface::display(const QString& term)
         m_searchTerm->setItemText(0, term);
     }
 
+ /*
+ FIXME: I don't understand this, it may mean match or m_runnerManager->reset()
     if (!isVisible()) {
-        queueMatch();
+        reset();
     }
-
+*/
     KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
 
     int screen = 0;
@@ -460,40 +321,28 @@ void Interface::displayWithClipboardContents()
 
 void Interface::switchUser()
 {
-    Plasma::AbstractRunner *sessionrunner = 0;
-    foreach (Plasma::AbstractRunner* runner, m_runners) {
-        if (qstrcmp(runner->metaObject()->className(), "SessionRunner") == 0) {
-            sessionrunner = runner;
-            break;
-        }
-    }
-
-    if (!sessionrunner) {
-        kDebug() << "Could not find the Sessionrunner; not showing any sessions!";
-        return;
-    }
     //TODO: ugh, magic strings. See sessions/sessionrunner.cpp
     display("SESSIONS");
     m_header->setText(i18n("Switch users"));
     m_header->setPixmap("system-switch-user");
     m_defaultMatch = 0;
-    m_context.reset();
-    m_context.setSearchTerm("SESSIONS");
-    sessionrunner->match(&m_context);
 
-    foreach (const Plasma::SearchMatch *action, m_context.matches()) {
+    m_runnerManager->execQuery("SESSIONS", "SessionRunner");
+
+    foreach (const Plasma::SearchMatch *action, m_runnerManager->matches()) {
         bool makeDefault = !m_defaultMatch && action->type() != Plasma::SearchMatch::InformationalMatch;
-
         SearchMatch *match = new SearchMatch(action, m_matchList);
-
         if (makeDefault) {
             m_defaultMatch = match;
             m_defaultMatch->setDefault(true);
             m_runButton->setEnabled(true);
-            m_optionsButton->setEnabled(sessionrunner->hasRunOptions());
+            Plasma::AbstractRunner *runner=m_runnerManager->runner("SessionRunner");
+            if (!runner) {
+                kDebug("We couldn't find the Session runner even when we launched a moment ago");
+            }
+            m_optionsButton->setEnabled(runner->hasRunOptions());
         }
     }
-
     if (!m_defaultMatch) {
         m_matchList->addItem(i18n("No desktop sessions available"));
     } else {
@@ -520,13 +369,12 @@ void Interface::resetInterface()
     m_header->setText(i18n("Enter the name of an application, location or search term below."));
     m_header->setPixmap("system-search");
     m_defaultMatch = 0;
-    m_context.reset();
+    m_runnerManager->reset();
     m_searchTerm->setCurrentItem(QString(), true, 0);
     m_matchList->clear();
     m_runButton->setEnabled( false );
     m_optionsButton->setEnabled( false );
     showOptions( false );
-    m_matchTimer.stop();
 }
 
 void Interface::closeEvent(QCloseEvent* e)
@@ -556,75 +404,38 @@ void Interface::matchActivated(QListWidgetItem* item)
         //kDebug() << "informational match activated" << match->toString();
         m_searchTerm->setItemText(m_searchTerm->currentIndex(), match->toString());
     } else {
-        //kDebug() << "match activated! " << match->text();
-        QString term = m_searchTerm->currentText().trimmed();
-        m_context.setSearchTerm(term);
-
-        match->activate(&m_context);
+        match->activate(m_runnerManager);
         close();
     }
 }
 
-void Interface::queueMatch()
-{
-    if (m_matchTimer.isActive()) {
-        return;
-    }
-    Weaver::instance()->dequeue();
-    m_matchTimer.start(200);
-}
-
-void Interface::queueUpdates()
-{
-    if (m_updateTimer.isActive()) {
-        return;
-    }
-    //Wait 100ms between updating matches
-    m_matchList->clear();
-    m_updateTimer.start(100);
-}
 
 void Interface::match()
 {
-    // If ThreadWeaver is idle, it is safe to clear previous jobs
-    if ( Weaver::instance()->isIdle() ) {
-        qDeleteAll( m_searchJobs );
-        m_searchJobs.clear();
-    }
-    m_defaultMatch = 0;
-
     QString term = m_searchTerm->currentText().trimmed();
+
+    m_defaultMatch = 0;
 
     if (term.isEmpty()) {
         resetInterface();
         m_execQueued = false;
         return;
     }
+ 
+    m_runnerManager->launchQuery(term);
+    m_completion->insertItems(m_searchTerm->historyItems());
 
-    if (m_context.searchTerm() == term) {
-        // we already are searching for this!
-        return;
-    }
-
-    m_context.reset();
-    m_context.setSearchTerm(term);
-    m_context.addStringCompletions(m_searchTerm->historyItems());
-
-    foreach (Plasma::AbstractRunner* runner, m_runners) {
-        Job *job = new FindMatchesJob(term, runner, &m_context, this);
-        Weaver::instance()->enqueue( job );
-        m_searchJobs.append( job );
-    }
 }
+
+
 
 void Interface::updateMatches()
 {
     m_matchList->clear();
     m_defaultMatch = 0;
-
-    foreach (const Plasma::SearchMatch *action, m_context.matches()) {
+//    kDebug() << "interface got:" << m_runnerManager->matches().count() << " matches";
+    foreach (const Plasma::SearchMatch *action, m_runnerManager->matches()) {
         SearchMatch *match = new SearchMatch(action, m_matchList);
-
         if (action->isEnabled() && action->relevance() > 0 &&
             (!m_defaultMatch || *m_defaultMatch < *match) &&
             (action->type() != Plasma::SearchMatch::InformationalMatch ||
@@ -632,7 +443,6 @@ void Interface::updateMatches()
             if (m_defaultMatch) {
                 m_defaultMatch->setDefault(false);
             }
-
             match->setDefault(true);
             m_defaultMatch = match;
             m_optionsButton->setEnabled(action->runner()->hasRunOptions());
@@ -655,7 +465,7 @@ void Interface::updateMatches()
 void Interface::run()
 {
     if (!m_execQueued && m_searchTerm->completionBox() && m_searchTerm->completionBox()->isVisible()) {
-        queueMatch();
+        match();
         return;
     }
 

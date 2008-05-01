@@ -19,14 +19,8 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-#include <QMap>
-#include <QTimer>
-
 // pulls in definition for Window
 #include <KSelectionWatcher>
-
-// libplasma includes
-#include <plasma/abstractrunner.h>
 
 // local includes
 #include "krunnerdialog.h"
@@ -37,15 +31,19 @@ class QListWidgetItem;
 class QVBoxLayout;
 
 class KHistoryComboBox;
+class KCompletion;
 class KPushButton;
 class KTitleWidget;
 
-namespace ThreadWeaver {
-    class Job;
-}
-
 class CollapsibleWidget;
+
+//this is Interface internal SearchMatch
 class SearchMatch;
+
+namespace Plasma {
+    
+    class RunnerManager;
+};
 
 class Interface : public KRunnerDialog
 {
@@ -66,8 +64,6 @@ class Interface : public KRunnerDialog
 
     protected Q_SLOTS:
         void match();
-        void queueMatch();
-        void queueUpdates();
         void updateMatches();
         void setWidgetPalettes();
         void run();
@@ -80,14 +76,13 @@ class Interface : public KRunnerDialog
 
     private:
         void resetInterface();
+        
+        Plasma::RunnerManager* m_runnerManager;
 
-        Plasma::AbstractRunner::List m_runners;
-
-        QTimer m_matchTimer;
-        QTimer m_updateTimer;
         QVBoxLayout* m_layout;
         KTitleWidget* m_header;
         KHistoryComboBox* m_searchTerm;
+        KCompletion *m_completion;
         QListWidget* m_matchList;
         QLabel* m_optionsLabel;
         KPushButton* m_cancelButton;
@@ -96,10 +91,7 @@ class Interface : public KRunnerDialog
         CollapsibleWidget* m_expander;
         QWidget *m_optionsWidget;
 
-        QList<ThreadWeaver::Job*> m_searchJobs;
-
         SearchMatch* m_defaultMatch;
-        Plasma::SearchContext m_context;
 
         bool m_execQueued;
 };
