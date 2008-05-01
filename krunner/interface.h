@@ -43,7 +43,7 @@ class SearchMatch;
 namespace Plasma {
     
     class RunnerManager;
-};
+}
 
 class Interface : public KRunnerDialog
 {
