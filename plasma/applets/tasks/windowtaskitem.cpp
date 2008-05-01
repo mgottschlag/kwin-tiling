@@ -221,7 +221,8 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
     KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme());
 
     if (taskFlags() & TaskWantsAttention) {
-        if (s_taskItemBackground) {
+        //FIXME: instead of hasElement probably would be prettier a new function like SvgPanel::hasPrefix
+        if (s_taskItemBackground && s_taskItemBackground->hasElement("attention-center")) {
             //Draw task background from theme svg "attention" element
             s_taskItemBackground->setElementPrefix("attention");
             s_taskItemBackground->resizePanel(option->rect.size());
@@ -234,10 +235,36 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
             painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
         }
     } else if (taskFlags() & TaskIsMinimized) {
-            //Not painting anything for iconified tasks for now
-            painter->setBrush(QBrush());
+        //Not painting anything for iconified tasks for now
+        painter->setBrush(QBrush());
+    } else if (taskFlags() & TaskHasFocus) {
+            if (s_taskItemBackground && s_taskItemBackground->hasElement("focus-center")) {
+                //Draw task background from theme svg "focus" element
+                s_taskItemBackground->setElementPrefix("focus");
+                s_taskItemBackground->resizePanel(option->rect.size());
+                s_taskItemBackground->paintPanel(painter, option->rect);
+            } else {
+                //Draw task background without svg theming
+                QLinearGradient background(boundingRect().topLeft(),
+                                           boundingRect().bottomLeft());
+    
+                QColor startColor = colorScheme.background(KColorScheme::NormalBackground).color();
+                QColor endColor = colorScheme.shade(startColor,KColorScheme::DarkShade);
+    
+                endColor.setAlphaF(qMin(0.8,startColor.alphaF()+0.2));
+                startColor.setAlphaF(0);
+    
+                background.setColorAt(0, startColor);
+                background.setColorAt(1, endColor);
+    
+                painter->setBrush(background);
+                painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
+
+                painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
+            }
+    //Default is a normal task
     } else {
-        if (s_taskItemBackground) {
+        if (s_taskItemBackground && s_taskItemBackground->hasElement("normal-center")) {
             //Draw task background from theme svg "normal" element
             s_taskItemBackground->setElementPrefix("normal");
             s_taskItemBackground->resizePanel(option->rect.size());
@@ -251,49 +278,38 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
             background.setAlphaF(0.2);
             painter->setBrush(QBrush(background));
             painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
+
+            painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
         }
     }
 
-    if (option->state & QStyle::State_MouseOver
-         || m_animId != -1
-         || taskFlags() & TaskHasFocus)
+    if (option->state & QStyle::State_MouseOver || m_animId != -1)
     {
 
-        if (s_taskItemBackground) {
-            if (taskFlags() & TaskHasFocus) {
-                //Draw task background from theme svg "focus" element
-                s_taskItemBackground->setElementPrefix("focus");
-                s_taskItemBackground->resizePanel(option->rect.size());
-                s_taskItemBackground->paintPanel(painter, option->rect);
-            }
+        if (s_taskItemBackground && s_taskItemBackground->hasElement("hover-center")) {
+            //Draw task background from theme svg "hover" element
+            painter->save();
 
-            if (option->state & QStyle::State_MouseOver && m_alpha > 0) {
-                //Draw task background from theme svg "hover" element
-                painter->save();
+            //if mouse pressed it's more transparent
+            if (option->state & QStyle::State_Sunken) {
+                painter->setOpacity(0.2);
+            } else {
                 painter->setOpacity(m_alpha);
-
-                s_taskItemBackground->setElementPrefix("hover");
-                s_taskItemBackground->resizePanel(option->rect.size());
-                s_taskItemBackground->paintPanel(painter, option->rect);
-
-                painter->restore();
             }
+
+            s_taskItemBackground->setElementPrefix("hover");
+            s_taskItemBackground->resizePanel(option->rect.size());
+            s_taskItemBackground->paintPanel(painter, option->rect);
+
+            painter->restore();
 
         } else {
             //Draw task background without svg theming
             QLinearGradient background(boundingRect().topLeft(),
-                                   boundingRect().bottomLeft());
+                                       boundingRect().bottomLeft());
 
-            QColor startColor;
-            QColor endColor;
-
-            if (taskFlags() & TaskHasFocus) {
-                startColor = colorScheme.background(KColorScheme::NormalBackground).color();
-            } else {
-                startColor = colorScheme.background(KColorScheme::AlternateBackground).color();
-            }
-
-            endColor = colorScheme.shade(startColor,KColorScheme::DarkShade);
+            QColor startColor = colorScheme.background(KColorScheme::AlternateBackground).color();
+            QColor endColor = colorScheme.shade(startColor,KColorScheme::DarkShade);
 
             const qreal pressedAlpha = 0.2;
 
@@ -305,23 +321,17 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
                 alpha = hoverAlpha;
             }
 
-            if (!(taskFlags() & TaskHasFocus)) {
-                alpha *= m_alpha;
-            }
-
             startColor.setAlphaF(alpha);
-            endColor.setAlphaF(qMin(1.0,startColor.alphaF()+0.2));
+            endColor.setAlphaF(m_alpha);
 
             background.setColorAt(0, startColor);
             background.setColorAt(1, endColor);
 
             painter->setBrush(background);
             painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
-        }
-    }
 
-    if (!s_taskItemBackground) {
-        painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
+            painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
+        }
     }
 }
 
