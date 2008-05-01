@@ -34,6 +34,8 @@ namespace Plasma
     class Svg;
 }
 
+class PanelController;
+
 class PanelView : public Plasma::View
 {
     Q_OBJECT
@@ -44,7 +46,7 @@ public:
     * @arg parent the QWidget this panel is parented to
     */
     explicit PanelView(Plasma::Containment *panel, int id = 0, QWidget *parent = 0);
-    
+    ~PanelView();
 
     /**
      * Sets the location (screen edge) where this panel is positioned.
@@ -103,6 +105,7 @@ protected:
 private slots:
     void updatePanelGeometry();
     void showAppletBrowser();
+    void togglePanelController();
 
 private:
     Qt::Alignment alignmentFilter(Qt::Alignment align) const;
@@ -110,6 +113,8 @@ private:
     Plasma::Svg *m_background;
 
     KConfigGroup m_viewConfig;
+
+    PanelController *m_panelController;
 
     int m_offset;
     Qt::Alignment m_alignment;

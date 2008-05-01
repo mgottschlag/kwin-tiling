@@ -32,6 +32,7 @@
 #include <plasma/svg.h>
 
 #include "plasmaapp.h"
+#include "panelcontroller.h"
 
 
 PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
@@ -40,6 +41,10 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
 
     m_viewConfig =  config();
+
+    m_panelController = new PanelController();
+    m_panelController->hide();
+    m_panelController->setContainment(containment());
 
     m_offset = m_viewConfig.readEntry("Offset", 0);
     m_alignment = alignmentFilter((Qt::Alignment)m_viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
@@ -50,6 +55,9 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
         connect(panel, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
         connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));
         connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
+        connect(panel, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
+        connect(m_panelController, SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
+        connect(m_panelController, SIGNAL(removePanel()), panel, SLOT(remove()));
     }
 
     kDebug() << "Panel geometry is" << panel->geometry();
@@ -72,9 +80,22 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     updateStruts();
 }
 
+PanelView::~PanelView()
+{
+    delete m_panelController;
+}
+
 void PanelView::setLocation(Plasma::Location loc)
 {
     containment()->setLocation(loc);
+
+    //update the panel controller location position and size
+    m_panelController->setLocation(location());
+
+    if (m_panelController->isVisible()) {
+        m_panelController->resize(m_panelController->sizeHint());
+        m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
+    }
 }
 
 Plasma::Location PanelView::location() const
@@ -90,6 +111,14 @@ Plasma::Corona *PanelView::corona() const
 void PanelView::updatePanelGeometry()
 {
     kDebug() << "New panel geometry is" << containment()->geometry();
+
+    //update the panel controller location position and size
+    m_panelController->setLocation(containment()->location());
+
+    if (m_panelController->isVisible()) {
+        m_panelController->resize(m_panelController->sizeHint());
+        m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
+    }
 
     QSize size = containment()->size().toSize();
     QRect geom(QPoint(0,0), size);
@@ -259,6 +288,18 @@ Qt::Alignment PanelView::alignment() const
 void PanelView::showAppletBrowser()
 {
     PlasmaApp::self()->showAppletBrowser(containment());
+}
+
+void PanelView::togglePanelController()
+{
+    if (!m_panelController->isVisible()) {
+        m_panelController->resize(m_panelController->sizeHint());
+        m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
+
+        m_panelController->show();
+    } else {
+        m_panelController->hide();
+    }
 }
 
 void PanelView::saveConfig()
