@@ -304,15 +304,16 @@ KGVerify::start()
 			applyPreset();
 	}
 	running = true;
-	debug( "%s->start()\n", pName.data() );
-	greet->start();
 	if (!(func == KGreeterPlugin::Authenticate ||
 	      ctx == KGreeterPlugin::ChangeTok ||
 	      ctx == KGreeterPlugin::ExChangeTok))
 	{
 		cont = true;
-		handleVerify();
 	}
+	debug( "%s->start()\n", pName.data() );
+	greet->start();
+	if (cont)
+		handleVerify();
 }
 
 void
@@ -812,6 +813,8 @@ void
 KGVerify::gplugStart()
 {
 	// XXX handle func != Authenticate
+	if (cont)
+		return;
 	debug( "%s: gplugStart()\n", pName.data() );
 	gSendInt( ctx == KGreeterPlugin::Shutdown ? G_VerifyRootOK : G_Verify );
 	gSendStr( greetPlugins[pluginList[curPlugin]].info->method );

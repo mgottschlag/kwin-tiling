@@ -398,7 +398,7 @@ struct KDE_EXPORT kgreeterplugin_info {
      *
      * "init" means that the plugin is supposed to call gplugStart, "cont"
      * that the backend is already in a cycle of the method the plugin was
-     * initialized with.
+     * initialized with (it does not hurt if gplugStart is still called).
      */
     KGreeterPlugin *(*create)( KGreeterPluginHandler *handler,
                                QWidget *parent,
