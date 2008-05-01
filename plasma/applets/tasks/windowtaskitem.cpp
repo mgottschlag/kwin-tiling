@@ -221,8 +221,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
     KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme());
 
     if (taskFlags() & TaskWantsAttention) {
-        //FIXME: instead of hasElement probably would be prettier a new function like SvgPanel::hasPrefix
-        if (s_taskItemBackground && s_taskItemBackground->hasElement("attention-center")) {
+        if (s_taskItemBackground && s_taskItemBackground->hasElementPrefix("attention")) {
             //Draw task background from theme svg "attention" element
             s_taskItemBackground->setElementPrefix("attention");
             s_taskItemBackground->resizePanel(option->rect.size());
@@ -238,7 +237,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
         //Not painting anything for iconified tasks for now
         painter->setBrush(QBrush());
     } else if (taskFlags() & TaskHasFocus) {
-            if (s_taskItemBackground && s_taskItemBackground->hasElement("focus-center")) {
+            if (s_taskItemBackground && s_taskItemBackground->hasElementPrefix("focus")) {
                 //Draw task background from theme svg "focus" element
                 s_taskItemBackground->setElementPrefix("focus");
                 s_taskItemBackground->resizePanel(option->rect.size());
@@ -264,7 +263,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
             }
     //Default is a normal task
     } else {
-        if (s_taskItemBackground && s_taskItemBackground->hasElement("normal-center")) {
+        if (s_taskItemBackground && s_taskItemBackground->hasElementPrefix("normal")) {
             //Draw task background from theme svg "normal" element
             s_taskItemBackground->setElementPrefix("normal");
             s_taskItemBackground->resizePanel(option->rect.size());
@@ -286,7 +285,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
     if (option->state & QStyle::State_MouseOver || m_animId != -1)
     {
 
-        if (s_taskItemBackground && s_taskItemBackground->hasElement("hover-center")) {
+        if (s_taskItemBackground && s_taskItemBackground->hasElementPrefix("hover")) {
             //Draw task background from theme svg "hover" element
             painter->save();
 
