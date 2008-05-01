@@ -46,7 +46,7 @@ XesamRunner::~XesamRunner()
 {
 }
 
-void XesamRunner::match(Plasma::SearchContext *context)
+void XesamRunner::match(Plasma::RunnerContext *context)
 {
     if (context->searchTerm().length()<3) return;
 
@@ -106,7 +106,7 @@ void XesamRunner::match(Plasma::SearchContext *context)
     }
 }
 
-void XesamRunner::run(const Plasma::SearchContext *context,
+void XesamRunner::run(const Plasma::RunnerContext *context,
                        const Plasma::SearchMatch *match)
 {
     QMutexLocker lock(bigLock());

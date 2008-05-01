@@ -39,8 +39,8 @@ SessionRunner::SessionRunner(QObject *parent, const QVariantList &args)
 
     setObjectName(i18n("Sessions"));
     setPriority(LowPriority);
-    setIgnoredTypes(Plasma::SearchContext::Directory | Plasma::SearchContext::File | 
-                    Plasma::SearchContext::NetworkLocation);
+    setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File | 
+                    Plasma::RunnerContext::NetworkLocation);
 }
 
 SessionRunner::~SessionRunner()
@@ -84,7 +84,7 @@ Plasma::SearchMatch* SessionRunner::matchCommands(const QString& term)
   }
 
 
-void SessionRunner::match(Plasma::SearchContext *search)
+void SessionRunner::match(Plasma::RunnerContext *search)
 {
     const QString term = search->searchTerm();
     QString user;
@@ -184,7 +184,7 @@ void SessionRunner::match(Plasma::SearchContext *search)
     search->addMatches(term, matches);
 }
 
-void SessionRunner::run(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
+void SessionRunner::run(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action)
 {
     Q_UNUSED(search);
     if (action->data().type() == QVariant::Int) {

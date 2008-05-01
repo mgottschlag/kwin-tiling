@@ -48,14 +48,14 @@ ShellRunner::~ShellRunner()
 {
 }
 
-void ShellRunner::match(Plasma::SearchContext *search)
+void ShellRunner::match(Plasma::RunnerContext *search)
 {
     if (!m_enabled) {
         return;
     }
 
-    if (search->type() == Plasma::SearchContext::Executable ||
-        search->type() == Plasma::SearchContext::ShellCommand)  {
+    if (search->type() == Plasma::RunnerContext::Executable ||
+        search->type() == Plasma::RunnerContext::ShellCommand)  {
         const QString term = search->searchTerm();
         Plasma::SearchMatch* match = new Plasma::SearchMatch(this);
         match->setType(Plasma::SearchMatch::ExactMatch);
@@ -81,7 +81,7 @@ void ShellRunner::setRunInTerminal(bool inTerminal)
     m_inTerminal = inTerminal;
 }
 
-void ShellRunner::run(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
+void ShellRunner::run(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action)
 {
     Q_UNUSED(action);
     if (!m_enabled) {

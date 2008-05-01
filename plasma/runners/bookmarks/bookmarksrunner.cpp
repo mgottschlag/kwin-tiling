@@ -47,7 +47,7 @@ BookmarksRunner::~BookmarksRunner()
 {
 }
 
-void BookmarksRunner::match(Plasma::SearchContext *search)
+void BookmarksRunner::match(Plasma::RunnerContext *search)
 {
     const QString term = search->searchTerm();
     if (term.length() < 3) {
@@ -142,7 +142,7 @@ KIcon BookmarksRunner::getFavicon(const KUrl &url)
     return icon;
 }
 
-void BookmarksRunner::run(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
+void BookmarksRunner::run(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action)
 {
     Q_UNUSED(search);
     KUrl url = (KUrl)action->data().toString();

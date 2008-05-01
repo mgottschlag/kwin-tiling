@@ -36,8 +36,8 @@ class SessionRunner : public Plasma::AbstractRunner
         SessionRunner(QObject *parent, const QVariantList &args);
         ~SessionRunner();
 
-        void match(Plasma::SearchContext *context);
-        void run(const Plasma::SearchContext *context, const Plasma::SearchMatch *action);
+        void match(Plasma::RunnerContext *context);
+        void run(const Plasma::RunnerContext *context, const Plasma::SearchMatch *action);
 
         enum { LogoutAction = 1, ShutdownAction, RestartAction, LockAction };
 

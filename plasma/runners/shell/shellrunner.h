@@ -37,8 +37,8 @@ class ShellRunner : public Plasma::AbstractRunner
         ~ShellRunner();
 
         void createMatchOptions(QWidget* parent);
-        void match(Plasma::SearchContext *search);
-        void run(const Plasma::SearchContext *context, const Plasma::SearchMatch *action);
+        void match(Plasma::RunnerContext *search);
+        void run(const Plasma::RunnerContext *context, const Plasma::SearchMatch *action);
 
 
     public slots:

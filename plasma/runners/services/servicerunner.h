@@ -42,8 +42,8 @@ class ServiceRunner : public Plasma::AbstractRunner
         ServiceRunner(QObject *parent, const QVariantList &args);
         ~ServiceRunner();
 
-        void match(Plasma::SearchContext *context);
-        void run(const Plasma::SearchContext *context, const Plasma::SearchMatch *action);
+        void match(Plasma::RunnerContext *context);
+        void run(const Plasma::RunnerContext *context, const Plasma::SearchMatch *action);
 
     protected:
         void setupAction(const KService::Ptr &service, Plasma::SearchMatch *action);

@@ -20,18 +20,17 @@
 #include <QFile>
 
 #include <plasma/abstractrunner.h>
-#include <plasma/searchcontext.h>
 #include <plasma/searchmatch.h>
 
 #include "runnerscriptqscript.h"
 
 
-typedef const Plasma::SearchContext* ConstSearchContextStar;
+typedef const Plasma::RunnerContext* ConstRunnerContextStar;
 typedef const Plasma::SearchMatch* ConstSearchMatchStar;
 
 Q_DECLARE_METATYPE(Plasma::SearchMatch*)
-Q_DECLARE_METATYPE(Plasma::SearchContext*)
-Q_DECLARE_METATYPE(ConstSearchContextStar)
+Q_DECLARE_METATYPE(Plasma::RunnerContext*)
+Q_DECLARE_METATYPE(ConstRunnerContextStar)
 Q_DECLARE_METATYPE(ConstSearchMatchStar)
 
 RunnerScriptQScript::RunnerScriptQScript(QObject *parent, const QVariantList &args)
@@ -72,7 +71,7 @@ bool RunnerScriptQScript::init()
     return true;
 }
 
-void RunnerScriptQScript::match(Plasma::SearchContext *search)
+void RunnerScriptQScript::match(Plasma::RunnerContext *search)
 {
     QScriptValue fun = m_self.property( "match" );
     if ( !fun.isFunction() ) {
@@ -93,7 +92,7 @@ void RunnerScriptQScript::match(Plasma::SearchContext *search)
     }
 }
 
-void RunnerScriptQScript::exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
+void RunnerScriptQScript::exec(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action)
 {
     QScriptValue fun = m_self.property( "exec" );
     if ( !fun.isFunction() ) {

@@ -41,14 +41,14 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
     // query ktrader for all available searchproviders and preload the default icon
     m_offers = serviceQuery("SearchProvider");
     m_icon = KIcon("internet-web-browser");
-    setIgnoredTypes(Plasma::SearchContext::FileSystem);
+    setIgnoredTypes(Plasma::RunnerContext::FileSystem);
 }
 
 WebshortcutRunner::~WebshortcutRunner()
 {
 }
 
-void WebshortcutRunner::match(Plasma::SearchContext *search)
+void WebshortcutRunner::match(Plasma::RunnerContext *search)
 {
     const QString term = search->searchTerm();
     const char separator = ':';
@@ -130,7 +130,7 @@ KIcon WebshortcutRunner::getFavicon(const KUrl &url) {
     return icon;
 }
 
-void WebshortcutRunner::run(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
+void WebshortcutRunner::run(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action)
 {
     QString location = getSearchQuery(action->data().toString(), search->searchTerm());
 

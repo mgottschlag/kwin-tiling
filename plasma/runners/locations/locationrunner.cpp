@@ -38,14 +38,14 @@
 
 LocationsRunner::LocationsRunner(QObject *parent, const QVariantList& args)
     : Plasma::AbstractRunner(parent, args),
-      m_type(Plasma::SearchContext::UnknownType)
+      m_type(Plasma::RunnerContext::UnknownType)
 {
     KGlobal::locale()->insertCatalog("krunner_locationsrunner");
     Q_UNUSED(args);
     // set the name shown after the result in krunner window
     setObjectName(i18n("Locations"));
-    setIgnoredTypes(Plasma::SearchContext::Executable | Plasma::SearchContext::ShellCommand |
-                    Plasma::SearchContext::UnknownType);
+    setIgnoredTypes(Plasma::RunnerContext::Executable | Plasma::RunnerContext::ShellCommand |
+                    Plasma::RunnerContext::UnknownType);
 
 }
 
@@ -66,26 +66,26 @@ void processUrl(KUrl &url, const QString &term)
     }
 }
 
-void LocationsRunner::match(Plasma::SearchContext *search)
+void LocationsRunner::match(Plasma::RunnerContext *search)
 {
     QString term = search->searchTerm();
     m_type = search->type();
     Plasma::SearchMatch *action = 0;
 
-    if (m_type == Plasma::SearchContext::Directory ||
-        m_type == Plasma::SearchContext::File) {
+    if (m_type == Plasma::RunnerContext::Directory ||
+        m_type == Plasma::RunnerContext::File) {
         action = new Plasma::SearchMatch(this);
         action->setType(Plasma::SearchMatch::ExactMatch);
         action->setText(i18n("Open %1", term));
         action->setIcon(KIcon("system-file-manager"));
-    } else if (m_type == Plasma::SearchContext::Help) {
+    } else if (m_type == Plasma::RunnerContext::Help) {
         //kDebug() << "Locations matching because of" << m_type;
         action = new Plasma::SearchMatch(this);
         action->setType(Plasma::SearchMatch::ExactMatch);
         action->setText(i18n("Open %1", term));
         action->setIcon(KIcon("system-help"));
         action->setRelevance(1);
-    } else if (m_type == Plasma::SearchContext::NetworkLocation) {
+    } else if (m_type == Plasma::RunnerContext::NetworkLocation) {
         KUrl url(term);
         processUrl(url, term);
         QMutexLocker lock(bigLock());
@@ -114,16 +114,16 @@ void LocationsRunner::match(Plasma::SearchContext *search)
     }
 }
 
-void LocationsRunner::run(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
+void LocationsRunner::run(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action)
 {
     QString data = action->data().toString();
     const QString location = search->searchTerm();
 
     //kDebug() << "command: " << action->searchTerm();
     //kDebug() << "url: " << location << data;
-    if (m_type == Plasma::SearchContext::UnknownType) {
+    if (m_type == Plasma::RunnerContext::UnknownType) {
         KToolInvocation::invokeBrowser(location);
-    } else if (m_type == Plasma::SearchContext::NetworkLocation && data.left(4) == "http") {
+    } else if (m_type == Plasma::RunnerContext::NetworkLocation && data.left(4) == "http") {
         // the text may have changed while we were running, so we have to refresh
         // our content
         KUrl url(location);

@@ -38,8 +38,8 @@ class BookmarksRunner : public Plasma::AbstractRunner
         BookmarksRunner(QObject* parent, const QVariantList &args);
         ~BookmarksRunner();
 
-        void match(Plasma::SearchContext *context);
-        void run(const Plasma::SearchContext *context, const Plasma::SearchMatch *action);
+        void match(Plasma::RunnerContext *context);
+        void run(const Plasma::RunnerContext *context, const Plasma::SearchMatch *action);
 
     private:
         KIcon getFavicon(const KUrl &url);

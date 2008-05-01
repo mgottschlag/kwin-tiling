@@ -27,9 +27,6 @@
 
 #include <KIcon>
 
-#include <plasma/searchcontext.h>
-
-
 CalculatorRunner::CalculatorRunner( QObject* parent, const QVariantList &args )
     : Plasma::AbstractRunner(parent, args)
 {
@@ -37,9 +34,9 @@ CalculatorRunner::CalculatorRunner( QObject* parent, const QVariantList &args )
     Q_UNUSED(args)
 
     setObjectName(i18n("Calculator"));
-    setIgnoredTypes(Plasma::SearchContext::Directory | Plasma::SearchContext::File | 
-                         Plasma::SearchContext::NetworkLocation | Plasma::SearchContext::Executable |
-                         Plasma::SearchContext::ShellCommand);
+    setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File | 
+                         Plasma::RunnerContext::NetworkLocation | Plasma::RunnerContext::Executable |
+                         Plasma::RunnerContext::ShellCommand);
 }
 
 CalculatorRunner::~CalculatorRunner()
@@ -145,7 +142,7 @@ void CalculatorRunner::userFriendlySubstitutions(QString& cmd)
 }
 
 
-void CalculatorRunner::match(Plasma::SearchContext *search)
+void CalculatorRunner::match(Plasma::RunnerContext *search)
 {
     const QString term = search->searchTerm();
     QString cmd = term;

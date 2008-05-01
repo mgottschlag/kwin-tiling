@@ -30,11 +30,11 @@ class LocationsRunner : public Plasma::AbstractRunner {
         LocationsRunner( QObject *parent, const QVariantList& args );
         ~LocationsRunner();
 
-        void match(Plasma::SearchContext *search);
-        void run(const Plasma::SearchContext *context, const Plasma::SearchMatch *action);
+        void match(Plasma::RunnerContext *search);
+        void run(const Plasma::RunnerContext *context, const Plasma::SearchMatch *action);
 
     private:
-        Plasma::SearchContext::Type m_type;
+        Plasma::RunnerContext::Type m_type;
 };
 
 K_EXPORT_PLASMA_RUNNER(locations, LocationsRunner)

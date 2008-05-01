@@ -36,7 +36,7 @@ class CalculatorRunner : public Plasma::AbstractRunner
         CalculatorRunner(QObject* parent, const QVariantList &args);
         ~CalculatorRunner();
 
-        void match(Plasma::SearchContext *context);
+        void match(Plasma::RunnerContext *context);
 
     private:
         QString calculate(const QString& term);

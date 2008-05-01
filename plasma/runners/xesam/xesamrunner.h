@@ -30,8 +30,8 @@ class XesamRunner : public Plasma::AbstractRunner {
         XesamRunner(QObject *parent, const QVariantList& args);
         ~XesamRunner();
 
-        void match(Plasma::SearchContext *context);
-        void run(const Plasma::SearchContext *context,
+        void match(Plasma::RunnerContext *context);
+        void run(const Plasma::RunnerContext *context,
                   const Plasma::SearchMatch *match);
 };
 

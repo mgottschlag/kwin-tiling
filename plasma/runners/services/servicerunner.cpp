@@ -40,7 +40,7 @@ ServiceRunner::~ServiceRunner()
 {
 }
 
-void ServiceRunner::match(Plasma::SearchContext *search)
+void ServiceRunner::match(Plasma::RunnerContext *search)
 {
     const QString term = search->searchTerm();
     if (term.length() <  3) {
@@ -112,7 +112,7 @@ void ServiceRunner::match(Plasma::SearchContext *search)
     search->addMatches(term, matches);
 }
 
-void ServiceRunner::run(const Plasma::SearchContext *search, const Plasma::SearchMatch *action)
+void ServiceRunner::run(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action)
 {
     Q_UNUSED(search);
     QMutexLocker lock(bigLock());

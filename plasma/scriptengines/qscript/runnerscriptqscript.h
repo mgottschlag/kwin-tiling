@@ -42,10 +42,10 @@ public:
     Q_INVOKABLE Plasma::AbstractRunner* runner() const;
 
     /** Reimplemented to forward to script. */
-    void match(Plasma::SearchContext *search);
+    void match(Plasma::RunnerContext *search);
 
     /** Reimplemented to forward to script. */
-    void exec(const Plasma::SearchContext *search, const Plasma::SearchMatch *action);
+    void exec(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action);
 
 protected:
     void setupObjects();
