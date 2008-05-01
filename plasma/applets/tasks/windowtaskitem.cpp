@@ -44,6 +44,10 @@
 
 bool WindowTaskItem::s_backgroundCreated = false;
 Plasma::PanelSvg* WindowTaskItem::s_taskItemBackground = 0;
+qreal WindowTaskItem::s_leftMargin = 0;
+qreal WindowTaskItem::s_topMargin = 0;
+qreal WindowTaskItem::s_rightMargin = 0;
+qreal WindowTaskItem::s_bottomMargin = 0;
 
 WindowTaskItem::WindowTaskItem(QGraphicsItem *parent, const bool showTooltip)
     : QGraphicsWidget(parent),
@@ -237,6 +241,8 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
             //Draw task background from theme svg "normal" element
             s_taskItemBackground->setElementPrefix("normal");
             s_taskItemBackground->resizePanel(option->rect.size());
+            //get the margins now
+            s_taskItemBackground->getMargins(s_leftMargin, s_topMargin, s_rightMargin, s_bottomMargin);
             s_taskItemBackground->paintPanel(painter, option->rect);
         } else {
             //Draw task background without svg theming
@@ -649,26 +655,14 @@ void WindowTaskItem::setupBackgroundSvg(QObject *parent)
 
 QRectF WindowTaskItem::iconRect() const
 {
-    QSizeF bounds = boundingRect().size();
+    QRectF bounds = boundingRect().adjusted(s_leftMargin, s_topMargin, -s_rightMargin, -s_bottomMargin);
     //leave enough space for the text. usefull in vertical panel
     bounds.setWidth(qMax(bounds.width() / 3, qMin(minimumSize().height(), bounds.width())));
 
-    //add the margins in the svg if the icon wouldn't become too small
-    if (s_taskItemBackground) {
-        const int height = bounds.height() - s_taskItemBackground->marginSize(Plasma::TopMargin) - s_taskItemBackground->marginSize(Plasma::BottomMargin);
-        const int width = bounds.width() - s_taskItemBackground->marginSize(Plasma::LeftMargin) - s_taskItemBackground->marginSize(Plasma::RightMargin);
-
-        const int minIconSize = IconSize(KIconLoader::Small);
-
-        if (height > minIconSize && width > minIconSize) {
-            bounds = QSize(width, height);
-        }
-    }
-
-    QSize iconSize = _icon.actualSize(bounds.toSize());
+    QSize iconSize = _icon.actualSize(bounds.size().toSize());
 
     return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignLeft | Qt::AlignVCenter,
-                               iconSize, boundingRect().toRect());
+                               iconSize, bounds.toRect());
 }
 
 QRectF WindowTaskItem::textRect() const

@@ -199,6 +199,10 @@ private:
 
     static bool s_backgroundCreated;
     static Plasma::PanelSvg* s_taskItemBackground;
+    static qreal s_leftMargin;
+    static qreal s_topMargin;
+    static qreal s_rightMargin;
+    static qreal s_bottomMargin;
 
     // minimum size (in pixels) of a task's icon
     static const int MinTaskIconSize = 48;
