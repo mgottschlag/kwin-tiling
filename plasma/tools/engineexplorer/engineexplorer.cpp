@@ -24,6 +24,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QSpinBox>
+#include <QBitArray>
 #include <QBitmap>
 
 #include <KAction>
@@ -206,15 +207,27 @@ void EngineExplorer::requestSource()
 
 QString EngineExplorer::convertToString(const QVariant &value) const
 {
-    if (value.canConvert(QVariant::String)) {
+    if (value.canConvert(QVariant::String) && value.type() != QVariant::ByteArray) {
         return value.toString();
     }
 
     switch (value.type())
     {
+        case QVariant::BitArray: {
+            return i18nc("<%1 bit>", "<%1 bits>", QString::number(value.toBitArray().size()));
+        }
         case QVariant::Bitmap: {
             QBitmap bitmap = value.value<QBitmap>();
             return QString("<%1x%2px - %3bpp>").arg(bitmap.width()).arg(bitmap.height()).arg(bitmap.depth());
+        }
+        case QVariant::ByteArray: {
+            // Return the array size if it is not displayable
+            if (value.toString().isEmpty()) {
+                return i18nc("<%1 byte>", "<%1 bytes>", QString::number(value.toByteArray().size()));
+            }
+            else {
+                return value.toString();
+            }
         }
         case QVariant::Image: {
             QImage image = value.value<QImage>();
@@ -232,7 +245,7 @@ QString EngineExplorer::convertToString(const QVariant &value) const
             return QString("%1").arg(value.toLocale().name());
         }
         case QVariant::Map: {
-            return QString("<%1 items>").arg(value.toMap().size());
+            return i18np("<%1 item>", "<%1 items>", QString::number(value.toMap().size()));
         }
         case QVariant::Pixmap: {
             QPixmap pixmap = value.value<QPixmap>();
@@ -273,7 +286,7 @@ QString EngineExplorer::convertToString(const QVariant &value) const
             return QString("%1").arg(value.toUrl().toString());
         }
         default: {
-            return "<not displayable>";
+            return i18n("<not displayable>");
         }
     }
 }
