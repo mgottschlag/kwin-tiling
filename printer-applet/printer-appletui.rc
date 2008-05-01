@@ -1,9 +1,0 @@
-<!DOCTYPE kpartgui>
-<kpartgui name="printer-applet" version="1">
-<MenuBar>
-  <Menu name="view"><text>&amp;View</text>
-    <Action name="refresh"/>
-    <Action name="show_completed_jobs"/>
-    <Action name="show_printer_status"/>
-  </Menu>
-</kpartgui>
