@@ -39,6 +39,8 @@ SessionRunner::SessionRunner(QObject *parent, const QVariantList &args)
 
     setObjectName(i18n("Sessions"));
     setPriority(LowPriority);
+    setIgnoredTypes(Plasma::SearchContext::Directory | Plasma::SearchContext::File | 
+                    Plasma::SearchContext::NetworkLocation);
 }
 
 SessionRunner::~SessionRunner()
@@ -93,7 +95,6 @@ void SessionRunner::match(Plasma::SearchContext *search)
     if (term.size() < 3) {
         return;
     }
-
     // first compare with SESSIONS. this must *NOT* be translated (i18n)
     // as it is used as an internal command trigger (e.g. via d-bus),
     // not as a user supplied query. and yes, "Ugh, magic strings"
