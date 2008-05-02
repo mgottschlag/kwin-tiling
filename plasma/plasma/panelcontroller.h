@@ -63,7 +63,6 @@ Q_SIGNALS:
      */
      void showAddWidgets();
      void removePanel();
-     void requestResize(const QSize & newSize);
 
 private:
     class Private;

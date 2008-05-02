@@ -182,7 +182,6 @@ PanelController::~PanelController()
 void PanelController::setContainment( Plasma::Containment *containment)
 {
     d->containment = containment;
-    //connect(this, SIGNAL(requestResize(const QSize &)), d->containment, SLOT(resize(const QSize &)));
 }
 
 QSize PanelController::sizeHint() const
