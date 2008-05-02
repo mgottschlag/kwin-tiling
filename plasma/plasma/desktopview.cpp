@@ -44,6 +44,8 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
       m_zoomLevel(Plasma::DesktopZoom),
       m_dashboard(0)
 {
+    setFocusPolicy(Qt::NoFocus);
+
     connectContainment(containment);
     if (containment) {
         containment->enableToolBoxTool("zoomIn", false);
@@ -90,6 +92,29 @@ void DesktopView::adjustSize()
     if (m_dashboard) {
         m_dashboard->setGeometry(geom);
     }
+}
+
+void DesktopView::setIsDesktop(bool isDesktop)
+{
+    if (isDesktop) {
+        setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
+
+        KWindowSystem::setOnAllDesktops(winId(), true);
+        KWindowSystem::setType(winId(), NET::Desktop);
+        lower();
+
+        adjustSize();
+    } else {
+        setWindowFlags(windowFlags() & ~Qt::FramelessWindowHint);
+
+        KWindowSystem::setOnAllDesktops(winId(), false);
+        KWindowSystem::setType(winId(), NET::Normal); 
+    }
+}
+
+bool DesktopView::isDesktop() const
+{
+    return KWindowInfo(winId(), NET::WMWindowType).windowType(NET::Desktop);
 }
 
 void DesktopView::addContainment(Plasma::Containment *fromContainment)
@@ -240,6 +265,25 @@ void DesktopView::wheelEvent(QWheelEvent* event)
         } else {
             zoomIn(containment());
         }
+    }
+}
+
+void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment)
+{
+    kDebug() << "was, is, containment:" << wasScreen << isScreen << (QObject*)containment;
+    if (containment->containmentType() == Plasma::Containment::PanelContainment) {
+        // we don't care about panel containments changing screens on us
+        return;
+    }
+
+    if (wasScreen == screen()) {
+        if (this->containment() == containment) {
+            setContainment(0);
+        }
+    }
+
+    if (isScreen == screen()) {
+        setContainment(containment);
     }
 }
 

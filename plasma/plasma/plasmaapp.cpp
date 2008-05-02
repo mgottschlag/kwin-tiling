@@ -47,6 +47,7 @@
 #include <KDebug>
 #include <KCmdLineArgs>
 #include <KWindowSystem>
+#include <KAction>
 
 #include <ksmserver_interface.h>
 
@@ -56,7 +57,6 @@
 
 #include "appadaptor.h"
 #include "desktopcorona.h"
-#include "rootwidget.h"
 #include "desktopview.h"
 #include "panelview.h"
 
@@ -114,7 +114,6 @@ PlasmaApp* PlasmaApp::self()
 
 PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     : KUniqueApplication(display, visual, colormap),
-      m_root(0),
       m_corona(0),
       m_appletBrowser(0)
 {
@@ -201,8 +200,14 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     KConfigGroup cg(KGlobal::config(), "General");
     Plasma::Theme::defaultTheme()->setFont(cg.readEntry("desktopFont", font()));
 
-    m_root = new RootWidget();
-    m_root->setAsDesktop(KCmdLineArgs::parsedArgs()->isSet("desktop"));
+    setIsDesktop(KCmdLineArgs::parsedArgs()->isSet("desktop"));
+
+    //TODO: Make the shortcut configurable
+    KAction *showAction = new KAction( this );
+    showAction->setText( i18n( "Show Dashboard" ) );
+    showAction->setObjectName( "Show Dashboard" ); // NO I18N
+    showAction->setGlobalShortcut( KShortcut( Qt::CTRL + Qt::Key_F12 ) );
+    connect( showAction, SIGNAL( triggered() ), this, SLOT( toggleDashboard() ) );
 
     // this line initializes the corona.
     corona();
@@ -210,7 +215,6 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     notifyStartup(true);
 
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
-    m_root->show();
 }
 
 PlasmaApp::~PlasmaApp()
@@ -240,14 +244,17 @@ void PlasmaApp::cleanup()
 
     int numScreens = QApplication::desktop()->numScreens();
     for (int i = 0; i < numScreens; ++i) {
-        DesktopView *v = m_root->viewForScreen(i);
+        DesktopView *v = viewForScreen(i);
         if (v && v->containment()) {
             viewIds.writeEntry(QString::number(v->containment()->id()), v->id());
         }
     }
 
-    delete m_root;
-    m_root = 0;
+    
+    QList<DesktopView*> desktops = m_desktops;
+    m_desktops.clear();
+    qDeleteAll(desktops);
+    
     QList<PanelView*> panels = m_panels;
     m_panels.clear();
     qDeleteAll(panels);
@@ -256,19 +263,73 @@ void PlasmaApp::cleanup()
 
 void PlasmaApp::initializeWallpaper()
 {
-    if (!m_root) {
-        return;
-    }
-
     //FIXME this has moved to Containment, so .....
     //m_root->desktop()->initializeWallpaper();
 }
 
 void PlasmaApp::toggleDashboard()
 {
-    if (m_root) {
-        m_root->toggleDashboard();
+    int currentScreen = 0;
+    if (QApplication::desktop()->numScreens() > 1) {
+        currentScreen = QApplication::desktop()->screenNumber(QCursor::pos());
     }
+
+    DesktopView *view = viewForScreen(currentScreen);
+    if (!view) {
+        kWarning() << "we don't have a DesktopView for the current screen!";
+        return;
+    }
+
+    view->toggleDashboard();
+}
+
+void PlasmaApp::setIsDesktop(bool isDesktop)
+{
+    m_isDesktop = isDesktop;
+    foreach (DesktopView *view, m_desktops) {
+        view->setIsDesktop(isDesktop);
+    }
+    
+    if (isDesktop) {
+        connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize(int)));
+    } else {
+        disconnect(QApplication::desktop(), SIGNAL(resized(int)), this, SLOT(adjustSize()));
+    }
+}
+
+bool PlasmaApp::isDesktop() const
+{
+    return m_isDesktop;
+}
+
+void PlasmaApp::adjustSize(int screen)
+{
+    QDesktopWidget *desktop = QApplication::desktop();
+    DesktopView *view = viewForScreen(screen);
+    
+    if (view) {
+        if (screen < desktop->numScreens()) {
+            view->adjustSize();
+        } else {
+            // the screen was removed, so we'll destroy the
+            // corresponding view
+            kDebug() << "removing the view for screen" << screen;
+            view->setContainment(0);
+            m_desktops.removeAll(view);
+            delete view;
+        }
+    }
+}
+
+DesktopView* PlasmaApp::viewForScreen(int screen) const
+{
+    foreach (DesktopView *view, m_desktops) {
+        if (view->screen() == screen) {
+            return view;
+        }
+    }
+
+    return 0;
 }
 
 void PlasmaApp::setCrashHandler()
@@ -288,14 +349,15 @@ void PlasmaApp::crashHandler(int signal)
 
 Plasma::Corona* PlasmaApp::corona()
 {
-    Q_ASSERT(m_root);
-
     if (!m_corona) {
         DesktopCorona *c = new DesktopCorona(this);
         connect(c, SIGNAL(containmentAdded(Plasma::Containment*)),
                 this, SLOT(createView(Plasma::Containment*)));
-        connect(c, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
-                m_root, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
+                
+        foreach (DesktopView *view, m_desktops) {
+            connect(c, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
+                            view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
+        }
 
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
         c->loadLayout();
@@ -375,7 +437,24 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         default:
             if (containment->screen() > -1 &&
                 containment->screen() < QApplication::desktop()->numScreens()) {
-                m_root->createDesktopView(containment, id);
+                if (viewForScreen(containment->screen())) {
+                    // we already have a view for this screen
+                    return;
+                }
+            
+                kDebug() << "creating a view for" << containment->screen() << "and we have"
+                    << QApplication::desktop()->numScreens() << "screens";
+            
+                // we have a new screen. neat.
+                DesktopView *view = new DesktopView(containment, id, 0);
+                if (m_corona) {
+                    connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
+                            view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
+                }
+                view->setGeometry(QApplication::desktop()->screenGeometry(containment->screen()));
+                m_desktops.append(view);
+                view->setIsDesktop(m_isDesktop);
+                view->show();
             }
             break;
     }

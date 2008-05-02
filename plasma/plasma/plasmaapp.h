@@ -33,6 +33,7 @@ namespace Plasma
 
 class RootWidget;
 class PanelView;
+class DesktopView;
 
 class PlasmaApp : public KUniqueApplication
 {
@@ -47,6 +48,33 @@ public:
     Plasma::Corona* corona();
     void showAppletBrowser(Plasma::Containment *containment);
 
+    /**
+     * Sets all DesktopView widgets that belong to this PlasmaApp
+     * as a desktop window if @p isDesktop is true or an ordinary 
+     * window otherwise.
+     *
+     * Desktop windows are displayed beneath all other windows, have
+     * no window decoration and occupy the full size of the desktop.
+     *
+     * The value of @p isDesktop will be remembered, so that any 
+     * DesktopView widgets that are created afterwards will have the
+     * same setting.
+     * The default is to create DesktopView widgets as desktop
+     * window.
+     */
+    void setIsDesktop(bool isDesktop);
+
+    /** 
+     * Returns true if this widget is currently a desktop window.
+     * See setIsDesktop()
+     */
+    bool isDesktop() const;
+
+    /**
+     * Creates a view for the given containment
+     */
+    void createDesktopView(Plasma::Containment *containment, int id = 0);
+
 public Q_SLOTS:
     // DBUS interface. if you change these methods, you MUST run:
     // qdbuscpp2xml plasmaapp.h -o org.kde.plasma.App.xml
@@ -59,15 +87,18 @@ private Q_SLOTS:
     void appletBrowserDestroyed();
     void createView(Plasma::Containment *containment);
     void panelRemoved(QObject* panel);
+    void adjustSize(int screen);
 
 private:
     PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap);
     static void crashHandler(int signal);
+    DesktopView* viewForScreen(int screen) const;
 
-    RootWidget *m_root;
     Plasma::Corona *m_corona;
     QList<PanelView*> m_panels;
     Plasma::AppletBrowser *m_appletBrowser;
+    QList<DesktopView*> m_desktops;
+    bool m_isDesktop;
 };
 
 #endif // multiple inclusion guard

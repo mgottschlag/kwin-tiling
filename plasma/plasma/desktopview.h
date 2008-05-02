@@ -43,6 +43,21 @@ public:
      */
     void connectContainment(Plasma::Containment *containment);
 
+    /**
+     * Sets this DesktopView as a desktop window if @p isDesktop is
+     * true or an ordinary window otherwise.
+     *
+     * Desktop windows are displayed beneath all other windows, have
+     * no window decoration and occupy the full size of the desktop.
+     */
+    void setIsDesktop(bool isDesktop);
+
+    /** 
+     * Returns true if this widget is currently a desktop window.
+     * See setAsDesktop()
+     */
+    bool isDesktop() const;
+
 public slots:
     /**
      * zoom in towards the given containment.
@@ -60,6 +75,8 @@ public slots:
      * create a new containment based on fromContainment
      */
     void addContainment(Plasma::Containment *fromContainment = 0);
+
+    void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
 
 protected:
     void wheelEvent(QWheelEvent *event);

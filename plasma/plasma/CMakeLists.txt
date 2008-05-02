@@ -5,7 +5,6 @@ set(plasma_SRCS
     desktopview.cpp
     main.cpp
     plasmaapp.cpp
-    rootwidget.cpp
     panelview.cpp
     panelcontroller.cpp
     dashboardview.cpp
