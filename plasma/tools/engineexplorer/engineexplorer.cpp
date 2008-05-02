@@ -44,7 +44,7 @@ EngineExplorer::EngineExplorer(QWidget* parent)
       m_requestingSource(false)
 {
     setButtons(0);
-	(void) qRegisterMetaType<Soprano::Node>();
+    (void) qRegisterMetaType<Soprano::Node>();
     setWindowTitle(i18n("Plasma Engine Explorer"));
     QWidget* mainWidget = new QWidget(this);
     setMainWidget(mainWidget);
