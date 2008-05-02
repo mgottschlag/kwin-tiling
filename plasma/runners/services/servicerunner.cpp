@@ -42,7 +42,7 @@ ServiceRunner::~ServiceRunner()
 
 void ServiceRunner::match(Plasma::RunnerContext *search)
 {
-    const QString term = search->searchTerm();
+    const QString term = search->query();
     if (term.length() <  3) {
         return;
     }

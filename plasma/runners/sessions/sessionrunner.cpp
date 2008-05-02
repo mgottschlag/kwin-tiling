@@ -86,7 +86,7 @@ Plasma::SearchMatch* SessionRunner::matchCommands(const QString& term)
 
 void SessionRunner::match(Plasma::RunnerContext *search)
 {
-    const QString term = search->searchTerm();
+    const QString term = search->query();
     QString user;
     bool matchUser = false;
 

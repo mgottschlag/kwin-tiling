@@ -68,7 +68,7 @@ void processUrl(KUrl &url, const QString &term)
 
 void LocationsRunner::match(Plasma::RunnerContext *search)
 {
-    QString term = search->searchTerm();
+    QString term = search->query();
     m_type = search->type();
     Plasma::SearchMatch *action = 0;
 
@@ -117,9 +117,9 @@ void LocationsRunner::match(Plasma::RunnerContext *search)
 void LocationsRunner::run(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action)
 {
     QString data = action->data().toString();
-    const QString location = search->searchTerm();
+    const QString location = search->query();
 
-    //kDebug() << "command: " << action->searchTerm();
+    //kDebug() << "command: " << action->query();
     //kDebug() << "url: " << location << data;
     if (m_type == Plasma::RunnerContext::UnknownType) {
         KToolInvocation::invokeBrowser(location);

@@ -56,7 +56,7 @@ void ShellRunner::match(Plasma::RunnerContext *search)
 
     if (search->type() == Plasma::RunnerContext::Executable ||
         search->type() == Plasma::RunnerContext::ShellCommand)  {
-        const QString term = search->searchTerm();
+        const QString term = search->query();
         Plasma::SearchMatch* match = new Plasma::SearchMatch(this);
         match->setType(Plasma::SearchMatch::ExactMatch);
         match->setIcon(KIcon("system-run"));
@@ -89,12 +89,12 @@ void ShellRunner::run(const Plasma::RunnerContext *search, const Plasma::SearchM
     }
 
     if (m_inTerminal) {
-        KToolInvocation::invokeTerminal(search->searchTerm());
+        KToolInvocation::invokeTerminal(search->query());
 
         // reset for the next run!
         m_inTerminal = false;
     } else {
-        KRun::runCommand(search->searchTerm(), NULL);
+        KRun::runCommand(search->query(), NULL);
     }
 }
 

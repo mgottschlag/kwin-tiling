@@ -144,7 +144,7 @@ void CalculatorRunner::userFriendlySubstitutions(QString& cmd)
 
 void CalculatorRunner::match(Plasma::RunnerContext *search)
 {
-    const QString term = search->searchTerm();
+    const QString term = search->query();
     QString cmd = term;
 
     if (cmd.length() < 4 || cmd[0] != '=') {

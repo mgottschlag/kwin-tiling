@@ -48,7 +48,7 @@ XesamRunner::~XesamRunner()
 
 void XesamRunner::match(Plasma::RunnerContext *context)
 {
-    if (context->searchTerm().length()<3) return;
+    if (context->query().length()<3) return;
 
     QDBusInterface xesam("org.freedesktop.xesam.searcher",
                          "/org/freedesktop/xesam/searcher/main");
@@ -65,7 +65,7 @@ void XesamRunner::match(Plasma::RunnerContext *context)
         "<request xmlns='http://freedesktop.org/standards/xesam/1.0/query'>"
         "<userQuery>%1</userQuery>"
         "</request>";
-    QString userQuery = context->searchTerm();
+    QString userQuery = context->query();
 
     reply = xesam.call("NewSearch", session, query.arg(userQuery));
     if (!reply.isValid()) return;

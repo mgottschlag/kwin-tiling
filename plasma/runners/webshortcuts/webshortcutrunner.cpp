@@ -50,7 +50,7 @@ WebshortcutRunner::~WebshortcutRunner()
 
 void WebshortcutRunner::match(Plasma::RunnerContext *search)
 {
-    const QString term = search->searchTerm();
+    const QString term = search->query();
     const char separator = ':';
 
     if (term.length() < 3 || !term.contains(separator)) {
@@ -132,7 +132,7 @@ KIcon WebshortcutRunner::getFavicon(const KUrl &url) {
 
 void WebshortcutRunner::run(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action)
 {
-    QString location = getSearchQuery(action->data().toString(), search->searchTerm());
+    QString location = getSearchQuery(action->data().toString(), search->query());
 
     if (!location.isEmpty()) {
         KToolInvocation::invokeBrowser(location);
