@@ -92,7 +92,7 @@ void RunnerScriptQScript::match(Plasma::RunnerContext *search)
     }
 }
 
-void RunnerScriptQScript::exec(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action)
+void RunnerScriptQScript::exec(const Plasma::RunnerContext *search, const Plasma::QueryMatch *action)
 {
     QScriptValue fun = m_self.property( "exec" );
     if ( !fun.isFunction() ) {
