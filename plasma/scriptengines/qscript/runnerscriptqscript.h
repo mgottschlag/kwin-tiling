@@ -45,7 +45,7 @@ public:
     void match(Plasma::RunnerContext *search);
 
     /** Reimplemented to forward to script. */
-    void exec(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action);
+    void exec(const Plasma::RunnerContext *search, const Plasma::QueryMatch *action);
 
 protected:
     void setupObjects();

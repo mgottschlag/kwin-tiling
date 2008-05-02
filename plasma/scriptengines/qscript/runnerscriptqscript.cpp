@@ -20,15 +20,15 @@
 #include <QFile>
 
 #include <plasma/abstractrunner.h>
-#include <plasma/searchmatch.h>
+#include <plasma/querymatch.h>
 
 #include "runnerscriptqscript.h"
 
 
 typedef const Plasma::RunnerContext* ConstRunnerContextStar;
-typedef const Plasma::SearchMatch* ConstSearchMatchStar;
+typedef const Plasma::QueryMatch* ConstSearchMatchStar;
 
-Q_DECLARE_METATYPE(Plasma::SearchMatch*)
+Q_DECLARE_METATYPE(Plasma::QueryMatch*)
 Q_DECLARE_METATYPE(Plasma::RunnerContext*)
 Q_DECLARE_METATYPE(ConstRunnerContextStar)
 Q_DECLARE_METATYPE(ConstSearchMatchStar)
