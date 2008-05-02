@@ -138,9 +138,6 @@ protected:
     virtual void timerEvent(QTimerEvent *event);
     virtual void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget);
 
-    /** TODO: Document me. */
-    QSize preferredIconSize() const;
-  
     /** Draws the background for the task item. */
     virtual void drawBackground(QPainter *painter,const QStyleOptionGraphicsItem *option,
                                 QWidget *widget);
@@ -203,11 +200,6 @@ private:
     static qreal s_topMargin;
     static qreal s_rightMargin;
     static qreal s_bottomMargin;
-
-    // minimum size (in pixels) of a task's icon
-    static const int MinTaskIconSize = 48;
-    // maximum size (in pixels) of a task's icon
-    static const int MaxTaskIconSize = 48;
 
     // distance (in pixels) between a task's icon and its text
     static const int IconTextSpacing = 4;

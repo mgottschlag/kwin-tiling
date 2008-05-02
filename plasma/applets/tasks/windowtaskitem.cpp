@@ -207,11 +207,6 @@ void WindowTaskItem::paint(QPainter *painter,
     drawTask(painter, option, widget);
 }
 
-QSize WindowTaskItem::preferredIconSize() const 
-{
-    return QSize(MinTaskIconSize, MinTaskIconSize);
-}
-
 void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
     // FIXME  Check the usage of KColorScheme here with various color schemes
@@ -269,6 +264,12 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
             s_taskItemBackground->resizePanel(option->rect.size());
             //get the margins now
             s_taskItemBackground->getMargins(s_leftMargin, s_topMargin, s_rightMargin, s_bottomMargin);
+            //if the task height is too little reset the top and bottom margins
+            if (option->rect.height() - s_topMargin - s_bottomMargin < KIconLoader::SizeSmall) {
+                s_topMargin = 0;
+                s_bottomMargin = 0;
+            }
+
             s_taskItemBackground->paintPanel(painter, option->rect);
         } else {
             //Draw task background without svg theming
@@ -489,9 +490,20 @@ void WindowTaskItem::updateTask()
     }
 
     // basic title and icon
-    QPixmap iconPixmap = _task->icon(preferredIconSize().width(),
-                                     preferredIconSize().height(),
-                                     true);
+    QIcon taskIcon;
+    taskIcon.addPixmap(_task->icon(KIconLoader::SizeSmall,
+                                   KIconLoader::SizeSmall,
+                                   false));
+    taskIcon.addPixmap(_task->icon(KIconLoader::SizeSmallMedium,
+                                   KIconLoader::SizeSmallMedium,
+                                   false));
+    taskIcon.addPixmap(_task->icon(KIconLoader::SizeMedium,
+                                   KIconLoader::SizeMedium,
+                                   false));
+    taskIcon.addPixmap(_task->icon(KIconLoader::SizeLarge,
+                                   KIconLoader::SizeLarge,
+                                   false));
+
 #ifdef TOOLTIP_MANAGER
     if (_showTooltip) {
       Plasma::ToolTipData data;
@@ -505,7 +517,7 @@ void WindowTaskItem::updateTask()
         setToolTip(data); // Clear
     }
 #endif
-    setIcon(QIcon(iconPixmap));
+    setIcon(taskIcon);
     setText(_task->visibleName());
     //redraw
     queueUpdate();
@@ -676,11 +688,12 @@ QRectF WindowTaskItem::iconRect() const
 
 QRectF WindowTaskItem::textRect() const
 {
-    QSize size(boundingRect().size().toSize());
-    size.rwidth() -= int(iconRect().width()) + qMin(0, IconTextSpacing - 2);
+    QRectF bounds = boundingRect().adjusted(s_leftMargin, s_topMargin, -s_rightMargin, -s_bottomMargin);
+    QSize size(bounds.size().toSize());
+    size.rwidth() -= int(iconRect().width()) + qMax(0, IconTextSpacing - 2);
 
     return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignRight | Qt::AlignVCenter,
-                                     size, boundingRect().toRect());
+                                     size, bounds.toRect());
 }
 
 #include "windowtaskitem.moc"
