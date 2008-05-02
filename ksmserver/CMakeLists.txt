@@ -7,6 +7,8 @@ include_directories(
    ${KDEBASE_WORKSPACE_SOURCE_DIR}/solid/control/
    ${BLITZ_INCLUDES}
 )
+
+check_library_exists(ICE _IceTransNoListen "" HAVE__ICETRANSNOLISTEN)
 configure_file(config-ksmserver.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-ksmserver.h)
 
 ########### next target ###############
