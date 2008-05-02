@@ -57,7 +57,7 @@ void BookmarksRunner::match(Plasma::RunnerContext *search)
     KBookmarkManager *bookmarkManager = KBookmarkManager::userBookmarksManager();
     KBookmarkGroup bookmarkGroup = bookmarkManager->root();
 
-    QList<Plasma::SearchMatch*> matches;
+    QList<Plasma::QueryMatch*> matches;
     QStack<KBookmarkGroup> groups;
 
     KBookmark bookmark = bookmarkGroup.first();
@@ -77,16 +77,16 @@ void BookmarksRunner::match(Plasma::RunnerContext *search)
             continue;
         }
 
-        Plasma::SearchMatch *match = 0;
+        Plasma::QueryMatch *match = 0;
         if (bookmark.text().toLower() == term.toLower()) {
-            match = new Plasma::SearchMatch(this);
-            match->setType(Plasma::SearchMatch::ExactMatch);
+            match = new Plasma::QueryMatch(this);
+            match->setType(Plasma::QueryMatch::ExactMatch);
             match->setRelevance(1);
         } else if (bookmark.text().contains(term, Qt::CaseInsensitive)) {
-            match = new Plasma::SearchMatch(this);
+            match = new Plasma::QueryMatch(this);
             match->setRelevance(0.9);
         } else if (bookmark.url().prettyUrl().contains(term, Qt::CaseInsensitive)) {
-            match = new Plasma::SearchMatch(this);
+            match = new Plasma::QueryMatch(this);
             match->setRelevance(0.8);
         }
 
@@ -142,7 +142,7 @@ KIcon BookmarksRunner::getFavicon(const KUrl &url)
     return icon;
 }
 
-void BookmarksRunner::run(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action)
+void BookmarksRunner::run(const Plasma::RunnerContext *search, const Plasma::QueryMatch *action)
 {
     Q_UNUSED(search);
     KUrl url = (KUrl)action->data().toString();

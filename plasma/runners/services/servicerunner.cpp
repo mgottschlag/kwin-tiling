@@ -50,13 +50,13 @@ void ServiceRunner::match(Plasma::RunnerContext *search)
     QMutexLocker lock(bigLock());
     KService::Ptr service = KService::serviceByName(term);
 
-    QList<Plasma::SearchMatch*> matches;
+    QList<Plasma::QueryMatch*> matches;
 
     QHash<QString, bool> seen;
     if (service && !service->exec().isEmpty()) {
         //kDebug() << service->name() << "is an exact match!" << service->storageId() << service->exec();
-        Plasma::SearchMatch *match = new Plasma::SearchMatch(this);
-        match->setType(Plasma::SearchMatch::ExactMatch);
+        Plasma::QueryMatch *match = new Plasma::QueryMatch(this);
+        match->setType(Plasma::QueryMatch::ExactMatch);
         setupAction(service, match);
         match->setRelevance(1);
         matches << match;
@@ -80,7 +80,7 @@ void ServiceRunner::match(Plasma::RunnerContext *search)
         seen[id] = true;
         seen[exec] = true;
 
-        Plasma::SearchMatch *match = new Plasma::SearchMatch(this);
+        Plasma::QueryMatch *match = new Plasma::QueryMatch(this);
         setupAction(service, match);
         qreal relevance(0.6);
 
@@ -112,7 +112,7 @@ void ServiceRunner::match(Plasma::RunnerContext *search)
     search->addMatches(term, matches);
 }
 
-void ServiceRunner::run(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action)
+void ServiceRunner::run(const Plasma::RunnerContext *search, const Plasma::QueryMatch *action)
 {
     Q_UNUSED(search);
     QMutexLocker lock(bigLock());
@@ -122,7 +122,7 @@ void ServiceRunner::run(const Plasma::RunnerContext *search, const Plasma::Searc
     }
 }
 
-void ServiceRunner::setupAction(const KService::Ptr &service, Plasma::SearchMatch *action)
+void ServiceRunner::setupAction(const KService::Ptr &service, Plasma::QueryMatch *action)
 {
     const QString name = service->name();
 

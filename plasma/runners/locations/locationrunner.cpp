@@ -70,18 +70,18 @@ void LocationsRunner::match(Plasma::RunnerContext *search)
 {
     QString term = search->query();
     m_type = search->type();
-    Plasma::SearchMatch *action = 0;
+    Plasma::QueryMatch *action = 0;
 
     if (m_type == Plasma::RunnerContext::Directory ||
         m_type == Plasma::RunnerContext::File) {
-        action = new Plasma::SearchMatch(this);
-        action->setType(Plasma::SearchMatch::ExactMatch);
+        action = new Plasma::QueryMatch(this);
+        action->setType(Plasma::QueryMatch::ExactMatch);
         action->setText(i18n("Open %1", term));
         action->setIcon(KIcon("system-file-manager"));
     } else if (m_type == Plasma::RunnerContext::Help) {
         //kDebug() << "Locations matching because of" << m_type;
-        action = new Plasma::SearchMatch(this);
-        action->setType(Plasma::SearchMatch::ExactMatch);
+        action = new Plasma::QueryMatch(this);
+        action->setType(Plasma::QueryMatch::ExactMatch);
         action->setText(i18n("Open %1", term));
         action->setIcon(KIcon("system-help"));
         action->setRelevance(1);
@@ -93,7 +93,7 @@ void LocationsRunner::match(Plasma::RunnerContext *search)
             return;
         }
 
-        action = new Plasma::SearchMatch(this);
+        action = new Plasma::QueryMatch(this);
         action->setText(i18n("Go to %1", url.prettyUrl()));
         action->setIcon(KIcon(KProtocolInfo::icon(url.protocol())));
         action->setData(url.url());
@@ -109,12 +109,12 @@ void LocationsRunner::match(Plasma::RunnerContext *search)
 
     if (action) {
         action->setRelevance(1);
-        action->setType(Plasma::SearchMatch::ExactMatch);
+        action->setType(Plasma::QueryMatch::ExactMatch);
         search->addMatch(term, action);
     }
 }
 
-void LocationsRunner::run(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action)
+void LocationsRunner::run(const Plasma::RunnerContext *search, const Plasma::QueryMatch *action)
 {
     QString data = action->data().toString();
     const QString location = search->query();

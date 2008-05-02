@@ -32,7 +32,7 @@ class XesamRunner : public Plasma::AbstractRunner {
 
         void match(Plasma::RunnerContext *context);
         void run(const Plasma::RunnerContext *context,
-                  const Plasma::SearchMatch *match);
+                  const Plasma::QueryMatch *match);
 };
 
 K_EXPORT_PLASMA_RUNNER(xesam, XesamRunner)

@@ -39,7 +39,7 @@ class BookmarksRunner : public Plasma::AbstractRunner
         ~BookmarksRunner();
 
         void match(Plasma::RunnerContext *context);
-        void run(const Plasma::RunnerContext *context, const Plasma::SearchMatch *action);
+        void run(const Plasma::RunnerContext *context, const Plasma::QueryMatch *action);
 
     private:
         KIcon getFavicon(const KUrl &url);

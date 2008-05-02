@@ -37,13 +37,13 @@ class SessionRunner : public Plasma::AbstractRunner
         ~SessionRunner();
 
         void match(Plasma::RunnerContext *context);
-        void run(const Plasma::RunnerContext *context, const Plasma::SearchMatch *action);
+        void run(const Plasma::RunnerContext *context, const Plasma::QueryMatch *action);
 
         enum { LogoutAction = 1, ShutdownAction, RestartAction, LockAction };
 
     private:
         void lock();
-        Plasma::SearchMatch* matchCommands(const QString& term);
+        Plasma::QueryMatch* matchCommands(const QString& term);
 
         KDisplayManager dm;
 };

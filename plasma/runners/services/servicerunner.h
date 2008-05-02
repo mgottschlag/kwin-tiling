@@ -43,10 +43,10 @@ class ServiceRunner : public Plasma::AbstractRunner
         ~ServiceRunner();
 
         void match(Plasma::RunnerContext *context);
-        void run(const Plasma::RunnerContext *context, const Plasma::SearchMatch *action);
+        void run(const Plasma::RunnerContext *context, const Plasma::QueryMatch *action);
 
     protected:
-        void setupAction(const KService::Ptr &service, Plasma::SearchMatch *action);
+        void setupAction(const KService::Ptr &service, Plasma::QueryMatch *action);
 };
 
 K_EXPORT_PLASMA_RUNNER(services, ServiceRunner)

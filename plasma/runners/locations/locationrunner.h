@@ -31,7 +31,7 @@ class LocationsRunner : public Plasma::AbstractRunner {
         ~LocationsRunner();
 
         void match(Plasma::RunnerContext *search);
-        void run(const Plasma::RunnerContext *context, const Plasma::SearchMatch *action);
+        void run(const Plasma::RunnerContext *context, const Plasma::QueryMatch *action);
 
     private:
         Plasma::RunnerContext::Type m_type;

@@ -73,8 +73,8 @@ void WebshortcutRunner::match(Plasma::RunnerContext *search)
                 QString url = getSearchQuery(service->property("Query").toString(), term);
                 //kDebug() << "url is" << url << "!!!!!!!!!!!!!!!!!!!!!!!";
 
-                Plasma::SearchMatch *match = new Plasma::SearchMatch(this);
-                match->setType(Plasma::SearchMatch::ExactMatch);
+                Plasma::QueryMatch *match = new Plasma::QueryMatch(this);
+                match->setType(Plasma::QueryMatch::ExactMatch);
                 match->setText(actionText);
                 match->setData(service->property("Query").toString());
                 match->setRelevance(0.9);
@@ -130,7 +130,7 @@ KIcon WebshortcutRunner::getFavicon(const KUrl &url) {
     return icon;
 }
 
-void WebshortcutRunner::run(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action)
+void WebshortcutRunner::run(const Plasma::RunnerContext *search, const Plasma::QueryMatch *action)
 {
     QString location = getSearchQuery(action->data().toString(), search->query());
 

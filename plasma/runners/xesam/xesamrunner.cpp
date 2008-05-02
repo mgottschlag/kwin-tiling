@@ -96,8 +96,8 @@ void XesamRunner::match(Plasma::RunnerContext *context)
             title = hit[0].toString();
         }
 
-        Plasma::SearchMatch *match = new Plasma::SearchMatch(this);
-        match->setType(Plasma::SearchMatch::PossibleMatch);
+        Plasma::QueryMatch *match = new Plasma::QueryMatch(this);
+        match->setType(Plasma::QueryMatch::PossibleMatch);
         match->setIcon(KIcon("text-x-generic"));
         match->setData(url);
         match->setText(title);
@@ -107,7 +107,7 @@ void XesamRunner::match(Plasma::RunnerContext *context)
 }
 
 void XesamRunner::run(const Plasma::RunnerContext *context,
-                       const Plasma::SearchMatch *match)
+                       const Plasma::QueryMatch *match)
 {
     QMutexLocker lock(bigLock());
     new KRun(KUrl(match->data().toString()), 0);

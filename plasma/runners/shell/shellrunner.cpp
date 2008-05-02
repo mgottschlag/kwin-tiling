@@ -57,8 +57,8 @@ void ShellRunner::match(Plasma::RunnerContext *search)
     if (search->type() == Plasma::RunnerContext::Executable ||
         search->type() == Plasma::RunnerContext::ShellCommand)  {
         const QString term = search->query();
-        Plasma::SearchMatch* match = new Plasma::SearchMatch(this);
-        match->setType(Plasma::SearchMatch::ExactMatch);
+        Plasma::QueryMatch* match = new Plasma::QueryMatch(this);
+        match->setType(Plasma::QueryMatch::ExactMatch);
         match->setIcon(KIcon("system-run"));
         match->setText(i18n("Run %1", term));
         match->setRelevance(1);
@@ -81,7 +81,7 @@ void ShellRunner::setRunInTerminal(bool inTerminal)
     m_inTerminal = inTerminal;
 }
 
-void ShellRunner::run(const Plasma::RunnerContext *search, const Plasma::SearchMatch *action)
+void ShellRunner::run(const Plasma::RunnerContext *search, const Plasma::QueryMatch *action)
 {
     Q_UNUSED(action);
     if (!m_enabled) {

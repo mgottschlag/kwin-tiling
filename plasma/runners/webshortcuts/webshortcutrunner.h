@@ -34,7 +34,7 @@ class WebshortcutRunner : public Plasma::AbstractRunner {
         ~WebshortcutRunner();
 
         void match(Plasma::RunnerContext *search);
-        void run(const Plasma::RunnerContext *context, const Plasma::SearchMatch *action);
+        void run(const Plasma::RunnerContext *context, const Plasma::QueryMatch *action);
 
     private:
         QString getSearchQuery(const QString &query, const QString &searchWord);
