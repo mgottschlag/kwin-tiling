@@ -37,8 +37,8 @@ class KTitleWidget;
 
 class CollapsibleWidget;
 
-//this is Interface internal SearchMatch
-class SearchMatch;
+//this is Interface internal QueryMatch
+class QueryMatch;
 
 namespace Plasma {
     
@@ -91,7 +91,7 @@ class Interface : public KRunnerDialog
         CollapsibleWidget* m_expander;
         QWidget *m_optionsWidget;
 
-        SearchMatch* m_defaultMatch;
+        QueryMatch* m_defaultMatch;
 
         bool m_execQueued;
 };

@@ -45,7 +45,6 @@
 
 #include <plasma/abstractrunner.h>
 #include <plasma/runnermanager.h>
-#include <plasma/searchmatch.h>
 
 #include "collapsiblewidget.h"
 #include "interfaceadaptor.h"
@@ -53,10 +52,10 @@
 
 
 // A little hack of a class to let us easily activate a match
-class SearchMatch : public QListWidgetItem
+class QueryMatch : public QListWidgetItem
 {
     public:
-        SearchMatch(const Plasma::SearchMatch* action, QListWidget* parent)
+        QueryMatch(const Plasma::QueryMatch* action, QListWidget* parent)
             : QListWidgetItem( parent ),
               m_default(false),
               m_action(0)
@@ -99,7 +98,7 @@ class SearchMatch : public QListWidgetItem
             return m_action->data().toString();
         }
 
-        Plasma::SearchMatch::Type actionType() const
+        Plasma::QueryMatch::Type actionType() const
         {
             return m_action->type();
         }
@@ -141,7 +140,7 @@ class SearchMatch : public QListWidgetItem
             //      2. Informational trumps possible
             //      3. Higher relevance wins
 
-            const SearchMatch *otherMatch = dynamic_cast<const SearchMatch*>(&other);
+            const QueryMatch *otherMatch = dynamic_cast<const QueryMatch*>(&other);
 
             if (!otherMatch) {
                 return QListWidgetItem::operator<(other);
@@ -151,8 +150,8 @@ class SearchMatch : public QListWidgetItem
                 return true;
             }
 
-            Plasma::SearchMatch::Type myType = m_action->type();
-            Plasma::SearchMatch::Type otherType = otherMatch->m_action->type();
+            Plasma::QueryMatch::Type myType = m_action->type();
+            Plasma::QueryMatch::Type otherType = otherMatch->m_action->type();
 
             if (myType != otherType) {
                 return myType < otherType;
@@ -163,7 +162,7 @@ class SearchMatch : public QListWidgetItem
 
     private:
         bool m_default;
-        const Plasma::SearchMatch* m_action;
+        const Plasma::QueryMatch* m_action;
 };
 
 Interface::Interface(QWidget* parent)
@@ -329,9 +328,9 @@ void Interface::switchUser()
 
     m_runnerManager->execQuery("SESSIONS", "SessionRunner");
 
-    foreach (const Plasma::SearchMatch *action, m_runnerManager->matches()) {
-        bool makeDefault = !m_defaultMatch && action->type() != Plasma::SearchMatch::InformationalMatch;
-        SearchMatch *match = new SearchMatch(action, m_matchList);
+    foreach (const Plasma::QueryMatch *action, m_runnerManager->matches()) {
+        bool makeDefault = !m_defaultMatch && action->type() != Plasma::QueryMatch::InformationalMatch;
+        QueryMatch *match = new QueryMatch(action, m_matchList);
         if (makeDefault) {
             m_defaultMatch = match;
             m_defaultMatch->setDefault(true);
@@ -385,10 +384,10 @@ void Interface::closeEvent(QCloseEvent* e)
 
 void Interface::matchActivated(QListWidgetItem* item)
 {
-    SearchMatch* match = dynamic_cast<SearchMatch*>(item);
+    QueryMatch* match = dynamic_cast<QueryMatch*>(item);
 
     if (!match) {
-        //kDebug() << "not a SearchMatch object";
+        //kDebug() << "not a QueryMatch object";
         return;
     }
 
@@ -400,7 +399,7 @@ void Interface::matchActivated(QListWidgetItem* item)
     QString searchTerm = m_searchTerm->currentText();
     m_searchTerm->addToHistory(searchTerm);
 
-    if (match->actionType() == Plasma::SearchMatch::InformationalMatch) {
+    if (match->actionType() == Plasma::QueryMatch::InformationalMatch) {
         //kDebug() << "informational match activated" << match->toString();
         m_searchTerm->setItemText(m_searchTerm->currentIndex(), match->toString());
     } else {
@@ -434,11 +433,11 @@ void Interface::updateMatches()
     m_matchList->clear();
     m_defaultMatch = 0;
 //    kDebug() << "interface got:" << m_runnerManager->matches().count() << " matches";
-    foreach (const Plasma::SearchMatch *action, m_runnerManager->matches()) {
-        SearchMatch *match = new SearchMatch(action, m_matchList);
+    foreach (const Plasma::QueryMatch *action, m_runnerManager->matches()) {
+        QueryMatch *match = new QueryMatch(action, m_matchList);
         if (action->isEnabled() && action->relevance() > 0 &&
             (!m_defaultMatch || *m_defaultMatch < *match) &&
-            (action->type() != Plasma::SearchMatch::InformationalMatch ||
+            (action->type() != Plasma::QueryMatch::InformationalMatch ||
              !action->data().toString().isEmpty())) {
             if (m_defaultMatch) {
                 m_defaultMatch->setDefault(false);
@@ -485,9 +484,9 @@ void Interface::run()
             currentMatch = m_defaultMatch;
         } else {
             for (int i = 0; i < m_matchList->count(); ++i) {
-                SearchMatch* match = dynamic_cast<SearchMatch*>(m_matchList->item(i));
+                QueryMatch* match = dynamic_cast<QueryMatch*>(m_matchList->item(i));
                 if (match && match->actionEnabled() && match->actionRelevance() > 0 &&
-                    match->actionType() != Plasma::SearchMatch::HelperMatch) {
+                    match->actionType() != Plasma::QueryMatch::HelperMatch) {
                     currentMatch = match;
                     break;
                 }
@@ -555,7 +554,7 @@ void Interface::setDefaultItem( QListWidgetItem* item )
             m_defaultMatch->setDefault(false);
         }
 
-        m_defaultMatch = dynamic_cast<SearchMatch*>(item);
+        m_defaultMatch = dynamic_cast<QueryMatch*>(item);
         if (!m_defaultMatch) {
             return;
         }
