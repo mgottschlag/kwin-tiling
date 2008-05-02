@@ -32,6 +32,9 @@
 #include <KIconTheme>
 #include <KStandardAction>
 
+#include <Soprano/Node>
+Q_DECLARE_METATYPE(Soprano::Node)
+
 #include "plasma/dataenginemanager.h"
 
 EngineExplorer::EngineExplorer(QWidget* parent)
@@ -41,6 +44,7 @@ EngineExplorer::EngineExplorer(QWidget* parent)
       m_requestingSource(false)
 {
     setButtons(0);
+	(void) qRegisterMetaType<Soprano::Node>();
     setWindowTitle(i18n("Plasma Engine Explorer"));
     QWidget* mainWidget = new QWidget(this);
     setMainWidget(mainWidget);
@@ -286,6 +290,16 @@ QString EngineExplorer::convertToString(const QVariant &value) const
             return QString("%1").arg(value.toUrl().toString());
         }
         default: {
+            if (QLatin1String(value.typeName()) == "Soprano::Node") {
+                Soprano::Node node = value.value<Soprano::Node>();
+                if (node.isLiteral()) {
+                    return convertToString(node.literal().variant());
+                } else if (node.isResource()) {
+                    return node.uri().toString();
+                } else if (node.isBlank()) {
+                    return QString("_:%1").arg(node.identifier());
+                }
+            }
             return i18n("<not displayable>");
         }
     }
