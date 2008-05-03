@@ -37,6 +37,7 @@ ShellRunner::ShellRunner(QObject *parent, const QVariantList &args)
       m_inTerminal(false)
 {
     Q_UNUSED(args)
+    KGlobal::locale()->insertCatalog("krunner_shellrunner");
 
     setObjectName(i18n("Command"));
     setHasRunOptions(true);
