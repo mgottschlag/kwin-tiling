@@ -334,7 +334,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             }
 
             // Check sizes
-            QRect dateRect = preparePainter(p, geometry().toRect(), KGlobalSettings::smallestReadableFont(), dateString);
+            QRect dateRect = preparePainter(p, contentsRect, KGlobalSettings::smallestReadableFont(), dateString);
             int subtitleHeight = dateRect.height();
 
             p->drawText(QRectF(0,
