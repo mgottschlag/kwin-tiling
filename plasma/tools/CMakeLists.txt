@@ -1,5 +1,5 @@
 macro_optional_find_package(Soprano)
-macro_log_feature(Soprano_FOUND "Soprano" "Soprano Libraries" "kdesupport" FALSE"" "Required to build the Plasma Engine Explorer.")
+macro_log_feature(Soprano_FOUND "Soprano" "Soprano Libraries" "kdesupport" FALSE "" "Required to build the Plasma Engine Explorer.")
 
 if (Soprano_FOUND)
   add_subdirectory(engineexplorer)
