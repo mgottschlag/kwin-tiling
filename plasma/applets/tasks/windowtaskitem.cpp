@@ -211,6 +211,11 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
 {
     // FIXME  Check the usage of KColorScheme here with various color schemes
 
+    //Don't paint with invalid sizes, the happens when the layout i's being initialized
+    if (!option->rect.isValid()) {
+        return;
+    }
+
     const qreal hoverAlpha = 0.4;
 
     KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme());
