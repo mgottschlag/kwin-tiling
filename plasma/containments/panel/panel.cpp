@@ -261,7 +261,6 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
     }
 
     //we need to know if the width or height is 100%
-    bool fullSize = false;
     if (constraints & Plasma::LocationConstraint || constraints & Plasma::SizeConstraint) {
         m_currentSize = geometry().size().toSize();
         QRectF screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) :
@@ -269,23 +268,16 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
 
         if ((formFactor() == Horizontal && m_currentSize.width() >= screenRect.width()) || 
                 (formFactor() == Vertical && m_currentSize.height() >= screenRect.height())) {
-            fullSize = true;
-        } else {
-            fullSize = false;
-        }
-    }
-
-    if (constraints & Plasma::LocationConstraint) {
-        setFormFactorFromLocation(location());
-        if (fullSize) {
             m_background->setElementPrefix(location());
         } else {
             m_background->setElementPrefix(QString());
         }
+
+        m_background->resizePanel(m_currentSize);
     }
 
-    if (constraints & Plasma::SizeConstraint) {
-        m_background->resizePanel(m_currentSize);
+    if (constraints & Plasma::LocationConstraint) {
+        setFormFactorFromLocation(location());
     }
 
     if (constraints & Plasma::ImmutableConstraint && m_appletBrowserAction) {
