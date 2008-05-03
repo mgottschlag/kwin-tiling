@@ -226,7 +226,7 @@ Interface::Interface(QWidget* parent)
     // buttons at the bottom
     QHBoxLayout* bottomLayout = new QHBoxLayout(w);
     m_optionsButton = new KPushButton(KStandardGuiItem::configure(), this);
-    m_optionsButton->setText( i18n( "Show Options" ) );
+    m_optionsButton->setText( i18n( "Show &Options" ) );
     m_optionsButton->setEnabled( false );
     m_optionsButton->setCheckable( true );
     connect( m_optionsButton, SIGNAL(toggled(bool)), SLOT(showOptions(bool)) );
@@ -523,11 +523,11 @@ void Interface::showOptions(bool show)
         delete m_optionsWidget;
         m_optionsWidget = new QWidget(this);
         m_defaultMatch->createRunOptions(m_optionsWidget);
-        m_optionsButton->setText( i18n( "Hide Options" ) );
+        m_optionsButton->setText( i18n( "Hide &Options" ) );
     } else {
         delete m_optionsWidget;
         m_optionsWidget = 0;
-        m_optionsButton->setText( i18n( "Show Options" ) );
+        m_optionsButton->setText( i18n( "Show &Options" ) );
         resize( 400, 250 );
     }
 
@@ -565,12 +565,12 @@ void Interface::setDefaultItem( QListWidgetItem* item )
 
     if (hasOptions) {
         if (m_expander && m_expander->isExpanded()) {
-            m_optionsButton->setText(i18n("Hide Options"));
+            m_optionsButton->setText(i18n("Hide &Options"));
         } else {
-            m_optionsButton->setText(i18n("Show Options"));
+            m_optionsButton->setText(i18n("Show &Options"));
         }
     } else {
-        m_optionsButton->setText(i18n("Show Options"));
+        m_optionsButton->setText(i18n("Show &Options"));
         m_optionsButton->setChecked(false);
         if (m_expander) {
             m_expander->hide();
