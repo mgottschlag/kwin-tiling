@@ -3,6 +3,8 @@ set(plasmaengineexplorer_SRCS
     main.cpp
 )
 
+include_directories( ${SOPRANO_INCLUDE_DIR} )
+
 kde4_add_ui_files(plasmaengineexplorer_SRCS engineexplorer.ui)
 kde4_add_executable(plasmaengineexplorer ${plasmaengineexplorer_SRCS})
 
