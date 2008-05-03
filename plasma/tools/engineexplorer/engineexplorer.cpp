@@ -62,6 +62,14 @@ EngineExplorer::EngineExplorer(QWidget* parent)
     listEngines();
     m_engines->setFocus();
 
+    setButtons(KDialog::User1 | KDialog::User2);
+    setButtonText(KDialog::User1, i18n("Collapse all"));
+    setButtonText(KDialog::User2, i18n("Expand all"));
+    connect(this, SIGNAL(user1Clicked()), m_data, SLOT(collapseAll()));
+    connect(this, SIGNAL(user2Clicked()), m_data, SLOT(expandAll()));
+    enableButton(KDialog::User1, false);
+    enableButton(KDialog::User2, false);
+
     addAction(KStandardAction::quit(qApp, SLOT(quit()), this));
 }
 
@@ -115,6 +123,8 @@ void EngineExplorer::showEngine(const QString& name)
 {
     m_sourceRequester->setEnabled(false);
     m_sourceRequesterButton->setEnabled(false);
+    enableButton(KDialog::User1, false);
+    enableButton(KDialog::User2, false);
     m_dataModel->clear();
     m_dataModel->setColumnCount(4);
     QStringList headers;
@@ -173,6 +183,9 @@ void EngineExplorer::addSource(const QString& source)
 
     ++m_sourceCount;
     updateTitle();
+
+    enableButton(KDialog::User1, true);
+    enableButton(KDialog::User2, true);
 }
 
 void EngineExplorer::removeSource(const QString& source)
