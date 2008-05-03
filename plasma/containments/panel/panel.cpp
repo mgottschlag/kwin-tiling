@@ -252,6 +252,7 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
                 lay->setSpacing(4);
                 lay->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
                 setLayout(lay);
+                updateBorders(geometry().toRect());
 
                 foreach (Applet *applet, applets()) {
                     lay->addItem(applet);
