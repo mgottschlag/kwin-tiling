@@ -84,6 +84,7 @@ void DesktopCorona::loadDefaultLayout()
         c->setScreen(i);
         c->setFormFactor(Plasma::Planar);
         c->flushPendingConstraintsEvents();
+        emit containmentAdded(c);
 
         if (g.x() <= topLeftCorner.x() && g.y() >= topLeftCorner.y()) {
             topLeftCorner = g.topLeft();
@@ -96,6 +97,7 @@ void DesktopCorona::loadDefaultLayout()
     panel->setScreen(topLeftScreen);
     panel->setLocation(Plasma::BottomEdge);
     panel->flushPendingConstraintsEvents();
+    emit containmentAdded(panel);
 
     // some default applets to get a usable UI
     panel->addApplet("launcher");
