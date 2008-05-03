@@ -98,6 +98,7 @@ int main(int argc, char **argv)
         kDebug() << "setting pixmap cach to" << args->getOption("pixmapcache").toInt();
         QPixmapCache::setCacheLimit(args->getOption("pixmapcache").toInt());
     }
+    args->clear();
 
     return app.exec();
 }
