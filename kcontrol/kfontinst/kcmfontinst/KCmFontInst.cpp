@@ -1366,8 +1366,8 @@ void CKCmFontInst::toggleFonts(CJobRunner::ItemList &urls, const QStringList &fo
                                             "contained within group \'<b>%2</b>\'?</p>",
                                             fonts.first(), grp),
                        enable ? i18n("Enable Font") : i18n("Disable Font"),
-                       enable ? KGuiItem(i18n("Enable"), "enablefont", i18n("Enable font"))
-                              : KGuiItem(i18n("Disable"), "disablefont", i18n("Disable font")));
+                       enable ? KGuiItem(i18n("Enable"), "enablefont", i18n("Enable Font"))
+                              : KGuiItem(i18n("Disable"), "disablefont", i18n("Disable Font")));
             break;
         default:
             doIt = KMessageBox::Yes==KMessageBox::warningYesNoList(this,
@@ -1390,8 +1390,8 @@ void CKCmFontInst::toggleFonts(CJobRunner::ItemList &urls, const QStringList &fo
                                              urls.count(), grp),
                        fonts,
                        enable ? i18n("Enable Fonts") : i18n("Disable Fonts"),
-                       enable ? KGuiItem(i18n("Enable"), "enablefont", i18n("Enable fonts"))
-                              : KGuiItem(i18n("Disable"), "disablefont", i18n("Disable fonts")));
+                       enable ? KGuiItem(i18n("Enable"), "enablefont", i18n("Enable Fonts"))
+                              : KGuiItem(i18n("Disable"), "disablefont", i18n("Disable Fonts")));
     }
 
     if(doIt && (!hasSys || itsRunner->getAdminPasswd(this)))
