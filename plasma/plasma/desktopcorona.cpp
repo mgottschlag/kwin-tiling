@@ -97,7 +97,6 @@ void DesktopCorona::loadDefaultLayout()
     panel->setScreen(topLeftScreen);
     panel->setLocation(Plasma::BottomEdge);
     panel->flushPendingConstraintsEvents();
-    emit containmentAdded(panel);
 
     // some default applets to get a usable UI
     panel->addApplet("launcher");
