@@ -67,8 +67,7 @@ void WebshortcutRunner::match(Plasma::RunnerContext *search)
             key = key.toLower() + separator;
             if (term.size() > key.size() &&
                 term.startsWith(key, Qt::CaseInsensitive)) {
-                QString actionText = QString("Search %1 for %2");
-                actionText = actionText.arg(service->name(),
+                QString actionText = i18n("Search %1 for %2",service->name(),
                                             term.right(term.length() - term.indexOf(':') - 1));
                 QString url = getSearchQuery(service->property("Query").toString(), term);
                 //kDebug() << "url is" << url << "!!!!!!!!!!!!!!!!!!!!!!!";
@@ -97,7 +96,7 @@ void WebshortcutRunner::match(Plasma::RunnerContext *search)
 QString WebshortcutRunner::getSearchQuery(const QString &query, const QString &term)
 {
     // FIXME delimiter check like for above?
-    QStringList tempList = term.split(":");
+    QStringList tempList = term.split(':');
     if(tempList.count() > 0) {
         QString searchWord(tempList[1]);
         QString finalQuery(query);
