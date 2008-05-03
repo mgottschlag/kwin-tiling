@@ -21,7 +21,6 @@
 
 #include <plasma/abstractrunner.h>
 
-class QAction;
 
 class XesamRunner : public Plasma::AbstractRunner {
     Q_OBJECT
