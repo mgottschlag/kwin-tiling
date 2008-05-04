@@ -618,9 +618,9 @@ create( KGreeterPluginHandler *handler,
 	return new KWinbindGreeter( handler, parent, fixedEntity, func, ctx );
 }
 
-KDE_EXPORT kgreeterplugin_info kgreeterplugin_info = {
+KDE_EXPORT KGreeterPluginInfo kgreeterplugin_info = {
 	I18N_NOOP2("@item:inmenu authentication method", "Winbind / Samba"), "classic",
-	kgreeterplugin_info::Local | kgreeterplugin_info::Fielded | kgreeterplugin_info::Presettable,
+	KGreeterPluginInfo::Local | KGreeterPluginInfo::Fielded | KGreeterPluginInfo::Presettable,
 	init, done, create
 };
 

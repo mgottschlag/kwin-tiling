@@ -128,19 +128,19 @@ KGVerify::getPlugMenu()
 bool // public
 KGVerify::entitiesLocal() const
 {
-	return greetPlugins[pluginList[curPlugin]].info->flags & kgreeterplugin_info::Local;
+	return greetPlugins[pluginList[curPlugin]].info->flags & KGreeterPluginInfo::Local;
 }
 
 bool // public
 KGVerify::entitiesFielded() const
 {
-	return greetPlugins[pluginList[curPlugin]].info->flags & kgreeterplugin_info::Fielded;
+	return greetPlugins[pluginList[curPlugin]].info->flags & KGreeterPluginInfo::Fielded;
 }
 
 bool // public
 KGVerify::entityPresettable() const
 {
-	return greetPlugins[pluginList[curPlugin]].info->flags & kgreeterplugin_info::Presettable;
+	return greetPlugins[pluginList[curPlugin]].info->flags & KGreeterPluginInfo::Presettable;
 }
 
 bool // public
@@ -938,7 +938,7 @@ KGVerify::init( const QStringList &plugins )
 			continue;
 		}
 		plugin.library = lib;
-		plugin.info = (kgreeterplugin_info*)lib->resolveSymbol( "kgreeterplugin_info" );
+		plugin.info = (KGreeterPluginInfo *)lib->resolveSymbol( "kgreeterplugin_info" );
 		if (!plugin.info) {
 			logError( "GreeterPlugin %s (%s) is no valid greet widget plugin\n",
 			          qPrintable( pg ), qPrintable( lib->fileName() ) );

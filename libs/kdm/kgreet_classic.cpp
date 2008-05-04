@@ -475,9 +475,9 @@ create( KGreeterPluginHandler *handler,
 	return new KClassicGreeter( handler, parent, fixedEntity, func, ctx );
 }
 
-KDE_EXPORT kgreeterplugin_info kgreeterplugin_info = {
+KDE_EXPORT KGreeterPluginInfo kgreeterplugin_info = {
 	I18N_NOOP2("@item:inmenu authentication method", "Username + password (classic)"), "classic",
-	kgreeterplugin_info::Local | kgreeterplugin_info::Presettable,
+	KGreeterPluginInfo::Local | KGreeterPluginInfo::Presettable,
 	init, done, create
 };
 

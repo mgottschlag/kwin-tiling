@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <qlabel.h>
 #include <qtextdocument.h>
 
-extern struct kgreeterplugin_info kgreeterplugin_info; // defined at bottom
+extern KGreeterPluginInfo kgreeterplugin_info; // defined at bottom
 
 static int echoMode;
 
@@ -151,7 +151,7 @@ KGenericGreeter::textPrompt( const char *prompt, bool echo, bool /* nonBlocking 
 	exp =
 		exp >= 0 ||
 		func != Authenticate ||
-		!(kgreeterplugin_info.flags & kgreeterplugin_info::Presettable);
+		!(kgreeterplugin_info.flags & KGreeterPluginInfo::Presettable);
 
 	if (!exp && !fixedUser.isEmpty()) {
 		handler->gplugReturnText( fixedUser.toLocal8Bit(),
@@ -320,7 +320,7 @@ static bool init( const QString &,
 	// Fielded entities are not supported per se.
 	// This implies that the first field is the presettable entity, if any.
 	if (getConf( ctx, "generic.Presettable", QVariant( false ) ).toBool())
-		kgreeterplugin_info.flags |= kgreeterplugin_info::Presettable;
+		kgreeterplugin_info.flags |= KGreeterPluginInfo::Presettable;
 	KGlobal::locale()->insertCatalog( "kgreet_generic" );
 	return true;
 }
@@ -340,9 +340,9 @@ create( KGreeterPluginHandler *handler,
 	return new KGenericGreeter( handler, parent, fixedEntity, func, ctx );
 }
 
-KDE_EXPORT struct kgreeterplugin_info kgreeterplugin_info = {
+KDE_EXPORT KGreeterPluginInfo kgreeterplugin_info = {
 	I18N_NOOP2("@item:inmenu authentication method", "Generic"), "generic",
-	kgreeterplugin_info::Local,
+	KGreeterPluginInfo::Local,
 	init, done, create
 };
 

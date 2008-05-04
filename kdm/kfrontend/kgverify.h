@@ -80,7 +80,7 @@ class KGVerifyHandler {
 
 struct GreeterPluginHandle {
 	KLibrary *library;
-	kgreeterplugin_info *info;
+	KGreeterPluginInfo *info;
 	QAction *action;
 };
 

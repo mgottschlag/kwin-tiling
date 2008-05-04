@@ -23,11 +23,11 @@
 
 class KLibrary;
 
-struct kgreeterplugin_info;
+struct KGreeterPluginInfo;
 
 struct GreeterPluginHandle {
     KLibrary *library;
-    kgreeterplugin_info *info;
+    KGreeterPluginInfo *info;
 };
 
 //===========================================================================
