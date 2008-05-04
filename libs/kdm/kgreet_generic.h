@@ -3,6 +3,7 @@
 Conversation widget for kdm greeter
 
 Copyright (C) 2008 Dirk Mueller <mueller@kde.org>
+Copyright (C) 2008 Oswald Buddenhagen <ossi@kde.org>
 
 based on classic kdm greeter:
 
@@ -25,19 +26,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 */
 
-
-#ifndef KGREET_CLASSIC_H
-#define KGREET_CLASSIC_H
+#ifndef KGREET_GENERIC_H
+#define KGREET_GENERIC_H
 
 #include "kgreeterplugin.h"
 
 #include <qobject.h>
-#include <qlayout.h>
 
-class KLineEdit;
-class KSimpleConfig;
 class QGridLayout;
-class QLabel;
+class QWidget;
+class KLineEdit;
 
 class KGenericGreeter : public QObject, public KGreeterPlugin {
 	Q_OBJECT
@@ -65,30 +63,22 @@ class KGenericGreeter : public QObject, public KGreeterPlugin {
 	virtual void revive();
 	virtual void clear();
 
-	QGridLayout *getLayoutItem() const { return m_grid; }
-
   public slots:
 	void slotLoginLostFocus();
 	void slotChanged();
 
   private:
-	void setActive( bool enable );
-	void setAllActive( bool enable );
-	void returnData();
-
-	QGridLayout* m_grid;
-	QLabel *loginLabel;
-	QList<QLabel*> authLabel;
-	KLineEdit *loginEdit;
-	QWidget* m_parentWidget;
-	QList<KLineEdit*> authEdit;
-	KSimpleConfig *stsFile;
+	QGridLayout *m_grid;
+	QList<QWidget *> m_children;
+	KLineEdit *m_lineEdit;
+	QWidget *m_parentWidget;
+	QList<QString> m_infoMsgs;
 	QString fixedUser, curUser;
+	QStringList m_users;
 	Function func;
 	Context ctx;
-	int exp, pExp, has;
-	unsigned state;
-	bool running, authTok;
+	int exp, m_line;
+	bool running, m_echo;
 };
 
-#endif /* KGREET_CLASSIC_H */
+#endif /* KGREET_GENERIC_H */
