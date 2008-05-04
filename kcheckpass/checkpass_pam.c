@@ -167,6 +167,10 @@ AuthReturn Authenticate(const char *caller, const char *method,
 
   pam_error = pam_authenticate(pamh, 0);
   if (pam_error != PAM_SUCCESS) {
+    if (PAM_data.abort) {
+      pam_end(pamh, PAM_SUCCESS);
+      return AuthAbort;
+    }
     pam_end(pamh, pam_error);
     switch (pam_error) {
       case PAM_USER_UNKNOWN:
@@ -191,7 +195,7 @@ AuthReturn Authenticate(const char *caller, const char *method,
   }
 
   pam_error = pam_setcred(pamh, PAM_REFRESH_CRED);
-  /* ignore errors on refresh credentials. If this did not work we use the old once. */
+  /* ignore errors on refresh credentials. If this did not work we use the old ones. */
 
   pam_end(pamh, PAM_SUCCESS);
   return AuthOk;
