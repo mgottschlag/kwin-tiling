@@ -34,6 +34,7 @@
 #include <kmessagebox.h>
 #include <kstyle.h>
 #include <kstandarddirs.h>
+#include <KDebug>
 
 #include <QtCore/QFile>
 #include <QtCore/QSettings>
@@ -134,7 +135,7 @@ public:
             case QEvent::Leave:
             case QEvent::Wheel:
             case QEvent::ContextMenu:
-                return true; // ignore
+                  return true; // ignore
             default:
                 break;
         }
@@ -275,8 +276,6 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	tabWidget->addTab( page1, i18n("&Style"));
 	tabWidget->addTab( page2, i18n("&Effects"));
 
-	//Enable/disable the button for the initial style
-	updateConfigButton();
 }
 
 
@@ -376,6 +375,8 @@ void KCMStyle::load()
 
 	m_bStyleDirty= false;
 	m_bEffectsDirty = false;
+	//Enable/disable the button for the initial style
+	updateConfigButton();
 
 	emit changed( false );
 }
@@ -408,7 +409,7 @@ void KCMStyle::save()
 		case 0: tbIcon = "IconOnly"; break;
 		case 1: tbIcon = "TextOnly"; break;
 		case 2: tbIcon = "TextBesideIcon"; break;
-		default: 
+		default:
 		case 3: tbIcon = "TextUnderIcon"; break;
 	}
     toolbarStyleGroup.writeEntry("ToolButtonStyle", tbIcon, KConfig::Normal|KConfig::Global);
@@ -523,7 +524,6 @@ void KCMStyle::setStyleDirty()
 void KCMStyle::loadStyle( KConfig& config )
 {
 	cbStyle->clear();
-
 	// Create a dictionary of WidgetStyle to Name and Desc. mappings,
 	// as well as the config page info
 	qDeleteAll(styleEntries);
@@ -618,7 +618,6 @@ void KCMStyle::loadStyle( KConfig& config )
 		item = 0;
 	}
 	cbStyle->setCurrentIndex( item );
-
 	m_bStyleDirty = false;
 
 	switchStyle( currentStyle() );	// make resets visible
