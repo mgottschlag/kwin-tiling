@@ -44,19 +44,20 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <stdlib.h>
 #include <stdio.h>
 
+static int echoMode;
+
 class KDMPasswordEdit : public KLineEdit {
 public:
-	KDMPasswordEdit( int echoMode, QWidget *parent ) : KLineEdit( parent )
+	KDMPasswordEdit( QWidget *parent ) : KLineEdit( parent )
 	{
-		if (echoMode == -1)
+		if (::echoMode == -1)
 			setPasswordMode(true);
 		else
-			setEchoMode( echoMode ? Password : NoEcho );
+			setEchoMode( ::echoMode ? Password : NoEcho );
 		setContextMenuPolicy( Qt::NoContextMenu );
 	}
 };
 
-static int echoMode;
 static char separator;
 static QStringList staticDomains;
 static QString defaultDomain;
@@ -147,7 +148,7 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			grid->addWidget( loginLabel, line, 0 );
 			grid->addWidget( new QLabel( fixedUser, parent ), line++, 1 );
 		}
-		passwdEdit = new KDMPasswordEdit( echoMode, parent );
+		passwdEdit = new KDMPasswordEdit( parent );
 		connect( passwdEdit, SIGNAL(textChanged( const QString & )),
 		         SLOT(slotChanged()) );
 		connect( passwdEdit, SIGNAL(editingFinished()), SLOT(slotChanged()) );
@@ -171,10 +172,10 @@ KWinbindGreeter::KWinbindGreeter( KGreeterPluginHandler *_handler,
 			passwdEdit->setFocus();
 	}
 	if (func != Authenticate) {
-		passwd1Edit = new KDMPasswordEdit( echoMode, parent );
+		passwd1Edit = new KDMPasswordEdit( parent );
 		passwd1Label = new QLabel( i18n("&New password:"), parent );
 		passwd1Label->setBuddy( passwd1Edit );
-		passwd2Edit = new KDMPasswordEdit( echoMode, parent );
+		passwd2Edit = new KDMPasswordEdit( parent );
 		passwd2Label = new QLabel( i18n("Con&firm password:"), parent );
 		passwd2Label->setBuddy( passwd2Edit );
 		if (grid) {
