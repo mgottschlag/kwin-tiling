@@ -28,7 +28,6 @@
 #include <plasma/dataengine.h>
 #include <plasma/dialog.h>
 #include "ui_calendar.h"
-#include <KDatePicker>
 
 #include "plasmaclock_export.h"
 
@@ -49,7 +48,7 @@ class PLASMA_EXPORT ClockApplet : public Plasma::Applet
 
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
-    protected slots:
+    protected Q_SLOTS:
         void showCalendar(QGraphicsSceneMouseEvent *event);
 
     private:
