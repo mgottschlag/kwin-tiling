@@ -63,7 +63,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     setHasConfigurationInterface(true);
     // TODO: minimum size causes size on panel to be huge (do not use for now)
     //setMinimumContentSize(m_smallPixelSize, m_smallPixelSize);
-    resize(64, 64);
+    resize(128, 128);
 }
 
 void Battery::init()
@@ -94,7 +94,7 @@ void Battery::init()
     m_theme = new Plasma::Svg(this);
     m_theme->setImagePath(svgFile);
     m_theme->setContainsMultipleImages(false);
-    m_theme->resize(geometry().size());
+    m_theme->resize(contentsRect().size());
 
     setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     m_font = QApplication::font();
@@ -110,7 +110,7 @@ void Battery::init()
 
     //connect sources
     connectSources();
-    
+
     foreach (const QString &battery_source, battery_sources) {
         kDebug() << "BatterySource:" << battery_source;
         dataUpdated(battery_source, dataEngine("powermanagement")->query(battery_source));
@@ -141,12 +141,12 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
             kDebug() << "Other FormFactor" << formFactor();
             background = (m_drawBackground?DefaultBackground:NoBackground);
         }
-        
+
         setBackgroundHints(background);
     }
 
-    if (constraints & Plasma::SizeConstraint && m_theme) {
-        m_theme->resize(geometry().size().toSize());
+    if (constraints & (Plasma::SizeConstraint | Plasma::FormFactorConstraint) && m_theme) {
+        m_theme->resize(contentsRect().size().toSize());
     }
 }
 
@@ -214,7 +214,7 @@ void Battery::configAccepted()
         m_theme->setImagePath(svgFile);
         kDebug() << "Changing theme to " << svgFile;
         cg.writeEntry("style", m_batteryStyle);
-        m_theme->resize(geometry().size());
+        m_theme->resize(contentsRect().size());
         if (m_acadapter_plugged) {
             showAcAdapter(true);
         }
@@ -286,14 +286,14 @@ QRectF Battery::scaleRectF(const qreal progress, QRectF rect) {
     // Scale
     qreal w = rect.width()*progress;
     qreal h = rect.width()*progress;
-    
+
     // Position centered
     rect.setX((rect.width() - w)/2);
     rect.setY((rect.height() - h)/2);
 
     rect.setWidth(w);
     rect.setHeight(h);
-    
+
     return rect;
 }
 
@@ -404,7 +404,7 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
     // Let's find a good position for painting the background
     QRectF text_rect = QRectF(qMax(0.0, contentsRect.left() + (contentsRect.width() - text_width) / 2),
                             contentsRect.top() + ((contentsRect.height() - (int)fm.height()) / 2 * 0.9),
-                            qMin(geometry().width(), text_width),
+                            qMin(contentsRect.width(), (int)text_width),
                             fm.height() * 1.2 );
 
     // Poor man's highlighting
@@ -434,7 +434,7 @@ void Battery::paintBattery(QPainter *p, const QRect &contentsRect, const int bat
     QString fill_element = QString();
     if (plugState && m_theme->hasElement("Battery")) {
         m_theme->paint(p, scaleRectF(m_batteryAlpha, contentsRect), "Battery");
-    
+
         if (m_batteryStyle == OxygenBattery) {
             if (batteryPercent > 95) {
                 fill_element = "Fill100";
@@ -526,14 +526,13 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
         while (battery_data.hasNext()) {
             battery_data.next();
-            //p->drawRect();
-            QRect corect = QRect(contentsRect.left()+battery_num*width, 
+            QRect corect = QRect(contentsRect.left()+battery_num*width,
                                  contentsRect.top(), 
-                                 width, geometry().size().toSize().height());
-       
+                                 width, contentsRect.height());
+
             // paint battery with appropriate charge level
             paintBattery(p, corect, battery_data.value()[I18N_NOOP("Percent")].toInt(), battery_data.value()[I18N_NOOP("Plugged in")].toBool());
-                
+
             if (m_showBatteryString || m_isHovered) {
                 // Show the charge percentage with a box on top of the battery
                 QString batteryLabel;
