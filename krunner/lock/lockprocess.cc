@@ -360,7 +360,7 @@ void LockProcess::configure()
 
     mPlugins = KScreenSaverSettings::pluginsUnlock();
     if (mPlugins.isEmpty()) {
-        mPlugins = QStringList("classic");
+        mPlugins << "classic" << "generic";
     }
     mPluginOptions = KScreenSaverSettings::pluginOptions();
 }
