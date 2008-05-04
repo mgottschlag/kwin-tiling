@@ -333,6 +333,7 @@ doPAMAuth( const char *psrv, struct pam_data *pdata )
 	else if (pam_set_item( pamh, PAM_RHOST, 0 ) != PAM_SUCCESS)
 		goto pam_bail;
 # endif
+	pam_set_item( pamh, PAM_USER_PROMPT, (void *)"Username:" );
 # ifdef PAM_FAIL_DELAY
 	pam_set_item( pamh, PAM_FAIL_DELAY, (void *)fail_delay );
 # endif
