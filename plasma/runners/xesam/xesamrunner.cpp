@@ -40,6 +40,7 @@ XesamRunner::XesamRunner(QObject *parent, const QVariantList& args)
     Q_UNUSED(args);
     // set the name shown after the result in krunner window
     setObjectName(i18n("Desktop Search"));
+    setSpeed(AbstractRunner::SlowSpeed);
 }
 
 XesamRunner::~XesamRunner()
