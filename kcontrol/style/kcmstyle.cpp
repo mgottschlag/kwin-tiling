@@ -229,7 +229,9 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	// -------------------
 	QGridLayout *effectsLayout = new QGridLayout( );
 	QLabel* lbl = new QLabel( i18n("Graphical User Interface:"), page2 );
+    lbl->setVisible(false);
 	comboGraphicEffectsLevel = new KComboBox( page2 );
+    comboGraphicEffectsLevel->setVisible(false);
 	comboGraphicEffectsLevel->setObjectName( "cbGraphicEffectsLevel" );
 	comboGraphicEffectsLevel->setEditable( false );
 	comboGraphicEffectsLevel->addItem(i18n("Low display resolution and Low CPU"), KGlobalSettings::NoEffects);
