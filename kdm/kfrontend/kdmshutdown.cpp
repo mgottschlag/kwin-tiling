@@ -485,14 +485,14 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 	buttonlay->addStretch( 1 );
 
 	KPushButton *btnHalt = new
-	KPushButton( KGuiItem( i18n("&Turn Off Computer"), "application-exit" ), this );
+	KPushButton( KGuiItem( i18n("&Turn Off Computer"), "system-shutdown" ), this );
 	buttonlay->addWidget( btnHalt );
 	connect( btnHalt, SIGNAL(clicked()), SLOT(slotHalt()) );
 
 	buttonlay->addSpacing( KDialog::spacingHint() );
 
 	KDMDelayedPushButton *btnReboot = new
-	KDMDelayedPushButton( KGuiItem( i18n("&Restart Computer"), "view-refresh" ), this );
+	KDMDelayedPushButton( KGuiItem( i18n("&Restart Computer"), "system-restart" ), this );
 	buttonlay->addWidget( btnReboot );
 	connect( btnReboot, SIGNAL(clicked()), SLOT(slotReboot()) );
 
