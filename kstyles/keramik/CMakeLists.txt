@@ -1,11 +1,11 @@
 
 project(kstyle-keramik)
 
-find_package(Blitz REQUIRED)
+find_package(QImageBlitz REQUIRED)
 
 add_definitions(-DQT_PLUGIN)
 
-include_directories( ${BLITZ_INCLUDES} )
+include_directories( ${QIMAGEBLITZ_INCLUDES} )
 
 ########### next target ###############
 
@@ -14,7 +14,7 @@ set(genembed_SRCS genembed.cpp )
 
 kde4_add_executable(genembed NOGUI RUN_UNINSTALLED ${genembed_SRCS})
 
-target_link_libraries(genembed  ${KDE4_KDECORE_LIBS} ${BLITZ_LIBRARIES} ${QT_QTGUI_LIBRARIES} )
+target_link_libraries(genembed  ${KDE4_KDECORE_LIBS} ${QIMAGEBLITZ_LIBRARIES} ${QT_QTGUI_LIBRARIES} )
 
 #pixmaps.keramik keramikrc.h: genembed
 #	pics=`ls $(srcdir)/pics/*.png 2>/dev/null` ;\
@@ -54,7 +54,7 @@ endif (WIN32)
 
 kde4_add_plugin(keramik ${keramik_PART_SRCS})
 
-target_link_libraries(keramik  ${KDE4_KDEUI_LIBS} ${BLITZ_LIBRARIES} )
+target_link_libraries(keramik  ${KDE4_KDEUI_LIBS} ${QIMAGEBLITZ_LIBRARIES} )
 
 install(TARGETS keramik  DESTINATION ${PLUGIN_INSTALL_DIR}/plugins/styles/ )
 

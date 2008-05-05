@@ -7,7 +7,7 @@ add_subdirectory( sessions )
 include_directories(
 	${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/kdm/background
 	${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kdm
-	${BLITZ_INCLUDES}
+	${QIMAGEBLITZ_INCLUDES}
 )
 
 set(kdmthemer_SRCS
@@ -91,7 +91,7 @@ set(krootimage_SRCS krootimage.cpp krootimage.h ${backgroundlib_SRCS})
 kde4_add_executable(krootimage ${krootimage_SRCS})
 # needs qt3support for q3ptrvector in background/bgrender.cpp
 target_link_libraries(krootimage ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KIO_LIBS} ${QT_QTCORE_LIBRARY}
-${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${BLITZ_LIBRARIES})
+${QT_QTGUI_LIBRARY} ${QT_QT3SUPPORT_LIBRARY} ${QIMAGEBLITZ_LIBRARIES})
 install(TARGETS krootimage DESTINATION ${LIBEXEC_INSTALL_DIR})
 
 set(genkdmconf_SRCS genkdmconf.c)

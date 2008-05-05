@@ -1,7 +1,7 @@
 KDE4_NO_ENABLE_FINAL(styles)
 add_subdirectory( keramik )
 
-include_directories( ${BLITZ_INCLUDES} )
+include_directories( ${QIMAGEBLITZ_INCLUDES} )
 
 ########### next target ###############
 
@@ -12,7 +12,7 @@ kde4_add_ui_files(kcm_style_PART_SRCS stylepreview.ui)
 
 kde4_add_plugin(kcm_style ${kcm_style_PART_SRCS})
 
-target_link_libraries(kcm_style ${KDE4_KDEUI_LIBS} ${BLITZ_LIBRARIES})
+target_link_libraries(kcm_style ${KDE4_KIO_LIBS} ${QIMAGEBLITZ_LIBRARIES})
 
 install(TARGETS kcm_style  DESTINATION ${PLUGIN_INSTALL_DIR})
 
