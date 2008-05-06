@@ -26,10 +26,16 @@
 // Qt
 #include <QGraphicsView>
 
+//Plasma
+#include <plasma/panelsvg.h>
+
 SystemTray::SystemTray(QObject *parent, const QVariantList &arguments)
     : Plasma::Applet(parent, arguments)
 {
+    m_background = new Plasma::PanelSvg(this);
+    m_background->setImagePath("widgets/systemtray");
     resize(40,60);
+    m_background->resizePanel(size());
     setSizePolicy(QSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred));
 }
 
@@ -52,11 +58,21 @@ void SystemTray::constraintsEvent(Plasma::Constraints constraints)
 {   
     if (constraints & Plasma::SizeConstraint) {
         updateWidgetGeometry();
+        m_background->resizePanel(size());
     }
 
     if (constraints & (Plasma::LocationConstraint | Plasma::FormFactorConstraint)) {
         updateWidgetOrientation();
     }
+}
+
+void SystemTray::paintInterface(QPainter *painter,
+                                const QStyleOptionGraphicsItem *option,
+                                const QRect& contentsRect)
+{
+    Q_UNUSED(option)
+
+    m_background->paintPanel(painter, contentsRect);
 }
 
 void SystemTray::updateSize()

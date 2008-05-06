@@ -32,6 +32,11 @@
 // Plasma
 #include <plasma/applet.h>
 
+namespace Plasma
+{
+    class PanelSvg;
+}
+
 class SystemTray: public Plasma::Applet
 {
 Q_OBJECT
@@ -44,6 +49,10 @@ public:
 
     void constraintsEvent(Plasma::Constraints constraints);
 
+    void paintInterface(QPainter *painter,
+                        const QStyleOptionGraphicsItem *option,
+                        const QRect &contentsRect);
+
 private slots:
     void updateSize();
 
@@ -51,6 +60,7 @@ private:
     void updateWidgetOrientation();
     void updateWidgetGeometry();
 
+    Plasma::PanelSvg *m_background;
     // The parent widget might delete this so we guard it
     QPointer<SystemTrayWidget> m_systemTrayWidget;
 };
