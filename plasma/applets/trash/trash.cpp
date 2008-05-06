@@ -144,10 +144,10 @@ void Trash::constraintsEvent(Plasma::Constraints constraints)
             //in a panel the icon always behaves like a button
             connect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));
 
-            m_icon->setText(0);
-            m_icon->setInfoText(0);
-            m_showText = false;
-            m_icon->setDrawBackground(false);
+            m_icon->setText(i18n("Trash"));
+            m_icon->setInfoText(i18np("One item", "%1 items", m_count));
+            m_showText = true;
+            m_icon->setDrawBackground(true);
             //Adding an arbitrary width to make room for a larger count of items
             setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop))+=QSizeF(20,0));
         } else {
