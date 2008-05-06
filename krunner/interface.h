@@ -41,8 +41,8 @@ class CollapsibleWidget;
 class QueryMatch;
 
 namespace Plasma {
-    
     class RunnerManager;
+    class QueryMatch;
 }
 
 class Interface : public KRunnerDialog
@@ -64,7 +64,7 @@ class Interface : public KRunnerDialog
 
     protected Q_SLOTS:
         void match();
-        void updateMatches();
+        void updateMatches(const QList<Plasma::QueryMatch*> &matches);
         void setWidgetPalettes();
         void run();
         void matchActivated( QListWidgetItem* );

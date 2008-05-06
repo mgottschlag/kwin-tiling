@@ -38,6 +38,7 @@
 #include <KLineEdit>
 #include <KLocale>
 #include <KGlobalSettings>
+#include <KPluginInfo>
 #include <KPushButton>
 #include <KStandardGuiItem>
 #include <KTitleWidget>
@@ -269,7 +270,8 @@ Interface::Interface(QWidget* parent)
     //        SLOT(setWidgetPalettes()));
 
 
-    connect(m_runnerManager, SIGNAL(matchesChanged()), this, SLOT(updateMatches()));
+    connect(m_runnerManager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch*>&)),
+            this, SLOT(updateMatches(const QList<Plasma::QueryMatch*>&)));
 
     resetInterface();
 }
@@ -321,13 +323,13 @@ void Interface::displayWithClipboardContents()
 void Interface::switchUser()
 {
     //TODO: ugh, magic strings. See sessions/sessionrunner.cpp
-    display("SESSIONS");
+    display(QString());
     m_header->setText(i18n("Switch users"));
     m_header->setPixmap("system-switch-user");
     m_defaultMatch = 0;
 
-    m_runnerManager->execQuery("SESSIONS", "SessionRunner");
-
+//    m_runnerManager->execQuery("SESSIONS", "SessionRunner");
+/*
     foreach (const Plasma::QueryMatch *action, m_runnerManager->matches()) {
         bool makeDefault = !m_defaultMatch && action->type() != Plasma::QueryMatch::InformationalMatch;
         QueryMatch *match = new QueryMatch(action, m_matchList);
@@ -342,7 +344,13 @@ void Interface::switchUser()
             m_optionsButton->setEnabled(runner->hasRunOptions());
         }
     }
-    if (!m_defaultMatch) {
+    */
+    KService::Ptr service = KService::serviceByStorageId("plasma-runner-sessions.desktop");
+    KPluginInfo info(sessionRunnerService);
+
+    if (!info.isValid() ||
+        !m_runnerManager->execQuery("SESSIONS", info.pluginName()) ||
+        !m_defaultMatch) {
         m_matchList->addItem(i18n("No desktop sessions available"));
     } else {
         m_matchList->sortItems(Qt::DescendingOrder);
@@ -428,12 +436,12 @@ void Interface::match()
 
 
 
-void Interface::updateMatches()
+void Interface::updateMatches(const QList<Plasma::QueryMatch*> &matches)
 {
     m_matchList->clear();
     m_defaultMatch = 0;
-//    kDebug() << "interface got:" << m_runnerManager->matches().count() << " matches";
-    foreach (const Plasma::QueryMatch *action, m_runnerManager->matches()) {
+    kDebug() << "interface got:" << m_runnerManager->matches().count() << " matches";
+    foreach (const Plasma::QueryMatch *action, matches) {
         QueryMatch *match = new QueryMatch(action, m_matchList);
         if (action->isEnabled() && action->relevance() > 0 &&
             (!m_defaultMatch || *m_defaultMatch < *match) &&
