@@ -33,6 +33,7 @@
 #include <plasma/theme.h>
 #include <plasma/containment.h>
 
+#include "positioningruler.h"
 
 class PanelController::Private
 {
@@ -103,6 +104,33 @@ public:
        }
     }
 
+    void rulersMoved(const int &offset, const int &minLength, const int &maxLength)
+    {
+         if (!containment) {
+            return;
+        }
+
+        QSize preferredSize(containment->preferredSize().toSize());
+
+        switch (location) {
+        case Plasma::LeftEdge:
+        case Plasma::RightEdge:
+            containment->resize(QSize((int)containment->size().width(), qBound(minLength, preferredSize.height(), maxLength)));
+            containment->setMinimumSize(QSize((int)containment->minimumSize().width(), minLength));
+            containment->setMaximumSize(QSize((int)containment->maximumSize().width(), maxLength));
+            break;
+        case Plasma::TopEdge:
+        case Plasma::BottomEdge:
+        default:
+            containment->resize(QSize(qBound(minLength, preferredSize.width(), maxLength), (int)containment->size().height()));
+            containment->setMinimumSize(QSize(minLength, (int)containment->minimumSize().height()));
+            containment->setMaximumSize(QSize(maxLength, (int)containment->maximumSize().height()));
+            break;
+       }
+
+       emit q->offsetChanged(offset);
+    }
+
     PanelController *q;
     Plasma::Containment *containment;
     Qt::Orientation orientation;
@@ -114,6 +142,7 @@ public:
 
     class ResizeHandle;
     ResizeHandle *panelHeightHandle;
+    PositioningRuler *ruler;
 
     static const int minimumHeight = 10;
 };
@@ -172,6 +201,10 @@ PanelController::PanelController(QWidget* parent)
     QToolButton *removePanelTool = d->addTool("list-remove", i18n("Remove this panel"));
     connect(removePanelTool, SIGNAL(clicked()), this, SIGNAL(removePanel()));
     connect(removePanelTool, SIGNAL(clicked()), this, SLOT(hideController()));
+
+    d->ruler = new PositioningRuler(this);
+    connect(d->ruler, SIGNAL(rulersMoved(const int&, const int&, const int&)), this, SLOT(rulersMoved(const int&, const int&, const int&)));
+    d->extLayout->addWidget(d->ruler);
 }
 
 PanelController::~PanelController()
@@ -181,7 +214,31 @@ PanelController::~PanelController()
 
 void PanelController::setContainment( Plasma::Containment *containment)
 {
+    if (!containment) {
+        return;
+    }
+
     d->containment = containment;
+
+    QRect screenGeom =
+    QApplication::desktop()->screenGeometry(d->containment->screen());
+
+    switch (d->location) {
+    case Plasma::LeftEdge:
+    case Plasma::RightEdge:
+        d->ruler->setAvailableLength(screenGeom.height());
+        d->ruler->setMaxLength(qMin((int)containment->maximumSize().height(), screenGeom.height()));
+        d->ruler->setMinLength(containment->minimumSize().height());
+        break;
+    case Plasma::TopEdge:
+    case Plasma::BottomEdge:
+    default:
+        d->ruler->setAvailableLength(screenGeom.width());
+        d->ruler->setMaxLength(qMin((int)containment->maximumSize().width(), screenGeom.width()));
+        d->ruler->setMinLength(containment->minimumSize().width());
+        break;
+    }
+
 }
 
 QSize PanelController::sizeHint() const
@@ -231,30 +288,43 @@ void PanelController::setLocation(const Plasma::Location &loc)
     }
 
     d->location = loc;
+    d->ruler->setLocation(loc);
+    QRect screenGeom =
+    QApplication::desktop()->screenGeometry(d->containment->screen());
 
     switch (loc) {
     case Plasma::LeftEdge:
         d->layout->setDirection(QBoxLayout::TopToBottom);
         d->extLayout->setDirection(QBoxLayout::RightToLeft);
         d->panelHeightHandle->setCursor(Qt::SizeHorCursor);
+
+        d->ruler->setAvailableLength(screenGeom.height());
         break;
     case Plasma::RightEdge:
         d->layout->setDirection(QBoxLayout::TopToBottom);
         d->extLayout->setDirection(QBoxLayout::LeftToRight);
         d->panelHeightHandle->setCursor(Qt::SizeHorCursor);
+
+        d->ruler->setAvailableLength(screenGeom.height());
         break;
     case Plasma::TopEdge:
         d->layout->setDirection(QBoxLayout::LeftToRight);
         d->extLayout->setDirection(QBoxLayout::BottomToTop);
         d->panelHeightHandle->setCursor(Qt::SizeVerCursor);
+
+        d->ruler->setAvailableLength(screenGeom.width());
         break;
     case Plasma::BottomEdge:
     default:
         d->layout->setDirection(QBoxLayout::LeftToRight);
         d->extLayout->setDirection(QBoxLayout::TopToBottom);
         d->panelHeightHandle->setCursor(Qt::SizeVerCursor);
+
+        d->ruler->setAvailableLength(screenGeom.width());
         break;
     }
+
+    d->ruler->setMaximumSize(d->ruler->sizeHint());
 }
 
 Plasma::Location PanelController::location() const

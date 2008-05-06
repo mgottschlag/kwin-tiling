@@ -65,17 +65,6 @@ public:
     Plasma::Corona *corona() const;
 
     /**
-     * Sets the offset the left border, the offset is the distance of the left
-     * border of the panel from the left border of the screen when the alignment is
-     * Qt::AlignLeft, right border and right edge if the alignment is Qt::alignRight
-     * and the distance between the center of the panel and the center of the screen if
-     * the alignment is Qt::AlignCenter.
-     * Similar way for vertical panels.
-     * @param newOffset the offset of the panel
-     */
-    void setOffset(int newOffset);
-
-    /**
      * @return the offset of the panel from the left screen edge
      */
     int offset() const;
@@ -97,12 +86,24 @@ public:
      */
      void saveConfig();
 
+public Q_SLOTS:
+    /**
+     * Sets the offset the left border, the offset is the distance of the left
+     * border of the panel from the left border of the screen when the alignment is
+     * Qt::AlignLeft, right border and right edge if the alignment is Qt::alignRight
+     * and the distance between the center of the panel and the center of the screen if
+     * the alignment is Qt::AlignCenter.
+     * Similar way for vertical panels.
+     * @param newOffset the offset of the panel
+     */
+    void setOffset(const int &newOffset);
+
 protected:
     void updateStruts();
     virtual void moveEvent(QMoveEvent *event);
     virtual void resizeEvent(QResizeEvent *event);
 
-private slots:
+private Q_SLOTS:
     void updatePanelGeometry();
     void showAppletBrowser();
     void togglePanelController();

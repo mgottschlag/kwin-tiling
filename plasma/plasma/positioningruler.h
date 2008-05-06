@@ -17,8 +17,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef PANELCONTROLLER_H
-#define PANELCONTROLLER_H 
+#ifndef POSITIONINGRULER_H
+#define POSITIONINGRULER_H 
 
 #include <QWidget>
 
@@ -31,43 +31,44 @@ namespace Plasma
     class Containment;
 }
 
-class PanelController : public QWidget
+class PositioningRuler : public QWidget
 {
 Q_OBJECT
 public:
-    PanelController(QWidget* parent = 0);
-    ~PanelController();
+    PositioningRuler(QWidget* parent = 0);
+    ~PositioningRuler();
 
     QSize sizeHint() const;
-
-    QPoint positionForPanelGeometry(const QRect &panelGeom) const;
-    void setContainment(Plasma::Containment *containment);
-    void resizePanel(const QSizeF newSize);
 
     void setLocation(const Plasma::Location &loc);
     Plasma::Location location() const;
 
+    void setAlignment(const Qt::Alignment &align);
+    Qt::Alignment alignment() const;
 
-public Q_SLOTS:
-    void hideController();
+    void setOffset(const int &newOffset);
+    int offset() const;
+
+    void setMaxLength(const int &newMax);
+    int maxLength() const;
+
+    void setMinLength(const int &newMin);
+    int minLength() const;
+
+    void setAvailableLength(const int &newAvailable);
+    int availableLength() const;
 
 protected:
     void paintEvent(QPaintEvent *event);
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+    void resizeEvent(QResizeEvent *event);
 
 Q_SIGNALS:
-    /**
-     * Emitted when the controller requests an add widgets dialog is shown.
-     */
-     void showAddWidgets();
-     void removePanel();
-     void offsetChanged(const int &offset);
+     void rulersMoved(const int &offset, const int &minLength, const int &minLength);
 
 private:
-    Q_PRIVATE_SLOT(d, void rulersMoved(const int &offset, const int &minLength, const int &minLength))
-
     class Private;
     Private *d;
 };

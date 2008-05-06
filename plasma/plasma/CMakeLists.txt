@@ -7,6 +7,7 @@ set(plasma_SRCS
     plasmaapp.cpp
     panelview.cpp
     panelcontroller.cpp
+    positioningruler.cpp
     dashboardview.cpp
 )
 

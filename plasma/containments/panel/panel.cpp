@@ -62,6 +62,8 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     setZValue(150);
     setContainmentType(Containment::PanelContainment);
     resize(m_currentSize);
+    setMinimumSize(m_currentSize);
+    setMaximumSize(m_currentSize);
 
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
     connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
