@@ -440,7 +440,7 @@ void Interface::updateMatches(const QList<Plasma::QueryMatch*> &matches)
 {
     m_matchList->clear();
     m_defaultMatch = 0;
-    kDebug() << "interface got:" << m_runnerManager->matches().count() << " matches";
+    //kDebug() << "interface got:" << m_runnerManager->matches().count() << " matches";
     foreach (const Plasma::QueryMatch *action, matches) {
         QueryMatch *match = new QueryMatch(action, m_matchList);
         if (action->isEnabled() && action->relevance() > 0 &&
