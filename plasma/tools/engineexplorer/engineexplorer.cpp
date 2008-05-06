@@ -228,14 +228,10 @@ void EngineExplorer::requestSource()
 
 QString EngineExplorer::convertToString(const QVariant &value) const
 {
-    if (value.canConvert(QVariant::String) && value.type() != QVariant::ByteArray) {
-        return value.toString();
-    }
-
     switch (value.type())
     {
         case QVariant::BitArray: {
-            return i18np("<1 bit>", "<%1 bits>", value.toBitArray().size());
+            return i18np("&lt;1 bit&gt;", "&lt;%1 bits&gt;", value.toBitArray().size());
         }
         case QVariant::Bitmap: {
             QBitmap bitmap = value.value<QBitmap>();
@@ -244,7 +240,7 @@ QString EngineExplorer::convertToString(const QVariant &value) const
         case QVariant::ByteArray: {
             // Return the array size if it is not displayable
             if (value.toString().isEmpty()) {
-                return i18np("<1 byte>", "<%1 bytes>", value.toByteArray().size());
+                return i18np("&lt;1 byte&gt;", "&lt;%1 bytes&gt;", value.toByteArray().size());
             }
             else {
                 return value.toString();
@@ -266,7 +262,7 @@ QString EngineExplorer::convertToString(const QVariant &value) const
             return QString("%1").arg(value.toLocale().name());
         }
         case QVariant::Map: {
-            return i18np("<1 item>", "<%1 items>", value.toMap().size());
+            return i18np("&lt;1 item&gt;", "&lt;%1 items&gt;", value.toMap().size());
         }
         case QVariant::Pixmap: {
             QPixmap pixmap = value.value<QPixmap>();
@@ -319,6 +315,15 @@ QString EngineExplorer::convertToString(const QVariant &value) const
                 }
             }
 #endif
+            if (value.canConvert(QVariant::String)) {
+                if (value.toString().isEmpty()) {
+                    return i18n("<empty>");
+                }
+                else {
+                    return value.toString();
+                }
+            }
+
             return i18n("<not displayable>");
         }
     }
