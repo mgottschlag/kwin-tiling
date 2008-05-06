@@ -66,7 +66,7 @@ protected:
     void resizeEvent(QResizeEvent *event);
 
 Q_SIGNALS:
-     void rulersMoved(const int &offset, const int &minLength, const int &minLength);
+     void rulersMoved(int offset, int minLength, int maxLength);
 
 private:
     class Private;
