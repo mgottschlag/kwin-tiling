@@ -70,12 +70,12 @@ class QueryMatch : public QListWidgetItem
             if (action->subtext().isEmpty()) {
                 setText(i18n("%1 (%2)",
                         m_action->text(),
-                        m_action->runner()->objectName()));
+                        m_action->runner()->name()));
             } else {
                 setText(i18n("%1 (%2, %3)",
                         m_action->text(),
                         m_action->subtext(),
-                        m_action->runner()->objectName()));
+                        m_action->runner()->name()));
             }
         }
 
@@ -346,7 +346,7 @@ void Interface::switchUser()
     }
     */
     KService::Ptr service = KService::serviceByStorageId("plasma-runner-sessions.desktop");
-    KPluginInfo info(sessionRunnerService);
+    KPluginInfo info(service);
 
     if (!info.isValid() ||
         !m_runnerManager->execQuery("SESSIONS", info.pluginName()) ||
