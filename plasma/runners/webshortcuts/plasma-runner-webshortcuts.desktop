@@ -64,4 +64,3 @@ Comment[zh_TW]=允許使用者使用 Konqueror 的網頁捷徑
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_webshortcuts
-X-Plasma-RunnerName=Webshortcut

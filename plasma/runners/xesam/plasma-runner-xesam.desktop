@@ -27,4 +27,3 @@ Comment[zh_TW]=允許使用者使用 Xesam 相容的搜尋引擎來做桌面搜�
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_xesam
-X-Plasma-RunnerName=Xesam

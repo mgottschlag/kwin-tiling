@@ -107,4 +107,3 @@ Comment[zh_TW]=計算機表示式
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_calculatorrunner
-X-Plasma-RunnerName=Calculator

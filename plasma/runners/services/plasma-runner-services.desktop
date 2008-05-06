@@ -54,5 +54,4 @@ Comment[zh_TW]=應用程式、控制面板與服務
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_services
-X-Plasma-RunnerName=Services
 X-Plasma-RunnerPhase=first

@@ -52,4 +52,3 @@ Comment[zh_TW]=快速切換使用者
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_sessions
-X-Plasma-RunnerName=Sessions
