@@ -279,6 +279,13 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
         m_background->resizePanel(m_currentSize);
     }
 
+    //FIXME: this seems the only way to correctly resize the layout the first time when the
+    // saved panel size is less than the default is to setting a maximum size.
+    // this shouldn't happen. maybe even a qgraphicslayout bug?
+    if (layout() && (constraints & Plasma::SizeConstraint)) {
+        layout()->setMaximumSize(size());
+    }
+
     if (constraints & Plasma::LocationConstraint) {
         setFormFactorFromLocation(location());
     }
