@@ -44,9 +44,7 @@ LocationsRunner::LocationsRunner(QObject *parent, const QVariantList& args)
     Q_UNUSED(args);
     // set the name shown after the result in krunner window
     setObjectName(i18n("Locations"));
-    setIgnoredTypes(Plasma::RunnerContext::Executable | Plasma::RunnerContext::ShellCommand |
-                    Plasma::RunnerContext::UnknownType);
-
+    setIgnoredTypes(Plasma::RunnerContext::Executable | Plasma::RunnerContext::ShellCommand);
 }
 
 LocationsRunner::~LocationsRunner()
@@ -85,7 +83,8 @@ void LocationsRunner::match(Plasma::RunnerContext *search)
         action->setText(i18n("Open %1", term));
         action->setIcon(KIcon("system-help"));
         action->setRelevance(1);
-    } else if (m_type == Plasma::RunnerContext::NetworkLocation) {
+    } else if (m_type == Plasma::RunnerContext::NetworkLocation ||
+               m_type == Plasma::RunnerContext::UnknownType) {
         KUrl url(term);
         processUrl(url, term);
         QMutexLocker lock(bigLock());
