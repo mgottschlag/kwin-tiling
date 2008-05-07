@@ -159,6 +159,13 @@ void Pager::recalculateGeometry()
     const int padding = 2; // Space between miniatures of desktops
     const int textMargin = 3; // Space between name of desktop and border
 
+    qreal leftMargin;
+    qreal topMargin;
+    qreal rightMargin;
+    qreal bottomMargin;
+
+    getContentsMargins(&leftMargin, &topMargin, &rightMargin, &bottomMargin);
+
     int columns = m_desktopCount / m_rows + m_desktopCount % m_rows;
     qreal itemHeight;
     qreal itemWidth;
@@ -191,13 +198,13 @@ void Pager::recalculateGeometry()
     itemRect.setWidth(floor(itemWidth - 1));
     itemRect.setHeight(floor(itemHeight - 1));
     for (int i = 0; i < m_desktopCount; i++) {
-        itemRect.moveLeft(floor((i % columns) * (itemWidth + padding)));
-        itemRect.moveTop(floor((i / columns) * (itemHeight + padding)));
+        itemRect.moveLeft(leftMargin + floor((i % columns) * (itemWidth + padding)));
+        itemRect.moveTop(topMargin + floor((i / columns) * (itemHeight + padding)));
         m_rects.append(itemRect);
     }
 
-    m_size = QSizeF(ceil(columns * itemWidth + padding * (columns - 1)),
-                    ceil(m_rows * itemHeight + padding * (m_rows - 1)));
+    m_size = QSizeF(ceil(columns * itemWidth + padding * (columns - 1) + leftMargin + rightMargin),
+                    ceil(m_rows * itemHeight + padding * (m_rows - 1) + topMargin + bottomMargin));
 
     //kDebug() << "new size set" << m_size << m_rows << m_columns << columns << itemWidth;
 
