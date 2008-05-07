@@ -66,7 +66,7 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
     KFI_DBUG << "Create font thumbnail for:" << path << endl;
 
     // Is this a fonts/package file? If so, extract 1 scalable font...
-    if(Misc::isPackage(path))
+    if(Misc::isPackage(path) || "application/zip"==KMimeType::findByFileContent(path)->name())
     {
         KZip zip(path);
 
