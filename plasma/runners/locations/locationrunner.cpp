@@ -84,7 +84,8 @@ void LocationsRunner::match(Plasma::RunnerContext *search)
         action->setIcon(KIcon("system-help"));
         action->setRelevance(1);
     } else if (m_type == Plasma::RunnerContext::NetworkLocation ||
-               (m_type == Plasma::RunnerContext::UnknownType && term.contains('.'))) {
+               (m_type == Plasma::RunnerContext::UnknownType &&
+                term.contains(QRegExp("^[a-zA-Z0-9]+\\.")))) {
         KUrl url(term);
         processUrl(url, term);
         QMutexLocker lock(bigLock());
@@ -112,8 +113,11 @@ void LocationsRunner::match(Plasma::RunnerContext *search)
     }
 
     if (action) {
-        action->setRelevance(1);
-        action->setType(Plasma::QueryMatch::ExactMatch);
+        if (m_type != Plasma::RunnerContext::UnknownType) {
+            action->setRelevance(1);
+            action->setType(Plasma::QueryMatch::ExactMatch);
+        }
+
         search->addMatch(term, action);
     }
 }
