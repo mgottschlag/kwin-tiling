@@ -97,7 +97,6 @@ class Battery : public Plasma::Applet
         bool m_showBatteryString;
         QSizeF m_size;
         int m_pixelSize;
-        int m_smallPixelSize;
         Plasma::Svg* m_theme;
         bool m_acadapter_plugged;
 

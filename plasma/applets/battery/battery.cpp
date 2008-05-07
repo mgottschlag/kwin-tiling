@@ -43,7 +43,6 @@
 Battery::Battery(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_batteryStyle(0),
-      m_smallPixelSize(22),
       m_theme(0),
       m_dialog(0),
       m_animId(-1),
@@ -61,8 +60,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
-    // TODO: minimum size causes size on panel to be huge (do not use for now)
-    //setMinimumContentSize(m_smallPixelSize, m_smallPixelSize);
     resize(128, 128);
 }
 
@@ -81,7 +78,8 @@ void Battery::init()
             setBackgroundHints(NoBackground);
         }
     }
-    setWindowFlags(Qt::Window);
+
+    setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 
     QString svgFile = QString();
     if (cg.readEntry("style", 0) == 0) {
@@ -94,9 +92,8 @@ void Battery::init()
     m_theme = new Plasma::Svg(this);
     m_theme->setImagePath(svgFile);
     m_theme->setContainsMultipleImages(false);
-    m_theme->resize(contentsRect().size());
 
-    setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    m_theme->resize(size());
     m_font = QApplication::font();
     m_font.setWeight(QFont::Bold);
 
