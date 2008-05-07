@@ -84,7 +84,7 @@ void LocationsRunner::match(Plasma::RunnerContext *search)
         action->setIcon(KIcon("system-help"));
         action->setRelevance(1);
     } else if (m_type == Plasma::RunnerContext::NetworkLocation ||
-               m_type == Plasma::RunnerContext::UnknownType) {
+               (m_type == Plasma::RunnerContext::UnknownType && term.contains('.'))) {
         KUrl url(term);
         processUrl(url, term);
         QMutexLocker lock(bigLock());
@@ -96,13 +96,18 @@ void LocationsRunner::match(Plasma::RunnerContext *search)
         action->setText(i18n("Go to %1", url.prettyUrl()));
         action->setIcon(KIcon(KProtocolInfo::icon(url.protocol())));
         action->setData(url.url());
- 
+
         if (KProtocolInfo::isHelperProtocol(url.protocol())) {
             //kDebug() << "helper protocol" << url.protocol() <<"call external application" ; 
             action->setText(i18n("Launch with %1", KProtocolInfo::exec(url.protocol())));
         } else {
             //kDebug() << "protocol managed by browser" << url.protocol();
             action->setText(i18n("Go to %1", url.prettyUrl()));
+        }
+
+        if (m_type == Plasma::RunnerContext::UnknownType) {
+            action->setRelevance(0);
+            action->setType(Plasma::QueryMatch::PossibleMatch);
         }
     }
 
