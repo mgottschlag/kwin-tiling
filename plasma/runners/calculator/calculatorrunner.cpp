@@ -158,7 +158,7 @@ void CalculatorRunner::match(Plasma::RunnerContext *search)
     }
 
     userFriendlySubstitutions(cmd);
- 
+
     cmd.replace(QRegExp("([a-zA-Z]+)"), "Math.\\1");
     QString result = calculate(cmd);
 
@@ -168,6 +168,7 @@ void CalculatorRunner::match(Plasma::RunnerContext *search)
         match->setIcon(KIcon("accessories-calculator"));
         match->setText(QString("%1 = %2").arg(cmd, result));
         match->setData("= " + result);
+        match->setId(QString());
         search->addMatch(term, match);
     }
 }
