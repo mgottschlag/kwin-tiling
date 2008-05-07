@@ -56,12 +56,28 @@
 class QueryMatch : public QListWidgetItem
 {
     public:
-        QueryMatch(const Plasma::QueryMatch* action, QListWidget* parent)
+        QueryMatch(QListWidget* parent)
             : QListWidgetItem( parent ),
               m_default(false),
               m_action(0)
         {
+        }
+
+        const Plasma::QueryMatch* action() const
+        {
+            return m_action;
+        }
+
+        void setAction(const Plasma::QueryMatch *action)
+        {
             m_action = action;
+
+            if (!m_action) {
+                //setIcon(QIcon());
+                //setText(QString());
+                return;
+            }
+
             setIcon(m_action->icon());
             if (!action) {
                 kDebug() << "empty action got on the interface, something is rotten";
@@ -81,60 +97,69 @@ class QueryMatch : public QListWidgetItem
 
         void activate(Plasma::RunnerManager *manager) const
         {
+            Q_ASSERT(m_action);
             manager->run(m_action);
         }
 
         bool actionEnabled() const
         {
+            Q_ASSERT(m_action);
             return m_action->isEnabled();
         }
 
         bool hasRunOptions() const
         {
+            Q_ASSERT(m_action);
             return m_action->runner()->hasRunOptions();
         }
 
         QString toString() const
         {
+            Q_ASSERT(m_action);
             return m_action->data().toString();
         }
 
         Plasma::QueryMatch::Type actionType() const
         {
+            Q_ASSERT(m_action);
             return m_action->type();
         }
 
         qreal actionRelevance() const
         {
+            Q_ASSERT(m_action);
             return m_action->relevance();
         }
 
         void createRunOptions(QWidget* parent) const
         {
+            Q_ASSERT(m_action);
             m_action->runner()->createRunOptions(parent);
         }
 
         void setDefault(bool def)
         {
+            Q_ASSERT(m_action);
             if (m_default == def) {
                 return;
             }
 
-            m_default = def;
+            m_default = def && m_action->isEnabled();
+            const QString &defaultLabel = i18n("Default: ");
+            QString t = text();
 
             if (m_default) {
-                if (m_action->isEnabled()) {
-                    setText(text().prepend(i18n("Default: ")));
-                } else {
-                    m_default = false;
+                if (!t.startsWith(defaultLabel)) {
+                    setText(defaultLabel + t);
                 }
-            } else {
-                setText(text().mid(9));
+            } else if (t.startsWith(defaultLabel)) {
+                setText(t.mid(defaultLabel.length()));
             }
         }
 
         bool operator<(const QListWidgetItem & other) const
         {
+            Q_ASSERT(m_action);
             // Rules:
             //      0. Default wins. Always.
             //      1. Exact trumps informational
@@ -176,7 +201,9 @@ Interface::Interface(QWidget* parent)
     setWindowTitle( i18n("Run Command") );
     setWindowIcon(KIcon("system-run"));
 
-    m_runnerManager=new Plasma::RunnerManager(this);
+    connect(&m_clearTimer, SIGNAL(timeout()), this, SLOT(clearMatches()));
+
+    m_runnerManager = new Plasma::RunnerManager(this);
 
     QWidget* w = mainWidget();
     m_layout = new QVBoxLayout(w);
@@ -280,6 +307,12 @@ Interface::~Interface()
 {
     KRunnerSettings::setPastQueries(m_searchTerm->historyItems());
     KRunnerSettings::setQueryTextCompletionMode(m_searchTerm->completionMode());
+}
+
+void Interface::clearMatches()
+{
+    m_matchesById.clear();
+    m_matchList->clear();
 }
 
 void Interface::clearHistory()
@@ -428,21 +461,47 @@ void Interface::match()
         m_execQueued = false;
         return;
     }
- 
+
     m_runnerManager->launchQuery(term);
     m_completion->insertItems(m_searchTerm->historyItems());
 
 }
 
-
-
 void Interface::updateMatches(const QList<Plasma::QueryMatch*> &matches)
 {
-    m_matchList->clear();
+    if (matches.count() == 0) {
+        QMapIterator<QString, QueryMatch*> it(m_matchesById);
+        while (it.hasNext()) {
+            it.next();
+            it.value()->setAction(0);
+        }
+
+        m_clearTimer.start(200);
+        return;
+    }
+
+    m_clearTimer.stop();
+    //kDebug() << "\n\ninterface got:" << m_runnerManager->matches().count() << " matches";
+    //kDebug() << "\n\ncurrently we have" << m_matchesById.count() << m_matchesById << endl << endl;
+    QMap<QString, QueryMatch*> existingMatches = m_matchesById;
+    m_matchesById.clear();
     m_defaultMatch = 0;
-    //kDebug() << "interface got:" << m_runnerManager->matches().count() << " matches";
+
     foreach (const Plasma::QueryMatch *action, matches) {
-        QueryMatch *match = new QueryMatch(action, m_matchList);
+        QString id = action->id();
+        //kDebug() << "checking match with id" << id;
+        QueryMatch *match;
+        if (existingMatches.contains(id)) {
+            match = existingMatches.take(id);
+            //kDebug() << "found existing" << match->text();
+        } else {
+            //kDebug() << "making a new one";
+            match = new QueryMatch(m_matchList);
+        }
+
+        match->setAction(action);
+        m_matchesById.insert(id, match);
+
         if (action->isEnabled() && action->relevance() > 0 &&
             (!m_defaultMatch || *m_defaultMatch < *match) &&
             (action->type() != Plasma::QueryMatch::InformationalMatch ||
@@ -455,6 +514,14 @@ void Interface::updateMatches(const QList<Plasma::QueryMatch*> &matches)
             m_optionsButton->setEnabled(action->runner()->hasRunOptions());
             m_runButton->setEnabled(true);
         }
+    }
+
+    // these are now the left overs that no longer actually exist
+    QMutableMapIterator<QString, QueryMatch*> it(existingMatches);
+    while (it.hasNext()) {
+        it.next();
+        delete it.value();
+        it.remove();
     }
 
     m_matchList->sortItems(Qt::DescendingOrder);
@@ -485,7 +552,8 @@ void Interface::run()
         return;
     }
 
-    QListWidgetItem* currentMatch = m_matchList->currentItem();
+    QueryMatch* currentMatch = dynamic_cast<QueryMatch*>(m_matchList->currentItem());
+
     if (!currentMatch) {
         if (m_defaultMatch) {
             //kDebug() << "exec'ing default match";
@@ -493,7 +561,17 @@ void Interface::run()
         } else {
             for (int i = 0; i < m_matchList->count(); ++i) {
                 QueryMatch* match = dynamic_cast<QueryMatch*>(m_matchList->item(i));
-                if (match && match->actionEnabled() && match->actionRelevance() > 0 &&
+                if (!match) {
+                    continue;
+                }
+
+                if (!match->action()) {
+                    // we are in an intermediate state
+                    m_execQueued = true;
+                    return;
+                }
+
+                if (match->actionEnabled() && match->actionRelevance() > 0 &&
                     match->actionType() != Plasma::QueryMatch::HelperMatch) {
                     currentMatch = match;
                     break;
@@ -501,7 +579,12 @@ void Interface::run()
             }
             //kDebug() << "exec'ing first plausable item" << currentMatch;
         }
+    } else {
+        // we are in an intermediate state
+        m_execQueued = true;
+        return;
     }
+
 
     if (currentMatch) {
         matchActivated(currentMatch);

@@ -19,6 +19,9 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
+#include <QMap>
+#include <QTimer>
+
 // pulls in definition for Window
 #include <KSelectionWatcher>
 
@@ -45,6 +48,8 @@ namespace Plasma {
     class QueryMatch;
 }
 
+class QueryMatch;
+
 class Interface : public KRunnerDialog
 {
     Q_OBJECT
@@ -57,12 +62,13 @@ class Interface : public KRunnerDialog
     public Q_SLOTS:
         // DBUS interface. if you change these methods, you MUST run:
         // qdbuscpp2xml interface.h -o org.kde.krunner.Interface.xml
-        void display(const QString& term = QString());        
+        void display(const QString& term = QString());
         void displayWithClipboardContents();
         void switchUser();
         void clearHistory();
 
     protected Q_SLOTS:
+        void clearMatches();
         void match();
         void updateMatches(const QList<Plasma::QueryMatch*> &matches);
         void setWidgetPalettes();
@@ -76,8 +82,10 @@ class Interface : public KRunnerDialog
 
     private:
         void resetInterface();
-        
+
         Plasma::RunnerManager* m_runnerManager;
+        QMap<QString, QueryMatch*> m_matchesById;
+        QTimer m_clearTimer;
 
         QVBoxLayout* m_layout;
         KTitleWidget* m_header;
