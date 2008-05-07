@@ -155,8 +155,11 @@ public:
        : QWidget(parent)
     {
         setCursor(Qt::SizeVerCursor);
-        setMinimumHeight(4);
-        setMaximumHeight(4);
+    }
+
+    QSize sizeHint() const
+    {
+        return QSize(4, 4);
     }
 
     void paintEvent(QPaintEvent *event)
@@ -166,6 +169,8 @@ public:
         backColor.setAlphaF(0.50);
         painter.fillRect(event->rect(), backColor);
     }
+
+    Plasma::Location m_location;
 };
 
 PanelController::PanelController(QWidget* parent)
@@ -296,6 +301,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
     case Plasma::LeftEdge:
         d->layout->setDirection(QBoxLayout::TopToBottom);
         d->extLayout->setDirection(QBoxLayout::RightToLeft);
+        d->extLayout->setContentsMargins(1, 0, 0, 0);
         d->panelHeightHandle->setCursor(Qt::SizeHorCursor);
 
         d->ruler->setAvailableLength(screenGeom.height());
@@ -303,6 +309,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
     case Plasma::RightEdge:
         d->layout->setDirection(QBoxLayout::TopToBottom);
         d->extLayout->setDirection(QBoxLayout::LeftToRight);
+        d->extLayout->setContentsMargins(1, 0, 0, 0);
         d->panelHeightHandle->setCursor(Qt::SizeHorCursor);
 
         d->ruler->setAvailableLength(screenGeom.height());
@@ -310,6 +317,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
     case Plasma::TopEdge:
         d->layout->setDirection(QBoxLayout::LeftToRight);
         d->extLayout->setDirection(QBoxLayout::BottomToTop);
+        d->extLayout->setContentsMargins(0, 0, 0, 1);
         d->panelHeightHandle->setCursor(Qt::SizeVerCursor);
 
         d->ruler->setAvailableLength(screenGeom.width());
@@ -318,6 +326,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
     default:
         d->layout->setDirection(QBoxLayout::LeftToRight);
         d->extLayout->setDirection(QBoxLayout::TopToBottom);
+        d->extLayout->setContentsMargins(0, 1, 0, 0);
         d->panelHeightHandle->setCursor(Qt::SizeVerCursor);
 
         d->ruler->setAvailableLength(screenGeom.width());
