@@ -159,7 +159,6 @@ class QueryMatch : public QListWidgetItem
 
         bool operator<(const QListWidgetItem & other) const
         {
-            Q_ASSERT(m_action);
             // Rules:
             //      0. Default wins. Always.
             //      1. Exact trumps informational
@@ -170,6 +169,12 @@ class QueryMatch : public QListWidgetItem
 
             if (!otherMatch) {
                 return QListWidgetItem::operator<(other);
+            }
+
+            if (!m_action) {
+                return false;
+            } else if (!otherMatch->m_action) {
+                return true;
             }
 
             if (otherMatch->m_default) {
@@ -201,6 +206,7 @@ Interface::Interface(QWidget* parent)
     setWindowTitle( i18n("Run Command") );
     setWindowIcon(KIcon("system-run"));
 
+    m_clearTimer.setSingleShot(true);
     connect(&m_clearTimer, SIGNAL(timeout()), this, SLOT(clearMatches()));
 
     m_runnerManager = new Plasma::RunnerManager(this);
@@ -222,8 +228,8 @@ Interface::Interface(QWidget* parent)
     // QComboBox::setLineEdit sets the autoComplete flag on the lineedit,
     // and KComboBox::setAutoComplete resets the autocomplete mode! ugh!
     m_searchTerm->setLineEdit(lineEdit);
-    
-    m_completion=new KCompletion();
+
+    m_completion = new KCompletion();
     lineEdit->setCompletionObject(m_completion);
     lineEdit->setCompletionMode(static_cast<KGlobalSettings::Completion>(KRunnerSettings::queryTextCompletionMode()));
     lineEdit->setClearButtonShown(true);
@@ -271,8 +277,7 @@ Interface::Interface(QWidget* parent)
 
     QString runButtonWhatsThis = i18n( "Click to execute the selected item above" );
     m_runButton = new KPushButton(KGuiItem(i18n( "Launch" ), "system-run",
-                                           QString(), runButtonWhatsThis),
-                                  w);
+                                           QString(), runButtonWhatsThis), w);
     m_runButton->setEnabled( false );
     m_runButton->setDefault(true);
     connect( m_runButton, SIGNAL( clicked(bool) ), SLOT(run()) );
@@ -368,8 +373,7 @@ void Interface::switchUser()
         QueryMatch *match = new QueryMatch(action, m_matchList);
         if (makeDefault) {
             m_defaultMatch = match;
-            m_defaultMatch->setDefault(true);
-            m_runButton->setEnabled(true);
+            m_defaultMatch->setDefault(true); m_runButton->setEnabled(true);
             Plasma::AbstractRunner *runner=m_runnerManager->runner("SessionRunner");
             if (!runner) {
                 kDebug("We couldn't find the Session runner even when we launched a moment ago");
@@ -469,7 +473,9 @@ void Interface::match()
 
 void Interface::updateMatches(const QList<Plasma::QueryMatch*> &matches)
 {
+    m_matchList->setSortingEnabled(false);
     if (matches.count() == 0) {
+        //kDebug() << "zeroing out";
         QMapIterator<QString, QueryMatch*> it(m_matchesById);
         while (it.hasNext()) {
             it.next();
@@ -483,7 +489,7 @@ void Interface::updateMatches(const QList<Plasma::QueryMatch*> &matches)
     m_clearTimer.stop();
     //kDebug() << "\n\ninterface got:" << m_runnerManager->matches().count() << " matches";
     //kDebug() << "\n\ncurrently we have" << m_matchesById.count() << m_matchesById << endl << endl;
-    QMap<QString, QueryMatch*> existingMatches = m_matchesById;
+    QMultiMap<QString, QueryMatch*> existingMatches = m_matchesById;
     m_matchesById.clear();
     m_defaultMatch = 0;
 
@@ -491,12 +497,13 @@ void Interface::updateMatches(const QList<Plasma::QueryMatch*> &matches)
         QString id = action->id();
         //kDebug() << "checking match with id" << id;
         QueryMatch *match;
-        if (existingMatches.contains(id)) {
-            match = existingMatches.take(id);
-            //kDebug() << "found existing" << match->text();
-        } else {
-            //kDebug() << "making a new one";
+        QMap<QString, QueryMatch*>::iterator existing = existingMatches.find(id);
+        if (existing == existingMatches.end()) {
             match = new QueryMatch(m_matchList);
+        } else {
+            match = existing.value();
+            existingMatches.erase(existing);
+            //kDebug() << "found existing" << match->text();
         }
 
         match->setAction(action);
@@ -517,13 +524,14 @@ void Interface::updateMatches(const QList<Plasma::QueryMatch*> &matches)
     }
 
     // these are now the left overs that no longer actually exist
-    QMutableMapIterator<QString, QueryMatch*> it(existingMatches);
+    //kDebug() << "got" << m_matchesById << "removing" << existingMatches;
+    QMapIterator<QString, QueryMatch*> it(existingMatches);
     while (it.hasNext()) {
         it.next();
         delete it.value();
-        it.remove();
     }
 
+    m_matchList->setSortingEnabled(true);
     m_matchList->sortItems(Qt::DescendingOrder);
 
     if (!m_defaultMatch) {

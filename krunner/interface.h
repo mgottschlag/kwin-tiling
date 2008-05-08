@@ -19,7 +19,7 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-#include <QMap>
+#include <QMultiMap>
 #include <QTimer>
 
 // pulls in definition for Window
@@ -84,7 +84,7 @@ class Interface : public KRunnerDialog
         void resetInterface();
 
         Plasma::RunnerManager* m_runnerManager;
-        QMap<QString, QueryMatch*> m_matchesById;
+        QMultiMap<QString, QueryMatch*> m_matchesById;
         QTimer m_clearTimer;
 
         QVBoxLayout* m_layout;
