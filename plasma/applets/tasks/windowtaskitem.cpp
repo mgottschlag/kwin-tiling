@@ -293,21 +293,21 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
 
         if (s_taskItemBackground && s_taskItemBackground->hasElementPrefix("hover")) {
             //Draw task background from theme svg "hover" element
-            painter->save();
-
-            //if mouse pressed it's more transparent
-            if (option->state & QStyle::State_Sunken) {
-                painter->setOpacity(0.2);
-            } else {
-                painter->setOpacity(m_alpha);
-            }
 
             s_taskItemBackground->setElementPrefix("hover");
             s_taskItemBackground->resizePanel(option->rect.size());
-            s_taskItemBackground->paintPanel(painter, option->rect);
+            QPixmap pixmap(option->rect.size());
+            
+            if (option->state & QStyle::State_Sunken) {
+                pixmap.fill(QColor(0,0,0,50));
+            } else {
+                pixmap.fill(QColor(0,0,0,255*m_alpha));
+            }
 
-            painter->restore();
-
+            QPainter buffPainter(&pixmap);
+            buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+            s_taskItemBackground->paintPanel(&buffPainter, option->rect);
+            painter->drawPixmap(option->rect.topLeft(), pixmap);
         } else {
             //Draw task background without svg theming
             QLinearGradient background(boundingRect().topLeft(),
