@@ -266,7 +266,7 @@ void PanelView::updatePanelGeometry()
     }
 }
 
-void PanelView::setOffset(const int &newOffset)
+void PanelView::setOffset(int newOffset)
 {
     m_offset = newOffset;
     updatePanelGeometry();

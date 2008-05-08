@@ -213,7 +213,7 @@ Qt::Alignment PositioningRuler::alignment() const
     return d->alignment;
 }
 
-void PositioningRuler::setOffset(const int &newOffset)
+void PositioningRuler::setOffset(int newOffset)
 {
     const int delta = newOffset - d->offset;
 
@@ -239,7 +239,7 @@ int PositioningRuler::offset() const
     return d->offset;
 }
 
-void PositioningRuler::setMaxLength(const int &newMax)
+void PositioningRuler::setMaxLength(int newMax)
 {
     int deltaX;
     int deltaY;
@@ -283,7 +283,7 @@ int PositioningRuler::maxLength() const
     return d->maxLength;
 }
 
-void PositioningRuler::setMinLength(const int &newMin)
+void PositioningRuler::setMinLength(int newMin)
 {
     int deltaX;
     int deltaY;
@@ -328,7 +328,7 @@ int PositioningRuler::minLength() const
     return d->minLength;
 }
 
-void PositioningRuler::setAvailableLength(const int &newAvail)
+void PositioningRuler::setAvailableLength(int newAvail)
 {
     d->availableLength = newAvail;
     

@@ -63,10 +63,10 @@ Q_SIGNALS:
      */
      void showAddWidgets();
      void removePanel();
-     void offsetChanged(const int &offset);
+     void offsetChanged(int offset);
 
 private:
-    Q_PRIVATE_SLOT(d, void rulersMoved(const int &offset, const int &minLength, const int &minLength))
+    Q_PRIVATE_SLOT(d, void rulersMoved(int offset, int minLength, int minLength))
 
     class Private;
     Private *d;

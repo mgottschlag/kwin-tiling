@@ -104,7 +104,7 @@ public:
        }
     }
 
-    void rulersMoved(const int &offset, const int &minLength, const int &maxLength)
+    void rulersMoved(int offset, int minLength, int maxLength)
     {
          if (!containment) {
             return;

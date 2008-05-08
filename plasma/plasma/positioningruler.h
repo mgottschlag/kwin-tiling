@@ -46,16 +46,16 @@ public:
     void setAlignment(const Qt::Alignment &align);
     Qt::Alignment alignment() const;
 
-    void setOffset(const int &newOffset);
+    void setOffset(int newOffset);
     int offset() const;
 
-    void setMaxLength(const int &newMax);
+    void setMaxLength(int newMax);
     int maxLength() const;
 
-    void setMinLength(const int &newMin);
+    void setMinLength(int newMin);
     int minLength() const;
 
-    void setAvailableLength(const int &newAvailable);
+    void setAvailableLength(int newAvailable);
     int availableLength() const;
 
 protected:

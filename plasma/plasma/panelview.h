@@ -96,7 +96,7 @@ public Q_SLOTS:
      * Similar way for vertical panels.
      * @param newOffset the offset of the panel
      */
-    void setOffset(const int &newOffset);
+    void setOffset(int newOffset);
 
 protected:
     void updateStruts();
