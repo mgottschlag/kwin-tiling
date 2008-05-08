@@ -97,7 +97,7 @@ QString WebshortcutRunner::getSearchQuery(const QString &query, const QString &t
 {
     // FIXME delimiter check like for above?
     QStringList tempList = term.split(':');
-    if(tempList.count() > 0) {
+    if(tempList.count() > 1) {
         QString searchWord(tempList[1]);
         QString finalQuery(query);
         // FIXME? currently only basic searches are supported
