@@ -104,7 +104,7 @@ void FullView::resizeEvent(QResizeEvent *event)
     qreal newWidth = 0;
     qreal newHeight = 0;
 
-    if (m_applet->aspectRatioMode() == Qt::KeepAspectRatio) {
+    if (m_applet->aspectRatioMode() == Plasma::KeepAspectRatio) {
         float ratio = event->oldSize().width() / event->oldSize().height();
         float newPossibleWidth = size().height() * ratio;
         if (newPossibleWidth > size().width()) {
