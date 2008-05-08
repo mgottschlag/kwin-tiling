@@ -1,21 +1,5 @@
 [Desktop Entry]
 Name=Xesam Search
-Name[el]=Εκτελεστής αναζήτησης Xesam
-Name[et]=Xesami otsingu käivitaja
-Name[ga]=Feidhmitheoir Cuardaigh Xesam
-Name[gu]=Xesam શોધ ચલાવનાર
-Name[ja]=Xesam 検索 Runner
-Name[km]=កម្មវិធី​រត់​ការ​ស្វែងរក Xesam
-Name[nds]=Xesam-Söökdreger
-Name[pt]=Execução de pesquisas no Xesam
-Name[pt_BR]=Mecanismo de Busca Xesam
-Name[ro]=Executor Căutare Xesam
-Name[sv]=Utför sökning med Xesam
-Name[tr]=Xesam Arama çalıştırıcı
-Name[uk]=Механізм пошуку Xesam
-Name[x-test]=xxXesam Search runnerxx
-Name[zh_CN]=Xesam 搜索运行器
-Name[zh_TW]=Xesam 搜索引擎
 Comment=Allows user to use a Xesam compatible indexer for desktop search
 Comment[el]=Επιτρέπει τη χρήση ενός συμβατού με το Xesam ευρετηρίου για αναζητήσεις
 Comment[et]=Võimaldab kasutajal kasutada Xesamiga ühilduvat indekseerijat töölauaotsinguks
