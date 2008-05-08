@@ -78,6 +78,7 @@ ThemeModel::~ThemeModel()
 
 void ThemeModel::reload()
 {
+    reset();
     m_themes.clear();
     m_svgs.clear();
 
@@ -90,12 +91,14 @@ void ThemeModel::reload()
         QString themeRoot = theme.left(themeSepIndex);
         int themeNameSepIndex = themeRoot.lastIndexOf("/", -1);
         QString name = themeRoot.right(themeRoot.length() - themeNameSepIndex - 1);
+        beginInsertRows(QModelIndex(), m_themes.size(), m_themes.size());
         m_themes << name;
 
         Plasma::PanelSvg *svg = new Plasma::PanelSvg(this);
         svg->setImagePath(themeRoot + "/widgets/background.svg");
         svg->setEnabledBorders(Plasma::PanelSvg::AllBorders);
         m_svgs.append( svg );
+        endInsertRows();
     }
 }
 
