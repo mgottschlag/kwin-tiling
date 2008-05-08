@@ -87,7 +87,7 @@ QList<QAction*> Panel::contextualActions()
         m_appletBrowserAction = new QAction(i18n("Add Widgets..."), this);
         m_appletBrowserAction->setIcon(KIcon("list-add"));
 
-        bool locked = immutability() != NotImmutable;
+        bool locked = immutability() != Mutable;
         m_appletBrowserAction->setVisible(!locked);
         connect(m_appletBrowserAction, SIGNAL(triggered()), this, SLOT(showAddWidgets()));
 
@@ -292,7 +292,7 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & Plasma::ImmutableConstraint && m_appletBrowserAction) {
         // we need to update the menu items that have already been created
-        bool locked = immutability() != NotImmutable;
+        bool locked = immutability() != Mutable;
         m_appletBrowserAction->setVisible(!locked);
         m_removeAction->setVisible(!locked);
     }

@@ -97,7 +97,7 @@ void LauncherApplet::init()
 
     Q_ASSERT( ! d->switcher );
     d->switcher = new QAction(i18n("Switch to Classic Menu Style"), this);
-    d->switcher->setVisible(immutability() == Plasma::NotImmutable);
+    d->switcher->setVisible(immutability() == Plasma::Mutable);
     d->actions.append(d->switcher);
     connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
     resize(IconSize(KIconLoader::Desktop),IconSize(KIconLoader::Desktop));
@@ -128,7 +128,7 @@ void LauncherApplet::constraintsEvent(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::ImmutableConstraint) {
-        d->switcher->setVisible(immutability() == Plasma::NotImmutable);
+        d->switcher->setVisible(immutability() == Plasma::Mutable);
     }
 }
 

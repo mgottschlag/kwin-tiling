@@ -140,7 +140,7 @@ void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & Plasma::ImmutableConstraint && m_appletBrowserAction) {
         // we need to update the menu items that have already been created
-        bool locked = immutability() != NotImmutable;
+        bool locked = immutability() != Mutable;
         m_appletBrowserAction->setVisible(!locked);
         m_addPanelAction->setVisible(!locked);
         if (locked) {
@@ -408,7 +408,7 @@ QList<QAction*> DefaultDesktop::contextualActions()
 
     actions.append(m_separator);
 
-    if (immutability() == NotImmutable && s_icons && s_icons->showIcons()) {
+    if (immutability() == Mutable && s_icons && s_icons->showIcons()) {
         //icon actions
         actions << s_icons->contextualActions();
         actions.append(m_separator2);
