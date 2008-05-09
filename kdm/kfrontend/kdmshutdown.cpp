@@ -45,6 +45,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QLabel>
 #include <QLineEdit>
 #include <QMenu>
+#include <QStylePainter>
 #include <QStyle>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
@@ -440,30 +441,41 @@ KDMDelayedPushButton::KDMDelayedPushButton( const KGuiItem &item,
 	connect( &popt, SIGNAL(timeout()), SLOT(slotTimeout()) );
 }
 
-void KDMDelayedPushButton::setPopup( QMenu *p )
+void KDMDelayedPushButton::setDelayedMenu( QMenu *p )
 {
 	pop = p;
-	setMenu( p );
+}
+
+void KDMDelayedPushButton::paintEvent( QPaintEvent * )
+{
+	QStylePainter p(this);
+	QStyleOptionButton option;
+	initStyleOption(&option);
+	if (pop)
+		option.features |= QStyleOptionButton::HasMenu;
+	p.drawControl(QStyle::CE_PushButton, option);
 }
 
 void KDMDelayedPushButton::slotPressed()
 {
 	if (pop)
-		popt.start( QApplication::startDragTime() );
+		popt.start( style()->styleHint(QStyle::SH_ToolButton_PopupDelay, 0, this) );
 }
 
 void KDMDelayedPushButton::slotReleased()
 {
 	popt.stop();
+	setMenu(0);
 }
 
 void KDMDelayedPushButton::slotTimeout()
 {
 	popt.stop();
-	pop->popup( mapToGlobal( rect().bottomLeft() ) );
+	setMenu( pop );
+	showMenu();
+	setMenu( 0 );
 	setDown( false );
 }
-
 
 KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 	: inherited( _parent )
@@ -510,7 +522,7 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 			                            "%1 (current)", t ) :
 			                     t ))->setData( i );
 		}
-		btnReboot->setPopup( targets );
+		btnReboot->setDelayedMenu( targets );
 		connect( targets, SIGNAL(triggered( QAction * )),
 		         SLOT(slotReboot( QAction * )) );
 	}
