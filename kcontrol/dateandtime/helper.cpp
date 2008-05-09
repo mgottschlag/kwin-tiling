@@ -228,7 +228,7 @@ int main( int argc, char* argv[] )
   }
   bool ntp = false;
   QStringList ntpServerList;
-  bool ntpEnabled;
+  bool ntpEnabled = false;
   bool date = false;
   QString datestr;
   bool tz = false;
