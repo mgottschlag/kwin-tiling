@@ -29,9 +29,8 @@ class XesamRunner : public Plasma::AbstractRunner {
         XesamRunner(QObject *parent, const QVariantList& args);
         ~XesamRunner();
 
-        void match(Plasma::RunnerContext *context);
-        void run(const Plasma::RunnerContext *context,
-                  const Plasma::QueryMatch *match);
+        void match(Plasma::RunnerContext &context);
+        void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match);
 };
 
 K_EXPORT_PLASMA_RUNNER(xesam, XesamRunner)

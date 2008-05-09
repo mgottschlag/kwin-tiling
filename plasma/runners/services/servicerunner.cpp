@@ -40,9 +40,9 @@ ServiceRunner::~ServiceRunner()
 {
 }
 
-void ServiceRunner::match(Plasma::RunnerContext *search)
+void ServiceRunner::match(Plasma::RunnerContext &context)
 {
-    const QString term = search->query();
+    const QString term = context.query();
     if (term.length() <  3) {
         return;
     }
@@ -50,15 +50,15 @@ void ServiceRunner::match(Plasma::RunnerContext *search)
     QMutexLocker lock(bigLock());
     KService::Ptr service = KService::serviceByName(term);
 
-    QList<Plasma::QueryMatch*> matches;
+    QList<Plasma::QueryMatch> matches;
 
     QHash<QString, bool> seen;
     if (service && !service->exec().isEmpty()) {
         //kDebug() << service->name() << "is an exact match!" << service->storageId() << service->exec();
-        Plasma::QueryMatch *match = new Plasma::QueryMatch(this);
-        match->setType(Plasma::QueryMatch::ExactMatch);
+        Plasma::QueryMatch match(this);
+        match.setType(Plasma::QueryMatch::ExactMatch);
         setupAction(service, match);
-        match->setRelevance(1);
+        match.setRelevance(1);
         matches << match;
         seen[service->storageId()] = true;
         seen[service->exec()] = true;
@@ -80,7 +80,8 @@ void ServiceRunner::match(Plasma::RunnerContext *search)
         seen[id] = true;
         seen[exec] = true;
 
-        Plasma::QueryMatch *match = new Plasma::QueryMatch(this);
+        Plasma::QueryMatch match(this);
+        match.setType(Plasma::QueryMatch::ExactMatch);
         setupAction(service, match);
         qreal relevance(0.6);
 
@@ -94,49 +95,49 @@ void ServiceRunner::match(Plasma::RunnerContext *search)
             if (id.startsWith("kde-")) {
                 // This is an older version, let's disambiguate it
                 QString subtext("KDE3");
-                if (!match->subtext().isEmpty()) {
-                    subtext.append(", " + match->subtext());
+                if (!match.subtext().isEmpty()) {
+                    subtext.append(", " + match.subtext());
                 }
 
-                match->setSubtext(subtext);
+                match.setSubtext(subtext);
             } else {
                 relevance += .1;
             }
         }
 
         //kDebug() << service->name() << "is this relevant:" << relevance;
-        match->setRelevance(relevance);
+        match.setRelevance(relevance);
         matches << match;
     }
 
-    search->addMatches(term, matches);
+    context.addMatches(term, matches);
 }
 
-void ServiceRunner::run(const Plasma::RunnerContext *search, const Plasma::QueryMatch *action)
+void ServiceRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
-    Q_UNUSED(search);
+    Q_UNUSED(context);
     QMutexLocker lock(bigLock());
-    KService::Ptr service = KService::serviceByStorageId(action->data().toString());
+    KService::Ptr service = KService::serviceByStorageId(match.data().toString());
     if (service) {
         KRun::run(*service, KUrl::List(), 0);
     }
 }
 
-void ServiceRunner::setupAction(const KService::Ptr &service, Plasma::QueryMatch *action)
+void ServiceRunner::setupAction(const KService::Ptr &service, Plasma::QueryMatch &match)
 {
     const QString name = service->name();
 
-    action->setText(name);
-    action->setData(service->storageId());
+    match.setText(name);
+    match.setData(service->storageId());
 
     if (!service->genericName().isEmpty() && service->genericName() != name) {
-        action->setSubtext(service->genericName());
+        match.setSubtext(service->genericName());
     } else if (!service->comment().isEmpty()) {
-        action->setSubtext(service->comment());
+        match.setSubtext(service->comment());
     }
 
     if (!service->icon().isEmpty()) {
-        action->setIcon(KIcon(service->icon()));
+        match.setIcon(KIcon(service->icon()));
     }
 }
 

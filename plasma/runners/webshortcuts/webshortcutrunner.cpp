@@ -48,16 +48,16 @@ WebshortcutRunner::~WebshortcutRunner()
 {
 }
 
-void WebshortcutRunner::match(Plasma::RunnerContext *search)
+void WebshortcutRunner::match(Plasma::RunnerContext &context)
 {
-    const QString term = search->query();
+    const QString term = context.query();
     const char separator = ':';
 
     if (term.length() < 3 || !term.contains(separator)) {
         return;
     }
 
-    //kDebug() << "checking with" << term;
+    kDebug() << "checking with" << term;
 
     QMutexLocker lock(bigLock());
     foreach (const KService::Ptr &service, m_offers) {
@@ -72,21 +72,21 @@ void WebshortcutRunner::match(Plasma::RunnerContext *search)
                 QString url = getSearchQuery(service->property("Query").toString(), term);
                 //kDebug() << "url is" << url << "!!!!!!!!!!!!!!!!!!!!!!!";
 
-                Plasma::QueryMatch *match = new Plasma::QueryMatch(this);
-                match->setType(Plasma::QueryMatch::ExactMatch);
-                match->setText(actionText);
-                match->setData(service->property("Query").toString());
-                match->setRelevance(0.9);
+                Plasma::QueryMatch match(this);
+                match.setType(Plasma::QueryMatch::ExactMatch);
+                match.setText(actionText);
+                match.setData(service->property("Query").toString());
+                match.setRelevance(0.9);
 
                 // let's try if we can get a proper icon from the favicon cache
                 KIcon icon = getFavicon(url);
                 if (icon.isNull()){
-                    match->setIcon(m_icon);
+                    match.setIcon(m_icon);
                 } else {
-                    match->setIcon(icon);
+                    match.setIcon(icon);
                 }
 
-                search->addMatch(term, match);
+                context.addMatch(term, match);
                 return;
             }
         }
@@ -97,7 +97,7 @@ QString WebshortcutRunner::getSearchQuery(const QString &query, const QString &t
 {
     // FIXME delimiter check like for above?
     QStringList tempList = term.split(':');
-    if(tempList.count() > 1) {
+    if (tempList.count() > 1) {
         QString searchWord(tempList[1]);
         QString finalQuery(query);
         // FIXME? currently only basic searches are supported
@@ -129,9 +129,9 @@ KIcon WebshortcutRunner::getFavicon(const KUrl &url) {
     return icon;
 }
 
-void WebshortcutRunner::run(const Plasma::RunnerContext *search, const Plasma::QueryMatch *action)
+void WebshortcutRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
-    QString location = getSearchQuery(action->data().toString(), search->query());
+    QString location = getSearchQuery(match.data().toString(), context.query());
 
     if (!location.isEmpty()) {
         KToolInvocation::invokeBrowser(location);

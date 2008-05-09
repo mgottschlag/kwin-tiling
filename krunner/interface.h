@@ -70,7 +70,7 @@ class Interface : public KRunnerDialog
     protected Q_SLOTS:
         void clearMatches();
         void match();
-        void updateMatches(const QList<Plasma::QueryMatch*> &matches);
+        void updateMatches(const QList<Plasma::QueryMatch> &matches);
         void setWidgetPalettes();
         void run();
         void matchActivated( QListWidgetItem* );

@@ -142,9 +142,9 @@ void CalculatorRunner::userFriendlySubstitutions(QString& cmd)
 }
 
 
-void CalculatorRunner::match(Plasma::RunnerContext *search)
+void CalculatorRunner::match(Plasma::RunnerContext &context)
 {
-    const QString term = search->query();
+    const QString term = context.query();
     QString cmd = term;
 
     if (cmd.length() < 4 || cmd[0] != '=') {
@@ -163,13 +163,13 @@ void CalculatorRunner::match(Plasma::RunnerContext *search)
     QString result = calculate(cmd);
 
     if (!result.isEmpty() && result != cmd) {
-        Plasma::QueryMatch *match = new Plasma::QueryMatch(this);
-        match->setType(Plasma::QueryMatch::InformationalMatch);
-        match->setIcon(KIcon("accessories-calculator"));
-        match->setText(QString("%1 = %2").arg(cmd, result));
-        match->setData("= " + result);
-        match->setId(QString());
-        search->addMatch(term, match);
+        Plasma::QueryMatch match(this);
+        match.setType(Plasma::QueryMatch::InformationalMatch);
+        match.setIcon(KIcon("accessories-calculator"));
+        match.setText(QString("%1 = %2").arg(cmd, result));
+        match.setData("= " + result);
+        match.setId(QString());
+        context.addMatch(term, match);
     }
 }
 

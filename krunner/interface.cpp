@@ -70,14 +70,16 @@ class QueryMatch : public QListWidgetItem
 
         void setAction(const Plasma::QueryMatch *action)
         {
-            m_action = action;
+            delete m_action;
 
-            if (!m_action) {
+            if (!action) {
+                m_action = 0;
                 //setIcon(QIcon());
                 //setText(QString());
                 return;
             }
 
+            m_action = new Plasma::QueryMatch(*action);
             setIcon(m_action->icon());
             if (!action) {
                 kDebug() << "empty action got on the interface, something is rotten";
@@ -97,8 +99,7 @@ class QueryMatch : public QListWidgetItem
 
         void activate(Plasma::RunnerManager *manager) const
         {
-            Q_ASSERT(m_action);
-            manager->run(m_action);
+            manager->run(*m_action);
         }
 
         bool actionEnabled() const
@@ -302,8 +303,8 @@ Interface::Interface(QWidget* parent)
     //        SLOT(setWidgetPalettes()));
 
 
-    connect(m_runnerManager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch*>&)),
-            this, SLOT(updateMatches(const QList<Plasma::QueryMatch*>&)));
+    connect(m_runnerManager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
+            this, SLOT(updateMatches(const QList<Plasma::QueryMatch>&)));
 
     resetInterface();
 }
@@ -471,7 +472,7 @@ void Interface::match()
 
 }
 
-void Interface::updateMatches(const QList<Plasma::QueryMatch*> &matches)
+void Interface::updateMatches(const QList<Plasma::QueryMatch> &matches)
 {
     m_matchList->setSortingEnabled(false);
     if (matches.count() == 0) {
@@ -493,8 +494,8 @@ void Interface::updateMatches(const QList<Plasma::QueryMatch*> &matches)
     m_matchesById.clear();
     m_defaultMatch = 0;
 
-    foreach (const Plasma::QueryMatch *action, matches) {
-        QString id = action->id();
+    foreach (const Plasma::QueryMatch &action, matches) {
+        QString id = action.id();
         //kDebug() << "checking match with id" << id;
         QueryMatch *match;
         QMap<QString, QueryMatch*>::iterator existing = existingMatches.find(id);
@@ -506,19 +507,19 @@ void Interface::updateMatches(const QList<Plasma::QueryMatch*> &matches)
             //kDebug() << "found existing" << match->text();
         }
 
-        match->setAction(action);
+        match->setAction(&action);
         m_matchesById.insert(id, match);
 
-        if (action->isEnabled() && action->relevance() > 0 &&
+        if (action.isEnabled() && action.relevance() > 0 &&
             (!m_defaultMatch || *m_defaultMatch < *match) &&
-            (action->type() != Plasma::QueryMatch::InformationalMatch ||
-             !action->data().toString().isEmpty())) {
+            (action.type() != Plasma::QueryMatch::InformationalMatch ||
+             !action.data().toString().isEmpty())) {
             if (m_defaultMatch) {
                 m_defaultMatch->setDefault(false);
             }
             match->setDefault(true);
             m_defaultMatch = match;
-            m_optionsButton->setEnabled(action->runner()->hasRunOptions());
+            m_optionsButton->setEnabled(action.runner()->hasRunOptions());
             m_runButton->setEnabled(true);
         }
     }

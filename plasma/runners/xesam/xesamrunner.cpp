@@ -47,9 +47,9 @@ XesamRunner::~XesamRunner()
 {
 }
 
-void XesamRunner::match(Plasma::RunnerContext *context)
+void XesamRunner::match(Plasma::RunnerContext &context)
 {
-    if (context->query().length()<3) return;
+    if (context.query().length()<3) return;
 
     QDBusInterface xesam("org.freedesktop.xesam.searcher",
                          "/org/freedesktop/xesam/searcher/main");
@@ -66,7 +66,7 @@ void XesamRunner::match(Plasma::RunnerContext *context)
         "<request xmlns='http://freedesktop.org/standards/xesam/1.0/query'>"
         "<userQuery>%1</userQuery>"
         "</request>";
-    QString userQuery = context->query();
+    QString userQuery = context.query();
 
     reply = xesam.call("NewSearch", session, query.arg(userQuery));
     if (!reply.isValid()) return;
@@ -97,21 +97,21 @@ void XesamRunner::match(Plasma::RunnerContext *context)
             title = hit[0].toString();
         }
 
-        Plasma::QueryMatch *match = new Plasma::QueryMatch(this);
-        match->setType(Plasma::QueryMatch::PossibleMatch);
-        match->setIcon(KIcon("text-x-generic"));
-        match->setData(url);
-        match->setText(title);
-        match->setRelevance(1);
-        context->addMatch(userQuery, match);
+        Plasma::QueryMatch match(this);
+        match.setType(Plasma::QueryMatch::PossibleMatch);
+        match.setIcon(KIcon("text-x-generic"));
+        match.setData(url);
+        match.setText(title);
+        match.setRelevance(1);
+        context.addMatch(userQuery, match);
     }
 }
 
-void XesamRunner::run(const Plasma::RunnerContext *context,
-                       const Plasma::QueryMatch *match)
+void XesamRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
+    Q_UNUSED(context)
     QMutexLocker lock(bigLock());
-    new KRun(KUrl(match->data().toString()), 0);
+    new KRun(KUrl(match.data().toString()), 0);
 }
 
 #include "xesamrunner.moc"

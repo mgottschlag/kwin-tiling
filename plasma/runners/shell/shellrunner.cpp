@@ -52,21 +52,21 @@ ShellRunner::~ShellRunner()
 {
 }
 
-void ShellRunner::match(Plasma::RunnerContext *search)
+void ShellRunner::match(Plasma::RunnerContext &context)
 {
     if (!m_enabled) {
         return;
     }
 
-    if (search->type() == Plasma::RunnerContext::Executable ||
-        search->type() == Plasma::RunnerContext::ShellCommand)  {
-        const QString term = search->query();
-        Plasma::QueryMatch* match = new Plasma::QueryMatch(this);
-        match->setType(Plasma::QueryMatch::ExactMatch);
-        match->setIcon(KIcon("system-run"));
-        match->setText(i18n("Run %1", term));
-        match->setRelevance(1);
-        search->addMatch(term, match);
+    if (context.type() == Plasma::RunnerContext::Executable ||
+        context.type() == Plasma::RunnerContext::ShellCommand)  {
+        const QString term = context.query();
+        Plasma::QueryMatch match(this);
+        match.setType(Plasma::QueryMatch::ExactMatch);
+        match.setIcon(KIcon("system-run"));
+        match.setText(i18n("Run %1", term));
+        match.setRelevance(1);
+        context.addMatch(term, match);
     }
 }
 
@@ -85,20 +85,20 @@ void ShellRunner::setRunInTerminal(bool inTerminal)
     m_inTerminal = inTerminal;
 }
 
-void ShellRunner::run(const Plasma::RunnerContext *search, const Plasma::QueryMatch *action)
+void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
-    Q_UNUSED(action);
+    Q_UNUSED(match);
     if (!m_enabled) {
         return;
     }
 
     if (m_inTerminal) {
-        KToolInvocation::invokeTerminal(search->query());
+        KToolInvocation::invokeTerminal(context.query());
 
         // reset for the next run!
         m_inTerminal = false;
     } else {
-        KRun::runCommand(search->query(), NULL);
+        KRun::runCommand(context.query(), NULL);
     }
 }
 

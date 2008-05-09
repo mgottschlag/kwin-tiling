@@ -64,25 +64,30 @@ void processUrl(KUrl &url, const QString &term)
     }
 }
 
-void LocationsRunner::match(Plasma::RunnerContext *search)
+void LocationsRunner::match(Plasma::RunnerContext &context)
 {
-    QString term = search->query();
-    m_type = search->type();
-    Plasma::QueryMatch *action = 0;
+    QString term = context.query();
+    m_type = context.type();
 
     if (m_type == Plasma::RunnerContext::Directory ||
         m_type == Plasma::RunnerContext::File) {
-        action = new Plasma::QueryMatch(this);
-        action->setType(Plasma::QueryMatch::ExactMatch);
-        action->setText(i18n("Open %1", term));
-        action->setIcon(KIcon("system-file-manager"));
+        Plasma::QueryMatch match(this);
+        match.setType(Plasma::QueryMatch::ExactMatch);
+        match.setText(i18n("Open %1", term));
+        match.setIcon(KIcon("system-file-manager"));
+        match.setRelevance(1);
+        match.setType(Plasma::QueryMatch::ExactMatch);
+        context.addMatch(term, match);
     } else if (m_type == Plasma::RunnerContext::Help) {
         //kDebug() << "Locations matching because of" << m_type;
-        action = new Plasma::QueryMatch(this);
-        action->setType(Plasma::QueryMatch::ExactMatch);
-        action->setText(i18n("Open %1", term));
-        action->setIcon(KIcon("system-help"));
-        action->setRelevance(1);
+        Plasma::QueryMatch match(this);
+        match.setType(Plasma::QueryMatch::ExactMatch);
+        match.setText(i18n("Open %1", term));
+        match.setIcon(KIcon("system-help"));
+        match.setRelevance(1);
+        match.setRelevance(1);
+        match.setType(Plasma::QueryMatch::ExactMatch);
+        context.addMatch(term, match);
     } else if (m_type == Plasma::RunnerContext::NetworkLocation ||
                (m_type == Plasma::RunnerContext::UnknownType &&
                 term.contains(QRegExp("^[a-zA-Z0-9]+\\.")))) {
@@ -93,41 +98,37 @@ void LocationsRunner::match(Plasma::RunnerContext *search)
             return;
         }
 
-        action = new Plasma::QueryMatch(this);
-        action->setText(i18n("Go to %1", url.prettyUrl()));
-        action->setIcon(KIcon(KProtocolInfo::icon(url.protocol())));
-        action->setData(url.url());
+        Plasma::QueryMatch match(this);
+        match.setText(i18n("Go to %1", url.prettyUrl()));
+        match.setIcon(KIcon(KProtocolInfo::icon(url.protocol())));
+        match.setData(url.url());
 
         if (KProtocolInfo::isHelperProtocol(url.protocol())) {
             //kDebug() << "helper protocol" << url.protocol() <<"call external application" ; 
-            action->setText(i18n("Launch with %1", KProtocolInfo::exec(url.protocol())));
+            match.setText(i18n("Launch with %1", KProtocolInfo::exec(url.protocol())));
         } else {
             //kDebug() << "protocol managed by browser" << url.protocol();
-            action->setText(i18n("Go to %1", url.prettyUrl()));
+            match.setText(i18n("Go to %1", url.prettyUrl()));
         }
 
         if (m_type == Plasma::RunnerContext::UnknownType) {
-            action->setRelevance(0);
-            action->setType(Plasma::QueryMatch::PossibleMatch);
-        }
-    }
-
-    if (action) {
-        if (m_type != Plasma::RunnerContext::UnknownType) {
-            action->setRelevance(1);
-            action->setType(Plasma::QueryMatch::ExactMatch);
+            match.setRelevance(0);
+            match.setType(Plasma::QueryMatch::PossibleMatch);
+        } else {
+            match.setRelevance(1);
+            match.setType(Plasma::QueryMatch::ExactMatch);
         }
 
-        search->addMatch(term, action);
+        context.addMatch(term, match);
     }
 }
 
-void LocationsRunner::run(const Plasma::RunnerContext *search, const Plasma::QueryMatch *action)
+void LocationsRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
-    QString data = action->data().toString();
-    const QString location = search->query();
+    QString data = match.data().toString();
+    const QString location = context.query();
 
-    //kDebug() << "command: " << action->query();
+    //kDebug() << "command: " << match.query();
     //kDebug() << "url: " << location << data;
     if (m_type == Plasma::RunnerContext::UnknownType) {
         KToolInvocation::invokeBrowser(location);

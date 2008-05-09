@@ -42,11 +42,11 @@ class ServiceRunner : public Plasma::AbstractRunner
         ServiceRunner(QObject *parent, const QVariantList &args);
         ~ServiceRunner();
 
-        void match(Plasma::RunnerContext *context);
-        void run(const Plasma::RunnerContext *context, const Plasma::QueryMatch *action);
+        void match(Plasma::RunnerContext &context);
+        void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &action);
 
     protected:
-        void setupAction(const KService::Ptr &service, Plasma::QueryMatch *action);
+        void setupAction(const KService::Ptr &service, Plasma::QueryMatch &action);
 };
 
 K_EXPORT_PLASMA_RUNNER(services, ServiceRunner)

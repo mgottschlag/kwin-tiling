@@ -27,11 +27,11 @@ class LocationsRunner : public Plasma::AbstractRunner {
     Q_OBJECT
 
     public:
-        LocationsRunner( QObject *parent, const QVariantList& args );
+        LocationsRunner(QObject *parent, const QVariantList& args);
         ~LocationsRunner();
 
-        void match(Plasma::RunnerContext *search);
-        void run(const Plasma::RunnerContext *context, const Plasma::QueryMatch *action);
+        void match(Plasma::RunnerContext &context);
+        void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &action);
 
     private:
         Plasma::RunnerContext::Type m_type;

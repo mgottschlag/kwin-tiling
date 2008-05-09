@@ -47,9 +47,9 @@ BookmarksRunner::~BookmarksRunner()
 {
 }
 
-void BookmarksRunner::match(Plasma::RunnerContext *search)
+void BookmarksRunner::match(Plasma::RunnerContext &context)
 {
-    const QString term = search->query();
+    const QString term = context.query();
     if (term.length() < 3) {
         return;
     }
@@ -57,7 +57,7 @@ void BookmarksRunner::match(Plasma::RunnerContext *search)
     KBookmarkManager *bookmarkManager = KBookmarkManager::userBookmarksManager();
     KBookmarkGroup bookmarkGroup = bookmarkManager->root();
 
-    QList<Plasma::QueryMatch*> matches;
+    QList<Plasma::QueryMatch> matches;
     QStack<KBookmarkGroup> groups;
 
     KBookmark bookmark = bookmarkGroup.first();
@@ -77,20 +77,21 @@ void BookmarksRunner::match(Plasma::RunnerContext *search)
             continue;
         }
 
-        Plasma::QueryMatch *match = 0;
+        Plasma::QueryMatch::Type type = Plasma::QueryMatch::NoMatch;
+        qreal relevance = 0;
+
         if (bookmark.text().toLower() == term.toLower()) {
-            match = new Plasma::QueryMatch(this);
-            match->setType(Plasma::QueryMatch::ExactMatch);
-            match->setRelevance(1);
+            type = Plasma::QueryMatch::ExactMatch;
+            relevance = 1;
         } else if (bookmark.text().contains(term, Qt::CaseInsensitive)) {
-            match = new Plasma::QueryMatch(this);
-            match->setRelevance(0.9);
+            type = Plasma::QueryMatch::PossibleMatch;
+            relevance = 0.9;
         } else if (bookmark.url().prettyUrl().contains(term, Qt::CaseInsensitive)) {
-            match = new Plasma::QueryMatch(this);
-            match->setRelevance(0.8);
+            type = Plasma::QueryMatch::PossibleMatch;
+            relevance = 0.8;
         }
 
-        if (match) {
+        if (type != Plasma::QueryMatch::NoMatch) {
             //kDebug() << "Found bookmark: " << bookmark.text() << " (" << bookmark.url().prettyUrl() << ")";
             // getting the favicon is too slow and can easily lead to starving the thread pool out
             /*
@@ -103,9 +104,12 @@ void BookmarksRunner::match(Plasma::RunnerContext *search)
             }
             */
 
-            match->setIcon(m_icon);
-            match->setText(bookmark.text());
-            match->setData(bookmark.url().url());
+            Plasma::QueryMatch match(this);
+            match.setType(type);
+            match.setRelevance(relevance);
+            match.setIcon(m_icon);
+            match.setText(bookmark.text());
+            match.setData(bookmark.url().url());
             matches << match;
         }
 
@@ -118,7 +122,7 @@ void BookmarksRunner::match(Plasma::RunnerContext *search)
         }
     }
 
-    search->addMatches(term, matches);
+    context.addMatches(term, matches);
 }
 
 KIcon BookmarksRunner::getFavicon(const KUrl &url)
@@ -142,10 +146,10 @@ KIcon BookmarksRunner::getFavicon(const KUrl &url)
     return icon;
 }
 
-void BookmarksRunner::run(const Plasma::RunnerContext *search, const Plasma::QueryMatch *action)
+void BookmarksRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &action)
 {
-    Q_UNUSED(search);
-    KUrl url = (KUrl)action->data().toString();
+    Q_UNUSED(context);
+    KUrl url = (KUrl)action.data().toString();
     //kDebug() << "BookmarksRunner::run opening: " << url.url();
     KToolInvocation::invokeBrowser(url.url());
 }

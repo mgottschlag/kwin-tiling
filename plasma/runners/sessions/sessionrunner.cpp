@@ -47,50 +47,52 @@ SessionRunner::~SessionRunner()
 {
 }
 
-
-  
-Plasma::QueryMatch* SessionRunner::matchCommands(const QString& term)
+void SessionRunner::matchCommands(QList<Plasma::QueryMatch> &matches, const QString& term)
 {
-      Plasma::QueryMatch *match = 0;
       if (term.compare(i18nc("log out command","logout"), Qt::CaseInsensitive) == 0 ||
           term.compare(i18n("log out"), Qt::CaseInsensitive) == 0) {
-          match = new Plasma::QueryMatch(this);
-          match->setText(i18nc("log out command","Logout"));
-          match->setIcon(KIcon("system-log-out"));
-          match->setData(LogoutAction);
+          Plasma::QueryMatch match(this);
+          match.setText(i18nc("log out command","Logout"));
+          match.setIcon(KIcon("system-log-out"));
+          match.setData(LogoutAction);
+          match.setType(Plasma::QueryMatch::ExactMatch);
+          match.setRelevance(0.9);
+          matches << match;
       } else if (term.compare(i18nc("restart computer command", "restart"), Qt::CaseInsensitive) == 0 ||
                  term.compare(i18nc("restart computer command", "reboot"), Qt::CaseInsensitive) == 0) {
-          match = new Plasma::QueryMatch(this);
-          match->setText(i18n("Restart the computer"));
-          match->setIcon(KIcon("system-restart"));
-          match->setData(RestartAction);
+          Plasma::QueryMatch match(this);
+          match.setText(i18n("Restart the computer"));
+          match.setIcon(KIcon("system-restart"));
+          match.setData(RestartAction);
+          match.setType(Plasma::QueryMatch::ExactMatch);
+          match.setRelevance(0.9);
+          matches << match;
       } else if (term.compare(i18nc("shutdown computer command","shutdown"), Qt::CaseInsensitive) == 0) {
-          match = new Plasma::QueryMatch(this);
-          match->setText(i18n("Shutdown the computer"));
-          match->setIcon(KIcon("system-shutdown"));
-          match->setData(ShutdownAction);
+          Plasma::QueryMatch match(this);
+          match.setText(i18n("Shutdown the computer"));
+          match.setIcon(KIcon("system-shutdown"));
+          match.setData(ShutdownAction);
+          match.setType(Plasma::QueryMatch::ExactMatch);
+          match.setRelevance(0.9);
+          matches << match;
       } else if (term.compare(i18nc("lock screen command","lock"), Qt::CaseInsensitive) == 0) {
-          match = new Plasma::QueryMatch(this);
-          match->setText(i18n("Lock the screen"));
-          match->setIcon(KIcon("system-lock-screen"));
-          match->setData(LockAction);
+          Plasma::QueryMatch match(this);
+          match.setText(i18n("Lock the screen"));
+          match.setIcon(KIcon("system-lock-screen"));
+          match.setData(LockAction);
+          match.setType(Plasma::QueryMatch::ExactMatch);
+          match.setRelevance(0.9);
+          matches << match;
       }
+}
 
-      if (match) {
-          match->setType(Plasma::QueryMatch::ExactMatch);
-          match->setRelevance(0.9);
-      }
-      return match;
-  }
-
-
-void SessionRunner::match(Plasma::RunnerContext *search)
+void SessionRunner::match(Plasma::RunnerContext &context)
 {
-    const QString term = search->query();
+    const QString term = context.query();
     QString user;
     bool matchUser = false;
 
-    QList<Plasma::QueryMatch*> matches;
+    QList<Plasma::QueryMatch> matches;
 
     if (term.size() < 3) {
         return;
@@ -120,11 +122,7 @@ void SessionRunner::match(Plasma::RunnerContext *search)
         } else {
             // we know it's not SESSION or "switch <something>", so let's
             // try some other possibilities
-            Plasma::QueryMatch *commandMatch;
-            commandMatch = matchCommands(term);
-            if (commandMatch) {
-                matches << commandMatch;
-            }
+            matchCommands(matches, term);
         }
     }
 
@@ -138,12 +136,11 @@ void SessionRunner::match(Plasma::RunnerContext *search)
         KAuthorized::authorizeKAction("start_new_session") &&
         dm.isSwitchable() &&
         dm.numReserve() >= 0) {
-        Plasma::QueryMatch *action = new Plasma::QueryMatch(this);
-        action->setType(Plasma::QueryMatch::ExactMatch);
-        action->setIcon(KIcon("system-switch-user"));
-        action->setText(i18n("New Session"));
-
-        matches << action;
+        Plasma::QueryMatch match(this);
+        match.setType(Plasma::QueryMatch::ExactMatch);
+        match.setIcon(KIcon("system-switch-user"));
+        match.setText(i18n("New Session"));
+        matches << match;
     }
 
     // now add the active sessions
@@ -155,42 +152,45 @@ void SessionRunner::match(Plasma::RunnerContext *search)
             }
 
             QString name = KDisplayManager::sess2Str(session);
-            Plasma::QueryMatch* match = 0;
+            Plasma::QueryMatch::Type type = Plasma::QueryMatch::NoMatch;
+            qreal relevance = 0.7;
 
             if (listAll) {
-                match = new Plasma::QueryMatch(this);
-                match->setType(Plasma::QueryMatch::ExactMatch);
-                match->setRelevance(1);
+                type = Plasma::QueryMatch::ExactMatch;
+                relevance = 1;
             } else if (matchUser) {
                 if (name.compare(user, Qt::CaseInsensitive) == 0) {
                     // we need an elif branch here because we don't
                     // want the last conditional to be checked if !listAll
-                    match = new Plasma::QueryMatch(this);
-                    match->setType(Plasma::QueryMatch::ExactMatch);
-                    match->setRelevance(1);
+                    type = Plasma::QueryMatch::ExactMatch;
+                    relevance = 1;
                 } else if (name.contains(user, Qt::CaseInsensitive)) {
-                    match = new Plasma::QueryMatch(this);
+                    type = Plasma::QueryMatch::PossibleMatch;
                 }
             }
 
-            if (match) {
+            if (type != Plasma::QueryMatch::NoMatch) {
+                Plasma::QueryMatch match(this);
+                match.setType(type);
+                match.setRelevance(relevance);
+                match.setIcon(KIcon("user-identity"));
+                match.setText(name);
+                match.setData(session.session);
                 matches << match;
-                match->setIcon(KIcon("user-identity"));
-                match->setText(name);
-                match->setData(session.session);
             }
         }
     }
-    search->addMatches(term, matches);
+
+    context.addMatches(term, matches);
 }
 
-void SessionRunner::run(const Plasma::RunnerContext *search, const Plasma::QueryMatch *action)
+void SessionRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
-    Q_UNUSED(search);
-    if (action->data().type() == QVariant::Int) {
+    Q_UNUSED(context);
+    if (match.data().type() == QVariant::Int) {
         KWorkSpace::ShutdownType type = KWorkSpace::ShutdownTypeDefault;
 
-        switch (action->data().toInt()) {
+        switch (match.data().toInt()) {
             case LogoutAction:
                 type = KWorkSpace::ShutdownTypeNone;
                 break;
@@ -213,8 +213,8 @@ void SessionRunner::run(const Plasma::RunnerContext *search, const Plasma::Query
         }
     }
 
-    if (!action->data().toString().isEmpty()) {
-        QString sessionName = action->text();
+    if (!match.data().toString().isEmpty()) {
+        QString sessionName = match.text();
 
         SessList sessions;
         if (dm.localSessions(sessions)) {
