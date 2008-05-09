@@ -56,10 +56,10 @@
 class QueryMatch : public QListWidgetItem
 {
     public:
-        QueryMatch(QListWidget* parent)
+        QueryMatch(QListWidget* parent, const Plasma::QueryMatch &action)
             : QListWidgetItem( parent ),
               m_default(false),
-              m_action(0)
+              m_action(action)
         {
         }
 
@@ -402,7 +402,7 @@ void Interface::resetInterface()
     m_defaultMatch = 0;
     m_runnerManager->reset();
     m_searchTerm->setCurrentItem(QString(), true, 0);
-    m_matchList->clear();
+    clearMatches();
     m_runButton->setEnabled( false );
     m_optionsButton->setEnabled( false );
     showOptions( false );
@@ -460,7 +460,6 @@ void Interface::match()
 
 void Interface::updateMatches(const QList<Plasma::QueryMatch> &matches)
 {
-    m_matchList->setSortingEnabled(false);
     if (matches.count() == 0) {
         //kDebug() << "zeroing out";
         QMapIterator<QString, QueryMatch*> it(m_matchesById);
@@ -486,14 +485,14 @@ void Interface::updateMatches(const QList<Plasma::QueryMatch> &matches)
         QueryMatch *match;
         QMap<QString, QueryMatch*>::iterator existing = existingMatches.find(id);
         if (existing == existingMatches.end()) {
-            match = new QueryMatch(m_matchList);
+            match = new QueryMatch(m_matchList, action);
         } else {
             match = existing.value();
+            match->setAction(action);
             existingMatches.erase(existing);
             //kDebug() << "found existing" << match->text();
         }
 
-        match->setAction(action);
         m_matchesById.insert(id, match);
 
         if (action.isEnabled() && action.relevance() > 0 &&
@@ -518,7 +517,6 @@ void Interface::updateMatches(const QList<Plasma::QueryMatch> &matches)
         delete it.value();
     }
 
-    m_matchList->setSortingEnabled(true);
     m_matchList->sortItems(Qt::DescendingOrder);
 
     if (!m_defaultMatch) {
