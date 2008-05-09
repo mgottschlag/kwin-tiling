@@ -61,6 +61,7 @@ class QueryMatch : public QListWidgetItem
               m_default(false),
               m_action(action)
         {
+            init(action);
         }
 
         bool isValid() const
@@ -76,6 +77,11 @@ class QueryMatch : public QListWidgetItem
                 return;
             }
 
+            init(action);
+        }
+
+        void init(const Plasma::QueryMatch &action)
+        {
             setIcon(m_action.icon());
 
             if (m_action.subtext().isEmpty()) {
@@ -88,6 +94,8 @@ class QueryMatch : public QListWidgetItem
                         m_action.subtext(),
                         m_action.runner()->name()));
             }
+
+            setDefault(m_default);
         }
 
         void activate(Plasma::RunnerManager *manager) const
@@ -127,10 +135,6 @@ class QueryMatch : public QListWidgetItem
 
         void setDefault(bool def)
         {
-            if (m_default == def) {
-                return;
-            }
-
             m_default = def && m_action.isEnabled();
             const QString &defaultLabel = i18n("Default: ");
             QString t = text();
@@ -461,7 +465,7 @@ void Interface::match()
 void Interface::updateMatches(const QList<Plasma::QueryMatch> &matches)
 {
     if (matches.count() == 0) {
-        //kDebug() << "zeroing out";
+        kDebug() << "zeroing out";
         QMapIterator<QString, QueryMatch*> it(m_matchesById);
         while (it.hasNext()) {
             it.next();
@@ -473,15 +477,15 @@ void Interface::updateMatches(const QList<Plasma::QueryMatch> &matches)
     }
 
     m_clearTimer.stop();
-    //kDebug() << "\n\ninterface got:" << m_runnerManager->matches().count() << " matches";
-    //kDebug() << "\n\ncurrently we have" << m_matchesById.count() << m_matchesById << endl << endl;
+    kDebug() << "\n\ninterface got:" << m_runnerManager->matches().count() << " matches";
+    kDebug() << "\n\ncurrently we have" << m_matchesById.count() << m_matchesById << endl << endl;
     QMultiMap<QString, QueryMatch*> existingMatches = m_matchesById;
     m_matchesById.clear();
     m_defaultMatch = 0;
 
     foreach (const Plasma::QueryMatch &action, matches) {
         QString id = action.id();
-        //kDebug() << "checking match with id" << id;
+        kDebug() << "checking match with id" << id;
         QueryMatch *match;
         QMap<QString, QueryMatch*>::iterator existing = existingMatches.find(id);
         if (existing == existingMatches.end()) {
@@ -490,7 +494,7 @@ void Interface::updateMatches(const QList<Plasma::QueryMatch> &matches)
             match = existing.value();
             match->setAction(action);
             existingMatches.erase(existing);
-            //kDebug() << "found existing" << match->text();
+            kDebug() << "found existing" << match->text();
         }
 
         m_matchesById.insert(id, match);
@@ -510,7 +514,7 @@ void Interface::updateMatches(const QList<Plasma::QueryMatch> &matches)
     }
 
     // these are now the left overs that no longer actually exist
-    //kDebug() << "got" << m_matchesById << "removing" << existingMatches;
+    kDebug() << "got" << m_matchesById << "removing" << existingMatches;
     QMapIterator<QString, QueryMatch*> it(existingMatches);
     while (it.hasNext()) {
         it.next();
