@@ -160,6 +160,7 @@ PositioningRuler::PositioningRuler(QWidget* parent)
 
 PositioningRuler::~PositioningRuler()
 {
+   delete d;
 }
 
 QSize PositioningRuler::sizeHint() const
