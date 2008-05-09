@@ -90,12 +90,13 @@ void KclockModule::save()
   dtime->save( helperargs );
   tzone->save( helperargs );
   QString helper = KStandardDirs::findExe( "kcmdatetimehelper" );
+  QString kdesu = KStandardDirs::findExe( "kdesu" );
   int error = 0;
-  if( helper.isEmpty())
+  if( helper.isEmpty() || kdesu.isEmpty())
     error = -1;
   else {
     KProcess proc;
-    proc << "kdesu" << "--" << helper;
+    proc << kdesu << "--" << helper;
     proc << helperargs;
     error = proc.execute();
   }
