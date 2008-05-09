@@ -63,89 +63,75 @@ class QueryMatch : public QListWidgetItem
         {
         }
 
-        const Plasma::QueryMatch* action() const
+        bool isValid() const
         {
-            return m_action;
+            return m_action.isValid();
         }
 
-        void setAction(const Plasma::QueryMatch *action)
+        void setAction(const Plasma::QueryMatch &action)
         {
-            delete m_action;
+            m_action = action;
 
-            if (!action) {
-                m_action = 0;
-                //setIcon(QIcon());
-                //setText(QString());
+            if (!m_action.isValid()) {
                 return;
             }
 
-            m_action = new Plasma::QueryMatch(*action);
-            setIcon(m_action->icon());
-            if (!action) {
-                kDebug() << "empty action got on the interface, something is rotten";
-                return;
-            }
-            if (action->subtext().isEmpty()) {
+            setIcon(m_action.icon());
+
+            if (m_action.subtext().isEmpty()) {
                 setText(i18n("%1 (%2)",
-                        m_action->text(),
-                        m_action->runner()->name()));
+                        m_action.text(),
+                        m_action.runner()->name()));
             } else {
                 setText(i18n("%1 (%2, %3)",
-                        m_action->text(),
-                        m_action->subtext(),
-                        m_action->runner()->name()));
+                        m_action.text(),
+                        m_action.subtext(),
+                        m_action.runner()->name()));
             }
         }
 
         void activate(Plasma::RunnerManager *manager) const
         {
-            manager->run(*m_action);
+            manager->run(m_action);
         }
 
         bool actionEnabled() const
         {
-            Q_ASSERT(m_action);
-            return m_action->isEnabled();
+            return m_action.isEnabled();
         }
 
         bool hasRunOptions() const
         {
-            Q_ASSERT(m_action);
-            return m_action->runner()->hasRunOptions();
+            return m_action.runner()->hasRunOptions();
         }
 
         QString toString() const
         {
-            Q_ASSERT(m_action);
-            return m_action->data().toString();
+            return m_action.data().toString();
         }
 
         Plasma::QueryMatch::Type actionType() const
         {
-            Q_ASSERT(m_action);
-            return m_action->type();
+            return m_action.type();
         }
 
         qreal actionRelevance() const
         {
-            Q_ASSERT(m_action);
-            return m_action->relevance();
+            return m_action.relevance();
         }
 
         void createRunOptions(QWidget* parent) const
         {
-            Q_ASSERT(m_action);
-            m_action->runner()->createRunOptions(parent);
+            m_action.runner()->createRunOptions(parent);
         }
 
         void setDefault(bool def)
         {
-            Q_ASSERT(m_action);
             if (m_default == def) {
                 return;
             }
 
-            m_default = def && m_action->isEnabled();
+            m_default = def && m_action.isEnabled();
             const QString &defaultLabel = i18n("Default: ");
             QString t = text();
 
@@ -172,9 +158,9 @@ class QueryMatch : public QListWidgetItem
                 return QListWidgetItem::operator<(other);
             }
 
-            if (!m_action) {
+            if (!m_action.isValid()) {
                 return false;
-            } else if (!otherMatch->m_action) {
+            } else if (!otherMatch->m_action.isValid()) {
                 return true;
             }
 
@@ -182,19 +168,19 @@ class QueryMatch : public QListWidgetItem
                 return true;
             }
 
-            Plasma::QueryMatch::Type myType = m_action->type();
-            Plasma::QueryMatch::Type otherType = otherMatch->m_action->type();
+            Plasma::QueryMatch::Type myType = m_action.type();
+            Plasma::QueryMatch::Type otherType = otherMatch->m_action.type();
 
             if (myType != otherType) {
                 return myType < otherType;
             }
 
-            return m_action->relevance() < otherMatch->m_action->relevance();
+            return m_action.relevance() < otherMatch->m_action.relevance();
         }
 
     private:
         bool m_default;
-        const Plasma::QueryMatch* m_action;
+        Plasma::QueryMatch m_action;
 };
 
 Interface::Interface(QWidget* parent)
@@ -480,7 +466,7 @@ void Interface::updateMatches(const QList<Plasma::QueryMatch> &matches)
         QMapIterator<QString, QueryMatch*> it(m_matchesById);
         while (it.hasNext()) {
             it.next();
-            it.value()->setAction(0);
+            it.value()->setAction(Plasma::QueryMatch(0));
         }
 
         m_clearTimer.start(200);
@@ -507,7 +493,7 @@ void Interface::updateMatches(const QList<Plasma::QueryMatch> &matches)
             //kDebug() << "found existing" << match->text();
         }
 
-        match->setAction(&action);
+        match->setAction(action);
         m_matchesById.insert(id, match);
 
         if (action.isEnabled() && action.relevance() > 0 &&
@@ -574,7 +560,7 @@ void Interface::run()
                     continue;
                 }
 
-                if (!match->action()) {
+                if (!match->isValid()) {
                     // we are in an intermediate state
                     m_execQueued = true;
                     return;
