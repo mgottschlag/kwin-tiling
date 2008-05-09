@@ -459,13 +459,8 @@ void HalPower::computeAcAdapters()
 
 void HalPower::computeBatteries()
 {
-    QString predicate = "Battery.type == %1";
-
-    predicate = predicate.arg((int)Solid::Battery::PrimaryBattery);
-
     QList<Solid::Device> batteries
-        = Solid::Device::listFromType(Solid::DeviceInterface::Battery,
-                                                     predicate);
+        = Solid::Device::listFromQuery("Battery.type == 'PrimaryBattery'");
 
     foreach (Solid::Device battery, batteries)
     {
