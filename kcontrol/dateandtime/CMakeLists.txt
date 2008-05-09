@@ -13,6 +13,12 @@ target_link_libraries(kcm_clock  ${KDE4_KIO_LIBS} )
 
 install(TARGETS kcm_clock  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
+########### next target ###############
+
+set(kcmdatetimehelper_SRCS helper.cpp)
+kde4_add_executable(kcmdatetimehelper ${kcmdatetimehelper_SRCS})
+target_link_libraries(kcmdatetimehelper  ${KDE4_KDECORE_LIBS} )
+install(TARGETS kcmdatetimehelper DESTINATION ${LIBEXEC_INSTALL_DIR})
 
 ########### install files ###############
 

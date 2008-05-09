@@ -33,11 +33,15 @@
 #include <kdialog.h>
 #include <kpluginfactory.h>
 #include <kpluginloader.h>
+#include <kprocess.h>
+#include <kmessagebox.h>
+#include <kstandarddirs.h>
 
 #include "main.moc"
 
 #include "tzone.h"
 #include "dtime.h"
+#include "helper.h"
 
 K_PLUGIN_FACTORY(KlockModuleFactory, registerPlugin<KclockModule>();)
 K_EXPORT_PLUGIN(KlockModuleFactory("kcmkclock"))
@@ -77,17 +81,30 @@ KclockModule::KclockModule(QWidget *parent, const QVariantList &)
 
   layout->addStretch();
 
-  if(getuid() == 0)
-    setButtons(Help|Apply);
-  else
-    setButtons(Help);
+  setButtons(Help|Apply);
 }
 
 void KclockModule::save()
 {
-//  The order here is important
-  dtime->save();
-  tzone->save();
+  QStringList helperargs;
+  dtime->save( helperargs );
+  tzone->save( helperargs );
+  QString helper = KStandardDirs::findExe( "kcmdatetimehelper" );
+  int error = 0;
+  if( helper.isEmpty())
+    error = -1;
+  else {
+    KProcess proc;
+    proc << "kdesu" << "--" << helper;
+    proc << helperargs;
+    error = proc.execute();
+  }
+  if( error < 0 || error == ERROR_CALL )
+    KMessageBox::error( this, i18n( "Failed to set system date/time/timezone."), i18n( "Date/Time Error" ));
+  else {
+    dtime->processHelperErrors( error );
+    tzone->processHelperErrors( error );
+  }
 #if 0
   // Tell the clock applet about the change so that it can update its timezone
   QDBusInterface clock("org.kde.kicker", "/Applets/Clock", "org.kde.kicker.ClockApplet");
@@ -100,4 +117,3 @@ void KclockModule::load()
   dtime->load();
   tzone->load();
 }
-

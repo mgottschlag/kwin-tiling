@@ -6,8 +6,6 @@ X-KDE-ServiceTypes=KCModule
 X-DocPath=kcontrol/clock/index.html
 
 X-KDE-Library=kcm_clock
-X-KDE-RootOnly=true
-X-KDE-SubstituteUID=true
 X-KDE-ParentApp=kcontrol
 
 #FIXME should this be in system settings when we can get to it through the panel?

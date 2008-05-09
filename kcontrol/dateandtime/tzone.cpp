@@ -57,6 +57,8 @@
 #include <sys/stat.h>
 #endif
 
+#include "helper.h"
+
 Tzone::Tzone(QWidget * parent)
   : QGroupBox(parent)
 {
@@ -73,8 +75,6 @@ Tzone::Tzone(QWidget * parent)
     lay->addWidget(tzonelist);
 
     load();
-
-    tzonelist->setEnabled(getuid() == 0);
 }
 
 void Tzone::load()
@@ -99,123 +99,24 @@ void Tzone::currentZone()
 
 // FIXME: Does the logic in this routine actually work correctly? For example,
 // on non-Solaris systems which do not use /etc/timezone?
-void Tzone::save()
+void Tzone::save( QStringList& helperargs )
 {
     QStringList selectedZones(tzonelist->selection());
 
     if (selectedZones.count() > 0)
     {
-      // Find untranslated selected zone
       QString selectedzone(selectedZones[0]);
-
-#if defined(USE_SOLARIS)	// MARCO
-
-        KTemporaryFile tf;
-        tf.setPrefix("kde-tzone");
-        tf.open();
-        QTextStream ts(&tf);
-
-        QFile fTimezoneFile(INITFILE);
-        bool updatedFile = false;
-
-        if (fTimezoneFile.open(QIODevice::ReadOnly))
-        {
-            bool found = false;
-
-            QTextStream is(&fTimezoneFile);
-
-            for (QString line = is.readLine(); !line.isNull();
-                 line = is.readLine())
-            {
-                if (line.find("TZ=") == 0)
-                {
-                    ts << "TZ=" << selectedzone << endl;
-                    found = true;
-                }
-                else
-                {
-                    ts << line << endl;
-                }
-            }
-
-            if (!found)
-            {
-                ts << "TZ=" << selectedzone << endl;
-            }
-
-            updatedFile = true;
-            fTimezoneFile.close();
-        }
-
-        if (updatedFile)
-        {
-            ts.device()->reset();
-            fTimezoneFile.remove();
-
-            if (fTimezoneFile.open(QIODevice::WriteOnly | QIODevice::Truncate))
-            {
-                QTextStream os(&fTimezoneFile);
-
-                for (QString line = ts->readLine(); !line.isNull();
-                     line = ts->readLine())
-                {
-                    os << line << endl;
-                }
-
-                fchmod(fTimezoneFile.handle(),
-                       S_IXUSR | S_IRUSR | S_IRGRP | S_IXGRP |
-                       S_IROTH | S_IXOTH);
-                fTimezoneFile.close();
-            }
-        }
-
-
-        QString val = selectedzone;
-#else
-        QString tz = "/usr/share/zoneinfo/" + selectedzone;
-
-        kDebug() << "Set time zone " << tz;
-
-        if( !KStandardDirs::findExe( "zic" ).isEmpty())
-        {
-            KProcess::execute("zic", QStringList() << "-l" << selectedzone);
-        }
-        else
-        {
-            QFile fTimezoneFile("/etc/timezone");
-
-            if (fTimezoneFile.open(QIODevice::WriteOnly | QIODevice::Truncate) )
-            {
-                QTextStream t(&fTimezoneFile);
-                t << selectedzone;
-                fTimezoneFile.close();
-            }
-
-            if (!QFile::remove("/etc/localtime"))
-            {
-                //After the KDE 3.2 release, need to add an error message
-            }
-            else
-                if (!KIO::NetAccess::file_copy(KUrl(tz),KUrl("/etc/localtime")))
-                        KMessageBox::error( 0, i18n("Error setting new timezone."),
-                                            i18n("Timezone Error"));
-        }
-
-        QString val = ':' + tz;
-#endif // !USE_SOLARIS
-
-        setenv("TZ", val.toAscii(), 1);
-        tzset();
-
+      helperargs << "tz" << selectedzone; // make the helper set the timezone
     } else {
-#if !defined(USE_SOLARIS) // Do not update the System!
-        unlink( "/etc/timezone" );
-        unlink( "/etc/localtime" );
-
-        setenv("TZ", "", 1);
-        tzset();
-#endif // !USE SOLARIS
+      helperargs << "tzreset"; // // make the helper reset the timezone
     }
 
     currentZone();
+}
+
+void Tzone::processHelperErrors( int code )
+{
+  if( code & ERROR_TZONE )
+    KMessageBox::error( this, i18n("Error setting new timezone."),
+        i18n("Timezone Error"));
 }

@@ -1,5 +1,5 @@
 /*
- *  tzone.h
+ *  main.h
  *
  *  Copyright (C) 1998 Luca Montecchiani <m.luca@usa.net>
  *
@@ -18,39 +18,23 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+#ifndef helper_included
+#define helper_included
 
-#ifndef tzone_included
-#define tzone_included
+/*
+ commands:
+   ntp <count> <servers> <enabled/disabled>
+   date <date>
+   tz <timezone>
+   tzreset
+*/
 
-//Added by qt3to4:
-#include <QLabel>
-#include <ktimezone.h>
-#include <ktimezonewidget.h>
-#include <QGroupBox>
+enum
+    {
+    ERROR_CALL       = 1 << 0,
+    ERROR_TZONE      = 1 << 1,
+    ERROR_DTIME_NTP  = 1 << 2,
+    ERROR_DTIME_DATE = 1 << 3
+    };
 
-class QLabel;
-
-class Tzone : public QGroupBox
-{
-  Q_OBJECT
-
-public:
-  Tzone( QWidget *parent=0 );
-
-  void	save( QStringList& helperargs );
-  void processHelperErrors( int code );
-  void  load();
-
-Q_SIGNALS:
-	void zoneChanged(bool);
-
-protected Q_SLOTS:
-  void handleZoneChange() {emit zoneChanged( true );}
-
-private:
-  void currentZone();
-  QLabel *m_local;
-  KTimeZoneWidget *tzonelist;
-};
-
-#endif // tzone_included
+#endif // main_included

@@ -49,6 +49,8 @@
 
 #include "dtime.moc"
 
+#include "helper.h"
+
 HMSTimeWidget::HMSTimeWidget(QWidget *parent) :
 	KIntSpinBox(parent)
 {
@@ -202,15 +204,6 @@ Dtime::Dtime(QWidget * parent)
 
   load();
 
-  if (getuid() != 0)
-    {
-      cal->setEnabled(false);
-      hour->setEnabled(false);
-      minute->setEnabled(false);
-      second->setEnabled(false);
-      timeServerList->setEnabled(false);
-      setDateTimeAuto->setEnabled(false);
-    }
   kclock->setEnabled(false);
 }
 
@@ -263,7 +256,9 @@ void Dtime::configChanged(){
 
 void Dtime::load()
 {
-  KConfig _config( "kcmclockrc", KConfig::NoGlobals  );
+  // The config is actually written to the system config, but the user does not have any local config,
+  // since there is nothing writing it.
+  KConfig _config( "kcmclockrc", KConfig::NoGlobals );
   KConfigGroup config(&_config, "NTP");
   timeServerList->addItems(config.readEntry("servers",
     i18n("Public Time Server (pool.ntp.org),\
@@ -284,11 +279,8 @@ oceania.pool.ntp.org")).split(',', QString::SkipEmptyParts));
   timeout();
 }
 
-void Dtime::save()
+void Dtime::save( QStringList& helperargs )
 {
-  KConfig _config("kcmclockrc", KConfig::NoGlobals);
-  KConfigGroup config(&_config, "NTP");
-
   // Save the order, but don't duplicate!
   QStringList list;
   if( timeServerList->count() != 0)
@@ -301,32 +293,17 @@ void Dtime::save()
     if( list.count() == 10)
       break;
   }
-  config.writeEntry("servers", list);
-  config.writeEntry("enabled", setDateTimeAuto->isChecked());
+  helperargs << "ntp" << QString::number( list.count()) << list
+      << ( setDateTimeAuto->isChecked() ? "enabled" : "disabled" );
 
   if(setDateTimeAuto->isChecked() && !ntpUtility.isEmpty()){
-    // NTP Time setting
-    QString timeServer = timeServerList->currentText();
-    if( timeServer.indexOf( QRegExp(".*\\(.*\\)$") ) != -1 ) {
-      timeServer.replace( QRegExp(".*\\("), "" );
-      timeServer.replace( QRegExp("\\).*"), "" );
-      // Would this be better?: s/^.*\(([^)]*)\).*$/\1/
-    }
-    KProcess proc;
-    proc << ntpUtility << timeServer;
-    if( proc.execute() != 0 ){
-      KMessageBox::error( this, i18n("Unable to contact time server: %1.", timeServer) );
-      setDateTimeAuto->setChecked( false );
-    }
-    else {
-        // success
-        kDebug() << "Set date from time server " << timeServer.toLatin1() << " success!";
-    }
+    // NTP Time setting - done in helper
+    timeServer = timeServerList->currentText();
+    kDebug() << "Setting date from time server " << timeServer;
   }
   else {
     // User time setting
-    KProcess c_proc;
-
+    QString BufS;
   // BSD systems reverse year compared to Susv3
 #if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
     BufS.sprintf("%04d%02d%02d%02d%02d.%02d",
@@ -342,20 +319,22 @@ void Dtime::save()
 
     kDebug() << "Set date " << BufS;
 
-    c_proc << "date" << BufS;
-    int result = c_proc.execute();
-    if (result != 0
-#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
-  	  && result != 2	// can only set local date, which is okay
-#endif
-      ) {
-      KMessageBox::error( this, i18n("Can not set date."));
-      return;
-    }
+    helperargs << "date" << BufS;
   }
 
   // restart time
   internalTimer.start( 1000 );
+}
+
+void Dtime::processHelperErrors( int code )
+{
+  if( code & ERROR_DTIME_NTP ) {
+    KMessageBox::error( this, i18n("Unable to contact time server: %1.", timeServer) );
+    setDateTimeAuto->setChecked( false );
+  }
+  if( code & ERROR_DTIME_DATE ) {
+    KMessageBox::error( this, i18n("Can not set date."));
+  }
 }
 
 void Dtime::timeout()

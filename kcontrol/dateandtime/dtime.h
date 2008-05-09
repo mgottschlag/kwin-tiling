@@ -53,7 +53,8 @@ class Dtime : public QWidget
  public:
   Dtime( QWidget *parent=0 );
 
-  void	save();
+  void	save( QStringList& helperargs );
+  void processHelperErrors( int code );
   void	load();
 
   QString quickHelp() const;
@@ -90,7 +91,7 @@ private:
   QDate		date;
   QTimer	internalTimer;
 
-  QString	BufS;
+  QString       timeServer;
   int		BufI;
   bool		refresh;
   bool		ontimeout;
