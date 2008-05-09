@@ -61,7 +61,7 @@ class QueryMatch : public QListWidgetItem
               m_default(false),
               m_action(action)
         {
-            init(action);
+            init();
         }
 
         bool isValid() const
@@ -77,10 +77,10 @@ class QueryMatch : public QListWidgetItem
                 return;
             }
 
-            init(action);
+            init();
         }
 
-        void init(const Plasma::QueryMatch &action)
+        void init()
         {
             setIcon(m_action.icon());
 
@@ -227,8 +227,8 @@ Interface::Interface(QWidget* parent)
 
     m_header->setBuddy(m_searchTerm);
     m_layout->addWidget(m_searchTerm);
-    connect(m_searchTerm, SIGNAL(editTextChanged(QString)),
-            this, SLOT(match()));
+    connect(m_searchTerm, SIGNAL(editTextChanged(QString)), this, SLOT(clearExecQueued()));
+    connect(m_searchTerm, SIGNAL(editTextChanged(QString)), this, SLOT(match()));
     connect(m_searchTerm, SIGNAL(returnPressed()),
             this, SLOT(run()));
 
@@ -240,6 +240,7 @@ Interface::Interface(QWidget* parent)
 
     //TODO: temporary feedback, change later with the "icon parade" :)
     m_matchList = new QListWidget(w);
+
     //m_matchList->setSortingEnabled(true);
 
     connect( m_matchList, SIGNAL(itemActivated(QListWidgetItem*)),
@@ -444,6 +445,10 @@ void Interface::matchActivated(QListWidgetItem* item)
     }
 }
 
+void Interface::clearExecQueued()
+{
+    m_execQueued = false;
+}
 
 void Interface::match()
 {
@@ -464,6 +469,8 @@ void Interface::match()
 
 void Interface::updateMatches(const QList<Plasma::QueryMatch> &matches)
 {
+    m_defaultMatch = 0;
+
     if (matches.count() == 0) {
         kDebug() << "zeroing out";
         QMapIterator<QString, QueryMatch*> it(m_matchesById);
@@ -481,7 +488,6 @@ void Interface::updateMatches(const QList<Plasma::QueryMatch> &matches)
     kDebug() << "\n\ncurrently we have" << m_matchesById.count() << m_matchesById << endl << endl;
     QMultiMap<QString, QueryMatch*> existingMatches = m_matchesById;
     m_matchesById.clear();
-    m_defaultMatch = 0;
 
     foreach (const Plasma::QueryMatch &action, matches) {
         QString id = action.id();
@@ -542,10 +548,14 @@ void Interface::run()
 
     //kDebug() << "match list has" << m_matchList->count() << "items";
     if (m_matchList->count() < 1) {
-        if (m_searchTerm->currentText().length() > 0) {
+        int termLength = m_searchTerm->currentText().length();
+        // we want to queue an exec unless the user starts deleting letters
+        // so make sure that the term is not in the process of shrinking
+        if (termLength > 0) {
             m_execQueued = true;
             match();
         }
+
         return;
     }
 
@@ -581,7 +591,6 @@ void Interface::run()
         m_execQueued = true;
         return;
     }
-
 
     if (currentMatch) {
         matchActivated(currentMatch);
@@ -647,6 +656,8 @@ void Interface::setDefaultItem( QListWidgetItem* item )
             return;
         }
         hasOptions = m_defaultMatch && m_defaultMatch->hasRunOptions();
+    } else {
+        m_defaultMatch = 0;
     }
 
     m_optionsButton->setEnabled(hasOptions);

@@ -69,6 +69,7 @@ class Interface : public KRunnerDialog
 
     protected Q_SLOTS:
         void clearMatches();
+        void clearExecQueued();
         void match();
         void updateMatches(const QList<Plasma::QueryMatch> &matches);
         void setWidgetPalettes();
