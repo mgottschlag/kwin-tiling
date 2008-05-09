@@ -1,5 +1,8 @@
 [Desktop Entry]
 Name=Command Line
+Name[gu]=આદેશ જગ્યા
+Name[km]=បន្ទាត់​ពាក្យ​បញ្ជា
+Name[zh_TW]=命令列
 Comment=Executes shell commands
 Comment[ca]=Executa ordres de l'intèrpret d'ordres
 Comment[de]=Führt Shell-Kommandos aus
