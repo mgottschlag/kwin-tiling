@@ -18,8 +18,8 @@
 */
 
 
-#ifndef SOLIDNOTIFIERENGINE_H
-#define SOLIDNOTIFIERENGINE_H
+#ifndef HOTPLUGENGINE_H
+#define HOTPLUGENGINE_H
 
 #include <QObject>
 #include <QString>

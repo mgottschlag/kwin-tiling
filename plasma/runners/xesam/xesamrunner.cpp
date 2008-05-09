@@ -16,6 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "xesamrunner.h"
+
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QDBusMetaType>
@@ -27,8 +29,6 @@
 #include <KRun>
 #include <KUrl>
 #include <KIcon>
-
-#include "xesamrunner.h"
 
 Q_DECLARE_METATYPE(QList<QList<QVariant> >)
 static int typeId = qDBusRegisterMetaType<QList<QList<QVariant> > >();

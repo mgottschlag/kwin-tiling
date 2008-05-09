@@ -296,7 +296,7 @@ void UKMETIon::setup_slotRedirected(KIO::Job *job, const KUrl &url)
     QString tmp;
     bool flag = false;
     QStringList tokens = url.url().split("=");
-    if (url.url().contains("xhtml")) { // We dont care about the first redirection (there is two)
+    if (url.url().contains("xhtml")) { // We don't care about the first redirection (there is two)
         if (url.url().contains("world")) {
 	    obsUrl = "http://feeds.bbc.co.uk/weather/feeds/obs/world/" + tokens[2] + ".xml";
 	    flag = false;
@@ -348,7 +348,7 @@ void UKMETIon::setup_slotJobFinished(KJob *job)
         d->m_jobXml.remove(job);
         return;
     }
-    // If Redirected, dont go to this routine
+    // If Redirected, don't go to this routine
     if (!d->m_locations.contains(QString("bbcukmet|%1").arg(d->m_jobList[job]))) {
         readSearchXMLData(d->m_jobList[job], *d->m_jobXml[job]);
     }

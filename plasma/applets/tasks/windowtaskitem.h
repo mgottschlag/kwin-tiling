@@ -158,7 +158,7 @@ protected:
     QSize layoutText(QTextLayout &layout, const QString &text, const QSize &constraints) const;
 
     /**
-    * Draws the text layout (which must already have the text layed out) in the rect using
+    * Draws the text layout (which must already have the text laid out) in the rect using
     * the supplied painter. If the layout contains text lines that are longer than the rect
     * is wide, they will be elided by fading the text out.
     */

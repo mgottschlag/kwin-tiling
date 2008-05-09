@@ -66,8 +66,8 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
         //avoid out of range on weird commands 
         preIndex=qMax(0, preIndex);
         postIndex=qMin(postIndex, cmd.length()-1); 
-      
-        //go backwards looking for the end of the number or expresion
+
+        //go backwards looking for the end of the number or expression
         while (preIndex!=0) {
             QChar current=cmd.at(preIndex);
             QChar next=cmd.at(preIndex-1);
@@ -86,9 +86,9 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
                 break;
             }
             preIndex--;
-        }   
+        }
 
-       //go forwards looking for the end of the number or expresion
+       //go forwards looking for the end of the number or expression
         count=0;
         while (postIndex!=cmd.size()-1) {
             QChar current=cmd.at(postIndex);

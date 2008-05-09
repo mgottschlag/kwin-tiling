@@ -16,6 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "qscript.h"
+
 #include <QScriptEngine>
 #include <QFile>
 #include <QUiLoader>
@@ -31,8 +33,6 @@
 using namespace Plasma;
 
 #include "bind_dataengine.h"
-
-#include "qscript.h"
 
 Q_DECLARE_METATYPE(QPainter*)
 Q_DECLARE_METATYPE(QStyleOptionGraphicsItem*)

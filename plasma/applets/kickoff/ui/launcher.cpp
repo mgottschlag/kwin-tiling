@@ -18,11 +18,10 @@
     Boston, MA 02110-1301, USA.
 */
 
+#include "ui/launcher.h"
+
 // System
 #include <unistd.h>
-
-// Own
-#include "ui/launcher.h"
 
 // Qt
 #include <QApplication>

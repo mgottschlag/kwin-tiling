@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-// Own
-#include "core/systemmodel.h"
+#include "systemmodel.h"
 
 // Qt
 #include <QFile>
@@ -46,8 +45,7 @@
 
 // Local
 #include "core/models.h"
-#include "systemmodel.h"
-
+#include "core/systemmodel.h"
 
 using namespace Kickoff;
 

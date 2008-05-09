@@ -16,13 +16,13 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "runnerscriptqscript.h"
+
 #include <QScriptEngine>
 #include <QFile>
 
 #include <plasma/abstractrunner.h>
 #include <plasma/querymatch.h>
-
-#include "runnerscriptqscript.h"
 
 
 typedef const Plasma::RunnerContext* ConstRunnerContextStar;

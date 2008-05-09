@@ -16,9 +16,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "config-workspace.h"
-
 #include "soliddeviceengine.h"
+
+#include <config-workspace.h>
 
 #include <KDebug>
 #include <KLocale>

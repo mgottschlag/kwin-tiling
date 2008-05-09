@@ -119,7 +119,7 @@ void MenuView::updateAction(QAction *action,const QModelIndex& index)
             } break;
             case NameDescription: // fall through
             case DescriptionName: {
-                if( ! name.isEmpty() ) { // seems we have a program, but some of them dont define a name at all
+                if( ! name.isEmpty() ) { // seems we have a program, but some of them don't define a name at all
                     if( name.contains(text,Qt::CaseInsensitive) ) {
                         action->setText(name);
                     }

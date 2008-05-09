@@ -16,10 +16,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QX11Info>
-
 #include "cursornotificationhandler.h"
-#include "cursornotificationhandler.moc"
+
+#include <QX11Info>
 
 #include <X11/extensions/Xfixes.h>
 
@@ -109,4 +108,6 @@ bool CursorNotificationHandler::x11Event(XEvent* event)
 
     return false;
 }
+
+#include "cursornotificationhandler.moc"
 

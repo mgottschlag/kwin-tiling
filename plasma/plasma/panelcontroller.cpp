@@ -60,9 +60,9 @@ public:
              border: 2px solid " + mixedColor.name() +
              "; border-radius: 3px;\
              color: " + textColor.name() +
-             "; background-color: " + backgroundColor.name() +"}"+
+             "; background-color: " + backgroundColor.name() +'}'+
              "QToolButton:hover {\
-               background-color: " + mixedColor.name() + "}");
+               background-color: " + mixedColor.name() + '}');
     }
 
     QToolButton *addTool(const QString icon, const QString iconText)

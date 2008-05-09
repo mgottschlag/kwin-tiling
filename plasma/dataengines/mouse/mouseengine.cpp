@@ -16,10 +16,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include <QCursor>
-
 #include "mouseengine.h"
-#include "mouseengine.moc"
+
+#include <QCursor>
 
 #include <config-X11.h>
 
@@ -97,4 +96,6 @@ void MouseEngine::updateCursorName(const QString &name)
     setData(QLatin1String("Name"), QVariant(name));
     scheduleSourcesUpdated();
 }
+
+#include "mouseengine.moc"
 

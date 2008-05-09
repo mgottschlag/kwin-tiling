@@ -20,8 +20,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-#ifndef SYSTRAYWIDGET_H
-#define SYSTRAYWIDGET_H
+#ifndef SYSTEMTRAYWIDGET_H
+#define SYSTEMTRAYWIDGET_H
 
 // Qt
 #include <QGridLayout>
@@ -64,4 +64,4 @@ private:
     Atom m_opcodeAtom;
 };
 
-#endif // SYSTRAYWIDGET_H
+#endif // SYSTEMTRAYWIDGET_H

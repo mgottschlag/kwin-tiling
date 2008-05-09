@@ -16,6 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include "locationrunner.h"
+
 #include <QAction>
 #include <QStringList>
 #include <QDBusInterface>
@@ -32,8 +34,6 @@
 #include <KProtocolInfo>
 
 #include <kservicetypetrader.h>
-
-#include "locationrunner.h"
 
 
 LocationsRunner::LocationsRunner(QObject *parent, const QVariantList& args)

@@ -18,8 +18,7 @@
     Boston, MA 02110-1301, USA.
 */
 
-// Own
-#include "core/urlitemlauncher.h"
+#include "urlitemlauncher.h"
 
 // Qt
 #include <QFileInfo>
@@ -35,7 +34,7 @@
 
 // Local
 #include "core/models.h"
-#include "urlitemlauncher.h"
+#include "core/urlitemlauncher.h"
 
 using namespace Kickoff;
 
