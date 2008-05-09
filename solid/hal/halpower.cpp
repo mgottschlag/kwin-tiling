@@ -163,6 +163,8 @@ Solid::Control::PowerManager::BatteryState HalPower::batteryState() const
 
 int HalPower::batteryChargePercent() const
 {
+    if (!m_maxBatteryCharge) return 0;
+
     return (m_currentBatteryCharge *100)/m_maxBatteryCharge;
 }
 
