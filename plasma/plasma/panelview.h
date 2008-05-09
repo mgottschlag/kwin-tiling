@@ -70,13 +70,6 @@ public:
     int offset() const;
 
     /**
-     * Sets the edge of the screen the panel will be aligned and will grow
-     * @param align the direction (for instance Qt::AlignLeft) means the panel will start
-     * from the left of the screen and grow to the right
-     */
-    void setAlignment(Qt::Alignment align);
-
-    /**
      * @return the panel alignment
      */
     Qt::Alignment alignment() const;
@@ -97,6 +90,13 @@ public Q_SLOTS:
      * @param newOffset the offset of the panel
      */
     void setOffset(int newOffset);
+
+    /**
+     * Sets the edge of the screen the panel will be aligned and will grow
+     * @param align the direction (for instance Qt::AlignLeft) means the panel will start
+     * from the left of the screen and grow to the right
+     */
+    void setAlignment(Qt::Alignment align);
 
 protected:
     void updateStruts();

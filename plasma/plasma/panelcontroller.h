@@ -64,9 +64,11 @@ Q_SIGNALS:
      void showAddWidgets();
      void removePanel();
      void offsetChanged(int offset);
+     void alignmentChanged(Qt::Alignment);
 
 private:
     Q_PRIVATE_SLOT(d, void rulersMoved(int offset, int minLength, int minLength))
+    Q_PRIVATE_SLOT(d, void alignToggled(bool toggle))
 
     class Private;
     Private *d;

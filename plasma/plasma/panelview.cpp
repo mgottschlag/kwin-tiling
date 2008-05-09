@@ -58,7 +58,8 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
         connect(panel, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
         connect(m_panelController, SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
         connect(m_panelController, SIGNAL(removePanel()), panel, SLOT(remove()));
-        connect(m_panelController, SIGNAL(offsetChanged(const int&)), this, SLOT(setOffset(const int&)));
+        connect(m_panelController, SIGNAL(offsetChanged(int)), this, SLOT(setOffset(int)));
+        connect(m_panelController, SIGNAL(alignmentChanged(Qt::Alignment)), this, SLOT(setAlignment(Qt::Alignment)));
     }
 
     kDebug() << "Panel geometry is" << panel->geometry();

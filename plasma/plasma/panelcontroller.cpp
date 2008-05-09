@@ -46,7 +46,10 @@ public:
          extLayout(0),
          layout(0),
          isDragging(false),
-         startDragPos(0,0)
+         startDragPos(0,0),
+         leftAlignTool(0),
+         centerAlignTool(0),
+         rightAlignTool(0)
     {
     }
 
@@ -65,14 +68,21 @@ public:
                background-color: " + mixedColor.name() + '}');
     }
 
-    QToolButton *addTool(const QString icon, const QString iconText)
+    QToolButton *addTool(const QString icon, const QString iconText, Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon, bool checkButton = false)
     {
         QToolButton *tool = new QToolButton(q);
 
         tool->setIcon(KIcon(icon));
         tool->setText(iconText);
-        tool->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        tool->setToolButtonStyle(style);
         tool->setStyleSheet(buttonStyleSheet());
+
+        if (style == Qt::ToolButtonIconOnly) {
+            tool->setToolTip(iconText);
+        }
+
+        tool->setCheckable(checkButton);
+        tool->setAutoExclusive(checkButton);
 
         if (layout) {
             layout->addWidget(tool);
@@ -108,27 +118,48 @@ public:
     {
          if (!containment) {
             return;
+         }
+
+         QSize preferredSize(containment->preferredSize().toSize());
+
+         switch (location) {
+         case Plasma::LeftEdge:
+         case Plasma::RightEdge:
+             containment->resize(QSize((int)containment->size().width(), qBound(minLength, preferredSize.height(), maxLength)));
+             containment->setMinimumSize(QSize((int)containment->minimumSize().width(), minLength));
+             containment->setMaximumSize(QSize((int)containment->maximumSize().width(), maxLength));
+             break;
+         case Plasma::TopEdge:
+         case Plasma::BottomEdge:
+         default:
+             containment->resize(QSize(qBound(minLength, preferredSize.width(), maxLength), (int)containment->size().height()));
+             containment->setMinimumSize(QSize(minLength, (int)containment->minimumSize().height()));
+             containment->setMaximumSize(QSize(maxLength, (int)containment->maximumSize().height()));
+             break;
         }
 
-        QSize preferredSize(containment->preferredSize().toSize());
+        emit q->offsetChanged(offset);
+    }
 
-        switch (location) {
-        case Plasma::LeftEdge:
-        case Plasma::RightEdge:
-            containment->resize(QSize((int)containment->size().width(), qBound(minLength, preferredSize.height(), maxLength)));
-            containment->setMinimumSize(QSize((int)containment->minimumSize().width(), minLength));
-            containment->setMaximumSize(QSize((int)containment->maximumSize().width(), maxLength));
-            break;
-        case Plasma::TopEdge:
-        case Plasma::BottomEdge:
-        default:
-            containment->resize(QSize(qBound(minLength, preferredSize.width(), maxLength), (int)containment->size().height()));
-            containment->setMinimumSize(QSize(minLength, (int)containment->minimumSize().height()));
-            containment->setMaximumSize(QSize(maxLength, (int)containment->maximumSize().height()));
-            break;
-       }
+    void alignToggled(bool toggle)
+    {
+        if (!toggle) {
+            return;
+        }
 
-       emit q->offsetChanged(offset);
+        if (q->sender() == leftAlignTool) {
+            emit q->alignmentChanged(Qt::AlignLeft);
+            ruler->setAlignment(Qt::AlignLeft);
+        } else if (q->sender() == centerAlignTool) {
+            emit q->alignmentChanged(Qt::AlignCenter);
+            ruler->setAlignment(Qt::AlignCenter);
+        } else if (q->sender() == rightAlignTool) {
+            emit q->alignmentChanged(Qt::AlignRight);
+            ruler->setAlignment(Qt::AlignRight);
+        }
+
+        emit q->offsetChanged(0);
+        ruler->setOffset(0);
     }
 
     PanelController *q;
@@ -139,6 +170,11 @@ public:
     QBoxLayout *layout;
     bool isDragging;
     QPoint startDragPos;
+
+    //Alignment buttons
+    QToolButton *leftAlignTool;
+    QToolButton *centerAlignTool;
+    QToolButton *rightAlignTool;
 
     class ResizeHandle;
     ResizeHandle *panelHeightHandle;
@@ -190,7 +226,6 @@ PanelController::PanelController(QWidget* parent)
     d->extLayout->setContentsMargins(0, 1, 0, 0);
     setLayout(d->extLayout);
     d->extLayout->addWidget(d->panelHeightHandle);
-    //d->extLayout->addStretch();
 
     d->layout = new QBoxLayout(QBoxLayout::LeftToRight, this);
     d->layout->setContentsMargins(4, 4, 4, 4);
@@ -199,6 +234,20 @@ PanelController::PanelController(QWidget* parent)
     d->extLayout->addItem(d->layout);
 
     //Add buttons
+    //alignment
+    d->leftAlignTool = d->addTool("format-justify-left", i18n("Align panel left"), Qt::ToolButtonIconOnly, true);
+    d->leftAlignTool->setChecked(true);
+    connect(d->leftAlignTool, SIGNAL(toggled(bool)), this, SLOT(alignToggled(bool)));
+
+    d->centerAlignTool = d->addTool("format-justify-center", i18n("Align panel center"), Qt::ToolButtonIconOnly, true);
+    connect(d->centerAlignTool, SIGNAL(clicked(bool)), this, SLOT(alignToggled(bool)));
+
+    d->rightAlignTool = d->addTool("format-justify-right", i18n("Align panel right"), Qt::ToolButtonIconOnly, true);
+    connect(d->rightAlignTool, SIGNAL(clicked(bool)), this, SLOT(alignToggled(bool)));
+
+    d->layout->addStretch();
+
+    //other buttons
     QToolButton *addWidgetTool = d->addTool("list-add", i18n("Add Widgets"));
     connect(addWidgetTool, SIGNAL(clicked()), this, SIGNAL(showAddWidgets()));
     connect(addWidgetTool, SIGNAL(clicked()), this, SLOT(hideController()));
@@ -208,7 +257,7 @@ PanelController::PanelController(QWidget* parent)
     connect(removePanelTool, SIGNAL(clicked()), this, SLOT(hideController()));
 
     d->ruler = new PositioningRuler(this);
-    connect(d->ruler, SIGNAL(rulersMoved(const int&, const int&, const int&)), this, SLOT(rulersMoved(const int&, const int&, const int&)));
+    connect(d->ruler, SIGNAL(rulersMoved(int, int, int)), this, SLOT(rulersMoved(int, int, int)));
     d->extLayout->addWidget(d->ruler);
 }
 

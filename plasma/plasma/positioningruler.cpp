@@ -66,12 +66,12 @@ public:
         if (location == Plasma::LeftEdge || location == Plasma::RightEdge) {
             sliderRect.moveTop(newPos.y());
             if (alignment == Qt::AlignCenter) {
-                symmetricSliderRect.moveTop((offset + (offset - newPos.y())));
+                symmetricSliderRect.moveTop((offsetSliderRect.top() + (offsetSliderRect.top() - newPos.y())));
             }
         } else {
             sliderRect.moveLeft(newPos.x());
             if (alignment == Qt::AlignCenter) {
-                symmetricSliderRect.moveLeft((offset + (offset - newPos.x())));
+                symmetricSliderRect.moveLeft((offsetSliderRect.left() + (offsetSliderRect.left() - newPos.x())));
             }
         }
     }
@@ -121,6 +121,91 @@ public:
         leftMinSliderRect.setSize(slider->elementSize(elementPrefix + "minslider"));
         rightMinSliderRect.setSize(leftMinSliderRect.size());
         offsetSliderRect.setSize(slider->elementSize(elementPrefix + "offsetslider"));
+    }
+
+    void setupSliders(const QSize &totalSize)
+    {
+        //FIXME: the following is waay too clumsy...
+
+        int rightMaxPos;
+        int leftMaxPos;
+        int rightMinPos;
+        int leftMinPos;
+        int offsetPos;
+
+        int totalLength;
+        if (location == Plasma::LeftEdge || location == Plasma::RightEdge) {
+            totalLength = totalSize.height();
+        } else {
+            totalLength = totalSize.width();
+        }
+
+        switch (alignment) {
+        case Qt::AlignLeft:
+            rightMaxPos = offset + maxLength;
+            leftMaxPos = 0;
+            rightMinPos = offset + minLength;
+            leftMinPos = 0;
+            offsetPos = offset;
+            break;
+        case Qt::AlignRight:
+            leftMaxPos = totalLength - offset - maxLength;
+            rightMaxPos = 0;
+            leftMinPos = totalLength - offset - maxLength;
+            rightMinPos = 0;
+            offsetPos = totalLength - offset;
+            break;
+        case Qt::AlignCenter:
+        default:
+            leftMaxPos = totalLength/2 + offset + maxLength/2;
+            rightMaxPos = totalLength/2 + offset - maxLength/2;
+
+            leftMinPos = totalLength/2 + offset + minLength/2;
+            rightMinPos = totalLength/2 + offset - minLength/2;
+
+            offsetPos = totalLength/2 - offset;
+            break;
+        }
+    
+        switch (location) {
+        case Plasma::LeftEdge:
+            leftMaxSliderRect.moveCenter(QPoint(3*(totalSize.width()/4), leftMaxPos));
+            rightMaxSliderRect.moveCenter(QPoint(3*(totalSize.width()/4), rightMaxPos));
+        
+            leftMinSliderRect.moveCenter(QPoint(totalSize.width()/4, leftMinPos));
+            rightMinSliderRect.moveCenter(QPoint(totalSize.width()/4, rightMinPos));
+        
+            offsetSliderRect.moveCenter(QPoint(3*(totalSize.width()/4), offsetPos));
+            break;
+        case Plasma::RightEdge:
+            leftMaxSliderRect.moveCenter(QPoint(totalSize.width()/4, leftMaxPos));
+            rightMaxSliderRect.moveCenter(QPoint(totalSize.width()/4, rightMaxPos));
+        
+            leftMinSliderRect.moveCenter(QPoint(3*(totalSize.width()/4), leftMinPos));
+            rightMinSliderRect.moveCenter(QPoint(3*(totalSize.width()/4), rightMinPos));
+        
+            offsetSliderRect.moveCenter(QPoint(totalSize.width()/4, offsetPos));
+            break;
+        case Plasma::TopEdge:
+            leftMaxSliderRect.moveCenter(QPoint(leftMaxPos, 3*(totalSize.height()/4)));
+            rightMaxSliderRect.moveCenter(QPoint(rightMaxPos, 3*(totalSize.height()/4)));
+        
+            leftMinSliderRect.moveCenter(QPoint(leftMinPos, totalSize.height()/4));
+            rightMinSliderRect.moveCenter(QPoint(rightMinPos, totalSize.height()/4));
+        
+            offsetSliderRect.moveCenter(QPoint(offsetPos, 3*(totalSize.height()/4)));
+            break;
+        case Plasma::BottomEdge:
+        default:
+            leftMaxSliderRect.moveCenter(QPoint(leftMaxPos, totalSize.height()/4));
+            rightMaxSliderRect.moveCenter(QPoint(rightMaxPos, totalSize.height()/4));
+        
+            leftMinSliderRect.moveCenter(QPoint(leftMinPos, 3*(totalSize.height()/4)));
+            rightMinSliderRect.moveCenter(QPoint(rightMinPos, 3*(totalSize.height()/4)));
+        
+            offsetSliderRect.moveCenter(QPoint(offsetPos, totalSize.height()/4));
+            break;
+        }
     }
 
     enum DragElement { NoElement = 0,
@@ -206,6 +291,9 @@ void PositioningRuler::setAlignment(const Qt::Alignment &align)
     }
 
     d->alignment = align;
+
+    d->setupSliders(size());
+
     update();
 }
 
@@ -231,8 +319,8 @@ void PositioningRuler::setOffset(int newOffset)
     }
 
     d->offset = newOffset;
-    d->maxLength += delta;
-    d->minLength += delta;
+
+    d->setupSliders(size());
 }
 
 int PositioningRuler::offset() const
@@ -445,7 +533,6 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
                            qMin(event->pos().y() - d->startDragPos.y(), height() - d->leftMaxSliderRect.height()/2 + 1));
     newPos = QPoint(qMax(newPos.x(), 0 - d->leftMaxSliderRect.width()/2), qMax(newPos.y(), 0 - d->leftMaxSliderRect.height()/2));
 
-    //TODO:Vertical panel
     switch (d->dragging) {
     case Private::LeftMaxSlider:
         d->moveSlider(d->leftMaxSliderRect, d->rightMaxSliderRect, newPos);
@@ -495,8 +582,31 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
             d->offset = d->offsetSliderRect.center().x();
         }
 
-        d->maxLength -= (d->offset - oldOffset);
-        d->minLength -= (d->offset - oldOffset);
+        if (d->alignment == Qt::AlignCenter) {
+            d->offset -= d->availableLength/2;
+        } else if (d->alignment == Qt::AlignRight) {
+            d->offset = d->availableLength - d->offset;
+        }
+
+        int centerFactor = 1;
+        if (d->alignment == Qt::AlignCenter) {
+            centerFactor = 2;
+        }
+
+        d->maxLength = centerFactor*qMin(d->maxLength/centerFactor, d->availableLength/centerFactor - qAbs(d->offset));
+        d->minLength = centerFactor*qMin(d->minLength/centerFactor, d->availableLength/centerFactor - qAbs(d->offset));
+
+        if (d->location == Plasma::LeftEdge || d->location == Plasma::RightEdge) {
+             d->leftMaxSliderRect.moveTop(d->offsetSliderRect.top() - d->maxLength/centerFactor);
+             d->leftMinSliderRect.moveTop(d->offsetSliderRect.top() - d->minLength/centerFactor);
+             d->rightMaxSliderRect.moveTop(d->offsetSliderRect.top() + d->maxLength/centerFactor);
+             d->rightMinSliderRect.moveTop(d->offsetSliderRect.top() + d->minLength/centerFactor);
+        } else {
+             d->leftMaxSliderRect.moveLeft(d->offsetSliderRect.left() - d->maxLength/centerFactor);
+             d->leftMinSliderRect.moveLeft(d->offsetSliderRect.left() - d->minLength/centerFactor);
+             d->rightMaxSliderRect.moveLeft(d->offsetSliderRect.left() + d->maxLength/centerFactor);
+             d->rightMinSliderRect.moveLeft(d->offsetSliderRect.left() + d->minLength/centerFactor);
+        }
 
         break;
     }
@@ -510,80 +620,7 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
 
 void PositioningRuler::resizeEvent(QResizeEvent *event)
 {
-    //FIXME: the following is waay too clumsy...
-
-    int rightMaxPos;
-    int leftMaxPos;
-    int rightMinPos;
-    int leftMinPos;
-    int offsetPos;
-
-    switch (d->alignment) {
-    case Qt::AlignLeft:
-        rightMaxPos = d->offset + d->maxLength;
-        leftMaxPos = 0;
-        rightMinPos = d->offset + d->minLength;
-        leftMinPos = 0;
-        offsetPos = d->offset;
-        break;
-    case Qt::AlignRight:
-        leftMaxPos = event->size().width() - d->offset - d->maxLength;
-        rightMaxPos = 0;
-        leftMinPos = event->size().width() - d->offset - d->maxLength;
-        rightMinPos = 0;
-        offsetPos = event->size().width() - d->offset;
-        break;
-    case Qt::AlignCenter:
-    default:
-        leftMaxPos = event->size().width()/2 + d->offset + d->maxLength/2;
-        rightMaxPos = event->size().width()/2 + d->offset - d->maxLength/2;
-
-        leftMinPos = event->size().width()/2 + d->offset + d->minLength/2;
-        rightMinPos = event->size().width()/2 + d->offset - d->minLength/2;
-
-        offsetPos = event->size().width()/2 - d->offset;
-        break;
-    }
-
-    switch (d->location) {
-    case Plasma::LeftEdge:
-        d->leftMaxSliderRect.moveCenter(QPoint(3*(event->size().width()/4), leftMaxPos));
-        d->rightMaxSliderRect.moveCenter(QPoint(3*(event->size().width()/4), rightMaxPos));
-    
-        d->leftMinSliderRect.moveCenter(QPoint(event->size().width()/4, leftMinPos));
-        d->rightMinSliderRect.moveCenter(QPoint(event->size().width()/4, rightMinPos));
-    
-        d->offsetSliderRect.moveCenter(QPoint(3*(event->size().width()/4), offsetPos));
-        break;
-    case Plasma::RightEdge:
-        d->leftMaxSliderRect.moveCenter(QPoint(event->size().width()/4, leftMaxPos));
-        d->rightMaxSliderRect.moveCenter(QPoint(event->size().width()/4, rightMaxPos));
-    
-        d->leftMinSliderRect.moveCenter(QPoint(3*(event->size().width()/4), leftMinPos));
-        d->rightMinSliderRect.moveCenter(QPoint(3*(event->size().width()/4), rightMinPos));
-    
-        d->offsetSliderRect.moveCenter(QPoint(event->size().width()/4, offsetPos));
-        break;
-    case Plasma::TopEdge:
-        d->leftMaxSliderRect.moveCenter(QPoint(leftMaxPos, 3*(event->size().height()/4)));
-        d->rightMaxSliderRect.moveCenter(QPoint(rightMaxPos, 3*(event->size().height()/4)));
-    
-        d->leftMinSliderRect.moveCenter(QPoint(leftMinPos, event->size().height()/4));
-        d->rightMinSliderRect.moveCenter(QPoint(rightMinPos, event->size().height()/4));
-    
-        d->offsetSliderRect.moveCenter(QPoint(offsetPos, 3*(event->size().height()/4)));
-        break;
-    case Plasma::BottomEdge:
-    default:
-        d->leftMaxSliderRect.moveCenter(QPoint(leftMaxPos, event->size().height()/4));
-        d->rightMaxSliderRect.moveCenter(QPoint(rightMaxPos, event->size().height()/4));
-    
-        d->leftMinSliderRect.moveCenter(QPoint(leftMinPos, 3*(event->size().height()/4)));
-        d->rightMinSliderRect.moveCenter(QPoint(rightMinPos, 3*(event->size().height()/4)));
-    
-        d->offsetSliderRect.moveCenter(QPoint(offsetPos, event->size().height()/4));
-        break;
-    }
+    d->setupSliders(event->size());
 
     event->accept();
 }
