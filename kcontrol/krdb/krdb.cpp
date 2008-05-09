@@ -87,11 +87,12 @@ static void applyGtkStyles(bool active, int version)
    QString gtkkde = KStandardDirs::locateLocal("config", 2==version?"gtkrc-2.0":"gtkrc");
    QByteArray gtkrc = getenv(gtkEnvVar(version));
    QStringList list = QFile::decodeName(gtkrc).split( ':');
-   if (list.count() == 0)
-   {
-      list.append(QLatin1String(sysGtkrc(version)));
-      list.append(QDir::homePath()+userGtkrc(version));
-   }
+   QString userHomeGtkrc = QDir::homePath()+userGtkrc(version);
+   if (!list.contains(userHomeGtkrc))
+      list.prepend(userHomeGtkrc);
+   QLatin1String systemGtkrc = QLatin1String(sysGtkrc(version));
+   if (!list.contains(systemGtkrc))
+      list.prepend(systemGtkrc);
    list.removeAll(gtkkde);
    list.append(gtkkde);
    if (!active)
