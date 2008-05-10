@@ -186,12 +186,15 @@ void Battery::configAccepted()
     m_showMultipleBatteries = ui.showMultipleBatteriesCheckBox->checkState() == Qt::Checked;
     cg.writeEntry("showMultipleBatteries", m_showMultipleBatteries);
 
-    m_drawBackground = ui.drawBackgroundCheckBox->checkState() == Qt::Checked;
-    cg.writeEntry("drawBackground", m_drawBackground);
-
-    // TODO: set background on panel causes 0 height, so do not use it
-    if (formFactor() != Plasma::Vertical && formFactor() != Plasma::Horizontal) {
-        setBackgroundHints(m_drawBackground?DefaultBackground:NoBackground);
+    if (m_drawBackground != ui.drawBackgroundCheckBox->isChecked()) {
+        cg.writeEntry("drawBackground", m_drawBackground);
+        m_drawBackground = !m_drawBackground;
+        // Only set background when we're not in a panel, the panel controls this
+        // just fine otherwise.
+        if (formFactor() != Plasma::Vertical && formFactor() != Plasma::Horizontal) {
+            setBackgroundHints(m_drawBackground?DefaultBackground:NoBackground);
+        }
+        m_theme->resize(contentsRect().size().toSize());
     }
 
     if (ui.styleGroup->selected() != m_batteryStyle) {
