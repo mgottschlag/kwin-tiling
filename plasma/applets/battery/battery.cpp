@@ -178,17 +178,21 @@ void Battery::createConfigurationInterface(KConfigDialog *parent)
 void Battery::configAccepted()
 {
     KConfigGroup cg = config();
-    m_showBatteryString = ui.showBatteryStringCheckBox->checkState() == Qt::Checked;
-    showLabel(m_showBatteryString);
-    cg.writeEntry("showBatteryString", m_showBatteryString);
 
-    bool old_showMultipleBatteries = m_showMultipleBatteries;
-    m_showMultipleBatteries = ui.showMultipleBatteriesCheckBox->checkState() == Qt::Checked;
-    cg.writeEntry("showMultipleBatteries", m_showMultipleBatteries);
+    if (m_showBatteryString != ui.showBatteryStringCheckBox->isChecked()) {
+        m_showBatteryString = !m_showBatteryString;
+        cg.writeEntry("showBatteryString", m_showBatteryString);
+        showLabel(m_showBatteryString);
+    }
 
+    if (m_showMultipleBatteries != ui.showMultipleBatteriesCheckBox->isChecked()) {
+        m_showMultipleBatteries = !m_showMultipleBatteries;
+        cg.writeEntry("showMultipleBatteries", m_showMultipleBatteries);
+        kDebug() << "Show multiple battery changed: " << m_showMultipleBatteries;
+    }
     if (m_drawBackground != ui.drawBackgroundCheckBox->isChecked()) {
-        cg.writeEntry("drawBackground", m_drawBackground);
         m_drawBackground = !m_drawBackground;
+        cg.writeEntry("drawBackground", m_drawBackground);
         // Only set background when we're not in a panel, the panel controls this
         // just fine otherwise.
         if (formFactor() != Plasma::Vertical && formFactor() != Plasma::Horizontal) {
@@ -219,10 +223,6 @@ void Battery::configAccepted()
             showAcAdapter(true);
         }
         showBattery(true);
-    }
-
-    if (m_numOfBattery > 1 && old_showMultipleBatteries != m_showMultipleBatteries) {
-        kDebug() << "Show multiple battery changed: " << m_showMultipleBatteries;
     }
 
     //reconnect sources
