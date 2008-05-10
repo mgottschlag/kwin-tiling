@@ -110,11 +110,11 @@ namespace Control
         /**
          * This enum defines the different types of brightness controls.
          *
-         * - UnkownBrightnessControl: Unknown
+         * - UnknownBrightnessControl: Unknown
          * - Screen: Brightness control for a monitor or laptop panel
          * - Keyboard: Brightness control for a keyboard backlight
          */
-        enum BrightnessControlType{ UnkownBrightnessControl = 0, Screen = 1, Keyboard = 2 };
+        enum BrightnessControlType{ UnknownBrightnessControl = 0, Screen = 1, Keyboard = 2 };
 
         typedef QHash<QString, BrightnessControlType> BrightnessControlsList;
 
