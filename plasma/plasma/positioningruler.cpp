@@ -274,6 +274,7 @@ void PositioningRuler::setLocation(const Plasma::Location &loc)
 
     d->location = loc;
 
+    d->setupSliders(size());
     d->loadSlidersGraphics();
 
     update();
