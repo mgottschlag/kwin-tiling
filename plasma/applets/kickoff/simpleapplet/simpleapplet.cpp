@@ -240,26 +240,26 @@ void MenuLauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     QGridLayout *l = new QGridLayout(p);
     p->setLayout(l);
 
-    QLabel *viewLabel = new QLabel(i18n("View:"), p);
+    QLabel *viewLabel = new QLabel(i18nc("@label:listbox Which category of items to view in a KMenu-like menu", "View:"), p);
     l->addWidget(viewLabel, 0, 0);
     d->viewComboBox = new QComboBox(p);
     viewLabel->setBuddy(d->viewComboBox);
-    d->addItem(d->viewComboBox, i18n("Standard"), MenuLauncherApplet::Combined, "start-here-kde");
-    d->addItem(d->viewComboBox, i18n("Favorites"), MenuLauncherApplet::Favorites, "bookmarks");
-    d->addItem(d->viewComboBox, i18n("Applications"), MenuLauncherApplet::Applications, "applications-other");
-    d->addItem(d->viewComboBox, i18n("Computer"), MenuLauncherApplet::Computer, "computer");
-    d->addItem(d->viewComboBox, i18n("Recently Used"), MenuLauncherApplet::RecentlyUsed, "document-open-recent");
-    d->addItem(d->viewComboBox, i18n("Leave"), MenuLauncherApplet::Leave, "application-exit");
+    d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Standard"), MenuLauncherApplet::Combined, "start-here-kde");
+    d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Favorites"), MenuLauncherApplet::Favorites, "bookmarks");
+    d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Applications"), MenuLauncherApplet::Applications, "applications-other");
+    d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Computer"), MenuLauncherApplet::Computer, "computer");
+    d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Recently Used"), MenuLauncherApplet::RecentlyUsed, "document-open-recent");
+    d->addItem(d->viewComboBox, i18nc("@item:inlistbox View:", "Leave"), MenuLauncherApplet::Leave, "application-exit");
     l->addWidget(d->viewComboBox, 0, 1);
 
-    QLabel *formatLabel = new QLabel(i18n("Format:"), p);
+    QLabel *formatLabel = new QLabel(i18nc("@label:listbox How to present applications in a KMenu-like menu", "Format:"), p);
     l->addWidget(formatLabel, 1, 0);
     d->formatComboBox = new QComboBox(p);
     formatLabel->setBuddy(d->formatComboBox);
-    d->addItem(d->formatComboBox, i18n("Name Only"), MenuLauncherApplet::Name);
-    d->addItem(d->formatComboBox, i18n("Description Only"), MenuLauncherApplet::Description);
-    d->addItem(d->formatComboBox, i18n("Name Description"), MenuLauncherApplet::NameDescription);
-    d->addItem(d->formatComboBox, i18n("Description (Name)"), MenuLauncherApplet::DescriptionName);
+    d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Name Only"), MenuLauncherApplet::Name);
+    d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Description Only"), MenuLauncherApplet::Description);
+    d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Name Description"), MenuLauncherApplet::NameDescription);
+    d->addItem(d->formatComboBox, i18nc("@item:inlistbox Format:", "Description (Name)"), MenuLauncherApplet::DescriptionName);
     l->addWidget(d->formatComboBox, 1, 1);
 
     l->setColumnStretch(1,1);
