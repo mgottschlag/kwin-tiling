@@ -79,6 +79,9 @@
     </layout>
    </item>
    <item>
+    <widget class="KTreeViewSearchLine" name="m_searchLine" />
+   </item>
+   <item>
     <widget class="QTreeView" name="m_data" >
      <property name="editTriggers" >
       <set>QAbstractItemView::NoEditTriggers</set>
@@ -101,12 +104,18 @@
    <extends>QWidget</extends>
    <header>ktitlewidget.h</header>
   </customwidget>
+  <customwidget>
+   <class>KTreeWidgetSearchLine</class>
+   <extends>KLineEdit</extends>
+   <header>ktreewidgetsearchline.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>m_engines</tabstop>
   <tabstop>m_sourceRequester</tabstop>
   <tabstop>m_updateInterval</tabstop>
   <tabstop>m_sourceRequesterButton</tabstop>
+  <tabstop>m_searchLine</tabstop>
   <tabstop>m_data</tabstop>
  </tabstops>
  <resources/>

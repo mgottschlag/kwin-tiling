@@ -1,4 +1,5 @@
 set(plasmaengineexplorer_SRCS
+    ktreeviewsearchline.cpp
     engineexplorer.cpp
     main.cpp
 )

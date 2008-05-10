@@ -63,10 +63,13 @@ EngineExplorer::EngineExplorer(QWidget* parent)
     connect(m_sourceRequesterButton, SIGNAL(clicked(bool)), this, SLOT(requestSource()));
     m_data->setModel(m_dataModel);
 
+    m_searchLine->setTreeView(m_data);
+    m_searchLine->setClickMessage(i18n("Search"));
+
     listEngines();
     m_engines->setFocus();
 
-    setButtons(KDialog::User1 | KDialog::User2);
+    setButtons(KDialog::Close | KDialog::User1 | KDialog::User2);
     setButtonText(KDialog::User1, i18n("Collapse all"));
     setButtonText(KDialog::User2, i18n("Expand all"));
     connect(this, SIGNAL(user1Clicked()), m_data, SLOT(collapseAll()));
