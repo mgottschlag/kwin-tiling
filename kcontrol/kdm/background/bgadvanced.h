@@ -50,6 +50,7 @@ class BGAdvancedDialog : public KDialog
 public:
    BGAdvancedDialog(KBackgroundRenderer *_r, QWidget *parent, bool _kdmMode);
 
+#if 0
    void setCacheSize(int s);
    int cacheSize();
    QColor textColor();
@@ -62,24 +63,31 @@ public:
    int textLines() const;
    void setTextWidth(int width);
    int textWidth() const;
+#endif
 
    void updateUI();
 
    void makeReadOnly();
 
+#if 0
 public Q_SLOTS:
    void slotAdd();
    void slotRemove();
    void slotModify();
+#endif
 
 protected:
    void addProgram(const QString &name);
+#if 0
    void removeProgram(const QString &name);
+#endif
    void selectProgram(const QString &name);
 
 protected Q_SLOTS:
    void slotProgramItemClicked(Q3ListViewItem *item);
+#if 0
    void slotProgramItemDoubleClicked(Q3ListViewItem *item);
+#endif
    void slotProgramChanged();
    void slotEnableProgram(bool b);
 
@@ -95,6 +103,7 @@ private:
    bool m_kdmMode;
 };
 
+#if 0
 /**
  * Dialog to edit a background program.
  */
@@ -121,7 +130,7 @@ private:
     KBackgroundProgram *m_Prog;
     bool m_kdmMode;
 };
-
+#endif
 
 #endif
 

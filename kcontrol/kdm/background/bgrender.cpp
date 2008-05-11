@@ -397,6 +397,7 @@ wp_load:
                 m_Wallpaper = m_Wallpaper.scaled(xs, ys, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
         }
 
+#if 0
         // HACK: Use KFileMetaInfo only when we have a KApplication
         // KFileMetaInfo needs ksycoca and so on, but this code is
         // used also in krootimage (which in turn is used by kdm).
@@ -439,6 +440,7 @@ wp_load:
                 }
             }
         }
+#endif
     }
 wp_out:
 

@@ -111,12 +111,14 @@ BGDialog::BGDialog(QWidget* parent, const KSharedConfigPtr &_config, bool _kdmMo
    m_pMonitorArrangement = new BGMonitorArrangement(m_screenArrangement);
    m_pMonitorArrangement->setObjectName("monitor arrangement");
    connect(m_pMonitorArrangement, SIGNAL(imageDropped(const QString &)), SLOT(slotImageDropped(const QString &)));
+#if 0
    if( !m_kdmMode)
      {
        // desktop
        connect(m_comboDesktop, SIGNAL(activated(int)),
 	       SLOT(slotSelectDesk(int)));
      }
+#endif
    if (m_numScreens > 1)
    {
        connect(m_comboScreen, SIGNAL(activated(int)),
@@ -1189,6 +1191,7 @@ void BGDialog::slotAdvanced()
        return;
     }
 
+#if 0
     dlg.setTextColor(m_pGlobals->textColor());
     dlg.setTextBackgroundColor(m_pGlobals->textBackgroundColor());
     dlg.setShadowEnabled(m_pGlobals->shadowEnabled());
@@ -1199,12 +1202,14 @@ void BGDialog::slotAdvanced()
        dlg.setCacheSize( m_pGlobals->cacheSize() );
     else
        dlg.setCacheSize( 0 );
+#endif
 
     if( !dlg.exec())
     {
         m_previewUpdates = true;
         return;
     }
+#if 0
     int cacheSize = dlg.cacheSize();
     if (cacheSize)
     {
@@ -1221,6 +1226,7 @@ void BGDialog::slotAdvanced()
     m_pGlobals->setShadowEnabled(dlg.shadowEnabled());
     m_pGlobals->setTextLines(dlg.textLines());
     m_pGlobals->setTextWidth(dlg.textWidth());
+#endif
 
     r->stop();
     m_previewUpdates = true;

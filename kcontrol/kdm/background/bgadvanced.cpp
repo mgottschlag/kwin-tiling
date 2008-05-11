@@ -47,6 +47,7 @@
 
 /**** BGAdvancedDialog ****/
 
+#if 0
 static QString desktopConfigname()
 {
     int desktop=0;
@@ -60,6 +61,7 @@ static QString desktopConfigname()
 
     return name;
 }
+#endif
 
 
 BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
@@ -90,6 +92,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
    for (it=lst.begin(); it != lst.end(); ++it)
       addProgram(*it);
 
+#if 0
    if (!_kdmMode)
    {
       KConfig cfg(desktopConfigname( ), KConfig::NoGlobals );
@@ -115,6 +118,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
          SLOT(slotProgramItemDoubleClicked(Q3ListViewItem *)));
    }
    else
+#endif
    {
       dlg->m_buttonAdd->hide();
       dlg->m_buttonRemove->hide();
@@ -140,6 +144,7 @@ void BGAdvancedDialog::makeReadOnly()
    dlg->m_listPrograms->setEnabled(false);
 }
 
+#if 0
 void BGAdvancedDialog::setCacheSize(int s)
 {
    dlg->m_spinCache->setValue(s);
@@ -215,6 +220,7 @@ int BGAdvancedDialog::textWidth() const
 {
     return dlg->m_spinTextWidth->value();
 }
+#endif
 
 void BGAdvancedDialog::updateUI()
 {
@@ -242,6 +248,7 @@ void BGAdvancedDialog::updateUI()
     dlg->m_cbProgram->blockSignals(false);
 }
 
+#if 0
 void BGAdvancedDialog::removeProgram(const QString &name)
 {
    if (m_programItems.find(name))
@@ -250,10 +257,13 @@ void BGAdvancedDialog::removeProgram(const QString &name)
       m_programItems.remove(name);
    }
 }
+#endif
 
 void BGAdvancedDialog::addProgram(const QString &name)
 {
+#if 0
    removeProgram(name);
+#endif
 
    KBackgroundProgram prog(m_kdmMode, name);
    if (prog.command().isEmpty() || (prog.isGlobal() && !prog.isAvailable()))
@@ -278,6 +288,7 @@ void BGAdvancedDialog::selectProgram(const QString &name)
    }
 }
 
+#if 0
 void BGAdvancedDialog::slotAdd()
 {
    KProgramEditDialog dlg(m_kdmMode, QString(), this);
@@ -339,6 +350,7 @@ void BGAdvancedDialog::slotModify()
       selectProgram(dlg.program());
    }
 }
+#endif
 
 void BGAdvancedDialog::slotProgramItemClicked(Q3ListViewItem *item)
 {
@@ -347,11 +359,13 @@ void BGAdvancedDialog::slotProgramItemClicked(Q3ListViewItem *item)
    slotProgramChanged();
 }
 
+#if 0
 void BGAdvancedDialog::slotProgramItemDoubleClicked(Q3ListViewItem *item)
 {
    slotProgramItemClicked(item);
    slotModify();
 }
+#endif
 
 void BGAdvancedDialog::slotProgramChanged()
 {
@@ -386,7 +400,7 @@ void BGAdvancedDialog::slotEnableProgram(bool b)
 }
 
 /**** KProgramEditDialog ****/
-
+#if 0
 KProgramEditDialog::KProgramEditDialog(bool kdmMode, const QString &program, QWidget *parent, char *name)
     : KDialog( parent ),
       m_kdmMode( kdmMode )
@@ -512,6 +526,6 @@ void KProgramEditDialog::accept()
 
     KDialog::accept();
 }
-
+#endif
 
 #include "bgadvanced.moc"
