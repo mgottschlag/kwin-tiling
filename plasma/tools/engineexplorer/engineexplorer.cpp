@@ -367,8 +367,7 @@ void EngineExplorer::updateTitle()
 
     m_title->setText(ki18ncp("The name of the engine followed by the number of data sources",
                              "%1 Engine - 1 data source", "%1 Engine - %2 data sources")
-                              .subs(m_engine->objectName().isEmpty() ? i18n("Unnamed")
-                                                                     : m_engine->objectName())
+                              .subs(m_engine->name())
                               .subs(m_sourceCount).toString());
     if (m_engine->icon().isEmpty()) {
         m_title->setPixmap(KIcon("plasma").pixmap(IconSize(KIconLoader::Dialog)));
