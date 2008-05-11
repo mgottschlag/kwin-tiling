@@ -31,6 +31,7 @@
 #include <KIconLoader>
 #include <KIconTheme>
 #include <KStandardAction>
+#include <KStringHandler>
 
 #ifdef FOUND_SOPRANO
 #include <Soprano/Node>
@@ -367,7 +368,7 @@ void EngineExplorer::updateTitle()
 
     m_title->setText(ki18ncp("The name of the engine followed by the number of data sources",
                              "%1 Engine - 1 data source", "%1 Engine - %2 data sources")
-                              .subs(m_engine->name())
+                              .subs(KStringHandler::capwords(m_engine->name()))
                               .subs(m_sourceCount).toString());
     if (m_engine->icon().isEmpty()) {
         m_title->setPixmap(KIcon("plasma").pixmap(IconSize(KIconLoader::Dialog)));
