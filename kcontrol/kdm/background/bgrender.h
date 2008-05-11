@@ -12,10 +12,9 @@
 #define BGRender_h_Included
 
 #include <QObject>
-//Added by qt3to4:
 #include <QPixmap>
 #include <QImage>
-#include <Qt3Support/Q3PtrVector>
+#include <KProcess>
 #include <ksharedconfig.h>
 
 #include "bgsettings.h"
@@ -25,9 +24,7 @@ class QRect;
 class QString;
 class QTimer;
 
-class K3Process;
 class KTemporaryFile;
-class K3ShellProcess;
 class KStandardDirs;
 
 /**
@@ -69,7 +66,7 @@ Q_SIGNALS:
     void programSuccess(int desk);                //programSuccess is emitted after imageDone
 
 private Q_SLOTS:
-    void slotBackgroundDone(K3Process *);
+    void slotBackgroundDone(int exitCode, QProcess::ExitStatus exitStatus);
     void render();
     void done();
 
@@ -111,7 +108,7 @@ private:
     QTimer *m_pTimer;
 
     KStandardDirs *m_pDirs;
-    K3ShellProcess *m_pProc;
+    KProcess *m_pProc;
 };
 
 /**
@@ -166,14 +163,14 @@ private:
     float m_scaleX;
     float m_scaleY;
     int m_desk;
-    unsigned m_numRenderers;
+    int m_numRenderers;
     bool m_bDrawBackgroundPerScreen;
     bool m_bCommonScreen;
     bool m_kdmMode;
     QSize m_size;
 
     QVector<bool> m_bFinished;
-    Q3PtrVector<KBackgroundRenderer> m_renderer;
+    QVector<KBackgroundRenderer *> m_renderer;
     QPixmap *m_pPixmap;
 };
 

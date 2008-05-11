@@ -21,7 +21,7 @@
  */
 
 #include <QCheckBox>
-#include <Qt3Support/Q3Header>
+#include <QHeaderView>
 #include <QLabel>
 #include <QLayout>
 #include <QLineEdit>
@@ -32,6 +32,7 @@
 #include <QFrame>
 #include <QGridLayout>
 #include <QByteArray>
+#include <QX11Info>
 
 #include <kconfig.h>
 #include <kcolorbutton.h>
@@ -43,7 +44,7 @@
 #include "bgadvanced.h"
 
 #include <X11/Xlib.h>
-#include <QX11Info>
+#include <fixx11h.h>
 
 /**** BGAdvancedDialog ****/
 
@@ -80,11 +81,12 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
    dlg = new BGAdvancedBase(this);
    setMainWidget(dlg);
 
-   dlg->m_listPrograms->header()->setStretchEnabled ( true, 1 );
+   dlg->m_listPrograms->header()->setResizeMode(1, QHeaderView::Stretch);
+   dlg->m_listPrograms->setRootIsDecorated(false);
    dlg->m_listPrograms->setAllColumnsShowFocus(true);
 
-   connect(dlg->m_listPrograms, SIGNAL(clicked(Q3ListViewItem *)),
-         SLOT(slotProgramItemClicked(Q3ListViewItem *)));
+   connect(dlg->m_listPrograms, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
+         SLOT(slotProgramItemClicked(QTreeWidgetItem *)));
 
    // Load programs
    QStringList lst = KBackgroundProgram::list();
@@ -114,8 +116,8 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
       connect(dlg->m_buttonModify, SIGNAL(clicked()),
          SLOT(slotModify()));
 
-      connect(dlg->m_listPrograms, SIGNAL(doubleClicked(Q3ListViewItem *)),
-         SLOT(slotProgramItemDoubleClicked(Q3ListViewItem *)));
+      connect(dlg->m_listPrograms, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)),
+         SLOT(slotProgramItemDoubleClicked(QTreeWidgetItem *)));
    }
    else
 #endif
@@ -251,11 +253,7 @@ void BGAdvancedDialog::updateUI()
 #if 0
 void BGAdvancedDialog::removeProgram(const QString &name)
 {
-   if (m_programItems.find(name))
-   {
-      delete m_programItems[name];
-      m_programItems.remove(name);
-   }
+    delete m_programItems.take(name);
 }
 #endif
 
@@ -269,7 +267,7 @@ void BGAdvancedDialog::addProgram(const QString &name)
    if (prog.command().isEmpty() || (prog.isGlobal() && !prog.isAvailable()))
       return;
 
-   Q3ListViewItem *item = new Q3ListViewItem(dlg->m_listPrograms);
+   QTreeWidgetItem *item = new QTreeWidgetItem(dlg->m_listPrograms);
    item->setText(0, prog.name());
    item->setText(1, prog.comment());
    item->setText(2, i18n("%1 min.", prog.refresh()));
@@ -279,11 +277,10 @@ void BGAdvancedDialog::addProgram(const QString &name)
 
 void BGAdvancedDialog::selectProgram(const QString &name)
 {
-   if (m_programItems.find(name))
+   if (QTreeWidgetItem *item = m_programItems[name])
    {
-      Q3ListViewItem *item = m_programItems[name];
-      dlg->m_listPrograms->ensureItemVisible(item);
-      dlg->m_listPrograms->setSelected(item, true);
+      dlg->m_listPrograms->scrollToItem(item);
+      item->setSelected(true);
       m_selectedProgram = name;
    }
 }
@@ -352,7 +349,7 @@ void BGAdvancedDialog::slotModify()
 }
 #endif
 
-void BGAdvancedDialog::slotProgramItemClicked(Q3ListViewItem *item)
+void BGAdvancedDialog::slotProgramItemClicked(QTreeWidgetItem *item)
 {
    if (item)
       m_selectedProgram = item->text(0);
@@ -360,7 +357,7 @@ void BGAdvancedDialog::slotProgramItemClicked(Q3ListViewItem *item)
 }
 
 #if 0
-void BGAdvancedDialog::slotProgramItemDoubleClicked(Q3ListViewItem *item)
+void BGAdvancedDialog::slotProgramItemDoubleClicked(QTreeWidgetItem *item)
 {
    slotProgramItemClicked(item);
    slotModify();
@@ -386,12 +383,13 @@ void BGAdvancedDialog::slotEnableProgram(bool b)
    dlg->m_listPrograms->setEnabled(b);
    if (b)
    {
-      dlg->m_listPrograms->blockSignals(true);
-      Q3ListViewItem *cur = dlg->m_listPrograms->currentItem();
-      dlg->m_listPrograms->setSelected(cur, true);
-      dlg->m_listPrograms->ensureItemVisible(cur);
-      dlg->m_listPrograms->blockSignals(false);
-      slotProgramItemClicked(cur);
+      if (QTreeWidgetItem *cur = dlg->m_listPrograms->currentItem()) {
+        dlg->m_listPrograms->blockSignals(true);
+        cur->setSelected(true);
+        dlg->m_listPrograms->scrollToItem(cur);
+        dlg->m_listPrograms->blockSignals(false);
+        slotProgramItemClicked(cur);
+      }
    }
    else
    {
@@ -417,7 +415,7 @@ KProgramEditDialog::KProgramEditDialog(bool kdmMode, const QString &program, QWi
     QGridLayout *grid = new QGridLayout(frame);
     grid->setSpacing(spacingHint());
     grid->setMargin(0);
-    grid->addColSpacing(1, 300);
+    grid->setColumnMinimumWidth(1, 300);
 
     QLabel *lbl = new QLabel(i18n("&Name:"), frame);
     grid->addWidget(lbl, 0, 0);

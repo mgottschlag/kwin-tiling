@@ -127,7 +127,8 @@ BGDialog::BGDialog(QWidget* parent, const KSharedConfigPtr &_config, bool _kdmMo
 
    // background image settings
    QIcon iconSet = KIcon(QLatin1String("document-open"));
-   QPixmap pixMap = iconSet.pixmap( QIcon::Small, QIcon::Normal );
+   QPixmap pixMap = iconSet.pixmap(
+      style()->pixelMetric( QStyle::PM_SmallIconSize ), QIcon::Normal );
    m_urlWallpaperButton->setIcon( iconSet );
    m_urlWallpaperButton->setFixedSize( pixMap.width()+8, pixMap.height()+8 );
    m_urlWallpaperButton->setToolTip( i18n("Open file dialog"));
@@ -431,7 +432,7 @@ void BGDialog::slotIdentifyScreens()
    // Taken from PositionTab::showIdentify in kdebase/kcontrol/kicker/positiontab_impl.cpp
    for(unsigned s = 0; s < m_numScreens; s++)
    {
-      QLabel *screenLabel = new QLabel(0, Qt::WDestructiveClose | Qt::WStyle_Customize | Qt::X11BypassWindowManagerHint);
+      QLabel *screenLabel = new QLabel(0, Qt::X11BypassWindowManagerHint);
       screenLabel->setObjectName("Screen Identify");
 
       QFont identifyFont(KGlobalSettings::generalFont());
@@ -445,7 +446,7 @@ void BGDialog::slotIdentifyScreens()
       screenLabel->setNum(int(s + 1));
         // BUGLET: we should not allow the identification to be entered again
         //         until the timer fires.
-      QTimer::singleShot(1500, screenLabel, SLOT(close()));
+      QTimer::singleShot(1500, screenLabel, SLOT(deleteLater()));
 
       QPoint screenCenter(QApplication::desktop()->screenGeometry(s).center());
       QRect targetGeometry(QPoint(0,0),screenLabel->sizeHint());

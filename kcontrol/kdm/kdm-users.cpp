@@ -310,7 +310,7 @@ void KDMUsersWidget::slotUserSelected()
 		p.load( m_userPixDir + ".default.face.icon" );
 		rstuserbutton->setEnabled( false );
 	}
-	userbutton->setPixmap( QPixmap::fromImage( p.scaled( 48, 48, Qt::KeepAspectRatio, Qt::SmoothTransformation ) ) );
+	userbutton->setIcon( QPixmap::fromImage( p.scaled( 48, 48, Qt::KeepAspectRatio, Qt::SmoothTransformation ) ) );
 }
 
 

@@ -31,7 +31,6 @@
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <qimageblitz.h>
-#include <k3process.h>
 #include <ktemporaryfile.h>
 #include <kcursor.h>
 #include <kfilemetainfo.h>
@@ -150,7 +149,7 @@ int KBackgroundRenderer::doBackground(bool quit)
 
     if (quit) {
         if (bgmode == Program && m_pProc)
-            m_pProc->kill();
+            m_pProc->terminate();
         return Done;
     }
 
@@ -209,11 +208,12 @@ int KBackgroundRenderer::doBackground(bool quit)
             break;
 
         delete m_pProc;
-        m_pProc = new K3ShellProcess;
-        *m_pProc << file;
-        connect(m_pProc, SIGNAL(processExited(K3Process *)),
-                SLOT(slotBackgroundDone(K3Process *)));
-        m_pProc->start(K3ShellProcess::NotifyOnExit);
+        m_pProc = new KProcess;
+        m_pProc->setShellCommand(file);
+        connect(m_pProc,
+                SIGNAL(finished(int, QProcess::ExitStatus)),
+                SLOT(slotBackgroundDone(int, QProcess::ExitStatus)));
+        m_pProc->start();
         retval = Wait;
         break;
 
@@ -709,12 +709,11 @@ void KBackgroundRenderer::blend(QImage& dst, const QRect &_dr, const QImage& src
 
 
 
-void KBackgroundRenderer::slotBackgroundDone(K3Process *process)
+void KBackgroundRenderer::slotBackgroundDone(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    Q_ASSERT(process == m_pProc);
     m_State |= BackgroundDone;
 
-    if (m_pProc->normalExit() && !m_pProc->exitStatus()) {
+    if (exitStatus == QProcess::NormalExit && !exitCode) {
         m_Background.load(m_Tempfile->fileName());
         m_State |= BackgroundDone;
     }
@@ -799,11 +798,11 @@ void KBackgroundRenderer::done()
     m_State |= AllDone;
     emit imageDone(desk(), screen());
     if(backgroundMode() == Program && m_pProc &&
-       m_pProc->normalExit() && m_pProc->exitStatus()) {
-         emit programFailure(desk(), m_pProc->exitStatus());
-     } else if(backgroundMode() == Program && m_pProc &&
-       !m_pProc->normalExit()) {
+       m_pProc->exitStatus() != QProcess::NormalExit) {
          emit programFailure(desk(), -1);
+     } else if(backgroundMode() == Program && m_pProc &&
+       m_pProc->exitCode()) {
+         emit programFailure(desk(), m_pProc->exitStatus());
      } else if(backgroundMode() == Program) {
          emit programSuccess(desk());
      }
@@ -1014,7 +1013,7 @@ KVirtualBGRenderer::KVirtualBGRenderer(int desk, const KSharedConfigPtr &config,
 
 KVirtualBGRenderer::~KVirtualBGRenderer()
 {
-    for (unsigned i=0; i<m_numRenderers; ++i)
+    for (int i=0; i<m_numRenderers; ++i)
         delete m_renderer[i];
 
     delete m_pPixmap;
@@ -1038,7 +1037,7 @@ QPixmap KVirtualBGRenderer::pixmap()
 
 bool KVirtualBGRenderer::needProgramUpdate()
 {
-    for (unsigned i=0; i<m_numRenderers; ++i)
+    for (int i=0; i<m_numRenderers; ++i)
     {
         if ( m_renderer[i]->backgroundMode() == KBackgroundSettings::Program &&
              m_renderer[i]->KBackgroundProgram::needUpdate() )
@@ -1050,7 +1049,7 @@ bool KVirtualBGRenderer::needProgramUpdate()
 
 void KVirtualBGRenderer::programUpdate()
 {
-    for (unsigned i=0; i<m_numRenderers; ++i)
+    for (int i=0; i<m_numRenderers; ++i)
     {
         if ( m_renderer[i]->backgroundMode() == KBackgroundSettings::Program &&
              m_renderer[i]->KBackgroundProgram::needUpdate() )
@@ -1063,7 +1062,7 @@ void KVirtualBGRenderer::programUpdate()
 
 bool KVirtualBGRenderer::needWallpaperChange()
 {
-    for (unsigned i=0; i<m_numRenderers; ++i)
+    for (int i=0; i<m_numRenderers; ++i)
     {
         if ( m_renderer[i]->needWallpaperChange() )
             return true;
@@ -1074,7 +1073,7 @@ bool KVirtualBGRenderer::needWallpaperChange()
 
 void KVirtualBGRenderer::changeWallpaper()
 {
-    for (unsigned i=0; i<m_numRenderers; ++i)
+    for (int i=0; i<m_numRenderers; ++i)
     {
         m_renderer[i]->changeWallpaper();
     }
@@ -1084,7 +1083,7 @@ void KVirtualBGRenderer::changeWallpaper()
 int KVirtualBGRenderer::hash()
 {
     QString fp;
-    for (unsigned i=0; i<m_numRenderers; ++i)
+    for (int i=0; i<m_numRenderers; ++i)
     {
         fp += m_renderer[i]->fingerprint();
     }
@@ -1096,7 +1095,7 @@ int KVirtualBGRenderer::hash()
 
 bool KVirtualBGRenderer::isActive()
 {
-    for (unsigned i=0; i<m_numRenderers; ++i)
+    for (int i=0; i<m_numRenderers; ++i)
     {
         if ( m_renderer[i]->isActive() )
             return true;
@@ -1107,7 +1106,7 @@ bool KVirtualBGRenderer::isActive()
 
 void KVirtualBGRenderer::setEnabled(bool enable)
 {
-    for (unsigned i=0; i<m_numRenderers; ++i)
+    for (int i=0; i<m_numRenderers; ++i)
         m_renderer[i]->setEnabled(enable);
 }
 
@@ -1123,7 +1122,7 @@ void KVirtualBGRenderer::desktopResized()
         m_pPixmap->fill(Qt::black);
     }
 
-    for (unsigned i=0; i<m_numRenderers; ++i)
+    for (int i=0; i<m_numRenderers; ++i)
         m_renderer[i]->desktopResized();
 }
 
@@ -1143,7 +1142,7 @@ void KVirtualBGRenderer::setPreview(const QSize & size)
     m_scaleY = float(m_size.height()) / float(QApplication::desktop()->size().height());
 
     // Scale renderers appropriately
-    for (unsigned i=0; i<m_renderer.size(); ++i)
+    for (int i=0; i<m_renderer.size(); ++i)
     {
         QSize unscaledRendererSize = renderSize(i);
 
@@ -1176,11 +1175,11 @@ void KVirtualBGRenderer::initRenderers()
     if (m_numRenderers == m_renderer.size())
         return;
 
-    for (unsigned i=0; i<m_renderer.size(); ++i)
+    for (int i=0; i<m_renderer.size(); ++i)
         delete m_renderer[i];
 
     m_renderer.resize(m_numRenderers);
-    for (unsigned i=0; i<m_numRenderers; ++i)
+    for (int i=0; i<m_numRenderers; ++i)
     {
         int eScreen = m_bCommonScreen ? 0 : i;
         KBackgroundRenderer * r = new KBackgroundRenderer( m_desk, eScreen, m_bDrawBackgroundPerScreen, m_pConfig, m_kdmMode );
@@ -1199,9 +1198,9 @@ void KVirtualBGRenderer::load(int desk, bool reparseConfig)
 
     initRenderers();
 
-    for (unsigned i=0; i<m_numRenderers; ++i)
+    for (int i=0; i<m_numRenderers; ++i)
     {
-        unsigned eScreen = m_bCommonScreen ? 0 : i;
+        int eScreen = m_bCommonScreen ? 0 : i;
         m_renderer[i]->load(desk, eScreen, m_bDrawBackgroundPerScreen, reparseConfig);
     }
 }
@@ -1212,8 +1211,8 @@ void KVirtualBGRenderer::screenDone(int _desk, int _screen)
     Q_UNUSED(_desk);
     Q_UNUSED(_screen);
 
-    const KBackgroundRenderer * sender = dynamic_cast<const KBackgroundRenderer*>(this->sender());
-    int screen = m_renderer.find(sender);
+    KBackgroundRenderer *sender = dynamic_cast<KBackgroundRenderer *>(this->sender());
+    int screen = m_renderer.indexOf(sender);
     if (screen == -1)
         //??
         return;
@@ -1277,14 +1276,14 @@ void KVirtualBGRenderer::start()
     }
 
     m_bFinished.fill(false);
-    for (unsigned i=0; i<m_numRenderers; ++i)
+    for (int i=0; i<m_numRenderers; ++i)
         m_renderer[i]->start();
 }
 
 
 void KVirtualBGRenderer::stop()
 {
-    for (unsigned i=0; i<m_numRenderers; ++i)
+    for (int i=0; i<m_numRenderers; ++i)
         m_renderer[i]->stop();
 }
 
@@ -1293,7 +1292,7 @@ void KVirtualBGRenderer::cleanup()
 {
     m_bFinished.fill(false);
 
-    for (unsigned i=0; i<m_numRenderers; ++i)
+    for (int i=0; i<m_numRenderers; ++i)
         m_renderer[i]->cleanup();
 
     delete m_pPixmap;
@@ -1302,13 +1301,13 @@ void KVirtualBGRenderer::cleanup()
 
 void KVirtualBGRenderer::saveCacheFile()
 {
-    for (unsigned i=0; i<m_numRenderers; ++i)
+    for (int i=0; i<m_numRenderers; ++i)
         m_renderer[i]->saveCacheFile();
 }
 
 void KVirtualBGRenderer::enableTiling( bool enable )
 {
-    for (unsigned i=0; i<m_numRenderers; ++i)
+    for (int i=0; i<m_numRenderers; ++i)
         m_renderer[i]->enableTiling( enable );
 }
 

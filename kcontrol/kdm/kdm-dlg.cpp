@@ -169,7 +169,7 @@ bool KDMDialogWidget::setLogo(const QString &logo)
 		return false;
 	if (p.width() > 100 || p.height() > 100)
 		p = p.scaled( 100, 100, Qt::KeepAspectRatio, Qt::SmoothTransformation );
-	logobutton->setPixmap( QPixmap::fromImage( p ) );
+	logobutton->setIcon( QPixmap::fromImage( p ) );
 	uint bd = style()->pixelMetric( QStyle::PM_ButtonMargin ) * 2;
 	logobutton->setFixedSize( p.width() + bd, p.height() + bd );
 	logopath = logo;

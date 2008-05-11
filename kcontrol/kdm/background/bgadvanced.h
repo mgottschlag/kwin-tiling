@@ -23,8 +23,7 @@
 #ifndef BGADVANCED_H
 #define BGADVANCED_H
 
-#include <Qt3Support/Q3Dict>
-#include <Qt3Support/Q3CheckListItem>
+#include <QHash>
 
 #include <kdialog.h>
 
@@ -32,6 +31,7 @@
 
 class QLineEdit;
 class QSpinBox;
+class QTreeWidgetItem;
 
 class KBackgroundRenderer;
 class KBackgroundProgram;
@@ -84,9 +84,9 @@ protected:
    void selectProgram(const QString &name);
 
 protected Q_SLOTS:
-   void slotProgramItemClicked(Q3ListViewItem *item);
+   void slotProgramItemClicked(QTreeWidgetItem *item);
 #if 0
-   void slotProgramItemDoubleClicked(Q3ListViewItem *item);
+   void slotProgramItemDoubleClicked(QTreeWidgetItem *item);
 #endif
    void slotProgramChanged();
    void slotEnableProgram(bool b);
@@ -97,7 +97,7 @@ private:
    BGAdvancedBase *dlg;
 
    QWidget *m_pMonitor;
-   Q3Dict<Q3ListViewItem> m_programItems;
+   QHash<QString, QTreeWidgetItem *> m_programItems;
    QString m_selectedProgram;
    int m_oldBackgroundMode;
    bool m_kdmMode;

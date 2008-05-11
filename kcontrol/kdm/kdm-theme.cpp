@@ -237,7 +237,7 @@ void KDMThemeWidget::installNewTheme()
 	QList<const KArchiveDirectory *> foundThemes;
 
 	KTar archive( themeTmpFile );
-	archive.open( IO_ReadOnly );
+	archive.open( QIODevice::ReadOnly );
 
 	const KArchiveDirectory *archDir = archive.directory();
 	foreach (QString ent, archDir->entries()) {

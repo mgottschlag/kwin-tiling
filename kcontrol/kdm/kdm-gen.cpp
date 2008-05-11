@@ -52,7 +52,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	QGridLayout *grid = new QGridLayout( box );
 	grid->setSpacing( KDialog::spacingHint() );
 	grid->setMargin( KDialog::marginHint() );
-	grid->setColStretch( 2, 1 );
+	grid->setColumnStretch( 2, 1 );
 
 	useThemeCheck = new QCheckBox( i18n("&Use themed greeter"), box );
 	connect( useThemeCheck, SIGNAL(toggled( bool )), SLOT(slotUseThemeChanged()) );
@@ -92,7 +92,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	grid = new QGridLayout( box );
 	grid->setSpacing( KDialog::spacingHint() );
 	grid->setMargin( KDialog::marginHint() );
-	grid->setColStretch( 2, 1 );
+	grid->setColumnStretch( 2, 1 );
 
 	// The Language group box
 	langcombo = new KLanguageButton( box );
