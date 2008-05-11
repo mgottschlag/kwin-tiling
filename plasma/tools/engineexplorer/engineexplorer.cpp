@@ -39,6 +39,8 @@ Q_DECLARE_METATYPE(Soprano::Node)
 
 #include "plasma/dataenginemanager.h"
 
+#include "titlecombobox.h"
+
 EngineExplorer::EngineExplorer(QWidget* parent)
     : KDialog(parent),
       m_engine(0),
@@ -120,7 +122,6 @@ void EngineExplorer::dataUpdated(const QString& source, const Plasma::DataEngine
 void EngineExplorer::listEngines()
 {
     m_engines->clear();
-    m_engines->addItem("");
     QStringList engines = m_engineManager->listAllEngines();
     qSort(engines);
     m_engines->addItems(engines);
@@ -365,7 +366,7 @@ void EngineExplorer::updateTitle()
     }
 
     m_title->setText(ki18ncp("The name of the engine followed by the number of data sources",
-                             "%1 Engine - 1 data source", "%1 - %2 data sources")
+                             "%1 Engine - 1 data source", "%1 Engine - %2 data sources")
                               .subs(m_engine->objectName().isEmpty() ? i18n("Unnamed")
                                                                      : m_engine->objectName())
                               .subs(m_sourceCount).toString());
