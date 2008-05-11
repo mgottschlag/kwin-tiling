@@ -1134,7 +1134,7 @@ KGChTok::KGChTok( QWidget *_parent, const QString &user,
 
 	QVBoxLayout *box = new QVBoxLayout( this );
 
-	box->addWidget( new QLabel( i18n("Changing authentication token"), this ), 0, Qt::AlignHCenter );
+	box->addWidget( new QLabel( i18n("Changing authentication token"), this ), 0, Qt::AlignHCenter|Qt::AlignTop );
 
 	box->addLayout( verify->getLayout() );
 
