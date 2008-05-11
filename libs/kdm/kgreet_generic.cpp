@@ -43,7 +43,7 @@ static int echoMode;
 
 class KDMPasswordEdit : public KLineEdit {
 public:
-	KDMPasswordEdit( QWidget *parent ) : KLineEdit( parent )
+	KDMPasswordEdit( QWidget *parent = 0 ) : KLineEdit( parent )
 	{
 		if (::echoMode == -1)
 			setPasswordMode(true);
@@ -164,12 +164,12 @@ KGenericGreeter::textPrompt( const char *prompt, bool echo, bool /* nonBlocking 
 	else
 		m_infoMsgs.clear();
 
-	QLabel *label = new QLabel( QString::fromUtf8( prompt ).trimmed(), m_parentWidget );
+	QLabel *label = new QLabel( QString::fromUtf8( prompt ).trimmed() );
 	m_grid->addWidget( label, m_line, 0 );
 	m_children.append( label );
 	m_echo = echo;
 	if (echo) {
-		m_lineEdit = new KLineEdit( m_parentWidget );
+		m_lineEdit = new KLineEdit;
 		m_lineEdit->setContextMenuEnabled( false );
 		if (!exp) {
 			if (!m_users.isEmpty()) {
@@ -189,7 +189,7 @@ KGenericGreeter::textPrompt( const char *prompt, bool echo, bool /* nonBlocking 
 		connect( m_lineEdit, SIGNAL(editingFinished()), SLOT(slotChanged()) );
 		connect( m_lineEdit, SIGNAL(textChanged( const QString & )), SLOT(slotChanged()) );
 	} else {
-		m_lineEdit = new KDMPasswordEdit( m_parentWidget );
+		m_lineEdit = new KDMPasswordEdit;
 	}
 	m_lineEdit->setMinimumWidth(
 		m_lineEdit->fontMetrics().width( "This is a long password" ) );
