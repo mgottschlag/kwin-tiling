@@ -1,7 +1,13 @@
 [Desktop Entry]
 Name=Desktop Sessions
+Name[ca]=Sessions d'escriptori
+Name[ga]=Seisiúin Deisce
 Name[gu]=ડેસ્કટોપ સત્રો
 Name[km]=សម័យ​ផ្ទៃតុ
+Name[nds]=Schriefdischtörns
+Name[sl]=Namizne seje
+Name[sv]=Skrivbordssessioner
+Name[uk]=Стільничні сеанси
 Name[zh_TW]=桌面工作階段
 Comment=Fast user switching
 Comment[ca]=Commutador ràpid d'usuari

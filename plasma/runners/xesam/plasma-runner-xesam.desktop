@@ -1,9 +1,16 @@
 [Desktop Entry]
 Name=Xesam Search
+Name[ca]=Cerca Xesam
+Name[ga]=Cuardach Xesam
 Name[gu]=Xesam શોધ
 Name[km]=ស្វែងរក Xesam
+Name[nds]=Xesam-Söök
+Name[sl]=Namizno iskanje
+Name[sv]=Sökning med Xesam
+Name[uk]=Пошук Xesam
 Name[zh_TW]=Xesam 搜尋
 Comment=Allows user to use a Xesam compatible indexer for desktop search
+Comment[ca]=Permet que l'usuari utilitzi un indexador compatible amb Xesam per a la cerca d'escriptori
 Comment[el]=Επιτρέπει τη χρήση ενός συμβατού με το Xesam ευρετηρίου για αναζητήσεις
 Comment[et]=Võimaldab kasutajal kasutada Xesamiga ühilduvat indekseerijat töölauaotsinguks
 Comment[gu]=વપરાશકર્તાને Xesam અનુરૂપ અનુક્રમ ડેસ્કટોપ શોધ માટે ઉપયોગ કરવા દે છે
@@ -13,6 +20,7 @@ Comment[nds]=De Bruker kann een to Xesam kompatibel Indizeerprogramm för't Sök
 Comment[pt]=Permite ao utilizador usar uma indexação compatível com o Xesam para a pesquisa no ambiente de trabalho
 Comment[pt_BR]=Permite que o usuário utilize um indexador compatível como o Xesam para procuras no desktop
 Comment[ro]=Permite utilizatorului să folosească un indexator compatibil cu Xesam pentru căutări de birou
+Comment[sl]=Omogoča iskanje po namizju z uporabo kazala po standardu Xesam
 Comment[sv]=Låter användaren använda indexering som fungerar med Xesam för skrivbordssökning
 Comment[tr]=Kullanıcıların masaüstü araması için Xesam uyumlu bir indeksleyici kullanmasını sağlar
 Comment[uk]=Надає користувачеві змогу скористатися індексатором сумісним з Xesam для пошуку зі стільниці

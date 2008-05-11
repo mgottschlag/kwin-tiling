@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=JavaScript Runner
+Name[ca]=Executador de JavaScript
 Name[el]=Εκτελεστής JavaScript
 Name[et]=JavaScripti käivitaja
 Name[ga]=Feidhmitheoir JavaScript
@@ -18,6 +19,7 @@ Name[x-test]=xxJavaScript Runnerxx
 Name[zh_CN]=JavaScript 运行器
 Name[zh_TW]=JavaScript 執行器
 Comment=JavaScript Runner
+Comment[ca]=Executador de JavaScript
 Comment[el]=Εκτελεστής JavaScript
 Comment[et]=JavaScripti käivitaja
 Comment[ga]=Feidhmitheoir JavaScript
