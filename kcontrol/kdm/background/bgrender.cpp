@@ -38,6 +38,7 @@
 #include <kconfig.h>
 #include <kconfiggroup.h>
 #include <ksvgrenderer.h>
+#include <kmacroexpander.h>
 
 #include "bgdefaults.h"
 
@@ -117,9 +118,6 @@ void KBackgroundRenderer::tile(QImage& dest, const QRect &_rect, const QImage& s
 
 QString KBackgroundRenderer::buildCommand()
 {
-    QString num;
-    int pos = 0;
-
     QString cmd;
     if (m_bPreview)
         cmd = previewCommand();
@@ -129,41 +127,11 @@ QString KBackgroundRenderer::buildCommand()
     if (cmd.isEmpty())
         return QString();
 
-    while ((pos = cmd.indexOf('%', pos)) != -1) {
-
-        if (pos == (int) (cmd.length() - 1))
-            break;
-
-        switch (cmd.at(pos+1).toLatin1()) {
-        case 'f':
-            createTempFile();
-            cmd.replace(pos, 2, K3ShellProcess::quote(m_Tempfile->fileName()));
-            pos += m_Tempfile->fileName().length() - 2;
-            break;
-
-        case 'x':
-            num.setNum(m_Size.width());
-            cmd.replace(pos, 2, num);
-            pos += num.length() - 2;
-            break;
-
-        case 'y':
-            num.setNum(m_Size.height());
-            cmd.replace(pos, 2, num);
-            pos += num.length() - 2;
-            break;
-
-        case '%':
-            cmd.replace(pos, 2, "%");
-            pos--;
-            break;
-        default:
-            ++pos; // avoid infinite loop
-            break;
-        }
-
-    }
-    return cmd;
+    QHash<QChar, QString> map;
+    map.insert('f', m_Tempfile->fileName());
+    map.insert('x', QString::number(m_Size.width()));
+    map.insert('y', QString::number(m_Size.height()));
+    return KMacroExpander::expandMacrosShellQuote(cmd, map);
 }
 
 
