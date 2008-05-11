@@ -682,8 +682,14 @@ void WindowTaskItem::setupBackgroundSvg(QObject *parent)
 QRectF WindowTaskItem::iconRect() const
 {
     QRectF bounds = boundingRect().adjusted(s_leftMargin, s_topMargin, -s_rightMargin, -s_bottomMargin);
+    const int right = bounds.right();
     //leave enough space for the text. useful in vertical panel
     bounds.setWidth(qMax(bounds.width() / 3, qMin(minimumSize().height(), bounds.width())));
+
+    //restore right position if the layout is RTL
+    if (QApplication::layoutDirection() == Qt::RightToLeft) {
+        bounds.moveRight(right);
+    }
 
     QSize iconSize = _icon.actualSize(bounds.size().toSize());
 
