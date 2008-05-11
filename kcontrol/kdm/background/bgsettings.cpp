@@ -66,7 +66,7 @@ KBackgroundPattern::KBackgroundPattern(bool _kdmMode, const QString &name)
     m_kdmMode = _kdmMode;
 
     m_pDirs = KGlobal::dirs();
-    m_pDirs->addResourceType("dtop_pattern", "data", "kdesktop/patterns");
+    m_pDirs->addResourceType("dtop_pattern", "data", "kdm/patterns");
     m_pConfig = 0L;
 
     m_Name = name;
@@ -209,7 +209,7 @@ int KBackgroundPattern::hash()
 QStringList KBackgroundPattern::list()
 {
     KStandardDirs *dirs = KGlobal::dirs();
-    dirs->addResourceType("dtop_pattern", "data", "kdesktop/patterns");
+    dirs->addResourceType("dtop_pattern", "data", "kdm/patterns");
     QStringList lst = dirs->findAllResources("dtop_pattern", "*.desktop",
                                              KStandardDirs::NoDuplicates);
     QStringList::Iterator it;
@@ -236,7 +236,7 @@ KBackgroundProgram::KBackgroundProgram(bool _kdmMode, const QString &name)
     m_kdmMode = _kdmMode;
 
     m_pDirs = KGlobal::dirs();
-    m_pDirs->addResourceType("dtop_program", "data", "kdesktop/programs");
+    m_pDirs->addResourceType("dtop_program", "data", "kdm/programs");
     m_pConfig = 0L;
 
     // prevent updates when just constructed.
@@ -432,7 +432,7 @@ int KBackgroundProgram::hash()
 QStringList KBackgroundProgram::list()
 {
     KStandardDirs *dirs = KGlobal::dirs();
-    dirs->addResourceType("dtop_program", "data", "kdesktop/programs");
+    dirs->addResourceType("dtop_program", "data", "kdm/programs");
     QStringList lst = dirs->findAllResources("dtop_program", "*.desktop",
                                              KStandardDirs::NoDuplicates);
     QStringList::Iterator it;
