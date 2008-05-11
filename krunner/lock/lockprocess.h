@@ -9,7 +9,7 @@
 #ifndef LOCKPROCESS_H
 #define LOCKPROCESS_H
 
-#include <K3Process>
+#include <KProcess>
 
 #include <QWidget>
 #include <QTimer>
@@ -101,7 +101,7 @@ private:
     int         mLockGrace;
     int         mPriority;
     bool        mBusy;
-    K3Process    mHackProc;
+    KProcess    mHackProc;
     QString     mSaverExec;
     QString     mSaver;
     bool        mOpenGLVisual;

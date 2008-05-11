@@ -25,7 +25,7 @@ class QFrame;
 class QGridLayout;
 class QLabel;
 class KPushButton;
-class Q3ListView;
+class QTreeWidget;
 
 //===========================================================================
 //
@@ -87,7 +87,7 @@ private:
     int         mCapsLocked;
     bool        mUnlockingFailed;
     int         sPid, sFd;
-    Q3ListView   *lv;
+    QTreeWidget *lv;
 };
 
 #endif

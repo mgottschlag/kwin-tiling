@@ -1,7 +1,5 @@
 include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner ${KDEBASE_WORKSPACE_SOURCE_DIR}/kcheckpass ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/kdm )
 
-add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
-
 ########### next target ###############
 
 check_library_exists(Xxf86misc XF86MiscSetGrabKeysState "" HAVE_XF86MISCSETGRABKEYSSTATE)
@@ -37,8 +35,7 @@ kde4_add_kcfg_files(krunner_lock_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../kscreensave
 
 kde4_add_executable(krunner_lock ${krunner_lock_SRCS} )
 
-# needs qt3support for Q3ListView
-target_link_libraries(krunner_lock  ${KDE4_KDE3SUPPORT_LIBS} ${KDE4_KIO_LIBS} kworkspace ${QT_QT3SUPPORT_LIBRARY})
+target_link_libraries(krunner_lock  ${KDE4_KDEUI_LIBS} kworkspace)
 
 if (HAVE_XF86MISC)
   target_link_libraries(krunner_lock ${X11_Xxf86misc_LIB})

@@ -57,6 +57,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <signal.h>
+#include <unistd.h>
 #ifdef HAVE_SETPRIORITY
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -153,7 +154,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     gXA_VROOT = XInternAtom (QX11Info::display(), "__SWM_VROOT", False);
     gXA_SCREENSAVER_VERSION = XInternAtom (QX11Info::display(), "_SCREENSAVER_VERSION", False);
 
-    connect(&mHackProc, SIGNAL(processExited(K3Process *)),
+    connect(&mHackProc, SIGNAL(finished(int, QProcess::ExitStatus)),
             SLOT(hackExited()));
 
     mSuspendTimer.setSingleShot(true);
@@ -829,7 +830,8 @@ bool LockProcess::startHack()
     keyMap.insert('w', QString::number(winId()));
     mHackProc << KShell::splitArgs(KMacroExpander::expandMacrosShellQuote(mSaverExec, keyMap));
 
-    if (mHackProc.start())
+    mHackProc.start();
+    if (mHackProc.waitForStarted())
     {
 #ifdef HAVE_SETPRIORITY
         setpriority(PRIO_PROCESS, mHackProc.pid(), mPriority);
@@ -845,12 +847,12 @@ bool LockProcess::startHack()
 //
 void LockProcess::stopHack()
 {
-    if (mHackProc.isRunning())
+    if (mHackProc.state() != QProcess::NotRunning)
     {
-        mHackProc.kill();
-        if (!mHackProc.wait(10))
+        mHackProc.terminate();
+        if (!mHackProc.waitForFinished(10000))
         {
-            mHackProc.kill(SIGKILL);
+            mHackProc.kill();
         }
     }
 }
@@ -867,9 +869,9 @@ void LockProcess::hackExited()
 
 void LockProcess::suspend()
 {
-    if( !mSuspended && mHackProc.isRunning() )
+    if( !mSuspended && mHackProc.state() == QProcess::Running )
     {
-        mHackProc.kill(SIGSTOP);
+        ::kill(mHackProc.pid(), SIGSTOP);
         QApplication::syncX();
         mSavedScreen = QPixmap::grabWindow( winId());
     }
@@ -880,13 +882,13 @@ void LockProcess::resume( bool force )
 {
     if( !force && (!mDialogs.isEmpty() || !mVisibility ))
         return; // no resuming with dialog visible or when not visible
-    if( mSuspended && mHackProc.isRunning() )
+    if( mSuspended && mHackProc.state() == QProcess::Running )
     {
         XForceScreenSaver(QX11Info::display(), ScreenSaverReset );
-        bitBlt( this, 0, 0, &mSavedScreen );
+        mSavedScreen = QPixmap::grabWidget( this );
         mSavedScreen = QPixmap();
         QApplication::syncX();
-        mHackProc.kill(SIGCONT);
+        ::kill(mHackProc.pid(), SIGCONT);
     }
     mSuspended = false;
 }

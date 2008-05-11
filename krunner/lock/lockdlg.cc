@@ -37,8 +37,8 @@
 #include <QFontMetrics>
 #include <QStyle>
 #include <QApplication>
-#include <Qt3Support/Q3CheckListItem>
-#include <Qt3Support/Q3Header>
+#include <QTreeWidget>
+#include <QHeaderView>
 #include <QCheckBox>
 #include <QGridLayout>
 #include <QEvent>
@@ -57,6 +57,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/wait.h>
 
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
@@ -539,11 +540,11 @@ void PasswordDlg::slotStartNewSession()
     mTimeoutTimerId = startTimer(PASSDLG_HIDE_TIMEOUT);
 }
 
-class LockListViewItem : public Q3ListViewItem {
+class LockListViewItem : public QTreeWidgetItem {
 public:
-    LockListViewItem( Q3ListView *parent,
+    LockListViewItem( QTreeWidget *parent,
 		      const QString &sess, const QString &loc, int _vt )
-	: Q3ListViewItem( parent )
+	: QTreeWidgetItem( parent )
 	, vt( _vt )
     {
 	setText( 0, sess );
@@ -575,22 +576,21 @@ void PasswordDlg::slotSwitchUser()
     SessList sess;
     if (dm.localSessions( sess )) {
 
-        lv = new Q3ListView( &dialog );
-        connect( lv, SIGNAL(doubleClicked(Q3ListViewItem *, const QPoint&, int)), SLOT(slotSessionActivated()) );
-        connect( lv, SIGNAL(doubleClicked(Q3ListViewItem *, const QPoint&, int)), &dialog, SLOT(reject()) );
+        lv = new QTreeWidget( &dialog );
+        connect( lv, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), SLOT(slotSessionActivated()) );
+        connect( lv, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), &dialog, SLOT(reject()) );
         lv->setAllColumnsShowFocus( true );
-        lv->addColumn( i18n("Session") );
-        lv->addColumn( i18n("Location") );
-        lv->setColumnWidthMode( 0, Q3ListView::Maximum );
-        lv->setColumnWidthMode( 1, Q3ListView::Maximum );
-        Q3ListViewItem *itm = 0;
+        lv->setHeaderLabels( QStringList() << i18n("Session") << i18n("Location") );
+        lv->header()->setResizeMode( 0, QHeaderView::Stretch );
+        lv->header()->setResizeMode( 1, QHeaderView::Stretch );
+        QTreeWidgetItem *itm = 0;
         QString user, loc;
         int ns = 0;
         for (SessList::ConstIterator it = sess.begin(); it != sess.end(); ++it) {
             KDisplayManager::sess2Str2( *it, user, loc );
             itm = new LockListViewItem( lv, user, loc, (*it).vt );
             if (!(*it).vt)
-                itm->setEnabled( false );
+                itm->setFlags( itm->flags() & ~Qt::ItemIsEnabled );
             if ((*it).self) {
                 lv->setCurrentItem( itm );
                 itm->setSelected( true );
@@ -601,9 +601,11 @@ void PasswordDlg::slotSwitchUser()
         QSize hds( lv->header()->sizeHint() );
         lv->setMinimumWidth( fw + hds.width() +
             (ns > 10 ? style()->pixelMetric(QStyle::PM_ScrollBarExtent) : 0 ) );
+        int ih = lv->itemDelegate()->sizeHint(
+            QStyleOptionViewItem(), lv->model()->index( 0, 0 ) ).height();
         lv->setFixedHeight( fw + hds.height() +
-            itm->height() * (ns < 6 ? 6 : ns > 10 ? 10 : ns) );
-        lv->header()->adjustHeaderSize();
+            ih * (ns < 6 ? 6 : ns > 10 ? 10 : ns) );
+        lv->header()->adjustSize();
         vbox1->addWidget( lv );
 
         btn = new KPushButton( KGuiItem(i18nc("session", "&Activate"), "fork"), &dialog );
