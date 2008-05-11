@@ -31,7 +31,7 @@
 #include <KWindowSystem>
 
 #include <plasma/theme.h>
-#include <plasma/svg.h>
+#include <plasma/panelsvg.h>
 #include <plasma/containment.h>
 
 
@@ -52,7 +52,7 @@ public:
          leftMinSliderRect(QRect(0,0,0,0)),
          rightMinSliderRect(QRect(0,0,0,0)),
          offsetSliderRect(QRect(0,0,0,0)),
-         slider(0),
+         sliderGraphics(0),
          elementPrefix(QString())
     {
     }
@@ -116,11 +116,11 @@ public:
             break;
         }
 
-        leftMaxSliderRect.setSize(slider->elementSize(elementPrefix + "maxslider"));
+        leftMaxSliderRect.setSize(sliderGraphics->elementSize(elementPrefix + "maxslider"));
         rightMaxSliderRect.setSize(leftMaxSliderRect.size());
-        leftMinSliderRect.setSize(slider->elementSize(elementPrefix + "minslider"));
+        leftMinSliderRect.setSize(sliderGraphics->elementSize(elementPrefix + "minslider"));
         rightMinSliderRect.setSize(leftMinSliderRect.size());
-        offsetSliderRect.setSize(slider->elementSize(elementPrefix + "offsetslider"));
+        offsetSliderRect.setSize(sliderGraphics->elementSize(elementPrefix + "offsetslider"));
     }
 
     void setupSliders(const QSize &totalSize)
@@ -229,7 +229,7 @@ public:
     QRect leftMinSliderRect;
     QRect rightMinSliderRect;
     QRect offsetSliderRect;
-    Plasma::Svg *slider;
+    Plasma::PanelSvg *sliderGraphics;
     QString elementPrefix;
 };
 
@@ -237,8 +237,8 @@ PositioningRuler::PositioningRuler(QWidget* parent)
    : QWidget(parent),
      d(new Private())
 {
-   d->slider = new Plasma::Svg(this);
-   d->slider->setImagePath("widgets/containment-controls");
+   d->sliderGraphics = new Plasma::PanelSvg(this);
+   d->sliderGraphics->setImagePath("widgets/containment-controls");
 
    d->loadSlidersGraphics();
 }
@@ -439,27 +439,27 @@ int PositioningRuler::availableLength() const
 void PositioningRuler::paintEvent(QPaintEvent *event)
 {
     //Draw background
-    int x = 0;
-    int y = 0;
     if (d->location == Plasma::LeftEdge || d->location == Plasma::RightEdge) {
-        x = event->rect().width();
+        d->sliderGraphics->setElementPrefix("background-vertical");
     } else {
-        y = event->rect().height();
+        d->sliderGraphics->setElementPrefix("background-horizontal");
     }
 
     QPainter painter(this);
-    QLinearGradient gradient(0, 0, x, y);
-    QColor startColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-    startColor.setAlphaF(0.25);
-    QColor endColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-    endColor.setAlphaF(0.25);
+    painter.setCompositionMode(QPainter::CompositionMode_Source);
 
-    gradient.setColorAt(0, startColor);
-    gradient.setColorAt(1, endColor);
+    d->sliderGraphics->resizePanel(event->rect().size());
+    d->sliderGraphics->paintPanel(&painter, event->rect());
+    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
-    painter.fillRect(event->rect(), gradient);
+    //Draw center indicators
+    if (d->alignment == Qt::AlignCenter && (d->location == Plasma::LeftEdge || d->location == Plasma::RightEdge)) {
+        d->sliderGraphics->paint(&painter, QPoint(event->rect().left(), event->rect().center().y()), "vertical-centerindicator");
+    } else if (d->alignment == Qt::AlignCenter) {
+        d->sliderGraphics->paint(&painter, QPoint(event->rect().center().x(), event->rect().top()), "horizontal-centerindicator");
+    }
 
-
+    //Draw handles
     QString elementPrefix;
 
     switch (d->location) {
@@ -478,18 +478,17 @@ void PositioningRuler::paintEvent(QPaintEvent *event)
         break;
     }
 
-    //Draw handles
     if (d->alignment != Qt::AlignLeft) {
-        d->slider->paint(&painter, d->leftMaxSliderRect, elementPrefix + "maxslider");
-        d->slider->paint(&painter, d->leftMinSliderRect, elementPrefix + "minslider");
+        d->sliderGraphics->paint(&painter, d->leftMaxSliderRect, elementPrefix + "maxslider");
+        d->sliderGraphics->paint(&painter, d->leftMinSliderRect, elementPrefix + "minslider");
     }
 
     if (d->alignment != Qt::AlignRight) {
-        d->slider->paint(&painter, d->rightMaxSliderRect, elementPrefix + "maxslider");
-        d->slider->paint(&painter, d->rightMinSliderRect, elementPrefix + "minslider");
+        d->sliderGraphics->paint(&painter, d->rightMaxSliderRect, elementPrefix + "maxslider");
+        d->sliderGraphics->paint(&painter, d->rightMinSliderRect, elementPrefix + "minslider");
     }
 
-    d->slider->paint(&painter, d->offsetSliderRect, elementPrefix + "offsetslider");
+    d->sliderGraphics->paint(&painter, d->offsetSliderRect, elementPrefix + "offsetslider");
 }
 
 void PositioningRuler::mousePressEvent(QMouseEvent *event)
@@ -573,8 +572,6 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
         break;
     case Private::OffsetSlider:
     {
-        const int oldOffset = d->offset;
-
         if (d->location == Plasma::LeftEdge || d->location == Plasma::RightEdge) {
             d->offsetSliderRect.moveTop(newPos.y());
             d->offset = d->offsetSliderRect.center().y();
