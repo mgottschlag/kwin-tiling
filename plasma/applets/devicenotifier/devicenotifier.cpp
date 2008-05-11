@@ -87,7 +87,7 @@ void DeviceNotifier::init()
 
     m_widget = new Dialog();
 
-    QVBoxLayout *l_layout = new QVBoxLayout();
+    QVBoxLayout *l_layout = new QVBoxLayout(m_widget);
     l_layout->setSpacing(0);
     l_layout->setMargin(0);
 
@@ -95,11 +95,11 @@ void DeviceNotifier::init()
 
     KColorScheme colorTheme = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme());
     QLabel *label = new QLabel(i18n("<font color=\"%1\">Devices recently plugged in:</font>",
-                            colorTheme.foreground(KColorScheme::NormalText).color().name()));
-    QLabel *icon = new QLabel();
+                            colorTheme.foreground(KColorScheme::NormalText).color().name()),m_widget);
+    QLabel *icon = new QLabel(m_widget);
     icon->setPixmap(KIcon("emblem-mounted").pixmap(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     
-    QHBoxLayout *l_layout2 = new QHBoxLayout();
+    QHBoxLayout *l_layout2 = new QHBoxLayout(m_widget);
     l_layout2->setSpacing(0);
     l_layout2->setMargin(0);
 
@@ -172,12 +172,6 @@ void DeviceNotifier::initSysTray()
 
 DeviceNotifier::~DeviceNotifier()
 {
-    delete m_icon;
-    delete m_layout;
-    if (m_proxy) {
-        m_proxy->setWidget(0);
-        delete m_proxy;
-    }
     delete m_widget;
     delete m_hotplugModel;
     delete m_timer;
@@ -207,9 +201,7 @@ void DeviceNotifier::constraintsEvent(Plasma::Constraints constraints)
             m_icon = 0;
 
             m_widget->setWindowFlags(Qt::Widget);
-            //TODO: this is a bit messy .. it should size to the proper content size, perhaps?
-            //m_layout = new Plasma::BoxLayout(Plasma::BoxLayout::LeftToRight, this);
-            m_layout = new QGraphicsLinearLayout();
+            m_layout = new QGraphicsLinearLayout(this);
             m_layout->setContentsMargins(0,0,0,0);
             m_layout->setSpacing(0);
             m_proxy = new QGraphicsProxyWidget(this);
