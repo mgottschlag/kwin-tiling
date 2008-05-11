@@ -193,7 +193,11 @@ void Panel::updateBorders(const QRect &geom)
         }
 
         //hardcoded extra margin for the toolbox right now
-        rightWidth += 20;
+        if (QApplication::layoutDirection() == Qt::RightToLeft) {
+            leftWidth += 20;
+        } else {
+            rightWidth += 20;
+        }
         //kDebug() << "top/bottom: Width:" << width << ", height:" << height;
     } else if (loc == LeftEdge || loc == RightEdge) {
         QRect r = QApplication::desktop()->screenGeometry(s);
