@@ -61,6 +61,7 @@ MyApplication::renderDone()
 	palette.setBrush( desktop()->backgroundRole(), QBrush( renderer.pixmap() ) );
 	desktop()->setPalette( palette );
 	desktop()->setAutoFillBackground( true );
+	desktop()->setAttribute( Qt::WA_PaintOnScreen );
 	desktop()->show();
 	desktop()->repaint();
 
