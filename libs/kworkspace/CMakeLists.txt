@@ -17,7 +17,7 @@ qt4_add_dbus_interface( kworkspace_LIB_SRCS ${kwin_xml} kwin_interface )
 
 kde4_add_library(kworkspace SHARED ${kworkspace_LIB_SRCS})
 
-target_link_libraries(kworkspace  ${KDE4_KIO_LIBS} ${X11_LIBRARIES} )
+target_link_libraries(kworkspace  ${KDE4_KDEUI_LIBS} ${X11_LIBRARIES} )
 
 set_target_properties(kworkspace PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 install(TARGETS kworkspace ${INSTALL_TARGETS_DEFAULT_ARGS} )
