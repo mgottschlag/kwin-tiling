@@ -223,7 +223,7 @@ void WeatherEngine::dataUpdated(const QString& source, Plasma::DataEngine::Data 
 
 // Constructor
 WeatherEngine::WeatherEngine(QObject *parent, const QVariantList& args)
-        :  Plasma::DataEngine(parent), d(new Private())
+        :  Plasma::DataEngine(parent, args), d(new Private())
 {
     Q_UNUSED(args)
 
