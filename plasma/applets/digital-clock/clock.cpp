@@ -61,7 +61,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
 {
     setHasConfigurationInterface(true);
     resize(150, 75);
-    setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
+    setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
 }
 
 void Clock::init()
