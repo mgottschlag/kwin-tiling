@@ -439,11 +439,7 @@ int PositioningRuler::availableLength() const
 void PositioningRuler::paintEvent(QPaintEvent *event)
 {
     //Draw background
-    if (d->location == Plasma::LeftEdge || d->location == Plasma::RightEdge) {
-        d->sliderGraphics->setElementPrefix("background-vertical");
-    } else {
-        d->sliderGraphics->setElementPrefix("background-horizontal");
-    }
+    d->sliderGraphics->setElementPrefix(d->location);
 
     QPainter painter(this);
     painter.setCompositionMode(QPainter::CompositionMode_Source);
