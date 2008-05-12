@@ -84,8 +84,9 @@ void DeviceNotifier::init()
 
     m_solidEngine = dataEngine("hotplug");
     m_solidDeviceEngine = dataEngine("soliddevice");
-
     m_widget = new Dialog();
+    m_widget->setFocusPolicy(Qt::NoFocus);
+    m_widget->setWindowFlags(Qt::X11BypassWindowManagerHint);   
 
     QVBoxLayout *l_layout = new QVBoxLayout(m_widget);
     l_layout->setSpacing(0);
@@ -150,7 +151,7 @@ void DeviceNotifier::initSysTray()
         return;
     }
 
-    m_widget->setWindowFlags(Qt::Popup);
+    m_widget->setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     //we display the icon corresponding to the computer
     QList<Solid::Device> list = Solid::Device::allDevices();
@@ -200,7 +201,7 @@ void DeviceNotifier::constraintsEvent(Plasma::Constraints constraints)
             delete m_icon;
             m_icon = 0;
 
-            m_widget->setWindowFlags(Qt::Widget);
+            m_widget->setWindowFlags(Qt::X11BypassWindowManagerHint);
             m_layout = new QGraphicsLinearLayout(this);
             m_layout->setContentsMargins(0,0,0,0);
             m_layout->setSpacing(0);
@@ -259,7 +260,6 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
             if (m_icon && isNotificationEnabled) {
                 m_widget->move(popupPosition(m_widget->sizeHint()));
                 m_widget->show();
-                m_widget->clearFocus();
                 m_timer->start(m_displayTime*1000);
             }
         //data from soliddevice engine
@@ -355,9 +355,7 @@ void DeviceNotifier::onClickNotifier()
     } else {
         m_widget->move(popupPosition(m_widget->sizeHint()));
         m_widget->show();
-    }
-
-    m_widget->clearFocus();
+    }    
 }
 
 void DeviceNotifier::createConfigurationInterface(KConfigDialog *parent)
