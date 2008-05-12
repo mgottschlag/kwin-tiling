@@ -525,12 +525,25 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
         return;
     }
 
+    //bound to width, height
     QPoint newPos = QPoint(qMin(event->pos().x() - d->startDragPos.x(), width() - d->leftMaxSliderRect.width()/2 + 1),
                            qMin(event->pos().y() - d->startDragPos.y(), height() - d->leftMaxSliderRect.height()/2 + 1));
+    //bound to 0,0
     newPos = QPoint(qMax(newPos.x(), 0 - d->leftMaxSliderRect.width()/2), qMax(newPos.y(), 0 - d->leftMaxSliderRect.height()/2));
 
+
+    const bool horizontal = (d->location == Plasma::TopEdge || d->location == Plasma::BottomEdge);
+    const int widthBound = 20;
+    
     switch (d->dragging) {
     case Private::LeftMaxSlider:
+        //don't let the slider "cross" with the offset slider
+        if (horizontal && newPos.x() > d->offsetSliderRect.left() - widthBound) {
+            return;
+        } else if (!horizontal && newPos.y() > d->offsetSliderRect.top() - widthBound) {
+            return;
+        }
+
         d->moveSlider(d->leftMaxSliderRect, d->rightMaxSliderRect, newPos);
         d->maxLength = d->sliderRectToLength(d->leftMaxSliderRect);
 
@@ -540,6 +553,12 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
         }
         break;
     case Private::RightMaxSlider:
+        if (horizontal && newPos.x() < d->offsetSliderRect.left() + widthBound) {
+            return;
+        } else if (!horizontal && newPos.y() < d->offsetSliderRect.top() + widthBound) {
+            return;
+        }
+
         d->moveSlider(d->rightMaxSliderRect, d->leftMaxSliderRect, newPos);
         d->maxLength = d->sliderRectToLength(d->rightMaxSliderRect);
 
@@ -549,6 +568,12 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
         }
         break;
     case Private::LeftMinSlider:
+        if (horizontal && newPos.x() > d->offsetSliderRect.left() - widthBound) {
+            return;
+        } else if (!horizontal && newPos.y() > d->offsetSliderRect.top() - widthBound) {
+            return;
+        }
+
         d->moveSlider(d->leftMinSliderRect, d->rightMinSliderRect, newPos);
         d->minLength = d->sliderRectToLength(d->leftMinSliderRect);
 
@@ -558,6 +583,12 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
         }
         break;
     case Private::RightMinSlider:
+        if (horizontal && newPos.x() < d->offsetSliderRect.left() + widthBound) {
+            return;
+        } else if (!horizontal && newPos.y() < d->offsetSliderRect.top() + widthBound) {
+            return;
+        }
+
         d->moveSlider(d->rightMinSliderRect, d->leftMinSliderRect, newPos);
         d->minLength = d->sliderRectToLength(d->rightMinSliderRect);
 
