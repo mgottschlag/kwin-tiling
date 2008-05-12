@@ -31,6 +31,10 @@
 class KDialog;
 class KSelectionOwner;
 
+namespace Plasma
+{
+    class PanelSvg;
+}
 
 class Pager : public Plasma::Applet
 {
@@ -74,6 +78,7 @@ class Pager : public Plasma::Applet
         void createMenu();
         QRect fixViewportPosition( const QRect& r );
         void createConfigurationInterface(KConfigDialog *parent);
+        bool posOnDesktopRect(const QRectF& r, const QPointF& pos);
 
     private:
         QTimer* m_timer;
@@ -87,6 +92,7 @@ class Pager : public Plasma::Applet
         };
         DisplayedText m_displayedText;
         bool m_showWindowIcons;
+        bool m_showOwnBackground;
         int m_rows;
         int m_columns;
         int m_desktopCount;
@@ -100,6 +106,7 @@ class Pager : public Plasma::Applet
         QList<QRect> m_activeWindows;
         QList<QAction*> m_actions;
         KSelectionOwner* m_desktopLayoutOwner;
+        Plasma::PanelSvg *m_background;
 
         // dragging of windows
         QRect m_dragOriginal;

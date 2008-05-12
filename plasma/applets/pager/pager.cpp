@@ -41,6 +41,7 @@
 #include <kmanagerselection.h>
 
 #include <plasma/svg.h>
+#include <plasma/panelsvg.h>
 #include <plasma/theme.h>
 
 const int WINDOW_UPDATE_DELAY = 50;
@@ -49,7 +50,8 @@ Pager::Pager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_dialog(0),
       m_displayedText(Number),
-      m_showWindowIcons(true),
+      m_showWindowIcons(false),
+      m_showOwnBackground(false),
       m_rows(2),
       m_columns(0),
       m_dragId(0),
@@ -57,6 +59,10 @@ Pager::Pager(QObject *parent, const QVariantList &args)
 {
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
+
+    m_background = new Plasma::PanelSvg(this);
+    m_background->setImagePath("widgets/pager");
+    m_background->setCacheAllRenderedPanels(true);
 
     // initialize with a decent default
     m_desktopCount = KWindowSystem::numberOfDesktops();
@@ -109,6 +115,10 @@ void Pager::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::SizeConstraint) {
         recalculateGeometry();
         recalculateWindowRects();
+        if (m_background->hasElementPrefix(QString())) {
+            m_background->setElementPrefix(QString());
+            m_background->resizePanel(size());
+        }
     }
 }
 
@@ -149,6 +159,36 @@ void Pager::createConfigurationInterface(KConfigDialog *parent)
     ui.spinRows->setMaximum(m_desktopCount);
 }
 
+bool Pager::posOnDesktopRect(const QRectF& r, const QPointF& pos)
+{
+    qreal leftMargin;
+    qreal topMargin;
+    qreal rightMargin;
+    qreal bottomMargin;
+
+    if (m_showOwnBackground && m_background) {
+        m_background->setElementPrefix(QString());
+        m_background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+
+        if (r.left() > leftMargin) {
+            leftMargin = 0;
+        }
+        if (r.top() > topMargin) {
+            leftMargin = 0;
+        }
+        if (geometry().width() - r.right() < rightMargin) {
+            leftMargin = 0;
+        }
+        if (geometry().bottom() - r.bottom() < bottomMargin) {
+            leftMargin = 0;
+        }
+
+        return r.adjusted(-leftMargin, -topMargin, rightMargin, bottomMargin).contains(pos);
+    } else {
+        return r.contains(pos);
+    }
+}
+
 void Pager::recalculateGeometry()
 {
     if (!m_rects.isEmpty() && geometry().size() == m_size) {
@@ -158,25 +198,39 @@ void Pager::recalculateGeometry()
 
     const int padding = 2; // Space between miniatures of desktops
     const int textMargin = 3; // Space between name of desktop and border
+    int columns = m_desktopCount / m_rows + m_desktopCount % m_rows;
 
     qreal leftMargin;
     qreal topMargin;
     qreal rightMargin;
     qreal bottomMargin;
 
-    getContentsMargins(&leftMargin, &topMargin, &rightMargin, &bottomMargin);
+    if (formFactor() == Plasma::Vertical || formFactor() == Plasma::Horizontal) {
+        m_background->setElementPrefix(QString());
+        m_background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
 
-    int columns = m_desktopCount / m_rows + m_desktopCount % m_rows;
+        //if the final size is going to be really tiny avoid to add extra margins
+        if (geometry().width() - leftMargin - rightMargin < 16 * columns ||
+            geometry().height() - topMargin - bottomMargin < 12 * m_rows) {
+            m_showOwnBackground = false;
+            leftMargin = topMargin = rightMargin = bottomMargin = 0;
+        } else {
+            m_showOwnBackground = true;
+        }
+    } else {
+        getContentsMargins(&leftMargin, &topMargin, &rightMargin, &bottomMargin);
+    }
+
     qreal itemHeight;
     qreal itemWidth;
 
     if (formFactor() == Plasma::Vertical) { // Panel is on left or right
-        itemWidth = (geometry().width() - padding * (columns - 1)) / columns;
+        itemWidth = (geometry().width() - leftMargin - rightMargin - padding * (columns - 1)) / columns;
         m_widthScaleFactor = itemWidth / QApplication::desktop()->width();
         itemHeight = QApplication::desktop()->height() * m_widthScaleFactor;
         m_heightScaleFactor = m_widthScaleFactor;
     } else { // Panel is on top or bottom
-        itemHeight = (geometry().height() - padding * (m_rows - 1)) / m_rows;
+        itemHeight = (geometry().height() - topMargin -  bottomMargin - padding * (m_rows - 1)) / m_rows;
         m_heightScaleFactor = itemHeight / QApplication::desktop()->height();
         itemWidth = QApplication::desktop()->width() * m_heightScaleFactor;
         if (m_displayedText==Name) {
@@ -201,6 +255,20 @@ void Pager::recalculateGeometry()
         itemRect.moveLeft(leftMargin + floor((i % columns) * (itemWidth + padding)));
         itemRect.moveTop(topMargin + floor((i / columns) * (itemHeight + padding)));
         m_rects.append(itemRect);
+    }
+
+    //Resize background svgs as needed
+    if (m_background->hasElementPrefix("normal")) {
+        m_background->setElementPrefix("normal");
+        m_background->resizePanel(itemRect.size());
+    }
+    if (m_background->hasElementPrefix("active")) {
+        m_background->setElementPrefix("active");
+        m_background->resizePanel(itemRect.size());
+    }
+    if (m_background->hasElementPrefix("hover")) {
+        m_background->setElementPrefix("hover");
+        m_background->resizePanel(itemRect.size());
     }
 
     m_size = QSizeF(ceil(columns * itemWidth + padding * (columns - 1) + leftMargin + rightMargin),
@@ -397,7 +465,7 @@ void Pager::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if (event->buttons() != Qt::RightButton)
     {
         for (int i = 0; i < m_desktopCount; i++) {
-            if (m_rects[i].contains(event->pos())) {
+            if (posOnDesktopRect(m_rects[i], event->pos())) {
                 m_dragStartDesktop = m_dragHighlightedDesktop = i;
                 m_dragOriginalPos = m_dragCurrentPos = event->pos();
                 if (m_dragOriginal.isEmpty()) {
@@ -500,7 +568,7 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             }
         }
         m_timer->start();
-    } else if (m_dragStartDesktop != -1 && m_rects[m_dragStartDesktop].contains(event->pos().toPoint()) && 
+    } else if (m_dragStartDesktop != -1 && posOnDesktopRect(m_rects[m_dragStartDesktop], event->pos()) && 
                m_currentDesktop != m_dragStartDesktop + 1) {
         // only change the desktop if the user presses and releases the mouse on the same desktop
         KWindowSystem::setCurrentDesktop(m_dragStartDesktop + 1);
@@ -526,7 +594,7 @@ void Pager::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 void Pager::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
     foreach (const QRectF &rect, m_rects) {
-        if (rect.contains(event->pos())) {
+        if (posOnDesktopRect(rect, event->pos())) {
             if (m_hoverRect != rect) {
                 m_hoverRect = rect;
                 update();
@@ -580,7 +648,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     // Inactive windows
     QColor drawingColor = plasmaColorTheme.foreground(KColorScheme::InactiveText).color();
-    drawingColor.setAlpha(192);
+    drawingColor.setAlpha(132);
     QBrush windowBrush(drawingColor);
 
     // Inactive window borders
@@ -592,18 +660,26 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     QPen activeWindowPen(defaultTextColor);
 
     // Active windows
-    drawingColor.setAlpha(238);
+    drawingColor.setAlpha(208);
     QBrush activeWindowBrush(drawingColor);
+
+    if (m_showOwnBackground && (formFactor() == Plasma::Vertical || formFactor() == Plasma::Horizontal)) {
+        m_background->setElementPrefix(QString());
+        m_background->paintPanel(painter, contentsRect);
+    }
 
     // Draw backgrounds of desktops
     painter->setPen(Qt::NoPen);
-    for (int i = 0; i < m_desktopCount; i++) {
-        if (m_rects[i] == m_hoverRect) {
-            painter->setBrush(hoverBrush);
-        } else {
-            painter->setBrush(defaultBrush);
+    if (!m_background->hasElementPrefix("hover") || !m_background->hasElementPrefix("normal")) {
+        for (int i = 0; i < m_desktopCount; i++) {
+            if (!m_background->hasElementPrefix("hover") && m_rects[i] == m_hoverRect) {
+                painter->setBrush(hoverBrush);
+                painter->drawRect(m_rects[i]);
+            } else if (!m_background->hasElementPrefix("normal")) {
+                painter->setBrush(defaultBrush);
+                painter->drawRect(m_rects[i]);
+            }
         }
-        painter->drawRect(m_rects[i]);
     }
 
     // Draw miniatures of windows from each desktop
@@ -622,7 +698,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
                 rect.translate((m_dragCurrentPos - m_dragOriginalPos).toPoint());
                 painter->setClipRect(option->exposedRect);
             } else {
-                painter->setClipRect(m_rects[i]);
+                painter->setClipRect(m_rects[i].adjusted(1, 1, -1, -1));
             }
             painter->drawRect(rect);
             if ((rect.width() > 16) && (rect.height() > 16) && m_showWindowIcons){
@@ -638,21 +714,40 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     QPen drawingPen = QPen();
     painter->setBrush(Qt::NoBrush);
 
+    QString prefix;
     for( int i = 0; i < m_desktopCount; i++) {
-        if (i + 1 == m_currentDesktop || i == m_dragHighlightedDesktop) {
-            drawingPen = QPen(defaultTextColor);
+        if (m_rects[i] == m_hoverRect) {
+            prefix = "hover";
+        } else if (i + 1 == m_currentDesktop || i == m_dragHighlightedDesktop) {
+            prefix = "active";
         } else {
-            drawingPen = QPen(plasmaColorTheme.foreground(KColorScheme::InactiveText).color());
+            prefix = "normal";
         }
-        painter->setPen(drawingPen);
-        painter->drawRect(m_rects[i]);
 
-        if (m_displayedText==Number) { // Display number of desktop
-            painter->setPen(activePen);
-            painter->drawText(m_rects[i], Qt::AlignCenter, QString::number(i+1));
-        } else if (m_displayedText==Name) { // Display name of desktop
-            painter->setPen(activePen);
-            painter->drawText(m_rects[i], Qt::AlignCenter, KWindowSystem::desktopName(i+1));
+        //Paint the panel or fallback if we don't have that prefix
+        if (m_background->hasElementPrefix(prefix)) {
+            m_background->setElementPrefix(prefix);
+            m_background->paintPanel(painter, m_rects[i], m_rects[i].topLeft());
+        } else {
+            if (i + 1 == m_currentDesktop || i == m_dragHighlightedDesktop) {
+            drawingPen = QPen(defaultTextColor);
+            } else {
+                drawingPen = QPen(plasmaColorTheme.foreground(KColorScheme::InactiveText).color());
+            }
+
+            painter->setPen(drawingPen);
+            painter->drawRect(m_rects[i]);
+        }
+
+        //Draw text
+        if (m_rects[i] == m_hoverRect) {
+            if (m_displayedText==Number) { // Display number of desktop
+                painter->setPen(activePen);
+                painter->drawText(m_rects[i], Qt::AlignCenter, QString::number(i+1));
+            } else if (m_displayedText==Name) { // Display name of desktop
+                painter->setPen(activePen);
+                painter->drawText(m_rects[i], Qt::AlignCenter, KWindowSystem::desktopName(i+1));
+            }
         }
     }
 }
