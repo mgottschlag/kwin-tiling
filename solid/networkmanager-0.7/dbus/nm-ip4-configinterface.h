@@ -20,6 +20,9 @@
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
 
+//HAND-EDIT
+#include "generic-types.h"
+
 /*
  * Proxy class for interface org.freedesktop.NetworkManager.IP4Config
  */
