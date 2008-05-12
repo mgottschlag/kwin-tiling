@@ -51,7 +51,7 @@ class ChooserListViewItem : public QTreeWidgetItem {
 ChooserDlg::ChooserDlg()
 	: inherited()
 {
-	completeMenu( LOGIN_REMOTE_ONLY, ex_greet, i18n("&Local Login"), Qt::ALT+Qt::Key_L );
+	completeMenu( LOGIN_REMOTE_ONLY, ex_greet, i18nc("@action:inmenu", "&Local Login"), Qt::ALT+Qt::Key_L );
 
 	QBoxLayout *vbox = new QVBoxLayout( this );
 
@@ -64,7 +64,9 @@ ChooserDlg::ChooserDlg()
 	host_view->setUniformRowHeights( true );
 	host_view->setEditTriggers( QAbstractItemView::NoEditTriggers );
 	host_view->setColumnCount( 2 );
-	host_view->setHeaderLabels( QStringList() << i18n("Hostname") << i18n("Status") );
+	host_view->setHeaderLabels( QStringList()
+		<< i18nc("@title:column", "Hostname")
+		<< i18nc("@title:column ... of named host", "Status") );
 	host_view->setColumnWidth( 0, fontMetrics().width( "login.crap.net" ) );
 	host_view->setMinimumWidth( fontMetrics().width( "login.crap.com Display not authorized to connect this server" ) );
 	host_view->setAllColumnsShowFocus( true );
@@ -72,9 +74,9 @@ ChooserDlg::ChooserDlg()
 
 	iline = new QLineEdit( this );
 	iline->setEnabled( true );
-	QLabel *itxt = new QLabel( i18n("Hos&t:"), this );
+	QLabel *itxt = new QLabel( i18nc("XDMCP server", "Hos&t:"), this );
 	itxt->setBuddy( iline );
-	QPushButton *addButton = new QPushButton( i18n("A&dd"), this );
+	QPushButton *addButton = new QPushButton( i18nc("@action:button", "A&dd"), this );
 	connect( addButton, SIGNAL(clicked()), SLOT(addHostname()) );
 	QBoxLayout *hibox = new QHBoxLayout();
 	vbox->addLayout( hibox );
@@ -83,9 +85,9 @@ ChooserDlg::ChooserDlg()
 	hibox->addWidget( addButton );
 
 	// Buttons
-	QPushButton *acceptButton = new QPushButton( i18n("&Accept"), this );
+	QPushButton *acceptButton = new QPushButton( i18nc("@action:button", "&Accept"), this );
 	acceptButton->setDefault( true );
-	QPushButton *pingButton = new QPushButton( i18n("&Refresh"), this );
+	QPushButton *pingButton = new QPushButton( i18nc("@action:button", "&Refresh"), this );
 
 	QBoxLayout *hbox = new QHBoxLayout();
 	vbox->addLayout( hbox );
@@ -95,13 +97,13 @@ ChooserDlg::ChooserDlg()
 	hbox->addStretch( 1 );
 
 	if (optMenu) {
-		QPushButton *menuButton = new QPushButton( i18n("&Menu"), this );
+		QPushButton *menuButton = new QPushButton( i18nc("@action:button", "&Menu"), this );
 		menuButton->setMenu( optMenu );
 		hbox->addWidget( menuButton );
 		hbox->addStretch( 1 );
 	}
 
-//	QPushButton *helpButton = new QPushButton( i18n("&Help"), this );
+//	QPushButton *helpButton = new QPushButton( i18nc("@action:button", "&Help"), this );
 //	hbox->addWidget( helpButton );
 
 #ifdef WITH_KDM_XCONSOLE
@@ -175,7 +177,7 @@ QString ChooserDlg::recvStr()
 		free( arr );
 		return str;
 	} else
-		return i18n("<unknown>"); //krazy:exclude=i18ncheckarg
+		return i18nc("hostname or status", "<unknown>"); //krazy:exclude=i18ncheckarg
 }
 
 ChooserListViewItem *ChooserDlg::findItem( int id )

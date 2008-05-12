@@ -223,22 +223,22 @@ KdmLabel::update()
 static const struct {
 	const char *type, *text;
 } stocks[] = {
-	{ "language",          I18N_NOOP("_Language") },
-	{ "session",           I18N_NOOP("Session _Type") },
-	{ "system",            I18N_NOOP("_Menu") },	// i18n("Actions");
-	{ "disconnect",        I18N_NOOP("Disconn_ect") },
-	{ "quit",              I18N_NOOP("_Quit") },
-	{ "halt",              I18N_NOOP("Power o_ff") },
-//	{ "suspend",           I18N_NOOP("_Suspend") },
-	{ "reboot",            I18N_NOOP("Re_boot") },
-	{ "chooser",           I18N_NOOP("XDMCP Choose_r") },
+	{ "language",          I18N_NOOP2("@action:button", "Lan_guage") },
+	{ "session",           I18N_NOOP2("@action:button", "Session _Type") },
+	{ "system",            I18N_NOOP2("@action:button", "_Menu") },	// i18n("Actions");
+	{ "disconnect",        I18N_NOOP2("@action:button ... from XDMCP server", "Disconn_ect") },
+	{ "quit",              I18N_NOOP2("@action:button", "_Quit") },
+	{ "halt",              I18N_NOOP2("@action:button", "Power o_ff") },
+//	{ "suspend",           I18N_NOOP2("@action:button", "_Suspend") },
+	{ "reboot",            I18N_NOOP2("@action:button", "Re_boot") },
+	{ "chooser",           I18N_NOOP2("@action:button", "_Remote login") },
 	{ "caps-lock-warning", I18N_NOOP("Caps Lock is enabled") },
 	{ "timed-label",       I18N_NOOP("User %u will log in in %t") },
 	{ "welcome-label",     I18N_NOOP("Welcome to %h") },	// _greetString
 	{ "domain-label",      I18N_NOOP("_Domain:") },
 	{ "username-label",    I18N_NOOP("_Username:") },
 	{ "password-label",    I18N_NOOP("_Password:") },
-	{ "login",             I18N_NOOP("_Login") }
+	{ "login",             I18N_NOOP2("@action:button", "_Login") }
 };
 
 // public static
@@ -279,7 +279,7 @@ KdmLabel::lookupText( const QString &t )
 #elif defined(HAVE_SYS_SYSTEMINFO)
 	m['o'] = (unsigned)sysinfo( SI_SRPC_DOMAIN, buf, sizeof(buf) ) > sizeof(buf) ? "localdomain" : QString::fromLocal8Bit( buf );
 #endif
-	m['t'] = i18np( "1 second", "%1 seconds", timedDelay );
+	m['t'] = i18ncp( "will login in ...", "1 second", "%1 seconds", timedDelay );
 	m['u'] = timedUser;
 	// xgettext:no-c-format
 	KGlobal::locale()->setDateFormat( i18nc("date format", "%a %d %B") );

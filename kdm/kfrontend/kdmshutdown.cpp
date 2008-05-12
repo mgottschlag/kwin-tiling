@@ -119,7 +119,7 @@ KDMShutdownBase::complete( QWidget *prevWidget )
 	}
 	if (maySched) {
 		KPushButton *schedButton =
-			new KPushButton( KGuiItem( i18n("&Schedule...") ), this );
+			new KPushButton( KGuiItem( i18nc("@action:inmenu verb", "&Schedule...") ), this );
 		schedButton->setSizePolicy( fp );
 		hlay->addWidget( schedButton );
 		hlay->addStretch( 1 );
@@ -286,7 +286,7 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 
 	howGroup->setSizePolicy( fp );
 
-	schedGroup = new QGroupBox( i18n("Scheduling"), this );
+	schedGroup = new QGroupBox( i18nc("@title:group ... of shutdown", "Scheduling"), this );
 	hlay->addWidget( schedGroup, 0, Qt::AlignTop );
 
 	le_start = new QLineEdit( schedGroup );
@@ -504,7 +504,7 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 
 	if (_scheduledSd != SHUT_NEVER) {
 		KPushButton *btnSched = new
-		KPushButton( KGuiItem( i18n("&Schedule...") ), this );
+		KPushButton( KGuiItem( i18nc("@action:button verb", "&Schedule...") ), this );
 		buttonlay->addWidget( btnSched );
 		connect( btnSched, SIGNAL(clicked()), SLOT(slotSched()) );
 
@@ -627,7 +627,9 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, const char 
 		lv->setUniformRowHeights( true );
 		lv->setEditTriggers( QAbstractItemView::NoEditTriggers );
 		lv->setColumnCount( 2 );
-		lv->setHeaderLabels( QStringList() << i18n("Session") << i18n("Location") );
+		lv->setHeaderLabels( QStringList()
+			<< i18nc("@title:column", "Session")
+			<< i18nc("@title:column ... of session", "Location") );
 		int ns = 0;
 		QString user, loc;
 		do {
@@ -675,13 +677,13 @@ KDMCancelShutdown::KDMCancelShutdown( int how, int start, int timeout,
 	QDateTime qdt;
 	QString strt, end;
 	if (start < time( 0 ))
-		strt = i18n("now");
+		strt = i18nc("start of shutdown:", "now");
 	else {
 		qdt.setTime_t( start );
 		strt = qdt.toString( Qt::LocalDate );
 	}
 	if (timeout == TO_INF)
-		end = i18n("infinite");
+		end = i18nc("timeout of shutdown:", "infinite");
 	else {
 		qdt.setTime_t( timeout );
 		end = qdt.toString( Qt::LocalDate );
@@ -692,9 +694,9 @@ KDMCancelShutdown::KDMCancelShutdown( int how, int start, int timeout,
 		     "\nStart: %3"
 		     "\nTimeout: %4",
 		  uid == -2 ?
-		      i18n("console user") :
+		      i18nc("owner of shutdown:", "console user") :
 		      uid == -1 ?
-		      i18n("control socket") :
+		      i18nc("owner of shutdown:", "control socket") :
 		      KUser( uid ).loginName() ,
 		  how == SHUT_HALT ?
 		      i18n("turn off computer") :
@@ -706,10 +708,10 @@ KDMCancelShutdown::KDMCancelShutdown( int how, int start, int timeout,
 	if (timeout != TO_INF)
 		trg += i18n("\nAfter timeout: %1",
 		         force == SHUT_FORCE ?
-		             i18n("abort all sessions") :
+		             i18nc("after timeout:", "abort all sessions") :
 		             force == SHUT_FORCEMY ?
-		             i18n("abort own sessions") :
-		             i18n("cancel shutdown") );
+		             i18nc("after timeout:", "abort own sessions") :
+		             i18nc("after timeout:", "cancel shutdown") );
 	lab = new QLabel( trg, this );
 	box->addWidget( lab );
 	complete( 0 );

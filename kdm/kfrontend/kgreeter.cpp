@@ -415,9 +415,9 @@ KGreeter::insertSessions()
 				                  dsk.readEntry( "TryExec" ) ).isEmpty())),
 				            dsk.readEntry( "Exec" ).toLatin1() );
 			}
-	putSession( "default", i18n("Default"), false, "default" );
-	putSession( "custom", i18n("Custom"), false, "custom" );
-	putSession( "failsafe", i18n("Failsafe"), false, "failsafe" );
+	putSession( "default", i18nc("@item:inlistbox session type", "Default"), false, "default" );
+	putSession( "custom", i18nc("@item:inlistbox session type", "Custom"), false, "custom" );
+	putSession( "failsafe", i18nc("@item:inlistbox session type", "Failsafe"), false, "failsafe" );
 	qSort( sessionTypes );
 	for (int i = 0; i < sessionTypes.size() && !sessionTypes[i].hid; i++) {
 		sessionTypes[i].action = sessGroup->addAction( sessionTypes[i].name );
@@ -495,7 +495,8 @@ KGreeter::setPrevWM( QAction *wm )
 		if (curPrev)
 			curPrev->setText( sessionTypes[curPrev->data().toInt()].name );
 		if (wm)
-			wm->setText( sessionTypes[wm->data().toInt()].name + i18n(" (previous)") );
+			wm->setText( sessionTypes[wm->data().toInt()].name +
+			             i18nc("appended to session type", " (previous)") );
 		curPrev = wm;
 	}
 }
@@ -731,10 +732,10 @@ KStdGreeter::KStdGreeter()
 			main_box->addWidget( pixLabel, 0, Qt::AlignCenter );
 	}
 
-	goButton = new QPushButton( i18n("L&ogin"), this );
+	goButton = new QPushButton( i18nc("@action:button", "L&ogin"), this );
 	goButton->setDefault( true );
 	connect( goButton, SIGNAL(clicked()), SLOT(accept()) );
-	QPushButton *menuButton = new QPushButton( i18n("&Menu"), this );
+	QPushButton *menuButton = new QPushButton( i18nc("@action:button", "&Menu"), this );
 	//helpButton
 
 	QWidget *prec;
@@ -765,17 +766,17 @@ KStdGreeter::KStdGreeter()
 	hbox2->addStretch( 1 );
 
 	if (sessMenu->actions().count() > 1) {
-		inserten( i18n("Session &Type"), Qt::ALT+Qt::Key_T, sessMenu );
+		inserten( i18nc("@title:menu", "Session &Type"), Qt::ALT+Qt::Key_T, sessMenu );
 		needSep = true;
 	}
 
 	if (plugMenu) {
-		inserten( i18n("&Authentication Method"), Qt::ALT+Qt::Key_A, plugMenu );
+		inserten( i18nc("@title:menu", "&Authentication Method"), Qt::ALT+Qt::Key_A, plugMenu );
 		needSep = true;
 	}
 
 #ifdef XDMCP
-	completeMenu( LOGIN_LOCAL_ONLY, ex_choose, i18n("&Remote Login"), Qt::ALT+Qt::Key_R );
+	completeMenu( LOGIN_LOCAL_ONLY, ex_choose, i18nc("@action:inmenu", "&Remote Login"), Qt::ALT+Qt::Key_R );
 #else
 	completeMenu();
 #endif
@@ -849,7 +850,7 @@ KThemedGreeter::KThemedGreeter( KdmThemer *_themer )
 	pam_error = themer->findNode( "pam-error" );
 	KdmLabel *pam_error_label = qobject_cast<KdmLabel *>(pam_error);
 	if (pam_error_label)
-		pam_error_label->setText( i18n("Login Failed.") );
+		pam_error_label->setText( i18n("Login failed") );
 	timed_label = themer->findNode( "timed-label" );
 
 	KdmItem *itm;
@@ -898,18 +899,18 @@ KThemedGreeter::KThemedGreeter( KdmThemer *_themer )
 		}
 	} else {
 		if (sessMenu->actions().count() > 1) {
-			inserten( i18n("Session &Type"), Qt::ALT+Qt::Key_T, sessMenu );
+			inserten( i18nc("@title:menu", "Session &Type"), Qt::ALT+Qt::Key_T, sessMenu );
 			needSep = true;
 		}
 	}
 
 	if (plugMenu) {
-		inserten( i18n("&Authentication Method"), Qt::ALT+Qt::Key_A, plugMenu );
+		inserten( i18nc("@title:menu", "&Authentication Method"), Qt::ALT+Qt::Key_A, plugMenu );
 		needSep = true;
 	}
 
 #ifdef XDMCP
-	completeMenu( LOGIN_LOCAL_ONLY, ex_choose, i18n("&Remote Login"), Qt::ALT+Qt::Key_R );
+	completeMenu( LOGIN_LOCAL_ONLY, ex_choose, i18nc("@action:inmenu", "&Remote Login"), Qt::ALT+Qt::Key_R );
 #else
 	completeMenu();
 #endif

@@ -67,7 +67,7 @@ KConsole::KConsole( QWidget *_parent )
 	setLineWrapMode( NoWrap );
 
 	if (!openConsole())
-		append( i18n("Cannot open console") );
+		append( i18n("*** Cannot connect to console log ***") );
 }
 
 KConsole::~KConsole()
@@ -149,9 +149,8 @@ KConsole::slotData()
 
 	if ((n = read( fd, buffer, sizeof(buffer) )) <= 0) {
 		closeConsole();
-		if (!n)
-			if (!openConsole())
-				append( i18n("\n*** Cannot open console log source ***") );
+		if (n || !openConsole())
+			append( i18n("\n*** Lost connection with console log ***") );
 	} else {
 		QString str( QString::fromLocal8Bit( buffer, n ).remove( '\r' ) );
 		int pos, opos;

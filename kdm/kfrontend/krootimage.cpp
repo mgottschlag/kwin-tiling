@@ -35,11 +35,6 @@ Boston, MA 02110-1301, USA.
 
 #include <stdlib.h>
 
-static const char description[] =
-	I18N_NOOP( "Fancy desktop background for kdm" );
-
-static const char version[] = "v2.0";
-
 
 MyApplication::MyApplication( const char *conf, int argc, char **argv )
 	: QApplication( argc, argv )
@@ -99,8 +94,9 @@ MyApplication::slotTimeout()
 int
 main( int argc, char *argv[] )
 {
-	KCmdLineArgs::init( argc, argv, "krootimage", "kdesktop",
-	                    ki18n("KRootImage"), version, ki18n(description) );
+	KCmdLineArgs::init( argc, argv, "krootimage", "kdmgreet",
+	                    ki18n("KRootImage"), QByteArray(),
+	                    ki18n("Fancy desktop background for kdm") );
 
 	KCmdLineOptions options;
 	options.add( "+config", ki18n("Name of the configuration file") );
