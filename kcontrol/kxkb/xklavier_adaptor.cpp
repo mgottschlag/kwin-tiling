@@ -18,6 +18,8 @@
 
 #include <locale.h>
 
+#include <QTextDocument> // for Qt::escape
+
 #include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
@@ -64,9 +66,13 @@ XKlavierAdaptor::XKlavierAdaptor(Display* dpy)
     }
 
 #if KDE_TRANSLATE == 1
-    // try to translate layout names by countries in desktop_kdebase if translations are missing from x.org
-    // this is poor man's translation as it's good only for layout names and only those which match country names
-    KGlobal::locale()->insertCatalog("desktop_kdebase");
+    // If we cannot get XKlavier's own i18n to work,
+    // we have to manually translate strings it reports using its catalog.
+    // This catalog has to be in the locale paths which KDE will search.
+    KGlobal::locale()->insertCatalog("xkeyboard-config");
+    // KDE's i18n expects messages to be well-formed XML,
+    // so use Qt::escape() to replace < with &lt; etc.
+    #define I18N_KDE(x) i18n(Qt::escape(QString::fromUtf8(x)).toUtf8())
 #endif
 }
 
@@ -81,7 +87,11 @@ QHash<QString, QList<XkbVariant>*> XKlavierAdaptor::getVariants() { return priv-
 static void processModel(XklConfigRegistry*, const XklConfigItem* configItem, gpointer userData)
 {
 	QString model = QString::fromUtf8(configItem->name);
+#if KDE_TRANSLATE == 1
+	QString desc = I18N_KDE(configItem->description);
+#else
 	QString desc = QString::fromUtf8(configItem->description);
+#endif
 
 #if VERBOSE == 1
 	  kDebug() << "model: " << model << " - " << desc;
@@ -93,9 +103,13 @@ static void processModel(XklConfigRegistry*, const XklConfigItem* configItem, gp
 
 static void processVariants(XklConfigRegistry*, const XklConfigItem* configItem, gpointer userData)
 {
-        XkbVariant variant;
+	XkbVariant variant;
 	variant.name = QString::fromUtf8(configItem->name);
-        variant.description = QString::fromUtf8(configItem->description);
+#if KDE_TRANSLATE == 1
+	variant.description = I18N_KDE(configItem->description);
+#else
+	variant.description = QString::fromUtf8(configItem->description);
+#endif
 	QString layout = ((XKlavierAdaptorPriv*)userData)->currLayout;
 
 #if VERBOSE == 1
@@ -110,9 +124,10 @@ static void processVariants(XklConfigRegistry*, const XklConfigItem* configItem,
 static void processLayout(XklConfigRegistry*, const XklConfigItem* configItem, gpointer userData)
 {
 	QString layout = QString::fromUtf8(configItem->name);
-	QString desc = QString::fromUtf8(configItem->description);
 #if KDE_TRANSLATE == 1
-        desc = i18nc("Name", desc.toUtf8().constData());
+	QString desc = I18N_KDE(configItem->description);
+#else
+	QString desc = QString::fromUtf8(configItem->description);
 #endif
 
 #if VERBOSE == 1
@@ -132,7 +147,11 @@ static void processOptions(XklConfigRegistry*, const XklConfigItem* configItem, 
 	XkbOption option;
 	
 	option.name = QString::fromUtf8(configItem->name);
+#if KDE_TRANSLATE == 1
+	option.description = I18N_KDE(configItem->description);
+#else
 	option.description = QString::fromUtf8(configItem->description);
+#endif
 	option.group = ((XKlavierAdaptorPriv*)userData)->currGroup;
 
 #if VERBOSE == 1
@@ -147,7 +166,11 @@ static void processOptionGroup(XklConfigRegistry*, const XklConfigItem* configIt
 {
 	XkbOptionGroup group;
 	group.name = QString::fromUtf8(configItem->name);
+#if KDE_TRANSLATE == 1
+	group.description = I18N_KDE(configItem->description);
+#else
 	group.description = QString::fromUtf8(configItem->description);
+#endif
 	group.exclusive = ! GPOINTER_TO_INT (g_object_get_data (G_OBJECT (configItem),
 	                                                          XCI_PROP_ALLOW_MULTIPLE_SELECTION));
 	
