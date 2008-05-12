@@ -84,6 +84,9 @@ URLGrabber::URLGrabber(const KSharedConfigPtr &config)
 URLGrabber::~URLGrabber()
 {
     delete myMenu;
+    ActionListIterator it( *myActions );
+    while (it.hasNext())
+        delete it.next();
     delete myActions;
     qDeleteAll(myMatches);
 }
@@ -105,6 +108,9 @@ void URLGrabber::invokeAction( const QString& clip )
 
 void URLGrabber::setActionList( ActionList *list )
 {
+    ActionListIterator it( *myActions );
+    while (it.hasNext())
+        delete it.next();
     delete myActions;
     myActions = list;
 }
@@ -288,6 +294,9 @@ void URLGrabber::editData()
 
 void URLGrabber::readConfiguration( KConfig *kc )
 {
+    ActionListIterator it( *myActions );
+    while (it.hasNext())
+        delete it.next();
     myActions->clear();
     KConfigGroup cg(kc, "General");
     int num = cg.readEntry("Number of Actions", 0);

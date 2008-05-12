@@ -484,8 +484,8 @@ void Klipper::slotConfigure()
         setURLGrabberEnabled( true );
         readConfiguration( m_config.data() );
     }
-
-    ConfigDialog *dlg = new ConfigDialog( 0, new KConfigSkeleton(), myURLGrabber->actionList(), collection, isApplet() );
+    KConfigSkeleton *skeleton = new KConfigSkeleton();
+    ConfigDialog *dlg = new ConfigDialog( 0, skeleton, myURLGrabber->actionList(), collection, isApplet() );
     dlg->setKeepContents( bKeepContents );
     dlg->setPopupAtMousePos( bPopupAtMouse );
     dlg->setStripWhiteSpace( myURLGrabber->trimmed() );
@@ -522,6 +522,7 @@ void Klipper::slotConfigure()
     }
     setURLGrabberEnabled( haveURLGrabber );
 
+    delete skeleton;
     delete dlg;
 }
 
