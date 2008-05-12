@@ -61,7 +61,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
 {
     setHasConfigurationInterface(true);
     resize(150, 75);
-    setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+    setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Maximum);
 }
 
 void Clock::init()
@@ -100,7 +100,6 @@ void Clock::init()
 
 void Clock::constraintsEvent(Plasma::Constraints constraints)
 {
-    kDebug();
     if (constraints & Plasma::SizeConstraint) {
         int aspect = 2;
         if (m_showSeconds) {
