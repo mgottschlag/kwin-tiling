@@ -107,6 +107,8 @@ private Q_SLOTS:
     void updatePanelGeometry();
     void showAppletBrowser();
     void togglePanelController();
+    //The following two slots are for a kind of a "transaction" where you can change the geometry,
+    //formFactor and location of the containment but updatePanelGeometry will be called a single time at the commit
     void locationChangeBegun();
     void locationChangeCommitted();
 
