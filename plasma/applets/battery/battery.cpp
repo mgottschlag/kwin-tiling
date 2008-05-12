@@ -61,6 +61,8 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
     resize(128, 128);
+    setAspectRatioMode(Plasma::Square);
+
 }
 
 void Battery::init()
@@ -79,7 +81,7 @@ void Battery::init()
         }
     }
 
-    setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    //setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 
     QString svgFile = QString();
     if (cg.readEntry("style", 0) == 0) {
@@ -123,9 +125,11 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
         BackgroundHints background = NoBackground;
 
         if (formFactor() == Plasma::Vertical) {
+            setMinimumHeight(geometry().width());
             kDebug() << "Vertical FormFactor";
             // TODO: set background(true) on panel causes 0 height, so do not use it
         } else if (formFactor() == Plasma::Horizontal) {
+            setMinimumWidth(geometry().height());
             kDebug() << "Horizontal FormFactor";
             // TODO: set background(true) on panel causes 0 height, so do not use it
         } else if (formFactor() == Plasma::Planar) {
