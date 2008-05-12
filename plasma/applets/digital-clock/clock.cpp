@@ -61,6 +61,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
 {
     setHasConfigurationInterface(true);
     resize(150, 75);
+    setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
 }
 
 void Clock::init()
@@ -99,6 +100,7 @@ void Clock::init()
 
 void Clock::constraintsEvent(Plasma::Constraints constraints)
 {
+    kDebug();
     if (constraints & Plasma::SizeConstraint) {
         int aspect = 2;
         if (m_showSeconds) {
@@ -295,6 +297,12 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         p->setRenderHint(QPainter::SmoothPixmapTransform);
         p->setRenderHint(QPainter::Antialiasing);
 
+        /* ... helps debugging contentsRect and sizing ...
+        QColor c = QColor(Qt::green);
+        c.setAlphaF(.5);
+        p->setBrush(c);
+        p->drawRect(contentsRect);
+        */
         QRect timeRect;
 
         // Paint the date, conditionally, and let us know afterwards how much
