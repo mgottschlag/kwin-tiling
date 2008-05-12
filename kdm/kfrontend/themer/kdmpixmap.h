@@ -61,6 +61,7 @@ protected:
 			QColor tint;
 			bool present;
 			bool svgImage;
+			QString svgElement;
 		} normal, active, prelight;
 	} pixmap;
 

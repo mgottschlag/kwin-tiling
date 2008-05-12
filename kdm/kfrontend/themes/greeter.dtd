@@ -44,6 +44,7 @@ Items with these IDs are always hidden:
 >
 <!ENTITY % colorattrs "
 	file CDATA #IMPLIED
+	element CDATA #IMPLIED
 	color CDATA #IMPLIED
 	font CDATA #IMPLIED
 	tint CDATA #IMPLIED

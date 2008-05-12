@@ -25,7 +25,6 @@
 
 <programlisting>
 [KdmGreeterTheme]
-Encoding=UTF-8
 Greeter=circles.xml
 Name=Circles
 Description=Theme with blue circles
@@ -246,7 +245,7 @@ Screenshot=screenshot.png
 &lt;!DOCTYPE greeter SYSTEM &quot;greeter.dtd&quot;&gt;
 &lt;greeter&gt;
   &lt;item type=&quot;rect&quot; background=&quot;true&quot;&gt;
-    &lt;normal file="background_for_login.svg"/&gt;
+    &lt;normal file="background_for_login.svg" element="background"/&gt;
     &lt;pos x=&quot;0&quot; y=&quot;0&quot; width=&quot;100%&quot; height=&quot;100%&quot;/&gt;
   &lt;/item&gt;
   &lt;item type=&quot;rect&quot;&gt;
@@ -917,6 +916,11 @@ Screenshot=screenshot.png
             <para>
               <literal>file</literal> specifies the file containing the image.
               Relative pathnames are relative to the theme's directory.
+            </para>
+
+            <para>
+              <literal>element</literal> specifies the element id of a SVG file.
+              If empty, the whole SVG image will be rendered.
             </para>
 
             <para>

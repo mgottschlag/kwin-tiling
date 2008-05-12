@@ -77,6 +77,8 @@ KdmPixmap::definePixmap( const QDomElement &el, PixmapStruct::PixmapClass &pClas
 		pClass.fullpath = themer()->baseDir() + '/' + fileName;
 
 	pClass.svgImage = fileName.endsWith( ".svg" ) || fileName.endsWith( ".svgz" );
+	if (pClass.svgImage)
+		pClass.svgElement = el.attribute( "element" );
 }
 
 bool
@@ -171,7 +173,10 @@ KdmPixmap::drawContents( QPainter *p, const QRect &r )
 				scaledImage = QImage( area.size(), QImage::Format_ARGB32 );
 				scaledImage.fill( 0 );
 				QPainter pa( &scaledImage );
-				pClass.svgRenderer->render( &pa );
+				if (pClass.svgElement.isEmpty())
+					pClass.svgRenderer->render( &pa );
+				else
+					pClass.svgRenderer->render( &pa, pClass.svgElement );
 				applyTint( pClass, scaledImage );
 			}
 		} else {
