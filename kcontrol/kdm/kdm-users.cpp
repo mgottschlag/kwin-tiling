@@ -100,20 +100,21 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 
 	QString wtstr;
 
-	minGroup = new QGroupBox( i18n("System U&IDs"), this );
+	minGroup = new QGroupBox( i18nc("@title:group UIDs belonging to system users like 'cron'",
+	                                "System U&IDs"), this );
 	minGroup->setWhatsThis( i18n("Users with a UID (numerical user identification) outside this range will not be listed by KDM and this setup dialog."
 	                             " Note that users with the UID 0 (typically root) are not affected by this and must be"
 	                             " explicitly excluded in \"Inverse selection\" mode.") );
 	QSizePolicy sp_ign_fix( QSizePolicy::Ignored, QSizePolicy::Fixed );
 	QValidator *valid = new QIntValidator( 0, 999999, minGroup );
-	QLabel *minlab = new QLabel( i18n("Below:"), minGroup );
+	QLabel *minlab = new QLabel( i18nc("UIDs", "Below:"), minGroup );
 	leminuid = new KLineEdit( minGroup );
 	minlab->setBuddy( leminuid );
 	leminuid->setSizePolicy( sp_ign_fix );
 	leminuid->setValidator( valid );
 	connect( leminuid, SIGNAL(textChanged( const QString & )), SIGNAL(changed()) );
 	connect( leminuid, SIGNAL(textChanged( const QString & )), SLOT(slotMinMaxChanged()) );
-	QLabel *maxlab = new QLabel( i18n("Above:"), minGroup );
+	QLabel *maxlab = new QLabel( i18nc("UIDs", "Above:"), minGroup );
 	lemaxuid = new KLineEdit( minGroup );
 	maxlab->setBuddy( lemaxuid );
 	lemaxuid->setSizePolicy( sp_ign_fix );
@@ -126,14 +127,15 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	grid->addWidget( maxlab, 1, 0 );
 	grid->addWidget( lemaxuid, 1, 1 );
 
-	usrGroup = new QGroupBox( i18n("Users"), this );
-	cbshowlist = new QCheckBox( i18n("Show list"), usrGroup );
+	usrGroup = new QGroupBox( i18nc("@title:group", "Users"), this );
+	cbshowlist = new QCheckBox( i18nc("... of users", "Show list"), usrGroup );
 	cbshowlist->setWhatsThis( i18n("If this option is checked, KDM will show a list of users,"
 	                               " so users can click on their name or image rather than typing in their login.") );
-	cbcomplete = new QCheckBox( i18n("Autocompletion"), usrGroup );
+	cbcomplete = new QCheckBox( i18nc("user ...", "Autocompletion"), usrGroup );
 	cbcomplete->setWhatsThis( i18n("If this option is checked, KDM will automatically complete"
 	                               " user names while they are typed in the line edit.") );
-	cbinverted = new QCheckBox( i18n("Inverse selection"), usrGroup );
+	cbinverted = new QCheckBox( i18nc("@option:check mode of the user selection",
+	                                  "Inverse selection"), usrGroup );
 	cbinverted->setWhatsThis( i18n("This option specifies how the users for \"Show list\" and \"Autocompletion\""
 	                               " are selected in the \"Select users and groups\" list: "
 	                               "If not checked, select only the checked users. "
@@ -177,15 +179,16 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	connect( optoutlv, SIGNAL(clicked( Q3ListViewItem * )),
 	         SIGNAL(changed()) );
 
-	faceGroup = new QGroupBox( i18n("User Image Source"), this );
+	faceGroup = new QGroupBox( i18nc("@title:group source for user faces",
+	                                 "User Image Source"), this );
 	faceGroup->setWhatsThis( i18n("Here you can specify where KDM will obtain the images that represent users."
-	                              " \"Admin\" represents the global folder; these are the pictures you can set below."
+	                              " \"System\" represents the global folder; these are the pictures you can set below."
 	                              " \"User\" means that KDM should read the user's $HOME/.face.icon file."
 	                              " The two selections in the middle define the order of preference if both sources are available.") );
-	rbadmonly = new QRadioButton( i18n("Admin"), faceGroup );
-	rbprefadm = new QRadioButton( i18n("Admin, user"), faceGroup );
-	rbprefusr = new QRadioButton( i18n("User, admin"), faceGroup );
-	rbusronly = new QRadioButton( i18n("User"), faceGroup );
+	rbadmonly = new QRadioButton( i18nc("@option:radio image source", "System"), faceGroup );
+	rbprefadm = new QRadioButton( i18nc("@option:radio image source", "System, user"), faceGroup );
+	rbprefusr = new QRadioButton( i18nc("@option:radio image source", "User, system"), faceGroup );
+	rbusronly = new QRadioButton( i18nc("@option:radio image source", "User"), faceGroup );
 	buttonGroup = new QButtonGroup( faceGroup );
 	connect( buttonGroup, SIGNAL(buttonClicked( int )), SLOT(slotFaceOpts()) );
 	connect( buttonGroup, SIGNAL(buttonClicked( int )), SIGNAL(changed()) );
@@ -199,7 +202,8 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	box->addWidget( rbprefusr );
 	box->addWidget( rbusronly );
 
-	QGroupBox *picGroup = new QGroupBox( i18n("User Images"), this );
+	QGroupBox *picGroup = new QGroupBox( i18nc("@title:group user face assignments",
+	                                           "User Images"), this );
 	usercombo = new KComboBox( picGroup );
 	usercombo->setWhatsThis( i18n("The user the image below belongs to.") );
 	connect( usercombo, SIGNAL(activated( int )),
@@ -216,7 +220,8 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	userbutton->setToolTip( i18n("Click or drop an image here") );
 	userbutton->setWhatsThis( i18n("Here you can see the image assigned to the user selected in the combo box above. Click on the image button to select from a list"
 	                               " of images or drag and drop your own image on to the button (e.g. from Konqueror).") );
-	rstuserbutton = new QPushButton( i18n("Unset"), picGroup );
+	rstuserbutton = new QPushButton( i18nc("@action:button assign default user face",
+	                                       "R&eset"), picGroup );
 	rstuserbutton->setWhatsThis( i18n("Click this button to make KDM use the default image for the selected user.") );
 	connect( rstuserbutton, SIGNAL(clicked()),
 	         SLOT(slotUnsetUserPix()) );
@@ -319,7 +324,7 @@ void KDMUsersWidget::changeUserPix( const QString &pix )
 	QString user( usercombo->currentText() );
 	if (user == m_defaultText) {
 		user = ".default";
-		if (KMessageBox::questionYesNo( this, i18n("Save image as default image?"),
+		if (KMessageBox::questionYesNo( this, i18n("Save image as default?"),
 		                                QString(), KStandardGuiItem::save(),
 		                                KStandardGuiItem::cancel() ) != KMessageBox::Yes)
 			return;

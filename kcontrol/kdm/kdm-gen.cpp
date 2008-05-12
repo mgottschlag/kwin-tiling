@@ -47,7 +47,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	ml->setSpacing( KDialog::spacingHint() );
 	ml->setMargin( KDialog::marginHint() );
 
-	QGroupBox *box = new QGroupBox( i18n("Appearance"), this );
+	QGroupBox *box = new QGroupBox( i18nc("@title:group", "Appearance"), this );
 	ml->addWidget( box );
 	QGridLayout *grid = new QGridLayout( box );
 	grid->setSpacing( KDialog::spacingHint() );
@@ -87,7 +87,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	label->setWhatsThis( wtstr );
 	colcombo->setWhatsThis( wtstr );
 
-	box = new QGroupBox( i18n("Locale"), this );
+	box = new QGroupBox( i18nc("@title:group 'man locale' ...", "Locale"), this );
 	ml->addWidget( box );
 	grid = new QGridLayout( box );
 	grid->setSpacing( KDialog::spacingHint() );
@@ -108,13 +108,13 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	label->setWhatsThis( wtstr );
 	langcombo->setWhatsThis( wtstr );
 
-	box = new QGroupBox( i18n("Fonts"), this );
+	box = new QGroupBox( i18nc("@title:group", "Fonts"), this );
 	ml->addWidget( box );
 	grid = new QGridLayout( box );
 	grid->setSpacing( KDialog::spacingHint() );
 	grid->setMargin( KDialog::marginHint() );
 
-	label = new QLabel( i18n("&General:"), box );
+	label = new QLabel( i18nc("... font", "&General:"), box );
 	stdFontChooser = new KFontRequester( box );
 	label->setBuddy( stdFontChooser );
 	stdFontChooser->setWhatsThis( i18n("This changes the font which is used for all the text in the login manager except for the greeting and failure messages.") );
@@ -122,7 +122,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	grid->addWidget( label, 0, 0 );
 	grid->addWidget( stdFontChooser, 0, 1 );
 
-	label = new QLabel( i18n("&Failure font:"), box );
+	label = new QLabel( i18nc("font for ...", "&Failure:"), box );
 	failFontChooser = new KFontRequester( box );
 	label->setBuddy( failFontChooser );
 	failFontChooser->setWhatsThis( i18n("This changes the font which is used for failure messages in the login manager.") );
@@ -130,7 +130,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	grid->addWidget( label, 1, 0 );
 	grid->addWidget( failFontChooser, 1, 1 );
 
-	label = new QLabel( i18n("Gree&ting:"), box );
+	label = new QLabel( i18nc("font for ...", "Gree&ting:"), box );
 	greetingFontChooser = new KFontRequester( box );
 	label->setBuddy( greetingFontChooser );
 	greetingFontChooser->setWhatsThis( i18n("This changes the font which is used for the login manager's greeting.") );

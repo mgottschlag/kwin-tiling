@@ -70,7 +70,9 @@ KDMThemeWidget::KDMThemeWidget( QWidget *parent )
 	ml->setMargin( KDialog::marginHint() );
 
 	themeWidget = new QTreeWidget( this );
-	themeWidget->setHeaderLabels( QStringList() << i18n("Theme") << i18n("Author") );
+	themeWidget->setHeaderLabels( QStringList()
+		<< i18nc("@title:column", "Theme")
+		<< i18nc("@title:column", "Author") );
 	themeWidget->setSortingEnabled( true );
 	themeWidget->sortItems( 0, Qt::AscendingOrder );
 	themeWidget->setRootIsDecorated( false );
@@ -94,18 +96,17 @@ KDMThemeWidget::KDMThemeWidget( QWidget *parent )
 
 	ml->addWidget( info, 1, 4 );
 
-	bInstallTheme = new QPushButton( i18n("Install &new theme"), this );
+	bInstallTheme = new QPushButton( i18nc("@action:button", "Install &new theme"), this );
 	bInstallTheme->setWhatsThis( i18n("This will install a theme into the theme directory.") );
 
 	ml->addWidget( bInstallTheme, 2, 0 );
 
-	bRemoveTheme = new QPushButton( i18n("&Remove theme"), this );
+	bRemoveTheme = new QPushButton( i18nc("@action:button", "&Remove theme"), this );
 	bRemoveTheme->setWhatsThis( i18n("This will remove the selected theme.") );
 
 	ml->addWidget( bRemoveTheme, 2, 1 );
 
-	bGetNewThemes = new QPushButton( i18n("&Get New Themes"), this );
-	bGetNewThemes->setWhatsThis( i18n("Get New Themes") );
+	bGetNewThemes = new QPushButton( i18nc("@action:button", "&Get New Themes"), this );
 
 	ml->addWidget( bGetNewThemes, 2, 2 );
 
@@ -254,7 +255,7 @@ void KDMThemeWidget::installNewTheme()
 		KMessageBox::error( this, i18n("The file is not a valid KDM theme archive.") );
 	else {
 		KProgressDialog progressDiag( this,
-			i18n("Installing KDM themes"), QString() );
+			i18nc("@title:window", "Installing KDM themes"), QString() );
 		progressDiag.setModal( true );
 		progressDiag.setAutoClose( true );
 		progressDiag.progressBar()->setMaximum( foundThemes.size() );
@@ -262,7 +263,8 @@ void KDMThemeWidget::installNewTheme()
 
 		foreach (const KArchiveDirectory *ard, foundThemes) {
 			progressDiag.setLabelText(
-				i18n("<qt>Installing <strong>%1</strong> theme</qt>", ard->name() ) );
+				i18nc("@info:progress",
+				      "<qt>Installing <strong>%1</strong> theme</qt>", ard->name() ) );
 
 			QString path = themeDir + ard->name();
 			ard->copyTo( path, true );
@@ -308,7 +310,7 @@ void KDMThemeWidget::removeSelectedThemes()
 	}
 	if (KMessageBox::questionYesNoList( this,
 			i18n("Are you sure you want to remove the following themes?"),
-			nameList, i18n("Remove themes?") ) != KMessageBox::Yes)
+			nameList, i18nc("@title:window", "Remove themes?") ) != KMessageBox::Yes)
 		return;
 	KIO::del( KUrl::List( delList ) ); // XXX error check
 

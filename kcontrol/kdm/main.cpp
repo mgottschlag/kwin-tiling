@@ -96,9 +96,10 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 	, updateOK( false )
 {
 	KAboutData *about =
-		new KAboutData( I18N_NOOP( "kcmkdm" ), 0, ki18n( "KDE Login Manager Config Module" ),
-		                0, KLocalizedString(), KAboutData::License_GPL,
-		                ki18n( "(c) 1996 - 2006 The KDM Authors" ) );
+		new KAboutData( "kcmkdm", "kdmconfig", ki18n( "KDE Login Manager Config Module" ),
+		                QByteArray(), KLocalizedString(), KAboutData::License_GPL,
+		                ki18n( "(c) 1996-2008 The KDM Authors" ), KLocalizedString(),
+		                "http://developer.kde.org/~ossi/sw/kdm.html" );
 
 	about->addAuthor( ki18n("Thomas Tanghus"), ki18n( "Original author" ), "tanghus@earthling.net" );
 	about->addAuthor( ki18n("Steffen Hansen"), KLocalizedString(), "hansen@kde.org" );

@@ -44,19 +44,19 @@ KDMSessionsWidget::KDMSessionsWidget( QWidget *parent )
 
 	sdlcombo = new KComboBox( group0 );
 	sdlcombo->setEditable( false );
-	sdllabel = new QLabel( i18n ("&Local:"), group0 );
+	sdllabel = new QLabel( i18nc("shutdown request origin", "&Local:"), group0 );
 	sdllabel->setBuddy( sdlcombo );
-	sdlcombo->insertItem( SdAll, i18n("Everybody") );
-	sdlcombo->insertItem( SdRoot, i18n("Only Root") );
-	sdlcombo->insertItem( SdNone, i18n("Nobody") );
+	sdlcombo->insertItem( SdAll, i18nc("@item:inlistbox allow shutdown", "Everybody") );
+	sdlcombo->insertItem( SdRoot, i18nc("@item:inlistbox allow shutdown", "Only Root") );
+	sdlcombo->insertItem( SdNone, i18nc("@item:inlistbox allow shutdown", "Nobody") );
 	connect( sdlcombo, SIGNAL(activated( int )), SIGNAL(changed()) );
 	sdrcombo = new KComboBox( group0 );
 	sdrcombo->setEditable( false );
-	sdrlabel = new QLabel( i18n ("&Remote:"), group0 );
+	sdrlabel = new QLabel( i18nc("shutdown request origin", "&Remote:"), group0 );
 	sdrlabel->setBuddy( sdrcombo );
-	sdrcombo->insertItem( SdAll, i18n("Everybody") );
-	sdrcombo->insertItem( SdRoot, i18n("Only Root") );
-	sdrcombo->insertItem( SdNone, i18n("Nobody") );
+	sdrcombo->insertItem( SdAll, i18nc("@item:inlistbox allow shutdown", "Everybody") );
+	sdrcombo->insertItem( SdRoot, i18nc("@item:inlistbox allow shutdown", "Only Root") );
+	sdrcombo->insertItem( SdNone, i18nc("@item:inlistbox allow shutdown", "Nobody") );
 	connect( sdrcombo, SIGNAL(activated( int )), SIGNAL(changed()) );
 	group0->setWhatsThis( i18n("Here you can select who is allowed to shutdown"
 	                           " the computer using KDM. You can specify different values for local (console) and remote displays. "
@@ -66,10 +66,10 @@ KDMSessionsWidget::KDMSessionsWidget( QWidget *parent )
 	                           " <li><em>Nobody:</em> nobody can shutdown the computer using KDM</li></ul>") );
 
 
-	QGroupBox *group1 = new QGroupBox( i18n("Commands"), this );
+	QGroupBox *group1 = new QGroupBox( i18nc("@title:group shell commands for shutdown", "Commands"), this );
 
 	shutdown_lined = new KUrlRequester( group1 );
-	QLabel *shutdown_label = new QLabel( i18n("H&alt:"), group1 );
+	QLabel *shutdown_label = new QLabel( i18nc("command for ...", "H&alt:"), group1 );
 	shutdown_label->setBuddy( shutdown_lined );
 	connect( shutdown_lined, SIGNAL(textChanged( const QString& )),
 	         SIGNAL(changed()) );
@@ -78,7 +78,7 @@ KDMSessionsWidget::KDMSessionsWidget( QWidget *parent )
 	shutdown_lined->setWhatsThis( wtstr );
 
 	restart_lined = new KUrlRequester( group1 );
-	QLabel *restart_label = new QLabel( i18n("Reb&oot:"), group1 );
+	QLabel *restart_label = new QLabel( i18nc("command for ...", "Reb&oot:"), group1 );
 	restart_label->setBuddy( restart_lined );
 	connect( restart_lined, SIGNAL(textChanged( const QString& )),
 	         SIGNAL(changed()) );
@@ -87,7 +87,7 @@ KDMSessionsWidget::KDMSessionsWidget( QWidget *parent )
 	restart_lined->setWhatsThis( wtstr );
 
 
-	QGroupBox *group4 = new QGroupBox( i18n("Miscellaneous"), this );
+	QGroupBox *group4 = new QGroupBox( i18nc("@title:group", "Miscellaneous"), this );
 
 	bm_combo = new KBackedComboBox( group4 );
 	bm_combo->insertItem( "None", i18nc("boot manager", "None") );

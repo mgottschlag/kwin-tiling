@@ -81,15 +81,15 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	                                  "will be locked immediately (provided it is a KDE session). This can "
 	                                  "be used to obtain a super-fast login restricted to one user.") );
 
-	puGroup = new QGroupBox( i18n("Preselect User"), this );
+	puGroup = new QGroupBox( i18nc("@title:group", "Preselect User"), this );
 
 	puGroup->setSizePolicy( vpref );
 
-	npRadio = new QRadioButton( i18nc("preselected user", "&None"), puGroup );
-	ppRadio = new QRadioButton( i18n("Prev&ious"), puGroup );
+	npRadio = new QRadioButton( i18nc("@option:radio preselected user", "&None"), puGroup );
+	ppRadio = new QRadioButton( i18nc("@option:radio preselected user", "Prev&ious"), puGroup );
 	ppRadio->setWhatsThis( i18n("Preselect the user that logged in previously. "
 	                            "Use this if this computer is usually used several consecutive times by one user.") );
-	spRadio = new QRadioButton( i18n("Specif&y"), puGroup );
+	spRadio = new QRadioButton( i18nc("@option:radio preselected user", "Specif&y"), puGroup );
 	spRadio->setWhatsThis( i18n("Preselect the user specified in the combo box below. "
 	                            "Use this if this computer is predominantly used by a certain user.") );
 	QButtonGroup *buttonGroup = new QButtonGroup( puGroup );
@@ -121,7 +121,7 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	hlpl->addWidget( pu_label );
 	hlpl->addWidget( puserlb );
 	hlpl->addStretch( 1 );
-	cbjumppw = new QCheckBox( i18n("Focus pass&word"), puGroup );
+	cbjumppw = new QCheckBox( i18nc("@option:check action", "Focus pass&word"), puGroup );
 	laygroup5->addWidget( cbjumppw );
 	cbjumppw->setWhatsThis( i18n("When this option is on, KDM will place the cursor "
 	                             "in the password field instead of the user field after preselecting a user. "
@@ -155,7 +155,7 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	connect( npuserlv, SIGNAL(clicked( Q3ListViewItem * )),
 	         SIGNAL(changed()) );
 
-	btGroup = new QGroupBox( i18n("Miscellaneous"), this );
+	btGroup = new QGroupBox( i18nc("@title:group", "Miscellaneous"), this );
 	QVBoxLayout *laygroup4 = new QVBoxLayout( btGroup );
 	laygroup4->setSpacing( KDialog::spacingHint() );
 
