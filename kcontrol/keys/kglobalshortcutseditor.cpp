@@ -127,7 +127,10 @@ void KGlobalShortcutsEditor::addCollection(KActionCollection *collection, const 
 {
     kDebug() << "adding collection " << componentId;
     KShortcutsEditor *editor;
-    const QString &friendlyName = componentId[ComponentFriendly];
+    const QString &friendlyName = 
+        componentId[ComponentFriendly].isEmpty()
+        ? componentId[ComponentUnique]
+        : componentId[ComponentFriendly];
     // Check if this component is known
     QHash<QString, componentData>::Iterator iter = d->components.find(friendlyName);
     if (iter == d->components.end()) {
