@@ -60,6 +60,8 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
         connect(m_panelController, SIGNAL(removePanel()), panel, SLOT(remove()));
         connect(m_panelController, SIGNAL(offsetChanged(int)), this, SLOT(setOffset(int)));
         connect(m_panelController, SIGNAL(alignmentChanged(Qt::Alignment)), this, SLOT(setAlignment(Qt::Alignment)));
+        connect(m_panelController, SIGNAL(beginLocationChange()), this, SLOT(locationChangeBegun()));
+        connect(m_panelController, SIGNAL(commitLocationChange()), this, SLOT(locationChangeCommitted()));
     }
 
     kDebug() << "Panel geometry is" << panel->geometry();
@@ -113,14 +115,6 @@ Plasma::Corona *PanelView::corona() const
 void PanelView::updatePanelGeometry()
 {
     kDebug() << "New panel geometry is" << containment()->geometry();
-
-    //update the panel controller location position and size
-    m_panelController->setLocation(containment()->location());
-
-    if (m_panelController->isVisible()) {
-        m_panelController->resize(m_panelController->sizeHint());
-        m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
-    }
 
     QSize size = containment()->size().toSize();
     QRect geom(QPoint(0,0), size);
@@ -265,6 +259,14 @@ void PanelView::updatePanelGeometry()
     } else {
         setGeometry(geom);
     }
+
+    //update the panel controller location position and size
+    m_panelController->setLocation(containment()->location());
+
+    if (m_panelController->isVisible()) {
+        m_panelController->resize(m_panelController->sizeHint());
+        m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
+    }
 }
 
 void PanelView::setOffset(int newOffset)
@@ -303,6 +305,17 @@ void PanelView::togglePanelController()
     } else {
         m_panelController->hide();
     }
+}
+
+void PanelView::locationChangeBegun()
+{
+    disconnect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
+}
+
+void PanelView::locationChangeCommitted()
+{
+    updatePanelGeometry();
+    connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
 }
 
 void PanelView::saveConfig()

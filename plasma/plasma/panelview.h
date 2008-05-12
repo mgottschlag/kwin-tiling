@@ -107,6 +107,8 @@ private Q_SLOTS:
     void updatePanelGeometry();
     void showAppletBrowser();
     void togglePanelController();
+    void locationChangeBegun();
+    void locationChangeCommitted();
 
 private:
     Qt::Alignment alignmentFilter(Qt::Alignment align) const;

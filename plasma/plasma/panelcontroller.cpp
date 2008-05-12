@@ -45,7 +45,7 @@ public:
          location(Plasma::BottomEdge),
          extLayout(0),
          layout(0),
-         isDragging(false),
+         dragging(NoElement),
          startDragPos(0,0),
          leftAlignTool(0),
          centerAlignTool(0),
@@ -162,13 +162,18 @@ public:
         ruler->setOffset(0);
     }
 
+     enum DragElement { NoElement = 0,
+                        ResizeHandleElement,
+                        PanelControllerElement
+                      };
+
     PanelController *q;
     Plasma::Containment *containment;
     Qt::Orientation orientation;
     Plasma::Location location;
     QBoxLayout *extLayout;
     QBoxLayout *layout;
-    bool isDragging;
+    DragElement dragging;
     QPoint startDragPos;
 
     //Alignment buttons
@@ -406,9 +411,12 @@ void PanelController::paintEvent(QPaintEvent *event)
 
 void PanelController::mousePressEvent(QMouseEvent *event)
 {
-    if (d->panelHeightHandle->geometry().contains( event->pos() ) ) {
+    if (d->panelHeightHandle->geometry().contains(event->pos()) ) {
         d->startDragPos = event->pos();
-        d->isDragging = true;
+        d->dragging = Private::ResizeHandleElement;
+    } else if (!d->ruler->geometry().contains(event->pos()) ) {
+        d->dragging = Private::PanelControllerElement;
+        setCursor(Qt::SizeAllCursor);
     }
 
     QWidget::mousePressEvent(event);
@@ -417,18 +425,75 @@ void PanelController::mousePressEvent(QMouseEvent *event)
 void PanelController::mouseReleaseEvent(QMouseEvent *event)
 {
     d->startDragPos = QPoint(0, 0);
-    d->isDragging = false;
+    d->dragging = Private::NoElement;
+    setCursor(Qt::ArrowCursor);
 }
 
 void PanelController::mouseMoveEvent(QMouseEvent *event)
 {
-    if (!d->isDragging || !d->containment) {
+    if (d->dragging == Private::NoElement || !d->containment) {
         return;
     }
 
     QRect screenGeom =
     QApplication::desktop()->screenGeometry(d->containment->screen());
 
+    if (d->dragging == Private::PanelControllerElement) {
+        Plasma::FormFactor oldFormFactor = d->containment->formFactor();
+        Plasma::FormFactor newFormFactor = d->containment->formFactor();
+        const Plasma::Location oldLocation = d->containment->location();
+        Plasma::Location newLocation = d->containment->location();
+
+        if( d->containment->location() != Plasma::TopEdge && QRect(screenGeom.width()/4, screenGeom.y(), 3*(screenGeom.width()/4), screenGeom.height()/4).contains(mapToGlobal(event->pos()))) {
+            newFormFactor = Plasma::Horizontal;
+            newLocation = Plasma::TopEdge;
+        } else if( d->containment->location() != Plasma::BottomEdge && QRect(screenGeom.width()/4, 3*(screenGeom.height()/4), 3*(screenGeom.width()/4), screenGeom.height()/4).contains(mapToGlobal(event->pos()))) {
+            newFormFactor = Plasma::Horizontal;
+            newLocation = Plasma::BottomEdge;
+        } else if( d->containment->location() != Plasma::LeftEdge && QRect(screenGeom.left(), screenGeom.height()/4, screenGeom.width()/4, 3*(screenGeom.height()/4)).contains(mapToGlobal(event->pos()))) {
+            newFormFactor = Plasma::Vertical;
+            newLocation = Plasma::LeftEdge;
+        } else if( d->containment->location() != Plasma::RightEdge && QRect(3*(screenGeom.width()/4), screenGeom.height()/4, screenGeom.width()/4, 3*(screenGeom.height()/4)).contains(mapToGlobal(event->pos()))) {
+            newFormFactor = Plasma::Vertical;
+            newLocation = Plasma::RightEdge;
+        }
+
+
+        //If the orientation changed swap width and height
+        if (oldLocation != newLocation) {
+            int panelHeight;
+
+            if (oldFormFactor == Plasma::Vertical) {
+                panelHeight = d->containment->size().width();
+            } else {
+                panelHeight = d->containment->size().height();
+            }
+
+            //FIXME: to achieve a reliable resize it seems that it is necessary to resize, set min and max sizes and resize again, a little weird
+
+            emit beginLocationChange();
+            d->containment->setFormFactor(newFormFactor);
+            d->containment->setLocation(newLocation);
+
+            if (newFormFactor == Plasma::Vertical) {
+                d->containment->resize(panelHeight, d->containment->preferredSize().height());
+                d->containment->setMaximumSize(panelHeight, d->ruler->maxLength());
+                d->containment->setMinimumSize(panelHeight, d->ruler->minLength());
+                d->containment->resize(panelHeight, d->containment->preferredSize().height());
+            } else {
+                d->containment->resize(d->containment->preferredSize().width(), panelHeight);
+                d->containment->setMaximumSize(d->ruler->maxLength(), panelHeight);
+                d->containment->setMinimumSize(d->ruler->minLength(), panelHeight);
+                d->containment->resize(d->containment->preferredSize().width(), panelHeight);
+            }
+
+            emit commitLocationChange();
+        }
+
+        return;
+    } 
+
+    //Resize handle moved
     switch (location()) {
     case Plasma::LeftEdge:
         if (mapToGlobal(event->pos()).x() -
