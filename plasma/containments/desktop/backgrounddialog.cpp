@@ -543,7 +543,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     connect(m_pictureUrlButton, SIGNAL(clicked()), this, SLOT(showFileDialog()));
 
     // resize method
-    m_resizeMethod->addItem(i18n("Scale & Crop"),
+    m_resizeMethod->addItem(i18n("Scaled & Cropped"),
                             Background::ScaleCrop);
     m_resizeMethod->addItem(i18n("Scaled"), 
                             Background::Scale);
