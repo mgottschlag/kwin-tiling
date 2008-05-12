@@ -35,6 +35,7 @@
 #include <time.h>
 #include <unistd.h>
 
+#include <kcomponentdata.h>
 #include <kconfig.h>
 #include <kconfiggroup.h>
 #include <kdebug.h>
@@ -269,6 +270,7 @@ int main( int argc, char* argv[] )
       exit( ERROR_CALL );
     }
   }
+  KComponentData data( "kcmdatetimehelper" );
   int ret = 0; // error code
 //  The order here is important
   if( ntp )
