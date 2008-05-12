@@ -8,8 +8,8 @@
  * Do not edit! All changes made to it will be lost.
  */
 
-#ifndef NM_DEVICEINTERFACE_H_1207426519
-#define NM_DEVICEINTERFACE_H_1207426519
+#ifndef NMDEVICEINTERFACE_H_1210621531
+#define NMDEVICEINTERFACE_H_1210621531
 
 #include <QtCore/QObject>
 #include <QtCore/QByteArray>
@@ -59,6 +59,10 @@ public:
     inline QDBusObjectPath ip4Config() const
     { return qvariant_cast< QDBusObjectPath >(internalPropGet("Ip4Config")); }
 
+    Q_PROPERTY(bool Managed READ managed)
+    inline bool managed() const
+    { return qvariant_cast< bool >(internalPropGet("Managed")); }
+
     Q_PROPERTY(uint State READ state)
     inline uint state() const
     { return qvariant_cast< uint >(internalPropGet("State")); }
@@ -68,12 +72,6 @@ public:
     { return qvariant_cast< QString >(internalPropGet("Udi")); }
 
 public Q_SLOTS: // METHODS
-    inline QDBusReply<void> Deactivate()
-    {
-        QList<QVariant> argumentList;
-        return callWithArgumentList(QDBus::Block, QLatin1String("Deactivate"), argumentList);
-    }
-
 Q_SIGNALS: // SIGNALS
     void StateChanged(uint state);
 };

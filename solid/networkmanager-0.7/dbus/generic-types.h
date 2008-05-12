@@ -23,6 +23,9 @@
 
 #include <QtCore/QVariantMap>
 
+
+typedef QList<QList<uint> > UIntListList;
+Q_DECLARE_METATYPE(UIntListList)
 typedef QList<uint> UIntList;
 Q_DECLARE_METATYPE(UIntList)
 Q_DECLARE_METATYPE(QVariantMap)

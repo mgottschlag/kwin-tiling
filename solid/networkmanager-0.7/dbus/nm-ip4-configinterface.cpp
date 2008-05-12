@@ -9,9 +9,6 @@
  * before re-generating it.
  */
 
-//HAND-EDIT
-#include "generic-types.h"
-
 #include "nm-ip4-configinterface.h"
 
 /*

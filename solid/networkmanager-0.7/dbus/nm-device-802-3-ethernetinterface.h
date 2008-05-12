@@ -8,8 +8,8 @@
  * Do not edit! All changes made to it will be lost.
  */
 
-#ifndef NM_DEVICE_WIRED_ETHERNETINTERFACE_H
-#define NM_DEVICE_WIRED_ETHERNETINTERFACE_H
+#ifndef NMDEVICE8023ETHERNETINTERFACE_H_1210621532
+#define NMDEVICE8023ETHERNETINTERFACE_H_1210621532
 
 #include <QtCore/QObject>
 #include <QtCore/QByteArray>

@@ -7,7 +7,6 @@ set( INTERFACE_INTROSPECTION_XML_FILES
 #   introspection/nm-exported-connection.xml
    introspection/nm-ip4-config.xml
 #   introspection/nm-vpn-connection.xml
-#   introspection/nm-vpn-manager.xml
 #   introspection/nm-vpn-plugin.xml
    )
 
@@ -37,7 +36,7 @@ set( UNUSED_GENERATED_FILES
    nm-vpn-plugininterface.cpp
 )
 
-#QT4_ADD_DBUS_INTERFACES( FILES_TO_BUILD ${INTERFACE_INTROSPECTION_XML_FILES} )
+QT4_ADD_DBUS_INTERFACES( FILES_TO_BUILD ${INTERFACE_INTROSPECTION_XML_FILES} )
 
 kde4_add_library(networkmanagerdbus ${FILES_TO_BUILD})
 

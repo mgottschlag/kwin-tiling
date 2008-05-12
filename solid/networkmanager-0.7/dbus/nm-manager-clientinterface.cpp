@@ -9,9 +9,6 @@
  * before re-generating it.
  */
 
-//HAND-EDIT
-#include "activeconnection.h"
-
 #include "nm-manager-clientinterface.h"
 
 /*

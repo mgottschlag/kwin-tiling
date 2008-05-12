@@ -8,8 +8,8 @@
  * Do not edit! All changes made to it will be lost.
  */
 
-#ifndef NM_DEVICE_802_11_WIRELESSINTERFACE_H_1207426619
-#define NM_DEVICE_802_11_WIRELESSINTERFACE_H_1207426619
+#ifndef NMDEVICE80211WIRELESSINTERFACE_H_1210621531
+#define NMDEVICE80211WIRELESSINTERFACE_H_1210621531
 
 #include <QtCore/QObject>
 #include <QtCore/QByteArray>
@@ -47,9 +47,9 @@ public:
     inline QString hwAddress() const
     { return qvariant_cast< QString >(internalPropGet("HwAddress")); }
 
-    Q_PROPERTY(int Mode READ mode)
-    inline int mode() const
-    { return qvariant_cast< int >(internalPropGet("Mode")); }
+    Q_PROPERTY(uint Mode READ mode)
+    inline uint mode() const
+    { return qvariant_cast< uint >(internalPropGet("Mode")); }
 
     Q_PROPERTY(uint WirelessCapabilities READ wirelessCapabilities)
     inline uint wirelessCapabilities() const

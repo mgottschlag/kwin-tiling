@@ -8,8 +8,8 @@
  * Do not edit! All changes made to it will be lost.
  */
 
-#ifndef NM_ACCESS_POINTINTERFACE_H_1207683005
-#define NM_ACCESS_POINTINTERFACE_H_1207683005
+#ifndef NMACCESSPOINTINTERFACE_H_1210621531
+#define NMACCESSPOINTINTERFACE_H_1210621531
 
 #include <QtCore/QObject>
 #include <QtCore/QByteArray>
@@ -51,9 +51,9 @@ public:
     inline uint maxBitrate() const
     { return qvariant_cast< uint >(internalPropGet("MaxBitrate")); }
 
-    Q_PROPERTY(int Mode READ mode)
-    inline int mode() const
-    { return qvariant_cast< int >(internalPropGet("Mode")); }
+    Q_PROPERTY(uint Mode READ mode)
+    inline uint mode() const
+    { return qvariant_cast< uint >(internalPropGet("Mode")); }
 
     Q_PROPERTY(uint RsnFlags READ rsnFlags)
     inline uint rsnFlags() const

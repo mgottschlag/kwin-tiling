@@ -8,8 +8,8 @@
  * Do not edit! All changes made to it will be lost.
  */
 
-#ifndef NM_MANAGER_CLIENTINTERFACE_H_1207426518
-#define NM_MANAGER_CLIENTINTERFACE_H_1207426518
+#ifndef NMMANAGERCLIENTINTERFACE_H_1210621531
+#define NMMANAGERCLIENTINTERFACE_H_1210621531
 
 #include <QtCore/QObject>
 #include <QtCore/QByteArray>
@@ -19,8 +19,6 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
-
-#include "activeconnection.h"
 
 /*
  * Proxy class for interface org.freedesktop.NetworkManager
@@ -37,6 +35,10 @@ public:
 
     ~OrgFreedesktopNetworkManagerInterface();
 
+    Q_PROPERTY(QList<QDBusObjectPath> ActiveConnections READ activeConnections)
+    inline QList<QDBusObjectPath> activeConnections() const
+    { return qvariant_cast< QList<QDBusObjectPath> >(internalPropGet("ActiveConnections")); }
+
     Q_PROPERTY(uint State READ state)
     inline uint state() const
     { return qvariant_cast< uint >(internalPropGet("State")); }
@@ -52,17 +54,18 @@ public:
     { return qvariant_cast< bool >(internalPropGet("WirelessHardwareEnabled")); }
 
 public Q_SLOTS: // METHODS
-    inline QDBusReply<void> ActivateDevice(const QDBusObjectPath &device, const QString &service_name, const QDBusObjectPath &connection, const QDBusObjectPath &specific_object)
+    inline QDBusReply<QDBusObjectPath> ActivateConnection(const QString &service_name, const QDBusObjectPath &connection, const QDBusObjectPath &device, const QDBusObjectPath &specific_object)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(device) << qVariantFromValue(service_name) << qVariantFromValue(connection) << qVariantFromValue(specific_object);
-        return callWithArgumentList(QDBus::Block, QLatin1String("ActivateDevice"), argumentList);
+        argumentList << qVariantFromValue(service_name) << qVariantFromValue(connection) << qVariantFromValue(device) << qVariantFromValue(specific_object);
+        return callWithArgumentList(QDBus::Block, QLatin1String("ActivateConnection"), argumentList);
     }
 
-    inline QDBusReply<ActiveConnectionList> GetActiveConnections()
+    inline QDBusReply<void> DeactivateConnection(const QDBusObjectPath &active_connection)
     {
         QList<QVariant> argumentList;
-        return callWithArgumentList(QDBus::Block, QLatin1String("GetActiveConnections"), argumentList);
+        argumentList << qVariantFromValue(active_connection);
+        return callWithArgumentList(QDBus::Block, QLatin1String("DeactivateConnection"), argumentList);
     }
 
     inline QDBusReply<QList<QDBusObjectPath> > GetDevices()
@@ -82,7 +85,7 @@ Q_SIGNALS: // SIGNALS
     void DeviceAdded(const QDBusObjectPath &state);
     void DeviceRemoved(const QDBusObjectPath &state);
     void PropertiesChanged(const QVariantMap &properties);
-    void StateChange(uint state);
+    void StateChanged(uint state);
 };
 
 #endif
