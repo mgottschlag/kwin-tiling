@@ -23,6 +23,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <time.h>
+#include <signal.h>
 
 #include "xautolock_c.h"
 extern xautolock_corner_t xautolock_corners[ 4 ];
@@ -55,7 +56,7 @@ SaverEngine::SaverEngine()
     m_nr_inhibited = 0;
     m_actived_time = -1;
 
-    connect(&mLockProcess, SIGNAL(processExited(K3Process *)),
+    connect(&mLockProcess, SIGNAL(finished(int, QProcess::ExitStatus)),
                         SLOT(lockProcessExited()));
 
     connect(QDBusConnection::sessionBus().interface(),
@@ -75,7 +76,6 @@ SaverEngine::SaverEngine()
 //
 SaverEngine::~SaverEngine()
 {
-    mLockProcess.detach(); // don't kill it if we crash
     delete mXAutoLock;
 
     // Restore X screensaver parameters
@@ -103,7 +103,7 @@ void SaverEngine::Lock()
     else
     {
         // XXX race condition here
-        mLockProcess.kill( SIGHUP );
+        ::kill(mLockProcess.pid(), SIGHUP);
     }
 }
 
@@ -128,7 +128,7 @@ void SaverEngine::saverLockReady()
     kDebug() << "Saver Lock Ready";
     processLockTransactions();
     if (m_nr_throttled)
-        mLockProcess.suspend();
+        ::kill(mLockProcess.pid(), SIGSTOP);
 }
 
 void SaverEngine::SimulateUserActivity()
@@ -243,7 +243,7 @@ bool SaverEngine::startLockProcess( LockType lock_type )
         kDebug() << "Can't find krunner_lock!";
         return false;
     }
-    mLockProcess.clearArguments();
+    mLockProcess.clearProgram();
     mLockProcess << path;
     switch( lock_type )
     {
@@ -258,7 +258,8 @@ bool SaverEngine::startLockProcess( LockType lock_type )
     }
 
     m_actived_time = time( 0 );
-    if (mLockProcess.start() == false )
+    mLockProcess.start();
+    if (mLockProcess.waitForStarted() == false )
     {
         kDebug() << "Failed to start krunner_lock!";
         m_actived_time = -1;
@@ -399,8 +400,8 @@ uint SaverEngine::Throttle(const QString &/*application_name*/, const QString &/
     sr.dbusid = message().service();
     m_requests.append( sr );
     m_nr_throttled++;
-    if (mLockProcess.isRunning())
-        mLockProcess.suspend();
+    if (mLockProcess.state() == QProcess::Running)
+        ::kill(mLockProcess.pid(), SIGSTOP);
     return sr.cookie;
 }
 
@@ -412,8 +413,8 @@ void SaverEngine::UnThrottle(uint cookie)
         if ( it.next().cookie == cookie ) {
             it.remove();
             if ( !--m_nr_throttled )
-                if (mLockProcess.isRunning())
-                    mLockProcess.resume();
+                if (mLockProcess.state() == QProcess::Running)
+                    ::kill(mLockProcess.pid(), SIGCONT);
         }
     }
 }

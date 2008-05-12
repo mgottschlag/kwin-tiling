@@ -5,11 +5,11 @@
 // Copyright 1999 Martin R. Jones <mjones@kde.org>
 //
 
-#ifndef __SAVERENGINE_H__
-#define __SAVERENGINE_H__
+#ifndef SAVERENGINE_H
+#define SAVERENGINE_H
 
 #include <QWidget>
-#include <k3process.h>
+#include <kprocess.h>
 #include <QVector>
 #include <QDBusContext>
 #include <QDBusMessage>
@@ -154,7 +154,7 @@ private:
 
     State       mState;
     XAutoLock   *mXAutoLock;
-    K3Process    mLockProcess;
+    KProcess    mLockProcess;
 
     // the original X screensaver parameters
     int         mXTimeout;
