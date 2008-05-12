@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "themer/kdmthemer.h"
 #include "themer/kdmitem.h"
 
+#include <KColorScheme>
 #include <kguiitem.h>
 #include <klibrary.h>
 #include <klocale.h>
@@ -1040,7 +1041,9 @@ KGStdVerify::updateStatus()
 				failedLabel->clear();
 				break;
 			case 3:
-				p.setColor( QPalette::WindowText, Qt::red );
+				p.setBrush( QPalette::WindowText,
+					KColorScheme( QPalette::Active, KColorScheme::Window )
+						.foreground( KColorScheme::NegativeText ) );
 				failedLabel->setText( i18n("Warning: Caps Lock is on") );
 				break;
 			case 2:

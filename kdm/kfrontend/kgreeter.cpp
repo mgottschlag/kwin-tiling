@@ -31,11 +31,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "themer/kdmitem.h"
 #include "themer/kdmlabel.h"
 
+#include <KColorScheme>
+#include <KConfigGroup>
 #include <klocale.h>
 #include <kseparator.h>
 #include <kstandarddirs.h>
 #include <kstringhandler.h>
-#include <KConfigGroup>
 
 #include <QAction>
 #include <QBuffer>
@@ -687,7 +688,9 @@ KStdGreeter::KStdGreeter()
 		complainLabel->setAlignment( Qt::AlignCenter );
 		complainLabel->setFont( *_failFont );
 		QPalette p;
-		p.setColor( QPalette::WindowText, Qt::red );
+		p.setBrush( QPalette::WindowText,
+			KColorScheme( QPalette::Active, KColorScheme::Window )
+				.foreground( KColorScheme::NegativeText ) );
 		complainLabel->setPalette( p );
 		inner_box->addWidget( complainLabel );
 	}

@@ -21,6 +21,7 @@
 #include "kdm-conv.h"
 
 #include <K3ListView>
+#include <KColorScheme>
 #include <KComboBox>
 #include <KDialog>
 #include <KLocale>
@@ -45,8 +46,13 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	QString wtstr;
 
 	QLabel *paranoia = new QLabel(
-		i18n("<big style='color:red;text-align:center;font-weight:bold;'>Attention<br/>"
-		     "Read help</big>"), this );
+		i18n("<big><b><center>Attention<br/>"
+		     "Read help</center></b></big>"), this );
+	QPalette p;
+	p.setBrush( QPalette::WindowText,
+		KColorScheme( QPalette::Active, KColorScheme::Window )
+			.foreground( KColorScheme::NegativeText ) );
+	paranoia->setPalette( p );
 
 	QSizePolicy vpref( QSizePolicy::Minimum, QSizePolicy::Fixed );
 
