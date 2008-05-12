@@ -1,28 +1,54 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <node name="/" xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
+  <interface name="org.freedesktop.NetworkManager.Connection.Active">
+    <property name="ServiceName" type="s" access="read">
+      <tp:docstring>The D-Bus service name providing this connection.</tp:docstring>
+    </property>
+    <property name="Connection" type="o" access="read">
+      <tp:docstring>The path of the connection.</tp:docstring>
+    </property>
+    <property name="SpecificObject" type="o" access="read">
+      <tp:docstring>A specific object associated with the active connection.</tp:docstring>
+    </property>
+    <property name="SharedServiceName" type="s" access="read">
+      <tp:docstring>The D-Bus service name that provides a connection with which this active connection is shared.</tp:docstring>
+    </property>
+    <property name="SharedConnection" type="o" access="read">
+      <tp:docstring>The path of a connection provided by the D-Bus service SharedServiceName which which this connection is shared.</tp:docstring>
+    </property>
+    <property name="Devices" type="ao" access="read">
+      <tp:docstring>Array of object paths representing devices which are part of this active connection.</tp:docstring>
+    </property>
+    <property name="State" type="u" access="read" tp:type="NM_ACTIVE_DEVICE_STATE">
+      <tp:docstring>The state of this active connection.</tp:docstring>
+    </property>
+    <property name="Default" type="b" access="read">
+      <tp:docstring>Whether this active connection is the default connection, i.e. whether it currently owns the default route.</tp:docstring>
+    </property>
+  </interface>
+
   <interface name="org.freedesktop.NetworkManager.VPN.Connection">
     <tp:docstring>
-      Represents a connection to a Virtual Private Network.
+      Represents an active connection to a Virtual Private Network.
     </tp:docstring>
-    <method name="Disconnect">
-      <tp:docstring>
-        Disconnect the VPN connection.
-      </tp:docstring>
-      <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_vpn_connection_disconnect"/>
-    </method>
 
-    <property name="Name" type="s" access="read">
-      <tp:docstring>The name of the VPN connection.</tp:docstring>
-    </property>
-    <property name="State" type="u" access="read" tp:type="NM_VPN_CONNECTION_STATE">
-      <tp:docstring>The state of the VPN connection.</tp:docstring>
+    <signal name="PropertiesChanged">
+        <arg name="properties" type="a{sv}" tp:type="String_Variant_Map">
+            <tp:docstring>
+                A dictionary mapping property names to variant boxed values
+            </tp:docstring>
+        </arg>
+    </signal>
+
+    <property name="VpnState" type="u" access="read" tp:type="NM_VPN_CONNECTION_STATE">
+      <tp:docstring>The VPN-specific state of the connection.</tp:docstring>
     </property>
     <property name="Banner" type="s" access="read">
       <tp:docstring>The banner string of the VPN connection.</tp:docstring>
     </property>
 
-    <signal name="StateChanged">
+    <signal name="VpnStateChanged">
       <tp:docstring>
         Emitted when the state of the VPN connection has changed.
       </tp:docstring>
@@ -37,6 +63,7 @@
         </tp:docstring>
       </arg>
     </signal>
+
     <tp:enum name="NM_VPN_CONNECTION_STATE" type="u">
       <tp:enumvalue suffix="UNKNOWN" value="0">
         <tp:docstring>
