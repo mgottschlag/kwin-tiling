@@ -79,6 +79,10 @@ void Panel::init()
 {
     Containment::init();
     setFlag(ItemClipsChildrenToShape, true);
+
+    KConfigGroup cg = config("Configuration");
+    setMinimumSize(cg.readEntry("minimumSize", m_currentSize));
+    setMaximumSize(cg.readEntry("maximumSize", m_currentSize));
 }
 
 QList<QAction*> Panel::contextualActions()
@@ -300,6 +304,12 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
         m_appletBrowserAction->setVisible(!locked);
         m_removeAction->setVisible(!locked);
     }
+}
+
+void Panel::saveState(KConfigGroup* config) const
+{
+    config->writeEntry("minimumSize", minimumSize());
+    config->writeEntry("maximumSize", maximumSize());
 }
 
 void Panel::themeUpdated()

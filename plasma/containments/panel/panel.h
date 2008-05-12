@@ -56,6 +56,9 @@ public:
      */
     void updateSize(const QSize &newSize);
 
+protected:
+    void saveState(KConfigGroup* config) const;
+
 private slots:
     void configure();
     void remove();
