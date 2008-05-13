@@ -31,6 +31,7 @@
 class NMNetworkManagerPrivate;
 class KDE_EXPORT NMNetworkManager : public Solid::Control::Ifaces::NetworkManager
 {
+Q_INTERFACES(Solid::Control::Ifaces::NetworkManager)
 Q_OBJECT
     public:
         NMNetworkManager(QObject * parent, const QStringList  & args);
@@ -40,9 +41,12 @@ Q_OBJECT
         QStringList activeNetworkInterfaces() const;
         QObject * createNetworkInterface(const QString &);
         QObject * createAuthenticationValidator();
+        void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QString & extra_connection_parameter);
+        void deactivateConnection(const QString & activeConnection);
 
         bool isNetworkingEnabled() const;
         bool isWirelessEnabled() const;
+        bool isWirelessHardwareEnabled() const;
     public Q_SLOTS:
         void setWirelessEnabled(bool);
         void setNetworkingEnabled(bool);

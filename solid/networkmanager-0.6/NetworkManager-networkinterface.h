@@ -26,6 +26,8 @@
 
 #include <solid/control/ifaces/networkinterface.h>
 
+#include <QtCore/qobject.h>
+
 struct NMDBusDeviceProperties {
     QDBusObjectPath path;
     QString interface;
@@ -48,7 +50,7 @@ Q_DECLARE_METATYPE(NMDBusDeviceProperties)
 
 class NMNetworkInterfacePrivate;
 
-class KDE_EXPORT NMNetworkInterface : public Solid::Control::Ifaces::NetworkInterface
+class KDE_EXPORT NMNetworkInterface : public QObject, virtual public Solid::Control::Ifaces::NetworkInterface
 {
 Q_OBJECT
 Q_INTERFACES(Solid::Control::Ifaces::NetworkInterface)
@@ -63,7 +65,9 @@ public:
     int designSpeed() const;
     bool isLinkUp() const;
     Solid::Control::NetworkInterface::Capabilities capabilities() const;
+#if 0
     QObject *createNetwork(const QString  & uni);
+#endif
     QStringList networks() const;
     QString activeNetwork() const;
     // These setters are used to update the interface by the manager
@@ -79,8 +83,18 @@ public:
     void addNetwork(const QDBusObjectPath  & netPath);
     void removeNetwork(const QDBusObjectPath  & netPath);
     void updateNetworkStrength(const QDBusObjectPath  & netPath, int strength);
+    QString interfaceName() const;
+    QString driver() const;
+    Solid::Control::IPv4Config ipV4Config() const;
+    QString activeConnection() const;
+protected:
+    void ipDetailsChanged();
+    void connectionStateChanged(int state);
+    NMNetworkInterface(NMNetworkInterfacePrivate &dd);
+    NMNetworkInterfacePrivate * d_ptr;
 private:
-    NMNetworkInterfacePrivate * d;
+    Q_DECLARE_PRIVATE(NMNetworkInterface)
+    Q_DISABLE_COPY(NMNetworkInterface)
 };
 
 #endif

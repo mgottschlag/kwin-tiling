@@ -25,7 +25,7 @@
 
 #include <kdebug.h>
 
-#include "NetworkManager-networkinterface.h"
+#include "NetworkManager-wirelessnetwork.h"
 
 class NMNetworkManagerPrivate
 {
@@ -131,7 +131,7 @@ QStringList NMNetworkManager::activeNetworkInterfaces() const
 
 QObject * NMNetworkManager::createNetworkInterface(const QString  & uni)
 {
-    //kDebug(1441) << "NMNetworkManager::createNetworkInterface()";
+    kDebug(1441) << uni;
     NMNetworkInterface * netInterface;
     if (d->interfaces.contains(uni))
     {
@@ -139,8 +139,35 @@ QObject * NMNetworkManager::createNetworkInterface(const QString  & uni)
     }
     else
     {
-        netInterface = new NMNetworkInterface(uni);
-        d->interfaces.insert(uni, netInterface);
+        QDBusInterface iface("org.freedesktop.NetworkManager",
+                             uni,
+                             "org.freedesktop.NetworkManager.Devices",
+                             QDBusConnection::systemBus());
+        QDBusMessage reply = iface.call("getType");
+        const QList<QVariant> args = reply.arguments();
+        if (args.isEmpty())
+        {
+            kDebug(1441) << "Invalid reply";
+            return 0;
+        }
+        const int type = args.at(0).toInt();
+        switch (type)
+        {
+#if 0
+        case DEVICE_TYPE_802_3_ETHERNET:
+            netInterface = new NMWiredNetwork(uni);
+            break;
+#endif
+        case DEVICE_TYPE_802_11_WIRELESS:
+            netInterface = new NMWirelessNetwork(uni);
+            break;
+        case DEVICE_TYPE_UNKNOWN:
+        default:
+            ;
+        }
+
+        if (netInterface)
+            d->interfaces.insert(uni, netInterface);
     }
     return netInterface;
 }
@@ -175,6 +202,25 @@ bool NMNetworkManager::isWirelessEnabled() const
         kDebug(1441) << "  wireless enabled: " << wirelessEnabled.value();
     }
     return wirelessEnabled.value();
+}
+
+bool NMNetworkManager::isWirelessHardwareEnabled() const
+{
+#warning implement me!
+    kDebug(1441);
+    return true;
+}
+
+void NMNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QString & extra_connection_parameter)
+{
+#warning implement me!
+    kDebug(1441) << interfaceUni << connectionUni << extra_connection_parameter;
+}
+
+void NMNetworkManager::deactivateConnection(const QString & activeConnection)
+{
+#warning implement me!
+    kDebug(1441) << activeConnection;
 }
 
 void NMNetworkManager::setNetworkingEnabled(bool enabled)

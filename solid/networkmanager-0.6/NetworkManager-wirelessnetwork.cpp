@@ -19,6 +19,8 @@
 
 #include "NetworkManager-wirelessnetwork.h"
 
+#include "NetworkManager-networkinterface_p.h"
+
 // Copied from wireless.h
 /* Modes of operation */
 #define IW_MODE_AUTO    0   /* Let the driver decides */
@@ -36,20 +38,14 @@
 
 #include "NetworkManager-dbushelper.h"
 
-void dump(const Solid::Control::WirelessNetwork::Capabilities  & cap)
+void dump(const Solid::Control::WirelessNetworkInterface::Capabilities  & cap)
 {
-    kDebug(1441) << "WEP      " << (cap  & Solid::Control::WirelessNetwork::Wep ? "X " : " O");
-    kDebug(1441) << "WPA      " << (cap  & Solid::Control::WirelessNetwork::Wpa ? "X " : " O");
-    kDebug(1441) << "WPA2     " << (cap  & Solid::Control::WirelessNetwork::Wpa2 ? "X " : " O");
-    kDebug(1441) << "PSK      " << (cap  & Solid::Control::WirelessNetwork::Psk ? "X " : " O");
-    kDebug(1441) << "Ieee8021x" << (cap  & Solid::Control::WirelessNetwork::Ieee8021x ? "X " : " O");
-    kDebug(1441) << "Wep40    " << (cap  & Solid::Control::WirelessNetwork::Wep40 ? "X " : " O");
-    kDebug(1441) << "Wep104   " << (cap  & Solid::Control::WirelessNetwork::Wep104 ? "X " : " O");
-    kDebug(1441) << "Wep192   " << (cap  & Solid::Control::WirelessNetwork::Wep192 ? "X " : " O");
-    kDebug(1441) << "Wep256   " << (cap  & Solid::Control::WirelessNetwork::Wep256 ? "X " : " O");
-    kDebug(1441) << "WepOther " << (cap  & Solid::Control::WirelessNetwork::WepOther ? "X " : " O");
-    kDebug(1441) << "TKIP     " << (cap  & Solid::Control::WirelessNetwork::Tkip ? "X " : " O");
-    kDebug(1441) << "CCMP     " << (cap  & Solid::Control::WirelessNetwork::Ccmp ? "X " : " O");
+    kDebug(1441) << "WPA      " << (cap  & Solid::Control::WirelessNetworkInterface::Wpa ? "X " : " O");
+    kDebug(1441) << "Wep40    " << (cap  & Solid::Control::WirelessNetworkInterface::Wep40 ? "X " : " O");
+    kDebug(1441) << "Wep104   " << (cap  & Solid::Control::WirelessNetworkInterface::Wep104 ? "X " : " O");
+    kDebug(1441) << "TKIP     " << (cap  & Solid::Control::WirelessNetworkInterface::Tkip ? "X " : " O");
+    kDebug(1441) << "CCMP     " << (cap  & Solid::Control::WirelessNetworkInterface::Ccmp ? "X " : " O");
+    kDebug(1441) << "RSM      " << (cap  & Solid::Control::WirelessNetworkInterface::Rsn ? "X " : " O");
 }
 
 void dump(const NMDBusWirelessNetworkProperties  & network)
@@ -62,46 +58,50 @@ void dump(const NMDBusWirelessNetworkProperties  & network)
     dump(network.capabilities);
 }
 
-Solid::Control::WirelessNetwork::Capabilities getCapabilities(const int nm)
+Solid::Control::WirelessNetworkInterface::Capabilities getCapabilities(const int nm)
 {
-    Solid::Control::WirelessNetwork::Capabilities caps;
+    Solid::Control::WirelessNetworkInterface::Capabilities caps;
     if (nm  & NM_802_11_CAP_NONE)
-        caps |= Solid::Control::WirelessNetwork::Unencrypted;
+        caps |= Solid::Control::WirelessNetworkInterface::NoCapability;
+#if 0
     if (nm  & NM_802_11_CAP_PROTO_WEP)
-        caps |= Solid::Control::WirelessNetwork::Wep;
+        caps |= Solid::Control::WirelessNetworkInterface::Wep;
+#endif
     if (nm  & NM_802_11_CAP_PROTO_WPA)
-        caps |= Solid::Control::WirelessNetwork::Wpa;
+        caps |= Solid::Control::WirelessNetworkInterface::Wpa;
+#if 0
     if (nm  & NM_802_11_CAP_PROTO_WPA2)
-        caps |= Solid::Control::WirelessNetwork::Wpa2;
+        caps |= Solid::Control::WirelessNetworkInterface::Wpa2;
     if (nm  & NM_802_11_CAP_KEY_MGMT_PSK)
-        caps |= Solid::Control::WirelessNetwork::Psk;
+        caps |= Solid::Control::WirelessNetworkInterface::Psk;
     if (nm  & NM_802_11_CAP_KEY_MGMT_802_1X)
-        caps |= Solid::Control::WirelessNetwork::Ieee8021x;
+        caps |= Solid::Control::WirelessNetworkInterface::Ieee8021x;
+#endif
     if (nm  & NM_802_11_CAP_CIPHER_WEP40)
-        caps |= Solid::Control::WirelessNetwork::Wep40;
+        caps |= Solid::Control::WirelessNetworkInterface::Wep40;
     if (nm  & NM_802_11_CAP_CIPHER_WEP104)
-        caps |= Solid::Control::WirelessNetwork::Wep104;
+        caps |= Solid::Control::WirelessNetworkInterface::Wep104;
     if (nm  & NM_802_11_CAP_CIPHER_TKIP)
-        caps |= Solid::Control::WirelessNetwork::Tkip;
+        caps |= Solid::Control::WirelessNetworkInterface::Tkip;
     if (nm  & NM_802_11_CAP_CIPHER_CCMP)
-        caps |= Solid::Control::WirelessNetwork::Ccmp;
+        caps |= Solid::Control::WirelessNetworkInterface::Ccmp;
     return caps;
 }
 
-Solid::Control::WirelessNetwork::OperationMode getOperationMode(const int nm)
+Solid::Control::WirelessNetworkInterface::OperationMode getOperationMode(const int nm)
 {
-    Solid::Control::WirelessNetwork::OperationMode mode = Solid::Control::WirelessNetwork::Unassociated;
+    Solid::Control::WirelessNetworkInterface::OperationMode mode = Solid::Control::WirelessNetworkInterface::Unassociated;
     switch (nm)
     {
     case IW_MODE_ADHOC:
-        mode = Solid::Control::WirelessNetwork::Adhoc;
+        mode = Solid::Control::WirelessNetworkInterface::Adhoc;
         break;
     case IW_MODE_INFRA:
     case IW_MODE_MASTER:
-        mode = Solid::Control::WirelessNetwork::Managed;
+        mode = Solid::Control::WirelessNetworkInterface::Managed;
         break;
     case IW_MODE_REPEAT:
-        mode = Solid::Control::WirelessNetwork::Repeater;
+        mode = Solid::Control::WirelessNetworkInterface::Repeater;
         break;
     }
     return mode;
@@ -126,30 +126,27 @@ void deserialize(const QDBusMessage  & message, NMDBusWirelessNetworkProperties 
 
 typedef void Encryption;
 
-class NMWirelessNetworkPrivate
+class NMWirelessNetworkPrivate : public NMNetworkInterfacePrivate
 {
 public:
     NMWirelessNetworkPrivate(const QString  & netPath)
-        : iface("org.freedesktop.NetworkManager",
-                netPath,
-                "org.freedesktop.NetworkManager.Devices",
-                QDBusConnection::systemBus()),
+        : NMNetworkInterfacePrivate(netPath),
         strength(0), frequency(0.0), rate(0), broadcast(true), authentication(0) { }
-    QDBusInterface iface;
     QString essid;
     MacAddressList hwAddr; // MACs of the APs
     int strength;
     double frequency;
     int rate;
-    Solid::Control::WirelessNetwork::OperationMode mode;
-    Solid::Control::WirelessNetwork::Capabilities capabilities;
+    Solid::Control::WirelessNetworkInterface::OperationMode mode;
+    Solid::Control::WirelessNetworkInterface::Capabilities capabilities;
     bool broadcast;
     Solid::Control::Authentication * authentication;
 };
 
 NMWirelessNetwork::NMWirelessNetwork(const QString  & networkPath)
- : NMNetwork(networkPath), d(new NMWirelessNetworkPrivate(networkPath))
+ : NMNetworkInterface(*new NMWirelessNetworkPrivate(networkPath))
 {
+    Q_D(NMWirelessNetwork);
     //kDebug(1441) << "NMWirelessNetwork::NMWirelessNetwork() - " << networkPath;
     QDBusMessage reply = d->iface.call("getProperties");
     NMDBusWirelessNetworkProperties wlan;
@@ -160,11 +157,11 @@ NMWirelessNetwork::NMWirelessNetwork(const QString  & networkPath)
 
 NMWirelessNetwork::~NMWirelessNetwork()
 {
-    delete d;
 }
 
 void NMWirelessNetwork::setProperties(const NMDBusWirelessNetworkProperties  & props)
 {
+    Q_D(NMWirelessNetwork);
     d->essid = props.essid;
     d->hwAddr.append(props.hwAddr);
     d->strength = props.strength;
@@ -177,31 +174,37 @@ void NMWirelessNetwork::setProperties(const NMDBusWirelessNetworkProperties  & p
 
 int NMWirelessNetwork::signalStrength() const
 {
+    Q_D(const NMWirelessNetwork);
     return d->strength;
 }
 
-int NMWirelessNetwork::bitrate() const
+int NMWirelessNetwork::bitRate() const
 {
+    Q_D(const NMWirelessNetwork);
     return d->rate;
 }
 
 double NMWirelessNetwork::frequency() const
 {
+    Q_D(const NMWirelessNetwork);
     return d->frequency;
 }
 
-Solid::Control::WirelessNetwork::Capabilities NMWirelessNetwork::capabilities() const
+Solid::Control::WirelessNetworkInterface::Capabilities NMWirelessNetwork::wirelessCapabilities() const
 {
+    Q_D(const NMWirelessNetwork);
     return d->capabilities;
 }
 
 QString NMWirelessNetwork::essid() const
 {
+    Q_D(const NMWirelessNetwork);
     return d->essid;
 }
 
-Solid::Control::WirelessNetwork::OperationMode NMWirelessNetwork::mode() const
+Solid::Control::WirelessNetworkInterface::OperationMode NMWirelessNetwork::mode() const
 {
+    Q_D(const NMWirelessNetwork);
     return d->mode;
 }
 
@@ -214,7 +217,9 @@ bool NMWirelessNetwork::isAssociated() const
 
 bool NMWirelessNetwork::isEncrypted() const
 {
-    return !(d->capabilities  & Solid::Control::WirelessNetwork::Unencrypted) ;
+    Q_D(const NMWirelessNetwork);
+    // FIXME
+    return !(d->capabilities  & Solid::Control::WirelessNetworkInterface::NoCapability) ;
 }
 
 bool NMWirelessNetwork::isHidden() const
@@ -226,31 +231,37 @@ bool NMWirelessNetwork::isHidden() const
 
 MacAddressList NMWirelessNetwork::bssList() const
 {
+    Q_D(const NMWirelessNetwork);
     return d->hwAddr;
 }
 
 Solid::Control::Authentication * NMWirelessNetwork::authentication() const
 {
+    Q_D(const NMWirelessNetwork);
     return d->authentication;
 }
 
 void NMWirelessNetwork::setAuthentication(Solid::Control::Authentication * auth)
 {
+    Q_D(NMWirelessNetwork);
     d->authentication = auth;
 }
 
 void NMWirelessNetwork::setSignalStrength(int strength)
 {
+    Q_D(NMWirelessNetwork);
     d->strength = strength;
     emit signalStrengthChanged(strength);
 }
 
 void NMWirelessNetwork::setBitrate(int rate)
 {
+    Q_D(NMWirelessNetwork);
     d->rate = rate;
     emit bitrateChanged(rate);
 }
 
+#if 0
 void NMWirelessNetwork::setActivated(bool activated)
 {
     QDBusInterface manager("org.freedesktop.NetworkManager",
@@ -275,6 +286,37 @@ void NMWirelessNetwork::setActivated(bool activated)
 
     emit activationStateChanged(activated);
 }
+#endif
+
+MacAddressList NMWirelessNetwork::accessPoints() const
+{
+#warning implement me!
+    Q_D(const NMWirelessNetwork);
+    kDebug();
+    return d->networks.keys();
+}
+
+QString NMWirelessNetwork::activeAccessPoint() const
+{
+#warning implement me!
+    kDebug();
+    return QString();
+}
+
+QString NMWirelessNetwork::hardwareAddress() const
+{
+#warning implement me!
+    kDebug();
+    return QString();
+}
+
+QObject * NMWirelessNetwork::createAccessPoint(const QString & uni)
+{
+#warning implement me!
+    kDebug() << uni;
+    return 0;
+}
+
 
 #include "NetworkManager-wirelessnetwork.moc"
 

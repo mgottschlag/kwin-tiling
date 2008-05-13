@@ -25,9 +25,10 @@
 #include <QStringList>
 #include <qdbusextratypes.h>
 
-#include <solid/control/ifaces/wirelessnetwork.h>
+#include <solid/control/ifaces/wirelessnetworkinterface.h>
+#include <solid/control/wirelessnetworkinterface.h>
 
-#include "NetworkManager-network.h"
+#include "NetworkManager-networkinterface.h"
 
 struct NMDBusWirelessNetworkProperties
 {
@@ -37,30 +38,34 @@ struct NMDBusWirelessNetworkProperties
     int strength;
     double frequency;
     int rate;
-    Solid::Control::WirelessNetwork::OperationMode mode;
-    Solid::Control::WirelessNetwork::Capabilities capabilities;
+    Solid::Control::WirelessNetworkInterface::OperationMode mode;
+    Solid::Control::WirelessNetworkInterface::Capabilities capabilities;
     bool broadcast;
 };
 
 //typedef QString MacAddress;
 //typedef QStringList MacAddressList;
 
+namespace Solid {
+namespace Control {
 class Authentication;
+}
+}
 class NMWirelessNetworkPrivate;
 
-class KDE_EXPORT NMWirelessNetwork : public NMNetwork, virtual public Solid::Control::Ifaces::WirelessNetwork
+class KDE_EXPORT NMWirelessNetwork : public NMNetworkInterface, virtual public Solid::Control::Ifaces::WirelessNetworkInterface
 {
 Q_OBJECT
-Q_INTERFACES(Solid::Control::Ifaces::WirelessNetwork)
+Q_INTERFACES(Solid::Control::Ifaces::WirelessNetworkInterface)
 public:
     NMWirelessNetwork(const QString  & networkPath);
     virtual ~NMWirelessNetwork();
     int signalStrength() const;
-    int bitrate() const;
+    int bitRate() const;
     double frequency() const;
-    Solid::Control::WirelessNetwork::Capabilities capabilities() const;
+    Solid::Control::WirelessNetworkInterface::Capabilities wirelessCapabilities() const;
     QString essid() const;
-    Solid::Control::WirelessNetwork::OperationMode mode() const;
+    Solid::Control::WirelessNetworkInterface::OperationMode mode() const;
     bool isAssociated() const; // move to Device, is this a property on device?
     bool isEncrypted() const;
     bool isHidden() const;
@@ -69,16 +74,27 @@ public:
     void setAuthentication(Solid::Control::Authentication *authentication);
     void setSignalStrength(int strength);
     void setBitrate(int rate);
+#if 0
     virtual void setActivated(bool activated);
+#endif
+    MacAddressList accessPoints() const;
+    QString activeAccessPoint() const;
+    QString hardwareAddress() const;
+    QObject * createAccessPoint(const QString & uni);
 Q_SIGNALS:
     void signalStrengthChanged(int strength);
     void bitrateChanged(int bitrate);
     void associationChanged(bool associated); // move to Device?
     void authenticationNeeded();
+    void activeAccessPointChanged(const QString &);
+    void modeChanged(Solid::Control::WirelessNetworkInterface::OperationMode);
+    void accessPointAppeared(const QString &);
+    void accessPointDisappeared(const QString &);
 protected:
     void setProperties(const NMDBusWirelessNetworkProperties  &);
 private:
-    NMWirelessNetworkPrivate * d;
+    Q_DECLARE_PRIVATE(NMWirelessNetwork)
+    Q_DISABLE_COPY(NMWirelessNetwork)
 };
 
 #endif

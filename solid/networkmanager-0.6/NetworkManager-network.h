@@ -21,7 +21,7 @@
 #define NETWORKMANAGER_NETWORK_H
 
 #include <QDBusInterface>
-#include <solid/control/ifaces/network.h>
+#include <solid/control/ifaces/networkinterface.h>
 
 struct NMDBusNetworkProperties {
     QString ipv4Address;
@@ -37,10 +37,10 @@ class NMNetworkPrivate;
 /**
  * This interface represents a generic Internet Protocol (IP) network which we may be connected to.
  */
-class KDE_EXPORT NMNetwork : public QObject, virtual public Solid::Control::Ifaces::Network
+class KDE_EXPORT NMNetwork : public QObject, virtual public Solid::Control::Ifaces::NetworkInterface
 {
 Q_OBJECT
-Q_INTERFACES(Solid::Control::Ifaces::Network)
+Q_INTERFACES(Solid::Control::Ifaces::NetworkInterface)
 public:
     /**
      * Constructs a network and looks up its properties over DBus.

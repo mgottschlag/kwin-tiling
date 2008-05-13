@@ -18,6 +18,7 @@
 */
 
 #include "NetworkManager-networkinterface.h"
+#include "NetworkManager-networkinterface_p.h"
 
 #include <NetworkManager/NetworkManager.h>
 #include <QtDBus>
@@ -76,102 +77,118 @@ void deserialize(const QDBusMessage &message, NMDBusDeviceProperties  & device, 
     device.networks = (args.size() != 0) ? args.takeFirst().toStringList() : QStringList();
 }
 
-class NMNetworkInterfacePrivate
-{
-public:
-    NMNetworkInterfacePrivate(const QString  & objPath)
+
+NMNetworkInterfacePrivate::NMNetworkInterfacePrivate(const QString  & objPath)
      : iface("org.freedesktop.NetworkManager",
               objPath,
               "org.freedesktop.NetworkManager.Devices",
               QDBusConnection::systemBus()),
        objectPath(objPath) { }
-    QDBusInterface iface;
-    QString objectPath;
-    bool active;
-    Solid::Control::NetworkInterface::Type type;
-    int activationStage;
-    bool carrier;
-    int signalStrength;
-    int designSpeed;
-    QMap<QString,NMNetwork *> networks;
-    QPair<QString, NMDBusNetworkProperties> cachedNetworkProps;
-    Solid::Control::NetworkInterface::Capabilities capabilities;
-    QString activeNetPath;
-};
+
+NMNetworkInterfacePrivate::~NMNetworkInterfacePrivate()
+{
+}
+
 
 NMNetworkInterface::NMNetworkInterface(const QString  & objectPath)
-: NetworkInterface(0), d(new NMNetworkInterfacePrivate(objectPath))
+: NetworkInterface(), QObject(), d_ptr(new NMNetworkInterfacePrivate(objectPath))
 {
-    QDBusMessage reply = d->iface.call("getProperties");
+    Q_D(NMNetworkInterface);
+    d->q_ptr = this;
+    d->initGeneric();
+}
+
+NMNetworkInterface::NMNetworkInterface(NMNetworkInterfacePrivate &dd)
+    : NetworkInterface(), QObject(), d_ptr(&dd)
+{
+    Q_D(NMNetworkInterface);
+    d->q_ptr = this;
+    d->initGeneric();
+}
+
+
+void NMNetworkInterfacePrivate::initGeneric()
+{
+    Q_Q(NMNetworkInterface);
+    QDBusMessage reply = iface.call("getProperties");
     NMDBusDeviceProperties dev;
     NMDBusNetworkProperties net;
     deserialize(reply, dev, net);
     //dump(dev);
     //dump(net);
-    setProperties(dev);
+    q->setProperties(dev);
     // insert empty networks in our map.  These will be expanded on demand
     foreach (QString netPath, dev.networks)
-        d->networks.insert(netPath, 0);
+        networks.insert(netPath, 0);
 
-    if (d->type == Solid::Control::NetworkInterface::Ieee8023)
+    if (type == Solid::Control::NetworkInterface::Ieee8023)
     {
         QString fakeNetPath = objectPath + "/Networks/ethernet";
-        d->networks.insert(fakeNetPath, 0);
-        d->cachedNetworkProps.first = fakeNetPath;
-        d->cachedNetworkProps.second = net;
+        networks.insert(fakeNetPath, 0);
+        cachedNetworkProps.first = fakeNetPath;
+        cachedNetworkProps.second = net;
     }
-    else if (d->type == Solid::Control::NetworkInterface::Ieee80211)
+    else if (type == Solid::Control::NetworkInterface::Ieee80211)
     {
-        d->cachedNetworkProps.first = dev.activeNetPath;
-        d->cachedNetworkProps.second = net;
+        cachedNetworkProps.first = dev.activeNetPath;
+        cachedNetworkProps.second = net;
     }
 }
 
 NMNetworkInterface::~NMNetworkInterface()
 {
-    delete d;
+    delete d_ptr;
 }
 
 QString NMNetworkInterface::uni() const
 {
+    Q_D(const NMNetworkInterface);
     return d->objectPath;
 }
 
 bool NMNetworkInterface::isActive() const
 {
+    Q_D(const NMNetworkInterface);
     return d->active;
 }
 
 Solid::Control::NetworkInterface::Type NMNetworkInterface::type() const
 {
+    Q_D(const NMNetworkInterface);
     return d->type;
 }
 
 Solid::Control::NetworkInterface::ConnectionState NMNetworkInterface::connectionState() const
 {
+    Q_D(const NMNetworkInterface);
     return (Solid::Control::NetworkInterface::ConnectionState)d->activationStage;
 }
 
 int NMNetworkInterface::signalStrength() const
 {
+    Q_D(const NMNetworkInterface);
     return d->signalStrength;
 }
 
 int NMNetworkInterface::designSpeed() const
 {
+    Q_D(const NMNetworkInterface);
     return d->designSpeed;
 }
 
 bool NMNetworkInterface::isLinkUp() const
 {
+    Q_D(const NMNetworkInterface);
     return d->carrier;
 }
 
 Solid::Control::NetworkInterface::Capabilities NMNetworkInterface::capabilities() const
 {
+    Q_D(const NMNetworkInterface);
     return d->capabilities;
 }
 
+#if 0
 QObject * NMNetworkInterface::createNetwork(const QString  & uni)
 {
     kDebug(1441) << "NMNetworkInterface::createNetwork() - " << uni;
@@ -195,19 +212,23 @@ QObject * NMNetworkInterface::createNetwork(const QString  & uni)
     }
     return net;
 }
+#endif
 
 QStringList NMNetworkInterface::networks() const
 {
+    Q_D(const NMNetworkInterface);
     return d->networks.keys();
 }
 
 QString NMNetworkInterface::activeNetwork() const
 {
+    Q_D(const NMNetworkInterface);
     return d->activeNetPath;
 }
 
 void NMNetworkInterface::setProperties(const NMDBusDeviceProperties  & props)
 {
+    Q_D(NMNetworkInterface);
     switch (props.type)
     {
     case DEVICE_TYPE_UNKNOWN:
@@ -234,13 +255,16 @@ void NMNetworkInterface::setProperties(const NMDBusDeviceProperties  & props)
         d->capabilities |= Solid::Control::NetworkInterface::IsManageable;
     if (props.capabilities  & NM_DEVICE_CAP_CARRIER_DETECT)
         d->capabilities |= Solid::Control::NetworkInterface::SupportsCarrierDetect;
+#if 0
     if (props.capabilities  & NM_DEVICE_CAP_WIRELESS_SCAN)
         d->capabilities |= Solid::Control::NetworkInterface::SupportsWirelessScan;
+#endif
     d->activeNetPath = props.activeNetPath;
 }
 
 void NMNetworkInterface::setSignalStrength(int strength)
 {
+    Q_D(NMNetworkInterface);
     d->signalStrength = strength;
     // update the network object
     if (d->networks.contains(d->activeNetPath))
@@ -251,29 +275,41 @@ void NMNetworkInterface::setSignalStrength(int strength)
             net->setSignalStrength(strength);
         }
     }
+#if 0
     emit signalStrengthChanged(strength);
+#endif
 }
 
 void NMNetworkInterface::setCarrierOn(bool on)
 {
+    Q_D(NMNetworkInterface);
     d->carrier = on;
+#if 0
     emit linkUpChanged(on);
+#endif
 }
 
 void NMNetworkInterface::setActive(bool active)
 {
+    Q_D(NMNetworkInterface);
     d->active = active;
+#if 0
     emit activeChanged(active);
+#endif
 }
 
 void NMNetworkInterface::setActivationStage(int activationStage)
 {
+    Q_D(NMNetworkInterface);
     d->activationStage = activationStage;
+#if 0
     emit connectionStateChanged(activationStage);
+#endif
 }
 
 void NMNetworkInterface::addNetwork(const QDBusObjectPath  & netPath)
 {
+    Q_D(NMNetworkInterface);
     // check that it's not already present, as NetworkManager may
     // detect networks that aren't really new.
     if (!d->networks.contains(netPath.path()))
@@ -282,11 +318,13 @@ void NMNetworkInterface::addNetwork(const QDBusObjectPath  & netPath)
 
 void NMNetworkInterface::removeNetwork(const QDBusObjectPath  & netPath)
 {
+    Q_D(NMNetworkInterface);
     d->networks.remove(netPath.path());
 }
 
 void NMNetworkInterface::updateNetworkStrength(const QDBusObjectPath  & netPath, int strength)
 {
+    Q_D(const NMNetworkInterface);
     // check that it's not already present, as NetworkManager may
     // detect networks that aren't really new.
     if (d->networks.contains(netPath.path()))
@@ -300,4 +338,45 @@ void NMNetworkInterface::updateNetworkStrength(const QDBusObjectPath  & netPath,
         }
     }
 }
+
+QString NMNetworkInterface::interfaceName() const
+{
+#warning implement me!
+    kDebug();
+    return QString();
+}
+
+QString NMNetworkInterface::driver() const
+{
+#warning implement me!
+    kDebug();
+    return QString();
+}
+
+Solid::Control::IPv4Config NMNetworkInterface::ipV4Config() const
+{
+#warning implement me!
+    kDebug();
+    return Solid::Control::IPv4Config();
+}
+
+QString NMNetworkInterface::activeConnection() const
+{
+#warning implement me!
+    kDebug();
+    return QString();
+}
+
+void NMNetworkInterface::ipDetailsChanged()
+{
+#warning implement me!
+    kDebug();
+}
+
+void NMNetworkInterface::connectionStateChanged(int state)
+{
+#warning implement me!
+    kDebug() << state;
+}
+
 #include "NetworkManager-networkinterface.moc"
