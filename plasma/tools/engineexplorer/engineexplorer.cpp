@@ -126,6 +126,7 @@ void EngineExplorer::listEngines()
     QStringList engines = m_engineManager->listAllEngines();
     qSort(engines);
     m_engines->addItems(engines);
+    m_engines->setCurrentIndex(-1);
 }
 
 void EngineExplorer::showEngine(const QString& name)

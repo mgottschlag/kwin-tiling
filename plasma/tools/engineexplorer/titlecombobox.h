@@ -21,7 +21,7 @@ protected:
     {
         QComboBox::paintEvent(event);
 
-        if (currentIndex() > 0) {
+        if (currentIndex() != -1) {
             return;
         }
 
