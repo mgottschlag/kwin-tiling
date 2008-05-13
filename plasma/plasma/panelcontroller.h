@@ -47,6 +47,11 @@ public:
     void setLocation(const Plasma::Location &loc);
     Plasma::Location location() const;
 
+    void setOffset(int newOffset);
+    int offset();
+
+    void setAlignment(const Qt::Alignment &newAlignment);
+    int alignment();
 
 public Q_SLOTS:
     void hideController();

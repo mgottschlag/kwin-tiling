@@ -163,7 +163,7 @@ public:
             leftMinPos = totalLength/2 + offset + minLength/2;
             rightMinPos = totalLength/2 + offset - minLength/2;
 
-            offsetPos = totalLength/2 - offset;
+            offsetPos = totalLength/2 + offset;
             break;
         }
     
@@ -305,7 +305,7 @@ Qt::Alignment PositioningRuler::alignment() const
 
 void PositioningRuler::setOffset(int newOffset)
 {
-    const int delta = newOffset - d->offset;
+    /*const int delta = newOffset - d->offset;
 
     switch (d->location) {
     case Plasma::LeftEdge:
@@ -317,7 +317,7 @@ void PositioningRuler::setOffset(int newOffset)
     default:
         d->offsetSliderRect.moveCenter(QPoint(d->offsetSliderRect.center().x() + delta, d->offsetSliderRect.center().y()));
         break;
-    }
+    }*/
 
     d->offset = newOffset;
 

@@ -49,6 +49,9 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     m_offset = m_viewConfig.readEntry("Offset", 0);
     m_alignment = alignmentFilter((Qt::Alignment)m_viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
 
+    m_panelController->setAlignment(m_alignment);
+    m_panelController->setOffset(m_offset);
+
     updatePanelGeometry();
 
     if (panel) {
@@ -272,6 +275,8 @@ void PanelView::updatePanelGeometry()
 void PanelView::setOffset(int newOffset)
 {
     m_offset = newOffset;
+    m_viewConfig.writeEntry("Offset", m_offset);
+
     updatePanelGeometry();
 }
 
@@ -283,6 +288,7 @@ int PanelView::offset() const
 void PanelView::setAlignment(Qt::Alignment align)
 {
     m_alignment = alignmentFilter(align);
+    m_viewConfig.writeEntry("Alignment", (int)m_alignment);
 }
 
 Qt::Alignment PanelView::alignment() const
@@ -316,12 +322,6 @@ void PanelView::locationChangeCommitted()
 {
     updatePanelGeometry();
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
-}
-
-void PanelView::saveConfig()
-{
-    m_viewConfig.writeEntry("Offset", m_offset);
-    m_viewConfig.writeEntry("Alignment", (int)m_alignment);
 }
 
 Qt::Alignment PanelView::alignmentFilter(Qt::Alignment align) const

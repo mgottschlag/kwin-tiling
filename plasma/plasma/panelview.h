@@ -74,10 +74,6 @@ public:
      */
     Qt::Alignment alignment() const;
 
-    /**
-     * Saves the view settings
-     */
-     void saveConfig();
 
 public Q_SLOTS:
     /**

@@ -395,6 +395,38 @@ Plasma::Location PanelController::location() const
     return d->location;
 }
 
+void PanelController::setOffset(int newOffset)
+{
+    if (newOffset != d->ruler->offset()) {
+        d->ruler->setOffset(newOffset);
+    }
+}
+
+int PanelController::offset()
+{
+    return d->ruler->offset();
+}
+
+void PanelController::setAlignment(const Qt::Alignment &newAlignment)
+{
+    if (newAlignment != d->ruler->alignment()) {
+        if (newAlignment == Qt::AlignLeft) {
+            d->leftAlignTool->setChecked(true);
+        } else if (newAlignment == Qt::AlignCenter) {
+            d->centerAlignTool->setChecked(true);
+        } else if (newAlignment == Qt::AlignRight) {
+            d->rightAlignTool->setChecked(true);
+        }
+
+        d->ruler->setAlignment(newAlignment);
+    }
+}
+
+int PanelController::alignment()
+{
+    return d->ruler->alignment();
+}
+
 void PanelController::hideController()
 {
     hide();
