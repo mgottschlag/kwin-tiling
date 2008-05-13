@@ -556,13 +556,13 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
 
             if (newFormFactor == Plasma::Vertical) {
                 d->containment->resize(panelHeight, d->containment->preferredSize().height());
-                d->containment->setMaximumSize(panelHeight, d->ruler->maxLength());
-                d->containment->setMinimumSize(panelHeight, d->ruler->minLength());
+                d->containment->setMaximumSize(panelHeight, qMin(screenGeom.height(), d->ruler->maxLength()));
+                d->containment->setMinimumSize(panelHeight, qMin(screenGeom.height(), d->ruler->minLength()));
                 d->containment->resize(panelHeight, d->containment->preferredSize().height());
             } else {
                 d->containment->resize(d->containment->preferredSize().width(), panelHeight);
-                d->containment->setMaximumSize(d->ruler->maxLength(), panelHeight);
-                d->containment->setMinimumSize(d->ruler->minLength(), panelHeight);
+                d->containment->setMaximumSize(qMin(screenGeom.width(), d->ruler->maxLength()), panelHeight);
+                d->containment->setMinimumSize(qMin(screenGeom.width(), d->ruler->minLength()), panelHeight);
                 d->containment->resize(d->containment->preferredSize().width(), panelHeight);
             }
 
