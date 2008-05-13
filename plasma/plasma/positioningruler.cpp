@@ -151,17 +151,17 @@ public:
         case Qt::AlignRight:
             leftMaxPos = totalLength - offset - maxLength;
             rightMaxPos = 0;
-            leftMinPos = totalLength - offset - maxLength;
+            leftMinPos = totalLength - offset - minLength;
             rightMinPos = 0;
             offsetPos = totalLength - offset;
             break;
         case Qt::AlignCenter:
         default:
-            leftMaxPos = totalLength/2 + offset + maxLength/2;
-            rightMaxPos = totalLength/2 + offset - maxLength/2;
+            leftMaxPos = totalLength/2 + offset - maxLength/2;
+            rightMaxPos = totalLength/2 + offset + maxLength/2;
 
-            leftMinPos = totalLength/2 + offset + minLength/2;
-            rightMinPos = totalLength/2 + offset - minLength/2;
+            leftMinPos = totalLength/2 + offset - minLength/2;
+            rightMinPos = totalLength/2 + offset + minLength/2;
 
             offsetPos = totalLength/2 + offset;
             break;
@@ -305,20 +305,6 @@ Qt::Alignment PositioningRuler::alignment() const
 
 void PositioningRuler::setOffset(int newOffset)
 {
-    /*const int delta = newOffset - d->offset;
-
-    switch (d->location) {
-    case Plasma::LeftEdge:
-    case Plasma::RightEdge:
-        d->offsetSliderRect.moveCenter(QPoint(d->offsetSliderRect.center().x(), d->offsetSliderRect.center().y() + delta));
-        break;
-    case Plasma::TopEdge:
-    case Plasma::BottomEdge:
-    default:
-        d->offsetSliderRect.moveCenter(QPoint(d->offsetSliderRect.center().x() + delta, d->offsetSliderRect.center().y()));
-        break;
-    }*/
-
     d->offset = newOffset;
 
     d->setupSliders(size());
@@ -534,7 +520,7 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
 
     const bool horizontal = (d->location == Plasma::TopEdge || d->location == Plasma::BottomEdge);
     const int widthBound = 20;
-    
+
     switch (d->dragging) {
     case Private::LeftMaxSlider:
         //don't let the slider "cross" with the offset slider
