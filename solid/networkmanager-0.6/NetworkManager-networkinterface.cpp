@@ -260,6 +260,7 @@ void NMNetworkInterface::setProperties(const NMDBusDeviceProperties  & props)
         d->capabilities |= Solid::Control::NetworkInterface::SupportsWirelessScan;
 #endif
     d->activeNetPath = props.activeNetPath;
+    d->interface = props.interface;
 }
 
 void NMNetworkInterface::setSignalStrength(int strength)
@@ -341,9 +342,8 @@ void NMNetworkInterface::updateNetworkStrength(const QDBusObjectPath  & netPath,
 
 QString NMNetworkInterface::interfaceName() const
 {
-#warning implement me!
-    kDebug();
-    return QString();
+    Q_D(const NMNetworkInterface);
+    return d->interface;
 }
 
 QString NMNetworkInterface::driver() const

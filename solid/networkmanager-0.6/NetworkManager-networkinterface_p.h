@@ -49,6 +49,7 @@ public:
     QPair<QString, NMDBusNetworkProperties> cachedNetworkProps;
     Solid::Control::NetworkInterface::Capabilities capabilities;
     QString activeNetPath;
+    QString interface;
 };
 
 #endif
