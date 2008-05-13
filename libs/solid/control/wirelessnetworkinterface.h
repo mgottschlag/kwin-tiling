@@ -153,8 +153,6 @@ namespace Ifaces
          */
         WirelessNetworkInterface(WirelessNetworkInterfacePrivate &dd, const WirelessNetworkInterface &network);
 
-        WirelessNetworkInterfacePrivate *d_ptr;
-
         void makeConnections(QObject * source);
         QPair<AccessPoint *, Ifaces::AccessPoint *> findRegisteredAccessPoint(const QString &uni) const;
     private Q_SLOTS:
