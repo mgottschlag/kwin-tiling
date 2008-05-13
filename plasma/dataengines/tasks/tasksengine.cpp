@@ -38,7 +38,7 @@ void TasksEngine::connectTask(TaskPtr task)
 
 void TasksEngine::connectStartup(StartupPtr startup)
 {
-    connect(startup.constData(), SIGNAL(changed()), this, SLOT(taskChanged()));
+    connect(startup.constData(), SIGNAL(changed()), this, SLOT(startupChanged()));
 }
 
 void TasksEngine::init()
