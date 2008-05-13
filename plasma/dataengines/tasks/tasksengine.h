@@ -39,7 +39,7 @@ class TasksEngine : public Plasma::DataEngine
     Q_OBJECT
 
     public:
-		TasksEngine( QObject* parent, const QVariantList& args);
+        TasksEngine( QObject* parent, const QVariantList& args);
 
     protected:
         virtual void init();
@@ -53,9 +53,7 @@ class TasksEngine : public Plasma::DataEngine
         void startupRemoved(StartupPtr);
 
     private:
-        void connectTask(TaskPtr task);
         void setDataForTask(TaskPtr task);
-        void connectStartup(StartupPtr task);
         void setDataForStartup(StartupPtr task);
 };
 

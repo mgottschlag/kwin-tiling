@@ -31,20 +31,10 @@ TasksEngine::TasksEngine(QObject* parent, const QVariantList& args)
     Q_UNUSED(args);
 }
 
-void TasksEngine::connectTask(TaskPtr task)
-{
-        connect( task.constData() , SIGNAL(changed()) , this , SLOT(taskChanged()) );
-}
-
-void TasksEngine::connectStartup(StartupPtr startup)
-{
-    connect(startup.constData(), SIGNAL(changed()), this, SLOT(startupChanged()));
-}
-
 void TasksEngine::init()
 {
     foreach(const TaskPtr &task , TaskManager::TaskManager::self()->tasks().values() ) {
-        connectTask(task);
+        connect(task.constData(), SIGNAL(changed()), this, SLOT(taskChanged()));
         setDataForTask(task);
     }
 
@@ -60,7 +50,7 @@ void TasksEngine::init()
 
 void TasksEngine::startupAdded(StartupPtr startup)
 {
-    connectStartup(startup);
+    connect(startup.constData(), SIGNAL(changed()), this, SLOT(startupChanged()));
     setDataForStartup(startup);
 }
 
@@ -96,7 +86,7 @@ void TasksEngine::setDataForStartup(StartupPtr startup)
 
 void TasksEngine::taskAdded(TaskPtr task)
 {
-    connectTask(task);
+    connect(task.constData(), SIGNAL(changed()), this, SLOT(taskChanged()));
     setDataForTask(task);
 }
 
