@@ -68,6 +68,8 @@ Panel::Panel(QObject *parent, const QVariantList &args)
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
     connect(this, SIGNAL(appletAdded(Plasma::Applet*,QPointF)),
             this, SLOT(layoutApplet(Plasma::Applet*,QPointF)));
+    connect(this, SIGNAL(appletRemoved(Plasma::Applet*)),
+            this, SLOT(appletRemoved(Plasma::Applet*)));
 }
 
 Panel::~Panel()
@@ -127,6 +129,14 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     Plasma::FormFactor f = formFactor();
     int insertIndex = -1;
 
+    //Enlarge the panel if possible
+    if (f == Plasma::Horizontal) {
+        resize(size().width() + applet->preferredWidth(), size().height());
+    } else {
+        resize(size().width(), size().height() + applet->preferredHeight());
+    }
+    layout()->setMaximumSize(size());
+
     //if pos is (-1,-1) insert at the end of the panel
     if (pos != QPoint(-1, -1)) {
         for (int i = 0; i < lay->count(); ++i) {
@@ -158,6 +168,17 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     } else {
         lay->insertItem(insertIndex, applet);
     }
+}
+
+void Panel::appletRemoved(Plasma::Applet* applet)
+{
+    //shrink the panel if possible
+    if (formFactor() == Plasma::Horizontal) {
+        resize(size().width() - applet->size().width(), size().height());
+    } else {
+        resize(size().width(), size().height() - applet->size().height());
+    }
+    layout()->setMaximumSize(size());
 }
 
 void Panel::updateBorders(const QRect &geom)
