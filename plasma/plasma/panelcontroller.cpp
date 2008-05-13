@@ -234,6 +234,11 @@ PanelController::PanelController(QWidget* parent)
 
     d->layout = new QBoxLayout(QBoxLayout::LeftToRight, this);
     d->layout->setContentsMargins(4, 4, 4, 4);
+    if (QApplication::layoutDirection() == Qt::RightToLeft) {
+        d->layout->setDirection(QBoxLayout::RightToLeft);
+    } else {
+        d->layout->setDirection(QBoxLayout::LeftToRight);
+    }
     d->layout->setSpacing(4);
     d->layout->addStretch();
     d->extLayout->addItem(d->layout);
@@ -354,7 +359,13 @@ void PanelController::setLocation(const Plasma::Location &loc)
     switch (loc) {
     case Plasma::LeftEdge:
         d->layout->setDirection(QBoxLayout::TopToBottom);
-        d->extLayout->setDirection(QBoxLayout::RightToLeft);
+        //The external layout gwts auto flipped when QApplication::layoutDirection() changes
+        //and it shouldn't, the internal one no and it should, so i must manually invert both
+        if (QApplication::layoutDirection() == Qt::RightToLeft) {
+            d->extLayout->setDirection(QBoxLayout::LeftToRight);
+        } else {
+            d->extLayout->setDirection(QBoxLayout::RightToLeft);
+        }
         d->extLayout->setContentsMargins(1, 0, 0, 0);
         d->panelHeightHandle->setCursor(Qt::SizeHorCursor);
 
@@ -362,14 +373,22 @@ void PanelController::setLocation(const Plasma::Location &loc)
         break;
     case Plasma::RightEdge:
         d->layout->setDirection(QBoxLayout::TopToBottom);
-        d->extLayout->setDirection(QBoxLayout::LeftToRight);
+        if (QApplication::layoutDirection() == Qt::RightToLeft) {
+            d->extLayout->setDirection(QBoxLayout::RightToLeft);
+        } else {
+            d->extLayout->setDirection(QBoxLayout::LeftToRight);
+        }
         d->extLayout->setContentsMargins(1, 0, 0, 0);
         d->panelHeightHandle->setCursor(Qt::SizeHorCursor);
 
         d->ruler->setAvailableLength(screenGeom.height());
         break;
     case Plasma::TopEdge:
-        d->layout->setDirection(QBoxLayout::LeftToRight);
+        if (QApplication::layoutDirection() == Qt::RightToLeft) {
+            d->layout->setDirection(QBoxLayout::RightToLeft);
+        } else {
+            d->layout->setDirection(QBoxLayout::LeftToRight);
+        }
         d->extLayout->setDirection(QBoxLayout::BottomToTop);
         d->extLayout->setContentsMargins(0, 0, 0, 1);
         d->panelHeightHandle->setCursor(Qt::SizeVerCursor);
@@ -378,7 +397,11 @@ void PanelController::setLocation(const Plasma::Location &loc)
         break;
     case Plasma::BottomEdge:
     default:
-        d->layout->setDirection(QBoxLayout::LeftToRight);
+        if (QApplication::layoutDirection() == Qt::RightToLeft) {
+            d->layout->setDirection(QBoxLayout::RightToLeft);
+        } else {
+            d->layout->setDirection(QBoxLayout::LeftToRight);
+        }
         d->extLayout->setDirection(QBoxLayout::TopToBottom);
         d->extLayout->setContentsMargins(0, 1, 0, 0);
         d->panelHeightHandle->setCursor(Qt::SizeVerCursor);
