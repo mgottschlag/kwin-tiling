@@ -17,10 +17,11 @@
 
 */
 
-#include "networkinterface.h"
+#include "manager.h"
 
-Solid::Control::Ifaces::NetworkInterface::~NetworkInterface()
-{
+// KDE includes
+#include <kgenericfactory.h>
 
-}
+typedef KGenericFactory<NMNetworkManager, Solid::Control::Ifaces::NetworkManager> NetworkManagerBackendFactory;
+K_EXPORT_COMPONENT_FACTORY(solid_networkmanager07, NetworkManagerBackendFactory("NetworkManagerbackend"))
 

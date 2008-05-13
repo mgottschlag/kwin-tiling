@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2006 Will Stephenson <wstephenson@kde.org>
+    Copyright (C) 2007 Kevin Ottens <ervin@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -17,10 +18,24 @@
 
 */
 
-#include "networkinterface.h"
+#ifndef SOLID_NETWORK_P_H
+#define SOLID_NETWORK_P_H
 
-Solid::Control::Ifaces::NetworkInterface::~NetworkInterface()
+#include "networkinterface_p.h"
+
+namespace Solid
 {
+namespace Control
+{
+    class WiredNetworkInterfacePrivate : public NetworkInterfacePrivate
+    {
+    public:
+        explicit WiredNetworkInterfacePrivate(QObject *parent)
+            : NetworkInterfacePrivate(parent) { }
 
+        void setBackendObject(QObject *object);
+    };
+}
 }
 
+#endif

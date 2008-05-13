@@ -1,5 +1,5 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2006 Will Stephenson <wstephenson@kde.org>
+    Copyright (C) 2006,2008 Will Stephenson <wstephenson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -20,12 +20,11 @@
 #include <QStringList>
 
 #include "fakenetworkinterface.h"
-#include "fakenetwork.h"
 
 #include <kdebug.h>
 
 FakeNetworkInterface::FakeNetworkInterface(const QMap<QString, QVariant>  & propertyMap, QObject * parent)
-: Solid::Control::Ifaces::NetworkInterface(parent), mPropertyMap(propertyMap)
+: QObject(parent), mPropertyMap(propertyMap)
 {
 }
 
@@ -39,39 +38,37 @@ QString FakeNetworkInterface::uni() const
     return mPropertyMap["uni"].toString();
 }
 
-bool FakeNetworkInterface::isActive() const
+
+QString FakeNetworkInterface::interfaceName() const
 {
-    return mPropertyMap["active"].toBool();
+    return mPropertyMap["interface"].toString();
 }
 
-Solid::Control::NetworkInterface::Type FakeNetworkInterface::type() const
+QString FakeNetworkInterface::driver() const
 {
-    QString typeString = mPropertyMap["type"].toString();
-
-    if (typeString == "ieee8023")
-        return Solid::Control::NetworkInterface::Ieee8023;
-    else if (typeString == "ieee80211")
-        return Solid::Control::NetworkInterface::Ieee80211;
-    else
-        return Solid::Control::NetworkInterface::UnknownType;
+    return mPropertyMap["driver"].toString();
+}
+bool FakeNetworkInterface::isActive() const
+{
+    return !mActiveConnection.isEmpty();
 }
 
 Solid::Control::NetworkInterface::ConnectionState FakeNetworkInterface::connectionState() const
 {
     QString stateString = mPropertyMap["state"].toString();
 
-    if (stateString == "prepare")
-        return Solid::Control::NetworkInterface::Prepare;
-    else if (stateString == "configure")
-        return Solid::Control::NetworkInterface::Configure;
-    else if (stateString == "needuserkey")
-        return Solid::Control::NetworkInterface::NeedUserKey;
-    else if (stateString == "ipstart")
-        return Solid::Control::NetworkInterface::IPStart;
-    else if (stateString == "ipget")
-        return Solid::Control::NetworkInterface::IPGet;
-    else if (stateString == "ipcommit")
-        return Solid::Control::NetworkInterface::IPCommit;
+    if (stateString == "down")
+        return Solid::Control::NetworkInterface::Down;
+    else if (stateString == "disconnected")
+        return Solid::Control::NetworkInterface::Disconnected;
+    else if (stateString == "preparing")
+        return Solid::Control::NetworkInterface::Preparing;
+    else if (stateString == "configuring")
+        return Solid::Control::NetworkInterface::Configuring;
+    else if (stateString == "needauth")
+        return Solid::Control::NetworkInterface::NeedAuth;
+    else if (stateString == "ipconfig")
+        return Solid::Control::NetworkInterface::IPConfig;
     else if (stateString == "activated")
         return Solid::Control::NetworkInterface::Activated;
     else if (stateString == "failed")
@@ -82,19 +79,9 @@ Solid::Control::NetworkInterface::ConnectionState FakeNetworkInterface::connecti
         return Solid::Control::NetworkInterface::UnknownState;
 }
 
-int FakeNetworkInterface::signalStrength() const
-{
-    return mPropertyMap["signalstrength"].toInt();
-}
-
 int FakeNetworkInterface::designSpeed() const
 {
     return mPropertyMap["speed"].toInt();
-}
-
-bool FakeNetworkInterface::isLinkUp() const
-{
-    return mPropertyMap["linkup"].toBool();
 }
 
 Solid::Control::NetworkInterface::Capabilities FakeNetworkInterface::capabilities() const
@@ -106,41 +93,27 @@ Solid::Control::NetworkInterface::Capabilities FakeNetworkInterface::capabilitie
         caps |= Solid::Control::NetworkInterface::IsManageable;
     if (capStrings.contains("carrierdetect"))
         caps |= Solid::Control::NetworkInterface::SupportsCarrierDetect;
-    if (capStrings.contains("wirelessscan"))
-        caps |= Solid::Control::NetworkInterface::SupportsWirelessScan;
-
     return caps;
 }
 
-QObject * FakeNetworkInterface::createNetwork(const QString  & uni)
+QString FakeNetworkInterface::activeConnection() const
 {
-    if (mNetworks.contains(uni))
-    {
-        kDebug() << "found " << uni;
-        return mNetworks[uni];
-    }
-    else
-        kDebug() << "NOT found " << uni;
-        return 0;
+    return "FIXMEACTIVECONNECTION/org/freedesktop/NetworkManager/Devices/eth0";
 }
 
-QStringList FakeNetworkInterface::networks() const
+void FakeNetworkInterface::activate(const QString & connectionUni, const QString &)
 {
-    return mNetworks.keys();
+    mActiveConnection = connectionUni;
 }
 
-QString FakeNetworkInterface::activeNetwork() const
+void FakeNetworkInterface::deactivate()
 {
-    return "/org/freedesktop/NetworkManager/Devices/eth0";
-}
-void FakeNetworkInterface::setActive(bool active)
-{
-    mPropertyMap.insert("active", QVariant(active));
+    mActiveConnection = "";
 }
 
-void FakeNetworkInterface::injectNetwork(const QString  & uni, FakeNetwork * net)
+
+Solid::Control::IPv4Config FakeNetworkInterface::ipV4Config() const
 {
-   mNetworks.insert(uni, net);
+    return Solid::Control::IPv4Config();
 }
 
-#include "fakenetworkinterface.moc"

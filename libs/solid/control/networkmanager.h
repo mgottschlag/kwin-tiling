@@ -36,7 +36,7 @@ namespace Control
     }
     class Network;
     class NetworkInterface;
-    typedef QList<NetworkInterface> NetworkInterfaceList;
+    typedef QList<NetworkInterface*> NetworkInterfaceList;
         
     /**
      * This class allow to query the underlying system to discover the available
@@ -63,12 +63,13 @@ namespace Control
         SOLIDCONTROL_EXPORT NetworkInterfaceList networkInterfaces();
 
         /**
-         * Find a new NetworkInterface object given its UNI.
+         * Find a new NetworkInterface object given its UNI.  This pointer is owned by the Solid
+         * infrastructure.
          *
          * @param uni the identifier of the network interface to find
          * @returns a valid NetworkInterface object if there's a device having the given UNI, an invalid one otherwise
          */
-        SOLIDCONTROL_EXPORT const NetworkInterface &findNetworkInterface(const QString &uni);
+        SOLIDCONTROL_EXPORT NetworkInterface * findNetworkInterface(const QString &uni);
 
         /**
          * Retrieves the status of networking (as a whole) in the system.
@@ -95,6 +96,15 @@ namespace Control
         SOLIDCONTROL_EXPORT void setNetworkingEnabled(bool enabled);
 
         /**
+         * Retrieves the status of wireless hardware in the system.  This is typically
+         * controlled by a physical switch so there is no way to set this in software.
+         *
+         * @since KDE 4.1
+         * @return true if this wireless networking is enabled, false otherwise
+         */
+        SOLIDCONTROL_EXPORT bool isWirelessHardwareEnabled();
+
+        /**
          * Activates or deactivates wireless networking.
          *
          * @param enabled true to activate wireless networking, false otherwise
@@ -102,11 +112,18 @@ namespace Control
         SOLIDCONTROL_EXPORT void setWirelessEnabled(bool enabled);
 
         /**
-         * Informs the system of hidden networks.
+         * @param deviceUni unique identifier of the network interface to be activated
+         * @param connectionUni unique identifier for the connection to be activated
+         * @param extra_connection_parameter can be used to specify a parameter not specific to the NetworkInterface or the connection, eg which AP to use when several present with same ESSID in range (because ESSID no guarantee that the AP is part of the network you want to join!) Consider making this an object in its own right
          *
-         * @param networkName the name of the hidden network that could be discovered
          */
-        SOLIDCONTROL_EXPORT void notifyHiddenNetwork(const QString &networkName);
+        SOLIDCONTROL_EXPORT void activateConnection(const QString & deviceUni, const QString & connectionUni,
+                const QString & extra_connection_parameter );
+        /**
+         * Deactivate this network interface, if active
+         * @param activeConnectionUni identifer of the connection to deactivate
+         */
+        SOLIDCONTROL_EXPORT void deactivateConnection(const QString & activeConnectionUni);
 
         class SOLIDCONTROL_EXPORT Notifier : public QObject
         {

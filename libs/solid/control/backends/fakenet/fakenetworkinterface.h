@@ -1,5 +1,5 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2006 Will Stephenson <wstephenson@kde.org>
+    Copyright (C) 2006,2008 Will Stephenson <wstephenson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -26,12 +26,11 @@
 #include <kdemacros.h>
 
 #include <solid/control/ifaces/networkinterface.h>
+#include <solid/control/networkipv4config.h>
 
 using namespace Solid::Control::Ifaces;
 
-class FakeNetwork;
-
-class KDE_EXPORT FakeNetworkInterface : public Solid::Control::Ifaces::NetworkInterface
+class KDE_EXPORT FakeNetworkInterface : public QObject, virtual public Solid::Control::Ifaces::NetworkInterface
 {
     friend class FakeNetworkManager;
     Q_OBJECT
@@ -41,30 +40,26 @@ public:
                           QObject *parent = 0);
         virtual ~FakeNetworkInterface();
         QString uni() const;
+        QString interfaceName() const;
+        QString driver() const;
         bool isActive() const;
-        Solid::Control::NetworkInterface::Type type() const;
+        Solid::Control::IPv4Config ipV4Config() const;
         Solid::Control::NetworkInterface::ConnectionState connectionState() const;
-        int signalStrength() const;
         int designSpeed() const;
-        bool isLinkUp() const;
         Solid::Control::NetworkInterface::Capabilities capabilities() const;
-        QObject * createNetwork(const QString  & uni);
-        QStringList networks() const;
-        QString activeNetwork() const;
+        QString activeConnection() const;
+        void activate(const QString & connectionUni, const QString & extra_connection_parameter = QString() );
+        void deactivate();
     Q_SIGNALS:
+        void ipDetailsChanged();
         void activeChanged(bool);
         void linkUpChanged(bool);
-        void signalStrengthChanged(int);
         void connectionStateChanged(int /*NetworkStatus::ConnectionState */);
-        void networkAppeared(const QString  & uni);
-        void networkDisappeared(const QString  & uni);
 
     protected:
         /* These methods are operations that are carried out by the manager
            In a real backend they would be events coming up from the network layer */
-        void setActive(bool active);
-        void injectNetwork(const QString  & uni, FakeNetwork * net);
-        QMap<QString, FakeNetwork *> mNetworks;
+        QString mActiveConnection;
         QMap<QString, QVariant> mPropertyMap;
 };
 

@@ -54,7 +54,6 @@ namespace Ifaces
          */
         virtual ~NetworkManager();
 
-
         /**
          * Get the manager connection state
          */
@@ -77,14 +76,6 @@ namespace Ifaces
         virtual QObject *createNetworkInterface(const QString &uni) = 0;
 
         /**
-         * Instantiates a new AuthenticationValidator object.
-         *
-         * @returns a new AuthenticationValidator object, or 0 on failure
-         */
-        virtual QObject *createAuthenticationValidator() = 0;
-
-
-        /**
          * Retrieves the activation status of networking (as a whole) in the system.
          *
          * @return true if this networking is enabled, false otherwise
@@ -98,6 +89,18 @@ namespace Ifaces
          */
         virtual bool isWirelessEnabled() const = 0;
 
+        /**
+         * Retrieves the status of wireless hardware in the system.  This is typically
+         * controlled by a physical switch so there is no way to set this in software.
+         *
+         * @since KDE 4.1
+         * @return true if this wireless networking is enabled, false otherwise
+         */
+        virtual bool isWirelessHardwareEnabled() const = 0;
+
+        virtual void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QString & extra_connection_parameter) = 0;
+
+        virtual void deactivateConnection(const QString & activeConnection) = 0;
 
     public Q_SLOTS:
         /**
@@ -113,13 +116,6 @@ namespace Ifaces
          * @param enabled true to activate wireless networking, false otherwise
          */
         virtual void setWirelessEnabled(bool enabled) = 0;
-
-        /**
-         * Informs the system of hidden networks.
-         *
-         * @param networkName the name of the hidden network that could be discovered
-         */
-        virtual void notifyHiddenNetwork(const QString &networkName) = 0;
 
     Q_SIGNALS:
         /**
@@ -147,5 +143,7 @@ namespace Ifaces
 } // Control
 
 } // Solid
+
+Q_DECLARE_INTERFACE(Solid::Control::Ifaces::NetworkManager, "org.kde.Solid.Control.Ifaces.NetworkManager/0.1")
 
 #endif

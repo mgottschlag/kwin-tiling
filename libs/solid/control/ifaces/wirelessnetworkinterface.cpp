@@ -17,10 +17,12 @@
 
 */
 
-#include "networkinterface.h"
+#include "wirelessnetworkinterface.h"
 
-Solid::Control::Ifaces::NetworkInterface::~NetworkInterface()
+Solid::Control::Ifaces::WirelessNetworkInterface::~WirelessNetworkInterface()
 {
 
 }
+
+
 

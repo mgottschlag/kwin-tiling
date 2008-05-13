@@ -17,9 +17,9 @@
 
 */
 
-#include "networkinterface.h"
+#include "wirednetworkinterface.h"
 
-Solid::Control::Ifaces::NetworkInterface::~NetworkInterface()
+Solid::Control::Ifaces::WiredNetworkInterface::~WiredNetworkInterface()
 {
 
 }

@@ -4,17 +4,24 @@
 
 set(solidcontrolifaces_LIB_SRCS 
    powermanager.cpp
-   networkmanager.cpp
    networkinterface.cpp
-   network.cpp
-   wirelessnetwork.cpp
-   authentication.cpp
+   networkmanager.cpp
+   wirednetworkinterface.cpp
+   wirelessaccesspoint.cpp
+   wirelessnetworkinterface.cpp
    bluetoothremotedevice.cpp
    bluetoothinputdevice.cpp
    bluetoothinterface.cpp
    bluetoothmanager.cpp
    bluetoothsecurity.cpp )
 
+set(unused
+   networkmanager.cpp
+   network.cpp
+   wirelessnetwork.cpp
+   authentication.cpp
+
+   )
 
 kde4_add_library(solidcontrolifaces SHARED ${solidcontrolifaces_LIB_SRCS})
 
@@ -26,5 +33,5 @@ install(TARGETS solidcontrolifaces ${INSTALL_TARGETS_DEFAULT_ARGS}  )
 
 ########### install files ###############
 
-install( FILES powermanager.h networkmanager.h networkinterface.h network.h wirelessnetwork.h authentication.h bluetoothremotedevice.h bluetoothinputdevice.h bluetoothinterface.h bluetoothmanager.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/control/ifaces)
+install( FILES powermanager.h networkmanager.h networkinterface.h wirednetworkinterface.h wirelessnetworkinterface.h wirelessaccesspoint.h bluetoothremotedevice.h bluetoothinputdevice.h bluetoothinterface.h bluetoothmanager.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/control/ifaces)
 

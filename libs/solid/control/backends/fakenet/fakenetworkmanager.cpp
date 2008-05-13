@@ -1,5 +1,5 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2006 Will Stephenson <wstephenson@kde.org>
+    Copyright (C) 2006,2008 Will Stephenson <wstephenson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -16,6 +16,8 @@
     Boston, MA 02110-1301, USA.
 
 */
+#include "fakenetworkmanager.h"
+
 #include <QFile>
 #include <QtXml/QtXml>
 #include <QLatin1String>
@@ -23,27 +25,15 @@
 #include <kstandarddirs.h>
 #include <kdebug.h>
 
-#include "fakenetworkmanager.h"
-#include "fakenetwork.h"
-#include "fakewirelessnetwork.h"
+#include "fakeaccesspoint.h"
+#include "fakewirednetworkinterface.h"
+#include "fakewirelessnetworkinterface.h"
 
-FakeAuthenticationValidator::FakeAuthenticationValidator(QObject * parent) : QObject(parent)
-{
-}
-
-FakeAuthenticationValidator::~FakeAuthenticationValidator()
-{
-}
-
-bool FakeAuthenticationValidator::validate(const Solid::Control::Authentication *)
-{
-    return true;
-}
-
-FakeNetworkManager::FakeNetworkManager(QObject * parent, const QStringList  &) : Solid::Control::Ifaces::NetworkManager(parent), mAuthValidator(0)
+FakeNetworkManager::FakeNetworkManager(QObject * parent, const QStringList  &) : Solid::Control::Ifaces::NetworkManager(parent)
 {
     mUserNetworkingEnabled = true;
     mUserWirelessEnabled = true;
+    mRfKillEnabled = false;
 
     mXmlFile = KStandardDirs::locate("data", "solidfakebackend/fakenetworking.xml");
 
@@ -52,7 +42,7 @@ FakeNetworkManager::FakeNetworkManager(QObject * parent, const QStringList  &) :
     parseNetworkingFile();
 }
 
-FakeNetworkManager::FakeNetworkManager(QObject * parent, const QStringList &, const QString &xmlFile) : Solid::Control::Ifaces::NetworkManager(parent), mAuthValidator(0)
+FakeNetworkManager::FakeNetworkManager(QObject * parent, const QStringList &, const QString &xmlFile) : Solid::Control::Ifaces::NetworkManager(parent)
 {
     mUserNetworkingEnabled = true;
     mUserWirelessEnabled = true;
@@ -68,7 +58,6 @@ FakeNetworkManager::FakeNetworkManager(QObject * parent, const QStringList &, co
 
 FakeNetworkManager::~FakeNetworkManager()
 {
-    delete mAuthValidator;
 }
 
 Solid::Networking::Status FakeNetworkManager::status() const
@@ -103,25 +92,9 @@ QObject * FakeNetworkManager::createNetworkInterface(const QString  & undi)
         return 0;
 }
 
-QObject * FakeNetworkManager::createAuthenticationValidator()
-{
-    if (mAuthValidator == 0)
-        mAuthValidator = new FakeAuthenticationValidator(this);
-    return mAuthValidator;
-}
-
 bool FakeNetworkManager::isWirelessEnabled() const
 {
-    QMapIterator<QString, FakeNetworkInterface *> it(mNetworkInterfaces);
-    while (it.hasNext())
-    {
-        it.next();
-        FakeNetworkInterface * netDevice = it.value();
-        if (netDevice->type() == Solid::Control::NetworkInterface::Ieee80211)
-            if (netDevice->isActive())
-                return true;
-    }
-    return false;
+    return mUserWirelessEnabled;
 }
 
 bool FakeNetworkManager::isNetworkingEnabled() const
@@ -137,19 +110,13 @@ bool FakeNetworkManager::isNetworkingEnabled() const
     return false;
 }
 
+bool FakeNetworkManager::isWirelessHardwareEnabled() const
+{
+    return mRfKillEnabled;
+}
+
 void FakeNetworkManager::setWirelessEnabled(bool enabled)
 {
-    QMapIterator<QString, FakeNetworkInterface *> it(mNetworkInterfaces);
-    if (mUserNetworkingEnabled)
-    {
-        while (it.hasNext())
-        {
-            it.next();
-            FakeNetworkInterface * netDevice = it.value();
-            if (netDevice->type() == Solid::Control::NetworkInterface::Ieee80211)
-                netDevice->setActive(enabled);
-        }
-    }
     mUserWirelessEnabled = enabled;
 }
 
@@ -160,17 +127,11 @@ void FakeNetworkManager::setNetworkingEnabled(bool enabled)
     {
         it.next();
         FakeNetworkInterface * netDevice = it.value();
-        if ((netDevice->type() == Solid::Control::NetworkInterface::Ieee80211 && mUserWirelessEnabled)
-           || netDevice->type() == Solid::Control::NetworkInterface::Ieee8023)
-            netDevice->setActive(enabled);
+    //    if ((netDevice->type() == Solid::Control::NetworkInterface::Ieee80211 && mUserWirelessEnabled)
+      //     || netDevice->type() == Solid::Control::NetworkInterface::Ieee8023)
+        //    netDevice->setActive(enabled);
     }
     mUserNetworkingEnabled = enabled;
-}
-
-void FakeNetworkManager::notifyHiddenNetwork(const QString  & essid)
-{
-    // look up the device hosting the hidden net.
-    // move the hidden net into the device's networks list
 }
 
 void FakeNetworkManager::parseNetworkingFile()
@@ -206,6 +167,16 @@ void FakeNetworkManager::parseNetworkingFile()
 // Use the DeviceManager for now, the udi/uni should
 //                emit deviceAdded(tempDevice->uni());
             }
+        } else if (tempElement.tagName() == QLatin1String("property")) {
+            QString propertyKey = tempElement.attribute("key");
+            QVariant propertyValue = QVariant(tempElement.text());
+            if ( propertyKey== QLatin1String("networking")) {
+                mUserNetworkingEnabled = propertyValue.toBool();
+            } else if ( propertyKey== QLatin1String("wireless")) {
+                mUserWirelessEnabled = propertyValue.toBool();
+            } else if ( propertyKey== QLatin1String("rfkill")) {
+                mRfKillEnabled = propertyValue.toBool();
+            }
         }
         node = node.nextSibling();
     }
@@ -219,8 +190,8 @@ FakeNetworkInterface *FakeNetworkManager::parseDeviceElement(const QDomElement &
     propertyMap.insert("uni", uni);
     kDebug() << "Listing device: " << uni;
     propertyMap.insert("uni", QVariant(uni));
-    QList< FakeNetwork * > networks;
-
+    QList< FakeAccessPoint * > networks;
+    bool wireless = false;
     QDomNode childNode = deviceElement.firstChild();
     while (!childNode.isNull())
     {
@@ -233,21 +204,17 @@ FakeNetworkInterface *FakeNetworkManager::parseDeviceElement(const QDomElement &
 
             propertyKey = childElement.attribute("key");
             propertyValue = QVariant(childElement.text());
+            if ( propertyValue == "ieee80211" ) {
+                wireless = true;
+            }
             //kDebug() << "Got property key=" << propertyKey << ", value=" << propertyValue.toString();
             propertyMap.insert(propertyKey, propertyValue);
         }
-        else if (!childElement.isNull() && childElement.tagName() == QLatin1String("network"))
+        else if (!childElement.isNull() && childElement.tagName() == QLatin1String("accesspoint"))
         {
             QString uni = childElement.attribute("uni");
             kDebug() << "Listing properties: " << uni;
-            FakeNetwork * net = new FakeNetwork(uni, parseNetworkElement(childElement));
-            networks.append(net);
-        }
-        else if (!childElement.isNull() && childElement.tagName() == QLatin1String("wireless"))
-        {
-            QString uni = childElement.attribute("uni");
-            kDebug() << "Listing properties: " << uni;
-            FakeNetwork * wifi = new FakeWirelessNetwork(uni, parseNetworkElement(childElement));
+            FakeAccessPoint * wifi = new FakeAccessPoint(parseAPElement(childElement), this);
             networks.append(wifi);
         }
         childNode = childNode.nextSibling();
@@ -257,21 +224,25 @@ FakeNetworkInterface *FakeNetworkManager::parseDeviceElement(const QDomElement &
 /*    if (!propertyMap.isEmpty())
     { */
         kDebug() << "Creating FakeNetworkDevice for " << uni;
-        device = new FakeNetworkInterface(propertyMap);
-        QListIterator< FakeNetwork * > it (networks);
-        while (it.hasNext())
-        {
-            FakeNetwork * net = it.next();
-            kDebug() << "Injecting " << net->uni();
-            device->injectNetwork(net->uni(), net);
+        if (wireless) {
+            FakeWirelessNetworkInterface * wifi = new FakeWirelessNetworkInterface(propertyMap);
+            foreach( FakeAccessPoint * net, networks)
+            {
+                kDebug() << "Injecting " << net->uni();
+                wifi->injectAccessPoint(net);
+            }
+            device = wifi;
+        } else {
+            device = new FakeWiredNetworkInterface(propertyMap);
         }
+
 
 //     }
 
     return device;
 }
 
-QMap<QString,QVariant> FakeNetworkManager::parseNetworkElement(const QDomElement &deviceElement)
+QMap<QString,QVariant> FakeNetworkManager::parseAPElement(const QDomElement &deviceElement)
 {
     QMap<QString,QVariant> propertyMap;
 
@@ -293,6 +264,16 @@ QMap<QString,QVariant> FakeNetworkManager::parseNetworkElement(const QDomElement
         propertyNode = propertyNode.nextSibling();
     }
     return propertyMap;
+}
+
+void FakeNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QString & extra_connection_parameter)
+{
+
+}
+
+void FakeNetworkManager::deactivateConnection(const QString & activeConnection)
+{
+
 }
 
 

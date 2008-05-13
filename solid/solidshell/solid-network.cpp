@@ -40,8 +40,9 @@
 #include <solid/control/ifaces/authentication.h>
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
-#include <solid/control/network.h>
-#include <solid/control/wirelessnetwork.h>
+#include <solid/control/wirednetworkinterface.h>
+#include <solid/control/wirelessnetworkinterface.h>
+#include <solid/control/wirelessaccesspoint.h>
 
 #include <kjob.h>
 
@@ -161,45 +162,34 @@ std::ostream &operator<<(std::ostream &out, const QMap<QString,QVariant> &proper
 std::ostream &operator<<(std::ostream &out, const Solid::Control::NetworkInterface &networkdevice)
 {
     out << "  UNI =                " << QVariant(networkdevice.uni()) << endl;
-    out << "  Type =               " << (networkdevice.type() == Solid::Control::NetworkInterface::Ieee8023 ? "Wired" : "802.11 Wireless") << endl;
+    //out << "  Type =               " << (networkdevice.type() == Solid::Control::NetworkInterface::Ieee8023 ? "Wired" : "802.11 Wireless") << endl;
     out << "  Active =             " << (networkdevice.isActive() ? "Yes" : "No") << endl;
     //out << "  HW Address =         " << networkdevice.  // TODO add to solid API.
     out << "\n  Capabilities:" << endl;
     out << "    Supported =        " << (networkdevice.capabilities()  & Solid::Control::NetworkInterface::IsManageable ? "Yes" : "No") << endl;
     out << "    Speed =            " << networkdevice.designSpeed() << endl;
-    if (networkdevice.type() == Solid::Control::NetworkInterface::Ieee8023)
+#if 0
+    if (networkdevice.type() == Solid::Control::NetworkInterface::Ieee8023) {
+
         out << "    Carrier Detect =   " << (networkdevice.capabilities()  & Solid::Control::NetworkInterface::SupportsCarrierDetect ? "Yes" : "No") << endl;
-    else
+    }
+    else {
         out << "    Wireless Scan =    " << (networkdevice.capabilities()  & Solid::Control::NetworkInterface::SupportsWirelessScan ? "Yes" : "No") << endl;
+    }
     out << "    Link Up =          " << (networkdevice.isLinkUp() ? "Yes" : "No") << endl;
+#endif
 
     return out;
 }
 
-std::ostream &operator<<(std::ostream &out, const Solid::Control::Network &network)
+std::ostream &operator<<(std::ostream &out, const Solid::Control::AccessPoint &ap)
 {
-    out << "  UNI =                " << QVariant(network.uni()) << endl;
-    out << "  Addresses:" << endl;
-    foreach (QNetworkAddressEntry addr, network.addressEntries())
-    {
-        out << "    (" << addr.ip().toString() << "," << addr.broadcast().toString() << "," << addr.ip().toString() << ")" << endl;
-    }
-    if (network.addressEntries().isEmpty())
-        out << "    none" << endl;
-    out << "  Route:               " << QVariant(network.route()) <<  endl;
-    out << "  DNS Servers:" << endl;
-    int i = 1;
-    foreach (QHostAddress addr, network.dnsServers())
-    {
-        out << "  " << i++ << ": " << addr.toString() << endl;
-    }
-    if (network.dnsServers().isEmpty())
-        out << "    none" << endl;
-    out << "  Active =             " << (network.isActive() ? "Yes" : "No") << endl;
-
+    out << "  UNI =                " << QVariant(ap.uni()) << endl;
+    out << "  SSID =               " << QVariant(ap.ssid()) << endl;
+    out << "  MAC Address =        " << QVariant(ap.hardwareAddress()) << endl;
     return out;
 }
-
+#if 0
 std::ostream &operator<<(std::ostream &out, const Solid::Control::WirelessNetwork &network)
 {
     out << "  ESSID =                " << QVariant(network.essid()) << endl;
@@ -264,6 +254,7 @@ std::ostream &operator<<(std::ostream &out, const Solid::Control::WirelessNetwor
 
     return out;
 }
+#endif
 
 void checkArgumentCount(int min, int max)
 {
@@ -429,6 +420,8 @@ bool SolidNetwork::doIt()
         /* wpaeap UNIMPLEMENTED */
         else if (what == "network")
         {
+            cerr << i18n("Not implemented");
+#if 0 // probably won't be reimplemented since solidshell can't provide a persistent settings service...
             checkArgumentCount(4, 9);
             QString dev(args->arg(2));
             QString uni(args->arg(3));
@@ -546,6 +539,7 @@ bool SolidNetwork::doIt()
 
             return shell.netmgrActivateNetwork(dev, uni, auth);
             delete auth;
+#endif
         }
         else
         {
@@ -606,51 +600,57 @@ bool SolidNetwork::netmgrList()
     const Solid::Control::NetworkInterfaceList all = Solid::Control::NetworkManager::networkInterfaces();
 
     cerr << "debug: network interface list contains: " << all.count() << " entries" << endl;
-    foreach (const Solid::Control::NetworkInterface device, all)
+    foreach (const Solid::Control::NetworkInterface *device, all)
     {
-        cout << "UNI = '" << device.uni() << "'" << endl;
+        cout << "UNI = '" << device->uni() << "'" << endl;
     }
     return true;
 }
 
 bool SolidNetwork::netmgrListNetworks(const QString  & deviceUni)
 {
-    Solid::Control::NetworkInterface device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
+    Solid::Control::NetworkInterface * device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
+    Solid::Control::WirelessNetworkInterface * wifiDev =  qobject_cast<Solid::Control::WirelessNetworkInterface *>(device );
+    if (wifiDev) {
 
-    Solid::Control::NetworkList networks = device.networks();
-    foreach (const Solid::Control::Network * net, networks)
-    {
-        cout << "NETWORK UNI = '" << net->uni() << "'" << endl;
+        Solid::Control::AccessPointList aps = wifiDev->accessPoints();
+        foreach (QString apUni, aps)
+        {
+            cout << "NETWORK UNI = '" << apUni << "'" << endl;
+        }
+
+        return true;
     }
-
-    return true;
+    return false;
 }
 
 bool SolidNetwork::netmgrQueryNetworkInterface(const QString  & deviceUni)
 {
     cerr << "SolidNetwork::netmgrQueryNetworkInterface()" << endl;
-    Solid::Control::NetworkInterface device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
-    cout << device << endl;
+    Solid::Control::NetworkInterface * device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
+    cout << *device << endl;
     return true;
 }
 
-bool SolidNetwork::netmgrQueryNetwork(const QString  & deviceUni, const QString  & networkUni)
+bool SolidNetwork::netmgrQueryNetwork(const QString  & deviceUni, const QString  & apUni)
 {
     cerr << "SolidNetwork::netmgrQueryNetwork()" << endl;
-    Solid::Control::NetworkInterface device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
-    Solid::Control::Network * network = device.findNetwork(networkUni);
-    cout << *network << endl;
-    Solid::Control::WirelessNetwork * wlan = qobject_cast<Solid::Control::WirelessNetwork *>(network);
-    if (wlan)
-    {
-        cout << *wlan << endl;
+    Solid::Control::NetworkInterface * device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
+    Solid::Control::WirelessNetworkInterface * wifiDev =  qobject_cast<Solid::Control::WirelessNetworkInterface *>(device );
+    if (wifiDev) {
+        Solid::Control::AccessPoint * ap = wifiDev->findAccessPoint( apUni );
+        if ( ap ) {
+            cout << *ap << endl;
+            return true;
+        }
     }
-    return true;
+    return false;
 }
 
+#if 0
 bool SolidNetwork::netmgrActivateNetwork(const QString  & deviceUni, const QString  & networkUni, Solid::Control::Authentication * auth)
 {
-    Solid::Control::NetworkInterface device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
+    Solid::Control::NetworkInterface * device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
     Solid::Control::Network * network = device.findNetwork(networkUni);
     Solid::Control::WirelessNetwork * wlan = 0;
     if (( wlan = qobject_cast<Solid::Control::WirelessNetwork *>(network)))
@@ -662,6 +662,7 @@ bool SolidNetwork::netmgrActivateNetwork(const QString  & deviceUni, const QStri
         network->setActivated(true);
     return true;
 }
+#endif
 
 void SolidNetwork::connectJob(KJob *job)
 {

@@ -6,25 +6,25 @@ add_subdirectory( tests )
 
 ########### next target ###############
 
-set(solidcontrol_LIB_SRCS 
+set(solidcontrol_LIB_SRCS
    frontendobject.cpp
    managerbase.cpp
    powermanager.cpp
+   networking.cpp
    networkmanager.cpp
    networkinterface.cpp
-   network.cpp
-   wirelessnetwork.cpp
-   authentication.cpp
+   networkipv4config.cpp
+   wirednetworkinterface.cpp
+   wirelessaccesspoint.cpp
+   wirelessnetworkinterface.cpp
    bluetoothinterface.cpp
    bluetoothmanager.cpp
    bluetoothremotedevice.cpp
    bluetoothinputdevice.cpp
    bluetoothsecurity.cpp
-   networking.cpp
 )
 
 qt4_add_dbus_interface(solidcontrol_LIB_SRCS org.kde.Solid.Networking.xml org_kde_solid_networking)
-
 
 kde4_add_library(solidcontrol SHARED ${solidcontrol_LIB_SRCS})
 
@@ -37,8 +37,9 @@ install(TARGETS solidcontrol ${INSTALL_TARGETS_DEFAULT_ARGS} )
 ########### install files ###############
 
 install( FILES solidpowermanager.desktop solidnetworkmanager.desktop solidbluetoothmanager.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR}  )
-install( FILES powermanager.h networkmanager.h networkinterface.h network.h wirelessnetwork.h
-    authentication.h bluetoothmanager.h bluetoothinterface.h bluetoothremotedevice.h
-    bluetoothinputdevice.h bluetoothsecurity.h singletondefs.h networking.h solid_control_export.h DESTINATION 
+install( FILES powermanager.h networkmanager.h networkinterface.h wirednetworkinterface.h
+    wirelessnetworkinterface.h wirelessaccesspoint.h bluetoothmanager.h bluetoothinterface.h
+    bluetoothremotedevice.h bluetoothinputdevice.h bluetoothsecurity.h
+    singletondefs.h networking.h solid_control_export.h DESTINATION
 ${INCLUDE_INSTALL_DIR}/solid/control)
 

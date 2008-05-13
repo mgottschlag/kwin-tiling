@@ -46,7 +46,7 @@ namespace Control
         ~NetworkManagerPrivate();
 
         NetworkInterfaceList networkInterfaces();
-        const NetworkInterface &findNetworkInterface(const QString &uni);
+        NetworkInterface *findNetworkInterface(const QString &uni);
 
     private Q_SLOTS:
         void _k_networkInterfaceAdded(const QString &uni);
@@ -55,9 +55,9 @@ namespace Control
 
     private:
         NetworkInterfaceList buildDeviceList(const QStringList &uniList);
-        QPair<NetworkInterface *, Ifaces::NetworkInterface *> findRegisteredNetworkInterface(const QString &uni);
+        QPair<NetworkInterface *, QObject *> findRegisteredNetworkInterface(const QString &uni);
 
-        QMap<QString, QPair<NetworkInterface *, Ifaces::NetworkInterface *> > m_networkInterfaceMap;
+        QMap<QString, QPair<NetworkInterface *, QObject *> > m_networkInterfaceMap;
         NetworkInterface m_invalidDevice;
     };
 }

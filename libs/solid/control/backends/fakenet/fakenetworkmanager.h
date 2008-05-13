@@ -1,5 +1,5 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2006 Will Stephenson <wstephenson@kde.org>
+    Copyright (C) 2006,2008 Will Stephenson <wstephenson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -26,7 +26,6 @@
 #include <kdemacros.h>
 
 #include <solid/control/ifaces/networkmanager.h>
-#include <solid/control/authentication.h>
 
 #include "fakenetworkinterface.h"
 
@@ -50,35 +49,29 @@ Q_OBJECT
         QStringList networkInterfaces() const;
         QStringList activeNetworkInterfaces() const;
         QObject * createNetworkInterface(const QString &);
-        QObject * createAuthenticationValidator();
 
         bool isNetworkingEnabled() const;
         bool isWirelessEnabled() const;
+        bool isWirelessHardwareEnabled() const;
+
+        void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QString & extra_connection_parameter);
+
+        void deactivateConnection(const QString & activeConnection);
+
     public Q_SLOTS:
         void setWirelessEnabled(bool);
         void setNetworkingEnabled(bool);
-        void notifyHiddenNetwork(const QString  &);
 
     private:
         void parseNetworkingFile();
         FakeNetworkInterface *parseDeviceElement(const QDomElement &deviceElement);
-        QMap<QString,QVariant> parseNetworkElement(const QDomElement &deviceElement);
+        QMap<QString,QVariant> parseAPElement(const QDomElement &deviceElement);
 
         bool mUserNetworkingEnabled;
         bool mUserWirelessEnabled;
+        bool mRfKillEnabled;
         QMap<QString, FakeNetworkInterface *> mNetworkInterfaces;
-        FakeAuthenticationValidator * mAuthValidator;
         QString mXmlFile;
-};
-
-class FakeAuthenticationValidator : public QObject, public Solid::Control::Ifaces::AuthenticationValidator
-{
-Q_OBJECT
-Q_INTERFACES(Solid::Control::Ifaces::AuthenticationValidator)
-    public:
-        FakeAuthenticationValidator(QObject * parent);
-        virtual ~FakeAuthenticationValidator();
-        bool validate(const Solid::Control::Authentication *);
 };
 
 #endif
