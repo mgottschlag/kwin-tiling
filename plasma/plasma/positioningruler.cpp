@@ -61,19 +61,37 @@ public:
     {
     }
 
-    void moveSlider(QRect &sliderRect, QRect &symmetricSliderRect, const QPoint &newPos)
+    bool moveSlider(QRect &sliderRect, QRect &symmetricSliderRect, const QPoint &newPos)
     {
         if (location == Plasma::LeftEdge || location == Plasma::RightEdge) {
-            sliderRect.moveTop(newPos.y());
-            if (alignment == Qt::AlignCenter) {
-                symmetricSliderRect.moveTop((offsetSliderRect.top() + (offsetSliderRect.top() - newPos.y())));
+            if (newPos.y() < 0 || newPos.y() > availableLength) {
+                return false;
             }
+
+            if (alignment == Qt::AlignCenter) {
+                const int newTop = offsetSliderRect.top() + (offsetSliderRect.top() - newPos.y());
+                if (newTop < 0 || newTop > availableLength) {
+                    return false;
+                }
+                symmetricSliderRect.moveCenter(QPoint(symmetricSliderRect.center().x(), newTop));
+            }
+            sliderRect.moveCenter(QPoint(sliderRect.center().x(), newPos.y()));
         } else {
-            sliderRect.moveLeft(newPos.x());
-            if (alignment == Qt::AlignCenter) {
-                symmetricSliderRect.moveLeft((offsetSliderRect.left() + (offsetSliderRect.left() - newPos.x())));
+            if (newPos.x() < 0 || newPos.x() > availableLength) {
+                return false;
             }
+
+            if (alignment == Qt::AlignCenter) {
+                const int newLeft = offsetSliderRect.left() + (offsetSliderRect.left() - newPos.x());
+                if (newLeft < 0 || newLeft > availableLength) {
+                    return false;
+                }
+                symmetricSliderRect.moveCenter(QPoint(newLeft, symmetricSliderRect.center().y()));
+            }
+            sliderRect.moveCenter(QPoint(newPos.x(), sliderRect.center().y()));
         }
+
+        return true;
     }
 
     int sliderRectToLength(const QRect &sliderRect)
@@ -477,19 +495,19 @@ void PositioningRuler::mousePressEvent(QMouseEvent *event)
 {
     if (d->alignment != Qt::AlignLeft && d->leftMaxSliderRect.contains(event->pos())) {
         d->dragging = Private::LeftMaxSlider;
-        d->startDragPos = QPoint(event->pos().x() - d->leftMaxSliderRect.left(), event->pos().y() - d->leftMaxSliderRect.top());
+        d->startDragPos = QPoint(event->pos().x() - d->leftMaxSliderRect.center().x(), event->pos().y() - d->leftMaxSliderRect.center().y());
     } else if (d->alignment != Qt::AlignRight && d->rightMaxSliderRect.contains(event->pos())) {
         d->dragging = Private::RightMaxSlider;
-        d->startDragPos = QPoint(event->pos().x() - d->rightMaxSliderRect.left(), event->pos().y() - d->rightMaxSliderRect.top());
+        d->startDragPos = QPoint(event->pos().x() - d->rightMaxSliderRect.center().x(), event->pos().y() - d->rightMaxSliderRect.center().y());
     } else if (d->alignment != Qt::AlignLeft && d->leftMinSliderRect.contains(event->pos())) {
         d->dragging = Private::LeftMinSlider;
-        d->startDragPos = QPoint(event->pos().x() - d->leftMinSliderRect.left(), event->pos().y() - d->leftMinSliderRect.top());
+        d->startDragPos = QPoint(event->pos().x() - d->leftMinSliderRect.center().x(), event->pos().y() - d->leftMinSliderRect.center().y());
     } else if (d->alignment != Qt::AlignRight && d->rightMinSliderRect.contains(event->pos())) {
         d->dragging = Private::RightMinSlider;
-        d->startDragPos = QPoint(event->pos().x() - d->rightMinSliderRect.left(), event->pos().y() - d->rightMinSliderRect.top());
+        d->startDragPos = QPoint(event->pos().x() - d->rightMinSliderRect.center().x(), event->pos().y() - d->rightMinSliderRect.center().y());
     } else if (d->offsetSliderRect.contains(event->pos())) {
         d->dragging = Private::OffsetSlider;
-        d->startDragPos = QPoint(event->pos().x() - d->offsetSliderRect.left(), event->pos().y() - d->offsetSliderRect.top());
+        d->startDragPos = QPoint(event->pos().x() - d->offsetSliderRect.center().x(), event->pos().y() - d->offsetSliderRect.center().y());
     } else {
         d->dragging = Private::NoElement;
     }
@@ -512,10 +530,10 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
     }
 
     //bound to width, height
-    QPoint newPos = QPoint(qMin(event->pos().x() - d->startDragPos.x(), width() - d->leftMaxSliderRect.width()/2 + 1),
-                           qMin(event->pos().y() - d->startDragPos.y(), height() - d->leftMaxSliderRect.height()/2 + 1));
+    QPoint newPos = QPoint(qMin(event->pos().x() - d->startDragPos.x(), width()/* - d->leftMaxSliderRect.width()/2 + 1*/),
+                           qMin(event->pos().y() - d->startDragPos.y(), height()/* - d->leftMaxSliderRect.height()/2 + 1*/));
     //bound to 0,0
-    newPos = QPoint(qMax(newPos.x(), 0 - d->leftMaxSliderRect.width()/2), qMax(newPos.y(), 0 - d->leftMaxSliderRect.height()/2));
+    newPos = QPoint(qMax(newPos.x(), 0/* - d->leftMaxSliderRect.width()/2*/), qMax(newPos.y(), 0/* - d->leftMaxSliderRect.height()/2*/));
 
 
     const bool horizontal = (d->location == Plasma::TopEdge || d->location == Plasma::BottomEdge);
@@ -530,7 +548,10 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
             return;
         }
 
-        d->moveSlider(d->leftMaxSliderRect, d->rightMaxSliderRect, newPos);
+        if (!d->moveSlider(d->leftMaxSliderRect, d->rightMaxSliderRect, newPos)) {
+            return;
+        }
+
         d->maxLength = d->sliderRectToLength(d->leftMaxSliderRect);
 
         if (d->minLength > d->maxLength) {
@@ -545,7 +566,10 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
             return;
         }
 
-        d->moveSlider(d->rightMaxSliderRect, d->leftMaxSliderRect, newPos);
+        if (!d->moveSlider(d->rightMaxSliderRect, d->leftMaxSliderRect, newPos)) {
+            return;
+        }
+
         d->maxLength = d->sliderRectToLength(d->rightMaxSliderRect);
 
         if (d->minLength > d->maxLength) {
@@ -560,7 +584,10 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
             return;
         }
 
-        d->moveSlider(d->leftMinSliderRect, d->rightMinSliderRect, newPos);
+        if (!d->moveSlider(d->leftMinSliderRect, d->rightMinSliderRect, newPos)) {
+            return;
+        }
+
         d->minLength = d->sliderRectToLength(d->leftMinSliderRect);
 
         if (d->minLength > d->maxLength) {
@@ -575,7 +602,10 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
             return;
         }
 
-        d->moveSlider(d->rightMinSliderRect, d->leftMinSliderRect, newPos);
+        if (!d->moveSlider(d->rightMinSliderRect, d->leftMinSliderRect, newPos)) {
+            return;
+        }
+
         d->minLength = d->sliderRectToLength(d->rightMinSliderRect);
 
         if (d->minLength > d->maxLength) {
@@ -586,10 +616,10 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
     case Private::OffsetSlider:
     {
         if (d->location == Plasma::LeftEdge || d->location == Plasma::RightEdge) {
-            d->offsetSliderRect.moveTop(newPos.y());
+            d->offsetSliderRect.moveCenter(QPoint(d->offsetSliderRect.center().x(), newPos.y()));
             d->offset = d->offsetSliderRect.center().y();
         } else {
-            d->offsetSliderRect.moveLeft(newPos.x());
+            d->offsetSliderRect.moveCenter(QPoint(newPos.x(), d->offsetSliderRect.center().y()));
             d->offset = d->offsetSliderRect.center().x();
         }
 
