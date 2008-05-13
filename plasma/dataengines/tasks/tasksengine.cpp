@@ -18,10 +18,10 @@
 
 #include "tasksengine.h"
 
+#include <plasma/datacontainer.h>
+
 #include <KDebug>
 #include <KLocale>
-
-#include <plasma/datacontainer.h>
 
 using namespace Plasma;
 
@@ -36,6 +36,11 @@ void TasksEngine::connectTask(TaskPtr task)
         connect( task.constData() , SIGNAL(changed()) , this , SLOT(taskChanged()) );
 }
 
+void TasksEngine::connectStartup(StartupPtr startup)
+{
+    connect(startup.constData(), SIGNAL(changed()), this, SLOT(taskChanged()));
+}
+
 void TasksEngine::init()
 {
     foreach(const TaskPtr &task , TaskManager::TaskManager::self()->tasks().values() ) {
@@ -47,6 +52,46 @@ void TasksEngine::init()
             this, SLOT(taskAdded(TaskPtr)));
     connect(TaskManager::TaskManager::self(), SIGNAL(taskRemoved(TaskPtr)),
             this, SLOT(taskRemoved(TaskPtr)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(startupAdded(StartupPtr)),
+            this, SLOT(startupAdded(StartupPtr)));
+    connect(TaskManager::TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)),
+            this, SLOT(startupRemoved(StartupPtr)));
+}
+
+void TasksEngine::startupAdded(StartupPtr startup)
+{
+    connectStartup(startup);
+    setDataForStartup(startup);
+}
+
+void TasksEngine::startupRemoved(StartupPtr startup)
+{
+    removeSource(startup->id().id());
+}
+
+void TasksEngine::startupChanged()
+{
+    TaskManager::Startup* startup = qobject_cast<TaskManager::Startup*>(sender());
+
+    Q_ASSERT(startup);
+
+    setDataForStartup(StartupPtr(startup));
+}
+
+void TasksEngine::setDataForStartup(StartupPtr startup)
+{
+    Q_ASSERT(startup);
+
+    QString name(startup->id().id());
+
+    const QMetaObject* metaObject = startup->metaObject();
+
+    for (int i = 0 ; i < metaObject->propertyCount() ; i++) {
+        QMetaProperty property = metaObject->property(i);
+
+        setData(name, property.name(), property.read(startup.constData()));
+    }
+    setData(name, "TaskOrStartup", "startup");
 }
 
 void TasksEngine::taskAdded(TaskPtr task)
@@ -82,6 +127,8 @@ void TasksEngine::setDataForTask(TaskPtr task)
 
         setData(name,property.name(),property.read(task.constData()));
     }
+    setData(name, "WId", static_cast<qulonglong>(task->window()));
+    setData(name, "TaskOrStartup", "task");
 }
 
 #include "tasksengine.moc"

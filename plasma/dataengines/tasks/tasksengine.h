@@ -48,10 +48,15 @@ class TasksEngine : public Plasma::DataEngine
         void taskChanged();
         void taskAdded(TaskPtr task);
         void taskRemoved(TaskPtr task);
+        void startupChanged();
+        void startupAdded(StartupPtr task);
+        void startupRemoved(StartupPtr);
 
     private:
         void connectTask(TaskPtr task);
         void setDataForTask(TaskPtr task);
+        void connectStartup(StartupPtr task);
+        void setDataForStartup(StartupPtr task);
 };
 
 K_EXPORT_PLASMA_DATAENGINE(tasks, TasksEngine)
