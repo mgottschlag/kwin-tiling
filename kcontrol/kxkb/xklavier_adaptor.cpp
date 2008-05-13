@@ -72,6 +72,10 @@ XKlavierAdaptor::XKlavierAdaptor(Display* dpy)
     KGlobal::locale()->insertCatalog("xkeyboard-config");
     // KDE's i18n expects messages to be well-formed XML,
     // so use Qt::escape() to replace < with &lt; etc.
+    // Actually we couldn't have done this just like that,
+    // as then an escaped message would not be found in the catalog;
+    // but, by a lucky fiat, xkeyboard-config too wants its messages as
+    // well-formed XML, so they come escaped exactly like this.
     #define I18N_KDE(x) i18n(Qt::escape(QString::fromUtf8(x)).toUtf8())
 #endif
 }
