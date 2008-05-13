@@ -28,7 +28,6 @@
 
 #include <KIcon>
 #include <KColorUtils>
-#include <KWindowSystem>
 
 #include <plasma/theme.h>
 #include <plasma/containment.h>
@@ -218,10 +217,7 @@ PanelController::PanelController(QWidget* parent)
    : QWidget(parent),
      d(new Private(this))
 {
-    // KWin setup
-    KWindowSystem::setType(winId(), NET::Dock);
-    KWindowSystem::setState(winId(), NET::Sticky);
-    KWindowSystem::setOnAllDesktops(winId(), true);
+    setWindowFlags(Qt::Popup);
 
     //Resize handles
     d->panelHeightHandle = new Private::ResizeHandle(this);
@@ -469,7 +465,7 @@ void PanelController::mousePressEvent(QMouseEvent *event)
     if (d->panelHeightHandle->geometry().contains(event->pos()) ) {
         d->startDragPos = event->pos();
         d->dragging = Private::ResizeHandleElement;
-    } else if (!d->ruler->geometry().contains(event->pos()) ) {
+    } else if (QRect(QPoint(0, 0), size()).contains(event->pos()) && !d->ruler->geometry().contains(event->pos()) ) {
         d->dragging = Private::PanelControllerElement;
         setCursor(Qt::SizeAllCursor);
     }
