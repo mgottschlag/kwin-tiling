@@ -385,7 +385,7 @@ QList<QAction*> DefaultDesktop::contextualActions()
         connect(m_lockScreenAction, SIGNAL(triggered(bool)), this, SLOT(lockScreen()));
 
         m_logoutAction = new QAction(i18n("Leave..."), this);
-        m_logoutAction->setIcon(KIcon("system-log-out"));
+        m_logoutAction->setIcon(KIcon("system-shutdown"));
         connect(m_logoutAction, SIGNAL(triggered(bool)), this, SLOT(logout()));
         constraintsEvent(Plasma::ImmutableConstraint);
 
