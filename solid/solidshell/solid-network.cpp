@@ -194,26 +194,27 @@ std::ostream &operator<<(std::ostream &out, const Solid::Control::AccessPoint &a
     out << "  Signal Strength =    " << ap.signalStrength() << endl;
     return out;
 }
-#if 0
-std::ostream &operator<<(std::ostream &out, const Solid::Control::WirelessNetwork &network)
+
+std::ostream &operator<<(std::ostream &out, const Solid::Control::WirelessNetworkInterface &network)
 {
-    out << "  ESSID =                " << QVariant(network.essid()) << endl;
-    out << "  Mode =                 ";
+    out << (Solid::Control::NetworkInterface)network;
+    out << endl;
+    out << "  Mode =               ";
     switch (network.mode())
     {
-    case Solid::Control::WirelessNetwork::Unassociated:
+    case Solid::Control::WirelessNetworkInterface::Unassociated:
         cout << "Unassociated" << endl;
         break;
-    case Solid::Control::WirelessNetwork::Adhoc:
+    case Solid::Control::WirelessNetworkInterface::Adhoc:
         cout << "Ad-hoc" << endl;
         break;
-    case Solid::Control::WirelessNetwork::Managed:
+    case Solid::Control::WirelessNetworkInterface::Managed:
         cout << "Infrastructure" << endl;
         break;
-    case Solid::Control::WirelessNetwork::Master:
+    case Solid::Control::WirelessNetworkInterface::Master:
         cout << "Master" << endl;
         break;
-    case Solid::Control::WirelessNetwork::Repeater:
+    case Solid::Control::WirelessNetworkInterface::Repeater:
         cout << "Repeater" << endl;
         break;
     default:
@@ -221,9 +222,9 @@ std::ostream &operator<<(std::ostream &out, const Solid::Control::WirelessNetwor
         cerr << "Unknown network operation mode: " << network.mode() << endl;
         break;
     }
-    out << "  Frequency =            " << network.frequency() << endl;
-    out << "  Rate =                 " << network.bitrate() << endl;
-    out << "  Strength =             " << network.signalStrength() << endl;
+    out << "  Bit Rate =           " << network.bitRate() << endl;
+    out << "  Hardware Address =   " << network.hardwareAddress() << endl;
+#if 0
     if (network.isEncrypted())
     {
         out << "  Encrypted =            Yes (";
@@ -256,10 +257,11 @@ std::ostream &operator<<(std::ostream &out, const Solid::Control::WirelessNetwor
     }
     else
         out << "  Encrypted =            No" << endl;
+#endif
 
     return out;
 }
-#endif
+
 
 void checkArgumentCount(int min, int max)
 {
@@ -633,7 +635,12 @@ bool SolidNetwork::netmgrQueryNetworkInterface(const QString  & deviceUni)
 {
     cerr << "SolidNetwork::netmgrQueryNetworkInterface()" << endl;
     Solid::Control::NetworkInterface * device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
-    cout << *device << endl;
+    Solid::Control::WirelessNetworkInterface * wifiDev =  qobject_cast<Solid::Control::WirelessNetworkInterface *>(device);
+    if (wifiDev) {
+        cout << *wifiDev << endl;
+    } else {
+        cout << *device << endl;
+    }
     return true;
 }
 
