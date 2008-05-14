@@ -54,7 +54,7 @@ void deserialize(const QDBusMessage &message, NMDBusDeviceProperties  & device, 
 {
     //kDebug(1441) << /*"deserialize args: " << message.arguments() << */"signature: " << message.signature();
     QList<QVariant> args = message.arguments();
-    device.path.setPath((args.size() != 0) ? args.takeFirst().toString() : QString());
+    device.path = ((args.size() != 0) ? args.takeFirst().value<QDBusObjectPath>() : QDBusObjectPath());
     device.interface = (args.size() != 0) ? args.takeFirst().toString() : QString();
     device.type = (args.size() != 0) ? args.takeFirst().toUInt() : 0;
     device.udi = (args.size() != 0) ? args.takeFirst().toString() : QString();

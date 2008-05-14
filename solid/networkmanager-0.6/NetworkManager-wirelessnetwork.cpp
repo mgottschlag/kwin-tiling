@@ -111,7 +111,7 @@ void deserialize(const QDBusMessage  & message, NMDBusWirelessNetworkProperties 
 {
     //Debug(1441) << "signature: " << message.signature() << endl;
     QList<QVariant> args = message.arguments();
-    network.path.setPath(args.takeFirst().toString());
+    network.path = args.takeFirst().value<QDBusObjectPath>();
     network.essid = args.takeFirst().toString();
     network.hwAddr = args.takeFirst().toString();
     network.strength = args.takeFirst().toInt();
