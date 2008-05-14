@@ -159,7 +159,7 @@ public:
         delegate->setRoleMapping(Plasma::Delegate::SubTitleMandatoryRole, SubTitleMandatoryRole);
         view->setItemDelegate(delegate);
         view->setItemStateProvider(delegate);
-        addView(i18n("Leave"), KIcon("application-exit"), model, view);
+        addView(i18n("Leave"), KIcon("system-shutdown"), model, view);
     }
 
     void setupFavoritesView()
