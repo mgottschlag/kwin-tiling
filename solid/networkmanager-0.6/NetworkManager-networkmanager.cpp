@@ -39,7 +39,7 @@ public:
     uint cachedState;
 };
 
-NMNetworkManager::NMNetworkManager(QObject * parent, const QStringList  & /*args */)
+NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList  & /*args */)
  : NetworkManager(parent), d(new NMNetworkManagerPrivate)
 {
     #define connectNMToThis(signal, slot) \

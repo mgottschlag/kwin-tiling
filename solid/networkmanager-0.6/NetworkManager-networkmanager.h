@@ -34,7 +34,7 @@ class KDE_EXPORT NMNetworkManager : public Solid::Control::Ifaces::NetworkManage
 Q_INTERFACES(Solid::Control::Ifaces::NetworkManager)
 Q_OBJECT
     public:
-        NMNetworkManager(QObject * parent, const QStringList  & args);
+        NMNetworkManager(QObject * parent, const QVariantList  & args);
         virtual ~NMNetworkManager();
         Solid::Networking::Status status() const;
         QStringList networkInterfaces() const;
