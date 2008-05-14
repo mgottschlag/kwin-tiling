@@ -367,16 +367,4 @@ QString NMNetworkInterface::activeConnection() const
     return QString();
 }
 
-void NMNetworkInterface::ipDetailsChanged()
-{
-#warning implement me!
-    kDebug();
-}
-
-void NMNetworkInterface::connectionStateChanged(int state)
-{
-#warning implement me!
-    kDebug() << state;
-}
-
 #include "NetworkManager-networkinterface.moc"

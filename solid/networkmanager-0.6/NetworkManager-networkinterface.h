@@ -87,9 +87,10 @@ public:
     QString driver() const;
     Solid::Control::IPv4Config ipV4Config() const;
     QString activeConnection() const;
-protected:
+Q_SIGNALS:
     void ipDetailsChanged();
     void connectionStateChanged(int state);
+protected:
     NMNetworkInterface(NMNetworkInterfacePrivate &dd);
     NMNetworkInterfacePrivate * d_ptr;
 private:
