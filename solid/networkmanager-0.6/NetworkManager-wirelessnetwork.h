@@ -30,20 +30,6 @@
 
 #include "NetworkManager-networkinterface.h"
 
-struct NMDBusWirelessNetworkProperties
-{
-    QDBusObjectPath path;
-    QString essid;
-    QString hwAddr;
-    int strength;
-    double frequency;
-    int rate;
-    Solid::Control::WirelessNetworkInterface::OperationMode mode;
-    Solid::Control::WirelessNetworkInterface::Capabilities capabilities;
-    bool broadcast;
-    QStringList networks;
-};
-
 //typedef QString MacAddress;
 //typedef QStringList MacAddressList;
 
@@ -61,9 +47,7 @@ Q_INTERFACES(Solid::Control::Ifaces::WirelessNetworkInterface)
 public:
     NMWirelessNetwork(const QString  & networkPath);
     virtual ~NMWirelessNetwork();
-    int signalStrength() const;
     int bitRate() const;
-    double frequency() const;
     Solid::Control::WirelessNetworkInterface::Capabilities wirelessCapabilities() const;
     Solid::Control::WirelessNetworkInterface::OperationMode mode() const;
     bool isAssociated() const; // move to Device, is this a property on device?
@@ -86,8 +70,6 @@ Q_SIGNALS:
     void modeChanged(Solid::Control::WirelessNetworkInterface::OperationMode);
     void accessPointAppeared(const QString &);
     void accessPointDisappeared(const QString &);
-protected:
-    void setProperties(const NMDBusWirelessNetworkProperties  &);
 private:
     Q_DECLARE_PRIVATE(NMWirelessNetwork)
     Q_DISABLE_COPY(NMWirelessNetwork)

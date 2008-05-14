@@ -50,7 +50,7 @@ void dump(const NMDBusAccessPointProperties  & network)
         << "\n    secondary dns: " << network.secondaryDNS << endl;
 }
 
-void deserialize(const QDBusMessage &message, NMDBusDeviceProperties  & device, NMDBusAccessPointProperties  & network)
+void deserialize(const QDBusMessage &message, NMDBusDeviceProperties & device)
 {
     //kDebug(1441) << /*"deserialize args: " << message.arguments() << */"signature: " << message.signature();
     QList<QVariant> args = message.arguments();
@@ -60,13 +60,13 @@ void deserialize(const QDBusMessage &message, NMDBusDeviceProperties  & device, 
     device.udi = (args.size() != 0) ? args.takeFirst().toString() : QString();
     device.active = (args.size() != 0) ? args.takeFirst().toBool() : false;
     device.activationStage = (args.size() != 0) ? args.takeFirst().toUInt() : 0;
-    network.ipv4Address = (args.size() != 0) ? args.takeFirst().toString() : QString();
-    network.subnetMask = (args.size() != 0) ? args.takeFirst().toString() : QString();
-    network.broadcast = (args.size() != 0) ? args.takeFirst().toString() : QString();
+    device.ipv4Address = (args.size() != 0) ? args.takeFirst().toString() : QString();
+    device.subnetMask = (args.size() != 0) ? args.takeFirst().toString() : QString();
+    device.broadcast = (args.size() != 0) ? args.takeFirst().toString() : QString();
     device.hardwareAddress = (args.size() != 0) ? args.takeFirst().toString() : QString();
-    network.route = (args.size() != 0) ? args.takeFirst().toString() : QString();
-    network.primaryDNS = (args.size() != 0) ? args.takeFirst().toString() : QString();
-    network.secondaryDNS = (args.size() != 0) ? args.takeFirst().toString() : QString();
+    device.route = (args.size() != 0) ? args.takeFirst().toString() : QString();
+    device.primaryDNS = (args.size() != 0) ? args.takeFirst().toString() : QString();
+    device.secondaryDNS = (args.size() != 0) ? args.takeFirst().toString() : QString();
     device.mode = (args.size() != 0) ? args.takeFirst().toInt() : 0;
     device.strength = (args.size() != 0) ? args.takeFirst().toInt() : 0;
     device.linkActive = (args.size() != 0) ? args.takeFirst().toBool() : false;
@@ -120,11 +120,9 @@ void NMNetworkInterfacePrivate::initGeneric()
     Q_Q(NMNetworkInterface);
     QDBusMessage reply = iface.call("getProperties");
     NMDBusDeviceProperties dev;
-    NMDBusAccessPointProperties net;
-    deserialize(reply, dev, net);
+    deserialize(reply, dev);
     //dump(dev);
-    //dump(net);
-    q->setProperties(dev);
+    applyProperties(dev);
     QDBusReply<QString> dbusdriver = iface.call("getDriver");
     if (dbusdriver.isValid())
         driver = dbusdriver.value();
@@ -233,41 +231,38 @@ QString NMNetworkInterface::activeNetwork() const
     return d->activeNetPath;
 }
 
-void NMNetworkInterface::setProperties(const NMDBusDeviceProperties  & props)
+void NMNetworkInterfacePrivate::applyProperties(const NMDBusDeviceProperties & props)
 {
-    Q_D(NMNetworkInterface);
     switch (props.type)
     {
     case DEVICE_TYPE_UNKNOWN:
-        d->type = Solid::Control::NetworkInterface::UnknownType;
+        type = Solid::Control::NetworkInterface::UnknownType;
         break;
     case DEVICE_TYPE_802_3_ETHERNET:
-        d->type = Solid::Control::NetworkInterface::Ieee8023;
+        type = Solid::Control::NetworkInterface::Ieee8023;
         break;
     case DEVICE_TYPE_802_11_WIRELESS:
-        d->type = Solid::Control::NetworkInterface::Ieee80211;
+        type = Solid::Control::NetworkInterface::Ieee80211;
         break;
     default:
-        d->type = Solid::Control::NetworkInterface::UnknownType;
+        type = Solid::Control::NetworkInterface::UnknownType;
         break;
     }
-    d->active = props.active;
-    d->activationStage = props.activationStage;
-    d->carrier = props.linkActive;
-    d->signalStrength = props.strength;
-    d->designSpeed = props.speed;
-    //d->networks
-    d->capabilities = 0;
+    active = props.active;
+    activationStage = props.activationStage;
+    carrier = props.linkActive;
+    signalStrength = props.strength;
+    designSpeed = props.speed;
     if (props.capabilities  & NM_DEVICE_CAP_NM_SUPPORTED)
-        d->capabilities |= Solid::Control::NetworkInterface::IsManageable;
+        capabilities |= Solid::Control::NetworkInterface::IsManageable;
     if (props.capabilities  & NM_DEVICE_CAP_CARRIER_DETECT)
-        d->capabilities |= Solid::Control::NetworkInterface::SupportsCarrierDetect;
+        capabilities |= Solid::Control::NetworkInterface::SupportsCarrierDetect;
 #if 0
     if (props.capabilities  & NM_DEVICE_CAP_WIRELESS_SCAN)
-        d->capabilities |= Solid::Control::NetworkInterface::SupportsWirelessScan;
+        capabilities |= Solid::Control::NetworkInterface::SupportsWirelessScan;
 #endif
-    d->activeNetPath = props.activeNetPath;
-    d->interface = props.interface;
+    activeNetPath = props.activeNetPath;
+    interface = props.interface;
 }
 
 void NMNetworkInterface::setSignalStrength(int strength)

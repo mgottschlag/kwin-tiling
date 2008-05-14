@@ -26,6 +26,7 @@
 #include "NetworkManager-wirelessaccesspoint.h"
 
 class NMNetworkInterface;
+class NMDBusDeviceProperties;
 
 class NMNetworkInterfacePrivate
 {
@@ -39,6 +40,7 @@ public:
 
     virtual void notifyNewNetwork(const QDBusObjectPath & netPath) { Q_UNUSED(netPath) }
     virtual void notifyRemoveNetwork(const QDBusObjectPath & netPath) { Q_UNUSED(netPath) }
+    virtual void applyProperties(const NMDBusDeviceProperties & props);
 
     NMNetworkInterface * q_ptr;
 

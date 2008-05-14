@@ -49,6 +49,7 @@ void dump(const Solid::Control::WirelessNetworkInterface::Capabilities  & cap)
     kDebug(1441) << "RSM      " << (cap  & Solid::Control::WirelessNetworkInterface::Rsn ? "X " : " O");
 }
 
+#if 0
 void dump(const NMDBusWirelessNetworkProperties  & network)
 {
     kDebug(1441) << "Object path: " << network.path.path() << "\nESSID: " << network.essid
@@ -58,6 +59,7 @@ void dump(const NMDBusWirelessNetworkProperties  & network)
         << "\nBroadcast: " << network.broadcast << "\nWireless Capabilities: " << endl;
     dump(network.capabilities);
 }
+#endif
 
 Solid::Control::WirelessNetworkInterface::Capabilities getCapabilities(const int nm)
 {
@@ -108,23 +110,6 @@ Solid::Control::WirelessNetworkInterface::OperationMode getOperationMode(const i
     return mode;
 }
 
-void deserialize(const QDBusMessage  & message, NMDBusWirelessNetworkProperties  & network)
-{
-    //Debug(1441) << "signature: " << message.signature() << endl;
-    QList<QVariant> args = message.arguments();
-    network.path = args.takeFirst().value<QDBusObjectPath>();
-    network.essid = args.takeFirst().toString();
-    network.hwAddr = args.takeFirst().toString();
-    network.strength = args.takeFirst().toInt();
-    network.frequency = args.takeFirst().toDouble();
-    network.rate = args.takeFirst().toInt();
-    network.mode = getOperationMode(args.takeFirst().toInt());
-    network.capabilities = getCapabilities(args.takeFirst().toInt());
-    network.broadcast = args.takeFirst().toBool();
-    network.networks = args.takeLast().toStringList();
-}
-
-
 
 typedef void Encryption;
 
@@ -133,17 +118,15 @@ class NMWirelessNetworkPrivate : public NMNetworkInterfacePrivate
 public:
     NMWirelessNetworkPrivate(const QString  & netPath)
         : NMNetworkInterfacePrivate(netPath),
-        strength(0), frequency(0.0), rate(0), broadcast(true), authentication(0) { }
+        rate(0), authentication(0) { }
     Q_DECLARE_PUBLIC(NMWirelessNetwork)
     /* reimp */ void notifyNewNetwork(const QDBusObjectPath & netPath);
     /* reimp */ void notifyRemoveNetwork(const QDBusObjectPath & netPath);
+    /* reimp */ void applyProperties(const NMDBusDeviceProperties & props);
     MacAddress hwAddr;
-    int strength;
-    double frequency;
     int rate;
     Solid::Control::WirelessNetworkInterface::OperationMode mode;
     Solid::Control::WirelessNetworkInterface::Capabilities wirelessCapabilities;
-    bool broadcast;
     Solid::Control::Authentication * authentication;
     QHash<QString, NMAccessPoint*> accessPoints;
 };
@@ -175,50 +158,27 @@ void NMWirelessNetworkPrivate::notifyRemoveNetwork(const QDBusObjectPath & netPa
 NMWirelessNetwork::NMWirelessNetwork(const QString  & networkPath)
  : NMNetworkInterface(*new NMWirelessNetworkPrivate(networkPath))
 {
-    Q_D(NMWirelessNetwork);
     //kDebug(1441) << "NMWirelessNetwork::NMWirelessNetwork() - " << networkPath;
-    QDBusMessage reply = d->iface.call("getProperties");
-    NMDBusWirelessNetworkProperties wlan;
-    deserialize(reply, wlan);
-    //dump(wlan);
-    setProperties(wlan);
 }
 
 NMWirelessNetwork::~NMWirelessNetwork()
 {
 }
 
-void NMWirelessNetwork::setProperties(const NMDBusWirelessNetworkProperties  & props)
+void NMWirelessNetworkPrivate::applyProperties(const NMDBusDeviceProperties & props)
 {
-    Q_D(NMWirelessNetwork);
-    d->hwAddr.append(props.hwAddr);
-    d->strength = props.strength;
-    d->frequency = props.frequency;
-    d->rate = props.rate;
-    d->mode = props.mode;
-    d->wirelessCapabilities = props.capabilities;
-    d->broadcast = props.broadcast;
-    Q_FOREACH (const QString & udi, props.networks) {
-        d->accessPoints.insert(udi, 0);
-    }
-}
+    NMNetworkInterfacePrivate::applyProperties(props);
 
-int NMWirelessNetwork::signalStrength() const
-{
-    Q_D(const NMWirelessNetwork);
-    return d->strength;
+    hwAddr = props.hardwareAddress;
+    Q_FOREACH (const QString & netudi, props.networks) {
+        accessPoints.insert(netudi, 0);
+    }
 }
 
 int NMWirelessNetwork::bitRate() const
 {
     Q_D(const NMWirelessNetwork);
     return d->rate;
-}
-
-double NMWirelessNetwork::frequency() const
-{
-    Q_D(const NMWirelessNetwork);
-    return d->frequency;
 }
 
 Solid::Control::WirelessNetworkInterface::Capabilities NMWirelessNetwork::wirelessCapabilities() const

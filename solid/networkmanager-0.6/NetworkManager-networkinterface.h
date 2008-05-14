@@ -34,7 +34,13 @@ struct NMDBusDeviceProperties {
     QString udi;
     bool active;
     uint activationStage;
+    QString ipv4Address;
+    QString subnetMask;
+    QString broadcast;
     QString hardwareAddress;
+    QString route;
+    QString primaryDNS;
+    QString secondaryDNS;
     int mode;
     int strength;
     bool linkActive;
@@ -70,7 +76,6 @@ public:
     QString activeNetwork() const;
     // These setters are used to update the interface by the manager
     // in response to DBus signals
-    void setProperties(const NMDBusDeviceProperties  &);
     // Used for ethernet devices to create the network object implied by
     // NetworkManager using the info returned by getProperties
 #if 0
