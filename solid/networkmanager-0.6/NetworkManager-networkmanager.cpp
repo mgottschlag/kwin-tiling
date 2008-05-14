@@ -101,7 +101,7 @@ Solid::Networking::Status NMNetworkManager::status() const
 
 QStringList NMNetworkManager::networkInterfaces() const
 {
-    kDebug(1441) << "NMNetworkManager::networkInterfaces()";
+    kDebug(1441);
     QStringList networkInterfaces;
 
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
@@ -125,7 +125,7 @@ QStringList NMNetworkManager::networkInterfaces() const
 
 QStringList NMNetworkManager::activeNetworkInterfaces() const
 {
-    kDebug(1441) << "NMNetworkManager::activeNetworkInterfaces() implement me";
+    kDebug(1441) << "implement me";
     return QStringList();
 }
 
@@ -174,13 +174,13 @@ QObject * NMNetworkManager::createNetworkInterface(const QString  & uni)
 
 QObject * NMNetworkManager::createAuthenticationValidator()
 {
-    kDebug(1441) << "NMNetworkManager::createAuthenticationValidator() implement me";
+    kDebug(1441) << "implement me";
     return 0;
 }
 
 bool NMNetworkManager::isNetworkingEnabled() const
 {
-    kDebug(1441) << "NMNetworkManager::isNetworkingEnabled()";
+    kDebug(1441);
     if (NM_STATE_UNKNOWN == d->cachedState)
     {
         QDBusReply< uint > state = d->manager.call("state");
@@ -195,7 +195,7 @@ bool NMNetworkManager::isNetworkingEnabled() const
 
 bool NMNetworkManager::isWirelessEnabled() const
 {
-    kDebug(1441) << "NMNetworkManager::isWirelessEnabled()";
+    kDebug(1441);
     QDBusReply< bool > wirelessEnabled = d->manager.call("getWirelessEnabled");
     if (wirelessEnabled.isValid())
     {
@@ -225,20 +225,20 @@ void NMNetworkManager::deactivateConnection(const QString & activeConnection)
 
 void NMNetworkManager::setNetworkingEnabled(bool enabled)
 {
-    kDebug(1441) << "NMNetworkManager::setNetworkingEnabled()";
+    kDebug(1441) << enabled;
     d->manager.call(enabled ? "wake" : "sleep"); //TODO Find out the semantics of the optional bool argument to 'sleep'
 }
 
 void NMNetworkManager::setWirelessEnabled(bool enabled)
 {
-    kDebug(1441) << "NMNetworkManager::setWirelessEnabled()";
+    kDebug(1441) << enabled;
     d->manager.call("setWirelessEnabled", enabled);
 }
 
 void NMNetworkManager::notifyHiddenNetwork(const QString  & /*netname */)
 {
 #warning NMNetworkManager::notifyHiddenNetwork() is unimplemented
-    kDebug(1441) << "NMNetworkManager::notifyHiddenNetwork() implement me";
+    kDebug(1441) << "implement me";
 }
 
 void NMNetworkManager::stateChanged(uint state)
@@ -246,21 +246,21 @@ void NMNetworkManager::stateChanged(uint state)
     d->cachedState = state;
     switch ( d->cachedState ) {
         case NM_STATE_CONNECTING:
-            kDebug(1441) << "NMNetworkManager::statusChanged() Connecting";
+            kDebug(1441) << "Connecting";
             emit statusChanged( Solid::Networking::Connecting );
             break;
         case NM_STATE_CONNECTED:
-            kDebug(1441) << "NMNetworkManager::statusChanged() CONNECTED";
+            kDebug(1441) << "CONNECTED";
             emit statusChanged( Solid::Networking::Connected );
             break;
         case NM_STATE_ASLEEP:
         case NM_STATE_DISCONNECTED:
-            kDebug(1441) << "NMNetworkManager::statusChanged() Unconnected";
+            kDebug(1441) << "Unconnected";
             emit statusChanged( Solid::Networking::Unconnected );
             break;
         default:
         case NM_STATE_UNKNOWN:
-            kDebug(1441) << "NMNetworkManager::statusChanged() Unknown";
+            kDebug(1441) << "Unknown";
             emit statusChanged( Solid::Networking::Unknown );
             break;
     }
@@ -268,19 +268,19 @@ void NMNetworkManager::stateChanged(uint state)
 
 void NMNetworkManager::receivedDeviceAdded(QDBusObjectPath objpath)
 {
-    kDebug(1441) << "NMNetworkManager::receivedDeviceAdded()";
+    kDebug(1441) << objpath.path();
     emit networkInterfaceAdded(objpath.path());
 }
 
 void NMNetworkManager::receivedDeviceRemoved(QDBusObjectPath objpath)
 {
-    kDebug(1441) << "NMNetworkManager::receivedDeviceRemoved()";
+    kDebug(1441) << objpath.path();
     emit networkInterfaceRemoved(objpath.path());
 }
 
 void NMNetworkManager::deviceStrengthChanged(QDBusObjectPath devPath, int strength)
 {
-    kDebug(1441) << "NMNetworkManager::deviceStrengthChanged() ("<< strength << ")";
+    kDebug(1441) << devPath.path() << strength;
     NMNetworkInterface * interface = 0;
     if (d->interfaces.contains(devPath.path()) && (interface = d->interfaces[devPath.path()]) != 0)
         d->interfaces[devPath.path()]->setSignalStrength(strength);
@@ -288,7 +288,7 @@ void NMNetworkManager::deviceStrengthChanged(QDBusObjectPath devPath, int streng
 
 void NMNetworkManager::networkStrengthChanged(QDBusObjectPath devPath,QDBusObjectPath netPath, int strength)
 {
-    kDebug(1441) << "NMNetworkManager::networkStrengthChanged(): " << devPath.path() << ", " << netPath.path() << ", " << strength;
+    kDebug(1441) << devPath.path() << "," << netPath.path() << "," << strength;
     NMNetworkInterface * interface = 0;
     if (d->interfaces.contains(devPath.path()) && (interface = d->interfaces[devPath.path()]) != 0)
     {
@@ -300,7 +300,7 @@ void NMNetworkManager::networkStrengthChanged(QDBusObjectPath devPath,QDBusObjec
 
 void NMNetworkManager::wirelessNetworkAppeared(QDBusObjectPath devPath,QDBusObjectPath netPath)
 {
-    kDebug(1441) << "NMNetworkManager::wirelessNetworkAppeared(): " << devPath.path() << ", " << netPath.path();
+    kDebug(1441) << devPath.path() << "," << netPath.path();
     if (d->interfaces.contains(devPath.path()))
     {
         NMNetworkInterface * interface = d->interfaces[devPath.path()];
@@ -310,7 +310,7 @@ void NMNetworkManager::wirelessNetworkAppeared(QDBusObjectPath devPath,QDBusObje
 
 void NMNetworkManager::wirelessNetworkDisappeared(QDBusObjectPath devPath,QDBusObjectPath netPath)
 {
-    kDebug(1441) << "NMNetworkManager::wirelessNetworkDisappeared(): " << devPath.path() << ", " << netPath.path();
+    kDebug(1441) << devPath.path() << "," << netPath.path();
     if (d->interfaces.contains(devPath.path()))
     {
         NMNetworkInterface * interface = d->interfaces[devPath.path()];
@@ -320,47 +320,47 @@ void NMNetworkManager::wirelessNetworkDisappeared(QDBusObjectPath devPath,QDBusO
 
 void NMNetworkManager::deviceActivationStageChanged(QDBusObjectPath devPath, uint stage)
 {
-    kDebug(1441) << "NMNetworkManager::deviceActivationStageChanged() " << devPath.path() << " ("<< stage << ")";
+    kDebug(1441) << devPath.path() << "("<< stage << ")";
     if (d->interfaces.contains(devPath.path()))
         d->interfaces[devPath.path()]->setActivationStage(stage);
 }
 
 void NMNetworkManager::carrierOn(QDBusObjectPath devPath)
 {
-    kDebug(1441) << "NMNetworkManager::carrierOn(): " << devPath.path();
+    kDebug(1441) << devPath.path();
     if (d->interfaces.contains(devPath.path()))
         d->interfaces[devPath.path()]->setCarrierOn(true);
 }
 void NMNetworkManager::carrierOff(QDBusObjectPath devPath)
 {
-    kDebug(1441) << "NMNetworkManager::carrierOff(): " << devPath.path();
+    kDebug(1441) << devPath.path();
     if (d->interfaces.contains(devPath.path()))
         d->interfaces[devPath.path()]->setCarrierOn(false);
 }
 
 void NMNetworkManager::nowActive(QDBusObjectPath devPath)
 {
-    kDebug(1441) << "NMNetworkManager::nowActive(): " << devPath.path();
+    kDebug(1441) << devPath.path();
     if (d->interfaces.contains(devPath.path()))
         d->interfaces[devPath.path()]->setActive(true);
 }
 
 void NMNetworkManager::noLongerActive(QDBusObjectPath devPath)
 {
-    kDebug(1441) << "NMNetworkManager::noLongerActive(): " << devPath.path();
+    kDebug(1441) << devPath.path();
     if (d->interfaces.contains(devPath.path()))
         d->interfaces[devPath.path()]->setActive(false);
 }
 
 void NMNetworkManager::activating(QDBusObjectPath devPath)
 {
-    kDebug(1441) << "NMNetworkManager::activating(): " << devPath.path();
+    kDebug(1441) << devPath.path();
     // We don't do anything with this signal as it is duplicated by connectionStateChanged
 }
 
 void NMNetworkManager::activationFailed(QDBusObjectPath devPath)
 {
-    kDebug(1441) << "NMNetworkManager::activationFailed(): " << devPath.path();
+    kDebug(1441) << devPath.path();
     if (d->interfaces.contains(devPath.path()))
         d->interfaces[devPath.path()]->setActivationStage(NM_ACT_STAGE_FAILED);
 }
