@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Command Line
 Name[ca]=Línia d'ordres
+Name[et]=Käsurida
 Name[ga]=Líne na nOrduithe
 Name[gu]=આદેશ જગ્યા
 Name[km]=បន្ទាត់​ពាក្យ​បញ្ជា
@@ -18,7 +19,7 @@ Comment[de]=Führt Shell-Kommandos aus
 Comment[el]=Εκτελεί εντολές του κελύφους
 Comment[eo]=Plenumas ŝel-komandojn
 Comment[es]=Ejecuta comandos de la consola
-Comment[et]=Käivitad shellikäske
+Comment[et]=Shellikäskude käivitamine
 Comment[fi]=Suorittaa komentorivikomentoja
 Comment[ga]=Rith orduithe blaoisce
 Comment[gu]=શૅલ આદેશ ચલાવો
