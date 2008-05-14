@@ -54,6 +54,7 @@ public:
     Solid::Control::NetworkInterface::Capabilities capabilities;
     QString activeNetPath;
     QString interface;
+    QString driver;
 };
 
 #endif

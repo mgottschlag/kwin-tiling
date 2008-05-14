@@ -125,6 +125,9 @@ void NMNetworkInterfacePrivate::initGeneric()
     //dump(dev);
     //dump(net);
     q->setProperties(dev);
+    QDBusReply<QString> dbusdriver = iface.call("getDriver");
+    if (dbusdriver.isValid())
+        driver = dbusdriver.value();
 #if 0
     // insert empty networks in our map.  These will be expanded on demand
     foreach (const QString & netPath, dev.networks)
@@ -353,9 +356,8 @@ QString NMNetworkInterface::interfaceName() const
 
 QString NMNetworkInterface::driver() const
 {
-#warning implement me!
-    kDebug();
-    return QString();
+    Q_D(const NMNetworkInterface);
+    return d->driver;
 }
 
 Solid::Control::IPv4Config NMNetworkInterface::ipV4Config() const
