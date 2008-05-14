@@ -132,7 +132,7 @@ namespace Ifaces
          *
          * @param bitrate the new bitrate value for this network
          */
-        void bitRateChanged();
+        void bitRateChanged(int);
         /**
          * The active network changed.
          */

@@ -114,8 +114,8 @@ void Solid::Control::WirelessNetworkInterfacePrivate::setBackendObject(QObject *
     NetworkInterfacePrivate::setBackendObject(object);
 
     if (object) {
-        QObject::connect(object, SIGNAL(bitRateChanged()),
-                         parent(), SIGNAL(bitRateChanged()));
+        QObject::connect(object, SIGNAL(bitRateChanged(int)),
+                         parent(), SIGNAL(bitRateChanged(int)));
         QObject::connect(object, SIGNAL(activeNetworkChanged(const QString&)),
                          parent(), SIGNAL(activeNetworkChanged(const QString&)));
         QObject::connect(object, SIGNAL(modeChanged(Solid::Control::WirelessNetworkInterface::OperationMode)),
