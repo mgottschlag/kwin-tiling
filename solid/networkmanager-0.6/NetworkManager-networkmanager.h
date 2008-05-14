@@ -53,19 +53,19 @@ Q_OBJECT
         void notifyHiddenNetwork(const QString  &);
     protected Q_SLOTS:
         void stateChanged(uint);
-        void receivedDeviceAdded(QDBusObjectPath);
-        void receivedDeviceRemoved(QDBusObjectPath);
-        void deviceStrengthChanged(QDBusObjectPath,int strength);
-        void networkStrengthChanged(QDBusObjectPath,QDBusObjectPath,int);
-        void wirelessNetworkAppeared(QDBusObjectPath,QDBusObjectPath);
-        void wirelessNetworkDisappeared(QDBusObjectPath,QDBusObjectPath);
-        void deviceActivationStageChanged(QDBusObjectPath,uint);
-        void carrierOn(QDBusObjectPath);
-        void carrierOff(QDBusObjectPath);
-        void nowActive(QDBusObjectPath);
-        void noLongerActive(QDBusObjectPath);
-        void activating(QDBusObjectPath);
-        void activationFailed(QDBusObjectPath);
+        void receivedDeviceAdded(const QDBusObjectPath &);
+        void receivedDeviceRemoved(const QDBusObjectPath &);
+        void deviceStrengthChanged(const QDBusObjectPath &, int strength);
+        void networkStrengthChanged(const QDBusObjectPath &, const QDBusObjectPath &,int);
+        void wirelessNetworkAppeared(const QDBusObjectPath &, const QDBusObjectPath &);
+        void wirelessNetworkDisappeared(const QDBusObjectPath &, const QDBusObjectPath &);
+        void deviceActivationStageChanged(const QDBusObjectPath &, uint);
+        void carrierOn(const QDBusObjectPath &);
+        void carrierOff(const QDBusObjectPath &);
+        void nowActive(const QDBusObjectPath &);
+        void noLongerActive(const QDBusObjectPath &);
+        void activating(const QDBusObjectPath &);
+        void activationFailed(const QDBusObjectPath &);
     private:
         NMNetworkManagerPrivate * d;
 };

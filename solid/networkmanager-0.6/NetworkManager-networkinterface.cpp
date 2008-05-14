@@ -118,7 +118,7 @@ void NMNetworkInterfacePrivate::initGeneric()
     //dump(net);
     q->setProperties(dev);
     // insert empty networks in our map.  These will be expanded on demand
-    foreach (QString netPath, dev.networks)
+    foreach (const QString & netPath, dev.networks)
         networks.insert(netPath, 0);
 
     if (type == Solid::Control::NetworkInterface::Ieee8023)
