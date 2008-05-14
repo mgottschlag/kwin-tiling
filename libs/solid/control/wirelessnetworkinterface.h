@@ -136,7 +136,7 @@ namespace Ifaces
         /**
          * The active network changed.
          */
-        void activeNetworkChanged(const QString &);
+        void activeAccessPointChanged(const QString &);
         /**
          * The device switched operating mode.
          */
