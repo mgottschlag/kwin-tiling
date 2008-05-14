@@ -54,7 +54,7 @@ void dump(const NMDBusWirelessNetworkProperties  & network)
         << "\nHardware address: " << network.hwAddr << "\nSignal strength: " << network.strength
         << "\nFrequency: " << network.frequency << "\nBit rate: " << network.rate
         << "\nMode: " << network.mode
-        << "\nBroadcast: " << network.broadcast << "\nCapabilities: " << endl;
+        << "\nBroadcast: " << network.broadcast << "\nWireless Capabilities: " << endl;
     dump(network.capabilities);
 }
 
@@ -138,7 +138,7 @@ public:
     double frequency;
     int rate;
     Solid::Control::WirelessNetworkInterface::OperationMode mode;
-    Solid::Control::WirelessNetworkInterface::Capabilities capabilities;
+    Solid::Control::WirelessNetworkInterface::Capabilities wirelessCapabilities;
     bool broadcast;
     Solid::Control::Authentication * authentication;
 };
@@ -168,7 +168,7 @@ void NMWirelessNetwork::setProperties(const NMDBusWirelessNetworkProperties  & p
     d->frequency = props.frequency;
     d->rate = props.rate;
     d->mode = props.mode;
-    d->capabilities = props.capabilities;
+    d->wirelessCapabilities = props.capabilities;
     d->broadcast = props.broadcast;
 }
 
@@ -193,7 +193,7 @@ double NMWirelessNetwork::frequency() const
 Solid::Control::WirelessNetworkInterface::Capabilities NMWirelessNetwork::wirelessCapabilities() const
 {
     Q_D(const NMWirelessNetwork);
-    return d->capabilities;
+    return d->wirelessCapabilities;
 }
 
 QString NMWirelessNetwork::essid() const
@@ -219,7 +219,7 @@ bool NMWirelessNetwork::isEncrypted() const
 {
     Q_D(const NMWirelessNetwork);
     // FIXME
-    return !(d->capabilities  & Solid::Control::WirelessNetworkInterface::NoCapability) ;
+    return !(d->wirelessCapabilities  & Solid::Control::WirelessNetworkInterface::NoCapability) ;
 }
 
 bool NMWirelessNetwork::isHidden() const
