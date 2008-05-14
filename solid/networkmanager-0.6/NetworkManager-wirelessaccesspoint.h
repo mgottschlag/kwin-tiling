@@ -20,6 +20,8 @@
 #ifndef NETWORKMANAGER_WIRELESSACCESSPOINT_H
 #define NETWORKMANAGER_WIRELESSACCESSPOINT_H
 
+#include <QtCore/qobject.h>
+
 #include <solid/control/ifaces/wirelessaccesspoint.h>
 
 struct NMDBusAccessPointProperties {
@@ -36,10 +38,10 @@ class NMAccessPointPrivate;
 /**
  * This interface represents a generic Internet Protocol (IP) network which we may be connected to.
  */
-class KDE_EXPORT NMAccessPoint : public Solid::Control::Ifaces::WirelessAccessPoint
+class KDE_EXPORT NMAccessPoint : public Solid::Control::Ifaces::AccessPoint
 {
 Q_OBJECT
-Q_INTERFACES(Solid::Control::Ifaces::WirelessAccessPoint)
+Q_INTERFACES(Solid::Control::Ifaces::AccessPoint)
 public:
     /**
      * Constructs a network and looks up its properties over DBus.
@@ -48,16 +50,23 @@ public:
     NMAccessPoint(const QString  & networkPath);
     virtual ~NMAccessPoint();
     QString uni() const;
-    QList<QNetworkAddressEntry> addressEntries() const;
-    QString route() const;
-    QList<QHostAddress> dnsServers() const;
-    bool isActive() const;
-    virtual void setActivated(bool activated);
-
-    void setProperties(const NMDBusNetworkProperties  & props);
+    Solid::Control::AccessPoint::Capabilities capabilities() const;
+    Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
+    Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
+    QString ssid() const;
+    uint frequency() const;
+    QString hardwareAddress() const;
+    uint maxBitRate() const;
+    Solid::Control::WirelessNetworkInterface::OperationMode mode() const;
+    void setSignalStrength(int strength);
+    int signalStrength() const;
 Q_SIGNALS:
-    void ipDetailsChanged();
-    void activationStateChanged(bool);
+    void signalStrengthChanged(int strength);
+    void bitRateChanged(int bitrate);
+    void wpaFlagsChanged(Solid::Control::AccessPoint::WpaFlags flags);
+    void rsnFlagsChanged(Solid::Control::AccessPoint::WpaFlags flags);
+    void ssidChanged(const QString &ssid);
+    void frequencyChanged(uint frequency);
 private:
     NMAccessPointPrivate * d;
 };

@@ -22,22 +22,41 @@
 #include <QtDBus>
 #include <kdebug.h>
 
-#include "NetworkManager-wirelessnetwork.h"
-
 class NMAccessPointPrivate
 {
 public:
     NMAccessPointPrivate(const QString  & networkPath) : netPath(networkPath) { }
+
+    void deserialize(const QDBusMessage & message);
+
     QString netPath;
-    QList<QNetworkAddressEntry> addrList;
-    QString route;
-    QList<QHostAddress> dnsServers;
-    bool active;
+    Solid::Control::AccessPoint::Capabilities capabilities;
+    Solid::Control::AccessPoint::WpaFlags wpaFlags;
+    Solid::Control::AccessPoint::WpaFlags rsnFlags;
+    QString ssid;
+    uint frequency;
+    QString hardwareAddress;
+    uint maxBitRate;
+    Solid::Control::WirelessNetworkInterface::OperationMode mode;
+    int signalStrength;
 };
 
-NMAccessPoint::NMAccessPoint(const QString  & netPath)
-    : Solid::Control::Ifaces::WirelessAccessPoint(), d(new NMAccessPointPrivate(netPath))
+void NMAccessPointPrivate::deserialize(const QDBusMessage &message)
 {
+    const QList<QVariant> args = message.arguments();
+    if (args.size() > 15) signalStrength = args[14].toInt();
+}
+
+
+NMAccessPoint::NMAccessPoint(const QString  & netPath)
+    : Solid::Control::Ifaces::AccessPoint(0), d(new NMAccessPointPrivate(netPath))
+{
+    QDBusInterface iface("org.freedesktop.NetworkManager",
+            netPath,
+            "org.freedesktop.NetworkManager.Devices",
+            QDBusConnection::systemBus());
+    QDBusMessage reply = iface.call("getProperties");
+    d->deserialize(reply);
 }
 
 NMAccessPoint::~NMAccessPoint()
@@ -50,50 +69,58 @@ QString NMAccessPoint::uni() const
     return d->netPath;
 }
 
-QList<QNetworkAddressEntry> NMAccessPoint::addressEntries() const
+Solid::Control::AccessPoint::Capabilities NMAccessPoint::capabilities() const
 {
-    return d->addrList;
+    return d->capabilities;
 }
 
-QString NMAccessPoint::route() const
+Solid::Control::AccessPoint::WpaFlags NMAccessPoint::wpaFlags() const
 {
-    return d->route;
+    return d->wpaFlags;
 }
 
-QList<QHostAddress> NMAccessPoint::dnsServers() const
+Solid::Control::AccessPoint::WpaFlags NMAccessPoint::rsnFlags() const
 {
-    return d->dnsServers;
+    return d->rsnFlags;
 }
 
-bool NMAccessPoint::isActive() const
+QString NMAccessPoint::ssid() const
 {
-    return d->active;
+    return d->ssid;
 }
 
-void NMAccessPoint::setActivated(bool activated)
+uint NMAccessPoint::frequency() const
 {
-    // todo activate the device network here
-    d->active = activated;
-    QDBusInterface manager("org.freedesktop.NetworkManager",
-            "/org/freedesktop/NetworkManager",
-            "org.freedesktop.NetworkManager",
-            QDBusConnection::systemBus());
-    QString devicePath = d->netPath.left(d->netPath.indexOf("/Networks"));
-    manager.call("setActiveDevice", qVariantFromValue(QDBusObjectPath(devicePath)));
-
-    emit activationStateChanged(activated);
+    return d->frequency;
 }
 
-void NMAccessPoint::setProperties(const NMDBusNetworkProperties  & props)
+QString NMAccessPoint::hardwareAddress() const
 {
-    QNetworkAddressEntry addr;
-    addr.setIp(QHostAddress(props.ipv4Address));
-    addr.setNetmask(QHostAddress(props.subnetMask));
-    addr.setBroadcast(QHostAddress(props.broadcast));
-    d->addrList.append(addr);
-    d->route = props.route;
-    d->dnsServers.append(props.primaryDNS);
-    d->dnsServers.append(props.secondaryDNS);
+    return d->hardwareAddress;
 }
 
-#include "NetworkManager-network.moc"
+uint NMAccessPoint::maxBitRate() const
+{
+    return d->maxBitRate;
+}
+
+Solid::Control::WirelessNetworkInterface::OperationMode NMAccessPoint::mode() const
+{
+    return d->mode;
+}
+
+void NMAccessPoint::setSignalStrength(int strength)
+{
+    if (strength == d->signalStrength)
+        return;
+
+    d->signalStrength = strength;
+    emit signalStrengthChanged(d->signalStrength);
+}
+
+int NMAccessPoint::signalStrength() const
+{
+    return d->signalStrength;
+}
+
+#include "NetworkManager-wirelessaccesspoint.moc"
