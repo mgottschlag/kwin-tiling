@@ -66,6 +66,17 @@ QString Solid::Control::NetworkInterface::uni() const
     return_SOLID_CALL(Ifaces::NetworkInterface *, d->backendObject(), QString(), uni());
 }
 
+QString Solid::Control::NetworkInterface::interfaceName() const
+{
+    Q_D(const NetworkInterface);
+    return_SOLID_CALL(Ifaces::NetworkInterface *, d->backendObject(), QString(), interfaceName());
+}
+
+QString Solid::Control::NetworkInterface::driver() const
+{
+    Q_D(const NetworkInterface);
+    return_SOLID_CALL(Ifaces::NetworkInterface *, d->backendObject(), QString(), driver());
+}
 
 Solid::Control::IPv4Config Solid::Control::NetworkInterface::ipV4Config() const
 {
