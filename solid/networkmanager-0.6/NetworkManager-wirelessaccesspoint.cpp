@@ -57,6 +57,7 @@ public:
     uint maxBitRate;
     Solid::Control::WirelessNetworkInterface::OperationMode mode;
     int signalStrength;
+    bool broadcast;
 };
 
 void NMAccessPointPrivate::deserialize(const QDBusMessage &message)
@@ -65,11 +66,12 @@ void NMAccessPointPrivate::deserialize(const QDBusMessage &message)
     if (args.size() > 0) ssid = args[1].toString();
     if (args.size() > 1) hardwareAddress = args[2].toString();
     if (args.size() > 2) signalStrength = args[3].toInt();
-//    if (args.size() > 3) ssid = args[4].toDouble(); // TODO freq
+    // frequency: NM 0.6 provides it in Hz, while we need MHz
+    if (args.size() > 3) frequency = static_cast<uint>(args[4].toDouble() / 1000000);
     if (args.size() > 4) maxBitRate = args[5].toUInt();
     if (args.size() > 5) mode = AP::getOperationMode(args[6].toInt());
     if (args.size() > 6) capabilities = AP::getCapabilities(args[7].toInt());
-//    if (args.size() > 7) broadcast = args[8].toBool(); // TODO broadcase
+    if (args.size() > 7) broadcast = args[8].toBool();
 }
 
 
