@@ -67,7 +67,6 @@ public:
 #if 0
     QObject *createNetwork(const QString  & uni);
 #endif
-    QStringList networks() const;
     QString activeNetwork() const;
     // These setters are used to update the interface by the manager
     // in response to DBus signals

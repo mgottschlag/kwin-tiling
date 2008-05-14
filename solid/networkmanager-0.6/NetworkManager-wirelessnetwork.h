@@ -41,6 +41,7 @@ struct NMDBusWirelessNetworkProperties
     Solid::Control::WirelessNetworkInterface::OperationMode mode;
     Solid::Control::WirelessNetworkInterface::Capabilities capabilities;
     bool broadcast;
+    QStringList networks;
 };
 
 //typedef QString MacAddress;
@@ -64,12 +65,10 @@ public:
     int bitRate() const;
     double frequency() const;
     Solid::Control::WirelessNetworkInterface::Capabilities wirelessCapabilities() const;
-    QString essid() const;
     Solid::Control::WirelessNetworkInterface::OperationMode mode() const;
     bool isAssociated() const; // move to Device, is this a property on device?
     bool isEncrypted() const;
     bool isHidden() const;
-    MacAddressList bssList() const;
     Solid::Control::Authentication *authentication() const;
     void setAuthentication(Solid::Control::Authentication *authentication);
     void setSignalStrength(const QDBusObjectPath & netPath, int strength);
@@ -83,8 +82,6 @@ public:
     QObject * createAccessPoint(const QString & uni);
 Q_SIGNALS:
     void bitRateChanged(int bitrate);
-    void associationChanged(bool associated); // move to Device?
-    void authenticationNeeded();
     void activeAccessPointChanged(const QString &);
     void modeChanged(Solid::Control::WirelessNetworkInterface::OperationMode);
     void accessPointAppeared(const QString &);

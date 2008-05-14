@@ -20,13 +20,11 @@
 #ifndef NETWORKMANAGER_NETWORKINTERFACE_P_H
 #define NETWORKMANAGER_NETWORKINTERFACE_P_H
 
-#include <QtCore/qmap.h>
 #include <QtCore/qstring.h>
 #include <QtDBus/QDBusInterface>
 
 #include "NetworkManager-wirelessaccesspoint.h"
 
-class NMNetwork;
 class NMNetworkInterface;
 
 class NMNetworkInterfacePrivate
@@ -39,6 +37,9 @@ public:
 
     void initGeneric();
 
+    virtual void notifyNewNetwork(const QDBusObjectPath & netPath) { Q_UNUSED(netPath) }
+    virtual void notifyRemoveNetwork(const QDBusObjectPath & netPath) { Q_UNUSED(netPath) }
+
     NMNetworkInterface * q_ptr;
 
     QDBusInterface iface;
@@ -49,7 +50,6 @@ public:
     bool carrier;
     int signalStrength;
     int designSpeed;
-    QMap<QString,NMNetwork *> networks;
     QPair<QString, NMDBusAccessPointProperties> cachedNetworkProps;
     Solid::Control::NetworkInterface::Capabilities capabilities;
     QString activeNetPath;

@@ -121,6 +121,7 @@ void deserialize(const QDBusMessage  & message, NMDBusWirelessNetworkProperties 
     network.mode = getOperationMode(args.takeFirst().toInt());
     network.capabilities = getCapabilities(args.takeFirst().toInt());
     network.broadcast = args.takeFirst().toBool();
+    network.networks = args.takeLast().toStringList();
 }
 
 
@@ -133,8 +134,10 @@ public:
     NMWirelessNetworkPrivate(const QString  & netPath)
         : NMNetworkInterfacePrivate(netPath),
         strength(0), frequency(0.0), rate(0), broadcast(true), authentication(0) { }
-    QString essid;
-    MacAddressList hwAddr; // MACs of the APs
+    Q_DECLARE_PUBLIC(NMWirelessNetwork)
+    /* reimp */ void notifyNewNetwork(const QDBusObjectPath & netPath);
+    /* reimp */ void notifyRemoveNetwork(const QDBusObjectPath & netPath);
+    MacAddress hwAddr;
     int strength;
     double frequency;
     int rate;
@@ -144,6 +147,30 @@ public:
     Solid::Control::Authentication * authentication;
     QHash<QString, NMAccessPoint*> accessPoints;
 };
+
+void NMWirelessNetworkPrivate::notifyNewNetwork(const QDBusObjectPath & netPath)
+{
+    Q_Q(NMWirelessNetwork);
+    const QString path = netPath.path();
+    QHash<QString, NMAccessPoint*>::ConstIterator it = accessPoints.find(path);
+    if (it == accessPoints.end()) {
+        accessPoints.insert(path, 0);
+        emit q->accessPointAppeared(path);
+    }
+}
+
+void NMWirelessNetworkPrivate::notifyRemoveNetwork(const QDBusObjectPath & netPath)
+{
+    Q_Q(NMWirelessNetwork);
+    const QString path = netPath.path();
+    QHash<QString, NMAccessPoint*>::Iterator it = accessPoints.find(path);
+    if (it != accessPoints.end()) {
+        // ### who owns the AccessPoint's?
+        accessPoints.erase(it);
+        emit q->accessPointDisappeared(path);
+    }
+}
+
 
 NMWirelessNetwork::NMWirelessNetwork(const QString  & networkPath)
  : NMNetworkInterface(*new NMWirelessNetworkPrivate(networkPath))
@@ -164,7 +191,6 @@ NMWirelessNetwork::~NMWirelessNetwork()
 void NMWirelessNetwork::setProperties(const NMDBusWirelessNetworkProperties  & props)
 {
     Q_D(NMWirelessNetwork);
-    d->essid = props.essid;
     d->hwAddr.append(props.hwAddr);
     d->strength = props.strength;
     d->frequency = props.frequency;
@@ -172,6 +198,9 @@ void NMWirelessNetwork::setProperties(const NMDBusWirelessNetworkProperties  & p
     d->mode = props.mode;
     d->wirelessCapabilities = props.capabilities;
     d->broadcast = props.broadcast;
+    Q_FOREACH (const QString & udi, props.networks) {
+        d->accessPoints.insert(udi, 0);
+    }
 }
 
 int NMWirelessNetwork::signalStrength() const
@@ -196,12 +225,6 @@ Solid::Control::WirelessNetworkInterface::Capabilities NMWirelessNetwork::wirele
 {
     Q_D(const NMWirelessNetwork);
     return d->wirelessCapabilities;
-}
-
-QString NMWirelessNetwork::essid() const
-{
-    Q_D(const NMWirelessNetwork);
-    return d->essid;
 }
 
 Solid::Control::WirelessNetworkInterface::OperationMode NMWirelessNetwork::mode() const
@@ -229,12 +252,6 @@ bool NMWirelessNetwork::isHidden() const
 #warning NMWirelessNetwork::isHidden() is unimplemented
     kDebug(1441) << "Fixme: implement NMWirelessNetwork::isHidden()";
     return true;
-}
-
-MacAddressList NMWirelessNetwork::bssList() const
-{
-    Q_D(const NMWirelessNetwork);
-    return d->hwAddr;
 }
 
 Solid::Control::Authentication * NMWirelessNetwork::authentication() const
@@ -295,10 +312,8 @@ void NMWirelessNetwork::setActivated(bool activated)
 
 MacAddressList NMWirelessNetwork::accessPoints() const
 {
-#warning implement me!
     Q_D(const NMWirelessNetwork);
-    kDebug();
-    return d->networks.keys();
+    return d->accessPoints.keys();
 }
 
 QString NMWirelessNetwork::activeAccessPoint() const
@@ -310,9 +325,8 @@ QString NMWirelessNetwork::activeAccessPoint() const
 
 QString NMWirelessNetwork::hardwareAddress() const
 {
-#warning implement me!
-    kDebug();
-    return QString();
+    Q_D(const NMWirelessNetwork);
+    return d->hwAddr;
 }
 
 QObject * NMWirelessNetwork::createAccessPoint(const QString & uni)
@@ -320,7 +334,7 @@ QObject * NMWirelessNetwork::createAccessPoint(const QString & uni)
     Q_D(NMWirelessNetwork);
     kDebug() << uni;
     QHash<QString, NMAccessPoint*>::ConstIterator it = d->accessPoints.find(uni);
-    if (it != d->accessPoints.end()) {
+    if (it != d->accessPoints.end() && it.value()) {
         return it.value();
     }
     NMAccessPoint * ap = new NMAccessPoint(uni);

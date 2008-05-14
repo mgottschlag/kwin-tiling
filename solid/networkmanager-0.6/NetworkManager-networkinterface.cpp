@@ -117,6 +117,7 @@ void NMNetworkInterfacePrivate::initGeneric()
     //dump(dev);
     //dump(net);
     q->setProperties(dev);
+#if 0
     // insert empty networks in our map.  These will be expanded on demand
     foreach (const QString & netPath, dev.networks)
         networks.insert(netPath, 0);
@@ -133,6 +134,7 @@ void NMNetworkInterfacePrivate::initGeneric()
         cachedNetworkProps.first = dev.activeNetPath;
         cachedNetworkProps.second = net;
     }
+#endif
 }
 
 NMNetworkInterface::~NMNetworkInterface()
@@ -213,12 +215,6 @@ QObject * NMNetworkInterface::createNetwork(const QString  & uni)
     return net;
 }
 #endif
-
-QStringList NMNetworkInterface::networks() const
-{
-    Q_D(const NMNetworkInterface);
-    return d->networks.keys();
-}
 
 QString NMNetworkInterface::activeNetwork() const
 {
@@ -313,26 +309,23 @@ void NMNetworkInterface::setActivationStage(int activationStage)
 void NMNetworkInterface::addNetwork(const QDBusObjectPath  & netPath)
 {
     Q_D(NMNetworkInterface);
-    // check that it's not already present, as NetworkManager may
-    // detect networks that aren't really new.
-    if (!d->networks.contains(netPath.path()))
-        d->networks.insert(netPath.path(), 0);
+    d->notifyNewNetwork(netPath);
 }
 
 void NMNetworkInterface::removeNetwork(const QDBusObjectPath  & netPath)
 {
     Q_D(NMNetworkInterface);
-    d->networks.remove(netPath.path());
+    d->notifyRemoveNetwork(netPath);
 }
 
 void NMNetworkInterface::updateNetworkStrength(const QDBusObjectPath  & netPath, int strength)
 {
     Q_D(const NMNetworkInterface);
+#if 0
     // check that it's not already present, as NetworkManager may
     // detect networks that aren't really new.
     if (d->networks.contains(netPath.path()))
     {
-#if 0
         NMNetwork * net = d->networks[netPath.path()];
         if (net != 0)
         {
@@ -340,8 +333,8 @@ void NMNetworkInterface::updateNetworkStrength(const QDBusObjectPath  & netPath,
             if (wlan != 0)
                 wlan->setSignalStrength(strength);
         }
-#endif
     }
+#endif
 }
 
 QString NMNetworkInterface::interfaceName() const
