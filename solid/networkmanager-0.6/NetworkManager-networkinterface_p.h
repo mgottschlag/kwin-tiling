@@ -22,7 +22,11 @@
 
 #include <QtCore/qmap.h>
 #include <QtCore/qstring.h>
+#include <QtDBus/QDBusInterface>
 
+#include "NetworkManager-wirelessaccesspoint.h"
+
+class NMNetwork;
 class NMNetworkInterface;
 
 class NMNetworkInterfacePrivate
@@ -46,7 +50,7 @@ public:
     int signalStrength;
     int designSpeed;
     QMap<QString,NMNetwork *> networks;
-    QPair<QString, NMDBusNetworkProperties> cachedNetworkProps;
+    QPair<QString, NMDBusAccessPointProperties> cachedNetworkProps;
     Solid::Control::NetworkInterface::Capabilities capabilities;
     QString activeNetPath;
     QString interface;

@@ -27,7 +27,7 @@
 
 #include <solid/control/networkinterface.h>
 
-#include "NetworkManager-network.h"
+#include "NetworkManager-wirelessaccesspoint.h"
 #include "NetworkManager-wirelessnetwork.h"
 
 void dump(const NMDBusDeviceProperties &device)
@@ -42,7 +42,7 @@ void dump(const NMDBusDeviceProperties &device)
         << device.activeNetPath << "\n    Networks:" << device.networks << endl;
 }
 
-void dump(const NMDBusNetworkProperties  & network)
+void dump(const NMDBusAccessPointProperties  & network)
 {
     kDebug(1441) << "dump(const NMDBusNetworkProperties &)\n    IPV4 address: " << network.ipv4Address
         << "\n    subnet mask: " << network.subnetMask << "\n    Broadcast: " << network.broadcast
@@ -50,7 +50,7 @@ void dump(const NMDBusNetworkProperties  & network)
         << "\n    secondary dns: " << network.secondaryDNS << endl;
 }
 
-void deserialize(const QDBusMessage &message, NMDBusDeviceProperties  & device, NMDBusNetworkProperties  & network)
+void deserialize(const QDBusMessage &message, NMDBusDeviceProperties  & device, NMDBusAccessPointProperties  & network)
 {
     //kDebug(1441) << /*"deserialize args: " << message.arguments() << */"signature: " << message.signature();
     QList<QVariant> args = message.arguments();
@@ -112,7 +112,7 @@ void NMNetworkInterfacePrivate::initGeneric()
     Q_Q(NMNetworkInterface);
     QDBusMessage reply = iface.call("getProperties");
     NMDBusDeviceProperties dev;
-    NMDBusNetworkProperties net;
+    NMDBusAccessPointProperties net;
     deserialize(reply, dev, net);
     //dump(dev);
     //dump(net);
@@ -267,6 +267,7 @@ void NMNetworkInterface::setSignalStrength(int strength)
 {
     Q_D(NMNetworkInterface);
     d->signalStrength = strength;
+#if 0
     // update the network object
     if (d->networks.contains(d->activeNetPath))
     {
@@ -276,6 +277,7 @@ void NMNetworkInterface::setSignalStrength(int strength)
             net->setSignalStrength(strength);
         }
     }
+#endif
 #if 0
     emit signalStrengthChanged(strength);
 #endif
@@ -330,6 +332,7 @@ void NMNetworkInterface::updateNetworkStrength(const QDBusObjectPath  & netPath,
     // detect networks that aren't really new.
     if (d->networks.contains(netPath.path()))
     {
+#if 0
         NMNetwork * net = d->networks[netPath.path()];
         if (net != 0)
         {
@@ -337,6 +340,7 @@ void NMNetworkInterface::updateNetworkStrength(const QDBusObjectPath  & netPath,
             if (wlan != 0)
                 wlan->setSignalStrength(strength);
         }
+#endif
     }
 }
 

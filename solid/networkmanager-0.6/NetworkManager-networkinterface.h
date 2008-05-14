@@ -22,11 +22,10 @@
 
 #include <kdemacros.h>
 
-#include "NetworkManager-network.h"
-
 #include <solid/control/ifaces/networkinterface.h>
 
 #include <QtCore/qobject.h>
+#include <QtDBus/QDBusObjectPath>
 
 struct NMDBusDeviceProperties {
     QDBusObjectPath path;
@@ -75,7 +74,9 @@ public:
     void setProperties(const NMDBusDeviceProperties  &);
     // Used for ethernet devices to create the network object implied by
     // NetworkManager using the info returned by getProperties
+#if 0
     void setNetwork(const NMDBusNetworkProperties  &);
+#endif
     void setSignalStrength(int);
     void setCarrierOn(bool);
     void setActive(bool);
