@@ -60,6 +60,13 @@ namespace Control
         virtual ~WiredNetworkInterface();
 
         /**
+         * The NetworkInterface type.
+         *
+         * @return the NetworkInterface::Type.  This always returns NetworkInterface::Ieee8023
+         */
+        virtual NetworkInterface::Type type() const;
+
+        /**
          * The hardware address assigned to the network interface
          */
         QString hardwareAddress() const;

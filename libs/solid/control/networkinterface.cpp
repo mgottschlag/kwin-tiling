@@ -57,6 +57,11 @@ Solid::Control::NetworkInterface::~NetworkInterface()
 
 }
 
+Solid::Control::NetworkInterface::Type Solid::Control::NetworkInterface::type() const
+{
+    return UnknownType;
+}
+
 QString Solid::Control::NetworkInterface::uni() const
 {
     Q_D(const NetworkInterface);

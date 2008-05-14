@@ -92,6 +92,14 @@ namespace Control
         virtual ~NetworkInterface();
 
         /**
+         * Retrieves the interface type.  This is a virtual function that will return the
+         * proper type of all sub-classes.
+         *
+         * @returns the NetworkInterface::Type that corresponds to this device.
+         */
+        virtual Type type() const;
+
+        /**
          * Retrieves the Unique Network Identifier (UNI) of the NetworkInterface.
          * This identifier is unique for each network and network interface in the system.
          *

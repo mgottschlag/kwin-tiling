@@ -74,6 +74,13 @@ namespace Ifaces
         virtual ~WirelessNetworkInterface();
 
         /**
+         * The NetworkInterface type.
+         *
+         * @return the NetworkInterface::Type.  This always returns NetworkInterface::Ieee80211
+         */
+        virtual NetworkInterface::Type type() const;
+
+        /**
          * List of wireless networks currently visible to the hardware
          */
         AccessPointList accessPoints() const;

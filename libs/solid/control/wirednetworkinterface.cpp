@@ -53,6 +53,11 @@ Solid::Control::WiredNetworkInterface::~WiredNetworkInterface()
 
 }
 
+Solid::Control::NetworkInterface::Type Solid::Control::WiredNetworkInterface::type() const
+{
+    return Ieee8023;
+}
+
 QString Solid::Control::WiredNetworkInterface::hardwareAddress() const
 {
     Q_D(const WiredNetworkInterface);

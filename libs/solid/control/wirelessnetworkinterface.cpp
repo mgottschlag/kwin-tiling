@@ -59,6 +59,11 @@ Solid::Control::WirelessNetworkInterface::~WirelessNetworkInterface()
 
 }
 
+Solid::Control::NetworkInterface::Type Solid::Control::WirelessNetworkInterface::type() const
+{
+    return Ieee80211;
+}
+
 void Solid::Control::WirelessNetworkInterface::makeConnections(QObject * source)
 {
     connect(source, SIGNAL(accessPointAdded(const QString &)),
