@@ -22,6 +22,24 @@
 #include <QtDBus>
 #include <kdebug.h>
 
+namespace AP
+{
+
+Solid::Control::WirelessNetworkInterface::OperationMode getOperationMode(int opmode)
+{
+    Solid::Control::WirelessNetworkInterface::OperationMode mode;
+    return mode;
+}
+
+Solid::Control::AccessPoint::Capabilities getCapabilities(int netcap)
+{
+    Solid::Control::AccessPoint::Capabilities cap;
+    return cap;
+}
+
+}
+
+
 class NMAccessPointPrivate
 {
 public:
@@ -44,7 +62,14 @@ public:
 void NMAccessPointPrivate::deserialize(const QDBusMessage &message)
 {
     const QList<QVariant> args = message.arguments();
-    if (args.size() > 15) signalStrength = args[14].toInt();
+    if (args.size() > 0) ssid = args[1].toString();
+    if (args.size() > 1) hardwareAddress = args[2].toString();
+    if (args.size() > 2) signalStrength = args[3].toInt();
+//    if (args.size() > 3) ssid = args[4].toDouble(); // TODO freq
+    if (args.size() > 4) maxBitRate = args[5].toUInt();
+    if (args.size() > 5) mode = AP::getOperationMode(args[6].toInt());
+    if (args.size() > 6) capabilities = AP::getCapabilities(args[7].toInt());
+//    if (args.size() > 7) broadcast = args[8].toBool(); // TODO broadcase
 }
 
 
