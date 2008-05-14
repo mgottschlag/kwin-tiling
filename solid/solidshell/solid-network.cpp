@@ -187,6 +187,9 @@ std::ostream &operator<<(std::ostream &out, const Solid::Control::AccessPoint &a
     out << "  UNI =                " << QVariant(ap.uni()) << endl;
     out << "  SSID =               " << QVariant(ap.ssid()) << endl;
     out << "  MAC Address =        " << QVariant(ap.hardwareAddress()) << endl;
+    out << "  Frequency (MHz) =    " << ap.frequency() << endl;
+    out << "  Max BitRate (Kb/s) = " << ap.maxBitRate() << endl;
+    out << "  Signal Strength =    " << ap.signalStrength() << endl;
     return out;
 }
 #if 0
