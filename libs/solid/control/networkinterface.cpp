@@ -41,15 +41,13 @@ Solid::Control::NetworkInterface::NetworkInterface(const NetworkInterface &other
 Solid::Control::NetworkInterface::NetworkInterface(NetworkInterfacePrivate &dd, QObject *backendObject)
     : QObject(), d_ptr(&dd)
 {
-    Q_D(NetworkInterface);
-    d->setBackendObject(backendObject);
+    Q_UNUSED(backendObject);
 }
 
 Solid::Control::NetworkInterface::NetworkInterface(NetworkInterfacePrivate &dd, const NetworkInterface &other)
     : d_ptr(&dd)
 {
-    Q_D(NetworkInterface);
-    d->setBackendObject(other.d_ptr->backendObject());
+    Q_UNUSED(other);
 }
 
 Solid::Control::NetworkInterface::~NetworkInterface()
