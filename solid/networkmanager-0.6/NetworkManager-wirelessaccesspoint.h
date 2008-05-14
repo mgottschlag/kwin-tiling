@@ -17,13 +17,12 @@
 
 */
 
-#ifndef NETWORKMANAGER_NETWORK_H
-#define NETWORKMANAGER_NETWORK_H
+#ifndef NETWORKMANAGER_WIRELESSACCESSPOINT_H
+#define NETWORKMANAGER_WIRELESSACCESSPOINT_H
 
-#include <QDBusInterface>
-#include <solid/control/ifaces/networkinterface.h>
+#include <solid/control/ifaces/wirelessaccesspoint.h>
 
-struct NMDBusNetworkProperties {
+struct NMDBusAccessPointProperties {
     QString ipv4Address;
     QString subnetMask;
     QString broadcast;
@@ -32,22 +31,22 @@ struct NMDBusNetworkProperties {
     QHostAddress secondaryDNS;
 };
 
-class NMNetworkPrivate;
+class NMAccessPointPrivate;
 
 /**
  * This interface represents a generic Internet Protocol (IP) network which we may be connected to.
  */
-class KDE_EXPORT NMNetwork : public QObject, virtual public Solid::Control::Ifaces::NetworkInterface
+class KDE_EXPORT NMAccessPoint : public Solid::Control::Ifaces::WirelessAccessPoint
 {
 Q_OBJECT
-Q_INTERFACES(Solid::Control::Ifaces::NetworkInterface)
+Q_INTERFACES(Solid::Control::Ifaces::WirelessAccessPoint)
 public:
     /**
      * Constructs a network and looks up its properties over DBus.
      * @param net contains the IP details of the network.
      */
-    NMNetwork(const QString  & networkPath);
-    virtual ~NMNetwork();
+    NMAccessPoint(const QString  & networkPath);
+    virtual ~NMAccessPoint();
     QString uni() const;
     QList<QNetworkAddressEntry> addressEntries() const;
     QString route() const;
@@ -60,7 +59,7 @@ Q_SIGNALS:
     void ipDetailsChanged();
     void activationStateChanged(bool);
 private:
-    NMNetworkPrivate * d;
+    NMAccessPointPrivate * d;
 };
 
 #endif

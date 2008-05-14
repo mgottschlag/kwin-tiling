@@ -3,7 +3,7 @@ include_directories(${NETWORKMANAGER_INCLUDE_DIRS} ${NM-UTIL_INCLUDE_DIRS} ${CMA
 add_subdirectory(tests)
 
 set(solid_networkmanager_PART_SRCS
-	NetworkManager-network.cpp
+	NetworkManager-wirelessaccesspoint.cpp
 	NetworkManager-networkmanager.cpp
 	NetworkManager-networkinterface.cpp
 	NetworkManager-wirelessnetwork.cpp

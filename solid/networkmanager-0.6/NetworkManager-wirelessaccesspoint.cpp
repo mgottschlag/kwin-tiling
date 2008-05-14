@@ -17,17 +17,17 @@
 
 */
 
-#include "NetworkManager-network.h"
+#include "NetworkManager-wirelessaccesspoint.h"
 
 #include <QtDBus>
 #include <kdebug.h>
 
 #include "NetworkManager-wirelessnetwork.h"
 
-class NMNetworkPrivate
+class NMAccessPointPrivate
 {
 public:
-    NMNetworkPrivate(const QString  & networkPath) : netPath(networkPath) { }
+    NMAccessPointPrivate(const QString  & networkPath) : netPath(networkPath) { }
     QString netPath;
     QList<QNetworkAddressEntry> addrList;
     QString route;
@@ -35,42 +35,42 @@ public:
     bool active;
 };
 
-NMNetwork::NMNetwork(const QString  & netPath)
- : QObject(), d(new NMNetworkPrivate(netPath))
+NMAccessPoint::NMAccessPoint(const QString  & netPath)
+    : Solid::Control::Ifaces::WirelessAccessPoint(), d(new NMAccessPointPrivate(netPath))
 {
 }
 
-NMNetwork::~NMNetwork()
+NMAccessPoint::~NMAccessPoint()
 {
     delete d;
 }
 
-QString NMNetwork::uni() const
+QString NMAccessPoint::uni() const
 {
     return d->netPath;
 }
 
-QList<QNetworkAddressEntry> NMNetwork::addressEntries() const
+QList<QNetworkAddressEntry> NMAccessPoint::addressEntries() const
 {
     return d->addrList;
 }
 
-QString NMNetwork::route() const
+QString NMAccessPoint::route() const
 {
     return d->route;
 }
 
-QList<QHostAddress> NMNetwork::dnsServers() const
+QList<QHostAddress> NMAccessPoint::dnsServers() const
 {
     return d->dnsServers;
 }
 
-bool NMNetwork::isActive() const
+bool NMAccessPoint::isActive() const
 {
     return d->active;
 }
 
-void NMNetwork::setActivated(bool activated)
+void NMAccessPoint::setActivated(bool activated)
 {
     // todo activate the device network here
     d->active = activated;
@@ -84,7 +84,7 @@ void NMNetwork::setActivated(bool activated)
     emit activationStateChanged(activated);
 }
 
-void NMNetwork::setProperties(const NMDBusNetworkProperties  & props)
+void NMAccessPoint::setProperties(const NMDBusNetworkProperties  & props)
 {
     QNetworkAddressEntry addr;
     addr.setIp(QHostAddress(props.ipv4Address));
