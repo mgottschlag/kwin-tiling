@@ -78,7 +78,7 @@ bool Solid::Control::WiredNetworkInterface::carrier() const
 
 void Solid::Control::WiredNetworkInterfacePrivate::setBackendObject(QObject *object)
 {
-    FrontendObjectPrivate::setBackendObject(object);
+    NetworkInterfacePrivate::setBackendObject(object);
 
     if (object) {
         QObject::connect(object, SIGNAL(bitRateChanged(int)),
