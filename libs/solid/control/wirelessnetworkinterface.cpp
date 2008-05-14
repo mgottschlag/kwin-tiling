@@ -32,6 +32,7 @@ Solid::Control::WirelessNetworkInterface::WirelessNetworkInterface(QObject *back
     Q_D(WirelessNetworkInterface);
     d->setBackendObject(backendObject);
     makeConnections( backendObject );
+    d->readAccessPoints();
 }
 
 Solid::Control::WirelessNetworkInterface::WirelessNetworkInterface(const WirelessNetworkInterface &networkinterface)
@@ -40,18 +41,23 @@ Solid::Control::WirelessNetworkInterface::WirelessNetworkInterface(const Wireles
     Q_D(WirelessNetworkInterface);
     d->setBackendObject(networkinterface.d_ptr->backendObject());
     makeConnections( networkinterface.d_ptr->backendObject() );
+    d->readAccessPoints();
 }
 
 Solid::Control::WirelessNetworkInterface::WirelessNetworkInterface(WirelessNetworkInterfacePrivate &dd, QObject *backendObject)
     : NetworkInterface(dd, backendObject)
 {
+    Q_D(WirelessNetworkInterface);
     makeConnections( backendObject );
+    d->readAccessPoints();
 }
 
 Solid::Control::WirelessNetworkInterface::WirelessNetworkInterface(WirelessNetworkInterfacePrivate &dd, const WirelessNetworkInterface &networkinterface)
     : NetworkInterface(dd, networkinterface.d_ptr->backendObject())
 {
+    Q_D(WirelessNetworkInterface);
     makeConnections( networkinterface.d_ptr->backendObject() );
+    d->readAccessPoints();
 }
 
 Solid::Control::WirelessNetworkInterface::~WirelessNetworkInterface()
@@ -105,7 +111,7 @@ Solid::Control::WirelessNetworkInterface::Capabilities Solid::Control::WirelessN
 Solid::Control::AccessPoint * Solid::Control::WirelessNetworkInterface::findAccessPoint(const QString  & uni) const
 {
     Q_D(const WirelessNetworkInterface);
-    QPair<AccessPoint*, Ifaces::AccessPoint*> pair = findRegisteredAccessPoint(uni);
+    AccessPointPair pair = findRegisteredAccessPoint(uni);
     return pair.first;
 }
 
@@ -136,15 +142,18 @@ Solid::Control::AccessPointList Solid::Control::WirelessNetworkInterface::access
 void Solid::Control::WirelessNetworkInterface::_k_accessPointAdded(const QString & uni)
 {
     Q_D(WirelessNetworkInterface);
-    QPair<AccessPoint *, Ifaces::AccessPoint *> pair = d->apMap.take(uni);
+    AccessPointMap::Iterator mapIt = d->apMap.find(uni);
 
-    if (pair.first!= 0)
+    if (mapIt != d->apMap.end())
     {
         // Oops, I'm not sure it should happen...
         // But well in this case we'd better kill the old device we got, it's probably outdated
+        AccessPointPair pair = mapIt.value();
 
         delete pair.first;
         delete pair.second;
+    } else {
+        mapIt = d->apMap.insert(uni, AccessPointPair(0, 0));
     }
 
     emit accessPointAppeared(uni);
@@ -153,7 +162,7 @@ void Solid::Control::WirelessNetworkInterface::_k_accessPointAdded(const QString
 void Solid::Control::WirelessNetworkInterface::_k_accessPointRemoved(const QString & uni)
 {
     Q_D(WirelessNetworkInterface);
-    QPair<AccessPoint *, Ifaces::AccessPoint *> pair = d->apMap.take(uni);
+    AccessPointPair pair = d->apMap.take(uni);
 
     if (pair.first!= 0)
     {
@@ -172,41 +181,64 @@ void Solid::Control::WirelessNetworkInterface::_k_destroyed(QObject *object)
     if (ap!=0)
     {
         QString uni = ap->uni();
-        QPair<AccessPoint *, Ifaces::AccessPoint *> pair = d->apMap.take(uni);
+        AccessPointPair pair = d->apMap.take(uni);
         delete pair.first;
     }
 }
 
-QPair<Solid::Control::AccessPoint *, Solid::Control::Ifaces::AccessPoint *>
+Solid::Control::AccessPointPair
 Solid::Control::WirelessNetworkInterface::findRegisteredAccessPoint(const QString &uni) const
 {
     Q_D(const WirelessNetworkInterface);
 
-    if (d->apMap.contains(uni)) {
-        return d->apMap[uni];
+    AccessPointMap::ConstIterator mapIt = d->apMap.find(uni);
+    if (mapIt != d->apMap.end() && mapIt.value().second) {
+        return mapIt.value();
     } else {
-        Ifaces::WirelessNetworkInterface *device = qobject_cast<Ifaces::WirelessNetworkInterface *>(d->backendObject());
-        AccessPoint *ap = 0;
-
-        if (device!=0) {
-            Ifaces::AccessPoint *iface = qobject_cast<Ifaces::AccessPoint *>( device->createAccessPoint(uni) );
-
-            if (qobject_cast<Ifaces::AccessPoint *>(iface)!=0) {
-                ap = new AccessPoint(iface);
-            }
-
-            if (ap != 0) {
-                QPair<AccessPoint *, Ifaces::AccessPoint *> pair(ap, iface);
-                QObject::connect(iface, SIGNAL(destroyed(QObject *)),
-                        this, SLOT(_k_destroyed(QObject *)));
-
-                d->apMap[uni] = pair;
-                return pair;
-            }
+        AccessPointPair pair = d->createAP(uni);
+        if (pair.first && pair.second) {
+            d->apMap[uni] = pair;
         }
+        return pair;
     }
 
-    return QPair<AccessPoint *, Ifaces::AccessPoint *>(0, 0);
+    return AccessPointPair(0, 0);
+}
+
+void Solid::Control::WirelessNetworkInterfacePrivate::readAccessPoints()
+{
+    Ifaces::WirelessNetworkInterface * t = qobject_cast<Ifaces::WirelessNetworkInterface *>(backendObject());
+    if (t != 0)
+    {
+        const MacAddressList unis = t->accessPoints();
+        Q_FOREACH (const QString & uni, unis) {
+            apMap[uni] = AccessPointPair(0, 0);
+        }
+    }
+}
+
+Solid::Control::AccessPointPair
+Solid::Control::WirelessNetworkInterfacePrivate::createAP(const QString &uni) const
+{
+    Ifaces::WirelessNetworkInterface *device = qobject_cast<Ifaces::WirelessNetworkInterface *>(backendObject());
+    AccessPoint *ap = 0;
+
+    if (device!=0) {
+        Ifaces::AccessPoint *iface = qobject_cast<Ifaces::AccessPoint *>(device->createAccessPoint(uni));
+
+        if (qobject_cast<Ifaces::AccessPoint *>(iface)!=0) {
+            ap = new AccessPoint(iface);
+        }
+
+        if (ap != 0) {
+            AccessPointPair pair(ap, iface);
+            QObject::connect(iface, SIGNAL(destroyed(QObject *)),
+                             parent(), SLOT(_k_destroyed(QObject *)));
+
+            return pair;
+        }
+    }
+    return AccessPointPair(0, 0);
 }
 
 #include "wirelessnetworkinterface.moc"

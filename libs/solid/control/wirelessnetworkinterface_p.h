@@ -22,10 +22,21 @@
 #define SOLID_NETWORK_P_H
 
 #include "networkinterface_p.h"
+
 namespace Solid
 {
 namespace Control
 {
+    class AccessPoint;
+namespace Ifaces
+{
+    class AccessPoint;
+}
+
+    typedef QPair<AccessPoint *, Ifaces::AccessPoint *> AccessPointPair;
+    typedef QMap<QString, AccessPointPair > AccessPointMap;
+
+
     class WirelessNetworkInterfacePrivate : public NetworkInterfacePrivate
     {
     public:
@@ -35,9 +46,11 @@ namespace Control
         void setBackendObject(QObject *object);
 
         //Solid::Control::AccessPoint *findRegisteredAccessPoint(const QString &uni) const;
+        void readAccessPoints();
+        AccessPointPair createAP(const QString &uni) const;
 
         //mutable QMap<QString, AccessPoint *> apMap;
-        mutable QMap<QString, QPair<AccessPoint *, Ifaces::AccessPoint *> > apMap;
+        mutable AccessPointMap apMap;
     };
 }
 }
