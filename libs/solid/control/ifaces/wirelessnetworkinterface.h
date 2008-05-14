@@ -95,7 +95,7 @@ namespace Ifaces
          *
          * @param bitrate the new bitrate value for this network
          */
-        virtual void bitrateChanged(int bitrate) = 0;
+        virtual void bitRateChanged(int bitrate) = 0;
         /**
          * The accesspoint in use changed.
          */

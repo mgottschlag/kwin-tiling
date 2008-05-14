@@ -56,7 +56,7 @@ protected Q_SLOTS:
     void accessPointAdded(const QDBusObjectPath &);
     void accessPointRemoved(const QDBusObjectPath &);
 Q_SIGNALS:
-    void bitrateChanged(int bitrate);
+    void bitRateChanged(int bitrate);
     void activeAccessPointChanged(const QString &);
     void modeChanged(Solid::Control::WirelessNetworkInterface::OperationMode);
     void accessPointAppeared(const QString &);

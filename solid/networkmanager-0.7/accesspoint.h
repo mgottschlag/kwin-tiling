@@ -53,7 +53,7 @@ Q_SIGNALS:
     void rsnFlagsChanged(Solid::Control::AccessPoint::WpaFlags flags);
     void ssidChanged(const QString &ssid);
     void frequencyChanged(uint frequency);
-    void bitrateChanged(int);
+    void bitRateChanged(int);
 private:
     static Solid::Control::AccessPoint::Capabilities convertCapabilities(int);
     static Solid::Control::AccessPoint::WpaFlags convertWpaFlags(uint);

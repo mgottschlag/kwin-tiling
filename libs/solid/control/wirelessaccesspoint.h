@@ -135,7 +135,7 @@ namespace Control
          *
          * @param bitrate the new bitrate value for this network
          */
-        void bitrateChanged(int bitrate);
+        void bitRateChanged(int bitrate);
 
         /**
          * This signal is emitted when the WPA flags in use by this access point change

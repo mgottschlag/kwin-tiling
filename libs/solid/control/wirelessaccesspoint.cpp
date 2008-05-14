@@ -142,8 +142,8 @@ void Solid::Control::AccessPointPrivate::setBackendObject(QObject *object)
     if (object) {
         QObject::connect(object, SIGNAL(signalStrengthChanged(int)),
                 parent(), SIGNAL(signalStrengthChanged(int)));
-        QObject::connect(object, SIGNAL(bitrateChanged(int)),
-                parent(), SIGNAL(bitrateChanged(int)));
+        QObject::connect(object, SIGNAL(bitRateChanged(int)),
+                parent(), SIGNAL(bitRateChanged(int)));
         QObject::connect(object, SIGNAL(wpaFlagsChanged(Solid::Control::AccessPoint::WpaFlags)),
                 parent(), SIGNAL(wpaFlagsChanged(Solid::Control::AccessPoint::WpaFlags)));
         QObject::connect(object, SIGNAL(rsnFlagsChanged(Solid::Control::AccessPoint::WpaFlags)),

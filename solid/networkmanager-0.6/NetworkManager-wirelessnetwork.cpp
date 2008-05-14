@@ -258,7 +258,7 @@ void NMWirelessNetwork::setBitrate(int rate)
 {
     Q_D(NMWirelessNetwork);
     d->rate = rate;
-    emit bitrateChanged(rate);
+    emit bitRateChanged(rate);
 }
 
 #if 0

@@ -83,7 +83,7 @@ public:
     QObject * createAccessPoint(const QString & uni);
 Q_SIGNALS:
     void signalStrengthChanged(int strength);
-    void bitrateChanged(int bitrate);
+    void bitRateChanged(int bitrate);
     void associationChanged(bool associated); // move to Device?
     void authenticationNeeded();
     void activeAccessPointChanged(const QString &);

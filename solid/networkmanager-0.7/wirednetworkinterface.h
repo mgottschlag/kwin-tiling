@@ -36,7 +36,7 @@ Q_OBJECT
 Q_DECLARE_PRIVATE(NMWiredNetworkInterface)
 Q_INTERFACES(Solid::Control::Ifaces::WiredNetworkInterface)
 Q_PROPERTY(bool carrier READ carrier WRITE setCarrier NOTIFY carrierChanged)
-Q_PROPERTY(int bitRate READ bitRate WRITE setBitRate NOTIFY bitrateChanged)
+Q_PROPERTY(int bitRate READ bitRate WRITE setBitRate NOTIFY bitRateChanged)
 
 public:
     NMWiredNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent);

@@ -118,7 +118,7 @@ namespace Ifaces
          *
          * @param bitrate the new bitrate value for this network
          */
-        virtual void bitrateChanged(int bitrate) = 0;
+        virtual void bitRateChanged(int bitrate) = 0;
 
         /**
          * This signal is emitted when the WPA flags in use by this access point change

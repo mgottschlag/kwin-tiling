@@ -46,7 +46,7 @@ public:
     Solid::Control::WirelessNetworkInterface::Capabilities wirelessCapabilities() const;
     QObject * createAccessPoint(const QString & uni);
 signals:
-    void bitrateChanged(int bitrate);
+    void bitRateChanged(int bitrate);
     void activeAccessPointChanged(const QString &);
     void modeChanged(Solid::Control::WirelessNetworkInterface::OperationMode);
     void accessPointAppeared(const QString &);

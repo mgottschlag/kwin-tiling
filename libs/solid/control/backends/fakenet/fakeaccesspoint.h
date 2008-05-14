@@ -49,7 +49,7 @@ signals:
     void ssidChanged(const QString &);
     void frequencyChanged(uint);
     void signalStrengthChanged(int strength);
-    void bitrateChanged(int bitrate);
+    void bitRateChanged(int bitrate);
     void wpaFlagsChanged(Solid::Control::AccessPoint::WpaFlags flags);
     void rsnFlagsChanged(Solid::Control::AccessPoint::WpaFlags flags);
 private:
