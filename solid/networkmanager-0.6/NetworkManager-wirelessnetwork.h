@@ -72,7 +72,7 @@ public:
     MacAddressList bssList() const;
     Solid::Control::Authentication *authentication() const;
     void setAuthentication(Solid::Control::Authentication *authentication);
-    void setSignalStrength(int strength);
+    void setSignalStrength(const QDBusObjectPath & netPath, int strength);
     void setBitrate(int rate);
 #if 0
     virtual void setActivated(bool activated);
@@ -82,7 +82,6 @@ public:
     QString hardwareAddress() const;
     QObject * createAccessPoint(const QString & uni);
 Q_SIGNALS:
-    void signalStrengthChanged(int strength);
     void bitRateChanged(int bitrate);
     void associationChanged(bool associated); // move to Device?
     void authenticationNeeded();

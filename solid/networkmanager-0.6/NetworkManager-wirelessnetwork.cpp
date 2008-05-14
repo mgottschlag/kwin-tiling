@@ -37,6 +37,7 @@
 #include <solid/control/ifaces/authentication.h>
 
 #include "NetworkManager-dbushelper.h"
+#include "NetworkManager-wirelessaccesspoint.h"
 
 void dump(const Solid::Control::WirelessNetworkInterface::Capabilities  & cap)
 {
@@ -141,6 +142,7 @@ public:
     Solid::Control::WirelessNetworkInterface::Capabilities wirelessCapabilities;
     bool broadcast;
     Solid::Control::Authentication * authentication;
+    QHash<QString, NMAccessPoint*> accessPoints;
 };
 
 NMWirelessNetwork::NMWirelessNetwork(const QString  & networkPath)
@@ -247,11 +249,14 @@ void NMWirelessNetwork::setAuthentication(Solid::Control::Authentication * auth)
     d->authentication = auth;
 }
 
-void NMWirelessNetwork::setSignalStrength(int strength)
+void NMWirelessNetwork::setSignalStrength(const QDBusObjectPath & netPath, int strength)
 {
     Q_D(NMWirelessNetwork);
-    d->strength = strength;
-    emit signalStrengthChanged(strength);
+    QHash<QString, NMAccessPoint*>::ConstIterator it = d->accessPoints.find(netPath.path());
+    if (it != d->accessPoints.end()) {
+        NMAccessPoint * ap = it.value();
+        ap->setSignalStrength(strength);
+    }
 }
 
 void NMWirelessNetwork::setBitrate(int rate)
@@ -312,9 +317,15 @@ QString NMWirelessNetwork::hardwareAddress() const
 
 QObject * NMWirelessNetwork::createAccessPoint(const QString & uni)
 {
-#warning implement me!
+    Q_D(NMWirelessNetwork);
     kDebug() << uni;
-    return 0;
+    QHash<QString, NMAccessPoint*>::ConstIterator it = d->accessPoints.find(uni);
+    if (it != d->accessPoints.end()) {
+        return it.value();
+    }
+    NMAccessPoint * ap = new NMAccessPoint(uni);
+    d->accessPoints.insert(uni, ap);
+    return ap;
 }
 
 

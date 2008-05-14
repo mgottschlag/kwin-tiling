@@ -292,7 +292,9 @@ void NMNetworkManager::networkStrengthChanged(QDBusObjectPath devPath,QDBusObjec
     NMNetworkInterface * interface = 0;
     if (d->interfaces.contains(devPath.path()) && (interface = d->interfaces[devPath.path()]) != 0)
     {
-        interface->updateNetworkStrength(netPath, strength);
+        NMWirelessNetwork * wifiNet = qobject_cast<NMWirelessNetwork *>(interface);
+        if (interface)
+            wifiNet->setSignalStrength(netPath, strength);
     }
 }
 
