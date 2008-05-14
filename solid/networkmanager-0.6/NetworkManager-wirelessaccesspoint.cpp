@@ -43,7 +43,7 @@ Solid::Control::AccessPoint::Capabilities getCapabilities(int netcap)
 class NMAccessPointPrivate
 {
 public:
-    NMAccessPointPrivate(const QString  & networkPath) : netPath(networkPath) { }
+    NMAccessPointPrivate(const QString  & networkPath);
 
     void deserialize(const QDBusMessage & message);
 
@@ -59,6 +59,19 @@ public:
     int signalStrength;
     bool broadcast;
 };
+
+NMAccessPointPrivate::NMAccessPointPrivate(const QString  & networkPath)
+    : netPath(networkPath)
+    , capabilities(0)
+    , wpaFlags(0)
+    , rsnFlags(0)
+    , frequency(0)
+    , maxBitRate(0)
+    , mode(static_cast<Solid::Control::WirelessNetworkInterface::OperationMode>(0))
+    , signalStrength(0)
+    , broadcast(false)
+{
+}
 
 void NMAccessPointPrivate::deserialize(const QDBusMessage &message)
 {

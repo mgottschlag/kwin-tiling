@@ -83,7 +83,15 @@ NMNetworkInterfacePrivate::NMNetworkInterfacePrivate(const QString  & objPath)
               objPath,
               "org.freedesktop.NetworkManager.Devices",
               QDBusConnection::systemBus()),
-       objectPath(objPath) { }
+       objectPath(objPath)
+    , active(false)
+    , type(Solid::Control::NetworkInterface::UnknownType)
+    , activationStage(Solid::Control::NetworkInterface::UnknownState)
+    , carrier(false)
+    , signalStrength(0)
+    , designSpeed(0)
+{
+}
 
 NMNetworkInterfacePrivate::~NMNetworkInterfacePrivate()
 {
