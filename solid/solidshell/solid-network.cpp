@@ -162,8 +162,10 @@ std::ostream &operator<<(std::ostream &out, const QMap<QString,QVariant> &proper
 std::ostream &operator<<(std::ostream &out, const Solid::Control::NetworkInterface &networkdevice)
 {
     out << "  UNI =                " << QVariant(networkdevice.uni()) << endl;
-    //out << "  Type =               " << (networkdevice.type() == Solid::Control::NetworkInterface::Ieee8023 ? "Wired" : "802.11 Wireless") << endl;
+    out << "  Type =               " << (networkdevice.type() == Solid::Control::NetworkInterface::Ieee8023 ? "Wired" : "802.11 Wireless") << endl;
     out << "  Active =             " << (networkdevice.isActive() ? "Yes" : "No") << endl;
+    out << "  Interface Name =     " << networkdevice.interfaceName() << endl;
+    out << "  Driver =             " << networkdevice.driver() << endl;
     //out << "  HW Address =         " << networkdevice.  // TODO add to solid API.
     out << "\n  Capabilities:" << endl;
     out << "    Supported =        " << (networkdevice.capabilities()  & Solid::Control::NetworkInterface::IsManageable ? "Yes" : "No") << endl;
