@@ -75,8 +75,7 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
       d(new Private)
 {
     setHasConfigurationInterface(true);
-    setAspectRatioMode(Plasma::IgnoreAspectRatio);
-    setBackgroundHints(DefaultBackground);
+    setBackgroundHints(NoBackground);
     d->icon = new Plasma::Icon(KIcon("start-here-kde"), QString(), this);
     d->icon->setFlag(ItemIsMovable, false);
     connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
@@ -110,21 +109,21 @@ void LauncherApplet::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint) {
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
-            setMinimumSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
+            //FIXME set correct minimum size
+            //setMinimumSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
         } else {
-            setMinimumSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
+            //setMinimumSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
         }
     }
-    int s = contentsRect().width();
-    if (formFactor() == Plasma::Horizontal ) {
-        s = contentsRect().height();
-        setMinimumWidth(s);
-    } else if (formFactor() == Plasma::Vertical) {
-        s = contentsRect().width();
-        setMinimumHeight(s);
-    }
+
     if (constraints & Plasma::SizeConstraint) {
-        d->icon->resize(QSize(s, s));
+        if (formFactor() == Plasma::Horizontal ) {
+            setMaximumWidth(contentsRect().height());
+        } else if (formFactor() == Plasma::Vertical) {
+            setMaximumHeight(contentsRect().width());
+        }
+
+        d->icon->resize(contentsRect().size());
     }
 
     if (constraints & Plasma::ImmutableConstraint) {

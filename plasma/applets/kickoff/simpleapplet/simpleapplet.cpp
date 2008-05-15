@@ -143,7 +143,6 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
       d(new Private)
 {
     setHasConfigurationInterface(true);
-    setAspectRatioMode(Plasma::Square);
     setBackgroundHints(NoBackground);
 
     d->icon = new Plasma::Icon(QString(), this);
@@ -163,8 +162,6 @@ MenuLauncherApplet::~MenuLauncherApplet()
 
 void MenuLauncherApplet::init()
 {
-    setSizePolicy(QSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed));
-
     KConfigGroup cg = config();
 
     {
@@ -206,14 +203,20 @@ void MenuLauncherApplet::constraintsEvent(Plasma::Constraints constraints)
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
             //FIXME set correct minimum size
-	    //setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
+            //setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
         } else {
             //setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
         }
     }
 
     if (constraints & Plasma::SizeConstraint) {
-        d->icon->resize(geometry().size());
+        if (formFactor() == Plasma::Horizontal ) {
+            setMaximumWidth(contentsRect().height());
+        } else if (formFactor() == Plasma::Vertical) {
+            setMaximumHeight(contentsRect().width());
+        }
+
+        d->icon->resize(contentsRect().size());
     }
 
     if (constraints & Plasma::ImmutableConstraint) {
