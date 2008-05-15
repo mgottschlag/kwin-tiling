@@ -151,9 +151,10 @@ std::ostream &operator<<(std::ostream &out, const Solid::Device &device)
 
 std::ostream &operator<<(std::ostream &out, const QMap<QString,QVariant> &properties)
 {
-    foreach (QString key, properties.keys())
+    QMap<QString, QVariant>::ConstIterator it = properties.constBegin(), itEnd = properties.constEnd();
+    for ( ; it != itEnd; ++it)
     {
-        out << "  " << key << " = " << properties[key] << endl;
+        out << "  " << it.key() << " = " << it.value() << endl;
     }
 
     return out;
@@ -621,7 +622,7 @@ bool SolidNetwork::netmgrListNetworks(const QString  & deviceUni)
     if (wifiDev) {
 
         Solid::Control::AccessPointList aps = wifiDev->accessPoints();
-        foreach (QString apUni, aps)
+        foreach (const QString &apUni, aps)
         {
             cout << "NETWORK UNI = '" << apUni << "'" << endl;
         }
