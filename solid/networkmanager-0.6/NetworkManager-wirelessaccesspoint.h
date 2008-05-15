@@ -24,15 +24,6 @@
 
 #include <solid/control/ifaces/wirelessaccesspoint.h>
 
-struct NMDBusAccessPointProperties {
-    QString ipv4Address;
-    QString subnetMask;
-    QString broadcast;
-    QString route;
-    QHostAddress primaryDNS;
-    QHostAddress secondaryDNS;
-};
-
 class NMAccessPointPrivate;
 
 /**

@@ -29,8 +29,6 @@
 
 #include <solid/control/networkinterface.h>
 
-#include "NetworkManager-wirelessaccesspoint.h"
-
 void dump(const NMDBusDeviceProperties &device)
 {
     kDebug(1441) << "dump(const NMDBusDeviceProperties &device):\n    Object path: " << device.path.path() << "\n    Interface: " << device.interface
@@ -41,14 +39,6 @@ void dump(const NMDBusDeviceProperties &device)
         << "\n    Speed: " << device.speed << "\n    Capabilities: " << device.capabilities
         << "\n    Capabilities type: " << device.capabilitiesType << "\n    active net path: "
         << device.activeNetPath << "\n    Networks:" << device.networks << endl;
-}
-
-void dump(const NMDBusAccessPointProperties  & network)
-{
-    kDebug(1441) << "dump(const NMDBusNetworkProperties &)\n    IPV4 address: " << network.ipv4Address
-        << "\n    subnet mask: " << network.subnetMask << "\n    Broadcast: " << network.broadcast
-        << "\n    route: " << network.route << "\n    primary dns: " << network.primaryDNS
-        << "\n    secondary dns: " << network.secondaryDNS << endl;
 }
 
 void deserialize(const QDBusMessage &message, NMDBusDeviceProperties & device)

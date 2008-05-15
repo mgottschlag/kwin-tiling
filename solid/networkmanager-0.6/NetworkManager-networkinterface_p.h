@@ -23,8 +23,6 @@
 #include <QtCore/qstring.h>
 #include <QtDBus/QDBusInterface>
 
-#include "NetworkManager-wirelessaccesspoint.h"
-
 class NMNetworkInterface;
 class NMDBusDeviceProperties;
 
@@ -52,7 +50,6 @@ public:
     bool carrier;
     int signalStrength;
     int designSpeed;
-    QPair<QString, NMDBusAccessPointProperties> cachedNetworkProps;
     Solid::Control::NetworkInterface::Capabilities capabilities;
     QString activeNetPath;
     QString interface;
