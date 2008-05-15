@@ -122,7 +122,7 @@ namespace Control
          */
         int signalStrength() const;
 
-    protected:
+    Q_SIGNALS:
         /**
          * This signal is emitted when the signal strength of this network has changed.
          *

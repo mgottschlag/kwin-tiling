@@ -105,47 +105,47 @@ namespace Ifaces
          */
         virtual int signalStrength() const = 0;
 
-    protected:
+    Q_SIGNALS:
         /**
          * This signal is emitted when the signal strength of this network has changed.
          *
          * @param strength the new signal strength value for this network
          */
-        virtual void signalStrengthChanged(int strength) = 0;
+        void signalStrengthChanged(int strength);
 
         /**
          * This signal is emitted when the bitrate of this network has changed.
          *
          * @param bitrate the new bitrate value for this network
          */
-        virtual void bitRateChanged(int bitrate) = 0;
+        void bitRateChanged(int bitrate);
 
         /**
          * This signal is emitted when the WPA flags in use by this access point change
          *
          * @param flags the new flags
          */
-        virtual void wpaFlagsChanged(Solid::Control::AccessPoint::WpaFlags flags) = 0;
+        void wpaFlagsChanged(Solid::Control::AccessPoint::WpaFlags flags);
 
         /**
          * This signal is emitted when the RSN(WPA2) flags in use by this access point change
          *
          * @param flags the new flags
          */
-        virtual void rsnFlagsChanged(Solid::Control::AccessPoint::WpaFlags flags) = 0;
+        void rsnFlagsChanged(Solid::Control::AccessPoint::WpaFlags flags);
         /**
          * This signal is emitted when the ssid of this Access Point changes
          *
          * @param ssid the new SSID
          */
-        virtual void ssidChanged(const QString &ssid) = 0;
+        void ssidChanged(const QString &ssid);
 
         /**
          * This signal is emitted when the frequency used by this Access Point changes
          *
          * @param frequency the new frequency
          */
-        virtual void frequencyChanged(uint frequency) = 0;
+        void frequencyChanged(uint frequency);
     };
 }
 }
