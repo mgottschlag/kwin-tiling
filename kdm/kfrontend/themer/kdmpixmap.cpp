@@ -230,7 +230,7 @@ KdmPixmap::getClass( ItemState sts )
 {
 	return
 		(sts == Sprelight && pixmap.prelight.present) ?
-			pixmap.active :
+			pixmap.prelight :
 			(sts == Sactive && pixmap.active.present) ?
 				pixmap.active :
 				pixmap.normal;
