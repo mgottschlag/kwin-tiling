@@ -520,6 +520,11 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
     QApplication::desktop()->screenGeometry(d->containment->screen());
 
     if (d->dragging == Private::PanelControllerElement) {
+        //only move when the mouse cursor is out of the controller to avoid an endless reposition cycle
+        if (geometry().contains(event->globalPos())) {
+            return;
+        }
+
         Plasma::FormFactor oldFormFactor = d->containment->formFactor();
         Plasma::FormFactor newFormFactor = d->containment->formFactor();
         const Plasma::Location oldLocation = d->containment->location();
