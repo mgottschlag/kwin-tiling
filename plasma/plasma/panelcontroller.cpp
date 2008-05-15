@@ -64,7 +64,9 @@ public:
              color: " + textColor.name() +
              "; background-color: " + backgroundColor.name() +'}'+
              "QToolButton:hover {\
-               background-color: " + mixedColor.name() + '}');
+               background-color: " + mixedColor.name() + '}'+
+             "QToolButton:checked {\
+               background-color: " + mixedColor.darker(120).name() + '}');
     }
 
     QToolButton *addTool(const QString icon, const QString iconText, Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon, bool checkButton = false)
