@@ -20,8 +20,6 @@
 #ifndef NETWORKMANAGER_NETWORKINTERFACE_H
 #define NETWORKMANAGER_NETWORKINTERFACE_H
 
-#include <kdemacros.h>
-
 #include <solid/control/ifaces/networkinterface.h>
 
 #include <QtCore/qobject.h>

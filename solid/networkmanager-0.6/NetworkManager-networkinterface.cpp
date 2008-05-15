@@ -21,14 +21,15 @@
 #include "NetworkManager-networkinterface_p.h"
 
 #include <NetworkManager/NetworkManager.h>
-#include <QtDBus>
+
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusReply>
 
 #include <kdebug.h>
 
 #include <solid/control/networkinterface.h>
 
 #include "NetworkManager-wirelessaccesspoint.h"
-#include "NetworkManager-wirelessnetwork.h"
 
 void dump(const NMDBusDeviceProperties &device)
 {

@@ -20,13 +20,10 @@
 #ifndef NETWORKMANAGER_NETWORK_MANAGER_H
 #define NETWORKMANAGER_NETWORK_MANAGER_H
 
-#include <QObject>
-#include <qdbusextratypes.h>
-#include <QStringList>
-
-#include <kdemacros.h>
-
 #include <solid/control/ifaces/networkmanager.h>
+
+class QDBusObjectPath;
+typedef class QList<QVariant> QVariantList;
 
 class NMNetworkManagerPrivate;
 class KDE_EXPORT NMNetworkManager : public Solid::Control::Ifaces::NetworkManager

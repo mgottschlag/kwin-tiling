@@ -34,9 +34,7 @@
 #include <NetworkManager/NetworkManager.h>
 
 #include <kdebug.h>
-#include <solid/control/ifaces/authentication.h>
 
-#include "NetworkManager-dbushelper.h"
 #include "NetworkManager-wirelessaccesspoint.h"
 
 void dump(const Solid::Control::WirelessNetworkInterface::Capabilities  & cap)

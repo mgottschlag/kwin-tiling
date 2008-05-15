@@ -21,7 +21,10 @@
 
 #include <NetworkManager/NetworkManager.h>
 
-#include <QtDBus>
+#include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusMetaType>
+#include <QtDBus/QDBusReply>
 
 #include <kdebug.h>
 

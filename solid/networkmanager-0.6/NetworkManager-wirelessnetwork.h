@@ -20,18 +20,10 @@
 #ifndef NETWORKMANAGER_WIRELESSNETWORK_H
 #define NETWORKMANAGER_WIRELESSNETWORK_H
 
-#include <kdemacros.h>
-
-#include <QStringList>
-#include <qdbusextratypes.h>
-
 #include <solid/control/ifaces/wirelessnetworkinterface.h>
 #include <solid/control/wirelessnetworkinterface.h>
 
 #include "NetworkManager-networkinterface.h"
-
-//typedef QString MacAddress;
-//typedef QStringList MacAddressList;
 
 namespace Solid {
 namespace Control {
