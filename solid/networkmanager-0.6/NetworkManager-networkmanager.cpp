@@ -39,8 +39,11 @@ public:
                                          "/org/freedesktop/NetworkManager",
                                          "org.freedesktop.NetworkManager",
                                          QDBusConnection::systemBus()), cachedState(NM_STATE_UNKNOWN) { }
+
+    void fillNetworkInterfacesList();
+
     QDBusInterface manager;
-    QMap<QString, NMNetworkInterface *> interfaces;
+    QHash<QString, NMNetworkInterface *> interfaces;
     uint cachedState;
 };
 
@@ -70,6 +73,8 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList  & /*arg
     connectNMToThis("DeviceActivationFailed", activationFailed(QDBusObjectPath));
 
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
+
+    d->fillNetworkInterfacesList();
 }
 
 NMNetworkManager::~NMNetworkManager()
@@ -109,32 +114,44 @@ Solid::Networking::Status NMNetworkManager::status() const
 QStringList NMNetworkManager::networkInterfaces() const
 {
     kDebug(1441);
-    QStringList networkInterfaces;
+    return d->interfaces.keys();
+}
 
+void NMNetworkManagerPrivate::fillNetworkInterfacesList()
+{
     // wtf does this work when not called on org.freedesktop.NetworkManager.Devices?
-    QDBusReply< QList <QDBusObjectPath> > deviceList = d->manager.call("getDevices");
+    QDBusReply< QList <QDBusObjectPath> > deviceList = manager.call("getDevices");
     if (deviceList.isValid())
     {
         kDebug(1441) << "Got device list";
         QList <QDBusObjectPath> devices = deviceList.value();
         foreach (const QDBusObjectPath & op, devices)
         {
-            networkInterfaces.append(op.path());
-            kDebug(1441) << "  " << op.path();
+            QHash<QString, NMNetworkInterface *>::ConstIterator it = interfaces.find(op.path());
+            if (it == interfaces.end())
+            {
+                interfaces.insert(op.path(), 0);
+                kDebug(1441) << "  adding:" << op.path();
+            }
         }
     }
     else
         kDebug(1441) << "Error getting device list: " << deviceList.error().name() << ": " << deviceList.error().message();
-    return networkInterfaces;
 }
 
 QObject * NMNetworkManager::createNetworkInterface(const QString  & uni)
 {
     kDebug(1441) << uni;
     NMNetworkInterface * netInterface = 0;
-    if (d->interfaces.contains(uni))
+    QHash<QString, NMNetworkInterface *>::Iterator it = d->interfaces.find(uni);
+    if (it == d->interfaces.end())
     {
-        netInterface = d->interfaces[uni];
+        kDebug(1441) << "unknown interface:" << uni;
+        return 0;
+    }
+    if (it.value())
+    {
+        netInterface = it.value();
     }
     else
     {
@@ -163,7 +180,7 @@ QObject * NMNetworkManager::createNetworkInterface(const QString  & uni)
         }
 
         if (netInterface)
-            d->interfaces.insert(uni, netInterface);
+            it.value() = netInterface;
     }
     return netInterface;
 }
@@ -259,13 +276,26 @@ void NMNetworkManager::stateChanged(uint state)
 void NMNetworkManager::receivedDeviceAdded(const QDBusObjectPath & objpath)
 {
     kDebug(1441) << objpath.path();
-    emit networkInterfaceAdded(objpath.path());
+    const QString path = objpath.path();
+    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.find(path);
+    if (it == d->interfaces.end())
+    {
+        d->interfaces.insert(path, 0);
+        emit networkInterfaceAdded(path);
+    }
 }
 
 void NMNetworkManager::receivedDeviceRemoved(const QDBusObjectPath & objpath)
 {
     kDebug(1441) << objpath.path();
-    emit networkInterfaceRemoved(objpath.path());
+    const QString path = objpath.path();
+    QHash<QString, NMNetworkInterface *>::Iterator it = d->interfaces.find(path);
+    if (it != d->interfaces.end())
+    {
+        delete it.value();
+        d->interfaces.erase(it);
+        emit networkInterfaceRemoved(path);
+    }
 }
 
 void NMNetworkManager::deviceStrengthChanged(const QDBusObjectPath & devPath, int strength)
