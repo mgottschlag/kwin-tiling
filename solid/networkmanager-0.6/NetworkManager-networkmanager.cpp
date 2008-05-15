@@ -301,19 +301,23 @@ void NMNetworkManager::receivedDeviceRemoved(const QDBusObjectPath & objpath)
 void NMNetworkManager::deviceStrengthChanged(const QDBusObjectPath & devPath, int strength)
 {
     kDebug(1441) << devPath.path() << strength;
-    NMNetworkInterface * interface = 0;
-    if (d->interfaces.contains(devPath.path()) && (interface = d->interfaces[devPath.path()]) != 0)
-        d->interfaces[devPath.path()]->setSignalStrength(strength);
+    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.find(devPath.path());
+    if (it != d->interfaces.end() && it.value())
+    {
+        NMNetworkInterface * interface = it.value();
+        interface->setSignalStrength(strength);
+    }
 }
 
 void NMNetworkManager::networkStrengthChanged(const QDBusObjectPath & devPath, const QDBusObjectPath & netPath, int strength)
 {
     kDebug(1441) << devPath.path() << "," << netPath.path() << "," << strength;
-    NMNetworkInterface * interface = 0;
-    if (d->interfaces.contains(devPath.path()) && (interface = d->interfaces[devPath.path()]) != 0)
+    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.find(devPath.path());
+    if (it != d->interfaces.end() && it.value())
     {
+        NMNetworkInterface * interface = it.value();
         NMWirelessNetwork * wifiNet = qobject_cast<NMWirelessNetwork *>(interface);
-        if (interface)
+        if (wifiNet)
             wifiNet->setSignalStrength(netPath, strength);
     }
 }
@@ -321,9 +325,10 @@ void NMNetworkManager::networkStrengthChanged(const QDBusObjectPath & devPath, c
 void NMNetworkManager::wirelessNetworkAppeared(const QDBusObjectPath & devPath, const QDBusObjectPath & netPath)
 {
     kDebug(1441) << devPath.path() << "," << netPath.path();
-    if (d->interfaces.contains(devPath.path()))
+    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.find(devPath.path());
+    if (it != d->interfaces.end() && it.value())
     {
-        NMNetworkInterface * interface = d->interfaces[devPath.path()];
+        NMNetworkInterface * interface = it.value();
         interface->addNetwork(netPath);
     }
 }
@@ -331,9 +336,10 @@ void NMNetworkManager::wirelessNetworkAppeared(const QDBusObjectPath & devPath, 
 void NMNetworkManager::wirelessNetworkDisappeared(const QDBusObjectPath & devPath, const QDBusObjectPath & netPath)
 {
     kDebug(1441) << devPath.path() << "," << netPath.path();
-    if (d->interfaces.contains(devPath.path()))
+    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.find(devPath.path());
+    if (it != d->interfaces.end() && it.value())
     {
-        NMNetworkInterface * interface = d->interfaces[devPath.path()];
+        NMNetworkInterface * interface = it.value();
         interface->removeNetwork(netPath);
     }
 }
@@ -341,35 +347,55 @@ void NMNetworkManager::wirelessNetworkDisappeared(const QDBusObjectPath & devPat
 void NMNetworkManager::deviceActivationStageChanged(const QDBusObjectPath & devPath, uint stage)
 {
     kDebug(1441) << devPath.path() << "("<< stage << ")";
-    if (d->interfaces.contains(devPath.path()))
-        d->interfaces[devPath.path()]->setActivationStage(stage);
+    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.find(devPath.path());
+    if (it != d->interfaces.end() && it.value())
+    {
+        NMNetworkInterface * interface = it.value();
+        interface->setActivationStage(stage);
+    }
 }
 
 void NMNetworkManager::carrierOn(const QDBusObjectPath & devPath)
 {
     kDebug(1441) << devPath.path();
-    if (d->interfaces.contains(devPath.path()))
-        d->interfaces[devPath.path()]->setCarrierOn(true);
+    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.find(devPath.path());
+    if (it != d->interfaces.end() && it.value())
+    {
+        NMNetworkInterface * interface = it.value();
+        interface->setCarrierOn(true);
+    }
 }
 void NMNetworkManager::carrierOff(const QDBusObjectPath & devPath)
 {
     kDebug(1441) << devPath.path();
-    if (d->interfaces.contains(devPath.path()))
-        d->interfaces[devPath.path()]->setCarrierOn(false);
+    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.find(devPath.path());
+    if (it != d->interfaces.end() && it.value())
+    {
+        NMNetworkInterface * interface = it.value();
+        interface->setCarrierOn(false);
+    }
 }
 
 void NMNetworkManager::nowActive(const QDBusObjectPath & devPath)
 {
     kDebug(1441) << devPath.path();
-    if (d->interfaces.contains(devPath.path()))
-        d->interfaces[devPath.path()]->setActive(true);
+    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.find(devPath.path());
+    if (it != d->interfaces.end() && it.value())
+    {
+        NMNetworkInterface * interface = it.value();
+        interface->setActive(true);
+    }
 }
 
 void NMNetworkManager::noLongerActive(const QDBusObjectPath & devPath)
 {
     kDebug(1441) << devPath.path();
-    if (d->interfaces.contains(devPath.path()))
-        d->interfaces[devPath.path()]->setActive(false);
+    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.find(devPath.path());
+    if (it != d->interfaces.end() && it.value())
+    {
+        NMNetworkInterface * interface = it.value();
+        interface->setActive(false);
+    }
 }
 
 void NMNetworkManager::activating(const QDBusObjectPath & devPath)
@@ -381,8 +407,12 @@ void NMNetworkManager::activating(const QDBusObjectPath & devPath)
 void NMNetworkManager::activationFailed(const QDBusObjectPath & devPath)
 {
     kDebug(1441) << devPath.path();
-    if (d->interfaces.contains(devPath.path()))
-        d->interfaces[devPath.path()]->setActivationStage(NM_ACT_STAGE_FAILED);
+    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.find(devPath.path());
+    if (it != d->interfaces.end() && it.value())
+    {
+        NMNetworkInterface * interface = it.value();
+        interface->setActivationStage(NM_ACT_STAGE_FAILED);
+    }
 }
 
 // TODO check for bum input at least to public methods ie devPath
