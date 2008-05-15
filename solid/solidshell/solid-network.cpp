@@ -198,7 +198,7 @@ std::ostream &operator<<(std::ostream &out, const Solid::Control::AccessPoint &a
 
 std::ostream &operator<<(std::ostream &out, const Solid::Control::WirelessNetworkInterface &network)
 {
-    out << (Solid::Control::NetworkInterface)network;
+    out << static_cast<const Solid::Control::NetworkInterface&>(network);
     out << endl;
     out << "  Mode =               ";
     switch (network.mode())
@@ -265,7 +265,7 @@ std::ostream &operator<<(std::ostream &out, const Solid::Control::WirelessNetwor
 
 std::ostream &operator<<(std::ostream &out, const Solid::Control::WiredNetworkInterface &network)
 {
-    out << (Solid::Control::NetworkInterface)network;
+    out << static_cast<const Solid::Control::NetworkInterface&>(network);
     out << endl;
     out << "  Hardware Address =   " << network.hardwareAddress() << endl;
     out << "  Bit Rate =           " << network.bitRate() << endl;
