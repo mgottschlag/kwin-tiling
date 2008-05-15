@@ -263,6 +263,16 @@ std::ostream &operator<<(std::ostream &out, const Solid::Control::WirelessNetwor
     return out;
 }
 
+std::ostream &operator<<(std::ostream &out, const Solid::Control::WiredNetworkInterface &network)
+{
+    out << (Solid::Control::NetworkInterface)network;
+    out << endl;
+    out << "  Hardware Address =   " << network.hardwareAddress() << endl;
+    out << "  Bit Rate =           " << network.bitRate() << endl;
+    out << "  Carrier =            " << qVariantFromValue(network.carrier()) << endl;
+    return out;
+}
+
 
 void checkArgumentCount(int min, int max)
 {
@@ -637,8 +647,11 @@ bool SolidNetwork::netmgrQueryNetworkInterface(const QString  & deviceUni)
     cerr << "SolidNetwork::netmgrQueryNetworkInterface()" << endl;
     Solid::Control::NetworkInterface * device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
     Solid::Control::WirelessNetworkInterface * wifiDev =  qobject_cast<Solid::Control::WirelessNetworkInterface *>(device);
+    Solid::Control::WiredNetworkInterface * wiredDev =  qobject_cast<Solid::Control::WiredNetworkInterface *>(device);
     if (wifiDev) {
         cout << *wifiDev << endl;
+    } else if (wiredDev) {
+        cout << *wiredDev << endl;
     } else {
         cout << *device << endl;
     }
