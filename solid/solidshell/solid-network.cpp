@@ -225,6 +225,7 @@ std::ostream &operator<<(std::ostream &out, const Solid::Control::WirelessNetwor
     }
     out << "  Bit Rate =           " << network.bitRate() << endl;
     out << "  Hardware Address =   " << network.hardwareAddress() << endl;
+    out << "  Active Access Point= " << qVariantFromValue(network.activeAccessPoint()) << endl;
 #if 0
     if (network.isEncrypted())
     {
