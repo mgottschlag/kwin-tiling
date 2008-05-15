@@ -119,7 +119,7 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
 {
     KGlobal::locale()->insertCatalog("libplasma");
 
-    new AppAdaptor(this); 
+    new PlasmaAppAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/App", this);
     notifyStartup(false);
 
