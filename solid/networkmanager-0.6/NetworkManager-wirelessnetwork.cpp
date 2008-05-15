@@ -260,13 +260,19 @@ QObject * NMWirelessNetwork::createAccessPoint(const QString & uni)
 {
     Q_D(NMWirelessNetwork);
     kDebug() << uni;
-    QHash<QString, NMAccessPoint*>::ConstIterator it = d->accessPoints.find(uni);
-    if (it != d->accessPoints.end() && it.value()) {
-        return it.value();
+    QHash<QString, NMAccessPoint*>::Iterator it = d->accessPoints.find(uni);
+    if (it != d->accessPoints.end()) {
+        if (it.value()) {
+            return it.value();
+        } else {
+            NMAccessPoint * ap = new NMAccessPoint(uni);
+            it.value() = ap;
+            return ap;
+        }
+    } else {
+        kDebug(1441) << "no such AP:" << uni;
     }
-    NMAccessPoint * ap = new NMAccessPoint(uni);
-    d->accessPoints.insert(uni, ap);
-    return ap;
+    return 0;
 }
 
 
