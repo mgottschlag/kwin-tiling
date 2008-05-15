@@ -29,6 +29,7 @@
 
 #include <kdebug.h>
 
+#include "NetworkManager-wirednetwork.h"
 #include "NetworkManager-wirelessnetwork.h"
 
 class NMNetworkManagerPrivate
@@ -150,11 +151,9 @@ QObject * NMNetworkManager::createNetworkInterface(const QString  & uni)
         const int type = reply.value();
         switch (type)
         {
-#if 0
         case DEVICE_TYPE_802_3_ETHERNET:
             netInterface = new NMWiredNetwork(uni);
             break;
-#endif
         case DEVICE_TYPE_802_11_WIRELESS:
             netInterface = new NMWirelessNetwork(uni);
             break;

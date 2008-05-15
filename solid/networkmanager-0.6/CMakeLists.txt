@@ -7,6 +7,7 @@ set(solid_networkmanager_PART_SRCS
 	NetworkManager-networkmanager.cpp
 	NetworkManager-networkinterface.cpp
 	NetworkManager-wirelessnetwork.cpp
+	NetworkManager-wirednetwork.cpp
 #	NetworkManager-dbushelper.cpp
 )
 
