@@ -38,6 +38,8 @@
 
 #include "NetworkManager-wirelessaccesspoint.h"
 
+#include <QtDBus/QDBusReply>
+
 void dump(const Solid::Control::WirelessNetworkInterface::Capabilities  & cap)
 {
     kDebug(1441) << "WPA      " << (cap  & Solid::Control::WirelessNetworkInterface::Wpa ? "X " : " O");
@@ -122,11 +124,13 @@ public:
     /* reimp */ void notifyNewNetwork(const QDBusObjectPath & netPath);
     /* reimp */ void notifyRemoveNetwork(const QDBusObjectPath & netPath);
     /* reimp */ void applyProperties(const NMDBusDeviceProperties & props);
+    void readActiveAccessPoint();
     MacAddress hwAddr;
     int rate;
     Solid::Control::WirelessNetworkInterface::OperationMode mode;
     Solid::Control::WirelessNetworkInterface::Capabilities wirelessCapabilities;
     QHash<QString, NMAccessPoint*> accessPoints;
+    QString activeAccessPoint;
 };
 
 void NMWirelessNetworkPrivate::notifyNewNetwork(const QDBusObjectPath & netPath)
@@ -148,7 +152,19 @@ void NMWirelessNetworkPrivate::notifyRemoveNetwork(const QDBusObjectPath & netPa
     if (it != accessPoints.end()) {
         delete it.value();
         accessPoints.erase(it);
+        if (path == activeAccessPoint) {
+            readActiveAccessPoint();
+        }
         emit q->accessPointDisappeared(path);
+    }
+}
+
+void NMWirelessNetworkPrivate::readActiveAccessPoint()
+{
+    activeAccessPoint = QString();
+    const QDBusReply<QString> reply = iface.call("getActiveNetwork");
+    if (reply.isValid()) {
+        activeAccessPoint = reply.value();
     }
 }
 
@@ -157,6 +173,8 @@ NMWirelessNetwork::NMWirelessNetwork(const QString  & networkPath)
  : NMNetworkInterface(*new NMWirelessNetworkPrivate(networkPath))
 {
     //kDebug(1441) << "NMWirelessNetwork::NMWirelessNetwork() - " << networkPath;
+    Q_D(NMWirelessNetwork);
+    d->readActiveAccessPoint();
 }
 
 NMWirelessNetwork::~NMWirelessNetwork()
@@ -245,9 +263,8 @@ MacAddressList NMWirelessNetwork::accessPoints() const
 
 QString NMWirelessNetwork::activeAccessPoint() const
 {
-#warning NMWirelessNetwork::activeAccessPoint() is unimplemented
-    kDebug();
-    return QString();
+    Q_D(const NMWirelessNetwork);
+    return d->activeAccessPoint;
 }
 
 QString NMWirelessNetwork::hardwareAddress() const
