@@ -127,12 +127,6 @@ QStringList NMNetworkManager::networkInterfaces() const
     return networkInterfaces;
 }
 
-QStringList NMNetworkManager::activeNetworkInterfaces() const
-{
-    kDebug(1441) << "implement me";
-    return QStringList();
-}
-
 QObject * NMNetworkManager::createNetworkInterface(const QString  & uni)
 {
     kDebug(1441) << uni;

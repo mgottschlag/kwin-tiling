@@ -191,32 +191,6 @@ Solid::Control::NetworkInterface::Capabilities NMNetworkInterface::capabilities(
     return d->capabilities;
 }
 
-#if 0
-QObject * NMNetworkInterface::createNetwork(const QString  & uni)
-{
-    kDebug(1441) << "NMNetworkInterface::createNetwork() - " << uni;
-    NMNetwork * net = 0;
-    if (d->networks.contains(uni) && d->networks[uni] != 0)
-        net = d->networks[uni];
-    else
-    {
-        if (d->type == Solid::Control::NetworkInterface::Ieee8023)
-        {
-            net = new NMNetwork(uni);
-            //net->setActivated(true);
-        }
-        else if (d->type == Solid::Control::NetworkInterface::Ieee80211)
-        {
-            net = new NMWirelessNetwork(uni);
-        }
-        if (d->cachedNetworkProps.first == uni)
-            net->setProperties(d->cachedNetworkProps.second);
-        d->networks.insert(uni, net);
-    }
-    return net;
-}
-#endif
-
 QString NMNetworkInterface::activeNetwork() const
 {
     Q_D(const NMNetworkInterface);

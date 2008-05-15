@@ -192,27 +192,6 @@ Solid::Control::WirelessNetworkInterface::OperationMode NMWirelessNetwork::mode(
     return d->mode;
 }
 
-bool NMWirelessNetwork::isAssociated() const
-{
-#warning NMWirelessNetwork::isAssociated() is unimplemented
-    kDebug(1441) << "Fixme: implement NMWirelessNetwork::isAssociated()";
-    return true;
-}
-
-bool NMWirelessNetwork::isEncrypted() const
-{
-    Q_D(const NMWirelessNetwork);
-    // FIXME
-    return !(d->wirelessCapabilities  & Solid::Control::WirelessNetworkInterface::NoCapability) ;
-}
-
-bool NMWirelessNetwork::isHidden() const
-{
-#warning NMWirelessNetwork::isHidden() is unimplemented
-    kDebug(1441) << "Fixme: implement NMWirelessNetwork::isHidden()";
-    return true;
-}
-
 Solid::Control::Authentication * NMWirelessNetwork::authentication() const
 {
     Q_D(const NMWirelessNetwork);

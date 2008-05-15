@@ -43,9 +43,6 @@ public:
     int bitRate() const;
     Solid::Control::WirelessNetworkInterface::Capabilities wirelessCapabilities() const;
     Solid::Control::WirelessNetworkInterface::OperationMode mode() const;
-    bool isAssociated() const; // move to Device, is this a property on device?
-    bool isEncrypted() const;
-    bool isHidden() const;
     Solid::Control::Authentication *authentication() const;
     void setAuthentication(Solid::Control::Authentication *authentication);
     void setSignalStrength(const QDBusObjectPath & netPath, int strength);

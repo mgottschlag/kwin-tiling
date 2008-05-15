@@ -69,17 +69,9 @@ public:
     int designSpeed() const;
     bool isLinkUp() const;
     Solid::Control::NetworkInterface::Capabilities capabilities() const;
-#if 0
-    QObject *createNetwork(const QString  & uni);
-#endif
     QString activeNetwork() const;
     // These setters are used to update the interface by the manager
     // in response to DBus signals
-    // Used for ethernet devices to create the network object implied by
-    // NetworkManager using the info returned by getProperties
-#if 0
-    void setNetwork(const NMDBusNetworkProperties  &);
-#endif
     void setSignalStrength(int);
     void setCarrierOn(bool);
     void setActive(bool);
