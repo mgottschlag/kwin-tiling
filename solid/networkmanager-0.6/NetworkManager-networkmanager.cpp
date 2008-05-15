@@ -130,7 +130,7 @@ QStringList NMNetworkManager::networkInterfaces() const
 QObject * NMNetworkManager::createNetworkInterface(const QString  & uni)
 {
     kDebug(1441) << uni;
-    NMNetworkInterface * netInterface;
+    NMNetworkInterface * netInterface = 0;
     if (d->interfaces.contains(uni))
     {
         netInterface = d->interfaces[uni];
@@ -141,14 +141,13 @@ QObject * NMNetworkManager::createNetworkInterface(const QString  & uni)
                              uni,
                              "org.freedesktop.NetworkManager.Devices",
                              QDBusConnection::systemBus());
-        QDBusMessage reply = iface.call("getType");
-        const QList<QVariant> args = reply.arguments();
-        if (args.isEmpty())
+        QDBusReply<int> reply = iface.call("getType");
+        if (!reply.isValid())
         {
-            kDebug(1441) << "Invalid reply";
+            kDebug(1441) << "Invalid reply, most probably the specified device does not exists.";
             return 0;
         }
-        const int type = args.at(0).toInt();
+        const int type = reply.value();
         switch (type)
         {
 #if 0
