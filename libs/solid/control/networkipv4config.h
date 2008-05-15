@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef SOLID_CONTROL_NETWORKIPV4CONFIG_H
 #define SOLID_CONTROL_NETWORKIPV4CONFIG_H
 
-#include <QStringList>
+#include <QtCore/QStringList>
 
 #include <solid/control/solid_control_export.h>
 
