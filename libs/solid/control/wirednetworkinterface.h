@@ -83,7 +83,7 @@ namespace Control
          *
          * @return true if there's a carrier, false otherwise
          */
-        virtual bool carrier() const;
+        bool carrier() const;
 
     Q_SIGNALS:
         /**
