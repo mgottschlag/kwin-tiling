@@ -109,8 +109,6 @@ namespace Control
          */
         WiredNetworkInterface(WiredNetworkInterfacePrivate &dd, const WiredNetworkInterface &network);
 
-        WiredNetworkInterfacePrivate *d_ptr;
-
     private:
         friend class NetworkInterface;
         friend class NetworkInterfacePrivate;
