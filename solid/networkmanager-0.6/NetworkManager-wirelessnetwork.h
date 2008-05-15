@@ -26,11 +26,6 @@
 
 #include "NetworkManager-networkinterface.h"
 
-namespace Solid {
-namespace Control {
-class Authentication;
-}
-}
 class NMWirelessNetworkPrivate;
 
 class KDE_EXPORT NMWirelessNetwork : public NMNetworkInterface, virtual public Solid::Control::Ifaces::WirelessNetworkInterface
@@ -43,8 +38,6 @@ public:
     int bitRate() const;
     Solid::Control::WirelessNetworkInterface::Capabilities wirelessCapabilities() const;
     Solid::Control::WirelessNetworkInterface::OperationMode mode() const;
-    Solid::Control::Authentication *authentication() const;
-    void setAuthentication(Solid::Control::Authentication *authentication);
     void setSignalStrength(const QDBusObjectPath & netPath, int strength);
     void setBitrate(int rate);
 #if 0

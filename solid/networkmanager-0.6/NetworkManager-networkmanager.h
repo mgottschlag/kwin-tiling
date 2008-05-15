@@ -37,7 +37,6 @@ Q_OBJECT
         Solid::Networking::Status status() const;
         QStringList networkInterfaces() const;
         QObject * createNetworkInterface(const QString &);
-        QObject * createAuthenticationValidator();
         void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QString & extra_connection_parameter);
         void deactivateConnection(const QString & activeConnection);
 

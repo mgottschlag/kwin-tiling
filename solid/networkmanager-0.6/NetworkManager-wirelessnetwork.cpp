@@ -117,7 +117,7 @@ class NMWirelessNetworkPrivate : public NMNetworkInterfacePrivate
 public:
     NMWirelessNetworkPrivate(const QString  & netPath)
         : NMNetworkInterfacePrivate(netPath),
-        rate(0), authentication(0) { }
+        rate(0) { }
     Q_DECLARE_PUBLIC(NMWirelessNetwork)
     /* reimp */ void notifyNewNetwork(const QDBusObjectPath & netPath);
     /* reimp */ void notifyRemoveNetwork(const QDBusObjectPath & netPath);
@@ -126,7 +126,6 @@ public:
     int rate;
     Solid::Control::WirelessNetworkInterface::OperationMode mode;
     Solid::Control::WirelessNetworkInterface::Capabilities wirelessCapabilities;
-    Solid::Control::Authentication * authentication;
     QHash<QString, NMAccessPoint*> accessPoints;
 };
 
@@ -190,18 +189,6 @@ Solid::Control::WirelessNetworkInterface::OperationMode NMWirelessNetwork::mode(
 {
     Q_D(const NMWirelessNetwork);
     return d->mode;
-}
-
-Solid::Control::Authentication * NMWirelessNetwork::authentication() const
-{
-    Q_D(const NMWirelessNetwork);
-    return d->authentication;
-}
-
-void NMWirelessNetwork::setAuthentication(Solid::Control::Authentication * auth)
-{
-    Q_D(NMWirelessNetwork);
-    d->authentication = auth;
 }
 
 void NMWirelessNetwork::setSignalStrength(const QDBusObjectPath & netPath, int strength)

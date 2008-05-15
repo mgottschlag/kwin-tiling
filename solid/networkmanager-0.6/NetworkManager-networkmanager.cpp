@@ -170,12 +170,6 @@ QObject * NMNetworkManager::createNetworkInterface(const QString  & uni)
     return netInterface;
 }
 
-QObject * NMNetworkManager::createAuthenticationValidator()
-{
-    kDebug(1441) << "implement me";
-    return 0;
-}
-
 bool NMNetworkManager::isNetworkingEnabled() const
 {
     kDebug(1441);
