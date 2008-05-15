@@ -37,11 +37,7 @@ KdmPixmap::KdmPixmap( QObject *parent, const QDomNode &node )
 
 	// Set default values for pixmap (note: strings are already Null)
 	pixmap.normal.tint.setRgb( 0xFFFFFF );
-	pixmap.normal.svgRenderer = 0;
-	pixmap.active.present = false;
-	pixmap.active.svgRenderer = 0;
-	pixmap.prelight.present = false;
-	pixmap.prelight.svgRenderer = 0;
+	pixmap.normal.present = true;
 
 	// Read PIXMAP TAGS
 	QDomNodeList childList = node.childNodes();

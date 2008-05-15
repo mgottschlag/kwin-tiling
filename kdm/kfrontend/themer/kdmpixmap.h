@@ -54,6 +54,8 @@ protected:
 
 	struct PixmapStruct {
 		struct PixmapClass {
+			PixmapClass()
+				: svgRenderer(0), present(false), svgImage(false) {}
 			QString fullpath;
 			QImage image;
 			KSvgRenderer *svgRenderer;
