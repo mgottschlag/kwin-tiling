@@ -19,7 +19,9 @@
 
 #include "NetworkManager-wirelessaccesspoint.h"
 
-#include <QtDBus>
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusMessage>
+
 #include <kdebug.h>
 
 namespace AP
