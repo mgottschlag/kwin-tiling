@@ -261,12 +261,6 @@ void PlasmaApp::cleanup()
     delete m_corona;
 }
 
-void PlasmaApp::initializeWallpaper()
-{
-    //FIXME this has moved to Containment, so .....
-    //m_root->desktop()->initializeWallpaper();
-}
-
 void PlasmaApp::toggleDashboard()
 {
     int currentScreen = 0;
