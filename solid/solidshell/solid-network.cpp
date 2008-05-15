@@ -647,6 +647,10 @@ bool SolidNetwork::netmgrQueryNetworkInterface(const QString  & deviceUni)
 {
     cerr << "SolidNetwork::netmgrQueryNetworkInterface()" << endl;
     Solid::Control::NetworkInterface * device = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
+    if (!device) {
+        cerr << "No such interface: " << deviceUni << endl;
+        return false;
+    }
     Solid::Control::WirelessNetworkInterface * wifiDev =  qobject_cast<Solid::Control::WirelessNetworkInterface *>(device);
     Solid::Control::WiredNetworkInterface * wiredDev =  qobject_cast<Solid::Control::WiredNetworkInterface *>(device);
     if (wifiDev) {
