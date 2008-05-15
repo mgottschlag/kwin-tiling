@@ -52,7 +52,7 @@ Solid::Control::NetworkInterface::NetworkInterface(NetworkInterfacePrivate &dd, 
 
 Solid::Control::NetworkInterface::~NetworkInterface()
 {
-
+    delete d_ptr;
 }
 
 Solid::Control::NetworkInterface::Type Solid::Control::NetworkInterface::type() const

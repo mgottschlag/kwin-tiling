@@ -23,10 +23,20 @@
 #include <kservice.h>
 #include <klibloader.h>
 
+#include <kglobal.h>
 #include <klocale.h>
 #include <kdebug.h>
 
-static QMap<QString, QObject *> _k_preloadedBackends;
+namespace
+{
+    class AutoDeleteObjectStapMap : public QMap<QString, QObject *>
+    {
+    public:
+        AutoDeleteObjectStapMap() {}
+        ~AutoDeleteObjectStapMap() { qDeleteAll(begin(), end()); }
+    };
+}
+K_GLOBAL_STATIC(AutoDeleteObjectStapMap, _k_preloadedBackends)
 
 Solid::Control::ManagerBasePrivate::ManagerBasePrivate()
     : m_backend(0)
@@ -35,13 +45,14 @@ Solid::Control::ManagerBasePrivate::ManagerBasePrivate()
 
 Solid::Control::ManagerBasePrivate::~ManagerBasePrivate()
 {
+    delete m_backend;
 }
 
 void Solid::Control::ManagerBasePrivate::loadBackend(const QString &description, const char *serviceName,
                                             const char *backendClassName)
 {
-    if (_k_preloadedBackends.contains(backendClassName)) {
-        m_backend = _k_preloadedBackends[backendClassName];
+    if (_k_preloadedBackends->contains(backendClassName)) {
+        m_backend = _k_preloadedBackends->value(backendClassName, 0);
         return;
     }
 
@@ -109,7 +120,7 @@ QObject *Solid::Control::ManagerBasePrivate::managerBackend() const
 
 void Solid::Control::ManagerBasePrivate::_k_forcePreloadedBackend(const char *backendClassName, QObject *backend)
 {
-    _k_preloadedBackends[backendClassName] = backend;
+    (*_k_preloadedBackends)[backendClassName] = backend;
 }
 
 
