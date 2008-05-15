@@ -58,7 +58,7 @@ Solid::Control::NetworkManagerPrivate::~NetworkManagerPrivate()
 
     foreach (const NetworkInterfaceIfacePair &pair, m_networkInterfaceMap.values()) {
         delete pair.first;
-        // delete pair.second; // no, it's owned by the backend
+        delete pair.second;
     }
 
     m_networkInterfaceMap.clear();
