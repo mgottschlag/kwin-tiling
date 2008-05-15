@@ -241,14 +241,14 @@ PanelController::PanelController(QWidget* parent)
 
     //Add buttons
     //alignment
-    d->leftAlignTool = d->addTool("format-justify-left", i18n("Align panel left"), Qt::ToolButtonIconOnly, true);
+    d->leftAlignTool = d->addTool("format-justify-left", i18n("Align panel to left"), Qt::ToolButtonIconOnly, true);
     d->leftAlignTool->setChecked(true);
     connect(d->leftAlignTool, SIGNAL(toggled(bool)), this, SLOT(alignToggled(bool)));
 
-    d->centerAlignTool = d->addTool("format-justify-center", i18n("Align panel center"), Qt::ToolButtonIconOnly, true);
+    d->centerAlignTool = d->addTool("format-justify-center", i18n("Align panel to center"), Qt::ToolButtonIconOnly, true);
     connect(d->centerAlignTool, SIGNAL(clicked(bool)), this, SLOT(alignToggled(bool)));
 
-    d->rightAlignTool = d->addTool("format-justify-right", i18n("Align panel right"), Qt::ToolButtonIconOnly, true);
+    d->rightAlignTool = d->addTool("format-justify-right", i18n("Align panel to right"), Qt::ToolButtonIconOnly, true);
     connect(d->rightAlignTool, SIGNAL(clicked(bool)), this, SLOT(alignToggled(bool)));
 
     d->layout->addStretch();
@@ -261,6 +261,10 @@ PanelController::PanelController(QWidget* parent)
     QToolButton *removePanelTool = d->addTool("list-remove", i18n("Remove this panel"));
     connect(removePanelTool, SIGNAL(clicked()), this, SIGNAL(removePanel()));
     connect(removePanelTool, SIGNAL(clicked()), this, SLOT(hideController()));
+
+    d->layout->addSpacing(20);
+    QToolButton *closeControllerTool = d->addTool("window-close", i18n("Close this configuration window"), Qt::ToolButtonIconOnly, true);
+    connect(closeControllerTool, SIGNAL(clicked()), this, SLOT(hideController()));
 
     d->ruler = new PositioningRuler(this);
     connect(d->ruler, SIGNAL(rulersMoved(int, int, int)), this, SLOT(rulersMoved(int, int, int)));
