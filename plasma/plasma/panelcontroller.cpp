@@ -265,7 +265,7 @@ PanelController::PanelController(QWidget* parent)
     connect(removePanelTool, SIGNAL(clicked()), this, SLOT(hideController()));
 
     d->layout->addSpacing(20);
-    QToolButton *closeControllerTool = d->addTool("window-close", i18n("Close this configuration window"), Qt::ToolButtonIconOnly, true);
+    QToolButton *closeControllerTool = d->addTool("window-close", i18n("Close this configuration window"), Qt::ToolButtonIconOnly, false);
     connect(closeControllerTool, SIGNAL(clicked()), this, SLOT(hideController()));
 
     d->ruler = new PositioningRuler(this);
