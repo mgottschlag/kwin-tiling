@@ -245,7 +245,7 @@ MacAddressList NMWirelessNetwork::accessPoints() const
 
 QString NMWirelessNetwork::activeAccessPoint() const
 {
-#warning implement me!
+#warning NMWirelessNetwork::activeAccessPoint() is unimplemented
     kDebug();
     return QString();
 }

@@ -196,20 +196,20 @@ bool NMNetworkManager::isWirelessEnabled() const
 
 bool NMNetworkManager::isWirelessHardwareEnabled() const
 {
-#warning implement me!
+#warning NMNetworkManager::isWirelessHardwareEnabled() is unimplemented
     kDebug(1441);
     return true;
 }
 
 void NMNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QString & extra_connection_parameter)
 {
-#warning implement me!
+#warning NMNetworkManager::activateConnection() is unimplemented
     kDebug(1441) << interfaceUni << connectionUni << extra_connection_parameter;
 }
 
 void NMNetworkManager::deactivateConnection(const QString & activeConnection)
 {
-#warning implement me!
+#warning NMNetworkManager::deactivateConnection() is unimplemented
     kDebug(1441) << activeConnection;
 }
 

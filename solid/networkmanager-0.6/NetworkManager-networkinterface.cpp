@@ -323,14 +323,14 @@ QString NMNetworkInterface::driver() const
 
 Solid::Control::IPv4Config NMNetworkInterface::ipV4Config() const
 {
-#warning implement me!
+#warning NMNetworkInterface::ipV4Config() is unimplemented
     kDebug();
     return Solid::Control::IPv4Config();
 }
 
 QString NMNetworkInterface::activeConnection() const
 {
-#warning implement me!
+#warning NMNetworkInterface::activeConnection() is unimplemented
     kDebug();
     return QString();
 }
