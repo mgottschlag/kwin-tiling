@@ -48,7 +48,6 @@ using namespace Plasma;
 
 Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
-      m_dialog(0),
       m_appletBrowserAction(0),
       m_configureAction(0),
       m_removeAction(0),
@@ -74,7 +73,6 @@ Panel::Panel(QObject *parent, const QVariantList &args)
 
 Panel::~Panel()
 {
-    delete m_dialog;
 }
 
 void Panel::init()
@@ -99,7 +97,7 @@ QList<QAction*> Panel::contextualActions()
 
         m_configureAction = new QAction(i18n("Panel Settings"), this);
         m_configureAction->setIcon(KIcon("configure"));
-        connect(m_configureAction, SIGNAL(triggered()), this, SLOT(configure()));
+        connect(m_configureAction, SIGNAL(triggered()), this, SIGNAL(toolBoxToggled()));
 
         m_removeAction = new QAction(i18n("Remove this Panel"), this);
         m_removeAction->setIcon(KIcon("edit-delete"));
@@ -380,95 +378,6 @@ void Panel::showAddWidgets()
     emit showAddWidgetsInterface(QPointF());
 }
 
-void Panel::configure()
-{
-    if (! m_dialog) {
-        m_dialog = new KDialog();
-        m_dialog->setCaption( i18nc("@title:window","Panel Settings") );
-        m_dialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
-        connect(m_dialog, SIGNAL(applyClicked()), this, SLOT(applyConfig()));
-        connect(m_dialog, SIGNAL(okClicked()), this, SLOT(applyConfig()));
-
-        QWidget *p = m_dialog->mainWidget();
-        QGridLayout *l = new QGridLayout(p);
-        p->setLayout(l);
-
-        QLabel *sizeLabel = new QLabel(i18n("Size:"), p);
-        l->addWidget(sizeLabel, 0, 0);
-        m_sizeCombo = new QComboBox(p);
-        sizeLabel->setBuddy(m_sizeCombo);
-        l->addWidget(m_sizeCombo, 0, 1);
-        m_sizeCombo->addItem(i18n("Tiny"), QVariant(32));
-        m_sizeCombo->addItem(i18n("Small"), QVariant(40));
-        m_sizeCombo->addItem(i18n("Normal"), QVariant(56));
-        m_sizeCombo->addItem(i18n("Large"), QVariant(72));
-        m_sizeCombo->addItem(i18n("Custom"));
-        m_sizeEdit = new KIntNumInput(p);
-        m_sizeEdit->setRange(16, 256);
-        l->addWidget(m_sizeEdit, 1, 1);
-        l->setColumnStretch(1,1);
-        connect(m_sizeCombo, SIGNAL(currentIndexChanged(int)), this, SLOT(sizeComboChanged()));
-
-        QLabel *lengthLabel = new QLabel(i18n("Length:"), p);
-        l->addWidget(lengthLabel, 2, 0);
-        m_lengthEdit = new KIntNumInput(p);
-        QRect screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) : geometry().toRect();
-        int screenlength = 0;
-        int currentlength = 0;
-        switch (location()) {
-            case BottomEdge:
-            case TopEdge:
-            case Floating:
-                screenlength = screenRect.width();
-                currentlength = m_currentSize.width();
-                break;
-            case RightEdge:
-            case LeftEdge:
-                screenlength = screenRect.height();
-                currentlength = m_currentSize.height();
-                break;
-            default:
-                kDebug() << "shouldn't happen!" << location();
-            return;
-        }
-        m_lengthEdit->setRange(0, screenlength);
-        m_lengthEdit->setValue(currentlength);
-        l->addWidget(m_lengthEdit, 2, 1);
-
-        QLabel *locationLabel = new QLabel(i18n("Location:"), p);
-        l->addWidget(locationLabel, 3, 0);
-        m_locationCombo = new QComboBox(p);
-        locationLabel->setBuddy(m_locationCombo);
-        l->addWidget(m_locationCombo, 3, 1);
-        m_locationCombo->addItem(i18n("Bottom"), Plasma::BottomEdge);
-        m_locationCombo->addItem(i18n("Top"), Plasma::TopEdge);
-        m_locationCombo->addItem(i18n("Right"), Plasma::RightEdge);
-        m_locationCombo->addItem(i18n("Left"), Plasma::LeftEdge);
-    }
-
-    int panelSize = (formFactor() == Plasma::Horizontal) ? size().toSize().height() : size().toSize().width();
-    int idx = m_sizeCombo->count() - 1;
-    for (int i = 0; i <= m_sizeCombo->count() - 2; ++i) {
-        if (m_sizeCombo->itemData(i).toInt() == panelSize) {
-            idx = i;
-            break;
-        }
-    }
-    m_sizeCombo->setCurrentIndex(idx);
-    m_sizeEdit->setValue(panelSize);
-    sizeComboChanged();
-    idx = 0;
-    for (int i = 0; i < m_locationCombo->count(); i++) {
-        if (m_locationCombo->itemData(i).toInt() == location()) {
-            idx = i;
-            break;
-        }
-    }
-    m_locationCombo->setCurrentIndex(idx);
-
-    m_dialog->show();
-}
-
 void Panel::remove()
 {
     if (KMessageBox::warningContinueCancel(0, i18n( "Do you really want to remove this panel?"),
@@ -479,29 +388,6 @@ void Panel::remove()
     }
 }
 
-void Panel::applyConfig()
-{
-    QSize newSize = QSize(m_lengthEdit->value(), m_sizeCombo->itemData(m_sizeCombo->currentIndex()).toInt());
-    if (newSize.height() == 0) {
-        newSize = QSize(m_lengthEdit->value(), m_sizeEdit->value());
-    }
-    Plasma::Location newLoc = (Plasma::Location)(m_locationCombo->itemData(m_locationCombo->currentIndex()).toInt());
-
-    //swap width and height if the panel is vertical
-    if (newLoc == LeftEdge || newLoc == RightEdge) {
-        newSize = QSize(newSize.height(), newSize.width());
-    }
-
-    if (newLoc != location()) {
-        //m_currentSize = newSize;
-        setFormFactorFromLocation(newLoc);
-        setLocation(newLoc);
-    }
-    if (newSize != m_currentSize) {
-        updateSize(newSize);
-    }
-
-}
 
 void Panel::setFormFactorFromLocation(Plasma::Location loc) {
     switch (loc) {
@@ -522,23 +408,6 @@ void Panel::setFormFactorFromLocation(Plasma::Location loc) {
         default:
             kDebug() << "invalid location!!";
     }
-}
-
-//assumes location is an edge and screen is valid
-//TODO handle floating location too
-void Panel::updateSize(const QSize &newSize)
-{
-    resize(newSize);
-    setMinimumSize(newSize);
-    setMaximumSize(newSize);
-    m_currentSize = newSize;
-    //kDebug( )<< "geometry is now" << geometry() << sceneBoundingRect();
-}
-
-void Panel::sizeComboChanged()
-{
-    QVariant v = m_sizeCombo->itemData(m_sizeCombo->currentIndex());
-    m_sizeEdit->setEnabled(v.isNull());
 }
 
 K_EXPORT_PLASMA_APPLET(panel, Panel)

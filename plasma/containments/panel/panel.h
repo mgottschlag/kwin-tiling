@@ -48,23 +48,13 @@ public:
                         const QStyleOptionGraphicsItem *option,
                         const QRect &contentsRect);
     void paintBackground(QPainter *painter, const QRect &contentsRect);
-    /**
-     * resize the appropriate dimension to newSize
-     * if the panel is horizontal this changes the height
-     * if it's vertical this changes the width
-     * the other dimension will be resized to the screen width/height.
-     */
-    void updateSize(const QSize &newSize);
 
 protected:
     void saveState(KConfigGroup* config) const;
 
 private slots:
-    void configure();
     void remove();
-    void applyConfig();
     void themeUpdated();
-    void sizeComboChanged();
     void backgroundChanged();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void appletRemoved(Plasma::Applet* applet);
@@ -82,11 +72,6 @@ private:
     void updateBorders(const QRect &geom);
 
     Plasma::PanelSvg *m_background;
-    KDialog* m_dialog;
-    QComboBox* m_sizeCombo;
-    KIntNumInput* m_sizeEdit;
-    KIntNumInput* m_lengthEdit;
-    QComboBox* m_locationCombo;
     QAction* m_appletBrowserAction;
     QAction* m_configureAction;
     QAction* m_removeAction;
