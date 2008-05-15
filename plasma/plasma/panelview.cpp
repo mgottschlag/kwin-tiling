@@ -49,10 +49,10 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     m_offset = m_viewConfig.readEntry("Offset", 0);
     m_alignment = alignmentFilter((Qt::Alignment)m_viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
 
+    updatePanelGeometry();
+
     m_panelController->setAlignment(m_alignment);
     m_panelController->setOffset(m_offset);
-
-    updatePanelGeometry();
 
     if (panel) {
         connect(panel, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
