@@ -67,6 +67,8 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList  & /*arg
     connectNMToThis("DeviceActivating", activating(QDBusObjectPath));
     //TODO: find a way to connect to the wireless variant of this, incl essid
     connectNMToThis("DeviceActivationFailed", activationFailed(QDBusObjectPath));
+
+    qDBusRegisterMetaType<QList<QDBusObjectPath> >();
 }
 
 NMNetworkManager::~NMNetworkManager()
@@ -107,8 +109,6 @@ QStringList NMNetworkManager::networkInterfaces() const
 {
     kDebug(1441);
     QStringList networkInterfaces;
-
-    qDBusRegisterMetaType<QList<QDBusObjectPath> >();
 
     // wtf does this work when not called on org.freedesktop.NetworkManager.Devices?
     QDBusReply< QList <QDBusObjectPath> > deviceList = d->manager.call("getDevices");
