@@ -146,7 +146,7 @@ void NMWirelessNetworkPrivate::notifyRemoveNetwork(const QDBusObjectPath & netPa
     const QString path = netPath.path();
     QHash<QString, NMAccessPoint*>::Iterator it = accessPoints.find(path);
     if (it != accessPoints.end()) {
-        // ### who owns the AccessPoint's?
+        delete it.value();
         accessPoints.erase(it);
         emit q->accessPointDisappeared(path);
     }
@@ -161,6 +161,8 @@ NMWirelessNetwork::NMWirelessNetwork(const QString  & networkPath)
 
 NMWirelessNetwork::~NMWirelessNetwork()
 {
+    Q_D(NMWirelessNetwork);
+    qDeleteAll(d->accessPoints);
 }
 
 void NMWirelessNetworkPrivate::applyProperties(const NMDBusDeviceProperties & props)
