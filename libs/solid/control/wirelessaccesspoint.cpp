@@ -67,7 +67,7 @@ Solid::Control::AccessPoint::AccessPoint(AccessPointPrivate &dd, const AccessPoi
 
 Solid::Control::AccessPoint::~AccessPoint()
 {
-
+    delete d_ptr;
 }
 
 QString Solid::Control::AccessPoint::uni() const
