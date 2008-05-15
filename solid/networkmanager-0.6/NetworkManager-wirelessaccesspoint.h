@@ -52,13 +52,6 @@ public:
     Solid::Control::WirelessNetworkInterface::OperationMode mode() const;
     void setSignalStrength(int strength);
     int signalStrength() const;
-Q_SIGNALS:
-    void signalStrengthChanged(int strength);
-    void bitRateChanged(int bitrate);
-    void wpaFlagsChanged(Solid::Control::AccessPoint::WpaFlags flags);
-    void rsnFlagsChanged(Solid::Control::AccessPoint::WpaFlags flags);
-    void ssidChanged(const QString &ssid);
-    void frequencyChanged(uint frequency);
 private:
     NMAccessPointPrivate * d;
 };
