@@ -491,6 +491,56 @@ void PositioningRuler::paintEvent(QPaintEvent *event)
     d->sliderGraphics->paint(&painter, d->offsetSliderRect, elementPrefix + "offsetslider");
 }
 
+void PositioningRuler::wheelEvent(QWheelEvent *event)
+{
+    QPoint movement;
+    int hMargins = 0;
+    int vMargins = 0;
+
+    if (d->location == Plasma::LeftEdge || d->location == Plasma::RightEdge) {
+        vMargins = 200;
+        if (event->delta() < 0) {
+            movement = QPoint(0, 20);
+        } else {
+            movement = QPoint(0, -20);
+        }
+    } else {
+        hMargins = 100;
+        if (event->delta() < 0) {
+            movement = QPoint(20, 0);
+        } else {
+            movement = QPoint(-20, 0);
+        }
+    }
+
+    if (d->alignment != Qt::AlignLeft && d->leftMaxSliderRect.adjusted(-hMargins, -vMargins, hMargins, vMargins).contains(event->pos())) {
+        d->dragging = Private::LeftMaxSlider;
+        movement += d->leftMaxSliderRect.center();
+    } else if (d->alignment != Qt::AlignRight && d->rightMaxSliderRect.adjusted(-hMargins, -vMargins, hMargins, vMargins).contains(event->pos())) {
+        d->dragging = Private::RightMaxSlider;
+        movement += d->rightMaxSliderRect.center();
+    } else if (d->alignment != Qt::AlignLeft && d->leftMinSliderRect.adjusted(-hMargins, -vMargins, hMargins, vMargins).contains(event->pos())) {
+        d->dragging = Private::LeftMinSlider;
+        movement += d->leftMinSliderRect.center();
+    } else if (d->alignment != Qt::AlignRight && d->rightMinSliderRect.adjusted(-hMargins, -vMargins, hMargins, vMargins).contains(event->pos())) {
+        d->dragging = Private::RightMinSlider;
+        movement += d->rightMinSliderRect.center();
+    } else if (d->offsetSliderRect.adjusted(-hMargins, -vMargins, hMargins, vMargins).contains(event->pos())) {
+        d->dragging = Private::OffsetSlider;
+        movement += d->offsetSliderRect.center();
+    } else {
+        d->dragging = Private::NoElement;
+    }
+
+    //do a fake mouse move event that drags the slider around
+    if (d->dragging != Private::NoElement) {
+        d->startDragPos = QPoint(0,0);
+        QMouseEvent mouseEvent(QEvent::MouseMove, movement, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+        mouseMoveEvent(&mouseEvent);
+        d->dragging = Private::NoElement;
+    }
+}
+
 void PositioningRuler::mousePressEvent(QMouseEvent *event)
 {
     if (d->alignment != Qt::AlignLeft && d->leftMaxSliderRect.contains(event->pos())) {
