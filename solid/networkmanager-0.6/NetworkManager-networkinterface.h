@@ -67,7 +67,6 @@ public:
     Solid::Control::NetworkInterface::ConnectionState connectionState() const;
     int signalStrength() const;
     int designSpeed() const;
-    bool isLinkUp() const;
     Solid::Control::NetworkInterface::Capabilities capabilities() const;
     QString activeNetwork() const;
     // These setters are used to update the interface by the manager

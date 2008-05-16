@@ -109,7 +109,6 @@ NMNetworkInterface::NMNetworkInterface(NMNetworkInterfacePrivate &dd)
 
 void NMNetworkInterfacePrivate::initGeneric()
 {
-    Q_Q(NMNetworkInterface);
     QDBusMessage reply = iface.call("getProperties");
     NMDBusDeviceProperties dev;
     deserialize(reply, dev);
@@ -118,24 +117,6 @@ void NMNetworkInterfacePrivate::initGeneric()
     QDBusReply<QString> dbusdriver = iface.call("getDriver");
     if (dbusdriver.isValid())
         driver = dbusdriver.value();
-#if 0
-    // insert empty networks in our map.  These will be expanded on demand
-    foreach (const QString & netPath, dev.networks)
-        networks.insert(netPath, 0);
-
-    if (type == Solid::Control::NetworkInterface::Ieee8023)
-    {
-        QString fakeNetPath = objectPath + "/Networks/ethernet";
-        networks.insert(fakeNetPath, 0);
-        cachedNetworkProps.first = fakeNetPath;
-        cachedNetworkProps.second = net;
-    }
-    else if (type == Solid::Control::NetworkInterface::Ieee80211)
-    {
-        cachedNetworkProps.first = dev.activeNetPath;
-        cachedNetworkProps.second = net;
-    }
-#endif
 }
 
 NMNetworkInterface::~NMNetworkInterface()
@@ -177,12 +158,6 @@ int NMNetworkInterface::designSpeed() const
 {
     Q_D(const NMNetworkInterface);
     return d->designSpeed;
-}
-
-bool NMNetworkInterface::isLinkUp() const
-{
-    Q_D(const NMNetworkInterface);
-    return d->carrier;
 }
 
 Solid::Control::NetworkInterface::Capabilities NMNetworkInterface::capabilities() const

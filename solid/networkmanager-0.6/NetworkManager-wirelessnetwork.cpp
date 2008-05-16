@@ -112,8 +112,6 @@ Solid::Control::WirelessNetworkInterface::OperationMode getOperationMode(const i
 }
 
 
-typedef void Encryption;
-
 class NMWirelessNetworkPrivate : public NMNetworkInterfacePrivate
 {
 public:
@@ -172,7 +170,6 @@ void NMWirelessNetworkPrivate::readActiveAccessPoint()
 NMWirelessNetwork::NMWirelessNetwork(const QString  & networkPath)
  : NMNetworkInterface(*new NMWirelessNetworkPrivate(networkPath))
 {
-    //kDebug(1441) << "NMWirelessNetwork::NMWirelessNetwork() - " << networkPath;
     Q_D(NMWirelessNetwork);
     d->readActiveAccessPoint();
 }
