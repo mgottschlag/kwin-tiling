@@ -162,7 +162,7 @@ namespace Control
          *
          * @param frequency the new frequency
          */
-        void frequencyChanged(double frequency) const;
+        void frequencyChanged(uint frequency) const;
     protected:
         /**
          * @internal
