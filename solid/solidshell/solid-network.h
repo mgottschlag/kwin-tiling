@@ -45,6 +45,7 @@ public:
     bool netmgrList();
     bool netmgrNetworkingEnabled();
     bool netmgrWirelessEnabled();
+    bool netmgrWirelessHardwareEnabled();
     bool netmgrChangeNetworkingEnabled(bool enabled);
     bool netmgrChangeWirelessEnabled(bool enabled);
     bool netmgrListNetworks(const QString &device);

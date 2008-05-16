@@ -323,12 +323,14 @@ int main(int argc, char **argv)
       cout << "  solid-network listnetworks 'uni'" << endl;
       cout << i18n("             # List the networks known to the device specified by 'uni'.\n") << endl;
 
-      cout << "  solid-network query (status|wireless)|(interface 'uni')|(network 'device-uni' 'network-uni')" << endl;
+      cout << "  solid-network query (status|wireless|wireless-hardware)|(interface 'uni')|(network 'device-uni' 'network-uni')" << endl;
       cout << i18n("             # Query whether networking features are active or not.\n"
                     "             # - If the 'status' option is given, return whether\n"
                     "             # networking is enabled for the system\n"
                     "             # - If the 'wireless' option is is given, return whether\n"
                     "             # wireless is enabled for the system\n"
+                    "             # - If the 'wireless-hardware' option is is given,\n"
+                    "             #  return whether the wireless hardware is enabled\n"
                     "             # - If the 'interface' option is given, print the\n"
                     "             # properties of the network interface that 'uni' refers to.\n"
                     "             # - If the 'network' option is given, print the\n"
@@ -375,6 +377,8 @@ bool SolidNetwork::doIt()
             return shell.netmgrNetworkingEnabled();
         else if (what == "wireless")
             return shell.netmgrWirelessEnabled();
+        else if (what == "wireless-hardware")
+            return shell.netmgrWirelessHardwareEnabled();
         else if (what == "interface")
         {
             checkArgumentCount(3, 3);
@@ -600,6 +604,15 @@ bool SolidNetwork::netmgrWirelessEnabled()
     else
         cout << i18n("wireless: is not enabled")<< endl;
     return Solid::Control::NetworkManager::isWirelessEnabled();
+}
+
+bool SolidNetwork::netmgrWirelessHardwareEnabled()
+{
+    if (Solid::Control::NetworkManager::isWirelessHardwareEnabled())
+        cout << i18n("wireless hardware: is enabled")<< endl;
+    else
+        cout << i18n("wireless hardware: is not enabled")<< endl;
+    return Solid::Control::NetworkManager::isWirelessHardwareEnabled();
 }
 
 bool SolidNetwork::netmgrChangeNetworkingEnabled(bool enabled)
