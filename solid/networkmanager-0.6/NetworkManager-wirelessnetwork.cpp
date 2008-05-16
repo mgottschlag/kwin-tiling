@@ -215,7 +215,7 @@ void NMWirelessNetwork::setSignalStrength(const QDBusObjectPath & netPath, int s
 {
     Q_D(NMWirelessNetwork);
     QHash<QString, NMAccessPoint*>::ConstIterator it = d->accessPoints.find(netPath.path());
-    if (it != d->accessPoints.end()) {
+    if (it != d->accessPoints.end() && it.value()) {
         NMAccessPoint * ap = it.value();
         ap->setSignalStrength(strength);
     }
@@ -224,6 +224,9 @@ void NMWirelessNetwork::setSignalStrength(const QDBusObjectPath & netPath, int s
 void NMWirelessNetwork::setBitrate(int rate)
 {
     Q_D(NMWirelessNetwork);
+    if (d->rate == rate)
+        return;
+
     d->rate = rate;
     emit bitRateChanged(rate);
 }
