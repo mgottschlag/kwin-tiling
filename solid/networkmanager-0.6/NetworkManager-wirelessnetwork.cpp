@@ -191,6 +191,8 @@ void NMWirelessNetworkPrivate::applyProperties(const NMDBusDeviceProperties & pr
     Q_FOREACH (const QString & netudi, props.networks) {
         accessPoints.insert(netudi, 0);
     }
+    mode = getOperationMode(props.mode);
+    wirelessCapabilities = getCapabilities(props.capabilitiesType);
 }
 
 int NMWirelessNetwork::bitRate() const

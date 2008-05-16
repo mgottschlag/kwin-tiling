@@ -25,19 +25,29 @@
 
 #include <kdebug.h>
 
+#include <NetworkManager/NetworkManager.h>
+
+extern Solid::Control::WirelessNetworkInterface::OperationMode getOperationMode(const int nm);
+
 namespace AP
 {
 
-Solid::Control::WirelessNetworkInterface::OperationMode getOperationMode(int opmode)
+Solid::Control::AccessPoint::WpaFlags getWpaFlags(int netflags)
 {
-    Solid::Control::WirelessNetworkInterface::OperationMode mode;
-    return mode;
-}
-
-Solid::Control::AccessPoint::Capabilities getCapabilities(int netcap)
-{
-    Solid::Control::AccessPoint::Capabilities cap;
-    return cap;
+    Solid::Control::AccessPoint::WpaFlags f = (Solid::Control::AccessPoint::WpaFlags)0;
+    if (netflags  & NM_802_11_CAP_KEY_MGMT_PSK)
+        f |= Solid::Control::AccessPoint::KeyMgmtPsk;
+    if (netflags  & NM_802_11_CAP_KEY_MGMT_802_1X)
+        f |= Solid::Control::AccessPoint::KeyMgmt8021x;
+    if (netflags  & NM_802_11_CAP_CIPHER_WEP40)
+        f |= Solid::Control::AccessPoint::PairWep40;
+    if (netflags  & NM_802_11_CAP_CIPHER_WEP104)
+        f |= Solid::Control::AccessPoint::PairWep104;
+    if (netflags  & NM_802_11_CAP_CIPHER_TKIP)
+        f |= Solid::Control::AccessPoint::GroupTkip;
+    if (netflags  & NM_802_11_CAP_CIPHER_CCMP)
+        f |= Solid::Control::AccessPoint::GroupCcmp;
+    return f;
 }
 
 }
@@ -85,8 +95,8 @@ void NMAccessPointPrivate::deserialize(const QDBusMessage &message)
     // frequency: NM 0.6 provides it in Hz, while we need MHz
     if (args.size() > 4) frequency = static_cast<uint>(args[4].toDouble() / 1000000);
     if (args.size() > 5) maxBitRate = args[5].toUInt();
-    if (args.size() > 6) mode = AP::getOperationMode(args[6].toInt());
-    if (args.size() > 7) capabilities = AP::getCapabilities(args[7].toInt());
+    if (args.size() > 6) mode = getOperationMode(args[6].toInt());
+    if (args.size() > 7) wpaFlags = AP::getWpaFlags(args[7].toInt());
     if (args.size() > 8) broadcast = args[8].toBool();
 }
 
