@@ -193,6 +193,101 @@ std::ostream &operator<<(std::ostream &out, const Solid::Control::AccessPoint &a
     out << "  Frequency (MHz) =    " << ap.frequency() << endl;
     out << "  Max BitRate (Kb/s) = " << ap.maxBitRate() << endl;
     out << "  Signal Strength =    " << ap.signalStrength() << endl;
+    out << "  Mode =               ";
+    switch (ap.mode())
+    {
+    case Solid::Control::WirelessNetworkInterface::Unassociated:
+        cout << "Unassociated" << endl;
+        break;
+    case Solid::Control::WirelessNetworkInterface::Adhoc:
+        cout << "Ad-hoc" << endl;
+        break;
+    case Solid::Control::WirelessNetworkInterface::Managed:
+        cout << "Infrastructure" << endl;
+        break;
+    case Solid::Control::WirelessNetworkInterface::Master:
+        cout << "Master" << endl;
+        break;
+    case Solid::Control::WirelessNetworkInterface::Repeater:
+        cout << "Repeater" << endl;
+        break;
+    default:
+        cout << "Unknown" << endl;
+        cerr << "Unknown network operation mode: " << ap.mode() << endl;
+        break;
+    }
+    out << "  Capabilities =       ";
+    const Solid::Control::AccessPoint::Capabilities cap = ap.capabilities();
+    if (cap)
+    {
+        if (cap  & Solid::Control::AccessPoint::Privacy)
+            out << "Privacy,";
+        out << endl;
+    }
+    else
+    {
+        out << "(No Capabilities)" << endl;
+    }
+    out << "  WPA Options =        ";
+    const Solid::Control::AccessPoint::WpaFlags wpaFlags = ap.wpaFlags();
+    if (wpaFlags)
+    {
+        if (wpaFlags  & Solid::Control::AccessPoint::PairWep40)
+            out << "PairWep40,";
+        if (wpaFlags  & Solid::Control::AccessPoint::PairWep104)
+            out << "PairWep104,";
+        if (wpaFlags  & Solid::Control::AccessPoint::PairTkip)
+            out << "PairTkip,";
+        if (wpaFlags  & Solid::Control::AccessPoint::PairCcmp)
+            out << "PairCcmp,";
+        if (wpaFlags  & Solid::Control::AccessPoint::GroupWep40)
+            out << "GroupWep40,";
+        if (wpaFlags  & Solid::Control::AccessPoint::GroupWep104)
+            out << "GroupWep104,";
+        if (wpaFlags  & Solid::Control::AccessPoint::GroupTkip)
+            out << "GroupTkip,";
+        if (wpaFlags  & Solid::Control::AccessPoint::GroupCcmp)
+            out << "GroupCcmp,";
+        if (wpaFlags  & Solid::Control::AccessPoint::KeyMgmtPsk)
+            out << "KeyMgmtPsk,";
+        if (wpaFlags  & Solid::Control::AccessPoint::KeyMgmt8021x)
+            out << "KeyMgmt8021x,";
+        out << endl;
+    }
+    else
+    {
+        out << "(No Options)" << endl;
+    }
+    out << "  RSN Options =        ";
+    const Solid::Control::AccessPoint::WpaFlags rsnFlags = ap.rsnFlags();
+    if (rsnFlags)
+    {
+        if (rsnFlags  & Solid::Control::AccessPoint::PairWep40)
+            out << "PairWep40,";
+        if (rsnFlags  & Solid::Control::AccessPoint::PairWep104)
+            out << "PairWep104,";
+        if (rsnFlags  & Solid::Control::AccessPoint::PairTkip)
+            out << "PairTkip,";
+        if (rsnFlags  & Solid::Control::AccessPoint::PairCcmp)
+            out << "PairCcmp,";
+        if (rsnFlags  & Solid::Control::AccessPoint::GroupWep40)
+            out << "GroupWep40,";
+        if (rsnFlags  & Solid::Control::AccessPoint::GroupWep104)
+            out << "GroupWep104,";
+        if (rsnFlags  & Solid::Control::AccessPoint::GroupTkip)
+            out << "GroupTkip,";
+        if (rsnFlags  & Solid::Control::AccessPoint::GroupCcmp)
+            out << "GroupCcmp,";
+        if (rsnFlags  & Solid::Control::AccessPoint::KeyMgmtPsk)
+            out << "KeyMgmtPsk,";
+        if (rsnFlags  & Solid::Control::AccessPoint::KeyMgmt8021x)
+            out << "KeyMgmt8021x,";
+        out << endl;
+    }
+    else
+    {
+        out << "(No Options)" << endl;
+    }
     return out;
 }
 
@@ -226,41 +321,28 @@ std::ostream &operator<<(std::ostream &out, const Solid::Control::WirelessNetwor
     out << "  Bit Rate =           " << network.bitRate() << endl;
     out << "  Hardware Address =   " << network.hardwareAddress() << endl;
     out << "  Active Access Point= " << qVariantFromValue(network.activeAccessPoint()) << endl;
-#if 0
-    if (network.isEncrypted())
+    out << "  Capabilities =       ";
+    const Solid::Control::WirelessNetworkInterface::Capabilities cap = network.wirelessCapabilities();
+    if (cap)
     {
-        out << "  Encrypted =            Yes (";
-        Solid::Control::WirelessNetwork::Capabilities cap = network.capabilities();
-        if (cap  & Solid::Control::WirelessNetwork::Wep)
-            out << "WEP,";
-        if (cap  & Solid::Control::WirelessNetwork::Wpa)
+        if (cap  & Solid::Control::WirelessNetworkInterface::Wpa)
             out << "WPA,";
-        if (cap  & Solid::Control::WirelessNetwork::Wpa2)
-            out << "WPA2,";
-        if (cap  & Solid::Control::WirelessNetwork::Psk)
-            out << "PSK,";
-        if (cap  & Solid::Control::WirelessNetwork::Ieee8021x)
-            out << "Ieee8021x,";
-        if (cap  & Solid::Control::WirelessNetwork::Wep40)
+        if (cap  & Solid::Control::WirelessNetworkInterface::Wep40)
             out << "WEP40,";
-        if (cap  & Solid::Control::WirelessNetwork::Wep104)
+        if (cap  & Solid::Control::WirelessNetworkInterface::Wep104)
             out << "WEP104,";
-        if (cap  & Solid::Control::WirelessNetwork::Wep192)
-            out << "WEP192,";
-        if (cap  & Solid::Control::WirelessNetwork::Wep256)
-            out << "WEP256,";
-        if (cap  & Solid::Control::WirelessNetwork::WepOther)
-            out << "WEP-Other,";
-        if (cap  & Solid::Control::WirelessNetwork::Tkip)
-            out << "TKIP";
-        if (cap  & Solid::Control::WirelessNetwork::Ccmp)
-            out << "CCMP";
-        out << ")" << endl;
+        if (cap  & Solid::Control::WirelessNetworkInterface::Tkip)
+            out << "TKIP,";
+        if (cap  & Solid::Control::WirelessNetworkInterface::Ccmp)
+            out << "CCMP,";
+        if (cap  & Solid::Control::WirelessNetworkInterface::Rsn)
+            out << "RSN,";
+        out << endl;
     }
     else
-        out << "  Encrypted =            No" << endl;
-#endif
-
+    {
+        out << "(No Capabilities)" << endl;
+    }
     return out;
 }
 
