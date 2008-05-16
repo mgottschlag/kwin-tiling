@@ -20,6 +20,7 @@
 #include <cmath>
 // <cmath> does not define fabs (by the standard, even if it does with gcc)
 #include <math.h>
+#include <float.h> // FLT_MAX
 
 #include <QFileInfo>
 #include <QPainter>
@@ -206,7 +207,7 @@ QString BackgroundPackage::findBackground(const QSize &size,
     }
     
     // choose the nearest resolution
-    float best;
+    float best = FLT_MAX;
     QString bestImage;
     foreach (const QString &entry, images) {
         QSize candidate = resSize(QFileInfo(entry).baseName());
