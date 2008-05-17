@@ -2,10 +2,7 @@
 add_subdirectory( pics )
 add_subdirectory( patterns )
 add_subdirectory( programs )
-#KDE4_NO_ENABLE_FINAL(background)
-# Currently needed for DEFAULT_TEXT_HEIGHT
-# The plan is to move konq_iconviewwidget to kdesktop and then it's all inside workspace.
-# But first KonqOperations must be redesigned to not use konq_iconviewwidget...
+
 include_directories( ${QIMAGEBLITZ_INCLUDES} )
 
 add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)

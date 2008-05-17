@@ -63,7 +63,7 @@
                 <enum>QSizePolicy::Expanding</enum>
               </property>
               <property name="orientation" >
-                <enum>Qt::Qt::Horizontal</enum>
+                <enum>Horizontal</enum>
               </property>
             </spacer>
           </item>
@@ -108,7 +108,7 @@
                 <enum>QSizePolicy::Expanding</enum>
               </property>
               <property name="orientation" >
-                <enum>Qt::Qt::Vertical</enum>
+                <enum>Vertical</enum>
               </property>
             </spacer>
           </item>

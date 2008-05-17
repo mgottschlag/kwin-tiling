@@ -44,7 +44,7 @@ class BGDialog : public BGDialog_UI
 {
    Q_OBJECT
 public:
-   BGDialog(QWidget* parent, const KSharedConfigPtr & _config, bool _kdmMode);
+   BGDialog(QWidget* parent, const KSharedConfigPtr & _config);
    ~BGDialog();
 
    void load();
@@ -70,7 +70,6 @@ protected:
 protected Q_SLOTS:
    void slotIdentifyScreens();
    void slotSelectScreen(int screen);
-   void slotSelectDesk(int desk);
    void slotWallpaperTypeChanged(int i);
    void slotWallpaper(int i);
    void slotWallpaperPos(int);
@@ -80,7 +79,7 @@ protected Q_SLOTS:
    void slotSecondaryColor(const QColor &color);
    void slotPattern(int pattern);
    void slotImageDropped(const QString &uri);
-   void slotPreviewDone(int desk, int screen);
+   void slotPreviewDone(int screen);
    void slotAdvanced();
    void slotGetNewStuff();
    void slotBlendMode(int mode);
@@ -93,15 +92,11 @@ protected:
    void getEScreen();
    KGlobalBackgroundSettings *m_pGlobals;
    KStandardDirs *m_pDirs;
-   bool m_kdmMode;
 
-   unsigned m_numDesks;
    unsigned m_numScreens;
-   int m_desk;
    int m_screen;
-   int m_eDesk;
    int m_eScreen;
-   QVector< Q3PtrVector<KBackgroundRenderer> > m_renderer; // m_renderer[desk][screen]
+   Q3PtrVector<KBackgroundRenderer> m_renderer; // m_renderer[screen]
    QMap<QString,int> m_wallpaper;
    QStringList m_patterns;
    int m_slideShowRandom; // Remembers last Slide Show setting
@@ -110,7 +105,6 @@ protected:
    BGMonitorArrangement * m_pMonitorArrangement;
 
    bool m_previewUpdates;
-   bool m_copyAllDesktops;
    bool m_copyAllScreens;
 };
 

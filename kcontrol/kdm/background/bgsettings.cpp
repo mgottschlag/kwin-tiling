@@ -12,7 +12,6 @@
 #include <time.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <QtDBus/QtDBus>
 // Clean up after X.h/Xlib.h
 #undef Bool
 #undef Unsorted
@@ -33,9 +32,6 @@
 #include "bgdefaults.h"
 #include "bgsettings.h"
 #include <QX11Info>
-
-#define DEFAULT_TEXTWIDTH 0
-#define DEFAULT_TEXTHEIGHT 2
 
 
 /*
@@ -59,11 +55,10 @@ static int BGHash(const QString &key)
 /**** KBackgroundPattern ****/
 
 
-KBackgroundPattern::KBackgroundPattern(bool _kdmMode, const QString &name)
+KBackgroundPattern::KBackgroundPattern(const QString &name)
 {
     dirty = false;
     hashdirty = true;
-    m_kdmMode = _kdmMode;
 
     m_pDirs = KGlobal::dirs();
     m_pDirs->addResourceType("dtop_pattern", "data", "kdm/patterns");
@@ -141,7 +136,7 @@ void KBackgroundPattern::readSettings()
 
     const KConfigGroup group = m_pConfig->group("KDE Desktop Pattern");
 
-    m_Pattern = m_kdmMode ? group.readEntry("File") : group.readPathEntry("File", QString());
+    m_Pattern = group.readEntry("File");
     m_Comment = group.readEntry("Comment");
     if (m_Comment.isEmpty())
        m_Comment = m_File.mid(m_File.lastIndexOf('/')+1);
@@ -159,10 +154,7 @@ void KBackgroundPattern::writeSettings()
         return; // better safe than sorry
 
     KConfigGroup group = m_pConfig->group("KDE Desktop Pattern");
-    if (m_kdmMode)
-        group.writeEntry("File", m_Pattern);
-    else
-        group.writePathEntry("File", m_Pattern);
+    group.writeEntry("File", m_Pattern);
     group.writeEntry("Comment", m_Comment);
     m_pConfig->sync();
     dirty = false;
@@ -229,11 +221,10 @@ QStringList KBackgroundPattern::list()
 /**** KBackgroundProgram ****/
 
 
-KBackgroundProgram::KBackgroundProgram(bool _kdmMode, const QString &name)
+KBackgroundProgram::KBackgroundProgram(const QString &name)
 {
     dirty = false;
     hashdirty = true;
-    m_kdmMode = _kdmMode;
 
     m_pDirs = KGlobal::dirs();
     m_pDirs->addResourceType("dtop_program", "data", "kdm/programs");
@@ -346,15 +337,9 @@ void KBackgroundProgram::readSettings()
 
     const KConfigGroup group = m_pConfig->group("KDE Desktop Program");
     m_Comment = group.readEntry("Comment");
-    if (m_kdmMode) {
-        m_Executable = group.readEntry("Executable");
-        m_Command = group.readEntry("Command");
-        m_PreviewCommand = group.readEntry("PreviewCommand", m_Command);
-    } else {
-        m_Executable = group.readPathEntry("Executable", QString());
-        m_Command = group.readPathEntry("Command", QString());
-        m_PreviewCommand = group.readPathEntry("PreviewCommand", m_Command);
-    }
+    m_Executable = group.readEntry("Executable");
+    m_Command = group.readEntry("Command");
+    m_PreviewCommand = group.readEntry("PreviewCommand", m_Command);
     m_Refresh = group.readEntry("Refresh", 300);
 }
 
@@ -371,15 +356,9 @@ void KBackgroundProgram::writeSettings()
 
     KConfigGroup group = m_pConfig->group("KDE Desktop Program");
     group.writeEntry("Comment", m_Comment);
-    if (m_kdmMode) {
-        group.writeEntry("Executable", m_Executable);
-        group.writeEntry("Command", m_Command);
-        group.writeEntry("PreviewCommand", m_PreviewCommand);
-    } else {
-        group.writePathEntry("Executable", m_Executable);
-        group.writePathEntry("Command", m_Command);
-        group.writePathEntry("PreviewCommand", m_PreviewCommand);
-    }
+    group.writeEntry("Executable", m_Executable);
+    group.writeEntry("Command", m_Command);
+    group.writeEntry("PreviewCommand", m_PreviewCommand);
     group.writeEntry("Refresh", m_Refresh);
     m_pConfig->sync();
     dirty = false;
@@ -452,16 +431,14 @@ QStringList KBackgroundProgram::list()
 /**** KBackgroundSettings ****/
 
 
-KBackgroundSettings::KBackgroundSettings(int desk, int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config, bool _kdmMode)
-    : KBackgroundPattern(_kdmMode),
-      KBackgroundProgram(_kdmMode)
+KBackgroundSettings::KBackgroundSettings(int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config)
+    : KBackgroundPattern(),
+      KBackgroundProgram()
 {
     dirty = false; hashdirty = true;
 	m_bDrawBackgroundPerScreen = drawBackgroundPerScreen;
-    m_Desk = desk;
     m_Screen = screen;
     m_bEnabled = true;
-    m_kdmMode = _kdmMode;
 
     // Default values.
     defColorA = _defColorA;
@@ -528,24 +505,7 @@ KBackgroundSettings::KBackgroundSettings(int desk, int screen, bool drawBackgrou
     #undef ADD_STRING
 
     m_pDirs = KGlobal::dirs();
-
-    if (!config) {
-        int screen_number = 0;
-        if (QX11Info::display())
-            screen_number = DefaultScreen(QX11Info::display());
-        QString configname;
-        if (screen_number == 0)
-            configname = "kdesktoprc";
-        else
-            configname.sprintf("kdesktop-screen-%drc", screen_number);
-
-        m_pConfig = KSharedConfig::openConfig(configname, KConfig::NoGlobals);
-    } else {
-        m_pConfig = config;
-    }
-
-    if (m_Desk == -1)
-	return;
+    m_pConfig = config;
 
     readSettings();
 }
@@ -583,9 +543,8 @@ void KBackgroundSettings::copyConfig(const KBackgroundSettings *settings)
 }
 
 
-void KBackgroundSettings::load(int desk, int screen, bool drawBackgroundPerScreen, bool reparseConfig)
+void KBackgroundSettings::load(int screen, bool drawBackgroundPerScreen, bool reparseConfig)
 {
-    m_Desk = desk;
     m_Screen = screen;
     m_bDrawBackgroundPerScreen = drawBackgroundPerScreen;
     readSettings(reparseConfig);
@@ -762,7 +721,7 @@ QString KBackgroundSettings::configGroupName() const
     QString screenName;
     if (m_bDrawBackgroundPerScreen)
         screenName = QString("Screen%1").arg(QString::number(m_Screen));
-    return QString("Desktop%1%2").arg(m_Desk).arg(screenName);
+    return QString("Desktop0%1").arg(screenName);
 }
 
 void KBackgroundSettings::readSettings(bool reparse)
@@ -776,11 +735,11 @@ void KBackgroundSettings::readSettings(bool reparse)
     m_ColorA = cg.readEntry("Color1", defColorA);
     m_ColorB = cg.readEntry("Color2", defColorB);
 
-    QString s = m_kdmMode ? cg.readEntry("Pattern") : cg.readPathEntry("Pattern", QString());
+    QString s = cg.readEntry("Pattern");
     if (!s.isEmpty())
         KBackgroundPattern::load(s);
 
-    s = m_kdmMode ? cg.readEntry("Program") : cg.readPathEntry("Program", QString());
+    s = cg.readEntry("Program");
     if (!s.isEmpty())
         KBackgroundProgram::load(s);
 
@@ -833,7 +792,7 @@ void KBackgroundSettings::readSettings(bool reparse)
 
     // Wallpaper mode (NoWallpaper, div. tilings)
     m_WallpaperMode = defWallpaperMode;
-    m_Wallpaper = m_kdmMode ? cg.readEntry("Wallpaper") : cg.readPathEntry("Wallpaper", QString());
+    m_Wallpaper = cg.readEntry("Wallpaper");
     s = cg.readEntry("WallpaperMode", "invalid");
     if (m_WMMap.contains(s)) {
         int mode = m_WMMap[s];
@@ -870,15 +829,9 @@ void KBackgroundSettings::writeSettings()
     conf.writeEntry("ReverseBlending", m_ReverseBlending);
     conf.writeEntry("MinOptimizationDepth", m_MinOptimizationDepth);
     conf.writeEntry("UseSHM", m_bShm);
-    if (m_kdmMode) {
-        conf.writeEntry("Pattern", KBackgroundPattern::name());
-        conf.writeEntry("Wallpaper", m_Wallpaper);
-        conf.writeEntry("WallpaperList", m_WallpaperList);
-    } else {
-        conf.writePathEntry("Pattern", KBackgroundPattern::name());
-        conf.writePathEntry("Wallpaper", m_Wallpaper);
-        conf.writePathEntry("WallpaperList", m_WallpaperList);
-    }
+    conf.writeEntry("Pattern", KBackgroundPattern::name());
+    conf.writeEntry("Wallpaper", m_Wallpaper);
+    conf.writeEntry("WallpaperList", m_WallpaperList);
     conf.writeEntry("ChangeInterval", m_Interval);
     conf.writeEntry("LastChange", m_LastChange);
     conf.deleteEntry("CurrentWallpaper"); // obsolete, remember name
@@ -1111,23 +1064,6 @@ KGlobalBackgroundSettings::KGlobalBackgroundSettings(const KSharedConfigPtr &_co
 }
 
 
-QString KGlobalBackgroundSettings::deskName(int desk)
-{
-    return m_Names[desk];
-}
-
-
-/*
-void KGlobalBackgroundSettings::setDeskName(int desk, QString name)
-{
-    if (name == m_Names[desk])
-	return;
-    dirty = true;
-    m_Names[desk] = name;
-}
-*/
-
-
 void KGlobalBackgroundSettings::setCacheSize(int size)
 {
     if (size == m_CacheSize)
@@ -1146,24 +1082,19 @@ void KGlobalBackgroundSettings::setLimitCache(bool limit)
 }
 
 
-bool KGlobalBackgroundSettings::drawBackgroundPerScreen(int desk) const
+bool KGlobalBackgroundSettings::drawBackgroundPerScreen() const
 {
-    if ( desk > int(m_bDrawBackgroundPerScreen.size()) )
-        return _defDrawBackgroundPerScreen;
-    return m_bDrawBackgroundPerScreen[desk];
+    return m_bDrawBackgroundPerScreen;
 }
 
 
-void KGlobalBackgroundSettings::setDrawBackgroundPerScreen(int desk, bool perScreen)
+void KGlobalBackgroundSettings::setDrawBackgroundPerScreen(bool perScreen)
 {
-    if ( desk >= int(m_bDrawBackgroundPerScreen.size()) )
-        return;
-
-    if ( m_bDrawBackgroundPerScreen[desk] == perScreen )
+    if ( m_bDrawBackgroundPerScreen == perScreen )
         return;
 
     dirty = true;
-    m_bDrawBackgroundPerScreen[desk] = perScreen;
+    m_bDrawBackgroundPerScreen = perScreen;
 }
 
 
@@ -1175,102 +1106,14 @@ void KGlobalBackgroundSettings::setCommonScreenBackground(bool common)
     m_bCommonScreen = common;
 }
 
-
-void KGlobalBackgroundSettings::setCommonDeskBackground(bool common)
-{
-    if (common == m_bCommonDesk)
-	return;
-    dirty = true;
-    m_bCommonDesk = common;
-}
-
-
-void KGlobalBackgroundSettings::setDockPanel(bool dock)
-{
-    if (dock == m_bDock)
-        return;
-    dirty = true;
-    m_bDock = dock;
-}
-
-
-void KGlobalBackgroundSettings::setExportBackground(bool _export)
-{
-    if (_export == m_bExport)
-        return;
-    dirty = true;
-    m_bExport = _export;
-}
-
-void KGlobalBackgroundSettings::setTextColor(const QColor &_color)
-{
-    if (_color == m_TextColor)
-        return;
-    dirty = true;
-    m_TextColor = _color;
-}
-
-void KGlobalBackgroundSettings::setTextBackgroundColor(const QColor &_color)
-{
-    if (_color == m_TextBackgroundColor)
-        return;
-    dirty = true;
-    m_TextBackgroundColor = _color;
-}
-
-void KGlobalBackgroundSettings::setShadowEnabled(bool enabled)
-{
-    if (enabled == m_shadowEnabled)
-        return;
-    dirty = true;
-    m_shadowEnabled = enabled;
-}
-
-void KGlobalBackgroundSettings::setTextLines(int lines)
-{
-    if (lines == m_textLines)
-        return;
-    dirty = true;
-    m_textLines = lines;
-}
-
-void KGlobalBackgroundSettings::setTextWidth(int width)
-{
-    if (width == m_textWidth)
-        return;
-    dirty = true;
-    m_textWidth = width;
-}
-
 void KGlobalBackgroundSettings::readSettings()
 {
     const KConfigGroup common = m_pConfig->group( "Background Common");
 
     m_bCommonScreen = common.readEntry("CommonScreen", _defCommonScreen);
-    m_bCommonDesk = common.readEntry("CommonDesktop", _defCommonDesk);
-    m_bDock = common.readEntry("Dock", _defDock);
-    m_bExport = common.readEntry("Export", _defExport);
     m_bLimitCache = common.readEntry("LimitCache", _defLimitCache);
     m_CacheSize = common.readEntry("CacheSize", _defCacheSize);
-
-    NETRootInfo info( QX11Info::display(), NET::DesktopNames | NET::NumberOfDesktops );
-    m_bDrawBackgroundPerScreen.resize(info.numberOfDesktops());
-    for ( int i = 0 ; i < info.numberOfDesktops() ; ++i )
-        m_bDrawBackgroundPerScreen[i] = common.readEntry( QString("DrawBackgroundPerScreen_%1").arg(i), _defDrawBackgroundPerScreen );
-
-    // OK to use explicit QPalette::Active here, desktop icons can ignore state
-    // ### But, aren't desktop icons gone in KDE4?
-    m_TextColor = KColorScheme(QPalette::Active, KColorScheme::View).foreground().color();
-    const KConfigGroup fmSettings = m_pConfig->group("FMSettings");
-    m_TextColor = fmSettings.readEntry("NormalTextColor", m_TextColor);
-    m_TextBackgroundColor = fmSettings.readEntry("ItemTextBackground");
-    m_shadowEnabled = fmSettings.readEntry("ShadowEnabled", true);
-    m_textLines = fmSettings.readEntry("TextHeight", DEFAULT_TEXTHEIGHT);
-    m_textWidth = fmSettings.readEntry("TextWidth", DEFAULT_TEXTWIDTH);
-
-    m_Names.clear();
-    for ( int i = 0 ; i < info.numberOfDesktops() ; ++i )
-      m_Names.append( QString::fromUtf8(info.desktopName(i+1)) );
+    m_bDrawBackgroundPerScreen = common.readEntry("DrawBackgroundPerScreen_0", _defDrawBackgroundPerScreen);
 
     dirty = false;
 }
@@ -1282,27 +1125,11 @@ void KGlobalBackgroundSettings::writeSettings()
 
     KConfigGroup common = m_pConfig->group( "Background Common");
     common.writeEntry("CommonScreen", m_bCommonScreen);
-    common.writeEntry("CommonDesktop", m_bCommonDesk);
-    common.writeEntry("Dock", m_bDock);
-    common.writeEntry("Export", m_bExport);
     common.writeEntry("LimitCache", m_bLimitCache);
     common.writeEntry("CacheSize", m_CacheSize);
-
-    for ( int i = 0 ; i < m_bDrawBackgroundPerScreen.size() ; ++i )
-        common.writeEntry(QString("DrawBackgroundPerScreen_%1").arg(i), m_bDrawBackgroundPerScreen[i] );
-
-    KConfigGroup fmSettings = m_pConfig->group("FMSettings");
-    fmSettings.writeEntry("NormalTextColor", m_TextColor);
-    fmSettings.writeEntry("ItemTextBackground", m_TextBackgroundColor);
-    fmSettings.writeEntry("ShadowEnabled", m_shadowEnabled);
-    fmSettings.writeEntry("TextHeight", m_textLines);
-    fmSettings.writeEntry("TextWidth", m_textWidth);
+    common.writeEntry("DrawBackgroundPerScreen_0", m_bDrawBackgroundPerScreen);
 
     m_pConfig->sync();
     dirty = false;
-
-    // tell kdesktop to get it's butt in gear and pick up the new settings
-    QDBusInterface kdesktop("org.kde.kdesktop", "/Background", "org.kde.kdesktop.Background");
-    kdesktop.call("configure");
 }
 

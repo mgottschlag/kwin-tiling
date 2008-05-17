@@ -31,7 +31,7 @@ class QString;
 class KBackgroundPattern
 {
 public:
-    explicit KBackgroundPattern(bool _kdmMode, const QString &name = QString());
+    explicit KBackgroundPattern(const QString &name = QString());
     ~KBackgroundPattern();
 
     void copyConfig(const KBackgroundPattern*);
@@ -62,7 +62,6 @@ private:
 
     bool dirty, hashdirty;
     bool m_bReadOnly;
-    bool m_kdmMode;
     int m_Hash;
     QString m_Name, m_Comment;
     QString m_Pattern, m_File;
@@ -90,7 +89,7 @@ private:
 class KBackgroundProgram
 {
 public:
-    explicit KBackgroundProgram(bool _kdmMode, const QString &name = QString());
+    explicit KBackgroundProgram(const QString &name = QString());
     ~KBackgroundProgram();
 
     void copyConfig(const KBackgroundProgram*);
@@ -133,7 +132,6 @@ private:
 
     bool dirty, hashdirty;
     bool m_bReadOnly;
-    bool m_kdmMode;
     int m_Refresh, m_Hash, m_LastChange;
     QString m_Name, m_Command;
     QString m_PreviewCommand, m_Comment;
@@ -157,7 +155,7 @@ public:
      * mode) will be treated as one big display, and the "screen" paramater
      * will be ignored.
      */
-    KBackgroundSettings(int desk, int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config, bool _kdmMode);
+    KBackgroundSettings(int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config);
     ~KBackgroundSettings();
 
     void copyConfig(const KBackgroundSettings*);
@@ -165,10 +163,8 @@ public:
     bool drawBackgroundPerScreen() const { return m_bDrawBackgroundPerScreen; }
     void setDrawBackgroundPerScreen(bool draw);
 
-    int desk() const { return m_Desk; }
     int screen() const { return m_Screen; }
-//     void load(int desk, int screen, bool drawBackgroundPerScreen, bool reparseConfig=true);
-    void load(int desk, int screen, bool drawBackgroundPerScreen, bool reparseConfig);
+    void load(int screen, bool drawBackgroundPerScreen, bool reparseConfig);
 
     void setColorA(const QColor &color);
     QColor colorA() const { return m_ColorA; }
@@ -262,8 +258,7 @@ private:
 
     bool dirty;
     bool hashdirty;
-    bool m_kdmMode;
-    int m_Screen, m_Desk, m_Hash;
+    int m_Screen, m_Hash;
 
     QColor m_ColorA, defColorA;
     QColor m_ColorB, defColorB;
@@ -309,14 +304,11 @@ class KGlobalBackgroundSettings
 public:
     KGlobalBackgroundSettings(const KSharedConfigPtr &config);
 
-    QString deskName(int desk);
-    //void setDeskName(int desk, QString name);
-
     int cacheSize() { return m_CacheSize; }
     void setCacheSize(int size);
 
-    bool drawBackgroundPerScreen(int desk) const;
-    void setDrawBackgroundPerScreen(int desk, bool perScreen);
+    bool drawBackgroundPerScreen() const;
+    void setDrawBackgroundPerScreen(bool perScreen);
 
     bool limitCache() { return m_bLimitCache; }
     void setLimitCache(bool limit);
@@ -324,48 +316,17 @@ public:
     bool commonScreenBackground() { return m_bCommonScreen; }
     void setCommonScreenBackground(bool common);
 
-    bool commonDeskBackground() { return m_bCommonDesk; }
-    void setCommonDeskBackground(bool common);
-
-    bool dockPanel() { return m_bDock; }
-    void setDockPanel(bool dock);
-
-    bool exportBackground() {return m_bExport; }
-    void setExportBackground(bool _export);
-
-    void setTextColor(const QColor &_color);
-    QColor textColor() const { return m_TextColor; }
-
-    void setTextBackgroundColor(const QColor &_color);
-    QColor textBackgroundColor() const { return m_TextBackgroundColor; }
-
-    void setShadowEnabled(bool enabled);
-    bool shadowEnabled() const { return m_shadowEnabled; }
-
-    void setTextLines(int lines);
-    int textLines() const { return m_textLines; }
-    void setTextWidth(int width);
-    int textWidth() const { return m_textWidth; }
-
     void readSettings();
     void writeSettings();
 
 private:
     bool dirty;
-    bool m_bCommonDesk;
     bool m_bCommonScreen;
-    bool m_bDock;
-    bool m_bLimitCache, m_bExport;
+    bool m_bLimitCache;
     int m_CacheSize;
-    QStringList m_Names;
 
-    QColor m_TextColor;
-    QColor m_TextBackgroundColor;
-    bool m_shadowEnabled;
-    int m_textLines;
-    int m_textWidth;
     KSharedConfigPtr m_pConfig;
-    QVector<bool> m_bDrawBackgroundPerScreen; // m_bDrawBackgroundPerScreen[desk]
+    bool m_bDrawBackgroundPerScreen;
 };
 
 

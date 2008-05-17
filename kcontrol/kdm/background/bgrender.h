@@ -40,10 +40,10 @@ class KBackgroundRenderer:
     Q_OBJECT
 
 public:
-    KBackgroundRenderer(int desk, int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config = KSharedConfigPtr(), bool kdmMode = false);
+    KBackgroundRenderer(int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config);
     ~KBackgroundRenderer();
 
-    void load(int desk, int screen, bool drawBackgroundPerScreen, bool reparseConfig=true);
+    void load(int screen, bool drawBackgroundPerScreen, bool reparseConfig=true);
 
     void setPreview(const QSize &size);
     void setSize(const QSize &size);
@@ -61,9 +61,9 @@ public Q_SLOTS:
     void desktopResized();
 
 Q_SIGNALS:
-    void imageDone(int desk, int screen);
-    void programFailure(int desk, int exitstatus); //Guaranteed either programFailure or
-    void programSuccess(int desk);                //programSuccess is emitted after imageDone
+    void imageDone(int screen);
+    void programFailure(int exitstatus); //Guaranteed either programFailure or
+    void programSuccess();                //programSuccess is emitted after imageDone
 
 private Q_SLOTS:
     void slotBackgroundDone(int exitCode, QProcess::ExitStatus exitStatus);
@@ -121,7 +121,7 @@ class KVirtualBGRenderer : public QObject
 {
     Q_OBJECT
 public:
-    explicit KVirtualBGRenderer(int desk, const KSharedConfigPtr &config = KSharedConfigPtr(), bool kdmMode = false);
+    explicit KVirtualBGRenderer(const KSharedConfigPtr &config);
     ~KVirtualBGRenderer();
 
     KBackgroundRenderer * renderer(unsigned screen);
@@ -142,7 +142,7 @@ public:
     void setEnabled( bool enable );
     void desktopResized();
 
-    void load(int desk, bool reparseConfig=true);
+    void load(bool reparseConfig=true);
     void start();
     void stop();
     void cleanup();
@@ -150,10 +150,10 @@ public:
     void enableTiling( bool enable );
 
 signals:
-    void imageDone(int desk);
+    void imageDone();
 
 private slots:
-    void screenDone(int desk, int screen);
+    void screenDone(int screen);
 
 private:
     QSize renderSize(int screen); // the size the renderer should be
@@ -162,11 +162,9 @@ private:
     KSharedConfigPtr m_pConfig;
     float m_scaleX;
     float m_scaleY;
-    int m_desk;
     int m_numRenderers;
     bool m_bDrawBackgroundPerScreen;
     bool m_bCommonScreen;
-    bool m_kdmMode;
     QSize m_size;
 
     QVector<bool> m_bFinished;

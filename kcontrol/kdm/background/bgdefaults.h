@@ -13,9 +13,6 @@
 // Globals
 #define _defDrawBackgroundPerScreen false
 #define _defCommonScreen true
-#define _defCommonDesk true
-#define _defDock true
-#define _defExport false
 #define _defLimitCache false
 #define _defCacheSize 2048
 
@@ -23,7 +20,6 @@
 // there are usually poor results with bpp<16 when tiling
 #define _defMinOptimizationDepth 1
 
-// Per desktop defaults
 // Before you change this get in touch with me (torsten@kde.org)
 // Thanks!!
 #define _defColorA  QColor("#003082")

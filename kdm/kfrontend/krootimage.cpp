@@ -38,10 +38,10 @@ Boston, MA 02110-1301, USA.
 
 MyApplication::MyApplication( const char *conf, int argc, char **argv )
 	: QApplication( argc, argv )
-	, renderer( 0, KSharedConfig::openConfig( QFile::decodeName( conf ) ), true )
+	, renderer( KSharedConfig::openConfig( QFile::decodeName( conf ) ) )
 {
 	connect( &timer, SIGNAL(timeout()), SLOT(slotTimeout()) );
-	connect( &renderer, SIGNAL(imageDone( int )), this, SLOT(renderDone()) );
+	connect( &renderer, SIGNAL(imageDone()), this, SLOT(renderDone()) );
 	renderer.enableTiling( true ); // optimize
 	renderer.changeWallpaper(); // cannot do it when we're killed, so do it now
 	timer.start( 60000 );

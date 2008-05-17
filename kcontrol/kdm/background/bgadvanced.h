@@ -48,21 +48,11 @@ class BGAdvancedDialog : public KDialog
 {
    Q_OBJECT
 public:
-   BGAdvancedDialog(KBackgroundRenderer *_r, QWidget *parent, bool _kdmMode);
+   BGAdvancedDialog(KBackgroundRenderer *_r, QWidget *parent);
 
 #if 0
    void setCacheSize(int s);
    int cacheSize();
-   QColor textColor();
-   void setTextColor(const QColor &color);
-   QColor textBackgroundColor();
-   void setTextBackgroundColor(const QColor &color);
-   bool shadowEnabled();
-   void setShadowEnabled(bool enabled);
-   void setTextLines(int lines);
-   int textLines() const;
-   void setTextWidth(int width);
-   int textWidth() const;
 #endif
 
    void updateUI();
@@ -100,7 +90,6 @@ private:
    QHash<QString, QTreeWidgetItem *> m_programItems;
    QString m_selectedProgram;
    int m_oldBackgroundMode;
-   bool m_kdmMode;
 };
 
 #if 0
@@ -112,7 +101,7 @@ class KProgramEditDialog: public KDialog
     Q_OBJECT
 
 public:
-    explicit KProgramEditDialog(bool kdmMode, const QString &program=QString(),
+    explicit KProgramEditDialog(const QString &program=QString(),
                                 QWidget *parent=0L, char *name=0L);
 
     /** The program name is here in case the user changed it */
@@ -128,7 +117,6 @@ private:
     QLineEdit *m_PreviewEdit;
     QSpinBox *m_RefreshEdit;
     KBackgroundProgram *m_Prog;
-    bool m_kdmMode;
 };
 #endif
 

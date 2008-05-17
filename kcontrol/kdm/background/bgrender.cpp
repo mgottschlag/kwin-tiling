@@ -48,8 +48,8 @@
 /**** KBackgroundRenderer ****/
 
 
-KBackgroundRenderer::KBackgroundRenderer(int desk, int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config, bool kdmMode)
-    : KBackgroundSettings(desk, screen, drawBackgroundPerScreen, config, kdmMode)
+KBackgroundRenderer::KBackgroundRenderer(int screen, bool drawBackgroundPerScreen, const KSharedConfigPtr &config)
+    : KBackgroundSettings(screen, drawBackgroundPerScreen, config)
 {
     m_State = 0;
     m_isBusyCursor = false;
@@ -796,15 +796,15 @@ void KBackgroundRenderer::done()
 {
     setBusyCursor(false);
     m_State |= AllDone;
-    emit imageDone(desk(), screen());
+    emit imageDone(screen());
     if(backgroundMode() == Program && m_pProc &&
        m_pProc->exitStatus() != QProcess::NormalExit) {
-         emit programFailure(desk(), -1);
+         emit programFailure(-1);
      } else if(backgroundMode() == Program && m_pProc &&
        m_pProc->exitCode()) {
-         emit programFailure(desk(), m_pProc->exitStatus());
+         emit programFailure(m_pProc->exitStatus());
      } else if(backgroundMode() == Program) {
-         emit programSuccess(desk());
+         emit programSuccess();
      }
 }
 
@@ -889,7 +889,7 @@ QImage KBackgroundRenderer::image()
 }
 
 
-void KBackgroundRenderer::load(int desk, int screen, bool drawBackgroundPerScreen, bool reparseConfig)
+void KBackgroundRenderer::load(int screen, bool drawBackgroundPerScreen, bool reparseConfig)
 {
     if (m_State & Rendering)
         stop();
@@ -898,7 +898,7 @@ void KBackgroundRenderer::load(int desk, int screen, bool drawBackgroundPerScree
     m_bPreview = false;
     m_Size = m_rSize;
 
-    KBackgroundSettings::load(desk, screen, drawBackgroundPerScreen, reparseConfig);
+    KBackgroundSettings::load(screen, drawBackgroundPerScreen, reparseConfig);
 }
 
 void KBackgroundRenderer::createTempFile()
@@ -982,30 +982,14 @@ void KBackgroundRenderer::saveCacheFile()
 }
 
 //BEGIN class KVirtualBGRenderer
-KVirtualBGRenderer::KVirtualBGRenderer(int desk, const KSharedConfigPtr &config, bool kdmMode)
+KVirtualBGRenderer::KVirtualBGRenderer(const KSharedConfigPtr &config)
 {
     m_pPixmap = 0l;
-    m_desk = desk;
     m_numRenderers = 0;
     m_scaleX = 1;
     m_scaleY = 1;
-    m_kdmMode = kdmMode;
 
-    // The following code is borrowed from KBackgroundSettings::KBackgroundSettings
-    if (!config) {
-        int screen_number = 0;
-        if (QX11Info::display())
-            screen_number = DefaultScreen(QX11Info::display());
-        QString configname;
-        if (screen_number == 0)
-            configname = "kdesktoprc";
-        else
-            configname.sprintf("kdesktop-screen-%drc", screen_number);
-
-        m_pConfig = KSharedConfig::openConfig(configname, KConfig::NoGlobals);
-    } else {
-        m_pConfig = config;
-    }
+    m_pConfig = config;
 
     initRenderers();
     m_size = QApplication::desktop()->size();
@@ -1163,7 +1147,7 @@ QSize KVirtualBGRenderer::renderSize(int screen)
 void KVirtualBGRenderer::initRenderers()
 {
     KConfigGroup cg(m_pConfig, "Background Common");
-    m_bDrawBackgroundPerScreen = cg.readEntry( QString("DrawBackgroundPerScreen_%1").arg(m_desk), _defDrawBackgroundPerScreen );
+    m_bDrawBackgroundPerScreen = cg.readEntry("DrawBackgroundPerScreen_0", _defDrawBackgroundPerScreen);
 
     m_bCommonScreen = cg.readEntry("CommonScreen", _defCommonScreen);
 
@@ -1182,18 +1166,16 @@ void KVirtualBGRenderer::initRenderers()
     for (int i=0; i<m_numRenderers; ++i)
     {
         int eScreen = m_bCommonScreen ? 0 : i;
-        KBackgroundRenderer * r = new KBackgroundRenderer( m_desk, eScreen, m_bDrawBackgroundPerScreen, m_pConfig, m_kdmMode );
+        KBackgroundRenderer * r = new KBackgroundRenderer( eScreen, m_bDrawBackgroundPerScreen, m_pConfig );
         m_renderer.insert( i, r );
         r->setSize(renderSize(i));
-        connect( r, SIGNAL(imageDone(int,int)), this, SLOT(screenDone(int,int)) );
+        connect( r, SIGNAL(imageDone(int)), this, SLOT(screenDone(int)) );
     }
 }
 
 
-void KVirtualBGRenderer::load(int desk, bool reparseConfig)
+void KVirtualBGRenderer::load(bool reparseConfig)
 {
-    m_desk = desk;
-
     m_bCommonScreen = m_pConfig->group("Background Common").readEntry("CommonScreen", _defCommonScreen);
 
     initRenderers();
@@ -1201,14 +1183,13 @@ void KVirtualBGRenderer::load(int desk, bool reparseConfig)
     for (int i=0; i<m_numRenderers; ++i)
     {
         int eScreen = m_bCommonScreen ? 0 : i;
-        m_renderer[i]->load(desk, eScreen, m_bDrawBackgroundPerScreen, reparseConfig);
+        m_renderer[i]->load(eScreen, m_bDrawBackgroundPerScreen, reparseConfig);
     }
 }
 
 
-void KVirtualBGRenderer::screenDone(int _desk, int _screen)
+void KVirtualBGRenderer::screenDone(int _screen)
 {
-    Q_UNUSED(_desk);
     Q_UNUSED(_screen);
 
     KBackgroundRenderer *sender = dynamic_cast<KBackgroundRenderer *>(this->sender());
@@ -1254,7 +1235,7 @@ void KVirtualBGRenderer::screenDone(int _desk, int _screen)
             return;
     }
 
-    emit imageDone(m_desk);
+    emit imageDone();
 }
 
 
