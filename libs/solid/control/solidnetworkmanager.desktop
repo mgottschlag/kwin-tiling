@@ -3,6 +3,7 @@ Type=ServiceType
 X-KDE-ServiceType=SolidNetworkManager
 
 Comment=Network Management Backend
+Comment[af]=Netwerk-beheer agtergrondprogram
 Comment[be]=Кіраванне сеткай
 Comment[bg]=Заден слой за управление на мрежа
 Comment[ca]=Dorsal de gestió de xarxa

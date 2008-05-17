@@ -1,5 +1,6 @@
 [Misc]
 Name=KDE Classic
+Name[af]=KDE Klassiek
 Name[be]=Класічны KDE
 Name[ca]=KDE clàssic
 Name[csb]=KDE - Klasykòwi
@@ -45,6 +46,7 @@ Name[x-test]=xxKDE Classicxx
 Name[zh_CN]=KDE 经典
 Name[zh_TW]=KDE 經典
 Comment=Classic KDE style
+Comment[af]=Klassieke KDE styl
 Comment[be]=Класічны стыль KDE
 Comment[bg]=Класически стил на KDE
 Comment[ca]=Estil KDE clàssic

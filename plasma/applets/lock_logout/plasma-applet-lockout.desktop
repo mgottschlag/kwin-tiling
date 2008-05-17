@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Lock/Logout
+Name[af]=Sluit/Teken af
 Name[bg]=Заключване и изход
 Name[ca]=Bloqueja/surt
 Name[csb]=Blokòwanié ekranu/Wëlogòwanié
@@ -48,10 +49,12 @@ Name[x-test]=xxLock/Logoutxx
 Name[zh_CN]=锁定/注销
 Name[zh_TW]=鎖定/登出
 Comment=Lets user lock screen or end session
+Comment[af]=Laat die gebruiker die skerm sluit of afteken
 Comment[ca]=Permet a l'usuari bloquejar la pantalla o sortir de la sessió
 Comment[el]=Επιτρέπει στο χρήση το κλείδωμα της οθόνης ή το τέλος της συνεδρίας
 Comment[et]=Võimaldab kasutajal ekraani lukustada ning seansi lõpetada
 Comment[fi]=Antaa käyttäjän lukita ruudun tai päättää istunnon
+Comment[fr]=Permet à l'utilisateur de verrouiller l'écran ou de terminer la session
 Comment[ga]=Ceadaigh don úsáideoir an scáileán a chur faoi ghlas, nó deireadh a chur leis an seisiún
 Comment[gu]=વપરાશકર્તાને સ્ક્રિન પર તાળું મારવા દે છે અથવા સત્રનો અંત કરવા દે છે
 Comment[ja]=スクリーンをロックしたりセッションを終了したりします

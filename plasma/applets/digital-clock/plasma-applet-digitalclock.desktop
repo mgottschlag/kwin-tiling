@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Digital Clock
+Name[af]=Digitale horlosie
 Name[be]=Лічбавы гадзіннік
 Name[bg]=Цифров часовник
 Name[ca]=Rellotge digital
@@ -54,6 +55,7 @@ Name[zh_CN]=数字钟
 Name[zh_TW]=數位時鐘
 
 Comment=A simple digital clock
+Comment[af]='n Eenvoudige digitale horlosie
 Comment[bg]=Обикновен цифров часовник
 Comment[ca]=Un rellotge digital senzill
 Comment[da]=Et simpelt digitalt ur

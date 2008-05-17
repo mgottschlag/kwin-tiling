@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Application Launcher Menu
+Name[af]=Programlanseerder-kieslys
 Name[bg]=Стартиране на програми
 Name[ca]=Menú de l'engegador d'aplicacions
 Name[csb]=Menu zrëszôcza programów
@@ -44,6 +45,7 @@ Name[x-test]=xxApplication Launcher Menuxx
 Name[zh_CN]=应用程序启动菜单
 Name[zh_TW]=應用程式啟動器選單
 Comment=Traditional menu based application launcher
+Comment[af]=Tradisionele kieslys as programlanseerder
 Comment[ca]=Engegador d'aplicacions basat en el menú tradicional
 Comment[da]=Traditionel menubaseret programstarter
 Comment[de]=Programmstarter mit traditionellen Menüs
@@ -52,7 +54,7 @@ Comment[eo]=La kutima menua bazita aplikaĵolanĉilo
 Comment[es]=Lanzador de aplicaciones tradicional basado en menú
 Comment[et]=Rakenduste käivitajale tuginev traditsiooniline menüü
 Comment[fi]=Perinteinen valikkopohjainen sovellusten käynnistin
-Comment[fr]=Lanceur d'application basé sur le menu traditionnel
+Comment[fr]=Lanceur d'application utilisant un menu traditionnel
 Comment[fy]=Tradisjoneel menu bassearre applikaasje úteinsetter
 Comment[ga]=Tosaitheoir traidisiúnta feidhmchlár bunaithe ar roghchlár
 Comment[gu]=પરંપરાગત મેનુ આધારિત કાર્યક્રમમ ચલાવનાર

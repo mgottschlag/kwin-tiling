@@ -72,7 +72,8 @@ Name[tg]=Барпо кардани ҳарфҳо
 Name[th]=ตัวติดตั้งแบบอักษร
 Name[tr]=Yazıtipi Kurucusu
 Name[uk]=Встановлення шрифтів
-Name[uz]=Шрифт ўрнатгич
+Name[uz]=Shrift oʻrnatgich
+Name[uz@cyrillic]=Шрифт ўрнатгич
 Name[vi]=Cài đặt Phông chữ
 Name[wa]=Astaleu di fontes
 Name[x-test]=xxFont Installerxx
@@ -81,6 +82,7 @@ Name[zh_CN]=字体安装程序
 Name[zh_TW]=字型安裝程式
 
 Comment=Install, manage, and preview fonts
+Comment[af]=Installeer, bestuur en bekyk skriftipes
 Comment[be]=Устаноўка, кіраванне і прагляд шрыфтоў
 Comment[bg]=Инсталиране и преглед на шрифтове
 Comment[ca]=Instal·lació , gestió i vista prèvia dels tipus de lletra

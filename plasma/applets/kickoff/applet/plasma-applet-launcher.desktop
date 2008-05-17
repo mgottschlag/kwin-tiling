@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Application Launcher
+Name[af]=Programlanseerder
 Name[be]=Запуск праграмаў
 Name[bg]=Стартиране на програми
 Name[ca]=Engegador d'aplicacions
@@ -48,6 +49,7 @@ Name[x-test]=xxApplication Launcherxx
 Name[zh_CN]=程序启动器
 Name[zh_TW]=應用程式啟動器
 Comment=Launcher to start applications
+Comment[af]=Lanseerder om programme te loop
 Comment[bg]=Стартиране на програми
 Comment[ca]=Executador per a iniciar aplicacions
 Comment[da]=Til at starte programmer

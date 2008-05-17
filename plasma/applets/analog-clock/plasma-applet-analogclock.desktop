@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Analog Clock
+Name[af]=Analooghorlosie
 Name[ar]=ساعة عادية
 Name[be]=Аналагавы гадзіннік
 Name[bg]=Аналогов часовник
@@ -57,6 +58,7 @@ Name[x-test]=xxAnalog Clockxx
 Name[zh_CN]=模拟时钟
 Name[zh_TW]=類比時鐘
 Comment=An SVG themable clock
+Comment[af]='n Horlosie met SVG temas
 Comment[bg]=Часовник с SVG тема
 Comment[ca]=Un rellotge que permet temes SVG
 Comment[da]=Et SVG-tematisérbart ur

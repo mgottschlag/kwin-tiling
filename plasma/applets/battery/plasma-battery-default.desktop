@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Battery Monitor
+Name[af]=Battery-monitor
 Name[be]=Назіранне за батарэяй
 Name[bg]=Мониторинг на батерията
 Name[ca]=Monitor de bateria
@@ -51,6 +52,7 @@ Name[x-test]=xxBattery Monitorxx
 Name[zh_CN]=电池监视器
 Name[zh_TW]=電池監視器
 Comment=A battery charge monitor
+Comment[af]='n Battery-laai monitor
 Comment[be]=Назіранне за зарадам батарэй
 Comment[bg]=Наблюдение зареждането на батерията
 Comment[ca]=Un monitor de càrrega de la bateria
