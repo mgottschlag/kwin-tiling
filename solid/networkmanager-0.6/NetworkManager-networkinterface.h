@@ -26,6 +26,8 @@
 #include <QtCore/qobject.h>
 #include <QtDBus/QDBusObjectPath>
 
+class QDBusInterface;
+
 struct NMDBusDeviceProperties {
     QDBusObjectPath path;
     QString interface;
@@ -77,6 +79,7 @@ public:
     void addNetwork(const QDBusObjectPath  & netPath);
     void removeNetwork(const QDBusObjectPath  & netPath);
     void updateNetworkStrength(const QDBusObjectPath  & netPath, int strength);
+    void setManagerInterface(QDBusInterface * manager);
     QString interfaceName() const;
     QString driver() const;
     Solid::Control::IPv4Config ipV4Config() const;

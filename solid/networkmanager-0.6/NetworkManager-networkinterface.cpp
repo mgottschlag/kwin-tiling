@@ -76,6 +76,7 @@ NMNetworkInterfacePrivate::NMNetworkInterfacePrivate(const QString  & objPath)
               "org.freedesktop.NetworkManager.Devices",
               QDBusConnection::systemBus()),
        objectPath(objPath)
+    , manager(0)
     , active(false)
     , type(Solid::Control::NetworkInterface::UnknownType)
     , activationStage(Solid::Control::NetworkInterface::UnknownState)
@@ -271,6 +272,12 @@ void NMNetworkInterface::updateNetworkStrength(const QDBusObjectPath  & netPath,
         }
     }
 #endif
+}
+
+void NMNetworkInterface::setManagerInterface(QDBusInterface * manager)
+{
+    Q_D(NMNetworkInterface);
+    d->manager = manager;
 }
 
 QString NMNetworkInterface::interfaceName() const

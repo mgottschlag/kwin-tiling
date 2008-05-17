@@ -44,6 +44,7 @@ public:
 
     QDBusInterface iface;
     QString objectPath;
+    QDBusInterface * manager;
     bool active;
     Solid::Control::NetworkInterface::Type type;
     int activationStage;

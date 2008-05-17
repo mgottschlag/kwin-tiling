@@ -180,7 +180,10 @@ QObject * NMNetworkManager::createNetworkInterface(const QString  & uni)
         }
 
         if (netInterface)
+        {
+            netInterface->setManagerInterface(&d->manager);
             it.value() = netInterface;
+        }
     }
     return netInterface;
 }
