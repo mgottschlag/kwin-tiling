@@ -34,7 +34,7 @@ void Network::setStatus( Solid::Networking::Status status )
 	m_status = status;
 }
 
-Solid::Networking::Status Network::status()
+Solid::Networking::Status Network::status() const
 {
 	return m_status;
 }
@@ -44,12 +44,12 @@ void Network::setName( const QString& name )
 	m_name = name;
 }
 
-QString Network::name()
+QString Network::name() const
 {
 	return m_name;
 }
 
-QString Network::service()
+QString Network::service() const
 {
 	return m_service;
 }

@@ -36,16 +36,16 @@ public:
 	/**
 	 * The connection status of this network
 	 */
-	Solid::Networking::Status status();
+	Solid::Networking::Status status() const;
 	/**
 	 * The name of this network
 	 */
-	QString name();
+	QString name() const;
 	void setName( const QString& name );
 	/**
 	 * Returns the service owning this network
 	 */
-	QString service();
+	QString service() const;
 	void setService( const QString& service );
 
 private:
