@@ -46,6 +46,7 @@ public:
     QStringList domains() const;
     QString nisDomain() const;
     QList<uint> nisServers() const;
+    IPv4Config &operator=(const IPv4Config&);
 private:
     class Private;
     Private * d;

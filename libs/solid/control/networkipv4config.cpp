@@ -100,3 +100,12 @@ QList<uint> Solid::Control::IPv4Config::nisServers() const
     return d->nisServers;
 }
 
+Solid::Control::IPv4Config &Solid::Control::IPv4Config::operator=(const Solid::Control::IPv4Config& other)
+{
+    if (this == &other)
+        return *this;
+
+    *d = *other.d;
+    return *this;
+}
+
