@@ -43,6 +43,7 @@
 #include <plasma/svg.h>
 #include <plasma/panelsvg.h>
 #include <plasma/theme.h>
+#include <plasma/animator.h>
 
 const int WINDOW_UPDATE_DELAY = 50;
 
@@ -54,6 +55,7 @@ Pager::Pager(QObject *parent, const QVariantList &args)
       m_showOwnBackground(false),
       m_rows(2),
       m_columns(0),
+      m_hoverIndex(-1),
       m_dragId(0),
       m_dragHighlightedDesktop(-1)
 {
@@ -248,6 +250,7 @@ void Pager::recalculateGeometry()
     }
 
     m_rects.clear();
+    m_animations.clear();
     QRectF itemRect;
     itemRect.setWidth(floor(itemWidth - 1));
     itemRect.setHeight(floor(itemHeight - 1));
@@ -255,6 +258,11 @@ void Pager::recalculateGeometry()
         itemRect.moveLeft(leftMargin + floor((i % columns) * (itemWidth + padding)));
         itemRect.moveTop(topMargin + floor((i / columns) * (itemHeight + padding)));
         m_rects.append(itemRect);
+        AnimInfo anim;
+        anim.animId = -1;
+        anim.fadeIn = true;
+        anim.alpha = 0;
+        m_animations.append(anim);
     }
 
     //Resize background svgs as needed
@@ -593,14 +601,39 @@ void Pager::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 void Pager::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
+    bool changedHover = !posOnDesktopRect(m_hoverRect, event->pos());
+
+    if (changedHover && m_hoverIndex > -1) {
+        if (m_animations[m_hoverIndex].animId != -1) {
+            Plasma::Animator::self()->stopCustomAnimation(m_animations[m_hoverIndex].animId);
+        }
+        m_animations[m_hoverIndex].fadeIn = false;
+        m_animations[m_hoverIndex].alpha = 1;
+        m_animations[m_hoverIndex].animId = Plasma::Animator::self()->customAnimation(40 / (1000 / s_FadeOutDuration), s_FadeOutDuration,Plasma::Animator::EaseOutCurve, this,"animationUpdate");
+    }
+
+
+    if (!changedHover) {
+        return;
+    }
+
+    int i = 0;
     foreach (const QRectF &rect, m_rects) {
         if (posOnDesktopRect(rect, event->pos())) {
             if (m_hoverRect != rect) {
                 m_hoverRect = rect;
+                m_hoverIndex = i;
+                if (m_animations[i].animId != -1) {
+                    Plasma::Animator::self()->stopCustomAnimation(m_animations[i].animId);
+                }
+                m_animations[i].fadeIn = true;
+                m_animations[m_hoverIndex].alpha = 0;
+                m_animations[i].animId = Plasma::Animator::self()->customAnimation(40 / (1000 / s_FadeInDuration), s_FadeInDuration,Plasma::Animator::EaseInCurve, this,"animationUpdate");
                 update();
             }
             return;
         }
+        i++;
     }
     m_hoverRect = QRectF();
     update();
@@ -613,7 +646,17 @@ void Pager::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
         m_hoverRect = QRectF();
         update();
     }
-    
+
+    if (m_hoverIndex != -1) {
+        if (m_animations[m_hoverIndex].animId != -1) {
+            Plasma::Animator::self()->stopCustomAnimation(m_animations[m_hoverIndex].animId);
+        }
+        m_animations[m_hoverIndex].fadeIn = false;
+        m_animations[m_hoverIndex].alpha = 1;
+        m_animations[m_hoverIndex].animId = Plasma::Animator::self()->customAnimation(40 / (1000 / s_FadeOutDuration), s_FadeOutDuration,Plasma::Animator::EaseOutCurve, this,"animationUpdate");
+        m_hoverIndex = -1;
+    }
+
     // The applet doesn't always get mouseReleaseEvents, for example when starting a drag
     // on the panel and releasing the mouse on the desktop or another window. This can cause
     // weird bugs because the pager still thinks a drag is going on.
@@ -631,6 +674,28 @@ void Pager::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     Applet::hoverLeaveEvent(event);
 }
 
+void Pager::animationUpdate(qreal progress, int animId)
+{
+    int i = 0;
+    foreach (AnimInfo anim, m_animations) {
+
+        if (anim.animId == animId) {
+            break;
+        }
+        i++;
+    }
+
+    if (progress == 1) {
+        m_animations[i].animId = -1;
+        m_animations[i].fadeIn = true;
+    }
+
+    m_animations[i].alpha = m_animations[i].fadeIn ? progress : 1 - progress;
+
+    // explicit update
+    update();
+}
+
 void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
     Q_UNUSED( option );
@@ -641,10 +706,8 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     // Desktop background
     QColor defaultTextColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-    QColor textColor = defaultTextColor;
-    textColor.setAlpha(64);
-    QBrush hoverBrush(textColor);
-    QBrush defaultBrush(Qt::NoBrush);
+    QColor hoverColor = defaultTextColor;
+    hoverColor.setAlpha(64);
 
     // Inactive windows
     QColor drawingColor = plasmaColorTheme.foreground(KColorScheme::InactiveText).color();
@@ -668,15 +731,16 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         m_background->paintPanel(painter, contentsRect);
     }
 
-    // Draw backgrounds of desktops
+    // Draw backgrounds of desktops only when there are not the proper theme elements
     painter->setPen(Qt::NoPen);
-    if (!m_background->hasElementPrefix("hover") || !m_background->hasElementPrefix("normal")) {
+    if (!m_background->hasElementPrefix("hover")) {
         for (int i = 0; i < m_desktopCount; i++) {
-            if (!m_background->hasElementPrefix("hover") && m_rects[i] == m_hoverRect) {
-                painter->setBrush(hoverBrush);
-                painter->drawRect(m_rects[i]);
-            } else if (!m_background->hasElementPrefix("normal")) {
-                painter->setBrush(defaultBrush);
+            if (m_rects[i] == m_hoverRect) {
+                QColor animHoverColor = hoverColor;
+                if (m_animations[i].animId > -1) {
+                    animHoverColor.setAlpha(hoverColor.alpha()*m_animations[i].alpha);
+                }
+                painter->setBrush(animHoverColor);
                 painter->drawRect(m_rects[i]);
             }
         }
@@ -716,9 +780,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     QString prefix;
     for( int i = 0; i < m_desktopCount; i++) {
-        if (m_rects[i] == m_hoverRect) {
-            prefix = "hover";
-        } else if (i + 1 == m_currentDesktop || i == m_dragHighlightedDesktop) {
+        if (i + 1 == m_currentDesktop || i == m_dragHighlightedDesktop) {
             prefix = "active";
         } else {
             prefix = "normal";
@@ -727,10 +789,41 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         //Paint the panel or fallback if we don't have that prefix
         if (m_background->hasElementPrefix(prefix)) {
             m_background->setElementPrefix(prefix);
-            m_background->paintPanel(painter, m_rects[i], m_rects[i].topLeft());
+            if (m_animations[i].animId > -1) {
+                QPixmap pixmap(m_rects[i].size().toSize());
+                QColor alphaColor(0,0,0);
+
+                //alpha of the not-hover element
+                alphaColor.setAlphaF(1.0-m_animations[i].alpha);
+                pixmap.fill(alphaColor);
+
+                QPainter buffPainter(&pixmap);
+                buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+
+                m_background->paintPanel(&buffPainter, QRectF(QPointF(0, 0), m_rects[i].size()));
+                buffPainter.end();
+                painter->drawPixmap(m_rects[i].topLeft(), pixmap);
+
+                m_background->setElementPrefix("hover");
+                //alpha of the not-hover element
+                alphaColor.setAlphaF(m_animations[i].alpha);
+                //FIXME: filling again the old pixmap makes a segfault
+                pixmap = QPixmap(m_rects[i].size().toSize());
+                pixmap.fill(alphaColor);
+                buffPainter.begin(&pixmap);
+                buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+                m_background->paintPanel(&buffPainter, QRectF(QPointF(0, 0), m_rects[i].size()));
+                painter->drawPixmap(m_rects[i].topLeft(), pixmap);
+            } else {
+                //no anims, simpler thing
+                if (m_rects[i] == m_hoverRect) {
+                    m_background->setElementPrefix("hover");
+                }
+                m_background->paintPanel(painter, m_rects[i], m_rects[i].topLeft());
+            }
         } else {
             if (i + 1 == m_currentDesktop || i == m_dragHighlightedDesktop) {
-            drawingPen = QPen(defaultTextColor);
+                drawingPen = QPen(defaultTextColor);
             } else {
                 drawingPen = QPen(plasmaColorTheme.foreground(KColorScheme::InactiveText).color());
             }
@@ -740,12 +833,16 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         }
 
         //Draw text
-        if (m_rects[i] == m_hoverRect) {
+        if (m_animations[i].animId > -1 || m_rects[i] == m_hoverRect) {
+            if (m_animations[i].animId == -1) {
+                defaultTextColor.setAlphaF(1);
+            }
+            defaultTextColor.setAlphaF(m_animations[i].alpha);
+            painter->setPen(defaultTextColor);
+
             if (m_displayedText==Number) { // Display number of desktop
-                painter->setPen(activePen);
                 painter->drawText(m_rects[i], Qt::AlignCenter, QString::number(i+1));
             } else if (m_displayedText==Name) { // Display name of desktop
-                painter->setPen(activePen);
                 painter->drawText(m_rects[i], Qt::AlignCenter, KWindowSystem::desktopName(i+1));
             }
         }

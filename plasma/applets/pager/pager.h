@@ -73,6 +73,7 @@ class Pager : public Plasma::Applet
         void showingDesktopChanged(bool showing);
         void slotConfigureDesktop();
         void lostDesktopLayoutOwner();
+        void animationUpdate(qreal progress, int animId);
 
     protected:
         void createMenu();
@@ -90,6 +91,15 @@ class Pager : public Plasma::Applet
             Name,
             None
         };
+
+        struct AnimInfo
+        {
+            int animId;
+            qreal alpha;
+            bool fadeIn;
+            bool operator == (AnimInfo otherAnim) const { return otherAnim.animId == animId; }
+        };
+
         DisplayedText m_displayedText;
         bool m_showWindowIcons;
         bool m_showOwnBackground;
@@ -101,7 +111,10 @@ class Pager : public Plasma::Applet
         qreal m_heightScaleFactor;
         QSizeF m_size;
         QList<QRectF> m_rects;
+        //list of info about animations for each desktop
+        QList<AnimInfo> m_animations;
         QRectF m_hoverRect;
+        int m_hoverIndex;
         QList<QList<QPair<WId, QRect> > > m_windowRects;
         QList<QRect> m_activeWindows;
         QList<QAction*> m_actions;
@@ -115,6 +128,9 @@ class Pager : public Plasma::Applet
         WId m_dragId;
         int m_dragStartDesktop;
         int m_dragHighlightedDesktop;
+        
+        static const int s_FadeInDuration = 100;
+        static const int s_FadeOutDuration = 200;
     };
 
 K_EXPORT_PLASMA_APPLET(pager, Pager)
