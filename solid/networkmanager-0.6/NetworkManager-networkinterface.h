@@ -72,7 +72,6 @@ public:
     // These setters are used to update the interface by the manager
     // in response to DBus signals
     void setSignalStrength(int);
-    void setCarrierOn(bool);
     void setActive(bool);
     void setActivationStage(int activationStage);
     void addNetwork(const QDBusObjectPath  & netPath);

@@ -379,7 +379,9 @@ void NMNetworkManager::carrierOn(const QDBusObjectPath & devPath)
     if (it != d->interfaces.end() && it.value())
     {
         NMNetworkInterface * interface = it.value();
-        interface->setCarrierOn(true);
+        NMWiredNetwork * wiredNet = qobject_cast<NMWiredNetwork *>(interface);
+        if (wiredNet)
+            wiredNet->setCarrier(true);
     }
 }
 void NMNetworkManager::carrierOff(const QDBusObjectPath & devPath)
@@ -389,7 +391,9 @@ void NMNetworkManager::carrierOff(const QDBusObjectPath & devPath)
     if (it != d->interfaces.end() && it.value())
     {
         NMNetworkInterface * interface = it.value();
-        interface->setCarrierOn(false);
+        NMWiredNetwork * wiredNet = qobject_cast<NMWiredNetwork *>(interface);
+        if (wiredNet)
+            wiredNet->setCarrier(false);
     }
 }
 

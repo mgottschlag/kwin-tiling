@@ -31,11 +31,13 @@ public:
     /* reimp */ void applyProperties(const NMDBusDeviceProperties & props);
     QString hwAddr;
     int rate;
+    bool carrier;
 };
 
 NMWiredNetworkPrivate::NMWiredNetworkPrivate(const QString & netPath)
     : NMNetworkInterfacePrivate(netPath)
     , rate(0)
+    , carrier(false)
 {
 }
 
@@ -44,6 +46,7 @@ void NMWiredNetworkPrivate::applyProperties(const NMDBusDeviceProperties & props
     NMNetworkInterfacePrivate::applyProperties(props);
 
     hwAddr = props.hardwareAddress;
+    carrier = props.linkActive;
 }
 
 
@@ -82,6 +85,16 @@ void NMWiredNetwork::setBitrate(int rate)
 
     d->rate = rate;
     emit bitRateChanged(rate);
+}
+
+void NMWiredNetwork::setCarrier(bool carrier)
+{
+    Q_D(NMWiredNetwork);
+    if (d->carrier == carrier)
+        return;
+
+    d->carrier = carrier;
+    emit carrierChanged(d->carrier);
 }
 
 bool NMWiredNetwork::activateConnection(const QString & connectionUni, const QString & extra_connection_parameter)

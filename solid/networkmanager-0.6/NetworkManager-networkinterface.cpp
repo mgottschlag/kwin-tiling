@@ -79,7 +79,6 @@ NMNetworkInterfacePrivate::NMNetworkInterfacePrivate(const QString  & objPath)
     , active(false)
     , type(Solid::Control::NetworkInterface::UnknownType)
     , activationStage(Solid::Control::NetworkInterface::UnknownState)
-    , carrier(false)
     , signalStrength(0)
     , designSpeed(0)
 {
@@ -191,7 +190,6 @@ void NMNetworkInterfacePrivate::applyProperties(const NMDBusDeviceProperties & p
     }
     active = props.active;
     activationStage = props.activationStage;
-    carrier = props.linkActive;
     signalStrength = props.strength;
     designSpeed = props.speed;
     if (props.capabilities  & NM_DEVICE_CAP_NM_SUPPORTED)
@@ -223,15 +221,6 @@ void NMNetworkInterface::setSignalStrength(int strength)
 #endif
 #if 0
     emit signalStrengthChanged(strength);
-#endif
-}
-
-void NMNetworkInterface::setCarrierOn(bool on)
-{
-    Q_D(NMNetworkInterface);
-    d->carrier = on;
-#if 0
-    emit linkUpChanged(on);
 #endif
 }
 
