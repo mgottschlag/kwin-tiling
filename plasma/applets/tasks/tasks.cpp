@@ -37,7 +37,8 @@
 #include <plasma/theme.h>
 
 Tasks::Tasks(QObject* parent, const QVariantList &arguments)
- : Plasma::Applet(parent, arguments)
+ : Plasma::Applet(parent, arguments),
+   m_activeTask(0)
 {
     setHasConfigurationInterface(true);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
@@ -153,6 +154,16 @@ void Tasks::addWindowTask(TaskPtr task)
     }
     item->setWindowTask(task);
     m_windowTaskItems.insert(task, item);
+
+    //if active initialize m_activeTask at the last item inserted
+    if (task->isActive()) {
+        m_activeTask = m_windowTaskItems.find(task);
+    } else if (m_windowTaskItems.count() == 1) {
+        m_activeTask = m_windowTaskItems.begin();
+    }
+
+    connect(item, SIGNAL(activated(WindowTaskItem*)),
+            this, SLOT(updateActive(WindowTaskItem*)));
 }
 
 void Tasks::removeWindowTask(TaskPtr task)
@@ -161,6 +172,9 @@ void Tasks::removeWindowTask(TaskPtr task)
         WindowTaskItem *item = m_windowTaskItems.take(task);
         m_layout->removeItem(item);
         scene()->removeItem(item);
+        if (m_windowTaskItems.count() > 1) {
+            m_activeTask = m_windowTaskItems.end();
+        }
     }
 }
 
@@ -183,10 +197,38 @@ void Tasks::constraintsEvent(Plasma::Constraints constraints)
     }
 }
 
+void Tasks::updateActive(WindowTaskItem *task)
+{
+    m_activeTask = m_windowTaskItems.find(task->windowTask());
+}
+
 void Tasks::wheelEvent(QGraphicsSceneWheelEvent *e)
 {
-     //TODO PORT THIS : we don't need a root, iteration with QGraphicsLayoutItem * itemAt in the layout and give the focus. 
-     //m_rootTaskGroup->cycle(e->delta());
+    //zero or one tasks don't cycle
+    if (m_windowTaskItems.count() < 2) {
+        return;
+    }
+
+    // if it's invalid move to start
+    if (m_activeTask ==  m_windowTaskItems.constEnd()) {
+        m_activeTask = m_windowTaskItems.begin();
+    //mouse wheel down
+    } else if (e->delta() < 0) {
+        m_activeTask++;
+
+        if (m_activeTask == m_windowTaskItems.constEnd()) {
+            m_activeTask = m_windowTaskItems.begin();
+        }
+    //mouse wheel up
+    } else {
+        if (m_activeTask == m_windowTaskItems.constBegin()) {
+            m_activeTask = m_windowTaskItems.end();
+        }
+
+        m_activeTask--;
+    }
+
+    m_activeTask.value()->activate();
 }
 
 void Tasks::currentDesktopChanged(int)

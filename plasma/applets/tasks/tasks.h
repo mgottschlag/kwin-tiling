@@ -71,6 +71,7 @@ protected slots:
         void configAccepted();
         virtual void wheelEvent(QGraphicsSceneWheelEvent *);
         void themeRefresh();
+        void updateActive(WindowTaskItem *task);
 
 protected:
         void createConfigurationInterface(KConfigDialog *parent);
@@ -103,6 +104,7 @@ private:
 
         QHash<TaskPtr,WindowTaskItem*> m_windowTaskItems;
         QHash<StartupPtr,WindowTaskItem*> m_startupTaskItems;
+        QHash<TaskPtr,WindowTaskItem*>::iterator m_activeTask;
 
         bool m_showTooltip;
         bool m_showOnlyCurrentDesktop;
