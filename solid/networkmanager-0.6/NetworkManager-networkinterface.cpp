@@ -310,4 +310,16 @@ QString NMNetworkInterface::activeConnection() const
     return QString();
 }
 
+bool NMNetworkInterface::activateConnection(const QString & connectionUni, const QString & extra_connection_parameter)
+{
+    Q_UNUSED(connectionUni)
+    Q_UNUSED(extra_connection_parameter)
+    return false;
+}
+
+bool NMNetworkInterface::deactivateConnection()
+{
+    return false;
+}
+
 #include "NetworkManager-networkinterface.moc"

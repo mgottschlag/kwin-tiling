@@ -82,6 +82,8 @@ public:
     QString driver() const;
     Solid::Control::IPv4Config ipV4Config() const;
     QString activeConnection() const;
+    virtual bool activateConnection(const QString & connectionUni, const QString & extra_connection_parameter);
+    virtual bool deactivateConnection();
 Q_SIGNALS:
     void ipDetailsChanged();
     void connectionStateChanged(int state);

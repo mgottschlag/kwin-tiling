@@ -220,14 +220,31 @@ bool NMNetworkManager::isWirelessHardwareEnabled() const
 
 void NMNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QString & extra_connection_parameter)
 {
-#warning NMNetworkManager::activateConnection() is unimplemented
     kDebug(1441) << interfaceUni << connectionUni << extra_connection_parameter;
+    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.find(interfaceUni);
+    if (it != d->interfaces.end())
+    {
+        NMNetworkInterface * interface = it.value();
+        if (!interface)
+            interface = qobject_cast<NMNetworkInterface *>(createNetworkInterface(interfaceUni));
+        if (interface)
+        {
+            bool activated = interface->activateConnection(connectionUni, extra_connection_parameter);
+            Q_UNUSED(activated)
+        }
+    }
 }
 
 void NMNetworkManager::deactivateConnection(const QString & activeConnection)
 {
-#warning NMNetworkManager::deactivateConnection() is unimplemented
     kDebug(1441) << activeConnection;
+    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.find(activeConnection);
+    if (it != d->interfaces.end() && it.value())
+    {
+        NMNetworkInterface * interface = it.value();
+        bool deactivated = interface->deactivateConnection();
+        Q_UNUSED(deactivated)
+    }
 }
 
 void NMNetworkManager::setNetworkingEnabled(bool enabled)

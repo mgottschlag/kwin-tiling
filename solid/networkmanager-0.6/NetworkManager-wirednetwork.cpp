@@ -84,4 +84,16 @@ void NMWiredNetwork::setBitrate(int rate)
     emit bitRateChanged(rate);
 }
 
+bool NMWiredNetwork::activateConnection(const QString & connectionUni, const QString & extra_connection_parameter)
+{
+    Q_UNUSED(connectionUni)
+    Q_UNUSED(extra_connection_parameter)
+    return false;
+}
+
+bool NMWiredNetwork::deactivateConnection()
+{
+    return false;
+}
+
 #include "NetworkManager-wirednetwork.moc"
