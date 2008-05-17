@@ -23,6 +23,8 @@
 
 #include <kdebug.h>
 
+#include <QtDBus/QDBusReply>
+
 class NMWiredNetworkPrivate : public NMNetworkInterfacePrivate
 {
 public:
@@ -99,8 +101,15 @@ void NMWiredNetwork::setCarrier(bool carrier)
 
 bool NMWiredNetwork::activateConnection(const QString & connectionUni, const QString & extra_connection_parameter)
 {
+    Q_D(NMWiredNetwork);
     Q_UNUSED(connectionUni)
     Q_UNUSED(extra_connection_parameter)
+    if (d->manager)
+    {
+        const QDBusReply<void> reply = d->manager->call(QDBus::NoBlock, "setActiveDevice", uni());
+        Q_UNUSED(reply)
+        return true;
+    }
     return false;
 }
 
