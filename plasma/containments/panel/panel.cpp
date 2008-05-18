@@ -88,12 +88,9 @@ void Panel::init()
 QList<QAction*> Panel::contextualActions()
 {
     if (!m_appletBrowserAction) {
-        m_appletBrowserAction = new QAction(i18n("Add Widgets..."), this);
-        m_appletBrowserAction->setIcon(KIcon("list-add"));
+        m_appletBrowserAction = action("add widgets");
 
         bool locked = immutability() != Mutable;
-        m_appletBrowserAction->setVisible(!locked);
-        connect(m_appletBrowserAction, SIGNAL(triggered()), this, SLOT(showAddWidgets()));
 
         m_configureAction = new QAction(i18n("Panel Settings"), this);
         m_configureAction->setIcon(KIcon("configure"));
@@ -320,7 +317,6 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::ImmutableConstraint && m_appletBrowserAction) {
         // we need to update the menu items that have already been created
         bool locked = immutability() != Mutable;
-        m_appletBrowserAction->setVisible(!locked);
         m_removeAction->setVisible(!locked);
     }
 }
@@ -371,11 +367,6 @@ void Panel::paintInterface(QPainter *painter,
 
     // restore transformation and composition mode
     painter->restore();
-}
-
-void Panel::showAddWidgets()
-{
-    emit showAddWidgetsInterface(QPointF());
 }
 
 void Panel::remove()
