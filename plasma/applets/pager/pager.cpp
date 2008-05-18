@@ -690,8 +690,9 @@ void Pager::animationUpdate(qreal progress, int animId)
         m_animations[i].fadeIn = true;
     }
 
-    m_animations[i].alpha = m_animations[i].fadeIn ? progress : 1 - progress;
-
+    if (m_animations.size() > i) {
+        m_animations[i].alpha = m_animations[i].fadeIn ? progress : 1 - progress;
+    }
     // explicit update
     update();
 }
