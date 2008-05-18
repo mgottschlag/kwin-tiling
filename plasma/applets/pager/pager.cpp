@@ -226,17 +226,17 @@ void Pager::recalculateGeometry()
     qreal itemHeight;
     qreal itemWidth;
 
-    if (formFactor() == Plasma::Vertical) { // Panel is on left or right
+    if (formFactor() == Plasma::Vertical) {
         itemWidth = (geometry().width() - leftMargin - rightMargin - padding * (columns - 1)) / columns;
         m_widthScaleFactor = itemWidth / QApplication::desktop()->width();
         itemHeight = QApplication::desktop()->height() * m_widthScaleFactor;
         m_heightScaleFactor = m_widthScaleFactor;
-    } else { // Panel is on top or bottom
+    } else {
         itemHeight = (geometry().height() - topMargin -  bottomMargin - padding * (m_rows - 1)) / m_rows;
         m_heightScaleFactor = itemHeight / QApplication::desktop()->height();
         itemWidth = QApplication::desktop()->width() * m_heightScaleFactor;
-        if (m_displayedText==Name) {
-            // When panel is in this position we are not limited by low width and we can
+        if (m_displayedText == Name) {
+            // When containment is in this position we are not limited by low width and we can
             // afford increasing width of applet to be able to display every name of desktops
             for (int i = 0; i < m_desktopCount; i++) {
                 QFontMetricsF metrics(KGlobalSettings::taskbarFont());
@@ -602,6 +602,7 @@ void Pager::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 void Pager::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
     bool changedHover = !posOnDesktopRect(m_hoverRect, event->pos());
+    Plasma::Animator *anim = Plasma::Animator::self();
 
     if (changedHover && m_hoverIndex > -1) {
         if (m_animations[m_hoverIndex].animId != -1) {
@@ -609,9 +610,8 @@ void Pager::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
         }
         m_animations[m_hoverIndex].fadeIn = false;
         m_animations[m_hoverIndex].alpha = 1;
-        m_animations[m_hoverIndex].animId = Plasma::Animator::self()->customAnimation(40 / (1000 / s_FadeOutDuration), s_FadeOutDuration,Plasma::Animator::EaseOutCurve, this,"animationUpdate");
+        m_animations[m_hoverIndex].animId = anim->customAnimation(40 / (1000 / s_FadeOutDuration), s_FadeOutDuration,Plasma::Animator::EaseOutCurve, this,"animationUpdate");
     }
-
 
     if (!changedHover) {
         return;
@@ -623,12 +623,12 @@ void Pager::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
             if (m_hoverRect != rect) {
                 m_hoverRect = rect;
                 m_hoverIndex = i;
-                if (m_animations[i].animId != -1) {
-                    Plasma::Animator::self()->stopCustomAnimation(m_animations[i].animId);
+                if (m_animations[m_hoverIndex].animId != -1) {
+                    anim->stopCustomAnimation(m_animations[i].animId);
                 }
-                m_animations[i].fadeIn = true;
+                m_animations[m_hoverIndex].fadeIn = true;
                 m_animations[m_hoverIndex].alpha = 0;
-                m_animations[i].animId = Plasma::Animator::self()->customAnimation(40 / (1000 / s_FadeInDuration), s_FadeInDuration,Plasma::Animator::EaseInCurve, this,"animationUpdate");
+                m_animations[m_hoverIndex].animId = anim->customAnimation(40 / (1000 / s_FadeInDuration), s_FadeInDuration,Plasma::Animator::EaseInCurve, this,"animationUpdate");
                 update();
             }
             return;
@@ -658,7 +658,7 @@ void Pager::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     }
 
     // The applet doesn't always get mouseReleaseEvents, for example when starting a drag
-    // on the panel and releasing the mouse on the desktop or another window. This can cause
+    // on the containment and releasing the mouse on the desktop or another window. This can cause
     // weird bugs because the pager still thinks a drag is going on.
     // The only reliable event I found is the hoverLeaveEvent, so we just stop the drag
     // on this event.
@@ -678,11 +678,14 @@ void Pager::animationUpdate(qreal progress, int animId)
 {
     int i = 0;
     foreach (AnimInfo anim, m_animations) {
-
         if (anim.animId == animId) {
             break;
         }
         i++;
+    }
+
+    if (i >= m_animations.size()) {
+        return;
     }
 
     if (progress == 1) {
@@ -690,9 +693,7 @@ void Pager::animationUpdate(qreal progress, int animId)
         m_animations[i].fadeIn = true;
     }
 
-    if (m_animations.size() > i) {
-        m_animations[i].alpha = m_animations[i].fadeIn ? progress : 1 - progress;
-    }
+    m_animations[i].alpha = m_animations[i].fadeIn ? progress : 1 - progress;
     // explicit update
     update();
 }
@@ -775,12 +776,10 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     // Draw desktop frame and possibly text over it
     painter->setClipRect(option->exposedRect);
-    QPen activePen(defaultTextColor);
-    QPen drawingPen = QPen();
     painter->setBrush(Qt::NoBrush);
 
     QString prefix;
-    for( int i = 0; i < m_desktopCount; i++) {
+    for (int i = 0; i < m_desktopCount; i++) {
         if (i + 1 == m_currentDesktop || i == m_dragHighlightedDesktop) {
             prefix = "active";
         } else {
@@ -823,7 +822,10 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
                 m_background->paintPanel(painter, m_rects[i], m_rects[i].topLeft());
             }
         } else {
+            QPen drawingPen;
+
             if (i + 1 == m_currentDesktop || i == m_dragHighlightedDesktop) {
+                defaultTextColor.setAlphaF(1);
                 drawingPen = QPen(defaultTextColor);
             } else {
                 drawingPen = QPen(plasmaColorTheme.foreground(KColorScheme::InactiveText).color());
