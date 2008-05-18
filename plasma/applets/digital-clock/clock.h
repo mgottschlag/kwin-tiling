@@ -63,6 +63,7 @@ class Clock : public Plasma::Applet
 
     private:
         void updateToolTipContent();
+        void updateSize();
         QRect preparePainter(QPainter *p, const QRect &rect, const QFont &font, const QString &text);
 
         QFont m_plainClockFont;

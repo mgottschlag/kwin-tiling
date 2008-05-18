@@ -61,7 +61,6 @@ Clock::Clock(QObject *parent, const QVariantList &args)
 {
     setHasConfigurationInterface(true);
     resize(150, 75);
-    setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
 }
 
 void Clock::init()
@@ -101,17 +100,21 @@ void Clock::init()
 void Clock::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::SizeConstraint) {
-        int aspect = 2;
-        if (m_showSeconds) {
-            aspect = 3;
-        }
-        if (formFactor() == Plasma::Horizontal) {
-            // We have a fixed height, set some sensible width
-            setMinimumWidth(geometry().height() * aspect);
-        } else if (formFactor() == Plasma::Vertical) {
-            // We have a fixed width, set some sensible height
-            setMinimumHeight((int)geometry().width() / aspect);
-        }
+        updateSize();
+    }
+}
+
+void Clock::updateSize() {
+    int aspect = 2;
+    if (m_showSeconds) {
+        aspect = 3;
+    }
+    if (formFactor() == Plasma::Horizontal) {
+        // We have a fixed height, set some sensible width
+        setMinimumWidth(contentsRect().height() * aspect);
+    } else if (formFactor() == Plasma::Vertical) {
+        // We have a fixed width, set some sensible height
+        setMinimumHeight((int)contentsRect().width() / aspect);
     }
 }
 
@@ -140,7 +143,6 @@ void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &d
     // avoid unnecessary repaints
     if (m_showSeconds || m_time.minute() != m_lastTimeSeen.minute()) {
         m_lastTimeSeen = m_time;
-
         update();
     }
 }
@@ -214,16 +216,19 @@ void Clock::configAccepted()
 
     //We need this to happen before we disconnect/reconnect sources to ensure
     //that the update interval is set properly.
-    m_showSeconds = ui.secondsCheckbox->checkState() == Qt::Checked;
-    cg.writeEntry("showSeconds", m_showSeconds);
+    if (m_showSeconds != ui.secondsCheckbox->isChecked()) {
+        m_showSeconds = !m_showSeconds;
+        cg.writeEntry("showSeconds", m_showSeconds);
+        updateSize();
+    }
 
-    m_localTimeZone = ui.localTimeZone->checkState() == Qt::Checked;
-    cg.writeEntry("localTimeZone", m_localTimeZone);
+    if (m_localTimeZone != ui.localTimeZone->isChecked()) {
+        m_localTimeZone = !m_localTimeZone;
+        cg.writeEntry("localTimeZone", m_localTimeZone);
+    }
 
     m_timeZones = ui.timeZones->selection();
     cg.writeEntry("timeZones", m_timeZones);
-
-    //QGraphicsItem::update();
 
     if (m_localTimeZone) {
         dataEngine("time")->disconnectSource(m_timezone, this);
