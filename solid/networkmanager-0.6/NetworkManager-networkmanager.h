@@ -27,7 +27,7 @@ class QDBusObjectPath;
 typedef class QList<QVariant> QVariantList;
 
 class NMNetworkManagerPrivate;
-class KDE_EXPORT NMNetworkManager : public Solid::Control::Ifaces::NetworkManager
+class NMNetworkManager : public Solid::Control::Ifaces::NetworkManager
 {
 Q_INTERFACES(Solid::Control::Ifaces::NetworkManager)
 Q_OBJECT

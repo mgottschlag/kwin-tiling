@@ -27,7 +27,7 @@
 
 class NMWiredNetworkPrivate;
 
-class KDE_EXPORT NMWiredNetwork : public NMNetworkInterface, virtual public Solid::Control::Ifaces::WiredNetworkInterface
+class NMWiredNetwork : public NMNetworkInterface, virtual public Solid::Control::Ifaces::WiredNetworkInterface
 {
 Q_OBJECT
 Q_INTERFACES(Solid::Control::Ifaces::WiredNetworkInterface)

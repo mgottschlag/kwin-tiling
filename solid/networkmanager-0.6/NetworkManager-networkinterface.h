@@ -56,7 +56,7 @@ Q_DECLARE_METATYPE(NMDBusDeviceProperties)
 
 class NMNetworkInterfacePrivate;
 
-class KDE_EXPORT NMNetworkInterface : public QObject, virtual public Solid::Control::Ifaces::NetworkInterface
+class NMNetworkInterface : public QObject, virtual public Solid::Control::Ifaces::NetworkInterface
 {
 Q_OBJECT
 Q_INTERFACES(Solid::Control::Ifaces::NetworkInterface)

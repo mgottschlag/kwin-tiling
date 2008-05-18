@@ -30,7 +30,7 @@ class NMAccessPointPrivate;
 /**
  * This interface represents a generic Internet Protocol (IP) network which we may be connected to.
  */
-class KDE_EXPORT NMAccessPoint : public Solid::Control::Ifaces::AccessPoint
+class NMAccessPoint : public Solid::Control::Ifaces::AccessPoint
 {
 Q_OBJECT
 Q_INTERFACES(Solid::Control::Ifaces::AccessPoint)
