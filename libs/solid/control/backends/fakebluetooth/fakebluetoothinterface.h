@@ -108,7 +108,7 @@ public:
     {
         return mName;
     }
-    QString getRemoteName(const QString &mac)
+    QString getRemoteName(const QString &)
     {
 	return "";
     }
