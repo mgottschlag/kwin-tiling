@@ -100,7 +100,7 @@ void LauncherApplet::init()
     d->actions.append(d->switcher);
     connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
     resize(IconSize(KIconLoader::Desktop),IconSize(KIconLoader::Desktop));
-    d->icon->resize(geometry().size());
+    d->icon->resize(contentsRect().size());
 }
 
 void LauncherApplet::constraintsEvent(Plasma::Constraints constraints)
