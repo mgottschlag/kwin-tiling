@@ -33,6 +33,7 @@ class QMenu;
 class QTimer;
 class QTimeLine;
 class QLabel;
+class LogoutEffect;
 
 namespace Plasma
 {
@@ -61,6 +62,8 @@ private:
     KSMShutdownFeedback();
     int m_currentY;
     QPixmap m_pixmap;
+    LogoutEffect *effect;
+    bool initialized;
 };
 
 class KSMPushButton : public QPushButton

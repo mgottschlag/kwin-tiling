@@ -37,8 +37,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 
-#include <qimageblitz.h>
-
 #include <KApplication>
 #include <kdialog.h>
 #include <kiconloader.h>
@@ -55,6 +53,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <config-workspace.h>
 
+#include "logouteffect.h"
 #include "shutdowndlg.moc"
 
 #include <kjob.h>
@@ -65,47 +64,33 @@ KSMShutdownFeedback * KSMShutdownFeedback::s_pSelf = 0L;
 
 KSMShutdownFeedback::KSMShutdownFeedback()
  : QWidget( 0L, Qt::Popup ),
-    m_currentY( 0 )
+    m_currentY( 0 ), initialized( false )
 {
     setObjectName( "feedbackwidget" );
     setAttribute( Qt::WA_NoSystemBackground );
     setAttribute( Qt::WA_PaintOnScreen );
     setGeometry( QApplication::desktop()->geometry() );
     m_pixmap = QPixmap( size() );
-    m_pixmap.fill( Qt::transparent );
     QTimer::singleShot( 10, this, SLOT( slotPaintEffect() ) );
 }
 
 
 void KSMShutdownFeedback::paintEvent( QPaintEvent* )
 {
-    if ( m_currentY >= height() ) {
-        QPainter painter( this );
-        painter.drawPixmap( 0, 0, m_pixmap );
+    if ( !initialized )
         return;
-    }
 
     QPainter painter( this );
-    painter.drawPixmap( 0, 0, m_pixmap, 0, 0, width(), m_currentY );
+    painter.setCompositionMode( QPainter::CompositionMode_Source );
+    painter.drawPixmap( 0, 0, m_pixmap );
 }
 
 void KSMShutdownFeedback::slotPaintEffect()
 {
-    if ( m_currentY >= height() )
-        return;
+    effect = LogoutEffect::create(this, &m_pixmap);
+    effect->start();
 
-    QImage image = QPixmap::grabWindow( QApplication::desktop()->winId(), 0, m_currentY, width(), 10 ).toImage();
-    Blitz::intensity( image, -0.4 );
-    Blitz::grayscale( image );
-
-    QPainter painter( &m_pixmap );
-    painter.drawImage( 0, m_currentY, image );
-    painter.end();
-
-    m_currentY += 10;
-    update( 0, 0, width(), m_currentY );
-
-    QTimer::singleShot( 5, this, SLOT( slotPaintEffect() ) );
+    initialized = true;
 }
 
 void KSMShutdownFeedback::start()
