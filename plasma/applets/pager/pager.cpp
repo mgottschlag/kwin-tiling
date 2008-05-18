@@ -156,6 +156,7 @@ void Pager::createConfigurationInterface(KConfigDialog *parent)
     ui.displayedTextComboBox->addItem(i18n("Desktop Name"));
     ui.displayedTextComboBox->addItem(i18n("None"));
     ui.displayedTextComboBox->setCurrentIndex((int)m_displayedText);
+    ui.displayedTextComboBox->setToolTip(i18n("What will appear when the mouse is over a desktop miniature"));
     ui.showWindowIconsCheckBox->setChecked(m_showWindowIcons);
     ui.spinRows->setValue(m_rows);
     ui.spinRows->setMaximum(m_desktopCount);
