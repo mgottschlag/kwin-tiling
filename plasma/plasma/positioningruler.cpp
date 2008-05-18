@@ -25,6 +25,7 @@
 #include <QToolButton>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QToolTip>
 
 #include <KIcon>
 #include <KColorUtils>
@@ -226,7 +227,7 @@ public:
         }
     }
 
-    enum DragElement { NoElement = 0,
+    enum SubElement { NoElement = 0,
                        LeftMaxSlider,
                        RightMaxSlider,
                        LeftMinSlider,
@@ -236,7 +237,8 @@ public:
 
     Plasma::Location location;
     Qt::Alignment alignment;
-    DragElement dragging;
+    SubElement dragging;
+    SubElement underMouse;
     QPoint startDragPos;
     int offset;
     int minLength;
@@ -438,6 +440,27 @@ void PositioningRuler::setAvailableLength(int newAvail)
 int PositioningRuler::availableLength() const
 {
     return d->availableLength;
+}
+
+bool PositioningRuler::event(QEvent *ev)
+{
+    //Show a different tooltip on each slider
+    if (ev->type() == QEvent::ToolTip) {
+        QHelpEvent *helpEvent = static_cast<QHelpEvent *>(ev);
+        if (d->offsetSliderRect.contains(helpEvent->pos())) {
+            QToolTip::showText(helpEvent->globalPos(), i18n("Move this slider to set the panel position"), this);
+        } else if ((d->alignment != Qt::AlignLeft && d->leftMaxSliderRect.contains(helpEvent->pos())) ||
+                   (d->alignment != Qt::AlignRight && d->rightMaxSliderRect.contains(helpEvent->pos()))) {
+            QToolTip::showText(helpEvent->globalPos(), i18n("Move this slider to set the maximum panel size"), this);
+        } else if ((d->alignment != Qt::AlignLeft && d->leftMinSliderRect.contains(helpEvent->pos())) ||
+                   (d->alignment != Qt::AlignRight && d->rightMinSliderRect.contains(helpEvent->pos()))) {
+            QToolTip::showText(helpEvent->globalPos(), i18n("Move this slider to set the minimum panel size"), this);
+        }
+
+        return true;
+    } else {
+        return QWidget::event(ev);
+    }
 }
 
 void PositioningRuler::paintEvent(QPaintEvent *event)

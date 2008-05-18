@@ -59,6 +59,7 @@ public:
     int availableLength() const;
 
 protected:
+    bool event(QEvent *ev);
     void paintEvent(QPaintEvent *event);
     void wheelEvent(QWheelEvent *event);
     void mousePressEvent(QMouseEvent *event);
