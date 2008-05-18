@@ -53,18 +53,14 @@
 #include "basictab.moc"
 
 BasicTab::BasicTab( QWidget *parent )
-    : QWidget(parent)
+    : KTabWidget(parent)
 {
     _menuFolderInfo = 0;
     _menuEntryInfo = 0;
-
-    QGridLayout *layout = new QGridLayout(this );
-    layout->setMargin( KDialog::marginHint() );
-    layout->setSpacing( KDialog::spacingHint() );
-
+    
     // general group
-    QGroupBox *general_group = new QGroupBox(this);
-    QGridLayout *grid = new QGridLayout(general_group );
+    QWidget *general_group = new QWidget();
+    QGridLayout *grid = new QGridLayout(general_group);
     grid->setMargin( KDialog::marginHint() );
     grid->setSpacing( KDialog::spacingHint() );
 
@@ -143,24 +139,23 @@ BasicTab::BasicTab( QWidget *parent )
     _iconButton->setIconSize(48);
     connect(_iconButton, SIGNAL(iconChanged(QString)), SLOT(slotChanged()));
     grid->addWidget(_iconButton, 0, 2, 2, 1);
+    grid->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::MinimumExpanding), 8, 0, 1, 3);
 
     // add the general group to the main layout
-    layout->addWidget(general_group, 0, 0, 1, 2 );
+    addTab(general_group, i18n("General"));
+    
+    QWidget *advanced = new QWidget();
+    QVBoxLayout *advancedLayout = new QVBoxLayout(advanced);
 
     // path group
     _path_group = new QGroupBox(this);
-    QVBoxLayout *vbox = new QVBoxLayout(_path_group);
-    vbox->setMargin(KDialog::marginHint());
-    vbox->setSpacing(KDialog::spacingHint());
-
-    QWidget *hbox = new QWidget(_path_group);
-    QHBoxLayout *hboxLayout1 = new QHBoxLayout(hbox);
-    hbox->setLayout(hboxLayout1);
+    QHBoxLayout *hboxLayout1 = new QHBoxLayout(_path_group);
     hboxLayout1->setSpacing(KDialog::spacingHint());
+    hboxLayout1->setMargin(KDialog::marginHint());
 
-    _pathLabel = new QLabel(i18n("&Work path:"), hbox);
+    _pathLabel = new QLabel(i18n("&Work path:"), _path_group);
     hboxLayout1->addWidget(_pathLabel);
-    _pathEdit = new KUrlRequester(hbox);
+    _pathEdit = new KUrlRequester(_path_group);
     hboxLayout1->addWidget(_pathEdit);
     _pathEdit->setMode(KFile::Directory | KFile::LocalOnly);
     _pathEdit->lineEdit()->setAcceptDrops(false);
@@ -169,12 +164,11 @@ BasicTab::BasicTab( QWidget *parent )
 
     connect(_pathEdit, SIGNAL(textChanged(const QString&)),
             SLOT(slotChanged()));
-    vbox->addWidget(hbox);
-    layout->addWidget(_path_group, 1, 0, 1, 2 );
+    advancedLayout->addWidget(_path_group);
 
     // terminal group
     _term_group = new QGroupBox(this);
-    vbox = new QVBoxLayout(_term_group);
+    QVBoxLayout *vbox = new QVBoxLayout(_term_group);
     vbox->setMargin(KDialog::marginHint());
     vbox->setSpacing(KDialog::spacingHint());
 
@@ -182,7 +176,7 @@ BasicTab::BasicTab( QWidget *parent )
     connect(_terminalCB, SIGNAL(clicked()), SLOT(termcb_clicked()));
     vbox->addWidget(_terminalCB);
 
-    hbox = new QWidget(_term_group);
+    QWidget *hbox = new QWidget(_term_group);
     QHBoxLayout *hboxLayout2 = new QHBoxLayout(hbox);
     hbox->setLayout(hboxLayout2);
     hboxLayout2->setSpacing(KDialog::spacingHint());
@@ -196,7 +190,7 @@ BasicTab::BasicTab( QWidget *parent )
     connect(_termOptEdit, SIGNAL(textChanged(const QString&)),
             SLOT(slotChanged()));
     vbox->addWidget(hbox);
-    layout->addWidget(_term_group, 2, 0, 1, 2 );
+    advancedLayout->addWidget(_term_group);
 
     _termOptEdit->setEnabled(false);
 
@@ -224,29 +218,28 @@ BasicTab::BasicTab( QWidget *parent )
     connect(_uidEdit, SIGNAL(textChanged(const QString&)),
 	    SLOT(slotChanged()));
     vbox->addWidget(hbox);
-    layout->addWidget(_uid_group, 3, 0, 1, 2 );
+    advancedLayout->addWidget(_uid_group);
 
     _uidEdit->setEnabled(false);
 
-    layout->setRowStretch(0, 2);
-
     // key binding group
     general_group_keybind = new QGroupBox(this);
-    layout->addWidget( general_group_keybind, 4, 0, 1, 2 );
-    // dummy widget in order to make it look a bit better
-    layout->addWidget( new QWidget(this), 5, 0 );
-    layout->setRowStretch( 5, 4 );
-    QGridLayout *grid_keybind = new QGridLayout(general_group_keybind );
-    grid_keybind->setMargin( KDialog::marginHint() );
-    grid_keybind->setSpacing( KDialog::spacingHint());
+    QHBoxLayout *keybindLayout = new QHBoxLayout(general_group_keybind);
+    keybindLayout->setMargin( KDialog::marginHint() );
+    keybindLayout->setSpacing( KDialog::spacingHint());
 
     _keyEdit = new KKeySequenceWidget(general_group_keybind);
     QLabel *l = new QLabel( i18n("Current shortcut &key:"), general_group_keybind);
     l->setBuddy( _keyEdit );
-    grid_keybind->addWidget(l, 0, 0);
+    keybindLayout->addWidget(l);
     connect( _keyEdit, SIGNAL(keySequenceChanged(const QKeySequence&)),
              this, SLOT(slotCapturedKeySequence(const QKeySequence&)));
-    grid_keybind->addWidget(_keyEdit, 0, 1);
+    keybindLayout->addWidget(_keyEdit);
+    advancedLayout->addWidget( general_group_keybind );
+    
+    advancedLayout->addItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::MinimumExpanding));
+    
+    addTab(advanced, i18n("Advanced"));
 
     if (!KHotKeys::present())
         general_group_keybind->hide();

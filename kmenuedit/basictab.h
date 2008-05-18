@@ -20,12 +20,7 @@
 #ifndef __basictab_h__
 #define __basictab_h__
 
-#include <QWidget>
-
-//Added by qt3to4:
-#include <QLabel>
-
-#include <klineedit.h>
+#include <KTabWidget>
 
 class KKeySequenceWidget;
 class KLineEdit;
@@ -40,7 +35,7 @@ class KLineSpellChecking;
 class MenuFolderInfo;
 class MenuEntryInfo;
 
-class BasicTab : public QWidget
+class BasicTab : public KTabWidget
 {
     Q_OBJECT
 
