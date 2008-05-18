@@ -275,7 +275,7 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
                                                                            Qt::Vertical);
                 }
             } else {
-                QGraphicsLinearLayout *lay = new QGraphicsLinearLayout();
+                QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
                 lay->setOrientation(form == Plasma::Horizontal ? Qt::Horizontal : Qt::Vertical);
                 lay->setContentsMargins(0, 0, 0, 0);
                 lay->setSpacing(4);
