@@ -238,9 +238,7 @@ void NMNetworkInterface::setActivationStage(int activationStage)
 {
     Q_D(NMNetworkInterface);
     d->activationStage = activationStage;
-#if 0
     emit connectionStateChanged(activationStage);
-#endif
 }
 
 void NMNetworkInterface::addNetwork(const QDBusObjectPath  & netPath)
