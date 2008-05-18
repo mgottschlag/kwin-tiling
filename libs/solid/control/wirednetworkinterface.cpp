@@ -22,7 +22,7 @@
 #include "wirednetworkinterface_p.h"
 
 #include "soliddefs_p.h"
-#include <solid/control/ifaces/wirednetworkinterface.h>
+#include "ifaces/wirednetworkinterface.h"
 
 Solid::Control::WiredNetworkInterface::WiredNetworkInterface(QObject *backendObject)
     : NetworkInterface(*new WiredNetworkInterfacePrivate(this), backendObject)

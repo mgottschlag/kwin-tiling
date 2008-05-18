@@ -24,7 +24,7 @@
 
 #include <QtCore/QObject>
 #include <QtCore/QStringList>
-#include <solid/control/solid_control_export.h>
+#include "../solid_control_export.h"
 
 class KJob;
 

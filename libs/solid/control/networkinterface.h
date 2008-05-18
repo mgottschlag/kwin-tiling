@@ -25,9 +25,9 @@
 #include <QtCore/QStringList>
 #include <QtNetwork/QNetworkAddressEntry>
 
-#include <solid/control/solid_control_export.h>
+#include "solid_control_export.h"
 
-#include <solid/control/networkipv4config.h>
+#include "networkipv4config.h"
 
 namespace Solid
 {

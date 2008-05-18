@@ -23,10 +23,10 @@
 #define SOLID_IFACES_BLUETOOTHINTERFACE_H
 
 #include <QtCore/QList>
-#include <solid/control/solid_control_export.h>
+#include "../solid_control_export.h"
 
-#include <solid/control/bluetoothinterface.h>
-#include <solid/control/ifaces/bluetoothremotedevice.h>
+#include "../bluetoothinterface.h"
+#include "bluetoothremotedevice.h"
 
 #include <QtCore/QObject>
 

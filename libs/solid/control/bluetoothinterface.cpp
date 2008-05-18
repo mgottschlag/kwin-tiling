@@ -25,7 +25,7 @@
 
 #include <kdebug.h>
 
-#include <solid/control/ifaces/bluetoothinterface.h>
+#include "ifaces/bluetoothinterface.h"
 
 #include "frontendobject_p.h"
 

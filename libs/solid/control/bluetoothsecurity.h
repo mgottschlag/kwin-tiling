@@ -25,8 +25,8 @@
 #include <QtCore/QObject>
 #include <QtCore/QPair>
 
-#include <solid/control/singletondefs.h>
-#include <solid/control/solid_control_export.h>
+#include "singletondefs.h"
+#include "solid_control_export.h"
 
 namespace Solid
 {

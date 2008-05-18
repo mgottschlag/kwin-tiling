@@ -23,7 +23,7 @@
 #define SOLID_IFACES_BLUETOOTHINPUTDEVICE
 
 #include <QtCore/QObject>
-#include <solid/control/solid_control_export.h>
+#include "../solid_control_export.h"
 
 namespace Solid
 {

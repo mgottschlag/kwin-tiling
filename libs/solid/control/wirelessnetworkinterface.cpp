@@ -22,9 +22,9 @@
 #include "wirelessnetworkinterface_p.h"
 
 #include "soliddefs_p.h"
-#include <solid/control/wirelessaccesspoint.h>
-#include <solid/control/ifaces/wirelessaccesspoint.h>
-#include <solid/control/ifaces/wirelessnetworkinterface.h>
+#include "wirelessaccesspoint.h"
+#include "ifaces/wirelessaccesspoint.h"
+#include "ifaces/wirelessnetworkinterface.h"
 
 Solid::Control::WirelessNetworkInterface::WirelessNetworkInterface(QObject *backendObject)
     : NetworkInterface(*new WirelessNetworkInterfacePrivate(this), backendObject)

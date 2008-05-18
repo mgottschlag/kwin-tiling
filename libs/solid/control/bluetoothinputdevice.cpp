@@ -22,7 +22,7 @@
 #include <QMap>
 #include <QStringList>
 
-#include <solid/control/ifaces/bluetoothinputdevice.h>
+#include "ifaces/bluetoothinputdevice.h"
 
 #include "frontendobject_p.h"
 

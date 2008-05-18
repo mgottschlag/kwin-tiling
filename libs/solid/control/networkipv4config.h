@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtCore/QStringList>
 
-#include <solid/control/solid_control_export.h>
+#include "solid_control_export.h"
 
 namespace Solid
 {

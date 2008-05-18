@@ -21,9 +21,9 @@
 #ifndef SOLID_CONTROL_WIRELESSNETWORKINTERFACE_H
 #define SOLID_CONTROL_WIRELESSNETWORKINTERFACE_H
 
-#include <solid/control/solid_control_export.h>
+#include "solid_control_export.h"
 
-#include <solid/control/networkinterface.h>
+#include "networkinterface.h"
 
 typedef QStringList AccessPointList;
 namespace Solid

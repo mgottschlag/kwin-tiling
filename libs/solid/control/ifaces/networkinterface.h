@@ -20,8 +20,8 @@
 #ifndef SOLID_CONTROL_IFACES_NETWORKINTERFACE_H
 #define SOLID_CONTROL_IFACES_NETWORKINTERFACE_H
 
-#include <solid/control/solid_control_export.h>
-#include <solid/control/networkinterface.h>
+#include "../solid_control_export.h"
+#include "../networkinterface.h"
 #include <QtCore/QObject>
 #include <QtCore/QList>
 

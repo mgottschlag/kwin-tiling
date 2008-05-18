@@ -22,8 +22,8 @@
 #ifndef SOLID_IFACES_BLUETOOTHSECURITY_H
 #define SOLID_IFACES_BLUETOOTHSECURITY_H
 
-#include <solid/control/solid_control_export.h>
-#include <solid/control/bluetoothsecurity.h> // So we know about Solid::Control::BluetoothPassKeyAgent
+#include "../solid_control_export.h"
+#include "../bluetoothsecurity.h" // So we know about Solid::Control::BluetoothPassKeyAgent
 
 #include <QObject>
 

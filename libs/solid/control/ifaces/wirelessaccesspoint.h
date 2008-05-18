@@ -21,9 +21,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef SOLIDCONTROL_IFACES_WIRELESSAP_H
 #define SOLIDCONTROL_IFACES_WIRELESSAP_H
 
-#include <solid/control/solid_control_export.h>
-#include <solid/control/wirelessaccesspoint.h>
-#include <solid/control/wirelessnetworkinterface.h>
+#include "../solid_control_export.h"
+#include "../wirelessaccesspoint.h"
+#include "../wirelessnetworkinterface.h"
 
 namespace Solid
 {

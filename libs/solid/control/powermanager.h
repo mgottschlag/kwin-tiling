@@ -23,7 +23,7 @@
 #include <QtCore/QObject>
 #include <QtCore/QHash>
 
-#include <solid/control/solid_control_export.h>
+#include "solid_control_export.h"
 
 class KJob;
 

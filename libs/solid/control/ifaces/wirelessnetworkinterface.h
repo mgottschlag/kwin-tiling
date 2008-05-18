@@ -20,12 +20,12 @@
 #ifndef SOLID_IFACES_WIRELESSNETWORKINTERFACE_H
 #define SOLID_IFACES_WIRELESSNETWORKINTERFACE_H
 
-#include <solid/control/solid_control_export.h>
+#include "../solid_control_export.h"
 
 #include <QtCore/QStringList>
 
-#include <solid/control/wirelessnetworkinterface.h>
-#include <solid/control/ifaces/networkinterface.h>
+#include "../wirelessnetworkinterface.h"
+#include "networkinterface.h"
 
 
 typedef QString MacAddress;

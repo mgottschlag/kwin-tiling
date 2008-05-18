@@ -25,11 +25,11 @@
 
 #include <QtCore/QObject>
 
-#include <solid/control/singletondefs.h>
-#include <solid/control/solid_control_export.h>
+#include "singletondefs.h"
+#include "solid_control_export.h"
 
-#include <solid/control/bluetoothinterface.h>
-#include <solid/control/bluetoothinputdevice.h>
+#include "bluetoothinterface.h"
+#include "bluetoothinputdevice.h"
 
 class KJob;
 

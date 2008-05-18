@@ -26,8 +26,8 @@
 #include <QtCore/QStringList>
 #include <QtCore/QMap>
 
-#include <solid/control/bluetoothmanager.h>
-#include <solid/control/bluetoothinterface.h>
+#include "bluetoothmanager.h"
+#include "bluetoothinterface.h"
 
 class KJob;
 

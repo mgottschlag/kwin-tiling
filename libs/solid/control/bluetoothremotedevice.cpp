@@ -22,7 +22,7 @@
 #include <QMap>
 #include <QStringList>
 
-#include <solid/control/ifaces/bluetoothremotedevice.h>
+#include "ifaces/bluetoothremotedevice.h"
 
 #include "frontendobject_p.h"
 

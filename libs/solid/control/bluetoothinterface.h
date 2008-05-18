@@ -26,8 +26,8 @@
 #include <QtCore/QPair>
 #include <QtCore/QObject>
 
-#include <solid/control/bluetoothremotedevice.h>
-#include <solid/control/ifaces/bluetoothremotedevice.h>
+#include "bluetoothremotedevice.h"
+#include "ifaces/bluetoothremotedevice.h"
 
 
 

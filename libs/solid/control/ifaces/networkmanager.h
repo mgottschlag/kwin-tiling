@@ -22,8 +22,8 @@
 
 #include <QtCore/QObject>
 #include <solid/networking.h>
-#include <solid/control/solid_control_export.h>
-#include <solid/control/networkmanager.h>
+#include "../solid_control_export.h"
+#include "../networkmanager.h"
 
 namespace Solid
 {

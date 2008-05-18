@@ -20,7 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "frontendobject_p.h"
 #include "soliddefs_p.h"
-#include <solid/control/ifaces/wirelessaccesspoint.h>
+#include "ifaces/wirelessaccesspoint.h"
 
 namespace Solid
 {

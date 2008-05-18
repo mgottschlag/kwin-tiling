@@ -22,7 +22,7 @@
 #include "networkinterface_p.h"
 
 #include "soliddefs_p.h"
-#include <solid/control/ifaces/networkinterface.h>
+#include "ifaces/networkinterface.h"
 
 Solid::Control::NetworkInterface::NetworkInterface(QObject *backendObject)
     : QObject(), d_ptr(new NetworkInterfacePrivate(this))
