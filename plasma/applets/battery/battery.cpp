@@ -95,7 +95,7 @@ void Battery::init()
     m_theme->setImagePath(svgFile);
     m_theme->setContainsMultipleImages(false);
 
-    m_theme->resize(size());
+    m_theme->resize(contentsRect().size());
     m_font = QApplication::font();
     m_font.setWeight(QFont::Bold);
 
@@ -125,11 +125,11 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
         BackgroundHints background = NoBackground;
 
         if (formFactor() == Plasma::Vertical) {
-            setMinimumHeight(geometry().width());
+            setMaximumHeight(contentsRect().width());
             kDebug() << "Vertical FormFactor";
             // TODO: set background(true) on panel causes 0 height, so do not use it
         } else if (formFactor() == Plasma::Horizontal) {
-            setMinimumWidth(geometry().height());
+            setMaximumWidth(contentsRect().height());
             kDebug() << "Horizontal FormFactor";
             // TODO: set background(true) on panel causes 0 height, so do not use it
         } else if (formFactor() == Plasma::Planar) {
