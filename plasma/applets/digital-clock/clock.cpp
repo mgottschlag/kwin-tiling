@@ -219,7 +219,6 @@ void Clock::configAccepted()
     if (m_showSeconds != ui.secondsCheckbox->isChecked()) {
         m_showSeconds = !m_showSeconds;
         cg.writeEntry("showSeconds", m_showSeconds);
-        updateSize();
     }
 
     if (m_localTimeZone != ui.localTimeZone->isChecked()) {
@@ -239,7 +238,6 @@ void Clock::configAccepted()
         dataEngine("time")->disconnectSource(m_timezone, this);
         // We have changed the timezone, show that in the clock, but only if this
         // setting hasn't been changed.
-        ui.showTimezone->setCheckState(Qt::Checked);
         m_timezone = m_timeZones.at(0);
         cg.writeEntry("timezone", m_timezone);
         dataEngine("time")->connectSource(m_timezone, this, updateInterval(), intervalAlignment());
@@ -261,8 +259,8 @@ void Clock::configAccepted()
     m_showSeconds = ui.secondsCheckbox->checkState() == Qt::Checked;
     cg.writeEntry("showSeconds", m_showSeconds);
 
-    if (m_showTimezone != (ui.showTimezone->checkState() == Qt::Checked)) {
-        m_showTimezone = ui.showTimezone->checkState() == Qt::Checked;
+    if (m_showTimezone != ui.showTimezone->isChecked()) {
+        m_showTimezone = !m_showTimezone;
         cg.writeEntry("showTimezone", m_showTimezone);
         kDebug() << "Saving show timezone: " << m_showTimezone;
     }
@@ -282,6 +280,7 @@ void Clock::configAccepted()
     cg.writeEntry("useCustomColor", m_useCustomColor);
     cg.writeEntry("plainClockColor", m_plainClockColor);
 
+    updateSize();
     constraintsEvent(Plasma::SizeConstraint);
     update();
     emit configNeedsSaving();
