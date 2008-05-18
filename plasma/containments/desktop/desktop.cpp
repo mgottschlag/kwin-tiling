@@ -141,15 +141,7 @@ void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::ImmutableConstraint && m_appletBrowserAction) {
         // we need to update the menu items that have already been created
         bool locked = immutability() != Mutable;
-        m_appletBrowserAction->setVisible(!locked);
         m_addPanelAction->setVisible(!locked);
-        if (locked) {
-            m_lockDesktopAction->setIcon(KIcon("object-unlocked"));
-            m_lockDesktopAction->setText(i18n("Unlock Widgets"));
-        } else {
-            m_lockDesktopAction->setIcon(KIcon("object-locked"));
-            m_lockDesktopAction->setText(i18n("Lock Widgets"));
-        }
     }
 }
 
@@ -292,11 +284,6 @@ void DefaultDesktop::updateBackground(int token, const QImage &img)
     }
 }
 
-void DefaultDesktop::showAddWidgets()
-{
-    emit showAddWidgetsInterface(QPointF());
-}
-
 void DefaultDesktop::addPanel()
 {
     if (corona()) {
@@ -360,9 +347,7 @@ QList<QAction*> DefaultDesktop::contextualActions()
     //TODO: should we offer "Switch User" here?
 
     if (!m_appletBrowserAction) {
-        m_appletBrowserAction = new QAction(i18n("Add Widgets..."), this);
-        connect(m_appletBrowserAction, SIGNAL(triggered(bool)), this, SLOT(showAddWidgets()));
-        m_appletBrowserAction->setIcon(KIcon("list-add"));
+        m_appletBrowserAction = action("add widgets");
 
         m_addPanelAction = new QAction(i18n("Add Panel"), this);
         connect(m_addPanelAction, SIGNAL(triggered(bool)), this, SLOT(addPanel()));
@@ -376,9 +361,7 @@ QList<QAction*> DefaultDesktop::contextualActions()
         m_setupDesktopAction->setIcon(KIcon("configure"));
         connect(m_setupDesktopAction, SIGNAL(triggered()), this, SLOT(configure()));
 
-        m_lockDesktopAction = new QAction(i18n("Lock Widgets"), this);
-        m_lockDesktopAction->setIcon(KIcon("object-locked"));
-        connect(m_lockDesktopAction, SIGNAL(triggered(bool)), this, SLOT(toggleDesktopImmutability()));
+        m_lockDesktopAction = action("lock widgets");
 
         m_lockScreenAction = new QAction(i18n("Lock Screen"), this);
         m_lockScreenAction->setIcon(KIcon("system-lock-screen"));
