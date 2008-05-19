@@ -1,0 +1,50 @@
+<html>
+<head>
+<script>
+function runTest()
+{
+    var str = window.applet.name;
+    document.getElementById('sample').innerHTML = str;
+    var engines = window.plasma.knownEngines();
+    document.getElementById('sample').innerHTML = engines;
+
+    var engine = window.plasma.loadDataEngine("time");
+    var data = engine.query("Local");
+    document.getElementById('small').innerHTML = "Sample Applet";
+    document.getElementById('sample').innerHTML = "Time is " + data.value("Time");
+}
+</script>
+
+<style>
+	body {
+		margin: 0;
+	        background: white;
+	}
+
+	.helloText {
+		font: 12px "Lucida Grande";
+		font-weight: bold;
+		color: blue;
+		text-align: center;
+		position: absolute;
+		top: 41px;
+		left: 18px;
+		width: 180px;
+	}
+	.smallText {
+		font: 8px "Lucida Grande";
+		color: red;
+		text-align: center;
+		position: absolute;
+		width: 180px;
+	}
+</style>
+
+</head>
+
+<body onload="runTest();">
+  <div id="sample" class="helloText">Hello, World!</div>
+  <div id="small" class="smallTest">Hello, World!</div>
+</body>
+
+</html>

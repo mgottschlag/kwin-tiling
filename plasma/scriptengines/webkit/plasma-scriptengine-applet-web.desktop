@@ -1,0 +1,24 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Web Widget
+Name[et]=Veebividin
+Name[sv]=Webbminiprogram
+Comment=Webpage widget using HTML and JavaScript
+Comment[et]=HTML-i ja JavaScripti kasutav veebilehekülje vidin
+Comment[sv]=Grafisk webbkomponent som använder HTML och Javascript
+Type=Service
+ServiceTypes=Plasma/ScriptEngine
+Icon=internet-web-browser
+
+X-KDE-Library=plasma_appletscriptengine_webapplet
+X-KDE-PluginInfo-Author=Zack Rusin
+X-KDE-PluginInfo-Email=zack@kde.org
+X-KDE-PluginInfo-Name=webkit
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=Applet
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=BSD
+X-KDE-PluginInfo-EnabledByDefault=true
+X-Plasma-API=webkit
+X-Plasma-ComponentTypes=Applet

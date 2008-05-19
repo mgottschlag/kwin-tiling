@@ -1,0 +1,23 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Dashboard
+Name[sv]=Instrumentbräda
+Comment=MacOS X dashboard widget
+Comment[sv]=Grafisk komponent för MacOS X instrumentbräda
+Type=Service
+ServiceTypes=Plasma/ScriptEngine
+Icon=internet-web-browser
+
+X-KDE-Library=plasma_appletscriptengine_dashboard
+X-KDE-PluginInfo-Author=Zack Rusin
+X-KDE-PluginInfo-Email=zackr@kde.org
+X-KDE-PluginInfo-Name=dashboard
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=Applet
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=BSD
+X-KDE-PluginInfo-EnabledByDefault=true
+X-Plasma-ComponentTypes=Applet
+X-Plasma-API=dashboard
+X-Plasma-PackageFormat=dashboard
