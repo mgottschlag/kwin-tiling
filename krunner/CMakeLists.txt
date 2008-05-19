@@ -40,6 +40,10 @@ if(X11_Xss_LIB)
   target_link_libraries(kdeinit_krunner ${X11_Xss_LIB})
 endif(X11_Xss_LIB)
 
+if(X11_Xcursor_FOUND)
+  target_link_libraries(kdeinit_krunner ${X11_Xcursor_LIB})
+endif(X11_Xcursor_FOUND)
+
 add_subdirectory( lock )
 
 install(TARGETS kdeinit_krunner ${INSTALL_TARGETS_DEFAULT_ARGS} )
