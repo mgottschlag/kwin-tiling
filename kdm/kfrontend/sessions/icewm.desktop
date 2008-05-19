@@ -4,6 +4,7 @@ Exec=icewm-session
 TryExec=icewm-session
 Name=IceWM
 Name[hi]=आइस-डबल्यूएम
+Name[ml]=ഐസ്ഡബ്ലിയുഎം
 Name[sr]=АјсВМ
 Name[sv]=Ice WM
 Name[te]=ఐస్ డబ్ల్యు ఎం

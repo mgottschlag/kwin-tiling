@@ -1,8 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Folder View
-Name[et]=Kataloogivaade
-Name[sv]=Katalogvy
 Type=Service
 Icon=folder
 X-KDE-ServiceTypes=Plasma/Applet

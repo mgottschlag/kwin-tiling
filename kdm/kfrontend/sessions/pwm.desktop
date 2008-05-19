@@ -4,6 +4,7 @@ Exec=pwm
 TryExec=pwm
 Name=PWM
 Name[hi]=पीडबल्यूएम
+Name[ml]=പിഡബ്ലിയുഎം
 Name[sr]=ПВМ
 Name[te]=పి డబ్ల్యు ఎం
 Name[x-test]=xxPWMxx
