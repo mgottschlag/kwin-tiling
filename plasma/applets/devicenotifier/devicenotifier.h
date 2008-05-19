@@ -91,6 +91,7 @@ class DeviceNotifier : public Plasma::Applet
     private slots:
         void storageEjectDone(Solid::ErrorType error, QVariant errorData);
         void storageTeardownDone(Solid::ErrorType error, QVariant errorData);
+        void resetIcon();
 
     private:
         QModelIndex indexForUdi(const QString &udi) const;

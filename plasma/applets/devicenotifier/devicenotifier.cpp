@@ -435,6 +435,10 @@ void DeviceNotifier::storageTeardownDone(Solid::ErrorType error, QVariant errorD
 {
     if (error && errorData.isValid()) {
         KMessageBox::error(0, i18n("Cannot unmount the device.\nOne or more files on this device are open within an application."), QString());
+    } else if (m_icon) {
+        m_icon->setIcon(KIcon("dialog-ok"));
+        QTimer::singleShot(2000, this, SLOT(resetIcon()));
+        update();
     }
 
     //show the message only one time
@@ -446,11 +450,23 @@ void DeviceNotifier::storageEjectDone(Solid::ErrorType error, QVariant errorData
 {
     if (error && errorData.isValid()) {
         KMessageBox::error(0, i18n("Cannot eject the disc.\nOne or more files on this disc are open within an application."), QString());
+    } else if (m_icon) {
+        m_icon->setIcon(KIcon("dialog-ok"));
+        QTimer::singleShot(2000, this, SLOT(resetIcon()));
+        update();
     }
 
     //show the message only one time
     disconnect(sender(), SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
                this, SLOT(storageEjectDone(Solid::ErrorType, QVariant)));
+}
+
+void DeviceNotifier::resetIcon()
+{
+    if (m_icon) {
+        m_icon->setIcon(KIcon("computer"));
+        update();
+    }
 }
 
 #include "devicenotifier.moc"
