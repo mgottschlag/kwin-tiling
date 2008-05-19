@@ -213,10 +213,12 @@ void Panel::updateBorders(const QRect &geom)
         }
 
         //hardcoded extra margin for the toolbox right now
-        if (QApplication::layoutDirection() == Qt::RightToLeft) {
-            leftWidth += 20;
-        } else {
-            rightWidth += 20;
+        if (immutability() == Mutable) {
+            if (QApplication::layoutDirection() == Qt::RightToLeft) {
+                leftWidth += 20;
+            } else {
+                rightWidth += 20;
+            }
         }
         //kDebug() << "top/bottom: Width:" << width << ", height:" << height;
     } else if (loc == LeftEdge || loc == RightEdge) {
@@ -239,7 +241,9 @@ void Panel::updateBorders(const QRect &geom)
         }
 
         //hardcoded extra margin for the toolbox right now
-        bottomHeight += 20;
+        if (immutability() == Mutable) {
+            bottomHeight += 20;
+        }
         //kDebug() << "left/right: Width:" << width << ", height:" << height;
     } else {
         kDebug() << "no location!?";
@@ -318,6 +322,10 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
         // we need to update the menu items that have already been created
         bool locked = immutability() != Mutable;
         m_removeAction->setVisible(!locked);
+    }
+
+    if (constraints & Plasma::ImmutableConstraint) {
+        updateBorders(geometry().toRect());
     }
 }
 
