@@ -1,11 +1,5 @@
 project(plasma-dataengine-nowplaying)
 
-find_package(KDE4 REQUIRED)
-include (KDE4Defaults)
-find_package(Plasma REQUIRED)
-add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
-include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
-
 set(nowplaying_engine_SRCS
     nowplayingengine.cpp
     player.cpp
@@ -56,7 +50,7 @@ QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS mpris_interface.xml mpris_interfac
 configure_file(config-nowplaying.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-nowplaying.h)
 
 kde4_add_plugin(plasma_engine_nowplaying ${nowplaying_engine_SRCS})
-target_link_libraries(plasma_engine_nowplaying ${KDE4_KDECORE_LIBS} ${KDE4_KIO_LIBS} ${PLASMA_LIBS} ${QT_QTGUI_LIBRARY})
+target_link_libraries(plasma_engine_nowplaying ${KDE4_KDECORE_LIBS} ${KDE4_KIO_LIBS} plasma ${QT_QTGUI_LIBRARY})
 if(XMMS_FOUND)
    target_link_libraries(plasma_engine_nowplaying ${XMMS_LDFLAGS})
 endif(XMMS_FOUND)
