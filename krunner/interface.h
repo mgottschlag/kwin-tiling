@@ -96,6 +96,7 @@ class Interface : public KRunnerDialog
         QGraphicsView *m_resultsView;
         ResultScene *m_resultsScene;
         bool m_running;
+        //KPushButton *m_runButton;
 };
 
 #endif

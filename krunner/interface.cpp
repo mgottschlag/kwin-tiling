@@ -92,6 +92,7 @@ Interface::Interface(QWidget* parent)
     m_resultsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_resultsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_resultsView->setOptimizationFlag(QGraphicsView::DontSavePainterState);
+    m_resultsView->setMinimumSize(ResultItem::BOUNDING_SIZE * 2, ResultItem::BOUNDING_SIZE * 2);
     m_layout->addWidget(m_resultsView);
 
     m_resultsScene = new ResultScene(this);
@@ -101,6 +102,47 @@ Interface::Interface(QWidget* parent)
     m_descriptionLabel->setForegroundRole(QPalette::Window);
     m_layout->addWidget(m_descriptionLabel);
 
+    QHBoxLayout *bottomLayout = new QHBoxLayout(w);
+    KGuiItem configButtonGui = KStandardGuiItem::configure();
+    configButtonGui.setText(i18n("Settings"));
+    KPushButton *configButton = new KPushButton(configButtonGui, this);
+    connect(configButton, SIGNAL(clicked()), SLOT(showConfigDialog()));
+    bottomLayout->addWidget( configButton );
+
+    /*
+    KPushButton *m_optionsButton = new KPushButton(KStandardGuiItem::configure(), this);
+    m_optionsButton->setText(i18n("Show Options"));
+    m_optionsButton->setEnabled(false);
+    m_optionsButton->setCheckable(true);
+    connect(m_optionsButton, SIGNAL(toggled(bool)), SLOT(showOptions(bool)));
+    bottomLayout->addWidget( m_optionsButton );
+    */
+
+    KPushButton *activityButton = new KPushButton(w);
+    activityButton->setText(i18n("Show System Activity"));
+    activityButton->setIcon(KIcon("utilities-system-monitor"));
+    connect(activityButton, SIGNAL(clicked()), qApp, SLOT(showTaskManager()));
+    connect(activityButton, SIGNAL(clicked()), this, SLOT(close()));
+    bottomLayout->addWidget(activityButton);
+
+    bottomLayout->addStretch();
+
+    QString stringReserver = i18n("Launch");
+    stringReserver = i18n("Click to execute the selected item above");
+    stringReserver = i18n("Show Options");
+    /*
+    QString runButtonWhatsThis = i18n( "Click to execute the selected item above" );
+    m_runButton = new KPushButton(KGuiItem(i18n("Launch"), "system-run", QString(), runButtonWhatsThis), w);
+    m_runButton->setEnabled( false );
+    m_runButton->setDefault(true);
+    connect( m_runButton, SIGNAL( clicked(bool) ), SLOT(run()) );
+    bottomLayout->addWidget( m_runButton );
+    */
+    KPushButton *closeButton = new KPushButton(KStandardGuiItem::close(), w);
+    connect(closeButton, SIGNAL(clicked(bool)), SLOT(close()));
+    bottomLayout->addWidget(closeButton);
+
+    m_layout->addLayout(bottomLayout);
 
     connect(m_searchTerm, SIGNAL(editTextChanged(QString)), m_resultsScene, SLOT(launchQuery(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));
