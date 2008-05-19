@@ -22,6 +22,8 @@
 
 #include "resultitem.h"
 
+#include <math.h>
+
 #include <QtCore/QTimeLine>
 #include <QtCore/QDebug>
 #include <KDebug>
@@ -395,6 +397,8 @@ void ResultItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
 
     painter->save();
 
+        /*
+        The following implements blinking Blinking
     if (mouseOver || d->tempTransp >= 1.5) {
         painter->setOpacity(1.0);
     } else {
@@ -405,6 +409,15 @@ void ResultItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
         } else {
             painter->setOpacity(2.0 * transp);
         }
+
+        if (!d->highlightTimerId) {
+            d->highlightTimerId = startTimer(40);
+        }
+    }
+        */
+
+    if (!mouseOver && d->tempTransp < 0.9) {
+        painter->setOpacity(d->tempTransp);
 
         if (!d->highlightTimerId) {
             d->highlightTimerId = startTimer(40);
@@ -493,7 +506,7 @@ void ResultItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 
 void ResultItem::timerEvent(QTimerEvent *e)
 {
-    d->tempTransp += 0.02;
+    d->tempTransp += 0.1;
     killTimer(d->highlightTimerId);
     d->highlightTimerId = 0;
 
