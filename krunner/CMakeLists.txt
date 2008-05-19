@@ -16,11 +16,14 @@ set(kscreensaver_dbusXML org.kde.screensaver.xml)
 set(krunner_SRCS
                  krunnerdialog.cpp
                  collapsiblewidget.cpp
+                 configdialog.cpp
                  interface.cpp
                  configdialog.cpp
                  krunnerapp.cpp
                  restartingapplication.cpp
                  main.cpp
+                 resultitem.cpp
+                 resultscene.cpp
                  saverengine.cpp
                  startupid.cpp
                  xautolock.cpp
@@ -35,7 +38,7 @@ qt4_add_dbus_adaptor(krunner_SRCS ${screensaver_dbusXML} saverengine.h SaverEngi
 qt4_add_dbus_adaptor(krunner_SRCS ${kscreensaver_dbusXML} saverengine.h SaverEngine kscreensaveradaptor KScreenSaverAdaptor)
 
 kde4_add_kdeinit_executable(krunner ${krunner_SRCS})
-target_link_libraries(kdeinit_krunner plasma kworkspace processui ${KDE4_SOLID_LIBRARIES} ${KDE4_THREADWEAVER_LIBRARIES} ${X11_Xrender_LIB} ${KDE4_KDEUI_LIBS} ${KDE4_KUTILS_LIBS})
+target_link_libraries(kdeinit_krunner plasma kworkspace processui ${KDE4_SOLID_LIBRARIES} ${KDE4_THREADWEAVER_LIBRARIES} ${X11_Xrender_LIB} ${KDE4_KDEUI_LIBS}  ${KDE4_KUTILS_LIBS})
 
 if(X11_Xss_LIB)
   target_link_libraries(kdeinit_krunner ${X11_Xss_LIB})
