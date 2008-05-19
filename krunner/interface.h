@@ -95,6 +95,7 @@ class Interface : public KRunnerDialog
         KCompletion *m_completion;
         QGraphicsView *m_resultsView;
         ResultScene *m_resultsScene;
+        bool m_running;
 };
 
 #endif

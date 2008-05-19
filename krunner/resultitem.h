@@ -92,6 +92,9 @@ protected:
     void hoverEnterEvent(QGraphicsSceneHoverEvent *e);
     void timerEvent(QTimerEvent *e);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *);
+    void focusInEvent(QFocusEvent *event);
+    void focusOutEvent(QFocusEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 
 private:
     // must always call remove()

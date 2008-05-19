@@ -213,6 +213,7 @@ void ResultItem::Private::init()
     q->setFlag(QGraphicsItem::ItemIsFocusable);
     q->setFlag(QGraphicsItem::ItemIsSelectable);
     q->setAcceptHoverEvents(true);
+    q->setFocusPolicy(Qt::TabFocus);
     q->resize(ITEM_SIZE, ITEM_SIZE);
 }
 
@@ -379,7 +380,7 @@ void ResultItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
     painter->setClipping(false);
 
     QRect iRect = boundingRect().toRect();
-    bool mouseOver = option->state & QStyle::State_MouseOver || isSelected();
+    bool mouseOver = option->state & QStyle::State_MouseOver || hasFocus();
 
     painter->setRenderHint(QPainter::Antialiasing);
     painter->save();
@@ -510,6 +511,29 @@ void ResultItem::slotTestTransp()
 void ResultItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
 {
     emit activated(this);
+}
+
+void ResultItem::focusInEvent(QFocusEvent * event)
+{
+    QGraphicsWidget::focusInEvent(event);
+    emit hoverEnter(this);
+    update();
+}
+
+void ResultItem::focusOutEvent(QFocusEvent * event)
+{
+    QGraphicsWidget::focusOutEvent(event);
+    emit hoverLeave(this);
+    update();
+}
+
+void ResultItem::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
+        emit activated(this);
+    } else {
+        QGraphicsWidget::keyPressEvent(event);
+    }
 }
 
 #include "resultitem.moc"
