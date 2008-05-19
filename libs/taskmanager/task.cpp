@@ -119,7 +119,8 @@ Task::Task(WId w, QObject *parent, const char *name)
 Task::~Task()
 {
 #ifdef THUMBNAILING_POSSIBLE
-    if (d->windowPixmap)
+    //be sure we have something to delete
+    if (d->windowPixmap && QX11Info::display())
     {
         XFreePixmap(QX11Info::display(), d->windowPixmap);
     }
