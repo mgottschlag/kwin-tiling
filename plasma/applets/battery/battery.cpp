@@ -44,7 +44,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_batteryStyle(0),
       m_theme(0),
-      m_dialog(0),
       m_animId(-1),
       m_alpha(1),
       m_fadeIn(true),

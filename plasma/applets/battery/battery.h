@@ -30,8 +30,6 @@
 #include <plasma/dataengine.h>
 #include "ui_batteryConfig.h"
 
-class KDialog;
-
 namespace Plasma
 {
     class Svg;
@@ -101,7 +99,6 @@ class Battery : public Plasma::Applet
         bool m_acadapter_plugged;
 
         // Configuration dialog
-        KDialog *m_dialog;
         Ui::batteryConfig ui;
 
         int m_animId;
