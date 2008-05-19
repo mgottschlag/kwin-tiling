@@ -18,7 +18,6 @@ set(krunner_SRCS
                  collapsiblewidget.cpp
                  configdialog.cpp
                  interface.cpp
-                 configdialog.cpp
                  krunnerapp.cpp
                  restartingapplication.cpp
                  main.cpp
