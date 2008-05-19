@@ -50,6 +50,7 @@
 #include "collapsiblewidget.h"
 #include "interfaceadaptor.h"
 #include "krunnersettings.h"
+#include "configdialog.h"
 
 
 // A little hack of a class to let us easily activate a match
@@ -189,6 +190,7 @@ class QueryMatch : public QListWidgetItem
 
 Interface::Interface(QWidget* parent)
     : KRunnerDialog( parent ),
+      m_configDialog(0),
       m_expander(0),
       m_optionsWidget(0),
       m_defaultMatch(0),
@@ -251,6 +253,10 @@ Interface::Interface(QWidget* parent)
 
     // buttons at the bottom
     QHBoxLayout* bottomLayout = new QHBoxLayout(w);
+    KPushButton *configButton = new KPushButton(KStandardGuiItem::configure(), this);
+    connect( configButton, SIGNAL(clicked()), SLOT(showConfigDialog()) );
+    bottomLayout->addWidget( configButton );
+
     m_optionsButton = new KPushButton(KStandardGuiItem::configure(), this);
     m_optionsButton->setText( i18n( "Show &Options" ) );
     m_optionsButton->setEnabled( false );
@@ -675,6 +681,24 @@ void Interface::setDefaultItem( QListWidgetItem* item )
             m_expander->hide();
         }
     }
+}
+
+void Interface::showConfigDialog()
+{
+    if (!m_configDialog) {
+        m_configDialog = new KRunnerConfigDialog(m_runnerManager);
+        connect(m_configDialog, SIGNAL(finished()), this, SLOT(configCompleted()));
+    }
+
+    KWindowSystem::setOnDesktop(m_configDialog->winId(), KWindowSystem::currentDesktop());
+    KWindowSystem::activateWindow(m_configDialog->winId());
+    m_configDialog->show();
+}
+
+void Interface::configCompleted()
+{
+    m_configDialog->deleteLater();
+    m_configDialog = 0;
 }
 
 #include "interface.moc"

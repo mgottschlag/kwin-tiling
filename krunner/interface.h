@@ -49,6 +49,7 @@ namespace Plasma {
 }
 
 class QueryMatch;
+class KRunnerConfigDialog;
 
 class Interface : public KRunnerDialog
 {
@@ -77,6 +78,8 @@ class Interface : public KRunnerDialog
         void matchActivated( QListWidgetItem* );
         void showOptions(bool show);
         void setDefaultItem( QListWidgetItem* );
+        void showConfigDialog();
+        void configCompleted();
 
     protected:
         void closeEvent(QCloseEvent* e);
@@ -85,6 +88,7 @@ class Interface : public KRunnerDialog
         void resetInterface();
 
         Plasma::RunnerManager* m_runnerManager;
+        KRunnerConfigDialog *m_configDialog;
         QMultiMap<QString, QueryMatch*> m_matchesById;
         QTimer m_clearTimer;
 
