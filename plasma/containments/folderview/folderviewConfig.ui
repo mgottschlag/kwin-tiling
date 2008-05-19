@@ -1,0 +1,115 @@
+<ui version="4.0" >
+ <class>folderviewConfig</class>
+ <widget class="QWidget" name="folderviewConfig" >
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" >
+   <item row="0" column="0" colspan="3" >
+    <widget class="QRadioButton" name="showDesktopFolder" >
+     <property name="text" >
+      <string>Show the desktop folder</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="3" >
+    <widget class="QRadioButton" name="showCustomFolder" >
+     <property name="text" >
+      <string>Show a custom folder</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <spacer name="spacer2" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>21</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="1" >
+    <widget class="QLabel" name="selectLabel" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string>Select:</string>
+     </property>
+     <property name="wordWrap" >
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2" >
+    <widget class="KUrlRequester" name="lineEdit" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QLabel" name="filterLabel" >
+     <property name="text" >
+      <string>Filter</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2" >
+    <widget class="QLineEdit" name="filterFiles" >
+     <property name="toolTip" >
+      <string>Space-separated list of extensions, e.g. *.txt * .od*</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Space-separated list of extensions, e.g. *.txt * .od* to display only office- and text-files</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2" >
+    <spacer name="spacer1" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>81</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KUrlRequester</class>
+   <extends>QFrame</extends>
+   <header>kurlrequester.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <includes>
+  <include location="global" >KDE/KUrlRequester</include>
+ </includes>
+ <resources/>
+ <connections/>
+</ui>
