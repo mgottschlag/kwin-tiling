@@ -162,6 +162,8 @@ void KTreeViewSearchLine::Private::checkColumns()
 
 void KTreeViewSearchLine::Private::checkItemParentsNotVisible( QTreeView *treeView )
 {
+    Q_UNUSED(treeView)
+
 // TODO: PORT ME
 #if 0
   QTreeWidgetItemIterator it( treeWidget );
