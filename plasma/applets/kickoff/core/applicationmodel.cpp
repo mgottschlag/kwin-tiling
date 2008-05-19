@@ -99,6 +99,7 @@ public:
           sortOrder(Qt::AscendingOrder),
           sortColumn(Qt::DisplayRole)
     {
+        systemApplications = Kickoff::systemApplicationList();
     }
 
     ~ApplicationModelPrivate()
@@ -115,6 +116,7 @@ public:
     ApplicationModel::DuplicatePolicy duplicatePolicy;
     Qt::SortOrder sortOrder;
     int sortColumn;
+    QStringList systemApplications;
 };
 
 bool ApplicationModelPrivate::AppNodeLessThan(AppNode *n1, AppNode *n2)
@@ -176,6 +178,12 @@ void ApplicationModelPrivate::fillNode(const QString &_relPath, AppNode *node)
                     }
                 }
          }
+         // don't duplicate applications that are configured to appear in the System tab
+         // in the Applications tab
+         if ( systemApplications.contains( service->desktopEntryName() ) ) {
+             continue;
+         }
+
          existingServices[appName] = service;
       }
       else if (p->isType(KST_KServiceGroup))

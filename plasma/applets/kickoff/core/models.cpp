@@ -151,6 +151,15 @@ bool Kickoff::isLaterVersion(KService::Ptr first , KService::Ptr second)
     return firstIsKde4 && !secondIsKde4;
 }
 
+QStringList Kickoff::systemApplicationList()
+{
+    KConfigGroup appsGroup = componentData().config()->group("SystemApplications");
+    QStringList apps;
+    apps << "systemsettings";
+    apps = appsGroup.readEntry("DesktopFiles", apps);
+    return apps;
+}
+
 #if 0
 void Kickoff::swapModelIndexes(QModelIndex& first,QModelIndex& second)
 {

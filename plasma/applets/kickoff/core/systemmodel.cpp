@@ -108,10 +108,7 @@ public:
 
     void loadApplications()
     {
-        KConfigGroup appsGroup = componentData().config()->group("SystemApplications");
-        QStringList apps;
-        apps << "kde4-systemsettings.desktop";
-        apps = appsGroup.readEntry("DesktopFiles", apps);
+        QStringList apps = Kickoff::systemApplicationList();
         appsList.clear();
 
         foreach (const QString &app, apps) {
