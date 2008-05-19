@@ -238,7 +238,6 @@ public:
     Plasma::Location location;
     Qt::Alignment alignment;
     SubElement dragging;
-    SubElement underMouse;
     QPoint startDragPos;
     int offset;
     int minLength;
