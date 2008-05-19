@@ -58,7 +58,8 @@
 
 Interface::Interface(QWidget* parent)
     : KRunnerDialog(parent),
-      m_configDialog(0)
+      m_configDialog(0),
+      m_running(false)
 {
     setWindowTitle( i18n("Run Command") );
     setWindowIcon(KIcon("system-run"));
@@ -192,7 +193,9 @@ void Interface::resetInterface()
 
 void Interface::closeEvent(QCloseEvent* e)
 {
-    resetInterface();
+    if (!m_running) {
+        resetInterface();
+    }
     e->accept();
 }
 
@@ -203,9 +206,12 @@ void Interface::run(ResultItem *item)
     }
 
     kDebug() << "ResultItem: " << item->name() << "\n";
-    m_runnerManager->run(item->id()); //NOTE: This line avoid krunner reuse
     m_searchTerm->addToHistory(m_searchTerm->currentText());
+    m_running = true;
     close();
+    m_runnerManager->run(item->id()); //NOTE: This line avoid krunner reuse
+    m_running = false;
+    resetInterface();
 }
 
 void Interface::runDefaultResultItem()
