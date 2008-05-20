@@ -276,8 +276,8 @@ void ResultScene::itemHoverEnterSlot(ResultItem *item)
 
 void ResultScene::itemHoverLeaveSlot(ResultItem *item)
 {
-    m_items.at(0)->setSelected(true);
     item->setSelected(false);
+    m_items.at(0)->setSelected(true);
     emit itemHoverLeave(item);
 }
 
