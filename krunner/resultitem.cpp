@@ -464,8 +464,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     bool drawMixed = false;
 
-    //TODO: add bool selected()
-    if (mouseOver || isDefault()) {
+    if (selected()) {
         if (d->highlight > 2) {
             painter->drawPixmap(PADDING, PADDING, d->icon.pixmap(iRect.size(), QIcon::Active));
         } else {
