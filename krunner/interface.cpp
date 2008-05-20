@@ -83,29 +83,27 @@ Interface::Interface(QWidget* parent)
     lineEdit->setCompletionObject(m_completion);
     lineEdit->setCompletionMode(static_cast<KGlobalSettings::Completion>(KRunnerSettings::queryTextCompletionMode()));
     lineEdit->setClearButtonShown(true);
-
     m_layout->addWidget(m_searchTerm);
+
     m_resultsView = new QGraphicsView(w);
     m_resultsView->setFrameStyle(QFrame::NoFrame);
     m_resultsView->viewport()->setAutoFillBackground(false);
-    m_resultsView->setAutoFillBackground(false);
     m_resultsView->setInteractive(true);
     m_resultsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_resultsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_resultsView->setOptimizationFlag(QGraphicsView::DontSavePainterState);
     m_resultsView->setMinimumSize(ResultItem::BOUNDING_SIZE * 4, ResultItem::BOUNDING_SIZE * 2);
-    kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
-    m_layout->addWidget(m_resultsView);
-
+    m_resultsView->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+    //kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
     m_resultsScene = new ResultScene(this);
     m_resultsView->setScene(m_resultsScene);
+    m_layout->addWidget(m_resultsView);
 
     m_descriptionLabel = new QLabel(w);
-    m_descriptionLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
     QPalette p = m_descriptionLabel->palette();
     p.setColor(QPalette::WindowText, Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
     m_descriptionLabel->setPalette(p);
-    m_layout->addWidget(m_descriptionLabel);
+    m_layout->addWidget(m_descriptionLabel, 0, Qt::AlignCenter | Qt::AlignTop);
 
     QWidget *buttonContainer = new QWidget(w);
     QHBoxLayout *bottomLayout = new QHBoxLayout(buttonContainer);
@@ -137,8 +135,6 @@ Interface::Interface(QWidget* parent)
     connect(activityButton, SIGNAL(clicked()), qApp, SLOT(showTaskManager()));
     connect(activityButton, SIGNAL(clicked()), this, SLOT(close()));
     bottomLayout->addWidget(activityButton);
-
-    //bottomLayout->addStretch();
 
     QString stringReserver = i18n("Launch");
     stringReserver = i18n("Click to execute the selected item above");
