@@ -122,6 +122,7 @@ void ResultItem::Private::appear()
     qreal halfway = ResultItem::BOUNDING_SIZE * 0.5;
     qreal mostway = ResultItem::BOUNDING_SIZE * 0.1;
 
+    q->setPos(pos());
     animation = new QGraphicsItemAnimation();
     animation->setItem(q);
     animation->setScaleAt(0.0, 0.0, 0.0);
@@ -133,8 +134,9 @@ void ResultItem::Private::appear()
     QTimeLine * timer = new QTimeLine(100);
     animation->setTimeLine(timer);
 
-    connect(timer, SIGNAL(finished()), q, SLOT(animationComplete()));
     timer->start();
+    QTimer::singleShot(50, q, SLOT(becomeVisible()));
+    connect(timer, SIGNAL(finished()), q, SLOT(animationComplete()));
 }
 
 void ResultItem::Private::move(bool randomStart)
@@ -345,6 +347,11 @@ void ResultItem::animate()
         d->needsMoving = false;
         d->move(false);
     }
+}
+
+void ResultItem::becomeVisible()
+{
+    show();
 }
 
 int ResultItem::index() const

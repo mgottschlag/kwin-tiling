@@ -115,6 +115,7 @@ void ResultScene::addQueryMatch(const Plasma::QueryMatch &match)
     if (it == m_itemsById.end()) {
         //kDebug() << "did not find";
         item = new ResultItem(match, m_iconArea);
+        item->hide();
         m_itemsById.insert(match.id(), item);
         m_items.append(item);
         int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);

@@ -108,6 +108,7 @@ private slots:
     void slotTestTransp();
     void animationComplete();
     void animate();
+    void becomeVisible();
 };
 
 #endif
