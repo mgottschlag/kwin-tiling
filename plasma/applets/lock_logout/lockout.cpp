@@ -53,7 +53,7 @@ void LockOut::init()
     m_layout->addItem(icon_logout);
     connect(icon_logout, SIGNAL(clicked()), this, SLOT(clickLogout()));
 
-    resize(MINSIZE,MINSIZE*2);
+    resize(MINSIZE*2,MINSIZE*4);
 }
 
 LockOut::~LockOut()
