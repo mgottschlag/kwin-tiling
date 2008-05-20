@@ -166,7 +166,7 @@ void CalculatorRunner::match(Plasma::RunnerContext &context)
         Plasma::QueryMatch match(this);
         match.setType(Plasma::QueryMatch::InformationalMatch);
         match.setIcon(KIcon("accessories-calculator"));
-        match.setText(QString("%1 = %2").arg(cmd, result));
+        match.setText(result);
         match.setData("= " + result);
         match.setId(QString());
         context.addMatch(term, match);
