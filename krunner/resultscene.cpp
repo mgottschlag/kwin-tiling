@@ -39,7 +39,8 @@
 
 ResultScene::ResultScene(QObject * parent)
     : QGraphicsScene(parent),
-      m_itemCount(0)
+      m_itemCount(0),
+      m_cIndex(0)
 {
     setItemIndexMethod(NoIndex);
 
@@ -237,21 +238,40 @@ void ResultScene::removeMatch(ResultItem* item)
 
 void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
 {
-    switch (keyEvent->key()) {
-        case Qt::Key_Up:
-            qWarning("ResultScene: key up");
-            break;
+    kDebug() << "m_items (size): " << m_items.size() << "\n";
+    kDebug() << m_items.at(m_items.size() - 1)->name() << "\n";
 
-        case Qt::Key_Down:
-            qWarning("ResultScene: key down");
+    switch (keyEvent->key()) {
+        case Qt::Key_Up:{
+            qWarning("ResultScene: key up");
+            int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);
+            m_items.at(m_cIndex)->setIsSelected(false);
+            m_cIndex = (m_cIndex < rowStride) ? m_items.size() - rowStride - 1 + (m_cIndex % m_items.size()) : m_cIndex - rowStride;
+            m_items.at(m_cIndex)->setIsSelected(true);
             break;
+        }
+
+        case Qt::Key_Down:{
+            qWarning("ResultScene: key down");
+            int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);
+            m_items.at(m_cIndex)->setIsSelected(false);
+            m_cIndex = (m_cIndex + rowStride) % m_items.size();
+            m_items.at(m_cIndex)->setIsSelected(true);
+            break;
+        }
 
         case Qt::Key_Left:
             qWarning("ResultScene: key left");
+            m_items.at(m_cIndex)->setIsSelected(false);
+            m_cIndex = (m_cIndex == 0) ? m_items.size() - 1 : m_cIndex - 1;
+            m_items.at(m_cIndex)->setIsSelected(true);
             break;
 
         case Qt::Key_Right:
             qWarning("ResultScene: key right");
+            m_items.at(m_cIndex)->setIsSelected(false);
+            m_cIndex = (m_cIndex + 1) % m_items.size();
+            m_items.at(m_cIndex)->setIsSelected(true);
             break;
 
         case Qt::Key_Return:
@@ -261,6 +281,8 @@ void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
             QGraphicsScene::keyPressEvent(keyEvent);
             break;
     }
+
+    kDebug() << "m_cIndex: " << m_cIndex << "\n";
 }
 
 /// SLOTS <- ResultItems
@@ -268,7 +290,7 @@ void ResultScene::itemHoverEnterSlot(ResultItem *item)
 {
     if (!item->isDefault()) {
         QMap<QString, ResultItem*>::iterator it = m_itemsById.begin();
-        m_items.at(0)->setIsSelected(false);
+        m_items.at(m_cIndex)->setIsSelected(false);
     }
     item->setIsSelected(true);
     emit itemHoverEnter(item);
@@ -277,7 +299,7 @@ void ResultScene::itemHoverEnterSlot(ResultItem *item)
 void ResultScene::itemHoverLeaveSlot(ResultItem *item)
 {
     item->setIsSelected(false);
-    m_items.at(0)->setIsSelected(true);
+    m_items.at(m_cIndex)->setIsSelected(true);
     emit itemHoverLeave(item);
 }
 

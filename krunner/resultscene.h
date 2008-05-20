@@ -97,6 +97,8 @@ class ResultScene : public QGraphicsScene
         QGraphicsWidget *m_mainWidget;
         QGraphicsWidget *m_iconArea;
 
+        int m_cIndex;
+
     private slots:
         void layoutIcons();
         void slotArrowResultItemPressed();
