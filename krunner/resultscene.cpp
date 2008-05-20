@@ -33,7 +33,7 @@
 #include <KDE/KDebug>
 #include <KDE/KLineEdit>
 
-#include <KDE/Plasma/RunnerManager>
+#include <plasma/runnermanager.h>
 
 #include "resultitem.h"
 
