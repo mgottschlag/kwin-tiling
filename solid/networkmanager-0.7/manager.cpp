@@ -129,11 +129,13 @@ bool NMNetworkManager::isWirelessHardwareEnabled() const
     return d->isWirelessHardwareEnabled;
 }
 
-void NMNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QString & extra_connection_parameter)
+void NMNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters)
 {
     Q_D(NMNetworkManager);
     QString serviceName = connectionUni.split(' ')[0];
     QString connectionPath = connectionUni.split(' ')[1];
+    // ### FIXME find a better name for the parameter needed for NM 0.7
+    QString extra_connection_parameter = connectionParameters.value("extra_connection_parameter").toString();
     if ( serviceName.isEmpty() || connectionPath.isEmpty() ) {
         return;
     }
