@@ -1,17 +1,7 @@
 [Desktop Entry]
 Name=Now Playing Engine
-Name[da]=Motor for 'Afspiller nu'
-Name[et]=Praegu mängitakse mootor
-Name[pt]=Motor Agora a Tocar
-Name[pt_BR]=Motor Agora a Tocar
-Name[sv]=Spelar nu-gränssnitt
 
 Comment=Lists currently playing music
-Comment[da]=Liste over musik som aktuelt bliver afspillet
-Comment[et]=Näitab parajasti esitatavat muusikat
-Comment[pt]=Mostra a música actualmente em reprodução
-Comment[pt_BR]=Mostra a música actualmente em reprodução
-Comment[sv]=Listar musik som för närvarande spelas
 
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service

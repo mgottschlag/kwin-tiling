@@ -1,11 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Web Widget
-Name[et]=Veebividin
-Name[sv]=Webbminiprogram
 Comment=Webpage widget using HTML and JavaScript
-Comment[et]=HTML-i ja JavaScripti kasutav veebilehekülje vidin
-Comment[sv]=Grafisk webbkomponent som använder HTML och Javascript
 Type=Service
 ServiceTypes=Plasma/ScriptEngine
 Icon=internet-web-browser

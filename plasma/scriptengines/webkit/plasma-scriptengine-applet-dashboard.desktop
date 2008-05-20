@@ -1,9 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Dashboard
-Name[sv]=Instrumentbräda
 Comment=MacOS X dashboard widget
-Comment[sv]=Grafisk komponent för MacOS X instrumentbräda
 Type=Service
 ServiceTypes=Plasma/ScriptEngine
 Icon=internet-web-browser

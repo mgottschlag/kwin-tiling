@@ -1,11 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Network Manager Engine
-Name[et]=Võrguhalduri mootor
-Name[sv]=Gränssnitt för nätverkshantering
 Comment=Network Management for Plasmoids
-Comment[et]=Võrguhaldus plasmoididele
-Comment[sv]=Nätverkshantering för Plasmoider
 ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=network-workgroup
