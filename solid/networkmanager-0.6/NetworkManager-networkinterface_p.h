@@ -32,7 +32,7 @@ public:
     NMNetworkInterfacePrivate(const QString  & objPath);
     virtual ~NMNetworkInterfacePrivate();
 
-    Q_DECLARE_PUBLIC(NMNetworkInterface);
+    Q_DECLARE_PUBLIC(NMNetworkInterface)
 
     void initGeneric();
 
