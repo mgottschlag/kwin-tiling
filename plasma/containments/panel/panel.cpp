@@ -90,16 +90,11 @@ QList<QAction*> Panel::contextualActions()
     if (!m_appletBrowserAction) {
         m_appletBrowserAction = action("add widgets");
 
-        bool locked = immutability() != Mutable;
-
         m_configureAction = new QAction(i18n("Panel Settings"), this);
         m_configureAction->setIcon(KIcon("configure"));
         connect(m_configureAction, SIGNAL(triggered()), this, SIGNAL(toolBoxToggled()));
 
-        m_removeAction = new QAction(i18n("Remove this Panel"), this);
-        m_removeAction->setIcon(KIcon("edit-delete"));
-        connect(m_removeAction, SIGNAL(triggered()), this, SLOT(remove()));
-        m_removeAction->setVisible(!locked);
+        m_removeAction = action("remove");
     }
 
     QList<QAction*> actions;
@@ -318,12 +313,6 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
         setFormFactorFromLocation(location());
     }
 
-    if (constraints & Plasma::ImmutableConstraint && m_appletBrowserAction) {
-        // we need to update the menu items that have already been created
-        bool locked = immutability() != Mutable;
-        m_removeAction->setVisible(!locked);
-    }
-
     if (constraints & Plasma::ImmutableConstraint) {
         updateBorders(geometry().toRect());
     }
@@ -376,17 +365,6 @@ void Panel::paintInterface(QPainter *painter,
     // restore transformation and composition mode
     painter->restore();
 }
-
-void Panel::remove()
-{
-    if (KMessageBox::warningContinueCancel(0, i18n( "Do you really want to remove this panel?"),
-                     i18n("Remove Panel"), KStandardGuiItem::remove()) == KMessageBox::Continue ) {
-         clearApplets();
-         corona()->destroyContainment(this);
-         delete this;
-    }
-}
-
 
 void Panel::setFormFactorFromLocation(Plasma::Location loc) {
     switch (loc) {

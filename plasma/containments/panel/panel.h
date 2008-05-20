@@ -53,7 +53,6 @@ protected:
     void saveState(KConfigGroup* config) const;
 
 private slots:
-    void remove();
     void themeUpdated();
     void backgroundChanged();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);

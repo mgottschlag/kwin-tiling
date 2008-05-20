@@ -388,6 +388,9 @@ QList<QAction*> DefaultDesktop::contextualActions()
     actions.append(m_appletBrowserAction);
     actions.append(m_addPanelAction);
     actions.append(m_setupDesktopAction);
+    if (screen() == -1) {
+        actions.append(action("remove"));
+    }
 
     actions.append(m_separator);
 
