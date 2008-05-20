@@ -110,6 +110,9 @@ NMAccessPoint::NMAccessPoint(const QString  & netPath)
             QDBusConnection::systemBus());
     QDBusMessage reply = iface.call("getProperties");
     d->deserialize(reply);
+
+    if (d->wpaFlags)
+        d->capabilities |= Solid::Control::AccessPoint::Privacy;
 }
 
 NMAccessPoint::~NMAccessPoint()
