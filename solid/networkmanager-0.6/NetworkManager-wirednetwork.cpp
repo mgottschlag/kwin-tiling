@@ -99,11 +99,11 @@ void NMWiredNetwork::setCarrier(bool carrier)
     emit carrierChanged(d->carrier);
 }
 
-bool NMWiredNetwork::activateConnection(const QString & connectionUni, const QString & extra_connection_parameter)
+bool NMWiredNetwork::activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters)
 {
     Q_D(NMWiredNetwork);
     Q_UNUSED(connectionUni)
-    Q_UNUSED(extra_connection_parameter)
+    Q_UNUSED(connectionParameters)
     if (d->manager)
     {
         const QDBusReply<void> reply = d->manager->call(QDBus::NoBlock, "setActiveDevice", uni());

@@ -47,7 +47,7 @@ public:
     QString activeAccessPoint() const;
     QString hardwareAddress() const;
     QObject * createAccessPoint(const QString & uni);
-    /* reimp */ bool activateConnection(const QString & connectionUni, const QString & extra_connection_parameter);
+    /* reimp */ bool activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters);
     /* reimp */ bool deactivateConnection();
 Q_SIGNALS:
     void bitRateChanged(int bitrate);

@@ -37,7 +37,7 @@ Q_OBJECT
         Solid::Networking::Status status() const;
         QStringList networkInterfaces() const;
         QObject * createNetworkInterface(const QString &);
-        void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QString & extra_connection_parameter);
+        void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters);
         void deactivateConnection(const QString & activeConnection);
 
         bool isNetworkingEnabled() const;

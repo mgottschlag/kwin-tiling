@@ -221,9 +221,9 @@ bool NMNetworkManager::isWirelessHardwareEnabled() const
     return true;
 }
 
-void NMNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QString & extra_connection_parameter)
+void NMNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters)
 {
-    kDebug(1441) << interfaceUni << connectionUni << extra_connection_parameter;
+    kDebug(1441) << interfaceUni << connectionUni << connectionParameters;
     QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.find(interfaceUni);
     if (it != d->interfaces.end())
     {
@@ -232,7 +232,7 @@ void NMNetworkManager::activateConnection(const QString & interfaceUni, const QS
             interface = qobject_cast<NMNetworkInterface *>(createNetworkInterface(interfaceUni));
         if (interface)
         {
-            bool activated = interface->activateConnection(connectionUni, extra_connection_parameter);
+            bool activated = interface->activateConnection(connectionUni, connectionParameters);
             Q_UNUSED(activated)
         }
     }

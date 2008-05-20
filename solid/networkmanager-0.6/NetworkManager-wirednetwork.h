@@ -39,7 +39,7 @@ public:
     bool carrier() const;
     void setBitrate(int rate);
     void setCarrier(bool carrier);
-    /* reimp */ bool activateConnection(const QString & connectionUni, const QString & extra_connection_parameter);
+    /* reimp */ bool activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters);
     /* reimp */ bool deactivateConnection();
 Q_SIGNALS:
     void bitRateChanged(int bitRate);

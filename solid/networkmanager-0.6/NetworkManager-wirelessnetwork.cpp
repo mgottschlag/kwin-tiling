@@ -294,10 +294,10 @@ QObject * NMWirelessNetwork::createAccessPoint(const QString & uni)
     return 0;
 }
 
-bool NMWirelessNetwork::activateConnection(const QString & connectionUni, const QString & extra_connection_parameter)
+bool NMWirelessNetwork::activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters)
 {
     Q_UNUSED(connectionUni)
-    Q_UNUSED(extra_connection_parameter)
+    Q_UNUSED(connectionParameters)
     return false;
 }
 
