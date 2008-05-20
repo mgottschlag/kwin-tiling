@@ -48,13 +48,15 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
     }
 
     QMutexLocker lock(bigLock());
-    KService::Ptr service = KService::serviceByName(term);
+    QString query = QString("exist Exec and ('%3' =~ Name)").arg(term, term, term);
+    KService::List services = KServiceTypeTrader::self()->query("Application", query);
 
     QList<Plasma::QueryMatch> matches;
 
     QHash<QString, bool> seen;
-    if (service && !service->exec().isEmpty()) {
+    if (!services.isEmpty()) {
         //kDebug() << service->name() << "is an exact match!" << service->storageId() << service->exec();
+        KService::Ptr service = services.at(0);
         Plasma::QueryMatch match(this);
         match.setType(Plasma::QueryMatch::ExactMatch);
         setupAction(service, match);
@@ -64,8 +66,8 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
         seen[service->exec()] = true;
     }
 
-    QString query = QString("exist Exec and ('%1' ~subin Keywords or '%2' ~~ GenericName or '%3' ~~ Name)").arg(term, term, term);
-    const KService::List services = KServiceTypeTrader::self()->query("Application", query);
+    query = QString("exist Exec and ('%1' ~subin Keywords or '%2' ~~ GenericName or '%3' ~~ Name)").arg(term, term, term);
+    services = KServiceTypeTrader::self()->query("Application", query);
 
     //kDebug() << "got " << services.count() << " services from " << query;
     foreach (const KService::Ptr &service, services) {
@@ -81,14 +83,14 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
         seen[exec] = true;
 
         Plasma::QueryMatch match(this);
-        match.setType(Plasma::QueryMatch::ExactMatch);
+        match.setType(Plasma::QueryMatch::PossibleMatch);
         setupAction(service, match);
         qreal relevance(0.6);
 
         if (service->name().contains(term, Qt::CaseInsensitive)) {
-            relevance = .8;
+            relevance = 0.8;
         } else if (service->genericName().contains(term, Qt::CaseInsensitive)) {
-            relevance = .7;
+            relevance = 0.7;
         }
 
         if (service->categories().contains("KDE")) {
