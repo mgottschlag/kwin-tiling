@@ -69,8 +69,8 @@ public:
     uint priority() const;
     bool isFavorite() const;
     bool isDefault() const;
-    bool selected() const;
-    void setSelected(bool selected);
+    bool isSelected() const;
+    void setIsSelected(bool selected);
     void setIndex(int index);
     int index() const;
     void setRowStride(int stride);

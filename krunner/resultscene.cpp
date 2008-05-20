@@ -128,15 +128,15 @@ void ResultScene::addQueryMatch(const Plasma::QueryMatch &match)
         //Make sure of what is really the selected/default item. We have to do this because of the unpredictable arrive of matches.
         if (m_items.at(0) == item) {
             item->setIsDefault(true);
-            item->setSelected(true);
+            item->setIsSelected(true);
             for (int i = 1; i < m_items.size(); i++) {
                 m_items.at(i)->setIsDefault(false);
-                m_items.at(i)->setSelected(false);
+                m_items.at(i)->setIsSelected(false);
             }
         } else {
             for (int i = 0; i < m_items.size(); i++) {
                 m_items.at(i)->setIsDefault(false);
-                m_items.at(i)->setSelected(false);
+                m_items.at(i)->setIsSelected(false);
             }
         }
     } else {
@@ -218,7 +218,7 @@ void ResultScene::removeMatches(const QList<ResultItem*> &items)
 
     if (!m_items.isEmpty()) {
         m_items.at(0)->setIsDefault(true);
-        m_items.at(0)->setSelected(true);
+        m_items.at(0)->setIsSelected(true);
     }
 }
 
@@ -231,7 +231,7 @@ void ResultScene::removeMatch(ResultItem* item)
 
     if (!m_items.isEmpty()) {
         m_items.at(0)->setIsDefault(true);
-        m_items.at(0)->setSelected(true);
+        m_items.at(0)->setIsSelected(true);
     }
 }
 
@@ -268,16 +268,16 @@ void ResultScene::itemHoverEnterSlot(ResultItem *item)
 {
     if (!item->isDefault()) {
         QMap<QString, ResultItem*>::iterator it = m_itemsById.begin();
-        m_items.at(0)->setSelected(false);
+        m_items.at(0)->setIsSelected(false);
     }
-    item->setSelected(true);
+    item->setIsSelected(true);
     emit itemHoverEnter(item);
 }
 
 void ResultScene::itemHoverLeaveSlot(ResultItem *item)
 {
-    item->setSelected(false);
-    m_items.at(0)->setSelected(true);
+    item->setIsSelected(false);
+    m_items.at(0)->setIsSelected(true);
     emit itemHoverLeave(item);
 }
 

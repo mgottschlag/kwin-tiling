@@ -316,13 +316,13 @@ bool ResultItem::isDefault() const
     return Private::s_defaultItem == this;
 }
 
-void ResultItem::setSelected(bool selected)
+void ResultItem::setIsSelected(bool selected)
 {
     d->selected = selected;
     update();
 }
 
-bool ResultItem::selected() const
+bool ResultItem::isSelected() const
 {
     return d->selected;
 }
@@ -464,7 +464,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     bool drawMixed = false;
 
-    if (selected()) {
+    if (isSelected()) {
         if (d->highlight > 2) {
             painter->drawPixmap(PADDING, PADDING, d->icon.pixmap(iRect.size(), QIcon::Active));
         } else {
@@ -507,7 +507,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->save();
     // Draw hover/selection rects
     // TODO: Make me themable with the SVG!
-    if (selected()) {
+    if (isSelected()) {
         painter->translate(0.5, 0.5);
         painter->setBrush(Qt::transparent);
         painter->setPen(QPen(Qt::white, 1));
