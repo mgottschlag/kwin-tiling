@@ -100,6 +100,7 @@ void FolderView::createConfigurationInterface(KConfigDialog *parent)
         ui.lineEdit->setUrl(m_url);
     }
     
+    ui.lineEdit->setMode(KFile::Directory); 
     ui.filterFiles->setText(m_filterFiles);
 
     parent->addPage(widget, parent->windowTitle(), icon());
