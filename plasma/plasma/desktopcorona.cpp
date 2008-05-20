@@ -100,10 +100,10 @@ void DesktopCorona::loadDefaultLayout()
 
     // some default applets to get a usable UI
     panel->addApplet("launcher");
-    panel->addApplet("tasks");
-    panel->addApplet("pager");
-    panel->addApplet("systemtray");
     panel->addApplet("notifier");
+    panel->addApplet("pager");
+    panel->addApplet("tasks");
+    panel->addApplet("systemtray");
     panel->addApplet("digital-clock");
 }
 
