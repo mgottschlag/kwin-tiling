@@ -451,6 +451,8 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     }
 
     bool drawMixed = false;
+
+    //TODO: add bool selected()
     if (mouseOver || isDefault()) {
         if (d->highlight > 2) {
             painter->drawPixmap(PADDING, PADDING, d->icon.pixmap(iRect.size(), QIcon::Active));
@@ -494,7 +496,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->save();
     // Draw hover/selection rects
     // TODO: Make me themable with the SVG!
-    if (mouseOver) {
+    if (mouseOver || isDefault()) {
         painter->translate(0.5, 0.5);
         painter->setBrush(Qt::transparent);
         painter->setPen(QPen(Qt::white, 1));
@@ -502,17 +504,17 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     }
     painter->restore();
 
-/*
+
     int textHeight = option->fontMetrics.height();
-qWarning() << textHeight;
+// qWarning() << textHeight;
     QRect textRect = iRect;
     textRect.setTop(textRect.bottom() - textHeight);
-    painter->drawText(textRect, Qt::AlignCenter, m_description);
-    textRect.translate(0, -textHeight);
-    painter->drawText(textRect, Qt::AlignCenter, m_name);
+//     painter->drawText(textRect, Qt::AlignCenter, m_description);
+//     textRect.translate(0, -textHeight);
+    painter->drawText(textRect, Qt::AlignCenter, name());
     painter->setPen(Qt::white);
-    painter->drawText(textRect.translated(-1, -1), Qt::AlignCenter, m_name);
-*/
+    painter->drawText(textRect.translated(-1, -1), Qt::AlignCenter, name());
+
     painter->setClipping(oldClipping);
 }
 
