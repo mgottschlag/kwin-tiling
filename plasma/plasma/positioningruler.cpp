@@ -70,7 +70,7 @@ public:
             }
 
             if (alignment == Qt::AlignCenter) {
-                const int newTop = offsetSliderRect.top() + (offsetSliderRect.top() - newPos.y());
+                const int newTop = offsetSliderRect.center().y() + (offsetSliderRect.center().y() - newPos.y());
                 if (newTop < 0 || newTop > availableLength) {
                     return false;
                 }
@@ -83,7 +83,7 @@ public:
             }
 
             if (alignment == Qt::AlignCenter) {
-                const int newLeft = offsetSliderRect.left() + (offsetSliderRect.left() - newPos.x());
+                const int newLeft = offsetSliderRect.center().x() + (offsetSliderRect.center().x() - newPos.x());
                 if (newLeft < 0 || newLeft > availableLength) {
                     return false;
                 }
