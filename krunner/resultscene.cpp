@@ -122,8 +122,23 @@ void ResultScene::addQueryMatch(const Plasma::QueryMatch &match)
         item->setRowStride(rowStride);
         item->setIndex(m_itemCount++);
         connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
-        connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
-        connect(item, SIGNAL(hoverLeave(ResultItem*)), this, SIGNAL(itemHoverLeave(ResultItem*)));
+        connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SLOT(itemHoverEnterSlot(ResultItem*)));
+        connect(item, SIGNAL(hoverLeave(ResultItem*)), this, SLOT(itemHoverLeaveSlot(ResultItem*)));
+
+        //Make sure of what is really the selected/default item. We have to do this because of the unpredictable arrive of matches.
+        if (m_items.at(0) == item) {
+            item->setIsDefault(true);
+            item->setSelected(true);
+            for (int i = 1; i < m_items.size(); i++) {
+                m_items.at(i)->setIsDefault(false);
+                m_items.at(i)->setSelected(false);
+            }
+        } else {
+            for (int i = 0; i < m_items.size(); i++) {
+                m_items.at(i)->setIsDefault(false);
+                m_items.at(i)->setSelected(false);
+            }
+        }
     } else {
         item = it.value();
         item->setMatch(match);
@@ -203,6 +218,7 @@ void ResultScene::removeMatches(const QList<ResultItem*> &items)
 
     if (!m_items.isEmpty()) {
         m_items.at(0)->setIsDefault(true);
+        m_items.at(0)->setSelected(true);
     }
 }
 
@@ -215,6 +231,7 @@ void ResultScene::removeMatch(ResultItem* item)
 
     if (!m_items.isEmpty()) {
         m_items.at(0)->setIsDefault(true);
+        m_items.at(0)->setSelected(true);
     }
 }
 
@@ -247,6 +264,23 @@ void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
 }
 
 /// SLOTS <- ResultItems
+void ResultScene::itemHoverEnterSlot(ResultItem *item)
+{
+    if (!item->isDefault()) {
+        QMap<QString, ResultItem*>::iterator it = m_itemsById.begin();
+        m_items.at(0)->setSelected(false);
+    }
+    item->setSelected(true);
+    emit itemHoverEnter(item);
+}
+
+void ResultScene::itemHoverLeaveSlot(ResultItem *item)
+{
+    m_items.at(0)->setSelected(true);
+    item->setSelected(false);
+    emit itemHoverLeave(item);
+}
+
 void ResultScene::slotArrowResultItemPressed()
 {
 

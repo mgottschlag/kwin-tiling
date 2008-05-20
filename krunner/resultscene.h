@@ -59,6 +59,9 @@ class ResultScene : public QGraphicsScene
         void launchQuery(const QString &term);
         void clearQuery();
 
+        void itemHoverEnterSlot(ResultItem *item);
+        void itemHoverLeaveSlot(ResultItem *item);
+
     signals:
         void itemActivated(ResultItem *item);
         void itemHoverEnter(ResultItem *item);

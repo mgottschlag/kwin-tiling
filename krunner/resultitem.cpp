@@ -94,6 +94,7 @@ public:
     QGraphicsItemAnimation *animation;
     bool isFavorite : 1;
     bool needsMoving : 1;
+    bool selected : 1;
 };
 
 int ResultItem::Private::s_removingCount = 0;
@@ -315,6 +316,17 @@ bool ResultItem::isDefault() const
     return Private::s_defaultItem == this;
 }
 
+void ResultItem::setSelected(bool selected)
+{
+    d->selected = selected;
+    update();
+}
+
+bool ResultItem::selected() const
+{
+    return d->selected;
+}
+
 void ResultItem::setIndex(int index)
 {
     if (d->index == index) {
@@ -496,7 +508,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->save();
     // Draw hover/selection rects
     // TODO: Make me themable with the SVG!
-    if (mouseOver || isDefault()) {
+    if (selected()) {
         painter->translate(0.5, 0.5);
         painter->setBrush(Qt::transparent);
         painter->setPen(QPen(Qt::white, 1));
