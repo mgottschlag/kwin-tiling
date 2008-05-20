@@ -464,7 +464,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     bool drawMixed = false;
 
-    if (isSelected()) {
+    if (mouseOver || isSelected()) {
         if (d->highlight > 2) {
             painter->drawPixmap(PADDING, PADDING, d->icon.pixmap(iRect.size(), QIcon::Active));
         } else {
@@ -508,11 +508,18 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     // Draw hover/selection rects
     // TODO: Make me themable with the SVG!
     if (isSelected()) {
+        //TODO: fancier, please
+        painter->translate(0.5, 0.5);
+        painter->setBrush(Qt::transparent);
+        painter->setPen(QPen(Qt::white, 2));
+        painter->drawPath(Plasma::roundedRectangle(boundingRect(), 6));
+    } else if (mouseOver) {
         painter->translate(0.5, 0.5);
         painter->setBrush(Qt::transparent);
         painter->setPen(QPen(Qt::white, 1));
         painter->drawPath(Plasma::roundedRectangle(boundingRect(), 6));
     }
+
     painter->restore();
 
 
