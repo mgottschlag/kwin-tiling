@@ -68,7 +68,7 @@ Pager::Pager(QObject *parent, const QVariantList &args)
 
     // initialize with a decent default
     m_desktopCount = KWindowSystem::numberOfDesktops();
-    m_size = QSizeF(88, 44);
+    m_size = QSizeF(176, 88);
     resize(m_size);
 }
 
