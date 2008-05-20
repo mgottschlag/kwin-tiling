@@ -195,27 +195,6 @@ ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent)
 
 void ResultItem::Private::init()
 {
-    int hue = qrand() % 359;
-    switch (group) {
-        case Plasma::QueryMatch::CompletionMatch:
-            hue = 10; // reddish
-            break;
-        case Plasma::QueryMatch::PossibleMatch:
-            hue = 40; // browny
-            break;
-        case Plasma::QueryMatch::InformationalMatch:
-        case Plasma::QueryMatch::HelperMatch:
-            hue = 110; // green
-            break;
-        case Plasma::QueryMatch::ExactMatch:
-            hue = 60; // gold
-            break;
-        default:
-            break;
-    }
-    tempColor = QColor::fromHsv(hue, 100, 150);
-    tempTransp = (qreal)qrand() / (qreal)RAND_MAX;
-
     //QTimer * timer = new QTimer(q);
     //connect(timer, SIGNAL(timeout()), q, SLOT(slotTestTransp()));
     //timer->start(50);
@@ -250,6 +229,27 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
     d->icon = KIcon(match.icon());
     d->group = match.type();
     d->priority = match.relevance(); // TODO, need to fator in more things than just this
+
+    int hue = qrand() % 359;
+    switch (d->group) {
+        case Plasma::QueryMatch::CompletionMatch:
+            hue = 10; // reddish
+            break;
+        case Plasma::QueryMatch::PossibleMatch:
+            hue = 40; // browny
+            break;
+        case Plasma::QueryMatch::InformationalMatch:
+        case Plasma::QueryMatch::HelperMatch:
+            hue = 110; // green
+            break;
+        case Plasma::QueryMatch::ExactMatch:
+            hue = 110; // gold
+            break;
+        default:
+            break;
+    }
+
+    d->tempColor = QColor::fromHsv(hue, 100, 150);
 }
 
 QString ResultItem::id() const
