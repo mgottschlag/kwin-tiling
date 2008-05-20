@@ -131,6 +131,9 @@ bool DesktopView::isDesktop() const
 
 void DesktopView::setContainment(Plasma::Containment *containment)
 {
+    if (containment == this->containment()) {
+        return;
+    }
     if (m_zoomLevel == Plasma::DesktopZoom) {
         //switch connections
         disconnect(this->containment(), 0, this, 0);
