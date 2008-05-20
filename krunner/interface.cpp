@@ -304,7 +304,18 @@ void Interface::updateDescriptionLabel(ResultItem *item)
 
 void Interface::switchUser()
 {
+    //TODO: ugh, magic strings. See sessions/sessionrunner.cpp
+    display(QString());
+    //TODO: create a "single runner" mode
+    //m_header->setText(i18n("Switch users"));
+    //m_header->setPixmap("system-switch-user");
 
+    KService::Ptr service = KService::serviceByStorageId("plasma-runner-sessions.desktop");
+    KPluginInfo info(service);
+
+    if (info.isValid()) {
+        !m_runnerManager->execQuery("SESSIONS", info.pluginName());
+    }
 }
 
 void Interface::showConfigDialog()
