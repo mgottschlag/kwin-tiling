@@ -242,7 +242,8 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
             break;
     }
 
-    d->tempColor = QColor::fromHsv(hue, 100, 150);
+//     d->tempColor = QColor::fromHsv(hue, 0, 150);
+    d->tempColor = QColor(61, 61, 61);
 }
 
 QString ResultItem::id() const
