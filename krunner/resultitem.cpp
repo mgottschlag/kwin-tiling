@@ -43,6 +43,7 @@ class ResultItem::Private {
 public:
     Private(ResultItem *item)
         : q(item),
+          match(0),
           tempTransp(1.0),
           highlight(false),
           index(-1),
@@ -79,13 +80,9 @@ public:
     static ResultItem *s_defaultItem;
 
     ResultItem * q;
+    Plasma::QueryMatch match;
     // static description
-    QString id;
-    QString     name;
-    QString     description;
     QIcon       icon;
-    Plasma::QueryMatch::Type group;
-    uint        priority;
     // dyn params
     QColor      tempColor;
     qreal       tempTransp;
@@ -223,29 +220,25 @@ ResultItem::~ResultItem()
 
 void ResultItem::setMatch(const Plasma::QueryMatch &match)
 {
-    d->id = match.id();
-    d->name = match.text();
-    d->description = match.subtext();
+    d->match = match;
     d->icon = KIcon(match.icon());
-    d->group = match.type();
-    d->priority = match.relevance(); // TODO, need to fator in more things than just this
 
-    int hue = qrand() % 359;
-    switch (d->group) {
+    int hue = 0;
+    switch (match.type()) {
         case Plasma::QueryMatch::CompletionMatch:
             hue = 10; // reddish
-            break;
-        case Plasma::QueryMatch::PossibleMatch:
-            hue = 40; // browny
             break;
         case Plasma::QueryMatch::InformationalMatch:
         case Plasma::QueryMatch::HelperMatch:
             hue = 110; // green
             break;
         case Plasma::QueryMatch::ExactMatch:
-            hue = 110; // gold
+            hue = 60; // gold
             break;
+        case Plasma::QueryMatch::PossibleMatch:
         default:
+            hue = 40; // browny
+            break;
             break;
     }
 
@@ -254,7 +247,7 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
 
 QString ResultItem::id() const
 {
-    return d->id;
+    return d->match.id();
 }
 
 int ResultItem::updateId() const
@@ -269,12 +262,17 @@ void ResultItem::setUpdateId(int id)
 
 QString ResultItem::name() const
 {
-    return d->name;
+    return d->match.text();
 }
 
 QString ResultItem::description() const
 {
-    return d->description;
+    return d->match.subtext();
+}
+
+QString ResultItem::data() const
+{
+    return d->match.data().toString();
 }
 
 QIcon ResultItem::icon() const
@@ -284,12 +282,13 @@ QIcon ResultItem::icon() const
 
 Plasma::QueryMatch::Type ResultItem::group() const
 {
-    return d->group;
+    return d->match.type();
 }
 
 uint ResultItem::priority() const
 {
-    return d->priority;
+    // TODO, need to fator in more things than just this
+    return d->match.relevance();
 }
 
 bool ResultItem::isFavorite() const

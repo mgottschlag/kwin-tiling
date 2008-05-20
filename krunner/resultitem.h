@@ -63,6 +63,7 @@ public:
     int updateId() const;
     QString name() const;
     QString description() const;
+    QString data() const;
     QIcon icon() const;
     Plasma::QueryMatch::Type group() const;
     uint priority() const;
