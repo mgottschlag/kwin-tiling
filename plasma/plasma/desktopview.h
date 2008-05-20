@@ -58,11 +58,19 @@ public:
      */
     bool isDesktop() const;
 
+    /**
+     * Sets the containment for this view, which will also cause the view
+     * to track the geometry of the containment.
+     *
+     * @arg containment the containment to center the view on
+     */
+    void setContainment(Plasma::Containment *containment);
+
 public slots:
     /**
      * zoom in towards the given containment.
      * if toContainment is null, the current containment is used instead.
-     * zooming in all the way sets toContainment as current.
+     * zooming in also sets toContainment as current.
      */
     void zoom(Plasma::Containment *containment, Plasma::ZoomDirection direction);
     void zoomIn(Plasma::Containment *toContainment);
@@ -77,6 +85,16 @@ public slots:
     void addContainment(Plasma::Containment *fromContainment = 0);
 
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
+
+    /**
+     * switch to the "next" available containment on the corona.
+     */
+    void nextContainment();
+
+    /**
+     * switch to the "previous" available containment on the corona.
+     */
+    void previousContainment();
 
 protected:
     void wheelEvent(QWheelEvent *event);

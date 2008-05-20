@@ -51,6 +51,17 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
         containment->enableToolBoxTool("zoomIn", false);
         containment->enableToolBoxTool("addSiblingContainment", false);
     }
+    //FIXME should we have next/prev or up/down/left/right or what?
+    QAction *action = new QAction(i18n("Next Activity"), this);
+    action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    action->setShortcut(QKeySequence("ctrl+]"));
+    connect(action, SIGNAL(triggered()), this, SLOT(nextContainment()));
+    addAction(action);
+    action = new QAction(i18n("Previous Activity"), this);
+    action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    action->setShortcut(QKeySequence("ctrl+["));
+    connect(action, SIGNAL(triggered()), this, SLOT(previousContainment()));
+    addAction(action);
 }
 
 DesktopView::~DesktopView()
@@ -76,6 +87,7 @@ void DesktopView::toggleDashboard()
         }
 
         m_dashboard = new DashboardView(containment(), 0);
+        m_dashboard->addActions(actions());
     }
 
     m_dashboard->toggleVisibility();
@@ -117,6 +129,21 @@ bool DesktopView::isDesktop() const
     return KWindowInfo(winId(), NET::WMWindowType).windowType(NET::Desktop);
 }
 
+void DesktopView::setContainment(Plasma::Containment *containment)
+{
+    if (m_zoomLevel == Plasma::DesktopZoom) {
+        //switch connections
+        disconnect(this->containment(), 0, this, 0);
+        connectContainment(containment);
+    }
+
+    View::setContainment(containment);
+
+    if (m_dashboard) {
+        m_dashboard->setContainment(containment);
+    }
+}
+
 void DesktopView::addContainment(Plasma::Containment *fromContainment)
 {
     if (fromContainment) {
@@ -124,9 +151,9 @@ void DesktopView::addContainment(Plasma::Containment *fromContainment)
         if (corona) {
             //make it the same type of containment
             Plasma::Containment *c = corona->addContainment(fromContainment->pluginName());
-            //it doesn't know what size to be because it's never had a screen
-            //c->resize(fromContainment->size());
-            connectContainment(c); //TODO put this in our own setContainment
+            if (m_zoomLevel != Plasma::DesktopZoom) {
+                connectContainment(c);
+            }
             //note: this will set a sane size too, assuming we have a screen
             setContainment(c);
             kDebug() << "containment added at" << c->geometry();
@@ -152,9 +179,6 @@ void DesktopView::zoomIn(Plasma::Containment *toContainment)
 
     if (toContainment && containment() != toContainment) {
         setContainment(toContainment);
-        if (m_dashboard) {
-            m_dashboard->setContainment(toContainment);
-        }
     }
 
     if (m_zoomLevel == Plasma::GroupZoom) {
@@ -285,6 +309,42 @@ void DesktopView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Contai
     if (isScreen == screen()) {
         setContainment(containment);
     }
+}
+
+void DesktopView::nextContainment()
+{
+    QList<Plasma::Containment*> containments = containment()->corona()->containments();
+    int start = containments.indexOf(containment());
+    int i = (start + 1) % containments.size();
+    //FIXME this is a *horrible* way of choosing a "next" containment.
+    while (i != start) {
+        if (containments.at(i)->containmentType() != Plasma::Containment::PanelContainment &&
+            containments.at(i)->screen() == -1) {
+            break;
+        }
+        i = (i + 1) % containments.size();
+    }
+
+    Plasma::Containment *c = containments.at(i);
+    setContainment(c);
+}
+
+void DesktopView::previousContainment()
+{
+    QList<Plasma::Containment*> containments = containment()->corona()->containments();
+    int start = containments.indexOf(containment());
+    int i = (start - 1) % containments.size();
+    //FIXME this is a *horrible* way of choosing a "previous" containment.
+    while (i != start) {
+        if (containments.at(i)->containmentType() != Plasma::Containment::PanelContainment &&
+            containments.at(i)->screen() == -1) {
+            break;
+        }
+        i = (i - 1) % containments.size();
+    }
+
+    Plasma::Containment *c = containments.at(i);
+    setContainment(c);
 }
 
 #include "desktopview.moc"
