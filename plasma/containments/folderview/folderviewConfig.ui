@@ -71,16 +71,6 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="2" >
-    <widget class="QLineEdit" name="filterFiles" >
-     <property name="toolTip" >
-      <string>Space-separated list of extensions, e.g. *.txt * .od*</string>
-     </property>
-     <property name="whatsThis" >
-      <string>Space-separated list of extensions, e.g. *.txt * .od* to display only office- and text-files</string>
-     </property>
-    </widget>
-   </item>
    <item row="4" column="2" >
     <spacer name="spacer1" >
      <property name="orientation" >
@@ -97,9 +87,30 @@
      </property>
     </spacer>
    </item>
+   <item row="3" column="2" >
+    <widget class="KLineEdit" name="filterFiles" >
+     <property name="toolTip" >
+      <string>Space-separated list of extensions, e.g. *.txt * .od*</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Space-separated list of extensions, e.g. *.txt * .od* to display only office- and text-files</string>
+     </property>
+     <property name="urlDropsEnabled" >
+      <bool>false</bool>
+     </property>
+     <property name="showClearButton" stdset="0" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
+  </customwidget>
   <customwidget>
    <class>KUrlRequester</class>
    <extends>QFrame</extends>
