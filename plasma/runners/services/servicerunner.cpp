@@ -48,7 +48,7 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
     }
 
     QMutexLocker lock(bigLock());
-    QString query = QString("exist Exec and ('%3' =~ Name)").arg(term, term, term);
+    QString query = QString("exist Exec and ('%1' =~ Name)").arg(term);
     KService::List services = KServiceTypeTrader::self()->query("Application", query);
 
     QList<Plasma::QueryMatch> matches;
