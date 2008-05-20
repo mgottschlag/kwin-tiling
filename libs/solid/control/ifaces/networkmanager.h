@@ -98,7 +98,7 @@ namespace Ifaces
          */
         virtual bool isWirelessHardwareEnabled() const = 0;
 
-        virtual void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QString & extra_connection_parameter) = 0;
+        virtual void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters ) = 0;
 
         virtual void deactivateConnection(const QString & activeConnection) = 0;
 

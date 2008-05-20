@@ -22,6 +22,7 @@
 #define SOLID_NETWORKMANAGER
 
 #include <QtCore/QObject>
+#include <QtCore/QVariant>
 
 #include <solid/networking.h>
 #include "solid_control_export.h"
@@ -114,11 +115,11 @@ namespace Control
         /**
          * @param deviceUni unique identifier of the network interface to be activated
          * @param connectionUni unique identifier for the connection to be activated
-         * @param extra_connection_parameter can be used to specify a parameter not specific to the NetworkInterface or the connection, eg which AP to use when several present with same ESSID in range (because ESSID no guarantee that the AP is part of the network you want to join!) Consider making this an object in its own right
+         * @param connectionParameters can be used to specify extra parameters not specific to the NetworkInterface or the connection, eg which AP to use when several present with same ESSID in range (because ESSID no guarantee that the AP is part of the network you want to join!)
          *
          */
         SOLIDCONTROL_EXPORT void activateConnection(const QString & deviceUni, const QString & connectionUni,
-                const QString & extra_connection_parameter );
+                const QVariantMap & connectionParameters );
         /**
          * Deactivate this network interface, if active
          * @param activeConnectionUni identifer of the connection to deactivate

@@ -54,7 +54,7 @@ Q_OBJECT
         bool isWirelessEnabled() const;
         bool isWirelessHardwareEnabled() const;
 
-        void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QString & extra_connection_parameter);
+        void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters);
 
         void deactivateConnection(const QString & activeConnection);
 

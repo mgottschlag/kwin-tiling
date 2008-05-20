@@ -266,7 +266,7 @@ QMap<QString,QVariant> FakeNetworkManager::parseAPElement(const QDomElement &dev
     return propertyMap;
 }
 
-void FakeNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QString & extra_connection_parameter)
+void FakeNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters)
 {
 
 }

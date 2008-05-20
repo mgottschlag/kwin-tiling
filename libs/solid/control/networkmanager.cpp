@@ -241,9 +241,9 @@ Solid::Control::NetworkManagerPrivate::findRegisteredNetworkInterface(const QStr
 }
 
 void Solid::Control::NetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni,
-                const QString & extra_connection_parameter )
+                const QVariantMap & connectionParameters )
 {
-    SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), activateConnection(interfaceUni, connectionUni, extra_connection_parameter));
+    SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), activateConnection(interfaceUni, connectionUni, connectionParameters));
 }
 
 void Solid::Control::NetworkManager::deactivateConnection(const QString & activeConnectionUni)
