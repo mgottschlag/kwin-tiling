@@ -30,8 +30,8 @@ THE SOFTWARE.
 #include <QtNetwork>
 #include <math.h>
 
-#include <Plasma/Applet>
-#include <Plasma/Package>
+#include <plasma/applet.h>
+#include <plasma/package.h>
 
 static inline QByteArray dataFor(const QString &str)
 {
