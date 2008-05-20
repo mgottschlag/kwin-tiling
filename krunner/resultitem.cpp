@@ -523,15 +523,16 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->restore();
 
 
-    int textHeight = option->fontMetrics.height();
-// qWarning() << textHeight;
     QRect textRect = iRect;
-    textRect.setTop(textRect.bottom() - textHeight);
+    textRect.setTop(textRect.bottom() - option->fontMetrics.height());
+    //Avoid to cut text both in the left and in the right
+    int textAlign = (option->fontMetrics.width(name()) < textRect.width()) ? Qt::AlignCenter : Qt::AlignLeft;
+
 //     painter->drawText(textRect, Qt::AlignCenter, m_description);
 //     textRect.translate(0, -textHeight);
-    painter->drawText(textRect, Qt::AlignCenter, name());
+    painter->drawText(textRect, textAlign, name());
     painter->setPen(Qt::white);
-    painter->drawText(textRect.translated(-1, -1), Qt::AlignCenter, name());
+    painter->drawText(textRect.translated(-1, -1), textAlign, name());
 
     painter->setClipping(oldClipping);
 }
