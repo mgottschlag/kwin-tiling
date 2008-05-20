@@ -41,7 +41,7 @@ KRunnerConfigDialog::KRunnerConfigDialog(Plasma::RunnerManager* manager, QWidget
     setMainWidget(m_sel);
     setInitialSize(QSize(400, 500));
 
-    setWindowTitle(i18n("Configure KRunner"));
+    setWindowTitle(i18n("KRunner Settings"));
 
     connect(m_sel, SIGNAL(configCommitted(const QByteArray&)), this, SLOT(updateRunner(const QByteArray&)));
     connect(this, SIGNAL(okClicked()), this, SLOT(accept()));

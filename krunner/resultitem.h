@@ -77,9 +77,10 @@ public:
     void setUpdateId(int id);
     void setIsDefault(bool isDefault);
 
-    static const int BOUNDING_SIZE = 72;
-    static const int ITEM_SIZE = 64;
-    static const int ITEM_MARGIN = 4;
+    static const int ITEM_SIZE = 68;
+    static const int PADDING = 2;
+    static const int MARGIN = 3;
+    static const int BOUNDING_SIZE = ITEM_SIZE + MARGIN*2;
 
 signals:
     void indexReleased(int index);

@@ -46,6 +46,7 @@ ResultScene::ResultScene(QObject * parent)
     m_mainWidget = new QGraphicsWidget(0);
 
     QGraphicsGridLayout *layout = new QGraphicsGridLayout(m_mainWidget);
+    layout->setContentsMargins(0, 0, 0, 0);
 
     m_iconArea = new QGraphicsWidget(m_mainWidget);
     layout->addItem(m_iconArea, 1, 0);
@@ -62,6 +63,9 @@ ResultScene::ResultScene(QObject * parent)
 
     m_clearTimer.setSingleShot(true);
     connect(&m_clearTimer, SIGNAL(timeout()), this, SLOT(clearMatches()));
+
+    //QColor bg(255, 255, 255, 126);
+    //setBackgroundBrush(bg);
 }
 
 ResultScene::~ResultScene()
@@ -113,9 +117,9 @@ void ResultScene::addQueryMatch(const Plasma::QueryMatch &match)
         item = new ResultItem(match, m_iconArea);
         m_itemsById.insert(match.id(), item);
         m_items.append(item);
-        item->setIndex(m_itemCount++);
         int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);
         item->setRowStride(rowStride);
+        item->setIndex(m_itemCount++);
         connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
         connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
         connect(item, SIGNAL(hoverLeave(ResultItem*)), this, SIGNAL(itemHoverLeave(ResultItem*)));

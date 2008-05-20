@@ -107,6 +107,7 @@ QPointF ResultItem::Private::pos()
 {
     int row = (index / rowStride) * ResultItem::BOUNDING_SIZE;
     int col = (index % rowStride) * ResultItem::BOUNDING_SIZE; //(w / rowStride);
+    //kDebug() << col << row << "for" << index;
     return QPointF(col, row);
 }
 
@@ -117,14 +118,18 @@ void ResultItem::Private::appear()
         animation = 0;
     }
 
+    QPointF p(pos());
+    qreal halfway = ResultItem::BOUNDING_SIZE * 0.5;
+    qreal mostway = ResultItem::BOUNDING_SIZE * 0.1;
+
     animation = new QGraphicsItemAnimation();
     animation->setItem(q);
     animation->setScaleAt(0.0, 0.0, 0.0);
     animation->setScaleAt(0.5, 0.1, 1.0);
     animation->setScaleAt(1.0, 1.0, 1.0);
-    animation->setPosAt(0.0, pos() + QPointF(32.0, 32.0));
-    animation->setPosAt(0.5, pos() + QPointF(32.0*0.9, 0.0));
-    animation->setPosAt(1.0, pos());
+    animation->setPosAt(0.0, p + QPointF(halfway, halfway));
+    animation->setPosAt(0.5, p + QPointF(mostway, 0));
+    animation->setPosAt(1.0, p);
     QTimeLine * timer = new QTimeLine(100);
     animation->setTimeLine(timer);
 
@@ -174,6 +179,7 @@ void ResultItem::animationComplete()
 {
     delete d->animation;
     d->animation = 0;
+    resetTransform();
 }
 
 ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent)
@@ -315,6 +321,14 @@ void ResultItem::setIndex(int index)
 
     bool first = d->index == -1;
     d->index = index;
+    d->needsMoving = false;
+
+    if (index < 0) {
+        index = -1;
+        return;
+    }
+
+    //kDebug() << index << first;
     if (first) {
         d->appear();
     } else if (d->s_removingCount) {
@@ -345,7 +359,9 @@ void ResultItem::setRowStride(int stride)
     }
 
     d->rowStride = stride;
-    d->move(d->index == -1);
+    if (d->index != -1) {
+        d->move(false);
+    }
 }
 
 int ResultItem::rowStride() const
@@ -360,6 +376,7 @@ void ResultItem::remove()
         d->animation = 0;
     }
 
+    d->needsMoving = false;
     d->animation = new QGraphicsItemAnimation();
     d->animation->setItem(this);
     d->animation->setScaleAt(0.0, 1.0, 1.0);
@@ -376,12 +393,14 @@ void ResultItem::remove()
     timer->start();
 }
 
-void ResultItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
+void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    Q_UNUSED(widget);
+
     bool oldClipping = painter->hasClipping();
     painter->setClipping(false);
 
-    QRect iRect = boundingRect().toRect();
+    QRect iRect = boundingRect().toRect().adjusted(PADDING, PADDING, -PADDING, -PADDING);
     bool mouseOver = option->state & QStyle::State_MouseOver || hasFocus();
 
     painter->setRenderHint(QPainter::Antialiasing);
@@ -427,7 +446,7 @@ void ResultItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
     bool drawMixed = false;
     if (mouseOver || isDefault()) {
         if (d->highlight > 2) {
-            painter->drawPixmap(0, 0, d->icon.pixmap(iRect.size(), QIcon::Active));
+            painter->drawPixmap(PADDING, PADDING, d->icon.pixmap(iRect.size(), QIcon::Active));
         } else {
             drawMixed = true;
             ++d->highlight;
@@ -442,7 +461,7 @@ void ResultItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
             d->highlightTimerId = startTimer(40);
         }
     } else {
-        painter->drawPixmap(0, 0, d->icon.pixmap(iRect.size(), QIcon::Disabled));
+        painter->drawPixmap(PADDING, PADDING, d->icon.pixmap(iRect.size(), QIcon::Disabled));
     }
 
     if (drawMixed) {
@@ -459,9 +478,9 @@ void ResultItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * opti
         qreal activeOpacity = painter->opacity() * factor;
 
         painter->setOpacity(painter->opacity() * (1 - factor));
-        painter->drawPixmap(0, 0, d->icon.pixmap(iRect.size(), QIcon::Disabled));
+        painter->drawPixmap(PADDING, PADDING, d->icon.pixmap(iRect.size(), QIcon::Disabled));
         painter->setOpacity(activeOpacity);
-        painter->drawPixmap(0, 0, d->icon.pixmap(iRect.size(), QIcon::Active));
+        painter->drawPixmap(PADDING, PADDING, d->icon.pixmap(iRect.size(), QIcon::Active));
     }
     painter->restore();
 
@@ -506,6 +525,8 @@ void ResultItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 
 void ResultItem::timerEvent(QTimerEvent *e)
 {
+    Q_UNUSED(e)
+
     d->tempTransp += 0.1;
     killTimer(d->highlightTimerId);
     d->highlightTimerId = 0;

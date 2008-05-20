@@ -48,6 +48,7 @@
 
 #include <plasma/abstractrunner.h>
 #include <plasma/runnermanager.h>
+#include <plasma/theme.h>
 
 #include "collapsiblewidget.h"
 #include "configdialog.h"
@@ -68,7 +69,7 @@ Interface::Interface(QWidget* parent)
     m_layout = new QVBoxLayout(w);
     m_layout->setMargin(0);
 
-    m_searchTerm = new KHistoryComboBox(false,w);
+    m_searchTerm = new KHistoryComboBox(false, w);
     m_searchTerm->setDuplicatesEnabled(false);
 
     KLineEdit *lineEdit = new KLineEdit(m_searchTerm);
@@ -92,25 +93,31 @@ Interface::Interface(QWidget* parent)
     m_resultsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_resultsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_resultsView->setOptimizationFlag(QGraphicsView::DontSavePainterState);
-    m_resultsView->setMinimumSize(ResultItem::BOUNDING_SIZE * 2, ResultItem::BOUNDING_SIZE * 2);
+    m_resultsView->setMinimumSize(ResultItem::BOUNDING_SIZE * 4, ResultItem::BOUNDING_SIZE * 2);
+    kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
     m_layout->addWidget(m_resultsView);
 
     m_resultsScene = new ResultScene(this);
     m_resultsView->setScene(m_resultsScene);
 
     m_descriptionLabel = new QLabel(w);
-    m_descriptionLabel->setForegroundRole(QPalette::Window);
+    m_descriptionLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+    QPalette p = m_descriptionLabel->palette();
+    p.setColor(QPalette::WindowText, Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+    m_descriptionLabel->setPalette(p);
     m_layout->addWidget(m_descriptionLabel);
 
-    QHBoxLayout *bottomLayout = new QHBoxLayout(w);
+    QWidget *buttonContainer = new QWidget(w);
+    QHBoxLayout *bottomLayout = new QHBoxLayout(buttonContainer);
+    bottomLayout->setMargin(0);
     KGuiItem configButtonGui = KStandardGuiItem::configure();
     configButtonGui.setText(i18n("Settings"));
-    KPushButton *configButton = new KPushButton(configButtonGui, this);
+    KPushButton *configButton = new KPushButton(configButtonGui, buttonContainer);
     connect(configButton, SIGNAL(clicked()), SLOT(showConfigDialog()));
     bottomLayout->addWidget( configButton );
 
     /*
-    KPushButton *m_optionsButton = new KPushButton(KStandardGuiItem::configure(), this);
+    KPushButton *m_optionsButton = new KPushButton(KStandardGuiItem::configure(), buttonContainer);
     m_optionsButton->setText(i18n("Show Options"));
     m_optionsButton->setEnabled(false);
     m_optionsButton->setCheckable(true);
@@ -118,31 +125,31 @@ Interface::Interface(QWidget* parent)
     bottomLayout->addWidget( m_optionsButton );
     */
 
-    KPushButton *activityButton = new KPushButton(w);
+    KPushButton *activityButton = new KPushButton(buttonContainer);
     activityButton->setText(i18n("Show System Activity"));
     activityButton->setIcon(KIcon("utilities-system-monitor"));
     connect(activityButton, SIGNAL(clicked()), qApp, SLOT(showTaskManager()));
     connect(activityButton, SIGNAL(clicked()), this, SLOT(close()));
     bottomLayout->addWidget(activityButton);
 
-    bottomLayout->addStretch();
+    //bottomLayout->addStretch();
 
     QString stringReserver = i18n("Launch");
     stringReserver = i18n("Click to execute the selected item above");
     stringReserver = i18n("Show Options");
     /*
     QString runButtonWhatsThis = i18n( "Click to execute the selected item above" );
-    m_runButton = new KPushButton(KGuiItem(i18n("Launch"), "system-run", QString(), runButtonWhatsThis), w);
+    m_runButton = new KPushButton(KGuiItem(i18n("Launch"), "system-run", QString(), runButtonWhatsThis), buttonContainer);
     m_runButton->setEnabled( false );
     m_runButton->setDefault(true);
     connect( m_runButton, SIGNAL( clicked(bool) ), SLOT(run()) );
     bottomLayout->addWidget( m_runButton );
     */
-    KPushButton *closeButton = new KPushButton(KStandardGuiItem::close(), w);
+    KPushButton *closeButton = new KPushButton(KStandardGuiItem::close(), buttonContainer);
     connect(closeButton, SIGNAL(clicked(bool)), SLOT(close()));
     bottomLayout->addWidget(closeButton);
 
-    m_layout->addLayout(bottomLayout);
+    m_layout->addWidget(buttonContainer);
 
     connect(m_searchTerm, SIGNAL(editTextChanged(QString)), m_resultsScene, SLOT(launchQuery(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));
@@ -158,13 +165,15 @@ Interface::Interface(QWidget* parent)
 
     new QShortcut( QKeySequence( Qt::Key_Escape ), this, SLOT(close()) );
 
-    //FIXME: what size should we be?
-    resize(400, 250);
+    kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
+    KConfigGroup interfaceConfig(KGlobal::config(), "Interface");
+    restoreDialogSize(interfaceConfig);
+    kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize() << size();
 }
 
 void Interface::resizeEvent(QResizeEvent *event)
 {
-    m_resultsView->resize(size());
+    //m_resultsView->resize(size());
     m_resultsScene->resize(m_resultsView->width(), m_resultsView->height());
     KRunnerDialog::resizeEvent(event);
 }
@@ -173,6 +182,8 @@ Interface::~Interface()
 {
     KRunnerSettings::setPastQueries(m_searchTerm->historyItems());
     KRunnerSettings::setQueryTextCompletionMode(m_searchTerm->completionMode());
+    KConfigGroup interfaceConfig(KGlobal::config(), "Interface");
+    saveDialogSize(interfaceConfig);
 }
 
 void Interface::clearHistory()

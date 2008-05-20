@@ -55,10 +55,12 @@ KRunnerDialog::~KRunnerDialog()
 
 void KRunnerDialog::themeUpdated()
 {
-    const int topHeight = m_background->marginSize(Plasma::TopMargin);
-    const int leftWidth = m_background->marginSize(Plasma::LeftMargin);
-    const int rightWidth = m_background->marginSize(Plasma::RightMargin);
-    const int bottomHeight = m_background->marginSize(Plasma::BottomMargin);
+    int margin = marginHint();
+    const int topHeight = qMax(0, int(m_background->marginSize(Plasma::TopMargin)) - margin);
+    const int leftWidth = qMax(0, int(m_background->marginSize(Plasma::LeftMargin)) - margin);
+    const int rightWidth = qMax(0, int(m_background->marginSize(Plasma::RightMargin)) - margin);
+    const int bottomHeight = qMax(0, int(m_background->marginSize(Plasma::BottomMargin)) - margin);
+
     setContentsMargins(leftWidth, topHeight, rightWidth, bottomHeight);
 }
 
