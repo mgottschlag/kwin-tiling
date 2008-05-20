@@ -84,7 +84,7 @@ public:
     // static description
     QIcon       icon;
     // dyn params
-    QColor      tempColor;
+    QBrush bgBrush;
     qreal       tempTransp;
     int highlight;
     int index;
@@ -240,11 +240,16 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
         default:
             hue = 40; // browny
             break;
-            break;
     }
 
-//     d->tempColor = QColor::fromHsv(hue, 0, 150);
-    d->tempColor = QColor(61, 61, 61);
+    QColor grey(61, 61, 61);
+    QColor mix =  QColor::fromHsv(hue, 160, 150);
+    QRectF rect = boundingRect();
+    QConicalGradient gr(QPointF(0, 0), 280);
+    gr.setColorAt(0.0, mix);
+    gr.setColorAt(0.8, grey);
+    gr.setColorAt(1.0, mix);
+    d->bgBrush = gr;
 }
 
 QString ResultItem::id() const
@@ -427,7 +432,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     // Draw icon frame
     // TODO: Make me SVG themable!
-    painter->setBrush(d->tempColor);//QColor(51, 51, 51));
+    painter->setBrush(d->bgBrush);//QColor(51, 51, 51));
     painter->setPen(QPen(Qt::transparent, 0));
     painter->drawPath(Plasma::roundedRectangle(boundingRect(), 6));
 
@@ -504,32 +509,42 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     }
     painter->restore();
 
-    painter->save();
     // Draw hover/selection rects
     // TODO: Make me themable with the SVG!
     if (isSelected()) {
         //TODO: fancier, please
+        painter->save();
         painter->translate(0.5, 0.5);
         painter->setBrush(Qt::transparent);
         painter->setPen(QPen(Qt::white, 2));
-        painter->drawPath(Plasma::roundedRectangle(boundingRect(), 6));
+        QColor color = palette().color(QPalette::Highlight);
+        if (mouseOver) {
+            color = color.lighter();
+        }
+        //QPen pen(palette().color(QPalette::Highlight), 2);
+        QPen pen(color, 2);
+        painter->strokePath(Plasma::roundedRectangle(boundingRect(), 6), pen);
+        painter->restore();
     } else if (mouseOver) {
+        painter->save();
         painter->translate(0.5, 0.5);
-        painter->setBrush(Qt::transparent);
-        painter->setPen(QPen(Qt::white, 1));
-        painter->drawPath(Plasma::roundedRectangle(boundingRect(), 6));
+        QPen pen(palette().color(QPalette::Highlight).lighter(), 1);
+        painter->strokePath(Plasma::roundedRectangle(boundingRect(), 6), pen);
+        painter->restore();
     }
 
-    painter->restore();
 
 
     QRect textRect = iRect;
     textRect.setTop(textRect.bottom() - option->fontMetrics.height());
     //Avoid to cut text both in the left and in the right
-    int textAlign = (option->fontMetrics.width(name()) < textRect.width()) ? Qt::AlignCenter : Qt::AlignLeft;
+    int textAlign = (option->fontMetrics.width(name()) < textRect.width()) ? Qt::AlignCenter : Qt::AlignRight;
 
 //     painter->drawText(textRect, Qt::AlignCenter, m_description);
 //     textRect.translate(0, -textHeight);
+    QBrush textBackground(QColor(0, 0, 0, 150));
+    painter->fillPath(Plasma::roundedRectangle(textRect.adjusted(1, -2, 0, -2), 3), textBackground);
+
     painter->drawText(textRect, textAlign, name());
     painter->setPen(Qt::white);
     painter->drawText(textRect.translated(-1, -1), textAlign, name());
