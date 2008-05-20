@@ -34,7 +34,7 @@
 namespace Plasma
 {
     class RunnerManager;
-};
+}
 
 class ResultItem;
 
