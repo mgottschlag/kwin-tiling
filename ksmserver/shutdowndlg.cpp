@@ -25,6 +25,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "shutdowndlg.h"
 #include "plasma/svg.h"
+#include "plasma/theme.h"
 
 #include <QBitmap>
 #include <QDesktopWidget>
@@ -196,6 +197,7 @@ void KSMPushButton::paintEvent( QPaintEvent * e )
     p.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
     QPen pen;
     QFont fnt;
+    QColor fntColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     fnt.setPixelSize(12);
     p.setFont( fnt );
     p.setCompositionMode(QPainter::CompositionMode_SourceOver);
@@ -219,15 +221,15 @@ void KSMPushButton::paintEvent( QPaintEvent * e )
     p.drawPixmap(width() - (m_smallButton ? 16 : 32) - 4, height() / 2 - (m_smallButton ? 8 : 16), m_pixmap);
 
     p.save();
-    p.setPen(QPen(QColor(FONTCOLOR)));
+    p.setPen(fntColor);
     p.drawText(10, 0, width() - (m_smallButton ? 16 : 32) - 8, height(),
                Qt::AlignVCenter | Qt::AlignLeft | Qt::TextWordWrap | Qt::TextShowMnemonic, m_text);
     p.restore();
 
     if( m_popupMenu ) {
         p.save();
-        p.setBrush(QColor(FONTCOLOR));
-        pen.setColor(QColor(FONTCOLOR));
+        p.setBrush(fntColor);
+        pen.setColor(QColor(fntColor));
         p.setPen( pen );
         QPoint points[3] = {
             QPoint(width() - 10 - 34, height() - 7),
@@ -367,9 +369,9 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     QFont fnt;
     fnt.setPixelSize(16);
-
+    QColor fntColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     QPalette palette;
-    palette.setColor(QPalette::WindowText, QColor(FONTCOLOR));
+    palette.setColor(QPalette::WindowText, fntColor);
 
     QLabel *versionLabel = new QLabel(this);
 
