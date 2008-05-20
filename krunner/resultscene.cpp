@@ -150,20 +150,26 @@ void ResultScene::clearMatches()
     }
 }
 
-void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &matches)
+void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 {
     //kDebug() << "matches retreived: " << matches.count();
-    if (matches.count() == 0) {
+    if (m.count() == 0) {
         //kDebug() << "clearing";
         m_clearTimer.start(200);
         return;
     }
 
     m_clearTimer.stop();
+
+    QList<Plasma::QueryMatch> matches = m;
+    qStableSort(matches);
+
     ++m_updateId;
     // be sure all the new elements are in
-    foreach (const Plasma::QueryMatch &match, matches) {
-        addQueryMatch(match);
+    QList<Plasma::QueryMatch>::const_iterator newMatchIt = matches.constEnd();
+    while (newMatchIt != matches.constBegin()) {
+        --newMatchIt;
+        addQueryMatch(*newMatchIt);
     }
 
     // now delete the stragglers
