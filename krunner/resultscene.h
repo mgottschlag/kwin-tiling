@@ -47,20 +47,16 @@ class ResultScene : public QGraphicsScene
         ~ResultScene();
 
         void resize(int width, int height);
-
-        void removeMatches(const QList<ResultItem *> &items);
-
         ResultItem* defaultResultItem() const;
+        void run(ResultItem* item) const;
 
-        Plasma::RunnerManager *m_runnerManager;
+        Plasma::RunnerManager* manager() const;
 
     public slots:
         void setQueryMatches(const QList<Plasma::QueryMatch> &matches);
         void launchQuery(const QString &term);
+        void launchQuery(const QString &term, const QString &runner);
         void clearQuery();
-
-        void itemHoverEnterSlot(ResultItem *item);
-        void itemHoverLeaveSlot(ResultItem *item);
 
     signals:
         void itemActivated(ResultItem *item);
@@ -72,9 +68,10 @@ class ResultScene : public QGraphicsScene
 
     private:
         void addQueryMatch(const Plasma::QueryMatch &match);
-        void removeQueryMatch(const Plasma::QueryMatch &match);
-        void removeMatch(ResultItem *item);
         void performResize(int width, int height);
+        void indexReleased(int index);
+
+        Plasma::RunnerManager *m_runnerManager;
 
         QSize       m_size;
         QPixmap     m_backPixmap;
@@ -103,7 +100,6 @@ class ResultScene : public QGraphicsScene
         void layoutIcons();
         void slotArrowResultItemPressed();
         void slotArrowResultItemReleased();
-        void indexReleased(int index);
         void clearMatches();
 };
 

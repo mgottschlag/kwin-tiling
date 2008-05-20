@@ -167,8 +167,6 @@ Interface::Interface(QWidget* parent)
     connect(m_resultsScene, SIGNAL(itemHoverEnter(ResultItem *)), this, SLOT(updateDescriptionLabel(ResultItem *)));
     connect(m_resultsScene, SIGNAL(itemHoverLeave(ResultItem *)), m_descriptionLabel, SLOT(clear()));
 
-    m_runnerManager = m_resultsScene->m_runnerManager;
-
     new InterfaceAdaptor( this );
     QDBusConnection::sessionBus().registerObject( "/Interface", this );
 
@@ -209,12 +207,6 @@ void Interface::display(const QString& term)
         m_searchTerm->setItemText(0, term);
     }
 
- /*
- FIXME: I don't understand this, it may mean match or m_runnerManager->reset()
-    if (!isVisible()) {
-        reset();
-    }
-*/
     KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
 
     int screen = 0;
@@ -247,7 +239,6 @@ void Interface::setWidgetPalettes()
 
 void Interface::resetInterface()
 {
-    m_runnerManager->reset();
     m_searchTerm->setCurrentItem(QString(), true, 0);
     m_descriptionLabel->clear();
     m_resultsScene->clearQuery();
@@ -282,8 +273,7 @@ void Interface::run(ResultItem *item)
 
     m_running = true;
     close();
-    // TODO: switch to using item->match?
-    m_runnerManager->run(item->id()); //NOTE: This line avoid krunner reuse
+    m_resultsScene->run(item);
     m_running = false;
     resetInterface();
 }
@@ -314,14 +304,14 @@ void Interface::switchUser()
     KPluginInfo info(service);
 
     if (info.isValid()) {
-        !m_runnerManager->execQuery("SESSIONS", info.pluginName());
+        m_resultsScene->launchQuery("SESSIONS", info.pluginName());
     }
 }
 
 void Interface::showConfigDialog()
 {
     if (!m_configDialog) {
-        m_configDialog = new KRunnerConfigDialog(m_runnerManager);
+        m_configDialog = new KRunnerConfigDialog(m_resultsScene->manager());
         connect(m_configDialog, SIGNAL(finished()), this, SLOT(configCompleted()));
     }
 

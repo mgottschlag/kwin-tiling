@@ -56,8 +56,7 @@ KRunnerConfigDialog::KRunnerConfigDialog(Plasma::RunnerManager* manager, QWidget
 
 void KRunnerConfigDialog::updateRunner(const QByteArray& name)
 {
-    QString _name(name);
-    Plasma::AbstractRunner* runner = m_manager->runner(_name);
+    Plasma::AbstractRunner* runner = m_manager->runner(name);
     //Update runner if runner is loaded
     if (runner) {
         runner->reloadConfiguration();

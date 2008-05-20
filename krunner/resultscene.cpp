@@ -1,24 +1,24 @@
 /***************************************************************************
- *   Copyright 2007 by Enrico Ros <enrico.ros@gmail.com>                   *
- *   Copyright 2007 by Riccardo Iaconelli <ruphy@kde.org>                  *
- *   Copyright 2008 by Aaron Seigo <aseigo@kde.org>                        *
- *   Copyright 2008 by Davide Bettio <davide.bettio@kdemail.net>           *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
- ***************************************************************************/
+*   Copyright 2007 by Enrico Ros <enrico.ros@gmail.com>                   *
+*   Copyright 2007 by Riccardo Iaconelli <ruphy@kde.org>                  *
+*   Copyright 2008 by Aaron Seigo <aseigo@kde.org>                        *
+*   Copyright 2008 by Davide Bettio <davide.bettio@kdemail.net>           *
+*                                                                         *
+*   This program is free software; you can redistribute it and/or modify  *
+*   it under the terms of the GNU General Public License as published by  *
+*   the Free Software Foundation; either version 2 of the License, or     *
+*   (at your option) any later version.                                   *
+*                                                                         *
+*   This program is distributed in the hope that it will be useful,       *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU General Public License for more details.                          *
+*                                                                         *
+*   You should have received a copy of the GNU General Public License     *
+*   along with this program; if not, write to the                         *
+*   Free Software Foundation, Inc.,                                       *
+*   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
+***************************************************************************/
 
 
 #include "resultscene.h"
@@ -38,78 +38,70 @@
 #include "resultitem.h"
 
 ResultScene::ResultScene(QObject * parent)
-    : QGraphicsScene(parent),
-      m_itemCount(0),
-      m_cIndex(0)
+: QGraphicsScene(parent),
+  m_itemCount(0),
+  m_cIndex(0)
 {
-    setItemIndexMethod(NoIndex);
+setItemIndexMethod(NoIndex);
 
-    m_mainWidget = new QGraphicsWidget(0);
+m_mainWidget = new QGraphicsWidget(0);
 
-    QGraphicsGridLayout *layout = new QGraphicsGridLayout(m_mainWidget);
-    layout->setContentsMargins(0, 0, 0, 0);
+QGraphicsGridLayout *layout = new QGraphicsGridLayout(m_mainWidget);
+layout->setContentsMargins(0, 0, 0, 0);
 
-    m_iconArea = new QGraphicsWidget(m_mainWidget);
-    layout->addItem(m_iconArea, 1, 0);
+m_iconArea = new QGraphicsWidget(m_mainWidget);
+layout->addItem(m_iconArea, 1, 0);
 
-    m_mainWidget->resize(sceneRect().size());
-    addItem(m_mainWidget);
+m_mainWidget->resize(sceneRect().size());
+addItem(m_mainWidget);
 
-    m_runnerManager = new Plasma::RunnerManager(this);
-    connect(m_runnerManager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
-            this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
+m_runnerManager = new Plasma::RunnerManager(this);
+connect(m_runnerManager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
+        this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
 
-    m_resizeTimer.setSingleShot(true);
-    connect(&m_resizeTimer, SIGNAL(timeout()), this, SLOT(layoutIcons()));
+m_resizeTimer.setSingleShot(true);
+connect(&m_resizeTimer, SIGNAL(timeout()), this, SLOT(layoutIcons()));
 
-    m_clearTimer.setSingleShot(true);
-    connect(&m_clearTimer, SIGNAL(timeout()), this, SLOT(clearMatches()));
+m_clearTimer.setSingleShot(true);
+connect(&m_clearTimer, SIGNAL(timeout()), this, SLOT(clearMatches()));
 
-    //QColor bg(255, 255, 255, 126);
-    //setBackgroundBrush(bg);
+//QColor bg(255, 255, 255, 126);
+//setBackgroundBrush(bg);
 }
 
 ResultScene::~ResultScene()
 {
-    delete m_mainWidget;
+delete m_mainWidget;
 }
 
 void ResultScene::resize(int width, int height)
 {
-    // optimize
-    if (m_size.width() == width && m_size.height() == height) {
-        return;
-    }
+// optimize
+if (m_size.width() == width && m_size.height() == height) {
+    return;
+}
 
-    m_size = QSize(width, height);
-    setSceneRect(0.0, 0.0, (qreal)width, (qreal)height);
-    m_mainWidget->resize(m_size);
-    m_resizeTimer.start(150);
+m_size = QSize(width, height);
+setSceneRect(0.0, 0.0, (qreal)width, (qreal)height);
+m_mainWidget->resize(m_size);
+m_resizeTimer.start(150);
 }
 
 void ResultScene::layoutIcons()
 {
-    // resize
-    int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);
+// resize
+int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);
 
-    QListIterator<ResultItem *> it(m_items);
+QListIterator<ResultItem *> it(m_items);
 
-    while (it.hasNext()) {
-        ResultItem *item = it.next();
-        item->setRowStride(rowStride);
-    }
+while (it.hasNext()) {
+    ResultItem *item = it.next();
+    item->setRowStride(rowStride);
+}
 }
 
 void ResultScene::addQueryMatch(const Plasma::QueryMatch &match)
 {
-    // TODO: check for duplicates
-    //kDebug() << "adding" << match.id() << m_itemsById.count();
-    /*QMapIterator<QString, ResultItem*> dbgIt(m_itemsById);
-    while (dbgIt.hasNext()) {
-        dbgIt.next();
-        kDebug() << dbgIt.key() << dbgIt.value()->id();
-    }*/
-
     QMap<QString, ResultItem*>::iterator it = m_itemsById.find(match.id());
     ResultItem *item = 0;
 
@@ -123,52 +115,32 @@ void ResultScene::addQueryMatch(const Plasma::QueryMatch &match)
         item->setRowStride(rowStride);
         item->setIndex(m_itemCount++);
         connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
-        connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SLOT(itemHoverEnterSlot(ResultItem*)));
-        connect(item, SIGNAL(hoverLeave(ResultItem*)), this, SLOT(itemHoverLeaveSlot(ResultItem*)));
-
-        //Make sure of what is really the selected/default item. We have to do this because of the unpredictable arrive of matches.
-        if (m_items.at(0) == item) {
-            item->setIsDefault(true);
-            item->setIsSelected(true);
-            for (int i = 1; i < m_items.size(); i++) {
-                m_items.at(i)->setIsDefault(false);
-                m_items.at(i)->setIsSelected(false);
-            }
-        } else {
-            for (int i = 0; i < m_items.size(); i++) {
-                m_items.at(i)->setIsDefault(false);
-                m_items.at(i)->setIsSelected(false);
-            }
-        }
+        connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
+        connect(item, SIGNAL(hoverLeave(ResultItem*)), this, SIGNAL(itemHoverLeave(ResultItem*)));
     } else {
         item = it.value();
         item->setMatch(match);
     }
 
-    item->setUpdateId(m_updateId);
-    //connect(item, SIGNAL(indexReleased(int)), this, SLOT(indexReleased(int)));
-}
-
-void ResultScene::removeQueryMatch(const Plasma::QueryMatch &match)
-{
-    QMap<QString, ResultItem*>::iterator it = m_itemsById.find(match.id());
-    if (it != m_itemsById.end()) {
-        m_itemsById.erase(it);
-        removeMatch(it.value());
+    if (item->index() == 0) {
+        clearSelection();
+        kDebug() << "setting selection" << item->description();
+        item->setSelected(true);
+        kDebug() << selectedItems();
     }
+
+    item->setUpdateId(m_updateId);
 }
 
 void ResultScene::clearMatches()
 {
-    QMutableMapIterator<QString, ResultItem*> it(m_itemsById);
-    while (it.hasNext()) {
-        it.next();
-        ResultItem *item = it.value();
-        it.remove();
-        m_items.removeOne(item);
-        indexReleased(item->index());
+    foreach (ResultItem *item, m_items) {
         item->remove();
     }
+
+    m_itemsById.clear();
+    m_items.clear();
+    m_itemCount = 0;
 }
 
 void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
@@ -194,113 +166,83 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     }
 
     // now delete the stragglers
-    QList<ResultItem*> remove;
     QMutableListIterator<ResultItem *> it(m_items);
     while (it.hasNext()) {
-        it.next();
-        if (it.value()->updateId() != m_updateId) {
-            //kDebug() << it.value()->id() << "was not updated (" << it.value()->updateId() << " vs " << m_updateId << ")";
-            m_itemsById.remove(it.value()->id());
-            remove << it.value();
-            //removeMatch(it.value());
+        ResultItem *item = it.next();
+        if (item->updateId() != m_updateId) {
+            kDebug() << item->id() << "was not updated (" << item->updateId() << " vs " << m_updateId << ")";
+            m_itemsById.remove(item->id());
+            indexReleased(item->index());
+            item->remove(); 
+            it.remove();
         }
-    }
-
-    removeMatches(remove);
-}
-
-void ResultScene::removeMatches(const QList<ResultItem*> &items)
-{
-    foreach (ResultItem *item, items) {
-        m_items.removeOne(item);
-        indexReleased(item->index());
-        item->remove();
-    }
-
-    if (!m_items.isEmpty()) {
-        m_items.at(0)->setIsDefault(true);
-        m_items.at(0)->setIsSelected(true);
-    }
-}
-
-void ResultScene::removeMatch(ResultItem* item)
-{
-    qWarning("It's a song to say goodbye ...");
-    m_items.removeOne(item);
-    indexReleased(item->index());
-    item->remove();
-
-    if (!m_items.isEmpty()) {
-        m_items.at(0)->setIsDefault(true);
-        m_items.at(0)->setIsSelected(true);
     }
 }
 
 void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
 {
-    kDebug() << "m_items (size): " << m_items.size() << "\n";
-    kDebug() << m_items.at(m_items.size() - 1)->name() << "\n";
-
+    //kDebug() << "m_items (size): " << m_items.size() << "\n";
     switch (keyEvent->key()) {
         case Qt::Key_Up:{
             qWarning("ResultScene: key up");
             int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);
-            m_items.at(m_cIndex)->setIsSelected(false);
-            m_cIndex = (m_cIndex < rowStride) ? m_items.size() - rowStride - 1 + (m_cIndex % m_items.size()) : m_cIndex - rowStride;
-            m_items.at(m_cIndex)->setIsSelected(true);
+            if (m_cIndex < rowStride) {
+                if (m_items.size() < rowStride) {
+                    // we have less than one row of items, so lets just move to the next item
+                    m_cIndex = (m_cIndex + 1) % m_items.size();
+                } else {
+                    m_cIndex = m_items.size() - (m_items.size() % rowStride) - 1 + (m_cIndex % m_items.size());
+                    if (m_cIndex >= m_items.size()) {
+                        // we should be on the bottom row, but there is nothing there; move up one row
+                        m_cIndex -= rowStride % m_items.size();
+                    }
+                }
+            } else {
+                m_cIndex = m_cIndex - rowStride;
+            }
             break;
         }
 
         case Qt::Key_Down:{
             qWarning("ResultScene: key down");
             int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);
-            m_items.at(m_cIndex)->setIsSelected(false);
-            m_cIndex = (m_cIndex + rowStride) % m_items.size();
-            m_items.at(m_cIndex)->setIsSelected(true);
+            if (m_cIndex + rowStride >= m_items.size()) {
+                // warp to the top
+                m_cIndex = (m_cIndex + 1) % rowStride;
+            } else {
+                // next row!
+                m_cIndex += rowStride;
+            }
+
             break;
         }
 
         case Qt::Key_Left:
             qWarning("ResultScene: key left");
-            m_items.at(m_cIndex)->setIsSelected(false);
             m_cIndex = (m_cIndex == 0) ? m_items.size() - 1 : m_cIndex - 1;
-            m_items.at(m_cIndex)->setIsSelected(true);
-            break;
+        break;
 
         case Qt::Key_Right:
             qWarning("ResultScene: key right");
-            m_items.at(m_cIndex)->setIsSelected(false);
             m_cIndex = (m_cIndex + 1) % m_items.size();
-            m_items.at(m_cIndex)->setIsSelected(true);
-            break;
+        break;
 
         case Qt::Key_Return:
+            //TODO: run the item
         case Qt::Key_Space:
         default:
             // pass the event to the item
             QGraphicsScene::keyPressEvent(keyEvent);
-            break;
+            return;
+        break;
     }
 
-    kDebug() << "m_cIndex: " << m_cIndex << "\n";
-}
-
-/// SLOTS <- ResultItems
-void ResultScene::itemHoverEnterSlot(ResultItem *item)
-{
-    if (!item->isDefault()) {
-        QMap<QString, ResultItem*>::iterator it = m_itemsById.begin();
-        m_items.at(m_cIndex)->setIsSelected(false);
-    }
-    item->setIsSelected(true);
-    emit itemHoverEnter(item);
-}
-
-void ResultScene::itemHoverLeaveSlot(ResultItem *item)
-{
-    item->setIsSelected(false);
-    m_items.at(m_cIndex)->setIsSelected(true);
-    emit itemHoverLeave(item);
+    // If we arrive here, it was due to an arrow button.
+    Q_ASSERT(m_cIndex  >= 0);
+    Q_ASSERT(m_cIndex < m_items.count());
+    //kDebug() << "m_cIndex: " << m_cIndex << "\n";
+    clearSelection();
+    m_items.at(m_cIndex)->setSelected(true);
 }
 
 void ResultScene::slotArrowResultItemPressed()
@@ -316,13 +258,10 @@ void ResultScene::slotArrowResultItemReleased()
 void ResultScene::indexReleased(int index)
 {
     --m_itemCount;
-    QMutableListIterator<ResultItem *> it(m_items);
+    QListIterator<ResultItem *> it(m_items);
     while (it.hasNext()) {
         ResultItem *item = it.next();
-        if (item->index() == index) {
-            //qDebug() << "found our boy to remove" << item->name();
-            it.remove();
-        } else if (item->index() > index) {
+        if (item->index() > index) {
             //qDebug() << "decrementing" << item->name() << "from" << item->index();
             item->setIndex(item->index() - 1);
             //qDebug() << "now is" << item->index();
@@ -333,6 +272,11 @@ void ResultScene::indexReleased(int index)
 void ResultScene::launchQuery(const QString &term)
 {
     m_runnerManager->launchQuery(term);
+}
+
+void ResultScene::launchQuery(const QString &term, const QString &runner)
+{
+    m_runnerManager->launchQuery(term, runner);
 }
 
 void ResultScene::clearQuery()
@@ -350,6 +294,20 @@ ResultItem* ResultScene::defaultResultItem() const
     kDebug() << (QObject*) m_items[0] << m_items.count();
     //fixme: this should really be a sorted list!
     return m_items[0];
+}
+
+void ResultScene::run(ResultItem *item) const
+{
+    if (!item) {
+        return;
+    }
+
+    item->run(m_runnerManager);
+}
+
+Plasma::RunnerManager* ResultScene::manager() const
+{
+    return m_runnerManager;
 }
 
 #include "resultscene.moc"

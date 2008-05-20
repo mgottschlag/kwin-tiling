@@ -28,6 +28,11 @@
 
 class QGraphicsLinearLayout;
 
+namespace Plasma
+{
+    class RunnerManager;
+} // namespace Plasma
+
 class ResultItemSignaller : public QObject
 {
     Q_OBJECT
@@ -68,17 +73,14 @@ public:
     Plasma::QueryMatch::Type group() const;
     uint priority() const;
     bool isFavorite() const;
-    bool isDefault() const;
-    bool isSelected() const;
-    void setIsSelected(bool selected);
     void setIndex(int index);
     int index() const;
     void setRowStride(int stride);
     int rowStride() const;
     void remove();
+    void run(Plasma::RunnerManager *manager);
 
     void setUpdateId(int id);
-    void setIsDefault(bool isDefault);
 
     static const int ITEM_SIZE = 68;
     static const int PADDING = 2;
@@ -99,6 +101,7 @@ protected:
     void focusInEvent(QFocusEvent *event);
     void focusOutEvent(QFocusEvent *event);
     void keyPressEvent(QKeyEvent *event);
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
 
 private:
     // must always call remove()

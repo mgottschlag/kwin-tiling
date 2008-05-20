@@ -43,13 +43,6 @@ class KTitleWidget;
 
 class CollapsibleWidget;
 
-namespace Plasma {
-    class RunnerManager;
-    class QueryMatch;
-}
-
-//this is Interface internal QueryMatch
-class QueryMatch;
 class ResultItem;
 class ResultScene;
 class KRunnerConfigDialog;
@@ -86,7 +79,6 @@ class Interface : public KRunnerDialog
     private:
         void resetInterface();
 
-        Plasma::RunnerManager* m_runnerManager;
         KRunnerConfigDialog *m_configDialog;
 
         QVBoxLayout* m_layout;

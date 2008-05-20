@@ -38,6 +38,7 @@
 #include <kicon.h>
 
 #include <plasma/plasma.h>
+#include <plasma/runnermanager.h>
 
 class ResultItem::Private {
 public:
@@ -77,7 +78,6 @@ public:
 
     static ResultItemSignaller *s_signaller;
     static int s_removingCount;
-    static ResultItem *s_defaultItem;
 
     ResultItem * q;
     Plasma::QueryMatch match;
@@ -94,12 +94,10 @@ public:
     QGraphicsItemAnimation *animation;
     bool isFavorite : 1;
     bool needsMoving : 1;
-    bool selected : 1;
 };
 
 int ResultItem::Private::s_removingCount = 0;
 ResultItemSignaller* ResultItem::Private::s_signaller = 0;
-ResultItem *ResultItem::Private::s_defaultItem = 0;
 
 QPointF ResultItem::Private::pos()
 {
@@ -206,10 +204,6 @@ void ResultItem::Private::init()
 
 ResultItem::~ResultItem()
 {
-    if (Private::s_defaultItem == this) {
-        Private::s_defaultItem = 0;
-    }
-
     --Private::s_removingCount;
 
     if (Private::s_removingCount < 1) {
@@ -303,35 +297,6 @@ bool ResultItem::isFavorite() const
     return d->isFavorite;
 }
 
-void ResultItem::setIsDefault(bool isDefault)
-{
-    if (isDefault) {
-        if (Private::s_defaultItem != this) {
-            Private::s_defaultItem = this;
-            update();
-        }
-    } else if (Private::s_defaultItem == this) {
-        Private::s_defaultItem = 0;
-        update();
-    }
-}
-
-bool ResultItem::isDefault() const
-{
-    return Private::s_defaultItem == this;
-}
-
-void ResultItem::setIsSelected(bool selected)
-{
-    d->selected = selected;
-    update();
-}
-
-bool ResultItem::isSelected() const
-{
-    return d->selected;
-}
-
 void ResultItem::setIndex(int index)
 {
     if (d->index == index) {
@@ -415,6 +380,11 @@ void ResultItem::remove()
 
     connect(timer, SIGNAL(finished()), this, SLOT(deleteLater()));
     timer->start();
+}
+
+void ResultItem::run(Plasma::RunnerManager *manager)
+{
+    manager->run(d->match);
 }
 
 void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -538,12 +508,12 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     QRect textRect = iRect;
     textRect.setTop(textRect.bottom() - option->fontMetrics.height());
     //Avoid to cut text both in the left and in the right
-    int textAlign = (option->fontMetrics.width(name()) < textRect.width()) ? Qt::AlignCenter : Qt::AlignRight;
+    int textAlign = (option->fontMetrics.width(name()) < textRect.width()) ? Qt::AlignCenter : Qt::AlignLeft;
 
 //     painter->drawText(textRect, Qt::AlignCenter, m_description);
 //     textRect.translate(0, -textHeight);
     QBrush textBackground(QColor(0, 0, 0, 150));
-    painter->fillPath(Plasma::roundedRectangle(textRect.adjusted(1, -2, 0, -2), 3), textBackground);
+    painter->fillPath(Plasma::roundedRectangle(textRect.adjusted(-1, -2, 2, -2), 3), textBackground);
 
     painter->drawText(textRect, textAlign, name());
     painter->setPen(Qt::white);
@@ -611,6 +581,16 @@ void ResultItem::keyPressEvent(QKeyEvent *event)
     } else {
         QGraphicsWidget::keyPressEvent(event);
     }
+}
+
+QVariant ResultItem::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if (change == ItemSelectedChange) {
+        kDebug() << "item select change on" << name();
+        update();
+    }
+
+    return QGraphicsWidget::itemChange(change, value);
 }
 
 #include "resultitem.moc"
