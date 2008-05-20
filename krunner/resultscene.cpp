@@ -38,66 +38,66 @@
 #include "resultitem.h"
 
 ResultScene::ResultScene(QObject * parent)
-: QGraphicsScene(parent),
-  m_itemCount(0),
-  m_cIndex(0)
+    : QGraphicsScene(parent),
+      m_itemCount(0),
+      m_cIndex(0)
 {
-setItemIndexMethod(NoIndex);
+    setItemIndexMethod(NoIndex);
 
-m_mainWidget = new QGraphicsWidget(0);
+    m_mainWidget = new QGraphicsWidget(0);
 
-QGraphicsGridLayout *layout = new QGraphicsGridLayout(m_mainWidget);
-layout->setContentsMargins(0, 0, 0, 0);
+    QGraphicsGridLayout *layout = new QGraphicsGridLayout(m_mainWidget);
+    layout->setContentsMargins(0, 0, 0, 0);
 
-m_iconArea = new QGraphicsWidget(m_mainWidget);
-layout->addItem(m_iconArea, 1, 0);
+    m_iconArea = new QGraphicsWidget(m_mainWidget);
+    layout->addItem(m_iconArea, 1, 0);
 
-m_mainWidget->resize(sceneRect().size());
-addItem(m_mainWidget);
+    m_mainWidget->resize(sceneRect().size());
+    addItem(m_mainWidget);
 
-m_runnerManager = new Plasma::RunnerManager(this);
-connect(m_runnerManager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
-        this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
+    m_runnerManager = new Plasma::RunnerManager(this);
+    connect(m_runnerManager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
+            this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
 
-m_resizeTimer.setSingleShot(true);
-connect(&m_resizeTimer, SIGNAL(timeout()), this, SLOT(layoutIcons()));
+    m_resizeTimer.setSingleShot(true);
+    connect(&m_resizeTimer, SIGNAL(timeout()), this, SLOT(layoutIcons()));
 
-m_clearTimer.setSingleShot(true);
-connect(&m_clearTimer, SIGNAL(timeout()), this, SLOT(clearMatches()));
+    m_clearTimer.setSingleShot(true);
+    connect(&m_clearTimer, SIGNAL(timeout()), this, SLOT(clearMatches()));
 
-//QColor bg(255, 255, 255, 126);
-//setBackgroundBrush(bg);
+    //QColor bg(255, 255, 255, 126);
+    //setBackgroundBrush(bg);
 }
 
 ResultScene::~ResultScene()
 {
-delete m_mainWidget;
+    delete m_mainWidget;
 }
 
 void ResultScene::resize(int width, int height)
 {
-// optimize
-if (m_size.width() == width && m_size.height() == height) {
-    return;
-}
+    // optimize
+    if (m_size.width() == width && m_size.height() == height) {
+        return;
+    }
 
-m_size = QSize(width, height);
-setSceneRect(0.0, 0.0, (qreal)width, (qreal)height);
-m_mainWidget->resize(m_size);
-m_resizeTimer.start(150);
+    m_size = QSize(width, height);
+    setSceneRect(0.0, 0.0, (qreal)width, (qreal)height);
+    m_mainWidget->resize(m_size);
+    m_resizeTimer.start(150);
 }
 
 void ResultScene::layoutIcons()
 {
-// resize
-int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);
+    // resize
+    int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);
 
-QListIterator<ResultItem *> it(m_items);
+    QListIterator<ResultItem *> it(m_items);
 
-while (it.hasNext()) {
-    ResultItem *item = it.next();
-    item->setRowStride(rowStride);
-}
+    while (it.hasNext()) {
+        ResultItem *item = it.next();
+        item->setRowStride(rowStride);
+    }
 }
 
 void ResultScene::addQueryMatch(const Plasma::QueryMatch &match)
