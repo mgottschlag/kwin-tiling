@@ -113,11 +113,15 @@ Interface::Interface(QWidget* parent)
     KGuiItem configButtonGui = KStandardGuiItem::configure();
     configButtonGui.setText(i18n("Settings"));
     KPushButton *configButton = new KPushButton(configButtonGui, buttonContainer);
+    configButton->setDefault(false);
+    configButton->setAutoDefault(false);
     connect(configButton, SIGNAL(clicked()), SLOT(showConfigDialog()));
     bottomLayout->addWidget( configButton );
 
     /*
     KPushButton *m_optionsButton = new KPushButton(KStandardGuiItem::configure(), buttonContainer);
+    m_optionsButton->setDefault(false);
+    m_optionsButton->setAutoDefault(false);
     m_optionsButton->setText(i18n("Show Options"));
     m_optionsButton->setEnabled(false);
     m_optionsButton->setCheckable(true);
@@ -126,6 +130,8 @@ Interface::Interface(QWidget* parent)
     */
 
     KPushButton *activityButton = new KPushButton(buttonContainer);
+    activityButton->setDefault(false);
+    activityButton->setAutoDefault(false);
     activityButton->setText(i18n("Show System Activity"));
     activityButton->setIcon(KIcon("utilities-system-monitor"));
     connect(activityButton, SIGNAL(clicked()), qApp, SLOT(showTaskManager()));
@@ -142,10 +148,13 @@ Interface::Interface(QWidget* parent)
     m_runButton = new KPushButton(KGuiItem(i18n("Launch"), "system-run", QString(), runButtonWhatsThis), buttonContainer);
     m_runButton->setEnabled( false );
     m_runButton->setDefault(true);
+    m_runButton->setAutoDefault(true);
     connect( m_runButton, SIGNAL( clicked(bool) ), SLOT(run()) );
     bottomLayout->addWidget( m_runButton );
     */
     KPushButton *closeButton = new KPushButton(KStandardGuiItem::close(), buttonContainer);
+    closeButton->setDefault(false);
+    closeButton->setAutoDefault(false);
     connect(closeButton, SIGNAL(clicked(bool)), SLOT(close()));
     bottomLayout->addWidget(closeButton);
 
@@ -254,14 +263,26 @@ void Interface::closeEvent(QCloseEvent* e)
 
 void Interface::run(ResultItem *item)
 {
-    if (!item) {
+    if (!item || item->group() < Plasma::QueryMatch::PossibleMatch) {
         return;
     }
 
-    kDebug() << "ResultItem: " << item->name() << "\n";
+    kDebug() << item->name() << item->id();
     m_searchTerm->addToHistory(m_searchTerm->currentText());
+
+    if (item->group() == Plasma::QueryMatch::InformationalMatch) {
+        QString info = item->data();
+
+        if (!info.isEmpty()) {
+            m_searchTerm->setItemText(0, info);
+            m_searchTerm->setCurrentIndex(0);
+        }
+        return;
+    }
+
     m_running = true;
     close();
+    // TODO: switch to using item->match?
     m_runnerManager->run(item->id()); //NOTE: This line avoid krunner reuse
     m_running = false;
     resetInterface();
