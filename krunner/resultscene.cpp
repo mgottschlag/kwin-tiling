@@ -97,6 +97,14 @@ void ResultScene::addQueryMatch(const Plasma::QueryMatch &match)
     QMap<QString, ResultItem*>::iterator it = m_itemsById.find(match.id());
     ResultItem *item = 0;
 
+    // handle the case of re-using multiple items of the same id
+    while (it != m_itemsById.end() && it.value()->updateId() == m_updateId) {
+        ++it;
+        if (it == m_itemsById.end() || it.value()->id() != match.id()) {
+            break;
+        }
+    }
+
     if (it == m_itemsById.end()) {
         //kDebug() << "did not find";
         item = new ResultItem(match, 0);
