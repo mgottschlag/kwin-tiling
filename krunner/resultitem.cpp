@@ -410,13 +410,12 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         //kDebug() << "stylin'";
         QStyleOptionViewItemV4 o;
         o.initFrom(scene()->views()[0]->viewport());
-        o.backgroundBrush = QColor(61, 61, 61);
-        o.state = option->state | QStyle::State_MouseOver;
         if (hasFocus()) {
             o.state |= QStyle::State_Selected;
+        } else {
+            o.state |= QStyle::State_MouseOver;
         }
         o.rect = rect.toRect();
-        o.showDecorationSelected = true;
         o.viewItemPosition = QStyleOptionViewItemV4::OnlyOne;
         s->drawPrimitive(QStyle::PE_PanelItemViewItem, &o, painter, widget);
     } else {
