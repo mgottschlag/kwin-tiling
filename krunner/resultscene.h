@@ -71,7 +71,6 @@ class ResultScene : public QGraphicsScene
     private:
         void addQueryMatch(const Plasma::QueryMatch &match);
         void performResize(int width, int height);
-        void indexReleased(int index);
 
         Plasma::RunnerManager *m_runnerManager;
 

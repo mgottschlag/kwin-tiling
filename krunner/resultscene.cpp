@@ -166,15 +166,19 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         if (item->updateId() != m_updateId) {
             //kDebug() << item->id() << "was not updated (" << item->updateId() << " vs " << m_updateId << ")";
             m_itemsById.remove(item->id());
-            indexReleased(item->index());
             item->remove(); 
             it.remove();
         }
     }
 
-    if (!m_items.isEmpty()) {
-        emit itemHoverEnter(m_items.at(0));
-        setFocusItem(m_items.at(0));
+    // now move the remainders
+    int i = 0;
+    foreach (ResultItem * item, m_items) {
+        if (i == 0) {
+            setFocusItem(item);
+        }
+        item->setIndex(i);
+        ++i;
     }
 }
 
@@ -257,20 +261,6 @@ void ResultScene::slotArrowResultItemPressed()
 void ResultScene::slotArrowResultItemReleased()
 {
 
-}
-
-void ResultScene::indexReleased(int index)
-{
-    --m_itemCount;
-    QListIterator<ResultItem *> it(m_items);
-    while (it.hasNext()) {
-        ResultItem *item = it.next();
-        if (item->index() > index) {
-            //qDebug() << "decrementing" << item->name() << "from" << item->index();
-            item->setIndex(item->index() - 1);
-            //qDebug() << "now is" << item->index();
-        }
-    }
 }
 
 void ResultScene::launchQuery(const QString &term)
