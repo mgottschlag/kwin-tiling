@@ -19,6 +19,12 @@
 
 #include "hddtemp.h"
 
+#include <QObject>
+#include <QMap>
+#include <QString>
+#include <QStringList>
+#include <QVariant>
+#include <QTimer>
 #include <QTcpSocket>
 
 #include <KDebug>
@@ -28,10 +34,8 @@ HddTemp::HddTemp(QObject* parent)
       m_failCount(0),
       m_timer(0)
 {
-    updateData();
     m_timer = new QTimer(this);
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(updateData()));
-    m_timer->start(10000);
+    updateData();
 }
 
 HddTemp::~HddTemp()
@@ -43,36 +47,32 @@ QStringList HddTemp::sources() const
     return m_data.keys();
 }
 
-bool HddTemp::updateData()
+void HddTemp::updateData()
 {
     if (m_failCount > 4) {
-        return false;
+        return;
     }
-    QTcpSocket socket;
-    QString data;
+    m_socket.connectToHost("localhost", 7634);
+}
 
-    socket.connectToHost("localhost", 7634);
-    if (socket.waitForConnected(500)) {
-        while (data.length() < 1024) {
-            if (!socket.waitForReadyRead(500)) {
-                if (data.length() > 0) {
-                    break;
-                } else {
-                    kDebug() << socket.errorString();
-                    return false;
-                }
-            }
-            data += QString(socket.readAll());
-        }
-        socket.disconnectFromHost();
-        //on success retry fail count
-        m_failCount = 0;
-    } else {
-        m_failCount++;
-        kDebug() << socket.errorString();
-        return false;
-    }
-    QStringList list = data.split('|');
+void HddTemp::onConnected()
+{
+    kDebug() << "Connection established.";
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(onReadComplete()));
+    m_timer->start(500);
+}
+
+void HddTemp::onReadReady()
+{
+    m_timer->stop();
+    kDebug() << "Reading data.";
+    m_bufferedData += QString(m_socket.readAll());
+    m_timer->start(500);
+}
+
+void HddTemp::onReadComplete()
+{
+    QStringList list = m_bufferedData.split('|');
     int i = 1;
     m_data.clear();
     while (i + 4 < list.size()) {
@@ -80,7 +80,17 @@ bool HddTemp::updateData()
         m_data[list[i]].append(list[i + 3]);
         i += 5;
     }
-    return true;
+    m_socket.disconnectFromHost();
+    //on success retry fail count
+    m_failCount = 0;
+    //save memory
+    m_bufferedData.clear();
+}
+
+void HddTemp::onError()
+{
+    m_failCount++;
+    kDebug() << m_socket.errorString();
 }
 
 QVariant HddTemp::data(const QString source, const DataType type) const

@@ -57,16 +57,15 @@ SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QVariantList& args)
     signalmanager = new DeviceSignalMapManager(this);
 
     listenForNewDevices();
-    temperature = new HddTemp();
     setMinimumPollingInterval(1000);
 }
 
 SolidDeviceEngine::~SolidDeviceEngine()
 {
-    disconnect(notifier, SIGNAL(deviceAdded(const QString&)),
+   /* disconnect(notifier, SIGNAL(deviceAdded(const QString&)),
             this, SLOT(deviceAdded(const QString&)));
     disconnect(notifier, SIGNAL(deviceRemoved(const QString&)),
-            this, SLOT(deviceRemoved(const QString&)));
+            this, SLOT(deviceRemoved(const QString&)));*/
     delete signalmanager;
     delete temperature;
 }
@@ -164,6 +163,10 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         Solid::StorageDrive *storagedrive = device.as<Solid::StorageDrive>();
         if (storagedrive == 0) {
             return false;
+        }
+        //create temp object on demand
+        if (temperature == 0) {
+            temperature = new HddTemp();
         }
 
         devicetypes << I18N_NOOP("Storage Drive");

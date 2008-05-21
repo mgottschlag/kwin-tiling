@@ -20,12 +20,15 @@
 #ifndef HDDTEMP_H
 #define HDDTEMP_H
 
-#include <QObject>
 #include <QMap>
-#include <QString>
-#include <QStringList>
-#include <QVariant>
-#include <QTimer>
+#include <QTcpSocket>
+
+class QObject;
+class QString;
+class QStringList;
+class QVariant;
+class QTimer;
+class QTcpSocket;
 
 
 class HddTemp : public QObject
@@ -41,10 +44,16 @@ class HddTemp : public QObject
         QVariant data(const QString source, const DataType type) const;
 
     private Q_SLOTS:
-        bool updateData();
+        void updateData();
+        void onConnected();
+        void onReadReady();
+        void onReadComplete();
+        void onError();
         
     private:
         int m_failCount;
+        QTcpSocket m_socket;
+        QString m_bufferedData;
         QMap<QString, QList<QVariant> > m_data;
         QTimer *m_timer;
 };
