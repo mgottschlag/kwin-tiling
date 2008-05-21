@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Xesam Search
+Name=Desktop Search
 Name[ca]=Cerca Xesam
 Name[et]=Xesami otsing
 Name[fr]=Recherche Xesam
@@ -17,7 +17,7 @@ Name[tr]=Xesam Araması
 Name[uk]=Пошук Xesam
 Name[zh_CN]=Xesam 搜索
 Name[zh_TW]=Xesam 搜尋
-Comment=Allows user to use a Xesam compatible indexer for desktop search
+Comment=Search the contents of your documents and other files
 Comment[ca]=Permet que l'usuari utilitzi un indexador compatible amb Xesam per a la cerca d'escriptori
 Comment[el]=Επιτρέπει τη χρήση ενός συμβατού με το Xesam ευρετηρίου για αναζητήσεις
 Comment[et]=Võimaldab kasutajal kasutada Xesamiga ühilduvat indekseerijat töölauaotsinguks
