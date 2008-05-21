@@ -169,7 +169,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     }
 
     // now organize the remainders
-    int i = m_items.count() - 1;
+    int i = 0;
     m_itemsById.clear();
 
     // this will leave them in *reverse* order
@@ -186,7 +186,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
             setFocusItem(item);
         }
 
-        --i;
+        ++i;
     }
 }
 

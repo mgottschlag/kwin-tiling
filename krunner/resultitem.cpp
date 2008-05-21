@@ -254,13 +254,11 @@ void ResultItem::setUpdateId(int id)
 
 bool ResultItem::compare(const ResultItem *one, const ResultItem *other)
 {
-    kDebug();
-    return one->d->match < other->d->match;
+    return other->d->match < one->d->match;
 }
 
 bool ResultItem::operator<(const ResultItem &other) const
 {
-    kDebug();
     return d->match < other.d->match;
 }
 
