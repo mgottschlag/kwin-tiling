@@ -110,8 +110,7 @@ QPointF ResultItem::Private::pos()
 void ResultItem::Private::appear()
 {
     if (animation) {
-        delete animation;
-        animation = 0;
+        q->animationComplete();
     }
 
     QPointF p(pos());
@@ -119,19 +118,22 @@ void ResultItem::Private::appear()
     qreal mostway = ResultItem::BOUNDING_SIZE * 0.1;
 
     q->setPos(pos());
+    q->scale(0.0, 0.0);
+    q->setPos(p + QPointF(halfway, halfway));
+    q->becomeVisible();
     animation = new QGraphicsItemAnimation();
     animation->setItem(q);
-    animation->setScaleAt(0.0, 0.0, 0.0);
+//    animation->setScaleAt(0.0, 0.0, 0.0);
     animation->setScaleAt(0.5, 0.1, 1.0);
     animation->setScaleAt(1.0, 1.0, 1.0);
-    animation->setPosAt(0.0, p + QPointF(halfway, halfway));
+//    animation->setPosAt(0.0, p + QPointF(halfway, halfway));
     animation->setPosAt(0.5, p + QPointF(mostway, 0));
     animation->setPosAt(1.0, p);
     QTimeLine * timer = new QTimeLine(100);
     animation->setTimeLine(timer);
 
     timer->start();
-    QTimer::singleShot(50, q, SLOT(becomeVisible()));
+   // QTimer::singleShot(50, q, SLOT(becomeVisible()));
     connect(timer, SIGNAL(finished()), q, SLOT(animationComplete()));
 }
 
@@ -139,8 +141,7 @@ void ResultItem::Private::move(bool randomStart)
 {
     //qDebug() << "moving to" << index << rowStride;
     if (animation) {
-        delete animation;
-        animation = 0;
+        q->animationComplete();
     }
 
     QTimeLine *timer = new QTimeLine();
@@ -315,7 +316,7 @@ void ResultItem::setIndex(int index)
         return;
     }
 
-    //kDebug() << index << first;
+    //kDebug() << index << first << hasFocus();
     if (first) {
         d->appear();
     } else if (d->s_removingCount) {
@@ -465,11 +466,13 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         } else {
             drawMixed = true;
 
-            ++d->highlight;
-            if (d->highlight == 1) {
-                setGeometry(sceneBoundingRect().adjusted(-1, -1, 1, 1));
-            } else if (d->highlight == 3) {
-                setGeometry(sceneBoundingRect().adjusted(-2, -2, 2, 2));
+            if (!d->animation) {
+                ++d->highlight;
+                if (d->highlight == 1) {
+                    setGeometry(sceneBoundingRect().adjusted(-1, -1, 1, 1));
+                } else if (d->highlight == 3) {
+                    setGeometry(sceneBoundingRect().adjusted(-2, -2, 2, 2));
+                }
             }
 
             if (!d->highlightTimerId) {
@@ -479,11 +482,13 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     } else if (d->highlight > 0) {
         drawMixed = true;
 
-        --d->highlight;
-        if (d->highlight == 0) {
-            setGeometry(sceneBoundingRect().adjusted(1, 1, -1, -1));
-        } else if (d->highlight == 2) {
-            setGeometry(sceneBoundingRect().adjusted(2, 2, -2, -2));
+        if (!d->animation) {
+            --d->highlight;
+            if (d->highlight == 0) {
+                setGeometry(sceneBoundingRect().adjusted(1, 1, -1, -1));
+            } else if (d->highlight == 2) {
+                setGeometry(sceneBoundingRect().adjusted(2, 2, -2, -2));
+            }
         }
 
         if (!d->highlightTimerId) {
