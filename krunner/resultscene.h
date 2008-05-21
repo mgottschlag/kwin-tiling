@@ -64,7 +64,8 @@ class ResultScene : public QGraphicsScene
         void itemHoverLeave(ResultItem *item);
 
     protected:
-        void keyPressEvent( QKeyEvent * keyEvent );
+        void keyPressEvent(QKeyEvent * keyEvent);
+        void focusOutEvent(QFocusEvent *focusEvent);
 
     private:
         void addQueryMatch(const Plasma::QueryMatch &match);

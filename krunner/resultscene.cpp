@@ -122,13 +122,6 @@ void ResultScene::addQueryMatch(const Plasma::QueryMatch &match)
         item->setMatch(match);
     }
 
-    if (item->index() == 0) {
-        clearSelection();
-        kDebug() << "setting selection" << item->description();
-        item->setSelected(true);
-        kDebug() << selectedItems();
-    }
-
     item->setUpdateId(m_updateId);
 }
 
@@ -177,14 +170,26 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
             it.remove();
         }
     }
+
+    if (!m_items.isEmpty()) {
+        setFocusItem(m_items.at(0));
+    }
+}
+
+void ResultScene::focusOutEvent(QFocusEvent *focusEvent)
+{
+    if (!m_items.isEmpty()) {
+        setFocusItem(m_items.at(0));
+    }
 }
 
 void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
 {
     //kDebug() << "m_items (size): " << m_items.size() << "\n";
+    ResultItem *currentFocus = dynamic_cast<ResultItem*>(focusItem());
+    int m_cIndex = currentFocus ? currentFocus->index() : 0;
     switch (keyEvent->key()) {
         case Qt::Key_Up:{
-            qWarning("ResultScene: key up");
             int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);
             if (m_cIndex < rowStride) {
                 if (m_items.size() < rowStride) {
@@ -204,11 +209,10 @@ void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
         }
 
         case Qt::Key_Down:{
-            qWarning("ResultScene: key down");
             int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);
             if (m_cIndex + rowStride >= m_items.size()) {
                 // warp to the top
-                m_cIndex = (m_cIndex + 1) % rowStride;
+                m_cIndex = (m_cIndex + 1) % rowStride % m_items.size();
             } else {
                 // next row!
                 m_cIndex += rowStride;
@@ -223,7 +227,6 @@ void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
         break;
 
         case Qt::Key_Right:
-            qWarning("ResultScene: key right");
             m_cIndex = (m_cIndex + 1) % m_items.size();
         break;
 
@@ -241,8 +244,7 @@ void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
     Q_ASSERT(m_cIndex  >= 0);
     Q_ASSERT(m_cIndex < m_items.count());
     //kDebug() << "m_cIndex: " << m_cIndex << "\n";
-    clearSelection();
-    m_items.at(m_cIndex)->setSelected(true);
+    setFocusItem(m_items.at(m_cIndex));
 }
 
 void ResultScene::slotArrowResultItemPressed()
