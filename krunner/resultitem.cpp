@@ -42,7 +42,10 @@
 #include <plasma/plasma.h>
 #include <plasma/runnermanager.h>
 
-class ResultItem::Private {
+#define TEXT_AREA_HEIGHT ResultItem::MARGIN + ResultItem::TEXT_MARGIN*2 + ResultItem::Private::s_fontHeight
+
+class ResultItem::Private
+{
 public:
     Private(ResultItem *item)
         : q(item),
@@ -56,6 +59,12 @@ public:
           animation(0),
           needsMoving(false)
     {
+        if (s_fontHeight < 1) {
+            //FIXME: reset when the application font changes
+            QFontMetrics fm(q->font());
+            s_fontHeight = fm.height();
+            kDebug() << "font height is: " << s_fontHeight;
+        }
     }
 
     ~Private()
@@ -80,6 +89,7 @@ public:
 
     static ResultItemSignaller *s_signaller;
     static int s_removingCount;
+    static int s_fontHeight;
 
     ResultItem * q;
     Plasma::QueryMatch match;
@@ -100,11 +110,12 @@ public:
 
 int ResultItem::Private::s_removingCount = 0;
 ResultItemSignaller* ResultItem::Private::s_signaller = 0;
+int ResultItem::Private::s_fontHeight = 0;
 
 QPointF ResultItem::Private::pos()
 {
-    const int x = (index % rowStride) * ResultItem::BOUNDING_SIZE + 4;
-    const int y = (index / rowStride) * ResultItem::BOUNDING_SIZE + 4;
+    const int x = (index % rowStride) * ResultItem::BOUNDING_WIDTH + 4;
+    const int y = (index / rowStride) * (ResultItem::BOUNDING_HEIGHT + s_fontHeight) + 4;
     //kDebug() << x << y << "for" << index;
     return QPointF(x, y);
 }
@@ -117,8 +128,8 @@ void ResultItem::Private::appear()
 
     //TODO: maybe have them scatter in versus expand/spin in place into view?
     QPointF p(pos());
-    qreal halfway = ResultItem::BOUNDING_SIZE * 0.5;
-    qreal mostway = ResultItem::BOUNDING_SIZE * 0.1;
+    qreal halfway = ResultItem::BOUNDING_WIDTH * 0.5;
+    qreal mostway = ResultItem::BOUNDING_WIDTH * 0.1;
 
     q->setPos(p);
     q->scale(0.0, 0.0);
@@ -189,7 +200,7 @@ void ResultItem::Private::init()
     q->setFlag(QGraphicsItem::ItemIsSelectable);
     q->setAcceptHoverEvents(true);
     q->setFocusPolicy(Qt::TabFocus);
-    q->resize(ITEM_SIZE, ITEM_SIZE);
+    q->resize(ITEM_SIZE, ITEM_SIZE + TEXT_AREA_HEIGHT);
 }
 
 ResultItem::~ResultItem()
@@ -367,15 +378,16 @@ void ResultItem::remove()
         d->animation = 0;
     }
 
+    QPointF p(d->pos());
     d->needsMoving = false;
     d->animation = new QGraphicsItemAnimation();
     d->animation->setItem(this);
     d->animation->setScaleAt(0.0, 1.0, 1.0);
     d->animation->setScaleAt(0.5, 0.1, 1.0);
     d->animation->setScaleAt(1.0, 0.0, 0.0);
-    d->animation->setPosAt(0.0, d->pos() + QPointF(0.0, 0.0));
-    d->animation->setPosAt(0.5, d->pos() + QPointF(32.0*0.9, 0.0));
-    d->animation->setPosAt(1.0, d->pos() + QPointF(32.0, 32.0));
+    d->animation->setPosAt(0.0, p + QPointF(0.0, 0.0));
+    d->animation->setPosAt(0.5, p + QPointF(32.0*0.9, 0.0));
+    d->animation->setPosAt(1.0, p + QPointF(32.0, 32.0));
     QTimeLine * timer = new QTimeLine(150);
     d->animation->setTimeLine(timer);
     ++Private::s_removingCount;
@@ -396,7 +408,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     bool oldClipping = painter->hasClipping();
     painter->setClipping(false);
 
-    QRectF rect = boundingRect();
+    QRectF rect = boundingRect().adjusted(0, 0, 0, -(TEXT_AREA_HEIGHT));
     QRect iRect = rect.toRect().adjusted(PADDING, PADDING, -PADDING, -PADDING);
     QSize iconSize = iRect.size().boundedTo(QSize(64, 64));
     int iconPadding = qMax((int(rect.width()) - iconSize.width()) / 2, 0);
@@ -413,6 +425,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         if (hasFocus()) {
             o.state |= QStyle::State_Selected;
         } else {
+            o.backgroundBrush = QColor(61, 61, 61);
             o.state |= QStyle::State_MouseOver;
         }
         o.rect = rect.toRect();
@@ -540,24 +553,17 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     */
 
 
-    QRect textRect = iRect;
-    textRect.setBottom(textRect.top() + iconPadding + iconSize.height());
-    textRect.setTop(textRect.bottom() - option->fontMetrics.height());
+    QRect textRect(iRect.bottomLeft() + QPoint(0, MARGIN + TEXT_MARGIN), iRect.bottomRight() + QPoint(0, TEXT_AREA_HEIGHT));
 
-    QRect textBoxRect = textRect.adjusted(0, -d->highlight, 0, d->highlight);
-//    textBoxRect.setTop(textRect.top() - (textRect.bottom() - iRect.bottom()));
+    //kDebug() << d->highlight;
+    painter->fillPath(Plasma::roundedRectangle(textRect.adjusted(-1, 0, 1, 0), 3), d->bgBrush);
 
     //Avoid to cut text both in the left and in the right
-    int textAlign = (option->fontMetrics.width(name()) < textRect.width()) ? Qt::AlignCenter : Qt::AlignLeft;
-
-//     painter->drawText(textRect, Qt::AlignCenter, m_description);
-//     textRect.translate(0, -textHeight);
-    QBrush textBackground(QColor(0, 0, 0, 150));
-    painter->fillPath(Plasma::roundedRectangle(textRect.adjusted(0, -2 - qMin(d->highlight, 2), 1, -2 + qMin(d->highlight, 2)), 3), d->bgBrush);
-
+    Qt::Alignment textAlign = (option->fontMetrics.width(name()) < textRect.width()) ? Qt::AlignCenter : Qt::AlignLeft;
+    textRect.adjust(0, MARGIN, -1, MARGIN);
     painter->drawText(textRect, textAlign, name());
     painter->setPen(Qt::white);
-    painter->drawText(textRect.translated(-1, -1), textAlign, name());
+    painter->drawText(textRect.translated(1, -1), textAlign, name());
 
     painter->setClipping(oldClipping);
 }

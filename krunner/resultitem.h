@@ -87,7 +87,9 @@ public:
     static const int ITEM_SIZE = 68;
     static const int PADDING = 2;
     static const int MARGIN = 3;
-    static const int BOUNDING_SIZE = ITEM_SIZE + MARGIN*2;
+    static const int TEXT_MARGIN = 1;
+    static const int BOUNDING_WIDTH = ITEM_SIZE + MARGIN*2;
+    static const int BOUNDING_HEIGHT = ITEM_SIZE + MARGIN*3 + TEXT_MARGIN*2;
 
 signals:
     void indexReleased(int index);

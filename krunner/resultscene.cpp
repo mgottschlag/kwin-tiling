@@ -64,7 +64,8 @@ ResultScene::~ResultScene()
 
 QSize ResultScene::minimumSizeHint() const
 {
-    return QSize(ResultItem::BOUNDING_SIZE * 4 + 6, ResultItem::BOUNDING_SIZE * 2 + 6);
+    QFontMetrics fm(font());
+    return QSize(ResultItem::BOUNDING_WIDTH * 4 + 6, (ResultItem::BOUNDING_HEIGHT + fm.height()) * 2 + 6);
 }
 
 void ResultScene::resize(int width, int height)
@@ -82,7 +83,7 @@ void ResultScene::resize(int width, int height)
 void ResultScene::layoutIcons()
 {
     // resize
-    int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);
+    int rowStride = sceneRect().width() / (ResultItem::BOUNDING_WIDTH);
 
     QListIterator<ResultItem *> it(m_items);
 
@@ -112,7 +113,7 @@ void ResultScene::addQueryMatch(const Plasma::QueryMatch &match)
         item->hide();
         m_itemsById.insert(match.id(), item);
         m_items.append(item);
-        int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);
+        int rowStride = sceneRect().width() / (ResultItem::BOUNDING_WIDTH);
         item->setRowStride(rowStride);
         connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
         connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
@@ -210,7 +211,7 @@ void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
     int m_cIndex = currentFocus ? currentFocus->index() : 0;
     switch (keyEvent->key()) {
         case Qt::Key_Up:{
-            int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);
+            int rowStride = sceneRect().width() / (ResultItem::BOUNDING_WIDTH);
             if (m_cIndex < rowStride) {
                 if (m_items.size() < rowStride) {
                     // we have less than one row of items, so lets just move to the next item
@@ -229,7 +230,7 @@ void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
         }
 
         case Qt::Key_Down:{
-            int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);
+            int rowStride = sceneRect().width() / (ResultItem::BOUNDING_WIDTH);
             if (m_cIndex + rowStride >= m_items.size()) {
                 // warp to the top
                 m_cIndex = (m_cIndex + 1) % rowStride % m_items.size();
