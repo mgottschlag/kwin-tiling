@@ -103,8 +103,8 @@ void DesktopCorona::loadDefaultLayout()
     panel->addApplet("notifier");
     panel->addApplet("pager");
     panel->addApplet("tasks");
-    panel->addApplet("systemtray");
     panel->addApplet("digital-clock");
+    panel->addApplet("systemtray");
 }
 
 void DesktopCorona::screenResized(int screen)
