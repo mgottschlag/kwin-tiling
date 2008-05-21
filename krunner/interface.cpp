@@ -85,6 +85,12 @@ Interface::Interface(QWidget* parent)
     lineEdit->setClearButtonShown(true);
     m_layout->addWidget(m_searchTerm);
 
+    m_descriptionLabel = new QLabel(w);
+    QPalette p = m_descriptionLabel->palette();
+    p.setColor(QPalette::WindowText, Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+    m_descriptionLabel->setPalette(p);
+    m_layout->addWidget(m_descriptionLabel, 0, Qt::AlignCenter | Qt::AlignTop);
+
     m_resultsView = new QGraphicsView(w);
     m_resultsView->setFrameStyle(QFrame::NoFrame);
     m_resultsView->viewport()->setAutoFillBackground(false);
@@ -98,12 +104,6 @@ Interface::Interface(QWidget* parent)
     m_resultsScene = new ResultScene(this);
     m_resultsView->setScene(m_resultsScene);
     m_layout->addWidget(m_resultsView);
-
-    m_descriptionLabel = new QLabel(w);
-    QPalette p = m_descriptionLabel->palette();
-    p.setColor(QPalette::WindowText, Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-    m_descriptionLabel->setPalette(p);
-    m_layout->addWidget(m_descriptionLabel, 0, Qt::AlignCenter | Qt::AlignTop);
 
     QWidget *buttonContainer = new QWidget(w);
     QHBoxLayout *bottomLayout = new QHBoxLayout(buttonContainer);
