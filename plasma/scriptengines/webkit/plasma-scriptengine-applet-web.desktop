@@ -1,7 +1,19 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Web Widget
+Name[ga]=Giuirléid Ghréasáin
+Name[km]=ធាតុក្រាហ្វិក​បណ្ដាញ
+Name[pt]=Elemento Web
+Name[pt_BR]=Elemento Web
+Name[uk]=Віджет тенет
+Name[zh_TW]=網頁元件
 Comment=Webpage widget using HTML and JavaScript
+Comment[ga]=Giuirléid Ghréasáin a úsáideann HTML agus JavaScript
+Comment[km]=ធាតុក្រាហ្វិក​ទំព័រ​បណ្ដាញ​ដោយប្រើ HTML និង JavaScript
+Comment[pt]=Elemento de página Web que usa HTML e JavaScript
+Comment[pt_BR]=Elemento de página Web que usa HTML e JavaScript
+Comment[uk]=Віджет сторінки тенет, що використовує HTML і JavaScript
+Comment[zh_TW]=使用 HTML 與 JavaScript 的網頁元件
 Type=Service
 ServiceTypes=Plasma/ScriptEngine
 Icon=internet-web-browser

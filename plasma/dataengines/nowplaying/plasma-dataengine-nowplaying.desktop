@@ -1,7 +1,19 @@
 [Desktop Entry]
 Name=Now Playing Engine
+Name[ga]=Inneall 'Á Sheinm Anois'
+Name[km]=កម្មវិធី​កំពុង​ចាក់
+Name[pt]=Motor 'Agora a Tocar'
+Name[pt_BR]=Motor 'Agora a Tocar'
+Name[uk]=Рушій поточного відтворення
+Name[zh_TW]=「現在播放」引擎
 
 Comment=Lists currently playing music
+Comment[ga]=Taispeáin an ceol á sheinm faoi láthair
+Comment[km]=រាយ​តន្ដ្រី​ដែល​កពុង​ចាក់
+Comment[pt]=Apresenta a música actualmente em reprodução
+Comment[pt_BR]=Apresenta a música actualmente em reprodução
+Comment[uk]=Показує список музики, що відтворюється
+Comment[zh_TW]=列出目前播放的音樂
 
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service

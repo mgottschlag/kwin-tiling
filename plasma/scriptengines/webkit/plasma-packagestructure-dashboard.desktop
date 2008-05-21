@@ -1,7 +1,19 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Dashboard Widget
+Name[ga]=Giuirléid Dashboard
+Name[km]=ធាតុ​ក្រាហ្វិក​ផ្ទាំង​គ្រប់គ្រង
+Name[pt]=Elemento do Dashboard
+Name[pt_BR]=Elemento do Dashboard
+Name[uk]=Віджет панелі приладів
+Name[zh_TW]=儀表板元件
 Comment=MacOS dashboard widget
+Comment[ga]=Giuirléid dashboard MacOS
+Comment[km]=ធាតុ​ក្រាហ្វិក​ផ្ទាំង​គ្រប់គ្រង​របស់ MacOS
+Comment[pt]=Elemento do Painel do MacOS
+Comment[pt_BR]=Elemento do Painel do MacOS
+Comment[uk]=Віджет панелі приладів MacOS
+Comment[zh_TW]=MacOS 儀表板元件
 Type=Service
 ServiceTypes=Plasma/PackageStructure
 

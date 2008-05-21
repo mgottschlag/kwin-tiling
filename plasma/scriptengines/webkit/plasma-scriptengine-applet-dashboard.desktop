@@ -1,7 +1,16 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Dashboard
+Name[km]=ផ្ទាំង​គ្រប់គ្រង
+Name[uk]=Панель приладів
+Name[zh_TW]=儀表板
 Comment=MacOS X dashboard widget
+Comment[ga]=Giuirléid dashboard MacOS X
+Comment[km]=ធាតុ​ក្រាហ្វិក​ផ្ទាំងគ្រប់គ្រង​របស់ MacOS
+Comment[pt]=Elemento gráfico do painel do MacOS X
+Comment[pt_BR]=Elemento gráfico do painel do MacOS X
+Comment[uk]=Віджет панелі приладів MacOS X
+Comment[zh_TW]=MacOS X 儀表板元件
 Type=Service
 ServiceTypes=Plasma/ScriptEngine
 Icon=internet-web-browser
