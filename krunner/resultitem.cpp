@@ -26,18 +26,18 @@
 
 #include <QtCore/QTimeLine>
 #include <QtCore/QDebug>
-#include <KDebug>
 #include <QtCore/QtGlobal>
 #include <QtCore/QTimer>
+#include <QtGui/QApplication>
 #include <QtGui/QPainter>
 #include <QtGui/QStyleOptionGraphicsItem>
 #include <QtGui/QGraphicsItemAnimation>
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QGraphicsScene>
-#include <QtGui/QApplication>
 #include <QtGui/QGraphicsView>
 
-#include <kicon.h>
+#include <KDebug>
+#include <KIcon>
 
 #include <plasma/plasma.h>
 #include <plasma/runnermanager.h>
@@ -396,8 +396,6 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     bool oldClipping = painter->hasClipping();
     painter->setClipping(false);
 
-    bool mouseOver = /*option->state & QStyle::State_MouseOver || */hasFocus();
-
     QRectF rect = boundingRect();
     QRect iRect = rect.toRect().adjusted(PADDING, PADDING, -PADDING, -PADDING);
     QSize iconSize = iRect.size().boundedTo(QSize(64, 64));
@@ -407,18 +405,32 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->save();
 
     // Draw background
-    QStyleOptionViewItemV4 o;
-    o.initFrom(scene()->views()[0]->viewport());
-    o.rect = rect.toRect();
-    o.viewItemPosition = QStyleOptionViewItemV4::OnlyOne;
-    QApplication::style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &o, painter, widget);
+    QStyle *s = style();
+    if (s) {
+        //kDebug() << "stylin'";
+        QStyleOptionViewItemV4 o;
+        o.initFrom(scene()->views()[0]->viewport());
+        o.backgroundBrush = QColor(61, 61, 61);
+        o.state = option->state | QStyle::State_MouseOver;
+        if (hasFocus()) {
+            o.state |= QStyle::State_Selected;
+        }
+        o.rect = rect.toRect();
+        o.showDecorationSelected = true;
+        o.viewItemPosition = QStyleOptionViewItemV4::OnlyOne;
+        s->drawPrimitive(QStyle::PE_PanelItemViewItem, &o, painter, widget);
+    } else {
+        //kDebug() << "oldschool";
+        QColor grey(61, 61, 61);
+        painter->fillPath(Plasma::roundedRectangle(rect, 6), grey);
+    }
 
     painter->restore();
     painter->save();
 
         /*
         The following implements blinking Blinking
-    if (mouseOver || d->tempTransp >= 1.5) {
+    if (hasFocus() || d->tempTransp >= 1.5) {
         painter->setOpacity(1.0);
     } else {
         qreal transp = d->tempTransp - int(d->tempTransp);
@@ -435,7 +447,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     }
         */
 
-    if (!mouseOver && d->tempTransp < 0.9) {
+    if (!hasFocus() && d->tempTransp < 0.9) {
         painter->setOpacity(d->tempTransp);
 
         if (!d->highlightTimerId) {
@@ -445,7 +457,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     bool drawMixed = false;
 
-    if (mouseOver || isSelected()) {
+    if (hasFocus() || isSelected()) {
         if (d->highlight > 2) {
             painter->drawPixmap(iconPadding, iconPadding, d->icon.pixmap(iconSize, QIcon::Active));
         } else {
@@ -504,7 +516,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->restore();
 
     // Draw hover/selection rects
-    // TODO: Make me themable with the SVG!
+    /*
     if (isSelected()) {
         //TODO: fancier, please
         painter->save();
@@ -526,7 +538,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         painter->strokePath(Plasma::roundedRectangle(rect, 6), pen);
         painter->restore();
     }
-
+    */
 
 
     QRect textRect = iRect;
