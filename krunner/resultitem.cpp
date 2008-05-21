@@ -72,7 +72,7 @@ public:
 
     QPointF pos();
     void appear();
-    void move(bool randomStart = true);
+    void move();
     void init();
     //void animationComplete();
 
@@ -101,10 +101,10 @@ ResultItemSignaller* ResultItem::Private::s_signaller = 0;
 
 QPointF ResultItem::Private::pos()
 {
-    int row = (index / rowStride) * ResultItem::BOUNDING_SIZE + 4;
-    int col = (index % rowStride) * ResultItem::BOUNDING_SIZE + 4; //(w / rowStride);
-    //kDebug() << col << row << "for" << index;
-    return QPointF(col, row);
+    const int x = (index % rowStride) * ResultItem::BOUNDING_SIZE + 4;
+    const int y = (index / rowStride) * ResultItem::BOUNDING_SIZE + 4;
+    //kDebug() << x << y << "for" << index;
+    return QPointF(x, y);
 }
 
 void ResultItem::Private::appear()
@@ -137,7 +137,7 @@ void ResultItem::Private::appear()
     connect(timer, SIGNAL(finished()), q, SLOT(animationComplete()));
 }
 
-void ResultItem::Private::move(bool randomStart)
+void ResultItem::Private::move()
 {
     //qDebug() << "moving to" << index << rowStride;
     if (animation) {
@@ -145,28 +145,15 @@ void ResultItem::Private::move(bool randomStart)
     }
 
     QTimeLine *timer = new QTimeLine();
-
-    if (randomStart) {
-        timer->setDuration(250);
-    } else {
-        //TODO: port to phase
-        timer->setDuration(150);
-    }
+    timer->setDuration(150);
     timer->setCurveShape(QTimeLine::EaseOutCurve);
 
     QGraphicsLayoutItem *parent = q->parentLayoutItem();
     QRect contentsRect = parent ? parent->contentsRect().toRect() : q->scene()->sceneRect().toRect();
-    int h = contentsRect.height();
-    int w = contentsRect.width();
 
     QGraphicsItemAnimation * animation = new QGraphicsItemAnimation(q);
     animation->setItem(q);
     animation->setTimeLine(timer);
-
-    if (randomStart) {
-       animation->setPosAt(0.0, QPointF(qrand() % (w - ResultItem::BOUNDING_SIZE),
-                                        qrand() % (h - ResultItem::BOUNDING_SIZE)));
-    }
 
     animation->setPosAt(1.0, pos());
     QObject::connect(timer, SIGNAL(finished()), q, SLOT(animationComplete()));
@@ -322,7 +309,7 @@ void ResultItem::setIndex(int index)
     } else if (d->s_removingCount) {
         d->needsMoving = true;
     } else {
-        d->move(false);
+        d->move();
     }
 }
 
@@ -331,7 +318,7 @@ void ResultItem::animate()
     //kDebug() << "can animate now" << d->needsMoving;
     if (d->needsMoving) {
         d->needsMoving = false;
-        d->move(false);
+        d->move();
     }
 }
 
@@ -353,7 +340,7 @@ void ResultItem::setRowStride(int stride)
 
     d->rowStride = stride;
     if (d->index != -1) {
-        d->move(false);
+        d->move();
     }
 }
 
