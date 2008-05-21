@@ -71,7 +71,7 @@ public:
     QString data() const;
     QIcon icon() const;
     Plasma::QueryMatch::Type group() const;
-    uint priority() const;
+    qreal priority() const;
     bool isFavorite() const;
     void setIndex(int index);
     int index() const;
@@ -81,6 +81,8 @@ public:
     void run(Plasma::RunnerManager *manager);
 
     void setUpdateId(int id);
+    static bool compare(const ResultItem *one, const ResultItem *other);
+    bool operator<(const ResultItem &other) const;
 
     static const int ITEM_SIZE = 68;
     static const int PADDING = 2;

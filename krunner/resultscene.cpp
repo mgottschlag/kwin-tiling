@@ -106,7 +106,7 @@ void ResultScene::addQueryMatch(const Plasma::QueryMatch &match)
     }
 
     if (it == m_itemsById.end()) {
-        //kDebug() << "did not find";
+        //kDebug() << "did not find for" << match.id();
         item = new ResultItem(match, 0);
         addItem(item);
         item->hide();
@@ -114,7 +114,6 @@ void ResultScene::addQueryMatch(const Plasma::QueryMatch &match)
         m_items.append(item);
         int rowStride = sceneRect().width() / (ResultItem::BOUNDING_SIZE);
         item->setRowStride(rowStride);
-        item->setIndex(m_itemCount++);
         connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
         connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
         connect(item, SIGNAL(hoverLeave(ResultItem*)), this, SIGNAL(itemHoverLeave(ResultItem*)));
@@ -149,7 +148,6 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     m_clearTimer.stop();
 
     QList<Plasma::QueryMatch> matches = m;
-    qStableSort(matches);
 
     ++m_updateId;
     // be sure all the new elements are in
@@ -165,20 +163,30 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         ResultItem *item = it.next();
         if (item->updateId() != m_updateId) {
             //kDebug() << item->id() << "was not updated (" << item->updateId() << " vs " << m_updateId << ")";
-            m_itemsById.remove(item->id());
             item->remove(); 
             it.remove();
         }
     }
 
-    // now move the remainders
-    int i = 0;
-    foreach (ResultItem * item, m_items) {
+    // now organize the remainders
+    int i = m_items.count() - 1;
+    m_itemsById.clear();
+
+    // this will leave them in *reverse* order
+    qSort(m_items.begin(), m_items.end(), ResultItem::compare);
+
+    it.toFront();
+    while (it.hasNext()) {
+        ResultItem *item = it.next();
+        kDebug()  << item->name() << item->id() << item->priority() << i;
+        m_itemsById.insert(item->id(), item);
+        item->setIndex(i);
+
         if (i == 0) {
             setFocusItem(item);
         }
-        item->setIndex(i);
-        ++i;
+
+        --i;
     }
 }
 

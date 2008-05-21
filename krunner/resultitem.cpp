@@ -252,6 +252,18 @@ void ResultItem::setUpdateId(int id)
     d->updateId = id;
 }
 
+bool ResultItem::compare(const ResultItem *one, const ResultItem *other)
+{
+    kDebug();
+    return one->d->match < other->d->match;
+}
+
+bool ResultItem::operator<(const ResultItem &other) const
+{
+    kDebug();
+    return d->match < other.d->match;
+}
+
 QString ResultItem::name() const
 {
     return d->match.text();
@@ -277,7 +289,7 @@ Plasma::QueryMatch::Type ResultItem::group() const
     return d->match.type();
 }
 
-uint ResultItem::priority() const
+qreal ResultItem::priority() const
 {
     // TODO, need to fator in more things than just this
     return d->match.relevance();
