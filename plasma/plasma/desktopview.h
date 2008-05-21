@@ -58,14 +58,6 @@ public:
      */
     bool isDesktop() const;
 
-    /**
-     * Sets the containment for this view, which will also cause the view
-     * to track the geometry of the containment.
-     *
-     * @arg containment the containment to center the view on
-     */
-    void setContainment(Plasma::Containment *containment);
-
 public slots:
     /**
      * zoom in towards the given containment.
@@ -95,6 +87,14 @@ public slots:
      * switch to the "previous" available containment on the corona.
      */
     void previousContainment();
+
+    /**
+     * Sets the containment for this view, which will also cause the view
+     * to track the geometry of the containment.
+     *
+     * @arg containment the containment to center the view on
+     */
+    void setContainment(Plasma::Containment *containment);
 
 protected:
     void wheelEvent(QWheelEvent *event);
