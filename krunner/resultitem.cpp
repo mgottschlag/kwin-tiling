@@ -34,6 +34,8 @@
 #include <QtGui/QGraphicsItemAnimation>
 #include <QtGui/QGraphicsLinearLayout>
 #include <QtGui/QGraphicsScene>
+#include <QtGui/QApplication>
+#include <QtGui/QGraphicsView>
 
 #include <kicon.h>
 
@@ -404,23 +406,12 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->setRenderHint(QPainter::Antialiasing);
     painter->save();
 
-    // ereslibre
     // Draw background
-    QStyle *s = style();
-    if (s) {
-        //kDebug() << "stylin'";
-        QStyleOptionViewItemV4 o;
-        //o.backgroundBrush = d->bgBrush;
-        o.state = option->state;
-        o.rect = rect.toRect();
-        //o.showDecorationSelected = true;
-        o.viewItemPosition = QStyleOptionViewItemV4::OnlyOne;
-        s->drawPrimitive(QStyle::PE_PanelItemViewItem, &o, painter, 0);
-    } else {
-        //kDebug() << "oldschool";
-        QColor grey(61, 61, 61);
-        painter->fillPath(Plasma::roundedRectangle(rect, 6), grey);
-    }
+    QStyleOptionViewItemV4 o;
+    o.initFrom(scene()->views()[0]->viewport());
+    o.rect = rect.toRect();
+    o.viewItemPosition = QStyleOptionViewItemV4::OnlyOne;
+    QApplication::style()->drawPrimitive(QStyle::PE_PanelItemViewItem, &o, painter, widget);
 
     painter->restore();
     painter->save();
