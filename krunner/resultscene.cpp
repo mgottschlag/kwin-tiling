@@ -176,17 +176,21 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     qSort(m_items.begin(), m_items.end(), ResultItem::compare);
 
     it.toFront();
+    QGraphicsWidget *tab = 0;
     while (it.hasNext()) {
         ResultItem *item = it.next();
-        kDebug()  << item->name() << item->id() << item->priority() << i;
+        //kDebug()  << item->name() << item->id() << item->priority() << i;
+        QGraphicsWidget::setTabOrder(tab, item);
         m_itemsById.insert(item->id(), item);
         item->setIndex(i);
 
+        // it is vital that focus is set *after* the index
         if (i == 0) {
             setFocusItem(item);
         }
 
         ++i;
+        tab = item;
     }
 }
 
