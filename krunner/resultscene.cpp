@@ -166,8 +166,9 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 
 void ResultScene::focusOutEvent(QFocusEvent *focusEvent)
 {
+    QGraphicsScene::focusOutEvent(focusEvent);
     if (!m_items.isEmpty()) {
-        setFocusItem(m_items.at(0));
+        emit itemHoverEnter(m_items.at(0));
     }
 }
 
