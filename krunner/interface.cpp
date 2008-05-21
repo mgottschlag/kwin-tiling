@@ -211,6 +211,9 @@ void Interface::display(const QString& term)
         screen = QApplication::desktop()->screenNumber(QCursor::pos());
     }
 
+    // TODO: set a nice welcome string when the string freeze lifts
+    m_descriptionLabel->clear();
+
     KDialog::centerOnScreen(this, screen);
     show();
     KWindowSystem::forceActiveWindow(winId());
