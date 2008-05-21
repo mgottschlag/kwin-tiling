@@ -141,6 +141,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     //kDebug() << "matches retreived: " << matches.count();
     if (m.count() == 0) {
         //kDebug() << "clearing";
+        emit itemHoverEnter(0);
         m_clearTimer.start(200);
         return;
     }

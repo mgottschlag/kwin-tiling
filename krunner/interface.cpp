@@ -294,10 +294,12 @@ void Interface::queryTextEditted(const QString &query)
 
 void Interface::updateDescriptionLabel(ResultItem *item)
 {
-    if (item->description() != "") {
-        m_descriptionLabel->setText(item->name() + ": " + item->description());
-    } else {
+    if (!item) {
+        m_descriptionLabel->clear();
+    } else if (item->description().isEmpty()) {
         m_descriptionLabel->setText(item->name());
+    } else {
+        m_descriptionLabel->setText(item->name() + ": " + item->description());
     }
 }
 
