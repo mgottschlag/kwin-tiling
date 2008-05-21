@@ -89,6 +89,7 @@ Interface::Interface(QWidget* parent)
     QPalette p = m_descriptionLabel->palette();
     p.setColor(QPalette::WindowText, Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
     m_descriptionLabel->setPalette(p);
+    m_descriptionLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
     m_layout->addWidget(m_descriptionLabel, 0, Qt::AlignCenter | Qt::AlignTop);
 
     m_resultsView = new QGraphicsView(w);
@@ -98,11 +99,11 @@ Interface::Interface(QWidget* parent)
     m_resultsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_resultsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_resultsView->setOptimizationFlag(QGraphicsView::DontSavePainterState);
-    m_resultsView->setMinimumSize(ResultItem::BOUNDING_SIZE * 4, ResultItem::BOUNDING_SIZE * 2);
     m_resultsView->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     //kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
     m_resultsScene = new ResultScene(this);
     m_resultsView->setScene(m_resultsScene);
+    m_resultsView->setMinimumSize(m_resultsScene->minimumSizeHint());
     m_layout->addWidget(m_resultsView);
 
     QWidget *buttonContainer = new QWidget(w);
@@ -156,7 +157,7 @@ Interface::Interface(QWidget* parent)
 
     m_layout->addWidget(buttonContainer);
 
-    connect(m_searchTerm, SIGNAL(editTextChanged(QString)), m_resultsScene, SLOT(launchQuery(QString)));
+    connect(m_searchTerm, SIGNAL(editTextChanged(QString)), this, SLOT(queryTextEditted(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));
 
     connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
@@ -277,6 +278,15 @@ void Interface::run(ResultItem *item)
 void Interface::runDefaultResultItem()
 {
     run(m_resultsScene->defaultResultItem());
+}
+
+void Interface::queryTextEditted(const QString &query)
+{
+    if (query.isEmpty()) {
+        resetInterface();
+    } else {
+        m_resultsScene->launchQuery(query);
+    }
 }
 
 void Interface::updateDescriptionLabel(ResultItem *item)

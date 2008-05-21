@@ -49,6 +49,7 @@ class ResultScene : public QGraphicsScene
         void resize(int width, int height);
         ResultItem* defaultResultItem() const;
         void run(ResultItem* item) const;
+        QSize minimumSizeHint() const;
 
         Plasma::RunnerManager* manager() const;
 

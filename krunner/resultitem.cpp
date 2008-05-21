@@ -101,8 +101,8 @@ ResultItemSignaller* ResultItem::Private::s_signaller = 0;
 
 QPointF ResultItem::Private::pos()
 {
-    int row = (index / rowStride) * ResultItem::BOUNDING_SIZE;
-    int col = (index % rowStride) * ResultItem::BOUNDING_SIZE; //(w / rowStride);
+    int row = (index / rowStride) * ResultItem::BOUNDING_SIZE + 4;
+    int col = (index % rowStride) * ResultItem::BOUNDING_SIZE + 4; //(w / rowStride);
     //kDebug() << col << row << "for" << index;
     return QPointF(col, row);
 }
@@ -187,6 +187,7 @@ ResultItem::ResultItem(const Plasma::QueryMatch &match, QGraphicsWidget *parent)
     setMatch(match);
     d->init();
     connect(Private::signaller(), SIGNAL(animate()), this, SLOT(animate()));
+    setZValue(0);
 }
 
 void ResultItem::Private::init()
@@ -236,14 +237,16 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
             break;
     }
 
-    QColor grey(61, 61, 61);
     QColor mix =  QColor::fromHsv(hue, 160, 150);
+    mix.setAlpha(200);
+/*    QColor grey(61, 61, 61, 200);
     QRectF rect = boundingRect();
-    QConicalGradient gr(QPointF(0, 0), 280);
+    QLinearGradient gr(QPointF(0, 0), geometry().bottomRight());
     gr.setColorAt(0.0, mix);
     gr.setColorAt(0.8, grey);
     gr.setColorAt(1.0, mix);
-    d->bgBrush = gr;
+    d->bgBrush = gr;*/
+    d->bgBrush = mix;
 }
 
 QString ResultItem::id() const
@@ -394,18 +397,35 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     bool oldClipping = painter->hasClipping();
     painter->setClipping(false);
 
-    QRect iRect = boundingRect().toRect().adjusted(PADDING, PADDING, -PADDING, -PADDING);
-    bool mouseOver = option->state & QStyle::State_MouseOver || hasFocus();
+    bool mouseOver = /*option->state & QStyle::State_MouseOver || */hasFocus();
 
+    QRectF rect = boundingRect();
+    QRect iRect = rect.toRect().adjusted(PADDING, PADDING, -PADDING, -PADDING);
+    QSize iconSize = iRect.size().boundedTo(QSize(64, 64));
+    int iconPadding = qMax((int(rect.width()) - iconSize.width()) / 2, 0);
+    //kDebug() << iconPadding << PADDING;
     painter->setRenderHint(QPainter::Antialiasing);
     painter->save();
 
     // Draw icon frame
     // TODO: Make me SVG themable!
-    painter->setBrush(d->bgBrush);//QColor(51, 51, 51));
-    painter->setPen(QPen(Qt::transparent, 0));
-    painter->drawPath(Plasma::roundedRectangle(boundingRect(), 6));
+    /*
+    QStyle *s = style();
+    if (s) {
+        kDebug() << "stylin'";
+        QStyleOptionViewItemV4 o;
+        //o.backgroundBrush = d->bgBrush;
+        o.state = option->state;
+        o.rect = option->rect;
+        o.showDecorationSelected = true;
+        s->drawPrimitive(QStyle::PE_PanelItemViewItem, &o, painter);
+    } else {
+        kDebug() << "oldschool";
+        painter->fillPath(Plasma::roundedRectangle(boundingRect(), 6), d->bgBrush);
+    }*/
 
+    QColor grey(61, 61, 61);
+    painter->fillPath(Plasma::roundedRectangle(rect, 6), grey);
     painter->restore();
 
     painter->save();
@@ -441,22 +461,36 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     if (mouseOver || isSelected()) {
         if (d->highlight > 2) {
-            painter->drawPixmap(PADDING, PADDING, d->icon.pixmap(iRect.size(), QIcon::Active));
+            painter->drawPixmap(iconPadding, iconPadding, d->icon.pixmap(iconSize, QIcon::Active));
         } else {
             drawMixed = true;
+
             ++d->highlight;
+            if (d->highlight == 1) {
+                setGeometry(sceneBoundingRect().adjusted(-1, -1, 1, 1));
+            } else if (d->highlight == 3) {
+                setGeometry(sceneBoundingRect().adjusted(-2, -2, 2, 2));
+            }
+
             if (!d->highlightTimerId) {
                 d->highlightTimerId = startTimer(40);
             }
         }
     } else if (d->highlight > 0) {
         drawMixed = true;
+
         --d->highlight;
+        if (d->highlight == 0) {
+            setGeometry(sceneBoundingRect().adjusted(1, 1, -1, -1));
+        } else if (d->highlight == 2) {
+            setGeometry(sceneBoundingRect().adjusted(2, 2, -2, -2));
+        }
+
         if (!d->highlightTimerId) {
             d->highlightTimerId = startTimer(40);
         }
     } else {
-        painter->drawPixmap(PADDING, PADDING, d->icon.pixmap(iRect.size(), QIcon::Disabled));
+        painter->drawPixmap(iconPadding, iconPadding, d->icon.pixmap(iconSize, QIcon::Disabled));
     }
 
     if (drawMixed) {
@@ -473,9 +507,9 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         qreal activeOpacity = painter->opacity() * factor;
 
         painter->setOpacity(painter->opacity() * (1 - factor));
-        painter->drawPixmap(PADDING, PADDING, d->icon.pixmap(iRect.size(), QIcon::Disabled));
+        painter->drawPixmap(iconPadding, iconPadding, d->icon.pixmap(iconSize, QIcon::Disabled));
         painter->setOpacity(activeOpacity);
-        painter->drawPixmap(PADDING, PADDING, d->icon.pixmap(iRect.size(), QIcon::Active));
+        painter->drawPixmap(iconPadding, iconPadding, d->icon.pixmap(iconSize, QIcon::Active));
     }
     painter->restore();
 
@@ -493,27 +527,32 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         }
         //QPen pen(palette().color(QPalette::Highlight), 2);
         QPen pen(color, 2);
-        painter->strokePath(Plasma::roundedRectangle(boundingRect(), 6), pen);
+        painter->strokePath(Plasma::roundedRectangle(rect, 6), pen);
         painter->restore();
     } else if (mouseOver) {
         painter->save();
         painter->translate(0.5, 0.5);
         QPen pen(palette().color(QPalette::Highlight).lighter(), 1);
-        painter->strokePath(Plasma::roundedRectangle(boundingRect(), 6), pen);
+        painter->strokePath(Plasma::roundedRectangle(rect, 6), pen);
         painter->restore();
     }
 
 
 
     QRect textRect = iRect;
+    textRect.setBottom(textRect.top() + iconPadding + iconSize.height());
     textRect.setTop(textRect.bottom() - option->fontMetrics.height());
+
+    QRect textBoxRect = textRect.adjusted(0, -d->highlight, 0, d->highlight);
+//    textBoxRect.setTop(textRect.top() - (textRect.bottom() - iRect.bottom()));
+
     //Avoid to cut text both in the left and in the right
     int textAlign = (option->fontMetrics.width(name()) < textRect.width()) ? Qt::AlignCenter : Qt::AlignLeft;
 
 //     painter->drawText(textRect, Qt::AlignCenter, m_description);
 //     textRect.translate(0, -textHeight);
     QBrush textBackground(QColor(0, 0, 0, 150));
-    painter->fillPath(Plasma::roundedRectangle(textRect.adjusted(-1, -2, 2, -2), 3), textBackground);
+    painter->fillPath(Plasma::roundedRectangle(textRect.adjusted(0, -2 - qMin(d->highlight, 2), 1, -2 + qMin(d->highlight, 2)), 3), d->bgBrush);
 
     painter->drawText(textRect, textAlign, name());
     painter->setPen(Qt::white);
@@ -525,15 +564,18 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 void ResultItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *e)
 {
     QGraphicsItem::hoverLeaveEvent(e);
-    update();
-    emit hoverLeave(this);
+    //update();
+    //emit hoverLeave(this);
+    setFocus(Qt::MouseFocusReason);
 }
 
 void ResultItem::hoverEnterEvent(QGraphicsSceneHoverEvent *e)
 {
     QGraphicsItem::hoverEnterEvent(e);
-    update();
-    emit hoverEnter(this);
+//    update();
+//    emit hoverEnter(this);
+    //setFocusItem(this);
+    setFocus(Qt::MouseFocusReason);
 }
 
 void ResultItem::timerEvent(QTimerEvent *e)
@@ -563,15 +605,23 @@ void ResultItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
 void ResultItem::focusInEvent(QFocusEvent * event)
 {
     QGraphicsWidget::focusInEvent(event);
+    setZValue(1);
+    //setGeometry(sceneBoundingRect().adjusted(-4, -4, 4, 4));
+    if (!d->highlightTimerId) {
+        d->highlightTimerId = startTimer(40);
+    }
     emit hoverEnter(this);
-    update();
 }
 
 void ResultItem::focusOutEvent(QFocusEvent * event)
 {
     QGraphicsWidget::focusOutEvent(event);
+    setZValue(0);
+    //setGeometry(sceneBoundingRect().adjusted(4, 4, -4, -4));
+    if (!d->highlightTimerId) {
+        d->highlightTimerId = startTimer(40);
+    }
     emit hoverLeave(this);
-    update();
 }
 
 void ResultItem::keyPressEvent(QKeyEvent *event)
@@ -585,11 +635,6 @@ void ResultItem::keyPressEvent(QKeyEvent *event)
 
 QVariant ResultItem::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-    if (change == ItemSelectedChange) {
-        kDebug() << "item select change on" << name();
-        update();
-    }
-
     return QGraphicsWidget::itemChange(change, value);
 }
 

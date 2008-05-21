@@ -62,6 +62,11 @@ ResultScene::~ResultScene()
 {
 }
 
+QSize ResultScene::minimumSizeHint() const
+{
+    return QSize(ResultItem::BOUNDING_SIZE * 4 + 6, ResultItem::BOUNDING_SIZE * 2 + 6);
+}
+
 void ResultScene::resize(int width, int height)
 {
     // optimize
@@ -160,6 +165,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     }
 
     if (!m_items.isEmpty()) {
+        emit itemHoverEnter(m_items.at(0));
         setFocusItem(m_items.at(0));
     }
 }
@@ -211,7 +217,6 @@ void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
         }
 
         case Qt::Key_Left:
-            qWarning("ResultScene: key left");
             m_cIndex = (m_cIndex == 0) ? m_items.size() - 1 : m_cIndex - 1;
         break;
 

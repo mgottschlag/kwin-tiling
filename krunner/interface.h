@@ -72,6 +72,7 @@ class Interface : public KRunnerDialog
         void setWidgetPalettes();
         void run(ResultItem *item);
         void runDefaultResultItem();
+        void queryTextEditted(const QString &query);
         void showConfigDialog();
         void updateDescriptionLabel(ResultItem *item);
         void configCompleted();
