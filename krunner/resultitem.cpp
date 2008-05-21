@@ -153,7 +153,7 @@ void ResultItem::Private::move(bool randomStart)
     }
     timer->setCurveShape(QTimeLine::EaseOutCurve);
 
-    QGraphicsLayoutItem *parent =  q->parentLayoutItem();
+    QGraphicsLayoutItem *parent = q->parentLayoutItem();
     QRect contentsRect = parent ? parent->contentsRect().toRect() : q->scene()->sceneRect().toRect();
     int h = contentsRect.height();
     int w = contentsRect.width();

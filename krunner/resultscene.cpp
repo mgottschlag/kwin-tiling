@@ -44,17 +44,6 @@ ResultScene::ResultScene(QObject * parent)
 {
     setItemIndexMethod(NoIndex);
 
-    m_mainWidget = new QGraphicsWidget(0);
-
-    QGraphicsGridLayout *layout = new QGraphicsGridLayout(m_mainWidget);
-    layout->setContentsMargins(0, 0, 0, 0);
-
-    m_iconArea = new QGraphicsWidget(m_mainWidget);
-    layout->addItem(m_iconArea, 1, 0);
-
-    m_mainWidget->resize(sceneRect().size());
-    addItem(m_mainWidget);
-
     m_runnerManager = new Plasma::RunnerManager(this);
     connect(m_runnerManager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
             this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
@@ -71,7 +60,6 @@ ResultScene::ResultScene(QObject * parent)
 
 ResultScene::~ResultScene()
 {
-    delete m_mainWidget;
 }
 
 void ResultScene::resize(int width, int height)
@@ -83,7 +71,6 @@ void ResultScene::resize(int width, int height)
 
     m_size = QSize(width, height);
     setSceneRect(0.0, 0.0, (qreal)width, (qreal)height);
-    m_mainWidget->resize(m_size);
     m_resizeTimer.start(150);
 }
 
@@ -107,7 +94,8 @@ void ResultScene::addQueryMatch(const Plasma::QueryMatch &match)
 
     if (it == m_itemsById.end()) {
         //kDebug() << "did not find";
-        item = new ResultItem(match, m_iconArea);
+        item = new ResultItem(match, 0);
+        addItem(item);
         item->hide();
         m_itemsById.insert(match.id(), item);
         m_items.append(item);

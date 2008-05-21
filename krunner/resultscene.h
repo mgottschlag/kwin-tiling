@@ -91,10 +91,6 @@ class ResultScene : public QGraphicsScene
         QList<ResultItem *>  m_items;
         QMultiMap<QString, ResultItem *>  m_itemsById;
 
-        // the UI items
-        QGraphicsWidget *m_mainWidget;
-        QGraphicsWidget *m_iconArea;
-
         int m_cIndex;
 
     private slots:
