@@ -25,6 +25,7 @@
 #include <QTimer>
 
 #include <KCrash>
+#include <KDebug>
 
 RestartingApplication::RestartingApplication(Display *display,
                                              Qt::HANDLE visual,
@@ -33,9 +34,9 @@ RestartingApplication::RestartingApplication(Display *display,
 {
     if (KCrash::crashHandler() == 0 ) {
         // this means we've most likely crashed once. so let's see if we
-        // stay up for more than 2 minutes time, and if so reset the
+        // stay up for more than 10s time, and if so reset the
         // crash handler since the crash isn't a frequent offender
-        QTimer::singleShot(120000, this, SLOT(setCrashHandler()));
+        QTimer::singleShot(10000, this, SLOT(setCrashHandler()));
     }
     else {
         // See if a crash handler was installed. It was if the -nocrashhandler
