@@ -113,20 +113,19 @@ void ResultItem::Private::appear()
         q->animationComplete();
     }
 
+    //TODO: maybe have them scatter in versus expand/spin in place into view?
     QPointF p(pos());
     qreal halfway = ResultItem::BOUNDING_SIZE * 0.5;
     qreal mostway = ResultItem::BOUNDING_SIZE * 0.1;
 
-    q->setPos(pos());
+    q->setPos(p);
     q->scale(0.0, 0.0);
     q->setPos(p + QPointF(halfway, halfway));
     q->becomeVisible();
     animation = new QGraphicsItemAnimation();
     animation->setItem(q);
-//    animation->setScaleAt(0.0, 0.0, 0.0);
     animation->setScaleAt(0.5, 0.1, 1.0);
     animation->setScaleAt(1.0, 1.0, 1.0);
-//    animation->setPosAt(0.0, p + QPointF(halfway, halfway));
     animation->setPosAt(0.5, p + QPointF(mostway, 0));
     animation->setPosAt(1.0, p);
     QTimeLine * timer = new QTimeLine(100);
@@ -405,27 +404,25 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->setRenderHint(QPainter::Antialiasing);
     painter->save();
 
-    // Draw icon frame
-    // TODO: Make me SVG themable!
-    /*
+    // ereslibre
+    // Draw background
     QStyle *s = style();
     if (s) {
-        kDebug() << "stylin'";
+        //kDebug() << "stylin'";
         QStyleOptionViewItemV4 o;
         //o.backgroundBrush = d->bgBrush;
         o.state = option->state;
-        o.rect = option->rect;
-        o.showDecorationSelected = true;
-        s->drawPrimitive(QStyle::PE_PanelItemViewItem, &o, painter);
+        o.rect = rect.toRect();
+        //o.showDecorationSelected = true;
+        o.viewItemPosition = QStyleOptionViewItemV4::OnlyOne;
+        s->drawPrimitive(QStyle::PE_PanelItemViewItem, &o, painter, 0);
     } else {
-        kDebug() << "oldschool";
-        painter->fillPath(Plasma::roundedRectangle(boundingRect(), 6), d->bgBrush);
-    }*/
+        //kDebug() << "oldschool";
+        QColor grey(61, 61, 61);
+        painter->fillPath(Plasma::roundedRectangle(rect, 6), grey);
+    }
 
-    QColor grey(61, 61, 61);
-    painter->fillPath(Plasma::roundedRectangle(rect, 6), grey);
     painter->restore();
-
     painter->save();
 
         /*
