@@ -156,7 +156,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     while (it.hasNext()) {
         ResultItem *item = it.next();
         if (item->updateId() != m_updateId) {
-            kDebug() << item->id() << "was not updated (" << item->updateId() << " vs " << m_updateId << ")";
+            //kDebug() << item->id() << "was not updated (" << item->updateId() << " vs " << m_updateId << ")";
             m_itemsById.remove(item->id());
             indexReleased(item->index());
             item->remove(); 
