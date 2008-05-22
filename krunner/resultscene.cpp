@@ -106,7 +106,7 @@ void ResultScene::clearMatches()
 
 void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 {
-    //kDebug() << "matches retreived: " << matches.count();
+    //kDebug() << "============================" << endl << "matches retreived: " << m.count();
     if (m.count() == 0) {
         //kDebug() << "clearing";
         emit itemHoverEnter(0);
@@ -115,12 +115,10 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     }
 
     m_clearTimer.stop();
+    m_items.clear();
 
     QList<Plasma::QueryMatch> matches = m;
-
-    // be sure all the new elements are in
     QMutableListIterator<Plasma::QueryMatch> newMatchIt(matches);
-    m_items.clear();
 
     // first pass: we try and match up items with existing ids (match persisitence)
     while (!m_itemsById.isEmpty() && newMatchIt.hasNext()) {
@@ -138,7 +136,6 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     while (newMatchIt.hasNext()) {
         m_items.append(addQueryMatch(newMatchIt.next(), true));
     }
-
 
     // now delete the stragglers
     QMapIterator<QString, ResultItem *> it(m_itemsById);
@@ -195,8 +192,8 @@ ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool use
             return 0;
         }
     } else {
-        //kDebug() << "reusing for" << match.id();
         item = it.value();
+        //kDebug() << "reusing" << item->name() << "for" << match.id();
         item->setMatch(match);
         m_itemsById.erase(it);
     }
