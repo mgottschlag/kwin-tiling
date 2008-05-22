@@ -2,11 +2,13 @@
 Encoding=UTF-8
 Name=Dashboard
 Name[km]=ផ្ទាំង​គ្រប់គ្រង
+Name[nds]=Klockpaneel
 Name[uk]=Панель приладів
 Name[zh_TW]=儀表板
 Comment=MacOS X dashboard widget
 Comment[ga]=Giuirléid dashboard MacOS X
 Comment[km]=ធាតុ​ក្រាហ្វិក​ផ្ទាំងគ្រប់គ្រង​របស់ MacOS
+Comment[nds]=MacOs-X-Klockpaneel
 Comment[pt]=Elemento gráfico do painel do MacOS X
 Comment[pt_BR]=Elemento gráfico do painel do MacOS X
 Comment[uk]=Віджет панелі приладів MacOS X
