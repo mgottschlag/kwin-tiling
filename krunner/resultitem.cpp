@@ -43,6 +43,7 @@
 #include <plasma/runnermanager.h>
 
 #define TEXT_AREA_HEIGHT ResultItem::MARGIN + ResultItem::TEXT_MARGIN*2 + ResultItem::Private::s_fontHeight
+//#define NO_GROW_ANIM
 
 class ResultItem::Private
 {
@@ -458,11 +459,21 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     bool drawMixed = false;
 
     if (hasFocus() || isSelected()) {
+#ifdef NO_GROW_ANIM
         if (d->highlight > 2) {
+#else
+        // here's what the next line means:
+        // we check to see if the scene has focus, but that's overriden by the mouse hovering an
+        // item ... or unless we are over 2 ticks into the higlight anim. complex but it works
+        if (((scene() && !scene()->views().isEmpty() && !scene()->views()[0]->hasFocus()) && !(option->state & QStyle::State_MouseOver)) || d->highlight > 2) {
+#endif
             painter->drawPixmap(iconPadding, iconPadding, d->icon.pixmap(iconSize, QIcon::Active));
         } else {
             drawMixed = true;
 
+#ifdef NO_GROW_ANIM
+            ++d->highlight;
+#else
             if (!d->animation) {
                 ++d->highlight;
                 if (d->highlight == 1) {
@@ -471,6 +482,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
                     setGeometry(sceneBoundingRect().adjusted(-2, -2, 2, 2));
                 }
             }
+#endif
 
             if (!d->highlightTimerId) {
                 d->highlightTimerId = startTimer(40);
@@ -479,6 +491,9 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     } else if (d->highlight > 0) {
         drawMixed = true;
 
+#ifdef NO_GROW_ANIM
+        --d->highlight;
+#else
         if (!d->animation) {
             --d->highlight;
             if (d->highlight == 0) {
@@ -487,6 +502,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
                 setGeometry(sceneBoundingRect().adjusted(2, 2, -2, -2));
             }
         }
+#endif
 
         if (!d->highlightTimerId) {
             d->highlightTimerId = startTimer(40);
