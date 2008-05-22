@@ -123,7 +123,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     m_items.clear();
 
     // first pass: we try and match up items with existing ids (match persisitence)
-    while (newMatchIt.hasNext()) {
+    while (!m_itemsById.isEmpty() && newMatchIt.hasNext()) {
         ResultItem *item = addQueryMatch(newMatchIt.next(), false);
 
         if (item) {
