@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class KDE_EXPORT NMAccessPoint : public Solid::Control::Ifaces::AccessPoint
 {
 Q_OBJECT
+Q_INTERFACES(Solid::Control::Ifaces::AccessPoint)
 public:
     NMAccessPoint( const QString & path, QObject * parent = 0 );
     virtual ~NMAccessPoint();
