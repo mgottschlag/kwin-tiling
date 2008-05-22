@@ -67,18 +67,15 @@ public:
     bool isActive() const;
     Solid::Control::NetworkInterface::Type type() const;
     Solid::Control::NetworkInterface::ConnectionState connectionState() const;
-    int signalStrength() const;
     int designSpeed() const;
     Solid::Control::NetworkInterface::Capabilities capabilities() const;
     QString activeNetwork() const;
     // These setters are used to update the interface by the manager
     // in response to DBus signals
-    void setSignalStrength(int);
     void setActive(bool);
     void setActivationStage(int activationStage);
     void addNetwork(const QDBusObjectPath  & netPath);
     void removeNetwork(const QDBusObjectPath  & netPath);
-    void updateNetworkStrength(const QDBusObjectPath  & netPath, int strength);
     void setManagerInterface(QDBusInterface * manager);
     QString interfaceName() const;
     QString driver() const;

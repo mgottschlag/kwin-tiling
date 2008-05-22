@@ -48,7 +48,6 @@ public:
     bool active;
     Solid::Control::NetworkInterface::Type type;
     int activationStage;
-    int signalStrength;
     int designSpeed;
     Solid::Control::NetworkInterface::Capabilities capabilities;
     QString activeNetPath;

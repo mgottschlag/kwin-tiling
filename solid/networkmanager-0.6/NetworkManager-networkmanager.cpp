@@ -321,12 +321,6 @@ void NMNetworkManager::receivedDeviceRemoved(const QDBusObjectPath & objpath)
 void NMNetworkManager::deviceStrengthChanged(const QDBusObjectPath & devPath, int strength)
 {
     kDebug(1441) << devPath.path() << strength;
-    QHash<QString, NMNetworkInterface *>::ConstIterator it = d->interfaces.find(devPath.path());
-    if (it != d->interfaces.end() && it.value())
-    {
-        NMNetworkInterface * interface = it.value();
-        interface->setSignalStrength(strength);
-    }
 }
 
 void NMNetworkManager::networkStrengthChanged(const QDBusObjectPath & devPath, const QDBusObjectPath & netPath, int strength)

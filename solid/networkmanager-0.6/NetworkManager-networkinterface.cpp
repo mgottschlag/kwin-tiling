@@ -80,7 +80,6 @@ NMNetworkInterfacePrivate::NMNetworkInterfacePrivate(const QString  & objPath)
     , active(false)
     , type(Solid::Control::NetworkInterface::UnknownType)
     , activationStage(Solid::Control::NetworkInterface::UnknownState)
-    , signalStrength(0)
     , designSpeed(0)
 {
 }
@@ -148,12 +147,6 @@ Solid::Control::NetworkInterface::ConnectionState NMNetworkInterface::connection
     return (Solid::Control::NetworkInterface::ConnectionState)d->activationStage;
 }
 
-int NMNetworkInterface::signalStrength() const
-{
-    Q_D(const NMNetworkInterface);
-    return d->signalStrength;
-}
-
 int NMNetworkInterface::designSpeed() const
 {
     Q_D(const NMNetworkInterface);
@@ -191,7 +184,6 @@ void NMNetworkInterfacePrivate::applyProperties(const NMDBusDeviceProperties & p
     }
     active = props.active;
     activationStage = props.activationStage;
-    signalStrength = props.strength;
     designSpeed = props.speed;
     if (props.capabilities  & NM_DEVICE_CAP_NM_SUPPORTED)
         capabilities |= Solid::Control::NetworkInterface::IsManageable;
@@ -203,26 +195,6 @@ void NMNetworkInterfacePrivate::applyProperties(const NMDBusDeviceProperties & p
 #endif
     activeNetPath = props.activeNetPath;
     interface = props.interface;
-}
-
-void NMNetworkInterface::setSignalStrength(int strength)
-{
-    Q_D(NMNetworkInterface);
-    d->signalStrength = strength;
-#if 0
-    // update the network object
-    if (d->networks.contains(d->activeNetPath))
-    {
-        NMWirelessNetwork * net = qobject_cast<NMWirelessNetwork *>(d->networks[d->activeNetPath]);
-        if (net != 0)
-        {
-            net->setSignalStrength(strength);
-        }
-    }
-#endif
-#if 0
-    emit signalStrengthChanged(strength);
-#endif
 }
 
 void NMNetworkInterface::setActive(bool active)
@@ -251,25 +223,6 @@ void NMNetworkInterface::removeNetwork(const QDBusObjectPath  & netPath)
 {
     Q_D(NMNetworkInterface);
     d->notifyRemoveNetwork(netPath);
-}
-
-void NMNetworkInterface::updateNetworkStrength(const QDBusObjectPath  & netPath, int strength)
-{
-    Q_D(const NMNetworkInterface);
-#if 0
-    // check that it's not already present, as NetworkManager may
-    // detect networks that aren't really new.
-    if (d->networks.contains(netPath.path()))
-    {
-        NMNetwork * net = d->networks[netPath.path()];
-        if (net != 0)
-        {
-            NMWirelessNetwork * wlan =  qobject_cast<NMWirelessNetwork *>(net);
-            if (wlan != 0)
-                wlan->setSignalStrength(strength);
-        }
-    }
-#endif
 }
 
 void NMNetworkInterface::setManagerInterface(QDBusInterface * manager)
