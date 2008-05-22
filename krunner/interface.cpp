@@ -73,6 +73,10 @@ Interface::Interface(QWidget* parent)
     m_searchTerm->setDuplicatesEnabled(false);
 
     KLineEdit *lineEdit = new KLineEdit(m_searchTerm);
+    QAction *focusEdit = new QAction(this);
+    focusEdit->setShortcut(Qt::Key_F6);
+    connect(focusEdit, SIGNAL(triggered(bool)), lineEdit, SLOT(setFocus()));
+    addAction(focusEdit);
 
     // the order of these next few lines if very important.
     // QComboBox::setLineEdit sets the autoComplete flag on the lineedit,
