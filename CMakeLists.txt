@@ -48,7 +48,7 @@ include_directories(
 )
 # libs
 add_subdirectory(cmake)
-macro_optional_add_subdirectory(libs)
+add_subdirectory(libs)
 
 # system settings (kcontrol replacement)
 macro_optional_add_subdirectory( systemsettings )
