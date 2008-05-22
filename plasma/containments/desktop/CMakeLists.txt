@@ -1,6 +1,5 @@
 set(desktop_SRCS
     desktop.cpp
-    iconloader.cpp
     backgrounddialog.cpp
     backgroundpackage.cpp
     renderthread.cpp)

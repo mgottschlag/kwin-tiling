@@ -33,8 +33,6 @@
 #include <plasma/containment.h>
 #include <plasma/animator.h>
 
-#include "iconloader.h"
-
 #include "renderthread.h"
 
 class BackgroundDialog;
@@ -130,9 +128,6 @@ private:
 
     RenderThread m_renderer;
     int m_current_renderer_token;
-
-    //Desktop icons
-    static IconLoader *s_icons;
 };
 
 #endif // PLASMA_PANEL_H

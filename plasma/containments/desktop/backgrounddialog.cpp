@@ -571,7 +571,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
 
     // preview
     QString monitorPath = KStandardDirs::locate("data",  "kcontrol/pics/monitor.png");
-    
+
     // Size of monitor image: 200x186
     // Geometry of "display" part of monitor image: (23,14)-[151x115]
     qreal previewRatio = 128.0 / (101.0 * m_ratio);
@@ -639,12 +639,6 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config, const KConfigGro
     }
 
     m_color->setColor(config.readEntry("wallpapercolor", m_color->color()));
-    KConfigGroup iconConfig(&globalConfig, "DesktopIcons");
-    bool showIcons = iconConfig.readEntry("showIcons",true);
-    m_showIcons->setCheckState(showIcons ? Qt::Checked : Qt::Unchecked);
-    bool alignToGrid = iconConfig.readEntry("alignToGrid", true);
-    m_alignToGrid->setCheckState(alignToGrid ? Qt::Checked : Qt::Unchecked);
-
     m_theme->setCurrentIndex(m_themeModel->indexOf(Plasma::Theme::defaultTheme()->themeName()));
 
     if (mode == kSlideshowBackground) {
@@ -677,10 +671,6 @@ void BackgroundDialog::saveConfig(KConfigGroup config, KConfigGroup globalConfig
         int seconds = QTime(0, 0, 0).secsTo(m_slideshowDelay->time());
         config.writeEntry("slideTimer", seconds);
     }
-
-    KConfigGroup iconConfig(&globalConfig, "DesktopIcons");
-    iconConfig.writeEntry("showIcons", (m_showIcons->checkState() == Qt::Checked ? true : false));
-    iconConfig.writeEntry("alignToGrid", (m_alignToGrid->checkState() == Qt::Checked ? true : false));
 
     Plasma::Theme::defaultTheme()->setThemeName(m_theme->currentText());
 }

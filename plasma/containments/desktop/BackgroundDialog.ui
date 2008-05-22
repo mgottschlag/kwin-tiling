@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>654</width>
-    <height>445</height>
+    <height>336</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -92,8 +92,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>490</width>
-             <height>179</height>
+             <width>493</width>
+             <height>174</height>
             </rect>
            </property>
            <layout class="QGridLayout" >
@@ -280,14 +280,14 @@
                 <height>30</height>
                </size>
               </property>
-              <property name="color" stdset="0" >
+              <property name="color" >
                <color>
                 <red>70</red>
                 <green>90</green>
                 <blue>130</blue>
                </color>
               </property>
-              <property name="defaultColor" stdset="0" >
+              <property name="defaultColor" >
                <color>
                 <red>70</red>
                 <green>90</green>
@@ -552,38 +552,6 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0" >
-    <widget class="QGroupBox" name="groupBox_2" >
-     <property name="title" >
-      <string>Desktop Icons</string>
-     </property>
-     <property name="flat" >
-      <bool>true</bool>
-     </property>
-     <property name="checkable" >
-      <bool>false</bool>
-     </property>
-     <layout class="QVBoxLayout" >
-      <item>
-       <widget class="QCheckBox" name="m_showIcons" >
-        <property name="text" >
-         <string>&amp;Show desktop icons</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="m_alignToGrid" >
-        <property name="enabled" >
-         <bool>false</bool>
-        </property>
-        <property name="text" >
-         <string>&amp;Align to grid</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -604,22 +572,5 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>m_showIcons</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>m_alignToGrid</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>70</x>
-     <y>275</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>74</x>
-     <y>305</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
