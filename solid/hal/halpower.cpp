@@ -512,10 +512,18 @@ void HalPower::slotPlugStateChanged(bool newState)
 {
     if (newState)
     {
+        if(m_pluggedAdapterCount == 0)
+        {
+            emit acAdapterStateChanged(Solid::Control::PowerManager::Plugged);
+        }
         m_pluggedAdapterCount++;
     }
     else
     {
+        if(m_pluggedAdapterCount == 1)
+        {
+            emit acAdapterStateChanged(Solid::Control::PowerManager::Unplugged);
+        }
         m_pluggedAdapterCount--;
     }
 }
