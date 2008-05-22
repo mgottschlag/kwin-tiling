@@ -77,6 +77,8 @@ private:
     Q_PRIVATE_SLOT(d, void rulersMoved(int offset, int minLength, int minLength))
     Q_PRIVATE_SLOT(d, void alignToggled(bool toggle))
 
+    class ToolButton;
+    class ResizeHandle;
     class Private;
     Private *d;
 };

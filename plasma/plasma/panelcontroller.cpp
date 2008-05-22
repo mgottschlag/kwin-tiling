@@ -34,6 +34,72 @@
 
 #include "positioningruler.h"
 
+class PanelController::ToolButton: public QToolButton
+{
+public:
+    ToolButton(QWidget *parent)
+       : QToolButton(parent)
+    {
+         
+    }
+    
+    ~ToolButton()
+    {}
+
+    void paintEvent(QPaintEvent *event)
+    {
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing, true);
+
+        QStyleOptionToolButton buttonOpt;
+        initStyleOption(&buttonOpt);
+
+        QColor backgroundColor;
+        if ((buttonOpt.state & QStyle::State_MouseOver) || isChecked()) {
+            backgroundColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+        } else {
+            backgroundColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+        }
+
+        backgroundColor.setAlphaF(0.4);
+        QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+        
+        buttonOpt.palette.setColor(QPalette::Foreground, textColor);
+
+        textColor.setAlphaF(0.4);
+        painter.setPen(textColor);
+        painter.setBrush(backgroundColor);
+        painter.drawPath(Plasma::roundedRectangle(event->rect().adjusted(1,1,-1,-1), 4));
+
+        style()->drawControl(QStyle::CE_ToolButtonLabel, &buttonOpt, &painter, this);
+    }
+};
+
+class PanelController::ResizeHandle: public QWidget
+{
+public:
+    ResizeHandle(QWidget *parent)
+       : QWidget(parent)
+    {
+        setCursor(Qt::SizeVerCursor);
+    }
+
+    QSize sizeHint() const
+    {
+        return QSize(4, 4);
+    }
+
+    void paintEvent(QPaintEvent *event)
+    {
+        QPainter painter(this);
+        QColor backColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+        backColor.setAlphaF(0.50);
+        painter.fillRect(event->rect(), backColor);
+    }
+
+    Plasma::Location m_location;
+};
+
 class PanelController::Private
 {
 public:
@@ -52,31 +118,13 @@ public:
     {
     }
 
-    QString buttonStyleSheet()
+    ToolButton *addTool(const QString icon, const QString iconText, Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon, bool checkButton = false)
     {
-         const QColor textColor( Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
-         const QColor backgroundColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
-         const QColor mixedColor(KColorUtils::mix(textColor, backgroundColor, 0.6));
-
-         return QString("QToolButton {\
-             border: 2px solid " + mixedColor.name() +
-             "; border-radius: 3px;\
-             color: " + textColor.name() +
-             "; background-color: " + backgroundColor.name() +'}'+
-             "QToolButton:hover {\
-               background-color: " + mixedColor.name() + '}'+
-             "QToolButton:checked {\
-               background-color: " + mixedColor.darker(120).name() + '}');
-    }
-
-    QToolButton *addTool(const QString icon, const QString iconText, Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon, bool checkButton = false)
-    {
-        QToolButton *tool = new QToolButton(q);
+        ToolButton *tool = new ToolButton(q);
 
         tool->setIcon(KIcon(icon));
         tool->setText(iconText);
         tool->setToolButtonStyle(style);
-        tool->setStyleSheet(buttonStyleSheet());
 
         if (style == Qt::ToolButtonIconOnly) {
             tool->setToolTip(iconText);
@@ -178,41 +226,14 @@ public:
     QPoint startDragPos;
 
     //Alignment buttons
-    QToolButton *leftAlignTool;
-    QToolButton *centerAlignTool;
-    QToolButton *rightAlignTool;
+    ToolButton *leftAlignTool;
+    ToolButton *centerAlignTool;
+    ToolButton *rightAlignTool;
 
-    class ResizeHandle;
     ResizeHandle *panelHeightHandle;
     PositioningRuler *ruler;
 
     static const int minimumHeight = 10;
-};
-
-
-class PanelController::Private::ResizeHandle: public QWidget
-{
-public:
-    ResizeHandle(QWidget *parent)
-       : QWidget(parent)
-    {
-        setCursor(Qt::SizeVerCursor);
-    }
-
-    QSize sizeHint() const
-    {
-        return QSize(4, 4);
-    }
-
-    void paintEvent(QPaintEvent *event)
-    {
-        QPainter painter(this);
-        QColor backColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-        backColor.setAlphaF(0.50);
-        painter.fillRect(event->rect(), backColor);
-    }
-
-    Plasma::Location m_location;
 };
 
 PanelController::PanelController(QWidget* parent)
@@ -222,7 +243,7 @@ PanelController::PanelController(QWidget* parent)
     setWindowFlags(Qt::Popup);
 
     //Resize handles
-    d->panelHeightHandle = new Private::ResizeHandle(this);
+    d->panelHeightHandle = new ResizeHandle(this);
 
     //layout setup
     d->extLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
@@ -256,16 +277,16 @@ PanelController::PanelController(QWidget* parent)
     d->layout->addStretch();
 
     //other buttons
-    QToolButton *addWidgetTool = d->addTool("list-add", i18n("Add Widgets"));
+    ToolButton *addWidgetTool = d->addTool("list-add", i18n("Add Widgets"));
     connect(addWidgetTool, SIGNAL(clicked()), this, SIGNAL(showAddWidgets()));
     connect(addWidgetTool, SIGNAL(clicked()), this, SLOT(hideController()));
 
-    QToolButton *removePanelTool = d->addTool("list-remove", i18n("Remove this panel"));
+    ToolButton *removePanelTool = d->addTool("list-remove", i18n("Remove this panel"));
     connect(removePanelTool, SIGNAL(clicked()), this, SIGNAL(removePanel()));
     connect(removePanelTool, SIGNAL(clicked()), this, SLOT(hideController()));
 
     d->layout->addSpacing(20);
-    QToolButton *closeControllerTool = d->addTool("window-close", i18n("Close this configuration window"), Qt::ToolButtonIconOnly, false);
+    ToolButton *closeControllerTool = d->addTool("window-close", i18n("Close this configuration window"), Qt::ToolButtonIconOnly, false);
     connect(closeControllerTool, SIGNAL(clicked()), this, SLOT(hideController()));
 
     d->ruler = new PositioningRuler(this);
