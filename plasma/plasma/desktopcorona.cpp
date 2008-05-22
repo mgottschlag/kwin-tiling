@@ -24,6 +24,7 @@
 #include <QGraphicsLayout>
 
 #include <KDebug>
+#include <KDialog>
 
 #include <plasma/containment.h>
 
@@ -84,12 +85,23 @@ void DesktopCorona::loadDefaultLayout()
         c->setScreen(i);
         c->setFormFactor(Plasma::Planar);
         c->flushPendingConstraintsEvents();
-        emit containmentAdded(c);
+
+        // put a folder view on the first screen
+        if (i == 0) {
+            Plasma::Applet *folderView =  Plasma::Applet::load("folderview", c->id() + 1);
+            c->addApplet(folderView, QPointF(KDialog::spacingHint(), KDialog::spacingHint()), true);
+            KConfigGroup config = folderView->config();
+            config.writeEntry("url", "desktop:/");
+            folderView->flushPendingConstraintsEvents();
+            folderView->init();
+        }
 
         if (g.x() <= topLeftCorner.x() && g.y() >= topLeftCorner.y()) {
             topLeftCorner = g.topLeft();
             topLeftScreen = i;
         }
+
+        emit containmentAdded(c);
     }
 
     // make a panel at the bottom
