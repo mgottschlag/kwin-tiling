@@ -65,6 +65,7 @@ public:
         QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
         
         buttonOpt.palette.setColor(QPalette::Foreground, textColor);
+        buttonOpt.palette.setColor(QPalette::ButtonText, textColor);
 
         textColor.setAlphaF(0.4);
         painter.setPen(textColor);
