@@ -54,7 +54,6 @@ public:
           highlight(false),
           index(-1),
           rowStride(6),
-          updateId(0),
           highlightTimerId(0),
           animation(0),
           needsMoving(false)
@@ -101,7 +100,6 @@ public:
     int highlight;
     int index;
     int rowStride;
-    int updateId;
     int highlightTimerId;
     QGraphicsItemAnimation *animation;
     bool isFavorite : 1;
@@ -252,16 +250,6 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
 QString ResultItem::id() const
 {
     return d->match.id();
-}
-
-int ResultItem::updateId() const
-{
-    return d->updateId;
-}
-
-void ResultItem::setUpdateId(int id)
-{
-    d->updateId = id;
 }
 
 bool ResultItem::compare(const ResultItem *one, const ResultItem *other)

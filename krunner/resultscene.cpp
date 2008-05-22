@@ -93,39 +93,6 @@ void ResultScene::layoutIcons()
     }
 }
 
-void ResultScene::addQueryMatch(const Plasma::QueryMatch &match)
-{
-    QMap<QString, ResultItem*>::iterator it = m_itemsById.find(match.id());
-    ResultItem *item = 0;
-
-    // handle the case of re-using multiple items of the same id
-    while (it != m_itemsById.end() && it.value()->updateId() == m_updateId) {
-        ++it;
-        if (it == m_itemsById.end() || it.value()->id() != match.id()) {
-            break;
-        }
-    }
-
-    if (it == m_itemsById.end()) {
-        //kDebug() << "did not find for" << match.id();
-        item = new ResultItem(match, 0);
-        addItem(item);
-        item->hide();
-        m_itemsById.insert(match.id(), item);
-        m_items.append(item);
-        int rowStride = sceneRect().width() / (ResultItem::BOUNDING_WIDTH);
-        item->setRowStride(rowStride);
-        connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
-        connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
-        connect(item, SIGNAL(hoverLeave(ResultItem*)), this, SIGNAL(itemHoverLeave(ResultItem*)));
-    } else {
-        item = it.value();
-        item->setMatch(match);
-    }
-
-    item->setUpdateId(m_updateId);
-}
-
 void ResultScene::clearMatches()
 {
     foreach (ResultItem *item, m_items) {
@@ -151,23 +118,32 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 
     QList<Plasma::QueryMatch> matches = m;
 
-    ++m_updateId;
     // be sure all the new elements are in
-    QList<Plasma::QueryMatch>::const_iterator newMatchIt = matches.constEnd();
-    while (newMatchIt != matches.constBegin()) {
-        --newMatchIt;
-        addQueryMatch(*newMatchIt);
+    QMutableListIterator<Plasma::QueryMatch> newMatchIt(matches);
+    m_items.clear();
+
+    // first pass: we try and match up items with existing ids (match persisitence)
+    while (newMatchIt.hasNext()) {
+        ResultItem *item = addQueryMatch(newMatchIt.next(), false);
+
+        if (item) {
+            // we failed to match it with an existing id. *sob*
+            m_items.append(item);
+            newMatchIt.remove();
+        }
     }
 
+    // second pass: now we just use any item that exists (item re-use)
+    newMatchIt.toFront();
+    while (newMatchIt.hasNext()) {
+        m_items.append(addQueryMatch(newMatchIt.next(), true));
+    }
+
+
     // now delete the stragglers
-    QMutableListIterator<ResultItem *> it(m_items);
+    QMapIterator<QString, ResultItem *> it(m_itemsById);
     while (it.hasNext()) {
-        ResultItem *item = it.next();
-        if (item->updateId() != m_updateId) {
-            //kDebug() << item->id() << "was not updated (" << item->updateId() << " vs " << m_updateId << ")";
-            item->remove(); 
-            it.remove();
-        }
+        it.next().value()->remove();
     }
 
     // now organize the remainders
@@ -177,10 +153,10 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     // this will leave them in *reverse* order
     qSort(m_items.begin(), m_items.end(), ResultItem::compare);
 
-    it.toFront();
+    QListIterator<ResultItem*> matchIt(m_items);
     QGraphicsWidget *tab = 0;
-    while (it.hasNext()) {
-        ResultItem *item = it.next();
+    while (matchIt.hasNext()) {
+        ResultItem *item = matchIt.next();
         //kDebug()  << item->name() << item->id() << item->priority() << i;
         QGraphicsWidget::setTabOrder(tab, item);
         m_itemsById.insert(item->id(), item);
@@ -194,6 +170,38 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         ++i;
         tab = item;
     }
+}
+
+ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId)
+{
+    QMap<QString, ResultItem*>::iterator it = useAnyId ? m_itemsById.begin() : m_itemsById.find(match.id());
+    ResultItem *item = 0;
+    //kDebug() << "attempting" << match.id();
+
+    if (it == m_itemsById.end()) {
+        //kDebug() << "did not find for" << match.id();
+        if (useAnyId) {
+            //kDebug() << "creating for" << match.id();
+            item = new ResultItem(match, 0);
+            addItem(item);
+            item->hide();
+            int rowStride = sceneRect().width() / (ResultItem::BOUNDING_WIDTH);
+            item->setRowStride(rowStride);
+            connect(item, SIGNAL(activated(ResultItem*)), this, SIGNAL(itemActivated(ResultItem*)));
+            connect(item, SIGNAL(hoverEnter(ResultItem*)), this, SIGNAL(itemHoverEnter(ResultItem*)));
+            connect(item, SIGNAL(hoverLeave(ResultItem*)), this, SIGNAL(itemHoverLeave(ResultItem*)));
+        } else {
+            //kDebug() << "returning failure for" << match.id();
+            return 0;
+        }
+    } else {
+        //kDebug() << "reusing for" << match.id();
+        item = it.value();
+        item->setMatch(match);
+        m_itemsById.erase(it);
+    }
+
+    return item;
 }
 
 void ResultScene::focusOutEvent(QFocusEvent *focusEvent)

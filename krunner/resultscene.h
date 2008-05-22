@@ -69,7 +69,7 @@ class ResultScene : public QGraphicsScene
         void focusOutEvent(QFocusEvent *focusEvent);
 
     private:
-        void addQueryMatch(const Plasma::QueryMatch &match);
+        ResultItem* addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId);
         void performResize(int width, int height);
 
         Plasma::RunnerManager *m_runnerManager;
@@ -87,7 +87,6 @@ class ResultScene : public QGraphicsScene
         int         m_resizeH;
 
         int m_itemCount;
-        int m_updateId;
         QList<ResultItem *>  m_items;
         QMultiMap<QString, ResultItem *>  m_itemsById;
 

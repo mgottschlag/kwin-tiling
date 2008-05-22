@@ -65,7 +65,6 @@ public:
 
     // getters
     QString id() const;
-    int updateId() const;
     QString name() const;
     QString description() const;
     QString data() const;
@@ -80,7 +79,6 @@ public:
     void remove();
     void run(Plasma::RunnerManager *manager);
 
-    void setUpdateId(int id);
     static bool compare(const ResultItem *one, const ResultItem *other);
     bool operator<(const ResultItem &other) const;
 
