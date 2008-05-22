@@ -7,29 +7,13 @@ set(nowplaying_engine_SRCS
     dbuswatcher.cpp
     pollingwatcher.cpp
     mpris.cpp
+    juk.cpp
+    amarok.cpp
 )
 
-set(juk_xml ${DBUS_INTERFACES_INSTALL_DIR}/org.kde.juk.player.xml)
-if(EXISTS ${juk_xml})
-   QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS ${juk_xml} juk_interface)
-   set(nowplaying_engine_SRCS ${nowplaying_engine_SRCS} juk.cpp)
-   set(JUK_FOUND ON)
-   message(STATUS "Found JuK D-Bus interface specification: the nowplaying dataengine will support JuK")
-else(EXISTS ${juk_xml})
-   message(STATUS "JuK D-Bus interface specification NOT found: the nowplaying dataengine will NOT support JuK")
-endif(EXISTS ${juk_xml})
-macro_log_feature(JUK_FOUND "JuK" "Jukebox and music manager for KDE" "http://developer.kde.org/~wheeler/juk.html" FALSE "" "Support for JuK in the Now Playing data engine")
-
-set(amarok_xml ${DBUS_INTERFACES_INSTALL_DIR}/org.kde.amarok.player.xml)
-if(EXISTS ${amarok_xml})
-   QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS ${amarok_xml} amarok_interface)
-   set(nowplaying_engine_SRCS ${nowplaying_engine_SRCS} amarok.cpp)
-   set(AMAROK_FOUND ON)
-   message(STATUS "Found Amarok D-Bus interface specification: the nowplaying dataengine will support Amarok")
-else(EXISTS ${amarok_xml})
-   message(STATUS "Amarok D-Bus interface specification NOT found: the nowplaying dataengine will NOT support Amarok")
-endif(EXISTS ${amarok_xml})
-macro_log_feature(AMAROK_FOUND "Amarok" "Music player for KDE" "http://amarok.kde.org/" FALSE "" "Support for Amarok in the Now Playing data engine")
+QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS org.kde.juk.player.xml juk_interface)
+QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS org.kde.amarok.player.xml amarok_interface)
+QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS mpris_interface.xml mpris_interface)
 
 macro_optional_find_package(GLIB2)
 if(GLIB2_FOUND)
@@ -44,8 +28,6 @@ if(GLIB2_FOUND)
       message(STATUS "Could NOT find XMMS: the nowplaying dataengine will NOT support XMMS 1.x")
    endif(XMMS_FOUND)
 endif(GLIB2_FOUND)
-
-QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS mpris_interface.xml mpris_interface)
 
 configure_file(config-nowplaying.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-nowplaying.h)
 

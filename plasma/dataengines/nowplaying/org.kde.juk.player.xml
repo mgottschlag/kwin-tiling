@@ -1,0 +1,60 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.juk.player">
+    <method name="playing">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="paused">
+      <arg type="b" direction="out"/>
+    </method>
+    <method name="volume">
+      <arg type="d" direction="out"/>
+    </method>
+    <method name="status">
+      <arg type="i" direction="out"/>
+    </method>
+    <method name="trackProperties">
+      <arg type="as" direction="out"/>
+    </method>
+    <method name="trackProperty">
+      <arg type="s" direction="out"/>
+      <arg name="property" type="s" direction="in"/>
+    </method>
+    <method name="play"/>
+    <method name="play">
+      <arg name="file" type="s" direction="in"/>
+    </method>
+    <method name="pause"/>
+    <method name="stop"/>
+    <method name="playPause"/>
+    <method name="back"/>
+    <method name="forward"/>
+    <method name="seekBack"/>
+    <method name="seekForward"/>
+    <method name="volumeUp"/>
+    <method name="volumeDown"/>
+    <method name="mute"/>
+    <method name="setVolume">
+      <arg name="volume" type="d" direction="in"/>
+    </method>
+    <method name="seek">
+      <arg name="time" type="i" direction="in"/>
+    </method>
+    <method name="playingString">
+      <arg type="s" direction="out"/>
+    </method>
+    <method name="currentTime">
+      <arg type="i" direction="out"/>
+    </method>
+    <method name="totalTime">
+      <arg type="i" direction="out"/>
+    </method>
+    <method name="randomPlayMode">
+      <arg type="s" direction="out"/>
+    </method>
+    <method name="setRandomPlayMode">
+      <arg name="randomMode" type="s" direction="in"/>
+    </method>
+  </interface>
+</node>
