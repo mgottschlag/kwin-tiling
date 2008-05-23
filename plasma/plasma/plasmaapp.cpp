@@ -347,14 +347,14 @@ Plasma::Corona* PlasmaApp::corona()
         DesktopCorona *c = new DesktopCorona(this);
         connect(c, SIGNAL(containmentAdded(Plasma::Containment*)),
                 this, SLOT(createView(Plasma::Containment*)));
-                
+
         foreach (DesktopView *view, m_desktops) {
             connect(c, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
                             view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
         }
 
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
-        c->loadLayout();
+        c->initializeLayout();
         c->checkScreens();
         m_corona = c;
     }
