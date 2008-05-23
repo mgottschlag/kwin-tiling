@@ -62,6 +62,18 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     action->setShortcut(QKeySequence("ctrl+["));
     connect(action, SIGNAL(triggered()), this, SLOT(previousContainment()));
     addAction(action);
+
+    const int w = 25;
+    QPixmap tile(w * 2, w * 2);
+    tile.fill(palette().base().color());
+    QPainter pt(&tile);
+    QColor color = palette().mid().color();
+    color.setAlphaF(.6);
+    pt.fillRect(0, 0, w, w, color);
+    pt.fillRect(w, w, w, w, color);
+    pt.end();
+    QBrush b(tile);
+    setBackgroundBrush(tile);
 }
 
 DesktopView::~DesktopView()
