@@ -1,0 +1,132 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+
+<authorgroup>
+<author>&Mike.McBride; &Mike.McBride.mail;</author>
+<author>&Mark.Donohoe; &Mark.Donohoe.mail;</author>
+<author>&Martin.R.Jones; &Martin.R.Jones.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2003-09-22</date>
+<releaseinfo>3.2</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>color</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="color">
+
+<title>Colors</title>
+<sect2 id="color-intro">
+<title>Introduction</title>
+
+<para>The Color Selection module is comprised of 4 sections:</para>
+
+<orderedlist>
+<listitem><para><link linkend="kcmdisplay-preview">The color scheme
+preview</link>.</para></listitem>
+<listitem><para><link linkend="kcmdisplay-widget-color">The current 
+<guilabel>Widget Color</guilabel></link>.</para>
+</listitem>
+<listitem><para><link linkend="kcmdisplay-color-schemes">The available Color
+Schemes</link>.</para></listitem>
+<listitem><para><link linkend="kcmdisplay-contrast">The contrast
+slider</link>.</para></listitem>
+</orderedlist>
+
+<note><para>A <emphasis>Widget</emphasis> is a commonly-used
+programmer's term for referring to User Interface elements such as
+buttons, menus, and scroll bars.  You can think of them as the
+fundamental pieces that are assembled to make your
+application.</para></note>
+
+<sect3 id="kcmdisplay-preview">
+<title>Preview</title>
+
+<para>This section of the dialog demonstrates how a color scheme applies
+to a sample selection of widgets. It provides you with a
+<guilabel>preview</guilabel> of your current color choices.</para>
+
+<para>A color scheme consists of a set of 18 colors. </para>
+
+<para>Each of the widgets is labeled to help you identify how your
+changes will impact the color scheme.</para>
+
+</sect3>
+
+<sect3 id="kcmdisplay-widget-color">
+<title><guilabel>Widget Color</guilabel></title>
+
+<para>The currently selected member of the color scheme is shown in the
+combo box. This widget color can be changed by clicking on the colored
+box below the combo box. A color selection dialog will then appear, from
+which you may select a new color. When you are happy with your color
+selection, press <guibutton>OK</guibutton> in the color selection
+dialog.  The color will be updated in the Preview Area.</para>
+
+<para>You may select any member of the color scheme from the 
+color combination box.</para>
+
+</sect3>
+
+<sect3 id="kcmdisplay-contrast">
+<title><guilabel>Contrast</guilabel> Slider</title>
+
+<para>The <guilabel>Contrast</guilabel> slider allows you to change the
+contrast between different shadings of the selected colors.</para>
+
+<para>The preview area instantly updates to show the effect of your
+change.</para>
+
+</sect3>
+
+<sect3 id="kcmdisplay-color-schemes">
+<title><guilabel>Color Scheme</guilabel></title>
+
+<para>Various color schemes are supplied with &kde;, and you are free to 
+define your own.</para> 
+
+<para>The three major color components of each scheme are shown beside
+the name in the list. To preview a scheme in the larger preview area,
+click on its name in the list box. </para>
+
+<para>You can use the &kde;-supplied Color Schemes as a starting point
+to devise your own Scheme. Click on the <guibutton>Save
+Scheme...</guibutton> button to store the color scheme under a new name,
+then modify it. </para>
+
+<para>When such a user-created Color Scheme is selected, changes to it
+(as shown in the Preview) can be saved with the <guibutton>Save
+Scheme...</guibutton> button; it can also be deleted with the
+<guibutton>Remove Scheme</guibutton> button.</para>
+
+<note><para>The &kde;-supplied Schemes themselves cannot be changed or
+deleted.</para></note>
+
+<para>You can use the <guibutton>Import Scheme...</guibutton> button to
+add new entries to the list.  This might be color schemes that you
+have created on another computer and saved, or color schemes you have
+downloaded from a website.</para>
+
+<para>You can choose if you want &kde; to apply the color scheme even
+to non-&kde; applications by enabling the <guilabel>Apply colors to
+non-KDE applications</guilabel>.  Not all applications will allow
+this, but most do.</para>
+
+</sect3>
+</sect2>
+
+</sect1>
+
+</article>
