@@ -107,7 +107,7 @@ Joystick::Joystick(QWidget *parent, const QVariantList &)
   top->setSpacing(KDialog::spacingHint());
   top->addWidget(joyWidget);
 
-  setButtons(KCModule::Default);
+  setButtons(Help);
 }
 
 //---------------------------------------------------------------------------------------------
