@@ -1,0 +1,203 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+
+<authorgroup>
+<author>&Mike.McBride; &Mike.McBride.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2005-02-20</date>
+<releaseinfo>3.4</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>screensaver</keyword>
+<keyword>screen saver</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="screensaver">
+
+<title>Screen Saver</title>
+
+<para>Using this module, you can choose your screen saver, determine
+how much time must pass before the screen saver is activated, and add
+or remove password protection to your screen saver.</para>
+
+<sect2 id="ss-choose">
+<title>Choosing the screen saver, and configuring its options</title>
+
+<para>In the <guilabel>Settings</guilabel> box is a check box
+labeled <guilabel>Start screen saver automatically</guilabel>.  This
+box must have a mark in it, or &kde; will not launch any screen saver
+and it will not allow you to adjust the settings of your screen
+saver.</para>
+
+<para>Along the left side is a list of all available screen savers.  You can
+select a screen saver by simply clicking on its name.  Once
+you have selected a screen saver, you will see a small preview on the 
+monitor on the right.</para>
+
+<note><para>The preview monitor will often show the screen saver
+larger than it is when the screen saver is activated.  This is done on
+purpose, since many of the details of the screen savers would be
+unintelligible if actually scaled down to such a small
+size.</para></note>
+
+<para>Each screen saver has a different set of setup options.  By
+clicking on <guilabel>Setup...</guilabel>, a dialog box will appear with
+all available options.  As you adjust the options, the preview box in
+the dialog box will show you what effect you will achieve with the
+current settings.</para>
+
+<para>When you are done setting up your screen saver, click
+<guibutton>OK</guibutton>.</para> <para>Clicking <guibutton>Cancel</guibutton>
+will erase any changes you made in this dialog box, and return you to the
+screen saver module.</para>
+
+<para>Clicking the <guibutton>About</guibutton> button will give you
+the Copyright and Author information if you are interested.</para>
+
+<para>When you think you have all the options set the way you want,
+simply click on <guibutton>Test</guibutton> to immediately start the
+screen saver <emphasis>exactly</emphasis> as it will appear.</para>
+
+</sect2>
+
+<sect2 id="ss-options">
+<title>Setting the time, priority and passwords for screen
+savers.</title>
+
+<para>Below the screensaver list is a check box to have the screen saver <guilabel>Start automatically</guilabel> check box, and a spin box which determines the period of inactivity before the screen saver should be started.  You can enter any postive number of minutes in this box.</para>
+
+<para>Below that is a check box labeled <guilabel>Require password to
+stop screen saver</guilabel>.  If it is checked, when you click a key
+or click a mouse button to end the screen saver and return to your
+work, you must enter a password.  The password used is the same
+password you used to login to your machine.  If there is no mark in
+the check box, no password is required to return to your
+desktop.</para>
+
+<para>Enable the check box <guilabel>Make aware of
+power management</guilabel> if you don't want the screensaver to start
+while you watch TV or movies on your monitor.</para>
+
+</sect2>
+
+<sect2 id="ss-other"><title>Using a non-&kde; screen saver</title> 
+
+<para>&kde; does not prevent another screen saver from working.  To use a
+different screen saver, such as <application>xscreensaver</application>, simply
+disable the &kde; Screen Saver, and set up your other screen saver program
+normally.  </para>
+
+</sect2>
+
+<sect2 id="screensaver-remove">
+<title>Removing and restoring a screen saver from your system</title>
+
+<para>If you want to remove a screen saver from the list in this
+Control Center Module, you will need to rename a file on your
+system.</para>
+
+<caution><para>Working as a <systemitem
+class="username">root</systemitem> user is a potentially dangerous
+situation.  While unlikely, it is entirely possible to do permanent
+damage to your system while working as
+<emphasis>root</emphasis>.</para>
+
+<para>Be very careful following the next set of
+directions</para></caution>
+
+<para>To delete a screen saver, type the following commands:</para>
+
+<screen>
+<prompt>bash$</prompt> <command>cd 
+$KDEDIR/share/applnk/System/ScreenSavers</command>
+<prompt>bash$</prompt> <command>ls</command>
+</screen> 
+
+<para>This will give you a list of files.  You will notice
+similarities between some of the file names and that of the screen saver you
+want to remove.  Simply rename the file of similarly named desktop
+file to a name which does not end in
+<emphasis>desktop</emphasis>.</para>
+
+<para>Example:</para>
+<screen>
+<prompt>bash$</prompt> <command>cd 
+$KDEDIR/share/applnk/System/ScreenSavers</command>
+<prompt>bash$</prompt> <command>mv KSpace.desktop KSpace.backup</command>
+</screen> 
+
+<para>Will remove Space (GL) from the list</para>
+
+<note><para>You must close the &kcontrolcenter; entirely and restart it before 
+the changes will be seen.</para></note>
+
+<para>To restore the disabled screen saver, simply rename the file back to its 
+original name:</para>
+
+<screen>
+<prompt>bash$</prompt> <command>cd 
+$KDEDIR/share/applnk/System/ScreenSavers</command>
+<prompt>bash$</prompt> <command>mv KSpace.backup KSpace.desktop</command>
+</screen> 
+
+<para>Restart the &kcontrolcenter;, and the screen saver is back in the 
+list.</para>
+
+</sect2>
+
+<sect2 id="grace">
+<title>Advanced Settings: Grace period</title>
+
+<para>There is a five second grace period after the screen saver
+begins before a  password is required even if <guilabel>Require
+password</guilabel> is checked.</para>
+<para>Locking the desktop manually, by clicking the lock icon
+in the &kde; panel, causes the password protection to engage immediately with
+no grace period.</para>
+<para>To alter the grace period setting, you need to manually edit the 
+configuration file.  To do so:</para>
+<para>
+<prompt>$</prompt> <command>cd <filename>~/.kde/share/config</filename>
+</command>
+</para>
+<para>Now, using a text editor (the example uses &kate;, the &kde; text editor), 
+load the <filename>kdesktoprc</filename>.</para>
+<para>
+<prompt>$</prompt> <command>kate <filename>kdesktoprc</filename>
+</command>
+</para>
+<para>Search through the file for the section labeled 
+<emphasis>[Screensaver]</emphasis>.</para>
+<para>Look through all lines in the section for an entry entitled 
+<emphasis>LockGrace</emphasis>.</para>
+<para>If the entry exists, you can edit the value of the entry.  </para>
+<screen>[Screensaver]
+LockGrace=3000</screen>
+<para>The value of the entity represents the duration of the grace period
+in milliseconds. An entry of 3000, would change the grace period to 3 seconds.
+You can set the value of the entry to any number between zero (no grace period) 
+and 300000 (5 minutes).
+</para>
+<para>If the entry does not exist, simply add the entry to the end of the 
+section.</para>
+
+<para>Any changes to the configuration entry take effect
+immediately.</para>
+
+</sect2>
+
+</sect1>
+
+</article>
