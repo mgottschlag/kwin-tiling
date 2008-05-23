@@ -80,7 +80,7 @@ KSplashThemeMgr::KSplashThemeMgr( QWidget *parent, const QVariantList &args)
   // Once string freeze is over, replace second argument with "Icon"
   about->addCredit(ki18n("Hans Karlsson"), KLocalizedString(), "karlsson.h@home.se" );
   setAboutData(about);
-  setButtons( KCModule::Default|KCModule::Apply );
+  //setButtons( KCModule::Default|KCModule::Apply );
 }
 
 KSplashThemeMgr::~KSplashThemeMgr()

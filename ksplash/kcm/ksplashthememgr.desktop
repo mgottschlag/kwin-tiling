@@ -1,7 +1,7 @@
 [Desktop Entry]
 Icon=preferences-system-splash
 Exec=kcmshell4 ksplashthememgr
-X-DocPath=ksplashml/themes.html
+X-DocPath=kcontrol/splashscreen/index.html
 
 Type=Service
 X-KDE-ServiceTypes=KCModule
