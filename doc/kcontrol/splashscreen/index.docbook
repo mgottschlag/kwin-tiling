@@ -94,7 +94,7 @@ Removing a theme means removing the theme files from your disk. A message box wa
 <varlistentry><term><guilabel>Test Theme</guilabel></term>
 <listitem>
 <para>
-This shows you the theme and the associated icons as they will be displayed when &kde; starts. Clicking on the splash screen hides it.
+This shows you the theme and the associated icons as they will be displayed as splash screen when &kde; starts. Clicking on the splash screen hides it.
 </para>
 </listitem>
 </varlistentry>
