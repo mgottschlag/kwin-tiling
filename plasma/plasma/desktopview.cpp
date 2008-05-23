@@ -337,14 +337,20 @@ void DesktopView::previousContainment()
 {
     QList<Plasma::Containment*> containments = containment()->corona()->containments();
     int start = containments.indexOf(containment());
-    int i = (start - 1) % containments.size();
+    //fun fact: in c++, (-1 % foo) == -1
+    int i = start - 1;
+    if (i < 0) {
+        i += containments.size();
+    }
     //FIXME this is a *horrible* way of choosing a "previous" containment.
     while (i != start) {
         if (containments.at(i)->containmentType() != Plasma::Containment::PanelContainment &&
             containments.at(i)->screen() == -1) {
             break;
         }
-        i = (i - 1) % containments.size();
+        if (--i < 0) {
+            i += containments.size();
+        }
     }
 
     Plasma::Containment *c = containments.at(i);
