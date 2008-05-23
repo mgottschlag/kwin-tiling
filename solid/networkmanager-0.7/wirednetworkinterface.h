@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define NM07_WIREDNETWORKINTERFACE_H
 
 #include "networkinterface.h"
-#include <solid/control/ifaces/wirednetworkinterface.h>
+#include "solid/control/ifaces/wirednetworkinterface.h"
 
 #include <KDebug>
 #include "dbus/generic-types.h"

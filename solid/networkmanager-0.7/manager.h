@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NM07_NETWORKMANAGER_H
 #define NM07_NETWORKMANAGER_H
 
-#include <solid/control/ifaces/networkmanager.h>
+#include "solid/control/ifaces/networkmanager.h"
 #include <QDBusObjectPath>
 #include <kdemacros.h>
 

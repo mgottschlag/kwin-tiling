@@ -21,9 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NM07_NETWORKINTERFACE_H
 #define NM07_NETWORKINTERFACE_H
 
-#include <solid/control/solid_control_export.h>
-#include <solid/control/networkinterface.h>
-#include <solid/control/ifaces/networkinterface.h>
+#include "solid/control/solid_control_export.h"
+#include "solid/control/networkinterface.h"
+#include "solid/control/ifaces/networkinterface.h"
 
 class NMNetworkInterfacePrivate;
 class NMNetworkManager;

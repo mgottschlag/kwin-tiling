@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "networkinterface.h"
 
-#include <solid/control/ifaces/wirelessnetworkinterface.h>
+#include "solid/control/ifaces/wirelessnetworkinterface.h"
 
 #include <QDBusObjectPath>
 #include <kdemacros.h>

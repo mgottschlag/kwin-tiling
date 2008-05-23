@@ -20,10 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #ifndef NM07_ACCESSPOINT_H
 #define NM07_ACCESSPOINT_H
-#include <solid/control/ifaces/wirelessaccesspoint.h>
+#include "solid/control/ifaces/wirelessaccesspoint.h"
 
-#include <solid/control/wirelessaccesspoint.h>
-#include <solid/control/wirelessnetworkinterface.h>
+#include "solid/control/wirelessaccesspoint.h"
+#include "solid/control/wirelessnetworkinterface.h"
 #include "dbus/generic-types.h"
 
 #include <kdemacros.h>
