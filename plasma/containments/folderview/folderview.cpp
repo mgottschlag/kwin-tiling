@@ -36,6 +36,7 @@
 #include <KGlobalSettings>
 
 #include "proxymodel.h"
+#include "plasma/theme.h"
 
 
 FolderView::FolderView(QObject *parent, const QVariantList &args)
@@ -80,7 +81,6 @@ void FolderView::init()
     lister->setNameFilter(m_filterFiles);
 
     m_dirModel->setDirLister(lister);
-    m_delegate->setShadowColor(Qt::black);
 }
 
 FolderView::~FolderView()
@@ -232,7 +232,8 @@ void FolderView::layoutItems() const
 void FolderView::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentRect)
 {
     QStyleOptionViewItemV4 opt = viewOptions();
-    opt.palette.setColor(QPalette::All, QPalette::Text, Qt::white);
+    opt.palette.setColor(QPalette::All, QPalette::Text, Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+    m_delegate->setShadowColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
 
     if (!m_layoutValid)
         layoutItems();
