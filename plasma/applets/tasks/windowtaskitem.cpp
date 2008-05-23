@@ -543,8 +543,6 @@ void WindowTaskItem::animationUpdate(qreal progress)
 
 void WindowTaskItem::slotUpdate()
 {
-    s_backgroundCreated = false;
-    setupBackgroundSvg(0);
     QGraphicsWidget::update();
 }
 
