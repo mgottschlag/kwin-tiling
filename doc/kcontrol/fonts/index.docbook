@@ -1,0 +1,121 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+
+<authorgroup>
+<author>&Mike.McBride; &Mike.McBride.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2003-09-22</date>
+<releaseinfo>3.2</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>fonts</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="fonts">
+
+<title>Fonts</title>
+
+<para>This module is designed to allow you to easily select different
+fonts for different parts of the &kde; Desktop.</para>
+
+<para>The panel consists of different font groups to give you a lot of
+flexibility in configuring your fonts: </para>
+
+<itemizedlist>
+<listitem><para><guilabel>General:</guilabel> Used everywhere the other font
+groups don't apply</para></listitem>
+
+<listitem><para><guilabel>Fixed width:</guilabel> Anywhere a
+non-proportional font is specified</para></listitem>
+
+<!-- <listitem><para><guilabel>File Manager</guilabel> (Font to use in the
+&kde; file manager)</para></listitem> -->
+
+<listitem><para><guilabel>Toolbar:</guilabel> Font used in &kde; application
+toolbars</para></listitem>
+
+<listitem><para><guilabel>Menu:</guilabel> Font used in &kde; application
+menus</para></listitem>
+
+<listitem><para><guilabel>Window title:</guilabel> Font used in the window
+title</para></listitem>
+
+<listitem><para><guilabel>Taskbar:</guilabel> Font used in the taskbar
+panel applet</para></listitem>
+
+<listitem><para><guilabel>Desktop:</guilabel> Font used on the desktop 
+to label icons</para></listitem>
+
+</itemizedlist>
+
+<para>Each font has a corresponding <guibutton>Choose...</guibutton>
+button.  By clicking on this button, a dialog box appears.  You can
+use this dialog box to choose a new font, font style, size and
+character set.  Then press <guibutton>OK</guibutton>.</para>
+
+<para>An example of the font you have chosen will be displayed in the space
+between the font group name and the <guibutton>Choose...</guibutton>
+button.</para>
+
+<para>When you are done, simply click <guibutton>OK</guibutton>, and
+all necessary components of &kde; will be restarted so your changes
+can take affect immediately.</para>
+
+<para>The <guibutton>Adjust All Fonts...</guibutton> button allows you to
+quickly set properties for all the fonts selected
+above.  A font selection dialog similar to the standard one will
+appear, but you will notice checkboxes that allow you to change the
+<guilabel>Font</guilabel>, <guilabel>Font style</guilabel> or 
+<guilabel>Size</guilabel> independently of each other.  You can
+choose any one, two, or three of these options, and they will be
+applied to all the font groups.</para>
+
+<para>For example, if you have selected several different font faces
+above, and realize they are all a size too big (this often happens
+when you change screen resolution, for instance), you can apply a new
+font size to all the fonts, without affecting your customized font
+faces and styles.</para>
+
+<sect2 id="fonts-aa">
+<title>Anti-alias text</title>
+
+<para>To use anti-aliasing, simply place a mark in the checkbox labeled 
+<guilabel>Use anti-aliasing for fonts</guilabel>.</para>
+
+<para>Placing a mark in the checkbox will allow you to specify which range of 
+fonts will <emphasis>not</emphasis> be anti-aliased.  This range is specified 
+with the two combo boxes on the same line.</para>
+
+<para>You can also choose the method that &kde; uses to create an anti-alias
+look to your fonts, and how strongly it should be applied. If you are not
+familiar with the individual methods, you should leave this option
+alone.</para>
+
+<!-- FIXME: Cop-out, I need to write a 'hinting and AA for beginners'
+paragraph in here -->
+
+<note><para>
+The ability to use anti-aliased fonts and icons requires that you have
+support in both X and the &Qt; toolkit, that you have suitable fonts
+installed, and that you are using the built-in font serving capabilities
+of the X server.  If you still are having problems, please contact the
+appropriate &kde; mailing list, or check the
+<acronym>FAQ</acronym>.</para></note>
+
+</sect2>
+
+</sect1>
+
+</article>
