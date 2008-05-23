@@ -1,0 +1,112 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+<authorgroup>
+<author>&Craig.Drummond; &Craig.Drummond.Mail;</author>
+
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2007-08-01</date>
+<releaseinfo>4.0</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>fonts</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="fontinst">
+<title>Font Installer</title>
+
+<para>This module is responsible for installing, un-installing, and managing your fonts. The main display is a list of the installed fonts, grouped via the fonts' family name - the number in square brackets represents the number of installed styles for that family. e.g. The <quote>Times</quote> font may be listed as:
+<itemizedlist>
+<listitem>
+    <para>Times [4]</para>
+    <itemizedlist>
+        <listitem><para>Regular</para></listitem>
+        <listitem><para>Italic</para></listitem>
+        <listitem><para>Bold</para></listitem>
+        <listitem><para>Bold Italic</para></listitem>
+    </itemizedlist>
+</listitem>
+</itemizedlist>
+</para>
+<para>The module has 2 main modes of operation:</para>
+<orderedlist>
+<listitem><para>Font Installation</para></listitem>
+<listitem><para>Font Management</para></listitem>
+</orderedlist>
+
+
+<sect2 id="font-installation">
+<title>Font Installation</title>
+<para>This mode is designed for users who just wish to install, and un-install fonts - and nothing else. Present within this mode are the following controls:</para>
+
+<orderedlist>
+<listitem><para><quote>Settings</quote> menu button. Use this button to change the mode of this module, toggle the displaying of a large font preview, and to change the text used for the previews.</para></listitem>
+<listitem><para>A combo-box used to change what fonts are shown, and where they will be installed.
+    <orderedlist>
+    <listitem><para><quote>Personal Fonts</quote> The fonts shown will be your personal fonts, and will not be available to other users.</para></listitem>
+    <listitem><para><quote>System Fonts</quote> The fonts shown will be those available to all users. Installing a font system-wide, or removing a system-wide font, will require administrator privileges. These fonts are displayed with bold text, to differentiate them from the Personal fonts.</para></listitem>
+    <listitem><para><quote>All Fonts</quote> This will display all fonts, both personal and system-wide.</para></listitem>
+    </orderedlist>
+</para></listitem>
+
+<listitem><para>A text field allowing you to filter the list of fonts. You can filter fonts based upon their family name, or their style name.</para></listitem>
+</orderedlist>
+
+<para>To install a font, press the <quote>Add...</quote> button, and select the desired fonts from within the file dialog. The setting within the above mentioned combo-box will control where the fonts will be installed.</para>
+
+<para>To un-install fonts, select the appropriate fonts from the list, and press the <quote>Delete...</quote> button.</para>
+
+</sect2>
+<sect2 id="font-management">
+<title>Font Management</title>
+<para>Enabling this mode, will activate the following extra functionality:
+
+<orderedlist>
+    <listitem><para>Enabling and disabling fonts.</para></listitem>
+    <listitem><para>Placing fonts within groups.</para></listitem>
+    <listitem><para>Extra font filtering categories.
+        <orderedlist>
+        <listitem><para>Foundry.</para></listitem>
+        <listitem><para>FontConfig match. This allows you to enter a family name, and see the family that fontconfig would actually use.</para></listitem>
+        <listitem><para>Font file.</para></listitem>
+        <listitem><para>Font file location.</para></listitem>
+        <listitem><para>Writing system.</para></listitem>
+        </orderedlist>
+    </para></listitem>
+    <listitem><para>Scanning for duplicate fonts</para></listitem>
+</orderedlist>
+In this mode, the combo-box from the <quote>Font Installation</quote> mode is replaced by the list of font groups.</para>
+<sect3 id="font-hiding">
+<title>Enabling and Disabling</title>
+<para>Users with many fonts may find it useful to only have certain fonts enabled (or active) at certain times. To facilitate this, this module will allow you to disable individual fonts, or whole groups of fonts. Disabling a font does not remove the font from the system, it simply hides it so that it no longer appears within applications. Re-enabling a font will then allow it to be used.</para>
+</sect3>
+<sect3 id="font-groups">
+<title>Font Groups</title>
+<para>There are 4 special pre-defined font groups:</para>
+
+<orderedlist>
+    <listitem><para><quote>All Fonts</quote> This will display all fonts, both personal and system-wide.</para></listitem>
+    <listitem><para><quote>Personal Fonts</quote> The fonts shown will be your personal fonts, and will not be available to other users.</para></listitem>
+    <listitem><para><quote>System Fonts</quote> The fonts shown will be those available to all users. Installing a font system-wide, or removing a system-wide font, will require administrator privileges. These fonts are displayed with bold text, to differentiate them from the Personal fonts.</para></listitem>
+    <listitem><para><quote>Unclassified</quote> This will list all fonts that have not been placed into any user-defined groups.</para></listitem>
+</orderedlist>
+<para>To add a font to a group, drag it from the list of fonts onto a group. To remove a font from a group, drag the font onto the <quote>All Fonts</quote> group.</para>
+</sect3>
+<sect3 id="font-duplicates">
+<title>Duplicate Fonts</title>
+<para>If you have lots of fonts installed on your system it is possible that you may have duplicates. The <quote>Scan For Duplicate Fonts...</quote> tool, is a simple tool that will scan your system looking for fonts that have multiple files associated with them. For example, if you have <quote>times.ttf</quote> and <quote>times.TTF</quote> installed in <quote>/usr/local/share/fonts</quote> the underlying font mechanism (called <quote>FontConfig</quote>) will only see one of these. So, if you un-installed the font, it would re-appear, as only one of the files would have been removed. Running this tool will produce a dialog listing each font that has multiple files, and the corresponding list of files. To select a file for deletion, click on the column containing the trash can icon.</para>
+</sect3>
+</sect2>
+</sect1>
+</article>

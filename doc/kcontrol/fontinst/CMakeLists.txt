@@ -1,13 +1,2 @@
-
-
-
 ########### install files ###############
-
-
-
-
-
-#original Makefile.am contents follow:
-
-#KDE_LANG = en
-#KDE_DOCS = kcontrol/kcmfontinst
+kde4_create_handbook(index.docbook INSTALL_DESTINATION ${HTML_INSTALL_DIR}/en SUBDIR kcontrol/fontinst)
