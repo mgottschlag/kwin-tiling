@@ -74,6 +74,7 @@ void KRunnerConfigDialog::accept()
 {
     m_sel->save();
     m_manager->reloadConfiguration();
+    close();
 }
 
 #include "configdialog.moc"
