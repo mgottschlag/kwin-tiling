@@ -5,7 +5,9 @@ Name[km]=កម្មវិធី​កំពុង​ចាក់
 Name[nds]=Lopen Stück-Karn
 Name[pt]=Motor 'Agora a Tocar'
 Name[pt_BR]=Motor 'Agora a Tocar'
+Name[sv]=Spelar nu-gränssnitt
 Name[uk]=Рушій поточного відтворення
+Name[zh_CN]=正在收听引擎
 Name[zh_TW]=「現在播放」引擎
 
 Comment=Lists currently playing music
@@ -14,7 +16,9 @@ Comment[km]=រាយ​តន្ដ្រី​ដែល​កពុង​ច�
 Comment[nds]=Wiest opstunns afspeelt Musik
 Comment[pt]=Apresenta a música actualmente em reprodução
 Comment[pt_BR]=Apresenta a música actualmente em reprodução
+Comment[sv]=Listar musik som för närvarande spelas
 Comment[uk]=Показує список музики, що відтворюється
+Comment[zh_CN]=列出当前正在播放的音乐
 Comment[zh_TW]=列出目前播放的音樂
 
 X-KDE-ServiceTypes=Plasma/DataEngine
