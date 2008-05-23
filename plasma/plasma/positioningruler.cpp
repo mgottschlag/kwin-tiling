@@ -605,12 +605,32 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
     QPoint newPos = QPoint(qMin(event->pos().x() - d->startDragPos.x(), width()/* - d->leftMaxSliderRect.width()/2 + 1*/),
                            qMin(event->pos().y() - d->startDragPos.y(), height()/* - d->leftMaxSliderRect.height()/2 + 1*/));
     //bound to 0,0
-    newPos = QPoint(qMax(newPos.x(), 0/* - d->leftMaxSliderRect.width()/2*/), qMax(newPos.y(), 0/* - d->leftMaxSliderRect.height()/2*/));
+    newPos = QPoint(qMax(newPos.x(), 0), qMax(newPos.y(), 0));
 
 
     const bool horizontal = (d->location == Plasma::TopEdge || d->location == Plasma::BottomEdge);
     const int widthBound = 20;
+    const int snapSize = 5;
 
+    //Snap
+    if (horizontal) {
+        if (newPos.x() <= snapSize) {
+            newPos.setX(0);
+        } else if (qAbs(newPos.x() - d->availableLength/2) <= snapSize) {
+            newPos.setX(d->availableLength/2);
+        } else if (d->availableLength - newPos.x() <= snapSize) {
+            newPos.setX(d->availableLength);
+        }
+    } else {
+        if (newPos.y() <= snapSize) {
+            newPos.setY(0);
+        } else if (qAbs(newPos.y() - d->availableLength/2) <= snapSize) {
+            newPos.setY(d->availableLength/2);
+        } else if (d->availableLength - newPos.y() <= snapSize) {
+            newPos.setY(d->availableLength);
+        }
+    }
+    
     switch (d->dragging) {
     case Private::LeftMaxSlider:
         //don't let the slider "cross" with the offset slider
