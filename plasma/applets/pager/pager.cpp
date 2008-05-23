@@ -57,6 +57,7 @@ Pager::Pager(QObject *parent, const QVariantList &args)
       m_columns(0),
       m_hoverIndex(-1),
       m_dragId(0),
+      m_dragStartDesktop(-1),
       m_dragHighlightedDesktop(-1)
 {
     setAcceptsHoverEvents(true);
