@@ -76,6 +76,7 @@ extern "C"
 Joystick::Joystick(QWidget *parent, const QVariantList &)
   : KCModule(JoystickFactory::componentData(), parent)
 {
+  setButtons(Help);
   setAboutData(new KAboutData("kcmjoystick", 0, ki18n("KDE Joystick Control Module"), "1.0",
                                ki18n("KDE Control Center Module to test Joysticks"),
                                KAboutData::License_GPL, ki18n("(c) 2004, Martin Koller"),
@@ -106,8 +107,6 @@ Joystick::Joystick(QWidget *parent, const QVariantList &)
   top->setMargin(0);
   top->setSpacing(KDialog::spacingHint());
   top->addWidget(joyWidget);
-
-  setButtons(Help);
 }
 
 //---------------------------------------------------------------------------------------------
