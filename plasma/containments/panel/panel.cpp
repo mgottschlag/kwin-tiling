@@ -51,7 +51,7 @@ Panel::Panel(QObject *parent, const QVariantList &args)
       m_appletBrowserAction(0),
       m_configureAction(0),
       m_removeAction(0),
-      m_currentSize(QSize(QApplication::desktop()->screenGeometry(screen()).width(), 56)),
+      m_currentSize(QSize(QApplication::desktop()->screenGeometry(screen()).width(), 38)),
       m_lastViewGeom()
 {
     m_background = new Plasma::PanelSvg(this);
