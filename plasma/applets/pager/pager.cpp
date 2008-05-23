@@ -715,7 +715,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     // Inactive windows
     QColor drawingColor = plasmaColorTheme.foreground(KColorScheme::InactiveText).color();
-    drawingColor.setAlpha(132);
+    drawingColor.setAlpha(192);
     QBrush windowBrush(drawingColor);
 
     // Inactive window borders
@@ -727,7 +727,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     QPen activeWindowPen(defaultTextColor);
 
     // Active windows
-    drawingColor.setAlpha(208);
+    drawingColor.setAlpha(228);
     QBrush activeWindowBrush(drawingColor);
 
     if (m_showOwnBackground && (formFactor() == Plasma::Vertical || formFactor() == Plasma::Horizontal)) {
