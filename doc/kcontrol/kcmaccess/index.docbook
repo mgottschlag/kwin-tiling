@@ -1,0 +1,179 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article>
+<articleinfo>
+
+<authorgroup>	
+<author>&Mike.McBride; &Mike.McBride.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2005-12-21</date>
+<releaseinfo>3.01.00</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>accessibility</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="accessibility">
+<title>Accessibility</title>
+<sect2 id="accessibility-intro">
+
+<title>Introduction</title>
+
+<para>This module is designed to help users who have difficulty hearing
+audible cues, or who have difficulty using a keyboard.  </para>
+
+<para>
+The module is divided into two tabs: <link
+linkend="access-bell"><guilabel>Bell</guilabel></link> and <link
+linkend="access-kb"><guilabel>Keyboard</guilabel></link>.
+</para>
+
+<sect3 id="access-bell">
+<title><guilabel>Bell</guilabel></title>
+
+<para>
+This panel is divided into an <guilabel>Audible Bell</guilabel> section
+and a <guilabel>Visible Bell</guilabel> section.
+</para>
+
+<para>
+The top check box labeled <guilabel>Use System Bell</guilabel>, determines
+whether the normal System bell rings.  If this option is disabled, the
+System bell will be silenced.
+</para>
+
+<para>
+The next check box down can be used to play a different sound whenever
+the system bell is triggered.  To activate, place a mark in the check
+box labeled <guilabel>Use customized bell</guilabel>, and enter the
+complete pathname to the sound file in the text box labeled
+<guilabel>Sound to Play</guilabel>.  If you want, you can select the
+<guibutton>Browse</guibutton> button to navigate through your filesystem
+to find the exact file.
+</para>
+
+<para>
+For those users who have difficulty hearing the System bell, or those
+users who have a silent computer, &kde; offers the <emphasis>visible bell</emphasis>.  This
+provides a visual signal (inverting the screen or flashing a color
+across it) when the system bell would normally sound.
+</para>
+
+<para>
+To use the visible bell, first place a mark in the check box labeled
+<guilabel>Use visible bell</guilabel>.
+</para>
+
+<para>
+You can then select between <guilabel>Invert screen</guilabel>, or
+<guilabel>Flash screen</guilabel>.  If you select <guilabel>Invert
+screen</guilabel>, all colors on the screen will be reversed.  If you
+choose <guilabel>Flash screen</guilabel>, you can choose the color by
+clicking the button to the right of the <guilabel>Flash
+screen</guilabel> selection.
+</para>
+
+<para>
+The slider bar can be used to adjust the duration of the visible
+bell.  The default value is 500ms, or half a second.
+</para>
+
+</sect3>
+
+<sect3 id="access-kb">
+<title><guilabel>Keyboard</guilabel></title>
+
+<para>There are three sections to this panel.</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Use Sticky Keys</guilabel></term>
+<listitem>
+<para>
+If this option is enabled, you can press and release the &Shift;,
+&Alt; or &Ctrl; keys, and then press another key to get a key combo
+(example: <keycombo action="simul">&Ctrl; &Alt;
+<keycap>Del</keycap></keycombo> could be done with &Ctrl; then &Alt;
+then <keycap>Del</keycap>).
+</para>
+
+<para>
+Also in this section is a check box labeled <guilabel>Lock Sticky
+Keys</guilabel>.  If this check box is enabled, the &Alt;, &Ctrl;
+and &Shift; keys stay <quote>selected</quote> until you
+<quote>de-selected</quote> them.
+</para>
+
+<para>
+As an example:
+</para>
+<variablelist>
+<varlistentry>
+<term>With <guilabel>Lock Sticky Keys</guilabel> disabled:</term>
+<listitem>
+<para>If you press the &Shift; key then press the
+<keycap>F</keycap> key, the computer interprets this as <keycombo
+action="simul">&Shift;<keycap>F</keycap></keycombo>.  Now if you
+type a <keycap>P</keycap>, the computer interprets this as the letter p
+(no shift).
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>With <guilabel>Lock Sticky Keys</guilabel> enabled:</term>
+<listitem>
+<para>
+If you press the &Shift; key <emphasis>twice</emphasis> then press the <keycap>F</keycap> key,
+the computer interprets this as <keycombo
+action="simul">&Shift;<keycap>F</keycap></keycombo>.  Now if you
+type a <keycap>p</keycap>, the computer interprets this as the letter P
+(<keycombo action="simul">&Shift;<keycap>P</keycap></keycombo>). To
+de-select the &Shift; key, press it again.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Slow keys</guilabel></term>
+<listitem>
+<para>
+If this option is enabled, you must hold the key down for a
+specified length of time (adjustable with the slider) before the
+keystroke will be accepted. This helps prevent accidental key strokes.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term><guilabel>Bounce keys</guilabel></term>
+<listitem>
+<para>
+If this option is enabled, you must wait for a specified length of time
+(configurable with the slider) before the next key press can be
+accepted. This prevents accidental multiple key strokes.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+</sect3>
+
+</sect2>
+
+</sect1>
+
+</article>
