@@ -25,6 +25,7 @@
 
 #include <KDebug>
 #include <KDialog>
+#include <KStandardDirs>
 
 #include <plasma/containment.h>
 
@@ -70,7 +71,13 @@ void DesktopCorona::checkScreens()
 
 void DesktopCorona::loadDefaultLayout()
 {
-    //FIXME: implement support for system-wide defaults
+    QString defaultConfig = KStandardDirs::locate("data", "plasma-default-layoutrc");
+    if (!defaultConfig.isEmpty()) {
+        kDebug() << "attempting to load the default layout from:" << defaultConfig;
+        loadLayout(defaultConfig);
+        return;
+    }
+
     QDesktopWidget *desktop = QApplication::desktop();
     int numScreens = desktop->numScreens();
     kDebug() << "number of screens is" << numScreens;
@@ -115,8 +122,8 @@ void DesktopCorona::loadDefaultLayout()
     panel->addApplet("notifier");
     panel->addApplet("pager");
     panel->addApplet("tasks");
-    panel->addApplet("digital-clock");
     panel->addApplet("systemtray");
+    panel->addApplet("digital-clock");
 }
 
 void DesktopCorona::screenResized(int screen)
