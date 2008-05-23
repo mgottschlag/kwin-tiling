@@ -1,4 +1,17 @@
 [Desktop Entry]
+Exec=kcmshell4 joystick
+
+X-DocPath=kcontrol/joystick/index.html
+Terminal=false
+Type=Service
+Icon=preferences-desktop-gaming
+Categories=Qt;KDE;X-KDE-settings-hardware;
+
+X-KDE-ServiceTypes=KCModule
+X-KDE-Library=kcm_joystick
+X-KDE-Test-Module=true
+X-KDE-System-Settings-Parent-Category=computer-administration
+
 Comment=joystick - a kcontrol module to test joysticks
 Comment[af]=joystick - 'n beheer module om joysticks mee te toets
 Comment[be]=Модуль настаўлення джойстыка
@@ -65,8 +78,6 @@ Comment[wa]=on module di controle po sayî et calibrer les djîsses di djeu
 Comment[x-test]=xxjoystick - a kcontrol module to test joysticksxx
 Comment[zh_CN]=joystick - 测试游戏杆的 kcontrol 模块
 Comment[zh_TW]=搖桿 - 用來測試搖桿的 kcontrol 模組
-Exec=kcmshell4 joystick
-X-KDE-Keywords=joystick,gamepad
 X-KDE-Keywords[ar]=وسادة اللعبة,عصا الألعاب
 X-KDE-Keywords[be]=Джойстык,joystick,gamepad
 X-KDE-Keywords[bg]=Keywords=джойстик, игра, игри, управление, joystick, gamepad
@@ -161,11 +172,5 @@ Name[x-test]=xxJoystickxx
 Name[xh]=Uvuyo
 Name[zh_CN]=游戏杆
 Name[zh_TW]=玩具
-Terminal=false
-Type=Service
-X-KDE-ServiceTypes=KCModule
-X-KDE-Library=kcm_joystick
-X-KDE-Test-Module=true
-Icon=preferences-desktop-gaming
-Categories=Qt;KDE;X-KDE-settings-hardware;
-X-KDE-System-Settings-Parent-Category=computer-administration
+
+X-KDE-Keywords=joystick,gamepad
