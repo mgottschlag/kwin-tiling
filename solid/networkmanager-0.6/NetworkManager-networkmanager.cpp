@@ -71,6 +71,7 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList  & /*arg
     connectNMToThis("DeviceActivating", activating(QDBusObjectPath));
     //TODO: find a way to connect to the wireless variant of this, incl essid
     connectNMToThis("DeviceActivationFailed", activationFailed(QDBusObjectPath));
+    connectNMToThis("WirelessEnabled", wirelessEnabled(bool, bool));
 
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
 
@@ -431,6 +432,11 @@ void NMNetworkManager::activationFailed(const QDBusObjectPath & devPath)
         NMNetworkInterface * interface = it.value();
         interface->setActivationStage(NM_ACT_STAGE_FAILED);
     }
+}
+
+void NMNetworkManager::wirelessEnabled(bool wirelessEnabled, bool unknown)
+{
+    kDebug(1441) << wirelessEnabled << unknown;
 }
 
 // TODO check for bum input at least to public methods ie devPath

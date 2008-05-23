@@ -62,6 +62,7 @@ Q_OBJECT
         void noLongerActive(const QDBusObjectPath &);
         void activating(const QDBusObjectPath &);
         void activationFailed(const QDBusObjectPath &);
+        void wirelessEnabled(bool, bool);
     private:
         NMNetworkManagerPrivate * d;
 };
