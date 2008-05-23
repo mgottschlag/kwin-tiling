@@ -62,7 +62,7 @@ than one joystick device, you can also select which one to configure.
 <varlistentry><term><guilabel>Position</guilabel></term>
 <listitem>
 <para>
-The plotted location of the X and Y axes of the joystick. Enable <guibutton>show trace</guibutton>
+The plotted location of the X and Y axes of the joystick. Enable <guibutton>Show trace</guibutton>
 to plot the path of the joystick from one point to another.
 </para>
 <tip><para>
@@ -94,6 +94,10 @@ maximum and minimum values depend on the joystick and the particular axis.
 <varlistentry><term><guilabel>Calibrate</guilabel></term>
 <listitem>
 <para>
+Clicking on <guibutton>Calibrate</guibutton> will open a dialog to calibrate every axis on your joystick. 
+</para>
+
+<para>
 <screenshot>
 <screeninfo>Calibrating your joystick</screeninfo>
   <mediaobject>
@@ -108,8 +112,7 @@ maximum and minimum values depend on the joystick and the particular axis.
 </para>
 
 <para>
-This will open a dialog to calibrate every axis on your joystick. Each axis
-will have to be moved to the minimum position, then the center, and finally the
+Each axis will have to be moved to the minimum position, then the center, and finally the
 maximum position. A meter in the bottom left corner of the dialog will help
 determine which way increases and which way decreases the values.
 </para>
