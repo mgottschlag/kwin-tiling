@@ -1,0 +1,306 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE">
+]>
+<article>
+<articleinfo>
+<authorgroup>
+<author>&Richard.Johnson;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2007-07-29</date>
+<releaseinfo>1.01.00</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>KCMDisplay</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="kcmdisplay">
+<title><guilabel>Monitor &amp; Display</guilabel></title>
+
+<para>
+This module allows you to change the various monitor and display settings.
+</para>
+
+<para>
+Changes in this module are stored in <filename>/etc/X11/xorg.conf</filename>
+and are the main settings that control the refresh rate, resolution, color,
+power saving, and driver configuration. This module is separated into four
+sections:
+<itemizedlist>
+<listitem>
+<para>
+Size, Orientation, &amp; Positioning (see <xref
+linkend="kcmdisplay-size" />)
+</para>
+</listitem>
+<listitem>
+<para>
+Color &amp; Gamma (see <xref linkend="kcmdisplay-color" />)
+</para>
+</listitem>
+<listitem>
+<para>
+Hardware (see <xref linkend="kcmdisplay-hw" />)
+</para>
+</listitem>
+<listitem>
+<para>
+Power saving (see <xref linkend="kcmdisplay-pwrsav" />)
+</para>
+</listitem>
+</itemizedlist>
+</para>
+
+<sect2 id="kcmdisplay-size">
+<title><guilabel>Size, Orientation, &amp; Position</guilabel></title>
+
+<para>
+This section allows you to configure the <guilabel>Screen size</guilabel>,
+<guilabel>Refresh</guilabel>, <guilabel>Monitor Orientation</guilabel>, as well
+as a <guilabel>Second screen</guilabel> if you have one installed.
+</para>
+
+<variablelist><title><guilabel>Monitor Orientation</guilabel></title>
+<varlistentry><term><guilabel>Normal</guilabel></term>
+<listitem>
+<para>
+This is the default setting and the most common setting. This will cause your
+desktop to be displayed horizontally.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guilabel>Left edge on top</guilabel></term>
+<listitem>
+<para>
+This setting will allow you to rotate your desktop ninety degrees clockwise, or
+to the right. Screen resolutions are greater horizontally, so this setting is
+used mostly for people who write often and need a page to be displayed longer
+than it would be in the <guilabel>Normal</guilabel> orientation.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guilabel>Right edge on top</guilabel></term>
+<listitem>
+<para>
+This is the same as the previous, <guilabel>Left edge on top</guilabel>,
+however it rotates your desktop ninety degrees counter-clockwise, or to the
+left.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guilabel>Upsidedown</guilabel></term>
+<listitem>
+<para>
+This option flips your desktop orientation horizontally, making the desktop
+appear upside down. This is used if you were to mount your monitor upside down
+from a shelving unit or such. After doing so, selecting this will make your
+desktop appear correctly and not upside down.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<variablelist><title><guilabel>Second screen</guilabel></title>
+<varlistentry><term><guilabel>Clone primary screen</guilabel></term>
+<listitem>
+<para>
+This option puts your desktop on both displays.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guilabel>Dual screen</guilabel></term>
+<listitem>
+<para>
+This option extends your desktop to another screen providing you with double
+the amount of workspace.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<variablelist><title><guilabel>Screen size</guilabel></title>
+<varlistentry><term><guilabel>Lower</guilabel></term>
+<listitem>
+<para>
+This side of the slider provides a lower resolution.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><guilabel>Higher</guilabel></term>
+<listitem>
+<para>
+This side of the slider provides a higher resolution.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<variablelist><title><guilabel>Resolution</guilabel></title>
+<varlistentry><term>Dropdown dialog</term>
+<listitem>
+<para>
+This dropdown selection allows you to select a proper resolution. Depending on
+your monitor, you may only have one selection.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+
+<sect2 id="kcmdisplay-color">
+<title><guilabel>Color &amp; Gamma</guilabel></title>
+
+<para>
+This section allows you to configure the color calibration of your display by
+utilizing a pre-configured setting or by your own custom setting. Unless you are
+sure about what settings you need, the default color and gamma is usually the
+best.
+</para>
+
+<tip><title><guilabel>Color calibration image</guilabel></title>
+<para>
+Gamma controls how your monitor displays colors.
+</para>
+<para>
+For accurate color reproduction, adjust the gamma correction sliders until the
+squares blend into the background as much as possible.
+</para>
+</tip>
+
+<variablelist><title><guilabel>Screen</guilabel></title>
+<varlistentry><term>Dropdown dialog</term>
+<listitem>
+<para>
+This option allows you to select the screen you would like to configure. You
+will only have <guilabel>Screen 1</guilabel> as a selection unless you have
+more than one display.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<variablelist><title><guilabel>Gamma correction</guilabel></title>
+<varlistentry><term>All</term>
+<listitem>
+<para>
+This slider allows you to control the red, green, and blue colors at one time
+in unison.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guilabel>Red</guilabel></term>
+<term><guilabel>Green</guilabel></term>
+<term><guilabel>Blue</guilabel></term>
+<listitem>
+<para>
+This selection allows you independently change each color setting to your
+preference.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<variablelist><title><guilabel>Target gamma</guilabel></title>
+<varlistentry><term>Dropdown dialog</term>
+<listitem>
+<para>
+This dropdown dialog allows you to select from various pre-configured settings
+which are considered an industry standard in some aspects.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+
+<sect2 id="kcmdisplay-hw">
+<title><guilabel>Hardware</guilabel></title>
+
+<para>
+This section allows you to configure hardware and driver settings for your
+graphics card(s) as well as monitor(s).
+</para>
+
+<note><title>Administrative access</title>
+<para>
+In order to make changes to this section, you will need to press the
+<guibutton>Administrator Mode</guibutton> button and enter your user password
+when prompted. You will notice that your <guibutton>Configure...</guibutton>
+buttons will become available.
+</para>
+</note>
+
+<sect3 id="kcmdisplay-hw-gfx">
+<title><guilabel>Graphics card</guilabel></title>
+
+<para>
+This subsection will allow you to view your <guilabel>Graphics card</guilabel>
+and <guilabel>Driver</guilabel> as well as configure this hardware by pressing
+the <guibutton>Configure...</guibutton> button.
+</para>
+
+<sect4 id="kcmdisplay-hw-gfx-conf">
+<title><guilabel>Choose Graphics Card</guilabel> Dialog</title>
+
+<para>
+In this dialog you can select your graphics card and if applicable you will be
+able to select either a <guilabel>Standard</guilabel> or
+<guilabel>Proprietary</guilabel> driver solution and select the amount of
+<guilabel>Video RAM</guilabel> necessary.
+</para>
+
+<para>
+Once you choose a graphics card from the list, press the
+<guibutton>Select</guibutton> button to select and load the card and driver.
+</para>
+</sect4>
+
+<sect4 id="kcmdisplay-hw-mon-conf">
+<title><guilabel>Choose Monitor</guilabel> Dialog</title>
+
+<para>
+In this dialog you can select your monitor as well as your image format. You
+can attempt to use the <guibutton>Detect Monitor</guibutton> button in order to
+automatically locate and configure your monitor. If this option doesn't work,
+you can manually select the monitor from the list. In the <guilabel>Image
+format</guilabel> dropdown, you can select from <guimenuitem>Standard
+4:3</guimenuitem> or <guimenuitem>Widescreen 16:9</guimenuitem>.
+</para>
+</sect4>
+</sect3>
+
+</sect2>
+
+<sect2 id="kcmdisplay-pwrsav">
+<title><guilabel>Power saving</guilabel></title>
+
+<para>
+In this section you have the option of enabling or disabling power saving for
+your monitor as well as setting the amount of time in which after it has
+reached, the monitor will switch off.
+</para>
+
+</sect2>
+
+</sect1>
+</article>
+
+<!--
+Local Variables:
+mode: xml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+vim:tabstop=2:shiftwidth=2:expandtab
+kate: space-indent on; indent-width 2; tab-width 2; indent-mode none;
+-->
