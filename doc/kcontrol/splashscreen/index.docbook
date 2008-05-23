@@ -86,7 +86,7 @@ Instead of installing a theme directly as above you might have a tarball of a th
 <varlistentry><term><guilabel>Remove Theme</guilabel></term>
 <listitem>
 <para>
-Removing a theme means removing the theme files from your disk. A message box warns you before doing and indicates you what it will remove. The theme is then no longer available in the list.
+Removing a theme means removing the theme files from your disk. A message box warns you before doing anything and indicates you what it will remove. The theme is then no longer available in the list.
 </para>
 </listitem>
 </varlistentry>
