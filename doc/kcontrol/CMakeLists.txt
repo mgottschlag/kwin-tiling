@@ -1,6 +1,11 @@
-add_subdirectory(autostart)
 add_subdirectory(clock)
 add_subdirectory(colors)
 add_subdirectory(joystick)
 add_subdirectory(kcmaccess)
 add_subdirectory(splashscreen)
+
+if ( Q_WS_X11 )
+add_subdirectory(autostart)
+add_subdirectory(bell)
+add_subdirectory(energy)
+endif ( Q_WS_X11 )
