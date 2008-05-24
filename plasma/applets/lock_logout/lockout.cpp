@@ -37,6 +37,7 @@
 LockOut::LockOut(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args)
 {
+    resize(MINSIZE*2,MINSIZE*4);
 }
 
 void LockOut::init()
@@ -52,8 +53,6 @@ void LockOut::init()
     Plasma::Icon *icon_logout = new Plasma::Icon(KIcon("system-log-out"), "", this);
     m_layout->addItem(icon_logout);
     connect(icon_logout, SIGNAL(clicked()), this, SLOT(clickLogout()));
-
-    resize(MINSIZE*2,MINSIZE*4);
 }
 
 LockOut::~LockOut()
