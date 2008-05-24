@@ -228,7 +228,7 @@ void DashboardView::toggleVisibility()
 
         m_suppressShow = true;
         QTimer::singleShot(SUPPRESS_SHOW_TIMEOUT, this, SLOT(suppressShowTimeout()));
-        containment()->openToolBox();
+        containment()->openToolbox();
     } else {
         hideView();
     }
@@ -243,7 +243,7 @@ void DashboardView::hideView()
     disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
     disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
 
-    containment()->closeToolBox();
+    containment()->closeToolbox();
     containment()->enableAction("zoom out", m_zoomOut);
     containment()->enableAction("zoom in", m_zoomIn);
     m_hideAction->setEnabled(false);
