@@ -298,9 +298,9 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
             QPixmap pixmap(option->rect.size());
 
             if (option->state & QStyle::State_Sunken) {
-                pixmap.fill(QColor(255,0,0,50));
+                pixmap.fill(QColor(0,0,0,50));
             } else {
-                pixmap.fill(QColor(255,0,0,255*m_alpha));
+                pixmap.fill(QColor(0,0,0,255*m_alpha));
             }
 
             {
