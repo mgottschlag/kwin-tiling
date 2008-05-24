@@ -46,8 +46,8 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
 {
     setFocusPolicy(Qt::NoFocus);
 
-    connectContainment(containment);
     if (containment) {
+        connectContainment(containment);
         containment->enableAction("zoom in", false);
         containment->enableAction("addSiblingContainment", false);
     }
@@ -151,6 +151,9 @@ void DesktopView::setContainment(Plasma::Containment *containment)
         //switch connections
         disconnect(this->containment(), 0, this, 0);
         connectContainment(containment);
+        //make sure actions are up-to-date
+        containment->enableAction("zoom in", false);
+        containment->enableAction("addSiblingContainment", false);
     }
 
     View::setContainment(containment);
