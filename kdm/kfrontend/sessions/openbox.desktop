@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=XSession
-Exec=openbox
+Exec=openbox-session
 TryExec=openbox
 Name=Openbox
 Name[bn]=ওপেনবক্স

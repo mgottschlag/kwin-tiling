@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=XSession
-Exec=enlightenment
+Exec=enlightenment_start
 TryExec=enlightenment
 Name=Enlightenment
 Name[bn]=এনলাইটেনমেন্ট
