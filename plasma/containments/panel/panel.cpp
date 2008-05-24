@@ -92,7 +92,7 @@ QList<QAction*> Panel::contextualActions()
 
         m_configureAction = new QAction(i18n("Panel Settings"), this);
         m_configureAction->setIcon(KIcon("configure"));
-        connect(m_configureAction, SIGNAL(triggered()), this, SIGNAL(toolBoxToggled()));
+        connect(m_configureAction, SIGNAL(triggered()), this, SIGNAL(toolboxToggled()));
 
         m_removeAction = action("remove");
     }
@@ -327,8 +327,34 @@ void Panel::saveState(KConfigGroup* config) const
 void Panel::themeUpdated()
 {
     //if the theme is changed all the calculations needs to be done again
-    //TODO resize based on the change in theme bordersize
-    constraintsEvent(Plasma::LocationConstraint);
+    //and resize based on the change in the theme bordersize
+
+    qreal oldLeftWidth;
+    qreal newLeftWidth;
+    qreal oldTopHeight;
+    qreal newTopHeight;
+    qreal oldRightWidth;
+    qreal newRightWidth;
+    qreal oldBottomHeight;
+    qreal newBottomHeight;
+
+    layout()->getContentsMargins(&oldLeftWidth, &oldTopHeight, &oldRightWidth, &oldBottomHeight);
+    m_background->getMargins(newLeftWidth, newTopHeight, newRightWidth, newBottomHeight);
+
+    QSize newSize(size().width()-(oldLeftWidth - newLeftWidth)-(oldRightWidth - newRightWidth),
+           size().height()-(oldTopHeight - newTopHeight)-(oldBottomHeight - newBottomHeight));
+
+    resize(newSize);
+
+    if (formFactor() == Plasma::Vertical) {
+        setMaximumWidth(newSize.width());
+        setMinimumWidth(newSize.width());
+    } else {
+        setMaximumHeight(newSize.height());
+        setMinimumHeight(newSize.height());
+    }
+
+    updateBorders(geometry().toRect());
 }
 
 void Panel::paintInterface(QPainter *painter,
