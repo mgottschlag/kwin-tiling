@@ -75,7 +75,13 @@ void FolderView::init()
     KConfigGroup cg = config();
     m_url = cg.readEntry("url", KUrl(QDir::homePath()));
     m_filterFiles = cg.readEntry("filterFiles", "*");
+    m_noBg = cg.readEntry("transparency", false);
 
+    if (m_noBg) {
+        setBackgroundHints(Plasma::Applet::NoBackground);
+    } else {
+        setBackgroundHints(Plasma::Applet::StandardBackground);
+    }
     KDirLister *lister = new KDirLister(this);
     lister->openUrl(m_url);
     lister->setNameFilter(m_filterFiles);
@@ -99,7 +105,9 @@ void FolderView::createConfigurationInterface(KConfigDialog *parent)
         ui.showCustomFolder->setChecked(true);
         ui.lineEdit->setUrl(m_url);
     }
-    
+
+    ui.transparency->setChecked(m_noBg);
+
     ui.lineEdit->setMode(KFile::Directory); 
     ui.filterFiles->setText(m_filterFiles);
 
@@ -114,10 +122,18 @@ void FolderView::configAccepted()
 {
     KUrl url;
 
-    if (ui.showDesktopFolder->isChecked())
+    if (ui.showDesktopFolder->isChecked()) {
         url = KUrl("desktop:/");
-    else
+    } else {
         url = ui.lineEdit->url();
+    }
+
+    m_noBg = ui.transparency->isChecked();
+    if (m_noBg) {
+        setBackgroundHints(Plasma::Applet::NoBackground);
+    } else {
+        setBackgroundHints(Plasma::Applet::StandardBackground);
+    }
 
     if (m_url != url || m_filterFiles != ui.filterFiles->text()) {
         m_dirModel->dirLister()->openUrl(url);
@@ -131,6 +147,8 @@ void FolderView::configAccepted()
 
         emit configNeedsSaving();
     }
+
+    update();
 }
 
 void FolderView::customFolderToggled(bool checked)

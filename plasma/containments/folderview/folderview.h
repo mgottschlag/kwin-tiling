@@ -51,7 +51,7 @@ public:
 protected:
     void createConfigurationInterface(KConfigDialog *parent);
 
-private slots:    
+private slots:
     void rowsInserted(const QModelIndex &parent, int first, int last);
     void rowsRemoved(const QModelIndex &parent, int first, int last);
     void modelReset();
@@ -100,6 +100,7 @@ private:
     bool m_updatesDisabled;
     bool m_doubleClick;
     bool m_dragInProgress;
+    bool m_noBg;
 };
 
 K_EXPORT_PLASMA_APPLET(folderview, FolderView)
