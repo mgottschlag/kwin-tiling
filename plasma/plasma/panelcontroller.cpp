@@ -51,6 +51,8 @@ public:
         QPainter painter(this);
         painter.setRenderHint(QPainter::Antialiasing, true);
 
+        painter.translate(0.5, 0.5);
+
         QStyleOptionToolButton buttonOpt;
         initStyleOption(&buttonOpt);
 
