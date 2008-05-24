@@ -24,20 +24,24 @@
 // Own
 #include "ui_tasksConfig.h"
 
+// Qt
+#include <QTimer>
+
 // KDE
 #include <taskmanager/taskmanager.h>
 #include <KDialog>
 
-// Qt
-#include <QTimer>
-#include <QGraphicsLinearLayout>
-
 // Plasma
 #include <plasma/applet.h>
+
+class QGraphicsLinearLayout;
+
+class KColorScheme;
 
 namespace Plasma
 {
     class LayoutAnimator;
+    class PanelSvg;
 } // namespace Plasma
 
 class WindowTaskItem;
@@ -66,6 +70,15 @@ public:
         void init();
 
         void constraintsEvent(Plasma::Constraints constraints);
+
+        Plasma::PanelSvg *itemBackground();
+        KColorScheme *colorScheme();
+
+        qreal itemLeftMargin() { return m_leftMargin; }
+        qreal itemRightMargin() { return m_rightMargin; }
+        qreal itemTopMargin() { return m_topMargin; }
+        qreal itemBottomMargin() { return m_bottomMargin; }
+        void resizeItemBackground(const QSizeF &newSize);
 
 protected slots:
         void configAccepted();
@@ -114,8 +127,13 @@ private:
         Ui::tasksConfig m_ui;
         QList<TaskPtr> m_tasks;
         QTimer m_screenTimer;
-};
 
-K_EXPORT_PLASMA_APPLET(tasks, Tasks)
+        Plasma::PanelSvg *m_taskItemBackground;
+        KColorScheme *m_colorScheme;
+        qreal m_leftMargin;
+        qreal m_topMargin;
+        qreal m_rightMargin;
+        qreal m_bottomMargin;
+};
 
 #endif

@@ -32,6 +32,8 @@
 #include <QGraphicsLinearLayout>
 #include <QGraphicsWidget>
 
+#include <KColorScheme>
+
 class QTimeLine;
 
 // Plasma
@@ -42,6 +44,8 @@ namespace Plasma
     class PanelSvg;
 }
 
+class Tasks;
+
 /**
  * A task item for a task which represents a window on the desktop.
  */
@@ -51,7 +55,7 @@ class WindowTaskItem : public QGraphicsWidget
 
 public:
     /** Constructs a new representation for a window task. */
-    WindowTaskItem(QGraphicsItem *parent, const bool showTooltip);
+    WindowTaskItem(Tasks *parent, const bool showTooltip);
 
     /** Sets the starting task represented by this item. */
     void setStartupTask(TaskManager::StartupPtr task);
@@ -136,6 +140,7 @@ protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     virtual void timerEvent(QTimerEvent *event);
+    virtual void resizeEvent(QGraphicsSceneResizeEvent *event);
     virtual void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget);
 
     /** Draws the background for the task item. */
@@ -168,38 +173,32 @@ protected:
 private slots:
     void updateTask();
     void animationUpdate(qreal progress);
-    void slotUpdate();
 
 private:
-    TaskManager::TaskPtr _task;
-    QTimer* _activateTimer;
+    Tasks *m_applet;
+    TaskManager::TaskPtr m_task;
+    QTimer* m_activateTimer;
 
-    bool _showTooltip;
-    static void setupBackgroundSvg(QObject *parent);
+    bool m_showTooltip;
     // area of item occupied by task's icon
-    QRectF iconRect() const;
+    QRectF iconRect(const QRectF &bounds) const;
     // area of item occupied by task's text
-    QRectF textRect() const;
+    QRectF textRect(const QRectF &bounds) const;
 
-    TaskFlags _flags;
+    TaskFlags m_flags;
 
-    QIcon _icon;
-    QString _text;
+    QIcon m_icon;
+    QString m_text;
 
     int m_animId;
     qreal m_alpha;
     bool m_fadeIn;
 
     QPointF _dragOffset;
-    int m_updateTimerId;
     QTime m_lastUpdate;
-
-    static bool s_backgroundCreated;
-    static Plasma::PanelSvg* s_taskItemBackground;
-    static qreal s_leftMargin;
-    static qreal s_topMargin;
-    static qreal s_rightMargin;
-    static qreal s_bottomMargin;
+    int m_updateTimerId;
+    int m_attentionTimerId;
+    int m_attentionTicks;
 
     // distance (in pixels) between a task's icon and its text
     static const int IconTextSpacing = 4;

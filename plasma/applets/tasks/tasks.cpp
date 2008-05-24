@@ -34,11 +34,18 @@
 
 // Plasma
 #include <plasma/containment.h>
+#include <plasma/panelsvg.h>
 #include <plasma/theme.h>
 
 Tasks::Tasks(QObject* parent, const QVariantList &arguments)
  : Plasma::Applet(parent, arguments),
-   m_activeTask(0)
+   m_activeTask(0),
+   m_taskItemBackground(0),
+   m_colorScheme(0),
+   m_leftMargin(0),
+   m_topMargin(0),
+   m_rightMargin(0),
+   m_bottomMargin(0)
 {
     setHasConfigurationInterface(true);
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
@@ -108,7 +115,6 @@ void Tasks::removeStartingTask(StartupPtr task)
 {
     if (m_startupTaskItems.contains(task)) {
         WindowTaskItem *item = m_startupTaskItems.take(task);
-        
         m_layout->removeItem(item);
         scene()->removeItem(item);
     }
@@ -136,6 +142,7 @@ void Tasks::addWindowTask(TaskPtr task)
     if (m_showOnlyCurrentDesktop && !task->isOnCurrentDesktop()) {
         return;
     }
+
     if (m_showOnlyCurrentScreen && !isOnMyScreen(task)) {
         return;
     }
@@ -195,6 +202,59 @@ void Tasks::constraintsEvent(Plasma::Constraints constraints)
             m_layout->setOrientation(Qt::Horizontal);
         }
     }
+}
+
+Plasma::PanelSvg* Tasks::itemBackground()
+{
+    if (!m_taskItemBackground) {
+        QString tasksThemePath = Plasma::Theme::defaultTheme()->imagePath("widgets/tasks");
+
+        delete m_taskItemBackground;
+        m_taskItemBackground = 0;
+
+        if (!tasksThemePath.isEmpty()) {
+            m_taskItemBackground = new Plasma::PanelSvg(this);
+            m_taskItemBackground->setImagePath(tasksThemePath);
+            m_taskItemBackground->setCacheAllRenderedPanels(true);
+        }
+    }
+
+    return m_taskItemBackground;
+}
+
+void Tasks::resizeItemBackground(const QSizeF &size)
+{
+    if (!m_taskItemBackground) {
+        itemBackground();
+
+        if (!m_taskItemBackground) {
+            return;
+        }
+    }
+
+    if (m_taskItemBackground->panelSize() == size) {
+        return;
+    }
+
+    m_taskItemBackground->clearCache();
+    m_taskItemBackground->resizePanel(size);
+    //get the margins now
+    m_taskItemBackground->getMargins(m_leftMargin, m_topMargin, m_rightMargin, m_bottomMargin);
+    //if the task height is too little reset the top and bottom margins
+    if (size.height() - m_topMargin - m_bottomMargin < KIconLoader::SizeSmall) {
+        m_topMargin = 0;
+        m_bottomMargin = 0;
+    }
+}
+
+KColorScheme *Tasks::colorScheme()
+{
+    if (!m_colorScheme) {
+        delete m_colorScheme;
+        m_colorScheme = new KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme());
+    }
+
+    return m_colorScheme;
 }
 
 void Tasks::updateActive(WindowTaskItem *task)
@@ -386,10 +446,17 @@ void Tasks::reconnect()
 
 void Tasks::themeRefresh()
 {
+    delete m_taskItemBackground;
+    m_taskItemBackground = 0;
+
+    delete m_colorScheme;
+    m_colorScheme = 0;
+
     foreach (WindowTaskItem *taskItem, m_windowTaskItems) {
         taskItem->update();
     }
-
 }
+
+K_EXPORT_PLASMA_APPLET(tasks, Tasks)
 
 #include "tasks.moc"

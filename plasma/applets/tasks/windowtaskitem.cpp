@@ -34,7 +34,6 @@
 #include <KIcon>
 #include <KLocalizedString>
 #include <KGlobalSettings>
-#include <KColorScheme>
 #include <KIconLoader>
 
 #include <taskmanager/taskrmbmenu.h>
@@ -42,27 +41,23 @@
 #include "plasma/theme.h"
 #include "plasma/panelsvg.h"
 
-bool WindowTaskItem::s_backgroundCreated = false;
-Plasma::PanelSvg* WindowTaskItem::s_taskItemBackground = 0;
-qreal WindowTaskItem::s_leftMargin = 0;
-qreal WindowTaskItem::s_topMargin = 0;
-qreal WindowTaskItem::s_rightMargin = 0;
-qreal WindowTaskItem::s_bottomMargin = 0;
+#include "tasks.h"
 
-WindowTaskItem::WindowTaskItem(QGraphicsItem *parent, const bool showTooltip)
+WindowTaskItem::WindowTaskItem(Tasks *parent, const bool showTooltip)
     : QGraphicsWidget(parent),
-      _activateTimer(0),
-      _flags(0),
-      m_animId(-1),
+      m_applet(parent),
+      m_activateTimer(0),
+      m_flags(0),
+      m_animId(0),
       m_alpha(1),
       m_fadeIn(true),
-      m_updateTimerId(-1)
+      m_updateTimerId(0),
+      m_attentionTimerId(0),
+      m_attentionTicks(0)
 {
-    _showTooltip = showTooltip;
+    m_showTooltip = showTooltip;
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setAcceptsHoverEvents(true);
-    setupBackgroundSvg(0);
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(slotUpdate()));
 }
 
 void WindowTaskItem::activate()
@@ -79,67 +74,70 @@ void WindowTaskItem::activate()
     // does not take away the focus from the active window (unless clicking
     // in a widget such as a line edit which does accept the focus)
     // this needs to be implemented for Plasma's own panels.
-    if (_task) {
-        _task->activateRaiseOrIconify();
+    if (m_task) {
+        m_task->activateRaiseOrIconify();
         emit windowSelected(this);
     }
 }
 
 void WindowTaskItem::close()
 {
-    if (_task) {
-        _task->close();
+    if (m_task) {
+        m_task->close();
     }
 }
 
 void WindowTaskItem::setShowTooltip(const bool showit)
 {
-    _showTooltip = showit;
+    m_showTooltip = showit;
     updateTask();
 }
 
 void WindowTaskItem::setText(const QString &text)
 {
-    if (_text == text) {
+    if (m_text == text) {
         return;
     }
-    _text = text;
+    m_text = text;
 }
 
 void WindowTaskItem::setIcon(const QIcon &icon)
 {
-    _icon = icon; //icon.pixmap(MinTaskIconSize);
+    m_icon = icon; //icon.pixmap(MinTaskIconSize);
 
 }
 
 void WindowTaskItem::setTaskFlags(TaskFlags flags)
 {
-    if (_flags & TaskWantsAttention != flags & TaskWantsAttention) {
+    if ((m_flags & TaskWantsAttention != 0) != (flags & TaskWantsAttention != 0)) {
+        //kDebug() << "task attention state changed" << m_attentionTimerId;
         if (flags & TaskWantsAttention) {
             // start attention getting
-        } else {
+            if (!m_attentionTimerId) {
+                m_attentionTimerId = startTimer(500);
+            }
+        } else if (m_attentionTimerId) {
+            killTimer(m_attentionTimerId);
+            m_attentionTimerId = 0;
             // stop attention getting
         }
     }
-    _flags = flags;
+    m_flags = flags;
 }
 
 WindowTaskItem::TaskFlags WindowTaskItem::taskFlags() const
 {
-    return _flags;
+    return m_flags;
 }
 
 void WindowTaskItem::queueUpdate()
 {
-    if (m_updateTimerId != -1) {
+    if (m_updateTimerId || m_attentionTimerId) {
         return;
     }
 
     if (m_lastUpdate.elapsed() < 200) {
-        if (m_updateTimerId == -1) {
-            m_updateTimerId = startTimer(200);
-        }
-
+        m_updateTimerId = startTimer(200);
         return;
     }
 
@@ -149,28 +147,30 @@ void WindowTaskItem::queueUpdate()
 
 void WindowTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    const int FadeInDuration = 100;
+    //const int FadeInDuration = 100;
 
-    if (m_animId != -1) {
+    if (m_animId) {
         Plasma::Animator::self()->stopCustomAnimation(m_animId);
     }
 
     m_fadeIn = true;
-    m_animId = Plasma::Animator::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,Plasma::Animator::LinearCurve, this,"animationUpdate");
+    //m_animId = Plasma::Animator::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,Plasma::Animator::LinearCurve, this, "animationUpdate");
+    animationUpdate(1);
 
     QGraphicsWidget::hoverEnterEvent(event);
 }
 
 void WindowTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    const int FadeOutDuration = 200;
+    //const int FadeOutDuration = 200;
 
-    if (m_animId != -1) {
+    if (m_animId) {
         Plasma::Animator::self()->stopCustomAnimation(m_animId);
     }
 
     m_fadeIn = false;
-    m_animId = Plasma::Animator::self()->customAnimation(40 / (1000 / FadeOutDuration), FadeOutDuration,Plasma::Animator::LinearCurve, this,"animationUpdate");
+    //m_animId = Plasma::Animator::self()->customAnimation(40 / (1000 / FadeOutDuration), FadeOutDuration,Plasma::Animator::LinearCurve, this, "animationUpdate");
+    animationUpdate(1);
 
     QGraphicsWidget::hoverLeaveEvent(event);
 }
@@ -190,8 +190,22 @@ void WindowTaskItem::timerEvent(QTimerEvent *event)
     if (event->timerId() == m_updateTimerId) {
         killTimer(m_updateTimerId);
         update();
-        m_updateTimerId = -1;
+        m_updateTimerId = 0;
+    } else if (event->timerId() == m_attentionTimerId) {
+        ++m_attentionTicks;
+        if (m_attentionTicks > 6) {
+            killTimer(m_attentionTimerId);
+            m_attentionTimerId = 0;
+            m_attentionTicks = 0;
+        }
+
+        update();
     }
+}
+
+void WindowTaskItem::resizeEvent(QGraphicsSceneResizeEvent *event)
+{
+    m_applet->resizeItemBackground(event->newSize());
 }
 
 void WindowTaskItem::paint(QPainter *painter,
@@ -218,44 +232,41 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
 
     const qreal hoverAlpha = 0.4;
 
-    KColorScheme colorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme());
+    Plasma::PanelSvg *itemBackground = m_applet->itemBackground();
 
-    if (taskFlags() & TaskWantsAttention) {
-        if (s_taskItemBackground && s_taskItemBackground->hasElementPrefix("attention")) {
+    if ((m_flags & TaskWantsAttention) && !(m_attentionTicks % 2)) {
+        if (itemBackground && itemBackground->hasElementPrefix("attention")) {
             //Draw task background from theme svg "attention" element
-            s_taskItemBackground->setElementPrefix("attention");
-            s_taskItemBackground->resizePanel(option->rect.size());
-            s_taskItemBackground->paintPanel(painter, option->rect);
+            itemBackground->setElementPrefix("attention");
+            itemBackground->paintPanel(painter, option->rect);
         } else {
             //Draw task background without svg theming
-            QColor background = colorScheme.background(KColorScheme::ActiveBackground).color();
+            QColor background = m_applet->colorScheme()->background(KColorScheme::ActiveBackground).color();
             background.setAlphaF(hoverAlpha+0.2);
             painter->setBrush(QBrush(background));
             painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
         }
-    } else if (taskFlags() & TaskIsMinimized) {
+    } else if (m_flags & TaskIsMinimized) {
         //Not painting anything for iconified tasks for now
         painter->setBrush(QBrush());
-    } else if (taskFlags() & TaskHasFocus) {
-            if (s_taskItemBackground && s_taskItemBackground->hasElementPrefix("focus")) {
+    } else if (m_flags & TaskHasFocus) {
+            if (itemBackground && itemBackground->hasElementPrefix("focus")) {
                 //Draw task background from theme svg "focus" element
-                s_taskItemBackground->setElementPrefix("focus");
-                s_taskItemBackground->resizePanel(option->rect.size());
-                s_taskItemBackground->paintPanel(painter, option->rect);
+                itemBackground->setElementPrefix("focus");
+                itemBackground->paintPanel(painter, option->rect);
             } else {
                 //Draw task background without svg theming
-                QLinearGradient background(boundingRect().topLeft(),
-                                           boundingRect().bottomLeft());
-    
-                QColor startColor = colorScheme.background(KColorScheme::NormalBackground).color();
-                QColor endColor = colorScheme.shade(startColor,KColorScheme::DarkShade);
-    
+                QLinearGradient background(boundingRect().topLeft(), boundingRect().bottomLeft());
+
+                QColor startColor = m_applet->colorScheme()->background(KColorScheme::NormalBackground).color();
+                QColor endColor = m_applet->colorScheme()->shade(startColor,KColorScheme::DarkShade);
+
                 endColor.setAlphaF(qMin(0.8,startColor.alphaF()+0.2));
                 startColor.setAlphaF(0);
-    
+
                 background.setColorAt(0, startColor);
                 background.setColorAt(1, endColor);
-    
+
                 painter->setBrush(background);
                 painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
 
@@ -263,23 +274,15 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
             }
     //Default is a normal task
     } else {
-        if (s_taskItemBackground && s_taskItemBackground->hasElementPrefix("normal")) {
+        if (itemBackground && itemBackground->hasElementPrefix("normal")) {
             //Draw task background from theme svg "normal" element
-            s_taskItemBackground->setElementPrefix("normal");
-            s_taskItemBackground->resizePanel(option->rect.size());
-            //get the margins now
-            s_taskItemBackground->getMargins(s_leftMargin, s_topMargin, s_rightMargin, s_bottomMargin);
-            //if the task height is too little reset the top and bottom margins
-            if (option->rect.height() - s_topMargin - s_bottomMargin < KIconLoader::SizeSmall) {
-                s_topMargin = 0;
-                s_bottomMargin = 0;
-            }
-
-            s_taskItemBackground->paintPanel(painter, option->rect);
+            itemBackground->setElementPrefix("normal");
+            itemBackground->paintPanel(painter, option->rect);
         } else {
             //Draw task background without svg theming
-            QColor background = colorScheme.shade(colorScheme.background(KColorScheme::AlternateBackground).color(),
-                                              KColorScheme::DarkShade);
+            KColorScheme *colorScheme = m_applet->colorScheme();
+            QColor background = colorScheme->shade(colorScheme->background(KColorScheme::AlternateBackground).color(),
+                                                   KColorScheme::DarkShade);
             background.setAlphaF(0.2);
             painter->setBrush(QBrush(background));
             painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
@@ -288,33 +291,32 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
         }
     }
 
-    if (option->state & QStyle::State_MouseOver || m_animId != -1)
-    {
-
-        if (s_taskItemBackground && s_taskItemBackground->hasElementPrefix("hover")) {
+    if (option->state & QStyle::State_MouseOver || m_animId) {
+        if (itemBackground && itemBackground->hasElementPrefix("hover")) {
             //Draw task background from theme svg "hover" element
-
-            s_taskItemBackground->setElementPrefix("hover");
-            s_taskItemBackground->resizePanel(option->rect.size());
             QPixmap pixmap(option->rect.size());
-            
+
             if (option->state & QStyle::State_Sunken) {
-                pixmap.fill(QColor(0,0,0,50));
+                pixmap.fill(QColor(255,0,0,50));
             } else {
-                pixmap.fill(QColor(0,0,0,255*m_alpha));
+                pixmap.fill(QColor(255,0,0,255*m_alpha));
             }
 
-            QPainter buffPainter(&pixmap);
-            buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-            s_taskItemBackground->paintPanel(&buffPainter, option->rect);
+            {
+                QPainter buffPainter(&pixmap);
+                buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+                itemBackground->setElementPrefix("hover");
+                itemBackground->paintPanel(&buffPainter, option->rect);
+            }
+
             painter->drawPixmap(option->rect.topLeft(), pixmap);
         } else {
             //Draw task background without svg theming
             QLinearGradient background(boundingRect().topLeft(),
                                        boundingRect().bottomLeft());
 
-            QColor startColor = colorScheme.background(KColorScheme::AlternateBackground).color();
-            QColor endColor = colorScheme.shade(startColor,KColorScheme::DarkShade);
+            QColor startColor = m_applet->colorScheme()->background(KColorScheme::AlternateBackground).color();
+            QColor endColor = m_applet->colorScheme()->shade(startColor,KColorScheme::DarkShade);
 
             const qreal pressedAlpha = 0.2;
 
@@ -344,18 +346,19 @@ void WindowTaskItem::drawTask(QPainter *painter,const QStyleOptionGraphicsItem *
 {
     Q_UNUSED(option)
 
-    _icon.paint( painter , iconRect().toRect() );
+    QRectF bounds = boundingRect().adjusted(m_applet->itemLeftMargin(), m_applet->itemTopMargin(), -m_applet->itemRightMargin(), -m_applet->itemBottomMargin());
+    m_icon.paint(painter, iconRect(bounds).toRect());
 
     painter->setPen(QPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor), 1.0));
 
-    QRect rect = textRect().toRect();
+    QRect rect = textRect(bounds).toRect();
     rect.adjust(2, 2, -2, -2); // Create a text margin
 
     QTextLayout layout;
     layout.setFont(KGlobalSettings::taskbarFont());
     layout.setTextOption(textOption());
 
-    layoutText(layout, _text, rect.size());
+    layoutText(layout, m_text, rect.size());
     drawTextLayout(painter, layout, rect);
 }
 
@@ -461,8 +464,9 @@ void WindowTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layout
     if (!fadeRects.isEmpty())
     {
         p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-        foreach (const QRect &rect, fadeRects)
+        foreach (const QRect &rect, fadeRects) {
             p.fillRect(rect, alphaGradient);
+        }
     }
 
     p.end();
@@ -472,50 +476,45 @@ void WindowTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layout
 
 void WindowTaskItem::updateTask()
 {
-    Q_ASSERT( _task );
+    Q_ASSERT(m_task);
 
     // task flags
-    if (_task->isActive()) {
-        setTaskFlags(taskFlags() | TaskHasFocus);
+    TaskFlags flags = m_flags;
+    if (m_task->isActive()) {
+        flags |= TaskHasFocus;
         emit activated(this);
     } else {
-        setTaskFlags(taskFlags() & ~TaskHasFocus);
+        flags &= ~TaskHasFocus;
     }
 
-    if (_task->demandsAttention()) {
-        setTaskFlags(taskFlags() | TaskWantsAttention);
+    if (m_task->demandsAttention()) {
+        flags |= TaskWantsAttention;
     } else {
-        setTaskFlags(taskFlags() & ~TaskWantsAttention);
+        flags &= ~TaskWantsAttention;
     }
 
-    if (_task->isMinimized()) {
-        setTaskFlags(taskFlags() | TaskIsMinimized);
+    if (m_task->isMinimized()) {
+        flags |= TaskIsMinimized;
     } else {
-        setTaskFlags(taskFlags() & ~TaskIsMinimized);
+        flags &= ~TaskIsMinimized;
     }
+
+    setTaskFlags(flags);
 
     // basic title and icon
     QIcon taskIcon;
-    taskIcon.addPixmap(_task->icon(KIconLoader::SizeSmall,
-                                   KIconLoader::SizeSmall,
-                                   false));
-    taskIcon.addPixmap(_task->icon(KIconLoader::SizeSmallMedium,
-                                   KIconLoader::SizeSmallMedium,
-                                   false));
-    taskIcon.addPixmap(_task->icon(KIconLoader::SizeMedium,
-                                   KIconLoader::SizeMedium,
-                                   false));
-    taskIcon.addPixmap(_task->icon(KIconLoader::SizeLarge,
-                                   KIconLoader::SizeLarge,
-                                   false));
+    taskIcon.addPixmap(m_task->icon(KIconLoader::SizeSmall, KIconLoader::SizeSmall, false));
+    taskIcon.addPixmap(m_task->icon(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium, false));
+    taskIcon.addPixmap(m_task->icon(KIconLoader::SizeMedium, KIconLoader::SizeMedium, false));
+    taskIcon.addPixmap(m_task->icon(KIconLoader::SizeLarge, KIconLoader::SizeLarge, false));
 
 #ifdef TOOLTIP_MANAGER
-    if (_showTooltip) {
+    if (m_showTooltip) {
       Plasma::ToolTipData data;
-      data.mainText = _task->visibleName();
-      data.subText = i18nc("Which virtual desktop a window is currently on", "On %1", KWindowSystem::desktopName(_task->desktop()));
+      data.mainText = m_task->visibleName();
+      data.subText = i18nc("Which virtual desktop a window is currently on", "On %1", KWindowSystem::desktopName(m_task->desktop()));
       data.image = iconPixmap;
-      data.windowToPreview = _task->window();
+      data.windowToPreview = m_task->window();
       setToolTip(data);
     } else {
         Plasma::ToolTipData data;
@@ -523,7 +522,7 @@ void WindowTaskItem::updateTask()
     }
 #endif
     setIcon(taskIcon);
-    setText(_task->visibleName());
+    setText(m_task->visibleName());
     //redraw
     queueUpdate();
 }
@@ -531,7 +530,7 @@ void WindowTaskItem::updateTask()
 void WindowTaskItem::animationUpdate(qreal progress)
 {
     if (progress == 1) {
-        m_animId = -1;
+        m_animId = 0;
         m_fadeIn = true;
     }
 
@@ -541,17 +540,12 @@ void WindowTaskItem::animationUpdate(qreal progress)
     update();
 }
 
-void WindowTaskItem::slotUpdate()
-{
-    QGraphicsWidget::update();
-}
-
 void WindowTaskItem::setStartupTask(TaskManager::StartupPtr task)
 {
     setText(task->text());
     setIcon(KIcon(task->icon()));
 #ifdef TOOLTIP_MANAGER
-    if (_showTooltip) {
+    if (m_showTooltip) {
         Plasma::ToolTipData tip;
         tip.mainText = task->text();
         tip.image = task->icon();
@@ -562,10 +556,11 @@ void WindowTaskItem::setStartupTask(TaskManager::StartupPtr task)
 
 void WindowTaskItem::setWindowTask(TaskManager::TaskPtr task)
 {
-    if (_task)
-        disconnect(_task.constData(), 0, this, 0);
+    if (m_task) {
+        disconnect(m_task.constData(), 0, this, 0);
+    }
 
-    _task = task;
+    m_task = task;
 
     connect(task.constData(), SIGNAL(changed()),
             this, SLOT(updateTask()));
@@ -580,30 +575,30 @@ void WindowTaskItem::setWindowTask(TaskManager::TaskPtr task)
 
 TaskManager::TaskPtr WindowTaskItem::windowTask() const
 {
-    return _task;
+    return m_task;
 }
 
 void WindowTaskItem::contextMenuEvent(QGraphicsSceneContextMenuEvent *e)
 {
-    if (!KAuthorized::authorizeKAction("kwin_rmb") || _task.isNull()) {
+    if (!KAuthorized::authorizeKAction("kwin_rmb") || m_task.isNull()) {
         QGraphicsWidget::contextMenuEvent(e);
         return;
     }
 
-    TaskManager::TaskRMBMenu menu(_task);
+    TaskManager::TaskRMBMenu menu(m_task);
     menu.exec(e->screenPos());
 }
 
 void WindowTaskItem::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
     event->accept();
-    if (!_activateTimer) {
-        _activateTimer = new QTimer();
-        _activateTimer->setSingleShot(true);
-        _activateTimer->setInterval(300);
-        connect(_activateTimer, SIGNAL(timeout()), this, SLOT(activate()));
+    if (!m_activateTimer) {
+        m_activateTimer = new QTimer(this);
+        m_activateTimer->setSingleShot(true);
+        m_activateTimer->setInterval(300);
+        connect(m_activateTimer, SIGNAL(timeout()), this, SLOT(activate()));
     }
-    _activateTimer->start();
+    m_activateTimer->start();
 }
 
 void WindowTaskItem::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
@@ -612,15 +607,15 @@ void WindowTaskItem::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 
     // restart the timer so that activate() is only called after the mouse
     // stops moving
-    _activateTimer->start();
+    m_activateTimer->start();
 }
 
 void WindowTaskItem::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 {
     Q_UNUSED(event);
 
-    delete _activateTimer;
-    _activateTimer = 0;
+    delete m_activateTimer;
+    m_activateTimer = 0;
 }
 
 void WindowTaskItem::setGeometry(const QRectF& geometry)
@@ -643,7 +638,7 @@ void WindowTaskItem::publishIconGeometry()
             parentView = view;
         }
     }
-    if (!parentView || !_task) {
+    if (!parentView || !m_task) {
         return;
     }
     if( !boundingRect().isValid() )
@@ -651,36 +646,14 @@ void WindowTaskItem::publishIconGeometry()
 
     QRect rect = parentView->mapFromScene(mapToScene(boundingRect())).boundingRect().adjusted(0, 0, 1, 1);
     rect.moveTopLeft(parentView->mapToGlobal(rect.topLeft()));
-    if (_task) {
-        _task->publishIconGeometry(rect);
+    if (m_task) {
+        m_task->publishIconGeometry(rect);
     }
 }
 
-void WindowTaskItem::setupBackgroundSvg(QObject *parent)
+QRectF WindowTaskItem::iconRect(const QRectF &b) const
 {
-    if (s_backgroundCreated) {
-        return;
-    }
-
-    //TODO: we should probably reset this when the theme changes
-    s_backgroundCreated = true;
-    QString tasksThemePath = Plasma::Theme::defaultTheme()->imagePath("widgets/tasks");
-    s_taskItemBackground = 0;
-
-    if (!tasksThemePath.isEmpty()) {
-        while (parent && parent->parent()) {
-            parent = parent->parent();
-        }
-
-        s_taskItemBackground = new Plasma::PanelSvg(parent);
-        s_taskItemBackground->setImagePath(tasksThemePath);
-        s_taskItemBackground->setCacheAllRenderedPanels(true);
-    }
-}
-
-QRectF WindowTaskItem::iconRect() const
-{
-    QRectF bounds = boundingRect().adjusted(s_leftMargin, s_topMargin, -s_rightMargin, -s_bottomMargin);
+    QRectF bounds(b);
     const int right = bounds.right();
     //leave enough space for the text. useful in vertical panel
     bounds.setWidth(qMax(bounds.width() / 3, qMin(minimumSize().height(), bounds.width())));
@@ -690,17 +663,16 @@ QRectF WindowTaskItem::iconRect() const
         bounds.moveRight(right);
     }
 
-    QSize iconSize = _icon.actualSize(bounds.size().toSize());
+    QSize iconSize = m_icon.actualSize(bounds.size().toSize());
 
     return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignLeft | Qt::AlignVCenter,
                                iconSize, bounds.toRect());
 }
 
-QRectF WindowTaskItem::textRect() const
+QRectF WindowTaskItem::textRect(const QRectF &bounds) const
 {
-    QRectF bounds = boundingRect().adjusted(s_leftMargin, s_topMargin, -s_rightMargin, -s_bottomMargin);
     QSize size(bounds.size().toSize());
-    size.rwidth() -= int(iconRect().width()) + qMax(0, IconTextSpacing - 2);
+    size.rwidth() -= int(iconRect(bounds).width()) + qMax(0, IconTextSpacing - 2);
 
     return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignRight | Qt::AlignVCenter,
                                      size, bounds.toRect());
