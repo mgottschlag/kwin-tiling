@@ -333,7 +333,7 @@ KGreeter::insertUsers()
 		for (setpwent(); (ps = getpwent()) != 0;) {
 			if (*ps->pw_dir && *ps->pw_shell &&
 			    (ps->pw_uid >= (unsigned)_lowUserId ||
-			     !ps->pw_uid && _showRoot) &&
+			     (!ps->pw_uid && _showRoot)) &&
 			    ps->pw_uid <= (unsigned)_highUserId &&
 			    !noUsers.hasUser( ps->pw_name ) &&
 			    !noUsers.hasGroup( ps->pw_gid ))
@@ -352,7 +352,7 @@ KGreeter::insertUsers()
 			for (setpwent(); (ps = getpwent()) != 0;) {
 				if (*ps->pw_dir && *ps->pw_shell &&
 				    (ps->pw_uid >= (unsigned)_lowUserId ||
-				     !ps->pw_uid && _showRoot) &&
+				     (!ps->pw_uid && _showRoot)) &&
 				    ps->pw_uid <= (unsigned)_highUserId &&
 				    (users.hasUser( ps->pw_name ) ||
 				     users.hasGroup( ps->pw_gid )))
