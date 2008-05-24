@@ -78,6 +78,7 @@ private:
     Q_PRIVATE_SLOT(d, void alignToggled(bool toggle))
 
     class ToolButton;
+    class ButtonGroup;
     class ResizeHandle;
     class Private;
     Private *d;

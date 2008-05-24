@@ -25,6 +25,7 @@
 #include <QToolButton>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QFrame>
 
 #include <KIcon>
 #include <KColorUtils>
@@ -78,6 +79,52 @@ public:
     }
 };
 
+class PanelController::ButtonGroup: public QFrame
+{
+public:
+    ButtonGroup(QWidget *parent)
+       : QFrame(parent)
+    {
+         
+    }
+    
+    ~ButtonGroup()
+    {}
+
+    void paintEvent(QPaintEvent *event)
+    {
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing, true);
+
+        painter.translate(0.5, 0.5);
+
+        QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+
+
+        int x;
+        int y;
+        if (event->rect().height() > event->rect().width()) {
+            x = event->rect().left();
+            y = event->rect().bottom();
+        } else {
+            x = event->rect().right();
+            y = event->rect().top();
+        }
+
+        QLinearGradient gradient(x, y, event->rect().right(), event->rect().bottom());
+        textColor.setAlphaF(0);
+        gradient.setColorAt(0.1, textColor);
+        textColor.setAlphaF(0.4);
+        gradient.setColorAt(1, textColor);
+
+        painter.setBrush(Qt::NoBrush);
+        QPen pen;
+        pen.setBrush(gradient);
+        painter.setPen(pen);
+        painter.drawPath(Plasma::roundedRectangle(event->rect().adjusted(1,1,-1,-1), 4));
+    }
+};
+
 class PanelController::ResizeHandle: public QWidget
 {
 public:
@@ -121,10 +168,10 @@ public:
     {
     }
 
-    ToolButton *addTool(const QString icon, const QString iconText, Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon, bool checkButton = false)
+    ToolButton *addTool(const QString icon, const QString iconText, QWidget *parent,  Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon, bool checkButton = false)
     {
         //TODO take advantage of setDefaultAction using the containment's actions if possible
-        ToolButton *tool = new ToolButton(q);
+        ToolButton *tool = new ToolButton(parent);
 
         tool->setIcon(KIcon(icon));
         tool->setText(iconText);
@@ -136,10 +183,6 @@ public:
 
         tool->setCheckable(checkButton);
         tool->setAutoExclusive(checkButton);
-
-        if (layout) {
-            layout->addWidget(tool);
-        }
 
         return tool;
     }
@@ -226,6 +269,7 @@ public:
     Plasma::Location location;
     QBoxLayout *extLayout;
     QBoxLayout *layout;
+    QBoxLayout *alignLayout;
     DragElement dragging;
     QPoint startDragPos;
 
@@ -267,30 +311,43 @@ PanelController::PanelController(QWidget* parent)
     d->extLayout->addItem(d->layout);
 
     //Add buttons
+
     //alignment
-    d->leftAlignTool = d->addTool("format-justify-left", i18n("Align panel to left"), Qt::ToolButtonIconOnly, true);
+    //first the container
+    QFrame *alignFrame = new ButtonGroup(this);
+    d->alignLayout = new QBoxLayout(d->layout->direction(), this);
+    alignFrame->setLayout(d->alignLayout);
+    d->layout->addWidget(alignFrame);
+    
+    d->leftAlignTool = d->addTool("format-justify-left", i18n("Align panel to left"), alignFrame,  Qt::ToolButtonIconOnly, true);
+    d->alignLayout->addWidget(d->leftAlignTool);
     d->leftAlignTool->setChecked(true);
     connect(d->leftAlignTool, SIGNAL(toggled(bool)), this, SLOT(alignToggled(bool)));
 
-    d->centerAlignTool = d->addTool("format-justify-center", i18n("Align panel to center"), Qt::ToolButtonIconOnly, true);
+    d->centerAlignTool = d->addTool("format-justify-center", i18n("Align panel to center"), alignFrame,  Qt::ToolButtonIconOnly, true);
+    d->alignLayout->addWidget(d->centerAlignTool);
     connect(d->centerAlignTool, SIGNAL(clicked(bool)), this, SLOT(alignToggled(bool)));
 
-    d->rightAlignTool = d->addTool("format-justify-right", i18n("Align panel to right"), Qt::ToolButtonIconOnly, true);
+    d->rightAlignTool = d->addTool("format-justify-right", i18n("Align panel to right"), alignFrame,  Qt::ToolButtonIconOnly, true);
+    d->alignLayout->addWidget(d->rightAlignTool);
     connect(d->rightAlignTool, SIGNAL(clicked(bool)), this, SLOT(alignToggled(bool)));
 
     d->layout->addStretch();
 
     //other buttons
-    ToolButton *addWidgetTool = d->addTool("list-add", i18n("Add Widgets"));
+    ToolButton *addWidgetTool = d->addTool("list-add", i18n("Add Widgets"), this);
+    d->layout->addWidget(addWidgetTool);
     connect(addWidgetTool, SIGNAL(clicked()), this, SIGNAL(showAddWidgets()));
     connect(addWidgetTool, SIGNAL(clicked()), this, SLOT(hideController()));
 
-    ToolButton *removePanelTool = d->addTool("list-remove", i18n("Remove this panel"));
+    ToolButton *removePanelTool = d->addTool("list-remove", i18n("Remove this panel"), this);
+    d->layout->addWidget(removePanelTool);
     connect(removePanelTool, SIGNAL(clicked()), this, SIGNAL(removePanel()));
     connect(removePanelTool, SIGNAL(clicked()), this, SLOT(hideController()));
 
     d->layout->addSpacing(20);
-    ToolButton *closeControllerTool = d->addTool("window-close", i18n("Close this configuration window"), Qt::ToolButtonIconOnly, false);
+    ToolButton *closeControllerTool = d->addTool("window-close", i18n("Close this configuration window"), this, Qt::ToolButtonIconOnly, false);
+    d->layout->addWidget(closeControllerTool);
     connect(closeControllerTool, SIGNAL(clicked()), this, SLOT(hideController()));
 
     d->ruler = new PositioningRuler(this);
@@ -435,6 +492,11 @@ void PanelController::setLocation(const Plasma::Location &loc)
 
         d->ruler->setAvailableLength(screenGeom.width());
         break;
+    }
+
+    d->alignLayout->setDirection(d->layout->direction());
+    if (d->alignLayout->parentWidget()) {
+        d->alignLayout->parentWidget()->setMaximumSize(d->alignLayout->sizeHint());
     }
 
     d->ruler->setMaximumSize(d->ruler->sizeHint());
