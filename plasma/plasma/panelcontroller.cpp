@@ -129,7 +129,8 @@ class PanelController::ResizeHandle: public QWidget
 {
 public:
     ResizeHandle(QWidget *parent)
-       : QWidget(parent)
+       : QWidget(parent),
+         m_mouseOver(false)
     {
         setCursor(Qt::SizeVerCursor);
     }
@@ -143,11 +144,68 @@ public:
     {
         QPainter painter(this);
         QColor backColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-        backColor.setAlphaF(0.50);
+
+        if (m_mouseOver) {
+            backColor.setAlphaF(0.50);
+        } else {
+            backColor.setAlphaF(0.30);
+        }
+
         painter.fillRect(event->rect(), backColor);
+
+        // draw 3 dots to resemble other resize handles
+        int diameter = qMin(width(), height());
+        QRect dotRect(QPoint(0,0), QSize(diameter, diameter));
+        dotRect.moveCenter(mapFromParent(geometry().center()));
+
+        painter.setRenderHint(QPainter::Antialiasing, true);
+
+        paintDot(&painter, dotRect);
+
+        //other two dots
+        if (size().width() > size().height()) {
+            dotRect.translate(-diameter*2, 0);
+            paintDot(&painter, dotRect);
+            dotRect.translate(diameter*4, 0);
+            paintDot(&painter, dotRect);
+        } else {
+            dotRect.translate(0, -diameter*2);
+            paintDot(&painter, dotRect);
+            dotRect.translate(0, diameter*4);
+            paintDot(&painter, dotRect);
+        }
     }
 
-    Plasma::Location m_location;
+protected:
+    void enterEvent(QEvent * event)
+    {
+        m_mouseOver = true;
+        update();
+    }
+
+    void leaveEvent(QEvent * event)
+    {
+        m_mouseOver = false;
+        update();
+    }
+
+private:
+    void paintDot(QPainter *painter, QRect dotRect)
+    {
+        QLinearGradient gradient(dotRect.left(), dotRect.top(), dotRect.left(), dotRect.bottom());
+        QColor firstColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+        firstColor.setAlphaF(0.6);
+        QColor secondColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+        secondColor.setAlphaF(0.6);
+        gradient.setColorAt(0, firstColor);
+        gradient.setColorAt(1, secondColor);
+
+        painter->setBrush(gradient);
+        painter->setPen(Qt::NoPen);
+        painter->drawEllipse(dotRect);
+    }
+
+    bool m_mouseOver;
 };
 
 class PanelController::Private
