@@ -62,7 +62,7 @@ DashboardView::DashboardView(Plasma::Containment *containment, QWidget *parent)
     m_hideAction->setIcon(KIcon("preferences-desktop-display"));
     m_hideAction->setEnabled(false);
     //FIXME what happens when we switch containment?
-    containment->addToolboxTool(m_hideAction);
+    containment->addToolBoxTool(m_hideAction);
     connect(m_hideAction, SIGNAL(triggered()), this, SLOT(hideView()));
 
     installEventFilter(this);
@@ -228,7 +228,7 @@ void DashboardView::toggleVisibility()
 
         m_suppressShow = true;
         QTimer::singleShot(SUPPRESS_SHOW_TIMEOUT, this, SLOT(suppressShowTimeout()));
-        containment()->openToolbox();
+        containment()->openToolBox();
     } else {
         hideView();
     }
@@ -243,7 +243,7 @@ void DashboardView::hideView()
     disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
     disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
 
-    containment()->closeToolbox();
+    containment()->closeToolBox();
     containment()->enableAction("zoom out", m_zoomOut);
     containment()->enableAction("zoom in", m_zoomIn);
     m_hideAction->setEnabled(false);

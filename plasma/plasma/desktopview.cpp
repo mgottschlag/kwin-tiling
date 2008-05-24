@@ -218,7 +218,7 @@ void DesktopView::zoomIn(Plasma::Containment *toContainment)
                 }
             }
             setSceneRect(containment()->geometry());
-            containment()->closeToolbox();
+            containment()->closeToolBox();
             containment()->enableAction("zoom in", false);
             containment()->enableAction("addSiblingContainment", false);
         }
@@ -237,7 +237,7 @@ void DesktopView::zoomIn(Plasma::Containment *toContainment)
     } else {
         setDragMode(NoDrag);
         if (containment()) {
-            containment()->closeToolbox();
+            containment()->closeToolBox();
             containment()->enableAction("zoom in", false);
             containment()->enableAction("addSiblingContainment", false);
         }

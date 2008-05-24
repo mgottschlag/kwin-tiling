@@ -58,7 +58,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
         connect(panel, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
         connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));
         connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
-        connect(panel, SIGNAL(toolboxToggled()), this, SLOT(togglePanelController()));
+        connect(panel, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
         connect(m_panelController, SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
         connect(m_panelController, SIGNAL(removePanel()), panel, SLOT(destroy()));
         connect(m_panelController, SIGNAL(offsetChanged(int)), this, SLOT(setOffset(int)));
