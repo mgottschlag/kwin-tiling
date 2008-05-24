@@ -254,6 +254,7 @@ kg_main( const char *argv0 )
 		palette.setBrush( app.desktop()->backgroundRole(), QBrush( pm ) );
 		app.desktop()->setPalette( palette );
 		app.desktop()->setAutoFillBackground( true );
+		app.desktop()->setAttribute( Qt::WA_PaintOnScreen );
 		app.desktop()->show();
 		app.desktop()->repaint();
 	}
