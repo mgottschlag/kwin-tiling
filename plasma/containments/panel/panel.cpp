@@ -318,10 +318,10 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
     }
 }
 
-void Panel::saveState(KConfigGroup* config) const
+void Panel::saveState(KConfigGroup &config) const
 {
-    config->writeEntry("minimumSize", minimumSize());
-    config->writeEntry("maximumSize", maximumSize());
+    config.writeEntry("minimumSize", minimumSize());
+    config.writeEntry("maximumSize", maximumSize());
 }
 
 void Panel::themeUpdated()

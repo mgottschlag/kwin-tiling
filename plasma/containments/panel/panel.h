@@ -50,7 +50,7 @@ public:
     void paintBackground(QPainter *painter, const QRect &contentsRect);
 
 protected:
-    void saveState(KConfigGroup* config) const;
+    void saveState(KConfigGroup &config) const;
 
 private slots:
     void themeUpdated();
