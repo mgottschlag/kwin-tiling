@@ -58,6 +58,7 @@ WindowTaskItem::WindowTaskItem(Tasks *parent, const bool showTooltip)
     m_showTooltip = showTooltip;
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setAcceptsHoverEvents(true);
+    setAcceptDrops(true);
 }
 
 void WindowTaskItem::activate()
