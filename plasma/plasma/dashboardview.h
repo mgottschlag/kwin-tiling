@@ -24,6 +24,8 @@
 #include "plasma/plasma.h"
 #include "plasma/view.h"
 
+class QAction;
+
 namespace Plasma
 {
     class AppletBrowser;
@@ -58,6 +60,7 @@ protected slots:
 private:
     Plasma::AppletBrowser *m_appletBrowser;
     QPoint m_appletBrowserDragStart;
+    QAction *m_hideAction;
     bool m_suppressShow;
     bool m_zoomIn;
     bool m_zoomOut;

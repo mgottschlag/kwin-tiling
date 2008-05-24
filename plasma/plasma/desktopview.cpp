@@ -48,8 +48,8 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
 
     connectContainment(containment);
     if (containment) {
-        containment->enableToolBoxTool("zoomIn", false);
-        containment->enableToolBoxTool("addSiblingContainment", false);
+        containment->enableAction("zoom in", false);
+        containment->enableAction("addSiblingContainment", false);
     }
     //FIXME should we have next/prev or up/down/left/right or what?
     QAction *action = new QAction(i18n("Next Activity"), this);
@@ -190,7 +190,7 @@ void DesktopView::zoomIn(Plasma::Containment *toContainment)
 {
     kDebug();
     if (containment()) {
-        containment()->enableToolBoxTool("zoomOut", true);
+        containment()->enableAction("zoom out", true);
     }
 
     if (toContainment && containment() != toContainment) {
@@ -216,8 +216,8 @@ void DesktopView::zoomIn(Plasma::Containment *toContainment)
             }
             setSceneRect(containment()->geometry());
             containment()->closeToolBox();
-            containment()->enableToolBoxTool("zoomIn", false);
-            containment()->enableToolBoxTool("addSiblingContainment", false);
+            containment()->enableAction("zoom in", false);
+            containment()->enableAction("addSiblingContainment", false);
         }
     } else if (m_zoomLevel == Plasma::OverviewZoom) {
         m_zoomLevel = Plasma::GroupZoom;
@@ -227,30 +227,26 @@ void DesktopView::zoomIn(Plasma::Containment *toContainment)
         setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom()));
 
         if (containment()) {
-            containment()->enableToolBoxTool("zoomIn", true);
-            containment()->enableToolBoxTool("addSiblingContainment", true);
+            containment()->enableAction("zoom in", true);
+            containment()->enableAction("addSiblingContainment", true);
             ensureVisible(containment()->sceneBoundingRect());
         }
     } else {
         setDragMode(NoDrag);
         if (containment()) {
             containment()->closeToolBox();
-            containment()->enableToolBoxTool("zoomIn", false);
-            containment()->enableToolBoxTool("addSiblingContainment", false);
+            containment()->enableAction("zoom in", false);
+            containment()->enableAction("addSiblingContainment", false);
         }
     }
 }
 
 void DesktopView::zoomOut(Plasma::Containment *fromContainment)
 {
-    if (fromContainment != containment()) {
-        return;
-    }
-
-    fromContainment->enableToolBoxTool("zoomIn", true);
-    fromContainment->enableToolBoxTool("addSiblingContainment", true);
+    fromContainment->enableAction("zoom in", true);
+    fromContainment->enableAction("addSiblingContainment", true);
     if (m_zoomLevel == Plasma::DesktopZoom) {
-        fromContainment->enableToolBoxTool("zoomOut", true);
+        fromContainment->enableAction("zoom out", true);
         m_zoomLevel = Plasma::GroupZoom;
         //connect to other containments
         //FIXME if some other view is zoomed out, a little madness will ensue
@@ -267,10 +263,10 @@ void DesktopView::zoomOut(Plasma::Containment *fromContainment)
             }
         }
     } else if (m_zoomLevel == Plasma::GroupZoom) {
-        fromContainment->enableToolBoxTool("zoomOut", false);
+        fromContainment->enableAction("zoom out", false);
         m_zoomLevel = Plasma::OverviewZoom;
     } else {
-        fromContainment->enableToolBoxTool("zoomOut", false);
+        fromContainment->enableAction("zoom out", false);
         return;
     }
 

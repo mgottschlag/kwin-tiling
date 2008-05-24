@@ -118,7 +118,7 @@ void Trash::createMenu()
     //add the menu as an action icon
     QAction* menu = new QAction(SmallIcon("arrow-up-double"),i18n("&Menu"), this);
     connect(menu, SIGNAL(triggered(bool)), this , SLOT(popup()));
-    m_icon->addAction(menu);
+    m_icon->addIconAction(menu);
 }
 
 void Trash::popup()

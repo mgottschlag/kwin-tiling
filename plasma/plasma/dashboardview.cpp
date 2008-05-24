@@ -21,6 +21,7 @@
 
 #include "dashboardview.h"
 
+#include <QAction>
 #include <QDesktopWidget>
 #include <QKeyEvent>
 #include <QTimer>
@@ -56,9 +57,13 @@ DashboardView::DashboardView(Plasma::Containment *containment, QWidget *parent)
     setWallpaperEnabled(!PlasmaApp::hasComposite());
 
     connect(scene(), SIGNAL(releaseVisualFocus()), SLOT(hideView()));
-    QGraphicsWidget *tool = containment->addToolBoxTool("hideDashboard", "preferences-desktop-display", i18n("Hide Dashboard"));
-    containment->enableToolBoxTool("hideDashboard", false);
-    connect(tool, SIGNAL(clicked()), this, SLOT(hideView()));
+
+    m_hideAction = new QAction(i18n("Hide Dashboard"), this);
+    m_hideAction->setIcon(KIcon("preferences-desktop-display"));
+    m_hideAction->setEnabled(false);
+    //FIXME what happens when we switch containment?
+    containment->addToolboxTool(m_hideAction);
+    connect(m_hideAction, SIGNAL(triggered()), this, SLOT(hideView()));
 
     installEventFilter(this);
 }
@@ -209,12 +214,14 @@ void DashboardView::toggleVisibility()
         KWindowSystem::setOnAllDesktops(winId(), true);
         KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
 
-        m_zoomOut = containment()->isToolBoxToolEnabled("zoomOut");
-        m_zoomIn = containment()->isToolBoxToolEnabled("zoomIn");
+        QAction *action = containment()->action("zoom out");
+        m_zoomOut = action ? action->isEnabled() : false;
+        action = containment()->action("zoom in");
+        m_zoomIn = action ? action->isEnabled() : false;
 
-        containment()->enableToolBoxTool("hideDashboard", true);
-        containment()->enableToolBoxTool("zoomOut", false);
-        containment()->enableToolBoxTool("zoomIn", false);
+        m_hideAction->setEnabled(true);
+        containment()->enableAction("zoom out", false);
+        containment()->enableAction("zoom in", false);
 
         show();
         raise();
@@ -237,9 +244,9 @@ void DashboardView::hideView()
     disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
 
     containment()->closeToolBox();
-    containment()->enableToolBoxTool("zoomOut", m_zoomOut);
-    containment()->enableToolBoxTool("zoomIn", m_zoomIn);
-    containment()->enableToolBoxTool("hideDashboard", false);
+    containment()->enableAction("zoom out", m_zoomOut);
+    containment()->enableAction("zoom in", m_zoomIn);
+    m_hideAction->setEnabled(false);
     hide();
 }
 

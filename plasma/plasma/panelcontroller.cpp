@@ -121,6 +121,7 @@ public:
 
     ToolButton *addTool(const QString icon, const QString iconText, Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon, bool checkButton = false)
     {
+        //TODO take advantage of setDefaultAction using the containment's actions if possible
         ToolButton *tool = new ToolButton(q);
 
         tool->setIcon(KIcon(icon));
