@@ -10,10 +10,11 @@
 
 <authorgroup>
 <author>&Mike.McBride; &Mike.McBride.mail;</author>
+<author>&Anne-Marie.Mahfouf; &Anne-Marie.Mahfouf.mail;</author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2003-09-22</date>
+<date>2008-05-25</date>
 <releaseinfo>3.2</releaseinfo>
 
 <keywordset>
@@ -30,18 +31,31 @@
 <para>This module is designed to allow you to easily select different
 fonts for different parts of the &kde; Desktop.</para>
 
+<para>
+<screenshot>
+<screeninfo>Here's a screenshot of the fonts settings module</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="main.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>The fonts settings module</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+
 <para>The panel consists of different font groups to give you a lot of
 flexibility in configuring your fonts: </para>
 
 <itemizedlist>
-<listitem><para><guilabel>General:</guilabel> Used everywhere the other font
-groups don't apply</para></listitem>
+<listitem><para><guilabel>General:</guilabel> Used everywhere when the other font
+groups do not apply</para></listitem>
 
 <listitem><para><guilabel>Fixed width:</guilabel> Anywhere a
 non-proportional font is specified</para></listitem>
 
-<!-- <listitem><para><guilabel>File Manager</guilabel> (Font to use in the
-&kde; file manager)</para></listitem> -->
+<listitem><para><guilabel>Small</guilabel> When small fonts are used</para></listitem> 
 
 <listitem><para><guilabel>Toolbar:</guilabel> Font used in &kde; application
 toolbars</para></listitem>
@@ -82,6 +96,20 @@ appear, but you will notice checkboxes that allow you to change the
 choose any one, two, or three of these options, and they will be
 applied to all the font groups.</para>
 
+<para>
+<screenshot>
+<screeninfo>Adjusting all fonts</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="adjust-all.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>The Adjust All Fonts... dialog</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+
 <para>For example, if you have selected several different font faces
 above, and realize they are all a size too big (this often happens
 when you change screen resolution, for instance), you can apply a new
@@ -89,10 +117,25 @@ font size to all the fonts, without affecting your customized font
 faces and styles.</para>
 
 <sect2 id="fonts-aa">
-<title>Anti-alias text</title>
+<title>Anti-aliasing text</title>
 
-<para>To use anti-aliasing, simply place a mark in the checkbox labeled 
-<guilabel>Use anti-aliasing for fonts</guilabel>.</para>
+<para>Default anti-aliasing settings are those used system wide by your distribution and labelled <guilabel>System Settings</guilabel>. You can disable all anti-aliasing by choosing <guilabel>Disabled</guilabel> in the drop down box.</para>
+
+<para>To use and set up anti-aliasing, simply choose <guilabel>Enabled</guilabel> from the box on the right of <guilabel>Use anti-aliasing:</guilabel>. The <guibutton>Configure...</guibutton> button will then get enabled and clicking on it will bring you a dialog to configure anti-aliasing.</para>
+
+<para>
+<screenshot>
+<screeninfo>Anti-aliasing properties</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="anti-aliasing.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>The anti-aliasing properties dialog</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
 
 <para>Placing a mark in the checkbox will allow you to specify which range of 
 fonts will <emphasis>not</emphasis> be anti-aliased.  This range is specified 
