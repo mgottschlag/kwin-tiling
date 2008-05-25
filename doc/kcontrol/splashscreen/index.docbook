@@ -24,11 +24,11 @@
 <keyword>KDE</keyword>
 <keyword>System Settings</keyword>
 <keyword>splash screen</keyword>
-<keyword>calibrate</keyword>
+<keyword>theme</keyword>
 </keywordset>
 </articleinfo>
 
-<sect1 id="kcm_joystick">
+<sect1 id="kcm_splashscreen">
 <title><guilabel>Splash Screen Theme Manager</guilabel></title>
 
 <para>This module provides an interface to install and view splash screen themes.</para>
@@ -48,7 +48,7 @@
 </para>
 
 <para>On the left you can see the list of already installed splash screens. The current splash screen name is highlighted.</para>
-<para>On the right is displayed a previous of the current splash screen with some information about it below the preview.</para>
+<para>On the right is displayed a preview of the current splash screen with some information about it below the preview.</para>
 
 <variablelist>
 <varlistentry><term><guilabel>Get New Themes...</guilabel></term>
@@ -70,7 +70,7 @@ You need to be connected to the Internet to use this action. A dialog will displ
 </screenshot>
 </para>
 <para>
-This new theme is immediately available after you close the System Settings Add-On Installer dialog and is highlighted. The preview displays the picture. You need to click the <guibutton>Apply</guibutton> to make this theme you splash-screen theme.
+This new theme is immediately available after you close the System Settings Add-On Installer dialog and is highlighted. The preview displays the picture. You need to click the <guibutton>Apply</guibutton> biutton to make this theme your current splash-screen theme.
 </para>
 </listitem>
 </varlistentry>
@@ -78,7 +78,7 @@ This new theme is immediately available after you close the System Settings Add-
 <varlistentry><term><guilabel>Install Theme File...</guilabel></term>
 <listitem>
 <para>
-Instead of installing a theme directly as above you might have a tarball of a theme locally that you want to install. Clicking on this button will open a file dialog and you choose the tarball of the theme you want to install. The installer then unpack the theme locally and makes it immediately available in the themes list.
+Instead of installing a theme directly as above you might have a tarball of a theme locally that you want to install. Clicking on this button will open a file dialog and you choose the tarball of the theme you want to install. The installer then unpacks the theme locally and makes it immediately available in the themes list.
 </para>
 </listitem>
 </varlistentry>
