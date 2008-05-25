@@ -118,7 +118,6 @@ void KGlobalShortcutsEditor::activateComponent(const QString &component)
     } else {
         // Known component. Get it.
         d->stack->setCurrentWidget((*iter).editor);
-        KGlobalAccel::self()->overrideMainComponentData(KComponentData((*iter).uniqueName.toAscii()));
     }
 }
 

@@ -454,10 +454,9 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
     connect( widget->spinStickyDepth, SIGNAL(valueChanged(int)), this, SLOT(changed()));
 #endif
 
-    KGlobalAccel::self()->overrideMainComponentData(componentData());
-    actionCollection = new KActionCollection( this, KComponentData("kxkb") );
+    actionCollection = new KActionCollection(this, componentData());
 //    actionCollection->setConfigGlobal(true);
-    KAction* a = NULL;
+    KAction* a = 0;
 #include "kxkbbindings.cpp"
     kDebug() << "getting shortcut" << a->globalShortcut().toString();
 

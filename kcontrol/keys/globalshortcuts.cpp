@@ -124,8 +124,7 @@ void GlobalShortcutsModule::load()
     foreach (const QStringList &componentId, components) {
         // kDebug() << "component:" << componentId;
         const QString &componentUnique = componentId[ComponentUnique];
-        kga->overrideMainComponentData(KComponentData(componentUnique.toAscii()));
-        KActionCollection* col = new KActionCollection(this);
+        KActionCollection* col = new KActionCollection(this, KComponentData(componentUnique.toAscii()));
         actionCollections[componentUnique] = col;
 
         QList<QStringList> actions = kga->allActionsForComponent(componentId);
