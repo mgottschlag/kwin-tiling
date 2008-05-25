@@ -92,7 +92,7 @@ QList<QAction*> Panel::contextualActions()
 
         m_configureAction = new QAction(i18n("Panel Settings"), this);
         m_configureAction->setIcon(KIcon("configure"));
-        connect(m_configureAction, SIGNAL(triggered()), this, SIGNAL(toolboxToggled()));
+        connect(m_configureAction, SIGNAL(triggered()), this, SIGNAL(toolBoxToggled()));
 
         m_removeAction = action("remove");
     }
