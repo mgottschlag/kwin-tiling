@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Web Widget
+Name[ca]=Estri web
 Name[ga]=Giuirléid Ghréasáin
 Name[km]=ធាតុក្រាហ្វិក​បណ្ដាញ
 Name[nds]=Nett-Finster
@@ -11,6 +12,7 @@ Name[uk]=Віджет тенет
 Name[zh_CN]=网页部件
 Name[zh_TW]=網頁元件
 Comment=Webpage widget using HTML and JavaScript
+Comment[ca]=Estri per a pàgines web que usa HTML i JavaScript
 Comment[ga]=Giuirléid Ghréasáin a úsáideann HTML agus JavaScript
 Comment[km]=ធាតុក្រាហ្វិក​ទំព័រ​បណ្ដាញ​ដោយប្រើ HTML និង JavaScript
 Comment[nds]=Nettsieden-Finster, bruukt HTML un JavaScript

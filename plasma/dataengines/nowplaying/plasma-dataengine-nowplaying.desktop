@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Now Playing Engine
+Name[ca]=Motor de «Ara sona»
 Name[ga]=Inneall 'Á Sheinm Anois'
 Name[km]=កម្មវិធី​កំពុង​ចាក់
 Name[nds]=Lopen Stück-Karn
@@ -11,6 +12,7 @@ Name[zh_CN]=正在收听引擎
 Name[zh_TW]=「現在播放」引擎
 
 Comment=Lists currently playing music
+Comment[ca]=Llista la música que s'està reproduint actualment
 Comment[ga]=Taispeáin an ceol á sheinm faoi láthair
 Comment[km]=រាយ​តន្ដ្រី​ដែល​កពុង​ចាក់
 Comment[nds]=Wiest opstunns afspeelt Musik

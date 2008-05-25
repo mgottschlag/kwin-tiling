@@ -1,6 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Dashboard Widget
+Name[ca]=Estri del tauler
 Name[ga]=Giuirléid Dashboard
 Name[km]=ធាតុ​ក្រាហ្វិក​ផ្ទាំង​គ្រប់គ្រង
 Name[nds]=Klockpaneel-Finster
@@ -11,6 +12,7 @@ Name[uk]=Віджет панелі приладів
 Name[zh_CN]=仪表板部件
 Name[zh_TW]=儀表板元件
 Comment=MacOS dashboard widget
+Comment[ca]=Estri del tauler del MacOS
 Comment[ga]=Giuirléid dashboard MacOS
 Comment[km]=ធាតុ​ក្រាហ្វិក​ផ្ទាំង​គ្រប់គ្រង​របស់ MacOS
 Comment[nds]=MacOs-Klockpaneel
