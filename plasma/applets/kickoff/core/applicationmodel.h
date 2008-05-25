@@ -84,6 +84,7 @@ class ApplicationModel : public KickoffAbstractModel
 
     public slots:
         void slotReloadMenu();
+        void checkSycocaChange();
 
     private:
         friend class ApplicationModelPrivate;

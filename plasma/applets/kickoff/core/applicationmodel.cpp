@@ -43,6 +43,7 @@
 #include <kurlrequester.h>
 #include <kmimetype.h>
 #include <kservicegroup.h>
+#include <ksycoca.h>
 #include <kdebug.h>
 
 #include <assert.h>
@@ -233,6 +234,7 @@ ApplicationModel::ApplicationModel(QObject *parent)
     (void)new KickoffAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/kickoff", this);
     dbus.connect(QString(), "/kickoff", "org.kde.plasma", "reloadMenu", this, SLOT(slotReloadMenu()));
+    connect(KSycoca::self(), SIGNAL(databaseChanged()), this, SLOT(checkSycocaChange()));
     d->fillNode(QString(), d->root);
 }
 
@@ -382,6 +384,13 @@ void ApplicationModel::slotReloadMenu()
     d->root = new AppNode();
     d->fillNode(QString(), d->root);
     reset();
+}
+
+void ApplicationModel::checkSycocaChange()
+{
+    if (KSycoca::self()->isChanged("services")) {
+        slotReloadMenu();
+    }
 }
 
 ApplicationModel::DuplicatePolicy ApplicationModel::duplicatePolicy() const
