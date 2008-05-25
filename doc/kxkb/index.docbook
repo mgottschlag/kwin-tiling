@@ -91,7 +91,7 @@ typing <command>kcmshell4 keyboard_layout</command> from the terminal.</para>
 Advanced. The first one defines layouts you want to use and their options 
 (variant, display label etc.), second defines how the layout switching is done, 
 including which shortcut is used and wether the layout should be remembered for
-each window, application etc. Third tab allows to set options for Xkb extension.
+each window, application &etc;. Third tab allows to set options for Xkb extension.
 These options are properties of X.org and are not handled in any way by &kxkb; - 
 it just sets them up.
 </para>
@@ -174,7 +174,7 @@ Shortcut can be modifier-only key combination (&ie; Ctrl+Shift), non-modifier ke
 <sect2 id="modifier-only-keys">
 <title>Modifier-only shortcuts</title>
 <para>
-These shortcuts are handled by X.org (not Qt/KDE) and are configured in Advanced tab. 
+These shortcuts are handled by X.org (not &Qt;/&kde;) and are configured in Advanced tab. 
 Availabe list of shortcuts is fixed but you can define your own if you know how to 
 change xkb rules and maps. Just note if you hack xkb maps don't forget to change xorg.xml
 rules file as that's where &kxkb; takes the configuration information from.
