@@ -86,7 +86,7 @@ Instead of installing a theme directly as above you might have a tarball of a th
 <varlistentry><term><guilabel>Remove Theme</guilabel></term>
 <listitem>
 <para>
-Removing a theme means removing the theme files from your disk. A message box warns you before doing anything and indicates you what it will remove. The theme is then no longer available in the list.
+Removing a theme means removing the theme files from your disk. A message box warns you before doing anything and indicates you what it will remove. Clicking on <guibutton>Delete</guibutton> in this message box will remove the splash screen theme from your disk. Clicking <guibutton>Cancel</guibutton> will abort the remove action. If you choose <guibutton>Delete</guibutton>, the theme is then no longer available in the list.
 </para>
 </listitem>
 </varlistentry>
