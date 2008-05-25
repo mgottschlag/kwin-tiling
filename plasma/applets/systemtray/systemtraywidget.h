@@ -38,6 +38,7 @@ public:
     SystemTrayWidget(QWidget *parent);
 
     void setOrientation(Qt::Orientation);
+    void setMaximumSize(QSize s);
 
     static const int MARGIN = 4;
 
@@ -56,6 +57,7 @@ private:
 
     QGridLayout *m_mainLayout;
     Qt::Orientation m_orientation;
+    int m_maxCount;
     int m_nextRow;
     int m_nextColumn;
 

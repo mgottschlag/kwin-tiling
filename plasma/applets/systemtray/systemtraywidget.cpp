@@ -43,6 +43,7 @@ enum
 SystemTrayWidget::SystemTrayWidget(QWidget *parent)
     : QWidget(parent),
     m_orientation(Qt::Horizontal),
+    m_maxCount(0),
     m_nextRow(0),
     m_nextColumn(0)
 {
@@ -109,32 +110,48 @@ void SystemTrayWidget::setOrientation(Qt::Orientation orientation)
     }
 }
 
+void SystemTrayWidget::setMaximumSize(QSize s)
+{
+    bool doLayout = (m_orientation == Qt::Horizontal && s.height() != maximumHeight());
+    doLayout |= (m_orientation == Qt::Vertical && s.width() != maximumWidth());
+
+    QWidget::setMaximumSize(s);
+    if (doLayout) {
+        relayoutContainers();
+    }
+}
+
 void SystemTrayWidget::addWidgetToLayout(QWidget *widget)
 {
     // Figure out where it should go and add it to our layout
     widget->setMaximumSize(22, 22);
+    m_mainLayout->addWidget(widget, m_nextRow, m_nextColumn);
+
     if (m_orientation == Qt::Horizontal) {
         // Add down then across when horizontal
-        if (m_nextRow == m_mainLayout->rowCount()
+        m_nextRow++;
+        if (m_nextColumn == 0) {
+            m_maxCount = m_nextRow;
+        }
+        if (m_nextRow == m_maxCount
             && m_mainLayout->minimumSize().height() + m_mainLayout->spacing()
                + widget->minimumHeight() > maximumHeight() - 2 * MARGIN) {
             m_nextColumn++;
             m_nextRow = 0;
         }
-        m_mainLayout->addWidget(widget, m_nextRow, m_nextColumn);
-        m_nextRow++;
     } else {
         // Add across then down when vertical
-        if (m_nextColumn == m_mainLayout->columnCount()
+        m_nextColumn++;
+        if (m_nextRow == 0) {
+            m_maxCount = m_nextColumn;
+        }
+        if (m_nextColumn == m_maxCount
             && m_mainLayout->minimumSize().width() + m_mainLayout->spacing()
                + widget->minimumWidth() > maximumWidth() - 2 * MARGIN) {
             m_nextRow++;
             m_nextColumn = 0;
         }
-        m_mainLayout->addWidget(widget, m_nextRow, m_nextColumn);
-        m_nextColumn++;
     }
-    emit sizeShouldChange();
 }
 
 void SystemTrayWidget::relayoutContainers(QObject *removeContainer)
@@ -160,6 +177,7 @@ void SystemTrayWidget::relayoutContainers(QObject *removeContainer)
     }
 
     // Re-add remaining widgets
+    m_maxCount = 0;
     m_nextRow = 0;
     m_nextColumn = 0;
     foreach (QWidget *widget, remainingWidgets) {
