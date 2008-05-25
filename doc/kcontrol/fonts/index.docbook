@@ -77,14 +77,14 @@ to label icons</para></listitem>
 <para>Each font has a corresponding <guibutton>Choose...</guibutton>
 button.  By clicking on this button, a dialog box appears.  You can
 use this dialog box to choose a new font, font style, size and
-character set.  Then press <guibutton>OK</guibutton>.</para>
+character set.  Then press <guibutton>Apply</guibutton>.</para>
 
 <para>An example of the font you have chosen will be displayed in the space
 between the font group name and the <guibutton>Choose...</guibutton>
 button.</para>
 
-<para>When you are done, simply click <guibutton>OK</guibutton>, and
-all necessary components of &kde; will be restarted so your changes
+<para>When you are done, simply click <guibutton>OK</guibutton> and
+all the necessary components of &kde; will be restarted so your changes
 can take affect immediately.</para>
 
 <para>The <guibutton>Adjust All Fonts...</guibutton> button allows you to
@@ -137,8 +137,7 @@ faces and styles.</para>
 </screenshot>
 </para>
 
-<para>Placing a mark in the checkbox will allow you to specify which range of 
-fonts will <emphasis>not</emphasis> be anti-aliased.  This range is specified 
+<para>Placing a mark in the <guilabel>Exclude range:</guilabel> checkbox will allow you to specify which range of fonts will <emphasis>not</emphasis> be anti-aliased.  This range is specified 
 with the two combo boxes on the same line.</para>
 
 <para>You can also choose the method that &kde; uses to create an anti-alias
@@ -157,6 +156,12 @@ of the X server.  If you still are having problems, please contact the
 appropriate &kde; mailing list, or check the
 <acronym>FAQ</acronym>.</para></note>
 
+</sect2>
+
+<sect2 id="fonts-dpi">
+<title>Fonts DPI</title>
+
+<para><guilabel>Force fonts DPI:</guilabel> proposes you an alternate DPI other than your system one which is used as default when this setting is on <guilabel>Disabled</guilabel>. You can check what DPI your X server is set to by running <userinput>xdpyinfo | grep resolution</userinput> in a terminal window and then change the DPI using the drop down box. This will be applied to newly started applications only.</para>
 </sect2>
 
 </sect1>
