@@ -36,7 +36,6 @@ SystemTray::SystemTray(QObject *parent, const QVariantList &arguments)
     m_background->setImagePath("widgets/systemtray");
     resize(40,60);
     m_background->resizePanel(size());
-    setSizePolicy(QSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred));
 }
 
 SystemTray::~SystemTray()
@@ -78,7 +77,7 @@ void SystemTray::paintInterface(QPainter *painter,
 void SystemTray::updateSize()
 {
     setPreferredSize(m_systemTrayWidget->sizeHint());
-    resize(m_systemTrayWidget->sizeHint());
+    updateGeometry();
     updateWidgetGeometry();
 }
 
@@ -106,21 +105,24 @@ void SystemTray::updateWidgetGeometry()
     if (!m_systemTrayWidget || m_systemTrayWidget->parentWidget() != parentView) {
         delete m_systemTrayWidget;
         m_systemTrayWidget = new SystemTrayWidget(parentView);
-        m_systemTrayWidget->setOrientation(Qt::Horizontal);
+        updateWidgetOrientation();
         connect(m_systemTrayWidget, SIGNAL(sizeShouldChange()),
                 this, SLOT(updateSize()));
-        updateWidgetOrientation();
         m_systemTrayWidget->setVisible(true);
-
     }
-    
-    // Set the system tray to its minimum size and centre it above the item
-    QRect itemRect = mapToView(parentView, geometry());
-    QRect widgetRect = QRect(QPoint(0, 0), m_systemTrayWidget->minimumSizeHint());
-    widgetRect.moveTop(itemRect.top() + (itemRect.height() - widgetRect.height()) / 2);
-    widgetRect.moveLeft(itemRect.left() + (itemRect.width() - widgetRect.width()) / 2);
-    m_systemTrayWidget->setMaximumSize(itemRect.size());
-    m_systemTrayWidget->setGeometry(geometry().toRect());
+
+    // Set the widget's maximum size to the size that this applet
+    // has been allocated. The widget will use that size to calculate
+    // whether to add icons horizontally or vertically.
+    QRect r = mapToView(parentView, rect());
+    m_systemTrayWidget->setMaximumSize(r.size());
+
+    // Center the widget within the applet area
+    QSize s = m_systemTrayWidget->minimumSizeHint();
+    r.moveLeft(r.left() + (r.width() - s.width()) / 2);
+    r.moveTop(r.top() + (r.height() - s.height()) / 2);
+    r.setSize(s);
+    m_systemTrayWidget->setGeometry(r);
 }
 
 #include "systemtray.moc"
