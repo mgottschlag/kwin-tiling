@@ -1,11 +1,13 @@
 [Desktop Entry]
 Name=Command Line
 Name[ca]=Línia d'ordres
+Name[de]=Befehlszeile
 Name[et]=Käsurida
 Name[fr]=Ligne de commandes
 Name[ga]=Líne na nOrduithe
 Name[gu]=આદેશ જગ્યા
 Name[km]=បន្ទាត់​ពាក្យ​បញ្ជា
+Name[lv]=Komandrinda
 Name[ml]=ആജ്ഞാസ്ഥാനം
 Name[nds]=Konsool
 Name[pt]=Linha de Comandos
@@ -31,6 +33,7 @@ Comment[gu]=શૅલ આદેશ ચલાવો
 Comment[ja]=シェルコマンドを実行します
 Comment[km]=ប្រតិបត្តិ​ពាក្យ​បញ្ជា​សែល
 Comment[ko]=셸 명령 실행
+Comment[lv]=Darbina čaulas komandas
 Comment[nds]=Föhrt Konsoolbefehlen ut
 Comment[pa]=ਸ਼ੈੱਲ ਕਮਾਂਡਾਂ ਚਲਾਓ
 Comment[pt]=Executa comandos da consola
