@@ -223,7 +223,7 @@ how to configure different session types.</para>
 <listitem>
 <para>(Optionally) A <guimenuitem>Authentication Method</guimenuitem> item
 to switch between different authentication methods like the classical
-username+password, smartcard, biometry, etc.  The actual authenticators
+username+password, smartcard, biometry, &etc;.  The actual authenticators
 are combinations of <acronym>PAM</acronym> modules and matching frontend
 modules (<quote>conversation plugins</quote>). See
 <xref linkend="option-pluginslogin"/>.</para>
@@ -1355,7 +1355,7 @@ and &Oswald.Buddenhagen;.
 This document also includes large parts of the &xdm; man page,
 which is &copy; Keith Packard.
 The theme format documentation is heavily based on the GDM manual,
-which is &copy; Martin K. Petersen, George Lebl, Red Hat, Inc. and
+which is &copy; Martin K. Petersen, George Lebl, &RedHat;, Inc. and
 Sun Microsystems, Inc.</para>
 
 <!--TRANS:CREDIT_FOR_TRANSLATORS -->
