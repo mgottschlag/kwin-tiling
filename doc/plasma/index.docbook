@@ -33,11 +33,12 @@
 <legalnotice>&FDLNotice;</legalnotice> - commented out because checkXML does not like it. Will ask someone who remembers :)
 -->
 
+
 <date>2007-11-23</date>
 <releaseinfo>3.96.1</releaseinfo>
 
 <abstract>
-<para>Plasma is the collective KDE desktop experience.</para>
+<para>Plasma is the collective &kde; desktop experience.</para>
 </abstract>
 
 <keywordset>
@@ -51,15 +52,28 @@
  
 <chapter id="introduction">
 <title>Introduction</title>
-<para>Plasma is the collective KDE desktop experience</para>
+<para>Plasma is the collective &kde; desktop experience</para>
 </chapter>
 
 <chapter id="using_plasma">
 <title>Using Plasma</title>
 <para>Using plasma</para>
 </chapter>
+<chapter id="credits">
 
+<title>Credits and License</title>
 
+<para>
+Documentation copyright 2007 &J.Hall; &J.Hall.mail;
+</para>
+
+<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
+
+&underFDL;
+
+&underGPL;                 <!-- GPL License -->
+
+</chapter>
 &documentation.index; 
 
 </book>
