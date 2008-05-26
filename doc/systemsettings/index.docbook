@@ -1,0 +1,374 @@
+<?xml version="1.0" ?>
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" "dtd/kdex.dtd" [
+  <!ENTITY kappname "&systemsettings;">
+  <!ENTITY package "kdebase-workspace">
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE">
+]>
+<book lang="&language;">
+
+<bookinfo>
+<title>The &systemsettings; Handbook</title>
+
+<authorgroup>
+<author>
+&Richard.Johnson;
+&Richard.Johnson.mail;
+</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<copyright>
+<year>2007</year>
+<holder>&Richard.Johnson;</holder>
+</copyright>
+<legalnotice>&FDLNotice;</legalnotice>
+
+<date>2008-05-26</date>
+<releaseinfo>1.01.00</releaseinfo>
+
+<abstract>
+<para>
+This documentation describes &kde;&apos;s system configuration and administration center.
+</para>
+</abstract>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>System</keyword>
+<keyword>Settings</keyword>
+<keyword>configuration</keyword>
+<keyword>administration</keyword>
+<keyword>config</keyword>
+<keyword>admin</keyword>
+</keywordset>
+
+</bookinfo>
+
+<chapter id="introduction">
+<title>Introduction</title>
+
+<para>
+The &kde; &systemsettings; provides the user with a centralized and convenient way to configure all of the &kde; settings.
+</para>
+
+<para>
+&systemsettings; is made up of multiple modules. Each module is a separate application, however the &kde; &systemsettings; organizes all of these applications into a single location.
+</para>
+
+<tip>
+<para>
+Each &systemsettings; module can be executed individually
+</para>
+<para>
+See section entitled <link linkend="run-modules-individually">Running
+individual &systemsettings; modules</link> for more information.
+</para>
+</tip>
+
+<para>
+&systemsettings; groups all of the configuration modules into two basic categories:
+<itemizedlist>
+<listitem><para><link linkend="general">General</link></para></listitem>
+<listitem><para><link linkend="advanced">Advanced</link></para></listitem>
+</itemizedlist>
+</para>
+
+<para>
+The modules that make up &systemsettings; fall under one of the above categories, making it easier to locate the correct configuration module.
+</para>
+
+</chapter>
+
+<chapter id="using-kapp">
+<title>Using &systemsettings;</title>
+
+<para>
+This section details the use of &systemsettings; itself. For information on each individual module, please see <link linkend="modules">&systemsettings; Modules</link>.
+</para>
+
+<sect1 id="starting">
+<title>Starting &systemsettings;</title>
+
+<para>
+The &kde; &systemsettings; can be started in one of three ways:
+</para>
+
+<orderedlist>
+<listitem>
+<para>
+By selecting <menuchoice><guimenu>K Button</guimenu><guisubmenu>Applications</guisubmenu><guimenuitem>System Settings</guimenuitem></menuchoice>.
+</para>
+</listitem>
+<listitem>
+<para>
+By pressing <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo>. This will bring up the &krunner; dialog. Type <command>system settings</command>, and click <guibutton>Launch</guibutton>.
+</para>
+</listitem>
+<listitem>
+<para>
+Type <command>systemsettings &amp;</command> at any command prompt.
+</para>
+</listitem>
+</orderedlist>
+
+<para>
+All three of these methods are equivalent, and produce the same result.
+</para>
+</sect1>
+
+<sect1 id="screen">
+<title>The &kde; &systemsettings; Screen</title>
+
+<para>
+When you start &systemsettings;, you are presented with a window, which is divided into three functional parts.
+</para>
+
+<para>
+Across the top is a toolbar. The toolbar provides the user with the ability to go back into the main view from within a module, or to search for something within all of the modules.
+</para>
+
+<para>
+Underneath the toolbar are two tabs, <link linkend="general">General</link> and <link linkend="advanced">Advanced</link>.
+</para>
+
+<para>
+Underneath the tabs is an icon view of the individual modules that make up &systemsettings;.
+</para>
+</sect1>
+
+<sect1 id="general">
+<title>&systemsettings; General Tab</title>
+
+<para>
+The <guilabel>General</guilabel> tab consists of modules that allow you to make changes to typical &kde; settings. This section is divided into the following subsections:
+</para>
+
+<variablelist>
+<varlistentry>
+<term>Look &amp; Feel</term>
+<listitem>
+<para>
+This section covers the settings related to configuring the way you want your &kde; system to look and feel. Settings include the appearance, desktop, notification, and window behavior customizations.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Personal</term>
+<listitem>
+<para>
+This section covers the settings related to the user. Settings include personal information about the user, accessibility, default applications, as well as regional and language settings.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Network &amp; Connectivity</term>
+<listitem>
+<para>
+This section covers the settings related to network and sharing configuration.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Computer Administration</term>
+<listitem>
+<para>
+This section covers the settings related to typical system administration. Settings include data and time, display, fonts, game controllers, keyboard and mouse, as well as system sound.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="advanced">
+<title>&systemsettings; Advanced Tab</title>
+
+<para>
+The <guilabel>Advanced</guilabel> tab consists of modules that allow you to make changes to more advanced &kde; settings. This section is divided into the following subsections:
+</para>
+
+<variablelist>
+<varlistentry>
+<term>Advanced User Settings</term>
+<listitem>
+<para>
+This section covers the settings related to the more advanced system settings for the user. Settings include digital cameras, file associations, input actions, resources, services, sessions, and hardware management.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>System</term>
+<listitem>
+<para>
+This sections covers the settings related to specific system settings such as configuration of the login manager.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="exiting">
+<title>Exiting the &kde; &systemsettings;</title>
+
+<para>
+&systemsettings; can be exited in one of two ways:
+</para>
+
+<orderedlist>
+<listitem>
+<para>
+Press <keycombo><keycap>Ctrl</keycap><keycap>Q</keycap></keycombo> on the keyboard.
+</para>
+</listitem>
+<listitem>
+<para>
+click on the Close button located in the top right hand corner of the window.
+</para>
+</listitem>
+</orderedlist>
+</sect1>
+
+<sect1 id="run-modules-individually">
+<title>Running Individual &systemsettings; Modules</title>
+
+<para>
+Individual modules can be run without running &systemsettings; using the command <command>kcmshell</command> from the command line. Type <command>kcmshell --list</command> to see a list of the available &kde; &systemsettings; modules.
+</para>
+</sect1>
+</chapter>
+
+<chapter id="modules">
+<title>The &kde; &systemsettings; Modules</title>
+
+<para>
+In order to make it as easy as possible, the &kde; &systemsettings; has organized options into <link linkend="general">General</link> and <link linkend="advanced">Advanced</link> categories. In the main window, under each category, there are icons grouped together under subcategories. Each icon is called a module. When you click on a module icon, you will be presented with the options of the module in the main window.
+</para>
+
+<para>
+Each module will have some or all of the following buttons:
+</para>
+
+<variablelist>
+<varlistentry>
+<term>Help</term>
+<listitem>
+<para>
+This button will provide help specific to the current module. Clicking the button will open &khelpcenter; in a new window providing detailed information on the module.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Defaults</term>
+<listitem>
+<para>
+Clicking this button will restore this module to its default values. You much click <guibutton>Apply</guibutton> to save the options.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Reset</term>
+<listitem>
+<para>
+This button will &quot;Reset&quot; the module to the previous settings.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry>
+<term>Apply</term>
+<listitem>
+<para>
+Clicking this button will save all changes to &kde;. If you have changed anything, clicking <guibutton>Apply</guibutton> will cause the changes to take effect.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<note>
+<para>
+You must either &quot;Reset&quot; or &quot;Apply&quot; the any changes before changing to another module.
+</para>
+<para>
+If you try to change without saving or resetting your options, you will be asked if you want to save your changes, or discard them.
+</para>
+</note>
+
+</chapter>
+
+<chapter id="credits">
+
+<title>Credits and License</title>
+
+<para>
+&systemsettings;
+</para>
+<para>
+Program copyright 2007 Benjamin C. Meyer.
+</para>
+<para>
+Contributors:
+<itemizedlist>
+<listitem>
+<para>
+Will Stephenson <email>wstepheson@kde.org</email>
+</para>
+</listitem>
+<listitem>
+<para>Michael D. Stemle, Jr. <email>manchicken@notsosoft.net</email>
+</para>
+</listitem>
+<listitem>
+<para>
+Matthias Kretz <email>kretz@kde.org</email>
+</para>
+</listitem>
+<listitem>
+<para>
+&Daniel.Molkentin; &Daniel.Mokentin.mail;
+</para>
+</listitem>
+<listitem>
+<para>
+&Matthias.Elter; &Matthias.Elter.mail;
+</para>
+</listitem>
+<listitem>
+<para>
+Frans Englich <email>englich@kde.org</email>
+</para>
+</listitem>
+<listitem>
+<para>
+Michael Jansen <email>kde@michael-jansen.biz</email>
+</para>
+</listitem>
+</itemizedlist>
+</para>
+
+<para>
+Documentation Copyright &copy; 2008 &Richard.Johnson; &Richard.Johnson.mail;
+</para>
+
+<!-- TRANS:CREDIT_FOR_TRANSLATORS -->
+
+&underFDL;
+&underGPL;
+</chapter>
+
+&documentation.index;
+</book>
+
+<!--
+Local Variables:
+mode: xml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+vim:tabstop=2:shiftwidth=2:expandtab
+kate: space-indent on; indent-width 2; tab-width 2; indent-mode none;
+-->
