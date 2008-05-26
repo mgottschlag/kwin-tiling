@@ -51,7 +51,7 @@ LocationsRunner::~LocationsRunner()
 {
 }
 
-void processUrl(KUrl &url, const QString &term)
+static void processUrl(KUrl &url, const QString &term)
 {
     if (url.protocol().isEmpty()) {
         int idx = term.indexOf('/');
@@ -128,16 +128,18 @@ void LocationsRunner::run(const Plasma::RunnerContext &context, const Plasma::Qu
     QString data = match.data().toString();
     const QString location = context.query();
 
-    //kDebug() << "command: " << match.query();
-    //kDebug() << "url: " << location << data;
-    if (m_type == Plasma::RunnerContext::UnknownType) {
-        KToolInvocation::invokeBrowser(location);
-    } else if (m_type == Plasma::RunnerContext::NetworkLocation && data.left(4) == "http") {
+    // terms like 'www.kde.org' will have UnknownType but match()
+    // recognized it as url and put correct protocol into data
+    if ((m_type == Plasma::RunnerContext::NetworkLocation
+         || m_type == Plasma::RunnerContext::UnknownType)
+        && data.startsWith("http:")) {
         // the text may have changed while we were running, so we have to refresh
         // our content
         KUrl url(location);
         processUrl(url, location);
         KToolInvocation::invokeBrowser(url.url());
+    } else if (m_type == Plasma::RunnerContext::UnknownType) {
+        KToolInvocation::invokeBrowser(location);
     } else {
         new KRun(KShell::tildeExpand(location), 0);
     }
