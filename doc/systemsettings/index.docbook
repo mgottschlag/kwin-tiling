@@ -102,7 +102,7 @@ By selecting <menuchoice><guimenu>K Button</guimenu><guisubmenu>Applications</gu
 </listitem>
 <listitem>
 <para>
-By pressing <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo>. This will bring up the &krunner; dialog. Type <command>system settings</command>, and click <guibutton>Launch</guibutton>.
+  By pressing <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo>. This will bring up the <application>KRunner</application> dialog. Type <command>system settings</command>, and click <guibutton>Launch</guibutton>.
 </para>
 </listitem>
 <listitem>
