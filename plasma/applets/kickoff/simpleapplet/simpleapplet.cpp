@@ -206,6 +206,13 @@ void MenuLauncherApplet::constraintsEvent(Plasma::Constraints constraints)
             //setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
         } else {
             //setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
+
+            //restore the maximum sizes tweaked in sizeconstraints
+            if (formFactor() == Plasma::Horizontal ) {
+                setMaximumHeight(INT_MAX);
+            } else if (formFactor() == Plasma::Vertical) {
+                setMaximumWidth(INT_MAX);
+            }
         }
     }
 

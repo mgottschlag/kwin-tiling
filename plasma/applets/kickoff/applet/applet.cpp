@@ -113,6 +113,13 @@ void LauncherApplet::constraintsEvent(Plasma::Constraints constraints)
             //setMinimumSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
         } else {
             //setMinimumSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
+
+            //restore the maximum sizes tweaked in sizeconstraints
+            if (formFactor() == Plasma::Horizontal ) {
+                setMaximumHeight(INT_MAX);
+            } else if (formFactor() == Plasma::Vertical) {
+                setMaximumWidth(INT_MAX);
+            }
         }
     }
 
