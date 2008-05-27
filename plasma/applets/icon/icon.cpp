@@ -54,8 +54,8 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
     kDebug() << "sized to:" << geometry();
 
-    if (args.count() > 2) {
-        setUrl(args.at(2).toString());
+    if (args.count() > 0) {
+        setUrl(args.value(0).toString());
     }
 }
 
