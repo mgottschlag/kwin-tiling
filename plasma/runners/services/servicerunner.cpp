@@ -48,6 +48,9 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
     }
 
     QMutexLocker lock(bigLock());
+    // Search for applications which are executable and case-insensitively match the search term
+    // See http://techbase.kde.org/Development/Tutorials/Services/Traders#The_KTrader_Query_Language
+    // if the following is unclear to you.
     QString query = QString("exist Exec and ('%1' =~ Name)").arg(term);
     KService::List services = KServiceTypeTrader::self()->query("Application", query);
 
@@ -66,7 +69,11 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
         seen[service->exec()] = true;
     }
 
-    query = QString("exist Exec and ('%1' ~subin Keywords or '%2' ~~ GenericName or '%3' ~~ Name)").arg(term, term, term);
+    // Search for applications which are executable and the term case-insensitive matches any of
+    // * a substring of one of the keywords
+    // * a substring of the GenericName field
+    // * a substring of the Name field
+    query = QString("exist Exec and ('%1' ~subin Keywords or '%1' ~~ GenericName or '%1' ~~ Name)").arg(term);
     services = KServiceTypeTrader::self()->query("Application", query);
 
     //kDebug() << "got " << services.count() << " services from " << query;
