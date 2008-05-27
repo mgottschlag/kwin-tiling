@@ -312,6 +312,8 @@ void FolderView::constraintsEvent(Plasma::Constraints constraints)
     //if (constraints & Plasma::FormFactorConstraint)
     //   setBackgroundHints(Applet::NoBackground);
 
+    setBackgroundHints(Applet::TranslucentBackground);
+
     if ((constraints & Plasma::SizeConstraint) &&
         columnsForWidth(contentsRect().width()) != m_columns)
     {
