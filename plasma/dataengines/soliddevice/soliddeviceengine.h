@@ -70,6 +70,7 @@ private Q_SLOTS:
     void deviceAdded(const QString &udi);
     void deviceRemoved(const QString &udi);
     void deviceChanged(const QString& udi, const QString &property, const QVariant &value);
+    void sourceRemoved(const QString &source);
 };
 
 K_EXPORT_PLASMA_DATAENGINE(soliddevice, SolidDeviceEngine)

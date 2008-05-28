@@ -59,6 +59,8 @@ SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QVariantList& args)
     listenForNewDevices();
     temperature = new HddTemp();
     setMinimumPollingInterval(1000);
+    connect(this, SIGNAL(sourceRemoved(const QString&)),
+            this, SLOT(sourceRemoved(const QString&)));
 }
 
 SolidDeviceEngine::~SolidDeviceEngine()
@@ -107,6 +109,11 @@ bool SolidDeviceEngine::sourceRequestEvent(const QString &name)
 
     kDebug() << "Source is not a predicate or a device.";
     return false;
+}
+
+void SolidDeviceEngine::sourceRemoved(const QString &source)
+{
+    devicemap.remove(source);
 }
 
 bool SolidDeviceEngine::populateDeviceData(const QString &name)
@@ -465,7 +472,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         if (video == 0) {
             return false;
         }
-        
+
         devicetypes << I18N_NOOP("Video");
 
         setData(name, I18N_NOOP("Supported Protocols"), video->supportedProtocols());
@@ -477,7 +484,7 @@ bool SolidDeviceEngine::populateDeviceData(const QString &name)
         }
         setData(name, I18N_NOOP("Driver Handles"), handles);
     }
-    
+
     setData(name, I18N_NOOP("Device Types"), devicetypes);
     return true;
 }
@@ -534,7 +541,7 @@ bool SolidDeviceEngine::updateFreeSpace(const QString &udi)
 
     Solid::StorageAccess *storageaccess = device.as<Solid::StorageAccess>();
     if (storageaccess == 0) return false;
-    
+
     QVariant freeSpaceVar;
     qlonglong freeSpace = freeDiskSpace(storageaccess->filePath());
     if ( freeSpace != -1 ) {
