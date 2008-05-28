@@ -3,6 +3,7 @@ Name=Compiz
 Name[gu]=કોમ્પિઝ
 Name[ml]=കോമ്പിസ്
 Name[pa]=ਕੰਪਿਜ਼
+Name[sr]=Компиз
 Name[x-test]=xxCompizxx
 Exec=compiz ccp
 TryExec=compiz
