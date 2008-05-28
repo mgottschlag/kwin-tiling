@@ -232,6 +232,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
     }
 
     const qreal hoverAlpha = 0.4;
+    bool hasSvg = false;
 
     Plasma::PanelSvg *itemBackground = m_applet->itemBackground();
 
@@ -239,7 +240,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
         if (itemBackground && itemBackground->hasElementPrefix("attention")) {
             //Draw task background from theme svg "attention" element
             itemBackground->setElementPrefix("attention");
-            itemBackground->paintPanel(painter, option->rect);
+            hasSvg = true;
         } else {
             //Draw task background without svg theming
             QColor background = m_applet->colorScheme()->background(KColorScheme::ActiveBackground).color();
@@ -254,7 +255,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
             if (itemBackground && itemBackground->hasElementPrefix("focus")) {
                 //Draw task background from theme svg "focus" element
                 itemBackground->setElementPrefix("focus");
-                itemBackground->paintPanel(painter, option->rect);
+                hasSvg = true;
             } else {
                 //Draw task background without svg theming
                 QLinearGradient background(boundingRect().topLeft(), boundingRect().bottomLeft());
@@ -278,7 +279,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
         if (itemBackground && itemBackground->hasElementPrefix("normal")) {
             //Draw task background from theme svg "normal" element
             itemBackground->setElementPrefix("normal");
-            itemBackground->paintPanel(painter, option->rect);
+            hasSvg = true;
         } else {
             //Draw task background without svg theming
             KColorScheme *colorScheme = m_applet->colorScheme();
@@ -292,25 +293,51 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
         }
     }
 
-    if (option->state & QStyle::State_MouseOver || m_animId) {
-        if (itemBackground && itemBackground->hasElementPrefix("hover")) {
-            //Draw task background from theme svg "hover" element
+    //Draw task background fading away if needed
+    if (hasSvg) {
+        if (!m_animId) {
+             if (~option->state & QStyle::State_MouseOver) {
+                 itemBackground->paintPanel(painter, option->rect);
+             }
+        } else {
             QPixmap pixmap(option->rect.size());
-
-            if (option->state & QStyle::State_Sunken) {
-                pixmap.fill(QColor(0,0,0,50));
-            } else {
-                pixmap.fill(QColor(0,0,0,255*m_alpha));
-            }
-
+    
+            pixmap.fill(QColor(0,0,0,255*(1-m_alpha)));
+    
             {
                 QPainter buffPainter(&pixmap);
                 buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-                itemBackground->setElementPrefix("hover");
                 itemBackground->paintPanel(&buffPainter, option->rect);
             }
-
+    
             painter->drawPixmap(option->rect.topLeft(), pixmap);
+        }
+    }
+
+    if (option->state & QStyle::State_MouseOver || m_animId) {
+        if (itemBackground && itemBackground->hasElementPrefix("hover")) {
+            if (!m_animId) {
+                itemBackground->setElementPrefix("hover");
+                itemBackground->paintPanel(painter, option->rect);
+            } else {
+                //Draw task background from theme svg "hover" element
+                QPixmap pixmap(option->rect.size());
+    
+                if (option->state & QStyle::State_Sunken) {
+                    pixmap.fill(QColor(0,0,0,50));
+                } else {
+                    pixmap.fill(QColor(0,0,0,255*m_alpha));
+                }
+    
+                {
+                    QPainter buffPainter(&pixmap);
+                    buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+                    itemBackground->setElementPrefix("hover");
+                    itemBackground->paintPanel(&buffPainter, option->rect);
+                }
+    
+                painter->drawPixmap(option->rect.topLeft(), pixmap);
+            }
         } else {
             //Draw task background without svg theming
             QLinearGradient background(boundingRect().topLeft(),
