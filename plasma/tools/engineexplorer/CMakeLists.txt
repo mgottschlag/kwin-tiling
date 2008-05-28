@@ -21,5 +21,5 @@ if (Soprano_FOUND)
    target_link_libraries(plasmaengineexplorer ${SOPRANO_LIBRARIES})
 endif (Soprano_FOUND)
 
-install(TARGETS plasmaengineexplorer DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS plasmaengineexplorer ${INSTALL_TARGETS_DEFAULT_ARGS})
 

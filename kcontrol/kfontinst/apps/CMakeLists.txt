@@ -20,9 +20,9 @@ target_link_libraries(kfontinst_bin ${KDE4_KIO_LIBS} ${KDE4_KDESU_LIBS} kfontins
 target_link_libraries(kfontprint_bin kfontinstui kfontinst )
 target_link_libraries(kfontview_bin ${KDE4_KPARTS_LIBS} kfontinstui kfontinst )
 
-install(TARGETS kfontinst_bin DESTINATION ${BIN_INSTALL_DIR} )
+install(TARGETS kfontinst_bin ${INSTALL_TARGETS_DEFAULT_ARGS} )
 install(TARGETS kfontprint_bin DESTINATION ${LIBEXEC_INSTALL_DIR} )
-install(TARGETS kfontview_bin DESTINATION ${BIN_INSTALL_DIR} )
+install(TARGETS kfontview_bin ${INSTALL_TARGETS_DEFAULT_ARGS} )
 install(FILES kfontviewui.rc DESTINATION ${DATA_INSTALL_DIR}/kfontview )
 install(FILES kfontview.desktop DESTINATION ${XDG_APPS_INSTALL_DIR} )
 install(FILES installfont.desktop DESTINATION

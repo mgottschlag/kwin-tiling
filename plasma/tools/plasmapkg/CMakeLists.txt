@@ -6,5 +6,5 @@ kde4_add_executable(plasmapkg ${plasmapkg_SRCS})
 
 target_link_libraries(plasmapkg plasma)
 
-install(TARGETS plasmapkg DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS plasmapkg ${INSTALL_TARGETS_DEFAULT_ARGS})
 

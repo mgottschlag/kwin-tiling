@@ -33,7 +33,7 @@ link_directories(lib)
 # install(TARGETS kdeinit_kxkb_aplt ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 #target_link_libraries( kxkb_aplt kdeinit_kxkb_aplt )
-#install(TARGETS kxkb_aplt DESTINATION ${BIN_INSTALL_DIR})
+#install(TARGETS kxkb_aplt ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 ########### next target ###############

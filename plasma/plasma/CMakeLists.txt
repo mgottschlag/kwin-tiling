@@ -27,5 +27,5 @@ set_target_properties(kdeinit_plasma-qgv PROPERTIES OUTPUT_NAME kdeinit4_plasma)
 set_target_properties(plasma-qgv PROPERTIES OUTPUT_NAME plasma)
 
 install(TARGETS kdeinit_plasma-qgv DESTINATION ${LIB_INSTALL_DIR})
-install(TARGETS plasma-qgv DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS plasma-qgv ${INSTALL_TARGETS_DEFAULT_ARGS})
 install( FILES plasma.desktop DESTINATION ${AUTOSTART_INSTALL_DIR} )

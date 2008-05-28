@@ -15,9 +15,9 @@ target_link_libraries(solid-network ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} soli
 target_link_libraries(solid-bluetooth ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} solidcontrol)
 target_link_libraries(solid-powermanagement ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} solidcontrol)
 
-install(TARGETS solid-network DESTINATION ${BIN_INSTALL_DIR})
-install(TARGETS solid-bluetooth DESTINATION ${BIN_INSTALL_DIR})
-install(TARGETS solid-powermanagement DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS solid-network ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS solid-bluetooth ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS solid-powermanagement ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 ########### install files ###############
 

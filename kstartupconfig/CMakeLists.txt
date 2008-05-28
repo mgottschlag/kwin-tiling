@@ -6,7 +6,7 @@ kde4_add_executable(kstartupconfig4 NOGUI ${kstartupconfig_SRCS})
 
 target_link_libraries(kstartupconfig4 kdefakes ${KDE4_KDECORE_LIBS})
 
-install(TARGETS kstartupconfig4 DESTINATION ${BIN_INSTALL_DIR} )
+install(TARGETS kstartupconfig4 ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 ########### kdostartupconfig ###############
 
@@ -16,5 +16,5 @@ kde4_add_executable(kdostartupconfig4 NOGUI ${kdostartupconfig_SRCS})
 
 target_link_libraries(kdostartupconfig4 ${KDE4_KDECORE_LIBS} )
 
-install(TARGETS kdostartupconfig4 DESTINATION ${BIN_INSTALL_DIR} )
+install(TARGETS kdostartupconfig4 ${INSTALL_TARGETS_DEFAULT_ARGS} )
 

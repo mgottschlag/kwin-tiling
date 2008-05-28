@@ -97,13 +97,13 @@ macro_add_file_dependencies(genkdmconf.c ${confci})
 kde4_add_executable(genkdmconf NOGUI RUN_UNINSTALLED ${genkdmconf_SRCS})
 macro_add_compile_flags(genkdmconf -U_REENTRANT)
 target_link_libraries(genkdmconf ${X11_LIBRARIES})
-install(TARGETS genkdmconf DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS genkdmconf ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 set(kdmctl_SRCS kdmctl.c)
 kde4_add_executable(kdmctl ${kdmctl_SRCS})
 macro_add_compile_flags(kdmctl -U_REENTRANT)
 target_link_libraries(kdmctl ${SOCKET_LIBRARIES})
-install(TARGETS kdmctl DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS kdmctl ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 build_confci()
 

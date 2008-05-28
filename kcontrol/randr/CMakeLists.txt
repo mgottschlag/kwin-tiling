@@ -54,7 +54,7 @@ kde4_add_executable(krandrtray ${krandrtray_SRCS})
 
 target_link_libraries(krandrtray  ${KDE4_KUTILS_LIBS} ${X11_Xrandr_LIB} )
 
-install(TARGETS krandrtray DESTINATION ${BIN_INSTALL_DIR})
+install(TARGETS krandrtray ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
 ########### install files ###############
