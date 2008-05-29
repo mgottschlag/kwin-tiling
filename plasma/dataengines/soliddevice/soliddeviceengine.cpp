@@ -114,6 +114,7 @@ bool SolidDeviceEngine::sourceRequestEvent(const QString &name)
 void SolidDeviceEngine::sourceRemoved(const QString &source)
 {
     devicemap.remove(source);
+    predicatemap.remove(source);
 }
 
 bool SolidDeviceEngine::populateDeviceData(const QString &name)
