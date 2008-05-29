@@ -1,5 +1,5 @@
 include_directories(
-   ${CMAKE_SOURCE_DIR}/workspace/libs
+   ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs
    ${NETWORKMANAGER_INCLUDE_DIRS} 
    ${CMAKE_CURRENT_SOURCE_DIR}/../control)
 
