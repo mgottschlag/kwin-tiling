@@ -1,4 +1,6 @@
-include_directories(${NETWORKMANAGER_INCLUDE_DIRS}
+include_directories(
+   ${CMAKE_SOURCE_DIR}/workspace/libs
+   ${NETWORKMANAGER_INCLUDE_DIRS}
    ${NM-UTIL_INCLUDE_DIRS}
    ${CMAKE_CURRENT_SOURCE_DIR}/dbus
    ${CMAKE_CURRENT_BUILD_DIR}

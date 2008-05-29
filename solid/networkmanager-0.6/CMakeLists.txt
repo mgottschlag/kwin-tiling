@@ -1,4 +1,7 @@
-include_directories(${NETWORKMANAGER_INCLUDE_DIRS} ${CMAKE_CURRENT_SOURCE_DIR}/../control)
+include_directories(
+   ${CMAKE_SOURCE_DIR}/workspace/libs
+   ${NETWORKMANAGER_INCLUDE_DIRS} 
+   ${CMAKE_CURRENT_SOURCE_DIR}/../control)
 
 #add_subdirectory(tests) # disabled for now, they depend on authentication.cpp
 
