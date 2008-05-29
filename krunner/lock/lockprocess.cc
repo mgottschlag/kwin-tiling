@@ -51,6 +51,7 @@
 #include <QDesktopWidget>
 #include <QX11Info>
 #include <QTextStream>
+#include <QPainter>
 
 #include <QDateTime>
 
@@ -885,7 +886,9 @@ void LockProcess::resume( bool force )
     if( mSuspended && mHackProc.state() == QProcess::Running )
     {
         XForceScreenSaver(QX11Info::display(), ScreenSaverReset );
-        mSavedScreen = QPixmap::grabWidget( this );
+        QPainter p( this );
+        p.drawPixmap( 0, 0, mSavedScreen );
+        p.end();
         mSavedScreen = QPixmap();
         QApplication::syncX();
         ::kill(mHackProc.pid(), SIGCONT);
