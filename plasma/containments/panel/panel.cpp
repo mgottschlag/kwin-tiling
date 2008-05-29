@@ -314,7 +314,9 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::ImmutableConstraint) {
-        updateBorders(geometry().toRect());
+        if (view()) {
+            updateBorders(view()->geometry());
+        }
     }
 }
 
