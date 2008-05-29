@@ -161,28 +161,31 @@ public:
 
         switch (alignment) {
         case Qt::AlignLeft:
-            rightMaxPos = offset + maxLength;
+            //Here substracting one to everything because QRect.moveCenter(pos) moves the rect with
+            //the width/2 th pixel at pos.x (and so for y) resulting in the painted image moved
+            //one pixel to the right
+            rightMaxPos = offset + maxLength - 1;
             leftMaxPos = 0;
-            rightMinPos = offset + minLength;
+            rightMinPos = offset + minLength - 1;
             leftMinPos = 0;
-            offsetPos = offset;
+            offsetPos = offset - 1;
             break;
         case Qt::AlignRight:
-            leftMaxPos = totalLength - offset - maxLength;
+            leftMaxPos = totalLength - offset - maxLength - 1;
             rightMaxPos = 0;
-            leftMinPos = totalLength - offset - minLength;
+            leftMinPos = totalLength - offset - minLength - 1;
             rightMinPos = 0;
-            offsetPos = totalLength - offset;
+            offsetPos = totalLength - offset - 1;
             break;
         case Qt::AlignCenter:
         default:
-            leftMaxPos = totalLength/2 + offset - maxLength/2;
-            rightMaxPos = totalLength/2 + offset + maxLength/2;
+            leftMaxPos = totalLength/2 + offset - maxLength/2 - 1;
+            rightMaxPos = totalLength/2 + offset + maxLength/2 - 1;
 
-            leftMinPos = totalLength/2 + offset - minLength/2;
-            rightMinPos = totalLength/2 + offset + minLength/2;
+            leftMinPos = totalLength/2 + offset - minLength/2 - 1;
+            rightMinPos = totalLength/2 + offset + minLength/2 - 1;
 
-            offsetPos = totalLength/2 + offset;
+            offsetPos = totalLength/2 + offset - 1;
             break;
         }
     
