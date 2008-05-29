@@ -244,13 +244,16 @@ void Panel::updateBorders(const QRect &geom)
         kDebug() << "no location!?";
     }
 
+    //activate borders and fetch sizes again
+    m_background->setEnabledBorders(enabledBorders);
+    m_background->getMargins(leftWidth, topHeight, rightWidth, bottomHeight);
+
     //invalidate the layout and set again
     if (layout()) {
         layout()->setContentsMargins(leftWidth, topHeight, rightWidth, bottomHeight);
         layout()->invalidate();
     }
 
-    m_background->setEnabledBorders(enabledBorders);
     update();
 }
 
