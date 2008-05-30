@@ -41,22 +41,35 @@
 
 <para>This a module to configure essential paths for the &kde; desktop.</para>
 
+<para>
+<screenshot>
+<screeninfo>Configure some &kde; paths</screeninfo>
+  <mediaobject>
+    <imageobject>
+      <imagedata fileref="paths.png" format="PNG"/>
+    </imageobject>
+    <textobject>
+      <phrase>Configure some &kde; paths</phrase>
+    </textobject>
+  </mediaobject>
+</screenshot>
+</para>
+
 <variablelist>
 <varlistentry>
 <term><guilabel>Desktop path:</guilabel></term>
-<listitem><para>The Desktop folder contains all the files which you see on your desktop. The default path is usually <filename>~/Desktop</filename> but you can change here the location of this folder. All the content will be moved to the new location when you click <guibutton>Apply</guibutton> or <guibutton>OK</guibutton>.
+<listitem><para>The Desktop folder contains all the files which you see on your desktop. The default path is usually <filename class="directory">~/Desktop</filename> but you can change here the location of this folder. All the content will be moved to the new location when you click <guibutton>Apply</guibutton> or <guibutton>OK</guibutton>.
 </para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Autostart path:</guilabel></term>
 <listitem><para>
-- 
+The Autostart folder contains applications or links to applications or scripts you want to start whenever &kde; starts. You can change the location of this folder if you want to, and the contents will move automatically to the new location as well when you click <guibutton>Apply</guibutton> or <guibutton>OK</guibutton>.
 </para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Documents path:</guilabel></term>
-<listitem><para> -
- </para></listitem>
+<listitem><para>This folder will be used by default to load or save documents from or to.</para></listitem>
 </varlistentry>
 </variablelist>
 
