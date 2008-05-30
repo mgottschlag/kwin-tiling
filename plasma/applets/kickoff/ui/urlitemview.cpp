@@ -234,6 +234,7 @@ public:
     UrlItemView * const q;
     QPersistentModelIndex currentRootIndex;
     QPersistentModelIndex hoveredIndex;
+    QPersistentModelIndex watchedIndexForDrag;
 
     QHash<QModelIndex,int> itemChildOffsets;
     QHash<QModelIndex,QRect> itemRects;
@@ -477,6 +478,17 @@ void UrlItemView::mouseMoveEvent(QMouseEvent *event)
     QAbstractItemView::mouseMoveEvent(event);
 }
 
+void UrlItemView::mousePressEvent(QMouseEvent *event)
+{
+    d->watchedIndexForDrag = indexAt(event->pos());
+    QAbstractItemView::mousePressEvent(event);
+}
+
+void UrlItemView::mouseReleaseEvent(QMouseEvent *event)
+{
+    d->watchedIndexForDrag = QModelIndex();
+}
+
 void UrlItemView::setItemStateProvider(ItemStateProvider *provider)
 {
     d->itemStateProvider = provider;
@@ -486,6 +498,10 @@ void UrlItemView::startDrag(Qt::DropActions supportedActions)
 {
     kDebug() << "Starting UrlItemView drag with actions" << supportedActions;
 
+    if (!d->watchedIndexForDrag.isValid()) {
+        return;
+    }
+    
     QDrag *drag = new QDrag(this);
     QMimeData *mimeData = model()->mimeData(selectionModel()->selectedIndexes());
 

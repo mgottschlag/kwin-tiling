@@ -245,6 +245,7 @@ public:
     FlipScrollView * const q;
     bool backArrowHover;
     QPersistentModelIndex hoveredIndex;
+    QPersistentModelIndex watchedIndexForDrag;
 
     QTimeLine *flipAnimTimeLine;
     bool animLeftToRight;
@@ -483,8 +484,16 @@ void FlipScrollView::resizeEvent(QResizeEvent*)
     d->updateScrollBarRange();
 }
 
+void FlipScrollView::mousePressEvent(QMouseEvent *event)
+{
+    d->watchedIndexForDrag = indexAt(event->pos());
+    QAbstractItemView::mousePressEvent(event);
+}
+
 void FlipScrollView::mouseReleaseEvent(QMouseEvent *event)
 {
+    d->watchedIndexForDrag = QModelIndex();
+
     if (d->backArrowRect().contains(event->pos()) && d->currentRoot().isValid()) {
         // go up one level
         d->setCurrentRoot(d->currentRoot().parent());
@@ -681,6 +690,10 @@ void FlipScrollView::paintEvent(QPaintEvent * event)
 void FlipScrollView::startDrag(Qt::DropActions supportedActions) 
 {
     kDebug() << "Starting UrlItemView drag with actions" << supportedActions;
+
+    if (!d->watchedIndexForDrag.isValid()) {
+        return;
+    }
 
     QDrag *drag = new QDrag(this);
     QMimeData *mimeData = model()->mimeData(selectionModel()->selectedIndexes());
