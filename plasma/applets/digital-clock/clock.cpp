@@ -111,10 +111,10 @@ void Clock::updateSize() {
     }
     if (formFactor() == Plasma::Horizontal) {
         // We have a fixed height, set some sensible width
-        setMinimumWidth(contentsRect().height() * aspect);
+        setMinimumSize(contentsRect().height() * aspect, 0);
     } else if (formFactor() == Plasma::Vertical) {
         // We have a fixed width, set some sensible height
-        setMinimumHeight((int)contentsRect().width() / aspect);
+        setMinimumSize(0, (int)contentsRect().width() / aspect);
     }
 }
 
