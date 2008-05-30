@@ -464,7 +464,20 @@ void DeviceNotifier::storageEjectDone(Solid::ErrorType error, QVariant errorData
 void DeviceNotifier::resetIcon()
 {
     if (m_icon) {
-        m_icon->setIcon(KIcon("computer"));
+        //we display the icon corresponding to the computer
+        QList<Solid::Device> list = Solid::Device::allDevices();
+
+        if (list.size() > 0) {
+            Solid::Device device=list[0];
+
+            while (device.parent().isValid()) {
+                device = device.parent();
+            }
+            m_icon->setIcon(KIcon(device.icon()));
+        } else {
+            //default icon if problem
+            m_icon->setIcon(KIcon("computer"));
+        }
         update();
     }
 }
