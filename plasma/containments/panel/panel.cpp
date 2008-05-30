@@ -324,8 +324,9 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::ImmutableConstraint) {
-        if (view()) {
-            updateBorders(view()->geometry());
+        QGraphicsView *panelView = view();
+        if (panelView) {
+            updateBorders(panelView->geometry());
         }
     }
 }
