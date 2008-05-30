@@ -23,6 +23,7 @@
 // Qt
 #include <QtCore/QAbstractItemModel>
 #include <QtCore/QStack>
+#include <QtGui/QApplication>
 #include <QtGui/QMouseEvent>
 
 // KDE
@@ -75,6 +76,7 @@ public:
     int column;
     UrlItemLauncher *launcher;
     MenuView::FormatType formattype;
+    QPoint mousePressPos;
 };
 
 MenuView::MenuView(QWidget *parent)
@@ -150,8 +152,10 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
     if (event->type() == QEvent::MouseMove) {
         QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
         QMenu *watchedMenu = qobject_cast<QMenu*>(watched);
+        const int mousePressDistance = !d->mousePressPos.isNull() ? (mouseEvent->pos() - d->mousePressPos).manhattanLength() : 0;
 
-        if (watchedMenu && mouseEvent->buttons() & Qt::LeftButton) {
+        if (watchedMenu && mouseEvent->buttons() & Qt::LeftButton
+            && mousePressDistance >= QApplication::startDragDistance()) {
             QAction *action = watchedMenu->actionAt(mouseEvent->pos());
 
             if (!action) {
@@ -173,9 +177,22 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
             QIcon icon = action->icon();
             drag->setPixmap(icon.pixmap(IconSize(KIconLoader::Desktop)));
 
+            d->mousePressPos = QPoint();
+
             Qt::DropAction dropAction = drag->exec();
 
             return true;
+        }
+    } else if (event->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+        QMenu *watchedMenu = qobject_cast<QMenu*>(watched);
+        if (watchedMenu) {
+            d->mousePressPos = mouseEvent->pos();
+        }
+    } else if (event->type() == QEvent::MouseButtonRelease) {
+        QMenu *watchedMenu = qobject_cast<QMenu*>(watched);
+        if (watchedMenu) {
+            d->mousePressPos = QPoint();
         }
     }
 
