@@ -100,7 +100,8 @@ Q_SIGNALS:
 
 struct ClipCommand
 {
-    ClipCommand( const QString &, const QString &, bool = true, const QString & = "" );
+    ClipCommand( ClipAction *, const QString &, const QString &, bool = true, const QString & = QString() );
+    ClipAction *parent;
     QString command;
     QString description;
     bool isEnabled;
@@ -125,6 +126,7 @@ public:
   inline bool matches( const QString& string ) const {
       return ( myRegExp.indexIn( string ) != -1 );
   }
+  QStringList regExpMatches() { return myRegExp.capturedTexts(); }
 
   void 	setDescription( const QString& d)     { myDescription = d; }
   const QString& description() 		const { return myDescription; }

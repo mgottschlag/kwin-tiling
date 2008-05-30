@@ -251,6 +251,20 @@ void URLGrabber::execute( const struct ClipCommand *command ) const
     if ( command->isEnabled ) {
         QHash<QChar,QString> map;
         map.insert( 's', myClipData );
+        // commands executed should always have a parent,
+        // but a simple check won't hurt...
+        if ( command->parent )
+        {
+            const QStringList matches = command->parent->regExpMatches();
+            // support only %0 and the first 9 matches...
+            const int numMatches = qMin(10, matches.count());
+            for ( int i = 0; i < numMatches; ++i )
+                map.insert( QChar( '0' + i ), matches.at( i ) );
+        }
+        else
+        {
+            kDebug() << "No parent for" << command->description << "(" << command->command << ")";
+        }
         QString cmdLine = KMacroExpander::expandMacrosShellQuote( command->command, map );
 
         if ( cmdLine.isEmpty() )
@@ -396,9 +410,10 @@ void URLGrabber::slotKillPopupMenu()
 ///////////////////////////////////////////////////////////////////////////
 ////////
 
-ClipCommand::ClipCommand(const QString &_command, const QString &_description,
+ClipCommand::ClipCommand(ClipAction *_parent, const QString &_command, const QString &_description,
                          bool _isEnabled, const QString &_icon)
-    : command(_command),
+    : parent(_parent),
+      command(_command),
       description(_description),
       isEnabled(_isEnabled)
 {
@@ -472,7 +487,7 @@ void ClipAction::addCommand( const QString& command,
     if ( command.isEmpty() )
         return;
 
-    struct ClipCommand *cmd = new ClipCommand( command, description, enabled, icon );
+    struct ClipCommand *cmd = new ClipCommand( this, command, description, enabled, icon );
     //    cmd->id = myCommands.count(); // superfluous, I think...
     myCommands.append( cmd );
 }

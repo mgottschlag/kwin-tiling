@@ -319,7 +319,7 @@ void ActionWidget::slotItemChanged(QTreeWidgetItem *item, int column)
 {
     if (!item->parent() || column != 0)
         return;
-    ClipCommand command( item->text(0), item->text(1) );
+    ClipCommand command( 0, item->text(0), item->text(1) );
 
     treeWidget->blockSignals(true); // don't lead in infinite recursion...
     item->setIcon(0, KIcon(command.pixmap.isEmpty() ? "system-run" : command.pixmap));
