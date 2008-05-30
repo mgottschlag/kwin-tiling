@@ -1,0 +1,65 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+
+<authorgroup>
+<author>
+<firstname>Michael</firstname>
+<surname>Anderson</surname>
+<affiliation>
+<address><email>nosrednaekim@gmail.com</email></address>
+</affiliation>
+</author>
+<author><firstname>Anne-Marie</firstname>
+<surname>Mahfouf</surname>
+<affiliation>
+<address><email>annma@kde.org</email></address>
+</affiliation></author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2008-05-30</date>
+<releaseinfo>3.4</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>desktop</keyword>
+<keyword>paths</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="paths">
+
+<title>Paths</title>
+
+<para>This a module to configure essential paths for the &kde; desktop.</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Desktop path:</guilabel></term>
+<listitem><para>The Desktop folder contains all the files which you see on your desktop. The default path is usually <filename>~/Desktop</filename> but you can change here the location of this folder. All the content will be moved to the new location when you click <guibutton>Apply</guibutton> or <guibutton>OK</guibutton>.
+</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Autostart path:</guilabel></term>
+<listitem><para>
+- 
+</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Documents path:</guilabel></term>
+<listitem><para> -
+ </para></listitem>
+</varlistentry>
+</variablelist>
+
+</sect1>
+
+</article>
