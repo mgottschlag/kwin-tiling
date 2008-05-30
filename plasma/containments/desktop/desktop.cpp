@@ -121,8 +121,7 @@ QSize DefaultDesktop::resolution() const
 void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::SizeConstraint) {
-        m_renderer.setSize(resolution()); 
-        resize(resolution());
+        m_renderer.setSize(size().toSize()); 
         updateBackground();
     }
 
