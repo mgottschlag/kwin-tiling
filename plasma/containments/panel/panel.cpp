@@ -207,14 +207,6 @@ void Panel::updateBorders(const QRect &geom)
             rightWidth = 0;
         }
 
-        //hardcoded extra margin for the toolbox right now
-        if (immutability() == Mutable) {
-            if (QApplication::layoutDirection() == Qt::RightToLeft) {
-                leftWidth += 20;
-            } else {
-                rightWidth += 20;
-            }
-        }
         //kDebug() << "top/bottom: Width:" << width << ", height:" << height;
     } else if (loc == LeftEdge || loc == RightEdge) {
         QRect r = QApplication::desktop()->screenGeometry(s);
@@ -235,10 +227,6 @@ void Panel::updateBorders(const QRect &geom)
             bottomHeight = 0;
         }
 
-        //hardcoded extra margin for the toolbox right now
-        if (immutability() == Mutable) {
-            bottomHeight += 20;
-        }
         //kDebug() << "left/right: Width:" << width << ", height:" << height;
     } else {
         kDebug() << "no location!?";
@@ -247,6 +235,25 @@ void Panel::updateBorders(const QRect &geom)
     //activate borders and fetch sizes again
     m_background->setEnabledBorders(enabledBorders);
     m_background->getMargins(leftWidth, topHeight, rightWidth, bottomHeight);
+
+    //calculation of extra margins has to be done after getMargins
+    if (formFactor() == Vertical) {
+        //hardcoded extra margin for the toolbox right now
+        if (immutability() == Mutable) {
+            bottomHeight += 20;
+        }
+    //Default to horizontal for now
+    } else {
+        //hardcoded extra margin for the toolbox for now
+        if (immutability() == Mutable) {
+            if (QApplication::layoutDirection() == Qt::RightToLeft) {
+                leftWidth += 20;
+            } else {
+                rightWidth += 20;
+            }
+        }
+    }
+
 
     //invalidate the layout and set again
     if (layout()) {
