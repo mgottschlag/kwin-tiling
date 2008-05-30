@@ -37,8 +37,7 @@
 
 
 LocationsRunner::LocationsRunner(QObject *parent, const QVariantList& args)
-    : Plasma::AbstractRunner(parent, args),
-      m_type(Plasma::RunnerContext::UnknownType)
+    : Plasma::AbstractRunner(parent, args)
 {
     KGlobal::locale()->insertCatalog("krunner_locationsrunner");
     Q_UNUSED(args);
@@ -67,19 +66,25 @@ static void processUrl(KUrl &url, const QString &term)
 void LocationsRunner::match(Plasma::RunnerContext &context)
 {
     QString term = context.query();
-    m_type = context.type();
+    Plasma::RunnerContext::Type type = context.type();
 
-    if (m_type == Plasma::RunnerContext::Directory ||
-        m_type == Plasma::RunnerContext::File) {
+    if (type == Plasma::RunnerContext::Directory ||
+        type == Plasma::RunnerContext::File) {
         Plasma::QueryMatch match(this);
         match.setType(Plasma::QueryMatch::ExactMatch);
         match.setText(i18n("Open %1", term));
         match.setIcon(KIcon("system-file-manager"));
         match.setRelevance(1);
         match.setType(Plasma::QueryMatch::ExactMatch);
+
+        if (type == Plasma::RunnerContext::Directory) {
+            match.setId("opendir");
+        } else {
+            match.setId("openfile");
+        }
         context.addMatch(term, match);
-    } else if (m_type == Plasma::RunnerContext::Help) {
-        //kDebug() << "Locations matching because of" << m_type;
+    } else if (type == Plasma::RunnerContext::Help) {
+        //kDebug() << "Locations matching because of" << type;
         Plasma::QueryMatch match(this);
         match.setType(Plasma::QueryMatch::ExactMatch);
         match.setText(i18n("Open %1", term));
@@ -87,9 +92,10 @@ void LocationsRunner::match(Plasma::RunnerContext &context)
         match.setRelevance(1);
         match.setRelevance(1);
         match.setType(Plasma::QueryMatch::ExactMatch);
+        match.setId("help");
         context.addMatch(term, match);
-    } else if (m_type == Plasma::RunnerContext::NetworkLocation ||
-               (m_type == Plasma::RunnerContext::UnknownType &&
+    } else if (type == Plasma::RunnerContext::NetworkLocation ||
+               (type == Plasma::RunnerContext::UnknownType &&
                 term.contains(QRegExp("^[a-zA-Z0-9]+\\.")))) {
         KUrl url(term);
         processUrl(url, term);
@@ -111,10 +117,12 @@ void LocationsRunner::match(Plasma::RunnerContext &context)
             match.setText(i18n("Go to %1", url.prettyUrl()));
         }
 
-        if (m_type == Plasma::RunnerContext::UnknownType) {
+        if (type == Plasma::RunnerContext::UnknownType) {
+            match.setId("openunknown");
             match.setRelevance(0);
             match.setType(Plasma::QueryMatch::PossibleMatch);
         } else {
+            match.setId("opennetwork");
             match.setRelevance(1);
             match.setType(Plasma::QueryMatch::ExactMatch);
         }
@@ -127,19 +135,18 @@ void LocationsRunner::run(const Plasma::RunnerContext &context, const Plasma::Qu
 {
     QString data = match.data().toString();
     const QString location = context.query();
+    Plasma::RunnerContext::Type type = context.type();
 
-    // terms like 'www.kde.org' will have UnknownType but match()
-    // recognized it as url and put correct protocol into data
-    if ((m_type == Plasma::RunnerContext::NetworkLocation
-         || m_type == Plasma::RunnerContext::UnknownType)
-        && data.startsWith("http:")) {
+    //kDebug() << "command: " << match.query();
+    //kDebug() << "url: " << location << data;
+    if (type == Plasma::RunnerContext::UnknownType) {
+        KToolInvocation::invokeBrowser(location);
+    } else if (type == Plasma::RunnerContext::NetworkLocation && data.startsWith("http://")) {
         // the text may have changed while we were running, so we have to refresh
         // our content
         KUrl url(location);
         processUrl(url, location);
         KToolInvocation::invokeBrowser(url.url());
-    } else if (m_type == Plasma::RunnerContext::UnknownType) {
-        KToolInvocation::invokeBrowser(location);
     } else {
         new KRun(KShell::tildeExpand(location), 0);
     }

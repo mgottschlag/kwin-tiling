@@ -34,7 +34,7 @@ class LocationsRunner : public Plasma::AbstractRunner {
         void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &action);
 
     private:
-        Plasma::RunnerContext::Type m_type;
+        Plasma::RunnerContext::Type type;
 };
 
 K_EXPORT_PLASMA_RUNNER(locations, LocationsRunner)
