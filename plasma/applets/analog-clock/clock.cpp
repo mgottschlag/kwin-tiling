@@ -192,6 +192,7 @@ void Clock::drawHand(QPainter *p, qreal rotation, const QString &handName)
     p->rotate(rotation);
     p->translate(-elementSize.width() / 2, -elementSize.width());
     m_theme->paint(p, QRect(QPoint(0, 0), elementSize), handName);
+   
     p->restore();
 }
 
@@ -213,13 +214,11 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     m_theme->paint(p, rect, "ClockFace");
 
-    drawHand(p, hours, "HourHand");
-    drawHand(p, minutes, "MinuteHand");
-
     //Make sure we paint the second hand on top of the others
+    qreal seconds = 0;
     if (m_showSecondHand) {
         static const double anglePerSec = 6;
-        qreal seconds = anglePerSec * m_time.second() - 180;
+        seconds = anglePerSec * m_time.second() - 180;
 
         if (m_fancyHands) {
             if (!m_secondHandUpdateTimer) {
@@ -251,7 +250,24 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                 }
             }
         }
+    }
 
+    if (m_theme->hasElement("HourHandShadow")) {
+        p->translate(1,3);
+
+        drawHand(p, hours, "HourHandShadow");
+        drawHand(p, minutes, "MinuteHandShadow");
+
+        if (m_showSecondHand) {
+            drawHand(p, seconds, "SecondHandShadow");
+        }
+
+        p->translate(-1,-3);
+    }
+    
+    drawHand(p, hours, "HourHand");
+    drawHand(p, minutes, "MinuteHand");
+    if (m_showSecondHand) {
         drawHand(p, seconds, "SecondHand");
     }
 
