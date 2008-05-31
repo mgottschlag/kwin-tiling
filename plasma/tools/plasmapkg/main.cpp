@@ -89,17 +89,17 @@ int main(int argc, char **argv)
         QString servicePrefix;
 
         Plasma::PackageStructure *installer = new Plasma::PackageStructure();
-        if (type == "plasmoid") {
+        if (type == i18n("plasmoid")) {
             packageRoot = "plasma/plasmoids/";
             servicePrefix = "plasma-applet-";
-        } else if (type == "theme") {
+        } else if (type == i18n("theme")) {
             packageRoot = "desktoptheme/";
-        } else if (type == "wallpaper") {
+        } else if (type == i18n("wallpaper")) {
             packageRoot = "wallpapers/";
-        } else if (type == "dataengine") {
+        } else if (type == i18n("dataengine")) {
             packageRoot = "plasma/dataengines/";
             servicePrefix = "plasma-dataengine-";
-        } else if (type == "runner") {
+        } else if (type == i18n("runner")) {
             packageRoot = "plasma/runners/";
             servicePrefix = "plasma-abstractrunner-";
         } else {
