@@ -47,6 +47,7 @@
 #include <KDialog>
 
 #include <plasma/svg.h>
+#include <plasma/theme.h>
 
 Clock::Clock(QObject *parent, const QVariantList &args)
     : Plasma::Containment(parent, args),
@@ -214,6 +215,38 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     m_theme->paint(p, rect, "ClockFace");
 
+    
+    //optionally paint the time string
+    if (m_showTimeString) {
+        QString time;
+        QFontMetrics fm(QApplication::font());
+        const int margin = 4;
+
+        if (m_showSecondHand) {
+            //FIXME: temporary time output
+            time = m_time.toString();
+        } else {
+            time = m_time.toString("hh:mm");
+        }
+
+        QRect textRect((rect.width()/2 - fm.width(time) / 2),((rect.height()/2) - fm.xHeight()*4),
+              fm.width(time), fm.xHeight());
+
+        p->setPen(Qt::NoPen);
+        QColor background = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+        background.setAlphaF(0.5);
+        p->setBrush(background);
+
+        p->setRenderHint(QPainter::Antialiasing, true);
+        p->drawPath(Plasma::roundedRectangle(textRect.adjusted(-margin, -margin, margin, margin), margin));
+        p->setRenderHint(QPainter::Antialiasing, false);
+
+        p->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
+        
+        p->drawText(textRect.bottomLeft(), time);
+    }
+
+
     //Make sure we paint the second hand on top of the others
     qreal seconds = 0;
     if (m_showSecondHand) {
@@ -278,21 +311,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     p->translate(boundSize.width() / 2 - elementSize.width() / 2, boundSize.height() / 2 - elementSize.height() / 2);
     m_theme->paint(p, tempRect, "HandCenterScrew");
     p->restore();
-
-    if (m_showTimeString) {
-        if (m_showSecondHand) {
-            //FIXME: temporary time output
-            QString time = m_time.toString();
-            QFontMetrics fm(QApplication::font());
-            p->drawText((rect.width()/2 - fm.width(time) / 2),
-                        ((rect.height()/2) - fm.xHeight()*3), m_time.toString());
-        } else {
-            QString time = m_time.toString("hh:mm");
-            QFontMetrics fm(QApplication::font());
-            p->drawText((rect.width()/2 - fm.width(time) / 2),
-                        ((rect.height()/2) - fm.xHeight()*3), m_time.toString("hh:mm"));
-        }
-    }
 
     m_theme->paint(p, rect, "Glass");
 }
