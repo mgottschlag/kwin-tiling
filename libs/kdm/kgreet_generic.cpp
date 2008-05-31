@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <qlabel.h>
 #include <qtextdocument.h>
 
-extern KGreeterPluginInfo kgreeterplugin_info; // defined at bottom
+extern KDE_EXPORT KGreeterPluginInfo kgreeterplugin_info; // defined at bottom
 
 static int echoMode;
 
