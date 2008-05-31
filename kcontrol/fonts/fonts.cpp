@@ -511,7 +511,7 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
 
   QList<QFont> defaultFontList;
 
-  // Keep in sync with kdelibs/kdeui/kernel/kglobalsettings.cpp
+  // NOTE: keep in sync with kdelibs/kdeui/kernel/kglobalsettings.cpp
 
   QFont f0("Sans Serif", 10);
   QFont f1("Monospace", 10);
@@ -519,13 +519,6 @@ KFonts::KFonts(QWidget *parent, const QVariantList &args)
   QFont f3("Sans Serif", 9, QFont::Bold);
   QFont f4("Sans Serif", 10);
   QFont f5("Sans Serif", 8); // smallestReadableFont
-
-  f0.setPointSize(10);
-  f1.setPointSize(10);
-  f2.setPointSize(8);
-  f3.setPointSize(9);
-  f4.setPointSize(10);
-  f5.setPointSize(8);
 
   defaultFontList << f0 << f1 << f5 << f2 << f0 << f3 << f4 << f0;
 
