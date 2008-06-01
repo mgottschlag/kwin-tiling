@@ -99,8 +99,8 @@ void DesktopCorona::loadDefaultLayout()
             c->addApplet(folderView, QPointF(KDialog::spacingHint(), KDialog::spacingHint()), true);
             KConfigGroup config = folderView->config();
             config.writeEntry("url", "desktop:/");
-            folderView->flushPendingConstraintsEvents();
             folderView->init();
+            folderView->flushPendingConstraintsEvents();
         }
 
         if (g.x() <= topLeftCorner.x() && g.y() >= topLeftCorner.y()) {
@@ -118,7 +118,8 @@ void DesktopCorona::loadDefaultLayout()
     panel->flushPendingConstraintsEvents();
 
     // some default applets to get a usable UI
-    panel->addApplet("launcher");
+    Plasma::Applet *launcher =  panel->addApplet("launcher");
+    launcher->setGlobalShortcut(KShortcut("Alt+F1"));
     panel->addApplet("notifier");
     panel->addApplet("pager");
     panel->addApplet("tasks");
