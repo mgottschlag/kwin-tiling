@@ -79,6 +79,7 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
     d->icon = new Plasma::Icon(KIcon("start-here-kde"), QString(), this);
     d->icon->setFlag(ItemIsMovable, false);
     connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
+    connect(this, SIGNAL(activate()), this, SLOT(toggleMenu()));
 }
 
 LauncherApplet::~LauncherApplet()
@@ -191,16 +192,20 @@ void LauncherApplet::configAccepted()
     d->launcher->setSwitchTabsOnHover(switchTabsOnHover);
 }
 
+
 void LauncherApplet::toggleMenu(bool pressed)
 {
-    if (!pressed) {
-        return;
+    if (pressed) {
+        toggleMenu();
     }
+}
 
-    //kDebug() << "Launcher button clicked";
+void LauncherApplet::toggleMenu()
+{
     if (!d->launcher) {
         d->createLauncher(this);
     }
+
     d->launcher->reset();
 
     if (!d->launcher->isVisible()) {

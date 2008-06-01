@@ -106,6 +106,7 @@ protected:
 private Q_SLOTS:
         void configAccepted();
         void toggleMenu(bool pressed);
+        void toggleMenu();
         void actionTriggered(QAction *action);
 
 private:

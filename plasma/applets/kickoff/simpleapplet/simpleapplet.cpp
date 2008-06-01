@@ -148,6 +148,7 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
     d->icon = new Plasma::Icon(QString(), this);
     d->icon->setFlag(ItemIsMovable, false);
     connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
+    connect(this, SIGNAL(activate()), this, SLOT(toggleMenu()));
 
     d->viewtype = Combined;
     d->formattype = NameDescription;
@@ -319,10 +320,13 @@ void MenuLauncherApplet::configAccepted()
 
 void MenuLauncherApplet::toggleMenu(bool pressed)
 {
-    if (!pressed) {
-        return;
+    if (pressed) {
+        toggleMenu();
     }
+}
 
+void MenuLauncherApplet::toggleMenu()
+{
     if (!d->menuview) {
         d->menuview = new Kickoff::MenuView();
         connect(d->menuview,SIGNAL(triggered(QAction*)),this,SLOT(actionTriggered(QAction*)));

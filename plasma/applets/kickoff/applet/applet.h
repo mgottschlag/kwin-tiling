@@ -56,6 +56,7 @@ public slots:
 
 protected slots:
         void configAccepted();
+        void toggleMenu();
         void toggleMenu(bool pressed);
 
 protected:
