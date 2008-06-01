@@ -21,6 +21,7 @@
 #include "proxymodel.h"
 
 #include <KDirModel>
+#include <KStringHandler>
 
 
 ProxyModel::ProxyModel(QObject *parent)
@@ -57,22 +58,22 @@ bool ProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) con
     if (!item1.isDir() && item2.isDir())
         return false;
 
-    return QSortFilterProxyModel::lessThan(left, right);
+    return KStringHandler::naturalCompare(item1.name(), item2.name(), Qt::CaseInsensitive) < 0;
 }
 
 bool ProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
 {
     const KDirModel *dirModel = static_cast<KDirModel*>(sourceModel());
     const KFileItem item = dirModel->itemForIndex(dirModel->index(sourceRow, KDirModel::Name, sourceParent));
-    const QString itemName = item.name().toLower();
 
-    const QString regExpOrig = filterRegExp().pattern().toLower();
+    const QString regExpOrig = filterRegExp().pattern();
     const QStringList regExps = regExpOrig.split(';');
     foreach (const QString &regExpStr, regExps) {
         QRegExp regExp(regExpStr);
         regExp.setPatternSyntax(QRegExp::Wildcard);
+        regExp.setCaseSensitivity(Qt::CaseInsensitive);
 
-        if (regExp.indexIn(itemName) != -1) {
+        if (regExp.indexIn(item.name()) != -1) {
             return true;
         }
     }
