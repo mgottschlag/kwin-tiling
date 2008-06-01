@@ -78,7 +78,8 @@ void FolderView::init()
 
     KDirLister *lister = new KDirLister(this);
     lister->openUrl(m_url);
-    lister->setNameFilter(m_filterFiles);
+
+    m_model->setFilterFixedString(m_filterFiles);
 
     m_dirModel->setDirLister(lister);
 }
@@ -121,7 +122,7 @@ void FolderView::configAccepted()
 
     if (m_url != url || m_filterFiles != ui.filterFiles->text()) {
         m_dirModel->dirLister()->openUrl(url);
-        m_dirModel->dirLister()->setNameFilter(ui.filterFiles->text());
+        m_model->setFilterFixedString(ui.filterFiles->text());
         m_url = url;
         m_filterFiles = ui.filterFiles->text();
  

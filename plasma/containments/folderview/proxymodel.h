@@ -34,6 +34,9 @@ public:
     QModelIndex indexForUrl(const KUrl &url) const;
     KFileItem itemForIndex(const QModelIndex &index) const;
     bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
+
+protected:
+    bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const;
 };
 
 #endif

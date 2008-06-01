@@ -1,5 +1,6 @@
 /*
  *   Copyright © 2008 Fredrik Höglund <fredrik@kde.org>
+ *   Copyright © 2008 Rafael Fernández López <ereslibre@kde.org>
  *
  *   This library is free software; you can redistribute it and/or
  *   modify it under the terms of the GNU Library General Public
@@ -57,5 +58,24 @@ bool ProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) con
         return false;
 
     return QSortFilterProxyModel::lessThan(left, right);
+}
+
+bool ProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const
+{
+    const KDirModel *dirModel = static_cast<KDirModel*>(sourceModel());
+    const KFileItem item = dirModel->itemForIndex(dirModel->index(sourceRow, KDirModel::Name, sourceParent));
+
+    const QString regExpOrig = filterRegExp().pattern();
+    const QStringList regExps = regExpOrig.split(';');
+    foreach (const QString &regExpStr, regExps) {
+        QRegExp regExp(regExpStr);
+        regExp.setPatternSyntax(QRegExp::Wildcard);
+
+        if (regExp.indexIn(item.name()) != -1) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
