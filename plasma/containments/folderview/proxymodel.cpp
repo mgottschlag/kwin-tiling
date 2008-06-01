@@ -64,14 +64,15 @@ bool ProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent
 {
     const KDirModel *dirModel = static_cast<KDirModel*>(sourceModel());
     const KFileItem item = dirModel->itemForIndex(dirModel->index(sourceRow, KDirModel::Name, sourceParent));
+    const QString itemName = item.name().toLower();
 
-    const QString regExpOrig = filterRegExp().pattern();
+    const QString regExpOrig = filterRegExp().pattern().toLower();
     const QStringList regExps = regExpOrig.split(';');
     foreach (const QString &regExpStr, regExps) {
         QRegExp regExp(regExpStr);
         regExp.setPatternSyntax(QRegExp::Wildcard);
 
-        if (regExp.indexIn(item.name()) != -1) {
+        if (regExp.indexIn(itemName) != -1) {
             return true;
         }
     }
