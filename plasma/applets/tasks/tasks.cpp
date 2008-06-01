@@ -372,6 +372,8 @@ void Tasks::createConfigurationInterface(KConfigDialog *parent)
 
 #ifdef TOOLTIP_MANAGER
     m_ui.showTooltip->setChecked(m_showTooltip);
+#else
+    m_ui.showTooltip->hide();
 #endif
     m_ui.showOnlyCurrentDesktop->setChecked(m_showOnlyCurrentDesktop);
     m_ui.showOnlyCurrentScreen->setChecked(m_showOnlyCurrentScreen);
