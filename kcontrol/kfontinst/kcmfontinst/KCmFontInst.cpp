@@ -217,6 +217,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     CFcEngine::setTextCol(QApplication::palette().color(QPalette::Active, QPalette::Text));
     KGlobal::locale()->insertCatalog(KFI_CATALOGUE);
     KIconLoader::global()->addAppDir(KFI_NAME);
+    KIconLoader::global()->reconfigure(KFI_NAME, KGlobal::dirs());
 
     KAboutData *about = new KAboutData("fontinst", 0, ki18n("KDE Font Installer"), 0, KLocalizedString(),
                                        KAboutData::License_GPL, ki18n("GUI front-end to the fonts:/ ioslave.\n"
