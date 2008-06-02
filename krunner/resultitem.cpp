@@ -63,7 +63,7 @@ public:
             //FIXME: reset when the application font changes
             QFontMetrics fm(q->font());
             s_fontHeight = fm.height();
-            kDebug() << "font height is: " << s_fontHeight;
+            //kDebug() << "font height is: " << s_fontHeight;
         }
     }
 
