@@ -39,7 +39,7 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
     , dbus_adaptor(NULL)
     {
     setModuleName("khotkeys");
-    dbus_adaptor = new KhotkeysAdaptor(this);
+    (void) new KhotkeysAdaptor(this);
 
     if (KHotKeys::StandAloneDaemon::isRunning())
         {
@@ -56,7 +56,6 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
 
 KHotKeysModule::~KHotKeysModule()
     {
-    delete dbus_adaptor;
     delete actions_root;
     }
 
