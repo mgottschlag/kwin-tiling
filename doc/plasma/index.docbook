@@ -1,97 +1,313 @@
 <?xml version="1.0" ?>
-<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" 
-"dtd/kdex.dtd" [
+<!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" "dtd/kdex.dtd" [
   <!ENTITY kappname "&plasma;">
-  <!ENTITY package "kdebase">
+  <!ENTITY package "kde-module">
   <!ENTITY % addindex "IGNORE">
-  <!ENTITY % English "INCLUDE" > <!-- change language only here -->
+  <!ENTITY % English "INCLUDE">
 ]>
-
 <book lang="&language;">
+
 <bookinfo>
-<title>The Plasma Handbook </title>
+<title>The &plasma; Handbook</title>
 
 <authorgroup>
-<author>&J.Hall; &J.Hall.mail;</author>
-
-<!--
-<othercredit role="developer">
-
-</othercredit>
--->
-
+<author>
+<personname>
+<firstname>Sebastian</firstname>
+<surname>Kügler</surname>
+</personname>
+<email>sebas@kde.org</email>
+</author>
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
-
 </authorgroup>
 
 <copyright>
-<year>2007</year>
-<holder>&J.Hall;</holder>
+<year>2008</year>
+<holder>Sebastian Kügler</holder>
 </copyright>
 
-<!--
-<legalnotice>&FDLNotice;</legalnotice> - commented out because checkXML does not like it. Will ask someone who remembers :)
--->
+<legalnotice>&FDLNotice;</legalnotice>
 
-
-<date>2007-11-23</date>
-<releaseinfo>3.96.1</releaseinfo>
+<date>2008-06-03</date>
+<releaseinfo>1.01.00</releaseinfo>
 
 <abstract>
-<para>Plasma is the collective &kde; desktop experience.</para>
+<para>
+&plasma;, the most visible pillar of &kde;, is the core interface to the desktop.
+</para>
 </abstract>
 
 <keywordset>
 <keyword>KDE</keyword>
 <keyword>Plasma</keyword>
-<keyword>kdebase</keyword>
+<keyword>Plasmoid</keyword>
+<keyword>Containments</keyword>
 <keyword>Desktop</keyword>
-<keyword>Panel</keyword>
+<keyword>Runner</keyword>
+<keyword>Kicker</keyword>
 </keywordset>
+
 </bookinfo>
- 
+
 <chapter id="introduction">
 <title>Introduction</title>
-<para>Plasma is the collective &kde; desktop experience</para>
+
+<para>
+&plasma; is one of the key technologies of &kde; 4 (also known as the &quot;Pillars of &kde;&quot;), and one of the most visible to users. As &plasma; treats the user interface differently than a traditional desktop, there may be confusion on what &plasma; is, what it does, and how to perform common tasks.
+</para>
+
+<para>
+This document attempts to address these problems by providing answers to the most common questions.
+</para>
 </chapter>
 
-<chapter id="using_plasma">
-<title>Using Plasma</title>
-<para>Using plasma</para>
+<chapter id="using-kapp">
+<title>Using &plasma;</title>
+
+<sect1 id="plasmoids-and-containments">
+<title>&plasmoids; and Containments</title>
+
+<para>
+The essence of Plasma revolves around two basic concepts:
+</para>
+
+<variablelist>
+<varlistentry>
+<term>&plasmoids;</term>
+<listitem>
+<para>
+Applets, or small applications that live on the desktop.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry>
+<term>Containments</term>
+<listitem>
+<para>
+Applets that act as the container for the &plasmoids;
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+
+<para>
+On a default desktop, there are two main elements: the Panel and the desktop itself. Both are containments in the &plasma; sense.
+</para>
+</sect1>
+
+<sect1 id="panel">
+<title>The Panel</title>
+
+<para>
+The panel holds a couple of &plasmoids;, starting from the left, there's the
+&kickoff; application launcher. You can use it to start applications, open recently opened files and the usual logout/shutdown options. There's also a structure that allows you to browse through your applications. The layout has been optimized for the use case that is most common: starting an application. The default tab is the <guilabel>Favorites</guilabel> tab that holds the most-used entries. In the beginning, you'll probably find yourself using the <guilabel>Applications</guilabel> tab more often. Once you have found out what your most frequently started applications are, <mousebutton>right</mousebutton> click on the items and select the <guimenuitem>Add to Favorites</guimenuitem> to add them to your <guilabel>Favorites</guilabel> (or directly into the panel or on the desktop. Note that you need to &quot;unlock&quot; Plasma by means of <mousebutton>right</mousebutton> clicking on the desktop for any kind of modification). If you prefer &kde;&apos;s traditional menu-style application launcher, change it by <mousebutton>right</mousebutton> clicking on the menu button and selecting <guimenuitem>Switch to Classic Menu Style</guimenuitem>.
+</para>
+
+<para>
+The next icon (looking like either a desktop computer or a laptop, depending on
+the type of machine) is the <application>Device Notifier</application>. Plug in a <acronym>USB</acronym> disk and a dialog will open that allows you to open the device in &dolphin;.
+</para>
+
+<para>
+The next item on your panel is the <application>Pager</application>. It allows you to switch between your virtual desktops. If you change the layout of the <application>Pager</application> through the <guimenuitem>Number of rows</guimenuitem> option, which will also affect the layout and animations that are shown in &kwin;&apos;s <guimenuitem>Desktop Grid</guimenuitem> effect -- (Switch on desktop effect, press <keycombo><keycap>Ctrl</keycap><keycap>F8</keycap></keycombo> to see it.) For larger pagers, selecting <guimenuitem>Display windows icons</guimenuitem> typically makes sense.
+</para>
+
+<para>
+The taskbar is up next on the panel. It shows an area for all open windows on the current desktop by default. You can make it show all windows by checking <guimenuitem>Traverse Windows on all desktops</guimenuitem>. <mousebutton>Right</mousebutton> click on the window frame, choose <guimenuitem>Window behavior</guimenuitem>, find this option in the <guilabel>Focus</guilabel> dialog. &kwin;&apos;s <guimenuitem>Expose effect</guimenuitem> offers similar functionality, it lays out all windows on the screen, start typing to filter the list, navigate with either mouse or arrow
+keys. The size of the text on the taskbar items can be set in &systemsettings; under the <menuchoice><guimenu>Appearance</guimenu><guisubmenu>Fonts</guisubmenu><guimenuitem>Taskbar</guimenuitem></menuchoice>.
+</para>
+
+<para>
+Next on our default panel is the <application>Digital Clock</application>. This clock can display the time in different timezones as well as have its size changed. The clock will adjust its font size to the area it is given by the surrounding containment (that is the panel in this case). If you choose to display the date, this date will be rendered using the <guimenuitem>Small font</guimenuitem> option from the &systemsettings; <guilabel>Font</guilabel> dialog. The time will take the rest of the space. So in the end, you'll choose yourself the amount of information displayed, and if that fits. If you want to display more information, make the panel larger or put the clock on the desktop where it can grow freely.
+</para>
+
+<para>
+The right-most &plasmoid; in the default panel holds the <application>System Tray</application>, which is used by traditional applications as a dock.
+</para>
+
+</sect1>
+
+<sect1 id="toolboxes">
+<title>The Panel Toolboxes</title>
+
+<para>
+If you have unlocked your desktop (you can do that by <mousebutton>right</mousebutton> clicking on the desktop, or when no application has the focus, with <keycombo><keycap>Ctrl</keycap><keycap>L</keycap></keycombo>). A small &plasma;
+logo will appear in the bottom right corner (it's commonly named the &quot;cashew&quot;). Click on this cashew, and the panel controller opens. The panel controller allows you to reposition, re-size and realign the panel. The &plasmoids; living in this panel will adjust their size automatically. &plasmoids; have basic knowledge about sizing, provided by the containment. They're programmed to take advantage of that size, and inform the applet about how much space they possibly need. In the end, the containment gives a possible size to the applets, the applets obey.
+</para>
+
+</sect1>
+
+<sect1 id="add-applets">
+<title>Adding Applets</title>
+
+<para>
+Unlock the desktop and you'll be able to add and remove &plasmoids; from panel or desktop. You add &plasmoids; by simply dragging them where you want them. <mousebutton>Right</mousebutton> click on an applet to remove it. The <guilabel>Add Applets</guilabel> dialog also allows you to mark certain applets as <guilabel>Favorite</guilabel> so you can find them back more easily. The <guibutton>Install new widgets</guibutton> button allows you to add widgets you've previously downloaded. Currently it supports native &plasmagik; packages and Mac OSX dashboard widgets. Widgets you install this way can then be accessed just like regular, preinstalled widgets.
+</para>
+
+</sect1>
+
+<sect1 id="desktop">
+<title>The Desktop</title>
+
+<para>
+The desktop is in fact another containment. One that doesn't put size constraints on the applets. Applets can be moved and sized freely. On the unlocked desktop, &plasmoids; will show a frame when you move the mouse over them. This applet handle allows you to move, re-size, relocate and realign the panel. It also allows you to drag Plasmoids on the desktop. The buttons in the corner are used to re-size, rotate configure and remove the applet. When rotated, a &plasmoid; will act magnetic towards 12 o'clock, so it's easy to get them back into sensible position. By default, most applets keep their aspect ratio when they're being re-sized. If you want to freely re-size an applet, hold the <keycap>Ctrl</keycap> key pressed while resizing.
+</para>
+
+<para>
+Right clicking on the desktop also offers you to configure aspects such as the
+wallpaper used, and the &plasma; theme. Both actions offer to download new
+wallpapers and themes through &knewstuff;.
+</para>
+
+<para>
+With open applications, it quickly gets hard to see the &plasmoids; on your
+desktop. The <emphasis role="bold">Dashboard</emphasis> gets those &plasmoids; in front of you, much like the <guilabel>Show desktop</guilabel> functionality you're used to from traditional desktops.
+</para>
+
+</sect1>
+
+<sect1 id="krunner">
+<title>&krunner;</title>
+
+<para>
+&krunner; is a versatile mini command-line. You can use it to start applications,
+open web pages, access bookmarks, search through your desktop data, calculate
+short equations, and many more. Pressing <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo> opens the &krunner; dialog. You just start typing and &krunner; will start searching matches as soon as you've entered more than two characters. You can open the settings dialog to learn about &krunner;&apos;s functionality, provided by plugins. You can navigate through the matches using the tab and arrow keys.
+</para>
+
+<para>
+If you want to know what's going on on your system, there's the <guibutton>Show System Activity</guibutton> button, giving you quick access to a list of windows and processes, with options to monitor their output and kill processes.
+</para>
+
+</sect1>
+
+<sect1 id="zooming-user-interface">
+<title>&quot;Activities&quot; or the &zui; (ZUI)</title>
+
+<para>
+The desktop toolbox, accessed via the top right corner has a button for zooming
+out. &plasma; allows you to have more than one activity. Basically, that is multiple desktop containments hosting multiple sets of &plasmoids;. Zoom out from your current activity, choose <guilabel>Add activity</guilabel> to create a new containment, zoom in to your new containment and customize suiting your taste. &plasma;&apos;s zooming and &kwin;&apos;s desktop grid are similar in that respect, but there is a fundamental difference. While virtual desktop are used to group and organize windows, &plasma;&apos;s activities are used to group and organize plasmoids. This way, you can switch between activities and have relevant &plasmoids; supporting the task you're currently trying to accomplish. You can create a &quot;Free time&quot; activity, with comic strips, a puzzle and other &plasmoids;, and a work activity, with relevant <acronym>RSS</acronym> feeds, calculator and calendar, for example.
+</para>
+
+</sect1>
+
+<sect1 id="shortcuts">
+<title>Shortcuts</title>
+
+<para>
+Most of &plasma;&apos;s functionality is also accessible through keyboard shortcuts. Currently, the following default shortcuts can be used:
+</para>
+
+<variablelist>
+<varlistentry>
+<term><keycombo><keycap>Ctrl</keycap><keycap>A</keycap></keycombo></term>
+<listitem><para>Add widgets</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><keycombo><keycap>Ctrl</keycap><keycap>L</keycap></keycombo></term>
+<listitem><para>Lock widgets</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><keycombo><keycap>Ctrl</keycap><keycap>-</keycap></keycombo></term>
+<listitem><para>Zoom out</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><keycombo><keycap>Ctrl</keycap><keycap>=</keycap></keycombo></term>
+<listitem><para>Zoom in</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><keycombo><keycap>Ctrl</keycap><keycap>N</keycap></keycombo></term>
+<listitem><para>Next applet</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><keycombo><keycap>Ctrl</keycap><keycap>P</keycap></keycombo></term>
+<listitem><para>Previous applet</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><keycombo><keycap>Ctrl</keycap><keycap>]</keycap></keycombo></term>
+<listitem><para>Next containment</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><keycombo><keycap>Ctrl</keycap><keycap>[</keycap></keycombo></term>
+<listitem><para>Previous containment</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><keycombo><keycap>Ctrl</keycap><keycap>S</keycap></keycombo></term>
+<listitem><para>Applet settings</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term>
+<keycombo>
+<keycap>Shift</keycap><keycap>Ctrl</keycap><keycap>S</keycap>
+</keycombo>
+</term>
+<listitem><para>Containment settings</para></listitem>
+</varlistentry>
+
+<varlistentry>
+<term><keycombo><keycap>Ctrl</keycap><keycap>R</keycap></keycombo></term>
+<listitem><para>Remove applet</para></listitem>
+</varlistentry>
+
+</variablelist>
+
+</sect1>
+
 </chapter>
+
 <chapter id="credits">
-
 <title>Credits and License</title>
 
 <para>
-Documentation copyright 2007 &J.Hall; &J.Hall.mail;
+&plasma;
+</para>
+<para>
+Program copyright 2008 &Aaron.J.Seigo; &Aaron.J.Seigo.mail;
+</para>
+
+<!-- ADD CONTRIBUTORS AS NEEDED
+<para>
+Contributors:
+<itemizedlist>
+<listitem><para>Konqui the KDE Dragon <email>konqui@kde.org</email></para>
+</listitem>
+<listitem><para>Tux the Linux Penguin <email>tux@linux.org</email></para>
+</listitem>
+</itemizedlist>
+</para>
+-->
+
+<para>
+Documentation Copyright &copy; 2008 Sebastian Kügler <email>sebas@kde.org</email>
 </para>
 
 <!-- TRANS:CREDIT_FOR_TRANSLATORS -->
 
 &underFDL;
 
-&underGPL;                 <!-- GPL License -->
-
 </chapter>
-&documentation.index; 
 
+&documentation.index;
 </book>
+
 <!--
 Local Variables:
-mode: sgml
-sgml-minimize-attributes: nil
-sgml-general-insert-case: lower
-sgml-indent-step: 0
+mode: xml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
 End:
+
+vim:tabstop=2:shiftwidth=2:expandtab
+kate: space-indent on; indent-width 2; tab-width 2; indent-mode none;
 -->
-
-
-
-
-
-
-
-
-
-
