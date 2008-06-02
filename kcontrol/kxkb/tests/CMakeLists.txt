@@ -57,8 +57,6 @@ link_directories(lib)
 
 project(kxkb_part_test)
 
-find_package(KDE4 REQUIRED)
-
 include_directories( ${KDE4_INCLUDES} )
 
 set(mySources kxkb_part_test.cpp kxkb_part_test_v.cpp)
