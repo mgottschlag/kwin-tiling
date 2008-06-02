@@ -106,6 +106,7 @@ protected:
 
    bool m_previewUpdates;
    bool m_copyAllScreens;
+    bool m_readOnly;
 };
 
 #endif
