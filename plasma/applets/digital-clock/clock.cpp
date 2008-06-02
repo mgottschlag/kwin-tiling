@@ -176,8 +176,8 @@ void Clock::showCalendar(QGraphicsSceneMouseEvent *event)
     if (m_calendar->isVisible()) {
         m_calendar->hide();
     } else {
-        kDebug();
-        m_calendarUi.kdatepicker->setDate(QDate::currentDate());
+        Plasma::DataEngine::Data data = dataEngine("time")->query(m_timezone);
+        m_calendarUi.kdatepicker->setDate(data["Date"].toDate());
         m_calendar->move(popupPosition(m_calendar->sizeHint()));
         m_calendar->show();
     }

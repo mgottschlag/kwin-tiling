@@ -35,12 +35,14 @@
 #include <plasma/containment.h>
 #include <plasma/dataengine.h>
 #include "ui_clockConfig.h"
+#include "ui_calendar.h"
 
 class QTimer;
 
 namespace Plasma
 {
     class Svg;
+    class Dialog;
 }
 
 class Clock : public Plasma::Containment
@@ -59,14 +61,14 @@ class Clock : public Plasma::Containment
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
 
-    protected slots:
-//         void acceptedTimeStringState(bool);
-        void configAccepted();
-        void moveSecondHand();
-
     protected:
         void createConfigurationInterface(KConfigDialog *parent);
+        void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
+    protected slots:
+        void configAccepted();
+        void moveSecondHand();
+        void showCalendar(QGraphicsSceneMouseEvent *event);
 
     private:
         void drawHand(QPainter *p, qreal rotation, const QString &handName);
@@ -83,6 +85,8 @@ class Clock : public Plasma::Containment
         int m_animationStart;
         /// Designer Config file
         Ui::clockConfig ui;
+        Plasma::Dialog *m_calendar;
+        Ui::calendar m_calendarUi;
 };
 
 K_EXPORT_PLASMA_APPLET(clock, Clock)
