@@ -87,7 +87,7 @@ void KHotKeysModule::reread_configuration()
 
 void KHotKeysModule::quit()
     {
-    delete this;
+    deleteLater();
     }
 
 
