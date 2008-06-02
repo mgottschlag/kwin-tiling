@@ -72,7 +72,11 @@ FolderView::FolderView(QObject *parent, const QVariantList &args)
 
 void FolderView::init()
 {
-    KConfigGroup cg = config();
+    // TODO Update the font when the global font settings change.
+    KConfigGroup cg(KGlobal::config(), "General");
+    m_font = cg.readEntry("desktopFont", QFont("Sans Serif", 10));
+
+    cg = config();
     m_url = cg.readEntry("url", KUrl(QDir::homePath()));
     m_filterFiles = cg.readEntry("filterFiles", "*");
 
@@ -601,7 +605,8 @@ QStyleOptionViewItemV4 FolderView::viewOptions() const
     QStyleOptionViewItemV4 option;
     initStyleOption(&option);
 
-    option.font                = font();
+    option.font                = m_font;
+    option.fontMetrics         = QFontMetrics(m_font);
     option.decorationAlignment = Qt::AlignTop | Qt::AlignHCenter;
     option.decorationPosition  = QStyleOptionViewItem::Top;
     option.decorationSize      = iconSize();

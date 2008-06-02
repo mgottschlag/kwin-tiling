@@ -88,6 +88,7 @@ private:
     QItemSelectionModel *m_selectionModel;
     KUrl m_url;
     QString m_filterFiles;
+    QFont m_font;
     mutable QVector<ViewItem> m_items;
     mutable int m_columns;
     mutable bool m_layoutValid;
