@@ -36,35 +36,23 @@
 
 
 PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
-    : Plasma::View(panel, id, parent)
+    : Plasma::View(panel, id, parent),
+      m_panelController(0)
 {
     Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
 
     m_viewConfig =  config();
-
-    m_panelController = new PanelController();
-    m_panelController->hide();
-    m_panelController->setContainment(containment());
 
     m_offset = m_viewConfig.readEntry("Offset", 0);
     m_alignment = alignmentFilter((Qt::Alignment)m_viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
 
     updatePanelGeometry();
 
-    m_panelController->setAlignment(m_alignment);
-    m_panelController->setOffset(m_offset);
-
     if (panel) {
         connect(panel, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
         connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));
         connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
         connect(panel, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
-        connect(m_panelController, SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
-        connect(m_panelController, SIGNAL(removePanel()), panel, SLOT(destroy()));
-        connect(m_panelController, SIGNAL(offsetChanged(int)), this, SLOT(setOffset(int)));
-        connect(m_panelController, SIGNAL(alignmentChanged(Qt::Alignment)), this, SLOT(setAlignment(Qt::Alignment)));
-        connect(m_panelController, SIGNAL(beginLocationChange()), this, SLOT(locationChangeBegun()));
-        connect(m_panelController, SIGNAL(commitLocationChange()), this, SLOT(locationChangeCommitted()));
     }
 
     kDebug() << "Panel geometry is" << panel->geometry();
@@ -97,11 +85,13 @@ void PanelView::setLocation(Plasma::Location loc)
     containment()->setLocation(loc);
 
     //update the panel controller location position and size
-    m_panelController->setLocation(location());
-
-    if (m_panelController->isVisible()) {
-        m_panelController->resize(m_panelController->sizeHint());
-        m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
+    if (m_panelController) {
+        m_panelController->setLocation(location());
+    
+        if (m_panelController->isVisible()) {
+            m_panelController->resize(m_panelController->sizeHint());
+            m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
+        }
     }
 }
 
@@ -264,11 +254,13 @@ void PanelView::updatePanelGeometry()
     }
 
     //update the panel controller location position and size
-    m_panelController->setLocation(containment()->location());
-
-    if (m_panelController->isVisible()) {
-        m_panelController->resize(m_panelController->sizeHint());
-        m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
+    if (m_panelController) {
+        m_panelController->setLocation(containment()->location());
+    
+        if (m_panelController->isVisible()) {
+            m_panelController->resize(m_panelController->sizeHint());
+            m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
+        }
     }
 }
 
@@ -303,6 +295,26 @@ void PanelView::showAppletBrowser()
 
 void PanelView::togglePanelController()
 {
+    if (!m_panelController) {
+        m_panelController = new PanelController();
+        m_panelController->setContainment(containment());
+        m_panelController->setLocation(containment()->location());
+        m_panelController->setAlignment(m_alignment);
+        m_panelController->setOffset(m_offset);
+
+        connect(m_panelController, SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
+
+        Plasma::Containment *panel = containment();
+        if (panel) {
+            connect(m_panelController, SIGNAL(removePanel()), panel, SLOT(destroy()));
+        }
+
+        connect(m_panelController, SIGNAL(offsetChanged(int)), this, SLOT(setOffset(int)));
+        connect(m_panelController, SIGNAL(alignmentChanged(Qt::Alignment)), this, SLOT(setAlignment(Qt::Alignment)));
+        connect(m_panelController, SIGNAL(beginLocationChange()), this, SLOT(locationChangeBegun()));
+        connect(m_panelController, SIGNAL(commitLocationChange()), this, SLOT(locationChangeCommitted()));
+    }
+
     if (!m_panelController->isVisible()) {
         m_panelController->resize(m_panelController->sizeHint());
         m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
