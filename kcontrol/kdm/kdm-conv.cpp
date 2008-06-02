@@ -211,6 +211,8 @@ void KDMConvenienceWidget::makeReadOnly()
 
 void KDMConvenienceWidget::slotPresChanged()
 {
+        if ( !alGroup->isEnabled() ) //if it's disabled don't change state => fix readOnly
+            return;
 	bool en = spRadio->isChecked();
 	pu_label->setEnabled( en );
 	puserlb->setEnabled( en );
