@@ -37,7 +37,7 @@
 
 #include "resultitem.h"
 
-ResultScene::ResultScene(QObject * parent)
+ResultScene::ResultScene(QObject *parent)
     : QGraphicsScene(parent),
       m_itemCount(0),
       m_cIndex(0)
@@ -102,6 +102,7 @@ void ResultScene::clearMatches()
     m_itemsById.clear();
     m_items.clear();
     m_itemCount = 0;
+    emit matchCountChanged(0);
 }
 
 void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
@@ -114,6 +115,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         return;
     }
 
+    emit matchCountChanged(m.count());
     m_clearTimer.stop();
     m_items.clear();
 

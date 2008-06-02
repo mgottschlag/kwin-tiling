@@ -63,6 +63,7 @@ class ResultScene : public QGraphicsScene
         void itemActivated(ResultItem *item);
         void itemHoverEnter(ResultItem *item);
         void itemHoverLeave(ResultItem *item);
+        void matchCountChanged(int count);
 
     protected:
         void keyPressEvent(QKeyEvent * keyEvent);
