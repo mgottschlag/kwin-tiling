@@ -114,7 +114,7 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 
 	pu_label = new QLabel( i18n("Us&er:"), puGroup );
 	pu_label->setBuddy( puserlb );
-	connect( puserlb, SIGNAL(textChanged( const QString & )), SIGNAL(changed()) );
+	connect( puserlb, SIGNAL(editTextChanged( const QString & )), SIGNAL(changed()) );
 	wtstr = i18n("Select the user to be preselected for login. "
 	             "This box is editable, so you can specify an arbitrary non-existent "
 	             "user to mislead possible attackers.");
@@ -187,7 +187,7 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 
 	connect( userlb, SIGNAL(activated( const QString & )),
 	         SLOT(slotSetAutoUser( const QString & )) );
-	connect( puserlb, SIGNAL(textChanged( const QString & )),
+	connect( puserlb, SIGNAL(editTextChanged( const QString & )),
 	         SLOT(slotSetPreselUser( const QString & )) );
 	connect( npuserlv, SIGNAL(clicked( Q3ListViewItem * )),
 	         SLOT(slotUpdateNoPassUser( Q3ListViewItem * )) );
