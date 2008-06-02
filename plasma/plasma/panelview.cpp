@@ -77,7 +77,6 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
 PanelView::~PanelView()
 {
-    delete m_panelController;
 }
 
 void PanelView::setLocation(Plasma::Location loc)
@@ -296,7 +295,7 @@ void PanelView::showAppletBrowser()
 void PanelView::togglePanelController()
 {
     if (!m_panelController) {
-        m_panelController = new PanelController();
+        m_panelController = new PanelController(this);
         m_panelController->setContainment(containment());
         m_panelController->setLocation(containment()->location());
         m_panelController->setAlignment(m_alignment);
@@ -322,6 +321,8 @@ void PanelView::togglePanelController()
         m_panelController->show();
     } else {
         m_panelController->hide();
+        delete m_panelController;
+        m_panelController = 0;
     }
 }
 
