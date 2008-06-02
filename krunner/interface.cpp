@@ -65,6 +65,9 @@ Interface::Interface(QWidget* parent)
     setWindowTitle( i18n("Run Command") );
     setWindowIcon(KIcon("system-run"));
 
+    m_hideResultsTimer.setSingleShot(true);
+    connect(&m_hideResultsTimer, SIGNAL(timeout()), this, SLOT(hideResultsArea()));
+
     QWidget* w = mainWidget();
     m_layout = new QVBoxLayout(w);
     m_layout->setMargin(0);
@@ -104,10 +107,16 @@ Interface::Interface(QWidget* parent)
     m_resultsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_resultsView->setOptimizationFlag(QGraphicsView::DontSavePainterState);
     m_resultsView->setAlignment(Qt::AlignLeft | Qt::AlignTop);
+
     //kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
     m_resultsScene = new ResultScene(this);
     m_resultsView->setScene(m_resultsScene);
     m_resultsView->setMinimumSize(m_resultsScene->minimumSizeHint());
+    connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));
+    connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
+    connect(m_resultsScene, SIGNAL(itemHoverEnter(ResultItem *)), this, SLOT(updateDescriptionLabel(ResultItem *)));
+    connect(m_resultsScene, SIGNAL(itemHoverLeave(ResultItem *)), m_descriptionLabel, SLOT(clear()));
+
     m_layout->addWidget(m_resultsView);
 
     QWidget *buttonContainer = new QWidget(w);
@@ -164,18 +173,18 @@ Interface::Interface(QWidget* parent)
     connect(m_searchTerm, SIGNAL(editTextChanged(QString)), this, SLOT(queryTextEditted(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));
 
-    connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
-    connect(m_resultsScene, SIGNAL(itemHoverEnter(ResultItem *)), this, SLOT(updateDescriptionLabel(ResultItem *)));
-    connect(m_resultsScene, SIGNAL(itemHoverLeave(ResultItem *)), m_descriptionLabel, SLOT(clear()));
-
     new InterfaceAdaptor( this );
     QDBusConnection::sessionBus().registerObject( "/Interface", this );
 
     new QShortcut( QKeySequence( Qt::Key_Escape ), this, SLOT(close()) );
 
     kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
+    // we restore the original size, which will set the results view back to its
+    // normal size, then we hide the results view and resize the dialog
     KConfigGroup interfaceConfig(KGlobal::config(), "Interface");
     restoreDialogSize(interfaceConfig);
+    m_resultsView->hide();
+    adjustSize();
     kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize() << size();
 }
 
@@ -210,17 +219,34 @@ void Interface::display(const QString& term)
 
     KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
 
+    // TODO: set a nice welcome string when the string freeze lifts
+    m_descriptionLabel->clear();
+
+    centerOnScreen();
+    KWindowSystem::forceActiveWindow(winId());
+    QTimer::singleShot(0, this, SLOT(show()));
+}
+
+void Interface::centerOnScreen()
+{
     int screen = 0;
     if (QApplication::desktop()->numScreens() > 1) {
         screen = QApplication::desktop()->screenNumber(QCursor::pos());
     }
 
-    // TODO: set a nice welcome string when the string freeze lifts
-    m_descriptionLabel->clear();
+    if (m_resultsView->isVisibleTo(this)) {
+        KDialog::centerOnScreen(this, screen);
+        return;
+    }
 
-    KDialog::centerOnScreen(this, screen);
-    show();
-    KWindowSystem::forceActiveWindow(winId());
+    // center it as if the results view was already visible
+    QDesktopWidget *desktop = qApp->desktop();
+    QRect r = desktop->screenGeometry(screen);
+    int w = width();
+    int h = height() + m_resultsView->height();
+    move(r.left() + (r.width() / 2) - (w / 2),
+         r.top() + (r.height() / 2) - (h / 2));
+    kDebug() << "moved to" << pos();
 }
 
 void Interface::displayWithClipboardContents()
@@ -246,12 +272,17 @@ void Interface::resetInterface()
     m_searchTerm->setCurrentItem(QString(), true, 0);
     m_descriptionLabel->clear();
     m_resultsScene->clearQuery();
+    m_resultsView->hide();
+    adjustSize();
 }
 
-void Interface::closeEvent(QCloseEvent* e)
+void Interface::closeEvent(QCloseEvent *e)
 {
     if (!m_running) {
         resetInterface();
+    } else {
+        m_resultsView->hide();
+        adjustSize();
     }
     e->accept();
 }
@@ -339,6 +370,29 @@ void Interface::configCompleted()
 {
     m_configDialog->deleteLater();
     m_configDialog = 0;
+}
+
+void Interface::matchCountChanged(int count)
+{
+    bool show = count > 0;
+    m_hideResultsTimer.stop();
+
+    if (m_resultsView->isVisible() == show) {
+        return;
+    }
+
+    if (show) {
+        m_resultsView->show();
+        adjustSize();
+    } else {
+        m_hideResultsTimer.start(2000);
+    }
+}
+
+void Interface::hideResultsArea()
+{
+    m_resultsView->hide();
+    adjustSize();
 }
 
 #include "interface.moc"

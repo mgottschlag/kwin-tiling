@@ -76,11 +76,15 @@ class Interface : public KRunnerDialog
         void showConfigDialog();
         void updateDescriptionLabel(ResultItem *item);
         void configCompleted();
+        void matchCountChanged(int count);
+        void hideResultsArea();
 
     private:
         void resetInterface();
+        void centerOnScreen();
 
         KRunnerConfigDialog *m_configDialog;
+        QTimer m_hideResultsTimer;
 
         QVBoxLayout* m_layout;
         QLabel *m_descriptionLabel;
