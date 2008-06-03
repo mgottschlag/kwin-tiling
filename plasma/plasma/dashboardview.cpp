@@ -61,7 +61,6 @@ DashboardView::DashboardView(Plasma::Containment *containment, QWidget *parent)
     m_hideAction = new QAction(i18n("Hide Dashboard"), this);
     m_hideAction->setIcon(KIcon("preferences-desktop-display"));
     m_hideAction->setEnabled(false);
-    //FIXME what happens when we switch containment?
     containment->addToolBoxTool(m_hideAction);
     connect(m_hideAction, SIGNAL(triggered()), this, SLOT(hideView()));
 
