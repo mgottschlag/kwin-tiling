@@ -50,6 +50,14 @@ protected:
 public slots:
     void toggleVisibility();
 
+    /**
+     * Sets the containment for this view, which will also cause the view
+     * to track the geometry of the containment.
+     *
+     * @arg containment the containment to center the view on
+     */
+    void setContainment(Plasma::Containment *newContainment);
+
 protected slots:
     void showAppletBrowser();
     void appletBrowserDestroyed();

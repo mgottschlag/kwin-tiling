@@ -234,6 +234,38 @@ void DashboardView::toggleVisibility()
     }
 }
 
+void DashboardView::setContainment(Plasma::Containment *newContainment)
+{
+    if (newContainment == containment()) {
+        return;
+    }
+
+    containment()->removeToolBoxTool(m_hideAction);
+    newContainment->addToolBoxTool(m_hideAction);
+
+    if (isVisible()) {
+        disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
+        containment()->closeToolBox();
+        containment()->enableAction("zoom out", m_zoomOut);
+        containment()->enableAction("zoom in", m_zoomIn);
+
+        connect(newContainment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
+        QAction *action = newContainment->action("zoom out");
+        m_zoomOut = action ? action->isEnabled() : false;
+        action = newContainment->action("zoom in");
+        m_zoomIn = action ? action->isEnabled() : false;
+        newContainment->enableAction("zoom out", false);
+        newContainment->enableAction("zoom in", false);
+        newContainment->openToolBox();
+    }
+
+    if (m_appletBrowser) {
+        m_appletBrowser->setContainment(newContainment);
+    }
+
+    View::setContainment(newContainment);
+}
+
 void DashboardView::hideView()
 {
     if (m_appletBrowser) {
