@@ -139,15 +139,16 @@ void LocationsRunner::run(const Plasma::RunnerContext &context, const Plasma::Qu
 
     //kDebug() << "command: " << match.query();
     //kDebug() << "url: " << location << data;
-    if (type == Plasma::RunnerContext::UnknownType) {
-        KToolInvocation::invokeBrowser(location);
-    } else if (type == Plasma::RunnerContext::NetworkLocation && data.startsWith("http://")) {
+
+	if ( (type == Plasma::RunnerContext::NetworkLocation || type == Plasma::RunnerContext::UnknownType) && data.startsWith("http://")) {
         // the text may have changed while we were running, so we have to refresh
         // our content
         KUrl url(location);
         processUrl(url, location);
         KToolInvocation::invokeBrowser(url.url());
-    } else {
+    } else if (type != Plasma::RunnerContext::UnknownType) {
+		KToolInvocation::invokeBrowser(location);
+	} else {
         new KRun(KShell::tildeExpand(location), 0);
     }
 }
