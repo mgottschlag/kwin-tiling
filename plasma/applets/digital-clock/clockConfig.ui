@@ -40,7 +40,7 @@
         </widget>
        </item>
        <item row="0" column="1" >
-        <widget class="QFontComboBox" name="plainClockFont" />
+        <widget class="KFontComboBox" name="plainClockFont" />
        </item>
        <item row="1" column="1" >
         <widget class="QCheckBox" name="plainClockFontBold" >
