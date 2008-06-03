@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 
+#
+# This python helper script does blend 2 images together and produces
+# a by KSplashX usuable PNG animation file.
+#
+# Use:
+# blend.py img1.png img2.png output.png
+#
+
 import sys, os, getopt, Image, ImageFile
 
 def generate(srcfile1,srcfile2,destfile):
