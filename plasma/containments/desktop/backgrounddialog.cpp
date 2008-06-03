@@ -537,6 +537,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     m_model = new BackgroundListModel(m_ratio, this);
     m_view->setModel(m_model);
     m_view->setItemDelegate(new BackgroundDelegate(m_view->view(), m_ratio, this));
+    m_view->view()->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
     connect(m_view, SIGNAL(currentIndexChanged(int)),
             this, SLOT(update()));
     m_pictureUrlButton->setIcon(KIcon("document-open"));
@@ -599,6 +600,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
     m_themeModel = new ThemeModel(this);
     m_theme->setModel(m_themeModel);
     m_theme->setItemDelegate(new ThemeDelegate(m_theme->view()));
+    m_theme->view()->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
     setMainWidget(main);
     m_emailLine->setTextInteractionFlags(Qt::TextSelectableByMouse);
