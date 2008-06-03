@@ -91,6 +91,7 @@ class Interface : public KRunnerDialog
         KHistoryComboBox* m_searchTerm;
         KCompletion *m_completion;
         QGraphicsView *m_resultsView;
+        QWidget *m_dividerLine;
         ResultScene *m_resultsScene;
         bool m_running;
         //KPushButton *m_runButton;
