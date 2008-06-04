@@ -17,8 +17,8 @@
 
 */
 
-#ifndef SOLID_SINGLETONDEFS_H
-#define SOLID_SINGLETONDEFS_H
+#ifndef SOLID_CONTROL_SINGLETONDEFS_H
+#define SOLID_CONTROL_SINGLETONDEFS_H
 
 #include <kglobal.h>
 

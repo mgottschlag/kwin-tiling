@@ -18,8 +18,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SOLIDCONTROL_WIRELESSAP_H
-#define SOLIDCONTROL_WIRELESSAP_H
+#ifndef SOLID_CONTROL_WIRELESSAP_H
+#define SOLID_CONTROL_WIRELESSAP_H
 
 #include <QtCore/QObject>
 
@@ -180,5 +180,5 @@ namespace Control
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Solid::Control::AccessPoint::Capabilities)
 Q_DECLARE_OPERATORS_FOR_FLAGS(Solid::Control::AccessPoint::WpaFlags)
-#endif // SOLIDCONTROL_WIRELESSAP_H
+#endif // SOLID_CONTROL_WIRELESSAP_H
 

@@ -17,8 +17,8 @@
 
 */
 
-#ifndef SOLID_POWERMANAGER_H
-#define SOLID_POWERMANAGER_H
+#ifndef SOLID_CONTROL_POWERMANAGER_H
+#define SOLID_CONTROL_POWERMANAGER_H
 
 #include <QtCore/QObject>
 #include <QtCore/QHash>

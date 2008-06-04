@@ -18,8 +18,8 @@
 
 */
 
-#ifndef SOLID_NETWORKMANAGER
-#define SOLID_NETWORKMANAGER
+#ifndef SOLID_CONTROL_NETWORKMANAGER
+#define SOLID_CONTROL_NETWORKMANAGER
 
 #include <QtCore/QObject>
 #include <QtCore/QVariant>

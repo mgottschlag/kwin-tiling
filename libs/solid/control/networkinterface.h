@@ -18,8 +18,8 @@
 
 */
 
-#ifndef SOLID_NETWORKINTERFACE_H
-#define SOLID_NETWORKINTERFACE_H
+#ifndef SOLID_CONTROL_NETWORKINTERFACE_H
+#define SOLID_CONTROL_NETWORKINTERFACE_H
 
 #include <QtCore/QObject>
 #include <QtCore/QStringList>
@@ -203,5 +203,5 @@ namespace Control
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Solid::Control::NetworkInterface::Capabilities)
 
-#endif //SOLID_NETWORKINTERFACE_H
+#endif //SOLID_CONTROL_NETWORKINTERFACE_H
 

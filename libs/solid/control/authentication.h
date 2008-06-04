@@ -18,8 +18,8 @@
 
 */
 
-#ifndef SOLID_AUTHENTICATION_H
-#define SOLID_AUTHENTICATION_H
+#ifndef SOLID_CONTROL_AUTHENTICATION_H
+#define SOLID_CONTROL_AUTHENTICATION_H
 
 #include <solid/control/ifaces/authentication.h>
 
