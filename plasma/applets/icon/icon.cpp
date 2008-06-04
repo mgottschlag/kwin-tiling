@@ -95,9 +95,9 @@ IconApplet::~IconApplet()
     delete m_dialog;
 }
 
-void IconApplet::saveState(KConfigGroup *cg) const
+void IconApplet::saveState(KConfigGroup &cg) const
 {
-    cg->writeEntry("Url", m_url);
+    cg.writeEntry("Url", m_url);
 }
 
 void IconApplet::setUrl(const KUrl& url)

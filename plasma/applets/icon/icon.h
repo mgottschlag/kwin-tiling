@@ -55,7 +55,7 @@ class IconApplet : public Plasma::Applet
 
     protected:
         void dropEvent(QGraphicsSceneDragDropEvent *event);
-        void saveState(KConfigGroup *cg) const;
+        void saveState(KConfigGroup &cg) const;
 
     private slots:
         void showPropertiesDialog();
