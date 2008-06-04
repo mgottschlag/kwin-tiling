@@ -56,67 +56,92 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
     // the below code is scary mainly because we have to honor priority
    // honor decimal numbers and parenthesis. 
     if (cmd.contains('^')){
-        int where=cmd.indexOf('^');
-        cmd=cmd.replace('^', ',');
-        int preIndex=where-1;
-        int postIndex=where+1;
-        int count=0;
+        int where = cmd.indexOf('^');
+        cmd = cmd.replace('^', ',');
+        int preIndex = where - 1;
+        int postIndex = where + 1;
+        int count = 0;
 
-        QChar decimalSymbol=KGlobal::locale()->decimalSymbol().at(0);     
+        QChar decimalSymbol = KGlobal::locale()->decimalSymbol().at(0);     
         //avoid out of range on weird commands 
-        preIndex=qMax(0, preIndex);
-        postIndex=qMin(postIndex, cmd.length()-1); 
+        preIndex = qMax(0, preIndex);
+        postIndex = qMin(postIndex, cmd.length()-1); 
 
-        //go backwards looking for the end of the number or expression
-        while (preIndex!=0) {
-            QChar current=cmd.at(preIndex);
-            QChar next=cmd.at(preIndex-1);
+        //go backwards looking for the beginning of the number or expression
+        while (preIndex != 0) {
+            QChar current = cmd.at(preIndex);
+            QChar next = cmd.at(preIndex-1);
             //kDebug() << "index " << preIndex << " char " << current;
             if (current == ')') {
                 count++;
             } else if (current == '(') {
                 count--;
             } else {
-                if (((next <'9' ) && (next>'0')) || next==decimalSymbol) {
+                if (((next < '9' ) && (next > '0')) || next == decimalSymbol) {
                     preIndex--;
                     continue;
                 }
             }
-            if (count==0) {
+            if (count == 0) {
                 break;
             }
             preIndex--;
         }
 
        //go forwards looking for the end of the number or expression
-        count=0;
-        while (postIndex!=cmd.size()-1) {
+        count = 0;
+        while (postIndex != cmd.size() - 1) { 
             QChar current=cmd.at(postIndex);
-            QChar next=cmd.at(postIndex+1);
+            QChar next=cmd.at(postIndex + 1);
             if (current == '(') {
                 count++;
             } else if (current == ')') {
                 count--;
             } else {
-                if (((next <'9' ) && (next>'0')) || next==decimalSymbol) {
+                if (((next < '9' ) && (next > '0')) || next == decimalSymbol) {
                     postIndex++;
                     continue;
                  }
             }
-            if (count==0) {
+            if (count == 0) {
                 break;
             }
             postIndex++;
         }   
        
-        preIndex=qMax(0, preIndex);
-        postIndex=qMin(postIndex, cmd.length()); 
+        preIndex = qMax(0, preIndex);
+        postIndex = qMin(postIndex, cmd.length()); 
 
         cmd.insert(preIndex,"pow(");
         // +1 +4 == next position to the last number after we add 4 new characters pow(
-        cmd.insert(postIndex+1+4, ')'); 
+        cmd.insert(postIndex + 1 + 4, ')'); 
         //kDebug() << "from" << preIndex << " to " << postIndex << " got: " << cmd;
     }
+}
+
+void CalculatorRunner::hexSubstitutions(QString& cmd)
+{
+    if (cmd.contains("0x")) {
+        bool ok;
+        int pos = 0;
+        QString hex;
+
+        for (int i = 0; i < cmd.size(); i++) {
+            hex.clear();
+            pos = cmd.indexOf("0x", pos);
+
+            for (int q = 0; q < cmd.size(); q++) {//find end of hex number
+                QChar current = cmd[pos+q+2];
+                if (((current <= '9' ) && (current >= '0')) || ((current <= 'F' ) && (current >= 'A'))) { //Check if valid hex sign
+                    hex[q] = current;
+                } else {
+                    break;
+                }
+            }
+            cmd = cmd.replace("0x" + hex,QString::number(hex.toInt(&ok,16))); //replace hex with decimal
+        }
+    } 
+
 }
 
 void CalculatorRunner::userFriendlySubstitutions(QString& cmd)
@@ -125,20 +150,20 @@ void CalculatorRunner::userFriendlySubstitutions(QString& cmd)
          cmd=cmd.replace(KGlobal::locale()->decimalSymbol(), ".", Qt::CaseInsensitive);
     }
 
-    //no meanless space between friendly guys: helps simplify below code
-    cmd.replace(" ","");
+    hexSubstitutions(cmd);
 
     powSubstitutions(cmd);
 
     if (cmd.contains(QRegExp("\\d+and\\d+"))) {
-         cmd=cmd.replace(QRegExp("(\\d+)and(\\d+)"), "\\1&\\2");
+         cmd = cmd.replace(QRegExp("(\\d+)and(\\d+)"), "\\1&\\2");
     }
     if (cmd.contains(QRegExp("\\d+or\\d+"))) {
-         cmd=cmd.replace(QRegExp("(\\d+)or(\\d+)"), "\\1|\\2");
+         cmd = cmd.replace(QRegExp("(\\d+)or(\\d+)"), "\\1|\\2");
     }
     if (cmd.contains(QRegExp("\\d+xor\\d+"))) {
-         cmd=cmd.replace(QRegExp("(\\d+)xor(\\d+)"), "\\1^\\2");
+         cmd = cmd.replace(QRegExp("(\\d+)xor(\\d+)"), "\\1^\\2");
     }
+   
 }
 
 
@@ -147,22 +172,34 @@ void CalculatorRunner::match(Plasma::RunnerContext &context)
     const QString term = context.query();
     QString cmd = term;
 
-    if (cmd.length() < 4 || cmd[0] != '=') {
+    //no meanless space between friendly guys: helps simplify code
+    cmd = cmd.trimmed().replace(" ", "");
+
+    if (cmd.length() < 4) {
+        return;
+    }
+    bool toHex = cmd.startsWith("hex=");
+
+    if (!toHex && (cmd[0] != '=')) {
         return;
     }
 
-    cmd = cmd.remove(0, 1).trimmed();
+    cmd = cmd.remove(0, cmd.indexOf('=')+1);
 
     if (cmd.isEmpty()) {
         return;
     }
 
     userFriendlySubstitutions(cmd);
+    cmd.replace(QRegExp("([a-zA-Z]+)"), "Math.\\1"); //needed for accessing math funktions like sin(),....
 
-    cmd.replace(QRegExp("([a-zA-Z]+)"), "Math.\\1");
     QString result = calculate(cmd);
 
     if (!result.isEmpty() && result != cmd) {
+        if (toHex) {
+            result = "0x" + QString::number(result.toInt(), 16).toUpper();
+        }
+
         Plasma::QueryMatch match(this);
         match.setType(Plasma::QueryMatch::InformationalMatch);
         match.setIcon(KIcon("accessories-calculator"));
