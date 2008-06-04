@@ -45,6 +45,8 @@
 #define TEXT_AREA_HEIGHT ResultItem::MARGIN + ResultItem::TEXT_MARGIN*2 + ResultItem::Private::s_fontHeight
 //#define NO_GROW_ANIM
 
+void shadowBlur(QImage &image, int radius, const QColor &color);
+
 class ResultItem::Private
 {
 public:
@@ -237,7 +239,7 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
     }
 
     QColor mix =  QColor::fromHsv(hue, 160, 150);
-    mix.setAlpha(200);
+    mix.setAlpha(180);
 /*    QColor grey(61, 61, 61, 200);
     QRectF rect = boundingRect();
     QLinearGradient gr(QPointF(0, 0), geometry().bottomRight());
@@ -560,14 +562,38 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     QRect textRect(iRect.bottomLeft() + QPoint(0, MARGIN + TEXT_MARGIN), iRect.bottomRight() + QPoint(0, TEXT_AREA_HEIGHT));
 
     //kDebug() << d->highlight;
-    painter->fillPath(Plasma::roundedRectangle(textRect.adjusted(-1, 0, 1, 0), 3), d->bgBrush);
+    painter->fillPath(Plasma::roundedRectangle(textRect.adjusted(-1, 2, 1, 0), 3), d->bgBrush);
 
     //Avoid to cut text both in the left and in the right
     Qt::Alignment textAlign = (option->fontMetrics.width(name()) < textRect.width()) ? Qt::AlignCenter : Qt::AlignLeft;
-    textRect.adjust(0, MARGIN, -1, MARGIN);
-    painter->drawText(textRect, textAlign, name());
-    painter->setPen(Qt::white);
-    painter->drawText(textRect.translated(1, -1), textAlign, name());
+    {
+        const int padding = 2;
+        const int blur = 2;
+        const int offset = 0;
+
+        textRect.adjust(0, MARGIN, -1, MARGIN);
+        QPixmap pixmap(textRect.size());
+        pixmap.fill(Qt::transparent);
+
+        QPainter p(&pixmap);
+
+        //FIXME: hardcoded colors: Qt::white, Qt::black
+        p.setPen(Qt::white);
+        p.drawText(pixmap.rect(), textAlign, name());
+        p.end();
+
+        QImage img(textRect.size() + QSize(padding * 2, padding * 2),
+                   QImage::Format_ARGB32_Premultiplied);
+        img.fill(Qt::transparent);
+        p.begin(&img);
+        p.drawImage(padding, padding, pixmap.toImage());
+        p.end();
+
+        shadowBlur(img, blur, Qt::black);
+
+        painter->drawImage(textRect.topLeft() - QPoint(padding + offset, padding + offset), img);
+        painter->drawPixmap(textRect.topLeft(), pixmap);
+    }
 
     painter->setClipping(oldClipping);
 }

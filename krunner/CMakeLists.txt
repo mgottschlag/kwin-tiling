@@ -14,20 +14,21 @@ set(screensaver_dbusXML org.freedesktop.ScreenSaver.xml)
 set(kscreensaver_dbusXML org.kde.screensaver.xml)
 
 set(krunner_SRCS
-                 krunnerdialog.cpp
-                 collapsiblewidget.cpp
-                 configdialog.cpp
-                 interface.cpp
-                 krunnerapp.cpp
-                 restartingapplication.cpp
-                 main.cpp
-                 resultitem.cpp
-                 resultscene.cpp
-                 saverengine.cpp
-                 startupid.cpp
-                 xautolock.cpp
-                 xautolock_diy.c
-                 xautolock_engine.c)
+    krunnerdialog.cpp
+    collapsiblewidget.cpp
+    configdialog.cpp
+    interface.cpp
+    krunnerapp.cpp
+    restartingapplication.cpp
+    main.cpp
+    resultitem.cpp
+    resultscene.cpp
+    saverengine.cpp
+    stackblur_shadows.cpp
+    startupid.cpp
+    xautolock.cpp
+    xautolock_diy.c
+    xautolock_engine.c)
 
 kde4_add_kcfg_files(krunner_SRCS ${krunner_KCFG_SRCS})
 
