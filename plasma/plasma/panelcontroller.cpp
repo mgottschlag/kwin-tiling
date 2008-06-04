@@ -661,13 +661,21 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
         return;
     }
 
-    QRect screenGeom =
-    QApplication::desktop()->screenGeometry(d->containment->screen());
+    QDesktopWidget *desktop = QApplication::desktop();
+    QRect screenGeom = desktop->screenGeometry(d->containment->screen());
 
     if (d->dragging == Private::PanelControllerElement) {
         //only move when the mouse cursor is out of the controller to avoid an endless reposition cycle
         if (geometry().contains(event->globalPos())) {
             return;
+        }
+
+        if (!screenGeom.contains(event->globalPos())) {
+            //move panel to new screen if dragged there
+            int targetScreen = desktop->screenNumber(event->globalPos());
+            kDebug() << "Moving panel from screen" << d->containment->screen() << "to screen" << targetScreen;
+            d->containment->setScreen(targetScreen);
+            screenGeom =  desktop->screenGeometry(targetScreen);
         }
 
         Plasma::FormFactor oldFormFactor = d->containment->formFactor();
