@@ -140,7 +140,7 @@ void Trash::constraintsEvent(Plasma::Constraints constraints)
         disconnect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
-           
+
             //in a panel the icon always behaves like a button
             connect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));
 
@@ -157,15 +157,14 @@ void Trash::constraintsEvent(Plasma::Constraints constraints)
             m_icon->setDrawBackground(false);
 
             setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
-	}
+        }
         setIcon();
     }
+
     if (constraints & Plasma::SizeConstraint && m_icon) {
         resize(size());
         m_icon->resize(size());
     }
-
-    updateGeometry();
 }
 
 void Trash::slotOpen()
