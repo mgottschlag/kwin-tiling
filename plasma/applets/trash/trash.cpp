@@ -23,6 +23,7 @@
 #include <QGraphicsSceneDragDropEvent>
 #include <QDesktopWidget>
 #include <QApplication>
+#include <QGraphicsLinearLayout>
 
 //KDE
 #include <KGlobalSettings>
@@ -94,6 +95,15 @@ void Trash::init()
 
     m_dirLister->openUrl(m_trashUrl);
     m_icon->setDrawBackground(true);
+
+    setAspectRatioMode(Plasma::ConstrainedSquare);
+
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
+
+    layout->addItem(m_icon);
+
     registerAsDragHandle(m_icon);
     //setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
     resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
@@ -159,11 +169,6 @@ void Trash::constraintsEvent(Plasma::Constraints constraints)
             setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
         }
         setIcon();
-    }
-
-    if (constraints & Plasma::SizeConstraint && m_icon) {
-        resize(size());
-        m_icon->resize(size());
     }
 }
 

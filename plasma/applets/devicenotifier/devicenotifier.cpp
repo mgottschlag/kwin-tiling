@@ -168,7 +168,14 @@ void DeviceNotifier::initSysTray()
         m_icon = new Plasma::Icon(KIcon("computer"), QString(), this);
     }
     connect(m_icon, SIGNAL(clicked()), this, SLOT(onClickNotifier()));
-    m_icon->resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
+
+    setAspectRatioMode(Plasma::ConstrainedSquare);
+
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
+
+    layout->addItem(m_icon);
 }
 
 DeviceNotifier::~DeviceNotifier()
@@ -213,9 +220,6 @@ void DeviceNotifier::constraintsEvent(Plasma::Constraints constraints)
         }
     }
 
-    if (m_icon && constraints & Plasma::SizeConstraint) {
-        m_icon->resize(geometry().size());
-    }
  }
 
 void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)

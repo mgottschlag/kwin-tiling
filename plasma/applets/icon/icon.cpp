@@ -24,6 +24,7 @@
 #include <QGraphicsItem>
 #include <QEvent>
 #include <QMimeData>
+#include <QGraphicsLinearLayout>
 
 #include <KGlobalSettings>
 #include <KDebug>
@@ -61,6 +62,12 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
 
 void IconApplet::init()
 {
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
+
+    layout->addItem(m_icon);
+
     KConfigGroup cg = config();
 
     if (!m_url.isValid()) {
@@ -69,6 +76,8 @@ void IconApplet::init()
     setDisplayLines(2);
 
     registerAsDragHandle(m_icon);
+
+    setAspectRatioMode(Plasma::ConstrainedSquare);
 
     // we do this right away since we may have our config
     // read shortly by the containment. usually applets don't need
@@ -138,24 +147,20 @@ void IconApplet::constraintsEvent(Plasma::Constraints constraints)
             connect(m_icon, SIGNAL(activated()), this, SLOT(openUrl()));
             m_icon->setText(m_text);
             //FIXME TOOL TIP MANAGER
-	    //m_icon->setToolTip(Plasma::ToolTipData());
+            //m_icon->setToolTip(Plasma::ToolTipData());
             m_icon->setDrawBackground(true);
         } else {
             //in the panel the icon behaves like a button
             connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
             m_icon->setText(QString());
-	    //FIXME PORT TO TOOL TIP MANAGER
-	    /*Plasma::ToolTipData data;
+            //FIXME PORT TO TOOL TIP MANAGER
+            /*Plasma::ToolTipData data;
             data.mainText = m_text;
             data.subText = m_genericName;
             data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
             m_icon->setToolTip(data);*/
             m_icon->setDrawBackground(false);
         }
-    }
-
-    if (constraints & Plasma::SizeConstraint) {
-        m_icon->resize(geometry().size());
     }
 }
 

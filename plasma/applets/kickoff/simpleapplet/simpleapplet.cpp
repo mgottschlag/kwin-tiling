@@ -29,6 +29,7 @@
 #include <QMetaObject>
 #include <QMetaEnum>
 #include <QPointer>
+#include <QGraphicsLinearLayout>
 
 // KDE
 #include <KIcon>
@@ -163,6 +164,12 @@ MenuLauncherApplet::~MenuLauncherApplet()
 
 void MenuLauncherApplet::init()
 {
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
+
+    layout->addItem(d->icon);
+
     KConfigGroup cg = config();
 
     {
@@ -179,6 +186,8 @@ void MenuLauncherApplet::init()
     d->icon->setIcon(KIcon(d->viewIcon()));
     //d->icon->setIcon(KIcon(cg.readEntry("icon","start-here-kde")));
     //setMinimumContentSize(d->icon->iconSize()); //setSize(d->icon->iconSize())
+
+    setAspectRatioMode(Plasma::ConstrainedSquare);
 
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ExtensionHandler,"desktop",new Kickoff::ServiceItemHandler);
     Kickoff::UrlItemLauncher::addGlobalHandler(Kickoff::UrlItemLauncher::ProtocolHandler, "leave", new Kickoff::LeaveItemHandler);
@@ -207,24 +216,7 @@ void MenuLauncherApplet::constraintsEvent(Plasma::Constraints constraints)
             //setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
         } else {
             //setMinimumContentSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
-
-            //restore the maximum sizes tweaked in sizeconstraints
-            if (formFactor() == Plasma::Horizontal ) {
-                setMaximumHeight(INT_MAX);
-            } else if (formFactor() == Plasma::Vertical) {
-                setMaximumWidth(INT_MAX);
-            }
         }
-    }
-
-    if (constraints & Plasma::SizeConstraint) {
-        if (formFactor() == Plasma::Horizontal ) {
-            setMaximumWidth(contentsRect().height());
-        } else if (formFactor() == Plasma::Vertical) {
-            setMaximumHeight(contentsRect().width());
-        }
-
-        d->icon->resize(contentsRect().size());
     }
 
     if (constraints & Plasma::ImmutableConstraint) {

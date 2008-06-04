@@ -28,6 +28,7 @@
 #include <QCheckBox>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QGraphicsLinearLayout>
 
 // KDE
 #include <KIcon>
@@ -89,11 +90,19 @@ LauncherApplet::~LauncherApplet()
 
 void LauncherApplet::init()
 {
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
+
+    layout->addItem(d->icon);
+
     if (KService::serviceByStorageId("kde4-kmenuedit.desktop")) {
         QAction* menueditor = new QAction(i18n("Menu Editor"), this);
         d->actions.append(menueditor);
         connect(menueditor, SIGNAL(triggered(bool)), this, SLOT(startMenuEditor()));
     }
+
+    setAspectRatioMode(Plasma::ConstrainedSquare);
 
     Q_ASSERT( ! d->switcher );
     d->switcher = new QAction(i18n("Switch to Classic Menu Style"), this);
@@ -114,24 +123,7 @@ void LauncherApplet::constraintsEvent(Plasma::Constraints constraints)
             //setMinimumSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
         } else {
             //setMinimumSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
-
-            //restore the maximum sizes tweaked in sizeconstraints
-            if (formFactor() == Plasma::Horizontal ) {
-                setMaximumHeight(INT_MAX);
-            } else if (formFactor() == Plasma::Vertical) {
-                setMaximumWidth(INT_MAX);
-            }
         }
-    }
-
-    if (constraints & Plasma::SizeConstraint) {
-        if (formFactor() == Plasma::Horizontal ) {
-            setMaximumWidth(contentsRect().height());
-        } else if (formFactor() == Plasma::Vertical) {
-            setMaximumHeight(contentsRect().width());
-        }
-
-        d->icon->resize(contentsRect().size());
     }
 
     if (constraints & Plasma::ImmutableConstraint) {
