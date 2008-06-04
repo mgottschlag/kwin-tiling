@@ -59,6 +59,9 @@ class Pager : public Plasma::Applet
         virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
         virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
         virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+        virtual void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
+        virtual void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
+        virtual void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
         virtual void wheelEvent(QGraphicsSceneWheelEvent *);
 
         void configAccepted();
@@ -74,12 +77,15 @@ class Pager : public Plasma::Applet
         void slotConfigureDesktop();
         void lostDesktopLayoutOwner();
         void animationUpdate(qreal progress, int animId);
+        void dragSwitch();
 
     protected:
         void createMenu();
         QRect fixViewportPosition( const QRect& r );
         void createConfigurationInterface(KConfigDialog *parent);
         bool posOnDesktopRect(const QRectF& r, const QPointF& pos);
+        void handleHoverMove(const QPointF& pos);
+        void handleHoverLeave();
 
     private:
         QTimer* m_timer;
@@ -128,7 +134,11 @@ class Pager : public Plasma::Applet
         WId m_dragId;
         int m_dragStartDesktop;
         int m_dragHighlightedDesktop;
-        
+
+        // desktop switching on drop event
+        int m_dragSwitchDesktop;
+        QTimer* m_dragSwitchTimer;
+
         static const int s_FadeInDuration = 100;
         static const int s_FadeOutDuration = 200;
     };

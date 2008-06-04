@@ -46,6 +46,7 @@
 #include <plasma/animator.h>
 
 const int WINDOW_UPDATE_DELAY = 50;
+const int DRAG_SWITCH_DELAY = 1000;
 
 Pager::Pager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
@@ -58,9 +59,11 @@ Pager::Pager(QObject *parent, const QVariantList &args)
       m_hoverIndex(-1),
       m_dragId(0),
       m_dragStartDesktop(-1),
-      m_dragHighlightedDesktop(-1)
+      m_dragHighlightedDesktop(-1),
+      m_dragSwitchDesktop(-1)
 {
     setAcceptsHoverEvents(true);
+    setAcceptDrops(true);
     setHasConfigurationInterface(true);
 
     m_background = new Plasma::PanelSvg(this);
@@ -91,6 +94,10 @@ void Pager::init()
     m_timer = new QTimer(this);
     m_timer->setSingleShot(true);
     connect(m_timer, SIGNAL(timeout()), this, SLOT(recalculateWindowRects()));
+
+    m_dragSwitchTimer = new QTimer(this);
+    m_dragSwitchTimer->setSingleShot(true);
+    connect(m_dragSwitchTimer, SIGNAL(timeout()), this, SLOT(dragSwitch()));
 
     connect(KWindowSystem::self(), SIGNAL(currentDesktopChanged(int)), this, SLOT(currentDesktopChanged(int)));
     connect(KWindowSystem::self(), SIGNAL(windowAdded(WId)), this, SLOT(windowAdded(WId)));
@@ -595,15 +602,11 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     Applet::mouseReleaseEvent(event);
 }
 
-void Pager::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+// If the pager is hovered in drag and drop mode, no hover events are geneated.
+// This method provides the common implementation for hoverMoveEvent and dragMoveEvent.
+void Pager::handleHoverMove(const QPointF& pos)
 {
-    hoverMoveEvent(event);
-    Applet::hoverEnterEvent(event);
-}
-
-void Pager::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
-{
-    bool changedHover = !posOnDesktopRect(m_hoverRect, event->pos());
+    bool changedHover = !posOnDesktopRect(m_hoverRect, pos);
     Plasma::Animator *anim = Plasma::Animator::self();
 
     if (changedHover && m_hoverIndex > -1) {
@@ -621,7 +624,7 @@ void Pager::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 
     int i = 0;
     foreach (const QRectF &rect, m_rects) {
-        if (posOnDesktopRect(rect, event->pos())) {
+        if (posOnDesktopRect(rect, pos)) {
             if (m_hoverRect != rect) {
                 m_hoverRect = rect;
                 m_hoverIndex = i;
@@ -637,13 +640,15 @@ void Pager::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
         }
         i++;
     }
+    m_hoverIndex = -1;
     m_hoverRect = QRectF();
     update();
 }
 
-void Pager::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+// If the pager is hovered in drag and drop mode, no hover events are geneated.
+// This method provides the common implementation for hoverLeaveEvent and dragLeaveEvent.
+void Pager::handleHoverLeave()
 {
-    Q_UNUSED( event );
     if (m_hoverRect != QRectF()) {
         m_hoverRect = QRectF();
         update();
@@ -672,8 +677,57 @@ void Pager::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
         m_dragOriginalPos = m_dragCurrentPos = QPointF();
         update();
     }
-    
+}
+
+void Pager::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    handleHoverMove(event->pos());
+    Applet::hoverEnterEvent(event);
+}
+
+void Pager::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+{
+    handleHoverMove(event->pos());
+}
+
+void Pager::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    handleHoverLeave();
     Applet::hoverLeaveEvent(event);
+}
+
+void Pager::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
+{
+    handleHoverMove(event->pos());
+
+    if (m_hoverIndex != -1) {
+        m_dragSwitchDesktop = m_hoverIndex;
+        m_dragSwitchTimer->start(DRAG_SWITCH_DELAY);
+    }
+    Applet::dragEnterEvent(event);
+}
+
+void Pager::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    handleHoverMove(event->pos());
+
+    if (m_dragSwitchDesktop != m_hoverIndex && m_hoverIndex != -1) {
+        m_dragSwitchDesktop = m_hoverIndex;
+        m_dragSwitchTimer->start(DRAG_SWITCH_DELAY);
+    } else if (m_hoverIndex == -1) {
+        m_dragSwitchDesktop = m_hoverIndex;
+        m_dragSwitchTimer->stop();
+    }
+    Applet::dragMoveEvent(event);
+}
+
+void Pager::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
+{
+    handleHoverLeave();
+
+    m_dragSwitchDesktop = -1;
+    m_dragSwitchTimer->stop();
+    Applet::dragLeaveEvent(event);
 }
 
 void Pager::animationUpdate(qreal progress, int animId)
@@ -698,6 +752,15 @@ void Pager::animationUpdate(qreal progress, int animId)
     m_animations[i].alpha = m_animations[i].fadeIn ? progress : 1 - progress;
     // explicit update
     update();
+}
+
+void Pager::dragSwitch()
+{
+    if (m_dragSwitchDesktop == -1) {
+        return;
+    }
+    KWindowSystem::setCurrentDesktop(m_dragSwitchDesktop + 1);
+    m_currentDesktop = m_dragSwitchDesktop + 1;
 }
 
 void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
