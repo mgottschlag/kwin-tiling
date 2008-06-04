@@ -68,6 +68,12 @@ FolderView::FolderView(QObject *parent, const QVariantList &args)
     m_layoutValid = false;
     m_doubleClick = false;
     m_dragInProgress = false;
+
+    if ( args.count() ) {
+        m_url = KUrl(args.value(0).toString());
+    } else {
+        m_url = KUrl();
+    }
 }
 
 void FolderView::init()
@@ -77,7 +83,9 @@ void FolderView::init()
     m_font = cg.readEntry("desktopFont", QFont("Sans Serif", 10));
 
     cg = config();
-    m_url = cg.readEntry("url", KUrl(QDir::homePath()));
+    if (!m_url.isValid()) {
+        m_url = cg.readEntry("url", KUrl(QDir::homePath()));
+    }
     m_filterFiles = cg.readEntry("filterFiles", "*");
 
     KDirLister *lister = new KDirLister(this);
