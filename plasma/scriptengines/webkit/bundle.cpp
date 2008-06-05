@@ -166,8 +166,8 @@ bool Bundle::open()
         return 0;
     }
 
-    qDebug()<<"Dir = "<<foundDir->name();
     m_isValid = extractArchive(foundDir, QLatin1String(""));
+    qDebug()<<"Dir = "<<foundDir->name() << m_isValid;
 
     if (m_isValid) {
         setPath(m_tempDir->name());
@@ -219,6 +219,7 @@ bool Bundle::extractArchive(const KArchiveDirectory *dir, const QString &path)
 
 void Bundle::pathChanged()
 {
+    //qDebug() << "path changed";
     m_isValid = extractInfo();
 }
 
@@ -227,15 +228,13 @@ bool Bundle::extractInfo()
     QString plistLocation = QString("%1Info.plist").arg(path());
     QString configXml = QString("%1config.xml").arg(path());
     if (QFile::exists(plistLocation)) {
-        //extract from plist
-        parsePlist(plistLocation);
+        //qDebug() << "doing plist";
+        return parsePlist(plistLocation);
     } else if (QFile::exists(configXml)) {
-        parseConfigXml(configXml);
-    } else {
-        return false;
+        return parseConfigXml(configXml);
     }
 
-    return true;
+    return false;
 }
 
 bool Bundle::parsePlist(const QString &loc)
@@ -253,6 +252,7 @@ bool Bundle::parsePlist(const QString &loc)
         reader.readNext();
         // do processing
         if (reader.isStartElement()) {
+            //qDebug() << reader.name().toString();
             if (reader.name() == "key") {
                 QString key, value;
                 reader.readNext();
@@ -318,7 +318,7 @@ bool Bundle::parsePlist(const QString &loc)
     //qDebug()<<"html = "<<m_htmlLocation;
     //qDebug()<<"icon = "<<m_iconLocation;
 
-    return true;
+    return !m_bundleId.isEmpty();
 }
 
 bool Bundle::installPackage(const QString &archivePath, const QString &packageRoot)
