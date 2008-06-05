@@ -55,6 +55,10 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QStringList &) : d_pt
     connect( &d->iface, SIGNAL(StateChanged(uint)),
                 this, SLOT(stateChanged(uint)));
 
+    d->iface.connection().connect(QLatin1String("org.freedesktop.DBus"),
+            QLatin1String("/org/freedesktop/DBus"), QLatin1String("org.freedesktop.DBus"),
+            QLatin1String("NameOwnerChanged"), QLatin1String("sss"),
+            this, SLOT(nameOwnerChanged(QString,QString,QString)));
 
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
     QDBusReply< QList <QDBusObjectPath> > deviceList = d->iface.GetDevices();
@@ -211,6 +215,22 @@ Solid::Networking::Status NMNetworkManager::convertNMState(uint state)
             break;
     }
     return status;
+}
+
+void NMNetworkManager::nameOwnerChanged(QString name, QString oldOwner, QString newOwner)
+{
+    if ( name == QLatin1String("org.freedesktop.NetworkManager") ) {
+        kDebug(1441) << "name: " << name << ", old owner: " << oldOwner << ", new owner: " << newOwner;
+        if ( oldOwner.isEmpty() && !newOwner.isEmpty() ) {
+            // NetworkManager started, but we are already listening to StateChanged so we should get
+            // its status that way
+            ;
+        }
+        if ( !oldOwner.isEmpty() && newOwner.isEmpty() ) {
+            // NetworkManager stopped, set status Unknown for safety
+            stateChanged(NM_STATE_UNKNOWN);
+        }
+    }
 }
 
 #include "manager.moc"

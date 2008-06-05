@@ -63,6 +63,7 @@ protected Q_SLOTS:
     void deviceRemoved(const QDBusObjectPath &state);
     void stateChanged(uint state);
     void propertiesChanged(const QVariantMap &properties);
+    void nameOwnerChanged(QString, QString, QString);
 private:
     static Solid::Networking::Status convertNMState(uint state);
 private:
