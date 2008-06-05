@@ -93,6 +93,7 @@ class Interface : public KRunnerDialog
         QGraphicsView *m_resultsView;
         QWidget *m_dividerLine;
         ResultScene *m_resultsScene;
+        bool m_delayedRun;
         bool m_running;
         //KPushButton *m_runButton;
 };

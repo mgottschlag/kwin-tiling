@@ -115,7 +115,6 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         return;
     }
 
-    emit matchCountChanged(m.count());
     m_clearTimer.stop();
     m_items.clear();
 
@@ -151,6 +150,8 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
 
     // this will leave them in *reverse* order
     qSort(m_items.begin(), m_items.end(), ResultItem::compare);
+
+    emit matchCountChanged(m.count());
 
     QListIterator<ResultItem*> matchIt(m_items);
     QGraphicsWidget *tab = 0;
@@ -307,7 +308,6 @@ ResultItem* ResultScene::defaultResultItem() const
     }
 
     kDebug() << (QObject*) m_items[0] << m_items.count();
-    //fixme: this should really be a sorted list!
     return m_items[0];
 }
 

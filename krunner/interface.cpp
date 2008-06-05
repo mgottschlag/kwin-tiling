@@ -62,6 +62,7 @@ static const int MIN_WIDTH = 400;
 Interface::Interface(QWidget* parent)
     : KRunnerDialog(parent),
       m_configDialog(0),
+      m_delayedRun(false),
       m_running(false)
 {
     setWindowTitle( i18n("Run Command") );
@@ -330,6 +331,7 @@ void Interface::setWidgetPalettes()
 
 void Interface::resetInterface()
 {
+    m_delayedRun = false;
     m_searchTerm->setCurrentItem(QString(), true, 0);
     m_descriptionLabel->clear();
     m_resultsScene->clearQuery();
@@ -343,6 +345,7 @@ void Interface::closeEvent(QCloseEvent *e)
     if (!m_running) {
         resetInterface();
     } else {
+        m_delayedRun = false;
         m_resultsView->hide();
         setMinimumSize(QSize(MIN_WIDTH, 0));
         adjustSize();
@@ -353,10 +356,12 @@ void Interface::closeEvent(QCloseEvent *e)
 void Interface::run(ResultItem *item)
 {
     if (!item || item->group() < Plasma::QueryMatch::PossibleMatch) {
+        m_delayedRun = true;
         return;
     }
 
     kDebug() << item->name() << item->id();
+    m_delayedRun = false;
     m_searchTerm->addToHistory(m_searchTerm->currentText());
 
     if (item->group() == Plasma::QueryMatch::InformationalMatch) {
@@ -439,6 +444,12 @@ void Interface::matchCountChanged(int count)
 {
     bool show = count > 0;
     m_hideResultsTimer.stop();
+
+    if (show && m_delayedRun) {
+        kDebug() << "delayed run with" << count << "items";
+        runDefaultResultItem();
+        return;
+    }
 
     if (m_resultsView->isVisible() == show) {
         return;
