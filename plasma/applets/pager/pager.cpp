@@ -746,12 +746,13 @@ void Pager::animationUpdate(qreal progress, int animId)
         return;
     }
 
+    m_animations[i].alpha = m_animations[i].fadeIn ? progress : 1 - progress;
+
     if (progress == 1) {
         m_animations[i].animId = -1;
         m_animations[i].fadeIn = true;
     }
 
-    m_animations[i].alpha = m_animations[i].fadeIn ? progress : 1 - progress;
     // explicit update
     update();
 }
@@ -903,19 +904,17 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
         }
 
         //Draw text
-        if (m_animations[i].animId > -1 || m_rects[i] == m_hoverRect) {
-            if (m_animations[i].animId == -1) {
-                defaultTextColor.setAlphaF(1);
-            }
-            defaultTextColor.setAlphaF(m_animations[i].alpha);
-            painter->setPen(defaultTextColor);
-
-            if (m_displayedText==Number) { // Display number of desktop
-                painter->drawText(m_rects[i], Qt::AlignCenter, QString::number(i+1));
-            } else if (m_displayedText==Name) { // Display name of desktop
-                painter->drawText(m_rects[i], Qt::AlignCenter, KWindowSystem::desktopName(i+1));
-            }
+        if (m_animations[i].animId == -1) {
+            defaultTextColor.setAlphaF(1);
         }
+        defaultTextColor.setAlphaF(m_animations[i].alpha / 2 + 0.5);
+        painter->setPen(defaultTextColor);
+
+        if (m_displayedText==Number) { // Display number of desktop
+            painter->drawText(m_rects[i], Qt::AlignCenter, QString::number(i+1));
+        } else if (m_displayedText==Name) { // Display name of desktop
+            painter->drawText(m_rects[i], Qt::AlignCenter, KWindowSystem::desktopName(i+1));
+         }
     }
 }
 
