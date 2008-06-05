@@ -60,7 +60,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
     resize(128, 128);
-    setAspectRatioMode(Plasma::Square);
+    setAspectRatioMode(Plasma::ConstrainedSquare );
 
 }
 
@@ -147,6 +147,7 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & (Plasma::SizeConstraint | Plasma::FormFactorConstraint) && m_theme) {
         m_theme->resize(contentsRect().size().toSize());
+        m_font.setPointSize(qRound(contentsRect().height() / 10));
     }
 }
 
@@ -346,6 +347,7 @@ void Battery::animationUpdate(qreal progress)
     } else {
         m_alpha = m_fadeIn ? progress : 1 - progress;
     }
+    m_alpha = qMax(0.0, m_alpha); 
     update();
 }
 
@@ -510,18 +512,15 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
     p->setRenderHint(QPainter::Antialiasing);
 
     if (m_numOfBattery == 0) {
-        QRectF ac_contentsRect(contentsRect.topLeft(), QSizeF(contentsRect.width() * m_acAlpha, contentsRect.height() * m_acAlpha));
+        QRectF ac_contentsRect(contentsRect.topLeft(), QSizeF(qMax(0.0, contentsRect.width() * m_acAlpha), qMax(0.0, contentsRect.height() * m_acAlpha)));
         if (m_acadapter_plugged) {
             m_theme->paint(p, ac_contentsRect, "AcAdapter");
         }
-        if (formFactor() == Plasma::Planar ||
-            formFactor() == Plasma::MediaCenter) {
-            // Show that there's no battery
-            paintLabel(p, contentsRect, I18N_NOOP("n/a"));
-        }
+        // Show that there's no battery
+        paintLabel(p, contentsRect, I18N_NOOP("n/a"));
         return;
     }
-   
+
     if (m_showMultipleBatteries) {
         // paint each battery with own charge level
         int battery_num = 0;
