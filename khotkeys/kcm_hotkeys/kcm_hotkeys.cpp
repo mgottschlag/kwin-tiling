@@ -42,11 +42,9 @@
 
 #include <KDE/KAboutData>
 #include <KDE/KDebug>
-#include <KDE/KGlobalAccel>
 #include <KDE/KLocale>
 #include <KDE/KMessageBox>
 #include <KDE/KPluginLoader>
-#include <KDE/KToolInvocation>
 
 
 
@@ -84,9 +82,9 @@ class KCMHotkeysPrivate
         bool maybeShowWidget();
 
         /**
-         * Save the currentely shown item
+         * Applies the changes from the current item
          */
-        void saveCurrentItem();
+        void applyCurrentItem();
 
         void load();
         void save();
@@ -123,12 +121,6 @@ KCMHotkeys::KCMHotkeys( QWidget *parent, const QVariantList & /* args */ )
     connect(
         d->simple_action, SIGNAL(changed(bool)),
         this, SIGNAL(changed(bool)) );
-
-    // Inform KGlobalAccel we only want to configure shortcuts
-    KGlobalAccel::self()->overrideMainComponentData( KComponentData("khotkeys") );
-
-    // Load the settings
-    load();
     }
 
 
@@ -156,7 +148,6 @@ void KCMHotkeys::currentChanged( const QModelIndex &pCurrent, const QModelIndex 
         return;
         }
 
-    Q_ASSERT(current.isValid());
     if (!current.isValid())
         {
         return;
@@ -313,8 +304,9 @@ bool KCMHotkeysPrivate::maybeShowWidget()
             {
             return false;
             }
-        // Save the current Item
-        saveCurrentItem();
+        // Apply the changes from the current item
+        applyCurrentItem();
+        save();
         }
     return true;
     }
@@ -322,17 +314,14 @@ bool KCMHotkeysPrivate::maybeShowWidget()
 
 void KCMHotkeysPrivate::save()
     {
-    if ( current && current->isChanged() )
-        {
-        saveCurrentItem();
-        }
+    applyCurrentItem();
 
     // Write the settings
     model->save();
 
     // Inform kdedkhotkeys demon to reload settings
     QDBusConnection bus = QDBusConnection::sessionBus();
-    QPointer<QDBusInterface> iface = new QDBusInterface("org.kde.kded", "/KHotKeys",
+    QPointer<QDBusInterface> iface = new QDBusInterface("org.kde.kded", "/modules/khotkeys",
                                                         "org.kde.khotkeys", bus, q);
     if(!iface->isValid())
         {
@@ -364,8 +353,6 @@ void KCMHotkeysPrivate::save()
                               reply.error().message()) + "</qt>" );
             }
 
-        // kDebug() << "Starting khotkeys demon";
-        // KToolInvocation::kdeinitExec( "khotkeys" );
         }
     else
         {
@@ -381,7 +368,7 @@ void KCMHotkeysPrivate::save()
 
 
 
-void KCMHotkeysPrivate::saveCurrentItem()
+void KCMHotkeysPrivate::applyCurrentItem()
     {
     Q_ASSERT( current );
     // Only save when really changed
@@ -389,7 +376,6 @@ void KCMHotkeysPrivate::saveCurrentItem()
         {
         current->copyToObject();
         model->emitChanged(current->data());
-        save();
         }
     }
 

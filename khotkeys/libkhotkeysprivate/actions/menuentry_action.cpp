@@ -57,7 +57,6 @@ KService::Ptr MenuEntryAction::service() const
 
 void MenuEntryAction::set_service( KService::Ptr service )
     {
-    Q_ASSERT( service );
     if (!service) return;
     _service = service;
     set_command_url(service->name());

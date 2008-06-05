@@ -40,7 +40,9 @@ ShortcutsHandler::ShortcutsHandler( HandlerType type, QObject *parent )
         : QObject(parent)
          ,_type(type)
          ,_actions(new KActionCollection(this))
-    {}
+    {
+    _actions->setComponentData(KComponentData("khotkeys"));
+    }
 
 ShortcutsHandler::~ShortcutsHandler()
     {

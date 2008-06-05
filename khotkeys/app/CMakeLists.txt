@@ -1,20 +1,5 @@
 ########### next target ###############
 
-set(khotkeys_KDEINIT_SRCS app.cpp )
-
-
-kde4_add_kdeinit_executable( khotkeys ${khotkeys_KDEINIT_SRCS})
-
-target_link_libraries(kdeinit_khotkeys khotkeysprivate kworkspace ${KDE4_KDE3SUPPORT_LIBS} )
-if(X11_XTest_FOUND)
-  target_link_libraries(kdeinit_khotkeys  ${X11_XTest_LIB}  )
-endif(X11_XTest_FOUND)
-
-install(TARGETS kdeinit_khotkeys ${INSTALL_TARGETS_DEFAULT_ARGS} )
-install(TARGETS khotkeys         ${INSTALL_TARGETS_DEFAULT_ARGS} )
-
-########### next target ###############
-
 set(kded_khotkeys_PART_SRCS kded.cpp )
 
 qt4_add_dbus_adaptor(kded_khotkeys_PART_SRCS org.kde.khotkeys.xml kded.h KHotKeysModule)

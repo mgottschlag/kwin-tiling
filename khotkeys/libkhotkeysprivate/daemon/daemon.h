@@ -20,42 +20,27 @@
 
 #include "kdemacros.h"
 
+#include "kded_module.h"
+
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
  */
-namespace KHotKeys { namespace Daemon {
+namespace KHotKeys {
 
-    /**
-     * Check if a daemon is running.
-     *
-     * Checks for the kdedmodule and standalone daemon versions.
-     */
-    KDE_EXPORT bool isRunning();
+    namespace Daemon {
 
-    /**
-     * Reload configuration.
-     *
-     * Reloads the configuration in the currently running daemon. If no daemon
-     * is running it starts the configured version from
-     * GlobalSettings::daemonType
-     */
-    KDE_EXPORT bool reload();
-
-    /**
-     * Start the daemon.
-     */
-    KDE_EXPORT bool start();
-
-    /**
-     * Stop the daemon.
-     */
-    KDE_EXPORT bool stop();
+    using KdedModuleDaemon::isRunning;
+    using KdedModuleDaemon::reload;
+    using KdedModuleDaemon::start;
+    using KdedModuleDaemon::stop;
 
     /**
      * Is the daemon enabled by the user?
      */
     KDE_EXPORT bool isEnabled();
 
-}} // namespace KHotKeys::Daemon
+    }
+
+} // namespace KHotKeys::Daemon
 
 #endif /* #ifndef DAEMON_H */

@@ -70,12 +70,10 @@ set(khotkeysprivate_SRCS
     triggers/window_trigger.cpp
 
     # DAEMON
-    daemon/daemon.cpp
     daemon/daemon.h
+    daemon/daemon.cpp
     daemon/kded_module.cpp
     daemon/kded_module.h
-    daemon/stand_alone.cpp
-    daemon/stand_alone.h
 
     # OTHER
     khotkeysglobal.cpp

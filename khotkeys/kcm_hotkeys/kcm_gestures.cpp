@@ -41,7 +41,6 @@
 
 #include <KDE/KAboutData>
 #include <KDE/KDebug>
-#include <KDE/KGlobalAccel>
 #include <KDE/KLocale>
 #include <KDE/KMessageBox>
 
@@ -118,9 +117,6 @@ KCMGestures::KCMGestures( QWidget *parent, const QVariantList & /* args */ )
     connect(
         d->simple_action, SIGNAL(changed(bool)),
         this, SIGNAL(changed(bool)) );
-
-    // Inform KGlobalAccel we only want to configure shortcuts
-    KGlobalAccel::self()->overrideMainComponentData( KComponentData("khotkeys") );
 
     // Load the settings
     load();
@@ -327,7 +323,7 @@ void KCMGesturesPrivate::save()
 
     // Inform kdedkhotkeys demon to reload settings
     QDBusConnection bus = QDBusConnection::sessionBus();
-    QPointer<QDBusInterface> iface = new QDBusInterface("org.kde.kded", "/KHotKeys",
+    QPointer<QDBusInterface> iface = new QDBusInterface("org.kde.kded", "/modules/khotkeys",
                                                         "org.kde.khotkeys", bus, q);
     if(!iface->isValid())
         {

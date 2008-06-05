@@ -18,8 +18,6 @@
 
 #include "daemon.h"
 
-#include "stand_alone.h"
-#include "kded_module.h"
 #include "khotkeysglobal.h"
 
 #include <KDE/KConfigGroup>
@@ -33,43 +31,6 @@ bool isEnabled()
     KConfig khotkeysrc( KHOTKEYS_CONFIG_FILE );
     KConfigGroup main( &khotkeysrc, "Main" );
     return ! main.readEntry( "Disabled", false );
-    }
-
-
-bool isRunning()
-    {
-    return StandAloneDaemon::isRunning()
-        or KdedModuleDaemon::isRunning();
-    }
-
-
-bool reload()
-    {
-    if (KdedModuleDaemon::isRunning())
-        {
-        return KdedModuleDaemon::reload();
-        }
-    else if (KdedModuleDaemon::isRunning())
-        {
-        return StandAloneDaemon::reload();
-        }
-    return false;
-    }
-
-
-bool start()
-    {
-    // TODO: Allow configuration. Currently KdedModuleDaemon doesn't work. See
-    // kcm_hotkeys/kcm_hotkeys.cpp
-    return StandAloneDaemon::start();
-    }
-
-
-bool stop()
-    {
-    return KdedModuleDaemon::isRunning()
-        ? KdedModuleDaemon::stop()
-        : StandAloneDaemon::stop();
     }
 
 

@@ -50,19 +50,6 @@ extern "C"
             return;
             }
 
-#if 0
-        // BUG: 2008-04-13 mjansen
-        // KGlobalAccel is currently unable to handle components correctly.
-        //
-        // 1. A action in a kded module allways belongs to the component kded. The
-        // ActionCollections component is ignored. Our actions belong to khotkeys
-        // and are known to khotkeys under that component.
-        // 2. KGlobalAccel::overrideMainComponentData disables all actions
-        // So we disable the kded module for now. _Whenever_ that is fixed we
-        // could go back.
-#endif
-        KToolInvocation::kdeinitExec( "khotkeys" );
-
         } // kcminit_khotkeys()
 }
 
