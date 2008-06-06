@@ -63,6 +63,7 @@ Q_OBJECT
         void activating(const QDBusObjectPath &);
         void activationFailed(const QDBusObjectPath &);
         void wirelessEnabled(bool, bool);
+        void nameOwnerChanged(QString, QString, QString);
     private:
         NMNetworkManagerPrivate * d;
 };

@@ -72,6 +72,9 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList  & /*arg
     //TODO: find a way to connect to the wireless variant of this, incl essid
     connectNMToThis("DeviceActivationFailed", activationFailed(QDBusObjectPath));
     connectNMToThis("WirelessEnabled", wirelessEnabled(bool, bool));
+    d->manager.connection().connect(QLatin1String("org.freedesktop.DBus"),
+            QLatin1String("/org/freedesktop/DBus"), QLatin1String("org.freedesktop.DBus"), QLatin1String("NameOwnerChanged"), QLatin1String("sss"),
+            this, SLOT(nameOwnerChanged(QString,QString,QString)));
 
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
 
@@ -439,5 +442,20 @@ void NMNetworkManager::wirelessEnabled(bool wirelessEnabled, bool unknown)
     kDebug(1441) << wirelessEnabled << unknown;
 }
 
+void NMNetworkManager::nameOwnerChanged(QString name, QString oldOwner, QString newOwner)
+{
+    if ( name == QLatin1String("org.freedesktop.NetworkManager") ) {
+        kDebug(1441) << "name: " << name << ", old owner: " << oldOwner << ", new owner: " << newOwner;
+        if ( oldOwner.isEmpty() && !newOwner.isEmpty() ) {
+            // NetworkManager started, but we are already listening to StateChanged so we should get
+            // its status that way
+            ;
+        }
+        if ( !oldOwner.isEmpty() && newOwner.isEmpty() ) {
+            // NetworkManager stopped, set status Unknown for safety
+            stateChanged(NM_STATE_UNKNOWN);
+        }
+    }
+}
 // TODO check for bum input at least to public methods ie devPath
 #include "NetworkManager-networkmanager.moc"
