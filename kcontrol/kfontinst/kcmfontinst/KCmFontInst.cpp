@@ -1271,7 +1271,13 @@ void CKCmFontInst::toggleFontManagement(bool on)
         itsFontListView->setMgtMode(on);
         itsFilter->setMgtMode(on);
         if(itsModeControl)
+        {
             itsModeAct->setVisible(!on);
+            // The setEnabled() should not be required, as the widget is hidden. But, when the kcm switches
+            // out of management mode, and re-shows the mode combo, the combo for some reason is disabled.
+            // Calling setEnabled() here fixes this.
+            itsModeAct->setEnabled(!on);
+        }
         itsEnableFontControl->setVisible(on);
         itsDisableFontControl->setVisible(on);
         selectMainGroup();
