@@ -67,7 +67,10 @@ fi
 # The user's personal KDE directory is usually ~/.kde, but this setting
 # may be overridden by setting KDEHOME.
 
-kdehome=$HOME/.kde
+kdehome=`kde4-config --localprefix`
+if test $? -ne 0; then
+    kdehome=$HOME/.kde
+fi
 test -n "$KDEHOME" && kdehome=`echo "$KDEHOME"|sed "s,^~/,$HOME/,"`
 
 # see kstartupconfig source for usage
