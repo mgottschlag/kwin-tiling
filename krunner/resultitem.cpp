@@ -248,6 +248,7 @@ void ResultItem::setMatch(const Plasma::QueryMatch &match)
     gr.setColorAt(1.0, mix);
     d->bgBrush = gr;*/
     d->bgBrush = mix;
+    update();
 }
 
 QString ResultItem::id() const
