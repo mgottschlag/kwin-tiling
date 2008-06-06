@@ -17,4 +17,4 @@ SOVERSION ${GENERIC_LIB_SOVERSION} )
 #clockapplet.h
 install(FILES clocknumber.h plasmaclock_export.h
 ${CMAKE_CURRENT_BINARY_DIR}/ui_calendar.h DESTINATION ${INCLUDE_INSTALL_DIR}/)
-install(TARGETS plasmaclock  DESTINATION ${LIB_INSTALL_DIR})
+install(TARGETS plasmaclock ${INSTALL_TARGETS_DEFAULT_ARGS} )
