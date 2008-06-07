@@ -33,11 +33,14 @@ class KDE_EXPORT NMNetworkInterface : public QObject, virtual public Solid::Cont
 Q_OBJECT
 Q_DECLARE_PRIVATE(NMNetworkInterface)
 Q_INTERFACES(Solid::Control::Ifaces::NetworkInterface)
+
 Q_PROPERTY(QString uni READ uni WRITE setUni)
 Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName)
 Q_PROPERTY(QString driver READ driver WRITE setDriver)
 Q_PROPERTY(QVariant genericCapabilities READ capabilitiesV WRITE setCapabilitiesV)
+Q_PROPERTY(int ipV4Address READ ipV4Address)
 Q_PROPERTY(bool managed READ managed WRITE setManaged)
+
 //Q_PROPERTY(Solid::Control::IPv4Config ipV4Config READ ipV4Config WRITE setIpV4Config)
 Q_PROPERTY(Solid::Control::NetworkInterface::ConnectionState connectionState READ connectionState WRITE setConnectionState)
 Q_FLAGS(Solid::Control::NetworkInterface::Capabilities)
@@ -52,6 +55,7 @@ public:
     void setInterfaceName(const QVariant&);
     QString driver() const;
     void setDriver(const QVariant&);
+    int ipV4Address() const;
     Solid::Control::IPv4Config ipV4Config() const;
     void setIpV4Config(const QVariant&);
     bool isActive() const;

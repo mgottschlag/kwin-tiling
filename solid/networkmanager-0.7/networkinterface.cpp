@@ -40,6 +40,7 @@ NMNetworkInterfacePrivate::NMNetworkInterfacePrivate( const QString & path, QObj
 {
     //isLinkUp = deviceIface.isLinkUp();
     driver = deviceIface.driver();
+    ipV4Address = deviceIface.ip4Address();
     isActive = capabilities != Solid::Control::NetworkInterface::Down;
     interfaceName = deviceIface.interface();
     //TODO set active connections based on active connection list on the manager; find out if
@@ -107,12 +108,18 @@ void NMNetworkInterface::setDriver(const QVariant & driver)
     d->driver = driver.toString();
 }
 
+int NMNetworkInterface::ipV4Address() const
+{
+    Q_D(const NMNetworkInterface);
+    return d->ipV4Address;
+}
 Solid::Control::IPv4Config NMNetworkInterface::ipV4Config() const
 {
 #warning TODO NMNetworkInterface::ipV4Config()
     return Solid::Control::IPv4Config();
 }
 
+// TODO remove
 void NMNetworkInterface::setIpV4Config(const QVariant & ipConfigObjPath)
 {
 #warning TODO NMNetworkInterface::setIpV4Config demarshal QVariant here

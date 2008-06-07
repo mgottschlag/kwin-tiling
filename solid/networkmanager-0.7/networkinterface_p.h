@@ -40,6 +40,7 @@ public:
     bool managed;
     Solid::Control::IPv4Config ipV4Config;
     QString driver;
+    int ipV4Address;
     QString interfaceName;
     QString activeConnection;
     NMNetworkManager * manager;
