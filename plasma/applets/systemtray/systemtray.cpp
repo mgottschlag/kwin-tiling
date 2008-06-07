@@ -36,6 +36,7 @@ SystemTray::SystemTray(QObject *parent, const QVariantList &arguments)
     m_background->setImagePath("widgets/systemtray");
     resize(40,60);
     m_background->resizePanel(size());
+    connect(this, SIGNAL(geometryChanged()), this, SLOT(updateWidgetGeometry()));
 }
 
 SystemTray::~SystemTray()
@@ -44,17 +45,8 @@ SystemTray::~SystemTray()
     delete m_systemTrayWidget;
 }
 
-QVariant SystemTray::itemChange(GraphicsItemChange change, const QVariant &value)
-{
-    if (change == ItemPositionHasChanged) {
-        updateWidgetGeometry();
-    }
-
-    return Applet::itemChange(change, value);
-}
-
 void SystemTray::constraintsEvent(Plasma::Constraints constraints)
-{   
+{
     if (constraints & Plasma::SizeConstraint) {
         updateWidgetGeometry();
         m_background->resizePanel(size());

@@ -45,8 +45,6 @@ public:
     explicit SystemTray(QObject *parent, const QVariantList &arguments = QVariantList());
     ~SystemTray();
   
-    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
-
     void constraintsEvent(Plasma::Constraints constraints);
 
     void paintInterface(QPainter *painter,
@@ -55,10 +53,10 @@ public:
 
 private slots:
     void updateSize();
+    void updateWidgetGeometry();
 
 private:
     void updateWidgetOrientation();
-    void updateWidgetGeometry();
 
     Plasma::PanelSvg *m_background;
     // The parent widget might delete this so we guard it
