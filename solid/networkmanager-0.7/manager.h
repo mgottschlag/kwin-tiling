@@ -50,6 +50,7 @@ public:
     bool isWirelessHardwareEnabled() const;
     void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters);
     void deactivateConnection(const QString & activeConnection);
+    QStringList activeConnections() const;
 public Q_SLOTS:
     void setNetworkingEnabled(bool enabled);
     void setWirelessEnabled(bool enabled);
@@ -58,6 +59,10 @@ Q_SIGNALS:
     void statusChanged(Solid::Networking::Status status);
     void networkInterfaceAdded(const QString & uni);
     void networkInterfaceRemoved(const QString & uni);
+    void wirelessEnabledChanged(bool);
+    void networkingEnabledChanged(bool);
+    void activeConnectionsChanged(const QStringList& );
+
 protected Q_SLOTS:
     void deviceAdded(const QDBusObjectPath &state);
     void deviceRemoved(const QDBusObjectPath &state);

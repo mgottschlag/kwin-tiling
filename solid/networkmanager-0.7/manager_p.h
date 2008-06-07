@@ -36,6 +36,7 @@ public:
     bool isWirelessEnabled;
     bool isWirelessHardwareEnabled;
     QStringList networkInterfaces;
+    QStringList activeConnections;
 };
 
 #endif

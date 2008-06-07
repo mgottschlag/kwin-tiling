@@ -40,8 +40,10 @@ NMNetworkManagerPrivate::NMNetworkManagerPrivate() : iface(NMNetworkManager::DBU
     kDebug() << NMNetworkManager::DBUS_SERVICE;
 }
 
-NMNetworkManager::NMNetworkManager(QObject * parent, const QStringList &) : d_ptr(new NMNetworkManagerPrivate)
+NMNetworkManager::NMNetworkManager(QObject * parent, const QStringList &) 
 {
+    qDBusRegisterMetaType<QList<QDBusObjectPath> >();
+    d_ptr = new NMNetworkManagerPrivate;
     Q_D(NMNetworkManager);
     d->nmState = d->iface.state();
     d->isWirelessHardwareEnabled = d->iface.wirelessHardwareEnabled();
@@ -60,11 +62,10 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QStringList &) : d_pt
             QLatin1String("NameOwnerChanged"), QLatin1String("sss"),
             this, SLOT(nameOwnerChanged(QString,QString,QString)));
 
-    qDBusRegisterMetaType<QList<QDBusObjectPath> >();
     QDBusReply< QList <QDBusObjectPath> > deviceList = d->iface.GetDevices();
     if (deviceList.isValid())
     {
-        kDebug(1441) << "Got device list";
+        kDebug(1441) << "Device list";
         QList <QDBusObjectPath> devices = deviceList.value();
         foreach (QDBusObjectPath op, devices)
         {
@@ -74,6 +75,14 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QStringList &) : d_pt
     }
     else
         kDebug(1441) << "Error getting device list: " << deviceList.error().name() << ": " << deviceList.error().message();
+
+    kDebug(1441) << "Active connections:";
+    QList <QDBusObjectPath> activeConnections = d->iface.activeConnections();
+    foreach (QDBusObjectPath ac, activeConnections)
+    {
+        d->activeConnections.append(ac.path());
+        kDebug(1441) << "  " << ac.path();
+    }
 }
 
 NMNetworkManager::~NMNetworkManager()
@@ -192,8 +201,32 @@ void NMNetworkManager::stateChanged(uint state)
 
 void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
 {
-#warning TODO NMNetworkManager::propertiesChanged implement
-    kDebug();
+    Q_D(NMNetworkManager);
+    kDebug() << properties.keys();
+    QLatin1String activeConnKey("ActiveConnections");
+    QLatin1String wifiHwKey("WirelessHardwareEnabled");
+    QLatin1String wifiEnabledKey("WirelessEnabled");
+    if (properties.contains(activeConnKey)) {
+        QVariant activeConnectionsValue = properties.value(activeConnKey);
+        kDebug() << (activeConnectionsValue.canConvert< QList<QDBusObjectPath> >() ? "can" : "can't" ) << " convert to ao - TODO: find out how to extract QList<QDBusObjectPath> out of a QVariantMap value, in the meantime, call activeConnections after this signal.";
+        QList<QDBusObjectPath> activePaths = qvariant_cast< QList<QDBusObjectPath> >(activeConnectionsValue);
+        kDebug() << activeConnKey << activePaths.count();
+        foreach (QDBusObjectPath ac, qvariant_cast< QList<QDBusObjectPath> >(properties.value(activeConnKey)))
+        {
+            d->activeConnections.append(ac.path());
+            kDebug(1441) << "  " << ac.path();
+        }
+        emit activeConnectionsChanged(d->activeConnections);
+    }
+    if (properties.contains(wifiHwKey)) {
+        d->isWirelessHardwareEnabled = properties.value(wifiHwKey).toBool();
+        kDebug() << wifiHwKey << d->isWirelessHardwareEnabled;
+     }
+    if (properties.contains(wifiEnabledKey)) {
+        d->isWirelessEnabled = properties.value(wifiEnabledKey).toBool();
+        kDebug() << wifiEnabledKey << d->isWirelessEnabled;
+        emit wirelessEnabledChanged(d->isWirelessEnabled);
+     }
 }
 
 Solid::Networking::Status NMNetworkManager::convertNMState(uint state)
@@ -233,5 +266,10 @@ void NMNetworkManager::nameOwnerChanged(QString name, QString oldOwner, QString 
     }
 }
 
+QStringList NMNetworkManager::activeConnections() const
+{
+    Q_D(const NMNetworkManager);
+    return d->activeConnections;
+}
 #include "manager.moc"
 
