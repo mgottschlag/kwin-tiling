@@ -113,6 +113,7 @@ void DesktopView::adjustSize()
     QDesktopWidget *desktop = QApplication::desktop();
     QRect geom = desktop->screenGeometry(screen());
     setGeometry(geom);
+    containment()->resize(geom.size());
 
     if (m_dashboard) {
         m_dashboard->setGeometry(geom);
