@@ -48,7 +48,6 @@ SystemTray::~SystemTray()
 void SystemTray::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::SizeConstraint) {
-        updateWidgetGeometry();
         m_background->resizePanel(size());
     }
 
