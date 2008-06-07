@@ -318,7 +318,9 @@ int FlipScrollView::itemHeight() const
 
 void FlipScrollView::scrollTo(const QModelIndex& index , ScrollHint hint)
 {
-    Q_ASSERT(index.isValid());
+    if (!index.isValid()) {
+        return;
+    }
 
     QRect itemRect = visualRect(index);
     if (itemRect.isValid() && hint == EnsureVisible) {
