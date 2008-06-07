@@ -40,8 +40,6 @@ public:
     void setOrientation(Qt::Orientation);
     void setMaximumSize(QSize s);
 
-    static const int MARGIN = 4;
-
 protected:
     bool x11Event(XEvent *event);
 
@@ -53,6 +51,7 @@ private slots:
 
 private:
     void addWidgetToLayout(QWidget *widget);
+    void doSizeChange();
     void init();
 
     QGridLayout *m_mainLayout;

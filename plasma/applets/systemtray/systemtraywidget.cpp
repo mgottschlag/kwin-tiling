@@ -52,6 +52,7 @@ SystemTrayWidget::SystemTrayWidget(QWidget *parent)
     // Override spacing set by the current style
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
     m_mainLayout->setSpacing(4);
+
     init();
 }
 
@@ -90,7 +91,7 @@ bool SystemTrayWidget::x11Event(XEvent *event)
             // Set up a SystemTrayContainer for the client
             SystemTrayContainer *container = new SystemTrayContainer(this);
             addWidgetToLayout(container);
-            connect(container, SIGNAL(clientIsEmbedded()), this, SIGNAL(sizeShouldChange()));
+            emit sizeShouldChange();
             connect(container, SIGNAL(destroyed(QObject *)), this, SLOT(relayoutContainers(QObject *)));
 
             const WId systemTrayClientId = (WId)event->xclient.data.l[2];
@@ -123,33 +124,35 @@ void SystemTrayWidget::setMaximumSize(QSize s)
 
 void SystemTrayWidget::addWidgetToLayout(QWidget *widget)
 {
-    // Figure out where it should go and add it to our layout
-    widget->setMaximumSize(22, 22);
+    // Add the widget to the layout
     m_mainLayout->addWidget(widget, m_nextRow, m_nextColumn);
 
+    // Figure out where the next widget should go
     if (m_orientation == Qt::Horizontal) {
+        setMinimumSize(QSize(22 * (m_nextColumn + 1) + m_mainLayout->spacing() * m_nextColumn,
+                             22 * (m_maxCount + 1) + m_mainLayout->spacing() * m_maxCount));
         // Add down then across when horizontal
         m_nextRow++;
-        if (m_nextColumn == 0) {
-            m_maxCount = m_nextRow;
-        }
-        if (m_nextRow == m_maxCount
-            && m_mainLayout->minimumSize().height() + m_mainLayout->spacing()
-               + widget->minimumHeight() > maximumHeight() - 2 * MARGIN) {
+        if ((m_nextRow == m_maxCount && m_nextColumn != 0) ||
+            minimumHeight() + widget->height() + m_mainLayout->spacing() > maximumHeight()) {
             m_nextColumn++;
             m_nextRow = 0;
         }
+        if (m_nextColumn == 0) {
+            m_maxCount = m_nextRow;
+        }
     } else {
+        setMinimumSize(QSize(22 * (m_maxCount + 1) + m_mainLayout->spacing() * m_maxCount,
+                             22 * (m_nextRow + 1) + m_mainLayout->spacing() * m_nextRow));
         // Add across then down when vertical
         m_nextColumn++;
-        if (m_nextRow == 0) {
-            m_maxCount = m_nextColumn;
-        }
-        if (m_nextColumn == m_maxCount
-            && m_mainLayout->minimumSize().width() + m_mainLayout->spacing()
-               + widget->minimumWidth() > maximumWidth() - 2 * MARGIN) {
+        if ((m_nextColumn == m_maxCount && m_nextRow != 0) ||
+            minimumWidth() + widget->width() + m_mainLayout->spacing() > maximumWidth()) {
             m_nextRow++;
             m_nextColumn = 0;
+        }
+        if (m_nextRow == 0) {
+            m_maxCount = m_nextColumn;
         }
     }
 }
@@ -184,9 +187,6 @@ void SystemTrayWidget::relayoutContainers(QObject *removeContainer)
         addWidgetToLayout(widget);
     }
 
-    // Force a layout so that minimumSizeHint() returns the correct value and
-    // signal that our size should change
-    layout()->activate();
     emit sizeShouldChange();
 }
 

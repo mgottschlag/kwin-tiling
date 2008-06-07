@@ -43,6 +43,8 @@ SystemTrayContainer::SystemTrayContainer(QWidget *parent)
 
     // Tray icons have a fixed size of 22x22
     setMinimumSize(22, 22);
+    setMaximumSize(22, 22);
+    resize(22, 22);
 }
 
 void SystemTrayContainer::embedSystemTrayClient( WId clientId )

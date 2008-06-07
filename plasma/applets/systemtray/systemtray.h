@@ -52,13 +52,15 @@ public:
                         const QRect &contentsRect);
 
 private slots:
-    void updateSize();
+    void updateWidgetGeometry();
     void updateWidgetGeometry();
 
 private:
     void updateWidgetOrientation();
 
     Plasma::PanelSvg *m_background;
+    bool m_showOwnBackground;
+
     // The parent widget might delete this so we guard it
     QPointer<SystemTrayWidget> m_systemTrayWidget;
 };

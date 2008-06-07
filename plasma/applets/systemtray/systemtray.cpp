@@ -30,12 +30,11 @@
 #include <plasma/panelsvg.h>
 
 SystemTray::SystemTray(QObject *parent, const QVariantList &arguments)
-    : Plasma::Applet(parent, arguments)
+    : Plasma::Applet(parent, arguments),
+      m_showOwnBackground(false)
 {
     m_background = new Plasma::PanelSvg(this);
     m_background->setImagePath("widgets/systemtray");
-    resize(40,60);
-    m_background->resizePanel(size());
     connect(this, SIGNAL(geometryChanged()), this, SLOT(updateWidgetGeometry()));
 }
 
@@ -48,7 +47,6 @@ SystemTray::~SystemTray()
 void SystemTray::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::SizeConstraint) {
-        m_background->resizePanel(size());
     }
 
     if (constraints & (Plasma::LocationConstraint | Plasma::FormFactorConstraint)) {
@@ -62,14 +60,9 @@ void SystemTray::paintInterface(QPainter *painter,
 {
     Q_UNUSED(option)
 
-    m_background->paintPanel(painter, contentsRect);
-}
-
-void SystemTray::updateSize()
-{
-    setPreferredSize(m_systemTrayWidget->sizeHint());
-    updateGeometry();
-    updateWidgetGeometry();
+    if (m_showOwnBackground) {
+        m_background->paintPanel(painter, contentsRect);
+    }
 }
 
 void SystemTray::updateWidgetOrientation()
@@ -98,18 +91,51 @@ void SystemTray::updateWidgetGeometry()
         m_systemTrayWidget = new SystemTrayWidget(parentView);
         updateWidgetOrientation();
         connect(m_systemTrayWidget, SIGNAL(sizeShouldChange()),
-                this, SLOT(updateSize()));
+                this, SLOT(updateWidgetGeometry()));
         m_systemTrayWidget->setVisible(true);
     }
 
-    // Set the widget's maximum size to the size that this applet
-    // has been allocated. The widget will use that size to calculate
-    // whether to add icons horizontally or vertically.
-    QRect r = mapToView(parentView, rect());
+    // Figure out the margins set by the background svg and disable the svg
+    // if there won't be enough room for a single row of icons
+    qreal leftMargin, topMargin, rightMargin, bottomMargin;
+    if (formFactor() == Plasma::Vertical || formFactor() == Plasma::Horizontal) {
+        m_background->setElementPrefix(QString());
+        m_background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
+
+        if (geometry().width() - leftMargin - rightMargin < 22 ||
+            geometry().height() - topMargin - bottomMargin < 22) {
+            m_showOwnBackground = false;
+            leftMargin = topMargin = rightMargin = bottomMargin = 0;
+        } else {
+            m_showOwnBackground = true;
+            m_background->resizePanel(size());
+            update();
+        }
+    } else {
+        getContentsMargins(&leftMargin, &topMargin, &rightMargin, &bottomMargin);
+    }
+
+    // Update our preferred size based on the wystem tray widget's size and any margins
+    QRectF rf = mapFromView(parentView, QRect(m_systemTrayWidget->pos(), m_systemTrayWidget->minimumSize()));
+    rf.setWidth(rf.width() + leftMargin + rightMargin);
+    rf.setHeight(rf.height() + topMargin + bottomMargin);
+    setPreferredSize(rf.size());
+
+    // Calculate the rect usable by the system tray widget
+    rf = rect();
+    rf.moveLeft(rf.left() + leftMargin);
+    rf.setWidth(rf.width() - leftMargin - rightMargin);
+    rf.moveTop(rf.top() + topMargin);
+    rf.setHeight(rf.height() - topMargin - bottomMargin);
+
+    // Set the widget's maximum size to the size to the available size.
+    // The widget will use this size to calculate how many rows/columns
+    // can be displayed.
+    QRect r = mapToView(parentView, rf);
     m_systemTrayWidget->setMaximumSize(r.size());
 
-    // Center the widget within the applet area
-    QSize s = m_systemTrayWidget->minimumSizeHint();
+    // Center the widget within the available area
+    QSize s = m_systemTrayWidget->minimumSize();
     r.moveLeft(r.left() + (r.width() - s.width()) / 2);
     r.moveTop(r.top() + (r.height() - s.height()) / 2);
     r.setSize(s);
