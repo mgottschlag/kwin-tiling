@@ -147,6 +147,25 @@ void RenderThread::run()
             scaledSize = imgSize;
             pos = QPoint((size.width() - scaledSize.width()) / 2,
                         (size.height() - scaledSize.height()) / 2);
+			
+	    //If the picture is bigger than the screen, shrink it
+            if( size.width() < imgSize.width() && imgSize.width() > imgSize.height() )
+	    {
+                int width = size.width();
+                int height = width * scaledSize.height() / imgSize.width();
+                scaledSize = QSize(width, height);
+		pos = QPoint((size.width() - scaledSize.width()) / 2,
+			    (size.height() - scaledSize.height()) / 2);
+	    } 
+	    else if( size.height() < imgSize.height() )
+	    {
+                int height = size.height();
+                int width = height * imgSize.width() / imgSize.height();
+                scaledSize = QSize(width, height);
+		pos = QPoint((size.width() - scaledSize.width()) / 2,
+			    (size.height() - scaledSize.height()) / 2);
+	    }
+	    
             break;
         case Background::ScaleCrop: {
             float xratio = (float) size.width() / imgSize.width();
