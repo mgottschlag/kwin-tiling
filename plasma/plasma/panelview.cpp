@@ -255,7 +255,7 @@ void PanelView::updatePanelGeometry()
     //update the panel controller location position and size
     if (m_panelController) {
         m_panelController->setLocation(containment()->location());
-    
+
         if (m_panelController->isVisible()) {
             m_panelController->resize(m_panelController->sizeHint());
             m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));

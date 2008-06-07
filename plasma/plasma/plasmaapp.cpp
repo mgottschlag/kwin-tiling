@@ -298,11 +298,24 @@ bool PlasmaApp::isDesktop() const
 
 void PlasmaApp::adjustSize(int screen)
 {
+    kDebug() << "adjust size for screen" << screen;
     QDesktopWidget *desktop = QApplication::desktop();
+    bool screenExists = screen < desktop->numScreens();
+
+    QRect screenGeom;
+    int sw = 0;
+    int sh = 0;
+    if (screenExists) {
+        screenGeom = desktop->screenGeometry(screen);
+        sw = screenGeom.width();
+        sh = screenGeom.height();
+    }
+
     DesktopView *view = viewForScreen(screen);
-    
+
     if (view) {
-        if (screen < desktop->numScreens()) {
+        if (screenExists) {
+            kDebug() << "here we go ... adjusting size";
             view->adjustSize();
         } else {
             // the screen was removed, so we'll destroy the
@@ -312,12 +325,57 @@ void PlasmaApp::adjustSize(int screen)
             m_desktops.removeAll(view);
             delete view;
         }
+    } else if (screenExists) {
+        //TODO: we have a screen that has changed, but no view.
+        //      perhaps we should make one.
+    }
+
+    foreach (PanelView *panel, m_panels) {
+        if (panel->screen() == screen) {
+            if (screenExists) {
+                bool needsAdjustment = true;
+                bool horizontal = panel->location() == Plasma::BottomEdge ||
+                                  panel->location() == Plasma::TopEdge;
+                Plasma::Containment *c = panel->containment();
+                QSizeF min = c->minimumSize();
+                QSizeF max = c->maximumSize();
+
+                kDebug() << "checking panel" << c->geometry() << "against" << screenGeom;
+                if (horizontal) {
+                    if (min.width() > sw) {
+                        kDebug() << "min size is too wide!";
+                        c->setMinimumSize(sw, min.height());
+                        needsAdjustment = false;
+                    }
+
+                    if (max.width() > sw) {
+                        kDebug() << "max size is too wide!";
+                        c->setMaximumSize(sw, max.height());
+                        needsAdjustment = false;
+                    }
+                } else if (c->geometry().height() > screenGeom.height()) {
+                    needsAdjustment = false;
+                }
+
+                    panel->updatePanelGeometry();
+                if (needsAdjustment) {
+                } else {
+                    kDebug() << "already adjusted";
+                }
+            } else {
+                //TODO: should we remove panels when the screen
+                //      disappears? this would mean having some
+                //      way of alerting that we have a new screen
+                //      that appears
+            }
+        }
     }
 }
 
 DesktopView* PlasmaApp::viewForScreen(int screen) const
 {
     foreach (DesktopView *view, m_desktops) {
+        kDebug() << "comparing" << view->screen() << screen;
         if (view->screen() == screen) {
             return view;
         }
@@ -435,10 +493,10 @@ void PlasmaApp::createView(Plasma::Containment *containment)
                     // we already have a view for this screen
                     return;
                 }
-            
+
                 kDebug() << "creating a view for" << containment->screen() << "and we have"
                     << QApplication::desktop()->numScreens() << "screens";
-            
+
                 // we have a new screen. neat.
                 DesktopView *view = new DesktopView(containment, id, 0);
                 if (m_corona) {

@@ -74,7 +74,6 @@ public:
      */
     Qt::Alignment alignment() const;
 
-
 public Q_SLOTS:
     /**
      * Sets the offset the left border, the offset is the distance of the left
@@ -94,13 +93,18 @@ public Q_SLOTS:
      */
     void setAlignment(Qt::Alignment align);
 
+    /**
+     * Updates the panel's position according to the screen and containment
+     * dimensions
+     */
+    void updatePanelGeometry();
+
 protected:
     void updateStruts();
     virtual void moveEvent(QMoveEvent *event);
     virtual void resizeEvent(QResizeEvent *event);
 
 private Q_SLOTS:
-    void updatePanelGeometry();
     void showAppletBrowser();
     void togglePanelController();
     //The following two slots are for a kind of a "transaction" where you can change the geometry,
