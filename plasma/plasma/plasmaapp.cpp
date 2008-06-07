@@ -333,35 +333,36 @@ void PlasmaApp::adjustSize(int screen)
     foreach (PanelView *panel, m_panels) {
         if (panel->screen() == screen) {
             if (screenExists) {
-                bool needsAdjustment = true;
                 bool horizontal = panel->location() == Plasma::BottomEdge ||
                                   panel->location() == Plasma::TopEdge;
                 Plasma::Containment *c = panel->containment();
                 QSizeF min = c->minimumSize();
                 QSizeF max = c->maximumSize();
 
-                kDebug() << "checking panel" << c->geometry() << "against" << screenGeom;
+                //kDebug() << "checking panel" << c->geometry() << "against" << screenGeom;
                 if (horizontal) {
                     if (min.width() > sw) {
-                        kDebug() << "min size is too wide!";
+                        //kDebug() << "min size is too wide!";
                         c->setMinimumSize(sw, min.height());
-                        needsAdjustment = false;
                     }
 
                     if (max.width() > sw) {
-                        kDebug() << "max size is too wide!";
+                        //kDebug() << "max size is too wide!";
                         c->setMaximumSize(sw, max.height());
-                        needsAdjustment = false;
                     }
-                } else if (c->geometry().height() > screenGeom.height()) {
-                    needsAdjustment = false;
+                } else {
+                    if (min.height() > sh) {
+                        //kDebug() << "min size is too tall!";
+                        c->setMinimumSize(min.width(), sh);
+                    }
+
+                    if (max.height() > sh) {
+                        //kDebug() << "max size is too tall!";
+                        c->setMaximumSize(max.width(), sh);
+                    }
                 }
 
-                    panel->updatePanelGeometry();
-                if (needsAdjustment) {
-                } else {
-                    kDebug() << "already adjusted";
-                }
+                panel->updatePanelGeometry();
             } else {
                 //TODO: should we remove panels when the screen
                 //      disappears? this would mean having some
