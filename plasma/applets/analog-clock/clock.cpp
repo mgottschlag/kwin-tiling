@@ -57,6 +57,8 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_secondHandUpdateTimer(0),
       m_calendar(0)
 {
+    KGlobal::locale()->insertCatalog("libplasmaclock");
+
     setHasConfigurationInterface(true);
     resize(125, 125);
     setAspectRatioMode(Plasma::Square);

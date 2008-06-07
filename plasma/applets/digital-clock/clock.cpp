@@ -59,6 +59,7 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_calendar(0),
       m_layout(0)
 {
+    KGlobal::locale()->insertCatalog("libplasmaclock");
     setHasConfigurationInterface(true);
     resize(150, 75);
 }
