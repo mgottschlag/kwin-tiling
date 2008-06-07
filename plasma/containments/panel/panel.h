@@ -70,9 +70,7 @@ private:
     void updateBorders(const QRect &geom);
 
     Plasma::PanelSvg *m_background;
-    QAction* m_appletBrowserAction;
     QAction* m_configureAction;
-    QAction* m_removeAction;
 
     //cached values
     QSize m_currentSize;

@@ -48,9 +48,7 @@ using namespace Plasma;
 
 Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
-      m_appletBrowserAction(0),
       m_configureAction(0),
-      m_removeAction(0),
       m_currentSize(QSize(QApplication::desktop()->screenGeometry(screen()).width(), 38)),
       m_lastViewGeom()
 {
@@ -87,18 +85,14 @@ void Panel::init()
 
 QList<QAction*> Panel::contextualActions()
 {
-    if (!m_appletBrowserAction) {
-        m_appletBrowserAction = action("add widgets");
-
+    if (!m_configureAction) {
         m_configureAction = new QAction(i18n("Panel Settings"), this);
         m_configureAction->setIcon(KIcon("configure"));
         connect(m_configureAction, SIGNAL(triggered()), this, SIGNAL(toolBoxToggled()));
-
-        m_removeAction = action("remove");
     }
 
     QList<QAction*> actions;
-    actions << m_configureAction << m_appletBrowserAction << m_removeAction;
+    actions << action("add widgets") << m_configureAction << action("remove");
     return actions;
 }
 
