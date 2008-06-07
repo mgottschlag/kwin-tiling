@@ -53,7 +53,6 @@ public:
 
 private slots:
     void updateWidgetGeometry();
-    void updateWidgetGeometry();
 
 private:
     void updateWidgetOrientation();
