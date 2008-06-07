@@ -30,9 +30,12 @@
 #include <QtCore/QFile>
 #include <QtGui/QPrinter>
 #include <QtGui/QPrintDialog>
+
 #include <KDE/KCmdLineArgs>
 #include <KDE/KAboutData>
 #include <KDE/KApplication>
+#include <kdeprintdialog.h>
+
 #ifdef HAVE_LOCALE_H
 #include <locale.h>
 #endif
@@ -91,11 +94,11 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
     }
 #endif
     QPrinter     printer;
-    QPrintDialog dialog(&printer, parent);
+    QPrintDialog *dialog = KdePrint::createPrintDialog(&printer, parent);
 
-    dialog.setWindowTitle(i18n("Print"));
+    dialog->setWindowTitle(i18n("Print"));
 
-    if(dialog.exec())
+    if(dialog->exec())
     {
         QPainter   painter;
         QFont      sans("sans", 12, QFont::Bold);
@@ -225,6 +228,8 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
     if(oldLocale)
         setlocale(LC_NUMERIC, oldLocale);
 #endif
+
+    delete dialog;
 }
 
 static KAboutData aboutData("kfontprint", 0, ki18n("Font Printer"), "1.0", ki18n("Simple font printer"),
