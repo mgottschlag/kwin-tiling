@@ -74,6 +74,11 @@ public:
      */
     Qt::Alignment alignment() const;
 
+    /**
+     * Pinches the min/max sizes of the containment to the current screen resolution
+     */
+    void pinchContainment(const QRect &screenGeometry);
+
 public Q_SLOTS:
     /**
      * Sets the offset the left border, the offset is the distance of the left
@@ -93,12 +98,6 @@ public Q_SLOTS:
      */
     void setAlignment(Qt::Alignment align);
 
-    /**
-     * Updates the panel's position according to the screen and containment
-     * dimensions
-     */
-    void updatePanelGeometry();
-
 protected:
     void updateStruts();
     virtual void moveEvent(QMoveEvent *event);
@@ -111,6 +110,13 @@ private Q_SLOTS:
     //formFactor and location of the containment but updatePanelGeometry will be called a single time at the commit
     void locationChangeBegun();
     void locationChangeCommitted();
+
+    /**
+     * Updates the panel's position according to the screen and containment
+     * dimensions
+     */
+    void updatePanelGeometry();
+
 
 private:
     Qt::Alignment alignmentFilter(Qt::Alignment align) const;

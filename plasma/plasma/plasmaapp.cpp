@@ -303,12 +303,8 @@ void PlasmaApp::adjustSize(int screen)
     bool screenExists = screen < desktop->numScreens();
 
     QRect screenGeom;
-    int sw = 0;
-    int sh = 0;
     if (screenExists) {
         screenGeom = desktop->screenGeometry(screen);
-        sw = screenGeom.width();
-        sh = screenGeom.height();
     }
 
     DesktopView *view = viewForScreen(screen);
@@ -333,36 +329,7 @@ void PlasmaApp::adjustSize(int screen)
     foreach (PanelView *panel, m_panels) {
         if (panel->screen() == screen) {
             if (screenExists) {
-                bool horizontal = panel->location() == Plasma::BottomEdge ||
-                                  panel->location() == Plasma::TopEdge;
-                Plasma::Containment *c = panel->containment();
-                QSizeF min = c->minimumSize();
-                QSizeF max = c->maximumSize();
-
-                //kDebug() << "checking panel" << c->geometry() << "against" << screenGeom;
-                if (horizontal) {
-                    if (min.width() > sw) {
-                        //kDebug() << "min size is too wide!";
-                        c->setMinimumSize(sw, min.height());
-                    }
-
-                    if (max.width() > sw) {
-                        //kDebug() << "max size is too wide!";
-                        c->setMaximumSize(sw, max.height());
-                    }
-                } else {
-                    if (min.height() > sh) {
-                        //kDebug() << "min size is too tall!";
-                        c->setMinimumSize(min.width(), sh);
-                    }
-
-                    if (max.height() > sh) {
-                        //kDebug() << "max size is too tall!";
-                        c->setMaximumSize(max.width(), sh);
-                    }
-                }
-
-                panel->updatePanelGeometry();
+                panel->pinchContainment(screenGeom);
             } else {
                 //TODO: should we remove panels when the screen
                 //      disappears? this would mean having some

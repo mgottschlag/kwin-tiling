@@ -46,7 +46,8 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     m_offset = m_viewConfig.readEntry("Offset", 0);
     m_alignment = alignmentFilter((Qt::Alignment)m_viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
 
-    updatePanelGeometry();
+    // pinchContainment calls updatePanelGeometry for us
+    pinchContainment(QApplication::desktop()->screenGeometry(containment()->screen()));
 
     if (panel) {
         connect(panel, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
@@ -261,6 +262,44 @@ void PanelView::updatePanelGeometry()
             m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
         }
     }
+}
+
+void PanelView::pinchContainment(const QRect &screenGeom)
+{
+    bool horizontal = location() == Plasma::BottomEdge ||
+                      location() == Plasma::TopEdge;
+
+    int sw = screenGeom.width();
+    int sh = screenGeom.height();
+
+    Plasma::Containment *c = containment();
+    QSizeF min = c->minimumSize();
+    QSizeF max = c->maximumSize();
+
+    //kDebug() << "checking panel" << c->geometry() << "against" << screenGeom;
+    if (horizontal) {
+        if (min.width() > sw) {
+            //kDebug() << "min size is too wide!";
+            c->setMinimumSize(sw, min.height());
+        }
+
+        if (max.width() > sw) {
+            //kDebug() << "max size is too wide!";
+            c->setMaximumSize(sw, max.height());
+        }
+    } else {
+        if (min.height() > sh) {
+            //kDebug() << "min size is too tall!";
+            c->setMinimumSize(min.width(), sh);
+        }
+
+        if (max.height() > sh) {
+            //kDebug() << "max size is too tall!";
+            c->setMaximumSize(max.width(), sh);
+        }
+    }
+
+    updatePanelGeometry();
 }
 
 void PanelView::setOffset(int newOffset)
