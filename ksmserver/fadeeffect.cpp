@@ -302,10 +302,19 @@ BlendingThread::BlendingThread(QObject *parent)
     // Check if the CPU supports MMX and SSE2.
     // We only check the first CPU on an SMP system, and assume all CPU's support the same features.
     QList<Solid::Device> list = Solid::Device::listFromType(Solid::DeviceInterface::Processor, QString());
-    Solid::Processor::InstructionSets features = list[0].as<Solid::Processor>()->instructionSets();
-
-    have_mmx  = features & Solid::Processor::IntelMmx;
-    have_sse2 = features & Solid::Processor::IntelSse2;
+    if (list.size() > 0)
+    {
+        Solid::Processor::InstructionSets features = list[0].as<Solid::Processor>()->instructionSets();
+        have_mmx  = features & Solid::Processor::IntelMmx;
+        have_sse2 = features & Solid::Processor::IntelSse2;
+    }
+    else
+    {
+        // Can happen if e.g. there is no usable backend for Solid.  Err on the side of caution.
+        // (c.f. bug:163112)
+        have_mmx  = false;
+        have_sse2 = false;
+    }
 
     m_final    = NULL;
     m_original = NULL;
