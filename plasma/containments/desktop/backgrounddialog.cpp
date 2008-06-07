@@ -619,6 +619,12 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config, const KConfigGro
     time = time.addSecs(delay);
     m_slideshowDelay->setTime(time);
 
+    // we go from index -> data -> config file entry (data) -> index. oi vey.
+    int resizeMethod = m_resizeMethod->itemData(m_resizeMethod->currentIndex()).toInt();
+    resizeMethod = config.readEntry("wallpaperposition", resizeMethod);
+    resizeMethod = m_resizeMethod->findData(resizeMethod);
+    m_resizeMethod->setCurrentIndex(resizeMethod);
+
     m_dirlist->clear();
     QStringList dirs = config.readEntry("slidepaths", QStringList());
     if (dirs.isEmpty()) {
@@ -645,8 +651,7 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config, const KConfigGro
 
     if (mode == kSlideshowBackground) {
         updateSlideshow();
-    }
-    else {
+    } else {
         update();
     }
 }

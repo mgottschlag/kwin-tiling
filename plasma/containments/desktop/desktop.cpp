@@ -182,7 +182,7 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
 
     // used in both modes, so read it no matter which mode we are in
     int old_wallPaperPosition = m_wallpaperPosition;
-    m_wallpaperPosition = cg.readEntry("wallpaperposition", 0);
+    m_wallpaperPosition = cg.readEntry("wallpaperposition", int(Background::ScaleCrop));
     QColor old_wallpaperColor = m_wallpaperColor;
     m_wallpaperColor = cg.readEntry("wallpapercolor", QColor(Qt::black));
 
