@@ -40,6 +40,8 @@ NMWiredNetworkInterface::NMWiredNetworkInterface(const QString & path, NMNetwork
     d->bitrate = d->wiredIface.speed();
     d->carrier = d->wiredIface.carrier();
     //d->propHelper.registerProperty();
+    connect( &d->wiredIface, SIGNAL(PropertiesChanged(const QVariantMap &)),
+                this, SLOT(wiredPropertiesChanged(const QVariantMap &)));
 }
 
 NMWiredNetworkInterface::~NMWiredNetworkInterface()
