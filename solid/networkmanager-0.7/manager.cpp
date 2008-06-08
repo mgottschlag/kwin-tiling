@@ -208,9 +208,7 @@ void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
     QLatin1String wifiEnabledKey("WirelessEnabled");
     if (properties.contains(activeConnKey)) {
         QList<QDBusObjectPath> activePaths = qdbus_cast< QList<QDBusObjectPath> >(properties.value(activeConnKey));
-       // QVariant activeConnectionsValue = properties.value(activeConnKey);
-        //kDebug() << (activeConnectionsValue.canConvert< QList<QDBusObjectPath> >() ? "can" : "can't" ) << " convert to ao - TODO: find out how to extract QList<QDBusObjectPath> out of a QVariantMap value, in the meantime, call activeConnections after this signal.";
-        //QList<QDBusObjectPath> activePaths = qvariant_cast< QList<QDBusObjectPath> >(activeConnectionsValue);
+        d->activeConnections.clear();
         if ( activePaths.count() ) {
             kDebug() << activeConnKey;
         }
@@ -224,12 +222,12 @@ void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
     if (properties.contains(wifiHwKey)) {
         d->isWirelessHardwareEnabled = properties.value(wifiHwKey).toBool();
         kDebug() << wifiHwKey << d->isWirelessHardwareEnabled;
-     }
+    }
     if (properties.contains(wifiEnabledKey)) {
         d->isWirelessEnabled = properties.value(wifiEnabledKey).toBool();
         kDebug() << wifiEnabledKey << d->isWirelessEnabled;
         emit wirelessEnabledChanged(d->isWirelessEnabled);
-     }
+    }
 }
 
 Solid::Networking::Status NMNetworkManager::convertNMState(uint state)
