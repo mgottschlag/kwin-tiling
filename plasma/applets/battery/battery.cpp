@@ -147,7 +147,8 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & (Plasma::SizeConstraint | Plasma::FormFactorConstraint) && m_theme) {
         m_theme->resize(contentsRect().size().toSize());
-        m_font.setPointSize(qRound(contentsRect().height() / 10));
+        m_font.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(),
+                                 qRound(contentsRect().height() / 10)));
     }
 }
 
