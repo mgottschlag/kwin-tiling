@@ -23,6 +23,7 @@
 #include <NetworkManager/NetworkManager.h>
 
 #include <QtDBus/QDBusConnection>
+#include <QtDBus/QDBusConnectionInterface>
 #include <QtDBus/QDBusInterface>
 #include <QtDBus/QDBusMetaType>
 #include <QtDBus/QDBusReply>
@@ -72,8 +73,8 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList  & /*arg
     //TODO: find a way to connect to the wireless variant of this, incl essid
     connectNMToThis("DeviceActivationFailed", activationFailed(QDBusObjectPath));
     connectNMToThis("WirelessEnabled", wirelessEnabled(bool, bool));
-    d->manager.connection().connect(QLatin1String("org.freedesktop.DBus"),
-            QLatin1String("/org/freedesktop/DBus"), QLatin1String("org.freedesktop.DBus"), QLatin1String("NameOwnerChanged"), QLatin1String("sss"),
+
+    connect(QDBusConnection::systemBus().interface(), SIGNAL(serviceOwnerChanged(QString, QString, QString)),
             this, SLOT(nameOwnerChanged(QString,QString,QString)));
 
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
@@ -442,7 +443,7 @@ void NMNetworkManager::wirelessEnabled(bool wirelessEnabled, bool unknown)
     kDebug(1441) << wirelessEnabled << unknown;
 }
 
-void NMNetworkManager::nameOwnerChanged(QString name, QString oldOwner, QString newOwner)
+void NMNetworkManager::nameOwnerChanged(const QString & name, const QString & oldOwner, const QString & newOwner)
 {
     if ( name == QLatin1String("org.freedesktop.NetworkManager") ) {
         kDebug(1441) << "name: " << name << ", old owner: " << oldOwner << ", new owner: " << newOwner;
