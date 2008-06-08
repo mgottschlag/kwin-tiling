@@ -34,7 +34,7 @@ public:
     // index of the active AP or -1 if none
     QString activeAccessPoint;
     Solid::Control::WirelessNetworkInterface::OperationMode mode;
-    int bitRate;
+    uint bitRate;
     Solid::Control::WirelessNetworkInterface::Capabilities wirelessCapabilities;
 };
 

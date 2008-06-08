@@ -116,7 +116,32 @@ QObject * NMWirelessNetworkInterface::createAccessPoint(const QString & uni)
 
 void NMWirelessNetworkInterface::wirelessPropertiesChanged(const QVariantMap & changedProperties)
 {
-#warning TODO NMWirelessNetworkInterface::wirelessPropertiesChanged() implement
+    kDebug() << changedProperties.keys();
+    Q_D(NMWirelessNetworkInterface);
+    QLatin1String activeApKey("ActiveAccessPoint"), 
+                  hwAddrKey("HwAddress"), 
+                  bitRateKey("Bitrate"), 
+                  modeKey("Mode"), 
+                  wirelessCapsKey("WirelessCapabilities");
+    if (changedProperties.contains(activeApKey)) {
+        d->activeAccessPoint = qdbus_cast<QDBusObjectPath>(changedProperties.value(activeApKey)).path();
+        emit activeAccessPointChanged(d->activeAccessPoint);
+    }
+    if (changedProperties.contains(hwAddrKey)) {
+        d->hardwareAddress = changedProperties.value(hwAddrKey).toString();
+    }
+    if (changedProperties.contains(bitRateKey)) {
+        d->bitRate = changedProperties.value(bitRateKey).toUInt();
+        emit bitRateChanged(d->bitRate);
+    }
+    if (changedProperties.contains(modeKey)) {
+        d->mode = convertOperationMode(changedProperties.value(modeKey).toUInt());
+        emit modeChanged(d->mode);
+    }
+    if (changedProperties.contains(wirelessCapsKey)) {
+        d->wirelessCapabilities = convertCapabilities(changedProperties.value(wirelessCapsKey).toUInt());
+        emit ;
+    }
 }
 
 void NMWirelessNetworkInterface::accessPointAdded(const QDBusObjectPath &apPath)
@@ -131,6 +156,9 @@ void NMWirelessNetworkInterface::accessPointRemoved(const QDBusObjectPath &apPat
 {
     kDebug() << apPath.path();
     Q_D(NMWirelessNetworkInterface);
+    if (!d->accessPoints.contains(apPath.path())) {
+        kDebug() << "Access point list lookup failed for " << apPath.path();
+    }
     d->accessPoints.removeAll(apPath.path());
     emit accessPointDisappeared(apPath.path());
 }
