@@ -28,22 +28,37 @@ namespace Control
 class IPv4Config::Private
 {
 public:
-    uint address;
-    uint gateway;
-    uint netmask;
-    uint broadcast;
-    uint hostname;
-    QList<uint> nameservers;
+    Private(QList< QList<quint32> > theAddresses,
+        quint32 theBroadcast, QString theHostname, QList<quint32> theNameservers,
+        QStringList theDomains, QString theNisDomain, QList<quint32> theNisServers)
+        : addresses(theAddresses), broadcast(theBroadcast),
+    hostname(theHostname), nameservers(theNameservers), domains(theDomains),
+    nisDomain(theNisDomain), nisServers(theNisServers)
+    {}
+    Private()
+    {}
+    QList< QList<quint32> > addresses;
+    quint32 broadcast;
+    QString hostname;
+    QList<quint32> nameservers;
     QStringList domains;
     QString nisDomain;
-    QList<uint> nisServers;
+    QList<quint32> nisServers;
 };
 }
 }
 
-Solid::Control::IPv4Config::IPv4Config()
+Solid::Control::IPv4Config::IPv4Config(QList< QList<quint32> > addresses,
+        quint32 broadcast, QString hostname, QList<quint32> nameservers,
+        QStringList domains, QString nisDomain, QList<quint32> nisServers)
+: d(new Private(addresses, broadcast, hostname, nameservers, domains, 
+            nisDomain, nisServers))
 {
-    d = new Private;
+}
+
+Solid::Control::IPv4Config::IPv4Config()
+: d(new Private())
+{
 }
 
 Solid::Control::IPv4Config::IPv4Config(const Solid::Control::IPv4Config& other)
@@ -55,32 +70,22 @@ Solid::Control::IPv4Config::~IPv4Config()
 {
 }
 
-uint Solid::Control::IPv4Config::address() const
+QList<QList<quint32> > Solid::Control::IPv4Config::addresses() const
 {
-    return d->address;
+    return d->addresses;
 }
 
-uint Solid::Control::IPv4Config::gateway() const
-{
-    return d->gateway;
-}
-
-uint Solid::Control::IPv4Config::netmask() const
-{
-    return d->netmask;
-}
-
-uint Solid::Control::IPv4Config::broadcast() const
+quint32 Solid::Control::IPv4Config::broadcast() const
 {
     return d->broadcast;
 }
 
-uint Solid::Control::IPv4Config::hostname() const
+QString Solid::Control::IPv4Config::hostname() const
 {
     return d->hostname;
 }
 
-QList<uint> Solid::Control::IPv4Config::nameservers() const
+QList<quint32> Solid::Control::IPv4Config::nameservers() const
 {
     return d->nameservers;
 }
@@ -95,7 +100,7 @@ QString Solid::Control::IPv4Config::nisDomain() const
     return d->nisDomain;
 }
 
-QList<uint> Solid::Control::IPv4Config::nisServers() const
+QList<quint32> Solid::Control::IPv4Config::nisServers() const
 {
     return d->nisServers;
 }
@@ -107,5 +112,10 @@ Solid::Control::IPv4Config &Solid::Control::IPv4Config::operator=(const Solid::C
 
     *d = *other.d;
     return *this;
+}
+
+bool Solid::Control::IPv4Config::isValid() const
+{
+    return !d->addresses.isEmpty();
 }
 

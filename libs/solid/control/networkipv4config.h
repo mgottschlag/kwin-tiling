@@ -34,23 +34,25 @@ namespace Control
 class SOLIDCONTROL_EXPORT IPv4Config
 {
 public:
+    IPv4Config(QList< QList<quint32> > addresses,
+        quint32 broadcast, QString hostname, QList<quint32> nameservers,
+        QStringList domains, QString nisDomain, QList<quint32> nisServers);
     IPv4Config();
     ~IPv4Config();
     IPv4Config(const IPv4Config&);
-    uint address() const;
-    uint gateway() const;
-    uint netmask() const;
-    uint broadcast() const;
-    uint hostname() const;
-    QList<uint> nameservers() const;
+    QList< QList<quint32> >addresses() const;
+    /** May go away, need to check if the broadcast address is *ALWAYS* .255 */
+    quint32 broadcast() const;
+    QString hostname() const;
+    QList<quint32> nameservers() const;
     QStringList domains() const;
     QString nisDomain() const;
-    QList<uint> nisServers() const;
+    QList<quint32> nisServers() const;
     IPv4Config &operator=(const IPv4Config&);
+    bool isValid() const;
 private:
     class Private;
     Private * d;
-
 };
 
 } // namespace Control
