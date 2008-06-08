@@ -605,8 +605,8 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
     }
 
     //bound to width, height
-    QPoint newPos = QPoint(qMin(event->pos().x() - d->startDragPos.x(), width()/* - d->leftMaxSliderRect.width()/2 + 1*/),
-                           qMin(event->pos().y() - d->startDragPos.y(), height()/* - d->leftMaxSliderRect.height()/2 + 1*/));
+    QPoint newPos = QPoint(qMin(event->pos().x() - d->startDragPos.x(), width()),
+                           qMin(event->pos().y() - d->startDragPos.y(), height()));
     //bound to 0,0
     newPos = QPoint(qMax(newPos.x(), 0), qMax(newPos.y(), 0));
 
