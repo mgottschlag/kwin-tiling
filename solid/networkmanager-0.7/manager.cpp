@@ -206,8 +206,9 @@ void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
     QLatin1String activeConnKey("ActiveConnections");
     QLatin1String wifiHwKey("WirelessHardwareEnabled");
     QLatin1String wifiEnabledKey("WirelessEnabled");
-    if (properties.contains(activeConnKey)) {
-        QList<QDBusObjectPath> activePaths = qdbus_cast< QList<QDBusObjectPath> >(properties.value(activeConnKey));
+    QVariantMap::const_iterator it = properties.find(activeConnKey);
+    if ( it != properties.end()) {
+        QList<QDBusObjectPath> activePaths = qdbus_cast< QList<QDBusObjectPath> >(*it);
         d->activeConnections.clear();
         if ( activePaths.count() ) {
             kDebug(1441) << activeConnKey;
@@ -219,12 +220,14 @@ void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
         }
         emit activeConnectionsChanged(d->activeConnections);
     }
-    if (properties.contains(wifiHwKey)) {
-        d->isWirelessHardwareEnabled = properties.value(wifiHwKey).toBool();
+    it = properties.find(wifiHwKey);
+    if ( it != properties.end()) {
+        d->isWirelessHardwareEnabled = it->toBool();
         kDebug(1441) << wifiHwKey << d->isWirelessHardwareEnabled;
     }
-    if (properties.contains(wifiEnabledKey)) {
-        d->isWirelessEnabled = properties.value(wifiEnabledKey).toBool();
+    it = properties.find(wifiEnabledKey);
+    if ( it != properties.end()) {
+        d->isWirelessEnabled = it->toBool();
         kDebug(1441) << wifiEnabledKey << d->isWirelessEnabled;
         emit wirelessEnabledChanged(d->isWirelessEnabled);
     }

@@ -86,18 +86,21 @@ void NMWiredNetworkInterface::wiredPropertiesChanged(const QVariantMap &properti
     QLatin1String carrierKey("Carrier");
     QLatin1String hwAddressKey("HwAddress");
     QLatin1String speedKey("Speed");
-    if (properties.contains(carrierKey)) {
-        d->carrier = properties.value(carrierKey).toBool();
+    QVariantMap::const_iterator it = properties.find(carrierKey);
+    if ( it != properties.end()) {
+        d->carrier = it->toBool();
         emit carrierChanged(d->carrier);
         propKeys.removeOne(carrierKey);
     }
-    if (properties.contains(speedKey)) {
-        d->bitrate = properties.value(speedKey).toUInt();
+    it = properties.find(speedKey);
+    if ( it != properties.end()) {
+        d->bitrate = it->toUInt();
         emit bitRateChanged(d->bitrate);
         propKeys.removeOne(speedKey);
     }
-    if (properties.contains(hwAddressKey)) {
-        d->hardwareAddress = properties.value(hwAddressKey).toString();
+    it = properties.find(hwAddressKey);
+    if ( it != properties.end()) {
+        d->hardwareAddress = it->toString();
         propKeys.removeOne(hwAddressKey);
     }
     if (propKeys.count()) {

@@ -130,45 +130,54 @@ void NMAccessPoint::propertiesChanged(const QVariantMap &properties)
                   modeKey("Mode"),
                   maxBitRateKey("MaxBitrate"),
                   strengthKey("Strength");
-    if (properties.contains(flagsKey)) {
-        d->capabilities = convertCapabilities(properties.value(flagsKey).toUInt());
+    QVariantMap::const_iterator it = properties.find(flagsKey);
+    if (it != properties.end()) {
+        d->capabilities = convertCapabilities(it->toUInt());
         propKeys.removeOne(flagsKey);
     }
-    if (properties.contains(wpaFlagsKey)) {
-        d->wpaFlags = convertWpaFlags(properties.value(wpaFlagsKey).toUInt());
+    it = properties.find(wpaFlagsKey);
+    if (it != properties.end()) {
+        d->wpaFlags = convertWpaFlags(it->toUInt());
         emit wpaFlagsChanged(d->wpaFlags);
         propKeys.removeOne(wpaFlagsKey);
     }
-    if (properties.contains(rsnFlagsKey)) {
-        d->rsnFlags = convertWpaFlags(properties.value(rsnFlagsKey).toUInt());
+    it = properties.find(rsnFlagsKey);
+    if (it != properties.end()) {
+        d->rsnFlags = convertWpaFlags(it->toUInt());
         emit rsnFlagsChanged(d->rsnFlags);
         propKeys.removeOne(rsnFlagsKey);
     }
-    if (properties.contains(ssidKey)) {
-        d->ssid = properties.value(ssidKey).toByteArray();
+    it = properties.find(ssidKey);
+    if (it != properties.end()) {
+        d->ssid = it->toByteArray();
         emit ssidChanged(d->ssid);
         propKeys.removeOne(ssidKey);
     }
-    if (properties.contains(freqKey)) {
-        d->frequency = properties.value(freqKey).toUInt();
+    it = properties.find(freqKey);
+    if (it != properties.end()) {
+        d->frequency = it->toUInt();
         emit frequencyChanged(d->frequency);
         propKeys.removeOne(freqKey);
     }
-    if (properties.contains(hwAddrKey)) {
-        d->hardwareAddress = properties.value(hwAddrKey).toString();
+    it = properties.find(hwAddrKey);
+    if (it != properties.end()) {
+        d->hardwareAddress = it->toString();
         propKeys.removeOne(hwAddrKey);
     }
-    if (properties.contains(modeKey)) {
-        d->mode = NMWirelessNetworkInterface::convertOperationMode(properties.value(modeKey).toUInt());
+    it = properties.find(modeKey);
+    if (it != properties.end()) {
+        d->mode = NMWirelessNetworkInterface::convertOperationMode(it->toUInt());
         propKeys.removeOne(modeKey);
     }
-    if (properties.contains(maxBitRateKey)) {
-        d->maxBitRate = properties.value(maxBitRateKey).toUInt();
+    it = properties.find(maxBitRateKey);
+    if (it != properties.end()) {
+        d->maxBitRate = it->toUInt();
         emit bitRateChanged(d->maxBitRate);
         propKeys.removeOne(maxBitRateKey);
     }
-    if (properties.contains(strengthKey)) {
-        d->signalStrength = properties.value(strengthKey).toInt();
+    it = properties.find(strengthKey);
+    if (it != properties.end()) {
+        d->signalStrength = it->toInt();
         kDebug(1441) << "UNI: " << d->uni << "MAC: " << d->hardwareAddress << "SignalStrength: " << d->signalStrength;
         emit signalStrengthChanged(d->signalStrength);
         propKeys.removeOne(strengthKey);

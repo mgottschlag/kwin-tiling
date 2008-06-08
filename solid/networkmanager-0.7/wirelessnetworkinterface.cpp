@@ -127,27 +127,32 @@ void NMWirelessNetworkInterface::wirelessPropertiesChanged(const QVariantMap & c
                   bitRateKey("Bitrate"), 
                   modeKey("Mode"), 
                   wirelessCapsKey("WirelessCapabilities");
-    if (changedProperties.contains(activeApKey)) {
-        d->activeAccessPoint = qdbus_cast<QDBusObjectPath>(changedProperties.value(activeApKey)).path();
+    QVariantMap::const_iterator it = changedProperties.find(activeApKey);
+    if (it != changedProperties.end()) {
+        d->activeAccessPoint = qdbus_cast<QDBusObjectPath>(*it).path();
         emit activeAccessPointChanged(d->activeAccessPoint);
         propKeys.removeOne(activeApKey);
     }
-    if (changedProperties.contains(hwAddrKey)) {
-        d->hardwareAddress = changedProperties.value(hwAddrKey).toString();
+    it = changedProperties.find(hwAddrKey);
+    if (it != changedProperties.end()) {
+        d->hardwareAddress = it->toString();
         propKeys.removeOne(hwAddrKey);
     }
-    if (changedProperties.contains(bitRateKey)) {
-        d->bitRate = changedProperties.value(bitRateKey).toUInt();
+    it = changedProperties.find(bitRateKey);
+    if (it != changedProperties.end()) {
+        d->bitRate = it->toUInt();
         emit bitRateChanged(d->bitRate);
         propKeys.removeOne(bitRateKey);
     }
-    if (changedProperties.contains(modeKey)) {
-        d->mode = convertOperationMode(changedProperties.value(modeKey).toUInt());
+    it = changedProperties.find(modeKey);
+    if (it != changedProperties.end()) {
+        d->mode = convertOperationMode(it->toUInt());
         emit modeChanged(d->mode);
         propKeys.removeOne(modeKey);
     }
-    if (changedProperties.contains(wirelessCapsKey)) {
-        d->wirelessCapabilities = convertCapabilities(changedProperties.value(wirelessCapsKey).toUInt());
+    it = changedProperties.find(wirelessCapsKey);
+    if (it != changedProperties.end()) {
+        d->wirelessCapabilities = convertCapabilities(it->toUInt());
         propKeys.removeOne(wirelessCapsKey);
     }
     if (propKeys.count()) {
