@@ -58,6 +58,8 @@ NMAccessPoint::NMAccessPoint( const QString& path, QObject * parent ) : Solid::C
     d->maxBitRate = d->iface.maxBitrate();
     // make this a static on WirelessNetworkInterface
     d->mode = NMWirelessNetworkInterface::convertOperationMode(d->iface.mode());
+    connect( &d->iface, SIGNAL(PropertiesChanged(const QVariantMap &)),
+                this, SLOT(propertiesChanged(const QVariantMap &)));
 }
 
 NMAccessPoint::~NMAccessPoint()
@@ -117,8 +119,63 @@ int NMAccessPoint::signalStrength() const
 
 void NMAccessPoint::propertiesChanged(const QVariantMap &properties)
 {
-#warning TODO NMAccessPoint::propertiesChanged() implement
-    kDebug() << properties.keys();
+    QStringList propKeys = properties.keys();
+    kDebug(1441) << propKeys;
+    QLatin1String flagsKey("Flags"),
+                  wpaFlagsKey("WpaFlags"),
+                  rsnFlagsKey("RsnFlags"),
+                  ssidKey("Ssid"),
+                  freqKey("Frequency"),
+                  hwAddrKey("HwAddress"),
+                  modeKey("Mode"),
+                  maxBitRateKey("MaxBitrate"),
+                  strengthKey("Strength");
+    if (properties.contains(flagsKey)) {
+        d->capabilities = convertCapabilities(properties.value(flagsKey).toUInt());
+        propKeys.removeOne(flagsKey);
+    }
+    if (properties.contains(wpaFlagsKey)) {
+        d->wpaFlags = convertWpaFlags(properties.value(wpaFlagsKey).toUInt());
+        emit wpaFlagsChanged(d->wpaFlags);
+        propKeys.removeOne(wpaFlagsKey);
+    }
+    if (properties.contains(rsnFlagsKey)) {
+        d->rsnFlags = convertWpaFlags(properties.value(rsnFlagsKey).toUInt());
+        emit rsnFlagsChanged(d->rsnFlags);
+        propKeys.removeOne(rsnFlagsKey);
+    }
+    if (properties.contains(ssidKey)) {
+        d->ssid = properties.value(ssidKey).toByteArray();
+        emit ssidChanged(d->ssid);
+        propKeys.removeOne(ssidKey);
+    }
+    if (properties.contains(freqKey)) {
+        d->frequency = properties.value(freqKey).toUInt();
+        emit frequencyChanged(d->frequency);
+        propKeys.removeOne(freqKey);
+    }
+    if (properties.contains(hwAddrKey)) {
+        d->hardwareAddress = properties.value(hwAddrKey).toString();
+        propKeys.removeOne(hwAddrKey);
+    }
+    if (properties.contains(modeKey)) {
+        d->mode = NMWirelessNetworkInterface::convertOperationMode(properties.value(modeKey).toUInt());
+        propKeys.removeOne(modeKey);
+    }
+    if (properties.contains(maxBitRateKey)) {
+        d->maxBitRate = properties.value(maxBitRateKey).toUInt();
+        emit bitRateChanged(d->maxBitRate);
+        propKeys.removeOne(maxBitRateKey);
+    }
+    if (properties.contains(strengthKey)) {
+        d->signalStrength = properties.value(strengthKey).toInt();
+        kDebug(1441) << "UNI: " << d->uni << "MAC: " << d->hardwareAddress << "SignalStrength: " << d->signalStrength;
+        emit signalStrengthChanged(d->signalStrength);
+        propKeys.removeOne(strengthKey);
+    }
+    if (propKeys.count()) {
+        kDebug(1441) << "Unhandled properties: " << propKeys;
+    }
 }
 
 Solid::Control::AccessPoint::Capabilities NMAccessPoint::convertCapabilities(int caps)
