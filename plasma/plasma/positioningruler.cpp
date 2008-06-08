@@ -756,6 +756,16 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
 
 void PositioningRuler::resizeEvent(QResizeEvent *event)
 {
+    switch (d->location) {
+    case Plasma::LeftEdge:
+    case Plasma::RightEdge:
+        setAvailableLength(event->size().height());
+        break;
+    default:
+        setAvailableLength(event->size().width());
+        break;
+    }
+
     d->setupSliders(event->size());
 
     event->accept();
