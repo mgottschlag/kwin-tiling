@@ -254,8 +254,7 @@ extern "C" KDE_EXPORT int kdemain(int argc, char *argv[])
   close( ready[ 0 ] );
 
   startup = ( strcmp( argv[ 0 ], "kcminit_startup" ) == 0 ); // started from startkde?
-
-  KAboutData aboutData( "kcminit", "kcontrol", ki18n("KCMInit"),
+  KAboutData aboutData( "kcminit", "kcminit", ki18n("KCMInit"),
 	"",
 	ki18n("KCMInit - runs startup initialization for Control Modules."));
 
