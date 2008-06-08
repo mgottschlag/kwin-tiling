@@ -285,13 +285,6 @@ Solid::Control::IPv4Config NMNetworkInterface::ipV4Config() const
     return Solid::Control::IPv4Config();
 }
 
-QStringList NMNetworkInterface::activeConnections() const
-{
-#warning NMNetworkInterface::activeConnection() is unimplemented
-    kDebug();
-    return QStringList();
-}
-
 bool NMNetworkInterface::activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters)
 {
     Q_UNUSED(connectionUni)

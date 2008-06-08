@@ -47,7 +47,6 @@ public:
         Solid::Control::NetworkInterface::ConnectionState connectionState() const;
         int designSpeed() const;
         Solid::Control::NetworkInterface::Capabilities capabilities() const;
-        QStringList activeConnections() const;
         void activate(const QString & connectionUni, const QString & extra_connection_parameter = QString() );
         void deactivate();
     Q_SIGNALS:

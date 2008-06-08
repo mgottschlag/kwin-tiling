@@ -150,11 +150,6 @@ namespace Control
          */
         Capabilities capabilities() const;
 
-        /**
-         * The unique identifiers of the currently active connections on this device
-         */
-        QStringList activeConnection() const;
-
     Q_SIGNALS:
         /**
          * This signal is emitted when the settings of this network have changed.

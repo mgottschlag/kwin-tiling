@@ -69,8 +69,6 @@ public:
     bool managed() const;
     void setManaged(const QVariant&);
 
-    QStringList activeConnections() const;
-
 Q_SIGNALS:
     void ipDetailsChanged();
     //void linkUpChanged(bool linkActivated);

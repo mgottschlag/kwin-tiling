@@ -96,13 +96,6 @@ Solid::Control::NetworkInterface::Capabilities FakeNetworkInterface::capabilitie
     return caps;
 }
 
-QStringList FakeNetworkInterface::activeConnections() const
-{
-    QStringList acs;
-    acs << QLatin1String("FIXMEACTIVECONNECTION/org/freedesktop/NetworkManager/Devices/eth0");
-    return acs;
-}
-
 void FakeNetworkInterface::activate(const QString & connectionUni, const QString &)
 {
     mActiveConnection = connectionUni;

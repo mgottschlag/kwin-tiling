@@ -98,11 +98,6 @@ namespace Ifaces
          */
         virtual Solid::Control::NetworkInterface::Capabilities capabilities() const = 0;
 
-        /**
-         * The unique identifiers of the currently active connections on this device
-         */
-        virtual QStringList activeConnections() const = 0;
-
     protected:
     //Q_SIGNALS:
         /**

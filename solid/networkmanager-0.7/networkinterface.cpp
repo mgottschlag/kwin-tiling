@@ -203,12 +203,6 @@ void NMNetworkInterface::setCapabilitiesV(const QVariant & caps)
     d->capabilities = convertCapabilities(caps.toUInt());
 }
 
-QStringList NMNetworkInterface::activeConnections() const
-{
-    Q_D(const NMNetworkInterface);
-    return d->activeConnections;
-}
-
 Solid::Control::NetworkInterface::Capabilities NMNetworkInterface::convertCapabilities(uint theirCaps)
 {
     Solid::Control::NetworkInterface::Capabilities ourCaps

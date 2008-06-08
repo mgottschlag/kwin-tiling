@@ -41,7 +41,6 @@ public:
     QString driver;
     int ipV4Address;
     QString interfaceName;
-    QStringList activeConnections;
     NMNetworkManager * manager;
     //NMPropertyHelper propHelper;
 };
