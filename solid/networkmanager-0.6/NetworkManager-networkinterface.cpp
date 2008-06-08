@@ -144,7 +144,42 @@ Solid::Control::NetworkInterface::Type NMNetworkInterface::type() const
 Solid::Control::NetworkInterface::ConnectionState NMNetworkInterface::connectionState() const
 {
     Q_D(const NMNetworkInterface);
-    return (Solid::Control::NetworkInterface::ConnectionState)d->activationStage;
+    Solid::Control::NetworkInterface::ConnectionState state = Solid::Control::NetworkInterface::UnknownState;
+    switch (d->activationStage)
+    {
+    default:
+    case NM_ACT_STAGE_UNKNOWN:
+        state = Solid::Control::NetworkInterface::UnknownState;
+        break;
+    case NM_ACT_STAGE_DEVICE_PREPARE:
+        state = Solid::Control::NetworkInterface::Preparing;
+        break;
+    case NM_ACT_STAGE_DEVICE_CONFIG:
+        state = Solid::Control::NetworkInterface::Configuring;
+        break;
+    case NM_ACT_STAGE_NEED_USER_KEY:
+        state = Solid::Control::NetworkInterface::NeedAuth;
+        break;
+    case NM_ACT_STAGE_IP_CONFIG_START:
+        state = Solid::Control::NetworkInterface::IPConfig;
+        break;
+    case NM_ACT_STAGE_IP_CONFIG_GET:
+        state = Solid::Control::NetworkInterface::IPConfig;
+        break;
+    case NM_ACT_STAGE_IP_CONFIG_COMMIT:
+        state = Solid::Control::NetworkInterface::IPConfig;
+        break;
+    case NM_ACT_STAGE_ACTIVATED:
+        state = Solid::Control::NetworkInterface::Activated;
+        break;
+    case NM_ACT_STAGE_FAILED:
+        state = Solid::Control::NetworkInterface::Failed;
+        break;
+    case NM_ACT_STAGE_CANCELLED:
+        state = Solid::Control::NetworkInterface::Disconnected;
+        break;
+    }
+    return state;
 }
 
 int NMNetworkInterface::designSpeed() const
@@ -210,7 +245,7 @@ void NMNetworkInterface::setActivationStage(int activationStage)
 {
     Q_D(NMNetworkInterface);
     d->activationStage = activationStage;
-    emit connectionStateChanged(activationStage);
+    emit connectionStateChanged(connectionState());
 }
 
 void NMNetworkInterface::addNetwork(const QDBusObjectPath  & netPath)
