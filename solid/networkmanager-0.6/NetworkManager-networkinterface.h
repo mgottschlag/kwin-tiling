@@ -80,7 +80,7 @@ public:
     QString interfaceName() const;
     QString driver() const;
     Solid::Control::IPv4Config ipV4Config() const;
-    QString activeConnection() const;
+    QStringList activeConnections() const;
     virtual bool activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters);
     virtual bool deactivateConnection();
 Q_SIGNALS:

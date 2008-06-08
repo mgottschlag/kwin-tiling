@@ -152,9 +152,9 @@ namespace Control
         Capabilities capabilities() const;
 
         /**
-         * The unique identifier of the currently active connection on this device
+         * The unique identifiers of the currently active connections on this device
          */
-        QString activeConnection() const;
+        QStringList activeConnection() const;
 
     Q_SIGNALS:
         /**

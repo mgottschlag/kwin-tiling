@@ -36,13 +36,12 @@ public:
     QString uni;
     int designSpeed;
     Solid::Control::NetworkInterface::ConnectionState connectionState;
-    bool isActive;
     bool managed;
     Solid::Control::IPv4Config ipV4Config;
     QString driver;
     int ipV4Address;
     QString interfaceName;
-    QString activeConnection;
+    QStringList activeConnections;
     NMNetworkManager * manager;
     NMPropertyHelper propHelper;
 };

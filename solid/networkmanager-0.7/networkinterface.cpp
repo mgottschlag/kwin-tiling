@@ -40,9 +40,10 @@ NMNetworkInterfacePrivate::NMNetworkInterfacePrivate( const QString & path, QObj
 {
     //isLinkUp = deviceIface.isLinkUp();
     driver = deviceIface.driver();
-    ipV4Address = deviceIface.ip4Address();
-    isActive = capabilities != Solid::Control::NetworkInterface::Down;
     interfaceName = deviceIface.interface();
+    ipV4Address = deviceIface.ip4Address();    
+    managed = deviceIface.managed();
+
     //TODO set active connections based on active connection list on the manager; find out if
     //signal needed
     //activeConnection = deviceIface.activeConnection();
@@ -52,18 +53,23 @@ NMNetworkInterfacePrivate::NMNetworkInterfacePrivate( const QString & path, QObj
 NMNetworkInterface::NMNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent) : QObject(parent), d_ptr(new NMNetworkInterfacePrivate(path, this))
 {
     Q_D(NMNetworkInterface);
-    d->capabilities = convertCapabilities(d->deviceIface.capabilities());
-    d->connectionState = convertState(d->deviceIface.state());
+    init();
     d->manager = manager;
-    connect(&d->deviceIface, SIGNAL(StateChanged(uint)), this, SLOT(stateChanged(uint)));
 }
 
 NMNetworkInterface::NMNetworkInterface(NMNetworkInterfacePrivate & dd, NMNetworkManager * manager, QObject * parent) : QObject(parent), d_ptr(&dd)
 {
     Q_D(NMNetworkInterface);
+    init();
+    d->manager = manager;
+}
+
+void NMNetworkInterface::init()
+{
+    Q_D(NMNetworkInterface);
     d->capabilities = convertCapabilities(d->deviceIface.capabilities());
     d->connectionState = convertState(d->deviceIface.state());
-    d->manager = manager;
+    
     connect(&d->deviceIface, SIGNAL(StateChanged(uint)), this, SLOT(stateChanged(uint)));
 }
 
@@ -113,6 +119,7 @@ int NMNetworkInterface::ipV4Address() const
     Q_D(const NMNetworkInterface);
     return d->ipV4Address;
 }
+
 Solid::Control::IPv4Config NMNetworkInterface::ipV4Config() const
 {
 #warning TODO NMNetworkInterface::ipV4Config()
@@ -130,7 +137,9 @@ void NMNetworkInterface::setIpV4Config(const QVariant & ipConfigObjPath)
 bool NMNetworkInterface::isActive() const
 {
     Q_D(const NMNetworkInterface);
-    return d->isActive;
+    return !(d->connectionState == Solid::Control::NetworkInterface::Down 
+            || d->connectionState == Solid::Control::NetworkInterface::Failed 
+            || d->connectionState == Solid::Control::NetworkInterface::Cancelled );
 }
 
 bool NMNetworkInterface::managed() const
@@ -144,7 +153,6 @@ void NMNetworkInterface::setManaged(const QVariant & driver)
     Q_D(NMNetworkInterface);
     d->driver = driver.toBool();
 }
-
 
 Solid::Control::NetworkInterface::ConnectionState NMNetworkInterface::connectionState() const
 {
@@ -188,10 +196,10 @@ void NMNetworkInterface::setCapabilitiesV(const QVariant & caps)
     d->capabilities = convertCapabilities(caps.toUInt());
 }
 
-QString NMNetworkInterface::activeConnection() const
+QStringList NMNetworkInterface::activeConnections() const
 {
     Q_D(const NMNetworkInterface);
-    return d->activeConnection;
+    return d->activeConnections;
 }
 
 Solid::Control::NetworkInterface::Capabilities NMNetworkInterface::convertCapabilities(uint theirCaps)

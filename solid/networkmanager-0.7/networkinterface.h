@@ -70,7 +70,7 @@ public:
     bool managed() const;
     void setManaged(const QVariant&);
 
-    QString activeConnection() const;
+    QStringList activeConnections() const;
 
 Q_SIGNALS:
     void ipDetailsChanged();
@@ -79,6 +79,7 @@ Q_SIGNALS:
 protected Q_SLOTS:
     void stateChanged(uint);
 private:
+    void init();
     Solid::Control::NetworkInterface::Capabilities convertCapabilities(uint theirCaps);
     Solid::Control::NetworkInterface::ConnectionState convertState(uint theirState);
 protected:

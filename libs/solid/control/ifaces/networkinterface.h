@@ -99,10 +99,9 @@ namespace Ifaces
         virtual Solid::Control::NetworkInterface::Capabilities capabilities() const = 0;
 
         /**
-         * The unique identifier of the currently active connection on this device
-         * NOTE: probably to be removed since a device can now have multiple active connections
+         * The unique identifiers of the currently active connections on this device
          */
-        virtual QString activeConnection() const = 0;
+        virtual QStringList activeConnections() const = 0;
 
     protected:
     //Q_SIGNALS:
