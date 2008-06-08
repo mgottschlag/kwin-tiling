@@ -43,7 +43,7 @@ public:
     QString interfaceName;
     QStringList activeConnections;
     NMNetworkManager * manager;
-    NMPropertyHelper propHelper;
+    //NMPropertyHelper propHelper;
 };
 
 #endif

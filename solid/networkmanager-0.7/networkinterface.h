@@ -57,7 +57,6 @@ public:
     void setDriver(const QVariant&);
     int ipV4Address() const;
     Solid::Control::IPv4Config ipV4Config() const;
-    void setIpV4Config(const QVariant&);
     bool isActive() const;
     Solid::Control::NetworkInterface::ConnectionState connectionState() const;
     void setConnectionState(const QVariant&);

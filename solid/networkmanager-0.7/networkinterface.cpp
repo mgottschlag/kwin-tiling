@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkinterface_p.h"
 #include <KDebug>
 
+#include "dbus/nm-ip4-configinterface.h"
 #include "manager.h"
 #include "networkmanagerdefinitions.h"
 
@@ -36,8 +37,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define NM_DEVICE_VENDOR "vendor"
 #define NM_DEVICE_PRODUCT "product"
 
-NMNetworkInterfacePrivate::NMNetworkInterfacePrivate( const QString & path, QObject * owner ) : deviceIface(NMNetworkManager::DBUS_SERVICE, path, QDBusConnection::systemBus()), uni(path), designSpeed(0), manager(0), propHelper(owner)
+NMNetworkInterfacePrivate::NMNetworkInterfacePrivate( const QString & path, QObject * owner ) : deviceIface(NMNetworkManager::DBUS_SERVICE, path, QDBusConnection::systemBus()), uni(path), designSpeed(0), manager(0)/*, propHelper(owner)*/
 {
+    Q_UNUSED(owner);
     //isLinkUp = deviceIface.isLinkUp();
     driver = deviceIface.driver();
     interfaceName = deviceIface.interface();
@@ -47,7 +49,7 @@ NMNetworkInterfacePrivate::NMNetworkInterfacePrivate( const QString & path, QObj
     //TODO set active connections based on active connection list on the manager; find out if
     //signal needed
     //activeConnection = deviceIface.activeConnection();
-    propHelper.registerProperty(NM_DEVICE_UDI, PropertySignalPair("uni",0));
+    //propHelper.registerProperty(NM_DEVICE_UDI, PropertySignalPair("uni",0));
 }
 
 NMNetworkInterface::NMNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent) : QObject(parent), d_ptr(new NMNetworkInterfacePrivate(path, this))
@@ -122,17 +124,22 @@ int NMNetworkInterface::ipV4Address() const
 
 Solid::Control::IPv4Config NMNetworkInterface::ipV4Config() const
 {
-#warning TODO NMNetworkInterface::ipV4Config()
-    return Solid::Control::IPv4Config();
+    Q_D(const NMNetworkInterface);
+    if (d->connectionState != Solid::Control::NetworkInterface::Activated) {
+        return Solid::Control::IPv4Config();
+    } else {
+        // ask the daemon for the details
+        QDBusObjectPath ipV4ConfigPath = d->deviceIface.ip4Config();
+        OrgFreedesktopNetworkManagerIP4ConfigInterface iface(NMNetworkManager::DBUS_SERVICE, ipV4ConfigPath.path(), QDBusConnection::systemBus());
+        if (iface.isValid()) {
+            return Solid::Control::IPv4Config(iface.addresses(), 0 /*broadcast*/,
+                    iface.hostname(), iface.nameservers(), iface.domains(),
+                    iface.nisDomain(), iface.nisServers());
+        } else {
+            return Solid::Control::IPv4Config();
+        }
+    }
 }
-
-// TODO remove
-void NMNetworkInterface::setIpV4Config(const QVariant & ipConfigObjPath)
-{
-#warning TODO NMNetworkInterface::setIpV4Config demarshal QVariant here
-    Q_D(NMNetworkInterface);
-}
-
 
 bool NMNetworkInterface::isActive() const
 {
@@ -220,5 +227,6 @@ void NMNetworkInterface::stateChanged(uint state)
     Q_D(NMNetworkInterface);
     d->connectionState = convertState(state);
 }
+
 #include "networkinterface.moc"
 
