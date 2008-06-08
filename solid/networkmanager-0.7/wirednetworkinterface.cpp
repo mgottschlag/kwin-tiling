@@ -81,20 +81,27 @@ void NMWiredNetworkInterface::setBitRate(const QVariant& bitrate)
 void NMWiredNetworkInterface::wiredPropertiesChanged(const QVariantMap &properties)
 {
     Q_D(NMWiredNetworkInterface);
-    kDebug() << properties.keys();
+    QStringList propKeys = properties.keys();
+    kDebug(1441) << properties.keys();
     QLatin1String carrierKey("Carrier");
     QLatin1String hwAddressKey("HwAddress");
     QLatin1String speedKey("Speed");
     if (properties.contains(carrierKey)) {
         d->carrier = properties.value(carrierKey).toBool();
         emit carrierChanged(d->carrier);
+        propKeys.removeOne(carrierKey);
     }
     if (properties.contains(speedKey)) {
         d->bitrate = properties.value(speedKey).toUInt();
         emit bitRateChanged(d->bitrate);
+        propKeys.removeOne(speedKey);
     }
     if (properties.contains(hwAddressKey)) {
         d->hardwareAddress = properties.value(hwAddressKey).toString();
+        propKeys.removeOne(hwAddressKey);
+    }
+    if (propKeys.count()) {
+        kDebug(1441) << "Unhandled properties: " << propKeys;
     }
 }
 

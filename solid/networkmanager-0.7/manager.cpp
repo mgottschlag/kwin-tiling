@@ -37,7 +37,7 @@ const QString NMNetworkManager::DBUS_SYSTEM_SETTINGS_PATH(QString::fromLatin1("o
 
 NMNetworkManagerPrivate::NMNetworkManagerPrivate() : iface(NMNetworkManager::DBUS_SERVICE, "/org/freedesktop/NetworkManager", QDBusConnection::systemBus())
 {
-    kDebug() << NMNetworkManager::DBUS_SERVICE;
+    kDebug(1441) << NMNetworkManager::DBUS_SERVICE;
 }
 
 NMNetworkManager::NMNetworkManager(QObject * parent, const QStringList &) 
@@ -104,7 +104,7 @@ QStringList NMNetworkManager::networkInterfaces() const
 
 QObject *NMNetworkManager::createNetworkInterface(const QString &uni)
 {
-    kDebug();
+    kDebug(1441);
     OrgFreedesktopNetworkManagerDeviceInterface devIface(NMNetworkManager::DBUS_SERVICE, uni, QDBusConnection::systemBus());
     uint deviceType = devIface.deviceType();
     NMNetworkInterface * createdInterface = 0;
@@ -202,7 +202,7 @@ void NMNetworkManager::stateChanged(uint state)
 void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
 {
     Q_D(NMNetworkManager);
-    kDebug() << properties.keys();
+    kDebug(1441) << properties.keys();
     QLatin1String activeConnKey("ActiveConnections");
     QLatin1String wifiHwKey("WirelessHardwareEnabled");
     QLatin1String wifiEnabledKey("WirelessEnabled");
@@ -210,7 +210,7 @@ void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
         QList<QDBusObjectPath> activePaths = qdbus_cast< QList<QDBusObjectPath> >(properties.value(activeConnKey));
         d->activeConnections.clear();
         if ( activePaths.count() ) {
-            kDebug() << activeConnKey;
+            kDebug(1441) << activeConnKey;
         }
         foreach (QDBusObjectPath ac, activePaths)
         {
@@ -221,11 +221,11 @@ void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
     }
     if (properties.contains(wifiHwKey)) {
         d->isWirelessHardwareEnabled = properties.value(wifiHwKey).toBool();
-        kDebug() << wifiHwKey << d->isWirelessHardwareEnabled;
+        kDebug(1441) << wifiHwKey << d->isWirelessHardwareEnabled;
     }
     if (properties.contains(wifiEnabledKey)) {
         d->isWirelessEnabled = properties.value(wifiEnabledKey).toBool();
-        kDebug() << wifiEnabledKey << d->isWirelessEnabled;
+        kDebug(1441) << wifiEnabledKey << d->isWirelessEnabled;
         emit wirelessEnabledChanged(d->isWirelessEnabled);
     }
 }
