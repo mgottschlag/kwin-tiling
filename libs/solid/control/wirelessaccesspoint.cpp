@@ -155,4 +155,9 @@ void Solid::Control::AccessPointPrivate::setBackendObject(QObject *object)
     }
 }
 
+void Solid::Control::AccessPoint::_k_destroyed(QObject *object)
+{
+    // nothing to do yet
+}
+
 #include "wirelessaccesspoint.moc"

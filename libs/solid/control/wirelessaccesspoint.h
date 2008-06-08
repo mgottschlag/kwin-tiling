@@ -173,6 +173,8 @@ namespace Control
          */
         AccessPoint(AccessPointPrivate &dd, const AccessPoint & ap);
         AccessPointPrivate * d_ptr;
+    private Q_SLOTS:
+        void _k_destroyed(QObject *object);
     };
     typedef QStringList AccessPointList;
 } // Control
