@@ -68,19 +68,32 @@ void NMWiredNetworkInterface::setCarrier(const QVariant& carrier)
 {
     Q_D(NMWiredNetworkInterface);
     d->carrier = carrier.toBool();
-
 }
 
 void NMWiredNetworkInterface::setBitRate(const QVariant& bitrate)
 {
     Q_D(NMWiredNetworkInterface);
     d->bitrate = bitrate.toInt();
-
 }
+
 void NMWiredNetworkInterface::wiredPropertiesChanged(const QVariantMap &properties)
 {
-#warning TODO NMWiredNEtworkINterface::wiredPropertiesChanged() implement
+    Q_D(NMWiredNetworkInterface);
     kDebug() << properties.keys();
+    QLatin1String carrierKey("Carrier");
+    QLatin1String hwAddressKey("HwAddress");
+    QLatin1String speedKey("Speed");
+    if (properties.contains(carrierKey)) {
+        d->carrier = properties.value(carrierKey).toBool();
+        emit carrierChanged(d->carrier);
+    }
+    if (properties.contains(speedKey)) {
+        d->bitrate = properties.value(speedKey).toUInt();
+        emit bitRateChanged(d->bitrate);
+    }
+    if (properties.contains(hwAddressKey)) {
+        d->hardwareAddress = properties.value(hwAddressKey).toString();
+    }
 }
 
 #include "wirednetworkinterface.moc"
