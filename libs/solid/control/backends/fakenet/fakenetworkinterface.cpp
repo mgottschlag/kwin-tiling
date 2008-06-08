@@ -57,8 +57,10 @@ Solid::Control::NetworkInterface::ConnectionState FakeNetworkInterface::connecti
 {
     QString stateString = mPropertyMap["state"].toString();
 
-    if (stateString == "down")
-        return Solid::Control::NetworkInterface::Down;
+    if (stateString == "unmanaged")
+        return Solid::Control::NetworkInterface::Unmanaged;
+    else if (stateString == "unavailable")
+        return Solid::Control::NetworkInterface::Unavailable;
     else if (stateString == "disconnected")
         return Solid::Control::NetworkInterface::Disconnected;
     else if (stateString == "preparing")
@@ -73,8 +75,6 @@ Solid::Control::NetworkInterface::ConnectionState FakeNetworkInterface::connecti
         return Solid::Control::NetworkInterface::Activated;
     else if (stateString == "failed")
         return Solid::Control::NetworkInterface::Failed;
-    else if (stateString == "cancelled")
-        return Solid::Control::NetworkInterface::Cancelled;
     else
         return Solid::Control::NetworkInterface::UnknownState;
 }

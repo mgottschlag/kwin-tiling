@@ -53,9 +53,8 @@ namespace Control
          * simplicity, states from several different layers are present -
          * this is a high level view
          */
-        enum ConnectionState{ UnknownState, Down, Disconnected, Preparing,
-                              Configuring, NeedAuth, IPConfig, Activated, Failed,
-                              Cancelled };
+        enum ConnectionState{ UnknownState, Unmanaged, Unavailable, Disconnected, Preparing,
+                              Configuring, NeedAuth, IPConfig, Activated, Failed };
         /**
          * Possible Device capabilities
          * - IsManageable: denotes that the device can be controlled by this API

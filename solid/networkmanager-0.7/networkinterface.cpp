@@ -69,7 +69,7 @@ void NMNetworkInterface::init()
     Q_D(NMNetworkInterface);
     d->capabilities = convertCapabilities(d->deviceIface.capabilities());
     d->connectionState = convertState(d->deviceIface.state());
-    
+
     connect(&d->deviceIface, SIGNAL(StateChanged(uint)), this, SLOT(stateChanged(uint)));
 }
 
@@ -137,9 +137,9 @@ void NMNetworkInterface::setIpV4Config(const QVariant & ipConfigObjPath)
 bool NMNetworkInterface::isActive() const
 {
     Q_D(const NMNetworkInterface);
-    return !(d->connectionState == Solid::Control::NetworkInterface::Down 
-            || d->connectionState == Solid::Control::NetworkInterface::Failed 
-            || d->connectionState == Solid::Control::NetworkInterface::Cancelled );
+    return !(d->connectionState == Solid::Control::NetworkInterface::Unavailable
+            || d->connectionState == Solid::Control::NetworkInterface::Disconnected
+            || d->connectionState == Solid::Control::NetworkInterface::Failed );
 }
 
 bool NMNetworkInterface::managed() const
@@ -211,8 +211,8 @@ Solid::Control::NetworkInterface::Capabilities NMNetworkInterface::convertCapabi
 
 Solid::Control::NetworkInterface::ConnectionState NMNetworkInterface::convertState(uint theirState)
 {
-    Solid::Control::NetworkInterface::ConnectionState ourMode = (Solid::Control::NetworkInterface::ConnectionState)theirState;
-    return ourMode;
+    Solid::Control::NetworkInterface::ConnectionState ourState = (Solid::Control::NetworkInterface::ConnectionState)theirState;
+    return ourState;
 }
 
 void NMNetworkInterface::stateChanged(uint state)
