@@ -88,4 +88,8 @@ void Solid::Control::WiredNetworkInterfacePrivate::setBackendObject(QObject *obj
     }
 }
 
+void Solid::Control::WiredNetworkInterface::_k_destroyed(QObject *object)
+{
+    // nothing to do yet
+}
 #include "wirednetworkinterface.moc"

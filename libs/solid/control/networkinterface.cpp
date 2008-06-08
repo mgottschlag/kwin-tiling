@@ -113,8 +113,6 @@ void Solid::Control::NetworkInterfacePrivate::setBackendObject(QObject *object)
     FrontendObjectPrivate::setBackendObject(object);
 
     if (object) {
-        QObject::connect(object, SIGNAL(activeChanged(bool)),
-                         parent(), SIGNAL(activeChanged(bool)));
         QObject::connect(object, SIGNAL(connectionStateChanged(int)),
                          parent(), SIGNAL(connectionStateChanged(int)));
     }

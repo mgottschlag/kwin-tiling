@@ -109,6 +109,8 @@ namespace Control
          */
         WiredNetworkInterface(WiredNetworkInterfacePrivate &dd, const WiredNetworkInterface &network);
 
+    private Q_SLOTS:
+        void _k_destroyed(QObject *object);
     private:
         friend class NetworkInterface;
         friend class NetworkInterfacePrivate;
