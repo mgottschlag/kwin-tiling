@@ -94,32 +94,39 @@ void PanelView::setLocation(Plasma::Location location)
     QSizeF s = c->size();
     QSizeF min = c->minimumSize();
     QSizeF max = c->maximumSize();
-    qreal panelHeight = s.height();
     qreal panelWidth = s.width();
+    qreal panelHeight = s.height();
 
     Plasma::FormFactor formFactor = c->formFactor();
-    if (formFactor == Plasma::Vertical) {
-        panelHeight = c->size().width();
-        panelWidth = c->size().height();
-    } else {
-        panelHeight = c->size().height();
-        panelWidth = c->size().width();
-    }
+    bool wasHorizontal = formFactor == Plasma::Horizontal;
+    bool wasFullSize = m_lastSeenSize == (wasHorizontal ? s.width() : s.height());
 
     if (location == Plasma::TopEdge || location == Plasma::BottomEdge) {
-        if (formFactor == Plasma::Vertical) {
+        if (!wasHorizontal) {
             // we're switching! swap the sizes about
             panelHeight = s.width();
-            panelWidth = s.height();
+            if (wasFullSize) {
+                QRect screenGeom = QApplication::desktop()->screenGeometry(c->screen());
+                panelWidth = screenGeom.width();
+            } else {
+                panelWidth = s.height();
+            }
             min = QSizeF(panelWidth, min.width());
             max = QSizeF(panelWidth, max.width());
         }
 
         formFactor = Plasma::Horizontal;
     } else {
-        if (formFactor == Plasma::Horizontal) {
+        if (wasHorizontal) {
             // we're switching! swap the sizes about
-            panelHeight = s.width();
+
+            if (wasFullSize) {
+                QRect screenGeom = QApplication::desktop()->screenGeometry(c->screen());
+                panelHeight = screenGeom.height();
+            } else {
+                panelHeight = s.width();
+            }
+
             panelWidth = s.height();
             min = QSizeF(min.height(), panelHeight);
             max = QSizeF(max.height(), panelHeight);
