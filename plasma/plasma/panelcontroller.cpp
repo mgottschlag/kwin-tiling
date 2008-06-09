@@ -357,7 +357,7 @@ PanelController::PanelController(QWidget* parent)
     setLayout(d->extLayout);
     d->extLayout->addWidget(d->panelHeightHandle);
 
-    d->layout = new QBoxLayout(QBoxLayout::LeftToRight, this);
+    d->layout = new QBoxLayout(QBoxLayout::LeftToRight);
     d->layout->setContentsMargins(4, 4, 4, 4);
     if (QApplication::layoutDirection() == Qt::RightToLeft) {
         d->layout->setDirection(QBoxLayout::RightToLeft);
@@ -366,7 +366,7 @@ PanelController::PanelController(QWidget* parent)
     }
     d->layout->setSpacing(4);
     d->layout->addStretch();
-    d->extLayout->addItem(d->layout);
+    d->extLayout->addLayout(d->layout);
 
     //Add buttons
 
