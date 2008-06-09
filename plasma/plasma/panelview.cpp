@@ -47,7 +47,11 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     m_alignment = alignmentFilter((Qt::Alignment)m_viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
 
     // pinchContainment calls updatePanelGeometry for us
-    pinchContainment(QApplication::desktop()->screenGeometry(containment()->screen()));
+
+    QRect screenRect = QApplication::desktop()->screenGeometry(containment()->screen());
+    m_lastSeenSize = isHorizontal() ? screenRect.width() : screenRect.height();
+    pinchContainment(screenRect);
+
 
     if (panel) {
         connect(panel, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
@@ -80,19 +84,61 @@ PanelView::~PanelView()
 {
 }
 
-void PanelView::setLocation(Plasma::Location loc)
+void PanelView::setLocation(Plasma::Location location)
 {
-    containment()->setLocation(loc);
+    Plasma::Containment *c = containment();
+    QSizeF s = c->size();
+    QSizeF min = c->minimumSize();
+    QSizeF max = c->maximumSize();
+    qreal panelHeight = s.height();
+    qreal panelWidth = s.width();
 
-    //update the panel controller location position and size
-    if (m_panelController) {
-        m_panelController->setLocation(location());
-    
-        if (m_panelController->isVisible()) {
-            m_panelController->resize(m_panelController->sizeHint());
-            m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
-        }
+    Plasma::FormFactor formFactor = c->formFactor();
+    if (formFactor == Plasma::Vertical) {
+        panelHeight = c->size().width();
+        panelWidth = c->size().height();
+    } else {
+        panelHeight = c->size().height();
+        panelWidth = c->size().width();
     }
+
+    if (location == Plasma::TopEdge || location == Plasma::BottomEdge) {
+        if (formFactor == Plasma::Vertical) {
+            // we're switching! swap the sizes about
+            panelHeight = s.width();
+            panelWidth = s.height();
+            min = QSizeF(panelWidth, min.width());
+            max = QSizeF(panelWidth, max.width());
+        }
+
+        formFactor = Plasma::Horizontal;
+    } else {
+        if (formFactor == Plasma::Horizontal) {
+            // we're switching! swap the sizes about
+            panelHeight = s.width();
+            panelWidth = s.height();
+            min = QSizeF(min.height(), panelHeight);
+            max = QSizeF(max.height(), panelHeight);
+        }
+
+        formFactor = Plasma::Vertical;
+    }
+
+    //kDebug() << "!!!!!!!!!!!!!!!!!! about to set to" << location << panelHeight << formFactor;
+    disconnect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
+    c->setFormFactor(formFactor);
+    c->setLocation(location);
+
+    c->setMinimumSize(0, 0);
+    c->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+    c->resize(panelWidth, panelHeight);
+    c->setMinimumSize(min);
+    c->setMaximumSize(max);
+
+    updatePanelGeometry();
+    QRect screenRect = QApplication::desktop()->screenGeometry(c->screen());
+    //pinchContainment(screenRect);
+    connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
 }
 
 Plasma::Location PanelView::location() const
@@ -264,10 +310,16 @@ void PanelView::updatePanelGeometry()
     }
 }
 
+bool PanelView::isHorizontal() const
+{
+    return location() == Plasma::BottomEdge ||
+           location() == Plasma::TopEdge;
+}
+
 void PanelView::pinchContainment(const QRect &screenGeom)
 {
-    bool horizontal = location() == Plasma::BottomEdge ||
-                      location() == Plasma::TopEdge;
+    kDebug() << "**************************** pinching" << screenGeom << m_lastSeenSize;
+    bool horizontal = isHorizontal();
 
     int sw = screenGeom.width();
     int sh = screenGeom.height();
@@ -276,26 +328,71 @@ void PanelView::pinchContainment(const QRect &screenGeom)
     QSizeF min = c->minimumSize();
     QSizeF max = c->maximumSize();
 
+    if (m_lastSeenSize != (horizontal ? sw : sh)) {
+        // we're adjusting size. store the current size now
+        KConfigGroup sizes  = config();
+        sizes = KConfigGroup(&sizes, "Sizes");
+        //TODO: should we store different sizes based on horiz vs vert?
+        KConfigGroup lastSize(&sizes, QString::number(m_lastSeenSize));
+        lastSize.writeEntry("size", size());
+        lastSize.writeEntry("offset", m_offset);
+        lastSize.writeEntry("min", min);
+        lastSize.writeEntry("max", max);
+
+        QString last = QString::number(horizontal ? sw : sh);
+        if (sizes.hasGroup(last)) {
+            KConfigGroup thisSize(&sizes, last);
+            c->setMinimumSize(thisSize.readEntry("min", min));
+            c->setMaximumSize(thisSize.readEntry("max", max));
+            c->resize(thisSize.readEntry("size", c->geometry().size()));
+            m_offset = thisSize.readEntry("offset", 0);
+        }
+
+        m_lastSeenSize = (horizontal ? sw : sh);
+    }
+
+    // Pinching strategy:
+    // if our containment is too big for the size of the screen we are now on,
+    // then we first try and limit the offset and then if that still doesn't
+    // give us enough room, we limit the size of the panel itself by setting
+    // the minimum and maximum sizes.
+
     //kDebug() << "checking panel" << c->geometry() << "against" << screenGeom;
     if (horizontal) {
-        if (min.width() > sw) {
+        if (m_offset + min.width() > sw) {
             //kDebug() << "min size is too wide!";
-            c->setMinimumSize(sw, min.height());
+            if (min.width() > sw) {
+                c->setMinimumSize(sw, min.height());
+            } else {
+                m_offset = sw - min.width();
+            }
         }
 
-        if (max.width() > sw) {
+        if (m_offset + max.width() > sw) {
             //kDebug() << "max size is too wide!";
-            c->setMaximumSize(sw, max.height());
+            if (max.width() > sw) {
+                c->setMaximumSize(sw, max.height());
+            } else {
+                m_offset = sw - max.width();
+            }
         }
     } else {
-        if (min.height() > sh) {
+        if (m_offset + min.height() > sh) {
             //kDebug() << "min size is too tall!";
-            c->setMinimumSize(min.width(), sh);
+            if (min.height() > sh) {
+                c->setMinimumSize(min.width(), sh);
+            } else {
+                m_offset = sh - min.height();
+            }
         }
 
-        if (max.height() > sh) {
+        if (m_offset + max.height() > sh) {
             //kDebug() << "max size is too tall!";
-            c->setMaximumSize(max.width(), sh);
+            if (max.height() > sh) {
+                c->setMaximumSize(max.width(), sh);
+            } else {
+                m_offset = sh - max.height();
+            }
         }
     }
 
@@ -307,6 +404,8 @@ void PanelView::setOffset(int newOffset)
     m_offset = newOffset;
     m_viewConfig.writeEntry("Offset", m_offset);
 
+    //TODO: do we ever need to worry about pinching here, or
+    //      do we just assume that the offset is always < screenSize - containmentSize?
     updatePanelGeometry();
 }
 
@@ -349,8 +448,8 @@ void PanelView::togglePanelController()
 
         connect(m_panelController, SIGNAL(offsetChanged(int)), this, SLOT(setOffset(int)));
         connect(m_panelController, SIGNAL(alignmentChanged(Qt::Alignment)), this, SLOT(setAlignment(Qt::Alignment)));
-        connect(m_panelController, SIGNAL(beginLocationChange()), this, SLOT(locationChangeBegun()));
-        connect(m_panelController, SIGNAL(commitLocationChange()), this, SLOT(locationChangeCommitted()));
+
+        connect(m_panelController, SIGNAL(locationChanged(Plasma::Location)), this, SLOT(setLocation(Plasma::Location)));
     }
 
     if (!m_panelController->isVisible()) {
@@ -363,17 +462,6 @@ void PanelView::togglePanelController()
         delete m_panelController;
         m_panelController = 0;
     }
-}
-
-void PanelView::locationChangeBegun()
-{
-    disconnect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
-}
-
-void PanelView::locationChangeCommitted()
-{
-    updatePanelGeometry();
-    connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
 }
 
 Qt::Alignment PanelView::alignmentFilter(Qt::Alignment align) const

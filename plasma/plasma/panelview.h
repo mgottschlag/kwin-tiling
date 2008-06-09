@@ -49,12 +49,6 @@ public:
     ~PanelView();
 
     /**
-     * Sets the location (screen edge) where this panel is positioned.
-     * @param location the location to place the panel at
-     */
-    void setLocation(Plasma::Location location);
-
-    /**
      * @return the location (screen edge) where this panel is positioned.
      */
     Plasma::Location location() const;
@@ -98,6 +92,12 @@ public Q_SLOTS:
      */
     void setAlignment(Qt::Alignment align);
 
+    /**
+     * Sets the location (screen edge) where this panel is positioned.
+     * @param location the location to place the panel at
+     */
+    void setLocation(Plasma::Location location);
+
 protected:
     void updateStruts();
     virtual void moveEvent(QMoveEvent *event);
@@ -106,10 +106,6 @@ protected:
 private Q_SLOTS:
     void showAppletBrowser();
     void togglePanelController();
-    //The following two slots are for a kind of a "transaction" where you can change the geometry,
-    //formFactor and location of the containment but updatePanelGeometry will be called a single time at the commit
-    void locationChangeBegun();
-    void locationChangeCommitted();
 
     /**
      * Updates the panel's position according to the screen and containment
@@ -120,6 +116,7 @@ private Q_SLOTS:
 
 private:
     Qt::Alignment alignmentFilter(Qt::Alignment align) const;
+    bool isHorizontal() const;
 
     Plasma::Svg *m_background;
 
@@ -129,6 +126,7 @@ private:
 
     int m_offset;
     Qt::Alignment m_alignment;
+    int m_lastSeenSize;
 };
 
 #endif

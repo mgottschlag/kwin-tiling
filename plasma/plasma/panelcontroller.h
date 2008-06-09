@@ -70,8 +70,7 @@ Q_SIGNALS:
      void removePanel();
      void offsetChanged(int offset);
      void alignmentChanged(Qt::Alignment);
-     void beginLocationChange();
-     void commitLocationChange();
+     void locationChanged(Plasma::Location);
 
 private:
     Q_PRIVATE_SLOT(d, void rulersMoved(int offset, int minLength, int minLength))

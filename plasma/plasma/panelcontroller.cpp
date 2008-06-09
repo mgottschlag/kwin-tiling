@@ -673,7 +673,7 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
         if (!screenGeom.contains(event->globalPos())) {
             //move panel to new screen if dragged there
             int targetScreen = desktop->screenNumber(event->globalPos());
-            kDebug() << "Moving panel from screen" << d->containment->screen() << "to screen" << targetScreen;
+            //kDebug() << "Moving panel from screen" << d->containment->screen() << "to screen" << targetScreen;
             d->containment->setScreen(targetScreen);
             return;
         }
@@ -687,10 +687,8 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
             return;
         }
 
-        Plasma::FormFactor oldFormFactor = d->containment->formFactor();
-        Plasma::FormFactor newFormFactor = d->containment->formFactor();
         const Plasma::Location oldLocation = d->containment->location();
-        Plasma::Location newLocation = d->containment->location();
+        Plasma::Location newLocation = oldLocation;
         float screenAspect = float(screenGeom.height()/screenGeom.width());
 
         /* Use diagonal lines so we get predictable behavior when moving the panel
@@ -702,13 +700,11 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
                 if (d->containment->location() == Plasma::TopEdge) {
                     return;
                 } else {
-                    newFormFactor = Plasma::Horizontal;
                     newLocation = Plasma::TopEdge;
                 }
             } else if (d->containment->location() == Plasma::RightEdge) {
                     return;
             } else {
-                newFormFactor = Plasma::Vertical;
                 newLocation = Plasma::RightEdge;
             }
         } else {
@@ -716,13 +712,11 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
                 if (d->containment->location() == Plasma::LeftEdge) {
                     return;
                 } else {
-                    newFormFactor = Plasma::Vertical;
                     newLocation = Plasma::LeftEdge;
                 }
             } else if(d->containment->location() == Plasma::BottomEdge) {
                     return;
             } else {
-                newFormFactor = Plasma::Horizontal;
                 newLocation = Plasma::BottomEdge;
             }
         }
@@ -730,33 +724,7 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
 
         //If the orientation changed swap width and height
         if (oldLocation != newLocation) {
-            int panelHeight;
-
-            if (oldFormFactor == Plasma::Vertical) {
-                panelHeight = d->containment->size().width();
-            } else {
-                panelHeight = d->containment->size().height();
-            }
-
-            //FIXME: to achieve a reliable resize it seems that it is necessary to resize, set min and max sizes and resize again, a little weird
-
-            emit beginLocationChange();
-            d->containment->setFormFactor(newFormFactor);
-            d->containment->setLocation(newLocation);
-
-            if (newFormFactor == Plasma::Vertical) {
-                d->containment->resize(panelHeight, d->containment->preferredSize().height());
-                d->containment->setMaximumSize(panelHeight, qMin(screenGeom.height(), d->ruler->maxLength()));
-                d->containment->setMinimumSize(panelHeight, qMin(screenGeom.height(), d->ruler->minLength()));
-                d->containment->resize(panelHeight, d->containment->preferredSize().height());
-            } else {
-                d->containment->resize(d->containment->preferredSize().width(), panelHeight);
-                d->containment->setMaximumSize(qMin(screenGeom.width(), d->ruler->maxLength()), panelHeight);
-                d->containment->setMinimumSize(qMin(screenGeom.width(), d->ruler->minLength()), panelHeight);
-                d->containment->resize(d->containment->preferredSize().width(), panelHeight);
-            }
-
-            emit commitLocationChange();
+            emit locationChanged(newLocation);
         }
 
         return;
