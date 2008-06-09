@@ -25,4 +25,4 @@ install(TARGETS kworkspace ${INSTALL_TARGETS_DEFAULT_ARGS} )
 install( FILES kdisplaymanager.h
                kworkspace.h
                kwindowlistmenu.h
-         DESTINATION ${INCLUDE_INSTALL_DIR}/kworkspace )
+         DESTINATION ${INCLUDE_INSTALL_DIR}/kworkspace COMPONENT Devel )
