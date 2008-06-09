@@ -66,8 +66,10 @@ namespace Control
          * Device medium types
          * - Ieee8023: wired ethernet
          * - Ieee80211: the popular family of wireless networks
+         * - Gsm: cellular device of the GSM family, used in Europe
+         * - Cdma: cellular device of the CDMA family, used in the USA
          */
-        enum Type { UnknownType, Ieee8023, Ieee80211 };
+        enum Type { UnknownType, Ieee8023, Ieee80211, Gsm, Cdma };
 
         Q_DECLARE_FLAGS(Capabilities, Capability)
 

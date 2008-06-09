@@ -13,6 +13,8 @@ set(solidcontrol_LIB_SRCS
    networking.cpp
    networkmanager.cpp
    networkinterface.cpp
+   networkcdmainterface.cpp
+   networkgsminterface.cpp
    networkipv4config.cpp
    wirednetworkinterface.cpp
    wirelessaccesspoint.cpp
@@ -40,6 +42,8 @@ install( FILES solidpowermanager.desktop solidnetworkmanager.desktop solidblueto
 install( FILES powermanager.h networkmanager.h networkinterface.h wirednetworkinterface.h
     wirelessnetworkinterface.h wirelessaccesspoint.h bluetoothmanager.h bluetoothinterface.h
     bluetoothremotedevice.h bluetoothinputdevice.h bluetoothsecurity.h
-    singletondefs.h networking.h networkipv4config.h solid_control_export.h DESTINATION
+    singletondefs.h networking.h networkipv4config.h solid_control_export.h 
+    networkcdmainterface.h networkgsminterface.h
+    DESTINATION
 ${INCLUDE_INSTALL_DIR}/solid/control)
 
