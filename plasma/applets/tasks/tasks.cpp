@@ -65,22 +65,21 @@ void Tasks::init()
     //like in Qt's designer
     //TODO : Qt's bug??
     setMaximumSize(INT_MAX,INT_MAX);
-   
+
     m_layout = new QGraphicsLinearLayout(this);
     m_layout->setContentsMargins(0,0,0,0);
     m_layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     //TODO : Qt's bug??
     m_layout->setMaximumSize(INT_MAX,INT_MAX);
     m_layout->addStretch();
-   
-   
+
     if (formFactor() == Plasma::Vertical) {
         m_layout->setOrientation(Qt::Vertical);
     } else {
         m_layout->setOrientation(Qt::Horizontal);
     }
     setLayout(m_layout);
-    
+
     KConfigGroup cg = config();
 #ifdef TOOLTIP_MANAGER
     m_showTooltip = cg.readEntry("showTooltip", true);
