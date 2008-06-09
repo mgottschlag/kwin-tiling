@@ -88,7 +88,6 @@ URLGrabber::~URLGrabber()
     while (it.hasNext())
         delete it.next();
     delete myActions;
-    qDeleteAll(myMatches);
 }
 
 //
@@ -477,7 +476,8 @@ ClipAction::ClipAction( KConfig *kc, const QString& group )
 
 ClipAction::~ClipAction()
 {
-    qDeleteAll(myCommands);
+    while (!myCommands.isEmpty())
+        delete myCommands.takeFirst();
 }
 
 
