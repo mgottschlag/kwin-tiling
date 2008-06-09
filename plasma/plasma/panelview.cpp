@@ -366,6 +366,16 @@ void PanelView::pinchContainment(const QRect &screenGeom)
             c->setMinimumSize(thisSize.readEntry("min", min));
             c->setMaximumSize(thisSize.readEntry("max", max));
             m_offset = thisSize.readEntry("offset", 0);
+        } else if (m_lastSeenSize < (horizontal ? sw : sh) &&
+                   c->geometry().width() == m_lastSeenSize) {
+            // we are moving from a smaller space where we are 100% to a larger one
+            if (horizontal) {
+                c->setMaximumSize(sw, max.height());
+                c->resize(sw, c->geometry().height());
+            } else {
+                c->setMaximumSize(max.width(), sh);
+                c->resize(c->geometry().width(), sh);
+            }
         }
     }
 
