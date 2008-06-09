@@ -389,7 +389,8 @@ QRect Clock::preparePainter(QPainter *p, const QRect &rect, const QFont &font, c
     do {
         p->setFont(tmpFont);
         tmpFont.setPointSize(qMax(KGlobalSettings::smallestReadableFont().pointSize(), tmpFont.pointSize() - 1));
-        tmpRect = p->boundingRect(rect, Qt::TextWordWrap, text);
+        int flags = (formFactor() == Plasma::Horizontal) ? Qt::TextSingleLine : Qt::TextWordWrap;
+        tmpRect = p->boundingRect(rect, flags, text);
     } while (tmpFont.pointSize() > KGlobalSettings::smallestReadableFont().pointSize() && (tmpRect.width() > rect.width() ||
             tmpRect.height() > rect.height()));
 
