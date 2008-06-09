@@ -126,7 +126,10 @@ private:
 
     int m_offset;
     Qt::Alignment m_alignment;
+    QSizeF m_lastMin;
+    QSizeF m_lastMax;
     int m_lastSeenSize;
+    bool m_lastHorizontal;
 };
 
 #endif

@@ -37,7 +37,8 @@
 
 PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     : Plasma::View(panel, id, parent),
-      m_panelController(0)
+      m_panelController(0),
+      m_lastHorizontal(true)
 {
     Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
 
@@ -49,8 +50,11 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     // pinchContainment calls updatePanelGeometry for us
 
     QRect screenRect = QApplication::desktop()->screenGeometry(containment()->screen());
-    m_lastSeenSize = isHorizontal() ? screenRect.width() : screenRect.height();
+    m_lastHorizontal = isHorizontal();
+    m_lastSeenSize = m_lastHorizontal ? screenRect.width() : screenRect.height();
     pinchContainment(screenRect);
+    m_lastMin = containment()->minimumSize();
+    m_lastMax = containment()->maximumSize();
 
 
     if (panel) {
@@ -135,9 +139,9 @@ void PanelView::setLocation(Plasma::Location location)
     c->setMinimumSize(min);
     c->setMaximumSize(max);
 
-    updatePanelGeometry();
     QRect screenRect = QApplication::desktop()->screenGeometry(c->screen());
-    //pinchContainment(screenRect);
+    pinchContainment(screenRect);
+    //updatePanelGeometry();
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
 }
 
@@ -153,11 +157,12 @@ Plasma::Corona *PanelView::corona() const
 
 void PanelView::updatePanelGeometry()
 {
-    kDebug() << "New panel geometry is" << containment()->geometry();
+    Plasma::Containment *c = containment();
+    //kDebug() << "New panel geometry is" << c->geometry();
 
-    QSize size = containment()->size().toSize();
+    QSize size = c->size().toSize();
     QRect geom(QPoint(0,0), size);
-    int screen = containment()->screen();
+    int screen = c->screen();
 
     if (screen < 0) {
         //TODO: is there a valid use for -1 with a panel? floating maybe?
@@ -246,7 +251,7 @@ void PanelView::updatePanelGeometry()
         }
 
         //enable borders if needed
-        //containment()->setGeometry(QRect(geom.left(), containment()->geometry().top(), geom.width(), geom.height()));
+        //c->setGeometry(QRect(geom.left(), c->geometry().top(), geom.width(), geom.height()));
         break;
 
     case Plasma::LeftEdge:
@@ -259,7 +264,7 @@ void PanelView::updatePanelGeometry()
         }
 
         //enable borders if needed
-        //containment()->setGeometry(QRect(containment()->geometry().left(), geom.top(), geom.width(), geom.height()));
+        //c->setGeometry(QRect(c->geometry().left(), geom.top(), geom.width(), geom.height()));
         break;
 
     case Plasma::RightEdge:
@@ -272,7 +277,7 @@ void PanelView::updatePanelGeometry()
         }
 
         //enable borders if needed
-        //containment()->setGeometry(QRect(containment()->geometry().left(), geom.top(), geom.width(), geom.height()));
+        //c->setGeometry(QRect(c->geometry().left(), geom.top(), geom.width(), geom.height()));
         break;
 
     case Plasma::BottomEdge:
@@ -286,11 +291,11 @@ void PanelView::updatePanelGeometry()
         }
 
         //enable borders if needed
-        //containment()->setGeometry(QRect(geom.left(), containment()->geometry().top(), geom.width(), geom.height()));
+        //c->setGeometry(QRect(geom.left(), c->geometry().top(), geom.width(), geom.height()));
         break;
     }
 
-    kDebug() << (QObject*)this << "thinks its panel is at " << geom;
+    //kDebug() << (QObject*)this << "thinks its panel is at " << geom;
     if (geom == geometry()) {
         // our geometry is the same, but the panel moved around
         // so make sure our struts are still valid
@@ -299,9 +304,12 @@ void PanelView::updatePanelGeometry()
         setGeometry(geom);
     }
 
+    m_lastMin = c->minimumSize();
+    m_lastMax = c->maximumSize();
+
     //update the panel controller location position and size
     if (m_panelController) {
-        m_panelController->setLocation(containment()->location());
+        m_panelController->setLocation(c->location());
 
         if (m_panelController->isVisible()) {
             m_panelController->resize(m_panelController->sizeHint());
@@ -328,27 +336,37 @@ void PanelView::pinchContainment(const QRect &screenGeom)
     QSizeF min = c->minimumSize();
     QSizeF max = c->maximumSize();
 
-    if (m_lastSeenSize != (horizontal ? sw : sh)) {
+    KConfigGroup sizes = config();
+    sizes = KConfigGroup(&sizes, "Sizes");
+
+    if (m_lastHorizontal != horizontal ||
+        m_lastSeenSize != (horizontal ? sw : sh)) {
         // we're adjusting size. store the current size now
-        KConfigGroup sizes  = config();
-        sizes = KConfigGroup(&sizes, "Sizes");
-        //TODO: should we store different sizes based on horiz vs vert?
-        KConfigGroup lastSize(&sizes, QString::number(m_lastSeenSize));
+        KConfigGroup lastSize(&sizes, (m_lastHorizontal ? "Horizontal" : "Vertical") +
+                                      QString::number(m_lastSeenSize));
         lastSize.writeEntry("size", size());
         lastSize.writeEntry("offset", m_offset);
-        lastSize.writeEntry("min", min);
-        lastSize.writeEntry("max", max);
+        lastSize.writeEntry("min", m_lastMin);
+        lastSize.writeEntry("max", m_lastMax);
 
-        QString last = QString::number(horizontal ? sw : sh);
+        QString last = (horizontal ? "Horizontal" : "Vertical") +
+                       QString::number(horizontal ? sw : sh);
         if (sizes.hasGroup(last)) {
             KConfigGroup thisSize(&sizes, last);
+
+            kDebug() << "has saved properties..." << last
+                     << thisSize.readEntry("min", min)
+                     << thisSize.readEntry("max", max)
+                     << thisSize.readEntry("size", c->geometry().size())
+                     << thisSize.readEntry("offset", 0);
+
+            c->setMinimumSize(0, 0);
+            c->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
+            c->resize(thisSize.readEntry("size", c->geometry().size()));
             c->setMinimumSize(thisSize.readEntry("min", min));
             c->setMaximumSize(thisSize.readEntry("max", max));
-            c->resize(thisSize.readEntry("size", c->geometry().size()));
             m_offset = thisSize.readEntry("offset", 0);
         }
-
-        m_lastSeenSize = (horizontal ? sw : sh);
     }
 
     // Pinching strategy:
@@ -357,10 +375,11 @@ void PanelView::pinchContainment(const QRect &screenGeom)
     // give us enough room, we limit the size of the panel itself by setting
     // the minimum and maximum sizes.
 
-    //kDebug() << "checking panel" << c->geometry() << "against" << screenGeom;
+    kDebug() << "checking panel" << c->geometry() << "against" << screenGeom;
     if (horizontal) {
+        kDebug() << "becoming horizontal with" << m_offset << min.width() << max.width() << sw;
         if (m_offset + min.width() > sw) {
-            //kDebug() << "min size is too wide!";
+            kDebug() << "min size is too wide!";
             if (min.width() > sw) {
                 c->setMinimumSize(sw, min.height());
             } else {
@@ -369,7 +388,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         }
 
         if (m_offset + max.width() > sw) {
-            //kDebug() << "max size is too wide!";
+            kDebug() << "max size is too wide!";
             if (max.width() > sw) {
                 c->setMaximumSize(sw, max.height());
             } else {
@@ -378,7 +397,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         }
     } else {
         if (m_offset + min.height() > sh) {
-            //kDebug() << "min size is too tall!";
+            kDebug() << "min size is too tall!";
             if (min.height() > sh) {
                 c->setMinimumSize(min.width(), sh);
             } else {
@@ -387,7 +406,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         }
 
         if (m_offset + max.height() > sh) {
-            //kDebug() << "max size is too tall!";
+            kDebug() << "max size is too tall!";
             if (max.height() > sh) {
                 c->setMaximumSize(max.width(), sh);
             } else {
@@ -396,7 +415,17 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         }
     }
 
+    if (m_lastHorizontal != horizontal ||
+        m_lastSeenSize != (horizontal ? sw : sh)) {
+        m_lastHorizontal = horizontal;
+        m_lastSeenSize = (horizontal ? sw : sh);
+    }
+
     updatePanelGeometry();
+
+    if (m_panelController) {
+        m_panelController->setContainment(c);
+    }
 }
 
 void PanelView::setOffset(int newOffset)
