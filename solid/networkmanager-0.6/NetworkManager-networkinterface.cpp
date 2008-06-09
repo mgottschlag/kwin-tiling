@@ -32,14 +32,28 @@
 
 void dump(const NMDBusDeviceProperties &device)
 {
-    kDebug(1441) << "dump(const NMDBusDeviceProperties &device):\n    Object path: " << device.path.path() << "\n    Interface: " << device.interface
-        << "\n    Type: " << device.type << "\n    Udi: " << device.udi << "\n    Active: "<< device.active
-        << "\n    Activation stage: " << device.activationStage 
-        << "\n    Hardware address: " << device.hardwareAddress << "\n    mode: " << device.mode
-        << "\n    Strength: " << device.strength << "\n    Link active: " << device.linkActive
-        << "\n    Speed: " << device.speed << "\n    Capabilities: " << device.capabilities
-        << "\n    Capabilities type: " << device.capabilitiesType << "\n    active net path: "
-        << device.activeNetPath << "\n    Networks:" << device.networks << endl;
+    kDebug(1441)
+        << "\n    path:" << device.path.path()
+        << "\n    interface:" << device.interface
+        << "\n    type:" << device.type
+        << "\n    udi:" << device.udi
+        << "\n    active:" << device.active
+        << "\n    activationStage:" << device.activationStage
+        << "\n    ipv4Address:" << device.ipv4Address
+        << "\n    subnetMask:" << device.subnetMask
+        << "\n    broadcast:" << device.broadcast
+        << "\n    hardwareAddress:" << device.hardwareAddress
+        << "\n    route:" << device.route
+        << "\n    primaryDNS:" << device.primaryDNS
+        << "\n    secondaryDNS:" << device.secondaryDNS
+        << "\n    strength:" << device.strength
+        << "\n    linkActive:" << device.linkActive
+        << "\n    speed:" << device.speed
+        << "\n    capabilities:" << device.capabilities
+        << "\n    capabilitiesType:" << device.capabilitiesType
+        << "\n    activeNetPath:" << device.activeNetPath
+        << "\n    networks:" << device.networks
+        ;
 }
 
 void deserialize(const QDBusMessage &message, NMDBusDeviceProperties & device)
