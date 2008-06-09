@@ -34,9 +34,9 @@ namespace Control
 class SOLIDCONTROL_EXPORT IPv4Config
 {
 public:
-    IPv4Config(QList< QList<quint32> > addresses,
-        quint32 broadcast, QString hostname, QList<quint32> nameservers,
-        QStringList domains, QString nisDomain, QList<quint32> nisServers);
+    IPv4Config(const QList< QList<quint32> > &addresses,
+        quint32 broadcast, const QString &hostname, const QList<quint32> &nameservers,
+        const QStringList &domains, const QString &nisDomain, const QList<quint32> &nisServers);
     IPv4Config();
     ~IPv4Config();
     IPv4Config(const IPv4Config&);

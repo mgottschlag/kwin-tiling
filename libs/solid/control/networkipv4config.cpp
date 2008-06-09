@@ -28,9 +28,9 @@ namespace Control
 class IPv4Config::Private
 {
 public:
-    Private(QList< QList<quint32> > theAddresses,
-        quint32 theBroadcast, QString theHostname, QList<quint32> theNameservers,
-        QStringList theDomains, QString theNisDomain, QList<quint32> theNisServers)
+    Private(const QList< QList<quint32> > &theAddresses,
+        quint32 theBroadcast, const QString &theHostname, const QList<quint32> &theNameservers,
+        const QStringList &theDomains, const QString &theNisDomain, const QList<quint32> &theNisServers)
         : addresses(theAddresses), broadcast(theBroadcast),
     hostname(theHostname), nameservers(theNameservers), domains(theDomains),
     nisDomain(theNisDomain), nisServers(theNisServers)
@@ -48,9 +48,9 @@ public:
 }
 }
 
-Solid::Control::IPv4Config::IPv4Config(QList< QList<quint32> > addresses,
-        quint32 broadcast, QString hostname, QList<quint32> nameservers,
-        QStringList domains, QString nisDomain, QList<quint32> nisServers)
+Solid::Control::IPv4Config::IPv4Config(const QList< QList<quint32> > &addresses,
+        quint32 broadcast, const QString &hostname, const QList<quint32> &nameservers,
+        const QStringList &domains, const QString &nisDomain, const QList<quint32> &nisServers)
 : d(new Private(addresses, broadcast, hostname, nameservers, domains, 
             nisDomain, nisServers))
 {
