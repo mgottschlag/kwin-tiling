@@ -61,6 +61,7 @@ protected:
      * @param widget The widget to embed in the screensaver widget.
      */
     void embed( QWidget *widget );
+    bool event( QEvent* event );
 
 private:
     KScreenSaverPrivate *d;

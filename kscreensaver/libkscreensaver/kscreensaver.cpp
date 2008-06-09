@@ -24,6 +24,7 @@
 #include <QTimer>
 #include <QtGui/QX11Info>
 #include <QApplication>
+#include <QDebug>
 #include <krandom.h>
 
 #ifdef Q_WS_X11
@@ -43,6 +44,13 @@ KScreenSaver::KScreenSaver( WId id ) : QWidget()
 KScreenSaver::~KScreenSaver()
 {
     destroy( false, false );
+}
+
+bool KScreenSaver::event(QEvent* e)
+{
+    bool r = QWidget::event(e);
+    if (e->type() == QEvent::Polish)
+        setAttribute(Qt::WA_StyledBackground, false);
 }
 
 void KScreenSaver::embed( QWidget *w )
