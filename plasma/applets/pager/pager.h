@@ -132,6 +132,7 @@ class Pager : public Plasma::Applet
         QPointF m_dragOriginalPos;
         QPointF m_dragCurrentPos;
         WId m_dragId;
+        int m_dirtyDesktop;
         int m_dragStartDesktop;
         int m_dragHighlightedDesktop;
 

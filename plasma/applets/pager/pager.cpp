@@ -45,7 +45,7 @@
 #include <plasma/theme.h>
 #include <plasma/animator.h>
 
-const int WINDOW_UPDATE_DELAY = 50;
+const int WINDOW_UPDATE_DELAY = 500;
 const int DRAG_SWITCH_DELAY = 1000;
 
 Pager::Pager(QObject *parent, const QVariantList &args)
@@ -58,6 +58,7 @@ Pager::Pager(QObject *parent, const QVariantList &args)
       m_columns(0),
       m_hoverIndex(-1),
       m_dragId(0),
+      m_dirtyDesktop(-1),
       m_dragStartDesktop(-1),
       m_dragHighlightedDesktop(-1),
       m_dragSwitchDesktop(-1)
@@ -346,7 +347,12 @@ void Pager::recalculateWindowRects()
             }
         }
     }
-    update();
+
+    if (m_dirtyDesktop <= -1 || m_dirtyDesktop > m_rects.count() + 1) {
+        update();
+    } else {
+        update(m_rects[m_dirtyDesktop]);
+    }
 }
 
 void Pager::configAccepted()
@@ -394,6 +400,8 @@ void Pager::currentDesktopChanged(int desktop)
 {
     m_currentDesktop = desktop;
 
+    m_dirtyDesktop = -1;
+    
     if (!m_timer->isActive()) {
         m_timer->start(WINDOW_UPDATE_DELAY);
     }
@@ -402,6 +410,9 @@ void Pager::currentDesktopChanged(int desktop)
 void Pager::windowAdded(WId id)
 {
     Q_UNUSED(id)
+
+    KWindowInfo info = KWindowSystem::windowInfo(id, NET::WMGeometry | NET::WMFrameExtents | NET::WMWindowType | NET::WMDesktop | NET::WMState | NET::XAWMState);
+    m_dirtyDesktop = info.desktop() - 1;
 
     if (!m_timer->isActive()) {
         m_timer->start(WINDOW_UPDATE_DELAY);
@@ -412,6 +423,9 @@ void Pager::windowRemoved(WId id)
 {
     Q_UNUSED(id)
 
+    KWindowInfo info = KWindowSystem::windowInfo(id, NET::WMGeometry | NET::WMFrameExtents | NET::WMWindowType | NET::WMDesktop | NET::WMState | NET::XAWMState);
+    m_dirtyDesktop = info.desktop() - 1;
+
     if (!m_timer->isActive()) {
         m_timer->start(WINDOW_UPDATE_DELAY);
     }
@@ -421,6 +435,9 @@ void Pager::activeWindowChanged(WId id)
 {
     Q_UNUSED(id)
 
+    KWindowInfo info = KWindowSystem::windowInfo(id, NET::WMGeometry | NET::WMFrameExtents | NET::WMWindowType | NET::WMDesktop | NET::WMState | NET::XAWMState);
+    m_dirtyDesktop = info.desktop() - 1;
+
     if (!m_timer->isActive()) {
         m_timer->start(WINDOW_UPDATE_DELAY);
     }
@@ -428,6 +445,8 @@ void Pager::activeWindowChanged(WId id)
 
 void Pager::numberOfDesktopsChanged(int num)
 {
+    m_dirtyDesktop = -1;
+
     m_desktopCount = num;
     if (m_rows > m_desktopCount) {
         m_rows = m_desktopCount;
@@ -442,6 +461,8 @@ void Pager::numberOfDesktopsChanged(int num)
 
 void Pager::desktopNamesChanged()
 {
+    m_dirtyDesktop = -1;
+
     m_rects.clear();
     recalculateGeometry();
 
@@ -452,6 +473,8 @@ void Pager::desktopNamesChanged()
 
 void Pager::stackingOrderChanged()
 {
+    m_dirtyDesktop = -1;
+
     if (!m_timer->isActive()) {
         m_timer->start(WINDOW_UPDATE_DELAY);
     }
@@ -460,6 +483,9 @@ void Pager::stackingOrderChanged()
 void Pager::windowChanged(WId id, unsigned int properties)
 {
     Q_UNUSED(id)
+
+    KWindowInfo info = KWindowSystem::windowInfo(id, NET::WMGeometry | NET::WMFrameExtents | NET::WMWindowType | NET::WMDesktop | NET::WMState | NET::XAWMState);
+    m_dirtyDesktop = info.desktop() - 1;
 
     if (properties & NET::WMGeometry ||
         properties & NET::WMDesktop) {
@@ -471,6 +497,8 @@ void Pager::windowChanged(WId id, unsigned int properties)
 
 void Pager::showingDesktopChanged(bool showing)
 {
+    m_dirtyDesktop = -1;
+
     Q_UNUSED(showing)
     if (!m_timer->isActive()) {
         m_timer->start(WINDOW_UPDATE_DELAY);
