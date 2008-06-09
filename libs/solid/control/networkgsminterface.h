@@ -21,7 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef SOLID_CONTROL_GSMNETWORKINTERFACE_H
 #define SOLID_CONTROL_GSMNETWORKINTERFACE_H
 
-#include "networkinterface.h"
+#include "networkserialinterface.h"
 
 namespace Solid
 {
@@ -31,7 +31,7 @@ namespace Control
     /**
      * This interface represents a GSM cellular network interface
      */
-    class SOLIDCONTROL_EXPORT GsmNetworkInterface : public NetworkInterface
+    class SOLIDCONTROL_EXPORT GsmNetworkInterface : public SerialNetworkInterface
     {
         Q_OBJECT
         Q_DECLARE_PRIVATE(GsmNetworkInterface)

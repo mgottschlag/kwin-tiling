@@ -26,7 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtCore/QStringList>
 
 #include "../networkcdmainterface.h"
-#include "networkinterface.h"
+#include "networkserialinterface.h"
 
 
 namespace Solid
@@ -38,7 +38,7 @@ namespace Ifaces
     /**
      * Represents a wireless network interface
      */
-    class SOLIDCONTROLIFACES_EXPORT CdmaNetworkInterface : virtual public NetworkInterface
+    class SOLIDCONTROLIFACES_EXPORT CdmaNetworkInterface : virtual public SerialNetworkInterface
     {
     public:
         /**

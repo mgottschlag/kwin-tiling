@@ -18,59 +18,59 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "networkcdmainterface.h"
-#include "networkcdmainterface_p.h"
+#include "networkserialinterface.h"
+#include "networkserialinterface_p.h"
 
 #include "frontendobject_p.h"
 #include "soliddefs_p.h"
 #include "ifaces/wirelessaccesspoint.h"
 
-Solid::Control::CdmaNetworkInterface::CdmaNetworkInterface(QObject *backendObject)
-    : SerialNetworkInterface(*new CdmaNetworkInterfacePrivate(this), backendObject)
+Solid::Control::SerialNetworkInterface::SerialNetworkInterface(QObject *backendObject)
+    : NetworkInterface(*new SerialNetworkInterfacePrivate(this), backendObject)
 {
-    Q_D(CdmaNetworkInterface);
+    Q_D(SerialNetworkInterface);
     d->setBackendObject(backendObject);
     makeConnections( backendObject );
 }
 
-Solid::Control::CdmaNetworkInterface::CdmaNetworkInterface(const CdmaNetworkInterface &networkinterface)
-    : SerialNetworkInterface(*new CdmaNetworkInterfacePrivate(this), networkinterface)
+Solid::Control::SerialNetworkInterface::SerialNetworkInterface(const SerialNetworkInterface &networkinterface)
+    : NetworkInterface(*new SerialNetworkInterfacePrivate(this), networkinterface)
 {
-    Q_D(CdmaNetworkInterface);
+    Q_D(SerialNetworkInterface);
     d->setBackendObject(networkinterface.d_ptr->backendObject());
     makeConnections( networkinterface.d_ptr->backendObject() );
 }
 
-Solid::Control::CdmaNetworkInterface::CdmaNetworkInterface(CdmaNetworkInterfacePrivate &dd, QObject *backendObject)
-    : SerialNetworkInterface(dd, backendObject)
+Solid::Control::SerialNetworkInterface::SerialNetworkInterface(SerialNetworkInterfacePrivate &dd, QObject *backendObject)
+    : NetworkInterface(dd, backendObject)
 {
     makeConnections( backendObject );
 }
 
-Solid::Control::CdmaNetworkInterface::CdmaNetworkInterface(CdmaNetworkInterfacePrivate &dd, const CdmaNetworkInterface &networkinterface)
-    : SerialNetworkInterface(dd, networkinterface.d_ptr->backendObject())
+Solid::Control::SerialNetworkInterface::SerialNetworkInterface(SerialNetworkInterfacePrivate &dd, const SerialNetworkInterface &networkinterface)
+    : NetworkInterface(dd, networkinterface.d_ptr->backendObject())
 {
     makeConnections( networkinterface.d_ptr->backendObject() );
 }
 
-Solid::Control::CdmaNetworkInterface::~CdmaNetworkInterface()
+Solid::Control::SerialNetworkInterface::~SerialNetworkInterface()
 {
 }
 
-Solid::Control::NetworkInterface::Type Solid::Control::CdmaNetworkInterface::type() const
+Solid::Control::NetworkInterface::Type Solid::Control::SerialNetworkInterface::type() const
 {
-    return Cdma;
+    return Serial;
 }
 
-void Solid::Control::CdmaNetworkInterface::makeConnections(QObject * source)
+void Solid::Control::SerialNetworkInterface::makeConnections(QObject * source)
 {
     connect(source, SIGNAL(accessPointAppeared(const QString &)),
             this, SLOT(_k_accessPointAdded(const QString &)));
 }
 
-void Solid::Control::CdmaNetworkInterfacePrivate::setBackendObject(QObject *object)
+void Solid::Control::SerialNetworkInterfacePrivate::setBackendObject(QObject *object)
 {
-    SerialNetworkInterfacePrivate::setBackendObject(object);
+    NetworkInterfacePrivate::setBackendObject(object);
 
     if (object) {
         QObject::connect(object, SIGNAL(bitRateChanged(int)),
@@ -78,7 +78,7 @@ void Solid::Control::CdmaNetworkInterfacePrivate::setBackendObject(QObject *obje
     }
 }
 
-void Solid::Control::CdmaNetworkInterface::_k_destroyed(QObject *object)
+void Solid::Control::SerialNetworkInterface::_k_destroyed(QObject *object)
 {
     Q_UNUSED(object);
 }

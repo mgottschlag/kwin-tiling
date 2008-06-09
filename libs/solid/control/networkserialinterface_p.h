@@ -18,45 +18,24 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SOLID_IFACES_GSMNETWORKINTERFACE_H
-#define SOLID_IFACES_GSMNETWORKINTERFACE_H
+#ifndef SOLID_CONTROL_SERIALNETWORKINTERFACE_P_H
+#define SOLID_CONTROL_SERIALNETWORKINTERFACE_P_H
 
-#include "../solid_control_export.h"
-
-#include <QtCore/QStringList>
-
-#include "../networkgsminterface.h"
-#include "networkserialinterface.h"
-
+#include "networkinterface_p.h"
 
 namespace Solid
 {
 namespace Control
 {
-namespace Ifaces
-{
-    /**
-     * Represents a wireless network interface
-     */
-    class SOLIDCONTROLIFACES_EXPORT GsmNetworkInterface : virtual public SerialNetworkInterface
+    class SerialNetworkInterfacePrivate : public NetworkInterfacePrivate
     {
     public:
-        /**
-         * Destroys a GsmNetworkInterface object
-         */
-        virtual ~GsmNetworkInterface();
-        /**
-         * List of wireless networks currently visible to the hardware
-         */
+        explicit SerialNetworkInterfacePrivate(QObject *parent)
+            : NetworkInterfacePrivate(parent) { }
 
-    protected:
-    //Q_SIGNALS:
+        void setBackendObject(QObject *object);
     };
-} //Ifaces
-} //Control
-} //Solid
+}
+}
 
-Q_DECLARE_INTERFACE(Solid::Control::Ifaces::GsmNetworkInterface, "org.kde.Solid.Control.Ifaces.GsmNetworkInterface/0.1")
-
-#endif //SOLID_IFACES_GSMNETWORKINTERFACE_H
-
+#endif //SOLID_CONTROL_SERIALNETWORKINTERFACE_P_H

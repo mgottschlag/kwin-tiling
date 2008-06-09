@@ -69,7 +69,7 @@ namespace Control
          * - Gsm: cellular device of the GSM family, used in Europe
          * - Cdma: cellular device of the CDMA family, used in the USA
          */
-        enum Type { UnknownType, Ieee8023, Ieee80211, Gsm, Cdma };
+        enum Type { UnknownType, Ieee8023, Ieee80211, Serial, Gsm, Cdma };
 
         Q_DECLARE_FLAGS(Capabilities, Capability)
 

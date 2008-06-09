@@ -18,48 +18,48 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SOLID_CONTROL_CDMANETWORKINTERFACE_H
-#define SOLID_CONTROL_CDMANETWORKINTERFACE_H
+#ifndef SOLID_CONTROL_SERIALNETWORKINTERFACE_H
+#define SOLID_CONTROL_SERIALNETWORKINTERFACE_H
 
-#include "networkserialinterface.h"
+#include "networkinterface.h"
 
 namespace Solid
 {
 namespace Control
 {
-    class CdmaNetworkInterfacePrivate;
+    class SerialNetworkInterfacePrivate;
     /**
-     * This interface represents a CDMA cellular network interface
+     * This interface represents a SERIAL cellular network interface
      */
-    class SOLIDCONTROL_EXPORT CdmaNetworkInterface : public SerialNetworkInterface
+    class SOLIDCONTROL_EXPORT SerialNetworkInterface : public NetworkInterface
     {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(CdmaNetworkInterface)
+        Q_DECLARE_PRIVATE(SerialNetworkInterface)
 
     public:
         /**
-         * Creates a new CdmaNetworkInterface object.
+         * Creates a new SerialNetworkInterface object.
          *
          * @param backendObject the network object provided by the backend
          */
-        CdmaNetworkInterface(QObject *backendObject = 0);
+        SerialNetworkInterface(QObject *backendObject = 0);
 
         /**
          * Constructs a copy of a network.
          *
          * @param network the network to copy
          */
-        CdmaNetworkInterface(const CdmaNetworkInterface &network);
+        SerialNetworkInterface(const SerialNetworkInterface &network);
 
         /**
-         * Destroys a CdmaNetworkInterface object.
+         * Destroys a SerialNetworkInterface object.
          */
-        virtual ~CdmaNetworkInterface();
+        virtual ~SerialNetworkInterface();
 
         /**
          * The NetworkInterface type.
          *
-         * @return the NetworkInterface::Type.  This always returns NetworkInterface::Cdma
+         * @return the NetworkInterface::Type.  This always returns NetworkInterface::Ieee8023
          */
         virtual NetworkInterface::Type type() const;
 
@@ -68,12 +68,12 @@ namespace Control
         /**
          * @internal
          */
-        CdmaNetworkInterface(CdmaNetworkInterfacePrivate &dd, QObject *backendObject);
+        SerialNetworkInterface(SerialNetworkInterfacePrivate &dd, QObject *backendObject);
 
         /**
          * @internal
          */
-        CdmaNetworkInterface(CdmaNetworkInterfacePrivate &dd, const CdmaNetworkInterface &network);
+        SerialNetworkInterface(SerialNetworkInterfacePrivate &dd, const SerialNetworkInterface &network);
 
         void makeConnections(QObject * source);
     private Q_SLOTS:
@@ -85,5 +85,5 @@ namespace Control
 } //Control
 } //Solid
 
-#endif // SOLID_CONTROL_CDMANETWORKINTERFACE_H
+#endif // SOLID_CONTROL_SERIALNETWORKINTERFACE_H
 

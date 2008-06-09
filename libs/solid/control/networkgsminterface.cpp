@@ -26,7 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "ifaces/wirelessaccesspoint.h"
 
 Solid::Control::GsmNetworkInterface::GsmNetworkInterface(QObject *backendObject)
-    : NetworkInterface(*new GsmNetworkInterfacePrivate(this), backendObject)
+    : SerialNetworkInterface(*new GsmNetworkInterfacePrivate(this), backendObject)
 {
     Q_D(GsmNetworkInterface);
     d->setBackendObject(backendObject);
@@ -34,7 +34,7 @@ Solid::Control::GsmNetworkInterface::GsmNetworkInterface(QObject *backendObject)
 }
 
 Solid::Control::GsmNetworkInterface::GsmNetworkInterface(const GsmNetworkInterface &networkinterface)
-    : NetworkInterface(*new GsmNetworkInterfacePrivate(this), networkinterface)
+    : SerialNetworkInterface(*new GsmNetworkInterfacePrivate(this), networkinterface)
 {
     Q_D(GsmNetworkInterface);
     d->setBackendObject(networkinterface.d_ptr->backendObject());
@@ -42,16 +42,14 @@ Solid::Control::GsmNetworkInterface::GsmNetworkInterface(const GsmNetworkInterfa
 }
 
 Solid::Control::GsmNetworkInterface::GsmNetworkInterface(GsmNetworkInterfacePrivate &dd, QObject *backendObject)
-    : NetworkInterface(dd, backendObject)
+    : SerialNetworkInterface(dd, backendObject)
 {
-    Q_D(GsmNetworkInterface);
     makeConnections( backendObject );
 }
 
 Solid::Control::GsmNetworkInterface::GsmNetworkInterface(GsmNetworkInterfacePrivate &dd, const GsmNetworkInterface &networkinterface)
-    : NetworkInterface(dd, networkinterface.d_ptr->backendObject())
+    : SerialNetworkInterface(dd, networkinterface.d_ptr->backendObject())
 {
-    Q_D(GsmNetworkInterface);
     makeConnections( networkinterface.d_ptr->backendObject() );
 }
 
@@ -72,7 +70,7 @@ void Solid::Control::GsmNetworkInterface::makeConnections(QObject * source)
 
 void Solid::Control::GsmNetworkInterfacePrivate::setBackendObject(QObject *object)
 {
-    NetworkInterfacePrivate::setBackendObject(object);
+    SerialNetworkInterfacePrivate::setBackendObject(object);
 
     if (object) {
         QObject::connect(object, SIGNAL(bitRateChanged(int)),
@@ -82,5 +80,6 @@ void Solid::Control::GsmNetworkInterfacePrivate::setBackendObject(QObject *objec
 
 void Solid::Control::GsmNetworkInterface::_k_destroyed(QObject *object)
 {
+    Q_UNUSED(object);
 }
 // vim: sw=4 sts=4 et tw=100

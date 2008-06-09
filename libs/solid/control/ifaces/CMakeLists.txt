@@ -7,6 +7,7 @@ set(solidcontrolifaces_LIB_SRCS
    networkinterface.cpp
    networkcdmainterface.cpp
    networkgsminterface.cpp
+   networkserialinterface.cpp
    networkmanager.cpp
    wirednetworkinterface.cpp
    wirelessaccesspoint.cpp
@@ -35,5 +36,5 @@ install(TARGETS solidcontrolifaces ${INSTALL_TARGETS_DEFAULT_ARGS}  )
 
 ########### install files ###############
 
-install( FILES powermanager.h networkmanager.h networkinterface.h networkcdmainterface.h networkgsminterface.h wirednetworkinterface.h wirelessnetworkinterface.h wirelessaccesspoint.h bluetoothremotedevice.h bluetoothinputdevice.h bluetoothinterface.h bluetoothmanager.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/control/ifaces)
+install( FILES powermanager.h networkmanager.h networkinterface.h networkcdmainterface.h networkgsminterface.h networkserialinterface.h wirednetworkinterface.h wirelessnetworkinterface.h wirelessaccesspoint.h bluetoothremotedevice.h bluetoothinputdevice.h bluetoothinterface.h bluetoothmanager.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/control/ifaces)
 

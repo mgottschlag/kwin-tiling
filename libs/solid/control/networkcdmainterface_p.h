@@ -21,17 +21,17 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef SOLID_CONTROL_CDMANETWORKINTERFACE_P_H
 #define SOLID_CONTROL_CDMANETWORKINTERFACE_P_H
 
-#include "networkinterface_p.h"
+#include "networkserialinterface_p.h"
 
 namespace Solid
 {
 namespace Control
 {
-    class CdmaNetworkInterfacePrivate : public NetworkInterfacePrivate
+    class CdmaNetworkInterfacePrivate : public SerialNetworkInterfacePrivate
     {
     public:
         explicit CdmaNetworkInterfacePrivate(QObject *parent)
-            : NetworkInterfacePrivate(parent) { }
+            : SerialNetworkInterfacePrivate(parent) { }
 
         void setBackendObject(QObject *object);
     };
