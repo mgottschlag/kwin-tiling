@@ -3,32 +3,41 @@ IMAGE 0 0 background.png
 
 SCALE OFF
 
-# the image is 400x220, make it centered, all icons need the same adjustment too
-IMAGE_REL CC -200 -110 LT rectangle.png
+# the image is 390x234, make it centered, all icons need the same adjustment too
+IMAGE_REL CC 0 0 CC rectangle.png
 
-ANIM_REL 1 CC -184 -32 LT 14 icon1_anim.png 60
+# these have their relative positions to the rectangle adjusted by -195,-117
+# (i.e. half of the rectangle size)
+# 3,32
+ANIM_REL 1 CC -192 -85 LT 30 icon1_anim.png 85 1
 WAIT_STATE kded
 
-STOP_ANIM 1
-IMAGE_REL CC -184 -32 LT icon1.png
-ANIM_REL 2 CC -115 -32 LT 14 icon2_anim.png 60
-WAIT_STATE confupdate
-
-STOP_ANIM 2
-IMAGE_REL CC -115 -32 LT icon2.png
-ANIM_REL 3 CC -52 -32 LT 14 icon3_anim.png 60
+# 69,32
+ANIM_REL 2 CC -126 -85 LT 30 icon2_anim.png 85 1
 WAIT_STATE kcminit
 
-STOP_ANIM 3
-IMAGE_REL CC -52 -32 LT icon3.png
-ANIM_REL 4 CC 15 -32 LT 14 icon4_anim.png 60
+# 135,32
+ANIM_REL 3 CC -60 -85 LT 29 icon3_anim.png 85 1
 WAIT_STATE ksmserver
 
-STOP_ANIM 4
-IMAGE_REL CC 15 -32 LT icon4.png
-ANIM_REL 5 CC 90 -64 LT 14 icon5_anim.png 60
+# 201,32
+ANIM_REL 4 CC 6 -85  LT 30 icon4_anim.png 85 1
+WAIT_STATE wm
+
+# 263,15
+ANIM_REL 5 CC 68 -102 LT 30 icon5_anim.png 85 1
 WAIT_STATE desktop
 
-STOP_ANIM 5
-IMAGE_REL CC 90 -64 LT icon5.png
 WAIT_STATE ready
+
+# show the icons fully right before the splash goes away
+STOP_ANIM 1
+IMAGE_REL CC -192 -85 LT icon1.png
+STOP_ANIM 2
+IMAGE_REL CC -126 -85 LT icon2.png
+STOP_ANIM 3
+IMAGE_REL CC -60 -85 LT icon3.png
+STOP_ANIM 4
+IMAGE_REL CC 6 -85 LT icon4.png
+STOP_ANIM 5
+IMAGE_REL CC 68 -102 LT icon5.png
