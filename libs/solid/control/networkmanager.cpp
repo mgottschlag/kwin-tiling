@@ -48,6 +48,10 @@ Solid::Control::NetworkManagerPrivate::NetworkManagerPrivate() : m_invalidDevice
                 this, SLOT(_k_networkInterfaceRemoved(const QString &)));
         connect(managerBackend(), SIGNAL(statusChanged(Solid::Networking::Status)),
                 this, SIGNAL(statusChanged(Solid::Networking::Status)));
+        connect(managerBackend(), SIGNAL(wirelessEnabledChanged(bool)),
+                this, SIGNAL(wirelessEnabledChanged(bool)));
+        connect(managerBackend(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
+                this, SIGNAL(wirelessHardwareEnabledChanged(bool)));
     }
 }
 

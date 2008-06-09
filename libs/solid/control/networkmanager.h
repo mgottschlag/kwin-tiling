@@ -147,6 +147,14 @@ namespace Control
              * @param uni the network interface identifier
              */
             void networkInterfaceRemoved(const QString &uni);
+            /**
+             * This signal is emitted when the status of the wireless changed
+             */
+            void wirelessEnabledChanged(bool enabled);
+            /**
+             * This signal is emitted when the status of the wireless hardware changed
+             */
+            void wirelessHardwareEnabledChanged(bool enabled);
         };
 
         SOLIDCONTROL_EXPORT Notifier *notifier();
