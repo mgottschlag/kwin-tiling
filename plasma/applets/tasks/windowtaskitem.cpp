@@ -96,16 +96,12 @@ void WindowTaskItem::setShowTooltip(const bool showit)
 
 void WindowTaskItem::setText(const QString &text)
 {
-    if (m_text == text) {
-        return;
-    }
     m_text = text;
 }
 
 void WindowTaskItem::setIcon(const QIcon &icon)
 {
     m_icon = icon; //icon.pixmap(MinTaskIconSize);
-
 }
 
 void WindowTaskItem::setTaskFlags(TaskFlags flags)
@@ -123,6 +119,7 @@ void WindowTaskItem::setTaskFlags(TaskFlags flags)
             // stop attention getting
         }
     }
+
     m_flags = flags;
 }
 
