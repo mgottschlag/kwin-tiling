@@ -21,8 +21,6 @@
 #include "NetworkManager-networkinterface.h"
 #include "NetworkManager-networkinterface_p.h"
 
-#include <NetworkManager/NetworkManager.h>
-
 #include <QtDBus/QDBusConnection>
 #include <QtDBus/QDBusReply>
 
@@ -118,15 +116,12 @@ Solid::Control::IPv4Config parseIPv4Config(const NMDBusDeviceProperties & dev)
 
 
 NMNetworkInterfacePrivate::NMNetworkInterfacePrivate(const QString  & objPath)
-     : iface("org.freedesktop.NetworkManager",
-              objPath,
-              "org.freedesktop.NetworkManager.Devices",
-              QDBusConnection::systemBus()),
-       objectPath(objPath)
+    : iface(NM_DBUS_SERVICE, objPath, NM_DBUS_INTERFACE_DEVICES, QDBusConnection::systemBus())
+    , objectPath(objPath)
     , manager(0)
     , active(false)
     , type(Solid::Control::NetworkInterface::UnknownType)
-    , activationStage(Solid::Control::NetworkInterface::UnknownState)
+    , activationStage(NM_ACT_STAGE_UNKNOWN)
     , designSpeed(0)
 {
 }
@@ -266,7 +261,7 @@ void NMNetworkInterfacePrivate::applyProperties(const NMDBusDeviceProperties & p
         break;
     }
     active = props.active;
-    activationStage = props.activationStage;
+    activationStage = static_cast<NMActStage>(props.activationStage);
     designSpeed = props.speed;
     if (props.capabilities  & NM_DEVICE_CAP_NM_SUPPORTED)
         capabilities |= Solid::Control::NetworkInterface::IsManageable;
@@ -292,7 +287,7 @@ void NMNetworkInterface::setActive(bool active)
 void NMNetworkInterface::setActivationStage(int activationStage)
 {
     Q_D(NMNetworkInterface);
-    d->activationStage = activationStage;
+    d->activationStage = static_cast<NMActStage>(activationStage);
     emit connectionStateChanged(connectionState());
 }
 

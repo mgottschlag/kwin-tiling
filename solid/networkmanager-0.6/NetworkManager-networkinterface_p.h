@@ -29,6 +29,8 @@
 #include <QtCore/qstring.h>
 #include <QtDBus/QDBusInterface>
 
+#include <NetworkManager/NetworkManager.h>
+
 class NMNetworkInterface;
 class NMDBusDeviceProperties;
 
@@ -53,7 +55,7 @@ public:
     QDBusInterface * manager;
     bool active;
     Solid::Control::NetworkInterface::Type type;
-    int activationStage;
+    NMActStage activationStage;
     int designSpeed;
     Solid::Control::NetworkInterface::Capabilities capabilities;
     QString activeNetPath;

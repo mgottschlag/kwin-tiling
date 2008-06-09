@@ -32,8 +32,6 @@
 #define IW_MODE_SECOND  5   /* Secondary master/repeater (backup) */
 #define IW_MODE_MONITOR 6   /* Passive monitor (listen only) */
 
-#include <NetworkManager/NetworkManager.h>
-
 #include <kdebug.h>
 
 #include "NetworkManager-wirelessaccesspoint.h"

@@ -42,7 +42,7 @@ public:
 
     QDBusInterface manager;
     QHash<QString, NMNetworkInterface *> interfaces;
-    uint cachedState;
+    NMState cachedState;
     bool wirelessEnabled;
     bool wirelessHardwareEnabled;
 };
@@ -111,7 +111,7 @@ Solid::Networking::Status NMNetworkManager::status() const
         if (state.isValid())
         {
             kDebug(1441) << "  got state: " << state.value();
-            d->cachedState = state.value();
+            d->cachedState = static_cast<NMState>(state.value());
         }
     }
     switch ( d->cachedState ) {
@@ -176,9 +176,9 @@ QObject * NMNetworkManager::createNetworkInterface(const QString  & uni)
     }
     else
     {
-        QDBusInterface iface("org.freedesktop.NetworkManager",
+        QDBusInterface iface(NM_DBUS_SERVICE,
                              uni,
-                             "org.freedesktop.NetworkManager.Devices",
+                             NM_DBUS_INTERFACE_DEVICES,
                              QDBusConnection::systemBus());
         QDBusReply<int> reply = iface.call("getType");
         if (!reply.isValid())
@@ -218,7 +218,7 @@ bool NMNetworkManager::isNetworkingEnabled() const
         if (state.isValid())
         {
             kDebug(1441) << "  got state: " << state.value();
-            d->cachedState = state.value();
+            d->cachedState = static_cast<NMState>(state.value());
         }
     }
     return NM_STATE_CONNECTING == d->cachedState || NM_STATE_CONNECTED == d->cachedState || NM_STATE_DISCONNECTED == d->cachedState;
@@ -285,7 +285,7 @@ void NMNetworkManager::notifyHiddenNetwork(const QString  & /*netname */)
 
 void NMNetworkManager::stateChanged(uint state)
 {
-    d->cachedState = state;
+    d->cachedState = static_cast<NMState>(state);
     switch ( d->cachedState ) {
         case NM_STATE_CONNECTING:
             kDebug(1441) << "Connecting";
@@ -465,7 +465,8 @@ void NMNetworkManager::wirelessEnabled(bool wirelessEnabled, bool wirelessHardwa
 
 void NMNetworkManager::nameOwnerChanged(const QString & name, const QString & oldOwner, const QString & newOwner)
 {
-    if ( name == QLatin1String("org.freedesktop.NetworkManager") ) {
+    if (name == QLatin1String(NM_DBUS_SERVICE))
+    {
         kDebug(1441) << "name: " << name << ", old owner: " << oldOwner << ", new owner: " << newOwner;
         if ( oldOwner.isEmpty() && !newOwner.isEmpty() ) {
             // NetworkManager started, but we are already listening to StateChanged so we should get

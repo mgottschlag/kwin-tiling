@@ -104,9 +104,7 @@ void NMAccessPointPrivate::deserialize(const QDBusMessage &message)
 NMAccessPoint::NMAccessPoint(const QString  & netPath)
     : Solid::Control::Ifaces::AccessPoint(0), d(new NMAccessPointPrivate(netPath))
 {
-    QDBusInterface iface("org.freedesktop.NetworkManager",
-            netPath,
-            "org.freedesktop.NetworkManager.Devices",
+    QDBusInterface iface(NM_DBUS_SERVICE, netPath, NM_DBUS_INTERFACE_DEVICES,
             QDBusConnection::systemBus());
     QDBusMessage reply = iface.call("getProperties");
     d->deserialize(reply);
