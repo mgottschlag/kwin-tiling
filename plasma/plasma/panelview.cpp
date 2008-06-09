@@ -333,7 +333,7 @@ bool PanelView::isHorizontal() const
 
 void PanelView::pinchContainment(const QRect &screenGeom)
 {
-    kDebug() << "**************************** pinching" << screenGeom << m_lastSeenSize;
+    //kDebug() << "**************************** pinching" << screenGeom << m_lastSeenSize;
     bool horizontal = isHorizontal();
 
     int sw = screenGeom.width();
@@ -361,12 +361,13 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         if (sizes.hasGroup(last)) {
             KConfigGroup thisSize(&sizes, last);
 
+            /*
             kDebug() << "has saved properties..." << last
                      << thisSize.readEntry("min", min)
                      << thisSize.readEntry("max", max)
                      << thisSize.readEntry("size", c->geometry().size())
                      << thisSize.readEntry("offset", 0);
-
+            */
             c->setMinimumSize(0, 0);
             c->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
             c->resize(thisSize.readEntry("size", c->geometry().size()));
@@ -392,11 +393,11 @@ void PanelView::pinchContainment(const QRect &screenGeom)
     // give us enough room, we limit the size of the panel itself by setting
     // the minimum and maximum sizes.
 
-    kDebug() << "checking panel" << c->geometry() << "against" << screenGeom;
+    //kDebug() << "checking panel" << c->geometry() << "against" << screenGeom;
     if (horizontal) {
-        kDebug() << "becoming horizontal with" << m_offset << min.width() << max.width() << sw;
+        //kDebug() << "becoming horizontal with" << m_offset << min.width() << max.width() << sw;
         if (m_offset + min.width() > sw) {
-            kDebug() << "min size is too wide!";
+            //kDebug() << "min size is too wide!";
             if (min.width() > sw) {
                 c->setMinimumSize(sw, min.height());
             } else {
@@ -405,7 +406,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         }
 
         if (m_offset + max.width() > sw) {
-            kDebug() << "max size is too wide!";
+            //kDebug() << "max size is too wide!";
             if (max.width() > sw) {
                 c->setMaximumSize(sw, max.height());
             } else {
@@ -414,7 +415,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         }
     } else {
         if (m_offset + min.height() > sh) {
-            kDebug() << "min size is too tall!";
+            //kDebug() << "min size is too tall!";
             if (min.height() > sh) {
                 c->setMinimumSize(min.width(), sh);
             } else {
@@ -423,7 +424,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         }
 
         if (m_offset + max.height() > sh) {
-            kDebug() << "max size is too tall!";
+            //kDebug() << "max size is too tall!";
             if (max.height() > sh) {
                 c->setMaximumSize(max.width(), sh);
             } else {
