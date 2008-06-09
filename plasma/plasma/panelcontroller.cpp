@@ -675,26 +675,56 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
             int targetScreen = desktop->screenNumber(event->globalPos());
             kDebug() << "Moving panel from screen" << d->containment->screen() << "to screen" << targetScreen;
             d->containment->setScreen(targetScreen);
-            screenGeom =  desktop->screenGeometry(targetScreen);
+            return;
+        }
+
+        //create a dead zone so you can go across the middle without having it hop to one side
+        float dzFactor = 0.35;
+        QPoint offset = QPoint::QPoint(screenGeom.width()*dzFactor,screenGeom.height()*dzFactor);
+        QRect deadzone = QRect::QRect(screenGeom.topLeft()+offset, screenGeom.bottomRight()-offset);
+        if (deadzone.contains(event->globalPos())) {
+            //kDebug() << "In the deadzone:" << deadzone;
+            return;
         }
 
         Plasma::FormFactor oldFormFactor = d->containment->formFactor();
         Plasma::FormFactor newFormFactor = d->containment->formFactor();
         const Plasma::Location oldLocation = d->containment->location();
         Plasma::Location newLocation = d->containment->location();
+        float screenAspect = float(screenGeom.height()/screenGeom.width());
 
-        if( d->containment->location() != Plasma::TopEdge && QRect(screenGeom.width()/4, screenGeom.y(), 3*(screenGeom.width()/4), screenGeom.height()/4).contains(mapToGlobal(event->pos()))) {
-            newFormFactor = Plasma::Horizontal;
-            newLocation = Plasma::TopEdge;
-        } else if( d->containment->location() != Plasma::BottomEdge && QRect(screenGeom.width()/4, 3*(screenGeom.height()/4), 3*(screenGeom.width()/4), screenGeom.height()/4).contains(mapToGlobal(event->pos()))) {
-            newFormFactor = Plasma::Horizontal;
-            newLocation = Plasma::BottomEdge;
-        } else if( d->containment->location() != Plasma::LeftEdge && QRect(screenGeom.left(), screenGeom.height()/4, screenGeom.width()/4, 3*(screenGeom.height()/4)).contains(mapToGlobal(event->pos()))) {
-            newFormFactor = Plasma::Vertical;
-            newLocation = Plasma::LeftEdge;
-        } else if( d->containment->location() != Plasma::RightEdge && QRect(3*(screenGeom.width()/4), screenGeom.height()/4, screenGeom.width()/4, 3*(screenGeom.height()/4)).contains(mapToGlobal(event->pos()))) {
-            newFormFactor = Plasma::Vertical;
-            newLocation = Plasma::RightEdge;
+        /* Use diagonal lines so we get predictable behavior when moving the panel
+         * y=topleft.y+(x-topleft.x)*aspectratio   topright < bottomleft
+         * y=bottomleft.y-(x-topleft.x)*aspectratio   topleft < bottomright
+         */
+        if (event->globalY() < screenGeom.y()+(event->globalX()-screenGeom.x())*screenAspect) {
+            if (event->globalY() < screenGeom.bottomLeft().y()-(event->globalX()-screenGeom.x())*screenAspect) {
+                if (d->containment->location() == Plasma::TopEdge) {
+                    return;
+                } else {
+                    newFormFactor = Plasma::Horizontal;
+                    newLocation = Plasma::TopEdge;
+                }
+            } else if (d->containment->location() == Plasma::RightEdge) {
+                    return;
+            } else {
+                newFormFactor = Plasma::Vertical;
+                newLocation = Plasma::RightEdge;
+            }
+        } else {
+            if (event->globalY() < screenGeom.bottomLeft().y()-(event->globalX()-screenGeom.x())*screenAspect) {
+                if (d->containment->location() == Plasma::LeftEdge) {
+                    return;
+                } else {
+                    newFormFactor = Plasma::Vertical;
+                    newLocation = Plasma::LeftEdge;
+                }
+            } else if(d->containment->location() == Plasma::BottomEdge) {
+                    return;
+            } else {
+                newFormFactor = Plasma::Horizontal;
+                newLocation = Plasma::BottomEdge;
+            }
         }
 
 
