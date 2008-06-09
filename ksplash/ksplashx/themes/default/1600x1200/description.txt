@@ -1,31 +1,34 @@
-SCALE OFF
-GEOMETRY_REL CC 0 0 CC 400 220
-
+SCALE ON
 IMAGE 0 0 background.png
 
-ANIM 1 16 78 14 icon1_anim.png 60
+SCALE OFF
+
+# the image is 400x220, make it centered, all icons need the same adjustment too
+IMAGE_REL CC -200 -110 LT rectangle.png
+
+ANIM_REL 1 CC -184 -32 LT 14 icon1_anim.png 60
 WAIT_STATE kded
 
 STOP_ANIM 1
-IMAGE 16 78 icon1.png
-ANIM 2 85 78 14 icon2_anim.png 60
+IMAGE_REL CC -184 -32 LT icon1.png
+ANIM_REL 2 CC -115 -32 LT 14 icon2_anim.png 60
 WAIT_STATE confupdate
 
 STOP_ANIM 2
-IMAGE 85 78 icon2.png
-ANIM 3 148 78 14 icon3_anim.png 60
+IMAGE_REL CC -115 -32 LT icon2.png
+ANIM_REL 3 CC -52 -32 LT 14 icon3_anim.png 60
 WAIT_STATE kcminit
 
 STOP_ANIM 3
-IMAGE 148 78 icon3.png
-ANIM 4 215 78 14 icon4_anim.png 60
+IMAGE_REL CC -52 -32 LT icon3.png
+ANIM_REL 4 CC 15 -32 LT 14 icon4_anim.png 60
 WAIT_STATE ksmserver
 
 STOP_ANIM 4
-IMAGE 215 78 icon4.png
-ANIM 5 290 46 14 icon5_anim.png 60
+IMAGE_REL CC 15 -32 LT icon4.png
+ANIM_REL 5 CC 90 -64 LT 14 icon5_anim.png 60
 WAIT_STATE desktop
 
 STOP_ANIM 5
-IMAGE 290 46 icon5.png
+IMAGE_REL CC 90 -64 LT icon5.png
 WAIT_STATE ready

@@ -1,9 +1,0 @@
-[KSplash Theme: DefaultFullscreen]
-Name = KDE 4.0 Splash Screen (Fullscreen)
-Description = Nice, powerful and stylish Oxygen Splash Screen.
-Version = 1.0
-Author = Riccardo Iaconelli <riccardo@kde.org>
-Homepage = http://www.ruphy.org
-
-# Theme behaviour settings.
-Engine = KSplashX

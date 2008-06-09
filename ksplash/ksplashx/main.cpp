@@ -47,7 +47,9 @@ int main( int argc, char* argv[] )
         else
             usage( argv[ 0 ] );
         }
-    char* theme = argv[ 1 ];
+    const char* theme = argv[ 1 ];
+    if( strcmp( theme, "DefaultFullscreen" ) == 0 )
+        theme = "Default"; // these are now the same
     int parent_pipe = -1;
     if( print_pid )
         {
