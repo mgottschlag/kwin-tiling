@@ -454,10 +454,12 @@ void NMNetworkManager::wirelessEnabled(bool wirelessEnabled, bool wirelessHardwa
     if (wirelessEnabled != d->wirelessEnabled)
     {
         d->wirelessEnabled = wirelessEnabled;
+        emit wirelessEnabledChanged(d->wirelessEnabled);
     }
     if (wirelessHardwareEnabled != d->wirelessHardwareEnabled)
     {
         d->wirelessHardwareEnabled = wirelessHardwareEnabled;
+        emit wirelessHardwareEnabledChanged(d->wirelessHardwareEnabled);
     }
 }
 
