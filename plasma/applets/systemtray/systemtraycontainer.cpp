@@ -42,9 +42,7 @@ SystemTrayContainer::SystemTrayContainer(QWidget *parent)
     updateBackground();
 
     // Tray icons have a fixed size of 22x22
-    setMinimumSize(22, 22);
     setMaximumSize(22, 22);
-    resize(22, 22);
 }
 
 void SystemTrayContainer::embedSystemTrayClient( WId clientId )
@@ -89,7 +87,7 @@ bool SystemTrayContainer::prepareFor(WId w)
     sa.colormap = ga.colormap;
 
     Window ww = XCreateWindow(dpy, parentWidget() ? parentWidget()->winId() : DefaultRootWindow(dpy),
-            1, 1, 1, 1, 0, ga.depth, InputOutput, ga.visual,
+            0, 0, 22, 22, 0, ga.depth, InputOutput, ga.visual,
             CWBackPixel | CWBorderPixel | CWColormap, &sa);
     create(ww, true, true);
 
