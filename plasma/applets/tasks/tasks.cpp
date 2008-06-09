@@ -209,9 +209,6 @@ Plasma::PanelSvg* Tasks::itemBackground()
     if (!m_taskItemBackground) {
         QString tasksThemePath = Plasma::Theme::defaultTheme()->imagePath("widgets/tasks");
 
-        delete m_taskItemBackground;
-        m_taskItemBackground = 0;
-
         if (!tasksThemePath.isEmpty()) {
             m_taskItemBackground = new Plasma::PanelSvg(this);
             m_taskItemBackground->setImagePath(tasksThemePath);
@@ -250,7 +247,6 @@ void Tasks::resizeItemBackground(const QSizeF &size)
 KColorScheme *Tasks::colorScheme()
 {
     if (!m_colorScheme) {
-        delete m_colorScheme;
         m_colorScheme = new KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme());
     }
 
