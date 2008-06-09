@@ -444,7 +444,6 @@ void PanelController::setContainment( Plasma::Containment *containment)
         d->ruler->setMinLength(containment->minimumSize().width());
         break;
     }
-
 }
 
 QSize PanelController::sizeHint() const
@@ -689,7 +688,7 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
 
         const Plasma::Location oldLocation = d->containment->location();
         Plasma::Location newLocation = oldLocation;
-        float screenAspect = float(screenGeom.height()/screenGeom.width());
+        float screenAspect = float(screenGeom.height())/screenGeom.width();
 
         /* Use diagonal lines so we get predictable behavior when moving the panel
          * y=topleft.y+(x-topleft.x)*aspectratio   topright < bottomleft
