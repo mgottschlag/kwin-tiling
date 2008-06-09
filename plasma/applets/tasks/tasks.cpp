@@ -179,18 +179,25 @@ void Tasks::removeWindowTask(TaskPtr task)
         WindowTaskItem *item = m_windowTaskItems.take(task);
         m_layout->removeItem(item);
         scene()->removeItem(item);
-        if (m_windowTaskItems.count() > 1) {
-            m_activeTask = m_windowTaskItems.end();
-        }
+        item->deleteLater();
+        m_activeTask = m_windowTaskItems.end();
     }
 }
 
 void Tasks::removeAllWindowTasks()
 {
-    foreach (const TaskPtr &task, m_windowTaskItems.keys()) {
-        removeWindowTask(task);
+    QHash<TaskPtr,WindowTaskItem*>::iterator it = m_windowTaskItems.begin();
+
+    while (it != m_windowTaskItems.end()) {
+        WindowTaskItem *item = it.value();
+        m_layout->removeItem(item);
+        scene()->removeItem(item);
+        item->deleteLater();
+        ++it;
     }
+
     m_windowTaskItems.clear();
+    m_activeTask = m_windowTaskItems.end();
 }
 
 void Tasks::constraintsEvent(Plasma::Constraints constraints)
