@@ -38,6 +38,9 @@ KDE_EXPORT int kdemain(int argc, char **argv)
     aboutData.addAuthor(ki18n("Aaron J. Seigo"),
                         ki18n("Author and maintainer"),
                         "aseigo@kde.org");
+    aboutData.addAuthor(ki18n("Riccardo 'ruphy' Iaconelli"),
+                        ki18n("Developer, artist and swiss-army-knife"),
+                        "riccardo@kde.org");
     aboutData.addCredit(ki18n("John Lions"),
                         ki18n("In memory of his contributions, 1937-1998."),
                         0, "http://en.wikipedia.org/wiki/John_Lions");
