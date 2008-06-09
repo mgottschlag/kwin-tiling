@@ -69,6 +69,39 @@ void deserialize(const QDBusMessage &message, NMDBusDeviceProperties & device)
     device.networks = (args.size() != 0) ? args.takeFirst().toStringList() : QStringList();
 }
 
+quint32 parseIPv4Address(const QString & addressString)
+{
+    const QStringList parts = addressString.split(QChar::fromLatin1('.'), QString::SkipEmptyParts);
+    if (parts.count() != 4)
+        return 0;
+
+    quint32 address = 0;
+    for (int i = 0; i < 4; ++i)
+    {
+        bool ok = false;
+        const short value = parts.at(i).toShort(&ok);
+        if (value < 0 || value > 255)
+            return 0;
+        address |= (value << ((3 - i) * 8));
+    }
+    return address;
+}
+
+Solid::Control::IPv4Config parseIPv4Config(const NMDBusDeviceProperties & dev)
+{
+    QList<quint32> addresses;
+    addresses.append(parseIPv4Address(dev.ipv4Address));
+    quint32 broadcast = parseIPv4Address(dev.broadcast);
+    QList<quint32> dnsServers;
+    dnsServers.append(parseIPv4Address(dev.primaryDNS));
+    dnsServers.append(parseIPv4Address(dev.secondaryDNS));
+    return Solid::Control::IPv4Config(
+        QList< QList<quint32> >() << addresses,
+        broadcast, QString() /* hostname */, dnsServers,
+        QStringList() /* domains */, QString() /* nisDomain */,
+        QList<quint32>() /* nisServers */);
+}
+
 
 NMNetworkInterfacePrivate::NMNetworkInterfacePrivate(const QString  & objPath)
      : iface("org.freedesktop.NetworkManager",
@@ -116,6 +149,7 @@ void NMNetworkInterfacePrivate::initGeneric()
     QDBusReply<QString> dbusdriver = iface.call("getDriver");
     if (dbusdriver.isValid())
         driver = dbusdriver.value();
+    ipv4Config = parseIPv4Config(dev);
 }
 
 NMNetworkInterface::~NMNetworkInterface()
@@ -280,9 +314,8 @@ QString NMNetworkInterface::driver() const
 
 Solid::Control::IPv4Config NMNetworkInterface::ipV4Config() const
 {
-#warning NMNetworkInterface::ipV4Config() is unimplemented
-    kDebug();
-    return Solid::Control::IPv4Config();
+    Q_D(const NMNetworkInterface);
+    return d->ipv4Config;
 }
 
 bool NMNetworkInterface::activateConnection(const QString & connectionUni, const QVariantMap & connectionParameters)

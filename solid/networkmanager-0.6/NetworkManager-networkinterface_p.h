@@ -59,6 +59,7 @@ public:
     QString activeNetPath;
     QString interface;
     QString driver;
+    Solid::Control::IPv4Config ipv4Config;
 };
 
 #endif
