@@ -66,6 +66,7 @@ class Pager : public Plasma::Applet
 
         void configAccepted();
         void currentDesktopChanged(int desktop);
+        void desktopsSizeChanged();
         void windowAdded(WId id);
         void windowRemoved(WId id);
         void activeWindowChanged(WId id);

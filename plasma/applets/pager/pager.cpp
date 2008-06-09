@@ -109,6 +109,7 @@ void Pager::init()
     connect(KWindowSystem::self(), SIGNAL(stackingOrderChanged()), this, SLOT(stackingOrderChanged()));
     connect(KWindowSystem::self(), SIGNAL(windowChanged(WId,unsigned int)), this, SLOT(windowChanged(WId,unsigned int)));
     connect(KWindowSystem::self(), SIGNAL(showingDesktopChanged(bool)), this, SLOT(showingDesktopChanged(bool)));
+    connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(desktopsSizeChanged()));
 
     m_desktopLayoutOwner = new KSelectionOwner( QString( "_NET_DESKTOP_LAYOUT_S%1" )
         .arg( QX11Info::appScreen()).toLatin1().data(), QX11Info::appScreen(), this );
@@ -500,6 +501,18 @@ void Pager::showingDesktopChanged(bool showing)
     m_dirtyDesktop = -1;
 
     Q_UNUSED(showing)
+    if (!m_timer->isActive()) {
+        m_timer->start(WINDOW_UPDATE_DELAY);
+    }
+}
+
+void Pager::desktopsSizeChanged()
+{
+    m_dirtyDesktop = -1;
+
+    m_rects.clear();
+    recalculateGeometry();
+
     if (!m_timer->isActive()) {
         m_timer->start(WINDOW_UPDATE_DELAY);
     }
