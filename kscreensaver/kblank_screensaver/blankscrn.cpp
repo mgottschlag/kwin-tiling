@@ -21,6 +21,7 @@
 #include <kglobal.h>
 #include "blankscrn.h"
 #include <kaboutdata.h>
+#include <kdeversion.h>
 #include "blankscrn.moc"
 
 // libkscreensaver interface
@@ -30,7 +31,7 @@ public:
     virtual KAboutData* aboutData()
     {
         return new KAboutData( "kblankscrn.kss", 0, ki18n( "KBlankScreen" ),
-                               "4.0.0", ki18n( "Blank Screen Saver" ) );
+                               KDE_VERSION_STRING, ki18n( "Blank Screen Saver" ) );
     }
 
     virtual KScreenSaver* create( WId id )

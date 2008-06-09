@@ -32,6 +32,7 @@
 #include <kdialog.h>
 #include <kconfig.h>
 #include <kservice.h>
+#include <kdeversion.h>
 #include "kscreensaver_vroot.h"
 #include "random.h"
 #include <QX11Info>
@@ -50,8 +51,6 @@ static const char appName[] = "random";
 
 static const char description[] = I18N_NOOP("Start a random KDE screen saver");
 
-static const char version[] = "2.0.0";
-
 static QString exeFromActionGroup(const QList<KServiceAction>& actions, const char* name)
 {
     foreach(const KServiceAction& action, actions) {
@@ -65,7 +64,8 @@ static QString exeFromActionGroup(const QList<KServiceAction>& actions, const ch
 
 int main(int argc, char *argv[])
 {
-	KCmdLineArgs::init(argc, argv, appName, "kscreensaver", ki18n("Random screen saver"), version, ki18n(description));
+	KCmdLineArgs::init(argc, argv, appName, "kscreensaver", ki18n("Random screen saver"), 
+                KDE_VERSION_STRING, ki18n(description));
 
 
 	KCmdLineOptions options;
