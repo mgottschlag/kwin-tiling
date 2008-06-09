@@ -127,6 +127,7 @@ void SystemTrayWidget::addWidgetToLayout(QWidget *widget)
     // Add the widget to the layout
     m_mainLayout->setRowMinimumHeight(m_nextRow, 22);
     m_mainLayout->setColumnMinimumWidth(m_nextColumn, 22);
+    widget->resize(22,22);
     m_mainLayout->addWidget(widget, m_nextRow, m_nextColumn, 1, 1, Qt::AlignCenter);
 
     // Figure out where the next widget should go
