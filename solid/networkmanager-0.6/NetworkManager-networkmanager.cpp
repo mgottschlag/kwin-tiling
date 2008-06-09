@@ -36,17 +36,25 @@
 class NMNetworkManagerPrivate
 {
 public:
-    NMNetworkManagerPrivate() : manager("org.freedesktop.NetworkManager",
-                                         "/org/freedesktop/NetworkManager",
-                                         "org.freedesktop.NetworkManager",
-                                         QDBusConnection::systemBus()), cachedState(NM_STATE_UNKNOWN) { }
+    NMNetworkManagerPrivate();
 
     void fillNetworkInterfacesList();
 
     QDBusInterface manager;
     QHash<QString, NMNetworkInterface *> interfaces;
     uint cachedState;
+    bool wirelessEnabled;
+    bool wirelessHardwareEnabled;
 };
+
+NMNetworkManagerPrivate::NMNetworkManagerPrivate()
+    : manager(NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, QDBusConnection::systemBus())
+    , cachedState(NM_STATE_UNKNOWN)
+    , wirelessEnabled(false)
+    , wirelessHardwareEnabled(false)
+{
+}
+
 
 NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList  & /*args */)
  : NetworkManager(parent), d(new NMNetworkManagerPrivate)
@@ -80,6 +88,14 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList  & /*arg
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
 
     d->fillNetworkInterfacesList();
+
+    const QDBusMessage wirelessEnabledReply = d->manager.call("getWirelessEnabled");
+    if (wirelessEnabledReply.type() == QDBusMessage::ReplyMessage)
+    {
+        const QList<QVariant> args = wirelessEnabledReply.arguments();
+        if (args.size() > 0) d->wirelessEnabled = args[0].toBool();
+        if (args.size() > 1) d->wirelessHardwareEnabled = args[1].toBool();
+    }
 }
 
 NMNetworkManager::~NMNetworkManager()
@@ -211,19 +227,13 @@ bool NMNetworkManager::isNetworkingEnabled() const
 bool NMNetworkManager::isWirelessEnabled() const
 {
     kDebug(1441);
-    QDBusReply< bool > wirelessEnabled = d->manager.call("getWirelessEnabled");
-    if (wirelessEnabled.isValid())
-    {
-        kDebug(1441) << "  wireless enabled: " << wirelessEnabled.value();
-    }
-    return wirelessEnabled.value();
+    return d->wirelessEnabled;
 }
 
 bool NMNetworkManager::isWirelessHardwareEnabled() const
 {
-#warning NMNetworkManager::isWirelessHardwareEnabled() is unimplemented
     kDebug(1441);
-    return true;
+    return d->wirelessHardwareEnabled;
 }
 
 void NMNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters)
@@ -438,9 +448,17 @@ void NMNetworkManager::activationFailed(const QDBusObjectPath & devPath)
     }
 }
 
-void NMNetworkManager::wirelessEnabled(bool wirelessEnabled, bool unknown)
+void NMNetworkManager::wirelessEnabled(bool wirelessEnabled, bool wirelessHardwareEnabled)
 {
-    kDebug(1441) << wirelessEnabled << unknown;
+    kDebug(1441) << wirelessEnabled << wirelessHardwareEnabled;
+    if (wirelessEnabled != d->wirelessEnabled)
+    {
+        d->wirelessEnabled = wirelessEnabled;
+    }
+    if (wirelessHardwareEnabled != d->wirelessHardwareEnabled)
+    {
+        d->wirelessHardwareEnabled = wirelessHardwareEnabled;
+    }
 }
 
 void NMNetworkManager::nameOwnerChanged(const QString & name, const QString & oldOwner, const QString & newOwner)
