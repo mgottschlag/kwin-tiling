@@ -68,6 +68,7 @@ Solid::Control::IPv4Config::IPv4Config(const Solid::Control::IPv4Config& other)
 
 Solid::Control::IPv4Config::~IPv4Config()
 {
+    delete d;
 }
 
 QList<QList<quint32> > Solid::Control::IPv4Config::addresses() const
