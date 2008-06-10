@@ -151,12 +151,14 @@ void ApplicationSearch::setQuery(const QString& query)
     // KDE 4 version
     QHash<QString,int> desktopNames;
     QSet<QString> execFields;
+
+
     for (int i=0;i<results.count();i++) {
         KService::Ptr service = results[i];
-
         int existingPos = desktopNames.value(service->name(),-1);
         KService::Ptr existing = existingPos < 0 ? KService::Ptr(0) : results[existingPos]; 
 
+       
         if (!existing.isNull()) {
             if (isLaterVersion(existing,service)) {
                 results[i] = 0; 
@@ -166,7 +168,7 @@ void ApplicationSearch::setQuery(const QString& query)
                 // do not show more than one entry which does the same thing when run
                 // (ie. ignore entries that have an identical 'Exec' field to an existing
                 // entry)
-                if (execFields.contains(service->exec())) {
+                if (execFields.contains(service->exec()) && service->noDisplay()) {
                     results[i] = 0;
                 }
             }
@@ -175,6 +177,7 @@ void ApplicationSearch::setQuery(const QString& query)
             execFields.insert(service->exec());
         }
     }
+
 
     QStringList pathResults;
     foreach(const KService::Ptr &service,results) {
