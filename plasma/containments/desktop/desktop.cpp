@@ -378,9 +378,9 @@ QList<QAction*> DefaultDesktop::contextualActions()
         actions.append(action("remove"));
     }
 
-    actions.append(m_separator);
-
     actions.append(m_lockDesktopAction);
+
+    actions.append(m_separator);
 
     if (KAuthorized::authorizeKAction("lock_screen")) {
         actions.append(m_lockScreenAction);
