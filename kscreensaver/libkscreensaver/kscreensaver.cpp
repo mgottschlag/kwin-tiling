@@ -51,6 +51,7 @@ bool KScreenSaver::event(QEvent* e)
     bool r = QWidget::event(e);
     if (e->type() == QEvent::Polish)
         setAttribute(Qt::WA_StyledBackground, false);
+    return r;
 }
 
 void KScreenSaver::embed( QWidget *w )
