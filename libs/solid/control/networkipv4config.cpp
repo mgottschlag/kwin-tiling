@@ -36,6 +36,7 @@ public:
     nisDomain(theNisDomain), nisServers(theNisServers)
     {}
     Private()
+        : broadcast(0)
     {}
     QList< QList<quint32> > addresses;
     quint32 broadcast;
