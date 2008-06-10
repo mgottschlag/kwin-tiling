@@ -2,12 +2,14 @@
 # TODO - Rename to "Desktop Search" in KDE 4.2
 Name=Xesam Search
 Name[ca]=Cerca Xesam
+Name[cs]=Vyhledávání Xesam
 Name[de]=Xesam-Suche
 Name[el]=Αναζήτηση Xesam
 Name[eo]=Xesam-serĉo
 Name[et]=Xesami otsing
 Name[fr]=Recherche Xesam
 Name[ga]=Cuardach Xesam
+Name[gl]=Procura con Xesam
 Name[gu]=Xesam શોધ
 Name[km]=ស្វែងរក Xesam
 Name[ko]=Xesam 검색
@@ -33,6 +35,7 @@ Comment[el]=Επιτρέπει τη χρήση ενός συμβατού με τ
 Comment[eo]=Permesas la uzon de Xesam-kongrua indeksilo por lokaj serĉoj
 Comment[et]=Võimaldab kasutajal kasutada Xesamiga ühilduvat indekseerijat töölauaotsinguks
 Comment[fr]=Permet d'utiliser un indexeur compatible Xesam pour la recherche
+Comment[gl]=Permítelle ao usuario empregar un indexador compatíbel con Xesam para facer procuras de escritorio
 Comment[gu]=વપરાશકર્તાને Xesam અનુરૂપ અનુક્રમ ડેસ્કટોપ શોધ માટે ઉપયોગ કરવા દે છે
 Comment[ja]=デスクトップ検索に Xesam 互換のインデクサが使えるようになります
 Comment[km]=អនុញ្ញាត​ឲ្យ​អ្នកប្រើ ប្រើកម្មវិធី​បង្កើត​លិបិក្រម​ដែល​ឆបគ្នា Xesam សម្រាប់​ការ​ស្វែងរក​ផ្ទៃតុ

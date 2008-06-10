@@ -1,12 +1,14 @@
 [Desktop Entry]
 Name=Locations
 Name[ca]=Ubicacions
+Name[cs]=Umístění
 Name[de]=Orte
 Name[el]=Τοποθεσίες
 Name[eo]=Lokoj
 Name[et]=Asukohad
 Name[fr]=Emplacements
 Name[ga]=Áiteanna
+Name[gl]=Lugares
 Name[gu]=સ્થળો
 Name[km]=ទីតាំង
 Name[ko]=위치
@@ -36,6 +38,7 @@ Comment[et]=Faili ja URL-i avaja
 Comment[fi]=Tiedostojen ja osoitteiden avaaja
 Comment[fr]=lanceur de fichier et d'URL
 Comment[ga]=Osclóir Comhad agus URLanna
+Comment[gl]=Abre ficheiros e URL
 Comment[gu]=ફાઇલ અને URL ખોલનાર
 Comment[hu]=Fájlmegnyitó
 Comment[is]=Skráa og slóða opnun
