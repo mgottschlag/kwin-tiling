@@ -526,7 +526,7 @@ void PanelView::updateStruts()
     NETExtendedStrut strut;
 
     QRect thisScreen = QApplication::desktop()->screenGeometry(containment()->screen());
-    QRect wholeScreen = QApplication::desktop()->screenGeometry();
+    QRect wholeScreen = QApplication::desktop()->geometry();
 
     // extended struts are to the combined screen geoms, not the single screen
     int leftOffset = wholeScreen.x() - thisScreen.x();
