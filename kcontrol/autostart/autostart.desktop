@@ -1,5 +1,6 @@
 [Desktop Entry]
 Exec=kcmshell4 autostart
+Icon=system-run
 Type=Service
 X-KDE-ServiceTypes=KCModule
 X-DocPath=kcontrol/autostart/index.html
