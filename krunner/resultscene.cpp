@@ -40,7 +40,11 @@
 ResultScene::ResultScene(QObject *parent)
     : QGraphicsScene(parent),
       m_itemCount(0),
-      m_cIndex(0)
+      m_cIndex(0),
+      m_rowStride(0),
+      m_pageStride(0),
+      m_pageCount(0),
+      m_currentPage(0)
 {
     setItemIndexMethod(NoIndex);
 
@@ -76,20 +80,19 @@ void ResultScene::resize(int width, int height)
     }
 
     m_size = QSize(width, height);
+    m_rowStride = width / (ResultItem::BOUNDING_WIDTH);
+    m_pageStride = height / (ResultItem::BOUNDING_WIDTH) * m_rowStride;
     setSceneRect(0.0, 0.0, (qreal)width, (qreal)height);
     m_resizeTimer.start(150);
 }
 
 void ResultScene::layoutIcons()
 {
-    // resize
-    int rowStride = sceneRect().width() / (ResultItem::BOUNDING_WIDTH);
-
     QListIterator<ResultItem *> it(m_items);
 
     while (it.hasNext()) {
         ResultItem *item = it.next();
-        item->setRowStride(rowStride);
+        item->setRowStride(m_rowStride);
     }
 }
 
@@ -102,6 +105,8 @@ void ResultScene::clearMatches()
     m_itemsById.clear();
     m_items.clear();
     m_itemCount = 0;
+    m_pageCount = 0;
+    m_currentPage = 0;
     emit matchCountChanged(0);
 }
 
@@ -126,7 +131,6 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         ResultItem *item = addQueryMatch(newMatchIt.next(), false);
 
         if (item) {
-            // we failed to match it with an existing id. *sob*
             m_items.append(item);
             newMatchIt.remove();
         }
@@ -138,18 +142,23 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         m_items.append(addQueryMatch(newMatchIt.next(), true));
     }
 
-    // now delete the stragglers
+    // delete the stragglers
     QMapIterator<QString, ResultItem *> it(m_itemsById);
     while (it.hasNext()) {
         it.next().value()->remove();
     }
 
-    // now organize the remainders
+    // organize the remainders
     int i = 0;
     m_itemsById.clear();
 
     // this will leave them in *reverse* order
     qSort(m_items.begin(), m_items.end(), ResultItem::compare);
+
+    m_currentPage = 0;
+    m_pageCount = m.count();
+    m_pageCount = m_pageCount / m_pageStride + (m_pageCount % m_pageStride != 0 ? 1 : 0);
+    kDebug() << "gots us" << m_pageCount << "m_pageCount of items";
 
     emit matchCountChanged(m.count());
 
@@ -219,32 +228,30 @@ void ResultScene::keyPressEvent(QKeyEvent * keyEvent)
     int m_cIndex = currentFocus ? currentFocus->index() : 0;
     switch (keyEvent->key()) {
         case Qt::Key_Up:{
-            int rowStride = sceneRect().width() / (ResultItem::BOUNDING_WIDTH);
-            if (m_cIndex < rowStride) {
-                if (m_items.size() < rowStride) {
+            if (m_cIndex < m_rowStride) {
+                if (m_items.size() < m_rowStride) {
                     // we have less than one row of items, so lets just move to the next item
                     m_cIndex = (m_cIndex + 1) % m_items.size();
                 } else {
-                    m_cIndex = m_items.size() - (m_items.size() % rowStride) - 1 + (m_cIndex % m_items.size());
+                    m_cIndex = m_items.size() - (m_items.size() % m_rowStride) - 1 + (m_cIndex % m_items.size());
                     if (m_cIndex >= m_items.size()) {
                         // we should be on the bottom row, but there is nothing there; move up one row
-                        m_cIndex -= rowStride % m_items.size();
+                        m_cIndex -= m_rowStride % m_items.size();
                     }
                 }
             } else {
-                m_cIndex = m_cIndex - rowStride;
+                m_cIndex = m_cIndex - m_rowStride;
             }
             break;
         }
 
         case Qt::Key_Down:{
-            int rowStride = sceneRect().width() / (ResultItem::BOUNDING_WIDTH);
-            if (m_cIndex + rowStride >= m_items.size()) {
+            if (m_cIndex + m_rowStride >= m_items.size()) {
                 // warp to the top
-                m_cIndex = (m_cIndex + 1) % rowStride % m_items.size();
+                m_cIndex = (m_cIndex + 1) % m_rowStride % m_items.size();
             } else {
                 // next row!
-                m_cIndex += rowStride;
+                m_cIndex += m_rowStride;
             }
 
             break;
@@ -325,5 +332,30 @@ Plasma::RunnerManager* ResultScene::manager() const
     return m_runnerManager;
 }
 
+uint ResultScene::pageCount() const
+{
+    return m_pageCount;
+}
+
+void ResultScene::nextPage()
+{
+    setPage(m_currentPage + 1);
+}
+
+void ResultScene::previousPage()
+{
+    setPage(m_currentPage - 1);
+}
+
+void ResultScene::setPage(uint index)
+{
+    if (index < 0 || index >= m_pageCount - 1) {
+        return;
+    }
+
+    m_currentPage = index;
+    setSceneRect(0.0, ((m_currentPage * (m_pageStride / m_rowStride))) * ResultItem::BOUNDING_HEIGHT,
+                 width(), height());
+}
 #include "resultscene.moc"
 

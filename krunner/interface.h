@@ -88,6 +88,8 @@ class Interface : public KRunnerDialog
 
         QVBoxLayout* m_layout;
         QLabel *m_descriptionLabel;
+        QLabel *m_previousPage;
+        QLabel *m_nextPage;
         KHistoryComboBox* m_searchTerm;
         KCompletion *m_completion;
         QGraphicsView *m_resultsView;

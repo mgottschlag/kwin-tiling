@@ -174,25 +174,39 @@ Interface::Interface(QWidget* parent)
 //    m_layout->addWidget(m_searchTerm);
     bottomLayout->insertWidget(2, m_searchTerm, 10);
 
-    //FIXME: this should be part of the svg theme
+    QHBoxLayout *statusLayout = new QHBoxLayout();
+    m_descriptionLabel = new QLabel(w);
+    m_descriptionLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+    m_descriptionLabel->hide();
+    statusLayout->addWidget(m_descriptionLabel, 10, Qt::AlignLeft | Qt::AlignTop);
+
+    m_previousPage = new QLabel(w);
+    m_previousPage->setText("<a href=\"prev\">&lt;&lt;</a>");
+    m_previousPage->hide();
+    statusLayout->addWidget(m_previousPage, 0, Qt::AlignLeft | Qt::AlignTop);
+
+    m_nextPage = new QLabel(w);
+    m_nextPage->setText("<a href=\"next\">&gt;&gt;</a>");
+    m_nextPage->hide();
+    statusLayout->addWidget(m_nextPage, 0, Qt::AlignLeft | Qt::AlignTop);
+
+    {
+        QPalette p = m_descriptionLabel->palette();
+        p.setColor(QPalette::WindowText, theme->color(Plasma::Theme::TextColor));
+        p.setColor(QPalette::Link, theme->color(Plasma::Theme::TextColor));
+        p.setColor(QPalette::LinkVisited, theme->color(Plasma::Theme::TextColor));
+        m_descriptionLabel->setPalette(p);
+        m_previousPage->setPalette(p);
+        m_nextPage->setPalette(p);
+    }
+
+    m_layout->addLayout(statusLayout);
+
     m_dividerLine = new QWidget(w);
-/*    QWidget *dummy = new QWidget(m_dividerLine);
-    QHBoxLayout *m_dividerLineLayout = new QHBoxLayout(w);
-    m_dividerLineLayout->addWidget(dummy);
-    m_dividerLineLayout->addStretch(10);*/
     m_dividerLine->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
     m_dividerLine->setFixedHeight(1);
     m_dividerLine->setAutoFillBackground(true);
     m_layout->addWidget(m_dividerLine);
-
-    m_descriptionLabel = new QLabel(w);
-    {
-        QPalette p = m_descriptionLabel->palette();
-        p.setColor(QPalette::WindowText, theme->color(Plasma::Theme::TextColor));
-        m_descriptionLabel->setPalette(p);
-    }
-    m_descriptionLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
-    m_layout->addWidget(m_descriptionLabel, 0, Qt::AlignCenter | Qt::AlignTop);
 
     m_resultsView = new QGraphicsView(w);
     m_resultsView->setFrameStyle(QFrame::NoFrame);
@@ -211,6 +225,8 @@ Interface::Interface(QWidget* parent)
     connect(m_resultsScene, SIGNAL(itemActivated(ResultItem *)), this, SLOT(run(ResultItem *)));
     connect(m_resultsScene, SIGNAL(itemHoverEnter(ResultItem *)), this, SLOT(updateDescriptionLabel(ResultItem *)));
     connect(m_resultsScene, SIGNAL(itemHoverLeave(ResultItem *)), m_descriptionLabel, SLOT(clear()));
+    connect(m_previousPage, SIGNAL(linkActivated(const QString&)), m_resultsScene, SLOT(previousPage()));
+    connect(m_nextPage, SIGNAL(linkActivated(const QString&)), m_resultsScene, SLOT(nextPage()));
 
     m_layout->addWidget(m_resultsView);
 
@@ -230,12 +246,14 @@ Interface::Interface(QWidget* parent)
     restoreDialogSize(interfaceConfig);
     m_resultsView->hide();
     adjustSize();
-    kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize() << size();
 
+    m_layout->addStretch(1);
     setTabOrder(0, configButton);
     setTabOrder(configButton, activityButton);
     setTabOrder(activityButton, m_searchTerm);
-    setTabOrder(m_searchTerm, m_resultsView);
+    setTabOrder(m_searchTerm, m_previousPage);
+    setTabOrder(m_previousPage, m_nextPage);
+    setTabOrder(m_nextPage, m_resultsView);
     setTabOrder(m_resultsView, closeButton);
 }
 
@@ -336,6 +354,9 @@ void Interface::resetInterface()
     m_descriptionLabel->clear();
     m_resultsScene->clearQuery();
     m_resultsView->hide();
+    m_descriptionLabel->hide();
+    m_previousPage->hide();
+    m_nextPage->hide();
     setMinimumSize(QSize(MIN_WIDTH, 0));
     adjustSize();
 }
@@ -347,6 +368,9 @@ void Interface::closeEvent(QCloseEvent *e)
     } else {
         m_delayedRun = false;
         m_resultsView->hide();
+        m_descriptionLabel->hide();
+        m_previousPage->hide();
+        m_nextPage->hide();
         setMinimumSize(QSize(MIN_WIDTH, 0));
         adjustSize();
     }
@@ -397,6 +421,7 @@ void Interface::queryTextEditted(const QString &query)
 
 void Interface::updateDescriptionLabel(ResultItem *item)
 {
+    m_descriptionLabel->setVisible(item);
     if (!item) {
         m_descriptionLabel->clear();
     } else if (item->description().isEmpty()) {
@@ -444,6 +469,9 @@ void Interface::matchCountChanged(int count)
 {
     bool show = count > 0;
     m_hideResultsTimer.stop();
+    bool pages = m_resultsScene->pageCount() > 1;
+    m_previousPage->setVisible(pages);
+    m_nextPage->setVisible(pages);
 
     if (show && m_delayedRun) {
         kDebug() << "delayed run with" << count << "items";
@@ -467,6 +495,9 @@ void Interface::matchCountChanged(int count)
 void Interface::hideResultsArea()
 {
     m_resultsView->hide();
+    m_descriptionLabel->hide();
+    m_previousPage->hide();
+    m_nextPage->hide();
     setMinimumSize(QSize(MIN_WIDTH, 0));
     adjustSize();
 }

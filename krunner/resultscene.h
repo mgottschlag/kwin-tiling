@@ -53,7 +53,12 @@ class ResultScene : public QGraphicsScene
 
         Plasma::RunnerManager* manager() const;
 
+        uint pageCount() const;
+
     public slots:
+        void nextPage();
+        void previousPage();
+        void setPage(uint index);
         void setQueryMatches(const QList<Plasma::QueryMatch> &matches);
         void launchQuery(const QString &term);
         void launchQuery(const QString &term, const QString &runner);
@@ -92,6 +97,10 @@ class ResultScene : public QGraphicsScene
         QMultiMap<QString, ResultItem *>  m_itemsById;
 
         int m_cIndex;
+        int m_rowStride;
+        int m_pageStride;
+        uint m_pageCount;
+        uint m_currentPage;
 
     private slots:
         void layoutIcons();
