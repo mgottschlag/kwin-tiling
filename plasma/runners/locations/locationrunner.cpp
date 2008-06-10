@@ -19,9 +19,8 @@
 #include "locationrunner.h"
 
 #include <QAction>
+#include <QDir>
 #include <QStringList>
-#include <QDBusInterface>
-#include <QDBusReply>
 
 #include <KDebug>
 #include <KRun>
@@ -140,16 +139,17 @@ void LocationsRunner::run(const Plasma::RunnerContext &context, const Plasma::Qu
     //kDebug() << "command: " << match.query();
     //kDebug() << "url: " << location << data;
 
-	if ( (type == Plasma::RunnerContext::NetworkLocation || type == Plasma::RunnerContext::UnknownType) && data.startsWith("http://")) {
+    if ((type == Plasma::RunnerContext::NetworkLocation || type == Plasma::RunnerContext::UnknownType) &&
+        data.startsWith("http://")) {
         // the text may have changed while we were running, so we have to refresh
         // our content
         KUrl url(location);
         processUrl(url, location);
         KToolInvocation::invokeBrowser(url.url());
-    } else if (type != Plasma::RunnerContext::UnknownType) {
-		KToolInvocation::invokeBrowser(location);
-	} else {
-        new KRun(KShell::tildeExpand(location), 0);
+    } else if (type == Plasma::RunnerContext::NetworkLocation) {
+        KToolInvocation::invokeBrowser(location);
+    } else {
+        new KRun(QDir::cleanPath(KShell::tildeExpand(location)), 0);
     }
 }
 
