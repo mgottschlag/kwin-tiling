@@ -60,9 +60,7 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList  & /*arg
  : NetworkManager(parent), d(new NMNetworkManagerPrivate)
 {
     #define connectNMToThis(signal, slot) \
-    d->manager.connection().connect("org.freedesktop.NetworkManager", \
-                                     "/org/freedesktop/NetworkManager", \
-                                     "org.freedesktop.NetworkManager", \
+    d->manager.connection().connect(NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE, \
                                      signal, this, SLOT(slot));
     connectNMToThis(NM_DBUS_SIGNAL_STATE_CHANGE, stateChanged(uint));
     connectNMToThis("DeviceAdded", receivedDeviceAdded(QDBusObjectPath));

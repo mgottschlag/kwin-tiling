@@ -219,9 +219,7 @@ void NMWirelessNetwork::setBitrate(int rate)
 #if 0
 void NMWirelessNetwork::setActivated(bool activated)
 {
-    QDBusInterface manager("org.freedesktop.NetworkManager",
-            "/org/freedesktop/NetworkManager",
-            "org.freedesktop.NetworkManager",
+    QDBusInterface manager(NM_DBUS_SERVICE, NM_DBUS_PATH, NM_DBUS_INTERFACE,
             QDBusConnection::systemBus());
     QString devicePath = uni().left(uni().indexOf("/Networks"));
     kDebug(1441) << devicePath << " - " << d->essid;
