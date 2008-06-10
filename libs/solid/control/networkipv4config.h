@@ -40,6 +40,11 @@ public:
     IPv4Config();
     ~IPv4Config();
     IPv4Config(const IPv4Config&);
+    /** 
+     * List of IP addresses related to this configuration. 
+     * Each inner list represents a triple <IP address, subnet mask, gateway>
+     * The outer list allows a configuration to have multiple addresses
+     */
     QList< QList<quint32> >addresses() const;
     /** May go away, need to check if the broadcast address is *ALWAYS* .255 */
     quint32 broadcast() const;
