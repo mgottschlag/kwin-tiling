@@ -46,7 +46,6 @@ Q_OBJECT
     public Q_SLOTS:
         void setWirelessEnabled(bool);
         void setNetworkingEnabled(bool);
-        void notifyHiddenNetwork(const QString  &);
     protected Q_SLOTS:
         void stateChanged(uint);
         void receivedDeviceAdded(const QDBusObjectPath &);
@@ -69,4 +68,3 @@ Q_OBJECT
 };
 
 #endif
-

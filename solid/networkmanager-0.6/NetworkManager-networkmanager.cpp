@@ -277,12 +277,6 @@ void NMNetworkManager::setWirelessEnabled(bool enabled)
     d->manager.call("setWirelessEnabled", enabled);
 }
 
-void NMNetworkManager::notifyHiddenNetwork(const QString  & /*netname */)
-{
-#warning NMNetworkManager::notifyHiddenNetwork() is unimplemented
-    kDebug(1441) << "implement me";
-}
-
 void NMNetworkManager::stateChanged(uint state)
 {
     d->cachedState = static_cast<NMState>(state);
@@ -396,6 +390,7 @@ void NMNetworkManager::carrierOn(const QDBusObjectPath & devPath)
             wiredNet->setCarrier(true);
     }
 }
+
 void NMNetworkManager::carrierOff(const QDBusObjectPath & devPath)
 {
     kDebug(1441) << devPath.path();
@@ -479,5 +474,5 @@ void NMNetworkManager::nameOwnerChanged(const QString & name, const QString & ol
         }
     }
 }
-// TODO check for bum input at least to public methods ie devPath
+
 #include "NetworkManager-networkmanager.moc"

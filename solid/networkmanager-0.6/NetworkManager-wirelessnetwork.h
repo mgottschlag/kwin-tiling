@@ -40,9 +40,6 @@ public:
     Solid::Control::WirelessNetworkInterface::OperationMode mode() const;
     void setSignalStrength(const QDBusObjectPath & netPath, int strength);
     void setBitrate(int rate);
-#if 0
-    virtual void setActivated(bool activated);
-#endif
     MacAddressList accessPoints() const;
     QString activeAccessPoint() const;
     QString hardwareAddress() const;

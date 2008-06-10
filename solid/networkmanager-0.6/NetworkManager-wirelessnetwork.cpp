@@ -48,18 +48,6 @@ void dump(const Solid::Control::WirelessNetworkInterface::Capabilities  & cap)
     kDebug(1441) << "RSM      " << (cap  & Solid::Control::WirelessNetworkInterface::Rsn ? "X " : " O");
 }
 
-#if 0
-void dump(const NMDBusWirelessNetworkProperties  & network)
-{
-    kDebug(1441) << "Object path: " << network.path.path() << "\nESSID: " << network.essid
-        << "\nHardware address: " << network.hwAddr << "\nSignal strength: " << network.strength
-        << "\nFrequency: " << network.frequency << "\nBit rate: " << network.rate
-        << "\nMode: " << network.mode
-        << "\nBroadcast: " << network.broadcast << "\nWireless Capabilities: " << endl;
-    dump(network.capabilities);
-}
-#endif
-
 Solid::Control::WirelessNetworkInterface::Capabilities getCapabilities(const int nm)
 {
     Solid::Control::WirelessNetworkInterface::Capabilities caps;
@@ -304,6 +292,4 @@ bool NMWirelessNetwork::deactivateConnection()
     return false;
 }
 
-
 #include "NetworkManager-wirelessnetwork.moc"
-

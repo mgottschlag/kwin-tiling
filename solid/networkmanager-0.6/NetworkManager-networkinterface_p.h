@@ -17,11 +17,6 @@
     Boston, MA 02110-1301, USA.
 
 */
-/***************************************************************************
- *   Copyright (C) 2006 by Pino Toscano <pino@kde.org>                     *
- *                                                                         *
- ***************************************************************************/
-
 
 #ifndef NETWORKMANAGER_NETWORKINTERFACE_P_H
 #define NETWORKMANAGER_NETWORKINTERFACE_P_H
