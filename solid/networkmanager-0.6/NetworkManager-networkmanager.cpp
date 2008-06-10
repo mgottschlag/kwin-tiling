@@ -319,9 +319,10 @@ void NMNetworkManager::receivedDeviceRemoved(const QDBusObjectPath & objpath)
     QHash<QString, NMNetworkInterface *>::Iterator it = d->interfaces.find(path);
     if (it != d->interfaces.end())
     {
-        delete it.value();
+        NMNetworkInterface * iface = it.value();
         d->interfaces.erase(it);
         emit networkInterfaceRemoved(path);
+        delete iface;
     }
 }
 

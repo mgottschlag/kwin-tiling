@@ -134,12 +134,13 @@ void NMWirelessNetworkPrivate::notifyRemoveNetwork(const QDBusObjectPath & netPa
     const QString path = netPath.path();
     QHash<QString, NMAccessPoint*>::Iterator it = accessPoints.find(path);
     if (it != accessPoints.end()) {
-        delete it.value();
+        NMAccessPoint * ap = it.value();
         accessPoints.erase(it);
         if (path == activeAccessPoint) {
             readActiveAccessPoint();
         }
         emit q->accessPointDisappeared(path);
+        delete ap;
     }
 }
 
