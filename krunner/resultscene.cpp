@@ -349,7 +349,7 @@ void ResultScene::previousPage()
 
 void ResultScene::setPage(uint index)
 {
-    if (index < 0 || index >= m_pageCount - 1) {
+    if (index >= m_pageCount || index == m_currentPage) {
         return;
     }
 
