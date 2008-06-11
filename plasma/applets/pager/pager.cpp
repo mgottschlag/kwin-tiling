@@ -402,7 +402,7 @@ void Pager::currentDesktopChanged(int desktop)
     m_currentDesktop = desktop;
 
     m_dirtyDesktop = -1;
-    
+
     if (!m_timer->isActive()) {
         m_timer->start(WINDOW_UPDATE_DELAY);
     }
@@ -485,8 +485,12 @@ void Pager::windowChanged(WId id, unsigned int properties)
 {
     Q_UNUSED(id)
 
-    KWindowInfo info = KWindowSystem::windowInfo(id, NET::WMGeometry | NET::WMFrameExtents | NET::WMWindowType | NET::WMDesktop | NET::WMState | NET::XAWMState);
-    m_dirtyDesktop = info.desktop() - 1;
+    if (properties & NET::WMGeometry) {
+        KWindowInfo info = KWindowSystem::windowInfo(id, NET::WMGeometry | NET::WMFrameExtents | NET::WMWindowType | NET::WMDesktop | NET::WMState | NET::XAWMState);
+        m_dirtyDesktop = info.desktop() - 1;
+    } else {
+        m_dirtyDesktop = -1;
+    }
 
     if (properties & NET::WMGeometry ||
         properties & NET::WMDesktop) {
