@@ -65,6 +65,8 @@ Otherwise kdostartupconfig is launched to create or update all the necessary fil
 
 #include <kdefakes.h>
 
+#include <config-workspace>
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
@@ -81,7 +83,7 @@ int main()
     else if( getenv( "HOME" ))
         {
         strlcpy( kdehome, getenv( "HOME" ), 1024 );
-        strlcat( kdehome, "/" + KDE_DEFAULT_HOME, 1024  );
+        strlcat( kdehome, "/" KDE_DEFAULT_HOME, 1024  );
         }
     else
         return 1;
