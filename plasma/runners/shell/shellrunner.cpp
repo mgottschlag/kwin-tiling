@@ -87,6 +87,7 @@ void ShellRunner::setRunInTerminal(bool inTerminal)
 
 void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
+    QMutexLocker lock(bigLock());
     Q_UNUSED(match);
     if (!m_enabled) {
         return;
