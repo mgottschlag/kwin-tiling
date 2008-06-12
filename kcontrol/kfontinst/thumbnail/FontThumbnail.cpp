@@ -26,6 +26,8 @@
 #include "FcEngine.h"
 #include <QtGui/QImage>
 #include <QtGui/QPixmap>
+#include <QtGui/QApplication>
+#include <QtGui/QPalette>
 #include <QtCore/QFile>
 #include <KDE/KGlobalSettings>
 #include <KDE/KLocale>
@@ -60,7 +62,7 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
     QString  realPath(path);
     KTempDir *tempDir = 0;
 
-    CFcEngine::setTextCol(Qt::black);
+    CFcEngine::setTextCol(QApplication::palette().color(QPalette::Text));
 
     KFI_DBUG << "Create font thumbnail for:" << path << endl;
 
