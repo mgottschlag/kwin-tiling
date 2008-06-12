@@ -127,6 +127,7 @@ private:
     QPixmap m_renderedSvg;
     Plasma::Svg* m_svg;
     QLabel *m_automaticallyDoLabel;
+    KSMPushButton *m_btnLogout;
     int m_automaticallyDoSeconds;
 
 private Q_SLOTS:

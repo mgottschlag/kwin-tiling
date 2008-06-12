@@ -360,10 +360,11 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     QVBoxLayout *buttonLayout = new QVBoxLayout();
     buttonLayout->addStretch();
     QHBoxLayout *buttonMainLayout = new QHBoxLayout();
+    if (m_svg->hasElement("picture")) {
+        buttonMainLayout->addSpacing(m_svg->elementRect("picture").toRect().width() + 12);
+    }
     buttonMainLayout->addStretch();
     buttonMainLayout->addLayout(buttonLayout);
-
-    QHBoxLayout *topLayout = new QHBoxLayout();
 
     QHBoxLayout *bottomLayout = new QHBoxLayout();
 
@@ -373,60 +374,12 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     QPalette palette;
     palette.setColor(QPalette::WindowText, fntColor);
 
-    QLabel *versionLabel = new QLabel(this);
-
-    int vmajor = KDE_VERSION_MAJOR;
-    int vminor = KDE_VERSION_MINOR;
-    int vbugfix = KDE_VERSION_RELEASE;
-
-    QString vcomposed;
-    if (vbugfix > 0) {
-        // Placeholders tagged <numid> to avoid treatment as amounts.
-        vcomposed = i18nc("@label In corner of the logout dialog",
-                          "KDE <numid>%1.%2.%3</numid>", vmajor, vminor, vbugfix);
-    }
-    else {
-        vcomposed = i18nc("@label In corner of the logout dialog",
-                          "KDE <numid>%1.%2</numid>", vmajor, vminor);
-    }
-    versionLabel->setPalette(palette);
-    versionLabel->setText(vcomposed);
-    versionLabel->setFont(fnt);
-
-    KUser userInformation;
-    QString logoutMsg;
-    QString userName = userInformation.property( KUser::FullName ).toString();
-    QString loginName = userInformation.loginName();
-
-    QFontMetrics fm(fnt);
-    if (fm.width(userName) > width() / 2) { // cut the text if it is really long in order to not use more than two lines
-        userName = fm.elidedText(userName, Qt::ElideRight, width() / 2);
-    }
-
-    if (userName.isEmpty()) {
-        logoutMsg = i18n( "End Session for %1", loginName );
-    } else {
-        logoutMsg = i18n( "End Session for %1 (%2)", userName, loginName );
-    }
-
-    QLabel *logoutMessageLabel = new QLabel(this);
-    // FIXME Made the color picked from the user's one
-    logoutMessageLabel->setPalette(palette);
-    logoutMessageLabel->setText(logoutMsg);
-    logoutMessageLabel->setAlignment(Qt::AlignRight);
-    fnt.setPixelSize(12);
-    logoutMessageLabel->setFont(fnt);
-    logoutMessageLabel->setWordWrap(true);
-
-    topLayout->addWidget(versionLabel, 0, Qt::AlignTop); // correct possition if logoutMessageLabel has multiple lines
-    topLayout->addWidget(logoutMessageLabel, 1, Qt::AlignBottom);
-
-    KSMPushButton* btnLogout = new KSMPushButton( i18n("&Logout"), this );
-    btnLogout->setObjectName("btnLogout");
-    btnLogout->setPixmap(KIconLoader::global()->loadIcon("system-log-out", KIconLoader::NoGroup, 32));
-    btnLogout->setFocus();
-    connect(btnLogout, SIGNAL(clicked()), SLOT(slotLogout()));
-    buttonLayout->addWidget(btnLogout);
+    m_btnLogout = new KSMPushButton( i18n("&Logout"), this );
+    m_btnLogout->setObjectName("m_btnLogout");
+    m_btnLogout->setPixmap(KIconLoader::global()->loadIcon("system-log-out", KIconLoader::NoGroup, 32));
+    m_btnLogout->setFocus();
+    connect(m_btnLogout, SIGNAL(clicked()), SLOT(slotLogout()));
+    buttonLayout->addWidget(m_btnLogout);
     buttonLayout->addStretch();
 
     if (maysd) {
@@ -511,8 +464,6 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     bottomLayout->addWidget(btnBack);
     connect(btnBack, SIGNAL(clicked()), SLOT(reject()));
 
-    mainLayout->addLayout(topLayout);
-    mainLayout->addSpacing(5);
     mainLayout->addLayout(buttonMainLayout);
     mainLayout->addSpacing(9);
     mainLayout->addLayout(bottomLayout);
@@ -554,6 +505,12 @@ void KSMShutdownDlg::paintEvent(QPaintEvent *e)
 
     p.fillRect(QRect(0, 0, width(), height()), Qt::transparent);
     m_svg->paint(&p, QRect(0, 0, width(), height()), "background");
+
+    if (m_svg->hasElement("picture")) {
+        QRect r = m_svg->elementRect("picture").toRect();
+        r.moveTop(m_btnLogout->geometry().top());
+        m_svg->paint(&p, r, "picture");
+    }
 }
 
 void KSMShutdownDlg::resizeEvent(QResizeEvent *e)
