@@ -50,6 +50,8 @@
 #include <plasma/runnermanager.h>
 #include <plasma/theme.h>
 
+#include "kworkspace/kdisplaymanager.h"
+
 #include "collapsiblewidget.h"
 #include "configdialog.h"
 #include "interfaceadaptor.h"
@@ -433,17 +435,28 @@ void Interface::updateDescriptionLabel(ResultItem *item)
 
 void Interface::switchUser()
 {
-    //TODO: ugh, magic strings. See sessions/sessionrunner.cpp
-    display(QString());
-    //TODO: create a "single runner" mode
-    //m_header->setText(i18n("Switch users"));
-    //m_header->setPixmap("system-switch-user");
-
     KService::Ptr service = KService::serviceByStorageId("plasma-runner-sessions.desktop");
     KPluginInfo info(service);
 
     if (info.isValid()) {
-        m_resultsScene->launchQuery("SESSIONS", info.pluginName());
+        SessList sessions;
+
+        if (sessions.isEmpty()) {
+            // no sessions to switch between, let's just start up another session directly
+            Plasma::AbstractRunner *sessionRunner = m_resultsScene->manager()->runner(info.pluginName());
+            if (sessionRunner) {
+                Plasma::QueryMatch switcher(sessionRunner);
+                sessionRunner->run(*m_resultsScene->manager()->searchContext(), switcher);
+            }
+        } else {
+            display(QString());
+            //TODO: create a "single runner" mode
+            //m_header->setText(i18n("Switch users"));
+            //m_header->setPixmap("system-switch-user");
+
+            //TODO: ugh, magic strings. See sessions/sessionrunner.cpp
+            m_resultsScene->launchQuery("SESSIONS", info.pluginName());
+        }
     }
 }
 
