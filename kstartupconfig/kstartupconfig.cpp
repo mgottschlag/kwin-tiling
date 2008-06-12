@@ -81,7 +81,7 @@ int main()
     else if( getenv( "HOME" ))
         {
         strlcpy( kdehome, getenv( "HOME" ), 1024 );
-        strlcat( kdehome, "/.kde", 1024  );
+        strlcat( kdehome, "/" + KDE_DEFAULT_HOME, 1024  );
         }
     else
         return 1;
