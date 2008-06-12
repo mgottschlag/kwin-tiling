@@ -476,8 +476,7 @@ ClipAction::ClipAction( KConfig *kc, const QString& group )
 
 ClipAction::~ClipAction()
 {
-    while (!myCommands.isEmpty())
-        delete myCommands.takeFirst();
+    qDeleteAll(myCommands);
 }
 
 
