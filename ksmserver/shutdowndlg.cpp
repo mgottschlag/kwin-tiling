@@ -549,6 +549,10 @@ void KSMShutdownDlg::paintEvent(QPaintEvent *e)
     Q_UNUSED(e);
     QPainter p(this);
     p.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    p.setCompositionMode( QPainter::CompositionMode_Source );
+    p.setClipRect(e->rect());
+
+    p.fillRect(QRect(0, 0, width(), height()), Qt::transparent);
     m_svg->paint(&p, QRect(0, 0, width(), height()), "background");
 }
 
@@ -556,13 +560,17 @@ void KSMShutdownDlg::resizeEvent(QResizeEvent *e)
 {
     QDialog::resizeEvent( e );
 
-    QBitmap mask(size());
-    mask.fill(Qt::color0);
+    if( KWindowSystem::compositingActive()) {
+        clearMask();
+    } else {
+        QBitmap mask(size());
+        mask.fill(Qt::color0);
 
-    QPainter p(&mask);
-    m_svg->resize(size());
-    m_svg->paint(&p, QRect(0, 0, width(), height()), "background");
-    setMask(mask);
+        QPainter p(&mask);
+        m_svg->resize(size());
+        m_svg->paint(&p, QRect(0, 0, width(), height()), "background");
+        setMask(mask);
+    }
 }
 
 void KSMShutdownDlg::slotLogout()
@@ -612,6 +620,11 @@ bool KSMShutdownDlg::confirmShutdown( bool maysd, KWorkSpace::ShutdownType& sdty
     KSMShutdownDlg* l = new KSMShutdownDlg( 0,
                                             //KSMShutdownFeedback::self(),
                                             maysd, sdtype );
+    XClassHint classHint;
+    classHint.res_name = "ksmserver";
+    classHint.res_class = "ksmserver";
+
+    XSetClassHint(QX11Info::display(), l->winId(), &classHint);
     bool result = l->exec();
     sdtype = l->m_shutdownType;
     bootOption = l->m_bootOption;

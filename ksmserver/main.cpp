@@ -45,9 +45,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "server.h"
 #include <QX11Info>
 
+#include <X11/extensions/Xrender.h>
 
 static const char version[] = "0.4";
 static const char description[] = I18N_NOOP( "The reliable KDE session manager that talks the standard X11R6 \nsession management protocol (XSMP)." );
+
+Display* dpy = 0;
+Colormap colormap = 0;
+Visual *visual = 0;
 
 extern KSMServer* the_server;
 
@@ -73,6 +78,47 @@ bool writeTest(QByteArray path)
    close(fd);
    unlink(path.data());
    return true;
+}
+
+void checkComposite()
+{
+    // thanks to zack rusin and frederik for pointing me in the right direction
+    // for the following bits of X11 code
+    dpy = XOpenDisplay(0); // open default display
+    if (!dpy)
+    {
+        kError() << "Cannot connect to the X server";
+        return;
+    }
+
+    int screen = DefaultScreen(dpy);
+    int eventBase, errorBase;
+
+    if (XRenderQueryExtension(dpy, &eventBase, &errorBase))
+    {
+        int nvi;
+        XVisualInfo templ;
+        templ.screen  = screen;
+        templ.depth   = 32;
+        templ.c_class = TrueColor;
+        XVisualInfo *xvi = XGetVisualInfo(dpy, VisualScreenMask |
+                                                VisualDepthMask |
+                                                VisualClassMask,
+                                            &templ, &nvi);
+        for (int i = 0; i < nvi; ++i)
+        {
+            XRenderPictFormat *format = XRenderFindVisualFormat(dpy,
+                                                                xvi[i].visual);
+            if (format->type == PictTypeDirect && format->direct.alphaMask)
+            {
+                visual = xvi[i].visual;
+                colormap = XCreateColormap(dpy, RootWindow(dpy, screen),
+                                            visual, AllocNone);
+                break;
+            }
+        }
+
+    }
 }
 
 void sanity_check( int argc, char* argv[], KAboutData* aboutDataPtr )
@@ -209,7 +255,8 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
     KCmdLineArgs::addCmdLineOptions( options );
 
     putenv((char*)"SESSION_MANAGER=");
-    KApplication a(true); // Disable styles until we need them.
+    checkComposite();    
+    KApplication a(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
     fcntl(ConnectionNumber(QX11Info::display()), F_SETFD, 1);
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
