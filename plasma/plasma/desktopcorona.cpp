@@ -96,11 +96,13 @@ void DesktopCorona::loadDefaultLayout()
         // put a folder view on the first screen
         if (i == 0) {
             Plasma::Applet *folderView =  Plasma::Applet::load("folderview", c->id() + 1);
-            c->addApplet(folderView, QPointF(KDialog::spacingHint(), KDialog::spacingHint()), true);
-            KConfigGroup config = folderView->config();
-            config.writeEntry("url", "desktop:/");
-            folderView->init();
-            folderView->flushPendingConstraintsEvents();
+            if (folderView) {
+                c->addApplet(folderView, QPointF(KDialog::spacingHint(), KDialog::spacingHint()), true);
+                KConfigGroup config = folderView->config();
+                config.writeEntry("url", "desktop:/");
+                folderView->init();
+                folderView->flushPendingConstraintsEvents();
+            }
         }
 
         if (g.x() <= topLeftCorner.x() && g.y() >= topLeftCorner.y()) {
