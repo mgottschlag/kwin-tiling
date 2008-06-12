@@ -30,12 +30,8 @@
 #include "dbuswatcher.h"
 #include "pollingwatcher.h"
 #include "mpris.h"
-#ifdef JUK_FOUND
 #include "juk.h"
-#endif // JUK_FOUND
-#ifdef AMAROK_FOUND
 #include "amarok.h"
-#endif // AMAROK_FOUND
 #ifdef XMMS_FOUND
 #include "xmms.h"
 #endif // XMMS_FOUND
@@ -58,12 +54,8 @@ NowPlayingEngine::NowPlayingEngine(QObject* parent,
             this,        SLOT(removePlayer(Player::Ptr)));
 
     dbusWatcher->addFactory(new MprisFactory(dbusWatcher));
-#ifdef JUK_FOUND
     dbusWatcher->addFactory(new JukFactory(dbusWatcher));
-#endif
-#ifdef AMAROK_FOUND
     dbusWatcher->addFactory(new AmarokFactory(dbusWatcher));
-#endif
 #ifdef XMMS_FOUND
     pollingWatcher->addFactory(new XmmsFactory(pollingWatcher));
 #endif
