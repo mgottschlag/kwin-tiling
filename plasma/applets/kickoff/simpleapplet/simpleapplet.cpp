@@ -340,7 +340,7 @@ void MenuLauncherApplet::toggleMenu()
                 switchaction->setData(KUrl("leave:/switch"));
                 QAction *lockaction = d->menuview->addAction(KIcon("system-lock-screen"),i18n("Lock"));
                 lockaction->setData(KUrl("leave:/lock"));
-                QAction *logoutaction = d->menuview->addAction(KIcon("system-log-out"),i18n("Logout"));
+                QAction *logoutaction = d->menuview->addAction(KIcon("system-log-out"),i18n("Leave"));
                 logoutaction->setData(KUrl("leave:/logout"));
             } break;
             case Favorites: {
