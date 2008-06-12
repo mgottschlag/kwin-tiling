@@ -391,7 +391,7 @@ void Kclock::paintEvent( QPaintEvent * )
       matrix.translate( cp.x(), cp.y() );
       matrix.scale( d/1000.0F, d/1000.0F );
 
-      // lancetta delle ore
+      // hour hand
       float h_angle = 30*(time.hour()%12-3) + time.minute()/2;
       matrix.rotate( h_angle );
       paint.setWorldTransform( matrix );
@@ -399,7 +399,7 @@ void Kclock::paintEvent( QPaintEvent * )
       paint.drawPolygon( pts );
       matrix.rotate( -h_angle );
 
-      // lancetta dei minuti
+      // minute hand
       float m_angle = (time.minute()-15)*6;
       matrix.rotate( m_angle );
       paint.setWorldTransform( matrix );
@@ -407,7 +407,7 @@ void Kclock::paintEvent( QPaintEvent * )
       paint.drawPolygon( pts );
       matrix.rotate( -m_angle );
 
-      // lancetta dei secondi
+      // second hand
       float s_angle = (time.second()-15)*6;
       matrix.rotate( s_angle );
       paint.setWorldTransform( matrix );
@@ -415,7 +415,7 @@ void Kclock::paintEvent( QPaintEvent * )
       paint.drawPolygon( pts );
       matrix.rotate( -s_angle );
 
-      // quadrante
+      // clock face
       for ( int i=0 ; i < 60 ; i++ )
         {
           paint.setWorldTransform( matrix );
