@@ -65,7 +65,7 @@ Otherwise kdostartupconfig is launched to create or update all the necessary fil
 
 #include <kdefakes.h>
 
-#include <config-workspace>
+#include <config-workspace.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
