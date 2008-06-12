@@ -60,7 +60,6 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
     QString  realPath(path);
     KTempDir *tempDir = 0;
 
-    CFcEngine::setBgndCol(Qt::white);
     CFcEngine::setTextCol(Qt::black);
 
     KFI_DBUG << "Create font thumbnail for:" << path << endl;
@@ -115,19 +114,6 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
     if(CFcEngine::instance()->draw(KUrl(realPath), width, height, pix, 0, true))
     {
         img=pix.toImage().convertToFormat(QImage::Format_ARGB32);
-
-        int pixelsPerLine=img.bytesPerLine()/4;
-
-        for(int l=0; l<img.height(); ++l)
-        {
-            QRgb *scanLine=(QRgb *)img.scanLine(l);
-
-            for(int pixel=0; pixel<pixelsPerLine; ++pixel)
-                scanLine[pixel]=qRgba(qRed(scanLine[pixel]), qGreen(scanLine[pixel]),
-                                      qBlue(scanLine[pixel]),
-                                      0xFF-qRed(scanLine[pixel]));
-        }
-
         delete tempDir;
         return true;
     }

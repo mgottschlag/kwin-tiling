@@ -218,23 +218,6 @@ CPreviewCache::CPreviewCache()
 {
 }
 
-static void addAlpha(QImage &img)
-{
-    img=img.convertToFormat(QImage::Format_ARGB32);
-
-    int pixelsPerLine=img.bytesPerLine()/4;
-
-    for(int l=0; l<img.height(); ++l)
-    {
-        QRgb *scanLine=(QRgb *)img.scanLine(l);
-
-        for(int pixel=0; pixel<pixelsPerLine; ++pixel)
-            scanLine[pixel]=qRgba(qRed(scanLine[pixel]), qGreen(scanLine[pixel]),
-                                  qBlue(scanLine[pixel]),
-                                  0xFF-qRed(scanLine[pixel]));
-    }
-}
-
 static QString replaceChars(const QString &in)
 {
     QString rv(in);
@@ -306,8 +289,7 @@ static void setTimeStamp(const QString &f)
 QString CPreviewCache::thumbKey(const QString &name, quint32 style, int height)
 {
     return replaceChars(name)+
-           QString().sprintf("-%06lX%02d%02X%02X%02X%02X%02X%02X.png", (long unsigned int)style, height,
-                             CFcEngine::bgndCol().red(), CFcEngine::bgndCol().green(), CFcEngine::bgndCol().blue(),
+           QString().sprintf("-%06lX%02d%02X%02X%02X.png", (long unsigned int)style, height,
                              CFcEngine::textCol().red(), CFcEngine::textCol().green(), CFcEngine::textCol().blue());
 }
 
@@ -342,7 +324,6 @@ QPixmap * CPreviewCache::getPixmap(const QString &family, const QString &name, c
 #endif
             QImage thumb=itsMap[thumbName].toImage();
 
-            addAlpha(thumb);
 #ifdef KFI_SAVE_PIXMAPS
             thumb.save(&pngFile, constFileType);
             pngFile.close();

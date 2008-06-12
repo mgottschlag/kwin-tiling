@@ -75,7 +75,6 @@ CFontViewPart::CFontViewPart(QWidget *parentWidget, QObject *parent, const QList
                itsTempDir(NULL)
 {
     CFcEngine::instance()->readConfig(*itsConfig);
-    CFcEngine::setBgndCol(QApplication::palette().color(QPalette::Active, QPalette::Base));
     CFcEngine::setTextCol(QApplication::palette().color(QPalette::Active, QPalette::Text));
 
     // create browser extension (for printing when embedded into browser)

@@ -213,7 +213,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     setButtons(Help);
 
     CFcEngine::instance()->readConfig(itsConfig);
-    CFcEngine::setBgndCol(QApplication::palette().color(QPalette::Active, QPalette::Base));
     CFcEngine::setTextCol(QApplication::palette().color(QPalette::Active, QPalette::Text));
     KGlobal::locale()->insertCatalog(KFI_CATALOGUE);
     KIconLoader::global()->addAppDir(KFI_NAME);

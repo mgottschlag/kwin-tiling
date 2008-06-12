@@ -34,6 +34,9 @@
 namespace KFI
 {
 
+static const int constBorder=4;
+static const int constStepSize=16;
+
 CFontPreview::CFontPreview(QWidget *parent)
             : QWidget(parent),
               itsCurrentFace(1),
@@ -43,9 +46,6 @@ CFontPreview::CFontPreview(QWidget *parent)
               itsLastChar(itsChars.end()),
               itsTip(NULL)
 {
-    QPalette p(palette());
-    p.setColor(backgroundRole(), CFcEngine::bgndCol());
-    setPalette(p);
 }
 
 CFontPreview::~CFontPreview()
@@ -70,8 +70,8 @@ void CFontPreview::showFace(int face)
 
 void CFontPreview::showFont()
 {
-    itsLastWidth=width();
-    itsLastHeight=height();
+    itsLastWidth=width()+constStepSize;
+    itsLastHeight=height()+constStepSize;
 
     if(!itsCurrentUrl.isEmpty() &&
        CFcEngine::instance()->draw(itsCurrentUrl, itsLastWidth, itsLastHeight, itsPixmap,
@@ -104,15 +104,15 @@ void CFontPreview::paintEvent(QPaintEvent *)
 {
     QPainter paint(this);
 
-    paint.fillRect(rect(), CFcEngine::bgndCol());
+    paint.fillRect(rect(), palette().base());
     if(!itsPixmap.isNull())
     {
-        static const int constStepSize=16;
 
         if(abs(width()-itsLastWidth)>constStepSize || abs(height()-itsLastHeight)>constStepSize)
             showFont();
         else
-            paint.drawPixmap(0, 0, itsPixmap);
+            paint.drawPixmap(QPoint(constBorder, constBorder), itsPixmap,
+                             QRect(0, 0, width()-(constBorder*2), height()-(constBorder*2)));
     }
 }
 

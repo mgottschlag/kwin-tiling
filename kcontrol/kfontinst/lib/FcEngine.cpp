@@ -53,7 +53,6 @@ K_GLOBAL_STATIC(CFcEngine, theInstance)
 const int CFcEngine::constScalableSizes[]={8, 10, 12, 24, 36, 48, 64, 72, 96, 0 };
 const int CFcEngine::constDefaultAlphaSize=24;
 
-QColor CFcEngine::theirBgndCol(Qt::white);
 QColor CFcEngine::theirTextCol(Qt::black);
 
 static int fcToQtWeight(int weight)
@@ -181,7 +180,7 @@ static bool drawChar32Centre(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCo
 static const int constBorder=2;
 
 static bool drawChar32(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, quint32 ch,
-                       int &x, int &y, int w, int h, int fontHeight, int offset, QRect &r)
+                       int &x, int &y, int w, int h, int fontHeight, QRect &r)
 {
     r=QRect();
     if(XftCharExists(QX11Info::display(), xftFont, ch))
@@ -195,13 +194,13 @@ static bool drawChar32(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, qui
 
         if(x+extents.width+constBorder>w)
         {
-            x=offset;
+            x=0;
             if(extents.x>0)
                 x+=extents.x;
             y+=fontHeight+constBorder;
         }
 
-        if(y+offset<h)
+        if(y<h)
         {
             r=QRect(x-extents.x, y-extents.y, extents.width+constBorder, extents.height);
 
@@ -216,7 +215,7 @@ static bool drawChar32(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, qui
 }
 
 static bool drawString(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, const QString &text,
-                       int x, int &y, int h, int offset)
+                       int x, int &y, int h)
 {
     XGlyphInfo     extents;
     const FcChar16 *str=(FcChar16 *)(text.utf16());
@@ -226,14 +225,14 @@ static bool drawString(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, con
         XftDrawString16(xftDraw, xftCol, xftFont, x, y+extents.y, str, text.length());
     if(extents.height>0)
     {
-        y+=extents.height+offset;
+        y+=extents.height;
         return true;
     }
     return false;
 }
 
 static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_UInt i,
-                      int &x, int &y, int w, int h, int fontHeight, int offset, bool oneLine,
+                      int &x, int &y, int w, int h, int fontHeight, bool oneLine,
                       QRect &r)
 {
     XGlyphInfo extents;
@@ -245,11 +244,11 @@ static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_U
         if(oneLine)
             return false;
 
-        x=offset;
+        x=0;
         y+=fontHeight+2;
     }
 
-    if(y+offset<h)
+    if(y<h)
     {
         XftDrawGlyphs(xftDraw, xftCol, xftFont, x, y, &i, 1);
         x+=extents.width+2;
@@ -261,7 +260,7 @@ static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_U
 }
 
 static bool drawAllGlyphs(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, int fontHeight,
-                          int &x, int &y, int w, int h, int offset, bool oneLine=false, int max=-1,
+                          int &x, int &y, int w, int h, bool oneLine=false, int max=-1,
                           QRect *used=NULL)
 {
     bool rv(false);
@@ -282,7 +281,7 @@ static bool drawAllGlyphs(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, 
             rv=true;
             y+=fontHeight;
             for(int i=1; i<face->num_glyphs && y<h; ++i)
-                if(drawGlyph(xftDraw, xftFont, xftCol, i, x, y, w, h, fontHeight, offset, oneLine, r))
+                if(drawGlyph(xftDraw, xftFont, xftCol, i, x, y, w, h, fontHeight, oneLine, r))
                 {
                     if(r.height()>0)
                     {
@@ -299,7 +298,7 @@ static bool drawAllGlyphs(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, 
                     break;
 
             if(oneLine)
-                x=offset;
+                x=0;
             XftUnlockFace(xftFont);
         }
     }
@@ -406,9 +405,11 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, quint32 st
             {
                 //
                 // Calculate size of text...
-                int  fSize=((int)(h*0.75))-2,
-                     offset=0;
+                int  fSize=((int)(h*0.75))-2;
                 bool needResize(false);
+
+                QColor bgndCol(Qt::white);
+                bgndCol.setAlphaF(0.0);
 
                 if(!itsScalable) // Then need to get nearest size...
                 {
@@ -422,17 +423,15 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, quint32 st
                     if(bSize>h)
                     {
                         pix=QPixmap(constInitialWidth, bSize+8);
-                        pix.fill(theirBgndCol);
+                        pix.fill(bgndCol);
                         needResize=true;
                     }
-                    else
-                        offset=(fSize-bSize)/2;
                 }
 
                 if(!needResize)
                 {
                     pix=QPixmap(constInitialWidth, h);
-                    pix.fill(theirBgndCol);
+                    pix.fill(bgndCol);
                 }
 
                 const QX11Info &x11Info(pix.x11Info());
@@ -449,8 +448,7 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, quint32 st
                                    DefaultColormap(QX11Info::display(), x11Info.screen()),
                                    &xrenderCol, &xftCol);
 
-                XftDraw *xftDraw=XftDrawCreate(QX11Info::display(), (Pixmap)(pix.handle()),
-                                               (Visual*)(x11Info.visual()), x11Info.colormap());
+                XftDraw *xftDraw=XftDrawCreateAlpha(QX11Info::display(), (Pixmap)(pix.handle()), 32);
 
                 if(xftDraw)
                 {
@@ -459,8 +457,7 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, quint32 st
 
                     //
                     // Calculate size of text...
-                    int fSize=((int)(h*0.75))-2,
-                        offset=0;
+                    int fSize=((int)(h*0.75))-2;
 
                     if(!itsScalable) // Then need to get nearest size...
                     {
@@ -470,21 +467,6 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, quint32 st
                             if (itsSizes[s]<=fSize || 0==bSize)
                                 bSize=itsSizes[s];
                         fSize=bSize;
-
-                        if(bSize>h)
-/*
-                        {
-#ifdef KFI_FC_DEBUG
-                            kDebug() << "use size:" << bSize+8;
-#endif
-                            pix=QPixmap(constInitialWidth, bSize+8);
-                            offset=4;
-                            pix.fill(theirBgndCol);
-                            needResize=true;
-                        }
-        else
-*/
-                            offset=(fSize-bSize)/2;
                     }
 
                     xftFont=getFont(fSize);
@@ -578,17 +560,16 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
         if(thumb && (h>256 || w!=h))
             thumb=false;
 
-        int offset=thumb
-                       ? h<=32
-                             ? 2
-                             : 3
-                       : 4,
-            x=offset, y=offset;
+        int x=0, y=0;
 
         getSizes();
 
         pix=thumb && itsScalable ? QPixmap(w*4, h*2) : QPixmap(w, h);
-        pix.fill(theirBgndCol);
+
+        QColor bgndCol(Qt::white);
+
+        bgndCol.setAlphaF(0.0);
+        pix.fill(bgndCol);
 
         QPainter painter(&pix);
 
@@ -607,8 +588,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                                DefaultColormap(QX11Info::display(), x11Info.screen()),
                                &xrenderCol, &xftCol);
 
-            XftDraw *xftDraw=XftDrawCreate(QX11Info::display(), (Pixmap)(pix.handle()),
-                                           (Visual*)(x11Info.visual()), x11Info.colormap());
+            XftDraw *xftDraw=XftDrawCreateAlpha(QX11Info::display(), (Pixmap)(pix.handle()), 32);
 
             if(xftDraw)
             {
@@ -623,7 +603,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                     //
                     // Calculate size of text...
-                    int fSize= h-(offset*2);
+                    int fSize=h;
 
                     if(!itsScalable) // Then need to get nearest size...
                     {
@@ -667,7 +647,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                         if(itsScalable
                             ? valid.length()!=text.length()
                             : valid.length()<(text.length()/2))
-                            drawAllGlyphs(xftDraw, xftFont, &xftCol, fSize, x, y, pix.width(), pix.height(), offset, true,
+                            drawAllGlyphs(xftDraw, xftFont, &xftCol, fSize, x, y, pix.width(), pix.height(), true,
                                           itsScalable ? 4 : -1, itsScalable ? &used : NULL);
                         else
                         {
@@ -675,8 +655,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                             QRect         r;
 
                             for(int ch=0; ch<ucs4.size(); ++ch) // Display char by char so wraps...
-                                if(drawChar32(xftDraw, xftFont, &xftCol, ucs4[ch], x, y, pix.width(), pix.height(), fSize,
-                                               offset, r))
+                                if(drawChar32(xftDraw, xftFont, &xftCol, ucs4[ch], x, y, pix.width(), pix.height(), fSize, r))
                                 {
                                     if(used.isEmpty())
                                         used=r;
@@ -689,13 +668,8 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                         painter.end();
 
-                        if(itsScalable && !used.isEmpty())
-                        {
-                            used.adjust(-1*offset, -1*offset, offset, offset);
-
-                            if(used.width()<pix.width() && used.height()<pix.height())
-                                pix=pix.copy(used);
-                        }
+                        if(itsScalable && !used.isEmpty() && used.width()<pix.width() && used.height()<pix.height())
+                            pix=pix.copy(used);
                     }
                 }
                 else if(0==range.count())
@@ -704,7 +678,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                             uppercase(getUppercaseLetters()),
                             punctuation(getPunctuation());
 
-                    drawName(painter, x, y, w, offset);
+                    drawName(painter, x, y, w);
 
                     xftFont=getFont(itsAlphaSize);
                     if(xftFont)
@@ -721,14 +695,14 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                             bool    punc(validPunc.length()>=(punctuation.length()/2));
 
                             if(lc)
-                                drawString(xftDraw, xftFont, &xftCol, lowercase, x, y, h, offset);
+                                drawString(xftDraw, xftFont, &xftCol, lowercase, x, y, h);
                             if(uc)
-                                drawString(xftDraw, xftFont, &xftCol, uppercase, x, y, h, offset);
+                                drawString(xftDraw, xftFont, &xftCol, uppercase, x, y, h);
                             if(punc)
-                                drawString(xftDraw, xftFont, &xftCol, validPunc, x, y, h, offset);
+                                drawString(xftDraw, xftFont, &xftCol, validPunc, x, y, h);
                             XftFontClose(QX11Info::display(), xftFont);
                             if(lc || uc || punc)
-                                painter.drawLine(offset, y, w-(offset+1), y);
+                                painter.drawLine(0, y, w-1, y);
                             y+=8;
                         }
 
@@ -749,31 +723,26 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                                 rv=true;
                                 if(drawGlyphs)
-                                    drawAllGlyphs(xftDraw, xftFont, &xftCol, fontHeight, x, y, w, h, offset,
+                                    drawAllGlyphs(xftDraw, xftFont, &xftCol, fontHeight, x, y, w, h,
                                                   itsSizes.count()>1);
                                 else
-                                    drawString(xftDraw, xftFont, &xftCol, previewString, x, y, h,
-                                               offset);
+                                    drawString(xftDraw, xftFont, &xftCol, previewString, x, y, h);
                                 XftFontClose(QX11Info::display(), xftFont);
                             }
                     }
-
-                    painter.setPen(theirBgndCol);
-                    for(int l=0; l<offset; ++l)
-                        painter.drawLine((w-1)-l, 0, (w-1)-l, h);
                 }
                 else if(1==range.count() && (range.first().null() || 0==range.first().to))
                 {
                     if(range.first().null())
                     {
-                        drawName(painter, x, y, w, offset);
+                        drawName(painter, x, y, w);
 
                         if((xftFont=getFont(itsAlphaSize)))
                         {
                             int fontHeight=xftFont->ascent+xftFont->descent;
 
                             y-=8;
-                            drawAllGlyphs(xftDraw, xftFont, &xftCol, fontHeight, x, y, w, h, offset);
+                            drawAllGlyphs(xftDraw, xftFont, &xftCol, fontHeight, x, y, w, h, 0);
                             rv=true;
                             XftFontClose(QX11Info::display(), xftFont);
                         }
@@ -793,7 +762,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                     if((xftFont=getFont(itsAlphaSize)))
                     {
                         rv=true;
-                        drawName(painter, x, y, w, offset);
+                        drawName(painter, x, y, w);
                         y+=itsAlphaSize;
 
                         bool  stop=false;
@@ -803,8 +772,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                         for(it=range.begin(); it!=end && !stop; ++it)
                             for(quint32 c=(*it).from; c<=(*it).to && !stop; ++c)
                             {
-                                if(drawChar32(xftDraw, xftFont, &xftCol, c, x, y, w, h, fontHeight,
-                                              offset, r))
+                                if(drawChar32(xftDraw, xftFont, &xftCol, c, x, y, w, h, fontHeight, r))
                                 {
                                     if(chars && !r.isEmpty())
                                         chars->append(TChar(r, c));
@@ -818,7 +786,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                             // No characters found within the selected range...
                             painter.setFont(KGlobalSettings::generalFont());
                             painter.setPen(theirTextCol);
-                            drawText(painter, x, y, w-offset, i18n("No characters found."));
+                            drawText(painter, x, y, w, i18n("No characters found."));
                         }
                     }
                 }
@@ -1426,7 +1394,7 @@ void CFcEngine::getSizes()
 #endif
 }
 
-void CFcEngine::drawName(QPainter &painter, int x, int &y, int w, int offset)
+void CFcEngine::drawName(QPainter &painter, int x, int &y, int w)
 {
     QString title(itsDescriptiveName.isEmpty()
                     ? i18n("ERROR: Could not determine font's name.")
@@ -1438,9 +1406,9 @@ void CFcEngine::drawName(QPainter &painter, int x, int &y, int w, int offset)
     painter.setFont(KGlobalSettings::generalFont());
     painter.setPen(theirTextCol);
     y=painter.fontMetrics().height();
-    drawText(painter, x, y, w-offset, title);
+    drawText(painter, x, y, w, title);
     y+=4;
-    painter.drawLine(offset, y, w-(offset+1), y);
+    painter.drawLine(0, y, w-1, y);
     y+=8;
 }
 

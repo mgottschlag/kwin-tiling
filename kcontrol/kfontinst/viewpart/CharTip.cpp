@@ -213,16 +213,12 @@ void CCharTip::showTip()
     QList<CFcEngine::TRange> range;
     range.append(CFcEngine::TRange(itsItem.ucs4, 0));
 
-    QColor prevBgndCol(CFcEngine::bgndCol());
-
-    CFcEngine::setBgndCol(palette().color(QPalette::Active, QPalette::Background));
     if(CFcEngine::instance()->draw(itsParent->itsCurrentUrl, pix.width(), pix.height(), pix,
                                    itsParent->itsCurrentFace-1, false, range,
                                    NULL, itsParent->itsFontName, itsParent->itsStyleInfo))
         itsPixmapLabel->setPixmap(pix);
     else
         itsPixmapLabel->setPixmap(QPixmap());
-    CFcEngine::setBgndCol(prevBgndCol);
     itsTimer->disconnect(this);
     connect(itsTimer, SIGNAL(timeout()), this, SLOT(hideTip()));
     itsTimer->setSingleShot(true);
