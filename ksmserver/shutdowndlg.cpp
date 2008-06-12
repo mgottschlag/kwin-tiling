@@ -578,8 +578,8 @@ bool KSMShutdownDlg::confirmShutdown( bool maysd, KWorkSpace::ShutdownType& sdty
                                             //KSMShutdownFeedback::self(),
                                             maysd, sdtype );
     XClassHint classHint;
-    classHint.res_name = "ksmserver";
-    classHint.res_class = "ksmserver";
+    classHint.res_name = const_cast<char*>("ksmserver");
+    classHint.res_class = const_cast<char*>("ksmserver");
 
     XSetClassHint(QX11Info::display(), l->winId(), &classHint);
     bool result = l->exec();

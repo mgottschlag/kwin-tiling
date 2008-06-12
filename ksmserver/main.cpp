@@ -42,6 +42,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kglobal.h>
 #include <kconfig.h>
 #include <kmanagerselection.h>
+#include <kwindowsystem.h>
 #include "server.h"
 #include <QX11Info>
 
@@ -255,8 +256,13 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
     KCmdLineArgs::addCmdLineOptions( options );
 
     putenv((char*)"SESSION_MANAGER=");
-    checkComposite();    
-    KApplication a(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
+    checkComposite();
+    KApplication *a;
+    if (KWindowSystem::compositingActive()) {
+        a = new KApplication(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
+    } else {
+        a = new KApplication(true);
+    }
     fcntl(ConnectionNumber(QX11Info::display()), F_SETFD, 1);
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
@@ -307,6 +313,8 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
         server->restoreSession( SESSION_BY_USER );
     else
         server->startDefaultSession();
-    return a.exec();
+    int ret = a->exec();
+    delete a;
+    return ret;
 }
 
