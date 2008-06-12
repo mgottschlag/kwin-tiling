@@ -77,7 +77,7 @@ class KDE_EXPORT CFcEngine
     void                  writeConfig(KConfig &cfg);
 
     void                  setDirty() { itsFcDirty=true; }
-    bool                  drawPreview(const QString &item, QPixmap &pix, int h,
+    bool                  drawPreview(const QString &item, QPixmap &pix, const QColor &col, int h,
                                       quint32 style=KFI_NO_STYLE_INFO, int face=0);
     bool                  draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bool thumb,
                                const QList<TRange> &range=QList<TRange>(), QList<TChar> *chars=NULL,

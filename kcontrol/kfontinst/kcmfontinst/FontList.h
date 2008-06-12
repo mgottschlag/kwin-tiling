@@ -237,8 +237,8 @@ class CFontItem : public CFontModelItem
     quint32                           styleInfo() const        { return itsStyleInfo; }
     int                               index() const            { return itsIndex; }
     const QString &                   family() const           { return (static_cast<CFamilyItem *>(parent()))->name(); }
-    const QPixmap *                   pixmap(bool force=false);
-    void                              clearPixmap()            { itsPixmap=NULL; }
+    const QPixmap *                   pixmap(bool selected, bool force=false);
+    void                              clearPixmap()            { itsPixmap[0]=itsPixmap[1]=NULL; }
     int                               rowNumber() const        { return (static_cast<CFamilyItem *>(parent()))->row(this); }
     const CDisabledFonts::TFileList & files() const            { return itsFiles; }
     KIO::filesize_t                   size() const             { return itsSize; }
@@ -252,7 +252,7 @@ class CFontItem : public CFontModelItem
                               itsStyle,
                               itsMimeType;
     int                       itsIndex;
-    QPixmap                   *itsPixmap;
+    QPixmap                   *itsPixmap[2];
     quint32                   itsStyleInfo;
     bool                      itsBitmap,
                               itsEnabled;

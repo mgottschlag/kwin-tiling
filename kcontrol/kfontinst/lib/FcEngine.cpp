@@ -372,7 +372,7 @@ const QString & CFcEngine::getName(const KUrl &url, int faceNo)
     return itsDescriptiveName;
 }
 
-bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, quint32 style, int face)
+bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, const QColor &col, int h, quint32 style, int face)
 {
     bool rv=false;
 
@@ -438,9 +438,9 @@ bool CFcEngine::drawPreview(const QString &item, QPixmap &pix, int h, quint32 st
                 XRenderColor   xrenderCol;
                 XftColor       xftCol;
 
-                xrenderCol.red=theirTextCol.red()<<8;
-                xrenderCol.green=theirTextCol.green()<<8;
-                xrenderCol.blue=theirTextCol.blue()<<8;
+                xrenderCol.red=col.red()<<8;
+                xrenderCol.green=col.green()<<8;
+                xrenderCol.blue=col.blue()<<8;
                 xrenderCol.alpha=0xffff;
 
                 XftColorAllocValue(QX11Info::display(), DefaultVisual(QX11Info::display(),

@@ -195,9 +195,9 @@ class CPreviewCache
     ~CPreviewCache() { clearOld(); }
 #endif
 
-    static QString thumbKey(const QString &family, quint32 style, int height);
+    static QString thumbKey(const QString &family, quint32 style, int height, const QColor &col);
     QPixmap * getPixmap(const QString &family, const QString &name, const QString &fileName,
-                        int height, quint32 stlye, bool force=false);
+                        int height, quint32 stlye, bool selected, bool force=false);
 #ifdef KFI_SAVE_PIXMAPS
     void clearOld();
 #endif
@@ -286,21 +286,22 @@ static void setTimeStamp(const QString &f)
     }
 }
 #endif
-QString CPreviewCache::thumbKey(const QString &name, quint32 style, int height)
+QString CPreviewCache::thumbKey(const QString &name, quint32 style, int height, const QColor &col)
 {
     return replaceChars(name)+
            QString().sprintf("-%06lX%02d%02X%02X%02X.png", (long unsigned int)style, height,
-                             CFcEngine::textCol().red(), CFcEngine::textCol().green(), CFcEngine::textCol().blue());
+                             col.red(), col.green(), col.blue());
 }
 
 QPixmap * CPreviewCache::getPixmap(const QString &family, const QString &name, const QString &fileName,
-                                   int height, quint32 style, bool force)
+                                   int height, quint32 style, bool selected, bool force)
 {
 #ifdef KFI_SAVE_PIXMAPS
     static const char *constFileType="PNG";
 #endif
 
-    QString thumbName(thumbKey(family, style, height));
+    QColor  col(QApplication::palette().color(selected ? QPalette::HighlightedText : QPalette::Text));
+    QString thumbName(thumbKey(family, style, height, col));
 
     if(!force && !itsMap[thumbName].isNull())
         return &(itsMap[thumbName]);
@@ -313,7 +314,7 @@ QPixmap * CPreviewCache::getPixmap(const QString &family, const QString &name, c
 #endif
 
     itsMap[thumbName]=QPixmap();
-    if(CFcEngine::instance()->drawPreview(fileName.isEmpty() ? name : fileName, itsMap[thumbName],
+    if(CFcEngine::instance()->drawPreview(fileName.isEmpty() ? name : fileName, itsMap[thumbName], col,
                                           height, style))  // CPD:TODO face???
     {
 #ifdef KFI_SAVE_PIXMAPS
@@ -403,11 +404,11 @@ inline bool isSysFolder(const QString &sect)
 
 CFontItem::CFontItem(CFontModelItem *p, const KFileItem &item, const QString &style)
          : CFontModelItem(p),
-           itsStyle(style),
-           itsPixmap(NULL)
+           itsStyle(style)
 {
     const KIO::UDSEntry &udsEntry(item.entry());
 
+    itsPixmap[0]=itsPixmap[1]=0L;
     setUrl(item.url());
     itsName=udsEntry.stringValue(KIO::UDSEntry::UDS_NAME);
     itsFileName=udsEntry.stringValue((uint)UDS_EXTRA_FILE_NAME);
@@ -436,7 +437,14 @@ void CFontItem::touchThumbnail()
 #ifdef KFI_SAVE_PIXMAPS
     // Access thumbFile, if it exists, to prevent its removal from the cache
     if(itsParent)
-        setTimeStamp(CPreviewCache::thumbKey(family(), itsStyleInfo, CFontList::previewSize()));
+    {
+        QColor norm(QApplication::palette().color(QPalette::Text)),
+               sel(QApplication::palette().color(QPalette::HighlightedText));
+
+        setTimeStamp(CPreviewCache::thumbKey(family(), itsStyleInfo, CFontList::previewSize(), norm));
+        if(norm!=sel)
+            setTimeStamp(CPreviewCache::thumbKey(family(), itsStyleInfo, CFontList::previewSize(), sel));
+    }
 #endif
 }
 
@@ -457,17 +465,19 @@ void CFontItem::setUrl(const KUrl &url)
     }
 }
 
-const QPixmap * CFontItem::pixmap(bool force)
+const QPixmap * CFontItem::pixmap(bool selected, bool force)
 {
+    int idx(selected ? 1 : 0);
+
     if(parent() &&
-       (!itsPixmap || itsPixmap->isNull() || force ||
-        itsPixmap->height()!=CFontList::previewSize()))
-        itsPixmap=theCache->getPixmap(family(), name(), isEnabled()
+       (!itsPixmap[idx] || itsPixmap[idx]->isNull() || force ||
+        itsPixmap[idx]->height()!=CFontList::previewSize()))
+        itsPixmap[idx]=theCache->getPixmap(family(), name(), isEnabled()
                                                             ? QString()
                                                             : itsFileName,
-                                      CFontList::previewSize(), itsStyleInfo, force);
+                                      CFontList::previewSize(), itsStyleInfo, selected, force);
 
-    return itsPixmap;
+    return itsPixmap[idx];
 }
 
 CFamilyItem::CFamilyItem(CFontList &p, const QString &n)
@@ -1539,7 +1549,7 @@ class CFontListViewDelegate : public QStyledItemDelegate
 
             if(fam->regularFont())
             {
-                const QPixmap *pix=fam->regularFont()->pixmap();
+                const QPixmap *pix=fam->regularFont()->pixmap(option.state&QStyle::State_Selected);
 
                 if(pix)
                     if(Qt::RightToLeft==QApplication::layoutDirection())
