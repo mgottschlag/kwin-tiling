@@ -79,8 +79,6 @@ KclockModule::KclockModule(QWidget *parent, const QVariantList &)
   layout->addWidget(tzone);
   connect(tzone, SIGNAL(zoneChanged(bool)), this, SIGNAL(changed(bool)));
 
-  layout->addStretch();
-
   setButtons(Help|Apply);
 }
 
