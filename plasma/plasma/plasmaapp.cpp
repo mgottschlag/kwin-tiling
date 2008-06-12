@@ -446,9 +446,12 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     KConfigGroup viewIds(KGlobal::config(), "ViewIds");
     int id = viewIds.readEntry(QString::number(containment->id()), 0);
 
+    WId viewWindow = 0;
+    
     switch (containment->containmentType()) {
         case Plasma::Containment::PanelContainment: {
             PanelView *panelView = new PanelView(containment, id);
+            viewWindow = panelView->winId();
             connect(panelView, SIGNAL(destroyed(QObject*)), this, SLOT(panelRemoved(QObject*)));
             m_panels << panelView;
             panelView->show();
@@ -467,6 +470,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
                 // we have a new screen. neat.
                 DesktopView *view = new DesktopView(containment, id, 0);
+                viewWindow = view->winId();
                 if (m_corona) {
                     connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
                             view, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
@@ -477,6 +481,16 @@ void PlasmaApp::createView(Plasma::Containment *containment)
                 view->show();
             }
             break;
+    }
+
+    //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
+    //the application name is we set the proper XClassHint here, hopefully won't be necessary anymore when
+    //qapplication will manage apps with argvisuals in a better way
+    if (viewWindow) {
+        XClassHint classHint;
+        classHint.res_name = const_cast<char*>("Plasma");
+        classHint.res_class = const_cast<char*>("Plasma");
+        XSetClassHint(QX11Info::display(), viewWindow, &classHint);
     }
 }
 

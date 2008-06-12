@@ -125,6 +125,14 @@ void KRunnerApp::initialize()
     initializeStartupNotification();
     m_interface = new Interface;
 
+    //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
+    //the application name is we set the proper XClassHint here, hopefully won't be necessary anymore when
+    //qapplication will manage apps with argvisuals in a better way
+    XClassHint classHint;
+    classHint.res_name = const_cast<char*>("krunner");
+    classHint.res_class = const_cast<char*>("krunner");
+    XSetClassHint(QX11Info::display(), m_interface->winId(), &classHint);
+    
     // Global keys
     m_actionCollection = new KActionCollection( m_interface );
     KAction* a = 0;
