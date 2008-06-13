@@ -141,8 +141,8 @@ class Pager : public Plasma::Applet
         int m_dragSwitchDesktop;
         QTimer* m_dragSwitchTimer;
 
-        static const int s_FadeInDuration = 100;
-        static const int s_FadeOutDuration = 200;
+        static const int s_FadeInDuration = 50;
+        static const int s_FadeOutDuration = 100;
     };
 
 K_EXPORT_PLASMA_APPLET(pager, Pager)

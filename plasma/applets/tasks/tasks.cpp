@@ -41,6 +41,7 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
  : Plasma::Applet(parent, arguments),
    m_activeTask(0),
    m_taskItemBackground(0),
+   m_taskAlphaPixmap(0),
    m_colorScheme(0),
    m_leftMargin(0),
    m_topMargin(0),
@@ -223,6 +224,11 @@ Plasma::PanelSvg* Tasks::itemBackground()
     }
 
     return m_taskItemBackground;
+}
+
+QPixmap *Tasks::taskAlphaPixmap()
+{
+    return m_taskAlphaPixmap;
 }
 
 void Tasks::resizeItemBackground(const QSizeF &size)

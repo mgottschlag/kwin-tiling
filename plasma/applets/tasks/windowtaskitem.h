@@ -200,6 +200,8 @@ private:
     int m_attentionTimerId;
     int m_attentionTicks;
 
+    QPixmap *m_alphaPixmap;
+
     // distance (in pixels) between a task's icon and its text
     static const int IconTextSpacing = 4;
 
