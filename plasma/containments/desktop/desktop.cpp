@@ -284,8 +284,6 @@ void DefaultDesktop::addPanel()
         // rather than waiting around for the event loop
         panel->updateConstraints(Plasma::StartupCompletedConstraint);
         panel->flushPendingConstraintsEvents();
-
-        emit configNeedsSaving();
     }
 }
 
