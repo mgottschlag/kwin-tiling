@@ -92,7 +92,7 @@ QList<QAction*> Panel::contextualActions()
     }
 
     QList<QAction*> actions;
-    actions << action("add widgets") << m_configureAction << action("remove");
+    actions << action("add widgets") << action("lock widgets") << m_configureAction << action("remove");
     return actions;
 }
 
