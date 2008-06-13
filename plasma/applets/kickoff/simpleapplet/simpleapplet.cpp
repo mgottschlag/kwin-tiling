@@ -321,8 +321,9 @@ void MenuLauncherApplet::toggleMenu()
 {
     if (!d->menuview) {
         d->menuview = new Kickoff::MenuView();
-        connect(d->menuview,SIGNAL(triggered(QAction*)),this,SLOT(actionTriggered(QAction*)));
-        connect(d->menuview,SIGNAL(aboutToHide()),d->icon,SLOT(setUnpressed()));
+        connect(d->menuview, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
+        connect(d->menuview, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
+        connect(d->menuview, SIGNAL(destroyed(QObject*)), this, SLOT(menuDestroyed()));
 
         switch( d->viewtype ) {
             case Combined: {
@@ -391,9 +392,14 @@ void MenuLauncherApplet::actionTriggered(QAction *action)
     }
 }
 
+void MenuLauncherApplet::menuDestroyed()
+{
+    d->menuview = 0;
+}
+
 QList<QAction*> MenuLauncherApplet::contextualActions()
 {
-  return d->actions;
+    return d->actions;
 }
 
 #include "simpleapplet.moc"
