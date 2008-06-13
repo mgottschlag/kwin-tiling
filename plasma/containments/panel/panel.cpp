@@ -49,6 +49,7 @@ using namespace Plasma;
 Panel::Panel(QObject *parent, const QVariantList &args)
     : Containment(parent, args),
       m_configureAction(0),
+      m_addPanelAction(0),
       m_currentSize(QSize(QApplication::desktop()->screenGeometry(screen()).width(), 38)),
       m_lastViewGeom()
 {
@@ -89,10 +90,14 @@ QList<QAction*> Panel::contextualActions()
         m_configureAction = new QAction(i18n("Panel Settings"), this);
         m_configureAction->setIcon(KIcon("configure"));
         connect(m_configureAction, SIGNAL(triggered()), this, SIGNAL(toolBoxToggled()));
+
+        m_addPanelAction = new QAction(i18n("Add Panel"), this);
+        connect(m_addPanelAction, SIGNAL(triggered(bool)), this, SLOT(addPanel()));
+        m_addPanelAction->setIcon(KIcon("list-add"));
     }
 
     QList<QAction*> actions;
-    actions << action("add widgets") << action("lock widgets") << m_configureAction << action("remove");
+    actions << action("add widgets") << m_addPanelAction << action("lock widgets") << m_configureAction << action("remove");
     return actions;
 }
 
@@ -163,6 +168,23 @@ void Panel::appletRemoved(Plasma::Applet* applet)
         resize(size().width(), size().height() - applet->size().height());
     }
     layout()->setMaximumSize(size());
+}
+
+void Panel::addPanel()
+{
+    if (corona()) {
+        // make a panel at the top
+        Containment* panel = corona()->addContainment("panel");
+        panel->showConfigurationInterface();
+
+        panel->setScreen(screen());
+        panel->setLocation(Plasma::TopEdge);
+
+        // trigger an instant layout so we immediately have a proper geometry 
+        // rather than waiting around for the event loop
+        panel->updateConstraints(Plasma::StartupCompletedConstraint);
+        panel->flushPendingConstraintsEvents();
+    }
 }
 
 void Panel::updateBorders(const QRect &geom)

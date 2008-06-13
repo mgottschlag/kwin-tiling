@@ -57,6 +57,7 @@ private slots:
     void backgroundChanged();
     void layoutApplet(Plasma::Applet* applet, const QPointF &pos);
     void appletRemoved(Plasma::Applet* applet);
+    void addPanel();
 
 private:
     /**
@@ -71,6 +72,7 @@ private:
 
     Plasma::PanelSvg *m_background;
     QAction* m_configureAction;
+    QAction* m_addPanelAction;
 
     //cached values
     QSize m_currentSize;
