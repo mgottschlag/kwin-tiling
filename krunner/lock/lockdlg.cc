@@ -27,6 +27,7 @@
 #include <KDebug>
 #include <KUser>
 #include <KMessageBox>
+#include <KColorScheme>
 
 #include <QtDBus/QtDBus>
 
@@ -172,15 +173,15 @@ void PasswordDlg::updateLabel()
     if (mUnlockingFailed)
     {
         QPalette palette;
-        palette.setColor(mStatusLabel->foregroundRole(), Qt::black);
+        KColorScheme::adjustForeground(palette, KColorScheme::NormalText, QPalette::WindowText);
         mStatusLabel->setPalette(palette);
         mStatusLabel->setText(i18n("<b>Unlocking failed</b>"));
     }
     else
     if (mCapsLocked)
     {
-        QPalette palette;
-        palette.setColor(mStatusLabel->foregroundRole(), Qt::red);
+        QPalette palette = mStatusLabel->palette();
+        KColorScheme::adjustForeground(palette, KColorScheme::NegativeText, QPalette::WindowText);
         mStatusLabel->setPalette(palette);
         mStatusLabel->setText(i18n("<b>Warning: Caps Lock on</b>"));
     }
