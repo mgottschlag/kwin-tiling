@@ -486,12 +486,7 @@ void PanelView::togglePanelController()
         m_panelController->setAlignment(m_alignment);
         m_panelController->setOffset(m_offset);
 
-        connect(m_panelController, SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
-
-        Plasma::Containment *panel = containment();
-        if (panel) {
-            connect(m_panelController, SIGNAL(removePanel()), panel, SLOT(destroy()));
-        }
+        //connect(m_panelController, SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
 
         connect(m_panelController, SIGNAL(offsetChanged(int)), this, SLOT(setOffset(int)));
         connect(m_panelController, SIGNAL(alignmentChanged(Qt::Alignment)), this, SLOT(setAlignment(Qt::Alignment)));

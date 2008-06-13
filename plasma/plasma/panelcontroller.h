@@ -66,8 +66,6 @@ Q_SIGNALS:
     /**
      * Emitted when the controller requests an add widgets dialog is shown.
      */
-     void showAddWidgets();
-     void removePanel();
      void offsetChanged(int offset);
      void alignmentChanged(Qt::Alignment);
      void locationChanged(Plasma::Location);
@@ -76,7 +74,6 @@ private:
     Q_PRIVATE_SLOT(d, void rulersMoved(int offset, int minLength, int minLength))
     Q_PRIVATE_SLOT(d, void alignToggled(bool toggle))
 
-    class ToolButton;
     class ButtonGroup;
     class ResizeHandle;
     class Private;

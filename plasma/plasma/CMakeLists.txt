@@ -1,14 +1,15 @@
 include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs)
 
 set(plasma_SRCS
+    dashboardview.cpp
     desktopcorona.cpp
     desktopview.cpp
     main.cpp
-    plasmaapp.cpp
-    panelview.cpp
     panelcontroller.cpp
+    panelview.cpp
+    plasmaapp.cpp
     positioningruler.cpp
-    dashboardview.cpp
+    toolbutton.cpp
 )
 
 set(plasmaapp_dbusXML org.kde.plasma.App.xml)

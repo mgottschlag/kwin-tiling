@@ -19,65 +19,23 @@
 
 #include "panelcontroller.h"
 
-#include <QPainter>
-#include <QBoxLayout>
-#include <QMouseEvent>
-#include <QToolButton>
+#include <QAction>
 #include <QApplication>
+#include <QBoxLayout>
 #include <QDesktopWidget>
 #include <QFrame>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QToolButton>
 
-#include <KIcon>
 #include <KColorUtils>
+#include <KIcon>
 
 #include <plasma/theme.h>
 #include <plasma/containment.h>
 
 #include "positioningruler.h"
-
-class PanelController::ToolButton: public QToolButton
-{
-public:
-    ToolButton(QWidget *parent)
-       : QToolButton(parent)
-    {
-         
-    }
-    
-    ~ToolButton()
-    {}
-
-    void paintEvent(QPaintEvent *event)
-    {
-        QPainter painter(this);
-        painter.setRenderHint(QPainter::Antialiasing, true);
-
-        painter.translate(0.5, 0.5);
-
-        QStyleOptionToolButton buttonOpt;
-        initStyleOption(&buttonOpt);
-
-        QColor backgroundColor;
-        if ((buttonOpt.state & QStyle::State_MouseOver) || isChecked()) {
-            backgroundColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-        } else {
-            backgroundColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-        }
-
-        backgroundColor.setAlphaF(0.4);
-        QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-        
-        buttonOpt.palette.setColor(QPalette::Foreground, textColor);
-        buttonOpt.palette.setColor(QPalette::ButtonText, textColor);
-
-        textColor.setAlphaF(0.4);
-        painter.setPen(textColor);
-        painter.setBrush(backgroundColor);
-        painter.drawPath(Plasma::roundedRectangle(event->rect().adjusted(1,1,-1,-1), 4));
-
-        style()->drawControl(QStyle::CE_ToolButtonLabel, &buttonOpt, &painter, this);
-    }
-};
+#include "toolbutton.h"
 
 class PanelController::ButtonGroup: public QFrame
 {
@@ -226,7 +184,16 @@ public:
     {
     }
 
-    ToolButton *addTool(const QString icon, const QString iconText, QWidget *parent,  Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon, bool checkButton = false)
+    ToolButton *addTool(QAction *action, QWidget *parent, Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon)
+    {
+        ToolButton *tool = new ToolButton(parent);
+        tool->setToolButtonStyle(style);
+        tool->setAction(action);
+
+        return tool;
+    }
+
+    ToolButton *addTool(const QString icon, const QString iconText, QWidget *parent, Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon, bool checkButton = false)
     {
         //TODO take advantage of setDefaultAction using the containment's actions if possible
         ToolButton *tool = new ToolButton(parent);
@@ -393,16 +360,6 @@ PanelController::PanelController(QWidget* parent)
     d->layout->addStretch();
 
     //other buttons
-    ToolButton *addWidgetTool = d->addTool("list-add", i18n("Add Widgets"), this);
-    d->layout->addWidget(addWidgetTool);
-    connect(addWidgetTool, SIGNAL(clicked()), this, SIGNAL(showAddWidgets()));
-    connect(addWidgetTool, SIGNAL(clicked()), this, SLOT(hideController()));
-
-    ToolButton *removePanelTool = d->addTool("list-remove", i18n("Remove this panel"), this);
-    d->layout->addWidget(removePanelTool);
-    connect(removePanelTool, SIGNAL(clicked()), this, SIGNAL(removePanel()));
-    connect(removePanelTool, SIGNAL(clicked()), this, SLOT(hideController()));
-
     d->layout->addSpacing(20);
     ToolButton *closeControllerTool = d->addTool("window-close", i18n("Close this configuration window"), this, Qt::ToolButtonIconOnly, false);
     d->layout->addWidget(closeControllerTool);
@@ -426,8 +383,33 @@ void PanelController::setContainment( Plasma::Containment *containment)
 
     d->containment = containment;
 
-    QRect screenGeom =
-    QApplication::desktop()->screenGeometry(d->containment->screen());
+    int insertIndex = d->layout->count() - 2;
+
+    QAction *action = containment->action("add widgets");
+    if (action) {
+        ToolButton *addWidgetTool = d->addTool(action, this);
+        d->layout->insertWidget(insertIndex, addWidgetTool);
+        ++insertIndex;
+        connect(addWidgetTool, SIGNAL(clicked()), this, SLOT(hideController()));
+    }
+
+    action = containment->action("lock widgets");
+    if (action) {
+        ToolButton *lockWidgetsTool = d->addTool(action, this);
+        d->layout->insertWidget(insertIndex, lockWidgetsTool);
+        ++insertIndex;
+        connect(lockWidgetsTool, SIGNAL(clicked()), this, SLOT(hideController()));
+    }
+
+    action = containment->action("remove");
+    if (action) {
+        ToolButton *removePanelTool = d->addTool(action, this);
+        d->layout->insertWidget(insertIndex, removePanelTool);
+        ++insertIndex;
+        connect(removePanelTool, SIGNAL(clicked()), this, SLOT(hideController()));
+    }
+
+    QRect screenGeom = QApplication::desktop()->screenGeometry(d->containment->screen());
 
     switch (d->location) {
     case Plasma::LeftEdge:
