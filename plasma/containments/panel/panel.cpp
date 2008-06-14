@@ -77,7 +77,8 @@ Panel::~Panel()
 void Panel::init()
 {
     Containment::init();
-    setFlag(ItemClipsChildrenToShape, true);
+    //FIXME: This should be enabled, but in that case proxywidgets won't get rendered
+    //setFlag(ItemClipsChildrenToShape, true);
 
     KConfigGroup cg = config("Configuration");
     setMinimumSize(cg.readEntry("minimumSize", m_currentSize));
