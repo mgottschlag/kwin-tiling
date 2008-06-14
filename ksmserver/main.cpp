@@ -258,7 +258,8 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
     putenv((char*)"SESSION_MANAGER=");
     checkComposite();
     KApplication *a;
-    if (KWindowSystem::compositingActive()) {
+
+    if (DefaultDepth(dpy, DefaultScreen(dpy)) >= 24) {
         a = new KApplication(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
     } else {
         a = new KApplication(true);
@@ -314,7 +315,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
     else
         server->startDefaultSession();
     int ret = a->exec();
-    delete a;
+    a->deleteLater();
     return ret;
 }
 
