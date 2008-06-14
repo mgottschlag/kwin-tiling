@@ -83,6 +83,7 @@ public Q_SLOTS:
 private Q_SLOTS:
     void setCrashHandler();
     void cleanup();
+    void syncConfig();
     void appletBrowserDestroyed();
     void createView(Plasma::Containment *containment);
     void panelRemoved(QObject* panel);

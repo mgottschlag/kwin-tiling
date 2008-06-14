@@ -219,9 +219,6 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
 
 PlasmaApp::~PlasmaApp()
 {
-    //TODO: This manual sync() should not be necessary. Remove it when
-    // KConfig was fixed
-    KGlobal::config()->sync();
     delete m_appletBrowser;
 }
 
@@ -250,15 +247,23 @@ void PlasmaApp::cleanup()
         }
     }
 
-    
     QList<DesktopView*> desktops = m_desktops;
     m_desktops.clear();
     qDeleteAll(desktops);
-    
+
     QList<PanelView*> panels = m_panels;
     m_panels.clear();
     qDeleteAll(panels);
     delete m_corona;
+
+    //TODO: This manual sync() should not be necessary. Remove it when
+    // KConfig was fixed
+    KGlobal::config()->sync();
+}
+
+void PlasmaApp::syncConfig()
+{
+    KGlobal::config()->sync();
 }
 
 void PlasmaApp::toggleDashboard()
@@ -373,6 +378,7 @@ Plasma::Corona* PlasmaApp::corona()
         DesktopCorona *c = new DesktopCorona(this);
         connect(c, SIGNAL(containmentAdded(Plasma::Containment*)),
                 this, SLOT(createView(Plasma::Containment*)));
+        connect(c, SIGNAL(configSynced()), this, SLOT(syncConfig()));
 
         foreach (DesktopView *view, m_desktops) {
             connect(c, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),

@@ -31,9 +31,11 @@
 #include <KColorUtils>
 #include <KIcon>
 
+#include <plasma/corona.h>
 #include <plasma/theme.h>
 #include <plasma/containment.h>
 
+#include "plasmaapp.h"
 #include "positioningruler.h"
 #include "toolbutton.h"
 
@@ -43,11 +45,7 @@ public:
     ButtonGroup(QWidget *parent)
        : QFrame(parent)
     {
-         
     }
-    
-    ~ButtonGroup()
-    {}
 
     void paintEvent(QPaintEvent *event)
     {
@@ -372,10 +370,13 @@ PanelController::PanelController(QWidget* parent)
 
 PanelController::~PanelController()
 {
+    //TODO: should we try and only call this when something has actually been
+    //      altered that we care about?
+    PlasmaApp::self()->corona()->requestConfigSync();
     delete d;
 }
 
-void PanelController::setContainment( Plasma::Containment *containment)
+void PanelController::setContainment(Plasma::Containment *containment)
 {
     if (!containment) {
         return;
