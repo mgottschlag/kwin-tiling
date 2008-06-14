@@ -242,50 +242,53 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
                     last_action_label = QString(services[0].text());
                 }
             }
+
             QModelIndex index = indexForUdi(source);
-            Q_ASSERT(index.isValid());
 
-            m_hotplugModel->setData(index, data["predicateFiles"], PredicateFilesRole);
-            m_hotplugModel->setData(index, data["text"], Qt::DisplayRole);
+            if (index.isValid()) {
+                m_hotplugModel->setData(index, data["predicateFiles"], PredicateFilesRole);
+                m_hotplugModel->setData(index, data["text"], Qt::DisplayRole);
 
-            //icon name
-            m_hotplugModel->setData(index, data["icon"], IconNameRole);
-            //icon data
-            m_hotplugModel->setData(index, KIcon(data["icon"].toString()), Qt::DecorationRole);
+                //icon name
+                m_hotplugModel->setData(index, data["icon"], IconNameRole);
+                //icon data
+                m_hotplugModel->setData(index, KIcon(data["icon"].toString()), Qt::DecorationRole);
 
-            if (nb_actions > 1) {
-                QString s = i18np("1 action for this device",
-                                  "%1 actions for this device",
-                                  nb_actions);
-                m_hotplugModel->setData(index, s, ActionRole);
-            } else {
-                m_hotplugModel->setData(index,last_action_label, ActionRole);
+                if (nb_actions > 1) {
+                    QString s = i18np("1 action for this device",
+                            "%1 actions for this device",
+                            nb_actions);
+                    m_hotplugModel->setData(index, s, ActionRole);
+                } else {
+                    m_hotplugModel->setData(index,last_action_label, ActionRole);
+                }
+                if (m_icon && isNotificationEnabled) {
+                    m_widget->move(popupPosition(m_widget->sizeHint()));
+                    m_widget->show();
+                    m_timer->start(m_displayTime*1000);
+                }
             }
-            if (m_icon && isNotificationEnabled) {
-                m_widget->move(popupPosition(m_widget->sizeHint()));
-                m_widget->show();
-                m_timer->start(m_displayTime*1000);
-            }
-        //data from soliddevice engine
+            //data from soliddevice engine
         } else {
             kDebug() << "DeviceNotifier::solidDeviceEngine updated" << source;
             QModelIndex index = indexForUdi(source);
-            Q_ASSERT(index.isValid());
-            QModelIndex actionIndex = m_hotplugModel->index(index.row(), 1, QModelIndex());
+            if (index.isValid()) {
+                QModelIndex actionIndex = m_hotplugModel->index(index.row(), 1, QModelIndex());
 
-            if (data["Device Types"].toStringList().contains("Storage Access")) {
-                if (data["Accessible"].toBool() == true) {
-                    m_hotplugModel->setData(actionIndex, KIcon("media-eject"), Qt::DecorationRole);
+                if (data["Device Types"].toStringList().contains("Storage Access")) {
+                    if (data["Accessible"].toBool() == true) {
+                        m_hotplugModel->setData(actionIndex, KIcon("media-eject"), Qt::DecorationRole);
 
-                    //set icon to mounted device
-                    QStringList overlays;
-                    overlays << "emblem-mounted";
-                    m_hotplugModel->setData(index, KIcon(index.data(IconNameRole).toString(), NULL, overlays), Qt::DecorationRole);
-                } else {
-                    m_hotplugModel->setData(actionIndex, KIcon(), Qt::DecorationRole);
+                        //set icon to mounted device
+                        QStringList overlays;
+                        overlays << "emblem-mounted";
+                        m_hotplugModel->setData(index, KIcon(index.data(IconNameRole).toString(), NULL, overlays), Qt::DecorationRole);
+                    } else {
+                        m_hotplugModel->setData(actionIndex, KIcon(), Qt::DecorationRole);
 
-                    //set icon to unmounted device
-                    m_hotplugModel->setData(index, KIcon(index.data(IconNameRole).toString()), Qt::DecorationRole);
+                        //set icon to unmounted device
+                        m_hotplugModel->setData(index, KIcon(index.data(IconNameRole).toString()), Qt::DecorationRole);
+                    }
                 }
             }
             // actions specific for other types of devices will go here
@@ -330,8 +333,10 @@ void DeviceNotifier::onSourceRemoved(const QString &name)
     m_solidDeviceEngine->disconnectSource(name, this);
 
     QModelIndex index = indexForUdi(name);
-    Q_ASSERT(index.isValid());
-    m_hotplugModel->removeRow(index.row());
+    if (!index.isValid()) {
+        m_hotplugModel->removeRow(index.row());
+    }
+
     if (m_icon && m_hotplugModel->rowCount() == 0) {
         m_widget->hide();
     }
