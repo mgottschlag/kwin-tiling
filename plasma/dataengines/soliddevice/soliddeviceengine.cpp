@@ -65,10 +65,6 @@ SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QVariantList& args)
 
 SolidDeviceEngine::~SolidDeviceEngine()
 {
-    disconnect(notifier, SIGNAL(deviceAdded(const QString&)),
-            this, SLOT(deviceAdded(const QString&)));
-    disconnect(notifier, SIGNAL(deviceRemoved(const QString&)),
-            this, SLOT(deviceRemoved(const QString&)));
     delete signalmanager;
     delete temperature;
 }
