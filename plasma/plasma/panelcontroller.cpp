@@ -662,8 +662,8 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
 
         //create a dead zone so you can go across the middle without having it hop to one side
         float dzFactor = 0.35;
-        QPoint offset = QPoint::QPoint(screenGeom.width()*dzFactor,screenGeom.height()*dzFactor);
-        QRect deadzone = QRect::QRect(screenGeom.topLeft()+offset, screenGeom.bottomRight()-offset);
+        QPoint offset = QPoint(screenGeom.width()*dzFactor,screenGeom.height()*dzFactor);
+        QRect deadzone = QRect(screenGeom.topLeft()+offset, screenGeom.bottomRight()-offset);
         if (deadzone.contains(event->globalPos())) {
             //kDebug() << "In the deadzone:" << deadzone;
             return;
