@@ -327,20 +327,20 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
                     alphaPixmap = new QPixmap(option->rect.size());
                     alphaPixmap->fill(Qt::transparent);
                 }
-    
+
                 if (option->state & QStyle::State_Sunken) {
                     alphaPixmap->fill(QColor(0,0,0,50));
                 } else {
                     alphaPixmap->fill(QColor(0,0,0,255*m_alpha));
                 }
-    
+
                 {
                     QPainter buffPainter(alphaPixmap);
                     buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
                     itemBackground->setElementPrefix("hover");
                     itemBackground->paintPanel(&buffPainter, option->rect);
                 }
-    
+
                 painter->drawPixmap(option->rect.topLeft(), *alphaPixmap);
             }
         } else {
@@ -385,8 +385,9 @@ void WindowTaskItem::drawTask(QPainter *painter,const QStyleOptionGraphicsItem *
     painter->setPen(QPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor), 1.0));
 
     QRect rect = textRect(bounds).toRect();
-    rect.adjust(2, 2, -2, -2); // Create a text margin
-
+    if (rect.height() > 20) {
+        rect.adjust(2, 2, -2, -2); // Create a text margin
+    }
     QTextLayout layout;
     layout.setFont(KGlobalSettings::taskbarFont());
     layout.setTextOption(textOption());
