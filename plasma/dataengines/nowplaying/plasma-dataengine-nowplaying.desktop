@@ -21,6 +21,7 @@ Name[sr@latin]=motor trenutne svirke
 Name[sv]=Spelar nu-gränssnitt
 Name[tr]=Şimdi Dinleniyor Motoru
 Name[uk]=Рушій поточного відтворення
+Name[x-test]=xxNow Playing Enginexx
 Name[zh_CN]=正在收听引擎
 Name[zh_TW]=「現在播放」引擎
 
@@ -46,6 +47,7 @@ Comment[sr@latin]=Navodi muziku koja trenutno svira
 Comment[sv]=Listar musik som för närvarande spelas
 Comment[tr]=O anda dinlenen müziği listeler
 Comment[uk]=Показує список музики, що відтворюється
+Comment[x-test]=xxLists currently playing musicxx
 Comment[zh_CN]=列出当前正在播放的音乐
 Comment[zh_TW]=列出目前播放的音樂
 
