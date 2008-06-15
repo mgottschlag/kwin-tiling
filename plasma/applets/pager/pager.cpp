@@ -112,7 +112,7 @@ void Pager::init()
     connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(desktopsSizeChanged()));
 
     m_desktopLayoutOwner = new KSelectionOwner( QString( "_NET_DESKTOP_LAYOUT_S%1" )
-        .arg( QX11Info::appScreen()).toLatin1().data(), QX11Info::appScreen(), this );
+        .arg( QX11Info::appScreen()).toLatin1().constData(), QX11Info::appScreen(), this );
     connect( m_desktopLayoutOwner, SIGNAL( lostOwnership()), SLOT( lostDesktopLayoutOwner()));
     if ( !m_desktopLayoutOwner->claim( false ))
         lostDesktopLayoutOwner();
