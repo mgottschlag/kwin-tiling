@@ -23,7 +23,7 @@ THE SOFTWARE.
 #define PLASMAJS_H
 
 #include <plasma/dataengine.h>
-#include <qobject.h>
+#include <QObject>
 
 namespace Plasma {
     class DataEngine;

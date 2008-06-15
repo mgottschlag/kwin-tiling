@@ -22,6 +22,7 @@ THE SOFTWARE.
 #ifndef WEBPAGE_H
 #define WEBPAGE_H
 
+#include <QObject>
 #include <QtWebKit/QWebPage>
 
 namespace Plasma

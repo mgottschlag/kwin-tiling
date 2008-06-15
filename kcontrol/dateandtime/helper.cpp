@@ -41,7 +41,7 @@
 #include <kdebug.h>
 #include <kstandarddirs.h>
 #include <kprocess.h>
-#include <qfile.h>
+#include <QFile>
 
 #if defined(USE_SOLARIS)
 #include <ktemporaryfile.h>

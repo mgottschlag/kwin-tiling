@@ -24,7 +24,7 @@ THE SOFTWARE.
 #include "plasma/dataenginemanager.h"
 #include "plasma/dataengine.h"
 
-#include <qdebug.h>
+#include <QDebug>
 
 using namespace Plasma;
 

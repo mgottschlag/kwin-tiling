@@ -21,8 +21,8 @@ THE SOFTWARE.
  */
 #include "webpage.h"
 
-#include <qwebsettings.h>
-#include <qdebug.h>
+#include <QtWebKit/QWebSettings>
+#include <QDebug>
 
 namespace Plasma
 {
