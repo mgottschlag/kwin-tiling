@@ -329,7 +329,10 @@ Q_DECLARE_METATYPE(Solid::Control::PowerManager::SuspendMethod)
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
                                 bool maysd, KWorkSpace::ShutdownType sdtype )
   : QDialog( parent, Qt::Popup ), //krazy:exclude=qclasses
-    m_automaticallyDoSeconds(60)
+    m_automaticallyDoSeconds(60),
+    m_btnLogout(0),
+    m_btnHalt(0),
+    m_btnReboot(0)
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
 {
@@ -375,7 +378,6 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     palette.setColor(QPalette::WindowText, fntColor);
 
     m_btnLogout = new KSMPushButton( i18n("&Logout"), this );
-    m_btnLogout->setObjectName("m_btnLogout");
     m_btnLogout->setPixmap(KIconLoader::global()->loadIcon("system-log-out", KIconLoader::NoGroup, 32));
     m_btnLogout->setFocus();
     connect(m_btnLogout, SIGNAL(clicked()), SLOT(slotLogout()));
@@ -384,19 +386,18 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     if (maysd) {
         // Shutdown
-        KSMPushButton* btnHalt = new KSMPushButton( i18n("&Turn Off Computer"), this );
-        btnHalt->setObjectName("btnHalt");
-        btnHalt->setPixmap(KIconLoader::global()->loadIcon("system-shutdown", KIconLoader::NoGroup, 32));
-        buttonLayout->addWidget(btnHalt);
+        m_btnHalt = new KSMPushButton( i18n("&Turn Off Computer"), this );
+        m_btnHalt->setPixmap(KIconLoader::global()->loadIcon("system-shutdown", KIconLoader::NoGroup, 32));
+        buttonLayout->addWidget(m_btnHalt);
         buttonLayout->addStretch();
-        connect(btnHalt, SIGNAL(clicked()), SLOT(slotHalt()));
+        connect(m_btnHalt, SIGNAL(clicked()), SLOT(slotHalt()));
         if ( sdtype == KWorkSpace::ShutdownTypeHalt )
-            btnHalt->setFocus();
+            m_btnHalt->setFocus();
 
-        QMenu *shutdownMenu = new QMenu( btnHalt );
+        QMenu *shutdownMenu = new QMenu( m_btnHalt );
         QActionGroup* spdActionGroup = new QActionGroup(shutdownMenu);
         connect( spdActionGroup, SIGNAL(triggered(QAction*)), SLOT(slotSuspend(QAction*)) );
-        btnHalt->setPopupMenu( shutdownMenu );
+        m_btnHalt->setPopupMenu( shutdownMenu );
         Solid::Control::PowerManager::SuspendMethods spdMethods = Solid::Control::PowerManager::supportedSuspendMethods();
         if( spdMethods & Solid::Control::PowerManager::Standby ) {
             QAction* action = new QAction(i18n("&Standby"), spdActionGroup);
@@ -413,24 +414,23 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         shutdownMenu->addActions(spdActionGroup->actions());
 
         // Reboot
-        KSMPushButton* btnReboot = new KSMPushButton( i18n("&Restart Computer"), this );
-        btnReboot->setObjectName("btnReboot");
-        btnReboot->setPixmap(KIconLoader::global()->loadIcon("system-restart", KIconLoader::NoGroup, 32));
-        connect(btnReboot, SIGNAL(clicked()), SLOT(slotReboot()));
-        buttonLayout->addWidget(btnReboot);
+        m_btnReboot = new KSMPushButton( i18n("&Restart Computer"), this );
+        m_btnReboot->setPixmap(KIconLoader::global()->loadIcon("system-restart", KIconLoader::NoGroup, 32));
+        connect(m_btnReboot, SIGNAL(clicked()), SLOT(slotReboot()));
+        buttonLayout->addWidget(m_btnReboot);
         buttonLayout->addStretch();
         if ( sdtype == KWorkSpace::ShutdownTypeReboot )
-            btnReboot->setFocus();
+            m_btnReboot->setFocus();
 
         int def, cur;
         if ( KDisplayManager().bootOptions( rebootOptions, def, cur ) ) {
             if ( cur == -1 )
                 cur = def;
 
-            QMenu *rebootMenu = new QMenu( btnReboot );
+            QMenu *rebootMenu = new QMenu( m_btnReboot );
             QActionGroup* rebootActionGroup = new QActionGroup(rebootMenu);
             connect( rebootActionGroup, SIGNAL(triggered(QAction*)), SLOT(slotReboot(QAction*)) );
-            btnReboot->setPopupMenu( rebootMenu );
+            m_btnReboot->setPopupMenu( rebootMenu );
 
             int index = 0;
             for (QStringList::ConstIterator it = rebootOptions.begin(); it != rebootOptions.end(); ++it, ++index) {
@@ -478,19 +478,21 @@ void KSMShutdownDlg::automaticallyDoTimeout()
         if (m_automaticallyDoSeconds <= 0) { // timeout is at 0, do selected action
                 focusedButton->click();
         // following code is required to provide a clean way to translate strings
-        } else if (!focusedButton->objectName().isEmpty()) { // one of the action buttons; not cancel
-            if (focusedButton->objectName() == "btnLogout")
-                m_automaticallyDoLabel->setText(i18np("Log out in 1 second.",
-                                                      "Log out in %1 seconds.", m_automaticallyDoSeconds));
-            else if (focusedButton->objectName() == "btnHalt")
+        } else if (focusedButton == m_btnLogout) {
+            m_automaticallyDoLabel->setText(i18np("Log out in 1 second.",
+                                            "Log out in %1 seconds.", m_automaticallyDoSeconds));
+        } else if (focusedButton == m_btnHalt) {
                 m_automaticallyDoLabel->setText(i18np("Turn off computer in 1 second.",
                                                       "Turn off computer in %1 seconds.", m_automaticallyDoSeconds));
-            else if (focusedButton->objectName() == "btnReboot")
+        } else if (focusedButton == m_btnReboot) {
                 m_automaticallyDoLabel->setText(i18np("Reboot computer in 1 second.",
                                                       "Reboot computer in %1 seconds.", m_automaticallyDoSeconds));
-            m_automaticallyDoSeconds--; // only decrease time if a valid actions button is selected
         } else {
             m_automaticallyDoLabel->setText(QString());
+        }
+
+        if (m_automaticallyDoLabel > 0) {
+            --m_automaticallyDoSeconds;
         }
     }
 }
