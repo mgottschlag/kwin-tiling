@@ -334,13 +334,7 @@ void Clock::showCalendar(QGraphicsSceneMouseEvent *event)
 
     if (m_calendar == 0) {
         m_calendar = new Plasma::Dialog();
-        //m_calendar->setStyleSheet("{ border : 0px }"); // FIXME: crashes
-        QVBoxLayout *layout = new QVBoxLayout();
-        layout->setSpacing(0);
-        layout->setMargin(0);
-
         m_calendarUi.setupUi(m_calendar);
-        m_calendar->setLayout(layout);
         m_calendar->setWindowFlags(Qt::Popup);
         m_calendar->adjustSize();
     }
