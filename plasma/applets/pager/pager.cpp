@@ -209,8 +209,8 @@ void Pager::recalculateGeometry()
         return;
     }
 
-    const int padding = 2; // Space between miniatures of desktops
-    const int textMargin = 3; // Space between name of desktop and border
+    int padding = 2; // Space between miniatures of desktops
+    int textMargin = 3; // Space between name of desktop and border
     int columns = m_desktopCount / m_rows + m_desktopCount % m_rows;
 
     qreal leftMargin;
@@ -226,7 +226,7 @@ void Pager::recalculateGeometry()
         if (geometry().width() - leftMargin - rightMargin < 16 * columns ||
             geometry().height() - topMargin - bottomMargin < 12 * m_rows) {
             m_showOwnBackground = false;
-            leftMargin = topMargin = rightMargin = bottomMargin = 0;
+            leftMargin = topMargin = rightMargin = bottomMargin = padding = textMargin = 0;
         } else {
             m_showOwnBackground = true;
         }
@@ -339,7 +339,7 @@ void Pager::recalculateWindowRects()
                 windowRect = fixViewportPosition( windowRect );
             windowRect = QRectF(windowRect.x() * m_widthScaleFactor,
                                 windowRect.y() * m_heightScaleFactor,
-                                windowRect.width() * m_widthScaleFactor, 
+                                windowRect.width() * m_widthScaleFactor,
                                 windowRect.height() * m_heightScaleFactor).toRect();
             windowRect.translate(m_rects[i].topLeft().toPoint());
             m_windowRects[i].append(QPair<WId, QRect>(window, windowRect));
@@ -632,7 +632,7 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             }
         }
         m_timer->start();
-    } else if (m_dragStartDesktop != -1 && posOnDesktopRect(m_rects[m_dragStartDesktop], event->pos()) && 
+    } else if (m_dragStartDesktop != -1 && posOnDesktopRect(m_rects[m_dragStartDesktop], event->pos()) &&
                m_currentDesktop != m_dragStartDesktop + 1) {
         // only change the desktop if the user presses and releases the mouse on the same desktop
         KWindowSystem::setCurrentDesktop(m_dragStartDesktop + 1);
