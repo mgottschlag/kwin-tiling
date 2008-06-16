@@ -62,7 +62,19 @@ Trash::Trash(QObject *parent, const QVariantList &args)
       m_trashUrl(KUrl("trash:/")),
       m_count(0)
 {
+    setAspectRatioMode(Plasma::ConstrainedSquare);
     setBackgroundHints(NoBackground);
+    m_icon = new Plasma::Icon(KIcon("user-trash"),QString(),this);
+    m_icon->setNumDisplayLines(2);
+    m_icon->setDrawBackground(true);
+    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
+    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setSpacing(0);
+
+    layout->addItem(m_icon);
+
+    registerAsDragHandle(m_icon);
+    resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
 }
 
 Trash::~Trash()
@@ -71,17 +83,9 @@ Trash::~Trash()
 
 void Trash::init()
 {
-    m_icon = new Plasma::Icon(KIcon("user-trash"),QString(),this);
-    m_icon->setNumDisplayLines(2);
-
     m_places = new  KFilePlacesModel(this);
 
     createMenu();
-
-    connect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
-
-    connect(&m_menu, SIGNAL(aboutToHide()),
-            m_icon, SLOT(setUnpressed()));
 
     setAcceptDrops(true);
 
@@ -94,21 +98,14 @@ void Trash::init()
              this, SLOT( slotDeleteItem( const KFileItem & ) ) );
 
     m_dirLister->openUrl(m_trashUrl);
-    m_icon->setDrawBackground(true);
 
-    setAspectRatioMode(Plasma::ConstrainedSquare);
-
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(0);
-
-    layout->addItem(m_icon);
-
-    registerAsDragHandle(m_icon);
     //setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
-    resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
     //FIXME PORT TO TOOLTIP MANAGER
     //m_data.mainText = i18n("Trash");
+
+    connect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
+    connect(&m_menu, SIGNAL(aboutToHide()),
+            m_icon, SLOT(setUnpressed()));
 }
 
 void Trash::createMenu()
