@@ -31,10 +31,27 @@ namespace Solid
 namespace Control
 {
 
+class SOLIDCONTROL_EXPORT IPv4Address
+{
+public:
+    IPv4Address(quint32 address, quint32 netMask, quint32 gateway);
+    IPv4Address();
+    ~IPv4Address();
+    IPv4Address(const IPv4Address&);
+    quint32 address() const;
+    quint32 netMask() const;
+    quint32 gateway() const;
+    IPv4Address &operator=(const IPv4Address&);
+    bool isValid() const;
+private:
+    class Private;
+    Private * d;
+};
+
 class SOLIDCONTROL_EXPORT IPv4Config
 {
 public:
-    IPv4Config(const QList< QList<quint32> > &addresses,
+    IPv4Config(const QList<IPv4Address> &addresses,
         quint32 broadcast, const QString &hostname, const QList<quint32> &nameservers,
         const QStringList &domains, const QString &nisDomain, const QList<quint32> &nisServers);
     IPv4Config();
@@ -42,10 +59,8 @@ public:
     IPv4Config(const IPv4Config&);
     /** 
      * List of IP addresses related to this configuration. 
-     * Each inner list represents a triple <IP address, subnet mask, gateway>
-     * The outer list allows a configuration to have multiple addresses
      */
-    QList< QList<quint32> >addresses() const;
+    QList<IPv4Address> addresses() const;
     /** May go away, need to check if the broadcast address is *ALWAYS* .255 */
     quint32 broadcast() const;
     QString hostname() const;
