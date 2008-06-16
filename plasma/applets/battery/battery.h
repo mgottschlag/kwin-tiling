@@ -121,6 +121,7 @@ class Battery : public Plasma::Applet
         bool m_drawBackground;
         QColor m_boxColor;
         QColor m_textColor;
+        QRectF m_textRect;
         int m_boxAlpha;
         int m_boxHoverAlpha;
         int m_numOfBattery;

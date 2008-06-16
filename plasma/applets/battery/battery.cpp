@@ -60,8 +60,8 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
     resize(128, 128);
-    setAspectRatioMode(Plasma::ConstrainedSquare );
-
+    //setAspectRatioMode(Plasma::ConstrainedSquare );
+    m_textRect = QRect();
 }
 
 void Battery::init()
@@ -122,13 +122,12 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {
         BackgroundHints background = NoBackground;
-
         if (formFactor() == Plasma::Vertical) {
-            setMaximumHeight(contentsRect().width());
+            setMaximumHeight(qMax(m_textRect.height(), contentsRect().width()));
             kDebug() << "Vertical FormFactor";
             // TODO: set background(true) on panel causes 0 height, so do not use it
         } else if (formFactor() == Plasma::Horizontal) {
-            setMaximumWidth(contentsRect().height());
+            setMaximumWidth(qMax(m_textRect.width(), contentsRect().height()));
             kDebug() << "Horizontal FormFactor";
             // TODO: set background(true) on panel causes 0 height, so do not use it
         } else if (formFactor() == Plasma::Planar) {
@@ -348,7 +347,7 @@ void Battery::animationUpdate(qreal progress)
     } else {
         m_alpha = m_fadeIn ? progress : 1 - progress;
     }
-    m_alpha = qMax(0.0, m_alpha); 
+    m_alpha = qMax(0.0, m_alpha);
     update();
 }
 
@@ -404,11 +403,11 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
         m_font.setWeight(QFont::Bold);
         fm = QFontMetrics(m_font);
         text_width = (fm.width(labelText)+8);
-    } 
+    }
     p->setFont(m_font);
 
     // Let's find a good position for painting the background
-    QRectF text_rect = QRectF(qMax(0.0, contentsRect.left() + (contentsRect.width() - text_width) / 2),
+    m_textRect = QRectF(qMax(0.0, contentsRect.left() + (contentsRect.width() - text_width) / 2),
                             contentsRect.top() + ((contentsRect.height() - (int)fm.height()) / 2 * 0.9),
                             qMin(contentsRect.width(), (int)text_width),
                             fm.height() * 1.2 );
@@ -420,15 +419,15 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
     p->setBrush(m_boxColor);
 
     // Find sensible proportions for the rounded corners
-    float round_prop = text_rect.width() / text_rect.height();
+    float round_prop = m_textRect.width() / m_textRect.height();
 
     // Tweak the rounding edge a bit with the proportions of the textbox
     qreal round_radius = 35.0;
-    p->drawRoundedRect(text_rect, round_radius / round_prop, round_radius, Qt::RelativeSize);
+    p->drawRoundedRect(m_textRect, round_radius / round_prop, round_radius, Qt::RelativeSize);
 
     m_textColor.setAlphaF(m_alpha);
     p->setPen(m_textColor);
-    p->drawText(text_rect, Qt::AlignCenter, labelText);
+    p->drawText(m_textRect, Qt::AlignCenter, labelText);
 
     // Reset font and box
     m_font.setPointSize(original_font_size);
@@ -530,7 +529,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         while (battery_data.hasNext()) {
             battery_data.next();
             QRect corect = QRect(contentsRect.left()+battery_num*width,
-                                 contentsRect.top(), 
+                                 contentsRect.top(),
                                  width, contentsRect.height());
 
             // paint battery with appropriate charge level
@@ -584,22 +583,22 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
 
 void Battery::connectSources() {
     const QStringList& battery_sources = dataEngine("powermanagement")->query(I18N_NOOP("Battery"))[I18N_NOOP("sources")].toStringList();
-    
+
     foreach (const QString &battery_source, battery_sources) {
         dataEngine("powermanagement")->connectSource(battery_source, this);
     }
-    
+
     dataEngine("powermanagement")->connectSource(I18N_NOOP("AC Adapter"), this);
 }
 
 void Battery::disconnectSources()
 {
     const QStringList& battery_sources = dataEngine("powermanagement")->query(I18N_NOOP("Battery"))[I18N_NOOP("sources")].toStringList();
-    
+
     foreach (const QString &battery_source ,battery_sources) {
         dataEngine("powermanagement")->disconnectSource(battery_source, this);
     }
-    
+
     dataEngine("powermanagement")->disconnectSource(I18N_NOOP("AC Adapter"), this);
 }
 
