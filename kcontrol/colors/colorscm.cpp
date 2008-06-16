@@ -1002,6 +1002,11 @@ void KColorCm::on_inactiveSelectionEffect_stateChanged(int state)
 void KColorCm::load()
 {
     loadInternal(true);
+
+    KConfig      cfg("kcmdisplayrc", KConfig::NoGlobals);
+    KConfigGroup group(&cfg, "X11");
+
+    applyToAlien->setChecked(group.readEntry("exportKDEColors", true));
 }
 
 void KColorCm::loadInternal(bool loadOptions)
@@ -1056,10 +1061,13 @@ void KColorCm::save()
     QDBusConnection::sessionBus().send(message);
 #endif
 
-    if (applyToAlien->isChecked())
-    {
-        runRdb(KRdbExportQtColors | KRdbExportColors);
-    }
+    KConfig      cfg("kcmdisplayrc", KConfig::NoGlobals);
+    KConfigGroup displayGroup(&cfg, "X11");
+
+    displayGroup.writeEntry("exportKDEColors", applyToAlien->isChecked());
+    cfg.sync();
+
+    runRdb(KRdbExportQtColors | ( applyToAlien->isChecked() ? KRdbExportColors : 0 ) );
 
     // now restore the normalized effect values
     groupI.writeEntry("IntensityEffect", inactiveIntensityBox->currentIndex());
