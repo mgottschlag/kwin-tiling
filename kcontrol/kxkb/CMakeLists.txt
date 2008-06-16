@@ -1,13 +1,13 @@
-add_subdirectory( pics )
-#add_subdirectory( tests ) 
+add_subdirectory(pics)
+#add_subdirectory(tests)
 KDE4_NO_ENABLE_FINAL(kxkb)
 
 OPTION(USE_XKLAVIER "Use libxklavier to get keyboard layouts configuration" ON)
 
-MESSAGE(STATUS "option: USE_XKLAVIER  <${USE_XKLAVIER}>")
+#if we are in here, we know that the X extension for Xkb is available.
 
-if( USE_XKLAVIER STREQUAL ON )
-
+SET(HAVE_XKLAVIER FALSE)
+if(USE_XKLAVIER STREQUAL ON)
   macro_optional_find_package(LibXKlavier)
   macro_optional_find_package(GLIB2)
   macro_optional_find_package(GObject)
@@ -24,30 +24,41 @@ if( USE_XKLAVIER STREQUAL ON )
     include_directories(${GLIB2_INCLUDE_DIR})
 
   else(LIBXKLAVIER_FOUND AND GLIB2_FOUND AND GOBJECT_FOUND)
-    MESSAGE (STATUS "kxkb: Could not find libxklavier >= 3.0, glib or gobject, will try xkbfile...")
+    MESSAGE(STATUS "Could not find libxklavier >= 3.0, glib or gobject which are recommended for kxkb.")
   endif(LIBXKLAVIER_FOUND AND GLIB2_FOUND AND GOBJECT_FOUND)
 
-endif( USE_XKLAVIER STREQUAL ON )
+else(USE_XKLAVIER STREQUAL ON)
 
-if( NOT HAVE_XKLAVIER )
+  MESSAGE(STATUS "Will attempt to use xkbfile to get keyboard layouts, per user request.")
 
-    if (NOT X11_Xkbfile_FOUND)
-        MESSAGE (STATUS "Could not find xkbfile - kxkb won't be built!")
-        macro_log_feature (FALSE "libxklavier" "Could not find libxklavier or xkbfile - kxkb won't be built!" "http://freedesktop.org/wiki/Software/LibXklavier")
-    else (NOT X11_Xkbfile_FOUND)
+endif(USE_XKLAVIER STREQUAL ON)
+
+# we can build against libxklavier or xkbfile, but libxklavier is preferred
+
+if(NOT HAVE_XKLAVIER)
+    # cannot use libxklavier, try xkbfile
+    if(NOT X11_Xkbfile_FOUND)
+        # total failure
+        MESSAGE(STATUS "\n    Could not find libxklavier or xkbfile - kxkb won't be built!\n    Please install libxklavier\n--")
+    else(NOT X11_Xkbfile_FOUND)
+        # oh well, xkbfile it is
         SET(XKB_SUPPORT_LIB ${X11_Xkbfile_LIB})
-        MESSAGE (STATUS "Using xkbfile for getting keyboard layouts is not well maintained, please consider installing libxklavier.")
-        macro_log_feature (TRUE "libxklavier" "Using xkbfile for getting keyboard layouts is not well maintained, please consider installing libxklavier." "http://freedesktop.org/wiki/Software/LibXklavier")
-    endif (NOT X11_Xkbfile_FOUND)
+        MESSAGE(STATUS "Using xkbfile to get keyboard layouts for kxkb")
+    endif(NOT X11_Xkbfile_FOUND)
 
-endif( NOT HAVE_XKLAVIER )
+endif(NOT HAVE_XKLAVIER)
+
+if(USE_XKLAVIER STREQUAL ON)
+   macro_log_feature(LIBXKLAVIER_FOUND "libxklavier" "A XKB foundation library for keyboard handling software" "http://freedesktop.org/wiki/Software/LibXklavier" FALSE "3.0" "Recommended for kxkb, the KDE keyboard map switching utility.")
+else(USE_XKLAVIER STREQUAL ON)
+  macro_log_feature(X11_Xkbfile_FOUND "xkbfile" "X11 KXB library for keyboard handling software" "http://www.x.org" FALSE "" "Either xkbfile or libxklavier is required to build kxkb, but libxklavier is preferred.")
+endif(USE_XKLAVIER STREQUAL ON)
 
 
-if (X11_Xkbfile_FOUND OR HAVE_XKLAVIER)
+
+if(X11_Xkbfile_FOUND OR HAVE_XKLAVIER)
 
 #MESSAGE("xkb support libs:: ${XKB_SUPPORT_LIB}")
-
-
 
 ########### common sources ############
 
@@ -68,7 +79,7 @@ set(kcm_keyboard_layout_PART_SRCS
   ${kxkb_COMMON_SRCS}
 )
 
-kde4_add_ui_files(kcm_keyboard_layout_PART_SRCS kcmlayoutwidget.ui )
+kde4_add_ui_files(kcm_keyboard_layout_PART_SRCS kcmlayoutwidget.ui)
 
 kde4_add_plugin(kcm_keyboard_layout ${kcm_keyboard_layout_PART_SRCS})
 
@@ -80,8 +91,8 @@ if(X11_XTest_FOUND)
   target_link_libraries(kcm_keyboard_layout ${X11_XTest_LIB})
 endif(X11_XTest_FOUND)
 
-install(TARGETS kcm_keyboard_layout DESTINATION ${PLUGIN_INSTALL_DIR} )
-install( FILES keyboard_layout.desktop DESTINATION  ${SERVICES_INSTALL_DIR} )
+install(TARGETS kcm_keyboard_layout DESTINATION ${PLUGIN_INSTALL_DIR})
+install(FILES keyboard_layout.desktop DESTINATION  ${SERVICES_INSTALL_DIR})
 
 
 ########### KXKB kdeinit ###############
@@ -95,19 +106,19 @@ set(kxkb_KDEINIT_SRCS ${kxkb_COMMON_SRCS}
   kxkb_part.cpp
 )
 
-kde4_add_kdeinit_executable( kxkb ${kxkb_KDEINIT_SRCS})
+kde4_add_kdeinit_executable(kxkb ${kxkb_KDEINIT_SRCS})
 
 target_link_libraries(kdeinit_kxkb ${X11_X11_LIB} ${X11_Xext_LIB} ${KDE4_KDEUI_LIBS}
      ${XKB_SUPPORT_LIB})
 
-install(TARGETS kdeinit_kxkb ${INSTALL_TARGETS_DEFAULT_ARGS} )
-install(TARGETS kxkb         ${INSTALL_TARGETS_DEFAULT_ARGS} )
+install(TARGETS kdeinit_kxkb ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS kxkb         ${INSTALL_TARGETS_DEFAULT_ARGS})
 #install(FILES kxkb_component.h DESTINATION ${INCLUDE_INSTALL_DIR})
 
 
 ########### KXKB Plasma Applet ###############
 
-if( FALSE )     # don't generate applet - it's not finished yet
+if(FALSE)     # don't generate applet - it's not finished yet
 
 set(plasma_applet_kxkb_SRCS kxkb_applet.cpp ${kxkb_COMMON_SRCS}
      kxkbcore.cpp
@@ -124,12 +135,12 @@ if(X11_XTest_FOUND)
     target_link_libraries(plasma_applet_kxkb ${X11_XTest_LIB})
 endif(X11_XTest_FOUND)
 
-install(TARGETS plasma_applet_kxkb  DESTINATION ${PLUGIN_INSTALL_DIR} )
+install(TARGETS plasma_applet_kxkb  DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-applet-kxkb.desktop  DESTINATION  ${SERVICES_INSTALL_DIR})
 
 ADD_DEPENDENCIES(plasma_applet_kxkb kdeinit_kxkb)
 
-endif (FALSE)
+endif(FALSE)
 
 ########### KXKB KPart ###############
 # we're not using KPart for now - it's too heavy
@@ -146,8 +157,8 @@ endif (FALSE)
 #  target_link_libraries(kxkb_part ${X11_XTest_LIB})
 #endif(X11_XTest_FOUND)
 #
-#install( TARGETS kxkb_part DESTINATION ${PLUGIN_INSTALL_DIR} )
-#install( FILES kxkb_part.desktop DESTINATION  ${SERVICES_INSTALL_DIR} )
-##install( FILES kxkb_part.rc DESTINATION  ${DATA_INSTALL_DIR}/kxkb_part )
+#install(TARGETS kxkb_part DESTINATION ${PLUGIN_INSTALL_DIR})
+#install(FILES kxkb_part.desktop DESTINATION  ${SERVICES_INSTALL_DIR})
+##install(FILES kxkb_part.rc DESTINATION  ${DATA_INSTALL_DIR}/kxkb_part)
 
-endif (X11_Xkbfile_FOUND OR HAVE_XKLAVIER)
+endif(X11_Xkbfile_FOUND OR HAVE_XKLAVIER)
