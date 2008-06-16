@@ -132,30 +132,30 @@ void SystemTrayWidget::addWidgetToLayout(QWidget *widget)
 
     // Figure out where the next widget should go
     if (m_orientation == Qt::Horizontal) {
+        // Calculate the items that fit into a column
+        m_maxCount = (maximumHeight() + m_mainLayout->spacing()) / (widget->height() + m_mainLayout->spacing()) -1;
+
         setMinimumSize(QSize(22 * (m_nextColumn + 1) + m_mainLayout->spacing() * m_nextColumn,
                              22 * (m_maxCount + 1) + m_mainLayout->spacing() * m_maxCount));
+
         // Add down then across when horizontal
         m_nextRow++;
-        if ((m_nextRow == m_maxCount && m_nextColumn != 0) ||
-            minimumHeight() + widget->height() + m_mainLayout->spacing() > maximumHeight()) {
+        if (m_nextRow > m_maxCount){
             m_nextColumn++;
             m_nextRow = 0;
         }
-        if (m_nextColumn == 0) {
-            m_maxCount = m_nextRow;
-        }
     } else {
+        // Calculate the items that fit into a row
+        m_maxCount = (maximumWidth() + m_mainLayout->spacing()) / (widget->width() + m_mainLayout->spacing()) -1;
+
         setMinimumSize(QSize(22 * (m_maxCount + 1) + m_mainLayout->spacing() * m_maxCount,
                              22 * (m_nextRow + 1) + m_mainLayout->spacing() * m_nextRow));
+
         // Add across then down when vertical
         m_nextColumn++;
-        if ((m_nextColumn == m_maxCount && m_nextRow != 0) ||
-            minimumWidth() + widget->width() + m_mainLayout->spacing() > maximumWidth()) {
+        if (m_nextColumn > m_maxCount) {
             m_nextRow++;
             m_nextColumn = 0;
-        }
-        if (m_nextRow == 0) {
-            m_maxCount = m_nextColumn;
         }
     }
 }
