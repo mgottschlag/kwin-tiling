@@ -53,8 +53,7 @@ WindowTaskItem::WindowTaskItem(Tasks *parent, const bool showTooltip)
       m_fadeIn(true),
       m_updateTimerId(0),
       m_attentionTimerId(0),
-      m_attentionTicks(0),
-      m_alphaPixmap(0)
+      m_attentionTicks(0)
 {
     m_showTooltip = showTooltip;
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
@@ -146,7 +145,7 @@ void WindowTaskItem::queueUpdate()
 
 void WindowTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-    const int FadeInDuration = 50;
+    const int FadeInDuration = 75;
 
     if (m_animId) {
         Plasma::Animator::self()->stopCustomAnimation(m_animId);
@@ -160,7 +159,7 @@ void WindowTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 void WindowTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-    const int FadeOutDuration = 100;
+    const int FadeOutDuration = 150;
 
     if (m_animId) {
         Plasma::Animator::self()->stopCustomAnimation(m_animId);
@@ -231,7 +230,6 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
     bool hasSvg = false;
 
     Plasma::PanelSvg *itemBackground = m_applet->itemBackground();
-    QPixmap *alphaPixmap = m_applet->taskAlphaPixmap();
 
     if ((m_flags & TaskWantsAttention) && !(m_attentionTicks % 2)) {
         if (itemBackground && itemBackground->hasElementPrefix("attention")) {
@@ -297,13 +295,9 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
                  itemBackground->paintPanel(painter, option->rect);
              }
         } else {
-            if (!alphaPixmap || alphaPixmap->size() != option->rect.size()) {
-                delete m_alphaPixmap;
-                alphaPixmap = new QPixmap(option->rect.size());
-                alphaPixmap->fill(Qt::transparent);
-            }
-
-            alphaPixmap->fill(QColor(0,0,0,255*(1.0-m_alpha)));
+            QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(option->rect.size());
+            //kDebug() << (QObject*)this << "setting alpha to" << (255 * (1.0 - m_alpha)) << m_alpha;
+            alphaPixmap->fill(QColor(0, 0, 0, 255 * (1.0 - m_alpha)));
 
             {
                 QPainter buffPainter(alphaPixmap);
@@ -322,16 +316,12 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
                 itemBackground->paintPanel(painter, option->rect);
             } else {
                 //Draw task background from theme svg "hover" element
-                if (!alphaPixmap || alphaPixmap->size() != option->rect.size()) {
-                    delete alphaPixmap;
-                    alphaPixmap = new QPixmap(option->rect.size());
-                    alphaPixmap->fill(Qt::transparent);
-                }
+                QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(option->rect.size());
 
                 if (option->state & QStyle::State_Sunken) {
-                    alphaPixmap->fill(QColor(0,0,0,50));
+                    alphaPixmap->fill(QColor(0, 0, 0, 50));
                 } else {
-                    alphaPixmap->fill(QColor(0,0,0,255*m_alpha));
+                    alphaPixmap->fill(QColor(0, 0, 0, 255 * (1.0 - m_alpha)));
                 }
 
                 {

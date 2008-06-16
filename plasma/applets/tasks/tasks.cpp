@@ -58,6 +58,7 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
 
 Tasks::~Tasks()
 {
+    delete m_taskAlphaPixmap;
 }
 
 void Tasks::init()
@@ -226,8 +227,15 @@ Plasma::PanelSvg* Tasks::itemBackground()
     return m_taskItemBackground;
 }
 
-QPixmap *Tasks::taskAlphaPixmap()
+QPixmap *Tasks::taskAlphaPixmap(const QSize &size)
 {
+    if (!m_taskAlphaPixmap) {
+        m_taskAlphaPixmap = new QPixmap(size);
+    } else if (m_taskAlphaPixmap->size() != size) {
+        delete m_taskAlphaPixmap;
+        m_taskAlphaPixmap = new QPixmap(size);
+    }
+
     return m_taskAlphaPixmap;
 }
 

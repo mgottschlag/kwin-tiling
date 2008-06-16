@@ -72,7 +72,7 @@ public:
         void constraintsEvent(Plasma::Constraints constraints);
 
         Plasma::PanelSvg *itemBackground();
-        QPixmap *taskAlphaPixmap();
+        QPixmap *taskAlphaPixmap(const QSize &size);
         KColorScheme *colorScheme();
 
         qreal itemLeftMargin() { return m_leftMargin; }
