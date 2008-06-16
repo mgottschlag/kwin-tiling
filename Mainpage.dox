@@ -3,12 +3,12 @@
 This is where the components that are only used when KDE is providing
 a complete desktop environment live.
 
-Of particular importance are <a href="../kwin/html/index.html">KWin</a>, the
-KDE window manager, and <a href="../plasma/html/index.html">Plasma</a>, which
+Of particular importance are <a href="kwin/html/index.html">KWin</a>, the
+KDE window manager, and <a href="plasma/html/index.html">Plasma</a>, which
 provides the workspace interface.
 
 If you are developing Plasma plugins (Plasmoids), you are probably interested
-in the <a href="../lib/plasma/html/index.html">libplasma documentation</a>.
+in the <a href="libs/plasma/html/index.html">libplasma documentation</a>.
 
 Other components that reside here are:
 - KCheckPass, a simple program for checking whether a password is correct
