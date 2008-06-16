@@ -101,16 +101,16 @@ quint32 parseIPv4Address(const QString & addressString)
 
 Solid::Control::IPv4Config parseIPv4Config(const NMDBusDeviceProperties & dev)
 {
-    QList<quint32> addresses;
-    addresses.append(parseIPv4Address(dev.ipv4Address));
-    addresses.append(parseIPv4Address(dev.subnetMask));
-    addresses.append(parseIPv4Address(dev.route));
+    Solid::Control::IPv4Address address(
+        parseIPv4Address(dev.ipv4Address),
+        parseIPv4Address(dev.subnetMask),
+        parseIPv4Address(dev.route));
     quint32 broadcast = parseIPv4Address(dev.broadcast);
     QList<quint32> dnsServers;
     dnsServers.append(parseIPv4Address(dev.primaryDNS));
     dnsServers.append(parseIPv4Address(dev.secondaryDNS));
     return Solid::Control::IPv4Config(
-        QList< QList<quint32> >() << addresses,
+        QList<Solid::Control::IPv4Address>() << address,
         broadcast, QString() /* hostname */, dnsServers,
         QStringList() /* domains */, QString() /* nisDomain */,
         QList<quint32>() /* nisServers */);
