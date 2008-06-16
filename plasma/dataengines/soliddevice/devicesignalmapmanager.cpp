@@ -31,7 +31,7 @@ void DeviceSignalMapManager::mapDevice(Solid::AcAdapter *ac, const QString &udi)
 {
     AcAdapterSignalMapper *map=0;
     if(!signalmap.contains(Solid::DeviceInterface::AcAdapter)) {
-        signalmap[Solid::DeviceInterface::AcAdapter] = new AcAdapterSignalMapper();
+        signalmap[Solid::DeviceInterface::AcAdapter] = new AcAdapterSignalMapper(this);
     }
     map = (AcAdapterSignalMapper*)signalmap[Solid::DeviceInterface::AcAdapter];
 
@@ -44,7 +44,7 @@ void DeviceSignalMapManager::mapDevice(Solid::Button *button, const QString &udi
 {
     ButtonSignalMapper *map=0;
     if(!signalmap.contains(Solid::DeviceInterface::Button)) {
-        signalmap[Solid::DeviceInterface::Button] = new ButtonSignalMapper();
+        signalmap[Solid::DeviceInterface::Button] = new ButtonSignalMapper(this);
     }
     map = (ButtonSignalMapper*)signalmap[Solid::DeviceInterface::Button];
 
@@ -57,7 +57,7 @@ void DeviceSignalMapManager::mapDevice(Solid::Battery *battery, const QString &u
 {
     BatterySignalMapper *map=0;
     if(!signalmap.contains(Solid::DeviceInterface::Battery)) {
-        signalmap[Solid::DeviceInterface::Battery] = new BatterySignalMapper();
+        signalmap[Solid::DeviceInterface::Battery] = new BatterySignalMapper(this);
     }
     map = (BatterySignalMapper*)signalmap[Solid::DeviceInterface::Battery];
 
@@ -74,7 +74,7 @@ void DeviceSignalMapManager::mapDevice(Solid::StorageAccess *storageaccess, cons
 {
     StorageAccessSignalMapper *map=0;
     if(!signalmap.contains(Solid::DeviceInterface::StorageAccess)) {
-        signalmap[Solid::DeviceInterface::StorageAccess] = new StorageAccessSignalMapper();
+        signalmap[Solid::DeviceInterface::StorageAccess] = new StorageAccessSignalMapper(this);
     }
     map = (StorageAccessSignalMapper*)signalmap[Solid::DeviceInterface::StorageAccess];
 
