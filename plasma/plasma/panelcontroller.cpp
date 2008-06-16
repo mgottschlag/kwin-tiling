@@ -187,6 +187,7 @@ public:
         ToolButton *tool = new ToolButton(parent);
         tool->setToolButtonStyle(style);
         tool->setAction(action);
+        actionWidgets.append(tool);
 
         return tool;
     }
@@ -301,6 +302,9 @@ public:
     ToolButton *centerAlignTool;
     ToolButton *rightAlignTool;
 
+    //Widgets for actions
+    QList<QWidget *> actionWidgets;
+
     ResizeHandle *panelHeightHandle;
     PositioningRuler *ruler;
 
@@ -383,6 +387,14 @@ void PanelController::setContainment(Plasma::Containment *containment)
     }
 
     d->containment = containment;
+
+    QWidget *child;
+    while (!d->actionWidgets.isEmpty()) {
+        child = d->actionWidgets.first();
+        d->layout->removeWidget(child);
+        d->actionWidgets.removeFirst();
+        child->deleteLater();
+    }
 
     int insertIndex = d->layout->count() - 2;
 
