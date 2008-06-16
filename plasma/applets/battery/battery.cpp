@@ -347,7 +347,7 @@ void Battery::animationUpdate(qreal progress)
     } else {
         m_alpha = m_fadeIn ? progress : 1 - progress;
     }
-    m_alpha = qMax(0.0, m_alpha);
+    m_alpha = qMax(qreal(0.0), m_alpha);
     update();
 }
 
@@ -407,7 +407,7 @@ void Battery::paintLabel(QPainter *p, const QRect &contentsRect, const QString& 
     p->setFont(m_font);
 
     // Let's find a good position for painting the background
-    m_textRect = QRectF(qMax(0.0, contentsRect.left() + (contentsRect.width() - text_width) / 2),
+    m_textRect = QRectF(qMax(qreal(0.0), contentsRect.left() + (contentsRect.width() - text_width) / 2),
                             contentsRect.top() + ((contentsRect.height() - (int)fm.height()) / 2 * 0.9),
                             qMin(contentsRect.width(), (int)text_width),
                             fm.height() * 1.2 );
@@ -512,7 +512,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
     p->setRenderHint(QPainter::Antialiasing);
 
     if (m_numOfBattery == 0) {
-        QRectF ac_contentsRect(contentsRect.topLeft(), QSizeF(qMax(0.0, contentsRect.width() * m_acAlpha), qMax(0.0, contentsRect.height() * m_acAlpha)));
+        QRectF ac_contentsRect(contentsRect.topLeft(), QSizeF(qMax(qreal(0.0), contentsRect.width() * m_acAlpha), qMax(qreal(0.0), contentsRect.height() * m_acAlpha)));
         if (m_acadapter_plugged) {
             m_theme->paint(p, ac_contentsRect, "AcAdapter");
         }

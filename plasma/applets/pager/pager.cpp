@@ -613,7 +613,7 @@ void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             QPointF dest = m_dragCurrentPos - m_rects[m_dragHighlightedDesktop].topLeft() - m_dragOriginalPos + m_dragOriginal.topLeft();
             dest = QPointF(dest.x()/m_widthScaleFactor, dest.y()/m_heightScaleFactor);
             // don't move windows to negative positions
-            dest = QPointF(qMax(dest.x(), 0.0), qMax(dest.y(), 0.0));
+            dest = QPointF(qMax(dest.x(), qreal(0.0)), qMax(dest.y(), qreal(0.0)));
             if( !KWindowSystem::mapViewport()) {
                 KWindowSystem::setOnDesktop(m_dragId, m_dragHighlightedDesktop+1);
                 // use _NET_MOVERESIZE_WINDOW rather than plain move, so that the WM knows this is a pager request
