@@ -364,20 +364,20 @@ void CJobRunner::doNext()
                 dest.setFileName(Misc::getFile((*itsIt).path()));
                 itsStatusLabel->setText(CMD_INSTALL==itsCmd ? i18n("Installing %1", (*itsIt).displayName())
                                                             : i18n("Copying %1", (*itsIt).displayName()) );
-                job=KIO::file_copy(*itsIt, dest, -1, KIO::HideProgressInfo);
+                job=KIO::file_copy(*itsIt, modifyUrl(dest), -1, KIO::HideProgressInfo);
                 break;
             }
             case CMD_DELETE:
                 itsStatusLabel->setText(i18n("Deleting %1", (*itsIt).displayName()));
-                job=KIO::file_delete(*itsIt, KIO::HideProgressInfo);
+                job=KIO::file_delete(modifyUrl(*itsIt), KIO::HideProgressInfo);
                 break;
             case CMD_ENABLE:
                 itsStatusLabel->setText(i18n("Enabling %1", (*itsIt).displayName()));
-                job=KIO::rename(*itsIt, toggle(*itsIt, true), KIO::HideProgressInfo);
+                job=KIO::rename(*itsIt, modifyUrl(toggle(*itsIt, true)), KIO::HideProgressInfo);
                 break;
             case CMD_DISABLE:
                 itsStatusLabel->setText(i18n("Disabling %1", (*itsIt).displayName()));
-                job=KIO::rename(*itsIt, toggle(*itsIt, false), KIO::HideProgressInfo);
+                job=KIO::rename(*itsIt, modifyUrl(toggle(*itsIt, false)), KIO::HideProgressInfo);
                 break;
             case CMD_MOVE:
             {
@@ -385,7 +385,7 @@ void CJobRunner::doNext()
 
                 dest.setFileName(Misc::getFile((*itsIt).path()));
                 itsStatusLabel->setText(i18n("Moving %1", (*itsIt).displayName()));
-                job=KIO::file_move(*itsIt, dest, -1, KIO::HideProgressInfo);
+                job=KIO::file_move(modifyUrl(*itsIt), modifyUrl(dest), -1, KIO::HideProgressInfo);
                 break;
             }
             default:
@@ -511,14 +511,25 @@ void CJobRunner::slotButtonClicked(int)
 // Tell the io-slave not to clear, and re-read, the list of fonts. And also, tell it to not
 // automatically recreate the config files - we want that to happen after all fonts are installed,
 // deleted, etc.
-void CJobRunner::setMetaData(KIO::Job *job)
+void CJobRunner::setMetaData(KIO::Job *job) const
 {
     job->addMetaData(KFI_KIO_TIMEOUT, "0");
     job->addMetaData(KFI_KIO_NO_CLEAR, "1");
+}
+
+KUrl CJobRunner::modifyUrl(const KUrl &orig) const
+{
+    KUrl url(orig);
 
     if(!Misc::root() && !itsPasswd.isEmpty())
-        job->addMetaData(KFI_KIO_PASS, itsPasswd);
+    {
+        url.setUser(KFI_SYS_USER);
+        url.setPass(itsPasswd);
+    }
+
+    return url;
 }
+
 
 CJobRunner::Item::Item(const KUrl &u, const QString &n)
                 : KUrl(u), name(n), fileName(Misc::getFile(u.path()))

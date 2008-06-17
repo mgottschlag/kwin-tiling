@@ -88,7 +88,8 @@ class CJobRunner : public CActionDialog
 
     private:
 
-    void setMetaData(KIO::Job *job);
+    void setMetaData(KIO::Job *job) const;
+    KUrl modifyUrl(const KUrl &orig) const;
 
     private:
 

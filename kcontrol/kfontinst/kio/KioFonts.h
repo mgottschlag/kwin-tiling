@@ -153,10 +153,10 @@ class CKioFonts : public KIO::SlaveBase
     void               special(const QByteArray &a);
     bool               configure(EFolder folder);
     void               doModified();
-    bool               getRootPasswd(bool askPasswd=true);
+    bool               getRootPasswd(const KUrl &url, bool askPasswd=true);
     void               quitHelper();
-    bool               doRootCmd(const TCommand &cmd, bool askPasswd=true);
-    bool               doRootCmd(QList<TCommand> &cmd, bool askPasswd=true);
+    bool               doRootCmd(const KUrl &url, const TCommand &cmd, bool askPasswd=true);
+    bool               doRootCmd(const KUrl &url, QList<TCommand> &cmd, bool askPasswd=true);
     void               correctUrl(KUrl &url);
     void               clearFontList();
     bool               updateFontList();

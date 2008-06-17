@@ -49,7 +49,6 @@
 #define KFI_KIO_FONTS_ALL            I18N_NOOP("All")
 #define KFI_KIO_NO_CLEAR             "noclear"
 #define KFI_KIO_TIMEOUT              "timeout"
-#define KFI_KIO_PASS                 "pass"
 #define KFI_KIO_FACE                 "face"
 
 #define KFI_FILE_QUERY               "file"

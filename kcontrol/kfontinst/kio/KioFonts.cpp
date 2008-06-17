@@ -114,10 +114,19 @@ int kdemain(int argc, char **argv)
     slave.dispatchLoop();
 
     return 0;
-}
+}   
 
 namespace KFI
 {
+
+static QString urlString(const KUrl &u)
+{
+    KUrl url(u);
+
+    if(url.hasUser() && KFI_KIO_FONTS_PROTOCOL==url.protocol() && KFI_SYS_USER==url.user())
+        url.setUser(QString());
+    return url.prettyUrl();
+}
 
 static bool addCreateFolderCmd(const QString &folder, QList<CKioFonts::TCommand> &cmd)
 {
@@ -958,7 +967,7 @@ void CKioFonts::stat(const KUrl &url)
 
         if(path.isEmpty())
         {
-            error(KIO::ERR_COULD_NOT_STAT, url.prettyUrl());
+            error(KIO::ERR_COULD_NOT_STAT, urlString(url));
             return;
         }
 
@@ -1023,7 +1032,7 @@ void CKioFonts::stat(const KUrl &url)
 
     if(err)
     {
-        error(KIO::ERR_DOES_NOT_EXIST, url.prettyUrl());
+        error(KIO::ERR_DOES_NOT_EXIST, urlString(url));
         return;
     }
 
@@ -1243,17 +1252,17 @@ void CKioFonts::get(const KUrl &url)
         KFI_DBUG << "real: " << realPathC;
 
         if (-2==KDE_stat(realPathC.constData(), &buff))
-            error(EACCES==errno ? KIO::ERR_ACCESS_DENIED : KIO::ERR_DOES_NOT_EXIST, url.prettyUrl());
+            error(EACCES==errno ? KIO::ERR_ACCESS_DENIED : KIO::ERR_DOES_NOT_EXIST, urlString(url));
         else if (S_ISDIR(buff.st_mode))
-            error(KIO::ERR_IS_DIRECTORY, url.prettyUrl());
+            error(KIO::ERR_IS_DIRECTORY, urlString(url));
         else if (!S_ISREG(buff.st_mode))
-            error(KIO::ERR_CANNOT_OPEN_FOR_READING, url.prettyUrl());
+            error(KIO::ERR_CANNOT_OPEN_FOR_READING, urlString(url));
         else
         {
             int fd = KDE_open(realPathC.constData(), O_RDONLY);
 
             if (fd < 0)
-                error(KIO::ERR_CANNOT_OPEN_FOR_READING, url.prettyUrl());
+                error(KIO::ERR_CANNOT_OPEN_FOR_READING, urlString(url));
             else
             {
                 // Determine the mimetype of the file to be retrieved, and emit it.
@@ -1275,7 +1284,7 @@ void CKioFonts::get(const KUrl &url)
                         if (EINTR==errno)
                             continue;
 
-                        error(KIO::ERR_COULD_NOT_READ, url.prettyUrl());
+                        error(KIO::ERR_COULD_NOT_READ, urlString(url));
                         ::close(fd);
                         if(multiple)
                             ::unlink(realPathC);
@@ -1310,7 +1319,7 @@ void CKioFonts::put(const KUrl &u, int mode, KIO::JobFlags flags)
     if(Misc::isHidden(u))
     {
         error(KIO::ERR_SLAVE_DEFINED, i18n("Cannot install %1\nHidden fonts cannot be "
-                                           "installed.", u.prettyUrl()));
+                                           "installed.", urlString(u)));
         return;
     }
 
@@ -1334,11 +1343,11 @@ void CKioFonts::put(const KUrl &u, int mode, KIO::JobFlags flags)
 
     if (destExists && !(flags & KIO::Overwrite) && !(flags & KIO::Resume))
     {
-        error(KIO::ERR_FILE_ALREADY_EXIST, url.prettyUrl());
+        error(KIO::ERR_FILE_ALREADY_EXIST, urlString(url));
         return;
     }
 
-    if(nrs && !getRootPasswd()) // Need to check can get root passwd before start download...
+    if(nrs && !getRootPasswd(u)) // Need to check can get root passwd before start download...
     {
         error(KIO::ERR_ACCESS_DENIED, KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS);
         return;
@@ -1380,7 +1389,7 @@ void CKioFonts::put(const KUrl &u, int mode, KIO::JobFlags flags)
             cmd.append(c);
 
             // Get root to move this to fonts folder...
-            if(doRootCmd(cmd, false)) // Already asked for passwd...
+            if(doRootCmd(u, cmd, false)) // Already asked for passwd...
             {
                 tmpFile.setAutoRemove(false);
                 if(FILE_FONT==type)
@@ -1664,7 +1673,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, KIO::JobFlags fla
     {
         error(KIO::ERR_SLAVE_DEFINED,
               i18n("Cannot copy %1 to %2\nHidden/disabled fonts cannot be installed.",
-                   src.prettyUrl(), d.prettyUrl()));
+                   urlString(src), urlString(d)));
         return;
     }
 
@@ -1733,7 +1742,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, KIO::JobFlags fla
 
                     totalSize(size);
 
-                    if(doRootCmd(cmd, true))
+                    if(doRootCmd(d, cmd, true))
                     {
                         if(!metrics)
                             modified(timeout, destFolder, clearList, addedFolders);
@@ -1766,7 +1775,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, KIO::JobFlags fla
                         if(-1==KDE_stat(realSrc.constData(), &buffSrc))
                         {
                             error(EACCES==errno ? KIO::ERR_ACCESS_DENIED : KIO::ERR_DOES_NOT_EXIST,
-                                  src.prettyUrl());
+                                  urlString(src));
                             return;
                         }
 
@@ -1774,7 +1783,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, KIO::JobFlags fla
 
                         if (srcFd<0)
                         {
-                            error(KIO::ERR_CANNOT_OPEN_FOR_READING, src.prettyUrl());
+                            error(KIO::ERR_CANNOT_OPEN_FOR_READING, urlString(src));
                             return;
                         }
 
@@ -1790,7 +1799,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, KIO::JobFlags fla
                         {
                             error(EACCES==errno
                                       ? KIO::ERR_WRITE_ACCESS_DENIED
-                                      : KIO::ERR_CANNOT_OPEN_FOR_WRITING, dest.prettyUrl());
+                                      : KIO::ERR_CANNOT_OPEN_FOR_WRITING, urlString(dest));
                             ::close(srcFd);
                             return;
                         }
@@ -1807,7 +1816,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, KIO::JobFlags fla
 
                             if(-1==n)
                             {
-                                error(KIO::ERR_COULD_NOT_READ, src.prettyUrl());
+                                error(KIO::ERR_COULD_NOT_READ, urlString(src));
                                 ::close(srcFd);
                                 ::close(destFd);
                                 return;
@@ -1821,11 +1830,11 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, KIO::JobFlags fla
                                 ::close(destFd);
                                 if (ENOSPC==errno) // disk full
                                 {
-                                    error(KIO::ERR_DISK_FULL, dest.prettyUrl());
+                                    error(KIO::ERR_DISK_FULL, urlString(dest));
                                     remove(realDest.constData());
                                 }
                                 else
-                                    error(KIO::ERR_COULD_NOT_WRITE, dest.prettyUrl());
+                                    error(KIO::ERR_COULD_NOT_WRITE, urlString(dest));
                                 return;
                             }
 
@@ -1837,7 +1846,7 @@ void CKioFonts::copy(const KUrl &src, const KUrl &d, int mode, KIO::JobFlags fla
 
                         if(::close(destFd))
                         {
-                            error(KIO::ERR_COULD_NOT_WRITE, dest.prettyUrl());
+                            error(KIO::ERR_COULD_NOT_WRITE, urlString(dest));
                             return;
                         }
 
@@ -1923,7 +1932,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, KIO::JobFlags flags)
 
                         c.args.append((*disabledIt).family);
                         c.args.append((int)(*disabledIt).styleInfo);
-                        ok=doRootCmd(c);
+                        ok=doRootCmd(d, c);
                     }
                     else
                         ok=itsFolders[folder].disabled->enable(disabledIt);
@@ -1937,7 +1946,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, KIO::JobFlags flags)
                         if(nrs)
                             error(KIO::ERR_ACCESS_DENIED, KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS);
                         else
-                            error(KIO::ERR_DOES_NOT_EXIST, src.prettyUrl());
+                            error(KIO::ERR_DOES_NOT_EXIST, urlString(src));
                 }
                 return;
             }
@@ -1981,7 +1990,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, KIO::JobFlags flags)
                                 c.args.append((*it).path);
                                 c.args.append((*it).foundry);
                             }
-                            ok=doRootCmd(c);
+                            ok=doRootCmd(d, c);
                         }
                         else
                         {
@@ -2008,7 +2017,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, KIO::JobFlags flags)
                         if(nrs)
                             error(KIO::ERR_ACCESS_DENIED, KFI_KIO_FONTS_PROTOCOL":/"KFI_KIO_FONTS_SYS);
                         else
-                            error(KIO::ERR_DOES_NOT_EXIST, src.prettyUrl());
+                            error(KIO::ERR_DOES_NOT_EXIST, urlString(src));
                     return;
                 }
                 error(KIO::ERR_SLAVE_DEFINED, i18n("Internal error - could not find font."));
@@ -2018,16 +2027,16 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, KIO::JobFlags flags)
                 error(KIO::ERR_SLAVE_DEFINED, enable
                                                   ? i18n("Could not enable %1\n"
                                                          "An enabled font already exists, please delete the disabled one.",
-                                                         src.prettyUrl())
+                                                         urlString(src))
                                                   : i18n("Could not disable %1\n"
                                                          "A disabled font already exists, please delete the enabled one.",
-                                                         src.prettyUrl()));
+                                                         urlString(src)));
             else
                 error(KIO::ERR_SLAVE_DEFINED, i18n("Sorry, fonts cannot be renamed."));
 
             return;
         }
-        error(KIO::ERR_DOES_NOT_EXIST, src.prettyUrl());
+        error(KIO::ERR_DOES_NOT_EXIST, urlString(src));
         return;
     }
     else if(itsRoot) // Should never happen...
@@ -2038,7 +2047,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, KIO::JobFlags flags)
     else if(Misc::isHidden(src) || Misc::isHidden(d))
     {
         error(KIO::ERR_SLAVE_DEFINED, i18n("Cannot move %1 to %2\nDisabled fonts cannot be moved.",
-                                           src.prettyUrl(), d.prettyUrl()));
+                                           urlString(src), urlString(d)));
         return;
     }
     else
@@ -2098,7 +2107,7 @@ void CKioFonts::rename(const KUrl &src, const KUrl &d, KIO::JobFlags flags)
                         sysDir=Misc::getDir(fIt.key());
                     }
 
-                    if(doRootCmd(cmd, askPasswd))
+                    if(doRootCmd(toSys ? d : src, cmd, askPasswd))
                     {
                         modified(timeout, FOLDER_SYS, true, sysDir);
                         modified(timeout, FOLDER_USER, true, userDir);
@@ -2144,7 +2153,7 @@ void CKioFonts::del(const KUrl &url, bool)
                 c.args.append((*disabledIt).family);
                 c.args.append((int)(*disabledIt).styleInfo);
 
-                if(doRootCmd(c))
+                if(doRootCmd(url, c))
                     itsFolders[FOLDER_SYS].disabled->refresh();
                 else
                 {
@@ -2175,7 +2184,7 @@ void CKioFonts::del(const KUrl &url, bool)
                     }
                 }
 
-                if(doRootCmd(cmd))
+                if(doRootCmd(url, cmd))
                     modified(timeout, FOLDER_SYS, clearList, modifiedDirs);
                 else
                 {
@@ -2227,7 +2236,7 @@ void CKioFonts::del(const KUrl &url, bool)
     else if(isATtc(QFile::encodeName(url.fileName())))
         finished();
     else
-        error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\".", url.prettyUrl()));
+        error(KIO::ERR_SLAVE_DEFINED, i18n("Could not access \"%1\".", urlString(url)));
 }
 
 void CKioFonts::modified(int timeout, EFolder folder, bool clearList, const CDirList &dirs)
@@ -2354,7 +2363,7 @@ bool CKioFonts::configure(EFolder folder)
         }
 
         cmd.append(TCommand(KFI::CMD_FC_CACHE));
-        doRootCmd(cmd, false);
+        doRootCmd(KUrl(), cmd, false);
     }
     else
     {
@@ -2407,13 +2416,13 @@ void CKioFonts::doModified()
     KFI_DBUG << "finished";
 }
 
-bool CKioFonts::getRootPasswd(bool askPasswd)
+bool CKioFonts::getRootPasswd(const KUrl &url, bool askPasswd)
 {
     KFI_DBUG;
 
-    if(hasMetaData(KFI_KIO_PASS))
+    if(url.hasUser() && !url.pass().isEmpty() && KFI_SYS_USER==url.user())
     {
-        itsPasswd=metaData(KFI_KIO_PASS);
+        itsPasswd=url.pass();
         return !itsPasswd.isEmpty();
     }
 
@@ -2478,11 +2487,11 @@ void CKioFonts::quitHelper()
     }
 }
 
-bool CKioFonts::doRootCmd(QList<TCommand> &cmd, bool askPasswd)
+bool CKioFonts::doRootCmd(const KUrl &url, QList<TCommand> &cmd, bool askPasswd)
 {
     KFI_DBUG;
 
-    if(cmd.count() && getRootPasswd(askPasswd))
+    if(cmd.count() && getRootPasswd(url, askPasswd))
     {
         if(!itsServer.isOpen())
         {
@@ -2584,12 +2593,12 @@ bool CKioFonts::doRootCmd(QList<TCommand> &cmd, bool askPasswd)
     return false;
 }
 
-bool CKioFonts::doRootCmd(const TCommand &cmd, bool askPasswd)
+bool CKioFonts::doRootCmd(const KUrl &url, const TCommand &cmd, bool askPasswd)
 {
     QList<TCommand> cmds;
 
     cmds.append(cmd);
-    return doRootCmd(cmds, askPasswd);
+    return doRootCmd(url, cmds, askPasswd);
 }
 
 void CKioFonts::correctUrl(KUrl &url)
@@ -2640,7 +2649,7 @@ bool CKioFonts::updateFontList()
     if(!itsRoot)
     {
         if(itsServer.isOpen() && itsSuProc && itsSocket)
-            doRootCmd(TCommand(KFI::CMD_RELOAD_DISABLED_LIST), false);
+            doRootCmd(KUrl(), TCommand(KFI::CMD_RELOAD_DISABLED_LIST), false);
         itsFolders[FOLDER_USER].disabled->refresh();
     }
     itsFolders[FOLDER_SYS].disabled->refresh();
@@ -2929,7 +2938,7 @@ CKioFonts::EFileType CKioFonts::checkFile(const QString &file, const KUrl &url)
     else if(Misc::isPackage(file))
         error(KIO::ERR_SLAVE_DEFINED, i18n("You cannot install a fonts package directly.\n"
                                            "Please extract %1, and install the components individually.",
-                                           url.prettyUrl()));
+                                           urlString(url)));
     else
     {
         //
@@ -2969,7 +2978,7 @@ CKioFonts::EFileType CKioFonts::checkFile(const QString &file, const KUrl &url)
                     FcPatternDestroy(pat);
                     error(KIO::ERR_SLAVE_DEFINED, i18n("File %1 contains the font:\n%2\n"
                                                        "A font with this name is already installed.\n",
-                                                       url.prettyUrl(), name));
+                                                       urlString(url), name));
                     return FILE_UNKNOWN;
                 }
             }
@@ -2978,7 +2987,7 @@ CKioFonts::EFileType CKioFonts::checkFile(const QString &file, const KUrl &url)
         }
 
         error(KIO::ERR_SLAVE_DEFINED, i18n("Could not determine file type for: %1\n"
-                                           "Only fonts may be installed.", url.prettyUrl()));
+                                           "Only fonts may be installed.", urlString(url)));
     }
     return FILE_UNKNOWN;
 }
@@ -3014,24 +3023,24 @@ bool CKioFonts::getSourceFiles(const KUrl &src, CDisabledFonts::TFileList &files
             if (-1==KDE_stat(realSrc.constData(), &buffSrc))
             {
                 error(EACCES==errno ? KIO::ERR_ACCESS_DENIED : KIO::ERR_DOES_NOT_EXIST,
-                      src.prettyUrl());
+                      urlString(src));
                 return false;
             }
             if(S_ISDIR(buffSrc.st_mode))
             {
-                error(KIO::ERR_IS_DIRECTORY, src.prettyUrl());
+                error(KIO::ERR_IS_DIRECTORY, urlString(src));
                 return false;
             }
             if(S_ISFIFO(buffSrc.st_mode) || S_ISSOCK(buffSrc.st_mode))
             {
-                error(KIO::ERR_CANNOT_OPEN_FOR_READING, src.prettyUrl());
+                error(KIO::ERR_CANNOT_OPEN_FOR_READING, urlString(src));
                 return false;
             }
         }
     }
     else
     {
-        error(KIO::ERR_DOES_NOT_EXIST, src.prettyUrl());
+        error(KIO::ERR_DOES_NOT_EXIST, urlString(src));
         return false;
     }
 
@@ -3063,7 +3072,7 @@ bool CKioFonts::checkDestFile(const KUrl &src, const KUrl &dest, EFolder destFol
             if(isSameTtc(src.path(), destFile))
                 finished();
             else
-                error(KIO::ERR_FILE_ALREADY_EXIST, dest.prettyUrl());
+                error(KIO::ERR_FILE_ALREADY_EXIST, urlString(dest));
             return false;
         }
 
@@ -3078,9 +3087,9 @@ bool CKioFonts::checkDestFile(const KUrl &src, const KUrl &dest, EFolder destFol
             error(KIO::ERR_SLAVE_DEFINED,
                   isHidden
                       ? i18n("Could not install %1\nA matching enabled font already exists. "
-                             "Please disable that.", src.prettyUrl())
+                             "Please disable that.", urlString(src))
                       : i18n("Could not install %1\nA matching disabled font already exists. "
-                             "Please enable that.", src.prettyUrl()));
+                             "Please enable that.", urlString(src)));
             return false;
         }
     }
@@ -3097,7 +3106,7 @@ bool CKioFonts::checkDestFiles(const KUrl &src, QMap<QString, QString> &map, con
        dest.directory()==src.directory())  // Check whether confirmUrl changed a "cp fonts:/System
                                            // fonts:/" to "cp fonts:/System fonts:/System"
     {
-        error(KIO::ERR_FILE_ALREADY_EXIST, dest.prettyUrl());
+        error(KIO::ERR_FILE_ALREADY_EXIST, urlString(dest));
         return false;
     }
 
@@ -3120,7 +3129,7 @@ bool CKioFonts::checkDestFiles(const KUrl &src, QMap<QString, QString> &map, con
                 if(isSameTtc(src.path(), *destEntry))
                     finished();
                 else
-                    error(KIO::ERR_FILE_ALREADY_EXIST, dest.prettyUrl());
+                    error(KIO::ERR_FILE_ALREADY_EXIST, urlString(dest));
                 return false;
             }
     }
@@ -3198,7 +3207,7 @@ bool CKioFonts::confirmMultiple(const KUrl &url, const CDisabledFonts::TFileList
 
         if(KMessageBox::No==messageBox(question, QuestionYesNo))
         {
-            error(KIO::ERR_USER_CANCELED, url.prettyUrl());
+            error(KIO::ERR_USER_CANCELED, urlString(url));
             return false;
         }
     }
@@ -3306,7 +3315,7 @@ void CKioFonts::createAfm(const QString &file, bool nrs)
                 QString name(t1.left(t1.length()-4));   // pf2afm wants name without extension...
 
                 if(nrs)
-                    doRootCmd(TCommand(KFI::CMD_CREATE_AFM, name));
+                    doRootCmd(KUrl(), TCommand(KFI::CMD_CREATE_AFM, name));
                 else
                     Misc::doCmd("pf2afm", QFile::encodeName(name));
             }
