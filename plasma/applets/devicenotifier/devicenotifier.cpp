@@ -62,6 +62,7 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
       m_hotplugModel(0),
       m_widget(0),
       m_icon(0),
+      m_label(0),
       m_layout(0),
       m_proxy(0),
       m_displayTime(0),
@@ -94,9 +95,8 @@ void DeviceNotifier::init()
 
     m_hotplugModel = new QStandardItemModel(this);
 
-    KColorScheme colorTheme = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme());
-    QLabel *label = new QLabel(i18n("<font color=\"%1\">Devices recently plugged in:</font>",
-                            colorTheme.foreground(KColorScheme::NormalText).color().name()),m_widget);
+    m_label = new QLabel(m_widget);
+    updateColors();
     QLabel *icon = new QLabel(m_widget);
     icon->setPixmap(KIcon("emblem-mounted").pixmap(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     
@@ -105,7 +105,7 @@ void DeviceNotifier::init()
     l_layout2->setMargin(0);
 
     l_layout2->addWidget(icon);
-    l_layout2->addWidget(label);
+    l_layout2->addWidget(m_label);
 
     m_notifierView= new NotifierView(m_widget);
     m_notifierView->setModel(m_hotplugModel);
@@ -142,6 +142,7 @@ void DeviceNotifier::init()
         connect(m_notifierView, SIGNAL(doubleClicked (const QModelIndex &)), this, SLOT(slotOnItemClicked(const QModelIndex &)));
     }
     connect(m_timer, SIGNAL(timeout()), this, SLOT(onTimerExpired()));
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));    // allows updating of colors automatically
 }
 
 
@@ -489,6 +490,13 @@ void DeviceNotifier::resetIcon()
         }
         update();
     }
+}
+
+void DeviceNotifier::updateColors()
+{ 
+    KColorScheme colorTheme = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme());
+    m_label->setText(i18n("<font color=\"%1\">Devices recently plugged in:</font>",
+                            colorTheme.foreground(KColorScheme::NormalText).color().name()));
 }
 
 #include "devicenotifier.moc"
