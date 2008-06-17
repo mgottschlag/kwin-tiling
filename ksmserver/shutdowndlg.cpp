@@ -145,6 +145,7 @@ void KSMPushButton::init()
         setFixedHeight(22); // workaround: force correct height
     } else {
         setMinimumSize(165, 38);
+        setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     }
 
     connect( this, SIGNAL(pressed()), SLOT(slotPressed()) );
@@ -361,7 +362,6 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
 
     mainLayout->setContentsMargins(12, 9, 12, 7);
     QVBoxLayout *buttonLayout = new QVBoxLayout();
-    buttonLayout->addStretch();
     QHBoxLayout *buttonMainLayout = new QHBoxLayout();
     if (m_svg->hasElement("picture")) {
         buttonMainLayout->addSpacing(m_svg->elementRect("picture").toRect().width() + 12);
@@ -381,15 +381,13 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     m_btnLogout->setPixmap(KIconLoader::global()->loadIcon("system-log-out", KIconLoader::NoGroup, 32));
     m_btnLogout->setFocus();
     connect(m_btnLogout, SIGNAL(clicked()), SLOT(slotLogout()));
-    buttonLayout->addWidget(m_btnLogout);
-    buttonLayout->addStretch();
+    buttonLayout->addWidget(m_btnLogout, Qt::AlignRight | Qt::AlignTop);
 
     if (maysd) {
         // Shutdown
         m_btnHalt = new KSMPushButton( i18n("&Turn Off Computer"), this );
         m_btnHalt->setPixmap(KIconLoader::global()->loadIcon("system-shutdown", KIconLoader::NoGroup, 32));
-        buttonLayout->addWidget(m_btnHalt);
-        buttonLayout->addStretch();
+        buttonLayout->addWidget(m_btnHalt, Qt::AlignTop | Qt::AlignRight);
         connect(m_btnHalt, SIGNAL(clicked()), SLOT(slotHalt()));
         if ( sdtype == KWorkSpace::ShutdownTypeHalt )
             m_btnHalt->setFocus();
@@ -417,8 +415,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
         m_btnReboot = new KSMPushButton( i18n("&Restart Computer"), this );
         m_btnReboot->setPixmap(KIconLoader::global()->loadIcon("system-restart", KIconLoader::NoGroup, 32));
         connect(m_btnReboot, SIGNAL(clicked()), SLOT(slotReboot()));
-        buttonLayout->addWidget(m_btnReboot);
-        buttonLayout->addStretch();
+        buttonLayout->addWidget(m_btnReboot, Qt::AlignTop | Qt::AlignRight);
         if ( sdtype == KWorkSpace::ShutdownTypeReboot )
             m_btnReboot->setFocus();
 
