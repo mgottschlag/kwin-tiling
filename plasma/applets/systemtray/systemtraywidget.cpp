@@ -90,13 +90,12 @@ bool SystemTrayWidget::x11Event(XEvent *event)
 
             // Set up a SystemTrayContainer for the client
             SystemTrayContainer *container = new SystemTrayContainer(this);
-            addWidgetToLayout(container);
-            emit sizeShouldChange();
             connect(container, SIGNAL(destroyed(QObject *)), this, SLOT(relayoutContainers(QObject *)));
+            connect(container, SIGNAL(clientIsEmbedded()), this, SIGNAL(sizeShouldChange()));
+            addWidgetToLayout(container);
 
             const WId systemTrayClientId = (WId)event->xclient.data.l[2];
             container->embedSystemTrayClient(systemTrayClientId);
-
             return true;
         }
     }
