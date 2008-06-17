@@ -333,7 +333,7 @@ void DeviceNotifier::onSourceRemoved(const QString &name)
     m_solidDeviceEngine->disconnectSource(name, this);
 
     QModelIndex index = indexForUdi(name);
-    if (!index.isValid()) {
+    if (index.isValid()) {
         m_hotplugModel->removeRow(index.row());
     }
 
