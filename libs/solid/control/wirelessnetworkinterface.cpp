@@ -110,8 +110,7 @@ Solid::Control::WirelessNetworkInterface::Capabilities Solid::Control::WirelessN
 
 Solid::Control::AccessPoint * Solid::Control::WirelessNetworkInterface::findAccessPoint(const QString  & uni) const
 {
-    Q_D(const WirelessNetworkInterface);
-    AccessPointPair pair = findRegisteredAccessPoint(uni);
+    const AccessPointPair pair = findRegisteredAccessPoint(uni);
     return pair.first;
 }
 

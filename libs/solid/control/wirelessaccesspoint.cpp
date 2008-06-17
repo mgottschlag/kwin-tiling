@@ -158,6 +158,7 @@ void Solid::Control::AccessPointPrivate::setBackendObject(QObject *object)
 
 void Solid::Control::AccessPoint::_k_destroyed(QObject *object)
 {
+    Q_UNUSED(object);
     // nothing to do yet
 }
 
