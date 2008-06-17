@@ -120,8 +120,6 @@ private:
 
     Plasma::Svg *m_background;
 
-    KConfigGroup m_viewConfig;
-
     PanelController *m_panelController;
 
     int m_offset;

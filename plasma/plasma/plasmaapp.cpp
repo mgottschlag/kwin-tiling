@@ -348,7 +348,7 @@ void PlasmaApp::adjustSize(int screen)
 DesktopView* PlasmaApp::viewForScreen(int screen) const
 {
     foreach (DesktopView *view, m_desktops) {
-        kDebug() << "comparing" << view->screen() << screen;
+        //kDebug() << "comparing" << view->screen() << screen;
         if (view->screen() == screen) {
             return view;
         }

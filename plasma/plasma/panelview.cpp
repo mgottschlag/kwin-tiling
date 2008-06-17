@@ -42,16 +42,17 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 {
     Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
 
-    m_viewConfig =  config();
+    KConfigGroup viewConfig = config();
 
-    m_offset = m_viewConfig.readEntry("Offset", 0);
-    m_alignment = alignmentFilter((Qt::Alignment)m_viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
+    m_offset = viewConfig.readEntry("Offset", 0);
+    m_alignment = alignmentFilter((Qt::Alignment)viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
 
     // pinchContainment calls updatePanelGeometry for us
 
     QRect screenRect = QApplication::desktop()->screenGeometry(containment()->screen());
     m_lastHorizontal = isHorizontal();
-    m_lastSeenSize = m_lastHorizontal ? screenRect.width() : screenRect.height();
+    KConfigGroup sizes = KConfigGroup(&viewConfig, "Sizes");
+    m_lastSeenSize = sizes.readEntry("lastsize", m_lastHorizontal ? screenRect.width() : screenRect.height());
     pinchContainment(screenRect);
     m_lastMin = containment()->minimumSize();
     m_lastMax = containment()->maximumSize();
@@ -437,6 +438,7 @@ void PanelView::pinchContainment(const QRect &screenGeom)
         m_lastSeenSize != (horizontal ? sw : sh)) {
         m_lastHorizontal = horizontal;
         m_lastSeenSize = (horizontal ? sw : sh);
+        sizes.writeEntry("lastsize", m_lastSeenSize);
     }
 
     updatePanelGeometry();
@@ -449,7 +451,8 @@ void PanelView::pinchContainment(const QRect &screenGeom)
 void PanelView::setOffset(int newOffset)
 {
     m_offset = newOffset;
-    m_viewConfig.writeEntry("Offset", m_offset);
+    KConfigGroup viewConfig = config();
+    viewConfig.writeEntry("Offset", m_offset);
 
     //TODO: do we ever need to worry about pinching here, or
     //      do we just assume that the offset is always < screenSize - containmentSize?
@@ -464,7 +467,8 @@ int PanelView::offset() const
 void PanelView::setAlignment(Qt::Alignment align)
 {
     m_alignment = alignmentFilter(align);
-    m_viewConfig.writeEntry("Alignment", (int)m_alignment);
+    KConfigGroup viewConfig = config();
+    viewConfig.writeEntry("Alignment", (int)m_alignment);
 }
 
 Qt::Alignment PanelView::alignment() const
