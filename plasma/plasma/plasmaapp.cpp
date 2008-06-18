@@ -292,7 +292,7 @@ void PlasmaApp::setIsDesktop(bool isDesktop)
     if (isDesktop) {
         connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize(int)));
     } else {
-        disconnect(QApplication::desktop(), SIGNAL(resized(int)), this, SLOT(adjustSize()));
+        disconnect(QApplication::desktop(), SIGNAL(resized(int)), this, SLOT(adjustSize(int)));
     }
 }
 
