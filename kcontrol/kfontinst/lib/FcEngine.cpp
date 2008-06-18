@@ -117,26 +117,6 @@ static bool fcToQtSlant(int slant)
     return FC_SLANT_ROMAN==slant ? false : true;
 }
 
-static void drawText(QPainter &painter, int x, int y, int width, const QString &str)
-{
-    QString s(str);
-    bool    addedElipses=false;
-
-    width-=x*2;
-    while(s.length()>3 && painter.fontMetrics().size(0, s).width()>width)
-    {
-        if(!addedElipses)
-        {
-            s.remove(s.length()-2, 2);
-            s.append("...");
-            addedElipses=true;
-        }
-        else
-            s.remove(s.length()-4, 1);
-    }
-    painter.drawText(x, y, s);
-}
-
 inline bool equal(double d1, double d2)
 {
     return (fabs(d1 - d2) < 0.0001);
@@ -229,6 +209,25 @@ static bool drawString(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, con
         return true;
     }
     return false;
+}
+
+static void drawString(XftDraw *xftDraw, XftColor *xftCol, const QString &text,
+                       int x, int &y, int h)
+
+{
+    QFont   qt(KGlobalSettings::generalFont());
+    XftFont *xftFont=XftFontOpen(QX11Info::display(), 0,
+                                 FC_FAMILY, FcTypeString, (const FcChar8 *)(qt.family().toUtf8().data()),
+                                 FC_WEIGHT, FcTypeInteger, qt.bold() ? FC_WEIGHT_BOLD : FC_WEIGHT_REGULAR,
+                                 FC_SLANT, FcTypeInteger, qt.italic() ? FC_SLANT_ITALIC : FC_SLANT_ROMAN,
+                                 FC_SIZE, FcTypeDouble, (double)qt.pointSize(),
+                                 NULL);
+
+    if(xftFont)
+    {
+        drawString(xftDraw, xftFont, xftCol, text, x, y, h);
+        XftFontClose(QX11Info::display(), xftFont);
+    }
 }
 
 static bool drawGlyph(XftDraw *xftDraw, XftFont *xftFont, XftColor *xftCol, FT_UInt i,
@@ -345,7 +344,7 @@ CFcEngine::CFcEngine()
            itsIndexCount(1),
            itsPreviewString(getDefaultPreviewString())
 {
-    reinit();
+        reinit();
 }
 
 CFcEngine::~CFcEngine()
@@ -666,8 +665,6 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                                     break;
                         }
 
-                        painter.end();
-
                         if(itsScalable && !used.isEmpty() && used.width()<pix.width() && used.height()<pix.height())
                             pix=pix.copy(used);
                     }
@@ -678,7 +675,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                             uppercase(getUppercaseLetters()),
                             punctuation(getPunctuation());
 
-                    drawName(painter, x, y, w);
+                    drawName(painter, xftDraw, &xftCol, x, y, w, h);
 
                     xftFont=getFont(itsAlphaSize);
                     if(xftFont)
@@ -735,7 +732,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                 {
                     if(range.first().null())
                     {
-                        drawName(painter, x, y, w);
+                        drawName(painter, xftDraw, &xftCol, x, y, w, h);
 
                         if((xftFont=getFont(itsAlphaSize)))
                         {
@@ -762,7 +759,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                     if((xftFont=getFont(itsAlphaSize)))
                     {
                         rv=true;
-                        drawName(painter, x, y, w);
+                        drawName(painter, xftDraw, &xftCol, x, y, w, h);
                         y+=itsAlphaSize;
 
                         bool  stop=false;
@@ -784,9 +781,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                         if(x==xOrig && y==yOrig)
                         {
                             // No characters found within the selected range...
-                            painter.setFont(KGlobalSettings::generalFont());
-                            painter.setPen(theirTextCol);
-                            drawText(painter, x, y, w, i18n("No characters found."));
+                            drawString(xftDraw, &xftCol, i18n("No characters found."), x, y, h);
                         }
                     }
                 }
@@ -1394,7 +1389,7 @@ void CFcEngine::getSizes()
 #endif
 }
 
-void CFcEngine::drawName(QPainter &painter, int x, int &y, int w)
+void CFcEngine::drawName(QPainter &painter, XftDraw *xftDraw, XftColor *xftCol, int x, int &y, int w, int h)
 {
     QString title(itsDescriptiveName.isEmpty()
                     ? i18n("ERROR: Could not determine font's name.")
@@ -1403,11 +1398,10 @@ void CFcEngine::drawName(QPainter &painter, int x, int &y, int w)
     if(1==itsSizes.size())
         title=i18np("%2 [1 pixel]", "%2 [%1 pixels]", itsSizes[0], title);
 
-    painter.setFont(KGlobalSettings::generalFont());
-    painter.setPen(theirTextCol);
-    y=painter.fontMetrics().height();
-    drawText(painter, x, y, w, title);
+    drawString(xftDraw, xftCol, title, x, y, h);
+
     y+=4;
+    painter.setPen(theirTextCol);
     painter.drawLine(0, y, w-1, y);
     y+=8;
 }

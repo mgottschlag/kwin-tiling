@@ -43,6 +43,8 @@ class QPixmap;
 class KConfig;
 
 typedef struct _XftFont  XftFont;
+typedef struct _XftDraw  XftDraw;
+typedef struct _XftColor XftColor;
 
 namespace KFI
 {
@@ -87,7 +89,7 @@ class KDE_EXPORT CFcEngine
     bool                  getInfo(const KUrl &url, int faceNo, Misc::TFont &info);
     static QFont          getQFont(const QString &family, quint32 style, int size);
 
-    const QVector<int> &  sizes() const { return itsSizes; }
+    const QVector<int> &  sizes() const     { return itsSizes; }
     int                   alphaSize() const { return itsAlphaSize; }
 
     quint32               styleVal() { return FC::createStyleVal(itsWeight, itsWidth, itsSlant); }
@@ -114,7 +116,7 @@ class KDE_EXPORT CFcEngine
     XftFont *             getFont(int size);
     bool                  isCorrect(XftFont *f, bool checkFamily);
     void                  getSizes();
-    void                  drawName(QPainter &painter, int x, int &y, int w);
+    void                  drawName(QPainter &painter, XftDraw *xftDraw, XftColor *xftCol, int x, int &y, int w, int h);
     void                  addFontFile(const QString &file);
     void                  reinit();
 
