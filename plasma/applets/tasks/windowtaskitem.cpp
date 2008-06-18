@@ -321,7 +321,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
                 if (option->state & QStyle::State_Sunken) {
                     alphaPixmap->fill(QColor(0, 0, 0, 50));
                 } else {
-                    alphaPixmap->fill(QColor(0, 0, 0, 255 * (1.0 - m_alpha)));
+                    alphaPixmap->fill(QColor(0, 0, 0, 255 * m_alpha));
                 }
 
                 {
