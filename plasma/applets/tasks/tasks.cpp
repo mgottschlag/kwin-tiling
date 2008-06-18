@@ -231,9 +231,14 @@ QPixmap *Tasks::taskAlphaPixmap(const QSize &size)
 {
     if (!m_taskAlphaPixmap) {
         m_taskAlphaPixmap = new QPixmap(size);
+
+        //fills the pixmap of transparent, because otherwise if the first time would be filled with
+        //a fully opaque color that would disable the alpha channel
+        m_taskAlphaPixmap->fill(Qt::transparent);
     } else if (m_taskAlphaPixmap->size() != size) {
         delete m_taskAlphaPixmap;
         m_taskAlphaPixmap = new QPixmap(size);
+        m_taskAlphaPixmap->fill(Qt::transparent);
     }
 
     return m_taskAlphaPixmap;
