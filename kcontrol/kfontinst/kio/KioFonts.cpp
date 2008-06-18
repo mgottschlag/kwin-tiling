@@ -2243,20 +2243,17 @@ void CKioFonts::modified(int timeout, EFolder folder, bool clearList, const CDir
 {
     KFI_DBUG << "timout:" << timeout << " folder:" << (int)folder << " clearList:" << clearList;
 
-    if(FOLDER_SYS!=folder || itsRoot)
+    if(dirs.count())
     {
-        if(dirs.count())
-        {
-            CDirList::ConstIterator it(dirs.begin()),
-                                    end(dirs.end());
+        CDirList::ConstIterator it(dirs.begin()),
+                                end(dirs.end());
 
-            for(; it!=end; ++it)
-                itsFolders[folder].modified.add(*it);
-        }
-        else
-            itsFolders[folder].modified.add(itsFolders[folder].location);
-        setTimeoutSpecialCommand(timeout ? timeout : -1);
+        for(; it!=end; ++it)
+            itsFolders[folder].modified.add(*it);
     }
+    else
+        itsFolders[folder].modified.add(itsFolders[folder].location);
+    setTimeoutSpecialCommand(timeout ? timeout : -1);
 
     if(clearList)
         clearFontList();  // List of fonts has changed.../
