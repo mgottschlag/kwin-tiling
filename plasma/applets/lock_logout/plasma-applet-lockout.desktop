@@ -84,7 +84,7 @@ Comment[uz@cyrillic]=Экранни қулфлаш ва сеансдан чиқ�
 Comment[x-test]=xxLets user lock screen or end sessionxx
 Comment[zh_CN]=让用户锁定屏幕或结束会话
 Comment[zh_TW]=讓使用者鎖定螢幕或結束工作階段
-Icon=system-log-out
+Icon=system-shutdown
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 
