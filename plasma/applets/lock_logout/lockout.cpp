@@ -62,20 +62,25 @@ LockOut::~LockOut()
 void LockOut::checkLayout()
 {
     Qt::Orientation direction;
+    qreal ratioToKeep = 2;
 
     switch (formFactor()) {
         case Plasma::Vertical:
             if (geometry().width() >= MINSIZE) {
                 direction = Qt::Horizontal;
+                ratioToKeep = 2;
             } else {
                 direction = Qt::Vertical;
+                ratioToKeep = 0.5;
             }
             break;
         case Plasma::Horizontal:
             if (geometry().height() >= MINSIZE) {
                 direction = Qt::Vertical;
+                ratioToKeep = 0.5;
             } else {
                 direction = Qt::Horizontal;
+                ratioToKeep = 2;
             }
             break;
         default:
@@ -83,6 +88,33 @@ void LockOut::checkLayout()
     }
     if (direction != m_layout->orientation()) {
         m_layout->setOrientation(direction);
+    }
+
+    if (formFactor() == Plasma::Horizontal) {
+        //if we are on horizontal panel
+        setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding));
+        qreal wsize = size().height() * ratioToKeep;
+
+        resize(QSizeF(wsize, size().height()));
+        setMaximumSize(wsize, QWIDGETSIZE_MAX);
+        setMinimumSize(0, 0);
+
+    } else if (formFactor() == Plasma::Vertical) {
+        //if we are on vertical panel
+        setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
+        qreal hsize = size().width() / ratioToKeep;
+        resize(QSizeF(size().width(), hsize));
+        setMaximumSize(QWIDGETSIZE_MAX, hsize);
+        setMinimumSize(0, 0);
+    } else {
+        if (ratioToKeep < 1) {
+            setMaximumSize(QWIDGETSIZE_MAX * ratioToKeep, QWIDGETSIZE_MAX);
+        } else {
+            setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX / ratioToKeep);
+        }
+
+        setMinimumSize(0, 0);
+        setMinimumSize(0, 0);
     }
 }
 
