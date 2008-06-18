@@ -426,7 +426,7 @@ QString contractHome(QString path)
         {
             int len = home.length();
 
-            if(len>=0 && (path.length() == len || path[len] == '/'))
+            if(len>1 && (path.length() == len || path[len] == '/'))
                 return path.replace(0, len, QString::fromLatin1("~"));
         }
     }
