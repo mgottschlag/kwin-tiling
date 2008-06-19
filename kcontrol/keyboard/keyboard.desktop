@@ -11,6 +11,7 @@ X-KDE-Init-Symbol=keyboard
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
+X-KDE-Weight=50
 
 Name=Keyboard
 Name[af]=Sleutelbord

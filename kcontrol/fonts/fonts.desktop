@@ -9,6 +9,7 @@ X-KDE-Library=kcm_fonts
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=appearance
+X-KDE-Weight=80
 
 Name=Fonts
 Name[af]=Skriftipes

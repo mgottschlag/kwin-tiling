@@ -9,6 +9,7 @@ X-KDE-Library=kcm_screensaver
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=desktop
+X-KDE-Weight=70
 
 Name=Screen Saver
 Name[af]=Skerm Bewaarder

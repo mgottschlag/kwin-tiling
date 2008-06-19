@@ -10,6 +10,7 @@ X-KDE-PluginKeyword=keyboard_layout
 X-KDE-Init-Symbol=keyboard_layout
 X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=regional-and-language
+X-KDE-Weight=60
 
 Name=Keyboard Layout
 Name[af]=Sleutelbord Uitleg

@@ -10,6 +10,7 @@ X-KDE-ParentApp=kcontrol
 X-KDE-Init-Phase=2
 
 X-KDE-System-Settings-Parent-Category=display
+X-KDE-Weight=60
 
 Name=Power Control
 Name[af]=Krag Beheer

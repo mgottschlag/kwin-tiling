@@ -10,6 +10,7 @@ X-KDE-Init-Symbol=mouse
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
+X-KDE-Weight=60
 
 Name=Mouse
 Name[af]=Muis

@@ -10,6 +10,7 @@ X-KDE-Init-Symbol=kcminit_style
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=appearance
+X-KDE-Weight=50
 
 Name=Style
 Name[af]=Styl

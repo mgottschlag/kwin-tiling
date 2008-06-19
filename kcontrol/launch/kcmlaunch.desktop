@@ -9,6 +9,7 @@ X-KDE-Library=kcm_launch
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=desktop
+X-KDE-Weight=80
 
 Name=Launch Feedback
 Name[af]=Lanseer Terugvoer

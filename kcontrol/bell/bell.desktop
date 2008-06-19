@@ -11,6 +11,7 @@ X-KDE-Init-Symbol=bell
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=notifications
+X-KDE-Weight=60
 
 Name=System Bell
 Name[af]=Stelsel Klok

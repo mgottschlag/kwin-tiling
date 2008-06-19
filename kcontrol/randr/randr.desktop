@@ -8,6 +8,7 @@ X-KDE-Library=kcm_randr
 #Hidden[$e]=$(if xdpyinfo|grep RANDR > /dev/null; then echo "false"; else echo "true"; fi)
 
 X-KDE-System-Settings-Parent-Category=display
+X-KDE-Weight=50
 
 Name=Size & Orientation
 Name[af]=Grootte & Ooriëntasie
