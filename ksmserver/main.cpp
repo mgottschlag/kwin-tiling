@@ -314,8 +314,6 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
         server->restoreSession( SESSION_BY_USER );
     else
         server->startDefaultSession();
-    int ret = a->exec();
-    a->deleteLater();
-    return ret;
+    return a->exec();
 }
 
