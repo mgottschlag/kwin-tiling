@@ -150,7 +150,6 @@ void XAutoLock::resetTrigger()
 {
     mLastReset = time( 0 );
     mTrigger = mLastReset + mTimeout;
-    XForceScreenSaver( QX11Info::display(), ScreenSaverReset );
 }
 
 //---------------------------------------------------------------------------
@@ -234,6 +233,9 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     if(!on && mDPMS) {
         activate = false;
         resetTrigger();
+#ifdef HAVE_XSCREENSAVER
+        XForceScreenSaver( QX11Info::display(), ScreenSaverReset );
+#endif
     }
 #endif
 
