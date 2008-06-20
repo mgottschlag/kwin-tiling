@@ -259,7 +259,7 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
     checkComposite();
     KApplication *a;
 
-    if (DefaultDepth(dpy, DefaultScreen(dpy)) >= 24) {
+    if (DefaultDepth(dpy, DefaultScreen(dpy)) >= 24) { // 16bpp breaks the software logout effect for some reason???
         a = new KApplication(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
     } else {
         a = new KApplication(true);
@@ -314,6 +314,8 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
         server->restoreSession( SESSION_BY_USER );
     else
         server->startDefaultSession();
-    return a->exec();
+    int ret = a->exec();
+    kde_running.release(); // needs to be done before QApplication destruction
+    delete a;
+    return ret;
 }
-
