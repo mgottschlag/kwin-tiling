@@ -46,6 +46,8 @@ void LockOut::init()
     m_layout->setContentsMargins(0,0,0,0);
     m_layout->setSpacing(0);
 
+    setMinimumSize(0, 0);
+
     Plasma::Icon *icon_lock = new Plasma::Icon(KIcon("system-lock-screen"), "", this);
     m_layout->addItem(icon_lock);
     connect(icon_lock, SIGNAL(clicked()), this, SLOT(clickLock()));
@@ -97,24 +99,14 @@ void LockOut::checkLayout()
 
         resize(QSizeF(wsize, size().height()));
         setMaximumSize(wsize, QWIDGETSIZE_MAX);
-        setMinimumSize(0, 0);
-
     } else if (formFactor() == Plasma::Vertical) {
         //if we are on vertical panel
         setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
         qreal hsize = size().width() / ratioToKeep;
         resize(QSizeF(size().width(), hsize));
         setMaximumSize(QWIDGETSIZE_MAX, hsize);
-        setMinimumSize(0, 0);
     } else {
-        if (ratioToKeep < 1) {
-            setMaximumSize(QWIDGETSIZE_MAX * ratioToKeep, QWIDGETSIZE_MAX);
-        } else {
-            setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX / ratioToKeep);
-        }
-
-        setMinimumSize(0, 0);
-        setMinimumSize(0, 0);
+        setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX / ratioToKeep);
     }
 }
 
