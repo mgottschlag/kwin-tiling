@@ -504,7 +504,8 @@ void SolidDeviceEngine::deviceAdded(const QString& udi)
 qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
 {
     //determine the free space available on the device
-    const char *path=mountPoint.toAscii().constData();
+    const QByteArray pathBa=mountPoint.toAscii();
+    const char *path=pathBa.constData();
 
 #ifdef HAVE_STATVFS
     struct statvfs fs_obj;
