@@ -505,7 +505,7 @@ void UrlItemView::startDrag(Qt::DropActions supportedActions)
     QDrag *drag = new QDrag(this);
     QMimeData *mimeData = model()->mimeData(selectionModel()->selectedIndexes());
 
-    if (mimeData->text().isNull()) {
+    if (! mimeData || mimeData->text().isNull()) {
         return;
     }
 
