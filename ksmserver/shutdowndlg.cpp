@@ -330,10 +330,10 @@ Q_DECLARE_METATYPE(Solid::Control::PowerManager::SuspendMethod)
 KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
                                 bool maysd, KWorkSpace::ShutdownType sdtype )
   : QDialog( parent, Qt::Popup ), //krazy:exclude=qclasses
-    m_automaticallyDoSeconds(60),
     m_btnLogout(0),
     m_btnHalt(0),
-    m_btnReboot(0)
+    m_btnReboot(0),
+    m_automaticallyDoSeconds(60)
     // this is a WType_Popup on purpose. Do not change that! Not
     // having a popup here has severe side effects.
 {
