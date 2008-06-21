@@ -454,6 +454,8 @@ void PanelView::setOffset(int newOffset)
     KConfigGroup viewConfig = config();
     viewConfig.writeEntry("Offset", m_offset);
 
+    containment()->update();
+
     //TODO: do we ever need to worry about pinching here, or
     //      do we just assume that the offset is always < screenSize - containmentSize?
     updatePanelGeometry();
