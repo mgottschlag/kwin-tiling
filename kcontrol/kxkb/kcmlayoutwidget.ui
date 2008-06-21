@@ -399,14 +399,14 @@
              <item row="1" column="0" >
               <widget class="QRadioButton" name="rdBtnSwitchPerDesktop" >
                <property name="text" >
-                <string>Desktop</string>
+                <string>&amp;Desktop</string>
                </property>
               </widget>
              </item>
              <item row="2" column="0" >
               <widget class="QRadioButton" name="rdBtnSwitchPerApp" >
                <property name="text" >
-                <string>Application</string>
+                <string>&amp;Application</string>
                </property>
               </widget>
              </item>
