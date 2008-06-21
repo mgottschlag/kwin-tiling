@@ -229,7 +229,7 @@ void CDuplicatesDialog::slotButtonClicked(int button)
                 {
                     if(KMessageBox::Yes==KMessageBox::warningYesNo(this, i18n("Abort font scan?")))
                     {
-                        itsLabel->setText("Aborting...");
+                        itsLabel->setText(i18n("Aborting..."));
 
                         if(itsFontFileList->isRunning())
                             itsFontFileList->terminate();
