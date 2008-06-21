@@ -22,23 +22,23 @@
 
 #include "lightstyle-v3.h"
 
-#include "QtGui/QMenuBar"
-#include "QtGui/QApplication"
-#include "QtGui/QCheckBox"
-#include "QtGui/QPainter"
-#include "QtGui/QColorGroup"
-#include "QtGui/QPushButton"
-#include "QtGui/qdrawutil.h"
-#include "QtGui/QProgressBar"
-#include "QtGui/QScrollBar"
-#include "QtGui/QTabBar"
-#include "QtCore/QPointer"
-#include "QtGui/QLayout"
-#include "QtGui/QLineEdit"
-#include "QtGui/QImage"
-#include "QtGui/QComboBox"
-#include "QtGui/QSlider"
-#include "QtGui/QStyleFactory"
+#include <QtGui/QMenuBar>
+#include <QtGui/QApplication>
+#include <QtGui/QCheckBox>
+#include <QtGui/QPainter>
+#include <QtGui/QColorGroup>
+#include <QtGui/QPushButton>
+#include <QtGui/qdrawutil.h>
+#include <QtGui/QProgressBar>
+#include <QtGui/QScrollBar>
+#include <QtGui/QTabBar>
+#include <QtCore/QPointer>
+#include <QtGui/QLayout>
+#include <QtGui/QLineEdit>
+#include <QtGui/QImage>
+#include <QtGui/QComboBox>
+#include <QtGui/QSlider>
+#include <QtGui/QStyleFactory>
 #include <Qt3Support/Q3PointArray>
 
 
@@ -1105,14 +1105,14 @@ void LightStyleV3::drawControlMask( ControlElement control,
     }
 }
 
-QRect LightStyleV3::subRect(SubRect subrect, const QWidget *widget) const
+QRect LightStyleV3::subElementRect(SubElement subelement, const QWidget *widget) const
 {
     QRect rect;
 
-    switch (subrect) {
+    switch (subelement) {
     case SR_PushButtonFocusRect:
 	{
-	    rect = QCommonStyle::subRect( SR_PushButtonContents, widget );
+	    rect = QCommonStyle::subElementRect( SR_PushButtonContents, widget );
 	    int bm = pixelMetric( PM_ButtonMargin, widget ), hbm = bm / 2;
 	    rect.adjust( hbm, hbm, -hbm, -hbm );
   	    break;
@@ -1120,7 +1120,7 @@ QRect LightStyleV3::subRect(SubRect subrect, const QWidget *widget) const
 
     case SR_ComboBoxFocusRect:
 	{
-	    rect = QCommonStyle::subRect( SR_ComboBoxFocusRect, widget );
+	    rect = QCommonStyle::subElementRect( SR_ComboBoxFocusRect, widget );
 	    rect.adjust( -1, -1, 1, 1 );
 	    break;
 	}
@@ -1143,7 +1143,7 @@ QRect LightStyleV3::subRect(SubRect subrect, const QWidget *widget) const
 
 
     default:
-	rect = QCommonStyle::subRect(subrect, widget);
+	rect = QCommonStyle::subElementRect(subelement, widget);
 	break;
     }
 
@@ -1853,10 +1853,10 @@ int LightStyleV3::styleHint( StyleHint stylehint,
     return ret;
 }
 
-QPixmap LightStyleV3::stylePixmap( StylePixmap stylepixmap,
+QPixmap LightStyleV3::standardPixmap( StandardPixmap standardpixmap,
 				   const QWidget *widget,
 				   const QStyleOption &data ) const
 {
-    return basestyle->stylePixmap( stylepixmap, widget, data );
+    return basestyle->standardPixmap( standardpixmap, widget, data );
 }
 #include "lightstyle-v3.moc"

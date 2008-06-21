@@ -25,7 +25,7 @@
 #include "QtGui/QMenuBar"
 #include "QtGui/QApplication"
 #include "QtGui/QPainter"
-#include "QtGui/QColorGroup"
+#include "QtGui/QPalette"
 #include "QtGui/QPushButton"
 #include "QtGui/qdrawutil.h"
 #include "QtGui/QProgressBar"
@@ -88,7 +88,7 @@ void LightStyleV2::polishPopupMenu( QMenu * menu )
     KStyle::polishPopupMenu(menu);
 }
 
-static void drawLightBevel(QPainter *p, const QRect &r, const QColorGroup &cg,
+static void drawLightBevel(QPainter *p, const QRect &r, const QPalette &cg,
 			   QStyle::State flags, const QBrush *fill = 0)
 {
     QRect br = r;
@@ -130,12 +130,11 @@ static void drawLightBevel(QPainter *p, const QRect &r, const QColorGroup &cg,
 }
 
 void LightStyleV2::drawPrimitive( PrimitiveElement pe,
+				const QStyleOption *option,
 				QPainter *p,
-				const QRect &r,
-				const QColorGroup &cg,
-				SFlags flags,
-				const QStyleOption &data ) const
+				const QWidget *widget ) const
 {
+    QRect r = option->rect();
     switch (pe) {
     case PE_HeaderSection:
 	{
@@ -613,13 +612,11 @@ void LightStyleV2::drawPrimitive( PrimitiveElement pe,
 }
 
 void LightStyleV2::drawControl( ControlElement control,
+			      const QStyleOption *option,
 			      QPainter *p,
-			      const QWidget *widget,
-			      const QRect &r,
-			      const QColorGroup &cg,
-			      SFlags flags,
-			      const QStyleOption &data ) const
+			      const QWidget *widget ) const
 {
+    QRect r = option->rect();
     switch (control) {
     case CE_TabBarTab:
 	{
@@ -987,11 +984,11 @@ void LightStyleV2::drawControlMask( ControlElement control,
     }
 }
 
-QRect LightStyleV2::subRect(SubRect subrect, const QWidget *widget) const
+QRect LightStyleV2::subElementRect(SubElement subelement, const QWidget *widget) const
 {
     QRect rect, wrect(widget->rect());
 
-    switch (subrect) {
+    switch (subelement) {
     case SR_PushButtonFocusRect:
  	{
  	    const QPushButton *button = (const QPushButton *) widget;
@@ -1009,7 +1006,7 @@ QRect LightStyleV2::subRect(SubRect subrect, const QWidget *widget) const
  	}
 
     default:
-	rect = QCommonStyle::subRect(subrect, widget);
+	rect = QCommonStyle::subElementRect(subelement, widget);
     }
 
     return rect;
@@ -1018,9 +1015,6 @@ QRect LightStyleV2::subRect(SubRect subrect, const QWidget *widget) const
 void LightStyleV2::drawComplexControl( ComplexControl control,
 				     QPainter* p,
 				     const QWidget* widget,
-				     const QRect& r,
-				     const QColorGroup& cg,
-				     SFlags flags,
 				     SCFlags controls,
 				     SCFlags active,
 				     const QStyleOption &data ) const
@@ -1618,10 +1612,10 @@ int LightStyleV2::styleHint( StyleHint stylehint,
     return ret;
 }
 
-QPixmap LightStyleV2::stylePixmap( StylePixmap stylepixmap,
+QPixmap LightStyleV2::standardPixmap( StylePixmap standardpixmap,
 				   const QWidget *widget,
 				   const QStyleOption &data ) const
 {
-    return singleton->basestyle->stylePixmap( stylepixmap, widget, data );
+    return singleton->basestyle->standardPixmap( stylepixmap, widget, data );
 }
 #include "lightstyle-v2.moc"

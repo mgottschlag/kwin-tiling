@@ -28,7 +28,8 @@
 #include <qcommonstyle.h>
 #endif // QT_H
 
-#include "kstyle.h"
+#include <kstyle.h>
+#include <QtGui/QStyleOption>
 
 #ifdef QT_PLUGIN
 #  define Q_EXPORT_STYLE_LIGHT_V3
@@ -48,41 +49,34 @@ public:
 
     void polishPopupMenu( Q3PopupMenu * );
 
-    void drawPrimitive(PrimitiveElement, QPainter *, const QRect &, const QColorGroup &,
-		       SFlags = Style_Default,
-		       const QStyleOption & = QStyleOption::Default ) const;
+    void drawPrimitive(PrimitiveElement, QPainter *, const QRect & ) const;
 
-    void drawControl(ControlElement, QPainter *, const QWidget *, const QRect &,
-		     const QColorGroup &, SFlags = Style_Default,
-		     const QStyleOption & = QStyleOption::Default ) const;
-    void drawControlMask(ControlElement, QPainter *, const QWidget *, const QRect &,
-			 const QStyleOption & = QStyleOption::Default) const;
+    void drawControl(ControlElement, QPainter *, const QWidget * ) const;
+    void drawControlMask(ControlElement, QPainter *, const QWidget * ) const;
 
-    QRect subRect(SubRect, const QWidget *) const;
+    QRect subElementRect(SubElement, const QWidget *) const;
 
     void drawComplexControl(ComplexControl, QPainter *, const QWidget *, const QRect &,
-			    const QColorGroup &, SFlags = Style_Default,
-			    SCFlags = SC_All, SCFlags = SC_None,
-			    const QStyleOption & = QStyleOption::Default ) const;
+			    SCFlags = SC_All, SCFlags = SC_None ) const;
 
     QRect querySubControlMetrics(ComplexControl, const QWidget *, SubControl,
-				 const QStyleOption & = QStyleOption::Default ) const;
+				 const QStyleOption & = QStyleOption::SO_Default ) const;
 
     SubControl querySubControl(ComplexControl, const QWidget *, const QPoint &,
-			       const QStyleOption &data = QStyleOption::Default ) const;
+			       const QStyleOption &data = QStyleOption::SO_Default ) const;
 
     int pixelMetric(PixelMetric, const QWidget * = 0 ) const;
 
     QSize sizeFromContents(ContentsType, const QWidget *, const QSize &,
-			   const QStyleOption & = QStyleOption::Default ) const;
+			   const QStyleOption & = QStyleOption::SO_Default ) const;
 
     int styleHint(StyleHint, const QWidget * = 0,
-		  const QStyleOption & = QStyleOption::Default,
+		  const QStyleOption & = QStyleOption::SO_Default,
 		  QStyleHintReturn * = 0 ) const;
 
-    QPixmap stylePixmap( StylePixmap stylepixmap,
+    QPixmap standardPixmap( StandardPixmap standardpixmap,
 			 const QWidget* widget = 0,
-			 const QStyleOption& = QStyleOption::Default ) const;
+			 const QStyleOption& = QStyleOption::SO_Default ) const;
 };
 
 
