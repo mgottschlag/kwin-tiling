@@ -524,9 +524,9 @@ qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
 #else
 #ifdef __GNUC__
 #warning "This system does not support statfs or statvfs - freeDiskSpace() will return -1"
+#endif
+#endif
     return -1;
-#endif
-#endif
 }
 
 bool SolidDeviceEngine::updateFreeSpace(const QString &udi)
