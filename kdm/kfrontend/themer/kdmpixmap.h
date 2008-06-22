@@ -64,6 +64,7 @@ protected:
 			bool present;
 			bool svgImage;
 			QString svgElement;
+			QSize svgSizeHint;
 		} normal, active, prelight;
 	} pixmap;
 

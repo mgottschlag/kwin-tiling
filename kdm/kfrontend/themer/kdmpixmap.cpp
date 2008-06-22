@@ -127,6 +127,9 @@ KdmPixmap::loadSvg( PixmapStruct::PixmapClass &pClass )
 		qsm->setMapping( pClass.svgRenderer, state ); // assuming we only load the current state
 		connect( pClass.svgRenderer, SIGNAL(repaintNeeded()), qsm, SLOT(map()) );
 	}
+	pClass.svgSizeHint = pClass.svgElement.isEmpty() ?
+		pClass.svgRenderer->defaultSize() :
+		pClass.svgRenderer->boundsOnElement( pClass.svgElement ).size().toSize();
 	return true;
 }
 
@@ -134,8 +137,13 @@ QSize
 KdmPixmap::sizeHint()
 {
 	// use the pixmap size as the size hint
-	if (!pixmap.normal.svgImage && loadPixmap( pixmap.normal ))
-		return pixmap.normal.image.size();
+	if (!pixmap.normal.svgImage) {
+		if (loadPixmap( pixmap.normal ))
+			return pixmap.normal.image.size();
+	} else {
+		if (loadSvg( pixmap.normal ))
+			return pixmap.normal.svgSizeHint;
+	}
 	return KdmItem::sizeHint();
 }
 
