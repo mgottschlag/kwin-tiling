@@ -381,7 +381,7 @@ void KRandRSystemTray::slotResolutionChanged(QAction *action)
 
 	QSize s = action->data().toSize();
 	int index = 0;
-	SizeList pixelSizes = screen->pixelSizes();
+	const SizeList pixelSizes = screen->pixelSizes();
 	for (int i = 0; i < pixelSizes.count(); ++i)
 		if (pixelSizes[i] == s)
 		{
