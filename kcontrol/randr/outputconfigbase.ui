@@ -103,7 +103,7 @@
         </sizepolicy>
        </property>
        <property name="text" >
-        <string>Position:</string>
+        <string comment="Position of the screen">Position:</string>
        </property>
       </widget>
      </item>
