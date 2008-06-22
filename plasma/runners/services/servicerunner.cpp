@@ -60,13 +60,15 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
     if (!services.isEmpty()) {
         //kDebug() << service->name() << "is an exact match!" << service->storageId() << service->exec();
         KService::Ptr service = services.at(0);
-        Plasma::QueryMatch match(this);
-        match.setType(Plasma::QueryMatch::ExactMatch);
-        setupAction(service, match);
-        match.setRelevance(1);
-        matches << match;
-        seen[service->storageId()] = true;
-        seen[service->exec()] = true;
+        if (!service->noDisplay()) {
+            Plasma::QueryMatch match(this);
+            match.setType(Plasma::QueryMatch::ExactMatch);
+            setupAction(service, match);
+            match.setRelevance(1);
+            matches << match;
+            seen[service->storageId()] = true;
+            seen[service->exec()] = true;
+        }
     }
 
     // Search for applications which are executable and the term case-insensitive matches any of
@@ -78,6 +80,10 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
 
     //kDebug() << "got " << services.count() << " services from " << query;
     foreach (const KService::Ptr &service, services) {
+        if (service->noDisplay()) {
+            continue;
+        }
+
         QString id = service->storageId();
         QString exec = service->exec();
         if (seen.contains(id) || seen.contains(exec)) {
