@@ -34,24 +34,43 @@
 #include <KDialog>
 #include <KColorScheme>
 #include <KDatePicker>
-#include <plasma/theme.h>
-#include <plasma/dialog.h>
 
+#include <plasma/dataengine.h>
+#include <plasma/dialog.h>
+#include <plasma/theme.h>
+
+class ClockApplet::Private
+{
+public:
+    Private()
+        : calendar(0),
+          timezone("Local")
+    {}
+
+    Ui::calendar calendarUi;
+    Plasma::Dialog *calendar;
+    QString timezone;
+};
 
 ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
-      m_calendar(0)
+      d(new Private)
 {
 }
 
+ClockApplet::~ClockApplet()
+{
+    delete d->calendar;
+}
+
 void ClockApplet::updateToolTipContent() {
-    QString timeString = "";//KGlobal::locale()->formatTime(m_time, m_showSeconds);
+    //QString timeString = KGlobal::locale()->formatTime(d->time, d->showSeconds);
     //TODO port to TOOLTIP manager
     /*Plasma::ToolTipData tipData;
 
-    tipData.mainText = "";//m_time.toString(timeString);
-    tipData.subText = "";//m_date.toString();
-    //tipData.image = m_toolTipIcon;
+    tipData.mainText = "";//d->time.toString(timeString);
+    tipData.subText = "";//d->date.toString();
+    //tipData.image = d->toolTipIcon;
 
     setToolTip(tipData);*/
 }
@@ -69,32 +88,42 @@ void ClockApplet::showCalendar(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
 
-    if (m_calendar == 0) {
-        m_calendar = new Plasma::Dialog();
-        //m_calendar->setStyleSheet("{ border : 0px }"); // FIXME: crashes
-        m_layout = new QVBoxLayout();
-        m_layout->setSpacing(0);
-        m_layout->setMargin(0);
-
-        m_calendarUi.setupUi(m_calendar);
-        m_calendar->setLayout(m_layout);
-        m_calendar->setWindowFlags(Qt::Popup);
-        m_calendar->adjustSize();
+    if (d->calendar == 0) {
+        d->calendar = new Plasma::Dialog();
+        d->calendarUi.setupUi(d->calendar);
+        d->calendar->setWindowFlags(Qt::Popup);
+        d->calendar->adjustSize();
     }
 
-    if (m_calendar->isVisible()) {
-        m_calendar->hide();
+    if (d->calendar->isVisible()) {
+        d->calendar->hide();
     } else {
         kDebug();
-        m_calendarUi.kdatepicker->setDate(QDate::currentDate());
-        m_calendar->move(popupPosition(m_calendar->sizeHint()));
-        m_calendar->show();
+        Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
+        d->calendarUi.kdatepicker->setDate(data["Date"].toDate());
+        d->calendar->move(popupPosition(d->calendar->sizeHint()));
+        d->calendar->show();
     }
 }
 
-ClockApplet::~ClockApplet()
+void ClockApplet::setCurrentTimezone(const QString &tz)
 {
-    delete m_calendar;
+    d->timezone = tz;
+}
+
+QString ClockApplet::currentTimezone() const
+{
+    return d->timezone;
+}
+
+bool ClockApplet::isLocalTimezone() const
+{
+    return d->timezone == localTimezone();
+}
+
+QString ClockApplet::localTimezone()
+{
+    return "Local";
 }
 
 #include "clockapplet.moc"

@@ -2,7 +2,7 @@ project(libplasmaclock)
 
 set(plasmaclock_LIB_SRCS
     clocknumber.cpp
-    #clockapplet.cpp
+    clockapplet.cpp
 )
 
 kde4_add_ui_files(plasmaclock_LIB_SRCS calendar.ui )

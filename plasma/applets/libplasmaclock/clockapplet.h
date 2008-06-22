@@ -46,17 +46,23 @@ class PLASMA_EXPORT ClockApplet : public Plasma::Applet
         ClockApplet(QObject *parent, const QVariantList &args);
         ~ClockApplet();
 
+        QString currentTimezone() const;
+        bool isLocalTimezone() const;
+
+        static QString localTimezone();
+
+    protected:
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
     protected Q_SLOTS:
+        void setCurrentTimezone(const QString &tz);
         void showCalendar(QGraphicsSceneMouseEvent *event);
 
     private:
         void updateToolTipContent();
 
-        Plasma::Dialog *m_calendar;
-        Ui::calendar m_calendarUi;
-        QVBoxLayout *m_layout;
+        class Private;
+        Private * const d;
 };
 
 
