@@ -130,7 +130,7 @@ void KSMShutdownFeedback::stop()
 ////////////
 
 KSMPushButton::KSMPushButton( const QString &text, QWidget *parent, bool smallButton )
- : QPushButton( parent ),  m_highlight( false ), m_text( text ), m_popupMenu(0), m_popupTimer(0),
+ : QPushButton( text, parent ),  m_highlight( false ), m_text( text ), m_popupMenu(0), m_popupTimer(0),
    m_glowOpacity( 0.0 ), m_smallButton( smallButton )
 {
     setAttribute(Qt::WA_Hover, true);
