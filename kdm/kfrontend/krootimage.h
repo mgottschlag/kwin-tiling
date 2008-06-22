@@ -28,6 +28,62 @@ Boston, MA 02110-1301, USA.
 #include <QApplication>
 #include <QTimer>
 
+/**
+ * In xinerama mode, each screen is rendered separately by KBackgroundRenderer.
+ * This class controls a set of renderers for a desktop, and collates the
+ * images. Usage is similar to KBackgroundRenderer: connect to the imageDone
+ * signal.
+ */
+class KVirtualBGRenderer : public QObject
+{
+	Q_OBJECT
+  public:
+	explicit KVirtualBGRenderer(const KSharedConfigPtr &config);
+	~KVirtualBGRenderer();
+
+	KBackgroundRenderer * renderer( unsigned screen );
+	unsigned numRenderers() const { return m_numRenderers; }
+
+	QPixmap pixmap();
+
+	bool needProgramUpdate();
+	void programUpdate();
+
+	bool needWallpaperChange();
+	void changeWallpaper();
+
+	void desktopResized();
+
+	void load( bool reparseConfig = true );
+	void start();
+	void stop();
+	void cleanup();
+	void saveCacheFile();
+	void enableTiling( bool enable );
+
+  signals:
+	void imageDone();
+
+  private slots:
+	void screenDone( int screen );
+
+  private:
+	QSize renderSize( int screen ); // the size the renderer should be
+	void initRenderers();
+
+	KSharedConfigPtr m_pConfig;
+	float m_scaleX;
+	float m_scaleY;
+	int m_numRenderers;
+	bool m_bDrawBackgroundPerScreen;
+	bool m_bCommonScreen;
+	QSize m_size;
+
+	QVector<bool> m_bFinished;
+	QVector<KBackgroundRenderer *> m_renderer;
+	QPixmap *m_pPixmap;
+};
+
 class MyApplication : public QApplication
 {
 	Q_OBJECT
