@@ -668,11 +668,14 @@ Screenshot=screenshot.png
 
       <para>
         It is also possible to specify which point within the item the
-        position refers to.  This is called the anchor and can be one of
+        position refers to.  This is called the anchor and can be
+        either <literal>c</literal> for center or one of
         <literal>n</literal>, <literal>ne</literal>, <literal>e</literal>,
         <literal>se</literal>, <literal>s</literal>, <literal>sw</literal>,
-        <literal>w</literal> and <literal>nw</literal> or <literal>c</literal>
-        which stand for the different edges/corners resp. center (the default).
+        <literal>w</literal> and <literal>nw</literal>
+        which stand for the different edges/corners corresponding the
+        directions on a topographical map.
+        The default is <literal>nw</literal>, which is the upper left corner.
         For example:
 <programlisting>
 &lt;pos x=&quot;10%&quot; y=&quot;50%&quot; anchor=&quot;w&quot; width=&quot;80%&quot; height=&quot;95&quot;/&gt;
