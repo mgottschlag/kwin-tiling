@@ -82,13 +82,13 @@ void BookmarksRunner::match(Plasma::RunnerContext &context)
 
         if (bookmark.text().toLower() == term.toLower()) {
             type = Plasma::QueryMatch::ExactMatch;
-            relevance = 1;
+            relevance = 1.0;
         } else if (bookmark.text().contains(term, Qt::CaseInsensitive)) {
             type = Plasma::QueryMatch::PossibleMatch;
-            relevance = 0.9;
+            relevance = 0.7;
         } else if (bookmark.url().prettyUrl().contains(term, Qt::CaseInsensitive)) {
             type = Plasma::QueryMatch::PossibleMatch;
-            relevance = 0.8;
+            relevance = 0.6;
         }
 
         if (type != Plasma::QueryMatch::NoMatch) {
