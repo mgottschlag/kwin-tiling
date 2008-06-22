@@ -63,8 +63,8 @@ void setWidgetAttribs( QWidget *widget, const StyleType &style, bool frame );
 
 enum NoSpaceDebug { NoSpace };
 enum SpaceDebug { Space };
-static inline QDebug& operator<<(QDebug& ds, NoSpaceDebug) { return ds.nospace(); }
-static inline QDebug& operator<<(QDebug& ds, SpaceDebug) { return ds.space(); }
+static inline QDebug operator<<(QDebug ds, NoSpaceDebug) { return ds.nospace(); }
+static inline QDebug operator<<(QDebug ds, SpaceDebug) { return ds.space(); }
 QDebug enter( const char *fct );
 QDebug debug();
 QDebug leave();
