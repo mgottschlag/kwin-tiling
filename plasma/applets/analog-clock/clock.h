@@ -34,6 +34,8 @@
 
 #include <plasma/containment.h>
 #include <plasma/dataengine.h>
+
+#include "clockapplet.h"
 #include "ui_clockConfig.h"
 #include "ui_calendar.h"
 
@@ -45,7 +47,7 @@ namespace Plasma
     class Dialog;
 }
 
-class Clock : public Plasma::Containment
+class Clock : public ClockApplet
 {
     Q_OBJECT
     public:
@@ -63,12 +65,10 @@ class Clock : public Plasma::Containment
 
     protected:
         void createConfigurationInterface(KConfigDialog *parent);
-        void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
     protected slots:
         void configAccepted();
         void moveSecondHand();
-        void showCalendar(QGraphicsSceneMouseEvent *event);
 
     private:
         void drawHand(QPainter *p, qreal rotation, const QString &handName);

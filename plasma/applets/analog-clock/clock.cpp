@@ -18,7 +18,6 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .        *
  ***************************************************************************/
 
-
 #include "clock.h"
 
 #include <math.h>
@@ -51,11 +50,10 @@
 #include <plasma/theme.h>
 
 Clock::Clock(QObject *parent, const QVariantList &args)
-    : Plasma::Containment(parent, args),
+    : ClockApplet(parent, args),
       m_showTimeString(false),
       m_showSecondHand(false),
-      m_secondHandUpdateTimer(0),
-      m_calendar(0)
+      m_secondHandUpdateTimer(0)
 {
     KGlobal::locale()->insertCatalog("libplasmaclock");
 
@@ -317,36 +315,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     p->restore();
 
     m_theme->paint(p, rect, "Glass");
-}
-
-void Clock::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    if (event->buttons() == Qt::LeftButton) {
-        showCalendar(event);
-    } else {
-        event->ignore();
-    }
-}
-
-void Clock::showCalendar(QGraphicsSceneMouseEvent *event)
-{
-    Q_UNUSED(event);
-
-    if (m_calendar == 0) {
-        m_calendar = new Plasma::Dialog();
-        m_calendarUi.setupUi(m_calendar);
-        m_calendar->setWindowFlags(Qt::Popup);
-        m_calendar->adjustSize();
-    }
-
-    if (m_calendar->isVisible()) {
-        m_calendar->hide();
-    } else {
-        Plasma::DataEngine::Data data = dataEngine("time")->query(m_timezone);
-        m_calendarUi.kdatepicker->setDate(data["Date"].toDate());
-        m_calendar->move(popupPosition(m_calendar->sizeHint()));
-        m_calendar->show();
-    }
 }
 
 #include "clock.moc"
