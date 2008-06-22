@@ -51,13 +51,14 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     setAcceptDrops(true);
     setBackgroundHints(NoBackground);
     m_icon = new Plasma::Icon(this);
-    //setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
-    resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
-    kDebug() << "sized to:" << geometry();
 
     if (args.count() > 0) {
         setUrl(args.value(0).toString());
+        m_icon->setText(m_text);
     }
+
+    resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
+    //kDebug() << "sized to:" << geometry();
 }
 
 void IconApplet::init()
@@ -196,6 +197,7 @@ void IconApplet::setDisplayLines(int displayLines)
         update();
     }
 }
+
 int IconApplet::displayLines()
 {
     if (m_icon) {
