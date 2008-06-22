@@ -179,6 +179,8 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
         ++i;
         tab = item;
     }
+
+    emit itemHoverEnter(m_items.at(0));
 }
 
 ResultItem* ResultScene::addQueryMatch(const Plasma::QueryMatch &match, bool useAnyId)
