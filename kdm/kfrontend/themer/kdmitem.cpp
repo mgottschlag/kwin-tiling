@@ -95,6 +95,7 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	geom.minSize.x.val = geom.minSize.y.val = 0;
 	geom.maxSize.x.val = geom.maxSize.y.val = 1000000;
 	geom.anchor = "nw";
+	geom.expand = 0;
 
 	// Set defaults for derived item's properties
 	state = Snormal;
