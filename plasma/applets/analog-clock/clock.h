@@ -77,7 +77,6 @@ class Clock : public ClockApplet
         bool m_showTimeString;
         bool m_showSecondHand;
         bool m_fancyHands;
-        QString m_timezone;
         Plasma::Svg* m_theme;
         QTime m_time;
         QTime m_lastTimeSeen;

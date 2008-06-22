@@ -77,7 +77,7 @@ void Clock::init()
     m_showTimeString = cg.readEntry("showTimeString", false);
     m_showSecondHand = cg.readEntry("showSecondHand", false);
     m_fancyHands = cg.readEntry("fancyHands", false);
-    m_timezone = cg.readEntry("timezone", "Local");
+    setCurrentTimezone(cg.readEntry("timezone", localTimezone()));
 
     connectToEngine();
 }
@@ -86,9 +86,9 @@ void Clock::connectToEngine()
 {
     Plasma::DataEngine* timeEngine = dataEngine("time");
     if (m_showSecondHand) {
-        timeEngine->connectSource(m_timezone, this, 500);
+        timeEngine->connectSource(currentTimezone(), this, 500);
     } else {
-        timeEngine->connectSource(m_timezone, this, 6000, Plasma::AlignToMinute);
+        timeEngine->connectSource(currentTimezone(), this, 6000, Plasma::AlignToMinute);
     }
 }
 
@@ -137,9 +137,9 @@ void Clock::createConfigurationInterface(KConfigDialog *parent)
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
     parent->addPage(widget, parent->windowTitle(), icon());
 
-    ui.timeZones->setSelected(m_timezone, true);
-    ui.timeZones->setEnabled(m_timezone != "Local");
-    ui.localTimeZone->setChecked(m_timezone == "Local");
+    ui.localTimeZone->setChecked(isLocalTimezone());
+    ui.timeZones->setSelected(currentTimezone(), true);
+    ui.timeZones->setEnabled(!isLocalTimezone());
     ui.showTimeStringCheckBox->setChecked(m_showTimeString);
     ui.showSecondHandCheckBox->setChecked(m_showSecondHand);
 }
@@ -155,23 +155,15 @@ void Clock::configAccepted()
     update();
     QStringList tzs = ui.timeZones->selection();
 
-    if (ui.localTimeZone->checkState() == Qt::Checked) {
-        dataEngine("time")->disconnectSource(m_timezone, this);
-        m_timezone = "Local";
-        cg.writeEntry("timezone", m_timezone);
-    } else if (tzs.count() > 0) {
+    dataEngine("time")->disconnectSource(currentTimezone(), this);
+    QString newTimezone = localTimezone();
+    if (!ui.localTimeZone->isChecked() && !tzs.isEmpty()) {
         //TODO: support multiple timezones
-        QString tz = tzs.at(0);
-        if (tz != m_timezone) {
-            dataEngine("time")->disconnectSource(m_timezone, this);
-            m_timezone = tz;
-            cg.writeEntry("timezone", m_timezone);
-        }
-    } else if (m_timezone != "Local") {
-        dataEngine("time")->disconnectSource(m_timezone, this);
-        m_timezone = "Local";
-        cg.writeEntry("timezone", m_timezone);
+        newTimezone = tzs.at(0);
     }
+
+    setCurrentTimezone(newTimezone);
+    cg.writeEntry("timezone", currentTimezone());
 
     connectToEngine();
     //TODO: why we don't call updateConstraints()?

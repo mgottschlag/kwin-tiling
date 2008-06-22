@@ -196,10 +196,9 @@ void Clock::configAccepted()
     cg.writeEntry("timeZones", m_timeZones);
 
     dataEngine("time")->disconnectSource(currentTimezone(), this);
-    QString newTimezone;
-    if (ui.localTimeZone->isChecked()) {
-        newTimezone = localTimezone();
-    } else {
+    QString newTimezone = localTimezone();
+
+    if (!ui.localTimeZone->isChecked() && !m_timeZones.isEmpty()) {
         newTimezone = m_timeZones.at(0);
     }
 
