@@ -109,7 +109,7 @@ JoyWidget::JoyWidget(QWidget *parent)
 
   QVBoxLayout *vboxLeft = new QVBoxLayout;
   vboxLeft->setSpacing(KDialog::spacingHint());
-  vboxLeft->addWidget(new QLabel(i18n("Position:")));
+  vboxLeft->addWidget(new QLabel(i18nc("Cue for deflection of the stick", "Position:")));
   vboxLeft->addWidget(xyPos = new PosWidget);
 
   mainVbox->addWidget(trace = new QCheckBox(i18n("Show trace")));
