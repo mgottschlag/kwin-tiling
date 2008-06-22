@@ -21,10 +21,12 @@
 
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QDir>
 #include <QGraphicsLayout>
 
 #include <KDebug>
 #include <KDialog>
+#include <KGlobalSettings>
 #include <KStandardDirs>
 
 #include <plasma/containment.h>
@@ -95,13 +97,17 @@ void DesktopCorona::loadDefaultLayout()
 
         // put a folder view on the first screen
         if (i == 0) {
-            Plasma::Applet *folderView =  Plasma::Applet::load("folderview", c->id() + 1);
-            if (folderView) {
-                c->addApplet(folderView, QPointF(KDialog::spacingHint(), KDialog::spacingHint()), true);
-                KConfigGroup config = folderView->config();
-                config.writeEntry("url", "desktop:/");
-                folderView->init();
-                folderView->flushPendingConstraintsEvents();
+            QDir desktopFolder(KGlobalSettings::desktopPath());
+            if (desktopFolder.exists()) {
+                //TODO: should we also not show this if the desktop folder is empty?
+                Plasma::Applet *folderView =  Plasma::Applet::load("folderview", c->id() + 1);
+                if (folderView) {
+                    c->addApplet(folderView, QPointF(KDialog::spacingHint(), KDialog::spacingHint()), true);
+                    KConfigGroup config = folderView->config();
+                    config.writeEntry("url", "desktop:/");
+                    folderView->init();
+                    folderView->flushPendingConstraintsEvents();
+                }
             }
         }
 
