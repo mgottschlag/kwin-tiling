@@ -81,30 +81,12 @@ Interface::Interface(QWidget* parent)
     QHBoxLayout *bottomLayout = new QHBoxLayout(buttonContainer);
     bottomLayout->setMargin(0);
 
-    Plasma::Theme *theme = Plasma::Theme::defaultTheme();
-    QColor buttonBgColor = theme->color(Plasma::Theme::BackgroundColor);
-    QString buttonStyleSheet = QString("QToolButton { border: 1px solid %4; border-radius: 4px; padding: 2px;"
-                                       " background-color: rgba(%1, %2, %3, %5); }")
-                                      .arg(buttonBgColor.red())
-                                      .arg(buttonBgColor.green())
-                                      .arg(buttonBgColor.blue())
-                                      .arg(theme->color(Plasma::Theme::HighlightColor).name(), "50%");
-    buttonBgColor = theme->color(Plasma::Theme::TextColor);
-    buttonStyleSheet += QString("QToolButton:hover { border: 2px solid %1; }")
-                               .arg(theme->color(Plasma::Theme::HighlightColor).name());
-    buttonStyleSheet += QString("QToolButton:focus { border: 2px solid %1; }")
-                               .arg(theme->color(Plasma::Theme::HighlightColor).name());
-    //kDebug() << "stylesheet is" << buttonStyleSheet;
-
-    QToolButton *configButton = new QToolButton(buttonContainer);
-    configButton->setStyleSheet(buttonStyleSheet);
-//    configButton->setDefault(false);
-//    configButton->setAutoDefault(false);
-    configButton->setText(i18n("Settings"));
-    configButton->setToolTip(i18n("Settings"));
-    configButton->setIcon(KIcon("configure"));
-    connect(configButton, SIGNAL(clicked()), SLOT(showConfigDialog()));
-    bottomLayout->addWidget( configButton );
+    m_configButton = new QToolButton(buttonContainer);
+    m_configButton->setText(i18n("Settings"));
+    m_configButton->setToolTip(i18n("Settings"));
+    m_configButton->setIcon(KIcon("configure"));
+    connect(m_configButton, SIGNAL(clicked()), SLOT(showConfigDialog()));
+    bottomLayout->addWidget( m_configButton );
 
     /*
     KPushButton *m_optionsButton = new KPushButton(KStandardGuiItem::configure(), buttonContainer);
@@ -117,16 +99,15 @@ Interface::Interface(QWidget* parent)
     bottomLayout->addWidget( m_optionsButton );
     */
 
-    QToolButton *activityButton = new QToolButton(buttonContainer);
-    activityButton->setStyleSheet(buttonStyleSheet);
-//    activityButton->setDefault(false);
-//    activityButton->setAutoDefault(false);
-    activityButton->setText(i18n("Show System Activity"));
-    activityButton->setToolTip(i18n("Show System Activity"));
-    activityButton->setIcon(KIcon("utilities-system-monitor"));
-    connect(activityButton, SIGNAL(clicked()), qApp, SLOT(showTaskManager()));
-    connect(activityButton, SIGNAL(clicked()), this, SLOT(close()));
-    bottomLayout->addWidget(activityButton);
+    m_activityButton = new QToolButton(buttonContainer);
+//    m_activityButton->setDefault(false);
+//    m_activityButton->setAutoDefault(false);
+    m_activityButton->setText(i18n("Show System Activity"));
+    m_activityButton->setToolTip(i18n("Show System Activity"));
+    m_activityButton->setIcon(KIcon("utilities-system-monitor"));
+    connect(m_activityButton, SIGNAL(clicked()), qApp, SLOT(showTaskManager()));
+    connect(m_activityButton, SIGNAL(clicked()), this, SLOT(close()));
+    bottomLayout->addWidget(m_activityButton);
     //bottomLayout->addStretch(10);
 
     QString stringReserver = i18n("Launch");
@@ -141,17 +122,16 @@ Interface::Interface(QWidget* parent)
     connect( m_runButton, SIGNAL( clicked(bool) ), SLOT(run()) );
     bottomLayout->addWidget( m_runButton );
     */
-    QToolButton *closeButton = new QToolButton(buttonContainer);
-    closeButton->setStyleSheet(buttonStyleSheet);
+    m_closeButton = new QToolButton(buttonContainer);
     //TODO: use a better string for this dialog when we are out of string freeze?
     KGuiItem guiItem = KStandardGuiItem::close();
-    closeButton->setText(guiItem.text());
-    closeButton->setToolTip(guiItem.text().remove('&'));
-    closeButton->setIcon(KIcon("dialog-close"));
-//    closeButton->setDefault(false);
-//    closeButton->setAutoDefault(false);
-    connect(closeButton, SIGNAL(clicked(bool)), SLOT(close()));
-    bottomLayout->addWidget(closeButton);
+    m_closeButton->setText(guiItem.text());
+    m_closeButton->setToolTip(guiItem.text().remove('&'));
+    m_closeButton->setIcon(KIcon("dialog-close"));
+//    m_closeButton->setDefault(false);
+//    m_closeButton->setAutoDefault(false);
+    connect(m_closeButton, SIGNAL(clicked(bool)), SLOT(close()));
+    bottomLayout->addWidget(m_closeButton);
 
     m_layout->addWidget(buttonContainer);
 
@@ -192,16 +172,6 @@ Interface::Interface(QWidget* parent)
     m_nextPage->hide();
     statusLayout->addWidget(m_nextPage, 0, Qt::AlignLeft | Qt::AlignTop);
 
-    {
-        QPalette p = m_descriptionLabel->palette();
-        p.setColor(QPalette::WindowText, theme->color(Plasma::Theme::TextColor));
-        p.setColor(QPalette::Link, theme->color(Plasma::Theme::TextColor));
-        p.setColor(QPalette::LinkVisited, theme->color(Plasma::Theme::TextColor));
-        m_descriptionLabel->setPalette(p);
-        m_previousPage->setPalette(p);
-        m_nextPage->setPalette(p);
-    }
-
     m_layout->addLayout(statusLayout);
 
     m_dividerLine = new QWidget(w);
@@ -235,6 +205,9 @@ Interface::Interface(QWidget* parent)
     connect(m_searchTerm, SIGNAL(editTextChanged(QString)), this, SLOT(queryTextEditted(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));
 
+    themeUpdated();
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
+
     new InterfaceAdaptor( this );
     QDBusConnection::sessionBus().registerObject( "/Interface", this );
 
@@ -250,13 +223,13 @@ Interface::Interface(QWidget* parent)
     adjustSize();
 
     m_layout->addStretch(1);
-    setTabOrder(0, configButton);
-    setTabOrder(configButton, activityButton);
-    setTabOrder(activityButton, m_searchTerm);
+    setTabOrder(0, m_configButton);
+    setTabOrder(m_configButton, m_activityButton);
+    setTabOrder(m_activityButton, m_searchTerm);
     setTabOrder(m_searchTerm, m_previousPage);
     setTabOrder(m_previousPage, m_nextPage);
     setTabOrder(m_nextPage, m_resultsView);
-    setTabOrder(m_resultsView, closeButton);
+    setTabOrder(m_resultsView, m_closeButton);
 }
 
 void Interface::resizeEvent(QResizeEvent *event)
@@ -283,6 +256,35 @@ Interface::~Interface()
     KRunnerSettings::setQueryTextCompletionMode(m_searchTerm->completionMode());
     KConfigGroup interfaceConfig(KGlobal::config(), "Interface");
     saveDialogSize(interfaceConfig);
+}
+
+void Interface::themeUpdated()
+{
+    Plasma::Theme *theme = Plasma::Theme::defaultTheme();
+    QColor buttonBgColor = theme->color(Plasma::Theme::BackgroundColor);
+    QString buttonStyleSheet = QString("QToolButton { border: 1px solid %4; border-radius: 4px; padding: 2px;"
+                                       " background-color: rgba(%1, %2, %3, %5); }")
+                                      .arg(buttonBgColor.red())
+                                      .arg(buttonBgColor.green())
+                                      .arg(buttonBgColor.blue())
+                                      .arg(theme->color(Plasma::Theme::HighlightColor).name(), "50%");
+    buttonBgColor = theme->color(Plasma::Theme::TextColor);
+    buttonStyleSheet += QString("QToolButton:hover { border: 2px solid %1; }")
+                               .arg(theme->color(Plasma::Theme::HighlightColor).name());
+    buttonStyleSheet += QString("QToolButton:focus { border: 2px solid %1; }")
+                               .arg(theme->color(Plasma::Theme::HighlightColor).name());
+    m_configButton->setStyleSheet(buttonStyleSheet);
+    m_activityButton->setStyleSheet(buttonStyleSheet);
+    m_closeButton->setStyleSheet(buttonStyleSheet);
+    //kDebug() << "stylesheet is" << buttonStyleSheet;
+
+    QPalette p = m_descriptionLabel->palette();
+    p.setColor(QPalette::WindowText, theme->color(Plasma::Theme::TextColor));
+    p.setColor(QPalette::Link, theme->color(Plasma::Theme::TextColor));
+    p.setColor(QPalette::LinkVisited, theme->color(Plasma::Theme::TextColor));
+    m_descriptionLabel->setPalette(p);
+    m_previousPage->setPalette(p);
+    m_nextPage->setPalette(p);
 }
 
 void Interface::clearHistory()

@@ -32,16 +32,11 @@
 
 class QGraphicsView;
 class QLabel;
-class QListWidget;
-class QListWidgetResultItem;
+class QToolButton;
 class QVBoxLayout;
 
 class KHistoryComboBox;
 class KCompletion;
-class KPushButton;
-class KTitleWidget;
-
-class CollapsibleWidget;
 
 class ResultItem;
 class ResultScene;
@@ -78,6 +73,7 @@ class Interface : public KRunnerDialog
         void configCompleted();
         void matchCountChanged(int count);
         void hideResultsArea();
+        void themeUpdated();
 
     private:
         void resetInterface();
@@ -90,6 +86,9 @@ class Interface : public KRunnerDialog
         QLabel *m_descriptionLabel;
         QLabel *m_previousPage;
         QLabel *m_nextPage;
+        QToolButton *m_configButton;
+        QToolButton *m_activityButton;
+        QToolButton *m_closeButton;
         KHistoryComboBox* m_searchTerm;
         KCompletion *m_completion;
         QGraphicsView *m_resultsView;
@@ -97,7 +96,6 @@ class Interface : public KRunnerDialog
         ResultScene *m_resultsScene;
         bool m_delayedRun;
         bool m_running;
-        //KPushButton *m_runButton;
 };
 
 #endif
