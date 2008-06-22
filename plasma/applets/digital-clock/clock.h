@@ -27,17 +27,17 @@
 #include <plasma/applet.h>
 #include <plasma/dataengine.h>
 #include <plasma/dialog.h>
+
 #include "ui_clockConfig.h"
 #include "ui_calendar.h"
-#include <KDatePicker>
-
+#include "clockapplet.h"
 
 namespace Plasma
 {
     class Svg;
 }
 
-class Clock : public Plasma::Applet
+class Clock : public ClockApplet
 {
     Q_OBJECT
     public:
@@ -47,7 +47,6 @@ class Clock : public Plasma::Applet
         void init();
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
         void setPath(const QString&);
-        void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
@@ -55,7 +54,6 @@ class Clock : public Plasma::Applet
 
     protected slots:
         void configAccepted();
-        void showCalendar(QGraphicsSceneMouseEvent *event);
         void constraintsEvent(Plasma::Constraints constraints);
 
     protected:
@@ -79,8 +77,6 @@ class Clock : public Plasma::Applet
         int updateInterval() const;
         Plasma::IntervalAlignment intervalAlignment() const;
 
-        bool m_localTimeZone;
-        QString m_timezone;
         QStringList m_timeZones;
         QString m_prettyTimezone;
         QTime m_time;
