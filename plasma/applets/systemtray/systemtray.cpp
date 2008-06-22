@@ -52,6 +52,10 @@ void SystemTray::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & (Plasma::LocationConstraint | Plasma::FormFactorConstraint)) {
         updateWidgetOrientation();
     }
+
+    if (constraints & Plasma::StartupCompletedConstraint) {
+        updateWidgetGeometry();
+    }
 }
 
 void SystemTray::paintInterface(QPainter *painter,
