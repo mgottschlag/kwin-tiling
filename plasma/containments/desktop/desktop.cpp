@@ -239,7 +239,7 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
 void DefaultDesktop::updateBackground()
 {
     if (m_wallpaperPath.isEmpty() && m_backgroundMode != BackgroundDialog::kNoBackground) {
-        QString defaultPath = QString("EOS/contents/images/%1x%2.jpg");
+        QString defaultPath = QString("Blue_Curl/contents/images/%1x%2.jpg");
 
         QString testPath = defaultPath.arg(geometry().width()).arg(geometry().height());
         m_wallpaperPath = KStandardDirs::locate("wallpaper", testPath);
