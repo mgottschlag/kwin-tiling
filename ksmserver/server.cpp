@@ -54,6 +54,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <errno.h>
 #include <string.h>
 #include <assert.h>
+#include <fcntl.h>
 #include <kdefakes.h>
 
 #ifdef HAVE_LIMITS_H
@@ -673,6 +674,7 @@ KSMServer::KSMServer( const QString& windowManager, bool _only_local )
 
     KSMListener* con;
     for ( int i = 0; i < numTransports; i++) {
+        fcntl( IceGetListenConnectionNumber( listenObjs[i] ), F_SETFD, FD_CLOEXEC );
         con = new KSMListener( listenObjs[i] );
         listener.append( con );
         connect( con, SIGNAL( activated(int) ), this, SLOT( newConnection(int) ) );
@@ -802,6 +804,9 @@ void KSMServer::newConnection( int /*socket*/ )
             kDebug( 1218 ) << "ICE Connection rejected!";
         (void )IceCloseConnection (iceConn);
     }
+
+    // don't leak the fd
+    fcntl( IceConnectionNumber(iceConn), F_SETFD, FD_CLOEXEC );
 }
 
 
