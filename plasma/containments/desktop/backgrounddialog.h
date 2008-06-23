@@ -42,7 +42,7 @@ public:
         kNoBackground
     };
     
-    // FIXME seems that we're leaking, make a distructor
+    // FIXME seems that we're leaking, make a destructor
     BackgroundDialog(const QSize &res, 
                      const KConfigGroup &config,
                      const KConfigGroup &globalConfig,
