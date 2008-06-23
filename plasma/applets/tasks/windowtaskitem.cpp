@@ -244,8 +244,14 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
             painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
         }
     } else if (m_flags & TaskIsMinimized) {
-        //Not painting anything for iconified tasks for now
-        painter->setBrush(QBrush());
+        if (itemBackground && itemBackground->hasElementPrefix("minimized")) {
+            //Draw task background from theme svg "attention" element
+            itemBackground->setElementPrefix("minimized");
+            hasSvg = true;
+        } else {
+            //Not painting anything by default
+            painter->setBrush(QBrush());
+        }
     } else if (m_flags & TaskHasFocus) {
             if (itemBackground && itemBackground->hasElementPrefix("focus")) {
                 //Draw task background from theme svg "focus" element
