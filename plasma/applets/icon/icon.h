@@ -48,7 +48,6 @@ class IconApplet : public Plasma::Applet
         void setDisplayLines(int displayLines);
         int displayLines();
         QPainterPath shape() const;
-        QList<QAction*> contextualActions();
 
     public slots:
         void openUrl();
@@ -56,9 +55,9 @@ class IconApplet : public Plasma::Applet
     protected:
         void dropEvent(QGraphicsSceneDragDropEvent *event);
         void saveState(KConfigGroup &cg) const;
+        void showConfigurationInterface();
 
     private slots:
-        void showPropertiesDialog();
         void acceptedPropertiesDialog();
         void propertiesDialogClosed();
 

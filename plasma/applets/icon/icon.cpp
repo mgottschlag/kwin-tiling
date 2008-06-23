@@ -28,15 +28,16 @@
 
 #include <KGlobalSettings>
 #include <KDebug>
-#include <KLocale>
+#include <KDesktopFile>
 #include <KIconLoader>
+#include <KLocale>
+#include <KMenu>
 #include <KPropertiesDialog>
 #include <KRun>
 #include <KSharedConfig>
-#include <KUrl>
-#include <KDesktopFile>
 #include <KShell>
-#include <KMenu>
+#include <KUrl>
+#include <KWindowSystem>
 #include <kio/copyjob.h>
 
 #include <plasma/theme.h>
@@ -50,6 +51,7 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
 {
     setAcceptDrops(true);
     setBackgroundHints(NoBackground);
+    setHasConfigurationInterface(true);
     m_icon = new Plasma::Icon(this);
 
     if (args.count() > 0) {
@@ -165,26 +167,18 @@ void IconApplet::constraintsEvent(Plasma::Constraints constraints)
     }
 }
 
-QList<QAction*> IconApplet::contextualActions()
-{
-        m_propertiesAction = new QAction(i18n("Properties"), this);
-        connect(m_propertiesAction, SIGNAL(triggered(bool)), this, SLOT(showPropertiesDialog()));
-
-        QList<QAction*> actions;
-        actions.append(m_propertiesAction);
-
-        return actions;
-}
-
-void IconApplet::showPropertiesDialog()
+void IconApplet::showConfigurationInterface()
 {
     if (m_dialog == 0) {
         m_dialog = new KPropertiesDialog(m_url, 0 /*no parent widget*/);
         connect(m_dialog, SIGNAL(applied()), this, SLOT(acceptedPropertiesDialog()));
         connect(m_dialog, SIGNAL(propertiesClosed()), this, SLOT(propertiesDialogClosed()));
+        m_dialog->show();
+    } else {
+        KWindowSystem::setOnDesktop(m_dialog->winId(), KWindowSystem::currentDesktop());
+        m_dialog->show();
+        KWindowSystem::activateWindow(m_dialog->winId());
     }
-
-    m_dialog->show();
 }
 
 void IconApplet::setDisplayLines(int displayLines)
