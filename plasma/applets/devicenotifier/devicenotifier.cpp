@@ -63,7 +63,6 @@ DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
       m_widget(0),
       m_icon(0),
       m_label(0),
-      m_layout(0),
       m_proxy(0),
       m_displayTime(0),
       m_numberItems(0),
@@ -135,12 +134,7 @@ void DeviceNotifier::init()
     connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(onSourceRemoved(const QString&)));
 
-    //FIXME : For KDE4.1 need to use to KStyle to use correct click behaviour
-    if (KGlobalSettings::singleClick()) {
-        connect(m_notifierView, SIGNAL(clicked (const QModelIndex &)), this, SLOT(slotOnItemClicked(const QModelIndex &)));
-    } else {
-        connect(m_notifierView, SIGNAL(doubleClicked (const QModelIndex &)), this, SLOT(slotOnItemClicked(const QModelIndex &)));
-    }
+    connect(m_notifierView, SIGNAL(activated(const QModelIndex&)), this, SLOT(slotOnItemClicked(const QModelIndex&)));
     connect(m_timer, SIGNAL(timeout()), this, SLOT(onTimerExpired()));
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));    // allows updating of colors automatically
 }
@@ -195,8 +189,7 @@ void DeviceNotifier::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & FormFactorConstraint) {
         if (isSizeConstrained) {
-            delete m_layout;
-            m_layout = 0;
+            setLayout(0); // this will delete it for us
 
             if (m_proxy) {
                 m_proxy->setWidget(0);
@@ -210,14 +203,14 @@ void DeviceNotifier::constraintsEvent(Plasma::Constraints constraints)
             m_icon = 0;
 
             m_widget->setWindowFlags(Qt::X11BypassWindowManagerHint);
-            m_layout = new QGraphicsLinearLayout(this);
-            m_layout->setContentsMargins(0,0,0,0);
-            m_layout->setSpacing(0);
+            QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
+            layout->setContentsMargins(0,0,0,0);
+            layout->setSpacing(0);
             m_proxy = new QGraphicsProxyWidget(this);
             m_proxy->setWidget(m_widget);
             m_proxy->show();
-            m_layout->addItem(m_proxy);
-            setLayout(m_layout);
+            layout->addItem(m_proxy);
+            setLayout(layout);
         }
     }
 
@@ -399,6 +392,7 @@ void DeviceNotifier::configAccepted()
 
 void DeviceNotifier::slotOnItemClicked(const QModelIndex &index)
 {
+    kDebug() << index;
     if (m_icon) {
         m_widget->hide();
         m_timer->stop();

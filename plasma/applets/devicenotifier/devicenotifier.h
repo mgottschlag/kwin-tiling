@@ -105,7 +105,6 @@ class DeviceNotifier : public Plasma::Applet
         Plasma::Dialog *m_widget;
         Plasma::Icon *m_icon;
         QLabel *m_label;
-        QGraphicsLinearLayout *m_layout;
         QGraphicsProxyWidget * m_proxy;
         int m_displayTime;
         int m_numberItems;
