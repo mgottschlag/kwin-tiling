@@ -86,17 +86,26 @@ void DesktopCorona::loadDefaultLayout()
     int topLeftScreen = 0;
     QPoint topLeftCorner = desktop->screenGeometry(0).topLeft();
 
-    // create a containment for each screen
+    // find our "top left" screen, use it as the primary
     for (int i = 0; i < numScreens; ++i) {
         QRect g = desktop->screenGeometry(i);
         kDebug() << "     screen " << i << "geometry is" << g;
+
+        if (g.x() <= topLeftCorner.x() && g.y() >= topLeftCorner.y()) {
+            topLeftCorner = g.topLeft();
+            topLeftScreen = i;
+        }
+    }
+
+    // create a containment for each screen
+    for (int i = 0; i < numScreens; ++i) {
         Plasma::Containment* c = addContainment("desktop");
         c->setScreen(i);
         c->setFormFactor(Plasma::Planar);
         c->flushPendingConstraintsEvents();
 
         // put a folder view on the first screen
-        if (i == 0) {
+        if (i == topLeftScreen) {
             QDir desktopFolder(KGlobalSettings::desktopPath());
             if (desktopFolder.exists()) {
                 //TODO: should we also not show this if the desktop folder is empty?
@@ -109,11 +118,6 @@ void DesktopCorona::loadDefaultLayout()
                     folderView->flushPendingConstraintsEvents();
                 }
             }
-        }
-
-        if (g.x() <= topLeftCorner.x() && g.y() >= topLeftCorner.y()) {
-            topLeftCorner = g.topLeft();
-            topLeftScreen = i;
         }
 
         emit containmentAdded(c);
