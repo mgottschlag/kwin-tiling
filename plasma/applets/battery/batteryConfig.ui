@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>318</width>
-    <height>144</height>
+    <width>363</width>
+    <height>134</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -33,16 +33,6 @@
      </property>
      <property name="text" >
       <string>Show the state for &amp;each battery present</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="drawBackgroundCheckBox" >
-     <property name="toolTip" >
-      <string/>
-     </property>
-     <property name="text" >
-      <string>Always show &amp;background</string>
      </property>
     </widget>
    </item>

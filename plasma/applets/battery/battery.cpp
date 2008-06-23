@@ -69,18 +69,6 @@ void Battery::init()
     KConfigGroup cg = config();
     m_showBatteryString = cg.readEntry("showBatteryString", false);
     m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", true);
-    m_drawBackground = cg.readEntry("drawBackground", true);
-
-    // TODO: set background on panel causes 0 height, so do not use it
-    if (formFactor() != Plasma::Vertical && formFactor() != Plasma::Horizontal) {
-        if (m_drawBackground) {
-            setBackgroundHints(DefaultBackground);
-        } else {
-            setBackgroundHints(NoBackground);
-        }
-    }
-
-    //setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
 
     QString svgFile = QString();
     if (cg.readEntry("style", 0) == 0) {
@@ -121,7 +109,6 @@ void Battery::init()
 void Battery::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {
-        BackgroundHints background = NoBackground;
         if (formFactor() == Plasma::Vertical) {
             setMaximumHeight(qMax(m_textRect.height(), contentsRect().width()));
             kDebug() << "Vertical FormFactor";
@@ -130,18 +117,7 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
             setMaximumWidth(qMax(m_textRect.width(), contentsRect().height()));
             kDebug() << "Horizontal FormFactor";
             // TODO: set background(true) on panel causes 0 height, so do not use it
-        } else if (formFactor() == Plasma::Planar) {
-            kDebug() << "Planar FormFactor";
-            background = (m_drawBackground?DefaultBackground:NoBackground);
-        } else if (formFactor() == Plasma::MediaCenter) {
-            kDebug() << "MediaCenter FormFactor";
-            background = (m_drawBackground?DefaultBackground:NoBackground);
-        } else {
-            kDebug() << "Other FormFactor" << formFactor();
-            background = (m_drawBackground?DefaultBackground:NoBackground);
         }
-
-        setBackgroundHints(background);
     }
 
     if (constraints & (Plasma::SizeConstraint | Plasma::FormFactorConstraint) && m_theme) {
@@ -176,7 +152,6 @@ void Battery::createConfigurationInterface(KConfigDialog *parent)
     ui.styleGroup->setSelected(m_batteryStyle);
     ui.showBatteryStringCheckBox->setChecked(m_showBatteryString ? Qt::Checked : Qt::Unchecked);
     ui.showMultipleBatteriesCheckBox->setChecked(m_showMultipleBatteries ? Qt::Checked : Qt::Unchecked);
-    ui.drawBackgroundCheckBox->setChecked(m_drawBackground ? Qt::Checked : Qt::Unchecked);
 }
 
 void Battery::configAccepted()
@@ -193,16 +168,6 @@ void Battery::configAccepted()
         m_showMultipleBatteries = !m_showMultipleBatteries;
         cg.writeEntry("showMultipleBatteries", m_showMultipleBatteries);
         kDebug() << "Show multiple battery changed: " << m_showMultipleBatteries;
-    }
-    if (m_drawBackground != ui.drawBackgroundCheckBox->isChecked()) {
-        m_drawBackground = !m_drawBackground;
-        cg.writeEntry("drawBackground", m_drawBackground);
-        // Only set background when we're not in a panel, the panel controls this
-        // just fine otherwise.
-        if (formFactor() != Plasma::Vertical && formFactor() != Plasma::Horizontal) {
-            setBackgroundHints(m_drawBackground?DefaultBackground:NoBackground);
-        }
-        m_theme->resize(contentsRect().size().toSize());
     }
 
     if (ui.styleGroup->selected() != m_batteryStyle) {
