@@ -77,7 +77,7 @@ void ClockApplet::updateToolTipContent() {
 
 void ClockApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->buttons() == Qt::LeftButton && geometry().contains(event->pos())) {
+    if (event->buttons() == Qt::LeftButton) {
         showCalendar(event);
     } else {
         event->ignore();
