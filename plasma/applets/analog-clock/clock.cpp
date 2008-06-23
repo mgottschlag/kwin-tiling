@@ -101,6 +101,10 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
 
 QPainterPath Clock::shape() const
 {
+    if (m_theme->hasElement("hint-square-clock")) {
+        return Applet::shape();
+    }
+
     QPainterPath path;
     // we adjust by 2px all around to allow for smoothing the jaggies
     // if the ellipse is too small, we'll get a nastily jagged edge around the clock
