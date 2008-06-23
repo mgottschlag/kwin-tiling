@@ -291,6 +291,8 @@ void DashboardView::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) {
         hideView();
+        event->accept();
+        return;
     }
 
     Plasma::View::keyPressEvent(event);
