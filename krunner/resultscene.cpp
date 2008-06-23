@@ -158,7 +158,7 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     m_currentPage = 0;
     m_pageCount = m.count();
     m_pageCount = m_pageCount / m_pageStride + (m_pageCount % m_pageStride != 0 ? 1 : 0);
-    kDebug() << "gots us" << m_pageCount << "m_pageCount of items";
+    //kDebug() << "gots us" << m_pageCount << "m_pageCount of items";
 
     emit matchCountChanged(m.count());
 

@@ -425,9 +425,11 @@ void Interface::queryTextEditted(const QString &query)
 
 void Interface::updateDescriptionLabel(ResultItem *item)
 {
-    m_descriptionLabel->setVisible(item);
+    // we want it always visible once we start showing it
+    // so that the interface isn't jumping all around
+    m_descriptionLabel->setVisible(true);
     if (!item) {
-        m_descriptionLabel->clear();
+        m_descriptionLabel->setText(" ");
     } else if (item->description().isEmpty()) {
         m_descriptionLabel->setText(item->name());
     } else {
@@ -503,6 +505,7 @@ void Interface::matchCountChanged(int count)
         setMinimumSize(QSize(MIN_WIDTH, 0));
         adjustSize();
     } else {
+        m_delayedRun = false;
         m_hideResultsTimer.start(2000);
     }
 }
@@ -511,6 +514,7 @@ void Interface::hideResultsArea()
 {
     m_resultsView->hide();
     m_descriptionLabel->hide();
+    m_descriptionLabel->clear();
     m_previousPage->hide();
     m_nextPage->hide();
     setMinimumSize(QSize(MIN_WIDTH, 0));
