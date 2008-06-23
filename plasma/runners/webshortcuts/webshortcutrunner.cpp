@@ -57,7 +57,7 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
         return;
     }
 
-    kDebug() << "checking with" << term;
+    //kDebug() << "checking with" << term;
 
     QMutexLocker lock(bigLock());
     foreach (const KService::Ptr &service, m_offers) {
@@ -79,12 +79,16 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
                 match.setRelevance(0.9);
 
                 // let's try if we can get a proper icon from the favicon cache
+                // getting the favicon is too slow and can easily lead to starving the thread pool out
+                /*
                 KIcon icon = getFavicon(url);
                 if (icon.isNull()){
                     match.setIcon(m_icon);
                 } else {
                     match.setIcon(icon);
                 }
+                */
+                match.setIcon(m_icon);
 
                 context.addMatch(term, match);
                 return;
@@ -96,17 +100,16 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
 QString WebshortcutRunner::getSearchQuery(const QString &query, const QString &term)
 {
     // FIXME delimiter check like for above?
-    QStringList tempList = term.split(':');
-    if (tempList.count() > 1) {
-        QString searchWord(tempList[1]);
-        QString finalQuery(query);
-        // FIXME? currently only basic searches are supported
-        finalQuery.replace("\\{@}", searchWord);
-        KUrl url(finalQuery);
-        return url.url();
+    QString searchWord = term.right(term.length() - term.indexOf(':') - 1);
+    if (searchWord.isEmpty()) {
+        return QString();
     }
 
-    return QString();
+    QString finalQuery(query);
+    // FIXME? currently only basic searches are supported
+    finalQuery.replace("\\{@}", searchWord);
+    KUrl url(finalQuery);
+    return url.url();
 }
 
 KIcon WebshortcutRunner::getFavicon(const KUrl &url) {
