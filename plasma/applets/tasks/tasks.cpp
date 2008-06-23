@@ -73,7 +73,12 @@ void Tasks::init()
     m_layout->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     //TODO : Qt's bug??
     m_layout->setMaximumSize(INT_MAX,INT_MAX);
-    m_layout->addStretch();
+
+    //Managing the spacer by hand to hide it when taskbar is full
+    m_spacer = new QGraphicsWidget(this);
+    m_spacer->setMinimumSize(QSizeF(0,0));
+    m_layout->addItem(m_spacer);
+    m_layout->setStretchFactor(m_spacer, 1);
 
     if (formFactor() == Plasma::Vertical) {
         m_layout->setOrientation(Qt::Vertical);
@@ -119,6 +124,8 @@ void Tasks::removeStartingTask(StartupPtr task)
         m_layout->removeItem(item);
         scene()->removeItem(item);
     }
+
+    adjustStretch();
 }
 
 void Tasks::registerWindowTasks()
@@ -183,6 +190,8 @@ void Tasks::removeWindowTask(TaskPtr task)
         item->deleteLater();
         m_activeTask = m_windowTaskItems.end();
     }
+    
+    adjustStretch();
 }
 
 void Tasks::removeAllWindowTasks()
@@ -209,6 +218,12 @@ void Tasks::constraintsEvent(Plasma::Constraints constraints)
         } else {
             m_layout->setOrientation(Qt::Horizontal);
         }
+        //avoid to make all tasks disappear for a wrong minimum size of the spacer
+        m_spacer->setMaximumSize(INT_MAX, INT_MAX);
+    }
+    
+    if (constraints & Plasma::SizeConstraint) {
+        adjustStretch();
     }
 }
 
@@ -365,6 +380,40 @@ void Tasks::insertItemBeforeSpacer(QGraphicsWidget * item)
     else {
         m_layout->insertItem(m_layout->count()-1,item);
     }
+
+    adjustStretch();
+}
+
+void Tasks::adjustStretch()
+{
+    if (m_layout->count() < 2) {
+        m_spacer->setMaximumSize(INT_MAX, INT_MAX);
+        return;
+    }
+
+    QGraphicsLayoutItem *item = m_layout->itemAt(0);
+
+    //hiding spacer
+    if (m_layout->orientation() == Qt::Horizontal) {
+        int itemSize = size().width() / m_layout->count();
+        int prefSize = item->preferredSize().width();
+
+        if (itemSize < prefSize) {
+            m_spacer->setMaximumWidth(0);
+        } else if (itemSize > prefSize + 10) {
+            m_spacer->setMaximumWidth(INT_MAX);
+        }
+    } else {
+        int itemSize = size().height() / m_layout->count();
+        int prefSize = item->preferredSize().height();
+
+        if (itemSize < prefSize) {
+            m_spacer->setMaximumHeight(0);
+        } else if (itemSize > prefSize + 10) {
+            m_spacer->setMaximumHeight(INT_MAX);
+        }
+    }
+
 }
 
 bool Tasks::isOnMyScreen(TaskPtr task)

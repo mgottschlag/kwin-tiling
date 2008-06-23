@@ -112,6 +112,7 @@ private:
         void removeAllWindowTasks();
 
         void insertItemBeforeSpacer(QGraphicsWidget * item);
+        void adjustStretch();
 
         bool isOnMyScreen(TaskPtr task);
         void reconnect();
@@ -128,6 +129,7 @@ private:
         Ui::tasksConfig m_ui;
         QList<TaskPtr> m_tasks;
         QTimer m_screenTimer;
+        QGraphicsWidget *m_spacer;
 
         Plasma::PanelSvg *m_taskItemBackground;
         QPixmap *m_taskAlphaPixmap;

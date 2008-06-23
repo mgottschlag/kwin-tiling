@@ -59,6 +59,11 @@ WindowTaskItem::WindowTaskItem(Tasks *parent, const bool showTooltip)
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
+    
+    QFontMetrics fm(KGlobalSettings::taskbarFont());
+    QSize mSize = fm.size(0, "M");
+    setPreferredSize(QSize(mSize.width()*15 + m_applet->itemLeftMargin() + m_applet->itemRightMargin() + IconSize(KIconLoader::Panel),
+                           mSize.height()*3 + m_applet->itemTopMargin() + m_applet->itemBottomMargin()));
 }
 
 void WindowTaskItem::activate()
