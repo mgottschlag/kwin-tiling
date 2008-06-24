@@ -1,16 +1,16 @@
-install(DIRECTORY Oxygen_Blue DESTINATION ${ICON_INSTALL_DIR} PATTERN .svn EXCLUDE)
+set(cursors_folders
+    Oxygen_Blue
+    Oxygen_Blue_Big
+    Oxygen_White
+    Oxygen_White_Big
+    Oxygen_Yellow
+    Oxygen_Yellow_Big
+    Oxygen_Zion
+    Oxygen_Zion_Big
+   )
 
-install(DIRECTORY Oxygen_Blue_Big DESTINATION ${ICON_INSTALL_DIR} PATTERN .svn EXCLUDE)
+foreach(theme ${cursors_folders})
+    install(DIRECTORY ${theme} DESTINATION ${ICON_INSTALL_DIR} PATTERN .svn EXCLUDE)
+endforeach(theme)
 
-install(DIRECTORY Oxygen_White DESTINATION ${ICON_INSTALL_DIR} PATTERN .svn EXCLUDE)
-
-install(DIRECTORY Oxygen_White_Big DESTINATION ${ICON_INSTALL_DIR} PATTERN .svn EXCLUDE)
-
-install(DIRECTORY Oxygen_Yellow DESTINATION ${ICON_INSTALL_DIR} PATTERN .svn EXCLUDE)
-
-install(DIRECTORY Oxygen_Yellow_Big DESTINATION ${ICON_INSTALL_DIR} PATTERN .svn EXCLUDE)
-
-install(DIRECTORY Oxygen_Zion DESTINATION ${ICON_INSTALL_DIR} PATTERN .svn EXCLUDE)
-
-install(DIRECTORY Oxygen_Zion_Big DESTINATION ${ICON_INSTALL_DIR} PATTERN .svn EXCLUDE)
 
