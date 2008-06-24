@@ -173,7 +173,11 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
     // which is called as soon as constraints are updated.
     QString oldWallpaperPath(m_wallpaperPath);
     m_wallpaperPath = cg.readEntry("wallpaper", QString());
-    if (!KStandardDirs::exists(m_wallpaperPath))  {
+
+    m_backgroundMode = cg.readEntry("backgroundmode", 
+        (int) BackgroundDialog::kStaticBackground);
+
+    if (m_backgroundMode != BackgroundDialog::kNoBackground && !KStandardDirs::exists(m_wallpaperPath))  {
 	m_wallpaperPath = KStandardDirs::locate("wallpaper", "Blue_Curl/contents/images/1920x1200.jpg");
 	cg.writeEntry("wallpaper", m_wallpaperPath);
     }
@@ -181,8 +185,7 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
         kDebug() << "Using configured wallpaper" << m_wallpaperPath;
     }
 
-    m_backgroundMode = cg.readEntry("backgroundmode", 
-        (int) BackgroundDialog::kStaticBackground);
+
 
     // used in both modes, so read it no matter which mode we are in
     int old_wallPaperPosition = m_wallpaperPosition;
