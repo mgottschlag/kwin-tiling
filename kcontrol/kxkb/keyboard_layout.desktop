@@ -12,6 +12,8 @@ X-KDE-ParentApp=kcontrol
 X-KDE-System-Settings-Parent-Category=regional-and-language
 X-KDE-Weight=60
 
+OnlyShowIn=KDE
+
 Name=Keyboard Layout
 Name[af]=Sleutelbord Uitleg
 Name[ar]=تصميم لوحة المفاتيح

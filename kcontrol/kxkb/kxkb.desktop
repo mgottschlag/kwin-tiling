@@ -1,5 +1,13 @@
 [Desktop Entry]
 Type=Application
+Icon=keyboard
+X-DBUS-StartupType=Unique
+
+X-KDE-Library=kdeinit_kxkb
+X-KDE-UniqueApplet=true
+
+OnlyShowIn=KDE
+
 Name=Keyboard Map Tool
 Name[af]=Sleutelbord Kaart Program
 Name[ar]=أداة خارطة لوحة المفاتيح
@@ -68,8 +76,3 @@ Name[x-test]=xxKeyboard Map Toolxx
 Name[xh]=Isixhobo semaphu yebhodi enezitshixo
 Name[zh_CN]=键盘映射工具
 Name[zh_TW]=鍵盤映射工具
-Icon=keyboard
-X-DBUS-StartupType=Unique
-
-X-KDE-Library=kdeinit_kxkb
-X-KDE-UniqueApplet=true
