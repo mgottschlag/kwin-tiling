@@ -1,4 +1,6 @@
 set(cursors_folders
+    Oxygen_Black
+    Oxygen_Black_Big
     Oxygen_Blue
     Oxygen_Blue_Big
     Oxygen_White
