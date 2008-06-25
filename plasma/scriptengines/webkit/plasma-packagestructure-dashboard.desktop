@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Dashboard Widget
 Name[ca]=Estri del tauler
+Name[da]=Instrumentbræts-widget
 Name[de]=Dashboard-Miniprogramm
 Name[el]=Συστατικό Dashboard
 Name[eo]=Stirtabla fenestraĵo
@@ -30,6 +31,7 @@ Name[zh_CN]=仪表板部件
 Name[zh_TW]=儀表板元件
 Comment=MacOS dashboard widget
 Comment[ca]=Estri del tauler del MacOS
+Comment[da]=MacOS dashboard-widget
 Comment[de]=MacOS-Dashboard-Miniprogramm
 Comment[el]=Συστατικό του MacOS dashboard
 Comment[eo]=MacOS stirtabla fenestraĵo

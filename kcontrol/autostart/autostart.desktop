@@ -57,6 +57,7 @@ Name[zh_TW]=自動啟動
 
 Comment=A configuration tool for managing which programs start up with KDE.
 Comment[ca]=Una eina de configuració per a gestionar els programes que s'iniciaran amb el KDE.
+Comment[da]=Et indstillingsværktøj til at håndtere hvilke programmer der starter op med KDE.
 Comment[de]=Einrichtung von Programmen, die bei der Anmeldung an KDE gestartet werden sollen
 Comment[el]=Ένα εργαλείο διαχείρισης των προγραμμάτων που εκκινούν με το KDE.
 Comment[eo]=Agordilo por la administrado de aŭtomate lanĉitaj programo ĉe KDE-lanĉo.

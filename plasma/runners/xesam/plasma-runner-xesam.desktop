@@ -3,6 +3,7 @@
 Name=Xesam Search
 Name[ca]=Cerca Xesam
 Name[cs]=Vyhledávání Xesam
+Name[da]=Xesam-søgning
 Name[de]=Xesam-Suche
 Name[el]=Αναζήτηση Xesam
 Name[eo]=Xesam-serĉo
@@ -36,6 +37,7 @@ Name[zh_TW]=Xesam 搜尋
 # TODO - Change to "Search for documents and other files" or similar in KDE 4.2
 Comment=Allows user to use a Xesam compatible indexer for desktop search
 Comment[ca]=Permet que l'usuari utilitzi un indexador compatible amb Xesam per a la cerca d'escriptori
+Comment[da]=Lader brugeren anvende en Xesam-kompatibel indeksering til desktop-søgning
 Comment[de]=Ermöglicht die Verwendung eines Xesam-kompatiblen Indizierers für die Desktop-Suche
 Comment[el]=Επιτρέπει τη χρήση ενός συμβατού με το Xesam ευρετηρίου για αναζητήσεις
 Comment[eo]=Permesas la uzon de Xesam-kongrua indeksilo por lokaj serĉoj

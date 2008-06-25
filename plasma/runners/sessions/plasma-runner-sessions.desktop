@@ -2,6 +2,7 @@
 Name=Desktop Sessions
 Name[ca]=Sessions d'escriptori
 Name[cs]=Relace plochy
+Name[da]=Desktop-sessioner
 Name[de]=Desktop-Sitzungen
 Name[el]=Συνεδρίες επιφάνειας εργασίας
 Name[eo]=Labortablaj seancoj
@@ -35,6 +36,7 @@ Name[zh_TW]=桌面工作階段
 Comment=Fast user switching
 Comment[ca]=Commutador ràpid d'usuari
 Comment[cs]=Rychlé přepínání uživatelů
+Comment[da]=Hurtig brugerskift
 Comment[de]=Schneller Benutzerwechsel
 Comment[el]=Γρήγορη αλλαγή χρήστη
 Comment[eo]=Rapida ŝanĝado de uzantoj

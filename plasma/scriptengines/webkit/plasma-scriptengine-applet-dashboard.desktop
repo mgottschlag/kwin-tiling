@@ -2,6 +2,7 @@
 Encoding=UTF-8
 Name=Dashboard
 Name[ca]=Tauler
+Name[da]=Instrumentbræt
 Name[eo]=Stirtablo
 Name[gu]=ડેશબોર્ડ
 Name[ja]=ダッシュボード
@@ -20,6 +21,7 @@ Name[zh_CN]=仪表板
 Name[zh_TW]=儀表板
 Comment=MacOS X dashboard widget
 Comment[ca]=Estri del tauler del MacOS X
+Comment[da]=MacOS X dashboard-widget
 Comment[de]=MacOS-X-Dashboard-Miniprogramm
 Comment[el]=Συστατικό MacOS X dashboard
 Comment[eo]=MacOS X stirtabla fenestraĵo

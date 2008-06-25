@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=JavaScript Runner
 Name[ca]=Executador de JavaScript
+Name[da]=JavaScript-runner
 Name[de]=JavaScript-Ausführung
 Name[el]=Εκτελεστής JavaScript
 Name[eo]=Ĝavaskripta ruligilo
@@ -32,6 +33,7 @@ Name[zh_CN]=JavaScript 运行器
 Name[zh_TW]=JavaScript 執行器
 Comment=JavaScript Runner
 Comment[ca]=Executador de JavaScript
+Comment[da]=JavaScript-runner
 Comment[de]=JavaScript-Ausführung
 Comment[el]=Εκτελεστής JavaScript
 Comment[eo]=Ĝavaskripta ruligilo

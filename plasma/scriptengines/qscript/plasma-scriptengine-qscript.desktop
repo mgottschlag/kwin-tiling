@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=JavaScript Widget
 Name[ca]=Estri del JavaScript
+Name[da]=JavaScript-widget
 Name[de]=JavaScript-Programm
 Name[el]=Συστατικό JavaScript
 Name[eo]=Ĝavaskripta fenestraĵo
@@ -35,6 +36,7 @@ Name[zh_CN]=JavaScript 部件
 Name[zh_TW]=JavaScript 元件
 Comment=Native Plasma widget written in JavaScript
 Comment[ca]=Estri nadiu del Plasma escrit en JavaScript
+Comment[da]=Native Plasma-widget skrevet i JavaScript
 Comment[de]=Echtes Plasma-Programm, geschrieben in JavaScript
 Comment[el]=Εγγενές συστατικό Plasma γραμμένο σε JavaScript
 Comment[eo]=Indiĝena Plasma-fenestraĵo programita per Ĝavoskripto

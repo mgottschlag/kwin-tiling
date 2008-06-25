@@ -2,6 +2,7 @@
 Name=Command Line
 Name[ca]=Línia d'ordres
 Name[cs]=Příkazový řádek
+Name[da]=Kommandolinje
 Name[de]=Befehlszeile
 Name[el]=Γραμμή εντολών
 Name[eo]=Komandlinio
@@ -35,6 +36,7 @@ Name[zh_TW]=命令列
 Comment=Executes shell commands
 Comment[ca]=Executa ordres de l'intèrpret d'ordres
 Comment[cs]=Spouští shellové příkazy
+Comment[da]=Kører skal-kommandoer
 Comment[de]=Führt Shell-Kommandos aus
 Comment[el]=Εκτελεί εντολές του κελύφους
 Comment[eo]=Plenumas ŝel-komandojn
