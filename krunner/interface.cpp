@@ -217,10 +217,10 @@ Interface::Interface(QWidget* parent)
     // we restore the original size, which will set the results view back to its
     // normal size, then we hide the results view and resize the dialog
     setMinimumSize(QSize(MIN_WIDTH , 0));
-    KConfigGroup interfaceConfig(KGlobal::config(), "Interface");
-    restoreDialogSize(interfaceConfig);
-    m_resultsView->hide();
-    adjustSize();
+    if (KGlobal::config()->hasGroup("Interface")) {
+        KConfigGroup interfaceConfig(KGlobal::config(), "Interface");
+        restoreDialogSize(interfaceConfig);
+    }
 
     m_layout->addStretch(1);
     setTabOrder(0, m_configButton);
@@ -230,6 +230,8 @@ Interface::Interface(QWidget* parent)
     setTabOrder(m_previousPage, m_nextPage);
     setTabOrder(m_nextPage, m_resultsView);
     setTabOrder(m_resultsView, m_closeButton);
+
+    QTimer::singleShot(0, this, SLOT(resetInterface()));
 }
 
 void Interface::resizeEvent(QResizeEvent *event)

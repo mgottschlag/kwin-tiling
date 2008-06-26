@@ -74,9 +74,9 @@ class Interface : public KRunnerDialog
         void matchCountChanged(int count);
         void hideResultsArea();
         void themeUpdated();
+        void resetInterface();
 
     private:
-        void resetInterface();
         void centerOnScreen();
 
         KRunnerConfigDialog *m_configDialog;
