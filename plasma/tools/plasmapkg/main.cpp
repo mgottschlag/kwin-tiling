@@ -73,14 +73,14 @@ int main(int argc, char **argv)
     options.add("packageroot <path>", ki18n("Absolute path to the package root. If not supplied, then the standard data directories for this KDE session will be searched instead."));
     KCmdLineArgs::addCmdLineOptions( options );
 
-    //KApplication app;
+    KApplication app;
     //QCoreApplication app;
 
     //TODOs:
     //   implement list
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-    if (args->count() == 0 || args->isSet("list")) {
+    if (args->isSet("list")) {
         listPackages();
     } else {
         // install and remove
