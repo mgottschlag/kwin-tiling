@@ -118,11 +118,10 @@ void Clock::updateSize() {
 }
 
 void Clock::updateToolTipContent() {
-    QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
     //FIXME Port to future tooltip manager
     /*Plasma::ToolTipData tipData;
 
-    tipData.mainText = m_time.toString(timeString);
+    tipData.mainText = KGlobal::locale()->formatTime(m_time, m_showSeconds);
     tipData.subText = m_date.toString();
     tipData.image = m_toolTipIcon;
 
