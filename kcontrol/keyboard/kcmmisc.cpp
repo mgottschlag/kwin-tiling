@@ -182,6 +182,7 @@ void KeyboardConfig::defaults()
     setClick(50);
     setRepeat(true, 660, 25);
     setNumLockState( 2 );
+    emit KCModule::changed(true);
 }
 
 QString KeyboardConfig::quickHelp() const
