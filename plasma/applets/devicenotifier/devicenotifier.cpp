@@ -82,6 +82,12 @@ void DeviceNotifier::init()
     m_numberItems = cg.readEntry("NumberItems", 4);
     m_itemsValidity = cg.readEntry("ItemsValidity", 5);
 
+    //main layout, used both in desktop and panel mode
+    m_layout = new QGraphicsLinearLayout(this);
+    m_layout->setContentsMargins(0, 0, 0, 0);
+    m_layout->setSpacing(0);
+    setLayout(m_layout);
+    
     m_solidEngine = dataEngine("hotplug");
     m_solidDeviceEngine = dataEngine("soliddevice");
     m_widget = new Dialog();
@@ -166,11 +172,7 @@ void DeviceNotifier::initSysTray()
 
     setAspectRatioMode(Plasma::ConstrainedSquare);
 
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(0);
-
-    layout->addItem(m_icon);
+    m_layout->addItem(m_icon);
 }
 
 DeviceNotifier::~DeviceNotifier()
@@ -189,7 +191,6 @@ void DeviceNotifier::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & FormFactorConstraint) {
         if (isSizeConstrained) {
-            setLayout(0); // this will delete it for us
 
             if (m_proxy) {
                 m_proxy->setWidget(0);
@@ -203,14 +204,11 @@ void DeviceNotifier::constraintsEvent(Plasma::Constraints constraints)
             m_icon = 0;
 
             m_widget->setWindowFlags(Qt::X11BypassWindowManagerHint);
-            QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
-            layout->setContentsMargins(0,0,0,0);
-            layout->setSpacing(0);
+
             m_proxy = new QGraphicsProxyWidget(this);
             m_proxy->setWidget(m_widget);
             m_proxy->show();
-            layout->addItem(m_proxy);
-            setLayout(layout);
+            m_layout->addItem(m_proxy);
         }
     }
 

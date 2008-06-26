@@ -112,6 +112,7 @@ class DeviceNotifier : public Plasma::Applet
         Notifier::NotifierView *m_notifierView;
         QTimer *m_timer;
         bool isNotificationEnabled;
+        QGraphicsLinearLayout *m_layout;
 
         /// Designer Config file
         Ui::solidNotifierConfig ui;
