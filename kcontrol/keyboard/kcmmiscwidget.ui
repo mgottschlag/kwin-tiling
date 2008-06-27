@@ -149,12 +149,19 @@
    <item>
     <widget class="KButtonGroup" native="1" name="numlockGroup" >
      <property name="whatsThis" >
-      <string>If supported, this option allows you to set the state of NumLock after KDE starts up.&lt;p>You can configure NumLock to be turned on or off, or configure KDE not to set the NumLock state.</string>
+      <string>If supported, this option allows you to setup the state of NumLock after KDE startup.&lt;p>You can configure NumLock to be turned on or off, or configure KDE not to set NumLock state.</string>
      </property>
      <property name="title" stdset="0" >
       <string>NumLock on KDE Startup</string>
      </property>
      <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QRadioButton" name="RadioButton1" >
+        <property name="text" >
+         <string>T&amp;urn on</string>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="0" >
        <widget class="QRadioButton" name="RadioButton1_2" >
         <property name="text" >
@@ -166,13 +173,6 @@
        <widget class="QRadioButton" name="RadioButton1_3" >
         <property name="text" >
          <string>Leave unchan&amp;ged</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" >
-       <widget class="QRadioButton" name="RadioButton1" >
-        <property name="text" >
-         <string>T&amp;urn on</string>
         </property>
        </widget>
       </item>
