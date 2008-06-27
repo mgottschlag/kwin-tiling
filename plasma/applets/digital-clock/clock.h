@@ -32,11 +32,6 @@
 #include "ui_calendar.h"
 #include "clockapplet.h"
 
-namespace Plasma
-{
-    class Svg;
-}
-
 class Clock : public ClockApplet
 {
     Q_OBJECT
