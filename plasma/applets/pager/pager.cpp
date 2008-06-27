@@ -80,7 +80,7 @@ Pager::Pager(QObject *parent, const QVariantList &args)
 void Pager::init()
 {
     createMenu();
-
+    
     KConfigGroup cg = config();
     m_displayedText = (DisplayedText)cg.readEntry("displayedText", (int)m_displayedText);
     m_showWindowIcons = cg.readEntry("showWindowIcons", m_showWindowIcons);
@@ -130,6 +130,15 @@ void Pager::constraintsEvent(Plasma::Constraints constraints)
         if (m_background->hasElementPrefix(QString())) {
             m_background->setElementPrefix(QString());
             m_background->resizePanel(size());
+        }
+    }
+    if (constraints & Plasma::FormFactorConstraint) {
+        if (formFactor() == Plasma::Horizontal) {
+            setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+        } else if (formFactor() == Plasma::Vertical) {
+            setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        } else {
+            setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         }
     }
 }
@@ -222,9 +231,11 @@ void Pager::recalculateGeometry()
         m_background->setElementPrefix(QString());
         m_background->getMargins(leftMargin, topMargin, rightMargin, bottomMargin);
 
+        qreal ratio = (qreal)QApplication::desktop()->width() / (qreal)QApplication::desktop()->height();
+
         //if the final size is going to be really tiny avoid to add extra margins
-        if (geometry().width() - leftMargin - rightMargin < 16 * columns ||
-            geometry().height() - topMargin - bottomMargin < 12 * m_rows) {
+        if (geometry().width() - leftMargin - rightMargin < KIconLoader::SizeSmall*ratio * columns + padding*(columns-1) ||
+            geometry().height() - topMargin - bottomMargin < KIconLoader::SizeSmall * m_rows + padding*(m_rows-1)) {
             m_showOwnBackground = false;
             leftMargin = topMargin = rightMargin = bottomMargin = padding = textMargin = 0;
         } else {
