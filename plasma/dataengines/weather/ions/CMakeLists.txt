@@ -20,11 +20,11 @@ TARGET_LINK_LIBRARIES (ion_bbcukmet ${KDE4_KDEUI_LIBS} plasma weather_ion)
 INSTALL (FILES ion.h
                ion_export.h
                formulas.h
-	 DESTINATION ${INCLUDE_INSTALL_DIR}/plasma/weather)
+	 DESTINATION ${INCLUDE_INSTALL_DIR}/plasma/weather COMPONENT Devel)
 
 INSTALL (FILES includes/Ion
                includes/Formulas
-	 DESTINATION ${INCLUDE_INSTALL_DIR}/KDE/Plasma/Weather)
+	 DESTINATION ${INCLUDE_INSTALL_DIR}/KDE/Plasma/Weather COMPONENT Devel)
 
 INSTALL (TARGETS ion_envcan DESTINATION ${PLUGIN_INSTALL_DIR})
 INSTALL (TARGETS ion_noaa DESTINATION ${PLUGIN_INSTALL_DIR})

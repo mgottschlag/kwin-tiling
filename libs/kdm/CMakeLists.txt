@@ -44,4 +44,4 @@ install(TARGETS kgreet_generic  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 ########### install files ###############
 
-install( FILES kgreeterplugin.h DESTINATION ${INCLUDE_INSTALL_DIR} )
+install( FILES kgreeterplugin.h DESTINATION ${INCLUDE_INSTALL_DIR} COMPONENT Devel )

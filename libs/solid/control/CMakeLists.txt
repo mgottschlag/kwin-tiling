@@ -46,5 +46,5 @@ install( FILES powermanager.h networkmanager.h networkinterface.h wirednetworkin
     singletondefs.h networking.h networkipv4config.h solid_control_export.h 
     networkcdmainterface.h networkgsminterface.h networkserialinterface.h
     DESTINATION
-${INCLUDE_INSTALL_DIR}/solid/control)
+${INCLUDE_INSTALL_DIR}/solid/control COMPONENT Devel)
 

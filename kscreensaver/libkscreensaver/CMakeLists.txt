@@ -17,5 +17,5 @@ install(FILES screensaver.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR})
 
 ########### install files ###############
 
-install( FILES kscreensaver.h kscreensaver_vroot.h DESTINATION ${INCLUDE_INSTALL_DIR} )
+install( FILES kscreensaver.h kscreensaver_vroot.h DESTINATION ${INCLUDE_INSTALL_DIR} COMPONENT Devel)
 
