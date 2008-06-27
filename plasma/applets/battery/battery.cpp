@@ -108,15 +108,13 @@ void Battery::init()
 
 void Battery::constraintsEvent(Plasma::Constraints constraints)
 {
-    if (constraints & Plasma::FormFactorConstraint) {
+    if (constraints & Plasma::FormFactorConstraint | Plasma::SizeConstraint) {
         if (formFactor() == Plasma::Vertical) {
             setMaximumHeight(qMax(m_textRect.height(), contentsRect().width()));
-            kDebug() << "Vertical FormFactor";
-            // TODO: set background(true) on panel causes 0 height, so do not use it
+            //kDebug() << "Vertical FormFactor";
         } else if (formFactor() == Plasma::Horizontal) {
             setMaximumWidth(qMax(m_textRect.width(), contentsRect().height()));
-            kDebug() << "Horizontal FormFactor";
-            // TODO: set background(true) on panel causes 0 height, so do not use it
+            //kDebug() << "Horizontal FormFactor" << m_textRect.width() << contentsRect().height();
         }
     }
 
