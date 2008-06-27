@@ -46,8 +46,6 @@ void LockOut::init()
     m_layout->setContentsMargins(0,0,0,0);
     m_layout->setSpacing(0);
 
-    setMinimumSize(0, 0);
-
     Plasma::Icon *icon_lock = new Plasma::Icon(KIcon("system-lock-screen"), "", this);
     m_layout->addItem(icon_lock);
     connect(icon_lock, SIGNAL(clicked()), this, SLOT(clickLock()));
