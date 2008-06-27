@@ -75,7 +75,7 @@ mkdir -m 700 -p $kdehome
 mkdir -m 700 -p $kdehome/share
 mkdir -m 700 -p $kdehome/share/config
 cat >$kdehome/share/config/startupconfigkeys <<EOF
-kcminputrc Mouse cursorTheme ''
+kcminputrc Mouse cursorTheme 'Oxygen_Black'
 kcminputrc Mouse cursorSize ''
 ksplashrc KSplash Theme Default
 ksplashrc KSplash Engine KSplashX
@@ -96,6 +96,8 @@ fi
 
 # XCursor mouse theme needs to be applied here to work even for kded or ksmserver
 if test -n "$kcminputrc_mouse_cursortheme" -o -n "$kcminputrc_mouse_cursorsize" ; then
+    @EXPORT_XCURSOR_PATH@
+
     kapplymousetheme "$kcminputrc_mouse_cursortheme" "$kcminputrc_mouse_cursorsize"
     if test $? -eq 10; then
         XCURSOR_THEME=default
