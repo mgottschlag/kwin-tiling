@@ -427,14 +427,14 @@ static void createGtkrc( bool exportColors, const QPalette& cg, int version )
 void runRdb( uint flags )
 {
   // Obtain the application palette that is about to be set.
-  QPalette newPal = KGlobalSettings::createApplicationPalette();
   bool exportColors      = flags & KRdbExportColors;
   bool exportQtColors    = flags & KRdbExportQtColors;
   bool exportQtSettings  = flags & KRdbExportQtSettings;
   bool exportXftSettings = flags & KRdbExportXftSettings;
 
-  KConfig _kglobals( "kdeglobals", KConfig::NoGlobals  );
-  KConfigGroup kglobals(KSharedConfig::openConfig( "kdeglobals" ), "KDE");
+  KSharedConfigPtr kglobalcfg = KSharedConfig::openConfig( "kdeglobals" );
+  KConfigGroup kglobals(kglobalcfg, "KDE");
+  QPalette newPal = KGlobalSettings::createApplicationPalette(kglobalcfg);
 
   KTemporaryFile tmpFile;
   if (!tmpFile.open())
