@@ -91,20 +91,15 @@ void LockOut::checkLayout()
     }
 
     if (formFactor() == Plasma::Horizontal) {
-        //if we are on horizontal panel
         setSizePolicy(QSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding));
         qreal wsize = size().height() * ratioToKeep;
-
-        resize(QSizeF(wsize, size().height()));
         setMaximumSize(wsize, QWIDGETSIZE_MAX);
     } else if (formFactor() == Plasma::Vertical) {
-        //if we are on vertical panel
-        setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed));
+        setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum));
         qreal hsize = size().width() / ratioToKeep;
-        resize(QSizeF(size().width(), hsize));
         setMaximumSize(QWIDGETSIZE_MAX, hsize);
     } else {
-        setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX / ratioToKeep);
+        setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
     }
 }
 
