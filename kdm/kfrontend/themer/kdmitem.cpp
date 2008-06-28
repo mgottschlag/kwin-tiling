@@ -246,9 +246,7 @@ KdmItem::updatePalette( QWidget *w )
 {
 	bool set = w->palette().isBrushSet( w->palette().currentColorGroup(),
 	                                    w->backgroundRole() );
-	bool opaque = set && w->palette().brush( w->backgroundRole() ).isOpaque();
 	w->setAutoFillBackground( set );
-	w->setAttribute( Qt::WA_OpaquePaintEvent, opaque );
 }
 
 bool
