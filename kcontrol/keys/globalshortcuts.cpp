@@ -106,6 +106,8 @@ void GlobalShortcutsModule::load()
     if (!iface->isValid()) {
         QString errorString;
         QDBusError error = iface->lastError();
+        // The global shortcuts DBus service manages all global shortcuts and we
+        // can't do anything useful without it.
         if (error.isValid()) {
             errorString = i18n("Message: %1\nError: %2", error.message(), error.name());
         }
@@ -134,18 +136,21 @@ void GlobalShortcutsModule::load()
             action->setProperty("isConfigurationAction", QVariant(true)); // see KAction::~KAction
             action->setText(actionId[ActionFriendly]);
 
+            // Always call this to enable global shortcuts for the action. The editor widget
+            // checks it.
+            // Also actually load the shortcut using the KAction::Autoloading mechanism. 
+            // Avoid setting the default shortcut; it would just be written to the global
+            // configuration so we would not get the real one below.
+            action->setGlobalShortcut(KShortcut(), KAction::ActiveShortcut);
+
+            // The default shortcut will never be loaded because it's pointless in a real
+            // application. There are no scarce resources [i.e. physical keys] to manage
+            // so applications can set them at will and there's no autoloading.
             QDBusReply<QList<int> > defaultShortcut = iface->call("defaultShortcut", qVariantFromValue(actionId));
-            QDBusReply<QList<int> > shortcut = iface->call("shortcut", qVariantFromValue(actionId));
             if (!defaultShortcut.value().isEmpty()) {
                 int key = defaultShortcut.value().first();
-                action->setGlobalShortcut(KShortcut(key), KAction::DefaultShortcut, KAction::NoAutoloading);
+                action->setGlobalShortcut(KShortcut(key), KAction::DefaultShortcut);
             }
-            int key = 0;
-            if (!shortcut.value().isEmpty()) {
-                key = shortcut.value().first();
-            }
-            // Always call this to enable global shortcuts for the action. The editor widget checks it.
-            action->setGlobalShortcut(KShortcut(key), KAction::ActiveShortcut, KAction::NoAutoloading);
         }
     }
 
