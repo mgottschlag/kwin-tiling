@@ -260,11 +260,15 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         if (m_showDate || m_showTimezone) {
             QString dateString;
             if (m_showDate) {
-                QString day = m_date.toString("d");
-                QString month = m_date.toString("MMM");
+                KLocale tmpLocale(*KGlobal::locale());
+                tmpLocale.setDateFormat("%e"); // day number of the month
+                QString day = tmpLocale.formatDate(m_date);
+                tmpLocale.setDateFormat("%b"); // short form of the month
+                QString month = tmpLocale.formatDate(m_date);
 
                 if (m_showYear) {
-                    QString year = m_date.toString("yyyy");
+                    tmpLocale.setDateFormat("%Yy"); // whole year
+                    QString year = tmpLocale.formatDate(m_date);
                     dateString = i18nc("@label Short date: "
                                        "%1 day in the month, %2 short month name, %3 year",
                                        "%1 %2 %3", day, month, year);
@@ -275,7 +279,8 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                 }
 
                 if (m_showDay) {
-                    QString weekday = QDate::shortDayName(m_date.dayOfWeek());
+                    tmpLocale.setDateFormat("%a"); // short weekday
+                    QString weekday = tmpLocale.formatDate(m_date);
                     dateString = i18nc("@label Day of the week with date: "
                                        "%1 short day name, %2 short date",
                                        "%1, %2", weekday, dateString);
