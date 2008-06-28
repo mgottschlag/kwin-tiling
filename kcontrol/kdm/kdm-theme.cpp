@@ -142,7 +142,7 @@ void KDMThemeWidget::selectTheme( const QString &path )
 
 void KDMThemeWidget::load()
 {
-	selectTheme( config->group("X-*-Greeter").readEntry( "Theme", themeDir + "circles" ) );
+	selectTheme( config->group("X-*-Greeter").readEntry( "Theme", themeDir + "oxygen" ) );
 }
 
 void KDMThemeWidget::save()
@@ -152,7 +152,7 @@ void KDMThemeWidget::save()
 
 void KDMThemeWidget::defaults()
 {
-	selectTheme( themeDir + "circles" );
+	selectTheme( themeDir + "oxygen" );
 
 	emit changed();
 }

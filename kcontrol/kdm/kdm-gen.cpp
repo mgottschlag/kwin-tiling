@@ -255,7 +255,7 @@ void KDMGeneralWidget::load()
 
 void KDMGeneralWidget::defaults()
 {
-	useThemeCheck->setChecked( false );
+	useThemeCheck->setChecked( true );
 	guicombo->setCurrentId( "" );
 	colcombo->setCurrentId( "" );
 	langcombo->setCurrentItem( "en_US" );
