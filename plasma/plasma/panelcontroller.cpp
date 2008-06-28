@@ -504,6 +504,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
         }
         d->extLayout->setContentsMargins(1, 0, 0, 0);
         d->panelHeightHandle->setCursor(Qt::SizeHorCursor);
+        d->panelHeightHandle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
         d->ruler->setAvailableLength(screenGeom.height());
         break;
@@ -516,6 +517,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
         }
         d->extLayout->setContentsMargins(1, 0, 0, 0);
         d->panelHeightHandle->setCursor(Qt::SizeHorCursor);
+        d->panelHeightHandle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
         d->ruler->setAvailableLength(screenGeom.height());
         break;
@@ -528,6 +530,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
         d->extLayout->setDirection(QBoxLayout::BottomToTop);
         d->extLayout->setContentsMargins(0, 0, 0, 1);
         d->panelHeightHandle->setCursor(Qt::SizeVerCursor);
+        d->panelHeightHandle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
         d->ruler->setAvailableLength(screenGeom.width());
         break;
@@ -541,6 +544,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
         d->extLayout->setDirection(QBoxLayout::TopToBottom);
         d->extLayout->setContentsMargins(0, 1, 0, 0);
         d->panelHeightHandle->setCursor(Qt::SizeVerCursor);
+        d->panelHeightHandle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
         d->ruler->setAvailableLength(screenGeom.width());
         break;
