@@ -95,6 +95,7 @@ QList<QAction*> Panel::contextualActions()
         m_addPanelAction = new QAction(i18n("Add Panel"), this);
         connect(m_addPanelAction, SIGNAL(triggered(bool)), this, SLOT(addPanel()));
         m_addPanelAction->setIcon(KIcon("list-add"));
+        constraintsEvent(Plasma::ImmutableConstraint);
     }
 
     QList<QAction*> actions;
@@ -341,6 +342,18 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
     }
 
     if (constraints & Plasma::ImmutableConstraint) {
+        bool unlocked = immutability() == Plasma::Mutable;
+
+        if (m_addPanelAction) {
+            m_addPanelAction->setEnabled(unlocked);
+            m_addPanelAction->setVisible(unlocked);
+        }
+
+        if (m_configureAction) {
+            m_configureAction->setEnabled(unlocked);
+            m_configureAction->setVisible(unlocked);
+        }
+
         QGraphicsView *panelView = view();
         if (panelView) {
             updateBorders(panelView->geometry());
