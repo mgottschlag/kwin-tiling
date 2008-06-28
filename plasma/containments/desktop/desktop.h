@@ -86,7 +86,7 @@ protected Q_SLOTS:
     void configure();
     void applyConfig();
     void nextSlide(bool skipUpdates=false);
-    
+
     void lockScreen();
     void logout();
 
@@ -96,7 +96,7 @@ protected Q_SLOTS:
     void addPanel();
 
 private:
-    void reloadConfig(bool skipUpdates=false);
+    void reloadConfig();
     QSize resolution() const;
     void suspendStartup(bool suspend); // for ksmserver
 

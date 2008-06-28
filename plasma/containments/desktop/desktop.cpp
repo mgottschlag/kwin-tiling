@@ -116,14 +116,18 @@ QSize DefaultDesktop::resolution() const
 void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::StartupCompletedConstraint) {
-        reloadConfig(true);
+        qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
+        reloadConfig();
     }
 
-    if (constraints & Plasma::SizeConstraint && m_rendererToken != -1) {
-        // if the renderer token is still -1, then we haven't actually started up yet
-        // and there is no point in touching the renderer at this point
+    if (constraints & Plasma::SizeConstraint) {
         m_renderer.setSize(size().toSize()); 
-        updateBackground();
+
+        if (m_rendererToken != -1) {
+            // if the renderer token is still -1, then we haven't actually started up yet
+            // and there is no point in touching the renderer at this point
+            updateBackground();
+        }
     }
 
     if (constraints & Plasma::ImmutableConstraint && m_appletBrowserAction) {
@@ -164,22 +168,24 @@ void DefaultDesktop::applyConfig()
     reloadConfig();
 }
 
-void DefaultDesktop::reloadConfig(bool skipUpdates)
+void DefaultDesktop::reloadConfig()
 {
-    qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
-
     KConfigGroup cg = config();
+
+    // store the state of the existing wallpaper config so we can determine later
+    // if we need to trigger updates
+    QString oldWallpaperPath(m_wallpaperPath);
+    QColor old_wallpaperColor = m_wallpaperColor;
+    int old_wallPaperPosition = m_wallpaperPosition;
 
     // If no wallpaper is set, a default will be set in updateBackground()
     // which is called as soon as constraints are updated.
-    QString oldWallpaperPath(m_wallpaperPath);
     m_wallpaperPath = cg.readEntry("wallpaper", QString());
-
     m_backgroundMode = cg.readEntry("backgroundmode", int(BackgroundDialog::kStaticBackground));
 
     if (m_backgroundMode != BackgroundDialog::kNoBackground &&
         (m_wallpaperPath.isEmpty() || !KStandardDirs::exists(m_wallpaperPath)))  {
-        m_wallpaperPath = Plasma::Theme::defaultTheme()->wallpaperPath(geometry().size().toSize());
+        m_wallpaperPath = Plasma::Theme::defaultTheme()->wallpaperPath(size().toSize());
         cg.writeEntry("wallpaper", m_wallpaperPath);
     }
 
@@ -188,9 +194,7 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
     }
 
     // used in both modes, so read it no matter which mode we are in
-    int old_wallPaperPosition = m_wallpaperPosition;
     m_wallpaperPosition = cg.readEntry("wallpaperposition", int(Background::ScaleCrop));
-    QColor old_wallpaperColor = m_wallpaperColor;
     m_wallpaperColor = cg.readEntry("wallpapercolor", QColor(Qt::black));
 
     if (m_backgroundMode == BackgroundDialog::kStaticBackground ||
@@ -198,11 +202,9 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
         m_slideshowTimer.stop();
         // Only set the wallpaper if constraints have been loaded
         // and background image has changed
-        if (!skipUpdates && (
-                oldWallpaperPath != m_wallpaperPath
-                || m_wallpaperPosition != old_wallPaperPosition
-                || m_wallpaperColor != old_wallpaperColor
-                )) {
+        if (oldWallpaperPath != m_wallpaperPath ||
+            m_wallpaperPosition != old_wallPaperPosition ||
+            m_wallpaperColor != old_wallpaperColor) {
             updateBackground();
         }
     } else {
@@ -246,7 +248,7 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
 void DefaultDesktop::updateBackground()
 {
     if (m_wallpaperPath.isEmpty() && m_backgroundMode != BackgroundDialog::kNoBackground) {
-        m_wallpaperPath = Plasma::Theme::defaultTheme()->wallpaperPath(geometry().size().toSize());
+        m_wallpaperPath = Plasma::Theme::defaultTheme()->wallpaperPath(size().toSize());
         kDebug() << "Setting wallpaper to default" << m_wallpaperPath;
         emit configNeedsSaving();
     }
