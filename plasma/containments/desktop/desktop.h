@@ -68,7 +68,7 @@ class DefaultDesktop : public Plasma::Containment
 public:
     DefaultDesktop(QObject *parent, const QVariantList &args);
     ~DefaultDesktop();
-    void init();
+
     void constraintsEvent(Plasma::Constraints constraints);
 
     QList<QAction*> contextualActions();
@@ -127,7 +127,7 @@ private:
     QColor m_wallpaperColor;
 
     RenderThread m_renderer;
-    int m_current_renderer_token;
+    int m_rendererToken;
 };
 
 #endif // PLASMA_PANEL_H

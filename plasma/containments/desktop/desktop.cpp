@@ -66,7 +66,8 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
       m_configDialog(0),
       m_wallpaperPath(0),
       m_wallpaperPosition(0),
-      m_renderer(resolution(), 1.0)
+      m_renderer(resolution(), 1.0),
+      m_rendererToken(-1)
 {
     qRegisterMetaType<QImage>("QImage");
     qRegisterMetaType<QPersistentModelIndex>("QPersistentModelIndex");
@@ -80,12 +81,6 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
 DefaultDesktop::~DefaultDesktop()
 {
     delete m_configDialog;
-}
-
-void DefaultDesktop::init()
-{
-    reloadConfig(true);
-    Containment::init();
 }
 
 void DefaultDesktop::nextSlide(bool skipUpdates)
@@ -120,7 +115,13 @@ QSize DefaultDesktop::resolution() const
 
 void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
 {
-    if (constraints & Plasma::SizeConstraint) {
+    if (constraints & Plasma::StartupCompletedConstraint) {
+        reloadConfig(true);
+    }
+
+    if (constraints & Plasma::SizeConstraint && m_rendererToken != -1) {
+        // if the renderer token is still -1, then we haven't actually started up yet
+        // and there is no point in touching the renderer at this point
         m_renderer.setSize(size().toSize()); 
         updateBackground();
     }
@@ -174,18 +175,17 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
     QString oldWallpaperPath(m_wallpaperPath);
     m_wallpaperPath = cg.readEntry("wallpaper", QString());
 
-    m_backgroundMode = cg.readEntry("backgroundmode", 
-        (int) BackgroundDialog::kStaticBackground);
+    m_backgroundMode = cg.readEntry("backgroundmode", int(BackgroundDialog::kStaticBackground));
 
-    if (m_backgroundMode != BackgroundDialog::kNoBackground && !KStandardDirs::exists(m_wallpaperPath))  {
-	m_wallpaperPath = KStandardDirs::locate("wallpaper", "Blue_Curl/contents/images/1920x1200.jpg");
-	cg.writeEntry("wallpaper", m_wallpaperPath);
+    if (m_backgroundMode != BackgroundDialog::kNoBackground &&
+        (m_wallpaperPath.isEmpty() || !KStandardDirs::exists(m_wallpaperPath)))  {
+        m_wallpaperPath = Plasma::Theme::defaultTheme()->wallpaperPath(geometry().size().toSize());
+        cg.writeEntry("wallpaper", m_wallpaperPath);
     }
+
     if (!m_wallpaperPath.isEmpty()) {
         kDebug() << "Using configured wallpaper" << m_wallpaperPath;
     }
-
-
 
     // used in both modes, so read it no matter which mode we are in
     int old_wallPaperPosition = m_wallpaperPosition;
@@ -209,7 +209,7 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
         QStringList dirs = cg.readEntry("slidepaths", QStringList());
         QStringList filters;
         filters << "*.png" << "*.jpeg" << "*.jpg" << "*.svg" << "*.svgz";
-        
+
         m_slideFiles.clear();
 
         for (int i = 0; i < dirs.size(); ++i) {
@@ -246,21 +246,12 @@ void DefaultDesktop::reloadConfig(bool skipUpdates)
 void DefaultDesktop::updateBackground()
 {
     if (m_wallpaperPath.isEmpty() && m_backgroundMode != BackgroundDialog::kNoBackground) {
-        QString defaultPath = QString("Blue_Curl/contents/images/%1x%2.jpg");
-
-        QString testPath = defaultPath.arg(geometry().width()).arg(geometry().height());
-        m_wallpaperPath = KStandardDirs::locate("wallpaper", testPath);
-
-        if (m_wallpaperPath.isEmpty()) {
-            kDebug() << "Trying" << defaultPath.arg(1920).arg(1200);
-            m_wallpaperPath = KStandardDirs::locate("wallpaper", defaultPath.arg(1920).arg(1200));
-        }
-
+        m_wallpaperPath = Plasma::Theme::defaultTheme()->wallpaperPath(geometry().size().toSize());
         kDebug() << "Setting wallpaper to default" << m_wallpaperPath;
         emit configNeedsSaving();
     }
 
-    m_current_renderer_token = 
+    m_rendererToken = 
         m_renderer.render(m_wallpaperPath,
                           m_wallpaperColor,
                           (Background::ResizeMethod)m_wallpaperPosition,
@@ -270,7 +261,7 @@ void DefaultDesktop::updateBackground()
 
 void DefaultDesktop::updateBackground(int token, const QImage &img)
 {
-    if (m_current_renderer_token == token) {
+    if (m_rendererToken == token) {
         m_bitmapBackground = QPixmap::fromImage(img);
         update();
         suspendStartup( false );

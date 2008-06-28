@@ -611,6 +611,8 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
 
 void BackgroundDialog::reloadConfig(const KConfigGroup &config, const KConfigGroup &globalConfig)
 {
+    Q_UNUSED(globalConfig)
+
     // initialize
     int mode = config.readEntry("backgroundmode", int(kStaticBackground));
     m_mode->setCurrentIndex(mode);
@@ -635,11 +637,10 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config, const KConfigGro
     }
     m_selected = config.readEntry("selected", QStringList());
     m_model->reload(m_selected);
-    QString currentPath = config.readEntry("wallpaper",
-            KStandardDirs::locate("wallpaper", "Blue_Curl/contents/images/1920x1200.jpg"));
+    QString defaultPath = Plasma::Theme::defaultTheme()->wallpaperPath();
+    QString currentPath = config.readEntry("wallpaper", defaultPath);
 
-    kDebug() << "Default would be" << KStandardDirs::locate("wallpaper", "Blue_Curl/contents/images/1920x1200.jpg");
-    kDebug() << "but we're loading" << currentPath << "instead";
+    kDebug() << "Default would be" << defaultPath << "but we're loading" << currentPath << "instead";
 
     int index = m_model->indexOf(currentPath);
     if (index != -1) {
@@ -658,6 +659,7 @@ void BackgroundDialog::reloadConfig(const KConfigGroup &config, const KConfigGro
 
 void BackgroundDialog::saveConfig(KConfigGroup config, KConfigGroup globalConfig)
 {
+    Q_UNUSED(globalConfig)
     int mode = m_mode->currentIndex();
     config.writeEntry("backgroundmode", mode);
     if (mode == kStaticBackground) {
