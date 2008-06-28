@@ -486,6 +486,10 @@ void PanelView::showAppletBrowser()
 void PanelView::togglePanelController()
 {
     if (!m_panelController) {
+        if (containment()->immutability() != Plasma::Mutable) {
+            return;
+        }
+
         m_panelController = new PanelController(this);
         m_panelController->setContainment(containment());
         m_panelController->setLocation(containment()->location());
@@ -500,10 +504,11 @@ void PanelView::togglePanelController()
     }
 
     if (!m_panelController->isVisible()) {
-        m_panelController->resize(m_panelController->sizeHint());
-        m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
-
-        m_panelController->show();
+        if (containment()->immutability() == Plasma::Mutable) {
+            m_panelController->resize(m_panelController->sizeHint());
+            m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
+            m_panelController->show();
+        }
     } else {
         m_panelController->hide();
         delete m_panelController;
