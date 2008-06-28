@@ -1,0 +1,10 @@
+# This is not really a .desktop file like the rest, but it is useful to treat
+# it as such
+
+[KdmGreeterTheme]
+Greeter=oxygen.xml
+Name=Oxygen
+Description=Oxygen Theme
+Author=Nuno Fernades Pinheiro, Urs Wolfer & Oswald Buddenhagen
+Copyright=(c) 2008 Nuno Fernades Pinheiro, Urs Wolfer & Oswald Buddenhagen
+Screenshot=screenshot.png
