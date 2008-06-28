@@ -267,7 +267,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                 QString month = tmpLocale.formatDate(m_date);
 
                 if (m_showYear) {
-                    tmpLocale.setDateFormat("%Yy"); // whole year
+                    tmpLocale.setDateFormat("%Y"); // whole year
                     QString year = tmpLocale.formatDate(m_date);
                     dateString = i18nc("@label Short date: "
                                        "%1 day in the month, %2 short month name, %3 year",
