@@ -364,7 +364,7 @@ KSMShutdownDlg::KSMShutdownDlg( QWidget* parent,
     QVBoxLayout *buttonLayout = new QVBoxLayout();
     QHBoxLayout *buttonMainLayout = new QHBoxLayout();
     if (m_svg->hasElement("picture")) {
-        buttonMainLayout->addSpacing(m_svg->elementRect("picture").toRect().width() + 12);
+        buttonMainLayout->addSpacing(m_svg->elementRect("picture").toRect().right() + 12);
     }
     buttonMainLayout->addStretch();
     buttonMainLayout->addLayout(buttonLayout);
