@@ -85,15 +85,15 @@
            </size>
           </property>
           <property name="currentIndex" >
-           <number>0</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="page" >
            <property name="geometry" >
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>493</width>
-             <height>174</height>
+             <width>466</width>
+             <height>167</height>
             </rect>
            </property>
            <layout class="QGridLayout" >
@@ -329,8 +329,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>490</width>
-             <height>179</height>
+             <width>466</width>
+             <height>167</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" >
@@ -418,7 +418,7 @@
                  <enum>QDateTimeEdit::HourSection</enum>
                 </property>
                 <property name="displayFormat" >
-                 <string>hh 'Hours' mm 'Mins' ss 'Secs'</string>
+                 <string comment="Please do not change the quotes ' and translate only the content of the quotes. " >hh 'Hours' mm 'Mins' ss 'Secs'</string>
                 </property>
                 <property name="time" >
                  <time>
