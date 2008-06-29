@@ -53,6 +53,7 @@ class PLASMA_EXPORT ClockApplet : public Plasma::Applet
 
     protected:
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
     protected Q_SLOTS:
         void setCurrentTimezone(const QString &tz);

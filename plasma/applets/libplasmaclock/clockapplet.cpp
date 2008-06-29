@@ -30,10 +30,11 @@
 #include <QtGui/QGraphicsSceneMouseEvent>
 #include <QtCore/QDate>
 
-#include <KDebug>
-#include <KDialog>
 #include <KColorScheme>
 #include <KDatePicker>
+#include <KDebug>
+#include <KDialog>
+#include <KGlobalSettings>
 
 #include <plasma/dataengine.h>
 #include <plasma/dialog.h>
@@ -50,6 +51,7 @@ public:
     Ui::calendar calendarUi;
     Plasma::Dialog *calendar;
     QString timezone;
+    QPoint clicked;
 };
 
 ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
@@ -78,9 +80,20 @@ void ClockApplet::updateToolTipContent() {
 void ClockApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->buttons() == Qt::LeftButton) {
+        kDebug() << d->clicked;
+        d->clicked = event->scenePos().toPoint();
+        event->setAccepted(true);
+        return;
+    }
+
+    Applet::mousePressEvent(event);
+}
+
+void ClockApplet::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    if ((d->clicked - event->scenePos().toPoint()).manhattanLength() <
+        KGlobalSettings::dndEventDelay()) {
         showCalendar(event);
-    } else {
-        event->ignore();
     }
 }
 
