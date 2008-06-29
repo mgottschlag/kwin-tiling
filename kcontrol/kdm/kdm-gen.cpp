@@ -56,7 +56,8 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 
 	useThemeCheck = new QCheckBox( i18n("&Use themed greeter"), box );
 	connect( useThemeCheck, SIGNAL(toggled( bool )), SLOT(slotUseThemeChanged()) );
-	useThemeCheck->setWhatsThis( i18n("Enable this if you would like to use a themed Login Manager.") );
+	useThemeCheck->setWhatsThis( i18n(
+		"Enable this if you would like to use a themed Login Manager.") );
 	grid->addWidget( useThemeCheck, 0, 0, 1, 2 );
 
 	guicombo = new KBackedComboBox( box );
@@ -68,8 +69,8 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	connect( guicombo, SIGNAL(activated( int )), SIGNAL(changed()) );
 	grid->addWidget( label, 1, 0 );
 	grid->addWidget( guicombo, 1, 1 );
-	wtstr = i18n("You can choose a basic GUI style here that will be "
-	             "used by KDM only.");
+	wtstr = i18n(
+		"You can choose a basic GUI style here that will be used by KDM only.");
 	label->setWhatsThis( wtstr );
 	guicombo->setWhatsThis( wtstr );
 
@@ -82,8 +83,8 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	connect( colcombo, SIGNAL(activated( int )), SIGNAL(changed()) );
 	grid->addWidget( label, 2, 0 );
 	grid->addWidget( colcombo, 2, 1 );
-	wtstr = i18n("You can choose a basic Color Scheme here that will be "
-	             "used by KDM only.");
+	wtstr = i18n(
+		"You can choose a basic Color Scheme here that will be used by KDM only.");
 	label->setWhatsThis( wtstr );
 	colcombo->setWhatsThis( wtstr );
 
@@ -103,8 +104,9 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	label->setBuddy( langcombo );
 	grid->addWidget( label, 0, 0 );
 	grid->addWidget( langcombo, 0, 1 );
-	wtstr = i18n("Here you can choose the language used by KDM. This setting does not affect"
-	             " a user's personal settings; that will take effect after login.");
+	wtstr = i18n(
+		"Here you can choose the language used by KDM. This setting does not "
+		"affect a user's personal settings; that will take effect after login.");
 	label->setWhatsThis( wtstr );
 	langcombo->setWhatsThis( wtstr );
 
@@ -117,7 +119,9 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	label = new QLabel( i18nc("... font", "&General:"), box );
 	stdFontChooser = new KFontRequester( box );
 	label->setBuddy( stdFontChooser );
-	stdFontChooser->setWhatsThis( i18n("This changes the font which is used for all the text in the login manager except for the greeting and failure messages.") );
+	stdFontChooser->setWhatsThis( i18n(
+		"This changes the font which is used for all the text in the login manager "
+		"except for the greeting and failure messages.") );
 	connect( stdFontChooser, SIGNAL(fontSelected( const QFont& )), SIGNAL(changed()) );
 	grid->addWidget( label, 0, 0 );
 	grid->addWidget( stdFontChooser, 0, 1 );
@@ -125,7 +129,8 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	label = new QLabel( i18nc("font for ...", "&Failure:"), box );
 	failFontChooser = new KFontRequester( box );
 	label->setBuddy( failFontChooser );
-	failFontChooser->setWhatsThis( i18n("This changes the font which is used for failure messages in the login manager.") );
+	failFontChooser->setWhatsThis( i18n(
+		"This changes the font which is used for failure messages in the login manager.") );
 	connect( failFontChooser, SIGNAL(fontSelected( const QFont& )), SIGNAL(changed()) );
 	grid->addWidget( label, 1, 0 );
 	grid->addWidget( failFontChooser, 1, 1 );
@@ -133,14 +138,16 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 	label = new QLabel( i18nc("font for ...", "Gree&ting:"), box );
 	greetingFontChooser = new KFontRequester( box );
 	label->setBuddy( greetingFontChooser );
-	greetingFontChooser->setWhatsThis( i18n("This changes the font which is used for the login manager's greeting.") );
+	greetingFontChooser->setWhatsThis( i18n(
+		"This changes the font which is used for the login manager's greeting.") );
 	connect( greetingFontChooser, SIGNAL(fontSelected( const QFont& )), SIGNAL(changed()) );
 	grid->addWidget( label, 2, 0 );
 	grid->addWidget( greetingFontChooser, 2, 1 );
 
 	aacb = new QCheckBox( i18n("Use anti-aliasing for fonts"), box );
-	aacb->setWhatsThis( i18n("If you check this box and your X-Server has the Xft extension, "
-	                         "fonts will be antialiased (smoothed) in the login dialog.") );
+	aacb->setWhatsThis( i18n(
+		"If you check this box and your X-Server has the Xft extension, "
+		"fonts will be antialiased (smoothed) in the login dialog.") );
 	connect( aacb, SIGNAL(toggled( bool )), SIGNAL(changed()) );
 	grid->addWidget( aacb, 3, 0, 1, 2 );
 

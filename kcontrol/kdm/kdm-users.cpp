@@ -92,19 +92,21 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	if (!testDir.exists() && !testDir.mkdir( testDir.absolutePath() ) && !geteuid())
 		KMessageBox::sorry( this, i18n("Unable to create folder %1", testDir.absolutePath() ) );
 	if (!getpwnam( "nobody" ) && !geteuid())
-		KMessageBox::sorry( this,
-			i18n("User 'nobody' does not exist. "
-			     "Displaying user images will not work in KDM.") );
+		KMessageBox::sorry( this, i18n(
+			"User 'nobody' does not exist. "
+			"Displaying user images will not work in KDM.") );
 
 	m_defaultText = i18n("<placeholder>default</placeholder>");
 
 	QString wtstr;
 
-	minGroup = new QGroupBox( i18nc("@title:group UIDs belonging to system users like 'cron'",
-	                                "System U&IDs"), this );
-	minGroup->setWhatsThis( i18n("Users with a UID (numerical user identification) outside this range will not be listed by KDM and this setup dialog."
-	                             " Note that users with the UID 0 (typically root) are not affected by this and must be"
-	                             " explicitly excluded in \"Inverse selection\" mode.") );
+	minGroup = new QGroupBox( i18nc(
+		"@title:group UIDs belonging to system users like 'cron'", "System U&IDs"), this );
+	minGroup->setWhatsThis( i18n(
+		"Users with a UID (numerical user identification) outside this range "
+		"will not be listed by KDM and this setup dialog. "
+		"Note that users with the UID 0 (typically root) are not affected by "
+		"this and must be explicitly excluded in \"Inverse selection\" mode.") );
 	QSizePolicy sp_ign_fix( QSizePolicy::Ignored, QSizePolicy::Fixed );
 	QValidator *valid = new QIntValidator( 0, 999999, minGroup );
 	QLabel *minlab = new QLabel( i18nc("UIDs", "Below:"), minGroup );
@@ -129,20 +131,24 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 
 	usrGroup = new QGroupBox( i18nc("@title:group", "Users"), this );
 	cbshowlist = new QCheckBox( i18nc("... of users", "Show list"), usrGroup );
-	cbshowlist->setWhatsThis( i18n("If this option is checked, KDM will show a list of users,"
-	                               " so users can click on their name or image rather than typing in their login.") );
+	cbshowlist->setWhatsThis( i18n(
+		"If this option is checked, KDM will show a list of users, so users can "
+		"click on their name or image rather than typing in their login.") );
 	cbcomplete = new QCheckBox( i18nc("user ...", "Autocompletion"), usrGroup );
-	cbcomplete->setWhatsThis( i18n("If this option is checked, KDM will automatically complete"
-	                               " user names while they are typed in the line edit.") );
-	cbinverted = new QCheckBox( i18nc("@option:check mode of the user selection",
-	                                  "Inverse selection"), usrGroup );
-	cbinverted->setWhatsThis( i18n("This option specifies how the users for \"Show list\" and \"Autocompletion\""
-	                               " are selected in the \"Select users and groups\" list: "
-	                               "If not checked, select only the checked users. "
-	                               "If checked, select all non-system users, except the checked ones.") );
+	cbcomplete->setWhatsThis( i18n(
+		"If this option is checked, KDM will automatically complete "
+		"user names while they are typed in the line edit.") );
+	cbinverted = new QCheckBox( i18nc(
+		"@option:check mode of the user selection", "Inverse selection"), usrGroup );
+	cbinverted->setWhatsThis( i18n(
+		"This option specifies how the users for \"Show list\" and \"Autocompletion\" "
+		"are selected in the \"Select users and groups\" list: "
+		"If not checked, select only the checked users. "
+		"If checked, select all non-system users, except the checked ones.") );
 	cbusrsrt = new QCheckBox( i18n("Sor&t users"), usrGroup );
-	cbusrsrt->setWhatsThis( i18n("If this is checked, KDM will alphabetically sort the user list."
-	                             " Otherwise users are listed in the order they appear in the password file.") );
+	cbusrsrt->setWhatsThis( i18n(
+		"If this is checked, KDM will alphabetically sort the user list. "
+		"Otherwise users are listed in the order they appear in the password file.") );
 	QButtonGroup *buttonGroup = new QButtonGroup( usrGroup );
 	buttonGroup->setExclusive( false );
 	connect( buttonGroup, SIGNAL(buttonClicked( int )), SLOT(slotShowOpts()) );
@@ -163,7 +169,9 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	optinlv = new K3ListView( this );
 	optinlv->addColumn( i18n("Selected Users") );
 	optinlv->setResizeMode( Q3ListView::LastColumn );
-	optinlv->setWhatsThis( i18n("KDM will show all checked users. Entries denoted with '@' are user groups. Checking a group is like checking all users in that group.") );
+	optinlv->setWhatsThis( i18n(
+		"KDM will show all checked users. Entries denoted with '@' are user groups. "
+		"Checking a group is like checking all users in that group.") );
 	wstack->addWidget( optinlv );
 	connect( optinlv, SIGNAL(clicked( Q3ListViewItem * )),
 	         SLOT(slotUpdateOptIn( Q3ListViewItem * )) );
@@ -172,19 +180,22 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	optoutlv = new K3ListView( this );
 	optoutlv->addColumn( i18n("Excluded Users") );
 	optoutlv->setResizeMode( Q3ListView::LastColumn );
-	optoutlv->setWhatsThis( i18n("KDM will show all non-checked non-system users. Entries denoted with '@' are user groups. Checking a group is like checking all users in that group.") );
+	optoutlv->setWhatsThis( i18n(
+		"KDM will show all non-checked non-system users. Entries denoted with '@' "
+		"are user groups. Checking a group is like checking all users in that group.") );
 	wstack->addWidget( optoutlv );
 	connect( optoutlv, SIGNAL(clicked( Q3ListViewItem * )),
 	         SLOT(slotUpdateOptOut( Q3ListViewItem * )) );
 	connect( optoutlv, SIGNAL(clicked( Q3ListViewItem * )),
 	         SIGNAL(changed()) );
 
-	faceGroup = new QGroupBox( i18nc("@title:group source for user faces",
-	                                 "User Image Source"), this );
-	faceGroup->setWhatsThis( i18n("Here you can specify where KDM will obtain the images that represent users."
-	                              " \"System\" represents the global folder; these are the pictures you can set below."
-	                              " \"User\" means that KDM should read the user's $HOME/.face.icon file."
-	                              " The two selections in the middle define the order of preference if both sources are available.") );
+	faceGroup = new QGroupBox( i18nc(
+		"@title:group source for user faces", "User Image Source"), this );
+	faceGroup->setWhatsThis( i18n(
+		"Here you can specify where KDM will obtain the images that represent users. "
+		"\"System\" represents the global folder; these are the pictures you can set below. "
+		"\"User\" means that KDM should read the user's $HOME/.face.icon file. "
+		"The two selections in the middle define the order of preference if both sources are available.") );
 	rbadmonly = new QRadioButton( i18nc("@option:radio image source", "System"), faceGroup );
 	rbprefadm = new QRadioButton( i18nc("@option:radio image source", "System, user"), faceGroup );
 	rbprefusr = new QRadioButton( i18nc("@option:radio image source", "User, system"), faceGroup );
@@ -202,8 +213,8 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	box->addWidget( rbprefusr );
 	box->addWidget( rbusronly );
 
-	QGroupBox *picGroup = new QGroupBox( i18nc("@title:group user face assignments",
-	                                           "User Images"), this );
+	QGroupBox *picGroup = new QGroupBox( i18nc(
+		"@title:group user face assignments", "User Images"), this );
 	usercombo = new KComboBox( picGroup );
 	usercombo->setWhatsThis( i18n("The user the image below belongs to.") );
 	connect( usercombo, SIGNAL(activated( int )),
@@ -218,11 +229,14 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 	connect( userbutton, SIGNAL(clicked()),
 	         SLOT(slotUserButtonClicked()) );
 	userbutton->setToolTip( i18n("Click or drop an image here") );
-	userbutton->setWhatsThis( i18n("Here you can see the image assigned to the user selected in the combo box above. Click on the image button to select from a list"
-	                               " of images or drag and drop your own image on to the button (e.g. from Konqueror).") );
-	rstuserbutton = new QPushButton( i18nc("@action:button assign default user face",
-	                                       "R&eset"), picGroup );
-	rstuserbutton->setWhatsThis( i18n("Click this button to make KDM use the default image for the selected user.") );
+	userbutton->setWhatsThis( i18n(
+		"Here you can see the image assigned to the user selected in the combo "
+		"box above. Click on the image button to select from a list of images "
+		"or drag and drop your own image on to the button (e.g. from Konqueror).") );
+	rstuserbutton = new QPushButton( i18nc(
+		"@action:button assign default user face", "R&eset"), picGroup );
+	rstuserbutton->setWhatsThis( i18n(
+		"Click this button to make KDM use the default image for the selected user.") );
 	connect( rstuserbutton, SIGNAL(clicked()),
 	         SLOT(slotUnsetUserPix()) );
 	QGridLayout *hlpl = new QGridLayout( picGroup );

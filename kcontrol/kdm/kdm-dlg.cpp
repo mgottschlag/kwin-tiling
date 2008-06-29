@@ -70,19 +70,20 @@ KDMDialogWidget::KDMDialogWidget( QWidget *parent )
 	connect( greetstr_lined, SIGNAL(textChanged( const QString& )),
 	         SIGNAL(changed()) );
 	hlay->addWidget( greetstr_lined );
-	wtstr = i18n("<p>This is the \"headline\" for KDM's login window. You may want to "
-	             "put some nice greeting or information about the operating system here.</p>"
-	             "<p>KDM will substitute the following character pairs with the "
-	             "respective contents:</p>"
-	             "<ul>"
-	             "<li>%d -> current display</li>"
-	             "<li>%h -> host name, possibly with domain name</li>"
-	             "<li>%n -> node name, most probably the host name without domain name</li>"
-	             "<li>%s -> the operating system</li>"
-	             "<li>%r -> the operating system's version</li>"
-	             "<li>%m -> the machine (hardware) type</li>"
-	             "<li>%% -> a single %</li>"
-	             "</ul>" );
+	wtstr = i18n(
+		"<p>This is the \"headline\" for KDM's login window. You may want to "
+		"put some nice greeting or information about the operating system here.</p>"
+		"<p>KDM will substitute the following character pairs with the "
+		"respective contents:</p>"
+		"<ul>"
+		"<li>%d -> current display</li>"
+		"<li>%h -> host name, possibly with domain name</li>"
+		"<li>%n -> node name, most probably the host name without domain name</li>"
+		"<li>%s -> the operating system</li>"
+		"<li>%r -> the operating system's version</li>"
+		"<li>%m -> the machine (hardware) type</li>"
+		"<li>%% -> a single %</li>"
+		"</ul>");
 	label->setWhatsThis( wtstr );
 	greetstr_lined->setWhatsThis( wtstr );
 
@@ -125,9 +126,10 @@ KDMDialogWidget::KDMDialogWidget( QWidget *parent )
 	hglay->addWidget( logoLabel, 1, 0, Qt::AlignVCenter );
 	hglay->addWidget( logobutton, 1, 1, Qt::AlignCenter );
 	hglay->setRowMinimumHeight( 1, 110 );
-	wtstr = i18n("Click here to choose an image that KDM will display. "
-	             "You can also drag and drop an image onto this button "
-	             "(e.g. from Konqueror).");
+	wtstr = i18n(
+		"Click here to choose an image that KDM will display. "
+		"You can also drag and drop an image onto this button "
+		"(e.g. from Konqueror).");
 	logoLabel->setWhatsThis( wtstr );
 	logobutton->setWhatsThis( wtstr );
 
@@ -317,8 +319,9 @@ void KDMDialogWidget::defaults()
 
 QString KDMDialogWidget::quickHelp() const
 {
-	return i18n("<h1>KDM - Dialog</h1> Here you can configure the basic appearance"
-	            " of the KDM login manager in dialog mode, i.e. a greeting string, an icon etc.");
+	return i18n(
+		"<h1>KDM - Dialog</h1> Here you can configure the basic appearance of "
+		"the KDM login manager in dialog mode, i.e. a greeting string, an icon etc.");
 }
 
 #include "kdm-dlg.moc"

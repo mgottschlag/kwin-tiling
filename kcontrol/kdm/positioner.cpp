@@ -93,10 +93,10 @@ Positioner::Positioner( QWidget *parent )
 	m_dlg->setPalette( pal2 );
 	m_ptr = new QLabel( m_screen );
 	m_ptr->setPixmap( m_anchor );
-	QString wts(
-		i18n("Drag the anchor to move the center of the dialog to the desired position. "
-		     "Keyboard control is possible as well: Use the arrow keys or Home to center. "
-		     "Note that the actual proportions of the dialog are probably different.") );
+	QString wts( i18n(
+		"Drag the anchor to move the center of the dialog to the desired position. "
+		"Keyboard control is possible as well: Use the arrow keys or Home to center. "
+		"Note that the actual proportions of the dialog are probably different.") );
 	m_frame->setWhatsThis( wts );
 	m_screen->setWhatsThis( wts );
 	m_ptr->setWhatsThis( wts );

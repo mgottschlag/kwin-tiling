@@ -83,9 +83,10 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	autoLockCheck = new QCheckBox( i18n("Loc&k session"), alGroup );
 	laygroup2->addWidget( autoLockCheck );
 	connect( autoLockCheck, SIGNAL(toggled( bool )), SIGNAL(changed()) );
-	autoLockCheck->setWhatsThis( i18n("The automatically started session "
-	                                  "will be locked immediately (provided it is a KDE session). This can "
-	                                  "be used to obtain a super-fast login restricted to one user.") );
+	autoLockCheck->setWhatsThis( i18n(
+		"The automatically started session "
+		"will be locked immediately (provided it is a KDE session). This can "
+		"be used to obtain a super-fast login restricted to one user.") );
 
 	puGroup = new QGroupBox( i18nc("@title:group", "Preselect User"), this );
 
@@ -93,11 +94,13 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 
 	npRadio = new QRadioButton( i18nc("@option:radio preselected user", "&None"), puGroup );
 	ppRadio = new QRadioButton( i18nc("@option:radio preselected user", "Prev&ious"), puGroup );
-	ppRadio->setWhatsThis( i18n("Preselect the user that logged in previously. "
-	                            "Use this if this computer is usually used several consecutive times by one user.") );
+	ppRadio->setWhatsThis( i18n(
+		"Preselect the user that logged in previously. "
+		"Use this if this computer is usually used several consecutive times by one user.") );
 	spRadio = new QRadioButton( i18nc("@option:radio preselected user", "Specif&y"), puGroup );
-	spRadio->setWhatsThis( i18n("Preselect the user specified in the combo box below. "
-	                            "Use this if this computer is predominantly used by a certain user.") );
+	spRadio->setWhatsThis( i18n(
+		"Preselect the user specified in the combo box below. "
+		"Use this if this computer is predominantly used by a certain user.") );
 	QButtonGroup *buttonGroup = new QButtonGroup( puGroup );
 	connect( buttonGroup, SIGNAL(buttonClicked( int )), SLOT(slotPresChanged()) );
 	connect( buttonGroup, SIGNAL(buttonClicked( int )), SIGNAL(changed()) );
@@ -115,9 +118,10 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	pu_label = new QLabel( i18n("Us&er:"), puGroup );
 	pu_label->setBuddy( puserlb );
 	connect( puserlb, SIGNAL(editTextChanged( const QString & )), SIGNAL(changed()) );
-	wtstr = i18n("Select the user to be preselected for login. "
-	             "This box is editable, so you can specify an arbitrary non-existent "
-	             "user to mislead possible attackers.");
+	wtstr = i18n(
+		"Select the user to be preselected for login. "
+		"This box is editable, so you can specify an arbitrary non-existent "
+		"user to mislead possible attackers.");
 	pu_label->setWhatsThis( wtstr );
 	puserlb->setWhatsThis( wtstr );
 	QBoxLayout *hlpl = new QHBoxLayout();
@@ -129,10 +133,11 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	hlpl->addStretch( 1 );
 	cbjumppw = new QCheckBox( i18nc("@option:check action", "Focus pass&word"), puGroup );
 	laygroup5->addWidget( cbjumppw );
-	cbjumppw->setWhatsThis( i18n("When this option is on, KDM will place the cursor "
-	                             "in the password field instead of the user field after preselecting a user. "
-	                             "Use this to save one key press per login, if the preselection usually does not need to "
-	                             "be changed.") );
+	cbjumppw->setWhatsThis( i18n(
+		"When this option is on, KDM will place the cursor "
+		"in the password field instead of the user field after preselecting a user. "
+		"Use this to save one key press per login, if the preselection usually "
+		"does not need to be changed.") );
 	connect( cbjumppw, SIGNAL(toggled( bool )), SIGNAL(changed()) );
 
 	npGroup = new QGroupBox( i18n("Enable Password-&Less Logins"), this );
@@ -141,10 +146,11 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 
 	npGroup->setCheckable( true );
 
-	npGroup->setWhatsThis( i18n("When this option is checked, the checked users from"
-	                            " the list below will be allowed to log in without entering their"
-	                            " password. This applies only to KDM's graphical login."
-	                            " Think twice before enabling this!") );
+	npGroup->setWhatsThis( i18n(
+		"When this option is checked, the checked users from "
+		"the list below will be allowed to log in without entering their "
+		"password. This applies only to KDM's graphical login. "
+		"Think twice before enabling this!") );
 
 	connect( npGroup, SIGNAL(toggled( bool )), SIGNAL(changed()) );
 
@@ -156,8 +162,10 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	npuserlv->addColumn( QString() );
 	npuserlv->header()->hide();
 	npuserlv->setResizeMode( Q3ListView::LastColumn );
-	npuserlv->setWhatsThis( i18n("Check all users you want to allow a password-less login for."
-	                             " Entries denoted with '@' are user groups. Checking a group is like checking all users in that group.") );
+	npuserlv->setWhatsThis( i18n(
+		"Check all users you want to allow a password-less login for. "
+		"Entries denoted with '@' are user groups. Checking a group is like "
+		"checking all users in that group.") );
 	connect( npuserlv, SIGNAL(clicked( Q3ListViewItem * )),
 	         SIGNAL(changed()) );
 
@@ -166,11 +174,12 @@ KDMConvenienceWidget::KDMConvenienceWidget( QWidget *parent )
 	laygroup4->setSpacing( KDialog::spacingHint() );
 
 	cbarlen = new QCheckBox( i18n("Automatically log in again after &X server crash"), btGroup );
-	cbarlen->setWhatsThis( i18n("When this option is on, a user will be"
-	                            " logged in again automatically when their session is interrupted by an"
-	                            " X server crash; note that this can open a security hole: if you use"
-	                            " a screen locker than KDE's integrated one, this will make"
-	                            " circumventing a password-secured screen lock possible.") );
+	cbarlen->setWhatsThis( i18n(
+		"When this option is on, a user will be "
+		"logged in again automatically when their session is interrupted by an "
+		"X server crash; note that this can open a security hole: if you use "
+		"a screen locker than KDE's integrated one, this will make "
+		"circumventing a password-secured screen lock possible.") );
 	laygroup4->addWidget( cbarlen );
 	connect( cbarlen, SIGNAL(toggled( bool )), SIGNAL(changed()) );
 

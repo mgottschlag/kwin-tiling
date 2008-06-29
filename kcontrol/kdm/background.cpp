@@ -38,13 +38,14 @@ KBackground::KBackground( QWidget *parent )
 
 	// Enabling checkbox
 	m_pCBEnable = new QCheckBox( i18n("E&nable background"), this );
-	m_pCBEnable->setWhatsThis(
-		i18n("If this is checked, KDM will use the settings below for the background."
-		     " If it is disabled, you have to look after the background yourself."
-		     " This is done by running some program (possibly xsetroot) in the script"
-		     " specified in the Setup= option in kdmrc (usually Xsetup).") );
+	m_pCBEnable->setWhatsThis( i18n(
+		"If this is checked, KDM will use the settings below for the background."
+		" If it is disabled, you have to look after the background yourself."
+		" This is done by running some program (possibly xsetroot) in the script"
+		" specified in the Setup= option in kdmrc (usually Xsetup).") );
 	m_simpleConf = KSharedConfig::openConfig(
-		config->group( "X-*-Greeter" ).readEntry( "BackgroundCfg", KDE_CONFDIR "/kdm/backgroundrc" ) );
+		config->group( "X-*-Greeter" ).readEntry(
+			"BackgroundCfg", KDE_CONFDIR "/kdm/backgroundrc" ) );
 	m_background = new BGDialog( this, m_simpleConf );
 
 	connect( m_background, SIGNAL(changed( bool )), SIGNAL(changed()) );

@@ -58,15 +58,18 @@ KDMSessionsWidget::KDMSessionsWidget( QWidget *parent )
 	sdrcombo->insertItem( SdRoot, i18nc("@item:inlistbox allow shutdown", "Only Root") );
 	sdrcombo->insertItem( SdNone, i18nc("@item:inlistbox allow shutdown", "Nobody") );
 	connect( sdrcombo, SIGNAL(activated( int )), SIGNAL(changed()) );
-	group0->setWhatsThis( i18n("Here you can select who is allowed to shutdown"
-	                           " the computer using KDM. You can specify different values for local (console) and remote displays. "
-	                           "Possible values are:<ul>"
-	                           " <li><em>Everybody:</em> everybody can shutdown the computer using KDM</li>"
-	                           " <li><em>Only root:</em> KDM will only allow shutdown after the user has entered the root password</li>"
-	                           " <li><em>Nobody:</em> nobody can shutdown the computer using KDM</li></ul>") );
+	group0->setWhatsThis( i18n(
+		"Here you can select who is allowed to shutdown the computer using KDM. "
+		"You can specify different values for local (console) and remote displays. "
+		"Possible values are:<ul>"
+		" <li><em>Everybody:</em> everybody can shutdown the computer using KDM</li>"
+		" <li><em>Only root:</em> KDM will only allow shutdown after the user has "
+			"entered the root password</li>"
+		" <li><em>Nobody:</em> nobody can shutdown the computer using KDM</li></ul>") );
 
 
-	QGroupBox *group1 = new QGroupBox( i18nc("@title:group shell commands for shutdown", "Commands"), this );
+	QGroupBox *group1 = new QGroupBox( i18nc(
+		"@title:group shell commands for shutdown", "Commands"), this );
 
 	shutdown_lined = new KUrlRequester( group1 );
 	QLabel *shutdown_label = new QLabel( i18nc("command for ...", "H&alt:"), group1 );

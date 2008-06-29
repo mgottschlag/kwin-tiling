@@ -106,31 +106,31 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 	about->addAuthor( ki18n("Oswald Buddenhagen"), ki18n("Current maintainer"), "ossi@kde.org" );
 	about->addAuthor( ki18n("Stephen Leaf"), KLocalizedString(), "smileaf@smileaf.org" );
 
-	setQuickHelp(
-		i18n("<h1>Login Manager</h1> In this module you can configure the "
-		     "various aspects of the KDE Login Manager. This includes "
-		     "the look and feel as well as the users that can be "
-		     "selected for login. Note that you can only make changes "
-		     "if you run the module with superuser rights. If you have not started the KDE "
-		     "Control Center with superuser rights (which is absolutely the right thing to "
-		     "do, by the way), click on the <em>Modify</em> button to acquire "
-		     "superuser rights. You will be asked for the superuser password."
-		     "<h2>General</h2> On this tab page, you can configure parts of "
-		     "the Login Manager's look, and which language it should use. "
-		     "The language settings made here have no influence on "
-		     "the user's language settings."
-		     "<h2>Dialog</h2>Here you can configure the look of the \"classical\" "
-		     "dialog based mode if you have chosen to use it. "
-		     "<h2>Background</h2>If you want to set a special background for the dialog based "
-		     "login screen, this is where to do it."
-		     "<h2>Themes</h2> Here you can specify a theme to be used by the Login Manager."
-		     "<h2>Shutdown</h2> Here you can specify who is allowed to shutdown/reboot the machine "
-		     "and whether a boot manager should be used."
-		     "<h2>Users</h2>On this tab page, you can select which users the Login Manager "
-		     "will offer you for logging in."
-		     "<h2>Convenience</h2> Here you can specify a user to be logged in automatically, "
-		     "users not needing to provide a password to log in, and other convenience features.<br/>"
-		     "Note, that these settings are security holes by their nature, so use them very carefully.") );
+	setQuickHelp( i18n(
+		"<h1>Login Manager</h1> In this module you can configure the "
+		"various aspects of the KDE Login Manager. This includes "
+		"the look and feel as well as the users that can be "
+		"selected for login. Note that you can only make changes "
+		"if you run the module with superuser rights. If you have not started the KDE "
+		"Control Center with superuser rights (which is absolutely the right thing to "
+		"do, by the way), click on the <em>Modify</em> button to acquire "
+		"superuser rights. You will be asked for the superuser password."
+		"<h2>General</h2> On this tab page, you can configure parts of "
+		"the Login Manager's look, and which language it should use. "
+		"The language settings made here have no influence on "
+		"the user's language settings."
+		"<h2>Dialog</h2>Here you can configure the look of the \"classical\" "
+		"dialog based mode if you have chosen to use it. "
+		"<h2>Background</h2>If you want to set a special background for the dialog based "
+		"login screen, this is where to do it."
+		"<h2>Themes</h2> Here you can specify a theme to be used by the Login Manager."
+		"<h2>Shutdown</h2> Here you can specify who is allowed to shutdown/reboot the machine "
+		"and whether a boot manager should be used."
+		"<h2>Users</h2>On this tab page, you can select which users the Login Manager "
+		"will offer you for logging in."
+		"<h2>Convenience</h2> Here you can specify a user to be logged in automatically, "
+		"users not needing to provide a password to log in, and other convenience features.<br/>"
+		"Note, that these settings are security holes by their nature, so use them very carefully.") );
 
 	setAboutData( about );
 
