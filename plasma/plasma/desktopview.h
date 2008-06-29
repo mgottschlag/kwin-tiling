@@ -98,6 +98,7 @@ public slots:
 
 protected:
     void wheelEvent(QWheelEvent *event);
+    void drawBackground(QPainter *painter, const QRectF &rect);
 
 private:
     Plasma::ZoomLevel m_zoomLevel;
