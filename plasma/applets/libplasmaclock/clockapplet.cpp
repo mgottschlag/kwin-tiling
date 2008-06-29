@@ -80,8 +80,7 @@ void ClockApplet::updateToolTipContent() {
 void ClockApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->buttons() == Qt::LeftButton) {
-        kDebug() << d->clicked;
-        d->clicked = event->scenePos().toPoint();
+        d->clicked = scenePos().toPoint();
         event->setAccepted(true);
         return;
     }
@@ -91,7 +90,7 @@ void ClockApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void ClockApplet::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if ((d->clicked - event->scenePos().toPoint()).manhattanLength() <
+    if ((d->clicked - scenePos().toPoint()).manhattanLength() <
         KGlobalSettings::dndEventDelay()) {
         showCalendar(event);
     }
