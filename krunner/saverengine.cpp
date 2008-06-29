@@ -340,7 +340,7 @@ xautolock_corner_t SaverEngine::applyManualSettings(int action)
 
 uint SaverEngine::GetSessionIdleTime()
 {
-    return mXAutoLock->idleTime();
+    return mXAutoLock ? mXAutoLock->idleTime() : 0;
 }
 
 uint SaverEngine::GetActiveTime()
