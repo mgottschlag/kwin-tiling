@@ -166,9 +166,9 @@ void KDMSessionsWidget::writeSD( KComboBox *combo, KConfigGroup group )
 
 void KDMSessionsWidget::save()
 {
-	writeSD( sdlcombo, config->group("X-:*-Core") );
+	writeSD( sdlcombo, config->group( "X-:*-Core" ) );
 
-	writeSD( sdrcombo, config->group("X-*-Core") );
+	writeSD( sdrcombo, config->group( "X-*-Core" ) );
 
 	KConfigGroup configGrp = config->group( "Shutdown" );
 	configGrp.writeEntry( "HaltCmd", shutdown_lined->url().path(), KConfig::Persistent );
@@ -192,9 +192,9 @@ void KDMSessionsWidget::readSD( KComboBox *combo, const QString &def, KConfigGro
 
 void KDMSessionsWidget::load()
 {
-	readSD( sdlcombo, "All", config->group("X-:*-Core") );
+	readSD( sdlcombo, "All", config->group( "X-:*-Core" ) );
 
-	readSD( sdrcombo, "Root", config->group("X-*-Core") );
+	readSD( sdrcombo, "Root", config->group( "X-*-Core" ) );
 
 	KConfigGroup configGrp = config->group( "Shutdown" );
 	restart_lined->setUrl( configGrp.readEntry( "RebootCmd", "/sbin/reboot" ) );

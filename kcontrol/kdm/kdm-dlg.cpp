@@ -159,7 +159,7 @@ void KDMDialogWidget::makeReadOnly()
 	positioner->makeReadOnly();
 }
 
-bool KDMDialogWidget::setLogo(const QString &logo)
+bool KDMDialogWidget::setLogo( const QString &logo )
 {
 	QString flogo = logo.isEmpty() ?
 		KStandardDirs::locate( "data", QLatin1String("kdm/pics/kdelogo.png") ) :
@@ -188,7 +188,7 @@ void KDMDialogWidget::slotLogoButtonClicked()
 	KImageFilePreview *imagePreview = new KImageFilePreview( &dialog );
 	dialog.setPreviewWidget( imagePreview );
 	if (dialog.exec() == QDialog::Accepted &&
-	    setLogo(dialog.selectedFile() ))
+	    setLogo( dialog.selectedFile() ))
 		changed();
 }
 
@@ -234,7 +234,7 @@ void KDMDialogWidget::iconLoaderDropEvent( QDropEvent *e )
 		// we gotta check if it is a non-local file and make a tmp copy at the hd.
 		if (!url->isLocalFile()) {
 			pixurl.setPath( KGlobal::dirs()->
-				resourceDirs("data").last() + "kdm/pics/" + url->fileName() );
+				resourceDirs( "data" ).last() + "kdm/pics/" + url->fileName() );
 			KIO::NetAccess::file_copy( *url, pixurl, parentWidget() );
 			istmp = true;
 		} else {
@@ -264,9 +264,10 @@ void KDMDialogWidget::save()
 	configGrp.writeEntry( "GreetString", greetstr_lined->text() );
 
 	configGrp.writeEntry( "LogoArea", noneRadio->isChecked() ? "None" :
-	                    logoRadio->isChecked() ? "Logo" : "Clock" );
+	                      logoRadio->isChecked() ? "Logo" : "Clock" );
 
-	configGrp.writeEntry( "LogoPixmap", KIconLoader::global()->iconPath( logopath, KIconLoader::Desktop, true ) );
+	configGrp.writeEntry( "LogoPixmap",
+		KIconLoader::global()->iconPath( logopath, KIconLoader::Desktop, true ) );
 
 	configGrp.writeEntry( "GreeterPos",
 		QString("%1,%2").arg( positioner->x() ).arg( positioner->y() ) );
@@ -279,7 +280,7 @@ void KDMDialogWidget::load()
 
 	// Read the greeting string
 	greetstr_lined->setText( configGrp.readEntry( "GreetString",
-	                                            i18n("Welcome to %s at %n") ) );
+	                                              i18n("Welcome to %s at %n") ) );
 
 	// Regular logo or clock
 	QString logoArea = configGrp.readEntry( "LogoArea", "Logo" );

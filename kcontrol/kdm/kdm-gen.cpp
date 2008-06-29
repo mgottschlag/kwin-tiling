@@ -96,7 +96,7 @@ KDMGeneralWidget::KDMGeneralWidget( QWidget *parent )
 
 	// The Language group box
 	langcombo = new KLanguageButton( box );
-	langcombo->showLanguageCodes(true);
+	langcombo->showLanguageCodes( true );
 	langcombo->loadAllLanguages();
 	connect( langcombo, SIGNAL(activated( const QString & )), SIGNAL(changed()) );
 	label = new QLabel( i18n("&Language:"), this );
@@ -167,7 +167,7 @@ void KDMGeneralWidget::loadColorSchemes( KBackedComboBox *combo )
 	for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
 	{
 		KConfig _config( *it, KConfig::SimpleConfig );
-		KConfigGroup config(&_config, "General" );
+		KConfigGroup config( &_config, "General" );
 
 		QString str;
 		if (!(str = config.readEntry( "Name" )).isEmpty())
@@ -179,14 +179,14 @@ void KDMGeneralWidget::loadColorSchemes( KBackedComboBox *combo )
 	}
 }
 
-void KDMGeneralWidget::loadGuiStyles(KBackedComboBox *combo)
+void KDMGeneralWidget::loadGuiStyles( KBackedComboBox *combo )
 {
 	// XXX: Global + local schemes
 	QStringList list = KGlobal::dirs()->
 		findAllResources( "data", "kstyle/themes/*.themerc", KStandardDirs::NoDuplicates );
 	for (QStringList::ConstIterator it = list.begin(); it != list.end(); ++it)
 	{
-		KConfig config( *it, KConfig::SimpleConfig);
+		KConfig config( *it, KConfig::SimpleConfig );
 
 		if (!(config.hasGroup( "KDE" ) && config.hasGroup( "Misc" )))
 			continue;
@@ -236,7 +236,7 @@ void KDMGeneralWidget::load()
 	guicombo->setCurrentId( configGrp.readEntry( "GUIStyle" ) );
 
 	// Check the Color Scheme
-	colcombo->setCurrentId( configGrp.readEntry("ColorScheme" ) );
+	colcombo->setCurrentId( configGrp.readEntry( "ColorScheme" ) );
 
 	// get the language
 	langcombo->setCurrentItem( configGrp.readEntry( "Language", "C" ) );

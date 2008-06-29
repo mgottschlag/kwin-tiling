@@ -87,7 +87,7 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 
 	// We assume that $kde_datadir/kdm exists, but better check for pics/ and pics/users,
 	// and create them if necessary.
-	m_userPixDir = config->group("X-*-Greeter").readEntry( "FaceDir", KGlobal::dirs()->resourceDirs( "data" ).last() + "kdm/faces" ) + '/';
+	m_userPixDir = config->group( "X-*-Greeter" ).readEntry( "FaceDir", KGlobal::dirs()->resourceDirs( "data" ).last() + "kdm/faces" ) + '/';
 	QDir testDir( m_userPixDir );
 	if (!testDir.exists() && !testDir.mkdir( testDir.absolutePath() ) && !geteuid())
 		KMessageBox::sorry( this, i18n("Unable to create folder %1", testDir.absolutePath() ) );
@@ -261,7 +261,7 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 
 void KDMUsersWidget::makeReadOnly()
 {
-        m_readOnly = true;
+	m_readOnly = true;
 	leminuid->setReadOnly( true );
 	lemaxuid->setReadOnly( true );
 	cbshowlist->setEnabled( false );
@@ -404,16 +404,16 @@ void KDMUsersWidget::save()
 	configGrp.writeEntry( "UserList", cbshowlist->isChecked() );
 	configGrp.writeEntry( "UserCompletion", cbcomplete->isChecked() );
 	configGrp.writeEntry( "ShowUsers",
-	                    cbinverted->isChecked() ? "NotHidden" : "Selected" );
+	                      cbinverted->isChecked() ? "NotHidden" : "Selected" );
 	configGrp.writeEntry( "SortUsers", cbusrsrt->isChecked() );
 
 	configGrp.writeEntry( "HiddenUsers", hiddenUsers );
 	configGrp.writeEntry( "SelectedUsers", selectedUsers );
 
 	configGrp.writeEntry( "FaceSource",
-	                    rbadmonly->isChecked() ? "AdminOnly" :
-	                    rbprefadm->isChecked() ? "PreferAdmin" :
-	                    rbprefusr->isChecked() ? "PreferUser" : "UserOnly" );
+	                      rbadmonly->isChecked() ? "AdminOnly" :
+	                      rbprefadm->isChecked() ? "PreferAdmin" :
+	                      rbprefusr->isChecked() ? "PreferUser" : "UserOnly" );
 }
 
 

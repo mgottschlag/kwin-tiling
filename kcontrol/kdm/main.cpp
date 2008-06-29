@@ -96,40 +96,41 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 	, updateOK( false )
 {
 	KAboutData *about =
-		new KAboutData( "kcmkdm", "kdmconfig", ki18n( "KDE Login Manager Config Module" ),
+		new KAboutData( "kcmkdm", "kdmconfig", ki18n("KDE Login Manager Config Module"),
 		                QByteArray(), KLocalizedString(), KAboutData::License_GPL,
-		                ki18n( "(c) 1996-2008 The KDM Authors" ), KLocalizedString(),
+		                ki18n("(c) 1996-2008 The KDM Authors"), KLocalizedString(),
 		                "http://developer.kde.org/~ossi/sw/kdm.html" );
 
-	about->addAuthor( ki18n("Thomas Tanghus"), ki18n( "Original author" ), "tanghus@earthling.net" );
+	about->addAuthor( ki18n("Thomas Tanghus"), ki18n("Original author"), "tanghus@earthling.net" );
 	about->addAuthor( ki18n("Steffen Hansen"), KLocalizedString(), "hansen@kde.org" );
-	about->addAuthor( ki18n("Oswald Buddenhagen"), ki18n( "Current maintainer" ), "ossi@kde.org" );
+	about->addAuthor( ki18n("Oswald Buddenhagen"), ki18n("Current maintainer"), "ossi@kde.org" );
 	about->addAuthor( ki18n("Stephen Leaf"), KLocalizedString(), "smileaf@smileaf.org" );
 
-	setQuickHelp( i18n( "<h1>Login Manager</h1> In this module you can configure the "
-	                    "various aspects of the KDE Login Manager. This includes "
-	                    "the look and feel as well as the users that can be "
-	                    "selected for login. Note that you can only make changes "
-	                    "if you run the module with superuser rights. If you have not started the KDE "
-	                    "Control Center with superuser rights (which is absolutely the right thing to "
-	                    "do, by the way), click on the <em>Modify</em> button to acquire "
-	                    "superuser rights. You will be asked for the superuser password."
-	                    "<h2>General</h2> On this tab page, you can configure parts of "
-	                    "the Login Manager's look, and which language it should use. "
-	                    "The language settings made here have no influence on "
-	                    "the user's language settings."
-	                    "<h2>Dialog</h2>Here you can configure the look of the \"classical\" "
-	                    "dialog based mode if you have chosen to use it. "
-	                    "<h2>Background</h2>If you want to set a special background for the dialog based "
-	                    "login screen, this is where to do it."
-	                    "<h2>Themes</h2> Here you can specify a theme to be used by the Login Manager."
-	                    "<h2>Shutdown</h2> Here you can specify who is allowed to shutdown/reboot the machine "
-	                    "and whether a boot manager should be used."
-	                    "<h2>Users</h2>On this tab page, you can select which users the Login Manager "
-	                    "will offer you for logging in."
-	                    "<h2>Convenience</h2> Here you can specify a user to be logged in automatically, "
-	                    "users not needing to provide a password to log in, and other convenience features.<br/>"
-	                    "Note, that these settings are security holes by their nature, so use them very carefully.") );
+	setQuickHelp(
+		i18n("<h1>Login Manager</h1> In this module you can configure the "
+		     "various aspects of the KDE Login Manager. This includes "
+		     "the look and feel as well as the users that can be "
+		     "selected for login. Note that you can only make changes "
+		     "if you run the module with superuser rights. If you have not started the KDE "
+		     "Control Center with superuser rights (which is absolutely the right thing to "
+		     "do, by the way), click on the <em>Modify</em> button to acquire "
+		     "superuser rights. You will be asked for the superuser password."
+		     "<h2>General</h2> On this tab page, you can configure parts of "
+		     "the Login Manager's look, and which language it should use. "
+		     "The language settings made here have no influence on "
+		     "the user's language settings."
+		     "<h2>Dialog</h2>Here you can configure the look of the \"classical\" "
+		     "dialog based mode if you have chosen to use it. "
+		     "<h2>Background</h2>If you want to set a special background for the dialog based "
+		     "login screen, this is where to do it."
+		     "<h2>Themes</h2> Here you can specify a theme to be used by the Login Manager."
+		     "<h2>Shutdown</h2> Here you can specify who is allowed to shutdown/reboot the machine "
+		     "and whether a boot manager should be used."
+		     "<h2>Users</h2>On this tab page, you can select which users the Login Manager "
+		     "will offer you for logging in."
+		     "<h2>Convenience</h2> Here you can specify a user to be logged in automatically, "
+		     "users not needing to provide a password to log in, and other convenience features.<br/>"
+		     "Note, that these settings are security holes by their nature, so use them very carefully.") );
 
 	setAboutData( about );
 
@@ -187,10 +188,10 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 		kWarning() << "user(s) '" << tgmapci.value().join( "," )
 		<< "' have unknown GID " << tgmapci.key() << endl;
 
-	config = new KConfig( QString::fromLatin1(KDE_CONFDIR "/kdm/kdmrc"), KConfig::SimpleConfig);
+	config = new KConfig( QString::fromLatin1(KDE_CONFDIR "/kdm/kdmrc"), KConfig::SimpleConfig );
 
 	QVBoxLayout *top = new QVBoxLayout( this );
-        top->setMargin(0);
+	top->setMargin( 0 );
 	tab = new QTabWidget( this );
 
 	general = new KDMGeneralWidget( this );
@@ -240,15 +241,19 @@ KDModule::KDModule( QWidget *parent, const QVariantList & )
 	tab->addTab( users, i18n("Users (&6)") );
 	connect( users, SIGNAL(changed()), SLOT(changed()) );
 	connect( users, SIGNAL(setMinMaxUID( int,int )), SLOT(slotMinMaxUID( int,int )) );
-	connect( this, SIGNAL(addUsers( const QMap<QString,int> & )), users, SLOT(slotAddUsers( const QMap<QString,int> & )) );
-	connect( this, SIGNAL(delUsers( const QMap<QString,int> & )), users, SLOT(slotDelUsers( const QMap<QString,int> & )) );
+	connect( this, SIGNAL(addUsers( const QMap<QString,int> & )),
+	         users, SLOT(slotAddUsers( const QMap<QString,int> & )) );
+	connect( this, SIGNAL(delUsers( const QMap<QString,int> & )),
+	         users, SLOT(slotDelUsers( const QMap<QString,int> & )) );
 	connect( this, SIGNAL(clearUsers()), users, SLOT(slotClearUsers()) );
 
 	convenience = new KDMConvenienceWidget( this );
 	tab->addTab( convenience, i18n("Convenience (&7)") );
 	connect( convenience, SIGNAL(changed()), SLOT(changed()) );
-	connect( this, SIGNAL(addUsers( const QMap<QString,int> & )), convenience, SLOT(slotAddUsers( const QMap<QString,int> & )) );
-	connect( this, SIGNAL(delUsers( const QMap<QString,int> & )), convenience, SLOT(slotDelUsers( const QMap<QString,int> & )) );
+	connect( this, SIGNAL(addUsers( const QMap<QString,int> & )),
+	         convenience, SLOT(slotAddUsers( const QMap<QString,int> & )) );
+	connect( this, SIGNAL(delUsers( const QMap<QString,int> & )),
+	         convenience, SLOT(slotDelUsers( const QMap<QString,int> & )) );
 	connect( this, SIGNAL(clearUsers()), convenience, SLOT(slotClearUsers()) );
 
 	if (getuid() != 0 || !config->isConfigWritable( true )) {

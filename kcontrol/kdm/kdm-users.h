@@ -91,7 +91,7 @@ class KDMUsersWidget : public QWidget {
 	QString m_defaultText;
 	QStringList hiddenUsers, selectedUsers;
 	QString defminuid, defmaxuid;
-        bool m_readOnly;
+	bool m_readOnly;
 };
 
 #endif

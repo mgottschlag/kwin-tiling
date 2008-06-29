@@ -116,7 +116,6 @@ KDMThemeWidget::KDMThemeWidget( QWidget *parent )
 	connect( bGetNewThemes, SIGNAL(clicked()), SLOT(getNewStuff()) );
 
 	themeDir = KGlobal::dirs()->resourceDirs( "data" ).last() + "kdm/themes/";
-        kDebug()<<" themeDir :"<<KGlobal::dirs()->resourceDirs( "data" );
 	defaultTheme = 0;
 	QDir testDir( themeDir );
 	if (!testDir.exists() && !testDir.mkdir( testDir.absolutePath() ) && !geteuid())
@@ -142,12 +141,12 @@ void KDMThemeWidget::selectTheme( const QString &path )
 
 void KDMThemeWidget::load()
 {
-	selectTheme( config->group("X-*-Greeter").readEntry( "Theme", themeDir + "oxygen" ) );
+	selectTheme( config->group( "X-*-Greeter" ).readEntry( "Theme", themeDir + "oxygen" ) );
 }
 
 void KDMThemeWidget::save()
 {
-	config->group("X-*-Greeter").writeEntry( "Theme", defaultTheme ? defaultTheme->path : "" );
+	config->group( "X-*-Greeter" ).writeEntry( "Theme", defaultTheme ? defaultTheme->path : "" );
 }
 
 void KDMThemeWidget::defaults()
@@ -167,14 +166,12 @@ void KDMThemeWidget::makeReadOnly()
 
 void KDMThemeWidget::insertTheme( const QString &_theme )
 {
-	KConfig themeConfig( _theme + "/KdmGreeterTheme.desktop", KConfig::SimpleConfig);
-	KConfigGroup themeGroup = themeConfig.group("KdmGreeterTheme");
+	KConfig themeConfig( _theme + "/KdmGreeterTheme.desktop", KConfig::SimpleConfig );
+	KConfigGroup themeGroup = themeConfig.group( "KdmGreeterTheme" );
 
 	QString name = themeGroup.readEntry( "Name" );
 	if (name.isEmpty())
-        {
 		return;
-        }
 	ThemeData *child = new ThemeData( themeWidget );
 	child->setText( 0, name );
 	child->setText( 1, themeGroup.readEntry( "Author" ) );
@@ -194,10 +191,10 @@ void KDMThemeWidget::updateInfoView( ThemeData *theme )
 		info->setText(
 			((theme->copyright.length() > 0) ?
 				i18n("<qt><strong>Copyright:</strong> %1<br/></qt>",
-					theme->copyright) : "") +
+				     theme->copyright) : "") +
 			((theme->description.length() > 0) ?
 				i18n("<qt><strong>Description:</strong> %1</qt>",
-					theme->description) : "") );
+				     theme->description) : "") );
 		preview->setPixmap( theme->path + '/' + theme->screenShot );
 		preview->setText( theme->screenShot.isEmpty() ?
 			"Screenshot not available" : QString() );
@@ -289,7 +286,7 @@ void KDMThemeWidget::themeSelected()
 		updateInfoView( (ThemeData *)(themeWidget->selectedItems().first()) );
 	else
 		updateInfoView( 0 );
-        updateButton();
+	updateButton();
 	emit changed();
 }
 
@@ -309,8 +306,8 @@ void KDMThemeWidget::removeSelectedThemes()
 		delList.append( ((ThemeData *)itm)->path );
 	}
 	if (KMessageBox::questionYesNoList( this,
-			i18n("Are you sure you want to remove the following themes?"),
-			nameList, i18nc("@title:window", "Remove themes?") ) != KMessageBox::Yes)
+	        i18n("Are you sure you want to remove the following themes?"),
+	        nameList, i18nc("@title:window", "Remove themes?") ) != KMessageBox::Yes)
 		return;
 	KIO::del( KUrl::List( delList ) ); // XXX error check
 
@@ -320,35 +317,31 @@ void KDMThemeWidget::removeSelectedThemes()
 
 void KDMThemeWidget::getNewStuff()
 {
-	KNS::Engine engine(this);
-	if ( engine.init("kdm.knsrc") )
-        {
-            KNS::Entry::List entries = engine.downloadDialogModal(this);
-            for(int i = 0; i < entries.size(); i ++) {
-                if(entries.at(i)->status() == KNS::Entry::Installed) {
-                     QString name = entries.at(i)->installedFiles().at(0).section('/', -2, -2);
-                     insertTheme( themeDir + name );
-                }
-                else if ( entries.at(i)->status() == KNS::Entry::Deleted) {
-                    if ( !entries.at(i)->uninstalledFiles().isEmpty() )
-                    {
-                        QString name = entries.at(i)->uninstalledFiles().at(0).section('/', -2, -2);
-                        removeTheme( themeDir + name );
-                    }
-                }
-            }
-        }
+	KNS::Engine engine( this );
+	if (engine.init( "kdm.knsrc" )) {
+	    KNS::Entry::List entries = engine.downloadDialogModal( this );
+	    for (int i = 0; i < entries.size(); i ++) {
+			if (entries.at( i )->status() == KNS::Entry::Installed) {
+				QString name = entries.at( i )->installedFiles().at( 0 ).section( '/', -2, -2 );
+				insertTheme( themeDir + name );
+			} else if (entries.at( i )->status() == KNS::Entry::Deleted) {
+				if (!entries.at( i )->uninstalledFiles().isEmpty()) {
+					QString name = entries.at( i )->uninstalledFiles().at( 0 ).section( '/', -2, -2 );
+					removeTheme( themeDir + name );
+				}
+			}
+	    }
+	}
 }
 
 void KDMThemeWidget::removeTheme( const QString &name )
 {
-    if(name.isEmpty())
-        return;
+	if (name.isEmpty())
+		return;
 
-    QList<QTreeWidgetItem *>ls = themeWidget->findItems(name, Qt::MatchExactly);
-    if(ls.size()) {
-        delete ls.at(0);
-    }
+	QList<QTreeWidgetItem *> ls = themeWidget->findItems( name, Qt::MatchExactly );
+	if (!ls.isEmpty())
+		delete ls.first();
 }
 
 #include "kdm-theme.moc"

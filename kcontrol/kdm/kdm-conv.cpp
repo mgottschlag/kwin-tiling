@@ -211,8 +211,8 @@ void KDMConvenienceWidget::makeReadOnly()
 
 void KDMConvenienceWidget::slotPresChanged()
 {
-        if ( !alGroup->isEnabled() ) //if it's disabled don't change state => fix readOnly
-            return;
+	if (!alGroup->isEnabled()) // read-only
+	    return;
 	bool en = spRadio->isChecked();
 	pu_label->setEnabled( en );
 	puserlb->setEnabled( en );
@@ -230,13 +230,13 @@ void KDMConvenienceWidget::save()
 	configGrp.writeEntry( "NoPassEnable", npGroup->isChecked() );
 	configGrp.writeEntry( "NoPassUsers", noPassUsers );
 
-	config->group("X-*-Core").writeEntry( "AutoReLogin", cbarlen->isChecked() );
+	config->group( "X-*-Core" ).writeEntry( "AutoReLogin", cbarlen->isChecked() );
 
 	configGrp = config->group( "X-:*-Greeter" );
 	configGrp.writeEntry( "PreselectUser",
-	                    npRadio->isChecked() ? "None" :
-	                    ppRadio->isChecked() ? "Previous" :
-	                    "Default" );
+	                      npRadio->isChecked() ? "None" :
+	                      ppRadio->isChecked() ? "Previous" :
+	                      "Default" );
 	configGrp.writeEntry( "DefaultUser", puserlb->currentText() );
 	configGrp.writeEntry( "FocusPasswd", cbjumppw->isChecked() );
 }
@@ -256,7 +256,7 @@ void KDMConvenienceWidget::load()
 	npGroup->setChecked( configGrp.readEntry( "NoPassEnable", false ) );
 	noPassUsers = configGrp.readEntry( "NoPassUsers", QStringList() );
 
-	cbarlen->setChecked( config->group("X-*-Core").readEntry( "AutoReLogin", false ) );
+	cbarlen->setChecked( config->group( "X-*-Core" ).readEntry( "AutoReLogin", false ) );
 
 	configGrp = config->group( "X-:*-Greeter" );
 	QString presstr = configGrp.readEntry( "PreselectUser", "None" );
