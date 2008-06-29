@@ -1,6 +1,7 @@
 [Desktop Entry]
 # TODO - Rename to "Desktop Search" in KDE 4.2
 Name=Xesam Search
+Name[bg]=Търсене Xesam
 Name[ca]=Cerca Xesam
 Name[cs]=Vyhledávání Xesam
 Name[da]=Xesam-søgning
@@ -16,6 +17,7 @@ Name[gu]=Xesam શોધ
 Name[ja]=Xesam 検索
 Name[km]=ស្វែងរក Xesam
 Name[ko]=Xesam 검색
+Name[ku]=Lêgerîna Xesam
 Name[lv]=Xesam meklēšana
 Name[ml]=സെസാം തെരച്ചില്‍
 Name[nds]=Xesam-Söök

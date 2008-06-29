@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Calculator
+Name[bg]=Калкулатор
 Name[ca]=Calculadora
 Name[cs]=Kalkulátor
 Name[da]=Regnemaskine
@@ -15,6 +16,7 @@ Name[gu]=કેલ્ક્યુલેટર
 Name[ja]=計算機
 Name[km]=ម៉ាស៊ីន​គិត​លេខ
 Name[ko]=계산기
+Name[ku]=Hesêbkar
 Name[lv]=Kalkulators
 Name[ml]=ഗണനി
 Name[nds]=Taschenreekner
@@ -65,6 +67,7 @@ Comment[ja]=数式を計算します
 Comment[kk]=Өрнектерді есептеу
 Comment[km]=គណនា​កន្សោម​​
 Comment[ko]=수식 계산기
+Comment[ku]=ravekirinên Hesabkirinê
 Comment[lv]=Rēķina izteiksmes
 Comment[nb]=Beregn uttrykk
 Comment[nds]=Utdrück utreken

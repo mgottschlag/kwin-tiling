@@ -4,6 +4,22 @@
 [KdmGreeterTheme]
 Greeter=oxygen.xml
 Name=Oxygen
+Name[csb]=Krziseń
+Name[es]=Oxígeno
+Name[gu]=ઓક્સિજન
+Name[hi]=आक्सीजन
+Name[kk]=Оттегі
+Name[km]=អុកស៊ីហ្សែន
+Name[ml]=ഓക്സിജന്‍
+Name[ne]=अक्सिजन
+Name[nn]=Oksygen
+Name[pa]=ਆਕਸੀਜਨ
+Name[se]=Oksygena
+Name[sr]=Кисеоник
+Name[sr@latin]=Kiseonik
+Name[th]=รูปแบบ Oxygen
+Name[wa]=Ocsidjinne
+Name[x-test]=xxOxygenxx
 Description=Oxygen Theme
 Author=Nuno Fernades Pinheiro, Urs Wolfer & Oswald Buddenhagen
 Copyright=(c) 2008 Nuno Fernades Pinheiro, Urs Wolfer & Oswald Buddenhagen
