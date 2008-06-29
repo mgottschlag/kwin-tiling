@@ -286,7 +286,8 @@ void KDMThemeWidget::themeSelected()
 		updateInfoView( (ThemeData *)(themeWidget->selectedItems().first()) );
 	else
 		updateInfoView( 0 );
-	updateButton();
+	if (bInstallTheme->isEnabled()) // not read-only
+		updateButton();
 	emit changed();
 }
 

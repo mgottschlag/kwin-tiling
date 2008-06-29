@@ -634,8 +634,6 @@ void BGDialog::updateUI()
    int wallpaperMode = r->wallpaperMode();
    int multiMode = r->multiWallpaperMode();
 
-   if ( !m_readOnly )
-   {
    if (r->backgroundMode() == KBackgroundSettings::Program &&
        wallpaperMode == KBackgroundSettings::NoWallpaper)
       groupBox3->setEnabled( false );
@@ -648,41 +646,47 @@ void BGDialog::updateUI()
       // No wallpaper
       if (wallpaperMode == KBackgroundSettings::NoWallpaper )
       {
-         m_urlWallpaperBox->setEnabled(false);
-         m_urlWallpaperButton->setEnabled(false);
-         m_buttonSetupWallpapers->setEnabled(false);
-         m_comboWallpaperPos->setEnabled(false);
-         m_lblWallpaperPos->setEnabled(false);
+         if (!m_readOnly) {
+            m_urlWallpaperBox->setEnabled(false);
+            m_urlWallpaperButton->setEnabled(false);
+            m_buttonSetupWallpapers->setEnabled(false);
+            m_comboWallpaperPos->setEnabled(false);
+            m_lblWallpaperPos->setEnabled(false);
+         }
          m_buttonGroupBackground->setButton(
-         m_buttonGroupBackground->id(m_radioNoPicture) );
+            m_buttonGroupBackground->id(m_radioNoPicture) );
       }
 
       // 1 Picture
       else
       {
-         m_urlWallpaperBox->setEnabled(true);
-         m_urlWallpaperButton->setEnabled(true);
-         m_buttonSetupWallpapers->setEnabled(false);
-         m_comboWallpaperPos->setEnabled(true);
-         m_lblWallpaperPos->setEnabled(true);
+         if (!m_readOnly) {
+            m_urlWallpaperBox->setEnabled(true);
+            m_urlWallpaperButton->setEnabled(true);
+            m_buttonSetupWallpapers->setEnabled(false);
+            m_comboWallpaperPos->setEnabled(true);
+            m_lblWallpaperPos->setEnabled(true);
+         }
          setWallpaper(r->wallpaper());
          m_buttonGroupBackground->setButton(
-         m_buttonGroupBackground->id(m_radioPicture) );
+            m_buttonGroupBackground->id(m_radioPicture) );
       }
    }
 
    // Slide show
    else
    {
-      m_urlWallpaperBox->setEnabled(false);
-      m_urlWallpaperButton->setEnabled(false);
-      m_buttonSetupWallpapers->setEnabled(true);
-      m_comboWallpaperPos->setEnabled(true);
-      m_lblWallpaperPos->setEnabled(true);
+      if (!m_readOnly) {
+         m_urlWallpaperBox->setEnabled(false);
+         m_urlWallpaperButton->setEnabled(false);
+         m_buttonSetupWallpapers->setEnabled(true);
+         m_comboWallpaperPos->setEnabled(true);
+         m_lblWallpaperPos->setEnabled(true);
+      }
       m_buttonGroupBackground->setButton(
-      m_buttonGroupBackground->id(m_radioSlideShow) );
+         m_buttonGroupBackground->id(m_radioSlideShow) );
    }
-   }
+
    m_comboWallpaperPos->setCurrentIndex(r->wallpaperMode()-1);
 
    bool bSecondaryEnabled = true;
