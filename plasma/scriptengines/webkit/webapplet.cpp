@@ -47,8 +47,8 @@ public:
 
         page = new Plasma::WebContent(applet);
         page->setPage(new WebPage(page));
-        QObject::connect(page, SIGNAL(loadDone(bool)),
-                         q, SLOT(loadDone(bool)));
+        QObject::connect(page, SIGNAL(loadFinished(bool)),
+                         q, SLOT(loadFinished(bool)));
         QObject::connect(page->page(), SIGNAL(frameCreated(QWebFrame *)),
                          q, SLOT(connectFrame(QWebFrame *)));
         q->connectFrame(page->mainFrame());
@@ -107,7 +107,7 @@ Plasma::WebContent* WebApplet::view() const
     return d->page;
 }
 
-void WebApplet::loadDone(bool success)
+void WebApplet::loadFinished(bool success)
 {
     kDebug() << success;
     if (success) {

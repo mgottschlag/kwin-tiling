@@ -54,7 +54,7 @@ protected:
     void constraintsEvent(Plasma::Constraints constraints);
 
 private slots:
-    void loadDone(bool);
+    void loadFinished(bool);
     void connectFrame(QWebFrame *);
     void initJsObjects();
 
