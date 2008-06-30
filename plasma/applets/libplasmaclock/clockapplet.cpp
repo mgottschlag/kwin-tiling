@@ -79,7 +79,7 @@ void ClockApplet::updateToolTipContent() {
 
 void ClockApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (event->buttons() == Qt::LeftButton) {
+    if (event->buttons() == Qt::LeftButton && immutability() == Plasma::Mutable) {
         d->clicked = scenePos().toPoint();
         event->setAccepted(true);
         return;
