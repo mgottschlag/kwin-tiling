@@ -73,7 +73,6 @@ Trash::Trash(QObject *parent, const QVariantList &args)
 
     layout->addItem(m_icon);
 
-    registerAsDragHandle(m_icon);
     resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
 }
 
@@ -98,6 +97,8 @@ void Trash::init()
              this, SLOT( slotDeleteItem( const KFileItem & ) ) );
 
     m_dirLister->openUrl(m_trashUrl);
+
+    registerAsDragHandle(m_icon);
 
     //setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
     //FIXME PORT TO TOOLTIP MANAGER
