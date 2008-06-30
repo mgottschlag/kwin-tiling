@@ -20,7 +20,9 @@
 #ifndef PLASMA_PANELVIEW_H
 #define PLASMA_PANELVIEW_H
 
-#include <kconfiggroup.h>
+#include <QList>
+
+#include <KConfigGroup>
 
 #include <plasma/plasma.h>
 #include <plasma/view.h>
@@ -100,12 +102,14 @@ public Q_SLOTS:
 
 protected:
     void updateStruts();
-    virtual void moveEvent(QMoveEvent *event);
-    virtual void resizeEvent(QResizeEvent *event);
+    void moveEvent(QMoveEvent *event);
+    void resizeEvent(QResizeEvent *event);
+    //void drawForeground(QPainter *painter, const QRectF &rect);
 
 private Q_SLOTS:
     void showAppletBrowser();
     void togglePanelController();
+    void edittingComplete();
 
     /**
      * Updates the panel's position according to the screen and containment
@@ -113,14 +117,13 @@ private Q_SLOTS:
      */
     void updatePanelGeometry();
 
-
 private:
     Qt::Alignment alignmentFilter(Qt::Alignment align) const;
     bool isHorizontal() const;
 
     Plasma::Svg *m_background;
-
     PanelController *m_panelController;
+    QList<QWidget*> m_moveOverlays;
 
     int m_offset;
     Qt::Alignment m_alignment;
@@ -128,6 +131,7 @@ private:
     QSizeF m_lastMax;
     int m_lastSeenSize;
     bool m_lastHorizontal;
+    bool m_editting;
 };
 
 #endif

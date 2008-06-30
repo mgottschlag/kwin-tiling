@@ -316,6 +316,7 @@ PanelController::PanelController(QWidget* parent)
      d(new Private(this))
 {
     setWindowFlags(Qt::Popup);
+    setAttribute(Qt::WA_DeleteOnClose);
 
     //Resize handles
     d->panelHeightHandle = new ResizeHandle(this);

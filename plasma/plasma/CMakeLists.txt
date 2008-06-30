@@ -7,6 +7,7 @@ set(plasma_SRCS
     main.cpp
     panelcontroller.cpp
     panelview.cpp
+    panelappletoverlay.cpp
     plasmaapp.cpp
     positioningruler.cpp
     toolbutton.cpp

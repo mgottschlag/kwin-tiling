@@ -21,7 +21,7 @@
 
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QTimeLine>
+#include <QTimer>
 
 #include <KWindowSystem>
 #include <KDebug>
@@ -33,12 +33,13 @@
 
 #include "plasmaapp.h"
 #include "panelcontroller.h"
-
+#include "panelappletoverlay.h"
 
 PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     : Plasma::View(panel, id, parent),
       m_panelController(0),
-      m_lastHorizontal(true)
+      m_lastHorizontal(true),
+      m_editting(false)
 {
     Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
 
@@ -485,11 +486,15 @@ void PanelView::showAppletBrowser()
 
 void PanelView::togglePanelController()
 {
-    if (!m_panelController) {
-        if (containment()->immutability() != Plasma::Mutable) {
-            return;
-        }
+    kDebug();
+    m_editting = false;
+    if (containment()->immutability() != Plasma::Mutable) {
+        delete m_panelController;
+        m_panelController = 0;
+        return;
+    }
 
+    if (!m_panelController) {
         m_panelController = new PanelController(this);
         m_panelController->setContainment(containment());
         m_panelController->setLocation(containment()->location());
@@ -498,22 +503,41 @@ void PanelView::togglePanelController()
 
         //connect(m_panelController, SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
 
+        connect(m_panelController, SIGNAL(destroyed(QObject*)), this, SLOT(edittingComplete()));
         connect(m_panelController, SIGNAL(offsetChanged(int)), this, SLOT(setOffset(int)));
         connect(m_panelController, SIGNAL(alignmentChanged(Qt::Alignment)), this, SLOT(setAlignment(Qt::Alignment)));
         connect(m_panelController, SIGNAL(locationChanged(Plasma::Location)), this, SLOT(setLocation(Plasma::Location)));
+
+        QBrush overlayBrush(QColor(127, 0, 0, 127));
+        QPalette p(palette());
+        p.setBrush(QPalette::Window, overlayBrush);
+        foreach (Plasma::Applet *applet, containment()->applets()) {
+            QWidget *moveOverlay = new PanelAppletOverlay(applet, this);
+            moveOverlay->setPalette(p);
+            moveOverlay->show();
+            m_moveOverlays << moveOverlay;
+            kDebug() << moveOverlay << moveOverlay->geometry();
+        }
     }
 
     if (!m_panelController->isVisible()) {
-        if (containment()->immutability() == Plasma::Mutable) {
-            m_panelController->resize(m_panelController->sizeHint());
-            m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
-            m_panelController->show();
-        }
+        m_editting = true;
+        m_panelController->resize(m_panelController->sizeHint());
+        m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
+        m_panelController->show();
     } else {
         m_panelController->hide();
-        delete m_panelController;
-        m_panelController = 0;
     }
+    repaint();
+}
+
+void PanelView::edittingComplete()
+{
+    kDebug();
+    m_panelController = 0;
+    m_editting = false;
+    qDeleteAll(m_moveOverlays);
+    m_moveOverlays.clear();
 }
 
 Qt::Alignment PanelView::alignmentFilter(Qt::Alignment align) const
@@ -598,6 +622,35 @@ void PanelView::resizeEvent(QResizeEvent *event)
     QWidget::resizeEvent(event);
     updateStruts();
 }
+
+#if 0
+void PanelView::drawForeground(QPainter *painter, const QRectF &rect)
+{
+    if (!m_editting) {
+        View::drawForeground(painter, rect);
+        return;
+    }
+
+    //kDebug() << rect << geometry();
+    Plasma::Containment *c = containment();
+
+    if (!c) {
+        return;
+    }
+
+    QBrush overlayBrush(QColor(127, 127, 127, 127));
+    //QBrush overlayBrush(Qt::red);
+
+    foreach (const Plasma::Applet *applet, c->applets()) {
+        QRectF sceneRect = applet->mapToScene(applet->boundingRect()).boundingRect();
+        //kDebug() << "applet geometry for" << (QObject*)applet << "is" << sceneRect;
+        if (sceneRect.intersects(rect)) {
+            //kDebug() << "filling rect" << sceneRect;
+            painter->fillRect(sceneRect.toRect(), overlayBrush);
+        }
+    }
+}
+#endif
 
 #include "panelview.moc"
 
