@@ -140,7 +140,7 @@ void DeviceNotifier::init()
     connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(onSourceRemoved(const QString&)));
 
-    connect(m_notifierView, SIGNAL(activated(const QModelIndex&)), this, SLOT(slotOnItemClicked(const QModelIndex&)));
+    connect(m_notifierView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(slotOnItemClicked(const QModelIndex&)));
     connect(m_timer, SIGNAL(timeout()), this, SLOT(onTimerExpired()));
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));    // allows updating of colors automatically
 }
