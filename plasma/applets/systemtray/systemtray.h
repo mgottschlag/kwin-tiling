@@ -32,6 +32,8 @@
 // Plasma
 #include <plasma/applet.h>
 
+class QTimer;
+
 namespace Plasma
 {
     class PanelSvg;
@@ -44,20 +46,23 @@ Q_OBJECT
 public:
     explicit SystemTray(QObject *parent, const QVariantList &arguments = QVariantList());
     ~SystemTray();
-  
-    void constraintsEvent(Plasma::Constraints constraints);
 
+    void constraintsEvent(Plasma::Constraints constraints);
     void paintInterface(QPainter *painter,
                         const QStyleOptionGraphicsItem *option,
                         const QRect &contentsRect);
 
 private slots:
     void updateWidgetGeometry();
+    void startupDelayer();
 
 private:
     void updateWidgetOrientation();
 
+    static const int STARTUP_TIMER_DELAY = 1500;
+
     Plasma::PanelSvg *m_background;
+    QTimer *m_startUpDelayShowTimer;
     bool m_showOwnBackground;
 
     // The parent widget might delete this so we guard it

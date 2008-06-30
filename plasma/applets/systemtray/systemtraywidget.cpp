@@ -87,7 +87,6 @@ bool SystemTrayWidget::x11Event(XEvent *event)
     if (event->type == ClientMessage) {
         if (event->xclient.message_type == m_opcodeAtom &&
             event->xclient.data.l[1] == SYSTEM_TRAY_REQUEST_DOCK) {
-
             // Set up a SystemTrayContainer for the client
             SystemTrayContainer *container = new SystemTrayContainer(this);
             connect(container, SIGNAL(destroyed(QObject *)), this, SLOT(relayoutContainers(QObject *)));

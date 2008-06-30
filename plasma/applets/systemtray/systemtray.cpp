@@ -25,12 +25,14 @@
 
 // Qt
 #include <QGraphicsView>
+#include <QTimer>
 
 //Plasma
 #include <plasma/panelsvg.h>
 
 SystemTray::SystemTray(QObject *parent, const QVariantList &arguments)
     : Plasma::Applet(parent, arguments),
+      m_startUpDelayShowTimer(0),
       m_showOwnBackground(false)
 {
     m_background = new Plasma::PanelSvg(this);
@@ -86,7 +88,13 @@ void SystemTray::updateWidgetGeometry()
 {
     QGraphicsView *parentView = view();
     if (!parentView) {
-        kDebug()<<"Problem view is NULL";
+        kDebug() << "Problem view is NULL";
+        return;
+    }
+
+    if (m_startUpDelayShowTimer) {
+        kDebug() << "start up delay";
+        m_startUpDelayShowTimer->start(STARTUP_TIMER_DELAY);
         return;
     }
 
@@ -96,7 +104,12 @@ void SystemTray::updateWidgetGeometry()
         updateWidgetOrientation();
         connect(m_systemTrayWidget, SIGNAL(sizeShouldChange()),
                 this, SLOT(updateWidgetGeometry()));
-        m_systemTrayWidget->setVisible(true);
+
+        if (!m_startUpDelayShowTimer) {
+            m_startUpDelayShowTimer = new QTimer(this);
+            connect(m_startUpDelayShowTimer, SIGNAL(timeout()), this, SLOT(startupDelayer()));
+            m_startUpDelayShowTimer->start(STARTUP_TIMER_DELAY);
+        }
     }
 
     // Figure out the margins set by the background svg and disable the svg
@@ -146,6 +159,13 @@ void SystemTray::updateWidgetGeometry()
     r.moveTop(r.top() + (r.height() - s.height()) / 2);
     r.setSize(s);
     m_systemTrayWidget->setGeometry(r);
+}
+
+void SystemTray::startupDelayer()
+{
+    delete m_startUpDelayShowTimer;
+    m_startUpDelayShowTimer = 0;
+    m_systemTrayWidget->setVisible(true);
 }
 
 #include "systemtray.moc"
