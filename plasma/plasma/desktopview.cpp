@@ -260,8 +260,7 @@ void DesktopView::zoomOut(Plasma::Containment *fromContainment)
             QList<Plasma::Containment*> containments = corona->containments();
             foreach (Plasma::Containment *c, containments) {
                 if (c == fromContainment ||
-                    c->containmentType() == Plasma::Containment::PanelContainment ||
-                    c->screen() > -1) {
+                    c->containmentType() == Plasma::Containment::PanelContainment) {
                     continue;
                 }
                 connectContainment(c);
