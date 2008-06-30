@@ -9,7 +9,7 @@ if (X11_Xfixes_FOUND)
 endif (X11_Xfixes_FOUND)
 
 kde4_add_plugin(plasma_engine_mouse ${mouse_engine_SRCS})
-target_link_libraries(plasma_engine_mouse ${KDE4_KDEUI_LIBS} plasma)
+target_link_libraries(plasma_engine_mouse ${KDE4_KDEUI_LIBS} plasma ${X11_LIBRARIES})
 if (X11_Xfixes_FOUND)
 	target_link_libraries(plasma_engine_mouse ${X11_Xfixes_LIB})
 endif (X11_Xfixes_FOUND)

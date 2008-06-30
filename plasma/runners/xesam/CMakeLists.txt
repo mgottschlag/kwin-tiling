@@ -3,7 +3,7 @@ set(krunner_xesam_SRCS
 )
 
 kde4_add_plugin(krunner_xesam ${krunner_xesam_SRCS})
-target_link_libraries(krunner_xesam  plasma)
+target_link_libraries(krunner_xesam ${KDE4_KIO_LIBS} plasma)
 
 install(TARGETS krunner_xesam DESTINATION ${PLUGIN_INSTALL_DIR} )
 
