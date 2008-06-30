@@ -7,7 +7,7 @@ set(taskmanager_LIB_SRCS startup.cpp task.cpp taskrmbmenu.cpp taskmanager.cpp)
 
 kde4_add_library(taskmanager SHARED ${taskmanager_LIB_SRCS})
 
-target_link_libraries(taskmanager ${KDE4_KDEUI_LIBS})
+target_link_libraries(taskmanager ${KDE4_KDEUI_LIBS} ${X11_LIBRARIES})
 if (X11_Xfixes_FOUND)
   target_link_libraries(taskmanager ${X11_Xfixes_LIB})
 endif (X11_Xfixes_FOUND)
