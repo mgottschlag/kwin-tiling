@@ -30,10 +30,11 @@
 
 #include <KColorUtils>
 #include <KIcon>
+#include <KWindowSystem>
 
+#include <plasma/containment.h>
 #include <plasma/corona.h>
 #include <plasma/theme.h>
-#include <plasma/containment.h>
 
 #include "plasmaapp.h"
 #include "positioningruler.h"
@@ -312,12 +313,14 @@ public:
 };
 
 PanelController::PanelController(QWidget* parent)
-   : QWidget(parent),
+   : QWidget(0),
      d(new Private(this))
 {
-    setWindowFlags(Qt::Popup);
+    //setWindowFlags(Qt::Popup);
+    setWindowFlags(Qt::FramelessWindowHint);
+    KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
     setAttribute(Qt::WA_DeleteOnClose);
-
+    setFocus(Qt::ActiveWindowFocusReason);
     //Resize handles
     d->panelHeightHandle = new ResizeHandle(this);
 
@@ -762,6 +765,12 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
         }
         break;
     }
+}
+
+void PanelController::focusOutEvent(QFocusEvent * event)
+{
+    Q_UNUSED(event)
+    close();
 }
 
 #include "panelcontroller.moc"

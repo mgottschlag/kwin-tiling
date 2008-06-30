@@ -501,8 +501,6 @@ void PanelView::togglePanelController()
         m_panelController->setAlignment(m_alignment);
         m_panelController->setOffset(m_offset);
 
-        //connect(m_panelController, SIGNAL(showAddWidgets()), this, SLOT(showAppletBrowser()));
-
         connect(m_panelController, SIGNAL(destroyed(QObject*)), this, SLOT(edittingComplete()));
         connect(m_panelController, SIGNAL(offsetChanged(int)), this, SLOT(setOffset(int)));
         connect(m_panelController, SIGNAL(alignmentChanged(Qt::Alignment)), this, SLOT(setAlignment(Qt::Alignment)));
@@ -526,9 +524,8 @@ void PanelView::togglePanelController()
         m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
         m_panelController->show();
     } else {
-        m_panelController->hide();
+        m_panelController->close();
     }
-    repaint();
 }
 
 void PanelView::edittingComplete()
