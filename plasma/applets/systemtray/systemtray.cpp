@@ -120,9 +120,11 @@ void SystemTray::updateWidgetGeometry()
     }
 
     // Update our preferred size based on the wystem tray widget's size and any margins
-    QRectF rf = mapFromView(parentView, QRect(m_systemTrayWidget->pos(), m_systemTrayWidget->minimumSize()));
+    QRectF rf = mapFromView(parentView, QRect(m_systemTrayWidget->pos(),
+                                              m_systemTrayWidget->minimumSize()));
     rf.setWidth(rf.width() + leftMargin + rightMargin);
     rf.setHeight(rf.height() + topMargin + bottomMargin);
+    setMinimumSize(rf.size());
     setPreferredSize(rf.size());
 
     // Calculate the rect usable by the system tray widget
