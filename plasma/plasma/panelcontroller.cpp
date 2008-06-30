@@ -342,7 +342,7 @@ PanelController::PanelController(QWidget* parent)
     //alignment
     //first the container
     QFrame *alignFrame = new ButtonGroup(this);
-    d->alignLayout = new QBoxLayout(d->layout->direction(), this);
+    d->alignLayout = new QBoxLayout(d->layout->direction(), alignFrame);
     alignFrame->setLayout(d->alignLayout);
     d->layout->addWidget(alignFrame);
     
