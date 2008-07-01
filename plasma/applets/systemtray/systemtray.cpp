@@ -92,12 +92,6 @@ void SystemTray::updateWidgetGeometry()
         return;
     }
 
-    if (m_startUpDelayShowTimer) {
-        kDebug() << "start up delay";
-        m_startUpDelayShowTimer->start(STARTUP_TIMER_DELAY);
-        return;
-    }
-
     if (!m_systemTrayWidget || m_systemTrayWidget->parentWidget() != parentView) {
         delete m_systemTrayWidget;
         m_systemTrayWidget = new SystemTrayWidget(parentView);
@@ -105,11 +99,16 @@ void SystemTray::updateWidgetGeometry()
         connect(m_systemTrayWidget, SIGNAL(sizeShouldChange()),
                 this, SLOT(updateWidgetGeometry()));
 
-        if (!m_startUpDelayShowTimer) {
+        if (! m_startUpDelayShowTimer) {
             m_startUpDelayShowTimer = new QTimer(this);
             connect(m_startUpDelayShowTimer, SIGNAL(timeout()), this, SLOT(startupDelayer()));
-            m_startUpDelayShowTimer->start(STARTUP_TIMER_DELAY);
         }
+    }
+
+    if (m_startUpDelayShowTimer) {
+        kDebug() << "start up delay";
+        m_startUpDelayShowTimer->start(STARTUP_TIMER_DELAY);
+        return; // don't relayout yet.
     }
 
     // Figure out the margins set by the background svg and disable the svg
@@ -173,6 +172,7 @@ void SystemTray::startupDelayer()
     delete m_startUpDelayShowTimer;
     m_startUpDelayShowTimer = 0;
     m_systemTrayWidget->setVisible(true);
+    m_systemTrayWidget->init();
 }
 
 #include "systemtray.moc"

@@ -37,6 +37,8 @@ Q_OBJECT
 public:
     SystemTrayWidget(QWidget *parent);
 
+    void init();
+
     void setOrientation(Qt::Orientation);
     void setMaximumSize(QSize s);
 
@@ -52,7 +54,6 @@ private slots:
 private:
     void addWidgetToLayout(QWidget *widget);
     void doSizeChange();
-    void init();
 
     QGridLayout *m_mainLayout;
     Qt::Orientation m_orientation;

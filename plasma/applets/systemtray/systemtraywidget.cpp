@@ -52,8 +52,6 @@ SystemTrayWidget::SystemTrayWidget(QWidget *parent)
     // Override spacing set by the current style
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
     m_mainLayout->setSpacing(4);
-
-    init();
 }
 
 void SystemTrayWidget::init()
