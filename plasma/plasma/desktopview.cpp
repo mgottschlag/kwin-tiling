@@ -49,7 +49,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     if (containment) {
         connectContainment(containment);
         containment->enableAction("zoom in", false);
-        containment->enableAction("addSiblingContainment", false);
+        containment->enableAction("add sibling containment", false);
     }
     //FIXME should we have next/prev or up/down/left/right or what?
     QAction *action = new QAction(i18n("Next Activity"), this);
@@ -155,7 +155,7 @@ void DesktopView::setContainment(Plasma::Containment *containment)
         connectContainment(containment);
         //make sure actions are up-to-date
         containment->enableAction("zoom in", false);
-        containment->enableAction("addSiblingContainment", false);
+        containment->enableAction("add sibling containment", false);
     }
 
     View::setContainment(containment);
@@ -222,7 +222,7 @@ void DesktopView::zoomIn(Plasma::Containment *toContainment)
             setSceneRect(containment()->geometry());
             containment()->closeToolBox();
             containment()->enableAction("zoom in", false);
-            containment()->enableAction("addSiblingContainment", false);
+            containment()->enableAction("add sibling containment", false);
         }
     } else if (m_zoomLevel == Plasma::OverviewZoom) {
         m_zoomLevel = Plasma::GroupZoom;
@@ -233,7 +233,7 @@ void DesktopView::zoomIn(Plasma::Containment *toContainment)
 
         if (containment()) {
             containment()->enableAction("zoom in", true);
-            containment()->enableAction("addSiblingContainment", true);
+            containment()->enableAction("add sibling containment", true);
             ensureVisible(containment()->sceneBoundingRect());
         }
     } else {
@@ -241,7 +241,7 @@ void DesktopView::zoomIn(Plasma::Containment *toContainment)
         if (containment()) {
             containment()->closeToolBox();
             containment()->enableAction("zoom in", false);
-            containment()->enableAction("addSiblingContainment", false);
+            containment()->enableAction("add sibling containment", false);
         }
     }
 }
@@ -249,7 +249,7 @@ void DesktopView::zoomIn(Plasma::Containment *toContainment)
 void DesktopView::zoomOut(Plasma::Containment *fromContainment)
 {
     fromContainment->enableAction("zoom in", true);
-    fromContainment->enableAction("addSiblingContainment", true);
+    fromContainment->enableAction("add sibling containment", true);
     if (m_zoomLevel == Plasma::DesktopZoom) {
         fromContainment->enableAction("zoom out", true);
         m_zoomLevel = Plasma::GroupZoom;
