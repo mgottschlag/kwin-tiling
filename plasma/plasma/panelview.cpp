@@ -446,6 +446,8 @@ void PanelView::pinchContainment(const QRect &screenGeom)
 
     if (m_panelController) {
         m_panelController->setContainment(c);
+
+        m_panelController->setOffset(m_offset);
     }
 }
 
