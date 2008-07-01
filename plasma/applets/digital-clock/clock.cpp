@@ -93,7 +93,7 @@ void Clock::init()
     m_toolTipIcon = KIcon("chronometer").pixmap(IconSize(KIconLoader::Desktop));
 
     dataEngine("time")->connectSource(currentTimezone(), this, updateInterval(), intervalAlignment());
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));    
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
 }
 
 void Clock::constraintsEvent(Plasma::Constraints constraints)
@@ -110,10 +110,11 @@ void Clock::updateSize() {
     }
     if (formFactor() == Plasma::Horizontal) {
         // We have a fixed height, set some sensible width
-        setMinimumSize(contentsRect().height() * aspect, 0);
+        setMinimumWidth(qMax(m_dateRect.width(), (int)(contentsRect().height() * aspect)));
+        //kDebug() << "DR" << m_dateRect.width() << "CR" << contentsRect().height() * aspect;
     } else if (formFactor() == Plasma::Vertical) {
         // We have a fixed width, set some sensible height
-        setMinimumSize(0, (int)contentsRect().width() / aspect);
+        setMinimumHeight((int)contentsRect().width() / aspect);
     }
 }
 
@@ -297,15 +298,16 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
             }
 
             // Check sizes
-            QRect dateRect = preparePainter(p, contentsRect, KGlobalSettings::smallestReadableFont(), dateString);
-            int subtitleHeight = dateRect.height();
+            m_dateRect = preparePainter(p, contentsRect, KGlobalSettings::smallestReadableFont(), dateString);
+            int subtitleHeight = m_dateRect.height();
 
-            p->drawText(QRectF(0,
+            QRectF myRect = QRectF(0,
                                 contentsRect.bottom()-subtitleHeight,
                                 contentsRect.right(),
-                                contentsRect.bottom()) ,
-                        dateString,
-                        QTextOption(Qt::AlignHCenter)
+                                contentsRect.bottom());
+            p->drawText(myRect,
+                        Qt::AlignHCenter | Qt::TextDontClip,
+                        dateString
                     );
 
             // Now find out how much space is left for painting the time

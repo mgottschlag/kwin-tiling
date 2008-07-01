@@ -62,6 +62,7 @@ class Clock : public ClockApplet
         QFont m_plainClockFont;
         bool m_useCustomColor;
         QColor m_plainClockColor;
+        QRect m_dateRect;
 
         bool m_showDate;
         bool m_showYear;
