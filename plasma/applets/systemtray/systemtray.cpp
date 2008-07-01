@@ -137,7 +137,14 @@ void SystemTray::updateWidgetGeometry()
                                               m_systemTrayWidget->minimumSize()));
     rf.setWidth(rf.width() + leftMargin + rightMargin);
     rf.setHeight(rf.height() + topMargin + bottomMargin);
-    setMinimumSize(rf.size());
+
+    if (formFactor() == Plasma::Vertical) {
+        setMinimumHeight(rf.height());
+        setMinimumWidth(22);
+    } else if (formFactor() == Plasma::Horizontal) {
+        setMinimumWidth(rf.width());
+        setMinimumHeight(22);
+    }
     setPreferredSize(rf.size());
 
     // Calculate the rect usable by the system tray widget
