@@ -27,8 +27,9 @@
 #include <QtGui/QMouseEvent>
 
 // KDE
+#include <KDebug>
 #include <KUrl>
-#include <kiconloader.h>
+#include <KIconLoader>
 
 // Local
 #include "core/models.h"
@@ -41,7 +42,7 @@ class MenuView::Private
 public:
     Private(MenuView *parent) : q(parent) , model(0) , column(0), launcher(new UrlItemLauncher(parent)), formattype(MenuView::DescriptionName) {}
 
-    QAction *createActionForIndex(const QModelIndex& index,QWidget *parent)
+    QAction *createActionForIndex(const QModelIndex& index, QMenu *parent)
     {
         Q_ASSERT(index.isValid());
 
@@ -51,7 +52,7 @@ public:
             QMenu *childMenu = new QMenu(parent);
             childMenu->installEventFilter(q);
 
-            QObject::connect(childMenu,SIGNAL(aboutToShow()),q,SLOT(fillSubMenu()));
+            QObject::connect(childMenu, SIGNAL(aboutToShow()), q, SLOT(fillSubMenu()));
             action = childMenu->menuAction();
         } else {
             action = q->createLeafAction(index,parent);
@@ -62,11 +63,11 @@ public:
         return action;
     }
 
-    void buildBranch(QMenu *menu,const QModelIndex& parent)
+    void buildBranch(QMenu *menu, const QModelIndex& parent)
     {
         int rowCount = model->rowCount(parent);
-        for (int i=0;i<rowCount;i++) {
-            QAction *action = createActionForIndex(model->index(i,column,parent),menu);
+        for (int i = 0; i < rowCount; i++) {
+            QAction *action = createActionForIndex(model->index(i, column, parent), menu);
             menu->addAction(action);
         }
     }
@@ -362,9 +363,9 @@ void MenuView::fillSubMenu()
     if (d->model->canFetchMore(menuIndex)) {
         d->model->fetchMore(menuIndex);
     }
-    d->buildBranch(subMenu,menuIndex);
 
-    disconnect(sender(),0,this,SLOT(fillSubMenu()));
+    d->buildBranch(subMenu, menuIndex);
+    disconnect(subMenu, SIGNAL(aboutToShow()), this, SLOT(fillSubMenu()));
 }
 
 void MenuView::setColumn(int column)

@@ -501,14 +501,14 @@ void UrlItemView::startDrag(Qt::DropActions supportedActions)
     if (!d->watchedIndexForDrag.isValid()) {
         return;
     }
-    
-    QDrag *drag = new QDrag(this);
+
     QMimeData *mimeData = model()->mimeData(selectionModel()->selectedIndexes());
 
-    if (! mimeData || mimeData->text().isNull()) {
+    if (!mimeData || mimeData->text().isNull()) {
         return;
     }
 
+    QDrag *drag = new QDrag(this);
     drag->setMimeData(mimeData);
 
     QModelIndex idx = selectionModel()->selectedIndexes().first();
