@@ -97,6 +97,10 @@ void Clock::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint) {
         setBackgroundHints(NoBackground);
     }
+
+    if (constraints & Plasma::SizeConstraint) {
+        m_theme->resize(size());
+    }
 }
 
 QPainterPath Clock::shape() const
@@ -303,7 +307,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
     }
 
     p->save();
-    m_theme->resize(boundSize);
     elementSize = m_theme->elementSize("HandCenterScrew");
     tempRect.setSize(elementSize);
     p->translate(boundSize.width() / 2 - elementSize.width() / 2, boundSize.height() / 2 - elementSize.height() / 2);
