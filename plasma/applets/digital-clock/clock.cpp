@@ -110,7 +110,11 @@ void Clock::updateSize() {
     }
     if (formFactor() == Plasma::Horizontal) {
         // We have a fixed height, set some sensible width
-        setMinimumWidth(qMax(m_dateRect.width(), (int)(contentsRect().height() * aspect)));
+        if (m_showDate || m_showTimezone) {
+            setMinimumWidth(qMax(m_dateRect.width(), (int)(contentsRect().height() * aspect)));
+        } else {
+            setMinimumWidth((int)(contentsRect().height() * aspect));
+        }
         //kDebug() << "DR" << m_dateRect.width() << "CR" << contentsRect().height() * aspect;
     } else if (formFactor() == Plasma::Vertical) {
         // We have a fixed width, set some sensible height
@@ -229,7 +233,6 @@ void Clock::configAccepted()
     cg.writeEntry("useCustomColor", m_useCustomColor);
     cg.writeEntry("plainClockColor", m_plainClockColor);
 
-    updateSize();
     constraintsEvent(Plasma::SizeConstraint);
     update();
     emit configNeedsSaving();
