@@ -56,6 +56,7 @@ public:
     QStringList listRemoteDevices() const;
     QStringList listRecentRemoteDevices(const QDateTime &) const;
     QString getRemoteName(const QString &);
+    bool isTrusted(const QString &);
 
     QObject *createBluetoothRemoteDevice(const QString &);
 
@@ -70,6 +71,8 @@ public Q_SLOTS:
     void startPeriodicDiscovery();
     void stopPeriodicDiscovery();
     void setPeriodicDiscoveryNameResolving(bool);
+    void setTrusted(const QString &);
+    void removeTrust(const QString &);
 
     void slotModeChanged(const Solid::Control::BluetoothInterface::Mode mode);
     void slotDiscoverableTimeoutChanged(int timeout);
@@ -79,13 +82,20 @@ public Q_SLOTS:
     void slotDiscoveryCompleted();
     void slotRemoteDeviceFound(const QString &ubi, uint deviceClass, short rssi);
     void slotRemoteDeviceDisappeared(const QString &ubi);
+    void slotRemoteNameUpdated(const QString &, const QString &);
+    void slotRemoteDeviceConnected(const QString&);
+    void slotRemoteDeviceDisconnected(const QString&);
+    void slotTrustAdded(const QString&);
+    void slotTrustRemoved(const QString&);
+    void slotBondingCreated(const QString&);
+    void slotBondingRemoved(const QString&);
 
 private:
     BluezBluetoothInterfacePrivate * d;
 
     QStringList listReply(const QString &method) const;
     QString stringReply(const QString &method, const QString &param = "") const;
-    bool boolReply(const QString &method) const;
+    bool boolReply(const QString &method, const QString &param = "") const;
 };
 
 #endif

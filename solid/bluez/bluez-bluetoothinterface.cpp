@@ -63,6 +63,13 @@ BluezBluetoothInterface::BluezBluetoothInterface(const QString  & objectPath)
     connectInterfaceToThis("DiscoveryCompleted", slotDiscoveryCompleted());
     connectInterfaceToThis("RemoteDeviceDisappeared", slotRemoteDeviceDisappeared(const QString &));
     connectInterfaceToThis("RemoteDeviceFound", slotRemoteDeviceFound(const QString &, uint, short));
+    connectInterfaceToThis("RemoteNameUpdated", slotRemoteNameUpdated(const QString &, const QString &));
+    connectInterfaceToThis("RemoteDeviceConnected", slotRemoteDeviceConnected(const QString &));
+    connectInterfaceToThis("RemoteDeviceDisconnected", slotRemoteDeviceDisconnected(const QString &));
+    connectInterfaceToThis("TrustAdded", slotTrustAdded(const QString &));
+    connectInterfaceToThis("TrustRemoved", slotTrustRemoved(const QString &));
+    connectInterfaceToThis("BondingCreated", slotBondingCreated(const QString &));
+    connectInterfaceToThis("BondingRemoved", slotBondingRemoved(const QString &));
 }
 
 BluezBluetoothInterface::~BluezBluetoothInterface()
@@ -172,6 +179,11 @@ QString BluezBluetoothInterface::getRemoteName(const QString &mac)
     return stringReply("GetRemoteName",mac);
 }
 
+bool BluezBluetoothInterface::isTrusted(const QString &mac)
+{
+   return boolReply("IsTrusted",mac);
+}
+
 QStringList BluezBluetoothInterface::listBondings() const
 {
     return listReply("ListBondings");
@@ -264,6 +276,16 @@ void BluezBluetoothInterface::setPeriodicDiscoveryNameResolving(bool nameResolvi
     d->iface.call("SetPeriodicDiscoveryNameResolving", nameResolving);
 }
 
+void BluezBluetoothInterface::setTrusted(const QString& mac)
+{
+    d->iface.call("SetTrusted", mac);
+}
+
+void BluezBluetoothInterface::removeTrust(const QString& mac)
+{
+    d->iface.call("RemoveTrust", mac);
+}
+
 void BluezBluetoothInterface::slotModeChanged(const Solid::Control::BluetoothInterface::Mode mode)
 {
     emit modeChanged(mode);
@@ -306,6 +328,41 @@ void BluezBluetoothInterface::slotRemoteDeviceDisappeared(const QString &address
     emit remoteDeviceDisappeared(remoteubi);
 }
 
+void BluezBluetoothInterface::slotRemoteNameUpdated(const QString &address, const QString& name)
+{
+   emit remoteNameUpdated(address,name);
+}
+
+void BluezBluetoothInterface::slotRemoteDeviceConnected(const QString &address)
+{
+   emit remoteDeviceConnected(address);
+}
+
+void BluezBluetoothInterface::slotRemoteDeviceDisconnected(const QString &address)
+{
+   emit remoteDeviceDisconnected(address);
+}
+
+void BluezBluetoothInterface::slotTrustAdded(const QString &address)
+{
+   emit trustAdded(address);
+}
+
+void BluezBluetoothInterface::slotTrustRemoved(const QString &address)
+{
+   emit trustRemoved(address);
+}
+
+void BluezBluetoothInterface::slotBondingCreated(const QString &address)
+{
+   emit bondingCreated(address);
+}
+
+void BluezBluetoothInterface::slotBondingRemoved(const QString &address)
+{
+   emit bondingRemoved(address);
+}
+
 QObject *BluezBluetoothInterface::createBluetoothRemoteDevice(const QString &ubi)
 {
     BluezBluetoothRemoteDevice *bluetoothInterface;
@@ -346,9 +403,15 @@ QString BluezBluetoothInterface::stringReply(const QString &method, const QStrin
     return QString();
 }
 
-bool BluezBluetoothInterface::boolReply(const QString &method) const
+bool BluezBluetoothInterface::boolReply(const QString &method, const QString &param) const
 {
-    QDBusReply< bool > reply = d->iface.call(method);
+    QDBusReply< bool > reply; 
+
+    if (param.isEmpty())
+	    reply = d->iface.call(method);
+    else
+	    reply = d->iface.call(method, param);
+
     if (reply.isValid()) {
         return reply.value();
     }
