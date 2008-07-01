@@ -132,6 +132,10 @@ public:
     {
         return mRecentRemoteDevices;
     }
+    bool isTrusted(const QString& mac)
+    {
+	return true;
+    }
 
     void injectDevice(const QString &, FakeBluetoothRemoteDevice *);
 private:
@@ -156,6 +160,9 @@ private:
     bool mPeriodicDiscoveryNameResolving;
     QStringList mRemoteDevices;
     QStringList mRecentRemoteDevices;
+    QString mSetTrusted;
+    QString mRemoveTrust;
+
 
 public Q_SLOTS:
     void setMode(const Solid::Control::BluetoothInterface::Mode mode)
@@ -187,6 +194,14 @@ public Q_SLOTS:
     {
         mPeriodicDiscoveryNameResolving = resolving;
     }
+    void setTrusted(const QString& mac) 
+    {
+	mSetTrusted = mac;
+    }
+    void removeTrust(const QString& mac) 
+    {
+	mRemoveTrust = mac;
+    }
 
 Q_SIGNALS:
     void modeChanged(Solid::Control::BluetoothInterface::Mode mode);
@@ -198,6 +213,13 @@ Q_SIGNALS:
     void remoteDeviceFound(const QString &ubi, int deviceClass, int rssi);
     void remoteDeviceDisappeared(const QString &ubi);
 
+    void remoteNameUpdated(const QString &address, const QString &name);
+    void remoteDeviceConnected(const QString &address);
+    void remoteDeviceDisconnected(const QString &address);
+    void trustAdded(const QString &address);
+    void trustRemoved(const QString &address);
+    void bondingCreated(const QString &address);
+    void bondingRemoved(const QString &address);
 protected:
     /* These methods are operations that are carried out by the manager
        In a real backend they would be events coming up from the network layer */

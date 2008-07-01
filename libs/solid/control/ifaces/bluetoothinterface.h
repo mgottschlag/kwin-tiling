@@ -226,6 +226,14 @@ public:
      */
     virtual QStringList listRecentRemoteDevices(const QDateTime &date) const = 0;
 
+    /**
+     * Returns true if the remote bluetooth device is trusted otherwise false.
+     *
+     * @param mac the address of the remote device
+     */
+    virtual bool isTrusted(const QString &) = 0;
+
+
 public Q_SLOTS:
     /**
      * Set mode of bluetooth interface/adapter.
@@ -296,6 +304,21 @@ public Q_SLOTS:
      */
     virtual QObject *createBluetoothRemoteDevice(const QString &address) = 0;
 
+    /**
+     * Marks the device as trusted.
+     *
+     * @param mac the address of the remote device
+     */
+    virtual void setTrusted(const QString &) = 0;
+
+    /**
+     * Marks the device as not trusted.
+     *
+     * @param mac the address of the remote device
+     */
+    virtual void removeTrust(const QString &) = 0;
+
+
 Q_SIGNALS:
 
     /**
@@ -356,6 +379,58 @@ Q_SIGNALS:
      * @param ubi the ubi of the disappering bluetooth remote device
      */
     void remoteDeviceDisappeared(const QString &ubi);
+
+    /**
+     * This signal is emitted if the bluetooth interface/adapter detectes a new name for a 
+     * bluetooth device.
+     *
+     * @param address the address of the bluetooth remote device
+     * @param name the name of the bluetooth remote device
+     */
+    void remoteNameUpdated(const QString &address, const QString &name);
+
+    /**
+     * This signal is emitted if a bluetooth connection has been created. 
+     *
+     * @param address the address of the connected bluetooth remote device
+     */
+    void remoteDeviceConnected(const QString &address);
+
+    /**
+     * This signal is emitted if a bluetooth connection has been terminated.
+     *
+     * @param address the address of the disconnected bluetooth remote device
+     */
+    void remoteDeviceDisconnected(const QString &address);
+
+    /**
+     * This signal is emitted if a bluetooth device was set trusted.
+     *
+     * @param address the address of the trusted bluetooth remote device
+     */
+    void trustAdded(const QString &address);
+
+    /**
+     * This signal is emitted if the trust to the bluetooth device was removed. 
+     *
+     * @param address the address of the bluetooth remote device
+     */
+    void trustRemoved(const QString &address);
+
+    /**
+     * This signal is emitted if a successful bonding has been created. 
+     *
+     * @param address the address of the bluetooth remote device
+     */
+    void bondingCreated(const QString &address);
+
+    /**
+     * This signal is emitted if the bonding to a bluetooth device has been removed. 
+     *
+     * @param address the address of the bluetooth remote device
+     */
+    void bondingRemoved(const QString &address);
+
 
 };
 } //Ifaces

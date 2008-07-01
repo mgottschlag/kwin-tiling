@@ -119,7 +119,8 @@ Solid::Control::BluetoothRemoteDevice * Solid::Control::BluetoothInterface::crea
 	ubi = address;
     else
     	ubi = this->ubi() + "/" + address;
-    
+   
+    kDebug() << "UBI iam using: " << ubi; 
     QPair<BluetoothRemoteDevice *, Ifaces::BluetoothRemoteDevice *> pair = d->findRegisteredBluetoothRemoteDevice(ubi);
     return pair.first;
 
@@ -227,6 +228,11 @@ bool Solid::Control::BluetoothInterface::isPeriodicDiscoveryNameResolvingActive(
                       isPeriodicDiscoveryNameResolvingActive());
 }
 
+bool  Solid::Control::BluetoothInterface::isTrusted(const QString& address)
+{
+    return_SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), false, isTrusted(address));
+}
+
 // TODO: QStringList or BluetoothRemoteDeviceList?
 QStringList Solid::Control::BluetoothInterface::listRemoteDevices() const
 {
@@ -293,13 +299,22 @@ void Solid::Control::BluetoothInterface::setPeriodicDiscoveryNameResolving(bool 
     SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), setPeriodicDiscoveryNameResolving(resolveNames));
 }
 
+void Solid::Control::BluetoothInterface::setTrusted(const QString& address)
+{
+    SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), setTrusted(address));
+}
+
+void Solid::Control::BluetoothInterface::removeTrust(const QString& address)
+{
+    SOLID_CALL(Ifaces::BluetoothInterface *, d->backendObject(), removeTrust(address));
+}
+
 void Solid::Control::BluetoothInterfacePrivate::setBackendObject(QObject *object)
 {
     FrontendObjectPrivate::setBackendObject(object);
 
     if (object) {
-        QObject::connect(object, SIGNAL(modeChanged(Solid::Control::BluetoothInterface::Mode)),
-                         parent(), SIGNAL(modeChanged(Solid::Control::BluetoothInterface::Mode)));
+        QObject::connect(object, SIGNAL(modeChanged(Solid::Control::BluetoothInterface::Mode)),parent(), SIGNAL(modeChanged(Solid::Control::BluetoothInterface::Mode)));
         QObject::connect(object, SIGNAL(discoverableTimeoutChanged(int)),
                          parent(), SIGNAL(discoverableTimeoutChanged(int)));
         QObject::connect(object, SIGNAL(minorClassChanged(const QString &)),
@@ -314,6 +329,21 @@ void Solid::Control::BluetoothInterfacePrivate::setBackendObject(QObject *object
                          parent(), SIGNAL(remoteDeviceFound(const QString &, int, int)));
         QObject::connect(object, SIGNAL(remoteDeviceDisappeared(const QString &)),
                          parent(), SIGNAL(remoteDeviceDisappeared(const QString &)));
+        QObject::connect(object, SIGNAL(remoteNameUpdated(const QString &,const QString &)),
+                         parent(), SIGNAL(remoteNameUpdated(const QString &,const QString &)));
+        QObject::connect(object, SIGNAL(remoteDeviceConnected(const QString &)),
+                         parent(), SIGNAL(remoteDeviceConnected(const QString &)));
+        QObject::connect(object, SIGNAL(remoteDeviceDisconnected(const QString &)),
+                         parent(), SIGNAL(remoteDeviceDisconnected(const QString &)));
+        QObject::connect(object, SIGNAL(trustAdded(const QString &)),
+                         parent(), SIGNAL(trustAdded(const QString &)));
+        QObject::connect(object, SIGNAL(trustRemoved(const QString &)),
+                         parent(), SIGNAL(trustRemoved(const QString &)));
+        QObject::connect(object, SIGNAL(bondingCreated(const QString &)),
+                         parent(), SIGNAL(bondingCreated(const QString &)));
+        QObject::connect(object, SIGNAL(bondingRemoved(const QString &)),
+                         parent(), SIGNAL(bondingRemoved(const QString &)));
+
     }
 }
 
