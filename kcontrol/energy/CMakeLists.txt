@@ -13,7 +13,7 @@ QT4_ADD_DBUS_INTERFACE( kcm_energy_PART_SRCS ${kscreensaver_xml} kscreensaver_in
 kde4_add_plugin(kcm_energy ${kcm_energy_PART_SRCS})
 
 
-target_link_libraries(kcm_energy  ${KDE4_KIO_LIBS} )
+target_link_libraries(kcm_energy  ${KDE4_KIO_LIBS} ${X11_LIBRARIES})
 
 install(TARGETS kcm_energy  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

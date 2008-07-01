@@ -2,7 +2,7 @@ include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/kcontrol/fonts)
 
 set(kio_fonts_PART_SRCS KioFonts.cpp Server.cpp Socket.cpp SuProc.cpp ${libkxftconfig_SRCS} )
 kde4_add_plugin(kio_fonts ${kio_fonts_PART_SRCS})
-target_link_libraries(kio_fonts ${KDE4_KIO_LIBS} ${KDE4_KDESU_LIBS} ${QT_QTNETWORK_LIBRARY} kfontinst )
+target_link_libraries(kio_fonts ${KDE4_KIO_LIBS} ${KDE4_KDESU_LIBS} ${QT_QTNETWORK_LIBRARY} ${FONTCONFIG_LIBRARIES} ${FREETYPE_LIBRARIES} kfontinst )
 install(TARGETS kio_fonts  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 install( FILES fonts.desktop  DESTINATION  ${DATA_INSTALL_DIR}/konqsidebartng/virtual_folders/services )

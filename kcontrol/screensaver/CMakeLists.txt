@@ -26,7 +26,7 @@ kde4_add_ui_files(kcm_screensaver_PART_SRCS advanceddialogimpl.ui )
 kde4_add_plugin(kcm_screensaver ${kcm_screensaver_PART_SRCS})
 
 
-target_link_libraries(kcm_screensaver  ${KDE4_KDE3SUPPORT_LIBS})
+target_link_libraries(kcm_screensaver  ${KDE4_KDE3SUPPORT_LIBS} ${X11_LIBRARIES})
 
 if(HAVE_GLXCHOOSEVISUAL)
    target_link_libraries(kcm_screensaver ${OPENGL_gl_LIBRARY})

@@ -17,7 +17,7 @@ target_link_libraries(kcm_keyboard
     ${KDE4_KIO_LIBS} 
 )
 if(X11_XTest_FOUND)
-  target_link_libraries(kcm_keyboard ${X11_XTest_LIB})
+  target_link_libraries(kcm_keyboard ${X11_XTest_LIB} ${X11_LIBRARIES})
 endif(X11_XTest_FOUND)
 
 install(TARGETS kcm_keyboard  DESTINATION ${PLUGIN_INSTALL_DIR} )

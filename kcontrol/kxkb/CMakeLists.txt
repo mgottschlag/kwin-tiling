@@ -85,6 +85,7 @@ kde4_add_plugin(kcm_keyboard_layout ${kcm_keyboard_layout_PART_SRCS})
 
 target_link_libraries(kcm_keyboard_layout ${KDE4_KIO_LIBS}
     ${XKB_SUPPORT_LIB}
+    ${X11_LIBRARIES}
 )
 
 if(X11_XTest_FOUND)

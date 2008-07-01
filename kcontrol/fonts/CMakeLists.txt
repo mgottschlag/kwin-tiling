@@ -11,7 +11,10 @@ set(kcm_fonts_PART_SRCS ../krdb/krdb.cpp fonts.cpp ${libkxftconfig_SRCS} )
 kde4_add_plugin(kcm_fonts ${kcm_fonts_PART_SRCS})
 
 
-target_link_libraries(kcm_fonts  ${KDE4_KDEUI_LIBS} ${FONTCONFIG_LIBRARIES} ${FREETYPE_LIBRARIES})
+target_link_libraries(kcm_fonts  ${KDE4_KDEUI_LIBS}
+   ${FONTCONFIG_LIBRARIES}
+   ${FREETYPE_LIBRARIES} ${QT_QTXML_LIBRARY} ${X11_LIBRARIES}
+)
 
 install(TARGETS kcm_fonts  DESTINATION ${PLUGIN_INSTALL_DIR} )
 

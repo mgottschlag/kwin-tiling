@@ -27,7 +27,7 @@ set(kcm_kdm_PART_SRCS ${kcmbackgroundlib_SRCS} ${backgroundlib_SRCS}
 kde4_add_plugin(kcm_kdm ${kcm_kdm_PART_SRCS})
 
 
-target_link_libraries(kcm_kdm ${KDE4_KDE3SUPPORT_LIBS} ${QIMAGEBLITZ_LIBRARIES} ${KDE4_KNEWSTUFF2_LIBS})
+target_link_libraries(kcm_kdm ${KDE4_KDE3SUPPORT_LIBS} ${QIMAGEBLITZ_LIBRARIES} ${KDE4_KNEWSTUFF2_LIBS} ${X11_LIBRARIES})
 
 install(TARGETS kcm_kdm  DESTINATION ${PLUGIN_INSTALL_DIR})
 
