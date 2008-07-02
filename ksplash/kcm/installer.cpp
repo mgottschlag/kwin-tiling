@@ -460,7 +460,6 @@ void SplashInstaller::slotSetTheme(int id)
 void SplashInstaller::slotNew()
 {
   KNS::Engine engine(this);
-  bool themeInstalled = false;
   if (engine.init("ksplash.knsrc")) {
     KNS::Entry::List entries = engine.downloadDialogModal(this);
     if ( !entries.isEmpty() )
