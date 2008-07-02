@@ -37,7 +37,6 @@
 #include <KGlobal>
 #include <KGlobalSettings>
 #include <KInputDialog>
-#include <KListWidget>
 #include <KMessageBox>
 #include <KStandardDirs>
 #include <kio/netaccess.h>

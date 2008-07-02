@@ -27,12 +27,8 @@
 
 #include "ui_colorsettings.h"
 
-class QSlider;
-class QPushButton;
-class QCheckBox;
 class QPalette;
 class QStackedWidget;
-class KListWidget;
 
 /**
  * The Desktop/Colors tab in kcontrol.
