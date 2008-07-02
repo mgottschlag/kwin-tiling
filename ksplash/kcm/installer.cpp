@@ -460,15 +460,20 @@ void SplashInstaller::slotSetTheme(int id)
 void SplashInstaller::slotNew()
 {
   KNS::Engine engine(this);
+  bool themeInstalled = false;
   if (engine.init("ksplash.knsrc")) {
     KNS::Entry::List entries = engine.downloadDialogModal(this);
     foreach(KNS::Entry* entry, entries) {
       if(entry->status() == KNS::Entry::Installed) {
         const QString themeTmpFile = entry->installedFiles().at(0);
         addNewTheme(themeTmpFile);
+      } else if (entry->status() == KNS::Entry::Deleted) {
+          themeInstalled = true;
       }
     }
   }
+  if ( themeInstalled )
+      readThemesList();
 }
 
 //-----------------------------------------------------------------------------
