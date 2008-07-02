@@ -87,7 +87,7 @@ typing <command>kcmshell4 keyboard_layout</command> from the terminal.</para>
 <sect1 id="general-config">
 <title>General Information</title>
 <para>
-&kxkb; configuration consists of thre tabs: Layout, Switching Options, and 
+&kxkb; configuration consists of three tabs: Layout, Switching Options, and 
 Advanced. The first one defines layouts you want to use and their options 
 (variant, display label etc.), second defines how the layout switching is done, 
 including which shortcut is used and wether the layout should be remembered for
@@ -182,7 +182,7 @@ rules file as that's where &kxkb; takes the configuration information from.
 <note>
 <para>
 The disadvantage of this approach is that the switching is done on key press not 
-key release so &eg; if you configure shortcut to be <keycombo action="simul">&Ctrl;&Shift;</keycombo> your other shortcuts wich start with this combination may stop working. See <ulink url="http://bugs.freedesktop.org/show_bug.cgi?id=865">X.org bug 865</ulink>
+key release so &eg; if you configure shortcut to be <keycombo action="simul">&Ctrl;&Shift;</keycombo> your other shortcuts which start with this combination may stop working. See <ulink url="http://bugs.freedesktop.org/show_bug.cgi?id=865">X.org bug 865</ulink>
 </para>
 </note>
 <para>
@@ -220,7 +220,7 @@ handled by &kxkb; and just passed to xkb extension.
 <title>Common Problems</title>
 
 <para>If you switch to some layout and you cannot see some characters
-from your layout as you type, please check your local settings. &eg;
+from your layout as you type, please check your local settings, &eg;
 <filename>~/.i18n</filename> or
 <filename>/etc/sysconfig/i18n</filename>, locale you have before
 starting &kde; applications must have an encoding which contains
