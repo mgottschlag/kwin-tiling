@@ -84,7 +84,7 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     m_config = KSharedConfig::openConfig("kdeglobals");
 
     setupUi(this);
-
+    schemeKnsButton->setIcon( KIcon("get-hot-new-stuff") );
     connect(colorSet, SIGNAL(currentIndexChanged(int)), this, SLOT(updateColorTable()));
     connect(schemeList, SIGNAL(currentRowChanged(int)), this, SLOT(loadScheme()));
     connect(applyToAlien, SIGNAL(toggled(bool)), this, SLOT(emitChanged()));
@@ -303,7 +303,7 @@ void KColorCm::on_schemeKnsButton_clicked()
 {
     KNS::Engine engine(this);
     if (engine.init("colorschemes.knsrc")) {
-            
+
 
         KNS::Entry::List entries = engine.downloadDialogModal(this);
         if (entries.size() > 0)
