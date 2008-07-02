@@ -106,7 +106,7 @@ void ResultScene::clearMatches()
     m_items.clear();
     m_itemCount = 0;
     m_pageCount = 0;
-    m_currentPage = 0;
+    setPage(0);
     emit matchCountChanged(0);
 }
 
@@ -155,9 +155,9 @@ void ResultScene::setQueryMatches(const QList<Plasma::QueryMatch> &m)
     // this will leave them in *reverse* order
     qSort(m_items.begin(), m_items.end(), ResultItem::compare);
 
-    m_currentPage = 0;
     m_pageCount = m.count();
     m_pageCount = m_pageCount / m_pageStride + (m_pageCount % m_pageStride != 0 ? 1 : 0);
+    setPage(0);
     //kDebug() << "gots us" << m_pageCount << "m_pageCount of items";
 
     emit matchCountChanged(m.count());
@@ -351,7 +351,7 @@ void ResultScene::previousPage()
 
 void ResultScene::setPage(uint index)
 {
-    if (index >= m_pageCount || index == m_currentPage) {
+    if (index > m_pageCount || index == m_currentPage) {
         return;
     }
 
