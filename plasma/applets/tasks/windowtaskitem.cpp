@@ -322,7 +322,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
 
     if (option->state & QStyle::State_MouseOver || m_animId) {
         if (itemBackground && itemBackground->hasElementPrefix("hover")) {
-            if (!m_animId && (~option->state & QStyle::State_Sunken)) {
+            if ((!m_animId || m_alpha == 1) && (~option->state & QStyle::State_Sunken)) {
                 itemBackground->setElementPrefix("hover");
                 itemBackground->paintPanel(painter, option->rect);
             } else {
