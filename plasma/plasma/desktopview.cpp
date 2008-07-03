@@ -42,7 +42,8 @@
 DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *parent)
     : Plasma::View(containment, id, parent),
       m_zoomLevel(Plasma::DesktopZoom),
-      m_dashboard(0)
+      m_dashboard(0),
+      m_dashboardFollowsDesktop(true)
 {
     setFocusPolicy(Qt::NoFocus);
 
@@ -99,7 +100,20 @@ void DesktopView::toggleDashboard()
             return;
         }
 
-        m_dashboard = new DashboardView(containment(), 0);
+        m_dashboardFollowsDesktop = true;
+        KConfigGroup cg = config();
+        Plasma::Containment *dc = containment();
+        int containmentId = cg.readEntry("DashboardContainment", 0);
+        if (containmentId > 0) {
+            foreach (Plasma::Containment *c, containment()->corona()->containments()) {
+                if (c->id() == containmentId) {
+                    dc = c;
+                    m_dashboardFollowsDesktop = false;
+                    break;
+                }
+            }
+        }
+        m_dashboard = new DashboardView(dc, 0);
         m_dashboard->addActions(actions());
     }
 
@@ -149,6 +163,10 @@ void DesktopView::setContainment(Plasma::Containment *containment)
         return;
     }
 
+    if (m_dashboard && m_dashboardFollowsDesktop) {
+        m_dashboard->setContainment(containment);
+    }
+
     if (m_zoomLevel == Plasma::DesktopZoom) {
         //switch connections
         disconnect(this->containment(), 0, this, 0);
@@ -159,10 +177,6 @@ void DesktopView::setContainment(Plasma::Containment *containment)
     }
 
     View::setContainment(containment);
-
-    if (m_dashboard) {
-        m_dashboard->setContainment(containment);
-    }
 }
 
 void DesktopView::addContainment(Plasma::Containment *fromContainment)
