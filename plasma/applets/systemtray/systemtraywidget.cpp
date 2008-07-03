@@ -85,13 +85,22 @@ bool SystemTrayWidget::x11Event(XEvent *event)
     if (event->type == ClientMessage) {
         if (event->xclient.message_type == m_opcodeAtom &&
             event->xclient.data.l[1] == SYSTEM_TRAY_REQUEST_DOCK) {
+            const WId systemTrayClientId = (WId)event->xclient.data.l[2];
+            if (systemTrayClientId == 0) {
+                return true;
+            }
+            foreach(SystemTrayContainer *c, findChildren<SystemTrayContainer*>()) {
+                if (c->clientWinId() == systemTrayClientId) {
+                    return true;
+                }
+            }
+
             // Set up a SystemTrayContainer for the client
             SystemTrayContainer *container = new SystemTrayContainer(this);
             connect(container, SIGNAL(destroyed(QObject *)), this, SLOT(relayoutContainers(QObject *)));
             connect(container, SIGNAL(clientIsEmbedded()), this, SIGNAL(sizeShouldChange()));
             addWidgetToLayout(container);
 
-            const WId systemTrayClientId = (WId)event->xclient.data.l[2];
             container->embedSystemTrayClient(systemTrayClientId);
             return true;
         }
