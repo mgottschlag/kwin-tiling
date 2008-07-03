@@ -52,6 +52,7 @@ Tasks::Tasks(QObject* parent, const QVariantList &arguments)
     setAspectRatioMode(Plasma::IgnoreAspectRatio);
     m_screenTimer.setSingleShot(true);
     m_screenTimer.setInterval(300);
+    resize(500, 58);
     connect(&m_screenTimer, SIGNAL(timeout()), this, SLOT(checkScreenChange()));
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeRefresh()));
 }
