@@ -505,6 +505,7 @@ qlonglong SolidDeviceEngine::freeDiskSpace(const QString &mountPoint)
 {
     //determine the free space available on the device
     const QByteArray pathBa=mountPoint.toAscii();
+    // path is only valid as long as pathBa exists
     const char *path=pathBa.constData();
 
 #ifdef HAVE_STATVFS
