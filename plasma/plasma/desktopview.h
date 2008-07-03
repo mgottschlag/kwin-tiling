@@ -103,6 +103,7 @@ protected:
 private:
     Plasma::ZoomLevel m_zoomLevel;
     DashboardView *m_dashboard;
+    bool m_dashboardFollowsDesktop;
 };
 
 #endif // multiple inclusion guard
