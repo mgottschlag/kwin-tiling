@@ -22,6 +22,8 @@
 
 #include <QWidget>
 
+class QGraphicsLinearLayout;
+
 namespace Plasma
 {
     class Applet;
@@ -36,9 +38,23 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+
+protected slots:
+    void syncGeometry();
 
 private:
+    void swapWithPrevious();
+    void swapWithNext();
+
     Plasma::Applet *m_applet;
+    Qt::Orientation m_orientation;
+    QGraphicsLinearLayout *m_layout;
+    QRectF m_prevGeom;
+    QRectF m_nextGeom;
+    int m_index;
 };
 
 #endif
