@@ -57,7 +57,7 @@ void SystemTrayContainer::embedSystemTrayClient( WId clientId )
 
     // check if we still have a valid clientId since there may cases where we don't any
     // longer after calling embedClient like e.g. if there is already a pidgin-instance
-    // running and it got started again. In that case those quniqueapplication starts
+    // running and it got started again. In that case those guniqueapplication starts
     // and fires a SYSTEM_TRAY_REQUEST_DOCK with another clientId up, exists and passes
     // commandline-arguments on to the other running instance and embedClient does fail
     // without emitting a clientClosed() or error() signal.
