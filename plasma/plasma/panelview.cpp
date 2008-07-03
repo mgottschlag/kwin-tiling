@@ -62,9 +62,9 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     if (panel) {
         connect(panel, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
         connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));
-        connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
         connect(panel, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
     }
+    connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
 
     kDebug() << "Panel geometry is" << panel->geometry();
 
@@ -304,7 +304,7 @@ void PanelView::updatePanelGeometry()
         break;
     }
 
-    //kDebug() << (QObject*)this << "thinks its panel is at " << geom;
+    kDebug() << (QObject*)this << "thinks its panel is at " << geom;
     if (geom == geometry()) {
         // our geometry is the same, but the panel moved around
         // so make sure our struts are still valid
