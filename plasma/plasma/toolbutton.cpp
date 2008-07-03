@@ -26,7 +26,7 @@
 #include <QStyle>
 #include <QStyleOptionToolButton>
 
-#include <plasma/plasma.h>
+#include <plasma/paintutils.h>
 #include <plasma/theme.h>
 
 ToolButton::ToolButton(QWidget *parent)
@@ -105,7 +105,7 @@ void ToolButton::paintEvent(QPaintEvent *event)
     textColor.setAlphaF(0.4);
     painter.setPen(textColor);
     painter.setBrush(backgroundColor);
-    painter.drawPath(Plasma::roundedRectangle(event->rect().adjusted(1,1,-1,-1), 4));
+    painter.drawPath(Plasma::PaintUtils::roundedRectangle(event->rect().adjusted(1,1,-1,-1), 4));
 
     style()->drawControl(QStyle::CE_ToolButtonLabel, &buttonOpt, &painter, this);
 }

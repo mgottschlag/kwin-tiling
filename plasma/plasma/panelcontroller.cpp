@@ -34,6 +34,7 @@
 
 #include <plasma/containment.h>
 #include <plasma/corona.h>
+#include <plasma/paintutils.h>
 #include <plasma/theme.h>
 
 #include "plasmaapp.h"
@@ -78,7 +79,7 @@ public:
         QPen pen;
         pen.setBrush(gradient);
         painter.setPen(pen);
-        painter.drawPath(Plasma::roundedRectangle(event->rect().adjusted(1,1,-1,-1), 4));
+        painter.drawPath(Plasma::PaintUtils::roundedRectangle(event->rect().adjusted(1,1,-1,-1), 4));
     }
 };
 
