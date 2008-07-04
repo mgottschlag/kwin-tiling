@@ -490,7 +490,7 @@ void PanelView::showAppletBrowser()
 
 void PanelView::togglePanelController()
 {
-    kDebug();
+    //kDebug();
     m_editting = false;
     if (containment()->immutability() != Plasma::Mutable) {
         delete m_panelController;
@@ -521,7 +521,7 @@ void PanelView::togglePanelController()
                 moveOverlay->setPalette(p);
                 moveOverlay->show();
                 m_moveOverlays << moveOverlay;
-                kDebug() << moveOverlay << moveOverlay->geometry();
+                //kDebug() << moveOverlay << moveOverlay->geometry();
             }
         }
     }
@@ -538,7 +538,7 @@ void PanelView::togglePanelController()
 
 void PanelView::edittingComplete()
 {
-    kDebug();
+    //kDebug();
     m_panelController = 0;
     m_editting = false;
     qDeleteAll(m_moveOverlays);
