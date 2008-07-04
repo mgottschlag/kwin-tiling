@@ -41,6 +41,7 @@
 
 #include <plasma/plasma.h>
 #include <plasma/runnermanager.h>
+#include <plasma/paintutils.h>
 
 #define TEXT_AREA_HEIGHT ResultItem::MARGIN + ResultItem::TEXT_MARGIN*2 + ResultItem::Private::s_fontHeight
 //#define NO_GROW_ANIM
@@ -426,7 +427,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     } else {
         //kDebug() << "oldschool";
         QColor grey(61, 61, 61);
-        painter->fillPath(Plasma::roundedRectangle(rect, 6), grey);
+        painter->fillPath(Plasma::PaintUtils::roundedRectangle(rect, 6), grey);
     }
 
     painter->restore();
@@ -548,13 +549,13 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         }
         //QPen pen(palette().color(QPalette::Highlight), 2);
         QPen pen(color, 2);
-        painter->strokePath(Plasma::roundedRectangle(rect, 6), pen);
+        painter->strokePath(Plasma::PaintUtils::roundedRectangle(rect, 6), pen);
         painter->restore();
     } else if (mouseOver) {
         painter->save();
         painter->translate(0.5, 0.5);
         QPen pen(palette().color(QPalette::Highlight).lighter(), 1);
-        painter->strokePath(Plasma::roundedRectangle(rect, 6), pen);
+        painter->strokePath(Plasma::PaintUtils::roundedRectangle(rect, 6), pen);
         painter->restore();
     }
     */
@@ -563,7 +564,7 @@ void ResultItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     QRect textRect(iRect.bottomLeft() + QPoint(0, MARGIN + TEXT_MARGIN), iRect.bottomRight() + QPoint(0, TEXT_AREA_HEIGHT));
 
     //kDebug() << d->highlight;
-    painter->fillPath(Plasma::roundedRectangle(textRect.adjusted(-1, 2, 1, 0), 3), d->bgBrush);
+    painter->fillPath(Plasma::PaintUtils::roundedRectangle(textRect.adjusted(-1, 2, 1, 0), 3), d->bgBrush);
 
     //Avoid to cut text both in the left and in the right
     Qt::Alignment textAlign = (option->fontMetrics.width(name()) < textRect.width()) ? Qt::AlignCenter : Qt::AlignLeft;
