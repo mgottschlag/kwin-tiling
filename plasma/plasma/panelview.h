@@ -37,6 +37,7 @@ namespace Plasma
 }
 
 class PanelController;
+class PanelAppletOverlay;
 
 class PanelView : public Plasma::View
 {
@@ -122,7 +123,7 @@ private:
 
     Plasma::Svg *m_background;
     PanelController *m_panelController;
-    QList<QWidget*> m_moveOverlays;
+    QList<PanelAppletOverlay*> m_moveOverlays;
 
     int m_offset;
     Qt::Alignment m_alignment;

@@ -71,11 +71,12 @@ PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
     : QWidget(parent),
       m_applet(applet),
       m_spacer(0),
-      m_orientation(applet->formFactor() == Plasma::Horizontal ? Qt::Horizontal : Qt::Vertical),
       m_layout(static_cast<QGraphicsLinearLayout*>(applet->containment()->layout())), // ++assumptions;
       m_index(0),
       m_clickDrag(false)
 {
+    syncOrientation();
+
     int i = 0;
     for (; i < m_layout->count(); ++i) {
         QGraphicsLayoutItem *l = m_layout->itemAt(i);
@@ -275,6 +276,11 @@ void PanelAppletOverlay::syncGeometry()
 {
     //kDebug();
     setGeometry(m_applet->geometry().toRect());
+}
+
+void PanelAppletOverlay::syncOrientation()
+{
+    m_orientation = m_applet->formFactor() == Plasma::Horizontal ? Qt::Horizontal : Qt::Vertical;
 }
 
 #include "panelappletoverlay.moc"

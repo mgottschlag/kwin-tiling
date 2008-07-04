@@ -38,6 +38,8 @@ public:
     PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent);
     ~PanelAppletOverlay();
 
+    void syncOrientation();
+
 protected:
     void paintEvent(QPaintEvent *event);
     void mousePressEvent(QMouseEvent *event);

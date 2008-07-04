@@ -326,6 +326,10 @@ void PanelView::updatePanelGeometry()
             m_panelController->resize(m_panelController->sizeHint());
             m_panelController->move(m_panelController->positionForPanelGeometry(geometry()));
         }
+
+        foreach (PanelAppletOverlay *o, m_moveOverlays) {
+            o->syncOrientation();
+        }
     }
 }
 
@@ -517,7 +521,7 @@ void PanelView::togglePanelController()
             QPalette p(palette());
             p.setBrush(QPalette::Window, overlayBrush);
             foreach (Plasma::Applet *applet, containment()->applets()) {
-                QWidget *moveOverlay = new PanelAppletOverlay(applet, this);
+                PanelAppletOverlay *moveOverlay = new PanelAppletOverlay(applet, this);
                 moveOverlay->setPalette(p);
                 moveOverlay->show();
                 m_moveOverlays << moveOverlay;
