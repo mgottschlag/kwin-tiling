@@ -75,25 +75,18 @@ PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
       m_index(0),
       m_clickDrag(false)
 {
-    syncOrientation();
-
     int i = 0;
     for (; i < m_layout->count(); ++i) {
-        QGraphicsLayoutItem *l = m_layout->itemAt(i);
-        QGraphicsWidget *w = dynamic_cast<QGraphicsWidget*>(l);
+        QGraphicsWidget *w = dynamic_cast<QGraphicsWidget*>(m_layout->itemAt(i));
         if (w == m_applet) {
             m_index = i;
             break;
         }
-        m_prevGeom = l->geometry();
     }
 
-    if (++i < m_layout->count()) {
-        // we have an item after us!
-        m_nextGeom = m_layout->itemAt(i)->geometry();
-    }
-
+    syncOrientation();
     syncGeometry();
+
     connect(m_applet, SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));
     connect(m_applet, SIGNAL(geometryChanged()), this, SLOT(delaySyncGeometry()));
 }
@@ -285,6 +278,18 @@ void PanelAppletOverlay::syncGeometry()
 {
     //kDebug();
     setGeometry(m_applet->geometry().toRect());
+
+    if (m_index > 0) {
+        m_prevGeom = m_layout->itemAt(m_index - 1)->geometry();
+    } else {
+        m_prevGeom = QRectF();
+    }
+
+    if (m_index < m_layout->count() - 1) {
+        m_nextGeom = m_layout->itemAt(m_index + 1)->geometry();
+    } else {
+        m_nextGeom = QRectF();
+    }
 }
 
 void PanelAppletOverlay::syncOrientation()
