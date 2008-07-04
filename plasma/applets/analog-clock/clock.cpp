@@ -46,6 +46,7 @@
 #include <KDialog>
 
 #include <plasma/dialog.h>
+#include <plasma/paintutils.h>
 #include <plasma/svg.h>
 #include <plasma/theme.h>
 
@@ -240,7 +241,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         p->setBrush(background);
 
         p->setRenderHint(QPainter::Antialiasing, true);
-        p->drawPath(Plasma::roundedRectangle(textRect.adjusted(-margin, -margin, margin, margin), margin));
+        p->drawPath(Plasma::PaintUtils::roundedRectangle(textRect.adjusted(-margin, -margin, margin, margin), margin));
         p->setRenderHint(QPainter::Antialiasing, false);
 
         p->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));

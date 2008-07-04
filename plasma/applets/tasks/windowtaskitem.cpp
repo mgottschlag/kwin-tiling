@@ -39,6 +39,7 @@
 #include <taskmanager/taskrmbmenu.h>
 
 #include "plasma/theme.h"
+#include "plasma/paintutils.h"
 #include "plasma/panelsvg.h"
 
 #include "tasks.h"
@@ -246,7 +247,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
             QColor background = m_applet->colorScheme()->background(KColorScheme::ActiveBackground).color();
             background.setAlphaF(hoverAlpha+0.2);
             painter->setBrush(QBrush(background));
-            painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
+            painter->drawPath(Plasma::PaintUtils::roundedRectangle(option->rect, 6));
         }
     } else if (m_flags & TaskIsMinimized) {
         if (itemBackground && itemBackground->hasElementPrefix("minimized")) {
@@ -278,7 +279,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
                 painter->setBrush(background);
                 painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
 
-                painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
+                painter->drawPath(Plasma::PaintUtils::roundedRectangle(option->rect, 6));
             }
     //Default is a normal task
     } else {
@@ -295,7 +296,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
             painter->setBrush(QBrush(background));
             painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
 
-            painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
+            painter->drawPath(Plasma::PaintUtils::roundedRectangle(option->rect, 6));
         }
     }
 
@@ -371,7 +372,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
             painter->setBrush(background);
             painter->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
 
-            painter->drawPath(Plasma::roundedRectangle(option->rect, 6));
+            painter->drawPath(Plasma::PaintUtils::roundedRectangle(option->rect, 6));
         }
     }
 }
