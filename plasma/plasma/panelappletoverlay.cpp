@@ -23,6 +23,8 @@
 #include <QPainter>
 #include <QTimer>
 
+#include <KGlobalSettings>
+
 #include <plasma/applet.h>
 #include <plasma/containment.h>
 #include <plasma/paintutils.h>
@@ -33,7 +35,8 @@ PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
       m_spacer(0),
       m_orientation(applet->formFactor() == Plasma::Horizontal ? Qt::Horizontal : Qt::Vertical),
       m_layout(static_cast<QGraphicsLinearLayout*>(applet->containment()->layout())), // ++assumptions;
-      m_index(0)
+      m_index(0),
+      m_clickDrag(false)
 {
     int i = 0;
     for (; i < m_layout->count(); ++i) {
@@ -54,6 +57,15 @@ PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
     syncGeometry();
     connect(m_applet, SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));
     connect(m_applet, SIGNAL(geometryChanged()), this, SLOT(delaySyncGeometry()));
+}
+
+PanelAppletOverlay::~PanelAppletOverlay()
+{
+    if (m_spacer) {
+        m_layout->removeItem(m_spacer);
+        m_spacer->deleteLater();
+        m_spacer = 0;
+    }
 }
 
 void PanelAppletOverlay::paintEvent(QPaintEvent *event)
@@ -87,9 +99,21 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
     Q_UNUSED(event)
 
     //kDebug();
-    delete m_spacer;
-    m_origin = mapToParent(event->pos());
-    m_spacer = new QGraphicsWidget(m_applet->containment());
+    if (m_clickDrag) {
+        setMouseTracking(false);
+        m_clickDrag = false;
+        m_origin = QPoint();
+        return;
+    }
+
+    m_clickDrag = false;
+    if (!m_spacer) {
+        m_spacer = new QGraphicsWidget(m_applet->containment());
+    } else {
+        m_layout->removeItem(m_spacer);
+    }
+
+    m_lastPoint = m_origin = mapToParent(event->pos());
     m_spacer->setMinimumSize(m_applet->geometry().size());
     m_spacer->setMaximumSize(m_applet->geometry().size());
     m_layout->removeItem(m_applet);
@@ -106,12 +130,12 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
     //kDebug() << p << g << m_origin << (QObject*)m_applet << m_prevGeom << m_nextGeom;
 
     if (m_orientation == Qt::Horizontal) {
-        g.moveLeft(g.x() + (p.x() - m_origin.x()));
+        g.moveLeft(g.x() + (p.x() - m_lastPoint.x()));
     } else {
-        g.moveTop(g.y() + (p.y() - m_origin.y()));
+        g.moveTop(g.y() + (p.y() - m_lastPoint.y()));
     }
 
-    m_origin = p;
+    m_lastPoint = p;
     m_applet->setGeometry(g);
 
     // swap items if we pass completely over the next/previou item or cross
@@ -135,14 +159,28 @@ void PanelAppletOverlay::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
 
+    if (!m_origin.isNull()) {
+        //kDebug() << m_clickDrag << m_origin << mapToParent(event->pos());
+        if (m_orientation == Qt::Horizontal) {
+            m_clickDrag = abs(mapToParent(event->pos()).x() - m_origin.x()) < KGlobalSettings::dndEventDelay();
+        } else {
+            m_clickDrag = abs(mapToParent(event->pos()).y() - m_origin.y()) < KGlobalSettings::dndEventDelay();
+        }
+
+        if (m_clickDrag) {
+            //kDebug() << "click dragging." << this << mouseGrabber();
+            setMouseTracking(true);
+            event->setAccepted(false);
+            return;
+        }
+    }
+
     //kDebug();
     m_layout->removeItem(m_spacer);
-    m_spacer->hide();
-    m_layout->insertItem(m_index, m_applet);
     m_spacer->deleteLater();
     m_spacer = 0;
+    m_layout->insertItem(m_index, m_applet);
     releaseMouse();
-    syncGeometry();
 }
 
 void PanelAppletOverlay::enterEvent(QEvent *event)

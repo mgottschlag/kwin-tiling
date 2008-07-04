@@ -36,6 +36,7 @@ class PanelAppletOverlay : public QWidget
 
 public:
     PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent);
+    ~PanelAppletOverlay();
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -60,7 +61,9 @@ private:
     QRectF m_prevGeom;
     QRectF m_nextGeom;
     QPoint m_origin;
+    QPoint m_lastPoint;
     int m_index;
+    bool m_clickDrag;
 };
 
 #endif
