@@ -543,6 +543,7 @@ void PanelView::edittingComplete()
     m_editting = false;
     qDeleteAll(m_moveOverlays);
     m_moveOverlays.clear();
+    containment()->closeToolBox();
 }
 
 Qt::Alignment PanelView::alignmentFilter(Qt::Alignment align) const
