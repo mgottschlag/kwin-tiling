@@ -148,7 +148,7 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
         }
     } else if (m_prevGeom.isValid() && g.top() <= m_prevGeom.top()) {
         swapWithPrevious();
-    } else if (m_nextGeom.isValid() && g.top() >= m_nextGeom.bottom()) {
+    } else if (m_nextGeom.isValid() && g.bottom() >= m_nextGeom.bottom()) {
         swapWithNext();
     }
 
