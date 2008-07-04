@@ -24,6 +24,7 @@
 #include <QTimer>
 
 #include <KGlobalSettings>
+#include <KIcon>
 
 #include <plasma/applet.h>
 #include <plasma/containment.h>
@@ -114,18 +115,15 @@ void PanelAppletOverlay::paintEvent(QPaintEvent *event)
 
     bool hovered = op.state & QStyle::State_MouseOver;
     bool mover = mouseGrabber() == this;
-    if (!hovered || mover) {
+    if (!hovered && !mover) {
         return;
     }
 
     QPainter p(this);
-
-    QBrush b(palette().brush(QPalette::Window));
-    QColor c(b.color());
-    c.setAlpha(c.alpha() * 0.5);
-    b.setColor(c);
-
-    p.fillRect(rect(), b);
+    KIcon icon("transform-move");
+    const int iconSize = height();
+    QRect iconRect(rect().center().x() - (iconSize / 2), 0, iconSize, iconSize);
+    p.drawPixmap(iconRect, icon.pixmap(iconSize, iconSize));
 }
 
 void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
