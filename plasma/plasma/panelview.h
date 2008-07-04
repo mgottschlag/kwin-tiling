@@ -104,7 +104,6 @@ protected:
     void updateStruts();
     void moveEvent(QMoveEvent *event);
     void resizeEvent(QResizeEvent *event);
-    //void drawForeground(QPainter *painter, const QRectF &rect);
 
 private Q_SLOTS:
     void showAppletBrowser();

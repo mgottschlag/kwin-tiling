@@ -23,6 +23,7 @@
 #include <QWidget>
 
 class QGraphicsLinearLayout;
+class QGraphicsWidget;
 
 namespace Plasma
 {
@@ -41,8 +42,11 @@ protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
+    void enterEvent(QEvent *event);
+    void leaveEvent(QEvent *event);
 
 protected slots:
+    void delaySyncGeometry();
     void syncGeometry();
 
 private:
@@ -50,10 +54,12 @@ private:
     void swapWithNext();
 
     Plasma::Applet *m_applet;
+    QGraphicsWidget *m_spacer;
     Qt::Orientation m_orientation;
     QGraphicsLinearLayout *m_layout;
     QRectF m_prevGeom;
     QRectF m_nextGeom;
+    QPoint m_origin;
     int m_index;
 };
 

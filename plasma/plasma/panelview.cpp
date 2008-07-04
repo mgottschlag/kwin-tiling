@@ -30,10 +30,11 @@
 #include <plasma/corona.h>
 #include <plasma/plasma.h>
 #include <plasma/svg.h>
+#include <plasma/theme.h>
 
-#include "plasmaapp.h"
-#include "panelcontroller.h"
 #include "panelappletoverlay.h"
+#include "panelcontroller.h"
+#include "plasmaapp.h"
 
 PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     : Plasma::View(panel, id, parent),
@@ -508,7 +509,9 @@ void PanelView::togglePanelController()
         connect(m_panelController, SIGNAL(alignmentChanged(Qt::Alignment)), this, SLOT(setAlignment(Qt::Alignment)));
         connect(m_panelController, SIGNAL(locationChanged(Plasma::Location)), this, SLOT(setLocation(Plasma::Location)));
 
-        QBrush overlayBrush(QColor(127, 0, 0, 127));
+        QColor overlayColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
+//        overlayColor.setAlpha(0.5);
+        QBrush overlayBrush(overlayColor);
         QPalette p(palette());
         p.setBrush(QPalette::Window, overlayBrush);
         foreach (Plasma::Applet *applet, containment()->applets()) {
@@ -621,35 +624,6 @@ void PanelView::resizeEvent(QResizeEvent *event)
     QWidget::resizeEvent(event);
     updateStruts();
 }
-
-#if 0
-void PanelView::drawForeground(QPainter *painter, const QRectF &rect)
-{
-    if (!m_editting) {
-        View::drawForeground(painter, rect);
-        return;
-    }
-
-    //kDebug() << rect << geometry();
-    Plasma::Containment *c = containment();
-
-    if (!c) {
-        return;
-    }
-
-    QBrush overlayBrush(QColor(127, 127, 127, 127));
-    //QBrush overlayBrush(Qt::red);
-
-    foreach (const Plasma::Applet *applet, c->applets()) {
-        QRectF sceneRect = applet->mapToScene(applet->boundingRect()).boundingRect();
-        //kDebug() << "applet geometry for" << (QObject*)applet << "is" << sceneRect;
-        if (sceneRect.intersects(rect)) {
-            //kDebug() << "filling rect" << sceneRect;
-            painter->fillRect(sceneRect.toRect(), overlayBrush);
-        }
-    }
-}
-#endif
 
 #include "panelview.moc"
 
