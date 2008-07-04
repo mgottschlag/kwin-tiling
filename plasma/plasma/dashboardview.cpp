@@ -127,6 +127,10 @@ void DashboardView::paintEvent(QPaintEvent *event)
 
 void DashboardView::showAppletBrowser()
 {
+    if (!containment()) {
+        return;
+    }
+
     if (!m_appletBrowser) {
         m_appletBrowser = new Plasma::AppletBrowser(this, Qt::FramelessWindowHint );
         m_appletBrowser->setContainment(containment());
@@ -203,7 +207,7 @@ bool DashboardView::eventFilter(QObject *watched, QEvent *event)
 
 void DashboardView::toggleVisibility()
 {
-    if (isHidden()) {
+    if (isHidden() && containment()) {
         if (m_suppressShow) {
             kDebug() << "DashboardView::toggleVisibility but show was suppressed";
             return;
@@ -235,18 +239,23 @@ void DashboardView::toggleVisibility()
 
 void DashboardView::setContainment(Plasma::Containment *newContainment)
 {
-    if (newContainment == containment()) {
+    if (!newContainment || newContainment == containment()) {
         return;
     }
 
-    containment()->removeToolBoxTool(m_hideAction);
+    Plasma::Containment *oldContainment = containment();
+    if (oldContainment) {
+        oldContainment->removeToolBoxTool(m_hideAction);
+    }
     newContainment->addToolBoxTool(m_hideAction);
 
     if (isVisible()) {
-        disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
-        containment()->closeToolBox();
-        containment()->enableAction("zoom out", m_zoomOut);
-        containment()->enableAction("zoom in", m_zoomIn);
+        if (oldContainment) {
+            disconnect(oldContainment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
+            oldContainment->closeToolBox();
+            oldContainment->enableAction("zoom out", m_zoomOut);
+            oldContainment->enableAction("zoom in", m_zoomIn);
+        }
 
         connect(newContainment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
         QAction *action = newContainment->action("zoom out");
@@ -262,6 +271,7 @@ void DashboardView::setContainment(Plasma::Containment *newContainment)
         m_appletBrowser->setContainment(newContainment);
     }
 
+    View::setContainment(0); // we don't actually to mess with the screen settings
     View::setContainment(newContainment);
 }
 
@@ -272,11 +282,15 @@ void DashboardView::hideView()
     }
 
     disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
-    disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
 
-    containment()->closeToolBox();
-    containment()->enableAction("zoom out", m_zoomOut);
-    containment()->enableAction("zoom in", m_zoomIn);
+    if (containment()) {
+        disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
+
+        containment()->closeToolBox();
+        containment()->enableAction("zoom out", m_zoomOut);
+        containment()->enableAction("zoom in", m_zoomIn);
+    }
+
     m_hideAction->setEnabled(false);
     hide();
 }
@@ -310,7 +324,9 @@ void DashboardView::showEvent(QShowEvent *event)
 {
     KWindowSystem::setState(winId(), NET::SkipPager);
     connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
-    connect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
+    if (containment()) {
+        connect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
+    }
     Plasma::View::showEvent(event);
 }
 
