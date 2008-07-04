@@ -115,7 +115,7 @@ void PanelAppletOverlay::paintEvent(QPaintEvent *event)
 
     bool hovered = op.state & QStyle::State_MouseOver;
     bool mover = mouseGrabber() == this;
-    if (!hovered && !mover) {
+    if (!hovered || mover) {
         return;
     }
 
