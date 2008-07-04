@@ -21,6 +21,7 @@
 
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QGraphicsLinearLayout>
 #include <QTimer>
 
 #include <KWindowSystem>
@@ -509,17 +510,19 @@ void PanelView::togglePanelController()
         connect(m_panelController, SIGNAL(alignmentChanged(Qt::Alignment)), this, SLOT(setAlignment(Qt::Alignment)));
         connect(m_panelController, SIGNAL(locationChanged(Plasma::Location)), this, SLOT(setLocation(Plasma::Location)));
 
-        QColor overlayColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
-//        overlayColor.setAlpha(0.5);
-        QBrush overlayBrush(overlayColor);
-        QPalette p(palette());
-        p.setBrush(QPalette::Window, overlayBrush);
-        foreach (Plasma::Applet *applet, containment()->applets()) {
-            QWidget *moveOverlay = new PanelAppletOverlay(applet, this);
-            moveOverlay->setPalette(p);
-            moveOverlay->show();
-            m_moveOverlays << moveOverlay;
-            kDebug() << moveOverlay << moveOverlay->geometry();
+        if (dynamic_cast<QGraphicsLinearLayout*>(containment()->layout())) {
+            // we only support mouse over drags for panels with linear layouts
+            QColor overlayColor(Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor));
+            QBrush overlayBrush(overlayColor);
+            QPalette p(palette());
+            p.setBrush(QPalette::Window, overlayBrush);
+            foreach (Plasma::Applet *applet, containment()->applets()) {
+                QWidget *moveOverlay = new PanelAppletOverlay(applet, this);
+                moveOverlay->setPalette(p);
+                moveOverlay->show();
+                m_moveOverlays << moveOverlay;
+                kDebug() << moveOverlay << moveOverlay->geometry();
+            }
         }
     }
 
