@@ -122,8 +122,17 @@ void PanelAppletOverlay::paintEvent(QPaintEvent *event)
 
     QPainter p(this);
     KIcon icon("transform-move");
-    const int iconSize = height();
-    QRect iconRect(rect().center().x() - (iconSize / 2), 0, iconSize, iconSize);
+    int iconSize;
+    QRect iconRect;
+
+    if (m_orientation == Qt::Horizontal) {
+        iconSize = qMin(qMin(height(), int(m_applet->size().width())), 64);
+        iconRect = QRect(rect().center() - QPoint(iconSize / 2, iconSize / 2), QSize(iconSize, iconSize));
+    } else {
+        iconSize = qMin(qMin(width(), int(m_applet->size().height())), 64);
+        iconRect = QRect(rect().center() - QPoint(iconSize / 2, iconSize / 2), QSize(iconSize, iconSize));
+    }
+
     p.drawPixmap(iconRect, icon.pixmap(iconSize, iconSize));
 }
 
