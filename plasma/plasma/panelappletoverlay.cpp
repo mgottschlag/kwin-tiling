@@ -28,6 +28,43 @@
 #include <plasma/applet.h>
 #include <plasma/containment.h>
 #include <plasma/paintutils.h>
+#include <plasma/theme.h>
+
+class AppletMoveSpacer : public QGraphicsWidget
+{
+public:
+    AppletMoveSpacer(Plasma::Applet *applet)
+        : QGraphicsWidget(applet->containment()),
+          m_applet(applet)
+    {
+    }
+
+protected:
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget * widget = 0)
+    {
+        Q_UNUSED(option)
+        Q_UNUSED(widget)
+
+        /*
+           results in odd painting corruption
+        if (collidesWithItem(m_applet, Qt::IntersectsItemBoundingRect)) {
+            painter->fillRect(contentsRect(), Qt::transparent);
+            return;
+        }
+        */
+
+        //TODO: make this a pretty gradient?
+        painter->setRenderHint(QPainter::Antialiasing);
+        QPainterPath p = Plasma::PaintUtils::roundedRectangle(contentsRect().adjusted(1, 1, -2, -2), 4);
+        QColor c = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+        c.setAlphaF(0.3);
+
+        painter->fillPath(p, c);
+    }
+
+private:
+    QGraphicsWidget *m_applet;
+};
 
 PanelAppletOverlay::PanelAppletOverlay(Plasma::Applet *applet, QWidget *parent)
     : QWidget(parent),
@@ -82,14 +119,11 @@ void PanelAppletOverlay::paintEvent(QPaintEvent *event)
     }
 
     QPainter p(this);
-    //QPainterPath path = Plasma::PaintUtils::roundedRectangle(rect(), 6);
 
     QBrush b(palette().brush(QPalette::Window));
-    if (hovered && !mover) {
-        QColor c(b.color());
-        c.setAlpha(c.alpha() * 0.5);
-        b.setColor(c);
-    }
+    QColor c(b.color());
+    c.setAlpha(c.alpha() * 0.5);
+    b.setColor(c);
 
     p.fillRect(rect(), b);
 }
@@ -108,7 +142,7 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
 
     m_clickDrag = false;
     if (!m_spacer) {
-        m_spacer = new QGraphicsWidget(m_applet->containment());
+        m_spacer = new AppletMoveSpacer(m_applet);
     } else {
         m_layout->removeItem(m_spacer);
     }
