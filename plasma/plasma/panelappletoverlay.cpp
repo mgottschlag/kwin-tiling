@@ -86,7 +86,7 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
 
-    kDebug();
+    //kDebug();
     delete m_spacer;
     m_origin = mapToParent(event->pos());
     m_spacer = new QGraphicsWidget(m_applet->containment());
@@ -103,7 +103,7 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
 
     QPoint p = mapToParent(event->pos());
     QRect g = geometry();
-    kDebug() << p << g << m_origin; //(QObject*)m_applet << m_prevGeom << m_nextGeom;
+    //kDebug() << p << g << m_origin << (QObject*)m_applet << m_prevGeom << m_nextGeom;
 
     if (m_orientation == Qt::Horizontal) {
         g.moveLeft(g.x() + (p.x() - m_origin.x()));
@@ -135,7 +135,7 @@ void PanelAppletOverlay::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
 
-    kDebug();
+    //kDebug();
     m_layout->removeItem(m_spacer);
     m_spacer->hide();
     m_layout->insertItem(m_index, m_applet);
@@ -159,7 +159,7 @@ void PanelAppletOverlay::leaveEvent(QEvent *event)
 
 void PanelAppletOverlay::swapWithPrevious()
 {
-    kDebug();
+    //kDebug();
     --m_index;
 
     if (m_index > 0) {
@@ -175,7 +175,7 @@ void PanelAppletOverlay::swapWithPrevious()
 
 void PanelAppletOverlay::swapWithNext()
 {
-    kDebug();
+    //kDebug();
     ++m_index;
 
     if (m_index < m_layout->count() - 1) {
