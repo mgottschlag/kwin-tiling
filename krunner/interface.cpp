@@ -213,15 +213,6 @@ Interface::Interface(QWidget* parent)
 
     new QShortcut( QKeySequence( Qt::Key_Escape ), this, SLOT(close()) );
 
-    kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
-    // we restore the original size, which will set the results view back to its
-    // normal size, then we hide the results view and resize the dialog
-    setMinimumSize(QSize(MIN_WIDTH , 0));
-    if (KGlobal::config()->hasGroup("Interface")) {
-        KConfigGroup interfaceConfig(KGlobal::config(), "Interface");
-        restoreDialogSize(interfaceConfig);
-    }
-
     m_layout->addStretch(1);
     setTabOrder(0, m_configButton);
     setTabOrder(m_configButton, m_activityButton);
@@ -231,6 +222,16 @@ Interface::Interface(QWidget* parent)
     setTabOrder(m_nextPage, m_resultsView);
     setTabOrder(m_resultsView, m_closeButton);
 
+    //kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
+    // we restore the original size, which will set the results view back to its
+    // normal size, then we hide the results view and resize the dialog
+    setMinimumSize(QSize(MIN_WIDTH , 0));
+    if (KGlobal::config()->hasGroup("Interface")) {
+        KConfigGroup interfaceConfig(KGlobal::config(), "Interface");
+        restoreDialogSize(interfaceConfig);
+    }
+
+    //kDebug() << "size:" << minimumSizeHint() << minimumSize();
     QTimer::singleShot(0, this, SLOT(resetInterface()));
 }
 
@@ -308,9 +309,10 @@ void Interface::display(const QString& term)
     // TODO: set a nice welcome string when the string freeze lifts
     m_descriptionLabel->clear();
 
+    show();
+    resetInterface();
     centerOnScreen();
     KWindowSystem::forceActiveWindow(winId());
-    QTimer::singleShot(0, this, SLOT(show()));
 }
 
 void Interface::centerOnScreen()
@@ -332,7 +334,7 @@ void Interface::centerOnScreen()
     int h = height() + m_resultsView->height();
     move(r.left() + (r.width() / 2) - (w / 2),
          r.top() + (r.height() / 2) - (h / 2));
-    kDebug() << "moved to" << pos();
+    //kDebug() << "moved to" << pos();
 }
 
 void Interface::displayWithClipboardContents()
@@ -358,13 +360,15 @@ void Interface::resetInterface()
     m_delayedRun = false;
     m_searchTerm->setCurrentItem(QString(), true, 0);
     m_descriptionLabel->clear();
-    m_resultsScene->clearQuery();
-    m_resultsView->hide();
     m_descriptionLabel->hide();
     m_previousPage->hide();
     m_nextPage->hide();
+    m_resultsScene->clearQuery();
+    m_resultsView->hide();
     setMinimumSize(QSize(MIN_WIDTH, 0));
     adjustSize();
+    //kDebug() << size() << minimumSizeHint();
+    resize(minimumSizeHint());
 }
 
 void Interface::closeEvent(QCloseEvent *e)
@@ -429,7 +433,7 @@ void Interface::updateDescriptionLabel(ResultItem *item)
 {
     // we want it always visible once we start showing it
     // so that the interface isn't jumping all around
-    m_descriptionLabel->setVisible(true);
+    m_descriptionLabel->setVisible(m_resultsView->isVisible());
     if (!item) {
         m_descriptionLabel->setText(" ");
     } else if (item->description().isEmpty()) {
@@ -503,10 +507,12 @@ void Interface::matchCountChanged(int count)
     }
 
     if (show) {
+        //kDebug() << "showing!";
         m_resultsView->show();
         setMinimumSize(QSize(MIN_WIDTH, 0));
         adjustSize();
     } else {
+        //kDebug() << "hiding ... eventually";
         m_delayedRun = false;
         m_hideResultsTimer.start(2000);
     }
@@ -521,6 +527,7 @@ void Interface::hideResultsArea()
     m_nextPage->hide();
     setMinimumSize(QSize(MIN_WIDTH, 0));
     adjustSize();
+    resize(minimumSizeHint());
 }
 
 #include "interface.moc"
