@@ -150,6 +150,7 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
     m_spacer->setMaximumSize(m_applet->geometry().size());
     m_layout->removeItem(m_applet);
     m_layout->insertItem(m_index, m_spacer);
+    m_applet->setZValue(m_applet->zValue() + 1);
     grabMouse();
 }
 
@@ -212,6 +213,7 @@ void PanelAppletOverlay::mouseReleaseEvent(QMouseEvent *event)
     m_spacer->deleteLater();
     m_spacer = 0;
     m_layout->insertItem(m_index, m_applet);
+    m_applet->setZValue(m_applet->zValue() - 1);
     releaseMouse();
 }
 
