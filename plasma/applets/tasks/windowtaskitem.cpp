@@ -207,7 +207,9 @@ void WindowTaskItem::timerEvent(QTimerEvent *event)
 
 void WindowTaskItem::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
-    m_applet->resizeItemBackground(event->newSize());
+    // we need to lose precision here because all our drawing later on
+    // is done with ints, not floats
+    m_applet->resizeItemBackground(event->newSize().toSize());
 }
 
 void WindowTaskItem::paint(QPainter *painter,
@@ -304,10 +306,10 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
     if (hasSvg) {
         if (!m_animId) {
              if (~option->state & QStyle::State_MouseOver) {
-                 itemBackground->paintPanel(painter, option->rect);
+                 itemBackground->paintPanel(painter, contentsRect()); //option->rect);
              }
         } else {
-            QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(option->rect.size());
+            QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(contentsRect().size().toSize());
             //kDebug() << (QObject*)this << "setting alpha to" << (255 * (1.0 - m_alpha)) << m_alpha;
             if (m_alpha < 0.95) {
                 alphaPixmap->fill(QColor(0, 0, 0, 255 * (1.0 - m_alpha)));
@@ -321,7 +323,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
                 itemBackground->paintPanel(&buffPainter, alphaPixmap->rect());
             }
 
-            painter->drawPixmap(option->rect.topLeft(), *alphaPixmap);
+            painter->drawPixmap(contentsRect(), *alphaPixmap, alphaPixmap->rect());
         }
     }
 
@@ -329,25 +331,28 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
         if (itemBackground && itemBackground->hasElementPrefix("hover")) {
             if ((!m_animId || m_alpha == 1) && (~option->state & QStyle::State_Sunken)) {
                 itemBackground->setElementPrefix("hover");
-                itemBackground->paintPanel(painter, option->rect);
+                itemBackground->paintPanel(painter, contentsRect());
             } else {
                 //Draw task background from theme svg "hover" element
-                QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(option->rect.size());
+                QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(contentsRect().size().toSize());
 
                 if (option->state & QStyle::State_Sunken) {
                     alphaPixmap->fill(QColor(0, 0, 0, 50));
-                } else {
+                } else if (m_alpha < 0.9) {
                     alphaPixmap->fill(QColor(0, 0, 0, 255 * m_alpha));
+                } else {
+                    alphaPixmap->fill(Qt::transparent);
                 }
+                    alphaPixmap->fill(Qt::transparent);
 
                 {
                     QPainter buffPainter(alphaPixmap);
                     buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
                     itemBackground->setElementPrefix("hover");
-                    itemBackground->paintPanel(&buffPainter, option->rect);
+                    itemBackground->paintPanel(&buffPainter, alphaPixmap->rect());
                 }
 
-                painter->drawPixmap(option->rect.topLeft(), *alphaPixmap);
+                painter->drawPixmap(contentsRect(), *alphaPixmap, alphaPixmap->rect());
             }
         } else {
             //Draw task background without svg theming

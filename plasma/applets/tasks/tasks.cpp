@@ -222,7 +222,7 @@ void Tasks::constraintsEvent(Plasma::Constraints constraints)
         //avoid to make all tasks disappear for a wrong minimum size of the spacer
         m_spacer->setMaximumSize(INT_MAX, INT_MAX);
     }
-    
+
     if (constraints & Plasma::SizeConstraint) {
         adjustStretch();
     }
