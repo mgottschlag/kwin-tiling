@@ -108,8 +108,13 @@ class UserListView : public QListWidget {
 		switch (event->key()) {
 		case Qt::Key_Enter:
 		case Qt::Key_Return:
-			if (currentIndex().isValid())
-				emit activated( currentIndex() );
+			if (currentItem())
+				emit itemDoubleClicked( currentItem() );
+			event->accept();
+			break;
+		case Qt::Key_Space:
+			if (currentItem())
+				emit itemClicked( currentItem() );
 			event->accept();
 			break;
 		default:
@@ -117,6 +122,29 @@ class UserListView : public QListWidget {
 			break;
 		}
 	}
+
+	virtual void mousePressEvent( QMouseEvent *event )
+	{
+		m_suppressClick = false;
+		QListWidget::mousePressEvent(event);
+	}
+
+	virtual void mouseReleaseEvent( QMouseEvent *event )
+	{
+		if (m_suppressClick)
+			m_suppressClick = false;
+		else
+			QListWidget::mouseReleaseEvent(event);
+	}
+
+	virtual void mouseDoubleClickEvent( QMouseEvent *event )
+	{
+		m_suppressClick = true;
+		QListWidget::mouseDoubleClickEvent(event);
+	}
+
+  private:
+	bool m_suppressClick;
 };
 
 class UserListViewItem : public QListWidgetItem {
@@ -154,9 +182,9 @@ KGreeter::KGreeter( bool framed )
 
 	if (_userList) {
 		userView = new UserListView( this );
-		connect( userView, SIGNAL(itemPressed( QListWidgetItem * )),
+		connect( userView, SIGNAL(itemClicked( QListWidgetItem * )),
 		         SLOT(slotUserClicked( QListWidgetItem * )) );
-		connect( userView, SIGNAL(itemActivated( QListWidgetItem * )),
+		connect( userView, SIGNAL(itemDoubleClicked( QListWidgetItem * )),
 		         SLOT(accept()) );
 	}
 	if (_userCompletion)
@@ -483,10 +511,7 @@ KGreeter::reject()
 void
 KGreeter::accept()
 {
-	if (userView && userView->hasFocus())
-		slotUserClicked( userView->currentItem() );
-	else
-		verify->accept();
+	verify->accept();
 }
 
 void // private
