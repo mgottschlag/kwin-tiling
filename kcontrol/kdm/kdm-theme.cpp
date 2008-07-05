@@ -172,6 +172,7 @@ void KDMThemeWidget::insertTheme( const QString &_theme )
 	QString name = themeGroup.readEntry( "Name" );
 	if (name.isEmpty())
 		return;
+
 	ThemeData *child = new ThemeData( themeWidget );
 	child->setText( 0, name );
 	child->setText( 1, themeGroup.readEntry( "Author" ) );
@@ -179,6 +180,16 @@ void KDMThemeWidget::insertTheme( const QString &_theme )
 	child->screenShot = themeGroup.readEntry( "Screenshot" );
 	child->copyright = themeGroup.readEntry( "Copyright" );
 	child->description = themeGroup.readEntry( "Description" );
+}
+
+void KDMThemeWidget::removeTheme( const QString &name )
+{
+	if (name.isEmpty())
+		return;
+
+	QList<QTreeWidgetItem *> ls = themeWidget->findItems( name, Qt::MatchExactly );
+	if (!ls.isEmpty())
+		delete ls.first();
 }
 
 void KDMThemeWidget::updateInfoView( ThemeData *theme )
@@ -287,13 +298,8 @@ void KDMThemeWidget::themeSelected()
 	else
 		updateInfoView( 0 );
 	if (bInstallTheme->isEnabled()) // not read-only
-		updateButton();
+		bRemoveTheme->setEnabled( !themeWidget->selectedItems().isEmpty() );
 	emit changed();
-}
-
-void KDMThemeWidget::updateButton()
-{
-    bRemoveTheme->setEnabled( !themeWidget->selectedItems().isEmpty() );
 }
 
 void KDMThemeWidget::removeSelectedThemes()
@@ -320,8 +326,8 @@ void KDMThemeWidget::getNewStuff()
 {
 	KNS::Engine engine( this );
 	if (engine.init( "kdm.knsrc" )) {
-	    KNS::Entry::List entries = engine.downloadDialogModal( this );
-	    for (int i = 0; i < entries.size(); i ++) {
+		KNS::Entry::List entries = engine.downloadDialogModal( this );
+		for (int i = 0; i < entries.size(); i ++) {
 			if (entries.at( i )->status() == KNS::Entry::Installed) {
 				QString name = entries.at( i )->installedFiles().at( 0 ).section( '/', -2, -2 );
 				insertTheme( themeDir + name );
@@ -331,18 +337,8 @@ void KDMThemeWidget::getNewStuff()
 					removeTheme( themeDir + name );
 				}
 			}
-	    }
+		}
 	}
-}
-
-void KDMThemeWidget::removeTheme( const QString &name )
-{
-	if (name.isEmpty())
-		return;
-
-	QList<QTreeWidgetItem *> ls = themeWidget->findItems( name, Qt::MatchExactly );
-	if (!ls.isEmpty())
-		delete ls.first();
 }
 
 #include "kdm-theme.moc"

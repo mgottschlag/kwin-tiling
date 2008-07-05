@@ -43,9 +43,8 @@ class KDMThemeWidget : public QWidget {
   private:
 	void selectTheme( const QString & );
 	void insertTheme( const QString & );
-	void removeTheme( const QString &name );
+	void removeTheme( const QString & );
 	void updateInfoView( ThemeData * );
-	void updateButton();
 	QTreeWidget *themeWidget;
 	QLabel *preview;
 	QLabel *info;
