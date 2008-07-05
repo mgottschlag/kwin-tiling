@@ -148,12 +148,18 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
         m_layout->removeItem(m_spacer);
     }
 
-    m_lastPoint = m_origin = mapToParent(event->pos());
+    m_origin = mapToParent(event->pos());
     m_spacer->setMinimumSize(m_applet->geometry().size());
     m_spacer->setMaximumSize(m_applet->geometry().size());
     m_layout->removeItem(m_applet);
     m_layout->insertItem(m_index, m_spacer);
     m_applet->setZValue(m_applet->zValue() + 1);
+
+    if (m_orientation == Qt::Horizontal) {
+        m_offset = geometry().x() - m_origin.x();
+    } else {
+        m_offset = geometry().y() - m_origin.y();
+    }
     grabMouse();
 }
 
@@ -163,15 +169,13 @@ void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
 
     QPoint p = mapToParent(event->pos());
     QRect g = geometry();
-    //kDebug() << p << g << m_origin << (QObject*)m_applet << m_prevGeom << m_nextGeom;
 
     if (m_orientation == Qt::Horizontal) {
-        g.moveLeft(g.x() + (p.x() - m_lastPoint.x()));
+        g.moveLeft(p.x() + m_offset);
     } else {
-        g.moveTop(g.y() + (p.y() - m_lastPoint.y()));
+        g.moveTop(p.y() + m_offset);
     }
 
-    m_lastPoint = p;
     m_applet->setGeometry(g);
 
     // swap items if we pass completely over the next/previou item or cross

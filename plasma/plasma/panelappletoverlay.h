@@ -63,7 +63,7 @@ private:
     QRectF m_prevGeom;
     QRectF m_nextGeom;
     QPoint m_origin;
-    QPoint m_lastPoint;
+    int m_offset;
     int m_index;
     bool m_clickDrag;
 };
