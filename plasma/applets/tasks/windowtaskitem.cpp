@@ -60,7 +60,7 @@ WindowTaskItem::WindowTaskItem(Tasks *parent, const bool showTooltip)
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
-    
+
     QFontMetrics fm(KGlobalSettings::taskbarFont());
     QSize mSize = fm.size(0, "M");
     setPreferredSize(QSize(mSize.width()*15 + m_applet->itemLeftMargin() + m_applet->itemRightMargin() + IconSize(KIconLoader::Panel),
@@ -211,8 +211,8 @@ void WindowTaskItem::resizeEvent(QGraphicsSceneResizeEvent *event)
 }
 
 void WindowTaskItem::paint(QPainter *painter,
-                             const QStyleOptionGraphicsItem *option,
-                             QWidget *widget)
+                           const QStyleOptionGraphicsItem *option,
+                           QWidget *widget)
 {
     painter->setRenderHint(QPainter::Antialiasing);
 
@@ -309,12 +309,16 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
         } else {
             QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(option->rect.size());
             //kDebug() << (QObject*)this << "setting alpha to" << (255 * (1.0 - m_alpha)) << m_alpha;
-            alphaPixmap->fill(QColor(0, 0, 0, 255 * (1.0 - m_alpha)));
+            if (m_alpha < 0.95) {
+                alphaPixmap->fill(QColor(0, 0, 0, 255 * (1.0 - m_alpha)));
+            } else {
+                alphaPixmap->fill(Qt::transparent);
+            }
 
             {
                 QPainter buffPainter(alphaPixmap);
                 buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-                itemBackground->paintPanel(&buffPainter, option->rect);
+                itemBackground->paintPanel(&buffPainter, alphaPixmap->rect());
             }
 
             painter->drawPixmap(option->rect.topLeft(), *alphaPixmap);
