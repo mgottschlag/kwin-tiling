@@ -837,8 +837,11 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     // Inactive windows
     QColor drawingColor = plasmaColorTheme.foreground(KColorScheme::InactiveText).color();
-    drawingColor.setAlpha(192);
+    drawingColor.setAlpha(50);
     QBrush windowBrush(drawingColor);
+    // Inactive windows Active desktop
+    drawingColor.setAlpha(192);
+    QBrush windowBrushActiveDesk(drawingColor);
 
     // Inactive window borders
     drawingColor = plasmaColorTheme.foreground(KColorScheme::NeutralText).color();
@@ -849,8 +852,11 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     QPen activeWindowPen(defaultTextColor);
 
     // Active windows
-    drawingColor.setAlpha(228);
+    drawingColor.setAlpha(190);
     QBrush activeWindowBrush(drawingColor);
+    // Active windows Active desktop
+    drawingColor.setAlpha(228);
+    QBrush activeWindowBrushActiveDesk(drawingColor);
 
     if (m_showOwnBackground && (formFactor() == Plasma::Vertical || formFactor() == Plasma::Horizontal)) {
         m_background->setElementPrefix(QString());
@@ -877,12 +883,22 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     for (int i = 0; i < m_windowRects.count(); i++) {
         for (int j = 0; j < m_windowRects[i].count(); j++) {
             QRect rect = m_windowRects[i][j].second;
-            if (m_activeWindows.contains(rect)) {
-                painter->setBrush(activeWindowBrush);
-                painter->setPen(activeWindowPen);
+            if (m_rects[m_currentDesktop-1].contains(rect)) {
+                if (m_activeWindows.contains(rect)) {
+                    painter->setBrush(activeWindowBrushActiveDesk);
+                    painter->setPen(activeWindowPen);
+                } else {
+                    painter->setBrush(windowBrushActiveDesk);
+                    painter->setPen(windowPen);
+                }
             } else {
-                painter->setBrush(windowBrush);
-                painter->setPen(windowPen);
+                if (m_activeWindows.contains(rect)) {
+                    painter->setBrush(activeWindowBrush);
+                    painter->setPen(activeWindowPen);
+                } else {
+                    painter->setBrush(windowBrush);
+                    painter->setPen(windowPen);
+                }
             }
             if (m_dragId == m_windowRects[i][j].first) {
                 rect.translate((m_dragCurrentPos - m_dragOriginalPos).toPoint());
