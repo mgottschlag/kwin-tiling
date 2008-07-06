@@ -323,7 +323,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
                 itemBackground->paintPanel(&buffPainter, alphaPixmap->rect());
             }
 
-            painter->drawPixmap(contentsRect(), *alphaPixmap, alphaPixmap->rect());
+            painter->drawPixmap(QPoint(0, 0), *alphaPixmap);
         }
     }
 
@@ -352,7 +352,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
                     itemBackground->paintPanel(&buffPainter, alphaPixmap->rect());
                 }
 
-                painter->drawPixmap(contentsRect(), *alphaPixmap, alphaPixmap->rect());
+                painter->drawPixmap(QPoint(0, 0), *alphaPixmap);
             }
         } else {
             //Draw task background without svg theming
