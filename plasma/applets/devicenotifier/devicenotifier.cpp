@@ -87,7 +87,7 @@ void DeviceNotifier::init()
     m_layout->setContentsMargins(0, 0, 0, 0);
     m_layout->setSpacing(0);
     setLayout(m_layout);
-    
+
     m_solidEngine = dataEngine("hotplug");
     m_solidDeviceEngine = dataEngine("soliddevice");
     m_widget = new Dialog();
@@ -104,7 +104,7 @@ void DeviceNotifier::init()
     updateColors();
     QLabel *icon = new QLabel(m_widget);
     icon->setPixmap(KIcon("emblem-mounted").pixmap(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
-    
+
     QHBoxLayout *l_layout2 = new QHBoxLayout(m_widget);
     l_layout2->setSpacing(0);
     l_layout2->setMargin(0);
@@ -126,7 +126,7 @@ void DeviceNotifier::init()
     m_widget->setLayout(l_layout);
 
     m_widget->adjustSize();
-    
+
     //feed the list with what is already reported by the engine
     isNotificationEnabled = false;
     foreach (const QString &source, m_solidEngine->sources()) {
@@ -186,14 +186,13 @@ void DeviceNotifier::constraintsEvent(Plasma::Constraints constraints)
 {
     // on the panel we don't want a background, and our proxy widget in Planar has one
     setBackgroundHints(NoBackground);
-
     bool isSizeConstrained = formFactor() != Plasma::Planar && formFactor() != Plasma::MediaCenter;
 
     if (constraints & FormFactorConstraint) {
         if (isSizeConstrained) {
-
             if (m_proxy) {
                 m_proxy->setWidget(0);
+                m_layout->removeItem(m_proxy);
                 delete m_proxy;
                 m_proxy = 0;
             }
