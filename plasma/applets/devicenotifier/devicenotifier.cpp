@@ -275,6 +275,11 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
                         QStringList overlays;
                         overlays << "emblem-mounted";
                         m_hotplugModel->setData(index, KIcon(index.data(IconNameRole).toString(), NULL, overlays), Qt::DecorationRole);
+                    //Unmounted optical drive
+                    } else if (data["Device Types"].toStringList().contains("OpticalDisc")) {
+                        m_hotplugModel->setData(actionIndex, KIcon("media-eject"), Qt::DecorationRole);
+                        //set icon to unmounted device
+                        m_hotplugModel->setData(index, KIcon(index.data(IconNameRole).toString()), Qt::DecorationRole);
                     } else {
                         m_hotplugModel->setData(actionIndex, KIcon(), Qt::DecorationRole);
 
@@ -404,15 +409,18 @@ void DeviceNotifier::slotOnItemClicked(const QModelIndex &index)
 
         if (device.is<Solid::OpticalDisc>()) {
             Solid::OpticalDrive *drive = device.parent().as<Solid::OpticalDrive>();
+
             connect(drive, SIGNAL(ejectDone(Solid::ErrorType, QVariant, const QString &)),
                     this, SLOT(storageEjectDone(Solid::ErrorType, QVariant)));
             drive->eject();
         } else if (device.is<Solid::StorageVolume>()) {
             Solid::StorageAccess *access = device.as<Solid::StorageAccess>();
 
-            connect(access, SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
-                this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant)));
-            access->teardown();
+            if (access->isAccessible()) {
+                connect(access, SIGNAL(teardownDone(Solid::ErrorType, QVariant, const QString &)),
+                    this, SLOT(storageTeardownDone(Solid::ErrorType, QVariant)));
+                access->teardown();
+            }
         }
     //open  (index.data(ScopeRole).toInt() == OpenAction)
     } else {
