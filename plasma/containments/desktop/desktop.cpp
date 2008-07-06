@@ -37,7 +37,6 @@
 #include <KImageFilePreview>
 #include <KRun>
 #include <KStandardDirs>
-#include <KSvgRenderer>
 #include <KWindowSystem>
 
 #include "plasma/corona.h"

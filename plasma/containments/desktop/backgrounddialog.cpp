@@ -39,7 +39,6 @@
 #include <KPushButton>
 #include <KSeparator>
 #include <KStandardDirs>
-#include <KSvgRenderer>
 #include <knewstuff2/engine.h>
 #include <ThreadWeaver/Weaver>
 
