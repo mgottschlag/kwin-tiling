@@ -159,6 +159,11 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 	kDebug() << "       mode: " << event->mode;
 	kDebug() << "       rotation: " << event->rotation;
 	kDebug() << "       connection: " << event->connection;
+
+	//FIXME: handling these events incorrectly, causing an X11 I/O error...
+	// Disable for now.
+	kWarning() << "FIXME: Output event ignored!";
+	return;
 	
 	RRCrtc currentCrtc = m_crtc->id();
 	if (event->crtc != currentCrtc)
@@ -522,7 +527,7 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 		crtc = m_crtc;
 		if (tryCrtc(crtc, changes))
 		{
-			if (!confirm || confirm && RandR::confirm(crtc->rect()))
+			if ( !confirm || (confirm && RandR::confirm(crtc->rect())) )
 			{
 				save(cfg);
 				return true;
@@ -547,7 +552,7 @@ bool RandROutput::applyProposed(int changes, bool confirm)
 	// try the crtc, and if no confirmation is needed or the user confirm, save the new settings
 	if (tryCrtc(crtc, changes)) 
 	{
-		if (!confirm || confirm && RandR::confirm(crtc->rect()))
+		if ( !confirm || (confirm && RandR::confirm(crtc->rect())) )
 		{
 			save(cfg);
 			return true;

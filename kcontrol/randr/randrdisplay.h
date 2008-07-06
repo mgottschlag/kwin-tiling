@@ -51,6 +51,7 @@ public:
 	void setCurrentScreen(int index);
 	int	currentScreenIndex() const;
 
+	bool needsRefresh() const;
 	void refresh();
 
 	/**

@@ -58,6 +58,7 @@ RandRDisplay::RandRDisplay()
 	
 	kDebug() << "XRANDR error base: " << m_errorBase;
 	m_numScreens = ScreenCount(m_dpy);
+	m_currentScreenIndex = 0;
 
 	// set the timestamp to 0
 	RandR::timestamp = 0;
@@ -146,12 +147,24 @@ int RandRDisplay::screenIndexOfWidget(QWidget* widget)
 	// Xinerama by default, which doesn't work properly with randr.
 	// It will return more screens than exist for the display, causing
 	// a crash in the screen/currentScreen methods.
-	return widget->x11Info().screen();
+	if(widget)
+		return widget->x11Info().screen();
+
+	return -1;
 }
 
 int RandRDisplay::currentScreenIndex() const
 {
 	return m_currentScreenIndex;
+}
+
+bool RandRDisplay::needsRefresh() const
+{
+	Time time, config_timestamp;
+	time = XRRTimes(m_dpy, m_currentScreenIndex, &config_timestamp);
+	
+	kDebug() << "Cache:" << RandR::timestamp << "Server:" << time << "Config:" << config_timestamp;
+	return (RandR::timestamp < time);
 }
 
 void RandRDisplay::refresh()

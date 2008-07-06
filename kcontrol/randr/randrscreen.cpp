@@ -98,8 +98,7 @@ void RandRScreen::loadSettings(bool notify)
 	m_resources = XRRGetScreenResources(QX11Info::display(), rootWindow());
 	Q_ASSERT(m_resources);
 
-	if (RandR::timestamp != m_resources->timestamp)
-		RandR::timestamp = m_resources->timestamp;
+	RandR::timestamp = m_resources->timestamp;
 
 	// get all modes
 	for (int i = 0; i < m_resources->nmode; ++i)

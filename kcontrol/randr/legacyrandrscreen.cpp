@@ -170,12 +170,13 @@ QString LegacyRandRScreen::currentRotationDescription() const
 {
 	QString ret = RandR::rotationName(m_currentRotation & RandR::RotateMask);
 
-	if (m_currentRotation != (m_currentRotation & RandR::RotateMask))
+	if (m_currentRotation != (m_currentRotation & RandR::RotateMask)) {
 		if (m_currentRotation & RR_Rotate_0)
 			ret = RandR::rotationName(m_currentRotation & (RR_Reflect_X + RR_Reflect_X), true, true);
 		else
 			ret += ", " + RandR::rotationName(m_currentRotation & (RR_Reflect_X + RR_Reflect_X), true, false);
-
+	}
+	
 	return ret;
 }
 

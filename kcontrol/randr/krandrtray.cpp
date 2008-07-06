@@ -54,8 +54,18 @@ KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
 
 	m_menu = new KMenu(parentWidget());
 	setContextMenu(m_menu);
-
+	
+	connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(slotActivated(QSystemTrayIcon::ActivationReason)));
+	
 	connect(m_menu, SIGNAL(aboutToShow()), this, SLOT(slotPrepareMenu()));
+	m_display->currentScreen()->loadSettings(true);
+}
+
+void KRandRSystemTray::slotActivated(QSystemTrayIcon::ActivationReason reason)
+{
+	if(reason == QSystemTrayIcon::DoubleClick) {
+		slotPrefs();
+	}
 }
 
 void KRandRSystemTray::slotPrepareMenu()
@@ -92,10 +102,12 @@ void KRandRSystemTray::slotPrepareMenu()
 			}
 		}
 
-		m_display->setCurrentScreen(m_display->screenIndexOfWidget(parentWidget()));
+		m_display->setCurrentScreen(m_display->screenIndexOfWidget(m_menu));
 #ifdef HAS_RANDR_1_2
-		if (RandR::has_1_2)
-			m_display->currentScreen()->loadSettings(true);
+		if (RandR::has_1_2 && m_display->needsRefresh()) {
+			kDebug() << "Configuration dirty, reloading settings...";
+			m_display->refresh();
+		}
 #endif
 		populateMenu(m_menu);
 	}

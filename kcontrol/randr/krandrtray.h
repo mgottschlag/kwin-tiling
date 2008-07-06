@@ -40,6 +40,7 @@ public:
 	void configChanged();
 
 protected Q_SLOTS:
+	void slotActivated(QSystemTrayIcon::ActivationReason reason);
 	void slotScreenActivated();
 	void slotResolutionChanged(QAction *action);
 	void slotOrientationChanged(QAction *action);

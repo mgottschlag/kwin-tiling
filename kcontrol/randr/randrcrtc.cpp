@@ -259,10 +259,10 @@ bool RandRCrtc::applyProposed()
 	if (mode.isValid())
 	{
 		if (m_currentRotation == m_proposedRotation ||
-		    m_currentRotation == RandR::Rotate0 && m_proposedRotation == RandR::Rotate180 ||
-		    m_currentRotation == RandR::Rotate180 && m_proposedRotation == RandR::Rotate0 ||
-		    m_currentRotation == RandR::Rotate90 && m_proposedRotation == RandR::Rotate270 ||
-		    m_currentRotation == RandR::Rotate270 && m_proposedRotation == RandR::Rotate90)
+		    (m_currentRotation == RandR::Rotate0 && m_proposedRotation == RandR::Rotate180) ||
+		    (m_currentRotation == RandR::Rotate180 && m_proposedRotation == RandR::Rotate0) ||
+		    (m_currentRotation == RandR::Rotate90 && m_proposedRotation == RandR::Rotate270) ||
+		    (m_currentRotation == RandR::Rotate270 && m_proposedRotation == RandR::Rotate90))
 		{
 			QRect r = QRect(0,0,0,0).united(m_proposedRect);
 			if (r.width() > m_screen->maxSize().width() || r.height() > m_screen->maxSize().height())
@@ -317,7 +317,9 @@ bool RandRCrtc::applyProposed()
 	else
 	{
 		ret = false;
-		loadSettings(true);
+		// Invalidate the XRRScreenResources cache
+		if(s == RRSetConfigInvalidConfigTime)
+			m_screen->loadSettings(true);
 	}
 
 	m_screen->adjustSize();
