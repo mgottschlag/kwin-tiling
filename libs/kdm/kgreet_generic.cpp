@@ -46,7 +46,7 @@ public:
 	KDMPasswordEdit( QWidget *parent = 0 ) : KLineEdit( parent )
 	{
 		if (::echoMode == -1)
-			setPasswordMode(true);
+			setPasswordMode( true );
 		else
 			setEchoMode( ::echoMode ? Password : NoEcho );
 		setContextMenuPolicy( Qt::NoContextMenu );
@@ -107,8 +107,13 @@ void // virtual
 KGenericGreeter::setUser( const QString &user )
 {
 	// assert( running );
-	// assert( !exp );
 	// assert( fixedUser.isEmpty() );
+	if (!(kgreeterplugin_info.flags & KGreeterPluginInfo::Presettable))
+		return; // Not interested in PAM telling us who logged in
+	if (exp) {
+		abort();
+		start();
+	}
 	curUser = user;
 	if (m_lineEdit) { // could be null if plugin is misconfigured
 		m_lineEdit->setText( user );
