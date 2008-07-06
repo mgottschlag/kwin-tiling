@@ -309,7 +309,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
                  itemBackground->paintPanel(painter, contentsRect()); //option->rect);
              }
         } else {
-            QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(contentsRect().size().toSize());
+            QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(rect().size().toSize());
             //kDebug() << (QObject*)this << "setting alpha to" << (255 * (1.0 - m_alpha)) << m_alpha;
             if (m_alpha < 0.95) {
                 alphaPixmap->fill(QColor(0, 0, 0, 255 * (1.0 - m_alpha)));
@@ -334,7 +334,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
                 itemBackground->paintPanel(painter, contentsRect());
             } else {
                 //Draw task background from theme svg "hover" element
-                QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(contentsRect().size().toSize());
+                QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(rect().size().toSize());
 
                 if (option->state & QStyle::State_Sunken) {
                     alphaPixmap->fill(QColor(0, 0, 0, 50));
@@ -343,7 +343,6 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
                 } else {
                     alphaPixmap->fill(Qt::transparent);
                 }
-                    alphaPixmap->fill(Qt::transparent);
 
                 {
                     QPainter buffPainter(alphaPixmap);
