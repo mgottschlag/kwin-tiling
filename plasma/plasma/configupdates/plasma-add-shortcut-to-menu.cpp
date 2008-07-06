@@ -21,7 +21,7 @@
 #include <KConfigGroup>
 #include <KStandardDirs>
 
-int main(int argc, char *argv[])
+int main()
 {
     KComponentData cd("plasma-add-shortcut-to-menu-update");
     QString file = KStandardDirs::locateLocal("config", "plasma-appletsrc");
@@ -50,6 +50,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    return 1;
+    return 0;
 }
 
