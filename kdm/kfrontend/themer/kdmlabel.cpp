@@ -129,6 +129,9 @@ KdmLabel::setCText( const QString &txt )
 		emit needPlugging();
 		pText.remove( pAccelOff, 1 );
 	}
+	QRect bbox = QFontMetrics( label.normal.font.font ).boundingRect( pText );
+	pTextSize = bbox.size();
+	pTextIndent = bbox.left();
 }
 
 void
@@ -161,7 +164,7 @@ KdmLabel::doPlugActions( bool plug )
 QSize
 KdmLabel::sizeHint()
 {
-	return QFontMetrics( label.normal.font.font ).size( 0, pText );
+	return pTextSize;
 }
 
 void
@@ -179,6 +182,7 @@ KdmLabel::drawContents( QPainter *p, const QRect &r )
 	p->setClipRect( r );
 	if (pAccelOff != -1) {
 		QRect tarea( area );
+		tarea.setLeft( tarea.left() - pTextIndent );
 		QFontMetrics fm( l->font.font );
 		QString left = pText.left( pAccelOff );
 		p->drawText( area, 0, left );
