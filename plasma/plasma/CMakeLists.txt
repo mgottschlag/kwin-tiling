@@ -1,5 +1,7 @@
 include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs)
 
+add_subdirectory(configupdates)
+
 set(plasma_SRCS
     dashboardview.cpp
     desktopcorona.cpp
