@@ -38,6 +38,11 @@ using namespace Plasma;
 class WebApplet::Private
 {
 public:
+    Private()
+        : page(0)
+    {
+    }
+
     void init(WebApplet *q)
     {
         loaded = false;
@@ -66,7 +71,6 @@ WebApplet::WebApplet(QObject *parent, const QVariantList &args)
       d(new Private)
 {
     Q_UNUSED(args)
-    d->page = 0;
 }
 
 WebApplet::~WebApplet()
