@@ -75,6 +75,8 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent,args),
       d(new Private)
 {
+    KGlobal::locale()->insertCatalog("plasma_applet_launcher");
+
     setHasConfigurationInterface(true);
     setBackgroundHints(NoBackground);
     d->icon = new Plasma::Icon(KIcon("start-here-kde"), QString(), this);
