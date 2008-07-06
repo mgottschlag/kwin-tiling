@@ -756,6 +756,8 @@ void Pager::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 void Pager::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
+    //TODO: we need to accept window id drops eventually
+    event->setAccepted(false);
     handleHoverMove(event->pos());
 
     if (m_hoverIndex != -1) {
