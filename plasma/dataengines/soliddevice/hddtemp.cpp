@@ -58,7 +58,7 @@ bool HddTemp::updateData()
                 if (data.length() > 0) {
                     break;
                 } else {
-                    kDebug() << socket.errorString();
+                    //kDebug() << socket.errorString();
                     return false;
                 }
             }
@@ -69,7 +69,7 @@ bool HddTemp::updateData()
         m_failCount = 0;
     } else {
         m_failCount++;
-        kDebug() << socket.errorString();
+        //kDebug() << socket.errorString();
         return false;
     }
     QStringList list = data.split('|');
