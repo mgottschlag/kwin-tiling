@@ -27,7 +27,9 @@
 #include <QVBoxLayout>
 #include <QCheckBox>
 #include <KColorButton>
+#include <KColorScheme>
 #include <KDebug>
+#include <KDesktopFile>
 #include <KDirSelectDialog>
 #include <KDirWatch>
 #include <KFileDialog>
@@ -40,7 +42,6 @@
 #include <KSvgRenderer>
 #include <knewstuff2/engine.h>
 #include <ThreadWeaver/Weaver>
-#include <KColorScheme>
 
 #ifdef USE_BACKGROUND_PACKAGES
 
@@ -51,9 +52,20 @@
 
 #endif
 
+class ThemeInfo
+{
+public:
+    QString package;
+    Plasma::PanelSvg *svg;
+};
+
 class ThemeModel : public QAbstractListModel
 {
 public:
+    enum { PackageNameRole = Qt::UserRole,
+           SvgRole = Qt::UserRole + 1
+         };
+
     ThemeModel(QObject *parent = 0);
     virtual ~ThemeModel();
 
@@ -62,8 +74,7 @@ public:
     int indexOf(const QString &path) const;
     void reload();
 private:
-    QStringList m_themes;
-    QList<Plasma::PanelSvg *> m_svgs;
+    QMap<QString, ThemeInfo> m_themes;
 };
 
 ThemeModel::ThemeModel( QObject *parent )
@@ -79,27 +90,36 @@ ThemeModel::~ThemeModel()
 void ThemeModel::reload()
 {
     reset();
+    //TODO: the svg objects don't get deleted until the dialog goes away!
     m_themes.clear();
-    m_svgs.clear();
 
     // get all desktop themes
     KStandardDirs dirs;
     QStringList themes = dirs.findAllResources("data", "desktoptheme/*/metadata.desktop", KStandardDirs::NoDuplicates);
-
     foreach (const QString &theme, themes) {
+        kDebug() << theme;
         int themeSepIndex = theme.lastIndexOf("/", -1);
         QString themeRoot = theme.left(themeSepIndex);
         int themeNameSepIndex = themeRoot.lastIndexOf("/", -1);
-        QString name = themeRoot.right(themeRoot.length() - themeNameSepIndex - 1);
-        beginInsertRows(QModelIndex(), m_themes.size(), m_themes.size());
-        m_themes << name;
+        QString packageName = themeRoot.right(themeRoot.length() - themeNameSepIndex - 1);
+
+        KDesktopFile df(theme);
+        QString name = df.readName();
+        if (name.isEmpty()) {
+            name = packageName;
+        }
 
         Plasma::PanelSvg *svg = new Plasma::PanelSvg(this);
         svg->setImagePath(themeRoot + "/widgets/background.svg");
         svg->setEnabledBorders(Plasma::PanelSvg::AllBorders);
-        m_svgs.append( svg );
-        endInsertRows();
+        ThemeInfo info;
+        info.package = packageName;
+        info.svg = svg;
+        m_themes[name] = info;
     }
+
+    beginInsertRows(QModelIndex(), 0, m_themes.size());
+    endInsertRows();
 }
 
 int ThemeModel::rowCount(const QModelIndex &) const
@@ -117,27 +137,36 @@ QVariant ThemeModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
+    QMap<QString, ThemeInfo>::const_iterator it = m_themes.constBegin();
+    for (int i = 0; i < index.row(); ++i) {
+        ++it;
+    }
 
     switch (role) {
-    case Qt::DisplayRole:
-        return m_themes[index.row()];
-    case Qt::UserRole:
-        return qVariantFromValue((void*)m_svgs[index.row()]);
-    default:
-        return QVariant();
+        case Qt::DisplayRole:
+            return it.key();
+        case PackageNameRole:
+            return (*it).package;
+        case SvgRole:
+            return qVariantFromValue((void*)(*it).svg);
+        default:
+            return QVariant();
     }
 }
 
 int ThemeModel::indexOf(const QString &name) const
 {
-    for (int i = 0; i < m_themes.size(); i++) {
-        if (name == m_themes[i]) {
+    QMapIterator<QString, ThemeInfo> it(m_themes);
+    int i = -1;
+    while (it.hasNext()) {
+        ++i;
+        if (it.next().value().package == name) {
             return i;
         }
     }
+
     return -1;
 }
-
 
 
 
@@ -166,6 +195,7 @@ void ThemeDelegate::paint(QPainter *painter,
                                const QModelIndex &index) const
 {
     QString title = index.model()->data(index, Qt::DisplayRole).toString();
+    QString package = index.model()->data(index, ThemeModel::PackageNameRole).toString();
 
     // highlight selected item
     painter->save();
@@ -178,7 +208,7 @@ void ThemeDelegate::paint(QPainter *painter,
     painter->restore();
 
     // draw image
-    Plasma::PanelSvg *svg = static_cast<Plasma::PanelSvg *>(index.model()->data(index, Qt::UserRole).value<void *>());
+    Plasma::PanelSvg *svg = static_cast<Plasma::PanelSvg *>(index.model()->data(index, ThemeModel::SvgRole).value<void *>());
     svg->resizePanel(QSize(option.rect.width()-(2*MARGIN), 100-(2*MARGIN)));
     QRect imgRect = QRect(option.rect.topLeft(), QSize( option.rect.width()-(2*MARGIN), 100-(2*MARGIN) )).
         translated(MARGIN, MARGIN);
@@ -188,33 +218,27 @@ void ThemeDelegate::paint(QPainter *painter,
     painter->save();
     QFont font = painter->font();
     font.setWeight(QFont::Bold);
-    QString colorFile = KStandardDirs::locate("data", "desktoptheme/" + title + "/colors");
-    if( !colorFile.isEmpty() ) {
+    QString colorFile = KStandardDirs::locate("data", "desktoptheme/" + package + "/colors");
+    if (!colorFile.isEmpty()) {
         KSharedConfigPtr colors = KSharedConfig::openConfig(colorFile);
-        KColorScheme colorScheme(QPalette::Active, KColorScheme::View, colors);
-        painter->setPen( colorScheme.foreground().color() );
+        KColorScheme colorScheme(QPalette::Active, KColorScheme::Window, colors);
+        painter->setPen(colorScheme.foreground(KColorScheme::NormalText).color());
     }
     painter->setFont(font);
     painter->drawText(option.rect, Qt::AlignCenter | Qt::TextWordWrap, title);
     painter->restore();
 }
 
-
-
-QSize ThemeDelegate::sizeHint(const QStyleOptionViewItem &, 
-                                   const QModelIndex &) const
+QSize ThemeDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
 {
     return QSize(200, 100);
 }
-
-
 
 
 class BackgroundContainer
 {
 public:
     virtual ~BackgroundContainer();
-    
     virtual bool contains(const QString &path) const = 0;
 };
 
@@ -681,7 +705,8 @@ void BackgroundDialog::saveConfig(KConfigGroup config, KConfigGroup globalConfig
         config.writeEntry("slideTimer", seconds);
     }
 
-    Plasma::Theme::defaultTheme()->setThemeName(m_theme->currentText());
+    QString newTheme = m_theme->itemData(m_theme->currentIndex(), ThemeModel::PackageNameRole).toString();
+    Plasma::Theme::defaultTheme()->setThemeName(newTheme);
 }
 
 void BackgroundDialog::getNewWallpaper()
