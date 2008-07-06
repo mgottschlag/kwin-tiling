@@ -181,12 +181,8 @@ void Clock::configAccepted()
 {
     KConfigGroup cg = config();
 
-    bool wasLocal = isLocalTimezone();
-    bool isLocal = ui.localTimeZone->isChecked();
-    if (wasLocal != isLocal) {
-        m_showTimezone = !isLocal;
-        cg.writeEntry("showTimezone", m_showTimezone);
-    }
+    m_showTimezone = ui.showTimezone->isChecked();
+    cg.writeEntry("showTimezone", m_showTimezone);
 
     m_plainClockFont = ui.plainClockFont->currentFont();
     //We need this to happen before we disconnect/reconnect sources to ensure
@@ -323,7 +319,6 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
         }
 
         QString timeString = KGlobal::locale()->formatTime(m_time, m_showSeconds);
-
         // Choose a relatively big font size to start with
         m_plainClockFont.setPointSizeF(qMax(timeRect.height(), KGlobalSettings::smallestReadableFont().pointSize()));
         preparePainter(p, timeRect, m_plainClockFont, timeString);
