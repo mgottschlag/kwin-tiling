@@ -46,7 +46,6 @@ set(khotkeysprivate_SRCS
     actions/keyboard_input_gesture_action_data.cpp
     actions/menuentry_shortcut_action_data.cpp
     actions/simple_action_data.cpp
-    actions/simple_action_data_base.cpp
 
     # CONDITIONS
     conditions/active_window_condition.cpp
@@ -69,13 +68,9 @@ set(khotkeysprivate_SRCS
     # triggers/voice_trigger.cpp
     triggers/window_trigger.cpp
 
-    # DAEMON
-    daemon/daemon.h
-    daemon/daemon.cpp
-    daemon/kded_module.cpp
-    daemon/kded_module.h
-
-    # OTHER
+    # Rest
+    khlistbox.cpp
+    khlistview.cpp
     khotkeysglobal.cpp
     settings.cpp
     shortcuts_handler.cpp
@@ -88,7 +83,7 @@ set(khotkeysprivate_SRCS
 )
 
 kde4_add_library(khotkeysprivate SHARED ${khotkeysprivate_SRCS})
-target_link_libraries(khotkeysprivate kworkspace ${KDE4_KDE3SUPPORT_LIBS})
+target_link_libraries(khotkeysprivate kworkspace ${KDE4_KDE3SUPPORT_LIBS} ${X11_LIBRARIES} ${X11_XTest_LIB})
 set_target_properties(khotkeysprivate PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
 install(TARGETS khotkeysprivate ${INSTALL_TARGETS_DEFAULT_ARGS})
 
