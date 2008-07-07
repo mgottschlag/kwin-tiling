@@ -24,16 +24,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Own
 #include "task.h"
-#include "taskmanager.h"
-#include "taskmanager_p.h"
 
 // Qt
 #include <QMimeData>
 #include <QTimer>
 
 // KDE
+#include <KDebug>
 #include <KIconLoader>
 #include <KLocale>
+
+#include "taskmanager.h"
+#include "taskmanager_p.h"
 
 namespace TaskManager
 {
@@ -47,7 +49,7 @@ public:
        frameId(w),
        info(KWindowSystem::windowInfo(w,
             NET::WMState | NET::XAWMState | NET::WMDesktop |
-            NET::WMVisibleName | NET::WMGeometry,
+            NET::WMVisibleName | NET::WMGeometry | NET::WMWindowType,
             NET::WM2AllowedActions)),
        lastWidth(0),
        lastHeight(0),
@@ -196,7 +198,7 @@ void Task::refresh(unsigned int dirty)
 {
     QString name = visibleName();
     d->info = KWindowSystem::windowInfo(d->win,
-        NET::WMState | NET::XAWMState | NET::WMDesktop | NET::WMVisibleName | NET::WMGeometry,
+        NET::WMState | NET::XAWMState | NET::WMDesktop | NET::WMVisibleName | NET::WMGeometry | NET::WMWindowType,
         NET::WM2AllowedActions);
 
     if (dirty != NET::WMName || name != visibleName())
