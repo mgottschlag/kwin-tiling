@@ -156,6 +156,26 @@ void Tasks::addWindowTask(TaskPtr task)
         return;
     }
 
+    NET::WindowType type = task->info().windowType(NET::NormalMask | NET::DialogMask |
+                                                   NET::OverrideMask | NET::UtilityMask);
+    if (type == NET::Utility) {
+        kDebug() << "skipping utility window" << task->name();
+        return;
+    }
+
+    //TODO: shoul we check for transiency? if so the following code can detect it.
+/*
+    QHash<TaskPtr,WindowTaskItem*>::iterator it = m_windowTaskItems.begin();
+
+    while (it != m_windowTaskItems.end()) {
+        WindowTaskItem *item = it.value();
+        if (item->windowTask()->hasTransient(task->window())) {
+            kDebug() << "TRANSIENT TRANSIENT TRANSIENT!";
+        }
+        ++it;
+    }
+*/
+
     WindowTaskItem *item = 0;
     foreach (const StartupPtr &startup, m_startupTaskItems.keys()) {
         if (startup->matchesWindow(task->window())) {
@@ -353,9 +373,10 @@ void Tasks::taskMovedDesktop(TaskPtr task)
 
 void Tasks::windowChangedGeometry(TaskPtr task)
 {
-    if (!m_tasks.contains(task)) {
-        m_tasks.append(task);
+    if (!m_geometryTasks.contains(task)) {
+        m_geometryTasks.append(task);
     }
+
     if (!m_screenTimer.isActive()) {
         m_screenTimer.start();
     }
@@ -363,14 +384,15 @@ void Tasks::windowChangedGeometry(TaskPtr task)
 
 void Tasks::checkScreenChange()
 {
-    foreach (const TaskPtr &task, m_tasks) {
+    foreach (const TaskPtr &task, m_geometryTasks) {
         if (!isOnMyScreen(task)) {
             removeWindowTask(task);
         } else if (!m_windowTaskItems.contains(task)) {
             addWindowTask(task);
         }
     }
-    m_tasks.clear();
+
+    m_geometryTasks.clear();
 }
 
 void Tasks::insertItemBeforeSpacer(QGraphicsWidget * item)

@@ -127,7 +127,7 @@ private:
         Plasma::LayoutAnimator *m_animator;
         QGraphicsLinearLayout *m_layout;
         Ui::tasksConfig m_ui;
-        QList<TaskPtr> m_tasks;
+        QList<TaskPtr> m_geometryTasks;
         QTimer m_screenTimer;
         QGraphicsWidget *m_spacer;
 
