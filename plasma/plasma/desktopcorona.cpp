@@ -30,6 +30,7 @@
 #include <KStandardDirs>
 
 #include <plasma/containment.h>
+#include <plasma/dataenginemanager.h>
 
 DesktopCorona::DesktopCorona(QObject *parent)
     : Plasma::Corona(parent)
@@ -130,12 +131,25 @@ void DesktopCorona::loadDefaultLayout()
     panel->flushPendingConstraintsEvents();
 
     // some default applets to get a usable UI
-    Plasma::Applet *launcher =  panel->addApplet("launcher");
-    launcher->setGlobalShortcut(KShortcut("Alt+F1"));
+    Plasma::Applet *applet = panel->addApplet("launcher");
+    if (applet) {
+        applet->setGlobalShortcut(KShortcut("Alt+F1"));
+    }
     panel->addApplet("notifier");
     panel->addApplet("pager");
     panel->addApplet("tasks");
     panel->addApplet("systemtray");
+
+    Plasma::DataEngineManager *engines = Plasma::DataEngineManager::self();
+    Plasma::DataEngine *power = engines->loadEngine("powermanagement");
+    if (power) {
+        const QStringList &batteries = power->query("Battery")["sources"].toStringList();
+        if (!batteries.isEmpty()) {
+            panel->addApplet("battery");
+        }
+    }
+    engines->unloadEngine("powermanagement");
+
     panel->addApplet("digital-clock");
 }
 
