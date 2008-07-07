@@ -24,6 +24,11 @@
 
 #include <plasma/corona.h>
 
+namespace Plasma
+{
+    class Applet;
+} // namespace Plasma
+
 /**
  * @short A Corona with desktop-y considerations
  */
@@ -49,6 +54,7 @@ protected Q_SLOTS:
 
 private:
     void init();
+    Plasma::Applet *loadDefaultApplet(const QString &pluginName, Plasma::Containment *c);
 
     int m_numScreens;
 };

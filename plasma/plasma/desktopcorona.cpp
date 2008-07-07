@@ -98,12 +98,25 @@ void DesktopCorona::loadDefaultLayout()
         }
     }
 
+    // used to force a save into the config file
+    KConfigGroup invalidConfig;
+
     // create a containment for each screen
     for (int i = 0; i < numScreens; ++i) {
-        Plasma::Containment* c = addContainment("desktop");
+        // passing in an empty string will get us whatever the default
+        // containment type is!
+        Plasma::Containment* c = addContainmentDelayed(QString());
+
+        if (!c) {
+            continue;
+        }
+
+        c->init();
         c->setScreen(i);
         c->setFormFactor(Plasma::Planar);
+        c->updateConstraints(Plasma::StartupCompletedConstraint);
         c->flushPendingConstraintsEvents();
+        c->save(invalidConfig);
 
         // put a folder view on the first screen
         if (i == topLeftScreen) {
@@ -125,32 +138,69 @@ void DesktopCorona::loadDefaultLayout()
     }
 
     // make a panel at the bottom
-    Plasma::Containment* panel = addContainment("panel");
+    Plasma::Containment* panel = addContainmentDelayed("panel");
+
+    if (!panel) {
+        return;
+    }
+
+    panel->init();
     panel->setScreen(topLeftScreen);
     panel->setLocation(Plasma::BottomEdge);
+    panel->updateConstraints(Plasma::StartupCompletedConstraint);
     panel->flushPendingConstraintsEvents();
 
     // some default applets to get a usable UI
-    Plasma::Applet *applet = panel->addApplet("launcher");
+    Plasma::Applet *applet = loadDefaultApplet("launcher", panel);
     if (applet) {
         applet->setGlobalShortcut(KShortcut("Alt+F1"));
     }
-    panel->addApplet("notifier");
-    panel->addApplet("pager");
-    panel->addApplet("tasks");
-    panel->addApplet("systemtray");
+
+    loadDefaultApplet("notifier", panel);
+    loadDefaultApplet("pager", panel);
+    loadDefaultApplet("tasks", panel);
+    loadDefaultApplet("systemtray", panel);
 
     Plasma::DataEngineManager *engines = Plasma::DataEngineManager::self();
     Plasma::DataEngine *power = engines->loadEngine("powermanagement");
     if (power) {
         const QStringList &batteries = power->query("Battery")["sources"].toStringList();
         if (!batteries.isEmpty()) {
-            panel->addApplet("battery");
+            loadDefaultApplet("battery", panel);
         }
     }
     engines->unloadEngine("powermanagement");
 
-    panel->addApplet("digital-clock");
+    loadDefaultApplet("digital-clock", panel);
+
+    foreach (Plasma::Applet* applet, panel->applets()) {
+        applet->init();
+        applet->flushPendingConstraintsEvents();
+        applet->save(invalidConfig);
+    }
+
+    panel->save(invalidConfig);
+    emit containmentAdded(panel);
+
+    requestConfigSync();
+    /*
+    foreach (Plasma::Containment *c, containments()) {
+        kDebug() << "letting the world know about" << (QObject*)c;
+        emit containmentAdded(c);
+    }
+    */
+}
+
+Plasma::Applet *DesktopCorona::loadDefaultApplet(const QString &pluginName, Plasma::Containment *c)
+{
+    QVariantList args;
+    Plasma::Applet *applet = Plasma::Applet::load(pluginName, 0, args);
+
+    if (applet) {
+        c->addApplet(applet);
+    }
+
+    return applet;
 }
 
 void DesktopCorona::screenResized(int screen)
