@@ -135,7 +135,8 @@ static bool xtest()
 bool ShortcutsHandler::send_macro_key( const QString& key, Window window_P )
     {
     kError() << "ShortcutsHandler::send_macro_key not implemented!!!";
-    Q_UNUSED( key )
+    Q_UNUSED( key );
+    Q_UNUSED( window_P );
     return false;
 
 #if 0
