@@ -58,7 +58,9 @@ KRandRSystemTray::KRandRSystemTray(RandRDisplay *dpy, QWidget* parent)
 	connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), SLOT(slotActivated(QSystemTrayIcon::ActivationReason)));
 	
 	connect(m_menu, SIGNAL(aboutToShow()), this, SLOT(slotPrepareMenu()));
+#ifdef HAS_RANDR_1_2
 	m_display->currentScreen()->loadSettings(true);
+#endif
 }
 
 void KRandRSystemTray::slotActivated(QSystemTrayIcon::ActivationReason reason)
