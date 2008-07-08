@@ -331,7 +331,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
         if (itemBackground && itemBackground->hasElementPrefix("hover")) {
             if ((!m_animId || m_alpha == 1) && (~option->state & QStyle::State_Sunken)) {
                 itemBackground->setElementPrefix("hover");
-                itemBackground->paintPanel(painter, contentsRect());
+                itemBackground->paintPanel(painter, rect().toRect());
             } else {
                 //Draw task background from theme svg "hover" element
                 QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(rect().size().toSize());
