@@ -39,6 +39,7 @@
 #include <KUrl>
 #include <KWindowSystem>
 #include <kio/copyjob.h>
+#include <kio/netaccess.h>
 
 #include <plasma/theme.h>
 #include <plasma/widgets/icon.h>
@@ -105,7 +106,7 @@ void IconApplet::saveState(KConfigGroup &cg) const
 
 void IconApplet::setUrl(const KUrl& url)
 {
-    m_url = url;
+    m_url = KIO::NetAccess::mostLocalUrl(url, 0);
 
     m_mimetype = KMimeType::findByUrl(url);
 
