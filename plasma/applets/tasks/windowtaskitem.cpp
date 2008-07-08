@@ -306,7 +306,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
     if (hasSvg) {
         if (!m_animId) {
              if (~option->state & QStyle::State_MouseOver) {
-                 itemBackground->paintPanel(painter, contentsRect()); //option->rect);
+                 itemBackground->paintPanel(painter, rect().toRect());
              }
         } else {
             QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(rect().size().toSize());
