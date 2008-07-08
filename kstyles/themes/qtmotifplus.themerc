@@ -1,8 +1,10 @@
 [Misc]
 Name=Motif Plus
+Name[bn_IN]=মোটিফ প্লাস
 Name[gu]=મોટિફ પ્લસ
 Name[is]=Mótíf Plús
 Name[km]=Motif បន្ថែម
+Name[mk]=Мотиф плус
 Name[ne]=नमुना जोड
 Name[nn]=Motif pluss
 Name[se]=Motif plussa
@@ -37,6 +39,7 @@ Comment[km]=រចនាប័ទ្ម​ជាប់​​ជាមួយ Moti
 Comment[ko]=내장된 확장 Motif 스타일
 Comment[lt]=Įtaisytas išplėstas Motif stilius
 Comment[lv]=Iebūvētais uzlabotais Motif stils
+Comment[mk]=Вграден унапреден стил Motif
 Comment[ml]=മെച്ചപ്പെട്ട മോട്ടിഫിന്റെ തനതു് രീതി
 Comment[nb]=Innebygget forbedret Motif-stil
 Comment[nds]=Inbuut verbetert "Motif"-Stil

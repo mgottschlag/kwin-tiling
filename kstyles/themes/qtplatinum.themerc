@@ -1,6 +1,7 @@
 [Misc]
 Name=Platinum
 Name[be]=Платына
+Name[bn_IN]=প্ল্যাটিনাম
 Name[es]=Platino
 Name[fa]=پلاتینیوم
 Name[fi]=Platina
@@ -8,6 +9,7 @@ Name[gu]=પ્લેટિનમ
 Name[hi]=प्लेटिनम
 Name[is]=Platína
 Name[km]=ប្លាទីន
+Name[mk]=Платинум
 Name[ml]=പ്ലാറ്റിനം
 Name[ne]=प्लेटिनम
 Name[pa]=ਪਲਟੀਨਮ
@@ -45,6 +47,7 @@ Comment[km]=រចនាប័ទ្ម​ជាប់​ជា​មួយ​�
 Comment[ko]=내장된 테마를 적용하지 않은 Platinum 스타일
 Comment[lt]=Įtaisytas betemis Platinos stilius
 Comment[lv]=Iebūvētais netēmotais Platinum stils
+Comment[mk]=Вграден стил Платинум, без тема
 Comment[ml]=രംഗവിതാനമൊന്നും തെരഞ്ഞെടുക്കാത്ത പ്ലാറ്റിനത്തിന്റെ തനതു് രീതി
 Comment[nb]=Innebygget Platinum-stil uten drakt
 Comment[nds]=Inbuut Stil "Platinum" ahn Muster
