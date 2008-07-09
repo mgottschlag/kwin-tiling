@@ -216,6 +216,14 @@ QString Klipper::getClipboardContents()
     return getClipboardHistoryItem(0);
 }
 
+void Klipper::showKlipperPopupMenu() {
+    slotPopupMenu();
+}
+void Klipper::showKlipperManuallyInvokeActionMenu() {
+    slotRepeatAction();
+}
+
+
 // DCOP - don't call from Klipper itself
 void Klipper::setClipboardContents(QString s)
 {
