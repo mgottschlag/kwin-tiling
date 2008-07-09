@@ -33,6 +33,9 @@ public:
     explicit SystemTrayContainer(QWidget *parent);
     void embedSystemTrayClient( WId clientId );
 
+protected:
+    bool x11Event(XEvent *event);
+
 private:
     bool prepareFor( WId id );
 

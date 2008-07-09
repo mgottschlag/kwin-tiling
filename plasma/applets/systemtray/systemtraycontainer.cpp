@@ -67,6 +67,15 @@ void SystemTrayContainer::embedSystemTrayClient( WId clientId )
     }
 }
 
+bool SystemTrayContainer::x11Event(XEvent *event)
+{
+    bool ok = QX11EmbedContainer::x11Event(event);
+    if (event->type == ReparentNotify) {
+        setMinimumSize(22,22);
+    }
+    return ok;
+}
+
 void SystemTrayContainer::updateBackground()
 {
     // Qt's regular quasi-transparent background doesn't work so set it to the
