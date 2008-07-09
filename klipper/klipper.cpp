@@ -219,6 +219,8 @@ QString Klipper::getClipboardContents()
 // DCOP - don't call from Klipper itself
 void Klipper::setClipboardContents(QString s)
 {
+    if (s.isEmpty())
+        return;
     Ignore lock( locklevel );
     updateTimestamp();
     HistoryStringItem* item = new HistoryStringItem( s );
@@ -814,7 +816,7 @@ void Klipper::checkClipData( bool selectionMode )
         }
         return;
     }
- 
+
     // this must be below the "bNoNullClipboard" handling code!
     // XXX: I want a better handling of selection/clipboard in general.
     // XXX: Order sensitive code. Must die.
