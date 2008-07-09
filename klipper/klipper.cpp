@@ -219,6 +219,8 @@ QString Klipper::getClipboardContents()
 // DCOP - don't call from Klipper itself
 void Klipper::setClipboardContents(QString s)
 {
+    if (s.isEmpty())
+        return;
     Ignore lock( locklevel );
     updateTimestamp();
     HistoryStringItem* item = new HistoryStringItem( s );
