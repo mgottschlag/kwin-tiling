@@ -41,6 +41,7 @@
 #include <KStandardDirs>
 #include <knewstuff2/engine.h>
 #include <ThreadWeaver/Weaver>
+#include <KAboutData>
 
 #ifdef USE_BACKGROUND_PACKAGES
 
@@ -802,9 +803,21 @@ void BackgroundDialog::update()
         return;
     }
 
+    // Prepare more user-friendly forms of some pieces of data.
+    // - license by config is more a of a key value,
+    //   try to get the proper name if one of known licenses.
+    QString license = b->license();
+    KAboutLicense knownLicense = KAboutLicense::byKeyword(license);
+    if (knownLicense.key() != KAboutData::License_Custom) {
+        license = knownLicense.name(KAboutData::ShortName);
+    }
+    // - last ditch attempt to localize author's name, if not such by config
+    //   (translators can "hook" names from outside if resolute enough).
+    QString author = i18nc("Wallpaper info, author name", "%1", b->author());
+
     // FIXME the second parameter is not used, get rid of it.
-    bool someMetadata = setMetadata(m_authorLine, b->author());
-    someMetadata = setMetadata(m_licenseLine, b->license()) || someMetadata;
+    bool someMetadata = setMetadata(m_authorLine, author);
+    someMetadata = setMetadata(m_licenseLine, license) || someMetadata;
     someMetadata = setMetadata(m_emailLine, b->email()) || someMetadata;
     //m_authorLabel->setVisible(someMetadata);
     //m_emailLabel->setVisible(someMetadata);
