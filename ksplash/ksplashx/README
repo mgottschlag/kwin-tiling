@@ -67,8 +67,11 @@ GEOMETRY_REL screen_ref x_rel y_rel window_ref w h
 # not necessary if image(s) will fill the area entirely
 BACKGROUND color
 
-# place an image called name (no path, include extension) at position x,y 
+# place an image called name (no path, include extension) at position x,y
 IMAGE x y name
+
+# Same as image but this image is painted on every screen in xinerama setups
+BACKGROUND_IMAGE x y name
 
 # place an image called name (no path, include extension) at relative position
 # see description of GEOMETRY_REL for screen_ref, x_rel, y_rel and image_ref (=window_ref)
@@ -76,7 +79,7 @@ IMAGE_REL screen_ref x_rel y_xrel image_ref name
 
 # place animation from file 'name' at position x,y, id is 'number'
 # animation is specified in a non-animated file as a sequence of images in rows,
-# images wrap at 10 columns 
+# images wrap at 10 columns
 # image contains 'frames' frames and there's 'delay' pause between each frame
 # the animation repeats 'repeat' times, with 0 for infinite (optional field defaulting to 0)
 ANIM number x y frames name delay [repeat]

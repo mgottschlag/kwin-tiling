@@ -47,7 +47,7 @@
 #include "qnamespace.h"
 #include "qcolor.h"
 #include "x11_defs.h"
-
+#include <vector>
 #include <string.h>
 
 #ifdef HAVE_XINERAMA
@@ -55,6 +55,8 @@ extern "C" { // for older XFree86 versions
 #include <X11/extensions/Xinerama.h>
 }
 #endif
+
+using namespace std;
 
 Display* spl_dpy;
 int spl_screen;
@@ -66,53 +68,62 @@ int spl_cells;
 static Display* appDpy;
 static int appScreenCount;
 
-static int sx, sy, sw, sh;
+static QRect totalScreenRect;
+static vector<QRect> screenRects;
+static int screens;
 
-QRect screenGeometry()
+int screenCount()
     {
-    return QRect( sx, sy, sw, sh );
+    return screens;
+    }
+
+QRect totalScreenGeometry()
+    {
+    return totalScreenRect;
+    }
+
+QRect screenGeometry(int screen)
+    {
+    if (screen < 0 || screen > screens - 1)
+        {
+            abort();
+        }
+    return screenRects[screen];
     }
 
 void detectScreenGeometry()
     {
     Display* dpy = x11Display();
+    totalScreenRect = QRect(0,
+                            0,
+                            WidthOfScreen( ScreenOfDisplay( dpy, DefaultScreen( dpy ))),
+                            HeightOfScreen( ScreenOfDisplay( dpy, DefaultScreen( dpy ))));
 #ifdef HAVE_XINERAMA
     // Xinerama code from Qt
     XineramaScreenInfo *xinerama_screeninfo = 0;
     int unused;
     bool use_xinerama = XineramaQueryExtension( dpy, &unused, &unused )
-        && XineramaIsActive( dpy );
+                        && XineramaIsActive( dpy );
     if (use_xinerama)
         {
-        int screenCount;
-	xinerama_screeninfo = XineramaQueryScreens( dpy, &screenCount );
-        QRect sg(xinerama_screeninfo[ 0 ].x_org,
-                 xinerama_screeninfo[ 0 ].y_org,
-                 xinerama_screeninfo[ 0 ].width,
-                 xinerama_screeninfo[ 0 ].height);
+        xinerama_screeninfo = XineramaQueryScreens( dpy, &screens );
+        QRect sg;
+        QRect total;
 
-        for (int s = 1; s < screenCount; ++s)
-        {
+        for (int s = 0; s < screens; ++s)
+            {
             QRect cs(xinerama_screeninfo[s].x_org,
-                    xinerama_screeninfo[s].y_org,
-                    xinerama_screeninfo[s].width,
-                    xinerama_screeninfo[s].height);
-
-            if (sg.intersects(cs))
-                sg = sg.unite(cs);
-        }
-
-        sx = sg.x();
-        sy = sg.y();
-        sw = sg.width();
-        sh = sg.height();
+                     xinerama_screeninfo[s].y_org,
+                     xinerama_screeninfo[s].width,
+                     xinerama_screeninfo[s].height);
+            screenRects.push_back(cs);
+            }
         }
     else
 #endif
         {
-        sx = sy = 0;
-        sw = WidthOfScreen( ScreenOfDisplay( dpy, DefaultScreen( dpy )));
-	sh = HeightOfScreen( ScreenOfDisplay( dpy, DefaultScreen( dpy )));
+        screens = 1;
+        screenRects.push_back(totalScreenRect);
         }
     }
 

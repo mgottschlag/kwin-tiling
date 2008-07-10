@@ -67,7 +67,9 @@ GC qt_xget_readonly_gc( int scrn, bool monochrome );	// get read-only GC
 GC qt_xget_temp_gc( int scrn, bool monochrome );		// get temporary GC
 inline Colormap x11AppColormap() { return spl_colormap; }
 
-QRect screenGeometry();
+int screenCount();
+QRect screenGeometry(int screen);
+QRect totalScreenGeometry();
 
 bool openDisplay();
 void closeDisplay();

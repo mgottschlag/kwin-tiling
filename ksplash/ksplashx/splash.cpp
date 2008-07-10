@@ -134,7 +134,7 @@ static int state;
 static time_t timestamp; // timestamp of the description.txt file, used for caching
 
 // returns a pointer to a static !
-static const char* findFileHelper( const char* name, int* w, int* h, bool locolor, bool lame )
+static const char* findFileHelper( const char* name, int* w, int* h, bool locolor, bool lame, QRect geom )
     {
     static char tmp[ 1024 ];
     char best[ 1024 ];
@@ -152,7 +152,7 @@ static const char* findFileHelper( const char* name, int* w, int* h, bool locolo
                 {
                 if( w > best_w
                     // only derive from themes with the same ratio if lame resolutions are not allowed, damn 1280x1024
-                    && ( lame || w * screenGeometry().height() == h * screenGeometry().width())
+                    && ( lame || w * geom.height() == h * geom.width())
                     )
                     {
                     snprintf( tmp, 1024, "%s/%dx%d%s/%s", theme_dir, w, h, locolor ? "-locolor" : "", name );
@@ -183,10 +183,10 @@ static const char* findFileHelper( const char* name, int* w, int* h, bool locolo
     }
 
 // returns a pointer to a static !
-static const char* findFileWithDepth( const char* name, int* w, int* h, bool locolor )
+static const char* findFileWithDepth( const char* name, int* w, int* h, bool locolor, QRect geom )
     {
     static char tmp[ 1024 ];
-    snprintf( tmp, 1024, "%s/%dx%d%s/%s", theme_dir, screenGeometry().width(), screenGeometry().height(),
+    snprintf( tmp, 1024, "%s/%dx%d%s/%s", theme_dir, geom.width(), geom.height(),
         locolor ? "-locolor" : "", name );
 #ifdef DEBUG
     fprintf( stderr, "FINDFILE1: %s %s\n", name, tmp );
@@ -201,7 +201,7 @@ static const char* findFileWithDepth( const char* name, int* w, int* h, bool loc
             gethostname( hostname, 1023 );
         hostname[ 1023 ] = '\0';
         snprintf( tmp, 1024, "%s/cache-%s/ksplashx/%s-%dx%d%s-%s", kdehome, hostname, theme_name,
-            screenGeometry().width(), screenGeometry().height(), locolor ? "-locolor" : "", name );
+            geom.width(), geom.height(), locolor ? "-locolor" : "", name );
 #ifdef DEBUG
         fprintf( stderr, "FINDFILE2: %s %s\n", name, tmp );
 #endif
@@ -217,21 +217,21 @@ static const char* findFileWithDepth( const char* name, int* w, int* h, bool loc
     if( access( tmp, R_OK ) == 0 )
         {
         if( w != NULL )
-            *w = screenGeometry().width();
+            *w = geom.width();
         if( h != NULL )
-            *h = screenGeometry().height();
+            *h = geom.height();
         return tmp;
         }
     if( w == NULL || h == NULL ) // no scaling possible
         return "";
-    const char* ret = findFileHelper( name, w, h, locolor, false );
+    const char* ret = findFileHelper( name, w, h, locolor, false, geom );
     if( ret == NULL || *ret == '\0' )
-        ret = findFileHelper( name, w, h, locolor, true );
+        ret = findFileHelper( name, w, h, locolor, true, geom );
     return ret;
     }
 
 // returns a pointer to a static !
-static const char* findLocalizedFileWithDepth( const char* name, int* w, int* h, bool locolor )
+static const char* findLocalizedFileWithDepth( const char* name, int* w, int* h, bool locolor, QRect geom )
     {
     const int bufsz = 1024;
 
@@ -261,7 +261,7 @@ static const char* findLocalizedFileWithDepth( const char* name, int* w, int* h,
             locname[ bufsz - 1 ] = '\0';
 
             // Check if this path exists.
-            const char* path = findFileWithDepth( locname, w, h, locolor );
+            const char* path = findFileWithDepth( locname, w, h, locolor, geom );
             if( path[ 0 ] )
                 return path;
 
@@ -271,15 +271,15 @@ static const char* findLocalizedFileWithDepth( const char* name, int* w, int* h,
         }
 
     // Fall back to unlocalized file.
-    return findFileWithDepth( name, w, h, locolor );
+    return findFileWithDepth( name, w, h, locolor, geom );
     }
 
 // returns a pointer to a static !
-static const char* findFile( const char* name, int* w = NULL, int* h = NULL, bool* locolor = NULL )
+static const char* findFile( const char* name, int* w = NULL, int* h = NULL, bool* locolor = NULL, QRect geom = screenGeometry(0) )
     {
     if( x11Depth() <= 8 )
         {
-        if( const char* ret = findLocalizedFileWithDepth( name, w, h, true )) // try locolor
+        if( const char* ret = findLocalizedFileWithDepth( name, w, h, true, geom )) // try locolor
             {
             if( locolor != NULL )
                 *locolor = true;
@@ -288,26 +288,26 @@ static const char* findFile( const char* name, int* w = NULL, int* h = NULL, boo
         }
     if( locolor != NULL )
         *locolor = false;
-    return findLocalizedFileWithDepth( name, w, h, false ); // no locolor
+    return findLocalizedFileWithDepth( name, w, h, false, geom); // no locolor
     }
 
 // If a properly sized image doesn't exist save it in the cache location
 // for the next use, because that means no scaling and a smaller png image
 // to load.
-static void pregeneratePixmap( const char* file, const char* real_file, int width, int height, bool locolor )
+static void pregeneratePixmap( const char* file, const char* real_file, int width, int height, bool locolor, QRect geom )
     {
 #ifdef DEBUG
     static char cmd[ 1024 ];
     snprintf( cmd, 1024, "ksplashx_scale \"%s\" \"%s\" \"%s\" %d %d %d %d %ld %s", theme_name,
-        file, real_file, width, height, screenGeometry().width(), screenGeometry().height(), timestamp,
+        file, real_file, width, height, geom.width(), geom.height(), timestamp,
         locolor ? "locolor" : "no-locolor" );
     fprintf( stderr, "PREGENERATE PIXMAP CMD:%s\n", cmd );
 #endif
     char w[ 20 ], h[ 20 ], sw[ 20 ], sh[ 20 ], t[ 40 ];
     sprintf( w, "%d", width );
     sprintf( h, "%d", height );
-    sprintf( sw, "%d", screenGeometry().width());
-    sprintf( sh, "%d", screenGeometry().height());
+    sprintf( sw, "%d", geom.width());
+    sprintf( sh, "%d", geom.height());
     sprintf( t, "%ld", timestamp );
     if( fork() == 0 )
         {
@@ -335,11 +335,11 @@ static void pregeneratePixmap( const char* file, const char* real_file, int widt
         }
     }
 
-static QImage loadImage( const char* file )
+static QImage loadImage( const char* file, QRect geom )
     {
     int w, h;
     bool locolor;
-    const char* real_file = findFile( file, &w, &h, &locolor ); // points to a static !
+    const char* real_file = findFile( file, &w, &h, &locolor, geom ); // points to a static !
     FILE* f = fopen( real_file, "r" );
     if( f == NULL )
         return QImage();
@@ -357,16 +357,16 @@ static QImage loadImage( const char* file )
         fprintf( stderr, "Not 32bpp: %s\n", file );
         exit( 3 );
         }
-    if(( scalex && w != screenGeometry().width()) || ( scaley && h != screenGeometry().height()))
+    if(( scalex && w != geom.width()) || ( scaley && h != geom.height()))
         {
-        double ratiox = scalex ? double( w ) / screenGeometry().width() : 1;
-        double ratioy = scaley ? double( h ) / screenGeometry().height() : 1;
+        double ratiox = scalex ? double( w ) / geom.width() : 1;
+        double ratioy = scaley ? double( h ) / geom.height() : 1;
 #ifdef DEBUG
         fprintf( stderr, "PIXMAP SCALING: %f %f\n", ratiox, ratioy );
 #endif
         img = scale( img, round( img.width() / ratiox ), round( img.height() / ratioy ));
         if( ratiox * ratioy > 1 ) // only downscale
-            pregeneratePixmap( file, real_file, img.width(), img.height(), locolor );
+            pregeneratePixmap( file, real_file, img.width(), img.height(), locolor, geom );
         }
     return img;
     }
@@ -419,10 +419,10 @@ static QImage loadAnimImage( const char* file, int frames )
             }
         }
     frameSize( img, frames, framew, frameh );
-    if(( scalex && w != screenGeometry().width()) || ( scaley && h != screenGeometry().height()))
+    if(( scalex && w != screenGeometry(0).width()) || ( scaley && h != screenGeometry(0).height()))
         {
-        double ratiox = scalex ? double( w ) / screenGeometry().width() : 1;
-        double ratioy = scaley ? double( h ) / screenGeometry().height() : 1;
+        double ratiox = scalex ? double( w ) / screenGeometry(0).width() : 1;
+        double ratioy = scaley ? double( h ) / screenGeometry(0).height() : 1;
 #ifdef DEBUG
         fprintf( stderr, "ANIM SCALING: %f %f\n", ratiox, ratioy );
 #endif
@@ -453,7 +453,7 @@ static QImage loadAnimImage( const char* file, int frames )
         frameh = framehnew;
         img = imgnew;
         if( ratiox * ratioy > 1 ) // only downscale
-            pregeneratePixmap( file, real_file, img.width(), img.height(), locolor );
+            pregeneratePixmap( file, real_file, img.width(), img.height(), locolor, screenGeometry(0) );
         }
     return img;
     }
@@ -525,11 +525,12 @@ static void createWindow()
     fprintf( stderr, "GEOMETRY: %d %d %d %d\n", geometry.x(), geometry.y(), geometry.width(), geometry.height());
 #endif
     XSetWindowAttributes attrs;
+    QRect geom = totalScreenGeometry();
     attrs.override_redirect = True;
     attrs.background_pixmap = None;
 //    attrs.override_redirect = False;
     window = XCreateWindow( qt_xdisplay(), DefaultRootWindow( qt_xdisplay()),
-        geometry.x(), geometry.y(), geometry.width(), geometry.height(),
+        geom.x(), geom.y(), geom.width(), geom.height(),
         0, CopyFromParent, CopyFromParent, CopyFromParent, CWOverrideRedirect | CWBackPixmap, &attrs );
     XSelectInput( qt_xdisplay(), window, ButtonPressMask | ExposureMask );
     XClassHint class_hint;
@@ -541,11 +542,12 @@ static void createWindow()
 
 static void createSplashImage()
     {
+    QRect geom = totalScreenGeometry();
     assert( splash_image.isNull());
     assert( splash_pixmap == None );
-    splash_image = QImage( geometry.size(), 32 );
+    splash_image = QImage( geom.size(), 32 );
     splash_pixmap = XCreatePixmap( qt_xdisplay(), DefaultRootWindow( qt_xdisplay()),
-        geometry.width(), geometry.height(), x11Depth());
+        geom.width(), geom.height(), x11Depth());
     }
 
 static bool waitState( int expected_state )
@@ -792,8 +794,7 @@ static void updateSplashImage( const QImage& img, int x_pos, int y_pos )
 
 void runSplash( const char* them, bool t, int p )
     {
-    geometry = screenGeometry();
-
+    geometry = screenGeometry(0);
     // fetch the $KDEHOME environment variable that may point to e.g. "~/.kde4"
     if( getenv( "KDEHOME" ) && getenv( "KDEHOME" )[ 0 ] )
         snprintf( kdehome, 1024, "%s", getenv( "KDEHOME" ));
@@ -838,8 +839,8 @@ void runSplash( const char* them, bool t, int p )
         exit( 2 );
         }
     timestamp = stat_buf.st_mtime;
-    double ratiox = double( desc_w ) / screenGeometry().width(); // only for coordinates in the description file
-    double ratioy = double( desc_h ) / screenGeometry().height(); // only for coordinates in the description file
+    double ratiox = double( desc_w ) / screenGeometry(0).width(); // only for coordinates in the description file
+    double ratioy = double( desc_h ) / screenGeometry(0).height(); // only for coordinates in the description file
     XSelectInput( qt_xdisplay(), DefaultRootWindow( qt_xdisplay()), SubstructureNotifyMask );
     kde_splash_progress = XInternAtom( qt_xdisplay(), "_KDE_SPLASH_PROGRESS", False );
     for( int i = 0;
@@ -910,11 +911,11 @@ void runSplash( const char* them, bool t, int p )
                 h = scaley ? round( h / ratioy ) : h;
                 }
             if( x < 0 )
-                x += screenGeometry().width();
+                x += screenGeometry(0).width();
             if( y < 0 )
-                y += screenGeometry().height();
+                y += screenGeometry(0).height();
             QRect r( x, y, w, h );
-            if( screenGeometry().contains( r ))
+            if( screenGeometry(0).contains( r ))
                 {
                 geometry = r;
                 if( window != None )
@@ -953,7 +954,7 @@ void runSplash( const char* them, bool t, int p )
             x = makeAbsoluteX( screen_ref, x_rel, window_ref, w );
             y = makeAbsoluteY( screen_ref, y_rel, window_ref, h );
             QRect r( x, y, w, h );
-            if( screenGeometry().contains( r ))
+            if( screenGeometry(0).contains( r ))
                 {
                 geometry = r;
                 if( window != None )
@@ -972,10 +973,38 @@ void runSplash( const char* them, bool t, int p )
                 exit( 3 );
                 }
             }
+        else if( sscanf( line, "BACKGROUND_IMAGE %d %d %1023s", &x, &y, buf ) == 3 )
+            {
+            int screens = screenCount();
+            handled = true;
+            if( scalex || scaley )
+                {
+                x = scalex ? round( x / ratiox ) : x;
+                y = scaley ? round( y / ratioy ) : y;
+                }
+            if( splash_image.isNull())
+                createSplashImage();
+            for (int i = 0; i < screens; ++i) {
+                QRect geom = screenGeometry(i);
+                QImage img = loadImage( buf, geom );
+                if( !img.isNull())
+                    {
+                    blend( img, geom.x() + x, geom.y() + y );
+                    updateSplashImage( img, geom.x() + x, geom.y() + y );
+                    doPaint( QRect( geom.x() + x, geom.y() + y, img.width(), img.height()));
+                    }
+                else
+                    {
+                    fprintf( stderr, "Bad image: %s\n", line );
+                    exit( 3 );
+                    }
+                }
+            }
         else if( sscanf( line, "BACKGROUND %1023s", buf ) == 1 )
             {
             handled = true;
             QColor background = QColor( buf );
+            QRect geom = totalScreenGeometry();
             if( !background.isValid())
                 {
                 fprintf( stderr, "Bad color: %s\n", line );
@@ -987,9 +1016,9 @@ void runSplash( const char* them, bool t, int p )
             XGCValues xgc;
             xgc.foreground = background.pixel();
             GC gc = XCreateGC( qt_xdisplay(), splash_pixmap, GCForeground, &xgc );
-            XFillRectangle( qt_xdisplay(), splash_pixmap, gc, 0, 0, geometry.width(), geometry.height());
+            XFillRectangle( qt_xdisplay(), splash_pixmap, gc, 0, 0, geom.width(), geom.height());
             XFreeGC( qt_xdisplay(), gc );
-            doPaint( QRect( 0, 0, geometry.width(), geometry.height()));
+            doPaint( QRect( 0, 0, geom.width(), geom.height()));
             }
         else if( sscanf( line, "IMAGE %d %d %1023s", &x, &y, buf ) == 3 )
             {
@@ -1001,7 +1030,7 @@ void runSplash( const char* them, bool t, int p )
                 }
             if( splash_image.isNull())
                 createSplashImage();
-            QImage img = loadImage( buf );
+            QImage img = loadImage( buf, screenGeometry(0) );
             if( !img.isNull())
                 {
 #if 0
@@ -1039,7 +1068,7 @@ void runSplash( const char* them, bool t, int p )
                 }
             if( splash_image.isNull())
                 createSplashImage();
-            QImage img = loadImage( buf );
+            QImage img = loadImage( buf, screenGeometry(0) );
             if( !img.isNull())
                 {
                 x = makeAbsoluteX( window_ref, x_rel, image_ref, img.width());
