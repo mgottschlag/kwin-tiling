@@ -153,7 +153,7 @@ Interface::Interface(QWidget* parent)
     lineEdit->setCompletionObject(m_completion);
     lineEdit->setCompletionMode(static_cast<KGlobalSettings::Completion>(KRunnerSettings::queryTextCompletionMode()));
     lineEdit->setClearButtonShown(true);
-//    m_layout->addWidget(m_searchTerm);
+    m_searchTerm->setHistoryItems(KRunnerSettings::pastQueries());
     bottomLayout->insertWidget(2, m_searchTerm, 10);
 
     QHBoxLayout *statusLayout = new QHBoxLayout();
@@ -259,6 +259,7 @@ Interface::~Interface()
     KRunnerSettings::setQueryTextCompletionMode(m_searchTerm->completionMode());
     KConfigGroup interfaceConfig(KGlobal::config(), "Interface");
     saveDialogSize(interfaceConfig);
+    KGlobal::config()->sync();
 }
 
 void Interface::themeUpdated()
