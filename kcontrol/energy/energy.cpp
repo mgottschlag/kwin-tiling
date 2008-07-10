@@ -197,7 +197,7 @@ KEnergy::KEnergy(QWidget *parent, const QVariantList &args)
     // Sliders
     m_pStandbySlider = new KIntNumInput(m_Standby, this);
     m_pStandbySlider->setLabel(i18n("&Standby after:"));
-    m_pStandbySlider->setRange(0, 120, 10);
+    m_pStandbySlider->setRange(0, 120, 1);
     m_pStandbySlider->setSuffix(i18n(" min"));
     m_pStandbySlider->setSpecialValueText(i18n("Disabled"));
     connect(m_pStandbySlider, SIGNAL(valueChanged(int)), SLOT(slotChangeStandby(int)));
@@ -208,7 +208,7 @@ KEnergy::KEnergy(QWidget *parent, const QVariantList &args)
 
     m_pSuspendSlider = new KIntNumInput(m_pStandbySlider, m_Suspend, this);
     m_pSuspendSlider->setLabel(i18n("S&uspend after:"));
-    m_pSuspendSlider->setRange(0, 120, 10);
+    m_pSuspendSlider->setRange(0, 120, 1);
     m_pSuspendSlider->setSuffix(i18n(" min"));
     m_pSuspendSlider->setSpecialValueText(i18n("Disabled"));
     connect(m_pSuspendSlider, SIGNAL(valueChanged(int)), SLOT(slotChangeSuspend(int)));
@@ -220,7 +220,7 @@ KEnergy::KEnergy(QWidget *parent, const QVariantList &args)
 
     m_pOffSlider = new KIntNumInput(m_pSuspendSlider, m_Off, this);
     m_pOffSlider->setLabel(i18n("&Power off after:"));
-    m_pOffSlider->setRange(0, 120, 10);
+    m_pOffSlider->setRange(0, 120, 1);
     m_pOffSlider->setSuffix(i18n(" min"));
     m_pOffSlider->setSpecialValueText(i18n("Disabled"));
     connect(m_pOffSlider, SIGNAL(valueChanged(int)), SLOT(slotChangeOff(int)));
