@@ -124,7 +124,6 @@ void KGlobalShortcutsEditor::activateComponent(const QString &component)
 
 void KGlobalShortcutsEditor::addCollection(KActionCollection *collection, const QStringList &componentId)
 {
-    kDebug() << "adding collection " << componentId;
     KShortcutsEditor *editor;
     const QString &friendlyName = 
         componentId[ComponentFriendly].isEmpty()
@@ -153,7 +152,6 @@ void KGlobalShortcutsEditor::addCollection(KActionCollection *collection, const 
     editor->addCollection(collection, friendlyName);
 
     if (d->ui.components->count() > -1) {
-        kDebug() << "Activate item " << d->ui.components->itemText(0);
         d->ui.components->setCurrentIndex(0);
         activateComponent(d->ui.components->itemText(0));
     }
@@ -187,7 +185,7 @@ void KGlobalShortcutsEditor::save()
     // The editors are responsible for the saving
     kDebug() << "Save the changes";
     foreach (const componentData &cd, d->components.values()) {
-        cd.editor->save();
+        cd.editor->commit();
     }
 }
 
