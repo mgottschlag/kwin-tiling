@@ -107,8 +107,8 @@ void CalculatorRunner::powSubstitutions(QString& cmd)
                 break;
             }
             postIndex++;
-        }   
-       
+        }
+
         preIndex = qMax(0, preIndex);
         postIndex = qMin(postIndex, cmd.length()); 
 
@@ -151,7 +151,6 @@ void CalculatorRunner::userFriendlySubstitutions(QString& cmd)
     }
 
     hexSubstitutions(cmd);
-
     powSubstitutions(cmd);
 
     if (cmd.contains(QRegExp("\\d+and\\d+"))) {
@@ -163,7 +162,6 @@ void CalculatorRunner::userFriendlySubstitutions(QString& cmd)
     if (cmd.contains(QRegExp("\\d+xor\\d+"))) {
          cmd = cmd.replace(QRegExp("(\\d+)xor(\\d+)"), "\\1^\\2");
     }
-   
 }
 
 
@@ -179,12 +177,16 @@ void CalculatorRunner::match(Plasma::RunnerContext &context)
         return;
     }
     bool toHex = cmd.startsWith("hex=");
+    bool startsWithEquals = !toHex && cmd[0] == '=';
 
-    if (!toHex && (cmd[0] != '=')) {
+    if (toHex || startsWithEquals && !cmd.endsWith('=')) {
+        cmd.remove(0, cmd.indexOf('=')+1);
+    } else if (cmd.endsWith('=')) {
+        cmd.chop(1);
+    } else {
+        // we don't have an actionable equation here
         return;
     }
-
-    cmd = cmd.remove(0, cmd.indexOf('=')+1);
 
     if (cmd.isEmpty()) {
         return;
@@ -210,7 +212,7 @@ void CalculatorRunner::match(Plasma::RunnerContext &context)
     }
 }
 
-QString CalculatorRunner::calculate( const QString& term )
+QString CalculatorRunner::calculate(const QString& term)
 {
     //kDebug() << "calculating" << term;
     QScriptEngine eng;
