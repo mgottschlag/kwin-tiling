@@ -78,8 +78,17 @@ void StandardActionsModule::load()
     // Put all standard shortcuts into the collection
     Q_FOREACH(KStandardAction::StandardAction id, KStandardAction::actionIds())
         {
-        KAction *action = KStandardAction::create(id, NULL, NULL, m_actionCollection);
         KStandardShortcut::StandardShortcut shortcutId = KStandardAction::shortcutForActionId(id);
+        // If the StandardShortcutId is AccelNone skip configuration for this
+        // action.
+        if (shortcutId == KStandardShortcut::AccelNone)
+            {
+            continue;
+            }
+        // Create the action
+        KAction *action = KStandardAction::create(id, NULL, NULL, m_actionCollection);
+        // Remember the shortcutId so we know where to save changes.
+        action->setData(shortcutId);
         // We have to manually adjust the action. We want to show the
         // hardcoded default and the user set shortcut. But action currently
         // only contain the active shortcuts as default shortcut. So we
@@ -89,14 +98,13 @@ void StandardActionsModule::load()
         // Set the hardcoded default shortcut as default shortcut
         action->setShortcut(hardcoded, KAction::DefaultShortcut);
         // Set the user defined values as active shortcuts. If the user only
-        // has overwritten the primary shortcut make sure alternate still
-        // get's shown
+        // has overwritten the primary shortcut make sure the alternate one
+        // still get's shown
         if (active.alternate()==QKeySequence())
             {
             active.setAlternate(hardcoded.alternate());
             }
         action->setShortcut(active, KAction::ActiveShortcut);
-        action->setData(shortcutId);
         }
 
     // Hand the collection to the editor
