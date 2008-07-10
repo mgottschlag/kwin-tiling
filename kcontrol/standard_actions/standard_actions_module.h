@@ -20,6 +20,7 @@
 
 #include <KCModule>
 
+class KActionCollection;
 class KShortcutsEditor;
 
 class StandardActionsModule : public KCModule
@@ -34,9 +35,13 @@ public:
     /*reimp*/ void load();
     /*reimp*/ void defaults();
 
+private slots:
+    void keyChanged();
+
 private:
 
     KShortcutsEditor *m_editor;
+    KActionCollection *m_actionCollection;
 
 }; // class StandardActionsModule
 
