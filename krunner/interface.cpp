@@ -451,6 +451,8 @@ void Interface::switchUser()
 
     if (info.isValid()) {
         SessList sessions;
+        KDisplayManager dm;
+        dm.localSessions(sessions);
 
         if (sessions.isEmpty()) {
             // no sessions to switch between, let's just start up another session directly

@@ -147,6 +147,8 @@ void SessionRunner::match(Plasma::RunnerContext &context)
     // now add the active sessions
     if (listAll || matchUser) {
         SessList sessions;
+        dm.localSessions(sessions);
+
         foreach (const SessEnt& session, sessions) {
             if (!session.vt || session.self) {
                 continue;
