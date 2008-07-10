@@ -23,36 +23,36 @@
 
 namespace kephal {
 
-    SimpleScreen::SimpleScreen(int id, QSize resolution, QPoint position, bool privacy, bool primary)
+    SimpleScreen::SimpleScreen(int id, QSize size, QPoint position, bool privacy, bool primary)
         : Screen()
     {
         _id = id;
-        _resolution = resolution;
+        _size = size;
         _position = position;
         _privacy = privacy;
         _primary = primary;
     }
     
     
-    int SimpleScreen::getId()
+    int SimpleScreen::id()
     {
         return _id;
     }
 
-    QSize SimpleScreen::getResolution() {
-        return _resolution;
+    QSize SimpleScreen::size() {
+        return _size;
     }
     
-    void SimpleScreen::setResolution(QSize size) {
+    void SimpleScreen::setSize(QSize size) {
         /*QSize old = _resolution;
         if (old == size) {
             return;
         }
         _resolution = size;*/
-        emit resolutionChanged(this, _resolution, size);
+        emit sizeChanged(this, _size, size);
     }
     
-    QPoint SimpleScreen::getPosition() {
+    QPoint SimpleScreen::position() {
         return _position;
     }
     //QList<PositionType> getRelativePosition();
@@ -85,8 +85,8 @@ namespace kephal {
         emit selectedAsPrimary(this);
     }
     
-    void SimpleScreen::_setResolution(QSize size) {
-        _resolution = size;
+    void SimpleScreen::_setSize(QSize size) {
+        _size = size;
     }
     
     void SimpleScreen::_setPosition(QPoint position)

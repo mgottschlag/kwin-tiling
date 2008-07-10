@@ -24,6 +24,7 @@
 #include <QPoint>
 #include <QSize>
 #include <QObject>
+#include <QRect>
 
 
 namespace kephal {
@@ -31,17 +32,19 @@ namespace kephal {
     class Screen : public QObject {
         Q_OBJECT
         public:
-            virtual int getId() = 0;
+            virtual int id() = 0;
 
-            virtual QSize getResolution() = 0;
-            virtual void setResolution(QSize size) = 0;
-            virtual QPoint getPosition() = 0;
+            virtual QSize size() = 0;
+            virtual void setSize(QSize size) = 0;
+            virtual QPoint position() = 0;
             //QList<PositionType> getRelativePosition();
 
             virtual bool isPrivacyMode() = 0;
             virtual void setPrivacyMode(bool b) = 0;
             virtual bool isPrimary() = 0;
             virtual void setAsPrimary() = 0;
+            
+            QRect geom();
     };
     
 }

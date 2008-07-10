@@ -18,38 +18,16 @@
  */
 
 
-#include "kephalapp.h"
-#include "../screens/screens.h"
-#include "../screens/screen.h"
+#include "screen.h"
+
+#include <QRect>
 
 
-#include <QDebug>
-#include <QDBusConnection>
+namespace kephal {
 
+    QRect Screen::geom() {
+        return QRect(position(), size());
+    }
 
-using namespace kephal;
-
-int main(int argc, char *argv[])
-{
-    KephalApp app(argc, argv);
-
-    return app.exec();
 }
-
-
-KephalApp::KephalApp(int & argc, char ** argv)
-    : QApplication(argc, argv)
-{
-    qDebug() << "kephal starting up";
-    init();
-}
-
-KephalApp::~KephalApp()
-{
-}
-
-void KephalApp::init() {
-    qDebug() << "size of screen 0:" << Screens::instance()->screens()[0]->size();
-}
-
 

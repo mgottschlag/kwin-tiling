@@ -57,7 +57,7 @@ namespace kephal {
         _screens.clear();
     }
 
-    QList<Screen *> DesktopWidgetScreens::getScreens()
+    QList<Screen *> DesktopWidgetScreens::screens()
     {
         QList<Screen *> result;
         foreach(SimpleScreen * screen, _screens) {
@@ -73,25 +73,26 @@ namespace kephal {
             qDebug() << "removing screen" << i;
             SimpleScreen * screen = _screens.takeLast();
             emit screenRemoved(screen);
+            delete screen;
         }
         
         for(int i = 0; i < _screens.size(); i++) {
             SimpleScreen * screen = _screens.at(i);
             QRect geom = desktop->screenGeometry(i);
-            if (screen->getPosition() != geom.topLeft()) {
-                QPoint oldPos = screen->getPosition();
+            if (screen->position() != geom.topLeft()) {
+                QPoint oldPos = screen->position();
                 QPoint newPos = geom.topLeft();
                 qDebug() << "screen" << i << "moved" << oldPos << "->" << newPos;
                 
                 screen->_setPosition(newPos);
                 emit screenMoved(screen, oldPos, newPos);
             }
-            if (screen->getResolution() != geom.size()) {
-                QSize oldSize = screen->getResolution();
+            if (screen->size() != geom.size()) {
+                QSize oldSize = screen->size();
                 QSize newSize = geom.size();
                 qDebug() << "screen" << i << "resized" << oldSize << "->" << newSize;
                 
-                screen->_setResolution(newSize);
+                screen->_setSize(newSize);
                 emit screenResized(screen, oldSize, newSize);
             }
         }

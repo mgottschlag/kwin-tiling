@@ -40,33 +40,33 @@ DBusAPIScreens::DBusAPIScreens(QObject * parent)
     qDebug() << "registered on the bus:" << result;
 }
 
-QSize DBusAPIScreens::getResolution(int screen)
+QSize DBusAPIScreens::size(int screen)
 {
-    QList<Screen *> screens = Screens::instance()->getScreens();
+    QList<Screen *> screens = Screens::instance()->screens();
     if (screen < screens.size()) {
-        return screens.at(screen)->getResolution();
+        return screens.at(screen)->size();
     }
     return QSize(0,0);
 }
 
-QPoint DBusAPIScreens::getPosition(int screen)
+QPoint DBusAPIScreens::position(int screen)
 {
-    QList<Screen *> screens = Screens::instance()->getScreens();
+    QList<Screen *> screens = Screens::instance()->screens();
     if (screen < screens.size()) {
-        return screens.at(screen)->getPosition();
+        return screens.at(screen)->position();
     }
     return QPoint(0,0);
 }
 
 int DBusAPIScreens::numScreens()
 {
-    QList<Screen *> screens = Screens::instance()->getScreens();
+    QList<Screen *> screens = Screens::instance()->screens();
     return screens.size();
 }
 
-int DBusAPIScreens::getPrimaryScreen()
+int DBusAPIScreens::primaryScreen()
 {
-    QList<Screen *> screens = Screens::instance()->getScreens();
+    QList<Screen *> screens = Screens::instance()->screens();
     for (int i = 0; i < screens.size(); ++i) {
         if (screens[i]->isPrimary()) {
             return i;

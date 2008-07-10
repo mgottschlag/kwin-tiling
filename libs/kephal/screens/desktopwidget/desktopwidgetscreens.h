@@ -33,7 +33,7 @@ namespace kephal {
         public:
             DesktopWidgetScreens(QObject * parent);
             ~DesktopWidgetScreens();
-            virtual QList<Screen *> getScreens();
+            virtual QList<Screen *> screens();
             
         private Q_SLOTS:
             void screenChanged(int screen);

@@ -6,7 +6,8 @@ INCLUDE_DIRECTORIES (. ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
 ADD_DEFINITIONS (-DSCREENS_FACTORY=screens_factory)
 
-SET (libkephal_SRCS libkephal.cpp ../screens/screens.cpp ../screens/simplescreen.cpp
+SET (libkephal_SRCS libkephal.cpp ../screens/screens.cpp ../screens/screen.cpp
+        ../screens/simplescreen.cpp
         ../screens/dbus/dbusscreens.cpp)
 QT4_WRAP_CPP (libkephal_SRCS ../screens/screens.h ../screens/simplescreen.h
         ../screens/screen.h ../screens/dbus/dbusscreens.h)

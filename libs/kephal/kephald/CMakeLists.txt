@@ -5,7 +5,7 @@ INCLUDE (${QT_USE_FILE})
 INCLUDE_DIRECTORIES (. ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
 SET (kephald_SRCS kephald.cpp ../screens/desktopwidget/desktopwidgetscreens.cpp
-        ../screens/screens.cpp ../screens/simplescreen.cpp
+        ../screens/screens.cpp ../screens/screen.cpp ../screens/simplescreen.cpp
         dbus/dbusapi_screens.cpp)
 QT4_WRAP_CPP (kephald_SRCS kephald.h ../screens/desktopwidget/desktopwidgetscreens.h
         ../screens/screens.h ../screens/screen.h ../screens/simplescreen.h

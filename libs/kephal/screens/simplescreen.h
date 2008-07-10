@@ -35,11 +35,11 @@ namespace kephal {
         public:
             SimpleScreen(int id, QSize resolution, QPoint position, bool privacy, bool primary);
             
-            virtual int getId();
+            virtual int id();
 
-            virtual QSize getResolution();
-            virtual void setResolution(QSize size);
-            virtual QPoint getPosition();
+            virtual QSize size();
+            virtual void setSize(QSize size);
+            virtual QPoint position();
             //QList<PositionType> getRelativePosition();
 
             virtual bool isPrivacyMode();
@@ -47,18 +47,18 @@ namespace kephal {
             virtual bool isPrimary();
             virtual void setAsPrimary();
             
-            void _setResolution(QSize size);
+            void _setSize(QSize size);
             void _setPosition(QPoint position);
             void _setPrimary(bool primary);
             
         Q_SIGNALS:
             void selectedAsPrimary(SimpleScreen * screen);
             void privacyModeChanged(SimpleScreen * screen, bool privacy);
-            void resolutionChanged(SimpleScreen * screen, QSize oldResolution, QSize newResolution);
+            void sizeChanged(SimpleScreen * screen, QSize oldSize, QSize newSize);
             
         private:
             int _id;
-            QSize _resolution;
+            QSize _size;
             QPoint _position;
             bool _privacy;
             bool _primary;

@@ -38,9 +38,9 @@ class DBusAPIScreens : public QObject
         
     public Q_SLOTS:
         int numScreens();
-        QSize getResolution(int screen);
-        QPoint getPosition(int screen);
-        int getPrimaryScreen();
+        QSize size(int screen);
+        QPoint position(int screen);
+        int primaryScreen();
 };
 
 

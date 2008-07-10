@@ -34,7 +34,7 @@ namespace kephal {
         public:
             DBusScreens(QObject * parent);
             ~DBusScreens();
-            virtual QList<Screen *> getScreens();
+            virtual QList<Screen *> screens();
             
         private:
             QList<SimpleScreen *> _screens;

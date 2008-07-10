@@ -37,10 +37,10 @@ namespace kephal {
             this);
             
         int numScreens = _interface->numScreens();
-        int primary = _interface->getPrimaryScreen();
+        int primary = _interface->primaryScreen();
         for (int i = 0; i < numScreens; ++i) {
-            QPoint pos = _interface->getPosition(i);
-            QSize size = _interface->getResolution(i);
+            QPoint pos = _interface->position(i);
+            QSize size = _interface->size(i);
             qDebug() << "adding a screen" << i << "with geom: " << pos << size;
             
             SimpleScreen * screen = new SimpleScreen(i,
@@ -60,7 +60,7 @@ namespace kephal {
         _screens.clear();
     }
 
-    QList<Screen *> DBusScreens::getScreens()
+    QList<Screen *> DBusScreens::screens()
     {
         QList<Screen *> result;
         foreach(SimpleScreen * screen, _screens) {
