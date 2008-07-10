@@ -1,0 +1,19 @@
+[Desktop Entry]
+Exec=kcmshell4 standard_actions
+Icon=preferences-desktop-keyboard-shortcut
+Type=Service
+X-KDE-ServiceTypes=KCModule
+X-DocPath=kcontrol/keys/index.html
+
+X-KDE-Library=kcm_standard_actions
+X-KDE-Init-Symbol=standard_actions
+X-KDE-ParentApp=kcontrol
+
+X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
+
+Name=Standard Keyboard Shortcuts
+
+Comment=Configuration of standard keybindings
+X-KDE-Keywords=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts
+
+Categories=Qt;KDE;X-KDE-settings-accessibility;
