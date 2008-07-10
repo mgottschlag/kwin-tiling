@@ -1,4 +1,5 @@
 add_subdirectory(libplasmaclock)
+add_subdirectory(libplasmaappletdialog)
 add_subdirectory(analog-clock)
 add_subdirectory(battery)
 add_subdirectory(digital-clock)
