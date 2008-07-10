@@ -2,6 +2,7 @@
 Name=Lock/Logout
 Name[af]=Sluit/Teken af
 Name[bg]=Заключване и изход
+Name[bn_IN]=লক/লগ-আউট করুন
 Name[ca]=Bloqueja/surt
 Name[cs]=Odhlášení/uzamčení
 Name[csb]=Blokòwanié ekranu/Wëlogòwanié
@@ -72,6 +73,7 @@ Comment[fy]=Lit de brûker it skerm beskoattelje of de sesje slute
 Comment[ga]=Ceadaigh don úsáideoir an scáileán a chur faoi ghlas, nó deireadh a chur leis an seisiún
 Comment[gl]=Permítelle ao usuario trancar a pantalla ou rematar a sesión
 Comment[gu]=વપરાશકર્તાને સ્ક્રિન પર તાળું મારવા દે છે અથવા સત્રનો અંત કરવા દે છે
+Comment[it]=Permette all'utente di bloccare lo schermo o uscire dalla sessione
 Comment[ja]=スクリーンをロックしたりセッションを終了したりします
 Comment[km]=អនុញ្ញាត​ឲ្យ​អ្នក​ប្រើចាក់សោ​អេក្រង់ ឬ​បញ្ចប់​សម័យ
 Comment[ko]=세션을 잠그거나 끝내기

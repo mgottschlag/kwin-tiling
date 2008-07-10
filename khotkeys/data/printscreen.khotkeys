@@ -121,6 +121,7 @@ ConditionsCount=0
 [Data_1_1]
 Comment=Launches KSnapShot when PrintScrn is pressed.
 Comment[bg]=Стартиране на KSnapShot при натискане на клавиша "PrintScrn"
+Comment[bn_IN]=PrintScrn টেপা হলে KSnapShot আরম্ভ করা হবে
 Comment[ca]=Executa el KSnapShot quan es prem ImprPant.
 Comment[da]=Starter KSnapshot når der trykkes på PrintScreen.
 Comment[de]=Startet KSnapShot, wenn „Bildschirm Drucken“ gedrückt wurde.
