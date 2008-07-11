@@ -176,11 +176,12 @@ void CalculatorRunner::match(Plasma::RunnerContext &context)
     if (cmd.length() < 4) {
         return;
     }
+
     bool toHex = cmd.startsWith("hex=");
     bool startsWithEquals = !toHex && cmd[0] == '=';
 
-    if (toHex || startsWithEquals && !cmd.endsWith('=')) {
-        cmd.remove(0, cmd.indexOf('=')+1);
+    if (toHex || startsWithEquals) {
+        cmd.remove(0, cmd.indexOf('=') + 1);
     } else if (cmd.endsWith('=')) {
         cmd.chop(1);
     } else {
