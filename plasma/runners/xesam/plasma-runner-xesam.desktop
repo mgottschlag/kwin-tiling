@@ -1,6 +1,5 @@
 [Desktop Entry]
-# TODO - Rename to "Desktop Search" in KDE 4.2
-Name=Xesam Search
+Name=Desktop Search
 Name[bg]=Търсене Xesam
 Name[ca]=Cerca Xesam
 Name[cs]=Vyhledávání Xesam
@@ -38,8 +37,7 @@ Name[uk]=Пошук Xesam
 Name[x-test]=xxXesam Searchxx
 Name[zh_CN]=Xesam 搜索
 Name[zh_TW]=Xesam 搜尋
-# TODO - Change to "Search for documents and other files" or similar in KDE 4.2
-Comment=Allows user to use a Xesam compatible indexer for desktop search
+Comment=Search in documents and files
 Comment[ca]=Permet que l'usuari utilitzi un indexador compatible amb Xesam per a la cerca d'escriptori
 Comment[da]=Lader brugeren anvende en Xesam-kompatibel indeksering til desktop-søgning
 Comment[de]=Ermöglicht die Verwendung eines Xesam-kompatiblen Indizierers für die Desktop-Suche
