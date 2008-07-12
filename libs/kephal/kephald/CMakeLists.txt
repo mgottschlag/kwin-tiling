@@ -14,5 +14,5 @@ QT4_GENERATE_DBUS_INTERFACE(dbus/dbusapi_screens.h org.kde.Kephal.Screens.xml)
 QT4_ADD_DBUS_ADAPTOR (kephald_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal.Screens.xml
         dbus/dbusapi_screens.h DBusAPIScreens)
 ADD_EXECUTABLE (kephald ${kephald_SRCS})
-TARGET_LINK_LIBRARIES (kephald ${QT_LIBRARIES})
+TARGET_LINK_LIBRARIES (kephald ${QT_LIBRARIES} kephalxml)
 

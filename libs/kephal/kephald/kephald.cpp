@@ -21,10 +21,14 @@
 #include "kephald.h"
 #include "../screens/desktopwidget/desktopwidgetscreens.h"
 #include "dbus/dbusapi_screens.h"
+#include "../xml/configurations_xml.h"
 
 
 #include <QDebug>
 #include <QDBusConnection>
+
+
+using namespace kephal;
 
 
 int main(int argc, char *argv[])
@@ -54,6 +58,39 @@ void KephalD::init() {
     qDebug() << "registered the service:" << result;
     
     new DBusAPIScreens(this);
+    
+    ConfigurationsXMLFactory * factory = new ConfigurationsXMLFactory();
+    ConfigurationsXML * config = (ConfigurationsXML *) factory->load("screen-configurations.xml");
+    
+    if (! config) {
+        config = new ConfigurationsXML();
+        
+        ConfigurationXML * single = new ConfigurationXML();
+        single->setParent(config);
+        config->configurations()->append(single);
+        
+        single->setName("single");
+        
+        ScreenXML * screen = new ScreenXML();
+        screen->setParent(single);
+        single->screens()->append(screen);
+        
+        screen->setId(0);
+        screen->setPrivacy(false);
+    
+        factory->save(config, "screen-configurations.xml");
+    }
+    
+    qDebug() << "configurations.configurations.size =>" << config->configurations()->size();
+    for (int i = 0; i < config->configurations()->size(); i++) {
+        qDebug() << "configurations.configurations[" << i << "].name =>" << config->configurations()->at(i)->name();
+        int j = 0;
+        foreach (kephal::ScreenXML * screen, * (config->configurations()->at(i)->screens())) {
+            qDebug() << "configurations.configurations[" << i << "].screens[" << j << "].id =>" << screen->id();
+            qDebug() << "configurations.configurations[" << i << "].screens[" << j << "].privacy =>" << screen->privacy();
+            ++j;
+        }
+    }
 }
 
 
