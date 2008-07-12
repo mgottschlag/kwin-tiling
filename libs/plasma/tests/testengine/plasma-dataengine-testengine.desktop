@@ -2,6 +2,7 @@
 Name=Test Data Engine
 Name[af]=Toets data-enjin
 Name[ca]=Motor de dades de prova
+Name[csb]=Testë mòtóra pòdôwków
 Name[da]=Test-datamotor
 Name[de]=Test-Datentreiber
 Name[el]=Μηχανή δεδομένων ελέγχου
@@ -18,6 +19,8 @@ Name[ja]=テスト用データエンジン
 Name[km]=សាកល្បង​ម៉ាស៊ីន​ទិន្នន័យ
 Name[ko]=테스트 데이터 엔진
 Name[lv]=Testēšanas datu dzinējs
+Name[ml]=ടെസ്റ്റ് ഡേറ്റാ എഞ്ചിന്‍
+Name[mr]=चाचणी माहिती इंजिन
 Name[nds]=Test-Hanteerkarn
 Name[nl]=Test (gegevensengine)
 Name[nn]=Testdatamotor

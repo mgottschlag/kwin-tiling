@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Dashboard
 Name[ca]=Tauler
+Name[csb]=Panel
 Name[da]=Instrumentbræt
 Name[eo]=Stirtablo
 Name[gu]=ડેશબોર્ડ
@@ -8,6 +9,8 @@ Name[it]=Bacheca
 Name[ja]=ダッシュボード
 Name[km]=ផ្ទាំង​គ្រប់គ្រង
 Name[ko]=대시보드
+Name[ml]=ഡാഷ്ബോര്‍ഡ് 
+Name[mr]=डॅशबोर्ड
 Name[nds]=Klockpaneel
 Name[nn]=Kontrollpult
 Name[pa]=ਡੈਸ਼ਬੋਰਡ
@@ -37,6 +40,8 @@ Comment[km]=ធាតុ​ក្រាហ្វិក​ផ្ទាំងគ�
 Comment[ko]=Mac OS X 대시보드 위젯
 Comment[ku]=Amûrê MacOS X dashboardê
 Comment[lv]=MacOS X Dashboard logdaļa
+Comment[ml]=MacOS എക്സ് ഡാഷ്ബോര്‍ഡ് വിഡ്ജറ്റ്
+Comment[mr]=MacOS X डॅशबोर्ड विजेट
 Comment[nds]=MacOs-X-Klockpaneel
 Comment[nl]=MacOS X-dashboard-widget
 Comment[nn]=MacOS X kontrollpult-element

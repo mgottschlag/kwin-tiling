@@ -20,6 +20,7 @@ Name[ko]=HAL 전력
 Name[lv]=HAL-Enerģija
 Name[mk]=HAL-енергија
 Name[ml]=ഹാല്‍-പവര്‍
+Name[mr]=HAL-पॉवर
 Name[nds]=HAL-Stroompleeg
 Name[ne]=हल-पावर
 Name[nl]=HAL-energiebeheer
@@ -64,6 +65,8 @@ Comment[ko]=freedesktop.org HAL 데몬을 사용하는 하드웨어 전원 관�
 Comment[ku]=Gerînendetiya hêza reqalavê xeyaleta freedesktop.org HAL'ê bi kar tîne
 Comment[lv]=Aparatūras energokontrole, lietojot freedesktop.org HAL dēmonu
 Comment[mk]=Менаџмент на енергијата на хардверот со даемонот HAL на freedesktop.org
+Comment[ml]=freedesktop.org HAL daemon ഉപയോഗിച്ചുള്ള ഹാര്‍ഡുവയര്‍ ഊര്‍ജ്ജമേല്‍നോട്ടം
+Comment[mr]=freedesktop.org HAL डीमनचा वापर करणारे हार्डवेयर पॉवर व्यवस्थापन
 Comment[nb]=Strømstyring i maskinvare med HAL-nissen fra freedesktop.org
 Comment[nds]=Stroompleeg för de Hardware mit den HAL-Dämoon vun freedesktop.org
 Comment[ne]=freedesktop.org हल डेइमोन प्रयोग गरिरहेको हार्डवेयर शक्ति व्यवस्थापन

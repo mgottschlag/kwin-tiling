@@ -3,6 +3,7 @@ Name=Web Widget
 Name[bn_IN]=ওয়েব উইজেট
 Name[ca]=Estri web
 Name[cs]=Webový widget
+Name[csb]=Sztél zblëżający bedënk do sécë Web
 Name[da]=Webwidget
 Name[de]=Web-Miniprogramm
 Name[el]=Συστατικό ιστού
@@ -18,6 +19,8 @@ Name[ja]=ウェブウィジェット
 Name[km]=ធាតុក្រាហ្វិក​បណ្ដាញ
 Name[ko]=Web 위젯
 Name[lv]=Tīmekļa logdaļa
+Name[ml]=വെബ് വിഡ്ജറ്റ്
+Name[mr]=वेब विजेट
 Name[nds]=Nett-Finster
 Name[nl]=Web-widget
 Name[nn]=Vevelement
@@ -52,6 +55,8 @@ Comment[km]=ធាតុក្រាហ្វិក​ទំព័រ​បណ�
 Comment[ko]=HTML과 자바스크립트를 사용하는 웹 페이지 위젯
 Comment[ku]=Amûrê Rûpela Webê HTML û JavaScript bi kar tîne
 Comment[lv]=Tīmekļa lapu logdaļa, kas izmanto HTML un JavaScript
+Comment[ml]=എച്ടിഎംഎലും ജാവാസ്ക്രിപ്റ്റും ഉപയോഗിക്കുന്ന വെബ്താള്‍ വിഡ്ജറ്റ്
+Comment[mr]=HTML व जावास्क्रिप्टचा वापर करणारे वेबपान विजेट
 Comment[nds]=Nettsieden-Finster, bruukt HTML un JavaScript
 Comment[nl]=Webpagina-widget, gebruik makend van HTML en JavaScript
 Comment[nn]=Nettsideelement som brukar HTML og JavaScript

@@ -4,7 +4,6 @@ Exec=xfwm
 TryExec=xfwm
 Name=XFce
 Name[hi]=एक्सएफसीई
-Name[ml]=എക്സ്എഫ്‌സിഇ
 Name[sr]=Иксефце
 Name[sv]=Xfce
 Name[te]=ఎక్స్ ఎఫ్ సి ఈ
@@ -45,6 +44,8 @@ Comment[km]=បរិស្ថាន​ផ្ទៃ​តុ​ Cholesterol ឥ�
 Comment[lt]=Darbatalio aplinka „Be cholesterolio“. CDE primenanti darbastalio aplinka
 Comment[lv]=Darbvirsmas vide bez holesterīna. Darba virsmas vide, kas atgādina CDE
 Comment[mk]=Cholesterol Free Desktop Environment. Работна околина која потсетува на CDE
+Comment[ml]=കൊളസ്ട്രോള്‍ ഫ്രീ പണിയിടസംവിധാനം. CDE യെ അനുസ്മരിപ്പിക്കുന്ന പണിയിടം
+Comment[mr]=कॉलेस्ट्रॉल फ्री डेस्कटॉप वातावरण. सीडीई नुरूप एक डेस्कटॉप वातावरण
 Comment[ms]=Persekitaran Desktop Bebas Kolesterol. Mengenang kembali persekitaran desktop CDE
 Comment[nb]=Det kolesterolfrie skrivebordsmiljø. Et skrivebordsmiljø som minner om CDE
 Comment[nds]=De "Cholesterol Free Desktop Environment". En Schriefdisch-Ümgeven, de wat liek is to CDE

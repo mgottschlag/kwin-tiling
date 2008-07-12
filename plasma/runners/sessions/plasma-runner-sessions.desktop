@@ -4,6 +4,7 @@ Name[bg]=Сесии
 Name[bn_IN]=ডেস্কটপের সেশান
 Name[ca]=Sessions d'escriptori
 Name[cs]=Relace plochy
+Name[csb]=Sesëje pùltu
 Name[da]=Desktop-sessioner
 Name[de]=Desktop-Sitzungen
 Name[el]=Συνεδρίες επιφάνειας εργασίας
@@ -21,6 +22,7 @@ Name[km]=សម័យ​ផ្ទៃតុ
 Name[ko]=데스크톱 세션
 Name[lv]=Darbvirsmas sesijas
 Name[ml]=പണിയിടത്തിന്റെ സെഷനുകള്‍
+Name[mr]=डेस्कटॉप सत्र
 Name[nds]=Schriefdischtörns
 Name[nl]=Desktopsessies
 Name[nn]=Skrivebordsøkter
@@ -60,6 +62,8 @@ Comment[km]=ការប្ដូរ​អ្នក​ប្រើ​យ៉ា�
 Comment[ko]=빠른 사용자 전환
 Comment[ku]=Derbasbûna lezgîn a bikarhêner
 Comment[lv]=Ātra lietotāju pārslēgšana
+Comment[ml]=മറ്റൊരു ഉപയോക്താവാകുന്നത് അനുവദിയ്ക്കുന്നതിനുള്ള സംവിധാനം
+Comment[mr]=जलद वापरकर्ता बदलाव
 Comment[nds]=Gau den Bruker wesseln
 Comment[nl]=Snel van gebruiker wisselen
 Comment[nn]=Kjapt brukarbyte

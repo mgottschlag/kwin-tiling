@@ -34,6 +34,8 @@ Comment[kk]=Konqueror-дың негізгі ым қимылдары.
 Comment[km]=កាយវិការ Konqueror ជា​មូលដ្ឋាន ។
 Comment[ko]=기본 Konqueror 제스처입니다.
 Comment[lv]=Pamata Konqueror žesti.
+Comment[ml]=അടിസ്ഥാന കോണ്‍ക്വറര്‍ ആംഗ്യങ്ങള്‍
+Comment[mr]=मूळ कॉन्करर गेस्चर्स.
 Comment[nb]=Grunnleggende musebevegelser for Konqueror.
 Comment[nds]=Eenfach Muustekens för Konqueror
 Comment[ne]=आधारभूत कन्क्वेरर गेस्चर ।
@@ -93,6 +95,8 @@ Name[kk]=Konqueror ым қимылдары
 Name[km]=កាយវិការ​ Konqueror
 Name[ko]=Konqueror 제스처
 Name[lv]=Konqueror žesti
+Name[ml]=കോണ്‍ക്വറര്‍ വിശേഷതകള്‍
+Name[mr]=कॉन्करर गेस्चर्स
 Name[nb]=Konquerors musebevegelser
 Name[nds]=Konqueror-Muustekens
 Name[ne]=कन्क्वेरर गेस्चर
@@ -157,6 +161,8 @@ Comment[ko]=Konqueror 창
 Comment[ku]=Paceya Konqueror
 Comment[lv]=Konqueror logs
 Comment[mk]=Прозорец од Konqueror
+Comment[ml]=കോണ്‍ക്വറിന്റെ ജാലകം
+Comment[mr]=कॉन्करर चौकट
 Comment[nb]=Konqueror-vindu
 Comment[nds]=Konqueror-Finster
 Comment[ne]=कन्क्वेरर सञ्झ्याल
@@ -198,6 +204,7 @@ Comment[gu]=કોન્કરર
 Comment[hi]=कॉन्करर
 Comment[kn]=ಕಾಂಕರರ್
 Comment[ml]=കോണ്‍ക്വറര്‍
+Comment[mr]=कॉन्करर
 Comment[ne]=कन्क्वेरर
 Comment[pa]=ਕੋਨਕਿਉਰਰ
 Comment[sr]=К‑освајач
@@ -215,6 +222,7 @@ Comment[gu]=કોન્કરર
 Comment[hi]=कॉन्करर
 Comment[kn]=ಕಾಂಕರರ್
 Comment[ml]=കോണ്‍ക്വറര്‍
+Comment[mr]=कॉन्करर
 Comment[ne]=कन्क्वेरर
 Comment[pa]=ਕੋਨਕਿਉਰਰ
 Comment[sr]=К‑освајач
@@ -232,6 +240,7 @@ Comment=Press, move left, release.
 Comment[af]=Kliek, skuif links, los
 Comment[bg]=Натискане, движение наляво, пускане.
 Comment[ca]=Premeu, moveu a l'esquerra, deixeu anar.
+Comment[csb]=Wcësni, przësënié w lewò, pùszczë
 Comment[da]=Tryk, bevæg til venstre, slip.
 Comment[de]=Drücken, nach links, loslassen.
 Comment[el]=Πιέστε, μετακινηθείτε αριστερά, ελευθερώστε.
@@ -255,6 +264,8 @@ Comment[kk]=Бас, солға жүгірт, босат
 Comment[km]=ចុច ផ្លាស់ទី​ទៅ​ឆ្វេង លែង 
 Comment[ko]=누르고, 왼쪽으로 이동하고, 놓기.
 Comment[lv]=Nospiest, pa kreisi, atlaist.
+Comment[ml]=അമര്‍ത്തി, ഇടത്തേക്കു് നീക്കി വിടുക
+Comment[mr]=दाबा, डावीकडे हलवा, सोडा.
 Comment[nb]=Trykk, flytt til venstre, slipp.
 Comment[nds]=Drücken, na links, looslaten.
 Comment[ne]=थिच्नुहोस्, बायाँ सार्नुहोस्, छोड्नुहोस् ।
@@ -318,6 +329,7 @@ Name[ku]=Paşve
 Name[lv]=Atpakaļ
 Name[mk]=Назад
 Name[ml]=പുറകോട്ടു്
+Name[mr]=मागे
 Name[nb]=Tilbake
 Name[nds]=Torüch
 Name[ne]=पछाडि
@@ -354,6 +366,7 @@ Comment=Opera-style: Press, move up, release.\nNOTE: Conflicts with 'New Tab', a
 Comment[af]=Opera-styl: Kliek, skuif op, los.\nLet wel: konflik met 'Nuwe oortjie', en word daarom by verstek afgeskakel.
 Comment[bg]=Стил Opera: натискане, движение нагоре, пускане.\nЗАБЕЛЕЖКА:Има конфликт с "Нов подпрозорец" и затова е изключено по подразбиране.
 Comment[ca]=Estil Opera: premeu, moveu amunt,deixeu anar.\nNota: els conflictes amb 'Pestanya nova', i similars s'han deshabilitat per omissió.
+Comment[csb]=Sztél Òperë: wcësni, do górë, pùszczë. \nBôczënk: Zwaga z 'Nowô kôrta', në to je domëszlno wëłączoné
 Comment[da]=Opera-agtig: Tryk, bevæg op, slip.\nBemærk: Konflikter med 'Nyt faneblad' og er derfor deaktiveret som standard.
 Comment[de]=Opera-Stil: Drücken, nach oben, loslassen.\nHinweis: Dies steht in Konflikt mit der Aktion „Neues Unterfenster“ und ist daher in der Voreinstellung nicht aktiviert.
 Comment[el]=Στυλ Opera: Πιέστε, μετακινήστε πάνω, ελευθερώστε.\nΣΗΜΕΙΩΣΗ: Αυτό συγκρούεται με την 'Νέα καρτέλα', και οπότε είναι προκαθορισμένα απενεργοποιημένο.
@@ -373,6 +386,7 @@ Comment[ja]=Opera スタイル: マウスの中ボタンを押したまま、マ
 Comment[kk]=Opera-стилі: Бас, жоғарға жүгірт, босат.\nЕСКЕРТУ: 'Жаңа қойынды' дегенмен қайшылықта, сондықтан әдетте рұқсат етілмеген.
 Comment[km]=រចនាប័ទ្ម Opera ៖ ចុច​ ផ្លាស់ទី​ឡើង​លើ លែង ។\nចំណាំ ៖ មាន​ការ​ប៉ទង្គិច​ជាមួយ 'ផ្ទាំង​ថ្មី' ហើយ​តាម​លំនាំ​ដើម​មិន​ត្រូវ​បាន​អនុញ្ញាត​ឡើយ ។
 Comment[lv]=Opera stils; nospiest, uz augšu, atlaist.\nPIEZĪME: Konfliktē ar 'Jauna Cilne' un tāpēc noklusēti ir izslēgts.
+Comment[ml]=Opera-style: അമര്‍ത്തുക, മുകളിലേയ്ക്ക്, വിടുക.\nNOTE: Conflicts with 'New Tab', and as such is disabled by default.
 Comment[nb]=Opera-stil: Trykk, flytt oppover, slipp.\nMerk: Slått av som standard pga. konflikt med «Ny fane».
 Comment[nds]=Opera-Stil: Drücken, na baven, looslaten.\nBeacht: Verdreegt sik nich mit "Nieg Paneel" un is dorüm standardwies utmaakt.
 Comment[ne]=ओपेरा-शैली: थिच्नुहोस्, माथि सार्नुहोस्, छोड्नुहोस् ।\nद्रष्टब्य: 'नयाव ट्याब' सँग द्वन्द गर्दछ, र पूर्वनिर्धारितद्वारा अक्षम गरिन्छ ।
@@ -427,6 +441,8 @@ Name[km]=បញ្ឈប់​ការ​ផ្ទុក​
 Name[ko]=불러오기 멈추기
 Name[ku]=Barkirinê Bisekinîne
 Name[lv]=Apturēt ielādi
+Name[ml]=ലഭ്യമാക്കുന്നതു് നിര്‍‌ത്തുക
+Name[mr]=दाखलन थांबवा
 Name[nb]=Stopp innlasting
 Name[nds]=Laden anhollen
 Name[ne]=लोडिङ रोक्नुहोस्
@@ -473,6 +489,7 @@ ConditionsCount=0
 Comment=Gesture_triggers
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
+Comment[csb]=Włączanié_gestów
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[eo]=Gestoj_komutiloj
@@ -487,6 +504,7 @@ Comment[hu]=Mozdulatsor_függvények
 Comment[it]=Interruttori_gesti
 Comment[kk]=Ым_Қимыл_жіберушілері
 Comment[lv]=Žestu_trigeri
+Comment[mr]=गेस्चर_ट्रिगर्स
 Comment[nb]=Bevegelses- startere
 Comment[nds]=Muustekens
 Comment[ne]=गेस्चर ट्रिगर
@@ -515,6 +533,7 @@ Type=GESTURE
 Comment=Going up in URL/directory structure.\nMozilla-style: Press, move up, move left, move up, release.
 Comment[bg]=Едно ниво нагоре в директорията..\nСтил Мозила: натискане, движение нагоре, движение наляво, движение нагоре, пускане.
 Comment[ca]=Anar cap amunt per l'URL/estructura de directoris.\nEstil Mozilla: premeu, moveu amunt, moveu a l'esquerra, moveu amunt, deixeu anar.
+Comment[csb]=Przejsce wëżi w sztrukturze URL/kataloga. \nSztél Mozillë: wcësni, do górë, w lewò, do górë, pùszczë.
 Comment[da]=Går op i URL-/mappe-struktur.\nMozilla-agtig: Tryk, bevæg op, bevæg til venstre bevæg op, slip.
 Comment[de]=Geht in der Adress-/Ordnerstruktur eine Ebene höher.\nMozilla-Stil: Drücken, nach oben, nach links, nach oben, loslassen.
 Comment[el]=Μετάβαση προς τα πάνω στη δομή URL/καταλόγου.\nΣτυλ Mozilla: Πιέστε, μετακίνηση πάνω, μετακίνηση αριστερά, μετακίνηση πάνω, ελευθέρωση.
@@ -534,6 +553,7 @@ Comment[kk]=URL/каталогтар құрылымында жоғарлау.\nM
 Comment[km]=ឡើង​លើ​ក្នុង​រចនាសម្ព័ន្ធ​ថត URL/ ។\nរចនាប័ទ្ម Mozilla ៖ ចុច ផ្លាស់ទី​ឡើង​លើ ផ្លាស់ទី​ទៅ​ឆ្វេង ផ្លាស់ទី​ឡើង​លើ លែង ។
 Comment[ko]=URL/디렉터리 구조에서 한 단계 위로 갑니다.\n모질라 스타일: 누르고, 위로 이동하고, 왼쪽으로 이동하고, 위로 이동하고, 놓기.
 Comment[lv]=Iet uz augšu pa URL/mapju struktūru.\nMozilla stilā: nopsiest, uz augšu, pa kreisi, uz augšu, atlaist.
+Comment[ml]=URL/ഘടനയില്‍ ഒരുപടി മുകളിലേയ്ക്ക് പോവുക.\nMozilla-style: അമര്‍ത്തുക, മുകളിലേയ്ക്കു്, ഇടത്തേയ്ക്കു്, മുകളിലേയ്ക്കു്, വിടുക.\n
 Comment[nb]=Går oppover i URL/katalogstruktur.\nMozilla-stil: Trykk, flytt opp, flytt til venstre, flytt opp, slipp.
 Comment[nds]=Na överornt Orner gahn.\nMozilla-Stil: Drücken, na baven, na links, na baven, looslaten.
 Comment[ne]=यूआरएल/डाइरेक्टरी संरचनामा जाँदै । \nमोजिला शैली: थिच्नुहोस्, माथि सार्नुहोस्, बायाँ सार्नुहोस्, माथि सार्नुहोस्, छोड्नुहोस् ।
@@ -591,6 +611,7 @@ Name[ku]=Jor
 Name[lv]=Augšup
 Name[mk]=Нагоре
 Name[ml]=മുകളിലോട്ടു്
+Name[mr]=वर
 Name[nb]=Opp
 Name[nds]=Na baven
 Name[ne]=माथि
@@ -638,6 +659,7 @@ ConditionsCount=0
 Comment=Gesture_triggers
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
+Comment[csb]=Włączanié_gestów
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[eo]=Gestoj_komutiloj
@@ -652,6 +674,7 @@ Comment[hu]=Mozdulatsor_függvények
 Comment[it]=Interruttori_gesti
 Comment[kk]=Ым_Қимыл_жіберушілері
 Comment[lv]=Žestu_trigeri
+Comment[mr]=गेस्चर_ट्रिगर्स
 Comment[nb]=Bevegelses- startere
 Comment[nds]=Muustekens
 Comment[ne]=गेस्चर ट्रिगर
@@ -699,6 +722,7 @@ Comment[kk]=URL/каталогтар құрылымында жоғарлау.\nO
 Comment[km]=ឡើង​លើ​ក្នុង​រចនាសម្ព័ន្ធ ថត/URL ។\nរចនាប័ទ្ម Opera ៖ ចុច ផ្លាស់ទី​ឡើង​លើ ផ្លាស់ទី​ទៅ​ឆ្វេង ផ្លាស់ទី​ឡើង​លើ លែង ។\nចំណាំ ៖ មាន​ការ​ប៉ះទង្គិច​ជា​មួយ  "ធ្វើ​ឲ្យ​ផ្ទាំង​មុន​សកម្ម" ហើយ​តាម​លំនាំដើម​វា​ត្រូវ​បាន​បិទ ។
 Comment[ko]=URL/디렉터리 구조에서 한 단계 위로 갑니다.\n오페라 스타일: 누르고, 위로 이동하고, 왼쪽으로 이동하고, 위로 이동하고, 놓기.\n메모: "이전 탭으로 이동하기"와 충돌하기 때문에 기본적으로 비활성화되어 있습니다.
 Comment[lv]=Iet uz augšu pa URL/mapju struktūru.\nOpera stilā: nopsiest, uz augšu, pa kreisi, augšup, atlaist.\nPIEZĪME: Konfilktē ar "Parādīt iepriekšējo cilni" un tāpēc noklusēti ir izslēgts.
+Comment[ml]=URL/ഘടനയില്‍ ഒരുപടി മുകളിലേയ്ക്ക് പോവുക.\nOpera-style: അമര്‍ത്തുക, മുകളിലേയ്ക്കു്, ഇടത്തേയ്ക്കു്, മുകളിലേയ്ക്കു്, വിടുക.\nNOTE: Conflicts with  "Activate Previous Tab", and as such is disabled by default.
 Comment[nb]=Går oppover i URL/katalogstruktur.\nOpera-stil: Trykk, flytt opp, flytt til venstre, flytt opp, slipp.\nMERK: slått av som standard pga. konflikt med «Gå til forrige fane».
 Comment[nds]=Na överornt Orner gahn.\nOpera-Stil: Drücken, na baven, na links, looslaten.\nBeacht: Verdreegt sik nich mit "Verleden Paneel aktiv maken" un is dorüm standardwies utmaakt.
 Comment[ne]=यूआरएल/डाइरेक्टरी संरचना जाँदै । \nओपेरा-शैली: थिच्नुहोस्, माथि सार्नुहोस्, बायाँ सार्नुहोस्, माथि सार्नुहोस्, छोड्नुहोस् ।\nद्रष्टब्य: "अघिल्लो ट्याब सक्रिय गर्नुहोस्" सँग द्वन्द हुन्छ, र सो पूर्वनिर्धारितद्वारा अक्षम गरिन्छ ।
@@ -745,6 +769,8 @@ Name[km]=ឡើងលើ #2
 Name[ko]=위로 #2
 Name[ku]=Jor #2
 Name[lv]=Augšup #2
+Name[ml]=മുകളിലേക്കു് #2
+Name[mr]=वर #2
 Name[nb]=Opp nr. 2
 Name[nds]=Na baven (2)
 Name[nl]=Omhoog #2
@@ -783,6 +809,7 @@ ConditionsCount=0
 Comment=Gesture_triggers
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
+Comment[csb]=Włączanié_gestów
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[eo]=Gestoj_komutiloj
@@ -797,6 +824,7 @@ Comment[hu]=Mozdulatsor_függvények
 Comment[it]=Interruttori_gesti
 Comment[kk]=Ым_Қимыл_жіберушілері
 Comment[lv]=Žestu_trigeri
+Comment[mr]=गेस्चर_ट्रिगर्स
 Comment[nb]=Bevegelses- startere
 Comment[nds]=Muustekens
 Comment[ne]=गेस्चर ट्रिगर
@@ -846,6 +874,8 @@ Comment[kk]=Бас, жоғары, сосын оңға жүгірт, босат.
 Comment[km]=ចុច ផ្លាស់ទី​ឡើងលើ ផ្លាស់ទី​ទៅ​ស្ដាំ​ ស្ដាំ ។
 Comment[ko]=누르고, 위로 이동하고, 오른쪽으로 이동하고, 놓기.
 Comment[lv]=Nospiest, uz augšu, pa labi, atlaist.
+Comment[ml]=അമര്‍ത്തി, മുകളിലേക്കു് നീങ്ങി, പിന്നീടു് വലത്തേക്കു് നീങ്ങി വിടുക.
+Comment[mr]=दाबा, वर हलवा, उजवीकडे हलवा, सोडा.
 Comment[nb]=Trykk, flytt opp, flytt til høyre, slipp.
 Comment[nds]=Drücken, na baven, na rechts, looslaten.
 Comment[ne]=थिच्नुहोस्, माथि सार्नुहोस्, दायाँ सार्नुहोस्, छोड्नुहोस् ।
@@ -901,6 +931,8 @@ Name[km]=ធ្វើ​ឲ្យ​ផ្ទាំង​បន្ទាប់�
 Name[ko]=다음 탭 활성화시키기
 Name[lv]=Parādīt nākamo cilni
 Name[mk]=Активирај следно ливче
+Name[ml]=അടുത്ത ടാബ് സജീവമാക്കുക
+Name[mr]=पुढील टॅब सक्रीय करा
 Name[nb]=Gå til neste fane
 Name[nds]=Nakamen Paneel aktiv maken
 Name[ne]=पछिल्लो ट्याब सक्रिय पार्नुहोस्
@@ -947,6 +979,7 @@ ConditionsCount=0
 Comment=Gesture_triggers
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
+Comment[csb]=Włączanié_gestów
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[eo]=Gestoj_komutiloj
@@ -961,6 +994,7 @@ Comment[hu]=Mozdulatsor_függvények
 Comment[it]=Interruttori_gesti
 Comment[kk]=Ым_Қимыл_жіберушілері
 Comment[lv]=Žestu_trigeri
+Comment[mr]=गेस्चर_ट्रिगर्स
 Comment[nb]=Bevegelses- startere
 Comment[nds]=Muustekens
 Comment[ne]=गेस्चर ट्रिगर
@@ -1010,6 +1044,8 @@ Comment[kk]=Бас, жоғары, сосын солға жүгірт, босат
 Comment[km]=ចុច ផ្លាស់ទី​ឡើងលើ ផ្លាស់ទី​ទៅ​ឆ្វេង លែង ។
 Comment[ko]=누르고, 위로 이동하고, 왼쪽으로 이동하고, 놓기.
 Comment[lv]=Nospiest, uz augšu, pa kreisi, atlaist.
+Comment[ml]=അമര്‍ത്തി, മുകളിലേക്കു് നീങ്ങി, പിന്നീട് ഇടത്തേക്കു് നീങ്ങി വിടുക.
+Comment[mr]=दाबा, वर हलवा, डावीकडे हलवा, सोडा.
 Comment[nb]=Trykk, flytt opp, flytt til venstre, slipp.
 Comment[nds]=Drücken, na baven, na links, looslaten.
 Comment[ne]=थिच्नुहोस्, माथि सार्नुहोस्, बायाँ सार्नुहोस्, छोड्नुहोस् ।
@@ -1068,6 +1104,8 @@ Name[km]=ធ្វើ​ឲ្យ​ផ្ទាំង​មុន​សកម�
 Name[ko]=이전 탭 활성화시키기
 Name[lv]=Parādīt iepriekšējo cilni
 Name[mk]=Активирај претходно ливче
+Name[ml]=മുമ്പുള്ള ടാബ് സജീവമാക്കുക
+Name[mr]=मागील टॅब सक्रीय करा
 Name[nb]=Gå til forrige fane
 Name[nds]=Verleden Paneel aktiv maken
 Name[ne]=अघिल्लो ट्याब सक्रिय बनाउनुहोस्
@@ -1112,6 +1150,7 @@ ConditionsCount=0
 Comment=Gesture_triggers
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
+Comment[csb]=Włączanié_gestów
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[eo]=Gestoj_komutiloj
@@ -1126,6 +1165,7 @@ Comment[hu]=Mozdulatsor_függvények
 Comment[it]=Interruttori_gesti
 Comment[kk]=Ым_Қимыл_жіберушілері
 Comment[lv]=Žestu_trigeri
+Comment[mr]=गेस्चर_ट्रिगर्स
 Comment[nb]=Bevegelses- startere
 Comment[nds]=Muustekens
 Comment[ne]=गेस्चर ट्रिगर
@@ -1166,6 +1206,7 @@ ConditionsCount=0
 Comment=Gesture_triggers
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
+Comment[csb]=Włączanié_gestów
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[eo]=Gestoj_komutiloj
@@ -1180,6 +1221,7 @@ Comment[hu]=Mozdulatsor_függvények
 Comment[it]=Interruttori_gesti
 Comment[kk]=Ым_Қимыл_жіберушілері
 Comment[lv]=Žestu_trigeri
+Comment[mr]=गेस्चर_ट्रिगर्स
 Comment[nb]=Bevegelses- startere
 Comment[nds]=Muustekens
 Comment[ne]=गेस्चर ट्रिगर
@@ -1229,6 +1271,8 @@ Comment[kk]=Бас, төмен, сосын жоғары, сосын төмен �
 Comment[km]=ចុច ផ្លាស់ទី​ចុះក្រោម ផ្លាស់ទី​ឡើង​លើ លែង ។
 Comment[ko]=누르고, 아래로 이동하고, 위로 이동하고, 아래로 이동하고, 놓기.
 Comment[lv]=Nospiest, uz leju, uz augšu, uz leju, atlaist.
+Comment[ml]=അമര്‍ത്തി, താഴേക്കു് നീങ്ങി, പിന്നീടു് മുകളില്‍ ചെന്നു് താഴേക്കു് നീങ്ങി വിടുക.
+Comment[mr]=दाबा, खाली हलवा, वर हलवा, खाली हलवा, सोडा.
 Comment[nb]=Trykk, flytt ned, flytt opp, flytt ned, slipp.
 Comment[nds]=Drücken, na nerrn, na baven, na nerrn, looslaten.
 Comment[ne]=थिच्नुहोस्, तल सार्नुहोस्, माथि सार्नुहोस्, तल सार्नुहोस्, छोड्नुहोस् ।
@@ -1285,6 +1329,8 @@ Name[kn]=ತದ್ರೂಪು ಹಾಳೆ (ಟಾಬ್)
 Name[ko]=탭 복제하기
 Name[lv]=Dublēt cilni
 Name[mk]=Удвој ливче
+Name[ml]=ആവര്‍ത്തന ടാബ്
+Name[mr]=दुहेरी टैब
 Name[nb]=Kopier fane
 Name[nds]=Paneel verdubbeln
 Name[ne]=नक्कली ट्याब
@@ -1330,6 +1376,7 @@ ConditionsCount=0
 Comment=Gesture_triggers
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
+Comment[csb]=Włączanié_gestów
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[eo]=Gestoj_komutiloj
@@ -1344,6 +1391,7 @@ Comment[hu]=Mozdulatsor_függvények
 Comment[it]=Interruttori_gesti
 Comment[kk]=Ым_Қимыл_жіберушілері
 Comment[lv]=Žestu_trigeri
+Comment[mr]=गेस्चर_ट्रिगर्स
 Comment[nb]=Bevegelses- startere
 Comment[nds]=Muustekens
 Comment[ne]=गेस्चर ट्रिगर
@@ -1393,6 +1441,8 @@ Comment[kk]=Бас, төмен, сосын жоғары жүгірт, босат
 Comment[km]=ចុច​ ផ្លាស់ទី​ចុះក្រោម ផ្លាស់ទី​ឡើង​លើ លែង ។
 Comment[ko]=누르고, 아래쪽으로 이동하고, 위쪽으로 이동하고, 놓기.
 Comment[lv]=Nospiest, uz leju, uz augšu, atlaist.
+Comment[ml]=അമര്‍ത്തി, താഴേക്കു് നീങ്ങി, പിന്നീടു് മുകളിലേക്കു് ചെന്നു് വിടുക.
+Comment[mr]=दाबा, खाली हलवा, वर हलवा, सोडा.
 Comment[nb]=Trykk, flytt ned, flytt opp, slipp.
 Comment[nds]=Drücken, na nerrn, na baven, looslaten.
 Comment[ne]=थिच्नुहोस्, तल सार्नुहोस्, माथि सार्नुहोस्, छोड्नुहोस् ।
@@ -1453,6 +1503,8 @@ Name[kn]=ತದ್ರೂಪು ಕಿಟಕಿ
 Name[ko]=창 복제하기
 Name[lv]=Dublēt logu
 Name[mk]=Удвој прозорец
+Name[ml]=ആവര്‍ത്തന ജാലകം
+Name[mr]=अनुकृति चौकट
 Name[nb]=Kopier vindu
 Name[nds]=Finster verdubbeln
 Name[ne]=नक्कली सञ्झ्याल
@@ -1496,6 +1548,7 @@ ConditionsCount=0
 Comment=Gesture_triggers
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
+Comment[csb]=Włączanié_gestów
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[eo]=Gestoj_komutiloj
@@ -1510,6 +1563,7 @@ Comment[hu]=Mozdulatsor_függvények
 Comment[it]=Interruttori_gesti
 Comment[kk]=Ым_Қимыл_жіберушілері
 Comment[lv]=Žestu_trigeri
+Comment[mr]=गेस्चर_ट्रिगर्स
 Comment[nb]=Bevegelses- startere
 Comment[nds]=Muustekens
 Comment[ne]=गेस्चर ट्रिगर
@@ -1559,6 +1613,8 @@ Comment[kk]=Бас, оңға жүгірт, босат.
 Comment[km]=ចុច ផ្លាស់ទី​ទៅ​ស្តាំ លែង ។​
 Comment[ko]=누르고, 오른쪽으로 이동하고, 놓기.
 Comment[lv]=Nospiest, pa labi, atlaist.
+Comment[ml]=അമര്‍ത്തി വലത്തേക്കു് നീക്കി വിടുക.
+Comment[mr]=दाबा, उजवीकडे हलवा, सोडा.
 Comment[nb]=Trykk, flytt til høyre, slipp.
 Comment[nds]=Drücken, na rechts, looslaten.
 Comment[ne]=थिच्नुहोस्, दायाँ सार्नुहोस्, छोड्नुहोस् ।
@@ -1620,6 +1676,7 @@ Name[ku]=Pêşve
 Name[lv]=Uz priekšu
 Name[mk]=Напред
 Name[ml]=മുന്നോട്ടു്
+Name[mr]=पुढे
 Name[nb]=Forover
 Name[nds]=Vörut
 Name[ne]=अगाडि
@@ -1667,6 +1724,7 @@ ConditionsCount=0
 Comment=Gesture_triggers
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
+Comment[csb]=Włączanié_gestów
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[eo]=Gestoj_komutiloj
@@ -1681,6 +1739,7 @@ Comment[hu]=Mozdulatsor_függvények
 Comment[it]=Interruttori_gesti
 Comment[kk]=Ым_Қимыл_жіберушілері
 Comment[lv]=Žestu_trigeri
+Comment[mr]=गेस्चर_ट्रिगर्स
 Comment[nb]=Bevegelses- startere
 Comment[nds]=Muustekens
 Comment[ne]=गेस्चर ट्रिगर
@@ -1727,6 +1786,7 @@ Comment[ja]=マウスの中ボタンを押したまま、マウスを下に動�
 Comment[kk]=Бас, төмен жүгірт, сосын жарты жол жоғары, оңға, төмен, босат.\n(Кіші 'h' әріпін сызу.)
 Comment[km]=ចុច ផ្លាស់ទី​ចុះ​ក្រោម ផ្លាស់ទី​ឡើង​លើ​ពាក់​កណ្តាល ផ្លាស់ទី​ចុះក្រោម លែង ។\n(គូស​អក្សរ 'h' តូច ។)
 Comment[lv]=Nospiest, uz leju, pusi uz augšu, pa labi, uz leju, atlaist.\n(Uzzīmēt mazo 'h'.)
+Comment[ml]=അമര്‍ത്തുക, താഴേയ്ക്കു നീക്കുക, പാതി മുകളിലേയ്ക്കു നീക്കുക, താഴേയ്ക്കുനീക്കുക, വിടുക(ചെറിയക്ഷരം 'h' എഴുതുംപോലെ)
 Comment[nb]=Trykk, flytt ned, flytt halvveis opp igjen, flytt til høyre, flytt ned, slipp.\n(Tegne en liten «h»).
 Comment[nds]=Drücken, na nerrn, halvig na baven, na rechts, na nerrn, looslaten.\n(En lütt "h" malen.)
 Comment[ne]=थिच्नुहोस्, तल सार्नुहोस्, माथि आधा सार्नुहोस्, दायाँ सार्नुहोस्, तल सार्नुहोस्, छोड्नुहोस् ।\n(सानो अक्षर 'h' रेखाचित्र गर्दै ।)
@@ -1791,6 +1851,7 @@ Name[lt]=Pradžia
 Name[lv]=Mājas
 Name[mk]=Дома
 Name[ml]=തട്ടകം
+Name[mr]=मुख्य
 Name[ms]=Laman Utama
 Name[nb]=Hjem
 Name[nds]=Tohuus
@@ -1841,6 +1902,7 @@ ConditionsCount=0
 Comment=Gesture_triggers
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
+Comment[csb]=Włączanié_gestów
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[eo]=Gestoj_komutiloj
@@ -1855,6 +1917,7 @@ Comment[hu]=Mozdulatsor_függvények
 Comment[it]=Interruttori_gesti
 Comment[kk]=Ым_Қимыл_жіберушілері
 Comment[lv]=Žestu_trigeri
+Comment[mr]=गेस्चर_ट्रिगर्स
 Comment[nb]=Bevegelses- startere
 Comment[nds]=Muustekens
 Comment[ne]=गेस्चर ट्रिगर
@@ -1905,6 +1968,7 @@ Comment[ja]=マウスの中ボタンを押したまま、マウスを右->下->�
 Comment[kk]=Бас, оңға жүгірт, сосын төмен, сосын оңға, босат.\nMozilla-стилі: Бас, төмен жүгірт, сосын оңға, босат.
 Comment[km]=ចុច ផ្លាស់​ទី​ទៅ​ស្តាំ ផ្លាស់ទី​ចុះក្រោម ផ្លាស់ទី​ទៅ​ស្តាំ លែង ។\nរចនាប័ទ្ម Mozilla ៖ ចុច ផ្លាស់ទី​ចុះក្រោម ផ្លាស់ទី​ទៅ​ស្តាំ លែង ។
 Comment[lv]=Nospiest, pa labi, uz leju, pa labi, atlaist.\nMozilla stilā: Nospiest, uz leju, pa labi, atlaist.
+Comment[ml]=അമര്‍ത്തുക, വലത്തേക്കു നീക്കുക, ഇടത്തേക്കു നീക്കുക, വിടുക\nമോസില്ല രീതി: അമര്‍ത്തുക, താഴേക്കു നീക്കുക, വലത്തേക്കു നീക്കുക, വിടുക
 Comment[nb]=Trykk, flytt til høyre, flytt ned, flytt til høyre, slipp. \nMozilla-stil: Trykk, flytt ned, flytt til høyre, slipp.
 Comment[nds]=Drücken, na rechts, na nerrn, na rechts, looslaten.\nMozilla-Stil: Drücken, na nerrn, na rechts, looslaten.
 Comment[ne]=थिच्नुहोस्, दायाँ सार्नुहोस्, तल सार्नुहोस्, दायाँ सार्नुहोस्, छोड्नुहोस् ।\nमोजिला-शैली: थिच्नुहोस्, तल सार्नुहोस्, दायाँ सार्नुहोस्, छोड्नुहोस् ।
@@ -1963,6 +2027,7 @@ Name[ku]=Hilfirînê Bigire
 Name[lv]=Aizvērt cilni
 Name[mk]=Затвори ливче
 Name[ml]=കിളിവാതില്‍ അടയ്ക്കുക
+Name[mr]=टॅब बंद करा
 Name[nb]=Lukk fane
 Name[nds]=Paneel tomaken
 Name[ne]=ट्याब बन्द गर्नुहोस्
@@ -2009,6 +2074,7 @@ ConditionsCount=0
 Comment=Gesture_triggers
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
+Comment[csb]=Włączanié_gestów
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[eo]=Gestoj_komutiloj
@@ -2023,6 +2089,7 @@ Comment[hu]=Mozdulatsor_függvények
 Comment[it]=Interruttori_gesti
 Comment[kk]=Ым_Қимыл_жіберушілері
 Comment[lv]=Žestu_trigeri
+Comment[mr]=गेस्चर_ट्रिगर्स
 Comment[nb]=Bevegelses- startere
 Comment[nds]=Muustekens
 Comment[ne]=गेस्चर ट्रिगर
@@ -2073,6 +2140,7 @@ Comment[ja]=マウスの中ボタンを押したまま、マウスを上に動�
 Comment[kk]=Бас, оңға жүгірт, сосын төмен, сосын оңға, босат.\nOpera-стильдегі 'Жоғары #2' дегенмен қайшылықта, сондықтан әдетте рұқсат етілмеген.
 Comment[km]=ចុច ផ្លាស់ទី​ឡើង​លើ លែង​ ។\nមាន​ការ​ប៉ះទង្គិច​ជាមួយ​រចនាប័ទ្ម Opera​ 'ឡើងលើ #2' ដែល​តាម​លំនាំដើម​ត្រូវ​បាន​បិទ ។
 Comment[lv]=Nospiest, uz augšu, atlaist.\nKonfliktē ar Opera stila 'Augšup #2', kas ir noklusēti izslēgts.
+Comment[ml]=അമര്‍ത്തുക, മുകളിലേക്ക് നീക്കുക, വിടുക\nഓപറയുടെ 'Up #2' വുമായി വിരുദ്ധം, സ്വതേ പ്രവര്‍ത്തനരഹിതമാക്കിയിരിക്കുന്നു.
 Comment[nb]=Trykk, flytt opp, slipp.\ Konflikt med Opera-stil «Opp 2», som er slått av som standard.
 Comment[nds]=Drücken, na baven, looslaten.\nVerdreegt sik nich mit "Na baven (2)" in Opera-Stil, wat man standardwies utmaakt is.
 Comment[ne]=थिच्नुहोस्, माथि सार्नुहोस्, छोड्नुहोस् ।\n ओपेरा-शैली 'Up #2' सँग द्वन्द हुन्छ, जुन पूर्वनिर्धारितद्वारा अक्षम गरिन्छ ।
@@ -2131,6 +2199,7 @@ Name[ku]=Hilfirîneke Nû
 Name[lv]=Jauna cilne
 Name[mk]=Ново ливче
 Name[ml]=പുതിയ കിളിവാതില്‍ 
+Name[mr]=नविन टॅब
 Name[nb]=Ny fane
 Name[nds]=Nieg Paneel
 Name[ne]=नयाँ ट्याब
@@ -2177,6 +2246,7 @@ ConditionsCount=0
 Comment=Gesture_triggers
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
+Comment[csb]=Włączanié_gestów
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[eo]=Gestoj_komutiloj
@@ -2191,6 +2261,7 @@ Comment[hu]=Mozdulatsor_függvények
 Comment[it]=Interruttori_gesti
 Comment[kk]=Ым_Қимыл_жіберушілері
 Comment[lv]=Žestu_trigeri
+Comment[mr]=गेस्चर_ट्रिगर्स
 Comment[nb]=Bevegelses- startere
 Comment[nds]=Muustekens
 Comment[ne]=गेस्चर ट्रिगर
@@ -2240,6 +2311,8 @@ Comment[kk]=Бас, төмен жүгірт, босат.
 Comment[km]=ចុច ផ្លាស់ទី​ចុះ​ក្រោម លែង ។
 Comment[ko]=누르고, 아래로 이동하고, 놓기.
 Comment[lv]=Nospiest, uz leju, atlaist.
+Comment[ml]=അമര്‍ത്തി, താഴേക്കു് നീങ്ങി വിടുക.
+Comment[mr]=दाबा, खाली हलवा, सोडा.
 Comment[nb]=Trykk, flytt ned, slipp.
 Comment[nds]=Drücken, na nerrn, looslaten.
 Comment[ne]=थिच्नुहोस्, तल सार्नुहोस्, छोड्नुहोस् ।
@@ -2308,6 +2381,7 @@ Name[lt]=Naujas langas
 Name[lv]=Jauns logs
 Name[mk]=Нов прозорец
 Name[ml]=പുതിയ ജാലകം
+Name[mr]=नविन चौकट
 Name[ms]=Tetingkap Baru
 Name[nb]=Nytt vindu
 Name[nds]=Nieg Finster
@@ -2358,6 +2432,7 @@ ConditionsCount=0
 Comment=Gesture_triggers
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
+Comment[csb]=Włączanié_gestów
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[eo]=Gestoj_komutiloj
@@ -2372,6 +2447,7 @@ Comment[hu]=Mozdulatsor_függvények
 Comment[it]=Interruttori_gesti
 Comment[kk]=Ым_Қимыл_жіберушілері
 Comment[lv]=Žestu_trigeri
+Comment[mr]=गेस्चर_ट्रिगर्स
 Comment[nb]=Bevegelses- startere
 Comment[nds]=Muustekens
 Comment[ne]=गेस्चर ट्रिगर
@@ -2421,6 +2497,8 @@ Comment[kk]=Бас, жоғары жүгірт, сосын төмен, босат
 Comment[km]=ចុច ផ្លាស់ទី​ឡើង​លើ ផ្លាស់ទី​ចុះក្រោម​ លែង ។
 Comment[ko]=누르고, 위로 이동하고, 아래로 이동하고, 놓기.
 Comment[lv]=Nospiest uz augšu, uz leju, atlaist.
+Comment[ml]=അമര്‍ത്തി, മുകളിലേക്കു് നീങ്ങി പിന്നീടു് താഴേക്കു് നീങ്ങി വിടുക.
+Comment[mr]=दाबा, वर हलवा, खाली हलवा, सोडा.
 Comment[nb]=Trykk, flytt opp, flytt ned, slipp.
 Comment[nds]=Drücken, na baven, na nerrn, looslaten.
 Comment[ne]=थिच्नुहोस्, माथि सार्नुहोस्, तल सार्नुहोस्, छोड्नुहोस् ।
@@ -2481,6 +2559,8 @@ Name[ko]=새로 고침
 Name[ku]=Nûbarkirin
 Name[lv]=Pārielādēt
 Name[mk]=Превчитај
+Name[ml]=പുതുക്കുക
+Name[mr]=पुनःदाखल करा
 Name[nb]=Last på nytt
 Name[nds]=Nieg laden
 Name[ne]=पुन: लोड गर्नुहोस्
@@ -2528,6 +2608,7 @@ ConditionsCount=0
 Comment=Gesture_triggers
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
+Comment[csb]=Włączanié_gestów
 Comment[de]=Gesten_Aktivierung
 Comment[el]=Ενεργοποιήσεις χειρονομίας
 Comment[eo]=Gestoj_komutiloj
@@ -2542,6 +2623,7 @@ Comment[hu]=Mozdulatsor_függvények
 Comment[it]=Interruttori_gesti
 Comment[kk]=Ым_Қимыл_жіберушілері
 Comment[lv]=Žestu_trigeri
+Comment[mr]=गेस्चर_ट्रिगर्स
 Comment[nb]=Bevegelses- startere
 Comment[nds]=Muustekens
 Comment[ne]=गेस्चर ट्रिगर

@@ -5,6 +5,7 @@ Name[bg]=Търсене Xesam
 Name[bn_IN]=Xesam অনুসন্ধান
 Name[ca]=Cerca Xesam
 Name[cs]=Vyhledávání Xesam
+Name[csb]=Szëkôrz Xesam
 Name[da]=Xesam-søgning
 Name[de]=Xesam-Suche
 Name[el]=Αναζήτηση Xesam
@@ -22,6 +23,7 @@ Name[km]=ស្វែងរក Xesam
 Name[ko]=Xesam 검색
 Name[lv]=Xesam meklēšana
 Name[ml]=സെസാം തെരച്ചില്‍
+Name[mr]=Xesam शोध
 Name[nds]=Xesam-Söök
 Name[nl]=Xesam-zoekmachine
 Name[nn]=Xesam-søk
@@ -57,6 +59,8 @@ Comment[ja]=デスクトップ検索に Xesam 互換のインデクサが使え�
 Comment[km]=អនុញ្ញាត​ឲ្យ​អ្នកប្រើ ប្រើកម្មវិធី​បង្កើត​លិបិក្រម​ដែល​ឆបគ្នា Xesam សម្រាប់​ការ​ស្វែងរក​ផ្ទៃតុ
 Comment[ko]=데스크톱 검색에 Xesam 호환 인덱서 사용하기
 Comment[lv]=Ļauj izmantot ar Xesam savietojamu indeksētāju darbvirsmas meklēšanai
+Comment[ml]=സെസാം പിന്തുണയുള്ള സൂചിക പണിയിട തെരച്ചിലിനുപയോഗിയ്ക്കാന്‍ സഹായിയ്ക്കുന്നു
+Comment[mr]=डेस्कटॉप शोध करीता वापरकर्त्यास Xesam सहत्व अनुक्रमाक वापरण्यास अनुमती देतो
 Comment[nds]=De Bruker kann een to Xesam kompatibel Indizeerprogramm för't Söken op den Schriefdisch bruken
 Comment[nl]=Maakt het mogelijk om een Xesam-ondersteunende indexer voor desktop-search te gebruiken
 Comment[nn]=Lèt brukaren bruka ein Xesam-kompatibel indeksar for skrivebordssøk

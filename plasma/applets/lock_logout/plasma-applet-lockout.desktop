@@ -30,6 +30,7 @@ Name[ku]=Kilît Bike/Derkeve
 Name[lv]=Slēgt/Atteikties
 Name[mk]=Копчиња „Заклучи/Одјави се“
 Name[ml]=പൂട്ടുക/പുറത്തിറങ്ങുക
+Name[mr]=कुलूपबंद/बाहेर पडा
 Name[nb]=Lås/Logg ut
 Name[nds]=Afsluten/Afmellen
 Name[ne]=ताल्चा लगाउनुहोस्/लगआउट गर्नुहोस्
@@ -61,6 +62,7 @@ Comment[af]=Laat die gebruiker die skerm sluit of afteken
 Comment[bg]=Заключване на екрана и завършване на сесията
 Comment[ca]=Permet a l'usuari bloquejar la pantalla o sortir de la sessió
 Comment[cs]=Umožní uzamknout obrazovku nebo ukončit relaci
+Comment[csb]=Zezwôlô brëkòwnikòwi blokòwac ekran abò zkùńczëc sesëjã
 Comment[da]=Lader brugeren låse skærmen eller afslutte session
 Comment[de]=Sperrt den Bildschirm oder meldet die KDE-Sitzung ab
 Comment[el]=Επιτρέπει στο χρήση το κλείδωμα της οθόνης ή το τέλος της συνεδρίας
@@ -79,6 +81,8 @@ Comment[km]=អនុញ្ញាត​ឲ្យ​អ្នក​ប្រើ�
 Comment[ko]=세션을 잠그거나 끝내기
 Comment[lv]=Ļauj lietotājam slēgt ekrānu vai beigt sesiju
 Comment[mk]=Додава копчиња за заклучување на екранот и одјавување од сесијата
+Comment[ml]=സെഷന്‍ അവസാനിപ്പിക്കാനോ പൂട്ടാനോ സഹായിക്കുന്നു.
+Comment[mr]=वापरकर्त्यास पडदा कुलूपबंद किंवा सत्र बंद करण्यास सहमती देतो
 Comment[nds]=De Bruker kann sik afmellen oder den Schirm afsluten
 Comment[nl]=Hiermee kunt u het scherm vergrendelen of de sessie beëindigen
 Comment[nn]=Let brukarne låsa skjermen eller avslutta økta
