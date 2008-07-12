@@ -132,7 +132,7 @@ The right-most &plasmoid; in the default panel holds the <application>System Tra
 
 <para>
 If you have unlocked your desktop (you can do that by <mousebutton>right</mousebutton> clicking on the desktop, or when no application has the focus, with <keycombo><keycap>Ctrl</keycap><keycap>L</keycap></keycombo>). A small &plasma;
-logo will appear in the bottom right corner (it's commonly named the &quot;cashew&quot;). Click on this cashew, and the panel controller opens. The panel controller allows you to reposition, re-size and realign the panel. The &plasmoids; living in this panel will adjust their size automatically. &plasmoids; have basic knowledge about sizing, provided by the containment. They're programmed to take advantage of that size, and inform the applet about how much space they possibly need. In the end, the containment gives a possible size to the applets, the applets obey.
+logo will appear in the bottom right corner (it's commonly named the &quot;cashew&quot;). Click on this cashew, and the panel controller opens. The panel controller allows you to reposition, re-size and realign the panel. The &plasmoids; living in this panel will adjust their size automatically. &plasmoids; have basic knowledge about sizing, provided by the containment. They are programmed to take advantage of that size, and inform the applet about how much space they possibly need. In the end, the containment gives a possible size to the applets, the applets obey.
 </para>
 
 </sect1>
@@ -141,7 +141,7 @@ logo will appear in the bottom right corner (it's commonly named the &quot;cashe
 <title>Adding Applets</title>
 
 <para>
-Unlock the desktop and you'll be able to add and remove &plasmoids; from panel or desktop. You add &plasmoids; by simply dragging them where you want them. <mousebutton>Right</mousebutton> click on an applet to remove it. The <guilabel>Add Applets</guilabel> dialog also allows you to mark certain applets as <guilabel>Favorite</guilabel> so you can find them back more easily. The <guibutton>Install new widgets</guibutton> button allows you to add widgets you've previously downloaded. Currently it supports native &plasmagik; packages and Mac OSX dashboard widgets. Widgets you install this way can then be accessed just like regular, preinstalled widgets.
+Unlock the desktop and you'll be able to add and remove &plasmoids; from panel or desktop. You add &plasmoids; by simply dragging them where you want them. <mousebutton>Right</mousebutton> click on an applet to remove it. The <guilabel>Add Applets</guilabel> dialog also allows you to mark certain applets as <guilabel>Favorite</guilabel> so you can find them back more easily. The <guibutton>Install new widgets</guibutton> button allows you to add widgets you've previously downloaded. Currently it supports native &plasmagik; packages and &Mac; OSX dashboard widgets. Widgets you install this way can then be accessed just like regular, preinstalled widgets.
 </para>
 
 </sect1>
@@ -150,7 +150,7 @@ Unlock the desktop and you'll be able to add and remove &plasmoids; from panel o
 <title>The Desktop</title>
 
 <para>
-The desktop is in fact another containment. One that doesn't put size constraints on the applets. Applets can be moved and sized freely. On the unlocked desktop, &plasmoids; will show a frame when you move the mouse over them. This applet handle allows you to move, re-size, relocate and realign the panel. It also allows you to drag Plasmoids on the desktop. The buttons in the corner are used to re-size, rotate configure and remove the applet. When rotated, a &plasmoid; will act magnetic towards 12 o'clock, so it's easy to get them back into sensible position. By default, most applets keep their aspect ratio when they're being re-sized. If you want to freely re-size an applet, hold the <keycap>Ctrl</keycap> key pressed while resizing.
+The desktop is in fact another containment. One that doesn't put size constraints on the applets. Applets can be moved and sized freely. On the unlocked desktop, &plasmoids; will show a frame when you move the mouse over them. This applet handle allows you to move, re-size, relocate and realign the panel. It also allows you to drag Plasmoids on the desktop. The buttons in the corner are used to re-size, rotate configure and remove the applet. When rotated, a &plasmoid; will act magnetic towards 12 o'clock, so it's easy to get them back into sensible position. By default, most applets keep their aspect ratio when they are being re-sized. If you want to freely re-size an applet, hold the <keycap>Ctrl</keycap> key pressed while resizing.
 </para>
 
 <para>
