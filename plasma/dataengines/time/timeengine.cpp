@@ -42,10 +42,6 @@ TimeEngine::TimeEngine(QObject* parent, const QVariantList& args)
     KGlobal::locale()->insertCatalog("timezones4");
 }
 
-TimeEngine::~TimeEngine()
-{
-}
-
 bool TimeEngine::sourceRequestEvent(const QString &name)
 {
     //kDebug() << "TimeEngine::sourceRequested " << name;
