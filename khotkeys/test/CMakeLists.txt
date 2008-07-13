@@ -6,7 +6,5 @@ MACRO(KHOTKEYS_UNIT_TESTS)
 ENDMACRO(KHOTKEYS_UNIT_TESTS)
 
 KHOTKEYS_UNIT_TESTS(
- kdedmodule_daemon_test
- standalone_daemon_test
- daemon_test )
+    kdedmodule_daemon_test )
 

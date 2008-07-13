@@ -18,6 +18,7 @@
    Boston, MA 02110-1301, USA.
 */
 
+#include "kdemacros.h"
 
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
@@ -25,10 +26,10 @@
 namespace KHotKeys { namespace KdedModuleDaemon 
 {
 
-    bool isRunning();
-    bool reload();
-    bool start();
-    bool stop();
+    KDE_EXPORT bool isRunning();
+    KDE_EXPORT bool reload();
+    KDE_EXPORT bool start();
+    KDE_EXPORT bool stop();
 
 }} // namespace KHotKeys::KdedModuleDaemon
 
