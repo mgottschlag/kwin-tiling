@@ -83,7 +83,7 @@ private:
 
 	QString cText, pText;
 	QSize pTextSize;
-	int pAccelOff, pTextIndent;
+	int pAccelOff, pTextIndent, zeroWidth;
 
 private Q_SLOTS:
 	void activate();

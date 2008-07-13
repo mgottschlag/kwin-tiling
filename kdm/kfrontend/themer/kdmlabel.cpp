@@ -96,13 +96,15 @@ KdmLabel::KdmLabel( QObject *parent, const QDomNode &node )
 		}
 	}
 
-	// Check if this is a timer label
 	label.isTimer = label.text.indexOf( "%c" ) >= 0;
 	if (label.isTimer) {
 		timer = new QTimer( this );
 		timer->start( 1000 );
 		connect( timer, SIGNAL(timeout()), SLOT(update()) );
 	}
+
+	zeroWidth = QFontMetrics( label.normal.font.font ).width( '0' );
+
 	label.text.replace( '\n', ' ' );
 	setCText( lookupText( label.text ) );
 }
@@ -130,7 +132,15 @@ KdmLabel::setCText( const QString &txt )
 		pText.remove( pAccelOff, 1 );
 	}
 	QRect bbox = QFontMetrics( label.normal.font.font ).boundingRect( pText );
-	pTextSize = bbox.size();
+	QSize newSize = bbox.size();
+	if (newSize.width() > pTextSize.width() ||
+	    (newSize.width() < (pTextSize.width() - zeroWidth)))
+	{
+		if (label.isTimer)
+			newSize.rwidth() += zeroWidth;
+		pTextSize = newSize;
+		emit needPlacement();
+	}
 	pTextIndent = bbox.left();
 }
 
@@ -220,7 +230,6 @@ KdmLabel::update()
 	if (text != cText) {
 		setCText( text );
 		needUpdate();
-		// emit needPlacement() as well?
 	}
 }
 
