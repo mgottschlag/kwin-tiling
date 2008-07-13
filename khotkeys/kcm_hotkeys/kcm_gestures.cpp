@@ -20,6 +20,7 @@
 #include "kcm_gestures.h"
 #include "kcm_module_factory.h"
 
+#include <typeinfo>
 
 // ACTION_DATAS
 #include "action_data_group.h"

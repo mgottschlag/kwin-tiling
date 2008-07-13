@@ -17,8 +17,11 @@
    Boston, MA 02110-1301, USA.
 */
 
+
 #include "kcm_hotkeys.h"
 #include "kcm_module_factory.h"
+
+#include <typeinfo>
 
 
 // ACTION_DATAS
