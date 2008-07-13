@@ -149,8 +149,7 @@ void Trash::constraintsEvent(Plasma::Constraints constraints)
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
 
-            //in a panel the icon always behaves like a button
-            connect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));
+            connect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
 
             m_icon->setText(i18n("Trash"));
             m_icon->setInfoText(i18np("One item", "%1 items", m_count));
@@ -159,6 +158,9 @@ void Trash::constraintsEvent(Plasma::Constraints constraints)
             //Adding an arbitrary width to make room for a larger count of items
             setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop))+=QSizeF(20,0));
         } else {
+            //in a panel the icon always behaves like a button
+            connect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));
+
             m_icon->setText(0);
             m_icon->setInfoText(0);
             m_showText = false;
