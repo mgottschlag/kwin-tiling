@@ -109,6 +109,6 @@ Comment[zh_CN]=Plasmoids 的时间数据
 Comment[zh_TW]=電漿時鐘的時間資料
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
-Icon=alarmclock
+Icon=preferences-system-time
 X-KDE-Library=plasma_engine_time
 X-Plasma-EngineName=time
