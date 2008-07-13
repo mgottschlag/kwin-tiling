@@ -167,6 +167,7 @@ void WindowTrigger::window_changed( WId window_P, unsigned int dirty_P )
     bool matches = windows()->match( Window_data( window_P ));
     existing_windows[ window_P ] = matches;
     if( active && matches && !was_match )
+        {
         if( window_actions & WINDOW_APPEARS )
             {
             windows_handler->set_action_window( window_P );
@@ -177,6 +178,7 @@ void WindowTrigger::window_changed( WId window_P, unsigned int dirty_P )
             windows_handler->set_action_window( window_P );
             data->execute();
             }
+        }
     kDebug( 1217 ) << "WindowTrigger::w_changed() : " << was_match << "|" << matches;
     }
 
