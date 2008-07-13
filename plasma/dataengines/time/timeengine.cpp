@@ -22,7 +22,6 @@
 #include <QDate>
 #include <QStringList>
 #include <QTime>
-#include <QTimer>
 
 #include <KDebug>
 #include <KLocale>
