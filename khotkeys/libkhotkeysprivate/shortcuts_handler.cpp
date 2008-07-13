@@ -63,8 +63,6 @@ KAction *ShortcutsHandler::addAction(
         {
         return 0;
         }
-    newAction->setText(text);
-    newAction->setGlobalShortcut( shortcut, KAction::DefaultShortcut | KAction::ActiveShortcut );
     // If our HandlerType is configuration we have to tell kdedglobalaccel
     // that this action is only for configuration purposes.
     // see KAction::~KAction
@@ -73,6 +71,8 @@ KAction *ShortcutsHandler::addAction(
         kDebug() << "Making it a configuration action";
         newAction->setProperty("isConfigurationAction", QVariant(true));
         }
+    newAction->setText(text);
+    newAction->setGlobalShortcut( shortcut, KAction::DefaultShortcut | KAction::ActiveShortcut );
     // Enable global shortcut. If that fails there is no sense in proceeding
     if (!newAction->isGlobalShortcutEnabled())
         {
