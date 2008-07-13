@@ -22,10 +22,12 @@
 
 #include "plasma/dataengine.h"
 
-class QTimer;
-
 /**
- * This class evaluates the basic expressions given in the interface.
+ * This engine provides the current date and time for a given
+ * timezone.
+ *
+ * "Local" is a special source that is an alias for the current
+ * timezone.
  */
 class TimeEngine : public Plasma::DataEngine
 {
