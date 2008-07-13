@@ -46,6 +46,7 @@ set(khotkeysprivate_SRCS
     actions/keyboard_input_gesture_action_data.cpp
     actions/menuentry_shortcut_action_data.cpp
     actions/simple_action_data.cpp
+    actions/simple_action_data_base.cpp
 
     # CONDITIONS
     conditions/active_window_condition.cpp
@@ -68,9 +69,13 @@ set(khotkeysprivate_SRCS
     # triggers/voice_trigger.cpp
     triggers/window_trigger.cpp
 
-    # Rest
-    khlistbox.cpp
-    khlistview.cpp
+    # DAEMON
+    daemon/daemon.h
+    daemon/daemon.cpp
+    daemon/kded_module.cpp
+    daemon/kded_module.h
+
+    # OTHER
     khotkeysglobal.cpp
     settings.cpp
     shortcuts_handler.cpp
