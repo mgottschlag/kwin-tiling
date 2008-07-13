@@ -24,6 +24,8 @@
 
 #include "kdmitem.h"
 
+#include <KCharMacroExpander>
+
 #include <QColor>
 #include <QFont>
 
@@ -34,7 +36,7 @@ class QTimer;
  * KdmLabel. A label element
  */
 
-class KdmLabel : public KdmItem {
+class KdmLabel : public KdmItem, private KCharMacroExpander {
 	Q_OBJECT
 
 public:
@@ -75,6 +77,9 @@ protected:
 public Q_SLOTS:
 	void update();
 
+protected:
+	virtual bool expandMacro( QChar chr, QStringList &ret );
+
 private:
 	/* Lookup variables in the text */
 	QString lookupText( const QString &t );
@@ -84,6 +89,9 @@ private:
 	QString cText, pText;
 	QSize pTextSize;
 	int pAccelOff, pTextIndent, zeroWidth;
+
+	static QHash<QChar,QString> expandoMap;
+	static bool dateFormatSet;
 
 private Q_SLOTS:
 	void activate();
