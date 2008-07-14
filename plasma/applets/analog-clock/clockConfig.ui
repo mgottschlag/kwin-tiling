@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>449</width>
+    <width>400</width>
     <height>300</height>
    </rect>
   </property>
@@ -15,35 +15,127 @@
     <height>300</height>
    </size>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" >
    <item>
-    <widget class="QCheckBox" name="showSecondHandCheckBox" >
-     <property name="toolTip" >
-      <string>Show the seconds</string>
-     </property>
-     <property name="whatsThis" >
-      <string>Check this if you want to show the seconds.</string>
-     </property>
-     <property name="text" >
-      <string>Show &amp;seconds</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QCheckBox" name="showTimeStringCheckBox" >
-     <property name="toolTip" >
-      <string>Show the time in text</string>
-     </property>
-     <property name="whatsThis" >
-      <string>Check this if you want to display the time as text within the clock.</string>
-     </property>
-     <property name="text" >
-      <string>Also show the time as text</string>
-     </property>
-    </widget>
+    <layout class="QVBoxLayout" >
+     <item>
+      <widget class="QGroupBox" name="groupBox" >
+       <property name="title" >
+        <string>Appearance</string>
+       </property>
+       <property name="flat" >
+        <bool>true</bool>
+       </property>
+       <layout class="QVBoxLayout" >
+        <item>
+         <layout class="QVBoxLayout" >
+          <item>
+           <widget class="QCheckBox" name="showSecondHandCheckBox" >
+            <property name="toolTip" >
+             <string>Show the seconds</string>
+            </property>
+            <property name="whatsThis" >
+             <string>Check this if you want to show the seconds.</string>
+            </property>
+            <property name="text" >
+             <string>Show &amp;seconds</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="showTimeStringCheckBox" >
+            <property name="toolTip" >
+             <string>Show the time in text</string>
+            </property>
+            <property name="whatsThis" >
+             <string>Check this if you want to display the time as text within the clock.</string>
+            </property>
+            <property name="text" >
+             <string>Also show the time as text</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_2" >
+       <property name="title" >
+        <string>Timezones</string>
+       </property>
+       <property name="flat" >
+        <bool>true</bool>
+       </property>
+       <layout class="QVBoxLayout" >
+        <item>
+         <layout class="QVBoxLayout" >
+          <item>
+           <widget class="QCheckBox" name="localTimeZone" >
+            <property name="text" >
+             <string>Use &amp;local timezone</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="KTimeZoneWidget" name="timeZones" >
+            <property name="minimumSize" >
+             <size>
+              <width>300</width>
+              <height>150</height>
+             </size>
+            </property>
+            <column>
+             <property name="text" >
+              <string>Area</string>
+             </property>
+            </column>
+            <column>
+             <property name="text" >
+              <string>Region</string>
+             </property>
+            </column>
+            <column>
+             <property name="text" >
+              <string>Comment</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KTimeZoneWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>ktimezonewidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>localTimeZone</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>timeZones</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

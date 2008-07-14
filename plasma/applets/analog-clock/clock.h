@@ -64,7 +64,7 @@ class Clock : public ClockApplet
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
 
     protected:
-        void createClockConfigurationInterface(KConfigDialog *parent);
+        void createConfigurationInterface(KConfigDialog *parent);
 
     protected slots:
         void configAccepted();
