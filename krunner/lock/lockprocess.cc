@@ -1171,6 +1171,8 @@ bool LockProcess::x11Event(XEvent *event)
             if (!mLocked || checkPass())
             {
                 quitSaver();
+                mBusy = false;
+                return true; //it's better not to forward any input while quitting, right?
             }
             else if (mAutoLogout) // we need to restart the auto logout countdown
             {
