@@ -77,17 +77,16 @@ HotkeysTreeViewContextMenu::~HotkeysTreeViewContextMenu()
 
 void HotkeysTreeViewContextMenu::newGlobalShortcutActionAction( int actionType )
     {
-    Q_ASSERT(_index.isValid());
-    if (!_index.isValid())
-        return;
-
     QModelIndex parent;      // == root element
-    if ( _view->model()->data( _index.sibling( _index.row(), KHotkeysModel::IsGroupColumn)).toBool())
+    if (!_index.isValid()
+        || _view->model()->data( _index.sibling( _index.row(), KHotkeysModel::IsGroupColumn)).toBool())
         {
+        // if the index is invalid (root index) or represents an group use it.
         parent = _index;
         }
     else
         {
+        // It is an action. Take the parent.
         parent = _index.parent();
         }
 
@@ -123,17 +122,16 @@ void HotkeysTreeViewContextMenu::newGlobalShortcutActionAction( int actionType )
 
 void HotkeysTreeViewContextMenu::newGroupAction()
     {
-    Q_ASSERT(_index.isValid());
-    if (!_index.isValid())
-        return;
-
     QModelIndex parent;      // == root element
-    if ( _view->model()->data( _index.sibling(_index.row(), KHotkeysModel::IsGroupColumn)).toBool())
+    if (!_index.isValid()
+        || _view->model()->data( _index.sibling( _index.row(), KHotkeysModel::IsGroupColumn)).toBool())
         {
+        // if the index is invalid (root index) or represents an group use it.
         parent = _index;
         }
     else
         {
+        // It is an action. Take the parent.
         parent = _index.parent();
         }
 
