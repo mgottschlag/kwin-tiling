@@ -20,7 +20,7 @@
 #ifndef PLAYERCONTROL_H
 #define PLAYERCONTROL_H
 
-#include <Plasma/Service>
+#include <plasma/service.h>
 
 #include "player.h"
 
