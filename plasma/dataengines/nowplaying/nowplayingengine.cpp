@@ -61,7 +61,7 @@ NowPlayingEngine::NowPlayingEngine(QObject* parent,
 #endif
 }
 
-bool NowPlayingEngine::sourceRequestEvent(const QString &source)
+bool NowPlayingEngine::sourceRequestEvent(const QString& source)
 {
     kDebug() << "Source" << source << "was requested";
     QString lowerSource = source.toLower();

@@ -166,7 +166,7 @@ void Xmms::next()
     xmms_remote_playlist_next(m_session);
 }
 
-void Xmms::setVolume(float volume)
+void Xmms::setVolume(qreal volume)
 {
     xmms_remote_set_main_volume(m_session, volume);
 }

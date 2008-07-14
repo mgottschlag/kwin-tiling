@@ -16,8 +16,8 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef PLAYERINFO_H
-#define PLAYERINFO_H
+#ifndef PLAYER_H
+#define PLAYER_H
 
 #include <QSharedData>
 #include <KSharedPtr>
@@ -148,7 +148,7 @@ public:
      * Must be between 0 and 1
      */
     virtual bool canSetVolume();
-    virtual void setVolume(float volume);
+    virtual void setVolume(qreal volume);
 
     /**
      * Set the position (in seconds)
@@ -166,4 +166,4 @@ private:
     PlayerFactory* m_factory;
 };
 
-#endif // PLAYERINFO_H
+#endif // PLAYER_H

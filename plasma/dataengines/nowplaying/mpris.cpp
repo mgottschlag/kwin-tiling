@@ -278,7 +278,7 @@ bool Mpris::canSetVolume()
     return true;
 }
 
-void Mpris::setVolume(float volume)
+void Mpris::setVolume(qreal volume)
 {
     if (m_player->isValid()) {
         m_player->VolumeSet((int)(volume * 100));

@@ -192,7 +192,7 @@ void Juk::next()
     }
 }
 
-void Juk::setVolume(float volume) {
+void Juk::setVolume(qreal volume) {
     if (jukPlayer->isValid()) {
         jukPlayer->setVolume(volume);
     }

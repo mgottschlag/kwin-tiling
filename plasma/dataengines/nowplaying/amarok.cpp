@@ -197,7 +197,7 @@ void Amarok::next()
     }
 }
 
-void Amarok::setVolume(float volume) {
+void Amarok::setVolume(qreal volume) {
     if (amarokPlayer->isValid()) {
         amarokPlayer->setVolume(volume * 100);
     }

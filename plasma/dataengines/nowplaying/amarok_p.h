@@ -57,7 +57,7 @@ public:
     void next();
 
     bool canSetVolume() { return true; }
-    void setVolume(float volume);
+    void setVolume(qreal volume);
 
     bool canSeek() { return state() != Stopped; }
     void seek(int time);
