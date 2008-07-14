@@ -55,11 +55,15 @@ public:
      */
     bool cheatsEnabled() const;
 
+Q_SIGNALS:
+    void viewCreated(uint id); //XXX this is actually a WId but qdbuscpp2xml is dumb
+
 public Q_SLOTS:
-    // DBUS interface. if you change these methods, you MUST run:
-    // qdbuscpp2xml plasmaapp.h -o org.kde.plasma.App.xml
+    // DBUS interface.
     void showPlasma();
     void hidePlasma();
+    //not really slots, but we want them in dbus
+    uint viewWinId();
 
 private Q_SLOTS:
     void cleanup();

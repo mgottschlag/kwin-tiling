@@ -52,6 +52,9 @@
 #include <QX11Info>
 #include <QTextStream>
 #include <QPainter>
+#include <QDBusConnection>
+#include <QDBusConnectionInterface>
+#include <QDBusInterface>
 
 #include <QDateTime>
 
@@ -123,6 +126,8 @@ int XSelectInput( Display* dpy, Window w, long e )
 //
 LockProcess::LockProcess(bool child, bool useBlankOnly)
     : QWidget(0L, Qt::X11BypassWindowManagerHint),
+      mPlasmaDBus(0),
+      mPlasmaView(0),
       mOpenGLVisual(false),
       child_saver(child),
       mParent(0),
@@ -873,21 +878,72 @@ void LockProcess::hackExited()
 bool LockProcess::startPlasma()
 {
     kDebug() << "starting plasma-overlay";
+    if (!mPlasmaDBus) {
+        //try to get it, in case it's already running somehow
+        //FIXME I don't like hardcoded strings
+        mPlasmaDBus = new QDBusInterface("org.kde.plasma-overlay", "/MainApplication", QString(),
+                QDBusConnection::sessionBus(), this);
+    }
+    if (mPlasmaDBus->isValid()) {
+        kDebug() << "weird, plasma-overlay is already running";
+        connect(mPlasmaDBus, SIGNAL(viewCreated(uint)), SLOT(setPlasmaView(uint)));
+        mPlasmaDBus->call(QDBus::NoBlock, "showPlasma");
+        mPlasmaDBus->callWithCallback("viewWinId", QList<QVariant>(), this,
+                SLOT(setPlasmaView(uint)));
+        return true;
+    }
+    connect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(QString, QString,
+                    QString)),
+            SLOT(newService(QString)));
     mPlasmaProc.setProgram("plasma-overlay");
     mPlasmaProc.start();
-    //FIXME we need to track it and control it and all sorts of stuff
-    //FIXME it's showing up below the saver. what do we do?
-    //maybe if we fakeFocusIn it'll get raised?
-    //but for that I need a winid from it...
     return true;
 }
 
 void LockProcess::stopPlasma()
 {
-    kDebug() << "pretending to stop plasma-overlay";
-    //don't really quit it until I get the lock dialog working on my desktop
-    //and can bring it above the screensaver
-    //mPlasmaProc.terminate(); FIXME doesn't work anyways; it forked
+    if (mPlasmaDBus && mPlasmaDBus->isValid()) {
+        mPlasmaDBus->call(QDBus::NoBlock, "quit");
+    } else {
+        kDebug() << "cannot stop plasma-overlay";
+    }
+}
+
+void LockProcess::newService(QString name)
+{
+    kDebug() << name;
+    if (mPlasmaDBus) {
+        kDebug() << "can't happen"; //but it does.
+        return;
+    }
+    if (name != "org.kde.plasma-overlay") {
+        return;
+    }
+
+    kDebug() << "plasma! yaay!";
+    disconnect(QDBusConnection::sessionBus().interface(), 0, this, 0); //no need for you any more
+    //FIXME might we want to know if the interface goes away?
+    //FIXME that disconnect isn't working anyways! wtf
+
+    mPlasmaDBus = new QDBusInterface(name, "/MainApplication", QString(),
+            QDBusConnection::sessionBus(), this);
+    if (!mPlasmaDBus->isValid()) {
+        kDebug() << "wtf! not valid!?"; //we're screwed now.
+        return;
+    }
+    connect(mPlasmaDBus, SIGNAL(viewCreated(uint)), SLOT(setPlasmaView(uint)));
+    kDebug() << "should be connected";
+    //however, we may have connnected too *late*, so now we have to see if we can grab the winid
+    //ourselves
+    mPlasmaDBus->callWithCallback("viewWinId", QList<QVariant>(), this,
+            SLOT(setPlasmaView(uint)));
+}
+
+void LockProcess::setPlasmaView(uint id)
+{
+    mPlasmaView = id;
+    kDebug() << id;
+    stayOnTop();
 }
 
 void LockProcess::suspend()
@@ -925,6 +981,7 @@ void LockProcess::resume( bool force )
 //
 bool LockProcess::checkPass()
 {
+    //TODO show plasma if it was hidden
     killTimer(mAutoLogoutTimerId);
     PasswordDlg passDlg( this, &greetPlugin);
 
@@ -1040,26 +1097,40 @@ bool LockProcess::x11Event(XEvent *event)
             if( event->xvisibility.window == winId())
             {  // mVisibility == false means the screensaver is not visible at all
                // e.g. when switched to text console
+               // ...or when plasma's over it non-compositely?
+               // hey, this gives me free "suspend saver when plasma obscures it"
                 mVisibility = !(event->xvisibility.state == VisibilityFullyObscured);
-                if(!mVisibility)
+                if (!mVisibility) {
                     mSuspendTimer.start(2000);
-		else
-                {
+                    kDebug() << "fully obscured";
+                } else {
+                    kDebug() << "not fully obscured";
                     mSuspendTimer.stop();
                     resume( false );
                 }
-                if (event->xvisibility.state != VisibilityUnobscured)
+                if ((!mPlasmaView) && event->xvisibility.state != VisibilityUnobscured) {
+                    kDebug() << "no plasma; saver obscured";
                     stayOnTop();
+                }
+            } else if (mPlasmaView && event->xvisibility.window == mPlasmaView &&
+                    event->xvisibility.state != VisibilityUnobscured) {
+                kDebug() << "plasma obscured!";
+                stayOnTop();
             }
             break;
 
         case ConfigureNotify: // from SubstructureNotifyMask on the root window
-            if(event->xconfigure.event == QX11Info::appRootWindow())
+            if(event->xconfigure.event == QX11Info::appRootWindow()) {
+                kDebug() << "ConfigureNotify:"; 
+                //the stacking order changed, so let's change the stacking order!
                 stayOnTop();
+            }
             break;
         case MapNotify: // from SubstructureNotifyMask on the root window
-            if( event->xmap.event == QX11Info::appRootWindow())
+            if( event->xmap.event == QX11Info::appRootWindow()) {
+                kDebug() << "MapNotify:";
                 stayOnTop();
+            }
             break;
     }
 
@@ -1094,18 +1165,30 @@ void LockProcess::stayOnTop()
         // thus avoiding possible infinite loops
         XRaiseWindow( QX11Info::display(), mDialogs.first()->winId()); // raise topmost
         // and stack others below it
-        Window* stack = new Window[ mDialogs.count() + 1 ];
+        Window* stack = new Window[ mDialogs.count() + (mPlasmaView ? 2 : 1) ];
         int count = 0;
         for( QVector< QWidget* >::ConstIterator it = mDialogs.begin();
              it != mDialogs.end();
              ++it )
             stack[ count++ ] = (*it)->winId();
+        if (mPlasmaView) {
+            stack[count++] = mPlasmaView;
+            kDebug() << "plasma on stack";
+        }
         stack[ count++ ] = winId();
         XRestackWindows( x11Info().display(), stack, count );
+        kDebug() << "restacked" << count;
         delete[] stack;
-    }
-    else
+    } else if (mPlasmaView) {
+        //this will put plasma above the saver without an infinite loop
+        XRaiseWindow(QX11Info::display(), mPlasmaView);
+        Window* stack = new Window[1];
+        stack[0] = winId();
+        XRestackWindows(x11Info().display(), stack, 1);
+        kDebug() << "raised plasma";
+    } else {
         XRaiseWindow(QX11Info::display(), winId());
+    }
 }
 
 void LockProcess::checkDPMSActive()

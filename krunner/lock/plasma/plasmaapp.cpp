@@ -53,6 +53,7 @@
 #include <plasma/containment.h>
 #include <plasma/theme.h>
 
+#include "appadaptor.h"
 #include "savercorona.h"
 #include "saverview.h"
 
@@ -115,12 +116,11 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
       m_corona(0),
       m_view(0)
 {
-    kDebug(); //FIXME we're never reaching this! wtf!?
     //FIXME what's this?
     KGlobal::locale()->insertCatalog("libplasma");
 
-//    new PlasmaAppAdaptor(this);
-//    QDBusConnection::sessionBus().registerObject("/App", this);
+    new PlasmaAppAdaptor(this);
+    QDBusConnection::sessionBus().registerObject("/App", this);
 
     //FIXME this is probably totally invalid
     // Enlarge application pixmap cache
@@ -234,6 +234,15 @@ void PlasmaApp::hidePlasma()
     //FIXME what about potential config dialogs?
 }
 
+uint PlasmaApp::viewWinId()
+{
+    if (m_view) {
+        //kDebug() << m_view->winId();
+        return m_view->effectiveWinId();
+    }
+    return 0;
+}
+
 void PlasmaApp::adjustSize(int screen)
 {
     if (! m_view) {
@@ -311,6 +320,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     }
 
     m_view->showView();
+    emit viewCreated(m_view->effectiveWinId());
 }
 
 

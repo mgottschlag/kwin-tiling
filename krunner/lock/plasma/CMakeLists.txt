@@ -9,8 +9,9 @@ set(plasma-overlay_SRCS
 
 add_subdirectory(containment)
 
-#set(plasmaapp_dbusXML org.kde.plasma.App.xml)
-#qt4_add_dbus_adaptor(plasma_SRCS ${plasmaapp_dbusXML} plasmaapp.h PlasmaApp)
+set(plasmaapp_dbusXML org.kde.plasma-overlay.App.xml)
+qt4_generate_dbus_interface(plasmaapp.h ${plasmaapp_dbusXML} OPTIONS -S -M)
+qt4_add_dbus_adaptor(plasma-overlay_SRCS ${CMAKE_CURRENT_BINARY_DIR}/${plasmaapp_dbusXML} plasmaapp.h PlasmaApp)
 
 #set(ksmserver_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
 #qt4_add_dbus_interface(plasma_SRCS ${ksmserver_xml} ksmserver_interface)

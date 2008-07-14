@@ -21,6 +21,7 @@
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 
+class QDBusInterface;
 class KLibrary;
 
 struct KGreeterPluginInfo;
@@ -71,6 +72,11 @@ private Q_SLOTS:
     void suspend();
     void checkDPMSActive();
     void slotDeadTimePassed();
+    /**
+     * a new dbus service has come in
+     */
+    void newService(QString name);
+    void setPlasmaView(uint id); //it's really a WId but qdbuscpp2xml is dumb
 
 private:
     void configure();
@@ -105,6 +111,8 @@ private:
     bool        mBusy;
     KProcess    mHackProc;
     KProcess    mPlasmaProc;
+    QDBusInterface *mPlasmaDBus;
+    WId         mPlasmaView;
     QString     mSaverExec;
     QString     mSaver;
     bool        mOpenGLVisual;
