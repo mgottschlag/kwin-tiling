@@ -78,8 +78,7 @@ void MenuentryActionWidget::doCopyToObject()
 bool MenuentryActionWidget::isChanged() const
     {
     Q_ASSERT(action());
-    // TODO
-    return true;
+    return ui.application->text() != action()->service()->name();
     }
 
 
