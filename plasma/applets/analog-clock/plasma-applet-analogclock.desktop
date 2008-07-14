@@ -117,7 +117,7 @@ Comment[zh_CN]=SVG 主题的时钟
 Comment[zh_TW]=SVG 可調整外觀時鐘
 Icon=chronometer
 Type=Service
-X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment
+X-KDE-ServiceTypes=Plasma/Applet
 
 X-KDE-Library=plasma_applet_clock
 X-KDE-PluginInfo-Author=The Plasma Team
