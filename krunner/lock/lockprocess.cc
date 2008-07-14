@@ -1125,10 +1125,9 @@ int LockProcess::execDialog( QDialog *dlg )
         mDialogs.remove( pos );
     if( mDialogs.isEmpty() ) {
         //blank pointer + plasma = confused user
-        //FIXME do we really need to fakefocusin plasma?
-        if (mPlasmaView) {
-            fakeFocusIn(mPlasmaView);
-        } else {
+        //FIXME plasma doesn't seem to need fakeFocusIn, but
+        //it also never seems to get a focus*out*
+        if (mForeignInputWindows.isEmpty()) {
             XChangeActivePointerGrab( QX11Info::display(), GRABEVENTS,
                     QCursor(Qt::BlankCursor).handle(), CurrentTime);
         }
