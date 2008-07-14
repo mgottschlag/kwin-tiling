@@ -16,3 +16,4 @@ QT4_ADD_DBUS_ADAPTOR (kephald_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal.Sc
 ADD_EXECUTABLE (kephald ${kephald_SRCS})
 TARGET_LINK_LIBRARIES (kephald ${QT_LIBRARIES} kephalxml)
 
+INSTALL (TARGETS kephald DESTINATION bin)

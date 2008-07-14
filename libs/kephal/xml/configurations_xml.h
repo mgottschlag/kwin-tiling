@@ -29,6 +29,7 @@
 namespace kephal {
 
     class ScreenXML : public XMLType {
+        Q_OBJECT
         public:
             int id() { return _id; }
             void setId(int id) { _id = id; }
@@ -41,6 +42,7 @@ namespace kephal {
     };
 
     class ConfigurationXML : public XMLType {
+        Q_OBJECT
         public:
             QString name();
             void setName(QString name);
@@ -54,6 +56,7 @@ namespace kephal {
     
     
     class ConfigurationsXML : public XMLType {
+        Q_OBJECT
         public:
             QList<ConfigurationXML *> * configurations();
             

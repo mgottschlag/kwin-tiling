@@ -13,5 +13,6 @@ QT4_WRAP_CPP (libkephal_SRCS ../screens/screens.h ../screens/simplescreen.h
         ../screens/screen.h ../screens/dbus/dbusscreens.h)
 QT4_ADD_DBUS_INTERFACE(libkephal_SRCS ${CMAKE_CURRENT_BINARY_DIR}/../kephald/org.kde.Kephal.Screens.xml screens_interface)
 ADD_LIBRARY (kephal SHARED ${libkephal_SRCS})
-#TARGET_LINK_LIBRARIES (kephal ${QT_LIBRARIES})
-
+INSTALL (TARGETS kephal DESTINATION lib)
+INSTALL (FILES ../screens/screens.h ../screens/screen.h DESTINATION include/kephal)
+INSTALL (FILES FindKephal.cmake DESTINATION share/apps/cmake/modules)

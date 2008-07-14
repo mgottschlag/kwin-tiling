@@ -41,6 +41,7 @@ namespace kephal {
     class XMLFactory {
         public:
             XMLFactory();
+            ~XMLFactory();
             
             QDomNode save(XMLType * data, QDomDocument doc, QString name);
             XMLType * load(QDomNode node);

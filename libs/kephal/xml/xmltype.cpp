@@ -31,6 +31,15 @@ namespace kephal {
         _schema = false;
     }
     
+    XMLFactory::~XMLFactory() {
+        foreach (XMLNodeHandler * n, _attributes.values()) {
+            delete n;
+        }
+        foreach (XMLNodeHandler * n, _elements.values()) {
+            delete n;
+        }
+    }
+    
     XMLType * XMLRootFactory::load(QString fileName) {
         QFile file(fileName);
         if (! file.open(QIODevice::ReadOnly)) {
