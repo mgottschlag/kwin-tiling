@@ -4,6 +4,7 @@
 //
 // Copyright 1999 Martin R. Jones <mjones@kde.org>
 // Copyright 2003 Oswald Buddenhagen <ossi@kde.org>
+// Copyright 2008 Chani Armitage <chanika@gmail.com>
 //
 
 //krunner keeps running and checks user inactivity
