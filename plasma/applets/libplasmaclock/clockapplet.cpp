@@ -31,6 +31,7 @@
 #include <QtCore/QDate>
 
 #include <KColorScheme>
+#include <KConfigDialog>
 #include <KDatePicker>
 #include <KDebug>
 #include <KDialog>
@@ -39,6 +40,8 @@
 #include <plasma/dataengine.h>
 #include <plasma/dialog.h>
 #include <plasma/theme.h>
+
+#include "ui_timezonesConfig.h"
 
 class ClockApplet::Private
 {
@@ -49,6 +52,7 @@ public:
     {}
 
     Ui::calendar calendarUi;
+    Ui::timezonesConfig ui;
     Plasma::Dialog *calendar;
     QString timezone;
     QPoint clicked;
@@ -75,6 +79,29 @@ void ClockApplet::updateToolTipContent() {
     //tipData.image = d->toolTipIcon;
 
     setToolTip(tipData);*/
+}
+
+void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
+{
+    QWidget *widget = new QWidget();
+    d->ui.setupUi(widget);
+
+    parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+
+    parent->addPage(widget, parent->windowTitle(), icon());
+
+    d->ui.localTimeZone->setChecked(isLocalTimezone());
+    d->ui.timeZones->setSelected(currentTimezone(), true);
+    d->ui.timeZones->setEnabled(!isLocalTimezone());
+
+    createClockConfigurationInterface(parent);
+}
+
+void ClockApplet::createClockConfigurationInterface(KConfigDialog *parent)
+{
+
 }
 
 void ClockApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)

@@ -1,0 +1,73 @@
+<ui version="4.0" >
+ <class>timezonesConfig</class>
+ <widget class="QWidget" name="timezonesConfig" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>308</width>
+    <height>227</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" >
+   <item>
+    <widget class="QCheckBox" name="localTimeZone" >
+     <property name="text" >
+      <string>Use &amp;local timezone</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="KTimeZoneWidget" name="timeZones" >
+     <property name="minimumSize" >
+      <size>
+       <width>300</width>
+       <height>150</height>
+      </size>
+     </property>
+     <column>
+      <property name="text" >
+       <string>Area</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Region</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Comment</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KTimeZoneWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>ktimezonewidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>localTimeZone</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>timeZones</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>209</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>209</x>
+     <y>239</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

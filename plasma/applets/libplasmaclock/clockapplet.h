@@ -31,8 +31,8 @@
 
 #include "plasmaclock_export.h"
 
-
 class KDialog;
+class KConfigDialog;
 
 namespace Plasma
 {
@@ -54,6 +54,8 @@ class PLASMA_EXPORT ClockApplet : public Plasma::Applet
     protected:
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
         void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+        void createConfigurationInterface(KConfigDialog *parent);
+        virtual void createClockConfigurationInterface(KConfigDialog *parent);
 
     protected Q_SLOTS:
         void setCurrentTimezone(const QString &tz);
@@ -65,6 +67,5 @@ class PLASMA_EXPORT ClockApplet : public Plasma::Applet
         class Private;
         Private * const d;
 };
-
 
 #endif
