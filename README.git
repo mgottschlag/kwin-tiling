@@ -1,0 +1,3 @@
+because git doesn't like svn externals, you need to create the following symlinks manually:
+kwin/clients/oxygen/lib -> ../../../../runtime/kstyles/oxygen/lib
+kwin/clients/ozone/lib -> ../../../../runtime/kstyles/oxygen/lib
