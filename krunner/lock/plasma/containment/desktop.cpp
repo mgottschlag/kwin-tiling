@@ -64,7 +64,7 @@ void SaverDesktop::init()
     unwanted = action("zoom out");
     removeToolBoxTool(unwanted);
     delete unwanted;
-    unwanted = action("addSiblingContainment");
+    unwanted = action("add sibling containment");
     removeToolBoxTool(unwanted);
     delete unwanted;
 }
