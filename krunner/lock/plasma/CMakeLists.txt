@@ -7,6 +7,8 @@ set(plasma-overlay_SRCS
     plasmaapp.cpp
 )
 
+add_subdirectory(containment)
+
 #set(plasmaapp_dbusXML org.kde.plasma.App.xml)
 #qt4_add_dbus_adaptor(plasma_SRCS ${plasmaapp_dbusXML} plasmaapp.h PlasmaApp)
 

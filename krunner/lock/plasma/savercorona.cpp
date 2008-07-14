@@ -90,17 +90,15 @@ void SaverCorona::loadDefaultLayout()
     for (int i = 0; i < 1; ++i) {
         QRect g = desktop->screenGeometry(i);
         kDebug() << "     screen " << i << "geometry is" << g;
-        Plasma::Containment* c = addContainment("desktop");
+        Plasma::Containment* c = addContainment("saverdesktop");
         c->setScreen(i);
         c->setFormFactor(Plasma::Planar);
         c->flushPendingConstraintsEvents();
 
         // put a folder view on the first screen
         if (i == 0) {
-            Plasma::Applet *folderView =  Plasma::Applet::load("folderview", c->id() + 1);
+            Plasma::Applet *folderView =  Plasma::Applet::load("clock", c->id() + 1);
             c->addApplet(folderView, QPointF(KDialog::spacingHint(), KDialog::spacingHint()), true);
-            KConfigGroup config = folderView->config();
-            config.writeEntry("url", "desktop:/");
             folderView->init();
             folderView->flushPendingConstraintsEvents();
         }
