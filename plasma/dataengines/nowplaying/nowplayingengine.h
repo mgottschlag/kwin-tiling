@@ -28,6 +28,7 @@
 
 class DBusWatcher;
 class PollingWatcher;
+class PlayerControl;
 
 /**
  * The Now Playing data engine.
@@ -41,6 +42,7 @@ class NowPlayingEngine : public Plasma::DataEngine
 public:
     NowPlayingEngine(QObject* parent, const QVariantList& args);
     QStringList sources() const;
+    Plasma::Service* serviceForSource(const QString& source);
 
 protected:
     bool sourceRequestEvent(const QString &source);
@@ -52,6 +54,7 @@ private slots:
 
 private:
     QMap<QString, Player::Ptr> players;
+    QMap<QString, PlayerControl*> controllers;
     DBusWatcher* dbusWatcher;
     PollingWatcher* pollingWatcher;
 };

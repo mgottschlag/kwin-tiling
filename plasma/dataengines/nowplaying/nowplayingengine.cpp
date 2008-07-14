@@ -27,6 +27,7 @@
 
 #include "player.h"
 #include "playerfactory.h"
+#include "playercontrol.h"
 #include "dbuswatcher.h"
 #include "pollingwatcher.h"
 #include "mpris.h"
@@ -58,6 +59,19 @@ NowPlayingEngine::NowPlayingEngine(QObject* parent,
     pollingWatcher->addFactory(new XmmsFactory(pollingWatcher));
 #endif
 }
+
+Plasma::Service* NowPlayingEngine::serviceForSource(const QString& source)
+{
+    if (players.contains(source)) {
+        if (!controllers.contains(source)) {
+            controllers[source] = new PlayerControl(this, players[source]);
+        }
+        return controllers[source];
+    } else {
+        return DataEngine::serviceForSource(source);
+    }
+}
+
 
 bool NowPlayingEngine::sourceRequestEvent(const QString& source)
 {
@@ -169,6 +183,9 @@ void NowPlayingEngine::removePlayer(Player::Ptr player)
         Q_ASSERT(player == players[player->name()]);
 
         players.remove(player->name());
+        if (controllers.contains(player->name())) {
+            controllers.remove(player->name());
+        }
         removeSource(player->name());
     } else {
         kDebug() << "We didn't know about player" << player->name();

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE kcfg SYSTEM
+    "http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+<kcfg>
+  <group name="play"/>
+  <group name="pause"/>
+  <group name="stop"/>
+  <group name="previous"/>
+  <group name="next"/>
+  <group name="volume"/>
+    <entry name="level" type="Double">
+      <label>The required volume level, as a real number between 0 and 1.</label>
+    </entry>
+  </group>
+  <group name="seek"/>
+    <entry name="seconds" type="Int">
+      <label>The position to seek to, in seconds.  Must be between 0 and the track length.</label>
+    </entry>
+  </group>
+</kcfg>

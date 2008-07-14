@@ -4,6 +4,8 @@ set(nowplaying_engine_SRCS
     nowplayingengine.cpp
     player.cpp
     playerfactory.cpp
+    playercontrol.cpp
+    playeractionjob.cpp
     dbuswatcher.cpp
     pollingwatcher.cpp
     mpris.cpp
@@ -36,5 +38,6 @@ if(XMMS_FOUND)
 endif(XMMS_FOUND)
 
 install(TARGETS plasma_engine_nowplaying DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES plasma-dataengine-nowplaying.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
+install(FILES plasma-dataengine-nowplaying.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES nowplaying.operations DESTINATION ${DATA_INSTALL_DIR}/plasma/services)
 
