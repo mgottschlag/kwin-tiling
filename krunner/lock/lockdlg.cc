@@ -74,7 +74,7 @@
 #endif
 
 #define PASSDLG_HIDE_TIMEOUT 10000
-
+const int TIMEOUT_CODE = 2;
 
 //===========================================================================
 //
@@ -199,7 +199,7 @@ void PasswordDlg::timerEvent(QTimerEvent *ev)
 {
     if (ev->timerId() == mTimeoutTimerId)
     {
-        reject();
+        done(TIMEOUT_CODE);
     }
     else if (ev->timerId() == mFailedTimerId)
     {

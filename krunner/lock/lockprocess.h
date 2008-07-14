@@ -76,7 +76,20 @@ private Q_SLOTS:
      * a new dbus service has come in
      */
     void newService(QString name);
+    /**
+     * set the winid of plasma's view
+     * so that we can control it
+     */
     void setPlasmaView(uint id); //it's really a WId but qdbuscpp2xml is dumb
+    /**
+     * hide plasma's view
+     */
+    void hidePlasma();
+    /**
+     * un-suppress and show the password dialog
+     * TODO make this a dbus method
+     */
+    void forceCheckPass();
 
 private:
     void configure();
@@ -98,6 +111,11 @@ private:
     bool startPlasma();
     void stopPlasma();
     void setupSignals();
+    /**
+     * if the password dialog is not suppressed, this execs it
+     * if the dialog *is* suppressed we just restart the timer
+     * @return true iff the password was checked and is valid
+     */
     bool checkPass();
     void stayOnTop();
     void lockXF86();
@@ -135,6 +153,7 @@ private:
     int         mAutoLogoutTimerId;
     int         mAutoLogoutTimeout;
     bool        mAutoLogout;
+    QTimer      mSuppressUnlock;
 };
 
 #endif

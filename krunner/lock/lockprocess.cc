@@ -119,6 +119,9 @@ int XSelectInput( Display* dpy, Window w, long e )
 }
 #endif
 
+const int TIMEOUT_CODE = 2; //from PasswordDlg
+const int SUPPRESS_TIMEOUT = 20 * 1000;
+
 //===========================================================================
 //
 // Screen saver handling process.  Handles screensaver window,
@@ -190,6 +193,12 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
 #endif
 
     greetPlugin.library = 0;
+
+    mSuppressUnlock.setSingleShot(true);
+    if (0) { //FIXME if hiding option eabled
+        connect(&mSuppressUnlock, SIGNAL(timeout()), SLOT(hidePlasma()));
+    }
+
 }
 
 //---------------------------------------------------------------------------
@@ -948,6 +957,20 @@ void LockProcess::setPlasmaView(uint id)
     stayOnTop();
 }
 
+void LockProcess::hidePlasma()
+{
+    //TODO hide plasma. simple dbus signal.
+}
+
+void LockProcess::forceCheckPass()
+{
+    mSuppressUnlock.stop();
+    if (checkPass()) {
+        stopSaver();
+        qApp->quit();
+    }
+}
+
 void LockProcess::suspend()
 {
     if( !mSuspended && mHackProc.state() == QProcess::Running )
@@ -983,11 +1006,23 @@ void LockProcess::resume( bool force )
 //
 bool LockProcess::checkPass()
 {
+    if (mSuppressUnlock.isActive()) {
+        //help, help, I'm being suppressed!
+        mSuppressUnlock.start(); //reset the timeout
+        return false;
+    }
+
     //TODO show plasma if it was hidden
     killTimer(mAutoLogoutTimerId);
     PasswordDlg passDlg( this, &greetPlugin);
 
     int ret = execDialog( &passDlg );
+
+    if (ret == QDialog::Rejected) {
+        mSuppressUnlock.start(SUPPRESS_TIMEOUT);
+    } else if (0 && ret == TIMEOUT_CODE) { //FIXME if optio enabled
+        hidePlasma();
+    }
 
     XWindowAttributes rootAttr;
     XGetWindowAttributes(QX11Info::display(), QX11Info::appRootWindow(), &rootAttr);
@@ -1044,8 +1079,9 @@ int LockProcess::execDialog( QDialog *dlg )
     if (pos != -1)
         mDialogs.remove( pos );
     if( mDialogs.isEmpty() ) {
-        XChangeActivePointerGrab( QX11Info::display(), GRABEVENTS,
-                QCursor(Qt::BlankCursor).handle(), CurrentTime);
+        //XChangeActivePointerGrab( QX11Info::display(), GRABEVENTS,
+        //        QCursor(Qt::BlankCursor).handle(), CurrentTime);
+        //FIXME blak pointer + plasma = cofused
         resume( false );
     } else
         fakeFocusIn( mDialogs.first()->winId());
@@ -1144,13 +1180,24 @@ bool LockProcess::x11Event(XEvent *event)
     // Qt seems to be quite hard to persuade to redirect the event,
     // so let's simply dupe it with correct destination window,
     // and ignore the original one.
-    if(!mDialogs.isEmpty() && ( event->type == KeyPress || event->type == KeyRelease)
-        && event->xkey.window != mDialogs.first()->winId())
-    {
-        XEvent ev2 = *event;
-        ev2.xkey.window = ev2.xkey.subwindow = mDialogs.first()->winId();
-        qApp->x11ProcessEvent( &ev2 );
-        return true;
+    if( event->type == KeyPress || event->type == KeyRelease) {
+        if (mDialogs.isEmpty()) {
+            if (mPlasmaView) {
+                kDebug() << "forward to plasma";
+                //fuckig hell, the evet needs to go to aother process
+                //pray that the winid will work.
+                XEvent ev2 = *event;
+                ev2.xkey.window = ev2.xkey.subwindow = mPlasmaView;
+                XSendEvent(QX11Info::display(), mPlasmaView, False, NoEventMask, &ev2);
+                return true;
+            }
+        } else if (event->xkey.window != mDialogs.first()->winId()) {
+            kDebug() << "forward to dialog";
+            XEvent ev2 = *event;
+            ev2.xkey.window = ev2.xkey.subwindow = mDialogs.first()->winId();
+            qApp->x11ProcessEvent( &ev2 );
+            return true;
+        }
     }
 
     return false;
