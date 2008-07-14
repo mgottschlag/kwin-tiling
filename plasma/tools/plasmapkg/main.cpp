@@ -110,7 +110,7 @@ int main(int argc, char **argv)
             QString constraint = QString("'%1' == [X-KDE-PluginInfo-Name]").arg(packageRoot);
             KService::List offers = KServiceTypeTrader::self()->query("Plasma/PackageStructure", constraint);
             if (offers.isEmpty()) {
-                kFatal() << i18n("Could not find a suitable installer for package of type") << type;
+                kFatal() << i18n("Could not find a suitable installer for package of type %1",type);
             }
 
             KService::Ptr offer = offers.first();
