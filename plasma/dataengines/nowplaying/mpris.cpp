@@ -139,13 +139,23 @@ QString Mpris::title()
 
 int Mpris::trackNumber()
 {
+    QVariant track;
     if (m_metadata.contains("trackNumber")) {
-        QString track = m_metadata["trackNumber"].toString();
-        int pos = track.indexOf('/');
-        if (pos >= 0) {
-            track.truncate(pos);
+        track = m_metadata["trackNumber"];
+    } else if (m_metadata.contains("tracknumber")) {
+        track = m_metadata["tracknumber"];
+    }
+    if (track.isValid()) {
+        if (track.canConvert(QVariant::Int)) {
+            return track.toInt();
+        } else {
+            QString text = track.toString();
+            int pos = text.indexOf('/');
+            if (pos >= 0) {
+                text.truncate(pos);
+            }
+            return text.toInt();
         }
-        return track.toInt();
     }
     return 0;
 }
