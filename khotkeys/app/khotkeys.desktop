@@ -39,5 +39,5 @@ Type=Service
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=khotkeys
 X-KDE-DBus-ModuleName=khotkeys
-X-KDE-Kded-autoload=false
+X-KDE-Kded-autoload=true
 OnlyShowIn=KDE;
