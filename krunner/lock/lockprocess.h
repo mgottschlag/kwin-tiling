@@ -89,6 +89,8 @@ private:
     void stopSaver();
     bool startHack();
     void stopHack();
+    bool startPlasma();
+    void stopPlasma();
     void setupSignals();
     bool checkPass();
     void stayOnTop();
@@ -102,6 +104,7 @@ private:
     int         mPriority;
     bool        mBusy;
     KProcess    mHackProc;
+    KProcess    mPlasmaProc;
     QString     mSaverExec;
     QString     mSaver;
     bool        mOpenGLVisual;

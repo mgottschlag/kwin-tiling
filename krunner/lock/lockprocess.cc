@@ -723,6 +723,7 @@ bool LockProcess::startSaver()
 
     setVRoot( winId(), winId() );
     startHack();
+    startPlasma();
     return true;
 }
 
@@ -734,6 +735,7 @@ void LockProcess::stopSaver()
 {
     kDebug(1204) << "LockProcess: stopping saver";
     resume( true );
+    stopPlasma();
     stopHack();
     hideSaverWindow();
     mVisibility = false;
@@ -866,6 +868,26 @@ void LockProcess::hackExited()
 	// Make sure the saver window is black.
     XSetWindowBackground(QX11Info::display(), winId(), 0);
     XClearWindow(QX11Info::display(), winId());
+}
+
+bool LockProcess::startPlasma()
+{
+    kDebug() << "starting plasma-overlay";
+    mPlasmaProc.setProgram("plasma-overlay");
+    mPlasmaProc.start();
+    //FIXME we need to track it and control it and all sorts of stuff
+    //FIXME it's showing up below the saver. what do we do?
+    //maybe if we fakeFocusIn it'll get raised?
+    //but for that I need a winid from it...
+    return true;
+}
+
+void LockProcess::stopPlasma()
+{
+    kDebug() << "pretending to stop plasma-overlay";
+    //don't really quit it until I get the lock dialog working on my desktop
+    //and can bring it above the screensaver
+    //mPlasmaProc.terminate(); FIXME doesn't work anyways; it forked
 }
 
 void LockProcess::suspend()

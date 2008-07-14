@@ -7,6 +7,8 @@ if(WITH_OpenGL)
 check_library_exists(GL glXChooseVisual "" HAVE_GLXCHOOSEVISUAL)
 endif(WITH_OpenGL)
 
+add_subdirectory(plasma)
+
 configure_file(config-krunner-lock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-krunner-lock.h)
 
 set(krunner_lock_SRCS
