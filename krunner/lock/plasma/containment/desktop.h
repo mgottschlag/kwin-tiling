@@ -29,6 +29,8 @@
 //#include <plasma/widgets/widget.h>
 
 class QAction;
+class QDBusMessage;
+class QDBusError;
 
 /**
  * SaverDesktop
@@ -54,6 +56,14 @@ public:
     void paintInterface(QPainter *painter,
                         const QStyleOptionGraphicsItem *option,
                         const QRect& contentsRect);
+signals:
+    void locked();
+    void unlocked();
+
+public slots:
+    void toggleLock();
+    void unlock(QDBusMessage reply);
+    void dbusError(QDBusError error);
 
 private:
     QAction *m_lockDesktopAction;

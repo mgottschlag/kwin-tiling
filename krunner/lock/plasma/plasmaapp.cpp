@@ -332,6 +332,9 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     //unsigned char data = VIEW;
     //XChangeProperty(QX11Info::display(), m_view->effectiveWinId(), tag, tag, 8, PropModeReplace, &data, 1);
 
+    connect(containment, SIGNAL(locked()), SLOT(hideDialogs()));
+    connect(containment, SIGNAL(unlocked()), SLOT(showDialogs()));
+    connect(m_view, SIGNAL(hidden()), SLOT(lock()));
     connect(m_view, SIGNAL(hidden()), SIGNAL(hidden()));
     m_view->showView();
     emit viewCreated(m_view->effectiveWinId());
@@ -397,5 +400,28 @@ void PlasmaApp::dialogDestroyed(QObject *obj)
     }
 }
 
+void PlasmaApp::hideDialogs()
+{
+    foreach (QWidget *w, m_dialogs) {
+        w->hide();
+    }
+    //FIXME where does the focus go?
+}
+
+void PlasmaApp::showDialogs()
+{
+    foreach (QWidget *w, m_dialogs) {
+        w->show();
+    }
+    //FIXME where does the focus go?
+}
+
+void PlasmaApp::lock()
+{
+    if (corona() && corona()->immutability() == Plasma::Mutable) {
+        hideDialogs();
+        corona()->setImmutability(Plasma::UserImmutable);
+    }
+}
 
 #include "plasmaapp.moc"

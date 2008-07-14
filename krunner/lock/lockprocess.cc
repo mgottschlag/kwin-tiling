@@ -16,6 +16,7 @@
 //crashes
 
 #include "lockprocess.h"
+#include "lockprocessadaptor.h"
 
 #include <config-workspace.h>
 #include <config-X11.h>
@@ -145,6 +146,10 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     setObjectName("save window");
     setupSignals();
 
+    new LockProcessAdaptor(this);
+    QDBusConnection::sessionBus().registerService("org.kde.krunner_lock");
+    QDBusConnection::sessionBus().registerObject("/LockProcess", this);
+
     kapp->installX11EventFilter(this);
 
     // Get root window size
@@ -198,6 +203,8 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     mSuppressUnlock.setSingleShot(true);
     if (0) { //FIXME if hiding option eabled
         connect(&mSuppressUnlock, SIGNAL(timeout()), SLOT(hidePlasma()));
+    } else {
+        connect(&mSuppressUnlock, SIGNAL(timeout()), SLOT(lockPlasma()));
     }
 
 }
@@ -968,6 +975,13 @@ void LockProcess::hidePlasma()
     }
 }
 
+void LockProcess::lockPlasma()
+{
+    if (mPlasmaDBus && mPlasmaDBus->isValid()) {
+        mPlasmaDBus->call(QDBus::NoBlock, "lock");
+    }
+}
+
 void LockProcess::unSuppressUnlock()
 {
     mSuppressUnlock.stop();
@@ -977,8 +991,7 @@ void LockProcess::forceCheckPass()
 {
     mSuppressUnlock.stop();
     if (checkPass()) {
-        stopSaver();
-        qApp->quit();
+        quitSaver();
     }
 }
 
@@ -1047,6 +1060,16 @@ bool LockProcess::checkPass()
             SubstructureNotifyMask | rootAttr.your_event_mask );
     }
 
+    return ret == QDialog::Accepted;
+}
+
+bool LockProcess::checkPass(const QString &reason)
+{
+    PasswordDlg passDlg(this, &greetPlugin, reason);
+    int ret = execDialog( &passDlg );
+    kDebug() << ret;
+
+    //FIXME do we need to copy&paste that SubstructureNotifyMask code above?
     return ret == QDialog::Accepted;
 }
 
@@ -1140,8 +1163,7 @@ bool LockProcess::x11Event(XEvent *event)
             mBusy = true;
             if (!mLocked || checkPass())
             {
-                stopSaver();
-                qApp->quit();
+                quitSaver();
             }
             else if (mAutoLogout) // we need to restart the auto logout countdown
             {

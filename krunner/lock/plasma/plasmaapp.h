@@ -65,6 +65,7 @@ public Q_SLOTS:
     // DBUS interface.
     void showPlasma();
     void hidePlasma();
+    void lock();
     //not really slots, but we want them in dbus
     uint viewWinId();
 
@@ -73,6 +74,8 @@ private Q_SLOTS:
     void createView(Plasma::Containment *containment);
     void adjustSize(int screen);
     void dialogDestroyed(QObject *obj);
+    void hideDialogs();
+    void showDialogs();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);

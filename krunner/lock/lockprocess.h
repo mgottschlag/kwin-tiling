@@ -56,11 +56,18 @@ public:
 
     void msgBox( QWidget *parent, QMessageBox::Icon type, const QString &txt );
     int execDialog( QDialog* dlg );
-    
+
 public Q_SLOTS:
     void quitSaver();
     void preparePopup();
     void cleanupPopup();
+    /**
+     * bring up the password dialog with @param reason displayed instead of the usual "this session
+     * is locked" message.
+     * @return true if the password was entered correctly
+     * (dbus method)
+     */
+    Q_SCRIPTABLE bool checkPass(const QString &reason);
 
 protected:
     virtual bool x11Event(XEvent *);
@@ -86,6 +93,7 @@ private Q_SLOTS:
      * hide plasma's view
      */
     void hidePlasma();
+    void lockPlasma();
     /**
      * immediately un-suppress the password dialog
      * FIXME need a better name

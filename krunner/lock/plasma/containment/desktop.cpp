@@ -25,13 +25,16 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QPainter>
+#include <QDBusConnection>
+#include <QDBusInterface>
+#include <QDBusMessage>
 
 //#include <KAuthorized>
 #include <KDebug>
 //#include <KWindowSystem>
 //#include <KActionCollection>
 
-//#include "plasma/corona.h"
+#include "plasma/corona.h"
 #include "plasma/theme.h"
 //#include "kworkspace/kworkspace.h"
 //#include "knewstuff2/engine.h"
@@ -57,7 +60,16 @@ void SaverDesktop::init()
     Containment::init();
     //setHasConfigurationInterface(true);
 
+    //re-wire the lock action so we can check for a password
+    QAction *lock = action("lock widgets");
+    if (lock) {
+        lock->disconnect(this);
+        //TODO connect our signal
+        connect(lock, SIGNAL(triggered(bool)), this, SLOT(toggleLock()));
+    }
+
     //remove the desktop actions
+    //FIXME do we really need to removeToolBoxTool?
     QAction *unwanted = action("zoom in");
     removeToolBoxTool(unwanted);
     delete unwanted;
@@ -111,6 +123,43 @@ void SaverDesktop::paintInterface(QPainter *painter,
 
     // restore transformation and composition mode
     painter->restore();
+}
+
+void SaverDesktop::toggleLock()
+{
+    //requre a password to unlock
+    if (!corona()) {
+        return; //I'm lazy, I know this'll never happen
+    }
+    if (corona()->immutability() == Mutable) {
+        corona()->setImmutability(UserImmutable);
+        emit locked();
+    } else if (corona()->immutability() == UserImmutable) {
+        QDBusInterface *lockprocess = new QDBusInterface("org.kde.krunner_lock",
+                "/LockProcess", "local.LockProcess", QDBusConnection::sessionBus(), this);
+        QList<QVariant> args;
+        args << i18n("Unlock Plasma Widgets");
+        bool sent = lockprocess->callWithCallback("checkPass", args, this, SLOT(unlock(QDBusMessage)), SLOT(dbusError(QDBusError)));
+        kDebug() << sent;
+    }
+}
+
+void SaverDesktop::unlock(QDBusMessage reply)
+{
+    //assuming everything went as expected
+    bool success = reply.arguments().first().toBool();
+    kDebug() << success;
+    if (success) {
+        corona()->setImmutability(Mutable);
+        emit unlocked(); //FIXME bad code
+    }
+}
+
+void SaverDesktop::dbusError(QDBusError error)
+{
+    //Q_UNUSED(error)
+    kDebug() << error.errorString(error.type());
+    //I don't really give a fuck.
 }
 
 K_EXPORT_PLASMA_APPLET(saverdesktop, SaverDesktop)

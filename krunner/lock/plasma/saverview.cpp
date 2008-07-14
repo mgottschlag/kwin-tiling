@@ -243,6 +243,8 @@ void SaverView::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) {
         hideView();
+        event->accept();
+        return;
     }
 
     kDebug() << event->key() << event->spontaneous();

@@ -80,7 +80,7 @@ const int TIMEOUT_CODE = 2;
 //
 // Simple dialog for entering a password.
 //
-PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
+PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, const QString &text)
     : KDialog(parent, Qt::X11BypassWindowManagerHint),
       mPlugin( plugin ),
       mCapsLocked(-1),
@@ -92,9 +92,13 @@ PasswordDlg::PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin)
     pixLabel->setPixmap(DesktopIcon("system-lock-screen"));
 
     KUser user; QString fullName=user.property(KUser::FullName).toString();
-    QLabel *greetLabel = new QLabel( fullName.isEmpty() ?
+    QString greetString = text;
+    if (text.isEmpty()) {
+        greetString = fullName.isEmpty() ?
             i18n("<nobr><b>The session is locked</b></nobr><br />") :
-            i18n("<nobr><b>The session was locked by %1</b></nobr><br />", fullName ), w );
+            i18n("<nobr><b>The session was locked by %1</b></nobr><br />", fullName );
+    }
+    QLabel *greetLabel = new QLabel(greetString, w);
 
     mStatusLabel = new QLabel( "<b> </b>", w );
     mStatusLabel->setAlignment( Qt::AlignCenter );

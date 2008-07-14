@@ -17,6 +17,10 @@ set(krunner_lock_SRCS
    autologout.cc
    main.cc )
 
+set(lockprocess_dbusXML org.kde.krunner_lock.LockProcess.xml)
+qt4_generate_dbus_interface(lockprocess.h ${lockprocess_dbusXML} OPTIONS -m)
+qt4_add_dbus_adaptor(krunner_lock_SRCS ${CMAKE_CURRENT_BINARY_DIR}/${lockprocess_dbusXML} lockprocess.h LockProcess)
+
 set(ksmserver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/ksmserver/org.kde.KSMServerInterface.xml)
 QT4_ADD_DBUS_INTERFACE(krunner_lock_SRCS ${ksmserver_xml} ksmserver_interface)
 set(kscreensaver_xml  ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/org.kde.screensaver.xml)

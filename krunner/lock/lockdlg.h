@@ -37,7 +37,7 @@ class PasswordDlg : public KDialog, public KGreeterPluginHandler
     Q_OBJECT
 
 public:
-    PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin);
+    PasswordDlg(LockProcess *parent, GreeterPluginHandle *plugin, const QString &text = QString());
     ~PasswordDlg();
     virtual void setVisible(bool visible);
 
