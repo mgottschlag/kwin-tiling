@@ -46,7 +46,7 @@ ShortcutsHandler::ShortcutsHandler( HandlerType type, QObject *parent )
 
 ShortcutsHandler::~ShortcutsHandler()
     {
-    kDebug() << "Destroying ShortcutsHandler";
+    _actions->clear();
     delete _actions;
     }
 
