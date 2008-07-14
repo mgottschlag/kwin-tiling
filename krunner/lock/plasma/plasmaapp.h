@@ -44,16 +44,16 @@ public:
     Plasma::Corona* corona();
 
     /**
-     * Sets whether the View should be a fullscreen widget appropriate for covering the screensaver
-     * or just a regular window
+     * enables or disables cheats useful for debugging.
+     * FIXME maybe this shouldn't be public.
      */
-    void setIsFullscreen(bool isFullscreen);
+    void enableCheats(bool enable);
 
     /** 
-     * Returns true if this widget is currently a fullscreen window.
-     * See setIsFullscreen()
+     * Returns true if cheats are enabled
+     * @see enableCheats
      */
-    bool isFullscreen() const;
+    bool cheatsEnabled() const;
 
 public Q_SLOTS:
     // DBUS interface. if you change these methods, you MUST run:
@@ -70,7 +70,7 @@ private:
 
     Plasma::Corona *m_corona;
     SaverView *m_view;
-    bool m_isFullscreen;
+    bool m_cheats;
 };
 
 #endif // multiple inclusion guard

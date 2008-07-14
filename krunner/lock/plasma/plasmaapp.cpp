@@ -46,7 +46,7 @@
 #include <KDebug>
 #include <KCmdLineArgs>
 #include <KWindowSystem>
-//#include <KAction>
+#include <KAction>
 
 //#include <ksmserver_interface.h>
 
@@ -102,9 +102,11 @@ PlasmaApp* PlasmaApp::self()
 {
     if (!kapp) {
         checkComposite();
+        kDebug() << "new PlasmaApp";
         return new PlasmaApp(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
     }
 
+    kDebug() << "existing PlasmaApp";
     return qobject_cast<PlasmaApp*>(kapp);
 }
 
@@ -113,7 +115,7 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
       m_corona(0),
       m_view(0)
 {
-    kDebug();
+    kDebug(); //FIXME we're never reaching this! wtf!?
     //FIXME what's this?
     KGlobal::locale()->insertCatalog("libplasma");
 
@@ -181,12 +183,12 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     KConfigGroup cg(KGlobal::config(), "General");
     Plasma::Theme::defaultTheme()->setFont(cg.readEntry("desktopFont", font()));
 
-    //FIXME the flag, it does nothing!
-    setIsFullscreen(KCmdLineArgs::parsedArgs()->isSet("fullscreen"));
+    enableCheats(KCmdLineArgs::parsedArgs()->isSet("cheats"));
 
     // this line initializes the corona.
     corona();
 
+    connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize(int)));
     connect(this, SIGNAL(aboutToQuit()), this, SLOT(cleanup()));
 }
 
@@ -207,20 +209,14 @@ void PlasmaApp::cleanup()
     delete m_corona;
 }
 
-void PlasmaApp::setIsFullscreen(bool isFullscreen)
+void PlasmaApp::enableCheats(bool enable)
 {
-    m_isFullscreen = isFullscreen;
-
-    if (isFullscreen) {
-        connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize(int)));
-    } else {
-        disconnect(QApplication::desktop(), SIGNAL(resized(int)), this, SLOT(adjustSize(int)));
-    }
+    m_cheats = enable;
 }
 
-bool PlasmaApp::isFullscreen() const
+bool PlasmaApp::cheatsEnabled() const
 {
-    return m_isFullscreen;
+    return m_cheats;
 }
 
 void PlasmaApp::adjustSize(int screen)
@@ -234,7 +230,6 @@ void PlasmaApp::adjustSize(int screen)
     m_view->setGeometry(geom);
 }
 
-//FIXME we need our own corona class
 Plasma::Corona* PlasmaApp::corona()
 {
     if (!m_corona) {
@@ -289,6 +284,17 @@ void PlasmaApp::createView(Plasma::Containment *containment)
                 }*/
     //FIXME is this the right geometry for multi-screen?
     m_view->setGeometry(QApplication::desktop()->screenGeometry(containment->screen()));
+
+    if (m_cheats) {
+        //TODO quit button...
+        kDebug() << "cheats enabled";
+        KAction *showAction = new KAction(this);
+        showAction->setText(i18n("Show plasma-overlay"));
+        showAction->setObjectName("Show plasma-overlay"); // NO I18N
+        showAction->setGlobalShortcut(KShortcut(Qt::CTRL + Qt::Key_F11));
+        connect(showAction, SIGNAL(triggered()), m_view, SLOT(showView()));
+    }
+
     m_view->showView();
 }
 

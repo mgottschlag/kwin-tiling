@@ -43,7 +43,7 @@ SaverView::SaverView(Plasma::Containment *containment, QWidget *parent)
       m_suppressShow(false)
 {
     kDebug();
-    //setWindowFlags(Qt::FramelessWindowHint); FIXME set only on fullscreen
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
     if (!PlasmaApp::hasComposite()) {
         setAutoFillBackground(false);
         setAttribute(Qt::WA_NoSystemBackground);

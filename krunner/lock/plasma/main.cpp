@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     KCmdLineArgs::init(argc, argv, &aboutData);
 
     KCmdLineOptions options;
-    options.add("nofullscreen",ki18n("Starts plasma-overlay as an ordinary window rather than as a fullscreen app."));
+    options.add("cheats",ki18n("Enables some cheats that are useful for debugging."));
     KCmdLineArgs::addCmdLineOptions(options);
 
     PlasmaApp *app = PlasmaApp::self();
