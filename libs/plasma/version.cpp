@@ -17,9 +17,6 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef PLASMA_VERSION_H
-#define PLASMA_VERSION_H
-
 #include <plasma/version.h>
 
 namespace Plasma
@@ -32,17 +29,17 @@ unsigned int version()
 
 unsigned int versionMajor()
 {
-    return PLASMA_MAJOR_VERSION;
+    return PLASMA_VERSION_MAJOR;
 }
 
 unsigned int versionMinor()
 {
-    return PLASMA_MINOR_VERSION;
+    return PLASMA_VERSION_MINOR;
 }
 
 unsigned int versionRelease()
 {
-    return PLASMA_RELEASE_VERSION;
+    return PLASMA_VERSION_RELEASE;
 }
 
 const char *versionString()
@@ -52,4 +49,3 @@ const char *versionString()
 
 } // Plasma namespace
 
-#endif // multiple inclusion guard
