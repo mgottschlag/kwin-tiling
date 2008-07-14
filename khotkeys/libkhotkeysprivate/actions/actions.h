@@ -53,6 +53,12 @@ class KDE_EXPORT Action
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual Action* copy( ActionData* data_P ) const = 0;
         static Action* create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P );
+
+        /**
+         * The action is about to be erased permanently
+         */
+        virtual void aboutToBeErased();
+
     protected:
         ActionData* const data;
     };
@@ -70,6 +76,11 @@ class KDE_EXPORT ActionList
         typedef QList<Action*>::Iterator Iterator;
         typedef QList<Action*>::ConstIterator ConstIterator;
         const QString& comment() const;
+
+        /**
+         * @reimp
+         */
+        void aboutToBeErased();
 
     private:
         QString _comment;

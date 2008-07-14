@@ -25,7 +25,6 @@
 #include "simple_action_data.h"
 
 #include "KDE/KLocale"
-#include "KDE/KDebug"
 
 #include <QtCore/QSignalMapper>
 #include <QtGui/QContextMenuEvent>
@@ -78,9 +77,12 @@ HotkeysTreeViewContextMenu::~HotkeysTreeViewContextMenu()
 
 void HotkeysTreeViewContextMenu::newGlobalShortcutActionAction( int actionType )
     {
+    Q_ASSERT(_index.isValid());
+    if (!_index.isValid())
+        return;
+
     QModelIndex parent;      // == root element
-    if (_index.isValid() 
-        && _view->model()->data( _view->model()->index( _index.row(), KHotkeysModel::IsGroupColumn, _index.parent() )).toBool())
+    if ( _view->model()->data( _index.sibling( _index.row(), KHotkeysModel::IsGroupColumn)).toBool())
         {
         parent = _index;
         }
@@ -115,14 +117,18 @@ void HotkeysTreeViewContextMenu::newGlobalShortcutActionAction( int actionType )
     QModelIndex newAct = _view->model()->insertActionData(data, parent);
     _view->setCurrentIndex(newAct);
     _view->edit(newAct);
+    _view->resizeColumnToContents(0);
     }
 
 
 void HotkeysTreeViewContextMenu::newGroupAction()
     {
+    Q_ASSERT(_index.isValid());
+    if (!_index.isValid())
+        return;
+
     QModelIndex parent;      // == root element
-    if (_index.isValid() 
-        && _view->model()->data( _view->model()->index( _index.row(), KHotkeysModel::IsGroupColumn, _index.parent() )).toBool())
+    if ( _view->model()->data( _index.sibling(_index.row(), KHotkeysModel::IsGroupColumn)).toBool())
         {
         parent = _index;
         }
@@ -134,6 +140,7 @@ void HotkeysTreeViewContextMenu::newGroupAction()
     QModelIndex newGroup = _view->model()->addGroup(parent);
     _view->setCurrentIndex(newGroup);
     _view->edit(newGroup);
+    _view->resizeColumnToContents(0);
     }
 
 
@@ -145,6 +152,8 @@ void HotkeysTreeViewContextMenu::deleteAction()
         return;
         }
     Q_ASSERT( _view->model()->removeRow(_index.row(), _index.parent()) );
+
+    _view->setCurrentIndex(QModelIndex());
     }
 
 

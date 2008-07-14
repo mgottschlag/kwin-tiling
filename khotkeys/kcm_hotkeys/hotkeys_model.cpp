@@ -67,6 +67,8 @@ QModelIndex KHotkeysModel::addGroup( const QModelIndex & parent )
 // Add a group
 QModelIndex KHotkeysModel::insertActionData(  KHotKeys::ActionDataBase *data, const QModelIndex & parent )
     {
+    Q_ASSERT(data);
+
     KHotKeys::ActionDataGroup *list;
     if (parent.isValid())
         {
@@ -80,7 +82,7 @@ QModelIndex KHotkeysModel::insertActionData(  KHotKeys::ActionDataBase *data, co
 
     beginInsertRows( parent, list->child_count(), list->child_count() );
 
-    list->add_child( data );
+    data->reparent(list);
 
     endInsertRows();
     return index( list->child_count()-1, NameColumn, parent );
@@ -298,7 +300,7 @@ QModelIndex KHotkeysModel::parent( const QModelIndex &index ) const
         }
 
     int row = grandparent->list.indexOf(parent);
-    return createIndex( row, index.column(), parent );
+    return createIndex( row, 0, parent );
     }
 
 
@@ -323,6 +325,7 @@ bool KHotkeysModel::removeRows( int row, int count, const QModelIndex &parent )
     KHotKeys::ActionDataBase *action = indexToActionDataBase(index(row,0,parent));
 
     list->remove_child(action);
+    action->aboutToBeErased();
     delete action;
 
     endRemoveRows();

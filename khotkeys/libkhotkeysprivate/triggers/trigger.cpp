@@ -41,6 +41,10 @@ Trigger::~Trigger()
     }
 
 
+void Trigger::aboutToBeErased()
+    {}
+
+
 void Trigger::cfg_write( KConfigGroup& cfg_P ) const
     {
     cfg_P.writeEntry( "Type", "ERROR" );

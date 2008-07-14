@@ -65,6 +65,11 @@ class KDE_EXPORT Trigger
         static Trigger* create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P );
         virtual void activate( bool activate_P ) = 0;
 
+        /**
+         * The trigger will be erased permanently
+         */
+        virtual void aboutToBeErased();
+
         virtual Type type() const = 0;
     protected:
         ActionData* const data;
@@ -86,6 +91,12 @@ class KDE_EXPORT Trigger_list
         typedef QList< Trigger* >::ConstIterator ConstIterator;
         const QString comment() const;
         Trigger_list* copy( ActionData* data_P ) const;
+
+        /**
+         * The trigger will be erased permanently
+         */
+        void aboutToBeErased();
+
     private:
         QString _comment;
     };

@@ -45,6 +45,11 @@ class KDE_EXPORT ActionData
 
         virtual void execute();
 
+        /**
+         * @reimp
+         */
+        void aboutToBeErased();
+
         const Trigger_list* triggers() const;
 
         const ActionList* actions() const;

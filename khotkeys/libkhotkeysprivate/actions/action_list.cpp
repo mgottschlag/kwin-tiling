@@ -45,6 +45,15 @@ ActionList::ActionList( const QString& comment_P )
     {}
 
 
+void ActionList::aboutToBeErased()
+    {
+    QListIterator<Action*> it(*this);
+    while (it.hasNext())
+        {
+        it.next()->aboutToBeErased();
+        }
+    }
+
 const QString& ActionList::comment() const
     {
     return _comment;

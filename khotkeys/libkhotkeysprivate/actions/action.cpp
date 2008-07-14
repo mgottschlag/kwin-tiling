@@ -36,6 +36,11 @@ Action::~Action()
     }
 
 
+void Action::aboutToBeErased()
+    {
+    // Nothing to do yet.
+    }
+
 Action::Action( KConfigGroup&, ActionData* data_P )
     : data( data_P )
     {

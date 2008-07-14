@@ -71,7 +71,7 @@ ActionDataGroup::system_group_t ActionDataGroup::system_group() const
 
 void ActionDataGroup::add_child( ActionDataBase* child_P )
     {
-    list.append( child_P ); // CHECKME tohle asi znemozni je mit nejak rucne serazene
+    list.append( child_P );
     }
 
 int ActionDataGroup::child_count() const
@@ -79,6 +79,13 @@ int ActionDataGroup::child_count() const
     return list.size();
     }
 
+void ActionDataGroup::aboutToBeErased()
+    {
+    Q_FOREACH( ActionDataBase *child, list)
+        {
+        child->aboutToBeErased();
+        }
+    }
 
 void ActionDataGroup::remove_child( ActionDataBase* child_P )
     {

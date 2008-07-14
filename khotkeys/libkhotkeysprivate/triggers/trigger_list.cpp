@@ -55,6 +55,16 @@ Trigger_list::~Trigger_list()
         }
     }
 
+void Trigger_list::aboutToBeErased()
+    {
+    QListIterator<Trigger*> it(*this);
+    while (it.hasNext())
+        {
+        it.next()->aboutToBeErased();
+        }
+    }
+
+
 void Trigger_list::cfg_write( KConfigGroup& cfg_P ) const
     {
     cfg_P.writeEntry( "Comment", comment());

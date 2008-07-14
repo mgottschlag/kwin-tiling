@@ -29,6 +29,7 @@
 // OUR ACTION WIDGETS
 #include "action_group_widget.h"
 #include "simple_action_data_widget.h"
+#include "global_settings_widget.h"
 // REST
 #include "daemon/daemon.h"
 #include "hotkeys_model.h"
@@ -75,6 +76,9 @@ class KCMHotkeysPrivate
 
         //! The currently shown dialog
         HotkeysWidgetBase *current;
+
+        //! GlobalSettingsWidget
+        GlobalSettingsWidget *global_settings;
 
         SimpleActionDataWidget *simple_action;
 
@@ -153,6 +157,8 @@ void KCMHotkeys::currentChanged( const QModelIndex &pCurrent, const QModelIndex 
 
     if (!current.isValid())
         {
+        d->current = NULL;
+        d->stack->setCurrentWidget( d->global_settings );
         return;
         }
 
@@ -242,9 +248,11 @@ KCMHotkeysPrivate::KCMHotkeysPrivate( KCMHotkeys *host )
     {
     action_group = new ActionGroupWidget(q);
     simple_action = new SimpleActionDataWidget(q);
+    global_settings = new GlobalSettingsWidget(q);
 
     // Setup the stack
     stack = new QStackedWidget;
+    stack->addWidget( global_settings );
     stack->addWidget( action_group );
     stack->addWidget( simple_action );
 
@@ -317,7 +325,8 @@ bool KCMHotkeysPrivate::maybeShowWidget()
 
 void KCMHotkeysPrivate::save()
     {
-    applyCurrentItem();
+    if (current)
+        applyCurrentItem();
 
     // Write the settings
     model->save();

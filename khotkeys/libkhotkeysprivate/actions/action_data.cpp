@@ -56,6 +56,12 @@ const Trigger_list* ActionData::triggers() const
     }
 
 
+void ActionData::aboutToBeErased()
+    {
+    _triggers->aboutToBeErased();
+    _actions->aboutToBeErased();
+    }
+
 const ActionList* ActionData::actions() const
     {
 //    Q_ASSERT( _actions != 0 );

@@ -70,6 +70,12 @@ class KDE_EXPORT ActionDataGroup
         ConstIterator after_last_child() const;
         int child_count() const;
 
+
+        /**
+         * @reimp
+         */
+        void aboutToBeErased();
+
         /**
          * Is this a system group?
          *

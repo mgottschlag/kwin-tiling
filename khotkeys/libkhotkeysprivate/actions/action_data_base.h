@@ -78,6 +78,11 @@ class KDE_EXPORT ActionDataBase
         const Condition_list* conditions() const;
 
         /**
+         * Prepare this action for complete removal.
+         */
+        virtual void aboutToBeErased() = 0;
+
+        /**
          * Get the \c ActionDataGroup this object belongs to or 0 if it
          * does not belong to a group.
          */
@@ -93,7 +98,7 @@ class KDE_EXPORT ActionDataBase
         void reparent( ActionDataGroup* new_parent_P );
 
         /**
-         *
+         * \todo document this method
          */
         virtual void update_triggers() = 0;
 
