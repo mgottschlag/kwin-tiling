@@ -33,7 +33,7 @@ static const char version[] = "0.0";
 //extern "C"
 int main(int argc, char **argv)
 {
-    KAboutData aboutData("plasma-overlay", 0, ki18n("Plasma for the Screensaver"),
+    KAboutData aboutData("plasma-overlay", "krunner", ki18n("Plasma for the Screensaver"),
                          version, ki18n(description), KAboutData::License_GPL,
                          ki18n("Copyright 2006-2008, The KDE Team"));
     aboutData.addAuthor(ki18n("Chani Armitage"),
