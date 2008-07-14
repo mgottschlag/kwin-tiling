@@ -30,10 +30,6 @@ fi
 # we have to unset this for Darwin since it will screw up KDE's dynamic-loading
 unset DYLD_FORCE_FLAT_NAMESPACE
 
-# Enable lightweight memory corruption checker
-MALLOC_CHECK_=2 
-export MALLOC_CHECK_
-
 # in case we have been started with full pathname spec without being in PATH
 bindir=`echo "$0" | sed -n 's,^\(/.*\)/[^/][^/]*$,\1,p'`
 if [ -n "$bindir" ]; then
