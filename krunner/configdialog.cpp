@@ -48,7 +48,7 @@ KRunnerConfigDialog::KRunnerConfigDialog(Plasma::RunnerManager* manager, QWidget
 
     KService::List offers = KServiceTypeTrader::self()->query("Plasma/Runner");
     QList<KPluginInfo> effectinfos = KPluginInfo::fromServices(offers);
-    m_sel->addPlugins(effectinfos, KPluginSelector::ReadConfigFile, i18n("Runners"), QString(), KSharedConfig::openConfig("krunnerrc"));
+    m_sel->addPlugins(effectinfos, KPluginSelector::ReadConfigFile, i18n("Available Features"), QString(), KSharedConfig::openConfig("krunnerrc"));
 
     KConfigGroup config(KGlobal::config(), "ConfigurationDialog");
     restoreDialogSize(config);
