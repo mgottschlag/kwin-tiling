@@ -86,6 +86,11 @@ private Q_SLOTS:
      */
     void hidePlasma();
     /**
+     * immediately un-suppress the password dialog
+     * FIXME need a better name
+     */
+    void unSuppressUnlock();
+    /**
      * un-suppress and show the password dialog
      * TODO make this a dbus method
      */
@@ -121,6 +126,16 @@ private:
     void lockXF86();
     void unlockXF86();
     void resume( bool force );
+    enum WindowType { IgnoreWindow = 0 /** regular window to be left below the saver */,
+                      SimpleWindow = 1 /** simple popup that can't handle direct input */,
+                      InputWindow = 2  /** annoying dialog that needs direct input */,
+                      DefaultWindow = 6/** input window that's also the plasma view */
+    };
+    /**
+     * @return the type of window, based on its X property
+     */
+    WindowType windowType(WId id);
+
     static QVariant getConf(void *ctx, const char *key, const QVariant &dflt);
 
     bool        mLocked;
@@ -154,6 +169,8 @@ private:
     int         mAutoLogoutTimeout;
     bool        mAutoLogout;
     QTimer      mSuppressUnlock;
+    QList<WId>  mForeignWindows;
+    QList<WId>  mForeignInputWindows;
 };
 
 #endif

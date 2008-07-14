@@ -40,6 +40,9 @@ public:
     SaverView(Plasma::Containment* containment, QWidget *parent);
     ~SaverView();
 
+signals:
+    void hidden();
+
 protected:
     void drawBackground(QPainter * painter, const QRectF & rect);
     void keyPressEvent(QKeyEvent *event);
@@ -61,7 +64,6 @@ public slots:
 protected slots:
     void showAppletBrowser();
     void appletBrowserDestroyed();
-    void activeWindowChanged(WId id);
     void suppressShowTimeout();
 
 private:

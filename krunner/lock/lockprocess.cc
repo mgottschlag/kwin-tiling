@@ -942,6 +942,9 @@ void LockProcess::newService(QString name)
         kDebug() << "wtf! not valid!?"; //we're screwed now.
         return;
     }
+
+    connect(mPlasmaDBus, SIGNAL(hidden()), SLOT(unSuppressUnlock()));
+    //TODO can we conect to this only when we don't have an ID?
     connect(mPlasmaDBus, SIGNAL(viewCreated(uint)), SLOT(setPlasmaView(uint)));
     kDebug() << "should be connected";
     //however, we may have connnected too *late*, so now we have to see if we can grab the winid
@@ -959,7 +962,14 @@ void LockProcess::setPlasmaView(uint id)
 
 void LockProcess::hidePlasma()
 {
-    //TODO hide plasma. simple dbus signal.
+    if (mPlasmaDBus && mPlasmaDBus->isValid()) {
+        mPlasmaDBus->call(QDBus::NoBlock, "hidePlasma");
+    }
+}
+
+void LockProcess::unSuppressUnlock()
+{
+    mSuppressUnlock.stop();
 }
 
 void LockProcess::forceCheckPass()
@@ -1009,13 +1019,16 @@ bool LockProcess::checkPass()
     if (mSuppressUnlock.isActive()) {
         //help, help, I'm being suppressed!
         mSuppressUnlock.start(); //reset the timeout
+        //FIXME that autologout timer may still be ticking...
         return false;
     }
 
-    //TODO show plasma if it was hidden
     killTimer(mAutoLogoutTimerId);
-    PasswordDlg passDlg( this, &greetPlugin);
+    if (mPlasmaDBus && mPlasmaDBus->isValid()) {
+        mPlasmaDBus->call(QDBus::NoBlock, "showPlasma");
+    }
 
+    PasswordDlg passDlg( this, &greetPlugin);
     int ret = execDialog( &passDlg );
 
     if (ret == QDialog::Rejected) {
@@ -1079,9 +1092,14 @@ int LockProcess::execDialog( QDialog *dlg )
     if (pos != -1)
         mDialogs.remove( pos );
     if( mDialogs.isEmpty() ) {
-        //XChangeActivePointerGrab( QX11Info::display(), GRABEVENTS,
-        //        QCursor(Qt::BlankCursor).handle(), CurrentTime);
-        //FIXME blak pointer + plasma = cofused
+        //blank pointer + plasma = confused user
+        //FIXME do we really need to fakefocusin plasma?
+        if (mPlasmaView) {
+            fakeFocusIn(mPlasmaView);
+        } else {
+            XChangeActivePointerGrab( QX11Info::display(), GRABEVENTS,
+                    QCursor(Qt::BlankCursor).handle(), CurrentTime);
+        }
         resume( false );
     } else
         fakeFocusIn( mDialogs.first()->winId());
@@ -1110,6 +1128,7 @@ void LockProcess::cleanupPopup()
 //
 bool LockProcess::x11Event(XEvent *event)
 {
+    bool ret = false;
     switch (event->type)
     {
         case KeyPress:
@@ -1129,7 +1148,8 @@ bool LockProcess::x11Event(XEvent *event)
                 mAutoLogoutTimerId = startTimer(mAutoLogoutTimeout);
             }
             mBusy = false;
-            return true;
+            ret = true;
+            break;
 
         case VisibilityNotify:
             if( event->xvisibility.window == winId())
@@ -1159,17 +1179,41 @@ bool LockProcess::x11Event(XEvent *event)
 
         case ConfigureNotify: // from SubstructureNotifyMask on the root window
             if(event->xconfigure.event == QX11Info::appRootWindow()) {
-                kDebug() << "ConfigureNotify:"; 
+                //kDebug() << "ConfigureNotify:"; 
                 //the stacking order changed, so let's change the stacking order!
                 stayOnTop();
             }
             break;
         case MapNotify: // from SubstructureNotifyMask on the root window
             if( event->xmap.event == QX11Info::appRootWindow()) {
-                kDebug() << "MapNotify:";
+                kDebug() << "MapNotify:" << event->xmap.window;
+                WindowType type = windowType(event->xmap.window);
+                //TODO get the view id here
+                if (type != IgnoreWindow) {
+                    if (mForeignWindows.contains(event->xmap.window)) {
+                        kDebug() << "uhoh! duplicate!";
+                    } else {
+                        //ordered youngest-on-top
+                        mForeignWindows.prepend(event->xmap.window);
+                    }
+                    if (type & InputWindow) {
+                        if (mForeignInputWindows.contains(event->xmap.window)) {
+                            kDebug() << "uhoh! duplicate again"; //never happens
+                        } else {
+                            //ordered youngest-on-top
+                            mForeignInputWindows.prepend(event->xmap.window);
+                        }
+                    }
+                }
                 stayOnTop();
             }
             break;
+        case UnmapNotify:
+            if (event->xmap.event == QX11Info::appRootWindow()) {
+                kDebug() << "UnmapNotify:" << event->xunmap.window;
+                mForeignWindows.removeAll(event->xunmap.window);
+                mForeignInputWindows.removeAll(event->xunmap.window);
+            }
     }
 
     // We have grab with the grab window being the root window.
@@ -1180,61 +1224,130 @@ bool LockProcess::x11Event(XEvent *event)
     // Qt seems to be quite hard to persuade to redirect the event,
     // so let's simply dupe it with correct destination window,
     // and ignore the original one.
-    if( event->type == KeyPress || event->type == KeyRelease) {
-        if (mDialogs.isEmpty()) {
-            if (mPlasmaView) {
-                kDebug() << "forward to plasma";
-                //fuckig hell, the evet needs to go to aother process
-                //pray that the winid will work.
-                XEvent ev2 = *event;
-                ev2.xkey.window = ev2.xkey.subwindow = mPlasmaView;
-                XSendEvent(QX11Info::display(), mPlasmaView, False, NoEventMask, &ev2);
-                return true;
-            }
-        } else if (event->xkey.window != mDialogs.first()->winId()) {
-            kDebug() << "forward to dialog";
+    if (!mDialogs.isEmpty()) {
+        if ((event->type == KeyPress || event->type == KeyRelease) &&
+                event->xkey.window != mDialogs.first()->winId()) {
+            //kDebug() << "forward to dialog";
             XEvent ev2 = *event;
             ev2.xkey.window = ev2.xkey.subwindow = mDialogs.first()->winId();
             qApp->x11ProcessEvent( &ev2 );
-            return true;
+            ret = true;
+        }
+    } else if (!mForeignInputWindows.isEmpty()) {
+        //when there are no dialogs, forward some events to plasma
+        switch (event->type) {
+        case KeyPress:
+        case KeyRelease:
+        case ButtonPress:
+        case ButtonRelease:
+        case MotionNotify:
+            {
+                //kDebug() << "forward to plasma";
+                XEvent ev2 = *event;
+                ev2.xkey.window = ev2.xkey.subwindow = mForeignInputWindows.first();
+                XSendEvent(QX11Info::display(), ev2.xkey.window, False, NoEventMask, &ev2);
+                ret = true;
+            }
+        default:
+            break;
         }
     }
+    return ret;
+}
 
-    return false;
+LockProcess::WindowType LockProcess::windowType(WId id)
+{
+    Atom tag = XInternAtom(QX11Info::display(), "_KDE_SCREENSAVER_OVERRIDE", False);
+    Atom actualType;
+    int actualFormat;
+    unsigned long nitems, remaining;
+    unsigned char *data = 0;
+    Display *display = QX11Info::display();
+
+    int result = XGetWindowProperty(display, id, tag, 0, 1, False, tag, &actualType,
+            &actualFormat, &nitems, &remaining, &data);
+
+    kDebug() << (result == Success) << (actualType == tag);
+    WindowType type = IgnoreWindow;
+    if (result == Success && actualType == tag) {
+        if (nitems != 1 || actualFormat != 8) {
+            kDebug() << "malformed property";
+        } else {
+            switch (data[0]) {
+                case 0: //FIXME magic numbers
+                    type = SimpleWindow;
+                    break;
+                case 1:
+                    type = InputWindow;
+                    break;
+                case 2:
+                    type = DefaultWindow;
+                    break;
+            }
+        }
+    }
+    if (data) {
+        XFree(data);
+    }
+    return type;
+/*    if (result != Success) {
+        return false;
+    }
+    if (actualType == tag) {
+        return true;
+    }
+    //managed windows will have a pesky frame we have to bypass
+    XWindowAttributes attr;
+    XGetWindowAttributes(display, id, &attr);
+    if (!attr.override_redirect) {
+        //check the real client window
+        if (Window client = XmuClientWindow(display, id)) {
+            result = XGetWindowProperty(display, client, tag, 0, 0, False, tag, &actualType,
+                    &actualFormat, &nitems, &remaining, &data);
+            kDebug() << (result == Success) << (actualType == tag);
+            if (data) {
+                XFree(data);
+            }
+            return (result == Success) && (actualType == tag);
+*        }
+    }
+    return false;*/
 }
 
 void LockProcess::stayOnTop()
 {
-    if(!mDialogs.isEmpty())
+    if(!(mDialogs.isEmpty() && mForeignWindows.isEmpty()))
     {
         // this restacking is written in a way so that
         // if the stacking positions actually don't change,
         // all restacking operations will be no-op,
         // and no ConfigureNotify will be generated,
         // thus avoiding possible infinite loops
-        XRaiseWindow( QX11Info::display(), mDialogs.first()->winId()); // raise topmost
-        // and stack others below it
-        Window* stack = new Window[ mDialogs.count() + (mPlasmaView ? 2 : 1) ];
+        Window* stack = new Window[ mDialogs.count() + mForeignWindows.count() + 1 ];
         int count = 0;
-        for( QVector< QWidget* >::ConstIterator it = mDialogs.begin();
-             it != mDialogs.end();
-             ++it )
-            stack[ count++ ] = (*it)->winId();
-        if (mPlasmaView) {
+        if (!mDialogs.isEmpty()) {
+            XRaiseWindow( QX11Info::display(), mDialogs.first()->winId()); // raise topmost
+            // and stack others below it
+            for( QVector< QWidget* >::ConstIterator it = mDialogs.begin();
+                    it != mDialogs.end();
+                    ++it )
+                stack[ count++ ] = (*it)->winId();
+        } else {
+            XRaiseWindow( QX11Info::display(), mForeignWindows.first()); // raise topmost
+        }
+        //now the plasma stuff below the dialogs
+        foreach (const WId w, mForeignWindows) {
+            stack[count++] = w;
+        }
+        /*if (mPlasmaView) {
             stack[count++] = mPlasmaView;
             kDebug() << "plasma on stack";
-        }
+        }*/
+        //finally, the saver window
         stack[ count++ ] = winId();
         XRestackWindows( x11Info().display(), stack, count );
-        kDebug() << "restacked" << count;
+        //kDebug() << "restacked" << count;
         delete[] stack;
-    } else if (mPlasmaView) {
-        //this will put plasma above the saver without an infinite loop
-        XRaiseWindow(QX11Info::display(), mPlasmaView);
-        Window* stack = new Window[1];
-        stack[0] = winId();
-        XRestackWindows(x11Info().display(), stack, 1);
-        kDebug() << "raised plasma";
     } else {
         XRaiseWindow(QX11Info::display(), winId());
     }

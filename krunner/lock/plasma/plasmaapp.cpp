@@ -60,6 +60,10 @@
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
 
+Atom tag; //FIXME should this be a member var or what?
+const unsigned char DIALOG = 1; //FIXME this is really bad code
+const unsigned char VIEW = 2;
+
 Display* dpy = 0;
 Colormap colormap = 0;
 Visual *visual = 0;
@@ -184,6 +188,10 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     Plasma::Theme::defaultTheme()->setFont(cg.readEntry("desktopFont", font()));
 
     enableCheats(KCmdLineArgs::parsedArgs()->isSet("cheats"));
+
+    //we have to keep an eye on created windows
+    tag = XInternAtom(QX11Info::display(), "_KDE_SCREENSAVER_OVERRIDE", False);
+    qApp->installEventFilter(this);
 
     // this line initializes the corona.
     corona();
@@ -319,8 +327,73 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         connect(showAction, SIGNAL(triggered()), m_view, SLOT(showView()));
     }
 
+    //FIXME why do I get BadWindow?
+    //unsigned char data = VIEW;
+    //XChangeProperty(QX11Info::display(), m_view->effectiveWinId(), tag, tag, 8, PropModeReplace, &data, 1);
+
+    connect(m_view, SIGNAL(hidden()), SIGNAL(hidden()));
     m_view->showView();
     emit viewCreated(m_view->effectiveWinId());
+}
+
+bool PlasmaApp::eventFilter(QObject *obj, QEvent *event)
+{
+    if (event->type() == QEvent::Show) {
+        //apparently this means we created a new window
+        //so, add a tag to prove it's our window
+        //FIXME using the show event means we tag on every show, not just the first.
+        //harmless but kinda wasteful.
+        QWidget *widget = qobject_cast<QWidget*>(obj);
+        if (widget && widget->isWindow() && !(qobject_cast<QDesktopWidget*>(widget) ||
+                    /*qobject_cast<SaverView*>(widget) ||*/
+                    widget->testAttribute(Qt::WA_DontShowOnScreen))) {
+            unsigned char data = 0;
+            //now we're *really* fucking with things
+            //we force-disable window management and frames to cut off access to wm-y stuff
+            //and to make it easy to check the tag (frames are a pain)
+            Qt::WindowFlags oldFlags = widget->windowFlags();
+            Qt::WindowFlags newFlags = oldFlags | Qt::X11BypassWindowManagerHint;
+            if (oldFlags != newFlags) {
+                kDebug() << "!!!!!!!setting flags on!!!!!" << widget;
+                m_dialogs.append(widget);
+                connect(widget, SIGNAL(destroyed(QObject*)), SLOT(dialogDestroyed(QObject*)));
+                widget->setWindowFlags(newFlags);
+                widget->show(); //setting the flags hid it :(
+                //qApp->setActiveWindow(widget); //gives kbd but not mouse events
+                //kDebug() << "parent" << widget->parentWidget();
+                //FIXME why can I only activate these dialogs from this exact line?
+                widget->activateWindow(); //gives keyboard focus
+                return false; //we'll be back when we get the new show event
+            } else if (qobject_cast<SaverView*>(widget)) {
+                data = VIEW;
+            } else if (m_dialogs.contains(widget)) {
+                data = DIALOG;
+            } else {
+                widget->activateWindow(); //gives keyboard focus
+                //FIXME when returning from a subdialog to another dialog,
+                //kbd focus is broken, only esc/enter work
+            }
+
+            XChangeProperty(QX11Info::display(), widget->effectiveWinId(), tag, tag, 8, PropModeReplace, &data, 1);
+            kDebug() << "tagged" << widget << widget->effectiveWinId() << (data != 0);
+        }
+    }
+    return false;
+}
+
+void PlasmaApp::dialogDestroyed(QObject *obj)
+{
+    m_dialogs.removeAll(qobject_cast<QWidget*>(obj));
+    if (m_dialogs.isEmpty()) {
+        if (m_view) {
+            //this makes qactions work again
+            m_view->activateWindow();
+        }
+    /*} else { failed attempt to fix kbd input after a subdialog closes
+        QWidget *top = m_dialogs.last();
+        top->activateWindow();
+        kDebug() << top;*/
+    }
 }
 
 

@@ -56,7 +56,9 @@ public:
     bool cheatsEnabled() const;
 
 Q_SIGNALS:
+    // DBUS interface.
     void viewCreated(uint id); //XXX this is actually a WId but qdbuscpp2xml is dumb
+    void hidden();
 
 public Q_SLOTS:
     // DBUS interface.
@@ -69,12 +71,17 @@ private Q_SLOTS:
     void cleanup();
     void createView(Plasma::Containment *containment);
     void adjustSize(int screen);
+    void dialogDestroyed(QObject *obj);
+
+protected:
+    bool eventFilter(QObject *obj, QEvent *event);
 
 private:
     PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap);
 
     Plasma::Corona *m_corona;
     SaverView *m_view;
+    QList<QWidget*> m_dialogs;
     bool m_cheats;
 };
 

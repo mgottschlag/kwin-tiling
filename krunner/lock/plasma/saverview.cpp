@@ -26,7 +26,7 @@
 #include <QKeyEvent>
 #include <QTimer>
 
-#include <KWindowSystem>
+//#include <KWindowSystem>
 
 #include "plasma/applet.h"
 #include "plasma/corona.h"
@@ -42,7 +42,6 @@ SaverView::SaverView(Plasma::Containment *containment, QWidget *parent)
       m_appletBrowser(0),
       m_suppressShow(false)
 {
-    kDebug();
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint |
             Qt::X11BypassWindowManagerHint);
     if (!PlasmaApp::hasComposite()) {
@@ -103,11 +102,14 @@ void SaverView::showAppletBrowser()
         m_appletBrowser->setPalette(p);
         m_appletBrowser->setBackgroundRole(QPalette::Background);
         m_appletBrowser->setAutoFillBackground(true);
-        KWindowSystem::setState(m_appletBrowser->winId(), NET::KeepAbove|NET::SkipTaskbar);
+        m_appletBrowser->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint |
+                Qt::X11BypassWindowManagerHint);
+        //KWindowSystem::setState(m_appletBrowser->winId(), NET::KeepAbove|NET::SkipTaskbar);
         m_appletBrowser->move(0, 0);
         m_appletBrowser->installEventFilter(this);
     }
 
+    kDebug();
     m_appletBrowser->setHidden(m_appletBrowser->isVisible());
 }
 
@@ -174,8 +176,8 @@ void SaverView::showView()
         }
 
         setWindowState(Qt::WindowFullScreen);
-        KWindowSystem::setOnAllDesktops(winId(), true);
-        KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
+        //KWindowSystem::setOnAllDesktops(winId(), true);
+        //KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
 
         m_hideAction->setEnabled(true);
 
@@ -214,16 +216,20 @@ void SaverView::setContainment(Plasma::Containment *newContainment)
 
 void SaverView::hideView()
 {
+    if (isHidden()) {
+        return;
+    }
     if (m_appletBrowser) {
         m_appletBrowser->hide();
     }
 
-    disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
     disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
 
     containment()->closeToolBox();
     m_hideAction->setEnabled(false);
     hide();
+    //let the lockprocess know
+    emit hidden();
 }
 
 void SaverView::suppressShowTimeout()
@@ -238,23 +244,14 @@ void SaverView::keyPressEvent(QKeyEvent *event)
         hideView();
     }
 
+    kDebug() << event->key() << event->spontaneous();
     Plasma::View::keyPressEvent(event);
-}
-
-//TODO probably do not want.
-void SaverView::activeWindowChanged(WId id)
-{
-    if (id != winId() &&
-        (!m_appletBrowser || id != m_appletBrowser->winId())) {
-        hideView();
-    }
 }
 
 //eeeeew. why did dashboard ever have this? wtf!
 void SaverView::showEvent(QShowEvent *event)
 {
-    KWindowSystem::setState(winId(), NET::SkipPager);
-    connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
+    //KWindowSystem::setState(winId(), NET::SkipPager);
     connect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
     Plasma::View::showEvent(event);
 }
