@@ -39,7 +39,7 @@ enum ImportType
  */
 class KDE_EXPORT Settings
 {
-    Q_DISABLE_COPY( Settings );
+    Q_DISABLE_COPY( Settings )
 
 public:
 

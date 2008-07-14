@@ -96,7 +96,7 @@ class KDE_EXPORT Windowdef
 class KDE_EXPORT Windowdef_list
     : public Q3PtrList< Windowdef >
     {
-    Q_DISABLE_COPY( Windowdef_list );
+    Q_DISABLE_COPY( Windowdef_list )
 
     public:
         Windowdef_list( const QString& comment_P );

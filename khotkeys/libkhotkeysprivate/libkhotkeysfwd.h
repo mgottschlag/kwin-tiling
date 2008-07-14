@@ -33,7 +33,7 @@ namespace KHotKeys
     class ShortcutTrigger;
     class SimpleActionData;
     class Trigger;
-    };
+    }
 
 
 #endif /* #ifndef LIBKHOTKEYSFWD_H */

@@ -34,7 +34,7 @@ class Condition_list_base;
 
 class KDE_EXPORT Condition
     {
-    Q_DISABLE_COPY( Condition );
+    Q_DISABLE_COPY( Condition )
 
     public:
         Condition( Condition_list_base* parent_P );

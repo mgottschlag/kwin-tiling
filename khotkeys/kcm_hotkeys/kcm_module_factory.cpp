@@ -34,7 +34,7 @@ K_PLUGIN_FACTORY_DEFINITION(
     registerPlugin<KCMHotkeys>("khotkeys");
     registerPlugin<KCMGestures>("gestures");
     )
-K_EXPORT_PLUGIN(KCMModuleFactory("kcm_khotkeys"));
+K_EXPORT_PLUGIN(KCMModuleFactory("kcm_khotkeys"))
 
 
 extern "C"

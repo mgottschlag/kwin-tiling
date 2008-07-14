@@ -31,7 +31,7 @@ class Windowdef_list;
 // ActionData instances usually contain at least one Action
 class KDE_EXPORT Action
     {
-    Q_DISABLE_COPY( Action );
+    Q_DISABLE_COPY( Action )
 
     public:
 

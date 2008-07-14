@@ -23,7 +23,7 @@
 #include "kcm_hotkeys.h"
 #include "kcm_gestures.h"
 
-K_PLUGIN_FACTORY_DECLARATION(KCMModuleFactory);
+K_PLUGIN_FACTORY_DECLARATION(KCMModuleFactory)
 
 
 #endif /* #ifndef KCM_MODULE_FACTORY_H */
