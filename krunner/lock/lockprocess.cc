@@ -1166,12 +1166,14 @@ bool LockProcess::x11Event(XEvent *event)
                     mSuspendTimer.stop();
                     resume( false );
                 }
-                if ((!mPlasmaView) && event->xvisibility.state != VisibilityUnobscured) {
+                if (mForeignWindows.isEmpty() && event->xvisibility.state != VisibilityUnobscured) {
                     kDebug() << "no plasma; saver obscured";
                     stayOnTop();
                 }
             } else if (mPlasmaView && event->xvisibility.window == mPlasmaView &&
                     event->xvisibility.state != VisibilityUnobscured) {
+                //FIXME now that we have several plasma winids this doesn't feel valid
+                //but I don't know what to do about it!
                 kDebug() << "plasma obscured!";
                 stayOnTop();
             }
