@@ -15,6 +15,6 @@ set_target_properties(plasmaclock PROPERTIES VERSION ${GENERIC_LIB_VERSION}
 SOVERSION ${GENERIC_LIB_SOVERSION} )
 
 #clockapplet.h
-install(FILES clocknumber.h plasmaclock_export.h
+install(FILES clocknumber.h clockapplet.h plasmaclock_export.h
 ${CMAKE_CURRENT_BINARY_DIR}/ui_calendar.h DESTINATION ${INCLUDE_INSTALL_DIR}/ COMPONENT Devel)
 install(TARGETS plasmaclock ${INSTALL_TARGETS_DEFAULT_ARGS} )
