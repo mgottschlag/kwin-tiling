@@ -892,6 +892,8 @@ bool LockProcess::startPlasma()
                 SLOT(setPlasmaView(uint)));
         return true;
     }
+    delete mPlasmaDBus;
+    mPlasmaDBus = 0;
     connect(QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(QString, QString,
                     QString)),
             SLOT(newService(QString)));
