@@ -219,6 +219,21 @@ bool PlasmaApp::cheatsEnabled() const
     return m_cheats;
 }
 
+void PlasmaApp::showPlasma()
+{
+    if (m_view) {
+        m_view->showView();
+    }
+}
+
+void PlasmaApp::hidePlasma()
+{
+    if (m_view) {
+        m_view->hideView();
+    }
+    //FIXME what about potential config dialogs?
+}
+
 void PlasmaApp::adjustSize(int screen)
 {
     if (! m_view) {
