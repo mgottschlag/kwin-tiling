@@ -2,6 +2,7 @@
 Name=JavaScript Runner
 Name[bg]=Изпълнение на JavaScript
 Name[ca]=Executador de JavaScript
+Name[cs]=Spouštěč JavaScriptu
 Name[csb]=Mòtór JavaScript
 Name[da]=JavaScript-runner
 Name[de]=JavaScript-Ausführung
@@ -41,6 +42,7 @@ Name[zh_TW]=JavaScript 執行器
 Comment=JavaScript Runner
 Comment[bg]=Изпълнение на JavaScript
 Comment[ca]=Executador de JavaScript
+Comment[cs]=Spouštěč JavaScriptu
 Comment[da]=JavaScript-runner
 Comment[de]=JavaScript-Ausführung
 Comment[el]=Εκτελεστής JavaScript
