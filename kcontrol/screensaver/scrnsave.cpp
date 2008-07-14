@@ -60,6 +60,7 @@
 #include <kscreensaver_interface.h>
 #include <KPluginFactory>
 #include <KPluginLoader>
+#include <KMessageBox>
 
 template class QList<SaverConfig*>;
 
@@ -264,6 +265,20 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     advancedLayout->addWidget( advancedBt );
     advancedLayout->addWidget( new QWidget( this ) );
 
+    QGroupBox *plasmaGroup = new QGroupBox(i18n("Plasma"), this);
+    groupLayout = new QVBoxLayout(plasmaGroup);
+    rightColumnLayout->addWidget(plasmaGroup);
+
+    mPlasmaCheckBox = new QCheckBox(i18n("Enable Plasma Widgets"), plasmaGroup);
+    mPlasmaCheckBox->setChecked(mPlasmaEnabled);
+    mPlasmaCheckBox->setWhatsThis(i18n("Add widgets to your screensaver"));
+    connect(mPlasmaCheckBox, SIGNAL(toggled(bool)), this, SLOT(slotEnablePlasma(bool)));
+    groupLayout->addWidget(mPlasmaCheckBox);
+
+    //FIXME just a temporary label. should I add a configure button?
+    QLabel *plasmaText = new QLabel("To configure widgets, lock the screen.", plasmaGroup);
+    groupLayout->addWidget(plasmaText);
+
     rightColumnLayout->addStretch();
 
     if (mImmutable)
@@ -271,6 +286,7 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
        setButtons(buttons() & ~Default);
        mSettingsGroup->setEnabled(false);
        mSaverGroup->setEnabled(false);
+       plasmaGroup->setEnabled(false);
     }
 
     // finding the savers can take some time, so defer loading until
@@ -389,6 +405,7 @@ void KScreenSaver::readSettings()
     mLockTimeout = config.readEntry("LockGrace", 60000);
     mLock = config.readEntry("Lock", false);
     mSaver = config.readEntry("Saver");
+    mPlasmaEnabled = config.readEntry("PlasmaEnabled", false);
 
     if (mTimeout < 60) mTimeout = 60;
     if (mLockTimeout < 0) mLockTimeout = 0;
@@ -432,6 +449,7 @@ void KScreenSaver::defaults()
     slotLockTimeoutChanged( 60 );
     slotLock( false );
     mEnabledCheckBox->setChecked(false);
+    mPlasmaCheckBox->setChecked(false);
 
     updateValues();
 
@@ -451,6 +469,7 @@ void KScreenSaver::save()
     config.writeEntry("Timeout", mTimeout);
     config.writeEntry("LockGrace", mLockTimeout);
     config.writeEntry("Lock", mLock);
+    config.writeEntry("PlasmaEnabled", mPlasmaEnabled);
 
     if ( !mSaver.isEmpty() )
         config.writeEntry("Saver", mSaver);
@@ -611,6 +630,18 @@ void KScreenSaver::slotEnable(bool e)
     mLockCheckBox->setEnabled( e );
     mLockLbl->setEnabled( e && mLock );
     mWaitLockEdit->setEnabled( e && mLock );
+    mChanged = true;
+    emit changed(true);
+}
+
+void KScreenSaver::slotEnablePlasma(bool enable)
+{
+    //FIXME temporary warning, kill it asap
+    if (enable && KMessageBox::warningContinueCancel(this, "Security not yet implemented. Use at your own risk.") != KMessageBox::Continue) {
+        mPlasmaCheckBox->setChecked(false);
+        return;
+    }
+    mPlasmaEnabled = enable;
     mChanged = true;
     emit changed(true);
 }

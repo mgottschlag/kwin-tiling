@@ -155,6 +155,7 @@ private:
     KProcess    mPlasmaProc;
     QDBusInterface *mPlasmaDBus;
     WId         mPlasmaView;
+    bool        mPlasmaEnabled;
     QString     mSaverExec;
     QString     mSaver;
     bool        mOpenGLVisual;

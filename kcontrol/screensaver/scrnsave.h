@@ -63,6 +63,7 @@ protected Q_SLOTS:
     // new preview
     void slotPreviewExited(K3Process *);
     void findSavers();
+    void slotEnablePlasma(bool enable);
 
 protected:
     void writeSettings();
@@ -87,6 +88,7 @@ protected:
     QCheckBox   *mLockCheckBox;
     QCheckBox   *mStarsCheckBox;
     QCheckBox   *mEnabledCheckBox;
+    QCheckBox   *mPlasmaCheckBox;
     QLabel      *mMonitorLabel;
     QLabel      *mActivateLbl;
     QLabel      *mLockLbl;
@@ -109,6 +111,7 @@ protected:
     bool        mEnabled;
     QString     mSaver;
     bool        mImmutable;
+    bool        mPlasmaEnabled;
 };
 
 #endif

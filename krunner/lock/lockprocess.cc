@@ -382,6 +382,8 @@ void LockProcess::configure()
 
     readSaver();
 
+    mPlasmaEnabled = KScreenSaverSettings::plasmaEnabled();
+
     mPlugins = KScreenSaverSettings::pluginsUnlock();
     if (mPlugins.isEmpty()) {
         mPlugins << "classic" << "generic";
@@ -894,6 +896,9 @@ void LockProcess::hackExited()
 
 bool LockProcess::startPlasma()
 {
+    if (!mPlasmaEnabled) {
+        return false;
+    }
     kDebug() << "starting plasma-overlay";
     if (!mPlasmaDBus) {
         //try to get it, in case it's already running somehow
@@ -930,7 +935,7 @@ void LockProcess::stopPlasma()
 
 void LockProcess::newService(QString name)
 {
-    kDebug() << name;
+    //kDebug() << name;
     if (mPlasmaDBus) {
         kDebug() << "can't happen"; //but it does.
         return;
@@ -948,13 +953,14 @@ void LockProcess::newService(QString name)
             QDBusConnection::sessionBus(), this);
     if (!mPlasmaDBus->isValid()) {
         kDebug() << "wtf! not valid!?"; //we're screwed now.
+        //FIXME delete it anyways?
         return;
     }
 
     connect(mPlasmaDBus, SIGNAL(hidden()), SLOT(unSuppressUnlock()));
     //TODO can we conect to this only when we don't have an ID?
     connect(mPlasmaDBus, SIGNAL(viewCreated(uint)), SLOT(setPlasmaView(uint)));
-    kDebug() << "should be connected";
+    //kDebug() << "should be connected";
     //however, we may have connnected too *late*, so now we have to see if we can grab the winid
     //ourselves
     mPlasmaDBus->callWithCallback("viewWinId", QList<QVariant>(), this,
@@ -1045,10 +1051,12 @@ bool LockProcess::checkPass()
     PasswordDlg passDlg( this, &greetPlugin);
     int ret = execDialog( &passDlg );
 
-    if (ret == QDialog::Rejected) {
-        mSuppressUnlock.start(SUPPRESS_TIMEOUT);
-    } else if (0 && ret == TIMEOUT_CODE) { //FIXME if optio enabled
-        hidePlasma();
+    if (mPlasmaEnabled) {
+        if (ret == QDialog::Rejected) {
+            mSuppressUnlock.start(SUPPRESS_TIMEOUT);
+        } else if (0 && ret == TIMEOUT_CODE) { //FIXME if optio enabled
+            hidePlasma();
+        }
     }
 
     XWindowAttributes rootAttr;
