@@ -136,24 +136,18 @@ void Clock::dataUpdated(const QString& source, const Plasma::DataEngine::Data &d
     update();
 }
 
-void Clock::createConfigurationInterface(KConfigDialog *parent)
+void Clock::createClockConfigurationInterface(KConfigDialog *parent)
 {
     //TODO: Make the size settable
     QWidget *widget = new QWidget();
     ui.setupUi(widget);
-    parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
-    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
     parent->addPage(widget, parent->windowTitle(), icon());
 
-    ui.localTimeZone->setChecked(isLocalTimezone());
-    ui.timeZones->setSelected(currentTimezone(), true);
-    ui.timeZones->setEnabled(!isLocalTimezone());
     ui.showTimeStringCheckBox->setChecked(m_showTimeString);
     ui.showSecondHandCheckBox->setChecked(m_showSecondHand);
 }
 
-void Clock::configAccepted()
+void Clock::clockConfigAccepted()
 {
     KConfigGroup cg = config();
     m_showTimeString = ui.showTimeStringCheckBox->isChecked();
@@ -162,19 +156,9 @@ void Clock::configAccepted()
     cg.writeEntry("showTimeString", m_showTimeString);
     cg.writeEntry("showSecondHand", m_showSecondHand);
     update();
-    QStringList tzs = ui.timeZones->selection();
-
-    dataEngine("time")->disconnectSource(currentTimezone(), this);
-    QString newTimezone = localTimezone();
-    if (!ui.localTimeZone->isChecked() && !tzs.isEmpty()) {
-        //TODO: support multiple timezones
-        newTimezone = tzs.at(0);
-    }
-
-    setCurrentTimezone(newTimezone);
-    cg.writeEntry("timezone", currentTimezone());
 
     connectToEngine();
+
     //TODO: why we don't call updateConstraints()?
     constraintsEvent(Plasma::AllConstraints);
     emit configNeedsSaving();

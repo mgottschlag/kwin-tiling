@@ -32,6 +32,7 @@
 
 #include <KColorScheme>
 #include <KConfigDialog>
+#include <KConfigGroup>
 #include <KDatePicker>
 #include <KDebug>
 #include <KDialog>
@@ -40,6 +41,8 @@
 #include <plasma/dataengine.h>
 #include <plasma/dialog.h>
 #include <plasma/theme.h>
+
+#include <plasma/dataengine.h>
 
 #include "ui_timezonesConfig.h"
 
@@ -56,6 +59,7 @@ public:
     Plasma::Dialog *calendar;
     QString timezone;
     QPoint clicked;
+    QStringList m_timeZones;
 };
 
 ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
@@ -83,25 +87,64 @@ void ClockApplet::updateToolTipContent() {
 
 void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
 {
+    createClockConfigurationInterface(parent);
+
     QWidget *widget = new QWidget();
     d->ui.setupUi(widget);
 
-    parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
-    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-
-    parent->addPage(widget, parent->windowTitle(), icon());
+    parent->addPage(widget, i18n("Time Zones"), icon());
 
     d->ui.localTimeZone->setChecked(isLocalTimezone());
     d->ui.timeZones->setSelected(currentTimezone(), true);
     d->ui.timeZones->setEnabled(!isLocalTimezone());
 
-    createClockConfigurationInterface(parent);
+    parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+
+#if 0
+#ifdef CLOCK_APPLET_CONF
+    ui.localTimeZone->setChecked(isLocalTimezone());
+    ui.timeZones->setEnabled(!isLocalTimezone());
+    foreach (const QString &str, m_timeZones) {
+        ui.timeZones->setSelected(str, true);
+    }
+#endif
+#endif
 }
 
 void ClockApplet::createClockConfigurationInterface(KConfigDialog *parent)
 {
 
+}
+
+void ClockApplet::clockConfigAccepted()
+{
+
+}
+
+void ClockApplet::configAccepted()
+{
+    KConfigGroup cg = config();
+
+    d->m_timeZones = d->ui.timeZones->selection();
+    cg.writeEntry("timeZones", d->m_timeZones);
+
+    dataEngine("time")->disconnectSource(currentTimezone(), this);
+    QString newTimezone = localTimezone();
+
+    if (!d->ui.localTimeZone->isChecked() && !d->m_timeZones.isEmpty()) {
+        newTimezone = d->m_timeZones.at(0);
+    }
+
+    setCurrentTimezone(newTimezone);
+    cg.writeEntry("currentTimezone", newTimezone);
+
+    clockConfigAccepted();
+
+    constraintsEvent(Plasma::SizeConstraint);
+    update();
+    emit configNeedsSaving();
 }
 
 void ClockApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)

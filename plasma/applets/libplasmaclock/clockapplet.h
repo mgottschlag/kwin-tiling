@@ -56,10 +56,12 @@ class PLASMA_EXPORT ClockApplet : public Plasma::Applet
         void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
         void createConfigurationInterface(KConfigDialog *parent);
         virtual void createClockConfigurationInterface(KConfigDialog *parent);
+        virtual void clockConfigAccepted();
 
     protected Q_SLOTS:
         void setCurrentTimezone(const QString &tz);
         void showCalendar(QGraphicsSceneMouseEvent *event);
+        void configAccepted();
 
     private:
         void updateToolTipContent();

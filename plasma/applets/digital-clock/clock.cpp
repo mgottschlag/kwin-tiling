@@ -150,15 +150,13 @@ void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &d
     }
 }
 
-void Clock::createConfigurationInterface(KConfigDialog *parent)
+void Clock::createClockConfigurationInterface(KConfigDialog *parent)
 {
     //TODO: Make the size settable
     QWidget *widget = new QWidget();
     ui.setupUi(widget);
     parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
     parent->addPage(widget, parent->windowTitle(), icon());
-    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
     ui.showDate->setChecked(m_showDate);
     ui.showYear->setChecked(m_showYear);
@@ -170,14 +168,9 @@ void Clock::createConfigurationInterface(KConfigDialog *parent)
     ui.plainClockFont->setCurrentFont(m_plainClockFont);
     ui.useCustomColor->setChecked(m_useCustomColor);
     ui.plainClockColor->setColor(m_plainClockColor);
-    ui.localTimeZone->setChecked(isLocalTimezone());
-    ui.timeZones->setEnabled(!isLocalTimezone());
-    foreach (const QString &str, m_timeZones) {
-        ui.timeZones->setSelected(str, true);
-    }
 }
 
-void Clock::configAccepted()
+void Clock::clockConfigAccepted()
 {
     KConfigGroup cg = config();
 
@@ -192,19 +185,7 @@ void Clock::configAccepted()
         cg.writeEntry("showSeconds", m_showSeconds);
     }
 
-    m_timeZones = ui.timeZones->selection();
-    cg.writeEntry("timeZones", m_timeZones);
-
-    dataEngine("time")->disconnectSource(currentTimezone(), this);
-    QString newTimezone = localTimezone();
-
-    if (!ui.localTimeZone->isChecked() && !m_timeZones.isEmpty()) {
-        newTimezone = m_timeZones.at(0);
-    }
-
-    setCurrentTimezone(newTimezone);
-    dataEngine("time")->connectSource(newTimezone, this, updateInterval(), intervalAlignment());
-    cg.writeEntry("currentTimezone", newTimezone);
+    dataEngine("time")->connectSource(currentTimezone(), this, updateInterval(), intervalAlignment());
 
     m_showDate = ui.showDate->checkState() == Qt::Checked;
     cg.writeEntry("showDate", m_showDate);

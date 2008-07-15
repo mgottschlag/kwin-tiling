@@ -48,11 +48,11 @@ class Clock : public ClockApplet
         void updateColors();
 
     protected slots:
-        void configAccepted();
+        void clockConfigAccepted();
         void constraintsEvent(Plasma::Constraints constraints);
 
     protected:
-        void createConfigurationInterface(KConfigDialog *parent);
+        void createClockConfigurationInterface(KConfigDialog *parent);
 
     private:
         void updateToolTipContent();
