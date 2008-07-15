@@ -158,7 +158,7 @@ void Clock::createClockConfigurationInterface(KConfigDialog *parent)
     QWidget *widget = new QWidget();
     ui.setupUi(widget);
     parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
-    parent->addPage(widget, parent->windowTitle(), icon());
+    parent->addPage(widget, i18n("General"), icon());
 
     ui.showDate->setChecked(m_showDate);
     ui.showYear->setChecked(m_showYear);

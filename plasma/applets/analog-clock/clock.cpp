@@ -141,7 +141,7 @@ void Clock::createClockConfigurationInterface(KConfigDialog *parent)
     //TODO: Make the size settable
     QWidget *widget = new QWidget();
     ui.setupUi(widget);
-    parent->addPage(widget, parent->windowTitle(), icon());
+    parent->addPage(widget, i18n("General"), icon());
 
     ui.showTimeStringCheckBox->setChecked(m_showTimeString);
     ui.showSecondHandCheckBox->setChecked(m_showSecondHand);
