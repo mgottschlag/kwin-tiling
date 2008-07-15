@@ -1,109 +1,116 @@
 <ui version="4.0" >
  <class>clockConfig</class>
  <widget class="QWidget" name="clockConfig" >
-      <attribute name="title" >
-       <string>Appearance</string>
-      </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="QLabel" name="plainClockFontLabel" >
-         <property name="text" >
-          <string>Plain clock font:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="KFontComboBox" name="plainClockFont" />
-       </item>
-       <item row="1" column="1" >
-        <widget class="QCheckBox" name="plainClockFontBold" >
-         <property name="text" >
-          <string>&amp;Bold</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" >
-        <widget class="QCheckBox" name="plainClockFontItalic" >
-         <property name="text" >
-          <string>&amp;Italic</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" >
-        <widget class="QCheckBox" name="useCustomColor" >
-         <property name="text" >
-          <string>Custom color</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1" >
-        <widget class="KColorCombo" name="plainClockColor" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="2" >
-        <widget class="QCheckBox" name="showDate" >
-         <property name="text" >
-          <string>Show &amp;date</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1" >
-        <widget class="QCheckBox" name="showDay" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
-         <property name="text" >
-          <string>Show day of the &amp;week</string>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1" >
-        <widget class="QCheckBox" name="showYear" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
-         <property name="text" >
-          <string>Show &amp;year</string>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0" colspan="2" >
-        <widget class="QCheckBox" name="showTimezone" >
-         <property name="text" >
-          <string>Show &amp;timezone</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0" >
-        <widget class="QCheckBox" name="secondsCheckbox" >
-         <property name="toolTip" >
-          <string>Show the seconds</string>
-         </property>
-         <property name="whatsThis" >
-          <string>Check this if you want to show the seconds.</string>
-         </property>
-         <property name="text" >
-          <string>Show &amp;seconds</string>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>0</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>438</width>
+    <height>338</height>
+   </rect>
+  </property>
+  <layout class="QGridLayout" name="gridLayout" >
+   <item row="0" column="0" colspan="2" >
+    <widget class="QGroupBox" name="groupBox" >
+     <property name="title" >
+      <string>Font</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout" >
+      <item>
+       <widget class="KFontComboBox" name="plainClockFont" />
+      </item>
+      <item>
+       <widget class="QCheckBox" name="plainClockFontBold" >
+        <property name="text" >
+         <string>&amp;Bold</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="plainClockFontItalic" >
+        <property name="text" >
+         <string>&amp;Italic</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0" >
+    <widget class="QCheckBox" name="useCustomColor" >
+     <property name="text" >
+      <string>Custom color</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="KColorCombo" name="plainClockColor" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2" >
+    <widget class="QCheckBox" name="showDate" >
+     <property name="text" >
+      <string>Show &amp;date</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QCheckBox" name="showDay" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+     <property name="text" >
+      <string>Show day of the &amp;week</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" >
+    <widget class="QCheckBox" name="showYear" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+     <property name="text" >
+      <string>Show &amp;year</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="2" >
+    <widget class="QCheckBox" name="showTimezone" >
+     <property name="text" >
+      <string>Show &amp;timezone</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2" >
+    <widget class="QCheckBox" name="secondsCheckbox" >
+     <property name="toolTip" >
+      <string>Show the seconds</string>
+     </property>
+     <property name="whatsThis" >
+      <string>Check this if you want to show the seconds.</string>
+     </property>
+     <property name="text" >
+      <string>Show &amp;seconds</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
  </widget>
  <customwidgets>
   <customwidget>
@@ -119,6 +126,16 @@
    <signal>toggled(bool)</signal>
    <receiver>plainClockColor</receiver>
    <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
   </connection>
   <connection>
    <sender>showDate</sender>
