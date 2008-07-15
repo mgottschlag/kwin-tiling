@@ -115,10 +115,12 @@ void Clock::updateSize() {
         } else {
             setMinimumWidth((int)(contentsRect().height() * aspect));
         }
+        setMinimumHeight(0);
         //kDebug() << "DR" << m_dateRect.width() << "CR" << contentsRect().height() * aspect;
     } else if (formFactor() == Plasma::Vertical) {
         // We have a fixed width, set some sensible height
         setMinimumHeight((int)contentsRect().width() / aspect);
+        setMinimumWidth(0);
     }
 }
 
