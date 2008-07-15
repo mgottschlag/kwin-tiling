@@ -524,8 +524,16 @@ void PanelView::togglePanelController()
                 PanelAppletOverlay *moveOverlay = new PanelAppletOverlay(applet, this);
                 moveOverlay->setPalette(p);
                 moveOverlay->show();
+                moveOverlay->raise();
                 m_moveOverlays << moveOverlay;
                 //kDebug() << moveOverlay << moveOverlay->geometry();
+            }
+
+            setTabOrder(0, m_panelController);
+            QWidget *prior = m_panelController;
+            foreach (PanelAppletOverlay *w, m_moveOverlays) {
+                setTabOrder(prior, w);
+                prior = w;
             }
         }
     }
