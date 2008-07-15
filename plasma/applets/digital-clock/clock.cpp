@@ -63,6 +63,10 @@ Clock::Clock(QObject *parent, const QVariantList &args)
     resize(150, 75);
 }
 
+Clock::~Clock()
+{
+}
+
 void Clock::init()
 {
     KConfigGroup cg = config();
@@ -185,9 +189,10 @@ void Clock::clockConfigAccepted()
     if (m_showSeconds != ui.secondsCheckbox->isChecked()) {
         m_showSeconds = !m_showSeconds;
         cg.writeEntry("showSeconds", m_showSeconds);
-    }
 
-    dataEngine("time")->connectSource(currentTimezone(), this, updateInterval(), intervalAlignment());
+        dataEngine("time")->disconnectSource(currentTimezone(), this);
+        dataEngine("time")->connectSource(currentTimezone(), this, updateInterval(), intervalAlignment());
+    }
 
     m_showDate = ui.showDate->checkState() == Qt::Checked;
     cg.writeEntry("showDate", m_showDate);
@@ -217,8 +222,10 @@ void Clock::clockConfigAccepted()
     emit configNeedsSaving();
 }
 
-Clock::~Clock()
+void Clock::changeEngineTimezone(QString oldTimezone, QString newTimezone)
 {
+    dataEngine("time")->disconnectSource(oldTimezone, this);
+    dataEngine("time")->connectSource(newTimezone, this, updateInterval(), intervalAlignment());
 }
 
 void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)

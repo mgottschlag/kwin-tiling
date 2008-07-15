@@ -57,6 +57,7 @@ class PLASMA_EXPORT ClockApplet : public Plasma::Applet
         void createConfigurationInterface(KConfigDialog *parent);
         virtual void createClockConfigurationInterface(KConfigDialog *parent);
         virtual void clockConfigAccepted();
+        virtual void changeEngineTimezone(QString oldTimezone, QString newTimezone);
 
     protected Q_SLOTS:
         void setCurrentTimezone(const QString &tz);

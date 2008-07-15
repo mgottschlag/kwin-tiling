@@ -157,11 +157,23 @@ void Clock::clockConfigAccepted()
     cg.writeEntry("showSecondHand", m_showSecondHand);
     update();
 
+    dataEngine("time")->disconnectSource(currentTimezone(), this);
     connectToEngine();
 
     //TODO: why we don't call updateConstraints()?
     constraintsEvent(Plasma::AllConstraints);
     emit configNeedsSaving();
+}
+
+void Clock::changeEngineTimezone(QString oldTimezone, QString newTimezone)
+{
+    dataEngine("time")->disconnectSource(oldTimezone, this);
+    Plasma::DataEngine* timeEngine = dataEngine("time");
+    if (m_showSecondHand) {
+        timeEngine->connectSource(newTimezone, this, 500);
+    } else {
+        timeEngine->connectSource(newTimezone, this, 6000, Plasma::AlignToMinute);
+    }
 }
 
 void Clock::moveSecondHand()

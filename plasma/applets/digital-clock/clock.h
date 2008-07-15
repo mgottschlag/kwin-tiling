@@ -53,6 +53,7 @@ class Clock : public ClockApplet
 
     protected:
         void createClockConfigurationInterface(KConfigDialog *parent);
+        void changeEngineTimezone(QString oldTimezone, QString newTimezone);
 
     private:
         void updateToolTipContent();

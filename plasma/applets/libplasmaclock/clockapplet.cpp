@@ -42,8 +42,6 @@
 #include <plasma/dialog.h>
 #include <plasma/theme.h>
 
-#include <plasma/dataengine.h>
-
 #include "ui_timezonesConfig.h"
 
 class ClockApplet::Private
@@ -130,12 +128,13 @@ void ClockApplet::configAccepted()
     d->m_timeZones = d->ui.timeZones->selection();
     cg.writeEntry("timeZones", d->m_timeZones);
 
-    dataEngine("time")->disconnectSource(currentTimezone(), this);
     QString newTimezone = localTimezone();
 
     if (!d->ui.localTimeZone->isChecked() && !d->m_timeZones.isEmpty()) {
         newTimezone = d->m_timeZones.at(0);
     }
+
+    changeEngineTimezone(currentTimezone(), newTimezone);
 
     setCurrentTimezone(newTimezone);
     cg.writeEntry("currentTimezone", newTimezone);
@@ -145,6 +144,12 @@ void ClockApplet::configAccepted()
     constraintsEvent(Plasma::SizeConstraint);
     update();
     emit configNeedsSaving();
+}
+
+void ClockApplet::changeEngineTimezone(QString oldTimezone, QString newTimezone)
+{
+    Q_UNUSED(oldTimezone);
+    Q_UNUSED(newTimezone);
 }
 
 void ClockApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)
