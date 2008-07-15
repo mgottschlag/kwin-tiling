@@ -13,7 +13,7 @@
    <item>
     <widget class="QCheckBox" name="localTimeZone" >
      <property name="text" >
-      <string>Use &amp;local timezone</string>
+      <string>Use &amp;local time zone</string>
      </property>
     </widget>
    </item>
