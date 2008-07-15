@@ -36,10 +36,15 @@
 static const char description[] = I18N_NOOP("Install, list, remove Plasma packages");
 static const char version[] = "0.1";
 
+void output(const QString &msg)
+{
+    std::cout << msg.toLocal8Bit().constData() << std::endl;
+}
+
 void listPackages()
 {
     //TODO: implement
-    kDebug() << "My apologies, listing is not yet implemented.";
+    output(i18n("Listing is not yet implemented."));
 }
 
 int main(int argc, char **argv)
@@ -110,7 +115,8 @@ int main(int argc, char **argv)
             QString constraint = QString("'%1' == [X-KDE-PluginInfo-Name]").arg(packageRoot);
             KService::List offers = KServiceTypeTrader::self()->query("Plasma/PackageStructure", constraint);
             if (offers.isEmpty()) {
-                kFatal() << i18n("Could not find a suitable installer for package of type %1",type);
+                output(i18n("Could not find a suitable installer for package of type %1", type));
+                return 1;
             }
 
             KService::Ptr offer = offers.first();
@@ -118,8 +124,9 @@ int main(int argc, char **argv)
             installer = offer->createInstance<Plasma::PackageStructure>(0, QVariantList(), &error);
 
             if (!installer) {
-                kFatal() << i18n("Could not load installer for package of type %1. Error reported was: %2",
-                                 type, error);
+                output(i18n("Could not load installer for package of type %1. Error reported was: %2",
+                            type, error));
+                return 1;
             }
 
             packageRoot = "plasma/plasmoids";
@@ -140,16 +147,18 @@ int main(int argc, char **argv)
             }
 
             if (installer->installPackage(package, packageRoot)) {
-                kDebug() << "Successfully installed " << package;
+                QString msg = i18n("Successfully installed %1", package);
             } else {
-                kFatal() << "Installation of " << package << " failed!";
+                output(i18n("Installation of %1 failed.", package));
+                return 1;
             }
         } else if (args->isSet("remove")) {
             QString package = args->getOption("remove");
             if (installer->uninstallPackage(package, packageRoot)) {
-                kDebug() << "Successfully removed " << package;
+                output(i18n("Successfully removed %1", package));
             } else {
-                kFatal() << "Removal of " << package << " failed!";
+                output(i18n("Removal of %1 failed.", package));
+                return 1;
             }
         } else {
             KCmdLineArgs::usageError(i18n("One of install, remove or list is required."));
