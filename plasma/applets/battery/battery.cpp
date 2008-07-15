@@ -110,10 +110,10 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint | Plasma::SizeConstraint) {
         if (formFactor() == Plasma::Vertical) {
-            setMaximumHeight(qMax(m_textRect.height(), contentsRect().width()));
+            setMaximumSize(QWIDGETSIZE_MAX, qMax(m_textRect.height(), contentsRect().width()));
             //kDebug() << "Vertical FormFactor";
         } else if (formFactor() == Plasma::Horizontal) {
-            setMaximumWidth(qMax(m_textRect.width(), contentsRect().height()));
+            setMaximumSize(qMax(m_textRect.width(), contentsRect().height()), QWIDGETSIZE_MAX);
             //kDebug() << "Horizontal FormFactor" << m_textRect.width() << contentsRect().height();
         }
     }
@@ -124,7 +124,6 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
                                  qRound(contentsRect().height() / 10)));
     }
 }
-
 
 void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
