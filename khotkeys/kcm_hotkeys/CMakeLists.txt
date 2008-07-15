@@ -47,8 +47,9 @@ kde4_add_plugin(
 target_link_libraries(
     kcm_hotkeys
     khotkeysprivate
-    ${KDE4_KDEUI_LIBS}
+    ${KDE4_KIO_LIBS}
     ${QT_QTGUI_LIBRARY}
+    ${QT_QT3SUPPORT_LIBRARY}
     )
 
 install(

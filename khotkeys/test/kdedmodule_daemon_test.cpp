@@ -71,5 +71,5 @@ void Test::testLoading()
     QVERIFY(KHotKeys::KdedModuleDaemon::stop());
     }
 
-QTEST_MAIN(Test);
+QTEST_MAIN(Test)
 #include "moc_kdedmodule_daemon_test.cpp"
