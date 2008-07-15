@@ -57,11 +57,11 @@ namespace kephal {
             void sizeChanged(SimpleScreen * screen, QSize oldSize, QSize newSize);
             
         private:
-            int _id;
-            QSize _size;
-            QPoint _position;
-            bool _privacy;
-            bool _primary;
+            int m_id;
+            QSize m_size;
+            QPoint m_position;
+            bool m_privacy;
+            bool m_primary;
     };
     
 }

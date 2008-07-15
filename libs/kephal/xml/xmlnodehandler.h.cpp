@@ -23,13 +23,13 @@ namespace kephal {
     
     template <class ElementType, typename SimpleType>
     XMLSimpleNodeHandler<ElementType, SimpleType>::XMLSimpleNodeHandler(Getter getter, Setter setter) {
-        _setter = setter;
-        _getter = getter;
+        m_setter = setter;
+        m_getter = getter;
     }
     
     template <class ElementType, typename SimpleType>
     void XMLSimpleNodeHandler<ElementType, SimpleType>::beginSave(XMLType * element) {
-        _saved = false;
+        m_saved = false;
     }
     
     template <class ElementType, typename SimpleType>
@@ -38,28 +38,28 @@ namespace kephal {
     
     template <class ElementType, typename SimpleType>
     bool XMLSimpleNodeHandler<ElementType, SimpleType>::hasMore(XMLType * element) {
-        return ! _saved;
+        return ! m_saved;
     }
     
     template <class ElementType, typename SimpleType>
     void XMLSimpleNodeHandler<ElementType, SimpleType>::setNode(XMLType * element, QDomNode node) {
         QDomNode child = node.firstChild();
         if (! child.isNull()) {
-            ((ElementType *)element->*_setter)(toValue(child.nodeValue()));
+            ((ElementType *)element->*m_setter)(toValue(child.nodeValue()));
         }
     }
     
     template <class ElementType, typename SimpleType>
     QDomNode XMLSimpleNodeHandler<ElementType, SimpleType>::node(XMLType * element, QDomDocument doc, QString name) {
-        _saved = true;
+        m_saved = true;
         QDomNode node = doc.createElement(name);
-        node.appendChild(doc.createTextNode(toString(((ElementType *)element->*_getter)())));
+        node.appendChild(doc.createTextNode(toString(((ElementType *)element->*m_getter)())));
         return node;
     }
     
     template <class ElementType, typename SimpleType>
     QString XMLSimpleNodeHandler<ElementType, SimpleType>::str(XMLType * element) {
-        return toString(((ElementType *)element->*_getter)());
+        return toString(((ElementType *)element->*m_getter)());
     }
     
     
@@ -114,13 +114,13 @@ namespace kephal {
     
     template <class ElementType, class ComplexType>
     XMLComplexNodeHandler<ElementType, ComplexType>::XMLComplexNodeHandler(XMLFactory * factory, Setter setter) {
-        _factory = factory;
-        _setter = setter;
+        m_factory = factory;
+        m_setter = setter;
     }
     
     template <class ElementType, typename ComplexType>
     void XMLComplexNodeHandler<ElementType, ComplexType>::beginSave(XMLType * element) {
-        _saved = false;
+        m_saved = false;
     }
     
     template <class ElementType, typename ComplexType>
@@ -129,18 +129,18 @@ namespace kephal {
     
     template <class ElementType, typename ComplexType>
     bool XMLComplexNodeHandler<ElementType, ComplexType>::hasMore(XMLType * element) {
-        return ! _saved;
+        return ! m_saved;
     }
     
     template <class ElementType, typename ComplexType>
     void XMLComplexNodeHandler<ElementType, ComplexType>::setNode(XMLType * element, QDomNode node) {
-        ComplexType * complex = (ComplexType *) _factory->load(node);
-        ((ElementType *)element->*_setter)(complex);
+        ComplexType * complex = (ComplexType *) m_factory->load(node);
+        ((ElementType *)element->*m_setter)(complex);
     }
     
     template <class ElementType, typename ComplexType>
     QDomNode XMLComplexNodeHandler<ElementType, ComplexType>::node(XMLType * element, QDomDocument doc, QString name) {
-        _saved = true;
+        m_saved = true;
         QDomNode node;
         return node;
     }
@@ -154,36 +154,36 @@ namespace kephal {
     
     template <class ElementType, class ComplexType>
     XMLComplexListNodeHandler<ElementType, ComplexType>::XMLComplexListNodeHandler(XMLFactory * factory, ListGetter listGetter) {
-        _factory = factory;
-        _listGetter = listGetter;
+        m_factory = factory;
+        m_listGetter = listGetter;
     }
     
     template <class ElementType, typename ComplexType>
     bool XMLComplexListNodeHandler<ElementType, ComplexType>::hasMore(XMLType * element) {
-        return _pos < ((ElementType *)element->*_listGetter)()->size();
+        return m_pos < ((ElementType *)element->*m_listGetter)()->size();
     }
     
     template <class ElementType, typename ComplexType>
     void XMLComplexListNodeHandler<ElementType, ComplexType>::setNode(XMLType * element, QDomNode node) {
-        ComplexType * complex = (ComplexType *) _factory->load(node);
-        ((ElementType *)element->*_listGetter)()->append(complex);
+        ComplexType * complex = (ComplexType *) m_factory->load(node);
+        ((ElementType *)element->*m_listGetter)()->append(complex);
     }
     
     template <class ElementType, typename ComplexType>
     QDomNode XMLComplexListNodeHandler<ElementType, ComplexType>::node(XMLType * element, QDomDocument doc, QString name) {
-        ComplexType * complex = ((ElementType *)element->*_listGetter)()->at(_pos);
-        ++_pos;
-        return _factory->save(complex, doc, name);
+        ComplexType * complex = ((ElementType *)element->*m_listGetter)()->at(m_pos);
+        ++m_pos;
+        return m_factory->save(complex, doc, name);
     }
     
     template <class ElementType, typename ComplexType>
     void XMLComplexListNodeHandler<ElementType, ComplexType>::beginSave(XMLType * element) {
-        _pos = 0;
+        m_pos = 0;
     }
     
     template <class ElementType, typename ComplexType>
     void XMLComplexListNodeHandler<ElementType, ComplexType>::beginLoad(XMLType * element) {
-        ((ElementType *)element->*_listGetter)()->clear();
+        ((ElementType *)element->*m_listGetter)()->clear();
     }
     
     template <class ElementType, typename ComplexType>

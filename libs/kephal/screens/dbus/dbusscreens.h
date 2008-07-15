@@ -37,9 +37,9 @@ namespace kephal {
             virtual QList<Screen *> screens();
             
         private:
-            QList<SimpleScreen *> _screens;
-            SimpleScreen * _primaryScreen;
-            org::kde::Kephal::Screens * _interface;
+            QList<SimpleScreen *> m_screens;
+            SimpleScreen * m_primaryScreen;
+            org::kde::Kephal::Screens * m_interface;
     };
     
 }

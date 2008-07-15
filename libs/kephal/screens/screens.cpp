@@ -29,20 +29,20 @@ namespace kephal {
 
     Screens * Screens::instance() {
 #ifdef SCREENS_FACTORY
-        if (Screens::_instance == 0) {
+        if (Screens::m_instance == 0) {
             SCREENS_FACTORY();
         }
 #endif
-        return Screens::_instance;
+        return Screens::m_instance;
     }
     
     Screens::Screens(QObject * parent)
             : QObject(parent)
     {
-        Screens::_instance = this;
+        Screens::m_instance = this;
     }
     
-    Screens * Screens::_instance = 0;
+    Screens * Screens::m_instance = 0;
     
 }
 

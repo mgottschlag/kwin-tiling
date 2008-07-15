@@ -30,17 +30,17 @@ namespace kephal {
     DBusScreens::DBusScreens(QObject * parent)
             : Screens(parent)
     {
-        _interface = new org::kde::Kephal::Screens(
+        m_interface = new org::kde::Kephal::Screens(
             "org.kde.Kephal",
             "/Screens",
             QDBusConnection::sessionBus(),
             this);
             
-        int numScreens = _interface->numScreens();
-        int primary = _interface->primaryScreen();
+        int numScreens = m_interface->numScreens();
+        int primary = m_interface->primaryScreen();
         for (int i = 0; i < numScreens; ++i) {
-            QPoint pos = _interface->position(i);
-            QSize size = _interface->size(i);
+            QPoint pos = m_interface->position(i);
+            QSize size = m_interface->size(i);
             qDebug() << "adding a screen" << i << "with geom: " << pos << size;
             
             SimpleScreen * screen = new SimpleScreen(i,
@@ -48,22 +48,22 @@ namespace kephal {
                     pos,
                     false,
                     i == primary);
-            _screens.append(screen);
+            m_screens.append(screen);
         }
-        _primaryScreen = _screens.at(primary);
+        m_primaryScreen = m_screens.at(primary);
     }
     
     DBusScreens::~DBusScreens() {
-        foreach(Screen * screen, _screens) {
+        foreach(Screen * screen, m_screens) {
             delete screen;
         }
-        _screens.clear();
+        m_screens.clear();
     }
 
     QList<Screen *> DBusScreens::screens()
     {
         QList<Screen *> result;
-        foreach(SimpleScreen * screen, _screens) {
+        foreach(SimpleScreen * screen, m_screens) {
             result.append(screen);
         }
         return result;

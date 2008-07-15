@@ -54,10 +54,10 @@ namespace kephal {
             virtual void schema() = 0;
             
         private:
-            QMap<QString, XMLNodeHandler *> _elements;
-            QMap<QString, XMLNodeHandler *> _attributes;
+            QMap<QString, XMLNodeHandler *> m_elements;
+            QMap<QString, XMLNodeHandler *> m_attributes;
             
-            bool _schema;
+            bool m_schema;
     };
     
     class XMLRootFactory : public XMLFactory {
@@ -68,7 +68,7 @@ namespace kephal {
             XMLType * load(QString fileName);
             
         private:
-            QString _name;
+            QString m_name;
     };
     
 }

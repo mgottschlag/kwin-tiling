@@ -43,24 +43,24 @@ namespace kephal {
                     i == 0);
             connect(screen, SIGNAL(selectedAsPrimary(SimpleScreen *)),
                     this, SLOT(selectedAsPrimary(SimpleScreen *)));
-            _screens.append(screen);
+            m_screens.append(screen);
         }
-        _primaryScreen = _screens.at(0);
+        m_primaryScreen = m_screens.at(0);
         
         connect(desktop, SIGNAL(resized(int)), this, SLOT(screenChanged(int)));
     }
     
     DesktopWidgetScreens::~DesktopWidgetScreens() {
-        foreach(Screen * screen, _screens) {
+        foreach(Screen * screen, m_screens) {
             delete screen;
         }
-        _screens.clear();
+        m_screens.clear();
     }
 
     QList<Screen *> DesktopWidgetScreens::screens()
     {
         QList<Screen *> result;
-        foreach(SimpleScreen * screen, _screens) {
+        foreach(SimpleScreen * screen, m_screens) {
             result.append(screen);
         }
         return result;
@@ -69,15 +69,15 @@ namespace kephal {
     void DesktopWidgetScreens::screenChanged(int screen)
     {
         QDesktopWidget * desktop = QApplication::desktop();
-        for(int i = _screens.size() - 1; i >= desktop->numScreens(); i--) {
+        for(int i = m_screens.size() - 1; i >= desktop->numScreens(); i--) {
             qDebug() << "removing screen" << i;
-            SimpleScreen * screen = _screens.takeLast();
+            SimpleScreen * screen = m_screens.takeLast();
             emit screenRemoved(screen);
             delete screen;
         }
         
-        for(int i = 0; i < _screens.size(); i++) {
-            SimpleScreen * screen = _screens.at(i);
+        for(int i = 0; i < m_screens.size(); i++) {
+            SimpleScreen * screen = m_screens.at(i);
             QRect geom = desktop->screenGeometry(i);
             if (screen->position() != geom.topLeft()) {
                 QPoint oldPos = screen->position();
@@ -97,7 +97,7 @@ namespace kephal {
             }
         }
         
-        for(int i = _screens.size(); i < desktop->numScreens(); i++) {
+        for(int i = m_screens.size(); i < desktop->numScreens(); i++) {
             QRect geom = desktop->screenGeometry(i);
             qDebug() << "adding a screen" << i << "with geom: " << geom;
             
@@ -108,16 +108,16 @@ namespace kephal {
                     false);
             connect(screen, SIGNAL(selectedAsPrimary(SimpleScreen *)),
                     this, SLOT(selectedAsPrimary(SimpleScreen *)));
-            _screens.append(screen);
+            m_screens.append(screen);
         }
     }
     
     void DesktopWidgetScreens::selectedAsPrimary(SimpleScreen * screen) {
-        if (screen == _primaryScreen) {
+        if (screen == m_primaryScreen) {
             return;
         }
-        _primaryScreen->_setPrimary(false);
-        _primaryScreen = screen;
+        m_primaryScreen->_setPrimary(false);
+        m_primaryScreen = screen;
         screen->_setPrimary(true);
     }
 

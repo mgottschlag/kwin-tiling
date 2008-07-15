@@ -37,17 +37,10 @@ namespace kephal {
 
     
     
-    QString ConfigurationXML::name() { return _name; }
-    void ConfigurationXML::setName(QString name) { _name = name; }
-    QList<ScreenXML *> * ConfigurationXML::screens() { return & _screens; }
+    QString ConfigurationXML::name() { return m_name; }
+    void ConfigurationXML::setName(QString name) { m_name = name; }
+    QList<ScreenXML *> * ConfigurationXML::screens() { return & m_screens; }
     
-    /*XMLType * ConfigurationXMLFactory::newInstance() {
-        return new ConfigurationXML();
-    }
-    
-    void ConfigurationXMLFactory::schema() {
-        STRING_ATTRIBUTE("name", ConfigurationXML, setName);
-    }*/
     
     class ConfigurationXMLFactory : public XMLFactory {
         protected:
@@ -60,7 +53,7 @@ namespace kephal {
 
     
     
-    QList<ConfigurationXML *> * ConfigurationsXML::configurations() { return & _configurations; }
+    QList<ConfigurationXML *> * ConfigurationsXML::configurations() { return & m_configurations; }
     
     ConfigurationsXMLFactory::ConfigurationsXMLFactory() : XMLRootFactory("configurations") {
     }

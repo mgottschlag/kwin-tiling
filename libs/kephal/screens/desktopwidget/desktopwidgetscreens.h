@@ -40,8 +40,8 @@ namespace kephal {
             void selectedAsPrimary(SimpleScreen * screen);
             
         private:
-            QList<SimpleScreen *> _screens;
-            SimpleScreen * _primaryScreen;
+            QList<SimpleScreen *> m_screens;
+            SimpleScreen * m_primaryScreen;
     };
     
 }

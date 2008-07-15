@@ -64,9 +64,9 @@ namespace kephal {
             virtual QString toString(SimpleType value) = 0;
             
         private:
-            Getter _getter;
-            Setter _setter;
-            bool _saved;
+            Getter m_getter;
+            Setter m_setter;
+            bool m_saved;
     };
     
     
@@ -127,9 +127,9 @@ namespace kephal {
             virtual QString str(XMLType * element);
         
         private:
-            XMLFactory * _factory;
-            Setter _setter;
-            bool _saved;
+            XMLFactory * m_factory;
+            Setter m_setter;
+            bool m_saved;
     };
     
     
@@ -148,9 +148,9 @@ namespace kephal {
             virtual QString str(XMLType * element);
         
         private:
-            XMLFactory * _factory;
-            ListGetter _listGetter;
-            int _pos;
+            XMLFactory * m_factory;
+            ListGetter m_listGetter;
+            int m_pos;
     };
     
 }

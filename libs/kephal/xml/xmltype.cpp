@@ -28,14 +28,14 @@
 namespace kephal {
 
     XMLFactory::XMLFactory() {
-        _schema = false;
+        m_schema = false;
     }
     
     XMLFactory::~XMLFactory() {
-        foreach (XMLNodeHandler * n, _attributes.values()) {
+        foreach (XMLNodeHandler * n, m_attributes.values()) {
             delete n;
         }
-        foreach (XMLNodeHandler * n, _elements.values()) {
+        foreach (XMLNodeHandler * n, m_elements.values()) {
             delete n;
         }
     }
@@ -62,7 +62,7 @@ namespace kephal {
         file.close();
         
         QDomElement root = dom.documentElement();
-        if (root.nodeName() == _name) {
+        if (root.nodeName() == m_name) {
             return XMLFactory::load(root);
         } else {
             return 0;
@@ -70,9 +70,9 @@ namespace kephal {
     }
     
     XMLType * XMLFactory::load(QDomNode root) {
-        if (! _schema) {
+        if (! m_schema) {
             schema();
-            _schema = true;
+            m_schema = true;
         }
         
         //qDebug() << "root:" << root.isElement() << root.nodeName();
@@ -86,10 +86,10 @@ namespace kephal {
             return 0;
         }
         
-        foreach (XMLNodeHandler * n, _attributes.values()) {
+        foreach (XMLNodeHandler * n, m_attributes.values()) {
             n->beginLoad(result);
         }
-        foreach (XMLNodeHandler * n, _elements.values()) {
+        foreach (XMLNodeHandler * n, m_elements.values()) {
             n->beginLoad(result);
         }
         
@@ -99,9 +99,9 @@ namespace kephal {
             //qDebug() << "attr:" << attr.isElement() << attr.nodeName();
             
             QString name = attr.nodeName();
-            if (_attributes.contains(name)) {
+            if (m_attributes.contains(name)) {
                 //qDebug() << "is known attribute...";
-                XMLNodeHandler * xmlNode = _attributes.value(name);
+                XMLNodeHandler * xmlNode = m_attributes.value(name);
                 xmlNode->setNode(result, attr);
                 //qDebug() << "value has been set!!";
             }
@@ -115,9 +115,9 @@ namespace kephal {
             }
             
             QString name = node.nodeName();
-            if (_elements.contains(name)) {
+            if (m_elements.contains(name)) {
                 //qDebug() << "is known element...";
-                XMLNodeHandler * xmlNode = _elements.value(name);
+                XMLNodeHandler * xmlNode = m_elements.value(name);
                 xmlNode->setNode(result, node);
                 //qDebug() << "value has been set!!";
             }
@@ -132,7 +132,7 @@ namespace kephal {
         QDomDocument doc;
         QDomProcessingInstruction header = doc.createProcessingInstruction("xml", "version=\"1.0\"");
         doc.appendChild(header);
-        QDomNode node = XMLFactory::save(data, doc, _name);
+        QDomNode node = XMLFactory::save(data, doc, m_name);
         if (! node.isNull()) {
             doc.appendChild(node);
         }
@@ -167,20 +167,20 @@ namespace kephal {
     }
     
     QDomNode XMLFactory::save(XMLType * data, QDomDocument doc, QString name) {
-        if (! _schema) {
+        if (! m_schema) {
             schema();
-            _schema = true;
+            m_schema = true;
         }
         
         QDomElement node = doc.createElement(name);
-        for (QMap<QString, XMLNodeHandler *>::const_iterator i = _attributes.constBegin(); i != _attributes.constEnd(); ++i) {
+        for (QMap<QString, XMLNodeHandler *>::const_iterator i = m_attributes.constBegin(); i != m_attributes.constEnd(); ++i) {
             //qDebug() << "save attribute:" << i.key();
             QString value = i.value()->str(data);
             if (! value.isNull()) {
                 node.setAttribute(i.key(), value);
             }
         }
-        for (QMap<QString, XMLNodeHandler *>::const_iterator i = _elements.constBegin(); i != _elements.constEnd(); ++i) {
+        for (QMap<QString, XMLNodeHandler *>::const_iterator i = m_elements.constBegin(); i != m_elements.constEnd(); ++i) {
             //qDebug() << "save element:" << i.key();
             i.value()->beginSave(data);
             while (i.value()->hasMore(data)) {
@@ -195,15 +195,15 @@ namespace kephal {
     }
     
     void XMLFactory::element(QString name, XMLNodeHandler * element) {
-        _elements.insert(name, element);
+        m_elements.insert(name, element);
     }
     
     void XMLFactory::attribute(QString name, XMLNodeHandler * attribute) {
-        _attributes.insert(name, attribute);
+        m_attributes.insert(name, attribute);
     }
     
     XMLRootFactory::XMLRootFactory(QString name) {
-        _name = name;
+        m_name = name;
     }
     
 }

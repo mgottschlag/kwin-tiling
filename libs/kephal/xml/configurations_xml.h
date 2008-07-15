@@ -31,14 +31,14 @@ namespace kephal {
     class ScreenXML : public XMLType {
         Q_OBJECT
         public:
-            int id() { return _id; }
-            void setId(int id) { _id = id; }
-            bool privacy() { return _privacy; }
-            void setPrivacy(bool b) { _privacy = b; }
+            int id() { return m_id; }
+            void setId(int id) { m_id = id; }
+            bool privacy() { return m_privacy; }
+            void setPrivacy(bool b) { m_privacy = b; }
             
         private:
-            int _id;
-            bool _privacy;
+            int m_id;
+            bool m_privacy;
     };
 
     class ConfigurationXML : public XMLType {
@@ -49,8 +49,8 @@ namespace kephal {
             QList<ScreenXML *> * screens();
             
         private:
-            QString _name;
-            QList<ScreenXML *> _screens;
+            QString m_name;
+            QList<ScreenXML *> m_screens;
     };
     
     
@@ -61,7 +61,7 @@ namespace kephal {
             QList<ConfigurationXML *> * configurations();
             
         private:
-            QList<ConfigurationXML *> _configurations;
+            QList<ConfigurationXML *> m_configurations;
     };
     
     class ConfigurationsXMLFactory : public XMLRootFactory {

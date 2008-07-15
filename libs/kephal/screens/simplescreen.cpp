@@ -26,76 +26,61 @@ namespace kephal {
     SimpleScreen::SimpleScreen(int id, QSize size, QPoint position, bool privacy, bool primary)
         : Screen()
     {
-        _id = id;
-        _size = size;
-        _position = position;
-        _privacy = privacy;
-        _primary = primary;
+        m_id = id;
+        m_size = size;
+        m_position = position;
+        m_privacy = privacy;
+        m_primary = primary;
     }
     
     
     int SimpleScreen::id()
     {
-        return _id;
+        return m_id;
     }
 
     QSize SimpleScreen::size() {
-        return _size;
+        return m_size;
     }
     
     void SimpleScreen::setSize(QSize size) {
-        /*QSize old = _resolution;
-        if (old == size) {
-            return;
-        }
-        _resolution = size;*/
-        emit sizeChanged(this, _size, size);
+        emit sizeChanged(this, m_size, size);
     }
     
     QPoint SimpleScreen::position() {
-        return _position;
+        return m_position;
     }
-    //QList<PositionType> getRelativePosition();
 
     bool SimpleScreen::isPrivacyMode()
     {
-        return _privacy;
+        return m_privacy;
     }
     
     void SimpleScreen::setPrivacyMode(bool privacy)
     {
-        /*if (_privacy == privacy) {
-            return;
-        }
-        
-        _privacy = privacy;*/
-        emit privacyModeChanged(this, _privacy);
+        emit privacyModeChanged(this, m_privacy);
     }
     
     bool SimpleScreen::isPrimary()
     {
-        return _primary;
+        return m_primary;
     }
     
     void SimpleScreen::setAsPrimary() {
-        /*if (_primary) {
-            return;
-        }
-        _primary = true;*/
         emit selectedAsPrimary(this);
     }
     
     void SimpleScreen::_setSize(QSize size) {
-        _size = size;
+        m_size = size;
     }
     
     void SimpleScreen::_setPosition(QPoint position)
     {
-        _position = position;
+        m_position = position;
     }
     
     void SimpleScreen::_setPrimary(bool primary) {
-        _primary = primary;
+        m_primary = primary;
     }
     
 }

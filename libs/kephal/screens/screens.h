@@ -46,7 +46,7 @@ namespace kephal {
             void screenMoved(Screen * s, QPoint oldPosition, QPoint newPosition);
             
         protected:
-            static Screens * _instance;
+            static Screens * m_instance;
     };
     
 }
