@@ -17,7 +17,11 @@ Description
 -----------
 ToolTipManger is quite simple to use. First you have to register your widget by calling ToolTipManager::self()->registerWidget. After this you have to set the content of the tooltip by calling setWidgetToolTipContent using the struct ToolTipContent.
 
-Widgets are unregistered automatically upon destruction, but can also be manually unregsitered by calling ToolTipMnager::unregisterWidget. If you use a Plasma::Applet, the show/hide of tooltip is automatically managed but if you use custom QGraphicsWidget, you must call showToolTip on your hoverEnterEvent and hideToolTip on you hoverLeaveEvent.
+Widgets are unregistered automatically upon destruction, but can also be manually unregsitered by calling ToolTipMnager::unregisterWidget.
+
+An event filter is registered on each registered widget and hover events that occur trigger calls to showToolTip and hideToolTip. The hover events are not, however, filtered out. 
+
+Note: If another event filter is placed on registered widget that filters out these events, it may be necessary to manually call showToolTip and hideToolTip.
 
 Future Work
 -----------
