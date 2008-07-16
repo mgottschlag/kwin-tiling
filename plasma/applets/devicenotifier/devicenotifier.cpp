@@ -92,7 +92,7 @@ void DeviceNotifier::init()
     m_solidDeviceEngine = dataEngine("soliddevice");
     m_widget = new Dialog();
     m_widget->setFocusPolicy(Qt::NoFocus);
-    m_widget->setWindowFlags(Qt::X11BypassWindowManagerHint);   
+    m_widget->setWindowFlags(Qt::Popup);   
 
     QVBoxLayout *l_layout = new QVBoxLayout(m_widget);
     l_layout->setSpacing(0);
@@ -152,8 +152,6 @@ void DeviceNotifier::initSysTray()
         return;
     }
 
-    m_widget->setWindowFlags(Qt::X11BypassWindowManagerHint);
-
     //we display the icon corresponding to the computer
     QList<Solid::Device> list = Solid::Device::allDevices();
 
@@ -201,8 +199,6 @@ void DeviceNotifier::constraintsEvent(Plasma::Constraints constraints)
         } else {
             delete m_icon;
             m_icon = 0;
-
-            m_widget->setWindowFlags(Qt::X11BypassWindowManagerHint);
 
             m_proxy = new QGraphicsProxyWidget(this);
             m_proxy->setWidget(m_widget);
