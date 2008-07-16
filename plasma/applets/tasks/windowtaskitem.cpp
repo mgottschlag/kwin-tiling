@@ -728,40 +728,5 @@ QRectF WindowTaskItem::textRect(const QRectF &bounds) const
                                      size, bounds.toRect());
 }
 
-bool WindowTaskItem::sceneEvent(QEvent *event)
-{
-    switch (event->type()) {
-    case QEvent::GraphicsSceneHoverMove:
-        // If the tooltip isn't visible, run through showing the tooltip again
-        // so that it only becomes visible after a stationary hover
-        if (Plasma::ToolTipManager::self()->isWidgetToolTipDisplayed(this)) {
-            break;
-        }
-
-    case QEvent::GraphicsSceneHoverEnter:
-    {
-        // Check that there is a tooltip to show
-        if (!Plasma::ToolTipManager::self()->widgetHasToolTip(this)) {
-            break;
-        }
-
-        Plasma::ToolTipManager::self()->showToolTip(this);
-        break;
-    }
-
-    case QEvent::GraphicsSceneHoverLeave:
-        Plasma::ToolTipManager::self()->delayedHideToolTip();
-        break;
-
-    case QEvent::GraphicsSceneMousePress:
-    case QEvent::GraphicsSceneWheel:
-        Plasma::ToolTipManager::self()->hideToolTip(this);
-
-    default:
-        break;
-    }
-
-    return QGraphicsWidget::sceneEvent(event);
-}
 
 #include "windowtaskitem.moc"
