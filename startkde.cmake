@@ -296,7 +296,9 @@ fi
 # Note: temporary locations can be overriden through the KDETMP and KDEVARTMP
 # environment variables
 for resource in tmp cache socket; do
-    if ! "$lnusertemp" $resource >/dev/null; then
+    if "$lnusertemp" $resource >/dev/null; then
+        : # ok
+    else
         echo 'startkde: Call to lnusertemp failed (temporary directories full?). Check your installation.'  1>&2
         test -n "$ksplash_pid" && kill "$ksplash_pid" 2>/dev/null
         xmessage -geometry 600x100 "Call to lnusertemp failed (temporary directories full?). Check your installation."
