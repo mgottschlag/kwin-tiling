@@ -41,7 +41,6 @@ class Clock : public ClockApplet
 
         void init();
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option, const QRect &contentsRect);
-        void setPath(const QString&);
 
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
@@ -78,13 +77,11 @@ class Clock : public ClockApplet
         QString m_prettyTimezone;
         QTime m_time;
         QDate m_date;
-        Plasma::Dialog *m_calendar;
         QVBoxLayout *m_layout;
         QTime m_lastTimeSeen;
         QPixmap m_toolTipIcon;
         /// Designer Config files
         Ui::clockConfig ui;
-        Ui::calendar m_calendarUi;
 };
 
 K_EXPORT_PLASMA_APPLET(dig_clock, Clock)

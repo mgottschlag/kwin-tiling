@@ -85,8 +85,6 @@ class Clock : public ClockApplet
         int m_animationStart;
         /// Designer Config file
         Ui::clockConfig ui;
-        Plasma::Dialog *m_calendar;
-        Ui::calendar m_calendarUi;
 };
 
 K_EXPORT_PLASMA_APPLET(clock, Clock)
