@@ -3,7 +3,7 @@ Tooltips
 
 Overview
 --------
-"ToolTipManager" is a component that manage easily tooltips in plasma.
+libplasma provides facilities to manage tooltips that display extended information in a visually pleasing and consistent manner for QGraphicsWidgets. These tooltip windows are themed using Plasma::Theme.
 
 Timeline
 --------
@@ -11,25 +11,13 @@ Introduced in: libplasma 2.1 (KDE 4.2.0)
 
 Component Type
 --------------
-ToolTipManager is inside plasma lib.
+ToolTipManager is a QObject subclass in libplasma.
 
-Component Description
----------------------
-This component is quite simple to use. First you have to register your widget by calling registerWidget on the ToolTipManager singleton. After this you have to set the content of the tooltip by calling setWidgetToolTipContent using the struct ToolTipContent. The tooltip manager unregister automatically the widget when it is destroyed but if you want to do it manually call unregisterWidget. If you use plasma's applets show/hide of tooltip is automatically manage but if you use custom QGraphicsWidget, please call showToolTip on you hoverEnterEvent or hideToolTip on you hoverLeaveEvent.
+Description
+-----------
+ToolTipManger is quite simple to use. First you have to register your widget by calling ToolTipManager::self()->registerWidget. After this you have to set the content of the tooltip by calling setWidgetToolTipContent using the struct ToolTipContent.
 
-Component API
--------------
-Subclasses: QObject
-
-*** Key Methods ***
-
-The registerWidget(QGraphicsWidget) method has to be called to inform the tooltip manager that a tooltip has to be displayed on this widget.The unregister action is automatically done (it delete the stuff in memory)
-
-setWidgetToolTipContent(QGraphicsWidget,const ToolTipContent) is used to set the content of the tooltip. Calling showWidgetToolTip(QGraphicsWidget) will display it.At the opposite hideWidgetToolTip(QGraphicsWidget) will hide it.Using plasma applet manage the hiding/showing aspect automatically
-
-User Configuration
-------------------
-N/A
+Widgets are unregistered automatically upon destruction, but can also be manually unregsitered by calling ToolTipMnager::unregisterWidget. If you use a Plasma::Applet, the show/hide of tooltip is automatically managed but if you use custom QGraphicsWidget, you must call showToolTip on your hoverEnterEvent and hideToolTip on you hoverLeaveEvent.
 
 Future Work
 -----------
