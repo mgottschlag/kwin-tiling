@@ -303,7 +303,6 @@ bool PlasmaApp::isDesktop() const
 
 void PlasmaApp::adjustSize(int screen)
 {
-    kDebug() << "adjust size for screen" << screen;
     QDesktopWidget *desktop = QApplication::desktop();
     bool screenExists = screen < desktop->numScreens();
 
@@ -313,6 +312,8 @@ void PlasmaApp::adjustSize(int screen)
     }
 
     DesktopView *view = viewForScreen(screen);
+
+    kDebug() << "adjust size for screen" << screen << screenGeom << view;
 
     if (view) {
         if (screenExists) {
