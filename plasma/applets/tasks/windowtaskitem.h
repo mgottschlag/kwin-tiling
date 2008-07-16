@@ -57,6 +57,9 @@ public:
     /** Constructs a new representation for a window task. */
     WindowTaskItem(Tasks *parent, const bool showTooltip);
 
+    /**Destruct the representation of the window task */
+    ~WindowTaskItem();
+
     /** Sets the starting task represented by this item. */
     void setStartupTask(TaskManager::StartupPtr task);
 
@@ -139,6 +142,7 @@ protected:
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
     virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    virtual bool sceneEvent(QEvent *event);
     virtual void timerEvent(QTimerEvent *event);
     virtual void resizeEvent(QGraphicsSceneResizeEvent *event);
     virtual void paint(QPainter *painter,const QStyleOptionGraphicsItem *option,QWidget *widget);

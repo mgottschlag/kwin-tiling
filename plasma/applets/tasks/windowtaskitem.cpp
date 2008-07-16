@@ -41,6 +41,7 @@
 #include "plasma/theme.h"
 #include "plasma/paintutils.h"
 #include "plasma/panelsvg.h"
+#include "plasma/tooltipmanager.h"
 
 #include "tasks.h"
 
@@ -65,6 +66,13 @@ WindowTaskItem::WindowTaskItem(Tasks *parent, const bool showTooltip)
     QSize mSize = fm.size(0, "M");
     setPreferredSize(QSize(mSize.width()*15 + m_applet->itemLeftMargin() + m_applet->itemRightMargin() + IconSize(KIconLoader::Panel),
                            mSize.height()*3 + m_applet->itemTopMargin() + m_applet->itemBottomMargin()));
+}
+
+WindowTaskItem::~WindowTaskItem()
+{
+    if (m_showTooltip) {
+        Plasma::ToolTipManager::self()->unregisterToolTip(this);
+    }
 }
 
 void WindowTaskItem::activate()
@@ -552,19 +560,23 @@ void WindowTaskItem::updateTask()
     taskIcon.addPixmap(m_task->icon(KIconLoader::SizeMedium, KIconLoader::SizeMedium, false));
     taskIcon.addPixmap(m_task->icon(KIconLoader::SizeLarge, KIconLoader::SizeLarge, false));
 
-#ifdef TOOLTIP_MANAGER
     if (m_showTooltip) {
-      Plasma::ToolTipData data;
+      Plasma::ToolTipManager::ToolTipData data;
       data.mainText = m_task->visibleName();
       data.subText = i18nc("Which virtual desktop a window is currently on", "On %1", KWindowSystem::desktopName(m_task->desktop()));
-      data.image = iconPixmap;
+      data.image = m_task->icon(KIconLoader::SizeSmall, KIconLoader::SizeSmall, false);
       data.windowToPreview = m_task->window();
-      setToolTip(data);
-    } else {
-        Plasma::ToolTipData data;
-        setToolTip(data); // Clear
+
+      if (!Plasma::ToolTipManager::self()->hasToolTip(this)){
+          Plasma::ToolTipManager::self()->registerToolTipData(this,data);
+      }
+      else {
+          Plasma::ToolTipManager::self()->updateToolTipData(this,data);
+      }
     }
-#endif
+    else {
+          Plasma::ToolTipManager::self()->unregisterToolTip(this);
+    }
     setIcon(taskIcon);
     setText(m_task->visibleName());
     //redraw
@@ -720,6 +732,42 @@ QRectF WindowTaskItem::textRect(const QRectF &bounds) const
 
     return QStyle::alignedRect(QApplication::layoutDirection(), Qt::AlignRight | Qt::AlignVCenter,
                                      size, bounds.toRect());
+}
+
+bool WindowTaskItem::sceneEvent(QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::GraphicsSceneHoverMove:
+        // If the tooltip isn't visible, run through showing the tooltip again
+        // so that it only becomes visible after a stationary hover
+        if (Plasma::ToolTipManager::self()->isVisible(this)) {
+            break;
+        }
+
+    case QEvent::GraphicsSceneHoverEnter:
+    {
+        // Check that there is a tooltip to show
+        if (!Plasma::ToolTipManager::self()->hasToolTip(this)) {
+            break;
+        }
+
+        Plasma::ToolTipManager::self()->showToolTip(this);
+        break;
+    }
+
+    case QEvent::GraphicsSceneHoverLeave:
+        Plasma::ToolTipManager::self()->delayedHideToolTip();
+        break;
+
+    case QEvent::GraphicsSceneMousePress:
+    case QEvent::GraphicsSceneWheel:
+        Plasma::ToolTipManager::self()->hideToolTip(this);
+
+    default:
+        break;
+    }
+
+    return QGraphicsWidget::sceneEvent(event);
 }
 
 #include "windowtaskitem.moc"

@@ -43,6 +43,7 @@
 #include <KDatePicker>
 #include <plasma/theme.h>
 #include <plasma/dialog.h>
+#include <plasma/tooltipmanager.h>
 
 
 Clock::Clock(QObject *parent, const QVariantList &args)
@@ -128,15 +129,19 @@ void Clock::updateSize() {
     }
 }
 
-void Clock::updateToolTipContent() {
-    //FIXME Port to future tooltip manager
-    /*Plasma::ToolTipData tipData;
-
+void Clock::updateToolTipContent() 
+{
+    Plasma::ToolTipManager::ToolTipData tipData;
     tipData.mainText = KGlobal::locale()->formatTime(m_time, m_showSeconds);
     tipData.subText = m_date.toString();
     tipData.image = m_toolTipIcon;
 
-    setToolTip(tipData);*/
+    if (!Plasma::ToolTipManager::self()->hasToolTip(this)){
+        Plasma::ToolTipManager::self()->registerToolTipData(this,tipData);
+    }
+    else {
+        Plasma::ToolTipManager::self()->updateToolTipData(this,tipData);
+    }
 }
 
 void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
