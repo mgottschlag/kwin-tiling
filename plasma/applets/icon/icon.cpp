@@ -44,6 +44,7 @@
 #include <plasma/theme.h>
 #include <plasma/widgets/icon.h>
 #include <plasma/containment.h>
+#include <plasma/tooltipmanager.h>
 
 IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
@@ -66,6 +67,8 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
 
 void IconApplet::init()
 {
+    Plasma::ToolTipManager::self()->registerWidget(this);
+
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
@@ -157,12 +160,11 @@ void IconApplet::constraintsEvent(Plasma::Constraints constraints)
             //in the panel the icon behaves like a button
             connect(m_icon, SIGNAL(clicked()), this, SLOT(openUrl()));
             m_icon->setText(QString());
-            //FIXME PORT TO TOOL TIP MANAGER
-            /*Plasma::ToolTipData data;
+            Plasma::ToolTipManager::ToolTipContent data;
             data.mainText = m_text;
             data.subText = m_genericName;
             data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
-            m_icon->setToolTip(data);*/
+            Plasma::ToolTipManager::self()->setWidgetToolTipContent(this, data);
             m_icon->setDrawBackground(false);
         }
     }
