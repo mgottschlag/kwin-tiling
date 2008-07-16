@@ -62,6 +62,8 @@ WindowTaskItem::WindowTaskItem(Tasks *parent, const bool showTooltip)
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
 
+    Plasma::ToolTipManager::self()->registerWidget(this);
+
     QFontMetrics fm(KGlobalSettings::taskbarFont());
     QSize mSize = fm.size(0, "M");
     setPreferredSize(QSize(mSize.width()*15 + m_applet->itemLeftMargin() + m_applet->itemRightMargin() + IconSize(KIconLoader::Panel),
@@ -70,9 +72,6 @@ WindowTaskItem::WindowTaskItem(Tasks *parent, const bool showTooltip)
 
 WindowTaskItem::~WindowTaskItem()
 {
-    if (m_showTooltip) {
-        Plasma::ToolTipManager::self()->unregisterToolTip(this);
-    }
 }
 
 void WindowTaskItem::activate()
@@ -561,21 +560,16 @@ void WindowTaskItem::updateTask()
     taskIcon.addPixmap(m_task->icon(KIconLoader::SizeLarge, KIconLoader::SizeLarge, false));
 
     if (m_showTooltip) {
-      Plasma::ToolTipManager::ToolTipData data;
+      Plasma::ToolTipManager::ToolTipContent data;
       data.mainText = m_task->visibleName();
       data.subText = i18nc("Which virtual desktop a window is currently on", "On %1", KWindowSystem::desktopName(m_task->desktop()));
       data.image = m_task->icon(KIconLoader::SizeSmall, KIconLoader::SizeSmall, false);
       data.windowToPreview = m_task->window();
 
-      if (!Plasma::ToolTipManager::self()->hasToolTip(this)){
-          Plasma::ToolTipManager::self()->registerToolTipData(this,data);
-      }
-      else {
-          Plasma::ToolTipManager::self()->updateToolTipData(this,data);
-      }
+      Plasma::ToolTipManager::self()->setWidgetToolTipContent(this,data);
     }
     else {
-          Plasma::ToolTipManager::self()->unregisterToolTip(this);
+      Plasma::ToolTipManager::self()->unregisterWidget(this);
     }
     setIcon(taskIcon);
     setText(m_task->visibleName());
@@ -740,14 +734,14 @@ bool WindowTaskItem::sceneEvent(QEvent *event)
     case QEvent::GraphicsSceneHoverMove:
         // If the tooltip isn't visible, run through showing the tooltip again
         // so that it only becomes visible after a stationary hover
-        if (Plasma::ToolTipManager::self()->isVisible(this)) {
+        if (Plasma::ToolTipManager::self()->isWidgetToolTipDisplayed(this)) {
             break;
         }
 
     case QEvent::GraphicsSceneHoverEnter:
     {
         // Check that there is a tooltip to show
-        if (!Plasma::ToolTipManager::self()->hasToolTip(this)) {
+        if (!Plasma::ToolTipManager::self()->widgetHasToolTip(this)) {
             break;
         }
 

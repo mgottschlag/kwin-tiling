@@ -70,6 +70,8 @@ Clock::~Clock()
 
 void Clock::init()
 {
+    Plasma::ToolTipManager::self()->registerWidget(this);
+
     KConfigGroup cg = config();
     setCurrentTimezone(cg.readEntry("currentTimezone", localTimezone()));
     m_timeZones = cg.readEntry("timeZones", QStringList());
@@ -131,17 +133,11 @@ void Clock::updateSize() {
 
 void Clock::updateToolTipContent() 
 {
-    Plasma::ToolTipManager::ToolTipData tipData;
+    Plasma::ToolTipManager::ToolTipContent tipData;
     tipData.mainText = KGlobal::locale()->formatTime(m_time, m_showSeconds);
     tipData.subText = m_date.toString();
     tipData.image = m_toolTipIcon;
-
-    if (!Plasma::ToolTipManager::self()->hasToolTip(this)){
-        Plasma::ToolTipManager::self()->registerToolTipData(this,tipData);
-    }
-    else {
-        Plasma::ToolTipManager::self()->updateToolTipData(this,tipData);
-    }
+    Plasma::ToolTipManager::self()->setWidgetToolTipContent(this,tipData);
 }
 
 void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
