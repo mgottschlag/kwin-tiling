@@ -392,7 +392,6 @@ void DeviceNotifier::slotOnItemClicked(const QModelIndex &index)
 {
     kDebug() << index;
     if (m_icon) {
-        m_widget->hide();
         m_timer->stop();
     }
 
@@ -419,6 +418,9 @@ void DeviceNotifier::slotOnItemClicked(const QModelIndex &index)
         }
     //open  (index.data(ScopeRole).toInt() == OpenAction)
     } else {
+        if (m_icon) {
+          m_widget->hide();
+        }
         QStringList desktop_files = m_hotplugModel->data(index, PredicateFilesRole).toStringList();
 
         kDebug() << "DeviceNotifier:: call Solid Ui Server with params :" << udi \
