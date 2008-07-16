@@ -65,7 +65,7 @@ class Clock : public ClockApplet
 
     protected:
         void createClockConfigurationInterface(KConfigDialog *parent);
-        void changeEngineTimezone(QString oldTimezone, QString newTimezone);
+        void changeEngineTimezone(const QString &oldTimezone, const QString &newTimezone);
 
     protected slots:
         void clockConfigAccepted();

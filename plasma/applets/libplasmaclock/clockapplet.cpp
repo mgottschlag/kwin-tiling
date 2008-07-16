@@ -146,7 +146,7 @@ void ClockApplet::configAccepted()
     emit configNeedsSaving();
 }
 
-void ClockApplet::changeEngineTimezone(QString oldTimezone, QString newTimezone)
+void ClockApplet::changeEngineTimezone(const QString &oldTimezone, const QString &newTimezone)
 {
     Q_UNUSED(oldTimezone);
     Q_UNUSED(newTimezone);
