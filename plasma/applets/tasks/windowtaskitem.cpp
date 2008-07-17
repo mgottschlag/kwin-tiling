@@ -566,7 +566,7 @@ void WindowTaskItem::updateTask()
       data.image = m_task->icon(KIconLoader::SizeSmall, KIconLoader::SizeSmall, false);
       data.windowToPreview = m_task->window();
 
-      Plasma::ToolTipManager::self()->setWidgetToolTipContent(this,data);
+      Plasma::ToolTipManager::self()->setToolTipContent(this,data);
     }
     else {
       Plasma::ToolTipManager::self()->unregisterWidget(this);

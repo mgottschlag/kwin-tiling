@@ -164,7 +164,7 @@ void IconApplet::constraintsEvent(Plasma::Constraints constraints)
             data.mainText = m_text;
             data.subText = m_genericName;
             data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
-            Plasma::ToolTipManager::self()->setWidgetToolTipContent(this, data);
+            Plasma::ToolTipManager::self()->setToolTipContent(this, data);
             m_icon->setDrawBackground(false);
         }
     }

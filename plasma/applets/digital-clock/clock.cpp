@@ -137,7 +137,7 @@ void Clock::updateToolTipContent()
     tipData.mainText = KGlobal::locale()->formatTime(m_time, m_showSeconds);
     tipData.subText = m_date.toString();
     tipData.image = m_toolTipIcon;
-    Plasma::ToolTipManager::self()->setWidgetToolTipContent(this,tipData);
+    Plasma::ToolTipManager::self()->setToolTipContent(this,tipData);
 }
 
 void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
