@@ -1073,17 +1073,6 @@ void ContainmentPrivate::toggleDesktopImmutability()
             q->setImmutability(Mutable);
         }
     }
-
-    if (q->immutability() != Mutable) {
-        QMap<Applet*, AppletHandle*> h = handles;
-        handles.clear();
-
-        foreach (AppletHandle* handle, h) {
-            handle->deleteLater();
-        }
-    }
-
-    //setLockToolText();
 }
 
 void ContainmentPrivate::zoomIn()
