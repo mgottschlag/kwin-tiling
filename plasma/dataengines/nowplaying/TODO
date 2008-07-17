@@ -1,7 +1,9 @@
 - add plugin support
   - make juk, xmms support plugins
-- add amarok support
+- MPD support
+- support players in Kelly's spreadsheet (see panel-devel list)
 - VLC pre-DBus support?  See /usr/include/vlc/mediacontrol.h
 - find a player that exports album artwork, and test
 - separate the watchers and plugin bits into a library?
 - unify the watchers?
+- finish service support
