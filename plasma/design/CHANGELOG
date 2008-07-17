@@ -1,0 +1,27 @@
+libplasma 2.1 / KDE 4.2
+=======================
+
+libplasma
+    * Features
+        * PopupApplet: Applet that switches between an icon with a popup and the popup on the desktop
+        * Symbol Versioning: limit loading of plugins to those that match the libplasma minimum rev#
+        * ToolTipManager: new Plasma style tooltips
+
+    * Fixes
+
+Plasma Desktop
+    * Features
+
+    * Fixes
+
+Plugins/Addons
+    * Features
+
+    * Fixes
+
+KRunner
+    * Features
+        * Plasma Screensaver: Plasma widget overlay for screensavers
+
+    * Fixes
+
