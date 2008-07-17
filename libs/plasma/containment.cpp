@@ -1253,7 +1253,7 @@ Applet* ContainmentPrivate::addApplet(const QString& name, const QVariantList& a
 
     if (!applet) {
         kDebug() << "Applet" << name << "could not be loaded.";
-        applet = new Applet;
+        applet = new Applet(0, QString(), id);
         //TODO: uncomment this when not in string freeze.
         //applet->setFailedToLaunch(true, QString("Could not find requested component: %1").arg(name));
     }
