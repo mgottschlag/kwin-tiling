@@ -1365,6 +1365,12 @@ Applet* Applet::load(const QString& appletName, uint appletId, const QVariantLis
         return new Applet(0, offer->storageId(), appletId);
     }
 
+    KPluginLoader plugin(*offer);
+
+    if (!Plasma::isPluginVersionCompatible(plugin.pluginVersion())) {
+        return 0;
+    }
+
     QVariantList allArgs;
     allArgs << offer->storageId() << appletId << args;
     QString error;

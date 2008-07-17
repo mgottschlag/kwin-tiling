@@ -37,12 +37,11 @@
 using namespace Plasma;
 
 static const char description[] = I18N_NOOP( "Run Plasma applets in their own window" );
-static const char version[] = "1.0";
 
 int main(int argc, char **argv)
 {
     KAboutData aboutData( "plasmoidviewer", 0, ki18n( "Plasma Applet Viewer" ),
-                          version, ki18n( description ), KAboutData::License_BSD,
+                          "1.0", ki18n( description ), KAboutData::License_BSD,
                          ki18n( "(C) 2007, The KDE Team" ) );
     aboutData.setProgramIconName( "plasma" );
     aboutData.addAuthor( ki18n( "Frerich Raabe" ),
