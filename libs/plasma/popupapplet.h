@@ -21,45 +21,42 @@
 #define PLASMAAPPLETDIALOG_H
 
 #include <plasma/applet.h>
-#include <plasma/dialog.h>
-#include "plasmaappletdialog_export.h"
+#include <plasma/plasma_export.h>
 
 class QGraphicsProxyWidget;
 class QGraphicsLinearLayout;
 
 namespace Plasma
 {
-    class Icon;
-}
 
-class PLASMAAPPLETDIALOG PlasmaAppletDialog : public Plasma::Applet
+class Dialog;
+class Icon;
+class PopupAppletPrivate;
+
+class PLASMA_EXPORT PopupApplet : public Plasma::Applet
 {
     Q_OBJECT
 public:
-    PlasmaAppletDialog(QObject *parent, const QVariantList &args);
-    ~PlasmaAppletDialog();
+    PopupApplet(QObject *parent, const QVariantList &args);
+    ~PopupApplet();
 
-    void init();
+    void setIcon(const QIcon &icon);
+    void setIcon(const QString &iconName);
+    QIcon icon() const;
 
     virtual QWidget *widget() = 0;
 
-    virtual void initMinimumSize();
-
-private Q_SLOTS:
-    void slotOpenDialog();
-
 protected:
-    virtual void initialize();
     void constraintsEvent(Plasma::Constraints constraints);
-    QSize m_minimumSize;
-    Plasma::Icon *m_icon;
-    Plasma::Dialog *m_dialog;
-    bool m_closePopup;
+    void showPopup();
+    void hidePopup();
 
 private:
-    QGraphicsLinearLayout *m_layout;
-    QGraphicsProxyWidget * m_proxy;
+    Q_PRIVATE_SLOT(d, void togglePopup());
+    PopupAppletPrivate * const d;
 };
+
+} // Plasma namespace
 
 #endif /* PLASMAAPPLETDIALOG_H */
 
