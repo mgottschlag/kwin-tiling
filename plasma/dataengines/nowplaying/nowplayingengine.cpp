@@ -165,6 +165,11 @@ bool NowPlayingEngine::updateSourceEvent(const QString& source)
     setData(source, "Position", player->position());
     setData(source, "Volume", player->volume());
     setData(source, "Artwork", player->artwork());
+    setData(source, "Can play", player->canPlay());
+    setData(source, "Can pause", player->canPause());
+    setData(source, "Can stop", player->canStop());
+    setData(source, "Can skip backward", player->canGoPrevious());
+    setData(source, "Can skip forward", player->canGoNext());
 
     return true;
 }

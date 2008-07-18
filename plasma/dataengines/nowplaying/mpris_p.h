@@ -79,7 +79,8 @@ private:
         CAN_PAUSE             = 4,
         CAN_PLAY              = 8,
         CAN_SEEK              = 16,
-        CAN_PROVIDE_METADATA  = 32
+        CAN_PROVIDE_METADATA  = 32,
+        CAN_HAS_TRACKLIST     = 64
     };
     void setup();
     OrgFreedesktopMediaPlayerInterface* m_player;
