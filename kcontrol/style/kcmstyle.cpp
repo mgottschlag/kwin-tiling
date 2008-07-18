@@ -260,13 +260,16 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
         effectsLayout->addItem( comboSpacer, 1, 2 );
 
 	cbHoverButtons = new QCheckBox( i18n("High&light buttons under mouse"), page2 );
+	cbSmoothScrollItemViews = new QCheckBox( i18n("&Smooth scrolling on item views"), page2 );
 
 	page2Layout->addLayout( effectsLayout );
 	page2Layout->addWidget( cbHoverButtons );
+	page2Layout->addWidget( cbSmoothScrollItemViews );
 	page2Layout->addStretch();
 
 	connect(cbStyle, SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
 	connect( cbHoverButtons,       SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
+	connect( cbSmoothScrollItemViews, SIGNAL(toggled(bool)),this, SLOT(setEffectsDirty()));
 	connect( cbEnableTooltips,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
 	connect( cbIconsOnButtons,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
 	connect( comboGraphicEffectsLevel, SIGNAL(activated(int)),   this, SLOT(setEffectsDirty()));
@@ -399,6 +402,7 @@ void KCMStyle::save()
     KConfigGroup g( &_config, "KDE-Global GUI Settings" );
     g.writeEntry( "GraphicEffectsLevel", comboGraphicEffectsLevel->itemData(comboGraphicEffectsLevel->currentIndex()), KConfig::Normal|KConfig::Global);
 	config.writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), KConfig::Normal|KConfig::Global);
+	config.writeEntry( "SmoothScroll", cbSmoothScrollItemViews->isChecked(), KConfig::Normal|KConfig::Global);
 
     KConfigGroup generalGroup(&_config, "General");
     generalGroup.writeEntry("widgetStyle", currentStyle());
@@ -505,6 +509,7 @@ void KCMStyle::defaults()
 	comboToolbarIcons->setCurrentIndex(0);
 	cbIconsOnButtons->setChecked(true);
 	comboGraphicEffectsLevel->setCurrentIndex(comboGraphicEffectsLevel->findData(((int) KGlobalSettings::graphicEffectsLevelDefault())));
+	cbSmoothScrollItemViews->setChecked(true);
 }
 
 void KCMStyle::setEffectsDirty()
@@ -713,6 +718,7 @@ void KCMStyle::loadEffects( KConfig& config )
 	configGroup = config.group("KDE");
 	cbIconsOnButtons->setChecked(configGroup.readEntry("ShowIconsOnPushButtons", true));
 	cbEnableTooltips->setChecked(!configGroup.readEntry("EffectNoTooltip", false));
+	cbSmoothScrollItemViews->setChecked(configGroup.readEntry("SmoothScroll", true));
 
 	KConfigGroup graphicConfigGroup = config.group("KDE-Global GUI Settings");
 	comboGraphicEffectsLevel->setCurrentIndex(comboGraphicEffectsLevel->findData(graphicConfigGroup.readEntry("GraphicEffectsLevel", ((int) KGlobalSettings::graphicEffectsLevel()))));
@@ -747,6 +753,8 @@ void KCMStyle::addWhatsThis()
 							"show small icons alongside some important buttons.") );
 	comboGraphicEffectsLevel->setWhatsThis( i18n( "If you enable this option, KDE Applications will "
 							"run internal animations.") );
+	cbSmoothScrollItemViews->setWhatsThis( i18n( "If this option is enabled, all item views will "
+							"scroll smoothly.") );
 }
 
 #include "kcmstyle.moc"

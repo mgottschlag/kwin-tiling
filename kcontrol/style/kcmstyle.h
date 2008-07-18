@@ -115,6 +115,7 @@ private:
 
 	QCheckBox* cbHoverButtons;
 	QCheckBox* cbEnableTooltips;
+	QCheckBox* cbSmoothScrollItemViews;
 	QComboBox* comboToolbarIcons;
 
 	QCheckBox* cbIconsOnButtons;
