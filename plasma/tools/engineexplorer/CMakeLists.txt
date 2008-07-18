@@ -15,7 +15,7 @@ endif (Soprano_FOUND)
 kde4_add_ui_files(plasmaengineexplorer_SRCS engineexplorer.ui)
 kde4_add_executable(plasmaengineexplorer ${plasmaengineexplorer_SRCS})
 
-target_link_libraries(plasmaengineexplorer plasma kworkspace  ${KDE4_KIO_LIBS})
+target_link_libraries(plasmaengineexplorer plasma ${KDE4_KIO_LIBS})
 
 if (Soprano_FOUND)
    target_link_libraries(plasmaengineexplorer ${SOPRANO_LIBRARIES})
