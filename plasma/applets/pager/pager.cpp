@@ -45,7 +45,8 @@
 #include <plasma/theme.h>
 #include <plasma/animator.h>
 
-const int WINDOW_UPDATE_DELAY = 500;
+const int FAST_UPDATE_DELAY = 200;
+const int UPDATE_DELAY = 500;
 const int DRAG_SWITCH_DELAY = 1000;
 
 Pager::Pager(QObject *parent, const QVariantList &args)
@@ -415,7 +416,7 @@ void Pager::currentDesktopChanged(int desktop)
     m_dirtyDesktop = -1;
 
     if (!m_timer->isActive()) {
-        m_timer->start(WINDOW_UPDATE_DELAY);
+        m_timer->start(FAST_UPDATE_DELAY);
     }
 }
 
@@ -427,7 +428,7 @@ void Pager::windowAdded(WId id)
     m_dirtyDesktop = info.desktop() - 1;
 
     if (!m_timer->isActive()) {
-        m_timer->start(WINDOW_UPDATE_DELAY);
+        m_timer->start(FAST_UPDATE_DELAY);
     }
 }
 
@@ -439,7 +440,7 @@ void Pager::windowRemoved(WId id)
     m_dirtyDesktop = info.desktop() - 1;
 
     if (!m_timer->isActive()) {
-        m_timer->start(WINDOW_UPDATE_DELAY);
+        m_timer->start(FAST_UPDATE_DELAY);
     }
 }
 
@@ -451,7 +452,7 @@ void Pager::activeWindowChanged(WId id)
     m_dirtyDesktop = info.desktop() - 1;
 
     if (!m_timer->isActive()) {
-        m_timer->start(WINDOW_UPDATE_DELAY);
+        m_timer->start(FAST_UPDATE_DELAY);
     }
 }
 
@@ -467,7 +468,7 @@ void Pager::numberOfDesktopsChanged(int num)
     recalculateGeometry();
 
     if (!m_timer->isActive()) {
-        m_timer->start(WINDOW_UPDATE_DELAY);
+        m_timer->start(UPDATE_DELAY);
     }
 }
 
@@ -479,7 +480,7 @@ void Pager::desktopNamesChanged()
     recalculateGeometry();
 
     if (!m_timer->isActive()) {
-        m_timer->start(WINDOW_UPDATE_DELAY);
+        m_timer->start(UPDATE_DELAY);
     }
 }
 
@@ -488,7 +489,7 @@ void Pager::stackingOrderChanged()
     m_dirtyDesktop = -1;
 
     if (!m_timer->isActive()) {
-        m_timer->start(WINDOW_UPDATE_DELAY);
+        m_timer->start(FAST_UPDATE_DELAY);
     }
 }
 
@@ -506,7 +507,7 @@ void Pager::windowChanged(WId id, unsigned int properties)
     if (properties & NET::WMGeometry ||
         properties & NET::WMDesktop) {
         if (!m_timer->isActive()) {
-            m_timer->start(WINDOW_UPDATE_DELAY);
+            m_timer->start(UPDATE_DELAY);
         }
     }
 }
@@ -517,7 +518,7 @@ void Pager::showingDesktopChanged(bool showing)
 
     Q_UNUSED(showing)
     if (!m_timer->isActive()) {
-        m_timer->start(WINDOW_UPDATE_DELAY);
+        m_timer->start(UPDATE_DELAY);
     }
 }
 
@@ -529,7 +530,7 @@ void Pager::desktopsSizeChanged()
     recalculateGeometry();
 
     if (!m_timer->isActive()) {
-        m_timer->start(WINDOW_UPDATE_DELAY);
+        m_timer->start(UPDATE_DELAY);
     }
 }
 
