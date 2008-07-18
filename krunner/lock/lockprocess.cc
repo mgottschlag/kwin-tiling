@@ -1039,7 +1039,6 @@ bool LockProcess::checkPass()
     if (mSuppressUnlock.isActive()) {
         //help, help, I'm being suppressed!
         mSuppressUnlock.start(); //reset the timeout
-        //FIXME that autologout timer may still be ticking...
         return false;
     }
 
@@ -1125,7 +1124,9 @@ int LockProcess::execDialog( QDialog *dlg )
         mDialogs.remove( pos );
     if( mDialogs.isEmpty() ) {
         //blank pointer + plasma = confused user
-        //FIXME do we really need to fakefocusin plasma?
+        //FIXME we need to fakefocusin plasma for the qactions to work
+        //but we never seem to get a focus*out*
+        //and what about the config dialogs?
         if (mPlasmaView) {
             fakeFocusIn(mPlasmaView);
         } else {
