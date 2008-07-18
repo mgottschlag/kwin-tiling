@@ -1,3 +1,5 @@
+if(NOT WIN32)
 add_subdirectory(engineexplorer)
+endif(NOT WIN32)
 add_subdirectory(plasmapkg)
 add_subdirectory(plasmoidviewer)
