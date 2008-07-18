@@ -56,6 +56,7 @@ public:
     void paintInterface(QPainter *painter,
                         const QStyleOptionGraphicsItem *option,
                         const QRect& contentsRect);
+
 signals:
     void locked();
     void unlocked();

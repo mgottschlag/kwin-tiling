@@ -64,7 +64,6 @@ void SaverDesktop::init()
     QAction *lock = action("lock widgets");
     if (lock) {
         lock->disconnect(this);
-        //TODO connect our signal
         connect(lock, SIGNAL(triggered(bool)), this, SLOT(toggleLock()));
     }
 
