@@ -39,7 +39,7 @@ namespace Plasma
     class Svg;
 }
 
-class PLASMA_EXPORT ClockApplet : public Plasma::Applet
+class PLASMACLOCK_EXPORT ClockApplet : public Plasma::Applet
 {
     Q_OBJECT
     public:
