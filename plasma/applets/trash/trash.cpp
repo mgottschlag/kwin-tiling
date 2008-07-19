@@ -45,6 +45,7 @@
 //Plasma
 #include <plasma/widgets/icon.h>
 #include <plasma/containment.h>
+#include <plasma/tooltipmanager.h>
 
 //Solid
 #include <solid/devicenotifier.h>
@@ -99,10 +100,6 @@ void Trash::init()
     m_dirLister->openUrl(m_trashUrl);
 
     registerAsDragHandle(m_icon);
-
-    //setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
-    //FIXME PORT TO TOOLTIP MANAGER
-    //m_data.mainText = i18n("Trash");
 
     connect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
     connect(&m_menu, SIGNAL(aboutToHide()),
@@ -201,17 +198,20 @@ void Trash::slotEmpty()
 
 void Trash::setIcon()
 {
+    Plasma::ToolTipManager::ToolTipContent data;
+    data.mainText = i18n("Trash");
+
     if (m_count > 0) {
         m_icon->setIcon(KIcon("user-trash-full"));
-	//FIXME PORT TO TOOLTIP MANAGER
-        //m_data.subText = i18np("One item", "%1 items", m_count);
+
+        data.subText = i18np("One item", "%1 items", m_count);
         if (m_showText) {
             m_icon->setInfoText(i18np("One item", "%1 items", m_count));
         }
     } else {
         m_icon->setIcon(KIcon("user-trash"));
-        //FIXME PORT TO TOOLTIP MANAGER
-	//m_data.subText = i18nc("The trash is empty. This is not an action, but a state", "Empty");
+
+        data.subText = i18nc("The trash is empty. This is not an action, but a state", "Empty");
         if (m_showText){
             m_icon->setInfoText(i18nc("The trash is empty. This is not an action, but a state", "Empty"));
         }
@@ -219,14 +219,13 @@ void Trash::setIcon()
 
     m_icon->update();
     
-    //FIXME TOOLTIP MANAGER
-    /*m_data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
+    data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
 
     if (!m_showText) {
-        m_icon->setToolTip(m_data);
+        Plasma::ToolTipManager::self()->setToolTipContent(this, data);
     } else {
-        m_icon->setToolTip(Plasma::ToolTipData());
-    }*/
+        Plasma::ToolTipManager::self()->setToolTipContent(this, Plasma::ToolTipManager::ToolTipContent());
+    }
 
     emptyTrash->setEnabled(m_count>0);
 }
