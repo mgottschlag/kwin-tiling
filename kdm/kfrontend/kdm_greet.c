@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "kdm_greet.h"
 #include "kdmconfig.h"
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdarg.h>
@@ -38,11 +37,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <signal.h>
 #include <setjmp.h>
 #include <ctype.h>
-#include <locale.h>
 #include <time.h>
 #include <errno.h>
-#include <fcntl.h>
-#include <sys/stat.h>
 #ifdef _POSIX_PRIORITY_SCHEDULING
 # include <sched.h>
 #endif
@@ -95,8 +91,8 @@ gDebug( const char *fmt, ... )
 
 char *dname;
 
-int rfd;
-static int wfd, mrfd, mwfd, srfd, swfd;
+int rfd, mrfd, mwfd, srfd, swfd;
+static int wfd;
 static const char *who;
 
 void
@@ -694,112 +690,4 @@ setCursor( Display *mdpy, int window, int shape )
 		XFreeCursor( mdpy, xcursor );
 		XFlush( mdpy );
 	}
-}
-
-static void
-sigterm( int n ATTR_UNUSED )
-{
-	exit( EX_NORMAL );
-}
-
-static char *savhome;
-
-static void
-cleanup( void )
-{
-	char buf[128];
-
-	if (strcmp( savhome, getenv( "HOME" ) ) || memcmp( savhome, "/tmp/", 5 ))
-		logError( "Internal error: memory corruption detected\n" ); /* no panic: recursion */
-	else {
-		sprintf( buf, "rm -rf %s", savhome );
-		system( buf );
-	}
-}
-
-static int
-goodLocale( const char *var )
-{
-	char *l = getenv( var );
-	if (!l)
-		return False;
-	if (*l && strcmp( l, "C" ) && strcmp( l, "POSIX" ))
-		return True;
-	unsetenv( l );
-	return False;
-}
-
-extern void kg_main( const char *argv0 );
-
-int
-main( int argc ATTR_UNUSED, char **argv )
-{
-	char *ci;
-	int i;
-	char qtrc[40];
-
-	if (!(ci = getenv( "CONINFO" ))) {
-		fprintf( stderr, "This program is part of kdm and should not be run manually.\n" );
-		return 1;
-	}
-	if (sscanf( ci, "%d %d %d %d", &srfd, &swfd, &mrfd, &mwfd ) != 4)
-		return 1;
-	fcntl( srfd, F_SETFD, FD_CLOEXEC );
-	fcntl( swfd, F_SETFD, FD_CLOEXEC );
-	fcntl( mrfd, F_SETFD, FD_CLOEXEC );
-	fcntl( mwfd, F_SETFD, FD_CLOEXEC );
-	gSet( 0 );
-
-	InitLog();
-
-	if ((debugLevel = gRecvInt()) & DEBUG_WGREET)
-		sleep( 100 );
-
-	signal( SIGTERM, sigterm );
-
-	dname = getenv( "DISPLAY" );
-
-	initConfig();
-
-	/* for QSettings */
-	srand( time( 0 ) );
-	for (i = 0; i < 10000; i++) {
-		sprintf( qtrc, "/tmp/%010d", rand() );
-		if (!mkdir( qtrc, 0700 ))
-			goto okay;
-	}
-	logPanic( "Cannot create $HOME\n" );
-  okay:
-	if (setenv( "HOME", qtrc, 1 ))
-		logPanic( "Cannot set $HOME\n" );
-	if (!(savhome = strdup( qtrc )))
-		logPanic( "Cannot save $HOME\n" );
-	atexit( cleanup );
-
-	if (*_language) {
-		/*
-		 * Make reasonably sure the locale is not POSIX. This will still fail
-		 * if all of the following apply:
-		 * - LANG, LC_MESSAGES & LC_ALL resolve to POSIX
-		 * - an abbreviated locale is configured (the kcm does this)
-		 * - the en_US locale is not installed
-		 */
-		if (!goodLocale( "LC_ALL" ) &&
-		    !goodLocale( "LC_MESSAGES" ) &&
-		    !goodLocale( "LANG" ))
-		{
-			if (strchr( _language, '_' ) && setlocale( LC_ALL, _language ))
-				setenv( "LANG", _language, 1 );
-			else if (setlocale( LC_ALL, "en_US" ))
-				setenv( "LANG", "en_US", 1 );
-			else
-				logError( "Cannot set locale. Translations will not work.\n" );
-		}
-
-		setenv( "LANGUAGE", _language, 1 );
-	}
-
-	kg_main( argv[0] );
-
-	return EX_NORMAL;
 }

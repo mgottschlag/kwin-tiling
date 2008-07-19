@@ -43,9 +43,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QDesktopWidget>
 #include <QX11Info>
 
+#include <stdio.h>
 #include <stdlib.h> // free(), exit()
 #include <unistd.h> // alarm()
 #include <signal.h>
+#include <locale.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+#ifdef USE_SYSLOG
+# include <syslog.h>
+#endif
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -184,17 +191,117 @@ xIOErr( Display * )
 	return 0;
 }
 
-void
-kg_main( const char *argv0 )
+static void
+sigterm( int n ATTR_UNUSED )
 {
-	static char *argv[] = { (char *)"kdmgreet", 0 };
+	exit( EX_NORMAL );
+}
+
+static char *savhome;
+
+static void
+cleanup( void )
+{
+	char buf[128];
+
+	if (strcmp( savhome, getenv( "HOME" ) ) || memcmp( savhome, "/tmp/", 5 ))
+		logError( "Internal error: memory corruption detected\n" ); /* no panic: recursion */
+	else {
+		sprintf( buf, "rm -rf %s", savhome );
+		system( buf );
+	}
+}
+
+static int
+goodLocale( const char *var )
+{
+	char *l = getenv( var );
+	if (!l)
+		return False;
+	if (*l && strcmp( l, "C" ) && strcmp( l, "POSIX" ))
+		return True;
+	unsetenv( l );
+	return False;
+}
+
+int
+main( int argc ATTR_UNUSED, char **argv )
+{
+	char *ci;
+	int i;
+	char qtrc[40];
+
+	if (!(ci = getenv( "CONINFO" ))) {
+		fprintf( stderr, "This program is part of kdm and should not be run manually.\n" );
+		return 1;
+	}
+	if (sscanf( ci, "%d %d %d %d", &srfd, &swfd, &mrfd, &mwfd ) != 4)
+		return 1;
+	fcntl( srfd, F_SETFD, FD_CLOEXEC );
+	fcntl( swfd, F_SETFD, FD_CLOEXEC );
+	fcntl( mrfd, F_SETFD, FD_CLOEXEC );
+	fcntl( mwfd, F_SETFD, FD_CLOEXEC );
+	gSet( 0 );
+
+#ifdef USE_SYSLOG
+	openlog( "kdm_greet", LOG_PID, LOG_DAEMON );
+#endif
+
+	if ((debugLevel = gRecvInt()) & DEBUG_WGREET)
+		sleep( 100 );
+
+	signal( SIGTERM, sigterm );
+
+	dname = getenv( "DISPLAY" );
+
+	initConfig();
+
+	/* for QSettings */
+	srand( time( 0 ) );
+	for (i = 0; i < 10000; i++) {
+		sprintf( qtrc, "/tmp/%010d", rand() );
+		if (!mkdir( qtrc, 0700 ))
+			goto okay;
+	}
+	logPanic( "Cannot create $HOME\n" );
+  okay:
+	if (setenv( "HOME", qtrc, 1 ))
+		logPanic( "Cannot set $HOME\n" );
+	if (!(savhome = strdup( qtrc )))
+		logPanic( "Cannot save $HOME\n" );
+	atexit( cleanup );
+
+	if (*_language) {
+		/*
+		 * Make reasonably sure the locale is not POSIX. This will still fail
+		 * if all of the following apply:
+		 * - LANG, LC_MESSAGES & LC_ALL resolve to POSIX
+		 * - an abbreviated locale is configured (the kcm does this)
+		 * - the en_US locale is not installed
+		 */
+		if (!goodLocale( "LC_ALL" ) &&
+		    !goodLocale( "LC_MESSAGES" ) &&
+		    !goodLocale( "LANG" ))
+		{
+			if (strchr( _language, '_' ) && setlocale( LC_ALL, _language ))
+				setenv( "LANG", _language, 1 );
+			else if (setlocale( LC_ALL, "en_US" ))
+				setenv( "LANG", "en_US", 1 );
+			else
+				logError( "Cannot set locale. Translations will not work.\n" );
+		}
+
+		setenv( "LANGUAGE", _language, 1 );
+	}
+
+	static char *fakeArgv[] = { (char *)"kdmgreet", 0 };
 
 	KCrash::setFlags( KCrash::KeepFDs | KCrash::SaferDialog | KCrash::AlwaysDirectly );
-	KCrash::setApplicationName( QLatin1String( argv[0] ) );
+	KCrash::setApplicationName( QLatin1String( fakeArgv[0] ) );
 	KCrash::setCrashHandler( KCrash::defaultCrashHandler );
 	XSetIOErrorHandler( xIOErr );
-	KComponentData inst( argv[0] );
-	GreeterApp app( as(argv) - 1, argv );
+	KComponentData inst( fakeArgv[0] );
+	GreeterApp app( as(fakeArgv) - 1, fakeArgv );
 	foreach (const QString &dir, KGlobal::dirs()->resourceDirs( "qtplugins" ))
 		app.addLibraryPath( dir );
 	initQAppConfig();
@@ -237,7 +344,7 @@ kg_main( const char *argv0 )
 	if (!_grabServer) {
 		if (_useBackground && !themer) {
 			proc = new KProcess;
-			*proc << QByteArray( argv0, strrchr( argv0, '/' ) - argv0 + 1 ) + "krootimage";
+			*proc << QByteArray( argv[0], strrchr( argv[0], '/' ) - argv[0] + 1 ) + "krootimage";
 			*proc << _backgroundCfg;
 			proc->start();
 		}
@@ -342,6 +449,8 @@ kg_main( const char *argv0 )
 		gSendInt( G_Ready );
 		KGVerify::handleFailVerify( qApp->desktop()->screen( _greeterScreen ), false );
 	}
+
+	return EX_NORMAL;
 }
 
 } // extern "C"

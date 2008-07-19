@@ -72,6 +72,7 @@ void setCursor( struct _XDisplay *mdpy, int window, int shape );
 
 
 extern int rfd; /* for select() loops */
+extern int mrfd, mwfd, srfd, swfd; /* for main */
 
 extern char *dname; /* d->name */
 
