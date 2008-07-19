@@ -270,35 +270,61 @@ KdmLabel::lookupStock( const QString &stock )
 
 QString KdmLabel::timedUser = QString();
 int KdmLabel::timedDelay = -1;
+QHash<QChar,QString> KdmLabel::expandoMap;
+bool KdmLabel::dateFormatSet = false;
+
+bool
+KdmLabel::expandMacro( QChar chr, QStringList &ret )
+{
+	switch (chr.unicode()) {
+	case 't':
+		ret << i18ncp( "will login in ...", "1 second", "%1 seconds", timedDelay );
+		return true;
+	case 'u':
+		ret << timedUser;
+		return true;
+	case 'c':
+		if (!dateFormatSet) {
+			// xgettext:no-c-format
+			KGlobal::locale()->setDateFormat( i18nc("date format", "%a %d %B") );
+			dateFormatSet = true;
+		}
+		ret << KGlobal::locale()->formatDateTime( QDateTime::currentDateTime(), KLocale::LongDate );
+		return true;
+	}
+
+	if (expandoMap.isEmpty()) {
+		struct utsname uts;
+		uname( &uts );
+		expandoMap['d'] = QString::fromLocal8Bit( DisplayString( QX11Info::display() ) );
+		expandoMap['n'] = QString::fromLocal8Bit( uts.nodename );
+		expandoMap['s'] = QString::fromLocal8Bit( uts.sysname );
+		expandoMap['r'] = QString::fromLocal8Bit( uts.release );
+		expandoMap['m'] = QString::fromLocal8Bit( uts.machine );
+		char buf[256];
+		buf[sizeof(buf) - 1] = '\0';
+		expandoMap['h'] = gethostname( buf, sizeof(buf) - 1 ) ? "localhost" : QString::fromLocal8Bit( buf );
+#ifdef HAVE_GETDOMAINNAME
+		expandoMap['o'] = getdomainname( buf, sizeof(buf) - 1 ) ? "localdomain" : QString::fromLocal8Bit( buf );
+#elif defined(HAVE_SYS_SYSTEMINFO)
+		expandoMap['o'] = (unsigned)sysinfo( SI_SRPC_DOMAIN, buf, sizeof(buf) ) > sizeof(buf) ? "localdomain" : QString::fromLocal8Bit( buf );
+#endif
+	}
+	QHash<QChar,QString>::const_iterator mi = expandoMap.constFind(chr);
+	if (mi != expandoMap.constEnd()) {
+		ret << mi.value();
+		return true;
+	}
+
+	return false;
+}
 
 QString
 KdmLabel::lookupText( const QString &t )
 {
 	QString text = t;
-
-	QHash<QChar,QString> m;
-	struct utsname uts;
-	uname( &uts );
-	m['d'] = QString::fromLocal8Bit( DisplayString( QX11Info::display() ) );
-	m['n'] = QString::fromLocal8Bit( uts.nodename );
-	m['s'] = QString::fromLocal8Bit( uts.sysname );
-	m['r'] = QString::fromLocal8Bit( uts.release );
-	m['m'] = QString::fromLocal8Bit( uts.machine );
-	char buf[256];
-	buf[sizeof(buf) - 1] = '\0';
-	m['h'] = gethostname( buf, sizeof(buf) - 1 ) ? "localhost" : QString::fromLocal8Bit( buf );
-#ifdef HAVE_GETDOMAINNAME
-	m['o'] = getdomainname( buf, sizeof(buf) - 1 ) ? "localdomain" : QString::fromLocal8Bit( buf );
-#elif defined(HAVE_SYS_SYSTEMINFO)
-	m['o'] = (unsigned)sysinfo( SI_SRPC_DOMAIN, buf, sizeof(buf) ) > sizeof(buf) ? "localdomain" : QString::fromLocal8Bit( buf );
-#endif
-	m['t'] = i18ncp( "will login in ...", "1 second", "%1 seconds", timedDelay );
-	m['u'] = timedUser;
-	// xgettext:no-c-format
-	KGlobal::locale()->setDateFormat( i18nc("date format", "%a %d %B") );
-	m['c'] = KGlobal::locale()->formatDateTime( QDateTime::currentDateTime(), KLocale::LongDate );
-
-	return KMacroExpander::expandMacros( text, m );
+	expandMacros( text );
+	return text;
 }
 
 #include "kdmlabel.moc"
