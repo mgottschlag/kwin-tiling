@@ -20,6 +20,8 @@
 #include "playercontrol.h"
 #include "playeractionjob.h"
 
+#include <kdebug.h>
+
 PlayerControl::PlayerControl(QObject* parent, Player::Ptr player)
     : Plasma::Service(parent),
       m_player(player)
@@ -27,12 +29,16 @@ PlayerControl::PlayerControl(QObject* parent, Player::Ptr player)
     setName("nowplaying");
     if (m_player) {
         setDestination(m_player->name());
+        kDebug() << "Created a player control for" << m_player->name();
+    } else {
+        kDebug() << "Created a dead player control";
     }
 }
 
 Plasma::ServiceJob* PlayerControl::createJob(const QString& operation,
                                              QMap<QString,QVariant>& parameters)
 {
+    kDebug() << "Job" << operation << "with arguments" << parameters << "requested";
     return new PlayerActionJob(m_player, operation, parameters, this);
 }
 

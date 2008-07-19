@@ -24,6 +24,8 @@
 #include <QTimer>
 #include "player.h"
 
+#include <kdebug.h>
+
 class PlayerActionJob : public Plasma::ServiceJob
 {
     Q_OBJECT
@@ -40,6 +42,7 @@ public:
 
     void start()
     {
+        kDebug() << "Starting a player action job";
         QTimer::singleShot(0, this, SLOT(doAction()));
     }
 

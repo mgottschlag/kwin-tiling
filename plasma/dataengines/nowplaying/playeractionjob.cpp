@@ -19,8 +19,11 @@
 
 #include "playeractionjob.h"
 
+#include <kdebug.h>
+
 void PlayerActionJob::doAction()
 {
+    kDebug() << "Trying to perform the action" << operationName();
     if (!m_player) {
         setErrorText(i18n("The player '%1' cannot be found", destination()));
         setError(-1);
@@ -101,6 +104,9 @@ void PlayerActionJob::doAction()
             setErrorText(i18n("The player '%1' cannot perform the action 'seek'", m_player->name()));
             setError(-1);
         }
+    }
+    if (error()) {
+        kDebug() << "Failed with error" << errorText();
     }
     emitResult();
 }
