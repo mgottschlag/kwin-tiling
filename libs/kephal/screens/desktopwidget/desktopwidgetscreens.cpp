@@ -36,7 +36,8 @@ namespace kephal {
             QRect geom = desktop->screenGeometry(i);
             qDebug() << "adding a screen" << i << "with geom: " << geom;
             
-            SimpleScreen * screen = new SimpleScreen(i,
+            SimpleScreen * screen = new SimpleScreen(this,
+                    i,
                     geom.size(),
                     geom.topLeft(),
                     false,
@@ -101,7 +102,8 @@ namespace kephal {
             QRect geom = desktop->screenGeometry(i);
             qDebug() << "adding a screen" << i << "with geom: " << geom;
             
-            SimpleScreen * screen = new SimpleScreen(i,
+            SimpleScreen * screen = new SimpleScreen(this,
+                    i,
                     geom.size(),
                     geom.topLeft(),
                     false,

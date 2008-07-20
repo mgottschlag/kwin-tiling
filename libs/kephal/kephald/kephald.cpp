@@ -18,14 +18,18 @@
  */
 
 
+#include <QDebug>
+#include <QDBusConnection>
+
+
 #include "kephald.h"
 #include "../screens/desktopwidget/desktopwidgetscreens.h"
+#include "../screens/output/outputscreens.h"
+#include "../outputs/xrandr/xrandroutputs.h"
 #include "dbus/dbusapi_screens.h"
 #include "../xml/configurations_xml.h"
 
-
-#include <QDebug>
-#include <QDBusConnection>
+#include "../xrandr12/randrdisplay.h"
 
 
 using namespace kephal;
@@ -51,7 +55,18 @@ KephalD::~KephalD()
 }
 
 void KephalD::init() {
-    new kephal::DesktopWidgetScreens(this);
+    RandRDisplay * display = new RandRDisplay();
+    new XRandROutputs(this, display);
+    
+    foreach (Output * output, Outputs::instance()->outputs()) {
+        qDebug() << "output:" << output->id() << output->geom();
+    }
+    
+    new OutputScreens(this);
+    
+    foreach (kephal::Screen * screen, Screens::instance()->screens()) {
+        qDebug() << "screen:" << screen->id() << screen->geom();
+    }
     
     QDBusConnection dbus = QDBusConnection::sessionBus();
     bool result = dbus.registerService("org.kde.Kephal");

@@ -25,6 +25,11 @@
 
 namespace kephal {
 
+    Screen::Screen(QObject * parent)
+        : QObject(parent)
+    {
+    }
+    
     QRect Screen::geom() {
         return QRect(position(), size());
     }

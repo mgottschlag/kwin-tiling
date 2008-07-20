@@ -36,7 +36,7 @@ namespace kephal {
         public:
             static Screens * instance();
             
-            Screens(QObject * parent = 0);
+            Screens(QObject * parent);
             virtual QList<Screen *> screens() = 0;
             
         Q_SIGNALS:

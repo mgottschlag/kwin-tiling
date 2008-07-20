@@ -18,39 +18,57 @@
  */
 
 
-#ifndef KEPHAL_SCREEN_H
-#define KEPHAL_SCREEN_H
+#ifndef KEPHAL_OUTPUTS_H
+#define KEPHAL_OUTPUTS_H
 
-#include <QPoint>
-#include <QSize>
 #include <QObject>
+#include <QSize>
+#include <QPoint>
 #include <QRect>
 
 
 namespace kephal {
 
-    class Screen : public QObject {
+    class Output : public QObject {
         Q_OBJECT
         public:
-            Screen(QObject * parent = 0);
-            
-            virtual int id() = 0;
+            Output(QObject * parent);
+
+            virtual QString id() = 0;
 
             virtual QSize size() = 0;
             virtual void setSize(QSize size) = 0;
             virtual QPoint position() = 0;
+            virtual bool isConnected() = 0;
+            virtual bool isActivated() = 0;
             //QList<PositionType> getRelativePosition();
 
-            virtual bool isPrivacyMode() = 0;
-            virtual void setPrivacyMode(bool b) = 0;
-            virtual bool isPrimary() = 0;
-            virtual void setAsPrimary() = 0;
-            
             QRect geom();
+    };
+    
+
+    class Outputs : public QObject {
+        Q_OBJECT
+        public:
+            static Outputs * instance();
+            
+            Outputs(QObject * parent);
+            virtual QList<Output *> outputs() = 0;
+            
+        Q_SIGNALS:
+            void outputConnected(Output * o);
+            void outputDisconnected(Output * o);
+            void outputActivated(Output * o);
+            void outputDeactivated(Output * o);
+            void outputResized(Output * o, QSize oldSize, QSize newSize);
+            void outputMoved(Output * o, QPoint oldPosition, QPoint newPosition);
+            
+        protected:
+            static Outputs * m_instance;
     };
     
 }
 
 
-#endif // KEPHAL_SCREEN_H
+#endif // KEPHAL_OUTPUTS_H
 

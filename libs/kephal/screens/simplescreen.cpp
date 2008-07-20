@@ -23,14 +23,24 @@
 
 namespace kephal {
 
-    SimpleScreen::SimpleScreen(int id, QSize size, QPoint position, bool privacy, bool primary)
-        : Screen()
+    SimpleScreen::SimpleScreen(QObject * parent, int id, QSize size, QPoint position, bool privacy, bool primary)
+        : Screen(parent)
     {
         m_id = id;
         m_size = size;
         m_position = position;
         m_privacy = privacy;
         m_primary = primary;
+    }
+    
+    SimpleScreen::SimpleScreen(QObject * parent)
+        : Screen(parent),
+        m_id(-1),
+        m_size(0, 0),
+        m_position(0, 0),
+        m_privacy(false),
+        m_primary(false)
+    {
     }
     
     
@@ -68,6 +78,10 @@ namespace kephal {
     
     void SimpleScreen::setAsPrimary() {
         emit selectedAsPrimary(this);
+    }
+    
+    void SimpleScreen::_setId(int id) {
+        m_id = id;
     }
     
     void SimpleScreen::_setSize(QSize size) {

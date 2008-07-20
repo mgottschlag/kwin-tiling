@@ -18,39 +18,42 @@
  */
 
 
-#ifndef KEPHAL_SCREEN_H
-#define KEPHAL_SCREEN_H
+#include "outputs.h"
 
-#include <QPoint>
-#include <QSize>
-#include <QObject>
-#include <QRect>
+#ifdef OUTPUTS_FACTORY
+void OUTPUTS_FACTORY();
+#endif
 
 
 namespace kephal {
 
-    class Screen : public QObject {
-        Q_OBJECT
-        public:
-            Screen(QObject * parent = 0);
-            
-            virtual int id() = 0;
-
-            virtual QSize size() = 0;
-            virtual void setSize(QSize size) = 0;
-            virtual QPoint position() = 0;
-            //QList<PositionType> getRelativePosition();
-
-            virtual bool isPrivacyMode() = 0;
-            virtual void setPrivacyMode(bool b) = 0;
-            virtual bool isPrimary() = 0;
-            virtual void setAsPrimary() = 0;
-            
-            QRect geom();
-    };
+    Outputs * Outputs::instance() {
+#ifdef OUTPUTS_FACTORY
+        if (Outputs::m_instance == 0) {
+            SCREENS_FACTORY();
+        }
+#endif
+        return Outputs::m_instance;
+    }
     
+    Outputs::Outputs(QObject * parent)
+            : QObject(parent)
+    {
+        Outputs::m_instance = this;
+    }
+    
+    Outputs * Outputs::m_instance = 0;
+    
+    
+    
+    Output::Output(QObject * parent)
+            : QObject(parent)
+    {
+    }
+    
+    QRect Output::geom() {
+        return QRect(position(), size());
+    }
+
 }
-
-
-#endif // KEPHAL_SCREEN_H
 

@@ -43,7 +43,8 @@ namespace kephal {
             QSize size = m_interface->size(i);
             qDebug() << "adding a screen" << i << "with geom: " << pos << size;
             
-            SimpleScreen * screen = new SimpleScreen(i,
+            SimpleScreen * screen = new SimpleScreen(this,
+                    i,
                     size,
                     pos,
                     false,

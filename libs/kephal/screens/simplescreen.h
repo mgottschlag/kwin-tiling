@@ -33,7 +33,8 @@ namespace kephal {
     class SimpleScreen : public Screen {
         Q_OBJECT
         public:
-            SimpleScreen(int id, QSize resolution, QPoint position, bool privacy, bool primary);
+            SimpleScreen(QObject * parent, int id, QSize resolution, QPoint position, bool privacy, bool primary);
+            SimpleScreen(QObject * parent);
             
             virtual int id();
 
@@ -47,6 +48,7 @@ namespace kephal {
             virtual bool isPrimary();
             virtual void setAsPrimary();
             
+            void _setId(int id);
             void _setSize(QSize size);
             void _setPosition(QPoint position);
             void _setPrimary(bool primary);
