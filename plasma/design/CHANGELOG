@@ -8,7 +8,7 @@ libplasma
         * ToolTipManager: new Plasma style tooltips
         * Support compressed SVGs in Plasma::Theme
 
-    * Signifcant Fixes
+    * Significant Fixes
         * WebContent painting update synchronization (fixes, among other things, scrolling)
         * Prevent crash when Containment that AppletBrowser is associated with is deleted
         * Applet handles work with double size pixels
