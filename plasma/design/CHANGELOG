@@ -6,6 +6,7 @@ libplasma
         * PopupApplet: Applet that switches between an icon with a popup and the popup on the desktop
         * Symbol Versioning: limit loading of plugins to those that match the libplasma minimum rev#
         * ToolTipManager: new Plasma style tooltips
+        * Support compressed SVGs in Plasma::Theme
 
     * Fixes
 
