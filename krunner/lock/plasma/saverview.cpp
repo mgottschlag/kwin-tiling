@@ -82,7 +82,12 @@ void SaverView::drawBackground(QPainter * painter, const QRectF & rect)
     if (PlasmaApp::hasComposite()) {
         setWallpaperEnabled(false);
         painter->setCompositionMode(QPainter::CompositionMode_Source);
-        painter->fillRect(geometry(), QColor(0, 0, 0, 180));
+        if (PlasmaApp::self()->cheatsEnabled()) {
+            painter->fillRect(geometry(), QColor(0, 0, 0, 180));
+        } else {
+            painter->fillRect(geometry(), QColor(0, 0, 0, 0));
+        }
+        //FIXME kwin's shadow effect is getting drawn behind me. do not want.
     } else {
         setWallpaperEnabled(true);
         Plasma::View::drawBackground(painter, rect);
