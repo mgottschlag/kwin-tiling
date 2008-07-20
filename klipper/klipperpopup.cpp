@@ -165,8 +165,8 @@ void KlipperPopup::rebuild( const QString& filter ) {
         buildFromScratch();
     } else {
         for ( int i=0; i<n_history_items; i++ ) {
-            if (i < actions().count())
-                removeAction(actions().at(TOP_HISTORY_ITEM_INDEX));
+            Q_ASSERT(TOP_HISTORY_ITEM_INDEX < actions().count());
+            removeAction(actions().at(TOP_HISTORY_ITEM_INDEX));
         }
     }
 
