@@ -8,21 +8,39 @@ libplasma
         * ToolTipManager: new Plasma style tooltips
         * Support compressed SVGs in Plasma::Theme
 
-    * Fixes
+    * Signifcant Fixes
+        * WebContent painting update synchronization (fixes, among other things, scrolling)
+        * Prevent crash when Containment that AppletBrowser is associated with is deleted
+        * Applet handles work with double size pixels
 
 Plasma Desktop
     * Features
 
-    * Fixes
+    * Significant Fixes
+        * Reposition toolbox when zooming out/in to avoid panel overlap
+        * MS Windows compile fixes
 
 Plugins/Addons
     * Features
+        * Plasmoids
+            * NEW: Calendar
+            * NEW: Character selector
+            * Now Playing media player controls
+            * Custom colours in notes
+            * Custom colours in digital clock
+            * Various clocks ported to AppletClock for calendar and timezone consistency
 
-    * Fixes
+        * DataEngines
+            * nowplaying Plasma::Service for controlling media players
+            * nowplaying supports MPRIS
+
+    * Significant Fixes
+        * Kickoff menu size restoration
+        * MS Windows compile fixes
 
 KRunner
     * Features
         * Plasma Screensaver: Plasma widget overlay for screensavers
 
-    * Fixes
+    * Significant Fixes
 
