@@ -81,7 +81,9 @@ if(NOT WIN32)
 macro_optional_add_subdirectory( ksystraycmd )
 endif(NOT WIN32)
 # data
+if(NOT WIN32)
 macro_optional_add_subdirectory( cursors )
+endif(NOT WIN32)
 macro_optional_add_subdirectory( doc )
 macro_optional_add_subdirectory( wallpapers )
 
