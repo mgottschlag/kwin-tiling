@@ -23,7 +23,9 @@
 
 #include "kcmstyle.h"
 
+#ifdef Q_WS_X11
 #include <config-X11.h>
+#endif
 
 #include "styleconfdialog.h"
 #include "ui_stylepreview.h"
