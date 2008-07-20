@@ -82,11 +82,13 @@ macro_optional_add_subdirectory( doc )
 macro_optional_add_subdirectory( wallpapers )
 
 if(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
-  	add_subdirectory( kdm )
+    add_subdirectory( kdm )
 else(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
-	MESSAGE(STATUS "Xau lib or Xdmcp lib was missing. kdm will not compile")
+    message(STATUS "Xau lib or Xdmcp lib was missing. kdm will not compile")
 endif(X11_Xau_FOUND AND X11_Xdmcp_FOUND)
 
+# This line looks very wrong, it should go.
+# Does anybody know why it's here ? If so, let me know. Alex
 SET(krunner_DEPENDS "plasma")
 
 ########### install files ###############
