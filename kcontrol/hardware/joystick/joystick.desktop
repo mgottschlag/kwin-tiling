@@ -10,7 +10,8 @@ Categories=Qt;KDE;X-KDE-settings-hardware;
 X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_joystick
 X-KDE-Test-Module=true
-X-KDE-System-Settings-Parent-Category=computer-administration
+X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
+X-KDE-Weight=70
 
 Comment=joystick - a kcontrol module to test joysticks
 Comment[af]=joystick - 'n beheer module om joysticks mee te toets

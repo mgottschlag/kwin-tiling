@@ -10,7 +10,7 @@ X-KDE-Init-Symbol=keys
 X-KDE-ParentApp=kcontrol
 
 X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
-X-KDE-Weight=70
+X-KDE-Weight=160
 
 Name=Global Keyboard Shortcuts
 Name[af]=Sleutelbord Kortpaaie
