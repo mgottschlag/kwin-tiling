@@ -74,6 +74,7 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
             this, SLOT(updateBackground(int, QImage)));
     connect(&m_slideshowTimer, SIGNAL(timeout()),
             this, SLOT(nextSlide()));
+
     //kDebug() << "!!! loading desktop";
 }
 
@@ -395,9 +396,11 @@ void DefaultDesktop::logout()
     if (!KAuthorized::authorizeKAction("logout")) {
         return;
     }
+#ifndef Q_WS_WIN
     KWorkSpace::requestShutDown(KWorkSpace::ShutdownConfirmDefault,
                                 KWorkSpace::ShutdownTypeDefault,
                                 KWorkSpace::ShutdownModeDefault);
+#endif
 }
 
 void DefaultDesktop::paintInterface(QPainter *painter,

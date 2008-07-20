@@ -39,6 +39,12 @@
 #include "dashboardview.h"
 #include "plasmaapp.h"
 
+#ifdef Q_WS_WIN
+#include "windef.h"
+#include "wingdi.h"
+#include "winuser.h"
+#endif
+
 DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *parent)
     : Plasma::View(containment, id, parent),
       m_zoomLevel(Plasma::DesktopZoom),
@@ -137,7 +143,14 @@ void DesktopView::adjustSize()
 void DesktopView::setIsDesktop(bool isDesktop)
 {
     if (isDesktop) {
+#ifdef Q_WS_WIN
+        setWindowFlags(Qt::FramelessWindowHint);
+        SetWindowPos(winId(), HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+        HWND hwndDesktop = ::FindWindowW(L"Progman", NULL);
+        SetParent(winId(),hwndDesktop);
+#else
         setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
+#endif
 
         KWindowSystem::setOnAllDesktops(winId(), true);
         KWindowSystem::setType(winId(), NET::Desktop);
@@ -154,7 +167,11 @@ void DesktopView::setIsDesktop(bool isDesktop)
 
 bool DesktopView::isDesktop() const
 {
+#ifndef Q_WS_WIN
     return KWindowInfo(winId(), NET::WMWindowType).windowType(NET::Desktop);
+#else
+    return true;
+#endif
 }
 
 void DesktopView::setContainment(Plasma::Containment *containment)

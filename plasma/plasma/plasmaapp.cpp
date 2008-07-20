@@ -60,15 +60,18 @@
 #include "desktopview.h"
 #include "panelview.h"
 
+#ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
 
 Display* dpy = 0;
 Colormap colormap = 0;
 Visual *visual = 0;
+#endif
 
 void checkComposite()
 {
+#ifdef Q_WS_X11
     dpy = XOpenDisplay(0); // open default display
     if (!dpy) {
         kError() << "Cannot connect to the X server" << endl;
@@ -100,20 +103,29 @@ void checkComposite()
     kDebug() << (colormap ? "Plasma has an argb visual" : "Plasma lacks an argb visual") << visual << colormap;
     kDebug() << ((KWindowSystem::compositingActive() && colormap) ? "Plasma can use COMPOSITE for effects"
                                                                     : "Plasma is COMPOSITE-less") << "on" << dpy;
+#endif
 }
 
 PlasmaApp* PlasmaApp::self()
 {
     if (!kapp) {
         checkComposite();
+#ifdef Q_WS_X11
         return new PlasmaApp(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
+#else
+        return new PlasmaApp(0, 0, 0);
+#endif
     }
 
     return qobject_cast<PlasmaApp*>(kapp);
 }
 
 PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
+#ifdef Q_WS_X11
     : KUniqueApplication(display, visual, colormap),
+#else
+    : KUniqueApplication(),
+#endif
       m_corona(0),
       m_appletBrowser(0)
 {
@@ -183,6 +195,9 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     len = sizeof(memorySize);
     sysctl(mib, 2, &memorySize, &len, NULL, 0);
     memorySize /= 1024;
+#endif
+#ifdef Q_WS_WIN
+    size_t memorySize = 2000000000; //FIXME: get the right memorysize instead of hardcoding it
 #endif
     // If you have no suitable sysconf() interface and are not FreeBSD,
     // then you are out of luck and get a compile error.
@@ -425,7 +440,11 @@ void PlasmaApp::appletBrowserDestroyed()
 
 bool PlasmaApp::hasComposite()
 {
+#ifdef Q_WS_X11
     return colormap && KWindowSystem::compositingActive();
+#else
+    return false;
+#endif
 }
 
 void PlasmaApp::notifyStartup(bool completed)
@@ -490,6 +509,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
             break;
     }
 
+#ifdef Q_WS_X11
     //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
     //the application name is we set the proper XClassHint here, hopefully won't be necessary anymore when
     //qapplication will manage apps with argvisuals in a better way
@@ -499,6 +519,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         classHint.res_class = const_cast<char*>("Plasma");
         XSetClassHint(QX11Info::display(), viewWindow, &classHint);
     }
+#endif
 }
 
 void PlasmaApp::panelRemoved(QObject* panel)
