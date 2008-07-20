@@ -383,7 +383,7 @@ void setproctitle( const char *fmt, ... );
 #endif
 void switchToX( struct display *d );
 void setNLogin( struct display *d,
-                const char *nuser, const char *npass, char *nargs,
+                const char *nuser, const char *npass, const char *nargs,
                 int rl );
 void cancelShutdown( void );
 int TTYtoVT( const char *tty );
@@ -440,7 +440,7 @@ char **baseEnv( char **env, const char *user );
 char **inheritEnv( char **env, const char **what );
 char **systemEnv( char **env, const char *user );
 int source( char **env, const char *file, const char *arg );
-void manageSession( struct display *d );
+void manageSession( void );
 
 extern GTalk mstrtalk, grttalk;
 extern GProc grtproc;

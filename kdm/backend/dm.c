@@ -296,10 +296,10 @@ main( int argc, char **argv )
 	/*
 	 * Step 2 - run a sub-daemon for each entry
 	 */
+	openCtrl( 0 );
 #ifdef XDMCP
 	updateListenSockets();
 #endif
-	openCtrl( 0 );
 	mainLoop();
 	closeCtrl( 0 );
 	if (sdRec.how) {
@@ -639,7 +639,7 @@ sessionDone( struct display *d )
 
 void
 setNLogin( struct display *d,
-           const char *nuser, const char *npass, char *nargs, int rl )
+           const char *nuser, const char *npass, const char *nargs, int rl )
 {
 	struct disphist *he = d->hstent;
 	he->rLogin =
@@ -1437,6 +1437,7 @@ startDisplayP2( struct display *d )
 	               &d->gpipe, cgname, 0, &d->pid ))
 	{
 	case 0:
+		td = d;
 #ifndef NOXDMTITLE
 		setproctitle( "%s", d->name );
 #endif
@@ -1452,7 +1453,7 @@ startDisplayP2( struct display *d )
 			gSet( &mstrtalk );
 			gSendInt( D_XConnOk );
 		}
-		manageSession( d );
+		manageSession();
 		/* NOTREACHED */
 	case -1:
 		closeCtrl( d );

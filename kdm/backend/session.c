@@ -546,15 +546,14 @@ errorHandler( Display *dspl ATTR_UNUSED, XErrorEvent *event )
 }
 
 void
-manageSession( struct display *d )
+manageSession( void )
 {
 	int ex, cmd;
 	volatile int clientPid = -1;
 	volatile time_t tdiff = 0;
 	sigset_t ss;
 
-	td = d;
-	debug( "manageSession %s\n", d->name );
+	debug( "manageSession %s\n", td->name );
 	if ((ex = Setjmp( abortSession ))) {
 		closeGreeter( True );
 		if (clientPid > 0)
@@ -572,7 +571,7 @@ manageSession( struct display *d )
 		Longjmp( abortSession, EX_RESERVER_DPY ); /* EX_RETRY_ONCE */
 
 #ifdef XDMCP
-	if (d->useChooser)
+	if (td->useChooser)
 		doChoose();
 		/* NOTREACHED */
 #endif
@@ -591,8 +590,8 @@ manageSession( struct display *d )
 		Signal( SIGALRM, IdleTimeout );
 		alarm( td->idleTimeout );
 #ifdef XDMCP
-		if (((d->displayType & d_location) == dLocal) &&
-		    d->loginMode >= LOGIN_DEFAULT_REMOTE)
+		if (((td->displayType & d_location) == dLocal) &&
+		    td->loginMode >= LOGIN_DEFAULT_REMOTE)
 			goto choose;
 #endif
 		for (;;) {
@@ -640,13 +639,13 @@ manageSession( struct display *d )
 	for (;;) {
 		if (!Setjmp( pingTime )) {
 			(void)Signal( SIGALRM, catchAlrm );
-			(void)alarm( d->pingInterval * 60 ); /* may be 0 */
+			(void)alarm( td->pingInterval * 60 ); /* may be 0 */
 			(void)Wait4( &clientPid );
 			(void)alarm( 0 );
 			break;
 		} else {
 			(void)alarm( 0 );
-			if (!pingServer( d ))
+			if (!pingServer( td ))
 				catchTerm( SIGTERM );
 		}
 	}
@@ -655,9 +654,9 @@ manageSession( struct display *d )
 	 * a server crash is noticed - so we sleep a bit and wait
 	 * for being killed.
 	 */
-	if (!pingServer( d )) {
+	if (!pingServer( td )) {
 		debug( "X server dead upon session exit.\n" );
-		if ((d->displayType & d_location) == dLocal)
+		if ((td->displayType & d_location) == dLocal)
 			sleep( 10 );
 		sessionExit( EX_AL_RESERVER_DPY );
 	}
