@@ -24,21 +24,23 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <greet.h>
 
-class QString;
+#include <QList>
+#include <QString>
 
-typedef struct dpySpec {
-	struct dpySpec *next;
-	char *display, *from, *user, *session;
+QString qString( char *str );
+QStringList qStringList( char **strList );
+
+struct DpySpec {
+	QString display, from, user, session;
 #ifdef HAVE_VTS
 	int vt;
 #endif
 	int flags;
 	int count;
-} dpySpec;
+};
 
-dpySpec *fetchSessions( int flags );
-void disposeSessions( dpySpec *sess );
+QList<DpySpec> fetchSessions( int flags );
 
-void decodeSession( dpySpec *sess, QString &user, QString &loc );
+void decodeSession( const DpySpec &sess, QString &user, QString &loc );
 
 #endif /* UTILS_H */

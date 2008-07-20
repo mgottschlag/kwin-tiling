@@ -39,6 +39,8 @@ class QCheckBox;
 class QLineEdit;
 class KGuiItem;
 
+struct DpySpec;
+
 enum { Authed = QDialog::Accepted + 1, Schedule };
 
 class KDMShutdownBase : public FDialog, public KGVerifyHandler {
@@ -152,8 +154,7 @@ class KDMSlimShutdown : public FDialog {
 
   public:
 	KDMSlimShutdown( QWidget *_parent = 0 );
-	~KDMSlimShutdown();
-	static void externShutdown( int type, const char *os, int uid );
+	static void externShutdown( int type, const QString &os, int uid );
 
   private Q_SLOTS:
 	void slotHalt();
@@ -162,8 +163,8 @@ class KDMSlimShutdown : public FDialog {
 	void slotSched();
 
   private:
-	bool checkShutdown( int type, const char *os );
-	char **targetList;
+	bool checkShutdown( int type, const QString &os );
+	QStringList targetList;
 
 };
 
@@ -172,8 +173,8 @@ class KDMConfShutdown : public KDMShutdownBase {
 	typedef KDMShutdownBase inherited;
 
   public:
-	KDMConfShutdown( int _uid, struct dpySpec *sess, int type, const char *os,
-	                 QWidget *_parent = 0 );
+	KDMConfShutdown( int _uid, const QList<DpySpec> &sessions, int type,
+	                 const QString &os, QWidget *_parent = 0 );
 };
 
 class KDMCancelShutdown : public KDMShutdownBase {
@@ -182,7 +183,7 @@ class KDMCancelShutdown : public KDMShutdownBase {
 
   public:
 	KDMCancelShutdown( int how, int start, int timeout, int force, int uid,
-	                   const char *os, QWidget *_parent );
+	                   const QString &os, QWidget *_parent );
 };
 
 #endif /* KDMSHUTDOWN_H */

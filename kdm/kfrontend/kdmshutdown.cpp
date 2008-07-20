@@ -223,7 +223,7 @@ KDMShutdownBase::verifySetUser( const QString & )
 
 
 static void
-doShutdown( int type, const char *os )
+doShutdown( int type, const QString &os )
 {
 	gSet( 1 );
 	gSendInt( G_Shutdown );
@@ -232,11 +232,26 @@ doShutdown( int type, const char *os )
 	gSendInt( 0 );
 	gSendInt( SHUT_FORCE );
 	gSendInt( 0 ); /* irrelevant, will timeout immediately anyway */
-	gSendStr( os );
+	gSendStr( os.toUtf8().data() );
 	gSet( 0 );
 }
 
 
+static bool
+getBootOptions( QStringList *options, int *defaultTarget, int *oldTarget )
+{
+	bool ret = false;
+	gSet( 1 );
+	gSendInt( G_ListBootOpts );
+	if (gRecvInt() == BO_OK) {
+		*options = qStringList( gRecvStrArr( 0 ) );
+		*defaultTarget = gRecvInt();
+		*oldTarget = gRecvInt();
+		ret = true;
+	}
+	gSet( 0 );
+	return ret;
+}
 
 KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 	: inherited( _uid, _parent )
@@ -263,16 +278,11 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 	connect( rb, SIGNAL(doubleClicked()), SLOT(accept()) );
 	connect( restart_rb, SIGNAL(doubleClicked()), SLOT(accept()) );
 
-	gSet( 1 );
-	gSendInt( G_ListBootOpts );
-	if (gRecvInt() == BO_OK) { /* XXX show dialog on failure */
-		char **tlist = gRecvStrArr( 0 );
-		int defaultTarget = gRecvInt();
-		oldTarget = gRecvInt();
+	QStringList options;
+	int defaultTarget;
+	if (getBootOptions( &options, &defaultTarget, &oldTarget )) { /* XXX show dialog on failure */
 		targets = new QComboBox();
-		for (int i = 0; tlist[i]; i++)
-			targets->addItem( QString::fromLocal8Bit( tlist[i] ) );
-		freeStrArr( tlist );
+		targets->addItems( options );
 		targets->setCurrentIndex( oldTarget == -1 ? defaultTarget : oldTarget );
 		QHBoxLayout *hb = new QHBoxLayout();
 		hwlay->addLayout( hb );
@@ -282,7 +292,6 @@ KDMShutdown::KDMShutdown( int _uid, QWidget *_parent )
 		hb->addWidget( targets );
 		connect( targets, SIGNAL(activated( int )), SLOT(slotTargetChanged()) );
 	}
-	gSet( 0 );
 
 	howGroup->setSizePolicy( fp );
 
@@ -452,7 +461,6 @@ void KDMDelayedPushButton::setDelayedMenu( QMenu *p )
 
 KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 	: inherited( _parent )
-	, targetList( 0 )
 {
 	QHBoxLayout *hbox = new QHBoxLayout( this );
 
@@ -480,25 +488,18 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 	buttonlay->addWidget( btnReboot );
 	connect( btnReboot, SIGNAL(clicked()), SLOT(slotReboot()) );
 
-	gSet( 1 );
-	gSendInt( G_ListBootOpts );
-	if (gRecvInt() == BO_OK) {
-		targetList = gRecvStrArr( 0 );
-		/*int def =*/ gRecvInt();
-		int cur = gRecvInt();
+	int dummy, cur;
+	if (getBootOptions( &targetList, &dummy, &cur )) {
 		QMenu *targets = new QMenu( this );
-		for (int i = 0; targetList[i]; i++) {
-			QString t( QString::fromLocal8Bit( targetList[i] ) );
+		for (int i = 0; i < targetList.size(); i++)
 			(targets->addAction( i == cur ?
 			                     i18nc( "current option in boot loader",
-			                            "%1 (current)", t ) :
-			                     t ))->setData( i );
-		}
+			                            "%1 (current)", targetList[i] ) :
+			                     targetList[i] ))->setData( i );
 		btnReboot->setDelayedMenu( targets );
 		connect( targets, SIGNAL(triggered( QAction * )),
 		         SLOT(slotReboot( QAction * )) );
 	}
-	gSet( 0 );
 
 	buttonlay->addStretch( 1 );
 
@@ -520,11 +521,6 @@ KDMSlimShutdown::KDMSlimShutdown( QWidget *_parent )
 	connect( btnBack, SIGNAL(clicked()), SLOT(reject()) );
 
 	buttonlay->addSpacing( KDialog::spacingHint() );
-}
-
-KDMSlimShutdown::~KDMSlimShutdown()
-{
-	freeStrArr( targetList );
 }
 
 void
@@ -557,14 +553,13 @@ KDMSlimShutdown::slotReboot( QAction *action )
 }
 
 bool
-KDMSlimShutdown::checkShutdown( int type, const char *os )
+KDMSlimShutdown::checkShutdown( int type, const QString &os )
 {
 	reject();
-	dpySpec *sess = fetchSessions( lstRemote | lstTTY );
-	if (!sess && _allowShutdown != SHUT_ROOT)
+	QList<DpySpec> sess = fetchSessions( lstRemote | lstTTY );
+	if (sess.isEmpty() && _allowShutdown != SHUT_ROOT)
 		return true;
 	int ret = KDMConfShutdown( -1, sess, type, os ).exec();
-	disposeSessions( sess );
 	if (ret == Schedule) {
 		KDMShutdown::scheduleShutdown();
 		return false;
@@ -573,11 +568,10 @@ KDMSlimShutdown::checkShutdown( int type, const char *os )
 }
 
 void
-KDMSlimShutdown::externShutdown( int type, const char *os, int uid )
+KDMSlimShutdown::externShutdown( int type, const QString &os, int uid )
 {
-	dpySpec *sess = fetchSessions( lstRemote | lstTTY );
+	QList<DpySpec> sess = fetchSessions( lstRemote | lstTTY );
 	int ret = KDMConfShutdown( uid, sess, type, os ).exec();
-	disposeSessions( sess );
 	if (ret == Schedule)
 		KDMShutdown( uid ).exec();
 	else if (ret)
@@ -585,8 +579,8 @@ KDMSlimShutdown::externShutdown( int type, const char *os, int uid )
 }
 
 
-KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, const char *os,
-                                  QWidget *_parent )
+KDMConfShutdown::KDMConfShutdown( int _uid, const QList<DpySpec> &sessions, int type,
+                                  const QString &os, QWidget *_parent )
 	: inherited( _uid, _parent )
 {
 #ifdef HAVE_VTS
@@ -603,13 +597,12 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, const char 
 	                                  i18n("Switch to Console") :
 #endif
 	                                  i18n("Restart Computer") )
-	                            .arg( os ?
-	                                  i18n("<br/>(Next boot: %1)",
-	                                    QString::fromLocal8Bit( os ) ) :
+	                            .arg( !os.isEmpty() ?
+	                                  i18n("<br/>(Next boot: %1)", os ) :
 	                                  QString() ),
 	                            this ) );
 
-	if (sess) {
+	if (!sessions.isEmpty()) {
 		if (willShut && _scheduledSd != SHUT_NEVER)
 			maySched = true;
 		mayNuke = doesNuke = true;
@@ -632,11 +625,11 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, const char 
 			<< i18nc("@title:column ... of session", "Location") );
 		int ns = 0;
 		QString user, loc;
-		do {
+		foreach (const DpySpec &sess, sessions) {
 			decodeSession( sess, user, loc );
 			new QTreeWidgetItem( lv, QStringList() << user << loc );
-			sess = sess->next, ns++;
-		} while (sess);
+			ns++;
+		}
 		int fw = lv->frameWidth() * 2;
 		int hh = lv->header()->sizeHint().height();
 		int ih = lv->itemDelegate()->sizeHint(
@@ -659,7 +652,7 @@ KDMConfShutdown::KDMConfShutdown( int _uid, dpySpec *sess, int type, const char 
 
 
 KDMCancelShutdown::KDMCancelShutdown( int how, int start, int timeout,
-                                      int force, int uid, const char *os,
+                                      int force, int uid, const QString &os,
                                       QWidget *_parent )
 	: inherited( -1, _parent )
 {
@@ -702,8 +695,8 @@ KDMCancelShutdown::KDMCancelShutdown( int how, int start, int timeout,
 		      i18n("turn off computer") :
 		      i18n("restart computer") ,
 		  strt, end ,
-		  os ?
-		      i18n("\nNext boot: %1", QString::fromLocal8Bit( os ) ) :
+		  !os.isEmpty() ?
+		      i18n("\nNext boot: %1", os ) :
 		      QString() );
 	if (timeout != TO_INF)
 		trg += i18n("\nAfter timeout: %1",

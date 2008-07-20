@@ -168,14 +168,13 @@ void
 KGDialog::slotConsole()
 {
 #ifdef HAVE_VTS
-	dpySpec *sess = fetchSessions( 0 );
-	if (sess) {
+	QList<DpySpec> sess = fetchSessions( 0 );
+	if (!sess.isEmpty()) {
 		if (verify)
 			verify->suspend();
 		int ret = KDMConfShutdown( -1, sess, SHUT_CONSOLE, 0 ).exec();
 		if (verify)
 			verify->resume();
-		disposeSessions( sess );
 		if (!ret)
 			return;
 	}
@@ -223,20 +222,19 @@ KGDialog::slotPopulateDisplays()
 {
 #ifdef HAVE_VTS
 	dpyMenu->clear();
-	dpySpec *sessions = fetchSessions( lstPassive | lstTTY );
+	QList<DpySpec> sessions = fetchSessions( lstPassive | lstTTY );
 	QString user, loc;
-	for (dpySpec *sess = sessions; sess; sess = sess->next) {
+	foreach (const DpySpec &sess, sessions) {
 		decodeSession( sess, user, loc );
 		QAction *action = dpyMenu->addAction(
 			i18nc( "session (location)", "%1 (%2)", user, loc ) );
-		action->setData( sess->vt ? sess->vt : -1 );
+		action->setData( sess.vt ? sess.vt : -1 );
 		action->setCheckable( true );
-		if (!sess->vt)
+		if (!sess.vt)
 			action->setEnabled( false );
-		if (sess->flags & isSelf)
+		if (sess.flags & isSelf)
 			action->setChecked( true );
 	}
-	disposeSessions( sessions );
 #endif
 }
 

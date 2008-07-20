@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # include "kchooser.h"
 #endif
 #include "themer/kdmthemer.h"
+#include "utils.h"
 
 #include <kcrash.h>
 #include <kglobalsettings.h>
@@ -376,11 +377,9 @@ main( int argc ATTR_UNUSED, char **argv )
 			gSet( 1 );
 			gSendInt( G_QryDpyShutdown );
 			int how = gRecvInt(), uid = gRecvInt();
-			char *os = gRecvStr();
+			QString os = qString( gRecvStr() );
 			gSet( 0 );
 			KDMSlimShutdown::externShutdown( how, os, uid );
-			if (os)
-				free( os );
 			gSendInt( G_Ready );
 			break;
 		}

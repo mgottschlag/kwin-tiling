@@ -25,91 +25,87 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <stdlib.h>
 
-static void
-disposeSession( dpySpec *sess )
+QString qString( char *str )
 {
-	free( sess->display );
-	free( sess->from );
-	if (sess->user)
-		free( sess->user );
-	if (sess->session)
-		free( sess->session );
+	if (!str)
+		return QString();
+	QString qs = QString::fromUtf8( str );
+	free( str );
+	return qs;
 }
 
-dpySpec *
+QStringList qStringList( char **strList )
+{
+	QStringList qsl;
+	for (int i = 0; strList[i]; i++) {
+		qsl.append( QString::fromUtf8( strList[i] ) );
+		free( strList[i] );
+	}
+	free( strList );
+	return qsl;
+}
+
+QList<DpySpec>
 fetchSessions( int flags )
 {
-	dpySpec *sess, *sessions = 0, tsess;
+	QList<DpySpec> sessions;
+	DpySpec tsess;
 
 	gSet( 1 );
 	gSendInt( G_List );
 	gSendInt( flags );
   next:
-	while ((tsess.display = gRecvStr())) {
-		tsess.from = gRecvStr();
+	while (!(tsess.display = qString( gRecvStr() )).isEmpty()) {
+		tsess.from = qString( gRecvStr() );
 #ifdef HAVE_VTS
 		tsess.vt = gRecvInt();
 #endif
-		tsess.user = gRecvStr();
-		tsess.session = gRecvStr();
+		tsess.user = qString( gRecvStr() );
+		tsess.session = qString( gRecvStr() );
 		tsess.flags = gRecvInt();
-		if ((tsess.flags & isTTY) && *tsess.from)
-			for (sess = sessions; sess; sess = sess->next)
-				if (sess->user && !strcmp( sess->user, tsess.user ) &&
-				    !strcmp( sess->from, tsess.from ))
+		if ((tsess.flags & isTTY) && !tsess.from.isEmpty())
+			for (int i = 0; i < sessions.size(); i++)
+				if (!sessions[i].user.isEmpty() &&
+				    sessions[i].user == tsess.user &&
+				    sessions[i].from == tsess.from)
 				{
-					sess->count++;
-					disposeSession( &tsess );
+					sessions[i].count++;
 					goto next;
 				}
-		if (!(sess = (dpySpec *)malloc( sizeof(*sess) )))
-			logPanic( "Out of memory\n" );
 		tsess.count = 1;
-		tsess.next = sessions;
-		*sess = tsess;
-		sessions = sess;
+		sessions.append( tsess );
 	}
 	gSet( 0 );
 	return sessions;
 }
 
 void
-disposeSessions( dpySpec *sess )
+decodeSession( const DpySpec &sess, QString &user, QString &loc )
 {
-	while (sess) {
-		dpySpec *nsess = sess->next;
-		disposeSession( sess );
-		free( sess );
-		sess = nsess;
-	}
-}
-
-void
-decodeSession( dpySpec *sess, QString &user, QString &loc )
-{
-	if (sess->flags & isTTY) {
+	if (sess.flags & isTTY) {
 		user =
 			i18ncp( "user: ...", "%2: TTY login", "%2: %1 TTY logins",
-			        sess->count, sess->user );
+			        sess.count, sess.user );
 		loc =
 #ifdef HAVE_VTS
-			sess->vt ?
-				QString("vt%1").arg( sess->vt ) :
+			sess.vt ?
+				QString("vt%1").arg( sess.vt ) :
 #endif
-				QString::fromLatin1( *sess->from ? sess->from : sess->display );
+				!sess.from.isEmpty() ?
+					sess.from : sess.display;
 	} else {
 		user =
-			!sess->user ?
+			sess.session.isEmpty() ?
 				i18nc("... session", "Unused") :
-				*sess->user ?
-					i18nc("user: session type", "%1: %2",
-					      sess->user, sess->session ) :
-					i18nc("... host", "X login on %1", sess->session );
+				!sess.user.isEmpty() ?
+					i18nc( "user: session type", "%1: %2",
+					       sess.user, sess.session ) :
+					i18nc( "... host", "X login on %1", sess.session );
 		loc =
 #ifdef HAVE_VTS
-			sess->vt ?
-				QString("%1, vt%2").arg( sess->display ).arg( sess->vt ) :
+			sess.vt ?
+				QString("%1, vt%2").arg( sess.display ).arg( sess.vt ) :
 #endif
-				QString::fromLatin1( sess->display );
+				sess.display;
 	}
 }

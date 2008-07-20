@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "kdmconfig.h"
 #include "kdm_greet.h"
+#include "utils.h"
 
 #include <kconfiggroup.h>
 #include <kglobal.h>
@@ -47,24 +48,13 @@ bool _authorized;
 static QString
 getCfgQStr( int id )
 {
-	char *tmp = getCfgStr( id );
-	QString qs = QString::fromUtf8( tmp );
-	free( tmp );
-	return qs;
+	return qString( getCfgStr( id ) );
 }
 
 static QStringList
 getCfgQStrList( int id )
 {
-	int i, len;
-	char **tmp = getCfgStrArr( id, &len );
-	QStringList qsl;
-	for (i = 0; i < len - 1; i++) {
-		qsl.append( QString::fromUtf8( tmp[i] ) );
-		free( tmp[i] );
-	}
-	free( tmp );
-	return qsl;
+	return qStringList( getCfgStrArr( id, 0 ) );
 }
 
 // Based on kconfiggroupgui.cpp
