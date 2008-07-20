@@ -79,6 +79,9 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
 
     setHasConfigurationInterface(true);
     setBackgroundHints(NoBackground);
+
+    resize(IconSize(KIconLoader::Desktop) * 2, IconSize(KIconLoader::Desktop) * 2);
+
     d->icon = new Plasma::Icon(KIcon("start-here-kde"), QString(), this);
     d->icon->setFlag(ItemIsMovable, false);
     connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
@@ -111,8 +114,6 @@ void LauncherApplet::init()
     d->switcher->setVisible(immutability() == Plasma::Mutable);
     d->actions.append(d->switcher);
     connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
-    resize(IconSize(KIconLoader::Desktop),IconSize(KIconLoader::Desktop));
-    d->icon->resize(contentsRect().size());
 }
 
 void LauncherApplet::constraintsEvent(Plasma::Constraints constraints)

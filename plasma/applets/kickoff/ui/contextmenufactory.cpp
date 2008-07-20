@@ -35,6 +35,7 @@
 #include <KBookmarkManager>
 #include <Solid/Device>
 #include <Solid/StorageAccess>
+#include <KUrl>
 
 // Plasma
 #include <plasma/containment.h>
@@ -133,7 +134,12 @@ void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& p
     // add to main panel
     QAction *addToPanelAction = new QAction(this);
 
-    if (d->applet) {
+    //### FIXME :   icons in leave-view are not properly based on a .desktop file
+    //so you cant put them in desktop or panel
+    //### TODO : do not forget to remove (kurl.scheme() != "leave") and kurl declaration
+    //when proper action for such case will be provided
+    KUrl kurl(url);
+    if ((d->applet) && (kurl.scheme() != "leave")) {
         Plasma::Containment *containment = d->applet->containment();
 
         if (containment && containment->corona()) {

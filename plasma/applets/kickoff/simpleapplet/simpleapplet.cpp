@@ -148,6 +148,8 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
     setHasConfigurationInterface(true);
     setBackgroundHints(NoBackground);
 
+    resize(IconSize(KIconLoader::Desktop) * 2, IconSize(KIconLoader::Desktop) * 2);
+
     d->icon = new Plasma::Icon(QString(), this);
     d->icon->setFlag(ItemIsMovable, false);
     connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
@@ -155,8 +157,6 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
 
     d->viewtype = Combined;
     d->formattype = NameDescription;
-
-    resize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
 }
 
 MenuLauncherApplet::~MenuLauncherApplet()
