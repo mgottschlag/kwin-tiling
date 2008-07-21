@@ -18,34 +18,32 @@
  */
 
 
-#ifndef KEPHAL_DESKTOPWIDGETSCREENS_H
-#define KEPHAL_DESKTOPWIDGETSCREENS_H
+#ifndef KEPHAL_DESKTOPWIDGETOUTPUTS_H
+#define KEPHAL_DESKTOPWIDGETOUTPUTS_H
 
 #include <QPoint>
-#include "../simplescreen.h"
-#include "../screens.h"
+#include "../simpleoutput.h"
+#include "../outputs.h"
 
 
 namespace kephal {
 
-    class DesktopWidgetScreens : public Screens {
+    class DesktopWidgetOutputs : public Outputs {
         Q_OBJECT
         public:
-            DesktopWidgetScreens(QObject * parent);
-            ~DesktopWidgetScreens();
-            virtual QList<Screen *> screens();
+            DesktopWidgetOutputs(QObject * parent);
+            ~DesktopWidgetOutputs();
+            virtual QList<Output *> outputs();
             
         private Q_SLOTS:
             void screenChanged(int screen);
-            void selectedAsPrimary(SimpleScreen * screen);
             
         private:
-            QList<SimpleScreen *> m_screens;
-            SimpleScreen * m_primaryScreen;
+            QList<SimpleOutput *> m_outputs;
     };
     
 }
 
 
-#endif // KEPHAL_DESKTOPWIDGETSCREENS_H
+#endif // KEPHAL_DESKTOPWIDGETOUTPUTS_H
 

@@ -23,13 +23,13 @@
 
 
 #include "kephald.h"
-#include "../screens/desktopwidget/desktopwidgetscreens.h"
-#include "../screens/output/outputscreens.h"
-#include "../outputs/xrandr/xrandroutputs.h"
+#include "outputs/desktopwidget/desktopwidgetoutputs.h"
+#include "screens/output/outputscreens.h"
+#include "outputs/xrandr/xrandroutputs.h"
 #include "dbus/dbusapi_screens.h"
-#include "../xml/configurations_xml.h"
+#include "xml/configurations_xml.h"
 
-#include "../xrandr12/randrdisplay.h"
+#include "xrandr12/randrdisplay.h"
 
 
 using namespace kephal;
@@ -44,9 +44,11 @@ int main(int argc, char *argv[])
 
 
 KephalD::KephalD(int & argc, char ** argv)
-    : QApplication(argc, argv)
+    : QApplication(argc, argv),
+    noXRandR(false)
 {
     qDebug() << "kephald starting up";
+    parseArgs(argc, argv);
     init();
 }
 
@@ -54,9 +56,28 @@ KephalD::~KephalD()
 {
 }
 
+void KephalD::parseArgs(int & argc, char ** argv) {
+    for (int i = 0; i < argc; ++i) {
+        QString arg(argv[i]);
+        qDebug() << "arg:" << i << arg;
+        
+        if (arg == "--no-xrandr") {
+            noXRandR = true;
+        }
+    }
+}
+
 void KephalD::init() {
-    RandRDisplay * display = new RandRDisplay();
-    new XRandROutputs(this, display);
+    RandRDisplay * display;
+    if (! noXRandR) {
+        display = new RandRDisplay();
+    }
+    
+    if (! noXRandR && display->isValid()) {
+        new XRandROutputs(this, display);
+    } else {
+        new DesktopWidgetOutputs(this);
+    }
     
     foreach (Output * output, Outputs::instance()->outputs()) {
         qDebug() << "output:" << output->id() << output->geom();

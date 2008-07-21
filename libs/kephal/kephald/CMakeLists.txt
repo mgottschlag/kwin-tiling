@@ -5,15 +5,18 @@ INCLUDE (${QT_USE_FILE})
 INCLUDE_DIRECTORIES (. .. ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
 SET (kephald_SRCS kephald.cpp
-        ../screens/desktopwidget/desktopwidgetscreens.cpp
         ../screens/screens.cpp ../screens/screen.cpp ../screens/simplescreen.cpp
         ../screens/output/outputscreens.cpp
         dbus/dbusapi_screens.cpp
+        ../outputs/simpleoutput.cpp
+        ../outputs/desktopwidget/desktopwidgetoutputs.cpp
         ../outputs/outputs.cpp ../outputs/xrandr/xrandroutputs.cpp)
-QT4_WRAP_CPP (kephald_SRCS kephald.h ../screens/desktopwidget/desktopwidgetscreens.h
+QT4_WRAP_CPP (kephald_SRCS kephald.h
         ../screens/screens.h ../screens/screen.h ../screens/simplescreen.h
         ../screens/output/outputscreens.h
         dbus/dbusapi_screens.h
+        ../outputs/simpleoutput.h
+        ../outputs/desktopwidget/desktopwidgetoutputs.h
         ../outputs/outputs.h ../outputs/xrandr/xrandroutputs.h)
 QT4_GENERATE_DBUS_INTERFACE(dbus/dbusapi_screens.h org.kde.Kephal.Screens.xml)
 QT4_ADD_DBUS_ADAPTOR (kephald_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal.Screens.xml

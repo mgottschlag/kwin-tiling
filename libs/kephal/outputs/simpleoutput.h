@@ -18,10 +18,10 @@
  */
 
 
-#ifndef KEPHAL_SIMPLESCREEN_H
-#define KEPHAL_SIMPLESCREEN_H
+#ifndef KEPHAL_SIMPLEOUTPUT_H
+#define KEPHAL_SIMPLEOUTPUT_H
 
-#include "screen.h"
+#include "outputs.h"
 
 #include <QSize>
 #include <QPoint>
@@ -30,40 +30,37 @@
 
 namespace kephal {
 
-    class SimpleScreen : public Screen {
+    class SimpleOutput : public Output {
         Q_OBJECT
         public:
-            SimpleScreen(QObject * parent, int id, QSize resolution, QPoint position, bool privacy, bool primary);
-            SimpleScreen(QObject * parent);
+            SimpleOutput(QObject * parent, QString id, QSize resolution, QPoint position, bool connected, bool activated);
+            SimpleOutput(QObject * parent);
             
-            virtual int id();
+            virtual QString id();
 
             virtual QSize size();
             virtual void setSize(QSize size);
             virtual QPoint position();
             //QList<PositionType> getRelativePosition();
-
-            virtual bool isPrivacyMode();
-            virtual void setPrivacyMode(bool b);
-            virtual bool isPrimary();
-            virtual void setAsPrimary();
             
-            void _setId(int id);
+            virtual bool isConnected();
+            virtual bool isActivated();
+
+            void _setId(QString id);
             void _setSize(QSize size);
             void _setPosition(QPoint position);
-            void _setPrimary(bool primary);
+            void _setActivated(bool activated);
+            void _setConnected(bool connected);
             
         Q_SIGNALS:
-            void selectedAsPrimary(SimpleScreen * screen);
-            void privacyModeChangeRequested(SimpleScreen * screen, bool privacy);
-            void sizeChangeRequested(SimpleScreen * screen, QSize oldSize, QSize newSize);
+            void sizeChangeRequested(SimpleOutput * screen, QSize oldSize, QSize newSize);
             
         private:
-            int m_id;
+            QString m_id;
             QSize m_size;
             QPoint m_position;
-            bool m_privacy;
-            bool m_primary;
+            bool m_activated;
+            bool m_connected;
     };
     
 }

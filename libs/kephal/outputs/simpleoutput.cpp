@@ -18,83 +18,75 @@
  */
 
 
-#include "simplescreen.h"
+#include "simpleoutput.h"
 
 
 namespace kephal {
 
-    SimpleScreen::SimpleScreen(QObject * parent, int id, QSize size, QPoint position, bool privacy, bool primary)
-        : Screen(parent)
+    SimpleOutput::SimpleOutput(QObject * parent, QString id, QSize size, QPoint position, bool connected, bool activated)
+        : Output(parent)
     {
         m_id = id;
         m_size = size;
         m_position = position;
-        m_privacy = privacy;
-        m_primary = primary;
+        m_connected = connected;
+        m_activated = activated;
     }
     
-    SimpleScreen::SimpleScreen(QObject * parent)
-        : Screen(parent),
-        m_id(-1),
+    SimpleOutput::SimpleOutput(QObject * parent)
+        : Output(parent),
+        m_id(""),
         m_size(0, 0),
         m_position(0, 0),
-        m_privacy(false),
-        m_primary(false)
+        m_connected(false),
+        m_activated(false)
     {
     }
     
     
-    int SimpleScreen::id()
+    QString SimpleOutput::id()
     {
         return m_id;
     }
 
-    QSize SimpleScreen::size() {
+    QSize SimpleOutput::size() {
         return m_size;
     }
     
-    void SimpleScreen::setSize(QSize size) {
+    void SimpleOutput::setSize(QSize size) {
         emit sizeChangeRequested(this, m_size, size);
     }
     
-    QPoint SimpleScreen::position() {
+    QPoint SimpleOutput::position() {
         return m_position;
     }
 
-    bool SimpleScreen::isPrivacyMode()
-    {
-        return m_privacy;
-    }
-    
-    void SimpleScreen::setPrivacyMode(bool privacy)
-    {
-        emit privacyModeChangeRequested(this, m_privacy);
-    }
-    
-    bool SimpleScreen::isPrimary()
-    {
-        return m_primary;
-    }
-    
-    void SimpleScreen::setAsPrimary() {
-        emit selectedAsPrimary(this);
-    }
-    
-    void SimpleScreen::_setId(int id) {
+    void SimpleOutput::_setId(QString id) {
         m_id = id;
     }
     
-    void SimpleScreen::_setSize(QSize size) {
+    void SimpleOutput::_setSize(QSize size) {
         m_size = size;
     }
     
-    void SimpleScreen::_setPosition(QPoint position)
-    {
+    void SimpleOutput::_setPosition(QPoint position) {
         m_position = position;
     }
     
-    void SimpleScreen::_setPrimary(bool primary) {
-        m_primary = primary;
+    void SimpleOutput::_setConnected(bool connected) {
+        m_connected = connected;
+    }
+    
+    void SimpleOutput::_setActivated(bool activated) {
+        m_activated = activated;
+    }
+    
+    bool SimpleOutput::isConnected() {
+        return m_connected;
+    }
+    
+    bool SimpleOutput::isActivated() {
+        return m_connected && m_activated;
     }
     
 }

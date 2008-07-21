@@ -33,6 +33,9 @@ class KephalD : public QApplication
         
     private:
         void init();
+        void parseArgs(int & argc, char ** argv);
+        
+        bool noXRandR;
 };
 
 
