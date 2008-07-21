@@ -18,10 +18,19 @@
  */
 
 
-#include "../screens/dbus/dbusscreens.h"
+#include "screens/dbus/dbusscreens.h"
+#include "screens/output/outputscreens.h"
+#include "outputs/desktopwidget/desktopwidgetoutputs.h"
+
+using namespace kephal;
 
 
 void SCREENS_FACTORY() {
-    new kephal::DBusScreens(qApp);
+    DBusScreens * screens = new DBusScreens(qApp);
+    if (! screens->isValid()) {
+        qDebug() << "could not access kephald, falling back to QDesktopWidget";
+        new DesktopWidgetOutputs(qApp);
+        new OutputScreens(qApp);
+    }
 }
 

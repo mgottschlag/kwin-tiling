@@ -36,6 +36,13 @@ namespace kephal {
             QDBusConnection::sessionBus(),
             this);
             
+        if (! m_interface->isValid()) {
+            m_valid = false;
+            return;
+        }
+            
+        m_valid = true;
+        
         int numScreens = m_interface->numScreens();
         int primary = m_interface->primaryScreen();
         for (int i = 0; i < numScreens; ++i) {
@@ -68,6 +75,10 @@ namespace kephal {
             result.append(screen);
         }
         return result;
+    }
+    
+    bool DBusScreens::isValid() {
+        return m_valid;
     }
     
 }

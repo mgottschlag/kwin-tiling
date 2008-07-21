@@ -35,11 +35,13 @@ namespace kephal {
             DBusScreens(QObject * parent);
             ~DBusScreens();
             virtual QList<Screen *> screens();
+            bool isValid();
             
         private:
             QList<SimpleScreen *> m_screens;
             SimpleScreen * m_primaryScreen;
             org::kde::Kephal::Screens * m_interface;
+            bool m_valid;
     };
     
 }
