@@ -63,6 +63,7 @@ ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
 ClockApplet::~ClockApplet()
 {
     delete d->calendar;
+    delete d;
 }
 
 void ClockApplet::updateToolTipContent() {
