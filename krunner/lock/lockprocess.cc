@@ -201,12 +201,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     greetPlugin.library = 0;
 
     mSuppressUnlock.setSingleShot(true);
-    if (0) { //FIXME if hiding option eabled
-        connect(&mSuppressUnlock, SIGNAL(timeout()), SLOT(hidePlasma()));
-    } else {
-        connect(&mSuppressUnlock, SIGNAL(timeout()), SLOT(lockPlasma()));
-    }
-
+    connect(&mSuppressUnlock, SIGNAL(timeout()), SLOT(deactivatePlasma()));
 }
 
 //---------------------------------------------------------------------------
@@ -909,7 +904,7 @@ bool LockProcess::startPlasma()
     if (mPlasmaDBus->isValid()) {
         kDebug() << "weird, plasma-overlay is already running";
         connect(mPlasmaDBus, SIGNAL(viewCreated(uint)), SLOT(setPlasmaView(uint)));
-        mPlasmaDBus->call(QDBus::NoBlock, "showPlasma");
+        mPlasmaDBus->call(QDBus::NoBlock, "deactivate");
         mPlasmaDBus->callWithCallback("viewWinId", QList<QVariant>(), this,
                 SLOT(setPlasmaView(uint)));
         return true;
@@ -974,10 +969,10 @@ void LockProcess::setPlasmaView(uint id)
     stayOnTop();
 }
 
-void LockProcess::hidePlasma()
+void LockProcess::deactivatePlasma()
 {
     if (mPlasmaDBus && mPlasmaDBus->isValid()) {
-        mPlasmaDBus->call(QDBus::NoBlock, "hidePlasma");
+        mPlasmaDBus->call(QDBus::NoBlock, "deactivate");
     }
 }
 
@@ -1044,7 +1039,7 @@ bool LockProcess::checkPass()
 
     killTimer(mAutoLogoutTimerId);
     if (mPlasmaDBus && mPlasmaDBus->isValid()) {
-        mPlasmaDBus->call(QDBus::NoBlock, "showPlasma");
+        mPlasmaDBus->call(QDBus::NoBlock, "activate");
     }
 
     PasswordDlg passDlg( this, &greetPlugin);
@@ -1053,8 +1048,8 @@ bool LockProcess::checkPass()
     if (mPlasmaEnabled) {
         if (ret == QDialog::Rejected) {
             mSuppressUnlock.start(SUPPRESS_TIMEOUT);
-        } else if (0 && ret == TIMEOUT_CODE) { //FIXME if optio enabled
-            hidePlasma();
+        } else if (ret == TIMEOUT_CODE) {
+            deactivatePlasma();
         }
     }
 

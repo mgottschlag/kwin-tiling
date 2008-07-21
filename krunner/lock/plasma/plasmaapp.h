@@ -25,6 +25,8 @@
 
 #include <KUniqueApplication>
 
+#include "ui_saverconfig.h"
+
 namespace Plasma
 {
     class Containment;
@@ -32,6 +34,7 @@ namespace Plasma
 } // namespace Plasma
 
 class SaverView;
+class KConfigDialog;
 
 class PlasmaApp : public KUniqueApplication
 {
@@ -56,6 +59,11 @@ public:
      */
     bool cheatsEnabled() const;
 
+    void setActiveOpacity(qreal opacity);
+    void setIdleOpacity(qreal opacity);
+    qreal activeOpacity() const;
+    qreal idleOpacity() const;
+
 Q_SIGNALS:
     // DBUS interface.
     void viewCreated(uint id); //XXX this is actually a WId but qdbuscpp2xml is dumb
@@ -63,10 +71,23 @@ Q_SIGNALS:
 
 public Q_SLOTS:
     // DBUS interface.
-    void showPlasma();
-    void hidePlasma();
+    /**
+     * tell plasma to go into active mode, ready for interaction
+     */
+    void activate();
+    /**
+     * tell plasma to go into idle mode
+     * this does not mean exit, it just means the computer is idle
+     */
+    void deactivate();
+    /**
+     * lock widgets
+     */
     void lock();
     //not really slots, but we want them in dbus
+    /**
+     * @return the window id of our view, or 0 if there is none
+     */
     uint viewWinId();
 
 private Q_SLOTS:
@@ -76,6 +97,8 @@ private Q_SLOTS:
     void dialogDestroyed(QObject *obj);
     void hideDialogs();
     void showDialogs();
+    void createConfigurationInterface(KConfigDialog *parent);
+    void configAccepted();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);
@@ -86,6 +109,10 @@ private:
     Plasma::Corona *m_corona;
     SaverView *m_view;
     QList<QWidget*> m_dialogs;
+    Ui::saverConfig ui;
+
+    qreal m_activeOpacity;
+    qreal m_idleOpacity;
     bool m_cheats;
 };
 

@@ -33,6 +33,7 @@
 #include <KDebug>
 //#include <KWindowSystem>
 //#include <KActionCollection>
+#include <KConfigDialog>
 
 #include "plasma/corona.h"
 #include "plasma/theme.h"
@@ -48,7 +49,6 @@ SaverDesktop::SaverDesktop(QObject *parent, const QVariantList &args)
       m_lockDesktopAction(0),
       m_appletBrowserAction(0)
 {
-    //kDebug() << "!!! loading desktop";
 }
 
 SaverDesktop::~SaverDesktop()
@@ -58,7 +58,7 @@ SaverDesktop::~SaverDesktop()
 void SaverDesktop::init()
 {
     Containment::init();
-    //setHasConfigurationInterface(true);
+    setHasConfigurationInterface(true);
 
     //re-wire the lock action so we can check for a password
     QAction *lock = action("lock widgets");
@@ -86,9 +86,13 @@ QList<QAction*> SaverDesktop::contextualActions()
         m_appletBrowserAction = action("add widgets");
         m_lockDesktopAction = action("lock widgets");
     }
+    QAction *config = action("configure");
 
     QList<QAction*> actions;
     actions.append(m_appletBrowserAction);
+    if (config) {
+        actions.append(config);
+    }
     actions.append(m_lockDesktopAction);
 
     return actions;
@@ -159,6 +163,11 @@ void SaverDesktop::dbusError(QDBusError error)
     //Q_UNUSED(error)
     kDebug() << error.errorString(error.type());
     //I don't really give a fuck.
+}
+
+void SaverDesktop::createConfigurationInterface(KConfigDialog *parent)
+{
+    emit delegateConfigurationInterface(parent);
 }
 
 K_EXPORT_PLASMA_APPLET(saverdesktop, SaverDesktop)

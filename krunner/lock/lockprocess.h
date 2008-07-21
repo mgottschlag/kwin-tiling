@@ -90,9 +90,9 @@ private Q_SLOTS:
      */
     void setPlasmaView(uint id); //it's really a WId but qdbuscpp2xml is dumb
     /**
-     * hide plasma's view
+     * tell plasma we're in idle mode
      */
-    void hidePlasma();
+    void deactivatePlasma();
     void lockPlasma();
     /**
      * immediately un-suppress the password dialog

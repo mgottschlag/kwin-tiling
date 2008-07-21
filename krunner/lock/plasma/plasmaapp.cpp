@@ -49,6 +49,7 @@
 #include <KCmdLineArgs>
 #include <KWindowSystem>
 #include <KAction>
+#include <KConfigDialog>
 
 //#include <ksmserver_interface.h>
 
@@ -109,11 +110,11 @@ PlasmaApp* PlasmaApp::self()
 {
     if (!kapp) {
         checkComposite();
-        kDebug() << "new PlasmaApp";
+        //kDebug() << "new PlasmaApp";
         return new PlasmaApp(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
     }
 
-    kDebug() << "existing PlasmaApp";
+    //kDebug() << "existing PlasmaApp";
     return qobject_cast<PlasmaApp*>(kapp);
 }
 
@@ -188,6 +189,8 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
 
     KConfigGroup cg(KGlobal::config(), "General");
     Plasma::Theme::defaultTheme()->setFont(cg.readEntry("desktopFont", font()));
+    m_activeOpacity = cg.readEntry("activeOpacity", 1.0);
+    m_idleOpacity = cg.readEntry("idleOpacity", 1.0);
 
     enableCheats(KCmdLineArgs::parsedArgs()->isSet("cheats"));
 
@@ -229,19 +232,64 @@ bool PlasmaApp::cheatsEnabled() const
     return m_cheats;
 }
 
-void PlasmaApp::showPlasma()
+void PlasmaApp::setActiveOpacity(qreal opacity)
 {
-    if (m_view) {
-        m_view->showView();
+    if (opacity == m_activeOpacity) {
+        return;
     }
+    m_activeOpacity = opacity;
+    if (m_view) {
+        //assume it's active, since things are happening
+        m_view->setWindowOpacity(opacity);
+    }
+    KConfigGroup cg(KGlobal::config(), "General");
+    cg.writeEntry("activeOpacity", opacity); //TODO trigger a save
 }
 
-void PlasmaApp::hidePlasma()
+void PlasmaApp::setIdleOpacity(qreal opacity)
+{
+    if (opacity == m_idleOpacity) {
+        return;
+    }
+    m_idleOpacity = opacity;
+    KConfigGroup cg(KGlobal::config(), "General");
+    cg.writeEntry("idleOpacity", opacity); //TODO trigger a save
+}
+
+qreal PlasmaApp::activeOpacity() const
+{
+    return m_activeOpacity;
+}
+
+qreal PlasmaApp::idleOpacity() const
+{
+    return m_idleOpacity;
+}
+
+
+void PlasmaApp::activate()
 {
     if (m_view) {
-        m_view->hideView();
+        m_view->setWindowOpacity(m_activeOpacity);
+        m_view->showView();
     }
-    //FIXME what about potential config dialogs?
+    //TODO set opacity
+}
+
+void PlasmaApp::deactivate()
+{
+    if (m_view) {
+        if (m_view->isVisible()) {
+            if (qFuzzyCompare(m_idleOpacity, 0.0)) {
+                m_view->hideView();
+            } else {
+                lock();
+                m_view->setWindowOpacity(m_idleOpacity);
+            }
+        } else {
+            lock();
+        }
+    }
 }
 
 uint PlasmaApp::viewWinId()
@@ -335,9 +383,16 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
     connect(containment, SIGNAL(locked()), SLOT(hideDialogs()));
     connect(containment, SIGNAL(unlocked()), SLOT(showDialogs()));
+    //ohhh, what a hack
+    connect(containment, SIGNAL(delegateConfigurationInterface(KConfigDialog *)),
+            SLOT(createConfigurationInterface(KConfigDialog *)));
+
     connect(m_view, SIGNAL(hidden()), SLOT(lock()));
     connect(m_view, SIGNAL(hidden()), SIGNAL(hidden()));
-    m_view->showView();
+    if (m_idleOpacity > 0) {
+        m_view->setWindowOpacity(m_idleOpacity);
+        m_view->showView();
+    }
     emit viewCreated(m_view->effectiveWinId());
 }
 
@@ -415,6 +470,26 @@ void PlasmaApp::showDialogs()
         w->show();
     }
     //FIXME where does the focus go?
+}
+
+void PlasmaApp::createConfigurationInterface(KConfigDialog *parent)
+{
+    QWidget *widget = new QWidget();
+    ui.setupUi(widget);
+    parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+    parent->addPage(widget, parent->windowTitle());
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    ui.activeSlider->setValue(m_activeOpacity * 10);
+    ui.idleSlider->setValue(m_idleOpacity * 10);
+    //TODO tell non-composite users they won't get anything other than 0 or 100%
+    //and generally prettify the UI
+}
+
+void PlasmaApp::configAccepted()
+{
+    setActiveOpacity(ui.activeSlider->value() / 10.0);
+    setIdleOpacity(ui.idleSlider->value() / 10.0);
 }
 
 void PlasmaApp::lock()

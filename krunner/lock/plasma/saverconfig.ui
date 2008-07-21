@@ -1,0 +1,90 @@
+<ui version="4.0" >
+ <class>saverConfig</class>
+ <widget class="QWidget" name="saverConfig" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>210</width>
+    <height>107</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Configure Plasma</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout" >
+   <item row="0" column="0" >
+    <widget class="QGroupBox" name="opacityGroup" >
+     <property name="title" >
+      <string>Opacity</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout" >
+      <item row="0" column="0" >
+       <widget class="QLabel" name="activeLabel" >
+        <property name="text" >
+         <string>While active:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>activeSlider</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="idleLabel" >
+        <property name="text" >
+         <string>While idle:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>idleSlider</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="QSlider" name="idleSlider" >
+        <property name="maximum" >
+         <number>10</number>
+        </property>
+        <property name="singleStep" >
+         <number>1</number>
+        </property>
+        <property name="pageStep" >
+         <number>2</number>
+        </property>
+        <property name="value" >
+         <number>10</number>
+        </property>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="QSlider" name="activeSlider" >
+        <property name="minimum" >
+         <number>1</number>
+        </property>
+        <property name="maximum" >
+         <number>10</number>
+        </property>
+        <property name="singleStep" >
+         <number>1</number>
+        </property>
+        <property name="pageStep" >
+         <number>2</number>
+        </property>
+        <property name="value" >
+         <number>10</number>
+        </property>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
