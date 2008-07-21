@@ -4,9 +4,9 @@ TARGET_LINK_LIBRARIES (weather_ion ${KDE4_KIO_LIBS} plasma)
 set_target_properties(weather_ion PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}
    SOVERSION ${GENERIC_LIB_SOVERSION}
+   ${KDE4_DISABLE_PROPERTY_}LINK_INTERFACE_LIBRARIES "${KDE4_KIO_LIBS}"
 )
 
-_kde4_target_link_interface_libraries(weather_ion "${KDE4_KIO_LIBS}")
 
 INSTALL (TARGETS weather_ion ${INSTALL_TARGETS_DEFAULT_ARGS})
 
