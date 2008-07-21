@@ -30,6 +30,8 @@
 //Plasma
 #include <plasma/panelsvg.h>
 
+K_EXPORT_PLASMA_APPLET(systemtray, SystemTray)
+
 SystemTray::SystemTray(QObject *parent, const QVariantList &arguments)
     : Plasma::Applet(parent, arguments),
       m_startUpDelayShowTimer(0),

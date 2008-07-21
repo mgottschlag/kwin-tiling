@@ -69,6 +69,4 @@ private:
     QPointer<SystemTrayWidget> m_systemTrayWidget;
 };
 
-K_EXPORT_PLASMA_APPLET(systemtray, SystemTray)
-
 #endif // SYSTEMTRAY_H
