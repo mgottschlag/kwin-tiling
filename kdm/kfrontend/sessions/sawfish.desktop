@@ -44,6 +44,7 @@ Comment[ja]=Emacs Lisp 言語スクリプトで機能拡張可能なウィンド
 Comment[ka]=Lisp სკრიპტებით გაფათოვებადი Emacs ის მაგვარი ფანჯრის მენეჯერი
 Comment[kk]=Emacs Lisp-секілді тілдегі скриптті қолданып, кеңейтілетін терезе менеджері
 Comment[km]=កម្មវិធី​គ្រប់គ្រង​បង្អួច​ដែល​អាច​ពង្រីក​បាន ហើយ​អាច​សរសេរ​ស្គ្រីប​ដោយ​​ភាសា​ដែល​ដូចទៅ​នឹង Emacs Lisp
+Comment[ko]=이맥스 Lisp 언어로 스크립팅이 가능한 확장 가능한 창 관리자
 Comment[lt]=Langų tvarkyklė, kurią galima išplėsti Emacs Lisp primenančia programavimo kalba
 Comment[lv]=Paplašināms logu pārvaldnieks ar Emacs Lisp līdzīgas valodas atbalstu
 Comment[mk]=Екстензивен менаџер на прозорци кој може да се скриптира со јазик како Emacs Lisp
