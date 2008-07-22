@@ -62,6 +62,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     resize(128, 128);
     //setAspectRatioMode(Plasma::ConstrainedSquare );
     m_textRect = QRect();
+    m_theme = new Plasma::Svg(this);
 }
 
 void Battery::init()
@@ -78,7 +79,6 @@ void Battery::init()
         m_batteryStyle = ClassicBattery;
         svgFile = "widgets/battery";
     }
-    m_theme = new Plasma::Svg(this);
     m_theme->setImagePath(svgFile);
     m_theme->setContainsMultipleImages(false);
 
