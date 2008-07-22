@@ -28,7 +28,7 @@ using namespace KHotKeys;
 
 int main( int argc, char* argv[] )
     {
-    KCmdLineArgs::init( argc, argv, "khotkeys_update", 0, ki18n("KHotKeys Update"), "1.0" ,
+    KCmdLineArgs::init( argc, argv, "khotkeys", 0, ki18n("KHotKeys Update"), "1.0" ,
 	ki18n("KHotKeys update utility"));
 
     KCmdLineOptions options;
