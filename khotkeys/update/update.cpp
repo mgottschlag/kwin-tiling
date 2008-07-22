@@ -28,11 +28,11 @@ using namespace KHotKeys;
 
 int main( int argc, char* argv[] )
     {
-    KCmdLineArgs::init( argc, argv, "khotkeys_update", 0, ki18n("KHotKeys Update"), "1.0" ,
+    KCmdLineArgs::init( argc, argv, "khotkeys", 0, ki18n("KHotKeys Update"), "1.0" ,
 	ki18n("KHotKeys update utility"));
 
     KCmdLineOptions options;
-    options.add("id <id>", ki18n("Id of the script to add to %1."), KHOTKEYS_CONFIG_FILE);
+    options.add("id <id>", ki18n("Id of the script to add to khotkeysrc."));
     KCmdLineArgs::addCmdLineOptions( options );
     KApplication app( true ); // X11 connection is necessary for KKey* stuff :-/
     KCmdLineArgs* args = KCmdLineArgs::parsedArgs();
@@ -57,7 +57,7 @@ int main( int argc, char* argv[] )
     QDBusConnection bus = QDBusConnection::sessionBus();
     if( bus.interface()->isServiceRegistered( "org.kde.khotkeys" ))
         {
-        org::kde::khotkeys iface("org.kde.khotkeys", "/modules/khotkeys", bus);
+        org::kde::khotkeys iface("org.kde.khotkeys", "/KHotKeys", bus);
         iface.reread_configuration();
         kDebug( 1217 ) << "telling khotkeys daemon to reread configuration";
         }
