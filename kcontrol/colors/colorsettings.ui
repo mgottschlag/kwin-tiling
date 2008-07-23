@@ -16,17 +16,9 @@
    <item>
     <widget class="QTabWidget" name="tabWidget" >
      <property name="currentIndex" >
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="schemePage" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>771</width>
-        <height>415</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>&amp;Scheme</string>
       </attribute>
@@ -193,14 +185,6 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>771</width>
-        <height>415</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>Colors</string>
       </attribute>
@@ -258,15 +242,10 @@
           <number>0</number>
          </property>
          <widget class="QWidget" name="commonColorsPage" >
-          <property name="geometry" >
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>763</width>
-            <height>360</height>
-           </rect>
-          </property>
           <layout class="QGridLayout" >
+           <property name="margin" >
+            <number>0</number>
+           </property>
            <item row="0" column="0" >
             <widget class="QTableWidget" name="commonColorTable" >
              <property name="editTriggers" >
@@ -539,15 +518,10 @@
           </layout>
          </widget>
          <widget class="QWidget" name="otherPage" >
-          <property name="geometry" >
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>100</width>
-            <height>30</height>
-           </rect>
-          </property>
           <layout class="QGridLayout" >
+           <property name="margin" >
+            <number>0</number>
+           </property>
            <item row="0" column="0" >
             <widget class="QTableWidget" name="colorTable" >
              <property name="editTriggers" >
@@ -576,14 +550,6 @@
       </layout>
      </widget>
      <widget class="QWidget" name="effectsPage" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>771</width>
-        <height>415</height>
-       </rect>
-      </property>
       <attribute name="title" >
        <string>&amp;Effects</string>
       </attribute>
