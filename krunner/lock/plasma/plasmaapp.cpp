@@ -272,8 +272,8 @@ void PlasmaApp::activate()
     if (m_view) {
         m_view->setWindowOpacity(m_activeOpacity);
         m_view->showView();
+        m_view->containment()->openToolBox();
     }
-    //TODO set opacity
 }
 
 void PlasmaApp::deactivate()
@@ -285,6 +285,7 @@ void PlasmaApp::deactivate()
             } else {
                 lock();
                 m_view->setWindowOpacity(m_idleOpacity);
+                m_view->containment()->closeToolBox();
             }
         } else {
             lock();

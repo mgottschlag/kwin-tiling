@@ -199,7 +199,6 @@ void SaverView::showView()
 
         m_suppressShow = true;
         QTimer::singleShot(SUPPRESS_SHOW_TIMEOUT, this, SLOT(suppressShowTimeout()));
-        containment()->openToolBox();
     }
 }
 
@@ -214,10 +213,7 @@ void SaverView::setContainment(Plasma::Containment *newContainment)
 
     if (isVisible()) {
         disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
-        containment()->closeToolBox();
-
         connect(newContainment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
-        newContainment->openToolBox();
     }
 
     if (m_appletBrowser) {
