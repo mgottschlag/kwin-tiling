@@ -121,7 +121,6 @@ void StandardActionsModule::save()
         {
         KAction *kaction = qobject_cast<KAction*>(action);
 
-        kDebug() << action->objectName() << ": " << action->data().toInt();
         KStandardShortcut::saveShortcut(
                 static_cast<KStandardShortcut::StandardShortcut>(action->data().toInt())
                 , kaction->shortcut());
