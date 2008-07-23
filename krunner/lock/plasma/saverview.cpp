@@ -115,8 +115,15 @@ void SaverView::showAppletBrowser()
         m_appletBrowser->installEventFilter(this);
     }
 
-    kDebug();
+    //TODO give the filter kbd focus
     m_appletBrowser->setHidden(m_appletBrowser->isVisible());
+}
+
+void SaverView::hideAppletBrowser()
+{
+    if (m_appletBrowser) {
+        m_appletBrowser->hide();
+    }
 }
 
 void SaverView::appletBrowserDestroyed()

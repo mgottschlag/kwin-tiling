@@ -61,6 +61,7 @@ public slots:
      * @arg containment the containment to center the view on
      */
     void setContainment(Plasma::Containment *newContainment);
+    void hideAppletBrowser();
 
 protected slots:
     void showAppletBrowser();
