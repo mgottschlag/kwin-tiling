@@ -960,6 +960,11 @@ void LockProcess::newService(QString name)
     //ourselves
     mPlasmaDBus->callWithCallback("viewWinId", QList<QVariant>(), this,
             SLOT(setPlasmaView(uint)));
+
+    if (!mDialogs.isEmpty()) {
+        //whoops, activation probably failed earlier
+        mPlasmaDBus->call(QDBus::NoBlock, "activate");
+    }
 }
 
 void LockProcess::setPlasmaView(uint id)
@@ -1038,6 +1043,7 @@ bool LockProcess::checkPass()
     }
 
     killTimer(mAutoLogoutTimerId);
+
     if (mPlasmaDBus && mPlasmaDBus->isValid()) {
         mPlasmaDBus->call(QDBus::NoBlock, "activate");
     }
@@ -1045,11 +1051,11 @@ bool LockProcess::checkPass()
     PasswordDlg passDlg( this, &greetPlugin);
     int ret = execDialog( &passDlg );
 
-    if (mPlasmaEnabled) {
+    if (mPlasmaDBus && mPlasmaDBus->isValid()) {
         if (ret == QDialog::Rejected) {
             mSuppressUnlock.start(SUPPRESS_TIMEOUT);
         } else if (ret == TIMEOUT_CODE) {
-            deactivatePlasma();
+            mPlasmaDBus->call(QDBus::NoBlock, "deactivate");
         }
     }
 
