@@ -86,6 +86,7 @@ SearchBar::SearchBar(QWidget *parent)
     layout->addWidget(searchIcon);
     layout->addSpacing(5);
     layout->addWidget(searchLabel);
+    layout->addSpacing(5);
     layout->addWidget(d->editWidget);
     setLayout(layout);
 
