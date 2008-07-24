@@ -319,7 +319,7 @@ Plasma::Corona* PlasmaApp::corona()
         SaverCorona *c = new SaverCorona(this);
         connect(c, SIGNAL(containmentAdded(Plasma::Containment*)),
                 this, SLOT(createView(Plasma::Containment*)));
-        kDebug() << "connected to containmentAdded";
+        //kDebug() << "connected to containmentAdded";
         /*
         foreach (DesktopView *view, m_desktops) {
             connect(c, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
@@ -328,7 +328,12 @@ Plasma::Corona* PlasmaApp::corona()
 
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
         c->initializeLayout();
-        kDebug() << "layout should exist";
+
+        //I like to be extra sure it's locked
+        if (c->immutability() == Plasma::Mutable) {
+            c->setImmutability(Plasma::UserImmutable);
+        }
+        //kDebug() << "layout should exist";
         //c->checkScreens();
         m_corona = c;
     }
