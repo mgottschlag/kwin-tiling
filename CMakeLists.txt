@@ -11,6 +11,7 @@ find_package(QImageBlitz REQUIRED)
 
 macro_optional_find_package(USB)
 macro_optional_find_package(Fontconfig)
+macro_optional_find_package(Freetype)
 macro_optional_find_package(OpenGL)
 
 include (MacroLibrary)
