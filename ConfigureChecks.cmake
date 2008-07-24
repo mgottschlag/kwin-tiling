@@ -63,6 +63,7 @@ check_include_files("sys/param.h;sys/mount.h" HAVE_SYS_MOUNT_H)
 check_include_files("sys/types.h;sys/statfs.h" HAVE_SYS_STATFS_H)
 check_function_exists(statfs HAVE_STATFS)
 macro_bool_to_01(FONTCONFIG_FOUND HAVE_FONTCONFIG) # kcontrol/{fonts,kfontinst}
+macro_bool_to_01(FREETYPE_FOUND HAVE_FREETYPE) # kcontrol/fonts
 macro_bool_to_01(OPENGL_FOUND HAVE_OPENGL) # kwin
 macro_bool_to_01(X11_XShm_FOUND HAVE_XSHM) # kwin, ksplash
 macro_bool_to_01(X11_XTest_FOUND HAVE_XTEST) # khotkeys, kxkb, kdm
