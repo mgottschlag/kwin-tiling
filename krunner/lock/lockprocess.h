@@ -61,13 +61,25 @@ public Q_SLOTS:
     void quitSaver();
     void preparePopup();
     void cleanupPopup();
+    //dbus methods
     /**
      * bring up the password dialog with @param reason displayed instead of the usual "this session
      * is locked" message.
      * @return true if the password was entered correctly
-     * (dbus method)
+     * if this returns true, there is a grace period where the screensaver can be freely unlocked
+     * with the unlock method without re-entering the password.
      */
     Q_SCRIPTABLE bool checkPass(const QString &reason);
+    /**
+     * this will unlock and quit the screensaver, asking for a password first if necessary
+     */
+    Q_SCRIPTABLE void unlock();
+    /**
+     * immediately end the "free unlock" grace period; if the screen is locked, it will now require
+     * a password to unlock.
+     * this has no effect if the screen wasn't locked in the first place.
+     */
+    Q_SCRIPTABLE void endFreeUnlock();
 
 protected:
     virtual bool x11Event(XEvent *);
@@ -99,11 +111,6 @@ private Q_SLOTS:
      * FIXME need a better name
      */
     void unSuppressUnlock();
-    /**
-     * un-suppress and show the password dialog
-     * TODO make this a dbus method
-     */
-    void forceCheckPass();
 
 private:
     void configure();
@@ -156,6 +163,7 @@ private:
     QDBusInterface *mPlasmaDBus;
     WId         mPlasmaView;
     bool        mPlasmaEnabled;
+    bool        mFreeUnlock;
     QString     mSaverExec;
     QString     mSaver;
     bool        mOpenGLVisual;

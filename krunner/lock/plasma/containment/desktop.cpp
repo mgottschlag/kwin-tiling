@@ -78,6 +78,13 @@ void SaverDesktop::init()
     unwanted = action("add sibling containment");
     removeToolBoxTool(unwanted);
     delete unwanted;
+
+    lock = new QAction(i18n("Unlock Desktop"), this);
+    lock->setIcon(KIcon("system-lock-screen"));
+    //TODO kbd shortcut
+    connect(lock, SIGNAL(triggered(bool)), this, SLOT(unlockDesktop()));
+    addAction("unlock desktop", lock);
+    addToolBoxTool(lock);
 }
 
 QList<QAction*> SaverDesktop::contextualActions()
@@ -134,15 +141,16 @@ void SaverDesktop::toggleLock()
     if (!corona()) {
         return; //I'm lazy, I know this'll never happen
     }
+    QDBusInterface lockprocess("org.kde.krunner_lock", "/LockProcess",
+            "local.LockProcess", QDBusConnection::sessionBus(), this); //FIXME local??
     if (corona()->immutability() == Mutable) {
         corona()->setImmutability(UserImmutable);
+        lockprocess.call(QDBus::NoBlock, "endFreeUnlock");
         emit locked();
     } else if (corona()->immutability() == UserImmutable) {
-        QDBusInterface *lockprocess = new QDBusInterface("org.kde.krunner_lock",
-                "/LockProcess", "local.LockProcess", QDBusConnection::sessionBus(), this);
         QList<QVariant> args;
         args << i18n("Unlock Plasma Widgets");
-        bool sent = lockprocess->callWithCallback("checkPass", args, this, SLOT(unlock(QDBusMessage)), SLOT(dbusError(QDBusError)));
+        bool sent = lockprocess.callWithCallback("checkPass", args, this, SLOT(unlock(QDBusMessage)), SLOT(dbusError(QDBusError)));
         kDebug() << sent;
     }
 }
@@ -163,6 +171,13 @@ void SaverDesktop::dbusError(QDBusError error)
     //Q_UNUSED(error)
     kDebug() << error.errorString(error.type());
     //I don't really give a fuck.
+}
+
+void SaverDesktop::unlockDesktop()
+{
+    QDBusInterface lockprocess("org.kde.krunner_lock", "/LockProcess",
+            "local.LockProcess", QDBusConnection::sessionBus(), this); //FIXME local??
+    lockprocess.call(QDBus::NoBlock, "unlock");
 }
 
 void SaverDesktop::createConfigurationInterface(KConfigDialog *parent)

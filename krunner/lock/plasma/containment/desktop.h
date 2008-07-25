@@ -66,6 +66,7 @@ public slots:
     void toggleLock();
     void unlock(QDBusMessage reply);
     void dbusError(QDBusError error);
+    void unlockDesktop();
 
 protected:
     void createConfigurationInterface(KConfigDialog *parent);

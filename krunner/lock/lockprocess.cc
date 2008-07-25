@@ -133,6 +133,7 @@ LockProcess::LockProcess(bool child, bool useBlankOnly)
     : QWidget(0L, Qt::X11BypassWindowManagerHint),
       mPlasmaDBus(0),
       mPlasmaView(0),
+      mFreeUnlock(false),
       mOpenGLVisual(false),
       child_saver(child),
       mParent(0),
@@ -976,6 +977,7 @@ void LockProcess::setPlasmaView(uint id)
 
 void LockProcess::deactivatePlasma()
 {
+    mFreeUnlock = false;
     if (mPlasmaDBus && mPlasmaDBus->isValid()) {
         mPlasmaDBus->call(QDBus::NoBlock, "deactivate");
     }
@@ -991,14 +993,20 @@ void LockProcess::lockPlasma()
 void LockProcess::unSuppressUnlock()
 {
     mSuppressUnlock.stop();
+    mFreeUnlock = false;
 }
 
-void LockProcess::forceCheckPass()
+void LockProcess::unlock()
 {
     mSuppressUnlock.stop();
-    if (checkPass()) {
+    if (!mLocked || mFreeUnlock || checkPass()) {
         quitSaver();
     }
+}
+
+void LockProcess::endFreeUnlock()
+{
+    mFreeUnlock = false;
 }
 
 void LockProcess::suspend()
@@ -1078,7 +1086,11 @@ bool LockProcess::checkPass(const QString &reason)
     kDebug() << ret;
 
     //FIXME do we need to copy&paste that SubstructureNotifyMask code above?
-    return ret == QDialog::Accepted;
+    if (ret == QDialog::Accepted) {
+        mFreeUnlock = true; //now we don't need the password for a while
+        return true;
+    }
+    return false;
 }
 
 static void fakeFocusIn( WId window )
