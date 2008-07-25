@@ -15,6 +15,10 @@ set(plasma_SRCS
     toolbutton.cpp
 )
 
+if(WIN32)
+    set(plasma_SRCS ${plasma_SRCS} panelview_win.cpp)
+endif(WIN32)
+
 set(plasmaapp_dbusXML org.kde.plasma.App.xml)
 qt4_add_dbus_adaptor(plasma_SRCS ${plasmaapp_dbusXML} plasmaapp.h PlasmaApp)
 
