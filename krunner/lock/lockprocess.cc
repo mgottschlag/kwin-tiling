@@ -1165,8 +1165,17 @@ bool LockProcess::x11Event(XEvent *event)
     bool ret = false;
     switch (event->type)
     {
-        case KeyPress:
         case ButtonPress:
+            if (!mDialogs.isEmpty() && event->xbutton.window == event->xbutton.root) {
+                //kDebug() << "close" << mDialogs.first()->effectiveWinId();
+                KDialog *dlg = qobject_cast<KDialog*>(mDialogs.first());
+                if (dlg) {
+                    //kDebug() << "casting success";
+                    dlg->reject();
+                }
+                break;
+            }
+        case KeyPress:
         case MotionNotify:
             if (mBusy || !mDialogs.isEmpty())
                 break;
