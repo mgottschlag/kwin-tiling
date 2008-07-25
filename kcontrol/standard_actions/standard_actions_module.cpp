@@ -137,7 +137,7 @@ void StandardActionsModule::save()
         "<ul><li>Applications need to be restarted to see the changes.</li>"
         "    <li>This change could introduce shortcut conflicts in some applications.<li>"
         "</ul" );
-    KMessageBox::information(this, message, title, i18n("shortcuts_saved_info"));
+    KMessageBox::information(this, message, title, "shortcuts_saved_info");
     }
 
 #include "standard_actions_module.moc"
