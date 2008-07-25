@@ -26,6 +26,8 @@
 #include <KPluginFactory>
 #include <KShortcutsEditor>
 #include <KStandardAction>
+#include <KMessageBox>
+#include <KLocale>
 
 K_PLUGIN_FACTORY(StandardActionsModuleFactory, registerPlugin<StandardActionsModule>();)
 K_EXPORT_PLUGIN(StandardActionsModuleFactory("kcmstandard_actions"))
@@ -114,7 +116,6 @@ void StandardActionsModule::load()
 
 void StandardActionsModule::save()
     {
-    // TODO Check what this call does
     m_editor->commit();
 
     Q_FOREACH(QAction* action, m_actionCollection->actions())
@@ -129,6 +130,14 @@ void StandardActionsModule::save()
     KGlobal::config()->sync();
     KConfigGroup cg(KGlobal::config(), "Shortcuts");
     cg.sync();
+
+    QString title = i18n("Standard Actions successfully saved");
+    QString message = i18n(
+        "The changes have been saved. Please consider:"
+        "<ul><li>Applications need to be restarted to see the changes.</li>"
+        "    <li>This change could introduce shortcut conflicts in some applications.<li>"
+        "</ul" );
+    KMessageBox::information(this, message, title, i18n("shortcuts_saved_info"));
     }
 
 #include "standard_actions_module.moc"
