@@ -122,7 +122,6 @@ int XSelectInput( Display* dpy, Window w, long e )
 #endif
 
 const int TIMEOUT_CODE = 2; //from PasswordDlg
-const int SUPPRESS_TIMEOUT = 20 * 1000;
 
 //===========================================================================
 //
@@ -353,8 +352,10 @@ void LockProcess::configure()
             mLockGrace = 0;
         else if (mLockGrace > 300000)
             mLockGrace = 300000; // 5 minutes, keep the value sane
+        mSuppressUnlockTimeout = mLockGrace;
     } else {
         mLockGrace = -1;
+        mSuppressUnlockTimeout = 0;
     }
 
     if ( KScreenSaverSettings::autoLogout() ) {
@@ -379,6 +380,9 @@ void LockProcess::configure()
     readSaver();
 
     mPlasmaEnabled = KScreenSaverSettings::plasmaEnabled();
+
+    mSuppressUnlockTimeout += qMax(0, KScreenSaverSettings::timeout() * 1000);
+    mSuppressUnlockTimeout = qMax(mSuppressUnlockTimeout, 30 * 1000); //min. 30 secs
 
     mPlugins = KScreenSaverSettings::pluginsUnlock();
     if (mPlugins.isEmpty()) {
@@ -1061,7 +1065,7 @@ bool LockProcess::checkPass()
 
     if (mPlasmaDBus && mPlasmaDBus->isValid()) {
         if (ret == QDialog::Rejected) {
-            mSuppressUnlock.start(SUPPRESS_TIMEOUT);
+            mSuppressUnlock.start(mSuppressUnlockTimeout);
         } else if (ret == TIMEOUT_CODE) {
             mPlasmaDBus->call(QDBus::NoBlock, "deactivate");
         }

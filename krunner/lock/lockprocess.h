@@ -187,6 +187,7 @@ private:
     int         mAutoLogoutTimeout;
     bool        mAutoLogout;
     QTimer      mSuppressUnlock;
+    int         mSuppressUnlockTimeout;
     QList<WId>  mForeignWindows;
     QList<WId>  mForeignInputWindows;
 };
