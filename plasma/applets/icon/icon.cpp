@@ -67,8 +67,6 @@ IconApplet::IconApplet(QObject *parent, const QVariantList &args)
 
 void IconApplet::init()
 {
-    Plasma::ToolTipManager::self()->registerWidget(this);
-
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
@@ -83,6 +81,7 @@ void IconApplet::init()
     setDisplayLines(2);
 
     registerAsDragHandle(m_icon);
+    Plasma::ToolTipManager::self()->registerWidget(m_icon);
 
     setAspectRatioMode(Plasma::ConstrainedSquare);
 
@@ -164,7 +163,7 @@ void IconApplet::constraintsEvent(Plasma::Constraints constraints)
             data.mainText = m_text;
             data.subText = m_genericName;
             data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
-            Plasma::ToolTipManager::self()->setToolTipContent(this, data);
+            Plasma::ToolTipManager::self()->setToolTipContent(m_icon, data);
             m_icon->setDrawBackground(false);
         }
     }
