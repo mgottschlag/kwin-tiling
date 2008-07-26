@@ -24,8 +24,8 @@
 class UKMETIon::Private : public QObject
 {
 public:
-    Private() {}
-    ~Private() {}
+    Private() { m_url = 0;}
+    ~Private() { delete m_url; }
 
 private:
     struct XMLMapInfo {
