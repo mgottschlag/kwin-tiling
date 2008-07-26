@@ -89,7 +89,7 @@ CGroupListItem::CGroupListItem(EType type, CGroupList *p)
             itsName=i18n("System Fonts");
             break;
         case STANDARD_TITLE:
-            itsName=i18n("Standard:");
+            itsName=i18nc("Title for a group that contains \"All Fonts\", \"Personal Fonts\", \"System Fonts\" and \"Unclassified\"", "Standard:");
             break;
         case GROUPS_TITLE:
             itsName=i18n("Custom:");
