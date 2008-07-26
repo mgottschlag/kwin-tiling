@@ -35,6 +35,8 @@ namespace WeatherFormula
     ION_EXPORT float inchesToKilopascals(float inches);
     ION_EXPORT float millibarsToKilopascals(float milibar);
     ION_EXPORT float millibarsToInches(float milibar);
+    ION_EXPORT float kilopascalsToHectopascals(float kpa);
+    ION_EXPORT float HectopascalsTokilopascals(float hpa);
     ION_EXPORT float centimetersToIN(float cm);
     ION_EXPORT float inchesToCM(float inch);
     ION_EXPORT float millimetersToIN(float mm);

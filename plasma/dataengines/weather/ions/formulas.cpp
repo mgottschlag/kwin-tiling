@@ -48,6 +48,16 @@ float kilopascalsToInches(float kpa)
     return ((0.02952997 * kpa) * 10);
 }
 
+float kilopascalsToHectopascals(float kpa)
+{   
+    return (kpa * 10);
+}
+
+float HectopascalsToKilopascals(float hpa)
+{ 
+    return (hpa / 10);
+}
+
 float inchesToKilopascals(float inches)
 {
     return (inches * 3.386389);
