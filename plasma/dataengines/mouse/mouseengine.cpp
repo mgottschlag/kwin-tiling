@@ -38,8 +38,9 @@ MouseEngine::~MouseEngine()
 {
     if (timerId)
         killTimer(timerId);
-
+#ifdef HAVE_XFIXES
     delete handler;
+#endif
 }
 
 
