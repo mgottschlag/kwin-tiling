@@ -918,7 +918,8 @@ bool LockProcess::startPlasma()
         connect(mPlasmaDBus, SIGNAL(viewCreated(uint)), SLOT(setPlasmaView(uint)));
         if (mFreeUnlock) {
             mPlasmaDBus->call(QDBus::NoBlock, "activate");
-            //um, fuck. it'll probably be locked.
+            //it'll be locked because we haven't put plasma in setup mode. doh.
+            //FIXME make a dbus call to change that
         } else {
             mPlasmaDBus->call(QDBus::NoBlock, "deactivate");
         }
