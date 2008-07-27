@@ -40,6 +40,7 @@ Status DPMSInfo ( Display *, CARD16 *, BOOL * );
 
 #ifdef HAVE_XSCREENSAVER
 int xautolock_useMit;
+unsigned long xautolock_lastIdleTime;
 #endif
 xautolock_corner_t xautolock_corners[ 4 ];
 
@@ -150,6 +151,8 @@ void XAutoLock::resetTrigger()
 {
     mLastReset = time( 0 );
     mTrigger = mLastReset + mTimeout;
+    xautolock_lastIdleTime = 0;
+    XForceScreenSaver( QX11Info::display(), ScreenSaverReset );
 }
 
 //---------------------------------------------------------------------------
@@ -233,9 +236,6 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     if(!on && mDPMS) {
         activate = false;
         resetTrigger();
-#ifdef HAVE_XSCREENSAVER
-        XForceScreenSaver( QX11Info::display(), ScreenSaverReset );
-#endif
     }
 #endif
 

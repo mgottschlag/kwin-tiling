@@ -29,27 +29,20 @@
 void 
 xautolock_queryIdleTime (Display* d)
 {
-  Time idleTime = 0; /* millisecs since last input event */
-
 #ifdef HAVE_XSCREENSAVER
   if( xautolock_useMit )
   {
     static XScreenSaverInfo* mitInfo = 0; 
     if (!mitInfo) mitInfo = XScreenSaverAllocInfo ();
     XScreenSaverQueryInfo (d, DefaultRootWindow (d), mitInfo);
-    idleTime = mitInfo->idle;
+    if (xautolock_lastIdleTime < mitInfo->idle)
+        xautolock_lastIdleTime = mitInfo->idle;
+    else
+        xautolock_resetTriggers ();
   }
-  else
+#else
+  (void)d;
 #endif /* HAVE_XSCREENSAVER */
-  {
-    d = d; /* shut up */
-    return; /* DIY */
-  }
-
-  if (idleTime < CHECK_INTERVAL )  
-  {
-    xautolock_resetTriggers ();
-  }
 }
 
 /*

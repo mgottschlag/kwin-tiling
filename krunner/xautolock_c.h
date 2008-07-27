@@ -64,6 +64,7 @@ void xautolock_setTrigger( time_t );
 int xautolock_ignoreWindow( Window );
 #ifdef HAVE_XSCREENSAVER
 extern int xautolock_useMit;
+extern unsigned long xautolock_lastIdleTime;
 #else
 # define xautolock_useMit 0
 #endif
