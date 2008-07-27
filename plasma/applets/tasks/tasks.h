@@ -113,6 +113,7 @@ private:
 
         void insertItemBeforeSpacer(QGraphicsWidget * item);
         void adjustStretch();
+        void updatePreferredSize();
 
         bool isOnMyScreen(TaskPtr task);
         void reconnect();

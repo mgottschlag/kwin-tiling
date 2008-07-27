@@ -242,7 +242,7 @@ public:
             return;
          }
 
-         QSize preferredSize(containment->size().toSize());
+         QSize preferredSize(containment->preferredSize().toSize());
 
          switch (location) {
          case Plasma::LeftEdge:

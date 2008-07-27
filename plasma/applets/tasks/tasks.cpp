@@ -116,6 +116,7 @@ void Tasks::addStartingTask(StartupPtr task)
     item->setStartupTask(task);
     m_startupTaskItems.insert(task, item);
     insertItemBeforeSpacer(item);
+    updatePreferredSize();
 }
 
 void Tasks::removeStartingTask(StartupPtr task)
@@ -126,6 +127,7 @@ void Tasks::removeStartingTask(StartupPtr task)
         scene()->removeItem(item);
     }
 
+    updatePreferredSize();
     adjustStretch();
 }
 
@@ -200,6 +202,8 @@ void Tasks::addWindowTask(TaskPtr task)
 
     connect(item, SIGNAL(activated(WindowTaskItem*)),
             this, SLOT(updateActive(WindowTaskItem*)));
+
+    updatePreferredSize();
 }
 
 void Tasks::removeWindowTask(TaskPtr task)
@@ -212,6 +216,7 @@ void Tasks::removeWindowTask(TaskPtr task)
         m_activeTask = m_windowTaskItems.end();
     }
     
+    updatePreferredSize();
     adjustStretch();
 }
 
@@ -437,6 +442,27 @@ void Tasks::adjustStretch()
         }
     }
 
+}
+
+void Tasks::updatePreferredSize()
+{
+    if (m_layout->count() > 0) {
+        QGraphicsLayoutItem *item = m_layout->itemAt(0);
+        
+        if (formFactor() == Plasma::Horizontal) {
+            setPreferredSize(item->preferredSize().width()*m_layout->count(), preferredSize().height());
+        } else if (formFactor() == Plasma::Vertical) {
+            setPreferredSize(preferredSize().width(), item->preferredSize().height()*m_layout->count());
+        }
+    //Empty taskbar, arbitrary small value
+    } else {
+        if (formFactor() == Plasma::Horizontal) {
+            setPreferredSize(10, preferredSize().height());
+        } else if (formFactor() == Plasma::Vertical) {
+            setPreferredSize(preferredSize().width(), 10);
+        }
+    }
+    emit sizeHintChanged(Qt::PreferredSize);
 }
 
 bool Tasks::isOnMyScreen(TaskPtr task)

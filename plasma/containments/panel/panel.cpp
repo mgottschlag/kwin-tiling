@@ -159,6 +159,8 @@ void Panel::layoutApplet(Plasma::Applet* applet, const QPointF &pos)
     } else {
         lay->insertItem(insertIndex, applet);
     }
+
+    connect(applet, SIGNAL(sizeHintChanged(Qt::SizeHint)), this, SLOT(updateSize()));
 }
 
 void Panel::appletRemoved(Plasma::Applet* applet)
@@ -170,6 +172,21 @@ void Panel::appletRemoved(Plasma::Applet* applet)
         resize(size().width(), size().height() - applet->size().height());
     }
     layout()->setMaximumSize(size());
+}
+
+void Panel::updateSize()
+{
+    Plasma::Applet *applet = qobject_cast<Plasma::Applet *>(sender());
+
+    if (applet) {
+        if (formFactor() == Plasma::Horizontal) {
+            setPreferredSize(geometry().width() + applet->preferredSize().width() - applet->size().width(), geometry().height());
+        } else if (formFactor() == Plasma::Vertical) {
+            setPreferredSize(geometry().width(), geometry().height() + applet->preferredSize().height() - applet->size().height());
+        }
+
+        resize(preferredSize());
+    }
 }
 
 void Panel::addPanel()
