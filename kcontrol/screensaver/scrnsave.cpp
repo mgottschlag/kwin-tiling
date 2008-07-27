@@ -275,7 +275,6 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     connect(mPlasmaCheckBox, SIGNAL(toggled(bool)), this, SLOT(slotEnablePlasma(bool)));
     groupLayout->addWidget(mPlasmaCheckBox);
 
-    //FIXME just a temporary label. should I add a configure button?
     mPlasmaSetup = new QPushButton(i18n("Setup..."), plasmaGroup);
     mPlasmaSetup->setEnabled(mPlasmaEnabled);
     connect(mPlasmaSetup, SIGNAL(clicked()), this, SLOT(slotPlasmaSetup()));
