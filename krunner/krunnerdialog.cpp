@@ -77,7 +77,7 @@ void KRunnerDialog::paintEvent(QPaintEvent *e)
         p.fillRect(rect(), Qt::transparent);
     }
 
-    m_background->paintPanel(&p, e->rect());
+    m_background->paintPanel(&p);
 }
 
 void KRunnerDialog::resizeEvent(QResizeEvent *e)
