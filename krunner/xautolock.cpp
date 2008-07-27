@@ -213,6 +213,7 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     }
 #endif /* HAVE_XSCREENSAVER */
 
+    // This needs to be after the above check, so it overrides it.
     xautolock_queryPointer( QX11Info::display());
 
     bool activate = false;
@@ -243,13 +244,8 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
 #endif
 
 #ifdef HAVE_XSCREENSAVER
-    static XScreenSaverInfo* mitInfo = 0;
-    if (!mitInfo) mitInfo = XScreenSaverAllocInfo ();
-    if (XScreenSaverQueryInfo (QX11Info::display(), QX11Info::appRootWindow(), mitInfo)) {
-        // kDebug() << "XScreenSaverQueryInfo " << mitInfo->state << ScreenSaverDisabled;
-        if (mitInfo->state == ScreenSaverDisabled)
-            activate = false;
-    }
+    if (mMitInfo && mMitInfo->state == ScreenSaverDisabled)
+        activate = false;
 #endif
 
     if(mActive && activate)
