@@ -19,8 +19,6 @@
 
 #include "xautolock_c.h"
 
-#include <time.h>
-
 /*
  *  Function for querying the idle time from the server.
  *  Only used if the Xscreensaver
@@ -61,8 +59,6 @@ xautolock_queryPointer (Display* d)
   int              rootX;            /* as it says                    */
   int              rootY;            /* as it says                    */
   int              corner;           /* corner index                  */
-  time_t           now;              /* as it says                    */
-  time_t           newTrigger;       /* temporary storage             */
   int              i;                /* loop counter                  */
   static Window    root;             /* root window the pointer is on */
   static Screen*   screen;           /* screen the pointer is on      */
@@ -132,24 +128,13 @@ xautolock_queryPointer (Display* d)
                rootX >= WidthOfScreen  (screen) - cornerSize - 1
             && rootY >= HeightOfScreen (screen) - cornerSize - 1))
     {
-      now = time (0);
-
       switch (corners[corner])
       {
         case ca_forceLock:
 #if 0
-          newTrigger = now + (useRedelay ? cornerRedelay : cornerDelay) - 1;
+          xautolock_setTrigger( (useRedelay ? cornerRedelay : cornerDelay) - 1 );
 #else
-          newTrigger = now;
-#endif
-
-#if 0
-          if (newTrigger < lockTrigger)
-          {
-            setLockTrigger (newTrigger - now);
-          }
-#else
-          xautolock_setTrigger( newTrigger );
+          xautolock_setTrigger( 0 );
 #endif
           break;
 

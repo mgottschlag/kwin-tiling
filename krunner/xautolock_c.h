@@ -60,7 +60,7 @@ void xautolock_processQueue( void );
 void xautolock_queryPointer (Display* d);
 void xautolock_initDiy (Display* d);
 void xautolock_resetTriggers( void );
-void xautolock_setTrigger( time_t );
+void xautolock_setTrigger( int );
 int xautolock_ignoreWindow( Window );
 #ifdef HAVE_XSCREENSAVER
 extern int xautolock_useMit;

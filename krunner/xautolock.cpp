@@ -80,10 +80,10 @@ XAutoLock::XAutoLock()
     mDPMS = true;
     resetTrigger();
 
-    time(&mLastTimeout);
     mActive = false;
 
     mTimerId = startTimer( CHECK_INTERVAL );
+    mElapsed = 0;
 
 }
 
@@ -124,7 +124,6 @@ void XAutoLock::setDPMS(bool s)
 //
 void XAutoLock::start()
 {
-    time(&mLastTimeout);
     mActive = true;
     resetTrigger();
     XSetScreenSaver(QX11Info::display(), mTimeout + 10, 100, PreferBlanking, DontAllowExposures); // We'll handle blanking
@@ -149,8 +148,8 @@ void XAutoLock::stop()
 //
 void XAutoLock::resetTrigger()
 {
-    mLastReset = time( 0 );
-    mTrigger = mLastReset + mTimeout;
+    mLastReset = mElapsed;
+    mTrigger = mElapsed + mTimeout;
     xautolock_lastIdleTime = 0;
     XForceScreenSaver( QX11Info::display(), ScreenSaverReset );
 }
@@ -161,17 +160,18 @@ void XAutoLock::resetTrigger()
 //
 void XAutoLock::postpone()
 {
-    mTrigger = time(0) + 60; // delay by 60sec
+    mTrigger = mElapsed + 60; // delay by 60sec
 }
 
 //---------------------------------------------------------------------------
 //
 // Set the remaining time to 't', if it's shorter than already set.
 //
-void XAutoLock::setTrigger( time_t t )
+void XAutoLock::setTrigger( int t )
 {
-    if( t < mTrigger )
-        mTrigger = t;
+    time_t newT = mElapsed + qMax(t, 0);
+    if (mTrigger > newT)
+        mTrigger = newT;
 }
 
 //---------------------------------------------------------------------------
@@ -184,6 +184,7 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     {
         return;
     }
+    mElapsed += CHECK_INTERVAL / 1000;
 
     int (*oldHandler)(Display *, XErrorEvent *) = NULL;
     if( !xautolock_useMit )
@@ -194,18 +195,6 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
 
     xautolock_processQueue();
 
-    time_t now = time(0);
-    if ((now > mLastTimeout && now - mLastTimeout > TIME_CHANGE_LIMIT) ||
-        (mLastTimeout > now && mLastTimeout - now > TIME_CHANGE_LIMIT+1))
-    {
-        /* the time has changed in one large jump.  This could be because
-           the date was changed, or the machine was suspended.  We'll just
-           reset the triger. */
-        resetTrigger();
-    }
-
-    mLastTimeout = now;
-
     xautolock_queryIdleTime( QX11Info::display());
     xautolock_queryPointer( QX11Info::display());
 
@@ -215,7 +204,7 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     bool activate = false;
 
     // kDebug() << now << mTrigger;
-    if (now >= mTrigger)
+    if (mElapsed >= mTrigger)
     {
         resetTrigger();
         activate = true;
@@ -273,7 +262,13 @@ bool XAutoLock::ignoreWindow( WId w )
 
 time_t XAutoLock::idleTime()
 {
-    return time( 0 ) - mLastReset;
+#ifdef HAVE_XSCREENSAVER
+    static XScreenSaverInfo* mitInfo = 0;
+    if (!mitInfo) mitInfo = XScreenSaverAllocInfo ();
+    if (XScreenSaverQueryInfo (QX11Info::display(), QX11Info::appRootWindow(), mitInfo))
+        return mitInfo->idle / 1000;
+#endif
+    return mElapsed - mLastReset;
 }
 
 extern "C"
@@ -283,7 +278,7 @@ void xautolock_resetTriggers()
 }
 
 extern "C"
-void xautolock_setTrigger( time_t t )
+void xautolock_setTrigger( int t )
 {
   self->setTrigger( t );
 }

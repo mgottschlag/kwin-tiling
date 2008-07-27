@@ -55,7 +55,7 @@ public:
     // internal
     void resetTrigger();
     // internal
-    void setTrigger( time_t );
+    void setTrigger( int );
     // internal
     bool ignoreWindow( WId );
     // internal
@@ -73,7 +73,8 @@ protected:
     int     mTimeout;
     time_t  mTrigger;
     bool    mActive;
-    time_t  mLastTimeout, mLastReset;
+    time_t  mLastReset;
+    time_t  mElapsed;
     bool    mDPMS;
 };
 
