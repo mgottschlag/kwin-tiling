@@ -21,7 +21,7 @@
 #define DEVICENOTIFIER_H
 
 #include <solid/solidnamespace.h>
-#include <plasma/applet.h>
+#include <plasma/popupapplet.h>
 #include <plasma/dataengine.h>
 #include <plasma/animator.h>
 #include <plasma/dialog.h>
@@ -29,7 +29,6 @@
 #include <QModelIndex>
 #include <QGraphicsProxyWidget>
 #include <QGraphicsGridLayout>
-#include <QTimer>
 #include <QListView>
 
 #include "ui_deviceNotifierConfig.h"
@@ -48,7 +47,7 @@ namespace Plasma
     class Icon;
 }
 
-class DeviceNotifier : public Plasma::Applet
+class DeviceNotifier : public Plasma::PopupApplet
 {
     Q_OBJECT
 
@@ -74,16 +73,14 @@ class DeviceNotifier : public Plasma::Applet
         ~DeviceNotifier();
 
         void init();
+        virtual QWidget *widget();
         void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
-        void constraintsEvent(Plasma::Constraints constraints);
     public slots:
         void onSourceAdded(const QString &name);
         void onSourceRemoved(const QString &name);
         void dataUpdated(const QString &source, Plasma::DataEngine::Data data);
         void configAccepted();
         void slotOnItemClicked(const QModelIndex &);
-        void onTimerExpired();
-        void onClickNotifier();
 
     protected:
         void createConfigurationInterface(KConfigDialog *parent);
@@ -91,28 +88,23 @@ class DeviceNotifier : public Plasma::Applet
     private slots:
         void storageEjectDone(Solid::ErrorType error, QVariant errorData);
         void storageTeardownDone(Solid::ErrorType error, QVariant errorData);
-        void resetIcon();
+        void initIcon();
         void updateColors();
 
     private:
         QModelIndex indexForUdi(const QString &udi) const;
-        void initSysTray();
 
         Plasma::DataEngine *m_solidEngine;
         Plasma::DataEngine *m_solidDeviceEngine;
         QStandardItemModel *m_hotplugModel;
 
-        Plasma::Dialog *m_widget;
-        Plasma::Icon *m_icon;
+        QWidget *m_widget;
         QLabel *m_label;
-        QGraphicsProxyWidget * m_proxy;
         int m_displayTime;
         int m_numberItems;
         int m_itemsValidity;
         Notifier::NotifierView *m_notifierView;
-        QTimer *m_timer;
         bool isNotificationEnabled;
-        QGraphicsLinearLayout *m_layout;
 
         /// Designer Config file
         Ui::solidNotifierConfig ui;

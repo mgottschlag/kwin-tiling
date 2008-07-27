@@ -57,42 +57,28 @@ using namespace Plasma;
 using namespace Notifier;
 
 DeviceNotifier::DeviceNotifier(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent, args),
+    : Plasma::PopupApplet(parent, args),
       m_solidEngine(0),
       m_hotplugModel(0),
       m_widget(0),
-      m_icon(0),
       m_label(0),
-      m_proxy(0),
       m_displayTime(0),
       m_numberItems(0),
-      m_itemsValidity(0),
-      m_timer(0)
+      m_itemsValidity(0)
 {
     setHasConfigurationInterface(true);
-    int iconSize = IconSize(KIconLoader::Desktop);
-    resize(iconSize, iconSize);
 }
 
 void DeviceNotifier::init()
 {
     KConfigGroup cg = config();
-    m_timer = new QTimer();
     m_displayTime = cg.readEntry("TimeDisplayed", 8);
     m_numberItems = cg.readEntry("NumberItems", 4);
     m_itemsValidity = cg.readEntry("ItemsValidity", 5);
 
-    //main layout, used both in desktop and panel mode
-    m_layout = new QGraphicsLinearLayout(this);
-    m_layout->setContentsMargins(0, 0, 0, 0);
-    m_layout->setSpacing(0);
-    setLayout(m_layout);
-
     m_solidEngine = dataEngine("hotplug");
     m_solidDeviceEngine = dataEngine("soliddevice");
-    m_widget = new Dialog();
-    m_widget->setFocusPolicy(Qt::NoFocus);
-    m_widget->setWindowFlags(Qt::Popup);   
+    m_widget = new QWidget; 
 
     QVBoxLayout *l_layout = new QVBoxLayout(m_widget);
     l_layout->setSpacing(0);
@@ -105,7 +91,7 @@ void DeviceNotifier::init()
     QLabel *icon = new QLabel(m_widget);
     icon->setPixmap(KIcon("emblem-mounted").pixmap(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
 
-    QHBoxLayout *l_layout2 = new QHBoxLayout(m_widget);
+    QHBoxLayout *l_layout2 = new QHBoxLayout;
     l_layout2->setSpacing(0);
     l_layout2->setMargin(0);
 
@@ -127,6 +113,8 @@ void DeviceNotifier::init()
 
     m_widget->adjustSize();
 
+    initIcon();
+
     //feed the list with what is already reported by the engine
     isNotificationEnabled = false;
     foreach (const QString &source, m_solidEngine->sources()) {
@@ -135,79 +123,21 @@ void DeviceNotifier::init()
     isNotificationEnabled = true;
 
     //connect to engine when a device is plug
-    connect(m_solidEngine, SIGNAL(sourceAdded(const QString&)),
-            this, SLOT(onSourceAdded(const QString&)));
-    connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)),
-            this, SLOT(onSourceRemoved(const QString&)));
+    connect(m_solidEngine, SIGNAL(sourceAdded(const QString&)), this, SLOT(onSourceAdded(const QString&)));
+    connect(m_solidEngine, SIGNAL(sourceRemoved(const QString&)), this, SLOT(onSourceRemoved(const QString&)));
 
     connect(m_notifierView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(slotOnItemClicked(const QModelIndex&)));
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(onTimerExpired()));
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));    // allows updating of colors automatically
 }
 
-
-void DeviceNotifier::initSysTray()
-{
-    if (m_icon) {
-        return;
-    }
-
-    //we display the icon corresponding to the computer
-    QList<Solid::Device> list = Solid::Device::allDevices();
-
-    if (list.size() > 0) {
-        Solid::Device device=list[0];
-
-        while (device.parent().isValid()) {
-            device = device.parent();
-        }
-        m_icon = new Plasma::Icon(KIcon(device.icon()), QString(), this);
-    } else {
-        //default icon if problem
-        m_icon = new Plasma::Icon(KIcon("computer"), QString(), this);
-    }
-    connect(m_icon, SIGNAL(clicked()), this, SLOT(onClickNotifier()));
-
-    setAspectRatioMode(Plasma::ConstrainedSquare);
-
-    m_layout->addItem(m_icon);
+QWidget *DeviceNotifier::widget() {
+    return m_widget;
 }
 
 DeviceNotifier::~DeviceNotifier()
 {
-    delete m_widget;
     delete m_hotplugModel;
-    delete m_timer;
+    delete m_widget;
 }
-
-void DeviceNotifier::constraintsEvent(Plasma::Constraints constraints)
-{
-    // on the panel we don't want a background, and our proxy widget in Planar has one
-    setBackgroundHints(NoBackground);
-    bool isSizeConstrained = formFactor() != Plasma::Planar && formFactor() != Plasma::MediaCenter;
-
-    if (constraints & FormFactorConstraint) {
-        if (isSizeConstrained) {
-            if (m_proxy) {
-                m_proxy->setWidget(0);
-                m_layout->removeItem(m_proxy);
-                delete m_proxy;
-                m_proxy = 0;
-            }
-
-            initSysTray();
-        } else {
-            delete m_icon;
-            m_icon = 0;
-
-            m_proxy = new QGraphicsProxyWidget(this);
-            m_proxy->setWidget(m_widget);
-            m_proxy->show();
-            m_layout->addItem(m_proxy);
-        }
-    }
-
- }
 
 void DeviceNotifier::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
 {
@@ -249,10 +179,8 @@ void DeviceNotifier::dataUpdated(const QString &source, Plasma::DataEngine::Data
                 } else {
                     m_hotplugModel->setData(index,last_action_label, ActionRole);
                 }
-                if (m_icon && isNotificationEnabled) {
-                    m_widget->move(popupPosition(m_widget->sizeHint()));
-                    m_widget->show();
-                    m_timer->start(m_displayTime*1000);
+                if (isNotificationEnabled) {
+                    showPopup(m_displayTime*1000);
                 }
             }
             //data from soliddevice engine
@@ -329,8 +257,8 @@ void DeviceNotifier::onSourceRemoved(const QString &name)
         m_hotplugModel->removeRow(index.row());
     }
 
-    if (m_icon && m_hotplugModel->rowCount() == 0) {
-        m_widget->hide();
+    if (m_hotplugModel->rowCount() == 0) {
+        hidePopup();
     }
 }
 
@@ -349,16 +277,6 @@ QModelIndex DeviceNotifier::indexForUdi(const QString &udi) const
     return QModelIndex();
 }
 
-void DeviceNotifier::onClickNotifier()
-{
-    if (m_widget->isVisible()) {
-        m_widget->hide();
-    } else {
-        m_widget->move(popupPosition(m_widget->sizeHint()));
-        m_widget->show();
-    }    
-}
-
 void DeviceNotifier::createConfigurationInterface(KConfigDialog *parent)
 {
     QWidget *widget = new QWidget;
@@ -366,7 +284,7 @@ void DeviceNotifier::createConfigurationInterface(KConfigDialog *parent)
     parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    parent->addPage(widget, parent->windowTitle(), icon());
+    parent->addPage(widget, parent->windowTitle(), Applet::icon());
 
     ui.spinTime->setValue(m_displayTime);
     ui.spinItems->setValue(m_numberItems);
@@ -391,9 +309,8 @@ void DeviceNotifier::configAccepted()
 void DeviceNotifier::slotOnItemClicked(const QModelIndex &index)
 {
     kDebug() << index;
-    if (m_icon) {
-        m_timer->stop();
-    }
+    //reset eventually Scheduled Popup Hide
+    showPopup();
 
     QString udi = QString(m_hotplugModel->data(index, SolidUdiRole).toString());
 
@@ -418,9 +335,7 @@ void DeviceNotifier::slotOnItemClicked(const QModelIndex &index)
         }
     //open  (index.data(ScopeRole).toInt() == OpenAction)
     } else {
-        if (m_icon) {
-          m_widget->hide();
-        }
+        hidePopup();
         QStringList desktop_files = m_hotplugModel->data(index, PredicateFilesRole).toStringList();
 
         kDebug() << "DeviceNotifier:: call Solid Ui Server with params :" << udi \
@@ -430,21 +345,13 @@ void DeviceNotifier::slotOnItemClicked(const QModelIndex &index)
     }
 }
 
-void DeviceNotifier::onTimerExpired()
-{
-    if (m_icon) {
-        m_timer->stop();
-        m_widget->hide();
-    }
-}
-
 void DeviceNotifier::storageTeardownDone(Solid::ErrorType error, QVariant errorData)
 {
     if (error && errorData.isValid()) {
         KMessageBox::error(0, i18n("Cannot unmount the device.\nOne or more files on this device are open within an application."), QString());
-    } else if (m_icon) {
-        m_icon->setIcon(KIcon("dialog-ok"));
-        QTimer::singleShot(2000, this, SLOT(resetIcon()));
+    } else if ((formFactor() == Horizontal || formFactor() == Vertical)) {
+        setIcon(KIcon("dialog-ok"));
+        QTimer::singleShot(2000, this, SLOT(initIcon()));
         update();
     }
 
@@ -457,9 +364,9 @@ void DeviceNotifier::storageEjectDone(Solid::ErrorType error, QVariant errorData
 {
     if (error && errorData.isValid()) {
         KMessageBox::error(0, i18n("Cannot eject the disc.\nOne or more files on this disc are open within an application."), QString());
-    } else if (m_icon) {
-        m_icon->setIcon(KIcon("dialog-ok"));
-        QTimer::singleShot(2000, this, SLOT(resetIcon()));
+    } else if ((formFactor() == Horizontal || formFactor() == Vertical)) {
+        setIcon(KIcon("dialog-ok"));
+        QTimer::singleShot(2000, this, SLOT(initIcon()));
         update();
     }
 
@@ -468,29 +375,27 @@ void DeviceNotifier::storageEjectDone(Solid::ErrorType error, QVariant errorData
                this, SLOT(storageEjectDone(Solid::ErrorType, QVariant)));
 }
 
-void DeviceNotifier::resetIcon()
+void DeviceNotifier::initIcon()
 {
-    if (m_icon) {
-        //we display the icon corresponding to the computer
-        QList<Solid::Device> list = Solid::Device::allDevices();
+    //we display the icon corresponding to the computer
+    QList<Solid::Device> list = Solid::Device::allDevices();
 
-        if (list.size() > 0) {
-            Solid::Device device=list[0];
+    if (list.size() > 0) {
+        Solid::Device device=list[0];
 
-            while (device.parent().isValid()) {
-                device = device.parent();
-            }
-            m_icon->setIcon(KIcon(device.icon()));
-        } else {
-            //default icon if problem
-            m_icon->setIcon(KIcon("computer"));
+        while (device.parent().isValid()) {
+            device = device.parent();
         }
-        update();
+        setIcon(device.icon());
+    } else {
+        //default icon if problem
+        setIcon("computer");
     }
+    update();
 }
 
 void DeviceNotifier::updateColors()
-{ 
+{
     KColorScheme colorTheme = KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme());
     m_label->setText(i18n("<font color=\"%1\">Devices recently plugged in:</font>",
                             colorTheme.foreground(KColorScheme::NormalText).color().name()));
