@@ -149,6 +149,15 @@ bool SaverEngine::save()
     return false;
 }
 
+bool SaverEngine::setupPlasma()
+{
+    if (mState == Waiting)
+    {
+        return startLockProcess( PlasmaSetup );
+    }
+    return false;
+}
+
 //---------------------------------------------------------------------------
 bool SaverEngine::quit()
 {
@@ -252,6 +261,9 @@ bool SaverEngine::startLockProcess( LockType lock_type )
         break;
     case DontLock:
         mLockProcess << QString( "--dontlock" );
+        break;
+    case PlasmaSetup:
+        mLockProcess << "--plasmasetup";
         break;
     default:
         break;

@@ -48,6 +48,7 @@ protected:
     void drawBackground(QPainter * painter, const QRectF & rect);
     void keyPressEvent(QKeyEvent *event);
     void showEvent(QShowEvent *event);
+    void paintEvent(QPaintEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
 
 public slots:
@@ -63,8 +64,11 @@ public slots:
     void setContainment(Plasma::Containment *newContainment);
     void hideAppletBrowser();
 
+    void enableSetupMode();
+    void disableSetupMode();
+
 protected slots:
-    void showAppletBrowser();
+    void showAppletBrowser(); //FIXME actually this is toggle
     void appletBrowserDestroyed();
     void suppressShowTimeout();
 
@@ -72,7 +76,8 @@ private:
     Plasma::AppletBrowser *m_appletBrowser;
     QPoint m_appletBrowserDragStart;
     QAction *m_hideAction;
-    bool m_suppressShow;
+    bool m_suppressShow : 1;
+    bool m_setupMode : 1;
 };
 
 #endif // multiple inclusion guard

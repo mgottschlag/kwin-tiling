@@ -276,8 +276,10 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     groupLayout->addWidget(mPlasmaCheckBox);
 
     //FIXME just a temporary label. should I add a configure button?
-    QLabel *plasmaText = new QLabel("To configure widgets, lock the screen.", plasmaGroup);
-    groupLayout->addWidget(plasmaText);
+    mPlasmaSetup = new QPushButton(i18n("Setup..."), plasmaGroup);
+    mPlasmaSetup->setEnabled(mPlasmaEnabled);
+    connect(mPlasmaSetup, SIGNAL(clicked()), this, SLOT(slotPlasmaSetup()));
+    groupLayout->addWidget(mPlasmaSetup);
 
     rightColumnLayout->addStretch();
 
@@ -450,6 +452,7 @@ void KScreenSaver::defaults()
     slotLock( false );
     mEnabledCheckBox->setChecked(false);
     mPlasmaCheckBox->setChecked(false);
+    mPlasmaSetup->setEnabled(false);
 
     updateValues();
 
@@ -642,8 +645,15 @@ void KScreenSaver::slotEnablePlasma(bool enable)
         return;
     }
     mPlasmaEnabled = enable;
+    mPlasmaSetup->setEnabled(mPlasmaEnabled);
     mChanged = true;
     emit changed(true);
+}
+
+void KScreenSaver::slotPlasmaSetup()
+{
+    org::kde::screensaver kscreensaver("org.kde.screensaver", "/ScreenSaver", QDBusConnection::sessionBus());
+    kscreensaver.setupPlasma();
 }
 
 

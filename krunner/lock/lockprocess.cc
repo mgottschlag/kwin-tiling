@@ -128,11 +128,11 @@ const int TIMEOUT_CODE = 2; //from PasswordDlg
 // Screen saver handling process.  Handles screensaver window,
 // starting screensaver hacks, and password entry.f
 //
-LockProcess::LockProcess(bool child, bool useBlankOnly)
+LockProcess::LockProcess(bool child, bool useBlankOnly, bool plasmaSetupMode)
     : QWidget(0L, Qt::X11BypassWindowManagerHint),
       mPlasmaDBus(0),
       mPlasmaView(0),
-      mFreeUnlock(false),
+      mFreeUnlock(plasmaSetupMode),
       mOpenGLVisual(false),
       child_saver(child),
       mParent(0),
@@ -380,6 +380,8 @@ void LockProcess::configure()
     readSaver();
 
     mPlasmaEnabled = KScreenSaverSettings::plasmaEnabled();
+    //if plasma's disabled, never start in setup mode
+    mFreeUnlock = mFreeUnlock && mPlasmaEnabled;
 
     mSuppressUnlockTimeout += qMax(0, KScreenSaverSettings::timeout() * 1000);
     mSuppressUnlockTimeout = qMax(mSuppressUnlockTimeout, 30 * 1000); //min. 30 secs
@@ -900,6 +902,11 @@ bool LockProcess::startPlasma()
         return false;
     }
     kDebug() << "starting plasma-overlay";
+    if (mFreeUnlock) {
+        mSuppressUnlock.start(mSuppressUnlockTimeout);
+        XChangeActivePointerGrab( QX11Info::display(), GRABEVENTS,
+                QCursor(Qt::ArrowCursor).handle(), CurrentTime);
+    }
     if (!mPlasmaDBus) {
         //try to get it, in case it's already running somehow
         //FIXME I don't like hardcoded strings
@@ -909,7 +916,12 @@ bool LockProcess::startPlasma()
     if (mPlasmaDBus->isValid()) {
         kDebug() << "weird, plasma-overlay is already running";
         connect(mPlasmaDBus, SIGNAL(viewCreated(uint)), SLOT(setPlasmaView(uint)));
-        mPlasmaDBus->call(QDBus::NoBlock, "deactivate");
+        if (mFreeUnlock) {
+            mPlasmaDBus->call(QDBus::NoBlock, "activate");
+            //um, fuck. it'll probably be locked.
+        } else {
+            mPlasmaDBus->call(QDBus::NoBlock, "deactivate");
+        }
         mPlasmaDBus->callWithCallback("viewWinId", QList<QVariant>(), this,
                 SLOT(setPlasmaView(uint)));
         return true;
@@ -920,6 +932,9 @@ bool LockProcess::startPlasma()
                     QString)),
             SLOT(newService(QString)));
     mPlasmaProc.setProgram("plasma-overlay");
+    if (mFreeUnlock) {
+        mPlasmaProc << "--setup";
+    }
     mPlasmaProc.start();
     return true;
 }
@@ -970,13 +985,6 @@ void LockProcess::newService(QString name)
         //whoops, activation probably failed earlier
         mPlasmaDBus->call(QDBus::NoBlock, "activate");
     }
-}
-
-void LockProcess::setPlasmaView(uint id)
-{
-    mPlasmaView = id;
-    kDebug() << id;
-    stayOnTop();
 }
 
 void LockProcess::deactivatePlasma()
@@ -1111,6 +1119,16 @@ static void fakeFocusIn( WId window )
     ev.xfocus.mode = NotifyNormal;
     ev.xfocus.detail = NotifyAncestor;
     XSendEvent( QX11Info::display(), window, False, NoEventMask, &ev );
+}
+
+void LockProcess::setPlasmaView(uint id)
+{
+    mPlasmaView = id;
+    if (mFreeUnlock) {
+        fakeFocusIn(mPlasmaView);
+    }
+    kDebug() << id;
+    stayOnTop();
 }
 
 int LockProcess::execDialog( QDialog *dlg )

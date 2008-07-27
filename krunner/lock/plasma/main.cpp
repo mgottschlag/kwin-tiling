@@ -50,6 +50,7 @@ int main(int argc, char **argv)
 
     KCmdLineOptions options;
     options.add("cheats",ki18n("Enables some cheats that are useful for debugging."));
+    options.add("setup",ki18n("Start unlocked for configuration."));
     KCmdLineArgs::addCmdLineOptions(options);
 
     PlasmaApp *app = PlasmaApp::self();

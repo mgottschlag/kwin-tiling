@@ -41,7 +41,8 @@ static const int SUPPRESS_SHOW_TIMEOUT = 500; // Number of millis to prevent res
 SaverView::SaverView(Plasma::Containment *containment, QWidget *parent)
     : Plasma::View(containment, parent),
       m_appletBrowser(0),
-      m_suppressShow(false)
+      m_suppressShow(false),
+      m_setupMode(false)
 {
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint |
             Qt::X11BypassWindowManagerHint);
@@ -75,6 +76,22 @@ SaverView::SaverView(Plasma::Containment *containment, QWidget *parent)
 SaverView::~SaverView()
 {
     delete m_appletBrowser;
+}
+
+void SaverView::enableSetupMode()
+{
+    if (!m_setupMode) {
+        m_setupMode = true;
+        update();
+    }
+}
+
+void SaverView::disableSetupMode()
+{
+    if (m_setupMode) {
+        m_setupMode = false;
+        update();
+    }
 }
 
 void SaverView::drawBackground(QPainter * painter, const QRectF & rect)
@@ -129,6 +146,50 @@ void SaverView::hideAppletBrowser()
 void SaverView::appletBrowserDestroyed()
 {
     m_appletBrowser = 0;
+}
+
+void SaverView::paintEvent(QPaintEvent *event)
+{
+    Plasma::View::paintEvent(event);
+    if (!m_setupMode) {
+        return;
+    }
+
+    // now draw a little label reminding the user their screen's not quite locked
+    const QRect r = rect();
+    const QString text = i18n("Setup Mode - Screen is NOT locked");
+    QFont f = font();
+    f.bold();
+    const QFontMetrics fm(f);
+    const int margin = 6;
+    const int textWidth = fm.width(text);
+    const QPoint centered(r.width() / 2 - textWidth / 2 - margin, r.y());
+    const QRect boundingBox(centered, QSize(margin * 2 + textWidth, fm.height() + margin * 2));
+
+    if (!viewport() || !event->rect().intersects(boundingBox)) {
+        return;
+    }
+
+    QPainterPath box;
+    box.moveTo(boundingBox.topLeft());
+    box.lineTo(boundingBox.bottomLeft() + QPoint(0, -margin * 2));
+    box.quadTo(boundingBox.bottomLeft(), boundingBox.bottomLeft() + QPoint(margin * 2, 0));
+    box.lineTo(boundingBox.bottomRight() + QPoint(-margin * 2, 0));
+    box.quadTo(boundingBox.bottomRight(), boundingBox.bottomRight() + QPoint(0, -margin * 2));
+    box.lineTo(boundingBox.topRight());
+    box.closeSubpath();
+
+    QPainter painter(viewport());
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setFont(f);
+    //kDebug() << "******************** painting from" << centered << boundingBox << rect() << event->rect();
+    QColor highlight = palette().highlight().color();
+    highlight.setAlphaF(0.7);
+    painter.setPen(highlight.darker());
+    painter.setBrush(highlight);
+    painter.drawPath(box);
+    painter.setPen(palette().highlightedText().color());
+    painter.drawText(boundingBox, Qt::AlignCenter | Qt::AlignVCenter, text);
 }
 
 bool SaverView::eventFilter(QObject *watched, QEvent *event)

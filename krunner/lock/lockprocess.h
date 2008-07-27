@@ -42,7 +42,7 @@ class LockProcess
 {
     Q_OBJECT
 public:
-    explicit LockProcess(bool child_saver = false, bool useBlankOnly = false);
+    explicit LockProcess(bool child_saver = false, bool useBlankOnly = false, bool plasmaSetupMode = false);
     ~LockProcess();
 
     bool lock();

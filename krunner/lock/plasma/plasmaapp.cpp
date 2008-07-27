@@ -329,8 +329,11 @@ Plasma::Corona* PlasmaApp::corona()
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
         c->initializeLayout();
 
-        //I like to be extra sure it's locked
-        if (c->immutability() == Plasma::Mutable) {
+        if (KCmdLineArgs::parsedArgs()->isSet("setup")) {
+            if (c->immutability() == Plasma::UserImmutable) {
+                c->setImmutability(Plasma::Mutable);
+            }
+        } else if (c->immutability() == Plasma::Mutable) {
             c->setImmutability(Plasma::UserImmutable);
         }
         //kDebug() << "layout should exist";
@@ -388,6 +391,7 @@ void PlasmaApp::createView(Plasma::Containment *containment)
     //XChangeProperty(QX11Info::display(), m_view->effectiveWinId(), tag, tag, 8, PropModeReplace, &data, 1);
 
     connect(containment, SIGNAL(locked()), SLOT(hideDialogs()));
+    connect(containment, SIGNAL(locked()), m_view, SLOT(disableSetupMode()));
     connect(containment, SIGNAL(unlocked()), SLOT(showDialogs()));
     //ohhh, what a hack
     connect(containment, SIGNAL(delegateConfigurationInterface(KConfigDialog *)),
@@ -395,7 +399,10 @@ void PlasmaApp::createView(Plasma::Containment *containment)
 
     connect(m_view, SIGNAL(hidden()), SLOT(lock()));
     connect(m_view, SIGNAL(hidden()), SIGNAL(hidden()));
-    if (m_idleOpacity > 0) {
+    if (KCmdLineArgs::parsedArgs()->isSet("setup")) {
+        m_view->enableSetupMode();
+        activate();
+    } else if (m_idleOpacity > 0) {
         m_view->setWindowOpacity(m_idleOpacity);
         m_view->showView();
     }

@@ -64,6 +64,7 @@ int main( int argc, char **argv )
     options.add("forcelock", ki18n("Force session locking"));
     options.add("dontlock", ki18n("Only start screen saver"));
     options.add("blank", ki18n("Only use the blank screen saver"));
+    options.add("plasmasetup", ki18n("start with plasma unlocked for configuring"));
     KCmdLineArgs::addCmdLineOptions( options );
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
@@ -139,7 +140,7 @@ int main( int argc, char **argv )
     app.disableSessionManagement();
     KGlobal::locale()->insertCatalog("libkworkspace");
 
-    LockProcess process(child, args->isSet( "blank" ));
+    LockProcess process(child, args->isSet( "blank" ), args->isSet("plasmasetup"));
     if (!child)
         process.setChildren(child_sockets);
     else
@@ -147,7 +148,7 @@ int main( int argc, char **argv )
 
     bool rt;
     bool sig = false;
-    if( !child && args->isSet( "forcelock" ))
+    if( !child && (args->isSet( "forcelock" ) || args->isSet("plasmasetup")))
     {
         rt = process.lock();
         sig = true;

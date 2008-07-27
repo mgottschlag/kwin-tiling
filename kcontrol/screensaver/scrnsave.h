@@ -64,6 +64,7 @@ protected Q_SLOTS:
     void slotPreviewExited(K3Process *);
     void findSavers();
     void slotEnablePlasma(bool enable);
+    void slotPlasmaSetup();
 
 protected:
     void writeSettings();
@@ -82,6 +83,7 @@ protected:
     KSSMonitor  *mMonitor;
     QPushButton *mSetupBt;
     QPushButton *mTestBt;
+    QPushButton *mPlasmaSetup;
     Q3ListView   *mSaverListView;
     QSpinBox	*mWaitEdit;
     QSpinBox    *mWaitLockEdit;

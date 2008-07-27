@@ -53,6 +53,12 @@ public Q_SLOTS:
     bool save();
 
     /**
+     * Start the screensaver in plasma-setup mode.
+     * if plasma is not enabled, this just locks the screen.
+     */
+    bool setupPlasma();
+
+    /**
      * Quit the screensaver if it is running
      */
     bool quit();
@@ -142,7 +148,7 @@ protected Q_SLOTS:
     void serviceOwnerChanged(const QString&, const QString&, const QString&);
 
 protected:
-    enum LockType { DontLock, DefaultLock, ForceLock };
+    enum LockType { DontLock, DefaultLock, ForceLock, PlasmaSetup };
     bool startLockProcess( LockType lock_type );
     void stopLockProcess();
     bool handleKeyPress(XKeyEvent *xke);
