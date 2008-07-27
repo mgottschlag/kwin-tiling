@@ -54,7 +54,7 @@ void xautolock_processQueue( void );
 void xautolock_queryPointer (Display* d);
 void xautolock_initDiy (Display* d);
 void xautolock_resetTriggers( void );
-void xautolock_setTrigger( time_t );
+void xautolock_setTrigger( int );
 int xautolock_ignoreWindow( Window );
 extern xautolock_corner_t xautolock_corners[ 4 ];
 #ifdef __cplusplus
