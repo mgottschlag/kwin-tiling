@@ -188,16 +188,18 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     }
     mElapsed += CHECK_INTERVAL / 1000;
 
-    int (*oldHandler)(Display *, XErrorEvent *) = NULL;
 #ifdef HAVE_XSCREENSAVER
     if (!mMitInfo)
 #endif
     { // only the diy way needs special X handler
         XSync( QX11Info::display(), False );
-        oldHandler = XSetErrorHandler(catchFalseAlarms);
-    }
+        int (*oldHandler)(Display *, XErrorEvent *) =
+                XSetErrorHandler(catchFalseAlarms);
 
-    xautolock_processQueue();
+        xautolock_processQueue();
+
+        XSetErrorHandler(oldHandler);
+    }
 
 #ifdef HAVE_XSCREENSAVER
     if (mMitInfo)
@@ -212,11 +214,6 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
 #endif /* HAVE_XSCREENSAVER */
 
     xautolock_queryPointer( QX11Info::display());
-
-#ifdef HAVE_XSCREENSAVER
-    if (!mMitInfo)
-#endif
-        XSetErrorHandler(oldHandler);
 
     bool activate = false;
 
