@@ -22,37 +22,6 @@
 #include <time.h>
 
 /*
- *  Function for querying the idle time from the server.
- *  Only used if the Xscreensaver
- *  extension is present.
- */
-void 
-xautolock_queryIdleTime (Display* d)
-{
-  Time idleTime = 0; /* millisecs since last input event */
-
-#ifdef HAVE_XSCREENSAVER
-  if( xautolock_useMit )
-  {
-    static XScreenSaverInfo* mitInfo = 0; 
-    if (!mitInfo) mitInfo = XScreenSaverAllocInfo ();
-    XScreenSaverQueryInfo (d, DefaultRootWindow (d), mitInfo);
-    idleTime = mitInfo->idle;
-  }
-  else
-#endif /* HAVE_XSCREENSAVER */
-  {
-    d = d; /* shut up */
-    return; /* DIY */
-  }
-
-  if (idleTime < CHECK_INTERVAL )  
-  {
-    xautolock_resetTriggers ();
-  }
-}
-
-/*
  *  Function for monitoring pointer movements. This implements the 
  *  `corners' feature and as a side effect also tracks pointer 
  *  related user activity. The latter actually is only needed when

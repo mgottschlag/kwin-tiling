@@ -8,10 +8,16 @@
 #ifndef __XAUTOLOCK_H__
 #define __XAUTOLOCK_H__
 
+#include <config-xautolock.h>
+
 #include <QWidget>
 
 #include <X11/Xlib.h>
+#ifdef HAVE_XSCREENSAVER
+# include <X11/extensions/scrnsaver.h>
+#endif
 #include <fixx11h.h>
+
 //===========================================================================
 //
 // Detect user inactivity.
@@ -75,6 +81,10 @@ protected:
     bool    mActive;
     time_t  mLastTimeout, mLastReset;
     bool    mDPMS;
+#ifdef HAVE_XSCREENSAVER
+    XScreenSaverInfo *mMitInfo;
+    ulong   mLastIdle;
+#endif
 };
 
 #endif

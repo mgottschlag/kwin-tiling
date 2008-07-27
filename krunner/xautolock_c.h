@@ -21,12 +21,7 @@
 #ifndef __xautolock_c_h
 #define __xautolock_c_h
 
-#include <config-xautolock.h>
-
 #include <X11/Xlib.h>
-#ifdef HAVE_XSCREENSAVER
-# include <X11/extensions/scrnsaver.h>
-#endif
 #ifdef __cplusplus
 # include <fixx11h.h>
 #endif
@@ -55,18 +50,12 @@ extern "C"
 {
 #endif
 void xautolock_processEvent( XEvent* ev );
-void xautolock_queryIdleTime( Display* d);
 void xautolock_processQueue( void );
 void xautolock_queryPointer (Display* d);
 void xautolock_initDiy (Display* d);
 void xautolock_resetTriggers( void );
 void xautolock_setTrigger( time_t );
 int xautolock_ignoreWindow( Window );
-#ifdef HAVE_XSCREENSAVER
-extern int xautolock_useMit;
-#else
-# define xautolock_useMit 0
-#endif
 extern xautolock_corner_t xautolock_corners[ 4 ];
 #ifdef __cplusplus
 }

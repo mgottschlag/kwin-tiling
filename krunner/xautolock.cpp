@@ -38,9 +38,6 @@ Status DPMSInfo ( Display *, CARD16 *, BOOL * );
 
 #include <ctime>
 
-#ifdef HAVE_XSCREENSAVER
-int xautolock_useMit;
-#endif
 xautolock_corner_t xautolock_corners[ 4 ];
 
 static XAutoLock* self = NULL;
@@ -61,10 +58,14 @@ XAutoLock::XAutoLock()
 {
     self = this;
 #ifdef HAVE_XSCREENSAVER
+    mMitInfo = 0;
     int dummy;
-    xautolock_useMit = XScreenSaverQueryExtension( QX11Info::display(), &dummy, &dummy );
+    if (XScreenSaverQueryExtension( QX11Info::display(), &dummy, &dummy ))
+    {
+        mMitInfo = XScreenSaverAllocInfo();
+    }
+    else
 #endif
-    if( !xautolock_useMit )
     {
         kapp->installX11EventFilter( this );
         int (*oldHandler)(Display *, XErrorEvent *);
@@ -150,6 +151,10 @@ void XAutoLock::resetTrigger()
 {
     mLastReset = time( 0 );
     mTrigger = mLastReset + mTimeout;
+#ifdef HAVE_XSCREENSAVER
+    mLastIdle = 0;
+#endif
+    XForceScreenSaver( QX11Info::display(), ScreenSaverReset );
 }
 
 //---------------------------------------------------------------------------
@@ -183,7 +188,9 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     }
 
     int (*oldHandler)(Display *, XErrorEvent *) = NULL;
-    if( !xautolock_useMit )
+#ifdef HAVE_XSCREENSAVER
+    if (!mMitInfo)
+#endif
     { // only the diy way needs special X handler
         XSync( QX11Info::display(), False );
         oldHandler = XSetErrorHandler(catchFalseAlarms);
@@ -200,13 +207,25 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
            reset the triger. */
         resetTrigger();
     }
-
     mLastTimeout = now;
 
-    xautolock_queryIdleTime( QX11Info::display());
+#ifdef HAVE_XSCREENSAVER
+    if (mMitInfo)
+    {
+        Display *d = QX11Info::display();
+        XScreenSaverQueryInfo(d, DefaultRootWindow(d), mMitInfo);
+        if (mLastIdle < mMitInfo->idle)
+            mLastIdle = mMitInfo->idle;
+        else
+            resetTrigger();
+    }
+#endif /* HAVE_XSCREENSAVER */
+
     xautolock_queryPointer( QX11Info::display());
 
-    if( !xautolock_useMit )
+#ifdef HAVE_XSCREENSAVER
+    if (!mMitInfo)
+#endif
         XSetErrorHandler(oldHandler);
 
     bool activate = false;
@@ -233,9 +252,6 @@ void XAutoLock::timerEvent(QTimerEvent *ev)
     if(!on && mDPMS) {
         activate = false;
         resetTrigger();
-#ifdef HAVE_XSCREENSAVER
-        XForceScreenSaver( QX11Info::display(), ScreenSaverReset );
-#endif
     }
 #endif
 
@@ -258,7 +274,9 @@ bool XAutoLock::x11Event( XEvent* ev )
     xautolock_processEvent( ev );
 // don't futher process key events that were received only because XAutoLock wants them
     if( ev->type == KeyPress && !ev->xkey.send_event
-        && !xautolock_useMit
+#ifdef HAVE_XSCREENSAVER
+        && !mMitInfo
+#endif
         && !QWidget::find( ev->xkey.window ))
         return true;
     return false;
