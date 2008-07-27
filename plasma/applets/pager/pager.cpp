@@ -863,7 +863,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     if (m_showOwnBackground && (formFactor() == Plasma::Vertical || formFactor() == Plasma::Horizontal)) {
         m_background->setElementPrefix(QString());
-        m_background->paintPanel(painter, contentsRect);
+        m_background->paintPanel(painter);
     }
 
     // Draw backgrounds of desktops only when there are not the proper theme elements
@@ -943,7 +943,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
                 QPainter buffPainter(&pixmap);
                 buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
 
-                m_background->paintPanel(&buffPainter, QRectF(QPointF(0, 0), m_rects[i].size()));
+                m_background->paintPanel(&buffPainter);
                 buffPainter.end();
                 painter->drawPixmap(m_rects[i].topLeft(), pixmap);
 
@@ -955,14 +955,14 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
                 pixmap.fill(alphaColor);
                 buffPainter.begin(&pixmap);
                 buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-                m_background->paintPanel(&buffPainter, QRectF(QPointF(0, 0), m_rects[i].size()));
+                m_background->paintPanel(&buffPainter);
                 painter->drawPixmap(m_rects[i].topLeft(), pixmap);
             } else {
                 //no anims, simpler thing
                 if (m_rects[i] == m_hoverRect) {
                     m_background->setElementPrefix("hover");
                 }
-                m_background->paintPanel(painter, m_rects[i], m_rects[i].topLeft());
+                m_background->paintPanel(painter, m_rects[i].topLeft());
             }
         } else {
             QPen drawingPen;

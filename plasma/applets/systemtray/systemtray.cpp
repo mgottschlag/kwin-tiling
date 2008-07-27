@@ -69,7 +69,7 @@ void SystemTray::paintInterface(QPainter *painter,
     Q_UNUSED(option)
 
     if (m_showOwnBackground) {
-        m_background->paintPanel(painter, contentsRect);
+        m_background->paintPanel(painter);
     }
 }
 

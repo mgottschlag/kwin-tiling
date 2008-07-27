@@ -474,7 +474,7 @@ void PositioningRuler::paintEvent(QPaintEvent *event)
     painter.setCompositionMode(QPainter::CompositionMode_Source);
 
     d->sliderGraphics->resizePanel(event->rect().size());
-    d->sliderGraphics->paintPanel(&painter, event->rect());
+    d->sliderGraphics->paintPanel(&painter);
     painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
     //Draw center indicators

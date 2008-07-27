@@ -313,7 +313,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
     if (hasSvg) {
         if (!m_animId) {
              if (~option->state & QStyle::State_MouseOver) {
-                 itemBackground->paintPanel(painter, rect().toRect());
+                 itemBackground->paintPanel(painter);
              }
         } else {
             QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(itemBackground->panelSize().toSize());
@@ -327,7 +327,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
             {
                 QPainter buffPainter(alphaPixmap);
                 buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-                itemBackground->paintPanel(&buffPainter, alphaPixmap->rect());
+                itemBackground->paintPanel(&buffPainter);
             }
 
             painter->drawPixmap(QPoint(0, 0), *alphaPixmap);
@@ -338,7 +338,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
         if (itemBackground && itemBackground->hasElementPrefix("hover")) {
             if ((!m_animId || m_alpha == 1) && (~option->state & QStyle::State_Sunken)) {
                 itemBackground->setElementPrefix("hover");
-                itemBackground->paintPanel(painter, rect().toRect());
+                itemBackground->paintPanel(painter);
             } else {
                 //Draw task background from theme svg "hover" element
                 QPixmap *alphaPixmap = m_applet->taskAlphaPixmap(itemBackground->panelSize().toSize());
@@ -355,7 +355,7 @@ void WindowTaskItem::drawBackground(QPainter *painter, const QStyleOptionGraphic
                     QPainter buffPainter(alphaPixmap);
                     buffPainter.setCompositionMode(QPainter::CompositionMode_SourceIn);
                     itemBackground->setElementPrefix("hover");
-                    itemBackground->paintPanel(&buffPainter, alphaPixmap->rect());
+                    itemBackground->paintPanel(&buffPainter);
                 }
 
                 painter->drawPixmap(QPoint(0, 0), *alphaPixmap);
