@@ -150,7 +150,9 @@ void XAutoLock::resetTrigger()
 {
     mLastReset = mElapsed;
     mTrigger = mElapsed + mTimeout;
+#ifdef HAVE_XSCREENSAVER
     xautolock_lastIdleTime = 0;
+#endif
     XForceScreenSaver( QX11Info::display(), ScreenSaverReset );
 }
 
