@@ -167,6 +167,7 @@ void SystemTray::updateWidgetGeometry()
     r.moveTop(r.top() + (r.height() - s.height()) / 2);
     r.setSize(s);
     m_systemTrayWidget->setGeometry(r);
+    emit sizeHintChanged(Qt::PreferredSize);
 }
 
 void SystemTray::startupDelayer()
