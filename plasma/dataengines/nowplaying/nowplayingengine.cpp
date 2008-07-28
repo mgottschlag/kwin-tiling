@@ -170,6 +170,8 @@ bool NowPlayingEngine::updateSourceEvent(const QString& source)
     setData(source, "Can stop", player->canStop());
     setData(source, "Can skip backward", player->canGoPrevious());
     setData(source, "Can skip forward", player->canGoNext());
+    setData(source, "Can seek", player->canSeek());
+    setData(source, "Can set volume", player->canSetVolume());
 
     return true;
 }
