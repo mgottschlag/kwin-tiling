@@ -79,7 +79,7 @@ static int Dtime_save_ntp( const QStringList& ntpServers, bool ntpEnabled )
     if( proc.execute() != 0 ){
       ret |= ERROR_DTIME_NTP;
     }
-  } else {
+  } else if( ntpEnabled ) {
     ret |= ERROR_DTIME_NTP;
   }
   return ret;
