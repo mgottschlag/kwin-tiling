@@ -23,15 +23,13 @@
 
  A helper that's run using kdesu and does the system modifications.
 
- TODO: The time is offset by the delay caused by entering kdesu password,
-       fix it by passing current time and adjust.
-
 */
 
 #include "helper.h"
 
 #include <config-workspace.h>
 
+#include <sys/time.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -85,22 +83,13 @@ static int Dtime_save_ntp( const QStringList& ntpServers, bool ntpEnabled )
   return ret;
 }
 
-static int Dtime_save_date( const QString& date )
+static int Dtime_save_date( const QString& date, const QString& olddate )
 {
-    int ret = 0;
-    // User time setting
-    KProcess c_proc;
-    c_proc << "date" << date;
-    int result = c_proc.execute();
-    if (result != 0
-#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
-  	  && result != 2	// can only set local date, which is okay
-#endif
-      ) {
-      ret |= ERROR_DTIME_DATE;
-      return ret;
-    }
-    return ret;
+    struct timeval tv;
+
+    tv.tv_sec = date.toULong() - olddate.toULong() + time(0);
+    tv.tv_usec = 0;
+    return settimeofday(&tv, 0) ? ERROR_DTIME_DATE : 0;
 }
 
 // on non-Solaris systems which do not use /etc/timezone?
@@ -232,6 +221,7 @@ int main( int argc, char* argv[] )
   bool ntpEnabled = false;
   bool date = false;
   QString datestr;
+  QString olddatestr;
   bool tz = false;
   QString timezone;
   bool tzreset = false;
@@ -259,6 +249,11 @@ int main( int argc, char* argv[] )
       ntp = true;
     } else if( arg == "date" && !args.isEmpty()) {
       datestr = args.takeFirst();
+      if( args.isEmpty()) {
+        fprintf( stderr, "Wrong arguments!\n" );
+        exit( ERROR_CALL );
+      }
+      olddatestr = args.takeFirst();
       date = true;
     } else if( arg == "tz" && !args.isEmpty()) {
       timezone = args.takeFirst();
@@ -276,7 +271,7 @@ int main( int argc, char* argv[] )
   if( ntp )
     ret |= Dtime_save_ntp( ntpServerList, ntpEnabled );
   if( date )
-    ret |= Dtime_save_date( datestr );
+    ret |= Dtime_save_date( datestr, olddatestr );
   if( tz )
     ret |= Tzone_save_set( timezone );
   if( tzreset )

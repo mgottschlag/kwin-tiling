@@ -22,6 +22,7 @@
 
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
 #include <sys/types.h>
 
 #include <QComboBox>
@@ -303,23 +304,13 @@ void Dtime::save( QStringList& helperargs )
   }
   else {
     // User time setting
-    QString BufS;
-  // BSD systems reverse year compared to Susv3
-#if defined(__OpenBSD__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__DragonFly__)
-    BufS.sprintf("%04d%02d%02d%02d%02d.%02d",
-               date.year(),
-               date.month(), date.day(),
-               hour->value(), minute->value(), second->value());
-#else
-    BufS.sprintf("%02d%02d%02d%02d%04d.%02d",
-               date.month(), date.day(),
-               hour->value(), minute->value(),
-               date.year(), second->value());
-#endif
+    QDateTime dt(date,
+        QTime(hour->value(), minute->value(), second->value()));
 
-    kDebug() << "Set date " << BufS;
+    kDebug() << "Set date " << dt;
 
-    helperargs << "date" << BufS;
+    helperargs << "date" << QString::number(dt.toTime_t())
+                         << QString::number(::time(0));
   }
 
   // restart time
