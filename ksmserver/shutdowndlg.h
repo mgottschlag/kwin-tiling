@@ -56,6 +56,7 @@ protected:
 
 private Q_SLOTS:
     void slotPaintEffect();
+    void slotPaintEffectInitialized();
 
 private:
     static KSMShutdownFeedback * s_pSelf;

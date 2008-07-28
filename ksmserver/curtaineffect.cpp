@@ -41,6 +41,7 @@ void CurtainEffect::start()
 {
     currentY = 0;
     nextFrame();
+    emit initialized();
 }
 
 void CurtainEffect::nextFrame()

@@ -89,8 +89,14 @@ void KSMShutdownFeedback::paintEvent( QPaintEvent* )
 void KSMShutdownFeedback::slotPaintEffect()
 {
     effect = LogoutEffect::create(this, &m_pixmap);
-    effect->start();
+    connect(effect, SIGNAL(initialized()),
+            this,   SLOT  (slotPaintEffectInitialized()));
 
+    effect->start();
+}
+
+void KSMShutdownFeedback::slotPaintEffectInitialized()
+{
     initialized = true;
 }
 

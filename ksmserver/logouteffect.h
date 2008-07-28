@@ -29,10 +29,14 @@ class QPixmap;
 
 class LogoutEffect : public QObject
 {
+    Q_OBJECT
 public:
     virtual ~LogoutEffect();
     static LogoutEffect *create(QWidget *parent, QPixmap *pixmap);
     virtual void start() = 0;
+
+Q_SIGNALS:
+    void initialized();
 
 protected:
     LogoutEffect(QWidget *parent, QPixmap *pixmap);

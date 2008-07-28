@@ -519,6 +519,9 @@ void FadeEffect::grabImageSection()
         return;
     }
 
+    // Let the owner know we're done.
+    emit initialized();
+
     // Start the fade effect
     blender->setImage(image);
     blender->setAlpha(alpha);
