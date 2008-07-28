@@ -94,6 +94,9 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
 PanelView::~PanelView()
 {
+#ifdef Q_WS_WIN
+    registerAccessBar(winId(), false);
+#endif    
 }
 
 void PanelView::setLocation(Plasma::Location location)

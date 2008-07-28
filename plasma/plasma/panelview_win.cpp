@@ -38,6 +38,7 @@ bool PanelView::registerAccessBar(HWND hwndAccessBar, bool fRegister)
         SetWindowLongPtr(hwndAccessBar, GWL_EXSTYLE, lp | WS_EX_TOOLWINDOW);
         SetWindowLongPtr(hwndAccessBar, GWL_STYLE, WS_TILED );
 
+        SetWindowPos(winId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
         // Provide an identifier for notification messages.
         abd.uCallbackMessage = APPBAR_CALLBACK;
 
@@ -48,7 +49,6 @@ bool PanelView::registerAccessBar(HWND hwndAccessBar, bool fRegister)
         }
 
         m_barRegistered = true;
-
     } else {
 
         // Unregister the appbar.
@@ -112,13 +112,6 @@ void PanelView::appBarQuerySetPos(UINT uEdge, LPRECT lprc, PAPPBARDATA pabd)
 
     // Pass the final bounding rectangle to the system.
     SHAppBarMessage(ABM_SETPOS, pabd);
-
-    // Move and size the appbar so that it conforms to the
-    // bounding rectangle passed to the system.
-    MoveWindow(pabd->hWnd, pabd->rc.left, pabd->rc.top,
-        pabd->rc.right - pabd->rc.left,
-        pabd->rc.bottom - pabd->rc.top, true);
-
 }
 
 void PanelView::appBarCallback(MSG *message, long *result)
@@ -137,9 +130,7 @@ void PanelView::appBarCallback(MSG *message, long *result)
             // accordingly.
             uState = SHAppBarMessage(ABM_GETSTATE, &abd);
 
-            SetWindowPos(winId(),
-                (ABS_ALWAYSONTOP & uState) ? HWND_TOPMOST : HWND_BOTTOM,
-                0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            SetWindowPos(winId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 
             break;
 
@@ -150,10 +141,7 @@ void PanelView::appBarCallback(MSG *message, long *result)
             // z-order appropriately.
             if (result) {
 
-                SetWindowPos(winId(),
-                    (ABS_ALWAYSONTOP & uState) ? HWND_TOPMOST : HWND_BOTTOM,
-                    0, 0, 0, 0,
-                    SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+                SetWindowPos(winId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 
             }
 			
@@ -162,9 +150,7 @@ void PanelView::appBarCallback(MSG *message, long *result)
                 uState = SHAppBarMessage(ABM_GETSTATE, &abd);
 
                 if (uState & ABS_ALWAYSONTOP)
-                    SetWindowPos(winId(), HWND_TOPMOST,
-                        0, 0, 0, 0,
-                        SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+                    SetWindowPos(winId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
 
 	        }
 
@@ -194,9 +180,8 @@ void PanelView::appBarPosChanged(PAPPBARDATA pabd)
     GetWindowRect(pabd->hWnd, &rcWindow);
     iHeight = rcWindow.bottom - rcWindow.top;
     iWidth = rcWindow.right - rcWindow.left;
-    if(!m_panelController)
-        return;
-    switch (m_panelController->location()) {
+
+    switch (location()) {
 
         case Plasma::TopEdge:
             rc.bottom = rc.top + iHeight;
@@ -217,9 +202,9 @@ void PanelView::appBarPosChanged(PAPPBARDATA pabd)
             rc.left = rc.right - iWidth;
             edge = ABE_RIGHT;
             break;
-        }
+    }
 
-        appBarQuerySetPos(edge, &rc, pabd);
+    appBarQuerySetPos(edge, &rc, pabd);
 }
 
 bool PanelView::winEvent(MSG *message, long *result)
