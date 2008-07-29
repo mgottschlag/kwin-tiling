@@ -223,8 +223,8 @@ so you can quickly tell that you have switched to the right one.</para>
 <title>Titlebar Actions</title>
 
 <para>
-In this panel you can configure what happens to windows when a mouse is
-clicked on there titlebars.
+In this panel you can configure what happens to windows when a mousebutton is
+clicked on their titlebars.
 </para>
 
 <sect3 id="action-actions-sec1">
