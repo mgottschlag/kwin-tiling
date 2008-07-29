@@ -34,7 +34,7 @@
 #include <KMessageBox>
 #include <KGlobalSettings>
 #include <KLocale>
-#include <KLibLoader>
+#include <KLibrary>
 #include <KPushButton>
 #include <KStandardGuiItem>
 #include <KAuthorized>
@@ -805,30 +805,35 @@ bool LockProcess::startLock()
 {
     for (QStringList::ConstIterator it = mPlugins.begin(); it != mPlugins.end(); ++it) {
         GreeterPluginHandle plugin;
-        QString path = KLibLoader::self()->findLibrary(
-                    ((*it)[0] == '/' ? *it : "kgreet_" + *it ).toLatin1() );
-        if (path.isEmpty()) {
+        KLibrary *lib = new KLibrary( (*it)[0] == '/' ? *it : "kgreet_" + *it );
+        if (lib->fileName().isEmpty()) {
             kWarning(1204) << "GreeterPlugin " << *it << " does not exist" ;
+            delete lib;
             continue;
         }
-        if (!(plugin.library = KLibLoader::self()->library( path.toLatin1() ))) {
-            kWarning(1204) << "Cannot load GreeterPlugin " << *it << " (" << path << ")" ;
+        if (!lib->load()) {
+            kWarning(1204) << "Cannot load GreeterPlugin " << *it << " (" << lib->fileName() << ")" ;
+            delete lib;
             continue;
         }
-        plugin.info = (KGreeterPluginInfo *)plugin.library->resolveSymbol( "kgreeterplugin_info" );
+        plugin.library = lib;
+        plugin.info = (KGreeterPluginInfo *)lib->resolveSymbol( "kgreeterplugin_info" );
         if (!plugin.info ) {
-            kWarning(1204) << "GreeterPlugin " << *it << " (" << path << ") is no valid greet widget plugin" ;
-            plugin.library->unload();
+            kWarning(1204) << "GreeterPlugin " << *it << " (" << lib->fileName() << ") is no valid greet widget plugin" ;
+            lib->unload();
+            delete lib;
             continue;
         }
         if (plugin.info->method && !mMethod.isEmpty() && mMethod != plugin.info->method) {
-            kDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") serves " << plugin.info->method << ", not " << mMethod;
-            plugin.library->unload();
+            kDebug(1204) << "GreeterPlugin " << *it << " (" << lib->fileName() << ") serves " << plugin.info->method << ", not " << mMethod;
+            lib->unload();
+            delete lib;
             continue;
         }
         if (!plugin.info->init( mMethod, getConf, this )) {
-            kDebug(1204) << "GreeterPlugin " << *it << " (" << path << ") refuses to serve " << mMethod;
-            plugin.library->unload();
+            kDebug(1204) << "GreeterPlugin " << *it << " (" << lib->fileName() << ") refuses to serve " << mMethod;
+            lib->unload();
+            delete lib;
             continue;
         }
         kDebug(1204) << "GreeterPlugin " << *it << " (" << plugin.info->method << ", " << plugin.info->name << ") loaded";
