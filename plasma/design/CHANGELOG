@@ -13,6 +13,8 @@ libplasma
         * WebContent painting update synchronization (fixes, among other things, scrolling)
         * Prevent crash when Containment that AppletBrowser is associated with is deleted
         * Applet handles work with all icon sizes (user system settings) 
+        * Fix View so that when a new activity is added, don't move more than necessary;
+          fixes dragging lock
 
 Plasma Desktop
     * Features
