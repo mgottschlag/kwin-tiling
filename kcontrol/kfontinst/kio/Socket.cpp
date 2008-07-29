@@ -299,7 +299,7 @@ bool CSocket::connectToServer(const QByteArray &sock, unsigned int socketUid)
     socklen_t    siz = sizeof(cred);
 
     // Security: if socket exists, we must own it
-    if (0==getsockopt(itsFd, SOL_SOCKET, SO_PEERCRED, &cred, &siz) == 0)
+    if (getsockopt(itsFd, SOL_SOCKET, SO_PEERCRED, &cred, &siz) == 0)
     {
         if (cred.uid != socketUid)
         {
