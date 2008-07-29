@@ -136,6 +136,7 @@ void PanelView::appBarCallback(MSG *message, long *result)
                     SetWindowPos(winId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
                 }
             }
+            break;
 
         case ABN_POSCHANGED:
             // The taskbar or another appbar has changed its
