@@ -36,6 +36,7 @@
 #include <KDebug>
 #include <KGlobal>
 #include <KGlobalSettings>
+#include <kcapacitybar.h>
 
 // plasma
 #include <plasma/plasma.h>
@@ -74,24 +75,17 @@ void ItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, 
                 painter->setOpacity(barSize.width()/20.0);
             }
 
-            QRectF spaceRect = QStyle::alignedRect(option.direction,
-                                                   Qt::AlignRight, barSize, emptyRect);
-
-            QStyleOptionProgressBar optionPBar;
+            QRect spaceRect = QStyle::alignedRect(option.direction,
+                                                  Qt::AlignRight, barSize, emptyRect);
 
             if (!(option.state & (QStyle::State_Selected|QStyle::State_MouseOver|QStyle::State_HasFocus))) {
                 painter->setOpacity(painter->opacity()/2.5);
-                optionPBar.state = QStyle::State_None;
             } else {
-                optionPBar.state = QStyle::State_Enabled;
             }
 
-            optionPBar.rect = spaceRect.toRect();
-            optionPBar.minimum = 0;
-            optionPBar.maximum = 100;
-            optionPBar.progress = (usedSpace / (freeSpace + usedSpace))*100;
-
-            QApplication::style()->drawControl(QStyle::CE_ProgressBar, &optionPBar, painter);
+            KCapacityBar capacityBar(KCapacityBar::DrawTextInline);
+            capacityBar.setValue((usedSpace / (freeSpace + usedSpace))*100);
+            capacityBar.drawCapacityBar(painter, spaceRect);
 
             // -- Removed the free space text because it added too much 'visual noise' to the item
             //
