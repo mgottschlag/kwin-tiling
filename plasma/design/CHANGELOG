@@ -6,6 +6,9 @@ libplasma
         * PopupApplet: Applet that switches between an icon with a popup and the popup on the desktop
         * Symbol Versioning: limit loading of plugins to those that match the libplasma minimum rev#
         * ToolTipManager: new Plasma style tooltips
+        * Package system:
+            * PackageStructure supports arbitrary URIs (in addition to auto-discovery for package)
+              structure description files.
         * Plasma::Theme
             * Support compressed SVGs (*.svgz)
         * Widgets
@@ -21,6 +24,13 @@ libplasma
         * Applet handles work with all icon sizes (user system settings) 
         * Fix View so that when a new activity is added, don't move more than necessary;
           fixes dragging lock
+
+Developer Documentation
+    * Design documentation
+        * NEW: tooltips
+        * NEW: wallpaper
+
+    * Tutorials
 
 Desktop Theme
     * widgets/button for theming pushbuttons
@@ -49,6 +59,7 @@ Plugins/Addons
         * Various clocks ported to AppletClock for calendar and timezone consistency
         * Kickoff menu size restoration
         * MS Windows compile fixes
+        * Taskbar shows thumbnails of windows on hover (4.1 regression)
 
 KRunner
     * Features
