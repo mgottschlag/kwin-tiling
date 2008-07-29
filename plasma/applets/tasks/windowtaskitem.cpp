@@ -119,7 +119,7 @@ void WindowTaskItem::setIcon(const QIcon &icon)
 
 void WindowTaskItem::setTaskFlags(TaskFlags flags)
 {
-    if ((m_flags & TaskWantsAttention != 0) != (flags & TaskWantsAttention != 0)) {
+    if ((m_flags & TaskWantsAttention) != (flags & TaskWantsAttention)) {
         //kDebug() << "task attention state changed" << m_attentionTimerId;
         if (flags & TaskWantsAttention) {
             // start attention getting

@@ -108,7 +108,7 @@ void Battery::init()
 
 void Battery::constraintsEvent(Plasma::Constraints constraints)
 {
-    if (constraints & Plasma::FormFactorConstraint | Plasma::SizeConstraint) {
+    if (constraints & (Plasma::FormFactorConstraint | Plasma::SizeConstraint)) {
         if (formFactor() == Plasma::Vertical) {
             setMaximumSize(QWIDGETSIZE_MAX, qMax(m_textRect.height(), contentsRect().width()));
             //kDebug() << "Vertical FormFactor";
