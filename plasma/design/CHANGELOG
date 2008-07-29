@@ -6,6 +6,7 @@ libplasma
         * PopupApplet: Applet that switches between an icon with a popup and the popup on the desktop
         * Symbol Versioning: limit loading of plugins to those that match the libplasma minimum rev#
         * ToolTipManager: new Plasma style tooltips
+        * Applet: sizeHintChanged() signal. A containment can adjust its size based on changed sizehints of an applet
         * Package system:
             * PackageStructure supports arbitrary URIs (in addition to auto-discovery for package)
               structure description files.
@@ -14,6 +15,7 @@ libplasma
         * Widgets
             * NEW: Plasma::Slider based on QSlider
             * NEW: Plasma::TabWidget
+            * Plasma::PushButton is svg-themed
         * Panel SVG
             * setting the margins via in-SVG hints
             * paintPanel API additions to make it more like QPainter and Plasma::Svg
@@ -37,6 +39,7 @@ Desktop Theme
 
 Plasma Desktop
     * Features
+        * Panel resizes itself when an applet changes its sizehint according to its maximum and minimum sizes
 
     * Significant Fixes
         * Reposition toolbox when zooming out/in to avoid panel overlap
