@@ -16,8 +16,8 @@ set_target_properties(kfontinst_bin PROPERTIES OUTPUT_NAME kfontinst)
 set_target_properties(kfontprint_bin PROPERTIES OUTPUT_NAME kfontprint)
 set_target_properties(kfontview_bin PROPERTIES OUTPUT_NAME kfontview)
 
-target_link_libraries(kfontinst_bin ${KDE4_KIO_LIBS} ${KDE4_KDESU_LIBS} kfontinst )
-target_link_libraries(kfontprint_bin kfontinstui kfontinst )
+target_link_libraries(kfontinst_bin ${KDE4_KIO_LIBS} ${KDE4_KDESU_LIBS} ${X11_X11_LIB} kfontinst)
+target_link_libraries(kfontprint_bin ${X11_X11_LIB} kfontinstui kfontinst)
 target_link_libraries(kfontview_bin ${KDE4_KPARTS_LIBS} kfontinstui kfontinst )
 
 install(TARGETS kfontinst_bin ${INSTALL_TARGETS_DEFAULT_ARGS} )

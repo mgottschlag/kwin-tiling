@@ -42,7 +42,7 @@ set(kapplymousetheme_SRCS kapplymousetheme.cpp )
 kde4_add_executable(kapplymousetheme ${kapplymousetheme_SRCS})
 
 target_link_libraries(kapplymousetheme 
-${KDE4_KDEUI_LIBS} ${X11_Xrender_LIB})
+${KDE4_KDEUI_LIBS} ${X11_Xrender_LIB} ${X11_X11_LIB})
 if (X11_Xcursor_FOUND)
    target_link_libraries(kapplymousetheme ${X11_Xcursor_LIB})
 endif (X11_Xcursor_FOUND)
