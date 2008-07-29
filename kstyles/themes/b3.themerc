@@ -1,6 +1,6 @@
 [Misc]
 Name=B3/KDE
-Name[fr]=B3 / KDE
+Name[fr]=B3 / KDE
 Name[ne]=बी३/केडीई
 Name[sr]=Б3/КДЕ
 Name[th]=รูปแบบ B3/KDE
@@ -21,7 +21,7 @@ Comment[es]=B3/Modificación de B2
 Comment[et]=B3/B2 modifikatsioon
 Comment[eu]=B3/B2ren aldaketa
 Comment[fi]=B3/B2:n muunnelma
-Comment[fr]=B3 / Modification de B2
+Comment[fr]=B3 / Modification de B2
 Comment[fy]=B3/modifikaasje fan B2
 Comment[ga]=B3/Mionathrú ar B2
 Comment[gl]=B3/Modificación de B2
@@ -37,6 +37,7 @@ Comment[ku]=B3/Guihertina B2
 Comment[lt]=B3 – B2 modifikacija
 Comment[lv]=B3/B2 modifikācija
 Comment[mk]=B3/модификација на B2
+Comment[mr]=B3/B2 चे संपादन
 Comment[nb]=B3/endring av B2
 Comment[nds]=B3-Variant vun B2
 Comment[ne]=बी३/बी२ को परिमार्जन
