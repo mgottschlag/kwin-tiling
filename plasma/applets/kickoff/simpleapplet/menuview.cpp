@@ -230,7 +230,7 @@ QModelIndex MenuView::indexForAction(QAction *action) const
     // action's parent widget.  for actions that are sub-menus this is the
     // action's parent widget's parent. 
     QWidget *parentWidget = action->parentWidget();
-    if (action->menu() != 0) {
+    if (action->menu() && parentWidget != this) {
         parentWidget = parentWidget->parentWidget();
     }
 
