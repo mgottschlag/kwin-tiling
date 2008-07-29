@@ -6,8 +6,14 @@ libplasma
         * PopupApplet: Applet that switches between an icon with a popup and the popup on the desktop
         * Symbol Versioning: limit loading of plugins to those that match the libplasma minimum rev#
         * ToolTipManager: new Plasma style tooltips
-        * Support compressed SVGs in Plasma::Theme
-        * Added a Slider widget based on QSlider
+        * Plasma::Theme
+            * Support compressed SVGs (*.svgz)
+        * Widgets
+            * NEW: Plasma::Slider based on QSlider
+            * NEW: Plasma::TabWidget
+        * Panel SVG
+            * setting the margins via in-SVG hints
+            * paintPanel API additions to make it more like QPainter and Plasma::Svg
 
     * Significant Fixes
         * WebContent painting update synchronization (fixes, among other things, scrolling)
@@ -15,6 +21,9 @@ libplasma
         * Applet handles work with all icon sizes (user system settings) 
         * Fix View so that when a new activity is added, don't move more than necessary;
           fixes dragging lock
+
+Desktop Theme
+    * widgets/button for theming pushbuttons
 
 Plasma Desktop
     * Features
@@ -31,13 +40,13 @@ Plugins/Addons
             * Now Playing media player controls
             * Custom colours in notes
             * Custom colours in digital clock
-            * Various clocks ported to AppletClock for calendar and timezone consistency
 
         * DataEngines
             * nowplaying Plasma::Service for controlling media players
             * nowplaying supports MPRIS
 
     * Significant Fixes
+        * Various clocks ported to AppletClock for calendar and timezone consistency
         * Kickoff menu size restoration
         * MS Windows compile fixes
 
@@ -46,4 +55,5 @@ KRunner
         * Plasma Screensaver: Plasma widget overlay for screensavers
 
     * Significant Fixes
+        * Screensaver activation fixed to compensate for system clock changes
 
