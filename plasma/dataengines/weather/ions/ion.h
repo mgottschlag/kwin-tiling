@@ -37,7 +37,6 @@ class ION_EXPORT IonInterface : public Plasma::DataEngine
 {
     Q_OBJECT
     Q_PROPERTY(QString timezone READ timezone WRITE setTimezoneFormat)
-    Q_PROPERTY(QString unit READ metricUnit WRITE setMeasureUnit)
 
 public:
     typedef QHash<QString, IonInterface*> IonDict; // Define Dict as a QHash for Ions
@@ -67,12 +66,6 @@ public:
      * @return true if the ion is being used, false otherwise
      */
     bool isUsed() const;
-
-    /**
-     * Reimplement to check whether the measurement is metric or not.
-     * @return true if metric is used, false if not.
-     */
-    virtual bool metricUnit(void) = 0;
 
     /**
      * Reimplement to check if timeformat is UTC or not.
@@ -113,12 +106,6 @@ protected:
     friend class WeatherEngine;
 
 private:
-    /**
-     * Sets the measurement unit from KGlobal::locale()->measureSystem This is internally set by the WeatherEngine itself.
-     * @arg measureType the measurement type
-     */
-    virtual void setMeasureUnit(const QString& measureType) = 0;
-
     /**
      * Sets the system default for UTC from KDateTime::currentDateTime This is internally set by the WeatherEngine itself.
      * @arg isUtc The UTC state, maybe 0 or 1.
