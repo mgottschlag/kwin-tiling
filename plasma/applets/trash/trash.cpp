@@ -61,7 +61,8 @@ Trash::Trash(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_icon(0),
       m_trashUrl(KUrl("trash:/")),
-      m_count(0)
+      m_count(0),
+      m_places(0)
 {
     setAspectRatioMode(Plasma::ConstrainedSquare);
     setBackgroundHints(NoBackground);
@@ -83,8 +84,6 @@ Trash::~Trash()
 
 void Trash::init()
 {
-    m_places = new  KFilePlacesModel(this);
-
     createMenu();
 
     setAcceptDrops(true);
@@ -263,7 +262,11 @@ void Trash::dropEvent(QGraphicsSceneDragDropEvent *event)
             //some special operation was done instead of simply deleting a file
             bool specialOperation = false;
 
-             foreach (const KUrl& url, urls) {
+            if (!m_places) {
+                m_places = new  KFilePlacesModel(this);
+            }
+
+            foreach (const KUrl& url, urls) {
                 const Solid::Predicate predicate(Solid::DeviceInterface::StorageAccess, "filePath", url.path());
 
                 //query for mounted devices
@@ -291,16 +294,14 @@ void Trash::dropEvent(QGraphicsSceneDragDropEvent *event)
                 }
             }
 
-            //finally, try to trash a file
-             if (!specialOperation) {
+             //finally, try to trash a file
+            if (!specialOperation) {
                 KIO::Job* job = KIO::trash(urls);
                 job->ui()->setWindow(0);
                 job->ui()->setAutoErrorHandlingEnabled(true);
             }
-
         }
     }
-
 }
 
 #include "trash.moc"
