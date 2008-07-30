@@ -70,9 +70,7 @@ public:
     NOAAIon(QObject *parent, const QVariantList &args);
     ~NOAAIon();
     void init(void);  // Setup the city location, fetching the correct URL name.
-    bool metricUnit(void);
     bool timezone(void);
-    void setMeasureUnit(const QString& unit);
     void setTimezoneFormat(const QString& tz);
     bool updateIonSource(const QString& source); // Sync data source with Applet
     void updateWeather(const QString& source);

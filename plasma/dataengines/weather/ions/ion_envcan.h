@@ -129,12 +129,8 @@ public:
     EnvCanadaIon(QObject *parent, const QVariantList &args);
     ~EnvCanadaIon();
     bool updateIonSource(const QString& source); // Sync data source with Applet
-
-    bool metricUnit(void);
     bool timezone(void);
-    void setMeasureUnit(const QString& unit);
     void setTimezoneFormat(const QString& tz);
-
     void updateWeather(const QString& source);
 
     static const int MAX_WARNINGS = 4;
