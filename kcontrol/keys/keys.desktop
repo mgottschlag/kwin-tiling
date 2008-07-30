@@ -13,6 +13,9 @@ X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
 X-KDE-Weight=160
 
 Name=Global Keyboard Shortcuts
+Name[pt]=Atalhos Globais do Teclado
+Name[pt_BR]=Atalhos Globais do Teclado
+Name[uk]=Глобальні скорочення клавіатури
 
 Comment=Configuration of keybindings
 Comment[af]=Opstelling van sleutel bindinge

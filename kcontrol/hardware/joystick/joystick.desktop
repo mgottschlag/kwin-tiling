@@ -14,6 +14,9 @@ X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
 X-KDE-Weight=70
 
 Comment=Joystick settings
+Comment[pt]=Configuração do 'joystick'
+Comment[pt_BR]=Configuração do 'joystick'
+Comment[uk]=Параметри джойстика
 X-KDE-Keywords[ar]=وسادة اللعبة,عصا الألعاب
 X-KDE-Keywords[be]=Джойстык,joystick,gamepad
 X-KDE-Keywords[bg]=Keywords=джойстик, игра, игри, управление, joystick, gamepad

@@ -2,7 +2,13 @@
 Name=Desktop Search
 Name[ga]=Cuardach Deisce
 Name[hr]=Pager na radnoj površini
+Name[pt]=Pesquisa no Ambiente de Trabalho
+Name[pt_BR]=Pesquisa no Ambiente de Trabalho
+Name[uk]=Стільничний пошук
 Comment=Search in documents and files
+Comment[pt]=Procurar nos documentos e ficheiros
+Comment[pt_BR]=Procurar nos documentos e ficheiros
+Comment[uk]=Пошук в документах і файлах
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
 X-KDE-Library=krunner_xesam

@@ -8,8 +8,14 @@ X-KDE-PluginKeyword=gestures
 X-KDE-System-Settings-Parent-Category=input-actions
 
 Name=Mouse Gestures
+Name[pt]=Gestos do Rato
+Name[pt_BR]=Gestos do Rato
+Name[uk]=Жести мишкою
 
 Comment=Configure Mouse Gestures
+Comment[pt]=Configurar os Gestos do Rato
+Comment[pt_BR]=Configurar os Gestos do Rato
+Comment[uk]=Налаштувати жести мишки
 
 Categories=Qt;KDE;X-KDE-settings-accessibility;
 

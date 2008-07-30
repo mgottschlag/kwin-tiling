@@ -1,5 +1,8 @@
 [Desktop Entry]
 Name=SaverDesktop
+Name[pt]=Ecrã de Protecção
+Name[pt_BR]=Ecrã de Protecção
+Name[uk]=Зберігач стільниці
 Icon=Plasma
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet,Plasma/Containment
