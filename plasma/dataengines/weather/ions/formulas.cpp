@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Shawn Starr <shawn.starr@rogers.com>            *
+ *   Copyright (C) 2007, 2008 by Shawn Starr <shawn.starr@rogers.com>      *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -23,111 +23,135 @@
 namespace WeatherFormula
 {
 
-float celsiusToF(float temperature)
+float convert(float value, int srcUnit, int destUnit)
 {
-    return (temperature * 9 / 5 + 32);
-}
+    switch (srcUnit) {
+    case WeatherFormula::Celsius:
+        switch (destUnit) {
+        case WeatherFormula::Fahrenheit:
+            return (value * 9 / 5 + 32);
+        case WeatherFormula::Kelvin:
+            return (value + 273.15);
+        };
 
-float fahrenheitToC(float temperature)
-{
-    return (temperature - 32) * 5 / 9;
-}
+    case WeatherFormula::Fahrenheit:
+        switch (destUnit) {
+        case WeatherFormula::Celsius:
+            return (value - 32) * 5 / 9;
+        case WeatherFormula::Kelvin:
+            return (5 / 9 * (value - 32) + 273.15);
+        };
 
-float milesToKM(float miles)
-{
-    return (1.609344 * miles);
-}
+    case WeatherFormula::Kelvin:
+        switch (destUnit) {
+        case WeatherFormula::Celsius:
+            return (value - 273.15);
+        case WeatherFormula::Fahrenheit:
+            return ((value - 273.15) * 1.8) + 32;
+        };
+  
+    case WeatherFormula::Kilometers:
+        switch (destUnit) {
+        case WeatherFormula::Miles:
+            return (0.621371192 * value);
+        case WeatherFormula::MetersPerSecond:
+            return (value * 0.277778);
+        case WeatherFormula::Knots:
+            return (value * 0.539956803);
+        case WeatherFormula::Beaufort:
+            return kilometersToBeaufort(value);
+        };
 
-float kilometersToMI(float km)
-{
-    return (0.621371192 * km);
-}
+    case WeatherFormula::MetersPerSecond:
+        switch (destUnit) {
+        case WeatherFormula::Miles:
+            return (value * 2.23693629);
+        case WeatherFormula::Kilometers:
+            return (value * 3.6);
+        case WeatherFormula::Knots:
+            return (value * 1.943845);
+        case WeatherFormula::Beaufort:
+            return metersPerSecondToBeaufort(value);
+        };
+    
+    case WeatherFormula::Miles:
+        switch (destUnit) {
+        case WeatherFormula::Kilometers:
+            return (1.609344 * value);
+        case WeatherFormula::MetersPerSecond:
+            return (value * 0.44704);
+        case WeatherFormula::Knots:
+            return (value * 0.868976242);
+        case WeatherFormula::Beaufort:
+            return milesToBeaufort(value);
+        };
 
-float kilopascalsToInches(float kpa)
-{
-    return ((0.02952997 * kpa) * 10);
-}
+    case WeatherFormula::Kilopascals:
+        switch (destUnit) {
+        case WeatherFormula::InchesHG:
+            return ((0.02952997 * value) * 10);
+        case WeatherFormula::Millibars:
+        case WeatherFormula::Hectopascals:
+            return (value / 0.10);
+        };
+   
+    case WeatherFormula::InchesHG:
+        switch (destUnit) {
+        case WeatherFormula::Kilopascals:
+            return (value * 3.386389);
+        case WeatherFormula::Millibars:
+        case WeatherFormula::Hectopascals:
+            return (value * 33.8637526);
+        };
+    
+    case WeatherFormula::Millibars:
+        switch (destUnit) {
+        case WeatherFormula::Kilopascals:
+            return (value * 0.10);
+        case WeatherFormula::InchesHG:
+	    return (value * 0.0295333727);
+        };
 
-float kilopascalsToHectopascals(float kpa)
-{   
-    return (kpa * 10);
+    case WeatherFormula::Centimeters:
+        switch (destUnit) {
+        case WeatherFormula::Millimeters:
+            return (value / 0.1);
+        case WeatherFormula::Inches:
+            return (value * 0.393700787);
+        };
+    
+    case WeatherFormula::Millimeters:
+        switch (destUnit) {
+        case WeatherFormula::Centimeters: 
+            return (value * 0.1);           
+        case WeatherFormula::Inches:
+            return (value * 0.0393700787);
+        };
+   
+    case WeatherFormula::Inches:
+        switch (destUnit) {
+        case WeatherFormula::Centimeters:
+            return (value * 2.54);
+        case WeatherFormula::Millimeters:
+            return (value * 25.4);
+        };
+  
+    case WeatherFormula::Knots:
+        switch (destUnit) {
+        case WeatherFormula::Kilometers:
+            return floor(value * 1.852 + 0.5);
+        case WeatherFormula::Miles:
+            return (value * 1.507794);
+        case WeatherFormula::MetersPerSecond:
+            return (value * 1.9438);
+        case WeatherFormula::Beaufort:
+            return knotsToBeaufort(value);
+        };
+    };
+   return 0;
 }
-
-float HectopascalsToKilopascals(float hpa)
-{ 
-    return (hpa / 10);
-}
-
-float inchesToKilopascals(float inches)
-{
-    return (inches * 3.386389);
-}
-
-float millibarsToInches(float millibar)
-{
-    return (millibar * 0.0295301);
-}
-
-float millibarsToKilopascals(float millibar)
-{
-    return (millibar * 0.10);
-}
-
-float centimetersToIN(float cm)
-{
-    return (cm * 0.393700787);
-}
-
-float inchesToCM(float inch)
-{
-    return (inch * 2.54);
-}
-
-float millimetersToIN(float mm)
-{
-    return (mm * 0.0393700787);
-}
-
-float inchesToMM(float inch)
-{
-    return (inch * 25.4);
-}
-
-float kilometersToMS(float km)
-{
-    return (km * 0.277778);
-}
-
-float milesToMS(float miles)
-{
-    return (miles * 0.44704);
-}
-
-float knotsToMS(float knots)
-{
-    return (knots * 1.9438);
-}
-
-float knotsToKM(float knots)
-{
-    return floor(knots * 1.852 + 0.5);
-}
-
-float kilometersToKT(float km)
-{
-    return (km * 0.539956803);
-}
-
-float milesToKT(float miles)
-{
-    return (miles * 0.868976242);
-}
-float knotsToMI(float knots)
-{
-    return (knots * 1.507794);
-}
-
-int knotsToBF(float knots)
+         
+int knotsToBeaufort(float knots)
 {
     if (knots < 1) {
         return 0;
@@ -158,14 +182,19 @@ int knotsToBF(float knots)
     }
 }
 
-int milesToBF(float miles)
+int milesToBeaufort(float miles)
 {
-    return knotsToBF(miles / 1.1507794);
+    return knotsToBeaufort(miles / 1.1507794);
 }
 
-int kilometersToBF(float km)
+int kilometersToBeaufort(float km)
 {
-    return knotsToBF(km / 1.852);
+    return knotsToBeaufort(km / 1.852);
+}
+
+int metersPerSecondToBeaufort(float ms)
+{
+    return knotsToBeaufort(ms * 1.943845);
 }
 
 } // namespace WeatherFormula
