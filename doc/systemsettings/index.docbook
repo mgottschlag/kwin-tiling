@@ -232,7 +232,7 @@ click on the Close button located in the top right hand corner of the window.
 <title>Running Individual &systemsettings; Modules</title>
 
 <para>
-Individual modules can be run without running &systemsettings; using the command <command>kcmshell</command> from the command line. Type <command>kcmshell --list</command> to see a list of the available &kde; &systemsettings; modules.
+Individual modules can be run without running &systemsettings; using the command <command>kcmshell4</command> from the command line. Type <command>kcmshell4 --list</command> to see a list of the available &kde; &systemsettings; modules.
 </para>
 </sect1>
 </chapter>
