@@ -60,19 +60,20 @@
 Trash::Trash(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_icon(0),
-      m_trashUrl(KUrl("trash:/")),
       m_count(0),
       m_places(0)
 {
     setAspectRatioMode(Plasma::ConstrainedSquare);
     setBackgroundHints(NoBackground);
+
     m_icon = new Plasma::Icon(KIcon("user-trash"),QString(),this);
     m_icon->setNumDisplayLines(2);
     m_icon->setDrawBackground(true);
+    registerAsDragHandle(m_icon);
+
     QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(0);
-
     layout->addItem(m_icon);
 
     resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
@@ -96,13 +97,9 @@ void Trash::init()
     connect( m_dirLister, SIGNAL( deleteItem( const KFileItem & ) ),
              this, SLOT( slotDeleteItem( const KFileItem & ) ) );
 
-    m_dirLister->openUrl(m_trashUrl);
-
-    registerAsDragHandle(m_icon);
+    m_dirLister->openUrl(KUrl("trash:/"));
 
     connect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
-    connect(&m_menu, SIGNAL(aboutToHide()),
-            m_icon, SLOT(setUnpressed()));
 }
 
 void Trash::createMenu()
@@ -123,6 +120,8 @@ void Trash::createMenu()
     QAction* menu = new QAction(SmallIcon("arrow-up-double"),i18n("&Menu"), this);
     connect(menu, SIGNAL(triggered(bool)), this , SLOT(popup()));
     m_icon->addIconAction(menu);
+
+    connect(&m_menu, SIGNAL(aboutToHide()), m_icon, SLOT(setUnpressed()));
 }
 
 void Trash::popup()
@@ -142,6 +141,7 @@ void Trash::constraintsEvent(Plasma::Constraints constraints)
     if (constraints & Plasma::FormFactorConstraint) {
         disconnect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
         disconnect(m_icon, SIGNAL(clicked()), this, SLOT(slotOpen()));
+
         if (formFactor() == Plasma::Planar ||
             formFactor() == Plasma::MediaCenter) {
 
@@ -164,14 +164,14 @@ void Trash::constraintsEvent(Plasma::Constraints constraints)
 
             setMinimumSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
         }
-        setIcon();
+        updateIcon();
     }
 }
 
 void Trash::slotOpen()
 {
     emit releaseVisualFocus();
-    KRun::runUrl(m_trashUrl, "inode/directory", 0);
+    KRun::runUrl(KUrl("trash:/"), "inode/directory", 0);
 }
 
 void Trash::slotEmpty()
@@ -195,7 +195,7 @@ void Trash::slotEmpty()
     }
 }
 
-void Trash::setIcon()
+void Trash::updateIcon()
 {
     Plasma::ToolTipManager::ToolTipContent data;
     data.mainText = i18n("Trash");
@@ -211,7 +211,7 @@ void Trash::setIcon()
         m_icon->setIcon(KIcon("user-trash"));
 
         data.subText = i18nc("The trash is empty. This is not an action, but a state", "Empty");
-        if (m_showText){
+        if (m_showText) {
             m_icon->setInfoText(i18nc("The trash is empty. This is not an action, but a state", "Empty"));
         }
     }
@@ -232,19 +232,19 @@ void Trash::setIcon()
 void Trash::slotClear()
 {
     m_count = 0;
-    setIcon();
+    updateIcon();
 }
 
 void Trash::slotCompleted()
 {
     m_count = m_dirLister->items(KDirLister::AllItems).count();
-    setIcon();
+    updateIcon();
 }
 
 void Trash::slotDeleteItem(const KFileItem &)
 {
     m_count--;
-    setIcon();
+    updateIcon();
 }
 
 QList<QAction*> Trash::contextualActions()

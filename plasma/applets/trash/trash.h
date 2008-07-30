@@ -57,7 +57,7 @@ class Trash : public Plasma::Applet
     protected:
         void dropEvent(QGraphicsSceneDragDropEvent *event);
         void createMenu();
-        void setIcon();
+        void updateIcon();
 
     protected slots:
         void popup();
@@ -68,9 +68,7 @@ class Trash : public Plasma::Applet
     private:
         Plasma::Icon* m_icon;
         QList<QAction*> actions;
-        KPropertiesDialog *m_dialog;
         KDirLister *m_dirLister;
-        KUrl m_trashUrl;
         KMenu m_menu;
         QAction *emptyTrash;
         int m_count;
