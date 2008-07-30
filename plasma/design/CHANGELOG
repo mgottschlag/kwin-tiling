@@ -35,7 +35,7 @@ Developer Documentation
     * Tutorials
 
 Desktop Theme
-    * widgets/button for theming pushbuttons
+    * NEW: widgets/button for theming pushbuttons
 
 Plasma Desktop
     * Features
@@ -51,8 +51,12 @@ Plugins/Addons
             * NEW: Calendar
             * NEW: Character selector
             * Now Playing media player controls
-            * Custom colours in notes
-            * Custom colours in digital clock
+            * Notes
+                * Custom colors
+            * Digital clock
+                * Custom colors
+            * Folder view
+                * Filtering improvements: mimetype and exclusion based.
 
         * DataEngines
             * nowplaying Plasma::Service for controlling media players
