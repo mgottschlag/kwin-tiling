@@ -270,8 +270,8 @@ Icon::Icon(const QString &text, QGraphicsItem *parent)
     : QGraphicsWidget(parent),
       d(new IconPrivate(this))
 {
-    setText(text);
     init();
+    setText(text);
 }
 
 Icon::Icon(const QIcon &icon, const QString &text, QGraphicsItem *parent)
