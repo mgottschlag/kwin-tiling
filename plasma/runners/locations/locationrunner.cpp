@@ -136,7 +136,11 @@ void LocationsRunner::run(const Plasma::RunnerContext &context, const Plasma::Qu
     const QString location = context.query();
     Plasma::RunnerContext::Type type = context.type();
 
-    //kDebug() << "command: " << match.query();
+    if (location.isEmpty()) {
+        return;
+    }
+
+    //kDebug() << "command: " << context.query();
     //kDebug() << "url: " << location << data;
 
     if ((type == Plasma::RunnerContext::NetworkLocation || type == Plasma::RunnerContext::UnknownType) &&
@@ -149,7 +153,13 @@ void LocationsRunner::run(const Plasma::RunnerContext &context, const Plasma::Qu
     } else if (type == Plasma::RunnerContext::NetworkLocation) {
         KToolInvocation::invokeBrowser(location);
     } else {
-        new KRun(QDir::cleanPath(KShell::tildeExpand(location)), 0);
+        QString path = QDir::cleanPath(KShell::tildeExpand(location));
+
+        if (path[0] != '/') {
+            path.prepend('/').prepend(QDir::currentPath());
+        }
+
+        new KRun(path, 0);
     }
 }
 
