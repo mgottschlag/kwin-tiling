@@ -744,7 +744,7 @@ QMap<QString, QString> UKMETIon::temperature(const QString& source)
     QMap<QString, QString> temperatureInfo;
 
     temperatureInfo.insert("temperature", QString(d->m_weatherData[source].temperature_C));
-    temperatureInfo.insert("temperatureUnit", QString(WeatherFormula::Celsius));
+    temperatureInfo.insert("temperatureUnit", QString::number(WeatherFormula::Celsius));
     return temperatureInfo;
 }
 
@@ -753,10 +753,10 @@ QMap<QString, QString> UKMETIon::wind(const QString& source)
     QMap<QString, QString> windInfo;
     if (d->m_weatherData[source].windSpeed_miles == "N/A") {
         windInfo.insert("windSpeed", "N/A");
-        windInfo.insert("windUnit", QString(WeatherFormula::NoUnit));
+        windInfo.insert("windUnit", QString::number(WeatherFormula::NoUnit));
     } else {
         windInfo.insert("windSpeed", QString(d->m_weatherData[source].windSpeed_miles));
-        windInfo.insert("windUnit", QString(WeatherFormula::Miles));
+        windInfo.insert("windUnit", QString::number(WeatherFormula::Miles));
     }
     windInfo.insert("windDirection", d->m_weatherData[source].windDirection);
     return windInfo;
@@ -784,7 +784,7 @@ QMap<QString, QString> UKMETIon::pressure(const QString& source)
     }
 
     pressureInfo.insert("pressure", QString(d->m_weatherData[source].pressure));
-    pressureInfo.insert("pressureUnit", QString(WeatherFormula::Millibars));
+    pressureInfo.insert("pressureUnit", QString::number(WeatherFormula::Millibars));
 
     pressureInfo.insert("pressureTendency", d->m_weatherData[source].pressureTendency);
     return pressureInfo;
