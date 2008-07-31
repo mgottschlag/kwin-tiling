@@ -24,13 +24,7 @@
 namespace WeatherFormula
 {
 
-/**
- * Convert from unit to another. See WeatherFormula::Unit for available units.
- * @param value float to convert
- * @param srcUnit from which unit to convert
- * @param destUnit to which unit to convert
- * @return converted value
-*/
+
 float convert(float value, int srcUnit, int destUnit)
 {
     switch (srcUnit) {
@@ -158,59 +152,7 @@ float convert(float value, int srcUnit, int destUnit)
     };
    return 0;
 }
-         
-int knotsToBeaufort(float knots)
-{
-    if (knots < 1) {
-        return 0;
-    } else if (knots >= 1 && knots < 4) {
-        return 1;
-    } else if (knots >= 4 && knots < 7) {
-        return 2;
-    } else if (knots >= 7 && knots < 11) {
-        return 3;
-    } else if (knots >= 11 && knots < 16) {
-        return 4;
-    } else if (knots >= 16 && knots < 22) {
-        return 5;
-    } else if (knots >= 22 && knots < 28) {
-        return 6;
-    } else if (knots >= 28 && knots < 34) {
-        return 7;
-    } else if (knots >= 34 && knots < 41) {
-        return 8;
-    } else if (knots >= 41 && knots < 48) {
-        return 9;
-    } else if (knots >= 48 && knots < 56) {
-        return 10;
-    } else if (knots >= 56 && knots < 64) {
-        return 11;
-    } else {
-        return 12;
-    }
-}
 
-int milesToBeaufort(float miles)
-{
-    return knotsToBeaufort(miles / 1.1507794);
-}
-
-int kilometersToBeaufort(float km)
-{
-    return knotsToBeaufort(km / 1.852);
-}
-
-int metersPerSecondToBeaufort(float ms)
-{
-    return knotsToBeaufort(ms * 1.943845);
-}
-
-/**
- * Returns a string presentation of of WeatherFormula::Unit. Set plain to true in case you don't want a localized version of it.
- * @param unit unit to convert.
- * @param plain if true, returned string is not localized. defaults to false.
- * @return a string presentation of WeatherFormula::Unit. Empty string if called for invalid unit.
-*/
 QString getUnitString(int unit, bool plain)
 {
     switch (unit) {
@@ -307,6 +249,95 @@ QString getUnitString(int unit, bool plain)
         default:
             return QString();
     }
+}
+
+QString windDegreesToCardinal(float degrees)
+{
+    QString direction;
+    if((degrees >= 348.75 && degrees <= 360) || (degrees > 0 && degrees <= 11.25))
+        direction = "N";
+    else if(degrees >= 11.25 && degrees < 33.75)
+        direction = "NNE";
+    else if(degrees >= 33.75 && degrees < 56.25)
+        direction = "NE";
+    else if(degrees >= 56.25 && degrees < 78.75)
+        direction = "ENE";
+    else if(degrees >= 78.75 && degrees < 101.25)
+        direction = "E";
+    else if(degrees >= 101.25 && degrees < 123.75)
+        direction = "ESE";
+    else if(degrees >= 123.75 && degrees < 146.25)
+        direction = "SE";
+    else if(degrees >= 146.25 && degrees < 168.75)
+        direction = "SSE";
+    else if(degrees >= 168.75 && degrees < 191.25)
+        direction = "S";
+    else if(degrees >= 191.25 && degrees < 213.75) 
+        direction = "SSW";
+    else if(degrees >= 213.75 && degrees < 236.25)
+        direction = "SW";
+    else if(degrees >= 236.25 && degrees < 258.75) 
+        direction = "WSW";
+    else if(degrees >= 258.75 && degrees < 281.25)
+        direction = "W";
+    else if(degrees >= 281.25 && degrees < 303.75) 
+        direction = "WNW";
+    else if(degrees >= 303.75 && degrees < 326.25)
+        direction = "NW";
+    else if(degrees >= 326.25 && degrees < 248.75) 
+        direction = "NNW";
+    
+    if(!direction.isEmpty())
+        return direction;
+    else
+        return QString();
+}
+
+
+int knotsToBeaufort(float knots)
+{
+    if (knots < 1) {
+        return 0;
+    } else if (knots >= 1 && knots < 4) {
+        return 1;
+    } else if (knots >= 4 && knots < 7) {
+        return 2;
+    } else if (knots >= 7 && knots < 11) {
+        return 3;
+    } else if (knots >= 11 && knots < 16) {
+        return 4;
+    } else if (knots >= 16 && knots < 22) {
+        return 5;
+    } else if (knots >= 22 && knots < 28) {
+        return 6;
+    } else if (knots >= 28 && knots < 34) {
+        return 7;
+    } else if (knots >= 34 && knots < 41) {
+        return 8;
+    } else if (knots >= 41 && knots < 48) {
+        return 9;
+    } else if (knots >= 48 && knots < 56) {
+        return 10;
+    } else if (knots >= 56 && knots < 64) {
+        return 11;
+    } else {
+        return 12;
+    }
+}
+
+int milesToBeaufort(float miles)
+{
+    return knotsToBeaufort(miles / 1.1507794);
+}
+
+int kilometersToBeaufort(float km)
+{
+    return knotsToBeaufort(km / 1.852);
+}
+
+int metersPerSecondToBeaufort(float ms)
+{
+    return knotsToBeaufort(ms * 1.943845);
 }
 
 } // namespace WeatherFormula
