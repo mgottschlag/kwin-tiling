@@ -131,7 +131,7 @@ void Clock::updateSize() {
     }
 }
 
-void Clock::updateToolTipContent() 
+void Clock::updateToolTipContent()
 {
     Plasma::ToolTipManager::ToolTipContent tipData;
     tipData.mainText = KGlobal::locale()->formatTime(m_time, m_showSeconds);
@@ -220,6 +220,7 @@ void Clock::clockConfigAccepted()
 
     constraintsEvent(Plasma::SizeConstraint);
     update();
+    emit sizeHintChanged(Qt::PreferredSize);
     emit configNeedsSaving();
 }
 
