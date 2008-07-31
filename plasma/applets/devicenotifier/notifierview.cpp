@@ -50,6 +50,19 @@ NotifierView::~NotifierView()
 
 }
 
+void NotifierView::setModel(QAbstractItemModel *m)
+{
+    if (model()) {
+        disconnect(model(), SIGNAL(rowsRemoved(const QModelIndex &, int, int)),
+                   this, SLOT(modelRowsRemoved(const QModelIndex &, int, int)));
+    }
+
+    QTreeView::setModel(m);
+
+    connect(model(), SIGNAL(rowsRemoved(const QModelIndex &, int, int)),
+            this, SLOT(modelRowsRemoved(const QModelIndex &, int, int)));
+}
+
 void NotifierView::resizeEvent(QResizeEvent * event)
 {
     //the columns after the first are squares KIconLoader::SizeMedium x KIconLoader::SizeMedium,
@@ -90,8 +103,29 @@ void NotifierView::leaveEvent(QEvent *event)
 QModelIndex NotifierView::moveCursor(CursorAction cursorAction,Qt::KeyboardModifiers modifiers )
 {
     m_hoveredIndex = QModelIndex();
-
     return QTreeView::moveCursor(cursorAction, modifiers );
+}
+
+void NotifierView::modelRowsRemoved(const QModelIndex &, int start, int end)
+{
+    m_hoveredIndex = QModelIndex();
+    setCurrentIndex(m_hoveredIndex);
+
+    QMouseEvent event(QEvent::MouseMove, viewport()->mapFromGlobal(QCursor::pos()), Qt::NoButton, Qt::NoButton, Qt::NoModifier);
+    mouseMoveEvent(&event);
+
+    disconnect(model(), SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(modelRowsRemoved(const QModelIndex &, int, int)));
+}
+
+void NotifierView::rowsInserted(const QModelIndex & parent, int start, int end)
+{
+    QTreeView::rowsInserted(parent, start, end);
+
+    m_hoveredIndex = QModelIndex();
+    setCurrentIndex(m_hoveredIndex);
+
+    QMouseEvent event(QEvent::MouseMove, viewport()->mapFromGlobal(QCursor::pos()), Qt::NoButton, Qt::NoButton, Qt::NoModifier);
+    mouseMoveEvent(&event);
 }
 
 void NotifierView::paintEvent(QPaintEvent *event)

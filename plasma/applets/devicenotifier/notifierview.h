@@ -34,12 +34,18 @@ namespace Notifier
       NotifierView(QWidget *parent = 0);
       virtual ~NotifierView();
 
+      void setModel(QAbstractItemModel * model);
+
+  public slots:
+      void modelRowsRemoved(const QModelIndex &, int start, int end);
+
   protected:
       void resizeEvent(QResizeEvent * event);
       void mouseMoveEvent(QMouseEvent *event);
       void leaveEvent(QEvent *event);
       QModelIndex moveCursor(CursorAction cursorAction,Qt::KeyboardModifiers );
       void paintEvent(QPaintEvent *event);
+      void rowsInserted(const QModelIndex & parent, int start, int end);
 
   private:
       QModelIndex m_hoveredIndex;
