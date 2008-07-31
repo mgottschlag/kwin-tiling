@@ -165,6 +165,7 @@ void Battery::configAccepted()
         m_showMultipleBatteries = !m_showMultipleBatteries;
         cg.writeEntry("showMultipleBatteries", m_showMultipleBatteries);
         kDebug() << "Show multiple battery changed: " << m_showMultipleBatteries;
+        emit sizeHintChanged(Qt::PreferredSize);
     }
 
     if (ui.styleGroup->selected() != m_batteryStyle) {
