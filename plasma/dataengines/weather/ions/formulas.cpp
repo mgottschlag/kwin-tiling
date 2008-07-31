@@ -19,6 +19,7 @@
 
 #include "formulas.h"
 #include <math.h>
+#include <KLocalizedString>
 
 namespace WeatherFormula
 {
@@ -195,6 +196,110 @@ int kilometersToBeaufort(float km)
 int metersPerSecondToBeaufort(float ms)
 {
     return knotsToBeaufort(ms * 1.943845);
+}
+
+/**
+ * Returns a string presentation of of WeatherFormula::Unit. Set plain to true in case you don't want a localized version of it.
+ * @param unit unit to convert.
+ * @param plain if true, returned string is not localized. defaults to false.
+ * @return a string presentation of WeatherFormula::Unit. Empty string if called for invalid unit.
+*/
+QString getUnitString(int unit, bool plain)
+{
+    switch (unit) {
+        case WeatherFormula::Celsius:
+            if(plain)
+                return QString("C");
+            else
+                return i18nc("Celsius, temperature unit", "⁰C");
+                
+        case WeatherFormula::Fahrenheit:
+            if(plain)
+                return QString("F");
+            else
+                return i18nc("Fahrenheit, temperature unit", "⁰F");
+            
+        case WeatherFormula::Kelvin:
+            if(plain)
+                return QString("K");
+            else
+                return i18nc("Kelvin, temperature unit", "K");
+            
+        case WeatherFormula::Kilometers:
+            if(plain)
+                return QString("kmh");
+            else
+                return i18nc("kilometers per hour, windspeed unit", "km/h");
+            
+        case WeatherFormula::MetersPerSecond:
+            if(plain)
+                return QString("ms");
+            else
+                return i18nc("meters per second, windspeed unit", "m/s");
+            
+        case WeatherFormula::Miles:
+            if(plain)
+                return QString("mph");
+            else
+                return i18nc("miles per hour, windspeed unit", "mph");
+            
+        case WeatherFormula::Kilopascals:
+            if(plain)
+                return QString("kpa");
+            else
+                return i18nc("kilopascals, airpressure unit", "kPa");
+            
+        case WeatherFormula::InchesHG:
+            if(plain)
+                return QString("in");
+            else
+                return i18nc("inches hg, airpressure unit", "inHg");
+            
+        case WeatherFormula::Millibars:
+            if(plain)
+                return QString("mbar");
+            else
+                return i18nc("millibars, airpressure unit", "mbar");
+            
+        case WeatherFormula::Hectopascals:
+            if(plain)
+                return QString("hpa");
+            else
+                return i18nc("hectopascals, airpressure unit", "hPa");
+            
+        case WeatherFormula::Centimeters:
+            if(plain)
+                return QString("cm");
+            else
+                return i18nc("centimeters, length unit", "cm");
+            
+        case WeatherFormula::Millimeters:
+            if(plain)
+                return QString("mm");
+            else
+                return i18nc("millimeters, length unit", "mm");
+            
+        case WeatherFormula::Inches:
+            if(plain)
+                return QString("in");
+            else
+                return i18nc("inches, length unit", "in");
+            
+        case WeatherFormula::Knots:
+            if(plain)
+                return QString("kt");
+            else
+                return i18nc("knots, wind speed unit", "kt");
+            
+        case WeatherFormula::Beaufort:
+            if(plain)
+                return QString("bft");
+            else
+                return i18nc("beaufort, wind speed unit", "Bft");
+            
+        default:
+            return QString();
+    }
 }
 
 } // namespace WeatherFormula
