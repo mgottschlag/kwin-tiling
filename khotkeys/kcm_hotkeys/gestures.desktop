@@ -11,11 +11,13 @@ Name=Mouse Gestures
 Name[pt]=Gestos do Rato
 Name[pt_BR]=Gestos do Rato
 Name[uk]=Жести мишкою
+Name[zh_TW]=滑鼠手勢
 
 Comment=Configure Mouse Gestures
 Comment[pt]=Configurar os Gestos do Rato
 Comment[pt_BR]=Configurar os Gestos do Rato
 Comment[uk]=Налаштувати жести мишки
+Comment[zh_TW]=設定滑鼠手勢
 
 Categories=Qt;KDE;X-KDE-settings-accessibility;
 

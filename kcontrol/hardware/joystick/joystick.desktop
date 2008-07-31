@@ -17,6 +17,7 @@ Comment=Joystick settings
 Comment[pt]=Configuração do 'joystick'
 Comment[pt_BR]=Configuração do 'joystick'
 Comment[uk]=Параметри джойстика
+Comment[zh_TW]=搖桿設定
 X-KDE-Keywords[ar]=وسادة اللعبة,عصا الألعاب
 X-KDE-Keywords[be]=Джойстык,joystick,gamepad
 X-KDE-Keywords[bg]=Keywords=джойстик, игра, игри, управление, joystick, gamepad
@@ -114,6 +115,6 @@ Name[wa]=Djîsse di djeu
 Name[x-test]=xxJoystickxx
 Name[xh]=Uvuyo
 Name[zh_CN]=游戏杆
-Name[zh_TW]=玩具
+Name[zh_TW]=搖桿
 
 X-KDE-Keywords=joystick,gamepad
