@@ -425,6 +425,8 @@ public:
     int visibleItemCount;
     QPoint launcherOrigin;
     bool isResizing;
+    int resizeOffsetX;
+    int resizeOffsetY;
     CompassDirection resizePlacement;
     Plasma::Location panelEdge;
 };
@@ -984,6 +986,24 @@ void Launcher::mousePressEvent(QMouseEvent *e)
 {
     if ( d->resizeHandle->geometry().contains( e->pos() ) ) {
         d->isResizing = true;
+        switch (d->resizePlacement) {
+            case Private::NorthEast:
+                d->resizeOffsetX = width() - e->x();
+                d->resizeOffsetY = e->y();
+                break;
+            case Private::SouthEast:
+                d->resizeOffsetX = width() - e->x();
+                d->resizeOffsetY = height() - e->y();
+                break;
+            case Private::SouthWest:
+                d->resizeOffsetX = e->x();
+                d->resizeOffsetY = height() - e->y();
+                break;
+            case Private::NorthWest:
+                d->resizeOffsetX = e->x();
+                d->resizeOffsetY = e->y();
+                break;
+        }
     }
     QWidget::mousePressEvent(e);
 }
@@ -1015,28 +1035,28 @@ void Launcher::mouseMoveEvent(QMouseEvent *e)
         kDebug() << "e-x: " << e->x() << " e->y: " << e->y();
         switch (d->resizePlacement) {
             case Private::NorthEast:
-                newWidth = qMax( e->x(), minimumSizeHint().width() );
-                newHeight = qMax( height() - e->y(), minimumSizeHint().height()/* + 10*/ );
+                newWidth = qMax( e->x() + d->resizeOffsetX, minimumSizeHint().width() );
+                newHeight = qMax( height() - e->y() + d->resizeOffsetY, minimumSizeHint().height()/* + 10*/ );
                 newX = x();
                 newY = y() + height() - newHeight;
                 kDebug() << "Foot of menu to newY + newHeight";
                 kDebug() << "= " << newY << " + " << newHeight << " = " << (newY + newHeight);
                 break;
             case Private::SouthEast:
-                newWidth = qMax( e->x(), minimumSizeHint().width() );
-                newHeight = qMax( e->y(), minimumSizeHint().height()/* + 10*/ );
+                newWidth = qMax( e->x() + d->resizeOffsetX, minimumSizeHint().width() );
+                newHeight = qMax( e->y() + d->resizeOffsetY, minimumSizeHint().height()/* + 10*/ );
                 newX = x();
                 newY = y();
                 break;
             case Private::SouthWest:
-                newWidth = qMax( width() - e->x(), minimumSizeHint().width() );
-                newHeight = qMax( e->y(), minimumSizeHint().height()/* + 10*/ );
+                newWidth = qMax( width() - e->x() + d->resizeOffsetX, minimumSizeHint().width() );
+                newHeight = qMax( e->y() + d->resizeOffsetY, minimumSizeHint().height()/* + 10*/ );
                 newX = x() + width() - newWidth;
                 newY = y();
                 break;
             case Private::NorthWest:
-                newWidth = qMax( width() - e->x(), minimumSizeHint().width() );
-                newHeight = qMax( height() - e->y(), minimumSizeHint().height()/* + 10*/ );
+                newWidth = qMax( width() - e->x() + d->resizeOffsetX, minimumSizeHint().width() );
+                newHeight = qMax( height() - e->y() + d->resizeOffsetY, minimumSizeHint().height()/* + 10*/ );
                 newX = x() + width() - newWidth;
                 newY = y() + height() - newHeight;
                 kDebug() << "Foot of menu to newY + newHeight";
