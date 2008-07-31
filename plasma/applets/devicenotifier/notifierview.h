@@ -36,19 +36,26 @@ namespace Notifier
 
       void setModel(QAbstractItemModel * model);
 
-  public slots:
-      void modelRowsRemoved(const QModelIndex &, int start, int end);
-
   protected:
       void resizeEvent(QResizeEvent * event);
       void mouseMoveEvent(QMouseEvent *event);
       void leaveEvent(QEvent *event);
       QModelIndex moveCursor(CursorAction cursorAction,Qt::KeyboardModifiers );
       void paintEvent(QPaintEvent *event);
-      void rowsInserted(const QModelIndex & parent, int start, int end);
+
+      void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end); /* overload QTreeView */
+      void rowsInserted(const QModelIndex &parent, int start, int end); /* overload QTreeView */
+
+      void invalidateSelection();
+      void refreshSelection();
+
+  protected slots:
+      void rowsRemoved(const QModelIndex &parent, int start, int end); /* overload QTreeView */
+      void rowsAboutToBeInserted(const QModelIndex &parent, int start, int end);
 
   private:
       QModelIndex m_hoveredIndex;
+      QPoint m_cursorPosition;
   };
 
 }

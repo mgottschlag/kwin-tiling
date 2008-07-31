@@ -21,6 +21,7 @@
 
 // Qt
 
+#include <QCoreApplication>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>
@@ -53,14 +54,14 @@ NotifierView::~NotifierView()
 void NotifierView::setModel(QAbstractItemModel *m)
 {
     if (model()) {
-        disconnect(model(), SIGNAL(rowsRemoved(const QModelIndex &, int, int)),
-                   this, SLOT(modelRowsRemoved(const QModelIndex &, int, int)));
+        disconnect(model(), SIGNAL(rowsAboutToBeInserted(const QModelIndex &, int, int)),
+                        this, SLOT(rowsAboutToBeInserted(const QModelIndex &, int, int)));
     }
 
     QTreeView::setModel(m);
 
-    connect(model(), SIGNAL(rowsRemoved(const QModelIndex &, int, int)),
-            this, SLOT(modelRowsRemoved(const QModelIndex &, int, int)));
+    connect(model(), SIGNAL(rowsAboutToBeInserted(const QModelIndex &, int, int)),
+                 this, SLOT(rowsAboutToBeInserted(const QModelIndex &, int, int)));
 }
 
 void NotifierView::resizeEvent(QResizeEvent * event)
@@ -76,6 +77,7 @@ void NotifierView::resizeEvent(QResizeEvent * event)
 
 void NotifierView::mouseMoveEvent(QMouseEvent *event)
 {
+    m_cursorPosition = event->globalPos();
     const QModelIndex itemUnderMouse = indexAt(event->pos());
     if (itemUnderMouse != m_hoveredIndex && itemUnderMouse.isValid() &&
         state() == NoState) {
@@ -94,6 +96,7 @@ void NotifierView::mouseMoveEvent(QMouseEvent *event)
 
 void NotifierView::leaveEvent(QEvent *event)
 {
+    m_cursorPosition = QPoint();
     const QModelIndex oldHoveredIndex = m_hoveredIndex;
     m_hoveredIndex = QModelIndex();
     setCurrentIndex(m_hoveredIndex);
@@ -102,30 +105,48 @@ void NotifierView::leaveEvent(QEvent *event)
 
 QModelIndex NotifierView::moveCursor(CursorAction cursorAction,Qt::KeyboardModifiers modifiers )
 {
+    m_cursorPosition = QPoint();
     m_hoveredIndex = QModelIndex();
     return QTreeView::moveCursor(cursorAction, modifiers );
 }
 
-void NotifierView::modelRowsRemoved(const QModelIndex &, int start, int end)
+void NotifierView::invalidateSelection()
 {
-    m_hoveredIndex = QModelIndex();
+    if (m_hoveredIndex.isValid()) {
+        m_hoveredIndex = QModelIndex();
+    }
     setCurrentIndex(m_hoveredIndex);
-
-    QMouseEvent event(QEvent::MouseMove, viewport()->mapFromGlobal(QCursor::pos()), Qt::NoButton, Qt::NoButton, Qt::NoModifier);
-    mouseMoveEvent(&event);
-
-    disconnect(model(), SIGNAL(rowsRemoved(const QModelIndex &, int, int)), this, SLOT(modelRowsRemoved(const QModelIndex &, int, int)));
 }
 
-void NotifierView::rowsInserted(const QModelIndex & parent, int start, int end)
+void NotifierView::refreshSelection()
+{
+    if (!m_cursorPosition.isNull()) {
+        QMouseEvent *event = new QMouseEvent(QEvent::MouseMove, viewport()->mapFromGlobal(m_cursorPosition), m_cursorPosition, Qt::NoButton, Qt::NoButton, Qt::NoModifier);
+        QCoreApplication::postEvent(viewport(), event);
+    }
+}
+
+void NotifierView::rowsAboutToBeInserted(const QModelIndex& parent, int start, int end)
+{
+    invalidateSelection();
+}
+
+void NotifierView::rowsInserted(const QModelIndex& parent, int start, int end)
 {
     QTreeView::rowsInserted(parent, start, end);
+    refreshSelection();
+}
 
-    m_hoveredIndex = QModelIndex();
-    setCurrentIndex(m_hoveredIndex);
+void NotifierView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int end)
+{
+    invalidateSelection();
+    QTreeView::rowsAboutToBeRemoved(parent, start, end);
+}
 
-    QMouseEvent event(QEvent::MouseMove, viewport()->mapFromGlobal(QCursor::pos()), Qt::NoButton, Qt::NoButton, Qt::NoModifier);
-    mouseMoveEvent(&event);
+void NotifierView::rowsRemoved(const QModelIndex& parent, int start, int end)
+{
+    QTreeView::rowsRemoved(parent, start, end);
+    refreshSelection();
 }
 
 void NotifierView::paintEvent(QPaintEvent *event)
