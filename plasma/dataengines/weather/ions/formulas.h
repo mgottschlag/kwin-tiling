@@ -36,10 +36,10 @@ namespace WeatherFormula
     ION_EXPORT float convert(float value, int srcUnit, int destUnit);
     ION_EXPORT QString getUnitString(int unit, bool plain=false);
     
-    ION_EXPORT int knotsToBeaufort(float knots);
-    ION_EXPORT int milesToBeaufort(float miles);
-    ION_EXPORT int kilometersToBeaufort(float km);
-    ION_EXPORT int metersPerSecondToBeaufort(float ms);
+    int knotsToBeaufort(float knots);
+    int milesToBeaufort(float miles);
+    int kilometersToBeaufort(float km);
+    int metersPerSecondToBeaufort(float ms);
 
 } // WeatherFormula namespace
 

@@ -24,6 +24,13 @@
 namespace WeatherFormula
 {
 
+/**
+ * Convert from unit to another. See WeatherFormula::Unit for available units.
+ * @param value float to convert
+ * @param srcUnit from which unit to convert
+ * @param destUnit to which unit to convert
+ * @return converted value
+*/
 float convert(float value, int srcUnit, int destUnit)
 {
     switch (srcUnit) {
