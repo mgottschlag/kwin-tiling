@@ -270,7 +270,6 @@ QAction *MenuView::actionForIndex(const QModelIndex& index) const
 
 void MenuView::rowsAboutToBeInserted(const QModelIndex& parent,int start,int end)
 {
-    kDebug();
     QAction *menuAction = actionForIndex(parent);
     if (!menuAction) {
         return;
