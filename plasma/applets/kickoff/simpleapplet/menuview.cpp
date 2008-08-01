@@ -1,5 +1,6 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
+    Copyright 2008 Sebastian Sauer <mail@dipe.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -56,7 +57,7 @@ public:
         QAction *action = 0; 
 
         if (model->hasChildren(index)) {
-            QMenu *childMenu = new QMenu(parent);
+            KMenu *childMenu = new KMenu(parent);
             childMenu->installEventFilter(q);
 
             QObject::connect(childMenu, SIGNAL(aboutToShow()), q, SLOT(fillSubMenu()));
@@ -106,6 +107,8 @@ QAction *MenuView::createLeafAction(const QModelIndex&,QObject *parent)
 
 void MenuView::updateAction(QAction *action,const QModelIndex& index)
 {
+    Q_ASSERT(d->model);
+
     QString text = index.data(Qt::DisplayRole).value<QString>().replace("&","&&"); // describing text, e.g. "Spreadsheet" or "Rekall" (right, sometimes the text is also used for the generic app-name)
     QString name = index.data(Kickoff::SubTitleRole).value<QString>().replace("&","&&"); // the generic name, e.g. "kspread" or "OpenOffice.org Spreadsheet" or just "" (right, it's a mess too)
     if( action->menu()!=0 ) { // if its an item with sub-menuitems, we probably like to thread them another way...
@@ -114,33 +117,29 @@ void MenuView::updateAction(QAction *action,const QModelIndex& index)
     else {
         switch( d->formattype ) {
             case Name: {
-                if( name.isEmpty() ) {
+                if (name.isEmpty()) {
                     action->setText(text);
-                }
-                else {
+                } else {
                     action->setText(name);
                 }
             } break;
             case Description: {
-                if( name.contains(text,Qt::CaseInsensitive) ) {
+                if (name.contains(text,Qt::CaseInsensitive)) {
                     text = name;
                 }
                 action->setText(text);
             } break;
             case NameDescription: // fall through
             case DescriptionName: {
-                if( ! name.isEmpty() ) { // seems we have a program, but some of them don't define a name at all
-                    if( text.contains(name,Qt::CaseInsensitive) ) { // sometimes the description contains also the name
+                if (!name.isEmpty()) { // seems we have a program, but some of them don't define a name at all
+                    if (text.contains(name,Qt::CaseInsensitive)) { // sometimes the description contains also the name
                         action->setText(text);
-                    }
-                    else if( name.contains(text,Qt::CaseInsensitive) ) { // and sometimes the name also contains the description
+                    } else if (name.contains(text,Qt::CaseInsensitive)) { // and sometimes the name also contains the description
                         action->setText(name);
-                    }
-                    else { // seems we have a perfect desktop-file (likely a KDE one, heh) and name+description are clear separated
-                        if( d->formattype == NameDescription ) {
+                    } else { // seems we have a perfect desktop-file (likely a KDE one, heh) and name+description are clear separated
+                        if (d->formattype == NameDescription) {
                             action->setText(QString("%1 %2").arg(name).arg(text));
-                        }
-                        else {
+                        } else {
                             action->setText(QString("%1 (%2)").arg(text).arg(name));
                         }
                     }
@@ -163,10 +162,8 @@ void MenuView::updateAction(QAction *action,const QModelIndex& index)
     d->model->blockSignals(false);
 }
 
-
 bool MenuView::eventFilter(QObject *watched, QEvent *event)
 {
-
     if (event->type() == QEvent::MouseMove) {
         QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
         QMenu *watchedMenu = qobject_cast<QMenu*>(watched);
@@ -223,6 +220,9 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
 
 void MenuView::setModel(QAbstractItemModel *model)
 {
+    if (d->model) {
+        d->model->disconnect(this);
+    }
     d->model = model;
     clear();
     if (d->model) {
@@ -270,10 +270,10 @@ QAction *MenuView::actionForIndex(const QModelIndex& index) const
 
 void MenuView::rowsAboutToBeInserted(const QModelIndex& parent,int start,int end)
 {
+    Q_ASSERT(d->model);
+
     QAction *menuAction = actionForIndex(parent);
-    if (!menuAction) {
-        return;
-    }
+    Q_ASSERT(menuAction);
 
     QMenu *menu = menuAction->menu();
     Q_ASSERT(menu);
@@ -285,7 +285,7 @@ void MenuView::rowsAboutToBeInserted(const QModelIndex& parent,int start,int end
         newActions << newAction;
     }
 
-    if(start < menu->actions().count()) {
+    if (start < menu->actions().count()) {
         menu->insertActions(menu->actions()[start],newActions);
     } else {
         menu->addActions(newActions);
@@ -295,9 +295,7 @@ void MenuView::rowsAboutToBeInserted(const QModelIndex& parent,int start,int end
 void MenuView::rowsAboutToBeRemoved(const QModelIndex& parent,int start,int end)
 {
     QAction *menuAction = actionForIndex(parent);
-    if (!menuAction) {
-        return;
-    }
+    Q_ASSERT(menuAction);
 
     QMenu *menu = menuAction->menu();
     Q_ASSERT(menu);
@@ -305,17 +303,16 @@ void MenuView::rowsAboutToBeRemoved(const QModelIndex& parent,int start,int end)
     QList<QAction*> actions = menu->actions();
     Q_ASSERT(end < actions.count());
     for (int row = end; row >= start; row--) {
-        QAction* a = actions[row];
-        delete a;
+        menu->removeAction(actions[row]);
     }
 }
 
 void MenuView::dataChanged(const QModelIndex& topLeft,const QModelIndex& bottomRight)
 {
+    Q_ASSERT(d->model);
+
     QAction *menuAction = actionForIndex(topLeft.parent());
-    if (!menuAction) {
-        return;
-    }
+    Q_ASSERT(menuAction);
 
     QMenu *menu = menuAction->menu();
     Q_ASSERT(menu);
@@ -323,24 +320,26 @@ void MenuView::dataChanged(const QModelIndex& topLeft,const QModelIndex& bottomR
     QList<QAction*> actions = menu->actions();
     Q_ASSERT(bottomRight.row() < actions.count());
 
-    for (int row=topLeft.row(); row <= bottomRight.row(); row++) {
-        updateAction(actions[row],d->model->index(row,d->column,topLeft.parent()));
+    for (int row = topLeft.row(); row <= bottomRight.row(); row++) {
+        updateAction(actions[row], d->model->index(row,d->column,topLeft.parent()));
     }
 }
 
 void MenuView::modelReset()
 {
     // force clearance of the menu and rebuild from scratch
-    QAbstractItemModel *m = d->model;
-    setModel(0);
-    setModel(m);
+    setModel(d->model);
 }
 
 void MenuView::fillSubMenu()
 {
+    Q_ASSERT(d->model);
+
     QMenu *subMenu = qobject_cast<QMenu*>(sender());
     Q_ASSERT(subMenu);
     Q_ASSERT(subMenu->isEmpty());
+
+    disconnect(subMenu, SIGNAL(aboutToShow()), this, SLOT(fillSubMenu()));
 
     QModelIndex menuIndex = indexForAction(subMenu->menuAction());
     Q_ASSERT(menuIndex.isValid());
@@ -350,7 +349,6 @@ void MenuView::fillSubMenu()
     }
 
     d->buildBranch(subMenu, menuIndex);
-    disconnect(subMenu, SIGNAL(aboutToShow()), this, SLOT(fillSubMenu()));
 }
 
 void MenuView::setColumn(int column)
@@ -376,11 +374,10 @@ void MenuView::setFormatType(MenuView::FormatType formattype)
 
 void MenuView::actionTriggered(QAction *action)
 {
+    Q_ASSERT(d->model);
     QModelIndex index = indexForAction(action);
     Q_ASSERT(index.isValid());
-    if (index.isValid()) {
-        d->launcher->openItem(index);
-    }
+    d->launcher->openItem(index);
 }
 
 #include "menuview.moc"
