@@ -53,11 +53,11 @@ namespace WeatherFormula
     ION_EXPORT QString getUnitString(int unit, bool plain=false);
     
     /**
-     * Converts wind direction given in degrees to the nearest cardinal direction.
+     * Converts wind/sun direction given in degrees to the nearest cardinal direction.
      * @param degrees wind direction in degrees.
      * @return a cardinal if available, empty string on error.
     */
-    ION_EXPORT QString windDegreesToCardinal(float degrees);
+    ION_EXPORT QString degreesToCardinal(float degrees);
     
     /**
      * @internal 

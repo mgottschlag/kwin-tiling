@@ -252,7 +252,7 @@ QString getUnitString(int unit, bool plain)
     }
 }
 
-QString windDegreesToCardinal(float degrees)
+QString degreesToCardinal(float degrees)
 {
     QString direction;
     if((degrees >= 348.75 && degrees <= 360) || (degrees > 0 && degrees <= 11.25))
