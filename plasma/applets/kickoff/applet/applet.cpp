@@ -118,8 +118,8 @@ void LauncherApplet::init()
 
     Plasma::ToolTipManager::self()->registerWidget(d->icon);
     Plasma::ToolTipManager::ToolTipContent data;
-    data.mainText = "Kickoff Application Launcher";
-    data.subText = "Favorites, applications, computer places, recently used items and desktop sessions";
+    data.mainText = i18n("Kickoff Application Launcher");
+    data.subText = i18n("Favorites, applications, computer places, recently used items and desktop sessions");
     data.image = d->icon->icon().pixmap(IconSize(KIconLoader::Desktop));
     Plasma::ToolTipManager::self()->setToolTipContent(d->icon, data);
 }
