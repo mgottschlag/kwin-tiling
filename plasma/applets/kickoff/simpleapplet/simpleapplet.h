@@ -108,7 +108,6 @@ private Q_SLOTS:
         void toggleMenu(bool pressed);
         void toggleMenu();
         void actionTriggered(QAction *action);
-        void menuDestroyed();
 
 private:
         class Private;

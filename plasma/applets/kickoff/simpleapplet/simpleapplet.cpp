@@ -51,10 +51,11 @@
 #include "core/leavemodel.h"
 #include "core/urlitemlauncher.h"
 
+/// @internal d-pointer class
 class MenuLauncherApplet::Private
 {
 public:
-        Kickoff::MenuView *menuview;
+        QPointer<Kickoff::MenuView> menuview;
         Plasma::Icon *icon;
         QPointer<Kickoff::UrlItemLauncher> launcher;
 
@@ -117,6 +118,7 @@ public:
                     menuview->addAction(action);
                 }
             }
+            connect(view->model(), SIGNAL(modelReset()), menuview, SLOT(deleteLater()));
         }
 
         QString viewIcon() {
@@ -325,7 +327,7 @@ void MenuLauncherApplet::toggleMenu()
         d->menuview = new Kickoff::MenuView();
         connect(d->menuview, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
         connect(d->menuview, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
-        connect(d->menuview, SIGNAL(destroyed(QObject*)), this, SLOT(menuDestroyed()));
+        connect(d->menuview, SIGNAL(aboutToHide()), d->menuview, SLOT(deleteLater()));
 
         switch( d->viewtype ) {
             case Combined: {
@@ -392,11 +394,6 @@ void MenuLauncherApplet::actionTriggered(QAction *action)
             break;
         }
     }
-}
-
-void MenuLauncherApplet::menuDestroyed()
-{
-    d->menuview = 0;
 }
 
 QList<QAction*> MenuLauncherApplet::contextualActions()

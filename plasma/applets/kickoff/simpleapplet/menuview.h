@@ -93,16 +93,18 @@ public:
     void setFormatType(FormatType formattype);
 
 protected:
-    /** 
-     * Creates a new action to represent a leaf index in the tree.  A leaf index
-     * is one which does not have children.  The default implementation creates a new
-     * QAction with no properties set.  updateAction() is immediately called on the 
-     * return action to set its text and icon.
-     *
-     * @param index The index in the model for which an action should be created
-     * @param parent The object which should be set as the parent of the new action
-     */
+
+    /**
+    * Creates a new action to represent a leaf index in the tree.  A leaf index
+    * is one which does not have children.  The default implementation creates a new
+    * QAction with no properties set.  updateAction() is immediately called on the
+    * return action to set its text and icon.
+    *
+    * @param index The index in the model for which an action should be created
+    * @param parent The object which should be set as the parent of the new action
+    */
     virtual QAction *createLeafAction(const QModelIndex& index,QObject *parent);
+
     /** 
      * Sets the text, icon and other properties of @p action using the data 
      * associated with @p index in the model().  This is called whenever the data for
@@ -121,10 +123,11 @@ public Q_SLOTS:
     void actionTriggered(QAction* action);
 
 private Q_SLOTS:
-    void rowsInserted(const QModelIndex& parent,int start,int end);
-    void rowsRemoved(const QModelIndex& parent,int start,int end);
+    void rowsAboutToBeInserted(const QModelIndex& parent,int start,int end);
+    void rowsAboutToBeRemoved(const QModelIndex& parent,int start,int end);
     void dataChanged(const QModelIndex& topLeft,const QModelIndex& bottomRight);
     void modelReset();
+
     // performs on-demand filling of sub-menus in the tree
     void fillSubMenu();
 

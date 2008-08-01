@@ -25,6 +25,7 @@
 #include <QtCore/QStack>
 #include <QtGui/QApplication>
 #include <QtGui/QMouseEvent>
+#include <QPersistentModelIndex>
 
 // KDE
 #include <KDebug>
@@ -35,11 +36,17 @@
 #include "core/models.h"
 #include "core/itemhandlers.h"
 
+Q_DECLARE_METATYPE(QPersistentModelIndex)
+Q_DECLARE_METATYPE(QAction*)
+
 using namespace Kickoff;
 
+/// @internal d-pointer class
 class MenuView::Private
 {
 public:
+    enum { ActionRole = Qt::UserRole + 52 };
+
     Private(MenuView *parent) : q(parent) , model(0) , column(0), launcher(new UrlItemLauncher(parent)), formattype(MenuView::DescriptionName) {}
 
     QAction *createActionForIndex(const QModelIndex& index, QMenu *parent)
@@ -94,7 +101,7 @@ MenuView::~MenuView()
 
 QAction *MenuView::createLeafAction(const QModelIndex&,QObject *parent)
 {
-    return new QAction(parent); 
+    return new QAction(parent);
 }
 
 void MenuView::updateAction(QAction *action,const QModelIndex& index)
@@ -123,10 +130,13 @@ void MenuView::updateAction(QAction *action,const QModelIndex& index)
             case NameDescription: // fall through
             case DescriptionName: {
                 if( ! name.isEmpty() ) { // seems we have a program, but some of them don't define a name at all
-                    if( name.contains(text,Qt::CaseInsensitive) ) {
+                    if( text.contains(name,Qt::CaseInsensitive) ) { // sometimes the description contains also the name
+                        action->setText(text);
+                    }
+                    if( name.contains(text,Qt::CaseInsensitive) ) { // and sometimes the name also contains the description
                         action->setText(name);
                     }
-                    else {
+                    else { // seems we have a perfect desktop-file (likely a KDE one, heh) and name+description are clear separated
                         if( d->formattype == NameDescription ) {
                             action->setText(QString("%1 %2").arg(name).arg(text));
                         }
@@ -142,8 +152,15 @@ void MenuView::updateAction(QAction *action,const QModelIndex& index)
         }
     }
 
-    action->setData(index.data(UrlRole));
     action->setIcon(index.data(Qt::DecorationRole).value<QIcon>());
+
+    // we map modelindex and action together
+    action->setData(qVariantFromValue(QPersistentModelIndex(index)));
+
+    // don't emit the dataChanged-signal cause else we may end in a infinite loop
+    d->model->blockSignals(true);
+    d->model->setData(index, qVariantFromValue(action), Private::ActionRole);
+    d->model->blockSignals(false);
 }
 
 
@@ -158,19 +175,22 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
         if (watchedMenu && mouseEvent->buttons() & Qt::LeftButton
             && mousePressDistance >= QApplication::startDragDistance()) {
             QAction *action = watchedMenu->actionAt(mouseEvent->pos());
-
             if (!action) {
                 return KMenu::eventFilter(watched, event);
             }
 
-            QMimeData *mimeData = new QMimeData();
-            QString urlString = action->data().toString();
-            mimeData->setData("text/uri-list", urlString.toAscii());
+            QPersistentModelIndex index = action->data().value<QPersistentModelIndex>();
+            if (!index.isValid()) {
+                return KMenu::eventFilter(watched, event);
+            }
 
+            QString urlString = index.data(UrlRole).toString();
             if (urlString.isNull()) {
                 return KMenu::eventFilter(watched, event);
             }
 
+            QMimeData *mimeData = new QMimeData();
+            mimeData->setData("text/uri-list", urlString.toAscii());
             mimeData->setText(mimeData->text());
             QDrag *drag = new QDrag(this);
             drag->setMimeData(mimeData);
@@ -181,6 +201,7 @@ bool MenuView::eventFilter(QObject *watched, QEvent *event)
             d->mousePressPos = QPoint();
 
             Qt::DropAction dropAction = drag->exec();
+            Q_UNUSED(dropAction);
 
             return true;
         }
@@ -206,6 +227,10 @@ void MenuView::setModel(QAbstractItemModel *model)
     clear();
     if (d->model) {
         d->buildBranch(this,QModelIndex());
+        connect(d->model, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)), this, SLOT(rowsAboutToBeInserted(QModelIndex,int,int)));
+        connect(d->model, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int)));
+        connect(d->model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
+        connect(d->model, SIGNAL(modelReset()), this, SLOT(modelReset()));
     }
 }
 
@@ -223,40 +248,8 @@ QModelIndex MenuView::indexForAction(QAction *action) const
 {
     Q_ASSERT(d->model);
     Q_ASSERT(action != 0);
-
-    QStack<int> rows;
- 
-    // find the menu containing the action.  for leaf actions this is the 
-    // action's parent widget.  for actions that are sub-menus this is the
-    // action's parent widget's parent. 
-    QWidget *parentWidget = action->parentWidget();
-    if (action->menu() && parentWidget != this) {
-        parentWidget = parentWidget->parentWidget();
-    }
-
-    // navigate up the menu hierarchy to find out the position of each
-    // action on the path to the specified action 
-    QMenu *menu = qobject_cast<QMenu*>(parentWidget);
-    while (menu) {
-        int row = menu->actions().indexOf(action);
-        if( row < 0 )
-            return QModelIndex();
-        rows.push(row);
-
-        if (menu == this) {
-            break;
-        }
-        action = menu->menuAction();
-        menu = qobject_cast<QMenu*>(menu->parentWidget());
-    }
-
-    // navigate down the model using the row information from the QMenu traversal
-    // to get the index for the specified action
-    QModelIndex index;
-    while (!rows.isEmpty()) {
-        index = d->model->index(rows.pop(),d->column,index);
-    }
-
+    QPersistentModelIndex index = action->data().value<QPersistentModelIndex>();
+    Q_ASSERT(index.isValid());
     return index;
 }
 
@@ -268,64 +261,53 @@ QAction *MenuView::actionForIndex(const QModelIndex& index) const
         return this->menuAction();
     }
 
-    // navigate up the model to get the rows of each index along the path
-    // to the specified index
-    QStack<int> rows;
-    QModelIndex parent = index.parent();
-    while (parent.isValid()) {
-        rows.push(parent.row());
-        parent = parent.parent();
-    }
-
-    // navigate down the menu using the row information from the model 
-    // traversal to find the action for the specified index
-    const QMenu *menu = this;
-    while (!rows.isEmpty()) {
-       if (menu->actions().isEmpty()) {
-            // if we reach an empty menu along the way this means that the index
-            // is in part of the tree for which the menu hierarchy has not been constructed
-            // because the user hasn't browsed there yet 
-            return 0;
-       }
-
-       menu = menu->actions()[rows.pop()]->menu(); 
-    }
-    return menu->actions()[index.row()];
+    QVariant v = d->model->data(index, Private::ActionRole);
+    Q_ASSERT(v.isValid());
+    QAction* a = v.value<QAction*>();
+    Q_ASSERT(a);
+    return a;
 }
 
-void MenuView::rowsInserted(const QModelIndex& parent,int start,int end)
+void MenuView::rowsAboutToBeInserted(const QModelIndex& parent,int start,int end)
 {
+    kDebug();
     QAction *menuAction = actionForIndex(parent);
     if (!menuAction) {
         return;
     }
-    QMenu *menu = menuAction->menu();
 
+    QMenu *menu = menuAction->menu();
     Q_ASSERT(menu);
 
     QList<QAction*> newActions;
     for (int row = start; row <= end; row++) {
-        QAction *newAction = d->createActionForIndex(d->model->index(row,d->column,parent),menu);
+        QModelIndex index = d->model->index(row, d->column, parent);
+        QAction *newAction = d->createActionForIndex(index, menu);
         newActions << newAction;
     }
 
-    Q_ASSERT(menu->actions().count() > start);
-    insertActions(menu->actions()[start],newActions);
+    if(start < menu->actions().count()) {
+        menu->insertActions(menu->actions()[start],newActions);
+    } else {
+        menu->addActions(newActions);
+    }
 }
 
-void MenuView::rowsRemoved(const QModelIndex& parent,int start,int end)
+void MenuView::rowsAboutToBeRemoved(const QModelIndex& parent,int start,int end)
 {
     QAction *menuAction = actionForIndex(parent);
     if (!menuAction) {
         return;
     }
-    QMenu *menu = menuAction->menu();
 
+    QMenu *menu = menuAction->menu();
     Q_ASSERT(menu);
 
     QList<QAction*> actions = menu->actions();
-    for (int row = start; row <= end; row++) {
-        menu->removeAction(actions[row]);
+    Q_ASSERT(end < actions.count());
+    for (int row = end; row >= start; row--) {
+        QAction* a = actions[row];
+        delete a;
     }
 }
 
@@ -335,9 +317,13 @@ void MenuView::dataChanged(const QModelIndex& topLeft,const QModelIndex& bottomR
     if (!menuAction) {
         return;
     }
+
     QMenu *menu = menuAction->menu();
+    Q_ASSERT(menu);
 
     QList<QAction*> actions = menu->actions();
+    Q_ASSERT(bottomRight.row() < actions.count());
+
     for (int row=topLeft.row(); row <= bottomRight.row(); row++) {
         updateAction(actions[row],d->model->index(row,d->column,topLeft.parent()));
     }
@@ -345,10 +331,10 @@ void MenuView::dataChanged(const QModelIndex& topLeft,const QModelIndex& bottomR
 
 void MenuView::modelReset()
 {
-    // force clearance of the menu
-    setModel(0); 
-    // rebuild the menu from scratch
-    setModel(d->model);
+    // force clearance of the menu and rebuild from scratch
+    QAbstractItemModel *m = d->model;
+    setModel(0);
+    setModel(m);
 }
 
 void MenuView::fillSubMenu()
@@ -392,6 +378,7 @@ void MenuView::setFormatType(MenuView::FormatType formattype)
 void MenuView::actionTriggered(QAction *action)
 {
     QModelIndex index = indexForAction(action);
+    Q_ASSERT(index.isValid());
     if (index.isValid()) {
         d->launcher->openItem(index);
     }
