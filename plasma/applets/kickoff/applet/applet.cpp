@@ -41,6 +41,7 @@
 #include <plasma/widgets/icon.h>
 #include <plasma/containment.h>
 #include <plasma/view.h>
+#include <plasma/tooltipmanager.h>
 
 // Local
 #include "ui/launcher.h"
@@ -114,6 +115,13 @@ void LauncherApplet::init()
     d->switcher->setVisible(immutability() == Plasma::Mutable);
     d->actions.append(d->switcher);
     connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
+
+    Plasma::ToolTipManager::self()->registerWidget(d->icon);
+    Plasma::ToolTipManager::ToolTipContent data;
+    data.mainText = "Kickoff Application Launcher";
+    data.subText = "Favorites, applications, computer places, recently used items and desktop sessions";
+    data.image = d->icon->icon().pixmap(IconSize(KIconLoader::Desktop));
+    Plasma::ToolTipManager::self()->setToolTipContent(d->icon, data);
 }
 
 void LauncherApplet::constraintsEvent(Plasma::Constraints constraints)
