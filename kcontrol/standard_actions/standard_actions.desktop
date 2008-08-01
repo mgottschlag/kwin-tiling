@@ -13,14 +13,22 @@ X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
 X-KDE-Weight=150
 
 Name=Standard Keyboard Shortcuts
+Name[gu]=પ્રમાણભૂત કીબોર્ડ ટૂંકાણો
+Name[km]=ផ្លូវកាត់​ក្ដារចុច​ស្តង់ដារ
+Name[nds]=Standard-Tastkombinatschonen
 Name[pt]=Atalhos-Padrão do Teclado
 Name[pt_BR]=Atalhos-Padrão do Teclado
+Name[sv]=Vanliga snabbtangenter
 Name[uk]=Стандартні скорочення клавіатури
 Name[zh_TW]=標準鍵盤捷徑
 
 Comment=Configuration of standard keybindings
+Comment[gu]=પ્રમાણભૂત કળજોડાણોનું રૂપરેખાંકન
+Comment[km]=ការ​កំណត់​រចនាសម្ព័ន្ធ​ការ​ចង​គ្រាប់​ចុច​ស្តង់ដារ
+Comment[nds]=Instellen vun Standard-Tastkombinatschonen
 Comment[pt]=Configuração das combinações de teclas-padrão
 Comment[pt_BR]=Configuração das combinações de teclas-padrão
+Comment[sv]=Anpassa vanliga snabbtangenter
 Comment[uk]=Налаштування стандартних прив'язок клавіш
 Comment[zh_TW]=標準按鍵組合設定
 X-KDE-Keywords=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts

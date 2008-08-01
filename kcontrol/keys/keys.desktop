@@ -13,8 +13,12 @@ X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
 X-KDE-Weight=160
 
 Name=Global Keyboard Shortcuts
+Name[gu]=વૈશ્વીક કીબોર્ડ ટૂંકાણો
+Name[km]=ផ្លូវកាត់​ក្ដារចុច​​សកល
+Name[nds]=Globaal Tastkombinatschonen
 Name[pt]=Atalhos Globais do Teclado
 Name[pt_BR]=Atalhos Globais do Teclado
+Name[sv]=Globala snabbtangenter
 Name[uk]=Глобальні скорочення клавіатури
 Name[zh_TW]=全域鍵盤捷徑
 

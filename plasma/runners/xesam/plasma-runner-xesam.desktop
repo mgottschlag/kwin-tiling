@@ -1,14 +1,22 @@
 [Desktop Entry]
 Name=Desktop Search
 Name[ga]=Cuardach Deisce
+Name[gu]=ડેસ્કટોપ શોધ
 Name[hr]=Pager na radnoj površini
+Name[km]=ស្វែងរក​ផ្ទៃតុ
+Name[nds]=Schriefdischsöök
 Name[pt]=Pesquisa no Ambiente de Trabalho
 Name[pt_BR]=Pesquisa no Ambiente de Trabalho
+Name[sv]=Skrivbordssökning
 Name[uk]=Стільничний пошук
 Name[zh_TW]=桌面搜尋
 Comment=Search in documents and files
+Comment[gu]=દસ્તાવેજો અને ફાઇલો શોધો
+Comment[km]=ស្វែងរក​នៅ​ក្នុង​ឯកសារ
+Comment[nds]=Binnen Dokmenten un Dateien söken
 Comment[pt]=Procurar nos documentos e ficheiros
 Comment[pt_BR]=Procurar nos documentos e ficheiros
+Comment[sv]=Sök i dokument och filer
 Comment[uk]=Пошук в документах і файлах
 Comment[zh_TW]=在文件與檔案裡搜尋
 X-KDE-ServiceTypes=Plasma/Runner

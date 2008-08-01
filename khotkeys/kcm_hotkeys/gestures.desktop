@@ -8,14 +8,22 @@ X-KDE-PluginKeyword=gestures
 X-KDE-System-Settings-Parent-Category=input-actions
 
 Name=Mouse Gestures
+Name[gu]=માઉસ ચેષ્ટાઓ
+Name[km]=កាយវិការ​​កណ្ដុរ
+Name[nds]=Muustekens
 Name[pt]=Gestos do Rato
 Name[pt_BR]=Gestos do Rato
+Name[sv]=Musgester
 Name[uk]=Жести мишкою
 Name[zh_TW]=滑鼠手勢
 
 Comment=Configure Mouse Gestures
+Comment[gu]=કોન્કરર ચેષ્ટાઓ રૂપરેખાંકિત કરો
+Comment[km]=កំណត់​រចនាសម្ព័ន្ធ​កាយវិការ​កណ្ដុរ
+Comment[nds]=Muustekens instellen
 Comment[pt]=Configurar os Gestos do Rato
 Comment[pt_BR]=Configurar os Gestos do Rato
+Comment[sv]=Anpassa musgester
 Comment[uk]=Налаштувати жести мишки
 Comment[zh_TW]=設定滑鼠手勢
 
