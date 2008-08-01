@@ -1,4 +1,4 @@
-SET (ionlib_SRCS ion.cpp formulas.cpp)
+SET (ionlib_SRCS ion.cpp weatherutils.cpp)
 kde4_add_library (weather_ion SHARED ${ionlib_SRCS})
 TARGET_LINK_LIBRARIES (weather_ion ${KDE4_KIO_LIBS} plasma)
 set_target_properties(weather_ion PROPERTIES
@@ -23,11 +23,11 @@ TARGET_LINK_LIBRARIES (ion_bbcukmet ${KDE4_KDEUI_LIBS} plasma weather_ion)
 
 INSTALL (FILES ion.h
                ion_export.h
-               formulas.h
+               weatherutils.h
 	 DESTINATION ${INCLUDE_INSTALL_DIR}/plasma/weather COMPONENT Devel)
 
 INSTALL (FILES includes/Ion
-               includes/Formulas
+               includes/WeatherUtils
 	 DESTINATION ${INCLUDE_INSTALL_DIR}/KDE/Plasma/Weather COMPONENT Devel)
 
 INSTALL (TARGETS ion_envcan DESTINATION ${PLUGIN_INSTALL_DIR})
