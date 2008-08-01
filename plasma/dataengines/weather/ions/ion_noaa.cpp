@@ -509,7 +509,7 @@ QMap<QString, QString> NOAAIon::visibility(const QString& source)
         return visibilityInfo;
     }
     visibilityInfo.insert("visibility", d->m_weatherData[source].visibility);
-    visibilityInfo.insert("visibilityUnit", QString::number(WeatherFormula::Miles));
+    visibilityInfo.insert("visibilityUnit", QString::number(WeatherUtils::Miles));
     return visibilityInfo;
 }
 
@@ -517,7 +517,7 @@ QMap<QString, QString> NOAAIon::temperature(const QString& source)
 {
     QMap<QString, QString> temperatureInfo;
     temperatureInfo.insert("temperature", d->m_weatherData[source].temperature_F);
-    temperatureInfo.insert("temperatureUnit", QString::number(WeatherFormula::Fahrenheit));
+    temperatureInfo.insert("temperatureUnit", QString::number(WeatherUtils::Fahrenheit));
     temperatureInfo.insert("comfortTemperature", "N/A");
 
     if (d->m_weatherData[source].heatindex_F != "NA" && d->m_weatherData[source].windchill_F == "NA") {
@@ -540,7 +540,7 @@ QMap<QString, QString> NOAAIon::pressure(const QString& source)
     }
 
     pressureInfo.insert("pressure", d->m_weatherData[source].pressure);
-    pressureInfo.insert("pressureUnit", QString::number(WeatherFormula::InchesHG));
+    pressureInfo.insert("pressureUnit", QString::number(WeatherUtils::InchesHG));
     return pressureInfo;
 }
 
@@ -551,19 +551,19 @@ QMap<QString, QString> NOAAIon::wind(const QString& source)
     // May not have any winds
     if (d->m_weatherData[source].windSpeed == "NA") {
         windInfo.insert("windSpeed", "Calm");
-        windInfo.insert("windUnit", QString::number(WeatherFormula::NoUnit));
+        windInfo.insert("windUnit", QString::number(WeatherUtils::NoUnit));
     } else {
         windInfo.insert("windSpeed", QString::number(d->m_weatherData[source].windSpeed.toFloat(), 'f', 1));
-        windInfo.insert("windUnit", QString::number(WeatherFormula::Miles));
+        windInfo.insert("windUnit", QString::number(WeatherUtils::Miles));
     }
 
     // May not always have gusty winds
     if (d->m_weatherData[source].windGust == "NA") {
         windInfo.insert("windGust", "N/A");
-        windInfo.insert("windGustUnit", QString::number(WeatherFormula::NoUnit));
+        windInfo.insert("windGustUnit", QString::number(WeatherUtils::NoUnit));
     } else {
         windInfo.insert("windGust", QString::number(d->m_weatherData[source].windGust.toFloat(), 'f', 1));
-        windInfo.insert("windGustUnit", QString::number(WeatherFormula::Miles));
+        windInfo.insert("windGustUnit", QString::number(WeatherUtils::Miles));
     }
 
     if (d->m_weatherData[source].windDirection.isEmpty()) {

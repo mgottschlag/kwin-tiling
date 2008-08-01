@@ -32,7 +32,7 @@
 #include <kdemacros.h>
 #include <plasma/dataengine.h>
 #include "ion.h"
-#include "formulas.h"
+#include "weatherutils.h"
 
 class WeatherData
 {

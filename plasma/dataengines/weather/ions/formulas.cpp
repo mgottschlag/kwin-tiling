@@ -18,136 +18,136 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA          *
  ***************************************************************************/
 
-#include "formulas.h"
+#include "weatherutils.h"
 #include <math.h>
 #include <KLocalizedString>
 
-namespace WeatherFormula
+namespace WeatherUtils
 {
 
 
 float convert(float value, int srcUnit, int destUnit)
 {
     switch (srcUnit) {
-    case WeatherFormula::Celsius:
+    case WeatherUtils::Celsius:
         switch (destUnit) {
-        case WeatherFormula::Fahrenheit:
+        case WeatherUtils::Fahrenheit:
             return (value * 9 / 5 + 32);
-        case WeatherFormula::Kelvin:
+        case WeatherUtils::Kelvin:
             return (value + 273.15);
         };
 
-    case WeatherFormula::Fahrenheit:
+    case WeatherUtils::Fahrenheit:
         switch (destUnit) {
-        case WeatherFormula::Celsius:
+        case WeatherUtils::Celsius:
             return (value - 32) * 5 / 9;
-        case WeatherFormula::Kelvin:
+        case WeatherUtils::Kelvin:
             return (5 / 9 * (value - 32) + 273.15);
         };
 
-    case WeatherFormula::Kelvin:
+    case WeatherUtils::Kelvin:
         switch (destUnit) {
-        case WeatherFormula::Celsius:
+        case WeatherUtils::Celsius:
             return (value - 273.15);
-        case WeatherFormula::Fahrenheit:
+        case WeatherUtils::Fahrenheit:
             return ((value - 273.15) * 1.8) + 32;
         };
   
-    case WeatherFormula::Kilometers:
+    case WeatherUtils::Kilometers:
         switch (destUnit) {
-        case WeatherFormula::Miles:
+        case WeatherUtils::Miles:
             return (0.621371192 * value);
-        case WeatherFormula::MetersPerSecond:
+        case WeatherUtils::MetersPerSecond:
             return (value * 0.277778);
-        case WeatherFormula::Knots:
+        case WeatherUtils::Knots:
             return (value * 0.539956803);
-        case WeatherFormula::Beaufort:
+        case WeatherUtils::Beaufort:
             return kilometersToBeaufort(value);
         };
 
-    case WeatherFormula::MetersPerSecond:
+    case WeatherUtils::MetersPerSecond:
         switch (destUnit) {
-        case WeatherFormula::Miles:
+        case WeatherUtils::Miles:
             return (value * 2.23693629);
-        case WeatherFormula::Kilometers:
+        case WeatherUtils::Kilometers:
             return (value * 3.6);
-        case WeatherFormula::Knots:
+        case WeatherUtils::Knots:
             return (value * 1.943845);
-        case WeatherFormula::Beaufort:
+        case WeatherUtils::Beaufort:
             return metersPerSecondToBeaufort(value);
         };
     
-    case WeatherFormula::Miles:
+    case WeatherUtils::Miles:
         switch (destUnit) {
-        case WeatherFormula::Kilometers:
+        case WeatherUtils::Kilometers:
             return (1.609344 * value);
-        case WeatherFormula::MetersPerSecond:
+        case WeatherUtils::MetersPerSecond:
             return (value * 0.44704);
-        case WeatherFormula::Knots:
+        case WeatherUtils::Knots:
             return (value * 0.868976242);
-        case WeatherFormula::Beaufort:
+        case WeatherUtils::Beaufort:
             return milesToBeaufort(value);
         };
 
-    case WeatherFormula::Kilopascals:
+    case WeatherUtils::Kilopascals:
         switch (destUnit) {
-        case WeatherFormula::InchesHG:
+        case WeatherUtils::InchesHG:
             return ((0.02952997 * value) * 10);
-        case WeatherFormula::Millibars:
-        case WeatherFormula::Hectopascals:
+        case WeatherUtils::Millibars:
+        case WeatherUtils::Hectopascals:
             return (value / 0.10);
         };
    
-    case WeatherFormula::InchesHG:
+    case WeatherUtils::InchesHG:
         switch (destUnit) {
-        case WeatherFormula::Kilopascals:
+        case WeatherUtils::Kilopascals:
             return (value * 3.386389);
-        case WeatherFormula::Millibars:
-        case WeatherFormula::Hectopascals:
+        case WeatherUtils::Millibars:
+        case WeatherUtils::Hectopascals:
             return (value * 33.8637526);
         };
     
-    case WeatherFormula::Millibars:
+    case WeatherUtils::Millibars:
         switch (destUnit) {
-        case WeatherFormula::Kilopascals:
+        case WeatherUtils::Kilopascals:
             return (value * 0.10);
-        case WeatherFormula::InchesHG:
+        case WeatherUtils::InchesHG:
 	    return (value * 0.0295333727);
         };
 
-    case WeatherFormula::Centimeters:
+    case WeatherUtils::Centimeters:
         switch (destUnit) {
-        case WeatherFormula::Millimeters:
+        case WeatherUtils::Millimeters:
             return (value / 0.1);
-        case WeatherFormula::Inches:
+        case WeatherUtils::Inches:
             return (value * 0.393700787);
         };
     
-    case WeatherFormula::Millimeters:
+    case WeatherUtils::Millimeters:
         switch (destUnit) {
-        case WeatherFormula::Centimeters: 
+        case WeatherUtils::Centimeters: 
             return (value * 0.1);           
-        case WeatherFormula::Inches:
+        case WeatherUtils::Inches:
             return (value * 0.0393700787);
         };
    
-    case WeatherFormula::Inches:
+    case WeatherUtils::Inches:
         switch (destUnit) {
-        case WeatherFormula::Centimeters:
+        case WeatherUtils::Centimeters:
             return (value * 2.54);
-        case WeatherFormula::Millimeters:
+        case WeatherUtils::Millimeters:
             return (value * 25.4);
         };
   
-    case WeatherFormula::Knots:
+    case WeatherUtils::Knots:
         switch (destUnit) {
-        case WeatherFormula::Kilometers:
+        case WeatherUtils::Kilometers:
             return floor(value * 1.852 + 0.5);
-        case WeatherFormula::Miles:
+        case WeatherUtils::Miles:
             return (value * 1.507794);
-        case WeatherFormula::MetersPerSecond:
+        case WeatherUtils::MetersPerSecond:
             return (value * 1.9438);
-        case WeatherFormula::Beaufort:
+        case WeatherUtils::Beaufort:
             return knotsToBeaufort(value);
         };
     };
@@ -157,91 +157,91 @@ float convert(float value, int srcUnit, int destUnit)
 QString getUnitString(int unit, bool plain)
 {
     switch (unit) {
-        case WeatherFormula::Celsius:
+        case WeatherUtils::Celsius:
             if(plain)
                 return QString("C");
             else
                 return i18nc("Celsius, temperature unit", "⁰C");
                 
-        case WeatherFormula::Fahrenheit:
+        case WeatherUtils::Fahrenheit:
             if(plain)
                 return QString("F");
             else
                 return i18nc("Fahrenheit, temperature unit", "⁰F");
             
-        case WeatherFormula::Kelvin:
+        case WeatherUtils::Kelvin:
             if(plain)
                 return QString("K");
             else
                 return i18nc("Kelvin, temperature unit", "K");
             
-        case WeatherFormula::Kilometers:
+        case WeatherUtils::Kilometers:
             if(plain)
                 return QString("kmh");
             else
                 return i18nc("kilometers per hour, windspeed unit", "km/h");
             
-        case WeatherFormula::MetersPerSecond:
+        case WeatherUtils::MetersPerSecond:
             if(plain)
                 return QString("ms");
             else
                 return i18nc("meters per second, windspeed unit", "m/s");
             
-        case WeatherFormula::Miles:
+        case WeatherUtils::Miles:
             if(plain)
                 return QString("mph");
             else
                 return i18nc("miles per hour, windspeed unit", "mph");
             
-        case WeatherFormula::Kilopascals:
+        case WeatherUtils::Kilopascals:
             if(plain)
                 return QString("kpa");
             else
                 return i18nc("kilopascals, airpressure unit", "kPa");
             
-        case WeatherFormula::InchesHG:
+        case WeatherUtils::InchesHG:
             if(plain)
                 return QString("in");
             else
                 return i18nc("inches hg, airpressure unit", "inHg");
             
-        case WeatherFormula::Millibars:
+        case WeatherUtils::Millibars:
             if(plain)
                 return QString("mbar");
             else
                 return i18nc("millibars, airpressure unit", "mbar");
             
-        case WeatherFormula::Hectopascals:
+        case WeatherUtils::Hectopascals:
             if(plain)
                 return QString("hpa");
             else
                 return i18nc("hectopascals, airpressure unit", "hPa");
             
-        case WeatherFormula::Centimeters:
+        case WeatherUtils::Centimeters:
             if(plain)
                 return QString("cm");
             else
                 return i18nc("centimeters, length unit", "cm");
             
-        case WeatherFormula::Millimeters:
+        case WeatherUtils::Millimeters:
             if(plain)
                 return QString("mm");
             else
                 return i18nc("millimeters, length unit", "mm");
             
-        case WeatherFormula::Inches:
+        case WeatherUtils::Inches:
             if(plain)
                 return QString("in");
             else
                 return i18nc("inches, length unit", "in");
             
-        case WeatherFormula::Knots:
+        case WeatherUtils::Knots:
             if(plain)
                 return QString("kt");
             else
                 return i18nc("knots, wind speed unit", "kt");
             
-        case WeatherFormula::Beaufort:
+        case WeatherUtils::Beaufort:
             if(plain)
                 return QString("bft");
             else
@@ -341,5 +341,5 @@ int metersPerSecondToBeaufort(float ms)
     return knotsToBeaufort(ms * 1.943845);
 }
 
-} // namespace WeatherFormula
+} // namespace WeatherUtils
 

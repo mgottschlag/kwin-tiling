@@ -20,12 +20,12 @@
 
 /* Meteorological formula class */
 
-#ifndef _WEATHERFORMULA_H
-#define _WEATHERFORMULA_H
+#ifndef _WEATHERUTILS_H
+#define _WEATHERUTILS_H
 
 #include "ion_export.h"
 
-namespace WeatherFormula
+namespace WeatherUtils
 {
     
     // Enumerations for unit types
@@ -36,7 +36,7 @@ namespace WeatherFormula
     // Convert Units
     
     /**
-     * Convert from unit to another. See WeatherFormula::Unit for available units.
+     * Convert from unit to another. See WeatherUtils::Unit for available units.
      * @param value float to convert
      * @param srcUnit from which unit to convert
      * @param destUnit to which unit to convert
@@ -45,10 +45,10 @@ namespace WeatherFormula
     ION_EXPORT float convert(float value, int srcUnit, int destUnit);
     
     /**
-    * Returns a string presentation of of WeatherFormula::Unit. Set plain to true in case you don't want a localized version of it.
+    * Returns a string presentation of of WeatherUtils::Unit. Set plain to true in case you don't want a localized version of it.
      * @param unit unit to convert.
      * @param plain if true, returned string is not localized. defaults to false.
-     * @return a string presentation of WeatherFormula::Unit. Empty string if called for invalid unit.
+     * @return a string presentation of WeatherUtils::Unit. Empty string if called for invalid unit.
     */
     ION_EXPORT QString getUnitString(int unit, bool plain=false);
     
@@ -67,6 +67,6 @@ namespace WeatherFormula
     int kilometersToBeaufort(float km);
     int metersPerSecondToBeaufort(float ms);
 
-} // WeatherFormula namespace
+} // WeatherUtils namespace
 
 #endif

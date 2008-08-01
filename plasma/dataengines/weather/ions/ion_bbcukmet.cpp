@@ -708,7 +708,7 @@ void UKMETIon::updateWeather(const QString& source)
     foreach(const QString &forecastItem, forecastList) {
         fieldList = forecastItem.split('|');
         windSpeed = fieldList[4];
-        windUnit = QString(WeatherFormula::Miles);
+        windUnit = QString(WeatherUtils::Miles);
 
         setData(weatherSource, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6|%7") \
                 .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[2]).arg(fieldList[3]) \
@@ -744,7 +744,7 @@ QMap<QString, QString> UKMETIon::temperature(const QString& source)
     QMap<QString, QString> temperatureInfo;
 
     temperatureInfo.insert("temperature", QString(d->m_weatherData[source].temperature_C));
-    temperatureInfo.insert("temperatureUnit", QString::number(WeatherFormula::Celsius));
+    temperatureInfo.insert("temperatureUnit", QString::number(WeatherUtils::Celsius));
     return temperatureInfo;
 }
 
@@ -753,10 +753,10 @@ QMap<QString, QString> UKMETIon::wind(const QString& source)
     QMap<QString, QString> windInfo;
     if (d->m_weatherData[source].windSpeed_miles == "N/A") {
         windInfo.insert("windSpeed", "N/A");
-        windInfo.insert("windUnit", QString::number(WeatherFormula::NoUnit));
+        windInfo.insert("windUnit", QString::number(WeatherUtils::NoUnit));
     } else {
         windInfo.insert("windSpeed", QString(d->m_weatherData[source].windSpeed_miles));
-        windInfo.insert("windUnit", QString::number(WeatherFormula::Miles));
+        windInfo.insert("windUnit", QString::number(WeatherUtils::Miles));
     }
     windInfo.insert("windDirection", d->m_weatherData[source].windDirection);
     return windInfo;
@@ -784,7 +784,7 @@ QMap<QString, QString> UKMETIon::pressure(const QString& source)
     }
 
     pressureInfo.insert("pressure", QString(d->m_weatherData[source].pressure));
-    pressureInfo.insert("pressureUnit", QString::number(WeatherFormula::Millibars));
+    pressureInfo.insert("pressureUnit", QString::number(WeatherUtils::Millibars));
 
     pressureInfo.insert("pressureTendency", d->m_weatherData[source].pressureTendency);
     return pressureInfo;
