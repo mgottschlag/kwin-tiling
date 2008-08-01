@@ -119,6 +119,14 @@ public:
                     menuview->addAction(action);
                 }
             }
+
+            // if the model asks us for a reset we can't do much except to invalidate our
+            // menuview to be able to rebuild it what is needed to prevent dealing with
+            // invalid items.
+            // the problem here is, that if the menu is currently displayed, it will just
+            // close itself what is evil++ but still better then crashes. anyway, the
+            // right(TM) solution would be to introduce logic to update the content of the
+            // menu even on a reset.
             connect(view->model(), SIGNAL(modelReset()), menuview, SLOT(deleteLater()));
         }
 
