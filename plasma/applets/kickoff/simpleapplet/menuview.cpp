@@ -133,7 +133,7 @@ void MenuView::updateAction(QAction *action,const QModelIndex& index)
                     if( text.contains(name,Qt::CaseInsensitive) ) { // sometimes the description contains also the name
                         action->setText(text);
                     }
-                    if( name.contains(text,Qt::CaseInsensitive) ) { // and sometimes the name also contains the description
+                    else if( name.contains(text,Qt::CaseInsensitive) ) { // and sometimes the name also contains the description
                         action->setText(name);
                     }
                     else { // seems we have a perfect desktop-file (likely a KDE one, heh) and name+description are clear separated
