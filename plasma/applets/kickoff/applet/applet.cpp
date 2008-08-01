@@ -66,7 +66,7 @@ void LauncherApplet::Private::createLauncher(LauncherApplet *q)
     launcher = new Kickoff::Launcher(q);
     launcher->setWindowFlags(launcher->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
     launcher->setAutoHide(true);
-    launcher->adjustSize();
+    launcher->resize(launcher->sizeHint());
     QObject::connect(launcher, SIGNAL(aboutToHide()), icon, SLOT(setUnpressed()));
     QObject::connect(launcher, SIGNAL(configNeedsSaving()), q, SIGNAL(configNeedsSaving()));
 }
@@ -218,11 +218,9 @@ void LauncherApplet::toggleMenu()
         if (pv) {
             loc = pv->containment()->location();
         }
-
         d->launcher->setLauncherOrigin( iconPosition, loc );
         emit releaseVisualFocus();
     }
-
     d->launcher->setVisible(!d->launcher->isVisible());
     d->icon->setPressed();
 }
