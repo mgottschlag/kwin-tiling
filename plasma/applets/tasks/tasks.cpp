@@ -89,9 +89,6 @@ void Tasks::init()
     setLayout(m_layout);
 
     KConfigGroup cg = config();
-#ifdef TOOLTIP_MANAGER
-    m_showTooltip = cg.readEntry("showTooltip", true);
-#endif
     m_showOnlyCurrentDesktop = cg.readEntry("showOnlyCurrentDesktop", false);
     m_showOnlyCurrentScreen = cg.readEntry("showOnlyCurrentScreen", false);
 
