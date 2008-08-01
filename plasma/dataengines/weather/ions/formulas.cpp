@@ -1,5 +1,6 @@
 /***************************************************************************
  *   Copyright (C) 2007, 2008 by Shawn Starr <shawn.starr@rogers.com>      *
+ *   Copyright (C) 2008 by Teemu Rytilahti <tpr@d5k.net>                   *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
