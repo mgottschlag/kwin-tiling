@@ -1,5 +1,5 @@
 /*
-*   Copyright 2007 by Alex Merry <huntedhacker@tiscali.co.uk>
+*   Copyright 2007 by Alex Merry <alex.merry@kdemail.net>
 *   Copyright 2008 by Alexis Ménard <darktears31@gmail.com>
 *
 *   This program is free software; you can redistribute it and/or modify
