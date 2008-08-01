@@ -20,7 +20,6 @@
 #include <KLocale>
 #include <KConfig>
 #include <KConfigGroup>
-
 #include <QStringList>
 #include <QDir>
 
@@ -44,6 +43,12 @@ CursorThemeModel::CursorThemeModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
     insertThemes();
+}
+
+CursorThemeModel::~CursorThemeModel()
+{
+   qDeleteAll(list);
+   list.clear();
 }
 
 
