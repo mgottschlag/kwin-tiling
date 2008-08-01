@@ -75,8 +75,8 @@ list.</para>
 
 <para>&RMB; clicking on the &kxkb; icon you can start its
 configuration by selecting <guimenuitem>Configure...</guimenuitem> or
-by opening <application>System Settings</application> and selecting
-Regional &amp; Language/Keyboard Layout. Alternatively, you can start it by
+by opening &systemsettings; and selecting <guilabel>Regional &amp; 
+Language</guilabel> <guilabel>Keyboard Layout</guilabel>. Alternatively, you can start it by
 typing <command>kcmshell4 keyboard_layout</command> from the terminal.</para>
 </sect1>
 </chapter>
@@ -159,11 +159,11 @@ If you leave the active layout list empty, keyboard layouts will be disabled
 <title>Switching Options</title>
 <para>
 Here you can choose a switching policy for keyboard layout. By default it's 
-<option>Global</option>, meaning all applications will share the same current
-layout. <option>Application</option> means each application will have its own
+<guilabel>Global</guilabel>, meaning all applications will share the same current
+layout. <guilabel>Application</guilabel> means each application will have its own
 layout and switching layout while you are working with one application will not
-affect the layout for any others. <option>Window</option> will make every window
-have its own layout even if they belong to the same program and <option>Desktop</option> 
+affect the layout for any others. <guilabel>Window</guilabel> will make every window
+have its own layout even if they belong to the same program and <guilabel>Desktop</guilabel> 
 allows you to have one layout per desktop.
 </para>
 <para>
