@@ -1,5 +1,6 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
+    Copyright 2008 Sebastian Sauer <mail@dipe.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -54,6 +55,7 @@ public:
 
     /** Constructs a new menu with the specified @p parent */
     MenuView(QWidget *parent = 0);
+    /** Destructor */
     virtual ~MenuView();
 
     /** Sets the model displayed by this menu. */
@@ -93,16 +95,18 @@ public:
     void setFormatType(FormatType formattype);
 
 protected:
-    /** 
-     * Creates a new action to represent a leaf index in the tree.  A leaf index
-     * is one which does not have children.  The default implementation creates a new
-     * QAction with no properties set.  updateAction() is immediately called on the 
-     * return action to set its text and icon.
-     *
-     * @param index The index in the model for which an action should be created
-     * @param parent The object which should be set as the parent of the new action
-     */
+
+    /**
+    * Creates a new action to represent a leaf index in the tree.  A leaf index
+    * is one which does not have children.  The default implementation creates a new
+    * QAction with no properties set.  updateAction() is immediately called on the
+    * return action to set its text and icon.
+    *
+    * @param index The index in the model for which an action should be created
+    * @param parent The object which should be set as the parent of the new action
+    */
     virtual QAction *createLeafAction(const QModelIndex& index,QObject *parent);
+
     /** 
      * Sets the text, icon and other properties of @p action using the data 
      * associated with @p index in the model().  This is called whenever the data for
@@ -113,7 +117,7 @@ protected:
      */
     virtual void updateAction(QAction *action, const QModelIndex& index);
 
-    //Reimplemented
+    // reimplemented
     virtual bool eventFilter(QObject * watched, QEvent *event);
 
 public Q_SLOTS:
@@ -121,10 +125,15 @@ public Q_SLOTS:
     void actionTriggered(QAction* action);
 
 private Q_SLOTS:
-    void rowsInserted(const QModelIndex& parent,int start,int end);
-    void rowsRemoved(const QModelIndex& parent,int start,int end);
+    // new items are about to be inserted into the model
+    void rowsAboutToBeInserted(const QModelIndex& parent,int start,int end);
+    // existing items are about to be removed from the model
+    void rowsAboutToBeRemoved(const QModelIndex& parent,int start,int end);
+    // data within an item of the model change
     void dataChanged(const QModelIndex& topLeft,const QModelIndex& bottomRight);
+    // the model did reset itself and all items are invalid
     void modelReset();
+
     // performs on-demand filling of sub-menus in the tree
     void fillSubMenu();
 

@@ -1,5 +1,6 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
+    Copyright 2008 Sebastian Sauer <mail@dipe.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -108,7 +109,6 @@ private Q_SLOTS:
         void toggleMenu(bool pressed);
         void toggleMenu();
         void actionTriggered(QAction *action);
-        void menuDestroyed();
 
 private:
         class Private;

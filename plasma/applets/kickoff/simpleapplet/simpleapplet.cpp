@@ -1,5 +1,6 @@
 /*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
+    Copyright 2008 Sebastian Sauer <mail@dipe.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -51,10 +52,11 @@
 #include "core/leavemodel.h"
 #include "core/urlitemlauncher.h"
 
+/// @internal d-pointer class
 class MenuLauncherApplet::Private
 {
 public:
-        Kickoff::MenuView *menuview;
+        QPointer<Kickoff::MenuView> menuview;
         Plasma::Icon *icon;
         QPointer<Kickoff::UrlItemLauncher> launcher;
 
@@ -117,6 +119,15 @@ public:
                     menuview->addAction(action);
                 }
             }
+
+            // if the model asks us for a reset we can't do much except to invalidate our
+            // menuview to be able to rebuild it what is needed to prevent dealing with
+            // invalid items.
+            // the problem here is, that if the menu is currently displayed, it will just
+            // close itself what is evil++ but still better then crashes. anyway, the
+            // right(TM) solution would be to introduce logic to update the content of the
+            // menu even on a reset.
+            connect(view->model(), SIGNAL(modelReset()), menuview, SLOT(deleteLater()));
         }
 
         QString viewIcon() {
@@ -148,6 +159,8 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
     setHasConfigurationInterface(true);
     setBackgroundHints(NoBackground);
 
+    resize(IconSize(KIconLoader::Desktop) * 2, IconSize(KIconLoader::Desktop) * 2);
+
     d->icon = new Plasma::Icon(QString(), this);
     d->icon->setFlag(ItemIsMovable, false);
     connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
@@ -155,8 +168,6 @@ MenuLauncherApplet::MenuLauncherApplet(QObject *parent, const QVariantList &args
 
     d->viewtype = Combined;
     d->formattype = NameDescription;
-
-    resize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
 }
 
 MenuLauncherApplet::~MenuLauncherApplet()
@@ -325,7 +336,7 @@ void MenuLauncherApplet::toggleMenu()
         d->menuview = new Kickoff::MenuView();
         connect(d->menuview, SIGNAL(triggered(QAction*)), this, SLOT(actionTriggered(QAction*)));
         connect(d->menuview, SIGNAL(aboutToHide()), d->icon, SLOT(setUnpressed()));
-        connect(d->menuview, SIGNAL(destroyed(QObject*)), this, SLOT(menuDestroyed()));
+        connect(d->menuview, SIGNAL(aboutToHide()), d->menuview, SLOT(deleteLater()));
 
         switch( d->viewtype ) {
             case Combined: {
@@ -392,11 +403,6 @@ void MenuLauncherApplet::actionTriggered(QAction *action)
             break;
         }
     }
-}
-
-void MenuLauncherApplet::menuDestroyed()
-{
-    d->menuview = 0;
 }
 
 QList<QAction*> MenuLauncherApplet::contextualActions()
