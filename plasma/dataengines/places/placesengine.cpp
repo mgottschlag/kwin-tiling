@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2007 Alex Merry <alex.merry@kdemail.net>
+ *   Copyright (C) 2008 Alex Merry <alex.merry@kdemail.net>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -16,29 +16,26 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-// Local includes
 #include "placesengine.h"
 
-// Qt includes
 #include <QtCore/QString>
-#include <QtCore/QVariantList>
 
+#include <KDiskFreeSpaceInfo>
 
-// KDE includes
-#include <KDiskFreeSpace>
 
 PlacesEngine::PlacesEngine(QObject *parent, const QVariantList &args)
     : Plasma::DataEngine(parent, args)
 {
-    // dataChanged(), rowsRemoved() and setupDone() signals from
-    // KFilePlacesModel are not propagated between applications.
-    // layoutChanged() is not emitted at all.
     connect(&m_placesModel, SIGNAL(modelReset()),
             this, SLOT(modelReset()));
+    connect(&m_placesModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+            this, SLOT(dataChanged(QModelIndex,QModelIndex)));
     connect(&m_placesModel, SIGNAL(rowsInserted(QModelIndex,int,int)),
             this, SLOT(placesAdded(QModelIndex,int,int)));
+    connect(&m_placesModel, SIGNAL(rowsRemoved(QModelIndex,int,int)),
+            this, SLOT(placesRemoved(QModelIndex,int,int)));
 
-    sendData();
+    sendAllData();
 }
 
 PlacesEngine::~PlacesEngine()
@@ -47,71 +44,41 @@ PlacesEngine::~PlacesEngine()
 
 void PlacesEngine::modelReset()
 {
-    kDebug() << "Model reset";
-
     removeAllSources();
 }
 
-void PlacesEngine::placesAdded(const QModelIndex &parent, int start, int end)
+void PlacesEngine::placesAdded(const QModelIndex&, int start, int end)
 {
-    kDebug() << "Places added:" << parent << "from" << start << "to" << end;
-    sendData();
+    sendData(start, end);
 }
 
-void PlacesEngine::diskFreeSpaceFound(const QString &mountPoint,
-                                      quint64 kBSize,
-                                      quint64 kBUsed,
-                                      quint64 kBAvailable)
+void PlacesEngine::placesRemoved(const QModelIndex&, int start, int end)
 {
-    kDebug() << "Sir! We got one!" << mountPoint + ": "
-        << "size =" << kBSize
-        << "used =" << kBUsed
-        << "avail =" << kBAvailable;
-    QString source;
-
-    foreach (const QString &testsource, sources()) {
-        kDebug() << "Testing" << query(testsource)["url"];
-        KUrl url(query(testsource)["url"].toString());
-        if (url.isLocalFile() && url.path() == mountPoint) {
-            source = testsource;
-            break;
-        }
-    }
-
-    kDebug() << "Source:" << source;
-    if (!source.isEmpty()) {
-        setData(source, "kBSize", kBSize);
-        setData(source, "kBUsed", kBUsed);
-        setData(source, "kBAvailable", kBAvailable);
+    kDebug() << "Places" << start << "through" << end << "removed";
+    for (int index = start; index <= end; index++) {
+        removeSource(QString::number(index));
     }
 }
 
-void PlacesEngine::tryGetFreeSpace(const KUrl &url)
+void PlacesEngine::dataChanged(const QModelIndex& topLeft,
+                               const QModelIndex& bottomRight)
 {
-    if (!url.isLocalFile()) {
-        return;
-    }
-
-    kDebug() << "Requesting free space on" << url;
-
-    // suicidal object: don't need to worry about cleanup
-    KDiskFreeSpace *diskFreeSpace = new KDiskFreeSpace(this);
-    connect(diskFreeSpace,
-            SIGNAL(foundMountPoint(QString,quint64,quint64,quint64)),
-            this,
-            SLOT(diskFreeSpaceFound(QString,quint64,quint64,quint64)));
-    diskFreeSpace->readDF(url.path());
+    sendData(topLeft.row(), bottomRight.row());
 }
 
-void PlacesEngine::sendData()
+void PlacesEngine::sendAllData()
 {
-    int rowCount = m_placesModel.rowCount();
-    for (int i = 0; i < rowCount; ++i) {
-        QModelIndex index = m_placesModel.index(i,0);
+    sendData(0, m_placesModel.rowCount() - 1);
+}
+
+void PlacesEngine::sendData(int start, int end)
+{
+    for (int row = start; row <= end; ++row) {
+        QModelIndex index = m_placesModel.index(row, 0);
 
         Data map;
 
-        QString source = QString::number(i);
+        QString source = QString::number(row);
 
         setData(source, "name", m_placesModel.text(index));
         setData(source, "url", m_placesModel.url(index).url());
@@ -120,16 +87,24 @@ void PlacesEngine::sendData()
                 m_placesModel.data(index, KFilePlacesModel::HiddenRole));
         setData(source, "setupNeeded",
                 m_placesModel.data(index, KFilePlacesModel::SetupNeededRole));
+        setData(source, "isDevice",
+                m_placesModel.deviceForIndex(index).isValid());
 
-        if (m_placesModel.deviceForIndex(index).isValid()) {
-            setData(source, "isDevice", true);
-            tryGetFreeSpace(m_placesModel.url(index));
-        } else {
-            setData(source, "isDevice", false);
+        QString path = m_placesModel.url(index).path();
+        if (!path.isEmpty()) {
+            // We can't get free space for unmounted volumes :-(
+            KDiskFreeSpaceInfo info = KDiskFreeSpaceInfo::freeSpaceInfo(path);
+            setData(source, "kBSize", info.size()/1024); // deprecated
+            setData(source, "kBUsed", info.used()/1024); // deprecated
+            setData(source, "kBAvailable", info.available()/1024); // deprecated
+            setData(source, "size (bytes)", info.size());
+            setData(source, "used (bytes)", info.used());
+            setData(source, "available (bytes)", info.available());
         }
     }
 }
 
 K_EXPORT_PLASMA_DATAENGINE(places, PlacesEngine)
 
+#include "placesengine.moc"
 

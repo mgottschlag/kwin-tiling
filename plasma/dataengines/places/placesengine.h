@@ -1,5 +1,5 @@
 /*
- *   Copyright (C) 2007 Alex Merry <alex.merry@kdemail.net>
+ *   Copyright (C) 2008 Alex Merry <alex.merry@kdemail.net>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -21,10 +21,6 @@
 
 #include <plasma/dataengine.h>
 
-#include <QtCore/QMap>
-#include <QtCore/QString>
-#include <QtCore/QStringList>
-
 #include <kfileplacesmodel.h>
 
 class PlacesEngine : public Plasma::DataEngine
@@ -38,18 +34,13 @@ public:
 private Q_SLOTS:
     // KFilePlacesModel
     void modelReset();
-    void placesAdded(const QModelIndex &parent, int start, int end);
-
-    // KFreeDiskSpace
-    void diskFreeSpaceFound(const QString &mountPoint,
-                            quint64 kBSize,
-                            quint64 kBUsed,
-                            quint64 kBAvailable);
+    void placesAdded(const QModelIndex& parent, int start, int end);
+    void placesRemoved(const QModelIndex& parent, int start, int end);
+    void dataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 
 private:
-    void tryGetFreeSpace(const KUrl &url);
-
-    void sendData();
+    void sendData(int start, int end);
+    void sendAllData();
 
     KFilePlacesModel m_placesModel;
 };
