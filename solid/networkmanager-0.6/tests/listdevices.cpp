@@ -45,7 +45,7 @@ int main(int argc, char ** argv)
     kDebug() << parentMo->className();
     QStringList networks = wifiIface->networks();
 
-    foreach (QString netPath, networks)
+    foreach (const QString& netPath, networks)
     {
         kDebug() << "Creating network: " << netPath;
         NMNetwork * network = qobject_cast<NMNetwork *>(wifiIface->createNetwork(netPath));

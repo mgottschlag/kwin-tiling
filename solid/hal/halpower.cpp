@@ -240,7 +240,7 @@ Solid::Control::PowerManager::CpuFreqPolicies HalPower::supportedCpuFreqPolicies
         QStringList governors = reply;
         Solid::Control::PowerManager::CpuFreqPolicies policies = Solid::Control::PowerManager::UnknownCpuFreqPolicy;
 
-        foreach (QString governor, governors)
+        foreach (const QString& governor, governors)
         {
             if (governor == "ondemand")
             {

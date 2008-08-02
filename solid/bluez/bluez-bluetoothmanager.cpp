@@ -91,7 +91,7 @@ QStringList BluezBluetoothManager::bluetoothInterfaces() const
     QDBusReply< QStringList > deviceList = d->manager.call("ListAdapters");
     if (deviceList.isValid()) {
         QStringList devices = deviceList.value();
-        foreach (QString path, devices) {
+        foreach (const QString& path, devices) {
             bluetoothInterfaces.append(path);
         }
     }
@@ -137,7 +137,7 @@ QStringList BluezBluetoothManager::bluetoothInputDevices() const
     QDBusReply< QStringList > deviceList = d->inputManager->call("ListDevices");
     if (deviceList.isValid()) {
         QStringList devices = deviceList.value();
-        foreach (QString path, devices) {
+        foreach (const QString& path, devices) {
             bluetoothInputDevices.append(path);
         }
     }
