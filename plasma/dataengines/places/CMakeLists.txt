@@ -1,6 +1,10 @@
 set(places_engine_SRCS
     placesengine.cpp
+    placeservice.cpp
+    setupdevicejob.cpp
 )
+
+AUTOMOC4_MOC_HEADERS(plasma_engine_places modeljob.h)
 
 kde4_add_plugin(plasma_engine_places ${places_engine_SRCS})
 
