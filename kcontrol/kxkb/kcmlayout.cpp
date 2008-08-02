@@ -79,13 +79,13 @@ static QList<QString> getKeysSortedByVaue(const QHash<QString, QString>& map)
     // we have to add nums as translations can be dups and them reverse map will miss items
     int i=0;
     QString fmt("%1%2");
-    foreach (QString str, map.keys())
+    foreach (const QString& str, map.keys())
     	reverseMap.insert(fmt.arg(map[str], i++), str);
 
     QList<QString> values = reverseMap.keys();
     qSort(values.begin(), values.end(), localeAwareLessThan);
 
-    foreach (QString value, values)
+    foreach (const QString& value, values)
         outList << reverseMap[value];
 /*        
     int diff = map.keys().count() - reverseMap.keys().count();
@@ -584,7 +584,7 @@ static QStringList getGroupOptionList(const QStringList& options, const QString&
 void LayoutConfig::clearXkbSequence()
 {
     QStringList grpOptions = getGroupOptionList(m_kxkbConfig.m_options, "grp");
-    foreach(QString opt, grpOptions)
+    foreach(const QString& opt, grpOptions)
         m_kxkbConfig.m_options.removeAll(opt);
     m_xkbOptModel->reset();
     widget->xkbOptionsTreeView->update();
@@ -595,7 +595,7 @@ void LayoutConfig::clearXkbSequence()
 void LayoutConfig::clearXkb3dSequence()
 {
     QStringList grpOptions = getGroupOptionList(m_kxkbConfig.m_options, "lv3");
-    foreach(QString opt, grpOptions)
+    foreach(const QString& opt, grpOptions)
         m_kxkbConfig.m_options.removeAll(opt);
     m_xkbOptModel->reset();
     widget->xkbOptionsTreeView->update();
@@ -957,7 +957,7 @@ void LayoutConfig::refreshRulesUI()
 {
     widget->comboModel->clear();
     QList<QString> sortedModels = getKeysSortedByVaue( m_rules->models() );
-    foreach( QString model, sortedModels ) {
+    foreach( const QString& model, sortedModels ) {
 	widget->comboModel->addItem( m_rules->models()[model], model);
         widget->comboModel->setItemData( widget->comboModel->count()-1, m_rules->models()[model], Qt::ToolTipRole );
     }

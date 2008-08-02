@@ -121,7 +121,7 @@ KDMThemeWidget::KDMThemeWidget( QWidget *parent )
 	if (!testDir.exists() && !testDir.mkdir( testDir.absolutePath() ) && !geteuid())
 		KMessageBox::sorry( this, i18n("Unable to create folder %1", testDir.absolutePath() ) );
 
-	foreach (QString ent,
+	foreach (const QString& ent,
 	         QDir( themeDir ).entryList( QDir::Dirs | QDir::NoDotAndDotDot,
 	                                     QDir::Unsorted ))
 		insertTheme( themeDir + ent );
@@ -249,7 +249,7 @@ void KDMThemeWidget::installNewTheme()
 	archive.open( QIODevice::ReadOnly );
 
 	const KArchiveDirectory *archDir = archive.directory();
-	foreach (QString ent, archDir->entries()) {
+	foreach (const QString& ent, archDir->entries()) {
 		const KArchiveEntry *possibleDir = archDir->entry( ent );
 		if (possibleDir->isDirectory()) {
 			const KArchiveDirectory *subDir =

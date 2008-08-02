@@ -156,7 +156,7 @@ void SMServerConfig::loadWMs( const QString& current )
   oldwm = "kwin";
   QStringList list = KGlobal::dirs()->findAllResources( "windowmanagers", QString(), KStandardDirs::NoDuplicates );
   QRegExp reg( ".*/([^/\\.]*)\\.[^/\\.]*" );
-  foreach( QString wmfile, list )
+  foreach( const QString& wmfile, list )
   {
     KDesktopFile file( wmfile );
     if( file.noDisplay())

@@ -966,9 +966,9 @@ void KBackgroundRenderer::saveCacheFile()
         const QFileInfoList list = dir.entryInfoList( QStringList() << "*.png", QDir::Files, QDir::Time | QDir::Reversed );
         if( !list.isEmpty()) {
             int size = 0;
-            Q_FOREACH( QFileInfo info, list )
+            Q_FOREACH( const QFileInfo& info, list )
                 size += info.size();
-            Q_FOREACH( QFileInfo info, list ) {
+            Q_FOREACH( const QFileInfo& info, list ) {
                 if( size < 8 * 1024 * 1024 )
                     break;
                 // keep everything newer than 10 minutes if the total size is less than 50M (just in case)
