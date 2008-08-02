@@ -232,7 +232,7 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
   // Find first directory entry.
   QStringList entries = ad->entries();
   QStringList themeNames;
-  foreach(QString s, entries)
+  foreach(const QString& s, entries)
   {
     if( ad->entry(s)->isDirectory() )
     {
