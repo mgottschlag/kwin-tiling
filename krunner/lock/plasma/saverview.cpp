@@ -63,13 +63,6 @@ SaverView::SaverView(Plasma::Containment *containment, QWidget *parent)
     //also, need a way to be sure the screensaver's shown if we're going byebye
     //connect(scene(), SIGNAL(releaseVisualFocus()), SLOT(hideView()));
 
-    //I suppose it doesn't hurt to leave this in
-    m_hideAction = new QAction(i18n("Hide Widgets"), this);
-    m_hideAction->setIcon(KIcon("preferences-desktop-display"));
-    m_hideAction->setEnabled(false);
-    containment->addToolBoxTool(m_hideAction);
-    connect(m_hideAction, SIGNAL(triggered()), this, SLOT(hideView()));
-
     installEventFilter(this);
 }
 
@@ -253,8 +246,6 @@ void SaverView::showView()
         //KWindowSystem::setOnAllDesktops(winId(), true);
         //KWindowSystem::setState(winId(), NET::KeepAbove|NET::SkipTaskbar);
 
-        m_hideAction->setEnabled(true);
-
         show();
         raise();
 
@@ -268,9 +259,6 @@ void SaverView::setContainment(Plasma::Containment *newContainment)
     if (newContainment == containment()) {
         return;
     }
-
-    containment()->removeToolBoxTool(m_hideAction);
-    newContainment->addToolBoxTool(m_hideAction);
 
     if (isVisible()) {
         disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
@@ -296,7 +284,6 @@ void SaverView::hideView()
     disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
 
     containment()->closeToolBox();
-    m_hideAction->setEnabled(false);
     hide();
     //let the lockprocess know
     emit hidden();
@@ -310,13 +297,13 @@ void SaverView::suppressShowTimeout()
 
 void SaverView::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Escape) {
+    /*if (event->key() == Qt::Key_Escape) {
         hideView();
         event->accept();
         return;
-    }
+    }*/
 
-    kDebug() << event->key() << event->spontaneous();
+    //kDebug() << event->key() << event->spontaneous();
     Plasma::View::keyPressEvent(event);
 }
 

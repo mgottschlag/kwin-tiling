@@ -492,6 +492,7 @@ void PlasmaApp::createConfigurationInterface(KConfigDialog *parent)
 {
     QWidget *widget = new QWidget();
     ui.setupUi(widget);
+    parent->setWindowTitle(i18nc("@title:window", "Settings"));
     parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
     parent->addPage(widget, parent->windowTitle());
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));

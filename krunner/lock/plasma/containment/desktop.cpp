@@ -60,11 +60,13 @@ void SaverDesktop::init()
     Containment::init();
     setHasConfigurationInterface(true);
 
+    bool unlocked = immutability() == Mutable;
     //re-wire the lock action so we can check for a password
     QAction *lock = action("lock widgets");
     if (lock) {
         lock->disconnect(this);
         connect(lock, SIGNAL(triggered(bool)), this, SLOT(toggleLock()));
+        lock->setText(unlocked ? i18n("Lock") : i18n("Unlock"));
     }
 
     //remove the desktop actions
@@ -79,12 +81,35 @@ void SaverDesktop::init()
     removeToolBoxTool(unwanted);
     delete unwanted;
 
-    lock = new QAction(i18n("Unlock Desktop"), this);
+    lock = new QAction(unlocked ? i18n("Quit") : i18n("Unlock and Quit"), this);
     lock->setIcon(KIcon("system-lock-screen"));
     //TODO kbd shortcut
+    lock->setShortcutContext(Qt::WidgetShortcut);
+    lock->setShortcut(QKeySequence("esc"));
     connect(lock, SIGNAL(triggered(bool)), this, SLOT(unlockDesktop()));
     addAction("unlock desktop", lock);
     addToolBoxTool(lock);
+
+    QAction *a = action("configure");
+    if (a) {
+        a->setText(i18n("Settings"));
+        addToolBoxTool(a);
+    }
+}
+
+void SaverDesktop::constraintsEvent(Plasma::Constraints constraints)
+{
+    if (constraints & Plasma::ImmutableConstraint) {
+        bool unlocked = immutability() == Mutable;
+        QAction *a = action("lock widgets");
+        if (a) {
+            a->setText(unlocked ? i18n("Lock") : i18n("Unlock"));
+        }
+        a = action("unlock desktop");
+        if (a) {
+            a->setText(unlocked ? i18n("Quit") : i18n("Unlock and Quit"));
+        }
+    }
 }
 
 QList<QAction*> SaverDesktop::contextualActions()

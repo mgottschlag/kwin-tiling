@@ -47,6 +47,7 @@ public:
     ~SaverDesktop();
     void init();
 
+    void constraintsEvent(Plasma::Constraints constraints);
     QList<QAction*> contextualActions();
 
     /**
