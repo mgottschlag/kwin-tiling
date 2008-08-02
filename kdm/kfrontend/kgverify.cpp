@@ -548,7 +548,7 @@ KGVerify::handleFailVerify( QWidget *parent, bool showUser )
 			{
 				QStringList pgs( _pluginsLogin );
 				pgs += _pluginsShutdown;
-				foreach (QString pg, pgs)
+				foreach (const QString& pg, pgs)
 					if (pg == "classic" || pg == "modern") {
 						pgs = QStringList( pg );
 						goto gotit;
@@ -904,7 +904,7 @@ KGVerify::getConf( void *, const char *key, const QVariant &dflt )
 		return QVariant( _echoPasswd );
 	else {
 		QString fkey = QString::fromLatin1( key ) + '=';
-		foreach (QString pgo, _pluginOptions)
+		foreach (const QString& pgo, _pluginOptions)
 			if (pgo.startsWith( fkey ))
 				return pgo.mid( fkey.length() );
 		return dflt;
@@ -918,7 +918,7 @@ KGVerify::init( const QStringList &plugins )
 {
 	PluginList pluginList;
 
-	foreach (QString pg, plugins) {
+	foreach (const QString& pg, plugins) {
 		GreeterPluginHandle plugin;
 		KLibrary *lib = new KLibrary( pg[0] == '/' ? pg : "kgreet_" + pg );
 		if (lib->fileName().isEmpty()) {
@@ -1105,7 +1105,7 @@ KGThemedVerify::selectPlugin( int id )
 			              i18n( greetPlugins[pluginList[id]].info->name ) ) );
 			break;
 		}
-	foreach (QString t, oldTypes)
+	foreach (const QString& t, oldTypes)
 		themer->setTypeVisible( t, false );
 }
 

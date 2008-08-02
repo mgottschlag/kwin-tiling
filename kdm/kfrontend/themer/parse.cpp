@@ -151,7 +151,7 @@ parseFont( const QString &is, FontType &ft )
 			rs = s;
 		QStringList ffs = rs.split( QRegExp( " ?, ?" ), QString::SkipEmptyParts );
 		if (!ffs.isEmpty()) {
-			foreach (QString ff, ffs) {
+			foreach (const QString& ff, ffs) {
 				ft.font.setFamily( ff );
 				if (ft.font.exactMatch())
 					return;
