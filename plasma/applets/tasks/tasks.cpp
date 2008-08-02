@@ -105,6 +105,7 @@ void Tasks::init()
             this, SLOT(removeStartingTask(StartupPtr)));
 
     reconnect();
+    updatePreferredSize();
 }
 
 void Tasks::addStartingTask(StartupPtr task)
@@ -231,6 +232,7 @@ void Tasks::removeAllWindowTasks()
 
     m_windowTaskItems.clear();
     m_activeTask = m_windowTaskItems.end();
+    updatePreferredSize();
 }
 
 void Tasks::constraintsEvent(Plasma::Constraints constraints)
