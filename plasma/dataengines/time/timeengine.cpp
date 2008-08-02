@@ -28,8 +28,6 @@
 #include <KSystemTimeZones>
 #include <KDateTime>
 
-#include "plasma/datacontainer.h"
-
 //timezone is defined in msvc
 #ifdef timezone
 #undef timezone
