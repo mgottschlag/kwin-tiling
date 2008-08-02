@@ -40,14 +40,7 @@ public:
     {
     }
 
-    void start()
-    {
-        kDebug() << "Starting a player action job";
-        QTimer::singleShot(0, this, SLOT(doAction()));
-    }
-
-private slots:
-    void doAction();
+    void start();
 
 private:
     Player::Ptr m_player;

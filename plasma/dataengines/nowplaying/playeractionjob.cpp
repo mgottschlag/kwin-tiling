@@ -21,7 +21,7 @@
 
 #include <kdebug.h>
 
-void PlayerActionJob::doAction()
+void PlayerActionJob::start()
 {
     kDebug() << "Trying to perform the action" << operationName();
     if (!m_player) {
