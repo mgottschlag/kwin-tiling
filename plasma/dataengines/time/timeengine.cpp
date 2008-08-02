@@ -23,7 +23,6 @@
 #include <QStringList>
 #include <QTime>
 
-#include <KDebug>
 #include <KLocale>
 #include <KSystemTimeZones>
 #include <KDateTime>
@@ -35,7 +34,7 @@
 #undef timezone
 #endif
 
-TimeEngine::TimeEngine(QObject* parent, const QVariantList& args)
+TimeEngine::TimeEngine(QObject *parent, const QVariantList &args)
     : Plasma::DataEngine(parent, args)
 {
     Q_UNUSED(args)
@@ -48,14 +47,11 @@ TimeEngine::TimeEngine(QObject* parent, const QVariantList& args)
 
 bool TimeEngine::sourceRequestEvent(const QString &name)
 {
-    //kDebug() << "TimeEngine::sourceRequested " << name;
     return updateSourceEvent(name);
 }
 
 bool TimeEngine::updateSourceEvent(const QString &tz)
 {
-    //kDebug() << "TimeEngine::updateTime()";
-
     QString timezone;
 
     static const QString localName = I18N_NOOP("Local");
@@ -85,5 +81,8 @@ bool TimeEngine::updateSourceEvent(const QString &tz)
 
     return true;
 }
+
+
+K_EXPORT_PLASMA_DATAENGINE(time, TimeEngine)
 
 #include "timeengine.moc"

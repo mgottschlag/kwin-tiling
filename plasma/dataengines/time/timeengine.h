@@ -34,13 +34,11 @@ class TimeEngine : public Plasma::DataEngine
     Q_OBJECT
 
     public:
-        TimeEngine(QObject* parent, const QVariantList& args);
+        TimeEngine(QObject *parent, const QVariantList &args);
 
     protected:
         bool sourceRequestEvent(const QString &name);
-        bool updateSourceEvent(const QString& source);
+        bool updateSourceEvent(const QString &source);
 };
 
-K_EXPORT_PLASMA_DATAENGINE(time, TimeEngine)
-
-#endif
+#endif // TIMEENGINE_H
