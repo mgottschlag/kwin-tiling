@@ -177,8 +177,16 @@ bool DesktopView::isDesktop() const
 
 void DesktopView::setContainment(Plasma::Containment *containment)
 {
-    if (containment == this->containment()) {
+    Plasma::Containment *oldContainment = this->containment();
+    if (containment == oldContainment) {
         return;
+    }
+
+    if (m_zoomLevel == Plasma::DesktopZoom) {
+        //make sure actions are up-to-date
+        //this is icky but necessary to have the toolbox show the right actions for the zoom level
+        containment->enableAction("zoom in", false);
+        containment->enableAction("add sibling containment", false);
     }
 
     if (m_dashboard && m_dashboardFollowsDesktop) {
@@ -187,11 +195,11 @@ void DesktopView::setContainment(Plasma::Containment *containment)
 
     if (m_zoomLevel == Plasma::DesktopZoom) {
         //switch connections
-        disconnect(this->containment(), 0, this, 0);
+        disconnect(oldContainment, 0, this, 0);
         connectContainment(containment);
         //make sure actions are up-to-date
-        containment->enableAction("zoom in", false);
-        containment->enableAction("add sibling containment", false);
+        oldContainment->enableAction("zoom in", true);
+        oldContainment->enableAction("add sibling containment", true);
     }
 
     View::setContainment(containment);
@@ -225,11 +233,6 @@ void DesktopView::zoom(Plasma::Containment *containment, Plasma::ZoomDirection d
 
 void DesktopView::zoomIn(Plasma::Containment *toContainment)
 {
-    kDebug();
-    if (containment()) {
-        containment()->enableAction("zoom out", true);
-    }
-
     if (toContainment && containment() != toContainment) {
         setContainment(toContainment);
     }
@@ -264,8 +267,18 @@ void DesktopView::zoomIn(Plasma::Containment *toContainment)
         setSceneRect(QRectF(0, 0, scene()->sceneRect().right(), scene()->sceneRect().bottom()));
 
         if (containment()) {
-            containment()->enableAction("zoom in", true);
-            containment()->enableAction("add sibling containment", true);
+            //make sure everyone can zoom out again
+            Plasma::Corona *corona = containment()->corona();
+            if (corona) {
+                QList<Plasma::Containment*> containments = corona->containments();
+                foreach (Plasma::Containment *c, containments) {
+                    if (c->containmentType() == Plasma::Containment::PanelContainment) {
+                        continue;
+                    }
+                    c->enableAction("zoom out", true);
+                }
+            }
+
             ensureVisible(containment()->sceneBoundingRect());
         }
     } else {
@@ -280,10 +293,9 @@ void DesktopView::zoomIn(Plasma::Containment *toContainment)
 
 void DesktopView::zoomOut(Plasma::Containment *fromContainment)
 {
-    fromContainment->enableAction("zoom in", true);
-    fromContainment->enableAction("add sibling containment", true);
     if (m_zoomLevel == Plasma::DesktopZoom) {
-        fromContainment->enableAction("zoom out", true);
+        fromContainment->enableAction("zoom in", true);
+        fromContainment->enableAction("add sibling containment", true);
         m_zoomLevel = Plasma::GroupZoom;
         //connect to other containments
         //FIXME if some other view is zoomed out, a little madness will ensue
@@ -299,7 +311,17 @@ void DesktopView::zoomOut(Plasma::Containment *fromContainment)
             }
         }
     } else if (m_zoomLevel == Plasma::GroupZoom) {
-        fromContainment->enableAction("zoom out", false);
+        //make sure nobody can zoom out
+        Plasma::Corona *corona = fromContainment->corona();
+        if (corona) {
+            QList<Plasma::Containment*> containments = corona->containments();
+            foreach (Plasma::Containment *c, containments) {
+                if (c->containmentType() == Plasma::Containment::PanelContainment) {
+                    continue;
+                }
+                c->enableAction("zoom out", false);
+            }
+        }
         m_zoomLevel = Plasma::OverviewZoom;
     } else {
         fromContainment->enableAction("zoom out", false);
