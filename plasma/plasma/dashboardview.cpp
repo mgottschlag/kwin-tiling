@@ -90,7 +90,7 @@ void DashboardView::paintEvent(QPaintEvent *event)
 
     // now draw a little label saying "this is your friendly neighbourhood dashboard"
     const QRect r = rect();
-    const QString text = i18n("Plasma Dashboard");
+    const QString text = i18n("Widget Dashboard");
     QFont f = font();
     f.bold();
     const QFontMetrics fm(f);
