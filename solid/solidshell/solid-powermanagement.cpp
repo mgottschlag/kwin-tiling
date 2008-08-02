@@ -146,7 +146,7 @@ std::ostream &operator<<(std::ostream &out, const Solid::Device &device)
 
 std::ostream &operator<<(std::ostream &out, const QMap<QString,QVariant> &properties)
 {
-    foreach (QString key, properties.keys())
+    foreach (const QString& key, properties.keys())
     {
         out << "  " << key << " = " << properties[key] << endl;
     }
@@ -385,7 +385,7 @@ bool SolidPowermanagement::powerQuerySchemes()
     QString current = Solid::Control::PowerManager::scheme();
     QStringList schemes = Solid::Control::PowerManager::supportedSchemes();
 
-    foreach (QString scheme, schemes)
+    foreach (const QString& scheme, schemes)
     {
         cout << scheme << " (" << Solid::Control::PowerManager::schemeDescription(scheme) << ")";
 
