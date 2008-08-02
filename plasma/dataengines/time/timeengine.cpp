@@ -1,5 +1,6 @@
 /*
  *   Copyright 2007 Aaron Seigo <aseigo@kde.org>
+ *   Copyright 2008 Alex Merry <alex.merry@kdemail.net>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -43,6 +44,13 @@ TimeEngine::TimeEngine(QObject *parent, const QVariantList &args)
     // To have translated timezone names
     // (effectively a noop if the catalog is already present).
     KGlobal::locale()->insertCatalog("timezones4");
+}
+
+QStringList TimeEngine::sources() const
+{
+    QStringList timezones(KSystemTimeZones::zones().keys());
+    timezones << "Local";
+    return timezones;
 }
 
 bool TimeEngine::sourceRequestEvent(const QString &name)
