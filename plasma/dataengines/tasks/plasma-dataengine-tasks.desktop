@@ -47,8 +47,19 @@ Name[wa]=Éndjin di dnêyes di manaedjmint des bouyes
 Name[x-test]=xxTask Management Data Enginexx
 Name[zh_CN]=任务管理数据引擎
 Name[zh_TW]=工作管理資料引擎
-X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=alarmclock
+
+X-KDE-ServiceTypes=Plasma/DataEngine
 X-KDE-Library=plasma_engine_tasks
 X-Plasma-EngineName=tasks
+
+X-KDE-PluginInfo-Author=Robert Knight
+X-KDE-PluginInfo-Email=robertknight@gmail.com
+X-KDE-PluginInfo-Name=tasks
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=Windows and Tasks
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=LGPL
+X-KDE-PluginInfo-EnabledByDefault=true
