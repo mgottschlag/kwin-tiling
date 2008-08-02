@@ -19,11 +19,6 @@
 #ifndef TASKSENGINE_H
 #define TASKSENGINE_H
 
-// Qt
-#include <QObject>
-#include <QString>
-#include <QList>
-
 // Plasma
 #include <plasma/dataengine.h>
 #include <taskmanager/taskmanager.h>
@@ -39,7 +34,7 @@ class TasksEngine : public Plasma::DataEngine
     Q_OBJECT
 
     public:
-        TasksEngine( QObject* parent, const QVariantList& args);
+        TasksEngine(QObject* parent, const QVariantList& args);
 
     protected:
         virtual void init();
@@ -57,6 +52,4 @@ class TasksEngine : public Plasma::DataEngine
         void setDataForStartup(StartupPtr task);
 };
 
-K_EXPORT_PLASMA_DATAENGINE(tasks, TasksEngine)
-
-#endif
+#endif // TASKSENGINE_H
