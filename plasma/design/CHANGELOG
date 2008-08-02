@@ -2,79 +2,88 @@ libplasma 2.1 / KDE 4.2
 =======================
 
 libplasma
-    * Features
-        * PopupApplet: Applet that switches between an icon with a popup and the popup on the desktop
-        * Symbol Versioning: limit loading of plugins to those that match the libplasma minimum rev#
-        * ToolTipManager: new Plasma style tooltips
-        * Applet: sizeHintChanged() signal. A containment can adjust its size based on changed sizehints of an applet
-        * Package system:
-            * PackageStructure supports arbitrary URIs (in addition to auto-discovery for package)
-              structure description files.
-        * Plasma::Theme
-            * Support compressed SVGs (*.svgz)
-        * Widgets
-            * NEW: Plasma::Slider based on QSlider
-            * NEW: Plasma::TabWidget
-            * NEW: Plasma::Extender and Plasma::ExtenderItem.
-            * NEW: Plasma::Frame used to visually group widgets
-            * Plasma::PushButton is svg-themed
-        * Panel SVG
-            * setting the margins via in-SVG hints
-            * paintPanel API additions to make it more like QPainter and Plasma::Svg
+---------
+* Features
+    * Symbol Versioning: limit loading of plugins to those that match the libplasma version
+    * New: ToolTipManager for Plasma style tooltips
+    * Applet
+        * sizeHintChanged() signal. A containment can adjust its size based on changed sizehints of an applet
+        * NEW: Plasma::Extender and Plasma::ExtenderItem, allowing visual, relocatable extensions to Applet
+        * NEW: PopupApplet, which switches between an icon with a popup and the popup on the desktop
+    * Corona
+        * addOffscreenWidget/removeOffscreenWidget: manageme canvas items that should not appear in a primary view (e.g. Extenders)
+    * Package system:
+        * PackageStructure supports arbitrary URIs (in addition to auto-discovery for package) structure description files.
+    * Plasma::Theme
+        * Support compressed SVGs (*.svgz)
+    * Widgets
+        * NEW: Plasma::Slider based on QSlider
+        * NEW: Plasma::TabWidget
+        * NEW: Plasma::Frame used to visually group widgets
+        * Plasma::PushButton is svg-themed
+    * Panel SVG
+        * setting the margins via in-SVG hints
+        * paintPanel API additions to make it more like QPainter and Plasma::Svg
 
-    * Significant Fixes
-        * WebContent painting update synchronization (fixes, among other things, scrolling)
-        * Prevent crash when Containment that AppletBrowser is associated with is deleted
-        * Applet handles work with all icon sizes (user system settings) 
-        * Fix View so that when a new activity is added, don't move more than necessary;
-          fixes dragging lock
+* Significant Fixes
+    * WebContent painting update synchronization (fixes, among other things, scrolling)
+    * Prevent crash when Containment that AppletBrowser is associated with is deleted
+    * Applet handles work with all icon sizes (user system settings) 
+    * Fix View so that when a new activity is added, don't move more than necessary;
+      fixes dragging lock
 
 Developer Documentation
-    * Design documentation
-        * NEW: tooltips
-        * NEW: wallpaper
+-----------------------
+* Design documentation
+    * NEW: tooltips
+    * NEW: wallpaper
+    * NEW: widgets
 
-    * Tutorials
+* Tutorials
 
 Desktop Theme
-    * NEW: widgets/button for theming pushbuttons
-    * NEW: widgets/frame for theming Plasma::Frame used also in other widgets
+-------------
+* NEW: widgets/button for theming pushbuttons
+* NEW: widgets/frame for theming Plasma::Frame used also in other widgets
 
 Plasma Desktop
-    * Features
-        * Panel resizes itself when an applet changes its sizehint according to its maximum and minimum sizes
+--------------
+* Features
+    * Panel resizes itself when an applet changes its sizehint according to its maximum and minimum sizes
 
-    * Significant Fixes
-        * Reposition toolbox when zooming out/in to avoid panel overlap
-        * MS Windows compile fixes
+* Significant Fixes
+    * Reposition toolbox when zooming out/in to avoid panel overlap
+    * MS Windows compile fixes
 
 Plugins/Addons
-    * Features
-        * Plasmoids
-            * NEW: Calendar
-            * NEW: Character selector
-            * Now Playing media player controls
-            * Notes
-                * Custom colors
-            * Digital clock
-                * Custom colors
-            * Folder view
-                * Filtering improvements: mimetype and exclusion based.
+--------------
+* Features
+    * Plasmoids
+        * NEW: Calendar
+        * NEW: Character selector
+        * Now Playing media player controls
+        * Notes
+            * Custom colors
+        * Digital clock
+        * Custom colors
+    * Folder view
+            * Filtering improvements: mimetype and exclusion based.
 
-        * DataEngines
-            * nowplaying Plasma::Service for controlling media players
-            * nowplaying supports MPRIS
+    * DataEngines
+        * nowplaying Plasma::Service for controlling media players
+        * nowplaying supports MPRIS
 
-    * Significant Fixes
-        * Various clocks ported to AppletClock for calendar and timezone consistency
-        * Kickoff menu size restoration
-        * MS Windows compile fixes
-        * Taskbar shows thumbnails of windows on hover (4.1 regression)
+* Significant Fixes
+    * Various clocks ported to AppletClock for calendar and timezone consistency
+    * Kickoff menu size restoration
+    * MS Windows compile fixes
+    * Taskbar shows thumbnails of windows on hover (4.1 regression)
 
 KRunner
-    * Features
-        * Plasma Screensaver: Plasma widget overlay for screensavers
+-------
+* Features
+    * Plasma Screensaver: Plasma widget overlay for screensavers
 
-    * Significant Fixes
-        * Screensaver activation fixed to compensate for system clock changes
+* Significant Fixes
+    * Screensaver activation fixed to compensate for system clock changes
 
