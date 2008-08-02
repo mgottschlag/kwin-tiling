@@ -16,6 +16,7 @@ libplasma
             * NEW: Plasma::Slider based on QSlider
             * NEW: Plasma::TabWidget
             * NEW: Plasma::Extender and Plasma::ExtenderItem.
+            * NEW: Plasma::Frame used to visually group widgets
             * Plasma::PushButton is svg-themed
         * Panel SVG
             * setting the margins via in-SVG hints
@@ -37,6 +38,7 @@ Developer Documentation
 
 Desktop Theme
     * NEW: widgets/button for theming pushbuttons
+    * NEW: widgets/frame for theming Plasma::Frame used also in other widgets
 
 Plasma Desktop
     * Features
