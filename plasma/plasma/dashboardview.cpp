@@ -159,12 +159,6 @@ void DashboardView::appletBrowserDestroyed()
 bool DashboardView::eventFilter(QObject *watched, QEvent *event)
 {
     if (watched != m_appletBrowser) {
-        if (event->type() == QEvent::MouseButtonPress) {
-            QMouseEvent *me = static_cast<QMouseEvent *>(event);
-            if (me->button() == Qt::LeftButton) {
-                hideView();
-            }
-        }
         return false;
     }
 
@@ -316,8 +310,7 @@ void DashboardView::keyPressEvent(QKeyEvent *event)
 
 void DashboardView::activeWindowChanged(WId id)
 {
-    if (id != winId() &&
-        (!m_appletBrowser || id != m_appletBrowser->winId())) {
+    if (id != winId() && (!m_appletBrowser || id != m_appletBrowser->winId()) && find(id) != 0) {
         hideView();
     }
 }
