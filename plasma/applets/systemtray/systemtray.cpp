@@ -176,6 +176,7 @@ void SystemTray::startupDelayer()
     m_startUpDelayShowTimer = 0;
     m_systemTrayWidget->setVisible(true);
     m_systemTrayWidget->init();
+    m_systemTrayWidget->raise();
 }
 
 #include "systemtray.moc"
