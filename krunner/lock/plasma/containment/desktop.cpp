@@ -95,6 +95,13 @@ void SaverDesktop::init()
         a->setText(i18n("Settings"));
         addToolBoxTool(a);
     }
+
+    //rearrange the toolboxtools
+    a = action("add widgets");
+    if (a) {
+        removeToolBoxTool(a);
+        addToolBoxTool(a);
+    }
 }
 
 void SaverDesktop::constraintsEvent(Plasma::Constraints constraints)
