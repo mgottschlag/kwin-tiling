@@ -936,15 +936,25 @@ static void fakeFocusIn( WId window )
     XSendEvent( QX11Info::display(), window, False, NoEventMask, &ev );
 }
 
+bool LockProcess::eventFilter(QObject *o, QEvent *e)
+{
+    if (e->type() == QEvent::Resize) {
+        QWidget *w = static_cast<QWidget *>(o);
+        mFrames.value(w)->resize(w->size());
+    }
+    return false;
+}
+
 int LockProcess::execDialog( QDialog *dlg )
 {
-    dlg->adjustSize();
-
     QFrame *winFrame = new QFrame( dlg );
     winFrame->setFrameStyle( QFrame::WinPanel | QFrame::Raised );
     winFrame->setLineWidth( 2 );
-    winFrame->resize( dlg->size() );
     winFrame->lower();
+    mFrames.insert(dlg, winFrame);
+    dlg->installEventFilter(this);
+
+    dlg->adjustSize();
 
     QRect rect = dlg->geometry();
     rect.moveCenter(KGlobalSettings::desktopGeometry(QCursor::pos()).center());
@@ -968,6 +978,10 @@ int LockProcess::execDialog( QDialog *dlg )
         resume( false );
     } else
         fakeFocusIn( mDialogs.first()->winId());
+
+    dlg->removeEventFilter(this);
+    mFrames.remove(dlg);
+
     return rt;
 }
 
