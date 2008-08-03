@@ -1,11 +1,14 @@
 find_program(TAR tar)
 # TODO abort if tar not found (or does not understand cjf?)
-
+if(NOT WIN32)
 find_program(INKSCAPE inkscape)
 # TODO abort if inkscape not found
 
 find_program(XCURSORGEN xcursorgen)
 # TODO abort if xcursorgen not found
+else(NOT WIN32)
+find_program(INKSCAPE inkscape "$ENV{PROGRAMFILES}/Inkscape" "$ENV{INKSCAPE_DIR}")
+endif(NOT WIN32)
 
 macro(set_dependencies cursor)
     file(READ ${CONFIGDIR}/${cursor}.in config_contents)

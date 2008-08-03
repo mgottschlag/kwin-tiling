@@ -26,12 +26,22 @@ macro(add_x_cursor theme cursor dpi)
                                                 -Ddpi=${dpi}
                                                 -P ${MAKE_CONFIG}
                       )
+    if(NOT WIN32)
     add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/oxy-${theme}/cursors/${cursor}
                        DEPENDS ${inputs} ${CMAKE_BINARY_DIR}/oxy-${theme}/config/${cursor}.in
                        COMMAND ${XCURSORGEN} -p ${CMAKE_BINARY_DIR}/oxy-${theme}/png
                                              ${CMAKE_BINARY_DIR}/oxy-${theme}/config/${cursor}.in
                                              ${CMAKE_BINARY_DIR}/oxy-${theme}/cursors/${cursor}
                       )
+    else(NOT WIN32)
+    add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/oxy-${theme}/cursors/${cursor}
+                       DEPENDS ${inputs} ${CMAKE_BINARY_DIR}/oxy-${theme}/config/${cursor}.in
+                       COMMAND "${CMAKE_SOURCE_DIR}/wincursor.py" ${CMAKE_BINARY_DIR}/oxy-${theme}/png
+                                             ${CMAKE_BINARY_DIR}/oxy-${theme}/config/${cursor}.in
+                                             ${CMAKE_BINARY_DIR}/wincursors/oxy-${theme}
+                                             ${CMAKE_BINARY_DIR}/oxy-${theme}/cursors/${cursor}
+                      )
+    endif(NOT WIN32)
 endmacro(add_x_cursor)
 
 file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/packages)
@@ -40,6 +50,9 @@ macro(add_theme color theme dpi)
     file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/oxy-${theme}/svg)
     file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/oxy-${theme}/config)
     file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/oxy-${theme}/cursors)
+    if(WIN32)
+    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/wincursors/oxy-${theme})
+    endif(WIN32)
     set(${theme}_cursors)
     foreach(svg ${SVGS})
         string(REGEX REPLACE ".*/" "" cursor ${svg})
