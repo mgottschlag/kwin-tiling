@@ -139,6 +139,11 @@ void SystemTray::updateWidgetGeometry()
     rf.setWidth(rf.width() + leftMargin + rightMargin);
     rf.setHeight(rf.height() + topMargin + bottomMargin);
 
+    bool hintChanged = false;
+    if (rf.size() != preferredSize()) {
+        hintChanged = true;
+    }
+
     if (formFactor() == Plasma::Vertical) {
         setMinimumHeight(rf.height());
         setMinimumWidth(22);
@@ -167,7 +172,10 @@ void SystemTray::updateWidgetGeometry()
     r.moveTop(r.top() + (r.height() - s.height()) / 2);
     r.setSize(s);
     m_systemTrayWidget->setGeometry(r);
-    emit sizeHintChanged(Qt::PreferredSize);
+
+    if (hintChanged) {
+        emit sizeHintChanged(Qt::PreferredSize);
+    }
 }
 
 void SystemTray::startupDelayer()
