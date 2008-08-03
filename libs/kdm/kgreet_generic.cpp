@@ -175,7 +175,7 @@ KGenericGreeter::textPrompt( const char *prompt, bool echo, bool /* nonBlocking 
 	m_echo = echo;
 	if (echo) {
 		m_lineEdit = new KLineEdit;
-		m_lineEdit->setContextMenuEnabled( false );
+		m_lineEdit->setContextMenuPolicy( Qt::NoContextMenu );
 		if (!exp) {
 			if (!m_users.isEmpty()) {
 				KCompletion *userNamesCompletion = new KCompletion;
