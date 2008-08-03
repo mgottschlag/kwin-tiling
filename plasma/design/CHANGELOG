@@ -4,21 +4,21 @@ libplasma 3.0 / KDE 4.2
 libplasma
 ---------
 * Features
-    * Symbol Versioning: limit loading of plugins to those that match the libplasma version
+* Symbol Versioning: limit loading of plugins to those that match the libplasma version
     * New: ToolTipManager for Plasma style tooltips
     * Applet
-        * sizeHintChanged() signal. A containment can adjust its size based on changed sizehints of an applet
+        * sizeHintChanged() signal. A containment (such as a panel) can adjust its size based on changed sizehints of an applet
         * NEW: Plasma::Extender and Plasma::ExtenderItem, allowing visual, relocatable extensions to Applet
-        * NEW: PopupApplet, which switches between an icon with a popup and the popup on the desktop
+        * NEW: PopupApplet, which switches between an icon with a popup in a Horizontal/Vertical containment (such as a panel) and the widget directly on the canvas in a Planer containment (such as a desktop)
     * Corona
-        * addOffscreenWidget/removeOffscreenWidget: manageme canvas items that should not appear in a primary view (e.g. Extenders)
+        * addOffscreenWidget/removeOffscreenWidget: manage canvas items that should not appear in a primary view (e.g. Extenders)
     * Package system:
         * PackageStructure supports arbitrary URIs (in addition to auto-discovery for package) structure description files.
     * Plasma::Theme
         * Support compressed SVGs (*.svgz)
     * Widgets
         * NEW: Plasma::Slider based on QSlider
-        * NEW: Plasma::TabWidget
+        * NEW: Plasma::TabWidget (usable with both QWidget and QGraphicsItems)
         * NEW: Plasma::Frame used to visually group widgets
         * Plasma::PushButton is svg-themed
     * Panel SVG
