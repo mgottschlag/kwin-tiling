@@ -133,7 +133,8 @@ private Q_SLOTS:
     void dataChanged(const QModelIndex& topLeft,const QModelIndex& bottomRight);
     // the model did reset itself and all items are invalid
     void modelReset();
-
+    // called shortly before the menu will be shown to the user
+    void aboutToShow();
     // performs on-demand filling of sub-menus in the tree
     void fillSubMenu();
 
