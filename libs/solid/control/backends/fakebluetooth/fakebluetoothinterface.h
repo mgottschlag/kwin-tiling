@@ -134,6 +134,7 @@ public:
     }
     bool isTrusted(const QString& mac)
     {
+	Q_UNUSED(mac)
 	return true;
     }
 
