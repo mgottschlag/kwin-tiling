@@ -728,8 +728,8 @@ void BackgroundDialog::getNewThemes()
         KNS::Entry::List entries = engine.downloadDialogModal(this);
 
         if (entries.size() > 0) {
-            // FIXME: do something to reload the list of themes
             m_themeModel->reload();
+            m_theme->setCurrentIndex(m_themeModel->indexOf(Plasma::Theme::defaultTheme()->themeName()));
         }
     }
 }
