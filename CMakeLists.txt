@@ -8,6 +8,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/mod
 find_package(KDE4 REQUIRED)
 find_package(Strigi REQUIRED)
 find_package(QImageBlitz REQUIRED)
+find_package(ZLIB REQUIRED)
 
 macro_optional_find_package(USB)
 macro_optional_find_package(Fontconfig)
