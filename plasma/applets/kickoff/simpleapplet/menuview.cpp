@@ -130,6 +130,7 @@ void MenuView::updateAction(QAction *action,const QModelIndex& index)
                 action->setText(text);
             } break;
             case NameDescription: // fall through
+            case NameDashDescription: // fall through
             case DescriptionName: {
                 if (!name.isEmpty()) { // seems we have a program, but some of them don't define a name at all
                     if (text.contains(name,Qt::CaseInsensitive)) { // sometimes the description contains also the name
@@ -139,6 +140,8 @@ void MenuView::updateAction(QAction *action,const QModelIndex& index)
                     } else { // seems we have a perfect desktop-file (likely a KDE one, heh) and name+description are clear separated
                         if (d->formattype == NameDescription) {
                             action->setText(QString("%1 %2").arg(name).arg(text));
+                        } else if (d->formattype == NameDashDescription) {
+                            action->setText(QString("%1 - %2").arg(name).arg(text));
                         } else {
                             action->setText(QString("%1 (%2)").arg(text).arg(name));
                         }

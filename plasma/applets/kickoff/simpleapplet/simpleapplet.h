@@ -56,7 +56,8 @@ class MenuLauncherApplet : public Plasma::Applet
             Name = 0, ///< Name only
             Description, ///< Description only
             NameDescription, ///< Name Description
-            DescriptionName ///< Description (Name)
+            DescriptionName, ///< Description (Name)
+            NameDashDescription ///< Name - Description
         };
 
         /**
