@@ -227,11 +227,20 @@ void MenuView::setModel(QAbstractItemModel *model)
     clear();
     if (d->model) {
         d->buildBranch(this,QModelIndex());
-        connect(d->model, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)), this, SLOT(rowsAboutToBeInserted(QModelIndex,int,int)));
-        connect(d->model, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int)));
-        connect(d->model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
-        connect(d->model, SIGNAL(modelReset()), this, SLOT(modelReset()));
+        connect(this, SIGNAL(aboutToShow()), this, SLOT(aboutToShow()));
     }
+}
+
+void MenuView::aboutToShow()
+{
+    // not needed to be called more then once
+    disconnect(this, SIGNAL(aboutToShow()), this, SLOT(aboutToShow()));
+    // we need to delay reaction to following signals till all the setup-work is done else
+    // it may the case we got called to early at a time where the models data is incomplete.
+    connect(d->model, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)), this, SLOT(rowsAboutToBeInserted(QModelIndex,int,int)));
+    connect(d->model, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int)));
+    connect(d->model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
+    connect(d->model, SIGNAL(modelReset()), this, SLOT(modelReset()));
 }
 
 QAbstractItemModel *MenuView::model() const
