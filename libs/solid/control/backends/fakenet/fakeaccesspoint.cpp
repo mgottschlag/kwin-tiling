@@ -76,7 +76,7 @@ Solid::Control::AccessPoint::WpaFlags FakeAccessPoint::rsnFlags() const
 
 Solid::Control::AccessPoint::WpaFlags FakeAccessPoint::wpaPropsToFlags( const QString & property ) const
 {
-    QStringList capStrings = mPropertyMap["wpaflags"].toStringList();
+    QStringList capStrings = mPropertyMap[property].toStringList();
 
     Solid::Control::AccessPoint::WpaFlags caps = 0;
     if (capStrings.contains("pairwep40"))
