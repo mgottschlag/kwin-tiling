@@ -191,7 +191,7 @@ void PlasmaHost::AdjustAppletSize() {
     if (w > d->constraint_width_) w = d->constraint_width_;
     if (h > d->constraint_height_) h = d->constraint_height_;
     d->info->applet->resize(w, h);
-    kDebug() << "applet size:" << d->info->applet->size();
+    //kDebug() << "applet size:" << d->info->applet->size();
   }
 }
 
