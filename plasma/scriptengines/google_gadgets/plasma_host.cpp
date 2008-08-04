@@ -25,7 +25,9 @@
 #include <ggadget/decorated_view_host.h>
 #include <ggadget/permissions.h>
 #include <ggadget/qt/utilities.h>
+#include <ggadget/gadget.h>
 
+#include <plasma/applet.h>
 #include "plasma_view_host.h"
 #include "plasma_host.h"
 

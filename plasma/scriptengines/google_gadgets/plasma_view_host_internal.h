@@ -17,6 +17,7 @@
 #ifndef HOSTS_PLASMA_VIEW_HOST_INTERNAL_H__
 #define HOSTS_PLASMA_VIEW_HOST_INTERNAL_H__
 #include <plasma/dialog.h>
+#include <plasma/applet.h>
 #include <ggadget/qt/qt_menu.h>
 #include <ggadget/view_interface.h>
 #include <QDialogButtonBox>
