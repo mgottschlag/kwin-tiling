@@ -110,11 +110,9 @@ PlasmaApp* PlasmaApp::self()
 {
     if (!kapp) {
         checkComposite();
-        //kDebug() << "new PlasmaApp";
         return new PlasmaApp(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
     }
 
-    //kDebug() << "existing PlasmaApp";
     return qobject_cast<PlasmaApp*>(kapp);
 }
 
@@ -123,7 +121,7 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
       m_corona(0),
       m_view(0)
 {
-    //FIXME what's this?
+    //load translations for libplasma
     KGlobal::locale()->insertCatalog("libplasma");
 
     new PlasmaAppAdaptor(this);
@@ -380,7 +378,6 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         //TODO quit button...
         kDebug() << "cheats enabled";
         KAction *showAction = new KAction(this);
-        showAction->setText(i18n("Show plasma-overlay"));
         showAction->setObjectName("Show plasma-overlay"); // NO I18N
         showAction->setGlobalShortcut(KShortcut(Qt::CTRL + Qt::Key_F11));
         connect(showAction, SIGNAL(triggered()), m_view, SLOT(showView()));
@@ -427,7 +424,7 @@ bool PlasmaApp::eventFilter(QObject *obj, QEvent *event)
             Qt::WindowFlags oldFlags = widget->windowFlags();
             Qt::WindowFlags newFlags = oldFlags | Qt::X11BypassWindowManagerHint;
             if (oldFlags != newFlags) {
-                kDebug() << "!!!!!!!setting flags on!!!!!" << widget;
+                //kDebug() << "!!!!!!!setting flags on!!!!!" << widget;
                 m_dialogs.append(widget);
                 connect(widget, SIGNAL(destroyed(QObject*)), SLOT(dialogDestroyed(QObject*)));
                 widget->setWindowFlags(newFlags);
