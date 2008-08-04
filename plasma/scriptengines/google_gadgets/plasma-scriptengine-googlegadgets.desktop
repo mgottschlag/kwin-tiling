@@ -1,11 +1,6 @@
 [Desktop Entry]
 Name=GoogleGadgets
-Name[tr]=Google Araçları
-Name[zh_TW]=Google 小玩意
 Comment=Google Desktop Gadgets
-Comment[tr]=Google Masaüstü Araçları
-Comment[uk]=Стільничні ґаджети Google
-Comment[zh_TW]=Google 桌面小玩意
 X-KDE-ServiceTypes=Plasma/ScriptEngine
 Type=Service
 Icon=google-gadgets
