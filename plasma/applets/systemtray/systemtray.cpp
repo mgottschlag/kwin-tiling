@@ -39,6 +39,10 @@ SystemTray::SystemTray(QObject *parent, const QVariantList &arguments)
 {
     m_background = new Plasma::PanelSvg(this);
     m_background->setImagePath("widgets/systemtray");
+}
+
+void SystemTray::init()
+{
     connect(this, SIGNAL(geometryChanged()), this, SLOT(updateWidgetGeometry()));
 }
 
@@ -184,7 +188,6 @@ void SystemTray::startupDelayer()
     m_startUpDelayShowTimer = 0;
     m_systemTrayWidget->setVisible(true);
     m_systemTrayWidget->init();
-    m_systemTrayWidget->raise();
 }
 
 #include "systemtray.moc"

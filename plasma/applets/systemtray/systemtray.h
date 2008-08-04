@@ -47,6 +47,8 @@ public:
     explicit SystemTray(QObject *parent, const QVariantList &arguments = QVariantList());
     ~SystemTray();
 
+    void init();
+
     void constraintsEvent(Plasma::Constraints constraints);
     void paintInterface(QPainter *painter,
                         const QStyleOptionGraphicsItem *option,
