@@ -180,9 +180,9 @@ void Panel::updateSize()
 
     if (applet) {
         if (formFactor() == Plasma::Horizontal) {
-            setPreferredSize(geometry().width() + applet->preferredSize().width() - applet->size().width(), geometry().height());
+            setPreferredWidth(preferredWidth() + applet->preferredWidth() - applet->size().width());
         } else if (formFactor() == Plasma::Vertical) {
-            setPreferredSize(geometry().width(), geometry().height() + applet->preferredSize().height() - applet->size().height());
+            setPreferredHeight(preferredHeight() + applet->preferredHeight() - applet->size().height());
         }
 
         resize(preferredSize());
