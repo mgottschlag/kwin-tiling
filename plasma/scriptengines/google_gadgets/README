@@ -1,0 +1,28 @@
+Build:
+
+To build this package, you need to install the HEAD version of
+google-gadgets-for-linux(GGL).
+
+Please visit http://code.google.com/p/google-gadgets-for-linux/ for more
+information about GGL.
+
+To get the lastest version of GGL, please check out the code from svn:
+
+svn checkout http://google-gadgets-for-linux.googlecode.com/svn/trunk/ google-gadgets-for-linux-read-only
+
+and after to generate Makefile (cmake support is not finished yet) 
+sh autotools/bootstrap.sh
+
+Usage:
+
+To install Google gadgets into plasma, run:
+  ggl-qt -p
+or
+  ggl-qt --plasma
+
+Then add gadgets through Google Gadgets Browser as usual. The added gadgets
+will not show up but be installed into plasma as a plasma applet.
+
+TODO:
+
+1. Make gadgets looks better, and behavior better in plasma. (Code change needed in GGL)
