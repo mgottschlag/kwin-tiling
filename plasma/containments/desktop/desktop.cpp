@@ -20,6 +20,8 @@
 
 #include "desktop.h"
 
+#include <limits>
+
 #include <QAction>
 #include <QApplication>
 #include <QDesktopWidget>
@@ -74,6 +76,8 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
             this, SLOT(updateBackground(int, QImage)));
     connect(&m_slideshowTimer, SIGNAL(timeout()),
             this, SLOT(nextSlide()));
+    connect(this, SIGNAL(appletAdded(Plasma::Applet *, const QPointF &)),
+            this, SLOT(onAppletAdded(Plasma::Applet *, const QPointF &)));
 
     //kDebug() << "!!! loading desktop";
 }
@@ -431,6 +435,405 @@ void DefaultDesktop::paintInterface(QPainter *painter,
     // restore transformation and composition mode
     painter->restore();
 }
+
+void DefaultDesktop::onAppletAdded(Plasma::Applet *applet, const QPointF &pos)
+{
+    if (pos == QPointF(-1, -1)) {
+        QPointF newpos = positionVertically(applet, Top, Left, APPLET_SPACING, APPLET_SPACING, APPLET_SPACING, APPLET_SPACING);
+        if (newpos != QPointF(-1,-1)) {
+            applet->setPos(newpos);
+        }
+    }
+}
+
+QPointF DefaultDesktop::positionHorizontally(Applet *applet, VertAlign yAlign, HorizAlign xAlign, qreal spL, qreal spR, qreal spT, qreal spB) const
+{
+    QPointF final = QPointF(-1,-1);
+
+    QRectF screenGeom = geometry();
+    if (screen() != -1) {
+        // we are associated with a screen, make sure not to overlap panels
+        QDesktopWidget *desktop = qApp->desktop();
+        screenGeom = desktop->availableGeometry(screen());
+    }
+
+    /* space needed for the applet - spacing added */
+    QSizeF size = QSizeF(applet->geometry().width()+spL+spR, applet->geometry().height()+spT+spB);
+
+    /* The algorithm works by placing a rectangle of needed size (above) somewhere
+       on the screen and checking for obstacles. x and y hold the top-left
+       coordinates of the rectangle being tested.
+       Start with the rectangle in the requested corner of the screen. */
+    qreal x = 0;
+    qreal y = 0;
+    if (xAlign == Right) {
+        x = screenGeom.width()-size.width();
+    }
+
+    if (yAlign == Bottom) {
+        y = screenGeom.height()-size.height();
+    }
+
+    while (1) {
+        bool outOfX, outOfY;
+
+        /* Place items horizontally - first try positions at the same height.
+           Once there are no more positions at the same height to try, try positions
+           on a different height.
+
+           If aligning left, X starts at 0 and increases as we try
+           positions more right. We must skip to a new Y once the
+           remaining X-space is less than the needed width (X + applet width > screen width).
+
+           If aligining right, X starts with the x coordinate of the top-left point
+           of the most-right rectangle and decreases as we try positions more left.
+           Skip to a new Y when there is no more space on the left (X<0). */
+
+        if (xAlign == Left) {
+            outOfX = (x + size.width() > screenGeom.width());
+        } else {
+            outOfX = (x < 0);
+        }
+
+        /* Every time we run out of X space, we try positions at a new hight.
+
+           If aligning to top, Y starts at 0 and increases as lower positions are tried.
+           If aligning to bottom, Y starts at the y coordinate of a most-bottom rectangle
+           and decreases as higher positions are tried.
+           If there is no more Y space, all possible positions have been tried,
+           and there is no place for the applet.
+        */
+
+        if (yAlign == Bottom) {
+            outOfY = (y < 0);
+        } else {
+            outOfY = (y + size.height() > screenGeom.height());
+        }
+
+        if (outOfY) {
+            break;
+        }
+
+        if (outOfX) {
+            /* Jumping to the next height
+
+               Take a rectangle ("strap") that expands horizontally over the whole screen,
+               and vertically starts and ends with the same lines as the previously
+               tested rectangles.
+
+               The next height at which the applet could possibly be placed is obtained as follows:
+               - if aligning to top, find the obstacle intersecting the strap that vertically
+                 ends at the highest position, and take the height where it ends,
+               - if aligning to bottom, find the obstacle intersecting the strap that vertically
+                 starts at the lowest position, and take the height where is starts.
+            */
+
+            QRectF a;
+            if (yAlign == Top) {
+                a = appletInRegionEndingFirstVert(applet, QRectF(0, y, screenGeom.width(), size.height()));
+            } else {
+                a = appletInRegionStartingLastVert(applet, QRectF(0, y, screenGeom.width(), size.height()));
+            }
+
+            /* If there were no obstacles, the whole screen is too narrow */
+            if (!a.isValid()) {
+                break;
+            }
+
+            /* Jump to the new height */
+            if (yAlign == Top) {
+                y = a.y() + a.height();
+            } else {
+                y = a.y() - size.height();
+            }
+
+            /* Set the starting X position for the new height */
+            if (xAlign == Left) {
+                x = 0;
+            } else {
+                x = screenGeom.width()-size.width();
+            }
+        } else {
+            /* Check for obstacles in out rectangle and possibly try the next position
+               on this height.
+               If there are obstacles, the next X position
+               where the applet could possibly be placed is
+               obtained by:
+               - if aligning to left, find the obstacle intersecting with our rectangle that
+                 horizontally ends the farthest on the right
+               - if aligining to right, find the obstacle intersecting with our rectangle
+                 that horizontally starts the farthest on the left */
+
+            QRectF a;
+            if (xAlign == Left) {
+                a = appletInRegionEndingLastHoriz(applet, QRectF(x, y, size.width(), size.height()));
+            } else {
+                a = appletInRegionStartingFirstHoriz(applet, QRectF(x, y, size.width(), size.height()));
+            }
+
+            /* no obstacle, place the applet! */
+            if (!a.isValid()) {
+                final = QPointF(x+spL, y+spT);
+                break;
+            }
+
+            /* try next position */
+            if (xAlign == Left) {
+                x = a.x() + a.width();
+            } else {
+                x = a.x() - size.width();
+            }
+        }
+    }
+    return final;
+}
+
+/* Instead of placing horizontally, place vertically.
+   So, try different heights and possibly jump to the next X */
+QPointF DefaultDesktop::positionVertically(Applet *applet, VertAlign yAlign, HorizAlign xAlign, qreal spL, qreal spR, qreal spT, qreal spB) const
+{
+    /* all the same here */
+
+    QRectF screenGeom = geometry();
+    if (screen() != -1) {
+        QDesktopWidget *desktop = qApp->desktop();
+        screenGeom = desktop->availableGeometry(screen());
+    }
+
+    QPointF final = QPointF(-1,-1);
+
+    QSizeF size = QSizeF(applet->geometry().width()+spL+spR, applet->geometry().height()+spT+spB);
+
+    qreal x = 0;
+    qreal y = 0;
+    if (xAlign == Right)  x = screenGeom.width()-size.width();
+    if (yAlign == Bottom) y = screenGeom.height()-size.height();
+
+    while (1) {
+        kDebug() << "----- TRY" << x << y;
+        bool outOfX, outOfY;
+
+        /* These are unchanged */
+
+        if (xAlign == Left) {
+            outOfX = (x + size.width() > screenGeom.width());
+        } else {
+            outOfX = (x < 0);
+        }
+
+        if (yAlign == Bottom) {
+            outOfY = (y < 0);
+        } else {
+            outOfY = (y + size.height() > screenGeom.height());
+        }
+
+        /* instead of stopping when all heights have been tried
+           stop when all X positions have been tried */
+        if (outOfX) {
+            break;
+        }
+
+        if (outOfY) {
+            /* Jumping to the next X position
+               Take a vertical strap. */
+
+            QRectF a;
+            if (xAlign == Left) {
+                a = appletInRegionEndingFirstHoriz(applet, QRectF(x, 0, size.width(), screenGeom.height()));
+            } else {
+                a = appletInRegionStartingLastHoriz(applet, QRectF(x, 0, size.width(), screenGeom.height()));
+            }
+
+            /* Screen is not high enough */
+            if (!a.isValid()) {
+                break;
+            }
+
+            /* Jump to the new X */
+            if (xAlign == Left) {
+                x = a.x() + a.width();
+            } else {
+                x = a.x() - size.width();
+            }
+
+            /* Set the starting height position for the new X */
+            if (yAlign == Top) {
+                y = 0;
+            } else {
+                y = screenGeom.height()-size.height();
+            }
+        } else {
+            /* Instead look for obstacles vertically */
+
+            QRectF a;
+            if (yAlign == Top) {
+                a = appletInRegionEndingLastVert(applet, QRectF(x, y, size.width(), size.height()));
+            } else {
+                a = appletInRegionStartingFirstVert(applet, QRectF(x, y, size.width(), size.height()));
+            }
+
+            /* no obstacle, place the applet! */
+            if (!a.isValid()) {
+                final = QPointF(x+spL, y+spT);
+                break;
+            }
+
+            /* try next position */
+            if (yAlign == Top) {
+                y = a.y() + a.height();
+            } else {
+                y = a.y() - size.height();
+            }
+        }
+    }
+    return final;
+}
+
+QRectF DefaultDesktop::appletInRegionStartingFirstHoriz(Plasma::Applet *target, const QRectF &region) const
+{
+    QRectF ret = QRectF(0,0,-1,-1);
+    qreal l = std::numeric_limits<qreal>::max();
+    foreach (Applet *applet, applets()) {
+        if (applet == target) {
+            continue;
+        }
+
+        qreal cl = applet->geometry().x();
+        if (applet->geometry().intersects(region) && cl < l) {
+            ret = applet->geometry();
+            l = cl;
+        }
+    }
+    return ret;
+}
+
+QRectF DefaultDesktop::appletInRegionEndingLastHoriz(Plasma::Applet *target, const QRectF &region) const
+{
+    QRectF ret = QRectF(0,0,-1,-1);
+    qreal l = -1;
+    foreach (Applet *applet, applets()) {
+        if (applet == target) {
+            continue;
+        }
+
+        qreal cl = applet->geometry().x()+applet->geometry().width();
+        if (applet->geometry().intersects(region) && cl > l) {
+            ret = applet->geometry();
+            l = cl;
+        }
+    }
+    return ret;
+}
+
+QRectF DefaultDesktop::appletInRegionEndingFirstVert(Plasma::Applet *target, const QRectF &region) const
+{
+    QRectF ret = QRectF(0,0,-1,-1);
+    qreal l = std::numeric_limits<qreal>::max();
+    foreach (Applet *applet, applets()) {
+        if (applet == target) {
+            continue;
+        }
+
+        qreal cl = applet->geometry().y()+applet->geometry().height();
+        if (applet->geometry().intersects(region) && cl < l) {
+            ret = applet->geometry();
+            l = cl;
+        }
+    }
+    return ret;
+}
+
+QRectF DefaultDesktop::appletInRegionStartingLastVert(Plasma::Applet *target, const QRectF &region) const
+{
+    QRectF ret = QRectF(0,0,-1,-1);
+    qreal l = -1;
+    foreach (Applet *applet, applets()) {
+        if (applet == target) {
+            continue;
+        }
+
+        qreal cl = applet->geometry().y();
+        if (applet->geometry().intersects(region) && cl > l) {
+            ret = applet->geometry();
+            l = cl;
+        }
+    }
+    return ret;
+}
+
+
+QRectF DefaultDesktop::appletInRegionStartingFirstVert(Plasma::Applet *target, const QRectF &region) const
+{
+    QRectF ret = QRectF(0,0,-1,-1);
+    qreal l = std::numeric_limits<qreal>::max();
+    foreach (Applet *applet, applets()) {
+        if (applet == target) {
+            continue;
+        }
+
+        qreal cl = applet->geometry().y();
+        if (applet->geometry().intersects(region) && cl < l) {
+            ret = applet->geometry();
+            l = cl;
+        }
+    }
+    return ret;
+}
+
+QRectF DefaultDesktop::appletInRegionEndingLastVert(Plasma::Applet *target, const QRectF &region) const
+{
+    QRectF ret = QRectF(0,0,-1,-1);
+    qreal l = -1;
+    foreach (Applet *applet, applets()) {
+        if (applet == target) {
+            continue;
+        }
+
+        qreal cl = applet->geometry().y()+applet->geometry().height();
+        if (applet->geometry().intersects(region) && cl > l) {
+            ret = applet->geometry();
+            l = cl;
+        }
+    }
+    return ret;
+}
+
+QRectF DefaultDesktop::appletInRegionEndingFirstHoriz(Plasma::Applet *target, const QRectF &region) const
+{
+    QRectF ret = QRectF(0,0,-1,-1);
+    qreal l = std::numeric_limits<qreal>::max();
+    foreach (Applet *applet, applets()) {
+        if (applet == target) {
+            continue;
+        }
+
+        qreal cl = applet->geometry().x()+applet->geometry().width();
+        if (applet->geometry().intersects(region) && cl < l) {
+            ret = applet->geometry();
+            l = cl;
+        }
+    }
+    return ret;
+}
+
+QRectF DefaultDesktop::appletInRegionStartingLastHoriz(Plasma::Applet *target, const QRectF &region) const
+{
+    QRectF ret = QRectF(0,0,-1,-1);
+    qreal l = -1;
+    foreach (Applet *applet, applets()) {
+        if (applet == target) {
+            continue;
+        }
+
+        qreal cl = applet->geometry().x();
+        if (applet->geometry().intersects(region) && cl > l) {
+            ret = applet->geometry();
+            l = cl;
+        }
+    }
+    return ret;
+}
+
 
 K_EXPORT_PLASMA_APPLET(desktop, DefaultDesktop)
 
