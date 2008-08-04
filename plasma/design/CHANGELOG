@@ -18,7 +18,7 @@ libplasma
         * Support compressed SVGs (*.svgz)
     * Widgets
         * NEW: Plasma::Slider based on QSlider
-        * NEW: Plasma::TabWidget (usable with both QWidget and QGraphicsItems)
+        * NEW: Plasma::TabBar (usable with both QWidget and QGraphicsItems)
         * NEW: Plasma::Frame used to visually group widgets
         * Plasma::PushButton is svg-themed
     * Panel SVG
@@ -46,10 +46,11 @@ Desktop Theme
 * NEW: widgets/button for theming pushbuttons
 * NEW: widgets/frame for theming Plasma::Frame used also in other widgets
 
-Plasma Desktop
---------------
+Plasma Desktop Shell
+--------------------
 * Features
-    * Panel resizes itself when an applet changes its sizehint according to its maximum and minimum sizes
+    * Panel
+        * resizes itself when an applet changes its sizehint according to its maximum and minimum sizes
 
 * Significant Fixes
     * Reposition toolbox when zooming out/in to avoid panel overlap
@@ -72,6 +73,9 @@ Plugins/Addons
     * DataEngines
         * nowplaying Plasma::Service for controlling media players
         * nowplaying supports MPRIS
+
+    * ScriptEngines
+        * GoogleGadgets support
 
 * Significant Fixes
     * Various clocks ported to AppletClock for calendar and timezone consistency
