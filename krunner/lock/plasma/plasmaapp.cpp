@@ -510,6 +510,9 @@ void PlasmaApp::lock()
 {
     if (corona() && corona()->immutability() == Plasma::Mutable) {
         hideDialogs();
+        if (m_view) {
+            m_view->disableSetupMode();
+        }
         corona()->setImmutability(Plasma::UserImmutable);
     }
 }
