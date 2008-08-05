@@ -265,11 +265,11 @@ KScreenSaver::KScreenSaver(QWidget *parent, const QVariantList&)
     advancedLayout->addWidget( advancedBt );
     advancedLayout->addWidget( new QWidget( this ) );
 
-    QGroupBox *plasmaGroup = new QGroupBox(i18n("Plasma"), this);
+    QGroupBox *plasmaGroup = new QGroupBox(i18n("Desktop Widgets"), this);
     groupLayout = new QVBoxLayout(plasmaGroup);
     rightColumnLayout->addWidget(plasmaGroup);
 
-    mPlasmaCheckBox = new QCheckBox(i18n("Enable Plasma Widgets"), plasmaGroup);
+    mPlasmaCheckBox = new QCheckBox(i18n("Allow widgets on screen saver"), plasmaGroup);
     mPlasmaCheckBox->setChecked(mPlasmaEnabled);
     mPlasmaCheckBox->setWhatsThis(i18n("Add widgets to your screensaver"));
     connect(mPlasmaCheckBox, SIGNAL(toggled(bool)), this, SLOT(slotEnablePlasma(bool)));
