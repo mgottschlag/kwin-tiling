@@ -20,7 +20,7 @@
 #ifndef COLOR_HEADER
 #define COLOR_HEADER
 
-#include <Plasma/Wallpaper>
+#include <plasma/wallpaper.h>
 
 class Color : public Plasma::Wallpaper
 {
