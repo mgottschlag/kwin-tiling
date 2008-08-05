@@ -66,6 +66,7 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::Applet
         void setCurrentTimezone(const QString &tz);
         void showCalendar(QGraphicsSceneMouseEvent *event);
         void configAccepted();
+        void adjustView();
 
     private:
         void updateToolTipContent();

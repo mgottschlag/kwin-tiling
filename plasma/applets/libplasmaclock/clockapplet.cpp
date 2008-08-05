@@ -55,12 +55,14 @@ public:
     Private()
         : calendarDialog(0),
           calendar(0),
+          view(0),
           timezone("Local")
     {}
 
     Ui::timezonesConfig ui;
     Plasma::Dialog *calendarDialog;
     KDatePicker *calendar;
+    QGraphicsView *view;
     QString timezone;
     QPoint clicked;
     QStringList m_timeZones;
@@ -120,7 +122,7 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
 
 void ClockApplet::createClockConfigurationInterface(KConfigDialog *parent)
 {
-
+    Q_UNUSED(parent)
 }
 
 void ClockApplet::clockConfigAccepted()
@@ -151,6 +153,14 @@ void ClockApplet::configAccepted()
     constraintsEvent(Plasma::SizeConstraint);
     update();
     emit configNeedsSaving();
+}
+
+void ClockApplet::adjustView()
+{
+    if (d->view && extender()) {
+        d->view->setSceneRect(extender()->mapToScene(extender()->boundingRect()).boundingRect());
+        d->view->resize(extender()->size().toSize());
+    }
 }
 
 void ClockApplet::changeEngineTimezone(const QString &oldTimezone, const QString &newTimezone)
@@ -189,8 +199,8 @@ void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
 
 void ClockApplet::init()
 {
-    new Plasma::Extender(this);
-    containment()->corona()->addOffscreenWidget(extender());
+    Plasma::Extender *extender = new Plasma::Extender(this);
+    containment()->corona()->addOffscreenWidget(extender);
 }
 
 void ClockApplet::showCalendar(QGraphicsSceneMouseEvent *event)
@@ -213,15 +223,15 @@ void ClockApplet::showCalendar(QGraphicsSceneMouseEvent *event)
         QVBoxLayout *lay = new QVBoxLayout(d->calendarDialog);
         lay->setMargin(0);
         lay->setSpacing(0);
-        QGraphicsView *view = new QGraphicsView(d->calendarDialog);
-        lay->addWidget(view);
+        d->view = new QGraphicsView(d->calendarDialog);
+        lay->addWidget(d->view);
 
-        view->setScene(scene());
-        view->setSceneRect(extender()->mapToScene(extender()->geometry()).boundingRect());
-        view->resize(extender()->size().toSize());
+        d->view->setScene(scene());
+        adjustView();
 
         d->calendarDialog->setWindowFlags(Qt::Popup);
         d->calendarDialog->adjustSize();
+        connect(extender(), SIGNAL(geometryChanged()), this, SLOT(adjustView()));
     }
 
     if (d->calendarDialog->isVisible()) {
