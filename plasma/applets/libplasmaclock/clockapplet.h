@@ -46,6 +46,8 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::Applet
         ClockApplet(QObject *parent, const QVariantList &args);
         ~ClockApplet();
 
+        void init();
+
         QString currentTimezone() const;
         bool isLocalTimezone() const;
 
@@ -58,6 +60,7 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::Applet
         virtual void createClockConfigurationInterface(KConfigDialog *parent);
         virtual void clockConfigAccepted();
         virtual void changeEngineTimezone(const QString &oldTimezone, const QString &newTimezone);
+        void initExtenderItem(Plasma::ExtenderItem *item);
 
     protected Q_SLOTS:
         void setCurrentTimezone(const QString &tz);

@@ -26,8 +26,9 @@
 #include <QtGui/QStyleOptionGraphicsItem>
 #include <QtGui/QSpinBox>
 #include <QtCore/QTimeLine>
-#include <QtGui/QGraphicsView>
+#include <QtGui/QGraphicsProxyWidget>
 #include <QtGui/QGraphicsSceneMouseEvent>
+#include <QtGui/QGraphicsView>
 #include <QtCore/QDate>
 
 #include <KColorScheme>
@@ -38,8 +39,12 @@
 #include <KDialog>
 #include <KGlobalSettings>
 
+#include <plasma/containment.h>
+#include <plasma/corona.h>
 #include <plasma/dataengine.h>
 #include <plasma/dialog.h>
+#include <plasma/extender.h>
+#include <plasma/extenderitem.h>
 #include <plasma/theme.h>
 
 #include "ui_timezonesConfig.h"
@@ -48,13 +53,14 @@ class ClockApplet::Private
 {
 public:
     Private()
-        : calendar(0),
+        : calendarDialog(0),
+          calendar(0),
           timezone("Local")
     {}
 
-    Ui::calendar calendarUi;
     Ui::timezonesConfig ui;
-    Plasma::Dialog *calendar;
+    Plasma::Dialog *calendarDialog;
+    KDatePicker *calendar;
     QString timezone;
     QPoint clicked;
     QStringList m_timeZones;
@@ -166,31 +172,66 @@ void ClockApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void ClockApplet::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if ((d->clicked - scenePos().toPoint()).manhattanLength() <
-        KGlobalSettings::dndEventDelay()) {
+    if ((d->clicked - scenePos().toPoint()).manhattanLength() < KGlobalSettings::dndEventDelay()) {
         showCalendar(event);
     }
+}
+
+void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
+{
+    d->calendar = new KDatePicker;
+    d->calendar->setMinimumSize(d->calendar->sizeHint());
+    QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget(this);
+    proxy->setWidget(d->calendar);
+    item->setWidget(proxy);
+    item->setTitle(i18n("Calendar"));
+}
+
+void ClockApplet::init()
+{
+    new Plasma::Extender(this);
+    containment()->corona()->addOffscreenWidget(extender());
 }
 
 void ClockApplet::showCalendar(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
 
-    if (d->calendar == 0) {
-        d->calendar = new Plasma::Dialog();
-        d->calendarUi.setupUi(d->calendar);
-        d->calendar->setWindowFlags(Qt::Popup);
-        d->calendar->adjustSize();
+    if (!d->calendarDialog) {
+        if (!extender()) {
+            // in case the subclass didn't call the parent init() properly
+            ClockApplet::init();
+        }
+
+        if (!d->calendar) {
+            Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
+            eItem->setName("calendar");
+            initExtenderItem(eItem);
+        }
+
+        d->calendarDialog = new Plasma::Dialog();
+        QVBoxLayout *lay = new QVBoxLayout(d->calendarDialog);
+        lay->setMargin(0);
+        lay->setSpacing(0);
+        QGraphicsView *view = new QGraphicsView(d->calendarDialog);
+        lay->addWidget(view);
+
+        view->setScene(scene());
+        view->setSceneRect(extender()->mapToScene(extender()->geometry()).boundingRect());
+        view->resize(extender()->size().toSize());
+
+        d->calendarDialog->setWindowFlags(Qt::Popup);
+        d->calendarDialog->adjustSize();
     }
 
-    if (d->calendar->isVisible()) {
-        d->calendar->hide();
+    if (d->calendarDialog->isVisible()) {
+        d->calendarDialog->hide();
     } else {
-        kDebug();
+        //kDebug();
         Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
-        d->calendarUi.kdatepicker->setDate(data["Date"].toDate());
-        d->calendar->move(popupPosition(d->calendar->sizeHint()));
-        d->calendar->show();
+        d->calendar->setDate(data["Date"].toDate());
+        d->calendarDialog->move(popupPosition(d->calendarDialog->sizeHint()));
+        d->calendarDialog->show();
     }
 }
 
