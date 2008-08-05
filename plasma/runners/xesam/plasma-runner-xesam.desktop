@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Desktop Search
+Name[et]=Töölauaotsing
 Name[ga]=Cuardach Deisce
 Name[gu]=ડેસ્કટોપ શોધ
 Name[hr]=Pager na radnoj površini
@@ -12,6 +13,7 @@ Name[tr]=Masaüstü Araması
 Name[uk]=Стільничний пошук
 Name[zh_TW]=桌面搜尋
 Comment=Search in documents and files
+Comment[et]=Otsing dokumentides ja failides
 Comment[gu]=દસ્તાવેજો અને ફાઇલો શોધો
 Comment[km]=ស្វែងរក​នៅ​ក្នុង​ឯកសារ
 Comment[nds]=Binnen Dokmenten un Dateien söken

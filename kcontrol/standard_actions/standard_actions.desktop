@@ -13,6 +13,8 @@ X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
 X-KDE-Weight=150
 
 Name=Standard Keyboard Shortcuts
+Name[et]=Standardsed kiirklahvid
+Name[ga]=Aicearraí Caighdeánacha Méarchláir
 Name[gu]=પ્રમાણભૂત કીબોર્ડ ટૂંકાણો
 Name[km]=ផ្លូវកាត់​ក្ដារចុច​ស្តង់ដារ
 Name[nds]=Standard-Tastkombinatschonen
@@ -24,6 +26,8 @@ Name[uk]=Стандартні скорочення клавіатури
 Name[zh_TW]=標準鍵盤捷徑
 
 Comment=Configuration of standard keybindings
+Comment[et]=Standardsete kiirklahvide seadistamine
+Comment[ga]=Cumraíocht ceangal eochracha
 Comment[gu]=પ્રમાણભૂત કળજોડાણોનું રૂપરેખાંકન
 Comment[km]=ការ​កំណត់​រចនាសម្ព័ន្ធ​ការ​ចង​គ្រាប់​ចុច​ស្តង់ដារ
 Comment[nds]=Instellen vun Standard-Tastkombinatschonen

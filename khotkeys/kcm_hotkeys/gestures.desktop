@@ -8,6 +8,8 @@ X-KDE-PluginKeyword=gestures
 X-KDE-System-Settings-Parent-Category=input-actions
 
 Name=Mouse Gestures
+Name[et]=Hiirežestid
+Name[ga]=Gothaí Luiche
 Name[gu]=માઉસ ચેષ્ટાઓ
 Name[km]=កាយវិការ​​កណ្ដុរ
 Name[nds]=Muustekens
@@ -19,6 +21,8 @@ Name[uk]=Жести мишкою
 Name[zh_TW]=滑鼠手勢
 
 Comment=Configure Mouse Gestures
+Comment[et]=Hiirežestide seadistamine
+Comment[ga]=Cumraigh Gothaí Luiche
 Comment[gu]=કોન્કરર ચેષ્ટાઓ રૂપરેખાંકિત કરો
 Comment[km]=កំណត់​រចនាសម្ព័ន្ធ​កាយវិការ​កណ្ដុរ
 Comment[nds]=Muustekens instellen

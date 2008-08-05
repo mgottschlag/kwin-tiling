@@ -1,6 +1,12 @@
 [Desktop Entry]
 Name=Google Gadgets
+Name[ga]=Giuirléidí Google
+Name[uk]=Гаджети Google
+Name[zh_TW]=Google 小玩意兒
 Comment=Google Desktop Gadget
+Comment[et]=Google'i töölauavidin
+Comment[uk]=Гаджет стільниці Google
+Comment[zh_TW]=Google 桌面小玩意
 Type=Service
 Icon=google-gadgets
 X-EngineName=googlegadgets
