@@ -70,6 +70,7 @@ Clock::~Clock()
 
 void Clock::init()
 {
+    ClockApplet::init();
     Plasma::ToolTipManager::self()->registerWidget(this);
 
     KConfigGroup cg = config();

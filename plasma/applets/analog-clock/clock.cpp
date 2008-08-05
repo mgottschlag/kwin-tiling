@@ -74,6 +74,8 @@ Clock::~Clock()
 
 void Clock::init()
 {
+    ClockApplet::init();
+
     KConfigGroup cg = config();
     m_showTimeString = cg.readEntry("showTimeString", false);
     m_showSecondHand = cg.readEntry("showSecondHand", false);
