@@ -76,7 +76,16 @@ namespace kephal {
         return output()->rect().size();
     }
     
+    QList<QSize> XRandROutput::availableSizes() {
+        QList<QSize> sizes = output()->sizes();
+        /*foreach (QSize size, sizes) {
+            qDebug() << "available size:" << id() << size;
+        }*/
+        return sizes;
+    }
+    
     void XRandROutput::setSize(QSize size) {
+        qDebug() << "XRandROutput::setSize() called:" << size;
     }
     
     QPoint XRandROutput::position() {

@@ -40,6 +40,7 @@ namespace kephal {
 
             virtual QSize size();
             virtual void setSize(QSize size);
+            virtual QList<QSize> availableSizes();
             virtual QPoint position();
             //QList<PositionType> getRelativePosition();
             
@@ -48,6 +49,7 @@ namespace kephal {
 
             void _setId(QString id);
             void _setSize(QSize size);
+            void _setAvailableSizes(QList<QSize> sizes);
             void _setPosition(QPoint position);
             void _setActivated(bool activated);
             void _setConnected(bool connected);
@@ -58,6 +60,7 @@ namespace kephal {
         private:
             QString m_id;
             QSize m_size;
+            QList<QSize> m_availableSizes;
             QPoint m_position;
             bool m_activated;
             bool m_connected;

@@ -37,7 +37,7 @@ DBusAPIScreens::DBusAPIScreens(QObject * parent)
     
     bool result;
     result = dbus.registerObject("/Screens", this);
-    qDebug() << "registered on the bus:" << result;
+    qDebug() << "screens registered on the bus:" << result;
 }
 
 QSize DBusAPIScreens::size(int screen)

@@ -53,6 +53,15 @@ namespace kephal {
         return m_size;
     }
     
+    QList<QSize> SimpleOutput::availableSizes() {
+        if (m_availableSizes.empty()) {
+            QList<QSize> result;
+            result.append(size());
+            return result;
+        }
+        return m_availableSizes;
+    }
+    
     void SimpleOutput::setSize(QSize size) {
         emit sizeChangeRequested(this, m_size, size);
     }
@@ -67,6 +76,10 @@ namespace kephal {
     
     void SimpleOutput::_setSize(QSize size) {
         m_size = size;
+    }
+    
+    void SimpleOutput::_setAvailableSizes(QList<QSize> sizes) {
+        m_availableSizes = sizes;
     }
     
     void SimpleOutput::_setPosition(QPoint position) {

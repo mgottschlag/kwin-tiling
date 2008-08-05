@@ -27,6 +27,7 @@
 #include "screens/output/outputscreens.h"
 #include "outputs/xrandr/xrandroutputs.h"
 #include "dbus/dbusapi_screens.h"
+#include "dbus/dbusapi_outputs.h"
 #include "xml/configurations_xml.h"
 
 #include "xrandr12/randrdisplay.h"
@@ -94,6 +95,7 @@ void KephalD::init() {
     qDebug() << "registered the service:" << result;
     
     new DBusAPIScreens(this);
+    new DBusAPIOutputs(this);
     
     ConfigurationsXMLFactory * factory = new ConfigurationsXMLFactory();
     ConfigurationsXML * config = (ConfigurationsXML *) factory->load("screen-configurations.xml");

@@ -1,6 +1,3 @@
-#include "dbusscreens.h"
-#include "../simplescreen.h"
-#include "screens_interface.h"
 /*
  *   Copyright 2008 Aike J Sommer <dev@aikesommer.name>
  *
@@ -23,6 +20,10 @@
 
 #include <QApplication>
 #include <QDebug>
+
+#include "dbusscreens.h"
+#include "../simplescreen.h"
+#include "screens_interface.h"
 
 
 namespace kephal {

@@ -18,42 +18,36 @@
  */
 
 
-#include "outputs.h"
+#ifndef KEPHAL_DBUSOUTPUTS_H
+#define KEPHAL_DBUSOUTPUTS_H
 
-#ifdef OUTPUTS_FACTORY
-void OUTPUTS_FACTORY();
-#endif
+#include <QPoint>
+#include "../simpleoutput.h"
+#include "../outputs.h"
+#include "outputs_interface.h"
 
 
 namespace kephal {
 
-    Outputs * Outputs::instance() {
-#ifdef OUTPUTS_FACTORY
-        if (Outputs::m_instance == 0) {
-            OUTPUTS_FACTORY();
-        }
-#endif
-        return Outputs::m_instance;
-    }
+    class DBusOutputs : public Outputs {
+        Q_OBJECT
+        public:
+            DBusOutputs(QObject * parent);
+            ~DBusOutputs();
+            virtual QList<Output *> outputs();
+            bool isValid();
+            
+        protected Q_SLOTS:
+            void resizeRequested(SimpleOutput * output, QSize oldSize, QSize newSize);
+            
+        private:
+            QList<SimpleOutput *> m_outputs;
+            org::kde::Kephal::Outputs * m_interface;
+            bool m_valid;
+    };
     
-    Outputs::Outputs(QObject * parent)
-            : QObject(parent)
-    {
-        Outputs::m_instance = this;
-    }
-    
-    Outputs * Outputs::m_instance = 0;
-    
-    
-    
-    Output::Output(QObject * parent)
-            : QObject(parent)
-    {
-    }
-    
-    QRect Output::geom() {
-        return QRect(position(), size());
-    }
-
 }
+
+
+#endif // KEPHAL_DBUSSCREENS_H
 

@@ -37,13 +37,16 @@ namespace kephal {
             virtual QString id() = 0;
 
             virtual QSize size() = 0;
-            virtual void setSize(QSize size) = 0;
             virtual QPoint position() = 0;
             virtual bool isConnected() = 0;
             virtual bool isActivated() = 0;
+            virtual QList<QSize> availableSizes() = 0;
             //QList<PositionType> getRelativePosition();
 
             QRect geom();
+            
+        public Q_SLOTS:
+            virtual void setSize(QSize size) = 0;
     };
     
 

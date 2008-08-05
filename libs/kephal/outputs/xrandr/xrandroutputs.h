@@ -38,6 +38,7 @@ namespace kephal {
 
             virtual QSize size();
             virtual void setSize(QSize size);
+            virtual QList<QSize> availableSizes();
             virtual QPoint position();
             virtual bool isConnected();
             virtual bool isActivated();
