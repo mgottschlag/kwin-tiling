@@ -86,7 +86,7 @@ void FullView::addApplet(const QString &a, const QVariantList &args)
     m_applet = m_containment->addApplet(a, args, QRectF(0, 0, -1, -1));
     m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
 
-    setSceneRect(m_corona.sceneRect());
+    setSceneRect(m_applet->geometry());
     setWindowTitle(m_applet->name());
     setWindowIcon(SmallIcon(m_applet->icon()));
 }
@@ -125,7 +125,9 @@ void FullView::resizeEvent(QResizeEvent *event)
 
 void FullView::sceneRectChanged(const QRectF &rect)
 {
-    setSceneRect(rect);
+    if (m_applet) {
+        setSceneRect(m_applet->geometry());
+    }
 }
 
 #include "fullview.moc"
