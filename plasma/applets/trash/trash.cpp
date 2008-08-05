@@ -263,7 +263,7 @@ void Trash::dropEvent(QGraphicsSceneDragDropEvent *event)
             bool specialOperation = false;
 
             if (!m_places) {
-                m_places = new  KFilePlacesModel(this);
+                m_places = new KFilePlacesModel(this);
             }
 
             foreach (const KUrl& url, urls) {
