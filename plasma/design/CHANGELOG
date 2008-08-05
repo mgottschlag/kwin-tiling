@@ -45,6 +45,7 @@ Desktop Theme
 -------------
 * NEW: widgets/button for theming pushbuttons
 * NEW: widgets/frame for theming Plasma::Frame used also in other widgets
+* NEW: color role for buttons text and background
 
 Plasma Desktop Shell
 --------------------
