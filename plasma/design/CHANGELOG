@@ -5,7 +5,8 @@ libplasma
 ---------
 * Features
 * Symbol Versioning: limit loading of plugins to those that match the libplasma version
-    * New: ToolTipManager for Plasma style tooltips
+    * NEW: ToolTipManager for Plasma style tooltips
+    * NEW: Wallpaper plugins for Containments
     * Applet
         * sizeHintChanged() signal. A containment (such as a panel) can adjust its size based on changed sizehints of an applet
         * NEW: Plasma::Extender and Plasma::ExtenderItem, allowing visual, relocatable extensions to Applet
@@ -16,6 +17,8 @@ libplasma
         * PackageStructure supports arbitrary URIs (in addition to auto-discovery for package) structure description files.
     * Plasma::Theme
         * Support compressed SVGs (*.svgz)
+    * Service
+        * Associate widgets with operations
     * Widgets
         * NEW: Plasma::Slider based on QSlider
         * NEW: Plasma::TabBar (usable with both QWidget and QGraphicsItems)
