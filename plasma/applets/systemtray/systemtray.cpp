@@ -184,7 +184,7 @@ void SystemTray::updateWidgetGeometry()
 
 void SystemTray::startupDelayer()
 {
-    delete m_startUpDelayShowTimer;
+    m_startUpDelayShowTimer->deleteLater();
     m_startUpDelayShowTimer = 0;
     m_systemTrayWidget->setVisible(true);
     m_systemTrayWidget->init();
