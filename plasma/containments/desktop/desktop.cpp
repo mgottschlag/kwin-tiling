@@ -89,11 +89,9 @@ void DefaultDesktop::nextSlide(bool skipUpdates)
     }
 
     if (m_slideFiles.size() > 0) {
-        // do not change to the same background (same path)
-        if (m_wallpaperPath == m_slideFiles[m_currentSlide]) {
-            if (m_slideFiles.size() == 1) {
-                return;
-            }
+        // do not change to the same background if we have a choice
+        // if there is only one background, it may be changed by someone else
+        if (m_slideFiles.size() > 1 && m_wallpaperPath == m_slideFiles[m_currentSlide]) {
             // try next one, they can't be the same (at least the same path)
             if (++m_currentSlide >= m_slideFiles.size()) {
                 m_currentSlide = 0;
