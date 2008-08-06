@@ -220,18 +220,8 @@ void ClockApplet::showCalendar(QGraphicsSceneMouseEvent *event)
         }
 
         d->calendarDialog = new Plasma::Dialog();
-        QVBoxLayout *lay = new QVBoxLayout(d->calendarDialog);
-        lay->setMargin(0);
-        lay->setSpacing(0);
-        d->view = new QGraphicsView(d->calendarDialog);
-        lay->addWidget(d->view);
-
-        d->view->setScene(scene());
-        adjustView();
-
         d->calendarDialog->setWindowFlags(Qt::Popup);
-        d->calendarDialog->adjustSize();
-        connect(extender(), SIGNAL(geometryChanged()), this, SLOT(adjustView()));
+        d->calendarDialog->setGraphicsWidget(extender());
     }
 
     if (d->calendarDialog->isVisible()) {
