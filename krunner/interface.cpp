@@ -202,7 +202,7 @@ Interface::Interface(QWidget* parent)
 
     m_layout->addWidget(m_resultsView);
 
-    connect(m_searchTerm, SIGNAL(editTextChanged(QString)), this, SLOT(queryTextEditted(QString)));
+    connect(m_searchTerm, SIGNAL(editTextChanged(QString)), this, SLOT(queryTextEdited(QString)));
     connect(m_searchTerm, SIGNAL(returnPressed()), this, SLOT(runDefaultResultItem()));
 
     themeUpdated();
@@ -421,7 +421,7 @@ void Interface::runDefaultResultItem()
     run(m_resultsScene->defaultResultItem());
 }
 
-void Interface::queryTextEditted(const QString &query)
+void Interface::queryTextEdited(const QString &query)
 {
     if (query.isEmpty()) {
         resetInterface();
