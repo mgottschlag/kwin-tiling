@@ -23,7 +23,7 @@ class Gadget;
 
 namespace ggadget {
 
-using ggadget::ViewHostInterface;;
+using ggadget::ViewHostInterface;
 
 class PlasmaHost : public ggadget::HostInterface {
  public:
