@@ -225,7 +225,9 @@ void NMWirelessNetwork::setActivated(bool activated)
     QString devicePath = uni().left(uni().indexOf("/Networks"));
     kDebug(1441) << devicePath << " - " << d->essid;
     QDBusObjectPath op(devicePath);
+#ifdef __GNUC__
 #warning fixme hardcoded false fallback bool in setActiveDevice - fixed, i think
+#endif
     QList<QVariant> args;
     args << qVariantFromValue(op) << d->essid;// << false;
     bool error;
