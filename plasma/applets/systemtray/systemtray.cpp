@@ -47,8 +47,14 @@ SystemTray::SystemTray(QObject *parent, const QVariantList &arguments)
     // possible.
     // See http://bugs.kde.org/show_bug.cgi?id=168007
     // and http://mail.kde.org/pipermail/plasma-devel/2008-August/000258.html
-    if (!QApplication::testAttribute(Qt::AA_DontCreateNativeWidgetSiblings)) {
-        QApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
+
+#if QT_VERSION < 0x040401
+    Qt::ApplicationAttribute attr = (Qt::ApplicationAttribute)4;
+#else
+    Qt::ApplicationAttribute attr = Qt::AA_DontCreateNativeWidgetSiblings;
+#endif
+    if (!QApplication::testAttribute(attr)) {
+        QApplication::setAttribute(attr);
     }
 
     m_background = new Plasma::PanelSvg(this);
