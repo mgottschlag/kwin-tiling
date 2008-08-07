@@ -91,6 +91,7 @@ void SystemTray::paintInterface(QPainter *painter,
                                 const QRect& contentsRect)
 {
     Q_UNUSED(option)
+    Q_UNUSED(contentsRect)
 
     if (m_showOwnBackground) {
         m_background->paintPanel(painter);
