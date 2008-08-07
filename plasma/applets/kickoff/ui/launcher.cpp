@@ -569,7 +569,15 @@ void Launcher::init()
     if (!gethostname( hostname, sizeof(hostname) )) {
        hostname[sizeof(hostname)-1] = '\0';
     }
-    QLabel *userinfo = new QLabel(i18n("User&nbsp;<b>%1</b>&nbsp;on&nbsp;<b>%2</b>", KUser().loginName(), hostname));
+    KUser user;
+    QString fullName = user.property(KUser::FullName).toString();
+    QString labelText;
+    if (fullName.isEmpty()) {
+        labelText = i18nc("login name, hostname", "user&nbsp;<b>%1</b>&nbsp;on&nbsp;<b>%2</b>", user.loginName(), hostname);
+    } else {
+        labelText = i18nc("full name, login name, hostname", "<b>%1 (%2)</b>&nbsp;on&nbsp;<b>%3</b>", fullName, user.loginName(), hostname);
+    }
+    QLabel *userinfo = new QLabel(labelText);
     QPalette palette;
     palette.setColor( QPalette::Foreground, KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText).color() );
     userinfo->setPalette( palette );
