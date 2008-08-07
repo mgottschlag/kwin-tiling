@@ -43,7 +43,7 @@ else(NOT WIN32)
 set(Kickoff_LIBS ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_SOLID_LIBS})
 endif(NOT WIN32)
 if(HAVE_STRIGIDBUS)
-     set ( Kickoff_LIBS ${Kickoff_LIBS} strigiqtdbusclient )
+     set ( Kickoff_LIBS ${Kickoff_LIBS} ${STRIGI_STRIGIQTDBUSCLIENT_LIBRARY} )
 endif(HAVE_STRIGIDBUS)
 
 include_directories( ${STRIGI_INCLUDE_DIR} )
