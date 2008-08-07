@@ -73,7 +73,6 @@ class Clock : public ClockApplet
         int updateInterval() const;
         Plasma::IntervalAlignment intervalAlignment() const;
 
-        QStringList m_timeZones;
         QString m_prettyTimezone;
         QTime m_time;
         QDate m_date;

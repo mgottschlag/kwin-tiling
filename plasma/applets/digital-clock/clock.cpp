@@ -56,7 +56,6 @@ Clock::Clock(QObject *parent, const QVariantList &args)
       m_showDay(false),
       m_showSeconds(false),
       m_showTimezone(false),
-      m_timeZones(),
       m_layout(0)
 {
     KGlobal::locale()->insertCatalog("libplasmaclock");
@@ -75,7 +74,6 @@ void Clock::init()
 
     KConfigGroup cg = config();
     setCurrentTimezone(cg.readEntry("currentTimezone", localTimezone()));
-    m_timeZones = cg.readEntry("timeZones", QStringList());
 
     m_showTimezone = cg.readEntry("showTimezone", !isLocalTimezone());
 
@@ -179,7 +177,7 @@ void Clock::createClockConfigurationInterface(KConfigDialog *parent)
 }
 
 void Clock::clockConfigAccepted()
-{
+{  
     KConfigGroup cg = config();
 
     m_showTimezone = ui.showTimezone->isChecked();
@@ -218,7 +216,7 @@ void Clock::clockConfigAccepted()
     cg.writeEntry("plainClockFont", m_plainClockFont);
     cg.writeEntry("useCustomColor", m_useCustomColor);
     cg.writeEntry("plainClockColor", m_plainClockColor);
-
+    
     constraintsEvent(Plasma::SizeConstraint);
     update();
     emit sizeHintChanged(Qt::PreferredSize);
@@ -285,7 +283,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
                                        "%1 day of the week with date, %2 currentTimezone",
                                        "%1 %2", dateString, currentTimezone);
                 }
-            } else if (m_showTimezone) {
+            } else if (m_showTimezone && !isLocalTimezone()) {
                 dateString = m_prettyTimezone;
             }
 

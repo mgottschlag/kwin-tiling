@@ -102,7 +102,9 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     parent->addPage(widget, i18n("Time Zones"), icon());
 
     d->ui.localTimeZone->setChecked(isLocalTimezone());
-    d->ui.timeZones->setSelected(currentTimezone(), true);
+    foreach(QString tz, d->m_timeZones) {
+        d->ui.timeZones->setSelected(tz, true);
+    }
     d->ui.timeZones->setEnabled(!isLocalTimezone());
 
     parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
@@ -137,11 +139,14 @@ void ClockApplet::configAccepted()
     d->m_timeZones = d->ui.timeZones->selection();
     cg.writeEntry("timeZones", d->m_timeZones);
 
-    QString newTimezone = localTimezone();
-
-    if (!d->ui.localTimeZone->isChecked() && !d->m_timeZones.isEmpty()) {
+    QString newTimezone;
+    
+    if(d->ui.localTimeZone->isChecked())
+        newTimezone = localTimezone();
+    else if(d->m_timeZones.contains(currentTimezone()))
+        newTimezone = currentTimezone();
+    else
         newTimezone = d->m_timeZones.at(0);
-    }
 
     changeEngineTimezone(currentTimezone(), newTimezone);
 
@@ -187,6 +192,40 @@ void ClockApplet::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
+void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
+{
+    if(d->m_timeZones.count() <= 1 || isLocalTimezone())
+        return;
+    
+    QString newTimezone;
+    int current = d->m_timeZones.indexOf(currentTimezone());
+    
+    if(event->delta() > 0) {
+        int previous = current - 1;
+        if(previous < 0)
+            newTimezone = d->m_timeZones.last();
+        else
+            newTimezone = d->m_timeZones.at(previous);
+    }
+    else {
+        int next = current + 1;
+        if(next > d->m_timeZones.count() - 1)
+            newTimezone = d->m_timeZones.first();
+        else
+            newTimezone = d->m_timeZones.at(next);
+    }
+    
+    changeEngineTimezone(currentTimezone(), newTimezone);
+    setCurrentTimezone(newTimezone);
+    
+    // let's save our current timezone to be used per default
+    KConfigGroup cg = config();
+    cg.writeEntry("currentTimezone", newTimezone);
+    emit configNeedsSaving();
+    
+    update();
+}
+
 void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
 {
     d->calendar = new KDatePicker;
@@ -199,6 +238,9 @@ void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
 
 void ClockApplet::init()
 {
+    KConfigGroup cg = config();
+    d->m_timeZones = cg.readEntry("timeZones", QStringList());
+    
     Plasma::Extender *extender = new Plasma::Extender(this);
     containment()->corona()->addOffscreenWidget(extender);
 }

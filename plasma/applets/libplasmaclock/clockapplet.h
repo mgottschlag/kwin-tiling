@@ -56,6 +56,7 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::Applet
     protected:
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
         void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+        void wheelEvent(QGraphicsSceneWheelEvent *event);
         void createConfigurationInterface(KConfigDialog *parent);
         virtual void createClockConfigurationInterface(KConfigDialog *parent);
         virtual void clockConfigAccepted();

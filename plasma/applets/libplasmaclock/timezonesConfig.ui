@@ -25,6 +25,9 @@
        <height>150</height>
       </size>
      </property>
+     <property name="selectionMode" >
+      <enum>QAbstractItemView::MultiSelection</enum>
+     </property>
      <column>
       <property name="text" >
        <string>Area</string>
