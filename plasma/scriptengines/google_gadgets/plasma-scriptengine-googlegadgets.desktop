@@ -1,8 +1,14 @@
 [Desktop Entry]
 Name=GoogleGadgets
+Name[km]=ឧបករណ៍​​ហ្គូហ្គល
+Name[nds]=Google-Lüttprogrammen
 Name[zh_TW]=Google 小玩意
 Comment=Google Desktop Gadgets
 Comment[et]=Google'i töölauavidinad
+Comment[km]=ឧបករណ៍​ផ្ទៃតុ​ហ្គូហ្គល
+Comment[nds]=Schriefdisch-Lüttprogrammen vun Google
+Comment[pt]='Gadgets' do Google Desktop
+Comment[pt_BR]='Gadgets' do Google Desktop
 Comment[uk]=Гаджети стільниці Google
 Comment[zh_TW]=Google 桌面小玩意
 X-KDE-ServiceTypes=Plasma/ScriptEngine

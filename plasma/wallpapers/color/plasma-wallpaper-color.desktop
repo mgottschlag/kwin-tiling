@@ -1,5 +1,10 @@
 [Desktop Entry]
 Name=Color
+Name[ga]=Dath
+Name[nds]=Klöör
+Name[pt]=Cor
+Name[pt_BR]=Cor
+Name[uk]=Колір
 Type=Service
 Icon=preferences-desktop-color
 ServiceTypes=Plasma/Wallpaper

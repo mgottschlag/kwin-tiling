@@ -1,11 +1,16 @@
 [Desktop Entry]
 Name=Google Gadgets
 Name[ga]=Giuirléidí Google
-Name[km]=ព័ត៌មាន​តាម​ហ្គូហ្គល
+Name[km]=ឧបករណ៍​​តាម​ហ្គូហ្គល
+Name[nds]=Google-Lüttprogrammen
 Name[uk]=Гаджети Google
 Name[zh_TW]=Google 小玩意兒
 Comment=Google Desktop Gadget
 Comment[et]=Google'i töölauavidin
+Comment[km]=ឧបករណ៍​ផ្ទៃតុ​ហ្គូហ្គល​
+Comment[nds]=Schriefdischlüttprogramm vun Google
+Comment[pt]='Gadget' do Google Desktop
+Comment[pt_BR]='Gadget' do Google Desktop
 Comment[uk]=Гаджет стільниці Google
 Comment[zh_TW]=Google 桌面小玩意
 Type=Service
