@@ -151,7 +151,7 @@ void ClockApplet::configAccepted()
     changeEngineTimezone(currentTimezone(), newTimezone);
 
     setCurrentTimezone(newTimezone);
-    cg.writeEntry("currentTimezone", newTimezone);
+    cg.writeEntry("timezone", newTimezone);
 
     clockConfigAccepted();
 
