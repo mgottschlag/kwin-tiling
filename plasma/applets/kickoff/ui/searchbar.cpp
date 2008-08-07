@@ -70,7 +70,7 @@ SearchBar::SearchBar(QWidget *parent)
 
     QFileInfo fi(QDir(QDir::homePath()), ".face.icon");
     if (fi.exists()) {
-        searchIcon->setPixmap(QPixmap(fi.absoluteFilePath()).scaled(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
+        searchIcon->setPixmap(QPixmap(fi.absoluteFilePath()).scaled(KIconLoader::SizeMedium, KIconLoader::SizeMedium, Qt::KeepAspectRatio));
     }
     else {
         searchIcon->setPixmap(KIcon("system-search").pixmap(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
