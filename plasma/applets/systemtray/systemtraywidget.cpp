@@ -52,17 +52,6 @@ SystemTrayWidget::SystemTrayWidget(QWidget *parent)
     // Override spacing set by the current style
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
     m_mainLayout->setSpacing(4);
-
-    // Widgets added to the parent before this one may end up
-    // on top of this one if their native windows are created
-    // after this one, so raise() to make sure this widget is
-    // on top.
-    // raise() -- doesn't work for some reason
-    foreach (QObject *sibling, parent->children()) {
-        if (sibling != this && sibling->isWidgetType()) {
-            static_cast<QWidget*>(sibling)->lower();
-        }
-    }
 }
 
 void SystemTrayWidget::init()
