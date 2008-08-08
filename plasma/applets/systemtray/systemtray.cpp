@@ -24,6 +24,7 @@
 #include "systemtray.h"
 
 // Qt
+#include <QApplication>
 #include <QGraphicsView>
 #include <QTimer>
 
@@ -35,6 +36,25 @@ SystemTray::SystemTray(QObject *parent, const QVariantList &arguments)
       m_startUpDelayShowTimer(0),
       m_showOwnBackground(false)
 {
+    // Revert to Qt-4.4.0 behaviour so that the SystemTrayWidget is always on
+    // top. Note, if a sibling widget requires a native window for other
+    // reasons the problem could reoccur.
+    // Another alternative is to raise() during SystemTrayWidget construction
+    // and then have it listen for ChildAdded events on its parent. However,
+    // this causes a lot of flashes of white and so should be avoided if
+    // possible.
+    // See http://bugs.kde.org/show_bug.cgi?id=168007
+    // and http://mail.kde.org/pipermail/plasma-devel/2008-August/000258.html
+
+#if QT_VERSION < 0x040401
+    Qt::ApplicationAttribute attr = (Qt::ApplicationAttribute)4;
+#else
+    Qt::ApplicationAttribute attr = Qt::AA_DontCreateNativeWidgetSiblings;
+#endif
+    if (!QApplication::testAttribute(attr)) {
+        QApplication::setAttribute(attr);
+    }
+
     m_background = new Plasma::PanelSvg(this);
     m_background->setImagePath("widgets/systemtray");
     connect(this, SIGNAL(geometryChanged()), this, SLOT(updateWidgetGeometry()));
