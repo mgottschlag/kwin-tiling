@@ -5,6 +5,7 @@ Name[nds]=Klöör
 Name[pt]=Cor
 Name[pt_BR]=Cor
 Name[uk]=Колір
+Name[zh_TW]=顏色
 Type=Service
 Icon=preferences-desktop-color
 ServiceTypes=Plasma/Wallpaper
