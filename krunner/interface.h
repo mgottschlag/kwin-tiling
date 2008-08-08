@@ -96,6 +96,7 @@ class Interface : public KRunnerDialog
         ResultScene *m_resultsScene;
         bool m_delayedRun;
         bool m_running;
+        bool m_queryRunning;
 };
 
 #endif

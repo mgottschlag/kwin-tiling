@@ -65,7 +65,8 @@ Interface::Interface(QWidget* parent)
     : KRunnerDialog(parent),
       m_configDialog(0),
       m_delayedRun(false),
-      m_running(false)
+      m_running(false),
+      m_queryRunning(false)
 {
     setWindowTitle( i18n("Run Command") );
     setWindowIcon(KIcon("system-run"));
@@ -418,15 +419,21 @@ void Interface::run(ResultItem *item)
 
 void Interface::runDefaultResultItem()
 {
-    run(m_resultsScene->defaultResultItem());
+    if (m_queryRunning) {
+        m_delayedRun = true;
+    } else {
+        run(m_resultsScene->defaultResultItem());
+    }
 }
 
 void Interface::queryTextEdited(const QString &query)
 {
     if (query.isEmpty()) {
         resetInterface();
+        m_queryRunning = false;
     } else {
         m_resultsScene->launchQuery(query);
+        m_queryRunning = true;
     }
 }
 
@@ -493,6 +500,7 @@ void Interface::configCompleted()
 
 void Interface::matchCountChanged(int count)
 {
+    m_queryRunning = false;
     bool show = count > 0;
     m_hideResultsTimer.stop();
     bool pages = m_resultsScene->pageCount() > 1;
