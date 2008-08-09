@@ -91,6 +91,7 @@ void Tasks::init()
     KConfigGroup cg = config();
     m_showOnlyCurrentDesktop = cg.readEntry("showOnlyCurrentDesktop", false);
     m_showOnlyCurrentScreen = cg.readEntry("showOnlyCurrentScreen", false);
+    m_showTooltip = cg.readEntry("showTooltip", true);
 
     // listen for addition and removal of window tasks
     connect(TaskManager::TaskManager::self(), SIGNAL(taskAdded(TaskPtr)),
@@ -481,18 +482,14 @@ bool Tasks::isOnMyScreen(TaskPtr task)
 
 void Tasks::createConfigurationInterface(KConfigDialog *parent)
 {
-     QWidget *widget = new QWidget;
-     m_ui.setupUi(widget);
-     parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
-     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-     parent->addPage(widget, parent->windowTitle(), icon());
+    QWidget *widget = new QWidget;
+    m_ui.setupUi(widget);
+    parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    parent->addPage(widget, parent->windowTitle(), icon());
 
-#ifdef TOOLTIP_MANAGER
     m_ui.showTooltip->setChecked(m_showTooltip);
-#else
-    m_ui.showTooltip->hide();
-#endif
     m_ui.showOnlyCurrentDesktop->setChecked(m_showOnlyCurrentDesktop);
     m_ui.showOnlyCurrentScreen->setChecked(m_showOnlyCurrentScreen);
 }
@@ -513,24 +510,16 @@ void Tasks::configAccepted()
         cg.writeEntry("showOnlyCurrentScreen", m_showOnlyCurrentScreen);
         changed = true;
     }
-
-    if (changed) {
-        reconnect();
-    }
-#ifdef TOOLTIP_MANAGER
-    if (m_showTooltip != (m_ui.showTooltip->checkState() == Qt::Checked)) {
+    if (m_showTooltip != (m_ui.showTooltip->isChecked())) {
         m_showTooltip = !m_showTooltip;
-        foreach (AbstractTaskItem *taskItem, m_windowTaskItems) {
-            WindowTaskItem *windowTaskItem = dynamic_cast<WindowTaskItem *>(taskItem);
-            if (windowTaskItem) {
-                windowTaskItem->setShowTooltip(m_showTooltip);
-            }
-        }
         KConfigGroup cg = config();
         cg.writeEntry("showTooltip", m_showTooltip);
         changed = true;
     }
-#endif
+
+    if (changed) {
+        reconnect();
+    }
     if (changed) {
         update();
         emit configNeedsSaving();
