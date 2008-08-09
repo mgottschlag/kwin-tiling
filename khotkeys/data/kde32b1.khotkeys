@@ -3,6 +3,7 @@ DataCount=1
 
 [Data_1]
 Comment=This group contains various examples demonstrating most of the features of KHotkeys. (Note that this group and all its actions are disabled by default.)
+Comment[ar]=هذه المجموعة تحتوي على عدد من الامثلة والمفضلات الافتراضية (ملاحظة هذه المجموعة وكل مؤثراتها مقفلة افتراضياً )
 Comment[bg]=Тази група съдържа различни примери, демонстриращи повечето от функциите на горещите клавиши. (Имайте предвид, че групата по подразбиране е изключена.)
 Comment[ca]=Aquest grup conté varis exemples que demostren la majoria de les funcionalitats del KHotkeys (tinguen en compte que aquest grup i totes les seves accions estan deshabilitats per omissió).
 Comment[csb]=Na grëpa zamëkô w se przëmiôrë dlô wikszoscë fùnkcëjów dlô Skrodzënów ë gestów (KHotkeys) (Bôczënk: No karno ë jegò dzejania są w domëszlnym nastôwie deaktiwòwòné)
@@ -131,6 +132,7 @@ ConditionsCount=0
 
 [Data_1_1]
 Comment=After pressing Ctrl+Alt+I, the KSIRC window will be activated, if it exists. Simple.
+Comment[ar]=بعد الضغط على Ctrl+Alt+I سيتم فتح نافذة تطبيق الشات KSIRC اذا ادخلت كمثال
 Comment[bg]=След като натиснете Ctrl+Alt+I ще се активира KSIRC прозорец, ако има такъв. Просто.
 Comment[ca]=Després de prémer Ctrl+Alt+I, s'activarà la finestra del KSIRC, si existeix. Simple.
 Comment[csb]=Pò wcësniãcô Ctrl+Alt+I, òkno KSIRC bãdze aktiwòwóné - jeżlë òno egzystëje.
@@ -185,6 +187,7 @@ Comment[zh_TW]=按下 Ctrl+Alt+I 會叫出隱藏的 KSIRC 視窗。就這麼簡�
 Enabled=false
 Name=Activate KSIRC Window
 Name[af]=Aktiveer KSIRC Venster
+Name[ar]=نشّط نافذة الشات  KSIRC
 Name[be]=Актывізаваць акно KSIRC
 Name[bg]=Активиране на KSIRC прозорец
 Name[bn_IN]=KSIRC উইন্ডো সক্রিয় করুন
@@ -397,6 +400,7 @@ Type=SHORTCUT
 
 [Data_1_2]
 Comment=After pressing Alt+Ctrl+H, 'Hello' input will be simulated just like if you typed it. Especially useful if you're lazy to type things like 'unsigned'. Every keypress in the input is separated by a colon ':' . Note that the keypresses mean really keypresses, so you have to write what you'd really press on the keyboard. In the table below, left column shows the input and the right column shows what to type.\n\n"enter" (i.e. new line)                Enter or Return\na (i.e. small a)                          A\nA (i.e. capital a)                       Shift+A\n: (colon)                                  Shift+;\n' '  (space)                              Space
+Comment[ar]=بعد الضغط على  Alt+Ctrl+H سيقوم Hello بمحاكاة المطبوعات كما تكتبها ، خاصة اذا كنت تريد تكرارها ، كل ضغطة زر في المدخلات المنفصلة coln يسجل ذلك. ضغطة الزر تعني حقيقية لذلك انتبه لما تكتب ، عند الكتابة العمود الايسر يظه رما كتبت ، العمود الايمن يظهر ما يجب أن تكتب
 Comment[bg]=След натискането на Alt+Ctrl+H ще бъде симулирано "Здравей" ,все едно сте го написали. Това е особено полезно ако ви мързи да пишете неща като "неподписан". Всяко натискане на клавиш се разделя с двоеточие. Натискане на клавиш значи именно това, така че трябва да напишете точно това, което бихте написали с клавиатурата. В таблицата е показано: лявата колона показва въведеното, а дясната - какво да се напише.\n\n"Enter" (напр. нов ред)                Enter или Return\na (напр. малко а)                          A\nA (напр главно А)                       Shift+A\n: (двоеточие)                                  Shift+;\n' '  (интервал)                              интервал
 Comment[ca]=Després de prémer Alt+Ctrl+H, se simularà l'entrada de 'Hola' com si l'haguéssiu teclejat. És especialment útil si sou mandrós per teclejar coses com 'unsigned'. Cada pulsació de tecla se separa amb dos punts ':' . Tingueu en compte que realment no esteu teclejant res al teclat. A la taula de sota, la columna de l'esquerra mostra l'entrada i la columna de la dreta mostra el que teclegeu.\n\n"entrada" (p.ex. línia nova)                Entrada o Retorn\na (p.ex. a minúscula)                          A\nA (p.ex. a majúscula)                       Maj+A\n: (dos punts)                                  Maj+.\n' '  (espai)                              Espai
 Comment[csb]=Pò wcësniãcô Alt+Ctrl+H, bãdze symùlowóné wprowadzenié słowa 'Hello'. Je to przëdatné, jeżlë dóné słowa bãdzeta chcelë wiedno wprowôdzac - n.p. jeżlë programira mùszi wpisëwac czãsto słowò 'unsigned'. Kòżdé wcësniãcé klawiszë przë wprowadzeniô bãdze rozdezloné przez dwapùnkt ':' . Proszã pamiãtac, że gôdómë tuwò ò wcësniãtëch klawiszach, a wa mùszita to wprowadzéc co wa pò prôwdze na klawiaturze wprowadzéc chceta. W tabelë je z lewi starnë wprowôdzany tekst, a z prawi klawisze jaczé je nót wcësnąc.\n\n"enter" (i.e. nowô réżka)                Enter abò Return\na (môłé a)                          A\nA (wiôldżé a)                       Shift+A\n: (dwapùnkt)                                  Shift+;\n' '  (spacëjô)                              Spacëjô
@@ -439,7 +443,7 @@ Comment[zh_CN]=在按下 Alt+Ctrl+H 之后，会模拟您在键盘上输入“He
 Comment[zh_TW]=按下 Alt+Ctrl+H 會模擬您在鍵盤上輸入 'Hello'。若是您挺懶得打一些常用的如 'unsigned' 之類的字，這類動作就很好用。輸入的每個按鍵以冒號 : 區隔。注意按鍵就是按鍵，您必須定義您實際要按下的鍵。在底下的表格中，左方的欄位顯示實際輸入，右方的欄位顯示要按的鍵。\n\n"enter"（換行）                  Enter 或 Return\na （小寫 a）                  A\nA（大寫 A）                  Shift+A\n:（冒號）                  Shift+;\n' '（空白鍵）                  Space
 Enabled=false
 Name=Type 'Hello'
-Name[ar]='اكتب 'مرحباً
+Name[ar]=اكتب 'Hello'
 Name[bg]=Напишете "Здравей"
 Name[bn_IN]='Hello' লিখুন
 Name[ca]=Teclegeu 'Hola'
@@ -565,6 +569,7 @@ Type=SHORTCUT
 
 [Data_1_3]
 Comment=This action runs Konsole, after pressing Ctrl+Alt+T.
+Comment[ar]=هذا العمل سيفتح الكونسول إذا ضغطت Ctrl+Alt+T.
 Comment[bg]=Това действие стартира конзола при натискането на Ctrl+Alt+T.
 Comment[ca]=Aquesta acció executa el Konsole, després de prémer Ctrl+Alt+T.
 Comment[csb]=To dzejanié zrëszi Kònsolã, pò wcëãniãcô Ctrl+Alt+T.
@@ -622,6 +627,7 @@ Comment[zh_TW]=這個動作會在按下 Ctrl+Alt+T 時執行 Konsole
 Enabled=false
 Name=Run Konsole
 Name[af]=Loop Konsole
+Name[ar]=شغل الكونسول
 Name[be]=Запусціць Konsole
 Name[bg]=Стартиране на конзола
 Name[bn_IN]=Konsole সঞ্চালন
@@ -752,6 +758,7 @@ Type=SHORTCUT
 
 [Data_1_4]
 Comment=Read the comment on action "Type 'Hello'" first.\n\nQt Designer uses Ctrl+F4 for closing windows (maybe because MS Windows does it that way *shrug*). But Ctrl+F4 in KDE stands for going to virtual desktop 4, so it doesn't work in Qt Designer, and also, Qt Designer doesn't use KDE's standard Ctrl+W for closing the window.\n\nBut the problem can be solved by remaping Ctrl+W to Ctrl+F4 when the active window is Qt Designer. When Qt Designer is active, every time Ctrl+W is pressed, Ctrl+F4 will be sent to Qt Designer instead. In other applications, Ctrl+W remains working the usual way of course.\n\nWe now need to specify three things: A new shortcut trigger on 'Ctrl+W', a new keyboard input action sending Ctrl+F4, and a new condition that the active window is Qt Designer.\nQt Designer seems to always have title 'Qt Designer by Trolltech', so the condition will check for the active window having that title.
+Comment[ar]=لقراءة التعليق على العملية اكتب  'Hello'المصمم الاول استخدم  Ctrl+F4 لغلق النوافذ (بسبب أن مايكرو سوفت وندوز تستخدمه بهذه الطريقة) لكن Ctrl+F4 في كيد ستنقلك إلى سطح المكتر رقم 4 وتستخدم Ctrl+W لغلق النوافذلكن المشكلة ستحل بتغيير   Ctrl+W إلى  Ctrl+F4 عند تفعيل النوافذ ،ستعود لاستخدام هذه المفاتيح عند تفعيل Qt لكنك ستصبح مضطراً لعمل ثلاثة اشياء : تغيير  Ctrl+W لتصبح  Ctrl+F4 وتكييف جديد للنزافذ وكل نظام نوافذ سيبحث عن هذه التعديلات .
 Comment[bg]=Прочетете коментара на действие "Напишете "Здравей".\n\nQt Designer използва Ctrl+F4 за затваряне на прозорците (може би защото и MS Windows прави същото *shrug*). Но Ctrl+F4 в KDE означава отиване на виртуален работен плот 4, следователно не работи в Qt Designer. Също така Qt Designer не използва стандартното Ctrl+W за затваряне на прозорец.\n\nПроблемът може да бъде решен чрез задаване на Ctrl+F4 вместо Ctrl+W когато активният прозорец е Qt Designer. Когато последният е активен, всеки път при натискане на Ctrl+W, ще бъде изпращан Ctrl+F4 до дизайнера. Разбира се, в другите програми Ctrl+W ще работи по обичайния начин.
 Comment[ca]=Primer llegiu el comentari de l'acció "Teclegeu 'Hola'".\n\nEl Qt Designer usa Ctrl+F4 per tancar finestres (potser perquè el MS Windows ho fa d'aquesta manera *arronso les espatlles*). Però Ctrl+F4 en el KDE porta a l'escriptori virtual 4, així que no funciona en el Qt Designer, i el Qt Designer tampoc usa l'estàndard del KDE Ctrl+W per a tancar la finestra.\n\nPerò el problema es pot resoldre reassignant Ctrl+W a Ctrl+F4 quan la finestra activa sigui el Qt Designer. Quan el Qt Designer és actiu, cada vegada que es premi Ctrl+W, en el seu lloc s'enviarà Ctrl+F4 al Qt Designer. En d'altres aplicacions, Ctrl+W continua funcionant de la manera habitual.\n\nAra ens cal indicar tres coses: una activador de drecera a 'Ctrl+W', una acció de teclat nova que enviï Ctrl+F4, i una condició nova que la finestra activa sigui el Qt Designer.\nEl Qt Designer sembla que sempre porta el títol 'Qt Designer by Trolltech', de manera que la condició a comprovar per la finestra activa serà que tingui aquest títol.
 Comment[da]=Læs kommentaren ved handlingen "Indtast 'Hello'" først. \n\nQt Designer bruger Ctrl+F4 til at lukke vinduer (måske fordig MS Windows gør det sådan *shrug*). Men Ctrl+F4 i KDE står for at gå til virtuel desktop 4, så det virker ikke i Qt Designer, og ligeledes bruger Qt Designer ikke KDEs standard Ctrl+W til at lukke vinduet.\n\nMen problemet kan løses ved at omtildele Ctrl+W til Ctrl+F4 når det aktive vindue er Qt Designer. Hver gang Ctrl+W trykkes mens Qt Designer er aktiv vil Ctrl+F4 blive sendt til Qt Designer i stedet. I andre programmer fortsætter Ctrl+W med at virke på den sædvanlige måde.\n\n Nu behøver vi at angive tre ting: En ny genvejsudløser på 'Ctrl+W', en ny inputhandling for tastatur som sender Ctrl+F4, og en ny betingelse at Qt Designer er det aktive vindue.\nQt Designer lader til altid at have titlen 'Qt Designer by Trolltech', so betingelsen vil tjekke om det aktive vindue har den titel.
@@ -791,6 +798,7 @@ Comment[zh_CN]=请先阅读动作“输入‘Hello’”的注释。\n\nQt 设�
 Comment[zh_TW]=請先參考「輸入 Hello」的註解。\n\nQt 設計器用 Ctrl+F4 來關閉視窗（也許是因為微軟用這個鍵？），不過在 KDE 中 Ctrl+F4 是跳到 4 號虛擬桌面，所以在 Qt 設計師中會無法使用。此外，Qt 設計師並未使用 KDE 標準的關閉視窗鍵 Ctrl+W。\n\n不過您可以利用此重新映射的功能來解決這個問題。當 Qt 設計師視窗取得焦點時，每次按下 Ctrl+W 鍵，實際上會送出 Ctrl+F4 給 Qt 設計師。而在其他應用程式中，Ctrl+W 鍵則不受影響。\n\n要使用此功能，要指定三個參數：快捷鍵 Ctrl+W，要做的動作為送出 Ctrl+F4，以及生效條件為目前焦點處於 Qt 設計師視窗。\nQt 設計師的視窗標題是 'Qt Designer by Trolltech'，所以生效條件可以檢查視窗的標題是否符合。
 Enabled=false
 Name=Remap Ctrl+W to Ctrl+F4 in Qt Designer
+Name[ar]=غير Ctrl +W لتصبح Crl + F4 في التصميم Qt
 Name[bg]=Задаване на Ctrl+W за Ctrl+F4 в Qt Designer
 Name[ca]=Reassigna Ctrl+W a Ctrl+F4 en el Qt Designer
 Name[csb]=Przełożë Ctrl+W na Ctrl+F4 in Qt Designer
@@ -914,6 +922,7 @@ Type=SHORTCUT
 
 [Data_1_5]
 Comment=By pressing Alt+Ctrl+W a D-Bus call will be performed that will show the minicli. You can use any kind of D-Bus call, just like using the command line 'qdbus' tool.
+Comment[ar]=عند الضغط على Alt Ctrl W سيؤدي إلى عرض minicli تستطيع تغيير الاختصار بكل طرق D-Bus مثل استخدام الامر 'qdbus' 
 Comment[bg]=Чрез натискане на Alt+Ctrl+W ще бъде изпълнена заявка към D-Bus.
 Comment[ca]=Prement Alt+Ctrl+W s'executarà una crida D-Bus que mostrarà el «minicli». Podeu usar qualsevol classe de crida D-Bus, com si estiguéssiu usant l'eina 'qdbus' de la línia d'ordres.
 Comment[csb]=Przez wcësniãcé Alt+Ctrl+W bãdze zreszoné wëwòłanié D-Bus, jaczé pòkôże òkno mini-terminala.Mòżeta brëkòwac kòżdegò ôrtu wëwòłaniów D-BUs, tak samò jakbë wa brëkòwôlë wiérztë pòlétów 'qdbus'.
@@ -951,6 +960,7 @@ Comment[zh_CN]=通过按下 Alt+Ctrl+W，将会执行一个 D-Bus 调用显示 m
 Comment[zh_TW]=按下 Alt+Ctrl+W 時，會產生一個 D-Bus 呼叫來顯示 minicli。您可以使用任何種類的 D-Bus 呼叫，就如同在命令列中使用 qdbus 一樣。
 Enabled=false
 Name=Perform D-Bus call 'kdesktop KDesktopIface popupExecuteCommand()'
+Name[ar]=الاداة D-Bus تسمى سطح مكتب K لتنفيذ الاوامر
 Name[bg]=Заявка към D-Bus
 Name[ca]=Executa la crida D-Bus 'kdesktop KDesktopIface popupExecuteCommand()'
 Name[csb]=Zrëszë D-Bus 'kdesktop KDesktopIface popupExecuteCommand()'
@@ -1060,6 +1070,7 @@ Type=SHORTCUT
 
 [Data_1_6]
 Comment=Read the comment on action "Type 'Hello'" first.\n\nJust like the "Type 'Hello'" action, this one simulates a keyboard input, specifically, after pressing Ctrl+Alt+B, it sends B to XMMS (B in XMMS jumps to the next song). The 'Send to specific window' checkbox is checked and a window with its class containing 'XMMS_Player' is specified; this will make the input always be sent to this window. This way, you can control XMMS even if it's e.g. on a different virtual desktop.\n\n(Run 'xprop' and click on the XMMS window and search for WM_CLASS to see 'XMMS_Player').
+Comment[ar]=لقراءة التعليق على العملية اكتب  'Hello'ادخالات لوحة المفاتيح هنا ، وعلى وجه التحديد ، بعد الضغط على المفاتيح Ctrl+Alt+B ستنقلك إلى الاغنية التالية في XMMS،هذا الاختصار سيعمل مع برنامج    الملحه السيطرة + ب + البديل ، وترسل الى xmms ب ب في xmms يقفز الى آخر الاغنية). 'ارسال الى نافذة محددة' مربع الاختيار للتدقيق ونافذة مع XMMS اياً كان سطح المكتب الذي يعمل عليه (شغل xprop ثم اختر نافذة XMMS ثم ابحث عن WM_CLASS لتشاهد مشغل الملتيميديا XMMS
 Comment[bg]=Прочетете коментара на действие "Напишете "Здравей".\n\nПодобно на него, това действие симулира въвеждане от клавиатурата. След натискането на Ctrl+Alt+B се изпраща B до XMMS (B в XMMS прескача до следващата песен). Ако отметката "Изпращане до специфичен прозорец" и е посочен прозореца "XMMS_Player", въведеното винаги ще бъде изпращано до този прозорец. Така можете да контролирате XMMS дори когато е на друг работен плот.\n\n(Стартирайте "xprop", щракнете върху прозореца на XMMS и търсете WM_CLASS за да видите "XMMS_Player").
 Comment[ca]=Primer llegiu el comentari de l'acció "Teclegeu 'Hola'".\n\nCom a l'acció "Teclegeu 'Hola'", aquesta simula una entrada de teclat, en concret, després de prémer Ctrl+Alt+B, s'envia B a l'XMMS (B en l'XMMS salta a la cançó següent). La caixa 'Envia a una finestra específica' està marcada i s'indica una finestra en que la seva classe conté 'XMMS_Player'; això farà que l'entrada sempre s'enviï a aquesta finestra. D'aquesta manera podeu controlar l'XMMS inclús si esteu en un escriptori virtual diferent.\n\n(Executeu 'xprop' i cliqueu a la finestra de l'XMMS i cerqueu WM_CLASS per a veure 'XMMS_Player').
 Comment[da]=Læs kommentaren om handlingen "Indtast 'Hello'" først.\n\nLigesom "Indtast 'Hello'"-handlingen, simulerer denne et tastaturinput, specifikt efter tryk på Ctrl+ Alt+B sendes B til XMMS (i XMMS springer B til næste sang). Afkrydsningsfeltet 'Send til specifikt vindue' er afkrydset og et vindue hvor klassen indeholder 'XMMS_Player' er specificeret, det vil gøre at inputtet altid sendes til dette vindue. På den måde kan du kontrollere XMMS selvom den f.eks. er på en andet virtuel desktop.\n\n(Kør 'xprop' og klik på XMMS-vinduet og søg efter WM_CLASS for at se 'XMMS_Player').
@@ -1100,6 +1111,7 @@ Comment[zh_TW]=請先參考「輸入 Hello」的註解。就如同「輸入 Hell
 Enabled=false
 Name=Next in XMMS
 Name[af]=Volgende in XMMS wagtou
+Name[ar]=التالي في XMMS
 Name[be]=Наступны ў XMMS
 Name[bg]="Следваща" в XMMS
 Name[bn_IN]=XMMS-এ পরবর্তী মান
@@ -1242,7 +1254,7 @@ WindowsCount=1
 Class=XMMS_Player
 ClassType=1
 Comment=XMMS Player window
-Comment[ar]=XMMS نافذة قارئ
+Comment[ar]=XMMS نافذة المشغل
 Comment[bg]=Прозорец на плеъра XMMS
 Comment[bn_IN]=XMMS প্লেয়ার উইন্ডো
 Comment[ca]=Finestra del reproductor XMMS
@@ -1369,6 +1381,7 @@ Type=SHORTCUT
 
 [Data_1_7]
 Comment=Ok, Konqi in KDE3.1 has tabs, and now you can also have gestures. No need to use other browsers >;).\n\nJust press the middle mouse button and start drawing one of the gestures, and after you're finished, release the mouse button. If you only need to paste the selection, it still works, simply only click the middle mouse button. (You can change the mouse button to use in the global settings).\n\nRight now, there are these gestures available:\nmove right and back left - Forward (ALt+Right)\nmove left and back right - Back (Alt+Left)\nmove up and back down  - Up (Alt+Up)\ncircle anticlockwise - Reload (F5)\n (As soon as I find out which ones are in Opera or Mozilla, I'll add more and make sure they are the same. Or if you do it yourself, feel free to help me and send me your khotkeysrc.)\n\nThe gestures shapes (some of the dialogs are from KGesture, thanks to Mike Pilone) can be simply entered by performing them in the configuration dialog. You can also look at your numeric pad to help you, gestures are recognized like a 3x3 grid of fields, numbered 1 to 9.\n\nNote that you must perform exactly the gesture to trigger the action. Because of this, it's possible to enter more gestures for the action. You should try to avoid complicated gestures where you change the direction of mouse moving more than once (i.e. do e.g. 45654 or 74123 as they are simple to perform but e.g. 1236987 may be already quite difficult).\n\nThe condition for all gestures are defined in this group. All these gestures are active only if the active window is Konqueror (class contains 'konqueror').
+Comment[ar]=كونكي في كيدي 3.1 نافذة مستقلة ، تستطيع الحصول على التلميحات ، لست بحاجة لاستخدام متصفح آخر ، اضغط على زر الفاره الاوسط لتظهر على علامة التصفح بالماوس ،وبعد الانتهاء ، اطلق زر الفار ، كل مرة تضغط على العجلة ستحصل على نفس العملية ، اذا اردت الاختيار قم بالغضغط على زر الفاره (يمكنك ان تغير زر الفاره  من لوحة التحكم ) تستطيع الحصول على علامة الماوس للتحكم في التنقل يمين ويسار ايضاً.الضغط على (Alt+Right) ينقلك مستوى واحد للاعلى،الضغط على (Alt+Left) ينقلك مستوى واحد للاسفل عند تصفح المجلدات ،عادة التحميل (F5) كما في الاوبرا و الفايرفوكس تستطيع ضبط عدد الاسطر التي تنقلك بها عجلة الفارة في كل مرة 
 Comment[bg]=Konqi в KDE3.1 има подпрозорци, а сега вече има и жестове. Няма нужда от други браузъри >;).\n\nПросто натиснете средният бутон на мишката и започнете да правите жестове, а след като свършите просто пуснете мишката. Ако само трябва да извършите операцията "поставяне", пак ще работи - просто натиснете средния бутон.
 Comment[ca]=D'acord, el Konqi des del KDE3.1 té pestanyes, i ara també té gestos. No hi ha cap necessitat d'usar altres navegadors >;).\n\nNomés premeu el botó del mig del ratolí i comenceu a dibuixar un dels gestos, després d'acabar deixeu anar el botó del ratolí. Si només us cal enganxar la selecció, encara funciona; senzillament cliqueu el botó del mig del ratolí (podeu canviar el botó del ratolí a usar a l'arranjament global).\n\nActualment hi ha disponibles els gestos següents:\nmoure a la dreta i tornar a l'esquerra - Endavant (Alt+Dreta)\nmoure a l'esquerra i tornar a la dreta - Enrere (Alt+Esquerra)\nmoure amunt i tornar avall - Amunt (Alt+Amunt)\ncercle antihorari - Refresca (F5)\n (Tant aviat com jo trobi quins estan a l'Opera o al Mozilla, n'afegiré més i asseguraré que són el mateixos. O si ho feu vosaltres mateixos, preneu-vos la llibertat d'ajudar-me i envieu-me el fitxer khotkeysrc.)\n\nLes formes del gestos (alguns dels diàlegs són del KGesture, gràcies a Mike Pilone) es poden introduir senzillament executant-los en el diàleg de configuració. També podeu mirar al teclat numèric per ajudar-vos, els gestos es reconeixen com una graella de camps de 3x3, numerats de l'1 al 9.\n\nTingueu en compte que heu d'executar exactament el gest per a activar l'acció. Degut a això, és possible introduir més gestos per l'acció. Hauríeu d'intentar evitar gestos complicats quan canvieu la direcció del moviment del ratolí més d'un cop (p.ex. 45654 o 74123 són senzills d'executar, però p.ex. 1236987 pot ser bastant difícil).\n\nEn aquest grup es defineixen les condicions per tots els gestos. Els gestos només són actius quan la finestra activa és el Konqueror (la classe conté 'konqueror').
 Comment[da]=Ok, Konqi i KDE3.1 har faneblade, og nu kan du også have gestusser. Ingen grund til at bruge andre browsere >;).\n\nTryk blot på midterste museknap og begynd at tegne en af gestusserne, og slip museknappen når du er færdig. Hvis du kun behøver at indsætte markeringen virker det stadig, du nøjes simpelthen med at klikke på den midterste knap. (Du kan ændre hvilken museknap der skal bruges i de globale indstillinger).\n\nLige nu er følgende gestusser tilgængelige: \nflyt til højre og tilbage til venstre - Fremad (Alt+højre)\nflyt til venstre og tilbage til højre - Tilbage (Alt+venstre)\nflyt op og ned igen - Op (Alt+op)\ncirkel mod uret - Genindlæs (F5)\n (Så snart jeg finder ud af hvilke der findes i Opera eller Mozilla vil jeg tilføje flere og sikre mig at de er ens. Eller hvis du selv gør det, så hjælp mig endelig og send mig din khotkeysrc.)\n\nGestusformerne (nogle af dialogerne er fra KGesture takket være Mike Pilone) kan simpelthen angives ved at udføre dem i konfigurationsdialogen. Du kan også kigge på dit nummertastatur for hjælp, dine gestusser er genkendt som et 3x3-gitter af felter nummereret fra 1-9.\n\nBemærk at du skal udføre den nøjagtige gestus for at udløse handlingen. På grund af dette er det muligt at angive flere gestusser for handlingen. Du bør undgå komplicerede gestusser hvor du ændrer bevægelsesretning for musen mere end en gang (gør f.eks. 45654 eller 74123 da de er nemme at udføre men f.eks. 1236987 kan være ret svært.) \n\nBetingelsen for alle gestusser er defineret i denne gruppe. Alle disse gestusser er kun aktive hvis det aktive vindue er Konqueror (klassen indeholder 'Konqueror').
@@ -1409,6 +1422,7 @@ Comment[zh_TW]=KDE 3.1 中的 Konqi 有分頁，現在您也可以用手勢。�
 DataCount=4
 Enabled=false
 Name=Konqi Gestures
+Name[ar]=حركات كونكي
 Name[bg]=Жестове на Konqui
 Name[ca]=Gestos del Konqui
 Name[cs]=Gesta Konqueroru
@@ -1665,6 +1679,7 @@ ConditionsCount=0
 
 [Data_1_7_1Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -1721,7 +1736,7 @@ Comment=
 Enabled=false
 Name=Forward
 Name[af]=Vorentoe
-Name[ar]=إلى الأمام
+Name[ar]=تحويل
 Name[be]=Наперад
 Name[bg]=Напред
 Name[bn_IN]=পরবর্তী
@@ -1803,6 +1818,7 @@ ConditionsCount=0
 
 [Data_1_7_2Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -1940,6 +1956,7 @@ ConditionsCount=0
 
 [Data_1_7_3Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -2078,6 +2095,7 @@ ConditionsCount=0
 
 [Data_1_7_4Triggers]
 Comment=Gesture_triggers
+Comment[ar]=اطلق مبادرة
 Comment[bg]=Жестове
 Comment[ca]=Activadors de gestos
 Comment[csb]=Włączanié_gestów
@@ -2131,6 +2149,7 @@ Type=GESTURE
 
 [Data_1_8]
 Comment=After pressing Win+E (Tux+E), WWW browser will be launched and it will open http://www.kde.org . You may run all kind of commands you can run in minicli (Alt+F2).
+Comment[ar]=بعد الضغط على (Win+E) (Tux+E) سيفتح المتصفح وستنقل مباشرة إلى http://www.kde.org تستطيع تشغيل كل الاوامر باضغط على (Alt+F2)
 Comment[bg]=След като натиснете Win+E (Tux+E), ще бъде стартиран уеб браузър, който ще отвори http://www.kde.org . Можете да стартирате всякакви команди (Alt+F2).
 Comment[ca]=Després de prémer Win+E (Tux+E), s'executarà el navegador web i s'obrirà http://www.kde.org . Podeu executar tot tipus d'ordres que es puguin executar al minicli (Alt+F2).
 Comment[csb]=Pò wcësniãcô Win+E (Tux+E) bãdze zreszony przezérnik WWW, w jaczim bãdze òtemkłô starna http://www.kde.org . W mini-terminalu (Alt+F2) mòże zrëszëc wszëtczé ôrtë pòlétów.

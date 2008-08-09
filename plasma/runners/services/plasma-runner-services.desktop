@@ -75,6 +75,7 @@ Name[x-test]=xxApplicationsxx
 Name[zh_CN]=应用程序
 Name[zh_TW]=應用程式
 Comment=Applications, control panels and services
+Comment[ar]=تطبيقات ، لوحة تحكم و خدمات
 Comment[ca]=Aplicacions, plafons de control i serveis
 Comment[cs]=Aplikace, ovládácí panely a služby
 Comment[da]=Programmer, kontrolpaneler og tjenester

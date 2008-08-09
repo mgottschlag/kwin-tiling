@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Dictionary Data Engine
 Name[af]=Woordeboek data-enjin
+Name[ar]=محرك بيانات القاموس
 Name[bg]=Речник
 Name[ca]=Motor de dades de diccionari
 Name[csb]=Czérownik słowôrza
@@ -53,6 +54,7 @@ Name[zh_CN]=字典数据引擎
 Name[zh_TW]=字典資料引擎
 Comment=Look up word meanings
 Comment[af]=Slaan woordbetekenisse na
+Comment[ar]=ابحث عن معنى الكلمة
 Comment[bg]=Търсене на думи
 Comment[bn_IN]=শব্দের অর্থ অনুসন্ধান করুন
 Comment[ca]=Cerca els significats de paraules

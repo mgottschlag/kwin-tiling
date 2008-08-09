@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Now Playing Engine
+Name[ar]=الان يتم تشغيل المحرك
 Name[ca]=Motor de «Ara sona»
 Name[da]=Spiller nu-motor
 Name[de]=Unterstützung für „Aktueller Titel“
@@ -41,6 +42,7 @@ Name[zh_CN]=正在收听引擎
 Name[zh_TW]=「現在播放」引擎
 
 Comment=Lists currently playing music
+Comment[ar]=قائمة بالمقاطع الموسيقية الحالية
 Comment[ca]=Llista la música que s'està reproduint actualment
 Comment[cs]=Vypíše aktuálně přehrávanou hudbu
 Comment[da]=Lister musik som aktuelt afspilles

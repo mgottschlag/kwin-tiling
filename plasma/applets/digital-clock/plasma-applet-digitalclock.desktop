@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Digital Clock
 Name[af]=Digitale horlosie
+Name[ar]=ساعة رقمية
 Name[be]=Лічбавы гадзіннік
 Name[bg]=Цифров часовник
 Name[bn_IN]=ডিজিট্যাল ঘড়ি
@@ -64,6 +65,7 @@ Name[zh_TW]=數位時鐘
 
 Comment=A simple digital clock
 Comment[af]='n Eenvoudige digitale horlosie
+Comment[ar]=ساعة رقمي بسيطة
 Comment[bg]=Обикновен цифров часовник
 Comment[bn_IN]=একটি সাধারণ ডিজিট্যাল ঘড়ি
 Comment[ca]=Un rellotge digital senzill

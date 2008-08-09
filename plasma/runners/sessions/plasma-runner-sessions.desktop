@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Desktop Sessions
+Name[ar]=جلسة سطح المكتب
 Name[bg]=Сесии
 Name[bn_IN]=ডেস্কটপের সেশান
 Name[ca]=Sessions d'escriptori
@@ -48,6 +49,7 @@ Name[x-test]=xxDesktop Sessionsxx
 Name[zh_CN]=桌面会话
 Name[zh_TW]=桌面工作階段
 Comment=Fast user switching
+Comment[ar]=تبديل سريع للمستخدم
 Comment[ca]=Commutador ràpid d'usuari
 Comment[cs]=Rychlé přepínání uživatelů
 Comment[da]=Hurtig brugerskift

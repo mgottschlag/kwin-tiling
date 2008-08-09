@@ -15,7 +15,7 @@ X-KDE-System-Settings-Parent-Category=system
 
 Name=Login Manager
 Name[af]=Aanteken Bestuurder
-Name[ar]=مدير الولوج
+Name[ar]=مدير الدخول
 Name[be]=Кіраўнік уваходу
 Name[bg]=Вход в системата
 Name[bn]=লগ-ইন ম্যানেজার
@@ -90,7 +90,7 @@ Name[zh_TW]=登錄管理程式
 
 Comment=Configure the login manager (KDM)
 Comment[af]=Konfigureer die aanteken bestuurder (Kdm)
-Comment[ar]=اضبط مدير الولوج (KDM)
+Comment[ar]=اضبط مدير الدخول (KDM)
 Comment[be]=Настаўленні кіраўніка ўваходу (KDM)
 Comment[bg]=Настройване на графичната системата за вход
 Comment[bn]=লগ-ইন ম্যানেজার কনফিগার করুন

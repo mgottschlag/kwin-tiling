@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Dashboard
+Name[ar]=لوحة علامات
 Name[ca]=Tauler
 Name[csb]=Panel
 Name[da]=Instrumentbræt
@@ -27,6 +28,7 @@ Name[x-test]=xxDashboardxx
 Name[zh_CN]=部件板
 Name[zh_TW]=儀表板
 Comment=MacOS X dashboard widget
+Comment[ar]=لوحة علامات ماك x
 Comment[ca]=Estri del tauler del MacOS X
 Comment[da]=MacOS X dashboard-widget
 Comment[de]=MacOS-X-Dashboard-Miniprogramm

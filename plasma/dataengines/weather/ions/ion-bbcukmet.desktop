@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=BBC Weather from UK MET Office
+Name[ar]=الطقس من BBC Weather
 Name[bg]=Време от BBC (офис UK MET)
 Name[ca]=Meteorologia de la BBC des de UK MET Office
 Name[csb]=Wiodro BBC z bura  UK-MET
@@ -50,6 +51,7 @@ Name[x-test]=xxBBC Weather from UK MET Officexx
 Name[zh_CN]=来自英国 MET 办公室来的 BBC 天气报告
 Name[zh_TW]=BBC 天氣報告，從 UK MET 辦公室來
 Comment=XML Data from the UK MET Office
+Comment[ar]=معلومات XML من مكتب  UK MET
 Comment[ca]=Dades XML des de UK MET Office
 Comment[csb]=XML-pòdôwczi z bura UK-MET
 Comment[da]=XML-data fra UK MET-kontoret

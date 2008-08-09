@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Lock/Logout
 Name[af]=Sluit/Teken af
+Name[ar]=أقفل /اخرج
 Name[bg]=Заключване и изход
 Name[bn_IN]=লক/লগ-আউট করুন
 Name[ca]=Bloqueja/surt
@@ -61,6 +62,7 @@ Name[zh_CN]=锁定/注销
 Name[zh_TW]=鎖定/登出
 Comment=Lets user lock screen or end session
 Comment[af]=Laat die gebruiker die skerm sluit of afteken
+Comment[ar]=آخر مستخدم انهى الجلسة او قفل الشاشة
 Comment[bg]=Заключване на екрана и завършване на сесията
 Comment[ca]=Permet a l'usuari bloquejar la pantalla o sortir de la sessió
 Comment[cs]=Umožní uzamknout obrazovku nebo ukončit relaci

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Application Launcher Menu
 Name[af]=Programlanseerder-kieslys
+Name[ar]=قائمة الوصول للتطبيقات
 Name[bg]=Стартиране на програми
 Name[ca]=Menú de l'engegador d'aplicacions
 Name[cs]=Nabídka spouštěče aplikací
@@ -55,6 +56,7 @@ Name[zh_CN]=应用程序启动菜单
 Name[zh_TW]=應用程式啟動器選單
 Comment=Traditional menu based application launcher
 Comment[af]=Tradisionele kieslys as programlanseerder
+Comment[ar]=قائمة تقليدية المبنية على قاعدة الوصول للتطبيقات
 Comment[ca]=Engegador d'aplicacions basat en el menú tradicional
 Comment[cs]=Tradiční spouštěč aplikací založený na nabídce
 Comment[da]=Traditionel menubaseret programstarter

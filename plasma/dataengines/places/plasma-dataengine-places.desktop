@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Places Data Engine
+Name[ar]=محرك بيانات الاماكن
 Name[bg]=Места
 Name[ca]=Motor de dades de llocs
 Name[da]=Datamotor til steder
@@ -48,6 +49,7 @@ Name[x-test]=xxPlaces Data Enginexx
 Name[zh_CN]=位置数据引擎
 Name[zh_TW]=Places 資料引擎
 Comment=Places data for Plasmoids
+Comment[ar]=محرك بيانات الاماكن للبلازما
 Comment[bg]=Места за Plasmoids
 Comment[ca]=Dades de llocs pels plasmoides
 Comment[da]=Steddata til plasmoids
