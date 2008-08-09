@@ -24,6 +24,7 @@ Name[mr]=ठोस
 Name[ne]=ठोस
 Name[pa]=ਸਾਲਡ
 Name[sr]=Солид
+Name[te]=సాలిడ్
 Name[vi]=Đặc
 Name[x-test]=xxSolidxx
 
@@ -79,6 +80,7 @@ Comment[sl]=Nastavitev integracije s strojno opremo
 Comment[sr]=Постава интеграције хардвера
 Comment[sr@latin]=Postava integracije hardvera
 Comment[sv]=Inställning av hårdvaruintegrering
+Comment[te]=హార్‍డ్‌వేర్ సమ్మేళనం ఆకృతీకరణ
 Comment[th]=การปรับแต่งการรวมฮาร์ดแวร์เข้าไว้ด้วยกัน
 Comment[tr]=Donanım Bütünleşme Yapılandırması
 Comment[uk]=Налаштування інтеграції обладнання
