@@ -1,5 +1,5 @@
 /*
- *   Copyright 2007 Richard J. Moore <rich@kde.org>
+ *   Copyright 2007-2008 Richard J. Moore <rich@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -39,6 +39,7 @@ Q_DECLARE_METATYPE(QStyleOptionGraphicsItem*)
 Q_DECLARE_METATYPE(QScriptApplet*)
 Q_DECLARE_METATYPE(Layout*)
 Q_DECLARE_METATYPE(Applet*)
+Q_DECLARE_METATYPE(QGraphicsWidget*)
 
 QScriptValue constructPainterClass(QScriptEngine *engine);
 QScriptValue constructGraphicsItemClass(QScriptEngine *engine);
@@ -367,21 +368,20 @@ void QScriptApplet::installWidgets( QScriptEngine *engine )
 
 QScriptValue QScriptApplet::createWidget(QScriptContext *context, QScriptEngine *engine)
 {
-#if 0 // FIXME: Broken by WoC
     if ( context->argumentCount() > 1 )
 	return context->throwError("Create widget takes one argument");
 
-    Applet *parent = 0;
+    QGraphicsWidget *parent = 0;
     if ( context->argumentCount() ) {
-	parent = qscriptvalue_cast<Applet*>(context->argument(0));
+	parent = qscriptvalue_cast<QGraphicsWidget*>(context->argument(0));
 
 	if ( !parent )
-	    return context->throwError("The parent must be a Widget");
+	    return context->throwError("The parent must be a QGraphicsWidget");
     }
 
     QString self = context->callee().property( "functionName" ).toString();
     UiLoader loader;
-    Applet *w = loader.createWidget( self, parent );
+    QGraphicsWidget *w = loader.createWidget( self, parent );
 
     if (!w)
 	return QScriptValue();
@@ -390,8 +390,6 @@ QScriptValue QScriptApplet::createWidget(QScriptContext *context, QScriptEngine 
     fun.setPrototype( context->callee().property("prototype") );
 
     return fun;
-#endif
-    return QScriptValue();
 }
 
 QScriptValue QScriptApplet::createPrototype( QScriptEngine *engine, const QString &name )
