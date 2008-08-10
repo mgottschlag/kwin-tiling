@@ -795,6 +795,34 @@ QVector<QString> UKMETIon::forecasts(const QString& source)
     QVector<QString> forecastData;
 
     for (int i = 0; i < d->m_weatherData[source].forecasts.size(); ++i) {
+
+        if (d->m_weatherData[source].forecasts[i]->period.contains("Saturday")) {
+            d->m_weatherData[source].forecasts[i]->period.replace("Saturday", "Sat");
+        }
+
+        if (d->m_weatherData[source].forecasts[i]->period.contains("Sunday")) {
+            d->m_weatherData[source].forecasts[i]->period.replace("Sunday", "Sun");
+        }
+
+        if (d->m_weatherData[source].forecasts[i]->period.contains("Monday")) {
+            d->m_weatherData[source].forecasts[i]->period.replace("Monday", "Mon");
+        }
+
+        if (d->m_weatherData[source].forecasts[i]->period.contains("Tuesday")) {
+            d->m_weatherData[source].forecasts[i]->period.replace("Tuesday", "Tue");
+        }
+
+        if (d->m_weatherData[source].forecasts[i]->period.contains("Wednesday")) {
+            d->m_weatherData[source].forecasts[i]->period.replace("Wednesday", "Wed");
+        }
+
+        if (d->m_weatherData[source].forecasts[i]->period.contains("Thursday")) {
+            d->m_weatherData[source].forecasts[i]->period.replace("Thursday", "Thu");
+        }
+        if (d->m_weatherData[source].forecasts[i]->period.contains("Friday")) {
+            d->m_weatherData[source].forecasts[i]->period.replace("Friday", "Fri");
+        }
+
         forecastData.append(QString("%1|%2|%3|%4|%5|%6") \
                             .arg(d->m_weatherData[source].forecasts[i]->period) \
                             .arg(d->m_weatherData[source].forecasts[i]->summary) \
