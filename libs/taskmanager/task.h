@@ -30,6 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtGui/QPixmap>
 #include <QtGui/QWidget>
 #include <QtCore/QHash>
+#include <QtGui/QIcon>
 
 // KDE
 #include <ksharedptr.h>
@@ -126,6 +127,11 @@ public:
      * none was found.
      */
     QPixmap icon( int width, int height, bool allowResize = false );
+    
+    /**
+     * \return a QIcon for the task
+     */
+    QIcon icon();
 
     /**
      * Returns true iff the windows with the specified ids should be grouped

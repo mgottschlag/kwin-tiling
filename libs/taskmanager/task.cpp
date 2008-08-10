@@ -73,6 +73,7 @@ public:
     int lastHeight;
     bool lastResize;
     QPixmap lastIcon;
+    QIcon icon;
 
     double thumbSize;
     QPixmap thumb;
@@ -191,6 +192,7 @@ void Task::refreshIcon()
     }
 
     d->lastIcon = QPixmap();
+    d->icon = QIcon();
     emit iconChanged();
 }
 
@@ -439,6 +441,21 @@ QPixmap Task::icon( int width, int height, bool allowResize )
 
   return newIcon;
 }
+
+QIcon Task::icon()
+{
+    if ( !d->icon.isNull() )
+        return d->icon;
+
+    d->icon.addPixmap(KWindowSystem::icon( d->win, KIconLoader::SizeSmall, KIconLoader::SizeSmall, false));
+    d->icon.addPixmap(KWindowSystem::icon( d->win, KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium, false));
+    d->icon.addPixmap(KWindowSystem::icon( d->win, KIconLoader::SizeMedium, KIconLoader::SizeMedium, false));
+    d->icon.addPixmap(KWindowSystem::icon( d->win, KIconLoader::SizeLarge, KIconLoader::SizeLarge, false));
+
+    return d->icon;
+}
+
+
 
 WindowList Task::transients() const
 {

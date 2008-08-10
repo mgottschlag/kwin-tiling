@@ -549,11 +549,7 @@ void WindowTaskItem::updateTask()
     setTaskFlags(flags);
 
     // basic title and icon
-    QIcon taskIcon;
-    taskIcon.addPixmap(m_task->icon(KIconLoader::SizeSmall, KIconLoader::SizeSmall, false));
-    taskIcon.addPixmap(m_task->icon(KIconLoader::SizeSmallMedium, KIconLoader::SizeSmallMedium, false));
-    taskIcon.addPixmap(m_task->icon(KIconLoader::SizeMedium, KIconLoader::SizeMedium, false));
-    taskIcon.addPixmap(m_task->icon(KIconLoader::SizeLarge, KIconLoader::SizeLarge, false));
+    QIcon taskIcon = m_task->icon();
 
     if (m_showTooltip) {
       Plasma::ToolTipManager::ToolTipContent data;
