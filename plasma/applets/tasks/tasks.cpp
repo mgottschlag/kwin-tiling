@@ -106,7 +106,6 @@ void Tasks::init()
             this, SLOT(removeStartingTask(StartupPtr)));
 
     reconnect();
-    updatePreferredSize();
 }
 
 void Tasks::addStartingTask(StartupPtr task)
@@ -115,7 +114,6 @@ void Tasks::addStartingTask(StartupPtr task)
     item->setStartupTask(task);
     m_startupTaskItems.insert(task, item);
     insertItemBeforeSpacer(item);
-    updatePreferredSize();
 }
 
 void Tasks::removeStartingTask(StartupPtr task)
@@ -141,6 +139,7 @@ void Tasks::registerWindowTasks()
         iter.next();
         addWindowTask(iter.value());
     }
+    updatePreferredSize();
 }
 
 void Tasks::addWindowTask(TaskPtr task)
@@ -201,39 +200,37 @@ void Tasks::addWindowTask(TaskPtr task)
 
     connect(item, SIGNAL(activated(WindowTaskItem*)),
             this, SLOT(updateActive(WindowTaskItem*)));
-
-    updatePreferredSize();
 }
 
 void Tasks::removeWindowTask(TaskPtr task)
 {
-    if (m_windowTaskItems.contains(task)) {
-        WindowTaskItem *item = m_windowTaskItems.take(task);
-        m_layout->removeItem(item);
-        scene()->removeItem(item);
-        item->deleteLater();
-        m_activeTask = m_windowTaskItems.end();
+    WindowTaskItem *item = m_windowTaskItems.take(task);
+    if (item) {
+      m_layout->removeItem(item);
+      scene()->removeItem(item);
+      item->deleteLater();
+      m_activeTask = m_windowTaskItems.end();
+      updatePreferredSize();
+      adjustStretch();
     }
-    
-    updatePreferredSize();
-    adjustStretch();
 }
 
 void Tasks::removeAllWindowTasks()
 {
-    QHash<TaskPtr,WindowTaskItem*>::iterator it = m_windowTaskItems.begin();
+    QHashIterator<TaskPtr,WindowTaskItem*> iter (m_windowTaskItems);
 
-    while (it != m_windowTaskItems.end()) {
-        WindowTaskItem *item = it.value();
+    while (iter.hasNext()) {
+        iter.next();
+        WindowTaskItem *item = iter.value();
         m_layout->removeItem(item);
         scene()->removeItem(item);
         item->deleteLater();
-        ++it;
     }
-
-    m_windowTaskItems.clear();
-    m_activeTask = m_windowTaskItems.end();
-    updatePreferredSize();
+    if (m_windowTaskItems.count() > 0) {
+      m_windowTaskItems.clear();
+      m_activeTask = m_windowTaskItems.end();
+      updatePreferredSize();
+    }
 }
 
 void Tasks::constraintsEvent(Plasma::Constraints constraints)
