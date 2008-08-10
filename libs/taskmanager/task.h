@@ -29,6 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtGui/QDrag>
 #include <QtGui/QPixmap>
 #include <QtGui/QWidget>
+#include <QtCore/QHash>
 
 // KDE
 #include <ksharedptr.h>
@@ -43,7 +44,7 @@ typedef QList<WId> WindowList;
 class Task;
 typedef KSharedPtr<Task> TaskPtr;
 typedef QVector<TaskPtr> TaskList;
-typedef QMap<WId, TaskPtr> TaskDict;
+typedef QHash<WId, TaskPtr> TaskDict;
 
 /**
  * A dynamic interface to a task (main window).

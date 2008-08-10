@@ -135,7 +135,7 @@ void Tasks::registerWindowTasks()
     TaskManager::TaskManager *manager = TaskManager::TaskManager::self();
 
     TaskManager::TaskDict tasks = manager->tasks();
-    QMapIterator<WId,TaskPtr> iter(tasks);
+    QHashIterator<WId,TaskPtr> iter(tasks);
 
     while (iter.hasNext()) {
         iter.next();
