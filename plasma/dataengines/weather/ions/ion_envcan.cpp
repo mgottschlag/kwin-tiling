@@ -1167,6 +1167,38 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
     }
 
     for (int i = 0; i < d->m_weatherData[source].forecasts.size(); ++i) {
+        // We need to shortform the day/night strings.
+        if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("night")) {
+            d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("night", "ngt");
+        }
+        
+        if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("Saturday")) {
+            d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Saturday", "Sat");
+        }
+        
+        if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("Sunday")) {
+            d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Sunday", "Sun");
+        }
+        
+        if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("Monday")) {
+            d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Monday", "Mon");
+        }
+
+        if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("Tuesday")) {
+            d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Tuesday", "Tue");
+        }
+
+        if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("Wednesday")) {
+            d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Wednesday", "Wed");
+        }
+
+        if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("Thursday")) {
+            d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Thursday", "Thu");
+        }
+        if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("Friday")) {
+            d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Friday", "Fri");
+        }
+
         forecastData.append(QString("%1|%2|%3|%4|%5|%6|%7|%8|%9|%10") \
                             .arg(d->m_weatherData[source].forecasts[i]->forecastPeriod) \
                             .arg(d->m_weatherData[source].forecasts[i]->shortForecast) \
