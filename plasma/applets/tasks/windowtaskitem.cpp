@@ -166,8 +166,6 @@ void WindowTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
     m_fadeIn = true;
     m_animId = Plasma::Animator::self()->customAnimation(40 / (1000 / FadeInDuration), FadeInDuration,Plasma::Animator::LinearCurve, this, "animationUpdate");
-
-    QGraphicsWidget::hoverEnterEvent(event);
 }
 
 void WindowTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
@@ -180,8 +178,6 @@ void WindowTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
     m_fadeIn = false;
     m_animId = Plasma::Animator::self()->customAnimation(40 / (1000 / FadeOutDuration), FadeOutDuration,Plasma::Animator::LinearCurve, this, "animationUpdate");
-
-    QGraphicsWidget::hoverLeaveEvent(event);
 }
 
 void WindowTaskItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *)
