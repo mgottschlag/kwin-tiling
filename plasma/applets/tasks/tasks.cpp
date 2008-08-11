@@ -40,6 +40,9 @@
 Tasks::Tasks(QObject* parent, const QVariantList &arguments)
  : Plasma::Applet(parent, arguments),
    m_activeTask(0),
+   m_animator(0),
+   m_layout(0),
+   m_spacer(0),
    m_taskItemBackground(0),
    m_taskAlphaPixmap(0),
    m_colorScheme(0),
@@ -235,6 +238,9 @@ void Tasks::removeAllWindowTasks()
 
 void Tasks::constraintsEvent(Plasma::Constraints constraints)
 {
+    if (!m_layout) {
+        return;
+    }
     if (constraints & Plasma::LocationConstraint) {
         if (formFactor() == Plasma::Vertical) {
             m_layout->setOrientation(Qt::Vertical);
