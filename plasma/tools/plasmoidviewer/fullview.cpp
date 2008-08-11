@@ -120,7 +120,12 @@ void FullView::resizeEvent(QResizeEvent *event)
     }
 
     m_containment->resize(size());
-    m_applet->resize(QSizeF(newWidth, newHeight));
+    QSizeF newSize(newWidth, newHeight);
+    // check if the rect is valid, or else it seems to try to allocate
+    // up to infinity memory in exponential increments
+    if (newSize.isValid()) {
+        m_applet->resize(QSizeF(newWidth, newHeight));
+    }
 }
 
 void FullView::sceneRectChanged(const QRectF &rect)
