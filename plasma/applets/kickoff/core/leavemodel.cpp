@@ -26,6 +26,7 @@
 // KDE
 #include <KLocalizedString>
 #include <KIcon>
+#include <kdisplaymanager.h>
 #include <solid/powermanagement.h>
 
 // Local
@@ -121,17 +122,19 @@ LeaveModel::LeaveModel(QObject *parent)
             QStandardItem *hibernateOption = createStandardItem("leave:/hibernate");
             systemOptions->appendRow(hibernateOption);
         }
+        bool displayCanShutdown = KDisplayManager().canShutdown();
+        if( displayCanShutdown ) {
+           // Shutdown
+           QStandardItem *shutDownOption = createStandardItem("leave:/shutdown");
+           systemOptions->appendRow(shutDownOption);
 
-        // Shutdown
-        QStandardItem *shutDownOption = createStandardItem("leave:/shutdown");
-        systemOptions->appendRow(shutDownOption);
-
-        // Restart
-        QStandardItem *restartOption = createStandardItem("leave:/restart");
-        systemOptions->appendRow(restartOption);
-
+           // Restart
+           QStandardItem *restartOption = createStandardItem("leave:/restart");
+           systemOptions->appendRow(restartOption);
+        }
     appendRow(sessionOptions);
-    appendRow(systemOptions);
+    if(displayCanShutdown)
+       appendRow(systemOptions);
 }
 LeaveModel::~LeaveModel()
 {
