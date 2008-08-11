@@ -103,7 +103,7 @@ public:
 	 * device. */
 	bool isActive() const;
 
-	bool applyProposed(int changes = 0xffffff, bool confirm = false);
+	bool applyProposed(int changes = 0xffffff);
 	void proposeOriginal();
 
 	// proposal functions

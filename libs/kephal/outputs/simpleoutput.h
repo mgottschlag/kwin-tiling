@@ -42,7 +42,11 @@ namespace kephal {
             virtual void setSize(QSize size);
             virtual QList<QSize> availableSizes();
             virtual QPoint position();
+            virtual void setPosition(QMap<Position, Output *> anchors);
             //QList<PositionType> getRelativePosition();
+            virtual QString vendor();
+            virtual int productId();
+            virtual unsigned int serialNumber();
             
             virtual bool isConnected();
             virtual bool isActivated();
@@ -53,9 +57,14 @@ namespace kephal {
             void _setPosition(QPoint position);
             void _setActivated(bool activated);
             void _setConnected(bool connected);
+            void _setAnchors(QMap<Position, Output *> anchors);
+            void _setVendor(QString vendor);
+            void _setProductId(int productId);
+            void _setSerialNumber(unsigned int serialNumber);
             
         Q_SIGNALS:
             void sizeChangeRequested(SimpleOutput * screen, QSize oldSize, QSize newSize);
+            void positionChangeRequested(SimpleOutput * screen, QMap<Position, Output *> oldAnchors, QMap<Position, Output *> newAnchors);
             
         private:
             QString m_id;
@@ -64,6 +73,10 @@ namespace kephal {
             QPoint m_position;
             bool m_activated;
             bool m_connected;
+            QMap<Position, Output *> m_anchors;
+            QString m_vendor;
+            int m_productId;
+            unsigned int m_serialNumber;
     };
     
 }

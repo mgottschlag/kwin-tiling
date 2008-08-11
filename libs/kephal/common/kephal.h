@@ -18,34 +18,27 @@
  */
 
 
-#ifndef KEPHAL_DESKTOPWIDGETOUTPUTS_H
-#define KEPHAL_DESKTOPWIDGETOUTPUTS_H
-
-#include <QPoint>
-#include "../simpleoutput.h"
-#include "../outputs.h"
-
+#ifndef KEPHAL_KEPHAL_H
+#define KEPHAL_KEPHAL_H
 
 namespace kephal {
 
-    class DesktopWidgetOutputs : public Outputs {
-        Q_OBJECT
-        public:
-            DesktopWidgetOutputs(QObject * parent);
-            ~DesktopWidgetOutputs();
-            
-            QList<Output *> outputs();
-            void activateLayout(QMap<Output *, QRect> layout);
-            
-        private Q_SLOTS:
-            void screenChanged(int screen);
-            
-        private:
-            QList<SimpleOutput *> m_outputs;
+    enum Position {
+        RightOf,
+        LeftOf,
+        TopOf,
+        BottomOf,
+        SameAs
     };
     
 }
 
+#define PROPERTY(type, name, setter) \
+    private:\
+        type m_##name;\
+    public:\
+        void setter(type name) { m_##name = name; }\
+        type name() { return m_##name; }
 
-#endif // KEPHAL_DESKTOPWIDGETOUTPUTS_H
+#endif // KEPHAL_KEPHAL_H
 

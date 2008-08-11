@@ -34,21 +34,34 @@ namespace kephal {
         public:
             XRandROutput(XRandROutputs * parent, RROutput rrId);
             
-            virtual QString id();
+            QString id();
 
-            virtual QSize size();
-            virtual void setSize(QSize size);
-            virtual QList<QSize> availableSizes();
-            virtual QPoint position();
-            virtual bool isConnected();
-            virtual bool isActivated();
+            QSize size();
+            void setSize(QSize size);
+            QList<QSize> availableSizes();
+            QPoint position();
+            void setPosition(QMap<Position, Output *> anchors);
+            bool isConnected();
+            bool isActivated();
             //QList<PositionType> getRelativePosition();
+            QString vendor();
+            int productId();
+            unsigned int serialNumber();
+            
+            bool _apply(QRect rect);
+            void _revert();
+            void _deactivate();
+            //void _activate();
 
         private:
             RandROutput * output();
+            void parseEdid();
             
             XRandROutputs * m_outputs;
             RROutput m_rrId;
+            QString m_vendor;
+            int m_productId;
+            unsigned int m_serialNumber;
     };
     
 
@@ -56,14 +69,25 @@ namespace kephal {
         Q_OBJECT
         public:
             XRandROutputs(QObject * parent, RandRDisplay * display);
-            virtual QList<Output *> outputs();
+            
+            QList<Output *> outputs();
+            void activateLayout(QMap<Output *, QRect> layout);
             RandROutput * output(RROutput rrId);
+            
+            //bool relayout(XRandROutput * output, QMap<Position, Output *> anchors, QSize size);
+            //bool checkLayout(XRandROutput * output, QMap<Position, Output *> anchors, QSize size);
             
         private:
             void init();
+            /*QMap<QString, QRect> relayout(QString output, QMap<Position, Output *> anchors, QSize size, QMap<QString, QRect> layout);
+            bool checkLayout(QString output, QMap<Position, Output *> anchors, QSize size, QMap<QString, QRect> layout);
+            bool checkLayout(QMap<QString, QRect> layout);
+            QMap<QString, QRect> layout();*/
+            //QMap<Position, Output *> anchors(QString output, QMap<QString, QRect> layout);
+            //QMap<Position, Output *> anchors(QString output);
             
             RandRDisplay * m_display;
-            QList<XRandROutput *> m_outputs;
+            QMap<QString, XRandROutput *> m_outputs;
     };
     
 }

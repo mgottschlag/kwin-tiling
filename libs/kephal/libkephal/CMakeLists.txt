@@ -2,7 +2,7 @@ FIND_PACKAGE (Qt4 REQUIRED)
 SET (QT_USE_QTDBUS 1)
 
 INCLUDE (${QT_USE_FILE})
-INCLUDE_DIRECTORIES (. .. ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
+INCLUDE_DIRECTORIES (. .. ../common ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
 ADD_DEFINITIONS (-DSCREENS_FACTORY=libkephal_factory)
 ADD_DEFINITIONS (-DOUTPUTS_FACTORY=libkephal_factory)
@@ -28,6 +28,6 @@ ADD_LIBRARY (kephal SHARED ${libkephal_SRCS})
 INSTALL (TARGETS kephal DESTINATION lib)
 INSTALL (FILES 
         ../screens/screens.h ../screens/screen.h
-        ../outputs/outputs.h
+        ../outputs/outputs.h ../common/kephal.h
         DESTINATION include/kephal)
 INSTALL (FILES FindKephal.cmake DESTINATION share/apps/cmake/modules)

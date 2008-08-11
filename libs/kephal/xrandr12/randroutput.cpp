@@ -431,7 +431,7 @@ bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
 	if( !crtc || (m_crtc && crtc->id() == m_crtc->id()) )
 		return false;
 	
-	qDebug() << "Setting CRTC" << crtc->id() << "on output" << m_name;
+	qDebug() << "Setting CRTC" << crtc->id() << "on output" << m_name << "(previous" << (m_crtc ? m_crtc->id() : 0) << ")";
 
 	if(m_crtc && m_crtc->isValid()) {
 		disconnect(m_crtc, SIGNAL(crtcChanged(RRCrtc, int)), 
@@ -442,9 +442,13 @@ bool RandROutput::setCrtc(RandRCrtc *crtc, bool applyNow)
 	}
 	m_crtc = crtc;
 	if (!m_crtc->isValid())
-		return true;
+		return false;
 
-	m_crtc->addOutput(m_id);
+	if (!m_crtc->addOutput(m_id)) {
+            return false;
+        }
+        
+        qDebug() << "CRTC outputs:" << m_crtc->connectedOutputs();
 	connect(m_crtc, SIGNAL(crtcChanged(RRCrtc, int)),
 	        this, SLOT(slotCrtcChanged(RRCrtc, int)));
 		   
@@ -457,6 +461,44 @@ void RandROutput::slotCrtcChanged(RRCrtc c, int changes)
 
 	//FIXME select which changes we should notify
 	emit outputChanged(m_id, changes);
+}
+
+bool RandROutput::applyProposed(int changes)
+{
+        RandRCrtc *crtc;
+
+        QRect r;
+
+        if (changes & RandR::ChangeRect)
+                r = m_proposedRect;
+
+
+        // first try to apply to the already attached crtc if any
+        if (m_crtc->isValid())
+        {
+                crtc = m_crtc;
+                if (tryCrtc(crtc, changes))
+                {
+                    return true;
+                }
+                return false;
+        }
+
+        //then try an empty crtc
+        crtc = findEmptyCrtc();
+
+        // TODO: check if we can add this output to a CRTC which already has an output 
+        // connection
+        if (!crtc)
+                return false;
+                
+        // try the crtc, and if no confirmation is needed or the user confirm, save the new settings
+        if (tryCrtc(crtc, changes)) 
+        {
+                return true;
+        }
+
+        return false;
 }
 
 

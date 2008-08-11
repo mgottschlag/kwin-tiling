@@ -2,24 +2,36 @@ FIND_PACKAGE (Qt4 REQUIRED)
 SET (QT_USE_QTDBUS 1)
 
 INCLUDE (${QT_USE_FILE})
-INCLUDE_DIRECTORIES (. .. ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
+INCLUDE_DIRECTORIES (. .. ../common ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
-SET (kephald_SRCS kephald.cpp
-        ../screens/screens.cpp ../screens/screen.cpp ../screens/simplescreen.cpp
+SET (kephald_SRCS
+        kephald.cpp
+        ../screens/screens.cpp
+        ../screens/screen.cpp
+        ../screens/simplescreen.cpp
         ../screens/output/outputscreens.cpp
         dbus/dbusapi_screens.cpp
         ../outputs/simpleoutput.cpp
         ../outputs/desktopwidget/desktopwidgetoutputs.cpp
-        ../outputs/outputs.cpp ../outputs/xrandr/xrandroutputs.cpp
-        dbus/dbusapi_outputs.cpp)
-QT4_WRAP_CPP (kephald_SRCS kephald.h
-        ../screens/screens.h ../screens/screen.h ../screens/simplescreen.h
+        ../outputs/outputs.cpp
+        ../outputs/xrandr/xrandroutputs.cpp
+        dbus/dbusapi_outputs.cpp
+        ../configurations/configurations.cpp
+        ../configurations/xml/xmlconfigurations.cpp)
+QT4_WRAP_CPP (kephald_SRCS
+        kephald.h
+        ../screens/screens.h
+        ../screens/screen.h
+        ../screens/simplescreen.h
         ../screens/output/outputscreens.h
         dbus/dbusapi_screens.h
         ../outputs/simpleoutput.h
         ../outputs/desktopwidget/desktopwidgetoutputs.h
-        ../outputs/outputs.h ../outputs/xrandr/xrandroutputs.h
-        dbus/dbusapi_outputs.h)
+        ../outputs/outputs.h
+        ../outputs/xrandr/xrandroutputs.h
+        dbus/dbusapi_outputs.h
+        ../configurations/configurations.h
+        ../configurations/xml/xmlconfigurations.h)
 QT4_GENERATE_DBUS_INTERFACE(dbus/dbusapi_screens.h org.kde.Kephal.Screens.xml)
 QT4_ADD_DBUS_ADAPTOR (kephald_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal.Screens.xml
         dbus/dbusapi_screens.h DBusAPIScreens)

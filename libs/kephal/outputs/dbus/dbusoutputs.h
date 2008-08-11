@@ -34,7 +34,10 @@ namespace kephal {
         public:
             DBusOutputs(QObject * parent);
             ~DBusOutputs();
-            virtual QList<Output *> outputs();
+            
+            QList<Output *> outputs();
+            void activateLayout(QMap<Output *, QRect> layout);
+            
             bool isValid();
             
         protected Q_SLOTS:

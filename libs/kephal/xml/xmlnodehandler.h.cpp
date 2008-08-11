@@ -97,6 +97,22 @@ namespace kephal {
     
     
     template <class ElementType>
+    XMLUIntNodeHandler<ElementType>::XMLUIntNodeHandler(Getter getter, Setter setter) : XMLSimpleNodeHandler<ElementType, unsigned int>(getter, setter) {
+    }
+    
+    template <class ElementType>
+    unsigned int XMLUIntNodeHandler<ElementType>::toValue(QString str) {
+        return str.toUInt();
+    }
+    
+    template <class ElementType>
+    QString XMLUIntNodeHandler<ElementType>::toString(unsigned int i) {
+        return QString::number(i);
+    }
+    
+    
+    
+    template <class ElementType>
     XMLBoolNodeHandler<ElementType>::XMLBoolNodeHandler(Getter getter, Setter setter) : XMLSimpleNodeHandler<ElementType, bool>(getter, setter) {
     }
     

@@ -97,6 +97,10 @@ namespace kephal {
         return result;
     }
     
+    void DBusOutputs::activateLayout(QMap<Output *, QRect> layout)
+    {
+    }
+    
     bool DBusOutputs::isValid() {
         return m_valid;
     }

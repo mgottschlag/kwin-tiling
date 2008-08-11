@@ -99,6 +99,20 @@ namespace kephal {
     
     
     template <class ElementType>
+    class XMLUIntNodeHandler : public XMLSimpleNodeHandler<ElementType, unsigned int> {
+        public:
+            typedef void (ElementType::*Setter)(unsigned int);
+            typedef unsigned int (ElementType::*Getter)();
+            
+            XMLUIntNodeHandler(Getter getter, Setter setter);
+        
+        protected:
+            virtual unsigned int toValue(QString str);
+            virtual QString toString(unsigned int value);
+    };
+    
+    
+    template <class ElementType>
     class XMLBoolNodeHandler : public XMLSimpleNodeHandler<ElementType, bool> {
         public:
             typedef void (ElementType::*Setter)(bool);
@@ -160,10 +174,12 @@ namespace kephal {
 
 #define STRING_ATTRIBUTE(name, class, getter, setter) attribute(name, new XMLStringNodeHandler<class>(&class::getter, &class::setter))
 #define INT_ATTRIBUTE(name, class, getter, setter) attribute(name, new XMLIntNodeHandler<class>(&class::getter, &class::setter))
+#define UINT_ATTRIBUTE(name, class, getter, setter) attribute(name, new XMLUIntNodeHandler<class>(&class::getter, &class::setter))
 #define BOOL_ATTRIBUTE(name, class, getter, setter) attribute(name, new XMLBoolNodeHandler<class>(&class::getter, &class::setter))
 
 #define STRING_ELEMENT(name, class, getter, setter) element(name, new XMLStringNodeHandler<class>(&class::getter, &class::setter))
 #define INT_ELEMENT(name, class, getter, setter) element(name, new XMLIntNodeHandler<class>(&class::getter, &class::setter))
+#define UINT_ELEMENT(name, class, getter, setter) element(name, new XMLUIntNodeHandler<class>(&class::getter, &class::setter))
 #define BOOL_ELEMENT(name, class, getter, setter) element(name, new XMLBoolNodeHandler<class>(&class::getter, &class::setter))
 #define COMPLEX_ELEMENT(name, class, setter, factory, complex) element(name, new XMLComplexNodeHandler<class, complex>(factory, &class::setter))
 #define COMPLEX_ELEMENT_LIST(name, class, listGetter, factory, complex) element(name, new XMLComplexListNodeHandler<class, complex>(factory, &class::listGetter))

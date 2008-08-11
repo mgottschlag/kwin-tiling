@@ -102,4 +102,36 @@ namespace kephal {
         return m_connected && m_activated;
     }
     
+    void SimpleOutput::setPosition(QMap<Position, Output *> anchors) {
+        emit positionChangeRequested(this, m_anchors, anchors);
+    }
+    
+    void SimpleOutput::_setAnchors(QMap<Position, Output *> anchors) {
+        m_anchors = anchors;
+    }
+    
+    void SimpleOutput::_setVendor(QString vendor) {
+        m_vendor = vendor;
+    }
+    
+    QString SimpleOutput::vendor() {
+        return m_vendor;
+    }
+    
+    void SimpleOutput::_setProductId(int productId) {
+        m_productId = productId;
+    }
+    
+    int SimpleOutput::productId() {
+        return m_productId;
+    }
+    
+    void SimpleOutput::_setSerialNumber(unsigned int serialNumber) {
+        m_serialNumber = serialNumber;
+    }
+    
+    unsigned int SimpleOutput::serialNumber() {
+        return m_serialNumber;
+    }
+    
 }

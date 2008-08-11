@@ -18,34 +18,38 @@
  */
 
 
-#ifndef KEPHAL_DESKTOPWIDGETOUTPUTS_H
-#define KEPHAL_DESKTOPWIDGETOUTPUTS_H
+#include "configurations.h"
 
-#include <QPoint>
-#include "../simpleoutput.h"
-#include "../outputs.h"
+#ifdef CONFIGURATIONS_FACTORY
+void CONFIGURATIONS_FACTORY();
+#endif
 
 
 namespace kephal {
 
-    class DesktopWidgetOutputs : public Outputs {
-        Q_OBJECT
-        public:
-            DesktopWidgetOutputs(QObject * parent);
-            ~DesktopWidgetOutputs();
-            
-            QList<Output *> outputs();
-            void activateLayout(QMap<Output *, QRect> layout);
-            
-        private Q_SLOTS:
-            void screenChanged(int screen);
-            
-        private:
-            QList<SimpleOutput *> m_outputs;
-    };
+    Configurations * Configurations::instance() {
+#ifdef CONFIGURATIONS_FACTORY
+        if (Configurations::m_instance == 0) {
+            CONFIGURATIONS_FACTORY();
+        }
+#endif
+        return Configurations::m_instance;
+    }
     
+    Configurations::Configurations(QObject * parent)
+            : QObject(parent)
+    {
+        Configurations::m_instance = this;
+    }
+    
+    Configurations * Configurations::m_instance = 0;
+    
+    
+    
+    Configuration::Configuration(QObject * parent)
+            : QObject(parent)
+    {
+    }
+
 }
-
-
-#endif // KEPHAL_DESKTOPWIDGETOUTPUTS_H
 

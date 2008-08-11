@@ -108,6 +108,7 @@ void RandRCrtc::loadSettings(bool notify)
 		changes |= RandR::ChangeOutputs;
 		m_possibleOutputs = outputs;
 	}
+        qDebug() << "loaded possible outputs:" << m_id << m_possibleOutputs;
 
 	// get all rotations
 	m_rotations = info->rotations;
@@ -390,6 +391,7 @@ bool RandRCrtc::addOutput(RROutput output, const QSize &s)
 	// if not, add it
 	if (m_connectedOutputs.indexOf(output) == -1)
 	{
+        qDebug() << "possible:" << m_possibleOutputs;
 		// the given output is not possible
 		if (m_possibleOutputs.indexOf(output) == -1)
 			return false;

@@ -75,6 +75,10 @@ namespace kephal {
         return result;
     }
     
+    void DesktopWidgetOutputs::activateLayout(QMap<Output *, QRect> layout)
+    {
+    }
+    
     void DesktopWidgetOutputs::screenChanged(int screen)
     {
         QDesktopWidget * desktop = QApplication::desktop();

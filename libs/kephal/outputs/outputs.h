@@ -25,6 +25,9 @@
 #include <QSize>
 #include <QPoint>
 #include <QRect>
+#include <QMap>
+
+#include "kephal.h"
 
 
 namespace kephal {
@@ -41,12 +44,16 @@ namespace kephal {
             virtual bool isConnected() = 0;
             virtual bool isActivated() = 0;
             virtual QList<QSize> availableSizes() = 0;
-            //QList<PositionType> getRelativePosition();
+            //virtual QMap<PositionType, Output *> relativePosition();
+            virtual QString vendor() = 0;
+            virtual int productId() = 0;
+            virtual unsigned int serialNumber() = 0;
 
             QRect geom();
             
         public Q_SLOTS:
             virtual void setSize(QSize size) = 0;
+            virtual void setPosition(QMap<Position, Output *> anchors) = 0;
     };
     
 
@@ -57,6 +64,7 @@ namespace kephal {
             
             Outputs(QObject * parent);
             virtual QList<Output *> outputs() = 0;
+            virtual void activateLayout(QMap<Output *, QRect> layout) = 0;
             
         Q_SIGNALS:
             void outputConnected(Output * o);

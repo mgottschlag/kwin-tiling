@@ -22,6 +22,7 @@
 #define KEPHAL_CONFIGURATIONSXML_H
 
 #include "xmltype.h"
+#include "kephal.h"
 
 #include <QString>
 
@@ -30,27 +31,83 @@ namespace kephal {
 
     class ScreenXML : public XMLType {
         Q_OBJECT
+        
+        PROPERTY(int, bottomOf, setBottomOf)
         public:
+            ScreenXML() : m_rightOf(-1), m_bottomOf(-1) {}
+            
             int id() { return m_id; }
             void setId(int id) { m_id = id; }
             bool privacy() { return m_privacy; }
             void setPrivacy(bool b) { m_privacy = b; }
             
+            int rightOf() { return m_rightOf; }
+            void setRightOf(int screen) { m_rightOf = screen; }
+            
         private:
             int m_id;
             bool m_privacy;
+            int m_rightOf;
     };
+
+
 
     class ConfigurationXML : public XMLType {
         Q_OBJECT
         public:
+            ConfigurationXML();
+            
             QString name();
             void setName(QString name);
+            bool modifiable();
+            void setModifiable(bool modifiable);
             QList<ScreenXML *> * screens();
             
         private:
             QString m_name;
             QList<ScreenXML *> m_screens;
+            bool m_modifiable;
+    };
+    
+    
+    
+    class OutputXML : public XMLType {
+        Q_OBJECT
+        
+        PROPERTY(QString, name, setName)
+        PROPERTY(int, screen, setScreen)
+        PROPERTY(QString, vendor, setVendor)
+        PROPERTY(int, product, setProduct)
+        PROPERTY(unsigned int, serial, setSerial)
+        PROPERTY(int, width, setWidth)
+        PROPERTY(int, height, setHeight)
+
+        PROPERTY(QString, actualOutput, setActualOutput)
+        public:
+            OutputXML() : m_screen(-1), m_product(-1), m_serial(0), m_width(-1), m_height(-1) { }
+            /*QString name() { return m_name; }
+            void setName(QString name) { m_name = name; }*/
+            
+        private:
+            //QString m_name;
+            //int m_screen;
+            //QString m_vendor;
+            //int m_product;
+            //QString m_serial;
+    };
+    
+    
+    
+    class OutputsXML : public XMLType {
+        Q_OBJECT
+        public:
+            QList<OutputXML *> * outputs() { return & m_outputs; }
+            QString configuration() { return m_configuration; }
+            void setConfiguration(QString configuration) { m_configuration = configuration; }
+            
+        private:
+            QList<OutputXML *> m_outputs;
+            QString m_configuration;
     };
     
     
@@ -59,9 +116,11 @@ namespace kephal {
         Q_OBJECT
         public:
             QList<ConfigurationXML *> * configurations();
+            QList<OutputsXML *> * outputs();
             
         private:
             QList<ConfigurationXML *> m_configurations;
+            QList<OutputsXML *> m_outputs;
     };
     
     class ConfigurationsXMLFactory : public XMLRootFactory {

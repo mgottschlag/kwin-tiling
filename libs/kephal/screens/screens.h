@@ -25,10 +25,12 @@
 #include <QSize>
 #include <QObject>
 
+#include "screen.h"
+
 
 namespace kephal {
 
-    class Screen;
+    //class Screen;
 
     
     class Screens : public QObject {
