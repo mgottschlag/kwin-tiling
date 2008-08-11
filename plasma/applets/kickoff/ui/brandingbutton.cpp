@@ -33,7 +33,7 @@ namespace Kickoff
 
 BrandingButton::BrandingButton(QWidget *parent)
     : QToolButton(parent),
-      m_svg(new Plasma::Svg())
+      m_svg(new Plasma::Svg(this))
 {
     m_svg->setImagePath("widgets/branding");
     m_svg->resize();
