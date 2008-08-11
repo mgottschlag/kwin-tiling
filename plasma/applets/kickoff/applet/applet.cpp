@@ -137,7 +137,7 @@ void LauncherApplet::constraintsEvent(Plasma::Constraints constraints)
         }
     }
 
-    if (constraints & Plasma::ImmutableConstraint && d->switcher) {
+    if ((constraints & Plasma::ImmutableConstraint) && d->switcher) {
         d->switcher->setVisible(immutability() == Plasma::Mutable);
     }
 }
