@@ -188,7 +188,7 @@ Solid::Control::PowerManager::SuspendMethods HalPower::supportedSuspendMethods()
 {
     Solid::Control::PowerManager::SuspendMethods supported = Solid::Control::PowerManager::UnknownSuspendMethod;
 
-    QDBusReply<bool> reply = m_halComputer.call("GetPropertyBoolean", "power_management.can_hibernate");
+    QDBusReply<bool> reply = m_halComputer.call("GetPropertyBoolean", "power_management.can_suspend");
 
     if (reply.isValid())
     {
