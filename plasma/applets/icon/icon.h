@@ -70,11 +70,9 @@ class IconApplet : public Plasma::Applet
         Plasma::Icon* m_icon;
         QString m_text;
         QString m_genericName;
-        QAction *m_propertiesAction;
         KPropertiesDialog *m_dialog;
         KMimeType::Ptr m_mimetype;
         KUrl m_url;
-        int m_displayLines;
 };
 
 K_EXPORT_PLASMA_APPLET(icon, IconApplet)

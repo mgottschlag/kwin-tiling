@@ -48,8 +48,8 @@
 
 IconApplet::IconApplet(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
-      m_dialog(0),
-      m_mimetype(0)
+      m_icon(0),
+      m_dialog(0)
 {
     setAcceptDrops(true);
     setBackgroundHints(NoBackground);
@@ -236,9 +236,9 @@ void IconApplet::dropEvent(QGraphicsSceneDragDropEvent *event)
         //TODO: why we don't call updateConstraints()?
         constraintsEvent(Plasma::FormFactorConstraint);
     } else if (m_url.isLocalFile() &&
-              (m_mimetype &&
-               m_mimetype->is("application/x-executable") ||
-               m_mimetype->is("application/x-shellscript") ||
+               m_mimetype &&
+               (m_mimetype->is("application/x-executable") ||
+                m_mimetype->is("application/x-shellscript") ||
                 KDesktopFile::isDesktopFile(m_url.toLocalFile()))) {
 
         //Parameters
