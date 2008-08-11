@@ -57,7 +57,7 @@ SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QVariantList& args)
     signalmanager = new DeviceSignalMapManager(this);
 
     listenForNewDevices();
-    temperature = new HddTemp();
+    temperature = new HddTemp(this);
     setMinimumPollingInterval(1000);
     connect(this, SIGNAL(sourceRemoved(const QString&)),
             this, SLOT(sourceRemoved(const QString&)));
@@ -65,8 +65,6 @@ SolidDeviceEngine::SolidDeviceEngine(QObject* parent, const QVariantList& args)
 
 SolidDeviceEngine::~SolidDeviceEngine()
 {
-    delete signalmanager;
-    delete temperature;
 }
 
 void SolidDeviceEngine::listenForNewDevices()
