@@ -1,6 +1,4 @@
 
-include_directories( ${KDE4_KDEUI_INCLUDES} )
-
 set(kcmsolid_SRCS kcmsolid.cpp backendchooser.cpp)
 kde4_add_ui_files(kcmsolid_SRCS backendchooser.ui)
 
