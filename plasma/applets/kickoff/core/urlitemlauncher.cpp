@@ -142,6 +142,8 @@ void UrlItemLauncher::onSetupDone(Solid::ErrorType error, QVariant errorData, co
     Private::openUrl(urlString);
 }
 
+// FIXME: the handlers are leaked, as they are added with each new Kickoff instance,
+//        but never deleted.
 void UrlItemLauncher::addGlobalHandler(HandlerType type,const QString& name,UrlItemHandler *handler)
 {
     HandlerInfo info;
