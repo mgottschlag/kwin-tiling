@@ -600,9 +600,9 @@ void Pager::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         update();
         event->accept();
         return;
-    } else if (m_dragId != -1 && m_dragStartDesktop != -1 &&
+    } else if (m_dragId && m_dragStartDesktop != -1 &&
                (event->pos() - m_dragOriginalPos).toPoint().manhattanLength() > KGlobalSettings::dndEventDelay()) {
-        m_dragId = -1; // prevent us from going through this more than once
+        m_dragId = 0; // prevent us from going through this more than once
         for (int k = m_windowRects[m_dragStartDesktop].count() - 1; k >= 0 ; k--) {
             if (m_windowRects[m_dragStartDesktop][k].second.contains(m_dragOriginalPos.toPoint())) {
                 m_dragOriginal = m_windowRects[m_dragStartDesktop][k].second;
@@ -620,7 +620,7 @@ void Pager::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void Pager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (m_dragId > 0) {
+    if (m_dragId) {
         if (m_dragHighlightedDesktop != -1) {
             QPointF dest = m_dragCurrentPos - m_rects[m_dragHighlightedDesktop].topLeft() - m_dragOriginalPos + m_dragOriginal.topLeft();
             dest = QPointF(dest.x()/m_widthScaleFactor, dest.y()/m_heightScaleFactor);
