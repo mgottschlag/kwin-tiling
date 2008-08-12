@@ -16,6 +16,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#include <QDebug>
+
 #include "randrscreen.h"
 #include "randrcrtc.h"
 #include "randroutput.h"
@@ -32,16 +34,18 @@ RandRScreen::RandRScreen(int screenIndex)
 	m_connectedCount = 0;
 	m_activeCount = 0;
 
-	loadSettings();
+        // select for randr input events
+        int mask = RRScreenChangeNotifyMask | 
+                   RRCrtcChangeNotifyMask   | 
+                   RROutputChangeNotifyMask | 
+                   RROutputPropertyNotifyMask;
+        
+        XRRSelectInput(QX11Info::display(), rootWindow(), 0);
+        XRRSelectInput(QX11Info::display(), rootWindow(), mask);
+        
+        qDebug() << "RRInput mask is set!!";
 
-	// select for randr input events
-	int mask = RRScreenChangeNotifyMask | 
-		   RRCrtcChangeNotifyMask   | 
-		   RROutputChangeNotifyMask | 
-		   RROutputPropertyNotifyMask;
-	
-	XRRSelectInput(QX11Info::display(), rootWindow(), 0);
-	XRRSelectInput(QX11Info::display(), rootWindow(), mask); 
+	loadSettings();
 }
 
 RandRScreen::~RandRScreen()
@@ -67,6 +71,11 @@ XRRScreenResources* RandRScreen::resources() const
 Window RandRScreen::rootWindow() const
 {
 	return RootWindow(QX11Info::display(), m_index);
+}
+
+void RandRScreen::pollState()
+{
+    XRRFreeScreenResources(XRRGetScreenResources(QX11Info::display(), rootWindow()));
 }
 
 void RandRScreen::loadSettings(bool notify)

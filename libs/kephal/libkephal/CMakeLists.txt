@@ -6,6 +6,7 @@ INCLUDE_DIRECTORIES (. .. ../common ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
 ADD_DEFINITIONS (-DSCREENS_FACTORY=libkephal_factory)
 ADD_DEFINITIONS (-DOUTPUTS_FACTORY=libkephal_factory)
+ADD_DEFINITIONS (-DCONFIGURATIONS_FACTORY=libkephal_factory)
 
 SET (libkephal_SRCS libkephal.cpp ../screens/screens.cpp ../screens/screen.cpp
         ../screens/simplescreen.cpp

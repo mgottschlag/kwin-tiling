@@ -108,7 +108,7 @@ void RandRCrtc::loadSettings(bool notify)
 		changes |= RandR::ChangeOutputs;
 		m_possibleOutputs = outputs;
 	}
-        qDebug() << "loaded possible outputs:" << m_id << m_possibleOutputs;
+        //qDebug() << "loaded possible outputs:" << m_id << m_possibleOutputs;
 
 	// get all rotations
 	m_rotations = info->rotations;

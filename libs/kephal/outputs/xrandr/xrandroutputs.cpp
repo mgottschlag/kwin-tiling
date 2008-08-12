@@ -58,11 +58,21 @@ namespace kephal {
         return m_display->screen(0)->outputs()[rrId];
     }
     
+    RandRDisplay * XRandROutputs::display() {
+        return m_display;
+    }
+    
+    void XRandROutputs::pollState() {
+        foreach (XRandROutput * o, m_outputs) {
+            output(o->_id())->pollState();
+        }
+    }
+    
     void XRandROutputs::activateLayout(QMap<Output *, QRect> layout) {
         qDebug() << "activate layout:" << layout;
         
         foreach (XRandROutput * output, m_outputs) {
-            if ((! layout.contains(output)) && output->isActivated()) {
+            if ((! layout.contains(output))/* && output->isActivated()*/) {
                 output->_deactivate();
             }
         }
@@ -84,6 +94,18 @@ namespace kephal {
                     output->_revert();
                 }
                 break;
+            }
+        }
+    }
+    
+    void XRandROutputs::outputChanged(RROutput id, int changes)
+    {
+        Q_UNUSED(changes)
+        qDebug() << "output changed:" << id;
+        
+        foreach (XRandROutput * output, m_outputs) {
+            if (output->_id() == id) {
+                output->_changed();
             }
         }
     }
@@ -229,11 +251,25 @@ namespace kephal {
         
         parseEdid();
         
+        saveAsPrevious();
+        
+        connect(this, SIGNAL(outputConnected(Output *)), parent, SIGNAL(outputConnected(Output *)));
+        connect(this, SIGNAL(outputDisconnected(Output *)), parent, SIGNAL(outputDisconnected(Output *)));
+        connect(this, SIGNAL(outputActivated(Output *)), parent, SIGNAL(outputActivated(Output *)));
+        connect(this, SIGNAL(outputDeactivated(Output *)), parent, SIGNAL(outputDeactivated(Output *)));
+        connect(this, SIGNAL(outputResized(Output *, QSize, QSize)), parent, SIGNAL(outputResized(Output *, QSize, QSize)));
+        connect(this, SIGNAL(outputMoved(Output *, QPoint, QPoint)), parent, SIGNAL(outputMoved(Output *, QPoint, QPoint)));
+        
+        connect(output(), SIGNAL(outputChanged(RROutput, int)), parent, SLOT(outputChanged(RROutput, int)));
         //connect(this, SLOT(_activate()), output(), SLOT(slotEnable()));
         //connect(this, SLOT(_deactivate()), output(), SLOT(slotDisable()));
     }
     
     void XRandROutput::parseEdid() {
+        m_vendor = "";
+        m_productId = -1;
+        m_serialNumber = 0;
+        
         Atom atom = XInternAtom (QX11Info::display(), "EDID_DATA", false);
         Atom type;
         unsigned char * data;
@@ -286,6 +322,54 @@ namespace kephal {
         }
         
         XFree(data);
+    }
+    
+    void XRandROutput::_changed() {
+        if (isConnected() != m_previousConnected) {
+            if (isConnected()) {
+                saveAsPrevious();
+                parseEdid();
+                emit outputConnected(this);
+                if (isActivated()) {
+                    emit outputActivated(this);
+                }
+            } else {
+                if (m_previousActivated) {
+                    saveAsPrevious();
+                    emit outputDeactivated(this);
+                }
+                saveAsPrevious();
+                emit outputDisconnected(this);
+            }
+            return;
+        }
+        if (! isConnected()) {
+            return;
+        }
+        if (isActivated() != m_previousActivated) {
+            saveAsPrevious();
+            if (isActivated()) {
+                emit outputActivated(this);
+            } else {
+                emit outputDeactivated(this);
+            }
+            return;
+        }
+        
+        QRect previousGeom = m_previousGeom;
+        saveAsPrevious();
+        if (size() != previousGeom.size()) {
+            emit outputResized(this, previousGeom.size(), size());
+        }
+        if (position() != previousGeom.topLeft()) {
+            emit outputMoved(this, previousGeom.topLeft(), position());
+        }
+    }
+    
+    void XRandROutput::saveAsPrevious() {
+        m_previousConnected = isConnected();
+        m_previousActivated = isActivated();
+        m_previousGeom = geom();
     }
     
     bool XRandROutput::_apply(QRect geom) {
@@ -361,6 +445,10 @@ namespace kephal {
     
     unsigned int XRandROutput::serialNumber() {
         return m_serialNumber;
+    }
+    
+    RROutput XRandROutput::_id() {
+        return m_rrId;
     }
     
 }

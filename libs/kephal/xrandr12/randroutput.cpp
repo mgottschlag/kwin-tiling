@@ -58,17 +58,24 @@ RandRScreen *RandROutput::screen() const
 	return m_screen;
 }
 
-void RandROutput::queryOutputInfo(void)
+bool RandROutput::queryOutputInfo(void)
 {
 	XRROutputInfo *info = XRRGetOutputInfo(QX11Info::display(), m_screen->resources(), m_id);
 	Q_ASSERT(info);
-	
-	if (RandR::timestamp != info->timestamp)
+
+        bool changes = false;
+	if (RandR::timestamp != info->timestamp) {
 		RandR::timestamp = info->timestamp;
+                //changes = true;
+        }
 	
 	// Set up the output's connection status, name, and current
 	// CRT controller.
+        bool pConn = m_connected;
 	m_connected = (info->connection == RR_Connected);
+        if (pConn != m_connected) {
+            changes = true;
+        }
 	m_name = info->name;
 	
 	setCrtc(m_screen->crtc(info->crtc));
@@ -104,6 +111,15 @@ void RandROutput::queryOutputInfo(void)
 	}
 	
 	XRRFreeOutputInfo(info);
+        
+        return changes;
+}
+
+void RandROutput::pollState() {
+    if (queryOutputInfo()) {
+        qDebug() << "output state changed!!";
+        emit outputChanged(m_id, 0);
+    }
 }
 
 void RandROutput::loadSettings(bool notify)
@@ -162,8 +178,8 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 
 	//FIXME: handling these events incorrectly, causing an X11 I/O error...
 	// Disable for now.
-	qWarning() << "FIXME: Output event ignored!";
-	return;
+	//qWarning() << "FIXME: Output event ignored!";
+	//return;
 	
 	RRCrtc currentCrtc = m_crtc->id();
 	if (event->crtc != currentCrtc)
@@ -193,8 +209,8 @@ void RandROutput::handleEvent(XRROutputChangeNotifyEvent *event)
 	}
 
 	// check if we are still connected, if not, release the crtc connection
-	if(!m_connected && m_crtc->isValid())
-		setCrtc(None);
+	//if(!m_connected && m_crtc->isValid())
+	//	setCrtc(None);
 
 	if(changed)
 		emit outputChanged(m_id, changed);

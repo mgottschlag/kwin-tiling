@@ -114,6 +114,7 @@ public:
 public slots:
 	void slotDisable();
 	void slotEnable();
+        void pollState();
 
 private slots:
 	void slotCrtcChanged(RRCrtc c, int changes);
@@ -127,7 +128,7 @@ signals:
 protected:
 	/** Query Xrandr for information about this output, and set
 	 * up this instance accordingly. */
-	void queryOutputInfo(void);
+	bool queryOutputInfo(void);
 	
 	/** Find the first CRTC that is not controlling any
 	 * display devices. */

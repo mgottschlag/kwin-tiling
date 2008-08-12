@@ -215,6 +215,7 @@ namespace kephal {
     Configuration * XMLConfigurations::findConfiguration()
     {
         qDebug() << "looking for a matching configuration...";
+        findOutputs();
         if (! m_currentOutputs) {
             return 0;
         }
@@ -376,7 +377,7 @@ namespace kephal {
     
     void XMLConfigurations::activate(XMLConfiguration * configuration) {
         qDebug() << "activate configuration:" << configuration->name();
-        if (configuration == activeConfiguration()) {
+        if (configuration == m_activeConfiguration) {
             return;
         }
         
@@ -549,6 +550,8 @@ namespace kephal {
         
         qDebug() << "layout:" << layout;
         Outputs::instance()->activateLayout(layout);
+        
+        m_activeConfiguration = configuration;
     }
     
     Configuration * XMLConfigurations::activeConfiguration() {

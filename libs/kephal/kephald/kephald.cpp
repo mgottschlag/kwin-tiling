@@ -20,9 +20,10 @@
 
 #include <QDebug>
 #include <QDBusConnection>
+#include <QApplication>
+#include <QAbstractEventDispatcher>
 
 
-#include "kephald.h"
 #include "outputs/desktopwidget/desktopwidgetoutputs.h"
 #include "screens/output/outputscreens.h"
 #include "outputs/xrandr/xrandroutputs.h"
@@ -31,6 +32,9 @@
 //#include "xml/configurations_xml.h"
 #include "configurations/xml/xmlconfigurations.h"
 #include "xrandr12/randrdisplay.h"
+#include "xrandr12/randrscreen.h"
+
+#include "kephald.h"
 
 
 using namespace kephal;
@@ -43,12 +47,23 @@ int main(int argc, char *argv[])
     return app.exec();
 }
 
+/*QAbstractEventDispatcher::EventFilter previousEventFilter = 0;
+bool kephalDEventFilter(void *message) {
+    qDebug() << "received an event";
+    if (previousEventFilter) {
+        return (*previousEventFilter)(message);
+    }
+    return true;
+}*/
+
 
 KephalD::KephalD(int & argc, char ** argv)
     : QApplication(argc, argv),
-    noXRandR(false)
+    m_noXRandR(false)
 {
     qDebug() << "kephald starting up";
+    //previousEventFilter = QAbstractEventDispatcher::instance()->setEventFilter(kephalDEventFilter);
+    
     parseArgs(argc, argv);
     init();
 }
@@ -63,20 +78,21 @@ void KephalD::parseArgs(int & argc, char ** argv) {
         qDebug() << "arg:" << i << arg;
         
         if (arg == "--no-xrandr") {
-            noXRandR = true;
+            m_noXRandR = true;
         }
     }
 }
 
 void KephalD::init() {
     RandRDisplay * display;
-    if (! noXRandR) {
+    if (! m_noXRandR) {
         display = new RandRDisplay();
     }
     
-    if (! noXRandR && display->isValid()) {
-        new XRandROutputs(this, display);
+    if ((! m_noXRandR) && display->isValid()) {
+        m_outputs = new XRandROutputs(this, display);
     } else {
+        m_outputs = 0;
         new DesktopWidgetOutputs(this);
     }
     
@@ -90,8 +106,11 @@ void KephalD::init() {
         qDebug() << "screen:" << screen->id() << screen->geom();
     }
     
-    Configurations * configs = new XMLConfigurations(this);
-    configs->findConfiguration()->activate();
+    new XMLConfigurations(this);
+    activateConfiguration();
+    
+    connect(Outputs::instance(), SIGNAL(outputDisconnected(Output *)), this, SLOT(outputDisconnected(Output *)));
+    connect(Outputs::instance(), SIGNAL(outputConnected(Output *)), this, SLOT(outputConnected(Output *)));
     
     QDBusConnection dbus = QDBusConnection::sessionBus();
     bool result = dbus.registerService("org.kde.Kephal");
@@ -99,6 +118,45 @@ void KephalD::init() {
     
     new DBusAPIScreens(this);
     new DBusAPIOutputs(this);
+    
+    m_pollTimer = new QTimer(this);
+    connect(m_pollTimer, SIGNAL(timeout()), this, SLOT(poll()));
+    m_pollTimer->start(3000);
+}
+
+void KephalD::poll() {
+    if (m_outputs) {
+        //m_outputs->pollState();
+        m_outputs->display()->screen(0)->pollState();
+    }
+}
+
+bool KephalD::x11EventFilter(XEvent* e)
+{
+    //qDebug() << "received x event";
+    if (m_outputs && m_outputs->display()->canHandle(e)) {
+        m_outputs->display()->handleEvent(e);
+    }
+    
+    return QApplication::x11EventFilter(e);
+}
+
+void KephalD::activateConfiguration() {
+    Configurations * configs = Configurations::instance();
+    Configuration * config = configs->findConfiguration();
+    if (config) {
+        config->activate();
+    } else {
+        qDebug() << "couldnt find matching configuration!!";
+    }
+}
+
+void KephalD::outputDisconnected(Output * output) {
+    activateConfiguration();
+}
+
+void KephalD::outputConnected(Output * output) {
+    activateConfiguration();
 }
 
 

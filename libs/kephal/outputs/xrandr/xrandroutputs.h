@@ -52,16 +52,30 @@ namespace kephal {
             void _revert();
             void _deactivate();
             //void _activate();
+            RROutput _id();
+            void _changed();
 
+        Q_SIGNALS:
+            void outputConnected(Output * o);
+            void outputDisconnected(Output * o);
+            void outputActivated(Output * o);
+            void outputDeactivated(Output * o);
+            void outputResized(Output * o, QSize oldSize, QSize newSize);
+            void outputMoved(Output * o, QPoint oldPosition, QPoint newPosition);
+            
         private:
             RandROutput * output();
             void parseEdid();
+            void saveAsPrevious();
             
             XRandROutputs * m_outputs;
             RROutput m_rrId;
             QString m_vendor;
             int m_productId;
             unsigned int m_serialNumber;
+            QRect m_previousGeom;
+            bool m_previousConnected;
+            bool m_previousActivated;
     };
     
 
@@ -72,10 +86,16 @@ namespace kephal {
             
             QList<Output *> outputs();
             void activateLayout(QMap<Output *, QRect> layout);
+            
             RandROutput * output(RROutput rrId);
+            RandRDisplay * display();
             
             //bool relayout(XRandROutput * output, QMap<Position, Output *> anchors, QSize size);
             //bool checkLayout(XRandROutput * output, QMap<Position, Output *> anchors, QSize size);
+            
+        public Q_SLOTS:
+            void outputChanged(RROutput id, int changes);
+            void pollState();
             
         private:
             void init();

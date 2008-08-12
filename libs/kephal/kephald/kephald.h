@@ -22,6 +22,14 @@
 #define KEPHALD_H
 
 #include <QApplication>
+#include <QTimer>
+
+namespace kephal {
+    class Output;
+    class XRandROutputs;
+}
+
+using namespace kephal;
 
 
 class KephalD : public QApplication
@@ -31,11 +39,21 @@ class KephalD : public QApplication
         KephalD(int & argc, char ** argv);
         ~KephalD();
         
+        virtual bool x11EventFilter(XEvent * e);
+        
+    private Q_SLOTS:
+        void outputDisconnected(Output * output);
+        void outputConnected(Output * output);
+        void poll();
+        
     private:
         void init();
         void parseArgs(int & argc, char ** argv);
+        void activateConfiguration();
         
-        bool noXRandR;
+        bool m_noXRandR;
+        XRandROutputs * m_outputs;
+        QTimer * m_pollTimer;
 };
 
 

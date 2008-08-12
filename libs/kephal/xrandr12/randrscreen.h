@@ -80,6 +80,8 @@ public:
 	SizeList unifiedSizes() const;
 
 	QRect rect() const;
+        
+        void pollState();
 
 public slots:
 	void slotOutputChanged(RROutput id, int changes);
