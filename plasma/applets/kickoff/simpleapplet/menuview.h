@@ -68,6 +68,7 @@ public:
 
     /** Maps an action in the menu to its corresponding index in model() */
     QModelIndex indexForAction(QAction *action) const;
+
     /** 
      * Maps an index in the model to its corresponding action in the menu. 
      * If @p index is invalid then menuAction() will be returned.  If @p index
@@ -76,6 +77,15 @@ public:
      * explores the menu. 
      */
     QAction *actionForIndex(const QModelIndex& index) const;
+
+    /**
+     * Returns true if the passed \p index is a valid QModelIndex and does
+     * represent a QAction. This method is equal to the actionForIndex() method
+     * above except allowing to explicit ask if the QModelIndex is valid and
+     * to indicate that way, that it may the case that the QModelIndex went
+     * out of scope already.
+     */
+    bool isValidIndex(const QModelIndex& index) const;
 
     /** Sets the column from the model which is used to construct the actions in the menu. */
     void setColumn(int column);
@@ -134,8 +144,6 @@ private Q_SLOTS:
     void dataChanged(const QModelIndex& topLeft,const QModelIndex& bottomRight);
     // the model did reset itself and all items are invalid
     void modelReset();
-    // called shortly before the menu will be shown to the user
-    void aboutToShow();
     // performs on-demand filling of sub-menus in the tree
     void fillSubMenu();
 
