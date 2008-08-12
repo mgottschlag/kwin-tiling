@@ -68,14 +68,11 @@ SystemTray::~SystemTray()
 
 void SystemTray::constraintsEvent(Plasma::Constraints constraints)
 {
-    if (constraints & Plasma::SizeConstraint) {
-    }
-
     if (constraints & (Plasma::LocationConstraint | Plasma::FormFactorConstraint)) {
         updateWidgetOrientation();
     }
 
-    if (constraints & Plasma::StartupCompletedConstraint) {
+    if (constraints & (Plasma::StartupCompletedConstraint | Plasma::FormFactorConstraint)) {
         updateWidgetGeometry();
     }
 }
@@ -99,8 +96,10 @@ void SystemTray::updateWidgetOrientation()
     // TODO: Handle other form factors
     if (formFactor() == Plasma::Horizontal) {
         m_systemTrayWidget->setOrientation(Qt::Horizontal);
-    } else {
+    } else if (formFactor() == Plasma::Vertical) {
         m_systemTrayWidget->setOrientation(Qt::Vertical);
+    } else { // desktop
+        m_systemTrayWidget->setOrientation(Qt::Horizontal);
     }
 }
 
@@ -157,12 +156,13 @@ void SystemTray::updateWidgetGeometry()
     rf.setWidth(rf.width() + leftMargin + rightMargin);
     rf.setHeight(rf.height() + topMargin + bottomMargin);
 
-    if (formFactor() == Plasma::Vertical) {
+
+    if (m_systemTrayWidget->orientation() == Qt::Vertical) {
         setMinimumHeight(rf.height());
-        setMinimumWidth(22);
-    } else if (formFactor() == Plasma::Horizontal) {
+        setMinimumWidth(22 + leftMargin + rightMargin);
+    } else {
         setMinimumWidth(rf.width());
-        setMinimumHeight(22);
+        setMinimumHeight(22 + topMargin + bottomMargin);
     }
     setPreferredSize(rf.size());
 

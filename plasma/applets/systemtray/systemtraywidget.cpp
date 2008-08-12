@@ -116,6 +116,11 @@ void SystemTrayWidget::setOrientation(Qt::Orientation orientation)
     }
 }
 
+Qt::Orientation SystemTrayWidget::orientation() const
+{
+    return m_orientation;
+}
+
 void SystemTrayWidget::setMaximumSize(QSize s)
 {
     bool doLayout = (m_orientation == Qt::Horizontal && s.height() != maximumHeight());
