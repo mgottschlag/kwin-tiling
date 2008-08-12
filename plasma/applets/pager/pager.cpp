@@ -361,11 +361,7 @@ void Pager::recalculateWindowRects()
         }
     }
 
-    if (m_dirtyDesktop < 0 || m_dirtyDesktop >= m_rects.count()) {
-        update();
-    } else {
-        update(m_rects[m_dirtyDesktop]);
-    }
+    update();
 }
 
 void Pager::configAccepted()
