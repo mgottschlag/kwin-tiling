@@ -40,6 +40,7 @@ public:
     void init();
 
     void setOrientation(Qt::Orientation);
+    Qt::Orientation orientation() const;
     void setMaximumSize(QSize s);
 
 protected:
