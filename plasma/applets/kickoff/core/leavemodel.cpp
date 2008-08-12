@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -110,20 +110,21 @@ LeaveModel::LeaveModel(QObject *parent)
 
         using namespace Solid::PowerManagement;
         QSet<SleepState> sleepStates = supportedSleepStates();
-
+        bool addSystemSession = false;
         // Sleep
         if (sleepStates.contains(SuspendState)) {
             QStandardItem *sleepOption = createStandardItem("leave:/sleep");
             systemOptions->appendRow(sleepOption);
+            addSystemSession = true;
         }
 
         // Hibernate
         if (sleepStates.contains(HibernateState)) {
             QStandardItem *hibernateOption = createStandardItem("leave:/hibernate");
             systemOptions->appendRow(hibernateOption);
+            addSystemSession = true;
         }
-        bool displayCanShutdown = KDisplayManager().canShutdown();
-        if( displayCanShutdown ) {
+        if( KDisplayManager().canShutdown() ) {
            // Shutdown
            QStandardItem *shutDownOption = createStandardItem("leave:/shutdown");
            systemOptions->appendRow(shutDownOption);
@@ -131,10 +132,15 @@ LeaveModel::LeaveModel(QObject *parent)
            // Restart
            QStandardItem *restartOption = createStandardItem("leave:/restart");
            systemOptions->appendRow(restartOption);
+           addSystemSession = true;
         }
     appendRow(sessionOptions);
-    if(displayCanShutdown)
+    if(addSystemSession)
+    {
        appendRow(systemOptions);
+    }
+    else //fix mem
+        delete systemOptions;
 }
 LeaveModel::~LeaveModel()
 {
