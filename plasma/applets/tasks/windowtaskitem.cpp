@@ -49,6 +49,7 @@ WindowTaskItem::WindowTaskItem(Tasks *parent, const bool showTooltip)
     : QGraphicsWidget(parent),
       m_applet(parent),
       m_activateTimer(0),
+      m_showTooltip(showTooltip),
       m_flags(0),
       m_animId(0),
       m_alpha(1),
@@ -57,7 +58,6 @@ WindowTaskItem::WindowTaskItem(Tasks *parent, const bool showTooltip)
       m_attentionTimerId(0),
       m_attentionTicks(0)
 {
-    m_showTooltip = showTooltip;
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
@@ -158,6 +158,8 @@ void WindowTaskItem::queueUpdate()
 
 void WindowTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event)
+
     const int FadeInDuration = 75;
 
     if (m_animId) {
@@ -170,6 +172,8 @@ void WindowTaskItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 void WindowTaskItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED(event)
+
     const int FadeOutDuration = 150;
 
     if (m_animId) {
