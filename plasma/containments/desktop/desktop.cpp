@@ -118,7 +118,7 @@ QSize DefaultDesktop::resolution() const
 void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::StartupCompletedConstraint) {
-        qsrand(QTime(0,0,0).secsTo(QTime::currentTime()));
+        qsrand(QTime(0,0,0).msecsTo(QTime::currentTime()) + id());
         reloadConfig();
     }
 
