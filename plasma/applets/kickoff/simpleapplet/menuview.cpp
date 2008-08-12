@@ -227,20 +227,11 @@ void MenuView::setModel(QAbstractItemModel *model)
     clear();
     if (d->model) {
         d->buildBranch(this,QModelIndex());
-        connect(this, SIGNAL(aboutToShow()), this, SLOT(aboutToShow()));
+        connect(d->model, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)), this, SLOT(rowsAboutToBeInserted(QModelIndex,int,int)));
+        connect(d->model, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int)));
+        connect(d->model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
+        connect(d->model, SIGNAL(modelReset()), this, SLOT(modelReset()));
     }
-}
-
-void MenuView::aboutToShow()
-{
-    // not needed to be called more then once
-    disconnect(this, SIGNAL(aboutToShow()), this, SLOT(aboutToShow()));
-    // we need to delay reaction to following signals till all the setup-work is done else
-    // it may the case we got called to early at a time where the models data is incomplete.
-    connect(d->model, SIGNAL(rowsAboutToBeInserted(QModelIndex,int,int)), this, SLOT(rowsAboutToBeInserted(QModelIndex,int,int)));
-    connect(d->model, SIGNAL(rowsAboutToBeRemoved(QModelIndex,int,int)), this, SLOT(rowsAboutToBeRemoved(QModelIndex,int,int)));
-    connect(d->model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SLOT(dataChanged(QModelIndex,QModelIndex)));
-    connect(d->model, SIGNAL(modelReset()), this, SLOT(modelReset()));
 }
 
 QAbstractItemModel *MenuView::model() const
@@ -277,8 +268,19 @@ QAction *MenuView::actionForIndex(const QModelIndex& index) const
     return a;
 }
 
+bool MenuView::isValidIndex(const QModelIndex& index) const
+{
+    QVariant v = (d->model && index.isValid()) ? d->model->data(index, Private::ActionRole) : QVariant();
+    return v.isValid() && v.value<QAction*>();
+}
+
 void MenuView::rowsAboutToBeInserted(const QModelIndex& parent,int start,int end)
 {
+    if (!isValidIndex(parent)) {
+        // can happen if the models data is incomplete yet
+        return;
+    }
+
     Q_ASSERT(d->model);
 
     QAction *menuAction = actionForIndex(parent);
@@ -303,6 +305,13 @@ void MenuView::rowsAboutToBeInserted(const QModelIndex& parent,int start,int end
 
 void MenuView::rowsAboutToBeRemoved(const QModelIndex& parent,int start,int end)
 {
+    if (!isValidIndex(parent)) {
+        // can happen if the models data is incomplete yet
+        return;
+    }
+
+    Q_ASSERT(d->model);
+
     QAction *menuAction = actionForIndex(parent);
     Q_ASSERT(menuAction);
 
@@ -318,6 +327,11 @@ void MenuView::rowsAboutToBeRemoved(const QModelIndex& parent,int start,int end)
 
 void MenuView::dataChanged(const QModelIndex& topLeft,const QModelIndex& bottomRight)
 {
+    if (!isValidIndex(topLeft.parent())) {
+        // can happen if the models data is incomplete yet
+        return;
+    }
+
     Q_ASSERT(d->model);
 
     QAction *menuAction = actionForIndex(topLeft.parent());
