@@ -75,15 +75,10 @@ SystemTray::~SystemTray()
 void SystemTray::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & (Plasma::LocationConstraint | Plasma::FormFactorConstraint)) {
-        if (formFactor() == Plasma::Planar) {
-            qreal leftMargin, topMargin, rightMargin, bottomMargin;
-            getContentsMargins(&leftMargin, &topMargin, &rightMargin, &bottomMargin);
-            setMinimumSize(22 + leftMargin + rightMargin, 22 + topMargin + bottomMargin);
-        }
         updateWidgetOrientation();
     }
 
-    if (constraints & Plasma::StartupCompletedConstraint) {
+    if (constraints & (Plasma::StartupCompletedConstraint | Plasma::FormFactorConstraint)) {
         updateWidgetGeometry();
     }
 }
@@ -177,10 +172,10 @@ void SystemTray::updateWidgetGeometry()
 
     if (m_systemTrayWidget->orientation() == Qt::Vertical) {
         setMinimumHeight(rf.height());
-        setMinimumWidth(22);
+        setMinimumWidth(22 + leftMargin + rightMargin);
     } else {
         setMinimumWidth(rf.width());
-        setMinimumHeight(22);
+        setMinimumHeight(22 + topMargin + bottomMargin);
     }
     setPreferredSize(rf.size());
 
