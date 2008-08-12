@@ -124,7 +124,6 @@ private:
         bool m_showTooltip;
         bool m_showOnlyCurrentDesktop;
         bool m_showOnlyCurrentScreen;
-        Plasma::LayoutAnimator *m_animator;
         QGraphicsLinearLayout *m_layout;
         Ui::tasksConfig m_ui;
         QList<TaskPtr> m_geometryTasks;
