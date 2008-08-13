@@ -412,7 +412,7 @@ QScriptValue QScriptApplet::print(QScriptContext *context, QScriptEngine *engine
 QScriptValue QScriptApplet::update(QScriptContext *context, QScriptEngine *engine)
 {
     QScriptValue appletValue = engine->globalObject().property("applet");
-    kDebug() << "appletValue is " << appletValue.toString();
+    //kDebug() << "appletValue is " << appletValue.toString();
 
     QObject *appletObject = appletValue.toQObject();
     if ( !appletObject )
