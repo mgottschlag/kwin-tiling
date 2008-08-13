@@ -42,7 +42,6 @@ public:
 
     Q_INVOKABLE QString findDataResource( const QString &filename );
     Q_INVOKABLE void debug( const QString &msg );
-//    Q_INVOKABLE void update( const QRectF & rect = QRectF() ) { Applet::update(rect); }
 
 public slots:
     void dataUpdated( const QString &name, const Plasma::DataEngine::Data &data );
@@ -57,9 +56,11 @@ private:
     static QScriptValue loadui(QScriptContext *context, QScriptEngine *engine);
     static QScriptValue newPlasmaSvg(QScriptContext *context, QScriptEngine *engine);
 
+    static QScriptValue update(QScriptContext *context, QScriptEngine *engine);
+
     void installWidgets( QScriptEngine *engine );
     static QScriptValue createWidget(QScriptContext *context, QScriptEngine *engine);
-
+    static QScriptValue print(QScriptContext *context, QScriptEngine *engine);
     static QScriptValue createPrototype( QScriptEngine *engine, const QString &name );
 
 private:

@@ -108,7 +108,6 @@ QScriptApplet::QScriptApplet( QObject *parent, const QVariantList &args )
 
     m_engine = new QScriptEngine( this );
     importExtensions();
-    setupObjects();
 }
 
 QScriptApplet::~QScriptApplet()
@@ -213,6 +212,8 @@ void QScriptApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *
 
 bool QScriptApplet::init()
 {
+    setupObjects();
+
     kDebug() << "ScriptName:" << applet()->name();
     kDebug() << "ScriptCategory:" << applet()->category();
 
@@ -254,13 +255,19 @@ void QScriptApplet::setupObjects()
     QScriptValue global = m_engine->globalObject();
 
     // Expose an applet
-    m_self = m_engine->newQObject( this );
+    m_self = m_engine->newQObject( applet() );
     m_self.setScope( global );    
 
     global.setProperty("applet", m_self);
     // Add a global loadui method for ui files
     QScriptValue fun = m_engine->newFunction( QScriptApplet::loadui );
     global.setProperty("loadui", fun);
+
+    fun = m_engine->newFunction( QScriptApplet::update );
+    global.setProperty("update", fun);
+
+    fun = m_engine->newFunction( QScriptApplet::print );
+    global.setProperty("print", fun);
 
     // Work around bug in 4.3.0
     qMetaTypeId<QVariant>();
@@ -287,6 +294,8 @@ void QScriptApplet::setupObjects()
     qScriptRegisterMapMetaType<DataEngine::Dict>(m_engine);
 //    qScriptRegisterMapMetaType<DataEngine::Data>(m_engine);
     qScriptRegisterMetaType<DataEngine::Data>( m_engine, qScriptValueFromData, 0, QScriptValue() );
+
+    installWidgets(m_engine);
 }
 
 QString QScriptApplet::findDataResource( const QString &filename )
@@ -390,6 +399,31 @@ QScriptValue QScriptApplet::createWidget(QScriptContext *context, QScriptEngine 
     fun.setPrototype( context->callee().property("prototype") );
 
     return fun;
+}
+
+QScriptValue QScriptApplet::print(QScriptContext *context, QScriptEngine *engine)
+{
+    if ( context->argumentCount() != 1 )
+	return context->throwError("print takes one argument");
+    kDebug() << context->argument(0).toString();
+    return engine->undefinedValue();
+}
+
+QScriptValue QScriptApplet::update(QScriptContext *context, QScriptEngine *engine)
+{
+    QScriptValue appletValue = engine->globalObject().property("applet");
+    kDebug() << "appletValue is " << appletValue.toString();
+
+    QObject *appletObject = appletValue.toQObject();
+    if ( !appletObject )
+	return context->throwError("Could not extract the AppletObject");
+
+    Applet *applet = qobject_cast<Applet*>( appletObject );
+    if ( !applet )
+	return context->throwError("Could not extract the Applet");
+
+    applet->update();
+    return engine->undefinedValue();
 }
 
 QScriptValue QScriptApplet::createPrototype( QScriptEngine *engine, const QString &name )
