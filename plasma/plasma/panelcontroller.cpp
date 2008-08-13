@@ -24,11 +24,13 @@
 #include <QBoxLayout>
 #include <QDesktopWidget>
 #include <QFrame>
+#include <QLabel>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QToolButton>
 
 #include <KColorUtils>
+#include <KIconLoader>
 #include <KIcon>
 #include <KWindowSystem>
 
@@ -91,6 +93,7 @@ public:
          m_mouseOver(false)
     {
         setCursor(Qt::SizeVerCursor);
+        setToolTip(i18n("Drag this handle to resize the panel"));
     }
 
     QSize sizeHint() const
@@ -180,7 +183,8 @@ public:
          startDragPos(0,0),
          leftAlignTool(0),
          centerAlignTool(0),
-         rightAlignTool(0)
+         rightAlignTool(0),
+         drawMoveHint(false)
     {
     }
 
@@ -296,6 +300,7 @@ public:
     QBoxLayout *extLayout;
     QBoxLayout *layout;
     QBoxLayout *alignLayout;
+    QLabel *alignLabel;
     DragElement dragging;
     QPoint startDragPos;
 
@@ -309,6 +314,8 @@ public:
 
     ResizeHandle *panelHeightHandle;
     PositioningRuler *ruler;
+    
+    bool drawMoveHint;
 
     static const int minimumHeight = 10;
 };
@@ -351,6 +358,10 @@ PanelController::PanelController(QWidget* parent)
     alignFrame->setLayout(d->alignLayout);
     d->layout->addWidget(alignFrame);
     
+    d->alignLabel = new QLabel(i18n("Panel alignment"), this);
+    d->alignLayout->addWidget(d->alignLabel);
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(setPalette()));
+    setPalette();
     d->leftAlignTool = d->addTool("format-justify-left", i18n("Align panel to left"), alignFrame,  Qt::ToolButtonIconOnly, true);
     d->alignLayout->addWidget(d->leftAlignTool);
     d->leftAlignTool->setChecked(true);
@@ -605,11 +616,20 @@ void PanelController::hideController()
     hide();
 }
 
+void PanelController::setPalette()
+{
+    QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    QPalette p = d->alignLabel->palette();
+    p.setColor(QPalette::Normal, QPalette::WindowText, color);
+    p.setColor(QPalette::Inactive, QPalette::WindowText, color);
+    d->alignLabel->setPalette(p);
+}
+
 void PanelController::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     painter.setCompositionMode(QPainter::CompositionMode_Source );
-    QColor backColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+    QColor backColor = Plasma::Theme::defaultTheme() ->color(Plasma::Theme::BackgroundColor);
     backColor.setAlphaF(0.75);
     painter.fillRect(event->rect(), backColor);
 }

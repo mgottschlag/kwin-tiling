@@ -55,6 +55,7 @@ public:
 
 public Q_SLOTS:
     void hideController();
+    void setPalette();
 
 protected:
     void paintEvent(QPaintEvent *event);
