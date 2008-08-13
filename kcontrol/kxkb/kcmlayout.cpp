@@ -433,8 +433,9 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
     connect( widget->editDisplayName, SIGNAL(textChanged(const QString&)), this, SLOT(displayNameChanged(const QString&)));
 
     widget->btnUp->setIcon(KIcon("arrow-up"));
-    widget->btnAdd->setIcon(KIcon("arrow-right"));
-    widget->btnRemove->setIcon(KIcon("arrow-left"));
+    widget->btnDown->setIcon(KIcon("arrow-down"));
+    widget->btnAdd->setIcon( layoutDirection() == Qt::LeftToRight? KIcon("arrow-right"): KIcon("arrow-left") );
+    widget->btnRemove->setIcon( layoutDirection() == Qt::LeftToRight? KIcon("arrow-left") : KIcon("arrow-right") );
     connect( widget->btnUp, SIGNAL(clicked()), this, SLOT(moveUp()));
     widget->btnDown->setIcon(KIcon("arrow-down"));
     connect( widget->btnDown, SIGNAL(clicked()), this, SLOT(moveDown()));
