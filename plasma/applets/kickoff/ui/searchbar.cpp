@@ -36,6 +36,9 @@
 #include <KLineEdit>
 #include <KLocalizedString>
 
+//Plasma
+#include <plasma/theme.h>
+
 #include "ui/itemdelegate.h"
 
 using namespace Kickoff;
@@ -66,6 +69,12 @@ SearchBar::SearchBar(QWidget *parent)
     layout->setSpacing(0); // we do the spacing manually to line up with the views below
 
     QLabel *searchLabel = new QLabel(i18n("Search:"),this);
+    QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    QPalette p = searchLabel->palette();
+    p.setColor(QPalette::Normal, QPalette::WindowText, color);
+    p.setColor(QPalette::Inactive, QPalette::WindowText, color);
+    searchLabel->setPalette(p);
+
     QLabel *searchIcon = new QLabel(this);
 
     QFileInfo fi(QDir(QDir::homePath()), ".face.icon");

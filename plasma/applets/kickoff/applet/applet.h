@@ -24,7 +24,7 @@
 #include <KIcon>
 
 // Plasma
-#include <plasma/applet.h>
+#include <plasma/popupapplet.h>
 
 namespace Kickoff
 {
@@ -36,7 +36,7 @@ namespace Plasma
     class PushButton;
 }
 
-class LauncherApplet : public Plasma::Applet
+class LauncherApplet : public Plasma::PopupApplet
 {
 Q_OBJECT
 
@@ -46,9 +46,11 @@ public:
 
         void init();
 
-        void constraintsEvent(Plasma::Constraints constraints);
+        //void constraintsEvent(Plasma::Constraints constraints);
 
         virtual QList<QAction*> contextualActions();
+
+        QWidget *widget();
 
 public slots:
         void switchMenuStyle();
@@ -56,11 +58,14 @@ public slots:
 
 protected slots:
         void configAccepted();
-        void toggleMenu();
-        void toggleMenu(bool pressed);
+        //void toggleMenu();
+        //void toggleMenu(bool pressed);
 
 protected:
         void createConfigurationInterface(KConfigDialog *parent);
+
+private slots:
+        void hideMe();
 
 private:
         class Private;

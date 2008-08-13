@@ -22,6 +22,7 @@
 
 // KDE
 #include <KGlobalSettings>
+#include <KColorScheme>
 
 // Qt
 #include <QIcon>
@@ -33,6 +34,7 @@
 
 #include "plasma/plasma.h"
 #include "plasma/animator.h"
+#include "plasma/theme.h"
 
 using namespace Kickoff;
 
@@ -246,6 +248,10 @@ void TabBar::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     //int numTabs = count();
     int currentTab = currentIndex();
+
+    //FIXME: here we must use BorderSVG
+    painter.fillRect(rect(), QBrush(QColor::fromRgb(255, 255, 255, 45)));
+
     //bool ltr = painter.layoutDirection() == Qt::LeftToRight; // Not yet used
     painter.setFont(KGlobalSettings::smallestReadableFont());
 
@@ -302,6 +308,12 @@ void TabBar::paintEvent(QPaintEvent *event)
         tabIcon(i).paint(&painter, iconRect);
 
         // draw tab text
+        //TODO: we may want a nice animation also for the text
+        if (i != currentTab){
+            painter.setPen(KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme()).foreground().color());
+        }else{
+            painter.setPen(Qt::black); //FIXME: we musn't use hardcoded color values
+        }
         QRect textRect = rect;
         textRect.setTop(textRect.bottom() - textHeight);
         painter.drawText(textRect, Qt::AlignCenter | Qt::TextHideMnemonic, tabText(i));

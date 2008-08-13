@@ -80,13 +80,7 @@ signals:
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
     virtual void showEvent(QShowEvent *event);
-    virtual void hideEvent(QHideEvent *event);
-    virtual void moveEvent(QMoveEvent *event);
-    virtual void paintEvent(QPaintEvent *event);
-    virtual void resizeEvent(QResizeEvent *e);
-    virtual void mousePressEvent(QMouseEvent *e);
     virtual void mouseReleaseEvent(QMouseEvent *e);
-    virtual void mouseMoveEvent(QMouseEvent *e);
 
 private Q_SLOTS:
     void focusSearchView(const QString& query);

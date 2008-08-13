@@ -65,28 +65,21 @@ public:
 void LauncherApplet::Private::createLauncher(LauncherApplet *q)
 {
     launcher = new Kickoff::Launcher(q);
-    launcher->setWindowFlags(launcher->windowFlags()|Qt::WindowStaysOnTopHint|Qt::Popup);
-    launcher->setAutoHide(true);
-    launcher->resize(launcher->sizeHint());
-    QObject::connect(launcher, SIGNAL(aboutToHide()), icon, SLOT(setUnpressed()));
-    QObject::connect(launcher, SIGNAL(configNeedsSaving()), q, SIGNAL(configNeedsSaving()));
+    //launcher->resize(launcher->sizeHint());
+    //QObject::connect(launcher, SIGNAL(aboutToHide()), icon, SLOT(setUnpressed()));
+    //QObject::connect(launcher, SIGNAL(configNeedsSaving()), q, SIGNAL(configNeedsSaving()));
 }
 
 LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent,args),
+    : Plasma::PopupApplet(parent,args),
       d(new Private)
 {
     KGlobal::locale()->insertCatalog("plasma_applet_launcher");
 
     setHasConfigurationInterface(true);
-    setBackgroundHints(NoBackground);
 
     resize(IconSize(KIconLoader::Desktop) * 2, IconSize(KIconLoader::Desktop) * 2);
-
-    d->icon = new Plasma::Icon(KIcon("start-here-kde"), QString(), this);
-    d->icon->setFlag(ItemIsMovable, false);
-    connect(d->icon, SIGNAL(pressed(bool)), this, SLOT(toggleMenu(bool)));
-    connect(this, SIGNAL(activate()), this, SLOT(toggleMenu()));
+    setIcon("start-here-kde");
 }
 
 LauncherApplet::~LauncherApplet()
@@ -96,12 +89,6 @@ LauncherApplet::~LauncherApplet()
 
 void LauncherApplet::init()
 {
-    QGraphicsLinearLayout *layout = new QGraphicsLinearLayout(this);
-    layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(0);
-
-    layout->addItem(d->icon);
-
     if (KService::serviceByStorageId("kde4-kmenuedit.desktop")) {
         QAction* menueditor = new QAction(i18n("Menu Editor"), this);
         d->actions.append(menueditor);
@@ -116,30 +103,12 @@ void LauncherApplet::init()
     d->actions.append(d->switcher);
     connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
 
-    Plasma::ToolTipManager::self()->registerWidget(d->icon);
+    /*Plasma::ToolTipManager::self()->registerWidget(d->icon);
     Plasma::ToolTipManager::ToolTipContent data;
     data.mainText = i18n("Kickoff Application Launcher");
     data.subText = i18n("Favorites, applications, computer places, recently used items and desktop sessions");
     data.image = d->icon->icon().pixmap(IconSize(KIconLoader::Desktop));
-    Plasma::ToolTipManager::self()->setToolTipContent(d->icon, data);
-}
-
-void LauncherApplet::constraintsEvent(Plasma::Constraints constraints)
-{
-    setBackgroundHints(NoBackground);
-    if (constraints & Plasma::FormFactorConstraint) {
-        if (formFactor() == Plasma::Planar ||
-            formFactor() == Plasma::MediaCenter) {
-            //FIXME set correct minimum size
-            //setMinimumSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
-        } else {
-            //setMinimumSize(d->icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
-        }
-    }
-
-    if ((constraints & Plasma::ImmutableConstraint) && d->switcher) {
-        d->switcher->setVisible(immutability() == Plasma::Mutable);
-    }
+    Plasma::ToolTipManager::self()->setToolTipContent(d->icon, data);*/
 }
 
 void LauncherApplet::switchMenuStyle()
@@ -170,10 +139,11 @@ void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     parent->setButtons(KDialog::Ok | KDialog::Cancel | KDialog::Apply);
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-    parent->addPage(widget, parent->windowTitle(), icon());
+    parent->addPage(widget, parent->windowTitle()/*, icon()*/);
 
     if (!d->launcher) {
         d->createLauncher(this);
+        QObject::connect(d->launcher, SIGNAL(aboutToHide()), this, SLOT(hideMe()));
     }
 
     d->switchOnHoverCheckBox->setChecked(d->launcher->switchTabsOnHover());
@@ -190,52 +160,32 @@ void LauncherApplet::configAccepted()
 
     if (!d->launcher) {
         d->createLauncher(this);
+        QObject::connect(d->launcher, SIGNAL(aboutToHide()), this, SLOT(hideMe()));
     }
 
     d->launcher->setSwitchTabsOnHover(switchTabsOnHover);
 }
 
-
-void LauncherApplet::toggleMenu(bool pressed)
-{
-    if (pressed) {
-        toggleMenu();
-    }
-}
-
-void LauncherApplet::toggleMenu()
-{
-    if (!d->launcher) {
-        d->createLauncher(this);
-    }
-
-    d->launcher->reset();
-
-    if (!d->launcher->isVisible()) {
-        // It's risky to calculate the popupPosition based on the size before
-        // calling setLauncherOrigin, which can change the size
-        // Probably just a problem on screens with strange aspect ratio or smaller than
-        // kickoff's size.
-        QPoint popupPosition = Applet::popupPosition(d->launcher->size());
-        d->launcher->move( popupPosition );
-        QPoint iconPosition = view()->mapToGlobal(
-                view()->mapFromScene( d->icon->scenePos() ) );
-
-        Plasma::View *pv = dynamic_cast<Plasma::View *>(view());
-        Plasma::Location loc = Plasma::Floating;
-        if (pv) {
-            loc = pv->containment()->location();
-        }
-        d->launcher->setLauncherOrigin( iconPosition, loc );
-        emit releaseVisualFocus();
-    }
-    d->launcher->setVisible(!d->launcher->isVisible());
-    d->icon->setPressed();
-}
-
 QList<QAction*> LauncherApplet::contextualActions()
 {
   return d->actions;
+}
+
+QWidget *LauncherApplet::widget()
+{
+    if (!d->launcher) {
+        d->createLauncher(this);
+        QObject::connect(d->launcher, SIGNAL(aboutToHide()), this, SLOT(hideMe()));
+    }
+
+    d->launcher->setAttribute(Qt::WA_NoSystemBackground);
+    return d->launcher;
+}
+
+//FIXME: hidePopup should be a slot
+void LauncherApplet::hideMe()
+{
+    hidePopup();
 }
 
 #include "applet.moc"

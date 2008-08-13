@@ -71,14 +71,12 @@ using namespace Kickoff;
 class Launcher::Private
 {
 public:
-    class ResizeHandle;
     enum CompassDirection { North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest };
 
     Private(Launcher *launcher)
         : q(launcher)
         , applet(0)
         , urlLauncher(new UrlItemLauncher(launcher))
-        , resizeHandle(0)
         , searchModel(0)
         , searchBar(0)
         , footer(0)
@@ -398,8 +396,6 @@ public:
         contentArea->addWidget( searchView );
     }
 
-    inline void adjustResizeHandlePosition();
-
     struct WidgetTabData
     {
         QString tabText;
@@ -411,7 +407,6 @@ public:
     Launcher * const q;
     Plasma::Applet *applet;
     UrlItemLauncher *urlLauncher;
-    ResizeHandle *resizeHandle;
     SearchModel *searchModel;
     SearchBar *searchBar;
     QWidget *footer;
@@ -430,94 +425,6 @@ public:
     CompassDirection resizePlacement;
     Plasma::Location panelEdge;
 };
-
-class Launcher::Private::ResizeHandle
-    : public QWidget
-{
-public:
-    ResizeHandle(QWidget *parent = 0)
-        : QWidget(parent),
-          m_placement(NorthEast)
-    {
-    }
-
-    ~ResizeHandle()
-    {
-    }
-
-    void setPlacement(CompassDirection dir)
-    {
-        m_placement = dir;
-        switch (m_placement) {
-            case NorthEast:
-            default:
-                setCursor(Qt::SizeBDiagCursor);
-                break;
-            case SouthEast:
-                setCursor(Qt::SizeFDiagCursor);
-                break;
-            case SouthWest:
-                setCursor(Qt::SizeBDiagCursor);
-                break;
-            case NorthWest:
-                setCursor(Qt::SizeFDiagCursor);
-                break;
-        }
-    }
-
-protected:
-    void paintEvent(QPaintEvent *event)
-    {
-        QPainter p(this);
-        QStyleOptionSizeGrip opt;
-        opt.initFrom(this);
-        switch (m_placement) {
-            case NorthEast:
-            default:
-                opt.corner = Qt::TopRightCorner;
-                break;
-            case SouthEast:
-                opt.corner = Qt::BottomRightCorner;
-                break;
-            case SouthWest:
-                opt.corner = Qt::BottomLeftCorner;
-                break;
-            case NorthWest:
-                opt.corner = Qt::TopLeftCorner;
-                break;
-        }
-        style()->drawControl(QStyle::CE_SizeGrip, &opt, &p);
-        p.end();
-    }
-
-private:
-    CompassDirection m_placement;
-};
-
-void Launcher::Private::adjustResizeHandlePosition()
-{
-    const int margin = 1;
-    switch (resizePlacement) {
-        case NorthEast:
-            resizeHandle->move(q->width()-resizeHandle->width() - margin,
-                               margin);
-            break;
-        case SouthEast:
-            resizeHandle->move(q->width()-resizeHandle->width() - margin,
-                               q->height()-resizeHandle->height() - margin);
-            break;
-        case SouthWest:
-            resizeHandle->move(margin, q->height()-resizeHandle->height() - margin);
-            break;
-        case NorthWest:
-            resizeHandle->move(margin, margin);
-            break;
-        default:
-            break;
-    }
-
-    resizeHandle->setPlacement(resizePlacement);
-}
 
 Launcher::Launcher(QWidget *parent)
     : QWidget(parent, Qt::Window)
@@ -578,19 +485,16 @@ void Launcher::init()
         labelText = i18nc("full name, login name, hostname", "<b>%1 (%2)</b>&nbsp;on&nbsp;<b>%3</b>", fullName, user.loginName(), hostname);
     }
     QLabel *userinfo = new QLabel(labelText);
-    QPalette palette;
-    palette.setColor( QPalette::Foreground, KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText).color() );
-    userinfo->setPalette( palette );
+    QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    QPalette p = userinfo->palette();
+    p.setColor(QPalette::Normal, QPalette::WindowText, color);
+    p.setColor(QPalette::Inactive, QPalette::WindowText, color);
+    userinfo->setPalette(p);
 
     QToolButton *branding = new BrandingButton(this);
     branding->setAutoRaise(false);
     branding->setToolButtonStyle(Qt::ToolButtonIconOnly);
     connect( branding, SIGNAL(clicked()), SLOT(openHomepage()));
-
-    d->resizeHandle = new Private::ResizeHandle(this);
-    d->resizeHandle->setFixedSize(16, 16);
-    d->resizeHandle->setCursor(Qt::SizeBDiagCursor);
-    setMouseTracking(true);
 
     QHBoxLayout *brandingLayout = new QHBoxLayout;
     brandingLayout->setMargin(3);
@@ -607,8 +511,8 @@ void Launcher::init()
     layout->addWidget(d->contentSwitcher);
 
     setLayout(layout);
-    setBackgroundRole(QPalette::AlternateBase);
-    setAutoFillBackground(true);
+    //setBackgroundRole(QPalette::AlternateBase);
+    //setAutoFillBackground(true);
     d->resizePlacement = Private::NorthEast;
 }
 
@@ -789,7 +693,7 @@ bool Launcher::eventFilter(QObject *object, QEvent *event)
                 d->searchBar->clear();
             }
             if (d->autoHide) {
-                hide();
+                emit aboutToHide();
             }
             return true;
         }
@@ -808,7 +712,7 @@ void Launcher::showViewContextMenu(const QPoint& pos)
 void Launcher::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) {
-        hide();
+        emit aboutToHide();
     }
 #if 0
     // allow tab switching by pressing the left or right arrow keys
@@ -821,61 +725,15 @@ void Launcher::keyPressEvent(QKeyEvent *event)
 #endif
 }
 
-void Launcher::moveEvent(QMoveEvent *e)
-{
-    // focus the search bar ready for typing
-    int leftMargin = 1;
-    int rightMargin = 1;
-    int topMargin = 1;
-    int bottomMargin = 1;
-
-    QRect r(QApplication::desktop()->screenGeometry(this));
-    QRect g(geometry());
-
-    if (g.left() == r.left()) {
-        leftMargin = 0;
-    }
-
-    if (g.right() == r.right()) {
-        rightMargin = 0;
-    }
-
-    if (g.top() == r.top()) {
-        topMargin = 0;
-    }
-
-    if (g.bottom() == r.bottom()) {
-        bottomMargin = 0;
-    }
-
-    setContentsMargins(leftMargin, rightMargin, topMargin, rightMargin);
-    QWidget::moveEvent(e);
-}
-
 void Launcher::showEvent(QShowEvent *e)
 {
     d->searchBar->setFocus();
-    d->resizeHandle->raise();
     QWidget::showEvent(e);
 }
 
-void Launcher::hideEvent(QHideEvent *e)
+void Launcher::openHomepage()
 {
     emit aboutToHide();
-    QWidget::hideEvent(e);
-}
-
-void Launcher::paintEvent(QPaintEvent*)
-{
-    // TODO - Draw a pretty background here
-    QPainter p(this);
-    p.setPen(QPen(palette().mid(), 0));
-    p.drawRect(rect().adjusted(0, 0, -1, -1));
-}
-
-void Launcher::openHomepage()
-{ 
-    hide();
     KToolInvocation::invokeBrowser("http://www.kde.org/");
 }
 
@@ -976,44 +834,11 @@ void Launcher::setLauncherOrigin( QPoint origin, Plasma::Location location )
             d->setWestLayout( Private::ReverseTabOrder );
         }
     }
-    d->adjustResizeHandlePosition();
 }
 
 QPoint Launcher::launcherOrigin() const
 {
     return d->launcherOrigin;
-}
-
-void Launcher::resizeEvent(QResizeEvent *e)
-{
-    d->adjustResizeHandlePosition();
-    QWidget::resizeEvent(e);
-}
-
-void Launcher::mousePressEvent(QMouseEvent *e)
-{
-    if ( d->resizeHandle->geometry().contains( e->pos() ) ) {
-        d->isResizing = true;
-        switch (d->resizePlacement) {
-            case Private::NorthEast:
-                d->resizeOffsetX = width() - e->x();
-                d->resizeOffsetY = e->y();
-                break;
-            case Private::SouthEast:
-                d->resizeOffsetX = width() - e->x();
-                d->resizeOffsetY = height() - e->y();
-                break;
-            case Private::SouthWest:
-                d->resizeOffsetX = e->x();
-                d->resizeOffsetY = height() - e->y();
-                break;
-            case Private::NorthWest:
-                d->resizeOffsetX = e->x();
-                d->resizeOffsetY = e->y();
-                break;
-        }
-    }
-    QWidget::mousePressEvent(e);
 }
 
 void Launcher::mouseReleaseEvent(QMouseEvent *e)
@@ -1031,52 +856,6 @@ void Launcher::mouseReleaseEvent(QMouseEvent *e)
        emit configNeedsSaving();
     }
     QWidget::mouseReleaseEvent(e);
-}
-
-void Launcher::mouseMoveEvent(QMouseEvent *e)
-{
-    /* I'm not sure what the magic 10 below is for, if you do, please comment - Will */
-    if ( hasMouseTracking() && d->isResizing ) {
-        int newX, newY, newWidth, newHeight;
-        kDebug() << "x: " << x() << " y: " << y();
-        kDebug() << "width: " << width() << " height: " << height();
-        kDebug() << "e-x: " << e->x() << " e->y: " << e->y();
-        switch (d->resizePlacement) {
-            case Private::NorthEast:
-                newWidth = qMax( e->x() + d->resizeOffsetX, minimumSizeHint().width() );
-                newHeight = qMax( height() - e->y() + d->resizeOffsetY, minimumSizeHint().height()/* + 10*/ );
-                newX = x();
-                newY = y() + height() - newHeight;
-                kDebug() << "Foot of menu to newY + newHeight";
-                kDebug() << "= " << newY << " + " << newHeight << " = " << (newY + newHeight);
-                break;
-            case Private::SouthEast:
-                newWidth = qMax( e->x() + d->resizeOffsetX, minimumSizeHint().width() );
-                newHeight = qMax( e->y() + d->resizeOffsetY, minimumSizeHint().height()/* + 10*/ );
-                newX = x();
-                newY = y();
-                break;
-            case Private::SouthWest:
-                newWidth = qMax( width() - e->x() + d->resizeOffsetX, minimumSizeHint().width() );
-                newHeight = qMax( e->y() + d->resizeOffsetY, minimumSizeHint().height()/* + 10*/ );
-                newX = x() + width() - newWidth;
-                newY = y();
-                break;
-            case Private::NorthWest:
-                newWidth = qMax( width() - e->x() + d->resizeOffsetX, minimumSizeHint().width() );
-                newHeight = qMax( height() - e->y() + d->resizeOffsetY, minimumSizeHint().height()/* + 10*/ );
-                newX = x() + width() - newWidth;
-                newY = y() + height() - newHeight;
-                kDebug() << "Foot of menu to newY + newHeight";
-                kDebug() << "= " << newY << " + " << newHeight << " = " << (newY + newHeight);
-                break;
-            default:
-                break;
-        }
-        kDebug() << "newX: " << newX << "newY: " << newY << "newW: " << newWidth << "newH: " << newHeight;
-        setGeometry( newX, newY, newWidth, newHeight);
-    }
-    QWidget::mouseMoveEvent(e);
 }
 
 #include "launcher.moc"
