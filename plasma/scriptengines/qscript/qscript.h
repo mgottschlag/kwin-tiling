@@ -62,6 +62,7 @@ private:
     static QScriptValue createWidget(QScriptContext *context, QScriptEngine *engine);
     static QScriptValue print(QScriptContext *context, QScriptEngine *engine);
     static QScriptValue createPrototype( QScriptEngine *engine, const QString &name );
+    static QScriptValue setLayout(QScriptContext *context, QScriptEngine *engine);
 
 private:
     QScriptEngine *m_engine;

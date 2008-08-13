@@ -21,6 +21,7 @@
 #include <QScriptEngine>
 #include <QFile>
 #include <QUiLoader>
+#include <QGraphicsLayout>
 
 #include <KDebug>
 #include <KLocale>
@@ -37,9 +38,9 @@ using namespace Plasma;
 Q_DECLARE_METATYPE(QPainter*)
 Q_DECLARE_METATYPE(QStyleOptionGraphicsItem*)
 Q_DECLARE_METATYPE(QScriptApplet*)
-Q_DECLARE_METATYPE(Layout*)
 Q_DECLARE_METATYPE(Applet*)
 Q_DECLARE_METATYPE(QGraphicsWidget*)
+Q_DECLARE_METATYPE(QGraphicsLayout*)
 
 QScriptValue constructPainterClass(QScriptEngine *engine);
 QScriptValue constructGraphicsItemClass(QScriptEngine *engine);
@@ -191,7 +192,8 @@ void QScriptApplet::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *
 //    kDebug() << "paintInterface() (c++)";
     QScriptValue fun = m_self.property( "paintInterface" );
     if ( !fun.isFunction() ) {
-	kDebug() << "Script: paintInterface is not a function, " << fun.toString();
+	//kDebug() << "Script: paintInterface is not a function, " << fun.toString();
+	AppletScript::paintInterface( p, option, contentsRect );
 	return;
     }
 
@@ -268,6 +270,9 @@ void QScriptApplet::setupObjects()
 
     fun = m_engine->newFunction( QScriptApplet::print );
     global.setProperty("print", fun);
+
+    fun = m_engine->newFunction( QScriptApplet::setLayout );
+    global.setProperty("setLayout", fun);
 
     // Work around bug in 4.3.0
     qMetaTypeId<QVariant>();
@@ -423,6 +428,31 @@ QScriptValue QScriptApplet::update(QScriptContext *context, QScriptEngine *engin
 	return context->throwError("Could not extract the Applet");
 
     applet->update();
+    return engine->undefinedValue();
+}
+
+QScriptValue QScriptApplet::setLayout(QScriptContext *context, QScriptEngine *engine)
+{
+    if ( context->argumentCount() != 1 )
+	return context->throwError("setLayout one argument");
+
+    // Get the applet
+    QScriptValue appletValue = engine->globalObject().property("applet");
+    QObject *appletObject = appletValue.toQObject();
+    if ( !appletObject )
+	return context->throwError("Could not extract the AppletObject");
+
+    Applet *applet = qobject_cast<Applet*>( appletObject );
+    if ( !applet )
+	return context->throwError("Could not extract the Applet");
+
+    // Get the layout
+    QGraphicsLayout *layout = qscriptvalue_cast<QGraphicsLayout*>(context->argument(0));
+    if ( !layout )
+	return context->throwError("Could not extract the QGraphicsLayout");
+
+    applet->setLayout( layout );
+
     return engine->undefinedValue();
 }
 
