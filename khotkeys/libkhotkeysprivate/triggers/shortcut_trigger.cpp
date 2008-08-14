@@ -61,10 +61,10 @@ ShortcutTrigger::ShortcutTrigger(
         QString shortcutString = cfg_P.readEntry( "Key" );
         shortcutString.replace("Win+", "Meta+"); // Qt4 doesn't parse Win+, avoid a shortcut without modifier
         _shortcut = KShortcut(shortcutString);
-    KAction *act = keyboard_handler->addAction( _uuid, data_P->name(), _shortcut );
-    connect(
-        act, SIGNAL(triggered(bool)),
-        this, SLOT(trigger()) );
+        KAction *act = keyboard_handler->addAction( _uuid, data_P->name(), _shortcut );
+        connect(
+            act, SIGNAL(triggered(bool)),
+            this, SLOT(trigger()) );
     }
 
 
