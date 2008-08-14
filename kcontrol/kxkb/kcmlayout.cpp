@@ -418,6 +418,7 @@ LayoutConfig::LayoutConfig(QWidget *parent, const QVariantList &)
     connect( widget->comboModel, SIGNAL(activated(int)), this, SLOT(changed()));
 
     connect( widget->srcTableView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(add()));
+    connect( widget->dstTableView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(remove()));
     connect( widget->btnAdd, SIGNAL(clicked()), this, SLOT(add()));
     connect( widget->btnRemove, SIGNAL(clicked()), this, SLOT(remove()));
 
