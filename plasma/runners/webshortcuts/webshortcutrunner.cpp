@@ -42,9 +42,21 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
     m_offers = serviceQuery("SearchProvider");
     m_icon = KIcon("internet-web-browser");
     // TODO: read delimiter from config... it's in kuriikwsfilterrc:KeywordDelimiter=\s
-    m_delimiter = ":";
+    m_delimiter = loadDelimiter();
     setIgnoredTypes(Plasma::RunnerContext::FileSystem);
 }
+
+QString WebshortcutRunner::loadDelimiter()
+{
+    KConfig *kuriconfig = new KConfig("kuriikwsfilterrc", KConfig::NoGlobals);
+    KConfigGroup generalgroup( kuriconfig, "General" );
+    QString delimiter = generalgroup.readPathEntry( "KeywordDelimiter", QString() );
+    delete kuriconfig;
+    kDebug() << "keyworddelimiter is: " << delimiter;
+    return delimiter;
+}
+
+
 
 WebshortcutRunner::~WebshortcutRunner()
 {
@@ -53,9 +65,8 @@ WebshortcutRunner::~WebshortcutRunner()
 void WebshortcutRunner::match(Plasma::RunnerContext &context)
 {
     const QString term = context.query();
-    const char separator = ':';
 
-    if (term.length() < 3 || !term.contains(separator)) {
+    if (term.length() < 3 || !term.contains(m_delimiter)) {
         return;
     }
 
@@ -65,12 +76,12 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
     foreach (const KService::Ptr &service, m_offers) {
         //TODO: how about getting the keys for the localized sites?
         foreach (QString key, service->property("Keys").toStringList()) {
-            // FIXME? should we look for the used separator from the konqi's settings?
-            key = key.toLower() + separator;
+            // FIXME? should we look for the used m_delimiter from the konqi's settings?
+            key = key.toLower() + m_delimiter;
             if (term.size() > key.size() &&
                 term.startsWith(key, Qt::CaseInsensitive)) {
                 QString actionText = i18n("Search %1 for %2",service->name(),
-                                            term.right(term.length() - term.indexOf(':') - 1));
+                                            term.right(term.length() - term.indexOf(m_delimiter) - 1));
                 QString url = getSearchQuery(service->property("Query").toString(), term);
                 //kDebug() << "url is" << url << "!!!!!!!!!!!!!!!!!!!!!!!";
 
