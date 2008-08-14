@@ -23,6 +23,11 @@
 #include <QTabBar>
 #include <QTimer>
 
+namespace Plasma
+{
+    class PanelSvg;
+}
+
 namespace Kickoff
 {
 
@@ -75,6 +80,7 @@ private:
     QRect m_currentAnimRect;
     int m_lastIndex[2];
     qreal m_animProgress;
+    Plasma::PanelSvg *background;
 
     QSize tabSize(int index) const;
     void storeLastIndex();

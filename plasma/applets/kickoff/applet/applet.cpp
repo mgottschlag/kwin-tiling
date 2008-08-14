@@ -185,7 +185,8 @@ QWidget *LauncherApplet::widget()
 //FIXME: hidePopup should be a slot
 void LauncherApplet::hideMe()
 {
-    hidePopup();
+   kDebug() << "hiding!!!!!!!!!!!!!!!!!!!!!!!!\n";
+   hidePopup();
 }
 
 #include "applet.moc"

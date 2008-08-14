@@ -35,6 +35,7 @@
 #include "plasma/plasma.h"
 #include "plasma/animator.h"
 #include "plasma/theme.h"
+#include "plasma/panelsvg.h"
 
 using namespace Kickoff;
 
@@ -52,6 +53,14 @@ TabBar::TabBar(QWidget *parent)
     setMouseTracking(true);
     setSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred );
     setUsesScrollButtons( false );
+
+    background = new Plasma::PanelSvg(this);
+    background->setImagePath("dialogs/kickoff");
+    background->setEnabledBorders(Plasma::PanelSvg::AllBorders);
+    background->resizePanel(size());
+    background->setElementPrefix("plain");
+
+    connect(background, SIGNAL(repaintNeeded()), this, SLOT(update()));
 }
 
 void TabBar::setShape( Shape shape )
@@ -249,8 +258,7 @@ void TabBar::paintEvent(QPaintEvent *event)
     //int numTabs = count();
     int currentTab = currentIndex();
 
-    //FIXME: here we must use BorderSVG
-    painter.fillRect(rect(), QBrush(QColor::fromRgb(255, 255, 255, 45)));
+    background->paintPanel(&painter);
 
     //bool ltr = painter.layoutDirection() == Qt::LeftToRight; // Not yet used
     painter.setFont(KGlobalSettings::smallestReadableFont());
@@ -339,6 +347,9 @@ void TabBar::resizeEvent(QResizeEvent* event)
 {
     QTabBar::resizeEvent(event);
     m_currentAnimRect = tabRect(currentIndex());
+
+    background->resizePanel(event->size());
+
     update();
 }
 
