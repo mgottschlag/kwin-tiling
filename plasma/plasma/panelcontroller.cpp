@@ -290,7 +290,7 @@ public:
 
      enum DragElement { NoElement = 0,
                         ResizeHandleElement,
-                        PanelControllerElement
+                        MoveButtonElement
                       };
 
     PanelController *q;
@@ -304,6 +304,8 @@ public:
     DragElement dragging;
     QPoint startDragPos;
 
+    ToolButton *moveTool;
+    
     //Alignment buttons
     ToolButton *leftAlignTool;
     ToolButton *centerAlignTool;
@@ -346,6 +348,7 @@ PanelController::PanelController(QWidget* parent)
         d->layout->setDirection(QBoxLayout::LeftToRight);
     }
     d->layout->setSpacing(4);
+ 
     d->layout->addStretch();
     d->extLayout->addLayout(d->layout);
 
@@ -375,6 +378,10 @@ PanelController::PanelController(QWidget* parent)
     d->alignLayout->addWidget(d->rightAlignTool);
     connect(d->rightAlignTool, SIGNAL(clicked(bool)), this, SLOT(alignToggled(bool)));
 
+    d->layout->addStretch();
+    d->moveTool = d->addTool("transform-move", i18n("Move the panel"), this, Qt::ToolButtonIconOnly, false);
+    d->moveTool->installEventFilter(this);
+    d->layout->addWidget(d->moveTool);
     d->layout->addStretch();
 
     //other buttons
@@ -639,12 +646,26 @@ void PanelController::mousePressEvent(QMouseEvent *event)
     if (d->panelHeightHandle->geometry().contains(event->pos()) ) {
         d->startDragPos = event->pos();
         d->dragging = Private::ResizeHandleElement;
-    } else if (QRect(QPoint(0, 0), size()).contains(event->pos()) && !d->ruler->geometry().contains(event->pos()) ) {
-        d->dragging = Private::PanelControllerElement;
-        setCursor(Qt::SizeAllCursor);
+    } else if (d->moveTool->geometry().contains(event->pos()) ) {
+        d->dragging = Private::MoveButtonElement;
     }
 
     QWidget::mousePressEvent(event);
+}
+
+bool PanelController::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched != d->moveTool) {
+        return false;
+    }
+
+    if (event->type() == QEvent::MouseButtonPress) {
+        d->dragging = Private::MoveButtonElement;
+    } else if (event->type() == QEvent::MouseButtonRelease) {
+        d->dragging = Private::NoElement;
+    }
+
+    return false;
 }
 
 void PanelController::mouseReleaseEvent(QMouseEvent *event)
@@ -687,7 +708,7 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
     QDesktopWidget *desktop = QApplication::desktop();
     QRect screenGeom = desktop->screenGeometry(d->containment->screen());
 
-    if (d->dragging == Private::PanelControllerElement) {
+    if (d->dragging == Private::MoveButtonElement) {
         //only move when the mouse cursor is out of the controller to avoid an endless reposition cycle
         if (geometry().contains(event->globalPos())) {
             return;
