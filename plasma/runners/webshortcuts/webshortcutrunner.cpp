@@ -48,6 +48,7 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
 
 QString WebshortcutRunner::loadDelimiter()
 {
+    // TODO: KDirWatch :)
     KConfig *kuriconfig = new KConfig("kuriikwsfilterrc", KConfig::NoGlobals);
     KConfigGroup generalgroup( kuriconfig, "General" );
     QString delimiter = generalgroup.readPathEntry( "KeywordDelimiter", QString() );
@@ -76,12 +77,11 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
     foreach (const KService::Ptr &service, m_offers) {
         //TODO: how about getting the keys for the localized sites?
         foreach (QString key, service->property("Keys").toStringList()) {
-            // FIXME? should we look for the used m_delimiter from the konqi's settings?
             key = key.toLower() + m_delimiter;
             if (term.size() > key.size() &&
                 term.startsWith(key, Qt::CaseInsensitive)) {
                 QString actionText = i18n("Search %1 for %2",service->name(),
-                                            term.right(term.length() - term.indexOf(m_delimiter) - 1));
+                                          term.right(term.length() - term.indexOf(m_delimiter) - 1));
                 QString url = getSearchQuery(service->property("Query").toString(), term);
                 //kDebug() << "url is" << url << "!!!!!!!!!!!!!!!!!!!!!!!";
 
@@ -112,7 +112,6 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
 
 QString WebshortcutRunner::getSearchQuery(const QString &query, const QString &term)
 {
-    // FIXME delimiter check like for above?
     QString searchWord = term.right(term.length() - term.indexOf(m_delimiter) - 1);
     if (searchWord.isEmpty()) {
         return QString();
