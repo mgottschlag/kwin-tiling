@@ -41,6 +41,8 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
     // query ktrader for all available searchproviders and preload the default icon
     m_offers = serviceQuery("SearchProvider");
     m_icon = KIcon("internet-web-browser");
+    // TODO: read delimiter from config... it's in kuriikwsfilterrc:KeywordDelimiter=\s
+    m_delimiter = ":";
     setIgnoredTypes(Plasma::RunnerContext::FileSystem);
 }
 
@@ -100,7 +102,7 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
 QString WebshortcutRunner::getSearchQuery(const QString &query, const QString &term)
 {
     // FIXME delimiter check like for above?
-    QString searchWord = term.right(term.length() - term.indexOf(':') - 1);
+    QString searchWord = term.right(term.length() - term.indexOf(m_delimiter) - 1);
     if (searchWord.isEmpty()) {
         return QString();
     }

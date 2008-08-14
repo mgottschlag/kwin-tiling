@@ -43,6 +43,7 @@ class WebshortcutRunner : public Plasma::AbstractRunner {
     private:
         KService::List m_offers;
         KIcon m_icon;
+        QString m_delimiter;
 };
 
 K_EXPORT_PLASMA_RUNNER(webshortcuts, WebshortcutRunner)
