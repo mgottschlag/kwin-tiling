@@ -21,6 +21,13 @@
 #ifndef KEPHAL_KEPHAL_H
 #define KEPHAL_KEPHAL_H
 
+#include <QPoint>
+
+inline uint qHash(const QPoint & key) {
+    return ((uint) (key.x() + 32767)) * 65536 + ((uint) (key.y() + 32767));
+}
+
+
 namespace kephal {
 
     enum Position {

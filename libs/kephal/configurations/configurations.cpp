@@ -19,6 +19,7 @@
 
 
 #include <QDebug>
+#include <QRegExp>
 
 #include "configurations.h"
 
@@ -82,6 +83,10 @@ namespace kephal {
             }
             first = false;
         }
+        translateOrigin(layout, origin);
+    }
+    
+    void Configurations::translateOrigin(QMap<int, QRect> & layout, QPoint origin) {
         QPoint offset(0, 0);
         offset -= origin;
         for (QMap<int, QRect>::iterator i = layout.begin(); i != layout.end(); ++i) {
@@ -186,5 +191,109 @@ namespace kephal {
         }
     }
     
+    QMap<int, QPoint> Configuration::cloneLayout(int screen) {
+        QSet<QPoint> positions = clonePositions(screen);
+        QMap<int, QPoint> layout;
+        int i = 0;
+        foreach (QPoint p, positions) {
+            layout.insert(i, p);
+            ++i;
+        }
+        
+        Configurations::translateOrigin(layout);
+        return layout;
+    }
+    
+    QSet<QPoint> Configuration::clonePositions(int screen) {
+        QList<QSet<QPoint> > partitions = partition(screen);
+        if (partitions.size() == 1) {
+            return partitions[0];
+        }
+        return QSet<QPoint>();
+    }
+    
+    QSet<QPoint> Configuration::positions() {
+        QSet<QPoint> result;
+        foreach (QPoint p, layout()) {
+            result << p;
+        }
+        return result;
+    }
+    
+    QSet<QPoint> Configuration::possiblePositions(int screen) {
+        QList<QSet<QPoint> > partitions = partition(screen);
+        QSet<QPoint> result = border(partitions[0]);
+        foreach (QSet<QPoint> partition, partitions) {
+            result.intersect(border(partition));
+        }
+        return result;
+    }
+    
+    QList<QSet<QPoint> > Configuration::partition(int screen) {
+        QHash<QPoint, QSet<QPoint> * > partitions;
+        QMap<int, QPoint> layout = this->layout();
+        bool exclude = layout.contains(screen);
+        QPoint excludePoint;
+        if (exclude) {
+            excludePoint = layout[screen];
+        }
+        foreach (QPoint p, layout) {
+            if (exclude && (p == excludePoint)) {
+                continue;
+            }
+            partitions.insert(p, new QSet<QPoint>());
+            partitions[p]->insert(p);
+        }
+        
+        foreach (QPoint p, layout) {
+            if (exclude && (p == excludePoint)) {
+                continue;
+            }
+            QList<QPoint> connected;
+            if (partitions.contains(p + QPoint(1, 0))) {
+                connected.append(p + QPoint(1, 0));
+            }
+            if (partitions.contains(p + QPoint(0, 1))) {
+                connected.append(p + QPoint(0, 1));
+            }
+            foreach (QPoint c, connected) {
+                if (partitions[p] == partitions[c]) {
+                    continue;
+                }
+                partitions[p]->unite(* (partitions[c]));
+                delete partitions[c];
+                partitions[c] = partitions[p];
+            }
+        }
+        
+        QSet<QSet<QPoint> * > unique;
+        foreach (QSet<QPoint> * partition, partitions) {
+            unique.insert(partition);
+        }
+        
+        QList<QSet<QPoint> > result;
+        foreach (QSet<QPoint> * partition, unique) {
+            result.append(* partition);
+            delete partition;
+        }
+        
+        return result;
+    }
+    
+    QSet<QPoint> Configuration::border(QSet<QPoint> screens) {
+        QSet<QPoint> result;
+        QList<QPoint> borders;
+        borders << QPoint(1, 0) << QPoint(0, 1) << QPoint(-1, 0) << QPoint(0, -1);
+        foreach (QPoint p, screens) {
+            foreach (QPoint border, borders) {
+                if (! screens.contains(p + border)) {
+                    result.insert(p + border);
+                }
+            }
+        }
+        
+        return result;
+    }
+
 }
 

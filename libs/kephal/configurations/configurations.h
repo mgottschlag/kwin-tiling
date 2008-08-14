@@ -45,11 +45,20 @@ namespace kephal {
             QMap<int, QRect> realLayout(const QMap<Output *, int> & outputScreens);
             QMap<int, QRect> realLayout();
             
+            QSet<QPoint> positions();
+            QSet<QPoint> clonePositions(int screen);
+            QMap<int, QPoint> cloneLayout(int screen);
+            QSet<QPoint> possiblePositions(int screen);
+            
         public Q_SLOTS:
             virtual void activate() = 0;
             
+        protected:
+
         private:
             void simpleToReal(QMap<int, QPoint> & simpleLayout, const QMap<int, QSize> & screenSizes, const int & index, QMap<int, QRect> & screens);
+            QList<QSet<QPoint> > partition(int screen);
+            QSet<QPoint> border(QSet<QPoint> screens);
     };
     
 
@@ -68,6 +77,7 @@ namespace kephal {
             static void translateOrigin(QMap<int, QPoint> & layout);
             static void translateOrigin(QMap<int, QPoint> & layout, QPoint origin);
             static void translateOrigin(QMap<int, QRect> & layout);
+            static void translateOrigin(QMap<int, QRect> & layout, QPoint origin);
             
         protected:
             static Configurations * m_instance;
