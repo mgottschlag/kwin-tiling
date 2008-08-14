@@ -68,10 +68,12 @@ public:
 
 protected:
 
+#if 0
     /**
      * Append the QLayoutItems from QGridLayout \from to QGridLayout \to.
      */
     void mergeLayouts( QGridLayout *to, QGridLayout *from );
+#endif
 
 Q_SIGNALS:
 

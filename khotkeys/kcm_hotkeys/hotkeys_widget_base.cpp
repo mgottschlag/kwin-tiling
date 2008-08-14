@@ -79,6 +79,7 @@ void HotkeysWidgetBase::doCopyToObject()
     }
 
 
+#if 0
 void HotkeysWidgetBase::mergeLayouts( QGridLayout *to, QGridLayout *from )
     {
     int offset = to->rowCount();
@@ -98,6 +99,7 @@ void HotkeysWidgetBase::mergeLayouts( QGridLayout *to, QGridLayout *from )
             to->addItem(item, row + offset , column, rowSpan, columnSpan );
         }
     }
+#endif
 
 
 QString HotkeysWidgetBase::title() const

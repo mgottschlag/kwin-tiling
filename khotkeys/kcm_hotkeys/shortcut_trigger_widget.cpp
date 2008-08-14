@@ -32,8 +32,6 @@ ShortcutTriggerWidget::ShortcutTriggerWidget( KHotKeys::ShortcutTrigger *trigger
     {
     shortcut_action_ui.setupUi(this);
 
-    // mergeLayouts( ui.gridLayout, shortcut_action_ui.gridLayout );
-
     connect(
         shortcut_action_ui.shortcut, SIGNAL(keySequenceChanged(QKeySequence)),
         _changedSignals, SLOT(map()) );
