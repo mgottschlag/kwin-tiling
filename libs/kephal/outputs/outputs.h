@@ -50,6 +50,7 @@ namespace kephal {
             virtual QString vendor() = 0;
             virtual int productId() = 0;
             virtual unsigned int serialNumber() = 0;
+            virtual QSize preferredSize() = 0;
             
             Screen * screen();
             QRect geom();

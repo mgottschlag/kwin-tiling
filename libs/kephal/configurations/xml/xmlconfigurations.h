@@ -45,6 +45,8 @@ namespace kephal {
             bool modifiable();
             bool isActivated();
             void activate();
+            QMap<int, QPoint> layout();
+            //QMap<int, QRect> realLayout(const QMap<Output *, int> & outputScreens);
             
             ConfigurationXML * configuration();
             
@@ -54,6 +56,7 @@ namespace kephal {
         private:
             ConfigurationXML * m_configuration;
             XMLConfigurations * m_parent;
+            QMap<int, QPoint> m_layout;
     };
     
     
@@ -79,19 +82,16 @@ namespace kephal {
             qreal match(QString known, QString current);
             qreal match(int known, int current);
             QMap<int, int> matchLayouts(QMap<int, QPoint> currentLayout, QMap<int, QPoint> layout);
-            QMap<int, QRect> calcMatchingLayout(QMap<int, QPoint> currentLayout, ConfigurationXML * configuration, QMap<int, QPoint> layout, Output * output = 0, int * outputScreen = 0);
-            QMap<int, QRect> calcLayout(XMLConfiguration * configuration);
+            QMap<int, QRect> calcMatchingLayout(QMap<int, QPoint> currentLayout, XMLConfiguration * configuration, QMap<int, QPoint> layout, Output * output = 0, int * outputScreen = 0);
+            /*QMap<int, QRect> calcLayout(XMLConfiguration * configuration);
             QMap<int, QRect> calcLayout(XMLConfiguration * configuration, QMap<OutputXML *, int> outputs);
-            QMap<int, QRect> calcLayout(ConfigurationXML * configuration, QMap<int, QPoint> simpleLayout, QMap<OutputXML *, int> outputs);
-            QMap<int, QPoint> calcSimpleLayout(XMLConfiguration * configuration);
-            QMap<int, QPoint> calcSimpleLayout(ConfigurationXML * configuration);
-            QList<ConfigurationXML *> equivalentConfigurations(int numScreens);
-            QMap<ConfigurationXML *, QPoint> equivalentConfigurationsPositions(Output * output);
-            QMap<ConfigurationXML *, QMap<int, QPoint> > matchingConfigurationsLayouts(QMap<int, QPoint> currentLayout, int removedOutputs);
-            void simpleToReal(QMap<int, QPoint> & simpleLayout, const QMap<int, QSize> & screenSizes, const int & index, QMap<int, QRect> & screens);
-            void translateOrigin(QMap<int, QPoint> & layout);
-            void translateOrigin(QMap<int, QPoint> & layout, QPoint origin);
-            void translateOrigin(QMap<int, QRect> & layout);
+            QMap<int, QRect> calcLayout(ConfigurationXML * configuration, QMap<int, QPoint> simpleLayout, QMap<OutputXML *, int> outputs);*/
+            //QMap<int, QPoint> calcSimpleLayout(XMLConfiguration * configuration);
+            //QMap<int, QPoint> calcSimpleLayout(ConfigurationXML * configuration);
+            QList<XMLConfiguration *> equivalentConfigurations(int numScreens);
+            QMap<XMLConfiguration *, QPoint> equivalentConfigurationsPositions(Output * output);
+            QMap<XMLConfiguration *, QMap<int, QPoint> > matchingConfigurationsLayouts(QMap<int, QPoint> currentLayout, int removedOutputs);
+            //void simpleToReal(QMap<int, QPoint> & simpleLayout, const QMap<int, QSize> & screenSizes, const int & index, QMap<int, QRect> & screens);
             
             QMap<QString, XMLConfiguration *> m_configurations;
             XMLConfiguration * m_activeConfiguration;

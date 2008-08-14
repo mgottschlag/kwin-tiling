@@ -39,6 +39,7 @@ namespace kephal {
             virtual QString id();
 
             virtual QSize size();
+            virtual QSize preferredSize();
             virtual void setSize(QSize size);
             virtual QList<QSize> availableSizes();
             virtual QPoint position();
@@ -53,6 +54,7 @@ namespace kephal {
             
             void _setId(QString id);
             void _setSize(QSize size);
+            void _setPreferredSize(QSize size);
             void _setAvailableSizes(QList<QSize> sizes);
             void _setPosition(QPoint position);
             void _setActivated(bool activated);
@@ -69,6 +71,7 @@ namespace kephal {
         private:
             QString m_id;
             QSize m_size;
+            QSize m_preferredSize;
             QList<QSize> m_availableSizes;
             QPoint m_position;
             bool m_activated;

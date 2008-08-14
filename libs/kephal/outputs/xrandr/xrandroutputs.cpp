@@ -408,6 +408,13 @@ namespace kephal {
         return output()->rect().size();
     }
     
+    QSize XRandROutput::preferredSize() {
+        if (! output()->preferredMode().size().isEmpty()) {
+            return output()->preferredMode().size();
+        }
+        return QSize(800, 600);
+    }
+    
     QList<QSize> XRandROutput::availableSizes() {
         QList<QSize> sizes = output()->sizes();
         /*foreach (QSize size, sizes) {

@@ -37,6 +37,7 @@ namespace kephal {
             QString id();
 
             QSize size();
+            QSize preferredSize();
             void setSize(QSize size);
             QList<QSize> availableSizes();
             QPoint position();

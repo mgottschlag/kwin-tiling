@@ -134,4 +134,12 @@ namespace kephal {
         return m_serialNumber;
     }
     
+    QSize SimpleOutput::preferredSize() {
+        return m_preferredSize;
+    }
+    
+    void SimpleOutput::_setPreferredSize(QSize size) {
+        m_preferredSize = size;
+    }
+    
 }

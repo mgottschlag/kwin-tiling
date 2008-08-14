@@ -50,18 +50,96 @@ namespace kephal {
         return m_configuration->modifiable();
     }
     
-
     bool XMLConfiguration::isActivated()
     {
         return this == m_parent->activeConfiguration();
     }
     
-
     void XMLConfiguration::activate()
     {
         emit activate(this);
     }
     
+    QMap<int, QPoint> XMLConfiguration::layout() {
+        if (! m_layout.empty()) {
+            return m_layout;
+        }
+        
+        QMap<int, ScreenXML *> remaining;
+        foreach (ScreenXML * screen, * (m_configuration->screens())) {
+            remaining.insert(screen->id(), screen);
+        }
+        
+        QMap<int, QPoint> layout;
+        bool changed;
+        do {
+            changed = false;
+            QSet<ScreenXML *> added;
+            foreach (ScreenXML * screen, remaining) {
+                QPoint pos;
+                bool found = false;
+                if (layout.empty()) {
+                    pos = QPoint(0, 0);
+                    found = true;
+                } else if (layout.contains(screen->rightOf())) {
+                    pos = QPoint(layout[screen->rightOf()]);
+                    pos.rx()++;
+                    found = true;
+                } else if (layout.contains(screen->bottomOf())) {
+                    pos = QPoint(layout[screen->bottomOf()]);
+                    pos.ry()++;
+                    found = true;
+                }
+                
+                if (found) {
+                    layout.insert(screen->id(), pos);
+                    changed = true;
+                    remaining.remove(screen->id());
+                    added.insert(screen);
+                    break;
+                }
+            }
+            
+            while (! added.empty()) {
+                QSet<ScreenXML *>::iterator i = added.begin();
+                while (i != added.end()) {
+                    ScreenXML * s = *i;
+                    if (remaining.contains(s->rightOf()) && ! layout.contains(s->rightOf())) {
+                        ScreenXML * toAdd = remaining[s->rightOf()];
+                        QPoint pos = QPoint(layout[s->id()]);
+                        pos.rx()--;
+                        
+                        layout.insert(toAdd->id(), pos);
+                        added.insert(toAdd);
+                        remaining.remove(toAdd->id());
+                        break;
+                    }
+                    if (remaining.contains(s->bottomOf()) && ! layout.contains(s->bottomOf())) {
+                        ScreenXML * toAdd = remaining[s->bottomOf()];
+                        QPoint pos = QPoint(layout[s->id()]);
+                        pos.ry()--;
+                        
+                        layout.insert(toAdd->id(), pos);
+                        added.insert(toAdd);
+                        remaining.remove(toAdd->id());
+                        break;
+                    }
+                    i = added.erase(i);
+                    //++i;
+                }
+            }
+        } while (changed);
+        
+        if (! remaining.empty()) {
+            qDebug() << "invalid configuration (remaining):" << name() << remaining;
+            layout.clear();
+        }
+        
+        Configurations::translateOrigin(layout);
+        m_layout = layout;
+        
+        return layout;
+    }
 
 
     XMLConfigurations::XMLConfigurations(QObject * parent)
@@ -404,22 +482,21 @@ namespace kephal {
     
     QList<Configuration *> XMLConfigurations::alternateConfigurations() {
         QList<Configuration *> configs;
-        foreach (ConfigurationXML * config, * (m_configXml->configurations())) {
-            if (config->screens()->size() <= m_currentOutputs->outputs()->size()) {
-                configs.append(m_configurations[config->name()]);
+        foreach (XMLConfiguration * config, m_configurations) {
+            if (config->layout().size() <= m_currentOutputs->outputs()->size()) {
+                configs.append(config);
             }
         }
         
         return configs;
     }
     
-    QList<ConfigurationXML *> XMLConfigurations::equivalentConfigurations(int numScreens) {
+    QList<XMLConfiguration *> XMLConfigurations::equivalentConfigurations(int numScreens) {
         qDebug() << "looking for equivalent configurations with" << numScreens << "screens";
-        //QMap<int, QRect> 
         
-        QList<ConfigurationXML *> result;
-        foreach (ConfigurationXML * config, * (m_configXml->configurations())) {
-            if ((! config->modifiable()) && (config->screens()->size() == numScreens)) {
+        QList<XMLConfiguration *> result;
+        foreach (XMLConfiguration * config, m_configurations) {
+            if ((! config->modifiable()) && (config->layout().size() == numScreens)) {
                 result.append(config);
             }
         }
@@ -434,7 +511,7 @@ namespace kephal {
         }
         
         if (! m_activeConfiguration->modifiable()) {
-            QMap<ConfigurationXML *, QPoint> equivalentPositions = equivalentConfigurationsPositions(output);
+            QMap<XMLConfiguration *, QPoint> equivalentPositions = equivalentConfigurationsPositions(output);
             foreach (QPoint point, equivalentPositions) {
                 result.append(point);
             }
@@ -443,11 +520,11 @@ namespace kephal {
         return result;
     }
     
-    QMap<ConfigurationXML *, QMap<int, QPoint> > XMLConfigurations::matchingConfigurationsLayouts(QMap<int, QPoint> currentLayout, int removedOutputs) {
-        QMap<ConfigurationXML *, QMap<int, QPoint> > result;
-        QList<ConfigurationXML *> configurations = equivalentConfigurations(currentLayout.size() + removedOutputs);
-        foreach (ConfigurationXML * configuration, configurations) {
-            QMap<int, QPoint> layout = calcSimpleLayout(configuration);
+    QMap<XMLConfiguration *, QMap<int, QPoint> > XMLConfigurations::matchingConfigurationsLayouts(QMap<int, QPoint> currentLayout, int removedOutputs) {
+        QMap<XMLConfiguration *, QMap<int, QPoint> > result;
+        QList<XMLConfiguration *> configurations = equivalentConfigurations(currentLayout.size() + removedOutputs);
+        foreach (XMLConfiguration * configuration, configurations) {
+            QMap<int, QPoint> layout = configuration->layout();
             QMap<int, int> match = matchLayouts(currentLayout, layout);
             if (! match.empty()) {
                 result.insert(configuration, layout);
@@ -491,18 +568,19 @@ namespace kephal {
         return result;
     }
     
-    QMap<int, QRect> XMLConfigurations::calcMatchingLayout(QMap<int, QPoint> currentLayout, ConfigurationXML * configuration, QMap<int, QPoint> layout, Output * output, int * outputScreen) {
+    QMap<int, QRect> XMLConfigurations::calcMatchingLayout(QMap<int, QPoint> currentLayout, XMLConfiguration * configuration, QMap<int, QPoint> layout, Output * output, int * outputScreen) {
         QMap<int, int> match = matchLayouts(currentLayout, layout);
-        QMap<OutputXML *, int> outputs;
+        QMap<Output *, int> outputs;
         Output * add = (match.contains(-1) ? output : 0);
         Output * remove = (add ? 0 : output);
-        foreach (OutputXML * o, * (m_currentOutputs->outputs())) {
-            if (remove && (remove->id() == o->name())) {
+        foreach (Output * o, Outputs::instance()->outputs()) {
+            Screen * screen = o->screen();
+            if (remove && (remove == o)) {
                 outputs.insert(o, -1);
                 remove = 0;
-            } else if (match.contains(o->screen())) {
-                outputs.insert(o, match[o->screen()]);
-            } else if (add && (add->id() == o->name())) {
+            } else if (screen && match.contains(screen->id())) {
+                outputs.insert(o, match[screen->id()]);
+            } else if (add && (add == o)) {
                 outputs.insert(o, match[-1]);
                 add = 0;
                 if (outputScreen) {
@@ -511,10 +589,10 @@ namespace kephal {
             }
         }
         
-        return calcLayout(configuration, layout, outputs);
+        return configuration->realLayout(layout, outputs);
     }
     
-    QMap<ConfigurationXML *, QPoint> XMLConfigurations::equivalentConfigurationsPositions(Output * output) {
+    QMap<XMLConfiguration *, QPoint> XMLConfigurations::equivalentConfigurationsPositions(Output * output) {
         bool cloned = false;
         if (! output->isActivated()) {
             cloned = true;
@@ -530,23 +608,23 @@ namespace kephal {
             }
         }
         
-        QMap<ConfigurationXML *, QPoint> positions;
-        QMap<int, QPoint> currentLayout = calcSimpleLayout(m_activeConfiguration);
-        QMap<ConfigurationXML *, QMap<int, QPoint> > layouts;
+        QMap<XMLConfiguration *, QPoint> positions;
+        QMap<int, QPoint> currentLayout = m_activeConfiguration->layout();
+        QMap<XMLConfiguration *, QMap<int, QPoint> > layouts;
         QMap<int, QPoint> cloneLayout;
-        ConfigurationXML * cloneConfig = 0;
+        XMLConfiguration * cloneConfig = 0;
         if (! cloned) {
             currentLayout.remove(output->screen()->id());
             translateOrigin(currentLayout);
             layouts = matchingConfigurationsLayouts(currentLayout, 0);
             if (! layouts.empty()) {
-                QMap<ConfigurationXML *, QMap<int, QPoint> >::const_iterator i = layouts.constBegin();
+                QMap<XMLConfiguration *, QMap<int, QPoint> >::const_iterator i = layouts.constBegin();
                 cloneLayout = i.value();
                 cloneConfig = i.key();
             }
         } else {
             cloneLayout = currentLayout;
-            cloneConfig = m_activeConfiguration->configuration();
+            cloneConfig = m_activeConfiguration;
         }
         
         if (cloneConfig) {
@@ -557,7 +635,7 @@ namespace kephal {
         }
         
         layouts = matchingConfigurationsLayouts(currentLayout, 1);
-        for (QMap<ConfigurationXML *, QMap<int, QPoint> >::const_iterator i = layouts.constBegin(); i != layouts.constEnd(); ++i) {
+        for (QMap<XMLConfiguration *, QMap<int, QPoint> >::const_iterator i = layouts.constBegin(); i != layouts.constEnd(); ++i) {
             qDebug() << "matching layout:" << i.value();
             int outputScreen = -1;
             QMap<int, QRect> layout = calcMatchingLayout(currentLayout, i.key(), i.value(), output, & outputScreen);
@@ -566,12 +644,12 @@ namespace kephal {
             }
         }
         
-        for (QMap<ConfigurationXML *, QPoint>::iterator i = positions.begin(); i != positions.end();) {
+        for (QMap<XMLConfiguration *, QPoint>::iterator i = positions.begin(); i != positions.end();) {
             if (i.value() == output->position()) {
                 i = positions.erase(i);
             } else {
                 QPoint pos = i.value();
-                for (QMap<ConfigurationXML *, QPoint>::iterator j = i + 1; j != positions.end();) {
+                for (QMap<XMLConfiguration *, QPoint>::iterator j = i + 1; j != positions.end();) {
                     if (j.value() == pos) {
                         j = positions.erase(j);
                     } else {
@@ -585,7 +663,7 @@ namespace kephal {
         return positions;
     }
     
-    QMap<int, QPoint> XMLConfigurations::calcSimpleLayout(XMLConfiguration * configuration) {
+    /*QMap<int, QPoint> XMLConfigurations::calcSimpleLayout(XMLConfiguration * configuration) {
         return calcSimpleLayout(configuration->configuration());
     }
     
@@ -758,47 +836,7 @@ namespace kephal {
             screens.insert(nextIndex, QRect(screens[index].topLeft() - QPoint(0, screenSize.height()), screenSize));
             simpleToReal(simpleLayout, screenSizes, nextIndex, screens);
         }
-    }
-    
-    void XMLConfigurations::translateOrigin(QMap<int, QPoint> & layout) {
-        QPoint origin;
-        bool first = true;
-        for (QMap<int, QPoint>::const_iterator i = layout.constBegin(); i != layout.constEnd(); ++i) {
-            if (first || (i.value().x() < origin.x())) {
-                origin.setX(i.value().x());
-            }
-            if (first || (i.value().y() < origin.y())) {
-                origin.setY(i.value().y());
-            }
-            first = false;
-        }
-        translateOrigin(layout, origin);
-    }
-    
-    void XMLConfigurations::translateOrigin(QMap<int, QPoint> & layout, QPoint origin) {
-        for (QMap<int, QPoint>::iterator i = layout.begin(); i != layout.end(); ++i) {
-            i.value() -= origin;
-        }
-    }
-    
-    void XMLConfigurations::translateOrigin(QMap<int, QRect> & layout) {
-        QPoint origin;
-        bool first = true;
-        for (QMap<int, QRect>::const_iterator i = layout.constBegin(); i != layout.constEnd(); ++i) {
-            if (first || (i.value().x() < origin.x())) {
-                origin.setX(i.value().x());
-            }
-            if (first || (i.value().y() < origin.y())) {
-                origin.setY(i.value().y());
-            }
-            first = false;
-        }
-        QPoint offset(0, 0);
-        offset -= origin;
-        for (QMap<int, QRect>::iterator i = layout.begin(); i != layout.end(); ++i) {
-            i.value().translate(offset);
-        }
-    }
+    }*/
     
     void XMLConfigurations::activate(XMLConfiguration * configuration) {
         qDebug() << "activate configuration:" << configuration->name();
@@ -851,7 +889,7 @@ namespace kephal {
             m_currentOutputsKnown = true;
         }
         
-        QMap<int, QRect> screens = calcLayout(configuration);
+        QMap<int, QRect> screens = configuration->realLayout();
         if (screens.empty()) {
             qDebug() << "calculating layout failed!!";
             return;
