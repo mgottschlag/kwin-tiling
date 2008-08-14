@@ -48,6 +48,8 @@ namespace kephal {
             virtual bool isPrimary();
             virtual void setAsPrimary();
             
+            QList<Output *> outputs();
+            
             void _setId(int id);
             void _setSize(QSize size);
             void _setPosition(QPoint position);

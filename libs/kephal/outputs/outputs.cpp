@@ -19,6 +19,7 @@
 
 
 #include "outputs.h"
+#include "screens/screens.h"
 
 #ifdef OUTPUTS_FACTORY
 void OUTPUTS_FACTORY();
@@ -53,6 +54,19 @@ namespace kephal {
     
     QRect Output::geom() {
         return QRect(position(), size());
+    }
+    
+    Screen * Output::screen() {
+        if (! isActivated()) {
+            return 0;
+        }
+        
+        foreach (Screen * screen, Screens::instance()->screens()) {
+            if (screen->outputs().contains(this)) {
+                return screen;
+            }
+        }
+        return 0;
     }
 
 }

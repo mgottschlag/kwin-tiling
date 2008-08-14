@@ -97,4 +97,8 @@ namespace kephal {
         m_primary = primary;
     }
     
+    QList<Output *> SimpleScreen::outputs() {
+        return QList<Output *>();
+    }
+    
 }

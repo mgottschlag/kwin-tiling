@@ -23,9 +23,12 @@
 
 #include <QObject>
 #include <QMap>
+#include <QPoint>
 
 
 namespace kephal {
+
+    class Output;
 
     class Configuration : public QObject {
         Q_OBJECT
@@ -50,6 +53,8 @@ namespace kephal {
             virtual QMap<QString, Configuration *> configurations() = 0;
             virtual Configuration * findConfiguration() = 0;
             virtual Configuration * activeConfiguration() = 0;
+            virtual QList<Configuration *> alternateConfigurations() = 0;
+            virtual QList<QPoint> possiblePositions(Output *) = 0;
             
         protected:
             static Configurations * m_instance;

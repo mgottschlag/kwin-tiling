@@ -112,6 +112,10 @@ void KephalD::init() {
     connect(Outputs::instance(), SIGNAL(outputDisconnected(Output *)), this, SLOT(outputDisconnected(Output *)));
     connect(Outputs::instance(), SIGNAL(outputConnected(Output *)), this, SLOT(outputConnected(Output *)));
     
+    foreach (Output * output, Outputs::instance()->outputs()) {
+        qDebug() << "possible positions for:" << output->id() << Configurations::instance()->possiblePositions(output);
+    }
+    
     QDBusConnection dbus = QDBusConnection::sessionBus();
     bool result = dbus.registerService("org.kde.Kephal");
     qDebug() << "registered the service:" << result;
@@ -121,7 +125,7 @@ void KephalD::init() {
     
     m_pollTimer = new QTimer(this);
     connect(m_pollTimer, SIGNAL(timeout()), this, SLOT(poll()));
-    m_pollTimer->start(3000);
+    m_pollTimer->start(10000);
 }
 
 void KephalD::poll() {

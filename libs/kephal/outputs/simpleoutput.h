@@ -50,7 +50,7 @@ namespace kephal {
             
             virtual bool isConnected();
             virtual bool isActivated();
-
+            
             void _setId(QString id);
             void _setSize(QSize size);
             void _setAvailableSizes(QList<QSize> sizes);

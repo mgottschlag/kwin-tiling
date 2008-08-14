@@ -29,6 +29,8 @@
 
 namespace kephal {
 
+    class Output;
+
     class Screen : public QObject {
         Q_OBJECT
         public:
@@ -45,6 +47,8 @@ namespace kephal {
             virtual void setPrivacyMode(bool b) = 0;
             virtual bool isPrimary() = 0;
             virtual void setAsPrimary() = 0;
+            
+            virtual QList<Output *> outputs() = 0;
             
             QRect geom();
     };
