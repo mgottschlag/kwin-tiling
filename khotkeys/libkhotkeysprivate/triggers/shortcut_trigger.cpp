@@ -74,6 +74,16 @@ ShortcutTrigger::~ShortcutTrigger()
     }
 
 
+void ShortcutTrigger::aboutToBeErased()
+    {
+    KAction *action = qobject_cast<KAction*>(keyboard_handler->getAction( _uuid ));
+    if(action)
+        {
+        action->forgetGlobalShortcut();
+        }
+    }
+
+
 void ShortcutTrigger::activate( bool activate_P )
     {
     kDebug() << activate_P << " and " << khotkeys_active();
@@ -121,7 +131,7 @@ void ShortcutTrigger::set_key_sequence( const QKeySequence &seq )
     Q_ASSERT(action);
     if (!action) return;
 
-    action->setGlobalShortcut( _shortcut, KAction::DefaultShortcut | KAction::ActiveShortcut, KAction::NoAutoloading );
+    action->setGlobalShortcut( _shortcut, KAction::ActiveShortcut, KAction::NoAutoloading );
     }
 
 

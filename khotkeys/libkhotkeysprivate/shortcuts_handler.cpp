@@ -72,7 +72,7 @@ KAction *ShortcutsHandler::addAction(
         newAction->setProperty("isConfigurationAction", QVariant(true));
         }
     newAction->setText(text);
-    newAction->setGlobalShortcut( shortcut, KAction::DefaultShortcut | KAction::ActiveShortcut );
+    newAction->setGlobalShortcut( shortcut, KAction::ActiveShortcut );
     // Enable global shortcut. If that fails there is no sense in proceeding
     if (!newAction->isGlobalShortcutEnabled())
         {

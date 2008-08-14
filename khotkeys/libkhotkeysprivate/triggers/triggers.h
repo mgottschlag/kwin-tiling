@@ -93,7 +93,7 @@ class KDE_EXPORT Trigger_list
         Trigger_list* copy( ActionData* data_P ) const;
 
         /**
-         * The trigger will be erased permanently
+         * @reimp
          */
         void aboutToBeErased();
 
@@ -127,6 +127,12 @@ class KDE_EXPORT ShortcutTrigger
         void set_key_sequence( const QKeySequence &seq );
 
         virtual Type type() const { return ShortcutTriggerType; }
+
+        /**
+         * @reimp
+         */
+        void aboutToBeErased();
+
     public Q_SLOTS:
 
         void trigger();
