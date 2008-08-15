@@ -118,7 +118,12 @@ void DeviceNotifier::init()
     //feed the list with what is already reported by the engine
     isNotificationEnabled = false;
     foreach (const QString &source, m_solidEngine->sources()) {
-        onSourceAdded(source);
+        Solid::Device *device = new Solid::Device(source);
+	Solid::Device parentDevice = device->parent();
+	Solid::StorageDrive *drive = parentDevice.as<Solid::StorageDrive>();
+	if(drive && (drive->isHotpluggable() || drive->isRemovable())) {
+		onSourceAdded(source);
+	}
     }
     isNotificationEnabled = true;
 
