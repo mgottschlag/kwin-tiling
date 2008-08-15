@@ -78,7 +78,6 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
 
     setHasConfigurationInterface(true);
 
-    resize(IconSize(KIconLoader::Desktop) * 2, IconSize(KIconLoader::Desktop) * 2);
     setIcon("start-here-kde");
 }
 
