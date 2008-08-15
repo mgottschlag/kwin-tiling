@@ -65,6 +65,7 @@ public:
 void LauncherApplet::Private::createLauncher(LauncherApplet *q)
 {
     launcher = new Kickoff::Launcher(q);
+    launcher->setAutoHide(true);
     //launcher->resize(launcher->sizeHint());
     //QObject::connect(launcher, SIGNAL(aboutToHide()), icon, SLOT(setUnpressed()));
     //QObject::connect(launcher, SIGNAL(configNeedsSaving()), q, SIGNAL(configNeedsSaving()));
