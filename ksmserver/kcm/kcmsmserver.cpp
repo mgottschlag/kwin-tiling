@@ -63,8 +63,6 @@ SMServerConfig::SMServerConfig( QWidget *parent, const QVariantList & )
     connect(dialog, SIGNAL(changed()), SLOT(changed()));
 
     topLayout->addWidget(dialog);
-
-    KGlobal::dirs()->addResourceType( "windowmanagers", "data", "ksmserver/windowmanagers" );
 }
 
 void SMServerConfig::load()
@@ -94,7 +92,6 @@ void SMServerConfig::load()
     dialog->logoutRadio->setChecked(true);
     break;
   }
-  loadWMs(c.readEntry("windowManager", "kwin"));
   dialog->excludeLineedit->setText( c.readEntry("excludeApps"));
 
   emit changed(false);
@@ -102,8 +99,8 @@ void SMServerConfig::load()
 
 void SMServerConfig::save()
 {
-  KConfig *c = new KConfig("ksmserverrc", KConfig::NoGlobals);
-  KConfigGroup group = c->group("General");
+  KConfig c("ksmserverrc", KConfig::NoGlobals);
+  KConfigGroup group = c.group("General");
   group.writeEntry( "confirmLogout", dialog->confirmLogoutCheck->isChecked());
   group.writeEntry( "offerShutdown", dialog->offerShutdownCheck->isChecked());
   QString s = "restorePreviousLogout";
@@ -119,21 +116,13 @@ void SMServerConfig::save()
                    dialog->rebootRadio->isChecked() ?
                      int(KWorkSpace::ShutdownTypeReboot) :
                      int(KWorkSpace::ShutdownTypeNone));
-  group.writeEntry("windowManager", currentWM());
   group.writeEntry("excludeApps", dialog->excludeLineedit->text());
-  c->sync();
-  delete c;
+  c.sync();
 # if 0
   // update the k menu if necessary
   QDBusInterface kicker("org.kde.kicker", "/kicker", "org.kde.kicker");
   kicker.call("configure");
 #endif
-  if( oldwm != currentWM())
-  { // TODO switch it already in the session instead and tell ksmserver
-    KMessageBox::information( this,
-        i18n( "The new window manager will be used when KDE is started the next time." ),
-        i18n( "Window manager change" ), "windowmanagerchange" );
-  }
 }
 
 void SMServerConfig::defaults()
@@ -143,55 +132,7 @@ void SMServerConfig::defaults()
   dialog->offerShutdownCheck->setChecked(true);
   dialog->sdGroup->setEnabled(true);
   dialog->logoutRadio->setChecked(true);
-  dialog->windowManagerCombo->setCurrentIndex( 0 );
   dialog->excludeLineedit->clear();
-}
-
-void SMServerConfig::loadWMs( const QString& current )
-{
-  QString kwinname = i18n( "KWin (KDE default)" );
-  dialog->windowManagerCombo->addItem( kwinname );
-  dialog->windowManagerCombo->setCurrentIndex( 0 );
-  wms[ kwinname ] = "kwin";
-  oldwm = "kwin";
-  QStringList list = KGlobal::dirs()->findAllResources( "windowmanagers", QString(), KStandardDirs::NoDuplicates );
-  QRegExp reg( ".*/([^/\\.]*)\\.[^/\\.]*" );
-  foreach( const QString& wmfile, list )
-  {
-    KDesktopFile file( wmfile );
-    if( file.noDisplay())
-        continue;
-    if( !file.tryExec())
-        continue;
-    QString testexec = file.desktopGroup().readEntry( "X-KDE-WindowManagerTestExec" );
-    if( !testexec.isEmpty())
-    {
-        KProcess proc;
-        proc.setShellCommand( testexec );
-        if( proc.execute() != 0 )
-            continue;
-    }
-    QString name = file.readName();
-    if( name.isEmpty())
-        continue;
-    if( !reg.exactMatch( wmfile ))
-        continue;
-    QString wm = reg.cap( 1 );
-    if( wms.values().contains( wm ))
-        continue;
-    wms[ name ] = wm;
-    dialog->windowManagerCombo->addItem( name );
-    if( wms[ name ] == current ) // make it selected
-    {
-        dialog->windowManagerCombo->setCurrentIndex( dialog->windowManagerCombo->count() - 1 );
-        oldwm = wm;
-    }
-  }
-}
-
-QString SMServerConfig::currentWM() const
-{
-  return wms[ dialog->windowManagerCombo->currentText() ];
 }
 
 #include "kcmsmserver.moc"
