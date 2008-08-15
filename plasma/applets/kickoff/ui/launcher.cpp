@@ -82,6 +82,7 @@ public:
         , searchBar(0)
         , footer(0)
         , contentArea(0)
+        , contentAreaBorder(0)
         , contentSwitcher(0)
         , searchView(0)
         , favoritesView(0)
@@ -277,7 +278,7 @@ public:
         delete layout;
         layout = new QVBoxLayout();
         layout->addWidget(contentSwitcher);
-        layout->addWidget(contentArea);
+        layout->addWidget(contentAreaBorder);
         layout->addWidget(searchBar);
         layout->addWidget(footer);
         layout->setSpacing(0);
@@ -294,7 +295,7 @@ public:
         layout = new QVBoxLayout();
         layout->addWidget(footer);
         layout->addWidget(searchBar);
-        layout->addWidget(contentArea);
+        layout->addWidget(contentAreaBorder);
         layout->addWidget(contentSwitcher);
         layout->setSpacing(0);
         layout->setMargin(0);
@@ -309,7 +310,7 @@ public:
         delete layout;
         layout = new QHBoxLayout();
         layout->addWidget(contentSwitcher);
-        layout->addWidget(contentArea);
+        layout->addWidget(contentAreaBorder);
         QBoxLayout * layout2 = new QVBoxLayout();
         if ( tabOrder == NormalTabOrder ) {
             layout2->addLayout(layout);
@@ -334,7 +335,7 @@ public:
         QLayout * layout = q->layout();
         delete layout;
         layout = new QHBoxLayout();
-        layout->addWidget(contentArea);
+        layout->addWidget(contentAreaBorder);
         layout->addWidget(contentSwitcher);
         QBoxLayout * layout2 = new QVBoxLayout();
         if ( tabOrder == NormalTabOrder ) {
@@ -412,6 +413,7 @@ public:
     SearchBar *searchBar;
     QWidget *footer;
     QStackedWidget *contentArea;
+    PanelSvgWidget *contentAreaBorder;
     TabBar *contentSwitcher;
     FlipScrollView *applicationView;
     QAbstractItemView *searchView;
@@ -458,6 +460,11 @@ void Launcher::init()
     }
     d->searchBar->installEventFilter(this);
     d->contentArea = new QStackedWidget(this);
+    d->contentAreaBorder = new PanelSvgWidget(this);
+    QVBoxLayout *contentAreaBorderLayout = new QVBoxLayout;
+    contentAreaBorderLayout->addWidget(d->contentArea);
+    d->contentAreaBorder->setLayout(contentAreaBorderLayout);
+
     d->contentSwitcher = new TabBar(this);
     d->contentSwitcher->installEventFilter(this);
     d->contentSwitcher->setIconSize(QSize(48,48));
@@ -508,13 +515,7 @@ void Launcher::init()
 
     layout->addWidget(d->footer);
     layout->addWidget(d->searchBar);
-    /**** Rounded corners hack ****/
-    PanelSvgWidget *pSvg = new PanelSvgWidget(this);
-    QVBoxLayout *pSvgLayout = new QVBoxLayout;
-    pSvgLayout->addWidget(d->contentArea);
-    pSvg->setLayout(pSvgLayout);
-    layout->addWidget(pSvg);
-    /**** Rounded corners hack ****/
+    layout->addWidget(d->contentAreaBorder);
     layout->addWidget(d->contentSwitcher);
 
     setLayout(layout);
