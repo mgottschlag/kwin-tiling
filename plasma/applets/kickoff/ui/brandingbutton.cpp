@@ -35,7 +35,8 @@ BrandingButton::BrandingButton(QWidget *parent)
     : QToolButton(parent),
       m_svg(new Plasma::Svg(this))
 {
-    m_svg->setImagePath("widgets/branding");
+    //FIXME: we have to change it
+    m_svg->setImagePath("widgets/kickoff-branding");
     m_svg->resize();
     setCursor(Qt::PointingHandCursor);
 }
