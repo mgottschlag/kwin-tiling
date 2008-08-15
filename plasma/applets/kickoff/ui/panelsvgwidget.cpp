@@ -30,7 +30,11 @@ PanelSvgWidget::PanelSvgWidget(QWidget *parent)
 {
     background = new Plasma::PanelSvg(this);
     background->setImagePath("dialogs/kickoff");
-    background->setEnabledBorders(Plasma::PanelSvg::NoBorder); //TODO: Change me to AllBorders
+    background->setEnabledBorders(
+                                  Plasma::PanelSvg::TopBorder |
+                                  Plasma::PanelSvg::LeftBorder |
+                                  Plasma::PanelSvg::RightBorder
+                                 ); //TODO: Change me to AllBorders
     background->resizePanel(size());
     background->setElementPrefix("borderview");
 

@@ -43,9 +43,6 @@ Q_SIGNALS:
     // internal
     void startUpdateTimer();
 
-protected:
-    void paintEvent(QPaintEvent *event);
-
 private Q_SLOTS:
     void updateTimerExpired();
 

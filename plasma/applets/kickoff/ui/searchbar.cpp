@@ -129,14 +129,6 @@ bool SearchBar::eventFilter(QObject *watched,QEvent *event)
     return false; 
 }
 
-void SearchBar::paintEvent(QPaintEvent *event)
-{
-    Q_UNUSED(event);
-    QPainter p(this);
-    p.setPen(QPen(palette().mid(), 1));
-    p.drawLine(0, height() - 1, width() - 1, height() - 1);
-}
-
 void SearchBar::clear()
 {
     d->editWidget->clear();
