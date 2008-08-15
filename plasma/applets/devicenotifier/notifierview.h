@@ -1,5 +1,7 @@
-/*  Copyright 2007 by Alexis Ménard <darktears31@gmail.com>
-
+/*  
+    Copyright 2007 Robert Knight <robertknight@gmail.com>
+    Copyright 2008 Alexis Ménard <menard@kde.org>
+    
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -15,48 +17,68 @@
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
 */
+
 #ifndef NOTIFIERVIEW_H
 #define NOTIFIERVIEW_H
 
 // Qt
-#include <QTreeView>
-
-class QModelIndex;
+#include <QAbstractItemView>
 
 namespace Notifier
 {
 
-  class NotifierView : public QTreeView
-  {
-  Q_OBJECT
+class NotifierView : public QAbstractItemView
+{
+Q_OBJECT
 
-  public:
-      NotifierView(QWidget *parent = 0);
-      virtual ~NotifierView();
+public:
+    NotifierView(QWidget *parent = 0);
+    virtual ~NotifierView();
 
-      void setModel(QAbstractItemModel * model);
+    // margin is equivalent to ItemDelegate::BACK_ARROW_WIDTH + ItemDelegate::BACK_ARROW_SPACING
+    static const int HEADER_LEFT_MARGIN = 5;
+    static const int HEADER_TOP_MARGIN = 15;
+    static const int HEADER_BOTTOM_MARGIN = 4;
+    static const int HEADER_HEIGHT = 35;
+    static const int FIRST_HEADER_HEIGHT = 20;
 
-  protected:
-      void resizeEvent(QResizeEvent * event);
-      void mouseMoveEvent(QMouseEvent *event);
-      void leaveEvent(QEvent *event);
-      QModelIndex moveCursor(CursorAction cursorAction,Qt::KeyboardModifiers );
-      void paintEvent(QPaintEvent *event);
+    static const int ITEM_LEFT_MARGIN = 7;
+    static const int ITEM_RIGHT_MARGIN = 7;
+    static const int TOP_OFFSET = 5;
 
-      void rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end); /* overload QTreeView */
-      void rowsInserted(const QModelIndex &parent, int start, int end); /* overload QTreeView */
+    static const int BACK_ARROW_WIDTH = 20;
+    static const int BACK_ARROW_SPACING = 5;
 
-      void invalidateSelection();
-      void refreshSelection();
+    // reimplemented from QAbstractItemView 
+    virtual QModelIndex indexAt(const QPoint& point) const;
+    virtual void scrollTo(const QModelIndex& index, ScrollHint hint = EnsureVisible); 
+    virtual QRect visualRect(const QModelIndex& index) const;
+    virtual void setModel(QAbstractItemModel *model);
+protected:
+    // reimplemented from QAbstractItemView 
+    virtual int horizontalOffset() const;
+    virtual bool isIndexHidden(const QModelIndex& index) const;
+    virtual QModelIndex moveCursor(CursorAction action,Qt::KeyboardModifiers modifiers);
+    virtual void setSelection(const QRect& rect,QItemSelectionModel::SelectionFlags flags);
+    virtual int verticalOffset() const;
+    virtual QRegion visualRegionForSelection(const QItemSelection& selection) const;
+   
+    // reimplemented from QWidget
+    virtual void paintEvent(QPaintEvent *event);
+    virtual void resizeEvent(QResizeEvent *event);
+    virtual void mouseMoveEvent(QMouseEvent *event);
+    virtual void leaveEvent(QEvent *event);
 
-  protected slots:
-      void rowsRemoved(const QModelIndex &parent, int start, int end); /* overload QTreeView */
-      void rowsAboutToBeInserted(const QModelIndex &parent, int start, int end);
+private Q_SLOTS:
+    // lays out all items in the view and sets the current index to the first
+    // selectable item
+    void updateLayout();
 
-  private:
-      QModelIndex m_hoveredIndex;
-      QPoint m_cursorPosition;
-  };
+private:
+    class Private;
+    Private * const d;
+};
 
 }
-#endif // NOTIFIERVIEW_H
+
+#endif // URLITEMVIEW_H

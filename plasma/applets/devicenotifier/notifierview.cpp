@@ -1,5 +1,7 @@
-/*
-    Copyright 2007 by Alexis Ménard <darktears31@gmail.com>
+/*  
+    Copyright 2007 Robert Knight <robertknight@gmail.com>
+    Copyright 2008 Alexis Ménard <menard@kde.org>
+    	
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -17,140 +19,395 @@
     Boston, MA 02110-1301, USA.
 */
 
+// Own
 #include "notifierview.h"
 
 // Qt
+#include <QtCore/QHash>
+#include <QtCore/QPersistentModelIndex>
 
-#include <QCoreApplication>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QScrollBar>
-#include <QtGui/QHeaderView>
 
-//KDE
+// KDE
 #include <KDebug>
+#include <KGlobalSettings>
 #include <KIconLoader>
-
-//Plasma
-#include <plasma/delegate.h>
+#include <KColorScheme>
 
 using namespace Notifier;
 
+class NotifierView::Private
+{
+public:
+    Private(NotifierView *parent)
+        : q(parent)
+        , contentsHeight(0)
+    {
+    }
+
+    void doLayout()
+    {
+        // clear existing layout information
+        itemRects.clear();
+        visualOrder.clear();
+
+        if (!q->model()) {
+            return;
+        }
+
+        int verticalOffset = TOP_OFFSET;
+        int horizontalOffset = 0;
+        int row = 0;
+        int visualColumn = 0;
+
+        QModelIndex branch = currentRootIndex;
+
+        while (true) {
+            if (itemChildOffsets[branch]+row >= q->model()->rowCount(branch) ||
+                (branch != currentRootIndex && row > MAX_CHILD_ROWS)) {
+
+                if (branch.isValid()) {
+                    row = branch.row()+1;
+                    branch = branch.parent();
+                    continue;
+                } else {
+                    break;
+                }
+            }
+
+            QModelIndex child = q->model()->index(row+itemChildOffsets[branch],0,branch);
+
+            if (q->model()->hasChildren(child)) {
+                QSize childSize = calculateHeaderSize(child);
+                QRect rect(QPoint(HEADER_LEFT_MARGIN, verticalOffset), childSize);
+                //kDebug() << "header is" << rect;
+                itemRects.insert(child, rect);
+
+                verticalOffset += childSize.height();
+                horizontalOffset = 0; 
+                branch = child;
+                row = 0;
+                visualColumn = 0;
+            } else {
+                QSize childSize = calculateItemSize(child);
+                //kDebug() <<  QRect(QPoint(horizontalOffset,verticalOffset), childSize);
+
+                itemRects.insert(child,QRect(QPoint(horizontalOffset,verticalOffset),
+                                             childSize));
+
+                if (childSize.isValid()) {
+                    visualOrder << child;
+                }
+
+                horizontalOffset += contentWidth() / MAX_COLUMNS;
+
+                visualColumn++;
+                row++;
+
+                bool wasLastRow = row+itemChildOffsets[branch] >= q->model()->rowCount(branch);
+                bool nextItemIsBranch = false;
+                if (!wasLastRow) { 
+                     QModelIndex nextIndex =q->model()->index(row+itemChildOffsets[branch],0,branch);
+                     nextItemIsBranch = q->model()->hasChildren(nextIndex);
+                }
+
+                if (visualColumn >= MAX_COLUMNS || wasLastRow || nextItemIsBranch) {
+                    horizontalOffset = 0; 
+                    visualColumn = 0;
+                }
+
+                verticalOffset += childSize.height();
+            }
+        }
+        contentsHeight = verticalOffset;
+
+        updateScrollBarRange();
+    }
+
+    void drawHeader(QPainter *painter,
+                    const QModelIndex& index,
+                    const QStyleOptionViewItem& option)
+    {
+        const bool first = isFirstHeader(index);
+        const int rightMargin = q->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 6;
+        const int dy = (first ? 4 : HEADER_TOP_MARGIN);
+
+        painter->save();
+        painter->setRenderHint(QPainter::Antialiasing, false);
+
+        QLinearGradient gradient(option.rect.topLeft(), option.rect.topRight());
+        gradient.setColorAt(0.0, Qt::transparent);
+        gradient.setColorAt(0.1, option.palette.midlight().color());
+        gradient.setColorAt(0.5, option.palette.mid().color());
+        gradient.setColorAt(0.9, option.palette.midlight().color());
+        gradient.setColorAt(1.0, Qt::transparent);
+        painter->setPen(QPen(gradient, 1));
+
+        painter->drawLine(option.rect.x() + 6, option.rect.y() + dy + 2,
+                          option.rect.right() - rightMargin , option.rect.y() + dy + 2);
+        painter->setFont(KGlobalSettings::smallestReadableFont());
+        painter->setPen(QPen(KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText), 0));
+        QString text = index.data(Qt::DisplayRole).value<QString>();
+        painter->drawText(option.rect.adjusted(0, dy, -rightMargin, 0),
+                          Qt::AlignVCenter|Qt::AlignRight, text);
+        painter->restore();
+    }
+
+    void updateScrollBarRange()
+    {
+        int pageSize = q->height();
+        q->verticalScrollBar()->setRange(0,contentsHeight-pageSize);
+        q->verticalScrollBar()->setPageStep(pageSize);
+        q->verticalScrollBar()->setSingleStep(q->sizeHintForRow(0));
+    }
+
+    int contentWidth() const
+    {
+        return q->width() - q->style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 2;
+    }
+
+    QSize calculateItemSize(const QModelIndex& index) const 
+    {
+      return  QSize(contentWidth() / MAX_COLUMNS, q->sizeHintForIndex(index).height());
+    }
+
+    bool isFirstHeader(const QModelIndex &index) const
+    {
+        if (index.row() == 0) {
+            return q->model()->hasChildren(index);
+        }
+
+        QModelIndex prevHeader = index.sibling(index.row() - 1, index.column());
+        while (prevHeader.isValid()) {
+            //kDebug() << "checking" << prevHeader.data(Qt::DisplayRole).value<QString>();
+            if (q->model()->hasChildren(prevHeader)) {
+                //kDebug() << "it has children";
+                return false;
+            }
+
+            prevHeader = prevHeader.sibling(prevHeader.row() - 1, prevHeader.column());
+        }
+
+        return true;
+    }
+
+    QSize calculateHeaderSize(const QModelIndex& index) const
+    {
+        const QFontMetrics fm(KGlobalSettings::smallestReadableFont());
+        int minHeight = HEADER_HEIGHT;
+        const bool isFirst = isFirstHeader(index);
+
+        if (isFirst) {
+            minHeight = FIRST_HEADER_HEIGHT;
+        }
+
+        return QSize(q->width() - HEADER_LEFT_MARGIN,
+                     qMax(fm.height() + (isFirst ? 4 : HEADER_TOP_MARGIN), minHeight)
+                     + HEADER_BOTTOM_MARGIN) ;
+    }
+
+    QPoint mapFromViewport(const QPoint& point) const
+    {
+        return point + QPoint(0,q->verticalOffset());
+    }
+
+    QPoint mapToViewport(const QPoint& point) const
+    {
+        return point - QPoint(0,q->verticalOffset());
+    }
+
+    NotifierView * const q;
+    QPersistentModelIndex currentRootIndex;
+    QPersistentModelIndex hoveredIndex;
+    
+    QHash<QModelIndex,int> itemChildOffsets;
+    QHash<QModelIndex,QRect> itemRects;
+    QList<QModelIndex> visualOrder;
+
+    int contentsHeight;
+
+    static const int MAX_COLUMNS = 1;
+
+    // TODO Eventually it will be possible to restrict each branch to only showing
+    // a given number of children, with Next/Previous arrows to view more children
+    //
+    // eg.  
+    //
+    // Recent Documents  [1-10 of 100]            Next
+    // Recent Applications [10-20 of 30] Previous|Next
+    //
+    static const int MAX_CHILD_ROWS = 1000;
+};
+
 NotifierView::NotifierView(QWidget *parent)
-    : QTreeView(parent)
+    : QAbstractItemView(parent)
+    , d(new Private(this))
 {
     setIconSize(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
-    setRootIsDecorated(false);
-    setHeaderHidden(true);
     setMouseTracking(true);
 }
 
 NotifierView::~NotifierView()
 {
-
+    delete d;
 }
 
-void NotifierView::setModel(QAbstractItemModel *m)
+QModelIndex NotifierView::indexAt(const QPoint& point) const
 {
-    if (model()) {
-        disconnect(model(), SIGNAL(rowsAboutToBeInserted(const QModelIndex &, int, int)),
-                        this, SLOT(rowsAboutToBeInserted(const QModelIndex &, int, int)));
+    // simple linear search through the item rects, this will
+    // be inefficient when the viewport is large
+    QHashIterator<QModelIndex,QRect> iter(d->itemRects);
+    while (iter.hasNext()) {
+        iter.next();
+        if (iter.value().contains(d->mapFromViewport(point))) {
+            return iter.key();
+        }
+    }
+    return QModelIndex();
+}
+
+void NotifierView::setModel(QAbstractItemModel *model)
+{
+    QAbstractItemView::setModel(model);
+
+    if (model) {
+        connect(model,SIGNAL(rowsRemoved(QModelIndex,int,int)),this,SLOT(updateLayout()));
+        connect(model,SIGNAL(rowsInserted(QModelIndex,int,int)),this,SLOT(updateLayout()));
+        connect(model,SIGNAL(modelReset()),this,SLOT(updateLayout()));
     }
 
-    QTreeView::setModel(m);
-
-    connect(model(), SIGNAL(rowsAboutToBeInserted(const QModelIndex &, int, int)),
-                 this, SLOT(rowsAboutToBeInserted(const QModelIndex &, int, int)));
+    d->currentRootIndex = QModelIndex();
+    d->itemChildOffsets.clear();
+    updateLayout();
 }
 
-void NotifierView::resizeEvent(QResizeEvent * event)
+void NotifierView::updateLayout()
 {
-    //the columns after the first are squares KIconLoader::SizeMedium x KIconLoader::SizeMedium,
-    //the first column takes all the remaining space
-    if (header()->count() > 0) {
-        const int newWidth = event->size().width() -
-                             (header()->count()-1)*(sizeHintForRow(0));
-        header()->resizeSection(0, newWidth);
-    }
-}
+    d->doLayout();
 
-void NotifierView::mouseMoveEvent(QMouseEvent *event)
-{
-    m_cursorPosition = event->globalPos();
-    const QModelIndex itemUnderMouse = indexAt(event->pos());
-    if (itemUnderMouse != m_hoveredIndex && itemUnderMouse.isValid() &&
-        state() == NoState) {
-        update(itemUnderMouse);
-        update(m_hoveredIndex);
-
-        m_hoveredIndex = itemUnderMouse;
-        setCurrentIndex(m_hoveredIndex);
-    } else if (!itemUnderMouse.isValid()) {
-        m_hoveredIndex = QModelIndex();
-        setCurrentIndex(m_hoveredIndex);
-    }
-
-    QAbstractItemView::mouseMoveEvent(event);
-}
-
-void NotifierView::leaveEvent(QEvent *event)
-{
-    m_cursorPosition = QPoint();
-    const QModelIndex oldHoveredIndex = m_hoveredIndex;
-    m_hoveredIndex = QModelIndex();
-    setCurrentIndex(m_hoveredIndex);
-    update(oldHoveredIndex);
-}
-
-QModelIndex NotifierView::moveCursor(CursorAction cursorAction,Qt::KeyboardModifiers modifiers )
-{
-    m_cursorPosition = QPoint();
-    m_hoveredIndex = QModelIndex();
-    return QTreeView::moveCursor(cursorAction, modifiers );
-}
-
-void NotifierView::invalidateSelection()
-{
-    if (m_hoveredIndex.isValid()) {
-        m_hoveredIndex = QModelIndex();
-    }
-    setCurrentIndex(m_hoveredIndex);
-}
-
-void NotifierView::refreshSelection()
-{
-    if (!m_cursorPosition.isNull()) {
-        QMouseEvent *event = new QMouseEvent(QEvent::MouseMove, viewport()->mapFromGlobal(m_cursorPosition), m_cursorPosition, Qt::NoButton, Qt::NoButton, Qt::NoModifier);
-        QCoreApplication::postEvent(viewport(), event);
+    if (viewport()->isVisible()) {
+        viewport()->update();
     }
 }
 
-void NotifierView::rowsAboutToBeInserted(const QModelIndex& parent, int start, int end)
+void NotifierView::scrollTo(const QModelIndex& index, ScrollHint hint)
 {
-    invalidateSelection();
+    QRect itemRect = d->itemRects[index];
+    QRect viewedRect = QRect(d->mapFromViewport(QPoint(0,0)),
+                             size());
+    int topDifference = viewedRect.top()-itemRect.top();
+    int bottomDifference = viewedRect.bottom()-itemRect.bottom();
+    QScrollBar *scrollBar = verticalScrollBar();
+
+    if (!itemRect.isValid())
+        return;
+
+    switch (hint) {
+        case EnsureVisible:
+            {
+               if (!viewedRect.contains(itemRect)) {
+
+                   if (topDifference < 0) {
+                        // scroll view down
+                        scrollBar->setValue(scrollBar->value() - bottomDifference); 
+                   } else {
+                        // scroll view up
+                        scrollBar->setValue(scrollBar->value() - topDifference);
+                   }
+               } 
+            }
+            break;
+        case PositionAtTop:
+            {
+                //d->viewportOffset = itemRect.top();
+            }
+        default:
+            Q_ASSERT(false); // Not implemented
+    }
 }
 
-void NotifierView::rowsInserted(const QModelIndex& parent, int start, int end)
+QRect NotifierView::visualRect(const QModelIndex& index) const
 {
-    QTreeView::rowsInserted(parent, start, end);
-    refreshSelection();
+    QRect itemRect = d->itemRects[index];
+    if (!itemRect.isValid()) {
+        return itemRect;
+    }
+
+    itemRect.moveTopLeft(d->mapToViewport(itemRect.topLeft()));
+    return itemRect;
 }
 
-void NotifierView::rowsAboutToBeRemoved(const QModelIndex& parent, int start, int end)
+int NotifierView::horizontalOffset() const
 {
-    invalidateSelection();
-    QTreeView::rowsAboutToBeRemoved(parent, start, end);
+    return 0;
 }
 
-void NotifierView::rowsRemoved(const QModelIndex& parent, int start, int end)
+bool NotifierView::isIndexHidden(const QModelIndex&) const
 {
-    QTreeView::rowsRemoved(parent, start, end);
-    refreshSelection();
+    return false;
+}
+
+QModelIndex NotifierView::moveCursor(CursorAction cursorAction,Qt::KeyboardModifiers )
+{
+    QModelIndex index = currentIndex();
+
+    int visualIndex = d->visualOrder.indexOf(index);
+
+    switch (cursorAction) {
+        case MoveUp:
+                if (!currentIndex().isValid()) {
+                    const QModelIndex root = model()->index(0, 0);
+                    index = model()->index(model()->rowCount(root) - 1, 0, root);
+                } else {
+                    visualIndex = qMax(0,visualIndex-1);
+                }
+            break;
+        case MoveDown:
+                if (!currentIndex().isValid()) {
+                    const QModelIndex root = model()->index(0, 0);
+                    index = model()->index(0, 0, root);
+                } else {
+                    visualIndex = qMin(d->visualOrder.count()-1,visualIndex+1);
+                }
+            break;
+        default:
+                // Do nothing
+            break;
+    }
+
+    d->hoveredIndex = QModelIndex();
+
+    return currentIndex().isValid() ? d->visualOrder.value(visualIndex,QModelIndex())
+                                    : index;
+}
+
+void NotifierView::setSelection(const QRect& rect,QItemSelectionModel::SelectionFlags flags)
+{
+    QItemSelection selection;
+    selection.select(indexAt(rect.topLeft()),indexAt(rect.bottomRight()));
+    selectionModel()->select(selection,flags);
+}
+
+int NotifierView::verticalOffset() const
+{
+    return verticalScrollBar()->value(); 
+}
+
+QRegion NotifierView::visualRegionForSelection(const QItemSelection& selection) const
+{
+    QRegion region;
+    foreach(const QModelIndex& index,selection.indexes()) {
+        region |= visualRect(index);
+    }
+    return region;
 }
 
 void NotifierView::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event)
     if (!model()) {
         return;
     }
@@ -158,33 +415,62 @@ void NotifierView::paintEvent(QPaintEvent *event)
     QPainter painter(viewport());
     painter.setRenderHint(QPainter::Antialiasing);
 
-    const int rows = model()->rowCount(rootIndex());
-    const int cols = header()->count();
-    //kDebug() << "painting" << rows << "rows" << cols << "columns";
+    QHashIterator<QModelIndex,QRect> indexIter(d->itemRects);
+    while (indexIter.hasNext()) {
+        indexIter.next();
+        const QRect itemRect = visualRect(indexIter.key());
+        const QModelIndex index = indexIter.key();
 
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            const QModelIndex index = model()->index(i, j, rootIndex());
-            const QRect itemRect = visualRect(index);
+        if (event->region().contains(itemRect)) {
+            QStyleOptionViewItem option = viewOptions();
+            option.rect = itemRect;
 
-            if (event->region().contains(itemRect)) {
-                QStyleOptionViewItem option = viewOptions();
-                option.rect = itemRect;
+            if (selectionModel()->isSelected(index)) {
+                option.state |= QStyle::State_Selected;
+            }
+            if (index == d->hoveredIndex) {
+                option.state |= QStyle::State_MouseOver;
+            }
+            if (index == currentIndex()) {
+                option.state |= QStyle::State_HasFocus;
+            }
 
-                if (selectionModel()->isSelected(index)) {
-                    option.state |= QStyle::State_Selected;
+            if (model()->hasChildren(index)) {
+                d->drawHeader(&painter, index, option);
+            } else {
+                if (option.rect.left() == 0) {
+                    option.rect.setLeft(option.rect.left() + ITEM_LEFT_MARGIN);
+                    option.rect.setRight(option.rect.right() - ITEM_RIGHT_MARGIN);
                 }
-                if (index == m_hoveredIndex) {
-                    option.state |= QStyle::State_MouseOver;
-                }
-                if (index == currentIndex()) {
-                    option.state |= QStyle::State_HasFocus;
-                }
-
                 itemDelegate(index)->paint(&painter,option,index);
             }
         }
     }
+}
+
+void NotifierView::resizeEvent(QResizeEvent *)
+{
+    updateLayout();
+}
+
+void NotifierView::mouseMoveEvent(QMouseEvent *event)
+{
+    const QModelIndex itemUnderMouse = indexAt(event->pos());
+    if (itemUnderMouse != d->hoveredIndex && state() == NoState) {
+        update(itemUnderMouse);
+        update(d->hoveredIndex);
+
+        d->hoveredIndex = itemUnderMouse;
+        setCurrentIndex(d->hoveredIndex);
+    }
+    QAbstractItemView::mouseMoveEvent(event);
+}
+
+void NotifierView::leaveEvent(QEvent *event)
+{
+    Q_UNUSED(event)
+    d->hoveredIndex = QModelIndex();
+    setCurrentIndex(QModelIndex());
 }
 
 #include "notifierview.moc"
