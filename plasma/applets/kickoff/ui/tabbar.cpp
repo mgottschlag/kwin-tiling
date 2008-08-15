@@ -280,31 +280,9 @@ void TabBar::paintEvent(QPaintEvent *event)
     painter.save();
     painter.setPen(QPen(palette().base(), 1));
 
-    // Cover the disturbing line between the tabbar and the content area
-    switch (shape()) {
-      case RoundedSouth:
-      case TriangularSouth:
-        painter.drawLine(rect().topLeft(), rect().topRight());
-        break;
-      case RoundedNorth:
-      case TriangularNorth:
-        painter.drawLine(rect().bottomLeft(), rect().bottomRight());
-        break;
-      case RoundedWest:
-      case TriangularWest:
-        painter.drawLine(rect().topRight(), rect().bottomRight());
-        break;
-      case RoundedEast:
-      case TriangularEast:
-        painter.drawLine(rect().topLeft(), rect().bottomLeft());
-        break;
-    }
-
-    painter.translate(0.5, 0.5);
     painter.setRenderHint(QPainter::Antialiasing);
     painter.fillPath(path, palette().base());
-    painter.setPen(QPen(palette().mid(), 1));
-    painter.drawPath(path);
+
     painter.restore();
 
     QFontMetrics metrics(painter.font());
