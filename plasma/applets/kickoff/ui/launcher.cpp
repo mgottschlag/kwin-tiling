@@ -63,6 +63,7 @@
 #include "ui/contextmenufactory.h"
 #include "ui/urlitemview.h"
 #include "ui/flipscrollview.h"
+#include "ui/panelsvgwidget.h"
 #include "ui/searchbar.h"
 #include "ui/tabbar.h"
 
@@ -507,7 +508,13 @@ void Launcher::init()
 
     layout->addWidget(d->footer);
     layout->addWidget(d->searchBar);
-    layout->addWidget(d->contentArea);
+    /**** Rounded corners hack ****/
+    PanelSvgWidget *pSvg = new PanelSvgWidget(this);
+    QVBoxLayout *pSvgLayout = new QVBoxLayout;
+    pSvgLayout->addWidget(d->contentArea);
+    pSvg->setLayout(pSvgLayout);
+    layout->addWidget(pSvg);
+    /**** Rounded corners hack ****/
     layout->addWidget(d->contentSwitcher);
 
     setLayout(layout);

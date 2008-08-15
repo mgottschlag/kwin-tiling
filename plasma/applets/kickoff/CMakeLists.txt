@@ -22,6 +22,7 @@ set( Kickoff_SRCS
        ui/contextmenufactory.cpp
        ui/flipscrollview.cpp
        ui/itemdelegate.cpp
+       ui/panelsvgwidget.cpp
        ui/launcher.cpp
        ui/searchbar.cpp
        ui/tabbar.cpp

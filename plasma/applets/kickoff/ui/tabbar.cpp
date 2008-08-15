@@ -56,7 +56,11 @@ TabBar::TabBar(QWidget *parent)
 
     background = new Plasma::PanelSvg(this);
     background->setImagePath("dialogs/kickoff");
-    background->setEnabledBorders(Plasma::PanelSvg::AllBorders);
+    background->setEnabledBorders(
+                                  Plasma::PanelSvg::BottomBorder |
+                                  Plasma::PanelSvg::LeftBorder |
+                                  Plasma::PanelSvg::RightBorder
+                                 );
     background->resizePanel(size());
     background->setElementPrefix("plain");
 
