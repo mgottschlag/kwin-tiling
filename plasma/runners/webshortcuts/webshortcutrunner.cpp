@@ -51,7 +51,7 @@ QString WebshortcutRunner::loadDelimiter()
     // TODO: KDirWatch :)
     KConfig *kuriconfig = new KConfig("kuriikwsfilterrc", KConfig::NoGlobals);
     KConfigGroup generalgroup( kuriconfig, "General" );
-    QString delimiter = generalgroup.readPathEntry( "KeywordDelimiter", QString() );
+    QString delimiter = generalgroup.readPathEntry( "KeywordDelimiter", QString(":") );
     delete kuriconfig;
     kDebug() << "keyworddelimiter is: " << delimiter;
     return delimiter;
