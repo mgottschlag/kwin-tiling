@@ -102,7 +102,7 @@ By selecting <menuchoice><guimenu>K Button</guimenu><guisubmenu>Applications</gu
 </listitem>
 <listitem>
 <para>
-  By pressing <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo>. This will bring up the <application>KRunner</application> dialog. Type <command>system settings</command>, and click <guibutton>Launch</guibutton>.
+  By pressing <keycombo>&Alt;<keycap>F2</keycap></keycombo>. This will bring up the <application>KRunner</application> dialog. Type <command>system settings</command>, and click <guibutton>Launch</guibutton>.
 </para>
 </listitem>
 <listitem>
@@ -217,7 +217,7 @@ This sections covers the settings related to specific system settings such as co
 <orderedlist>
 <listitem>
 <para>
-Press <keycombo><keycap>Ctrl</keycap><keycap>Q</keycap></keycombo> on the keyboard.
+Press <keycombo>&Ctrl;<keycap>Q</keycap></keycombo> on the keyboard.
 </para>
 </listitem>
 <listitem>
