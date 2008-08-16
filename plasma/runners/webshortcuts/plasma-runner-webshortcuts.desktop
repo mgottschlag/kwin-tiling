@@ -121,6 +121,7 @@ Comment[zh_CN]=允许用户使用 Konqueror 的网页快捷键
 Comment[zh_TW]=允許使用者使用 Konqueror 的網頁捷徑
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
+Icon=internet-web-browser
 X-KDE-Library=krunner_webshortcuts
 X-KDE-PluginInfo-Author=Teemu Rytilahti
 X-KDE-PluginInfo-Email=tpr@iki.fi

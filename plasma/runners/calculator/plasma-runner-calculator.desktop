@@ -111,6 +111,7 @@ Comment[zh_CN]=计算表达式
 Comment[zh_TW]=計算機表示式
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
+Icon=accessories-calculator
 X-KDE-Library=krunner_calculatorrunner
 X-KDE-PluginInfo-Author=Plasma Team
 X-KDE-PluginInfo-Email=panel-devel@kde.org

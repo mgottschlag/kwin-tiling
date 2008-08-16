@@ -95,6 +95,7 @@ Comment[uk]=Знайти і відкрити закладки
 Comment[zh_TW]=尋找並開啟書籤
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
+Icon=bookmarks
 X-KDE-Library=krunner_bookmarksrunner
 X-KDE-PluginInfo-Author=Glenn Ergeerts
 X-KDE-PluginInfo-Email=glenn.ergeerts@telenet.be

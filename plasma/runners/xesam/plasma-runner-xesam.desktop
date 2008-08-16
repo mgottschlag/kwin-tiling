@@ -36,6 +36,7 @@ Comment[uk]=Пошук в документах і файлах
 Comment[zh_TW]=在文件與檔案裡搜尋
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
+Icon=text-x-generic
 X-KDE-Library=krunner_xesam
 X-KDE-PluginInfo-Author=Plasma Team
 X-KDE-PluginInfo-Email=panel-devel@kde.org
