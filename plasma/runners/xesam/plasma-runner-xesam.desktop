@@ -90,6 +90,7 @@ Comment[zh_CN]=允许用户使用 Xesam 兼容的索引程序进行桌面搜索
 Comment[zh_TW]=允許使用者使用與 Xesam 相容的桌面搜尋
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service
+Icon=text-x-generic
 X-KDE-Library=krunner_xesam
 X-KDE-PluginInfo-Author=Plasma Team
 X-KDE-PluginInfo-Email=panel-devel@kde.org
