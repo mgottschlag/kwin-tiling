@@ -29,8 +29,16 @@
 
 // KDE
 #include <KIcon>
+#ifndef Q_OS_WIN
 #include <kworkspace/kworkspace.h>
 #include <screensaver_interface.h>
+#endif
+
+// Windows
+#ifdef Q_OS_WIN
+#define _WIN32_WINNT 0x0500 // require NT 5.0 (win 2k pro)
+#include <windows.h>
+#endif // Q_OS_WIN
 
 #define MINSIZE 48
 
@@ -115,20 +123,26 @@ void LockOut::clickLock()
 {
     kDebug()<<"LockOut:: lock clicked ";
 
+#ifndef Q_OS_WIN
     QString interface("org.freedesktop.ScreenSaver");
     org::freedesktop::ScreenSaver screensaver(interface, "/ScreenSaver",
                                               QDBusConnection::sessionBus());
     if (screensaver.isValid()) {
         screensaver.Lock();
     }
+#else
+    LockWorkStation();
+#endif // !Q_OS_WIN
 }
 
 void LockOut::clickLogout()
 {
     kDebug()<<"LockOut:: logout clicked ";
+#ifndef Q_OS_WIN
     KWorkSpace::requestShutDown( KWorkSpace::ShutdownConfirmDefault,
                                  KWorkSpace::ShutdownTypeDefault,
                                  KWorkSpace::ShutdownModeDefault);
+#endif
 }
 
 
