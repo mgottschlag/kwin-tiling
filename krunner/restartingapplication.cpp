@@ -30,7 +30,11 @@
 RestartingApplication::RestartingApplication(Display *display,
                                              Qt::HANDLE visual,
                                              Qt::HANDLE colormap)
+#ifdef Q_WS_X11
     : KUniqueApplication(display, visual, colormap)
+#else
+    : KUniqueApplication()
+#endif
 {
     if (KCrash::crashHandler() == 0 ) {
         // this means we've most likely crashed once. so let's see if we

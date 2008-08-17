@@ -23,12 +23,16 @@
 #include <KLocale>
 
 #include "krunnerapp.h"
+#ifdef Q_WS_X11
 #include "saverengine.h"
 #include "startupid.h"
+#endif
 #include "kscreensaversettings.h" // contains screen saver config
 #include "klaunchsettings.h" // contains startup config
 
+#ifdef Q_WS_X11
 #include <X11/extensions/Xrender.h>
+#endif
 
 static const char description[] = I18N_NOOP( "KDE run command interface" );
 static const char version[] = "0.1";

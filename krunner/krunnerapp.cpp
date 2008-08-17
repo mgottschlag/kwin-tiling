@@ -44,18 +44,23 @@
 #include "kworkspace.h"
 #include "interfaceadaptor.h"
 #include "interface.h"
+#ifdef Q_WS_X11
 #include "startupid.h"
+#endif
 #include "klaunchsettings.h"
 #include "krunnersettings.h"
 
+#ifdef Q_WS_X11
 #include <X11/extensions/Xrender.h>
 
 Display* dpy = 0;
 Colormap colormap = 0;
 Visual *visual = 0;
+#endif
 
 void checkComposite()
 {
+#ifdef Q_WS_X11
     // thanks to zack rusin and frederik for pointing me in the right direction
     // for the following bits of X11 code
     dpy = XOpenDisplay(0); // open default display
@@ -93,13 +98,18 @@ void checkComposite()
         }
 
     }
+#endif
 }
 
 KRunnerApp* KRunnerApp::self()
 {
     if (!kapp) {
         checkComposite();
+#ifdef Q_WS_X11
         return new KRunnerApp(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
+#else
+        return new KRunnerApp(0, 0, 0);
+#endif
     }
 
     return qobject_cast<KRunnerApp*>(kapp);
@@ -125,6 +135,7 @@ void KRunnerApp::initialize()
     initializeStartupNotification();
     m_interface = new Interface;
 
+#ifdef Q_WS_X11
     //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
     //the application name is we set the proper XClassHint here, hopefully won't be necessary anymore when
     //qapplication will manage apps with argvisuals in a better way
@@ -132,7 +143,8 @@ void KRunnerApp::initialize()
     classHint.res_name = const_cast<char*>("krunner");
     classHint.res_class = const_cast<char*>("krunner");
     XSetClassHint(QX11Info::display(), m_interface->winId(), &classHint);
-    
+#endif
+
     // Global keys
     m_actionCollection = new KActionCollection( m_interface );
     KAction* a = 0;
@@ -166,12 +178,14 @@ void KRunnerApp::initialize()
     a->setGlobalShortcut( KShortcut( Qt::ALT+Qt::CTRL+Qt::Key_Insert ) );
     connect(a, SIGNAL(triggered(bool)), m_interface, SLOT(switchUser()));
 
+#ifdef Q_WS_X11
     if ( KAuthorized::authorizeKAction( "lock_screen" ) ) {
         a = m_actionCollection->addAction( I18N_NOOP( "Lock Session" ) );
         a->setText( i18n( I18N_NOOP( "Lock Session" ) ) );
         a->setGlobalShortcut( KShortcut( Qt::ALT+Qt::CTRL+Qt::Key_L ) );
         connect( a, SIGNAL(triggered(bool)), &m_saver, SLOT(Lock()) );
     }
+#endif
 
     if ( KAuthorized::authorizeKAction( "logout" ) ) {
         a = m_actionCollection->addAction( I18N_NOOP("Log Out") );
@@ -205,6 +219,7 @@ void KRunnerApp::initializeStartupNotification()
 {
     // Startup notification
     KLaunchSettings::self()->readConfig();
+#ifdef Q_WS_X11
     if( !KLaunchSettings::busyCursor() ) {
         delete m_startupId;
         m_startupId = NULL;
@@ -215,6 +230,7 @@ void KRunnerApp::initializeStartupNotification()
 
         m_startupId->configure();
     }
+#endif
 }
 
 /*TODO: fixme - move to kwin
@@ -226,6 +242,7 @@ void KRunnerApp::showWindowList()
 
 void KRunnerApp::showTaskManager()
 {
+#ifndef Q_WS_WIN
     //kDebug(1204) << "Launching KSysGuard...";
     KSysGuardProcessList* w = NULL;
     if (!m_tasks) {
@@ -268,10 +285,12 @@ void KRunnerApp::showTaskManager()
     if (w) {
         w->filterLineEdit()->setFocus();
     }
+#endif
 }
 
 void KRunnerApp::taskDialogFinished()
 {
+#ifndef Q_WS_WIN  
     KConfigGroup cg = KGlobal::config()->group("TaskDialog");
     m_tasks->saveDialogSize(cg);
     KSysGuardProcessList *w = static_cast<KSysGuardProcessList *> (m_tasks->mainWidget());
@@ -286,6 +305,7 @@ void KRunnerApp::taskDialogFinished()
 
     m_tasks->deleteLater();
     m_tasks = 0;
+#endif
 }
 
 void KRunnerApp::logout()
@@ -315,6 +335,7 @@ void KRunnerApp::rebootWithoutConfirmation()
 void KRunnerApp::logout( KWorkSpace::ShutdownConfirm confirm,
                        KWorkSpace::ShutdownType sdtype )
 {
+#ifndef Q_WS_WIN
     if ( !KWorkSpace::requestShutDown( confirm, sdtype ) ) {
         // TODO: should we show these errors in Interface?
         KMessageBox::error( 0, i18n("Could not log out properly.\nThe session manager cannot "
@@ -322,6 +343,7 @@ void KRunnerApp::logout( KWorkSpace::ShutdownConfirm confirm,
                                     "Ctrl+Alt+Backspace; note, however, that your current session "
                                     "will not be saved with a forced shutdown." ) );
     }
+#endif
 }
 
 int KRunnerApp::newInstance()
@@ -339,7 +361,11 @@ int KRunnerApp::newInstance()
 
 bool KRunnerApp::hasCompositeManager() const
 {
+#ifdef Q_WS_X11
     return colormap && KWindowSystem::compositingActive();
+#else
+    return false;
+#endif
 }
 
 #include "krunnerapp.moc"

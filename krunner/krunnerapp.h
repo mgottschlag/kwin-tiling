@@ -22,7 +22,9 @@
 #include <kworkspace.h>
 
 #include "restartingapplication.h"
+#ifdef Q_WS_X11
 #include "saverengine.h"
+#endif
 
 class KActionCollection;
 class KDialog;
@@ -43,7 +45,9 @@ public:
     KActionCollection *actionCollection();
 
     virtual int newInstance();
+#ifdef Q_WS_X11
     SaverEngine& screensaver() { return m_saver; }
+#endif
 
     bool hasCompositeManager() const;
 
@@ -73,7 +77,9 @@ private:
     void initialize();
 
     KActionCollection *m_actionCollection;
+#ifdef Q_WS_X11
     SaverEngine m_saver;
+#endif
     Interface* m_interface;
     KDialog* m_tasks;
     StartupId* m_startupId;

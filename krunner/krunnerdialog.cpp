@@ -22,18 +22,24 @@
 #include <QSvgRenderer>
 #include <QResizeEvent>
 #include <QMouseEvent>
+#ifdef Q_WS_X11
 #include <QX11Info>
+#endif
 #include <QBitmap>
 
 #include <KDebug>
+#ifdef Q_WS_X11
 #include <NETRootInfo>
+#endif
 
 #include "plasma/panelsvg.h"
 #include "plasma/theme.h"
 
 #include "krunnerapp.h"
 
+#ifdef Q_WS_X11
 #include <X11/Xlib.h>
+#endif
 
 KRunnerDialog::KRunnerDialog( QWidget * parent, Qt::WindowFlags f )
     : KDialog(parent, f)
@@ -89,6 +95,7 @@ void KRunnerDialog::resizeEvent(QResizeEvent *e)
 
 void KRunnerDialog::mousePressEvent(QMouseEvent *e)
 {
+#ifdef Q_WS_X11
     // We have to release the mouse grab before initiating the move operation.
     // Ideally we would call releaseMouse() to do this, but when we only have an
     // implicit passive grab, Qt is unaware of it, and will refuse to release it.
@@ -99,6 +106,7 @@ void KRunnerDialog::mousePressEvent(QMouseEvent *e)
     rootInfo.moveResizeRequest(winId(), e->globalX(), e->globalY(), NET::Move);
 
     e->accept();
+#endif    
 }
 
 #include "krunnerdialog.moc"

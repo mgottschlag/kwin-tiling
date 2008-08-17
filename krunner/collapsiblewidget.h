@@ -30,7 +30,7 @@ class QScrollArea;
   @short A widget that has a caption and a collapsible widget
   @author Daniel Molkentin <molkentin@kde.org>
  */
-class Q_GUI_EXPORT CollapsibleWidget : public QWidget
+class CollapsibleWidget : public QWidget
 {
     Q_OBJECT
     public:
@@ -68,7 +68,7 @@ class Q_GUI_EXPORT CollapsibleWidget : public QWidget
          usually in the form of CollapsibleWidgets.
   @author Daniel Molkentin <molkentin@kde.org>
  */
-class Q_GUI_EXPORT SettingsContainer : public QScrollArea
+class SettingsContainer : public QScrollArea
 {
     Q_ENUMS( CollapseState )
     Q_OBJECT

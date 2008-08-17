@@ -23,22 +23,33 @@ set(krunner_SRCS
     main.cpp
     resultitem.cpp
     resultscene.cpp
+    stackblur_shadows.cpp)
+if(NOT WIN32)
+set(krunner_SRCS
+    ${krunner_SRCS}
     saverengine.cpp
-    stackblur_shadows.cpp
     startupid.cpp
     xautolock.cpp
     xautolock_diy.c
     xautolock_engine.c)
+endif(NOT WIN32)
+    
 
 kde4_add_kcfg_files(krunner_SRCS ${krunner_KCFG_SRCS})
 
 qt4_add_dbus_adaptor(krunner_SRCS ${krunner_dbusXML} interface.h Interface)
 qt4_add_dbus_adaptor(krunner_SRCS ${krunner_dbusAppXML} krunnerapp.h KRunnerApp)
+if(NOT WIN32)
 qt4_add_dbus_adaptor(krunner_SRCS ${screensaver_dbusXML} saverengine.h SaverEngine)
 qt4_add_dbus_adaptor(krunner_SRCS ${kscreensaver_dbusXML} saverengine.h SaverEngine kscreensaveradaptor KScreenSaverAdaptor)
+endif(NOT WIN32)
 
 kde4_add_kdeinit_executable(krunner ${krunner_SRCS})
+if(NOT WIN32)
 target_link_libraries(kdeinit_krunner plasma kworkspace processui ${KDE4_SOLID_LIBRARIES} ${KDE4_THREADWEAVER_LIBRARIES} ${X11_Xrender_LIB} ${KDE4_KDEUI_LIBS}  ${KDE4_KUTILS_LIBS} ${X11_LIBRARIES})
+else(NOT WIN32)
+target_link_libraries(kdeinit_krunner plasma  ${KDE4_SOLID_LIBRARIES} ${KDE4_THREADWEAVER_LIBRARIES} ${KDE4_KDEUI_LIBS}  ${KDE4_KUTILS_LIBS})
+endif(NOT WIN32)
 
 if(X11_Xss_LIB)
   target_link_libraries(kdeinit_krunner ${X11_Xss_LIB})
@@ -48,7 +59,9 @@ if(X11_Xcursor_FOUND)
   target_link_libraries(kdeinit_krunner ${X11_Xcursor_LIB})
 endif(X11_Xcursor_FOUND)
 
+if(NOT WIN32)
 add_subdirectory( lock )
+endif(NOT WIN32)
 
 install(TARGETS kdeinit_krunner ${INSTALL_TARGETS_DEFAULT_ARGS} )
 install(TARGETS krunner         ${INSTALL_TARGETS_DEFAULT_ARGS} )
