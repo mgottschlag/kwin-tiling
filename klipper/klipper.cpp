@@ -136,6 +136,7 @@ Klipper::Klipper(QObject *parent, const KSharedConfigPtr &config)
     toggleURLGrabAction = new KToggleAction( this );
     collection->addAction( "toggleUrlGrabAction", toggleURLGrabAction );
     toggleURLGrabAction->setEnabled( true );
+    toggleURLGrabAction->setText(i18n("Enable &Actions"));
     //toggleURLGrabAction->setGroup( defaultGroup );
     clearHistoryAction = collection->addAction( "clearHistoryAction" );
     clearHistoryAction->setIcon( KIcon("edit-clear-history") );
@@ -601,11 +602,9 @@ void Klipper::setURLGrabberEnabled( bool enable )
     if ( !bURLGrabber ) {
         delete myURLGrabber;
         myURLGrabber = 0L;
-        toggleURLGrabAction->setText(i18n("Enable &Actions"));
     }
 
     else {
-        toggleURLGrabAction->setText(i18n("&Actions Enabled"));
         if ( !myURLGrabber ) {
             myURLGrabber = new URLGrabber( m_config );
             connect( myURLGrabber, SIGNAL( sigPopup( QMenu * )),
