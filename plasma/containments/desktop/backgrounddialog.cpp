@@ -98,9 +98,9 @@ void ThemeModel::reload()
     QStringList themes = dirs.findAllResources("data", "desktoptheme/*/metadata.desktop", KStandardDirs::NoDuplicates);
     foreach (const QString &theme, themes) {
         kDebug() << theme;
-        int themeSepIndex = theme.lastIndexOf("/", -1);
+        int themeSepIndex = theme.lastIndexOf('/', -1);
         QString themeRoot = theme.left(themeSepIndex);
-        int themeNameSepIndex = themeRoot.lastIndexOf("/", -1);
+        int themeNameSepIndex = themeRoot.lastIndexOf('/', -1);
         QString packageName = themeRoot.right(themeRoot.length() - themeNameSepIndex - 1);
 
         KDesktopFile df(theme);
@@ -548,6 +548,7 @@ BackgroundDialog::BackgroundDialog(const QSize &res,
 {
     setWindowIcon(KIcon("preferences-desktop-wallpaper"));
     setCaption(i18n("Desktop Settings"));
+    showButtonSeparator(true);
     setButtons(Ok | Cancel | Apply);
 
     QWidget * main = new QWidget(this);
