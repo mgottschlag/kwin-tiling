@@ -39,6 +39,7 @@ set ( Kickoff_LIBS
         ${KDE4_KIO_LIBS}
         ${KDE4_KFILE_LIBS}
         ${KDE4_SOLID_LIBS}
+        solidcontrol
         kworkspace)
 else(NOT WIN32)
 set(Kickoff_LIBS ${KDE4_KIO_LIBS} ${KDE4_KFILE_LIBS} ${KDE4_SOLID_LIBS})

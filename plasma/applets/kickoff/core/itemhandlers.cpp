@@ -28,7 +28,7 @@
 #include <KService>
 #include <KToolInvocation>
 #include <KUrl>
-#include <solid/powermanagement.h>
+#include <solid/control/powermanager.h>
 
 // KDE Base
 #include <kworkspace/kworkspace.h>
@@ -65,10 +65,10 @@ bool LeaveItemHandler::openUrl(const KUrl& url)
     m_logoutAction = url.path().remove('/');
 
     if (m_logoutAction == "sleep") {
-        Solid::PowerManagement::requestSleep(Solid::PowerManagement::SuspendState,0,0);
+        Solid::Control::PowerManager::suspend(Solid::Control::PowerManager::ToRam);
         return true;
     } else if (m_logoutAction == "hibernate") {
-        Solid::PowerManagement::requestSleep(Solid::PowerManagement::HibernateState,0,0);
+        Solid::Control::PowerManager::suspend(Solid::Control::PowerManager::ToDisk);
         return true;
     } else if (m_logoutAction == "lock") {
         // decouple dbus call, otherwise we'll run into a dead-lock
