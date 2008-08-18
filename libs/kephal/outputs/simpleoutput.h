@@ -35,6 +35,7 @@ namespace kephal {
         public:
             SimpleOutput(QObject * parent, QString id, QSize resolution, QPoint position, bool connected, bool activated);
             SimpleOutput(QObject * parent);
+            SimpleOutput(QObject * parent, Output * output);
             
             virtual QString id();
 
@@ -43,7 +44,7 @@ namespace kephal {
             virtual void setSize(QSize size);
             virtual QList<QSize> availableSizes();
             virtual QPoint position();
-            virtual void setPosition(QMap<Position, Output *> anchors);
+            //virtual void setPosition(QMap<Position, Output *> anchors);
             //QList<PositionType> getRelativePosition();
             virtual QString vendor();
             virtual int productId();

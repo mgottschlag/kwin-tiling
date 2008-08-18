@@ -15,20 +15,30 @@ SET (libkephal_SRCS libkephal.cpp ../screens/screens.cpp ../screens/screen.cpp
         ../outputs/simpleoutput.cpp
         ../outputs/dbus/dbusoutputs.cpp
         ../outputs/desktopwidget/desktopwidgetoutputs.cpp
-        ../outputs/outputs.cpp)
+        ../outputs/outputs.cpp
+        ../configurations/configurations.cpp
+        ../configurations/dbus/dbusconfigurations.cpp
+        ../configurations/noconfigurations.cpp)
 QT4_WRAP_CPP (libkephal_SRCS ../screens/screens.h ../screens/simplescreen.h
         ../screens/screen.h ../screens/dbus/dbusscreens.h
         ../screens/output/outputscreens.h
         ../outputs/simpleoutput.h
         ../outputs/dbus/dbusoutputs.h
         ../outputs/desktopwidget/desktopwidgetoutputs.h
-        ../outputs/outputs.h)
+        ../outputs/outputs.h
+        ../configurations/configurations.h
+        ../configurations/dbus/dbusconfigurations.h
+        ../configurations/noconfigurations.h)
 QT4_ADD_DBUS_INTERFACE(libkephal_SRCS ${CMAKE_CURRENT_BINARY_DIR}/../kephald/org.kde.Kephal.Screens.xml screens_interface)
 QT4_ADD_DBUS_INTERFACE(libkephal_SRCS ${CMAKE_CURRENT_BINARY_DIR}/../kephald/org.kde.Kephal.Outputs.xml outputs_interface)
+QT4_ADD_DBUS_INTERFACE(libkephal_SRCS ${CMAKE_CURRENT_BINARY_DIR}/../kephald/org.kde.Kephal.Configurations.xml configurations_interface)
 ADD_LIBRARY (kephal SHARED ${libkephal_SRCS})
+#TARGET_LINK_LIBRARIES (kephal kephalxml)
+
 INSTALL (TARGETS kephal DESTINATION lib)
 INSTALL (FILES 
         ../screens/screens.h ../screens/screen.h
         ../outputs/outputs.h ../common/kephal.h
+        ../configurations/configurations.h
         DESTINATION include/kephal)
 INSTALL (FILES FindKephal.cmake DESTINATION share/apps/cmake/modules)

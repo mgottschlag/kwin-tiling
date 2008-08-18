@@ -110,137 +110,6 @@ namespace kephal {
         }
     }
     
-    /*bool XRandROutputs::relayout(XRandROutput * output, QMap<Position, Output *> anchors, QSize size)
-    {
-        QMap<QString, QRect> layout = relayout(output->id(), anchors, size, this->layout());
-        
-        if (layout.isEmpty()) {
-            return false;
-        } else {
-            qDebug() << "relayout to:" << layout;
-            return true;
-        }
-    }
-    
-    bool XRandROutputs::checkLayout(XRandROutput * output, QMap<Position, Output *> anchors, QSize size)
-    {
-        return checkLayout(output->id(), anchors, size, layout());
-    }
-    
-    QMap<QString, QRect> XRandROutputs::relayout(QString output, QMap<Position, Output *> anchors, QSize size, QMap<QString, QRect> layout)
-    {
-        QMap<QString, QRect> result;
-        
-        for (QMap<QString, QRect>::const_iterator i = layout.constBegin(); i != layout.constEnd(); ++i) {
-            if (i.key() == output) {
-                continue;
-            }
-            
-            result.insert(i.key(), i.value());
-            abc
-        }
-        
-        return result;
-    }
-    
-    bool XRandROutputs::checkLayout(QString output, QMap<Position, Output *> anchors, QSize size, QMap<QString, QRect> layout)
-    {
-    }
-    
-    bool XRandROutputs::checkLayout(QMap<QString, QRect> layout)
-    {
-        QMap<QString, QSet<QString> > anchored;
-        for (QMap<QString, QRect>::const_iterator i = layout.constBegin(); i != layout.constEnd(); ++i) {
-            for (QMap<QString, QRect>::const_iterator j = layout.constBegin(); j != layout.constEnd(); ++j) {
-                if (i.key() == j.key()) {
-                    continue;
-                }
-                
-                QString id1 = i.key();
-                QString id2 = j.key();
-                QRect g1 = i.value();
-                QRect g2 = j.value();
-                
-                if ((g1.topLeft() != g2.topLeft()) && g1.intersects(g2)) {
-                    return false;
-                } else if ((g1.topLeft == g2.topLeft)
-                        || (g1.topLeft == g2.topRight)
-                        || (g1.topRight == g2.topLeft)
-                        || (g1.topLeft == g2.bottomLeft)
-                        || (g1.bottomLeft == g2.topLeft)) {
-                    if ((! anchored.contains(id1)) || (! anchored[id1].contains(id2))) {
-                        QSet<QString> g1Set;
-                        QSet<QString> g2Set;
-                        if (! anchored.contains(id1)) {
-                            g1Set.insert(id1);
-                            anchored.insert(id1, g1Set);
-                        } else {
-                            g1Set = anchored[id1];
-                        }
-                        
-                        if (! anchored.contains(id2)) {
-                            g2Set.insert(id2);
-                            anchored.insert(id2, g2Set);
-                        } else {
-                            g2Set = anchored[id2];
-                        }
-                        
-                        g1Set.unite(g2Set);
-                        foreach (QString id, g1Set) {
-                            if (id == id1) {
-                                continue;
-                            }
-                            
-                            anchored.insert(id, g1Set);
-                        }
-                    }
-                }
-            }
-        }
-        
-        if (anchored.beginConst().value().size() == layout.size()) {
-            return true;
-        }
-        
-        return true;
-    }
-    
-    QMap<QString, QRect> XRandROutputs::layout()
-    {
-        QMap<QString, QRect> layout;
-        for (QMap<QString, XRandROutput *>::const_iterator i = m_outputs.constBegin(); i != m_outputs.constEnd(); ++i) {
-            layout.insert(i.key(), i.value()->geom());
-        }
-    }
-    
-    /*QMap<Position, QString> XRandROutputs::anchors(QString output, QMap<QString, QRect> layout)
-    {
-        QMap<Position, Output *> anchors;
-        QRect geom = layout[output];
-        for (QMap<QString, QRect>::const_iterator i = layout.constBegin(); i != layout.constEnd(); ++i) {
-            if (i.key() == output) {
-                continue;
-            }
-            
-            if (geom.topRight() == i.value().topLeft()) {
-                anchors.insert(LeftOf, i.key());
-            } else if (geom.topLeft() == i.value().topRight()) {
-                anchors.insert(RightOf, i.key());
-            } else if (geom.topLeft() == i.value().bottomLeft()) {
-                anchors.insert(BottomOf, i.key());
-            } else if (geom.bottomLeft() == i.value().topLeft()) {
-                anchors.insert(TopOf, i.key());
-            } else if (geom.topLeft() == i.value().topLeft()) {
-                anchors.insert(SameAs, i.key());
-            }
-        }
-    }
-    
-    QMap<Position, QString> XRandROutputs::anchors(QString output)
-    {
-        return anchors(output, layout());
-    }*/
-    
     
     
     XRandROutput::XRandROutput(XRandROutputs * parent, RROutput rrId)
@@ -391,11 +260,6 @@ namespace kephal {
         output()->slotDisable();
     }
     
-    /*void XRandROutput::_activate() {
-        //qDebug() << "rates:" << output()->refreshRate() << "-" << output()->refreshRates(size());
-        output()->slotEnable();
-    }*/
-    
     RandROutput * XRandROutput::output() {
         return m_outputs->output(m_rrId);
     }
@@ -423,10 +287,6 @@ namespace kephal {
         return sizes;
     }
     
-    void XRandROutput::setSize(QSize size) {
-        qDebug() << "XRandROutput::setSize() called:" << size;
-    }
-    
     QPoint XRandROutput::position() {
         return output()->rect().topLeft();
     }
@@ -437,9 +297,6 @@ namespace kephal {
     
     bool XRandROutput::isActivated() {
         return output()->isActive();
-    }
-    
-    void XRandROutput::setPosition(QMap<Position, Output *> anchors) {
     }
     
     QString XRandROutput::vendor() {

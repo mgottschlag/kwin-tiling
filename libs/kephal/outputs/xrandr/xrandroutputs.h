@@ -38,13 +38,10 @@ namespace kephal {
 
             QSize size();
             QSize preferredSize();
-            void setSize(QSize size);
             QList<QSize> availableSizes();
             QPoint position();
-            void setPosition(QMap<Position, Output *> anchors);
             bool isConnected();
             bool isActivated();
-            //QList<PositionType> getRelativePosition();
             QString vendor();
             int productId();
             unsigned int serialNumber();

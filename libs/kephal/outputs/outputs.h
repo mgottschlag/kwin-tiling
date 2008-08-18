@@ -54,10 +54,11 @@ namespace kephal {
             
             Screen * screen();
             QRect geom();
+            QList<QPoint> availablePositions();
             
         public Q_SLOTS:
-            virtual void setSize(QSize size) = 0;
-            virtual void setPosition(QMap<Position, Output *> anchors) = 0;
+            void setSize(QSize size);
+            void setPosition(QPoint position);
     };
     
 
@@ -69,6 +70,8 @@ namespace kephal {
             Outputs(QObject * parent);
             virtual QList<Output *> outputs() = 0;
             virtual void activateLayout(QMap<Output *, QRect> layout) = 0;
+            
+            virtual Output * output(QString id);
             
         Q_SIGNALS:
             void outputConnected(Output * o);

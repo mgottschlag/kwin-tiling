@@ -21,7 +21,7 @@
 #include <QDebug>
 
 #include "dbusapi_outputs.h"
-#include "../../outputs/outputs.h"
+#include "outputs/outputs.h"
 #include "outputsadaptor.h"
 
 #include <QVariant>
@@ -30,10 +30,8 @@
 using namespace kephal;
 
 DBusAPIOutputs::DBusAPIOutputs(QObject * parent)
-        : QObject(parent)
+    : QObject(parent)
 {
-    //qDBusRegisterMetaType<QList<QString> >();
-
     new OutputsAdaptor(this);
     QDBusConnection dbus = QDBusConnection::sessionBus();
     
@@ -44,7 +42,7 @@ DBusAPIOutputs::DBusAPIOutputs(QObject * parent)
 
 QSize DBusAPIOutputs::size(QString id)
 {
-    Output * output = this->output(id);
+    Output * output = Outputs::instance()->output(id);
     if (output && output->isActivated()) {
         return output->size();
     }
@@ -53,7 +51,7 @@ QSize DBusAPIOutputs::size(QString id)
 
 void DBusAPIOutputs::setSize(QString id, QSize size)
 {
-    Output * output = this->output(id);
+    Output * output = Outputs::instance()->output(id);
     if (output && output->isActivated()) {
         output->setSize(size);
     }
@@ -61,7 +59,7 @@ void DBusAPIOutputs::setSize(QString id, QSize size)
 
 int DBusAPIOutputs::numAvailableSizes(QString id)
 {
-    Output * output = this->output(id);
+    Output * output = Outputs::instance()->output(id);
     if (output && output->isActivated()) {
         return output->availableSizes().size();
     }
@@ -70,7 +68,7 @@ int DBusAPIOutputs::numAvailableSizes(QString id)
 
 QSize DBusAPIOutputs::availableSize(QString id, int i)
 {
-    Output * output = this->output(id);
+    Output * output = Outputs::instance()->output(id);
     if (output && output->isActivated()) {
         return output->availableSizes()[i];
     }
@@ -79,7 +77,7 @@ QSize DBusAPIOutputs::availableSize(QString id, int i)
 
 QPoint DBusAPIOutputs::position(QString id)
 {
-    Output * output = this->output(id);
+    Output * output = Outputs::instance()->output(id);
     if (output && output->isActivated()) {
         return output->position();
     }
@@ -100,7 +98,7 @@ QStringList DBusAPIOutputs::outputIds()
 
 bool DBusAPIOutputs::isConnected(QString id)
 {
-    Output * output = this->output(id);
+    Output * output = Outputs::instance()->output(id);
     if (output && output->isConnected()) {
         return true;
     }
@@ -109,14 +107,14 @@ bool DBusAPIOutputs::isConnected(QString id)
 
 bool DBusAPIOutputs::isActivated(QString id)
 {
-    Output * output = this->output(id);
+    Output * output = Outputs::instance()->output(id);
     if (output && output->isActivated()) {
         return true;
     }
     return false;
 }
 
-Output * DBusAPIOutputs::output(QString id) {
+/*Output * DBusAPIOutputs::output(QString id) {
     QList<Output *> outputs = Outputs::instance()->outputs();
     foreach (Output * output, outputs) {
         if (output->id() == id) {
@@ -124,6 +122,6 @@ Output * DBusAPIOutputs::output(QString id) {
         }
     }
     return 0;
-}
+}*/
 
 

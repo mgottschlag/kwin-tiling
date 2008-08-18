@@ -43,6 +43,16 @@ namespace kephal {
     {
     }
     
+    SimpleOutput::SimpleOutput(QObject * parent, Output * output)
+        : Output(parent)
+    {
+        m_id = output->id();
+        m_size = output->size();
+        m_position = output->position();
+        m_connected = output->isConnected();
+        m_activated = output->isActivated();
+    }
+    
     
     QString SimpleOutput::id()
     {
@@ -102,9 +112,9 @@ namespace kephal {
         return m_connected && m_activated;
     }
     
-    void SimpleOutput::setPosition(QMap<Position, Output *> anchors) {
+    /*void SimpleOutput::setPosition(QMap<Position, Output *> anchors) {
         emit positionChangeRequested(this, m_anchors, anchors);
-    }
+    }*/
     
     void SimpleOutput::_setAnchors(QMap<Position, Output *> anchors) {
         m_anchors = anchors;

@@ -29,6 +29,7 @@
 #include "outputs/xrandr/xrandroutputs.h"
 #include "dbus/dbusapi_screens.h"
 #include "dbus/dbusapi_outputs.h"
+#include "dbus/dbusapi_configurations.h"
 //#include "xml/configurations_xml.h"
 #include "configurations/xml/xmlconfigurations.h"
 #include "xrandr12/randrdisplay.h"
@@ -122,6 +123,7 @@ void KephalD::init() {
     
     new DBusAPIScreens(this);
     new DBusAPIOutputs(this);
+    new DBusAPIConfigurations(this);
     
     m_pollTimer = new QTimer(this);
     connect(m_pollTimer, SIGNAL(timeout()), this, SLOT(poll()));

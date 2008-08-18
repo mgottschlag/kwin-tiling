@@ -9,5 +9,5 @@ SET (xrandr12_SRCS randr.cpp randrscreen.cpp randroutput.cpp randrcrtc.cpp
 QT4_WRAP_CPP (xrandr12_SRCS randr.h randrscreen.h randroutput.h randrcrtc.h
     randrmode.h randrdisplay.h)
 
-ADD_LIBRARY (xrandr12 ${xrandr12_SRCS})
+#ADD_LIBRARY (xrandr12 ${xrandr12_SRCS})
 

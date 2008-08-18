@@ -22,13 +22,11 @@
 #define DBUSAPI_OUTPUTS_H
 
 
-#include "../../outputs/outputs.h"
-
 #include <QObject>
 #include <QVariant>
 #include <QStringList>
-
-//Q_DECLARE_METATYPE(QList<QString>)
+#include <QSize>
+#include <QPoint>
 
 
 class DBusAPIOutputs : public QObject
@@ -50,8 +48,8 @@ class DBusAPIOutputs : public QObject
         
         void setSize(QString id, QSize size);
         
-    private:
-        kephal::Output * output(QString id);
+    /*private:
+        kephal::Output * output(QString id);*/
 };
 
 

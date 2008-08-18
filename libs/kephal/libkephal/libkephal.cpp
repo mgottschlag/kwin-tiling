@@ -20,6 +20,8 @@
 
 #include "screens/dbus/dbusscreens.h"
 #include "outputs/dbus/dbusoutputs.h"
+#include "configurations/dbus/dbusconfigurations.h"
+#include "configurations/noconfigurations.h"
 #include "screens/output/outputscreens.h"
 #include "outputs/desktopwidget/desktopwidgetoutputs.h"
 
@@ -30,10 +32,12 @@ void libkephal_factory() {
     qDebug() << "trying to access kephald...";
     DBusScreens * screens = new DBusScreens(qApp);
     DBusOutputs * outputs = new DBusOutputs(qApp);
-    if ((! screens->isValid()) || (! outputs->isValid())) {
+    DBusConfigurations * configurations = new DBusConfigurations(qApp);
+    if ((! screens->isValid()) || (! outputs->isValid()) || (! configurations->isValid())) {
         qDebug() << "could not access kephald, falling back to QDesktopWidget";
         new DesktopWidgetOutputs(qApp);
         new OutputScreens(qApp);
+        new NoConfigurations(qApp);
     }
 }
 

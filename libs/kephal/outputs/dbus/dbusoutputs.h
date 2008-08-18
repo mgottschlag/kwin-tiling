@@ -33,7 +33,7 @@ namespace kephal {
         Q_OBJECT
         public:
             DBusOutputs(QObject * parent);
-            ~DBusOutputs();
+            //~DBusOutputs();
             
             QList<Output *> outputs();
             void activateLayout(QMap<Output *, QRect> layout);

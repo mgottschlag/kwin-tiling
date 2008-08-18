@@ -18,8 +18,11 @@
  */
 
 
+#include <QDebug>
+
 #include "outputs.h"
 #include "screens/screens.h"
+#include "configurations/configurations.h"
 
 #ifdef OUTPUTS_FACTORY
 void OUTPUTS_FACTORY();
@@ -41,6 +44,15 @@ namespace kephal {
             : QObject(parent)
     {
         Outputs::m_instance = this;
+    }
+    
+    Output * Outputs::output(QString id) {
+        foreach (Output * o, outputs()) {
+            if (o->id() == id) {
+                return o;
+            }
+        }
+        return 0;
     }
     
     Outputs * Outputs::m_instance = 0;
@@ -68,6 +80,20 @@ namespace kephal {
         }
         return 0;
     }
-
+    
+    QList<QPoint> Output::availablePositions() {
+        return Configurations::instance()->possiblePositions(this);
+    }
+    
+    void Output::setPosition(QPoint position) {
+        qDebug() << "Output::setPosition() called:" << position;
+        Configurations::instance()->move(this, position);
+    }
+    
+    void Output::setSize(QSize size) {
+        qDebug() << "Output::setSize() called:" << size;
+        Configurations::instance()->resize(this, size);
+    }
+    
 }
 

@@ -37,7 +37,7 @@ namespace kephal {
             Configuration(QObject * parent);
 
             virtual QString name() = 0;
-            virtual bool modifiable() = 0;
+            virtual bool isModifiable() = 0;
             virtual bool isActivated() = 0;
             virtual QMap<int, QPoint> layout() = 0;
             
@@ -72,7 +72,9 @@ namespace kephal {
             virtual Configuration * findConfiguration() = 0;
             virtual Configuration * activeConfiguration() = 0;
             virtual QList<Configuration *> alternateConfigurations() = 0;
-            virtual QList<QPoint> possiblePositions(Output *) = 0;
+            virtual QList<QPoint> possiblePositions(Output * output) = 0;
+            virtual void move(Output * output, QPoint position) = 0;
+            virtual void resize(Output * output, QSize size) = 0;
             
             static void translateOrigin(QMap<int, QPoint> & layout);
             static void translateOrigin(QMap<int, QPoint> & layout, QPoint origin);

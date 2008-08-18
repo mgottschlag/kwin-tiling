@@ -76,13 +76,6 @@ namespace kephal {
         }
     }
     
-    DBusOutputs::~DBusOutputs() {
-        foreach(Output * output, m_outputs) {
-            delete output;
-        }
-        m_outputs.clear();
-    }
-
     void DBusOutputs::resizeRequested(SimpleOutput * output, QSize oldSize, QSize newSize) {
         qDebug() << "resize requested:" << output->id() << oldSize << newSize;
         m_interface->setSize(output->id(), newSize);

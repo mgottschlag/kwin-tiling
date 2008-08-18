@@ -42,7 +42,7 @@ namespace kephal {
             XMLConfiguration(XMLConfigurations * parent, ConfigurationXML * configuration);
             
             QString name();
-            bool modifiable();
+            bool isModifiable();
             bool isActivated();
             void activate();
             QMap<int, QPoint> layout();
@@ -69,7 +69,9 @@ namespace kephal {
             Configuration * findConfiguration();
             Configuration * activeConfiguration();
             QList<Configuration *> alternateConfigurations();
-            QList<QPoint> possiblePositions(Output *);
+            QList<QPoint> possiblePositions(Output * output);
+            void move(Output * output, QPoint position);
+            void resize(Output * output, QSize size);
             
         public Q_SLOTS:
             void activate(XMLConfiguration * configuration);
@@ -91,6 +93,7 @@ namespace kephal {
             QMap<XMLConfiguration *, QMap<int, QPoint> > matchingConfigurationsLayouts(const QMap<int, QPoint> & currentLayout, int removedOutputs);
             XMLConfiguration * simpleConfiguration(int numScreens);
             void saveXml();
+            bool activateLayout(const QMap<int, QRect> & layout);
             
             QMap<QString, XMLConfiguration *> m_configurations;
             XMLConfiguration * m_activeConfiguration;
