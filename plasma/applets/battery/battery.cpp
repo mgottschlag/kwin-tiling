@@ -46,7 +46,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_theme(0),
       m_animId(-1),
       m_alpha(1),
-      m_fadeIn(true),
+      m_fadeIn(false),
       m_acAnimId(-1),
       m_acAlpha(1),
       m_acFadeIn(false),
