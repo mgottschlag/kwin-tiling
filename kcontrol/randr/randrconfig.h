@@ -24,6 +24,7 @@
 #include "randr.h"
 
 #include <QWidget>
+#include <QTimer>
 
 class QGraphicsScene;
 class SettingsContainer;
@@ -54,6 +55,8 @@ public slots:
 protected slots:
 	void slotChanged(void);
 	void slotAdjustOutput(OutputGraphicsItem *o);
+	void identifyOutputs();
+	void clearIndicators();
 
 signals:
 	void changed(bool change);
@@ -70,6 +73,8 @@ private:
 	QList<CollapsibleWidget*> m_outputList;
 	QGraphicsScene *m_scene;
 	LayoutManager *m_layoutManager;
+	QList<QWidget*> m_indicators;
+	QTimer identifyTimer;
 };
 
 

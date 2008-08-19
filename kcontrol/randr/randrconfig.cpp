@@ -28,6 +28,8 @@
 #include "randrdisplay.h"
 #include "randrscreen.h"
 
+#include <kglobalsettings.h>
+
 RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	: QWidget(parent), Ui::RandRConfigBase()
 {
@@ -43,6 +45,10 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 	}
 
 	setupUi(this);
+
+	connect( identifyOutputsButton, SIGNAL( clicked()), SLOT( identifyOutputs()));
+	connect( &identifyTimer, SIGNAL( timeout()), SLOT( clearIndicators()));
+	identifyTimer.setSingleShot( true );
 
 	// create the container for the settings widget
 	QHBoxLayout *layout = new QHBoxLayout(outputList);
@@ -62,6 +68,7 @@ RandRConfig::RandRConfig(QWidget *parent, RandRDisplay *display)
 
 RandRConfig::~RandRConfig()
 {
+	clearIndicators();
 }
 
 void RandRConfig::load(void)
@@ -217,6 +224,49 @@ void RandRConfig::slotUpdateView()
 	screenView->scale(scale,scale);
 	screenView->ensureVisible(r);
 	screenView->setSceneRect(r);
+}
+
+uint qHash( const QPoint& p )
+{
+	return p.x() * 10000 + p.y();
+}
+
+void RandRConfig::identifyOutputs()
+{
+	identifyTimer.stop();
+	clearIndicators();
+	QHash< QPoint, QStringList > ids; // outputs at centers of screens (can be more in case of clone mode)
+	OutputMap outputs = m_display->currentScreen()->outputs();
+	foreach(RandROutput *output, outputs)
+	{
+		if( !output->isConnected())
+			continue;
+		ids[ output->rect().center() ].append( output->name());
+	}
+	for( QHash< QPoint, QStringList >::ConstIterator it = ids.begin();
+	     it != ids.end();
+	     ++it )
+	{
+		QLabel *si = new QLabel(it->join("\n"), NULL, Qt::X11BypassWindowManagerHint);
+		QFont fnt = KGlobalSettings::generalFont();
+		fnt.setPixelSize(100);
+		si->setFont(fnt);
+		si->setFrameStyle(QFrame::Panel);
+		si->setFrameShadow(QFrame::Plain);
+		si->setAlignment(Qt::AlignCenter);
+		QRect targetGeometry(QPoint(0,0), si->sizeHint());
+	        targetGeometry.moveCenter(it.key());
+		si->setGeometry(targetGeometry);
+		si->show();
+	        m_indicators.append( si );
+	}
+	identifyTimer.start( 1500 );
+}
+
+void RandRConfig::clearIndicators()
+{
+	qDeleteAll( m_indicators );
+	m_indicators.clear();
 }
 
 #include "randrconfig.moc"
