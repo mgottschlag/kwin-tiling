@@ -468,4 +468,5 @@ void KRandRSystemTray::slotPrefs()
 	kcm->setPlainCaption( i18n( "Configure Display" ) );
 	kcm->addModule( "display" );
 	kcm->exec();
+	delete kcm;
 }
