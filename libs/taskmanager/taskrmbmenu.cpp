@@ -42,6 +42,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "taskrmbmenu.h"
 
+static const int ALL_DESKTOPS = 0;
+
 namespace TaskManager
 {
 
@@ -236,14 +238,14 @@ QMenu* TaskRMBMenu::makeAdvancedMenu(TaskPtr t)
 
 QMenu* TaskRMBMenu::makeDesktopsMenu(TaskPtr t)
 {
-    QMenu* m = new QMenu( this );
-    m->setTitle( i18n("To &Desktop") );
+    QMenu* m = new QMenu(this);
+    m->setTitle(i18n("To &Desktop"));
 
-    QAction *a = m->addAction( i18n("&All Desktops"), this, SLOT( slotToDesktop() ) );
+    QAction *a = m->addAction(i18n("&All Desktops"), this, SLOT(slotToDesktop()));
     a->setCheckable(true);
-    toDesktopMap.append( QPair<TaskPtr, int>( t, 0 ) ); // 0 means all desktops
-    a->setData( 0 );
-    a->setChecked( t->isOnAllDesktops() );
+    toDesktopMap.append(QPair<TaskPtr, int>(t, ALL_DESKTOPS));
+    a->setData(ALL_DESKTOPS);
+    a->setChecked(t->isOnAllDesktops());
 
     m->addSeparator();
 
@@ -261,21 +263,22 @@ QMenu* TaskRMBMenu::makeDesktopsMenu(TaskPtr t)
 
 QMenu* TaskRMBMenu::makeDesktopsMenu()
 {
-	QMenu* m = new QMenu( this );
-	QAction *a;
+    QMenu* m = new QMenu(this);
+    m->setTitle(i18n("All to &Desktop"));
+    QAction *a;
 
-	a = m->addAction( i18n("&All Desktops"), this, SLOT( slotAllToDesktop() ) );
-	a->setData( 0 ); // 0 means all desktops
+    a = m->addAction(i18n("&All Desktops"), this, SLOT(slotAllToDesktop()));
+    a->setData(ALL_DESKTOPS);
 
-	m->addSeparator();
+    m->addSeparator();
 
-	for (int i = 1; i <= TaskManager::self()->numberOfDesktops(); i++) {
-		QString name = QString("&%1 %2").arg(i).arg(TaskManager::self()->desktopName(i).replace('&', "&&"));
-		a = m->addAction( name, this, SLOT( slotAllToDesktop() ) );
-		a->setData( i );
-	}
+    for (int i = 1; i <= TaskManager::self()->numberOfDesktops(); i++) {
+        QString name = QString("&%1 %2").arg(i).arg(TaskManager::self()->desktopName(i).replace('&', "&&"));
+        a = m->addAction(name, this, SLOT(slotAllToDesktop()));
+        a->setData(i);
+    }
 
-	return m;
+    return m;
 }
 
 void TaskRMBMenu::slotMinimizeAll()
