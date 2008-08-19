@@ -182,6 +182,7 @@ void Clock::clockConfigAccepted()
 
     m_showTimezone = ui.showTimezone->isChecked();
     cg.writeEntry("showTimezone", m_showTimezone);
+    cg.writeEntry("currentTimezone", currentTimezone());
 
     m_plainClockFont = ui.plainClockFont->currentFont();
     //We need this to happen before we disconnect/reconnect sources to ensure
