@@ -24,6 +24,9 @@
         <property name="text" >
          <string>While active:</string>
         </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
         <property name="buddy" >
          <cstring>activeSlider</cstring>
         </property>
@@ -33,6 +36,9 @@
        <widget class="QLabel" name="idleLabel" >
         <property name="text" >
          <string>While idle:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
         </property>
         <property name="buddy" >
          <cstring>idleSlider</cstring>
