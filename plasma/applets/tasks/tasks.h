@@ -101,6 +101,7 @@ private slots:
         void taskMovedDesktop(TaskPtr task);
         void windowChangedGeometry(TaskPtr task);
         void checkScreenChange();
+	void addAttentionTask();
 
 private:
         // creates task representations for existing windows

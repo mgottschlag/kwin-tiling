@@ -140,6 +140,11 @@ void Tasks::registerWindowTasks()
 
     while (iter.hasNext()) {
         iter.next();
+	if (!iter.value()->isOnCurrentDesktop() && m_showOnlyCurrentDesktop ||
+	              !isOnMyScreen(iter.value()) && m_showOnlyCurrentScreen) {
+	     connect(iter.value().data(),SIGNAL(changed()),
+                           this, SLOT(addAttentionTask()));
+	}
         addWindowTask(iter.value());
     }
     updatePreferredSize();
@@ -151,11 +156,11 @@ void Tasks::addWindowTask(TaskPtr task)
         return;
     }
 
-    if (m_showOnlyCurrentDesktop && !task->isOnCurrentDesktop()) {
+    if (m_showOnlyCurrentDesktop && !task->isOnCurrentDesktop() && !task->demandsAttention()) {
         return;
     }
 
-    if (m_showOnlyCurrentScreen && !isOnMyScreen(task)) {
+    if (m_showOnlyCurrentScreen && !isOnMyScreen(task) && !task->demandsAttention()) {
         return;
     }
 
@@ -372,7 +377,7 @@ void Tasks::taskMovedDesktop(TaskPtr task)
         return;
     }
 
-    if (!task->isOnCurrentDesktop()) {
+    if (!task->isOnCurrentDesktop() && !task->demandsAttention()) {
         removeWindowTask(task);
     } else if (!m_windowTaskItems.contains(task)) {
         addWindowTask(task);
@@ -393,7 +398,7 @@ void Tasks::windowChangedGeometry(TaskPtr task)
 void Tasks::checkScreenChange()
 {
     foreach (const TaskPtr &task, m_geometryTasks) {
-        if (!isOnMyScreen(task)) {
+        if (!isOnMyScreen(task) && !task->demandsAttention()) {
             removeWindowTask(task);
         } else if (!m_windowTaskItems.contains(task)) {
             addWindowTask(task);
@@ -567,6 +572,17 @@ void Tasks::themeRefresh()
     foreach (WindowTaskItem *taskItem, m_windowTaskItems) {
         taskItem->update();
     }
+}
+
+/** Adds a windowTaskItem that is demanding attention to the taskbar if it is not currently shown and is not on the current desktop.
+*This funtion applies when the m_showOnlyCurrentDesktop or m_showOnlyCurrentScreen switch set. */
+void Tasks::addAttentionTask()
+{
+  TaskPtr task;
+  task.attach(qobject_cast<TaskManager::Task*>(sender()));
+  if (task->demandsAttention() && !m_windowTaskItems.contains(task)) {
+      addWindowTask(task);
+  }
 }
 
 K_EXPORT_PLASMA_APPLET(tasks, Tasks)
