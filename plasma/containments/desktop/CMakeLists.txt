@@ -2,7 +2,8 @@ set(desktop_SRCS
     desktop.cpp
     backgrounddialog.cpp
     backgroundpackage.cpp
-    renderthread.cpp)
+    renderthread.cpp
+    desktoplayout.cpp)
 
 kde4_add_ui_files( desktop_SRCS BackgroundDialog.ui )
 

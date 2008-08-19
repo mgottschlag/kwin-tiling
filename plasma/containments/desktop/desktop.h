@@ -34,6 +34,7 @@
 #include <plasma/animator.h>
 
 #include "renderthread.h"
+#include "desktoplayout.h"
 
 class BackgroundDialog;
 class QAction;
@@ -96,33 +97,18 @@ protected Q_SLOTS:
     void addPanel();
 
     void onAppletAdded(Plasma::Applet *, const QPointF &);
+    void onAppletDestroyed(QObject *applet);
+    void onAppletGeometryChanged();
+    void refreshWorkingArea();
+
+protected:
+    void saveContents(KConfigGroup &group) const;
+    void restoreContents(KConfigGroup &group);
 
 private:
     void reloadConfig();
     QSize resolution() const;
     void suspendStartup(bool suspend); // for ksmserver
-
-    enum HorizAlign { Left = 0, Right = 1 };
-    enum VertAlign { Top = 0, Bottom = 1 };
-
-    static const int APPLET_SPACING = 20;
-
-    /**
-     * Positions a new applet horizontally or vertically with the alignment specified.
-     * spL, spR, spT, spB is spacing left, right, above(Top) and below(Bottom) the applet.
-     */
-    QPointF positionHorizontally(Applet *applet, VertAlign yAlign, HorizAlign xAlign, qreal spL, qreal spR, qreal spT, qreal spB) const;
-    QPointF positionVertically(Applet *applet, VertAlign yAlign, HorizAlign xAlign, qreal spL, qreal spR, qreal spT, qreal spB) const;
-
-    // function used by the positioning functions
-    QRectF appletInRegionStartingFirstHoriz(Plasma::Applet *target, const QRectF &region) const;
-    QRectF appletInRegionEndingLastHoriz(Plasma::Applet *target, const QRectF &region) const;
-    QRectF appletInRegionEndingFirstVert(Plasma::Applet *target, const QRectF &region) const;
-    QRectF appletInRegionStartingLastVert(Plasma::Applet *target, const QRectF &region) const;
-    QRectF appletInRegionStartingFirstVert(Plasma::Applet *target, const QRectF &region) const;
-    QRectF appletInRegionEndingLastVert(Plasma::Applet *target, const QRectF &region) const;
-    QRectF appletInRegionEndingFirstHoriz(Plasma::Applet *target, const QRectF &region) const;
-    QRectF appletInRegionStartingLastHoriz(Plasma::Applet *target, const QRectF &region) const;
 
     QAction *m_lockDesktopAction;
     QAction *m_appletBrowserAction;
@@ -152,6 +138,9 @@ private:
 
     RenderThread m_renderer;
     int m_rendererToken;
+
+    DesktopLayout *m_layout;
+    bool restoring;
 };
 
 #endif // PLASMA_PANEL_H
