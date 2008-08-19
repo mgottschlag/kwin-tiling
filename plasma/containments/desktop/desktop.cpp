@@ -74,7 +74,8 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
       m_wallpaperPath(0),
       m_wallpaperPosition(0),
       m_renderer(resolution(), 1.0),
-      m_rendererToken(-1)
+      m_rendererToken(-1),
+      restoring(false)
 {
     qRegisterMetaType<QImage>("QImage");
     qRegisterMetaType<QPersistentModelIndex>("QPersistentModelIndex");
@@ -100,6 +101,9 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
 
 DefaultDesktop::~DefaultDesktop()
 {
+    disconnect(KWindowSystem::self(), SIGNAL(workAreaChanged()),
+            this, SLOT(refreshWorkingArea()));
+
     delete m_configDialog;
 }
 
@@ -529,8 +533,7 @@ void DefaultDesktop::restoreContents(KConfigGroup &group)
                 if (preferredGeom.isValid() && lastGeom.isValid()) {
                     m_layout->addItem(applet, true, preferredGeom, lastGeom);
                 } else {
-                    applet->setGeometry(applet->geometry());
-                    m_layout->addItem(applet, true, applet->geometry().size());
+                    m_layout->addItem(applet, true, applet->geometry());
                 }
                 break;
             }
