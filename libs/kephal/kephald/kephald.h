@@ -42,8 +42,8 @@ class KephalD : public QApplication
         virtual bool x11EventFilter(XEvent * e);
         
     private Q_SLOTS:
-        void outputDisconnected(Output * output);
-        void outputConnected(Output * output);
+        void outputDisconnected(kephal::Output * output);
+        void outputConnected(kephal::Output * output);
         void poll();
         
     private:

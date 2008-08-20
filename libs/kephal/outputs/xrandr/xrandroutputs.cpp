@@ -122,12 +122,12 @@ namespace kephal {
         
         saveAsPrevious();
         
-        connect(this, SIGNAL(outputConnected(Output *)), parent, SIGNAL(outputConnected(Output *)));
-        connect(this, SIGNAL(outputDisconnected(Output *)), parent, SIGNAL(outputDisconnected(Output *)));
-        connect(this, SIGNAL(outputActivated(Output *)), parent, SIGNAL(outputActivated(Output *)));
-        connect(this, SIGNAL(outputDeactivated(Output *)), parent, SIGNAL(outputDeactivated(Output *)));
-        connect(this, SIGNAL(outputResized(Output *, QSize, QSize)), parent, SIGNAL(outputResized(Output *, QSize, QSize)));
-        connect(this, SIGNAL(outputMoved(Output *, QPoint, QPoint)), parent, SIGNAL(outputMoved(Output *, QPoint, QPoint)));
+        connect(this, SIGNAL(outputConnected(kephal::Output *)), parent, SIGNAL(outputConnected(kephal::Output *)));
+        connect(this, SIGNAL(outputDisconnected(kephal::Output *)), parent, SIGNAL(outputDisconnected(kephal::Output *)));
+        connect(this, SIGNAL(outputActivated(kephal::Output *)), parent, SIGNAL(outputActivated(kephal::Output *)));
+        connect(this, SIGNAL(outputDeactivated(kephal::Output *)), parent, SIGNAL(outputDeactivated(kephal::Output *)));
+        connect(this, SIGNAL(outputResized(kephal::Output *, QSize, QSize)), parent, SIGNAL(outputResized(kephal::Output *, QSize, QSize)));
+        connect(this, SIGNAL(outputMoved(kephal::Output *, QPoint, QPoint)), parent, SIGNAL(outputMoved(kephal::Output *, QPoint, QPoint)));
         
         connect(output(), SIGNAL(outputChanged(RROutput, int)), parent, SLOT(outputChanged(RROutput, int)));
         //connect(this, SLOT(_activate()), output(), SLOT(slotEnable()));
@@ -194,6 +194,7 @@ namespace kephal {
     }
     
     void XRandROutput::_changed() {
+        qDebug() << "XRandROutput::_changed()" << isConnected() << isActivated() << geom();
         if (isConnected() != m_previousConnected) {
             if (isConnected()) {
                 saveAsPrevious();

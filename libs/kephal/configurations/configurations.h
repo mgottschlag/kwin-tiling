@@ -81,6 +81,9 @@ namespace kephal {
             static void translateOrigin(QMap<int, QRect> & layout);
             static void translateOrigin(QMap<int, QRect> & layout, QPoint origin);
             
+        Q_SIGNALS:
+            void configurationActivated(Configuration * configuration);
+            
         protected:
             static Configurations * m_instance;
     };

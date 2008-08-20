@@ -18,6 +18,8 @@
  */
 
 
+#include <QDebug>
+
 #include "outputscreens.h"
 
 
@@ -37,7 +39,50 @@ namespace kephal {
         return result;
     }
     
+    int OutputScreens::findId() {
+        for (int i = 0; i < m_screens.size(); ++i) {
+            if (! m_screens.contains(i)) {
+                return i;
+            }
+        }
+        return m_screens.size();
+    }
+    
     void OutputScreens::init() {
+        buildScreens();
+        
+        connect(Outputs::instance(), SIGNAL(outputResized(kephal::Output *, QSize, QSize)), this, SLOT(outputResized(kephal::Output *, QSize, QSize)));
+    }
+    
+    void OutputScreens::outputActivated(kephal::Output * o) {
+        Q_UNUSED(o)
+        
+        rebuildScreens();
+    }
+
+    void OutputScreens::outputDeactivated(kephal::Output * o) {
+        Q_UNUSED(o)
+        
+        rebuildScreens();
+    }
+
+    void OutputScreens::outputMoved(kephal::Output * o, QPoint oldPosition, QPoint newPosition) {
+        Q_UNUSED(o)
+        Q_UNUSED(oldPosition)
+        Q_UNUSED(newPosition)
+        
+        rebuildScreens();
+    }
+
+    void OutputScreens::outputResized(kephal::Output * o, QSize oldSize, QSize newSize) {
+        Q_UNUSED(o)
+        Q_UNUSED(oldSize)
+        Q_UNUSED(newSize)
+        
+        rebuildScreens();
+    }
+    
+    void OutputScreens::buildScreens() {
         foreach (Output * output, Outputs::instance()->outputs()) {
             if (! output->isConnected() || ! output->isActivated()) {
                 continue;
@@ -52,33 +97,97 @@ namespace kephal {
                 }
             }
             if (! found) {
+                foreach (OutputScreen * screen, m_screens) {
+                    if (screen->outputs().empty()) {
+                        screen->add(output);
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (! found) {
                 OutputScreen * screen = new OutputScreen(this);
+                screen->_setId(findId());
                 screen->add(output);
-                m_screens.append(screen);
+                m_screens.insert(screen->id(), screen);
             }
         }
         
-        bool changed = false;
+        for (QMap<int, OutputScreen *>::iterator i = m_screens.begin(); i != m_screens.end();) {
+            if (i.value()->outputs().empty()) {
+                i = m_screens.erase(i);
+            } else {
+                ++i;
+            }
+        }
+        
+        bool changed;
         do {
-            for (int i = 0; i + 1 < m_screens.size(); ++i) {
-                if (m_screens[i]->geom().intersects(m_screens[i + 1]->geom())) {
-                    OutputScreen * to = m_screens[i];
-                    OutputScreen * from = m_screens.takeAt(i + 1);
-                    
-                    foreach (Output * output, from->outputs()) {
-                        to->add(output);
+            changed = false;
+            for (QMap<int, OutputScreen *>::iterator i = m_screens.begin(); i != m_screens.end(); ++i) {
+                bool deleted = false;
+                for (QMap<int, OutputScreen *>::iterator j = i + 1; j != m_screens.end(); ++j) {
+                    if (i.value()->geom().intersects(j.value()->geom())) {
+                        OutputScreen * to = i.value();
+                        OutputScreen * from = j.value();
+                        
+                        foreach (Output * output, from->outputs()) {
+                            to->add(output);
+                        }
+                        
+                        changed = true;
+                        deleted = true;
+                        m_screens.erase(j);
+                        delete from;
+                        break;
                     }
-                    
-                    changed = true;
+                }
+                if (deleted) {
                     break;
                 }
             }
         } while (changed);
         
-        m_screens[0]->_setPrimary(true);
-        for (int i = 0; i < m_screens.size(); ++i) {
-            m_screens[i]->_setId(i);
+        foreach (OutputScreen * s, m_screens) {
+            s->_setPrimary(false);
         }
+        m_screens.begin().value()->_setPrimary(true);
+    }
+    
+    void OutputScreens::rebuildScreens() {
+        qDebug() << "OutputScreens::rebuildScreens()";
+        
+        QMap<int, QRect> geoms;
+        for (QMap<int, OutputScreen *>::const_iterator i = m_screens.constBegin(); i != m_screens.constEnd(); ++i) {
+            geoms.insert(i.key(), i.value()->geom());
+            
+            i.value()->clearOutputs();
+        }
+        
+        prepareScreens(m_screens);
+        buildScreens();
+        
+        for (QMap<int, OutputScreen *>::const_iterator i = m_screens.constBegin(); i != m_screens.constEnd(); ++i) {
+            if (! geoms.contains(i.key())) {
+                emit screenAdded(i.value());
+            } else if (geoms[i.key()] != i.value()->geom()) {
+                if (geoms[i.key()].topLeft() != i.value()->geom().topLeft()) {
+                    emit screenMoved(i.value(), geoms[i.key()].topLeft(), i.value()->geom().topLeft());
+                }
+                if (geoms[i.key()].size() != i.value()->geom().size()) {
+                    emit screenResized(i.value(), geoms[i.key()].size(), i.value()->geom().size());
+                }
+            }
+        }
+        
+        for (QMap<int, QRect>::const_iterator i = geoms.constBegin(); i != geoms.constEnd(); ++i) {
+            if (! m_screens.contains(i.key())) {
+                emit screenRemoved(i.key());
+            }
+        }
+    }
+    
+    void OutputScreens::prepareScreens(QMap<int, OutputScreen *> & screens) {
     }
     
     
@@ -91,13 +200,29 @@ namespace kephal {
     void OutputScreen::add(Output * output) {
         m_outputs.append(output);
         
-        QRect geom = this->geom().unite(output->geom());
+        QRect geom = this->geom();
+        if (geom.isEmpty()) {
+            geom = output->geom();
+        } else {
+            geom = geom.unite(output->geom());
+        }
+        
         _setSize(geom.size());
         _setPosition(geom.topLeft());
     }
     
     QList<Output *> OutputScreen::outputs() {
         return m_outputs;
+    }
+    
+    void OutputScreen::remove(Output * output) {
+        m_outputs.removeAll(output);
+    }
+    
+    void OutputScreen::clearOutputs() {
+        m_outputs.clear();
+        _setSize(QSize(0, 0));
+        _setPosition(QPoint(0, 0));
     }
     
 }

@@ -50,10 +50,11 @@ namespace kephal {
             
             QList<Output *> outputs();
             
-            void _setId(int id);
-            void _setSize(QSize size);
-            void _setPosition(QPoint position);
-            void _setPrimary(bool primary);
+            void _setId(const int & id);
+            void _setSize(const QSize & size);
+            void _setPosition(const QPoint & position);
+            void _setGeom(const QRect & geom);
+            void _setPrimary(const bool & primary);
             
         Q_SIGNALS:
             void selectedAsPrimary(SimpleScreen * screen);

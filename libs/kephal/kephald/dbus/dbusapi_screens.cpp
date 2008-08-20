@@ -38,6 +38,13 @@ DBusAPIScreens::DBusAPIScreens(QObject * parent)
     bool result;
     result = dbus.registerObject("/Screens", this);
     qDebug() << "screens registered on the bus:" << result;
+    
+    connect(Screens::instance(), SIGNAL(screenResized(kephal::Screen *, QSize, QSize)), this, SLOT(screenResized(kephal::Screen *, QSize, QSize)));
+}
+
+void DBusAPIScreens::screenResized(kephal::Screen * s, QSize oldSize, QSize newSize) {
+    qDebug() << "emit DBusAPIScreens::screenResized()" << s->id();
+    emit screenResized(s->id());
 }
 
 QSize DBusAPIScreens::size(int screen)

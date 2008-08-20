@@ -74,12 +74,12 @@ namespace kephal {
             virtual Output * output(QString id);
             
         Q_SIGNALS:
-            void outputConnected(Output * o);
-            void outputDisconnected(Output * o);
-            void outputActivated(Output * o);
-            void outputDeactivated(Output * o);
-            void outputResized(Output * o, QSize oldSize, QSize newSize);
-            void outputMoved(Output * o, QPoint oldPosition, QPoint newPosition);
+            void outputConnected(kephal::Output * o);
+            void outputDisconnected(kephal::Output * o);
+            void outputActivated(kephal::Output * o);
+            void outputDeactivated(kephal::Output * o);
+            void outputResized(kephal::Output * o, QSize oldSize, QSize newSize);
+            void outputMoved(kephal::Output * o, QPoint oldPosition, QPoint newPosition);
             
         protected:
             static Outputs * m_instance;

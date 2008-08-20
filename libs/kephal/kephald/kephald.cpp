@@ -25,7 +25,7 @@
 
 
 #include "outputs/desktopwidget/desktopwidgetoutputs.h"
-#include "screens/output/outputscreens.h"
+#include "screens/configuration/configurationscreens.h"
 #include "outputs/xrandr/xrandroutputs.h"
 #include "dbus/dbusapi_screens.h"
 #include "dbus/dbusapi_outputs.h"
@@ -48,22 +48,12 @@ int main(int argc, char *argv[])
     return app.exec();
 }
 
-/*QAbstractEventDispatcher::EventFilter previousEventFilter = 0;
-bool kephalDEventFilter(void *message) {
-    qDebug() << "received an event";
-    if (previousEventFilter) {
-        return (*previousEventFilter)(message);
-    }
-    return true;
-}*/
-
 
 KephalD::KephalD(int & argc, char ** argv)
     : QApplication(argc, argv),
     m_noXRandR(false)
 {
     qDebug() << "kephald starting up";
-    //previousEventFilter = QAbstractEventDispatcher::instance()->setEventFilter(kephalDEventFilter);
     
     parseArgs(argc, argv);
     init();
@@ -101,17 +91,16 @@ void KephalD::init() {
         qDebug() << "output:" << output->id() << output->geom();
     }
     
-    new OutputScreens(this);
+    new XMLConfigurations(this);
+    new ConfigurationScreens(this);
     
     foreach (kephal::Screen * screen, Screens::instance()->screens()) {
         qDebug() << "screen:" << screen->id() << screen->geom();
     }
     
-    new XMLConfigurations(this);
     activateConfiguration();
-    
-    connect(Outputs::instance(), SIGNAL(outputDisconnected(Output *)), this, SLOT(outputDisconnected(Output *)));
-    connect(Outputs::instance(), SIGNAL(outputConnected(Output *)), this, SLOT(outputConnected(Output *)));
+    connect(Outputs::instance(), SIGNAL(outputDisconnected(kephal::Output *)), this, SLOT(outputDisconnected(kephal::Output *)));
+    connect(Outputs::instance(), SIGNAL(outputConnected(kephal::Output *)), this, SLOT(outputConnected(kephal::Output *)));
     
     foreach (Output * output, Outputs::instance()->outputs()) {
         qDebug() << "possible positions for:" << output->id() << Configurations::instance()->possiblePositions(output);
@@ -132,14 +121,12 @@ void KephalD::init() {
 
 void KephalD::poll() {
     if (m_outputs) {
-        //m_outputs->pollState();
         m_outputs->display()->screen(0)->pollState();
     }
 }
 
 bool KephalD::x11EventFilter(XEvent* e)
 {
-    //qDebug() << "received x event";
     if (m_outputs && m_outputs->display()->canHandle(e)) {
         m_outputs->display()->handleEvent(e);
     }

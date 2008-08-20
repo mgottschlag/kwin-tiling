@@ -19,6 +19,7 @@ SET (kephald_SRCS
         ../screens/screen.cpp
         ../screens/simplescreen.cpp
         ../screens/output/outputscreens.cpp
+        ../screens/configuration/configurationscreens.cpp
         dbus/dbusapi_screens.cpp
         ../outputs/simpleoutput.cpp
         ../outputs/desktopwidget/desktopwidgetoutputs.cpp
@@ -43,6 +44,7 @@ QT4_WRAP_CPP (kephald_SRCS
         ../screens/screen.h
         ../screens/simplescreen.h
         ../screens/output/outputscreens.h
+        ../screens/configuration/configurationscreens.h
         dbus/dbusapi_screens.h
         ../outputs/simpleoutput.h
         ../outputs/desktopwidget/desktopwidgetoutputs.h

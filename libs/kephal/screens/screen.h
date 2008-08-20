@@ -39,7 +39,6 @@ namespace kephal {
             virtual int id() = 0;
 
             virtual QSize size() = 0;
-            virtual void setSize(QSize size) = 0;
             virtual QPoint position() = 0;
             //QList<PositionType> getRelativePosition();
 

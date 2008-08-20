@@ -18,8 +18,8 @@
  */
 
 
-#ifndef KEPHAL_XRANDRSCREENS_H
-#define KEPHAL_XRANDRSCREENS_H
+#ifndef KEPHAL_OUTPUTSCREENS_H
+#define KEPHAL_OUTPUTSCREENS_H
 
 #include <QPoint>
 #include "../screens.h"
@@ -35,6 +35,8 @@ namespace kephal {
             OutputScreen(QObject * parent);
             
             void add(Output * output);
+            void remove(Output * output);
+            void clearOutputs();
             QList<Output *> outputs();
             
         private:
@@ -48,14 +50,26 @@ namespace kephal {
             OutputScreens(QObject * parent);
             virtual QList<Screen *> screens();
             
+        protected:
+            virtual void prepareScreens(QMap<int, OutputScreen *> & screens);
+            void rebuildScreens();
+            
+        private Q_SLOTS:
+            void outputActivated(kephal::Output * o);
+            void outputDeactivated(kephal::Output * o);
+            void outputResized(kephal::Output * o, QSize oldSize, QSize newSize);
+            void outputMoved(kephal::Output * o, QPoint oldPosition, QPoint newPosition);
+            
         private:
             void init();
+            void buildScreens();
+            int findId();
             
-            QList<OutputScreen *> m_screens;
+            QMap<int, OutputScreen *> m_screens;
     };
     
 }
 
 
-#endif // KEPHAL_XRANDRSCREENS_H
+#endif // KEPHAL_OUTPUTSCREENS_H
 

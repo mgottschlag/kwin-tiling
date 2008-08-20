@@ -22,11 +22,14 @@
 #define DBUSAPI_SCREENS_H
 
 
-#include "../../screens/screens.h"
-#include "../../screens/screen.h"
-
 #include <QObject>
+#include <QSize>
+#include <QPoint>
 
+
+namespace kephal {
+    class Screen;
+}
 
 class DBusAPIScreens : public QObject
 {
@@ -41,6 +44,12 @@ class DBusAPIScreens : public QObject
         QSize size(int screen);
         QPoint position(int screen);
         int primaryScreen();
+        
+    private Q_SLOTS:
+        void screenResized(kephal::Screen * s, QSize oldSize, QSize newSize);
+        
+    Q_SIGNALS:
+        void screenResized(int screen);
 };
 
 

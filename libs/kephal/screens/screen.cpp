@@ -33,6 +33,6 @@ namespace kephal {
     QRect Screen::geom() {
         return QRect(position(), size());
     }
-
+    
 }
 

@@ -763,7 +763,11 @@ namespace kephal {
         if (! output->isActivated()) {
             cloned = true;
         } else {
+            int count = 0;
             foreach (Output * o, Outputs::instance()->outputs()) {
+                if (o->isActivated()) {
+                    ++count;
+                }
                 if (o == output) {
                     continue;
                 }
@@ -771,6 +775,10 @@ namespace kephal {
                     cloned = true;
                     break;
                 }
+            }
+            
+            if (count <= 1) {
+                return QMap<XMLConfiguration *, QPoint>();
             }
         }
         
@@ -950,6 +958,7 @@ namespace kephal {
         QMap<int, QRect> screens = configuration->realLayout();
         if (activateLayout(screens)) {
             m_activeConfiguration = configuration;
+            emit configurationActivated(configuration);
         }
     }
     

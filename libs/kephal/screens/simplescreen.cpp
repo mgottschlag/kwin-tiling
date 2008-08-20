@@ -80,20 +80,26 @@ namespace kephal {
         emit selectedAsPrimary(this);
     }
     
-    void SimpleScreen::_setId(int id) {
+    void SimpleScreen::_setId(const int & id) {
         m_id = id;
     }
     
-    void SimpleScreen::_setSize(QSize size) {
+    void SimpleScreen::_setSize(const QSize & size) {
         m_size = size;
     }
     
-    void SimpleScreen::_setPosition(QPoint position)
+    void SimpleScreen::_setPosition(const QPoint & position)
     {
         m_position = position;
     }
     
-    void SimpleScreen::_setPrimary(bool primary) {
+    void SimpleScreen::_setGeom(const QRect & geom)
+    {
+        _setPosition(geom.topLeft());
+        _setSize(geom.size());
+    }
+    
+    void SimpleScreen::_setPrimary(const bool & primary) {
         m_primary = primary;
     }
     

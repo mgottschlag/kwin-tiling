@@ -42,10 +42,10 @@ namespace kephal {
             virtual QList<Screen *> screens() = 0;
             
         Q_SIGNALS:
-            void screenAdded(Screen * s);
-            void screenRemoved(Screen * s);
-            void screenResized(Screen * s, QSize oldSize, QSize newSize);
-            void screenMoved(Screen * s, QPoint oldPosition, QPoint newPosition);
+            void screenAdded(kephal::Screen * s);
+            void screenRemoved(int id);
+            void screenResized(kephal::Screen * s, QSize oldSize, QSize newSize);
+            void screenMoved(kephal::Screen * s, QPoint oldPosition, QPoint newPosition);
             
         protected:
             static Screens * m_instance;

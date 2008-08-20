@@ -60,6 +60,12 @@ namespace kephal {
             m_screens.append(screen);
         }
         m_primaryScreen = m_screens.at(primary);
+        
+        connect(m_interface, SIGNAL(screenResized(int)), this, SLOT(screenResized(int)));
+    }
+    
+    void DBusScreens::screenResized(int id) {
+        qDebug() << "DBusScreens::screenResized()" << id;
     }
     
     DBusScreens::~DBusScreens() {

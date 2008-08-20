@@ -18,37 +18,29 @@
  */
 
 
-#ifndef KEPHAL_DBUSSCREENS_H
-#define KEPHAL_DBUSSCREENS_H
+#ifndef KEPHAL_CONFIGURATIONSCREENS_H
+#define KEPHAL_CONFIGURATIONSCREENS_H
 
-#include <QPoint>
-#include "../simplescreen.h"
-#include "../screens.h"
-#include "screens_interface.h"
+
+#include "../output/outputscreens.h"
 
 
 namespace kephal {
 
-    class DBusScreens : public Screens {
+    class Configuration;
+
+    class ConfigurationScreens : public OutputScreens {
         Q_OBJECT
         public:
-            DBusScreens(QObject * parent);
-            ~DBusScreens();
-            virtual QList<Screen *> screens();
-            bool isValid();
+            ConfigurationScreens(QObject * parent);
+            
+        protected:
+            void prepareScreens(QMap<int, OutputScreen *> & screens);
             
         private Q_SLOTS:
-            void screenResized(int id);
-            
-        private:
-            QList<SimpleScreen *> m_screens;
-            SimpleScreen * m_primaryScreen;
-            org::kde::Kephal::Screens * m_interface;
-            bool m_valid;
+            void configurationActivated(Configuration * configuration);
     };
     
 }
 
-
-#endif // KEPHAL_DBUSSCREENS_H
-
+#endif // KEPHAL_CONFIGURATIONSCREENS_H
