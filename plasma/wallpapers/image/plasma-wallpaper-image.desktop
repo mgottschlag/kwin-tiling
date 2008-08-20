@@ -1,0 +1,28 @@
+[Desktop Entry]
+Type=Service
+Name=Image
+Icon=image-jpeg
+ServiceTypes=Plasma/Wallpaper
+Actions=SingleImage;Slideshow;
+
+X-KDE-Library=plasma_wallpaper_image
+X-KDE-PluginInfo-Author=Petri Damstén
+X-KDE-PluginInfo-Email=damu@iki.fi
+X-KDE-PluginInfo-Name=image
+X-KDE-PluginInfo-Version=pre0.1
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true
+
+[Desktop Action SingleImage]
+Name=Image
+Icon=image-jpeg
+# Dummy
+Exec=plasma
+
+[Desktop Action Slideshow]
+Name=Slideshow
+Icon=folder-image
+# Dummy
+Exec=plasma
