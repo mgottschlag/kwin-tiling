@@ -503,7 +503,7 @@ void BackgroundDialog::changeBackgroundMode(int mode)
     }
     if (m_wallpaper) {
         KConfigGroup cfg = m_containment->config();
-        m_wallpaper->init(KConfigGroup(&cfg, "Wallpaper"), wallpaperInfo.second);
+        m_wallpaper->restore(KConfigGroup(&cfg, "Wallpaper"), wallpaperInfo.second);
         w = m_wallpaper->createConfigurationInterface(m_wallpaperGroupBox);
     }
     if (!w) {
@@ -523,7 +523,8 @@ void BackgroundDialog::saveConfig()
 
     if (m_wallpaper) {
         KConfigGroup cfg = m_containment->config();
-        m_wallpaper->save(KConfigGroup(&cfg, "Wallpaper"));
+        cfg = KConfigGroup(&cfg, "Wallpaper");
+        m_wallpaper->save(cfg);
     }
 
     // Wallpaper
@@ -531,7 +532,7 @@ void BackgroundDialog::saveConfig()
 
     // Containment
     if (m_containment->pluginName() != containment) {
-        m_containment = m_view->swapContainment(m_containment, containment);
+        m_containment = m_view->swapContainment(containment);
     }
 
     // Plasma Theme
