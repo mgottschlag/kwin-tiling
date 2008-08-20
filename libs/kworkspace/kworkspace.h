@@ -108,8 +108,23 @@ namespace KWorkSpace
    * contacted.
    */
   KDE_EXPORT bool requestShutDown( ShutdownConfirm confirm = ShutdownConfirmDefault,
-                        ShutdownType sdtype = ShutdownTypeDefault,
-			ShutdownMode sdmode = ShutdownModeDefault );
+                                   ShutdownType    sdtype  = ShutdownTypeDefault,
+                                   ShutdownMode    sdmode  = ShutdownModeDefault );
+
+  /**
+   * Used to check whether a requestShutDown call with the same arguments
+   * has any chance of succeeding.
+   *
+   * For example, if KDE's own session manager cannot be contacted, we can't
+   * demand that the computer be shutdown, or force a confirmation dialog.
+   *
+   * Even if we can access the KDE session manager, the system or user
+   * configuration may prevent the user from requesting a shutdown or
+   * reboot.
+   */
+  KDE_EXPORT bool canShutDown( ShutdownConfirm confirm = ShutdownConfirmDefault,
+                               ShutdownType    sdtype  = ShutdownTypeDefault,
+                               ShutdownMode    sdmode  = ShutdownModeDefault );
 
   /**
    * Propagates the network address of the session manager in the
@@ -125,7 +140,7 @@ namespace KWorkSpace
    * are kdesktop or kicker.
    */
    KDE_EXPORT void propagateSessionManager();
-    
+
 }
 
 #endif

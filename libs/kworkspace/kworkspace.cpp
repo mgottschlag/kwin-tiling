@@ -178,6 +178,25 @@ bool requestShutDown(
     return helper->requestShutdown( confirm );
 }
 
+bool canShutDown( ShutdownConfirm confirm,
+                  ShutdownType sdtype,
+                  ShutdownMode sdmode )
+{
+    if ( confirm == ShutdownConfirmYes ||
+         sdtype != ShutdownTypeDefault ||
+         sdmode != ShutdownModeDefault )
+    {
+        org::kde::KSMServerInterface ksmserver("org.kde.ksmserver", "/KSMServer", QDBusConnection::sessionBus());
+        QDBusReply<bool> reply = ksmserver.canShutdown();
+        if (!reply.isValid()) {
+            return false;
+        }
+        return reply;
+    }
+
+    return true;
+}
+
 static QTime smModificationTime;
 void propagateSessionManager()
 {

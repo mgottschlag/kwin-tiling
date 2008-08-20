@@ -27,8 +27,8 @@
 #include <KDebug>
 #include <KLocalizedString>
 #include <KIcon>
-#include <kdisplaymanager.h>
 #include <solid/control/powermanager.h>
+#include <kworkspace.h>
 
 // Local
 #include "core/models.h"
@@ -123,16 +123,22 @@ LeaveModel::LeaveModel(QObject *parent)
         }
     }
 
-    if (KDisplayManager().canShutdown()) {
+//FIXME: the proper fix is to implement the KWorkSpace methods for Windows
+#ifndef Q_WS_WIN
+    if (KWorkSpace::canShutDown(KWorkSpace::ShutdownConfirmDefault, KWorkSpace::ShutdownTypeHalt)) {
         // Shutdown
         QStandardItem *shutDownOption = createStandardItem("leave:/shutdown");
         systemOptions->appendRow(shutDownOption);
+        addSystemSession = true;
+    }
 
+    if (KWorkSpace::canShutDown(KWorkSpace::ShutdownConfirmDefault, KWorkSpace::ShutdownTypeReboot)) {
         // Restart
         QStandardItem *restartOption = createStandardItem("leave:/restart");
         systemOptions->appendRow(restartOption);
         addSystemSession = true;
     }
+#endif
 
     appendRow(sessionOptions);
     if (addSystemSession) {

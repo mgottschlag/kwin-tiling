@@ -87,6 +87,15 @@ void KSMServer::logout( int confirm, int sdtype, int sdmode )
             (KWorkSpace::ShutdownMode)sdmode );
 }
 
+bool KSMServer::canShutdown()
+{
+    KSharedConfig::Ptr config = KGlobal::config();
+    config->reparseConfiguration(); // config may have changed in the KControl module
+    KConfigGroup cg( config, "General");
+
+    return cg.readEntry( "offerShutdown", true ) && KDisplayManager().canShutdown();
+}
+
 void KSMServer::shutdown( KWorkSpace::ShutdownConfirm confirm,
     KWorkSpace::ShutdownType sdtype, KWorkSpace::ShutdownMode sdmode )
 {
