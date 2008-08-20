@@ -29,6 +29,9 @@ libplasma
         * setting the margins via in-SVG hints
         * paintPanel API additions to make it more like QPainter and Plasma::Svg
 
+* KRunner
+	* NEW: Konqueror history runner
+
 * Significant Fixes
     * WebContent painting update synchronization (fixes, among other things, scrolling)
     * Prevent crash when Containment that AppletBrowser is associated with is deleted
