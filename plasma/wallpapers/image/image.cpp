@@ -42,10 +42,10 @@ Image::~Image()
     delete m_dialog;
 }
 
-void Image::init(const KConfigGroup &config, const QString &mode)
+void Image::init(const KConfigGroup &config)
 {
     m_timer.stop();
-    m_mode = mode;
+    m_mode = renderingMode().name();
     calculateGeometry();
 
     m_delay = config.readEntry("slideTimer", 60);

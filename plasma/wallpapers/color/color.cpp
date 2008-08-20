@@ -32,9 +32,8 @@ void Color::paint(QPainter *painter, const QRectF& exposedRect)
     painter->fillRect(exposedRect, QBrush(m_color));
 }
 
-void Color::init(const KConfigGroup &config, const QString &mode)
+void Color::init(const KConfigGroup &config)
 {
-    Q_UNUSED(mode)
     m_color = config.readEntry("wallpapercolor", QColor(Qt::gray));
 }
 

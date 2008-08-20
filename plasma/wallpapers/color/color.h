@@ -30,10 +30,12 @@ class Color : public Plasma::Wallpaper
     public:
         Color(QObject* parent, const QVariantList& args);
 
-        virtual void init(const KConfigGroup &config, const QString &mode = QString());
         virtual void save(KConfigGroup config);
         virtual void paint(QPainter* painter, const QRectF& exposedRect);
         virtual QWidget* createConfigurationInterface(QWidget* parent);
+
+    protected:
+        virtual void init(const KConfigGroup &config);
 
     protected slots:
         void setColor(const QColor& color);

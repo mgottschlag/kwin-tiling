@@ -31,7 +31,6 @@ class Image : public Plasma::Wallpaper
         Image(QObject* parent, const QVariantList& args);
         ~Image();
 
-        virtual void init(const KConfigGroup &config, const QString &mode = QString());
         virtual void save(KConfigGroup config);
         virtual void paint(QPainter* painter, const QRectF& exposedRect);
         virtual QWidget* createConfigurationInterface(QWidget* parent);
@@ -52,6 +51,7 @@ class Image : public Plasma::Wallpaper
         void removeBackground(const QString &path);
 
     protected:
+        void init(const KConfigGroup &config);
         void updateDirs();
         void startSlideshow();
         void fillMetaInfo(Background* b);
