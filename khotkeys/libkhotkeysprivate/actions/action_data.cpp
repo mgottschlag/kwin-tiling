@@ -175,7 +175,7 @@ void ActionData::update_triggers()
          it != _triggers->end();
          ++it )
         {
-        kDebug() << "Going over the triggers";
+        kDebug( 1217 ) << "Going over the triggers";
         (*it)->activate( activate );
         }
     }
