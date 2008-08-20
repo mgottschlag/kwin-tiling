@@ -33,10 +33,8 @@
 #include <plasma/containment.h>
 #include <plasma/animator.h>
 
-#include "renderthread.h"
 #include "desktoplayout.h"
 
-class BackgroundDialog;
 class QAction;
 class QTimeLine;
 
@@ -44,11 +42,6 @@ namespace Plasma
 {
     class AppletBrowser;
     class Svg;
-}
-
-namespace Ui
-{
-    class config;
 }
 
 /*class Tool : public QObject, public QGraphicsItem
@@ -74,25 +67,12 @@ public:
 
     QList<QAction*> contextualActions();
 
-    /**
-     * Paints a default background image. Nothing fancy, but that's what plugins
-     * are for. Reimplemented from Plasma::Containment;
-     */
-    void paintInterface(QPainter *painter,
-                        const QStyleOptionGraphicsItem *option,
-                        const QRect& contentsRect);
-
 protected Q_SLOTS:
     void runCommand();
     void configure();
-    void applyConfig();
-    void nextSlide(bool skipUpdates=false);
 
     void lockScreen();
     void logout();
-
-    void updateBackground();
-    void updateBackground(int, const QImage &img);
 
     void addPanel();
 
@@ -106,9 +86,7 @@ protected:
     void restoreContents(KConfigGroup &group);
 
 private:
-    void reloadConfig();
     QSize resolution() const;
-    void suspendStartup(bool suspend); // for ksmserver
 
     QAction *m_lockDesktopAction;
     QAction *m_appletBrowserAction;
@@ -119,25 +97,6 @@ private:
     QAction *m_logoutAction;
     QAction *m_separator;
     QAction *m_separator2;
-
-    BackgroundDialog *m_configDialog;
-
-    int m_backgroundMode;
-
-    // slideshow settings
-    // the index of which m_slidePath is currently visible
-    int m_currentSlide;
-    QTimer m_slideshowTimer;
-    QStringList m_slideFiles;
-
-    QPixmap m_bitmapBackground;
-    QString m_wallpaperPath;
-
-    int m_wallpaperPosition;
-    QColor m_wallpaperColor;
-
-    RenderThread m_renderer;
-    int m_rendererToken;
 
     DesktopLayout *m_layout;
     bool restoring;

@@ -29,6 +29,7 @@ namespace Plasma
 } // namespace Plasma
 
 class DashboardView;
+class BackgroundDialog;
 
 class DesktopView : public Plasma::View
 {
@@ -52,7 +53,7 @@ public:
      */
     void setIsDesktop(bool isDesktop);
 
-    /** 
+    /**
      * Returns true if this widget is currently a desktop window.
      * See setAsDesktop()
      */
@@ -96,6 +97,13 @@ public slots:
      */
     void setContainment(Plasma::Containment *containment);
 
+    /**
+     * Configure containment.
+     *
+     * @arg containment to configure
+     */
+    void configureContainment();
+
 protected:
     void wheelEvent(QWheelEvent *event);
     void drawBackground(QPainter *painter, const QRectF &rect);
@@ -103,6 +111,7 @@ protected:
 private:
     Plasma::ZoomLevel m_zoomLevel;
     DashboardView *m_dashboard;
+    BackgroundDialog *m_configDialog;
     bool m_dashboardFollowsDesktop;
 };
 

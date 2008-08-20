@@ -1,0 +1,539 @@
+/*
+  Copyright (c) 2007 Paolo Capriotti <p.capriotti@gmail.com>
+  Copyright (C) 2007 Ivan Cukic <ivan.cukic+kde@gmail.com>
+  Copyright (c) 2008 by Petri Damsten <damu@iki.fi>
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+*/
+
+#include "backgrounddialog.h"
+
+#include <QPainter>
+#include <QFile>
+#include <QAbstractItemView>
+#include <QStandardItemModel>
+
+#include <KStandardDirs>
+#include <KDesktopFile>
+#include <KColorScheme>
+#include <KNS/Engine>
+
+#include <plasma/containment.h>
+#include <plasma/panelsvg.h>
+#include <plasma/theme.h>
+#include <plasma/wallpaper.h>
+#include <plasma/view.h>
+#include <plasma/corona.h>
+
+#include "wallpaperpreview.h"
+
+typedef QPair<QString, QString> WallpaperInfo;
+Q_DECLARE_METATYPE(WallpaperInfo)
+
+class ThemeInfo
+{
+public:
+    QString package;
+    Plasma::PanelSvg *svg;
+};
+
+class ThemeModel : public QAbstractListModel
+{
+public:
+    enum { PackageNameRole = Qt::UserRole,
+           SvgRole = Qt::UserRole + 1
+         };
+
+    ThemeModel(QObject *parent = 0);
+    virtual ~ThemeModel();
+
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    int indexOf(const QString &path) const;
+    void reload();
+private:
+    QMap<QString, ThemeInfo> m_themes;
+};
+
+ThemeModel::ThemeModel( QObject *parent )
+: QAbstractListModel( parent )
+{
+    reload();
+}
+
+ThemeModel::~ThemeModel()
+{
+}
+
+void ThemeModel::reload()
+{
+    reset();
+    foreach (const QString& key, m_themes.keys()) {
+        delete m_themes[key].svg;
+    }
+    m_themes.clear();
+
+    // get all desktop themes
+    KStandardDirs dirs;
+    QStringList themes = dirs.findAllResources("data", "desktoptheme/*/metadata.desktop",
+                                               KStandardDirs::NoDuplicates);
+    foreach (const QString &theme, themes) {
+        kDebug() << theme;
+        int themeSepIndex = theme.lastIndexOf('/', -1);
+        QString themeRoot = theme.left(themeSepIndex);
+        int themeNameSepIndex = themeRoot.lastIndexOf('/', -1);
+        QString packageName = themeRoot.right(themeRoot.length() - themeNameSepIndex - 1);
+
+        KDesktopFile df(theme);
+        QString name = df.readName();
+        if (name.isEmpty()) {
+            name = packageName;
+        }
+
+        Plasma::PanelSvg *svg = new Plasma::PanelSvg(this);
+        QString svgFile = themeRoot + "/widgets/background.svg";
+        if (QFile::exists(svgFile)) {
+            svg->setImagePath(svgFile);
+        } else {
+            svg->setImagePath(svgFile + "z");
+        }
+        svg->setEnabledBorders(Plasma::PanelSvg::AllBorders);
+        ThemeInfo info;
+        info.package = packageName;
+        info.svg = svg;
+        m_themes[name] = info;
+    }
+
+    beginInsertRows(QModelIndex(), 0, m_themes.size());
+    endInsertRows();
+}
+
+int ThemeModel::rowCount(const QModelIndex &) const
+{
+    return m_themes.size();
+}
+
+QVariant ThemeModel::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid()) {
+        return QVariant();
+    }
+
+    if (index.row() >= m_themes.size()) {
+        return QVariant();
+    }
+
+    QMap<QString, ThemeInfo>::const_iterator it = m_themes.constBegin();
+    for (int i = 0; i < index.row(); ++i) {
+        ++it;
+    }
+
+    switch (role) {
+        case Qt::DisplayRole:
+            return it.key();
+        case PackageNameRole:
+            return (*it).package;
+        case SvgRole:
+            return qVariantFromValue((void*)(*it).svg);
+        default:
+            return QVariant();
+    }
+}
+
+int ThemeModel::indexOf(const QString &name) const
+{
+    QMapIterator<QString, ThemeInfo> it(m_themes);
+    int i = -1;
+    while (it.hasNext()) {
+        ++i;
+        if (it.next().value().package == name) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+
+class ThemeDelegate : public QAbstractItemDelegate
+{
+public:
+    ThemeDelegate(QObject * parent = 0);
+
+    virtual void paint(QPainter *painter,
+                       const QStyleOptionViewItem &option,
+                       const QModelIndex &index) const;
+    virtual QSize sizeHint(const QStyleOptionViewItem &option,
+                           const QModelIndex &index) const;
+private:
+    static const int MARGIN = 5;
+};
+
+ThemeDelegate::ThemeDelegate(QObject* parent)
+: QAbstractItemDelegate(parent)
+{
+}
+
+void ThemeDelegate::paint(QPainter *painter,
+                          const QStyleOptionViewItem &option,
+                          const QModelIndex &index) const
+{
+    QString title = index.model()->data(index, Qt::DisplayRole).toString();
+    QString package = index.model()->data(index, ThemeModel::PackageNameRole).toString();
+
+    // highlight selected item
+    painter->save();
+    if (option.state & QStyle::State_Selected) {
+        painter->setBrush(option.palette.color(QPalette::Highlight));
+    } else {
+        painter->setBrush(Qt::gray);
+    }
+    painter->drawRect(option.rect);
+    painter->restore();
+
+    // draw image
+    Plasma::PanelSvg *svg = static_cast<Plasma::PanelSvg *>(
+            index.model()->data(index, ThemeModel::SvgRole).value<void *>());
+    svg->resizePanel(QSize(option.rect.width() - (2 * MARGIN), 100 - (2 * MARGIN)));
+    QRect imgRect = QRect(option.rect.topLeft(),
+            QSize(option.rect.width() - (2 * MARGIN), 100 - (2 * MARGIN)))
+            .translated(MARGIN, MARGIN);
+    svg->paintPanel(painter, QPoint(option.rect.left() + MARGIN, option.rect.top() + MARGIN));
+
+    // draw text
+    painter->save();
+    QFont font = painter->font();
+    font.setWeight(QFont::Bold);
+    QString colorFile = KStandardDirs::locate("data", "desktoptheme/" + package + "/colors");
+    if (!colorFile.isEmpty()) {
+        KSharedConfigPtr colors = KSharedConfig::openConfig(colorFile);
+        KColorScheme colorScheme(QPalette::Active, KColorScheme::Window, colors);
+        painter->setPen(colorScheme.foreground(KColorScheme::NormalText).color());
+    }
+    painter->setFont(font);
+    painter->drawText(option.rect, Qt::AlignCenter | Qt::TextWordWrap, title);
+    painter->restore();
+}
+
+QSize ThemeDelegate::sizeHint(const QStyleOptionViewItem &, const QModelIndex &) const
+{
+    return QSize(200, 100);
+}
+
+// From kcategorizeditemsviewdelegate by Ivan Cukic
+#define EMBLEM_ICON_SIZE 16
+#define UNIVERSAL_PADDING 6
+#define FADE_LENGTH 32
+#define MAIN_ICON_SIZE 48
+
+class AppletDelegate : public QAbstractItemDelegate
+{
+public:
+    enum { DescriptionRole = Qt::UserRole + 1, PluginNameRole };
+
+    AppletDelegate(QObject * parent = 0);
+
+    virtual void paint(QPainter* painter, const QStyleOptionViewItem& option,
+                       const QModelIndex& index) const;
+    virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    int calcItemHeight(const QStyleOptionViewItem& option) const;
+};
+
+AppletDelegate::AppletDelegate(QObject* parent)
+: QAbstractItemDelegate(parent)
+{
+}
+
+void AppletDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option,
+                           const QModelIndex& index) const
+{
+    QStyleOptionViewItemV4 opt(option);
+    QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
+    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);
+
+    const int left = option.rect.left();
+    const int top = option.rect.top();
+    const int width = option.rect.width();
+    const int height = calcItemHeight(option);
+
+    bool leftToRight = (painter->layoutDirection() == Qt::LeftToRight);
+    QIcon::Mode iconMode = QIcon::Normal;
+
+    QColor foregroundColor = (option.state.testFlag(QStyle::State_Selected)) ?
+        option.palette.color(QPalette::HighlightedText) : option.palette.color(QPalette::Text);
+
+    // Painting main column
+    QFont titleFont = option.font;
+    titleFont.setBold(true);
+    titleFont.setPointSize(titleFont.pointSize() + 2);
+
+    QPixmap pixmap(width, height);
+    pixmap.fill(Qt::transparent);
+    QPainter p(&pixmap);
+    p.translate(-option.rect.topLeft());
+
+    QLinearGradient gradient;
+
+    QString title = index.model()->data(index, Qt::DisplayRole).toString();
+    QString description = index.model()->data(index, AppletDelegate::DescriptionRole).toString();
+
+    // Painting
+
+    // Text
+    int textInner = 2 * UNIVERSAL_PADDING + MAIN_ICON_SIZE;
+
+    p.setPen(foregroundColor);
+    p.setFont(titleFont);
+    p.drawText(left + (leftToRight ? textInner : 0),
+               top, width - textInner, height / 2,
+               Qt::AlignBottom | Qt::AlignLeft, title);
+    p.setFont(option.font);
+    p.drawText(left + (leftToRight ? textInner : 0),
+               top + height / 2,
+               width - textInner, height / 2,
+               Qt::AlignTop | Qt::AlignLeft, description);
+
+    // Main icon
+    const QIcon& icon = qVariantValue<QIcon>(index.model()->data(index, Qt::DecorationRole));
+    icon.paint(&p,
+        leftToRight ? left + UNIVERSAL_PADDING : left + width - UNIVERSAL_PADDING - MAIN_ICON_SIZE,
+        top + UNIVERSAL_PADDING, MAIN_ICON_SIZE, MAIN_ICON_SIZE, Qt::AlignCenter, iconMode);
+
+    // Gradient part of the background - fading of the text at the end
+    if (leftToRight) {
+        gradient = QLinearGradient(left + width - UNIVERSAL_PADDING - FADE_LENGTH, 0,
+                left + width - UNIVERSAL_PADDING, 0);
+        gradient.setColorAt(0, Qt::white);
+        gradient.setColorAt(1, Qt::transparent);
+    } else {
+        gradient = QLinearGradient(left + UNIVERSAL_PADDING, 0,
+                left + UNIVERSAL_PADDING + FADE_LENGTH, 0);
+        gradient.setColorAt(0, Qt::transparent);
+        gradient.setColorAt(1, Qt::white);
+    }
+
+    QRect paintRect = option.rect;
+    p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+    p.fillRect(paintRect, gradient);
+
+    if (leftToRight) {
+        gradient.setStart(left + width - FADE_LENGTH, 0);
+        gradient.setFinalStop(left + width, 0);
+    } else {
+        gradient.setStart(left + UNIVERSAL_PADDING, 0);
+        gradient.setFinalStop(left + UNIVERSAL_PADDING + FADE_LENGTH, 0);
+    }
+    paintRect.setHeight(UNIVERSAL_PADDING + MAIN_ICON_SIZE / 2);
+    p.fillRect(paintRect, gradient);
+    p.end();
+
+    painter->drawPixmap(option.rect.topLeft(), pixmap);
+}
+
+int AppletDelegate::calcItemHeight(const QStyleOptionViewItem& option) const
+{
+    // Painting main column
+    QFont titleFont = option.font;
+    titleFont.setBold(true);
+    titleFont.setPointSize(titleFont.pointSize() + 2);
+
+    int textHeight = QFontInfo(titleFont).pixelSize() + QFontInfo(option.font).pixelSize();
+    //kDebug() << textHeight << qMax(textHeight, MAIN_ICON_SIZE) + 2 * UNIVERSAL_PADDING;
+    return qMax(textHeight, MAIN_ICON_SIZE) + 2 * UNIVERSAL_PADDING;
+}
+
+QSize AppletDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    Q_UNUSED(index)
+    return QSize(200, calcItemHeight(option));
+}
+
+BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::View* view, QWidget* parent)
+: KDialog(parent)
+, m_themeModel(0)
+, m_containmentModel(0)
+, m_wallpaper(0)
+, m_view(view)
+, m_containment(m_view->containment())
+, m_preview(0)
+{
+    setWindowIcon(KIcon("preferences-desktop-wallpaper"));
+    setCaption(i18n("Desktop Settings"));
+    showButtonSeparator(true);
+    setButtons(Ok | Cancel | Apply);
+
+    QWidget * main = new QWidget(this);
+    setupUi(main);
+
+    // preview
+    QString monitorPath = KStandardDirs::locate("data",  "kcontrol/pics/monitor.png");
+
+    // Size of monitor image: 200x186
+    // Geometry of "display" part of monitor image: (23,14)-[151x115]
+    qreal previewRatio = 128.0 / (101.0 * ((float) res.width() / res.height()));
+    QSize monitorSize(200, int(186 * previewRatio));
+    QRect previewRect(23, int(14 * previewRatio), 151, int(115 * previewRatio));
+
+    m_monitor->setPixmap(QPixmap(monitorPath).scaled(monitorSize));
+    m_monitor->setWhatsThis(i18n(
+        "This picture of a monitor contains a preview of "
+        "what the current settings will look like on your desktop."));
+    m_preview = new WallpaperPreview(m_monitor);
+    m_preview->setGeometry(previewRect);
+
+    connect(m_newThemeButton, SIGNAL(clicked()), this, SLOT(getNewThemes()));
+
+    connect(this, SIGNAL(finished(int)), this, SLOT(cleanup()));
+    connect(this, SIGNAL(okClicked()), this, SLOT(saveConfig()));
+    connect(this, SIGNAL(applyClicked()), this, SLOT(saveConfig()));
+
+    m_themeModel = new ThemeModel(this);
+    m_theme->setModel(m_themeModel);
+    m_theme->setItemDelegate(new ThemeDelegate(m_theme->view()));
+    m_theme->view()->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+
+    m_containmentModel = new QStandardItemModel(this);
+    m_containmentComboBox->setModel(m_containmentModel);
+    m_containmentComboBox->setItemDelegate(new AppletDelegate());
+    KPluginInfo::List plugins = Plasma::Containment::listContainments();
+    foreach (KPluginInfo info, plugins) {
+        QStandardItem* item = new QStandardItem(KIcon(info.icon()), info.name());
+        item->setData(info.comment(), AppletDelegate::DescriptionRole);
+        item->setData(info.pluginName(), AppletDelegate::PluginNameRole);
+        m_containmentModel->appendRow(item);
+    }
+
+    // Load wallpaper plugins
+    plugins = Plasma::Wallpaper::listWallpaperInfo();
+    foreach (KPluginInfo info, plugins) {
+        const QList<KServiceAction>& modes = info.service()->actions();
+        if (modes.count() > 0) {
+            foreach (const KServiceAction& mode, modes) {
+                m_mode->addItem(KIcon(mode.icon()), mode.text(),
+                                QVariant::fromValue(WallpaperInfo(info.pluginName(), mode.name())));
+            }
+        } else {
+            m_mode->addItem(KIcon(info.icon()), info.name(),
+                            QVariant::fromValue(WallpaperInfo(info.pluginName(), QString())));
+        }
+    }
+    connect(m_mode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
+
+    setMainWidget(main);
+    reloadConfig();
+    adjustSize();
+}
+
+BackgroundDialog::~BackgroundDialog()
+{
+    cleanup();
+}
+
+void BackgroundDialog::cleanup()
+{
+    delete m_wallpaper;
+    m_wallpaper = 0;
+}
+
+void BackgroundDialog::getNewThemes()
+{
+    KNS::Engine engine(0);
+    if (engine.init("plasma-themes.knsrc")) {
+        KNS::Entry::List entries = engine.downloadDialogModal(this);
+
+        if (entries.size() > 0) {
+            m_themeModel->reload();
+            m_theme->setCurrentIndex(m_themeModel->indexOf(
+                                     Plasma::Theme::defaultTheme()->themeName()));
+        }
+    }
+}
+
+void BackgroundDialog::reloadConfig()
+{
+    // Containment
+    int index = 0;
+    for (int i = 0; i < m_containmentModel->rowCount(); ++i) {
+        if (m_containmentModel->item(i)->data(AppletDelegate::PluginNameRole).toString() ==
+            m_containment->pluginName()) {
+            index = i;
+            break;
+        }
+    }
+    m_containmentComboBox->setCurrentIndex(index);
+
+    // Theme
+    m_theme->setCurrentIndex(m_themeModel->indexOf(Plasma::Theme::defaultTheme()->themeName()));
+
+    // Wallpaper
+    index = 0;
+    if (m_containment->wallpaper()) {
+        for (int i = 0; i < m_mode->count(); ++i) {
+            WallpaperInfo wallpaper = m_mode->itemData(i).value<WallpaperInfo>();
+            if (wallpaper.first == m_containment->wallpaper()->pluginName() &&
+                wallpaper.second == m_containment->wallpaperMode()) {
+                index = i;
+                break;
+            }
+        }
+    }
+    m_mode->setCurrentIndex(index);
+    changeBackgroundMode(index);
+}
+
+void BackgroundDialog::changeBackgroundMode(int mode)
+{
+    kDebug();
+    QWidget* w = 0;
+    WallpaperInfo wallpaperInfo = m_mode->itemData(mode).value<WallpaperInfo>();
+
+    if (m_wallpaperLayout->count() > 1) {
+        delete dynamic_cast<QWidgetItem*>(m_wallpaperLayout->takeAt(1))->widget();
+    }
+    if (m_wallpaper && m_wallpaper->pluginName() != wallpaperInfo.first) {
+        delete m_wallpaper;
+        m_wallpaper = 0;
+    }
+    if (!m_wallpaper) {
+        m_wallpaper = Plasma::Wallpaper::load(wallpaperInfo.first);
+        m_preview->setWallpaper(m_wallpaper);
+    }
+    if (m_wallpaper) {
+        KConfigGroup cfg = m_containment->config();
+        m_wallpaper->init(KConfigGroup(&cfg, "Wallpaper"), wallpaperInfo.second);
+        w = m_wallpaper->createConfigurationInterface(m_wallpaperGroupBox);
+    }
+    if (!w) {
+        w = new QWidget(m_wallpaperGroupBox);
+    }
+    m_wallpaperLayout->addWidget(w);
+}
+
+void BackgroundDialog::saveConfig()
+{
+    QString theme = m_theme->itemData(m_theme->currentIndex(),
+                                      ThemeModel::PackageNameRole).toString();
+    QString wallpaperPlugin = m_mode->itemData(m_mode->currentIndex()).value<WallpaperInfo>().first;
+    QString wallpaperMode = m_mode->itemData(m_mode->currentIndex()).value<WallpaperInfo>().second;
+    QString containment = m_containmentComboBox->itemData(m_containmentComboBox->currentIndex(),
+            AppletDelegate::PluginNameRole).toString();
+
+    if (m_wallpaper) {
+        KConfigGroup cfg = m_containment->config();
+        m_wallpaper->save(KConfigGroup(&cfg, "Wallpaper"));
+    }
+
+    // Wallpaper
+    m_containment->setWallpaper(wallpaperPlugin, wallpaperMode);
+
+    // Containment
+    if (m_containment->pluginName() != containment) {
+        m_containment = m_view->swapContainment(m_containment, containment);
+    }
+
+    // Plasma Theme
+    Plasma::Theme::defaultTheme()->setThemeName(theme);
+}

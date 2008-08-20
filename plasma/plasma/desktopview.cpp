@@ -35,9 +35,13 @@
 #include "plasma/corona.h"
 #include "plasma/containment.h"
 #include "plasma/svg.h"
+#include "plasma/wallpaper.h"
+#include "plasma/theme.h"
 
 #include "dashboardview.h"
 #include "plasmaapp.h"
+
+#include "backgrounddialog.h"
 
 #ifdef Q_WS_WIN
 #include "windows.h"
@@ -50,6 +54,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
     : Plasma::View(containment, id, parent),
       m_zoomLevel(Plasma::DesktopZoom),
       m_dashboard(0),
+      m_configDialog(0),
       m_dashboardFollowsDesktop(true)
 {
     setFocusPolicy(Qt::NoFocus);
@@ -86,6 +91,7 @@ DesktopView::DesktopView(Plasma::Containment *containment, int id, QWidget *pare
 
 DesktopView::~DesktopView()
 {
+    delete m_configDialog;
     delete m_dashboard;
 }
 
@@ -97,6 +103,7 @@ void DesktopView::connectContainment(Plasma::Containment *containment)
         connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
         connect(containment, SIGNAL(addSiblingContainment(Plasma::Containment *)), this, SLOT(addContainment(Plasma::Containment *)));
         connect(containment, SIGNAL(focusRequested(Plasma::Containment *)), this, SLOT(setContainment(Plasma::Containment *)));
+        connect(containment, SIGNAL(configureRequested()), this, SLOT(configureContainment()));
     }
 }
 
@@ -113,7 +120,7 @@ void DesktopView::toggleDashboard()
         int containmentId = cg.readEntry("DashboardContainment", 0);
         if (containmentId > 0) {
             foreach (Plasma::Containment *c, containment()->corona()->containments()) {
-                if (c->id() == containmentId) {
+                if ((int)c->id() == containmentId) {
                     dc = c;
                     m_dashboardFollowsDesktop = false;
                     break;
@@ -162,7 +169,7 @@ void DesktopView::setIsDesktop(bool isDesktop)
         setWindowFlags(windowFlags() & ~Qt::FramelessWindowHint);
 
         KWindowSystem::setOnAllDesktops(winId(), false);
-        KWindowSystem::setType(winId(), NET::Normal); 
+        KWindowSystem::setType(winId(), NET::Normal);
     }
 }
 
@@ -220,6 +227,22 @@ void DesktopView::addContainment(Plasma::Containment *fromContainment)
             kDebug() << "containment added at" << c->geometry();
         }
     }
+}
+
+void DesktopView::configureContainment()
+{
+    if (m_configDialog == 0) {
+        const QSize resolution =
+            QApplication::desktop()->screenGeometry(screen()).size();
+        m_configDialog = new BackgroundDialog(resolution, this);
+    }
+    else {
+        m_configDialog->reloadConfig();
+    }
+
+    m_configDialog->show();
+    KWindowSystem::setOnDesktop(m_configDialog->winId(), KWindowSystem::currentDesktop());
+    KWindowSystem::activateWindow(m_configDialog->winId());
 }
 
 void DesktopView::zoom(Plasma::Containment *containment, Plasma::ZoomDirection direction)

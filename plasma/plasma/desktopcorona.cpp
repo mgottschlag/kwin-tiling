@@ -113,6 +113,7 @@ void DesktopCorona::loadDefaultLayout()
 
         c->init();
         c->setScreen(i);
+        c->setWallpaper("image", "SingleImage");
         c->setFormFactor(Plasma::Planar);
         c->updateConstraints(Plasma::StartupCompletedConstraint);
         c->flushPendingConstraintsEvents();

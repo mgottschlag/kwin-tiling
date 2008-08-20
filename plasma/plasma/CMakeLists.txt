@@ -3,6 +3,7 @@ include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs)
 add_subdirectory(configupdates)
 
 set(plasma_SRCS
+    backgrounddialog.cpp
     dashboardview.cpp
     desktopcorona.cpp
     desktopview.cpp
@@ -13,7 +14,10 @@ set(plasma_SRCS
     plasmaapp.cpp
     positioningruler.cpp
     toolbutton.cpp
+    wallpaperpreview.cpp
 )
+
+kde4_add_ui_files(plasma_SRCS BackgroundDialog.ui)
 
 if(WIN32)
     set(plasma_SRCS ${plasma_SRCS} panelview_win.cpp)
@@ -30,7 +34,7 @@ kde4_add_kdeinit_executable(plasma_qgv ${plasma_SRCS})
 if(WIN32)
 target_link_libraries(kdeinit_plasma_qgv plasma ${KDE4_KIO_LIBS})
 else(WIN32)
-target_link_libraries(kdeinit_plasma_qgv plasma kworkspace ${KDE4_KIO_LIBS} ${X11_LIBRARIES})
+target_link_libraries(kdeinit_plasma_qgv plasma kworkspace ${KDE4_KNEWSTUFF2_LIBS} ${KDE4_KIO_LIBS} ${X11_LIBRARIES})
 endif(WIN32)
 if(X11_Xrender_FOUND)
   target_link_libraries(kdeinit_plasma_qgv ${X11_Xrender_LIB})
@@ -40,4 +44,6 @@ set_target_properties(plasma_qgv PROPERTIES OUTPUT_NAME plasma)
 
 install(TARGETS kdeinit_plasma_qgv DESTINATION ${LIB_INSTALL_DIR})
 install(TARGETS plasma_qgv ${INSTALL_TARGETS_DEFAULT_ARGS})
-install( FILES plasma.desktop DESTINATION ${AUTOSTART_INSTALL_DIR} )
+install(FILES plasma.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})
+
+install(FILES plasma-themes.knsrc DESTINATION  ${CONFIG_INSTALL_DIR})
