@@ -20,14 +20,27 @@
 #ifndef COLOR_HEADER
 #define COLOR_HEADER
 
+#include <QColor>
 #include <plasma/wallpaper.h>
+#include "ui_config.h"
 
 class Color : public Plasma::Wallpaper
 {
     Q_OBJECT
     public:
-        Color(QObject *parent, const QVariantList &args);
-        virtual void paint(QPainter *painter, const QRectF& exposedRect);
+        Color(QObject* parent, const QVariantList& args);
+
+        virtual void init(const KConfigGroup &config, const QString &mode = QString());
+        virtual void save(KConfigGroup config);
+        virtual void paint(QPainter* painter, const QRectF& exposedRect);
+        virtual QWidget* createConfigurationInterface(QWidget* parent);
+
+    protected slots:
+        void setColor(const QColor& color);
+
+    private:
+        Ui::Config m_ui;
+        QColor m_color;
 };
 
 K_EXPORT_PLASMA_WALLPAPER(color, Color)

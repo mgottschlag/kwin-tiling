@@ -1,6 +1,9 @@
+project(plasma-wallpaper-color)
+
 set(color_SRCS
     color.cpp
 )
+kde4_add_ui_files(color_SRCS config.ui)
 
 kde4_add_plugin(plasma_wallpaper_color ${color_SRCS})
 target_link_libraries(plasma_wallpaper_color plasma ${KDE4_KIO_LIBS})

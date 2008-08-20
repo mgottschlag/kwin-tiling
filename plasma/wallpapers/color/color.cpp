@@ -20,15 +20,43 @@
 #include "color.h"
 
 #include <QPainter>
+#include <KDebug>
 
 Color::Color(QObject *parent, const QVariantList &args)
-    : Plasma::Wallpaper(parent, args)
+    : Plasma::Wallpaper(parent, args), m_color(Qt::gray)
 {
 }
 
 void Color::paint(QPainter *painter, const QRectF& exposedRect)
 {
-    painter->fillRect(exposedRect, QBrush(Qt::gray));
+    painter->fillRect(exposedRect, QBrush(m_color));
+}
+
+void Color::init(const KConfigGroup &config, const QString &mode)
+{
+    Q_UNUSED(mode)
+    m_color = config.readEntry("wallpapercolor", QColor(Qt::gray));
+}
+
+QWidget* Color::createConfigurationInterface(QWidget* parent)
+{
+    QWidget *widget = new QWidget(parent);
+    m_ui.setupUi(widget);
+
+    m_ui.m_color->setColor(m_color);
+    connect(m_ui.m_color, SIGNAL(changed(const QColor&)), this, SLOT(setColor(const QColor&)));
+    return widget;
+}
+
+void Color::setColor(const QColor& color)
+{
+    m_color = color;
+    emit update(boundingRect());
+}
+
+void Color::save(KConfigGroup config)
+{
+    config.writeEntry("wallpapercolor", m_color);
 }
 
 #include "color.moc"
