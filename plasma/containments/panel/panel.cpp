@@ -83,6 +83,7 @@ void Panel::init()
     KConfigGroup cg = config("Configuration");
     setMinimumSize(cg.readEntry("minimumSize", m_currentSize));
     setMaximumSize(cg.readEntry("maximumSize", m_currentSize));
+    setDrawWallpaper(false);
 }
 
 QList<QAction*> Panel::contextualActions()
@@ -207,7 +208,7 @@ void Panel::addPanel()
         panel->setScreen(screen());
         panel->setLocation(Plasma::TopEdge);
 
-        // trigger an instant layout so we immediately have a proper geometry 
+        // trigger an instant layout so we immediately have a proper geometry
         // rather than waiting around for the event loop
         panel->updateConstraints(Plasma::StartupCompletedConstraint);
         panel->flushPendingConstraintsEvents();
@@ -345,7 +346,7 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
         QRectF screenRect = screen() >= 0 ? QApplication::desktop()->screenGeometry(screen()) :
             geometry();
 
-        if ((formFactor() == Horizontal && m_currentSize.width() >= screenRect.width()) || 
+        if ((formFactor() == Horizontal && m_currentSize.width() >= screenRect.width()) ||
                 (formFactor() == Vertical && m_currentSize.height() >= screenRect.height())) {
             m_background->setElementPrefix(location());
         } else {
@@ -435,7 +436,7 @@ void Panel::paintInterface(QPainter *painter,
     painter->resetTransform();
 
     const Containment::StyleOption *containmentOpt = qstyleoption_cast<const Containment::StyleOption *>(option);
-    
+
     QRect viewGeom;
     if (containmentOpt) {
         viewGeom = containmentOpt->view->geometry();
