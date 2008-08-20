@@ -91,6 +91,8 @@ Plugins/Addons
     * Kickoff menu size restoration
     * MS Windows compile fixes
     * Taskbar shows thumbnails of windows on hover (4.1 regression)
+    * Hide Shutdown and Restart options in KickOff when we know those actions are
+      not possible.
 
 KRunner
 -------
