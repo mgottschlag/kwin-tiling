@@ -23,6 +23,7 @@ libplasma
         * NEW: Plasma::Slider based on QSlider
         * NEW: Plasma::TabBar (usable with both QWidget and QGraphicsItems)
         * NEW: Plasma::Frame used to visually group widgets
+        * NEW: Plasma::TreeView used to put tree views or simple list in the canvas
         * Plasma::PushButton is svg-themed
     * Panel SVG
         * setting the margins via in-SVG hints
