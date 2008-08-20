@@ -69,6 +69,12 @@ class DesktopLayout : public QGraphicsLayout
     void setShiftingSpacing(qreal spacing);
 
     /**
+     * Sets the tolerance for temporary placement in terms of size
+     * of the item concerned.
+     **/
+    void setItemRelativeTolerance(qreal part);
+
+    /**
      * Sets whether the working area should always be
      * considered the geometry of the managed widget.
      * Default is on.
@@ -139,6 +145,7 @@ class DesktopLayout : public QGraphicsLayout
     qreal placementSpacing;
     qreal screenSpacing;
     qreal shiftingSpacing;
+    qreal itemRelativeTolerance;
 
     // item manipulation functions
     void offsetPositions(const QPointF &offset);
@@ -150,8 +157,8 @@ class DesktopLayout : public QGraphicsLayout
 
     // positioning functions
 
-    QPointF positionHorizontally(const QSizeF &itemSize, Qt::Alignment align, qreal spL, qreal spR, qreal spT, qreal spB) const;
-    QPointF positionVertically(const QSizeF &itemSize, Qt::Alignment align, qreal spL, qreal spR, qreal spT, qreal spB) const;
+    QPointF positionHorizontally(const QSizeF &itemSize, Qt::Alignment align, bool limitedSpace, qreal spL, qreal spR, qreal spT, qreal spB) const;
+    QPointF positionVertically(const QSizeF &itemSize, Qt::Alignment align, bool limitedSpace, qreal spL, qreal spR, qreal spT, qreal spB) const;
 
     QRectF itemInRegionStartingFirstHoriz(const QRectF &region) const;
     QRectF itemInRegionEndingLastHoriz(const QRectF &region) const;

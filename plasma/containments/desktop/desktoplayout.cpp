@@ -30,7 +30,8 @@ DesktopLayout::DesktopLayout (QGraphicsLayoutItem *parent)
     layoutAlignment(Qt::AlignTop|Qt::AlignLeft),
     placementSpacing(0),
     screenSpacing(0),
-    shiftingSpacing(0)
+    shiftingSpacing(0),
+    itemRelativeTolerance(0)
 {
 }
 
@@ -52,7 +53,7 @@ void DesktopLayout::addItem (QGraphicsLayoutItem *item, bool pushBack, const QRe
 void DesktopLayout::addItem (QGraphicsLayoutItem *item, bool pushBack, const QSizeF &size)
 {
     QSizeF itemSize = ( size.isValid() ? size : item->effectiveSizeHint(Qt::PreferredSize) );
-    QPointF newPos = positionVertically(itemSize, layoutAlignment, placementSpacing, placementSpacing, placementSpacing, placementSpacing);
+    QPointF newPos = positionVertically(itemSize, layoutAlignment, false, placementSpacing, placementSpacing, placementSpacing, placementSpacing);
     if (newPos == QPointF(-1, -1)) {
         newPos = QPointF(0, 0);
     }
@@ -90,6 +91,12 @@ void DesktopLayout::setShiftingSpacing (qreal spacing)
 {
     shiftingSpacing = spacing;
     // NOTE: not wise to call that during operation yet
+}
+
+void DesktopLayout::setItemRelativeTolerance(qreal part)
+{
+    itemRelativeTolerance = part;
+    invalidate();
 }
 
 void DesktopLayout::setWorkingArea (QRectF area)
@@ -158,7 +165,7 @@ void DesktopLayout::performTemporaryPlacement (int itemIndex)
     DesktopLayoutItem &item = items[itemIndex];
     QRectF origGeom = item.lastGeometry;
     item.lastGeometry = QRectF(0, 0, -1, -1);
-    QPointF newPos = positionVertically(origGeom.size(), layoutAlignment, placementSpacing, placementSpacing, placementSpacing, placementSpacing);
+    QPointF newPos = positionVertically(origGeom.size(), layoutAlignment, true, placementSpacing, placementSpacing, placementSpacing, placementSpacing);
     if (newPos == QPointF(-1, -1)) {
         newPos = QPointF(0, 0);
     }
@@ -399,18 +406,16 @@ void DesktopLayout::setGeometry(const QRectF &rect)
     */
     for (int i=0; i<items.size(); i++) {
         DesktopLayoutItem &item = items[i];
-        if (temporaryPlacement && !workingGeom.contains(item.lastGeometry)) {
-            performTemporaryPlacement(i);
-        } else if (item.temporaryGeometry.isValid()) {
-            bool okX = (layoutAlignment==Qt::AlignLeft ?
-                        item.lastGeometry.right()+screenSpacing <= workingGeom.width() :
-                        item.lastGeometry.left() >= screenSpacing);
-            bool okY = (layoutAlignment==Qt::AlignTop ?
-                        item.lastGeometry.bottom()+screenSpacing <= workingGeom.height() :
-                        item.lastGeometry.top() >= screenSpacing);
-            if (okX && okY) {
-                revertTemporaryPlacement(i);
+        qreal xTolerance = itemRelativeTolerance*item.lastGeometry.width();
+        qreal yTolerance = itemRelativeTolerance*item.lastGeometry.height();
+        QRectF allowedArea = QRectF(-xTolerance, -yTolerance,
+                                    workingGeom.width()+2*xTolerance, workingGeom.height()+2*yTolerance);
+        if (!allowedArea.contains(item.lastGeometry)) {
+            if (temporaryPlacement) {
+                performTemporaryPlacement(i);
             }
+        } else if (item.temporaryGeometry.isValid()) {
+            revertTemporaryPlacement(i);
         }
     }
 
@@ -455,7 +460,7 @@ QSizeF DesktopLayout::sizeHint (Qt::SizeHint which, const QSizeF &constraint) co
     return QSizeF();
 }
 
-QPointF DesktopLayout::positionHorizontally(const QSizeF &itemSize, Qt::Alignment align, qreal spL, qreal spR, qreal spT, qreal spB) const
+QPointF DesktopLayout::positionHorizontally(const QSizeF &itemSize, Qt::Alignment align, bool limitedSpace, qreal spL, qreal spR, qreal spT, qreal spB) const
 {
     QPointF final = QPointF(-1,-1);
 
@@ -502,8 +507,6 @@ QPointF DesktopLayout::positionHorizontally(const QSizeF &itemSize, Qt::Alignmen
            If aligning to top, Y starts at 0 and increases as lower positions are tried.
            If aligning to bottom, Y starts at the y coordinate of a most-bottom rectangle
            and decreases as higher positions are tried.
-           If there is no more Y space, all possible positions have been tried,
-           and there is no place for the applet.
         */
 
         if ((align & Qt::AlignBottom)) {
@@ -512,7 +515,7 @@ QPointF DesktopLayout::positionHorizontally(const QSizeF &itemSize, Qt::Alignmen
             outOfY = (y + size.height() > workingGeom.height());
         }
 
-        if (outOfY) {
+        if (outOfY && limitedSpace) {
             break;
         }
 
@@ -592,7 +595,7 @@ QPointF DesktopLayout::positionHorizontally(const QSizeF &itemSize, Qt::Alignmen
 
 /* Instead of placing horizontally, place vertically.
    So, try different heights and possibly jump to the next X */
-QPointF DesktopLayout::positionVertically(const QSizeF &itemSize, Qt::Alignment align, qreal spL, qreal spR, qreal spT, qreal spB) const
+QPointF DesktopLayout::positionVertically(const QSizeF &itemSize, Qt::Alignment align, bool limitedSpace, qreal spL, qreal spR, qreal spT, qreal spB) const
 {
     /* all the same here */
 
@@ -624,7 +627,7 @@ QPointF DesktopLayout::positionVertically(const QSizeF &itemSize, Qt::Alignment 
 
         /* instead of stopping when all heights have been tried
            stop when all X positions have been tried */
-        if (outOfX) {
+        if (outOfX && limitedSpace) {
             break;
         }
 
