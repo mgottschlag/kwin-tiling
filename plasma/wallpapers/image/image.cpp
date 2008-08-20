@@ -73,7 +73,7 @@ void Image::init(const KConfigGroup &config)
     }
 }
 
-void Image::save(KConfigGroup config)
+void Image::save(KConfigGroup &config)
 {
     config.writeEntry("slideTimer", m_delay);
     config.writeEntry("wallpaperposition", (int)m_resizeMethod);

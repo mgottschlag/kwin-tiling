@@ -53,7 +53,7 @@ void Color::setColor(const QColor& color)
     emit update(boundingRect());
 }
 
-void Color::save(KConfigGroup config)
+void Color::save(KConfigGroup &config)
 {
     config.writeEntry("wallpapercolor", m_color);
 }
