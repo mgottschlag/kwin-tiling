@@ -16,6 +16,14 @@
       <number>0</number>
      </property>
      <widget class="QWidget" name="tabLayout" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>606</width>
+        <height>534</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>Layout</string>
       </attribute>
@@ -259,7 +267,7 @@
                 <property name="orientation" >
                  <enum>Qt::Vertical</enum>
                 </property>
-                <property name="sizeHint" >
+                <property name="sizeHint" stdset="0" >
                  <size>
                   <width>20</width>
                   <height>40</height>
@@ -361,6 +369,14 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tab" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>606</width>
+        <height>534</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>Switching Options</string>
       </attribute>
@@ -431,6 +447,9 @@
                <property name="text" >
                 <string>Main shortcuts:</string>
                </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
                <property name="buddy" >
                 <cstring>btnXkbShortcut</cstring>
                </property>
@@ -457,6 +476,9 @@
               <widget class="QLabel" name="label_3" >
                <property name="text" >
                 <string>3rd level shortcuts:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
                <property name="buddy" >
                 <cstring>btnXkbShortcut3d</cstring>
@@ -485,6 +507,9 @@
                <property name="text" >
                 <string>Alternative shortcut:</string>
                </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
                <property name="buddy" >
                 <cstring>kdeKeySequence</cstring>
                </property>
@@ -505,7 +530,7 @@
             <property name="orientation" >
              <enum>Qt::Vertical</enum>
             </property>
-            <property name="sizeHint" >
+            <property name="sizeHint" stdset="0" >
              <size>
               <width>20</width>
               <height>40</height>
@@ -519,6 +544,14 @@
       </layout>
      </widget>
      <widget class="QWidget" name="tabOptions" >
+      <property name="geometry" >
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>606</width>
+        <height>534</height>
+       </rect>
+      </property>
       <attribute name="title" >
        <string>Advanced</string>
       </attribute>
