@@ -103,12 +103,12 @@ void LauncherApplet::init()
     d->actions.append(d->switcher);
     connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
 
-    /*Plasma::ToolTipManager::self()->registerWidget(d->icon);
+    Plasma::ToolTipManager::self()->registerWidget(this);
     Plasma::ToolTipManager::ToolTipContent data;
     data.mainText = i18n("Kickoff Application Launcher");
     data.subText = i18n("Favorites, applications, computer places, recently used items and desktop sessions");
-    data.image = d->icon->icon().pixmap(IconSize(KIconLoader::Desktop));
-    Plasma::ToolTipManager::self()->setToolTipContent(d->icon, data);*/
+    data.image = icon().pixmap(IconSize(KIconLoader::Desktop));
+    Plasma::ToolTipManager::self()->setToolTipContent(this, data);
 }
 
 void LauncherApplet::switchMenuStyle()
