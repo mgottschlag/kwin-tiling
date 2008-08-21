@@ -324,6 +324,13 @@ void DefaultDesktop::restoreContents(KConfigGroup &group)
     }
 }
 
+void DefaultDesktop::dropEvent(QGraphicsSceneDragDropEvent *event)
+{
+    restoring = true;
+    Containment::dropEvent(event);
+    restoring = false;
+}
+
 K_EXPORT_PLASMA_APPLET(desktop, DefaultDesktop)
 
 #include "desktop.moc"

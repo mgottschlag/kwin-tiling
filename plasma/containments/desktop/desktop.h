@@ -67,6 +67,11 @@ public:
 
     QList<QAction*> contextualActions();
 
+protected:
+    void saveContents(KConfigGroup &group) const;
+    void restoreContents(KConfigGroup &group);
+    void dropEvent(QGraphicsSceneDragDropEvent *event);
+
 protected Q_SLOTS:
     void runCommand();
     void configure();
@@ -80,10 +85,6 @@ protected Q_SLOTS:
     void onAppletDestroyed(QObject *applet);
     void onAppletGeometryChanged();
     void refreshWorkingArea();
-
-protected:
-    void saveContents(KConfigGroup &group) const;
-    void restoreContents(KConfigGroup &group);
 
 private:
     QSize resolution() const;
