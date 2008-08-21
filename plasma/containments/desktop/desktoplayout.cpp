@@ -21,7 +21,6 @@
 
 DesktopLayout::DesktopLayout (QGraphicsLayoutItem *parent)
   : QGraphicsLayout(parent),
-    screenGeom(QRectF(0, 0, -1, -1)),
     autoWorkingArea(true),
     temporaryPlacement(false),
     itemRelativeTolerance(0)

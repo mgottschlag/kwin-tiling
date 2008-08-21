@@ -124,8 +124,6 @@ class DesktopLayout : public QGraphicsLayout
     ItemSpace itemSpace;
     QList<DesktopLayoutItem> items;
     QPointF workingStart;
-    QRectF screenGeom;
-    bool reassignPositions;
 
     // layout configuration
 
