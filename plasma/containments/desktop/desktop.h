@@ -101,6 +101,7 @@ private:
 
     DesktopLayout *m_layout;
     bool restoring;
+    bool dropping;
 };
 
 #endif // PLASMA_PANEL_H

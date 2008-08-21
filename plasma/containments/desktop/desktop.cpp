@@ -67,7 +67,8 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
       m_runCommandAction(0),
       m_lockScreenAction(0),
       m_logoutAction(0),
-      restoring(false)
+      restoring(false),
+      dropping(false)
 {
     qRegisterMetaType<QImage>("QImage");
     qRegisterMetaType<QPersistentModelIndex>("QPersistentModelIndex");
@@ -243,7 +244,10 @@ void DefaultDesktop::logout()
 void DefaultDesktop::onAppletAdded(Plasma::Applet *applet, const QPointF &pos)
 {
     Q_UNUSED(pos)
-    if (!restoring) {
+    if (dropping) {
+        // add dropped item to the layout using the current position
+        m_layout->addItem(applet, true, applet->geometry());
+    } else if (!restoring) {
         /*
             There seems to be no uniform way to get the applet's preferred size.
             Regular applets properly set their current size when created, but report useless size hints.
@@ -326,9 +330,9 @@ void DefaultDesktop::restoreContents(KConfigGroup &group)
 
 void DefaultDesktop::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-    restoring = true;
+    dropping = true;
     Containment::dropEvent(event);
-    restoring = false;
+    dropping = false;
 }
 
 K_EXPORT_PLASMA_APPLET(desktop, DefaultDesktop)
