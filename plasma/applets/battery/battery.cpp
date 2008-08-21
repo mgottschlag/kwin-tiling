@@ -110,10 +110,18 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & (Plasma::FormFactorConstraint | Plasma::SizeConstraint)) {
         if (formFactor() == Plasma::Vertical) {
-            setMaximumSize(QWIDGETSIZE_MAX, qMax(m_textRect.height(), contentsRect().width()));
+            if (!m_showMultipleBatteries) {
+                setMaximumSize(QWIDGETSIZE_MAX, qMax(m_textRect.height(), contentsRect().width()));
+            } else {
+                setMaximumSize(QWIDGETSIZE_MAX, qMax(m_textRect.height(), contentsRect().width()*m_numOfBattery));
+            }
             //kDebug() << "Vertical FormFactor";
         } else if (formFactor() == Plasma::Horizontal) {
-            setMaximumSize(qMax(m_textRect.width(), contentsRect().height()), QWIDGETSIZE_MAX);
+            if (!m_showMultipleBatteries) {
+                setMaximumSize(qMax(m_textRect.width(), contentsRect().height()), QWIDGETSIZE_MAX);
+            } else {
+                setMaximumSize(qMax(m_textRect.width(), contentsRect().height()*m_numOfBattery), QWIDGETSIZE_MAX);
+            }
             //kDebug() << "Horizontal FormFactor" << m_textRect.width() << contentsRect().height();
         }
     }
@@ -124,6 +132,26 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
                                  qRound(contentsRect().height() / 10)));
     }
 }
+
+
+QSizeF Battery::sizeHint(const Qt::SizeHint which, const QSizeF& constraint) const
+{
+    Q_UNUSED( which );
+    Q_UNUSED( constraint );
+    QSizeF sizeHint = contentsRect().size();
+    switch (formFactor()) {
+        case Plasma::Vertical:
+            sizeHint.setHeight(sizeHint.width() * m_numOfBattery);
+            break;
+
+        default:
+            sizeHint.setWidth(sizeHint.height() * m_numOfBattery);
+            break;
+    }
+    kDebug() << "SizeHint" << sizeHint;
+    return sizeHint;
+}
+
 
 void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {

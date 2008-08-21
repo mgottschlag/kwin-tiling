@@ -46,7 +46,7 @@ class Battery : public Plasma::Applet
         void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *option,
                             const QRect &contents);
         void setPath(const QString&);
-        QSizeF contentSizeHint() const;
+        QSizeF sizeHint(const Qt::SizeHint which, const QSizeF& constraint) const;
         Qt::Orientations expandingDirections() const;
 
         void constraintsEvent(Plasma::Constraints constraints);
