@@ -87,7 +87,7 @@ KDMUsersWidget::KDMUsersWidget( QWidget *parent )
 
 	// We assume that $kde_datadir/kdm exists, but better check for pics/ and pics/users,
 	// and create them if necessary.
-	m_userPixDir = config->group( "X-*-Greeter" ).readEntry( "FaceDir", KGlobal::dirs()->resourceDirs( "data" ).last() + "kdm/faces" ) + '/';
+	m_userPixDir = config->group( "X-*-Greeter" ).readEntry( "FaceDir", KStandardDirs::installPath( "data" ) + "kdm/faces" ) + '/';
 	QDir testDir( m_userPixDir );
 	if (!testDir.exists() && !testDir.mkdir( testDir.absolutePath() ) && !geteuid())
 		KMessageBox::sorry( this, i18n("Unable to create folder %1", testDir.absolutePath() ) );
@@ -364,7 +364,7 @@ void KDMUsersWidget::changeUserPix( const QString &pix )
 void KDMUsersWidget::slotUserButtonClicked()
 {
 	KIconDialog dlg;
-	dlg.setCustomLocation( KGlobal::dirs()->resourceDirs( "data" ).last() + "kdm/pics/users" );
+	dlg.setCustomLocation( KStandardDirs::installPath( "data" ) + "kdm/pics/users" );
 	dlg.setup( KIconLoader::NoGroup, KIconLoader::Any, false, 48, true, true, false );
 	QString ic = dlg.openDialog();
 	if (ic.isEmpty())

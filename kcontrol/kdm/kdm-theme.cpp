@@ -115,7 +115,7 @@ KDMThemeWidget::KDMThemeWidget( QWidget *parent )
 	connect( bRemoveTheme, SIGNAL(clicked()), SLOT(removeSelectedThemes()) );
 	connect( bGetNewThemes, SIGNAL(clicked()), SLOT(getNewStuff()) );
 
-	themeDir = KGlobal::dirs()->resourceDirs( "data" ).last() + "kdm/themes/";
+	themeDir = KStandardDirs::installPath( "data" ) + "kdm/themes/";
 	defaultTheme = 0;
 	QDir testDir( themeDir );
 	if (!testDir.exists() && !testDir.mkdir( testDir.absolutePath() ) && !geteuid())
