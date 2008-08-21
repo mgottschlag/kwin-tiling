@@ -13,11 +13,13 @@ libplasma
         * NEW: PopupApplet, which switches between an icon with a popup in a Horizontal/Vertical containment (such as a panel) and the widget directly on the canvas in a Planer containment (such as a desktop)
     * Corona
         * addOffscreenWidget/removeOffscreenWidget: manage canvas items that should not appear in a primary view (e.g. Extenders)
-    * Package system:
+    * Package system
         * PackageStructure supports arbitrary URIs (in addition to auto-discovery for package) structure description files.
+        * Package removal
     * Plasma::Theme
         * Support compressed SVGs (*.svgz)
     * Service
+        * Allow enabling/disabling of operations at runtime
         * Associate widgets with operations
     * Widgets
         * NEW: Plasma::Slider based on QSlider
@@ -30,7 +32,7 @@ libplasma
         * paintPanel API additions to make it more like QPainter and Plasma::Svg
 
 * KRunner
-	* NEW: Konqueror history runner
+    * NEW: Konqueror history runner
 
 * Significant Fixes
     * WebContent painting update synchronization (fixes, among other things, scrolling)
@@ -58,8 +60,10 @@ Desktop Theme
 Plasma Desktop Shell
 --------------------
 * Features
+    * Desktop
+        * Allow configuration of the activity
     * Panel
-        * resizes itself when an applet changes its sizehint according to its maximum and minimum sizes
+        * Resizes itself when an applet changes its sizehint according to its maximum and minimum sizes
 
 * Significant Fixes
     * Reposition toolbox when zooming out/in to avoid panel overlap
@@ -68,7 +72,7 @@ Plasma Desktop Shell
 Plugins/Addons
 --------------
 * Features
-    * Plasmoids
+    * Plasmoids and Containments
         * NEW: Calendar
         * NEW: Character selector
         * Now Playing media player controls
@@ -77,7 +81,10 @@ Plugins/Addons
         * Digital clock
         * Custom colors
     * Folder view
-            * Filtering improvements: mimetype and exclusion based.
+        * Filtering improvements: mimetype and exclusion based.
+    * Default desktop containment
+        * Wheel mouse == switch desktop
+        * Creation of widgets on desktop containments puts them in empty areas, avoiding overlap
 
     * DataEngines
         * nowplaying Plasma::Service for controlling media players
@@ -88,11 +95,13 @@ Plugins/Addons
 
 * Significant Fixes
     * Various clocks ported to AppletClock for calendar and timezone consistency
-    * Kickoff menu size restoration
     * MS Windows compile fixes
     * Taskbar shows thumbnails of windows on hover (4.1 regression)
-    * Hide Shutdown and Restart options in KickOff when we know those actions are
-      not possible.
+    * Kickoff
+        * proper menu size restoration
+        * Hide Shutdown and Restart options when those actions are not possible.
+        * Make Sleep and Hibernate entries appear and work
+        * use Plasma::Theme to improve visual harmony with the rest of Plasma
 
 KRunner
 -------
