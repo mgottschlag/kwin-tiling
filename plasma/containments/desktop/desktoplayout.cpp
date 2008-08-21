@@ -53,12 +53,94 @@ void DesktopLayout::addItem (QGraphicsLayoutItem *item, bool pushBack, const QRe
 void DesktopLayout::addItem (QGraphicsLayoutItem *item, bool pushBack, const QSizeF &size)
 {
     QSizeF itemSize = ( size.isValid() ? size : item->effectiveSizeHint(Qt::PreferredSize) );
-    QPointF newPos = positionVertically(itemSize, layoutAlignment, false, placementSpacing, placementSpacing, placementSpacing, placementSpacing);
-    if (newPos == QPointF(-1, -1)) {
-        newPos = QPointF(0, 0);
+
+    // get possible positions
+    QList<QPointF> possiblePositions;
+    // TODO: add custom working area option to position{Vertically,Horizontally} and increase X
+    //       space for positionHorizontally to consider positions where the item is outsize the
+    //       working area in both dimensions
+    possiblePositions += positionVertically(itemSize, layoutAlignment, false, true, placementSpacing, placementSpacing, placementSpacing, placementSpacing);
+    possiblePositions += positionHorizontally(itemSize, layoutAlignment, false, true, placementSpacing, placementSpacing, placementSpacing, placementSpacing);
+
+    // choose the position that with the best resulting visibility
+    // TODO: make that less hacky and allow calculating available push without an actual item
+    QPointF bestPosition = QPointF();
+    qreal bestVisibility = 0;
+    foreach (QPointF position, possiblePositions) {
+        // see how much the item can be pushed if it intersects borders
+        addItem(item, pushBack, QRectF(position, itemSize));
+        int itemIndex = items.count() - 1;
+        QPointF canPush = tryBorderPush(itemIndex);
+        removeAt(itemIndex);
+
+        if (canPush.isNull()) {
+            // no borders around, use this position
+            bestPosition = position;
+            bestVisibility = 1;
+            break;
+        }
+
+        // calculate visibility of pushed item
+        QRectF pushedGeometry = QRectF(position+canPush, itemSize);
+        qreal visibility = positionVisibility(pushedGeometry);
+        if (visibility > bestVisibility) {
+            bestPosition = position;
+            bestVisibility = visibility;
+            if (visibility >= 1) {
+                break;
+            }
+        }
     }
-    QRectF newGeom = QRectF(newPos, itemSize);
-    addItem(item, pushBack, newGeom);
+
+    if (bestVisibility < (1.0-itemRelativeTolerance)) {
+        bestPosition = QPointF(screenSpacing, screenSpacing);
+    }
+
+    addItem(item, pushBack, QRectF(bestPosition, itemSize));
+    kDebug() << "Positioned item to" << bestPosition;
+}
+
+// TODO:
+// This may not be perfect. Can the available push in one dimension change once
+// a push in the other dimension has been performed? Create a seperate class for
+// position storage and pushing so the push can be performed on a local copy?
+QPointF DesktopLayout::tryBorderPush (int itemIndex)
+{
+        DesktopLayoutItem &item = items[itemIndex];
+        qreal push;
+        qreal canPush;
+        qreal dx = 0;
+        qreal dy = 0;
+
+        // left border
+        push = screenSpacing - item.lastGeometry.left();
+        if (push > 0) {
+            QList<int> previous;
+            dx += pushItem(itemIndex, DirRight, push, &previous, false, (layoutAlignment & Qt::AlignLeft));
+        }
+
+        // right border
+        push = item.lastGeometry.right()+screenSpacing - workingGeom.width();
+        if (push > 0) {
+            QList<int> previous;
+            dx -= pushItem(itemIndex, DirLeft, push, &previous, false, (layoutAlignment & Qt::AlignRight));
+        }
+
+        // top border
+        push = screenSpacing - item.lastGeometry.top();
+        if (push > 0) {
+            QList<int> previous;
+            dy += pushItem(itemIndex, DirDown, push, &previous, false, (layoutAlignment & Qt::AlignTop));
+        }
+
+        // bottom border
+        push = item.lastGeometry.bottom()+screenSpacing - workingGeom.height();
+        if (push > 0) {
+            QList<int> previous;
+            dy -= pushItem(itemIndex, DirUp, push, &previous, false, (layoutAlignment & Qt::AlignBottom));
+        }
+
+        return QPointF(dx, dy);
 }
 
 bool DesktopLayout::getPushBack (int index)
@@ -165,10 +247,13 @@ void DesktopLayout::performTemporaryPlacement (int itemIndex)
     DesktopLayoutItem &item = items[itemIndex];
     QRectF origGeom = item.lastGeometry;
     item.lastGeometry = QRectF(0, 0, -1, -1);
-    QPointF newPos = positionVertically(origGeom.size(), layoutAlignment, true, placementSpacing, placementSpacing, placementSpacing, placementSpacing);
-    if (newPos == QPointF(-1, -1)) {
-        newPos = QPointF(0, 0);
+
+    QPointF newPos = QPointF(0, 0);
+    QList<QPointF> possiblePositions = positionVertically(origGeom.size(), layoutAlignment, true, false, placementSpacing, placementSpacing, placementSpacing, placementSpacing);
+    if (possiblePositions.count() > 0) {
+        newPos = possiblePositions[0];
     }
+    
     kDebug() << "Temp placing" << itemIndex << "to" << newPos;
     item.lastGeometry = origGeom;
     item.temporaryGeometry = QRectF(newPos, origGeom.size());
@@ -406,11 +491,7 @@ void DesktopLayout::setGeometry(const QRectF &rect)
     */
     for (int i=0; i<items.size(); i++) {
         DesktopLayoutItem &item = items[i];
-        qreal xTolerance = itemRelativeTolerance*item.lastGeometry.width();
-        qreal yTolerance = itemRelativeTolerance*item.lastGeometry.height();
-        QRectF allowedArea = QRectF(-xTolerance, -yTolerance,
-                                    workingGeom.width()+2*xTolerance, workingGeom.height()+2*yTolerance);
-        if (!allowedArea.contains(item.lastGeometry)) {
+        if (positionVisibility(item.lastGeometry) < itemRelativeTolerance) {
             if (temporaryPlacement) {
                 performTemporaryPlacement(i);
             }
@@ -434,8 +515,18 @@ void DesktopLayout::setGeometry(const QRectF &rect)
     }
 }
 
+qreal DesktopLayout::positionVisibility(QRectF itemGeom)
+{
+        QRectF visibleArea = QRectF(0, 0, workingGeom.width(), workingGeom.height());
+        QRectF visibleItemPart = visibleArea.intersected(itemGeom);
+        qreal itemSurface = itemGeom.width() * itemGeom.height();
+        qreal itemVisibleSurface = visibleItemPart.width() * visibleItemPart.height();
+        return (itemVisibleSurface / itemSurface);
+}
+
 // This should be called when the geometry of an item has been changed.
 // If the change was made by the user, the new position is used as the preferred position.
+// TODO: refresh the layout without that item so things jump back and then add the item to the new position
 void DesktopLayout::itemGeometryChanged (QGraphicsLayoutItem *layoutItem)
 {
     if (isActivated()) return;
@@ -460,9 +551,9 @@ QSizeF DesktopLayout::sizeHint (Qt::SizeHint which, const QSizeF &constraint) co
     return QSizeF();
 }
 
-QPointF DesktopLayout::positionHorizontally(const QSizeF &itemSize, Qt::Alignment align, bool limitedSpace, qreal spL, qreal spR, qreal spT, qreal spB) const
+QList<QPointF> DesktopLayout::positionHorizontally(const QSizeF &itemSize, Qt::Alignment align, bool limitedSpace, bool findAll, qreal spL, qreal spR, qreal spT, qreal spB) const
 {
-    QPointF final = QPointF(-1,-1);
+    QList<QPointF> possiblePositions;
 
     /* space needed for the applet - spacing added */
     QSizeF size = QSizeF(itemSize.width()+spL+spR, itemSize.height()+spT+spB);
@@ -540,7 +631,7 @@ QPointF DesktopLayout::positionHorizontally(const QSizeF &itemSize, Qt::Alignmen
                 a = itemInRegionStartingLastVert(QRectF(0, y, workingGeom.width(), size.height()));
             }
 
-            /* If there were no obstacles, the whole screen is too narrow */
+            /* No more Y values to try */
             if (!a.isValid()) {
                 break;
             }
@@ -578,28 +669,36 @@ QPointF DesktopLayout::positionHorizontally(const QSizeF &itemSize, Qt::Alignmen
 
             /* no obstacle, place the applet! */
             if (!a.isValid()) {
-                final = QPointF(x+spL, y+spT);
-                break;
-            }
-
-            /* try next position */
-            if ((align & Qt::AlignLeft)) {
-                x = a.x() + a.width();
+                possiblePositions.append(QPointF(x+spL, y+spT));
+                if (!findAll) {
+                    break;
+                }
+                /* make it jump to next Y */
+                if ((align & Qt::AlignLeft)) {
+                    x = workingGeom.width();
+                } else {
+                    x = -1;
+                }
             } else {
-                x = a.x() - size.width();
+                /* try next position */
+                if ((align & Qt::AlignLeft)) {
+                    x = a.x() + a.width();
+                } else {
+                    x = a.x() - size.width();
+                }
             }
         }
     }
-    return final;
+    return possiblePositions;
 }
 
 /* Instead of placing horizontally, place vertically.
    So, try different heights and possibly jump to the next X */
-QPointF DesktopLayout::positionVertically(const QSizeF &itemSize, Qt::Alignment align, bool limitedSpace, qreal spL, qreal spR, qreal spT, qreal spB) const
+QList<QPointF> DesktopLayout::positionVertically(const QSizeF &itemSize, Qt::Alignment align, bool limitedSpace, bool findAll, qreal spL, qreal spR, qreal spT, qreal spB) const
 {
     /* all the same here */
 
-    QPointF final = QPointF(-1,-1);
+    QList<QPointF> possiblePositions;
 
     QSizeF size = QSizeF(itemSize.width()+spL+spR, itemSize.height()+spT+spB);
 
@@ -642,7 +741,7 @@ QPointF DesktopLayout::positionVertically(const QSizeF &itemSize, Qt::Alignment 
                 a = itemInRegionStartingLastHoriz(QRectF(x, 0, size.width(), workingGeom.height()));
             }
 
-            /* Screen is not high enough */
+            /* No more X values to try */
             if (!a.isValid()) {
                 break;
             }
@@ -672,19 +771,27 @@ QPointF DesktopLayout::positionVertically(const QSizeF &itemSize, Qt::Alignment 
 
             /* no obstacle, place the applet! */
             if (!a.isValid()) {
-                final = QPointF(x+spL, y+spT);
-                break;
-            }
-
-            /* try next position */
-            if ((align & Qt::AlignTop)) {
-                y = a.y() + a.height();
+                possiblePositions.append(QPointF(x+spL, y+spT));
+                if (!findAll) {
+                    break;
+                }
+                /* make it jump to next X */
+                if ((align & Qt::AlignTop)) {
+                    y = workingGeom.height();
+                } else {
+                    y = -1;
+                }
             } else {
-                y = a.y() - size.height();
+                /* try next position */
+                if ((align & Qt::AlignTop)) {
+                    y = a.y() + a.height();
+                } else {
+                    y = a.y() - size.height();
+                }
             }
         }
     }
-    return final;
+    return possiblePositions;
 }
 
 QRectF DesktopLayout::itemInRegionStartingFirstHoriz(const QRectF &region) const

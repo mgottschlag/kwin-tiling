@@ -69,7 +69,7 @@ class DesktopLayout : public QGraphicsLayout
     void setShiftingSpacing(qreal spacing);
 
     /**
-     * Sets the tolerance for temporary placement in terms of size
+     * Sets the tolerance for temporary placement in terms of surface
      * of the item concerned.
      **/
     void setItemRelativeTolerance(qreal part);
@@ -154,11 +154,13 @@ class DesktopLayout : public QGraphicsLayout
     qreal pushItem(int itemIndex, Direction direction, qreal amount, const QList<int> *previousItems, bool doPush, bool ignoreBorder);
     void performTemporaryPlacement(int itemIndex);
     void revertTemporaryPlacement(int itemIndex);
+    qreal positionVisibility(QRectF itemGeom);
+    QPointF tryBorderPush (int itemIndex);
 
     // positioning functions
 
-    QPointF positionHorizontally(const QSizeF &itemSize, Qt::Alignment align, bool limitedSpace, qreal spL, qreal spR, qreal spT, qreal spB) const;
-    QPointF positionVertically(const QSizeF &itemSize, Qt::Alignment align, bool limitedSpace, qreal spL, qreal spR, qreal spT, qreal spB) const;
+    QList<QPointF> positionVertically(const QSizeF &itemSize, Qt::Alignment align, bool limitedSpace, bool findAll, qreal spL, qreal spR, qreal spT, qreal spB) const;
+    QList<QPointF> positionHorizontally(const QSizeF &itemSize, Qt::Alignment align, bool limitedSpace, bool findAll, qreal spL, qreal spR, qreal spT, qreal spB) const;
 
     QRectF itemInRegionStartingFirstHoriz(const QRectF &region) const;
     QRectF itemInRegionEndingLastHoriz(const QRectF &region) const;
