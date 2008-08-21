@@ -13,15 +13,7 @@
 #include <QGraphicsLayout>
 #include <QList>
 
-class DesktopLayoutItem
-{
-  public:
-    QGraphicsLayoutItem *item;
-    bool pushBack;
-    QRectF preferredGeometry;
-    QRectF lastGeometry;
-    QRectF temporaryGeometry;
-};
+#include "itemspace.h"
 
 class DesktopLayout : public QGraphicsLayout
 {
@@ -120,19 +112,19 @@ class DesktopLayout : public QGraphicsLayout
 
   private:
 
-    enum Direction {
-        DirLeft = 1,
-        DirRight = 2,
-        DirUp = 4,
-        DirDown = 8
+    class DesktopLayoutItem
+    {
+      public:
+        QGraphicsLayoutItem *item;
+        QRectF temporaryGeometry;
     };
 
     // layout status
 
+    ItemSpace itemSpace;
     QList<DesktopLayoutItem> items;
+    QPointF workingStart;
     QRectF screenGeom;
-    QRectF workingGeom;
-    QRectF previousWorkingGeom;
     bool reassignPositions;
 
     // layout configuration
@@ -140,36 +132,11 @@ class DesktopLayout : public QGraphicsLayout
     bool autoWorkingArea;
     bool temporaryPlacement;
 
-    Qt::Alignment layoutAlignment;
-
-    qreal placementSpacing;
-    qreal screenSpacing;
-    qreal shiftingSpacing;
     qreal itemRelativeTolerance;
 
     // item manipulation functions
-    void offsetPositions(const QPointF &offset);
-    qreal performPush(int itemIndex, Direction direction, qreal amount, qreal minAmount, bool ignoreBorder);
-    void findPullGroup(int thisItem, QList<int> *currentItems);
-    qreal pushItem(int itemIndex, Direction direction, qreal amount, const QList<int> *previousItems, bool doPush, bool ignoreBorder);
     void performTemporaryPlacement(int itemIndex);
     void revertTemporaryPlacement(int itemIndex);
-    qreal positionVisibility(QRectF itemGeom);
-    QPointF tryBorderPush (int itemIndex);
-
-    // positioning functions
-
-    QList<QPointF> positionVertically(const QSizeF &itemSize, Qt::Alignment align, bool limitedSpace, bool findAll, qreal spL, qreal spR, qreal spT, qreal spB) const;
-    QList<QPointF> positionHorizontally(const QSizeF &itemSize, Qt::Alignment align, bool limitedSpace, bool findAll, qreal spL, qreal spR, qreal spT, qreal spB) const;
-
-    QRectF itemInRegionStartingFirstHoriz(const QRectF &region) const;
-    QRectF itemInRegionEndingLastHoriz(const QRectF &region) const;
-    QRectF itemInRegionEndingFirstVert(const QRectF &region) const;
-    QRectF itemInRegionStartingLastVert(const QRectF &region) const;
-    QRectF itemInRegionStartingFirstVert(const QRectF &region) const;
-    QRectF itemInRegionEndingLastVert(const QRectF &region) const;
-    QRectF itemInRegionEndingFirstHoriz(const QRectF &region) const;
-    QRectF itemInRegionStartingLastHoriz(const QRectF &region) const;
 };
 
 #endif

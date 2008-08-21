@@ -22,15 +22,8 @@
 DesktopLayout::DesktopLayout (QGraphicsLayoutItem *parent)
   : QGraphicsLayout(parent),
     screenGeom(QRectF(0, 0, -1, -1)),
-    workingGeom(QRectF(0, 0, -1, -1)),
-    previousWorkingGeom(QRectF(0, 0, -1, -1)),
-    reassignPositions(false),
     autoWorkingArea(true),
     temporaryPlacement(false),
-    layoutAlignment(Qt::AlignTop|Qt::AlignLeft),
-    placementSpacing(0),
-    screenSpacing(0),
-    shiftingSpacing(0),
     itemRelativeTolerance(0)
 {
 }
@@ -39,14 +32,11 @@ void DesktopLayout::addItem (QGraphicsLayoutItem *item, bool pushBack, const QRe
 {
     DesktopLayoutItem newItem;
     newItem.item = item;
-    newItem.pushBack = pushBack;
     newItem.temporaryGeometry = QRectF(0, 0, -1, -1);
-    newItem.preferredGeometry = preferredGeom;
-    newItem.lastGeometry = (lastGeom.isValid() ? lastGeom : preferredGeom);
-    items.append(newItem);
 
-    //item->setGeometry(newItem.lastGeometry.translated(workingGeom.topLeft()));
-    reassignPositions = true;
+    items.append(newItem);
+    itemSpace.addItem(pushBack, preferredGeom, lastGeom);
+
     invalidate();
 }
 
@@ -55,123 +45,85 @@ void DesktopLayout::addItem (QGraphicsLayoutItem *item, bool pushBack, const QSi
     QSizeF itemSize = ( size.isValid() ? size : item->effectiveSizeHint(Qt::PreferredSize) );
 
     // get possible positions
-    QList<QPointF> possiblePositions;
-    // TODO: add custom working area option to position{Vertically,Horizontally} and increase X
-    //       space for positionHorizontally to consider positions where the item is outsize the
-    //       working area in both dimensions
-    possiblePositions += positionVertically(itemSize, layoutAlignment, false, true, placementSpacing, placementSpacing, placementSpacing, placementSpacing);
-    possiblePositions += positionHorizontally(itemSize, layoutAlignment, false, true, placementSpacing, placementSpacing, placementSpacing, placementSpacing);
+    QList<QPointF> possiblePositions = itemSpace.positionVertically(itemSize, itemSpace.spaceAlignment, false, true);
+    //kDebug() << "possiblePositions" << possiblePositions;
 
-    // choose the position that with the best resulting visibility
-    // TODO: make that less hacky and allow calculating available push without an actual item
-    QPointF bestPosition = QPointF();
-    qreal bestVisibility = 0;
+    // prefer free positions
+    QRectF bestGeometry = QRectF();
     foreach (QPointF position, possiblePositions) {
-        // see how much the item can be pushed if it intersects borders
-        addItem(item, pushBack, QRectF(position, itemSize));
-        int itemIndex = items.count() - 1;
-        QPointF canPush = tryBorderPush(itemIndex);
-        removeAt(itemIndex);
+        kDebug() << "Checkfreeing" << position;
 
-        if (canPush.isNull()) {
-            // no borders around, use this position
-            bestPosition = position;
-            bestVisibility = 1;
+        QRectF geom = QRectF(position, itemSize);
+        if (itemSpace.positionedProperly(geom)) {
+            kDebug() << "FREE";
+            bestGeometry = geom;
             break;
         }
+    }
 
-        // calculate visibility of pushed item
-        QRectF pushedGeometry = QRectF(position+canPush, itemSize);
-        qreal visibility = positionVisibility(pushedGeometry);
-        if (visibility > bestVisibility) {
-            bestPosition = position;
-            bestVisibility = visibility;
-            if (visibility >= 1) {
-                break;
+    if (!bestGeometry.isValid()) {
+        // choose the position that with the best resulting visibility
+        QPointF bestPosition = QPointF();
+        qreal bestVisibility = 0;
+        foreach (QPointF position, possiblePositions) {
+            // see how much the item can be pushed into the working area:
+            // copy our ItemSpace, add the item to the copy, activate it
+            // and check the resulting position's visibility
+            ItemSpace tempItemSpace(itemSpace);
+            tempItemSpace.addItem(pushBack, QRectF(position, itemSize));
+            tempItemSpace.activate();
+            qreal visibility = tempItemSpace.positionVisibility(tempItemSpace.count()-1);
+            //kDebug() << "Trying " << position << " visibility " << visibility;
+
+            if (visibility > bestVisibility) {
+                bestPosition = position;
+                bestVisibility = visibility;
+                if (visibility >= 1) {
+                    break;
+                }
             }
         }
+
+        if (bestVisibility < (1.0-itemRelativeTolerance)) {
+            bestPosition = QPointF(itemSpace.screenSpacing, itemSpace.screenSpacing);
+        }
+
+        bestGeometry = QRectF(bestPosition, itemSize);
     }
 
-    if (bestVisibility < (1.0-itemRelativeTolerance)) {
-        bestPosition = QPointF(screenSpacing, screenSpacing);
-    }
-
-    addItem(item, pushBack, QRectF(bestPosition, itemSize));
-    kDebug() << "Positioned item to" << bestPosition;
-}
-
-// TODO:
-// This may not be perfect. Can the available push in one dimension change once
-// a push in the other dimension has been performed? Create a seperate class for
-// position storage and pushing so the push can be performed on a local copy?
-QPointF DesktopLayout::tryBorderPush (int itemIndex)
-{
-        DesktopLayoutItem &item = items[itemIndex];
-        qreal push;
-        qreal canPush;
-        qreal dx = 0;
-        qreal dy = 0;
-
-        // left border
-        push = screenSpacing - item.lastGeometry.left();
-        if (push > 0) {
-            QList<int> previous;
-            dx += pushItem(itemIndex, DirRight, push, &previous, false, (layoutAlignment & Qt::AlignLeft));
-        }
-
-        // right border
-        push = item.lastGeometry.right()+screenSpacing - workingGeom.width();
-        if (push > 0) {
-            QList<int> previous;
-            dx -= pushItem(itemIndex, DirLeft, push, &previous, false, (layoutAlignment & Qt::AlignRight));
-        }
-
-        // top border
-        push = screenSpacing - item.lastGeometry.top();
-        if (push > 0) {
-            QList<int> previous;
-            dy += pushItem(itemIndex, DirDown, push, &previous, false, (layoutAlignment & Qt::AlignTop));
-        }
-
-        // bottom border
-        push = item.lastGeometry.bottom()+screenSpacing - workingGeom.height();
-        if (push > 0) {
-            QList<int> previous;
-            dy -= pushItem(itemIndex, DirUp, push, &previous, false, (layoutAlignment & Qt::AlignBottom));
-        }
-
-        return QPointF(dx, dy);
+    addItem(item, pushBack, bestGeometry);
+    kDebug() << "Positioned item to" << bestGeometry;
 }
 
 bool DesktopLayout::getPushBack (int index)
 {
-    return items[index].pushBack;
+    return itemSpace.items[index].pushBack;
 }
 
 QRectF DesktopLayout::getPreferredGeometry (int index)
 {
-    return items[index].preferredGeometry;
+    return itemSpace.items[index].preferredGeometry;
 }
 
 QRectF DesktopLayout::getLastGeometry (int index)
 {
-    return items[index].lastGeometry;
+    return itemSpace.items[index].lastGeometry;
 }
 
 void DesktopLayout::setPlacementSpacing (qreal spacing)
 {
-    placementSpacing = spacing;
+    itemSpace.placementSpacing = spacing;
 }
 
 void DesktopLayout::setScreenSpacing (qreal spacing)
 {
-    screenSpacing = spacing;
+    itemSpace.screenSpacing = spacing;
     invalidate();
 }
 
 void DesktopLayout::setShiftingSpacing (qreal spacing)
 {
-    shiftingSpacing = spacing;
+    itemSpace.shiftingSpacing = spacing;
     // NOTE: not wise to call that during operation yet
 }
 
@@ -183,26 +135,14 @@ void DesktopLayout::setItemRelativeTolerance(qreal part)
 
 void DesktopLayout::setWorkingArea (QRectF area)
 {
-    if (workingGeom.isValid()) {
-        // if the working area size changed and alignment includes right or bottom,
-        // the difference is added to all positions to keep items in the same place
-        // relative to the borders of alignment
-        if (((layoutAlignment & Qt::AlignRight) || (layoutAlignment & Qt::AlignBottom)) &&
-            (area.width() != workingGeom.width() || area.height() != workingGeom.height())) {
-            offsetPositions(QPointF(area.width()-workingGeom.width(), area.height()-workingGeom.height()));
-            reassignPositions = true;
-        }
-        if (area.x() != workingGeom.x() || area.y() != workingGeom.y()) {
-            reassignPositions = true;
-        }
-    }
-    workingGeom = area;
+    itemSpace.setWorkingArea(area.size());
+    workingStart = area.topLeft();
     invalidate();
 }
 
 void DesktopLayout::setAlignment (Qt::Alignment alignment)
 {
-    layoutAlignment = alignment;
+    itemSpace.spaceAlignment = alignment;
     invalidate();
 }
 
@@ -229,194 +169,39 @@ QGraphicsLayoutItem *DesktopLayout::itemAt (int i) const
 
 void DesktopLayout::removeAt (int i)
 {
+    itemSpace.removeAt(i);
     items.removeAt(i);
     invalidate();
-}
-
-void DesktopLayout::offsetPositions (const QPointF &offset)
-{
-    for (int i=0; i<items.size(); i++) {
-        DesktopLayoutItem &item = items[i];
-        item.preferredGeometry.adjust(offset.x(), offset.y(), offset.x(), offset.y());
-        item.lastGeometry.adjust(offset.x(), offset.y(), offset.x(), offset.y());
-    }
 }
 
 void DesktopLayout::performTemporaryPlacement (int itemIndex)
 {
     DesktopLayoutItem &item = items[itemIndex];
-    QRectF origGeom = item.lastGeometry;
-    item.lastGeometry = QRectF(0, 0, -1, -1);
+    ItemSpace::ItemSpaceItem &spaceItem = itemSpace.items[itemIndex];
+
+    QRectF origGeom = spaceItem.lastGeometry;
+    spaceItem.lastGeometry = QRectF();
 
     QPointF newPos = QPointF(0, 0);
-    QList<QPointF> possiblePositions = positionVertically(origGeom.size(), layoutAlignment, true, false, placementSpacing, placementSpacing, placementSpacing, placementSpacing);
+    QList<QPointF> possiblePositions = itemSpace.positionVertically(origGeom.size(), itemSpace.spaceAlignment, true, false);
     if (possiblePositions.count() > 0) {
         newPos = possiblePositions[0];
     }
     
     kDebug() << "Temp placing" << itemIndex << "to" << newPos;
-    item.lastGeometry = origGeom;
+    spaceItem.lastGeometry = origGeom;
     item.temporaryGeometry = QRectF(newPos, origGeom.size());
-    item.item->setGeometry(item.temporaryGeometry.translated(workingGeom.topLeft()));
+    item.item->setGeometry(item.temporaryGeometry.translated(workingStart));
 }
 
 void DesktopLayout::revertTemporaryPlacement (int itemIndex)
 {
-    kDebug() << "Reverting temp placing" << itemIndex;
     DesktopLayoutItem &item = items[itemIndex];
-    item.temporaryGeometry = QRectF(0, 0, -1, -1);
-    item.item->setGeometry(item.lastGeometry.translated(workingGeom.topLeft()));
-}
+    ItemSpace::ItemSpaceItem &spaceItem = itemSpace.items[itemIndex];
 
-qreal DesktopLayout::performPush (int itemIndex, Direction direction, qreal amount, qreal minAmount, bool ignoreBorder)
-{
-    QList<int> previous;
-    qreal canPush = pushItem(itemIndex, direction, amount, &previous, false, ignoreBorder);
-    if (canPush >= minAmount) {
-        previous = QList<int>();
-        pushItem(itemIndex, direction, canPush, &previous, true, ignoreBorder);
-        return canPush;
-    }
-    return 0;
-}
-
-// locate a group of intersecting items
-// calls itself on new intersecting items
-void DesktopLayout::findPullGroup (int thisItem, QList<int> *currentItems)
-{
-    QRectF origGeom = items[thisItem].lastGeometry;
-    QRectF fullGeom = origGeom.adjusted(-shiftingSpacing, -shiftingSpacing, shiftingSpacing, shiftingSpacing);
-    currentItems->append(thisItem);
-    for (int i=0; i<items.size(); i++) {
-        if (currentItems->contains(i)) {
-            continue;
-        }
-        DesktopLayoutItem &item = items[i];
-        if (item.lastGeometry.intersects(fullGeom)) {
-            findPullGroup(i, currentItems);
-        }
-    }
-}
-
-/*
-    Push an item in the specified direction.
-
-    A group of intersecting items is treated as one item.
-    Non-intersecting items on the way will be recursively pushed away.
-
-    To perform a clean push:
-    - call this with 'doPush' false, return value indicates how much the item can actually be pushed,
-    - repeat the call with 'doPush' true and 'amount' no more than the previously returned value.
-*/
-qreal DesktopLayout::pushItem (int itemIndex, Direction direction, qreal amount, const QList<int> *previousItems, bool doPush, bool ignoreBorder)
-{
-    QList<int> pullGroup;
-
-    // find all intersecting items
-    findPullGroup(itemIndex, &pullGroup);
-
-    // create a list of previous items for use when recursing
-    QList<int> currentItems = *previousItems;
-    foreach (const int i, pullGroup) {
-        currentItems.append(i);
-    }
-
-    // look for obstacles for every item in the group
-    foreach (const int i, pullGroup) {
-        DesktopLayoutItem &groupItem = items[i];
-        QRectF origGeom = groupItem.lastGeometry;
-        QRectF fullGeom = origGeom.adjusted(-shiftingSpacing, -shiftingSpacing, shiftingSpacing, shiftingSpacing);
-
-        // limit push by screen boundaries
-        if (!ignoreBorder) {
-            qreal limit;
-            switch (direction) {
-                case DirLeft:
-                    limit = origGeom.left() - screenSpacing;
-                    break;
-                case DirRight:
-                    limit = workingGeom.width() - screenSpacing - origGeom.right();
-                    break;
-                case DirUp:
-                    limit = origGeom.top() - screenSpacing;
-                    break;
-                case DirDown:
-                    limit = workingGeom.height() - screenSpacing - origGeom.bottom();
-                    break;
-            }
-            amount = qMin(amount, limit);
-            if (amount <= 0) {
-                return 0;
-            }
-        }
-
-        // look for items in the way
-        for (int j=0; j<items.size(); j++) {
-            if (currentItems.contains(j)) {
-                continue;
-            }
-            DesktopLayoutItem &item = items[j];
-
-            QRectF newlyTakenSpace;
-            qreal push;
-            switch (direction) {
-                case DirLeft:
-                    newlyTakenSpace = QRectF(fullGeom.left()-amount, fullGeom.top(), amount, fullGeom.height());
-                    push = item.lastGeometry.right()-newlyTakenSpace.left();
-                    break;
-                case DirRight:
-                    newlyTakenSpace = QRectF(fullGeom.right(), fullGeom.top(), amount, fullGeom.height());
-                    push = newlyTakenSpace.right()-item.lastGeometry.left();
-                    break;
-                case DirUp:
-                    newlyTakenSpace = QRectF(fullGeom.left(), fullGeom.top()-amount, fullGeom.width(), amount);
-                    push = item.lastGeometry.bottom()-newlyTakenSpace.top();
-                    break;
-                case DirDown:
-                    newlyTakenSpace = QRectF(fullGeom.left(), fullGeom.bottom(), fullGeom.width(), amount);
-                    push = newlyTakenSpace.bottom()-item.lastGeometry.top();
-                    break;
-            }
-
-            // check if the item is in the way
-            if (item.lastGeometry.intersects(newlyTakenSpace)) {
-                // try to push the item, limit our push by the result
-                qreal pushed = pushItem(j, direction, push, &currentItems, doPush, ignoreBorder);
-                if (pushed < push) {
-                    amount -= push-pushed;
-                    if (amount <= 0) {
-                        return 0;
-                    }
-                }
-            }
-        }
-    }
-
-    // move items in the group
-    if (doPush) {
-        foreach (const int i, pullGroup) {
-            DesktopLayoutItem &groupItem = items[i];
-            switch (direction) {
-                case DirLeft:
-                    groupItem.lastGeometry = groupItem.lastGeometry.adjusted(-amount, 0, -amount, 0);
-                    break;
-                case DirRight:
-                    groupItem.lastGeometry = groupItem.lastGeometry.adjusted(amount, 0, amount, 0);
-                    break;
-                case DirUp:
-                    groupItem.lastGeometry = groupItem.lastGeometry.adjusted(0, -amount, 0, -amount);
-                    break;
-                case DirDown:
-                    groupItem.lastGeometry = groupItem.lastGeometry.adjusted(0, amount, 0, amount);
-                    break;
-            }
-            if (!groupItem.temporaryGeometry.isValid()) {
-                groupItem.item->setGeometry(groupItem.lastGeometry.translated(workingGeom.topLeft()));
-            }
-        }
-    }
-
-    return amount;
+    kDebug() << "Reverting temp placing" << itemIndex;
+    item.temporaryGeometry = QRectF();
+    item.item->setGeometry(spaceItem.lastGeometry.translated(workingStart));
 }
 
 // update anything that needs updating
@@ -424,66 +209,12 @@ void DesktopLayout::setGeometry(const QRectF &rect)
 {
     QGraphicsLayout::setGeometry(rect);
 
-    if (autoWorkingArea || !workingGeom.isValid()) {
+    if (autoWorkingArea || !itemSpace.workingGeom.isValid()) {
         setWorkingArea(rect);
     }
 
-    for (int i=0; i<items.size(); i++) {
-        DesktopLayoutItem &item = items[i];
-
-        qreal push;
-
-        /*
-          Push items intersecting working area borders inside.
-          For borders adjunct to the corner of alignment, allow pushing
-          over the opposite border (and items there may be temporarily placed).
-        */
-
-        // left border
-        push = screenSpacing - item.lastGeometry.left();
-        if (push > 0) {
-            performPush(i, DirRight, push, 0, (layoutAlignment & Qt::AlignLeft));
-        }
-
-        // right border
-        push = item.lastGeometry.right()+screenSpacing - workingGeom.width();
-        if (push > 0) {
-            performPush(i, DirLeft, push, 0, (layoutAlignment & Qt::AlignRight));
-        }
-
-        // top border
-        push = screenSpacing - item.lastGeometry.top();
-        if (push > 0) {
-            performPush(i, DirDown, push, 0, (layoutAlignment & Qt::AlignTop));
-        }
-
-        // bottom border
-        push = item.lastGeometry.bottom()+screenSpacing - workingGeom.height();
-        if (push > 0) {
-            performPush(i, DirUp, push, 0, (layoutAlignment & Qt::AlignBottom));
-        }
-
-        /*
-          Push items back towards their perferred positions.
-          Push is limited by working area borders.
-        */
-        if (item.pushBack) {
-            // left/right
-            push = item.preferredGeometry.left() - item.lastGeometry.left();
-            if (push > 0) {
-                performPush(i, DirRight, push, 0, false);
-            } else if (push < 0) {
-                performPush(i, DirLeft, -push, 0, false);
-            }
-            // up/down
-            push = item.preferredGeometry.top() - item.lastGeometry.top();
-            if (push > 0) {
-                performPush(i, DirDown, push, 0, false);
-            } else if (push < 0) {
-                performPush(i, DirUp, -push, 0, false);
-            }
-        }
-    }
+    // activate the ItemSpace to perform motion as needed
+    itemSpace.activate();
 
     /*
       Temporarily place items that could not be pushed inside the working area.
@@ -491,7 +222,7 @@ void DesktopLayout::setGeometry(const QRectF &rect)
     */
     for (int i=0; i<items.size(); i++) {
         DesktopLayoutItem &item = items[i];
-        if (positionVisibility(item.lastGeometry) < itemRelativeTolerance) {
+        if (itemSpace.positionVisibility(i) < itemRelativeTolerance) {
             if (temporaryPlacement) {
                 performTemporaryPlacement(i);
             }
@@ -500,28 +231,16 @@ void DesktopLayout::setGeometry(const QRectF &rect)
         }
     }
 
-    /*
-      Reset on-screen positions of items to where they should be.
-      Used when the offset of the working area changes, and if
-      bottom- or right-aligning, when the size of the working area changes.
-    */
-    if (reassignPositions) {
-        for (int i=0; i<items.size(); i++) {
-            DesktopLayoutItem &item = items[i];
-            QRectF geom = (item.temporaryGeometry.isValid() ? item.temporaryGeometry : item.lastGeometry);
-            item.item->setGeometry(geom.translated(workingGeom.topLeft()));
-        }
-        reassignPositions = false;
-    }
-}
+    // reset the absolute positions of applets
+    for (int i=0; i<items.size(); i++) {
+        DesktopLayoutItem &item = items[i];
+        ItemSpace::ItemSpaceItem &spaceItem = itemSpace.items[i];
 
-qreal DesktopLayout::positionVisibility(QRectF itemGeom)
-{
-        QRectF visibleArea = QRectF(0, 0, workingGeom.width(), workingGeom.height());
-        QRectF visibleItemPart = visibleArea.intersected(itemGeom);
-        qreal itemSurface = itemGeom.width() * itemGeom.height();
-        qreal itemVisibleSurface = visibleItemPart.width() * visibleItemPart.height();
-        return (itemVisibleSurface / itemSurface);
+        QRectF absoluteGeom = (item.temporaryGeometry.isValid() ? item.temporaryGeometry : spaceItem.lastGeometry).translated(workingStart);
+        if (item.item->geometry() != absoluteGeom) {
+            item.item->setGeometry(absoluteGeom);
+        }
+    }
 }
 
 // This should be called when the geometry of an item has been changed.
@@ -533,11 +252,13 @@ void DesktopLayout::itemGeometryChanged (QGraphicsLayoutItem *layoutItem)
 
     for (int i=0; i<items.size(); i++) {
         DesktopLayoutItem &item = items[i];
+        ItemSpace::ItemSpaceItem &spaceItem = itemSpace.items[i];
+
         if (item.item == layoutItem) {
-            QRectF currentRelative = item.item->geometry().translated(-workingGeom.topLeft());
-            if (item.lastGeometry != currentRelative) {
-                item.lastGeometry = currentRelative;
-                item.preferredGeometry = currentRelative;
+            QRectF currentRelative = item.item->geometry().translated(-workingStart);
+            if (spaceItem.lastGeometry != currentRelative) {
+                spaceItem.lastGeometry = currentRelative;
+                spaceItem.preferredGeometry = currentRelative;
                 kDebug() << "Repositioned" << i << "to" << currentRelative;
                 invalidate();
             }
@@ -549,399 +270,4 @@ void DesktopLayout::itemGeometryChanged (QGraphicsLayoutItem *layoutItem)
 QSizeF DesktopLayout::sizeHint (Qt::SizeHint which, const QSizeF &constraint) const
 {
     return QSizeF();
-}
-
-QList<QPointF> DesktopLayout::positionHorizontally(const QSizeF &itemSize, Qt::Alignment align, bool limitedSpace, bool findAll, qreal spL, qreal spR, qreal spT, qreal spB) const
-{
-    QList<QPointF> possiblePositions;
-
-    /* space needed for the applet - spacing added */
-    QSizeF size = QSizeF(itemSize.width()+spL+spR, itemSize.height()+spT+spB);
-
-    /* The algorithm works by placing a rectangle of needed size (above) somewhere
-       on the screen and checking for obstacles. x and y hold the top-left
-       coordinates of the rectangle being tested.
-       Start with the rectangle in the requested corner of the screen. */
-    qreal x = 0;
-    qreal y = 0;
-    if ((align & Qt::AlignRight)) {
-        x = workingGeom.width()-size.width();
-    }
-
-    if ((align & Qt::AlignBottom)) {
-        y = workingGeom.height()-size.height();
-    }
-
-    while (1) {
-        bool outOfX, outOfY;
-
-        /* Place items horizontally - first try positions at the same height.
-           Once there are no more positions at the same height to try, try positions
-           on a different height.
-
-           If aligning left, X starts at 0 and increases as we try
-           positions more right. We must skip to a new Y once the
-           remaining X-space is less than the needed width (X + applet width > screen width).
-
-           If aligining right, X starts with the x coordinate of the top-left point
-           of the most-right rectangle and decreases as we try positions more left.
-           Skip to a new Y when there is no more space on the left (X<0). */
-
-        if ((align & Qt::AlignLeft)) {
-            outOfX = (x + size.width() > workingGeom.width());
-        } else {
-            outOfX = (x < 0);
-        }
-
-        /* Every time we run out of X space, we try positions at a new hight.
-
-           If aligning to top, Y starts at 0 and increases as lower positions are tried.
-           If aligning to bottom, Y starts at the y coordinate of a most-bottom rectangle
-           and decreases as higher positions are tried.
-        */
-
-        if ((align & Qt::AlignBottom)) {
-            outOfY = (y < 0);
-        } else {
-            outOfY = (y + size.height() > workingGeom.height());
-        }
-
-        if (outOfY && limitedSpace) {
-            break;
-        }
-
-        if (outOfX) {
-            /* Jumping to the next height
-
-               Take a rectangle ("strap") that expands horizontally over the whole screen,
-               and vertically starts and ends with the same lines as the previously
-               tested rectangles.
-
-               The next height at which the applet could possibly be placed is obtained as follows:
-               - if aligning to top, find the obstacle intersecting the strap that vertically
-                 ends at the highest position, and take the height where it ends,
-               - if aligning to bottom, find the obstacle intersecting the strap that vertically
-                 starts at the lowest position, and take the height where is starts.
-            */
-
-            QRectF a;
-            if ((align & Qt::AlignTop)) {
-                a = itemInRegionEndingFirstVert(QRectF(0, y, workingGeom.width(), size.height()));
-            } else {
-                a = itemInRegionStartingLastVert(QRectF(0, y, workingGeom.width(), size.height()));
-            }
-
-            /* No more Y values to try */
-            if (!a.isValid()) {
-                break;
-            }
-
-            /* Jump to the new height */
-            if ((align & Qt::AlignTop)) {
-                y = a.y() + a.height();
-            } else {
-                y = a.y() - size.height();
-            }
-
-            /* Set the starting X position for the new height */
-            if ((align & Qt::AlignLeft)) {
-                x = 0;
-            } else {
-                x = workingGeom.width()-size.width();
-            }
-        } else {
-            /* Check for obstacles in out rectangle and possibly try the next position
-               on this height.
-               If there are obstacles, the next X position
-               where the applet could possibly be placed is
-               obtained by:
-               - if aligning to left, find the obstacle intersecting with our rectangle that
-                 horizontally ends the farthest on the right
-               - if aligining to right, find the obstacle intersecting with our rectangle
-                 that horizontally starts the farthest on the left */
-
-            QRectF a;
-            if ((align & Qt::AlignLeft)) {
-                a = itemInRegionEndingLastHoriz(QRectF(x, y, size.width(), size.height()));
-            } else {
-                a = itemInRegionStartingFirstHoriz(QRectF(x, y, size.width(), size.height()));
-            }
-
-            /* no obstacle, place the applet! */
-            if (!a.isValid()) {
-                possiblePositions.append(QPointF(x+spL, y+spT));
-                if (!findAll) {
-                    break;
-                }
-                /* make it jump to next Y */
-                if ((align & Qt::AlignLeft)) {
-                    x = workingGeom.width();
-                } else {
-                    x = -1;
-                }
-            } else {
-                /* try next position */
-                if ((align & Qt::AlignLeft)) {
-                    x = a.x() + a.width();
-                } else {
-                    x = a.x() - size.width();
-                }
-            }
-        }
-    }
-    return possiblePositions;
-}
-
-/* Instead of placing horizontally, place vertically.
-   So, try different heights and possibly jump to the next X */
-QList<QPointF> DesktopLayout::positionVertically(const QSizeF &itemSize, Qt::Alignment align, bool limitedSpace, bool findAll, qreal spL, qreal spR, qreal spT, qreal spB) const
-{
-    /* all the same here */
-
-    QList<QPointF> possiblePositions;
-
-    QSizeF size = QSizeF(itemSize.width()+spL+spR, itemSize.height()+spT+spB);
-
-    qreal x = 0;
-    qreal y = 0;
-    if ((align & Qt::AlignRight))  x = workingGeom.width()-size.width();
-    if ((align & Qt::AlignBottom)) y = workingGeom.height()-size.height();
-
-    while (1) {
-        bool outOfX, outOfY;
-
-        /* These are unchanged */
-
-        if ((align & Qt::AlignLeft)) {
-            outOfX = (x + size.width() > workingGeom.width());
-        } else {
-            outOfX = (x < 0);
-        }
-
-        if ((align & Qt::AlignBottom)) {
-            outOfY = (y < 0);
-        } else {
-            outOfY = (y + size.height() > workingGeom.height());
-        }
-
-        /* instead of stopping when all heights have been tried
-           stop when all X positions have been tried */
-        if (outOfX && limitedSpace) {
-            break;
-        }
-
-        if (outOfY) {
-            /* Jumping to the next X position
-               Take a vertical strap. */
-
-            QRectF a;
-            if ((align & Qt::AlignLeft)) {
-                a = itemInRegionEndingFirstHoriz(QRectF(x, 0, size.width(), workingGeom.height()));
-            } else {
-                a = itemInRegionStartingLastHoriz(QRectF(x, 0, size.width(), workingGeom.height()));
-            }
-
-            /* No more X values to try */
-            if (!a.isValid()) {
-                break;
-            }
-
-            /* Jump to the new X */
-            if ((align & Qt::AlignLeft)) {
-                x = a.x() + a.width();
-            } else {
-                x = a.x() - size.width();
-            }
-
-            /* Set the starting height position for the new X */
-            if ((align & Qt::AlignTop)) {
-                y = 0;
-            } else {
-                y = workingGeom.height()-size.height();
-            }
-        } else {
-            /* Instead look for obstacles vertically */
-
-            QRectF a;
-            if ((align & Qt::AlignTop)) {
-                a = itemInRegionEndingLastVert(QRectF(x, y, size.width(), size.height()));
-            } else {
-                a = itemInRegionStartingFirstVert(QRectF(x, y, size.width(), size.height()));
-            }
-
-            /* no obstacle, place the applet! */
-            if (!a.isValid()) {
-                possiblePositions.append(QPointF(x+spL, y+spT));
-                if (!findAll) {
-                    break;
-                }
-                /* make it jump to next X */
-                if ((align & Qt::AlignTop)) {
-                    y = workingGeom.height();
-                } else {
-                    y = -1;
-                }
-            } else {
-                /* try next position */
-                if ((align & Qt::AlignTop)) {
-                    y = a.y() + a.height();
-                } else {
-                    y = a.y() - size.height();
-                }
-            }
-        }
-    }
-    return possiblePositions;
-}
-
-QRectF DesktopLayout::itemInRegionStartingFirstHoriz(const QRectF &region) const
-{
-    QRectF ret = QRectF(0,0,-1,-1);
-    qreal l = std::numeric_limits<qreal>::max();
-    for (int i=0; i<items.count(); i++) {
-      DesktopLayoutItem item = items[i];
-      if (!item.lastGeometry.isValid()) {
-        continue;
-      }
-      QRectF itemGeom = (item.temporaryGeometry.isValid() ? item.temporaryGeometry : item.lastGeometry);
-      qreal cl = itemGeom.x();
-      if (itemGeom.intersects(region) && cl < l) {
-          ret = itemGeom;
-          l = cl;
-      }
-    }
-    return ret;
-}
-
-QRectF DesktopLayout::itemInRegionEndingLastHoriz(const QRectF &region) const
-{
-    QRectF ret = QRectF(0,0,-1,-1);
-    qreal l = -1;
-    for (int i=0; i<items.count(); i++) {
-      DesktopLayoutItem item = items[i];
-      if (!item.lastGeometry.isValid()) {
-        continue;
-      }
-      QRectF itemGeom = (item.temporaryGeometry.isValid() ? item.temporaryGeometry : item.lastGeometry);
-      qreal cl = itemGeom.x() + itemGeom.width();
-      if (itemGeom.intersects(region) && cl > l) {
-          ret = itemGeom;
-          l = cl;
-      }
-    }
-    return ret;
-}
-
-QRectF DesktopLayout::itemInRegionEndingFirstVert(const QRectF &region) const
-{
-    QRectF ret = QRectF(0,0,-1,-1);
-    qreal l = std::numeric_limits<qreal>::max();
-    for (int i=0; i<items.count(); i++) {
-      DesktopLayoutItem item = items[i];
-      if (!item.lastGeometry.isValid()) {
-        continue;
-      }
-      QRectF itemGeom = (item.temporaryGeometry.isValid() ? item.temporaryGeometry : item.lastGeometry);
-      qreal cl = itemGeom.y() + itemGeom.height();
-      if (itemGeom.intersects(region) && cl < l) {
-          ret = itemGeom;
-          l = cl;
-      }
-    }
-    return ret;
-}
-
-QRectF DesktopLayout::itemInRegionStartingLastVert(const QRectF &region) const
-{
-    QRectF ret = QRectF(0,0,-1,-1);
-    qreal l = -1;
-    for (int i=0; i<items.count(); i++) {
-      DesktopLayoutItem item = items[i];
-      if (!item.lastGeometry.isValid()) {
-        continue;
-      }
-      QRectF itemGeom = (item.temporaryGeometry.isValid() ? item.temporaryGeometry : item.lastGeometry);
-      qreal cl = itemGeom.y();
-      if (itemGeom.intersects(region) && cl > l) {
-          ret = itemGeom;
-          l = cl;
-      }
-    }
-    return ret;
-}
-
-QRectF DesktopLayout::itemInRegionStartingFirstVert(const QRectF &region) const
-{
-    QRectF ret = QRectF(0,0,-1,-1);
-    qreal l = std::numeric_limits<qreal>::max();
-    for (int i=0; i<items.count(); i++) {
-      DesktopLayoutItem item = items[i];
-      if (!item.lastGeometry.isValid()) {
-        continue;
-      }
-      QRectF itemGeom = (item.temporaryGeometry.isValid() ? item.temporaryGeometry : item.lastGeometry);
-      qreal cl = itemGeom.y();
-      if (itemGeom.intersects(region) && cl < l) {
-          ret = itemGeom;
-          l = cl;
-      }
-    }
-    return ret;
-}
-
-QRectF DesktopLayout::itemInRegionEndingLastVert(const QRectF &region) const
-{
-    QRectF ret = QRectF(0,0,-1,-1);
-    qreal l = -1;
-    for (int i=0; i<items.count(); i++) {
-      DesktopLayoutItem item = items[i];
-      if (!item.lastGeometry.isValid()) {
-        continue;
-      }
-      QRectF itemGeom = (item.temporaryGeometry.isValid() ? item.temporaryGeometry : item.lastGeometry);
-      qreal cl = itemGeom.y() + itemGeom.height();
-      if (itemGeom.intersects(region) && cl > l) {
-          ret = itemGeom;
-          l = cl;
-      }
-    }
-    return ret;
-}
-
-QRectF DesktopLayout::itemInRegionEndingFirstHoriz(const QRectF &region) const
-{
-    QRectF ret = QRectF(0,0,-1,-1);
-    qreal l = std::numeric_limits<qreal>::max();
-    for (int i=0; i<items.count(); i++) {
-      DesktopLayoutItem item = items[i];
-      if (!item.lastGeometry.isValid()) {
-        continue;
-      }
-      QRectF itemGeom = (item.temporaryGeometry.isValid() ? item.temporaryGeometry : item.lastGeometry);
-      qreal cl = itemGeom.x() + itemGeom.width();
-      if (itemGeom.intersects(region) && cl < l) {
-          ret = itemGeom;
-          l = cl;
-      }
-    }
-    return ret;
-}
-
-QRectF DesktopLayout::itemInRegionStartingLastHoriz(const QRectF &region) const
-{
-    QRectF ret = QRectF(0,0,-1,-1);
-    qreal l = -1;
-    for (int i=0; i<items.count(); i++) {
-      DesktopLayoutItem item = items[i];
-      if (!item.lastGeometry.isValid()) {
-        continue;
-      }
-      QRectF itemGeom = (item.temporaryGeometry.isValid() ? item.temporaryGeometry : item.lastGeometry);
-      qreal cl = itemGeom.x();
-      if (itemGeom.intersects(region) && cl > l) {
-          ret = itemGeom;
-          l = cl;
-      }
-    }
-    return ret;
 }

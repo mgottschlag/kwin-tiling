@@ -1,5 +1,6 @@
 set(desktop_SRCS
     desktop.cpp
+    itemspace.cpp
     desktoplayout.cpp)
 
 set(krunner_xml ${KDEBASE_WORKSPACE_SOURCE_DIR}/krunner/org.kde.krunner.Interface.xml)
