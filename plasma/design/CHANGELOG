@@ -37,7 +37,7 @@ libplasma
 * Significant Fixes
     * WebContent painting update synchronization (fixes, among other things, scrolling)
     * Prevent crash when Containment that AppletBrowser is associated with is deleted
-    * Applet handles work with all icon sizes (user system settings) 
+    * Applet handles work with all icon sizes (user system settings)
     * Fix View so that when a new activity is added, don't move more than necessary;
       fixes dragging lock
 
@@ -62,6 +62,7 @@ Plasma Desktop Shell
 * Features
     * Desktop
         * Allow configuration of the activity
+        * Desktop Containment selection in Desktop Settings
     * Panel
         * Resizes itself when an applet changes its sizehint according to its maximum and minimum sizes
 
