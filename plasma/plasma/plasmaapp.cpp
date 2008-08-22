@@ -361,15 +361,14 @@ void PlasmaApp::adjustSize(int screen)
         //      perhaps we should make one.
     }
 
-    foreach (PanelView *panel, m_panels) {
-        if (panel->screen() == screen) {
-            if (screenExists) {
+    //TODO: should we remove panels when the screen
+    //      disappears? this would mean having some
+    //      way of alerting that we have a new screen
+    //      that appears
+    if (screenExists) {
+        foreach (PanelView *panel, m_panels) {
+            if (panel->screen() == screen) {
                 panel->pinchContainment(screenGeom);
-            } else {
-                //TODO: should we remove panels when the screen
-                //      disappears? this would mean having some
-                //      way of alerting that we have a new screen
-                //      that appears
             }
         }
     }

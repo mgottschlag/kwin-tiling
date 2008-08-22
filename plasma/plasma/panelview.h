@@ -32,6 +32,7 @@
 #endif
 
 class QWidget;
+class QTimeLine;
 
 namespace Plasma
 {
@@ -65,7 +66,7 @@ public:
      */
     Plasma::Corona *corona() const;
 
-    /**
+    /*
      * @return the offset of the panel from the left screen edge
      */
     int offset() const;
@@ -109,11 +110,14 @@ protected:
     void updateStruts();
     void moveEvent(QMoveEvent *event);
     void resizeEvent(QResizeEvent *event);
+    void enterEvent(QEvent *event);
+    void leaveEvent(QEvent *event);
 
 private Q_SLOTS:
     void showAppletBrowser();
     void togglePanelController();
     void edittingComplete();
+    void animateHide(qreal);
 
     /**
      * Updates the panel's position according to the screen and containment
@@ -124,6 +128,8 @@ private Q_SLOTS:
 private:
     Qt::Alignment alignmentFilter(Qt::Alignment align) const;
     bool isHorizontal() const;
+    QTimeLine *timeLine();
+
 #ifdef Q_WS_WIN
     bool registerAccessBar(HWND hwndAccessBar, bool fRegister);
     void appBarQuerySetPos(uint uEdge, LPRECT lprc, PAPPBARDATA pabd);
@@ -136,14 +142,20 @@ private:
     Plasma::Svg *m_background;
     PanelController *m_panelController;
     QList<PanelAppletOverlay*> m_moveOverlays;
+    QTimeLine *m_timeLine;
 
     int m_offset;
     Qt::Alignment m_alignment;
+
     QSizeF m_lastMin;
     QSizeF m_lastMax;
     int m_lastSeenSize;
-    bool m_lastHorizontal;
-    bool m_editting;
+    bool m_lastHorizontal : 1;
+
+    bool m_editting : 1;
+    bool m_autohide : 1;
+    bool m_reserveStrut : 1;
+    bool m_hidden : 1;
 };
 
 #endif

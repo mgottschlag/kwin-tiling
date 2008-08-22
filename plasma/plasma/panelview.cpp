@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QGraphicsLinearLayout>
+#include <QTimeLine>
 #include <QTimer>
 
 #include <KWindowSystem>
@@ -40,8 +41,12 @@
 PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     : Plasma::View(panel, id, parent),
       m_panelController(0),
+      m_timeLine(0),
       m_lastHorizontal(true),
-      m_editting(false)
+      m_editting(false),
+      m_autohide(false),
+      m_reserveStrut(true),
+      m_hidden(false)
 {
     Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
 
@@ -49,6 +54,8 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     m_offset = viewConfig.readEntry("Offset", 0);
     m_alignment = alignmentFilter((Qt::Alignment)viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
+    m_autohide = viewConfig.readEntry("autohide", m_autohide);
+    m_reserveStrut = !viewConfig.readEntry("letWindowsCover", !m_reserveStrut);
 
     // pinchContainment calls updatePanelGeometry for us
 
@@ -66,6 +73,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
         connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));
         connect(panel, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
     }
+
     connect(this, SIGNAL(sceneRectAboutToChange()), this, SLOT(updatePanelGeometry()));
 
     kDebug() << "Panel geometry is" << panel->geometry();
@@ -83,11 +91,13 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     // KWin setup
     KWindowSystem::setType(winId(), NET::Dock);
     KWindowSystem::setState(winId(), NET::Sticky);
-    KWindowSystem::setOnAllDesktops(winId(), true);
-    
+    if (m_reserveStrut) {
+        KWindowSystem::setOnAllDesktops(winId(), true);
+    }
+
 #ifdef Q_WS_WIN
     registerAccessBar(winId(), true);
-#endif        
+#endif
 
     updateStruts();
 }
@@ -96,7 +106,7 @@ PanelView::~PanelView()
 {
 #ifdef Q_WS_WIN
     registerAccessBar(winId(), false);
-#endif    
+#endif
 }
 
 void PanelView::setLocation(Plasma::Location location)
@@ -579,47 +589,49 @@ void PanelView::updateStruts()
 {
     NETExtendedStrut strut;
 
-    QRect thisScreen = QApplication::desktop()->screenGeometry(containment()->screen());
-    QRect wholeScreen = QApplication::desktop()->geometry();
+    if (m_reserveStrut) {
+        QRect thisScreen = QApplication::desktop()->screenGeometry(containment()->screen());
+        QRect wholeScreen = QApplication::desktop()->geometry();
 
-    // extended struts are to the combined screen geoms, not the single screen
-    int leftOffset = wholeScreen.x() - thisScreen.x();
-    int rightOffset = wholeScreen.right() - thisScreen.right();
-    int bottomOffset = wholeScreen.bottom() - thisScreen.bottom();
-    int topOffset = wholeScreen.top() - thisScreen.top();
-    kDebug() << "screen l/r/b/t offsets are:" << leftOffset << rightOffset << bottomOffset << topOffset;
+        // extended struts are to the combined screen geoms, not the single screen
+        int leftOffset = wholeScreen.x() - thisScreen.x();
+        int rightOffset = wholeScreen.right() - thisScreen.right();
+        int bottomOffset = wholeScreen.bottom() - thisScreen.bottom();
+        int topOffset = wholeScreen.top() - thisScreen.top();
+        kDebug() << "screen l/r/b/t offsets are:" << leftOffset << rightOffset << bottomOffset << topOffset;
 
-    switch (location())
-    {
-        case Plasma::TopEdge:
-            strut.top_width = height() + topOffset;
-            strut.top_start = x();
-            strut.top_end = x() + width() - 1;
+        switch (location())
+        {
+            case Plasma::TopEdge:
+                strut.top_width = height() + topOffset;
+                strut.top_start = x();
+                strut.top_end = x() + width() - 1;
+                break;
+
+            case Plasma::BottomEdge:
+                strut.bottom_width = height() + bottomOffset;
+                strut.bottom_start = x();
+                strut.bottom_end = x() + width() - 1;
+                //kDebug() << "setting bottom edge to" << strut.bottom_width
+                //         << strut.bottom_start << strut.bottom_end;
+                break;
+
+            case Plasma::RightEdge:
+                strut.right_width = width() + rightOffset;
+                strut.right_start = y();
+                strut.right_end = y() + height() - 1;
+                break;
+
+            case Plasma::LeftEdge:
+                strut.left_width = width() + leftOffset;
+                strut.left_start = y();
+                strut.left_end = y() + height() - 1;
+                break;
+
+            default:
+                //kDebug() << "where are we?";
             break;
-
-        case Plasma::BottomEdge:
-            strut.bottom_width = height() + bottomOffset;
-            strut.bottom_start = x();
-            strut.bottom_end = x() + width() - 1;
-            //kDebug() << "setting bottom edge to" << strut.bottom_width
-            //         << strut.bottom_start << strut.bottom_end;
-            break;
-
-        case Plasma::RightEdge:
-            strut.right_width = width() + rightOffset;
-            strut.right_start = y();
-            strut.right_end = y() + height() - 1;
-            break;
-
-        case Plasma::LeftEdge:
-            strut.left_width = width() + leftOffset;
-            strut.left_start = y();
-            strut.left_end = y() + height() - 1;
-            break;
-
-        default:
-            //kDebug() << "where are we?";
-            break;
+        }
     }
 
     KWindowSystem::setExtendedStrut(winId(), strut.left_width,
@@ -646,6 +658,47 @@ void PanelView::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
     updateStruts();
+}
+
+QTimeLine *PanelView::timeLine()
+{
+    if (!m_timeLine) {
+        m_timeLine = new QTimeLine(300, this);
+        m_timeLine->setCurveShape(QTimeLine::EaseOutCurve);
+        connect(m_timeLine, SIGNAL(valueChanged(qreal)), this, SLOT(animateHide(qreal)));
+    }
+
+    return m_timeLine;
+}
+
+void PanelView::enterEvent(QEvent *event)
+{
+    kDebug();
+
+    if (m_autohide) {
+        QTimeLine * tl = timeLine();
+        tl->setDirection(QTimeLine::Backward);
+        if (tl->state() == QTimeLine::NotRunning) {
+            tl->start();
+        }
+    }
+}
+
+void PanelView::leaveEvent(QEvent *event)
+{
+    kDebug();
+    if (m_autohide) {
+        QTimeLine * tl = timeLine();
+        tl->setDirection(QTimeLine::Forward);
+        if (tl->state() == QTimeLine::NotRunning) {
+            tl->start();
+        }
+    }
+}
+
+void PanelView::animateHide(qreal progress)
+{
+    kDebug() << progress;
 }
 
 #include "panelview.moc"
