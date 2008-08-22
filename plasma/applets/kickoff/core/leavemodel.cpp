@@ -28,7 +28,7 @@
 #include <KLocalizedString>
 #include <KIcon>
 #include <solid/control/powermanager.h>
-#include <kworkspace.h>
+#include <kworkspace/kworkspace.h>
 
 // Local
 #include "core/models.h"
