@@ -47,7 +47,8 @@ public:
         Center,
         ScaleCrop,
         Tiled,
-        CenterTiled
+        CenterTiled,
+        Maxpect
     };
 
     static const int SCREENSHOT_HEIGHT = 60;

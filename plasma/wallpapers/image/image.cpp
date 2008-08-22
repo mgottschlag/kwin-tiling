@@ -113,6 +113,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
 
         m_uiImage.m_resizeMethod->addItem(i18n("Scaled & Cropped"), Background::ScaleCrop);
         m_uiImage.m_resizeMethod->addItem(i18n("Scaled"), Background::Scale);
+        m_uiImage.m_resizeMethod->addItem(i18n("Maxpect"), Background::Maxpect);
         m_uiImage.m_resizeMethod->addItem(i18n("Centered"), Background::Center);
         m_uiImage.m_resizeMethod->addItem(i18n("Tiled"), Background::Tiled);
         m_uiImage.m_resizeMethod->addItem(i18n("Center Tiled"), Background::CenterTiled);
