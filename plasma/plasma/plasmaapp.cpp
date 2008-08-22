@@ -135,7 +135,8 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     : KUniqueApplication(),
 #endif
       m_corona(0),
-      m_appletBrowser(0)
+      m_appletBrowser(0),
+      m_panelHidden(0)
 {
     KGlobal::locale()->insertCatalog("libplasma");
 
@@ -311,13 +312,45 @@ void PlasmaApp::toggleDashboard()
     view->toggleDashboard();
 }
 
+#ifdef Q_WS_X11
+void PlasmaApp::panelHidden(bool hidden)
+{
+    if (hidden) {
+        ++m_panelHidden;
+        //kDebug() << "panel hidden" << m_panelHidden;
+    } else {
+        --m_panelHidden;
+        if (m_panelHidden < 0) {
+            kDebug() << "panelHidden(false) called too many times!";
+            m_panelHidden = 0;
+        }
+        //kDebug() << "panel unhidden" << m_panelHidden;
+    }
+}
+
+bool PlasmaApp::x11EventFilter(XEvent *event)
+{
+    if (m_panelHidden && event->type == EnterNotify) {
+        foreach (PanelView *panel, m_panels) {
+            //kDebug() << panel->unhideTrigger() << event->xcrossing.window;
+            if (panel->unhideTrigger() == event->xcrossing.window) {
+                panel->unhide();
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+#endif
+
 void PlasmaApp::setIsDesktop(bool isDesktop)
 {
     m_isDesktop = isDesktop;
     foreach (DesktopView *view, m_desktops) {
         view->setIsDesktop(isDesktop);
     }
-    
+
     if (isDesktop) {
         connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize(int)));
     } else {

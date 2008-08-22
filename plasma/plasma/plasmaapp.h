@@ -75,10 +75,25 @@ public:
      */
     void createDesktopView(Plasma::Containment *containment, int id = 0);
 
+    /**
+     * Should be called when a panel hides or unhides itself
+     */
+    void panelHidden(bool hidden);
+
 public Q_SLOTS:
     // DBUS interface. if you change these methods, you MUST run:
     // qdbuscpp2xml plasmaapp.h -o org.kde.plasma.App.xml
     void toggleDashboard();
+
+protected:
+#ifdef Q_WS_X11
+    bool x11EventFilter(XEvent *event);
+#endif
+
+private:
+    PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap);
+    static void crashHandler(int signal);
+    DesktopView* viewForScreen(int screen) const;
 
 private Q_SLOTS:
     void setCrashHandler();
@@ -90,14 +105,11 @@ private Q_SLOTS:
     void adjustSize(int screen);
 
 private:
-    PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap);
-    static void crashHandler(int signal);
-    DesktopView* viewForScreen(int screen) const;
-
     Plasma::Corona *m_corona;
     QList<PanelView*> m_panels;
     Plasma::AppletBrowser *m_appletBrowser;
     QList<DesktopView*> m_desktops;
+    int m_panelHidden;
     bool m_isDesktop;
 };
 

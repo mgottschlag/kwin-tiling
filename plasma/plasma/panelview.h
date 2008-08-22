@@ -27,6 +27,11 @@
 #include <plasma/plasma.h>
 #include <plasma/view.h>
 
+#ifdef Q_WS_X11
+#include <X11/Xlib.h>
+#include <fixx11h.h>
+#endif
+
 #ifdef Q_WS_WIN
 #include <windows.h>
 #endif
@@ -81,6 +86,16 @@ public:
      */
     void pinchContainment(const QRect &screenGeometry);
 
+    /**
+     * @return the unhide trigger window id, None if there is none
+     */
+    Window unhideTrigger() { return m_unhideTrigger; }
+
+    /**
+     * unhides the panel if it is hidden
+     */
+    void unhide();
+
 public Q_SLOTS:
     /**
      * Sets the offset the left border, the offset is the distance of the left
@@ -110,7 +125,6 @@ protected:
     void updateStruts();
     void moveEvent(QMoveEvent *event);
     void resizeEvent(QResizeEvent *event);
-    void enterEvent(QEvent *event);
     void leaveEvent(QEvent *event);
     void paintEvent(QPaintEvent *event);
 
@@ -147,6 +161,9 @@ private:
 
     int m_offset;
     Qt::Alignment m_alignment;
+#ifdef Q_WS_X11
+    Window m_unhideTrigger;
+#endif
 
     QSizeF m_lastMin;
     QSizeF m_lastMax;

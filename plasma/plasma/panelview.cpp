@@ -24,6 +24,7 @@
 #include <QGraphicsLinearLayout>
 #include <QTimeLine>
 #include <QTimer>
+#include <QX11Info>
 
 #include <KWindowSystem>
 #include <KDebug>
@@ -42,6 +43,9 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     : Plasma::View(panel, id, parent),
       m_panelController(0),
       m_timeLine(0),
+#ifdef Q_WS_X11
+      m_unhideTrigger(None),
+#endif
       m_lastHorizontal(true),
       m_editting(false),
       m_autohide(false),
@@ -676,24 +680,27 @@ QTimeLine *PanelView::timeLine()
     return m_timeLine;
 }
 
-void PanelView::enterEvent(QEvent *event)
+void PanelView::unhide()
 {
-    kDebug();
+    if (m_unhideTrigger != None) {
+#ifdef Q_WS_X11
+        XDestroyWindow(QX11Info::display(), m_unhideTrigger);
+        m_unhideTrigger = None;
+#endif
+        PlasmaApp::self()->panelHidden(false);
 
-    if (m_autohide) {
         QTimeLine * tl = timeLine();
         tl->setDirection(QTimeLine::Backward);
         if (tl->state() == QTimeLine::NotRunning) {
             tl->start();
         }
-    }
 
-    Plasma::View::enterEvent(event);
+        show();
+    }
 }
 
 void PanelView::leaveEvent(QEvent *event)
 {
-    kDebug();
     if (m_autohide && !m_editting) {
         QTimeLine * tl = timeLine();
         tl->setDirection(QTimeLine::Forward);
@@ -702,7 +709,7 @@ void PanelView::leaveEvent(QEvent *event)
         }
     }
 
-    Plasma::View::enterEvent(event);
+    Plasma::View::leaveEvent(event);
 }
 
 void PanelView::paintEvent(QPaintEvent *event)
@@ -732,21 +739,32 @@ void PanelView::animateHide(qreal progress)
 
     int xtrans = 0;
     int ytrans = 0;
+    int triggerWidth = 1;
+    int triggerHeight = 1;
+    QPoint triggerPoint = pos();
 
     switch (loc) {
         case Plasma::TopEdge:
             ytrans = -margin;
+            triggerWidth = width();
             break;
         case Plasma::BottomEdge:
             ytrans = margin;
+            triggerWidth = width();
+            triggerPoint = geometry().bottomLeft();
             break;
         case Plasma::RightEdge:
             xtrans = -margin;
+            triggerHeight = height();
+            triggerPoint = geometry().topRight();
             break;
         case Plasma::LeftEdge:
             xtrans = margin;
+            triggerHeight = height();
             break;
         default:
+            // no hiding unless we're on an edge.
+            return;
             break;
     }
 
@@ -755,9 +773,24 @@ void PanelView::animateHide(qreal progress)
 
     QTimeLine *tl = timeLine();
     if (qFuzzyCompare(1.0, progress) && tl->direction() == QTimeLine::Forward) {
-        kDebug() << "hide complete";
+        //kDebug() << "**************** hide complete" << triggerPoint << triggerWidth << triggerHeight;
+
+#ifdef Q_WS_X11
+        XSetWindowAttributes attributes;
+        attributes.override_redirect = True;
+        attributes.event_mask = EnterWindowMask;
+        unsigned long valuemask = CWOverrideRedirect | CWEventMask;
+        m_unhideTrigger = XCreateWindow(QX11Info::display(), QX11Info::appRootWindow(),
+                                        triggerPoint.x(), triggerPoint.y(), triggerWidth, triggerHeight,
+                                        0, CopyFromParent, InputOnly, CopyFromParent,
+                                        valuemask, &attributes);
+        XMapWindow(QX11Info::display(), m_unhideTrigger);
+#endif
+
+        PlasmaApp::self()->panelHidden(true);
+        hide();
     } else if (qFuzzyCompare(0.0, progress) && tl->direction() == QTimeLine::Backward) {
-        kDebug() << "show complete";
+        //kDebug() << "show complete";
     }
 }
 
