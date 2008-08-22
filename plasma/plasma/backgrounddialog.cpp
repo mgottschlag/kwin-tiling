@@ -352,13 +352,13 @@ QSize AppletDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelI
 }
 
 BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::View* view, QWidget* parent)
-: KDialog(parent)
-, m_themeModel(0)
-, m_containmentModel(0)
-, m_wallpaper(0)
-, m_view(view)
-, m_containment(m_view->containment())
-, m_preview(0)
+    : KDialog(parent),
+      m_themeModel(0),
+      m_containmentModel(0),
+      m_wallpaper(0),
+      m_view(view),
+      m_containment(m_view->containment()),
+      m_preview(0)
 {
     setWindowIcon(KIcon("preferences-desktop-wallpaper"));
     setCaption(i18n("Desktop Settings"));
@@ -471,10 +471,12 @@ void BackgroundDialog::reloadConfig()
     // Wallpaper
     index = 0;
     if (m_containment->wallpaper()) {
+        QString currentPlugin = m_containment->wallpaper()->pluginName();
+        QString currentMode = m_containment->wallpaper()->renderingMode().name();
+
         for (int i = 0; i < m_mode->count(); ++i) {
             WallpaperInfo wallpaper = m_mode->itemData(i).value<WallpaperInfo>();
-            if (wallpaper.first == m_containment->wallpaper()->pluginName() &&
-                wallpaper.second == m_containment->wallpaperMode()) {
+            if (wallpaper.first == currentPlugin && wallpaper.second == currentMode) {
                 index = i;
                 break;
             }
@@ -503,6 +505,7 @@ void BackgroundDialog::changeBackgroundMode(int mode)
     }
     if (m_wallpaper) {
         KConfigGroup cfg = m_containment->config();
+        kDebug() << "making a" << wallpaperInfo.first << "in modD" << wallpaperInfo.second;
         m_wallpaper->restore(KConfigGroup(&cfg, "Wallpaper"), wallpaperInfo.second);
         w = m_wallpaper->createConfigurationInterface(m_wallpaperGroupBox);
     }
