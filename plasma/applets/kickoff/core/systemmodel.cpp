@@ -102,9 +102,9 @@ public:
     void queryFreeSpace(const QString& mountPoint)
     {
         KDiskFreeSpaceInfo freeSpace = KDiskFreeSpaceInfo::freeSpaceInfo(mountPoint);
-        if( freeSpace.isValid() )
-            q->freeSpaceInfoAvailable(freeSpace.mountPoint(), freeSpace.size(),
-                    freeSpace.used(), freeSpace.available());
+        if(freeSpace.isValid())
+            q->freeSpaceInfoAvailable(freeSpace.mountPoint(), freeSpace.size() / 1024,
+                    freeSpace.used() / 1024, freeSpace.available() / 1024);
     }
 
     void loadApplications()
