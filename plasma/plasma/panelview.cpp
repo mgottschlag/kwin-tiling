@@ -691,11 +691,23 @@ void PanelView::unhide()
 
         QTimeLine * tl = timeLine();
         tl->setDirection(QTimeLine::Backward);
-        if (tl->state() == QTimeLine::NotRunning) {
-            tl->start();
+        // with composite, we can quite do some nice animations with transparent
+        // backgrounds; without it we can't so we just show/hide
+        if (PlasmaApp::hasComposite()) {
+            if (tl->state() == QTimeLine::NotRunning) {
+                tl->start();
+            }
+        } else {
+            animateHide(0.0);
         }
 
         show();
+        KWindowSystem::setOnAllDesktops(winId(), true);
+        unsigned long state = NET::Sticky;
+        if (!m_windowsCover) {
+            state |= NET::StaysOnTop;
+        }
+        KWindowSystem::setState(winId(), state);
     }
 }
 
@@ -704,12 +716,29 @@ void PanelView::leaveEvent(QEvent *event)
     if (m_autohide && !m_editting) {
         QTimeLine * tl = timeLine();
         tl->setDirection(QTimeLine::Forward);
-        if (tl->state() == QTimeLine::NotRunning) {
-            tl->start();
+
+        // with composite, we can quite do some nice animations with transparent
+        // backgrounds; without it we can't so we just show/hide
+        if (PlasmaApp::hasComposite()) {
+            if (tl->state() == QTimeLine::NotRunning) {
+                tl->start();
+            }
+        } else {
+            animateHide(1.0);
         }
     }
 
     Plasma::View::leaveEvent(event);
+}
+
+void PanelView::drawBackground(QPainter *painter, const QRectF &rect)
+{
+    if (PlasmaApp::hasComposite()) {
+        painter->setCompositionMode(QPainter::CompositionMode_Source);
+        painter->fillRect(rect, Qt::transparent);
+    } else {
+        Plasma::View::drawBackground(painter, rect);
+    }
 }
 
 void PanelView::paintEvent(QPaintEvent *event)
@@ -770,7 +799,6 @@ void PanelView::animateHide(qreal progress)
 
     //kDebug() << progress << xtrans << ytrans;
     viewport()->move(xtrans, ytrans);
-
     QTimeLine *tl = timeLine();
     if (qFuzzyCompare(1.0, progress) && tl->direction() == QTimeLine::Forward) {
         //kDebug() << "**************** hide complete" << triggerPoint << triggerWidth << triggerHeight;
