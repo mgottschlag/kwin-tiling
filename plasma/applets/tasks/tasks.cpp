@@ -127,6 +127,7 @@ void Tasks::removeStartingTask(StartupPtr task)
         WindowTaskItem *item = m_startupTaskItems.take(task);
         m_layout->removeItem(item);
         scene()->removeItem(item);
+        item->deleteLater();
     }
 
     adjustStretch();
