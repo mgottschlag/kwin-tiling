@@ -45,17 +45,16 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
       m_lastHorizontal(true),
       m_editting(false),
       m_autohide(false),
-      m_reserveStrut(true),
-      m_hidden(false)
+      m_windowsCover(false),
+      m_firstPaint(true)
 {
     Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
-
     KConfigGroup viewConfig = config();
 
     m_offset = viewConfig.readEntry("Offset", 0);
     m_alignment = alignmentFilter((Qt::Alignment)viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
     m_autohide = viewConfig.readEntry("autohide", m_autohide);
-    m_reserveStrut = !viewConfig.readEntry("letWindowsCover", !m_reserveStrut);
+    m_windowsCover = !viewConfig.readEntry("letWindowsCover", m_windowsCover);
 
     // pinchContainment calls updatePanelGeometry for us
 
@@ -90,10 +89,12 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     // KWin setup
     KWindowSystem::setType(winId(), NET::Dock);
-    KWindowSystem::setState(winId(), NET::Sticky);
-    if (m_reserveStrut) {
-        KWindowSystem::setOnAllDesktops(winId(), true);
+    KWindowSystem::setOnAllDesktops(winId(), true);
+    unsigned long state = NET::Sticky;
+    if (!m_windowsCover) {
+        state |= NET::StaysOnTop;
     }
+    KWindowSystem::setState(winId(), state);
 
 #ifdef Q_WS_WIN
     registerAccessBar(winId(), true);
@@ -573,6 +574,7 @@ void PanelView::edittingComplete()
     qDeleteAll(m_moveOverlays);
     m_moveOverlays.clear();
     containment()->closeToolBox();
+    m_firstPaint = true; // triggers autohide
 }
 
 Qt::Alignment PanelView::alignmentFilter(Qt::Alignment align) const
@@ -589,7 +591,7 @@ void PanelView::updateStruts()
 {
     NETExtendedStrut strut;
 
-    if (m_reserveStrut) {
+    if (!m_windowsCover && !m_autohide) {
         QRect thisScreen = QApplication::desktop()->screenGeometry(containment()->screen());
         QRect wholeScreen = QApplication::desktop()->geometry();
 
@@ -650,12 +652,14 @@ void PanelView::updateStruts()
 
 void PanelView::moveEvent(QMoveEvent *event)
 {
+    kDebug();
     QWidget::moveEvent(event);
     updateStruts();
 }
 
 void PanelView::resizeEvent(QResizeEvent *event)
 {
+    kDebug();
     QWidget::resizeEvent(event);
     updateStruts();
 }
@@ -663,8 +667,9 @@ void PanelView::resizeEvent(QResizeEvent *event)
 QTimeLine *PanelView::timeLine()
 {
     if (!m_timeLine) {
-        m_timeLine = new QTimeLine(300, this);
+        m_timeLine = new QTimeLine(200, this);
         m_timeLine->setCurveShape(QTimeLine::EaseOutCurve);
+        m_timeLine->setUpdateInterval(10);
         connect(m_timeLine, SIGNAL(valueChanged(qreal)), this, SLOT(animateHide(qreal)));
     }
 
@@ -682,23 +687,78 @@ void PanelView::enterEvent(QEvent *event)
             tl->start();
         }
     }
+
+    Plasma::View::enterEvent(event);
 }
 
 void PanelView::leaveEvent(QEvent *event)
 {
     kDebug();
-    if (m_autohide) {
+    if (m_autohide && !m_editting) {
         QTimeLine * tl = timeLine();
         tl->setDirection(QTimeLine::Forward);
         if (tl->state() == QTimeLine::NotRunning) {
             tl->start();
         }
     }
+
+    Plasma::View::enterEvent(event);
+}
+
+void PanelView::paintEvent(QPaintEvent *event)
+{
+    Plasma::View::paintEvent(event);
+    if (m_firstPaint) {
+        if (m_autohide) {
+            QTimeLine * tl = timeLine();
+            tl->setDirection(QTimeLine::Forward);
+            tl->start();
+        }
+
+        m_firstPaint = false;
+    }
 }
 
 void PanelView::animateHide(qreal progress)
 {
-    kDebug() << progress;
+    int margin = 0;
+    Plasma::Location loc = location();
+
+    if (loc == Plasma::TopEdge || loc == Plasma::BottomEdge) {
+        margin = progress * height();
+    } else {
+        margin = progress * width();
+    }
+
+    int xtrans = 0;
+    int ytrans = 0;
+
+    switch (loc) {
+        case Plasma::TopEdge:
+            ytrans = -margin;
+            break;
+        case Plasma::BottomEdge:
+            ytrans = margin;
+            break;
+        case Plasma::RightEdge:
+            xtrans = -margin;
+            break;
+        case Plasma::LeftEdge:
+            xtrans = margin;
+            break;
+        default:
+            break;
+    }
+
+    //kDebug() << progress << xtrans << ytrans;
+    viewport()->move(xtrans, ytrans);
+
+    QTimeLine *tl = timeLine();
+    if (qFuzzyCompare(1.0, progress) && tl->direction() == QTimeLine::Forward) {
+        kDebug() << "hide complete";
+    } else if (qFuzzyCompare(0.0, progress) && tl->direction() == QTimeLine::Backward) {
+        kDebug() << "show complete";
+    }
 }
 
 #include "panelview.moc"

@@ -112,6 +112,7 @@ protected:
     void resizeEvent(QResizeEvent *event);
     void enterEvent(QEvent *event);
     void leaveEvent(QEvent *event);
+    void paintEvent(QPaintEvent *event);
 
 private Q_SLOTS:
     void showAppletBrowser();
@@ -154,8 +155,8 @@ private:
 
     bool m_editting : 1;
     bool m_autohide : 1;
-    bool m_reserveStrut : 1;
-    bool m_hidden : 1;
+    bool m_windowsCover: 1;
+    bool m_firstPaint : 1;
 };
 
 #endif
