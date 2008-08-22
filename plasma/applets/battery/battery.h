@@ -67,6 +67,8 @@ class Battery : public Plasma::Applet
         void animationUpdate(qreal progress);
         void acAnimationUpdate(qreal progress);
         void batteryAnimationUpdate(qreal progress);
+        void sourceAdded(const QString &source);
+        void sourceRemoved(const QString &source);
 
     private:
         Q_ENUMS( m_batteryStyle )
