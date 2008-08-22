@@ -28,7 +28,7 @@
 // KDE
 #include <KConfigGroup>
 #include <KDebug>
-#include <KDiskFreeSpace>
+#include <KDiskFreeSpaceInfo>
 #include <KLocalizedString>
 #include <KIcon>
 #include <KGlobal>
@@ -101,9 +101,10 @@ public:
 
     void queryFreeSpace(const QString& mountPoint)
     {
-        KDiskFreeSpace *freeSpace = KDiskFreeSpace::findUsageInfo(mountPoint);
-        connect(freeSpace, SIGNAL(foundMountPoint(QString,quint64,quint64,quint64)),
-                q, SLOT(freeSpaceInfoAvailable(QString,quint64,quint64,quint64)));
+        KDiskFreeSpaceInfo freeSpace = KDiskFreeSpaceInfo::freeSpaceInfo(mountPoint);
+        if( freeSpace.isValid() )
+            q->freeSpaceInfoAvailable(freeSpace.mountPoint(), freeSpace.size(),
+                    freeSpace.used(), freeSpace.available());
     }
 
     void loadApplications()
