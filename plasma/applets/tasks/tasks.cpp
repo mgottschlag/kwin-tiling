@@ -125,6 +125,7 @@ void Tasks::removeStartingTask(StartupPtr task)
         WindowTaskItem *item = m_startupTaskItems.take(task);
         m_layout->removeItem(item);
         scene()->removeItem(item);
+        item->deleteLater();
     }
 
     updatePreferredSize();
@@ -140,8 +141,8 @@ void Tasks::registerWindowTasks()
 
     while (iter.hasNext()) {
         iter.next();
-	if (!iter.value()->isOnCurrentDesktop() && m_showOnlyCurrentDesktop ||
-	              !isOnMyScreen(iter.value()) && m_showOnlyCurrentScreen) {
+	if ((!iter.value()->isOnCurrentDesktop() && m_showOnlyCurrentDesktop) ||
+	              (!isOnMyScreen(iter.value()) && m_showOnlyCurrentScreen)) {
 	     connect(iter.value().data(),SIGNAL(changed()),
                            this, SLOT(addAttentionTask()));
 	}
