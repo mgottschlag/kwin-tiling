@@ -278,7 +278,7 @@ void PlasmaApp::deactivate()
 {
     if (m_view) {
         if (m_view->isVisible()) {
-            if (qFuzzyCompare(m_idleOpacity, 0.0)) {
+            if (qFuzzyCompare(m_idleOpacity, qreal(0.0))) {
                 m_view->hideView();
             } else {
                 lock();
