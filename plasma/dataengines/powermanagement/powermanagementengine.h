@@ -44,11 +44,13 @@ protected:
     bool sourceRequestEvent(const QString &name);
     void init();
 
-protected slots:
+private slots:
     void updateBatteryChargeState(int newState, const QString& udi);
     void updateBatteryPlugState(bool newState, const QString& udi);
     void updateBatteryChargePercent(int newValue, const QString& udi);
     void updateAcPlugState(bool newState);
+    void deviceRemoved(const QString& udi);
+    void deviceAdded(const QString& udi);
 
 private:
     Solid::AcAdapter* m_acadapter;

@@ -38,9 +38,9 @@ PowermanagementEngine::PowermanagementEngine(QObject* parent, const QVariantList
         , m_sources(0)
 {
     Q_UNUSED(args)
-        
+
     m_sources << I18N_NOOP("Battery") << I18N_NOOP("AC Adapter") << I18N_NOOP("Sleepstates");
-    
+
     // This following call can be removed, but if we do, the
     // data is not shown in the plasmaengineexplorer.
     // sourceRequestEvent("Battery");
@@ -51,11 +51,15 @@ PowermanagementEngine::~PowermanagementEngine()
 
 void PowermanagementEngine::init()
 {
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceRemoved(QString)),
+            this,                              SLOT(deviceRemoved(QString)));
+    connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)),
+            this,                              SLOT(deviceAdded(QString)));
 }
 
 QStringList PowermanagementEngine::sources() const 
 {
-    return m_sources;
+    return m_sources + m_batterySources.values();
 }
 
 bool PowermanagementEngine::sourceRequestEvent(const QString &name)
@@ -67,10 +71,10 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
             setData(I18N_NOOP("Battery"), I18N_NOOP("has Battery"), false);
             return true;
         }
-        
+
         uint index = 0;
         QStringList battery_sources;
-        
+
         foreach (const Solid::Device &device_battery, list_battery) {
             const Solid::Battery* battery = device_battery.as<Solid::Battery>();
 
@@ -94,8 +98,8 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
                 updateBatteryPlugState(battery->isPlugged(), device_battery.udi());
             }
         }
-        
-        if(battery_sources.count() > 0) {
+
+        if (battery_sources.count() > 0) {
             setData(I18N_NOOP("Battery"), I18N_NOOP("has Battery"), true);
             setData(I18N_NOOP("Battery"), I18N_NOOP("sources"), battery_sources);
         }
@@ -168,6 +172,53 @@ void PowermanagementEngine::updateAcPlugState(bool newState)
 {
     setData(I18N_NOOP("AC Adapter"), I18N_NOOP("Plugged in"), newState);
     scheduleSourcesUpdated();
+}
+
+void PowermanagementEngine::deviceRemoved(const QString& udi)
+{
+    if (m_batterySources.contains(udi)) {
+        const QString& source = m_batterySources[udi];
+        m_batterySources.remove(udi);
+        removeSource(source);
+
+        QStringList sourceNames(m_batterySources.values());
+        sourceNames.removeAll(source);
+        setData("Battery", "sources", sourceNames);
+    }
+}
+
+void PowermanagementEngine::deviceAdded(const QString& udi)
+{
+    Solid::Device device(udi);
+    if (device.isValid()) {
+        const Solid::Battery* battery = device.as<Solid::Battery>();
+
+        if (battery != 0) {
+            int index = 0;
+            QStringList sourceNames(m_batterySources.values());
+            while (sourceNames.contains(QString("Battery%1").arg(index))) {
+                index++;
+            }
+
+            QString source = QString("Battery%1").arg(index);
+            sourceNames << source;
+            m_batterySources[device.udi()] = source;
+
+            connect(battery, SIGNAL(chargeStateChanged(int, const QString &)), this,
+                    SLOT(updateBatteryChargeState(int, const QString &)));
+            connect(battery, SIGNAL(chargePercentChanged(int, const QString &)), this,
+                    SLOT(updateBatteryChargePercent(int, const QString &)));
+            connect(battery, SIGNAL(plugStateChanged(bool, const QString &)), this,
+                    SLOT(updateBatteryPlugState(bool, const QString &)));
+
+            // Set initial values
+            updateBatteryChargeState(battery->chargeState(), device.udi());
+            updateBatteryChargePercent(battery->chargePercent(), device.udi());
+            updateBatteryPlugState(battery->isPlugged(), device.udi());
+
+            setData("Battery", "sources", sourceNames);
+        }
+    }
 }
 
 #include "powermanagementengine.moc"

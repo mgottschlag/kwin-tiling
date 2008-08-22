@@ -580,6 +580,11 @@ void Battery::connectSources() {
     }
 
     dataEngine("powermanagement")->connectSource(I18N_NOOP("AC Adapter"), this);
+
+    connect(dataEngine("powermanagement"), SIGNAL(sourceAdded(QString)),
+            this,                          SLOT(sourceAdded(QString)));
+    connect(dataEngine("powermanagement"), SIGNAL(sourceRemoved(QString)),
+            this,                          SLOT(sourceRemoved(QString)));
 }
 
 void Battery::disconnectSources()
@@ -591,6 +596,26 @@ void Battery::disconnectSources()
     }
 
     dataEngine("powermanagement")->disconnectSource(I18N_NOOP("AC Adapter"), this);
+
+    disconnect(SLOT(sourceAdded(QString)));
+    disconnect(SLOT(sourceRemoved(QString)));
+}
+
+void Battery::sourceAdded(const QString& source)
+{
+    if (source.startsWith("Battery") && source != "Battery") {
+        dataEngine("powermanagement")->connectSource(source, this);
+        m_numOfBattery++;
+    }
+}
+
+void Battery::sourceRemoved(const QString& source)
+{
+    if (m_batteries_data.contains(source)) {
+        m_batteries_data.remove(source);
+        m_numOfBattery--;
+        update();
+    }
 }
 
 #include "battery.moc"
