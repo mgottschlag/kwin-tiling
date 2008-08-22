@@ -16,7 +16,6 @@ SET (kephald_SRCS
         ../xrandr12/randrdisplay.cpp
         kephald.cpp
         ../screens/screens.cpp
-        ../screens/screen.cpp
         ../screens/simplescreen.cpp
         ../screens/output/outputscreens.cpp
         ../screens/configuration/configurationscreens.cpp
@@ -41,7 +40,6 @@ QT4_WRAP_CPP (kephald_SRCS
         ../xrandr12/randrdisplay.h
         kephald.h
         ../screens/screens.h
-        ../screens/screen.h
         ../screens/simplescreen.h
         ../screens/output/outputscreens.h
         ../screens/configuration/configurationscreens.h

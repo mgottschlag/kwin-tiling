@@ -83,13 +83,10 @@ namespace kephal {
             XRandROutputs(QObject * parent, RandRDisplay * display);
             
             QList<Output *> outputs();
-            void activateLayout(QMap<Output *, QRect> layout);
+            void activateLayout(const QMap<Output *, QRect> & layout);
             
             RandROutput * output(RROutput rrId);
             RandRDisplay * display();
-            
-            //bool relayout(XRandROutput * output, QMap<Position, Output *> anchors, QSize size);
-            //bool checkLayout(XRandROutput * output, QMap<Position, Output *> anchors, QSize size);
             
         public Q_SLOTS:
             void outputChanged(RROutput id, int changes);
@@ -97,12 +94,6 @@ namespace kephal {
             
         private:
             void init();
-            /*QMap<QString, QRect> relayout(QString output, QMap<Position, Output *> anchors, QSize size, QMap<QString, QRect> layout);
-            bool checkLayout(QString output, QMap<Position, Output *> anchors, QSize size, QMap<QString, QRect> layout);
-            bool checkLayout(QMap<QString, QRect> layout);
-            QMap<QString, QRect> layout();*/
-            //QMap<Position, Output *> anchors(QString output, QMap<QString, QRect> layout);
-            //QMap<Position, Output *> anchors(QString output);
             
             RandRDisplay * m_display;
             QMap<QString, XRandROutput *> m_outputs;

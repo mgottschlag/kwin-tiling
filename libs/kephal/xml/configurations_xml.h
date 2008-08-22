@@ -54,6 +54,8 @@ namespace kephal {
 
     class ConfigurationXML : public XMLType {
         Q_OBJECT
+        
+        PROPERTY(int, primaryScreen, setPrimaryScreen)
         public:
             ConfigurationXML();
             

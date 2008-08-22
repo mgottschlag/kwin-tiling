@@ -34,51 +34,202 @@ namespace kephal {
 
     class Screen;
 
+
+    /**
+     * An Output is the actual connector and a
+     * possibly connected monitor, such as
+     * VGA, LVDS, TMDS-1.
+     * This is most important for changing any
+     * settings of the current setup.
+     */
     class Output : public QObject {
         Q_OBJECT
         public:
             Output(QObject * parent);
 
+            /**
+             * Returns the id of the Output.
+             * In case of XRandR 1.2 these will
+             * be the names such as: VGA, LVDS,
+             * TMDS-1.
+             */
             virtual QString id() = 0;
 
+            /**
+             * Returns the actual size in pixels
+             * if the Output is active.
+             */
             virtual QSize size() = 0;
+
+            /**
+             * Returns the actual position in
+             * pixels if the Output is active.
+             */
             virtual QPoint position() = 0;
+            
+            /**
+             * Returns whether this Output is
+             * currently connected to a
+             * monitor.
+             */
             virtual bool isConnected() = 0;
+            
+            /**
+             * Returns whether this Output is
+             * currently activated and part
+             * of a Screen.
+             */
             virtual bool isActivated() = 0;
+            
+            /**
+             * Returns a list of sizes, which
+             * are supported by this Output.
+             * This depends on the connected
+             * monitor.
+             */
             virtual QList<QSize> availableSizes() = 0;
-            //virtual QMap<PositionType, Output *> relativePosition();
+            
+            /**
+             * Returns the vendor-code as
+             * it is part of the EDID-block.
+             */
             virtual QString vendor() = 0;
+            
+            /**
+             * Returns the product-id as
+             * it is part of the EDID-block.
+             */
             virtual int productId() = 0;
+            
+            /**
+             * Returns the serial-number as
+             * it is part of the EDID-block.
+             */
             virtual unsigned int serialNumber() = 0;
+            
+            /**
+             * Returns the preffered size of
+             * this Output. This depends on
+             * the connected monitor.
+             */
             virtual QSize preferredSize() = 0;
             
+            /**
+             * This is just a convenience
+             * method for looking up the 
+             * Screen this Output belongs to.
+             * Returns 0 if not active.
+             */
             Screen * screen();
+            
+            /**
+             * This convenience method
+             * returns size and position of
+             * this Output if active.
+             */
             QRect geom();
+            
+            /**
+             * Returns all available
+             * positions for this Output.
+             * This depends on the
+             * Configuration used and
+             * the positions of the other
+             * active Outputs.
+             */
             QList<QPoint> availablePositions();
             
         public Q_SLOTS:
-            void setSize(QSize size);
-            void setPosition(QPoint position);
+            /**
+             * This calls the appropriate
+             * methods in the Configuration
+             * to resize this Output.
+             */
+            void setSize(const QSize & size);
+
+            /**
+             * This calls the appropriate
+             * methods in the Configuration
+             * to move this Output.
+             */
+            void setPosition(const QPoint & position);
     };
     
 
+
+    /**
+     * Outputs is the entrance-point to all Output
+     * related operations.
+     * Use: Outputs::instance() to obtain the currently
+     * active instance.
+     */
     class Outputs : public QObject {
         Q_OBJECT
         public:
+            /**
+             * Returns the currently active
+             * instance.
+             */
             static Outputs * instance();
             
             Outputs(QObject * parent);
-            virtual QList<Output *> outputs() = 0;
-            virtual void activateLayout(QMap<Output *, QRect> layout) = 0;
             
-            virtual Output * output(QString id);
+            /**
+             * Returns a list of all known Outputs,
+             * even if they are inactive or
+             * disconnected.
+             */
+            virtual QList<Output *> outputs() = 0;
+            
+            /**
+             * Activate a given layout. This will
+             * usually only be called by the
+             * Configuration.
+             */
+            virtual void activateLayout(const QMap<Output *, QRect> & layout) = 0;
+            
+            /**
+             * Find an Output by its id.
+             * Returns 0 if the id is not known.
+             */
+            virtual Output * output(const QString & id);
             
         Q_SIGNALS:
+            /**
+             * This signal is emitted when an Output
+             * is connected.
+             */
             void outputConnected(kephal::Output * o);
+
+            /**
+             * This signal is emitted when an Output
+             * is disconnected.
+             */
             void outputDisconnected(kephal::Output * o);
+
+            /**
+             * This signal is emitted when an Output
+             * is activated.
+             */
             void outputActivated(kephal::Output * o);
+
+            /**
+             * This signal is emitted when an Output
+             * is deactivated.
+             */
             void outputDeactivated(kephal::Output * o);
+
+            /**
+             * This signal is emitted when an Output
+             * is resized from oldSize to newSize.
+             */
             void outputResized(kephal::Output * o, QSize oldSize, QSize newSize);
+
+            /**
+             * This signal is emitted when an Output
+             * is moved on the framebuffer from
+             * oldPosition to newPosition.
+             */
             void outputMoved(kephal::Output * o, QPoint oldPosition, QPoint newPosition);
             
         protected:

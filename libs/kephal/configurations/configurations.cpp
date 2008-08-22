@@ -94,6 +94,15 @@ namespace kephal {
         }
     }
     
+    Configuration * Configurations::configuration(QString name) {
+        foreach (Configuration * config, configurations()) {
+            if (config->name() == name) {
+                return config;
+            }
+        }
+        return 0;
+    }
+    
     
     
     Configuration::Configuration(QObject * parent)
@@ -115,8 +124,9 @@ namespace kephal {
         return realLayout(simpleLayout, outputScreens);
     }
     
-    QMap<int, QRect> Configuration::realLayout(QMap<int, QPoint> simpleLayout, const QMap<Output *, int> & outputScreens) {
+    QMap<int, QRect> Configuration::realLayout(const QMap<int, QPoint> & sLayout, const QMap<Output *, int> & outputScreens) {
         QMap<int, QRect> screens;
+        QMap<int, QPoint> simpleLayout = sLayout;
         
         QMap<int, QSize> screenSizes;
         foreach (int screen, simpleLayout.keys()) {
@@ -153,7 +163,7 @@ namespace kephal {
         return screens;
     }
     
-    void Configuration::simpleToReal(QMap<int, QPoint> & simpleLayout, const QMap<int, QSize> & screenSizes, const int & index, QMap<int, QRect> & screens) {
+    void Configuration::simpleToReal(QMap<int, QPoint> & simpleLayout, const QMap<int, QSize> & screenSizes, int index, QMap<int, QRect> & screens) {
         QPoint pos = simpleLayout.take(index);
         
         // to the right
@@ -294,6 +304,6 @@ namespace kephal {
         
         return result;
     }
-
+    
 }
 

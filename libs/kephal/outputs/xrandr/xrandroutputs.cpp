@@ -68,22 +68,15 @@ namespace kephal {
         }
     }
     
-    void XRandROutputs::activateLayout(QMap<Output *, QRect> layout) {
+    void XRandROutputs::activateLayout(const QMap<Output *, QRect> & layout) {
         qDebug() << "activate layout:" << layout;
         
         foreach (XRandROutput * output, m_outputs) {
-            if ((! layout.contains(output))/* && output->isActivated()*/) {
+            if (! layout.contains(output)) {
                 output->_deactivate();
             }
         }
 
-        /*foreach (XRandROutput * output, m_outputs) {
-            if (layout.contains(output) && ! (output->isActivated())) {
-                qDebug() << "enabling output" << output->id();
-                output->_activate();
-            }
-        }*/
-            
         for (QMap<Output *, QRect>::const_iterator i = layout.constBegin(); i != layout.constEnd(); ++i) {
             XRandROutput * output = (XRandROutput *) i.key();
             if (! output->_apply(i.value())) {

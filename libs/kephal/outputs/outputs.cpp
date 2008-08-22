@@ -46,7 +46,7 @@ namespace kephal {
         Outputs::m_instance = this;
     }
     
-    Output * Outputs::output(QString id) {
+    Output * Outputs::output(const QString & id) {
         foreach (Output * o, outputs()) {
             if (o->id() == id) {
                 return o;
@@ -85,12 +85,12 @@ namespace kephal {
         return Configurations::instance()->possiblePositions(this);
     }
     
-    void Output::setPosition(QPoint position) {
+    void Output::setPosition(const QPoint & position) {
         qDebug() << "Output::setPosition() called:" << position;
         Configurations::instance()->move(this, position);
     }
     
-    void Output::setSize(QSize size) {
+    void Output::setSize(const QSize & size) {
         qDebug() << "Output::setSize() called:" << size;
         Configurations::instance()->resize(this, size);
     }

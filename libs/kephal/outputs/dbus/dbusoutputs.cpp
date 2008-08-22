@@ -90,7 +90,7 @@ namespace kephal {
         return result;
     }
     
-    void DBusOutputs::activateLayout(QMap<Output *, QRect> layout)
+    void DBusOutputs::activateLayout(const QMap<Output *, QRect> & layout)
     {
     }
     

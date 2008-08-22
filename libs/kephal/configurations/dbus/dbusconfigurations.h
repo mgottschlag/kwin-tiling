@@ -39,6 +39,7 @@ namespace kephal {
             bool isModifiable();
             bool isActivated();
             QMap<int, QPoint> layout();
+            int primaryScreen();
             
         public Q_SLOTS:
             void activate();
@@ -53,15 +54,14 @@ namespace kephal {
         Q_OBJECT
         public:
             DBusConfigurations(QObject * parent);
-            //~DBusConfigurations();
             
             QMap<QString, Configuration *> configurations();
             Configuration * findConfiguration();
             Configuration * activeConfiguration();
             QList<Configuration *> alternateConfigurations();
             QList<QPoint> possiblePositions(Output * output);
-            void move(Output * output, QPoint position);
-            void resize(Output * output, QSize size);
+            void move(Output * output, const QPoint & position);
+            void resize(Output * output, const QSize & size);
             
             bool isValid();
             org::kde::Kephal::Configurations * interface();

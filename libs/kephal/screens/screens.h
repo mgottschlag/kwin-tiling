@@ -24,27 +24,155 @@
 #include <QPoint>
 #include <QSize>
 #include <QObject>
-
-#include "screen.h"
+#include <QRect>
 
 
 namespace kephal {
 
-    //class Screen;
+    class Output;
 
+
+    /**
+     * A Screen is the area that is significant for
+     * displaying windows.
+     * Every activated Output belongs to exactly one
+     * Screen and is completely contained within that
+     * Screen. No 2 Screens overlap each other.
+     */
+    class Screen : public QObject {
+        Q_OBJECT
+        public:
+            Screen(QObject * parent = 0);
+            
+            /**
+             * Returns the id of this Screen. The id
+             * is part of the Configuration and will
+             * be the same whenever the same Outputs
+             * are used with the same Configuration.
+             */
+            virtual int id() = 0;
+
+            /**
+             * The actual size of the screen in pixels.
+             * This is the smallest area possible, so
+             * that all Outputs are completely 
+             * contained.
+             */
+            virtual QSize size() = 0;
+            
+            /**
+             * The actual position on the framebuffer
+             * in pixels.
+             */
+            virtual QPoint position() = 0;
+
+            /**
+             * Returns whether this Screen is to be
+             * considered in privacy-mode.
+             * In this mode no content should be
+             * displayed on that screen unless the
+             * user forces this.
+             */
+            virtual bool isPrivacyMode() = 0;
+            
+            /**
+             * Sets the state of the privacy-mode.
+             */
+            virtual void setPrivacyMode(bool b) = 0;
+            
+            /**
+             * Return a list of Outputs currently
+             * being part of this Screen.
+             */
+            virtual QList<Output *> outputs() = 0;
+            
+            /**
+             * Returns whether this screen is the
+             * current primary screen.
+             * This is just a convenience method,
+             * since the real value is determined
+             * the configuration used.
+             */
+            bool isPrimary();
+            
+            /**
+             * Make this Screen the primary one.
+             * This just calls the appropriate
+             * method in the Configuration.
+             */
+            void setAsPrimary();
+            
+            /**
+             * Returns the position and size of the
+             * Screen as QRect.
+             * This is just a convenience method.
+             */
+            QRect geom();
+    };
     
+    
+    
+    /**
+     * Screens is the entrance-point for all Screen-
+     * related operations.
+     * Use: Screens::instance() for the currently
+     * active instance.
+     */
     class Screens : public QObject {
         Q_OBJECT
         public:
+            /**
+             * Returns the currently active instance.
+             */
             static Screens * instance();
             
             Screens(QObject * parent);
+            
+            /**
+             * Returns the list of all current
+             * Screens.
+             * Every Screen has at least one Output
+             * and a non-zero size.
+             */
             virtual QList<Screen *> screens() = 0;
             
+            /**
+             * Find a Screen by its id.
+             */
+            virtual Screen * screen(int id);
+            
+            /**
+             * Returns the current primary Screen.
+             */
+            Screen * primaryScreen();
+            
         Q_SIGNALS:
+            /**
+             * This signal is emitted when a new
+             * Screen appears, due to an Output
+             * being activated or the Configuration
+             * being changed.
+             */
             void screenAdded(kephal::Screen * s);
+
+            /**
+             * This signal is emitted when a
+             * Screen disappears, due to an Output
+             * being deactivated or the
+             * Configuration being changed.
+             */
             void screenRemoved(int id);
+            
+            /**
+             * This signal is emitted when the size
+             * of the Screen changes.
+             */
             void screenResized(kephal::Screen * s, QSize oldSize, QSize newSize);
+
+            /**
+             * This signal is emitted when the
+             * position of the Screen changes.
+             */
             void screenMoved(kephal::Screen * s, QPoint oldPosition, QPoint newPosition);
             
         protected:

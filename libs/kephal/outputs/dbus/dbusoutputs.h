@@ -33,10 +33,9 @@ namespace kephal {
         Q_OBJECT
         public:
             DBusOutputs(QObject * parent);
-            //~DBusOutputs();
             
             QList<Output *> outputs();
-            void activateLayout(QMap<Output *, QRect> layout);
+            void activateLayout(const QMap<Output *, QRect> & layout);
             
             bool isValid();
             

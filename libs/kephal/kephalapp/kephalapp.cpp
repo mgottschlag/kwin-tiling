@@ -20,7 +20,6 @@
 
 #include "kephalapp.h"
 #include "../screens/screens.h"
-#include "../screens/screen.h"
 
 
 #include <QDebug>

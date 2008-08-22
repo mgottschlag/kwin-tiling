@@ -55,8 +55,7 @@ namespace kephal {
                     i,
                     size,
                     pos,
-                    false,
-                    i == primary);
+                    false);
             m_screens.append(screen);
         }
         m_primaryScreen = m_screens.at(primary);

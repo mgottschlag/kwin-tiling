@@ -40,7 +40,8 @@ namespace kephal {
     
     
     ConfigurationXML::ConfigurationXML()
-        : m_modifiable(true)
+        : m_modifiable(true),
+        m_primaryScreen(0)
     { }
     
     QString ConfigurationXML::name() { return m_name; }
@@ -55,6 +56,7 @@ namespace kephal {
             virtual XMLType * newInstance() { return new ConfigurationXML(); }
             virtual void schema() {
                 STRING_ATTRIBUTE("name", ConfigurationXML, name, setName);
+                INT_ATTRIBUTE("primary", ConfigurationXML, primaryScreen, setPrimaryScreen);
                 BOOL_ATTRIBUTE("modifiable", ConfigurationXML, modifiable, setModifiable);
                 COMPLEX_ELEMENT_LIST("screen", ConfigurationXML, screens, new ScreenXMLFactory(), ScreenXML);
             }

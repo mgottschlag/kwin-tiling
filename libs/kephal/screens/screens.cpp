@@ -19,6 +19,8 @@
 
 
 #include "screens.h"
+#include "configurations/configurations.h"
+
 
 #ifdef SCREENS_FACTORY
 void SCREENS_FACTORY();
@@ -42,7 +44,41 @@ namespace kephal {
         Screens::m_instance = this;
     }
     
+    Screen * Screens::screen(int id) {
+        foreach (Screen * screen, screens()) {
+            if (screen->id() == id) {
+                return screen;
+            }
+        }
+        return 0;
+    }
+    
+    Screen * Screens::primaryScreen() {
+        Configuration * config = Configurations::instance()->activeConfiguration();
+        if (! config) {
+            return 0;
+        }
+        int id = config->primaryScreen();
+        
+        return screen(id);
+    }
+    
     Screens * Screens::m_instance = 0;
+    
+    
+    
+    Screen::Screen(QObject * parent)
+        : QObject(parent)
+    {
+    }
+    
+    QRect Screen::geom() {
+        return QRect(position(), size());
+    }
+    
+    bool Screen::isPrimary() {
+        return Screens::instance()->primaryScreen() == this;
+    }
     
 }
 

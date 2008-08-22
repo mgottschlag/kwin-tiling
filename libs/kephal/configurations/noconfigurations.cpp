@@ -47,6 +47,10 @@ namespace kephal {
     void SimpleConfiguration::activate() {
     }
     
+    int SimpleConfiguration::primaryScreen() {
+        return 0;
+    }
+    
     
     
     NoConfigurations::NoConfigurations(QObject * parent)
@@ -78,12 +82,12 @@ namespace kephal {
         return QList<QPoint>();
     }
 
-    void NoConfigurations::move(Output * output, QPoint position) {
+    void NoConfigurations::move(Output * output, const QPoint & position) {
         Q_UNUSED(output)
         Q_UNUSED(position)
     }
 
-    void NoConfigurations::resize(Output * output, QSize size) {
+    void NoConfigurations::resize(Output * output, const QSize & size) {
         Q_UNUSED(output)
         Q_UNUSED(size)
     }

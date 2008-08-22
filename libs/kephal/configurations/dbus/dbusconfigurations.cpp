@@ -56,6 +56,10 @@ namespace kephal {
     void DBusConfiguration::activate() {
         m_parent->interface()->activate(m_name);
     }
+    
+    int DBusConfiguration::primaryScreen() {
+        return m_parent->interface()->primaryScreen(m_name);
+    }
 
 
 
@@ -126,11 +130,11 @@ namespace kephal {
         return result;
     }
     
-    void DBusConfigurations::move(Output * output, QPoint position) {
+    void DBusConfigurations::move(Output * output, const QPoint & position) {
         m_interface->move(output->id(), position);
     }
     
-    void DBusConfigurations::resize(Output * output, QSize size) {
+    void DBusConfigurations::resize(Output * output, const QSize & size) {
         m_interface->resize(output->id(), size);
     }
     

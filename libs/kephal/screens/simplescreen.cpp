@@ -23,14 +23,13 @@
 
 namespace kephal {
 
-    SimpleScreen::SimpleScreen(QObject * parent, int id, QSize size, QPoint position, bool privacy, bool primary)
+    SimpleScreen::SimpleScreen(QObject * parent, int id, const QSize & size, const QPoint & position, bool privacy)
         : Screen(parent)
     {
         m_id = id;
         m_size = size;
         m_position = position;
         m_privacy = privacy;
-        m_primary = primary;
     }
     
     SimpleScreen::SimpleScreen(QObject * parent)
@@ -38,8 +37,7 @@ namespace kephal {
         m_id(-1),
         m_size(0, 0),
         m_position(0, 0),
-        m_privacy(false),
-        m_primary(false)
+        m_privacy(false)
     {
     }
     
@@ -51,10 +49,6 @@ namespace kephal {
 
     QSize SimpleScreen::size() {
         return m_size;
-    }
-    
-    void SimpleScreen::setSize(QSize size) {
-        emit sizeChangeRequested(this, m_size, size);
     }
     
     QPoint SimpleScreen::position() {
@@ -69,15 +63,6 @@ namespace kephal {
     void SimpleScreen::setPrivacyMode(bool privacy)
     {
         emit privacyModeChangeRequested(this, m_privacy);
-    }
-    
-    bool SimpleScreen::isPrimary()
-    {
-        return m_primary;
-    }
-    
-    void SimpleScreen::setAsPrimary() {
-        emit selectedAsPrimary(this);
     }
     
     void SimpleScreen::_setId(const int & id) {
@@ -97,10 +82,6 @@ namespace kephal {
     {
         _setPosition(geom.topLeft());
         _setSize(geom.size());
-    }
-    
-    void SimpleScreen::_setPrimary(const bool & primary) {
-        m_primary = primary;
     }
     
     QList<Output *> SimpleScreen::outputs() {

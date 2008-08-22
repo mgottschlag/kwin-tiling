@@ -75,7 +75,7 @@ namespace kephal {
         return result;
     }
     
-    void DesktopWidgetOutputs::activateLayout(QMap<Output *, QRect> layout)
+    void DesktopWidgetOutputs::activateLayout(const QMap<Output *, QRect> & layout)
     {
     }
     

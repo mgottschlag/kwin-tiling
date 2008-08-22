@@ -21,7 +21,7 @@
 #ifndef KEPHAL_SIMPLESCREEN_H
 #define KEPHAL_SIMPLESCREEN_H
 
-#include "screen.h"
+#include "screens.h"
 
 #include <QSize>
 #include <QPoint>
@@ -33,20 +33,16 @@ namespace kephal {
     class SimpleScreen : public Screen {
         Q_OBJECT
         public:
-            SimpleScreen(QObject * parent, int id, QSize resolution, QPoint position, bool privacy, bool primary);
+            SimpleScreen(QObject * parent, int id, const QSize & resolution, const QPoint & position, bool privacy);
             SimpleScreen(QObject * parent);
             
             virtual int id();
 
             virtual QSize size();
-            virtual void setSize(QSize size);
             virtual QPoint position();
-            //QList<PositionType> getRelativePosition();
 
             virtual bool isPrivacyMode();
             virtual void setPrivacyMode(bool b);
-            virtual bool isPrimary();
-            virtual void setAsPrimary();
             
             QList<Output *> outputs();
             
@@ -54,19 +50,15 @@ namespace kephal {
             void _setSize(const QSize & size);
             void _setPosition(const QPoint & position);
             void _setGeom(const QRect & geom);
-            void _setPrimary(const bool & primary);
             
         Q_SIGNALS:
-            void selectedAsPrimary(SimpleScreen * screen);
             void privacyModeChangeRequested(SimpleScreen * screen, bool privacy);
-            void sizeChangeRequested(SimpleScreen * screen, QSize oldSize, QSize newSize);
             
         private:
             int m_id;
             QSize m_size;
             QPoint m_position;
             bool m_privacy;
-            bool m_primary;
     };
     
 }

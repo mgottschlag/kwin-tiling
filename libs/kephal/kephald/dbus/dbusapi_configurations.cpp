@@ -106,7 +106,7 @@ void DBusAPIConfigurations::resize(QString output, QSize size) {
 }
 
 bool DBusAPIConfigurations::isModifiable(QString config) {
-    Configuration * c = Configurations::instance()->activeConfiguration();
+    Configuration * c = Configurations::instance()->configuration(config);
     if (c) {
         return c->isModifiable();
     }
@@ -114,7 +114,7 @@ bool DBusAPIConfigurations::isModifiable(QString config) {
 }
 
 bool DBusAPIConfigurations::isActivated(QString config) {
-    Configuration * c = Configurations::instance()->activeConfiguration();
+    Configuration * c = Configurations::instance()->configuration(config);
     if (c) {
         return c->isActivated();
     }
@@ -122,7 +122,14 @@ bool DBusAPIConfigurations::isActivated(QString config) {
 }
 
 void DBusAPIConfigurations::activate(QString config) {
-    Configuration * c = Configurations::instance()->activeConfiguration();
+    Configuration * c = Configurations::instance()->configuration(config);
+    if (c) {
+        c->activate();
+    }
+}
+
+int DBusAPIConfigurations::primaryScreen(QString config) {
+    Configuration * c = Configurations::instance()->configuration(config);
     if (c) {
         c->activate();
     }

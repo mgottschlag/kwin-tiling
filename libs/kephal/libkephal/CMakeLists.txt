@@ -8,7 +8,9 @@ ADD_DEFINITIONS (-DSCREENS_FACTORY=libkephal_factory)
 ADD_DEFINITIONS (-DOUTPUTS_FACTORY=libkephal_factory)
 ADD_DEFINITIONS (-DCONFIGURATIONS_FACTORY=libkephal_factory)
 
-SET (libkephal_SRCS libkephal.cpp ../screens/screens.cpp ../screens/screen.cpp
+SET (libkephal_SRCS
+        libkephal.cpp
+        ../screens/screens.cpp
         ../screens/simplescreen.cpp
         ../screens/dbus/dbusscreens.cpp
         ../screens/output/outputscreens.cpp
@@ -19,8 +21,10 @@ SET (libkephal_SRCS libkephal.cpp ../screens/screens.cpp ../screens/screen.cpp
         ../configurations/configurations.cpp
         ../configurations/dbus/dbusconfigurations.cpp
         ../configurations/noconfigurations.cpp)
-QT4_WRAP_CPP (libkephal_SRCS ../screens/screens.h ../screens/simplescreen.h
-        ../screens/screen.h ../screens/dbus/dbusscreens.h
+QT4_WRAP_CPP (libkephal_SRCS
+        ../screens/screens.h
+        ../screens/simplescreen.h
+        ../screens/dbus/dbusscreens.h
         ../screens/output/outputscreens.h
         ../outputs/simpleoutput.h
         ../outputs/dbus/dbusoutputs.h
@@ -37,8 +41,9 @@ ADD_LIBRARY (kephal SHARED ${libkephal_SRCS})
 
 INSTALL (TARGETS kephal DESTINATION lib)
 INSTALL (FILES 
-        ../screens/screens.h ../screens/screen.h
-        ../outputs/outputs.h ../common/kephal.h
+        ../screens/screens.h
+        ../outputs/outputs.h
+        ../common/kephal.h
         ../configurations/configurations.h
         DESTINATION include/kephal)
 INSTALL (FILES FindKephal.cmake DESTINATION share/apps/cmake/modules)

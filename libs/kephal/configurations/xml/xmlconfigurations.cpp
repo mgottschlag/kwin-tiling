@@ -64,6 +64,10 @@ namespace kephal {
     void XMLConfiguration::setLayout(const QMap<int, QPoint> & layout) {
     }
     
+    int XMLConfiguration::primaryScreen() {
+        return m_configuration->primaryScreen();
+    }
+    
     QMap<int, QPoint> XMLConfiguration::layout() {
         if (! m_layout.empty()) {
             return m_layout;
@@ -535,7 +539,7 @@ namespace kephal {
         return result;
     }
     
-    void XMLConfigurations::move(Output * output, QPoint position) {
+    void XMLConfigurations::move(Output * output, const QPoint & position) {
         if (! output->isConnected()) {
             return;
         }
@@ -570,7 +574,7 @@ namespace kephal {
         }
     }
     
-    void XMLConfigurations::resize(Output * output, QSize size) {
+    void XMLConfigurations::resize(Output * output, const QSize & size) {
         qDebug() << "XMLConfigurations::resize() called" << output->id() << size;
         if ((! output->isConnected()) || (! output->isActivated())) {
             return;
@@ -591,7 +595,7 @@ namespace kephal {
         }
         
         QMap<int, QRect> layout = m_activeConfiguration->realLayout(outputScreens);
-        activateLayout(layout);
+        activateLayout(layout, outputScreens);
         delete resized;
     }
     
@@ -909,6 +913,7 @@ namespace kephal {
         if (configuration == m_activeConfiguration) {
             return;
         }
+        QMap<int, QPoint> layout = configuration->layout();
         
         //bool saveWhenDone = false;
         if (! m_currentOutputsKnown) {
@@ -952,37 +957,107 @@ namespace kephal {
             m_currentOutputsKnown = true;
         } else {
             m_currentOutputs->setConfiguration(configuration->name());
+            matchOutputScreens(layout);
         }
         saveXml();
         
-        QMap<int, QRect> screens = configuration->realLayout();
-        if (activateLayout(screens)) {
+        QMap<Output *, int> outputScreens = currentOutputScreens(layout);
+        QMap<int, QRect> screens = configuration->realLayout(layout, outputScreens);
+        if (activateLayout(screens, outputScreens)) {
             m_activeConfiguration = configuration;
             emit configurationActivated(configuration);
         }
     }
     
-    bool XMLConfigurations::activateLayout(const QMap<int, QRect> & screensLayout) {
+    void XMLConfigurations::matchOutputScreens(const QMap<int, QPoint> & layout) {
+        QMap<QString, int> outputScreens;
+        QSet<int> screens;
+        QSet<int> unknownScreens;
+        QSet<int> takenScreens;
+        QSet<QString> cloned;
+        foreach (int screen, layout.keys()) {
+            screens << screen;
+        }
+        
+        if (screens.size() > m_currentOutputs->outputs()->size()) {
+            qDebug() << "configuration and outputs dont match!";
+        }
+        
+        foreach (OutputXML * output, * (m_currentOutputs->outputs())) {
+            if (output->screen() >= 0) {
+                if (screens.contains(output->screen())) {
+                    outputScreens.insert(output->name(), output->screen());
+                    if (takenScreens.contains(output->screen())) {
+                        cloned << output->name();
+                    }
+                    takenScreens << output->screen();
+                } else {
+                    unknownScreens << output->screen();
+                }
+            }
+        }
+        
+        foreach (int taken, outputScreens) {
+            screens.remove(taken);
+        }
+        
+        while (! (screens.empty() || unknownScreens.empty())) {
+            int from = * unknownScreens.begin();
+            unknownScreens.remove(from);
+            int to = * screens.begin();
+            screens.remove(to);
+            
+            foreach (OutputXML * output, * (m_currentOutputs->outputs())) {
+                if (output->screen() == from) {
+                    outputScreens.insert(output->name(), to);
+                }
+            }
+        }
+        
+        while (! (screens.empty() || cloned.empty())) {
+            QString o = * cloned.begin();
+            cloned.remove(o);
+            int to = * screens.begin();
+            screens.remove(to);
+            outputScreens.insert(o, to);
+        }
+        
+        foreach (OutputXML * output, * (m_currentOutputs->outputs())) {
+            if (outputScreens.contains(output->name())) {
+                output->setScreen(outputScreens[output->name()]);
+            } else {
+                output->setScreen(-1);
+            }
+        }
+    }
+    
+    QMap<Output *, int> XMLConfigurations::currentOutputScreens(const QMap<int, QPoint> & layout) {
+        QMap<Output *, int> outputScreens;
+        foreach (OutputXML * output, * (m_currentOutputs->outputs())) {
+            if (output->screen() >= 0) {
+                Output * o = Outputs::instance()->output(output->name());
+                if (! o) {
+                    qDebug() << "missing output:" << output->name();
+                    outputScreens.clear();
+                    return outputScreens;
+                }
+                outputScreens.insert(o, output->screen());
+            }
+        }
+        return outputScreens;
+    }
+    
+    bool XMLConfigurations::activateLayout(const QMap<int, QRect> & screensLayout, const QMap<Output *, int> & outputScreens) {
         if (screensLayout.empty()) {
             qDebug() << "layout is empty!!";
             return false;
         }
         
-        QMap<QString, Output *> outputMap;
-        QList<Output *> outputs = Outputs::instance()->outputs();
-        foreach (Output * output, outputs) {
-            outputMap.insert(output->id(), output);
-        }
-        
         QMap<Output *, QRect> layout;
         for (QMap<int, QRect>::const_iterator i = screensLayout.constBegin(); i != screensLayout.constEnd(); ++i) {
-            foreach (OutputXML * output, * (m_currentOutputs->outputs())) {
-                if (output->screen() == i.key()) {
-                    if (! outputMap.contains(output->name())) {
-                        qDebug() << "missing output:" << output->name();
-                        return false;
-                    }
-                    layout.insert(outputMap[output->name()], i.value());
+            for (QMap<Output *, int>::const_iterator j = outputScreens.constBegin(); j != outputScreens.constEnd(); ++j) {
+                if (j.value() == i.key()) {
+                    layout.insert(j.key(), QRect(i.value().topLeft(), j.key()->size()));
                 }
             }
         }

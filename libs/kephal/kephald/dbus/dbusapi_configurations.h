@@ -51,6 +51,7 @@ class DBusAPIConfigurations : public QObject
         bool isModifiable(QString config);
         bool isActivated(QString config);
         void activate(QString config);
+        int primaryScreen(QString config);
         
     private:
         QMap<QString, QList<QPoint> > m_outputAvailablePositions;

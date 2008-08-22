@@ -37,6 +37,7 @@ namespace kephal {
             bool isModifiable();
             bool isActivated();
             QMap<int, QPoint> layout();
+            int primaryScreen();
             
         public Q_SLOTS:
             void activate();
@@ -52,8 +53,8 @@ namespace kephal {
             Configuration * activeConfiguration();
             QList<Configuration *> alternateConfigurations();
             QList<QPoint> possiblePositions(Output * output);
-            void move(Output * output, QPoint position);
-            void resize(Output * output, QSize size);
+            void move(Output * output, const QPoint & position);
+            void resize(Output * output, const QSize & size);
             
         private:
             SimpleConfiguration * m_config;

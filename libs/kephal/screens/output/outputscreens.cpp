@@ -147,11 +147,6 @@ namespace kephal {
                 }
             }
         } while (changed);
-        
-        foreach (OutputScreen * s, m_screens) {
-            s->_setPrimary(false);
-        }
-        m_screens.begin().value()->_setPrimary(true);
     }
     
     void OutputScreens::rebuildScreens() {
