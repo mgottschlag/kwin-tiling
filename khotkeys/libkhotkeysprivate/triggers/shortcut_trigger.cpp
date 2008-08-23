@@ -31,9 +31,9 @@ namespace KHotKeys {
 
 ShortcutTrigger::ShortcutTrigger(
         ActionData* data_P,
-        const KShortcut& shortcut_P,
+        const KShortcut& shortcut,
         const QUuid &uuid )
-    : Trigger( data_P ), _shortcut( shortcut_P ), _uuid(uuid)
+    : Trigger( data_P ), _uuid(uuid)
     {
     QString name;
     if (data_P)
@@ -44,7 +44,7 @@ ShortcutTrigger::ShortcutTrigger(
         {
         name = "TODO";
         }
-    KAction *act = keyboard_handler->addAction( _uuid, name, _shortcut );
+    KAction *act = keyboard_handler->addAction( _uuid, name, shortcut );
     connect(
         act, SIGNAL(triggered(bool)),
         this, SLOT(trigger()) );
@@ -55,13 +55,18 @@ ShortcutTrigger::ShortcutTrigger(
         KConfigGroup& cfg_P
        ,ActionData* data_P )
     : Trigger( cfg_P, data_P )
-     ,_shortcut()
      ,_uuid( cfg_P.readEntry( "Uuid", QUuid::createUuid().toString()))
     {
         QString shortcutString = cfg_P.readEntry( "Key" );
+
+        // TODO: Check if this is still necessary
         shortcutString.replace("Win+", "Meta+"); // Qt4 doesn't parse Win+, avoid a shortcut without modifier
-        _shortcut = KShortcut(shortcutString);
-        KAction *act = keyboard_handler->addAction( _uuid, data_P->name(), _shortcut );
+
+        KAction *act = keyboard_handler->addAction( 
+            _uuid,
+            data_P->name(),
+            KShortcut(shortcutString));
+
         connect(
             act, SIGNAL(triggered(bool)),
             this, SLOT(trigger()) );
@@ -101,7 +106,7 @@ void ShortcutTrigger::activate( bool activate_P )
 void ShortcutTrigger::cfg_write( KConfigGroup& cfg_P ) const
     {
     base::cfg_write( cfg_P );
-    cfg_P.writeEntry( "Key", _shortcut.toString());
+    cfg_P.writeEntry( "Key", shortcut().toString());
     cfg_P.writeEntry( "Type", "SHORTCUT" ); // overwrites value set in base::cfg_write()
     cfg_P.writeEntry( "Uuid", _uuid.toString() );
     }
@@ -117,27 +122,35 @@ ShortcutTrigger* ShortcutTrigger::copy( ActionData* data_P ) const
 const QString ShortcutTrigger::description() const
     {
     // CHECKME vice mods
-    return i18n( "Shortcut trigger: " ) + _shortcut.toString();
+    return i18n( "Shortcut trigger: " ) + shortcut().toString();
     // CHECKME i18n pro toString() ?
     }
 
 
 void ShortcutTrigger::set_key_sequence( const QKeySequence &seq )
     {
-    Q_ASSERT( &_shortcut != 0 );
-    _shortcut.setPrimary( seq );
-
+    // Get the action from the keyboard handler
     KAction *action = qobject_cast<KAction*>(keyboard_handler->getAction( _uuid ));
     Q_ASSERT(action);
     if (!action) return;
 
-    action->setGlobalShortcut( _shortcut, KAction::ActiveShortcut, KAction::NoAutoloading );
+    // Set our key sequence
+    action->setGlobalShortcut( 
+        KShortcut(seq),
+        KAction::ActiveShortcut,
+        KAction::NoAutoloading );
     }
 
 
-const KShortcut& ShortcutTrigger::shortcut() const
+KShortcut ShortcutTrigger::shortcut() const
     {
-    return _shortcut;
+    // Get the action from the keyboard handler
+    KAction *action = qobject_cast<KAction*>(keyboard_handler->getAction( _uuid ));
+    Q_ASSERT(action);
+    if (!action) 
+        return KShortcut();
+
+    return action->globalShortcut();
     }
 
 

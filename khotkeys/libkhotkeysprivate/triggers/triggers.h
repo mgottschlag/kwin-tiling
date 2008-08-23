@@ -121,7 +121,7 @@ class KDE_EXPORT ShortcutTrigger
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         virtual ShortcutTrigger* copy( ActionData* data_P ) const;
         virtual const QString description() const;
-        const KShortcut& shortcut() const;
+        KShortcut shortcut() const;
         virtual void activate( bool activate_P );
 
         void set_key_sequence( const QKeySequence &seq );
@@ -138,9 +138,6 @@ class KDE_EXPORT ShortcutTrigger
         void trigger();
 
     private:
-
-        //! The shortcut
-        KShortcut _shortcut;
 
         //! A persistent identifier for this shortcut
         QUuid _uuid;
