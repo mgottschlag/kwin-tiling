@@ -70,7 +70,7 @@ public:
 
         while (true) {
             if (itemChildOffsets[branch]+row >= q->model()->rowCount(branch) ||
-                branch != currentRootIndex && row > MAX_CHILD_ROWS) {
+                (branch != currentRootIndex && row > MAX_CHILD_ROWS)) {
 
                 if (branch.isValid()) {
                     row = branch.row()+1;
@@ -486,6 +486,8 @@ void UrlItemView::mousePressEvent(QMouseEvent *event)
 
 void UrlItemView::mouseReleaseEvent(QMouseEvent *event)
 {
+    Q_UNUSED(event)
+
     d->watchedIndexForDrag = QModelIndex();
 }
 
@@ -515,17 +517,21 @@ void UrlItemView::startDrag(Qt::DropActions supportedActions)
     QIcon icon = idx.data(Qt::DecorationRole).value<QIcon>();
     drag->setPixmap(icon.pixmap(IconSize(KIconLoader::Desktop)));
 
-    Qt::DropAction dropAction = drag->exec();
+    drag->exec();
     QAbstractItemView::startDrag(supportedActions);
 }
 
-void UrlItemView::dropEvent(QDropEvent *)
+void UrlItemView::dropEvent(QDropEvent *event)
 {
+    Q_UNUSED(event)
+
     kDebug() << "UrlItemView drop event";
 }
 
 void UrlItemView::leaveEvent(QEvent *event)
 {
+    Q_UNUSED(event)
+
     d->hoveredIndex = QModelIndex();
     setCurrentIndex(QModelIndex());
 }
