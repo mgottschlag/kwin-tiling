@@ -58,7 +58,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     m_offset = viewConfig.readEntry("Offset", 0);
     m_alignment = alignmentFilter((Qt::Alignment)viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
     m_autohide = viewConfig.readEntry("autohide", m_autohide);
-    m_windowsCover = !viewConfig.readEntry("letWindowsCover", m_windowsCover);
+    m_windowsCover = viewConfig.readEntry("letWindowsCover", m_windowsCover);
 
     // pinchContainment calls updatePanelGeometry for us
 
