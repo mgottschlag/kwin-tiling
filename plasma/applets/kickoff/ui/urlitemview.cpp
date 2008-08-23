@@ -86,17 +86,20 @@ public:
             if (q->model()->hasChildren(child)) {
                 QSize childSize = calculateHeaderSize(child);
                 QRect rect(QPoint(ItemDelegate::HEADER_LEFT_MARGIN, verticalOffset), childSize);
-                //kDebug() << "header is" << rect;
+                //kDebug() << "header rect for" << child.data(Qt::DisplayRole) << "is" << rect;
                 itemRects.insert(child, rect);
 
-                verticalOffset += childSize.height();
+                if (childSize.isValid()) {
+                    // don't subtract 1
+                    verticalOffset += childSize.height();
+                }
                 horizontalOffset = 0; 
                 branch = child;
                 row = 0;
                 visualColumn = 0;
             } else {
                 QSize childSize = calculateItemSize(child);
-                //kDebug() <<  QRect(QPoint(horizontalOffset,verticalOffset), childSize);
+                //kDebug() << "item rect for" << child.data(Qt::DisplayRole) << "is" << QRect(QPoint(horizontalOffset,verticalOffset), childSize);
 
                 itemRects.insert(child,QRect(QPoint(horizontalOffset,verticalOffset),
                                              childSize));
@@ -122,7 +125,10 @@ public:
                     visualColumn = 0;
                 }
 
-                verticalOffset += childSize.height();
+                if (childSize.isValid()) {
+                    // don't subtract 1
+                    verticalOffset += childSize.height();
+                }
             }
         }
         contentsHeight = verticalOffset;
