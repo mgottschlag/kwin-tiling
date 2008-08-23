@@ -445,6 +445,11 @@ DataEnginePrivate::DataEnginePrivate(DataEngine* e, KService::Ptr service)
     }
 }
 
+DataEnginePrivate::~DataEnginePrivate()
+{
+    delete package;
+}
+
 void DataEnginePrivate::internalUpdateSource(DataContainer* source)
 {
     if (minPollingInterval > 0 &&
