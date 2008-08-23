@@ -62,6 +62,8 @@ namespace kephal {
             QList<QPoint> possiblePositions(Output * output);
             void move(Output * output, const QPoint & position);
             void resize(Output * output, const QSize & size);
+            int screen(Output * output);
+            void applyOutputSettings();
             
             bool isValid();
             org::kde::Kephal::Configurations * interface();

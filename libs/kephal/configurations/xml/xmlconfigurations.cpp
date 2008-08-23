@@ -22,7 +22,6 @@
 
 #include "../../xml/configurations_xml.h"
 #include "outputs/backendoutputs.h"
-#include "outputs/simpleoutput.h"
 #include "screens/screens.h"
 
 #include <QDir>
@@ -583,20 +582,20 @@ namespace kephal {
             return;
         }
         
-        SimpleOutput * resized = new SimpleOutput(this, output);
-        resized->_setSize(size);
-        QMap<Output *, int> outputScreens;
-        foreach (Output * o, Outputs::instance()->outputs()) {
+        QMap<Output *, QSize> outputSizes;
+        QMap<Output *, int> outputScreens = currentOutputScreens();
+        QMap<int, QPoint> simpleLayout = m_activeConfiguration->layout();
+        
+        foreach (Output * o, outputScreens.keys()) {
             if (o == output) {
-                outputScreens.insert(resized, output->screen()->id());
+                outputSizes.insert(output, size);
             } else if (o->isActivated()) {
-                outputScreens.insert(o, o->screen()->id());
+                outputSizes.insert(o, o->isActivated() ? o->size() : o->preferredSize());
             }
         }
         
-        QMap<int, QRect> layout = m_activeConfiguration->realLayout(outputScreens);
-        activateLayout(layout, outputScreens);
-        delete resized;
+        QMap<int, QRect> layout = m_activeConfiguration->realLayout(simpleLayout, outputScreens, outputSizes);
+        activateLayout(layout, outputScreens, outputSizes);
     }
     
     QMap<XMLConfiguration *, QMap<int, QPoint> > XMLConfigurations::matchingConfigurationsLayouts(const QMap<int, QPoint> & currentLayout, int removedOutputs) {
@@ -961,7 +960,7 @@ namespace kephal {
         }
         saveXml();
         
-        QMap<Output *, int> outputScreens = currentOutputScreens(layout);
+        QMap<Output *, int> outputScreens = currentOutputScreens();
         QMap<int, QRect> screens = configuration->realLayout(layout, outputScreens);
         if (activateLayout(screens, outputScreens)) {
             m_activeConfiguration = configuration;
@@ -1031,23 +1030,26 @@ namespace kephal {
         }
     }
     
-    QMap<Output *, int> XMLConfigurations::currentOutputScreens(const QMap<int, QPoint> & layout) {
+    QMap<Output *, int> XMLConfigurations::currentOutputScreens() {
         QMap<Output *, int> outputScreens;
-        foreach (OutputXML * output, * (m_currentOutputs->outputs())) {
-            if (output->screen() >= 0) {
-                Output * o = Outputs::instance()->output(output->name());
-                if (! o) {
-                    qDebug() << "missing output:" << output->name();
-                    outputScreens.clear();
-                    return outputScreens;
-                }
-                outputScreens.insert(o, output->screen());
+        foreach (Output * output, Outputs::instance()->outputs()) {
+            int screen = this->screen(output);
+            if (screen >= 0) {
+                outputScreens.insert(output, screen);
             }
         }
         return outputScreens;
     }
     
     bool XMLConfigurations::activateLayout(const QMap<int, QRect> & screensLayout, const QMap<Output *, int> & outputScreens) {
+        QMap<Output *, QSize> outputSizes;
+        foreach (Output * output, outputScreens.keys()) {
+            outputSizes.insert(output, output->isActivated() ? output->size() : output->preferredSize());
+        }
+        return activateLayout(screensLayout, outputScreens, outputSizes);
+    }
+    
+    bool XMLConfigurations::activateLayout(const QMap<int, QRect> & screensLayout, const QMap<Output *, int> & outputScreens, const QMap<Output *, QSize> & outputSizes) {
         if (screensLayout.empty()) {
             qDebug() << "layout is empty!!";
             return false;
@@ -1057,7 +1059,7 @@ namespace kephal {
         for (QMap<int, QRect>::const_iterator i = screensLayout.constBegin(); i != screensLayout.constEnd(); ++i) {
             for (QMap<Output *, int>::const_iterator j = outputScreens.constBegin(); j != outputScreens.constEnd(); ++j) {
                 if (j.value() == i.key()) {
-                    layout.insert(j.key(), QRect(i.value().topLeft(), j.key()->size()));
+                    layout.insert(j.key(), QRect(i.value().topLeft(), outputSizes[j.key()]));
                 }
             }
         }
@@ -1105,6 +1107,41 @@ namespace kephal {
         ConfigurationsXMLFactory * factory = new ConfigurationsXMLFactory();
         factory->save(m_configXml, m_configPath);
         delete factory;
+    }
+    
+    int XMLConfigurations::screen(Output * output) {
+        foreach (OutputXML * o, * (m_currentOutputs->outputs())) {
+            if (output->id() == o->name()) {
+                return o->screen();
+            }
+        }
+        return -1;
+    }
+    
+    void XMLConfigurations::applyOutputSettings() {
+        findOutputs();
+        if (! m_currentOutputs) {
+            return;
+        }
+
+        foreach (OutputXML * o, * (m_currentOutputs->outputs())) {
+            BackendOutput * output = BackendOutputs::instance()->backendOutput(o->name());
+            if (output) {
+                bool failed = false;
+                output->mark();
+                
+                QSize size(o->width(), o->height());
+                if ((! failed) && (! size.isEmpty()) && (size != output->size())) {
+                    if (! output->applyGeom(QRect(output->position(), size))) {
+                        failed = true;
+                    }
+                }
+                
+                if (failed) {
+                    output->revert();
+                }
+            }
+        }
     }
 
 }

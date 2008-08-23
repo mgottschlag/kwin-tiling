@@ -113,8 +113,8 @@ namespace kephal {
     QMap<int, QRect> Configuration::realLayout() {
         QMap<Output *, int> outputScreens;
         foreach (Output * output, Outputs::instance()->outputs()) {
-            Screen * screen = output->screen();
-            outputScreens.insert(output, screen ? screen->id() : -1);
+            int screen = Configurations::instance()->screen(output);
+            outputScreens.insert(output, screen);
         }
         return realLayout(outputScreens);
     }
@@ -125,6 +125,16 @@ namespace kephal {
     }
     
     QMap<int, QRect> Configuration::realLayout(const QMap<int, QPoint> & sLayout, const QMap<Output *, int> & outputScreens) {
+        QMap<Output *, QSize> outputSizes;
+        foreach (Output * output, outputScreens.keys()) {
+            outputSizes.insert(output, output->isActivated() ? output->size() : output->preferredSize());
+        }
+        return realLayout(sLayout, outputScreens, outputSizes);
+    }
+    
+    QMap<int, QRect> Configuration::realLayout(const QMap<int, QPoint> & sLayout, const QMap<Output *, int> & outputScreens, const QMap<Output *, QSize> & outputSizes) {
+        //qDebug() << "calculating real layout for:" << sLayout << outputScreens;
+        
         QMap<int, QRect> screens;
         QMap<int, QPoint> simpleLayout = sLayout;
         
@@ -142,7 +152,7 @@ namespace kephal {
                 qDebug() << "outputs and configuration dont match";
                 return screens;
             }
-            screenSizes[outputScreens[output]] = screenSizes[outputScreens[output]].expandedTo(output->isActivated() ? output->size() : output->preferredSize());
+            screenSizes[outputScreens[output]] = screenSizes[outputScreens[output]].expandedTo(outputSizes[output]);
         }
         
         int begin = simpleLayout.begin().key();

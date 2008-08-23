@@ -155,10 +155,9 @@ namespace kephal {
         QMap<int, QRect> geoms;
         for (QMap<int, OutputScreen *>::const_iterator i = m_screens.constBegin(); i != m_screens.constEnd(); ++i) {
             geoms.insert(i.key(), i.value()->geom());
-            
             i.value()->clearOutputs();
         }
-        
+
         prepareScreens(m_screens);
         buildScreens();
         

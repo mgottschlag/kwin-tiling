@@ -91,6 +91,13 @@ namespace kephal {
         Q_UNUSED(output)
         Q_UNUSED(size)
     }
+    
+    int NoConfigurations::screen(Output * output) {
+        return -1;
+    }
+
+    void NoConfigurations::applyOutputSettings() {
+    }
 
 
 }

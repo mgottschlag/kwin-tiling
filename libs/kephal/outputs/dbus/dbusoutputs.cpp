@@ -68,6 +68,8 @@ namespace kephal {
                 sizes.append(size);
             }
             output->_setAvailableSizes(sizes);
+            
+            m_outputs << output;
         }
     }
     

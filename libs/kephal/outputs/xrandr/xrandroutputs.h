@@ -48,8 +48,8 @@ namespace kephal {
             
             bool applyGeom(const QRect & rect);
             
-            void _revert();
-            void _deactivate();
+            //void _revert();
+            void deactivate();
             //void _activate();
             RROutput _id();
             void _changed();
@@ -84,7 +84,6 @@ namespace kephal {
             XRandROutputs(QObject * parent, RandRDisplay * display);
             
             QList<Output *> outputs();
-            void activateLayout(const QMap<Output *, QRect> & layout);
             
             RandROutput * output(RROutput rrId);
             RandRDisplay * display();

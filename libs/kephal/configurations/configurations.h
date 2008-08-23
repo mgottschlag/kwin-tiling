@@ -85,6 +85,19 @@ namespace kephal {
              *          from layout().
              * @param outputScreens A mapping of Outputs
              *          to Screens.
+             * @param outputSizes The sizes to use for the
+             *          Outputs instead of the current ones.
+             */
+            QMap<int, QRect> realLayout(const QMap<int, QPoint> & simpleLayout, const QMap<Output *, int> & outputScreens, const QMap<Output *, QSize> & outputSizes);
+            
+            /**
+             * Returns the real layout, with screen-sizes
+             * taken from the actual Outputs.
+             *
+             * @param simpleLayout The layout as returned
+             *          from layout().
+             * @param outputScreens A mapping of Outputs
+             *          to Screens.
              */
             QMap<int, QRect> realLayout(const QMap<int, QPoint> & simpleLayout, const QMap<Output *, int> & outputScreens);
 
@@ -212,6 +225,18 @@ namespace kephal {
              * This returns 0 if the name is not known.
              */
             virtual Configuration * configuration(QString name);
+            
+            /**
+             * Return the of the Screen this Output should
+             * belong to.
+             */
+            virtual int screen(Output * output) = 0;
+            
+            /**
+             * Apply Output-specific settings such as size,
+             * refresh-rate and rotation.
+             */
+            virtual void applyOutputSettings() = 0;
             
             static void translateOrigin(QMap<int, QPoint> & layout);
             static void translateOrigin(QMap<int, QPoint> & layout, QPoint origin);

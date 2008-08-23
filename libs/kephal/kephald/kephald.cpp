@@ -102,6 +102,7 @@ void KephalD::init() {
     connect(Outputs::instance(), SIGNAL(outputDisconnected(kephal::Output *)), this, SLOT(outputDisconnected(kephal::Output *)));
     connect(Outputs::instance(), SIGNAL(outputConnected(kephal::Output *)), this, SLOT(outputConnected(kephal::Output *)));
     
+    qDebug() << "will check for possible positions...";
     foreach (Output * output, Outputs::instance()->outputs()) {
         qDebug() << "possible positions for:" << output->id() << Configurations::instance()->possiblePositions(output);
     }
@@ -137,6 +138,7 @@ bool KephalD::x11EventFilter(XEvent* e)
 void KephalD::activateConfiguration() {
     Configurations * configs = Configurations::instance();
     Configuration * config = configs->findConfiguration();
+    configs->applyOutputSettings();
     if (config) {
         config->activate();
     } else {

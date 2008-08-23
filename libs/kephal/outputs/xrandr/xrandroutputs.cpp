@@ -68,29 +68,6 @@ namespace kephal {
         }
     }
     
-    void XRandROutputs::activateLayout(const QMap<Output *, QRect> & layout) {
-        qDebug() << "activate layout:" << layout;
-        
-        foreach (XRandROutput * output, m_outputs) {
-            if (! layout.contains(output)) {
-                output->_deactivate();
-            }
-        }
-
-        for (QMap<Output *, QRect>::const_iterator i = layout.constBegin(); i != layout.constEnd(); ++i) {
-            XRandROutput * output = (XRandROutput *) i.key();
-            if (! output->applyGeom(i.value())) {
-                qDebug() << "setting" << output->id() << "to" << i.value() << "failed!!";
-                for (--i; i != layout.constBegin(); --i) {
-                    output = (XRandROutput *) i.key();
-                    qDebug() << "trying to revert output" << output->id();
-                    output->_revert();
-                }
-                break;
-            }
-        }
-    }
-    
     void XRandROutputs::outputChanged(RROutput id, int changes)
     {
         Q_UNUSED(changes)
@@ -245,12 +222,12 @@ namespace kephal {
         return output()->applyProposed();
     }
     
-    void XRandROutput::_revert() {
+    /*void XRandROutput::_revert() {
         output()->proposeOriginal();
         output()->applyProposed();
-    }
+    }*/
     
-    void XRandROutput::_deactivate() {
+    void XRandROutput::deactivate() {
         output()->slotDisable();
     }
     

@@ -18,6 +18,8 @@
  */
 
 
+#include <QDebug>
+
 #include "backendoutputs.h"
 
 
@@ -26,6 +28,21 @@ namespace kephal {
     BackendOutput::BackendOutput(QObject * parent)
         : Output(parent)
     {
+    }
+    
+    void BackendOutput::mark() {
+        m_markedActive = isActivated();
+        if (m_markedActive) {
+            m_markedGeom = geom();
+        }
+    }
+    
+    void BackendOutput::revert() {
+        if (m_markedActive) {
+            applyGeom(m_markedGeom);
+        } else {
+            deactivate();
+        }
     }
     
     
@@ -46,6 +63,43 @@ namespace kephal {
         QList<BackendOutput *> result;
         foreach (Output * output, outputs()) {
             result << (BackendOutput *) output;
+        }
+        return result;
+    }
+    
+    BackendOutput * BackendOutputs::backendOutput(const QString & id) {
+        foreach (BackendOutput * output, backendOutputs()) {
+            if (output->id() == id) {
+                return output;
+            }
+        }
+        return 0;
+    }
+    
+    void BackendOutputs::activateLayout(const QMap<Output *, QRect> & layout) {
+        qDebug() << "activate layout:" << layout;
+        
+        QList<BackendOutput *> outputs = backendOutputs();
+        foreach (BackendOutput * output, outputs) {
+            if (! layout.contains(output)) {
+                qDebug() << "deactivating output:" << output->id();
+                output->deactivate();
+            }
+        }
+
+        for (QMap<Output *, QRect>::const_iterator i = layout.constBegin(); i != layout.constEnd(); ++i) {
+            BackendOutput * output = (BackendOutput *) i.key();
+            qDebug() << "setting output" << output->id() << "to" << i.value();
+            
+            if (! output->applyGeom(i.value())) {
+                qDebug() << "setting" << output->id() << "to" << i.value() << "failed!!";
+                for (--i; i != layout.constBegin(); --i) {
+                    output = (BackendOutput *) i.key();
+                    qDebug() << "trying to revert output" << output->id();
+                    output->revert();
+                }
+                break;
+            }
         }
     }
     

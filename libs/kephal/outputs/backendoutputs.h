@@ -33,6 +33,13 @@ namespace kephal {
             
         public Q_SLOTS:
             virtual bool applyGeom(const QRect & geom) = 0;
+            virtual void deactivate() = 0;
+            virtual void revert();
+            virtual void mark();
+            
+        private:
+            bool m_markedActive;
+            QRect m_markedGeom;
     };
     
     class BackendOutputs : public Outputs {
@@ -42,8 +49,9 @@ namespace kephal {
             
             BackendOutputs(QObject * parent);
             
-            virtual void activateLayout(const QMap<Output *, QRect> & layout) = 0;
+            virtual void activateLayout(const QMap<Output *, QRect> & layout);
             virtual QList<BackendOutput *> backendOutputs();
+            virtual BackendOutput * backendOutput(const QString & id);
             
         private:
             static BackendOutputs * m_instance;

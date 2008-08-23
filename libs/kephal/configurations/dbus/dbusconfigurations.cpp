@@ -146,4 +146,11 @@ namespace kephal {
         return m_interface;
     }
     
+    int DBusConfigurations::screen(Output * output) {
+        return m_interface->screen(output->id());
+    }
+    
+    void DBusConfigurations::applyOutputSettings() {
+    }
+
 }

@@ -131,7 +131,17 @@ void DBusAPIConfigurations::activate(QString config) {
 int DBusAPIConfigurations::primaryScreen(QString config) {
     Configuration * c = Configurations::instance()->configuration(config);
     if (c) {
-        c->activate();
+        return c->primaryScreen();
     }
+    return 0;
 }
+
+int DBusAPIConfigurations::screen(QString outputId) {
+    Output * output = Outputs::instance()->output(outputId);
+    if (output) {
+        return Configurations::instance()->screen(output);
+    }
+    return -1;
+}
+
 
