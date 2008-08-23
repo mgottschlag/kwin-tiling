@@ -39,29 +39,41 @@ DBusAPIScreens::DBusAPIScreens(QObject * parent)
     qDebug() << "screens registered on the bus:" << result;
     
     connect(Screens::instance(), SIGNAL(screenResized(kephal::Screen *, QSize, QSize)), this, SLOT(screenResized(kephal::Screen *, QSize, QSize)));
+    connect(Screens::instance(), SIGNAL(screenMoved(kephal::Screen *, QPoint, QPoint)), this, SLOT(screenMoved(kephal::Screen *, QPoint, QPoint)));
+    connect(Screens::instance(), SIGNAL(screenAdded(kephal::Screen *)), this, SLOT(screenAdded(kephal::Screen *)));
+    connect(Screens::instance(), SIGNAL(screenRemoved(int)), this, SLOT(screenRemovedSlot(int)));
 }
 
 void DBusAPIScreens::screenResized(kephal::Screen * s, QSize oldSize, QSize newSize) {
-    qDebug() << "emit DBusAPIScreens::screenResized()" << s->id();
+    Q_UNUSED(oldSize)
+    Q_UNUSED(newSize)
     emit screenResized(s->id());
 }
 
-QSize DBusAPIScreens::size(int screen)
-{
-    QList<Screen *> screens = Screens::instance()->screens();
-    if (screen < screens.size()) {
-        return screens.at(screen)->size();
-    }
-    return QSize(0,0);
+void DBusAPIScreens::screenMoved(kephal::Screen * s, QPoint oldPosition, QPoint newPosition) {
+    Q_UNUSED(oldPosition)
+    Q_UNUSED(newPosition)
+    emit screenMoved(s->id());
 }
 
-QPoint DBusAPIScreens::position(int screen)
+void DBusAPIScreens::screenAdded(kephal::Screen * s) {
+    emit screenAdded(s->id());
+}
+
+void DBusAPIScreens::screenRemovedSlot(int id) {
+    emit screenRemoved(id);
+}
+
+QSize DBusAPIScreens::size(int id)
 {
-    QList<Screen *> screens = Screens::instance()->screens();
-    if (screen < screens.size()) {
-        return screens.at(screen)->position();
-    }
-    return QPoint(0,0);
+    Screen * s = Screens::instance()->screen(id);
+    return s ? s->size() : QSize(0,0);
+}
+
+QPoint DBusAPIScreens::position(int id)
+{
+    Screen * s = Screens::instance()->screen(id);
+    return s ? s->position() : QPoint(0,0);
 }
 
 int DBusAPIScreens::numScreens()
@@ -70,14 +82,18 @@ int DBusAPIScreens::numScreens()
     return screens.size();
 }
 
-int DBusAPIScreens::primaryScreen()
+int DBusAPIScreens::id(int index)
 {
     QList<Screen *> screens = Screens::instance()->screens();
-    for (int i = 0; i < screens.size(); ++i) {
-        if (screens[i]->isPrimary()) {
-            return i;
-        }
+    if (index < screens.size()) {
+        return screens[index]->id();
     }
-    return 0;
+    return -1;
+}
+
+int DBusAPIScreens::primaryScreen()
+{
+    Screen * s = Screens::instance()->primaryScreen();
+    return s ? s->id() : 0;
 }
 

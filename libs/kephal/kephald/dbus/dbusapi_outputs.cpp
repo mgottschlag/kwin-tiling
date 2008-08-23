@@ -38,6 +38,13 @@ DBusAPIOutputs::DBusAPIOutputs(QObject * parent)
     bool result;
     result = dbus.registerObject("/Outputs", this);
     qDebug() << "outputs registered on the bus:" << result;
+    
+    connect(Outputs::instance(), SIGNAL(outputConnected(kephal::Output *)), this, SLOT(outputConnectedSlot(kephal::Output *)));
+    connect(Outputs::instance(), SIGNAL(outputDisconnected(kephal::Output *)), this, SLOT(outputDisconnectedSlot(kephal::Output *)));
+    connect(Outputs::instance(), SIGNAL(outputActivated(kephal::Output *)), this, SLOT(outputActivatedSlot(kephal::Output *)));
+    connect(Outputs::instance(), SIGNAL(outputDeactivated(kephal::Output *)), this, SLOT(outputDeactivatedSlot(kephal::Output *)));
+    connect(Outputs::instance(), SIGNAL(outputResized(kephal::Output *, QSize, QSize)), this, SLOT(outputResizedSlot(kephal::Output *, QSize, QSize)));
+    connect(Outputs::instance(), SIGNAL(outputMoved(kephal::Output *, QPoint, QPoint)), this, SLOT(outputMovedSlot(kephal::Output *, QPoint, QPoint)));
 }
 
 QSize DBusAPIOutputs::size(QString id)
@@ -105,6 +112,35 @@ bool DBusAPIOutputs::isActivated(QString id)
     }
     return false;
 }
+
+void DBusAPIOutputs::outputConnectedSlot(kephal::Output * o) {
+    emit outputConnected(o->id());
+}
+
+void DBusAPIOutputs::outputDisconnectedSlot(kephal::Output * o) {
+    emit outputDisconnected(o->id());
+}
+
+void DBusAPIOutputs::outputActivatedSlot(kephal::Output * o) {
+    emit outputActivated(o->id());
+}
+
+void DBusAPIOutputs::outputDeactivatedSlot(kephal::Output * o) {
+    emit outputDeactivated(o->id());
+}
+
+void DBusAPIOutputs::outputResizedSlot(kephal::Output * o, QSize oldSize, QSize newSize) {
+    Q_UNUSED(oldSize)
+    Q_UNUSED(newSize)
+    emit outputResized(o->id());
+}
+
+void DBusAPIOutputs::outputMovedSlot(kephal::Output * o, QPoint oldPosition, QPoint newPosition) {
+    Q_UNUSED(oldPosition)
+    Q_UNUSED(newPosition)
+    emit outputMoved(o->id());
+}
+
 
 /*Output * DBusAPIOutputs::output(QString id) {
     QList<Output *> outputs = Outputs::instance()->outputs();

@@ -45,28 +45,69 @@ namespace kephal {
         m_valid = true;
         
         int numScreens = m_interface->numScreens();
-        int primary = m_interface->primaryScreen();
         for (int i = 0; i < numScreens; ++i) {
-            QPoint pos = m_interface->position(i);
-            QSize size = m_interface->size(i);
-            qDebug() << "adding a screen" << i << "with geom: " << pos << size;
+            int id = m_interface->id(i);
+            QPoint pos = m_interface->position(id);
+            QSize size = m_interface->size(id);
+            qDebug() << "adding a screen" << id << "with geom: " << pos << size;
             
             SimpleScreen * screen = new SimpleScreen(this,
-                    i,
+                    id,
                     size,
                     pos,
                     false);
             m_screens.append(screen);
         }
-        m_primaryScreen = m_screens.at(primary);
         
-        connect(m_interface, SIGNAL(screenResized(int)), this, SLOT(screenResized(int)));
+        connect(m_interface, SIGNAL(screenResized(int)), this, SLOT(screenResizedSlot(int)));
+        connect(m_interface, SIGNAL(screenMoved(int)), this, SLOT(screenMovedSlot(int)));
+        connect(m_interface, SIGNAL(screenAdded(int)), this, SLOT(screenAddedSlot(int)));
+        connect(m_interface, SIGNAL(screenRemoved(int)), this, SLOT(screenRemovedSlot(int)));
     }
     
-    void DBusScreens::screenResized(int id) {
-        qDebug() << "DBusScreens::screenResized()" << id;
+    void DBusScreens::screenResizedSlot(int id) {
+        SimpleScreen * s = (SimpleScreen *) screen(id);
+        if (s) {
+            QSize prev = s->size();
+            s->_setSize(m_interface->size(id));
+            emit screenResized(s, prev, s->size());
+        }
     }
     
+    void DBusScreens::screenMovedSlot(int id) {
+        SimpleScreen * s = (SimpleScreen *) screen(id);
+        if (s) {
+            QPoint prev = s->position();
+            s->_setPosition(m_interface->position(id));
+            emit screenMoved(s, prev, s->position());
+        }
+    }
+    
+    void DBusScreens::screenAddedSlot(int id) {
+        QPoint pos = m_interface->position(id);
+        QSize size = m_interface->size(id);
+        qDebug() << "adding a screen" << id << "with geom: " << pos << size;
+        
+        SimpleScreen * screen = new SimpleScreen(this,
+                id,
+                size,
+                pos,
+                false);
+        m_screens.append(screen);
+        
+        emit screenAdded(screen);
+    }
+
+    void DBusScreens::screenRemovedSlot(int id) {
+        SimpleScreen * s = (SimpleScreen *) screen(id);
+        if (s) {
+            m_screens.removeAll(s);
+            delete s;
+            emit screenRemoved(id);
+        }
+    }
+
+
     DBusScreens::~DBusScreens() {
         foreach(Screen * screen, m_screens) {
             delete screen;

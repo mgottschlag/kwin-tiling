@@ -38,11 +38,13 @@ namespace kephal {
             bool isValid();
             
         private Q_SLOTS:
-            void screenResized(int id);
+            void screenResizedSlot(int id);
+            void screenMovedSlot(int id);
+            void screenAddedSlot(int id);
+            void screenRemovedSlot(int id);
             
         private:
             QList<SimpleScreen *> m_screens;
-            SimpleScreen * m_primaryScreen;
             org::kde::Kephal::Screens * m_interface;
             bool m_valid;
     };

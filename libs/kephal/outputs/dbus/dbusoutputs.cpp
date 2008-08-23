@@ -71,6 +71,13 @@ namespace kephal {
             
             m_outputs << output;
         }
+        
+        connect(m_interface, SIGNAL(outputConnected(QString)), this, SLOT(outputConnectedSlot(QString)));
+        connect(m_interface, SIGNAL(outputDisconnected(QString)), this, SLOT(outputDisconnectedSlot(QString)));
+        connect(m_interface, SIGNAL(outputActivated(QString)), this, SLOT(outputActivatedSlot(QString)));
+        connect(m_interface, SIGNAL(outputDeactivated(QString)), this, SLOT(outputDeactivatedSlot(QString)));
+        connect(m_interface, SIGNAL(outputResized(QString)), this, SLOT(outputResizedSlot(QString)));
+        connect(m_interface, SIGNAL(outputMoved(QString)), this, SLOT(outputMovedSlot(QString)));
     }
     
     QList<Output *> DBusOutputs::outputs()
@@ -90,5 +97,55 @@ namespace kephal {
         return m_valid;
     }
     
+    void DBusOutputs::outputConnectedSlot(QString id) {
+        SimpleOutput * o = (SimpleOutput *) output(id);
+        if (o) {
+            o->_setConnected(true);
+            emit outputConnected(o);
+        }
+    }
+    
+    void DBusOutputs::outputDisconnectedSlot(QString id) {
+        SimpleOutput * o = (SimpleOutput *) output(id);
+        if (o) {
+            o->_setConnected(false);
+            emit outputDisconnected(o);
+        }
+    }
+
+    void DBusOutputs::outputActivatedSlot(QString id) {
+        SimpleOutput * o = (SimpleOutput *) output(id);
+        if (o) {
+            o->_setActivated(true);
+            emit outputActivated(o);
+        }
+    }
+
+    void DBusOutputs::outputDeactivatedSlot(QString id) {
+        SimpleOutput * o = (SimpleOutput *) output(id);
+        if (o) {
+            o->_setActivated(false);
+            emit outputDeactivated(o);
+        }
+    }
+
+    void DBusOutputs::outputResizedSlot(QString id) {
+        SimpleOutput * o = (SimpleOutput *) output(id);
+        if (o) {
+            QSize prev = o->size();
+            o->_setSize(m_interface->size(id));
+            emit outputResized(o, prev, o->size());
+        }
+    }
+
+    void DBusOutputs::outputMovedSlot(QString id) {
+        SimpleOutput * o = (SimpleOutput *) output(id);
+        if (o) {
+            QPoint prev = o->position();
+            o->_setPosition(m_interface->position(id));
+            emit outputMoved(o, prev, o->position());
+        }
+    }
+
 }
 

@@ -41,15 +41,22 @@ class DBusAPIScreens : public QObject
         
     public Q_SLOTS:
         int numScreens();
-        QSize size(int screen);
-        QPoint position(int screen);
+        int id(int index);
+        QSize size(int id);
+        QPoint position(int id);
         int primaryScreen();
         
     private Q_SLOTS:
         void screenResized(kephal::Screen * s, QSize oldSize, QSize newSize);
+        void screenMoved(kephal::Screen * s, QPoint oldPosition, QPoint newPosition);
+        void screenAdded(kephal::Screen * s);
+        void screenRemovedSlot(int id);
         
     Q_SIGNALS:
         void screenResized(int screen);
+        void screenMoved(int screen);
+        void screenAdded(int screen);
+        void screenRemoved(int screen);
 };
 
 

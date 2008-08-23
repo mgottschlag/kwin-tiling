@@ -29,6 +29,10 @@
 #include <QPoint>
 
 
+namespace kephal {
+    class Output;
+}
+
 class DBusAPIOutputs : public QObject
 {
     Q_OBJECT
@@ -45,6 +49,22 @@ class DBusAPIOutputs : public QObject
         QPoint position(QString id);
         bool isConnected(QString id);
         bool isActivated(QString id);
+        
+    Q_SIGNALS:
+        void outputConnected(QString id);
+        void outputDisconnected(QString id);
+        void outputActivated(QString id);
+        void outputDeactivated(QString id);
+        void outputResized(QString id);
+        void outputMoved(QString id);
+        
+    private Q_SLOTS:
+        void outputConnectedSlot(kephal::Output * o);
+        void outputDisconnectedSlot(kephal::Output * o);
+        void outputActivatedSlot(kephal::Output * o);
+        void outputDeactivatedSlot(kephal::Output * o);
+        void outputResizedSlot(kephal::Output * o, QSize oldSize, QSize newSize);
+        void outputMovedSlot(kephal::Output * o, QPoint oldPosition, QPoint newPosition);
 };
 
 

@@ -39,6 +39,14 @@ namespace kephal {
             
             bool isValid();
             
+        private Q_SLOTS:
+            void outputConnectedSlot(QString id);
+            void outputDisconnectedSlot(QString id);
+            void outputActivatedSlot(QString id);
+            void outputDeactivatedSlot(QString id);
+            void outputResizedSlot(QString id);
+            void outputMovedSlot(QString id);
+        
         private:
             QList<SimpleOutput *> m_outputs;
             org::kde::Kephal::Outputs * m_interface;

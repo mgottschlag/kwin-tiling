@@ -595,7 +595,17 @@ namespace kephal {
         }
         
         QMap<int, QRect> layout = m_activeConfiguration->realLayout(simpleLayout, outputScreens, outputSizes);
-        activateLayout(layout, outputScreens, outputSizes);
+        if (activateLayout(layout, outputScreens, outputSizes)) {
+            foreach (OutputXML * o, * (m_currentOutputs->outputs())) {
+                if (o->name() == output->id()) {
+                    o->setWidth(size.width());
+                    o->setHeight(size.height());
+                    
+                    saveXml();
+                    break;
+                }
+            }
+        }
     }
     
     QMap<XMLConfiguration *, QMap<int, QPoint> > XMLConfigurations::matchingConfigurationsLayouts(const QMap<int, QPoint> & currentLayout, int removedOutputs) {
