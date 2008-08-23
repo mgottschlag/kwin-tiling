@@ -12,17 +12,27 @@ Directory Structure
 
 There are a number of subdirectories here. The purpose of each is explained:
 
-plugins:
-    animators:    Plugins of type Animator, which provides standard animation
-                  support to Plasma objects
-    applets:      Applets considered absolutely core to the desktop
-    containments: Standard containment objects that are not meant to be
-                  used as stand-alone applets
-    desktoptheme: A collection of SVG elements for use in Plasma, Applets and
-                  libplasma
-    engines:      DataEngines considered generally useful for desktop components
+design: documentation on various aspects of the plasma and krunner code base
 
-binaries:
-    plasma: the actual plasma desktop application
-    engineexplorer: a small graphical utility to examine engines
+plugins:
+    animators:     Plugins of type Animator, which provides standard animation
+                   support to Plasma objects
+    applets:       Applets considered absolutely core to the desktop
+    containments:  Standard containment objects that are not meant to be
+                   used as stand-alone applets
+    desktoptheme:  A collection of SVG elements for use in Plasma, Applets and
+                   libplasma
+    dataengines:   DataEngines considered generally useful for desktop components
+    runners:       Provides matches to queries
+    scriptengines: Glue between libplasma and APIs provided via dynamic languages or
+                   3rd party systems
+    wallpapers:    Background rendering for containments
+
+shells, applications that provide plasma viewing environments:
+    desktop: A traditional desktop experience with panels and full screen backgrounds
+
+tools:
+    engineexplorer: A small graphical utility to examine engines
+    plasmapkg: Installs, removes and lists plasma packages
+    plasmoidviewer: A viewer for individual plasma applets
 
