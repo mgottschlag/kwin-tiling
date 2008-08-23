@@ -21,7 +21,7 @@
 #include "xmlconfigurations.h"
 
 #include "../../xml/configurations_xml.h"
-#include "outputs/outputs.h"
+#include "outputs/backendoutputs.h"
 #include "outputs/simpleoutput.h"
 #include "screens/screens.h"
 
@@ -1063,7 +1063,7 @@ namespace kephal {
         }
         
         qDebug() << "layout:" << layout;
-        Outputs::instance()->activateLayout(layout);
+        BackendOutputs::instance()->activateLayout(layout);
         
         return true;
     }

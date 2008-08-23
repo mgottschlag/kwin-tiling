@@ -18,35 +18,37 @@
  */
 
 
-#ifndef DBUSAPI_OUTPUTS_H
-#define DBUSAPI_OUTPUTS_H
+#ifndef KEPHAL_BACKENDOUTPUTS_H
+#define KEPHAL_BACKENDOUTPUTS_H
+
+#include "outputs/outputs.h"
 
 
-#include <QObject>
-#include <QVariant>
-#include <QStringList>
-#include <QSize>
-#include <QPoint>
+namespace kephal {
 
-
-class DBusAPIOutputs : public QObject
-{
-    Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.kde.Kephal.Outputs")
+    class BackendOutput : public Output {
+        Q_OBJECT
+        public:
+            BackendOutput(QObject * parent);
+            
+        public Q_SLOTS:
+            virtual bool applyGeom(const QRect & geom) = 0;
+    };
     
-    public:
-        DBusAPIOutputs(QObject * parent);
-        
-    public Q_SLOTS:
-        QStringList outputIds();
-        QSize size(QString id);
-        int numAvailableSizes(QString id);
-        QSize availableSize(QString id, int i);
-        QPoint position(QString id);
-        bool isConnected(QString id);
-        bool isActivated(QString id);
-};
+    class BackendOutputs : public Outputs {
+        Q_OBJECT
+        public:
+            static BackendOutputs * instance();
+            
+            BackendOutputs(QObject * parent);
+            
+            virtual void activateLayout(const QMap<Output *, QRect> & layout) = 0;
+            virtual QList<BackendOutput *> backendOutputs();
+            
+        private:
+            static BackendOutputs * m_instance;
+    };
+    
+}
 
-
-#endif // DBUSAPI_OUTPUTS_H
-
+#endif // KEPHAL_BACKENDOUTPUTS_H

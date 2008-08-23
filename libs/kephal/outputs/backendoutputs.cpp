@@ -18,35 +18,35 @@
  */
 
 
-#ifndef DBUSAPI_OUTPUTS_H
-#define DBUSAPI_OUTPUTS_H
+#include "backendoutputs.h"
 
 
-#include <QObject>
-#include <QVariant>
-#include <QStringList>
-#include <QSize>
-#include <QPoint>
+namespace kephal {
 
-
-class DBusAPIOutputs : public QObject
-{
-    Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.kde.Kephal.Outputs")
+    BackendOutput::BackendOutput(QObject * parent)
+        : Output(parent)
+    {
+    }
     
-    public:
-        DBusAPIOutputs(QObject * parent);
-        
-    public Q_SLOTS:
-        QStringList outputIds();
-        QSize size(QString id);
-        int numAvailableSizes(QString id);
-        QSize availableSize(QString id, int i);
-        QPoint position(QString id);
-        bool isConnected(QString id);
-        bool isActivated(QString id);
-};
-
-
-#endif // DBUSAPI_OUTPUTS_H
-
+    
+    
+    BackendOutputs * BackendOutputs::m_instance = 0;
+    
+    BackendOutputs * BackendOutputs::instance() {
+        return m_instance;
+    }
+    
+    BackendOutputs::BackendOutputs(QObject * parent)
+        : Outputs(parent)
+    {
+        m_instance = this;
+    }
+    
+    QList<BackendOutput *> BackendOutputs::backendOutputs() {
+        QList<BackendOutput *> result;
+        foreach (Output * output, outputs()) {
+            result << (BackendOutput *) output;
+        }
+    }
+    
+}

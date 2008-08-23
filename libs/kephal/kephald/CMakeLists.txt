@@ -23,6 +23,7 @@ SET (kephald_SRCS
         ../outputs/simpleoutput.cpp
         ../outputs/desktopwidget/desktopwidgetoutputs.cpp
         ../outputs/outputs.cpp
+        ../outputs/backendoutputs.cpp
         ../outputs/xrandr/xrandroutputs.cpp
         dbus/dbusapi_outputs.cpp
         dbus/dbusapi_configurations.cpp
@@ -47,6 +48,7 @@ QT4_WRAP_CPP (kephald_SRCS
         ../outputs/simpleoutput.h
         ../outputs/desktopwidget/desktopwidgetoutputs.h
         ../outputs/outputs.h
+        ../outputs/backendoutputs.h
         ../outputs/xrandr/xrandroutputs.h
         dbus/dbusapi_outputs.h
         dbus/dbusapi_configurations.h

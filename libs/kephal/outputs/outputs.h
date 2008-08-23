@@ -145,14 +145,14 @@ namespace kephal {
              * methods in the Configuration
              * to resize this Output.
              */
-            void setSize(const QSize & size);
+            void resize(const QSize & size);
 
             /**
              * This calls the appropriate
              * methods in the Configuration
              * to move this Output.
              */
-            void setPosition(const QPoint & position);
+            void move(const QPoint & position);
     };
     
 
@@ -180,13 +180,6 @@ namespace kephal {
              * disconnected.
              */
             virtual QList<Output *> outputs() = 0;
-            
-            /**
-             * Activate a given layout. This will
-             * usually only be called by the
-             * Configuration.
-             */
-            virtual void activateLayout(const QMap<Output *, QRect> & layout) = 0;
             
             /**
              * Find an Output by its id.

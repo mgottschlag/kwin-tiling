@@ -39,9 +39,6 @@ namespace kephal {
             
             bool isValid();
             
-        protected Q_SLOTS:
-            void resizeRequested(SimpleOutput * output, QSize oldSize, QSize newSize);
-            
         private:
             QList<SimpleOutput *> m_outputs;
             org::kde::Kephal::Outputs * m_interface;

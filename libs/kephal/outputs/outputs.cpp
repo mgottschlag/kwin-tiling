@@ -85,12 +85,12 @@ namespace kephal {
         return Configurations::instance()->possiblePositions(this);
     }
     
-    void Output::setPosition(const QPoint & position) {
+    void Output::move(const QPoint & position) {
         qDebug() << "Output::setPosition() called:" << position;
         Configurations::instance()->move(this, position);
     }
     
-    void Output::setSize(const QSize & size) {
+    void Output::resize(const QSize & size) {
         qDebug() << "Output::setSize() called:" << size;
         Configurations::instance()->resize(this, size);
     }

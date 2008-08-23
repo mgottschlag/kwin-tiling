@@ -47,8 +47,6 @@ namespace kephal {
         
         QStringList ids = m_interface->outputIds();
         foreach (QString id, ids) {
-            //QString id = varId.toString();
-            
             QPoint pos = m_interface->position(id);
             QSize size = m_interface->size(id);
             bool connected = m_interface->isConnected(id);
@@ -70,15 +68,7 @@ namespace kephal {
                 sizes.append(size);
             }
             output->_setAvailableSizes(sizes);
-            
-            connect(output, SIGNAL(sizeChangeRequested(SimpleOutput *, QSize, QSize)), this, SLOT(resizeRequested(SimpleOutput *, QSize, QSize)));
-            m_outputs.append(output);
         }
-    }
-    
-    void DBusOutputs::resizeRequested(SimpleOutput * output, QSize oldSize, QSize newSize) {
-        qDebug() << "resize requested:" << output->id() << oldSize << newSize;
-        m_interface->setSize(output->id(), newSize);
     }
     
     QList<Output *> DBusOutputs::outputs()

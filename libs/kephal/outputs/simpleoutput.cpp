@@ -72,10 +72,6 @@ namespace kephal {
         return m_availableSizes;
     }
     
-    void SimpleOutput::setSize(QSize size) {
-        emit sizeChangeRequested(this, m_size, size);
-    }
-    
     QPoint SimpleOutput::position() {
         return m_position;
     }

@@ -32,7 +32,7 @@
 namespace kephal {
 
     XRandROutputs::XRandROutputs(QObject * parent, RandRDisplay * display)
-            : Outputs(parent)
+            : BackendOutputs(parent)
     {
         m_display = display;
         init();
@@ -79,7 +79,7 @@ namespace kephal {
 
         for (QMap<Output *, QRect>::const_iterator i = layout.constBegin(); i != layout.constEnd(); ++i) {
             XRandROutput * output = (XRandROutput *) i.key();
-            if (! output->_apply(i.value())) {
+            if (! output->applyGeom(i.value())) {
                 qDebug() << "setting" << output->id() << "to" << i.value() << "failed!!";
                 for (--i; i != layout.constBegin(); --i) {
                     output = (XRandROutput *) i.key();
@@ -106,7 +106,7 @@ namespace kephal {
     
     
     XRandROutput::XRandROutput(XRandROutputs * parent, RROutput rrId)
-            : Output(parent)
+            : BackendOutput(parent)
     {
         m_outputs = parent;
         m_rrId = rrId;
@@ -235,7 +235,7 @@ namespace kephal {
         m_previousGeom = geom();
     }
     
-    bool XRandROutput::_apply(QRect geom) {
+    bool XRandROutput::applyGeom(const QRect & geom) {
         output()->proposeRect(geom);
         /*float rate = output()->refreshRate();
         QList<float> rates = output()->refreshRates(geom.size());

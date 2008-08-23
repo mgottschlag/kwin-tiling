@@ -37,21 +37,18 @@ namespace kephal {
             SimpleOutput(QObject * parent);
             SimpleOutput(QObject * parent, Output * output);
             
-            virtual QString id();
+            QString id();
 
-            virtual QSize size();
-            virtual QSize preferredSize();
-            virtual void setSize(QSize size);
-            virtual QList<QSize> availableSizes();
-            virtual QPoint position();
-            //virtual void setPosition(QMap<Position, Output *> anchors);
-            //QList<PositionType> getRelativePosition();
-            virtual QString vendor();
-            virtual int productId();
-            virtual unsigned int serialNumber();
+            QSize size();
+            QSize preferredSize();
+            QList<QSize> availableSizes();
+            QPoint position();
+            QString vendor();
+            int productId();
+            unsigned int serialNumber();
             
-            virtual bool isConnected();
-            virtual bool isActivated();
+            bool isConnected();
+            bool isActivated();
             
             void _setId(QString id);
             void _setSize(QSize size);
@@ -64,10 +61,6 @@ namespace kephal {
             void _setVendor(QString vendor);
             void _setProductId(int productId);
             void _setSerialNumber(unsigned int serialNumber);
-            
-        Q_SIGNALS:
-            void sizeChangeRequested(SimpleOutput * screen, QSize oldSize, QSize newSize);
-            void positionChangeRequested(SimpleOutput * screen, QMap<Position, Output *> oldAnchors, QMap<Position, Output *> newAnchors);
             
         private:
             QString m_id;

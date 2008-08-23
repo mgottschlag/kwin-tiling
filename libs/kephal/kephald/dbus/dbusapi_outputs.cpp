@@ -49,14 +49,6 @@ QSize DBusAPIOutputs::size(QString id)
     return QSize(0,0);
 }
 
-void DBusAPIOutputs::setSize(QString id, QSize size)
-{
-    Output * output = Outputs::instance()->output(id);
-    if (output && output->isActivated()) {
-        output->setSize(size);
-    }
-}
-
 int DBusAPIOutputs::numAvailableSizes(QString id)
 {
     Output * output = Outputs::instance()->output(id);

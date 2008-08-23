@@ -21,7 +21,7 @@
 #ifndef KEPHAL_XRANDROUTPUTS_H
 #define KEPHAL_XRANDROUTPUTS_H
 
-#include "../outputs.h"
+#include "../backendoutputs.h"
 #include "xrandr12/randrdisplay.h"
 
 
@@ -29,7 +29,7 @@ namespace kephal {
 
     class XRandROutputs;
 
-    class XRandROutput : public Output {
+    class XRandROutput : public BackendOutput {
         Q_OBJECT
         public:
             XRandROutput(XRandROutputs * parent, RROutput rrId);
@@ -46,7 +46,8 @@ namespace kephal {
             int productId();
             unsigned int serialNumber();
             
-            bool _apply(QRect rect);
+            bool applyGeom(const QRect & rect);
+            
             void _revert();
             void _deactivate();
             //void _activate();
@@ -77,7 +78,7 @@ namespace kephal {
     };
     
 
-    class XRandROutputs : public Outputs {
+    class XRandROutputs : public BackendOutputs {
         Q_OBJECT
         public:
             XRandROutputs(QObject * parent, RandRDisplay * display);
