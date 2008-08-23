@@ -73,7 +73,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     if (panel) {
         connect(panel, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
-        connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(deleteLater()));
+        connect(panel, SIGNAL(destroyed(QObject*)), this, SLOT(panelDeleted()));
         connect(panel, SIGNAL(toolBoxToggled()), this, SLOT(togglePanelController()));
     }
 
@@ -830,6 +830,17 @@ void PanelView::animateHide(qreal progress)
     } else if (qFuzzyCompare(qreal(0.0), progress) && tl->direction() == QTimeLine::Backward) {
         kDebug() << "show complete";
     }
+}
+
+void PanelView::panelDeleted()
+{
+    if (!QApplication::closingDown()) {
+        // the panel was removed at runtime; clean up our configuration object as well
+        KConfigGroup c = config();
+        c.deleteGroup();
+    }
+
+    deleteLater();
 }
 
 #include "panelview.moc"

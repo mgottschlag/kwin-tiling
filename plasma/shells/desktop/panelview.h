@@ -134,6 +134,7 @@ private Q_SLOTS:
     void togglePanelController();
     void edittingComplete();
     void animateHide(qreal);
+    void panelDeleted();
 
     /**
      * Updates the panel's position according to the screen and containment
