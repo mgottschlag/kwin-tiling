@@ -803,7 +803,7 @@ void PanelView::animateHide(qreal progress)
     }
 
     QTimeLine *tl = timeLine();
-    if (qFuzzyCompare(1.0, progress) && tl->direction() == QTimeLine::Forward) {
+    if (qFuzzyCompare(qreal(1.0), progress) && tl->direction() == QTimeLine::Forward) {
         //kDebug() << "**************** hide complete" << triggerPoint << triggerWidth << triggerHeight;
 
 #ifdef Q_WS_X11
@@ -827,7 +827,7 @@ void PanelView::animateHide(qreal progress)
 #endif
 
         hide();
-    } else if (qFuzzyCompare(0.0, progress) && tl->direction() == QTimeLine::Backward) {
+    } else if (qFuzzyCompare(qreal(0.0), progress) && tl->direction() == QTimeLine::Backward) {
         kDebug() << "show complete";
     }
 }
