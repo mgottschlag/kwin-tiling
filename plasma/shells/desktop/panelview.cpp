@@ -783,12 +783,12 @@ void PanelView::animateHide(qreal progress)
             triggerPoint = geometry().bottomLeft();
             break;
         case Plasma::RightEdge:
-            xtrans = -margin;
+            xtrans = margin;
             triggerHeight = height();
             triggerPoint = geometry().topRight();
             break;
         case Plasma::LeftEdge:
-            xtrans = margin;
+            xtrans = -margin;
             triggerHeight = height();
             break;
         default:
