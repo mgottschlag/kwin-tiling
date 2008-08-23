@@ -682,10 +682,12 @@ QTimeLine *PanelView::timeLine()
 
 void PanelView::unhide()
 {
-    if (m_unhideTrigger != None) {
 #ifdef Q_WS_X11
+    if (m_unhideTrigger != None) {
         XDestroyWindow(QX11Info::display(), m_unhideTrigger);
         m_unhideTrigger = None;
+#else
+    {
 #endif
         PlasmaApp::self()->panelHidden(false);
 
@@ -805,6 +807,12 @@ void PanelView::animateHide(qreal progress)
         //kDebug() << "**************** hide complete" << triggerPoint << triggerWidth << triggerHeight;
 
 #ifdef Q_WS_X11
+        if (m_unhideTrigger != None) {
+            XDestroyWindow(QX11Info::display(), m_unhideTrigger);
+        } else {
+            PlasmaApp::self()->panelHidden(true);
+        }
+
         XSetWindowAttributes attributes;
         attributes.override_redirect = True;
         attributes.event_mask = EnterWindowMask;
@@ -814,12 +822,13 @@ void PanelView::animateHide(qreal progress)
                                         0, CopyFromParent, InputOnly, CopyFromParent,
                                         valuemask, &attributes);
         XMapWindow(QX11Info::display(), m_unhideTrigger);
+#else
+        PlasmaApp::self()->panelHidden(true);
 #endif
 
-        PlasmaApp::self()->panelHidden(true);
         hide();
     } else if (qFuzzyCompare(0.0, progress) && tl->direction() == QTimeLine::Backward) {
-        //kDebug() << "show complete";
+        kDebug() << "show complete";
     }
 }
 
