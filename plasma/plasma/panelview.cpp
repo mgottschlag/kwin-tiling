@@ -697,8 +697,6 @@ void PanelView::unhide()
             if (tl->state() == QTimeLine::NotRunning) {
                 tl->start();
             }
-        } else {
-            animateHide(0.0);
         }
 
         show();
@@ -798,7 +796,10 @@ void PanelView::animateHide(qreal progress)
     }
 
     //kDebug() << progress << xtrans << ytrans;
-    viewport()->move(xtrans, ytrans);
+    if (PlasmaApp::hasComposite()) {
+        viewport()->move(xtrans, ytrans);
+    }
+
     QTimeLine *tl = timeLine();
     if (qFuzzyCompare(1.0, progress) && tl->direction() == QTimeLine::Forward) {
         //kDebug() << "**************** hide complete" << triggerPoint << triggerWidth << triggerHeight;
