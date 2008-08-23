@@ -41,7 +41,7 @@ kde4_add_kcfg_files(krunner_lock_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../kscreensave
 
 kde4_add_executable(krunner_lock ${krunner_lock_SRCS} )
 
-target_link_libraries(krunner_lock  ${KDE4_KDEUI_LIBS} kworkspace)
+target_link_libraries(krunner_lock  ${KDE4_KDEUI_LIBS} ${DL_LIBRARY} kworkspace)
 
 if (HAVE_XF86MISC)
   target_link_libraries(krunner_lock ${X11_Xxf86misc_LIB})
