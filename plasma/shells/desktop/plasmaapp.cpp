@@ -340,7 +340,7 @@ bool PlasmaApp::x11EventFilter(XEvent *event)
         }
     }
 
-    return false;
+    return KUniqueApplication::x11EventFilter(event);
 }
 #endif
 
