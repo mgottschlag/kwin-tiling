@@ -215,12 +215,12 @@ void Tasks::removeWindowTask(TaskPtr task)
 {
     WindowTaskItem *item = m_windowTaskItems.take(task);
     if (item) {
-      m_layout->removeItem(item);
-      scene()->removeItem(item);
-      item->deleteLater();
-      m_activeTask = m_windowTaskItems.end();
-      updatePreferredSize();
-      adjustStretch();
+        m_layout->removeItem(item);
+        scene()->removeItem(item);
+        item->deleteLater();
+        m_activeTask = m_windowTaskItems.end();
+        updatePreferredSize();
+        adjustStretch();
     }
 }
 
@@ -236,9 +236,9 @@ void Tasks::removeAllWindowTasks()
         item->deleteLater();
     }
     if (m_windowTaskItems.count() > 0) {
-      m_windowTaskItems.clear();
-      m_activeTask = m_windowTaskItems.end();
-      updatePreferredSize();
+        m_windowTaskItems.clear();
+        m_activeTask = m_windowTaskItems.end();
+        updatePreferredSize();
     }
 }
 
@@ -579,11 +579,11 @@ void Tasks::themeRefresh()
 *This funtion applies when the m_showOnlyCurrentDesktop or m_showOnlyCurrentScreen switch set. */
 void Tasks::addAttentionTask()
 {
-  TaskPtr task;
-  task.attach(qobject_cast<TaskManager::Task*>(sender()));
-  if (task->demandsAttention() && !m_windowTaskItems.contains(task)) {
-      addWindowTask(task);
-  }
+    TaskPtr task;
+    task.attach(qobject_cast<TaskManager::Task*>(sender()));
+    if (task->demandsAttention() && !m_windowTaskItems.contains(task)) {
+        addWindowTask(task);
+    }
 }
 
 K_EXPORT_PLASMA_APPLET(tasks, Tasks)
