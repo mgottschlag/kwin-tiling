@@ -136,7 +136,6 @@ void KColorCm::populateSchemeList()
 void KColorCm::updatePreviews()
 {
     schemePreview->setPalette(m_config);
-    colorPreview->setPalette(m_config);
     inactivePreview->setPalette(m_config, QPalette::Inactive);
     disabledPreview->setPalette(m_config, QPalette::Disabled);
 }
