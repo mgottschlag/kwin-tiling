@@ -23,6 +23,7 @@
 #include <QVBoxLayout>
 #include <QDragEnterEvent>
 #include <QMouseEvent>
+#include <QScrollArea>
 
 #include "installer.h"
 
@@ -155,13 +156,16 @@ SplashInstaller::SplashInstaller (QWidget *aParent, const char *aName, bool aIni
   rightbox->setSpacing( KDialog::spacingHint() );
   hbox->setStretchFactor( rightbox, 3 );
 
+  QScrollArea* scrollarea = new QScrollArea(this);
+  scrollarea->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
   mPreview = new QLabel(this);
+  scrollarea->setWidget(mPreview);
   mPreview->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
   mPreview->setFrameStyle(QFrame::Panel|QFrame::Sunken);
   mPreview->setMinimumSize(QSize(320,240));
   mPreview->setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
-  rightbox->addWidget(mPreview);
-  rightbox->setStretchFactor( mPreview, 3 );
+  rightbox->addWidget(scrollarea);
+  rightbox->setStretchFactor( scrollarea, 3 );
 
   mText = new QTextEdit(this);
   mText->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Preferred );
