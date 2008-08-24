@@ -501,8 +501,8 @@ void BackgroundDialog::changeBackgroundMode(int mode)
     QWidget* w = 0;
     WallpaperInfo wallpaperInfo = m_mode->itemData(mode).value<WallpaperInfo>();
 
-    if (m_wallpaperLayout->count() > 1) {
-        delete dynamic_cast<QWidgetItem*>(m_wallpaperLayout->takeAt(1))->widget();
+    if (m_wallpaperGroup->layout()->count() > 1) {
+        delete dynamic_cast<QWidgetItem*>(m_wallpaperGroup->layout()->takeAt(1))->widget();
     }
     if (m_wallpaper && m_wallpaper->pluginName() != wallpaperInfo.first) {
         delete m_wallpaper;
@@ -516,12 +516,12 @@ void BackgroundDialog::changeBackgroundMode(int mode)
         KConfigGroup cfg = m_containment->config();
         kDebug() << "making a" << wallpaperInfo.first << "in modD" << wallpaperInfo.second;
         m_wallpaper->restore(KConfigGroup(&cfg, "Wallpaper"), wallpaperInfo.second);
-        w = m_wallpaper->createConfigurationInterface(m_wallpaperGroupBox);
+        w = m_wallpaper->createConfigurationInterface(m_wallpaperGroup);
     }
     if (!w) {
-        w = new QWidget(m_wallpaperGroupBox);
+        w = new QWidget(m_wallpaperGroup);
     }
-    m_wallpaperLayout->addWidget(w);
+    m_wallpaperGroup->layout()->addWidget(w);
 }
 
 void BackgroundDialog::saveConfig()
