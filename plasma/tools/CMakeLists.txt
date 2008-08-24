@@ -1,3 +1,2 @@
 add_subdirectory(engineexplorer)
 add_subdirectory(plasmapkg)
-add_subdirectory(plasmoidviewer)
