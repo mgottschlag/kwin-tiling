@@ -41,7 +41,7 @@ class Image : public Plasma::Wallpaper
         void slotAddDir();
         void slotRemoveDir();
         void getNewWallpaper();
-        void colorChanged(QColor color);
+        void colorChanged(const QColor& color);
         void pictureChanged(int index);
         void browse();
         void nextSlide();

@@ -127,7 +127,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
                 this, SLOT(positioningChanged(int)));
 
         m_uiImage.m_color->setColor(m_color);
-        connect(m_uiImage.m_color, SIGNAL(changed(QColor)), this, SLOT(colorChanged(QColor)));
+        connect(m_uiImage.m_color, SIGNAL(changed(const QColor&)), this, SLOT(colorChanged(const QColor&)));
 
         connect(m_uiImage.m_newStuff, SIGNAL(clicked()), this, SLOT(getNewWallpaper()));
     } else {
@@ -282,7 +282,7 @@ void Image::getNewWallpaper()
     }
 }
 
-void Image::colorChanged(QColor color)
+void Image::colorChanged(const QColor& color)
 {
     m_color = color;
     setSingleImage();
