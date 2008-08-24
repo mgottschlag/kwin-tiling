@@ -368,21 +368,30 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::View* view, QWidget
     QWidget * main = new QWidget(this);
     setupUi(main);
 
-    // preview
-    QString monitorPath = KStandardDirs::locate("data",  "kcontrol/pics/monitor.png");
 
     // Size of monitor image: 200x186
     // Geometry of "display" part of monitor image: (23,14)-[151x115]
-    qreal previewRatio = 128.0 / (101.0 * ((float) res.width() / res.height()));
-    QSize monitorSize(200, int(186 * previewRatio));
-    QRect previewRect(23, int(14 * previewRatio), 151, int(115 * previewRatio));
+    qreal previewRatio = (qreal)res.height() / (qreal)res.width();
+    QSize monitorSize(200, int(200 * previewRatio));
 
-    m_monitor->setPixmap(QPixmap(monitorPath).scaled(monitorSize));
+    Plasma::PanelSvg *svg = new Plasma::PanelSvg(this);
+    svg->setImagePath("widgets/monitor");
+    svg->resizePanel(monitorSize);
+    QPixmap monitorPix(monitorSize + QSize(0, svg->elementSize("base").height() - svg->marginSize(Plasma::BottomMargin)));
+    monitorPix.fill(Qt::transparent);
+
+    QPainter painter(&monitorPix);
+    QPoint standPosizion(monitorSize.width()/2 - svg->elementSize("base").width()/2, svg->contentsRect().bottom());
+    svg->paint(&painter, standPosizion, "base");
+    svg->paintPanel(&painter);
+    painter.end();
+
+    m_monitor->setPixmap(monitorPix);
     m_monitor->setWhatsThis(i18n(
         "This picture of a monitor contains a preview of "
         "what the current settings will look like on your desktop."));
     m_preview = new WallpaperPreview(m_monitor);
-    m_preview->setGeometry(previewRect);
+    m_preview->setGeometry(svg->contentsRect().toRect());
 
     connect(m_newThemeButton, SIGNAL(clicked()), this, SLOT(getNewThemes()));
 

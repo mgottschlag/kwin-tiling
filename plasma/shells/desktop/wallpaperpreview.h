@@ -22,6 +22,7 @@
 
 namespace Plasma{
     class Wallpaper;
+    class Svg;
 }
 
 class WallpaperPreview : public QWidget
@@ -42,6 +43,7 @@ protected slots:
 
 private:
     Plasma::Wallpaper* m_wallpaper;
+    Plasma::Svg* m_wallpaperOverlay;
 };
 
 #endif // WALLPAPER_PREVIEW

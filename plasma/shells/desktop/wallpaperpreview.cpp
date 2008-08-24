@@ -19,9 +19,13 @@
 #include <QPainter>
 #include <QPaintEvent>
 #include <plasma/wallpaper.h>
+#include <plasma/svg.h>
 
 WallpaperPreview::WallpaperPreview(QWidget *parent) : QWidget(parent), m_wallpaper(0)
 {
+    m_wallpaperOverlay = new Plasma::Svg(this);
+    m_wallpaperOverlay->setImagePath("widgets/monitor");
+    m_wallpaperOverlay->setContainsMultipleImages(true);
 }
 
 WallpaperPreview::~WallpaperPreview()
@@ -56,6 +60,7 @@ void WallpaperPreview::paintEvent(QPaintEvent* event)
     QPainter painter(this);
     if (m_wallpaper) {
         m_wallpaper->paint(&painter, event->rect());
+        m_wallpaperOverlay->paint(&painter, QRect(QPoint(0,0), size()), "glass");
     }
 }
 
