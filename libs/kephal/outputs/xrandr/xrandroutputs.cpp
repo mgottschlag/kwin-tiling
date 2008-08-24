@@ -233,6 +233,10 @@ namespace kephal {
     }
     
     bool XRandROutput::applyGeom(const QRect & geom, float rate) {
+        if ((geom == this->geom()) && ((rate < 1) || (qFuzzyCompare(rate, this->rate())))) {
+            return true;
+        }
+        
         output()->proposeRect(geom);
         if (rate < 1) {
             rate = output()->refreshRate();
@@ -257,23 +261,34 @@ namespace kephal {
     }
     
     bool XRandROutput::applyOrientation(Rotation rotation, bool reflectX, bool reflectY) {
-        Q_UNUSED(reflectX)
-        Q_UNUSED(reflectY)
-
+        if ((rotation == this->rotation()) && (reflectX == this->reflectX()) && (reflectY == this->reflectY())) {
+            return true;
+        }
+        
+        int orientation = 0;
+        
         switch (rotation) {
             case RotateRight:
-                output()->proposeRotation(RandR::Rotate90);
+                orientation |= RandR::Rotate90;
                 break;
             case RotateLeft:
-                output()->proposeRotation(RandR::Rotate270);
+                orientation |= RandR::Rotate270;
                 break;
             case RotateInverted:
-                output()->proposeRotation(RandR::Rotate180);
+                orientation |= RandR::Rotate180;
                 break;
             default:
-                output()->proposeRotation(RandR::Rotate0);
+                orientation |= RandR::Rotate0;
+        }
+        
+        if (reflectX) {
+            orientation |= RandR::ReflectX;
+        }
+        if (reflectY) {
+            orientation |= RandR::ReflectY;
         }
 
+        output()->proposeRotation(orientation);
         return output()->applyProposed();
     }
     
@@ -334,7 +349,7 @@ namespace kephal {
     }
     
     Rotation XRandROutput::rotation() {
-        switch (output()->rotation()) {
+        switch (output()->rotation() & RandR::RotateMask) {
             case RandR::Rotate90:
                 return RotateRight;
             case RandR::Rotate180:
@@ -347,10 +362,16 @@ namespace kephal {
     }
 
     bool XRandROutput::reflectX() {
+        if (output()->rotation() & RandR::ReflectX) {
+            return true;
+        }
         return false;
     }
 
     bool XRandROutput::reflectY() {
+        if (output()->rotation() & RandR::ReflectY) {
+            return true;
+        }
         return false;
     }
 

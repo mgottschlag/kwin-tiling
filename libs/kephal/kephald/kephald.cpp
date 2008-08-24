@@ -88,7 +88,7 @@ void KephalD::init() {
     }
     
     foreach (Output * output, Outputs::instance()->outputs()) {
-        qDebug() << "output:" << output->id() << output->geom();
+        qDebug() << "output:" << output->id() << output->geom() << output->rotation() << output->reflectX() << output->reflectY();
     }
     
     new XMLConfigurations(this);

@@ -261,11 +261,13 @@ bool RandRCrtc::applyProposed()
 
 	if (mode.isValid())
 	{
-		if (m_currentRotation == m_proposedRotation ||
-		    (m_currentRotation == RandR::Rotate0 && m_proposedRotation == RandR::Rotate180) ||
-		    (m_currentRotation == RandR::Rotate180 && m_proposedRotation == RandR::Rotate0) ||
-		    (m_currentRotation == RandR::Rotate90 && m_proposedRotation == RandR::Rotate270) ||
-		    (m_currentRotation == RandR::Rotate270 && m_proposedRotation == RandR::Rotate90))
+                int currentRotation = m_currentRotation & RandR::RotateMask;
+                int proposedRotation = m_proposedRotation & RandR::RotateMask;
+		if (currentRotation == proposedRotation ||
+		    (currentRotation == RandR::Rotate0 && proposedRotation == RandR::Rotate180) ||
+		    (currentRotation == RandR::Rotate180 && proposedRotation == RandR::Rotate0) ||
+		    (currentRotation == RandR::Rotate90 && proposedRotation == RandR::Rotate270) ||
+		    (currentRotation == RandR::Rotate270 && proposedRotation == RandR::Rotate90))
 		{
 			QRect r = QRect(0,0,0,0).united(m_proposedRect);
 			if (r.width() > m_screen->maxSize().width() || r.height() > m_screen->maxSize().height())
@@ -301,6 +303,7 @@ bool RandRCrtc::applyProposed()
 	}
 
 
+        qDebug() << "calling XRRSetCrtcConfig()";
 	Status s = XRRSetCrtcConfig(QX11Info::display(), m_screen->resources(), m_id, 
 				    RandR::timestamp, m_proposedRect.x(), m_proposedRect.y(), mode.id(),
 				    m_proposedRotation, outputs, m_connectedOutputs.count()); 

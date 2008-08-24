@@ -573,17 +573,8 @@ namespace kephal {
         }
     }
     
-    void XMLConfigurations::resize(Output * output, const QSize & size) {
-        qDebug() << "XMLConfigurations::resize() called" << output->id() << size;
-        if ((! output->isConnected()) || (! output->isActivated())) {
-            return;
-        }
-        if (size == output->size()) {
-            return;
-        }
-        
-        QMap<Output *, QSize> outputSizes;
-        QMap<Output *, int> outputScreens = currentOutputScreens();
+    QMap<int, QRect> XMLConfigurations::resizeLayout(Output * output, const QSize & size, QMap<Output *, int> & outputScreens, QMap<Output *, QSize> & outputSizes) {
+        outputScreens.unite(currentOutputScreens());
         QMap<int, QPoint> simpleLayout = m_activeConfiguration->layout();
         
         foreach (Output * o, outputScreens.keys()) {
@@ -594,7 +585,22 @@ namespace kephal {
             }
         }
         
-        QMap<int, QRect> layout = m_activeConfiguration->realLayout(simpleLayout, outputScreens, outputSizes);
+        return m_activeConfiguration->realLayout(simpleLayout, outputScreens, outputSizes);
+    }
+    
+    void XMLConfigurations::resize(Output * output, const QSize & size) {
+        qDebug() << "XMLConfigurations::resize() called" << output->id() << size;
+        if ((! output->isConnected()) || (! output->isActivated())) {
+            return;
+        }
+        if (size == output->size()) {
+            return;
+        }
+        
+        QMap<Output *, QSize> outputSizes;
+        QMap<Output *, int> outputScreens;
+        QMap<int, QRect> layout = resizeLayout(output, size, outputScreens, outputSizes);
+        
         if (activateLayout(layout, outputScreens, outputSizes)) {
             OutputXML * o = outputXml(output->id());
             if (o) {
@@ -1140,19 +1146,26 @@ namespace kephal {
                 Rotation rotation = (Rotation) o->rotation();
                 bool reflectX = o->reflectX();
                 bool reflectY = o->reflectY();
-                if (! output->applyOrientation(rotation, reflectX, reflectY)) {
-                    failed = true;
+                if ((rotation != output->rotation()) || (reflectX != output->reflectX()) || (reflectY != output->reflectY())) {
+                    qDebug() << "applying orientation to" << output->id() << rotation << reflectX << reflectY;
+                    if (! output->applyOrientation(rotation, reflectX, reflectY)) {
+                        qDebug() << "applying orientation failed!!";
+                        failed = true;
+                    }
                 }
                 
                 QSize size(o->width(), o->height());
-                double rate = o->rate();
-                if ((! failed) && (! size.isEmpty()) && (size != output->size())) {
+                float rate = o->rate();
+                if ((! failed) && (! size.isEmpty()) && ((size != output->size()) || ((rate > 1) && (! qFuzzyCompare(rate, output->rate()))))) {
+                    qDebug() << "applying geom to" << output->id() << size << rate;
                     if (! output->applyGeom(QRect(output->position(), size), rate)) {
+                        qDebug() << "applying geom failed!!";
                         failed = true;
                     }
                 }
                 
                 if (failed) {
+                    qDebug() << "reverting output" << output->id();
                     output->revert();
                 }
             }
@@ -1168,18 +1181,48 @@ namespace kephal {
     }
 
     void XMLConfigurations::rotate(Output * output, Rotation rotation) {
-        /*BackendOutput * o = BackendOutputs::instance()->backendOutput(output->id);
+        BackendOutput * o = BackendOutputs::instance()->backendOutput(output->id());
         if (o) {
-            if (o->applyOrientation(rotation, o->reflectX(), o->reflectY())) {
-                OutputXML * xml = outputXml(o->id());
-                if (xml) {
-                    xml->setRotation(rotation);
-                    saveXml();
+            bool resizeNeeded = ((output->rotation() + rotation) % 180) != 0;
+            if (resizeNeeded) {
+                qDebug() << "resize is needed for changing rotation from" << output->rotation() << "to" << rotation;
+                
+                QSize size(output->size().height(), output->size().width());
+                
+                QMap<Output *, QSize> outputSizes;
+                QMap<Output *, int> outputScreens;
+                QMap<int, QRect> layout = resizeLayout(output, size, outputScreens, outputSizes);
+                
+                if (layout.empty()) {
+                    qDebug() << "unable to change rotation!!";
+                    return;
+                }
+                
+                o->mark();
+                if (o->applyOrientation(rotation, o->reflectX(), o->reflectY()) && activateLayout(layout, outputScreens, outputSizes)) {
+                    OutputXML * xml = outputXml(output->id());
+                    if (xml) {
+                        xml->setWidth(size.width());
+                        xml->setHeight(size.height());
+                        xml->setRotation(rotation);
+                        saveXml();
+                    }
+                } else {
+                    qDebug() << "setting rotation to" << rotation << "for" << o->id() << "failed";
+                    o->revert();
                 }
             } else {
-                qDebug() << "setting rotation to" << rotation << "for" << o->id() << "failed";
+                if (o->applyOrientation(rotation, o->reflectX(), o->reflectY())) {
+                    OutputXML * xml = outputXml(o->id());
+                    if (xml) {
+                        xml->setRotation(rotation);
+                        saveXml();
+                    }
+                } else {
+                    qDebug() << "setting rotation to" << rotation << "for" << o->id() << "failed";
+                }
             }
-        }*/
+        }
     }
 
     void XMLConfigurations::reflectX(Output * output, bool reflect) {

@@ -105,6 +105,7 @@ namespace kephal {
             QMap<Output *, int> currentOutputScreens();
             void matchOutputScreens(const QMap<int, QPoint> & layout);
             OutputXML * outputXml(const QString & id);
+            QMap<int, QRect> resizeLayout(Output * output, const QSize & size, QMap<Output *, int> & outputScreens, QMap<Output *, QSize> & outputSizes);
             
             QMap<QString, XMLConfiguration *> m_configurations;
             XMLConfiguration * m_activeConfiguration;
