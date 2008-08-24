@@ -83,7 +83,7 @@ KColorCm::KColorCm(QWidget *parent, const QVariantList &)
     m_config = KSharedConfig::openConfig("kdeglobals");
 
     setupUi(this);
-    schemeKnsButton->setIcon( KIcon("get-hot-new-stuff") );
+    //schemeKnsButton->setIcon( KIcon("get-hot-new-stuff") );
     connect(colorSet, SIGNAL(currentIndexChanged(int)), this, SLOT(updateColorTable()));
     connect(schemeList, SIGNAL(currentRowChanged(int)), this, SLOT(loadScheme()));
     connect(applyToAlien, SIGNAL(toggled(bool)), this, SLOT(emitChanged()));

@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>783</width>
-    <height>455</height>
+    <width>477</width>
+    <height>422</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" >
@@ -22,94 +22,118 @@
       <attribute name="title" >
        <string>&amp;Scheme</string>
       </attribute>
-      <layout class="QGridLayout" >
-       <item row="0" column="0" colspan="2" >
-        <widget class="PreviewWidget" native="1" name="schemePreview" >
+      <layout class="QGridLayout" name="gridLayout" >
+       <item row="0" column="0" >
+        <widget class="KListWidget" name="schemeList" >
          <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
+         </property>
+         <property name="iconSize" >
+          <size>
+           <width>23</width>
+           <height>16</height>
+          </size>
          </property>
         </widget>
        </item>
-       <item rowspan="3" row="1" column="0" >
+       <item row="0" column="1" >
+        <layout class="QVBoxLayout" name="verticalLayout_2" >
+         <item>
+          <widget class="QPushButton" name="schemeKnsButton" >
+           <property name="text" >
+            <string>Get &amp;New Schemes...</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="schemeImportButton" >
+           <property name="toolTip" >
+            <string>Import a color scheme from a file</string>
+           </property>
+           <property name="text" >
+            <string>Import Scheme...</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="schemeSaveButton" >
+           <property name="toolTip" >
+            <string>Save the current color scheme</string>
+           </property>
+           <property name="text" >
+            <string>Save Scheme...</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="schemeRemoveButton" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="toolTip" >
+            <string>Remove the selected scheme</string>
+           </property>
+           <property name="text" >
+            <string>Remove Scheme</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0" >
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0" colspan="2" >
         <widget class="QGroupBox" name="groupBox_3" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="title" >
-          <string>Color Scheme</string>
+          <string>Preview</string>
          </property>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" colspan="4" >
-           <widget class="KListWidget" name="schemeList" >
+         <layout class="QVBoxLayout" name="verticalLayout_3" >
+          <item>
+           <widget class="PreviewWidget" native="1" name="schemePreview" >
             <property name="sizePolicy" >
-             <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="iconSize" >
+            <property name="minimumSize" >
              <size>
-              <width>23</width>
-              <height>16</height>
+              <width>0</width>
+              <height>10</height>
              </size>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <widget class="QPushButton" name="schemeSaveButton" >
-            <property name="toolTip" >
-             <string>Save the current color scheme</string>
-            </property>
-            <property name="text" >
-             <string>&amp;Save...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" >
-           <widget class="QPushButton" name="schemeRemoveButton" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="toolTip" >
-             <string>Remove the selected scheme</string>
-            </property>
-            <property name="text" >
-             <string>Rem&amp;ove</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2" >
-           <widget class="QPushButton" name="schemeImportButton" >
-            <property name="toolTip" >
-             <string>Import a color scheme from a file</string>
-            </property>
-            <property name="text" >
-             <string>I&amp;mport...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" colspan="3" >
-           <widget class="QPushButton" name="schemeKnsButton" >
-            <property name="text" >
-             <string>Get &amp;New Schemes...</string>
             </property>
            </widget>
           </item>
          </layout>
         </widget>
        </item>
-       <item row="1" column="1" >
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2" >
+      <attribute name="title" >
+       <string>Options</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_7" >
+       <item>
         <widget class="QGroupBox" name="groupBox_6" >
          <property name="title" >
           <string>Options</string>
          </property>
-         <layout class="QVBoxLayout" >
+         <layout class="QVBoxLayout" name="_4" >
           <item>
            <widget class="QCheckBox" name="useInactiveEffects" >
             <property name="text" >
@@ -131,10 +155,20 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QCheckBox" name="applyToAlien" >
+            <property name="mouseTracking" >
+             <bool>true</bool>
+            </property>
+            <property name="text" >
+             <string>Apply colors to &amp;non-KDE4 applications</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
-       <item row="2" column="1" >
+       <item>
         <widget class="QGroupBox" name="groupBox_5" >
          <property name="toolTip" >
           <string>Contrast used for 3D objects</string>
@@ -142,7 +176,7 @@
          <property name="title" >
           <string>Contrast</string>
          </property>
-         <layout class="QVBoxLayout" >
+         <layout class="QVBoxLayout" name="_5" >
           <item>
            <widget class="QSlider" name="contrastSlider" >
             <property name="maximum" >
@@ -159,28 +193,18 @@
          </layout>
         </widget>
        </item>
-       <item row="3" column="1" >
-        <spacer>
+       <item>
+        <spacer name="verticalSpacer" >
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" stdset="0" >
           <size>
            <width>20</width>
-           <height>40</height>
+           <height>141</height>
           </size>
          </property>
         </spacer>
-       </item>
-       <item row="4" column="0" >
-        <widget class="QCheckBox" name="applyToAlien" >
-         <property name="mouseTracking" >
-          <bool>true</bool>
-         </property>
-         <property name="text" >
-          <string>Apply colors to &amp;non-KDE4 applications</string>
-         </property>
-        </widget>
        </item>
       </layout>
      </widget>
@@ -188,17 +212,7 @@
       <attribute name="title" >
        <string>Colors</string>
       </attribute>
-      <layout class="QVBoxLayout" >
-       <item>
-        <widget class="PreviewWidget" native="1" name="colorPreview" >
-         <property name="sizePolicy" >
-          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-        </widget>
-       </item>
+      <layout class="QVBoxLayout" name="verticalLayout_5" >
        <item>
         <widget class="QComboBox" name="colorSet" >
          <property name="toolTip" >
@@ -239,7 +253,7 @@
        <item>
         <widget class="QStackedWidget" name="stackedWidget" >
          <property name="currentIndex" >
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="commonColorsPage" >
           <layout class="QGridLayout" >
@@ -547,19 +561,50 @@
          </widget>
         </widget>
        </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_4" >
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="title" >
+          <string>Preview</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4" >
+          <item>
+           <widget class="PreviewWidget" native="1" name="colorPreview" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize" >
+             <size>
+              <width>0</width>
+              <height>10</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="effectsPage" >
       <attribute name="title" >
-       <string>&amp;Effects</string>
+       <string>Inactive</string>
       </attribute>
-      <layout class="QVBoxLayout" >
+      <layout class="QVBoxLayout" name="verticalLayout_9" >
        <item>
         <widget class="QGroupBox" name="groupBox" >
          <property name="title" >
           <string>Inactive</string>
          </property>
-         <layout class="QGridLayout" >
+         <layout class="QGridLayout" name="_2" >
           <item row="0" column="0" >
            <widget class="QLabel" name="label" >
             <property name="text" >
@@ -768,10 +813,16 @@
           <item row="3" column="0" colspan="4" >
            <widget class="PreviewWidget" native="1" name="inactivePreview" >
             <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="minimumSize" >
+             <size>
+              <width>0</width>
+              <height>10</height>
+             </size>
             </property>
            </widget>
           </item>
@@ -779,11 +830,31 @@
         </widget>
        </item>
        <item>
+        <spacer name="verticalSpacer_3" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3" >
+      <attribute name="title" >
+       <string>Disabled</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_8" >
+       <item>
         <widget class="QGroupBox" name="groupBox_2" >
          <property name="title" >
           <string>Disabled</string>
          </property>
-         <layout class="QGridLayout" >
+         <layout class="QGridLayout" name="_3" >
           <item row="0" column="0" >
            <widget class="QLabel" name="label_5" >
             <property name="text" >
@@ -992,10 +1063,16 @@
           <item row="3" column="0" colspan="4" >
            <widget class="PreviewWidget" native="1" name="disabledPreview" >
             <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="minimumSize" >
+             <size>
+              <width>0</width>
+              <height>10</height>
+             </size>
             </property>
            </widget>
           </item>
@@ -1003,7 +1080,7 @@
         </widget>
        </item>
        <item>
-        <spacer>
+        <spacer name="verticalSpacer_2" >
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
@@ -1039,6 +1116,28 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>schemeList</tabstop>
+  <tabstop>schemeKnsButton</tabstop>
+  <tabstop>schemeImportButton</tabstop>
+  <tabstop>schemeSaveButton</tabstop>
+  <tabstop>schemeRemoveButton</tabstop>
+  <tabstop>useInactiveEffects</tabstop>
+  <tabstop>inactiveSelectionEffect</tabstop>
+  <tabstop>shadeSortedColumn</tabstop>
+  <tabstop>applyToAlien</tabstop>
+  <tabstop>contrastSlider</tabstop>
+  <tabstop>colorSet</tabstop>
+  <tabstop>colorTable</tabstop>
+  <tabstop>inactiveIntensityBox</tabstop>
+  <tabstop>inactiveIntensitySlider</tabstop>
+  <tabstop>inactiveColorBox</tabstop>
+  <tabstop>inactiveColorSlider</tabstop>
+  <tabstop>inactiveColorButton</tabstop>
+  <tabstop>inactiveContrastBox</tabstop>
+  <tabstop>inactiveContrastSlider</tabstop>
+  <tabstop>commonColorTable</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
