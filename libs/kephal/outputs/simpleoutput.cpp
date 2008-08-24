@@ -76,19 +76,19 @@ namespace kephal {
         return m_position;
     }
 
-    void SimpleOutput::_setId(QString id) {
+    void SimpleOutput::_setId(const QString & id) {
         m_id = id;
     }
     
-    void SimpleOutput::_setSize(QSize size) {
+    void SimpleOutput::_setSize(const QSize & size) {
         m_size = size;
     }
     
-    void SimpleOutput::_setAvailableSizes(QList<QSize> sizes) {
+    void SimpleOutput::_setAvailableSizes(const QList<QSize> & sizes) {
         m_availableSizes = sizes;
     }
     
-    void SimpleOutput::_setPosition(QPoint position) {
+    void SimpleOutput::_setPosition(const QPoint & position) {
         m_position = position;
     }
     
@@ -108,15 +108,7 @@ namespace kephal {
         return m_connected && m_activated;
     }
     
-    /*void SimpleOutput::setPosition(QMap<Position, Output *> anchors) {
-        emit positionChangeRequested(this, m_anchors, anchors);
-    }*/
-    
-    void SimpleOutput::_setAnchors(QMap<Position, Output *> anchors) {
-        m_anchors = anchors;
-    }
-    
-    void SimpleOutput::_setVendor(QString vendor) {
+    void SimpleOutput::_setVendor(const QString & vendor) {
         m_vendor = vendor;
     }
     
@@ -144,8 +136,48 @@ namespace kephal {
         return m_preferredSize;
     }
     
-    void SimpleOutput::_setPreferredSize(QSize size) {
+    void SimpleOutput::_setPreferredSize(const QSize & size) {
         m_preferredSize = size;
     }
     
+    void SimpleOutput::_setRotation(Rotation rotation) {
+        m_rotation = rotation;
+    }
+
+    void SimpleOutput::_setReflectX(bool reflect) {
+        m_reflectX = reflect;
+    }
+
+    void SimpleOutput::_setReflectY(bool reflect) {
+        m_reflectY = reflect;
+    }
+
+    void SimpleOutput::_setRate(float rate) {
+        m_rate = rate;
+    }
+
+    void SimpleOutput::_setAvailableRates(const QList<float> & rates) {
+        m_rates = rates;
+    }
+
+    Rotation SimpleOutput::rotation() {
+        return m_rotation;
+    }
+
+    bool SimpleOutput::reflectX() {
+        return m_reflectX;
+    }
+
+    bool SimpleOutput::reflectY() {
+        return m_reflectY;
+    }
+
+    float SimpleOutput::rate() {
+        return m_rate;
+    }
+
+    QList<float> SimpleOutput::availableRates() {
+        return m_rates;
+    }
+
 }

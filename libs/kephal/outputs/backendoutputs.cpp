@@ -34,12 +34,17 @@ namespace kephal {
         m_markedActive = isActivated();
         if (m_markedActive) {
             m_markedGeom = geom();
+            m_markedRate = rate();
+            m_markedRotation = rotation();
+            m_markedReflectX = reflectX();
+            m_markedReflectY = reflectY();
         }
     }
     
     void BackendOutput::revert() {
         if (m_markedActive) {
-            applyGeom(m_markedGeom);
+            applyGeom(m_markedGeom, m_markedRate);
+            applyOrientation(m_markedRotation, m_markedReflectX, m_markedReflectY);
         } else {
             deactivate();
         }
@@ -81,6 +86,7 @@ namespace kephal {
         
         QList<BackendOutput *> outputs = backendOutputs();
         foreach (BackendOutput * output, outputs) {
+            output->mark();
             if (! layout.contains(output)) {
                 qDebug() << "deactivating output:" << output->id();
                 output->deactivate();
@@ -91,7 +97,7 @@ namespace kephal {
             BackendOutput * output = (BackendOutput *) i.key();
             qDebug() << "setting output" << output->id() << "to" << i.value();
             
-            if (! output->applyGeom(i.value())) {
+            if (! output->applyGeom(i.value(), 0)) {
                 qDebug() << "setting" << output->id() << "to" << i.value() << "failed!!";
                 for (--i; i != layout.constBegin(); --i) {
                     output = (BackendOutput *) i.key();

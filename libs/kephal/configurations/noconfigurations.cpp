@@ -99,6 +99,17 @@ namespace kephal {
     void NoConfigurations::applyOutputSettings() {
     }
 
+    void NoConfigurations::rotate(Output * output, Rotation rotation) {
+    }
+
+    void NoConfigurations::changeRate(Output * output, float rate) {
+    }
+
+    void NoConfigurations::reflectX(Output * output, bool reflect) {
+    }
+
+    void NoConfigurations::reflectY(Output * output, bool reflect) {
+    }
 
 }
 

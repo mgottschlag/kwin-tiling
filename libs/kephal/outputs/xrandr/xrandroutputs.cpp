@@ -98,6 +98,9 @@ namespace kephal {
         connect(this, SIGNAL(outputDeactivated(kephal::Output *)), parent, SIGNAL(outputDeactivated(kephal::Output *)));
         connect(this, SIGNAL(outputResized(kephal::Output *, QSize, QSize)), parent, SIGNAL(outputResized(kephal::Output *, QSize, QSize)));
         connect(this, SIGNAL(outputMoved(kephal::Output *, QPoint, QPoint)), parent, SIGNAL(outputMoved(kephal::Output *, QPoint, QPoint)));
+        connect(this, SIGNAL(outputRateChanged(kephal::Output *, float, float)), parent, SIGNAL(outputRateChanged(kephal::Output *, float, float)));
+        connect(this, SIGNAL(outputRotated(kephal::Output *, kephal::Rotation, kephal::Rotation)), parent, SIGNAL(outputRotated(kephal::Output *, kephal::Rotation, kephal::Rotation)));
+        connect(this, SIGNAL(outputReflected(kephal::Output *, bool, bool, bool, bool)), parent, SIGNAL(outputReflected(kephal::Output *, bool, bool, bool, bool)));
         
         connect(output(), SIGNAL(outputChanged(RROutput, int)), parent, SLOT(outputChanged(RROutput, int)));
         //connect(this, SLOT(_activate()), output(), SLOT(slotEnable()));
@@ -197,6 +200,10 @@ namespace kephal {
         }
         
         QRect previousGeom = m_previousGeom;
+        Rotation previousRotation = m_previousRotation;
+        float previousRate = m_previousRate;
+        bool previousReflectX = m_previousReflectX;
+        bool previousReflectY = m_previousReflectY;
         saveAsPrevious();
         if (size() != previousGeom.size()) {
             emit outputResized(this, previousGeom.size(), size());
@@ -204,28 +211,71 @@ namespace kephal {
         if (position() != previousGeom.topLeft()) {
             emit outputMoved(this, previousGeom.topLeft(), position());
         }
+        if (rotation() != previousRotation) {
+            emit outputRotated(this, previousRotation, rotation());
+        }
+        if (rate() != previousRate) {
+            emit outputRateChanged(this, previousRate, rate());
+        }
+        if ((reflectX() != previousReflectX) || (reflectY() != previousReflectY)) {
+            emit outputReflected(this, previousReflectX, previousReflectY, reflectX(), reflectY());
+        }
     }
     
     void XRandROutput::saveAsPrevious() {
         m_previousConnected = isConnected();
         m_previousActivated = isActivated();
         m_previousGeom = geom();
+        m_previousRotation = rotation();
+        m_previousRate = rate();
+        m_previousReflectX = reflectX();
+        m_previousReflectY = reflectY();
     }
     
-    bool XRandROutput::applyGeom(const QRect & geom) {
+    bool XRandROutput::applyGeom(const QRect & geom, float rate) {
         output()->proposeRect(geom);
-        /*float rate = output()->refreshRate();
+        if (rate < 1) {
+            rate = output()->refreshRate();
+        }
+        bool found = false;
         QList<float> rates = output()->refreshRates(geom.size());
-        if (! rates.contains(rate)) {
-            output()->proposeRefreshRate(rates[0]);
-        }*/
+        foreach (float r, rates) {
+            if (qFuzzyCompare(rate, r)) {
+                rate = r;
+                found = true;
+                break;
+            }
+        }
+        if ((! found) && (! rates.empty())) {
+            rate = rates[0];
+        }
+        if (rate > 1) {
+            output()->proposeRefreshRate(rate);
+        }
+        
         return output()->applyProposed();
     }
     
-    /*void XRandROutput::_revert() {
-        output()->proposeOriginal();
-        output()->applyProposed();
-    }*/
+    bool XRandROutput::applyOrientation(Rotation rotation, bool reflectX, bool reflectY) {
+        Q_UNUSED(reflectX)
+        Q_UNUSED(reflectY)
+
+        switch (rotation) {
+            case RotateRight:
+                output()->proposeRotation(RandR::Rotate90);
+                break;
+            case RotateLeft:
+                output()->proposeRotation(RandR::Rotate270);
+                break;
+            case RotateInverted:
+                output()->proposeRotation(RandR::Rotate180);
+                break;
+            default:
+                output()->proposeRotation(RandR::Rotate0);
+        }
+
+        return output()->applyProposed();
+    }
     
     void XRandROutput::deactivate() {
         output()->slotDisable();
@@ -252,9 +302,6 @@ namespace kephal {
     
     QList<QSize> XRandROutput::availableSizes() {
         QList<QSize> sizes = output()->sizes();
-        /*foreach (QSize size, sizes) {
-            qDebug() << "available size:" << id() << size;
-        }*/
         return sizes;
     }
     
@@ -286,5 +333,34 @@ namespace kephal {
         return m_rrId;
     }
     
+    Rotation XRandROutput::rotation() {
+        switch (output()->rotation()) {
+            case RandR::Rotate90:
+                return RotateRight;
+            case RandR::Rotate180:
+                return RotateInverted;
+            case RandR::Rotate270:
+                return RotateLeft;
+            default:
+                return RotateNormal;
+        }
+    }
+
+    bool XRandROutput::reflectX() {
+        return false;
+    }
+
+    bool XRandROutput::reflectY() {
+        return false;
+    }
+
+    float XRandROutput::rate() {
+        return output()->refreshRate();
+    }
+
+    QList<float> XRandROutput::availableRates() {
+        return output()->refreshRates(size());
+    }
+
 }
 

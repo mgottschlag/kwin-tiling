@@ -26,6 +26,8 @@
 #include <QPoint>
 #include <QRect>
 
+#include "kephal.h"
+
 
 namespace kephal {
 
@@ -219,6 +221,11 @@ namespace kephal {
              * This will relayout all Outputs.
              */
             virtual void resize(Output * output, const QSize & size) = 0;
+            
+            virtual void rotate(Output * output, Rotation rotation) = 0;
+            virtual void reflectX(Output * output, bool reflect) = 0;
+            virtual void reflectY(Output * output, bool reflect) = 0;
+            virtual void changeRate(Output * output, float rate) = 0;
             
             /**
              * Find a Configuration by its name.

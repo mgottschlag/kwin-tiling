@@ -113,6 +113,22 @@ namespace kephal {
     
     
     template <class ElementType>
+    XMLDoubleNodeHandler<ElementType>::XMLDoubleNodeHandler(Getter getter, Setter setter) : XMLSimpleNodeHandler<ElementType, double>(getter, setter) {
+    }
+    
+    template <class ElementType>
+    double XMLDoubleNodeHandler<ElementType>::toValue(QString str) {
+        return str.toDouble();
+    }
+    
+    template <class ElementType>
+    QString XMLDoubleNodeHandler<ElementType>::toString(double i) {
+        return QString::number(i);
+    }
+    
+    
+    
+    template <class ElementType>
     XMLBoolNodeHandler<ElementType>::XMLBoolNodeHandler(Getter getter, Setter setter) : XMLSimpleNodeHandler<ElementType, bool>(getter, setter) {
     }
     

@@ -115,6 +115,40 @@ namespace kephal {
             virtual QSize preferredSize() = 0;
             
             /**
+             * Returns the current rotation of
+             * this Output.
+             */
+            virtual Rotation rotation() = 0;
+            
+            /**
+             * Returns wether this Output is
+             * currently reflected over the
+             * x-axis.
+             */
+            virtual bool reflectX() = 0;
+            
+            /**
+             * Returns wether this Output is
+             * currently reflected over the
+             * y-axis.
+             */
+            virtual bool reflectY() = 0;
+            
+            /**
+             * Returns the current refresh-rate
+             * of this Output.
+             */
+            virtual float rate() = 0;
+            
+            /**
+             * Returns all possible refresh-rates
+             * of this Output.
+             * This depends on the connected
+             * monitor.
+             */
+            virtual QList<float> availableRates() = 0;
+            
+            /**
              * This is just a convenience
              * method for looking up the 
              * Screen this Output belongs to.
@@ -153,6 +187,32 @@ namespace kephal {
              * to move this Output.
              */
             void move(const QPoint & position);
+            
+            /**
+             * This will set this Ouputs rotation
+             * to the given value.
+             */
+            void rotate(Rotation rotation);
+            
+            /**
+             * This will set this Output to be
+             * reflected over the x-axis if reflect
+             * is true.
+             */
+            void reflectX(bool reflect);
+            
+            /**
+             * This will set this Output to be
+             * reflected over the y-axis if reflect
+             * is true.
+             */
+            void reflectY(bool reflect);
+            
+            /**
+             * This will change this Outputs
+             * refresh-rate to rate.
+             */
+            void changeRate(double rate);
     };
     
 
@@ -224,6 +284,24 @@ namespace kephal {
              * oldPosition to newPosition.
              */
             void outputMoved(kephal::Output * o, QPoint oldPosition, QPoint newPosition);
+            
+            /**
+             * This signal is emitted when the refresh-rate
+             * of Output o changes.
+             */
+            void outputRateChanged(kephal::Output * o, float oldRate, float newRate);
+            
+            /**
+             * This signal is emitted when the rotation of
+             * Output o changes.
+             */
+            void outputRotated(kephal::Output * o, kephal::Rotation oldRotation, kephal::Rotation newRotation);
+            
+            /**
+             * This signal is emitted when the reflection
+             * state of Output o is changed.
+             */
+            void outputReflected(kephal::Output * o, bool oldX, bool oldY, bool newX, bool newY);
             
         protected:
             static Outputs * m_instance;

@@ -138,6 +138,22 @@ namespace kephal {
         m_interface->resize(output->id(), size);
     }
     
+    void DBusConfigurations::rotate(Output * output, Rotation rotation) {
+        m_interface->rotate(output->id(), rotation);
+    }
+
+    void DBusConfigurations::reflectX(Output * output, bool reflect) {
+        m_interface->reflectX(output->id(), reflect);
+    }
+
+    void DBusConfigurations::reflectY(Output * output, bool reflect) {
+        m_interface->reflectY(output->id(), reflect);
+    }
+
+    void DBusConfigurations::changeRate(Output * output, float rate) {
+        m_interface->changeRate(output->id(), rate);
+    }
+
     bool DBusConfigurations::isValid() {
         return m_valid;
     }

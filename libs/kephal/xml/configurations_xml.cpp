@@ -74,6 +74,10 @@ namespace kephal {
                 UINT_ELEMENT("serial", OutputXML, serial, setSerial);
                 INT_ELEMENT("width", OutputXML, width, setWidth);
                 INT_ELEMENT("height", OutputXML, height, setHeight);
+                INT_ELEMENT("rotation", OutputXML, rotation, setRotation);
+                BOOL_ELEMENT("reflect-x", OutputXML, reflectX, setReflectX);
+                BOOL_ELEMENT("reflect-y", OutputXML, reflectY, setReflectY);
+                DOUBLE_ELEMENT("refresh-rate", OutputXML, rate, setRate);
             }
     };
     

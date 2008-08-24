@@ -45,8 +45,14 @@ namespace kephal {
             QString vendor();
             int productId();
             unsigned int serialNumber();
+            Rotation rotation();
+            bool reflectX();
+            bool reflectY();
+            float rate();
+            QList<float> availableRates();
             
-            bool applyGeom(const QRect & rect);
+            bool applyGeom(const QRect & rect, float rate);
+            bool applyOrientation(Rotation rotation, bool reflectX, bool reflectY);
             
             //void _revert();
             void deactivate();
@@ -61,6 +67,9 @@ namespace kephal {
             void outputDeactivated(kephal::Output * o);
             void outputResized(kephal::Output * o, QSize oldSize, QSize newSize);
             void outputMoved(kephal::Output * o, QPoint oldPosition, QPoint newPosition);
+            void outputRateChanged(kephal::Output * o, float oldRate, float newRate);
+            void outputRotated(kephal::Output * o, kephal::Rotation oldRotation, kephal::Rotation newRotation);
+            void outputReflected(kephal::Output * o, bool oldX, bool oldY, bool newX, bool newY);
             
         private:
             RandROutput * output();
@@ -75,6 +84,10 @@ namespace kephal {
             QRect m_previousGeom;
             bool m_previousConnected;
             bool m_previousActivated;
+            Rotation m_previousRotation;
+            float m_previousRate;
+            bool m_previousReflectX;
+            bool m_previousReflectY;
     };
     
 

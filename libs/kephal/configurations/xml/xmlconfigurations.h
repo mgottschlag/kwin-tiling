@@ -73,6 +73,10 @@ namespace kephal {
             QList<QPoint> possiblePositions(Output * output);
             void move(Output * output, const QPoint & position);
             void resize(Output * output, const QSize & size);
+            void rotate(Output * output, Rotation rotation);
+            void changeRate(Output * output, float rate);
+            void reflectX(Output * output, bool reflect);
+            void reflectY(Output * output, bool reflect);
             int screen(Output * output);
             void applyOutputSettings();
             
@@ -100,6 +104,7 @@ namespace kephal {
             bool activateLayout(const QMap<int, QRect> & layout, const QMap<Output *, int> & outputScreens, const QMap<Output *, QSize> & outputSizes);
             QMap<Output *, int> currentOutputScreens();
             void matchOutputScreens(const QMap<int, QPoint> & layout);
+            OutputXML * outputXml(const QString & id);
             
             QMap<QString, XMLConfiguration *> m_configurations;
             XMLConfiguration * m_activeConfiguration;

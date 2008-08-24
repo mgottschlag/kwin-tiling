@@ -47,6 +47,10 @@ class DBusAPIConfigurations : public QObject
         QPoint availablePosition(QString output, int index);
         void move(QString output, QPoint position);
         void resize(QString output, QSize size);
+        void rotate(QString output, int rotation);
+        void changeRate(QString output, qreal rate);
+        void reflectX(QString output, bool reflect);
+        void reflectY(QString output, bool reflect);
         int screen(QString output);
         
         bool isModifiable(QString config);

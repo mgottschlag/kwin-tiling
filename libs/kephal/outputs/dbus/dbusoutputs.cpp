@@ -59,17 +59,18 @@ namespace kephal {
                     pos,
                     connected,
                     activated);
-                    
-            int numSizes = m_interface->numAvailableSizes(id);
-            QList<QSize> sizes;
-            for (int i = 0; i < numSizes; ++i) {
-                QSize size = m_interface->availableSize(id, i);
-                //qDebug() << "size from dbus:" << size;
-                sizes.append(size);
-            }
-            output->_setAvailableSizes(sizes);
             
             m_outputs << output;
+                    
+            if (connected) {
+                output->_setRate(m_interface->rate(id));
+                int rotation = m_interface->rotation(id);
+                output->_setRotation((Rotation) rotation);
+                output->_setReflectX(m_interface->reflectX(id));
+                output->_setReflectY(m_interface->reflectY(id));
+                
+                outputConnectedSlot(id);
+            }
         }
         
         connect(m_interface, SIGNAL(outputConnected(QString)), this, SLOT(outputConnectedSlot(QString)));
@@ -78,6 +79,9 @@ namespace kephal {
         connect(m_interface, SIGNAL(outputDeactivated(QString)), this, SLOT(outputDeactivatedSlot(QString)));
         connect(m_interface, SIGNAL(outputResized(QString)), this, SLOT(outputResizedSlot(QString)));
         connect(m_interface, SIGNAL(outputMoved(QString)), this, SLOT(outputMovedSlot(QString)));
+        connect(m_interface, SIGNAL(outputRotated(QString)), this, SLOT(outputRotatedSlot(QString)));
+        connect(m_interface, SIGNAL(outputRateChanged(QString)), this, SLOT(outputRateChangedSlot(QString)));
+        connect(m_interface, SIGNAL(outputReflected(QString)), this, SLOT(outputReflectedSlot(QString)));
     }
     
     QList<Output *> DBusOutputs::outputs()
@@ -101,6 +105,21 @@ namespace kephal {
         SimpleOutput * o = (SimpleOutput *) output(id);
         if (o) {
             o->_setConnected(true);
+            
+            int numSizes = m_interface->numAvailableSizes(id);
+            QList<QSize> sizes;
+            for (int i = 0; i < numSizes; ++i) {
+                sizes << m_interface->availableSize(id, i);
+            }
+            o->_setAvailableSizes(sizes);
+            
+            int numRates = m_interface->numAvailableRates(id);
+            QList<float> rates;
+            for (int i = 0; i < numRates; ++i) {
+                rates << m_interface->availableRate(id, i);
+            }
+            o->_setAvailableRates(rates);
+
             emit outputConnected(o);
         }
     }
@@ -144,6 +163,36 @@ namespace kephal {
             QPoint prev = o->position();
             o->_setPosition(m_interface->position(id));
             emit outputMoved(o, prev, o->position());
+        }
+    }
+
+    void DBusOutputs::outputRotatedSlot(QString id) {
+        SimpleOutput * o = (SimpleOutput *) output(id);
+        if (o) {
+            Rotation prev = o->rotation();
+            int rotation = m_interface->rotation(id);
+            o->_setRotation((Rotation) rotation);
+            emit outputRotated(o, prev, o->rotation());
+        }
+    }
+
+    void DBusOutputs::outputRateChangedSlot(QString id) {
+        SimpleOutput * o = (SimpleOutput *) output(id);
+        if (o) {
+            float prev = o->rate();
+            o->_setRate(m_interface->rate(id));
+            emit outputRateChanged(o, prev, o->rate());
+        }
+    }
+
+    void DBusOutputs::outputReflectedSlot(QString id) {
+        SimpleOutput * o = (SimpleOutput *) output(id);
+        if (o) {
+            bool prevX = o->reflectX();
+            bool prevY = o->reflectY();
+            o->_setReflectX(m_interface->reflectX(id));
+            o->_setReflectY(m_interface->reflectY(id));
+            emit outputReflected(o, prevX, prevY, o->reflectX(), o->reflectY());
         }
     }
 

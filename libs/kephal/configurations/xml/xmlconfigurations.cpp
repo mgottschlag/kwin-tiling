@@ -596,14 +596,11 @@ namespace kephal {
         
         QMap<int, QRect> layout = m_activeConfiguration->realLayout(simpleLayout, outputScreens, outputSizes);
         if (activateLayout(layout, outputScreens, outputSizes)) {
-            foreach (OutputXML * o, * (m_currentOutputs->outputs())) {
-                if (o->name() == output->id()) {
-                    o->setWidth(size.width());
-                    o->setHeight(size.height());
-                    
-                    saveXml();
-                    break;
-                }
+            OutputXML * o = outputXml(output->id());
+            if (o) {
+                o->setWidth(size.width());
+                o->setHeight(size.height());
+                saveXml();
             }
         }
     }
@@ -1140,9 +1137,17 @@ namespace kephal {
                 bool failed = false;
                 output->mark();
                 
+                Rotation rotation = (Rotation) o->rotation();
+                bool reflectX = o->reflectX();
+                bool reflectY = o->reflectY();
+                if (! output->applyOrientation(rotation, reflectX, reflectY)) {
+                    failed = true;
+                }
+                
                 QSize size(o->width(), o->height());
+                double rate = o->rate();
                 if ((! failed) && (! size.isEmpty()) && (size != output->size())) {
-                    if (! output->applyGeom(QRect(output->position(), size))) {
+                    if (! output->applyGeom(QRect(output->position(), size), rate)) {
                         failed = true;
                     }
                 }
@@ -1150,6 +1155,74 @@ namespace kephal {
                 if (failed) {
                     output->revert();
                 }
+            }
+        }
+    }
+    
+    OutputXML * XMLConfigurations::outputXml(const QString & id) {
+        foreach (OutputXML * o, * (m_currentOutputs->outputs())) {
+            if (o->name() == id) {
+                return o;
+            }
+        }
+    }
+
+    void XMLConfigurations::rotate(Output * output, Rotation rotation) {
+        /*BackendOutput * o = BackendOutputs::instance()->backendOutput(output->id);
+        if (o) {
+            if (o->applyOrientation(rotation, o->reflectX(), o->reflectY())) {
+                OutputXML * xml = outputXml(o->id());
+                if (xml) {
+                    xml->setRotation(rotation);
+                    saveXml();
+                }
+            } else {
+                qDebug() << "setting rotation to" << rotation << "for" << o->id() << "failed";
+            }
+        }*/
+    }
+
+    void XMLConfigurations::reflectX(Output * output, bool reflect) {
+        BackendOutput * o = BackendOutputs::instance()->backendOutput(output->id());
+        if (o) {
+            if (o->applyOrientation(o->rotation(), reflect, o->reflectY())) {
+                OutputXML * xml = outputXml(o->id());
+                if (xml) {
+                    xml->setReflectX(reflect);
+                    saveXml();
+                }
+            } else {
+                qDebug() << "setting reflect-x to" << reflect << "for" << o->id() << "failed";
+            }
+        }
+    }
+
+    void XMLConfigurations::reflectY(Output * output, bool reflect) {
+        BackendOutput * o = BackendOutputs::instance()->backendOutput(output->id());
+        if (o) {
+            if (o->applyOrientation(o->rotation(), o->reflectX(), reflect)) {
+                OutputXML * xml = outputXml(o->id());
+                if (xml) {
+                    xml->setReflectY(reflect);
+                    saveXml();
+                }
+            } else {
+                qDebug() << "setting reflect-y to" << reflect << "for" << o->id() << "failed";
+            }
+        }
+    }
+
+    void XMLConfigurations::changeRate(Output * output, float rate) {
+        BackendOutput * o = BackendOutputs::instance()->backendOutput(output->id());
+        if (o) {
+            if (o->applyGeom(o->geom(), rate)) {
+                OutputXML * xml = outputXml(o->id());
+                if (xml) {
+                    xml->setRate(rate);
+                    saveXml();
+                }
+            } else {
+                qDebug() << "setting rate to" << rate << "for" << o->id() << "failed";
             }
         }
     }

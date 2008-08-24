@@ -28,6 +28,8 @@
 #include <QSize>
 #include <QPoint>
 
+#include "kephal.h"
+
 
 namespace kephal {
     class Output;
@@ -45,10 +47,16 @@ class DBusAPIOutputs : public QObject
         QStringList outputIds();
         QSize size(QString id);
         int numAvailableSizes(QString id);
-        QSize availableSize(QString id, int i);
+        QSize availableSize(QString id, int index);
         QPoint position(QString id);
         bool isConnected(QString id);
         bool isActivated(QString id);
+        int rotation(QString id);
+        qreal rate(QString id);
+        bool reflectX(QString id);
+        bool reflectY(QString id);
+        int numAvailableRates(QString id);
+        qreal availableRate(QString id, int index);
         
     Q_SIGNALS:
         void outputConnected(QString id);
@@ -57,6 +65,9 @@ class DBusAPIOutputs : public QObject
         void outputDeactivated(QString id);
         void outputResized(QString id);
         void outputMoved(QString id);
+        void outputRateChanged(QString id);
+        void outputRotated(QString id);
+        void outputReflected(QString id);
         
     private Q_SLOTS:
         void outputConnectedSlot(kephal::Output * o);
@@ -65,6 +76,13 @@ class DBusAPIOutputs : public QObject
         void outputDeactivatedSlot(kephal::Output * o);
         void outputResizedSlot(kephal::Output * o, QSize oldSize, QSize newSize);
         void outputMovedSlot(kephal::Output * o, QPoint oldPosition, QPoint newPosition);
+        void outputRateChangedSlot(kephal::Output * o, float oldRate, float newRate);
+        void outputRotatedSlot(kephal::Output * o, kephal::Rotation oldRotation, kephal::Rotation newRotation);
+        void outputReflectedSlot(kephal::Output * o, bool oldX, bool oldY, bool newX, bool newY);
+        
+    private:
+        QMap<QString, QList<QSize> > m_sizes;
+        QMap<QString, QList<float> > m_rates;
 };
 
 

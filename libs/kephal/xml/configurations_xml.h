@@ -83,10 +83,17 @@ namespace kephal {
         PROPERTY(unsigned int, serial, setSerial)
         PROPERTY(int, width, setWidth)
         PROPERTY(int, height, setHeight)
+        PROPERTY(int, rotation, setRotation)
+        PROPERTY(bool, reflectX, setReflectX)
+        PROPERTY(bool, reflectY, setReflectY)
+        PROPERTY(double, rate, setRate)
 
         PROPERTY(QString, actualOutput, setActualOutput)
         public:
-            OutputXML() : m_screen(-1), m_product(-1), m_serial(0), m_width(-1), m_height(-1) { }
+            OutputXML() : m_screen(-1), m_product(-1), m_serial(0),
+                m_width(-1), m_height(-1), m_rotation(0),
+                m_reflectX(false), m_reflectY(false), m_rate(0)
+                { }
             /*QString name() { return m_name; }
             void setName(QString name) { m_name = name; }*/
             

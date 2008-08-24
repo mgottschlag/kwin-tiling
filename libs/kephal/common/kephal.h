@@ -37,7 +37,11 @@ namespace kephal {
         BottomOf,
         SameAs
     };
-    
+
+    enum Rotation {
+        RotateNormal = 0, RotateRight = 90, RotateInverted = 180, RotateLeft = 270
+    };
+
 }
 
 #define PROPERTY(type, name, setter) \

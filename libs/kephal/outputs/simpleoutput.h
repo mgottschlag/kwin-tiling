@@ -50,17 +50,27 @@ namespace kephal {
             bool isConnected();
             bool isActivated();
             
-            void _setId(QString id);
-            void _setSize(QSize size);
-            void _setPreferredSize(QSize size);
-            void _setAvailableSizes(QList<QSize> sizes);
-            void _setPosition(QPoint position);
+            Rotation rotation();
+            bool reflectX();
+            bool reflectY();
+            float rate();
+            QList<float> availableRates();
+
+            void _setId(const QString & id);
+            void _setSize(const QSize & size);
+            void _setPreferredSize(const QSize & size);
+            void _setAvailableSizes(const QList<QSize> & sizes);
+            void _setPosition(const QPoint & position);
             void _setActivated(bool activated);
             void _setConnected(bool connected);
-            void _setAnchors(QMap<Position, Output *> anchors);
-            void _setVendor(QString vendor);
+            void _setVendor(const QString &  vendor);
             void _setProductId(int productId);
             void _setSerialNumber(unsigned int serialNumber);
+            void _setRotation(Rotation rotation);
+            void _setReflectX(bool reflect);
+            void _setReflectY(bool reflect);
+            void _setRate(float rate);
+            void _setAvailableRates(const QList<float> & rates);
             
         private:
             QString m_id;
@@ -70,10 +80,14 @@ namespace kephal {
             QPoint m_position;
             bool m_activated;
             bool m_connected;
-            QMap<Position, Output *> m_anchors;
             QString m_vendor;
             int m_productId;
             unsigned int m_serialNumber;
+            Rotation m_rotation;
+            bool m_reflectX;
+            bool m_reflectY;
+            float m_rate;
+            QList<float> m_rates;
     };
     
 }

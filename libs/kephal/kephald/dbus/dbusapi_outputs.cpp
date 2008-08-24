@@ -45,6 +45,9 @@ DBusAPIOutputs::DBusAPIOutputs(QObject * parent)
     connect(Outputs::instance(), SIGNAL(outputDeactivated(kephal::Output *)), this, SLOT(outputDeactivatedSlot(kephal::Output *)));
     connect(Outputs::instance(), SIGNAL(outputResized(kephal::Output *, QSize, QSize)), this, SLOT(outputResizedSlot(kephal::Output *, QSize, QSize)));
     connect(Outputs::instance(), SIGNAL(outputMoved(kephal::Output *, QPoint, QPoint)), this, SLOT(outputMovedSlot(kephal::Output *, QPoint, QPoint)));
+    connect(Outputs::instance(), SIGNAL(outputRotated(kephal::Output *, kephal::Rotation, kephal::Rotation)), this, SLOT(outputRotatedSlot(kephal::Output *, kephal::Rotation, kephal::Rotation)));
+    connect(Outputs::instance(), SIGNAL(outputRateChanged(kephal::Output *, float, float)), this, SLOT(outputRateChangedSlot(kephal::Output *, float, float)));
+    connect(Outputs::instance(), SIGNAL(outputReflected(kephal::Output *, bool, bool, bool, bool)), this, SLOT(outputReflectedSlot(kephal::Output *, bool, bool, bool, bool)));
 }
 
 QSize DBusAPIOutputs::size(QString id)
@@ -60,18 +63,21 @@ int DBusAPIOutputs::numAvailableSizes(QString id)
 {
     Output * output = Outputs::instance()->output(id);
     if (output && output->isActivated()) {
-        return output->availableSizes().size();
+        m_sizes.insert(id, output->availableSizes());
+        return m_sizes[id].size();
     }
     return 0;
 }
 
 QSize DBusAPIOutputs::availableSize(QString id, int i)
 {
-    Output * output = Outputs::instance()->output(id);
-    if (output && output->isActivated()) {
-        return output->availableSizes()[i];
+    if (! m_sizes.contains(id)) {
+        numAvailableSizes(id);
     }
-    return QSize();
+    if (m_sizes.contains(id) && (m_sizes[id].size() > i)) {
+        return m_sizes[id][i];
+    }
+    return QSize(-1, -1);
 }
 
 QPoint DBusAPIOutputs::position(QString id)
@@ -113,6 +119,59 @@ bool DBusAPIOutputs::isActivated(QString id)
     return false;
 }
 
+int DBusAPIOutputs::numAvailableRates(QString id)
+{
+    Output * output = Outputs::instance()->output(id);
+    if (output && output->isActivated()) {
+        m_rates.insert(id, output->availableRates());
+        return m_rates[id].size();
+    }
+    return 0;
+}
+
+qreal DBusAPIOutputs::availableRate(QString id, int i)
+{
+    if (! m_rates.contains(id)) {
+        numAvailableRates(id);
+    }
+    if (m_rates.contains(id) && (m_rates[id].size() > i)) {
+        return m_rates[id][i];
+    }
+    return 0;
+}
+
+int DBusAPIOutputs::rotation(QString id) {
+    Output * output = Outputs::instance()->output(id);
+    if (output && output->isActivated()) {
+        return output->rotation();
+    }
+    return RotateNormal;
+}
+
+qreal DBusAPIOutputs::rate(QString id) {
+    Output * output = Outputs::instance()->output(id);
+    if (output && output->isActivated()) {
+        return output->rate();
+    }
+    return 0;
+}
+
+bool DBusAPIOutputs::reflectX(QString id) {
+    Output * output = Outputs::instance()->output(id);
+    if (output && output->isActivated()) {
+        return output->reflectX();
+    }
+    return false;
+}
+
+bool DBusAPIOutputs::reflectY(QString id) {
+    Output * output = Outputs::instance()->output(id);
+    if (output && output->isActivated()) {
+        return output->reflectY();
+    }
+    return false;
+}
+
 void DBusAPIOutputs::outputConnectedSlot(kephal::Output * o) {
     emit outputConnected(o->id());
 }
@@ -141,6 +200,25 @@ void DBusAPIOutputs::outputMovedSlot(kephal::Output * o, QPoint oldPosition, QPo
     emit outputMoved(o->id());
 }
 
+void DBusAPIOutputs::outputRateChangedSlot(kephal::Output * o, float oldRate, float newRate) {
+    Q_UNUSED(oldRate)
+    Q_UNUSED(newRate)
+    emit outputRateChanged(o->id());
+}
+
+void DBusAPIOutputs::outputRotatedSlot(kephal::Output * o, Rotation oldRotation, Rotation newRotation) {
+    Q_UNUSED(oldRotation)
+    Q_UNUSED(newRotation)
+    emit outputRotated(o->id());
+}
+
+void DBusAPIOutputs::outputReflectedSlot(kephal::Output * o, bool oldX, bool oldY, bool newX, bool newY) {
+    Q_UNUSED(oldX)
+    Q_UNUSED(oldY)
+    Q_UNUSED(newX)
+    Q_UNUSED(newY)
+    emit outputReflected(o->id());
+}
 
 /*Output * DBusAPIOutputs::output(QString id) {
     QList<Output *> outputs = Outputs::instance()->outputs();

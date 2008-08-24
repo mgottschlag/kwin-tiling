@@ -46,6 +46,9 @@ namespace kephal {
             void outputDeactivatedSlot(QString id);
             void outputResizedSlot(QString id);
             void outputMovedSlot(QString id);
+            void outputRotatedSlot(QString id);
+            void outputRateChangedSlot(QString id);
+            void outputReflectedSlot(QString id);
         
         private:
             QList<SimpleOutput *> m_outputs;

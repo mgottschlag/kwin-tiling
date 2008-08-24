@@ -32,14 +32,20 @@ namespace kephal {
             BackendOutput(QObject * parent);
             
         public Q_SLOTS:
-            virtual bool applyGeom(const QRect & geom) = 0;
+            virtual bool applyGeom(const QRect & geom, float rate) = 0;
+            virtual bool applyOrientation(Rotation rotation, bool reflectX, bool reflectY) = 0;
             virtual void deactivate() = 0;
+            
             virtual void revert();
             virtual void mark();
             
         private:
             bool m_markedActive;
             QRect m_markedGeom;
+            double m_markedRate;
+            Rotation m_markedRotation;
+            bool m_markedReflectX;
+            bool m_markedReflectY;
     };
     
     class BackendOutputs : public Outputs {

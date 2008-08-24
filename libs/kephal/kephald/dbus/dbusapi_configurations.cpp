@@ -98,10 +98,37 @@ void DBusAPIConfigurations::move(QString output, QPoint position) {
 }
 
 void DBusAPIConfigurations::resize(QString output, QSize size) {
-    qDebug() << "DBusAPIConfigurations::resize() called" << output << size;
     Output * o = Outputs::instance()->output(output);
     if (o) {
         Configurations::instance()->resize(o, size);
+    }
+}
+
+void DBusAPIConfigurations::rotate(QString output, int rotation) {
+    Output * o = Outputs::instance()->output(output);
+    if (o) {
+        Configurations::instance()->rotate(o, (Rotation) rotation);
+    }
+}
+
+void DBusAPIConfigurations::changeRate(QString output, qreal rate) {
+    Output * o = Outputs::instance()->output(output);
+    if (o) {
+        Configurations::instance()->changeRate(o, rate);
+    }
+}
+
+void DBusAPIConfigurations::reflectX(QString output, bool reflect) {
+    Output * o = Outputs::instance()->output(output);
+    if (o) {
+        Configurations::instance()->reflectX(o, reflect);
+    }
+}
+
+void DBusAPIConfigurations::reflectY(QString output, bool reflect) {
+    Output * o = Outputs::instance()->output(output);
+    if (o) {
+        Configurations::instance()->reflectY(o, reflect);
     }
 }
 
