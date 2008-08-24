@@ -596,7 +596,7 @@ void Pager::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         update();
         event->accept();
         return;
-    } else if (m_dragId && m_dragStartDesktop != -1 &&
+    } else if (m_dragStartDesktop != -1 &&
                (event->pos() - m_dragOriginalPos).toPoint().manhattanLength() > KGlobalSettings::dndEventDelay()) {
         m_dragId = 0; // prevent us from going through this more than once
         for (int k = m_windowRects[m_dragStartDesktop].count() - 1; k >= 0 ; k--) {
