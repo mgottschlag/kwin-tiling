@@ -30,9 +30,12 @@ plugins:
 
 shells, applications that provide plasma viewing environments:
     desktop: A traditional desktop experience with panels and full screen backgrounds
+    mid: A simplified shell designed for Mobile Internet Devices (MIDs) featuring full
+         screen launcher and navigation
+    plasmoidviewer: A viewer for individual plasma applets
+    screensaver: A Plasma overlay for screensavers that works in concert with krunner_lock
 
 tools:
     engineexplorer: A small graphical utility to examine engines
     plasmapkg: Installs, removes and lists plasma packages
-    plasmoidviewer: A viewer for individual plasma applets
 
