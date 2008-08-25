@@ -27,7 +27,7 @@
 #include "plasmaapp.h"
 
 static const char description[] = I18N_NOOP( "The KDE desktop, panels and widgets workspace application." );
-static const char version[] = "0.1";
+static const char version[] = "0.3";
 
 extern "C"
 #ifdef Q_WS_WIN
