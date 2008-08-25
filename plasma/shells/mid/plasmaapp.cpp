@@ -207,8 +207,11 @@ void PlasmaApp::cleanup()
         m_corona->saveLayout();
     }
 
-    delete m_mainView;
+    delete m_window;
+    m_window = 0;
+
     delete m_corona;
+    m_corona = 0;
 
     //TODO: This manual sync() should not be necessary?
     syncConfig();
@@ -278,18 +281,11 @@ void PlasmaApp::reserveStruts()
         strut.top_end = m_window->x() + m_window->width() - 1;
     }
 
-    KWindowSystem::setExtendedStrut(m_window->winId(), strut.left_width,
-                                                       strut.left_start,
-                                                       strut.left_end,
-                                                       strut.right_width,
-                                                       strut.right_start,
-                                                       strut.right_end,
-                                                       strut.top_width,
-                                                       strut.top_start,
-                                                       strut.top_end,
-                                                       strut.bottom_width,
-                                                       strut.bottom_start,
-                                                       strut.bottom_end);
+    KWindowSystem::setExtendedStrut(m_window->winId(),
+                                    strut.left_width, strut.left_start, strut.left_end,
+                                    strut.right_width, strut.right_start, strut.right_end,
+                                    strut.top_width, strut.top_start, strut.top_end,
+                                    strut.bottom_width, strut.bottom_start, strut.bottom_end);
 }
 
 Plasma::Corona* PlasmaApp::corona()
@@ -333,15 +329,8 @@ void PlasmaApp::notifyStartup(bool completed)
 
 void PlasmaApp::createView(Plasma::Containment *containment)
 {
-    kDebug() << "Containment name:" << containment->name()
-             << "| type" << containment->containmentType()
-             <<  "| screen:" << containment->screen()
-             << "| geometry:" << containment->geometry()
-             << "| zValue:" << containment->zValue()
-             << "| id:" << containment->id() << "==" << MidView::defaultId();
-
     if (m_mainView && containment->id() == MidView::defaultId()) {
-        kDebug() << "setting mainview to the containment!";
+        kDebug() << "setting the mainview containment!";
         m_mainView->setContainment(containment);
     }
 }
