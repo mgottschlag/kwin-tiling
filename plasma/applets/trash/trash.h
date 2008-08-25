@@ -30,6 +30,7 @@
 
 #include <plasma/applet.h>
 
+class KCModuleProxy;
 class KPropertiesDialog;
 class KFilePlacesModel;
 class QAction;
@@ -56,6 +57,7 @@ class Trash : public Plasma::Applet
 
     protected:
         void dropEvent(QGraphicsSceneDragDropEvent *event);
+        void createConfigurationInterface(KConfigDialog *parent);
         void createMenu();
         void updateIcon();
 
@@ -64,6 +66,7 @@ class Trash : public Plasma::Applet
         void slotClear();
         void slotCompleted();
         void slotDeleteItem(const KFileItem &);
+        void slotApplyConfig();
 
     private:
         Plasma::Icon* m_icon;
@@ -74,6 +77,7 @@ class Trash : public Plasma::Applet
         int m_count;
         bool m_showText;
         KFilePlacesModel *m_places;
+        KCModuleProxy *m_proxy;
 };
 
 K_EXPORT_PLASMA_APPLET(trash, Trash)

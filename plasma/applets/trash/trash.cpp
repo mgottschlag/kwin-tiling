@@ -27,6 +27,8 @@
 
 //KDE
 #include <KGlobalSettings>
+#include <KCModuleProxy>
+#include <KConfigDialog>
 #include <KDebug>
 #include <KLocale>
 #include <KIconLoader>
@@ -63,6 +65,7 @@ Trash::Trash(QObject *parent, const QVariantList &args)
       m_count(0),
       m_places(0)
 {
+    setHasConfigurationInterface(true);
     setAspectRatioMode(Plasma::ConstrainedSquare);
     setBackgroundHints(NoBackground);
 
@@ -100,6 +103,17 @@ void Trash::init()
     m_dirLister->openUrl(KUrl("trash:/"));
 
     connect(m_icon, SIGNAL(activated()), this, SLOT(slotOpen()));
+}
+
+void Trash::createConfigurationInterface(KConfigDialog *parent)
+{
+    m_proxy = new KCModuleProxy("kcmtrash");
+
+    parent->setButtons(KDialog::Ok | KDialog::Cancel);
+    parent->addPage(m_proxy, parent->windowTitle(), icon());
+    connect(parent, SIGNAL(okClicked()), this, SLOT(slotApplyConfig()));
+
+    m_proxy->load();
 }
 
 void Trash::createMenu()
@@ -245,6 +259,11 @@ void Trash::slotDeleteItem(const KFileItem &)
 {
     m_count--;
     updateIcon();
+}
+
+void Trash::slotApplyConfig()
+{
+    m_proxy->save();
 }
 
 QList<QAction*> Trash::contextualActions()
