@@ -243,11 +243,14 @@ void ClockApplet::init()
     
     Plasma::Extender *extender = new Plasma::Extender(this);
     containment()->corona()->addOffscreenWidget(extender);
+    connect(extender, SIGNAL(geometryChanged()), this, SLOT(adjustView()));
 }
 
 void ClockApplet::showCalendar(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event);
+
+    adjustView();
 
     if (!d->calendarDialog) {
         if (!extender()) {
