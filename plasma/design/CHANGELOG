@@ -72,6 +72,11 @@ Plasma Desktop Shell
     * Reposition toolbox when zooming out/in to avoid panel overlap
     * MS Windows compile fixes
 
+Other Shells
+------------
+* NEW: plasma-mid, a shell for mobile internet devices
+
+
 Plugins/Addons
 --------------
 * Features
