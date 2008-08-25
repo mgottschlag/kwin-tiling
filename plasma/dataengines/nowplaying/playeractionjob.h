@@ -22,7 +22,7 @@
 
 #include <plasma/servicejob.h>
 #include <QTimer>
-#include "player.h"
+#include "playerinterface/player.h"
 
 #include <kdebug.h>
 

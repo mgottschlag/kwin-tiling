@@ -24,7 +24,7 @@
 #include <QMap>
 #include <QString>
 
-#include "player.h"
+#include "playerinterface/player.h"
 
 class DBusWatcher;
 class PollingWatcher;

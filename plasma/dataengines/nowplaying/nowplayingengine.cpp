@@ -25,16 +25,17 @@
 #include <KDebug>
 #include <KLocale>
 
-#include "player.h"
-#include "playerfactory.h"
-#include "playercontrol.h"
-#include "dbuswatcher.h"
-#include "pollingwatcher.h"
-#include "mpris.h"
-#include "juk.h"
+#include "playerinterface/player.h"
+#include "playerinterface/playerfactory.h"
+#include "playerinterface/dbuswatcher.h"
+#include "playerinterface/pollingwatcher.h"
+#include "playerinterface/mpris.h"
+#include "playerinterface/juk.h"
 #ifdef XMMS_FOUND
-#include "xmms.h"
+#include "playerinterface/xmms.h"
 #endif // XMMS_FOUND
+
+#include "playercontrol.h"
 
 NowPlayingEngine::NowPlayingEngine(QObject* parent,
                                    const QVariantList& args)

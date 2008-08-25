@@ -22,7 +22,7 @@
 
 #include <plasma/service.h>
 
-#include "player.h"
+#include "playerinterface/player.h"
 
 class PlayerControl : public Plasma::Service
 {

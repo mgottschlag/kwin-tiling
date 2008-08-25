@@ -2,18 +2,18 @@ project(plasma-dataengine-nowplaying)
 
 set(nowplaying_engine_SRCS
     nowplayingengine.cpp
-    player.cpp
-    playerfactory.cpp
     playercontrol.cpp
     playeractionjob.cpp
-    dbuswatcher.cpp
-    pollingwatcher.cpp
-    mpris.cpp
-    juk.cpp
+    playerinterface/player.cpp
+    playerinterface/playerfactory.cpp
+    playerinterface/dbuswatcher.cpp
+    playerinterface/pollingwatcher.cpp
+    playerinterface/mpris.cpp
+    playerinterface/juk.cpp
 )
 
-QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS org.kde.juk.player.xml juk_interface)
-QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS mpris_interface.xml mpris_interface)
+QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS playerinterface/org.kde.juk.player.xml juk_interface)
+QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS playerinterface/mpris_interface.xml mpris_interface)
 
 macro_optional_find_package(GLIB2)
 if(GLIB2_FOUND)
@@ -22,7 +22,7 @@ if(GLIB2_FOUND)
    if(XMMS_FOUND)
       include_directories(${XMMS_INCLUDE_DIRS})
       include_directories(${GLIB2_INCLUDE_DIR})
-      set(nowplaying_engine_SRCS ${nowplaying_engine_SRCS} xmms.cpp)
+      set(nowplaying_engine_SRCS ${nowplaying_engine_SRCS} playerinterface/xmms.cpp)
       message(STATUS "Found XMMS: the nowplaying dataengine will support XMMS 1.x")
    else(XMMS_FOUND)
       message(STATUS "Could NOT find XMMS: the nowplaying dataengine will NOT support XMMS 1.x")
