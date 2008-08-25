@@ -104,7 +104,7 @@ void MidCorona::loadDefaultLayout()
 
     if (isDesktop) {
         c->setScreen(0);
-    } else if( (args->count() > 0) && (args->isSet("height")) && (args->isSet("width")) ){
+    } else if( args->isSet("height") && args->isSet("width") ){
         int width = qMax(400, args->getOption("width").toInt());
         int height = qMax(200, args->getOption("height").toInt());
         c->resize(width, height);
