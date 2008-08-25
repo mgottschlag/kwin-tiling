@@ -84,7 +84,7 @@ void MidCorona::loadDefaultLayout()
     emit containmentAdded(c);
 
     /*
-    todo: replace with an applet layout at the top, perhaps reserve a WM strut while we're at it?
+    todo: replace with an applet layout at the top
 
     loadDefaultApplet("systemtray", panel);
 

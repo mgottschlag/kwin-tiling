@@ -154,8 +154,7 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     layout->setMargin(0);
     layout->setSpacing(0);
 
-    //FIXME: replace with a proper View subclass, or at least populate this one!
-    m_controlBar = new Plasma::View(0, m_window);
+    m_controlBar = new MidView(0, m_window);
     m_controlBar->setFixedHeight(CONTROL_BAR_HEIGHT);
     m_controlBar->setBackgroundBrush(Qt::red);
     m_mainView = new MidView(0, m_window);
@@ -166,6 +165,7 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     int width = 400;
     int height = 200;
     if (isDesktop) {
+        //TODO: reserve a WM strut for m_controlBar
         QRect rect = desktop()->screenGeometry(0);
         width = rect.width();
         height = rect.height();
@@ -187,8 +187,8 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
 
     // this line initializes the corona.
     corona();
-
     setIsDesktop(isDesktop);
+    reserveStruts();
 
     if (isDesktop) {
         notifyStartup(true);
@@ -251,6 +251,7 @@ void PlasmaApp::adjustSize(int screen)
     int height = rect.height();
     m_window->setFixedSize(width, height);
     m_mainView->setFixedSize(width, height - CONTROL_BAR_HEIGHT);
+    reserveStruts();
 }
 
 void PlasmaApp::setCrashHandler()
@@ -266,6 +267,29 @@ void PlasmaApp::crashHandler(int signal)
 
     sleep(1);
     system("plasma --nocrashhandler &"); // try to restart
+}
+
+void PlasmaApp::reserveStruts()
+{
+    NETExtendedStrut strut;
+    if (isDesktop()) {
+        strut.top_width = m_controlBar->height();
+        strut.top_start = m_window->x();
+        strut.top_end = m_window->x() + m_window->width() - 1;
+    }
+
+    KWindowSystem::setExtendedStrut(m_window->winId(), strut.left_width,
+                                                       strut.left_start,
+                                                       strut.left_end,
+                                                       strut.right_width,
+                                                       strut.right_start,
+                                                       strut.right_end,
+                                                       strut.top_width,
+                                                       strut.top_start,
+                                                       strut.top_end,
+                                                       strut.bottom_width,
+                                                       strut.bottom_start,
+                                                       strut.bottom_end);
 }
 
 Plasma::Corona* PlasmaApp::corona()

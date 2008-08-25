@@ -31,23 +31,7 @@ MidView::MidView(Plasma::Containment *containment, QWidget *parent)
     : Plasma::View(containment, defaultId(), parent)
 {
     setFocusPolicy(Qt::NoFocus);
-
-    if (containment) {
-        connectContainment(containment);
-        containment->enableAction("add sibling containment", false);
-    }
-
-    //FIXME should we have next/prev or up/down/left/right or what?
-    QAction *action = new QAction(i18n("Next Activity"), this);
-    action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    action->setShortcut(QKeySequence("ctrl+shift+n"));
-    connect(action, SIGNAL(triggered()), this, SLOT(nextContainment()));
-    addAction(action);
-    action = new QAction(i18n("Previous Activity"), this);
-    action->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-    action->setShortcut(QKeySequence("ctrl+shift+p"));
-    connect(action, SIGNAL(triggered()), this, SLOT(previousContainment()));
-    addAction(action);
+    connectContainment(containment);
 
     const int w = 25;
     QPixmap tile(w * 2, w * 2);
@@ -68,18 +52,24 @@ MidView::~MidView()
 
 void MidView::connectContainment(Plasma::Containment *containment)
 {
-    if (containment) {
-        connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
-        connect(containment, SIGNAL(focusRequested(Plasma::Containment *)), this, SLOT(setContainment(Plasma::Containment *)));
-        connect(containment, SIGNAL(configureRequested()), this, SLOT(configureContainment()));
+    if (!containment) {
+        return;
     }
+
+    connect(containment, SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
+    connect(containment, SIGNAL(focusRequested(Plasma::Containment *)), this, SLOT(setContainment(Plasma::Containment *)));
+    connect(containment, SIGNAL(configureRequested()), this, SLOT(configureContainment()));
 }
 
-void MidView::setContainment(Plasma::Containment *containment)
+void MidView::setContainment(Plasma::Containment *c)
 {
-    Plasma::View::setContainment(containment);
-    containment->resize(size());
-    kDebug() << "goin' in!" << size() << containment->geometry().size().toSize();
+    if (containment()) {
+        disconnect(containment(), 0, this, 0);
+    }
+
+    Plasma::View::setContainment(c);
+    connectContainment(c);
+    c->resize(size());
 }
 
 void MidView::configureContainment()
