@@ -34,7 +34,7 @@ Look and Feel
 
 For most widgets, we let the QStyle do the painting.
 
-For certain widgets (e.g. Plasma::PushButton), the painting is overridden to blend in better with a Plasma based interface. This can be done without reimplemeting the entire native Qt widget by reimplementing the paint methods in either the QGraphicsWidget or a subclass of the native Qt Widget.
+For certain widgets (e.g. Plasma::PushButton), the painting is overridden to blend in better with a Plasma based interface. This can be done without reimplemeting the entire native Qt widget by reimplementing the paint methods in either the QGraphicsWidget or a subclass of the native Qt Widget. Another approach is to use a custom QStyle, which is how Plasma::Slider gets its look with minimal code.
 
 Creating a New Widget
 ---------------------
