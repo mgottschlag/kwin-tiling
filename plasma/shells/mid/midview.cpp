@@ -153,47 +153,5 @@ void MidView::screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containmen
     }
 }
 
-void MidView::nextContainment()
-{
-    QList<Plasma::Containment*> containments = containment()->corona()->containments();
-    int start = containments.indexOf(containment());
-    int i = (start + 1) % containments.size();
-    //FIXME this is a *horrible* way of choosing a "next" containment.
-    while (i != start) {
-        if (containments.at(i)->containmentType() != Plasma::Containment::PanelContainment &&
-            containments.at(i)->screen() == -1) {
-            break;
-        }
-        i = (i + 1) % containments.size();
-    }
-
-    Plasma::Containment *c = containments.at(i);
-    setContainment(c);
-}
-
-void MidView::previousContainment()
-{
-    QList<Plasma::Containment*> containments = containment()->corona()->containments();
-    int start = containments.indexOf(containment());
-    //fun fact: in c++, (-1 % foo) == -1
-    int i = start - 1;
-    if (i < 0) {
-        i += containments.size();
-    }
-    //FIXME this is a *horrible* way of choosing a "previous" containment.
-    while (i != start) {
-        if (containments.at(i)->containmentType() != Plasma::Containment::PanelContainment &&
-            containments.at(i)->screen() == -1) {
-            break;
-        }
-        if (--i < 0) {
-            i += containments.size();
-        }
-    }
-
-    Plasma::Containment *c = containments.at(i);
-    setContainment(c);
-}
-
 #include "midview.moc"
 

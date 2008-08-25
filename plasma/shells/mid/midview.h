@@ -52,16 +52,6 @@ public slots:
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
 
     /**
-     * switch to the "next" available containment on the corona.
-     */
-    void nextContainment();
-
-    /**
-     * switch to the "previous" available containment on the corona.
-     */
-    void previousContainment();
-
-    /**
      * Configure containment.
      *
      * @arg containment to configure
