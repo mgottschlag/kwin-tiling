@@ -30,7 +30,11 @@ static const char description[] = I18N_NOOP( "The KDE desktop, panels and widget
 static const char version[] = "0.1";
 
 extern "C"
+#ifdef Q_WS_WIN
+int kdemain(int argc, char **argv)
+#else
 KDE_EXPORT int kdemain(int argc, char **argv)
+#endif
 {
     KAboutData aboutData("plasma", 0, ki18n("Plasma Workspace"),
                          version, ki18n(description), KAboutData::License_GPL,

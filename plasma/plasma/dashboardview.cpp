@@ -281,7 +281,9 @@ void DashboardView::hideView()
         m_appletBrowser->hide();
     }
 
+#ifndef Q_WS_WIN
     disconnect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
+#endif
 
     if (containment()) {
         disconnect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
@@ -323,7 +325,9 @@ void DashboardView::activeWindowChanged(WId id)
 void DashboardView::showEvent(QShowEvent *event)
 {
     KWindowSystem::setState(winId(), NET::SkipPager);
+#ifndef Q_WS_WIN
     connect(KWindowSystem::self(), SIGNAL(activeWindowChanged(WId)), this, SLOT(activeWindowChanged(WId)));
+#endif
     if (containment()) {
         connect(containment(), SIGNAL(showAddWidgetsInterface(QPointF)), this, SLOT(showAppletBrowser()));
     }

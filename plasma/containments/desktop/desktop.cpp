@@ -393,9 +393,11 @@ void DefaultDesktop::logout()
     if (!KAuthorized::authorizeKAction("logout")) {
         return;
     }
+#ifndef Q_WS_WIN
     KWorkSpace::requestShutDown(KWorkSpace::ShutdownConfirmDefault,
                                 KWorkSpace::ShutdownTypeDefault,
                                 KWorkSpace::ShutdownModeDefault);
+#endif
 }
 
 void DefaultDesktop::paintInterface(QPainter *painter,

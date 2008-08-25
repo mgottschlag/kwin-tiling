@@ -105,7 +105,9 @@ void LeaveItemHandler::logout()
         type = KWorkSpace::ShutdownTypeHalt;
     }
 
+#ifndef Q_WS_WIN
     KWorkSpace::requestShutDown(confirm,type);
+#endif
 }
 
 void LeaveItemHandler::lock()

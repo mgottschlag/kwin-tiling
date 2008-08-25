@@ -84,6 +84,10 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     KWindowSystem::setType(winId(), NET::Dock);
     KWindowSystem::setState(winId(), NET::Sticky);
     KWindowSystem::setOnAllDesktops(winId(), true);
+    
+#ifdef Q_WS_WIN
+    registerAccessBar(winId(), true);
+#endif        
 
     updateStruts();
 }

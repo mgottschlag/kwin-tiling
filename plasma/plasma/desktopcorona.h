@@ -32,7 +32,7 @@ namespace Plasma
 /**
  * @short A Corona with desktop-y considerations
  */
-class PLASMA_EXPORT DesktopCorona : public Plasma::Corona
+class DesktopCorona : public Plasma::Corona
 {
     Q_OBJECT
 
