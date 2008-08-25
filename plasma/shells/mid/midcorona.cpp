@@ -66,22 +66,13 @@ void MidCorona::loadDefaultLayout()
         return;
     }
 
+    c->init();
+
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     bool isDesktop = args->isSet("desktop");
 
-    c->init();
-
     if (isDesktop) {
         c->setScreen(0);
-    } else {
-        QString geom = args->getOption("screen");
-        int x = geom.indexOf('x');
-
-        if (x > 0)  {
-            int width = qMax(400, geom.left(x).toInt());
-            int height = qMax(200, geom.right(geom.length() - x - 1).toInt());
-            c->resize(width, height);
-        }
     }
 
     c->setWallpaper("image", "SingleImage");

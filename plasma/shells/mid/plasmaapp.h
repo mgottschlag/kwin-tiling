@@ -28,6 +28,7 @@ namespace Plasma
 {
     class Containment;
     class Corona;
+    class View;
 } // namespace Plasma
 
 class MidView;
@@ -75,6 +76,8 @@ private Q_SLOTS:
 
 private:
     Plasma::Corona *m_corona;
+    QWidget *m_window;
+    Plasma::View *m_controlBar;
     MidView *m_mainView;
     bool m_isDesktop;
 };

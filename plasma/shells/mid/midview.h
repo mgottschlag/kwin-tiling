@@ -44,31 +44,11 @@ public:
      */
     void connectContainment(Plasma::Containment *containment);
 
-    /**
-     * Sets this MidView as a desktop window if @p isDesktop is
-     * true or an ordinary window otherwise.
-     *
-     * Desktop windows are displayed beneath all other windows, have
-     * no window decoration and occupy the full size of the desktop.
-     */
-    void setIsDesktop(bool isDesktop);
-
-    /**
-     * Returns true if this widget is currently a desktop window.
-     * See setAsDesktop()
-     */
-    bool isDesktop() const;
-
-    static int defaultId() { return 1; }
+    static uint defaultId() { return 1; }
 
 public slots:
     void showAppletBrowser();
-
-    /**
-     * reimplemented from Plasma::View
-     */
     void setContainment(Plasma::Containment *containment);
-
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
 
     /**
@@ -90,6 +70,7 @@ public slots:
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
+    void resizeEvent(QResizeEvent *event);
 };
 
 #endif // multiple inclusion guard

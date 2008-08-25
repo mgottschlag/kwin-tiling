@@ -25,13 +25,15 @@
 #include <QDesktopWidget>
 #include <QPixmapCache>
 #include <QTimer>
+#include <QVBoxLayout>
 #include <QtDBus/QtDBus>
 
+#include <KAction>
 #include <KCrash>
 #include <KDebug>
 #include <KCmdLineArgs>
+#include <KStandardAction>
 #include <KWindowSystem>
-#include <KAction>
 
 #include <ksmserver_interface.h>
 
@@ -47,6 +49,7 @@
 Display* dpy = 0;
 Colormap colormap = 0;
 Visual *visual = 0;
+static const int CONTROL_BAR_HEIGHT = 22;
 
 void checkComposite()
 {
@@ -98,12 +101,15 @@ PlasmaApp* PlasmaApp::self()
 PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     : KUniqueApplication(display, visual, colormap),
       m_corona(0),
+      m_window(0),
+      m_controlBar(0),
       m_mainView(0),
       m_isDesktop(false)
 {
     KGlobal::locale()->insertCatalog("libplasma");
 
-    bool isDesktop = KCmdLineArgs::parsedArgs()->isSet("desktop");
+    KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+    bool isDesktop = args->isSet("desktop");
     if (isDesktop) {
         notifyStartup(false);
     }
@@ -134,10 +140,48 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     KConfigGroup cg(KGlobal::config(), "General");
     Plasma::Theme::defaultTheme()->setFont(cg.readEntry("desktopFont", font()));
 
-    setIsDesktop(isDesktop);
+    m_window = new QWidget;
+
+    //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
+    //the application name is we set the proper XClassHint here, hopefully won't be necessary anymore when
+    //qapplication will manage apps with argb visuals in a better way
+    XClassHint classHint;
+    classHint.res_name = const_cast<char*>("Plasma");
+    classHint.res_class = const_cast<char*>("Plasma");
+    XSetClassHint(QX11Info::display(), m_window->winId(), &classHint);
+
+    QVBoxLayout *layout = new QVBoxLayout(m_window);
+    layout->setMargin(0);
+    layout->setSpacing(0);
+
+    //FIXME: replace with a proper View subclass, or at least populate this one!
+    m_controlBar = new Plasma::View(0, m_window);
+    m_controlBar->setFixedHeight(CONTROL_BAR_HEIGHT);
+    m_controlBar->setBackgroundBrush(Qt::red);
+    m_mainView = new MidView(0, m_window);
+
+    layout->addWidget(m_controlBar);
+    layout->addWidget(m_mainView);
+
+    if (!isDesktop) {
+        QAction *action = KStandardAction::quit(qApp, SLOT(quit()), m_window);
+        m_window->addAction(action);
+
+        QString geom = args->getOption("screen");
+        int x = geom.indexOf('x');
+
+        if (x > 0)  {
+            int width = qMax(400, geom.left(x).toInt());
+            int height = qMax(200, geom.right(geom.length() - x - 1).toInt());
+            m_window->setFixedSize(width, height);
+            m_mainView->setFixedSize(width, height - CONTROL_BAR_HEIGHT);
+        }
+    }
 
     // this line initializes the corona.
     corona();
+
+    setIsDesktop(isDesktop);
 
     if (isDesktop) {
         notifyStartup(true);
@@ -171,13 +215,17 @@ void PlasmaApp::syncConfig()
 void PlasmaApp::setIsDesktop(bool isDesktop)
 {
     m_isDesktop = isDesktop;
-    if (m_mainView) {
-        m_mainView->setIsDesktop(isDesktop);
-    }
 
     if (isDesktop) {
+        m_window->setWindowFlags(m_window->windowFlags() | Qt::FramelessWindowHint);
+        KWindowSystem::setOnAllDesktops(m_window->winId(), true);
+        KWindowSystem::setType(m_window->winId(), NET::Desktop);
+        m_window->lower();
         connect(QApplication::desktop(), SIGNAL(resized(int)), SLOT(adjustSize(int)));
     } else {
+        m_window->setWindowFlags(m_window->windowFlags() & ~Qt::FramelessWindowHint);
+        KWindowSystem::setOnAllDesktops(m_window->winId(), false);
+        KWindowSystem::setType(m_window->winId(), NET::Normal);
         disconnect(QApplication::desktop(), SIGNAL(resized(int)), this, SLOT(adjustSize(int)));
     }
 }
@@ -214,14 +262,20 @@ void PlasmaApp::crashHandler(int signal)
 Plasma::Corona* PlasmaApp::corona()
 {
     if (!m_corona) {
-        MidCorona *c = new MidCorona(this);
-        connect(c, SIGNAL(containmentAdded(Plasma::Containment*)),
+        m_corona = new MidCorona(this);
+        connect(m_corona, SIGNAL(containmentAdded(Plasma::Containment*)),
                 this, SLOT(createView(Plasma::Containment*)));
-        connect(c, SIGNAL(configSynced()), this, SLOT(syncConfig()));
+        connect(m_corona, SIGNAL(configSynced()), this, SLOT(syncConfig()));
 
-        c->setItemIndexMethod(QGraphicsScene::NoIndex);
-        c->initializeLayout();
-        m_corona = c;
+
+        m_corona->setItemIndexMethod(QGraphicsScene::NoIndex);
+        m_corona->initializeLayout();
+
+        m_window->show();
+
+        connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
+                m_mainView, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
+
     }
 
     return m_corona;
@@ -250,26 +304,12 @@ void PlasmaApp::createView(Plasma::Containment *containment)
              << "| type" << containment->containmentType()
              <<  "| screen:" << containment->screen()
              << "| geometry:" << containment->geometry()
-             << "| zValue:" << containment->zValue();
+             << "| zValue:" << containment->zValue()
+             << "| id:" << containment->id() << "==" << MidView::defaultId();
 
-    if (!m_mainView && containment->id() == MidView::defaultId()) {
-        m_mainView = new MidView(containment);
-
-        if (m_corona) {
-            connect(m_corona, SIGNAL(screenOwnerChanged(int,int,Plasma::Containment*)),
-                    m_mainView, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
-        }
-
-        m_mainView->setIsDesktop(m_isDesktop);
-        m_mainView->show();
-
-        //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
-        //the application name is we set the proper XClassHint here, hopefully won't be necessary anymore when
-        //qapplication will manage apps with argb visuals in a better way
-        XClassHint classHint;
-        classHint.res_name = const_cast<char*>("Plasma");
-        classHint.res_class = const_cast<char*>("Plasma");
-        XSetClassHint(QX11Info::display(), m_mainView->winId(), &classHint);
+    if (m_mainView && containment->id() == MidView::defaultId()) {
+        kDebug() << "setting mainview to the containment!";
+        m_mainView->setContainment(containment);
     }
 }
 

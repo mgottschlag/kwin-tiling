@@ -18,11 +18,10 @@
 
 #include "midview.h"
 
+#include <QAction>
 #include <QCoreApplication>
 #include <QDesktopWidget>
 
-#include <KAction>
-#include <KStandardAction>
 #include <KWindowSystem>
 
 #include "plasma/applet.h"
@@ -62,9 +61,6 @@ MidView::MidView(Plasma::Containment *containment, QWidget *parent)
     pt.end();
     QBrush b(tile);
     setBackgroundBrush(tile);
-
-    kDebug() << "goin' in!" << containment->geometry().size().toSize();
-    resize(containment->geometry().size().toSize());
 }
 
 MidView::~MidView()
@@ -83,29 +79,8 @@ void MidView::connectContainment(Plasma::Containment *containment)
 void MidView::setContainment(Plasma::Containment *containment)
 {
     Plasma::View::setContainment(containment);
-    kDebug() << "goin' in!" << containment->geometry().size().toSize();
-    resize(containment->geometry().size().toSize());
-}
-
-void MidView::setIsDesktop(bool isDesktop)
-{
-    if (isDesktop) {
-        setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
-        KWindowSystem::setOnAllDesktops(winId(), true);
-        KWindowSystem::setType(winId(), NET::Desktop);
-        lower();
-    } else {
-        setWindowFlags(windowFlags() & ~Qt::FramelessWindowHint);
-        KWindowSystem::setOnAllDesktops(winId(), false);
-        KWindowSystem::setType(winId(), NET::Normal);
-        QAction *action = KStandardAction::quit(qApp, SLOT(quit()), this);
-        addAction(action);
-    }
-}
-
-bool MidView::isDesktop() const
-{
-    return KWindowInfo(winId(), NET::WMWindowType).windowType(NET::Desktop);
+    containment->resize(size());
+    kDebug() << "goin' in!" << size() << containment->geometry().size().toSize();
 }
 
 void MidView::configureContainment()
@@ -159,6 +134,14 @@ void MidView::drawBackground(QPainter *painter, const QRectF &rect)
 
     default:
         QGraphicsView::drawBackground(painter, rect);
+    }
+}
+
+void MidView::resizeEvent(QResizeEvent *event)
+{
+    Q_UNUSED(event)
+    if (containment()) {
+        containment()->resize(size());
     }
 }
 
