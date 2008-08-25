@@ -47,6 +47,8 @@ Name[uk]=Пейджер
 Name[x-test]=xxPagerxx
 Name[zh_CN]=分页器
 Name[zh_TW]=呼叫器
+Comment=Switch between virtual desktops
+Icon=pager
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 
@@ -60,4 +62,3 @@ X-KDE-PluginInfo-Category=Windows and Tasks
 X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=true
-
