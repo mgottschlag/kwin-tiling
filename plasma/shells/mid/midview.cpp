@@ -18,28 +18,19 @@
 
 #include "midview.h"
 
-#include <QAction>
-#include <QDesktopWidget>
-#include <QFile>
-#include <QWheelEvent>
 #include <QCoreApplication>
+#include <QDesktopWidget>
 
-#include <KAuthorized>
-#include <KMenu>
-#include <KRun>
-#include <KToggleAction>
+#include <KAction>
+#include <KStandardAction>
 #include <KWindowSystem>
 
 #include "plasma/applet.h"
 #include "plasma/corona.h"
 #include "plasma/containment.h"
 
-#include "plasmaapp.h"
-
-static const int MIDVIEWID = 1;
-
 MidView::MidView(Plasma::Containment *containment, QWidget *parent)
-    : Plasma::View(containment, MIDVIEWID, parent)
+    : Plasma::View(containment, defaultId(), parent)
 {
     setFocusPolicy(Qt::NoFocus);
 
@@ -71,6 +62,9 @@ MidView::MidView(Plasma::Containment *containment, QWidget *parent)
     pt.end();
     QBrush b(tile);
     setBackgroundBrush(tile);
+
+    kDebug() << "goin' in!" << containment->geometry().size().toSize();
+    resize(containment->geometry().size().toSize());
 }
 
 MidView::~MidView()
@@ -86,47 +80,32 @@ void MidView::connectContainment(Plasma::Containment *containment)
     }
 }
 
-void MidView::adjustSize()
+void MidView::setContainment(Plasma::Containment *containment)
 {
-    // adapt to screen resolution changes
-    QDesktopWidget *desktop = QApplication::desktop();
-    QRect geom = desktop->screenGeometry(screen());
-    setGeometry(geom);
-    containment()->resize(geom.size());
+    Plasma::View::setContainment(containment);
+    kDebug() << "goin' in!" << containment->geometry().size().toSize();
+    resize(containment->geometry().size().toSize());
 }
 
 void MidView::setIsDesktop(bool isDesktop)
 {
     if (isDesktop) {
-#ifdef Q_WS_WIN
-        setWindowFlags(Qt::FramelessWindowHint);
-        SetWindowPos(winId(), HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-        HWND hwndDesktop = ::FindWindowW(L"Progman", NULL);
-        SetParent(winId(),hwndDesktop);
-#else
         setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
-#endif
-
         KWindowSystem::setOnAllDesktops(winId(), true);
         KWindowSystem::setType(winId(), NET::Desktop);
         lower();
-
-        adjustSize();
     } else {
         setWindowFlags(windowFlags() & ~Qt::FramelessWindowHint);
-
         KWindowSystem::setOnAllDesktops(winId(), false);
         KWindowSystem::setType(winId(), NET::Normal);
+        QAction *action = KStandardAction::quit(qApp, SLOT(quit()), this);
+        addAction(action);
     }
 }
 
 bool MidView::isDesktop() const
 {
-#ifndef Q_WS_WIN
     return KWindowInfo(winId(), NET::WMWindowType).windowType(NET::Desktop);
-#else
-    return true;
-#endif
 }
 
 void MidView::configureContainment()

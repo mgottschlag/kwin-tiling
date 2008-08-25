@@ -45,33 +45,6 @@ void MidCorona::init()
     QObject::connect(desktop, SIGNAL(resized(int)), this, SLOT(screenResized(int)));
 }
 
-void MidCorona::checkScreens()
-{
-    // quick sanity check to ensure we have containments for each screen!
-    int numScreens = QApplication::desktop()->numScreens();
-    for (int i = 0; i < numScreens; ++i) {
-        if (!containmentForScreen(i)) {
-            //TODO: should we look for containments that aren't asigned but already exist?
-            Plasma::Containment* c = addContainment("desktop");
-            c->setScreen(i);
-            c->setFormFactor(Plasma::Planar);
-            c->flushPendingConstraintsEvents();
-        } else if (i >= m_numScreens) {
-            // now ensure that if our screen count changed we actually get views
-            // for them, even if the Containment already existed for that screen
-            // so we "lie" and emit a containmentAdded signal for every new screen
-            // regardless of whether it actually already existed, or just got added
-            // and therefore had this signal emitted. plasma can handle such
-            // multiple emissions of the signal, and this is simply the most
-            // straightforward way of accomplishing this
-            kDebug() << "Notifying of new screen: " << i;
-            emit containmentAdded(containmentForScreen(i));
-        }
-    }
-
-    m_numScreens = numScreens;
-}
-
 void MidCorona::loadDefaultLayout()
 {
     QString defaultConfig = KStandardDirs::locate("appdata", "plasma-default-layoutrc");
@@ -80,10 +53,6 @@ void MidCorona::loadDefaultLayout()
         loadLayout(defaultConfig);
         return;
     }
-
-    QDesktopWidget *desktop = QApplication::desktop();
-
-    // find our "top left" screen, use it as the primary
 
     // used to force a save into the config file
     KConfigGroup invalidConfig;
@@ -104,10 +73,15 @@ void MidCorona::loadDefaultLayout()
 
     if (isDesktop) {
         c->setScreen(0);
-    } else if( args->isSet("height") && args->isSet("width") ){
-        int width = qMax(400, args->getOption("width").toInt());
-        int height = qMax(200, args->getOption("height").toInt());
-        c->resize(width, height);
+    } else {
+        QString geom = args->getOption("screen");
+        int x = geom.indexOf('x');
+
+        if (x > 0)  {
+            int width = qMax(400, geom.left(x).toInt());
+            int height = qMax(200, geom.right(geom.length() - x - 1).toInt());
+            c->resize(width, height);
+        }
     }
 
     c->setWallpaper("image", "SingleImage");

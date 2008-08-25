@@ -43,8 +43,7 @@ KDE_EXPORT int kdemain(int argc, char **argv)
 
     KCmdLineOptions options;
     options.add("desktop",ki18n("Registers the application as the primary user interface"));
-    options.add("width", ki18n("The width of the screen"), "800");
-    options.add("height", ki18n("The width of the screen"), "480");
+    options.add("screen <geometry>", ki18n("The geometry of the screen"), "800x480");
     KCmdLineArgs::addCmdLineOptions(options);
 
     PlasmaApp *app = PlasmaApp::self();

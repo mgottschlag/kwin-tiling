@@ -59,9 +59,15 @@ public:
      */
     bool isDesktop() const;
 
+    static int defaultId() { return 1; }
+
 public slots:
     void showAppletBrowser();
-    void adjustSize();
+
+    /**
+     * reimplemented from Plasma::View
+     */
+    void setContainment(Plasma::Containment *containment);
 
     void screenOwnerChanged(int wasScreen, int isScreen, Plasma::Containment* containment);
 

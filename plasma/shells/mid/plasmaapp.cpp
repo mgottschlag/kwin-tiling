@@ -104,7 +104,6 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     KGlobal::locale()->insertCatalog("libplasma");
 
     bool isDesktop = KCmdLineArgs::parsedArgs()->isSet("desktop");
-
     if (isDesktop) {
         notifyStartup(false);
     }
@@ -136,13 +135,6 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     Plasma::Theme::defaultTheme()->setFont(cg.readEntry("desktopFont", font()));
 
     setIsDesktop(isDesktop);
-
-    //TODO: Make the shortcut configurable
-    KAction *showAction = new KAction( this );
-    showAction->setText( i18n( "Show Dashboard" ) );
-    showAction->setObjectName( "Show Dashboard" ); // NO I18N
-    showAction->setGlobalShortcut( KShortcut( Qt::CTRL + Qt::Key_F12 ) );
-    connect( showAction, SIGNAL( triggered() ), this, SLOT( toggleDashboard() ) );
 
     // this line initializes the corona.
     corona();
@@ -200,7 +192,7 @@ void PlasmaApp::adjustSize(int screen)
     Q_UNUSED(screen)
 
     if (m_mainView) {
-        m_mainView->adjustSize();
+        //TODO: change size to be size of screen - the height of the panel m_mainView->adjustSize();
     }
 }
 
@@ -229,7 +221,6 @@ Plasma::Corona* PlasmaApp::corona()
 
         c->setItemIndexMethod(QGraphicsScene::NoIndex);
         c->initializeLayout();
-        c->checkScreens();
         m_corona = c;
     }
 
@@ -255,23 +246,13 @@ void PlasmaApp::notifyStartup(bool completed)
 
 void PlasmaApp::createView(Plasma::Containment *containment)
 {
-    if (m_mainView) {
-        kDebug() << "We already have a containment for our screen!";
-        return;
-    }
-
     kDebug() << "Containment name:" << containment->name()
              << "| type" << containment->containmentType()
              <<  "| screen:" << containment->screen()
              << "| geometry:" << containment->geometry()
              << "| zValue:" << containment->zValue();
 
-    if (containment->screen() > -1 &&
-        containment->screen() < QApplication::desktop()->numScreens()) {
-        kDebug() << "creating a view for" << containment->screen() << "and we have"
-                 << QApplication::desktop()->numScreens() << "screens";
-
-        // we have a new screen. neat.
+    if (!m_mainView && containment->id() == MidView::defaultId()) {
         m_mainView = new MidView(containment);
 
         if (m_corona) {
@@ -279,7 +260,6 @@ void PlasmaApp::createView(Plasma::Containment *containment)
                     m_mainView, SLOT(screenOwnerChanged(int,int,Plasma::Containment*)));
         }
 
-        m_mainView->setGeometry(QApplication::desktop()->screenGeometry(containment->screen()));
         m_mainView->setIsDesktop(m_isDesktop);
         m_mainView->show();
 
