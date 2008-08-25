@@ -17,10 +17,6 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-// plasma.loadEngine("hardware")
-// LineGraph graph
-// plasma.connect(graph, "hardware", "cpu");
-
 #include "plasmaapp.h"
 
 #ifdef Q_WS_WIN
