@@ -279,11 +279,15 @@ void DefaultDesktop::onAppletGeometryChanged()
 
 void DefaultDesktop::refreshWorkingArea()
 {
-    QRectF workingGeom = geometry();
+    QRectF workingGeom;
     if (screen() != -1) {
         // we are associated with a screen, make sure not to overlap panels
         QDesktopWidget *desktop = qApp->desktop();
         workingGeom = desktop->availableGeometry(screen());
+        // From screen coordinates to containment coordinates
+        workingGeom.translate(-desktop->screenGeometry(screen()).topLeft());
+    } else {
+        workingGeom = mapFromScene(geometry());
     }
     m_layout->setWorkingArea(workingGeom);
 }
