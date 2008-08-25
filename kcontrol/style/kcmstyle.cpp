@@ -43,6 +43,7 @@
 #include <QtGui/QLabel>
 #include <QtGui/QPixmapCache>
 #include <QtGui/QStyleFactory>
+#include <QtGui/QFormLayout>
 #include <QtDBus/QtDBus>
 
 #ifdef Q_WS_X11
@@ -149,7 +150,7 @@ public:
 KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	: KCModule( KCMStyleFactory::componentData(), parent ), appliedStyle(NULL)
 {
-    setQuickHelp( i18n("<h1>Style</h1>"
+	setQuickHelp( i18n("<h1>Style</h1>"
 			"This module allows you to modify the visual appearance "
 			"of user interface elements, such as the widget style "
 			"and effects."));
@@ -179,24 +180,29 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 
 	page1 = new QWidget;
 	page1Layout = new QVBoxLayout( page1 );
-	page2 = new QWidget;
-	page2Layout = new QVBoxLayout( page2 );
 
 	// Add Page1 (Style)
 	// -----------------
-	gbWidgetStyle = new QGroupBox( i18n("Widget Style"), page1 );
+	//gbWidgetStyle = new QGroupBox( i18n("Widget Style"), page1 );
+	QWidget* gbWidgetStyle = new QWidget( page1 );
 	QVBoxLayout *widgetLayout = new QVBoxLayout(gbWidgetStyle);
 
-	gbWidgetStyleLayout = new QVBoxLayout( );
+	gbWidgetStyleLayout = new QVBoxLayout;
         widgetLayout->addLayout( gbWidgetStyleLayout );
 	gbWidgetStyleLayout->setAlignment( Qt::AlignTop );
 	hbLayout = new QHBoxLayout( );
 	hbLayout->setObjectName( "hbLayout" );
 
+	QLabel* label=new QLabel(i18n("Widget Style:"),this);
+	label->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+	hbLayout->addWidget( label );
+
 	cbStyle = new KComboBox( gbWidgetStyle );
         cbStyle->setObjectName( "cbStyle" );
 	cbStyle->setEditable( false );
+	cbStyle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 	hbLayout->addWidget( cbStyle );
+	label->setBuddy(cbStyle);
 
 	pbConfigStyle = new QPushButton( i18n("Con&figure..."), gbWidgetStyle );
 	pbConfigStyle->setSizePolicy( QSizePolicy::Maximum, QSizePolicy::Minimum );
@@ -207,11 +213,6 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 
 	lblStyleDesc = new QLabel( gbWidgetStyle );
 	gbWidgetStyleLayout->addWidget( lblStyleDesc );
-
-	cbIconsOnButtons = new QCheckBox( i18n("Sho&w icons on buttons"), gbWidgetStyle );
-	gbWidgetStyleLayout->addWidget( cbIconsOnButtons );
-	cbEnableTooltips = new QCheckBox( i18n("E&nable tooltips"), gbWidgetStyle );
-	gbWidgetStyleLayout->addWidget( cbEnableTooltips );
 
 	QGroupBox *gbPreview = new QGroupBox( i18n( "Preview" ), page1 );
 	QVBoxLayout *previewLayout = new QVBoxLayout(gbPreview);
@@ -229,11 +230,11 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 
 	// Add Page2 (Effects)
 	// -------------------
-	QGridLayout *effectsLayout = new QGridLayout( );
-	QLabel* lbl = new QLabel( i18n("Graphical User Interface:"), page2 );
-    lbl->setVisible(false);
+	page2 = new QWidget;
+	QFormLayout* page2Layout = new QFormLayout( page2 );
+
 	comboGraphicEffectsLevel = new KComboBox( page2 );
-    comboGraphicEffectsLevel->setVisible(false);
+	comboGraphicEffectsLevel->setVisible(false);
 	comboGraphicEffectsLevel->setObjectName( "cbGraphicEffectsLevel" );
 	comboGraphicEffectsLevel->setEditable( false );
 	comboGraphicEffectsLevel->addItem(i18n("Low display resolution and Low CPU"), KGlobalSettings::NoEffects);
@@ -242,31 +243,26 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	comboGraphicEffectsLevel->addItem(i18n("High display resolution and High CPU"), (int) (KGlobalSettings::SimpleAnimationEffects | KGlobalSettings::GradientEffects));
 	comboGraphicEffectsLevel->addItem(i18n("Low display resolution and Very High CPU"), KGlobalSettings::ComplexAnimationEffects);
 	comboGraphicEffectsLevel->addItem(i18n("High display resolution and Very High CPU"), (int) (KGlobalSettings::ComplexAnimationEffects | KGlobalSettings::GradientEffects));
-	effectsLayout->addWidget( lbl, 0, 0 );
-	effectsLayout->addWidget( comboGraphicEffectsLevel, 0, 1 );
+	//page2Layout->addRow(i18nc("@label:listbox","Graphical User Interface:"), comboGraphicEffectsLevel);
 
-	lbl = new QLabel( i18n("Text pos&ition:"), page2 );
 	comboToolbarIcons = new QComboBox( page2 );
 	comboToolbarIcons->setEditable( false );
 	comboToolbarIcons->addItem( i18n("Icons Only") );
 	comboToolbarIcons->addItem( i18n("Text Only") );
 	comboToolbarIcons->addItem( i18n("Text Alongside Icons") );
 	comboToolbarIcons->addItem( i18n("Text Under Icons") );
-	lbl->setBuddy( comboToolbarIcons );
+	comboToolbarIcons->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
+	page2Layout->addRow(i18nc("@label:listbox","Text pos&ition:"), comboToolbarIcons);
 
-	effectsLayout->addWidget( lbl, 1, 0 );
-	effectsLayout->addWidget( comboToolbarIcons, 1, 1 );
+	cbHoverButtons = new QCheckBox( i18nc("@option:check","High&light buttons under mouse"), page2 );
+	page2Layout->addRow(cbHoverButtons);
 
-        // Push the [label combo] to the left.
-        comboSpacer = new QSpacerItem( 20, 20, QSizePolicy::Expanding, QSizePolicy::Minimum );
-        effectsLayout->addItem( comboSpacer, 1, 2 );
+	cbIconsOnButtons = new QCheckBox( i18nc("@option:check","Sho&w icons on buttons"), page2 );
+ 	page2Layout->addRow(cbIconsOnButtons);
 
-	cbHoverButtons = new QCheckBox( i18n("High&light buttons under mouse"), page2 );
-
-	page2Layout->addLayout( effectsLayout );
-	page2Layout->addWidget( cbHoverButtons );
-	page2Layout->addStretch();
-
+	cbEnableTooltips = new QCheckBox( i18nc("@option:check","E&nable tooltips"), page2 );
+	page2Layout->addRow(cbEnableTooltips);
+	
 	connect(cbStyle, SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
 	connect( cbHoverButtons,       SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
 	connect( cbEnableTooltips,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
@@ -277,15 +273,15 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	addWhatsThis();
 
 	// Insert the pages into the tabWidget
-	tabWidget->addTab( page1, i18n("&Style"));
-	tabWidget->addTab( page2, i18n("&Effects"));
+	tabWidget->addTab( page1, i18nc("@title:tab","&Style"));
+	tabWidget->addTab( page2, i18nc("@title:tab","&Fine Tunning"));
 
 }
 
 
 KCMStyle::~KCMStyle()
 {
-    qDeleteAll(styleEntries);
+	qDeleteAll(styleEntries);
 	delete appliedStyle;
 }
 
@@ -306,11 +302,11 @@ void KCMStyle::styleSpecificConfig()
 {
 	QString libname = styleEntries[currentStyle()]->configPage;
 
-    KLibrary library(libname, KCMStyleFactory::componentData());
-    if (!library.load()) {
+	KLibrary library(libname, KCMStyleFactory::componentData());
+	if (!library.load()) {
 		KMessageBox::detailedError(this,
 			i18n("There was an error loading the configuration dialog for this style."),
-            library.errorString(),
+			library.errorString(),
 			i18n("Unable to Load Dialog"));
 		return;
 	}
@@ -321,7 +317,7 @@ void KCMStyle::styleSpecificConfig()
 	{
 		KMessageBox::detailedError(this,
 			i18n("There was an error loading the configuration dialog for this style."),
-            library.errorString(),
+			library.errorString(),
 			i18n("Unable to Load Dialog"));
 		return;
 	}
@@ -398,15 +394,15 @@ void KCMStyle::save()
 
 	// Effects page
 	config.writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), KConfig::Normal|KConfig::Global);
-    KConfigGroup g( &_config, "KDE-Global GUI Settings" );
-    g.writeEntry( "GraphicEffectsLevel", comboGraphicEffectsLevel->itemData(comboGraphicEffectsLevel->currentIndex()), KConfig::Normal|KConfig::Global);
+	KConfigGroup g( &_config, "KDE-Global GUI Settings" );
+	g.writeEntry( "GraphicEffectsLevel", comboGraphicEffectsLevel->itemData(comboGraphicEffectsLevel->currentIndex()), KConfig::Normal|KConfig::Global);
 	config.writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), KConfig::Normal|KConfig::Global);
 
-    KConfigGroup generalGroup(&_config, "General");
-    generalGroup.writeEntry("widgetStyle", currentStyle());
+	KConfigGroup generalGroup(&_config, "General");
+	generalGroup.writeEntry("widgetStyle", currentStyle());
 
-    KConfigGroup toolbarStyleGroup(&_config, "Toolbar style");
-    toolbarStyleGroup.writeEntry("Highlighting", cbHoverButtons->isChecked(), KConfig::Normal|KConfig::Global);
+	KConfigGroup toolbarStyleGroup(&_config, "Toolbar style");
+	toolbarStyleGroup.writeEntry("Highlighting", cbHoverButtons->isChecked(), KConfig::Normal|KConfig::Global);
 	QString tbIcon;
 	switch( comboToolbarIcons->currentIndex() )
 	{
@@ -416,8 +412,8 @@ void KCMStyle::save()
 		default:
 		case 3: tbIcon = "TextUnderIcon"; break;
 	}
-    toolbarStyleGroup.writeEntry("ToolButtonStyle", tbIcon, KConfig::Normal|KConfig::Global);
-    _config.sync();
+	toolbarStyleGroup.writeEntry("ToolButtonStyle", tbIcon, KConfig::Normal|KConfig::Global);
+	_config.sync();
 
 	// Export the changes we made to qtrc, and update all qt-only
 	// applications on the fly, ensuring that we still follow the user's

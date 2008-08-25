@@ -66,6 +66,7 @@ KDMThemeWidget::KDMThemeWidget( QWidget *parent )
 	: QWidget( parent )
 {
 	QGridLayout *ml = new QGridLayout( this );
+	ml->setSizeConstraint(QLayout::SetMinAndMaxSize);
 	ml->setSpacing( KDialog::spacingHint() );
 	ml->setMargin( KDialog::marginHint() );
 
@@ -82,17 +83,19 @@ KDMThemeWidget::KDMThemeWidget( QWidget *parent )
 	ml->addWidget( themeWidget, 0, 0, 2, 4 );
 
 	preview = new QLabel( this );
-	preview->setFixedSize( QSize( 200, 150 ) );
+	//preview->setFixedSize( QSize( 200, 150 ) );
 	preview->setScaledContents( true );
 	preview->setWhatsThis( i18n("This is a screen shot of what KDM will look like.") );
+	preview->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Expanding);
 
 	ml->addWidget( preview, 0, 4 );
 
 	info = new QLabel( this );
-	info->setMaximumWidth( 200 );
+	//info->setMaximumWidth( 200 );
 	info->setAlignment( Qt::AlignTop );
 	info->setWordWrap( true );
 	info->setWhatsThis( i18n("This contains information about the selected theme.") );
+	info->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Minimum);
 
 	ml->addWidget( info, 1, 4 );
 

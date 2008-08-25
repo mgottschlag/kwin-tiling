@@ -96,10 +96,8 @@ private:
 	QTabWidget* tabWidget;
 	QWidget *page1, *page2;
 	QVBoxLayout* page1Layout;
-	QVBoxLayout* page2Layout;
 
 	// Page1 widgets
-	QGroupBox* gbWidgetStyle;
 	QVBoxLayout* gbWidgetStyleLayout;
 	QHBoxLayout* hbLayout;
 	KComboBox* cbStyle;
