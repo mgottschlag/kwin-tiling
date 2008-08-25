@@ -48,6 +48,10 @@ ShortcutTrigger::ShortcutTrigger(
     connect(
         act, SIGNAL(triggered(bool)),
         this, SLOT(trigger()) );
+
+    connect(
+        act, SIGNAL(globalShortcutChanged(const QKeySequence&)),
+        this, SIGNAL(globalShortcutChanged(const QKeySequence&)));
     }
 
 
@@ -57,19 +61,23 @@ ShortcutTrigger::ShortcutTrigger(
     : Trigger( cfg_P, data_P )
      ,_uuid( cfg_P.readEntry( "Uuid", QUuid::createUuid().toString()))
     {
-        QString shortcutString = cfg_P.readEntry( "Key" );
+    QString shortcutString = cfg_P.readEntry( "Key" );
 
-        // TODO: Check if this is still necessary
-        shortcutString.replace("Win+", "Meta+"); // Qt4 doesn't parse Win+, avoid a shortcut without modifier
+    // TODO: Check if this is still necessary
+    shortcutString.replace("Win+", "Meta+"); // Qt4 doesn't parse Win+, avoid a shortcut without modifier
 
-        KAction *act = keyboard_handler->addAction( 
-            _uuid,
-            data_P->name(),
-            KShortcut(shortcutString));
+    KAction *act = keyboard_handler->addAction( 
+        _uuid,
+        data_P->name(),
+        KShortcut(shortcutString));
 
-        connect(
-            act, SIGNAL(triggered(bool)),
-            this, SLOT(trigger()) );
+    connect(
+        act, SIGNAL(triggered(bool)),
+        this, SLOT(trigger()) );
+
+    connect(
+        act, SIGNAL(globalShortcutChanged(const QKeySequence&)),
+        this, SIGNAL(globalShortcutChanged(const QKeySequence&)));
     }
 
 
@@ -160,8 +168,6 @@ void ShortcutTrigger::trigger()
     windows_handler->set_action_window( 0 ); // use active window
     data->execute();
     }
-
-
 
 
 } // namespace KHotKeys

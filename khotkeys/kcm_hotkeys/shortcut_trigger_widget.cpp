@@ -37,6 +37,13 @@ ShortcutTriggerWidget::ShortcutTriggerWidget( KHotKeys::ShortcutTrigger *trigger
         _changedSignals, SLOT(map()) );
     _changedSignals->setMapping(shortcut_action_ui.shortcut, "shortcut" );
 
+    // If the global shortcuts is changed outside of the dialog just copy the
+    // new key sequencence. It doesn't matter if the user changed the sequence
+    // here.
+    connect(
+        trigger, SIGNAL(globalShortcutChanged(const QKeySequence&)),
+        this, SLOT(_k_globalShortcutChanged(const QKeySequence&)) );
+
     copyFromObject();
     }
 
@@ -76,6 +83,12 @@ bool ShortcutTriggerWidget::isChanged() const
     {
     Q_ASSERT(trigger());
     return trigger()->shortcut().primary() != shortcut_action_ui.shortcut->keySequence();
+    }
+
+
+void ShortcutTriggerWidget::_k_globalShortcutChanged(const QKeySequence &seq)
+    {
+    shortcut_action_ui.shortcut->setKeySequence(seq);
     }
 
 

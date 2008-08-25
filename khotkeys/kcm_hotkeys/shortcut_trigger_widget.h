@@ -22,6 +22,7 @@
 #include "trigger_widget_base.h"
 #include "ui_shortcut_trigger_widget.h"
 
+class QKeySequence;
 
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
@@ -49,6 +50,12 @@ public:
 
 
     virtual bool isChanged() const;
+
+private Q_SLOTS:
+
+    //! Invoked if the global shortcut is changed for the corresponding
+    //  shortcut trigger
+    void _k_globalShortcutChanged(const QKeySequence &);
 
 private:
 

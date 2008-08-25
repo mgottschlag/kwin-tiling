@@ -133,6 +133,12 @@ class KDE_EXPORT ShortcutTrigger
          */
         void aboutToBeErased();
 
+    Q_SIGNALS:
+
+        //! Emitted when the global shortcut is changed from somewhere else
+        //  (Global Shortcuts KCM)
+        void globalShortcutChanged(const QKeySequence&);
+
     public Q_SLOTS:
 
         void trigger();
