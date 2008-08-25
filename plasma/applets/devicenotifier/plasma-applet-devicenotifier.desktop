@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=New Device Notifier
+Name=Device Notifier
 Name[af]=Nuwe-toestel aankondiger
 Name[bg]=Уведомяване за нови устройства
 Name[bn_IN]=নতুন ডিভাইসের সূচনা ব্যবস্থা
@@ -54,7 +54,7 @@ Name[wa]=Notifiaedje di novea éndjin
 Name[x-test]=xxNew Device Notifierxx
 Name[zh_CN]=新设备通知
 Name[zh_TW]=新增裝置通知器
-Comment=New device notifier plasmoid
+Comment=Notifications and access for new devices
 Comment[ca]=Plasmoide notificador de dispositiu nou
 Comment[cs]=Plasmoid pro upozorňování na nová zařízení
 Comment[csb]=Plasmoid do kòntrolë nowich ùrządzeniów
