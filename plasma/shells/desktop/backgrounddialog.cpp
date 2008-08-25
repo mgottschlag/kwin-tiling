@@ -474,6 +474,8 @@ void BackgroundDialog::reloadConfig()
     }
     m_containmentComboBox->setCurrentIndex(index);
 
+    m_activityName->setText(m_containment->activity());
+
     // Theme
     m_theme->setCurrentIndex(m_themeModel->indexOf(Plasma::Theme::defaultTheme()->themeName()));
 
@@ -546,6 +548,8 @@ void BackgroundDialog::saveConfig()
     if (m_containment->pluginName() != containment) {
         m_containment = m_view->swapContainment(containment);
     }
+
+    m_containment->setActivity(m_activityName->text());
 
     // Plasma Theme
     Plasma::Theme::defaultTheme()->setThemeName(theme);
