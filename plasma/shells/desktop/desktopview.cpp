@@ -175,11 +175,7 @@ void DesktopView::setIsDesktop(bool isDesktop)
 
 bool DesktopView::isDesktop() const
 {
-#ifndef Q_WS_WIN
     return KWindowInfo(winId(), NET::WMWindowType).windowType(NET::Desktop);
-#else
-    return true;
-#endif
 }
 
 void DesktopView::setContainment(Plasma::Containment *containment)
