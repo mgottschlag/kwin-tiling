@@ -287,7 +287,8 @@ void DefaultDesktop::refreshWorkingArea()
         // From screen coordinates to containment coordinates
         workingGeom.translate(-desktop->screenGeometry(screen()).topLeft());
     } else {
-        workingGeom = mapFromScene(geometry());
+        workingGeom = geometry();
+        workingGeom = mapFromScene(workingGeom).boundingRect();
     }
     m_layout->setWorkingArea(workingGeom);
 }
