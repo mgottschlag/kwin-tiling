@@ -20,7 +20,6 @@
 
 #include <QAction>
 #include <QCoreApplication>
-#include <QDesktopWidget>
 
 #include <KWindowSystem>
 

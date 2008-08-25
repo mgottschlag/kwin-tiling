@@ -163,7 +163,13 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     layout->addWidget(m_controlBar);
     layout->addWidget(m_mainView);
 
-    if (!isDesktop) {
+    int width = 400;
+    int height = 200;
+    if (isDesktop) {
+        QRect rect = desktop()->screenGeometry(0);
+        width = rect.width();
+        height = rect.height();
+    } else {
         QAction *action = KStandardAction::quit(qApp, SLOT(quit()), m_window);
         m_window->addAction(action);
 
@@ -171,12 +177,13 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
         int x = geom.indexOf('x');
 
         if (x > 0)  {
-            int width = qMax(400, geom.left(x).toInt());
-            int height = qMax(200, geom.right(geom.length() - x - 1).toInt());
-            m_window->setFixedSize(width, height);
-            m_mainView->setFixedSize(width, height - CONTROL_BAR_HEIGHT);
+            width = qMax(width, geom.left(x).toInt());
+            height = qMax(height, geom.right(geom.length() - x - 1).toInt());
         }
     }
+
+    m_window->setFixedSize(width, height);
+    m_mainView->setFixedSize(width, height - CONTROL_BAR_HEIGHT);
 
     // this line initializes the corona.
     corona();
@@ -239,9 +246,11 @@ void PlasmaApp::adjustSize(int screen)
 {
     Q_UNUSED(screen)
 
-    if (m_mainView) {
-        //TODO: change size to be size of screen - the height of the panel m_mainView->adjustSize();
-    }
+    QRect rect = desktop()->screenGeometry(0);
+    int width = rect.width();
+    int height = rect.height();
+    m_window->setFixedSize(width, height);
+    m_mainView->setFixedSize(width, height - CONTROL_BAR_HEIGHT);
 }
 
 void PlasmaApp::setCrashHandler()
