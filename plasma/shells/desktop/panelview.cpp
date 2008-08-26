@@ -24,7 +24,9 @@
 #include <QGraphicsLinearLayout>
 #include <QTimeLine>
 #include <QTimer>
+#ifdef Q_WS_X11
 #include <QX11Info>
+#endif
 
 #include <KWindowSystem>
 #include <KDebug>

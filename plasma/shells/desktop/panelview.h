@@ -85,12 +85,12 @@ public:
      * Pinches the min/max sizes of the containment to the current screen resolution
      */
     void pinchContainment(const QRect &screenGeometry);
-
+#ifdef Q_WS_X11
     /**
      * @return the unhide trigger window id, None if there is none
      */
     Window unhideTrigger() { return m_unhideTrigger; }
-
+#endif
     /**
      * unhides the panel if it is hidden
      */

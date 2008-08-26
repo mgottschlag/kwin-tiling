@@ -308,7 +308,6 @@ void PlasmaApp::toggleDashboard()
     view->toggleDashboard();
 }
 
-#ifdef Q_WS_X11
 void PlasmaApp::panelHidden(bool hidden)
 {
     if (hidden) {
@@ -324,6 +323,7 @@ void PlasmaApp::panelHidden(bool hidden)
     }
 }
 
+#ifdef Q_WS_X11
 bool PlasmaApp::x11EventFilter(XEvent *event)
 {
     if (m_panelHidden && event->type == EnterNotify) {
