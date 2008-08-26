@@ -63,16 +63,27 @@ public:
         MenuLauncherApplet::ViewType viewtype;
         MenuLauncherApplet::FormatType formattype;
 
-        QComboBox *viewComboBox, *formatComboBox;
+        QComboBox *viewComboBox;
+        QComboBox *formatComboBox;
 
         QList<QAction*> actions;
         QAction* switcher;
 
-        Private() : menuview(0), launcher(0), switcher(0) {}
-        ~Private() { delete menuview; }
+        Private()
+            : menuview(0),
+              icon(0),
+              launcher(0),
+              viewComboBox(0),
+              formatComboBox(0),
+              switcher(0)
+        {}
+        ~Private()
+        {
+            delete menuview;
+        }
 
         void addItem(QComboBox* combo, const QString& caption, int index, const QString& icon = QString()) {
-            if( icon.isNull() ) {
+            if( icon.isEmpty() ) {
                 combo->addItem(caption, index);
             }
             else {
