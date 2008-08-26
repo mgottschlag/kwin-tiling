@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include "mprisdbustypes.h"
-#include <KDebug>
 
 // Marshall the MprisDBusVersion data into a D-BUS argument
 QDBusArgument &operator<<(QDBusArgument &argument, const MprisDBusVersion &version)
