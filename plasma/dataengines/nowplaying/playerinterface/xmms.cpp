@@ -29,6 +29,7 @@
 XmmsFactory::XmmsFactory(QObject* parent)
     : PollingPlayerFactory(parent)
 {
+    setObjectName("XmmsFactory");
 }
 
 Player::Ptr XmmsFactory::create(const QVariantList& args)

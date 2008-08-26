@@ -26,6 +26,7 @@
 JukFactory::JukFactory(QObject* parent)
     : DBusPlayerFactory(parent)
 {
+    setObjectName("JukFactory");
 }
 
 Player::Ptr JukFactory::create(const QVariantList& args)

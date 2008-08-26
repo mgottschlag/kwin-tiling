@@ -31,6 +31,7 @@
 MprisFactory::MprisFactory(QObject* parent)
     : DBusPlayerFactory(parent)
 {
+    setObjectName("MprisFactory");
 }
 
 Player::Ptr MprisFactory::create(const QVariantList& args)

@@ -38,6 +38,11 @@ public:
         : ServiceJob(player->name(), operation, parameters, parent),
           m_player(player)
     {
+        if (player) {
+            setObjectName("PlayerActionJob: " + player->name() + ": " + operation);
+        } else {
+            setObjectName("PlayerActionJob: null player: " + operation);
+        }
     }
 
     void start();

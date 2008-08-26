@@ -11,6 +11,7 @@ PollingWatcher::PollingWatcher(QObject* parent)
     : QObject(parent),
       m_timer(0)
 {
+    setObjectName("PollingWatcher");
 }
 
 QList<Player::Ptr> PollingWatcher::players()
