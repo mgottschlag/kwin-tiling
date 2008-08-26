@@ -27,7 +27,7 @@
 /**
  * @short A Corona with desktop-y considerations
  */
-class PLASMA_EXPORT SaverCorona : public Plasma::Corona
+class SaverCorona : public Plasma::Corona
 {
     Q_OBJECT
 

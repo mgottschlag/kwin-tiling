@@ -16,11 +16,14 @@ qt4_add_dbus_adaptor(plasma-overlay_SRCS ${CMAKE_CURRENT_BINARY_DIR}/${plasmaapp
 
 kde4_add_ui_files(plasma-overlay_SRCS saverconfig.ui)
 kde4_add_executable(plasma-overlay ${plasma-overlay_SRCS})
-
-target_link_libraries(plasma-overlay plasma kworkspace  ${KDE4_KIO_LIBS})
-if(X11_Xrender_FOUND)
-  target_link_libraries(plasma-overlay ${X11_Xrender_LIB})
-endif(X11_Xrender_FOUND)
+if(NOT WIN32)
+    target_link_libraries(plasma-overlay plasma kworkspace  ${KDE4_KIO_LIBS})
+    if(X11_Xrender_FOUND)
+      target_link_libraries(plasma-overlay ${X11_Xrender_LIB})
+    endif(X11_Xrender_FOUND)
+else(NOT WIN32)
+    target_link_libraries(plasma-overlay plasma ${KDE4_KIO_LIBS})
+endif(NOT WIN32)
 set_target_properties(plasma-overlay PROPERTIES OUTPUT_NAME plasma-overlay)
 
 install(TARGETS plasma-overlay ${INSTALL_TARGETS_DEFAULT_ARGS})

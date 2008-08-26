@@ -25,6 +25,14 @@
 
 #include "plasmaapp.h"
 
+#ifdef Q_WS_WIN
+#ifdef _WIN32_WINNT
+#undef _WIN32_WINNT
+#endif
+#define _WIN32_WINNT 0x0500
+#include <windows.h>
+#endif
+
 #include <unistd.h>
 
 #ifndef _SC_PHYS_PAGES
@@ -60,19 +68,24 @@
 #include "savercorona.h"
 #include "saverview.h"
 
+#ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
+#endif
 
 Atom tag; //FIXME should this be a member var or what?
 const unsigned char DIALOG = 1; //FIXME this is really bad code
 const unsigned char VIEW = 2;
 
+#ifdef Q_WS_X11
 Display* dpy = 0;
 Colormap colormap = 0;
 Visual *visual = 0;
+#endif
 
 void checkComposite()
 {
+#ifdef Q_WS_X11
     dpy = XOpenDisplay(0); // open default display
     if (!dpy) {
         kError() << "Cannot connect to the X server" << endl;
@@ -104,20 +117,29 @@ void checkComposite()
     kDebug() << (colormap ? "Plasma has an argb visual" : "Plasma lacks an argb visual") << visual << colormap;
     kDebug() << ((KWindowSystem::compositingActive() && colormap) ? "Plasma can use COMPOSITE for effects"
                                                                     : "Plasma is COMPOSITE-less") << "on" << dpy;
+#endif
 }
 
 PlasmaApp* PlasmaApp::self()
 {
     if (!kapp) {
         checkComposite();
+#ifdef Q_WS_X11
         return new PlasmaApp(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
+#else
+        return new PlasmaApp(0, 0, 0);
+#endif
     }
 
     return qobject_cast<PlasmaApp*>(kapp);
 }
 
 PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
+#ifdef Q_WS_X11
     : KUniqueApplication(display, visual, colormap),
+#else
+    : KUniqueApplication(),
+#endif
       m_corona(0),
       m_view(0)
 {
@@ -172,6 +194,15 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     sysctl(mib, 2, &memorySize, &len, NULL, 0);
     memorySize /= 1024;
 #endif
+#ifdef Q_WS_WIN
+    size_t memorySize;
+
+    MEMORYSTATUSEX statex;
+    statex.dwLength = sizeof (statex);
+    GlobalMemoryStatusEx (&statex);
+
+    memorySize = (statex.ullTotalPhys/1024) + (statex.ullTotalPageFile/1024);
+#endif
     // If you have no suitable sysconf() interface and are not FreeBSD,
     // then you are out of luck and get a compile error.
 #endif
@@ -193,7 +224,9 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     enableCheats(KCmdLineArgs::parsedArgs()->isSet("cheats"));
 
     //we have to keep an eye on created windows
+#ifdef Q_WS_X11
     tag = XInternAtom(QX11Info::display(), "_KDE_SCREENSAVER_OVERRIDE", False);
+#endif
     qApp->installEventFilter(this);
 
     // this line initializes the corona.
@@ -291,7 +324,7 @@ void PlasmaApp::deactivate()
     }
 }
 
-uint PlasmaApp::viewWinId()
+WId PlasmaApp::viewWinId()
 {
     if (m_view) {
         //kDebug() << m_view->winId();
@@ -344,7 +377,11 @@ Plasma::Corona* PlasmaApp::corona()
 
 bool PlasmaApp::hasComposite()
 {
+#ifdef Q_WS_X11
     return colormap && KWindowSystem::compositingActive();
+#else
+    return false;
+#endif
 }
 
 //I think we need this for when the corona loads the default setup
@@ -403,7 +440,9 @@ void PlasmaApp::createView(Plasma::Containment *containment)
         m_view->setWindowOpacity(m_idleOpacity);
         m_view->showView();
     }
+#ifndef Q_WS_WIN
     emit viewCreated(m_view->effectiveWinId());
+#endif
 }
 
 bool PlasmaApp::eventFilter(QObject *obj, QEvent *event)
@@ -443,8 +482,9 @@ bool PlasmaApp::eventFilter(QObject *obj, QEvent *event)
                 //FIXME when returning from a subdialog to another dialog,
                 //kbd focus is broken, only esc/enter work
             }
-
+#ifdef Q_WS_X11
             XChangeProperty(QX11Info::display(), widget->effectiveWinId(), tag, tag, 8, PropModeReplace, &data, 1);
+#endif
             kDebug() << "tagged" << widget << widget->effectiveWinId() << (data != 0);
         }
     }
