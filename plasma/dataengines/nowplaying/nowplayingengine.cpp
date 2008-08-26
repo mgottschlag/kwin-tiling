@@ -36,6 +36,7 @@
 #endif // XMMS_FOUND
 
 #include "playercontrol.h"
+#include "playercontainer.h"
 
 NowPlayingEngine::NowPlayingEngine(QObject* parent,
                                    const QVariantList& args)
@@ -63,11 +64,9 @@ NowPlayingEngine::NowPlayingEngine(QObject* parent,
 
 Plasma::Service* NowPlayingEngine::serviceForSource(const QString& source)
 {
-    if (players.contains(source)) {
-        if (!controllers.contains(source)) {
-            controllers[source] = new PlayerControl(this, players[source]);
-        }
-        return controllers[source];
+    PlayerContainer* container = qobject_cast<PlayerContainer*>(containerForSource(source));
+    if (container) {
+        return container->service(this);
     } else {
         return DataEngine::serviceForSource(source);
     }
@@ -108,18 +107,9 @@ bool NowPlayingEngine::sourceRequestEvent(const QString& source)
     } else if (lowerSource == "players") {
         setData(source, sources());
         return true;
-    } else if (players.contains(source)) {
-        return updateSourceEvent(source);
-    } else {
-        kWarning() << "Player" << source << "not found";
     }
 
     return false;
-}
-
-QStringList NowPlayingEngine::sources() const
-{
-    return players.keys();
 }
 
 bool NowPlayingEngine::updateSourceEvent(const QString& source)
@@ -129,75 +119,19 @@ bool NowPlayingEngine::updateSourceEvent(const QString& source)
         // help text doesn't change
         return true;
     }
-
-    if (!players.contains(source)) {
-        kDebug() << "Can't find source" << source;
-         removeAllData(source);
-        return false;
-    }
-    Player::Ptr player = players[source];
-    Q_ASSERT(player);
-
-    if (!player->isRunning()) {
-        kDebug() << source << "isn't running";
-        removePlayer(player);
-        return false;
-    }
-
-    switch(player->state()) {
-        case Player::Playing:
-            setData(source, "State", "playing");
-            break;
-        case Player::Paused:
-            setData(source, "State", "paused");
-            break;
-        case Player::Stopped:
-            setData(source, "State", "stopped");
-            break;
-    }
-
-    setData(source, "Artist", player->artist());
-    setData(source, "Album", player->album());
-    setData(source, "Title", player->title());
-    setData(source, "Track number", player->trackNumber());
-    setData(source, "Comment", player->comment());
-    setData(source, "Genre", player->genre());
-    setData(source, "Length", player->length());
-    setData(source, "Position", player->position());
-    setData(source, "Volume", player->volume());
-    setData(source, "Artwork", player->artwork());
-    setData(source, "Can play", player->canPlay());
-    setData(source, "Can pause", player->canPause());
-    setData(source, "Can stop", player->canStop());
-    setData(source, "Can skip backward", player->canGoPrevious());
-    setData(source, "Can skip forward", player->canGoNext());
-    setData(source, "Can seek", player->canSeek());
-    setData(source, "Can set volume", player->canSetVolume());
-
-    return true;
+    return false;
 }
 
 void NowPlayingEngine::addPlayer(Player::Ptr player)
 {
     kDebug() << "Adding player" << player->name();
-    players.insert(player->name(), player);
-    emit sourceAdded(player->name());
+    addSource(new PlayerContainer(player, this));
 }
 
 void NowPlayingEngine::removePlayer(Player::Ptr player)
 {
     kDebug() << "Player" << player->name() << "disappeared";
-    if (players.contains(player->name())) {
-        Q_ASSERT(player == players[player->name()]);
-
-        players.remove(player->name());
-        if (controllers.contains(player->name())) {
-            controllers.remove(player->name());
-        }
-        removeSource(player->name());
-    } else {
-        kDebug() << "We didn't know about player" << player->name();
-    }
+    removeSource(player->name());
 }
 
 #include "nowplayingengine.moc"

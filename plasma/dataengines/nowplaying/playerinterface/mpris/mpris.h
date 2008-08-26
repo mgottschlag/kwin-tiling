@@ -19,7 +19,7 @@
 #ifndef MPRIS_H
 #define MPRIS_H
 
-#include "playerfactory.h"
+#include "../playerfactory.h"
 
 class MprisFactory : public DBusPlayerFactory
 {

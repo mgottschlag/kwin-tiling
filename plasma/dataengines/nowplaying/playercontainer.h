@@ -17,29 +17,30 @@
  * Boston, MA  02110-1301  USA
  */
 
-#ifndef PLAYERCONTROL_H
-#define PLAYERCONTROL_H
+#ifndef PLAYERCONTAINER_H
+#define PLAYERCONTAINER_H
 
-#include <plasma/service.h>
+#include <plasma/datacontainer.h>
 
 #include "playerinterface/player.h"
 
-class PlayerControl : public Plasma::Service
+class PlayerControl;
+
+class PlayerContainer : public Plasma::DataContainer
 {
     Q_OBJECT
 
 public:
-    PlayerControl(QObject* parent, Player::Ptr player);
+    explicit PlayerContainer(Player::Ptr player, QObject* parent = 0);
+
+    Plasma::Service* service(QObject* parent = 0);
 
 public slots:
-    void updateEnabledOperations();
-
-protected:
-    Plasma::ServiceJob* createJob(const QString& operation,
-                                  QMap<QString,QVariant>& parameters);
+    void updateInfo();
 
 private:
     Player::Ptr m_player;
+    PlayerControl* m_controller;
 };
 
-#endif // PLAYERCONTROL_H
+#endif // PLAYERCONTAINER_H

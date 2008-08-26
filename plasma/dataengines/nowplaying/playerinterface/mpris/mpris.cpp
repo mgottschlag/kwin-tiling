@@ -18,7 +18,7 @@
 
 #include "mpris.h"
 #include "mpris_p.h"
-#include <mpris_interface.h>
+#include "mprisplayer.h"
 
 #include <QtDBus>
 #include <QFile>
@@ -32,6 +32,8 @@ MprisFactory::MprisFactory(QObject* parent)
     : DBusPlayerFactory(parent)
 {
     setObjectName("MprisFactory");
+    qDBusRegisterMetaType<MprisDBusVersion>();
+    qDBusRegisterMetaType<MprisDBusStatus>();
 }
 
 Player::Ptr MprisFactory::create(const QVariantList& args)
@@ -78,7 +80,7 @@ Mpris::~Mpris()
 
 void Mpris::setup() {
     delete m_player;
-    m_player = new OrgFreedesktopMediaPlayerInterface(
+    m_player = new MprisPlayer(
             m_playerName,
             "/Player",
             QDBusConnection::sessionBus());
@@ -92,8 +94,8 @@ void Mpris::setup() {
                 this,   SLOT(capsChanged(int)));
         connect(m_player, SIGNAL(TrackChange(QVariantMap)),
                 this,   SLOT(trackChanged(QVariantMap)));
-        connect(m_player, SIGNAL(StatusChange(int)),
-                this,   SLOT(stateChanged(int)));
+        connect(m_player, SIGNAL(StatusChange(MprisDBusStatus)),
+                this,   SLOT(stateChanged(MprisDBusStatus)));
 
         capsChanged(m_player->GetCaps());
         trackChanged(m_player->GetMetadata());
@@ -317,28 +319,28 @@ void Mpris::trackChanged(const QVariantMap& metadata)
     m_metadata = metadata;
 }
 
-void Mpris::stateChanged(int state)
+void Mpris::stateChanged(MprisDBusStatus state)
 {
-    kDebug() << m_playerName << "state:" << state;
-    switch (state) {
-        case 0:
+    kDebug() << m_playerName << "state:" << state.play;
+    switch (state.play) {
+        case MprisDBusStatus::Playing:
             m_state = Playing;
             break;
-        case 1:
+        case MprisDBusStatus::Paused:
             m_state = Paused;
             break;
-        case 2:
+        case MprisDBusStatus::Stopped:
             m_state = Stopped;
             break;
         default:
-            kDebug() << m_playerName << "unexpected state" << state;
+            kDebug() << m_playerName << "unexpected state" << state.play;
     }
 }
 
 void Mpris::capsChanged(int caps)
 {
     kDebug() << m_playerName << "capabilities:" << caps;
-    m_caps = static_cast<Caps>(caps);
+    m_caps = (DBusCaps)caps;
     if (!caps & CAN_PROVIDE_METADATA) {
         m_metadata.clear();
     }

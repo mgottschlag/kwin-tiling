@@ -18,11 +18,12 @@
 #define MPRIS_P_H
 
 #include "mpris.h"
-#include "player.h"
+#include "mprisdbustypes.h"
+#include "../player.h"
 
 #include <QVariantMap>
 
-class OrgFreedesktopMediaPlayerInterface;
+class MprisPlayer;
 
 class Mpris : public QObject, public Player
 {
@@ -68,27 +69,17 @@ public:
 
 private Q_SLOTS:
     void trackChanged(const QVariantMap& metadata);
-    void stateChanged(int state);
+    void stateChanged(MprisDBusStatus state);
     void capsChanged(int caps);
 
 private:
-    enum Caps {
-        NO_CAPS               = 0,
-        CAN_GO_NEXT           = 1,
-        CAN_GO_PREV           = 2,
-        CAN_PAUSE             = 4,
-        CAN_PLAY              = 8,
-        CAN_SEEK              = 16,
-        CAN_PROVIDE_METADATA  = 32,
-        CAN_HAS_TRACKLIST     = 64
-    };
     void setup();
-    OrgFreedesktopMediaPlayerInterface* m_player;
+    MprisPlayer* m_player;
 
     QString m_playerName;
     QVariantMap m_metadata;
     State m_state;
-    Caps m_caps;
+    DBusCaps m_caps;
     QMap<QString,QString> m_artfiles;
 };
 

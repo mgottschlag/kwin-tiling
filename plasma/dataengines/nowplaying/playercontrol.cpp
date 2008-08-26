@@ -35,6 +35,32 @@ PlayerControl::PlayerControl(QObject* parent, Player::Ptr player)
     } else {
         kDebug() << "Created a dead player control";
     }
+    updateEnabledOperations();
+}
+
+void PlayerControl::updateEnabledOperations()
+{
+    if (m_player) {
+        /*
+        kDebug() << "Updating operations:"
+                 << "\n    Play:" << m_player->canPlay()
+                 << "\n    Pause:" << m_player->canPause()
+                 << "\n    Stop:" << m_player->canStop()
+                 << "\n    Next:" << m_player->canGoNext()
+                 << "\n    Previous:" << m_player->canGoPrevious()
+                 << "\n    Volume:" << m_player->canSetVolume()
+                 << "\n    Seek:" << m_player->canSeek();
+                 */
+        setOperationEnabled("play", m_player->canPlay());
+        setOperationEnabled("pause", m_player->canPause());
+        setOperationEnabled("stop", m_player->canStop());
+        setOperationEnabled("next", m_player->canGoNext());
+        setOperationEnabled("previous", m_player->canGoPrevious());
+        setOperationEnabled("volume", m_player->canSetVolume());
+        setOperationEnabled("seek", m_player->canSeek());
+    } else {
+        kDebug() << "No player";
+    }
 }
 
 Plasma::ServiceJob* PlayerControl::createJob(const QString& operation,

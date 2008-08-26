@@ -41,7 +41,6 @@ class NowPlayingEngine : public Plasma::DataEngine
 
 public:
     NowPlayingEngine(QObject* parent, const QVariantList& args);
-    QStringList sources() const;
     Plasma::Service* serviceForSource(const QString& source);
 
 protected:
@@ -53,8 +52,6 @@ private slots:
     void removePlayer(Player::Ptr player);
 
 private:
-    QMap<QString, Player::Ptr> players;
-    QMap<QString, PlayerControl*> controllers;
     DBusWatcher* dbusWatcher;
     PollingWatcher* pollingWatcher;
 };
