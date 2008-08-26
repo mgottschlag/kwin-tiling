@@ -40,6 +40,7 @@
 #include "plasmaapp.h"
 
 #ifdef Q_WS_WIN
+#include "windows.h"
 #include "windef.h"
 #include "wingdi.h"
 #include "winuser.h"
