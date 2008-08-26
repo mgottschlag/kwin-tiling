@@ -38,6 +38,7 @@
 #include <plasma/corona.h>
 #include <plasma/paintutils.h>
 #include <plasma/theme.h>
+#include <plasma/svg.h>
 
 #include "plasmaapp.h"
 #include "positioningruler.h"
@@ -85,89 +86,6 @@ public:
     }
 };
 
-class PanelController::ResizeHandle: public QWidget
-{
-public:
-    ResizeHandle(QWidget *parent)
-       : QWidget(parent),
-         m_mouseOver(false)
-    {
-        setCursor(Qt::SizeVerCursor);
-        setToolTip(i18n("Drag this handle to resize the panel"));
-    }
-
-    QSize sizeHint() const
-    {
-        return QSize(4, 4);
-    }
-
-    void paintEvent(QPaintEvent *event)
-    {
-        QPainter painter(this);
-        QColor backColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-
-        if (m_mouseOver) {
-            backColor.setAlphaF(0.50);
-        } else {
-            backColor.setAlphaF(0.30);
-        }
-
-        painter.fillRect(event->rect(), backColor);
-
-        // draw 3 dots to resemble other resize handles
-        int diameter = qMin(width(), height());
-        QRect dotRect(QPoint(0,0), QSize(diameter, diameter));
-        dotRect.moveCenter(mapFromParent(geometry().center()));
-
-        painter.setRenderHint(QPainter::Antialiasing, true);
-
-        paintDot(&painter, dotRect);
-
-        //other two dots
-        if (size().width() > size().height()) {
-            dotRect.translate(-diameter*2, 0);
-            paintDot(&painter, dotRect);
-            dotRect.translate(diameter*4, 0);
-            paintDot(&painter, dotRect);
-        } else {
-            dotRect.translate(0, -diameter*2);
-            paintDot(&painter, dotRect);
-            dotRect.translate(0, diameter*4);
-            paintDot(&painter, dotRect);
-        }
-    }
-
-protected:
-    void enterEvent(QEvent * event)
-    {
-        m_mouseOver = true;
-        update();
-    }
-
-    void leaveEvent(QEvent * event)
-    {
-        m_mouseOver = false;
-        update();
-    }
-
-private:
-    void paintDot(QPainter *painter, QRect dotRect)
-    {
-        QLinearGradient gradient(dotRect.left(), dotRect.top(), dotRect.left(), dotRect.bottom());
-        QColor firstColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-        firstColor.setAlphaF(0.6);
-        QColor secondColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-        secondColor.setAlphaF(0.6);
-        gradient.setColorAt(0, firstColor);
-        gradient.setColorAt(1, secondColor);
-
-        painter->setBrush(gradient);
-        painter->setPen(Qt::NoPen);
-        painter->drawEllipse(dotRect);
-    }
-
-    bool m_mouseOver;
-};
 
 class PanelController::Private
 {
@@ -289,7 +207,7 @@ public:
     }
 
      enum DragElement { NoElement = 0,
-                        ResizeHandleElement,
+                        ResizeButtonElement,
                         MoveButtonElement
                       };
 
@@ -303,9 +221,11 @@ public:
     QLabel *alignLabel;
     DragElement dragging;
     QPoint startDragPos;
+    Plasma::Svg *svg;
 
     ToolButton *moveTool;
-    
+    ToolButton *sizeTool;
+
     //Alignment buttons
     ToolButton *leftAlignTool;
     ToolButton *centerAlignTool;
@@ -314,9 +234,8 @@ public:
     //Widgets for actions
     QList<QWidget *> actionWidgets;
 
-    ResizeHandle *panelHeightHandle;
     PositioningRuler *ruler;
-    
+
     bool drawMoveHint;
 
     static const int minimumHeight = 10;
@@ -326,19 +245,23 @@ PanelController::PanelController(QWidget* parent)
    : QWidget(0),
      d(new Private(this))
 {
+    Q_UNUSED(parent)
+
+
+    d->svg = new Plasma::Svg(this);
+    d->svg->setImagePath("widgets/containment-controls");
+    d->svg->setContainsMultipleImages(true);
+
     //setWindowFlags(Qt::Popup);
     setWindowFlags(Qt::FramelessWindowHint);
     KWindowSystem::setState(winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
     setAttribute(Qt::WA_DeleteOnClose);
     setFocus(Qt::ActiveWindowFocusReason);
-    //Resize handles
-    d->panelHeightHandle = new ResizeHandle(this);
 
     //layout setup
     d->extLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
     d->extLayout->setContentsMargins(0, 1, 0, 0);
     setLayout(d->extLayout);
-    d->extLayout->addWidget(d->panelHeightHandle);
 
     d->layout = new QBoxLayout(QBoxLayout::LeftToRight);
     d->layout->setContentsMargins(4, 4, 4, 4);
@@ -360,7 +283,7 @@ PanelController::PanelController(QWidget* parent)
     d->alignLayout = new QBoxLayout(d->layout->direction(), alignFrame);
     alignFrame->setLayout(d->alignLayout);
     d->layout->addWidget(alignFrame);
-    
+
     d->alignLabel = new QLabel(i18n("Panel alignment"), this);
     d->alignLayout->addWidget(d->alignLabel);
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(setPalette()));
@@ -379,9 +302,15 @@ PanelController::PanelController(QWidget* parent)
     connect(d->rightAlignTool, SIGNAL(clicked(bool)), this, SLOT(alignToggled(bool)));
 
     d->layout->addStretch();
-    d->moveTool = d->addTool("transform-move", i18n("Move the panel"), this, Qt::ToolButtonIconOnly, false);
+    d->moveTool = d->addTool("transform-move", i18n("Screen edge"), this);
     d->moveTool->installEventFilter(this);
+    d->moveTool->setCursor(Qt::SizeAllCursor);
     d->layout->addWidget(d->moveTool);
+
+    d->sizeTool = d->addTool("transform-scale", i18n("Height"), this);
+    d->sizeTool->installEventFilter(this);
+    d->sizeTool->setCursor(Qt::SizeVerCursor);
+    d->layout->addWidget(d->sizeTool);
     d->layout->addStretch();
 
     //other buttons
@@ -526,8 +455,8 @@ void PanelController::setLocation(const Plasma::Location &loc)
             d->extLayout->setDirection(QBoxLayout::RightToLeft);
         }
         d->extLayout->setContentsMargins(1, 0, 0, 0);
-        d->panelHeightHandle->setCursor(Qt::SizeHorCursor);
-        d->panelHeightHandle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+        d->sizeTool->setCursor(Qt::SizeHorCursor);
+        d->sizeTool->setText(i18n("Width"));
 
         d->ruler->setAvailableLength(screenGeom.height());
         break;
@@ -539,8 +468,8 @@ void PanelController::setLocation(const Plasma::Location &loc)
             d->extLayout->setDirection(QBoxLayout::LeftToRight);
         }
         d->extLayout->setContentsMargins(1, 0, 0, 0);
-        d->panelHeightHandle->setCursor(Qt::SizeHorCursor);
-        d->panelHeightHandle->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+        d->sizeTool->setCursor(Qt::SizeHorCursor);
+        d->sizeTool->setText(i18n("Width"));
 
         d->ruler->setAvailableLength(screenGeom.height());
         break;
@@ -552,8 +481,8 @@ void PanelController::setLocation(const Plasma::Location &loc)
         }
         d->extLayout->setDirection(QBoxLayout::BottomToTop);
         d->extLayout->setContentsMargins(0, 0, 0, 1);
-        d->panelHeightHandle->setCursor(Qt::SizeVerCursor);
-        d->panelHeightHandle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        d->sizeTool->setCursor(Qt::SizeVerCursor);
+        d->sizeTool->setText(i18n("Height"));
 
         d->ruler->setAvailableLength(screenGeom.width());
         break;
@@ -566,8 +495,8 @@ void PanelController::setLocation(const Plasma::Location &loc)
         }
         d->extLayout->setDirection(QBoxLayout::TopToBottom);
         d->extLayout->setContentsMargins(0, 1, 0, 0);
-        d->panelHeightHandle->setCursor(Qt::SizeVerCursor);
-        d->panelHeightHandle->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        d->sizeTool->setCursor(Qt::SizeVerCursor);
+        d->sizeTool->setText(i18n("Height"));
 
         d->ruler->setAvailableLength(screenGeom.width());
         break;
@@ -639,64 +568,84 @@ void PanelController::paintEvent(QPaintEvent *event)
     QColor backColor = Plasma::Theme::defaultTheme() ->color(Plasma::Theme::BackgroundColor);
     backColor.setAlphaF(0.75);
     painter.fillRect(event->rect(), backColor);
-}
 
-void PanelController::mousePressEvent(QMouseEvent *event)
-{
-    if (d->panelHeightHandle->geometry().contains(event->pos()) ) {
-        d->startDragPos = event->pos();
-        d->dragging = Private::ResizeHandleElement;
-    } else if (d->moveTool->geometry().contains(event->pos()) ) {
-        d->dragging = Private::MoveButtonElement;
+    QRect borderRect;
+    QString element;
+    switch (d->location) {
+    case Plasma::LeftEdge:
+        element = "west-right";
+        borderRect = QRect(QPoint(0,0), d->svg->elementSize(element));
+        borderRect.setHeight(height());
+        borderRect.moveRight(geometry().width());
+        break;
+    case Plasma::RightEdge:
+        element = "east-left";
+        borderRect = QRect(QPoint(0,0), d->svg->elementSize(element));
+        borderRect.setHeight(height());
+        break;
+    case Plasma::TopEdge:
+        element = "north-bottom";
+        borderRect = QRect(QPoint(0,0), d->svg->elementSize(element));
+        borderRect.setWidth(width());
+        borderRect.moveBottom(geometry().height());
+        break;
+    case Plasma::BottomEdge:
+    default:
+        element = "south-top";
+        borderRect = QRect(QPoint(0, 0), d->svg->elementSize(element));
+        borderRect.setWidth(width());
+        break;
     }
 
-    QWidget::mousePressEvent(event);
+    d->svg->paint(&painter, borderRect, element);
 }
 
 bool PanelController::eventFilter(QObject *watched, QEvent *event)
 {
-    if (watched != d->moveTool) {
-        return false;
-    }
+    if (watched == d->moveTool) {
+        if (event->type() == QEvent::MouseButtonPress) {
+            d->dragging = Private::MoveButtonElement;
+        } else if (event->type() == QEvent::MouseButtonRelease) {
+            d->dragging = Private::NoElement;
+        }
+    } else if (watched == d->sizeTool) {
+        if (event->type() == QEvent::MouseButtonPress) {
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+            d->startDragPos = mouseEvent->pos();
+            d->dragging = Private::ResizeButtonElement;
+        } else if (event->type() == QEvent::MouseButtonRelease) {
+            //FIXME: for now resizes here instead of on mouse move, for a serious performance problem, maybe in Qt
+            QRect screenGeom =
+            QApplication::desktop()->screenGeometry(d->containment->screen());
+            if (d->dragging == Private::ResizeButtonElement) {
+                switch (location()) {
+                case Plasma::LeftEdge:
+                    d->resizePanelHeight(geometry().left() - screenGeom.left());
+                    break;
+                case Plasma::RightEdge:
+                    d->resizePanelHeight(screenGeom.right() - geometry().right());
+                    break;
+                case Plasma::TopEdge:
+                    d->resizePanelHeight(geometry().top() - screenGeom.top());
+                    break;
+                case Plasma::BottomEdge:
+                default:
+                    d->resizePanelHeight(screenGeom.bottom() - geometry().bottom());
+                    break;
+                }
+            }
 
-    if (event->type() == QEvent::MouseButtonPress) {
-        d->dragging = Private::MoveButtonElement;
-    } else if (event->type() == QEvent::MouseButtonRelease) {
-        d->dragging = Private::NoElement;
-    }
-
-    return false;
-}
-
-void PanelController::mouseReleaseEvent(QMouseEvent *event)
-{
-    Q_UNUSED(event)
-
-    //FIXME: for now resizes here instead of on mouse move, for a serious performance problem, maybe in Qt
-    QRect screenGeom =
-    QApplication::desktop()->screenGeometry(d->containment->screen());
-    if (d->dragging == Private::ResizeHandleElement) {
-        switch (location()) {
-        case Plasma::LeftEdge:
-            d->resizePanelHeight(geometry().left() - screenGeom.left());
-            break;
-        case Plasma::RightEdge:
-            d->resizePanelHeight(screenGeom.right() - geometry().right());
-            break;
-        case Plasma::TopEdge:
-            d->resizePanelHeight(geometry().top() - screenGeom.top());
-            break;
-        case Plasma::BottomEdge:
-        default:
-            d->resizePanelHeight(screenGeom.bottom() - geometry().bottom());
-            break;
+            //resets properties saved during the drag
+            d->startDragPos = QPoint(0, 0);
+            d->dragging = Private::NoElement;
+            setCursor(Qt::ArrowCursor);
+        } else if (event->type() == QEvent::MouseMove) {
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+            mouseMoveEvent(mouseEvent);
         }
     }
 
-    //resets properties saved during the drag
-    d->startDragPos = QPoint(0, 0);
-    d->dragging = Private::NoElement;
-    setCursor(Qt::ArrowCursor);
+    return false;
 }
 
 void PanelController::mouseMoveEvent(QMouseEvent *event)

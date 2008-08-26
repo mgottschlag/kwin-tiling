@@ -135,11 +135,11 @@ public:
             break;
         }
 
-        leftMaxSliderRect.setSize(sliderGraphics->elementSize(elementPrefix + "maxslider"));
-        rightMaxSliderRect.setSize(leftMaxSliderRect.size());
-        leftMinSliderRect.setSize(sliderGraphics->elementSize(elementPrefix + "minslider"));
-        rightMinSliderRect.setSize(leftMinSliderRect.size());
-        offsetSliderRect.setSize(sliderGraphics->elementSize(elementPrefix + "offsetslider"));
+        leftMaxSliderRect.setSize(sliderGraphics->elementSize(elementPrefix + "left-limit-slider"));
+        leftMinSliderRect.setSize(sliderGraphics->elementSize(elementPrefix + "right-limit-slider"));
+        rightMaxSliderRect.setSize(leftMinSliderRect.size());
+        rightMinSliderRect.setSize(leftMaxSliderRect.size());
+        offsetSliderRect.setSize(sliderGraphics->elementSize(elementPrefix + "offset-slider"));
     }
 
     void setupSliders(const QSize &totalSize)
@@ -188,43 +188,43 @@ public:
             offsetPos = totalLength/2 + offset - 1;
             break;
         }
-    
+
         switch (location) {
         case Plasma::LeftEdge:
             leftMaxSliderRect.moveCenter(QPoint(3*(totalSize.width()/4), leftMaxPos));
             rightMaxSliderRect.moveCenter(QPoint(3*(totalSize.width()/4), rightMaxPos));
-        
+
             leftMinSliderRect.moveCenter(QPoint(totalSize.width()/4, leftMinPos));
             rightMinSliderRect.moveCenter(QPoint(totalSize.width()/4, rightMinPos));
-        
+
             offsetSliderRect.moveCenter(QPoint(3*(totalSize.width()/4), offsetPos));
             break;
         case Plasma::RightEdge:
             leftMaxSliderRect.moveCenter(QPoint(totalSize.width()/4, leftMaxPos));
             rightMaxSliderRect.moveCenter(QPoint(totalSize.width()/4, rightMaxPos));
-        
+
             leftMinSliderRect.moveCenter(QPoint(3*(totalSize.width()/4), leftMinPos));
             rightMinSliderRect.moveCenter(QPoint(3*(totalSize.width()/4), rightMinPos));
-        
+
             offsetSliderRect.moveCenter(QPoint(totalSize.width()/4, offsetPos));
             break;
         case Plasma::TopEdge:
             leftMaxSliderRect.moveCenter(QPoint(leftMaxPos, 3*(totalSize.height()/4)));
             rightMaxSliderRect.moveCenter(QPoint(rightMaxPos, 3*(totalSize.height()/4)));
-        
+
             leftMinSliderRect.moveCenter(QPoint(leftMinPos, totalSize.height()/4));
             rightMinSliderRect.moveCenter(QPoint(rightMinPos, totalSize.height()/4));
-        
+
             offsetSliderRect.moveCenter(QPoint(offsetPos, 3*(totalSize.height()/4)));
             break;
         case Plasma::BottomEdge:
         default:
             leftMaxSliderRect.moveCenter(QPoint(leftMaxPos, totalSize.height()/4));
             rightMaxSliderRect.moveCenter(QPoint(rightMaxPos, totalSize.height()/4));
-        
+
             leftMinSliderRect.moveCenter(QPoint(leftMinPos, 3*(totalSize.height()/4)));
             rightMinSliderRect.moveCenter(QPoint(rightMinPos, 3*(totalSize.height()/4)));
-        
+
             offsetSliderRect.moveCenter(QPoint(offsetPos, totalSize.height()/4));
             break;
         }
@@ -504,16 +504,16 @@ void PositioningRuler::paintEvent(QPaintEvent *event)
     }
 
     if (d->alignment != Qt::AlignLeft) {
-        d->sliderGraphics->paint(&painter, d->leftMaxSliderRect, elementPrefix + "maxslider");
-        d->sliderGraphics->paint(&painter, d->leftMinSliderRect, elementPrefix + "minslider");
+        d->sliderGraphics->paint(&painter, d->leftMaxSliderRect, elementPrefix + "left-limit-slider");
+        d->sliderGraphics->paint(&painter, d->leftMinSliderRect, elementPrefix + "right-limit-slider");
     }
 
     if (d->alignment != Qt::AlignRight) {
-        d->sliderGraphics->paint(&painter, d->rightMaxSliderRect, elementPrefix + "maxslider");
-        d->sliderGraphics->paint(&painter, d->rightMinSliderRect, elementPrefix + "minslider");
+        d->sliderGraphics->paint(&painter, d->rightMaxSliderRect, elementPrefix + "right-limit-slider");
+        d->sliderGraphics->paint(&painter, d->rightMinSliderRect, elementPrefix + "left-limit-slider");
     }
 
-    d->sliderGraphics->paint(&painter, d->offsetSliderRect, elementPrefix + "offsetslider");
+    d->sliderGraphics->paint(&painter, d->offsetSliderRect, elementPrefix + "offset-slider");
 }
 
 void PositioningRuler::wheelEvent(QWheelEvent *event)

@@ -59,9 +59,7 @@ public Q_SLOTS:
 
 protected:
     void paintEvent(QPaintEvent *event);
-    void mousePressEvent(QMouseEvent *event);
     bool eventFilter(QObject *watched, QEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void focusOutEvent(QFocusEvent * event);
 
