@@ -1,7 +1,7 @@
 [Desktop Entry]
 Exec=plasma
 X-DBUS-StartupType=wait
-Name=Plasma
+Name=Plasma Desktop Workspace
 Name[ar]=بلازما
 Name[be]=Плазма
 Name[csb]=Plazma

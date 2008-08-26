@@ -1,7 +1,8 @@
 [Desktop Entry]
 Exec=plasma-mid
 X-DBUS-StartupType=wait
-Name=Plasma MID Shell
+Name=Plasma MID
+Comment=Workspace shell for mobile internet devices
 Type=Service
 X-KDE-StartupNotify=false
 OnlyShowIn=KDE;
