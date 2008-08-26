@@ -43,11 +43,14 @@ public:
 
 public Q_SLOTS:
 
-    // load the settings from the config
+    /// load the settings from the config
     virtual void load();
 
-    // save the current settings
+    /// save the current settings
     virtual void save();
+
+    /// sets the configuration to sensible default values.
+    virtual void defaults();
 
 private slots:
 

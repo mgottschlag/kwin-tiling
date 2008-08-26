@@ -104,7 +104,11 @@ void KColorCm::populateSchemeList()
     // add current scheme entry
     QIcon icon = createSchemePreviewIcon(KGlobalSettings::createApplicationPalette(m_config),
                                          WindecoColors(m_config));
-    schemeList->addItem(new QListWidgetItem(icon, i18n("Current")));
+    QListWidgetItem *currentitem = new QListWidgetItem(icon, i18n("Current"));
+    schemeList->addItem(currentitem);
+    schemeList->blockSignals(true); // don't emit changed signals
+    schemeList->setCurrentItem(currentitem);
+    schemeList->blockSignals(false);
 
     // add default entry
     m_config->setReadDefaults(true);
@@ -217,6 +221,8 @@ void KColorCm::loadScheme()
         QString fileBaseName = schemeList->currentItem()->data(Qt::UserRole).toString();
         if (name == i18n("Default"))
         {
+            schemeRemoveButton->setEnabled(false);
+
             KSharedConfigPtr config = m_config;
             config->setReadDefaults(true);
             loadScheme(config);
@@ -226,10 +232,19 @@ void KColorCm::loadScheme()
         }
         else if (name == i18n("Current"))
         {
+            schemeRemoveButton->setEnabled(false);
             loadInternal(false);
         }
         else
         {
+            QString path = KGlobal::dirs()->findResource("data",
+                "color-schemes/" + fileBaseName + ".colors");
+
+            int permissions = QFile(path).permissions();
+            bool canWrite = (permissions & QFile::WriteUser);
+            kDebug() << "checking permissions of " << path;
+            schemeRemoveButton->setEnabled(canWrite);
+
             if (0) // TODO if changes made to loaded scheme
             {
                 if (KMessageBox::Continue != KMessageBox::warningContinueCancel(this,
@@ -242,14 +257,6 @@ void KColorCm::loadScheme()
                     return;
                 }
             }
-
-            QString path = KGlobal::dirs()->findResource("data",
-                "color-schemes/" + fileBaseName + ".colors");
-
-            int permissions = QFile(path).permissions();
-            bool canWrite = (permissions & QFile::WriteUser);
-            kDebug() << "checking permissions of " << path;
-            schemeRemoveButton->setEnabled(canWrite);
 
             KSharedConfigPtr config = KSharedConfig::openConfig(path);
             loadScheme(config);
@@ -1073,6 +1080,18 @@ void KColorCm::save()
     groupI.writeEntry("ContrastEffect", inactiveContrastBox->currentIndex());
 
     emit changed(false);
+}
+
+void KColorCm::defaults()
+{
+    for(int i = 0; i < schemeList->count(); ++i) {
+        if(schemeList->item(i)->text() == i18n("Default")) {
+            schemeList->setCurrentItem(schemeList->item(i));
+            break;
+        }
+    }
+    KCModule::defaults();
+    emit changed(true);
 }
 
 void KColorCm::emitChanged()
