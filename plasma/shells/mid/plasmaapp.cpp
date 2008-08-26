@@ -43,12 +43,15 @@
 #include "midcorona.h"
 #include "midview.h"
 
+#ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrender.h>
 
 Display* dpy = 0;
 Colormap colormap = 0;
 Visual *visual = 0;
+#endif
+
 static const int CONTROL_BAR_HEIGHT = 22;
 
 void checkComposite()
@@ -92,14 +95,22 @@ PlasmaApp* PlasmaApp::self()
 {
     if (!kapp) {
         checkComposite();
+#ifdef Q_WS_X11
         return new PlasmaApp(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
+#else
+        return new PlasmaApp(0, 0, 0);
+#endif
     }
 
     return qobject_cast<PlasmaApp*>(kapp);
 }
 
 PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
+#ifdef Q_WS_X11
     : KUniqueApplication(display, visual, colormap),
+#else
+    : KUniqueApplication(),
+#endif
       m_corona(0),
       m_window(0),
       m_controlBar(0),
@@ -142,6 +153,7 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
 
     m_window = new QWidget;
 
+#ifdef Q_WS_X11
     //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
     //the application name is we set the proper XClassHint here, hopefully won't be necessary anymore when
     //qapplication will manage apps with argb visuals in a better way
@@ -149,6 +161,7 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     classHint.res_name = const_cast<char*>("Plasma");
     classHint.res_class = const_cast<char*>("Plasma");
     XSetClassHint(QX11Info::display(), m_window->winId(), &classHint);
+#endif
 
     QVBoxLayout *layout = new QVBoxLayout(m_window);
     layout->setMargin(0);
@@ -312,7 +325,11 @@ Plasma::Corona* PlasmaApp::corona()
 
 bool PlasmaApp::hasComposite()
 {
+#ifdef Q_WS_X11
     return colormap && KWindowSystem::compositingActive();
+#else
+    return false;
+#endif
 }
 
 void PlasmaApp::notifyStartup(bool completed)
