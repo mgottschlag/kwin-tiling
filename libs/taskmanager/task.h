@@ -86,8 +86,8 @@ public:
     QString visibleName() const;
     QString visibleNameWithState() const;
     QString name() const;
-    QString className();
-    QString classClass();
+    QString className() const;
+    QString classClass() const;
 
     /**
      * A list of the window ids of all transient windows (dialogs) associated

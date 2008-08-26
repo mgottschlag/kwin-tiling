@@ -399,7 +399,7 @@ QString Task::name() const
     return d->info.name();
 }
 
-QString Task::className()
+QString Task::className() const
 {
     XClassHint hint;
     if(XGetClassHint(QX11Info::display(), d->win, &hint)) {
@@ -411,7 +411,7 @@ QString Task::className()
     return QString();
 }
 
-QString Task::classClass()
+QString Task::classClass() const
 {
     XClassHint hint;
     if(XGetClassHint(QX11Info::display(), d->win, &hint)) {
