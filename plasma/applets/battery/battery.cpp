@@ -141,14 +141,13 @@ QSizeF Battery::sizeHint(const Qt::SizeHint which, const QSizeF& constraint) con
     QSizeF sizeHint = contentsRect().size();
     switch (formFactor()) {
         case Plasma::Vertical:
-            sizeHint.setHeight(sizeHint.width() * m_numOfBattery);
+            sizeHint.setHeight(sizeHint.width() * qMax(1, m_numOfBattery));
             break;
 
         default:
-            sizeHint.setWidth(sizeHint.height() * m_numOfBattery);
+            sizeHint.setWidth(sizeHint.height() * qMax(1, m_numOfBattery));
             break;
     }
-    kDebug() << "SizeHint" << sizeHint;
     return sizeHint;
 }
 
@@ -168,7 +167,7 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
 
 void Battery::createConfigurationInterface(KConfigDialog *parent)
 {
-    QWidget *widget = new QWidget();
+    QWidget *widget = new QWidget(parent);
     ui.setupUi(widget);
     parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
     parent->addPage(widget, parent->windowTitle(), icon());
