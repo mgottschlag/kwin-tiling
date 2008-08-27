@@ -65,7 +65,7 @@ public:
     QGraphicsView *view;
     QString timezone;
     QPoint clicked;
-    QStringList m_timeZones;
+    QStringList selectedTimezones;
 };
 
 ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
@@ -102,7 +102,7 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     parent->addPage(widget, i18n("Time Zones"), icon());
 
     d->ui.localTimeZone->setChecked(isLocalTimezone());
-    foreach(QString tz, d->m_timeZones) {
+    foreach(QString tz, d->selectedTimezones) {
         d->ui.timeZones->setSelected(tz, true);
     }
     d->ui.timeZones->setEnabled(!isLocalTimezone());
@@ -115,7 +115,7 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
 #ifdef CLOCK_APPLET_CONF
     ui.localTimeZone->setChecked(isLocalTimezone());
     ui.timeZones->setEnabled(!isLocalTimezone());
-    foreach (const QString &str, m_timeZones) {
+    foreach (const QString &str, selectedTimezones) {
         ui.timeZones->setSelected(str, true);
     }
 #endif
@@ -136,28 +136,26 @@ void ClockApplet::configAccepted()
 {
     KConfigGroup cg = config();
 
-    d->m_timeZones = d->ui.timeZones->selection();
-    cg.writeEntry("timeZones", d->m_timeZones);
+    d->selectedTimezones = d->ui.timeZones->selection();
+    cg.writeEntry("timeZones", d->selectedTimezones);
 
     QString newTimezone;
 
-    if (d->ui.localTimeZone->isChecked() || d->m_timeZones.isEmpty()) {
+    if (d->ui.localTimeZone->isChecked() || d->selectedTimezones.isEmpty()) {
         newTimezone = localTimezone();
-    } else if (d->m_timeZones.contains(currentTimezone())) {
+    } else if (d->selectedTimezones.contains(currentTimezone())) {
         newTimezone = currentTimezone();
     } else {
-        newTimezone = d->m_timeZones.at(0);
+        newTimezone = d->selectedTimezones.at(0);
     }
 
     changeEngineTimezone(currentTimezone(), newTimezone);
-
     setCurrentTimezone(newTimezone);
-    cg.writeEntry("timezone", newTimezone);
 
     clockConfigAccepted();
-
     constraintsEvent(Plasma::SizeConstraint);
     update();
+
     emit configNeedsSaving();
 }
 
@@ -195,36 +193,31 @@ void ClockApplet::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
-    if (d->m_timeZones.count() <= 1 || isLocalTimezone()){
+    if (d->selectedTimezones.count() <= 1 || isLocalTimezone()){
         return;
     }
 
     QString newTimezone;
-    int current = d->m_timeZones.indexOf(currentTimezone());
+    int current = d->selectedTimezones.indexOf(currentTimezone());
 
     if (event->delta() > 0) {
         int previous = current - 1;
         if (previous < 0) {
-            newTimezone = d->m_timeZones.last();
+            newTimezone = d->selectedTimezones.last();
         } else {
-            newTimezone = d->m_timeZones.at(previous);
+            newTimezone = d->selectedTimezones.at(previous);
         }
     } else {
         int next = current + 1;
-        if (next > d->m_timeZones.count() - 1) {
-            newTimezone = d->m_timeZones.first();
+        if (next > d->selectedTimezones.count() - 1) {
+            newTimezone = d->selectedTimezones.first();
         } else {
-            newTimezone = d->m_timeZones.at(next);
+            newTimezone = d->selectedTimezones.at(next);
         }
     }
 
     changeEngineTimezone(currentTimezone(), newTimezone);
     setCurrentTimezone(newTimezone);
-
-    // let's save our current timezone to be used per default
-    KConfigGroup cg = config();
-    cg.writeEntry("currentTimezone", newTimezone);
-    emit configNeedsSaving();
 
     update();
 }
@@ -242,7 +235,7 @@ void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
 void ClockApplet::init()
 {
     KConfigGroup cg = config();
-    d->m_timeZones = cg.readEntry("timeZones", QStringList());
+    d->selectedTimezones = cg.readEntry("timeZones", QStringList());
     d->timezone = cg.readEntry("timezone", d->timezone);
 
     Plasma::Extender *extender = new Plasma::Extender(this);
@@ -286,7 +279,15 @@ void ClockApplet::showCalendar(QGraphicsSceneMouseEvent *event)
 
 void ClockApplet::setCurrentTimezone(const QString &tz)
 {
+    if (d->timezone == tz) {
+        return;
+    }
+
     d->timezone = tz;
+
+    KConfigGroup cg = config();
+    cg.writeEntry("timezone", tz);
+    emit configNeedsSaving();
 }
 
 QString ClockApplet::currentTimezone() const
