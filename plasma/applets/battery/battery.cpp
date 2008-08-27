@@ -60,7 +60,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
     resize(128, 128);
-    //setAspectRatioMode(Plasma::ConstrainedSquare );
+    setAspectRatioMode(Plasma::ConstrainedSquare );
     m_textRect = QRect();
     m_theme = new Plasma::Svg(this);
 }
@@ -124,6 +124,11 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
             }
             //kDebug() << "Horizontal FormFactor" << m_textRect.width() << contentsRect().height();
         }
+    }
+    if (!m_showMultipleBatteries || m_numOfBattery < 2) {
+        setAspectRatioMode(Plasma::Square);
+    } else {
+        setAspectRatioMode(Plasma::KeepAspectRatio);
     }
 
     if (constraints & (Plasma::SizeConstraint | Plasma::FormFactorConstraint) && m_theme) {
