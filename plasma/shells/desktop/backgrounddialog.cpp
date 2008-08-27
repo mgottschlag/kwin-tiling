@@ -463,6 +463,8 @@ void BackgroundDialog::getNewThemes()
 
 void BackgroundDialog::reloadConfig()
 {
+    m_containment = m_view->containment();
+
     // Containment
     int index = 0;
     for (int i = 0; i < m_containmentModel->rowCount(); ++i) {
