@@ -57,6 +57,12 @@ void ShellConfig::load()
 {
     KCModule::load();
 
+    //FIXME: This shouldn't be hardcoded!
+    KSharedConfig::Ptr cfg = KSharedConfig::openConfig( "krunnerrc" );
+    KConfigGroup conf = cfg->group( "Runners" );
+    KConfigGroup grp = KConfigGroup( &conf, "Shell");
+
+
     //TODO load
     emit changed(false);
 }
@@ -64,6 +70,12 @@ void ShellConfig::load()
 void ShellConfig::save()
 {
     //TODO save
+    //FIXME: This shouldn't be hardcoded!
+    KSharedConfig::Ptr cfg = KSharedConfig::openConfig( "krunnerrc" );
+    KConfigGroup conf = cfg->group( "Runners" );
+    KConfigGroup grp = KConfigGroup( &conf, "Shell");
+
+    grp.sync();
     emit changed(false);
 }
 
