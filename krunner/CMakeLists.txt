@@ -2,8 +2,34 @@
 macro_bool_to_01(X11_Xscreensaver_FOUND HAVE_XSCREENSAVER)
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=1207)
 
+include(UsePkgConfig)
+
+MACRO(PKGCONFIG_GETVAR _package _var _output_variable)
+   SET(${_output_variable})
+
+   # if pkg-config has been found
+   IF(PKGCONFIG_EXECUTABLE)
+      EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS ${_package} --exists RETURN_VALUE _return_VALUE OUTPUT_VARIABLE _pkgconfigDevNull )
+      # and if the package of interest also exists for pkg-config, then get the information
+      IF(NOT _return_VALUE)
+         EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS ${_package} --variable ${_var} OUTPUT_VARIABLE ${_output_variable} )
+      ENDIF(NOT _return_VALUE)
+   ENDIF(PKGCONFIG_EXECUTABLE)
+ENDMACRO(PKGCONFIG_GETVAR _package _var _output_variable)
+
+macro(dbus_add_activation_service _sources)
+   PKGCONFIG_GETVAR(dbus-1 session_bus_services_dir _install_dir)
+   foreach (_i ${_sources})
+      get_filename_component(_service_file ${_i} ABSOLUTE)
+      string(REGEX REPLACE "\\.service.*$" ".service" _output_file ${_i})
+      set(_target ${CMAKE_CURRENT_BINARY_DIR}/${_output_file})
+      configure_file(${_service_file} ${_target})
+      install(FILES ${_target} DESTINATION ${_install_dir})
+   endforeach (_i ${ARGN})
+endmacro(dbus_add_activation_service _sources)
+
 include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/ksysguard
-                    ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/ksysguard/processcore/)
+   ${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/ksysguard/processcore/)
 
 configure_file(config-xautolock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-xautolock.h)
 
@@ -14,14 +40,14 @@ set(screensaver_dbusXML org.freedesktop.ScreenSaver.xml)
 set(kscreensaver_dbusXML org.kde.screensaver.xml)
 
 set(krunner_SRCS
-    krunnerdialog.cpp
-    collapsiblewidget.cpp
-    configdialog.cpp
-    interface.cpp
-    krunnerapp.cpp
-    restartingapplication.cpp
-    main.cpp
-    resultitem.cpp
+   krunnerdialog.cpp
+   collapsiblewidget.cpp
+   configdialog.cpp
+   interface.cpp
+   krunnerapp.cpp
+   restartingapplication.cpp
+   main.cpp
+   resultitem.cpp
     resultscene.cpp
     stackblur_shadows.cpp)
 if(NOT WIN32)
@@ -43,6 +69,7 @@ if(NOT WIN32)
 qt4_add_dbus_adaptor(krunner_SRCS ${screensaver_dbusXML} saverengine.h SaverEngine)
 qt4_add_dbus_adaptor(krunner_SRCS ${kscreensaver_dbusXML} saverengine.h SaverEngine kscreensaveradaptor KScreenSaverAdaptor)
 endif(NOT WIN32)
+dbus_add_activation_service(org.kde.krunner.service.in)
 
 kde4_add_kdeinit_executable(krunner ${krunner_SRCS})
 if(NOT WIN32)
