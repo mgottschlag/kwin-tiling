@@ -60,8 +60,13 @@ public:
             KMenu *childMenu = new KMenu(parent);
             childMenu->installEventFilter(q);
 
-            QObject::connect(childMenu, SIGNAL(aboutToShow()), q, SLOT(fillSubMenu()));
             action = childMenu->menuAction();
+
+            if (model->canFetchMore(index)) {
+                model->fetchMore(index);
+            }
+
+            buildBranch(childMenu, index);
         } else {
             action = q->createLeafAction(index,parent);
         }
@@ -355,26 +360,6 @@ void MenuView::modelReset()
 {
     // force clearance of the menu and rebuild from scratch
     setModel(d->model);
-}
-
-void MenuView::fillSubMenu()
-{
-    Q_ASSERT(d->model);
-
-    QMenu *subMenu = qobject_cast<QMenu*>(sender());
-    Q_ASSERT(subMenu);
-    Q_ASSERT(subMenu->isEmpty());
-
-    disconnect(subMenu, SIGNAL(aboutToShow()), this, SLOT(fillSubMenu()));
-
-    QModelIndex menuIndex = indexForAction(subMenu->menuAction());
-    Q_ASSERT(menuIndex.isValid());
-
-    if (d->model->canFetchMore(menuIndex)) {
-        d->model->fetchMore(menuIndex);
-    }
-
-    d->buildBranch(subMenu, menuIndex);
 }
 
 void MenuView::setColumn(int column)
