@@ -44,20 +44,13 @@ ShellConfig::ShellConfig(QWidget* parent, const QVariantList& args) :
     QGridLayout* layout = new QGridLayout(this);
 
     layout->addWidget(m_ui, 0, 0);
-
-    connect(m_ui->cbRunInTerminal, SIGNAL(toggled(bool)), this, SLOT(setRunInTerminal(bool)));
-
+    connect(m_ui->cbRunAsOther, SIGNAL(clicked(bool)), this, SLOT(slotUpdateUser(bool)) );
+    connect(m_ui->cbPriority, SIGNAL(clicked(bool)), this, SLOT(slotPriority(bool)));
     load();
 }
 
 ShellConfig::~ShellConfig()
 {
-}
-
-
-void ShellConfig::setRunInTerminal(bool inTerminal)
-{
-    m_inTerminal = inTerminal;
 }
 
 void ShellConfig::load()
@@ -74,9 +67,24 @@ void ShellConfig::save()
     emit changed(false);
 }
 
+void ShellConfig::slotUpdateUser(bool b)
+{
+    m_ui->leUsername->setEnabled(b);
+    m_ui->lePassword->setEnabled(b);
+}
+
+void ShellConfig::slotPriority(bool b)
+{
+    m_ui->slPriority->setEnabled(b);
+    m_ui->textLabel1->setEnabled(b);
+}
+
 void ShellConfig::defaults()
 {
-    //TODO default
+    m_ui->cbRunInTerminal->setChecked(false);
+    m_ui->cbRunAsOther->setChecked(false);
+    m_ui->cbPriority->setChecked(false);
+    m_ui->cbRealtime->setChecked(false);
     emit changed(true);
 }
 

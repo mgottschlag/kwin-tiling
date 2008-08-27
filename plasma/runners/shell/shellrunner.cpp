@@ -40,13 +40,19 @@ ShellRunner::ShellRunner(QObject *parent, const QVariantList &args)
     setObjectName(i18n("Command"));
     setPriority(AbstractRunner::HighestPriority);
     m_enabled = KAuthorized::authorizeKAction("shell_access");
-    setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File | 
-                    Plasma::RunnerContext::NetworkLocation | Plasma::RunnerContext::UnknownType | 
+    setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File |
+                    Plasma::RunnerContext::NetworkLocation | Plasma::RunnerContext::UnknownType |
                     Plasma::RunnerContext::Help);
+    reloadConfig();
 }
 
 ShellRunner::~ShellRunner()
 {
+}
+
+void ShellRunner::reloadConfig()
+{
+    //TODO
 }
 
 void ShellRunner::match(Plasma::RunnerContext &context)

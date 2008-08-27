@@ -39,6 +39,8 @@ class ShellRunner : public Plasma::AbstractRunner
         void match(Plasma::RunnerContext &context);
         void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &action);
 
+    protected:
+        void reloadConfig();
 
     private:
         bool m_enabled;

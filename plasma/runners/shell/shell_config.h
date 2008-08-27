@@ -42,11 +42,13 @@ class ShellConfig : public KCModule
         void save();
         void load();
         void defaults();
-        void setRunInTerminal(bool);
+
+    protected slots:
+        void slotUpdateUser(bool);
+        void slotPriority(bool);
 
     private:
         ShellConfigForm* m_ui;
-        bool m_inTerminal;
 };
 
 #endif
