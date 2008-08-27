@@ -116,9 +116,7 @@ void LeaveItemHandler::lock()
     QString interface("org.freedesktop.ScreenSaver");
     org::freedesktop::ScreenSaver screensaver(interface, "/ScreenSaver",
                                               QDBusConnection::sessionBus());
-    if (screensaver.isValid()) {
-        screensaver.Lock();
-    }
+    screensaver.Lock();
 }
 
 void LeaveItemHandler::switchUser()
@@ -127,7 +125,5 @@ void LeaveItemHandler::switchUser()
 
     org::kde::krunner::Interface krunner(interface, "/Interface",
                                          QDBusConnection::sessionBus());
-    if (krunner.isValid()) {
-        krunner.switchUser();
-    }
+    krunner.switchUser();
 }

@@ -141,9 +141,7 @@ void DefaultDesktop::runCommand()
     QString interface("org.kde.krunner");
     org::kde::krunner::Interface krunner(interface, "/Interface",
                                          QDBusConnection::sessionBus());
-    if (krunner.isValid()) {
-        krunner.display();
-    }
+    krunner.display();
 }
 
 void DefaultDesktop::lockScreen()
