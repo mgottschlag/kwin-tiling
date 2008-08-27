@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Service
+X-KDE-ServiceTypes=KCModule
+
+X-KDE-Library=kcm_krunner_shell
+X-KDE-ParentComponents=krunner_shell
+X-KDE-PluginKeyword=kcm_krunner_shell
+
+Name=Shell Runner Config

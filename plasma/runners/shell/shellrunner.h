@@ -36,13 +36,9 @@ class ShellRunner : public Plasma::AbstractRunner
         ShellRunner(QObject *parent, const QVariantList &args);
         ~ShellRunner();
 
-        void createMatchOptions(QWidget* parent);
         void match(Plasma::RunnerContext &context);
         void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &action);
 
-
-    public slots:
-        void setRunInTerminal(bool inTerminal);
 
     private:
         bool m_enabled;

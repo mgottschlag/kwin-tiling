@@ -30,8 +30,6 @@
 #include <KStandardDirs>
 #include <KToolInvocation>
 
-#include "ui_shellOptions.h"
-
 ShellRunner::ShellRunner(QObject *parent, const QVariantList &args)
     : Plasma::AbstractRunner(parent, args),
       m_inTerminal(false)
@@ -40,7 +38,6 @@ ShellRunner::ShellRunner(QObject *parent, const QVariantList &args)
     KGlobal::locale()->insertCatalog("krunner_shellrunner");
 
     setObjectName(i18n("Command"));
-    setHasRunOptions(true);
     setPriority(AbstractRunner::HighestPriority);
     m_enabled = KAuthorized::authorizeKAction("shell_access");
     setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File | 
@@ -68,21 +65,6 @@ void ShellRunner::match(Plasma::RunnerContext &context)
         match.setRelevance(1);
         context.addMatch(term, match);
     }
-}
-
-void ShellRunner::createMatchOptions(QWidget* parent)
-{
-    m_inTerminal = false;
-    Ui::shellOptions ui;
-    ui.setupUi(parent);
-
-    //TODO: connect rest of UI up too!
-    connect(ui.cbRunInTerminal, SIGNAL(toggled(bool)), this, SLOT(setRunInTerminal(bool)));
-}
-
-void ShellRunner::setRunInTerminal(bool inTerminal)
-{
-    m_inTerminal = inTerminal;
 }
 
 void ShellRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
