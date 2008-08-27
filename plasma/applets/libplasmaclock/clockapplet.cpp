@@ -140,13 +140,14 @@ void ClockApplet::configAccepted()
     cg.writeEntry("timeZones", d->m_timeZones);
 
     QString newTimezone;
-    
-    if(d->ui.localTimeZone->isChecked())
+
+    if (d->ui.localTimeZone->isChecked() || d->m_timeZones.isEmpty()) {
         newTimezone = localTimezone();
-    else if(d->m_timeZones.contains(currentTimezone()))
+    } else if (d->m_timeZones.contains(currentTimezone())) {
         newTimezone = currentTimezone();
-    else
+    } else {
         newTimezone = d->m_timeZones.at(0);
+    }
 
     changeEngineTimezone(currentTimezone(), newTimezone);
 
