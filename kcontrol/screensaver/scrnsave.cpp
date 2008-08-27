@@ -507,7 +507,7 @@ void KScreenSaver::findSavers()
                 Q3ListViewItem *categoryItem = mSaverListView->findItem( s->category(), 0 );
                 if ( !categoryItem ) {
                     categoryItem = new Q3ListViewItem ( mSaverListView, s->category(), '1' + s->category() );
-                    categoryItem->setPixmap ( 0, SmallIcon ( "kscreensaver" ) );
+                    categoryItem->setPixmap ( 0, SmallIcon ( "preferences-desktop-screensaver" ) );
                 }
                 item = new Q3ListViewItem ( categoryItem, s->name(), s->name() );
                 categoryCount++;
