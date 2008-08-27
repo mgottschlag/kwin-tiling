@@ -56,7 +56,7 @@ public:
         : calendarDialog(0),
           calendar(0),
           view(0),
-          timezone("Local")
+          timezone(ClockApplet::localTimezone())
     {}
 
     Ui::timezonesConfig ui;
@@ -195,35 +195,37 @@ void ClockApplet::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
-    if(d->m_timeZones.count() <= 1 || isLocalTimezone())
+    if (d->m_timeZones.count() <= 1 || isLocalTimezone()){
         return;
-    
+    }
+
     QString newTimezone;
     int current = d->m_timeZones.indexOf(currentTimezone());
-    
-    if(event->delta() > 0) {
+
+    if (event->delta() > 0) {
         int previous = current - 1;
-        if(previous < 0)
+        if (previous < 0) {
             newTimezone = d->m_timeZones.last();
-        else
+        } else {
             newTimezone = d->m_timeZones.at(previous);
-    }
-    else {
+        }
+    } else {
         int next = current + 1;
-        if(next > d->m_timeZones.count() - 1)
+        if (next > d->m_timeZones.count() - 1) {
             newTimezone = d->m_timeZones.first();
-        else
+        } else {
             newTimezone = d->m_timeZones.at(next);
+        }
     }
-    
+
     changeEngineTimezone(currentTimezone(), newTimezone);
     setCurrentTimezone(newTimezone);
-    
+
     // let's save our current timezone to be used per default
     KConfigGroup cg = config();
     cg.writeEntry("currentTimezone", newTimezone);
     emit configNeedsSaving();
-    
+
     update();
 }
 
@@ -241,7 +243,8 @@ void ClockApplet::init()
 {
     KConfigGroup cg = config();
     d->m_timeZones = cg.readEntry("timeZones", QStringList());
-    
+    d->timezone = cg.readEntry("timezone", d->timezone);
+
     Plasma::Extender *extender = new Plasma::Extender(this);
     containment()->corona()->addOffscreenWidget(extender);
     connect(extender, SIGNAL(geometryChanged()), this, SLOT(adjustView()));
