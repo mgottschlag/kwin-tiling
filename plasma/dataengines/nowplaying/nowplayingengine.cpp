@@ -29,7 +29,7 @@
 #include "playerinterface/playerfactory.h"
 #include "playerinterface/dbuswatcher.h"
 #include "playerinterface/pollingwatcher.h"
-#include "playerinterface/mpris.h"
+#include "playerinterface/mpris/mpris.h"
 #include "playerinterface/juk.h"
 #ifdef XMMS_FOUND
 #include "playerinterface/xmms.h"
