@@ -1,116 +1,233 @@
 <ui version="4.0" >
  <class>SlideshowConfig</class>
- <widget class="QWidget" name="Form" >
+ <widget class="QWidget" name="SlideshowConfig" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>411</width>
-    <height>300</height>
+    <width>410</width>
+    <height>347</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
-   <property name="margin" >
-    <number>0</number>
-   </property>
-   <item>
-    <layout class="QHBoxLayout" >
+  <layout class="QGridLayout" name="gridLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="label" >
+     <property name="minimumSize" >
+      <size>
+       <width>75</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text" >
+      <string>Folders:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item rowspan="2" row="0" column="1" colspan="3" >
+    <widget class="KListWidget" name="m_dirlist" />
+   </item>
+   <item row="1" column="0" >
+    <spacer name="verticalSpacer_2" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>162</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="1" colspan="3" >
+    <layout class="QHBoxLayout" name="horizontalLayout" >
      <item>
-      <widget class="KListWidget" name="m_dirlist" />
+      <widget class="KPushButton" name="m_addDir" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text" >
+        <string>&amp;Add Folder...</string>
+       </property>
+      </widget>
      </item>
      <item>
-      <layout class="QVBoxLayout" name="_2" >
-       <item>
-        <widget class="KPushButton" name="m_addDir" >
-         <property name="text" >
-          <string>&amp;Add Folder...</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="KPushButton" name="m_removeDir" >
-         <property name="text" >
-          <string>&amp;Remove Folder</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QWidget" native="1" name="widget" />
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0" >
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
+      <widget class="KPushButton" name="m_removeDir" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text" >
+        <string>&amp;Remove Folder</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
-   <item>
-    <layout class="QHBoxLayout" name="_3" >
-     <item>
-      <widget class="QLabel" name="label_2" >
-       <property name="text" >
-        <string>&amp;Change images every:</string>
-       </property>
-       <property name="buddy" >
-        <cstring>m_slideshowDelay</cstring>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QTimeEdit" name="m_slideshowDelay" >
-       <property name="dateTime" >
-        <datetime>
-         <hour>0</hour>
-         <minute>0</minute>
-         <second>0</second>
-         <year>2000</year>
-         <month>1</month>
-         <day>1</day>
-        </datetime>
-       </property>
-       <property name="currentSection" >
-        <enum>QDateTimeEdit::HourSection</enum>
-       </property>
-       <property name="displayFormat" >
-        <string comment="(qtdt-format) Please do not change the quotes (') and translate only the content of the quotes." >hh 'Hours' mm 'Mins' ss 'Secs'</string>
-       </property>
-       <property name="time" >
-        <time>
-         <hour>0</hour>
-         <minute>0</minute>
-         <second>0</second>
-        </time>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0" >
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+   <item row="3" column="1" >
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
+      <string>&amp;Change images every:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>m_slideshowDelay</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2" colspan="2" >
+    <widget class="QTimeEdit" name="m_slideshowDelay" >
+     <property name="dateTime" >
+      <datetime>
+       <hour>0</hour>
+       <minute>0</minute>
+       <second>0</second>
+       <year>2000</year>
+       <month>1</month>
+       <day>1</day>
+      </datetime>
+     </property>
+     <property name="currentSection" >
+      <enum>QDateTimeEdit::HourSection</enum>
+     </property>
+     <property name="displayFormat" >
+      <string comment="(qtdt-format) Please do not change the quotes (') and translate only the content of the quotes." >hh 'Hours' mm 'Mins' ss 'Secs'</string>
+     </property>
+     <property name="time" >
+      <time>
+       <hour>0</hour>
+       <minute>0</minute>
+       <second>0</second>
+      </time>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1" >
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>5</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="5" column="0" >
+    <widget class="QLabel" name="label_4" >
+     <property name="minimumSize" >
+      <size>
+       <width>75</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="text" >
+      <string>P&amp;ositioning:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy" >
+      <cstring>m_resizeMethod</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="1" colspan="3" >
+    <widget class="QComboBox" name="m_resizeMethod" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" >
+    <widget class="QLabel" name="label_5" >
+     <property name="text" >
+      <string>&amp;Color:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy" >
+      <cstring>m_color</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="1" colspan="2" >
+    <widget class="KColorButton" name="m_color" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize" >
+      <size>
+       <width>150</width>
+       <height>30</height>
+      </size>
+     </property>
+     <property name="color" >
+      <color>
+       <red>70</red>
+       <green>90</green>
+       <blue>130</blue>
+      </color>
+     </property>
+     <property name="defaultColor" >
+      <color>
+       <red>70</red>
+       <green>90</green>
+       <blue>130</blue>
+      </color>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="3" >
+    <spacer name="spacer" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>166</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="7" column="1" >
+    <spacer name="verticalSpacer_3" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>21</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>KColorButton</class>
+   <extends>QPushButton</extends>
+   <header>kcolorbutton.h</header>
+  </customwidget>
   <customwidget>
    <class>KListWidget</class>
    <extends>QListWidget</extends>

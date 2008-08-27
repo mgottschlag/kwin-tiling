@@ -149,7 +149,26 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
         m_uiSlideshow.m_slideshowDelay->setMinimumTime(QTime(0, 0, 30));
         connect(m_uiSlideshow.m_slideshowDelay, SIGNAL(timeChanged(const QTime&)),
                 this, SLOT(timeChanged(const QTime&)));
+
+        m_uiSlideshow.m_resizeMethod->addItem(i18n("Scaled & Cropped"), Background::ScaleCrop);
+        m_uiSlideshow.m_resizeMethod->addItem(i18n("Scaled"), Background::Scale);
+        m_uiSlideshow.m_resizeMethod->addItem(i18n("Maxpect"), Background::Maxpect);
+        m_uiSlideshow.m_resizeMethod->addItem(i18n("Centered"), Background::Center);
+        m_uiSlideshow.m_resizeMethod->addItem(i18n("Tiled"), Background::Tiled);
+        m_uiSlideshow.m_resizeMethod->addItem(i18n("Center Tiled"), Background::CenterTiled);
+        for (int i = 0; i < m_uiSlideshow.m_resizeMethod->count(); ++i) {
+            if (m_resizeMethod == m_uiSlideshow.m_resizeMethod->itemData(i).value<int>()) {
+                m_uiSlideshow.m_resizeMethod->setCurrentIndex(i);
+                break;
+            }
+        }
+        connect(m_uiSlideshow.m_resizeMethod, SIGNAL(currentIndexChanged(int)),
+                this, SLOT(positioningChanged(int)));
+
+        m_uiSlideshow.m_color->setColor(m_color);
+        connect(m_uiSlideshow.m_color, SIGNAL(changed(const QColor&)), this, SLOT(colorChanged(const QColor&)));
     }
+
     return m_widget;
 }
 
@@ -262,8 +281,7 @@ void Image::startSlideshow()
     if (m_slideshowBackgrounds.isEmpty()) {
         m_pixmap = QPixmap();
         emit update(boundingRect());
-    }
-    else {
+    } else {
         m_currentSlide = -1;
         nextSlide();
         m_timer.start(m_delay * 1000);
@@ -304,9 +322,15 @@ void Image::pictureChanged(int index)
 
 void Image::positioningChanged(int index)
 {
-    m_resizeMethod =
-            (Background::ResizeMethod)m_uiImage.m_resizeMethod->itemData(index).value<int>();
-    setSingleImage();
+    if (m_mode == "SingleImage") {
+        m_resizeMethod =
+                (Background::ResizeMethod)m_uiImage.m_resizeMethod->itemData(index).value<int>();
+        setSingleImage();
+    } else {
+        m_resizeMethod =
+                (Background::ResizeMethod)m_uiSlideshow.m_resizeMethod->itemData(index).value<int>();
+        startSlideshow();
+    }
 }
 
 void Image::fillMetaInfo(Background *b)
