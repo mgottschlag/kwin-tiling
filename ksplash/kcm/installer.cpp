@@ -204,6 +204,7 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
   QString dir = KGlobal::dirs()->saveLocation("ksplashthemes");
 
   KUrl url;
+  QStringList themeNames;
   QString filename = srcURL.fileName();
   int i = filename.lastIndexOf('.');
   // Convert extension to lower case.
@@ -215,48 +216,63 @@ void SplashInstaller::addNewTheme(const KUrl &srcURL)
   if ( KIO::NetAccess::exists( url, KIO::NetAccess::SourceSide, 0 ) )
     KIO::NetAccess::del( url, 0 );
 
-  bool rc = KIO::NetAccess::file_copy(srcURL, url, 0);
-  if (!rc)
+  if (srcURL.fileName().toLower() == "theme.rc" ) // uncompressed theme selected
   {
-    kWarning() << "Failed to copy theme " << srcURL.fileName()
-        << " into temporary directory " << url.path() << endl;
-    return;
-  }
+    QString themeName;
+    // Get the name of the Theme from the theme.rc file
+    KConfig _cnf(srcURL.path());
+    KConfigGroup cnf(&_cnf, QString("KSplash Theme: %1").arg(themeName) );
+    
+    // copy directory of theme.rc to ThemesDir
+    KIO::NetAccess::dircopy(KUrl(srcURL.directory()), KUrl(dir + themeName));
 
-  // Extract into theme directory: we may have multiple themes in one tarball!
-  KTar tarFile(url.path());
-  if (!tarFile.open(QIODevice::ReadOnly))
-  {
-    kWarning() << "Unable to open archive: " << url.path();
-    KIO::NetAccess::del( url, 0 );
-    return;
+    themeNames << themeName;
   }
-  KArchiveDirectory const *ad = tarFile.directory();
-
-  // Find first directory entry.
-  QStringList entries = ad->entries();
-  QStringList themeNames;
-  foreach(const QString& s, entries)
+  else 
   {
-    if( ad->entry(s)->isDirectory() )
+    bool rc = KIO::NetAccess::file_copy(srcURL, url, 0);
+    if (!rc)
     {
-      // each directory may contain one theme
-      themeNames << s;
+      kWarning() << "Failed to copy theme " << srcURL.fileName()
+	  << " into temporary directory " << url.path() << endl;
+      return;
     }
-  }
-  if (themeNames.count() < 1)
-  {
-    kWarning() << "No directory in archive: " << url.path();
+
+    // Extract into theme directory: we may have multiple themes in one tarball!
+    KTar tarFile(url.path());
+    if (!tarFile.open(QIODevice::ReadOnly))
+    {
+      kWarning() << "Unable to open archive: " << url.path();
+      KIO::NetAccess::del( url, 0 );
+      return;
+    }
+    KArchiveDirectory const *ad = tarFile.directory();
+
+    // Find first directory entry.
+    QStringList entries = ad->entries();
+    foreach(const QString& s, entries)
+    {
+      if( ad->entry(s)->isDirectory() )
+      {
+	// each directory may contain one theme
+	themeNames << s;
+      }
+    }
+    if (themeNames.count() < 1)
+    {
+      kWarning() << "No directory in archive: " << url.path();
+      tarFile.close();
+      KIO::NetAccess::del( url, 0 );
+      return;
+    }
+
+    // copy the theme into the "ksplashthemes" directory
+    ad->copyTo(dir);
+
     tarFile.close();
     KIO::NetAccess::del( url, 0 );
-    return;
+
   }
-
-  // copy the theme into the "ksplashthemes" directory
-  ad->copyTo(dir);
-
-  tarFile.close();
-  KIO::NetAccess::del( url, 0 );
 
   readThemesList();
   mThemesList->setCurrentRow(findTheme(themeNames.first()));
@@ -477,8 +493,8 @@ void SplashInstaller::slotAdd()
   static QString path;
   if (path.isEmpty()) path = QDir::homePath();
 
-  KFileDialog dlg(path, "*.tgz *.tar.gz *.tar.bz2|" + i18n( "KSplash Theme Files" ), this);
-  dlg.setCaption(i18n("Add Theme"));
+  KFileDialog dlg(path, "*.tgz *.tar.gz *.tar.bz2 theme.rc|" + i18n( "KSplash Theme Files" ), this);
+  dlg.setCaption(i18n("Add Theme")); 
   if (!dlg.exec())
     return;
 
