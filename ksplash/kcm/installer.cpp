@@ -547,7 +547,7 @@ void SplashInstaller::slotTest()
     KProcess proc;
     proc << "ksplashsimple" << themeName << "--test";
     if (proc.execute())
-      KMessageBox::error(this,i18n("Unable to start ksplashsimple."));
+      KMessageBox::error(this,i18n("Failed to successfully test the splash screen."));
     return;
   }
   else if( mEngineOfSelected == "KSplashX" )
@@ -555,7 +555,7 @@ void SplashInstaller::slotTest()
     KProcess proc;
     proc << "ksplashx" << themeName << "--test";
     if (proc.execute())
-      KMessageBox::error(this,i18n("Unable to start ksplashx."));
+      KMessageBox::error(this,i18n("Failed to successfully test the splash screen."));
     return;
   }
   else // KSplashML engines
@@ -563,7 +563,7 @@ void SplashInstaller::slotTest()
     KProcess proc;
     proc << "ksplash" << "--test" << "--theme" << themeName;
     if (proc.execute())
-      KMessageBox::error(this,i18n("Unable to start ksplash."));
+      KMessageBox::error(this,i18n("Failed to successfully test the splash screen."));
   }
 }
 
