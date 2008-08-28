@@ -300,9 +300,9 @@ void TabBar::paintEvent(QPaintEvent *event)
         // draw tab text
         //TODO: we may want a nice animation also for the text
         if (i != currentTab){
-            painter.setPen(KColorScheme(QPalette::Active, KColorScheme::View, Plasma::Theme::defaultTheme()->colorScheme()).foreground().color());
+            painter.setPen(QPen(KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText), 1));
         }else{
-            painter.setPen(Qt::black); //FIXME: we musn't use hardcoded color values
+            painter.setPen(QPen(KColorScheme(QPalette::Active).foreground(KColorScheme::NormalText), 1));
         }
         QRect textRect = rect;
         textRect.setTop(textRect.bottom() - textHeight);
