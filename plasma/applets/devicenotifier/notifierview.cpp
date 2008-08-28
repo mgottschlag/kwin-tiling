@@ -44,7 +44,7 @@ NotifierView::NotifierView(QWidget *parent)
 {
     setIconSize(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     setRootIsDecorated(true);
-    setHeaderHidden(false);
+    setHeaderHidden(true);
     setMouseTracking(true);
 }
 
