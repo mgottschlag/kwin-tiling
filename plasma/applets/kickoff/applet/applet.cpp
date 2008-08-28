@@ -160,9 +160,9 @@ void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 void LauncherApplet::popupEvent(bool show)
 {
     if (show){
-        Plasma::ToolTipManager::self()->unregisterWidget(this);
+        Plasma::ToolTipManager::self()->setToolTipActivated(this,false);
     }else{
-        d->initToolTip();
+        Plasma::ToolTipManager::self()->setToolTipActivated(this,true);
     }
 }
 
