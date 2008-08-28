@@ -51,6 +51,7 @@ ShellConfig::ShellConfig(QWidget* parent, const QVariantList& args) :
 
 ShellConfig::~ShellConfig()
 {
+    save();
 }
 
 void ShellConfig::load()
@@ -62,6 +63,12 @@ void ShellConfig::load()
     KConfigGroup conf = cfg->group( "Runners" );
     KConfigGroup grp = KConfigGroup( &conf, "Shell");
 
+    m_ui->cbRunInTerminal->setChecked(grp.readEntry("RunInTerminal", false));
+    m_ui->cbRunAsOther->setChecked(grp.readEntry("RunAsOther", false));
+    m_ui->cbPriority->setChecked(grp.readEntry("Priority", false));
+    m_ui->cbRealtime->setChecked(grp.readEntry("RealTime", false));
+    //m_ui->lePassword->text();
+    //m_ui->leUsername->text();
 
     //TODO load
     emit changed(false);
@@ -69,12 +76,18 @@ void ShellConfig::load()
 
 void ShellConfig::save()
 {
-    //TODO save
+    kDebug()<<" save :";
     //FIXME: This shouldn't be hardcoded!
     KSharedConfig::Ptr cfg = KSharedConfig::openConfig( "krunnerrc" );
     KConfigGroup conf = cfg->group( "Runners" );
     KConfigGroup grp = KConfigGroup( &conf, "Shell");
-
+    grp.writeEntry("RunInTerminal", m_ui->cbRunInTerminal->isChecked());
+    bool runAsOther = m_ui->cbRunAsOther->isChecked();
+    grp.writeEntry("RunAsOther", runAsOther);
+    grp.writeEntry("Priority", m_ui->cbPriority->isChecked());
+    grp.writeEntry("RealTime", m_ui->cbRealtime->isChecked());
+    //m_ui->lePassword->text();
+    //m_ui->leUsername->text();
     grp.sync();
     emit changed(false);
 }
@@ -97,6 +110,8 @@ void ShellConfig::defaults()
     m_ui->cbRunAsOther->setChecked(false);
     m_ui->cbPriority->setChecked(false);
     m_ui->cbRealtime->setChecked(false);
+    m_ui->lePassword->clear();
+    m_ui->leUsername->clear();
     emit changed(true);
 }
 
