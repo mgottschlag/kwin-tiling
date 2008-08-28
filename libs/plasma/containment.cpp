@@ -1280,7 +1280,7 @@ void ContainmentPrivate::appletDestroyed(QObject* object)
 
     if (handles.contains(applet)) {
         AppletHandle *handle = handles.value(applet);
-        handles.remove(handle->applet());
+        handles.remove(applet);
         handle->deleteLater();
     }
 
