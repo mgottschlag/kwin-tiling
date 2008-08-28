@@ -274,7 +274,7 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 
 	// Insert the pages into the tabWidget
 	tabWidget->addTab( page1, i18nc("@title:tab","&Style"));
-	tabWidget->addTab( page2, i18nc("@title:tab","&Fine Tunning"));
+	tabWidget->addTab( page2, i18nc("@title:tab","&Fine Tuning"));
 
 }
 
