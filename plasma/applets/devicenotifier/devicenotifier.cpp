@@ -144,20 +144,22 @@ void DeviceNotifier::initSysTray()
     if (m_icon) {
         return;
     }
+    QStringList overlays;
+    overlays << "emblem-mounted";
     //we display the icon corresponding to the computer
     QList<Solid::Device> list = Solid::Device::allDevices();
-
+    
     if (list.size() > 0) {
         Solid::Device device=list[0];
 
         while (device.parent().isValid()) {
             device = device.parent();
         }
-        m_icon = new Plasma::Icon(KIcon(device.icon()), QString(), this);
+        m_icon = new Plasma::Icon(KIcon(device.icon(),NULL,overlays), QString(), this);
         m_iconName = device.icon();
     } else {
         //default icon if problem
-        m_icon = new Plasma::Icon(KIcon("computer"), QString(), this);
+        m_icon = new Plasma::Icon(KIcon("computer",NULL,overlays), QString(), this);
         m_iconName = QString("computer");
     }
     connect(m_icon, SIGNAL(clicked()), this, SLOT(onClickNotifier()));
