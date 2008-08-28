@@ -69,7 +69,6 @@ void RandrMonitorModule::initRandr()
     // It looks like we need a separate window for getting the events, so that we don't
     // change e.g. Qt's event mask.
     window = XCreateSimpleWindow( dpy, DefaultRootWindow( dpy ), 0, 0, 1, 1, 0, 0, 0 );
-    // TODO zkontrolovat, ze tohle opravdu nerusi randr eventmask pro Qt
     XRRSelectInput( dpy, window, RROutputChangeNotifyMask );
     // HACK: see poll()
     QTimer* timer = new QTimer( this );
@@ -96,15 +95,11 @@ void RandrMonitorModule::processX11Event( XEvent* e )
         XRRNotifyEvent* e2 = reinterpret_cast< XRRNotifyEvent* >( e );
         if( e2->subtype == RRNotify_OutputChange ) // TODO && e2->window == window )
             {
-//            kdDebug() << "WIN:" << e2->window << window << DefaultRootWindow( QX11Info::display());
             QStringList newMonitors = connectedMonitors();
             if( newMonitors == currentMonitors )
                 return;
-            // well, let's say plugging in a monitor is a user activity
-            kapp->updateUserTimestamp();
+            kapp->updateUserTimestamp(); // well, let's say plugging in a monitor is a user activity
 #warning Modal dialog, stupid, fix.
-            // TODO nedelat nic, kdyz kcmshell4 display uz je otevreny
-            // TODO musi se zobrazit na spravnem monitoru (tj. ne na vypnutem)
             QString change;
             QString question =
                 ( newMonitors.count() < currentMonitors.count()
