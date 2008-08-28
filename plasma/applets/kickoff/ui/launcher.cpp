@@ -95,6 +95,7 @@ public:
         , panelEdge( Plasma::LeftEdge )
     {
     }
+
     ~Private()
     {
     }
@@ -406,6 +407,7 @@ public:
         QIcon tabIcon;
         QWidget * widget;
     };
+
     Launcher * const q;
     Plasma::Applet *applet;
     UrlItemLauncher *urlLauncher;
@@ -715,6 +717,12 @@ void Launcher::showViewContextMenu(const QPoint& pos)
     if (view) {
         d->contextMenuFactory->showContextMenu(view, d->contentArea->mapFromParent(pos));
     }
+}
+
+void Launcher::hideEvent(QHideEvent *event)
+{
+    Q_UNUSED(event)
+    reset();
 }
 
 void Launcher::keyPressEvent(QKeyEvent *event)

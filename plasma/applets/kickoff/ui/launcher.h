@@ -80,6 +80,7 @@ signals:
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
     virtual void showEvent(QShowEvent *event);
+    virtual void hideEvent(QHideEvent *event);
     virtual void mouseReleaseEvent(QMouseEvent *e);
 
 private Q_SLOTS:
