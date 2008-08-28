@@ -56,14 +56,17 @@ public:
     KIntNumInput *visibleCountEdit;
     QList<QAction*> actions;
     QAction* switcher;
+    LauncherApplet *q;
 
-    Private() : launcher(0), switcher(0) {}
+    Private(LauncherApplet *lApplet) : launcher(0), switcher(0), q(lApplet) { }
     ~Private() { delete launcher; }
     void createLauncher(LauncherApplet *q);
+    void initToolTip();
 };
 
-void LauncherApplet::Private::createLauncher(LauncherApplet *q)
+void LauncherApplet::Private::createLauncher(LauncherApplet *lApplet)
 {
+    q = lApplet;
     launcher = new Kickoff::Launcher(q);
     launcher->setAutoHide(true);
     //launcher->resize(launcher->sizeHint());
@@ -71,9 +74,19 @@ void LauncherApplet::Private::createLauncher(LauncherApplet *q)
     //QObject::connect(launcher, SIGNAL(configNeedsSaving()), q, SIGNAL(configNeedsSaving()));
 }
 
+void LauncherApplet::Private::initToolTip()
+{
+    Plasma::ToolTipManager::self()->registerWidget(q);
+    Plasma::ToolTipManager::ToolTipContent data;
+    data.mainText = i18n("Kickoff Application Launcher");
+    data.subText = i18n("Favorites, applications, computer places, recently used items and desktop sessions");
+    data.image = q->icon().pixmap(IconSize(KIconLoader::Desktop));
+    Plasma::ToolTipManager::self()->setToolTipContent(q, data);
+}
+
 LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent,args),
-      d(new Private)
+      d(new Private(this))
 {
     KGlobal::locale()->insertCatalog("plasma_applet_launcher");
 
@@ -103,12 +116,7 @@ void LauncherApplet::init()
     d->actions.append(d->switcher);
     connect(d->switcher, SIGNAL(triggered(bool)), this, SLOT(switchMenuStyle()));
 
-    Plasma::ToolTipManager::self()->registerWidget(this);
-    Plasma::ToolTipManager::ToolTipContent data;
-    data.mainText = i18n("Kickoff Application Launcher");
-    data.subText = i18n("Favorites, applications, computer places, recently used items and desktop sessions");
-    data.image = icon().pixmap(IconSize(KIconLoader::Desktop));
-    Plasma::ToolTipManager::self()->setToolTipContent(this, data);
+    d->initToolTip();
 }
 
 void LauncherApplet::switchMenuStyle()
@@ -147,6 +155,15 @@ void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     }
 
     d->switchOnHoverCheckBox->setChecked(d->launcher->switchTabsOnHover());
+}
+
+void LauncherApplet::popupEvent(bool show)
+{
+    if (show){
+        Plasma::ToolTipManager::self()->unregisterWidget(this);
+    }else{
+        d->initToolTip();
+    }
 }
 
 void LauncherApplet::configAccepted()

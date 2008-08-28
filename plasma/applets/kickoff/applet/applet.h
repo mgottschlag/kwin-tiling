@@ -63,6 +63,7 @@ protected slots:
 
 protected:
         void createConfigurationInterface(KConfigDialog *parent);
+        void popupEvent(bool show);
 
 private slots:
         void hideMe();
