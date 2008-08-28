@@ -43,10 +43,12 @@ class RandrMonitorModule
     private:
         void initRandr();
         void getRandrInfo( XRROutputChangeNotifyEvent* e, QString* change, QRect* rect );
+        QStringList connectedMonitors() const;
         bool have_randr;
         int randr_base;
         int randr_error;
         Window window;
+        QStringList currentMonitors;
         RandrMonitorHelper* helper;
         QDialog* dialog;
     };
