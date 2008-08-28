@@ -110,7 +110,7 @@ void NotifierView::paintEvent(QPaintEvent *event)
 
     const int rows = model()->rowCount(rootIndex());
     const int cols = header()->count();
-    kDebug() << "painting" << rows << "rows" << cols << "columns";
+    //kDebug() << "painting" << rows << "rows" << cols << "columns";
 
     int verticalOffset = TOP_OFFSET;
 
@@ -130,7 +130,7 @@ void NotifierView::paintEvent(QPaintEvent *event)
 
               //paint the parent
               if (event->region().contains(itemRect)) {
-                  kDebug()<<"header"<<itemRect;
+                  //kDebug()<<"header"<<itemRect;
                   QStyleOptionViewItem option = viewOptions();
                   option.rect = itemRect;
                   const int rightMargin = style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 6;
@@ -157,18 +157,20 @@ void NotifierView::paintEvent(QPaintEvent *event)
                   painter.restore();
               }
             }
+
             QStandardItemModel * currentModel = dynamic_cast<QStandardItemModel *>(model());
-            QModelIndex currentIndex = model()->index(i, 0);
-            QStandardItem *currentItem = currentModel->itemFromIndex(currentIndex);
-            
+            QStandardItem *currentItem = currentModel->itemFromIndex(index);
             //we display the childs of this item
             for (int j=0; j < currentItem->rowCount(); ++j) {
                 for (int k=0; k < currentItem->columnCount(); ++k) {
                     QStandardItem *childItem = currentItem->child(j, k);
-                    const QRect itemChildRect = visualRect(childItem->index());
+                    //const QRect itemChildRect = visualRect(childItem->index());
+                    QRect itemChildRect(QPoint(HEADER_LEFT_MARGIN, verticalOffset), QSize(0,0));
                     QModelIndex childIndex = childItem->index();
+                    itemChildRect.setSize(QSize(width() - style()->pixelMetric(QStyle::PM_ScrollBarExtent) + 2,sizeHintForIndex(index).height()));
+                    verticalOffset += itemChildRect.size().height();
                     if (event->region().contains(itemChildRect)) {
-                        paintItem(painter,itemChildRect,index);
+                        paintItem(painter,itemChildRect,childIndex);
                     }
                 }
             }
