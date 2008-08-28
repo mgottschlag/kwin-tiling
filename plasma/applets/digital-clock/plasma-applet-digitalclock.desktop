@@ -65,6 +65,8 @@ Name[zh_CN]=数字钟
 Name[zh_TW]=數位時鐘
 
 Comment=Time displayed in a digital format
+Comment[nds]=Tiet in Digitaalformaat wiest
+Comment[zh_TW]=以數位格式顯示時間
 
 Icon=chronometer
 Type=Service

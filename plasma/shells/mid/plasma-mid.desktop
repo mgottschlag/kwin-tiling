@@ -2,7 +2,10 @@
 Exec=plasma-mid --desktop
 X-DBUS-StartupType=wait
 Name=Plasma MID
+Name[nds]=Plasma-MID
 Comment=Workspace shell for mobile internet devices
+Comment[nds]=Arbeitrebeet-Konsool för mobil Internetreedschappen
+Comment[zh_TW]=行動網路裝置的工作空間
 Type=Service
 X-KDE-StartupNotify=false
 OnlyShowIn=KDE;

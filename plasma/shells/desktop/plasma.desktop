@@ -2,6 +2,8 @@
 Exec=plasma
 X-DBUS-StartupType=wait
 Name=Plasma Desktop Workspace
+Name[nds]=Plasma-Schriefdischarbeitrebeet
+Name[zh_TW]=Plasma 桌面工作空間
 Type=Service
 X-KDE-StartupNotify=false
 OnlyShowIn=KDE;

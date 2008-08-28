@@ -1,6 +1,10 @@
 [Desktop Entry]
 Name=Device Notifier
+Name[nds]=Bescheden över Reedschappen
+Name[zh_TW]=裝置通知
 Comment=Notifications and access for new devices
+Comment[nds]=Bescheden un Togriep för nieg Reedschappen
+Comment[zh_TW]=通知與存取新裝置
 Icon=drive-removable-media-usb-pendrive
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
