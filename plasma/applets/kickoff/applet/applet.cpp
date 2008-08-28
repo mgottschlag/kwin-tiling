@@ -89,9 +89,7 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
       d(new Private(this))
 {
     KGlobal::locale()->insertCatalog("plasma_applet_launcher");
-
     setHasConfigurationInterface(true);
-
     setIcon("start-here-kde");
 }
 
@@ -151,7 +149,7 @@ void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 
     if (!d->launcher) {
         d->createLauncher(this);
-        QObject::connect(d->launcher, SIGNAL(aboutToHide()), this, SLOT(hideMe()));
+        QObject::connect(d->launcher, SIGNAL(aboutToHide()), this, SLOT(hidePopup()));
     }
 
     d->switchOnHoverCheckBox->setChecked(d->launcher->switchTabsOnHover());
@@ -197,13 +195,6 @@ QWidget *LauncherApplet::widget()
 
     d->launcher->setAttribute(Qt::WA_NoSystemBackground);
     return d->launcher;
-}
-
-//FIXME: hidePopup should be a slot
-void LauncherApplet::hideMe()
-{
-   kDebug() << "hiding!!!!!!!!!!!!!!!!!!!!!!!!\n";
-   hidePopup();
 }
 
 #include "applet.moc"
