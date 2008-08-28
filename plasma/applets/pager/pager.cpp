@@ -406,8 +406,11 @@ void Pager::configAccepted()
 
 void Pager::currentDesktopChanged(int desktop)
 {
-    m_currentDesktop = desktop;
+    if (desktop < 1) {
+        return; // bogus value, don't accept it
+    }
 
+    m_currentDesktop = desktop;
     m_dirtyDesktop = -1;
 
     if (!m_timer->isActive()) {
@@ -453,6 +456,10 @@ void Pager::activeWindowChanged(WId id)
 
 void Pager::numberOfDesktopsChanged(int num)
 {
+    if (num < 1) {
+        return; // refuse to update to zero desktops
+    }
+
     m_dirtyDesktop = -1;
 
     m_desktopCount = num;
@@ -558,12 +565,9 @@ void Pager::wheelEvent(QGraphicsSceneWheelEvent *e)
        if (m_kwin->numberOfViewports(0).width() * m_kwin->numberOfViewports(0).height() > 1 )
        desktops = m_kwin->numberOfViewports(0).width() * m_kwin->numberOfViewports(0).height();
        */
-    if (e->delta() < 0)
-    {
+    if (e->delta() < 0) {
         newDesk = m_currentDesktop % desktops + 1;
-    }
-    else
-    {
+    } else {
         newDesk = (desktops + m_currentDesktop - 2) % desktops + 1;
     }
 
@@ -881,7 +885,7 @@ void Pager::paintInterface(QPainter *painter, const QStyleOptionGraphicsItem *op
     for (int i = 0; i < m_windowRects.count(); i++) {
         for (int j = 0; j < m_windowRects[i].count(); j++) {
             QRect rect = m_windowRects[i][j].second;
-            if (m_rects[m_currentDesktop-1].contains(rect)) {
+            if (!m_rects.isEmpty() && m_rects[m_currentDesktop-1].contains(rect)) {
                 if (m_activeWindows.contains(rect)) {
                     painter->setBrush(activeWindowBrushActiveDesk);
                     painter->setPen(activeWindowPen);
