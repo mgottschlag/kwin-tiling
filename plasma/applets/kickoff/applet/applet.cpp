@@ -49,6 +49,11 @@
 class LauncherApplet::Private
 {
 public:
+    Private(LauncherApplet *lApplet) : launcher(0), switcher(0), q(lApplet) { }
+    ~Private() { delete launcher; }
+    void createLauncher();
+    void initToolTip();
+
     Plasma::Icon *icon;
     Kickoff::Launcher *launcher;
 
@@ -57,18 +62,17 @@ public:
     QList<QAction*> actions;
     QAction* switcher;
     LauncherApplet *q;
-
-    Private(LauncherApplet *lApplet) : launcher(0), switcher(0), q(lApplet) { }
-    ~Private() { delete launcher; }
-    void createLauncher(LauncherApplet *q);
-    void initToolTip();
 };
 
-void LauncherApplet::Private::createLauncher(LauncherApplet *lApplet)
+void LauncherApplet::Private::createLauncher()
 {
-    q = lApplet;
+    if (launcher) {
+        return;
+    }
+
     launcher = new Kickoff::Launcher(q);
     launcher->setAutoHide(true);
+    QObject::connect(launcher, SIGNAL(aboutToHide()), q, SLOT(hidePopup()));
     //launcher->resize(launcher->sizeHint());
     //QObject::connect(launcher, SIGNAL(aboutToHide()), icon, SLOT(setUnpressed()));
     //QObject::connect(launcher, SIGNAL(configNeedsSaving()), q, SIGNAL(configNeedsSaving()));
@@ -147,11 +151,7 @@ void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
     parent->addPage(widget, parent->windowTitle()/*, icon()*/);
 
-    if (!d->launcher) {
-        d->createLauncher(this);
-        QObject::connect(d->launcher, SIGNAL(aboutToHide()), this, SLOT(hidePopup()));
-    }
-
+    d->createLauncher();
     d->switchOnHoverCheckBox->setChecked(d->launcher->switchTabsOnHover());
 }
 
@@ -173,11 +173,7 @@ void LauncherApplet::configAccepted()
     cg.writeEntry("SwitchTabsOnHover", switchTabsOnHover);
     emit configNeedsSaving();
 
-    if (!d->launcher) {
-        d->createLauncher(this);
-        QObject::connect(d->launcher, SIGNAL(aboutToHide()), this, SLOT(hideMe()));
-    }
-
+    d->createLauncher();
     d->launcher->setSwitchTabsOnHover(switchTabsOnHover);
 }
 
@@ -188,11 +184,7 @@ QList<QAction*> LauncherApplet::contextualActions()
 
 QWidget *LauncherApplet::widget()
 {
-    if (!d->launcher) {
-        d->createLauncher(this);
-        QObject::connect(d->launcher, SIGNAL(aboutToHide()), this, SLOT(hideMe()));
-    }
-
+    d->createLauncher();
     d->launcher->setAttribute(Qt::WA_NoSystemBackground);
     return d->launcher;
 }
