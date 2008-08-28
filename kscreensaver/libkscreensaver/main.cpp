@@ -36,6 +36,7 @@
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kcmdlineargs.h>
+#include <kicon.h>
 #include <kapplication.h>
 #include <kcrash.h>
 #include <kaboutdata.h>
@@ -125,6 +126,9 @@ int kScreenSaverMain( int argc, char** argv, KScreenSaverInterface& screenSaverI
     KCmdLineArgs::addCmdLineOptions(options);
 
     KApplication app;
+
+    // Set a useful default icon.
+    app.setWindowIcon(KIcon("preferences-desktop-screensaver"));
 
     if (!pipe(termPipe))
     {
