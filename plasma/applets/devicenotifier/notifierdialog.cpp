@@ -144,7 +144,6 @@ void NotifierDialog::insertDevice(const QString &name)
         if(currentCategory)
         {
             currentCategory->insertRow(0,item);
-            QModelIndex indexCategory = currentCategory->index();
             currentCategory->setChild(0, 1, actionItem);
         }
     }

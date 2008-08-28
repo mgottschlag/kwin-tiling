@@ -1,7 +1,5 @@
-/*  
-    Copyright 2007 Robert Knight <robertknight@gmail.com>
-    Copyright 2008 Alexis Ménard <menard@kde.org>
-    
+/*  Copyright 2007 by Alexis Ménard <darktears31@gmail.com>
+
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -17,68 +15,94 @@
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
 */
-
 #ifndef NOTIFIERVIEW_H
 #define NOTIFIERVIEW_H
 
 // Qt
-#include <QAbstractItemView>
+#include <QTreeView>
+
+class QModelIndex;
 
 namespace Notifier
 {
+  /**
+  * @short The view used to display information in a device popup
+  *
+  */
+  class NotifierView : public QTreeView
+  {
+  Q_OBJECT
 
-class NotifierView : public QAbstractItemView
-{
-Q_OBJECT
+  public:
+      /**
+      * Constructor of view
+      * @param parent the parent of this object
+      **/
+      NotifierView(QWidget *parent = 0);
+      
+      /**
+      * Default destructor
+      **/
+      virtual ~NotifierView();
 
-public:
-    NotifierView(QWidget *parent = 0);
-    virtual ~NotifierView();
+  protected:
+      /**
+      * Call when the view is resized
+      * @param event the resize event
+      **/
+      void resizeEvent(QResizeEvent * event);
+      
+      /**
+      * Call when a mouse move event is catch
+      * @param event the mouse event
+      **/
+      void mouseMoveEvent(QMouseEvent *event);
+      
+      /**
+      * Call when cursor leave the widget
+      * @param event the leave event
+      **/
+      void leaveEvent(QEvent *event);
 
-    // margin is equivalent to ItemDelegate::BACK_ARROW_WIDTH + ItemDelegate::BACK_ARROW_SPACING
-    static const int HEADER_LEFT_MARGIN = 5;
-    static const int HEADER_TOP_MARGIN = 15;
-    static const int HEADER_BOTTOM_MARGIN = 4;
-    static const int HEADER_HEIGHT = 35;
-    static const int FIRST_HEADER_HEIGHT = 20;
+      /**
+      * Move the cursor in the way describe by cursorAction
+      * @param cursorAction the cursor action
+      **/
+      QModelIndex moveCursor(CursorAction cursorAction,Qt::KeyboardModifiers );
+      
+      /**
+      * Call when the view is paint
+      * @param event the paint event
+      **/
+      void paintEvent(QPaintEvent *event);
 
-    static const int ITEM_LEFT_MARGIN = 7;
-    static const int ITEM_RIGHT_MARGIN = 7;
-    static const int TOP_OFFSET = 5;
+      /**
+      * Paint an item in the view by using the delegate
+      * @param painter the painter used to paint
+      * @param itemRect the rect where the item will be paint
+      * @param index the QModelIndex that represent the item to paint
+      **/
+      void paintItem(QPainter &painter,const QRect &itemRect,const QModelIndex &index);
 
-    static const int BACK_ARROW_WIDTH = 20;
-    static const int BACK_ARROW_SPACING = 5;
+        // margin is equivalent to ItemDelegate::BACK_ARROW_WIDTH + ItemDelegate::BACK_ARROW_SPACING
+        static const int HEADER_LEFT_MARGIN = 5;
+        static const int HEADER_TOP_MARGIN = 5;
+        static const int HEADER_BOTTOM_MARGIN = 4;
+        static const int HEADER_HEIGHT = 35;
+        static const int FIRST_HEADER_HEIGHT = 20;
 
-    // reimplemented from QAbstractItemView 
-    virtual QModelIndex indexAt(const QPoint& point) const;
-    virtual void scrollTo(const QModelIndex& index, ScrollHint hint = EnsureVisible); 
-    virtual QRect visualRect(const QModelIndex& index) const;
-    virtual void setModel(QAbstractItemModel *model);
-protected:
-    // reimplemented from QAbstractItemView 
-    virtual int horizontalOffset() const;
-    virtual bool isIndexHidden(const QModelIndex& index) const;
-    virtual QModelIndex moveCursor(CursorAction action,Qt::KeyboardModifiers modifiers);
-    virtual void setSelection(const QRect& rect,QItemSelectionModel::SelectionFlags flags);
-    virtual int verticalOffset() const;
-    virtual QRegion visualRegionForSelection(const QItemSelection& selection) const;
-   
-    // reimplemented from QWidget
-    virtual void paintEvent(QPaintEvent *event);
-    virtual void resizeEvent(QResizeEvent *event);
-    virtual void mouseMoveEvent(QMouseEvent *event);
-    virtual void leaveEvent(QEvent *event);
+        static const int ITEM_LEFT_MARGIN = 7;
+        static const int ITEM_RIGHT_MARGIN = 7;
+        static const int TOP_OFFSET = 5;
 
-private Q_SLOTS:
-    // lays out all items in the view and sets the current index to the first
-    // selectable item
-    void updateLayout();
+        static const int BACK_ARROW_WIDTH = 20;
+        static const int BACK_ARROW_SPACING = 5;
 
-private:
-    class Private;
-    Private * const d;
-};
+
+  private:
+      ///The hovered index
+      QModelIndex m_hoveredIndex;
+  };
 
 }
-
-#endif // URLITEMVIEW_H
+#endif // NOTIFIERVIEW_H
