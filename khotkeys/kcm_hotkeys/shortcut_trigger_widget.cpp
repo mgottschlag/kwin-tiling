@@ -32,6 +32,13 @@ ShortcutTriggerWidget::ShortcutTriggerWidget( KHotKeys::ShortcutTrigger *trigger
     {
     shortcut_action_ui.setupUi(this);
 
+    shortcut_action_ui.shortcut->setCheckForConflictsAgainst(
+        // Don't know why that is necessary but it doesn't compile
+        // without.
+        KKeySequenceWidget::ShortcutTypes(
+            KKeySequenceWidget::GlobalShortcuts
+                | KKeySequenceWidget::StandardShortcuts ));
+
     connect(
         shortcut_action_ui.shortcut, SIGNAL(keySequenceChanged(QKeySequence)),
         _changedSignals, SLOT(map()) );
