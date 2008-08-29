@@ -26,5 +26,6 @@
     <method name="resumeStartup">
       <arg type="s" direction="in"/>
     </method>
+    <method name="wmChanged"/>
   </interface>
 </node>

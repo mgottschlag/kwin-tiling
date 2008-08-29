@@ -192,6 +192,7 @@ private:
     void saveCurrentSession();
     void saveCurrentSessionAs( const QString & );
     QStringList sessionList();
+    void wmChanged();
  private:
     QList<KSMListener*> listener;
     QList<KSMClient*> clients;

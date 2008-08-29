@@ -967,3 +967,9 @@ void KSMServer::selectWm( const QString& kdewm )
     wm = smname.isEmpty() ? cfgwm : smname;
     wmCommands = cfgWmCommands;
 }
+
+void KSMServer::wmChanged()
+{
+    KGlobal::config()->reparseConfiguration();
+    selectWm( "" );
+}
