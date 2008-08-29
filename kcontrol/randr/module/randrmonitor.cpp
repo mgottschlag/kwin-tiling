@@ -77,7 +77,6 @@ void RandrMonitorModule::initRandr()
     helper = new RandrMonitorHelper( this );
     kapp->installX11EventFilter( helper );
     dialog = NULL;
-    currentMonitors = connectedMonitors();
     }
 
 void RandrMonitorModule::poll()
@@ -95,18 +94,21 @@ void RandrMonitorModule::processX11Event( XEvent* e )
         XRRNotifyEvent* e2 = reinterpret_cast< XRRNotifyEvent* >( e );
         if( e2->subtype == RRNotify_OutputChange ) // TODO && e2->window == window )
             {
-            QStringList newMonitors = connectedMonitors();
-            if( newMonitors == currentMonitors )
-                return;
-            kapp->updateUserTimestamp(); // well, let's say plugging in a monitor is a user activity
+            kdDebug() << "WIN:" << e2->window << window << DefaultRootWindow( QX11Info::display());
+            // TODO nedelat nic, kdyz kcmshell4 display uz je otevreny
+            XRROutputChangeNotifyEvent* e3 = reinterpret_cast< XRROutputChangeNotifyEvent* >( e2 );
+            // well, let's say plugging in a monitor is a user activity
+            kapp->updateUserTimestamp();
 #warning Modal dialog, stupid, fix.
+            // TODO musi se zobrazit na spravnem monitoru (tj. ne na vypnutem)
+            // TODO zkontrolovat, ze tohle opravdu nerusit randr eventmask pro Qt
             QString change;
-            QString question =
-                ( newMonitors.count() < currentMonitors.count()
-                    ? i18n( "A monitor output has been disconnected." )
-                    : i18n( "A new monitor output has been connected." ))
-                + "\n\n" + i18n( "Do you wish to run a configuration tool to adjust the monitor setup?" );
-            currentMonitors = newMonitors;
+            QRect availableRect;
+            getRandrInfo( e3, &change, &availableRect );
+            // TODO improve the text
+            QString question;
+            question = change + "\n"
+                + i18n( "Do you wish to run a configuration tool to adjust the monitor setup?" );
             if( KMessageBox::questionYesNo( NULL, question, i18n( "Monitor setup has changed" ),
                     KGuiItem( "Con&figure" ), KGuiItem( "&Ignore" ), "randrmonitorchange" )
                 == KMessageBox::Yes )
@@ -117,23 +119,17 @@ void RandrMonitorModule::processX11Event( XEvent* e )
         }
     }
 
-QStringList RandrMonitorModule::connectedMonitors() const
+void RandrMonitorModule::getRandrInfo( XRROutputChangeNotifyEvent* e, QString* change, QRect* rect )
     {
-    QStringList ret;
     Display* dpy = QX11Info::display();
     XRRScreenResources* resources = XRRGetScreenResources( dpy, window );
-    for( int i = 0;
-         i < resources->noutput;
-         ++i )
-        {
-        XRROutputInfo* info = XRRGetOutputInfo( dpy, resources, resources->outputs[ i ] );
-        QString name = QString::fromUtf8( info->name );
-        if( info->connection == RR_Connected )
-            ret.append( name );
-        XRRFreeOutputInfo( info );
-        }
+    XRROutputInfo* info = XRRGetOutputInfo( dpy, resources, e->output );
+    if( e->connection == RR_Connected )
+        *change = i18n( "A new monitor output '%1' has been connected.", QString::fromUtf8( info->name ));
+    else
+        *change = i18n( "Monitor output '%1' has been disconnected.", QString::fromUtf8( info->name ));
+    XRRFreeOutputInfo( info );
     XRRFreeScreenResources( resources );
-    return ret;
     }
 
 bool RandrMonitorHelper::x11Event( XEvent* e )
