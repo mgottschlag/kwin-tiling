@@ -1,9 +1,13 @@
 [Desktop Entry]
 Name=Device Notifier
+Name[km]=កម្មវិធី​ជូនដំណឹង​ឧបករណ៍​
 Name[nds]=Bescheden över Reedschappen
+Name[uk]=Сповіщення про пристрої
 Name[zh_TW]=裝置通知
 Comment=Notifications and access for new devices
+Comment[km]=កា​រជូន​ដំណឹង និង​ចូល​ដំណើរការ​សម្រាប់​ឧបករណ៍​ថ្មី
 Comment[nds]=Bescheden un Togriep för nieg Reedschappen
+Comment[uk]=Сповіщення і доступ до нових пристроїв
 Comment[zh_TW]=通知與存取新裝置
 Icon=drive-removable-media-usb-pendrive
 Type=Service

@@ -32,6 +32,7 @@ Name[nn]=Maskinvare
 Name[sl]=Strojna oprema
 Name[ta]=வன்பொருள்
 Name[tr]=Donanım
+Name[uk]=Обладнання
 Name[uz]=Asbob-uskunalar
 Name[uz@cyrillic]=Асбоб-ускуналар
 Name[vi]=Phần cứng
@@ -42,6 +43,7 @@ Comment[et]=Riistvara lõimimise seadistamine Solidiga
 Comment[ga]=Cumraíocht Comhtháite Crua-Earraí le Solid
 Comment[km]=ការ​កំណត់​រចនាសម្ព័ន្ធ​ការ​រួម​បញ្ចូល​ផ្នែក​រឹង​ជា​មួយ​នឹង Solid​​
 Comment[nds]=Instellen för't Inbinnen vun Hardware mit Solid
+Comment[uk]=Налаштування інтеграції обладнання з Solid
 Comment[zh_TW]=使用 Solid 硬體整合設定
 
 X-KDE-Keywords=Solid,Hardware,Power,Network,Discovery,Management

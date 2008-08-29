@@ -7,3 +7,5 @@ X-KDE-ParentComponents=shell
 X-KDE-PluginKeyword=kcm_krunner_shell
 
 Name=Shell Runner Config
+Name[uk]=Налаштування засобу запуску оболонки
+Name[zh_TW]=Shell 執行者設定

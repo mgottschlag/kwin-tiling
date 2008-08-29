@@ -65,7 +65,9 @@ Name[zh_CN]=数字钟
 Name[zh_TW]=數位時鐘
 
 Comment=Time displayed in a digital format
+Comment[km]=ពេលវេលា​បាន​បង្ហាញ​នៅ​ក្នុងទ្រង់ទ្រាយ​ឌីជីថល
 Comment[nds]=Tiet in Digitaalformaat wiest
+Comment[uk]=Час, показаний у цифровому форматі
 Comment[zh_TW]=以數位格式顯示時間
 
 Icon=chronometer

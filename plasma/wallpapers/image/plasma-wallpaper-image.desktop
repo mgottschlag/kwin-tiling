@@ -5,6 +5,7 @@ Name[et]=Pilt
 Name[ga]=Íomhá
 Name[km]=រូបភាព
 Name[nds]=Bild
+Name[uk]=Зображення
 Name[zh_TW]=影像
 Icon=image-jpeg
 ServiceTypes=Plasma/Wallpaper
@@ -26,6 +27,7 @@ Name[et]=Pilt
 Name[ga]=Íomhá
 Name[km]=រូបភាព
 Name[nds]=Bild
+Name[uk]=Зображення
 Name[zh_TW]=影像
 Icon=image-jpeg
 # Dummy
@@ -37,6 +39,7 @@ Name[et]=Slaidiseanss
 Name[ga]=Taispeántas Sleamhnán
 Name[km]=បញ្ចាំង​ស្លាយ
 Name[nds]=Diaschau
+Name[uk]=Показ слайдів
 Name[zh_TW]=投影播放
 Icon=folder-image
 # Dummy

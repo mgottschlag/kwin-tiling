@@ -76,6 +76,7 @@ Comment=Default desktop containment
 Comment[et]=Vaikimisi töölauakonteiner
 Comment[km]=មាន​ផ្ទៃតុ​លំនាំដើម
 Comment[nds]=Standard-Schriefdischgelaats
+Comment[uk]=Типове розмежування стільниці
 Comment[zh_TW]=預設桌面容器
 Icon=user-desktop
 Type=Service
