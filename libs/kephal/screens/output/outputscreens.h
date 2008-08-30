@@ -22,9 +22,9 @@
 #define KEPHAL_OUTPUTSCREENS_H
 
 #include <QPoint>
-#include "../screens.h"
+#include "kephal/screens.h"
 #include "../simplescreen.h"
-#include "outputs/outputs.h"
+#include "kephal/outputs.h"
 
 
 namespace kephal {

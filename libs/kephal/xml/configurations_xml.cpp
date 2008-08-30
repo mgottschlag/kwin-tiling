@@ -103,6 +103,7 @@ namespace kephal {
     }
     
     void ConfigurationsXMLFactory::schema() {
+        BOOL_ELEMENT("polling", ConfigurationsXML, polling, setPolling);
         COMPLEX_ELEMENT_LIST("configuration", ConfigurationsXML, configurations, new ConfigurationXMLFactory(), ConfigurationXML);
         COMPLEX_ELEMENT_LIST("outputs", ConfigurationsXML, outputs, new OutputsXMLFactory(), OutputsXML);
     }

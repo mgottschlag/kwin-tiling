@@ -18,8 +18,8 @@
  */
 
 
-#include "screens.h"
-#include "configurations/configurations.h"
+#include "kephal/screens.h"
+#include "kephal/configurations.h"
 
 
 #ifdef SCREENS_FACTORY

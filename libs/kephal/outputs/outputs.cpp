@@ -20,9 +20,9 @@
 
 #include <QDebug>
 
-#include "outputs.h"
-#include "screens/screens.h"
-#include "configurations/configurations.h"
+#include "kephal/outputs.h"
+#include "kephal/screens.h"
+#include "kephal/configurations.h"
 
 #ifdef OUTPUTS_FACTORY
 void OUTPUTS_FACTORY();

@@ -19,7 +19,7 @@
 
 
 #include "dbusapi_screens.h"
-#include "screens/screens.h"
+#include "kephal/screens.h"
 #include "screensadaptor.h"
 
 #include <QDebug>

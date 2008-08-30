@@ -22,9 +22,9 @@
 #include <QObject>
 
 #include "dbusapi_configurations.h"
-#include "configurations/configurations.h"
+#include "kephal/configurations.h"
 #include "configurationsadaptor.h"
-#include "outputs/outputs.h"
+#include "kephal/outputs.h"
 
 #include <QVariant>
 
@@ -171,4 +171,11 @@ int DBusAPIConfigurations::screen(QString outputId) {
     return -1;
 }
 
+void DBusAPIConfigurations::setPolling(bool polling) {
+    Configurations::instance()->setPolling(polling);
+}
+
+bool DBusAPIConfigurations::polling() {
+    return Configurations::instance()->polling();
+}
 

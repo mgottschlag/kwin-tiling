@@ -115,9 +115,27 @@ void KephalD::init() {
     new DBusAPIOutputs(this);
     new DBusAPIConfigurations(this);
     
-    m_pollTimer = new QTimer(this);
-    connect(m_pollTimer, SIGNAL(timeout()), this, SLOT(poll()));
-    m_pollTimer->start(10000);
+    if (m_outputs) {
+        m_pollTimer = new QTimer(this);
+        connect(m_pollTimer, SIGNAL(timeout()), this, SLOT(poll()));
+        if (Configurations::instance()->polling()) {
+            m_pollTimer->start(10000);
+        }
+    } else {
+        m_pollTimer = 0;
+    }
+}
+
+void KephalD::pollingActivated() {
+    if (m_pollTimer && m_outputs) {
+        m_pollTimer->start(10000);
+    }
+}
+
+void KephalD::pollingDeactivated() {
+    if (m_pollTimer && m_outputs) {
+        m_pollTimer->stop();
+    }
 }
 
 void KephalD::poll() {

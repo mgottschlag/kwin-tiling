@@ -111,6 +111,13 @@ namespace kephal {
     void NoConfigurations::reflectY(Output * output, bool reflect) {
     }
 
+    void NoConfigurations::setPolling(bool polling) {
+    }
+    
+    bool NoConfigurations::polling() {
+        return false;
+    }
+    
 }
 
 

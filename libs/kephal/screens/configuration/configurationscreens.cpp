@@ -20,7 +20,7 @@
 
 #include "configurationscreens.h"
 
-#include "configurations/configurations.h"
+#include "kephal/configurations.h"
 
 
 namespace kephal {

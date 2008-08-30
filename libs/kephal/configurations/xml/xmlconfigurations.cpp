@@ -20,9 +20,9 @@
 
 #include "xmlconfigurations.h"
 
-#include "../../xml/configurations_xml.h"
+#include "xml/configurations_xml.h"
 #include "outputs/backendoutputs.h"
-#include "screens/screens.h"
+#include "kephal/screens.h"
 
 #include <QDir>
 
@@ -1268,6 +1268,22 @@ namespace kephal {
                 qDebug() << "setting rate to" << rate << "for" << o->id() << "failed";
             }
         }
+    }
+
+    void XMLConfigurations::setPolling(bool polling) {
+        if (polling != this->polling()) {
+            m_configXml->setPolling(polling);
+            saveXml();
+            if (polling) {
+                emit pollingActivated();
+            } else {
+                emit pollingDeactivated();
+            }
+        }
+    }
+
+    bool XMLConfigurations::polling() {
+        return m_configXml->polling();
     }
 
 }

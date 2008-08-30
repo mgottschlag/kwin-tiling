@@ -21,14 +21,14 @@
 #include <QDebug>
 #include <QRegExp>
 
-#include "configurations.h"
+#include "kephal/configurations.h"
 
 #ifdef CONFIGURATIONS_FACTORY
 void CONFIGURATIONS_FACTORY();
 #endif
 
-#include "outputs/outputs.h"
-#include "screens/screens.h"
+#include "kephal/outputs.h"
+#include "kephal/screens.h"
 
 
 namespace kephal {

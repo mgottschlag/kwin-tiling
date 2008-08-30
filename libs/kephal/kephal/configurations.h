@@ -245,6 +245,9 @@ namespace kephal {
              */
             virtual void applyOutputSettings() = 0;
             
+            virtual void setPolling(bool polling) = 0;
+            virtual bool polling() = 0;
+            
             static void translateOrigin(QMap<int, QPoint> & layout);
             static void translateOrigin(QMap<int, QPoint> & layout, QPoint origin);
             static void translateOrigin(QMap<int, QRect> & layout);
@@ -256,6 +259,9 @@ namespace kephal {
              * Configuration is changed.
              */
             void configurationActivated(Configuration * configuration);
+            
+            void pollingActivated();
+            void pollingDeactivated();
             
         protected:
             static Configurations * m_instance;

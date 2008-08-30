@@ -62,12 +62,6 @@ namespace kephal {
         return m_display;
     }
     
-    void XRandROutputs::pollState() {
-        foreach (XRandROutput * o, m_outputs) {
-            output(o->_id())->pollState();
-        }
-    }
-    
     void XRandROutputs::outputChanged(RROutput id, int changes)
     {
         Q_UNUSED(changes)

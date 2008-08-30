@@ -23,7 +23,7 @@
 
 #include <QPoint>
 #include "../simplescreen.h"
-#include "../screens.h"
+#include "kephal/screens.h"
 #include "screens_interface.h"
 
 

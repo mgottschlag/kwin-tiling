@@ -19,7 +19,7 @@
 
 
 #include "kephalapp.h"
-#include "../screens/screens.h"
+#include "kephal/screens.h"
 
 
 #include <QDebug>

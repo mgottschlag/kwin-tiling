@@ -22,7 +22,7 @@
 #define KEPHAL_DBUSCONFIGURATIONS_H
 
 #include <QPoint>
-#include "../configurations.h"
+#include "kephal/configurations.h"
 #include "configurations_interface.h"
 
 
@@ -68,6 +68,8 @@ namespace kephal {
             void changeRate(Output * output, float rate);
             int screen(Output * output);
             void applyOutputSettings();
+            void setPolling(bool polling);
+            bool polling();
             
             bool isValid();
             org::kde::Kephal::Configurations * interface();

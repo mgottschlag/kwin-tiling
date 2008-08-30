@@ -28,7 +28,7 @@
 #include <QSize>
 #include <QPoint>
 
-#include "kephal.h"
+#include "kephal/kephal.h"
 
 
 namespace kephal {

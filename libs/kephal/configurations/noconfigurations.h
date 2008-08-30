@@ -21,7 +21,7 @@
 #ifndef KEPHAL_NOCONFIGURATIONS_H
 #define KEPHAL_NOCONFIGURATIONS_H
 
-#include "configurations.h"
+#include "kephal/configurations.h"
 
 
 namespace kephal {
@@ -61,6 +61,8 @@ namespace kephal {
             void reflectY(Output * output, bool reflect);
             int screen(Output * output);
             void applyOutputSettings();
+            void setPolling(bool polling);
+            bool polling();
             
         private:
             SimpleConfiguration * m_config;

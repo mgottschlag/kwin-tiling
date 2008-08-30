@@ -58,6 +58,9 @@ class DBusAPIConfigurations : public QObject
         void activate(QString config);
         int primaryScreen(QString config);
         
+        void setPolling(bool polling);
+        bool polling();
+        
     private:
         QMap<QString, QList<QPoint> > m_outputAvailablePositions;
 };

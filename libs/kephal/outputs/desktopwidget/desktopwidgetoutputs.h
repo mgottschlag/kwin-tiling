@@ -23,7 +23,7 @@
 
 #include <QPoint>
 #include "../simpleoutput.h"
-#include "../outputs.h"
+#include "kephal/outputs.h"
 
 
 namespace kephal {

@@ -25,7 +25,7 @@
 #include "dbusconfigurations.h"
 #include "configurations_interface.h"
 
-#include "outputs/outputs.h"
+#include "kephal/outputs.h"
 
 
 namespace kephal {
@@ -167,6 +167,14 @@ namespace kephal {
     }
     
     void DBusConfigurations::applyOutputSettings() {
+    }
+
+    void DBusConfigurations::setPolling(bool polling) {
+        m_interface->setPolling(polling);
+    }
+
+    bool DBusConfigurations::polling() {
+        return m_interface->polling();
     }
 
 }

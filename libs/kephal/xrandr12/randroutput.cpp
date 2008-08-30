@@ -115,13 +115,6 @@ bool RandROutput::queryOutputInfo(void)
         return changes;
 }
 
-void RandROutput::pollState() {
-    if (queryOutputInfo()) {
-        qDebug() << "output state changed!!";
-        emit outputChanged(m_id, 0);
-    }
-}
-
 void RandROutput::loadSettings(bool notify)
 {
 	Q_UNUSED(notify);

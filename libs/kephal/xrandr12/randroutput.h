@@ -114,7 +114,6 @@ public:
 public slots:
 	void slotDisable();
 	void slotEnable();
-        void pollState();
 
 private slots:
 	void slotCrtcChanged(RRCrtc c, int changes);

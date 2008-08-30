@@ -22,7 +22,7 @@
 #define KEPHAL_CONFIGURATIONSXML_H
 
 #include "xmltype.h"
-#include "kephal.h"
+#include "kephal/kephal.h"
 
 #include <QString>
 
@@ -123,7 +123,10 @@ namespace kephal {
     
     class ConfigurationsXML : public XMLType {
         Q_OBJECT
+        PROPERTY(bool, polling, setPolling)
         public:
+            ConfigurationsXML() : m_polling(true) {}
+            
             QList<ConfigurationXML *> * configurations();
             QList<OutputsXML *> * outputs();
             

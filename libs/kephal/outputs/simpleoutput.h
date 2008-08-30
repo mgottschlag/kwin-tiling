@@ -21,7 +21,7 @@
 #ifndef KEPHAL_SIMPLEOUTPUT_H
 #define KEPHAL_SIMPLEOUTPUT_H
 
-#include "outputs.h"
+#include "kephal/outputs.h"
 
 #include <QSize>
 #include <QPoint>

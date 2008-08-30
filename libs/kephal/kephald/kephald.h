@@ -45,6 +45,8 @@ class KephalD : public QApplication
         void outputDisconnected(kephal::Output * output);
         void outputConnected(kephal::Output * output);
         void poll();
+        void pollingActivated();
+        void pollingDeactivated();
         
     private:
         void init();

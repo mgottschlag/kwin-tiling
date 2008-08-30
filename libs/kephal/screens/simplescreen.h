@@ -21,7 +21,7 @@
 #ifndef KEPHAL_SIMPLESCREEN_H
 #define KEPHAL_SIMPLESCREEN_H
 
-#include "screens.h"
+#include "kephal/screens.h"
 
 #include <QSize>
 #include <QPoint>

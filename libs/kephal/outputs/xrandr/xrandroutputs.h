@@ -103,7 +103,6 @@ namespace kephal {
             
         public Q_SLOTS:
             void outputChanged(RROutput id, int changes);
-            void pollState();
             
         private:
             void init();
