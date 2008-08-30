@@ -33,6 +33,10 @@ class KephalApp : public QApplication
         
     private:
         void init();
+        void query();
+        
+    private Q_SLOTS:
+        void run();
 };
 
 

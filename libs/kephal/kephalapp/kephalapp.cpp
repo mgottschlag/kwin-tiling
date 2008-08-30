@@ -20,10 +20,13 @@
 
 #include "kephalapp.h"
 #include "kephal/screens.h"
+#include "kephal/outputs.h"
 
 
 #include <QDebug>
-#include <QDBusConnection>
+#include <QTimer>
+
+#include <QTextStream>
 
 
 using namespace kephal;
@@ -39,7 +42,7 @@ int main(int argc, char *argv[])
 KephalApp::KephalApp(int & argc, char ** argv)
     : QApplication(argc, argv)
 {
-    qDebug() << "kephal starting up";
+    //qDebug() << "kephal starting up";
     init();
 }
 
@@ -48,7 +51,27 @@ KephalApp::~KephalApp()
 }
 
 void KephalApp::init() {
-    qDebug() << "size of screen 0:" << Screens::instance()->screens()[0]->size();
+
+    QTimer::singleShot(0, this, SLOT(run()));
+}
+
+void KephalApp::run() {
+    query();
+    exit(0);
+}
+
+void KephalApp::query() {
+    QTextStream cout(stdout);
+    cout << "Screens:\n";
+    foreach (Screen * screen, Screens::instance()->screens()) {
+        cout << "  Screen " << screen->id() << ":\n";
+        cout << "    Size: " << screen->size().width() << "x" << screen->size().height() << "\n";
+        cout << "    Position: (" << screen->position().x() << "," << screen->position().y() << ")\n";
+        
+        foreach (Output * output, screen->outputs()) {
+            cout << "    Output: " << output->id() << "\n";
+        }
+    }
 }
 
 
