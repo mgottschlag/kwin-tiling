@@ -1,0 +1,64 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+	
+<article lang="&language;">
+<articleinfo>
+
+<authorgroup>
+<author>&Lauri.Watts; &Lauri.Watts.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2007-07-27</date>
+<releaseinfo>4.2</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>window settings</keyword>
+<keyword>window placement</keyword>
+<keyword>window size</keyword>
+</keywordset>
+</articleinfo>
+<sect1 id="window-specific">
+<title>Window Specific Settings</title>
+
+<para>Here you can constomize window settings specifically only for
+some windows.</para>
+
+<note>
+<para>Please note that this configuration will not take effect if you
+do not use &kwin; as your window manager. If you do use a different
+window manager, please refer to its documentation for how to customize
+window behavior.</para>
+</note>
+
+<para>Many of the settings you can configure here are those you can
+configure on a global basis in the <guilabel>Window Behavior</guilabel>
+&systemsettings; module, however some of them are even more detailed.</para>
+
+<para>They encompass geometry, placement, whether a window should be
+kept above or below others, focus stealing prevention, and translucency
+settings.</para>
+
+<para>You can access this module in two ways: from the titlebar of the
+application you wish to configure, or from the &systemsettings;.  If you
+start it from within &systemsettings; you can use the
+<guibutton>New...</guibutton> to create a window profile, and the
+<guibutton>Detect Window Properties</guibutton> button on the resulting dialog to
+partially fill in the required information for the application
+you wish to configure.</para>
+
+<para>You can also at any time <guibutton>Modify...</guibutton> or
+<guibutton>Delete</guibutton> any stored settings profile, and
+reorder the list.  Reordering the list using the <guibutton>Move Up</guibutton>
+and <guibutton>Move Down</guibutton> buttons is a convenience to help you sort
+the profiles, and has no effect on how they are applied.</para>
+
+</sect1>
+
+</article>

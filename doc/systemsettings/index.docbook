@@ -102,7 +102,7 @@ By selecting <menuchoice><guimenu>K Button</guimenu><guisubmenu>Applications</gu
 </listitem>
 <listitem>
 <para>
-  By pressing <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo>. This will bring up the <application>KRunner</application> dialog. Type <command>system settings</command>, and click <guibutton>Launch</guibutton>.
+  By pressing <keycombo>&Alt;<keycap>F2</keycap></keycombo>. This will bring up the <application>KRunner</application> dialog. Type <command>system settings</command>, and click <guibutton>Launch</guibutton>.
 </para>
 </listitem>
 <listitem>
@@ -217,7 +217,7 @@ This sections covers the settings related to specific system settings such as co
 <orderedlist>
 <listitem>
 <para>
-Press <keycombo><keycap>Ctrl</keycap><keycap>Q</keycap></keycombo> on the keyboard.
+Press <keycombo>&Ctrl;<keycap>Q</keycap></keycombo> on the keyboard.
 </para>
 </listitem>
 <listitem>
@@ -232,7 +232,7 @@ click on the Close button located in the top right hand corner of the window.
 <title>Running Individual &systemsettings; Modules</title>
 
 <para>
-Individual modules can be run without running &systemsettings; using the command <command>kcmshell</command> from the command line. Type <command>kcmshell --list</command> to see a list of the available &kde; &systemsettings; modules.
+Individual modules can be run without running &systemsettings; using the command <command>kcmshell4</command> from the command line. Type <command>kcmshell4 --list</command> to see a list of the available &kde; &systemsettings; modules.
 </para>
 </sect1>
 </chapter>
