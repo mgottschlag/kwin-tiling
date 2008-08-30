@@ -25,6 +25,7 @@
 #include <QObject>
 #include <QSize>
 #include <QPoint>
+#include <QStringList>
 
 
 namespace kephal {
@@ -45,6 +46,7 @@ class DBusAPIScreens : public QObject
         QSize size(int id);
         QPoint position(int id);
         int primaryScreen();
+        QStringList outputs(int id);
         
     private Q_SLOTS:
         void screenResized(kephal::Screen * s, QSize oldSize, QSize newSize);

@@ -20,6 +20,7 @@
 
 #include "dbusapi_screens.h"
 #include "kephal/screens.h"
+#include "kephal/outputs.h"
 #include "screensadaptor.h"
 
 #include <QDebug>
@@ -95,5 +96,16 @@ int DBusAPIScreens::primaryScreen()
 {
     Screen * s = Screens::instance()->primaryScreen();
     return s ? s->id() : 0;
+}
+
+QStringList DBusAPIScreens::outputs(int id) {
+    Screen * s = Screens::instance()->screen(id);
+    QStringList result;
+    if (s) {
+        foreach (Output * output, s->outputs()) {
+            result << output->id();
+        }
+    }
+    return result;
 }
 

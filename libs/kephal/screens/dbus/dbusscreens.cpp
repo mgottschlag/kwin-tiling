@@ -24,6 +24,7 @@
 #include "dbusscreens.h"
 #include "../simplescreen.h"
 #include "screens_interface.h"
+#include "kephal/outputs.h"
 
 
 namespace kephal {
@@ -49,7 +50,7 @@ namespace kephal {
             int id = m_interface->id(i);
             QPoint pos = m_interface->position(id);
             QSize size = m_interface->size(id);
-            qDebug() << "adding a screen" << id << "with geom: " << pos << size;
+            //qDebug() << "adding a screen" << id << "with geom: " << pos << size;
             
             SimpleScreen * screen = new SimpleScreen(this,
                     id,
@@ -57,6 +58,14 @@ namespace kephal {
                     pos,
                     false);
             m_screens.append(screen);
+            
+            QStringList outputIds = m_interface->outputs(id);
+            foreach (QString outputId, outputIds) {
+                Output * output = Outputs::instance()->output(outputId);
+                if (output) {
+                    screen->_outputs() << output;
+                }
+            }
         }
         
         connect(m_interface, SIGNAL(screenResized(int)), this, SLOT(screenResizedSlot(int)));
@@ -86,7 +95,7 @@ namespace kephal {
     void DBusScreens::screenAddedSlot(int id) {
         QPoint pos = m_interface->position(id);
         QSize size = m_interface->size(id);
-        qDebug() << "adding a screen" << id << "with geom: " << pos << size;
+        //qDebug() << "adding a screen" << id << "with geom: " << pos << size;
         
         SimpleScreen * screen = new SimpleScreen(this,
                 id,
@@ -94,7 +103,15 @@ namespace kephal {
                 pos,
                 false);
         m_screens.append(screen);
-        
+
+        QStringList outputIds = m_interface->outputs(id);
+        foreach (QString outputId, outputIds) {
+            Output * output = Outputs::instance()->output(outputId);
+            if (output) {
+                screen->_outputs() << output;
+            }
+        }
+
         emit screenAdded(screen);
     }
 

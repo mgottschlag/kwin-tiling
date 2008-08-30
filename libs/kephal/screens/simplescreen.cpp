@@ -85,7 +85,11 @@ namespace kephal {
     }
     
     QList<Output *> SimpleScreen::outputs() {
-        return QList<Output *>();
+        return m_outputs;
+    }
+    
+    QList<Output *> & SimpleScreen::_outputs() {
+        return m_outputs;
     }
     
 }

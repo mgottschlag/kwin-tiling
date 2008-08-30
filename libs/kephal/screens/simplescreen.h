@@ -50,6 +50,7 @@ namespace kephal {
             void _setSize(const QSize & size);
             void _setPosition(const QPoint & position);
             void _setGeom(const QRect & geom);
+            QList<Output *> & _outputs();
             
         Q_SIGNALS:
             void privacyModeChangeRequested(SimpleScreen * screen, bool privacy);
@@ -59,6 +60,7 @@ namespace kephal {
             QSize m_size;
             QPoint m_position;
             bool m_privacy;
+            QList<Output *> m_outputs;
     };
     
 }

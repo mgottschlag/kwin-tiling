@@ -51,7 +51,7 @@ namespace kephal {
             QSize size = m_interface->size(id);
             bool connected = m_interface->isConnected(id);
             bool activated = m_interface->isActivated(id);
-            qDebug() << "adding an output" << id << "with geom: " << pos << size;
+            //qDebug() << "adding an output" << id << "with geom: " << pos << size;
             
             SimpleOutput * output = new SimpleOutput(this,
                     id,

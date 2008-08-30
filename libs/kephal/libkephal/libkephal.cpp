@@ -29,15 +29,15 @@ using namespace kephal;
 
 
 void libkephal_factory() {
-    qDebug() << "trying to access kephald...";
-    DBusScreens * screens = new DBusScreens(qApp);
-    DBusOutputs * outputs = new DBusOutputs(qApp);
+    //qDebug() << "trying to access kephald...";
     DBusConfigurations * configurations = new DBusConfigurations(qApp);
+    DBusOutputs * outputs = new DBusOutputs(qApp);
+    DBusScreens * screens = new DBusScreens(qApp);
     if ((! screens->isValid()) || (! outputs->isValid()) || (! configurations->isValid())) {
-        qDebug() << "could not access kephald, falling back to QDesktopWidget";
+        qWarning() << "could not access kephald, falling back to QDesktopWidget";
+        new NoConfigurations(qApp);
         new DesktopWidgetOutputs(qApp);
         new OutputScreens(qApp);
-        new NoConfigurations(qApp);
     }
 }
 
