@@ -179,6 +179,7 @@ Interface::Interface(QWidget* parent)
     m_dividerLine->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
     m_dividerLine->setFixedHeight(1);
     m_dividerLine->setAutoFillBackground(true);
+    m_dividerLine->hide();
     m_layout->addWidget(m_dividerLine);
 
     m_resultsView = new QGraphicsView(w);
@@ -367,6 +368,7 @@ void Interface::resetInterface()
     m_nextPage->hide();
     m_resultsScene->clearQuery();
     m_resultsView->hide();
+    m_dividerLine->hide();
     setMinimumSize(QSize(MIN_WIDTH, 0));
     adjustSize();
     //kDebug() << size() << minimumSizeHint();
@@ -383,6 +385,7 @@ void Interface::closeEvent(QCloseEvent *e)
         m_descriptionLabel->hide();
         m_previousPage->hide();
         m_nextPage->hide();
+        m_dividerLine->hide();
         setMinimumSize(QSize(MIN_WIDTH, 0));
         adjustSize();
     }
@@ -442,6 +445,7 @@ void Interface::updateDescriptionLabel(ResultItem *item)
     // we want it always visible once we start showing it
     // so that the interface isn't jumping all around
     m_descriptionLabel->setVisible(m_resultsView->isVisible());
+    m_dividerLine->setVisible(m_resultsView->isVisible());
     if (!item) {
         m_descriptionLabel->setText(" ");
     } else if (item->description().isEmpty()) {
@@ -536,6 +540,7 @@ void Interface::hideResultsArea()
     m_descriptionLabel->clear();
     m_previousPage->hide();
     m_nextPage->hide();
+    m_dividerLine->hide();
     setMinimumSize(QSize(MIN_WIDTH, 0));
     adjustSize();
     resize(minimumSizeHint());
