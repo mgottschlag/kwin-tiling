@@ -26,6 +26,7 @@
 class Dtime;
 class Tzone;
 class QTabWidget;
+class KProcess;
 
 
 class KclockModule : public KCModule
@@ -37,11 +38,14 @@ public:
   
   void	save();
   void	load();
+private Q_SLOTS:
+  void slotDateTimeHelperFinished(int exitCode);
 
 private:
   QTabWidget   *tab;
   Tzone	*tzone;
   Dtime	*dtime;
+  KProcess *process;
 };
 
 #endif // main_included

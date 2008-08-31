@@ -80,6 +80,8 @@ KclockModule::KclockModule(QWidget *parent, const QVariantList &)
   connect(tzone, SIGNAL(zoneChanged(bool)), this, SIGNAL(changed(bool)));
 
   setButtons(Help|Apply);
+
+  process = NULL;
 }
 
 void KclockModule::save()
@@ -89,28 +91,40 @@ void KclockModule::save()
   tzone->save( helperargs );
   QString helper = KStandardDirs::findExe( "kcmdatetimehelper" );
   QString kdesu = KStandardDirs::findExe( "kdesu" );
-  int error = 0;
+  bool ok = true;
   if( helper.isEmpty() || kdesu.isEmpty())
-    error = -1;
+    ok = false;
   else {
-    KProcess proc;
-    proc << kdesu << "--" << helper;
-    proc << helperargs;
-    error = proc.execute();
+    process = new KProcess(this);
+    *process << kdesu;
+    *process << "--attach" << QString::number(window()->winId()) << "--" << helper;
+    *process << helperargs;
+    process->start();
+    connect( process, SIGNAL( finished(int, QProcess::ExitStatus) ),
+		     SLOT( slotDateTimeHelperFinished(int) ) );
+    ok = process->waitForStarted();
+    if(!ok) {
+      delete process;
+      process = NULL;
+    }
   }
-  if( error < 0 || error == ERROR_CALL )
+  if( !ok )
     KMessageBox::error( this, i18n( "Failed to set system date/time/timezone."), i18n( "Date/Time Error" ));
-  else {
-    dtime->processHelperErrors( error );
-    tzone->processHelperErrors( error );
-  }
+}
+void KclockModule::slotDateTimeHelperFinished(int exitCode)
+{
+    dtime->processHelperErrors( exitCode );
+    tzone->processHelperErrors( exitCode);
+
+    process->deleteLater();
+    process = NULL;
 #if 0
   // Tell the clock applet about the change so that it can update its timezone
   QDBusInterface clock("org.kde.kicker", "/Applets/Clock", "org.kde.kicker.ClockApplet");
   clock.call("reconfigure");
 #endif
-}
 
+}
 void KclockModule::load()
 {
   dtime->load();
