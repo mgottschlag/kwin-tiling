@@ -92,8 +92,7 @@ void DeviceNotifier::init()
     m_solidDeviceEngine = dataEngine("soliddevice");
     m_widget = new Dialog();
     m_widget->setFocusPolicy(Qt::NoFocus);
-    m_widget->setWindowFlags(Qt::Popup);   
-
+    
     QVBoxLayout *l_layout = new QVBoxLayout(m_widget);
     l_layout->setSpacing(0);
     l_layout->setMargin(0);
@@ -177,6 +176,8 @@ void DeviceNotifier::initSysTray()
     setAspectRatioMode(Plasma::ConstrainedSquare);
 
     m_layout->addItem(m_icon);
+
+    m_widget->setWindowFlags(Qt::Popup);  
 }
 
 DeviceNotifier::~DeviceNotifier()
