@@ -8,8 +8,10 @@ X-KDE-PluginKeyword=kcm_krunner_shell
 
 Name=Shell Runner Config
 Name[gl]=Configuración do executor de shell
+Name[nds]=Konsooldreger instellen
 Name[pt]=Configuração da Linha de Comandos
 Name[pt_BR]=Configuração da Linha de Comandos
+Name[sl]=Nastavitev lupinskega zaganjalnika
 Name[sv]=Inställning av skalkommandon
 Name[tr]=Kabuk Çalıştırıcı Ayarları
 Name[uk]=Налаштування засобу запуску оболонки
