@@ -101,7 +101,7 @@ ContextMenuFactory::~ContextMenuFactory()
   delete d;
 }
 
-void ContextMenuFactory::showContextMenu(QAbstractItemView *view,const QPoint& pos)
+void ContextMenuFactory::showContextMenu(QAbstractItemView *view, const QPoint &pos)
 {
     Q_ASSERT(view);
 
