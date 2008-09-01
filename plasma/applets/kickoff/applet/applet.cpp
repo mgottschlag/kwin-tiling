@@ -171,7 +171,7 @@ void LauncherApplet::configAccepted()
     bool switchTabsOnHover = d->switchOnHoverCheckBox->isChecked();
 
     // TODO: should this be moved into Launcher as well? perhaps even the config itself?
-    KConfigGroup cg = config();
+    KConfigGroup cg = globalConfig();
     cg.writeEntry("SwitchTabsOnHover", switchTabsOnHover);
     emit configNeedsSaving();
 

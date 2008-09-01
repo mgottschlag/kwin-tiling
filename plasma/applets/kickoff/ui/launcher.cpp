@@ -608,8 +608,10 @@ void Launcher::setApplet(Plasma::Applet *applet)
     d->applet = applet;
     d->contextMenuFactory->setApplet(applet);
 
-    KConfigGroup cg = applet->config();
+    KConfigGroup cg = applet->globalConfig();
     setSwitchTabsOnHover(cg.readEntry("SwitchTabsOnHover", switchTabsOnHover()));
+
+    cg = applet->config();
     setVisibleItemCount(cg.readEntry("VisibleItemsCount", visibleItemCount()));
 }
 
