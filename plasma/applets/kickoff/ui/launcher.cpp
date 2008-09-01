@@ -759,7 +759,7 @@ void Launcher::resultsAvailable()
     d->searchView->setCurrentIndex(d->searchModel->index(0, 0, root));
 }
 
-void Launcher::setLauncherOrigin( QPoint origin, Plasma::Location location )
+void Launcher::setLauncherOrigin(const QPoint &origin, Plasma::Location location)
 {
 /* 8 interesting positions for the menu to popup, depending where
  * the launcher and panel it is on are sited:

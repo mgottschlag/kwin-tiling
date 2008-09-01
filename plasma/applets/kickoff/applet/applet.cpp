@@ -54,7 +54,6 @@ public:
     void createLauncher();
     void initToolTip();
 
-    Plasma::Icon *icon;
     Kickoff::Launcher *launcher;
 
     QCheckBox *switchOnHoverCheckBox;
@@ -157,10 +156,13 @@ void LauncherApplet::createConfigurationInterface(KConfigDialog *parent)
 
 void LauncherApplet::popupEvent(bool show)
 {
-    if (show){
-        Plasma::ToolTipManager::self()->setToolTipActivated(this,false);
-    }else{
-        Plasma::ToolTipManager::self()->setToolTipActivated(this,true);
+    if (show) {
+        Plasma::ToolTipManager::self()->setToolTipActivated(this, false);
+        d->createLauncher();
+        QPoint iconPosition = view()->mapToGlobal(view()->mapFromScene(scenePos()));
+        d->launcher->setLauncherOrigin(iconPosition, location());
+    } else {
+        Plasma::ToolTipManager::self()->setToolTipActivated(this, true);
     }
 }
 

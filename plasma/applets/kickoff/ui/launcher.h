@@ -61,7 +61,7 @@ public:
     void setApplet(Plasma::Applet *applet);
 
     /** Specifies the direction the launcher is popping up in relative to its icon */
-    void setLauncherOrigin( QPoint pos, Plasma::Location location );
+    void setLauncherOrigin(const QPoint &pos, Plasma::Location location);
     QPoint launcherOrigin() const;
 
     // reimplemented

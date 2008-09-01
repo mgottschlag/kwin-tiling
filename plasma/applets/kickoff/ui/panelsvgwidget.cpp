@@ -40,7 +40,6 @@ PanelSvgWidget::PanelSvgWidget(QWidget *parent)
 void PanelSvgWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-
     background->paintPanel(&painter);
 }
 
