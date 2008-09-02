@@ -44,6 +44,7 @@ class Clock : public ClockApplet
 
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
+        void toolTipAboutToShow();
         void updateColors();
 
     protected slots:

@@ -100,6 +100,8 @@ void Clock::init()
 
     dataEngine("time")->connectSource(currentTimezone(), this, updateInterval(), intervalAlignment());
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(updateColors()));
+
+    updateToolTipContent();
 }
 
 void Clock::constraintsEvent(Plasma::Constraints constraints)
@@ -147,13 +149,20 @@ void Clock::dataUpdated(const QString &source, const Plasma::DataEngine::Data &d
     m_prettyTimezone = data["Timezone City"].toString();
     m_prettyTimezone.replace("_", " ");
 
-    updateToolTipContent();
+    if (Plasma::ToolTipManager::self()->isWidgetToolTipDisplayed(this)) {
+        updateToolTipContent();
+    }
 
     // avoid unnecessary repaints
     if (m_showSeconds || m_time.minute() != m_lastTimeSeen.minute()) {
         m_lastTimeSeen = m_time;
         update();
     }
+}
+
+void Clock::toolTipAboutToShow()
+{
+    updateToolTipContent();
 }
 
 void Clock::createClockConfigurationInterface(KConfigDialog *parent)
