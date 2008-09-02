@@ -134,7 +134,7 @@ This button allows you to change the properties of the program or script. You ha
 <varlistentry><term><guibutton>Advanced</guibutton></term>
 <listitem>
 <para>
-This button only applies to programs (&ie; Desktop files). A dialog asks you if you only want the program to autostart only in &kde; (and not in other desktop environments you might run). By default, the program will autostart in all desktop environment you might run. Checking <guilabel>Autostart only in KDE</guilabel> will autostart the program if you start the &kde; desktop environment.
+This button only applies to programs (&ie; Desktop files). A dialog asks you if you only want the program to autostart only in &kde; (and not in other desktop environments you might run). By default, the program will autostart in all desktop environments you might run. Checking <guilabel>Autostart only in KDE</guilabel> will autostart the program only if you start the &kde; desktop environment.
 </para>
 <para>
 This sets the value KDE to the OnlyShowIn key of the program Desktop file.
