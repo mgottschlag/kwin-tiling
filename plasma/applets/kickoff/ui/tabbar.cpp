@@ -170,6 +170,27 @@ QSize TabBar::tabSizeHint(int index) const
     return hint;
 }
 
+QSize TabBar::sizeHint() const
+{
+    int width = 0;
+    int height = 0;
+
+    if (isVertical()) {
+        for (int i = count() - 1; i >= 0; i--) {
+             height += tabSize(i).height();
+        }
+
+        width = tabSize(0).width();
+    } else {
+        for (int i = count() - 1; i >= 0; i--) {
+             width += tabSize(i).width();
+        }
+
+        height = tabSize(0).height();
+    }
+    return QSize(width, height);
+}
+
 QPainterPath TabBar::tabPath(const QRect &_r)
 {
     const int radius = 6;

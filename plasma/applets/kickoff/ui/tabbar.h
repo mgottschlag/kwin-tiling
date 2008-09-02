@@ -38,6 +38,7 @@ class TabBar : public QTabBar
 public:
     TabBar(QWidget *parent);
 
+    QSize sizeHint() const;
     /** Like the setCurrentIndex() method but switches the tab without using any
     animation. This is used e.g. within Launcher::reset() to switch back to the
     favorite tab before Kickoff got shown. */
