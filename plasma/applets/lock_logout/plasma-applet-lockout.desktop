@@ -61,6 +61,7 @@ Name[x-test]=xxLock/Logoutxx
 Name[zh_CN]=锁定/注销
 Name[zh_TW]=鎖定/登出
 Comment=Lock the screen or log out
+Comment[et]=Ekraani lukustamine või väljalogimine
 Comment[gl]=Tranca a pantalla ou sai
 Comment[km]=ចាក់សោ​អេក្រង់ ឬ​ចេញ
 Comment[nds]=Den Schirm afsluten oder sik afmellen

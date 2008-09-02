@@ -62,6 +62,7 @@ Name[x-test]=xxBattery Monitorxx
 Name[zh_CN]=电池监视器
 Name[zh_TW]=電池監視器
 Comment=See the power status of your battery
+Comment[et]=Aku oleku näitaja
 Comment[gl]=Consulta o estado enerxético da batería
 Comment[km]=មើល​ស្ថានភាព​ថាមពល​នៃ​ថ្ម​របស់​អ្នក
 Comment[nds]=Den Tostand vun Dien Batterien bekieken

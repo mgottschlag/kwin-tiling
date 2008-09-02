@@ -2,6 +2,7 @@
 Exec=plasma
 X-DBUS-StartupType=wait
 Name=Plasma Desktop Workspace
+Name[et]=Plasma töölaua tööruum
 Name[gl]=Espazo de traballo do escritorio Plasma
 Name[km]=តំបន់​ការងារ​ផ្ទៃតុ​របស់ប្លាស្មា
 Name[nds]=Plasma-Schriefdischarbeitrebeet
