@@ -181,8 +181,7 @@ QPainterPath TabBar::tabPath(const QRect &_r)
         case RoundedSouth:
         case TriangularSouth:
             r.adjust(0, 0, 0, -3);
-            path.moveTo(rect().topLeft());
-            path.lineTo(r.topLeft());
+            path.moveTo(r.topLeft());
             // Top left corner
             path.quadTo(r.topLeft() + QPoint(radius, 0), r.topLeft() + QPoint(radius, radius));
             path.lineTo(r.bottomLeft() + QPoint(radius, -radius));
@@ -194,14 +193,12 @@ QPainterPath TabBar::tabPath(const QRect &_r)
             path.lineTo(r.topRight() + QPoint(-radius, radius));
             // Top right corner
             path.quadTo(r.topRight() + QPoint(-radius, 0), r.topRight());
-            path.lineTo(rect().topRight());
             break;
         case RoundedNorth:
         case TriangularNorth:
-            r.adjust(0, 3, 0, 0);
-            path.moveTo(rect().bottomLeft());
+            r.adjust(0, 3, 0, 1);
+            path.moveTo(r.bottomLeft());
             // Bottom left corner
-            path.lineTo(r.bottomLeft());
             path.quadTo(r.bottomLeft() + QPoint(radius, 0), r.bottomLeft() + QPoint(radius, -radius));
             // Top left corner
             path.lineTo(r.topLeft() + QPoint(radius, radius));
@@ -212,12 +209,11 @@ QPainterPath TabBar::tabPath(const QRect &_r)
             // Bottom right corner
             path.lineTo(r.bottomRight() + QPoint(-radius, -radius));
             path.quadTo(r.bottomRight() + QPoint(-radius, 0), r.bottomRight());
-            path.lineTo(rect().bottomRight());
             break;
         case RoundedWest:
         case TriangularWest:
-            r.adjust(3, 0, 0, 0);
-            path.moveTo(rect().topRight());
+            r.adjust(3, 0, 1, 0);
+            path.moveTo(r.topRight());
             // Top right corner
             path.lineTo(r.topRight());
             path.quadTo(r.topRight() + QPoint(0, radius), r.topRight() + QPoint(-radius, radius));
@@ -230,14 +226,12 @@ QPainterPath TabBar::tabPath(const QRect &_r)
             // Bottom right corner
             path.lineTo(r.bottomRight() + QPoint(-radius, -radius));
             path.quadTo(r.bottomRight() + QPoint(0, -radius), r.bottomRight());
-            path.lineTo(rect().bottomRight());
             break;
         case RoundedEast:
         case TriangularEast:
             r.adjust(0, 0, -3, 0);
-            path.moveTo(rect().topLeft());
+            path.moveTo(r.topLeft());
             // Top left corner
-            path.lineTo(r.topLeft());
             path.quadTo(r.topLeft() + QPoint(0, radius), r.topLeft() + QPoint(radius, radius));
             // Top right corner
             path.lineTo(r.topRight() + QPoint(-radius, radius));
@@ -248,7 +242,6 @@ QPainterPath TabBar::tabPath(const QRect &_r)
             // Bottom left corner
             path.lineTo(r.bottomLeft() + QPoint(radius, -radius));
             path.quadTo(r.bottomLeft() + QPoint(0, -radius), r.bottomLeft());
-            path.lineTo(rect().bottomLeft());
             break;
     }
 
