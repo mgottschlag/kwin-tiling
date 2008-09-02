@@ -213,7 +213,7 @@ void Clock::clockConfigAccepted()
     m_showSeconds = ui.secondsCheckbox->checkState() == Qt::Checked;
     cg.writeEntry("showSeconds", m_showSeconds);
 
-    m_useCustomColor = ui.useCustomColor->checkState() == Qt::Checked;
+    m_useCustomColor = ui.useCustomColor->isChecked();
     if (m_useCustomColor) {
         m_plainClockColor = ui.plainClockColor->color();
     } else {

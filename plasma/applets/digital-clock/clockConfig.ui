@@ -5,99 +5,317 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>438</width>
-    <height>338</height>
+    <width>700</width>
+    <height>432</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
-   <item row="0" column="0" colspan="2" >
+  <layout class="QVBoxLayout" name="verticalLayout_3" >
+   <item>
     <widget class="QGroupBox" name="groupBox" >
      <property name="title" >
       <string>Font</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout" >
       <item>
-       <widget class="KFontComboBox" name="plainClockFont" />
+       <layout class="QGridLayout" name="gridLayout_3" >
+        <item row="0" column="0" >
+         <widget class="QLabel" name="label" >
+          <property name="text" >
+           <string>Font style:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="KFontComboBox" name="plainClockFont" />
+        </item>
+        <item row="1" column="0" >
+         <spacer name="horizontalSpacer_3" >
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Minimum</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="1" >
+         <widget class="QCheckBox" name="plainClockFontBold" >
+          <property name="text" >
+           <string>&amp;Bold</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" >
+         <spacer name="horizontalSpacer_4" >
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Minimum</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="1" >
+         <widget class="QCheckBox" name="plainClockFontItalic" >
+          <property name="text" >
+           <string>&amp;Italic</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QCheckBox" name="plainClockFontBold" >
+       <spacer name="verticalSpacer_2" >
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0" >
+         <size>
+          <width>20</width>
+          <height>5</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout_4" >
+        <item row="0" column="0" >
+         <widget class="QLabel" name="label_2" >
+          <property name="text" >
+           <string>Font color:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="QRadioButton" name="useThemeColor" >
+          <property name="sizePolicy" >
+           <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text" >
+           <string>Use theme color</string>
+          </property>
+          <property name="checked" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <spacer name="horizontalSpacer_5" >
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Minimum</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="1" >
+         <layout class="QHBoxLayout" name="horizontalLayout" >
+          <item>
+           <widget class="QRadioButton" name="useCustomColor" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text" >
+             <string>Use custom color</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="KColorButton" name="plainClockColor" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_6" >
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer_3" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>10</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Information</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2" >
+      <item>
+       <widget class="QCheckBox" name="showDate" >
         <property name="text" >
-         <string>&amp;Bold</string>
+         <string>Show &amp;date</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="plainClockFontItalic" >
+       <layout class="QGridLayout" name="gridLayout" >
+        <item row="0" column="0" >
+         <spacer name="horizontalSpacer" >
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="0" column="1" >
+         <widget class="QCheckBox" name="showDay" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>Show day of the &amp;week</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" >
+         <spacer name="horizontalSpacer_2" >
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Fixed</enum>
+          </property>
+          <property name="sizeHint" stdset="0" >
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="1" >
+         <widget class="QCheckBox" name="showYear" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>Show &amp;year</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="verticalSpacer" >
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0" >
+         <size>
+          <width>20</width>
+          <height>5</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="showTimezone" >
         <property name="text" >
-         <string>&amp;Italic</string>
+         <string>Show &amp;timezone</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_4" >
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Fixed</enum>
+        </property>
+        <property name="sizeHint" stdset="0" >
+         <size>
+          <width>20</width>
+          <height>5</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="secondsCheckbox" >
+        <property name="toolTip" >
+         <string>Show the seconds</string>
+        </property>
+        <property name="whatsThis" >
+         <string>Check this if you want to show the seconds.</string>
+        </property>
+        <property name="text" >
+         <string>Show &amp;seconds</string>
         </property>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="1" column="0" >
-    <widget class="QCheckBox" name="useCustomColor" >
-     <property name="text" >
-      <string>Custom color</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1" >
-    <widget class="KColorCombo" name="plainClockColor" >
-     <property name="enabled" >
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="2" >
-    <widget class="QCheckBox" name="showDate" >
-     <property name="text" >
-      <string>Show &amp;date</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1" >
-    <widget class="QCheckBox" name="showDay" >
-     <property name="enabled" >
-      <bool>false</bool>
-     </property>
-     <property name="text" >
-      <string>Show day of the &amp;week</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="1" >
-    <widget class="QCheckBox" name="showYear" >
-     <property name="enabled" >
-      <bool>false</bool>
-     </property>
-     <property name="text" >
-      <string>Show &amp;year</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0" colspan="2" >
-    <widget class="QCheckBox" name="showTimezone" >
-     <property name="text" >
-      <string>Show &amp;timezone</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" colspan="2" >
-    <widget class="QCheckBox" name="secondsCheckbox" >
-     <property name="toolTip" >
-      <string>Show the seconds</string>
-     </property>
-     <property name="whatsThis" >
-      <string>Check this if you want to show the seconds.</string>
-     </property>
-     <property name="text" >
-      <string>Show &amp;seconds</string>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0" >
+   <item>
     <spacer>
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
@@ -112,31 +330,9 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>KColorCombo</class>
-   <extends>QComboBox</extends>
-   <header>kcolorcombo.h</header>
-  </customwidget>
- </customwidgets>
+ <customwidgets/>
  <resources/>
  <connections>
-  <connection>
-   <sender>useCustomColor</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>plainClockColor</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>showDate</sender>
    <signal>toggled(bool)</signal>
@@ -144,12 +340,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>111</x>
-     <y>53</y>
+     <x>124</x>
+     <y>272</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>309</x>
-     <y>53</y>
+     <x>347</x>
+     <y>300</y>
     </hint>
    </hints>
   </connection>
@@ -160,12 +356,28 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>78</x>
-     <y>53</y>
+     <x>91</x>
+     <y>272</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>369</x>
-     <y>53</y>
+     <x>407</x>
+     <y>327</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>useCustomColor</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>plainClockColor</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>155</x>
+     <y>169</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>258</x>
+     <y>182</y>
     </hint>
    </hints>
   </connection>
