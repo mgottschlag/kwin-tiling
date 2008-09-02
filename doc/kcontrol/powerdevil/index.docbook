@@ -1,0 +1,127 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+  <!ENTITY % addindex "IGNORE">
+  <!ENTITY % English "INCLUDE">
+]>
+<article>
+<articleinfo>
+<authorgroup>
+<author>Dario Freddi</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2008-09-02</date>
+<releaseinfo>1.0</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>System Settings</keyword>
+<keyword>powerdevil</keyword>
+<keyword>power management</keyword>
+<keyword>laptop power</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="kcm_powerdevilconfig">
+<title><guilabel>PowerDevil, a Power Management Daemon</guilabel></title>
+
+<para>This module is a configuration tool for managing Power Management in &kde;. It is a configurator for the PowerDevil daemon, that you can start or stop from the Services module. </para>
+
+<para>Through this module, you can define your computer's behaviour in various situations, allowing you to save as much energy as possible.
+</para>
+
+<note><para>Note that PowerDevil does not poll your system. This means that it will not waste energy while trying to save it, as some other power managers do.</para></note>
+
+<sect2 id="general">
+<title>General Settings</title>
+<para>Here you can configure some general options for the module.</para>
+
+<variablelist>
+<varlistentry><term><guilabel>Lock screen on resume</guilabel></term>
+<listitem>
+<para>
+When this box is checked, everytime the PC gets suspended, the screen will be locked when resuming.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><guilabel>Dim display when idle</guilabel></term>
+<listitem>
+<para>
+If checked, the display will be progressively dimmed, until reaching brightness 0, in the amount of time you specify in the spinbox.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><guilabel>Enable notifications</guilabel></term>
+<listitem>
+<para>
+If checked, you will be notified through a passive popup whenever PowerDevil has to notify something, such as screen locking or profile change.
+</para>
+</listitem>
+</varlistentry>
+
+<varlistentry><term><guilabel>Enable warning notifications</guilabel></term>
+<listitem>
+<para>
+If checked, you will be notified through a passive popup whenever PowerDevil triggers a warning, such as low battery level or AC adaptor plugging/unplugging. It is strongly advised to leave this checked.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+
+<sect2 id="actions">
+<title>Battery Management Settings</title>
+<para>
+Here you can configure some settings related to battery levels.
+</para>
+
+<variablelist>
+<varlistentry><term><guibutton>Low battery level</guibutton></term>
+<listitem>
+<para>
+Here you can set the percentage after which the battery will be considered low.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guibutton>Warning battery level</guibutton></term>
+<listitem>
+<para>
+Here you can set the percentage after which the battery will be considered at warning level.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guibutton>Critical battery level</guibutton></term>
+<listitem>
+<para>
+Here you can set the percentage after which the battery will be considered at critical level.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guibutton>When battery is at critical level</guibutton></term>
+<listitem>
+<para>
+Defines the action that will be done when battery reaches the critical level.
+</para>
+</listitem>
+</varlistentry>
+
+</variablelist>
+</sect2>
+</sect1>
+</article>
+
+<!--
+Local Variables:
+mode: xml
+sgml-minimize-attributes:nil
+sgml-general-insert-case:lower
+sgml-indent-step:0
+sgml-indent-data:nil
+End:
+
+vim:tabstop=2:shiftwidth=2:expandtab
+kate: space-indent on; indent-width 2; tab-width 2; indent-mode none;
+-->
