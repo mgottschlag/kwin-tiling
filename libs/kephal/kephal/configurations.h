@@ -26,7 +26,7 @@
 #include <QPoint>
 #include <QRect>
 
-#include "kephal.h"
+#include "kephal/kephal.h"
 
 
 namespace kephal {
@@ -79,86 +79,11 @@ namespace kephal {
              */
             virtual int primaryScreen() = 0;
             
-            /**
-             * Returns the real layout, with screen-sizes
-             * taken from the actual Outputs.
-             *
-             * @param simpleLayout The layout as returned
-             *          from layout().
-             * @param outputScreens A mapping of Outputs
-             *          to Screens.
-             * @param outputSizes The sizes to use for the
-             *          Outputs instead of the current ones.
-             */
-            QMap<int, QRect> realLayout(const QMap<int, QPoint> & simpleLayout, const QMap<Output *, int> & outputScreens, const QMap<Output *, QSize> & outputSizes);
-            
-            /**
-             * Returns the real layout, with screen-sizes
-             * taken from the actual Outputs.
-             *
-             * @param simpleLayout The layout as returned
-             *          from layout().
-             * @param outputScreens A mapping of Outputs
-             *          to Screens.
-             */
-            QMap<int, QRect> realLayout(const QMap<int, QPoint> & simpleLayout, const QMap<Output *, int> & outputScreens);
-
-            /**
-             * Returns the real layout, with screen-sizes
-             * taken from the actual Outputs.
-             * This will calculate the layout by calling
-             * layout().
-             *
-             * @param outputScreens A mapping of Outputs
-             *          to Screens.
-             */
-            QMap<int, QRect> realLayout(const QMap<Output *, int> & outputScreens);
-
-            /**
-             * Returns the real layout, with screen-sizes
-             * taken from the actual Outputs.
-             * This will calculate the layout by calling
-             * layout() and use the Output to Screen
-             * mapping as currently active if possible.
-             */
-            QMap<int, QRect> realLayout();
-            
-            /**
-             * Returns a set of points covered in the
-             * layout returned by layout().
-             */
-            QSet<QPoint> positions();
-            
-            /**
-             * Returns the positions as in positions
-             * to which the Screen can be cloned.
-             */
-            QSet<QPoint> clonePositions(int screen);
-            
-            /**
-             * Returns the layout if the Screen screen
-             * was to be cloned to any of the other
-             * Screens.
-             */
-            QMap<int, QPoint> cloneLayout(int screen);
-            
-            /**
-             * Returns the possible positions as in
-             * positions() to move the Screen screen
-             * to.
-             */
-            QSet<QPoint> possiblePositions(int screen);
-            
         public Q_SLOTS:
             /**
              * Activate this Configuration.
              */
             virtual void activate() = 0;
-            
-        private:
-            void simpleToReal(QMap<int, QPoint> & simpleLayout, const QMap<int, QSize> & screenSizes, int index, QMap<int, QRect> & screens);
-            QList<QSet<QPoint> > partition(int screen);
-            QSet<QPoint> border(QSet<QPoint> screens);
     };
     
 
@@ -186,12 +111,6 @@ namespace kephal {
             virtual QMap<QString, Configuration *> configurations() = 0;
             
             /**
-             * Find the Configuration for the currently
-             * connected Outputs.
-             */
-            virtual Configuration * findConfiguration() = 0;
-            
-            /**
              * Returns the currently active Configuration.
              */
             virtual Configuration * activeConfiguration() = 0;
@@ -214,18 +133,18 @@ namespace kephal {
              * Move Output output to position on the framebuffer.
              * This will relayout all Outputs.
              */
-            virtual void move(Output * output, const QPoint & position) = 0;
+            virtual bool move(Output * output, const QPoint & position) = 0;
             
             /**
              * Resize Output output to size.
              * This will relayout all Outputs.
              */
-            virtual void resize(Output * output, const QSize & size) = 0;
+            virtual bool resize(Output * output, const QSize & size) = 0;
             
-            virtual void rotate(Output * output, Rotation rotation) = 0;
-            virtual void reflectX(Output * output, bool reflect) = 0;
-            virtual void reflectY(Output * output, bool reflect) = 0;
-            virtual void changeRate(Output * output, float rate) = 0;
+            virtual bool rotate(Output * output, Rotation rotation) = 0;
+            virtual bool reflectX(Output * output, bool reflect) = 0;
+            virtual bool reflectY(Output * output, bool reflect) = 0;
+            virtual bool changeRate(Output * output, float rate) = 0;
             
             /**
              * Find a Configuration by its name.
@@ -239,14 +158,13 @@ namespace kephal {
              */
             virtual int screen(Output * output) = 0;
             
-            /**
-             * Apply Output-specific settings such as size,
-             * refresh-rate and rotation.
-             */
-            virtual void applyOutputSettings() = 0;
-            
             virtual void setPolling(bool polling) = 0;
             virtual bool polling() = 0;
+            
+            virtual void confirm() = 0;
+            virtual void revert() = 0;
+            
+            //virtual StatusMessage * status() = 0;
             
             static void translateOrigin(QMap<int, QPoint> & layout);
             static void translateOrigin(QMap<int, QPoint> & layout, QPoint origin);
@@ -258,10 +176,16 @@ namespace kephal {
              * This signal is emitted when the active
              * Configuration is changed.
              */
-            void configurationActivated(Configuration * configuration);
+            void configurationActivated(kephal::Configuration * configuration);
             
             void pollingActivated();
             void pollingDeactivated();
+            
+            void confirmTimeout(int seconds);
+            void confirmed();
+            void reverted();
+            
+            //void statusChanged(kephal::StatusMessage * status);
             
         protected:
             static Configurations * m_instance;

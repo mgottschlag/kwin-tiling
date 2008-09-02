@@ -29,6 +29,12 @@
 #include <QSize>
 
 
+namespace kephal {
+    class Configuration;
+    class StatusMessage;
+}
+
+
 class DBusAPIConfigurations : public QObject
 {
     Q_OBJECT
@@ -40,17 +46,16 @@ class DBusAPIConfigurations : public QObject
     public Q_SLOTS:
         QStringList configurations();
         QStringList alternateConfigurations();
-        QString findConfiguration();
         QString activeConfiguration();
 
         int numAvailablePositions(QString output);
         QPoint availablePosition(QString output, int index);
-        void move(QString output, QPoint position);
-        void resize(QString output, QSize size);
-        void rotate(QString output, int rotation);
-        void changeRate(QString output, qreal rate);
-        void reflectX(QString output, bool reflect);
-        void reflectY(QString output, bool reflect);
+        bool move(QString output, QPoint position);
+        bool resize(QString output, QSize size);
+        bool rotate(QString output, int rotation);
+        bool changeRate(QString output, qreal rate);
+        bool reflectX(QString output, bool reflect);
+        bool reflectY(QString output, bool reflect);
         int screen(QString output);
         
         bool isModifiable(QString config);
@@ -60,6 +65,24 @@ class DBusAPIConfigurations : public QObject
         
         void setPolling(bool polling);
         bool polling();
+        
+        /*int statusType();
+        int statusMessage();
+        QString statusDescription();*/
+        
+        void confirm();
+        void revert();
+        
+    Q_SIGNALS:
+        //void statusChanged();
+        void configurationActivated(QString name);
+        void confirmTimeout(int seconds);
+        void confirmed();
+        void reverted();
+        
+    private Q_SLOTS:
+        //void statusChangedSlot(kephal::StatusMessage * status);
+        void configurationActivatedSlot(kephal::Configuration * configuration);
         
     private:
         QMap<QString, QList<QPoint> > m_outputAvailablePositions;

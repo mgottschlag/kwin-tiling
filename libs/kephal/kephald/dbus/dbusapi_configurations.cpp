@@ -40,6 +40,12 @@ DBusAPIConfigurations::DBusAPIConfigurations(QObject * parent)
     bool result;
     result = dbus.registerObject("/Configurations", this);
     qDebug() << "configurations registered on the bus:" << result;
+    
+    //connect(Configurations::instance(), SIGNAL(statusChanged(kephal::StatusMessage *)), this, SLOT(statusChangedSlot(kephal::StatusMessage *)));
+    connect(Configurations::instance(), SIGNAL(configurationActivated(kephal::Configuration *)), this, SLOT(configurationActivatedSlot(kephal::Configuration *)));
+    connect(Configurations::instance(), SIGNAL(confirmed()), this, SIGNAL(confirmed()));
+    connect(Configurations::instance(), SIGNAL(reverted()), this, SIGNAL(reverted()));
+    connect(Configurations::instance(), SIGNAL(confirmTimeout(int)), this, SIGNAL(confirmTimeout(int)));
 }
 
 QStringList DBusAPIConfigurations::configurations() {
@@ -74,14 +80,6 @@ QStringList DBusAPIConfigurations::alternateConfigurations() {
     return result;
 }
 
-QString DBusAPIConfigurations::findConfiguration() {
-    Configuration * config = Configurations::instance()->findConfiguration();
-    if (config) {
-        return config->name();
-    }
-    return "";
-}
-
 QString DBusAPIConfigurations::activeConfiguration() {
     Configuration * config = Configurations::instance()->activeConfiguration();
     if (config) {
@@ -90,46 +88,52 @@ QString DBusAPIConfigurations::activeConfiguration() {
     return "";
 }
 
-void DBusAPIConfigurations::move(QString output, QPoint position) {
+bool DBusAPIConfigurations::move(QString output, QPoint position) {
     Output * o = Outputs::instance()->output(output);
     if (o) {
-        Configurations::instance()->move(o, position);
+        return Configurations::instance()->move(o, position);
     }
+    return false;
 }
 
-void DBusAPIConfigurations::resize(QString output, QSize size) {
+bool DBusAPIConfigurations::resize(QString output, QSize size) {
     Output * o = Outputs::instance()->output(output);
     if (o) {
-        Configurations::instance()->resize(o, size);
+        return Configurations::instance()->resize(o, size);
     }
+    return false;
 }
 
-void DBusAPIConfigurations::rotate(QString output, int rotation) {
+bool DBusAPIConfigurations::rotate(QString output, int rotation) {
     Output * o = Outputs::instance()->output(output);
     if (o) {
-        Configurations::instance()->rotate(o, (Rotation) rotation);
+        return Configurations::instance()->rotate(o, (Rotation) rotation);
     }
+    return false;
 }
 
-void DBusAPIConfigurations::changeRate(QString output, qreal rate) {
+bool DBusAPIConfigurations::changeRate(QString output, qreal rate) {
     Output * o = Outputs::instance()->output(output);
     if (o) {
-        Configurations::instance()->changeRate(o, rate);
+        return Configurations::instance()->changeRate(o, rate);
     }
+    return false;
 }
 
-void DBusAPIConfigurations::reflectX(QString output, bool reflect) {
+bool DBusAPIConfigurations::reflectX(QString output, bool reflect) {
     Output * o = Outputs::instance()->output(output);
     if (o) {
-        Configurations::instance()->reflectX(o, reflect);
+        return Configurations::instance()->reflectX(o, reflect);
     }
+    return false;
 }
 
-void DBusAPIConfigurations::reflectY(QString output, bool reflect) {
+bool DBusAPIConfigurations::reflectY(QString output, bool reflect) {
     Output * o = Outputs::instance()->output(output);
     if (o) {
-        Configurations::instance()->reflectY(o, reflect);
+        return Configurations::instance()->reflectY(o, reflect);
     }
+    return false;
 }
 
 bool DBusAPIConfigurations::isModifiable(QString config) {
@@ -177,5 +181,34 @@ void DBusAPIConfigurations::setPolling(bool polling) {
 
 bool DBusAPIConfigurations::polling() {
     return Configurations::instance()->polling();
+}
+
+/*int DBusAPIConfigurations::statusType() {
+    return Configurations::instance()->status()->type();
+}
+
+int DBusAPIConfigurations::statusMessage() {
+    return Configurations::instance()->status()->message();
+}
+
+QString DBusAPIConfigurations::statusDescription() {
+    return Configurations::instance()->status()->description();
+}
+
+void DBusAPIConfigurations::statusChangedSlot(kephal::StatusMessage * status) {
+    Q_UNUSED(status)
+    emit statusChanged();
+}*/
+
+void DBusAPIConfigurations::configurationActivatedSlot(kephal::Configuration * configuration) {
+    emit configurationActivated(configuration->name());
+}
+
+void DBusAPIConfigurations::confirm() {
+    Configurations::instance()->confirm();
+}
+
+void DBusAPIConfigurations::revert() {
+    Configurations::instance()->revert();
 }
 

@@ -4,8 +4,8 @@ SET (QT_USE_QTDBUS 1)
 INCLUDE (${QT_USE_FILE})
 INCLUDE_DIRECTORIES (. .. ${QT_INCLUDES} ${CMAKE_CURRENT_BINARY_DIR})
 
-SET (kephal_SRCS kephalapp.cpp)
-QT4_WRAP_CPP (kephal_SRCS kephalapp.h)
-ADD_EXECUTABLE (kephalapp ${kephal_SRCS})
+SET (kephalapp_SRCS kephalapp.cpp)
+QT4_WRAP_CPP (kephalapp_SRCS kephalapp.h)
+ADD_EXECUTABLE (kephalapp ${kephalapp_SRCS})
 TARGET_LINK_LIBRARIES (kephalapp ${QT_LIBRARIES} kephal)
 

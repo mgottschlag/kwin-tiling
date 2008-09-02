@@ -179,40 +179,40 @@ namespace kephal {
              * methods in the Configuration
              * to resize this Output.
              */
-            void resize(const QSize & size);
+            bool resize(const QSize & size);
 
             /**
              * This calls the appropriate
              * methods in the Configuration
              * to move this Output.
              */
-            void move(const QPoint & position);
+            bool move(const QPoint & position);
             
             /**
              * This will set this Ouputs rotation
              * to the given value.
              */
-            void rotate(Rotation rotation);
+            bool rotate(Rotation rotation);
             
             /**
              * This will set this Output to be
              * reflected over the x-axis if reflect
              * is true.
              */
-            void reflectX(bool reflect);
+            bool reflectX(bool reflect);
             
             /**
              * This will set this Output to be
              * reflected over the y-axis if reflect
              * is true.
              */
-            void reflectY(bool reflect);
+            bool reflectY(bool reflect);
             
             /**
              * This will change this Outputs
              * refresh-rate to rate.
              */
-            void changeRate(double rate);
+            bool changeRate(double rate);
     };
     
 

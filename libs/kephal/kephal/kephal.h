@@ -21,7 +21,12 @@
 #ifndef KEPHAL_KEPHAL_H
 #define KEPHAL_KEPHAL_H
 
+#include <QObject>
 #include <QPoint>
+
+
+#define CONFIRMATION_TIME 30
+
 
 inline uint qHash(const QPoint & key) {
     return ((uint) (key.x() + 32767)) * 65536 + ((uint) (key.y() + 32767));
@@ -41,15 +46,35 @@ namespace kephal {
     enum Rotation {
         RotateNormal = 0, RotateRight = 90, RotateInverted = 180, RotateLeft = 270
     };
+    
+    /*class StatusMessage : public QObject {
+        Q_OBJECT
+        public:
+            enum MessageType {
+                TypeNone, TypeInfo, TypeWarning, TypeError
+            };
+
+            enum Message {
+                NoMessage, FixMe, InvalidConfiguration, ConfigurationNotFound, OperationFailed
+            };
+
+            StatusMessage(MessageType type = TypeNone, Message message = NoMessage, QString description = "", QObject * parent = 0);
+            StatusMessage(MessageType type, Message message, QObject * parent);
+            StatusMessage(QObject * parent);
+
+            MessageType type();
+            Message message();
+            QString description();
+
+            QString toString();
+
+        private:
+            MessageType m_type;
+            Message m_message;
+            QString m_description;
+    };*/
 
 }
-
-#define PROPERTY(type, name, setter) \
-    private:\
-        type m_##name;\
-    public:\
-        void setter(type name) { m_##name = name; }\
-        type name() { return m_##name; }
 
 #endif // KEPHAL_KEPHAL_H
 

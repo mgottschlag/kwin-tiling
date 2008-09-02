@@ -154,7 +154,7 @@ bool KephalD::x11EventFilter(XEvent* e)
 }
 
 void KephalD::activateConfiguration() {
-    Configurations * configs = Configurations::instance();
+    BackendConfigurations * configs = BackendConfigurations::instance();
     Configuration * config = configs->findConfiguration();
     configs->applyOutputSettings();
     if (config) {

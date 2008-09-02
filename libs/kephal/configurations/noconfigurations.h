@@ -53,19 +53,23 @@ namespace kephal {
             Configuration * activeConfiguration();
             QList<Configuration *> alternateConfigurations();
             QList<QPoint> possiblePositions(Output * output);
-            void move(Output * output, const QPoint & position);
-            void resize(Output * output, const QSize & size);
-            void rotate(Output * output, Rotation rotation);
-            void changeRate(Output * output, float rate);
-            void reflectX(Output * output, bool reflect);
-            void reflectY(Output * output, bool reflect);
+            bool move(Output * output, const QPoint & position);
+            bool resize(Output * output, const QSize & size);
+            bool rotate(Output * output, Rotation rotation);
+            bool changeRate(Output * output, float rate);
+            bool reflectX(Output * output, bool reflect);
+            bool reflectY(Output * output, bool reflect);
             int screen(Output * output);
             void applyOutputSettings();
             void setPolling(bool polling);
             bool polling();
+            //StatusMessage * status();
+            void confirm();
+            void revert();
             
         private:
             SimpleConfiguration * m_config;
+            //StatusMessage * m_status;
     };
     
 }

@@ -81,12 +81,12 @@ namespace kephal {
         return 0;
     }
     
-    void BackendOutputs::activateLayout(const QMap<Output *, QRect> & layout) {
+    bool BackendOutputs::activateLayout(const QMap<Output *, QRect> & layout) {
         qDebug() << "activate layout:" << layout;
         
         QList<BackendOutput *> outputs = backendOutputs();
         foreach (BackendOutput * output, outputs) {
-            output->mark();
+            //output->mark();
             if (! layout.contains(output)) {
                 qDebug() << "deactivating output:" << output->id();
                 output->deactivate();
@@ -99,14 +99,11 @@ namespace kephal {
             
             if (! output->applyGeom(i.value(), 0)) {
                 qDebug() << "setting" << output->id() << "to" << i.value() << "failed!!";
-                for (--i; i != layout.constBegin(); --i) {
-                    output = (BackendOutput *) i.key();
-                    qDebug() << "trying to revert output" << output->id();
-                    output->revert();
-                }
-                break;
+                return false;
             }
         }
+        
+        return true;
     }
     
 }

@@ -83,6 +83,13 @@ namespace kephal {
         foreach (QString name, names) {
             m_configs.insert(name, new DBusConfiguration(this, name));
         }
+        
+        //statusChangedSlot();
+        connect(m_interface, SIGNAL(statusChanged()), this, SLOT(statusChangedSlot()));
+        connect(m_interface, SIGNAL(configurationActivated(QString)), this, SLOT(configurationActivatedSlot(QString)));
+        connect(m_interface, SIGNAL(confirmed()), this, SIGNAL(confirmed()));
+        connect(m_interface, SIGNAL(reverted()), this, SIGNAL(reverted()));
+        connect(m_interface, SIGNAL(confirmTimeout(int)), this, SIGNAL(confirmTimeout(int)));
     }
 
 
@@ -92,14 +99,6 @@ namespace kephal {
             result.insert(i.key(), i.value());
         }
         return result;
-    }
-    
-    Configuration * DBusConfigurations::findConfiguration() {
-        QString name = m_interface->findConfiguration();
-        if ((name != "") && m_configs.contains(name)) {
-            return m_configs[name];
-        }
-        return 0;
     }
     
     Configuration * DBusConfigurations::activeConfiguration() {
@@ -130,28 +129,28 @@ namespace kephal {
         return result;
     }
     
-    void DBusConfigurations::move(Output * output, const QPoint & position) {
-        m_interface->move(output->id(), position);
+    bool DBusConfigurations::move(Output * output, const QPoint & position) {
+        return m_interface->move(output->id(), position);
     }
     
-    void DBusConfigurations::resize(Output * output, const QSize & size) {
-        m_interface->resize(output->id(), size);
+    bool DBusConfigurations::resize(Output * output, const QSize & size) {
+        return m_interface->resize(output->id(), size);
     }
     
-    void DBusConfigurations::rotate(Output * output, Rotation rotation) {
-        m_interface->rotate(output->id(), rotation);
+    bool DBusConfigurations::rotate(Output * output, Rotation rotation) {
+        return m_interface->rotate(output->id(), rotation);
     }
 
-    void DBusConfigurations::reflectX(Output * output, bool reflect) {
-        m_interface->reflectX(output->id(), reflect);
+    bool DBusConfigurations::reflectX(Output * output, bool reflect) {
+        return m_interface->reflectX(output->id(), reflect);
     }
 
-    void DBusConfigurations::reflectY(Output * output, bool reflect) {
-        m_interface->reflectY(output->id(), reflect);
+    bool DBusConfigurations::reflectY(Output * output, bool reflect) {
+        return m_interface->reflectY(output->id(), reflect);
     }
 
-    void DBusConfigurations::changeRate(Output * output, float rate) {
-        m_interface->changeRate(output->id(), rate);
+    bool DBusConfigurations::changeRate(Output * output, float rate) {
+        return m_interface->changeRate(output->id(), rate);
     }
 
     bool DBusConfigurations::isValid() {
@@ -176,5 +175,39 @@ namespace kephal {
     bool DBusConfigurations::polling() {
         return m_interface->polling();
     }
+    
+    /*void DBusConfigurations::statusChangedSlot() {
+        if (m_status) {
+            delete m_status;
+        }
+        
+        int type = m_interface->statusType();
+        int message = m_interface->statusMessage();
+        m_status = new StatusMessage(
+                (StatusMessage::MessageType) type,
+                (StatusMessage::Message) message,
+                m_interface->statusDescription(),
+                this);
+        
+        emit statusChanged(m_status);
+    }
+    
+    StatusMessage * DBusConfigurations::status() {
+        return m_status;
+    }*/
+    
+    void DBusConfigurations::configurationActivatedSlot(QString name) {
+        if ((name != "") && m_configs.contains(name)) {
+            emit configurationActivated(m_configs[name]);
+        }
+    }
 
+    void DBusConfigurations::confirm() {
+        m_interface->confirm();
+    }
+    
+    void DBusConfigurations::revert() {
+        m_interface->revert();
+    }
+    
 }

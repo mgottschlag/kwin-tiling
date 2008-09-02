@@ -23,6 +23,7 @@
 
 #include "xmltype.h"
 #include "kephal/kephal.h"
+#include "kephal/backend.h"
 
 #include <QString>
 

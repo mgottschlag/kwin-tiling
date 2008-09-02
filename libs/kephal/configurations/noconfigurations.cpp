@@ -54,7 +54,8 @@ namespace kephal {
     
     
     NoConfigurations::NoConfigurations(QObject * parent)
-        : Configurations(parent)
+        : Configurations(parent)/*,
+        m_status(new StatusMessage(this))*/
     {
         m_config = new SimpleConfiguration(this);
     }
@@ -82,14 +83,16 @@ namespace kephal {
         return QList<QPoint>();
     }
 
-    void NoConfigurations::move(Output * output, const QPoint & position) {
+    bool NoConfigurations::move(Output * output, const QPoint & position) {
         Q_UNUSED(output)
         Q_UNUSED(position)
+        return false;
     }
 
-    void NoConfigurations::resize(Output * output, const QSize & size) {
+    bool NoConfigurations::resize(Output * output, const QSize & size) {
         Q_UNUSED(output)
         Q_UNUSED(size)
+        return false;
     }
     
     int NoConfigurations::screen(Output * output) {
@@ -99,16 +102,20 @@ namespace kephal {
     void NoConfigurations::applyOutputSettings() {
     }
 
-    void NoConfigurations::rotate(Output * output, Rotation rotation) {
+    bool NoConfigurations::rotate(Output * output, Rotation rotation) {
+        return false;
     }
 
-    void NoConfigurations::changeRate(Output * output, float rate) {
+    bool NoConfigurations::changeRate(Output * output, float rate) {
+        return false;
     }
 
-    void NoConfigurations::reflectX(Output * output, bool reflect) {
+    bool NoConfigurations::reflectX(Output * output, bool reflect) {
+        return false;
     }
 
-    void NoConfigurations::reflectY(Output * output, bool reflect) {
+    bool NoConfigurations::reflectY(Output * output, bool reflect) {
+        return false;
     }
 
     void NoConfigurations::setPolling(bool polling) {
@@ -116,6 +123,16 @@ namespace kephal {
     
     bool NoConfigurations::polling() {
         return false;
+    }
+    
+    /*StatusMessage * NoConfigurations::status() {
+        return m_status;
+    }*/
+    
+    void NoConfigurations::confirm() {
+    }
+    
+    void NoConfigurations::revert() {
     }
     
 }

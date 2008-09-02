@@ -22,6 +22,7 @@ SET (libkephal_SRCS
         ../configurations/dbus/dbusconfigurations.cpp
         ../configurations/noconfigurations.cpp)
 QT4_WRAP_CPP (libkephal_SRCS
+        ../kephal/kephal.h
         ../kephal/screens.h
         ../screens/simplescreen.h
         ../screens/dbus/dbusscreens.h
@@ -40,6 +41,7 @@ QT4_ADD_DBUS_INTERFACE(libkephal_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal
 QT4_GENERATE_DBUS_INTERFACE(../kephald/dbus/dbusapi_configurations.h org.kde.Kephal.Configurations.xml)
 QT4_ADD_DBUS_INTERFACE(libkephal_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal.Configurations.xml configurations_interface)
 ADD_LIBRARY (kephal SHARED ${libkephal_SRCS})
+TARGET_LINK_LIBRARIES (kephal ${QT_LIBRARIES})
 
 INSTALL (TARGETS kephal DESTINATION lib)
 INSTALL (FILES 

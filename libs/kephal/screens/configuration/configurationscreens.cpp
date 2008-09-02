@@ -21,6 +21,7 @@
 #include "configurationscreens.h"
 
 #include "kephal/configurations.h"
+#include "configurations/backendconfigurations.h"
 
 
 namespace kephal {
@@ -37,7 +38,7 @@ namespace kephal {
     }
     
     void ConfigurationScreens::prepareScreens(QMap<int, OutputScreen *> & screens) {
-        Configuration * config = Configurations::instance()->activeConfiguration();
+        BackendConfiguration * config = BackendConfigurations::instance()->activeBackendConfiguration();
         if (! config) {
             return;
         }

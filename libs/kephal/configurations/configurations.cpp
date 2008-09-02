@@ -29,6 +29,7 @@ void CONFIGURATIONS_FACTORY();
 
 #include "kephal/outputs.h"
 #include "kephal/screens.h"
+#include "kephal/backend.h"
 
 
 namespace kephal {
@@ -49,6 +50,15 @@ namespace kephal {
     }
     
     Configurations * Configurations::m_instance = 0;
+    
+    Configuration * Configurations::configuration(QString name) {
+        foreach (Configuration * config, configurations()) {
+            if (config->name() == name) {
+                return config;
+            }
+        }
+        return 0;
+    }
     
     void Configurations::translateOrigin(QMap<int, QPoint> & layout) {
         QPoint origin;
@@ -94,15 +104,6 @@ namespace kephal {
         }
     }
     
-    Configuration * Configurations::configuration(QString name) {
-        foreach (Configuration * config, configurations()) {
-            if (config->name() == name) {
-                return config;
-            }
-        }
-        return 0;
-    }
-    
     
     
     Configuration::Configuration(QObject * parent)
@@ -110,210 +111,73 @@ namespace kephal {
     {
     }
     
-    QMap<int, QRect> Configuration::realLayout() {
-        QMap<Output *, int> outputScreens;
-        foreach (Output * output, Outputs::instance()->outputs()) {
-            int screen = Configurations::instance()->screen(output);
-            outputScreens.insert(output, screen);
-        }
-        return realLayout(outputScreens);
-    }
-
-    QMap<int, QRect> Configuration::realLayout(const QMap<Output *, int> & outputScreens) {
-        QMap<int, QPoint> simpleLayout = layout();
-        return realLayout(simpleLayout, outputScreens);
+    
+    
+    /*StatusMessage::StatusMessage(StatusMessage::MessageType messageType, StatusMessage::Message message, QString description, QObject * parent)
+        : QObject(parent),
+        m_type(messageType),
+        m_message(message),
+        m_description(description)
+    {
     }
     
-    QMap<int, QRect> Configuration::realLayout(const QMap<int, QPoint> & sLayout, const QMap<Output *, int> & outputScreens) {
-        QMap<Output *, QSize> outputSizes;
-        foreach (Output * output, outputScreens.keys()) {
-            outputSizes.insert(output, output->isActivated() ? output->size() : output->preferredSize());
-        }
-        return realLayout(sLayout, outputScreens, outputSizes);
+    StatusMessage::StatusMessage(StatusMessage::MessageType messageType, StatusMessage::Message message, QObject * parent)
+        : QObject(parent),
+        m_type(messageType),
+        m_message(message),
+        m_description("")
+    {
     }
     
-    QMap<int, QRect> Configuration::realLayout(const QMap<int, QPoint> & sLayout, const QMap<Output *, int> & outputScreens, const QMap<Output *, QSize> & outputSizes) {
-        //qDebug() << "calculating real layout for:" << sLayout << outputScreens;
-        
-        QMap<int, QRect> screens;
-        QMap<int, QPoint> simpleLayout = sLayout;
-        
-        QMap<int, QSize> screenSizes;
-        foreach (int screen, simpleLayout.keys()) {
-            screenSizes.insert(screen, QSize());
-        }
-        
-        foreach (Output * output, outputScreens.keys()) {
-            if (outputScreens[output] < 0) {
-                continue;
-            }
-            
-            if (! screenSizes.contains(outputScreens[output])) {
-                qDebug() << "outputs and configuration dont match";
-                return screens;
-            }
-            screenSizes[outputScreens[output]] = screenSizes[outputScreens[output]].expandedTo(outputSizes[output]);
-        }
-        
-        int begin = simpleLayout.begin().key();
-        screens.insert(begin, QRect(QPoint(0, 0), screenSizes[begin]));
-        simpleToReal(simpleLayout, screenSizes, begin, screens);
-        Configurations::translateOrigin(screens);
-        
-        for (QMap<int, QRect>::const_iterator i = screens.constBegin(); i != screens.constEnd(); ++i) {
-            for (QMap<int, QRect>::const_iterator j = (i + 1); j != screens.constEnd(); ++j) {
-                if (i.value().intersects(j.value())) {
-                    qDebug() << "invalid configuration (overlapping):" << name() << screens;
-                    screens.clear();
-                    return screens;
-                }
-            }
-        }
-        
-        return screens;
+    StatusMessage::StatusMessage(QObject * parent)
+        : QObject(parent),
+        m_type(TypeNone),
+        m_message(NoMessage),
+        m_description("")
+    {
     }
     
-    void Configuration::simpleToReal(QMap<int, QPoint> & simpleLayout, const QMap<int, QSize> & screenSizes, int index, QMap<int, QRect> & screens) {
-        QPoint pos = simpleLayout.take(index);
-        
-        // to the right
-        QPoint nextPos(pos.x() + 1, pos.y());
-        int nextIndex = simpleLayout.key(nextPos, -1);
-        if (nextIndex >= 0) {
-            screens.insert(nextIndex, QRect(screens[index].topRight() + QPoint(1, 0), screenSizes[nextIndex]));
-            simpleToReal(simpleLayout, screenSizes, nextIndex, screens);
-        }
-        
-        // to the left
-        nextPos = QPoint(pos.x() - 1, pos.y());
-        nextIndex = simpleLayout.key(nextPos, -1);
-        if (nextIndex >= 0) {
-            QSize screenSize = screenSizes[nextIndex];
-            screens.insert(nextIndex, QRect(screens[index].topLeft() - QPoint(screenSize.width(), 0), screenSize));
-            simpleToReal(simpleLayout, screenSizes, nextIndex, screens);
-        }
-        
-        // to the bottom
-        nextPos = QPoint(pos.x(), pos.y() + 1);
-        nextIndex = simpleLayout.key(nextPos, -1);
-        if (nextIndex >= 0) {
-            screens.insert(nextIndex, QRect(screens[index].bottomLeft() + QPoint(0, 1), screenSizes[nextIndex]));
-            simpleToReal(simpleLayout, screenSizes, nextIndex, screens);
-        }
-
-        // to the top
-        nextPos = QPoint(pos.x(), pos.y() - 1);
-        nextIndex = simpleLayout.key(nextPos, -1);
-        if (nextIndex >= 0) {
-            QSize screenSize = screenSizes[nextIndex];
-            screens.insert(nextIndex, QRect(screens[index].topLeft() - QPoint(0, screenSize.height()), screenSize));
-            simpleToReal(simpleLayout, screenSizes, nextIndex, screens);
-        }
+    StatusMessage::MessageType StatusMessage::type() {
+        return m_type;
     }
     
-    QMap<int, QPoint> Configuration::cloneLayout(int screen) {
-        QSet<QPoint> positions = clonePositions(screen);
-        QMap<int, QPoint> layout;
-        int i = 0;
-        foreach (QPoint p, positions) {
-            layout.insert(i, p);
-            ++i;
-        }
-        
-        Configurations::translateOrigin(layout);
-        return layout;
+    StatusMessage::Message StatusMessage::message() {
+        return m_message;
     }
     
-    QSet<QPoint> Configuration::clonePositions(int screen) {
-        QList<QSet<QPoint> > partitions = partition(screen);
-        if (partitions.size() == 1) {
-            return partitions[0];
-        }
-        return QSet<QPoint>();
+    QString StatusMessage::description() {
+        return m_description;
     }
     
-    QSet<QPoint> Configuration::positions() {
-        QSet<QPoint> result;
-        foreach (QPoint p, layout()) {
-            result << p;
-        }
-        return result;
-    }
-    
-    QSet<QPoint> Configuration::possiblePositions(int screen) {
-        QList<QSet<QPoint> > partitions = partition(screen);
-        QSet<QPoint> result = border(partitions[0]);
-        foreach (QSet<QPoint> partition, partitions) {
-            result.intersect(border(partition));
-        }
-        return result;
-    }
-    
-    QList<QSet<QPoint> > Configuration::partition(int screen) {
-        QHash<QPoint, QSet<QPoint> * > partitions;
-        QMap<int, QPoint> layout = this->layout();
-        bool exclude = layout.contains(screen);
-        QPoint excludePoint;
-        if (exclude) {
-            excludePoint = layout[screen];
-        }
-        foreach (QPoint p, layout) {
-            if (exclude && (p == excludePoint)) {
-                continue;
-            }
-            partitions.insert(p, new QSet<QPoint>());
-            partitions[p]->insert(p);
+    QString StatusMessage::toString() {
+        QString result = "";
+        
+        switch (m_type) {
+            case TypeNone:
+                return "<none>";
+            case TypeInfo:
+                result += "[INFO] ";
+                break;
+            case TypeWarning:
+                result += "[WARNING] ";
+                break;
+            case TypeError:
+                result += "[ERROR] ";
+                break;
+            default:
+                result += "[?? (" + QString::number(m_type) + ")] ";
         }
         
-        foreach (QPoint p, layout) {
-            if (exclude && (p == excludePoint)) {
-                continue;
-            }
-            QList<QPoint> connected;
-            if (partitions.contains(p + QPoint(1, 0))) {
-                connected.append(p + QPoint(1, 0));
-            }
-            if (partitions.contains(p + QPoint(0, 1))) {
-                connected.append(p + QPoint(0, 1));
-            }
-            foreach (QPoint c, connected) {
-                if (partitions[p] == partitions[c]) {
-                    continue;
-                }
-                partitions[p]->unite(* (partitions[c]));
-                delete partitions[c];
-                partitions[c] = partitions[p];
-            }
+        switch (m_message) {
+            case InvalidConfiguration:
+                result += "InvalidConfiguration: ";
+                break;
+            default:
+                result += "Unknown (" + QString::number(m_message) + "): ";
         }
         
-        QSet<QSet<QPoint> * > unique;
-        foreach (QSet<QPoint> * partition, partitions) {
-            unique.insert(partition);
-        }
-        
-        QList<QSet<QPoint> > result;
-        foreach (QSet<QPoint> * partition, unique) {
-            result.append(* partition);
-            delete partition;
-        }
-        
-        return result;
-    }
-    
-    QSet<QPoint> Configuration::border(QSet<QPoint> screens) {
-        QSet<QPoint> result;
-        QList<QPoint> borders;
-        borders << QPoint(1, 0) << QPoint(0, 1) << QPoint(-1, 0) << QPoint(0, -1);
-        foreach (QPoint p, screens) {
-            foreach (QPoint border, borders) {
-                if (! screens.contains(p + border)) {
-                    result.insert(p + border);
-                }
-            }
-        }
-        
-        return result;
-    }
+        return result + m_description;
+    }*/
     
 }
 

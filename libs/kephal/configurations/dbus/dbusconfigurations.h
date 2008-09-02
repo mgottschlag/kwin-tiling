@@ -56,28 +56,35 @@ namespace kephal {
             DBusConfigurations(QObject * parent);
             
             QMap<QString, Configuration *> configurations();
-            Configuration * findConfiguration();
             Configuration * activeConfiguration();
             QList<Configuration *> alternateConfigurations();
             QList<QPoint> possiblePositions(Output * output);
-            void move(Output * output, const QPoint & position);
-            void resize(Output * output, const QSize & size);
-            void rotate(Output * output, Rotation rotation);
-            void reflectX(Output * output, bool reflect);
-            void reflectY(Output * output, bool reflect);
-            void changeRate(Output * output, float rate);
+            bool move(Output * output, const QPoint & position);
+            bool resize(Output * output, const QSize & size);
+            bool rotate(Output * output, Rotation rotation);
+            bool reflectX(Output * output, bool reflect);
+            bool reflectY(Output * output, bool reflect);
+            bool changeRate(Output * output, float rate);
             int screen(Output * output);
             void applyOutputSettings();
             void setPolling(bool polling);
             bool polling();
+            //StatusMessage * status();
+            void confirm();
+            void revert();
             
             bool isValid();
             org::kde::Kephal::Configurations * interface();
+            
+        private Q_SLOTS:
+            void statusChangedSlot();
+            void configurationActivatedSlot(QString name);
             
         private:
             org::kde::Kephal::Configurations * m_interface;
             bool m_valid;
             QMap<QString, DBusConfiguration *> m_configs;
+            //StatusMessage * m_status;
     };
     
 }

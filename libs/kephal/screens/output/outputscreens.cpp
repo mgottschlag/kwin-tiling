@@ -52,6 +52,9 @@ namespace kephal {
         buildScreens();
         
         connect(Outputs::instance(), SIGNAL(outputResized(kephal::Output *, QSize, QSize)), this, SLOT(outputResized(kephal::Output *, QSize, QSize)));
+        connect(Outputs::instance(), SIGNAL(outputMoved(kephal::Output *, QPoint, QPoint)), this, SLOT(outputMoved(kephal::Output *, QPoint, QPoint)));
+        connect(Outputs::instance(), SIGNAL(outputActivated(kephal::Output *)), this, SLOT(outputActivated(kephal::Output *)));
+        connect(Outputs::instance(), SIGNAL(outputDeactivated(kephal::Output *)), this, SLOT(outputDeactivated(kephal::Output *)));
     }
     
     void OutputScreens::outputActivated(kephal::Output * o) {

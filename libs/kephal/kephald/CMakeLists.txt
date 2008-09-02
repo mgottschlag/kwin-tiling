@@ -28,6 +28,7 @@ SET (kephald_SRCS
         dbus/dbusapi_outputs.cpp
         dbus/dbusapi_configurations.cpp
         ../configurations/configurations.cpp
+        ../configurations/backendconfigurations.cpp
         ../configurations/xml/xmlconfigurations.cpp)
 QT4_WRAP_CPP (kephald_SRCS
         ../xml/xmltype.h
@@ -36,6 +37,7 @@ QT4_WRAP_CPP (kephald_SRCS
         ../xrandr12/randroutput.h
         ../xrandr12/randrcrtc.h
         kephald.h
+        ../kephal/kephal.h
         ../kephal/screens.h
         ../screens/simplescreen.h
         ../screens/output/outputscreens.h
@@ -49,6 +51,7 @@ QT4_WRAP_CPP (kephald_SRCS
         dbus/dbusapi_outputs.h
         dbus/dbusapi_configurations.h
         ../kephal/configurations.h
+        ../configurations/backendconfigurations.h
         ../configurations/xml/xmlconfigurations.h)
 QT4_GENERATE_DBUS_INTERFACE(dbus/dbusapi_screens.h org.kde.Kephal.Screens.xml)
 QT4_ADD_DBUS_ADAPTOR (kephald_SRCS ${CMAKE_CURRENT_BINARY_DIR}/org.kde.Kephal.Screens.xml

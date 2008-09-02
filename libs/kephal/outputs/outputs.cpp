@@ -85,28 +85,28 @@ namespace kephal {
         return Configurations::instance()->possiblePositions(this);
     }
     
-    void Output::move(const QPoint & position) {
-        Configurations::instance()->move(this, position);
+    bool Output::move(const QPoint & position) {
+        return Configurations::instance()->move(this, position);
     }
     
-    void Output::resize(const QSize & size) {
-        Configurations::instance()->resize(this, size);
+    bool Output::resize(const QSize & size) {
+        return Configurations::instance()->resize(this, size);
     }
     
-    void Output::rotate(Rotation rotation) {
-        Configurations::instance()->rotate(this, rotation);
+    bool Output::rotate(Rotation rotation) {
+        return Configurations::instance()->rotate(this, rotation);
     }
     
-    void Output::reflectX(bool reflect) {
-        Configurations::instance()->reflectX(this, reflect);
+    bool Output::reflectX(bool reflect) {
+        return Configurations::instance()->reflectX(this, reflect);
     }
 
-    void Output::reflectY(bool reflect) {
-        Configurations::instance()->reflectY(this, reflect);
+    bool Output::reflectY(bool reflect) {
+        return Configurations::instance()->reflectY(this, reflect);
     }
 
-    void Output::changeRate(double rate) {
-        Configurations::instance()->changeRate(this, rate);
+    bool Output::changeRate(double rate) {
+        return Configurations::instance()->changeRate(this, rate);
     }
 
 }

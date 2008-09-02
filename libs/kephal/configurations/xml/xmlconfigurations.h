@@ -22,7 +22,9 @@
 #define KEPHAL_XMLCONFIGURATIONS_H
 
 #include <QRect>
+#include <QTimer>
 
+#include "configurations/backendconfigurations.h"
 #include "kephal/configurations.h"
 
 
@@ -36,7 +38,7 @@ namespace kephal {
     
     
 
-    class XMLConfiguration : public Configuration {
+    class XMLConfiguration : public BackendConfiguration {
         Q_OBJECT
         public:
             XMLConfiguration(XMLConfigurations * parent, ConfigurationXML * configuration);
@@ -61,7 +63,7 @@ namespace kephal {
     };
     
     
-    class XMLConfigurations : public Configurations {
+    class XMLConfigurations : public BackendConfigurations {
         Q_OBJECT
         public:
             XMLConfigurations(QObject * parent);
@@ -71,19 +73,22 @@ namespace kephal {
             Configuration * activeConfiguration();
             QList<Configuration *> alternateConfigurations();
             QList<QPoint> possiblePositions(Output * output);
-            void move(Output * output, const QPoint & position);
-            void resize(Output * output, const QSize & size);
-            void rotate(Output * output, Rotation rotation);
-            void changeRate(Output * output, float rate);
-            void reflectX(Output * output, bool reflect);
-            void reflectY(Output * output, bool reflect);
+            bool move(Output * output, const QPoint & position);
+            bool resize(Output * output, const QSize & size);
+            bool rotate(Output * output, Rotation rotation);
+            bool changeRate(Output * output, float rate);
+            bool reflectX(Output * output, bool reflect);
+            bool reflectY(Output * output, bool reflect);
             int screen(Output * output);
             void applyOutputSettings();
             void setPolling(bool polling);
             bool polling();
+            void confirm();
+            void revert();
             
-        public Q_SLOTS:
-            void activate(XMLConfiguration * configuration);
+        private Q_SLOTS:
+            void confirmTimerTimeout();
+            bool activate(XMLConfiguration * configuration);
             
         private:
             void init();
@@ -92,7 +97,7 @@ namespace kephal {
             OutputsXML * findBestOutputs();
             qreal match(QString known, QString current);
             qreal match(int known, int current);
-            QMap<int, int> matchLayouts(const QMap<int, QPoint> & currentLayout, QMap<int, QPoint> layout);
+            QMap<int, int> matchLayouts(const QMap<int, QPoint> & currentLayout, const QMap<int, QPoint> & layout);
             QMap<int, QRect> calcMatchingLayout(const QMap<int, QPoint> & currentLayout, XMLConfiguration * configuration, QMap<int, QPoint> layout, Output * output = 0, int * outputScreen = 0);
             void translateToOther(QMap<int, QRect> & layout, Output * base, QMap<int, int> match = (QMap<int, int>()));
             QList<XMLConfiguration *> equivalentConfigurations(int numScreens);
@@ -102,19 +107,25 @@ namespace kephal {
             QMap<XMLConfiguration *, QMap<int, QPoint> > matchingConfigurationsLayouts(const QMap<int, QPoint> & currentLayout, int removedOutputs);
             XMLConfiguration * simpleConfiguration(int numScreens);
             void saveXml();
+            void loadXml();
             bool activateLayout(const QMap<int, QRect> & layout, const QMap<Output *, int> & outputScreens);
             bool activateLayout(const QMap<int, QRect> & layout, const QMap<Output *, int> & outputScreens, const QMap<Output *, QSize> & outputSizes);
             QMap<Output *, int> currentOutputScreens();
             void matchOutputScreens(const QMap<int, QPoint> & layout);
             OutputXML * outputXml(const QString & id);
             QMap<int, QRect> resizeLayout(Output * output, const QSize & size, QMap<Output *, int> & outputScreens, QMap<Output *, QSize> & outputSizes);
+            void requireConfirm();
             
             QMap<QString, XMLConfiguration *> m_configurations;
             XMLConfiguration * m_activeConfiguration;
+            XMLConfiguration * m_markedConfiguration;
             ConfigurationsXML * m_configXml;
             QString m_configPath;
             OutputsXML * m_currentOutputs;
             bool m_currentOutputsKnown;
+            QTimer * m_confirmTimer;
+            int m_confirmLeft;
+            bool m_awaitingConfirm;
     };
     
 }
