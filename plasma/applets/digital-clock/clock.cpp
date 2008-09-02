@@ -135,9 +135,25 @@ void Clock::updateSize() {
 void Clock::updateToolTipContent()
 {
     Plasma::ToolTipManager::ToolTipContent tipData;
-    tipData.mainText = KGlobal::locale()->formatTime(m_time, m_showSeconds);
-    tipData.subText = m_date.toString();
     tipData.image = m_toolTipIcon;
+
+    QString mainText = m_prettyTimezone + " ";
+    mainText += KGlobal::locale()->formatTime(m_time, m_showSeconds) + "<br>";
+    mainText += KGlobal::locale()->formatDate(m_date);
+    tipData.mainText = mainText;
+
+    QString subText;
+    foreach(QString tz, getSelectedTimezones()) {
+        if (tz==currentTimezone()) {
+            continue;
+        }
+        Plasma::DataEngine::Data data = dataEngine("time")->query(tz);
+        subText += "<br><b>" + data["Timezone City"].toString().replace("_", " ")+"</b> ";
+        subText += KGlobal::locale()->formatTime(data["Time"].toTime(), m_showSeconds) + ", ";
+        subText += KGlobal::locale()->formatDate(data["Date"].toDate());
+    }
+    tipData.subText = subText;
+
     Plasma::ToolTipManager::self()->setToolTipContent(this,tipData);
 }
 

@@ -50,6 +50,7 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::Applet
 
         QString currentTimezone() const;
         bool isLocalTimezone() const;
+        QStringList getSelectedTimezones() const;
 
         static QString localTimezone();
 

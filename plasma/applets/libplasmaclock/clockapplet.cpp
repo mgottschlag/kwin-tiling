@@ -295,6 +295,11 @@ QString ClockApplet::currentTimezone() const
     return d->timezone;
 }
 
+QStringList ClockApplet::getSelectedTimezones() const
+{
+    return d->selectedTimezones;
+}
+
 bool ClockApplet::isLocalTimezone() const
 {
     return d->timezone == localTimezone();
