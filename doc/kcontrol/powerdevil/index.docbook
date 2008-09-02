@@ -107,9 +107,54 @@ Defines the action that will be done when battery reaches the critical level.
 </para>
 </listitem>
 </varlistentry>
-
 </variablelist>
 </sect2>
+
+<sect2 id="profileassign">
+<title>Profiles Assignment</title>
+<para>
+In this section you have to assign your profiles to the specified situations. You can edit and create new profiles in the next section, Edit Profiles. Just select the best suitable profile for every described situation.
+</para>
+</sect2>
+
+<sect2 id="editprofile">
+<title>Edit Profiles</title>
+<para>
+In this section you can edit, create and delete PowerDevil profiles. The listbox on the left shows you all currently available profiles. Select the one you want to edit, and tweak it with the options you see on the right, described hereafter. You can create or delete an existing profile thanks to the buttons you see at the bottom of the listbox, or you can even import profiles from a file, or export your existing ones to a file.
+</para>
+
+<variablelist>
+<varlistentry><term><guibutton>Low battery level</guibutton></term>
+<listitem>
+<para>
+Here you can set the percentage after which the battery will be considered low.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guibutton>Warning battery level</guibutton></term>
+<listitem>
+<para>
+Here you can set the percentage after which the battery will be considered at warning level.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guibutton>Critical battery level</guibutton></term>
+<listitem>
+<para>
+Here you can set the percentage after which the battery will be considered at critical level.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guibutton>When battery is at critical level</guibutton></term>
+<listitem>
+<para>
+Defines the action that will be done when battery reaches the critical level.
+</para>
+</listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+
 </sect1>
 </article>
 
