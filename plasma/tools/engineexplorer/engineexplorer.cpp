@@ -41,6 +41,7 @@ Q_DECLARE_METATYPE(Soprano::Node)
 
 #include "plasma/dataenginemanager.h"
 
+#include "serviceviewer.h"
 #include "titlecombobox.h"
 
 EngineExplorer::EngineExplorer(QWidget* parent)
@@ -49,7 +50,6 @@ EngineExplorer::EngineExplorer(QWidget* parent)
       m_sourceCount(0),
       m_requestingSource(false)
 {
-    setButtons(0);
 #ifdef FOUND_SOPRANO
     (void) qRegisterMetaType<Soprano::Node>();
 #endif
@@ -241,7 +241,6 @@ void EngineExplorer::requestSource()
 void EngineExplorer::showDataContextMenu(const QPoint &point)
 {
     QModelIndex index = m_data->indexAt(point);
-    kDebug() << "yay!" << point << index << index.isValid() << index.data().toString();
     if (index.isValid()) {
         if (index.parent().isValid()) {
             index = index.parent();
@@ -260,7 +259,8 @@ void EngineExplorer::showDataContextMenu(const QPoint &point)
 
         QAction *activated = menu.exec(m_data->viewport()->mapToGlobal(point));
         if (activated == service) {
-            kDebug() << "get service";
+            ServiceViewer *viewer = new ServiceViewer(m_engine, source);
+            viewer->show();
         } else if (activated == update) {
             m_engine->connectSource(source, this);
             Plasma::DataEngine::Data data = m_engine->query(source);

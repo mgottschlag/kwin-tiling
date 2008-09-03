@@ -1,7 +1,8 @@
 set(plasmaengineexplorer_SRCS
-    ktreeviewsearchline.cpp
     engineexplorer.cpp
+    ktreeviewsearchline.cpp
     main.cpp
+    serviceviewer.cpp
 )
 
 macro_optional_find_package(Soprano)
@@ -12,7 +13,7 @@ if (Soprano_FOUND)
    add_definitions( -DFOUND_SOPRANO=1 )
 endif (Soprano_FOUND)
 
-kde4_add_ui_files(plasmaengineexplorer_SRCS engineexplorer.ui)
+kde4_add_ui_files(plasmaengineexplorer_SRCS engineexplorer.ui serviceviewer.ui)
 kde4_add_executable(plasmaengineexplorer ${plasmaengineexplorer_SRCS})
 
 target_link_libraries(plasmaengineexplorer plasma ${KDE4_KIO_LIBS})
