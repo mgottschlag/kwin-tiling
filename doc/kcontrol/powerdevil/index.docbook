@@ -125,6 +125,9 @@ In this section you have to assign your profiles to the specified situations. Yo
 <para>
 In this section you can edit, create and delete PowerDevil profiles. The listbox on the left shows you all currently available profiles. Select the one you want to edit, and tweak it with the options you see on the right, described hereafter. You can create or delete an existing profile thanks to the buttons you see at the bottom of the listbox, or you can even import profiles from a file, or export your existing ones to a file.
 </para>
+<para>
+The first tab contains settings related to the screen and to the actions triggered by certain events; the second one contains settings related to CPU management and system-wide settings. Be sure to tweak both to gain better results.
+</para>
 
 <variablelist>
 <varlistentry><term><guibutton>Brightness</guibutton></term>
