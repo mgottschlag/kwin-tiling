@@ -564,6 +564,37 @@
          </widget>
         </widget>
        </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_4" >
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="title" >
+          <string>Preview</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4" >
+          <item>
+           <widget class="PreviewWidget" native="1" name="colorPreview" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize" >
+             <size>
+              <width>0</width>
+              <height>10</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="effectsPage" >
