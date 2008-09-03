@@ -30,6 +30,7 @@
 #include <KAction>
 #include <KIconLoader>
 #include <KIconTheme>
+#include <KMenu>
 #include <KStandardAction>
 #include <KStringHandler>
 
@@ -81,6 +82,10 @@ EngineExplorer::EngineExplorer(QWidget* parent)
     enableButton(KDialog::User2, false);
 
     addAction(KStandardAction::quit(qApp, SLOT(quit()), this));
+
+    connect(m_data, SIGNAL(customContextMenuRequested(QPoint)),
+            this, SLOT(showDataContextMenu(QPoint)));
+    m_data->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
 EngineExplorer::~EngineExplorer()
@@ -211,6 +216,7 @@ void EngineExplorer::removeSource(const QString& source)
     }
 
     --m_sourceCount;
+    m_engine->disconnectSource(source, this);
     updateTitle();
 }
 
@@ -230,6 +236,38 @@ void EngineExplorer::requestSource()
     m_requestingSource = true;
     m_engine->connectSource(source, this, (uint)m_updateInterval->value());
     m_requestingSource = false;
+}
+
+void EngineExplorer::showDataContextMenu(const QPoint &point)
+{
+    QModelIndex index = m_data->indexAt(point);
+    kDebug() << "yay!" << point << index << index.isValid() << index.data().toString();
+    if (index.isValid()) {
+        if (index.parent().isValid()) {
+            index = index.parent();
+        }
+
+        if (index.column() != 0) {
+            index = m_dataModel->index(index.row(), 0);
+        }
+
+        QString source = index.data().toString();
+        KMenu menu;
+        menu.addTitle(source);
+        QAction *service = menu.addAction(i18n("Get associated service"));
+        QAction *update = menu.addAction(i18n("Update source now"));
+        QAction *remove = menu.addAction(i18n("Remove source"));
+
+        QAction *activated = menu.exec(m_data->viewport()->mapToGlobal(point));
+        if (activated == service) {
+            kDebug() << "get service";
+        } else if (activated == update) {
+            m_engine->connectSource(source, this);
+            Plasma::DataEngine::Data data = m_engine->query(source);
+        } else if (activated == remove) {
+            removeSource(source);
+        }
+    }
 }
 
 QString EngineExplorer::convertToString(const QVariant &value) const
