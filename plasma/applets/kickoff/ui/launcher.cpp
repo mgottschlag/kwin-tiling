@@ -798,11 +798,19 @@ void Launcher::setLauncherOrigin(const QPoint &origin, Plasma::Location location
     if (d->launcherOrigin == origin && d->panelEdge == location) {
         return;
     }
+
+    //should never happen, or happen if this function is called when the menu is in
+    //a planar containment, where this function is useless
+    if (!parentWidget()) {
+        return;
+    }
+
     d->launcherOrigin = origin;
     d->panelEdge = location;
-    QPoint relativePosition = pos() - d->launcherOrigin;
+    QPoint relativePosition = parentWidget()->pos() - d->launcherOrigin;
     int rx = relativePosition.x();
     int ry = relativePosition.y();
+
     if ( rx < 0 ) {
         if ( ry < 0 ) {
             if ( location == Plasma::RightEdge ) {
