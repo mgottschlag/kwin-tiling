@@ -32,7 +32,7 @@ ServiceRunner::ServiceRunner(QObject *parent, const QVariantList &args)
 {
     Q_UNUSED(args)
 
-    setObjectName(i18n("Application"));
+    setObjectName("Application");
     setPriority(AbstractRunner::HighestPriority);
 }
 

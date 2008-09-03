@@ -37,9 +37,8 @@
 BookmarksRunner::BookmarksRunner( QObject* parent, const QVariantList &args )
     : Plasma::AbstractRunner(parent, args)
 {
-    KGlobal::locale()->insertCatalog("krunner_bookmarksrunner");
     Q_UNUSED(args)
-    setObjectName(i18n("Bookmarks"));
+    setObjectName("Bookmarks");
     m_icon = KIcon("bookmarks");
 }
 

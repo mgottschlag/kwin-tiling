@@ -36,10 +36,8 @@ static int typeId = qDBusRegisterMetaType<QList<QList<QVariant> > >();
 XesamRunner::XesamRunner(QObject *parent, const QVariantList& args)
     : Plasma::AbstractRunner(parent, args)
 {
-    KGlobal::locale()->insertCatalog("krunner_xesam");
     Q_UNUSED(args);
-    // set the name shown after the result in krunner window
-    setObjectName(i18n("Desktop Search"));
+    setObjectName("Desktop Search");
     setSpeed(AbstractRunner::SlowSpeed);
 }
 

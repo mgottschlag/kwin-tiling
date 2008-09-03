@@ -38,7 +38,7 @@ SessionRunner::SessionRunner(QObject *parent, const QVariantList &args)
     KGlobal::locale()->insertCatalog("krunner_sessions");
     Q_UNUSED(args)
 
-    setObjectName(i18n("Sessions"));
+    setObjectName("Sessions");
     setPriority(LowPriority);
     setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File | 
                     Plasma::RunnerContext::NetworkLocation);

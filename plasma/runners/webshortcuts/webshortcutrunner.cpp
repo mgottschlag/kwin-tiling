@@ -36,8 +36,7 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
 {
     KGlobal::locale()->insertCatalog("krunner_webshortcutsrunner");
     Q_UNUSED(args);
-    // set the name shown after the result in krunner window
-    setObjectName(i18n("Web Shortcut"));
+    setObjectName("Web Shortcut");
     // query ktrader for all available searchproviders and preload the default icon
     m_offers = serviceQuery("SearchProvider");
     m_icon = KIcon("internet-web-browser");

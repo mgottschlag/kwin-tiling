@@ -37,7 +37,7 @@ ShellRunner::ShellRunner(QObject *parent, const QVariantList &args)
     Q_UNUSED(args)
     KGlobal::locale()->insertCatalog("krunner_shellrunner");
 
-    setObjectName(i18n("Command"));
+    setObjectName("Command");
     setPriority(AbstractRunner::HighestPriority);
     m_enabled = KAuthorized::authorizeKAction("shell_access");
     setIgnoredTypes(Plasma::RunnerContext::Directory | Plasma::RunnerContext::File |
