@@ -32,13 +32,23 @@ ServiceViewer::ServiceViewer(Plasma::DataEngine *engine, const QString &source, 
       m_source(source),
       m_service(0)
 {
+    setAttribute(Qt::WA_DeleteOnClose);
     setWindowTitle(i18n("Service Viewer"));
     QWidget* mainWidget = new QWidget(this);
     setMainWidget(mainWidget);
     setupUi(mainWidget);
 
+    setButtons(KDialog::Close | KDialog::User1);
+    setButtonText(KDialog::User1, i18n("Start Operation"));
+    connect(this, SIGNAL(user1Clicked()), this, SLOT(startOperation()));
+    enableButton(KDialog::User1, false);
+
+    connect(m_operations, SIGNAL(currentIndexChanged(QString)),
+            this, SLOT(operationSelected(QString)));
+
     QString engineName = i18n("Unknown");
     QString serviceName = i18n("Unknown");
+
     if (m_engine) {
         engineName = KStringHandler::capwords(m_engine->name());
         m_service = m_engine->serviceForSource(m_source);
@@ -53,12 +63,6 @@ ServiceViewer::ServiceViewer(Plasma::DataEngine *engine, const QString &source, 
     QString title = i18n("DataEngine: <b>%1</b>; Source: <b>%2</b>; Service <b>%3</b>", engineName, m_source, serviceName);
     m_title->setText(title);
     m_operations->setFocus();
-
-    setButtons(KDialog::Close | KDialog::User1);
-    setButtonText(KDialog::User1, i18n("Start Operation"));
-    connect(this, SIGNAL(user1Clicked()), this, SLOT(startOperation()));
-    enableButton(KDialog::User1, false);
-    enableButton(KDialog::User2, false);
 }
 
 ServiceViewer::~ServiceViewer()
@@ -82,6 +86,7 @@ void ServiceViewer::updateOperations()
     if (m_operations) {
         QStringList operations = m_service->operationNames();
 
+        kDebug() << "updating operations" << operations;
         if (!operations.isEmpty()) {
             enable = true;
 
@@ -101,7 +106,24 @@ void ServiceViewer::startOperation()
     if (!m_service) {
         return;
     }
-    kDebug() << "start operation" << m_operations->currentText();
+
+    QString operation = m_operations->currentText();
+    KConfigGroup desc = m_service->operationDescription(operation);
+    for (int i = 0; i < m_operationDescription->rowCount(); ++i) {
+        QTableWidgetItem *item = m_operationDescription->item(i, 1);
+        QString value = item->text();
+
+        if (value.isEmpty()) {
+            continue;
+        }
+
+        item = m_operationDescription->item(i, 0);
+        QString key = item->text();
+        desc.writeEntry(key, value);
+    }
+
+    m_service->startOperationCall(desc);
+    kDebug() << "start operation" << operation;
 }
 
 void ServiceViewer::operationSelected(const QString &operation)
@@ -109,7 +131,26 @@ void ServiceViewer::operationSelected(const QString &operation)
     if (!m_service) {
         return;
     }
-    kDebug() << "selected operation" << operation;
+
+    enableButton(KDialog::User1, true);
+    QStringList headers;
+    headers << i18n("Key") << i18n("Value");
+    m_operationDescription->setHorizontalHeaderLabels(headers);
+
+    KConfigGroup desc = m_service->operationDescription(operation);
+    int i = 0;
+    QStringList keys = desc.keyList();
+    m_operationDescription->setRowCount(keys.count());
+    foreach (const QString key, keys) {
+        QTableWidgetItem *item = new QTableWidgetItem(key);
+        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        m_operationDescription->setItem(i, 0, item);
+
+        item = new QTableWidgetItem(desc.readEntry(key, QString()));
+        m_operationDescription->setItem(i, 1, item);
+
+        ++i;
+    }
 }
 
 void ServiceViewer::operationResult(Plasma::ServiceJob *job)
@@ -117,6 +158,7 @@ void ServiceViewer::operationResult(Plasma::ServiceJob *job)
     if (!m_service) {
         return;
     }
+
     kDebug() << "operation results are in!";
 }
 

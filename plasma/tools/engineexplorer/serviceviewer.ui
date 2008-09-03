@@ -87,25 +87,5 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>m_operations</sender>
-   <signal>currentIndexChanged(QString)</signal>
-   <receiver>ServiceViewer</receiver>
-   <slot>operationSelected(QString)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>108</x>
-     <y>47</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>237</x>
-     <y>-1</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
- <slots>
-  <slot>operationSelected(QString)</slot>
- </slots>
+ <connections/>
 </ui>
