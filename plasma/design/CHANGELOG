@@ -70,6 +70,7 @@ Plasma Desktop Shell
 
 * Significant Fixes
     * Reposition toolbox when zooming out/in to avoid panel overlap
+    * Draw the missing part of the toolbox when repositioned because of a panel
     * MS Windows compile fixes
 
 Other Shells
