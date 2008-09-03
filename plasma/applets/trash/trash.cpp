@@ -80,6 +80,7 @@ Trash::Trash(QObject *parent, const QVariantList &args)
     layout->addItem(m_icon);
 
     resize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
+    createMenu();
 }
 
 Trash::~Trash()
@@ -88,8 +89,6 @@ Trash::~Trash()
 
 void Trash::init()
 {
-    createMenu();
-
     setAcceptDrops(true);
 
     m_dirLister = new KDirLister();
