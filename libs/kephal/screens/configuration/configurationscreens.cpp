@@ -29,7 +29,7 @@ namespace kephal {
     ConfigurationScreens::ConfigurationScreens(QObject * parent)
         : OutputScreens(parent)
     {
-        connect(Configurations::instance(), SIGNAL(configurationActivated(Configuration *)), this, SLOT(configurationActivated(Configuration *)));
+        connect(Configurations::instance(), SIGNAL(configurationActivated(kephal::Configuration *)), this, SLOT(configurationActivated(kephal::Configuration *)));
     }
     
     void ConfigurationScreens::configurationActivated(Configuration * configuration) {

@@ -38,7 +38,7 @@ namespace kephal {
             void prepareScreens(QMap<int, OutputScreen *> & screens);
             
         private Q_SLOTS:
-            void configurationActivated(Configuration * configuration);
+            void configurationActivated(kephal::Configuration * configuration);
     };
     
 }

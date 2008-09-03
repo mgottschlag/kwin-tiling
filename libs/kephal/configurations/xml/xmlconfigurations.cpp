@@ -73,7 +73,7 @@ namespace kephal {
         }
         
         QMap<int, ScreenXML *> remaining;
-        foreach (ScreenXML * screen, * (m_configuration->screens())) {
+        foreach (ScreenXML * screen, m_configuration->screens()) {
             remaining.insert(screen->id(), screen);
         }
         
@@ -195,14 +195,14 @@ namespace kephal {
              */
             ConfigurationXML * config = new ConfigurationXML();
             config->setParent(m_configXml);
-            m_configXml->configurations()->append(config);
+            m_configXml->configurations().append(config);
             
             config->setName("single");
             config->setModifiable(false);
             
             ScreenXML * screen = new ScreenXML();
             screen->setParent(config);
-            config->screens()->append(screen);
+            config->screens().append(screen);
             
             screen->setId(0);
             screen->setPrivacy(false);
@@ -213,21 +213,21 @@ namespace kephal {
              */
             config = new ConfigurationXML();
             config->setParent(m_configXml);
-            m_configXml->configurations()->append(config);
+            m_configXml->configurations().append(config);
             
             config->setName("extended-right");
             config->setModifiable(false);
             
             screen = new ScreenXML();
             screen->setParent(config);
-            config->screens()->append(screen);
+            config->screens().append(screen);
             
             screen->setId(0);
             screen->setPrivacy(false);
         
             screen = new ScreenXML();
             screen->setParent(config);
-            config->screens()->append(screen);
+            config->screens().append(screen);
             
             screen->setId(1);
             screen->setPrivacy(false);
@@ -239,14 +239,14 @@ namespace kephal {
              */
             config = new ConfigurationXML();
             config->setParent(m_configXml);
-            m_configXml->configurations()->append(config);
+            m_configXml->configurations().append(config);
             
             config->setName("extended-left");
             config->setModifiable(false);
             
             screen = new ScreenXML();
             screen->setParent(config);
-            config->screens()->append(screen);
+            config->screens().append(screen);
             
             screen->setId(0);
             screen->setPrivacy(false);
@@ -254,7 +254,7 @@ namespace kephal {
         
             screen = new ScreenXML();
             screen->setParent(config);
-            config->screens()->append(screen);
+            config->screens().append(screen);
             
             screen->setId(1);
             screen->setPrivacy(false);
@@ -265,13 +265,13 @@ namespace kephal {
              */
             OutputsXML * outputs = new OutputsXML();
             outputs->setParent(m_configXml);
-            m_configXml->outputs()->append(outputs);
+            m_configXml->outputs().append(outputs);
             
             outputs->setConfiguration("single");
             
             OutputXML * output = new OutputXML();
             output->setParent(outputs);
-            outputs->outputs()->append(output);
+            outputs->outputs().append(output);
             
             output->setName("*");
             output->setScreen(0);
@@ -283,13 +283,13 @@ namespace kephal {
              */
             outputs = new OutputsXML();
             outputs->setParent(m_configXml);
-            m_configXml->outputs()->append(outputs);
+            m_configXml->outputs().append(outputs);
             
             outputs->setConfiguration("extended-right");
             
             output = new OutputXML();
             output->setParent(outputs);
-            outputs->outputs()->append(output);
+            outputs->outputs().append(output);
             
             output->setName("*");
             output->setScreen(0);
@@ -297,7 +297,7 @@ namespace kephal {
             
             output = new OutputXML();
             output->setParent(outputs);
-            outputs->outputs()->append(output);
+            outputs->outputs().append(output);
             
             output->setName("*");
             output->setScreen(1);
@@ -310,9 +310,9 @@ namespace kephal {
             saveXml();
         }
         
-        QList<ConfigurationXML *> * configs = m_configXml->configurations();
-        for (int i = 0; i < configs->size(); i++) {
-            ConfigurationXML * config = (* configs)[i];
+        QList<ConfigurationXML *> configs = m_configXml->configurations();
+        for (int i = 0; i < configs.size(); i++) {
+            ConfigurationXML * config = configs[i];
             
             XMLConfiguration * c = new XMLConfiguration(this, config);
             m_configurations.insert(config->name(), c);
@@ -361,8 +361,8 @@ namespace kephal {
             }
         }
         
-        foreach (OutputsXML * knownOutputs, * (m_configXml->outputs())) {
-            if (knownOutputs->outputs()->size() != connected) {
+        foreach (OutputsXML * knownOutputs, m_configXml->outputs()) {
+            if (knownOutputs->outputs().size() != connected) {
                 continue;
             }
             
@@ -373,7 +373,7 @@ namespace kephal {
                 }
 
                 bool matched = false;
-                foreach (OutputXML * known, * (knownOutputs->outputs())) {
+                foreach (OutputXML * known, knownOutputs->outputs()) {
                     if (known->name() != current->id()) {
                         continue;
                     }
@@ -414,8 +414,8 @@ namespace kephal {
         
         qreal scoreAllMax = 0.01;
         OutputsXML * knownAllMax = 0;
-        foreach (OutputsXML * knownOutputs, * (m_configXml->outputs())) {
-            if (knownOutputs->outputs()->size() != connected) {
+        foreach (OutputsXML * knownOutputs, m_configXml->outputs()) {
+            if (knownOutputs->outputs().size() != connected) {
                 continue;
             }
             
@@ -430,7 +430,7 @@ namespace kephal {
                 
                 qreal scoreMax = 0.01;
                 OutputXML * knownMax = 0;
-                foreach (OutputXML * known, * (knownOutputs->outputs())) {
+                foreach (OutputXML * known, knownOutputs->outputs()) {
                     if (knownTaken.contains(known)) {
                         continue;
                     }
@@ -489,7 +489,7 @@ namespace kephal {
     QList<Configuration *> XMLConfigurations::alternateConfigurations() {
         QList<Configuration *> configs;
         foreach (XMLConfiguration * config, m_configurations) {
-            if (config->layout().size() <= m_currentOutputs->outputs()->size()) {
+            if (config->layout().size() <= m_currentOutputs->outputs().size()) {
                 configs.append(config);
             }
         }
@@ -966,12 +966,12 @@ namespace kephal {
             
             OutputsXML * known = new OutputsXML();
             known->setParent(m_configXml);
-            m_configXml->outputs()->append(known);
+            m_configXml->outputs().append(known);
             
             known->setConfiguration(configuration->name());
 
             QMap<QString, OutputXML *> currentMap;
-            foreach (OutputXML * o, * (m_currentOutputs->outputs())) {
+            foreach (OutputXML * o, m_currentOutputs->outputs()) {
                 currentMap.insert(o->actualOutput(), o);
             }
             
@@ -987,7 +987,7 @@ namespace kephal {
                 
                 OutputXML * outputXml = new OutputXML();
                 outputXml->setParent(known);
-                known->outputs()->append(outputXml);
+                known->outputs().append(outputXml);
                 
                 outputXml->setName(output->id());
                 outputXml->setScreen(currentMap[output->id()]->screen());
@@ -1030,11 +1030,11 @@ namespace kephal {
             screens << screen;
         }
         
-        if (screens.size() > m_currentOutputs->outputs()->size()) {
+        if (screens.size() > m_currentOutputs->outputs().size()) {
             INVALID_CONFIGURATION("configuration and outputs dont match");
         }
         
-        foreach (OutputXML * output, * (m_currentOutputs->outputs())) {
+        foreach (OutputXML * output, m_currentOutputs->outputs()) {
             if (output->screen() >= 0) {
                 if (screens.contains(output->screen())) {
                     outputScreens.insert(output->name(), output->screen());
@@ -1058,7 +1058,7 @@ namespace kephal {
             int to = * screens.begin();
             screens.remove(to);
             
-            foreach (OutputXML * output, * (m_currentOutputs->outputs())) {
+            foreach (OutputXML * output, m_currentOutputs->outputs()) {
                 if (output->screen() == from) {
                     outputScreens.insert(output->name(), to);
                 }
@@ -1073,7 +1073,7 @@ namespace kephal {
             outputScreens.insert(o, to);
         }
         
-        foreach (OutputXML * output, * (m_currentOutputs->outputs())) {
+        foreach (OutputXML * output, m_currentOutputs->outputs()) {
             if (outputScreens.contains(output->name())) {
                 output->setScreen(outputScreens[output->name()]);
             } else {
@@ -1147,7 +1147,7 @@ namespace kephal {
         
         ConfigurationXML * config = new ConfigurationXML();
         config->setParent(m_configXml);
-        m_configXml->configurations()->append(config);
+        m_configXml->configurations().append(config);
         
         config->setName(name);
         config->setModifiable(true);
@@ -1155,7 +1155,7 @@ namespace kephal {
         for (int i = 0; i < numScreens; ++i) {
             ScreenXML * screen = new ScreenXML();
             screen->setParent(config);
-            config->screens()->append(screen);
+            config->screens().append(screen);
             
             screen->setId(i);
             screen->setPrivacy(false);
@@ -1183,7 +1183,7 @@ namespace kephal {
     }
     
     int XMLConfigurations::screen(Output * output) {
-        foreach (OutputXML * o, * (m_currentOutputs->outputs())) {
+        foreach (OutputXML * o, m_currentOutputs->outputs()) {
             if (output->id() == o->name()) {
                 return o->screen();
             }
@@ -1197,7 +1197,7 @@ namespace kephal {
             return;
         }
 
-        foreach (OutputXML * o, * (m_currentOutputs->outputs())) {
+        foreach (OutputXML * o, m_currentOutputs->outputs()) {
             BackendOutput * output = BackendOutputs::instance()->backendOutput(o->name());
             if (output) {
                 bool failed = false;
@@ -1233,7 +1233,7 @@ namespace kephal {
     }
     
     OutputXML * XMLConfigurations::outputXml(const QString & id) {
-        foreach (OutputXML * o, * (m_currentOutputs->outputs())) {
+        foreach (OutputXML * o, m_currentOutputs->outputs()) {
             if (o->name() == id) {
                 return o;
             }

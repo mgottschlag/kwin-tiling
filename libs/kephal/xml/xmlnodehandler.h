@@ -164,7 +164,7 @@ namespace kephal {
     template <class ElementType, class ComplexType>
     class XMLComplexListNodeHandler : public XMLNodeHandler {
         public:
-            typedef QList<ComplexType *> * (ElementType::*ListGetter)();
+            typedef QList<ComplexType *> & (ElementType::*ListGetter)();
             
             XMLComplexListNodeHandler(XMLFactory * factory, ListGetter listGetter);
             

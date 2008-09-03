@@ -48,7 +48,7 @@ namespace kephal {
     void ConfigurationXML::setName(QString name) { m_name = name; }
     bool ConfigurationXML::modifiable() { return m_modifiable; }
     void ConfigurationXML::setModifiable(bool modifiable) { m_modifiable = modifiable; }
-    QList<ScreenXML *> * ConfigurationXML::screens() { return & m_screens; }
+    QList<ScreenXML *> & ConfigurationXML::screens() { return m_screens; }
     
     
     class ConfigurationXMLFactory : public XMLFactory {
@@ -92,8 +92,8 @@ namespace kephal {
     };
     
     
-    QList<ConfigurationXML *> * ConfigurationsXML::configurations() { return & m_configurations; }
-    QList<OutputsXML *> * ConfigurationsXML::outputs() { return & m_outputs; }
+    QList<ConfigurationXML *> & ConfigurationsXML::configurations() { return m_configurations; }
+    QList<OutputsXML *> & ConfigurationsXML::outputs() { return m_outputs; }
     
     ConfigurationsXMLFactory::ConfigurationsXMLFactory() : XMLRootFactory("configurations") {
     }

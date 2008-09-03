@@ -192,18 +192,18 @@ namespace kephal {
     
     template <class ElementType, typename ComplexType>
     bool XMLComplexListNodeHandler<ElementType, ComplexType>::hasMore(XMLType * element) {
-        return m_pos < ((ElementType *)element->*m_listGetter)()->size();
+        return m_pos < ((ElementType *)element->*m_listGetter)().size();
     }
     
     template <class ElementType, typename ComplexType>
     void XMLComplexListNodeHandler<ElementType, ComplexType>::setNode(XMLType * element, QDomNode node) {
         ComplexType * complex = (ComplexType *) m_factory->load(node);
-        ((ElementType *)element->*m_listGetter)()->append(complex);
+        ((ElementType *)element->*m_listGetter)().append(complex);
     }
     
     template <class ElementType, typename ComplexType>
     QDomNode XMLComplexListNodeHandler<ElementType, ComplexType>::node(XMLType * element, QDomDocument doc, QString name) {
-        ComplexType * complex = ((ElementType *)element->*m_listGetter)()->at(m_pos);
+        ComplexType * complex = ((ElementType *)element->*m_listGetter)().at(m_pos);
         ++m_pos;
         return m_factory->save(complex, doc, name);
     }
@@ -215,7 +215,7 @@ namespace kephal {
     
     template <class ElementType, typename ComplexType>
     void XMLComplexListNodeHandler<ElementType, ComplexType>::beginLoad(XMLType * element) {
-        ((ElementType *)element->*m_listGetter)()->clear();
+        ((ElementType *)element->*m_listGetter)().clear();
     }
     
     template <class ElementType, typename ComplexType>

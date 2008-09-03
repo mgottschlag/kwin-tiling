@@ -64,7 +64,7 @@ namespace kephal {
             void setName(QString name);
             bool modifiable();
             void setModifiable(bool modifiable);
-            QList<ScreenXML *> * screens();
+            QList<ScreenXML *> & screens();
             
         private:
             QString m_name;
@@ -111,7 +111,7 @@ namespace kephal {
     class OutputsXML : public XMLType {
         Q_OBJECT
         public:
-            QList<OutputXML *> * outputs() { return & m_outputs; }
+            QList<OutputXML *> & outputs() { return m_outputs; }
             QString configuration() { return m_configuration; }
             void setConfiguration(QString configuration) { m_configuration = configuration; }
             
@@ -128,8 +128,8 @@ namespace kephal {
         public:
             ConfigurationsXML() : m_polling(true) {}
             
-            QList<ConfigurationXML *> * configurations();
-            QList<OutputsXML *> * outputs();
+            QList<ConfigurationXML *> & configurations();
+            QList<OutputsXML *> & outputs();
             
         private:
             QList<ConfigurationXML *> m_configurations;
