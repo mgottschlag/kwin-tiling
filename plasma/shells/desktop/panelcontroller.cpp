@@ -1,4 +1,4 @@
- /*
+/*
  *   Copyright 2008 Marco Martin <notmart@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -22,6 +22,7 @@
 #include <QAction>
 #include <QApplication>
 #include <QBoxLayout>
+#include <QVBoxLayout>
 #include <QDesktopWidget>
 #include <QFrame>
 #include <QLabel>
@@ -39,6 +40,7 @@
 #include <plasma/paintutils.h>
 #include <plasma/theme.h>
 #include <plasma/svg.h>
+#include <plasma/dialog.h>
 
 #include "plasmaapp.h"
 #include "positioningruler.h"
@@ -206,6 +208,69 @@ public:
         ruler->setOffset(0);
     }
 
+    void panelModeChanged(bool toggle)
+    {
+        if (!toggle) {
+            return;
+        }
+
+        if (q->sender() == normalPanelTool) {
+            emit q->panelModeChanged(PanelView::NormalPanel);
+        } else if (q->sender() == autoHideTool) {
+            emit q->panelModeChanged(PanelView::AutoHide);
+        } else if (q->sender() == underWindowsTool) {
+            emit q->panelModeChanged(PanelView::LetWindowsCover);
+        }
+    }
+
+    void settingsPopup()
+    {
+        if (optionsDialog->isVisible()) {
+            optionsDialog->hide();
+        } else {
+            KWindowSystem::setState(optionsDialog->winId(), NET::SkipTaskbar | NET::SkipPager | NET::Sticky);
+            QPoint pos = q->mapToGlobal(settingsTool->pos());
+            optionsDialog->layout()->activate();
+            optionsDialog->resize(optionsDialog->sizeHint());
+            QSize s = optionsDialog->size();
+
+            switch (location) {
+                case Plasma::BottomEdge:
+                pos = QPoint(pos.x(), pos.y() - s.height());
+                break;
+            case Plasma::TopEdge:
+                pos = QPoint(pos.x(), pos.y() + settingsTool->size().height());
+                break;
+            case Plasma::LeftEdge:
+                pos = QPoint(pos.x() + settingsTool->size().width(), pos.y());
+                break;
+            case Plasma::RightEdge:
+                pos = QPoint(pos.x() - s.width(), pos.y());
+                break;
+            default:
+                if (pos.y() - s.height() > 0) {
+                    pos = QPoint(pos.x(), pos.y() - s.height());
+                } else {
+                    pos = QPoint(pos.x(), pos.y() + settingsTool->size().height());
+                }
+            }
+
+            QRect screenRect = QApplication::desktop()->screenGeometry(containment->screen());
+
+            if (pos.rx() + s.width() > screenRect.right()) {
+                pos.rx() -= ((pos.rx() + s.width()) - screenRect.right());
+            }
+
+            if (pos.ry() + s.height() > screenRect.bottom()) {
+                pos.ry() -= ((pos.ry() + s.height()) - screenRect.bottom());
+            }
+
+            pos.rx() = qMax(0, pos.rx());
+            optionsDialog->move(pos);
+            optionsDialog->show();
+        }
+    }
+
      enum DragElement { NoElement = 0,
                         ResizeButtonElement,
                         MoveButtonElement
@@ -217,11 +282,14 @@ public:
     Plasma::Location location;
     QBoxLayout *extLayout;
     QBoxLayout *layout;
-    QBoxLayout *alignLayout;
     QLabel *alignLabel;
+    QLabel *modeLabel;
     DragElement dragging;
     QPoint startDragPos;
     Plasma::Svg *svg;
+    Plasma::Dialog *optionsDialog;
+    QBoxLayout *optDialogLayout;
+    ToolButton *settingsTool;
 
     ToolButton *moveTool;
     ToolButton *sizeTool;
@@ -230,6 +298,11 @@ public:
     ToolButton *leftAlignTool;
     ToolButton *centerAlignTool;
     ToolButton *rightAlignTool;
+
+    //Panel mode buttons
+    ToolButton *normalPanelTool;
+    ToolButton *autoHideTool;
+    ToolButton *underWindowsTool;
 
     //Widgets for actions
     QList<QWidget *> actionWidgets;
@@ -271,7 +344,7 @@ PanelController::PanelController(QWidget* parent)
         d->layout->setDirection(QBoxLayout::LeftToRight);
     }
     d->layout->setSpacing(4);
- 
+
     d->layout->addStretch();
     d->extLayout->addLayout(d->layout);
 
@@ -280,26 +353,52 @@ PanelController::PanelController(QWidget* parent)
     //alignment
     //first the container
     QFrame *alignFrame = new ButtonGroup(this);
-    d->alignLayout = new QBoxLayout(d->layout->direction(), alignFrame);
-    alignFrame->setLayout(d->alignLayout);
-    d->layout->addWidget(alignFrame);
+    QVBoxLayout *alignLayout = new QVBoxLayout(alignFrame);
+
 
     d->alignLabel = new QLabel(i18n("Panel alignment"), this);
-    d->alignLayout->addWidget(d->alignLabel);
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(setPalette()));
-    setPalette();
-    d->leftAlignTool = d->addTool("format-justify-left", i18n("Align panel to left"), alignFrame,  Qt::ToolButtonIconOnly, true);
-    d->alignLayout->addWidget(d->leftAlignTool);
+    alignLayout->addWidget(d->alignLabel);
+
+    d->leftAlignTool = d->addTool("format-justify-left", i18n("Left"), alignFrame,  Qt::ToolButtonTextBesideIcon, true);
+    d->leftAlignTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    alignLayout->addWidget(d->leftAlignTool);
     d->leftAlignTool->setChecked(true);
     connect(d->leftAlignTool, SIGNAL(toggled(bool)), this, SLOT(alignToggled(bool)));
 
-    d->centerAlignTool = d->addTool("format-justify-center", i18n("Align panel to center"), alignFrame,  Qt::ToolButtonIconOnly, true);
-    d->alignLayout->addWidget(d->centerAlignTool);
+    d->centerAlignTool = d->addTool("format-justify-center", i18n("Center"), alignFrame,  Qt::ToolButtonTextBesideIcon, true);
+    d->centerAlignTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    alignLayout->addWidget(d->centerAlignTool);
     connect(d->centerAlignTool, SIGNAL(clicked(bool)), this, SLOT(alignToggled(bool)));
 
-    d->rightAlignTool = d->addTool("format-justify-right", i18n("Align panel to right"), alignFrame,  Qt::ToolButtonIconOnly, true);
-    d->alignLayout->addWidget(d->rightAlignTool);
+    d->rightAlignTool = d->addTool("format-justify-right", i18n("Right"), alignFrame,  Qt::ToolButtonTextBesideIcon, true);
+    d->rightAlignTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    alignLayout->addWidget(d->rightAlignTool);
     connect(d->rightAlignTool, SIGNAL(clicked(bool)), this, SLOT(alignToggled(bool)));
+
+
+    //Panel mode
+    //first the container
+    QFrame *modeFrame = new ButtonGroup(this);
+    QVBoxLayout *modeLayout = new QVBoxLayout(modeFrame);
+
+    d->modeLabel = new QLabel(i18n("Visibility"), this);
+    modeLayout->addWidget(d->modeLabel);
+
+    d->normalPanelTool = d->addTool(QString(), i18n("Always visible"), modeFrame,  Qt::ToolButtonTextOnly, true);
+    d->normalPanelTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    modeLayout->addWidget(d->normalPanelTool);
+    connect(d->normalPanelTool, SIGNAL(toggled(bool)), this, SLOT(panelModeChanged(bool)));
+
+    d->autoHideTool = d->addTool(QString(), i18n("Auto hide"), modeFrame,  Qt::ToolButtonTextOnly, true);
+    d->autoHideTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    modeLayout->addWidget(d->autoHideTool);
+    connect(d->autoHideTool, SIGNAL(toggled(bool)), this, SLOT(panelModeChanged(bool)));
+
+    d->underWindowsTool = d->addTool(QString(), i18n("Windows can cover"), modeFrame,  Qt::ToolButtonTextOnly, true);
+    d->underWindowsTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    modeLayout->addWidget(d->underWindowsTool);
+    connect(d->underWindowsTool, SIGNAL(toggled(bool)), this, SLOT(panelModeChanged(bool)));
+
 
     d->layout->addStretch();
     d->moveTool = d->addTool("transform-move", i18n("Screen edge"), this);
@@ -315,6 +414,18 @@ PanelController::PanelController(QWidget* parent)
 
     //other buttons
     d->layout->addSpacing(20);
+
+    //Settings popup menu
+    d->settingsTool = d->addTool("configure", i18n("More settings..."), this);
+    d->layout->addWidget(d->settingsTool);
+    connect(d->settingsTool, SIGNAL(pressed()), this, SLOT(settingsPopup()));
+    d->optionsDialog = new Plasma::Dialog(this);
+    d->optionsDialog->installEventFilter(this);
+    d->optDialogLayout = new QVBoxLayout(d->optionsDialog);
+    d->optDialogLayout->addWidget(alignFrame);
+    d->optDialogLayout->addWidget(modeFrame);
+
+
     ToolButton *closeControllerTool = d->addTool("window-close", i18n("Close this configuration window"), this, Qt::ToolButtonIconOnly, false);
     d->layout->addWidget(closeControllerTool);
     connect(closeControllerTool, SIGNAL(clicked()), this, SLOT(hideController()));
@@ -322,6 +433,9 @@ PanelController::PanelController(QWidget* parent)
     d->ruler = new PositioningRuler(this);
     connect(d->ruler, SIGNAL(rulersMoved(int, int, int)), this, SLOT(rulersMoved(int, int, int)));
     d->extLayout->addWidget(d->ruler);
+
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(setPalette()));
+    setPalette();
 }
 
 PanelController::~PanelController()
@@ -343,7 +457,9 @@ void PanelController::setContainment(Plasma::Containment *containment)
     QWidget *child;
     while (!d->actionWidgets.isEmpty()) {
         child = d->actionWidgets.first();
+        //try to remove from both layouts
         d->layout->removeWidget(child);
+        d->optDialogLayout->removeWidget(child);
         d->actionWidgets.removeFirst();
         child->deleteLater();
     }
@@ -369,8 +485,8 @@ void PanelController::setContainment(Plasma::Containment *containment)
     action = containment->action("remove");
     if (action) {
         ToolButton *removePanelTool = d->addTool(action, this);
-        d->layout->insertWidget(insertIndex, removePanelTool);
-        ++insertIndex;
+        removePanelTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        d->optDialogLayout->insertWidget(insertIndex, removePanelTool);
         connect(removePanelTool, SIGNAL(clicked()), this, SLOT(hideController()));
     }
 
@@ -502,11 +618,6 @@ void PanelController::setLocation(const Plasma::Location &loc)
         break;
     }
 
-    d->alignLayout->setDirection(d->layout->direction());
-    if (d->alignLayout->parentWidget()) {
-        d->alignLayout->parentWidget()->setMaximumSize(d->alignLayout->sizeHint());
-    }
-
     d->ruler->setMaximumSize(d->ruler->sizeHint());
 }
 
@@ -522,7 +633,7 @@ void PanelController::setOffset(int newOffset)
     }
 }
 
-int PanelController::offset()
+int PanelController::offset() const
 {
     return d->ruler->offset();
 }
@@ -542,10 +653,40 @@ void PanelController::setAlignment(const Qt::Alignment &newAlignment)
     }
 }
 
-int PanelController::alignment()
+Qt::Alignment PanelController::alignment() const
 {
     return d->ruler->alignment();
 }
+
+void PanelController::setPanelMode(PanelView::PanelMode mode)
+{
+    switch (mode) {
+    case PanelView::AutoHide:
+        d->autoHideTool->setChecked(true);
+        break;
+    case PanelView::LetWindowsCover:
+        d->underWindowsTool->setChecked(true);
+        break;
+    case PanelView::NormalPanel:
+    default:
+        d->normalPanelTool->setChecked(true);
+        break;
+    }
+}
+
+
+
+PanelView::PanelMode PanelController::panelMode() const
+{
+    if (d->underWindowsTool->isChecked()) {
+        return PanelView::LetWindowsCover;
+    } else if (d->autoHideTool->isChecked()) {
+        return PanelView::AutoHide;
+    } else {
+        return PanelView::NormalPanel;
+    }
+}
+
 
 void PanelController::hideController()
 {
@@ -559,6 +700,7 @@ void PanelController::setPalette()
     p.setColor(QPalette::Normal, QPalette::WindowText, color);
     p.setColor(QPalette::Inactive, QPalette::WindowText, color);
     d->alignLabel->setPalette(p);
+    d->modeLabel->setPalette(p);
 }
 
 void PanelController::paintEvent(QPaintEvent *event)
@@ -602,7 +744,15 @@ void PanelController::paintEvent(QPaintEvent *event)
 
 bool PanelController::eventFilter(QObject *watched, QEvent *event)
 {
-    if (watched == d->moveTool) {
+    if (watched == d->optionsDialog && event->type() == QEvent::WindowDeactivate) {
+        if (!d->settingsTool->underMouse()) {
+            d->optionsDialog->hide();
+        }
+        if (!isActiveWindow()) {
+            close();
+        }
+        return true;
+    } else if (watched == d->moveTool) {
         if (event->type() == QEvent::MouseButtonPress) {
             d->dragging = Private::MoveButtonElement;
         } else if (event->type() == QEvent::MouseButtonRelease) {
@@ -761,7 +911,10 @@ void PanelController::mouseMoveEvent(QMouseEvent *event)
 void PanelController::focusOutEvent(QFocusEvent * event)
 {
     Q_UNUSED(event)
-    close();
+    if (!d->optionsDialog->isActiveWindow()) {
+        d->optionsDialog->hide();
+        close();
+    }
 }
 
 #include "panelcontroller.moc"

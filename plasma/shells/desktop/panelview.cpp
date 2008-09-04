@@ -48,10 +48,9 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 #ifdef Q_WS_X11
       m_unhideTrigger(None),
 #endif
+      m_panelMode(NormalPanel),
       m_lastHorizontal(true),
       m_editting(false),
-      m_autohide(false),
-      m_windowsCover(false),
       m_firstPaint(true)
 {
     Q_ASSERT(qobject_cast<Plasma::Corona*>(panel->scene()));
@@ -59,8 +58,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     m_offset = viewConfig.readEntry("Offset", 0);
     m_alignment = alignmentFilter((Qt::Alignment)viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
-    m_autohide = viewConfig.readEntry("autohide", m_autohide);
-    m_windowsCover = viewConfig.readEntry("letWindowsCover", m_windowsCover);
+    m_panelMode = (PanelMode)viewConfig.readEntry("panelMode", (int)m_panelMode);
 
     // pinchContainment calls updatePanelGeometry for us
 
@@ -97,7 +95,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     KWindowSystem::setType(winId(), NET::Dock);
     KWindowSystem::setOnAllDesktops(winId(), true);
     unsigned long state = NET::Sticky;
-    if (!m_windowsCover) {
+    if (m_panelMode != LetWindowsCover) {
         state |= NET::StaysOnTop;
     }
     KWindowSystem::setState(winId(), state);
@@ -183,6 +181,25 @@ void PanelView::setLocation(Plasma::Location location)
 Plasma::Location PanelView::location() const
 {
     return containment()->location();
+}
+
+void PanelView::setPanelMode(PanelView::PanelMode mode)
+{
+    unsigned long state = NET::Sticky;
+
+    if (mode != LetWindowsCover) {
+        state |= NET::StaysOnTop;
+    }
+
+    KWindowSystem::setState(winId(), state);
+
+    m_panelMode = mode;
+    config().writeEntry("panelMode", (int)mode);
+}
+
+PanelView::PanelMode PanelView::panelMode() const
+{
+    return m_panelMode;
 }
 
 Plasma::Corona *PanelView::corona() const
@@ -532,11 +549,13 @@ void PanelView::togglePanelController()
         m_panelController->setLocation(containment()->location());
         m_panelController->setAlignment(m_alignment);
         m_panelController->setOffset(m_offset);
+        m_panelController->setPanelMode(m_panelMode);
 
         connect(m_panelController, SIGNAL(destroyed(QObject*)), this, SLOT(edittingComplete()));
         connect(m_panelController, SIGNAL(offsetChanged(int)), this, SLOT(setOffset(int)));
         connect(m_panelController, SIGNAL(alignmentChanged(Qt::Alignment)), this, SLOT(setAlignment(Qt::Alignment)));
         connect(m_panelController, SIGNAL(locationChanged(Plasma::Location)), this, SLOT(setLocation(Plasma::Location)));
+        connect(m_panelController, SIGNAL(panelModeChanged(PanelView::PanelMode)), this, SLOT(setPanelMode(PanelView::PanelMode)));
 
         if (dynamic_cast<QGraphicsLinearLayout*>(containment()->layout())) {
             // we only support mouse over drags for panels with linear layouts
@@ -569,6 +588,7 @@ void PanelView::togglePanelController()
         m_panelController->show();
     } else {
         m_panelController->close();
+        updateStruts();
     }
 }
 
@@ -597,7 +617,7 @@ void PanelView::updateStruts()
 {
     NETExtendedStrut strut;
 
-    if (!m_windowsCover && !m_autohide) {
+    if (m_panelMode == NormalPanel) {
         QRect thisScreen = QApplication::desktop()->screenGeometry(containment()->screen());
         QRect wholeScreen = QApplication::desktop()->geometry();
 
@@ -706,7 +726,7 @@ void PanelView::unhide()
         show();
         KWindowSystem::setOnAllDesktops(winId(), true);
         unsigned long state = NET::Sticky;
-        if (!m_windowsCover) {
+        if (m_panelMode != LetWindowsCover) {
             state |= NET::StaysOnTop;
         }
         KWindowSystem::setState(winId(), state);
@@ -715,7 +735,7 @@ void PanelView::unhide()
 
 void PanelView::leaveEvent(QEvent *event)
 {
-    if (m_autohide && !m_editting) {
+    if (m_panelMode == AutoHide && !m_editting) {
         QTimeLine * tl = timeLine();
         tl->setDirection(QTimeLine::Forward);
 
@@ -747,7 +767,7 @@ void PanelView::paintEvent(QPaintEvent *event)
 {
     Plasma::View::paintEvent(event);
     if (m_firstPaint) {
-        if (m_autohide) {
+        if (m_panelMode == AutoHide) {
             QTimeLine * tl = timeLine();
             tl->setDirection(QTimeLine::Forward);
             tl->start();

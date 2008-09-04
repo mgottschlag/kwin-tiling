@@ -47,12 +47,19 @@ namespace Plasma
 }
 
 class PanelController;
+
 class PanelAppletOverlay;
 
 class PanelView : public Plasma::View
 {
     Q_OBJECT
 public:
+
+    enum PanelMode {
+        NormalPanel = 0,
+        AutoHide,
+        LetWindowsCover
+    };
 
    /**
     * Constructs a new panelview.
@@ -65,6 +72,11 @@ public:
      * @return the location (screen edge) where this panel is positioned.
      */
     Plasma::Location location() const;
+
+    /**
+     * @return panel behaviour
+     */
+    PanelMode panelMode() const;
 
     /**
      * @return the Corona (scene) associated with this panel.
@@ -121,6 +133,12 @@ public Q_SLOTS:
      */
     void setLocation(Plasma::Location location);
 
+    /**
+     * Sets the panel behaviour
+     * @param mode
+     */
+    void setPanelMode(PanelView::PanelMode mode);
+
 protected:
     void updateStruts();
     void moveEvent(QMoveEvent *event);
@@ -169,12 +187,11 @@ private:
 
     QSizeF m_lastMin;
     QSizeF m_lastMax;
+    PanelMode m_panelMode;
     int m_lastSeenSize;
     bool m_lastHorizontal : 1;
 
     bool m_editting : 1;
-    bool m_autohide : 1;
-    bool m_windowsCover: 1;
     bool m_firstPaint : 1;
 };
 

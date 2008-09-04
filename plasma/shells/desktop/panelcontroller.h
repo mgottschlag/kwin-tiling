@@ -24,6 +24,8 @@
 
 #include <plasma/plasma.h>
 
+#include "panelview.h"
+
 
 
 namespace Plasma
@@ -35,6 +37,7 @@ class PanelController : public QWidget
 {
 Q_OBJECT
 public:
+
     PanelController(QWidget* parent = 0);
     ~PanelController();
 
@@ -48,10 +51,13 @@ public:
     Plasma::Location location() const;
 
     void setOffset(int newOffset);
-    int offset();
+    int offset() const;
 
     void setAlignment(const Qt::Alignment &newAlignment);
-    int alignment();
+    Qt::Alignment alignment() const;
+
+    void setPanelMode(PanelView::PanelMode);
+    PanelView::PanelMode panelMode() const;
 
 public Q_SLOTS:
     void hideController();
@@ -70,10 +76,13 @@ Q_SIGNALS:
      void offsetChanged(int offset);
      void alignmentChanged(Qt::Alignment);
      void locationChanged(Plasma::Location);
+     void panelModeChanged(PanelView::PanelMode mode);
 
 private:
     Q_PRIVATE_SLOT(d, void rulersMoved(int offset, int minLength, int minLength))
     Q_PRIVATE_SLOT(d, void alignToggled(bool toggle))
+    Q_PRIVATE_SLOT(d, void panelModeChanged(bool toggle))
+    Q_PRIVATE_SLOT(d, void settingsPopup())
 
     class ButtonGroup;
     class ResizeHandle;
