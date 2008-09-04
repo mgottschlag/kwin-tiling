@@ -50,7 +50,7 @@ DBusAPIConfigurations::DBusAPIConfigurations(QObject * parent)
 
 QStringList DBusAPIConfigurations::configurations() {
     QStringList result;
-    foreach (QString name, Configurations::instance()->configurations().keys()) {
+    foreach (const QString& name, Configurations::instance()->configurations().keys()) {
         result << name;
     }
     return result;

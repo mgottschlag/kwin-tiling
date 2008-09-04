@@ -46,7 +46,7 @@ namespace kephal {
         m_valid = true;
         
         QStringList ids = m_interface->outputIds();
-        foreach (QString id, ids) {
+        foreach (const QString& id, ids) {
             QPoint pos = m_interface->position(id);
             QSize size = m_interface->size(id);
             bool connected = m_interface->isConnected(id);

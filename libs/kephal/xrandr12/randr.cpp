@@ -149,7 +149,7 @@ SizeList RandR::sortSizes(const SizeList &sizes)
 	SizeList sorted;
 
 	int i = 0;
-	foreach(QSize size, sizes)
+	foreach(const QSize& size, sizes)
 		sizeSort[i++] = size.width() * size.height();
 
 	for (int j = 0; j < numSizes; j++) 

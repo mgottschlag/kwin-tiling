@@ -526,27 +526,27 @@ namespace kephal {
         QMap<XMLConfiguration *, QPoint> positions;
         if (! m_activeConfiguration->isModifiable()) {
             positions = equivalentConfigurationsPositions(output);
-            foreach (QPoint point, positions) {
+            foreach (const QPoint& point, positions) {
                 unique.insert(point);
             }
             
             positions = simpleConfigurationsPositions(output, true);
-            foreach (QPoint point, positions) {
+            foreach (const QPoint& point, positions) {
                 unique.insert(point);
             }
         } else {
             positions = sameConfigurationsPositions(output, false);
-            foreach (QPoint point, positions) {
+            foreach (const QPoint& point, positions) {
                 unique.insert(point);
             }
             
             positions = simpleConfigurationsPositions(output, false);
-            foreach (QPoint point, positions) {
+            foreach (const QPoint& point, positions) {
                 unique.insert(point);
             }
         }
         
-        foreach (QPoint p, unique) {
+        foreach (const QPoint& p, unique) {
             result.append(p);
         }
         return result;
@@ -576,17 +576,17 @@ namespace kephal {
             }
             
             positions = simpleConfigurationsPositions(output, true);
-            foreach (QPoint point, positions) {
+            foreach (const QPoint& point, positions) {
                 FIX_ME("handle moving of output");
             }
         } else {
             positions = sameConfigurationsPositions(output, false);
-            foreach (QPoint point, positions) {
+            foreach (const QPoint& point, positions) {
                 FIX_ME("handle moving of output");
             }
             
             positions = simpleConfigurationsPositions(output, false);
-            foreach (QPoint point, positions) {
+            foreach (const QPoint& point, positions) {
                 FIX_ME("handle moving of output");
             }
         }
@@ -771,7 +771,7 @@ namespace kephal {
         
         if (cloneConfig) {
             QMap<int, QRect> layout = calcMatchingLayout(currentLayout, cloneConfig, cloneLayout, output);
-            foreach (QRect geom, layout) {
+            foreach (const QRect& geom, layout) {
                 positions.insertMulti(cloneConfig, geom.topLeft());
             }
         }
@@ -858,7 +858,7 @@ namespace kephal {
         
         if (cloneConfig) {
             QMap<int, QRect> layout = calcMatchingLayout(currentLayout, cloneConfig, cloneLayout, output);
-            foreach (QRect geom, layout) {
+            foreach (const QRect& geom, layout) {
                 positions.insertMulti(cloneConfig, geom.topLeft());
             }
         }
@@ -888,7 +888,7 @@ namespace kephal {
                 qDebug() << "output:" << i.value() << i.key()->id();
             }*/
             
-            foreach (QPoint p, possible) {
+            foreach (const QPoint& p, possible) {
                 noCloneLayout.insert(screenId, p);
                 //qDebug() << "layout:" << noCloneLayout;
                 QMap<int, QRect> layout = noCloneConfig->realLayout(noCloneLayout, outputIndexes);
@@ -940,7 +940,7 @@ namespace kephal {
             qDebug() << "output:" << i.value() << i.key()->id();
         }*/
         
-        foreach (QPoint p, possible) {
+        foreach (const QPoint& p, possible) {
             currentLayout.insert(screenId, p);
             //qDebug() << "layout:" << currentLayout;
             QMap<int, QRect> layout = m_activeConfiguration->realLayout(currentLayout, outputIndexes);

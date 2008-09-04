@@ -80,7 +80,7 @@ namespace kephal {
         m_valid = true;
         
         QStringList names = m_interface->configurations();
-        foreach (QString name, names) {
+        foreach (const QString& name, names) {
             m_configs.insert(name, new DBusConfiguration(this, name));
         }
         
@@ -112,7 +112,7 @@ namespace kephal {
     QList<Configuration *> DBusConfigurations::alternateConfigurations() {
         QStringList names = m_interface->alternateConfigurations();
         QList<Configuration *> result;
-        foreach (QString name, names) {
+        foreach (const QString& name, names) {
             if (m_configs.contains(name)) {
                 result << m_configs[name];
             }

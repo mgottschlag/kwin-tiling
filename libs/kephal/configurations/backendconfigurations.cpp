@@ -172,7 +172,7 @@ namespace kephal {
         QSet<QPoint> positions = clonePositions(screen);
         QMap<int, QPoint> layout;
         int i = 0;
-        foreach (QPoint p, positions) {
+        foreach (const QPoint& p, positions) {
             layout.insert(i, p);
             ++i;
         }
@@ -191,7 +191,7 @@ namespace kephal {
     
     QSet<QPoint> BackendConfiguration::positions() {
         QSet<QPoint> result;
-        foreach (QPoint p, layout()) {
+        foreach (const QPoint& p, layout()) {
             result << p;
         }
         return result;
@@ -214,7 +214,7 @@ namespace kephal {
         if (exclude) {
             excludePoint = layout[screen];
         }
-        foreach (QPoint p, layout) {
+        foreach (const QPoint& p, layout) {
             if (exclude && (p == excludePoint)) {
                 continue;
             }
@@ -222,7 +222,7 @@ namespace kephal {
             partitions[p]->insert(p);
         }
         
-        foreach (QPoint p, layout) {
+        foreach (const QPoint& p, layout) {
             if (exclude && (p == excludePoint)) {
                 continue;
             }
@@ -233,7 +233,7 @@ namespace kephal {
             if (partitions.contains(p + QPoint(0, 1))) {
                 connected.append(p + QPoint(0, 1));
             }
-            foreach (QPoint c, connected) {
+            foreach (const QPoint& c, connected) {
                 if (partitions[p] == partitions[c]) {
                     continue;
                 }
@@ -261,8 +261,8 @@ namespace kephal {
         QSet<QPoint> result;
         QList<QPoint> borders;
         borders << QPoint(1, 0) << QPoint(0, 1) << QPoint(-1, 0) << QPoint(0, -1);
-        foreach (QPoint p, screens) {
-            foreach (QPoint border, borders) {
+        foreach (const QPoint& p, screens) {
+            foreach (const QPoint& border, borders) {
                 if (! screens.contains(p + border)) {
                     result.insert(p + border);
                 }
