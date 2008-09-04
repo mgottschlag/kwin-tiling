@@ -30,6 +30,7 @@
 
 #include <KAction>
 #include <KActionCollection>
+#include <KCrash>
 #include <KDialog>
 #include <KAuthorized>
 #include <KGlobalAccel>
@@ -116,7 +117,7 @@ KRunnerApp* KRunnerApp::self()
 }
 
 KRunnerApp::KRunnerApp(Display *display, Qt::HANDLE visual, Qt::HANDLE colormap)
-    : RestartingApplication(display, visual, colormap),
+    : KUniqueApplication(display, visual, colormap),
       m_interface(0),
       m_tasks(0),
       m_startupId(NULL)
@@ -132,6 +133,7 @@ KRunnerApp::~KRunnerApp()
 void KRunnerApp::initialize()
 {
     setQuitOnLastWindowClosed(false);
+    KCrash::setFlags(KCrash::AutoRestart);
     initializeStartupNotification();
     m_interface = new Interface;
 
@@ -355,7 +357,7 @@ int KRunnerApp::newInstance()
         m_interface->display();
     }
 
-    return RestartingApplication::newInstance();
+    return KUniqueApplication::newInstance();
     //return 0;
 }
 

@@ -45,11 +45,10 @@ set(krunner_SRCS
    configdialog.cpp
    interface.cpp
    krunnerapp.cpp
-   restartingapplication.cpp
    main.cpp
    resultitem.cpp
-    resultscene.cpp
-    stackblur_shadows.cpp)
+   resultscene.cpp
+   stackblur_shadows.cpp)
 if(NOT WIN32)
 set(krunner_SRCS
     ${krunner_SRCS}

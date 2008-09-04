@@ -21,7 +21,7 @@
 
 #include <kworkspace.h>
 
-#include "restartingapplication.h"
+#include <kuniqueapplication.h>
 #ifdef Q_WS_X11
 #include "saverengine.h"
 #endif
@@ -31,7 +31,7 @@ class KDialog;
 class Interface;
 class StartupId;
 
-class KRunnerApp : public RestartingApplication
+class KRunnerApp : public KUniqueApplication
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.kde.krunner.App")
