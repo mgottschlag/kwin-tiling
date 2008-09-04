@@ -26,6 +26,7 @@
 #include <QObject>
 #include <QRect>
 
+#include <kephal_export.h>
 
 namespace kephal {
 
@@ -39,7 +40,7 @@ namespace kephal {
      * Screen and is completely contained within that
      * Screen. No 2 Screens overlap each other.
      */
-    class Screen : public QObject {
+    class KEPHAL_EXPORT Screen : public QObject {
         Q_OBJECT
         public:
             Screen(QObject * parent = 0);
@@ -118,7 +119,7 @@ namespace kephal {
      * Use: Screens::instance() for the currently
      * active instance.
      */
-    class Screens : public QObject {
+    class KEPHAL_EXPORT Screens : public QObject {
         Q_OBJECT
         public:
             /**

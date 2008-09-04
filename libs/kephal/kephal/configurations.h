@@ -27,7 +27,7 @@
 #include <QRect>
 
 #include "kephal/kephal.h"
-
+#include "kephal_export.h"
 
 namespace kephal {
 
@@ -39,7 +39,7 @@ namespace kephal {
      * control which Output belongs to which Screen or
      * is inactive.
      */
-    class Configuration : public QObject {
+    class KEPHAL_EXPORT Configuration : public QObject {
         Q_OBJECT
         public:
             Configuration(QObject * parent);
@@ -94,7 +94,7 @@ namespace kephal {
      * Use: Configurations::instance() to obtain the currently
      * active instance.
      */
-    class Configurations : public QObject {
+    class KEPHAL_EXPORT Configurations : public QObject {
         Q_OBJECT
         public:
             /**

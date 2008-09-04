@@ -28,7 +28,7 @@
 #include <QMap>
 
 #include "kephal.h"
-
+#include "kephal_export.h"
 
 namespace kephal {
 
@@ -42,7 +42,7 @@ namespace kephal {
      * This is most important for changing any
      * settings of the current setup.
      */
-    class Output : public QObject {
+    class KEPHAL_EXPORT Output : public QObject {
         Q_OBJECT
         public:
             Output(QObject * parent);
@@ -223,7 +223,7 @@ namespace kephal {
      * Use: Outputs::instance() to obtain the currently
      * active instance.
      */
-    class Outputs : public QObject {
+    class KEPHAL_EXPORT Outputs : public QObject {
         Q_OBJECT
         public:
             /**
