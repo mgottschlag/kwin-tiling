@@ -26,6 +26,7 @@
 #include "backgrounddelegate.h"
 #include "ksmserver_interface.h"
 
+
 Image::Image(QObject *parent, const QVariantList &args)
 : Plasma::Wallpaper(parent, args)
 , m_dialog(0)
@@ -138,6 +139,7 @@ QWidget* Image::createConfigurationInterface(QWidget* parent)
             m_uiSlideshow.m_dirlist->addItem(dir);
         }
         m_uiSlideshow.m_dirlist->setCurrentRow(0);
+        updateDirs();
         m_uiSlideshow.m_addDir->setIcon(KIcon("list-add"));
         connect(m_uiSlideshow.m_addDir, SIGNAL(clicked()), this, SLOT(slotAddDir()));
         m_uiSlideshow.m_removeDir->setIcon(KIcon("list-remove"));
@@ -246,12 +248,33 @@ void Image::slotRemoveDir()
 
 void Image::updateDirs()
 {
-    m_uiSlideshow.m_removeDir->setEnabled(m_uiSlideshow.m_dirlist->currentRow() != -1);
-
     m_dirs.clear();
     for (int i = 0; i < m_uiSlideshow.m_dirlist->count(); i++) {
         m_dirs.append(m_uiSlideshow.m_dirlist->item(i)->text());
     }
+
+    if (m_uiSlideshow.m_dirlist->count() == 0) {
+        m_uiSlideshow.m_dirlist->hide();
+    } else {
+        const int itemHeight = m_uiSlideshow.m_dirlist->visualItemRect(m_uiSlideshow.m_dirlist->item(0)).height();
+        const int vMargin = m_uiSlideshow.m_dirlist->height() - m_uiSlideshow.m_dirlist->viewport()->height();
+
+        if (m_uiSlideshow.m_dirlist->count() <= 6) {
+            m_uiSlideshow.m_dirlist->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+            m_uiSlideshow.m_dirlist->setFixedHeight(itemHeight * m_uiSlideshow.m_dirlist->count() + vMargin);
+        } else {
+            m_uiSlideshow.m_dirlist->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        }
+
+        if (!m_uiSlideshow.m_dirlist->isVisible()) {
+            m_uiSlideshow.m_dirlist->setCurrentRow(0);
+        }
+
+        m_uiSlideshow.m_dirlist->show();
+        m_uiSlideshow.gridLayout->invalidate();
+    }
+
+    m_uiSlideshow.m_removeDir->setEnabled(m_uiSlideshow.m_dirlist->currentRow() != -1);
 }
 
 void Image::setSingleImage()

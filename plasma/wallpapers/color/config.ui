@@ -17,7 +17,7 @@
     <widget class="QLabel" name="label_5" >
      <property name="minimumSize" >
       <size>
-       <width>75</width>
+       <width>125</width>
        <height>0</height>
       </size>
      </property>
@@ -39,12 +39,6 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
-     </property>
-     <property name="minimumSize" >
-      <size>
-       <width>200</width>
-       <height>30</height>
-      </size>
      </property>
      <property name="color" >
       <color>
@@ -83,7 +77,7 @@
      <property name="sizeHint" stdset="0" >
       <size>
        <width>338</width>
-       <height>199</height>
+       <height>30</height>
       </size>
      </property>
     </spacer>

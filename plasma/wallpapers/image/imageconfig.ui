@@ -5,11 +5,11 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>412</width>
-    <height>253</height>
+    <width>605</width>
+    <height>230</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
+  <layout class="QGridLayout" name="gridLayout_2" >
    <item row="0" column="0" >
     <widget class="QLabel" name="label" >
      <property name="minimumSize" >
@@ -29,7 +29,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1" colspan="2" >
+   <item row="0" column="1" >
     <widget class="QComboBox" name="m_view" >
      <property name="sizePolicy" >
       <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -39,7 +39,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="3" >
+   <item row="0" column="2" >
     <widget class="QToolButton" name="m_pictureUrlButton" >
      <property name="toolTip" >
       <string>Browse</string>
@@ -49,11 +49,8 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1" colspan="3" >
-    <layout class="QFormLayout" name="formLayout" >
-     <property name="labelAlignment" >
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
+   <item row="1" column="1" colspan="2" >
+    <layout class="QGridLayout" name="gridLayout" >
      <item row="0" column="0" >
       <widget class="QLabel" name="m_authorLabel" >
        <property name="text" >
@@ -132,7 +129,7 @@
     <widget class="QLabel" name="label_4" >
      <property name="minimumSize" >
       <size>
-       <width>75</width>
+       <width>125</width>
        <height>0</height>
       </size>
      </property>
@@ -147,15 +144,32 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1" colspan="3" >
-    <widget class="QComboBox" name="m_resizeMethod" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
+   <item row="2" column="1" colspan="2" >
+    <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <widget class="QComboBox" name="m_resizeMethod" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="spacer_2" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>187</width>
+         <height>17</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
    <item row="3" column="0" >
     <widget class="QLabel" name="label_5" >
@@ -170,51 +184,32 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1" >
-    <widget class="KColorButton" name="m_color" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize" >
-      <size>
-       <width>150</width>
-       <height>30</height>
-      </size>
-     </property>
-     <property name="color" >
-      <color>
-       <red>70</red>
-       <green>90</green>
-       <blue>130</blue>
-      </color>
-     </property>
-     <property name="defaultColor" >
-      <color>
-       <red>70</red>
-       <green>90</green>
-       <blue>130</blue>
-      </color>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2" colspan="2" >
-    <spacer name="spacer" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0" >
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="4" column="0" colspan="4" >
-    <layout class="QHBoxLayout" name="horizontalLayout" >
+   <item row="3" column="1" colspan="2" >
+    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <item>
+      <widget class="KColorButton" name="m_color" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="color" >
+        <color>
+         <red>70</red>
+         <green>90</green>
+         <blue>130</blue>
+        </color>
+       </property>
+       <property name="defaultColor" >
+        <color>
+         <red>70</red>
+         <green>90</green>
+         <blue>130</blue>
+        </color>
+       </property>
+      </widget>
+     </item>
      <item>
       <spacer name="spacer" >
        <property name="orientation" >
@@ -222,8 +217,25 @@
        </property>
        <property name="sizeHint" stdset="0" >
         <size>
-         <width>78</width>
-         <height>26</height>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="4" column="1" colspan="2" >
+    <layout class="QHBoxLayout" name="horizontalLayout_3" >
+     <item>
+      <spacer name="horizontalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
         </size>
        </property>
       </spacer>
@@ -234,13 +246,13 @@
         <string>Download new wallpapers</string>
        </property>
        <property name="text" >
-        <string>New Wallpaper...</string>
+        <string>Get new wallpapers...</string>
        </property>
       </widget>
      </item>
     </layout>
    </item>
-   <item row="5" column="0" colspan="4" >
+   <item row="5" column="1" >
     <spacer name="verticalSpacer_2" >
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
@@ -248,7 +260,7 @@
      <property name="sizeHint" stdset="0" >
       <size>
        <width>13</width>
-       <height>81</height>
+       <height>5</height>
       </size>
      </property>
     </spacer>
