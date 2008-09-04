@@ -49,5 +49,6 @@ INSTALL (FILES
         ../kephal/outputs.h
         ../kephal/kephal.h
         ../kephal/configurations.h
+        ../kephal/kephal_export.h
         DESTINATION include/kephal)
 INSTALL (FILES FindKephal.cmake DESTINATION share/apps/cmake/modules)
