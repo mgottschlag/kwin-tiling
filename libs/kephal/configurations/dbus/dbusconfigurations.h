@@ -77,7 +77,7 @@ namespace kephal {
             org::kde::Kephal::Configurations * interface();
             
         private Q_SLOTS:
-            void statusChangedSlot();
+            //void statusChangedSlot();
             void configurationActivatedSlot(QString name);
             
         private:
