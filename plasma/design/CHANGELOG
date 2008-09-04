@@ -77,6 +77,11 @@ Other Shells
 ------------
 * NEW: plasma-mid, a shell for mobile internet devices
 
+Tools
+-----
+* Plasma Engine Explorer
+    * Remove/update sources via context menu
+    * NEW: Plasma::Service interaction UI, using DataEngine::serviceForSource
 
 Plugins/Addons
 --------------
