@@ -440,6 +440,10 @@ void UKMETIon::parseWeatherChannel(const QString& source, WeatherData& data, QXm
         if (xml.isStartElement()) {
             if (xml.name() == "title") {
                 data.stationName = xml.readElementText().split("Observations for")[1].trimmed();
+
+                data.stationName.replace("United Kingdom", "UK");
+                data.stationName.replace("United States of America", "USA");
+
             } else if (xml.name() == "item") {
                 parseWeatherObservation(source, data, xml);
             } else {
@@ -703,16 +707,15 @@ void UKMETIon::updateWeather(const QString& source)
     // 5 Day forecast info
     forecastList = forecasts(source);
 
-    QString windSpeed;
-    QString windUnit;
+    // Set number of forecasts per day/night supported
+    setData(weatherSource, QString("Total Weather Days"), d->m_weatherData[source].forecasts.size());
+ 
     foreach(const QString &forecastItem, forecastList) {
         fieldList = forecastItem.split('|');
-        windSpeed = fieldList[4];
-        windUnit = QString(WeatherUtils::Miles);
 
-        setData(weatherSource, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6|%7") \
+        setData(weatherSource, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5") \
                 .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[2]).arg(fieldList[3]) \
-                .arg(windSpeed).arg(windUnit).arg(fieldList[5]));
+                .arg(fieldList[4]));
         i++;
     }
 
@@ -823,13 +826,14 @@ QVector<QString> UKMETIon::forecasts(const QString& source)
             d->m_weatherData[source].forecasts[i]->period.replace("Friday", "Fri");
         }
 
-        forecastData.append(QString("%1|%2|%3|%4|%5|%6") \
+        forecastData.append(QString("%1|%2|%3|%4|%5") \
                             .arg(d->m_weatherData[source].forecasts[i]->period) \
                             .arg(d->m_weatherData[source].forecasts[i]->summary) \
                             .arg(d->m_weatherData[source].forecasts[i]->tempHigh) \
                             .arg(d->m_weatherData[source].forecasts[i]->tempLow) \
-                            .arg(d->m_weatherData[source].forecasts[i]->windSpeed) \
-                            .arg(d->m_weatherData[source].forecasts[i]->windDirection));
+                            .arg("N/U"));
+                            //.arg(d->m_weatherData[source].forecasts[i]->windSpeed)
+                            //arg(d->m_weatherData[source].forecasts[i]->windDirection));
     }
 
     return forecastData;

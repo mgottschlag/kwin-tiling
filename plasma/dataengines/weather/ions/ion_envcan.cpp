@@ -112,15 +112,12 @@ QStringList EnvCanadaIon::validate(const QString& source) const
 // Get a specific Ion's data
 bool EnvCanadaIon::updateIonSource(const QString& source)
 {
-    kDebug() << "updateIonSource() SOURCE: " << source;
     // We expect the applet to send the source in the following tokenization:
     // ionname|validate|place_name - Triggers validation of place
     // ionname|weather|place_name - Triggers receiving weather of place
 
     QStringList sourceAction = source.split('|');
     if (sourceAction[1] == QString("validate")) {
-        kDebug() << "Initiate Validating of place: " << sourceAction[2];
-
         QStringList result = validate(QString("%1|%2").arg(sourceAction[0]).arg(sourceAction[2]));
 
         if (result.size() == 1) {
@@ -164,11 +161,7 @@ void EnvCanadaIon::getXMLData(const QString& source)
     // Demunge source name for key only.
     QString dataKey = source;
     dataKey.replace("|weather", "");
-    kDebug() << "DATA KEY: " << dataKey;
-
     url = "http://dd.weatheroffice.ec.gc.ca/EC_sites/xml/" + d->m_place[dataKey].territoryName + "/" + d->m_place[dataKey].cityCode + "_e.xml";
-
-    kDebug() << "URL Location: " << url.url();
 
     d->m_job = KIO::get(url.url(), KIO::Reload, KIO::HideProgressInfo);
     d->m_jobXml.insert(d->m_job, new QXmlStreamReader);
@@ -207,7 +200,6 @@ void EnvCanadaIon::slotDataArrived(KIO::Job *job, const QByteArray &data)
 void EnvCanadaIon::slotJobFinished(KJob *job)
 {
     // Dual use method, if we're fetching location data to parse we need to do this first
-    kDebug() << "WE FINISHED JOB!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
     setData(d->m_jobList[job], Data());
     readXMLData(d->m_jobList[job], *d->m_jobXml[job]);
     d->m_jobList.remove(job);
@@ -220,14 +212,12 @@ void EnvCanadaIon::setup_slotJobFinished(KJob *job)
     Q_UNUSED(job)
     readXMLSetup();
     setInitialized(true);
-    kDebug() << "We're INITIALIZED... GO!";
 }
 
 // Parse the city list and store into a QMap
 bool EnvCanadaIon::readXMLSetup()
 {
     QString tmp;
-    kDebug() << "readXMLSetup()";
     while (!d->m_xmlSetup.atEnd()) {
         d->m_xmlSetup.readNext();
 
@@ -252,7 +242,6 @@ bool EnvCanadaIon::readXMLSetup()
                 d->m_place[tmp].cityName = d->m_cityName;
 
                 // Set the string list, we will use for the applet to display the available cities.
-                kDebug() << "KEY NAME: " << tmp;
                 d->m_locations[tmp] = tmp;
             }
         }
@@ -886,11 +875,8 @@ void EnvCanadaIon::updateWeather(const QString& source)
     QVector<QString> forecastList;
     int i = 0;
 
-    kDebug() << "updateWeather() BEGIN";
     setData(source, "Country", country(source));
-    kDebug() << "SOURCE = " << source;
     setData(source, "Place", QString("%1, %2").arg(city(source)).arg(territory(source)));
-    kDebug() << "KEEP GOING" << source;
     setData(source, "Region", region(source));
     setData(source, "Station", station(source));
 
@@ -961,9 +947,9 @@ void EnvCanadaIon::updateWeather(const QString& source)
     }
 
     dataFields = warnings(source);
-    // Check if we have warnings or watches
 
-    for (int i = 0; i < EnvCanadaIon::MAX_WARNINGS; i++) {
+    // Check if we have warnings or watches
+    for (int i = 0; i < d->m_weatherData[source].warnings.size(); i++) {
         if (!dataFields[QString("watch %1").arg(i)].isEmpty()) {
             fieldList = dataFields[QString("watch %1").arg(i)].split('|');
             setData(source, QString("Watch Priority %1").arg(i), fieldList[0]);
@@ -981,16 +967,21 @@ void EnvCanadaIon::updateWeather(const QString& source)
     }
 
     forecastList = forecasts(source);
+
+    // Set number of forecasts per day/night supported
+    setData(source, QString("Total Weather Days"), d->m_weatherData[source].forecasts.size());
+
     foreach(const QString &forecastItem, forecastList) {
         fieldList = forecastItem.split('|');
 
-        // TODO: We don't convert the wind format (Knots, meteres per second, bft) for the Long Forecast yet. These are not used in the applet (for now).
         setData(source, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5") \
-                .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[3]).arg(fieldList[4]).arg(fieldList[5]));
+                .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[2]).arg(fieldList[3]).arg(fieldList[4]));
 
+/*
         setData(source, QString("Long Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6|%7|%8") \
                 .arg(fieldList[0]).arg(fieldList[2]).arg(fieldList[3]).arg(fieldList[4]).arg(fieldList[6]) \
                 .arg(fieldList[7]).arg(fieldList[8]).arg(fieldList[9]));
+*/
         i++;
     }
 
@@ -1026,7 +1017,6 @@ void EnvCanadaIon::updateWeather(const QString& source)
     setData(source, "Record Snowfall Unit", dataFields["recordSnowUnit"]);
 
     setData(source, "Credit", "Meteorological data is provided by Environment Canada");
-    kDebug() << "updateWeather FINISH Send it out!";
 }
 
 QString EnvCanadaIon::country(const QString& source)
@@ -1169,7 +1159,7 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
     for (int i = 0; i < d->m_weatherData[source].forecasts.size(); ++i) {
         // We need to shortform the day/night strings.
         if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("night")) {
-            d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("night", "ngt");
+            d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("night", "nt");
         }
         
         if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("Saturday")) {
@@ -1199,17 +1189,12 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
             d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Friday", "Fri");
         }
 
-        forecastData.append(QString("%1|%2|%3|%4|%5|%6|%7|%8|%9|%10") \
-                            .arg(d->m_weatherData[source].forecasts[i]->forecastPeriod) \
-                            .arg(d->m_weatherData[source].forecasts[i]->shortForecast) \
-                            .arg(d->m_weatherData[source].forecasts[i]->forecastSummary) \
-                            .arg(d->m_weatherData[source].forecasts[i]->forecastTempHigh) \
-                            .arg(d->m_weatherData[source].forecasts[i]->forecastTempLow) \
-                            .arg(d->m_weatherData[source].forecasts[i]->popPrecent) \
-                            .arg(d->m_weatherData[source].forecasts[i]->windForecast) \
-                            .arg(d->m_weatherData[source].forecasts[i]->precipForecast) \
-                            .arg(d->m_weatherData[source].forecasts[i]->precipType) \
-                            .arg(d->m_weatherData[source].forecasts[i]->precipTotalExpected));
+        forecastData.append(QString("%1|%2|%3|%4|%5") \
+                             .arg(d->m_weatherData[source].forecasts[i]->forecastPeriod) \
+                             .arg(d->m_weatherData[source].forecasts[i]->shortForecast) \
+                             .arg(d->m_weatherData[source].forecasts[i]->forecastTempHigh) \
+                             .arg(d->m_weatherData[source].forecasts[i]->forecastTempLow) \
+                             .arg(d->m_weatherData[source].forecasts[i]->popPrecent));
     }
     return forecastData;
 }

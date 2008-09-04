@@ -133,8 +133,6 @@ public:
     void setTimezoneFormat(const QString& tz);
     void updateWeather(const QString& source);
 
-    static const int MAX_WARNINGS = 4;
-
 protected:
     void init();  // Setup the city location, fetching the correct URL name.
 

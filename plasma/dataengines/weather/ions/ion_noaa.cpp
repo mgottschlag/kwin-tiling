@@ -448,6 +448,9 @@ void NOAAIon::updateWeather(const QString& source)
 
     setData(source, "Humidity", humidity(source));
 
+    // Set number of forecasts per day/night supported, none for this ion right now
+    setData(source, QString("Total Weather Days"), 0);
+    
     dataFields = wind(source);
     setData(source, "Wind Speed", dataFields["windSpeed"]);
 
