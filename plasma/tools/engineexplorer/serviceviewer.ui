@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>405</width>
+    <height>275</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -75,6 +75,13 @@
        <string>Value</string>
       </property>
      </column>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="5" >
+    <widget class="QLabel" name="m_operationStatus" >
+     <property name="text" >
+      <string>Operation count</string>
+     </property>
     </widget>
    </item>
   </layout>

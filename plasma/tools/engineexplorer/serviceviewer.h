@@ -38,6 +38,9 @@ public:
     ServiceViewer(Plasma::DataEngine *engine, const QString &m_source, QWidget *parent = 0);
     ~ServiceViewer();
 
+private:
+    void updateJobCount(int numberOfJobs);
+
 private slots:
     void updateOperations();
     void startOperation();
@@ -49,6 +52,7 @@ private:
     Plasma::DataEngine *m_engine;
     Plasma::Service *m_service;
     QString m_source;
+    int m_operationCount;
 };
 
 #endif

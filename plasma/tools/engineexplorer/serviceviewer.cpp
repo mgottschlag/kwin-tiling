@@ -20,6 +20,7 @@
 #include "serviceviewer.h"
 
 #include <KDebug>
+#include <KMessageBox>
 #include <KStringHandler>
 
 #include "plasma/dataengine.h"
@@ -29,14 +30,15 @@
 ServiceViewer::ServiceViewer(Plasma::DataEngine *engine, const QString &source, QWidget *parent)
     : KDialog(parent),
       m_engine(engine),
+      m_service(0),
       m_source(source),
-      m_service(0)
+      m_operationCount(0)
 {
     setAttribute(Qt::WA_DeleteOnClose);
-    setWindowTitle(i18n("Service Viewer"));
     QWidget* mainWidget = new QWidget(this);
     setMainWidget(mainWidget);
     setupUi(mainWidget);
+    m_operationStatus->hide();
 
     setButtons(KDialog::Close | KDialog::User1);
     setButtonText(KDialog::User1, i18n("Start Operation"));
@@ -60,6 +62,8 @@ ServiceViewer::ServiceViewer(Plasma::DataEngine *engine, const QString &source, 
         connect(m_engine, SIGNAL(destroyed(QObject*)), this, SLOT(engineDestroyed()));
     }
 
+    setWindowTitle(i18n("%1 Service Explorer", serviceName));
+
     QString title = i18n("DataEngine: <b>%1</b>; Source: <b>%2</b>; Service <b>%3</b>", engineName, m_source, serviceName);
     m_title->setText(title);
     m_operations->setFocus();
@@ -67,7 +71,6 @@ ServiceViewer::ServiceViewer(Plasma::DataEngine *engine, const QString &source, 
 
 ServiceViewer::~ServiceViewer()
 {
-    kDebug() << "service viewer destroy!";
     delete m_service;
     m_engine = 0;
 }
@@ -86,7 +89,6 @@ void ServiceViewer::updateOperations()
     if (m_operations) {
         QStringList operations = m_service->operationNames();
 
-        kDebug() << "updating operations" << operations;
         if (!operations.isEmpty()) {
             enable = true;
 
@@ -122,8 +124,8 @@ void ServiceViewer::startOperation()
         desc.writeEntry(key, value);
     }
 
+    updateJobCount(1);
     m_service->startOperationCall(desc);
-    kDebug() << "start operation" << operation;
 }
 
 void ServiceViewer::operationSelected(const QString &operation)
@@ -159,6 +161,27 @@ void ServiceViewer::operationResult(Plasma::ServiceJob *job)
         return;
     }
 
+    updateJobCount(-1);
+
+    if (job->error()) {
+        KMessageBox::information(this,
+                                 i18n("%1 operation with destination %2 failed. "
+                                      "The error was:<p><b>%3</b>", job->operationName(), job->destination(),
+                                      QString::number(job->error()) + ": " + job->errorString()),
+                                 i18n("Operation Result"));
+    } else {
+        QString result = job->result().toString();
+        if (result.isEmpty()) {
+            result = i18n("No response from job!");
+        }
+
+        KMessageBox::information(this,
+                                 i18n("%1 operation with destination %2 returned successfully. "
+                                      "The result was:<p><b>%3</b>", job->operationName(),
+                                      job->destination(), result),
+                                 i18n("Operation Result"));
+    }
+
     kDebug() << "operation results are in!";
 }
 
@@ -170,6 +193,18 @@ void ServiceViewer::engineDestroyed()
     deleteLater();
 }
 
+void ServiceViewer::updateJobCount(int numberOfJobs)
+{
+    m_operationCount += numberOfJobs;
+
+    if (m_operationCount < 1) {
+        m_operationCount = 0;
+        m_operationStatus->hide();
+    } else {
+        m_operationStatus->setText(i18nc("One active operation ...", "%1 operations active ...", m_operationCount));
+        m_operationStatus->show();
+    }
+}
 
 #include "serviceviewer.moc"
 
