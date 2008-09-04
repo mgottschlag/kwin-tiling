@@ -156,7 +156,7 @@ namespace kephal {
         m_markedConfiguration(0),
         m_currentOutputs(0),
         m_currentOutputsKnown(false),
-        m_confirmTimer(new QTimer()),
+        m_confirmTimer(new QTimer(this)),
         m_confirmLeft(0),
         m_awaitingConfirm(false)
     {

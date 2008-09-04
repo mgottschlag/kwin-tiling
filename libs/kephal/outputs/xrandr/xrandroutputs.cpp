@@ -136,7 +136,7 @@ namespace kephal {
             
             qDebug() << "vendor code:" << m_vendor;
             
-            delete vendor;
+            delete[] vendor;
             
             /**
              * parse the 16bit product id
