@@ -18,7 +18,7 @@
 
 #include "mpris.h"
 #include "mpris_p.h"
-#include "mprisplayer.h"
+#include <mprisplayer.h>
 
 #include <QtDBus>
 #include <QFile>

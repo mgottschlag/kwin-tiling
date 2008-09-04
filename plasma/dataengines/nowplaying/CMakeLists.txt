@@ -16,15 +16,13 @@ set(nowplaying_engine_SRCS
 
 QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS playerinterface/org.kde.juk.player.xml juk_interface)
 
-# For Monday:
-#set(mpris_player_desc playerinterface/mpris/org.freedesktop.MediaPlayer.player.xml)
-#set_source_files_properties(${mpris_player_desc} PROPERTIES
-#   NO_NAMESPACE true
-#   INCLUDE "playerinterface/mpris/mprisdbustypes.h"
-#   CLASSNAME MprisPlayer
-#)
-#QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS ${mpris_player_desc} mprisplayer)
-set(nowplaying_engine_SRCS ${nowplaying_engine_SRCS} playerinterface/mpris/mprisplayer.cpp)
+set(mpris_player_desc playerinterface/mpris/org.freedesktop.MediaPlayer.player.xml)
+set_source_files_properties(${mpris_player_desc} PROPERTIES
+   NO_NAMESPACE true
+   INCLUDE "playerinterface/mpris/mprisdbustypes.h"
+   CLASSNAME MprisPlayer
+)
+QT4_ADD_DBUS_INTERFACE(nowplaying_engine_SRCS ${mpris_player_desc} mprisplayer)
 
 macro_optional_find_package(GLIB2)
 if(GLIB2_FOUND)
