@@ -1,27 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Network Engine
-Name[es]=Motor de red
-Name[et]=Võrgumootor
-Name[ga]=Inneall Líonra
-Name[gl]=Motor de rede
-Name[nds]=Nettwark-Karn
-Name[pt]=Motor de Rede
-Name[pt_BR]=Motor de Rede
-Name[sv]=Nätverksgränssnitt
-Name[uk]=Мережевий рушій
-Name[zh_TW]=網路引擎
 Comment=Network information for Plasmoids
-Comment[es]=Información de la red para los plasmoides
-Comment[et]=Võrguinfo plasmoididele
-Comment[ga]=Faisnéis líonra le haghaidh Plasmoids
-Comment[gl]=Información da rede para Plasmoides
-Comment[nds]=Nettwark-Informatschonen för Plasma-Lüttprogrammen
-Comment[pt]=Informação de rede para os Plasmóides
-Comment[pt_BR]=Informação de rede para os Plasmóides
-Comment[sv]=Nätverksinformation för Plasmoider
-Comment[uk]=Інформація мережі для плазмоїдів
-Comment[zh_TW]=網路資訊的 Plasma 元件
 ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=network-workgroup
