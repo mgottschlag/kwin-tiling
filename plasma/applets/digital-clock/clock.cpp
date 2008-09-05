@@ -73,7 +73,6 @@ void Clock::init()
     Plasma::ToolTipManager::self()->registerWidget(this);
 
     KConfigGroup cg = config();
-    setCurrentTimezone(cg.readEntry("currentTimezone", localTimezone()));
 
     m_showTimezone = cg.readEntry("showTimezone", !isLocalTimezone());
 
@@ -202,12 +201,11 @@ void Clock::createClockConfigurationInterface(KConfigDialog *parent)
 }
 
 void Clock::clockConfigAccepted()
-{  
+{
     KConfigGroup cg = config();
 
     m_showTimezone = ui.showTimezone->isChecked();
     cg.writeEntry("showTimezone", m_showTimezone);
-    cg.writeEntry("currentTimezone", currentTimezone());
 
     m_plainClockFont = ui.plainClockFont->currentFont();
     //We need this to happen before we disconnect/reconnect sources to ensure
@@ -242,7 +240,7 @@ void Clock::clockConfigAccepted()
     cg.writeEntry("plainClockFont", m_plainClockFont);
     cg.writeEntry("useCustomColor", m_useCustomColor);
     cg.writeEntry("plainClockColor", m_plainClockColor);
-    
+
     constraintsEvent(Plasma::SizeConstraint);
     update();
     emit sizeHintChanged(Qt::PreferredSize);
