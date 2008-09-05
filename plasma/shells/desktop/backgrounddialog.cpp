@@ -440,66 +440,64 @@ void BackgroundDialog::getNewThemes()
 
 void BackgroundDialog::reloadConfig()
 {
+    m_containment = m_view->containment();
+    int containmentIndex = 0;
+    int wallpaperIndex = 0;
+
     disconnect(m_mode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
     KPluginInfo::List plugins = Plasma::Containment::listContainments();
     m_containmentModel->clear();
+    int i = 0;
     foreach (KPluginInfo info, plugins) {
         QStandardItem* item = new QStandardItem(KIcon(info.icon()), info.name());
         item->setData(info.comment(), AppletDelegate::DescriptionRole);
         item->setData(info.pluginName(), AppletDelegate::PluginNameRole);
         m_containmentModel->appendRow(item);
+        if (info.pluginName() == m_containment->pluginName()) {
+            containmentIndex = i;
+        }
+        ++i;
     }
 
     // Load wallpaper plugins
+    QString currentPlugin = m_containment->wallpaper()->pluginName();
+    QString currentMode = m_containment->wallpaper()->renderingMode().name();
     plugins = Plasma::Wallpaper::listWallpaperInfo();
     m_mode->clear();
+    i = 0;
     foreach (KPluginInfo info, plugins) {
+        bool matches = info.pluginName() == currentPlugin;
         const QList<KServiceAction>& modes = info.service()->actions();
         if (modes.count() > 0) {
             foreach (const KServiceAction& mode, modes) {
                 m_mode->addItem(KIcon(mode.icon()), mode.text(),
                                 QVariant::fromValue(WallpaperInfo(info.pluginName(), mode.name())));
+                if (matches && mode.name() == currentMode) {
+                    wallpaperIndex = i;
+                }
+                ++i;
             }
         } else {
             m_mode->addItem(KIcon(info.icon()), info.name(),
                             QVariant::fromValue(WallpaperInfo(info.pluginName(), QString())));
+            if (matches) {
+                wallpaperIndex = i;
+            }
+            ++i;
         }
     }
-
-    m_containment = m_view->containment();
 
     // Containment
-    int index = 0;
-    for (int i = 0; i < m_containmentModel->rowCount(); ++i) {
-        if (m_containmentModel->item(i)->data(AppletDelegate::PluginNameRole).toString() ==
-            m_containment->pluginName()) {
-            index = i;
-            break;
-        }
-    }
-    m_containmentComboBox->setCurrentIndex(index);
-
+    m_containmentComboBox->setCurrentIndex(containmentIndex);
     m_activityName->setText(m_containment->activity());
 
     // Theme
     m_theme->setCurrentIndex(m_themeModel->indexOf(Plasma::Theme::defaultTheme()->themeName()));
 
     // Wallpaper
-    index = 0;
-    if (m_containment->wallpaper()) {
-        QString currentPlugin = m_containment->wallpaper()->pluginName();
-        QString currentMode = m_containment->wallpaper()->renderingMode().name();
+    m_mode->setCurrentIndex(wallpaperIndex);
+    changeBackgroundMode(wallpaperIndex);
 
-        for (int i = 0; i < m_mode->count(); ++i) {
-            WallpaperInfo wallpaper = m_mode->itemData(i).value<WallpaperInfo>();
-            if (wallpaper.first == currentPlugin && wallpaper.second == currentMode) {
-                index = i;
-                break;
-            }
-        }
-    }
-    m_mode->setCurrentIndex(index);
-    changeBackgroundMode(index);
     connect(m_mode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
 }
 
