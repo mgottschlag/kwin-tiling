@@ -407,29 +407,6 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::View* view, QWidget
     m_containmentModel = new QStandardItemModel(this);
     m_containmentComboBox->setModel(m_containmentModel);
     m_containmentComboBox->setItemDelegate(new AppletDelegate());
-    KPluginInfo::List plugins = Plasma::Containment::listContainments();
-    foreach (KPluginInfo info, plugins) {
-        QStandardItem* item = new QStandardItem(KIcon(info.icon()), info.name());
-        item->setData(info.comment(), AppletDelegate::DescriptionRole);
-        item->setData(info.pluginName(), AppletDelegate::PluginNameRole);
-        m_containmentModel->appendRow(item);
-    }
-
-    // Load wallpaper plugins
-    plugins = Plasma::Wallpaper::listWallpaperInfo();
-    foreach (KPluginInfo info, plugins) {
-        const QList<KServiceAction>& modes = info.service()->actions();
-        if (modes.count() > 0) {
-            foreach (const KServiceAction& mode, modes) {
-                m_mode->addItem(KIcon(mode.icon()), mode.text(),
-                                QVariant::fromValue(WallpaperInfo(info.pluginName(), mode.name())));
-            }
-        } else {
-            m_mode->addItem(KIcon(info.icon()), info.name(),
-                            QVariant::fromValue(WallpaperInfo(info.pluginName(), QString())));
-        }
-    }
-    connect(m_mode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
 
     setMainWidget(main);
     reloadConfig();
@@ -463,6 +440,32 @@ void BackgroundDialog::getNewThemes()
 
 void BackgroundDialog::reloadConfig()
 {
+    disconnect(m_mode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
+    KPluginInfo::List plugins = Plasma::Containment::listContainments();
+    m_containmentModel->clear();
+    foreach (KPluginInfo info, plugins) {
+        QStandardItem* item = new QStandardItem(KIcon(info.icon()), info.name());
+        item->setData(info.comment(), AppletDelegate::DescriptionRole);
+        item->setData(info.pluginName(), AppletDelegate::PluginNameRole);
+        m_containmentModel->appendRow(item);
+    }
+
+    // Load wallpaper plugins
+    plugins = Plasma::Wallpaper::listWallpaperInfo();
+    m_mode->clear();
+    foreach (KPluginInfo info, plugins) {
+        const QList<KServiceAction>& modes = info.service()->actions();
+        if (modes.count() > 0) {
+            foreach (const KServiceAction& mode, modes) {
+                m_mode->addItem(KIcon(mode.icon()), mode.text(),
+                                QVariant::fromValue(WallpaperInfo(info.pluginName(), mode.name())));
+            }
+        } else {
+            m_mode->addItem(KIcon(info.icon()), info.name(),
+                            QVariant::fromValue(WallpaperInfo(info.pluginName(), QString())));
+        }
+    }
+
     m_containment = m_view->containment();
 
     // Containment
@@ -497,6 +500,7 @@ void BackgroundDialog::reloadConfig()
     }
     m_mode->setCurrentIndex(index);
     changeBackgroundMode(index);
+    connect(m_mode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
 }
 
 void BackgroundDialog::changeBackgroundMode(int mode)
