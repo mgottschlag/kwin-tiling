@@ -736,17 +736,38 @@ void PanelView::unhide()
 void PanelView::leaveEvent(QEvent *event)
 {
     if (m_panelMode == AutoHide && !m_editting) {
-        QTimeLine * tl = timeLine();
-        tl->setDirection(QTimeLine::Forward);
+        // try not to hide if we have an associated popup or window about
+        bool havePopup = QApplication::activePopupWidget() != 0;
 
-        // with composite, we can quite do some nice animations with transparent
-        // backgrounds; without it we can't so we just show/hide
-        if (PlasmaApp::hasComposite()) {
-            if (tl->state() == QTimeLine::NotRunning) {
-                tl->start();
+        if (!havePopup) {
+            QWidget *popup = QApplication::activeWindow();
+
+            if (popup) {
+                //kDebug() << "got a popup!" << KWindowSystem::transientFor(popup->window()->winId()) << winId()
+                //         << popup->window() << popup->parentWidget() << this;
+
+                if (popup->parentWidget() == this ||
+                    (popup->parentWidget() && popup->parentWidget()->window() == this)) {
+                    havePopup = true;
+                }
+            } /* else {
+                kDebug() << "no popup?!";
+            } */
+        }
+
+        if (!havePopup) {
+            QTimeLine * tl = timeLine();
+            tl->setDirection(QTimeLine::Forward);
+
+            // with composite, we can quite do some nice animations with transparent
+            // backgrounds; without it we can't so we just show/hide
+            if (PlasmaApp::hasComposite()) {
+                if (tl->state() == QTimeLine::NotRunning) {
+                    tl->start();
+                }
+            } else {
+                animateHide(1.0);
             }
-        } else {
-            animateHide(1.0);
         }
     }
 
