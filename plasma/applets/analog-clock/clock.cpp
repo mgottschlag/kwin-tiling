@@ -52,8 +52,8 @@
 
 Clock::Clock(QObject *parent, const QVariantList &args)
     : ClockApplet(parent, args),
-      m_showTimeString(false),
       m_showSecondHand(false),
+      m_showTimezoneString(false),
       m_secondHandUpdateTimer(0)
 {
     KGlobal::locale()->insertCatalog("libplasmaclock");
@@ -77,8 +77,8 @@ void Clock::init()
     ClockApplet::init();
 
     KConfigGroup cg = config();
-    m_showTimeString = cg.readEntry("showTimeString", false);
     m_showSecondHand = cg.readEntry("showSecondHand", false);
+    m_showTimezoneString = cg.readEntry("showTimezoneString", false);
     m_fancyHands = cg.readEntry("fancyHands", false);
     setCurrentTimezone(cg.readEntry("timezone", localTimezone()));
 
@@ -145,18 +145,18 @@ void Clock::createClockConfigurationInterface(KConfigDialog *parent)
     ui.setupUi(widget);
     parent->addPage(widget, i18n("General"), icon());
 
-    ui.showTimeStringCheckBox->setChecked(m_showTimeString);
     ui.showSecondHandCheckBox->setChecked(m_showSecondHand);
+    ui.showTimezoneStringCheckBox->setChecked(m_showTimezoneString);
 }
 
 void Clock::clockConfigAccepted()
 {
     KConfigGroup cg = config();
-    m_showTimeString = ui.showTimeStringCheckBox->isChecked();
     m_showSecondHand = ui.showSecondHandCheckBox->isChecked();
+    m_showTimezoneString = ui.showTimezoneStringCheckBox->isChecked();
 
-    cg.writeEntry("showTimeString", m_showTimeString);
     cg.writeEntry("showSecondHand", m_showSecondHand);
+    cg.writeEntry("showTimezoneString", m_showTimezoneString);
     update();
 
     dataEngine("time")->disconnectSource(currentTimezone(), this);
@@ -218,20 +218,14 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
     
     //optionally paint the time string
-    if (m_showTimeString) {
-        QString time;
+    if (m_showTimezoneString) {
+        QString time = currentTimezone();
         QFontMetrics fm(QApplication::font());
         const int margin = 4;
 
-        if (m_showSecondHand) {
-            //FIXME: temporary time output
-            time = m_time.toString();
-        } else {
-            time = m_time.toString("hh:mm");
-        }
 
-        QRect textRect((rect.width()/2 - fm.width(time) / 2),((rect.height()/2) - fm.xHeight()*4),
-              fm.width(time), fm.xHeight());
+        QRect textRect((rect.width()/2 - fm.width(time) / 2),((rect.height()/2) - fm.height()*2),
+              fm.width(time), fm.height());
 
         p->setPen(Qt::NoPen);
         QColor background = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
@@ -244,7 +238,7 @@ void Clock::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, 
 
         p->setPen(Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
         
-        p->drawText(textRect.bottomLeft(), time);
+        p->drawText(textRect, Qt::AlignCenter, time);
     }
 
 

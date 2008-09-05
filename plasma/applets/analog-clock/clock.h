@@ -75,9 +75,9 @@ class Clock : public ClockApplet
         void drawHand(QPainter *p, qreal rotation, const QString &handName);
         void connectToEngine();
 
-        bool m_showTimeString;
         bool m_showSecondHand;
         bool m_fancyHands;
+        bool m_showTimezoneString;
         Plasma::Svg* m_theme;
         QTime m_time;
         QTime m_lastTimeSeen;
