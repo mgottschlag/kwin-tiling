@@ -367,18 +367,22 @@ void DesktopView::showAppletBrowser()
 
 void DesktopView::wheelEvent(QWheelEvent* event)
 {
-    if (scene() && scene()->itemAt(event->pos())) {
-        QGraphicsView::wheelEvent(event);
+    QGraphicsItem * item = scene() ? scene()->itemAt(sceneRect().topLeft() + event->pos()) : 0;
+
+    if ((!item || item == (QGraphicsItem*)containment()) && event->modifiers() & Qt::ControlModifier) {
+        if (event->modifiers() & Qt::ControlModifier) {
+            if (event->delta() < 0) {
+                zoomOut(containment());
+            } else {
+                zoomIn(containment());
+            }
+        }
+
+        event->accept();
         return;
     }
 
-    if (event->modifiers() & Qt::ControlModifier) {
-        if (event->delta() < 0) {
-            zoomOut(containment());
-        } else {
-            zoomIn(containment());
-        }
-    }
+    QGraphicsView::wheelEvent(event);
 }
 
 // This function is reimplemented from QGraphicsView to work around the problem
