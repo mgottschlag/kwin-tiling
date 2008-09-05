@@ -109,6 +109,12 @@ Plugins/Addons
             * Respects web proxy and other relevant KDE settings
             * Improved mouse interaction (middle mouse zooms, context menu, etc)
             * NEW comics supported: Doonesbury, The Boondocks, Extralife, Unshelved, Ctrl+Alt+Delete, NichtLustig, Calvin and Hobbes, Shit Happens
+        * NEW: Lancelot
+            * Parts applet
+            * Contacts section
+            * Configuration interface
+            * Drag 'n' Drop support
+            * KRunner integration
 
     * DataEngines
         * NEW: Network engine
