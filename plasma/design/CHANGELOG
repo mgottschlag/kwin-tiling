@@ -4,7 +4,7 @@ libplasma 3.0 / KDE 4.2
 libplasma
 ---------
 * Features
-* Symbol Versioning: limit loading of plugins to those that match the libplasma version
+    * Symbol Versioning: limit loading of plugins to those that match the libplasma version
     * NEW: ToolTipManager for Plasma style tooltips
     * NEW: Wallpaper plugins for Containments
     * NEW: Context for coordinating and publishing Context information, such as the current Activity or phsyical location
@@ -16,6 +16,7 @@ libplasma
     * Containment
         * Support dropping of arbitrary data if the mimetypes are supported by an applet
         * Activity naming and Context support
+        * Toolbox can be positioned in any corner or edge
     * Corona
         * addOffscreenWidget/removeOffscreenWidget: manage canvas items that should not appear in a primary view (e.g. Extenders)
     * Package system
@@ -42,6 +43,8 @@ libplasma
     * Applet handles work with all icon sizes (user system settings)
     * Fix View so that when a new activity is added, don't move more than necessary;
       fixes dragging lock
+    * Dramatically fewer full paints by properly watching the exposed rect area, which for full screen Containments or large/complex Applets is quite significant in terms of performance
+    * Fix on-exit crashes related to focus handling issues in QGraphicsView
 
 Developer Documentation
 -----------------------
@@ -58,12 +61,13 @@ Desktop Theme
 * NEW: widgets/frame for theming Plasma::Frame used also in other widgets
 * NEW: widgets/scrollbars to theme Plasma::ScrollBar and views scrollbars in libplasma
 * NEW: color role for buttons text and background
+* NEW: Plasma::Slider follows theme
 
 Plasma Desktop Shell
 --------------------
 * Features
     * Desktop
-        * Allow configuration of the activity/containment in Desktop Settings
+        * New Containment configuration for all desktop containments: wallpapers, activity type, theme
     * Panel
         * Resizes itself when an applet changes its sizehint according to its maximum and minimum sizes
         * Autohide and windows-cover-panel options
@@ -92,13 +96,19 @@ Plugins/Addons
         * Now Playing media player controls
         * Notes
             * Custom colors
-        * Digital clock
-        * Custom colors
-    * Folder view
-        * Filtering improvements: mimetype and exclusion based.
-    * Default desktop containment
-        * Wheel mouse == switch desktop
-        * Creation of widgets on desktop containments puts them in empty areas, avoiding overlap
+            * Export notes to file
+        * Clocks
+            * Custom colors for digital clock
+            * Standardized multi-timezone support in libplasmaclock
+        * Folder view
+            * Filtering improvements: mimetype and exclusion based.
+        * Default desktop containment
+            * Wheel mouse == switch desktop
+            * Creation of widgets on desktop containments puts them in empty areas, avoiding overlap
+        * Comics
+            * Respects web proxy and other relevant KDE settings
+            * Improved mouse interaction (middle mouse zooms, context menu, etc)
+            * NEW comics supported: Doonesbury, The Boondocks, Extralife, Unshelved, Ctrl+Alt+Delete, NichtLustig, Calvin and Hobbes, Shit Happens
 
     * DataEngines
         * NEW: Network engine
@@ -109,14 +119,17 @@ Plugins/Addons
     * ScriptEngines
         * NEW: GoogleGadgets support
 
-    * KRunner
+    * Runners
+        * NEW: Spellcheck runner
         * NEW: Konqueror history runner
         * NEW: Konqueror sessions runner
         * NEW: Konsole sessions runner
+        * Converter runner now does speed, masses and nautical distances; conversion code moved to a shared lib
 
 
 * Significant Fixes
     * Various clocks ported to AppletClock for calendar and timezone consistency
+    * Pager crash fixes
     * MS Windows compile fixes
     * Taskbar shows thumbnails of windows on hover (4.1 regression)
     * TwitterEngine respects web proxies and provides a proper Plasma::Service
@@ -130,7 +143,12 @@ KRunner
 -------
 * Features
     * Plasma Screensaver: Plasma widget overlay for screensavers
+    * D-Bus autoactivation, so even if it has perma-crashed, selecting Run Command from Plasma will resurect it
 
 * Significant Fixes
     * Screensaver activation fixed to compensate for system clock changes
+
+Platforms
+---------
+Compile and runtime fixes for Microsoft Windows and Maemo
 
