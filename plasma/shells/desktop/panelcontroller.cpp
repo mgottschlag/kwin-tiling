@@ -428,7 +428,7 @@ PanelController::PanelController(QWidget* parent)
 
     ToolButton *closeControllerTool = d->addTool("window-close", i18n("Close this configuration window"), this, Qt::ToolButtonIconOnly, false);
     d->layout->addWidget(closeControllerTool);
-    connect(closeControllerTool, SIGNAL(clicked()), this, SLOT(hideController()));
+    connect(closeControllerTool, SIGNAL(clicked()), this, SLOT(hide()));
 
     d->ruler = new PositioningRuler(this);
     connect(d->ruler, SIGNAL(rulersMoved(int, int, int)), this, SLOT(rulersMoved(int, int, int)));
@@ -471,7 +471,7 @@ void PanelController::setContainment(Plasma::Containment *containment)
         ToolButton *addWidgetTool = d->addTool(action, this);
         d->layout->insertWidget(insertIndex, addWidgetTool);
         ++insertIndex;
-        connect(addWidgetTool, SIGNAL(clicked()), this, SLOT(hideController()));
+        connect(addWidgetTool, SIGNAL(clicked()), this, SLOT(hide()));
     }
 
     action = containment->action("lock widgets");
@@ -479,7 +479,7 @@ void PanelController::setContainment(Plasma::Containment *containment)
         ToolButton *lockWidgetsTool = d->addTool(action, this);
         d->layout->insertWidget(insertIndex, lockWidgetsTool);
         ++insertIndex;
-        connect(lockWidgetsTool, SIGNAL(clicked()), this, SLOT(hideController()));
+        connect(lockWidgetsTool, SIGNAL(clicked()), this, SLOT(hide()));
     }
 
     action = containment->action("remove");
@@ -487,7 +487,7 @@ void PanelController::setContainment(Plasma::Containment *containment)
         ToolButton *removePanelTool = d->addTool(action, this);
         removePanelTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
         d->optDialogLayout->insertWidget(insertIndex, removePanelTool);
-        connect(removePanelTool, SIGNAL(clicked()), this, SLOT(hideController()));
+        connect(removePanelTool, SIGNAL(clicked()), this, SLOT(hide()));
     }
 
     QRect screenGeom = QApplication::desktop()->screenGeometry(d->containment->screen());
@@ -685,12 +685,6 @@ PanelView::PanelMode PanelController::panelMode() const
     } else {
         return PanelView::NormalPanel;
     }
-}
-
-
-void PanelController::hideController()
-{
-    hide();
 }
 
 void PanelController::setPalette()

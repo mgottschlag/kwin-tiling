@@ -19,6 +19,7 @@
 
 #include "panelappletoverlay.h"
 
+#include <QApplication>
 #include <QGraphicsLinearLayout>
 #include <QPainter>
 #include <QTimer>
@@ -30,6 +31,7 @@
 #include <plasma/containment.h>
 #include <plasma/paintutils.h>
 #include <plasma/theme.h>
+#include <plasma/view.h>
 
 class AppletMoveSpacer : public QGraphicsWidget
 {
@@ -141,6 +143,17 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
         return;
     }
 
+    if (event->button() != Qt::LeftButton) {
+        kDebug() << "sending even to" << (QWidget*)parent();
+        Plasma::View *view = dynamic_cast<Plasma::View*>(parent());
+
+        if (view && view->containment()) {
+            view->containment()->showContextMenu(mapToParent(event->pos()), event->globalPos());
+        }
+
+        return;
+    }
+
     m_clickDrag = false;
     if (!m_spacer) {
         m_spacer = new AppletMoveSpacer(m_applet);
@@ -166,6 +179,10 @@ void PanelAppletOverlay::mousePressEvent(QMouseEvent *event)
 void PanelAppletOverlay::mouseMoveEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
+
+    if (!m_spacer) {
+        return;
+    }
 
     QPoint p = mapToParent(event->pos());
     QRect g = geometry();
@@ -199,6 +216,11 @@ void PanelAppletOverlay::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_UNUSED(event)
 
+    releaseMouse();
+    if (!m_spacer) {
+        return;
+    }
+
     if (!m_origin.isNull()) {
         //kDebug() << m_clickDrag << m_origin << mapToParent(event->pos());
         if (m_orientation == Qt::Horizontal) {
@@ -221,7 +243,6 @@ void PanelAppletOverlay::mouseReleaseEvent(QMouseEvent *event)
     m_spacer = 0;
     m_layout->insertItem(m_index, m_applet);
     m_applet->setZValue(m_applet->zValue() - 1);
-    releaseMouse();
 }
 
 void PanelAppletOverlay::enterEvent(QEvent *event)

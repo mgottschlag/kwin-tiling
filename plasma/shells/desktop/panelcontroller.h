@@ -60,7 +60,6 @@ public:
     PanelView::PanelMode panelMode() const;
 
 public Q_SLOTS:
-    void hideController();
     void setPalette();
 
 protected:
