@@ -600,6 +600,7 @@ void PanelView::edittingComplete()
     qDeleteAll(m_moveOverlays);
     m_moveOverlays.clear();
     containment()->closeToolBox();
+    updateStruts();
     m_firstPaint = true; // triggers autohide
 }
 
