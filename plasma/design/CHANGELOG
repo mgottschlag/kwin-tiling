@@ -130,8 +130,8 @@ Plugins/Addons
         * NEW: Konqueror history runner
         * NEW: Konqueror sessions runner
         * NEW: Konsole sessions runner
+        * NEW: KFilePlacesModel (as seen in dolphin, file dialog, kickoff, etc) runner
         * Converter runner now does speed, masses and nautical distances; conversion code moved to a shared lib
-
 
 * Significant Fixes
     * Various clocks ported to AppletClock for calendar and timezone consistency
