@@ -510,24 +510,39 @@ void BackgroundDialog::changeBackgroundMode(int mode)
     if (m_wallpaperGroup->layout()->count() > 1) {
         delete dynamic_cast<QWidgetItem*>(m_wallpaperGroup->layout()->takeAt(1))->widget();
     }
+
     if (m_wallpaper && m_wallpaper->pluginName() != wallpaperInfo.first) {
         delete m_wallpaper;
         m_wallpaper = 0;
     }
+
     if (!m_wallpaper) {
         m_wallpaper = Plasma::Wallpaper::load(wallpaperInfo.first);
         m_preview->setWallpaper(m_wallpaper);
     }
+
     if (m_wallpaper) {
-        KConfigGroup cfg = m_containment->config();
-        kDebug() << "making a" << wallpaperInfo.first << "in modD" << wallpaperInfo.second;
-        m_wallpaper->restore(KConfigGroup(&cfg, "Wallpaper"), wallpaperInfo.second);
+        KConfigGroup cfg = wallpaperConfig(wallpaperInfo.first);
+        kDebug() << "making a" << wallpaperInfo.first << "in mode" << wallpaperInfo.second;
+        m_wallpaper->restore(cfg, wallpaperInfo.second);
         w = m_wallpaper->createConfigurationInterface(m_wallpaperGroup);
     }
+
     if (!w) {
         w = new QWidget(m_wallpaperGroup);
     }
+
     m_wallpaperGroup->layout()->addWidget(w);
+}
+
+KConfigGroup BackgroundDialog::wallpaperConfig(const QString &plugin)
+{
+    Q_ASSERT(m_containment);
+
+    //FIXME: we have details about the structure of the containment config duplicated here!
+    KConfigGroup cfg = m_containment->config();
+    cfg = KConfigGroup(&cfg, "Wallpaper");
+    return KConfigGroup(&cfg, plugin);
 }
 
 void BackgroundDialog::saveConfig()
@@ -537,16 +552,7 @@ void BackgroundDialog::saveConfig()
     QString wallpaperPlugin = m_mode->itemData(m_mode->currentIndex()).value<WallpaperInfo>().first;
     QString wallpaperMode = m_mode->itemData(m_mode->currentIndex()).value<WallpaperInfo>().second;
     QString containment = m_containmentComboBox->itemData(m_containmentComboBox->currentIndex(),
-            AppletDelegate::PluginNameRole).toString();
-
-    if (m_wallpaper) {
-        KConfigGroup cfg = m_containment->config();
-        cfg = KConfigGroup(&cfg, "Wallpaper");
-        m_wallpaper->save(cfg);
-    }
-
-    // Wallpaper
-    m_containment->setWallpaper(wallpaperPlugin, wallpaperMode);
+                                                          AppletDelegate::PluginNameRole).toString();
 
     // Containment
     if (m_containment->pluginName() != containment) {
@@ -554,6 +560,20 @@ void BackgroundDialog::saveConfig()
     }
 
     m_containment->setActivity(m_activityName->text());
+
+    // Wallpaper
+    Plasma::Wallpaper *currentWallpaper = m_containment->wallpaper();
+    if (currentWallpaper) {
+        KConfigGroup cfg = wallpaperConfig(currentWallpaper->pluginName());
+        currentWallpaper->save(cfg);
+    }
+
+    if (m_wallpaper) {
+        KConfigGroup cfg = wallpaperConfig(m_wallpaper->pluginName());
+        m_wallpaper->save(cfg);
+    }
+
+    m_containment->setWallpaper(wallpaperPlugin, wallpaperMode);
 
     // Plasma Theme
     Plasma::Theme::defaultTheme()->setThemeName(theme);

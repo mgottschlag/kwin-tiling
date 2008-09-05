@@ -36,17 +36,20 @@ public slots:
     void saveConfig();
 
 private:
+    KConfigGroup wallpaperConfig(const QString &plugin);
+
+private slots:
+    void getNewThemes();
+    void changeBackgroundMode(int mode);
+    void cleanup();
+
+private:
     ThemeModel* m_themeModel;
     QStandardItemModel* m_containmentModel;
     Plasma::Wallpaper* m_wallpaper;
     Plasma::View* m_view;
     Plasma::Containment* m_containment;
     WallpaperPreview* m_preview;
-
-private slots:
-    void getNewThemes();
-    void changeBackgroundMode(int mode);
-    void cleanup();
 };
 
 #endif // BACKGROUNDDIALOG_H
