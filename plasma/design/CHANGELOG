@@ -7,12 +7,15 @@ libplasma
 * Symbol Versioning: limit loading of plugins to those that match the libplasma version
     * NEW: ToolTipManager for Plasma style tooltips
     * NEW: Wallpaper plugins for Containments
+    * NEW: Context for coordinating and publishing Context information, such as the current Activity or phsyical location
     * Applet
         * sizeHintChanged() signal. A containment (such as a panel) can adjust its size based on changed sizehints of an applet
+        * ContextConstraint events and access to the current Context object
         * NEW: Plasma::Extender and Plasma::ExtenderItem, allowing visual, relocatable extensions to Applet
         * NEW: PopupApplet, which switches between an icon with a popup in a Horizontal/Vertical containment (such as a panel) and the widget directly on the canvas in a Planer containment (such as a desktop)
     * Containment
         * Support dropping of arbitrary data if the mimetypes are supported by an applet
+        * Activity naming and Context support
     * Corona
         * addOffscreenWidget/removeOffscreenWidget: manage canvas items that should not appear in a primary view (e.g. Extenders)
     * Package system
@@ -32,9 +35,6 @@ libplasma
         * NEW: Plasma::Frame used to visually group widgets
         * NEW: Plasma::TreeView used to put tree views or simple list in the canvas
         * Plasma::PushButton is svg-themed
-
-* KRunner
-    * NEW: Konqueror history runner
 
 * Significant Fixes
     * WebContent painting update synchronization (fixes, among other things, scrolling)
@@ -101,16 +101,25 @@ Plugins/Addons
         * Creation of widgets on desktop containments puts them in empty areas, avoiding overlap
 
     * DataEngines
-        * nowplaying Plasma::Service for controlling media players
-        * nowplaying supports MPRIS
+        * NEW: Network engine
+        * NowPlaying
+            * Plasma::Service for controlling media players
+            * supports MPRIS
 
     * ScriptEngines
-        * GoogleGadgets support
+        * NEW: GoogleGadgets support
+
+    * KRunner
+        * NEW: Konqueror history runner
+        * NEW: Konqueror sessions runner
+        * NEW: Konsole sessions runner
+
 
 * Significant Fixes
     * Various clocks ported to AppletClock for calendar and timezone consistency
     * MS Windows compile fixes
     * Taskbar shows thumbnails of windows on hover (4.1 regression)
+    * TwitterEngine respects web proxies and provides a proper Plasma::Service
     * Kickoff
         * proper menu size restoration
         * Hide Shutdown and Restart options when those actions are not possible.
