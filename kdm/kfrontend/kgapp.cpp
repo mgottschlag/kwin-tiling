@@ -309,6 +309,12 @@ main( int argc ATTR_UNUSED, char **argv )
 	KGlobalSettings::self();
 
 	Display *dpy = QX11Info::display();
+	QDesktopWidget *dw = app.desktop();
+
+	if (_greeterScreen < 0)
+		_greeterScreen = _greeterScreen == -2 ?
+			dw->screenNumber( QPoint( dw->width() - 1, 0 ) ) :
+			dw->screenNumber( QPoint( 0, 0 ) );
 
 	_colorScheme = KStandardDirs::locate( "data", "color-schemes/" + _colorScheme + ".colors" );
 	if (!_colorScheme.isEmpty()) {
@@ -356,15 +362,15 @@ main( int argc ATTR_UNUSED, char **argv )
 	gSendInt( G_Ready );
 
 	if (themer) {
-		QPixmap pm( app.desktop()->screen()->size() );
+		QPixmap pm( dw->screen()->size() );
 		themer->paintBackground( &pm );
 		QPalette palette;
-		palette.setBrush( app.desktop()->backgroundRole(), QBrush( pm ) );
-		app.desktop()->setPalette( palette );
-		app.desktop()->setAutoFillBackground( true );
-		app.desktop()->setAttribute( Qt::WA_PaintOnScreen );
-		app.desktop()->show();
-		app.desktop()->repaint();
+		palette.setBrush( dw->backgroundRole(), QBrush( pm ) );
+		dw->setPalette( palette );
+		dw->setAutoFillBackground( true );
+		dw->setAttribute( Qt::WA_PaintOnScreen );
+		dw->show();
+		dw->repaint();
 	}
 
 	setCursor( dpy, app.desktop()->winId(), XC_left_ptr );

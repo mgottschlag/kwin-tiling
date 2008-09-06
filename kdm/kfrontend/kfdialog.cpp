@@ -80,11 +80,6 @@ FDialog::adjustGeometry()
 {
 	QDesktopWidget *dsk = qApp->desktop();
 
-	if (_greeterScreen < 0)
-		_greeterScreen = _greeterScreen == -2 ?
-			dsk->screenNumber( QPoint( dsk->width() - 1, 0 ) ) :
-			dsk->screenNumber( QPoint( 0, 0 ) );
-
 	QRect scr = dsk->screenGeometry( _greeterScreen );
 	if (!winFrame)
 		setFixedSize( scr.size() );
