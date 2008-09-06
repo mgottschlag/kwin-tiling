@@ -27,8 +27,8 @@
 #include "kdmlabel.h"
 #include "kdmbutton.h"
 
-#include <kdm_greet.h>
-#include <kfdialog.h>
+#include <kdm_greet.h> // debug stuff
+#include <kfdialog.h> // kfmsgbox
 
 #include <klocale.h>
 #include <kconfig.h>
