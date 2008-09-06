@@ -1,9 +1,11 @@
 [Desktop Entry]
 Type=Service
 Name=Image
+Name[el]=Εικόνα
 Name[et]=Pilt
 Name[ga]=Íomhá
 Name[gl]=Imaxe
+Name[gu]=ચિત્ર
 Name[km]=រូបភាព
 Name[nds]=Bild
 Name[pt]=Imagem
@@ -29,9 +31,11 @@ X-KDE-PluginInfo-EnabledByDefault=true
 
 [Desktop Action SingleImage]
 Name=Image
+Name[el]=Εικόνα
 Name[et]=Pilt
 Name[ga]=Íomhá
 Name[gl]=Imaxe
+Name[gu]=ચિત્ર
 Name[km]=រូបភាព
 Name[nds]=Bild
 Name[pt]=Imagem
@@ -47,9 +51,11 @@ Exec=plasma
 
 [Desktop Action Slideshow]
 Name=Slideshow
+Name[el]=Προβολή σλάιντ
 Name[et]=Slaidiseanss
 Name[ga]=Taispeántas Sleamhnán
 Name[gl]=Presentación
+Name[gu]=સ્લાઇડશો
 Name[km]=បញ្ចាំង​ស្លាយ
 Name[nds]=Diaschau
 Name[pt]=Apresentação

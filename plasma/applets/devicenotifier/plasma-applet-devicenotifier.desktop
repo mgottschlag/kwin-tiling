@@ -1,7 +1,9 @@
 [Desktop Entry]
 Name=Device Notifier
+Name[el]=Ειδοποίηση νέας συσκευής
 Name[et]=Seadmete teadustaja
 Name[gl]=Notificador de dispositivos
+Name[gu]=ઉપકરણ નોંધ કરનાર
 Name[km]=កម្មវិធី​ជូនដំណឹង​ឧបករណ៍​
 Name[nds]=Bescheden över Reedschappen
 Name[pt]=Notificação de Dispositivos
@@ -12,6 +14,7 @@ Name[tr]=Aygıt Bildirici
 Name[uk]=Сповіщення про пристрої
 Name[zh_TW]=裝置通知
 Comment=Notifications and access for new devices
+Comment[el]=Ειδοποιήσεις και πρόσβαση νέων συσκευών
 Comment[et]=Uutest seadmetest teatamine ja nende kasutamine
 Comment[gl]=Notificacións e aceso a novos dispositivos
 Comment[km]=កា​រជូន​ដំណឹង និង​ចូល​ដំណើរការ​សម្រាប់​ឧបករណ៍​ថ្មី

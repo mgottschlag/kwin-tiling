@@ -7,6 +7,7 @@ X-KDE-ParentComponents=shell
 X-KDE-PluginKeyword=kcm_krunner_shell
 
 Name=Shell Runner Config
+Name[el]=Ρύθμιση εκτελεστή κελύφους
 Name[et]=Shelli käivitaja seadistused
 Name[gl]=Configuración do executor de shell
 Name[km]=កំណត់​រចនាសម្ព័ន្ធ​កម្មវិធី​រត់​សែល
