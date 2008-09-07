@@ -460,8 +460,15 @@ void BackgroundDialog::reloadConfig()
     }
 
     // Load wallpaper plugins
-    QString currentPlugin = m_containment->wallpaper()->pluginName();
-    QString currentMode = m_containment->wallpaper()->renderingMode().name();
+    QString currentPlugin;
+    QString currentMode;
+
+    Plasma::Wallpaper *currentWallpaper = m_containment->wallpaper();
+    if (currentWallpaper) {
+        currentPlugin = currentWallpaper->pluginName();
+        currentMode = currentWallpaper->renderingMode().name();
+    }
+
     plugins = Plasma::Wallpaper::listWallpaperInfo();
     m_mode->clear();
     i = 0;
