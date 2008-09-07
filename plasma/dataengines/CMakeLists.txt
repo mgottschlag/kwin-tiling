@@ -1,6 +1,7 @@
 add_subdirectory(dict)
 add_subdirectory(hotplug)
 add_subdirectory(filebrowser)
+add_subdirectory(network)
 add_subdirectory(nowplaying)
 add_subdirectory(places)
 add_subdirectory(powermanagement)
