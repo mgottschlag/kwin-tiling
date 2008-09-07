@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=KRandRTray
 Name[be]=Змена параметраў манітора
+Name[be@latin]=Змена параметраў манітора
 Name[hi]=के-रैँड-आर-ट्रे
 Name[hu]=Képernyőfelbontás
 Name[mr]=केरैँडआरट्रे
@@ -15,6 +16,7 @@ GenericName=Screen Resize & Rotate
 GenericName[af]=Skerm Hervergroot & Roteer
 GenericName[ar]=إعادة تحجيم ودوران الشاشة
 GenericName[be]=Змена памераў экрана і перагортванне
+GenericName[be@latin]=Змена памераў экрана і перагортванне
 GenericName[bg]=Размер и ротация на екрана
 GenericName[bn]=পর্দা মাপবদল ও আবর্তন
 GenericName[bn_IN]=পর্দা মাপবদল ও আবর্তন

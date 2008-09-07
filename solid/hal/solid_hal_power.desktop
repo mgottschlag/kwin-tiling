@@ -39,6 +39,7 @@ Name[zh_CN]=HAL 电源
 Name[zh_TW]=HAL 電源管理
 Comment=Hardware power management using freedesktop.org HAL daemon
 Comment[be]=Кіраванне сілкаваннем пры дапамозе сервіса freedesktop.org HAL
+Comment[be@latin]=Кіраванне сілкаваннем пры дапамозе сервіса freedesktop.org HAL
 Comment[bg]=Управление на хардуера с демона HAL на freedesktop.org
 Comment[ca]=Gestió d'energia del maquinari que usa el dimoni HAL del freedesktop.org
 Comment[da]=Strømhåndtering i hardware med brug af HAL-dæmonen fra freedesktop.org

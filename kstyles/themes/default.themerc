@@ -2,6 +2,7 @@
 Name=KDE Classic
 Name[af]=KDE Klassiek
 Name[be]=Класічны KDE
+Name[be@latin]=Класічны KDE
 Name[bn_IN]=KDE পারম্পরিক
 Name[ca]=KDE clàssic
 Name[cs]=Klasika KDE
@@ -58,6 +59,7 @@ Name[zh_TW]=KDE 經典
 Comment=Classic KDE style
 Comment[af]=Klassieke KDE styl
 Comment[be]=Класічны стыль KDE
+Comment[be@latin]=Класічны стыль KDE
 Comment[bg]=Класически стил на KDE
 Comment[bn_IN]=KDE-র পারম্পরিক বিন্যাস
 Comment[ca]=Estil KDE clàssic

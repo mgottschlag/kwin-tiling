@@ -2,6 +2,7 @@
 Name=Web style
 Name[af]=Webstyl
 Name[be]=Стыль Сеціва
+Name[be@latin]=Стыль Сеціва
 Name[bg]=Уеб стил
 Name[bn_IN]=ওয়েব বিন্যাস
 Name[ca]=Estil web
@@ -61,6 +62,7 @@ Name[zh_CN]=网页风格
 Name[zh_TW]=網頁樣式
 Comment=Web widget style
 Comment[be]=Стыль Сеціва
+Comment[be@latin]=Стыль Сеціва
 Comment[bg]=Стил "уеб"
 Comment[bn_IN]=ওয়েব উইজেটের বিন্যাস
 Comment[ca]=Estil d'estris web
