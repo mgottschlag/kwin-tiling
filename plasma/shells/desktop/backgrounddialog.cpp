@@ -368,7 +368,6 @@ BackgroundDialog::BackgroundDialog(const QSize& res, Plasma::View* view, QWidget
     QWidget * main = new QWidget(this);
     setupUi(main);
 
-
     // Size of monitor image: 200x186
     // Geometry of "display" part of monitor image: (23,14)-[151x115]
     qreal previewRatio = (qreal)res.height() / (qreal)res.width();
@@ -440,11 +439,12 @@ void BackgroundDialog::getNewThemes()
 
 void BackgroundDialog::reloadConfig()
 {
+    disconnect(m_wallpaperMode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
     m_containment = m_view->containment();
     int containmentIndex = 0;
     int wallpaperIndex = 0;
 
-    disconnect(m_mode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
+    // Containment
     KPluginInfo::List plugins = Plasma::Containment::listContainments();
     m_containmentModel->clear();
     int i = 0;
@@ -458,61 +458,64 @@ void BackgroundDialog::reloadConfig()
         }
         ++i;
     }
+    m_containmentComboBox->setCurrentIndex(containmentIndex);
+    m_activityName->setText(m_containment->activity());
 
-    // Load wallpaper plugins
-    QString currentPlugin;
-    QString currentMode;
 
-    Plasma::Wallpaper *currentWallpaper = m_containment->wallpaper();
-    if (currentWallpaper) {
-        currentPlugin = currentWallpaper->pluginName();
-        currentMode = currentWallpaper->renderingMode().name();
-    }
+    // Wallpaper
+    bool doWallpaper = m_containment->drawWallpaper();
+    m_wallpaperLabel->setVisible(doWallpaper);
+    m_wallpaperGroup->setVisible(doWallpaper);
+    if (doWallpaper) {
+        // Load wallpaper plugins
+        QString currentPlugin;
+        QString currentMode;
 
-    plugins = Plasma::Wallpaper::listWallpaperInfo();
-    m_mode->clear();
-    i = 0;
-    foreach (KPluginInfo info, plugins) {
-        bool matches = info.pluginName() == currentPlugin;
-        const QList<KServiceAction>& modes = info.service()->actions();
-        if (modes.count() > 0) {
-            foreach (const KServiceAction& mode, modes) {
-                m_mode->addItem(KIcon(mode.icon()), mode.text(),
-                                QVariant::fromValue(WallpaperInfo(info.pluginName(), mode.name())));
-                if (matches && mode.name() == currentMode) {
+        Plasma::Wallpaper *currentWallpaper = m_containment->wallpaper();
+        if (currentWallpaper) {
+            currentPlugin = currentWallpaper->pluginName();
+            currentMode = currentWallpaper->renderingMode().name();
+        }
+
+        plugins = Plasma::Wallpaper::listWallpaperInfo();
+        m_wallpaperMode->clear();
+        i = 0;
+        foreach (KPluginInfo info, plugins) {
+            bool matches = info.pluginName() == currentPlugin;
+            const QList<KServiceAction>& modes = info.service()->actions();
+            if (modes.count() > 0) {
+                foreach (const KServiceAction& mode, modes) {
+                    m_wallpaperMode->addItem(KIcon(mode.icon()), mode.text(),
+                                    QVariant::fromValue(WallpaperInfo(info.pluginName(), mode.name())));
+                    if (matches && mode.name() == currentMode) {
+                        wallpaperIndex = i;
+                    }
+                    ++i;
+                }
+            } else {
+                m_wallpaperMode->addItem(KIcon(info.icon()), info.name(),
+                                QVariant::fromValue(WallpaperInfo(info.pluginName(), QString())));
+                if (matches) {
                     wallpaperIndex = i;
                 }
                 ++i;
             }
-        } else {
-            m_mode->addItem(KIcon(info.icon()), info.name(),
-                            QVariant::fromValue(WallpaperInfo(info.pluginName(), QString())));
-            if (matches) {
-                wallpaperIndex = i;
-            }
-            ++i;
         }
+        m_wallpaperMode->setCurrentIndex(wallpaperIndex);
+        changeBackgroundMode(wallpaperIndex);
     }
-
-    // Containment
-    m_containmentComboBox->setCurrentIndex(containmentIndex);
-    m_activityName->setText(m_containment->activity());
 
     // Theme
     m_theme->setCurrentIndex(m_themeModel->indexOf(Plasma::Theme::defaultTheme()->themeName()));
 
-    // Wallpaper
-    m_mode->setCurrentIndex(wallpaperIndex);
-    changeBackgroundMode(wallpaperIndex);
-
-    connect(m_mode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
+    connect(m_wallpaperMode, SIGNAL(currentIndexChanged(int)), this, SLOT(changeBackgroundMode(int)));
 }
 
 void BackgroundDialog::changeBackgroundMode(int mode)
 {
     kDebug();
     QWidget* w = 0;
-    WallpaperInfo wallpaperInfo = m_mode->itemData(mode).value<WallpaperInfo>();
+    WallpaperInfo wallpaperInfo = m_wallpaperMode->itemData(mode).value<WallpaperInfo>();
 
     if (m_wallpaperGroup->layout()->count() > 1) {
         delete dynamic_cast<QWidgetItem*>(m_wallpaperGroup->layout()->takeAt(1))->widget();
@@ -556,8 +559,8 @@ void BackgroundDialog::saveConfig()
 {
     QString theme = m_theme->itemData(m_theme->currentIndex(),
                                       ThemeModel::PackageNameRole).toString();
-    QString wallpaperPlugin = m_mode->itemData(m_mode->currentIndex()).value<WallpaperInfo>().first;
-    QString wallpaperMode = m_mode->itemData(m_mode->currentIndex()).value<WallpaperInfo>().second;
+    QString wallpaperPlugin = m_wallpaperMode->itemData(m_wallpaperMode->currentIndex()).value<WallpaperInfo>().first;
+    QString wallpaperMode = m_wallpaperMode->itemData(m_wallpaperMode->currentIndex()).value<WallpaperInfo>().second;
     QString containment = m_containmentComboBox->itemData(m_containmentComboBox->currentIndex(),
                                                           AppletDelegate::PluginNameRole).toString();
 
