@@ -561,6 +561,8 @@ void PanelController::setLocation(const Plasma::Location &loc)
         d->extLayout->setContentsMargins(0, 0, d->background->marginSize(Plasma::RightMargin), 0);
         d->sizeTool->setCursor(Qt::SizeHorCursor);
         d->sizeTool->setText(i18n("Width"));
+        d->leftAlignTool->setText(i18n("Top"));
+        d->rightAlignTool->setText(i18n("Bottom"));
 
         d->ruler->setAvailableLength(screenGeom.height());
         break;
@@ -575,6 +577,8 @@ void PanelController::setLocation(const Plasma::Location &loc)
         d->extLayout->setContentsMargins(d->background->marginSize(Plasma::LeftMargin), 0, 0, 0);
         d->sizeTool->setCursor(Qt::SizeHorCursor);
         d->sizeTool->setText(i18n("Width"));
+        d->leftAlignTool->setText(i18n("Top"));
+        d->rightAlignTool->setText(i18n("Bottom"));
 
         d->ruler->setAvailableLength(screenGeom.height());
         break;
@@ -589,6 +593,8 @@ void PanelController::setLocation(const Plasma::Location &loc)
         d->extLayout->setContentsMargins(0, 0, 0, d->background->marginSize(Plasma::BottomMargin));
         d->sizeTool->setCursor(Qt::SizeVerCursor);
         d->sizeTool->setText(i18n("Height"));
+        d->leftAlignTool->setText(i18n("Left"));
+        d->rightAlignTool->setText(i18n("Right"));
 
         d->ruler->setAvailableLength(screenGeom.width());
         break;
@@ -604,6 +610,8 @@ void PanelController::setLocation(const Plasma::Location &loc)
         d->extLayout->setContentsMargins(0, d->background->marginSize(Plasma::TopMargin), 0, 0);
         d->sizeTool->setCursor(Qt::SizeVerCursor);
         d->sizeTool->setText(i18n("Height"));
+        d->leftAlignTool->setText(i18n("Left"));
+        d->rightAlignTool->setText(i18n("Right"));
 
         d->ruler->setAvailableLength(screenGeom.width());
         break;
