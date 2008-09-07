@@ -177,7 +177,7 @@ void PowermanagementEngine::updateAcPlugState(bool newState)
 void PowermanagementEngine::deviceRemoved(const QString& udi)
 {
     if (m_batterySources.contains(udi)) {
-        const QString& source = m_batterySources[udi];
+        QString source = m_batterySources[udi];
         m_batterySources.remove(udi);
         removeSource(source);
 
