@@ -28,11 +28,16 @@
 
 #include <plasma/paintutils.h>
 #include <plasma/theme.h>
+#include <plasma/panelsvg.h>
 
 ToolButton::ToolButton(QWidget *parent)
     : QToolButton(parent),
       m_action(0)
 {
+    m_background = new Plasma::PanelSvg(this);
+    m_background->setImagePath("widgets/button");
+    m_background->setCacheAllRenderedPanels(true);
+    m_background->setElementPrefix("plain");
 }
 
 void ToolButton::setAction(QAction *action)
@@ -81,31 +86,26 @@ void ToolButton::actionDestroyed(QObject *)
 
 void ToolButton::paintEvent(QPaintEvent *event)
 {
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
+    Q_UNUSED(event)
 
-    painter.translate(0.5, 0.5);
+    QPainter painter(this);
 
     QStyleOptionToolButton buttonOpt;
     initStyleOption(&buttonOpt);
 
-    QColor backgroundColor;
-    if ((buttonOpt.state & QStyle::State_MouseOver) || isChecked()) {
-        backgroundColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    if ((buttonOpt.state & QStyle::State_MouseOver) || (buttonOpt.state & QStyle::State_On)) {
+        if (buttonOpt.state & QStyle::State_Sunken || (buttonOpt.state & QStyle::State_On)) {
+            m_background->setElementPrefix("pressed");
+        } else {
+            m_background->setElementPrefix("normal");
+        }
+        m_background->resizePanel(size());
+        m_background->paintPanel(&painter);
+
+        buttonOpt.palette.setColor(QPalette::ButtonText, Plasma::Theme::defaultTheme()->color(Plasma::Theme::ButtonTextColor));
     } else {
-        backgroundColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+        buttonOpt.palette.setColor(QPalette::ButtonText, Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor));
     }
-
-    backgroundColor.setAlphaF(0.4);
-    QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-
-    buttonOpt.palette.setColor(QPalette::Foreground, textColor);
-    buttonOpt.palette.setColor(QPalette::ButtonText, textColor);
-
-    textColor.setAlphaF(0.4);
-    painter.setPen(textColor);
-    painter.setBrush(backgroundColor);
-    painter.drawPath(Plasma::PaintUtils::roundedRectangle(event->rect().adjusted(1,1,-1,-1), 4));
 
     style()->drawControl(QStyle::CE_ToolButtonLabel, &buttonOpt, &painter, this);
 }

@@ -23,6 +23,11 @@
 
 #include <QToolButton>
 
+namespace Plasma
+{
+    class PanelSvg;
+};
+
 class ToolButton: public QToolButton
 {
     Q_OBJECT
@@ -40,6 +45,7 @@ protected slots:
 
 private:
     QAction *m_action;
+    Plasma::PanelSvg *m_background;
 };
 
 #endif

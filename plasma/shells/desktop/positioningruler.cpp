@@ -471,11 +471,9 @@ void PositioningRuler::paintEvent(QPaintEvent *event)
     d->sliderGraphics->setElementPrefix(d->location);
 
     QPainter painter(this);
-    painter.setCompositionMode(QPainter::CompositionMode_Source);
 
     d->sliderGraphics->resizePanel(event->rect().size());
     d->sliderGraphics->paintPanel(&painter);
-    painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
 
     //Draw center indicators
     if (d->alignment == Qt::AlignCenter && (d->location == Plasma::LeftEdge || d->location == Plasma::RightEdge)) {

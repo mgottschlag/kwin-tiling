@@ -39,7 +39,7 @@
 #include <plasma/corona.h>
 #include <plasma/paintutils.h>
 #include <plasma/theme.h>
-#include <plasma/svg.h>
+#include <plasma/panelsvg.h>
 #include <plasma/dialog.h>
 
 #include "plasmaapp.h"
@@ -52,40 +52,21 @@ public:
     ButtonGroup(QWidget *parent)
        : QFrame(parent)
     {
+        background = new Plasma::PanelSvg(this);
+        background->setImagePath("widgets/frame");
+        background->setElementPrefix("plain");
     }
 
     void paintEvent(QPaintEvent *event)
     {
+        Q_UNUSED(event)
+
         QPainter painter(this);
-        painter.setRenderHint(QPainter::Antialiasing, true);
-
-        painter.translate(0.5, 0.5);
-
-        QColor textColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-
-
-        int x;
-        int y;
-        if (event->rect().height() > event->rect().width()) {
-            x = event->rect().left();
-            y = event->rect().bottom();
-        } else {
-            x = event->rect().right();
-            y = event->rect().top();
-        }
-
-        QLinearGradient gradient(x, y, event->rect().right(), event->rect().bottom());
-        textColor.setAlphaF(0);
-        gradient.setColorAt(0.1, textColor);
-        textColor.setAlphaF(0.4);
-        gradient.setColorAt(1, textColor);
-
-        painter.setBrush(Qt::NoBrush);
-        QPen pen;
-        pen.setBrush(gradient);
-        painter.setPen(pen);
-        painter.drawPath(Plasma::PaintUtils::roundedRectangle(event->rect().adjusted(1,1,-1,-1), 4));
+        background->resizePanel(size());
+        background->paintPanel(&painter);
     }
+
+    Plasma::PanelSvg *background;
 };
 
 
@@ -118,12 +99,16 @@ public:
         return tool;
     }
 
-    ToolButton *addTool(const QString icon, const QString iconText, QWidget *parent, Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon, bool checkButton = false)
+    ToolButton *addTool(const QString iconName, const QString iconText, QWidget *parent, Qt::ToolButtonStyle style = Qt::ToolButtonTextBesideIcon, bool checkButton = false)
     {
         //TODO take advantage of setDefaultAction using the containment's actions if possible
         ToolButton *tool = new ToolButton(parent);
 
-        tool->setIcon(KIcon(icon));
+        KIcon icon = KIcon(iconName);
+        if (!icon.isNull() && !iconName.isNull()) {
+            tool->setIcon(icon);
+        }
+
         tool->setText(iconText);
         tool->setToolButtonStyle(style);
 
@@ -286,7 +271,7 @@ public:
     QLabel *modeLabel;
     DragElement dragging;
     QPoint startDragPos;
-    Plasma::Svg *svg;
+    Plasma::PanelSvg *background;
     Plasma::Dialog *optionsDialog;
     QBoxLayout *optDialogLayout;
     ToolButton *settingsTool;
@@ -321,9 +306,9 @@ PanelController::PanelController(QWidget* parent)
     Q_UNUSED(parent)
 
 
-    d->svg = new Plasma::Svg(this);
-    d->svg->setImagePath("widgets/containment-controls");
-    d->svg->setContainsMultipleImages(true);
+    d->background = new Plasma::PanelSvg(this);
+    d->background->setImagePath("dialogs/background");
+    d->background->setContainsMultipleImages(true);
 
     //setWindowFlags(Qt::Popup);
     setWindowFlags(Qt::FramelessWindowHint);
@@ -333,8 +318,10 @@ PanelController::PanelController(QWidget* parent)
 
     //layout setup
     d->extLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
-    d->extLayout->setContentsMargins(0, 1, 0, 0);
     setLayout(d->extLayout);
+
+    d->background->setEnabledBorders(Plasma::PanelSvg::TopBorder);
+    d->extLayout->setContentsMargins(0, d->background->marginSize(Plasma::TopMargin), 0, 0);
 
     d->layout = new QBoxLayout(QBoxLayout::LeftToRight);
     d->layout->setContentsMargins(4, 4, 4, 4);
@@ -384,17 +371,17 @@ PanelController::PanelController(QWidget* parent)
     d->modeLabel = new QLabel(i18n("Visibility"), this);
     modeLayout->addWidget(d->modeLabel);
 
-    d->normalPanelTool = d->addTool(QString(), i18n("Always visible"), modeFrame,  Qt::ToolButtonTextOnly, true);
+    d->normalPanelTool = d->addTool(QString(), i18n("Always visible"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
     d->normalPanelTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     modeLayout->addWidget(d->normalPanelTool);
     connect(d->normalPanelTool, SIGNAL(toggled(bool)), this, SLOT(panelModeChanged(bool)));
 
-    d->autoHideTool = d->addTool(QString(), i18n("Auto hide"), modeFrame,  Qt::ToolButtonTextOnly, true);
+    d->autoHideTool = d->addTool(QString(), i18n("Auto hide"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
     d->autoHideTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     modeLayout->addWidget(d->autoHideTool);
     connect(d->autoHideTool, SIGNAL(toggled(bool)), this, SLOT(panelModeChanged(bool)));
 
-    d->underWindowsTool = d->addTool(QString(), i18n("Windows can cover"), modeFrame,  Qt::ToolButtonTextOnly, true);
+    d->underWindowsTool = d->addTool(QString(), i18n("Windows can cover"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
     d->underWindowsTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     modeLayout->addWidget(d->underWindowsTool);
     connect(d->underWindowsTool, SIGNAL(toggled(bool)), this, SLOT(panelModeChanged(bool)));
@@ -570,7 +557,8 @@ void PanelController::setLocation(const Plasma::Location &loc)
         } else {
             d->extLayout->setDirection(QBoxLayout::RightToLeft);
         }
-        d->extLayout->setContentsMargins(1, 0, 0, 0);
+        d->background->setEnabledBorders(Plasma::PanelSvg::RightBorder);
+        d->extLayout->setContentsMargins(0, 0, d->background->marginSize(Plasma::RightMargin), 0);
         d->sizeTool->setCursor(Qt::SizeHorCursor);
         d->sizeTool->setText(i18n("Width"));
 
@@ -583,7 +571,8 @@ void PanelController::setLocation(const Plasma::Location &loc)
         } else {
             d->extLayout->setDirection(QBoxLayout::LeftToRight);
         }
-        d->extLayout->setContentsMargins(1, 0, 0, 0);
+        d->background->setEnabledBorders(Plasma::PanelSvg::LeftBorder);
+        d->extLayout->setContentsMargins(d->background->marginSize(Plasma::LeftMargin), 0, 0, 0);
         d->sizeTool->setCursor(Qt::SizeHorCursor);
         d->sizeTool->setText(i18n("Width"));
 
@@ -596,7 +585,8 @@ void PanelController::setLocation(const Plasma::Location &loc)
             d->layout->setDirection(QBoxLayout::LeftToRight);
         }
         d->extLayout->setDirection(QBoxLayout::BottomToTop);
-        d->extLayout->setContentsMargins(0, 0, 0, 1);
+        d->background->setEnabledBorders(Plasma::PanelSvg::BottomBorder);
+        d->extLayout->setContentsMargins(0, 0, 0, d->background->marginSize(Plasma::BottomMargin));
         d->sizeTool->setCursor(Qt::SizeVerCursor);
         d->sizeTool->setText(i18n("Height"));
 
@@ -610,7 +600,8 @@ void PanelController::setLocation(const Plasma::Location &loc)
             d->layout->setDirection(QBoxLayout::LeftToRight);
         }
         d->extLayout->setDirection(QBoxLayout::TopToBottom);
-        d->extLayout->setContentsMargins(0, 1, 0, 0);
+        d->background->setEnabledBorders(Plasma::PanelSvg::TopBorder);
+        d->extLayout->setContentsMargins(0, d->background->marginSize(Plasma::TopMargin), 0, 0);
         d->sizeTool->setCursor(Qt::SizeVerCursor);
         d->sizeTool->setText(i18n("Height"));
 
@@ -699,41 +690,13 @@ void PanelController::setPalette()
 
 void PanelController::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED(event)
+
     QPainter painter(this);
     painter.setCompositionMode(QPainter::CompositionMode_Source );
-    QColor backColor = Plasma::Theme::defaultTheme() ->color(Plasma::Theme::BackgroundColor);
-    backColor.setAlphaF(0.75);
-    painter.fillRect(event->rect(), backColor);
 
-    QRect borderRect;
-    QString element;
-    switch (d->location) {
-    case Plasma::LeftEdge:
-        element = "west-right";
-        borderRect = QRect(QPoint(0,0), d->svg->elementSize(element));
-        borderRect.setHeight(height());
-        borderRect.moveRight(geometry().width());
-        break;
-    case Plasma::RightEdge:
-        element = "east-left";
-        borderRect = QRect(QPoint(0,0), d->svg->elementSize(element));
-        borderRect.setHeight(height());
-        break;
-    case Plasma::TopEdge:
-        element = "north-bottom";
-        borderRect = QRect(QPoint(0,0), d->svg->elementSize(element));
-        borderRect.setWidth(width());
-        borderRect.moveBottom(geometry().height());
-        break;
-    case Plasma::BottomEdge:
-    default:
-        element = "south-top";
-        borderRect = QRect(QPoint(0, 0), d->svg->elementSize(element));
-        borderRect.setWidth(width());
-        break;
-    }
-
-    d->svg->paint(&painter, borderRect, element);
+    d->background->resizePanel(size());
+    d->background->paintPanel(&painter);
 }
 
 bool PanelController::eventFilter(QObject *watched, QEvent *event)
