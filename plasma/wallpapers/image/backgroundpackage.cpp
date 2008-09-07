@@ -216,18 +216,18 @@ QString BackgroundPackage::findBackground(const QSize &size,
         }
 
         double dist = distance(candidate, size, method);
-        kDebug() << "candidate" << candidate << "distance" << dist;
+        //kDebug() << "candidate" << candidate << "distance" << dist;
         if (bestImage.isNull() || dist < best) {
             bestImage = filePath("images", entry);
             best = dist;
-            kDebug() << "best" << bestImage;
+            //kDebug() << "best" << bestImage;
             if (dist == 0) {
                 break;
             }
         }
     }
 
-    kDebug() << "best image" << bestImage;
+    //kDebug() << "best image" << bestImage;
     return bestImage;
 }
 
