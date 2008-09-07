@@ -615,8 +615,7 @@ void Battery::sourceAdded(const QString& source)
 
 void Battery::sourceRemoved(const QString& source)
 {
-    if (m_batteries_data.contains(source)) {
-        m_batteries_data.remove(source);
+    if(m_batteries_data.remove(source)) {
         m_numOfBattery--;
         update();
     }
