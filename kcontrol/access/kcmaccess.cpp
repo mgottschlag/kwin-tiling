@@ -471,7 +471,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   slowKeysDelay = new ExtendedIntNumInput(grp);
   slowKeysDelay->setSuffix(i18n(" msec"));
   slowKeysDelay->setRange(50, 10000, 100);
-  slowKeysDelay->setLabel(i18n("Acceptance dela&y:"));
+  slowKeysDelay->setLabel(i18n("Acceptance dela&y:"), Qt::AlignVCenter|Qt::AlignLeft);
   hbox->addWidget(slowKeysDelay);
 
   hbox = new QHBoxLayout();
@@ -514,7 +514,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   bounceKeysDelay = new ExtendedIntNumInput(grp);
   bounceKeysDelay->setSuffix(i18n(" msec"));
   bounceKeysDelay->setRange(100, 5000, 100);
-  bounceKeysDelay->setLabel(i18n("D&ebounce time:"));
+  bounceKeysDelay->setLabel(i18n("D&ebounce time:"), Qt::AlignVCenter|Qt::AlignLeft);;
   hbox->addWidget(bounceKeysDelay);
 
   hbox = new QHBoxLayout();
@@ -580,7 +580,7 @@ KAccessConfig::KAccessConfig(QWidget *parent, const QStringList& args)
   timeoutDelay = new KIntNumInput(grp);
   timeoutDelay->setSuffix(i18n(" min"));
   timeoutDelay->setRange(1, 30, 4);
-  timeoutDelay->setLabel(i18n("Timeout:"));
+  timeoutDelay->setLabel(i18n("Timeout:"), Qt::AlignVCenter|Qt::AlignLeft);;
   hbox->addWidget(timeoutDelay);
 
   grp = new QGroupBox(i18n("Notification"), features);
