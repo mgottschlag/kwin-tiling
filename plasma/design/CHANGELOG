@@ -49,6 +49,7 @@ libplasma
 Developer Documentation
 -----------------------
 * Design documentation
+    * NEW: dataengine
     * NEW: tooltips
     * NEW: wallpaper
     * NEW: widgets
