@@ -83,6 +83,7 @@ Comment[uk]=Показує список музики, що відтворюєт�
 Comment[x-test]=xxLists currently playing musicxx
 Comment[zh_CN]=列出当前正在播放的音乐
 Comment[zh_TW]=列出目前播放的音樂
+X-Plasma-EngineName=Now Playing
 
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
