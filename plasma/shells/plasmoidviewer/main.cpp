@@ -55,18 +55,24 @@ int main(int argc, char **argv)
     options.add( "formfactor <name>", ki18n( "The formfactor to use (horizontal, vertical, mediacenter or planar)" ), "planar");
     options.add( "l" );
     options.add( "location <name>", ki18n( "The location constraint to start the Containment with (floating, desktop, fullscreen, top, bottom, left, right)" ), "floating");
+    options.add( "c" );
+    options.add( "containment <name>", ki18n( "Name of the containment plugin" ), QByteArray());
+    options.add( "w" );
+    options.add( "wallpaper <name>", ki18n( "Name of the wallpaper plugin" ), QByteArray());
     options.add( "p" );
     options.add( "pixmapcache <size>", ki18n("The size in KB to set the pixmap cache to"));
-    options.add( "!+applet", ki18n( "Name of applet to add (required)" ) );
+    options.add( "+applet", ki18n( "Name of applet to add (required)" ) );
     options.add( "+[args]", ki18n( "Optional arguments of the applet to add" ) );
     KCmdLineArgs::addCmdLineOptions( options );
 
     KApplication app;
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs() ;
+    QString pluginName;
     if ( args->count() == 0 ) {
         KCmdLineArgs::usageError(i18n("No applet name specified"));
     }
+    pluginName = args->arg(0);
 
     QString formfactor;
     if (args->isSet("formfactor")) {
@@ -79,7 +85,19 @@ int main(int argc, char **argv)
         kDebug() << "setting Location to" << args->getOption("location");
         location = args->getOption("location");
     }
-
+    
+    QString containment;
+    if (args->isSet("containment")) {
+        containment = args->getOption("containment");
+        kDebug() << "setting containment to" << containment;
+    }
+    
+    QString wallpaper;
+    if (args->isSet("wallpaper")) {
+        wallpaper = args->getOption("wallpaper");
+        kDebug() << "setting wallpaper to" << wallpaper;
+    }
+    
     QVariantList appletArgs;
     for ( int i = 1; i < args->count(); ++i ) {
         appletArgs << args->arg(i);
@@ -87,14 +105,14 @@ int main(int argc, char **argv)
 
     FullView view( formfactor, location );
     //At this point arg(0) is always set
-    view.addApplet( args->arg(0), appletArgs );
+    view.addApplet( pluginName, containment, wallpaper, appletArgs );
     view.show();
 
     QAction *action = KStandardAction::quit(&app, SLOT(quit()), &view);
     view.addAction(action);
 
     if (args->isSet("pixmapcache")) {
-        kDebug() << "setting pixmap cach to" << args->getOption("pixmapcache").toInt();
+        kDebug() << "setting pixmap cache to" << args->getOption("pixmapcache").toInt();
         QPixmapCache::setCacheLimit(args->getOption("pixmapcache").toInt());
     }
     args->clear();

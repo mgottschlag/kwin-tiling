@@ -1,6 +1,7 @@
 /*
  * Copyright 2007 Frerich Raabe <raabe@kde.org>
- * Copyright 2007 Aaron Seigo <aseigo@kde.org
+ * Copyright 2007 Aaron Seigo <aseigo@kde.org>
+ * Copyright 2008 Aleix Pol <aleixpol@gmail.com>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,7 @@
 #include "fullview.h"
 
 #include <plasma/containment.h>
+#include <plasma/wallpaper.h>
 #include <KStandardDirs>
 #include <KIconLoader>
 #include <QIcon>
@@ -78,11 +80,17 @@ FullView::FullView(const QString &ff, const QString &loc, QWidget *parent)
     setAlignment(Qt::AlignLeft | Qt::AlignTop);
 }
 
-void FullView::addApplet(const QString &a, const QVariantList &args)
+void FullView::addApplet(const QString &a, const QString &containment, const QString& wallpaper, const QVariantList &args)
 {
-    m_containment = m_corona.addContainment("null");
+    kDebug() << "adding applet" << a << "in" << containment;
+    m_containment = m_corona.addContainment(containment);
+    if(!wallpaper.isEmpty()) {
+        m_containment->setWallpaper(wallpaper);
+    }
     m_containment->setFormFactor(m_formfactor);
     m_containment->setLocation(m_location);
+    setScene(m_containment->scene());
+    
     m_applet = m_containment->addApplet(a, args, QRectF(0, 0, -1, -1));
     m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
 
@@ -118,9 +126,9 @@ void FullView::resizeEvent(QResizeEvent *event)
         newWidth = size().width();
         newHeight = size().height();
     }
+    QSizeF newSize(newWidth, newHeight);
 
     m_containment->resize(size());
-    QSizeF newSize(newWidth, newHeight);
     // check if the rect is valid, or else it seems to try to allocate
     // up to infinity memory in exponential increments
     if (newSize.isValid()) {
