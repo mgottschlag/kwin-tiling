@@ -1,3 +1,8 @@
+KDE4.?
+======
+1. Added zoom controls to font preview.
+2. Made viewer application a KUniqueApplication
+
 KDE3.5 -> KDE4.0
 ================
  1. Enabling/disabling of fonts.

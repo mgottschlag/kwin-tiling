@@ -59,8 +59,16 @@
 #include "KfiConstants.h"
 #include "Fc.h"
 #include "Misc.h"
+#if defined USE_POLICYKIT && USE_POLICYKIT==1
+#include "FontInst.h"
+#include "PolicyKitAuthenticator.h"
+#include <QtDBus/QtDBus>
+#include <QtDBus/QDBusConnection>
+#include <signal.h>
+#else
 #include "SuProc.h"
 #include "Socket.h"
+#endif
 #include <ctype.h>
 
 // Enable the following so that all URLs are actually <family>, <style>, e.g.
@@ -794,13 +802,19 @@ CKioFonts::CKioFonts(const QByteArray &pool, const QByteArray &app)
            itsAddToSysFc(false),
            itsLastFcCheckTime(0),
            itsFontList(NULL),
+#if defined USE_POLICYKIT && USE_POLICYKIT==1
+           itsFontInstIface(0L),
+           itsPid(0)
+#else
            itsSocket(NULL),
            itsSuProc(NULL)
+#endif
 {
     KFI_DBUG;
 
     slaveInstance=this;
 
+#if !(defined USE_POLICYKIT && USE_POLICYKIT==1)
     if(!itsRoot)
     {
         // Set core dump size to 0 because we will have
@@ -809,6 +823,7 @@ CKioFonts::CKioFonts(const QByteArray &pool, const QByteArray &app)
         rlim.rlim_cur=rlim.rlim_max=0;
         setrlimit(RLIMIT_CORE, &rlim);
     }
+#endif
     //
     // Check with fontconfig for folder locations...
     //
@@ -843,7 +858,7 @@ CKioFonts::CKioFonts(const QByteArray &pool, const QByteArray &app)
         itsFolders[FOLDER_USER].setLocation(dir, false);
     }
 
-    QString sysDefault("/usr/local/share/fonts/"),
+    QString sysDefault(KFI_DEFAULT_SYS_FONTS_FOLDER),
             sysDir(Misc::getFolder(sysDefault, "/usr/local/share/", dirs));
 
     if(sysDir.isEmpty())
@@ -877,10 +892,14 @@ void CKioFonts::cleanup()
     KFI_DBUG;
     itsFolders[FOLDER_USER].disabled->save();
     doModified();
+#if defined USE_POLICYKIT && USE_POLICYKIT==1
+    delete itsFontInstIface;
+#else
     quitHelper();
 
     delete itsSuProc;
     delete itsSocket;
+#endif
 }
 
 void CKioFonts::listDir(const KUrl &url)
@@ -2417,6 +2436,41 @@ bool CKioFonts::getRootPasswd(const KUrl &url, bool askPasswd)
 {
     KFI_DBUG;
 
+#if defined USE_POLICYKIT && USE_POLICYKIT==1
+    if(url.hasUser() && !url.pass().isEmpty() && KFI_SYS_USER==url.user())
+    {
+        bool ok;
+        int  v=url.pass().toInt(&ok);
+
+        if(ok)
+            itsPid=v;
+    }
+
+    KFI_DBUG << "askPasswd:" << askPasswd << " itsPid:" << itsPid;
+
+    // If we have a pid, check that its still alive!
+    if(0!=itsPid && 0!=kill(itsPid, 0))
+        itsPid=getpid();
+
+    if(!askPasswd)
+        return 0!=itsPid;
+
+    uint winId=hasMetaData("window-id") ? metaData("window-id").toInt() : 0,
+         pid=0==itsPid ? getpid() : itsPid;
+
+    KFI_DBUG << "ObtainAuthorization pid:" << pid << " winId:" << winId;
+
+    if(PolicyKitAuthenticator::instance()->authenticate(KFI_IFACE, winId, pid, false))
+    {
+        KFI_DBUG << "Authorization obtained";
+        itsPid=pid;
+        return true;
+    }
+
+    // If pids dont match, its possible (probable!) that the calling app has already
+    // authenticated, if so ObtainAuthorization returns false on sucessive attempts!
+    return itsPid!=getpid();
+#else
     if(url.hasUser() && !url.pass().isEmpty() && KFI_SYS_USER==url.user())
     {
         itsPasswd=url.pass();
@@ -2465,8 +2519,10 @@ bool CKioFonts::getRootPasswd(const KUrl &url, bool askPasswd)
 
     itsPasswd= error ? QString() : authInfo.password;
     return !itsPasswd.isEmpty();
+#endif
 }
 
+#if !(defined USE_POLICYKIT && USE_POLICYKIT==1)
 void CKioFonts::quitHelper()
 {
     if(itsServer.isOpen() && itsSuProc && itsSocket && itsSuProc->isRunning())
@@ -2483,6 +2539,7 @@ void CKioFonts::quitHelper()
         }
     }
 }
+#endif
 
 bool CKioFonts::doRootCmd(const KUrl &url, QList<TCommand> &cmd, bool askPasswd)
 {
@@ -2490,6 +2547,137 @@ bool CKioFonts::doRootCmd(const KUrl &url, QList<TCommand> &cmd, bool askPasswd)
 
     if(cmd.count() && getRootPasswd(url, askPasswd))
     {
+#if defined USE_POLICYKIT && USE_POLICYKIT==1
+        QList<TCommand>::ConstIterator it(cmd.begin()),
+                                       end(cmd.end());
+        bool                           error(false);
+
+        if(!itsFontInstIface)
+            itsFontInstIface=new org::kde::fontinst(KFI_IFACE, "/FontInst", QDBusConnection::systemBus());
+
+        for(; it!=end && !error; ++it)
+        {
+            int response(-1);
+
+            KFI_DBUG << "do cmd " << (int)((*it).cmd);
+
+            switch((*it).cmd)
+            {
+                case CMD_ENABLE_FONT:
+                    if(2==(*it).args.count())
+                        response=itsFontInstIface->enableFont(itsPid, (*it).args[0].toString(),
+                                                              (*it).args[1].toUInt()).value();
+                    else
+                        error=true;
+                    break;
+                case CMD_DISABLE_FONT:
+                    if((*it).args.count()>=7 && (*it).args.count()%2)
+                    {
+                        QStringList                    fileData;
+                        QList<QVariant>::ConstIterator fit((*it).args.begin()),
+                                                       fend((*it).args.end());
+
+                        for(int i=0; i<5; ++i)
+                            ++fit;
+
+                        for(; fit!=fend; ++fit)
+                            fileData.append((*fit).toString());
+
+                        response=itsFontInstIface->disableFont(itsPid, (*it).args[0].toString(),
+                                                               (*it).args[1].toUInt(), (*it).args[2].toULongLong(),
+                                                               (*it).args[3].toUInt(), fileData).value();
+                    }
+                    else
+                        error=true;
+                    break;
+                case CMD_DELETE_DISABLED_FONT:
+                    if(2==(*it).args.count())
+                        response=itsFontInstIface->deleteDisabledFont(itsPid, (*it).args[0].toString(),
+                                                                      (*it).args[1].toUInt()).value();
+                    else
+                        error=true;
+                    break;
+                case CMD_RELOAD_DISABLED_LIST:
+                    if(0==(*it).args.count())
+                        response=itsFontInstIface->reloadDisabledList(itsPid);
+                    else
+                        error=true;
+                    break;
+                case CMD_COPY_FILE:
+                    if(2==(*it).args.count())
+                        response=itsFontInstIface->copyFont(itsPid, (*it).args[0].toString(),
+                                                            (*it).args[1].toString()).value();
+                    else
+                        error=true;
+                    break;
+                case CMD_MOVE_FILE:
+                    if(4==(*it).args.count())
+                        response=itsFontInstIface->moveFont(itsPid, (*it).args[0].toString(),
+                                                            (*it).args[1].toString(), (*it).args[2].toUInt(),
+                                                            (*it).args[3].toUInt()).value();
+                    else
+                        error=true;
+                    break;
+                case CMD_DELETE_FILE:
+                    if(1==(*it).args.count())
+                        response=itsFontInstIface->deleteFont(itsPid, (*it).args[0].toString()).value();
+                    else
+                        error=true;
+                    break;
+                case CMD_CREATE_DIR:
+                    if(1==(*it).args.count())
+                    {
+                        KFI_DBUG << "Create dir " << (*it).args[0].toString();
+                        response=itsFontInstIface->createDir(itsPid, (*it).args[0].toString()).value();
+                    }
+                    else
+                        error=true;
+                    break;
+                case CMD_CREATE_AFM:
+                    if(1==(*it).args.count())
+                        response=itsFontInstIface->createAfm(itsPid, (*it).args[0].toString()).value();
+                    else
+                        error=true;
+                    break;
+                case CMD_FC_CACHE:
+                    if(0==(*it).args.count())
+                        response=doLongRootCmd("fcCache");
+                    else
+                        error=true;
+                    break;
+                case CMD_ADD_DIR_TO_FONTCONFIG:
+                    if(1==(*it).args.count())
+                        response=itsFontInstIface->addToFc(itsPid, (*it).args[0].toString()).value();
+                    else
+                        error=true;
+                    break;
+                case CMD_CFG_DIR_FOR_X:
+                    if(1==(*it).args.count())
+                        response=doLongRootCmd("configureX", (*it).args[0].toString());
+                    else
+                        error=true;
+                    break;
+                default:
+                    error=true;
+                    break;
+            }
+
+            if(!error)
+            {
+                if(FontInst::CommandOk!=response)
+                {
+                    error=true;
+                    KFI_DBUG << "Failed";
+                }
+                else
+                    KFI_DBUG << "Success";
+            }
+            else
+                KFI_DBUG << "Parameter error";
+        }
+
+        return !error;
+#else
         if(!itsServer.isOpen())
         {
             KFI_DBUG << "Open server socket";
@@ -2585,10 +2773,47 @@ bool CKioFonts::doRootCmd(const KUrl &url, QList<TCommand> &cmd, bool askPasswd)
             else
                 KFI_DBUG << "No socket connection :-(";
         }
+#endif
     }
 
     return false;
 }
+
+#if defined USE_POLICYKIT && USE_POLICYKIT==1
+int CKioFonts::doLongRootCmd(const QString &method, const QString &param)
+{
+    static const int constDBusTimeout=20*60*1000; // 20mins
+
+    KFI_DBUG << method << param;
+
+    QList<QVariant> args;
+    QDBusMessage    message=QDBusMessage::createMethodCall(itsFontInstIface->service(),
+                                                           itsFontInstIface->path(),
+                                                           itsFontInstIface->interface(),
+                                                           method);
+
+    args << qVariantFromValue(itsPid);
+
+    if(!param.isEmpty())
+        args << qVariantFromValue(param);
+
+    message.setArguments(args);
+
+    QDBusMessage reply=itsFontInstIface->connection().call(message, QDBus::Block, constDBusTimeout);
+
+    KFI_DBUG << "Got reply";
+
+    if (QDBusMessage::ReplyMessage==reply.type())
+    {
+        QDBusReply<int> r(reply);
+
+        if (r.isValid())
+            return r.value();
+    }
+
+    return FontInst::CommandFailed;
+}
+#endif
 
 bool CKioFonts::doRootCmd(const KUrl &url, const TCommand &cmd, bool askPasswd)
 {
@@ -2645,7 +2870,11 @@ bool CKioFonts::updateFontList()
 
     if(!itsRoot)
     {
+#if defined USE_POLICYKIT && USE_POLICYKIT==1
+        if(0!=itsPid)
+#else
         if(itsServer.isOpen() && itsSuProc && itsSocket)
+#endif
             doRootCmd(KUrl(), TCommand(KFI::CMD_RELOAD_DISABLED_LIST), false);
         itsFolders[FOLDER_USER].disabled->refresh();
     }
@@ -3277,8 +3506,13 @@ bool CKioFonts::checkAllowed(const KUrl &u)
 // Create an AFM from a Type 1 (pfa/pfb) font and its PFM file...
 void CKioFonts::createAfm(const QString &file, bool nrs)
 {
+#if defined USE_POLICYKIT && USE_POLICYKIT==1
+    if(nrs && 0==itsPid)
+        return;
+#else
     if(nrs && itsPasswd.isEmpty())
         return;
+#endif
 
     bool type1=isAType1(file),
          pfm=!type1 && isAPfm(file);  // No point checking if is pfm if its a type1

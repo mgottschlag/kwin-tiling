@@ -63,6 +63,7 @@
 #include <KDE/KMenu>
 #include <KDE/KPluginFactory>
 #include <KDE/KPluginLoader>
+#include <KDE/KStandardAction>
 
 #define CFG_GROUP                  "Main Settings"
 #define CFG_PREVIEW_SPLITTER_SIZES "PreviewSplitterSizes"
@@ -212,8 +213,6 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
 {
     setButtons(Help);
 
-    CFcEngine::instance()->readConfig(itsConfig);
-    CFcEngine::setTextCol(QApplication::palette().color(QPalette::Active, QPalette::Text));
     KGlobal::locale()->insertCatalog(KFI_CATALOGUE);
     KIconLoader::global()->addAppDir(KFI_NAME);
     KIconLoader::global()->reconfigure(KFI_NAME, KGlobal::dirs());
@@ -261,8 +260,12 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
 
     // Preview...
     itsPreviewControl=new CPreviewSelectAction(itsPreviewWidget);
-
+    itsZoomInAction=KStandardAction::zoomIn(this, SLOT(zoomIn()), this);
+    itsZoomOutAction=KStandardAction::zoomOut(this, SLOT(zoomOut()), this);
     previewToolbar->addAction(itsPreviewControl);
+    previewToolbar->addAction(itsZoomInAction);
+    previewToolbar->addAction(itsZoomOutAction);
+    previewToolbar->setToolButtonStyle(Qt::ToolButtonIconOnly);
 
     previewLayout->setMargin(0);
     previewLayout->setSpacing(KDialog::spacingHint());
@@ -280,6 +283,11 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     itsPreview->setWhatsThis(i18n("This displays a preview of the selected font."));
     itsPreview->setContextMenuPolicy(Qt::CustomContextMenu);
     previewFrameLayout->addWidget(itsPreview);
+
+    itsPreview->engine()->readConfig(itsConfig);
+    CFcEngine::setTextCol(QApplication::palette().color(QPalette::Active, QPalette::Text));
+    connect(itsPreview, SIGNAL(doZoomIn()), SLOT(zoomIn()));
+    connect(itsPreview, SIGNAL(doZoomOut()), SLOT(zoomOut()));
 
     // Toolbar...
     KActionMenu *settingsMenu=new KActionMenu(KIcon("configure"), i18n("Settings"), this);
@@ -348,7 +356,7 @@ CKCmFontInst::CKCmFontInst(QWidget *parent, const QVariantList&)
     groupsLayout->addItem(new QSpacerItem(itsDisableGroupControl->width(), KDialog::spacingHint(),
                           QSizePolicy::Expanding, QSizePolicy::Fixed), 1, 4);
     // Details - Fonts...
-    itsFontList=new CFontList(itsFontsWidget);
+    itsFontList=new CFontList(itsPreview->engine(), itsFontsWidget);
     itsFontListView=new CFontListView(itsFontsWidget, itsFontList);
     itsFontListView->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
     itsFontListView->readConfig(cg);
@@ -553,6 +561,8 @@ void CKCmFontInst::fontSelected(const QModelIndex &index, bool en, bool dis)
 
                 itsPreview->showFont(url, font->isEnabled() ? font->name() : QString(),
                                      font->styleInfo(), font->isEnabled() ? 1 : font->index());
+                itsZoomInAction->setEnabled(!itsPreview->engine()->atMax());
+                itsZoomOutAction->setEnabled(!itsPreview->engine()->atMin());
             }
             itsDeleteFontControl->setEnabled(true);
         }
@@ -979,14 +989,14 @@ void CKCmFontInst::changeText()
     {
         bool             status;
         QRegExpValidator validator(QRegExp(".*"), 0L);
-        QString          oldStr(CFcEngine::instance()->getPreviewString()),
+        QString          oldStr(itsPreview->engine()->getPreviewString()),
                          newStr(KInputDialog::getText(i18n("Preview Text"),
                                                       i18n("Please enter new text:"),
                                                       oldStr, &status, this, &validator));
 
         if(status && oldStr!=newStr)
         {
-            CFcEngine::instance()->setPreviewString(newStr);
+            itsPreview->engine()->setPreviewString(newStr);
             itsFontList->forceNewPreviews();
 
             if(itsPreview->width()>6)
@@ -1290,6 +1300,20 @@ void CKCmFontInst::selectMode(int mode)
     selectGroup(modeToGrp(mode));
 }
 
+void CKCmFontInst::zoomIn()
+{
+    itsPreview->zoomIn();
+    itsZoomInAction->setEnabled(!itsPreview->engine()->atMax());
+    itsZoomOutAction->setEnabled(!itsPreview->engine()->atMin());
+}
+
+void CKCmFontInst::zoomOut()
+{
+    itsPreview->zoomOut();
+    itsZoomInAction->setEnabled(!itsPreview->engine()->atMax());
+    itsZoomOutAction->setEnabled(!itsPreview->engine()->atMin());
+}
+
 void CKCmFontInst::selectGroup(CGroupListItem::EType grp)
 {
     QModelIndex current(itsGroupListView->currentIndex());
@@ -1448,7 +1472,7 @@ void CKCmFontInst::doCmd(CJobRunner::ECommand cmd, const CJobRunner::ItemList &u
 {
     itsFontList->setAutoUpdate(false);
     itsRunner->exec(cmd, urls, dest);
-    CFcEngine::instance()->setDirty();
+    CFcEngine::setDirty();
     setStatusBar();
     itsFontList->scan();
     itsFontList->setAutoUpdate(true);

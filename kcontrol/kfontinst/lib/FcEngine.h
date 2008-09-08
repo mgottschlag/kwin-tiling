@@ -72,13 +72,12 @@ class KDE_EXPORT CFcEngine
 
     static CFcEngine * instance();
 
-    CFcEngine();
+    CFcEngine(bool init=true);
     ~CFcEngine();
 
     void                  readConfig(KConfig &cfg);
     void                  writeConfig(KConfig &cfg);
-
-    void                  setDirty() { itsFcDirty=true; }
+    static void           setDirty() { theirFcDirty=true; }
     bool                  drawPreview(const QString &item, QPixmap &pix, const QColor &col, int h,
                                       quint32 style=KFI_NO_STYLE_INFO, int face=0);
     bool                  draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bool thumb,
@@ -88,10 +87,12 @@ class KDE_EXPORT CFcEngine
     const QString &       getName(const KUrl &url, int faceNo=0);
     bool                  getInfo(const KUrl &url, int faceNo, Misc::TFont &info);
     static QFont          getQFont(const QString &family, quint32 style, int size);
-
     const QVector<int> &  sizes() const     { return itsSizes; }
-    int                   alphaSize() const { return itsAlphaSize; }
-
+    bool                  atMin() const     { return 0==itsSizes.size() || 0==itsAlphaSizeIndex; }
+    bool                  atMax() const     { return 0==itsSizes.size() || itsSizes.size()-1==itsAlphaSizeIndex; }
+    void                  zoomIn()          { if(!atMax()) itsAlphaSizeIndex++; }
+    void                  zoomOut()         { if(!atMin()) itsAlphaSizeIndex--; }
+    int                   alphaSize() const { return itsSizes[itsAlphaSizeIndex]; }
     quint32               styleVal() { return FC::createStyleVal(itsWeight, itsWidth, itsSlant); }
 
     const QString &       getPreviewString()                  { return itsPreviewString; }
@@ -122,8 +123,7 @@ class KDE_EXPORT CFcEngine
 
     private:
 
-    bool          itsInstalled,
-                  itsFcDirty;
+    bool          itsInstalled;
     QString       itsName,
                   itsFileName,
                   itsDescriptiveName;
@@ -132,13 +132,13 @@ class KDE_EXPORT CFcEngine
                   itsWeight,
                   itsWidth,
                   itsSlant,
-                  itsAlphaSize;
+                  itsAlphaSizeIndex;
     QVector<int>  itsSizes;
     KUrl          itsLastUrl;
     FcBool        itsScalable;
     QStringList   itsAddedFiles;
     QString       itsPreviewString;
-
+    static bool   theirFcDirty;
     static QColor theirTextCol;
 };
 

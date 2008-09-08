@@ -29,6 +29,7 @@
 #include <QtGui/QPainter>
 #include <QtGui/QPaintEvent>
 #include <QtGui/QMouseEvent>
+#include <QtGui/QWheelEvent>
 #include <stdlib.h>
 
 namespace KFI
@@ -46,6 +47,7 @@ CFontPreview::CFontPreview(QWidget *parent)
               itsLastChar(itsChars.end()),
               itsTip(NULL)
 {
+    itsEngine=new CFcEngine;
 }
 
 CFontPreview::~CFontPreview()
@@ -74,9 +76,9 @@ void CFontPreview::showFont()
     itsLastHeight=height()+constStepSize;
 
     if(!itsCurrentUrl.isEmpty() &&
-       CFcEngine::instance()->draw(itsCurrentUrl, itsLastWidth, itsLastHeight, itsPixmap,
-                                   itsCurrentFace, false, itsRange, &itsChars, itsFontName,
-                                   itsStyleInfo))
+       itsEngine->draw(itsCurrentUrl, itsLastWidth, itsLastHeight, itsPixmap,
+                       itsCurrentFace, false, itsRange, &itsChars, itsFontName,
+                       itsStyleInfo))
     {
         setMouseTracking(itsChars.count()>0);
         update();
@@ -92,6 +94,18 @@ void CFontPreview::showFont()
         emit status(false);
     }
     itsLastChar=itsChars.end();
+}
+
+void CFontPreview::zoomIn()
+{
+    itsEngine->zoomIn();
+    showFont();
+}
+
+void CFontPreview::zoomOut()
+{
+    itsEngine->zoomOut();
+    showFont();
 }
 
 void CFontPreview::setUnicodeRange(const QList<CFcEngine::TRange> &r)
@@ -131,6 +145,16 @@ void CFontPreview::mouseMoveEvent(QMouseEvent *event)
                 itsLastChar=it;
                 break;
             }
+}
+
+void CFontPreview::wheelEvent(QWheelEvent *e)
+{
+    if(e->delta()>0)
+        emit doZoomIn();
+    else if(e->delta()<0)
+        emit doZoomOut();
+
+    e->accept();
 }
 
 QSize CFontPreview::sizeHint() const

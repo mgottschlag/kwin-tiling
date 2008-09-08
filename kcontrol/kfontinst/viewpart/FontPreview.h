@@ -33,10 +33,13 @@
 #include "KfiConstants.h"
 #include "FcEngine.h"
 
+class QWheelEvent;
+
 namespace KFI
 {
 
 class CCharTip;
+class CFcEngine;
 
 class CFontPreview : public QWidget
 {
@@ -49,6 +52,7 @@ class CFontPreview : public QWidget
 
     void        paintEvent(QPaintEvent *);
     void        mouseMoveEvent(QMouseEvent *event);
+    void        wheelEvent(QWheelEvent *e);
     QSize       sizeHint() const;
     QSize       minimumSizeHint() const;
 
@@ -56,6 +60,10 @@ class CFontPreview : public QWidget
                          unsigned long styleInfo=KFI_NO_STYLE_INFO, int face=0);
     void        showFont();
     void        showFace(int face);
+    void        zoomIn();
+    void        zoomOut();
+
+    CFcEngine * engine() { return itsEngine; }
 
     public Q_SLOTS:
 
@@ -64,6 +72,8 @@ class CFontPreview : public QWidget
     Q_SIGNALS:
 
     void        status(bool);
+    void        doZoomIn();
+    void        doZoomOut();
 
     private:
 
@@ -78,6 +88,7 @@ class CFontPreview : public QWidget
     QList<CFcEngine::TChar>                itsChars;
     QList<CFcEngine::TChar>::ConstIterator itsLastChar;
     CCharTip                               *itsTip;
+    CFcEngine                              *itsEngine;
 
     friend class CCharTip;
 };

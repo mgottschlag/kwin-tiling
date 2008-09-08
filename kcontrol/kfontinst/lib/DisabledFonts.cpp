@@ -31,12 +31,17 @@
 #include <QtXml/QDomNode>
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
-#include <KDE/KLockFile>
-#include <KDE/KSaveFile>
+#include <QtCore/QTemporaryFile>
 #include <KDE/KLocale>
 #include <KDE/KStandardDirs>
 #include <fontconfig/fontconfig.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <signal.h>
 
 namespace KFI
 {
@@ -55,8 +60,66 @@ namespace KFI
 #define LANGS_ATTR    "langs"
 #define LANG_SEP      ","
 
-static const int     constStaleLockTime(5);
-static const QString constLockExt(".lock");
+// Simple lock file class...
+class CLockFile
+{
+    public:
+
+    CLockFile(const QString &fileName)
+        : itsName(QFile::encodeName(fileName+".lock")),
+          itsFd(-1)
+    {
+    }
+
+    ~CLockFile()
+    {
+        if(itsFd>=0)
+        {
+            close(itsFd);
+            ::unlink(itsName.constData());
+        }
+    }
+
+    bool lock()
+    {
+        int pid(0);
+
+        itsFd=open(itsName.constData(), O_WRONLY|O_CREAT|O_EXCL, 0644);
+
+        if(itsFd<0 && EEXIST==errno)
+        {
+            // Open file read only to ascertain pid of process that currently is locking the file...
+            int fd(open(itsName.constData(), O_RDONLY));
+
+            if(fd>=0)
+            {
+                read(fd, &pid, sizeof(int));
+                close(fd);
+
+                if(0==kill(pid, 0)) // Process is still alive, give it 5 seconds to release the lock...
+                    sleep(5);
+                else // Process is not alive, remove file...
+                    ::unlink(itsName.constData());
+            }
+            // else could not open file - perhaps it was removed in between the 2 open calls?
+
+            // Try to lock again...
+            itsFd=open(itsName.constData(), O_WRONLY|O_CREAT|O_EXCL, 0644);
+        }
+
+        if(itsFd<0)
+            return false;
+
+        pid=getpid();
+        write(itsFd, &pid, sizeof(int));
+        return true;
+    }
+
+    private:
+
+    QByteArray itsName;
+    int        itsFd;
+};
 
 static QString changeName(const QString &f, bool enable)
 {
@@ -242,12 +305,11 @@ bool CDisabledFonts::refresh()
 // or this load might be being called within the save() - so cant lock as is already!
 void CDisabledFonts::load(bool lock)
 {
-    KLockFile lf(itsFileName+constLockExt);
+    CLockFile lf(itsFileName);
 
-    lf.setStaleTime(constStaleLockTime);
     lock=lock && itsModifiable;
 
-    if(!lock || KLockFile::LockOK==lf.lock(KLockFile::ForceFlag))
+    if(!lock || lf.lock())
     {
         time_t ts=Misc::getTimeStamp(itsFileName);
 
@@ -292,10 +354,9 @@ bool CDisabledFonts::save()
 
     if(itsModified)
     {
-        KLockFile lf(itsFileName+constLockExt);
+        CLockFile lf(itsFileName);
 
-        lf.setStaleTime(constStaleLockTime);
-        if(KLockFile::LockOK==lf.lock(KLockFile::ForceFlag))
+        if(lf.lock())
         {
             time_t ts=Misc::getTimeStamp(itsFileName);
 
@@ -305,29 +366,40 @@ bool CDisabledFonts::save()
                 merge(CDisabledFonts(*this));
             }
 
-            KSaveFile file(itsFileName);
+            QTemporaryFile temp(itsFileName);
 
-            if(file.open())
+            temp.setAutoRemove(false);
+
+            if(!temp.open())
+                return false;
+
+            QFile file(temp.fileName());
+
+            if(!file.open(QIODevice::WriteOnly))
             {
-                QTextStream str(&file);
+                temp.setAutoRemove(true);
+                return false;
+            }
 
-                str << "<"DISABLED_DOC">" << endl;
+            QTextStream str(&file);
 
-                TFontList::Iterator it(itsFonts.begin()),
-                                    end(itsFonts.end());
+            str << "<"DISABLED_DOC">" << endl;
 
-                for(; it!=end; ++it)
-                    str << (*it);
-                str << "</"DISABLED_DOC">" << endl;
-                itsModified=false;
-                file.setPermissions(QFile::ReadOwner|QFile::WriteOwner|
-                                    QFile::ReadGroup|QFile::ReadOther);
-                rv=file.finalize();
-                if(rv)
-                {
-                    itsTimeStamp=Misc::getTimeStamp(itsFileName);
-                    itsMods=0;
-                }
+            TFontList::Iterator it(itsFonts.begin()),
+                                end(itsFonts.end());
+
+            for(; it!=end; ++it)
+                str << (*it);
+            str << "</"DISABLED_DOC">" << endl;
+            itsModified=false;
+            file.setPermissions(QFile::ReadOwner|QFile::WriteOwner|
+                                QFile::ReadGroup|QFile::ReadOther);
+            file.close();
+            rv=::rename(QFile::encodeName(file.fileName()), QFile::encodeName(itsFileName));
+            if(rv)
+            {
+                itsTimeStamp=Misc::getTimeStamp(itsFileName);
+                itsMods=0;
             }
         }
     }

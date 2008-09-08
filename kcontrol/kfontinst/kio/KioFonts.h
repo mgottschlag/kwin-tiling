@@ -25,6 +25,7 @@
  */
 
 #include <fontconfig/fontconfig.h>
+#include "../config-fontinst.h"
 #include <time.h>
 #include <KDE/KIO/SlaveBase>
 #include <KDE/KUrl>
@@ -38,7 +39,11 @@
 #include "Misc.h"
 #include "KfiConstants.h"
 #include "DisabledFonts.h"
+#if defined USE_POLICYKIT && USE_POLICYKIT==1
+#include "FontInstInterface.h"
+#else
 #include "Server.h"
+#endif
 #include "Helper.h"
 
 class KTemporaryFile;
@@ -46,8 +51,10 @@ class KTemporaryFile;
 namespace KFI
 {
 
+#if !(defined USE_POLICYKIT && USE_POLICYKIT==1)
 class CSuProc;
 class CSocket;
+#endif
 
 class CKioFonts : public KIO::SlaveBase
 {
@@ -154,9 +161,14 @@ class CKioFonts : public KIO::SlaveBase
     bool               configure(EFolder folder);
     void               doModified();
     bool               getRootPasswd(const KUrl &url, bool askPasswd=true);
+#if !(defined USE_POLICYKIT && USE_POLICYKIT==1)
     void               quitHelper();
+#endif
     bool               doRootCmd(const KUrl &url, const TCommand &cmd, bool askPasswd=true);
     bool               doRootCmd(const KUrl &url, QList<TCommand> &cmd, bool askPasswd=true);
+#if defined USE_POLICYKIT && USE_POLICYKIT==1
+    int                doLongRootCmd(const QString &method, const QString &param=QString());
+#endif
     void               correctUrl(KUrl &url);
     void               clearFontList();
     bool               updateFontList();
@@ -185,18 +197,23 @@ class CKioFonts : public KIO::SlaveBase
 
     private:
 
-    bool                  itsRoot,
-                          itsAddToSysFc;
-    QString               itsPasswd;
-    QByteArray            itsHelper;
-    time_t                itsLastFcCheckTime;
-    FcFontSet             *itsFontList;
-    TFolder               itsFolders[FOLDER_COUNT];
-    QHash<uid_t, QString> itsUserCache;
-    QHash<gid_t, QString> itsGroupCache;
-    CServer               itsServer;
-    CSocket               *itsSocket;
-    CSuProc               *itsSuProc;
+    bool                   itsRoot,
+                           itsAddToSysFc;
+    QByteArray             itsHelper;
+    time_t                 itsLastFcCheckTime;
+    FcFontSet              *itsFontList;
+    TFolder                itsFolders[FOLDER_COUNT];
+    QHash<uid_t, QString>  itsUserCache;
+    QHash<gid_t, QString>  itsGroupCache;
+#if defined USE_POLICYKIT && USE_POLICYKIT==1
+    org::kde::fontinst     *itsFontInstIface;
+    uint                   itsPid;
+#else
+    QString                itsPasswd;
+    CServer                itsServer;
+    CSocket                *itsSocket;
+    CSuProc                *itsSuProc;
+#endif
 };
 
 }

@@ -36,6 +36,7 @@ class QPushButton;
 class QLabel;
 class QProcess;
 class QAction;
+class KAction;
 class KIntNumInput;
 class KTempDir;
 
@@ -70,6 +71,8 @@ class CFontViewPart : public KParts::ReadOnlyPart
     void displayType(const QList<CFcEngine::TRange> &range);
     void statResult(KJob *job);
     void showFace(int face);
+    void zoomIn();
+    void zoomOut();
 
     private:
 
@@ -87,6 +90,8 @@ class CFontViewPart : public KParts::ReadOnlyPart
 //                       *itsMetaLabel;
     KIntNumInput       *itsFaceSelector;
     QAction            *itsChangeTextAction;
+    KAction            *itsZoomInAction,
+                       *itsZoomOutAction;
     int                itsFace;
     KSharedConfigPtr   itsConfig;
     BrowserExtension   *itsExtension;

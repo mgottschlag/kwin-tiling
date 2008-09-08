@@ -213,9 +213,9 @@ void CCharTip::showTip()
     QList<CFcEngine::TRange> range;
     range.append(CFcEngine::TRange(itsItem.ucs4, 0));
 
-    if(CFcEngine::instance()->draw(itsParent->itsCurrentUrl, pix.width(), pix.height(), pix,
-                                   itsParent->itsCurrentFace-1, false, range,
-                                   NULL, itsParent->itsFontName, itsParent->itsStyleInfo))
+    if(itsParent->engine()->draw(itsParent->itsCurrentUrl, pix.width(), pix.height(), pix,
+                                 itsParent->itsCurrentFace-1, false, range,
+                                 NULL, itsParent->itsFontName, itsParent->itsStyleInfo))
         itsPixmapLabel->setPixmap(pix);
     else
         itsPixmapLabel->setPixmap(QPixmap());

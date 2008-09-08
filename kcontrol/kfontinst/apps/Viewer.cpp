@@ -25,7 +25,7 @@
 #include "KfiConstants.h"
 #include <KDE/KCmdLineArgs>
 #include <KDE/KAboutData>
-#include <KDE/KApplication>
+#include <KDE/KUniqueApplication>
 #include <KDE/KPluginLoader>
 #include <KDE/KPluginFactory>
 #include <KDE/KLocale>
@@ -98,6 +98,49 @@ void CViewer::enableAction(const char *name, bool enable)
         itsPrintAct->setEnabled(enable);
 }
 
+
+
+
+class ViewerApplication : public KUniqueApplication
+{
+    public:
+
+#ifdef Q_WS_X11
+    ViewerApplication(Display *display, Qt::HANDLE visual, Qt::HANDLE colormap)
+        : KUniqueApplication(display,visual,colormap)
+    {
+    }
+#endif
+
+    ViewerApplication() : KUniqueApplication()
+    {
+    }
+
+    int newInstance()
+    {
+        KCmdLineArgs *args(KCmdLineArgs::parsedArgs());
+        KFI::CViewer *viewer=new KFI::CViewer;
+
+        viewer->show();
+        if(args->count() > 0)
+        {
+            for (int i = 0; i < args->count(); ++i)
+            {
+                KUrl url(args->url(i));
+
+                if (i != 0)
+                {
+                    viewer=new KFI::CViewer;
+                    viewer->show();
+                }
+                viewer->showUrl(url);
+            }
+        }
+
+        return 0;
+    }
+};
+
 }
 
 static KAboutData aboutData("kfontview", KFI_CATALOGUE, ki18n("Font Viewer"), "1.1", ki18n("Simple font viewer"),
@@ -106,31 +149,16 @@ static KAboutData aboutData("kfontview", KFI_CATALOGUE, ki18n("Font Viewer"), "1
 int main(int argc, char **argv)
 {
     KCmdLineArgs::init(argc, argv, &aboutData);
+    KCmdLineArgs::addTempFileOption();
 
     KCmdLineOptions options;
     options.add("+[URL]", ki18n("URL to open"));
     KCmdLineArgs::addCmdLineOptions(options);
 
-    KApplication app;
-    
-    KCmdLineArgs *args(KCmdLineArgs::parsedArgs());
+    if (!KUniqueApplication::start())
+        exit(0);
 
-    KFI::CViewer *viewer=new KFI::CViewer;
-    viewer->show();
-    if(args->count() > 0)
-    {
-        for (int i = 0; i < args->count(); ++i)
-        {
-            KUrl url(args->url(i));
-
-            if (i != 0)
-            {
-                viewer=new KFI::CViewer;
-                viewer->show();
-            }
-            viewer->showUrl(url);
-        }
-    }
+    KFI::ViewerApplication app;
 
     return app.exec();
 }

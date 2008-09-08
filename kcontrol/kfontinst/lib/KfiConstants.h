@@ -51,6 +51,8 @@
 #define KFI_KIO_TIMEOUT              "timeout"
 #define KFI_KIO_FACE                 "face"
 
+#define KFI_IFACE                    "org.kde.fontinst"
+
 #define KFI_FILE_QUERY               "file"
 #define KFI_NAME_QUERY               "name"
 #define KFI_STYLE_QUERY              "style"
@@ -61,6 +63,7 @@
 #define KFI_AUTHINF_USER             I18N_NOOP("Administrator")
 #define KFI_UI_CFG_FILE              KFI_NAME"uirc"
 #define KFI_ROOT_CFG_DIR             "/etc/fonts/"
+#define KFI_DEFAULT_SYS_FONTS_FOLDER "/usr/local/share/fonts/"
 
 #define KFI_NO_STYLE_INFO            0xFFFFFFFF
 #define KFI_NAME_KEY                 "Name="

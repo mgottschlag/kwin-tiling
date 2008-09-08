@@ -4,6 +4,8 @@
   <text>&amp;Main Toolbar</text>
   <Action name="changeText"/>
   <Action name="displayType"/>
+  <Action name="view_zoom_in"/>
+  <Action name="view_zoom_out"/>
 </ToolBar>
 </kpartgui>
 

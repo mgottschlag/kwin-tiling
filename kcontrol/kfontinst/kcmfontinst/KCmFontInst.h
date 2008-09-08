@@ -39,6 +39,7 @@ class KTempDir;
 class KZip;
 class KToggleAction;
 class KActionMenu;
+class KAction;
 class QProcess;
 class QLabel;
 class QSplitter;
@@ -94,6 +95,8 @@ class CKCmFontInst : public KCModule
     void    addFonts(const QSet<KUrl> &src);
     void    toggleFontManagement(bool on);
     void    selectMode(int mode);
+    void    zoomIn();
+    void    zoomOut();
 
     private:
 
@@ -130,6 +133,8 @@ class CKCmFontInst : public KCModule
     KToggleAction        *itsMgtMode,
                          *itsShowPreview;
     KActionMenu          *itsToolsMenu;
+    KAction              *itsZoomInAction,
+                         *itsZoomOutAction;
     KPushButton          *itsDeleteGroupControl,
                          *itsEnableGroupControl,
                          *itsDisableGroupControl,

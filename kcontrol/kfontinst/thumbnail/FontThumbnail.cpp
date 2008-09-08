@@ -113,7 +113,7 @@ bool CFontThumbnail::create(const QString &path, int width, int height, QImage &
         }
     }
 
-    if(CFcEngine::instance()->draw(KUrl(realPath), width, height, pix, 0, true))
+    if(itsEngine.draw(KUrl(realPath), width, height, pix, 0, true))
     {
         img=pix.toImage().convertToFormat(QImage::Format_ARGB32);
         delete tempDir;

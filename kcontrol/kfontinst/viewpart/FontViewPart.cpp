@@ -57,6 +57,7 @@
 #include <KDE/KStandardDirs>
 #include <KDE/KPluginFactory>
 #include <KDE/KPluginLoader>
+#include <KDE/KStandardAction>
 #include <fontconfig/fontconfig.h>
 
 // Enable the following to allow printing of non-installed fonts. Does not seem to work :-(
@@ -74,9 +75,6 @@ CFontViewPart::CFontViewPart(QWidget *parentWidget, QObject *parent, const QList
                itsProc(NULL),
                itsTempDir(NULL)
 {
-    CFcEngine::instance()->readConfig(*itsConfig);
-    CFcEngine::setTextCol(QApplication::palette().color(QPalette::Active, QPalette::Text));
-
     // create browser extension (for printing when embedded into browser)
     itsExtension = new BrowserExtension(this);
 
@@ -127,6 +125,11 @@ CFontViewPart::CFontViewPart(QWidget *parentWidget, QObject *parent, const QList
     faceLayout->addItem(new QSpacerItem(KDialog::spacingHint(), 0, QSizePolicy::Fixed, QSizePolicy::Fixed));
     itsFaceWidget->hide();
 
+    itsPreview->engine()->readConfig(*itsConfig);
+    CFcEngine::setTextCol(QApplication::palette().color(QPalette::Active, QPalette::Text));
+    connect(itsPreview, SIGNAL(doZoomIn()), SLOT(zoomIn()));
+    connect(itsPreview, SIGNAL(doZoomOut()), SLOT(zoomOut()));
+
     //controlsLayout->addWidget(metaBox);
     //controlsLayout->addStretch(2);
     controlsLayout->addWidget(itsFaceWidget);
@@ -147,6 +150,12 @@ CFontViewPart::CFontViewPart(QWidget *parentWidget, QObject *parent, const QList
     actionCollection()->addAction("displayType", displayTypeAction);
     connect(displayTypeAction, SIGNAL(range(const QList<CFcEngine::TRange> &)),
             SLOT(displayType(const QList<CFcEngine::TRange> &)));
+
+    itsZoomInAction=actionCollection()->addAction(KStandardAction::ZoomIn, this, SLOT(zoomIn()));
+    itsZoomOutAction=actionCollection()->addAction(KStandardAction::ZoomOut, this, SLOT(zoomOut()));
+
+    itsZoomInAction->setEnabled(false);
+    itsZoomOutAction->setEnabled(false);
 
     setXMLFile("kfontviewpart.rc");
     setWidget(itsFrame);
@@ -332,10 +341,10 @@ void CFontViewPart::timeout()
     else
         itsPreview->showFont(isFonts ? url() : KUrl::fromPath(localFilePath()), isDisabled ? QString() : name, styleInfo);
 
-    if(!isFonts && CFcEngine::instance()->getNumIndexes()>1)
+    if(!isFonts && itsPreview->engine()->getNumIndexes()>1)
     {
         showFs=true;
-        itsFaceSelector->setRange(1, CFcEngine::instance()->getNumIndexes(), 1);
+        itsFaceSelector->setRange(1, itsPreview->engine()->getNumIndexes(), 1);
         itsFaceSelector->blockSignals(true);
         itsFaceSelector->setValue(1);
         itsFaceSelector->blockSignals(false);
@@ -363,6 +372,9 @@ void CFontViewPart::previewStatus(bool st)
 
     itsChangeTextAction->setEnabled(st);
     itsExtension->enablePrint(st && printable);
+    itsZoomInAction->setEnabled(st && !itsPreview->engine()->atMax());
+    itsZoomOutAction->setEnabled(st && !itsPreview->engine()->atMin());
+
 //     if(st)
 //         getMetaInfo(itsFaceSelector->isVisible() && itsFaceSelector->value()>0
 //                                           ? itsFaceSelector->value()-1 : 0);
@@ -402,15 +414,15 @@ void CFontViewPart::changeText()
 {
     bool             status;
     QRegExpValidator validator(QRegExp(".*"), 0L);
-    QString          oldStr(CFcEngine::instance()->getPreviewString()),
+    QString          oldStr(itsPreview->engine()->getPreviewString()),
                      newStr(KInputDialog::getText(i18n("Preview String"),
                                                   i18n("Please enter new string:"),
                                                   oldStr, &status, itsFrame, &validator));
 
     if(status && newStr!=oldStr)
     {
-        CFcEngine::instance()->setPreviewString(newStr);
-        CFcEngine::instance()->writeConfig(*itsConfig);
+        itsPreview->engine()->setPreviewString(newStr);
+        itsPreview->engine()->writeConfig(*itsConfig);
         itsPreview->showFont();
     }
 }
@@ -429,7 +441,7 @@ void CFontViewPart::print()
         {
             Misc::TFont info;
 
-            CFcEngine::instance()->getInfo(url(), 0, info);
+            itsPreview->engine()->getInfo(url(), 0, info);
 
             args << "--embed" << QString().sprintf("0x%x", (unsigned int)(itsFrame->window()->winId()))
                 << "--caption" << KGlobal::caption().toUtf8()
@@ -476,6 +488,20 @@ void CFontViewPart::statResult(KJob *job)
 void CFontViewPart::showFace(int face)
 {
     itsPreview->showFace(face-1);
+}
+
+void CFontViewPart::zoomIn()
+{
+    itsPreview->zoomIn();
+    itsZoomInAction->setEnabled(!itsPreview->engine()->atMax());
+    itsZoomOutAction->setEnabled(!itsPreview->engine()->atMin());
+}
+
+void CFontViewPart::zoomOut()
+{
+    itsPreview->zoomOut();
+    itsZoomInAction->setEnabled(!itsPreview->engine()->atMax());
+    itsZoomOutAction->setEnabled(!itsPreview->engine()->atMin());
 }
 
 #if 0
@@ -525,7 +551,7 @@ void CFontViewPart::stat(const QString &path)
 
     if(path.isEmpty())
     {
-        itsStatName=CFcEngine::instance()->getName(url());
+        itsStatName=itsPreview->engine()->getName(url());
         statUrl=Misc::root() ? KUrl(QString(KFI_KIO_FONTS_PROTOCOL":/")+itsStatName)
                              : KUrl(QString(KFI_KIO_FONTS_PROTOCOL":/")+i18n(KFI_KIO_FONTS_SYS)+QChar('/')+itsStatName);
     }

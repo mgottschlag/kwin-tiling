@@ -28,9 +28,9 @@
 #include <QtCore/QTextCodec>
 #include <QtCore/QTextStream>
 #include <QtCore/QProcess>
+#include <QtCore/QTemporaryFile>
 #include <KDE/KStandardDirs>
 #include <kde_file.h>
-#include <KDE/KSaveFile>
 #include <unistd.h>
 #include <ctype.h>
 
@@ -329,9 +329,16 @@ static void removeHiddenEntries(const QString &file)
 
         if(lineCount!=lines.count())
         {
-            KSaveFile out(file);
+            QTemporaryFile temp;
 
-            if(out.open())
+            temp.setAutoRemove(false);
+
+            if(!temp.open())
+                return;
+
+            QFile out(temp.fileName());
+
+            if(out.open(QIODevice::WriteOnly))
             {
                 QTextStream                stream(&out);
                 QStringList::ConstIterator it(lines.begin()),
@@ -340,8 +347,14 @@ static void removeHiddenEntries(const QString &file)
                 stream << lines.count() << endl;
                 for(; it!=end; ++it)
                     stream << (*it).toLocal8Bit() << endl;
-                out.finalize();
+
+                out.setPermissions(QFile::ReadOwner|QFile::WriteOwner|
+                                   QFile::ReadGroup|QFile::ReadOther);
+                out.close();
+                ::rename(QFile::encodeName(out.fileName()), QFile::encodeName(file));
             }
+            else
+                temp.setAutoRemove(true);
         }
     }
 }

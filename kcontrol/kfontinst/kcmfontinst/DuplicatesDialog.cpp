@@ -21,6 +21,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "../config-fontinst.h"
 #include "DuplicatesDialog.h"
 #include "Misc.h"
 #include "Fc.h"
@@ -48,6 +49,9 @@
 #include <QtGui/QApplication>
 #include <QtGui/QDesktopWidget>
 #include <QtCore/QProcess>
+#if defined USE_POLICYKIT && USE_POLICYKIT==1
+#include <QtDBus/QDBusInterface>
+#endif
 
 using namespace KDESu;
 
@@ -331,6 +335,22 @@ QSet<QString> CDuplicatesDialog::deleteSysFiles(const QStringList &files)
 
     if(files.count())
     {
+#if defined USE_POLICYKIT && USE_POLICYKIT==1
+        QStringList::ConstIterator it(files.begin()),
+                                   end(files.end());
+        QDBusInterface             iface(KFI_IFACE,
+                                         "/FontInst",
+                                         KFI_IFACE,
+                                         QDBusConnection::systemBus(), this);
+
+        for(; it!=end; ++it)
+        {
+            iface.call("deleteFont", (unsigned int)getpid(), *it);
+
+            if(!Misc::fExists(*it))
+                removed.insert(*it);
+        }
+#else
         QByteArray cmd("rm -f");
         QStringList::ConstIterator it(files.begin()),
                                    end(files.end());
@@ -349,6 +369,7 @@ QSet<QString> CDuplicatesDialog::deleteSysFiles(const QStringList &files)
         for(it=files.begin(); it!=end; ++it)
             if(!Misc::fExists(*it))
                 removed.insert(*it);
+#endif
     }
 
     if(removed.count())

@@ -43,7 +43,7 @@ class CHelper : public CSocket
 {
     public:
 
-    CHelper(char *sock, int uid) : itsSock(sock), itsUid(uid), itsKComponentData(KFI_NAME) { }
+    CHelper(char *sock, int uid) : itsSock(sock), itsUid(uid) { }
 
     int run();
 
@@ -65,7 +65,6 @@ class CHelper : public CSocket
 
     const char     *itsSock;
     int            itsUid;
-    KComponentData itsKComponentData; // Required by KLockFile (which is used in CDisabledFonts)
     CDisabledFonts itsDisabledFonts;
 };
 

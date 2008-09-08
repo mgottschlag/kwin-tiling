@@ -48,8 +48,7 @@
 namespace KFI
 {
 
-K_GLOBAL_STATIC(CFcEngine, theInstance)
-
+bool      CFcEngine::theirFcDirty(true);
 const int CFcEngine::constScalableSizes[]={8, 10, 12, 24, 36, 48, 64, 72, 96, 0 };
 const int CFcEngine::constDefaultAlphaSize=24;
 
@@ -333,17 +332,13 @@ static QString usableStr(XftFont *font, QString &str)
     return newStr;
 }
 
-CFcEngine * CFcEngine::instance()
-{
-    return theInstance;
-}
-
-CFcEngine::CFcEngine()
-         : itsFcDirty(true),
-           itsIndex(-1),
+CFcEngine::CFcEngine(bool init)
+         : itsIndex(-1),
            itsIndexCount(1),
+           itsAlphaSizeIndex(-1),
            itsPreviewString(getDefaultPreviewString())
 {
+    if(init)
         reinit();
 }
 
@@ -677,7 +672,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
 
                     drawName(painter, xftDraw, &xftCol, x, y, w, h);
 
-                    xftFont=getFont(itsAlphaSize);
+                    xftFont=getFont(alphaSize());
                     if(xftFont)
                     {
                         bool lc(hasStr(xftFont, lowercase)),
@@ -734,7 +729,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                     {
                         drawName(painter, xftDraw, &xftCol, x, y, w, h);
 
-                        if((xftFont=getFont(itsAlphaSize)))
+                        if((xftFont=getFont(alphaSize())))
                         {
                             int fontHeight=xftFont->ascent+xftFont->descent;
 
@@ -744,7 +739,7 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                             XftFontClose(QX11Info::display(), xftFont);
                         }
                     }
-                    else if((xftFont=getFont(itsAlphaSize*2)))
+                    else if((xftFont=getFont(alphaSize()*2)))
                     {
                         QRect r;
                         rv=drawChar32Centre(xftDraw, xftFont, &xftCol, (*(range.begin())).from,
@@ -756,11 +751,11 @@ bool CFcEngine::draw(const KUrl &url, int w, int h, QPixmap &pix, int faceNo, bo
                     QList<TRange>::ConstIterator it(range.begin()),
                                                  end(range.end());
 
-                    if((xftFont=getFont(itsAlphaSize)))
+                    if((xftFont=getFont(alphaSize())))
                     {
                         rv=true;
                         drawName(painter, xftDraw, &xftCol, x, y, w, h);
-                        y+=itsAlphaSize;
+                        y+=alphaSize();
 
                         bool  stop=false;
                         int   fontHeight=xftFont->ascent+xftFont->descent, xOrig(x), yOrig(y);
@@ -1126,7 +1121,7 @@ XftFont * CFcEngine::queryFont()
     if(itsInstalled && !f)
     {
         // Perhaps its a newly installed font? If so try re-initialising fontconfig...
-        itsFcDirty=true;
+        theirFcDirty=true;
         reinit();
 
         f=getFont(constQuerySize);
@@ -1266,11 +1261,12 @@ void CFcEngine::getSizes()
 #endif
 
     XftFont *f=queryFont();
+    int     oldAlphaSize(itsAlphaSizeIndex);
 
     itsScalable=FcTrue;
 
     itsSizes.clear();
-    itsAlphaSize=0;
+    itsAlphaSizeIndex=0;
 
     if(f)
     {
@@ -1311,6 +1307,7 @@ void CFcEngine::getSizes()
 
                 if (set)
                 {
+                    int size(0);
 #ifdef KFI_FC_DEBUG
                     kDebug() << "got fixed sizes: " << set->nfont;
 #endif
@@ -1325,7 +1322,8 @@ void CFcEngine::getSizes()
                             kDebug() << "got fixed: " << px;
 #endif
                             if (px<=constDefaultAlphaSize)
-                                itsAlphaSize=(int)px;
+                                itsAlphaSizeIndex=size;
+                            size++;
                         }
                     FcFontSetDestroy(set);
                 }
@@ -1363,7 +1361,7 @@ void CFcEngine::getSizes()
                         itsSizes.push_back((int)px);
 
                         if (px<=constDefaultAlphaSize)
-                            itsAlphaSize=(int)px;
+                            itsAlphaSizeIndex=size;
                     }
                 }
                 XftUnlockFace(f);
@@ -1379,11 +1377,12 @@ void CFcEngine::getSizes()
 
         for (int i=0; constScalableSizes[i]; ++i)
             itsSizes.push_back(point2Pixel(constScalableSizes[i]));
-        itsAlphaSize=constDefaultAlphaSize;
+        itsAlphaSizeIndex=itsSizes.indexOf(point2Pixel(constDefaultAlphaSize));
     }
 
-    if(0==itsAlphaSize && itsSizes.count())
-        itsAlphaSize=itsSizes[0];
+    if(-1!=oldAlphaSize && oldAlphaSize<itsSizes.count())
+        itsAlphaSizeIndex=oldAlphaSize;
+
 #ifdef KFI_FC_DEBUG
     kDebug() << "end";
 #endif
@@ -1418,11 +1417,11 @@ void CFcEngine::addFontFile(const QString &file)
 
 void CFcEngine::reinit()
 {
-    if(itsFcDirty)
+    if(theirFcDirty)
     {
         FcInitLoadConfigAndFonts();
         FcInitReinitialize();
-        itsFcDirty=false;
+        theirFcDirty=false;
     }
 }
 

@@ -59,6 +59,7 @@ namespace KFI
 class CFontItem;
 class CFamilyItem;
 class CGroupListItem;
+class CFcEngine;
 
 enum EColumns
 {
@@ -81,7 +82,7 @@ class CFontList : public QAbstractItemModel
     static void        setPreviewSize(int s)         { theirPreviewSize=s; }
     static int         previewSize()                 { return theirPreviewSize; }
 
-    CFontList(QWidget *parent = 0);
+    CFontList(CFcEngine *eng, QWidget *parent=0);
     ~CFontList();
 
     QVariant        data(const QModelIndex &index, int role) const;

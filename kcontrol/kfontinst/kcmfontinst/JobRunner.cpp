@@ -43,6 +43,9 @@
 #include <X11/Xlib.h>
 #include <fixx11h.h>
 #include <sys/resource.h>
+#if defined USE_POLICYKIT && USE_POLICYKIT==1
+#include "PolicyKitAuthenticator.h"
+#endif
 
 using namespace KDESu;
 
@@ -172,10 +175,12 @@ CJobRunner::CJobRunner(QWidget *parent, int xid)
              itsCancelClicked(false),
              itsModified(false)
 {
+#if !(defined USE_POLICYKIT && USE_POLICYKIT==1)
     // Set core dump size to 0 because we will have root's password in memory.
     struct rlimit rlim;
     rlim.rlim_cur=rlim.rlim_max=0;
     setrlimit(RLIMIT_CORE, &rlim);
+#endif
 
     setModal(true);
     setButtons(KDialog::Cancel);
@@ -203,6 +208,13 @@ bool CJobRunner::getAdminPasswd(QWidget *parent)
 {
     if(!Misc::root())
     {
+#if defined USE_POLICYKIT && USE_POLICYKIT==1
+        if(!PolicyKitAuthenticator::instance()->authenticate(KFI_IFACE, parent, true))
+        {
+            KMessageBox::error(parent, i18n("Authentication failed."));
+            return false;
+        }
+#else
         // Prompt the user for a password, if we do not already have it...
         if(itsPasswd.isEmpty() || 0!=SuProcess(KFI_SYS_USER).checkInstall(itsPasswd.toLocal8Bit()))
         {
@@ -212,6 +224,7 @@ bool CJobRunner::getAdminPasswd(QWidget *parent)
                 return false;
             itsPasswd=dlg.password().toLocal8Bit();
         }
+#endif
     }
 
     return true;
@@ -521,11 +534,19 @@ KUrl CJobRunner::modifyUrl(const KUrl &orig) const
 {
     KUrl url(orig);
 
+#if defined USE_POLICYKIT && USE_POLICYKIT==1
+    if(!Misc::root())
+    {
+        url.setUser(KFI_SYS_USER);
+        url.setPass(QString().setNum(getpid()));
+    }
+#else
     if(!Misc::root() && !itsPasswd.isEmpty())
     {
         url.setUser(KFI_SYS_USER);
         url.setPass(itsPasswd);
     }
+#endif
 
     return url;
 }

@@ -26,6 +26,7 @@
 
 #include <KDE/KIO/Job>
 #include "ActionDialog.h"
+#include "../config-fontinst.h"
 
 class QLabel;
 class QProgressBar;
@@ -75,9 +76,11 @@ class CJobRunner : public CActionDialog
     ~CJobRunner();
 
     bool            getAdminPasswd(QWidget *parent);
+#if !(defined USE_POLICYKIT && USE_POLICYKIT==1)
+    const QString & adminPasswd() const { return itsPasswd; }
+#endif
     static void     getAssociatedUrls(const KUrl &url, KUrl::List &list, bool afmAndPfm, QWidget *widget);
     int             exec(ECommand cmd, const ItemList &urls, const KUrl &dest);
-    const QString & adminPasswd() const { return itsPasswd; }
 
     private Q_SLOTS:
 
@@ -98,12 +101,14 @@ class CJobRunner : public CActionDialog
     ItemList::ConstIterator itsIt,
                             itsEnd;
     KUrl                    itsDest;
-    QString                 itsPasswd;
     QLabel                  *itsStatusLabel;
     QProgressBar            *itsProgress;
     bool                    itsAutoSkip,
                             itsCancelClicked,
                             itsModified;
+#if !(defined USE_POLICYKIT && USE_POLICYKIT==1)
+    QString                 itsPasswd;
+#endif
 };
 
 }

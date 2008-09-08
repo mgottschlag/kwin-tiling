@@ -103,7 +103,7 @@ static void printItems(const QList<Misc::TFont> &items, int size, QWidget *paren
         QPainter   painter;
         QFont      sans("sans", 12, QFont::Bold);
         bool       changedFontEmbeddingSetting(false);
-        QString    str(CFcEngine::instance()->getPreviewString());
+        QString    str(CFcEngine(false).getPreviewString());
 
         if(!printer.fontEmbeddingEnabled())
         {

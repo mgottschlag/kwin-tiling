@@ -190,7 +190,7 @@ class CPreviewCache
 {
     public:
 
-    CPreviewCache();
+    CPreviewCache(CFcEngine *eng);
 #ifdef KFI_SAVE_PIXMAPS
     ~CPreviewCache() { clearOld(); }
 #endif
@@ -205,15 +205,17 @@ class CPreviewCache
 
     private:
 
+    CFcEngine              *itsFcEngine;
     QMap<QString, QPixmap> itsMap;
 #ifdef KFI_SAVE_PIXMAPS
     QString                itsPath;
 #endif
 };
 
-CPreviewCache::CPreviewCache()
+CPreviewCache::CPreviewCache(CFcEngine *eng)
+             : itsFcEngine(eng)
 #ifdef KFI_SAVE_PIXMAPS
-             : itsPath(KGlobal::dirs()->saveLocation("cache", "fontpreview"))
+             , itsPath(KGlobal::dirs()->saveLocation("cache", "fontpreview"))
 #endif
 {
 }
@@ -314,8 +316,9 @@ QPixmap * CPreviewCache::getPixmap(const QString &family, const QString &name, c
 #endif
 
     itsMap[thumbName]=QPixmap();
-    if(CFcEngine::instance()->drawPreview(fileName.isEmpty() ? name : fileName, itsMap[thumbName], col,
-                                          height, style))  // CPD:TODO face???
+
+    if(itsFcEngine->drawPreview(fileName.isEmpty() ? name : fileName, itsMap[thumbName], col,
+                                height, style))  // CPD:TODO face???
     {
 #ifdef KFI_SAVE_PIXMAPS
         QFile pngFile(thumbFile);
@@ -666,13 +669,13 @@ bool CFamilyItem::updateRegularFont(CFontItem *font)
     return oldFont!=itsRegularFont;
 }
 
-CFontList::CFontList(QWidget *parent)
+CFontList::CFontList(CFcEngine *eng, QWidget *parent)
          : QAbstractItemModel(parent),
            itsAllowSys(true),
            itsAllowUser(true)
 {
     if(!theCache)
-        theCache=new CPreviewCache;
+        theCache=new CPreviewCache(eng);
 
     QFont font;
     int   pixelSize((int)(((font.pointSizeF()*QX11Info::appDpiY())/72.0)+0.5));

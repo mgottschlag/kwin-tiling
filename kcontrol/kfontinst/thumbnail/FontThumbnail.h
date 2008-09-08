@@ -26,6 +26,8 @@
 
 #include <KDE/ThumbCreator>
 
+#include "FcEngine.h"
+
 namespace KFI
 {
 
@@ -38,6 +40,10 @@ class CFontThumbnail : public ThumbCreator
 
     bool  create(const QString &path, int width, int height, QImage &img);
     Flags flags() const;
+
+    private:
+
+    CFcEngine itsEngine;
 };
 
 }
