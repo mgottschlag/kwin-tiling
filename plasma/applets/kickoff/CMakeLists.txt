@@ -70,9 +70,6 @@ install(TARGETS plasma_applet_launcher DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES applet/plasma-applet-launcher.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
 # Simple KMenu Plasma Applet
-#call QT4_AUTOMOC() here else simpleapplet/menuview.moc isn't created
-#typically, this shouldn't be required.
-QT4_AUTOMOC(simpleapplet/menuview.cpp)
 set ( SimpleApplet_SRCS ${Kickoff_SRCS} simpleapplet/menuview.cpp simpleapplet/simpleapplet.cpp )
 kde4_add_plugin(plasma_applet_simplelauncher ${SimpleApplet_SRCS})
 target_link_libraries(plasma_applet_simplelauncher plasma ${Kickoff_LIBS}) 
