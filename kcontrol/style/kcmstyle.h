@@ -111,8 +111,6 @@ private:
 	QComboBox* comboGraphicEffectsLevel;
 	QSpacerItem* comboSpacer;
 
-	QCheckBox* cbHoverButtons;
-	QCheckBox* cbEnableTooltips;
 	QComboBox* comboToolbarIcons;
 
 	QCheckBox* cbIconsOnButtons;

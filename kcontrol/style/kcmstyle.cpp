@@ -254,18 +254,10 @@ KCMStyle::KCMStyle( QWidget* parent, const QVariantList& )
 	comboToolbarIcons->setSizePolicy( QSizePolicy::Minimum, QSizePolicy::Minimum );
 	page2Layout->addRow(i18nc("@label:listbox","Text pos&ition:"), comboToolbarIcons);
 
-	cbHoverButtons = new QCheckBox( i18nc("@option:check","High&light buttons under mouse"), page2 );
-	page2Layout->addRow(cbHoverButtons);
-
 	cbIconsOnButtons = new QCheckBox( i18nc("@option:check","Sho&w icons on buttons"), page2 );
  	page2Layout->addRow(cbIconsOnButtons);
 
-	cbEnableTooltips = new QCheckBox( i18nc("@option:check","E&nable tooltips"), page2 );
-	page2Layout->addRow(cbEnableTooltips);
-	
 	connect(cbStyle, SIGNAL(activated(int)), this, SLOT(setStyleDirty()));
-	connect( cbHoverButtons,       SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
-	connect( cbEnableTooltips,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
 	connect( cbIconsOnButtons,     SIGNAL(toggled(bool)),   this, SLOT(setEffectsDirty()));
 	connect( comboGraphicEffectsLevel, SIGNAL(activated(int)),   this, SLOT(setEffectsDirty()));
 	connect( comboToolbarIcons,    SIGNAL(activated(int)), this, SLOT(setEffectsDirty()));
@@ -396,13 +388,11 @@ void KCMStyle::save()
 	config.writeEntry( "ShowIconsOnPushButtons", cbIconsOnButtons->isChecked(), KConfig::Normal|KConfig::Global);
 	KConfigGroup g( &_config, "KDE-Global GUI Settings" );
 	g.writeEntry( "GraphicEffectsLevel", comboGraphicEffectsLevel->itemData(comboGraphicEffectsLevel->currentIndex()), KConfig::Normal|KConfig::Global);
-	config.writeEntry( "EffectNoTooltip", !cbEnableTooltips->isChecked(), KConfig::Normal|KConfig::Global);
 
 	KConfigGroup generalGroup(&_config, "General");
 	generalGroup.writeEntry("widgetStyle", currentStyle());
 
 	KConfigGroup toolbarStyleGroup(&_config, "Toolbar style");
-	toolbarStyleGroup.writeEntry("Highlighting", cbHoverButtons->isChecked(), KConfig::Normal|KConfig::Global);
 	QString tbIcon;
 	switch( comboToolbarIcons->currentIndex() )
 	{
@@ -498,8 +488,6 @@ void KCMStyle::defaults()
 	switchStyle( currentStyle() );	// make resets visible
 
 	// Effects
-	cbHoverButtons->setChecked(true);
-	cbEnableTooltips->setChecked(true);
 	comboToolbarIcons->setCurrentIndex(0);
 	cbIconsOnButtons->setChecked(true);
 	comboGraphicEffectsLevel->setCurrentIndex(comboGraphicEffectsLevel->findData(((int) KGlobalSettings::graphicEffectsLevelDefault())));
@@ -696,7 +684,6 @@ void KCMStyle::loadEffects( KConfig& config )
 {
 	// KDE's Part via KConfig
 	KConfigGroup configGroup = config.group("Toolbar style");
-	cbHoverButtons->setChecked(configGroup.readEntry("Highlighting", true));
 
 	QString tbIcon = configGroup.readEntry("ToolButtonStyle", "TextUnderIcon");
 	if (tbIcon == "TextOnly")
@@ -710,7 +697,6 @@ void KCMStyle::loadEffects( KConfig& config )
 
 	configGroup = config.group("KDE");
 	cbIconsOnButtons->setChecked(configGroup.readEntry("ShowIconsOnPushButtons", true));
-	cbEnableTooltips->setChecked(!configGroup.readEntry("EffectNoTooltip", false));
 
 	KConfigGroup graphicConfigGroup = config.group("KDE-Global GUI Settings");
 	comboGraphicEffectsLevel->setCurrentIndex(comboGraphicEffectsLevel->findData(graphicConfigGroup.readEntry("GraphicEffectsLevel", ((int) KGlobalSettings::graphicEffectsLevel()))));
@@ -730,10 +716,6 @@ void KCMStyle::addWhatsThis()
 	// Page2
 	page2->setWhatsThis( i18n("This page allows you to enable various widget style effects. "
 							"For best performance, it is advisable to disable all effects.") );
-	cbHoverButtons->setWhatsThis( i18n("If this option is selected, toolbar buttons will change "
-							"their color when the mouse cursor is moved over them." ) );
-	cbEnableTooltips->setWhatsThis( i18n( "If you check this option, the KDE application "
-							"will offer tooltips when the cursor remains over items in the toolbar." ) );
 	comboToolbarIcons->setWhatsThis( i18n( "<p><b>Icons only:</b> Shows only icons on toolbar buttons. "
 							"Best option for low resolutions.</p>"
 							"<p><b>Text only: </b>Shows only text on toolbar buttons.</p>"
