@@ -476,24 +476,6 @@ void PanelController::setContainment(Plasma::Containment *containment)
         d->optDialogLayout->insertWidget(insertIndex, removePanelTool);
         connect(removePanelTool, SIGNAL(clicked()), this, SLOT(hide()));
     }
-
-    QRect screenGeom = QApplication::desktop()->screenGeometry(d->containment->screen());
-
-    switch (d->location) {
-    case Plasma::LeftEdge:
-    case Plasma::RightEdge:
-        d->ruler->setAvailableLength(screenGeom.height());
-        d->ruler->setMaxLength(qMin((int)containment->maximumSize().height(), screenGeom.height()));
-        d->ruler->setMinLength(containment->minimumSize().height());
-        break;
-    case Plasma::TopEdge:
-    case Plasma::BottomEdge:
-    default:
-        d->ruler->setAvailableLength(screenGeom.width());
-        d->ruler->setMaxLength(qMin((int)containment->maximumSize().width(), screenGeom.width()));
-        d->ruler->setMinLength(containment->minimumSize().width());
-        break;
-    }
 }
 
 QSize PanelController::sizeHint() const
@@ -618,6 +600,22 @@ void PanelController::setLocation(const Plasma::Location &loc)
     }
 
     d->ruler->setMaximumSize(d->ruler->sizeHint());
+
+    switch (d->location) {
+    case Plasma::LeftEdge:
+    case Plasma::RightEdge:
+        d->ruler->setAvailableLength(screenGeom.height());
+        d->ruler->setMaxLength(qMin((int)d->containment->maximumSize().height(), screenGeom.height()));
+        d->ruler->setMinLength(d->containment->minimumSize().height());
+        break;
+    case Plasma::TopEdge:
+    case Plasma::BottomEdge:
+    default:
+        d->ruler->setAvailableLength(screenGeom.width());
+        d->ruler->setMaxLength(qMin((int)d->containment->maximumSize().width(), screenGeom.width()));
+        d->ruler->setMinLength(d->containment->minimumSize().width());
+        break;
+    }
 }
 
 Plasma::Location PanelController::location() const
