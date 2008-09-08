@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Powermanagement Data Engine
+Name=Power Management
 Name[bg]=Управление на захранването
 Name[ca]=Motor de dades per a la gestió de l'energia
 Name[csb]=Czérownik sprôwianiô sëłą
@@ -53,4 +53,11 @@ X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=power
 X-KDE-Library=plasma_engine_powermanagement
-X-Plasma-EngineName=powermanagement
+
+X-KDE-PluginInfo-Author=
+X-KDE-PluginInfo-Email=
+X-KDE-PluginInfo-Name=powermanagement
+X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=

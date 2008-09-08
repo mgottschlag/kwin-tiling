@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Dictionary Data Engine
+Name=Dictionary
 Name[af]=Woordeboek data-enjin
 Name[bg]=Речник
 Name[ca]=Motor de dades de diccionari
@@ -108,4 +108,14 @@ X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=accessories-dictionary
 X-KDE-Library=plasma_engine_dict
-X-Plasma-EngineName=dict
+
+X-KDE-PluginInfo-Author=
+X-KDE-PluginInfo-Email=
+X-KDE-PluginInfo-Name=dict
+X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=
+
+

@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Mouse Data Engine
+Name=Pointer Position
 Name[bg]=Мишка
 Name[ca]=Motor de dades del ratolí
 Name[csb]=Czérownik pòdôwków mëszë
@@ -103,5 +103,12 @@ Type=Service
 X-KDE-ServiceTypes=Plasma/DataEngine
 Icon=
 X-KDE-Library=plasma_engine_mouse
-X-Plasma-EngineName=mouse
+
+X-KDE-PluginInfo-Author=
+X-KDE-PluginInfo-Email=
+X-KDE-PluginInfo-Name=mouse
+X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
 

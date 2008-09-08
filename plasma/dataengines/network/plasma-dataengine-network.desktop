@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Name=Network Engine
+Name=Networking
 Name[el]=Μηχανή δικτύου
 Name[gu]=નેટવર્ક એન્જિન
 Name[pt]=Motor de Rede
@@ -20,4 +20,12 @@ ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=network-workgroup
 X-KDE-Library=plasma_engine_network
-X-Plasma-EngineName=network
+
+X-KDE-PluginInfo-Author=
+X-KDE-PluginInfo-Email=
+X-KDE-PluginInfo-Name=network
+X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+

@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Places Data Engine
+Name=Places
 Name[bg]=Места
 Name[ca]=Motor de dades de llocs
 Name[da]=Datamotor til steder
@@ -102,7 +102,7 @@ Icon=folder
 
 X-KDE-ServiceTypes=Plasma/DataEngine
 X-KDE-Library=plasma_engine_places
-X-Plasma-EngineName=places
+
 X-KDE-PluginInfo-Author=Alex Merry
 X-KDE-PluginInfo-Email=alex.merry@kdemail.net
 X-KDE-PluginInfo-Name=places

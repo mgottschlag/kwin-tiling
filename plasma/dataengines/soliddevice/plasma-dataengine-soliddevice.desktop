@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=SolidDevice Data Engine
+Name=Device Information
 Name[bg]=SolidDevice
 Name[ca]=Motor de dades del SolidDevice
 Name[csb]=Czérownik ùrządzeniów Solid
@@ -101,4 +101,12 @@ X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=alarmclock
 X-KDE-Library=plasma_engine_soliddevice
-X-Plasma-EngineName=soliddevice
+
+X-KDE-PluginInfo-Author=
+X-KDE-PluginInfo-Email=
+X-KDE-PluginInfo-Name=soliddevice
+X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+

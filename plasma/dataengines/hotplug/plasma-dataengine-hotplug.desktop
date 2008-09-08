@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Hotplug Event Data Engine
+Name=Hotplug Events
 Name[ca]=Motor de dades d'esdeveniments de connexió en calent
 Name[csb]=Czérownik dlô Hotplug Event Data
 Name[da]=Datamotor for hotplug-hændelser
@@ -51,4 +51,13 @@ X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=notifier
 X-KDE-Library=plasma_engine_hotplug
-X-Plasma-EngineName=hotplug
+
+X-KDE-PluginInfo-Author=
+X-KDE-PluginInfo-Email=
+X-KDE-PluginInfo-Name=hotplug
+X-KDE-PluginInfo-Version=
+X-KDE-PluginInfo-Website=
+X-KDE-PluginInfo-Category=
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=
+
