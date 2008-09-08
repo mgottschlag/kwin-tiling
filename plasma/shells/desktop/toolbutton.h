@@ -26,7 +26,7 @@
 namespace Plasma
 {
     class PanelSvg;
-};
+}
 
 class ToolButton: public QToolButton
 {
