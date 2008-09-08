@@ -1,7 +1,6 @@
 [Misc]
 Name=Platinum
 Name[be]=Платына
-Name[be@latin]=Платына
 Name[bn_IN]=প্ল্যাটিনাম
 Name[es]=Platino
 Name[fa]=پلاتینیوم
@@ -26,7 +25,7 @@ Name[wa]=Platene
 Name[x-test]=xxPlatinumxx
 Comment=Built-in unthemed Platinum style
 Comment[be]=Убудаваны стыль Платына
-Comment[be@latin]=Убудаваны стыль Платына
+Comment[be@latin]=Styl „Platinum”
 Comment[bg]=Вграден платинен стил
 Comment[ca]=Estil integrat Platinum sense temes
 Comment[csb]=Wbùdowóny sztél Platinum
