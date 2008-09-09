@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Device Notifier
+Name[be@latin]=Infarmavańnie pra novyja pryłady
 Name[el]=Ειδοποίηση νέας συσκευής
 Name[et]=Seadmete teadustaja
 Name[gl]=Notificador de dispositivos
@@ -14,6 +15,7 @@ Name[tr]=Aygıt Bildirici
 Name[uk]=Сповіщення про пристрої
 Name[zh_TW]=裝置通知
 Comment=Notifications and access for new devices
+Comment[be@latin]=Infarmavańnie j dostup da novych pryładaŭ
 Comment[el]=Ειδοποιήσεις και πρόσβαση νέων συσκευών
 Comment[et]=Uutest seadmetest teatamine ja nende kasutamine
 Comment[gl]=Notificacións e aceso a novos dispositivos

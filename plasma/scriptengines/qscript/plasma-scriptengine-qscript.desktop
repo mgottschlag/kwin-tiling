@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=JavaScript Widget
+Name[be@latin]=Widžet JavaScript
 Name[bg]=Джаджа JavaScript
 Name[ca]=Estri del JavaScript
 Name[da]=JavaScript-widget
@@ -44,6 +45,7 @@ Name[x-test]=xxJavaScript Widgetxx
 Name[zh_CN]=JavaScript 部件
 Name[zh_TW]=JavaScript 元件
 Comment=Native Plasma widget written in JavaScript
+Comment[be@latin]=Widžet systemy „Plasma”, napisany ŭ movie „JavaScript”
 Comment[bg]=Оригинална джаджа за Plasma, написана с JavaScript
 Comment[ca]=Estri nadiu del Plasma escrit en JavaScript
 Comment[cs]=Nativní Plasma widget napsaný v JavaScriptu

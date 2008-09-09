@@ -233,6 +233,7 @@ ConditionsCount=0
 [Data_1_1Triggers]
 Comment=Simple_action
 Comment[ar]=إجراء بسيط
+Comment[be@latin]=Prostaja_aperacyja
 Comment[bg]=Обикновено_действие
 Comment[ca]=Acció_simple
 Comment[csb]=Prosté_dzejanié

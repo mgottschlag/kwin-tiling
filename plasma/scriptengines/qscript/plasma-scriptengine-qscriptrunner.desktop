@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=JavaScript Runner
+Name[be@latin]=Uklučeńnie „JavaScript”
 Name[bg]=Изпълнение на JavaScript
 Name[ca]=Executador de JavaScript
 Name[cs]=Spouštěč JavaScriptu
@@ -44,6 +45,7 @@ Name[x-test]=xxJavaScript Runnerxx
 Name[zh_CN]=JavaScript 运行器
 Name[zh_TW]=JavaScript 執行器
 Comment=JavaScript Runner
+Comment[be@latin]=Uklučeńnie „JavaScript”.
 Comment[bg]=Изпълнение на JavaScript
 Comment[ca]=Executador de JavaScript
 Comment[cs]=Spouštěč JavaScriptu

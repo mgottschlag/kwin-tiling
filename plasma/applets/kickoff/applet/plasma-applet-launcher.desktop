@@ -2,7 +2,7 @@
 Name=Application Launcher
 Name[af]=Programlanseerder
 Name[be]=Запуск праграмаў
-Name[be@latin]=Запуск праграмаў
+Name[be@latin]=Uklučeńnie aplikacyi
 Name[bg]=Стартиране на програми
 Name[bn_IN]=অ্যাপ্লিকেশন সঞ্চালনকারী
 Name[ca]=Engegador d'aplicacions
@@ -63,6 +63,7 @@ Name[zh_CN]=程序启动器
 Name[zh_TW]=應用程式啟動器
 Comment=Launcher to start applications
 Comment[af]=Lanseerder om programme te loop
+Comment[be@latin]=Uklučeńnie aplikacyjaŭ
 Comment[bg]=Стартиране на програми
 Comment[ca]=Executador per a iniciar aplicacions
 Comment[cs]=Aplikace pro spouštění aplikací

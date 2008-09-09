@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Web Widget
+Name[be@latin]=Sieciŭny widžet
 Name[bn_IN]=ওয়েব উইজেট
 Name[ca]=Estri web
 Name[cs]=Webový widget
@@ -42,6 +43,7 @@ Name[x-test]=xxWeb Widgetxx
 Name[zh_CN]=网页部件
 Name[zh_TW]=網頁元件
 Comment=Webpage widget using HTML and JavaScript
+Comment[be@latin]=Widžet z staronkaj u farmacie „HTML” i z skryptami „JavaScript”.
 Comment[ca]=Estri per a pàgines web que usa HTML i JavaScript
 Comment[da]=Hjemmeside-widget som bruger HTML og JavaScript
 Comment[de]=Webseiten-Miniprogramm (verwendet HTML und JavaScript)

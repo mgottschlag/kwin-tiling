@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Desktop Search
+Name[be@latin]=Pošuk
 Name[el]=Αναζήτηση επιφάνειας εργασίας
 Name[et]=Töölauaotsing
 Name[ga]=Cuardach Deisce
@@ -20,6 +21,7 @@ Name[tr]=Masaüstü Araması
 Name[uk]=Стільничний пошук
 Name[zh_TW]=桌面搜尋
 Comment=Search in documents and files
+Comment[be@latin]=Pošuk dakumentaŭ i fajłaŭ.
 Comment[el]=Αναζήτηση σε έγγραφα και αρχεία
 Comment[et]=Otsing dokumentides ja failides
 Comment[ga]=Cuardaigh i gcáipéisí agus i gcomhaid

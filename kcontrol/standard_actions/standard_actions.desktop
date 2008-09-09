@@ -13,6 +13,7 @@ X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
 X-KDE-Weight=150
 
 Name=Standard Keyboard Shortcuts
+Name[be@latin]=Zvyčajnyja klavijaturnyja skaroty
 Name[el]=Τυπικές συντομεύσεις πληκτρολογίου
 Name[et]=Standardsed kiirklahvid
 Name[ga]=Aicearraí Caighdeánacha Méarchláir
@@ -33,6 +34,7 @@ Name[uk]=Стандартні скорочення клавіатури
 Name[zh_TW]=標準鍵盤捷徑
 
 Comment=Configuration of standard keybindings
+Comment[be@latin]=Nałady zvyčajnych poviaziaŭ klavišaŭ z aperacyjami
 Comment[el]=Ρύθμιση τυπικών συνδυασμών πλήκτρων
 Comment[et]=Standardsete kiirklahvide seadistamine
 Comment[ga]=Cumraíocht ceangal eochracha

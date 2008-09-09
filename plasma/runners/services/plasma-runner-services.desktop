@@ -76,6 +76,7 @@ Name[x-test]=xxApplicationsxx
 Name[zh_CN]=应用程序
 Name[zh_TW]=應用程式
 Comment=Find applications, control panels and services
+Comment[be@latin]=Pošuk aplikacyjaŭ, panelaŭ kiravańnia j słužbaŭ
 Comment[el]=Αναζήτηση εφαρμογών, πινάκων ελέγχου και υπηρεσιών
 Comment[et]=Rakenduste, juhtpaneelide ja teenuste otsimine
 Comment[ga]=Aimsigh feidhmchláir, painéil rialaithe agus seirbhísí

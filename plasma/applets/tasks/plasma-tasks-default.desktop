@@ -2,7 +2,7 @@
 Name=Task Manager
 Name[af]=Taakbestuurder
 Name[be]=Кіраванне заданнямі
-Name[be@latin]=Кіраванне заданнямі
+Name[be@latin]=Kiraŭnik zadańniaŭ
 Name[bg]=Мениджър на задачи
 Name[ca]=Gestor de tasques
 Name[cs]=Správce úloh
@@ -62,6 +62,7 @@ Name[x-test]=xxTask Managerxx
 Name[zh_CN]=任务管理器
 Name[zh_TW]=工作管理員
 Comment=Switch between running applications
+Comment[be@latin]=Pieraklučeńnie dziejnych aplikacyjaŭ
 Comment[el]=Εναλλαγή μεταξύ εκτελούμενων εφαρμογών
 Comment[et]=Lülitumine töötavate rakenduste vahel
 Comment[gl]=Troca entre programas en execución

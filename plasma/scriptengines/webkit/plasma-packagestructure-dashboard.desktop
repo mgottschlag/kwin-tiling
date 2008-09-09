@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Dashboard Widget
+Name[be@latin]=Widžet „Dashboard”
 Name[ca]=Estri del tauler
 Name[da]=Instrumentbræts-widget
 Name[de]=Dashboard-Miniprogramm
@@ -41,6 +42,7 @@ Name[x-test]=xxDashboard Widgetxx
 Name[zh_CN]=部件板
 Name[zh_TW]=儀表板元件
 Comment=MacOS dashboard widget
+Comment[be@latin]=Widžet „Dashboard” systemy „MacOS”
 Comment[ca]=Estri del tauler del MacOS
 Comment[da]=MacOS dashboard-widget
 Comment[de]=MacOS-Dashboard-Miniprogramm

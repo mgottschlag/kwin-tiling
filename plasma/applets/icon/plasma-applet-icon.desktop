@@ -2,6 +2,7 @@
 Name=Icon
 Name[af]=Ikoon
 Name[ar]=أيقونة
+Name[be@latin]=Ikona
 Name[bg]=Икона
 Name[bn_IN]=আইকন
 Name[ca]=Icona
@@ -61,6 +62,7 @@ Name[x-test]=xxIconxx
 Name[zh_CN]=图标
 Name[zh_TW]=圖示
 Comment=A generic icon
+Comment[be@latin]=Prostaja ikona
 Comment[el]=Ένα γενικό εικονίδιο
 Comment[et]=Üldine ikoon
 Comment[gl]=Un ícone xenérico

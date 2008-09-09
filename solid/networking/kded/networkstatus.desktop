@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Network Status Daemon
 Name[ar]=رقيب حالة الشبكة
+Name[be@latin]=Słužba sietkavaha stanovišča
 Name[bg]=Демон за състоянието на мрежата
 Name[ca]=Dimoni d'estat de la xarxa
 Name[cs]=Démon stavu sítě
@@ -58,6 +59,7 @@ Name[x-test]=xxNetwork Status Daemonxx
 Name[zh_CN]=网络状态守护程序
 Name[zh_TW]=網路狀態伺服程式
 Comment=Tracks status of network interfaces and provides notification to applications using the network.
+Comment[be@latin]=Naziraje za stanoviščam sietkavych interfejsaŭ, infarmuje aplikacyi pra źmieny.
 Comment[bg]=Проверява състоянието на мрежата и изпраща уведомление на програмите в мрежата
 Comment[ca]=Fa un seguiment de l'estat de les interfícies de xarxa i proporciona notificació a les aplicacions usant la xarxa.
 Comment[da]=Overvåger status af netværksgrænseflader og giver besked til programmer som bruger netværket

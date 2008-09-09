@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Command Line
+Name[be@latin]=Zahadny radok
 Name[bg]=Команден ред
 Name[bn_IN]=কমান্ড-লাইন
 Name[ca]=Línia d'ordres
@@ -51,6 +52,7 @@ Name[x-test]=xxCommand Linexx
 Name[zh_CN]=命令行
 Name[zh_TW]=命令列
 Comment=Executes shell commands
+Comment[be@latin]=Vykanańnie zahadaŭ abałonki.
 Comment[bg]=Изпълнение на шел команди
 Comment[bn_IN]=শেল কমান্ড সঞ্চালনের জন্য প্রয়োগ হবে
 Comment[ca]=Executa ordres de l'intèrpret d'ordres

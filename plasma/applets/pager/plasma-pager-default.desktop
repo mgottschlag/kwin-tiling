@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Pager
+Name[be@latin]=Stały
 Name[bg]=Пейджър
 Name[bn_IN]=পেজার
 Name[ca]=Paginador
@@ -48,6 +49,7 @@ Name[x-test]=xxPagerxx
 Name[zh_CN]=分页器
 Name[zh_TW]=呼叫器
 Comment=Switch between virtual desktops
+Comment[be@latin]=Pieraklučeńnie virtualnych stałoŭ
 Comment[el]=Εναλλαγή μεταξύ εικονικών επιφανειών εργασίας
 Comment[et]=Lülitumine virtuaalsete töölaudade vahel
 Comment[gl]=Troca entre escritorios virtuais

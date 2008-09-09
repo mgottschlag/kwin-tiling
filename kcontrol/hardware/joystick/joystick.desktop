@@ -14,6 +14,7 @@ X-KDE-System-Settings-Parent-Category=keyboard-and-mouse
 X-KDE-Weight=70
 
 Comment=Joystick settings
+Comment[be@latin]=Nałady džojstyka
 Comment[el]=Ρυθμίσεις χειριστηρίου
 Comment[et]=Juhtpuldi seadistused
 Comment[ga]=Socruithe an luamháin stiúrtha
@@ -77,7 +78,7 @@ X-KDE-Keywords[zh_TW]=joystick,gamepad,搖桿,遊戲台
 Name=Joystick
 Name[ar]=عصا الألعاب
 Name[be]=Джойстык
-Name[be@latin]=Джойстык
+Name[be@latin]=Džojstyk
 Name[bg]=Джойстик
 Name[bn]=জয়-স্টিক
 Name[bn_IN]=জয়-স্টিক

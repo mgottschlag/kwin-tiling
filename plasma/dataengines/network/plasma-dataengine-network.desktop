@@ -1,16 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Networking
-Name[el]=Μηχανή δικτύου
-Name[gu]=નેટવર્ક એન્જિન
-Name[pt]=Motor de Rede
-Name[pt_BR]=Motor de Rede
-Name[sv]=Nätverksgränssnitt
-Name[uk]=Мережний рушій
-Name[zh_TW]=網路引擎
 Comment=Network information for Plasmoids
+Comment[be@latin]=Sietkavyja źviestki dla plazmoidaŭ
 Comment[el]=Πληροφορίες δικτύου για πλασμοειδή
 Comment[gu]=પ્લાઝમોઇડ માટે નેટવર્ક માહિતી
+Comment[km]=ព័ត៌មាន​បណ្ដាញ​សម្រាប់ Plasmoids
 Comment[pt]=Informação sobre a rede para os Plasmóides
 Comment[pt_BR]=Informação sobre a rede para os Plasmóides
 Comment[sv]=Nätverksinformation för Plasmoider

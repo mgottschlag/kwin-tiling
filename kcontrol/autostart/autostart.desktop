@@ -13,7 +13,7 @@ X-KDE-System-Settings-Parent-Category=advanced-user-settings
 Name=Autostart
 Name[af]=Outomatiese begin
 Name[be]=Аўтаматычны запуск
-Name[be@latin]=Аўтаматычны запуск
+Name[be@latin]=Aŭtamatyčnaje ŭklučeńnie
 Name[bg]=Автоматично стартиране
 Name[bn]=অটো-স্টার্ট
 Name[bn_IN]=স্বয়ং-আরম্ভ
@@ -70,6 +70,7 @@ Name[zh_CN]=自动启动
 Name[zh_TW]=自動啟動
 
 Comment=A configuration tool for managing which programs start up with KDE.
+Comment[be@latin]=Pryłada dla naładžvańnia prahramaŭ, jakija aŭtamatyčna ŭklučajucca z systemaj KDE.
 Comment[ca]=Una eina de configuració per a gestionar els programes que s'iniciaran amb el KDE.
 Comment[cs]=Konfigurační nástroj pro správu automatického spouštění programů KDE.
 Comment[csb]=Nôrzãdze do sprôwianiô programama, jaczé mają bëc zrëszané razã z KDE

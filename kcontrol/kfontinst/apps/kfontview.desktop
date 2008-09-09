@@ -1,7 +1,6 @@
 [Desktop Entry]
 Name=KFontView
 Name[be]=Прагляд шрыфтоў
-Name[be@latin]=Прагляд шрыфтоў
 Name[bn]=কে-ফন্ট-ভিউ
 Name[cs]=Prohlížeč písem
 Name[eu]=KFontWiew
@@ -30,7 +29,7 @@ GenericName=Font Viewer
 GenericName[af]=Skriftipe Besigter
 GenericName[ar]=عارض الخطوط
 GenericName[be]=Прагляд шрыфта
-GenericName[be@latin]=Прагляд шрыфта
+GenericName[be@latin]=Prahladnik šryftoŭ
 GenericName[bg]=Преглед на шрифт
 GenericName[bn]=ফন্ট প্রদর্শক
 GenericName[bn_IN]=ফন্ট প্রদর্শক

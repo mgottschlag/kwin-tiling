@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Google Gadgets
+Name[be@latin]=Gadžety „Google”
 Name[el]=Συστατικά Google
 Name[ga]=Giuirléidí Google
 Name[gl]=Gadgets de Google
@@ -14,6 +15,7 @@ Name[tr]=Google Araçları
 Name[uk]=Гаджети Google
 Name[zh_TW]=Google 小玩意兒
 Comment=Google Desktop Gadget
+Comment[be@latin]=Gadžet rabočaha stała „Google”
 Comment[el]=Συστατικό Google επιφάνειας εργασίας
 Comment[et]=Google'i töölauavidin
 Comment[gl]=Gadget de Google para o escritorio

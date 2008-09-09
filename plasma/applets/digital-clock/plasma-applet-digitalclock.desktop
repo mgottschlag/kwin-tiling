@@ -2,7 +2,7 @@
 Name=Digital Clock
 Name[af]=Digitale horlosie
 Name[be]=Лічбавы гадзіннік
-Name[be@latin]=Лічбавы гадзіннік
+Name[be@latin]=Ličbavy hadzińnik
 Name[bg]=Цифров часовник
 Name[bn_IN]=ডিজিট্যাল ঘড়ি
 Name[ca]=Rellotge digital
@@ -66,6 +66,7 @@ Name[zh_CN]=数字钟
 Name[zh_TW]=數位時鐘
 
 Comment=Time displayed in a digital format
+Comment[be@latin]=Čas u ličbach
 Comment[el]=Η ώρα εμφανιζόμενη σε ψηφιακή μορφή
 Comment[et]=Aja esitamine digikujul
 Comment[gl]=A hora mostrada nun formato dixital

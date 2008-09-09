@@ -8,6 +8,7 @@ X-KDE-PluginKeyword=gestures
 X-KDE-System-Settings-Parent-Category=input-actions
 
 Name=Mouse Gestures
+Name[be@latin]=Žesty myššu
 Name[el]=Χειρονομίες ποντικιού
 Name[et]=Hiirežestid
 Name[ga]=Gothaí Luiche
@@ -28,6 +29,7 @@ Name[uk]=Жести мишкою
 Name[zh_TW]=滑鼠手勢
 
 Comment=Configure Mouse Gestures
+Comment[be@latin]=Naładź žesty myššu
 Comment[el]=Ρύθμιση χειρονομιών ποντικιού
 Comment[et]=Hiirežestide seadistamine
 Comment[ga]=Cumraigh Gothaí Luiche
