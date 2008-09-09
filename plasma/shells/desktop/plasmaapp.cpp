@@ -327,8 +327,9 @@ void PlasmaApp::panelHidden(bool hidden)
 bool PlasmaApp::x11EventFilter(XEvent *event)
 {
     if (m_panelHidden && event->type == EnterNotify) {
+        //kDebug();
         foreach (PanelView *panel, m_panels) {
-            //kDebug() << panel->unhideTrigger() << event->xcrossing.window;
+            kDebug() << panel->unhideTrigger() << event->xcrossing.window;
             if (panel->unhideTrigger() == event->xcrossing.window) {
                 panel->unhide();
                 return true;

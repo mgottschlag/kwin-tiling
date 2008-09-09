@@ -147,20 +147,9 @@ protected:
     void drawBackground(QPainter * painter, const QRectF & rect);
     void paintEvent(QPaintEvent *event);
 
-private Q_SLOTS:
-    void showAppletBrowser();
-    void togglePanelController();
-    void edittingComplete();
-    void animateHide(qreal);
-    void panelDeleted();
-
-    /**
-     * Updates the panel's position according to the screen and containment
-     * dimensions
-     */
-    void updatePanelGeometry();
-
 private:
+    void createUnhideTrigger();
+    void destroyUnhideTrigger();
     Qt::Alignment alignmentFilter(Qt::Alignment align) const;
     bool isHorizontal() const;
     QTimeLine *timeLine();
@@ -174,6 +163,21 @@ private:
     bool m_barRegistered;
 #endif
 
+private Q_SLOTS:
+    void checkForActivation();
+    void showAppletBrowser();
+    void togglePanelController();
+    void edittingComplete();
+    void animateHide(qreal);
+    void panelDeleted();
+
+    /**
+     * Updates the panel's position according to the screen and containment
+     * dimensions
+     */
+    void updatePanelGeometry();
+
+private:
     Plasma::Svg *m_background;
     PanelController *m_panelController;
     QList<PanelAppletOverlay*> m_moveOverlays;

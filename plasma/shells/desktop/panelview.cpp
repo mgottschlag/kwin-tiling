@@ -58,7 +58,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
 
     m_offset = viewConfig.readEntry("Offset", 0);
     m_alignment = alignmentFilter((Qt::Alignment)viewConfig.readEntry("Alignment", (int)Qt::AlignLeft));
-    m_panelMode = (PanelMode)viewConfig.readEntry("panelMode", (int)m_panelMode);
+    setPanelMode((PanelMode)viewConfig.readEntry("panelMode", (int)m_panelMode));
 
     // pinchContainment calls updatePanelGeometry for us
 
@@ -92,13 +92,7 @@ PanelView::PanelView(Plasma::Containment *panel, int id, QWidget *parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     // KWin setup
-    KWindowSystem::setType(winId(), NET::Dock);
     KWindowSystem::setOnAllDesktops(winId(), true);
-    unsigned long state = NET::Sticky;
-    if (m_panelMode != LetWindowsCover) {
-        state |= NET::StaysOnTop;
-    }
-    KWindowSystem::setState(winId(), state);
 
 #ifdef Q_WS_WIN
     registerAccessBar(winId(), true);
@@ -183,14 +177,41 @@ Plasma::Location PanelView::location() const
     return containment()->location();
 }
 
+void PanelView::checkForActivation()
+{
+    //kDebug() << "stacking order changed!" << KWindowSystem::self()->stackingOrder().last() << winId();
+    if (KWindowSystem::self()->stackingOrder().last() == winId()) {
+        destroyUnhideTrigger();
+    } else {
+        createUnhideTrigger();
+    }
+}
+
 void PanelView::setPanelMode(PanelView::PanelMode mode)
 {
     unsigned long state = NET::Sticky;
 
-    if (mode != LetWindowsCover) {
+    disconnect(KWindowSystem::self(), SIGNAL(stackingOrderChanged()),
+               this, SLOT(checkForActivation()));
+
+    KWindowSystem::setType(winId(), NET::Dock);
+    if (mode == LetWindowsCover) {
+        createUnhideTrigger();
+        connect(KWindowSystem::self(), SIGNAL(stackingOrderChanged()),
+                this, SLOT(checkForActivation()));
+        KWindowSystem::clearState(winId(), NET::StaysOnTop | NET::KeepAbove);
+        state |= NET::KeepBelow;
+    } else {
+        //kDebug() << "panel shouldn't let windows cover it!";
         state |= NET::StaysOnTop;
     }
 
+    if (mode == NormalPanel) {
+        // we need to kill the input window if it exists!
+        destroyUnhideTrigger();
+    }
+
+    //kDebug() << "panel state set to" << state << NET::Sticky;
     KWindowSystem::setState(winId(), state);
 
     m_panelMode = mode;
@@ -678,14 +699,14 @@ void PanelView::updateStruts()
 
 void PanelView::moveEvent(QMoveEvent *event)
 {
-    kDebug();
+    //kDebug();
     QWidget::moveEvent(event);
     updateStruts();
 }
 
 void PanelView::resizeEvent(QResizeEvent *event)
 {
-    kDebug();
+    //kDebug();
     QWidget::resizeEvent(event);
     updateStruts();
 }
@@ -704,32 +725,26 @@ QTimeLine *PanelView::timeLine()
 
 void PanelView::unhide()
 {
-#ifdef Q_WS_X11
-    if (m_unhideTrigger != None) {
-        XDestroyWindow(QX11Info::display(), m_unhideTrigger);
-        m_unhideTrigger = None;
-#else
-    {
-#endif
-        PlasmaApp::self()->panelHidden(false);
+    //kDebug();
+    destroyUnhideTrigger();
 
-        QTimeLine * tl = timeLine();
-        tl->setDirection(QTimeLine::Backward);
-        // with composite, we can quite do some nice animations with transparent
-        // backgrounds; without it we can't so we just show/hide
-        if (PlasmaApp::hasComposite()) {
-            if (tl->state() == QTimeLine::NotRunning) {
-                tl->start();
-            }
+    QTimeLine * tl = timeLine();
+    tl->setDirection(QTimeLine::Backward);
+    // with composite, we can quite do some nice animations with transparent
+    // backgrounds; without it we can't so we just show/hide
+    if (PlasmaApp::hasComposite()) {
+        if (tl->state() == QTimeLine::NotRunning) {
+            tl->start();
         }
+    }
 
-        show();
-        KWindowSystem::setOnAllDesktops(winId(), true);
-        unsigned long state = NET::Sticky;
-        if (m_panelMode != LetWindowsCover) {
-            state |= NET::StaysOnTop;
-        }
-        KWindowSystem::setState(winId(), state);
+    show();
+    KWindowSystem::setOnAllDesktops(winId(), true);
+    unsigned long state = NET::Sticky;
+    KWindowSystem::setState(winId(), state);
+    if (m_panelMode == LetWindowsCover) {
+        KWindowSystem::raiseWindow(winId());
+        KWindowSystem::activateWindow(winId());
     }
 }
 
@@ -743,16 +758,20 @@ void PanelView::leaveEvent(QEvent *event)
             QWidget *popup = QApplication::activeWindow();
 
             if (popup) {
-                //kDebug() << "got a popup!" << KWindowSystem::transientFor(popup->window()->winId()) << winId()
-                //         << popup->window() << popup->parentWidget() << this;
+                kDebug() << "got a popup!" << popup
+                         << popup->window() << popup->window()->parentWidget() << popup->parentWidget() << this;
 
-                if (popup->parentWidget() == this ||
+
+                if (popup->window()->parentWidget() == this ||
+                    popup->parentWidget() == this ||
                     (popup->parentWidget() && popup->parentWidget()->window() == this)) {
                     havePopup = true;
                 }
             } /* else {
                 kDebug() << "no popup?!";
             } */
+        } else {
+            kDebug() << "gota a popup widget";
         }
 
         if (!havePopup) {
@@ -788,6 +807,7 @@ void PanelView::paintEvent(QPaintEvent *event)
 {
     Plasma::View::paintEvent(event);
     if (m_firstPaint) {
+        // set up our auothide system after we paint it visibly to the user
         if (m_panelMode == AutoHide) {
             QTimeLine * tl = timeLine();
             tl->setDirection(QTimeLine::Forward);
@@ -811,28 +831,19 @@ void PanelView::animateHide(qreal progress)
 
     int xtrans = 0;
     int ytrans = 0;
-    int triggerWidth = 1;
-    int triggerHeight = 1;
-    QPoint triggerPoint = pos();
 
     switch (loc) {
         case Plasma::TopEdge:
             ytrans = -margin;
-            triggerWidth = width();
             break;
         case Plasma::BottomEdge:
             ytrans = margin;
-            triggerWidth = width();
-            triggerPoint = geometry().bottomLeft();
             break;
         case Plasma::RightEdge:
             xtrans = margin;
-            triggerHeight = height();
-            triggerPoint = geometry().topRight();
             break;
         case Plasma::LeftEdge:
             xtrans = -margin;
-            triggerHeight = height();
             break;
         default:
             // no hiding unless we're on an edge.
@@ -848,31 +859,74 @@ void PanelView::animateHide(qreal progress)
     QTimeLine *tl = timeLine();
     if (qFuzzyCompare(qreal(1.0), progress) && tl->direction() == QTimeLine::Forward) {
         //kDebug() << "**************** hide complete" << triggerPoint << triggerWidth << triggerHeight;
+        createUnhideTrigger();
+        hide();
+    }/* else if (qFuzzyCompare(qreal(0.0), progress) && tl->direction() == QTimeLine::Backward) {
+        kDebug() << "show complete";
+    }*/
+}
 
+void PanelView::createUnhideTrigger()
+{
 #ifdef Q_WS_X11
-        if (m_unhideTrigger != None) {
-            XDestroyWindow(QX11Info::display(), m_unhideTrigger);
-        } else {
-            PlasmaApp::self()->panelHidden(true);
-        }
+    if (m_unhideTrigger != None) {
+        return;
+    }
 
-        XSetWindowAttributes attributes;
-        attributes.override_redirect = True;
-        attributes.event_mask = EnterWindowMask;
-        unsigned long valuemask = CWOverrideRedirect | CWEventMask;
-        m_unhideTrigger = XCreateWindow(QX11Info::display(), QX11Info::appRootWindow(),
-                                        triggerPoint.x(), triggerPoint.y(), triggerWidth, triggerHeight,
-                                        0, CopyFromParent, InputOnly, CopyFromParent,
-                                        valuemask, &attributes);
-        XMapWindow(QX11Info::display(), m_unhideTrigger);
-#else
-        PlasmaApp::self()->panelHidden(true);
+    int triggerWidth = 1;
+    int triggerHeight = 1;
+    QPoint triggerPoint = pos();
+
+    switch (location()) {
+        case Plasma::TopEdge:
+            triggerWidth = width();
+            break;
+        case Plasma::BottomEdge:
+            triggerWidth = width();
+            triggerPoint = geometry().bottomLeft();
+            break;
+        case Plasma::RightEdge:
+            triggerHeight = height();
+            triggerPoint = geometry().topRight();
+            break;
+        case Plasma::LeftEdge:
+            triggerHeight = height();
+            break;
+        default:
+            // no hiding unless we're on an edge.
+            return;
+            break;
+    }
+
+    XSetWindowAttributes attributes;
+    attributes.override_redirect = True;
+    attributes.event_mask = EnterWindowMask;
+    unsigned long valuemask = CWOverrideRedirect | CWEventMask;
+    m_unhideTrigger = XCreateWindow(QX11Info::display(), QX11Info::appRootWindow(),
+                                    triggerPoint.x(), triggerPoint.y(), triggerWidth, triggerHeight,
+                                    0, CopyFromParent, InputOnly, CopyFromParent,
+                                    valuemask, &attributes);
+    XMapWindow(QX11Info::display(), m_unhideTrigger);
+//    KWindowSystem::setState(m_unhideTrigger, NET::StaysOnTop);
+
+#endif
+    //kDebug() << m_unhideTrigger;
+    PlasmaApp::self()->panelHidden(true);
+}
+
+void PanelView::destroyUnhideTrigger()
+{
+#ifdef Q_WS_X11
+    if (m_unhideTrigger == None) {
+        return;
+    }
+
+    XDestroyWindow(QX11Info::display(), m_unhideTrigger);
+    m_unhideTrigger = None;
 #endif
 
-        hide();
-    } else if (qFuzzyCompare(qreal(0.0), progress) && tl->direction() == QTimeLine::Backward) {
-        kDebug() << "show complete";
-    }
+    //kDebug();
+    PlasmaApp::self()->panelHidden(false);
 }
 
 void PanelView::panelDeleted()
