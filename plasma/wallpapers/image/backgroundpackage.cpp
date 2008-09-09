@@ -245,10 +245,12 @@ float BackgroundPackage::distance(const QSize& size,
     case Scale: {
         // Consider first the difference in aspect ratio,
         // then in areas. Prefer scaling down.
-        float deltaRatio = size.width() / size.height() -
-                           desired.width() / desired.height();
-        return fabs(deltaRatio) * 3.0 +
-            (delta >= 0.0 ? delta : -delta + 5.0);
+        float deltaRatio = 1.0;
+        if (size.height() > 0 && desired.height() > 0) {
+            deltaRatio = size.width() / size.height() -
+                         desired.width() / desired.height();
+        }
+        return fabs(deltaRatio) * 3.0 + (delta >= 0.0 ? delta : -delta + 5.0);
     }
     case ScaleCrop:
         // Difference of areas, slight preference to scale down
