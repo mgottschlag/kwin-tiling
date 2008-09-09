@@ -84,13 +84,15 @@ void FullView::addApplet(const QString &a, const QString &containment, const QSt
 {
     kDebug() << "adding applet" << a << "in" << containment;
     m_containment = m_corona.addContainment(containment);
-    if(!wallpaper.isEmpty()) {
+
+    if (!wallpaper.isEmpty()) {
         m_containment->setWallpaper(wallpaper);
     }
+
     m_containment->setFormFactor(m_formfactor);
     m_containment->setLocation(m_location);
     setScene(m_containment->scene());
-    
+
     m_applet = m_containment->addApplet(a, args, QRectF(0, 0, -1, -1));
     m_applet->setFlag(QGraphicsItem::ItemIsMovable, false);
 
