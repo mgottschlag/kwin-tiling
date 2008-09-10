@@ -77,6 +77,7 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
     // * a substring of the Name field
     query = QString("exist Exec and ('%1' ~subin Keywords or '%1' ~~ GenericName or '%1' ~~ Name)").arg(term);
     services = KServiceTypeTrader::self()->query("Application", query);
+    services += KServiceTypeTrader::self()->query("KCModule", query);
 
     //kDebug() << "got " << services.count() << " services from " << query;
     foreach (const KService::Ptr &service, services) {
@@ -114,10 +115,18 @@ void ServiceRunner::match(Plasma::RunnerContext &context)
             }
         }
 
-        if (service->categories().contains("KDE")) {
+        if (service->categories().contains("KDE") || service->serviceTypes().contains("KCModule")) {
+            //kDebug() << "found a kde thing" << id << match.subtext() << relevance;
             if (id.startsWith("kde-")) {
                 // This is an older version, let's disambiguate it
                 QString subtext("KDE3");
+
+                //kDebug() << "old" << service->type();
+                if (service->type() == "KCModule") {
+                    // avoid showing old kcms
+                    continue;
+                }
+
                 if (!match.subtext().isEmpty()) {
                     subtext.append(", " + match.subtext());
                 }
