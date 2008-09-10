@@ -70,10 +70,9 @@ public:
             }
 
             if (alignment == Qt::AlignCenter) {
-                const int newTop = offsetSliderRect.center().y() + (offsetSliderRect.center().y() - newPos.y());
-                if (newTop < 0 || newTop > availableLength) {
-                    return false;
-                }
+                int newTop = offsetSliderRect.center().y() + (offsetSliderRect.center().y() - newPos.y());
+                newTop = qBound(0, newTop, availableLength);
+
                 symmetricSliderRect.moveCenter(QPoint(symmetricSliderRect.center().x(), newTop));
             }
             sliderRect.moveCenter(QPoint(sliderRect.center().x(), newPos.y()));
@@ -83,10 +82,9 @@ public:
             }
 
             if (alignment == Qt::AlignCenter) {
-                const int newLeft = offsetSliderRect.center().x() + (offsetSliderRect.center().x() - newPos.x());
-                if (newLeft < 0 || newLeft > availableLength) {
-                    return false;
-                }
+                int newLeft = offsetSliderRect.center().x() + (offsetSliderRect.center().x() - newPos.x());
+                newLeft = qBound(0, newLeft, availableLength);
+
                 symmetricSliderRect.moveCenter(QPoint(newLeft, symmetricSliderRect.center().y()));
             }
             sliderRect.moveCenter(QPoint(newPos.x(), sliderRect.center().y()));
@@ -164,28 +162,28 @@ public:
             //Here substracting one to everything because QRect.moveCenter(pos) moves the rect with
             //the width/2 th pixel at pos.x (and so for y) resulting in the painted image moved
             //one pixel to the right
-            rightMaxPos = offset + maxLength - 1;
+            rightMaxPos = offset + maxLength;
             leftMaxPos = 0;
-            rightMinPos = offset + minLength - 1;
+            rightMinPos = offset + minLength;
             leftMinPos = 0;
-            offsetPos = offset - 1;
+            offsetPos = offset;
             break;
         case Qt::AlignRight:
-            leftMaxPos = totalLength - offset - maxLength - 1;
+            leftMaxPos = totalLength - offset - maxLength;
             rightMaxPos = 0;
-            leftMinPos = totalLength - offset - minLength - 1;
+            leftMinPos = totalLength - offset - minLength;
             rightMinPos = 0;
-            offsetPos = totalLength - offset - 1;
+            offsetPos = totalLength - offset;
             break;
         case Qt::AlignCenter:
         default:
-            leftMaxPos = totalLength/2 + offset - maxLength/2 - 1;
-            rightMaxPos = totalLength/2 + offset + maxLength/2 - 1;
+            leftMaxPos = totalLength/2 + offset - maxLength/2;
+            rightMaxPos = totalLength/2 + offset + maxLength/2;
 
-            leftMinPos = totalLength/2 + offset - minLength/2 - 1;
-            rightMinPos = totalLength/2 + offset + minLength/2 - 1;
+            leftMinPos = totalLength/2 + offset - minLength/2;
+            rightMinPos = totalLength/2 + offset + minLength/2;
 
-            offsetPos = totalLength/2 + offset - 1;
+            offsetPos = totalLength/2 + offset;
             break;
         }
 
@@ -478,8 +476,11 @@ void PositioningRuler::paintEvent(QPaintEvent *event)
     //Draw center indicators
     if (d->alignment == Qt::AlignCenter && (d->location == Plasma::LeftEdge || d->location == Plasma::RightEdge)) {
         d->sliderGraphics->paint(&painter, QPoint(event->rect().left(), event->rect().center().y()), "vertical-centerindicator");
+        //this because rect.moveCenter will cause a rect moved one pixel off respect where we need it
+        painter.translate(0, -1);
     } else if (d->alignment == Qt::AlignCenter) {
         d->sliderGraphics->paint(&painter, QPoint(event->rect().center().x(), event->rect().top()), "horizontal-centerindicator");
+        painter.translate(-1, 0);
     }
 
     //Draw handles
@@ -631,7 +632,7 @@ void PositioningRuler::mouseMoveEvent(QMouseEvent *event)
             newPos.setY(d->availableLength);
         }
     }
-    
+
     switch (d->dragging) {
     case Private::LeftMaxSlider:
         //don't let the slider "cross" with the offset slider
