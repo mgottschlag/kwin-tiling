@@ -62,6 +62,9 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="insertPolicy" >
+        <enum>QComboBox::InsertAlphabetically</enum>
+       </property>
       </widget>
      </item>
     </layout>
@@ -96,7 +99,7 @@
   <connection>
    <sender>localTimeZone</sender>
    <signal>toggled(bool)</signal>
-   <receiver>mainTimeZone</receiver>
+   <receiver>clockDefaultsTo</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -104,7 +107,7 @@
      <y>15</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>229</x>
+     <x>206</x>
      <y>208</y>
     </hint>
    </hints>

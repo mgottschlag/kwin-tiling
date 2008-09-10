@@ -54,7 +54,7 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::Applet
 
         static QString localTimezone();
 
-	QString m_prettyTimezone;
+        QString m_prettyTimezone;
 
     protected:
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
