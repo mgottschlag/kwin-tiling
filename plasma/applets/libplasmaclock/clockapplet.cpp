@@ -237,6 +237,8 @@ void ClockApplet::init()
     KConfigGroup cg = config();
     d->selectedTimezones = cg.readEntry("timeZones", QStringList());
     d->timezone = cg.readEntry("timezone", d->timezone);
+    QStringList tzParts = d->timezone.split("/");
+    m_prettyTimezone = tzParts.value(1);
 
     Plasma::Extender *extender = new Plasma::Extender(this);
     containment()->corona()->addOffscreenWidget(extender);
@@ -284,6 +286,8 @@ void ClockApplet::setCurrentTimezone(const QString &tz)
     }
 
     d->timezone = tz;
+    QStringList tzParts = tz.split("/");
+    m_prettyTimezone = tzParts.value(1);
 
     KConfigGroup cg = config();
     cg.writeEntry("timezone", tz);
