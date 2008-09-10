@@ -277,9 +277,9 @@
        </spacer>
       </item>
       <item>
-       <widget class="QCheckBox" name="showTimezone" >
+       <widget class="QCheckBox" name="showTimeZone" >
         <property name="text" >
-         <string>Show &amp;timezone</string>
+         <string>Show &amp;time zone</string>
         </property>
        </widget>
       </item>

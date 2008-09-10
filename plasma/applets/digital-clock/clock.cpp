@@ -190,7 +190,7 @@ void Clock::createClockConfigurationInterface(KConfigDialog *parent)
     ui.showYear->setChecked(m_showYear);
     ui.showDay->setChecked(m_showDay);
     ui.secondsCheckbox->setChecked(m_showSeconds);
-    ui.showTimezone->setChecked(m_showTimezone);
+    ui.showTimeZone->setChecked(m_showTimezone);
     ui.plainClockFontBold->setChecked(m_plainClockFont.bold());
     ui.plainClockFontItalic->setChecked(m_plainClockFont.italic());
     ui.plainClockFont->setCurrentFont(m_plainClockFont);
@@ -202,7 +202,7 @@ void Clock::clockConfigAccepted()
 {
     KConfigGroup cg = config();
 
-    m_showTimezone = ui.showTimezone->isChecked();
+    m_showTimezone = ui.showTimeZone->isChecked();
     cg.writeEntry("showTimezone", m_showTimezone);
 
     m_plainClockFont = ui.plainClockFont->currentFont();
