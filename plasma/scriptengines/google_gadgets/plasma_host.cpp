@@ -38,9 +38,16 @@
 
 namespace ggadget {
 
+static const double kConstraint = 99999;
+
 class PlasmaHost::Private {
  public:
-  Private(GadgetInfo *i) : info(i) {
+  Private(GadgetInfo *i)
+      : info(i),
+        constraint_w_(kConstraint),
+        constraint_h_(kConstraint),
+        gadget_w_(0),
+        gadget_h_(0) {
     global_permissions_.SetGranted(Permissions::ALL_ACCESS, true);
   }
 
@@ -100,6 +107,8 @@ class PlasmaHost::Private {
 
   GadgetInfo *info;
   Permissions global_permissions_;
+  double constraint_w_, constraint_h_;
+  double gadget_w_, gadget_h_;
 };
 
 PlasmaHost::PlasmaHost(GadgetInfo *info)
@@ -200,12 +209,21 @@ bool PlasmaHost::OpenURL(const ggadget::Gadget *gadget, const char *url) {
 void PlasmaHost::AdjustAppletSize() {
   if (!d->info->main_view_host) return;
   ViewInterface *view = d->info->main_view_host->GetViewDecorator();
-  int w = static_cast<int>(view->GetWidth());
-  int h = static_cast<int>(view->GetHeight());
-  if (w > 0 && h > 0) {
-    d->info->applet->resize(w, h);
-    //kDebug() << "applet size:" << d->info->applet->size();
-  }
+  double w = view->GetWidth();
+  double h = view->GetHeight();
+  if (w <= 0 || h <= 0) return;
+  if (d->gadget_w_ == w && d->gadget_h_ == h) return;
+
+  d->gadget_w_ = w;
+  d->gadget_h_ = h;
+  kDebug() << "view size:" << w << " " << h;
+
+  QtViewWidget *widget = static_cast<QtViewWidget*>(d->info->main_view_host->GetNativeWidget());
+  kDebug() << "applet old size:" << d->info->applet->size();
+  kDebug() << "widget old size:" << widget->size();
+  d->info->applet->resize(w, h);
+  kDebug() << "applet new size:" << d->info->applet->size();
+  kDebug() << "widget new size:" << widget->size();
 }
 
 void PlasmaHost::OnConstraintsEvent(Plasma::Constraints constraints) {
@@ -217,9 +235,9 @@ void PlasmaHost::OnConstraintsEvent(Plasma::Constraints constraints) {
   }
   if (constraints & Plasma::SizeConstraint) {
     QSizeF s = d->info->applet->size();
-    if (s.width() == view->GetWidth() && s.height() == view->GetHeight())
-      return;
     kDebug() << "size requested:" << s;
+    d->constraint_w_ = s.width();
+    d->constraint_h_ = s.height();
     double w = s.width();
     double h = s.height();
 
@@ -238,11 +256,6 @@ void PlasmaHost::OnConstraintsEvent(Plasma::Constraints constraints) {
                << " " << view->GetHeight();
       view->SetSize(w, h);
       kDebug() << "view size change to:" << w << " " << h;
-
-      if (w > s.width()) w = s.width();
-      if (h > s.height()) h = s.height();
-      d->info->applet->resize(w, h);
-      kDebug() << "applet size change to:" << w << " " << h;
     }
   }
 }

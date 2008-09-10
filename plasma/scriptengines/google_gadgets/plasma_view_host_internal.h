@@ -147,6 +147,8 @@ class PlasmaViewHost::Private : public QObject {
   }
 
   void QueueResize() {
+    if (info->applet)
+      info->applet->update();
   }
 
   bool ShowContextMenu(int button) {

@@ -145,6 +145,7 @@ bool GglAppletScript::init() {
              << package()->path();
     return false;
   }
+  applet()->setAspectRatioMode(Plasma::ConstrainedSquare);
   QDataStream in(&config_file);
   in >> d->gg_file_ >> d->options_;
   QTimer::singleShot(50, this, SLOT(loadGadget()));
