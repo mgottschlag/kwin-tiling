@@ -256,6 +256,28 @@ public:
         }
     }
 
+    void syncRuler()
+    {
+        QRect screenGeom =
+              QApplication::desktop()->screenGeometry(containment->screen());
+
+        switch (location) {
+        case Plasma::LeftEdge:
+        case Plasma::RightEdge:
+            ruler->setAvailableLength(screenGeom.height());
+            ruler->setMaxLength(qMin((int)containment->maximumSize().height(), screenGeom.height()));
+            ruler->setMinLength(containment->minimumSize().height());
+            break;
+        case Plasma::TopEdge:
+        case Plasma::BottomEdge:
+        default:
+            ruler->setAvailableLength(screenGeom.width());
+            ruler->setMaxLength(qMin((int)containment->maximumSize().width(), screenGeom.width()));
+            ruler->setMinLength(containment->minimumSize().width());
+            break;
+        }
+    }
+
      enum DragElement { NoElement = 0,
                         ResizeButtonElement,
                         MoveButtonElement
@@ -476,6 +498,8 @@ void PanelController::setContainment(Plasma::Containment *containment)
         d->optDialogLayout->insertWidget(insertIndex, removePanelTool);
         connect(removePanelTool, SIGNAL(clicked()), this, SLOT(hide()));
     }
+
+    d->syncRuler();
 }
 
 QSize PanelController::sizeHint() const
@@ -601,21 +625,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
 
     d->ruler->setMaximumSize(d->ruler->sizeHint());
 
-    switch (d->location) {
-    case Plasma::LeftEdge:
-    case Plasma::RightEdge:
-        d->ruler->setAvailableLength(screenGeom.height());
-        d->ruler->setMaxLength(qMin((int)d->containment->maximumSize().height(), screenGeom.height()));
-        d->ruler->setMinLength(d->containment->minimumSize().height());
-        break;
-    case Plasma::TopEdge:
-    case Plasma::BottomEdge:
-    default:
-        d->ruler->setAvailableLength(screenGeom.width());
-        d->ruler->setMaxLength(qMin((int)d->containment->maximumSize().width(), screenGeom.width()));
-        d->ruler->setMinLength(d->containment->minimumSize().width());
-        break;
-    }
+    d->syncRuler();
 }
 
 Plasma::Location PanelController::location() const
