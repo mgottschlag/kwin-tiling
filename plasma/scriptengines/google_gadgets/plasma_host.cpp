@@ -23,6 +23,10 @@
 #include <ggadget/script_runtime_manager.h>
 #include <ggadget/gadget_consts.h>
 #include <ggadget/decorated_view_host.h>
+#include <ggadget/floating_main_view_decorator.h>
+#include <ggadget/docked_main_view_decorator.h>
+#include <ggadget/popout_main_view_decorator.h>
+#include <ggadget/details_view_decorator.h>
 #include <ggadget/permissions.h>
 #include <ggadget/qt/utilities.h>
 #include <ggadget/gadget.h>
@@ -30,75 +34,65 @@
 #include <plasma/applet.h>
 #include "plasma_view_host.h"
 #include "plasma_host.h"
+#include "panel_decorator.h"
 
 namespace ggadget {
-static double kMaxConstraint = 999999;
+
 class PlasmaHost::Private {
  public:
-  Private(GadgetInfo *i)
-      : info(i),
-        constraint_width_(kMaxConstraint),
-        constraint_height_(kMaxConstraint) {
+  Private(GadgetInfo *i) : info(i) {
     global_permissions_.SetGranted(Permissions::ALL_ACCESS, true);
   }
 
-  void OnCloseHandler(DecoratedViewHost *decorated) {
-    switch (decorated->GetDecoratorType()) {
-      case DecoratedViewHost::MAIN_STANDALONE:
-        if (info->expanded_main_view_host)
-          OnPopInHandler(info->main_view_host);
-        info->gadget->RemoveMe(true);
-        break;
-      case DecoratedViewHost::MAIN_EXPANDED:
-        OnPopInHandler(info->main_view_host);
-        break;
-      case DecoratedViewHost::DETAILS:
-        info->gadget->CloseDetailsView();
-        break;
-      default:
-        ASSERT("Invalid decorator type.");
-    }
+  void OnCloseMainViewHandler() {
+    if (info->expanded_main_view_host)
+      OnPopInHandler();
+    info->gadget->RemoveMe(true);
   }
 
-  void OnPopOutHandler(DecoratedViewHost *decorated) {
+  void OnCloseDetailsViewHandler() {
+    info->gadget->CloseDetailsView();
+  }
+
+  void OnClosePopOutViewHandler() {
+    OnPopInHandler();
+  }
+
+  void OnPopOutHandler() {
     if (info->expanded_main_view_host != NULL) {
-      OnPopInHandler(decorated);
+      OnPopInHandler();
       return;
     }
-    ViewInterface *child = decorated->GetView();
+    ViewInterface *child = info->main_view_host->GetView();
     ASSERT(child);
     if (child) {
       PlasmaViewHost *vh =
-        new PlasmaViewHost(info, ViewHostInterface::VIEW_HOST_MAIN, true);
-      if (info->applet->location() == Plasma::Floating) {
-        DecoratedViewHost* dvh =
-            new DecoratedViewHost(vh, DecoratedViewHost::MAIN_EXPANDED, true);
-        dvh->ConnectOnClose(
-            NewSlot(this, &Private::OnCloseHandler, dvh));
+          new PlasmaViewHost(info, ViewHostInterface::VIEW_HOST_MAIN, true);
+      PopOutMainViewDecorator *view_decorator =
+          new PopOutMainViewDecorator(vh);
+      DecoratedViewHost *dvh = new DecoratedViewHost(view_decorator);
+      view_decorator->ConnectOnClose(
+          NewSlot(this, &Private::OnClosePopOutViewHandler));
 
-        // Send popout event to decorator first.
-        SimpleEvent event(Event::EVENT_POPOUT);
-        dvh->GetDecoratedView()->OnOtherEvent(event);
-        info->expanded_main_view_host = dvh;
-      } else {
-        info->expanded_main_view_host = vh;
-      }
+      // Send popout event to decorator first.
+      SimpleEvent event(Event::EVENT_POPOUT);
+      info->main_view_host->GetViewDecorator()->OnOtherEvent(event);
 
-      child->SwitchViewHost(info->expanded_main_view_host);
-      info->expanded_main_view_host->ShowView(false, 0, NULL);
+      child->SwitchViewHost(dvh);
+      dvh->ShowView(false, 0, NULL);
+
+      info->expanded_main_view_host = dvh;
     }
   }
 
-  void OnPopInHandler(DecoratedViewHost *decorated) {
+  void OnPopInHandler() {
     kDebug() << "OnPopInHandler";
     ViewInterface *child = info->expanded_main_view_host->GetView();
     ASSERT(child);
     if (child) {
       child->SwitchViewHost(info->main_view_host);
-      if (info->applet->location() == Plasma::Floating) {
-        SimpleEvent event(Event::EVENT_POPIN);
-        info->main_view_host->GetDecoratedView()->OnOtherEvent(event);
-      }
+      SimpleEvent event(Event::EVENT_POPIN);
+      info->main_view_host->GetViewDecorator()->OnOtherEvent(event);
       info->expanded_main_view_host->Destroy();
       info->expanded_main_view_host = NULL;
     }
@@ -106,8 +100,6 @@ class PlasmaHost::Private {
 
   GadgetInfo *info;
   Permissions global_permissions_;
-  double constraint_width_, constraint_height_;
-
 };
 
 PlasmaHost::PlasmaHost(GadgetInfo *info)
@@ -118,37 +110,48 @@ PlasmaHost::~PlasmaHost() {
   delete d;
 }
 
-ViewHostInterface *PlasmaHost::NewViewHost(Gadget *gadget,
+ViewHostInterface *PlasmaHost::NewViewHost(Gadget *,
                                            ViewHostInterface::Type type) {
-  ViewHostInterface* vh =
-      new PlasmaViewHost(d->info, type);
+  ViewHostInterface* vh =  new PlasmaViewHost(d->info, type);
+
+  DecoratedViewHost *dvh;
   if (type == ViewHostInterface::VIEW_HOST_MAIN) {
-    DecoratedViewHost *dvh;
-    // TODO: We should use different decorator for main views on locations
-    // other than Floating. But we don't have proper one.
-    if (d->info->applet->location() == Plasma::Floating)
-      dvh = new DecoratedViewHost(vh, DecoratedViewHost::MAIN_STANDALONE, true);
-    else
-      dvh = new DecoratedViewHost(vh, DecoratedViewHost::MAIN_STANDALONE, true);
-    dvh->ConnectOnClose(NewSlot(d, &Private::OnCloseHandler, dvh));
-    dvh->ConnectOnPopOut(NewSlot(d, &Private::OnPopOutHandler, dvh));
-    dvh->ConnectOnPopIn(NewSlot(d, &Private::OnPopInHandler, dvh));
+    if (d->info->is_floating) {
+      FloatingMainViewDecorator *decorator =
+          new FloatingMainViewDecorator(vh, true);
+      dvh = new DecoratedViewHost(decorator);
+      decorator->ConnectOnClose(NewSlot(d, &Private::OnCloseMainViewHandler));
+      decorator->ConnectOnPopOut(NewSlot(d, &Private::OnPopOutHandler));
+      decorator->ConnectOnPopIn(NewSlot(d, &Private::OnPopInHandler));
+      decorator->SetButtonVisible(MainViewDecoratorBase::POP_IN_OUT_BUTTON,
+                                  false);
+      decorator->SetButtonVisible(MainViewDecoratorBase::MENU_BUTTON,
+                                  false);
+      decorator->SetButtonVisible(MainViewDecoratorBase::CLOSE_BUTTON,
+                                  false);
+    } else {
+      PanelDecorator *decorator = new PanelDecorator(vh);
+      decorator->ConnectOnPopOut(NewSlot(d, &Private::OnPopOutHandler));
+      decorator->ConnectOnPopIn(NewSlot(d, &Private::OnPopInHandler));
+      dvh = new DecoratedViewHost(decorator);
+    }
     d->info->main_view_host = dvh;
     return dvh;
   } else if (type == ViewHostInterface::VIEW_HOST_OPTIONS) {
     d->info->options_view_host = vh;
     return vh;
   } else {
-    DecoratedViewHost *dvh =
-        new DecoratedViewHost(vh, DecoratedViewHost::DETAILS, false);
-    dvh->ConnectOnClose(NewSlot(d, &Private::OnCloseHandler, dvh));
+    DetailsViewDecorator *view_decorator = new DetailsViewDecorator(vh);
+    dvh = new DecoratedViewHost(view_decorator);
+    view_decorator->ConnectOnClose(
+        NewSlot(d, &Private::OnCloseDetailsViewHandler));
     d->info->details_view_host = dvh;
     return dvh;
   }
 }
 
 void PlasmaHost::RemoveGadget(Gadget *gadget, bool save_data) {
-  // TODO: Right now, please close me through plasma's button
+  // Please close me through plasma's button
 }
 
 bool PlasmaHost::LoadFont(const char *filename) {
@@ -179,17 +182,27 @@ Gadget* PlasmaHost::LoadGadget(const char *path, const char *options_name) {
     return NULL;
   }
 
+  if (gadget->HasOptionsDialog()) {
+    d->info->script->setHasConfigurationInterface(true);
+  }
+
   return gadget;
+}
+
+int PlasmaHost::GetDefaultFontSize() {
+    return kDefaultFontSize;
+}
+
+bool PlasmaHost::OpenURL(const ggadget::Gadget *gadget, const char *url) {
+    return ggadget::qt::OpenURL(gadget, url);
 }
 
 void PlasmaHost::AdjustAppletSize() {
   if (!d->info->main_view_host) return;
-  ViewInterface *view = d->info->main_view_host->GetDecoratedView();
+  ViewInterface *view = d->info->main_view_host->GetViewDecorator();
   int w = static_cast<int>(view->GetWidth());
   int h = static_cast<int>(view->GetHeight());
   if (w > 0 && h > 0) {
-    if (w > d->constraint_width_) w = d->constraint_width_;
-    if (h > d->constraint_height_) h = d->constraint_height_;
     d->info->applet->resize(w, h);
     //kDebug() << "applet size:" << d->info->applet->size();
   }
@@ -197,43 +210,39 @@ void PlasmaHost::AdjustAppletSize() {
 
 void PlasmaHost::OnConstraintsEvent(Plasma::Constraints constraints) {
   if (!d->info->main_view_host) return;
-  ViewInterface *view = d->info->main_view_host->GetDecoratedView();
+  ViewInterface *view = d->info->main_view_host->GetViewDecorator();
 
   if (constraints & Plasma::FormFactorConstraint) {
     kDebug() << "FormFactorConstraint changed";
   }
   if (constraints & Plasma::SizeConstraint) {
     QSizeF s = d->info->applet->size();
+    if (s.width() == view->GetWidth() && s.height() == view->GetHeight())
+      return;
     kDebug() << "size requested:" << s;
-    d->constraint_width_ = s.width();
-    d->constraint_height_ = s.height();
-    double w = d->constraint_width_;
-    double h = d->constraint_height_;
+    double w = s.width();
+    double h = s.height();
+
+    // if gadget is on panel, we don't occupy the whole available space
+    if (d->info->applet->formFactor() == Plasma::Horizontal
+        && w > view->GetWidth()) {
+      w = view->GetWidth();
+    }
+    if (d->info->applet->formFactor() == Plasma::Vertical
+        && h > view->GetHeight()) {
+      h = view->GetHeight();
+    }
+
     if (view->OnSizing(&w, &h)) {
       kDebug() << "Original view size:" << view->GetWidth()
                << " " << view->GetHeight();
-      // if gadget is on panel, we don't occupy the whole available space
-      if (d->info->applet->formFactor() == Plasma::Horizontal
-          && w > view->GetWidth())
-        w = view->GetWidth();
-      if (d->info->applet->formFactor() == Plasma::Vertical
-          && h > view->GetHeight())
-        h = view->GetHeight();
       view->SetSize(w, h);
       kDebug() << "view size change to:" << w << " " << h;
-      if (d->info->applet->formFactor() == Plasma::Vertical &&
-          w > d->constraint_width_)
-        w = d->constraint_width_;
-      if (d->info->applet->formFactor() == Plasma::Horizontal &&
-          h > d->constraint_height_)
-        h = d->constraint_height_;
 
+      if (w > s.width()) w = s.width();
+      if (h > s.height()) h = s.height();
       d->info->applet->resize(w, h);
       kDebug() << "applet size change to:" << w << " " << h;
-      if (d->info->applet->formFactor() != Plasma::Horizontal)
-        d->constraint_height_ = kMaxConstraint;
-      if (d->info->applet->formFactor() != Plasma::Vertical)
-        d->constraint_width_ = kMaxConstraint;
     }
   }
 }

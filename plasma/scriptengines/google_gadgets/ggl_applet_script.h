@@ -40,7 +40,8 @@ class GadgetInfo {
         expanded_main_view_host(NULL),
         details_view_host(NULL),
         options_view_host(NULL),
-        view_debug_mode(0)
+        view_debug_mode(0),
+        is_floating(true)
   {}
   ggadget::PlasmaHost *host;
   ggadget::Gadget *gadget;
@@ -51,6 +52,7 @@ class GadgetInfo {
   ggadget::ViewHostInterface *details_view_host;
   ggadget::ViewHostInterface *options_view_host;
   int view_debug_mode;
+  bool is_floating;
 };
 
 class GglAppletScript : public Plasma::AppletScript {
@@ -64,7 +66,8 @@ class GglAppletScript : public Plasma::AppletScript {
   virtual void paintInterface(QPainter *painter,
                               const QStyleOptionGraphicsItem *option,
                               const QRect &contentsRect);
-  virtual QList<QAction*> contextActions();
+  virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
+  virtual QList<QAction*> contextualActions();
 
  public Q_SLOTS:
   virtual void showConfigurationInterface();

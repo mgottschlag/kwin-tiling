@@ -14,6 +14,9 @@ macro_optional_find_package(USB)
 macro_optional_find_package(Fontconfig)
 macro_optional_find_package(Freetype)
 macro_optional_find_package(Googlegadgets)
+macro_log_feature(GOOGLEGADGETS_FOUND "GoogleGadgets" "Google Gadgets library"
+  "http://code.google.com/p/google-gadgets-for-linux/" FALSE ""
+  "Needed to build plasma scriptengine for google gadgets")
 macro_optional_find_package(OpenGL)
 
 include (MacroLibrary)

@@ -61,8 +61,8 @@ class PlasmaViewHost : public ViewHostInterface {
                         Slot1<void, int> *feedback_handler);
   virtual void CloseView();
   virtual bool ShowContextMenu(int button);
-  virtual void BeginResizeDrag(int button, ViewInterface::HitTest hittest) {}
-  virtual void BeginMoveDrag(int button) {}
+  virtual void BeginResizeDrag(int, ViewInterface::HitTest) {}
+  virtual void BeginMoveDrag(int) {}
 
   virtual void Alert(const ViewInterface *view, const char *message);
   virtual bool Confirm(const ViewInterface *view, const char *message);

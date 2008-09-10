@@ -29,7 +29,6 @@ class PlasmaViewHost::Private : public QObject {
  public:
   Private(GadgetInfo *i, Type type, bool popout)
     : view_(NULL),
-      parent_dialog_(NULL),
       parent_widget_(NULL),
       widget_(NULL),
       type_(type),
@@ -55,9 +54,7 @@ class PlasmaViewHost::Private : public QObject {
   }
   /* Show the view in right place
    *    - floating main view: Shown within the applet
-   *    - main view in horizon panel: Shown within the applet and be minimized
-   *    - popouted main view: Shown in Plasma::Diglog
-   *    - details view: Shown in Plasma::Dialog
+   *    - popouted main view and details view: Shown in QtViewWidget
    *    - options view: Shown in QDialog
    */
   bool ShowView(bool modal, int flags, Slot1<void, int> *feedback_handler) {
@@ -76,7 +73,7 @@ class PlasmaViewHost::Private : public QObject {
       layout->addWidget(widget_);
 
       QDialog *dialog = new QDialog();
-      parent_dialog_ = dialog;
+      parent_widget_ = dialog;
 
       QDialogButtonBox::StandardButtons what_buttons = 0;
       if (flags & ViewInterface::OPTIONS_VIEW_FLAG_OK)
@@ -99,59 +96,59 @@ class PlasmaViewHost::Private : public QObject {
 
       dialog->setLayout(layout);
       dialog->setWindowTitle(caption_);
+      SetGadgetWindowIcon(dialog, view_->GetGadget());
       if (modal)
         dialog->exec();
       else
         dialog->show();
     } else if (type_ == ViewHostInterface::VIEW_HOST_DETAILS) {
       widget_ = new QtViewWidget(view_, false, false, true, false);
+      parent_widget_ = widget_;
+      SetGadgetWindowIcon(widget_, view_->GetGadget());
       widget_->show();
       widget_->move(info->applet->popupPosition(widget_->sizeHint()));
-      parent_widget_ = widget_;
     } else if (!is_popout_) {  // normal main view
       // Create a Widget (composite, decorated, movable, input_mask)
       widget_ = new QtViewWidget(view_, false, true, false, false);
       EmbededWidget(info->applet, widget_);
       info->applet->setBackgroundHints(Plasma::Applet::NoBackground);
-      connect(widget_, SIGNAL(moved(int, int)),
-              this, SLOT(OnViewMoved(int, int)));
+      if (info->is_floating)
+        connect(widget_, SIGNAL(moved(int, int)),
+                this, SLOT(OnViewMoved(int, int)));
+
+      if (info->applet->formFactor() == Plasma::Vertical)
+        view_->SetWidth(info->applet->size().width());
       if (info->applet->formFactor() == Plasma::Horizontal)
-        info->main_view_host->SetMinimized(true);
-    } else {    // popout main view
-      if (info->applet->location() != Plasma::Floating) {
-        widget_ = new QtViewWidget(view_, true, false, true, false);
-        widget_->setWindowFlags(Qt::Window|Qt::Popup);
-      } else {
-         widget_ = new QtViewWidget(view_, false, false, true, false);
-      }
+        view_->SetHeight(info->applet->size().height());
+    } else {
+      widget_ = new QtViewWidget(view_, false, false, true, false);
+      parent_widget_ = widget_;
+      SetGadgetWindowIcon(widget_, view_->GetGadget());
       widget_->show();
       widget_->move(info->applet->popupPosition(widget_->sizeHint()));
-      parent_widget_ = widget_;
     }
     return true;
   }
+
   void CloseView() {
     kDebug() << "CloseView";
-    if (parent_dialog_) {
-      delete parent_dialog_;
-      parent_dialog_= NULL;
-      widget_ = NULL;
-    } else if (parent_widget_) {
+    if (parent_widget_) {
       delete parent_widget_;
       parent_widget_ = NULL;
       widget_ = NULL;
     }
   }
+
   void QueueDraw() {
     if (parent_widget_)
       parent_widget_->update();
-    else if (parent_dialog_)
-      parent_dialog_->update();
     else if (info->applet)
       info->applet->update();
   }
+
   void QueueResize() {
   }
+
   bool ShowContextMenu(int button) {
     ASSERT(view_);
     context_menu_.clear();
@@ -166,7 +163,6 @@ class PlasmaViewHost::Private : public QObject {
   }
 
   ViewInterface *view_;
-  QDialog *parent_dialog_;
   QWidget *parent_widget_;
   QtViewWidget *widget_;
   ViewHostInterface::Type type_;
@@ -188,7 +184,7 @@ class PlasmaViewHost::Private : public QObject {
       delete feedback_handler_;
       feedback_handler_ = NULL;
     }
-    parent_dialog_->hide();
+    parent_widget_->hide();
   }
 
 

@@ -17,8 +17,10 @@
 #include <sys/time.h>
 
 #include <KMessageBox>
-#include <QGraphicsProxyWidget>
-#include <QGraphicsLinearLayout>
+#include <QtGui/QGraphicsProxyWidget>
+#include <QtGui/QGraphicsLinearLayout>
+#include <QtGui/QToolTip>
+
 #include <KInputDialog>
 #include <ggadget/file_manager_interface.h>
 #include <ggadget/gadget_consts.h>
@@ -29,6 +31,7 @@
 #include <ggadget/script_runtime_interface.h>
 #include <ggadget/script_runtime_manager.h>
 #include <ggadget/qt/qt_graphics.h>
+#include <ggadget/qt/utilities.h>
 #include "plasma_view_host.h"
 #include "plasma_view_host_internal.h"
 
@@ -106,8 +109,8 @@ void PlasmaViewHost::SetResizable(ViewInterface::ResizableMode mode) {
 
 void PlasmaViewHost::SetCaption(const char *caption) {
   d->caption_ = QString::fromUtf8(caption);
-  if (d->parent_dialog_)
-    d->parent_dialog_->setWindowTitle(d->caption_);
+  if (d->parent_widget_)
+    d->parent_widget_->setWindowTitle(d->caption_);
 }
 
 void PlasmaViewHost::SetShowCaptionAlways(bool always) {
@@ -115,14 +118,26 @@ void PlasmaViewHost::SetShowCaptionAlways(bool always) {
 }
 
 void PlasmaViewHost::SetCursor(int type) {
+  kDebug() << "SetCursor: " << type;
+  QCursor cursor(ggadget::qt::GetQtCursorShape(type));
+  // FIXME: Neither way to set cursor works...
+  //  d->info->applet->setCursor(cursor);
+  if (d->widget_)
+    d->widget_->setCursor(cursor);
 }
 
 void PlasmaViewHost::SetTooltip(const char *tooltip) {
+  QToolTip::showText(QCursor::pos(), QString::fromUtf8(tooltip));
 }
 
 bool PlasmaViewHost::ShowView(bool modal, int flags,
                           Slot1<void, int> *feedback_handler) {
-  return d->ShowView(modal, flags, feedback_handler);
+  if (d->ShowView(modal, flags, feedback_handler)) {
+    if (d->parent_widget_)
+      d->parent_widget_->setWindowTitle(d->caption_);
+    return true;
+  }
+  return false;
 }
 
 void PlasmaViewHost::CloseView() {

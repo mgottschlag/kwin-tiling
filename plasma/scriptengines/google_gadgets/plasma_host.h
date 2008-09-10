@@ -35,7 +35,9 @@ class PlasmaHost : public ggadget::HostInterface {
   virtual bool LoadFont(const char *filename);
   virtual void Run() {}
   virtual void ShowGadgetAboutDialog(Gadget *gadget);
-  virtual void ShowGadgetDebugConsole(Gadget *gadget) {}
+  virtual void ShowGadgetDebugConsole(Gadget *) {}
+  virtual int GetDefaultFontSize();
+  virtual bool OpenURL(const Gadget *gadget, const char *url);
   Gadget* LoadGadget(const char *path, const char *options_name);
   void AdjustAppletSize();
   void OnConstraintsEvent(Plasma::Constraints constraints);

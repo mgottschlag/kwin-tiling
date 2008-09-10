@@ -16,11 +16,15 @@
 
 #include <sys/time.h>
 #include <time.h>
+
 #include <QtCore/QTimer>
 #include <QtCore/QDir>
 #include <QtCore/QMutex>
 #include <QtCore/QMutexLocker>
 #include <QtCore/QFileInfo>
+#include <QtGui/QPainter>
+#include <QtGui/QColor>
+#include <QtGui/QGraphicsSceneMouseEvent>
 
 #include <plasma/applet.h> 
 #include <plasma/package.h>
@@ -30,6 +34,7 @@
 #include <ggadget/qt/qt_view_widget.h>
 #include <ggadget/qt/qt_view_host.h>
 #include <ggadget/qt/qt_menu.h>
+#include <ggadget/qt/utilities.h>
 #include <ggadget/qt/qt_main_loop.h>
 #include <ggadget/extension_manager.h>
 #include <ggadget/script_runtime_manager.h>
@@ -40,6 +45,7 @@
 #include <ggadget/view_interface.h>
 #include <ggadget/view.h>
 #include <ggadget/host_interface.h>
+#include <ggadget/decorated_view_host.h>
 #include "plasma_host.h"
 #include "ggl_applet_script.h"
 
@@ -67,7 +73,7 @@ class GglAppletScript::Private {
  public:
   QString gg_file_;
   QString options_;
-  QList<QAction*> actions_;
+  QMenu menu_;
   QStringList errors_;
   GadgetInfo info;
   ~Private() {
@@ -150,6 +156,9 @@ void GglAppletScript::loadGadget() {
   kDebug() << "Loading gadget " << d->gg_file_
            << "with options " << d->options_;
 
+  if (applet()->location() != Plasma::Floating) {
+    d->info.is_floating = false;
+  }
   d->info.applet = applet();
   d->info.host = new ggadget::PlasmaHost(&d->info);
   d->info.gadget = d->info.host->LoadGadget(d->gg_file_.toUtf8(),
@@ -162,16 +171,38 @@ void GglAppletScript::paintInterface(QPainter *p,
   if (d->info.host) d->info.host->AdjustAppletSize();
 }
 
-QList<QAction*> GglAppletScript::contextActions() {
-  return d->actions_;
+void GglAppletScript::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+  // FIXME: AppletScript has no way to handle mousePressEvent right now
+  if (event->button() == Qt::RightButton) {
+    kDebug() << "Right button pressed";
+    d->menu_.clear();
+    ggadget::qt::QtMenu qt_menu(&d->menu_);
+    ggadget::ViewInterface *view = d->info.main_view_host->GetViewDecorator();
+    if (!view->OnAddContextMenuItems(&qt_menu)) {
+      if (!d->menu_.isEmpty()) {
+        kDebug() << "Show my own menu";
+        d->menu_.exec(event->screenPos());
+        event->accept();
+      }
+    }
+  }
+}
+
+QList<QAction*> GglAppletScript::contextualActions() {
+  d->menu_.clear();
+  ggadget::qt::QtMenu qt_menu(&d->menu_);
+  ggadget::ViewInterface *view = d->info.main_view_host->GetViewDecorator();
+  view->OnAddContextMenuItems(&qt_menu);
+  return d->menu_.actions();
 }
 
 void GglAppletScript::constraintsEvent(Plasma::Constraints constraints) {
-  if (d->info.host) d->info.host->OnConstraintsEvent(constraints);
+  if (d->info.host)
+    d->info.host->OnConstraintsEvent(constraints);
 }
 
 void GglAppletScript::showConfigurationInterface() {
-    //TODO
+  d->info.gadget->ShowOptionsDialog();
 }
 
 #include "ggl_applet_script.moc"
