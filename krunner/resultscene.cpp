@@ -49,6 +49,7 @@ ResultScene::ResultScene(QObject *parent)
     setItemIndexMethod(NoIndex);
 
     m_runnerManager = new Plasma::RunnerManager(this);
+    m_runnerManager->reloadConfiguration(); // pre-load the runners
     connect(m_runnerManager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
             this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
 
