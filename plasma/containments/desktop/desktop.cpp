@@ -86,6 +86,7 @@ DefaultDesktop::DefaultDesktop(QObject *parent, const QVariantList &args)
     m_layout->setTemporaryPlacement(true);
     m_layout->setItemRelativeTolerance(0.5);
     setLayout(m_layout);
+    setHasConfigurationInterface(true);
 
     //kDebug() << "!!! loading desktop";
 }
@@ -108,11 +109,6 @@ void DefaultDesktop::constraintsEvent(Plasma::Constraints constraints)
         bool locked = immutability() != Mutable;
         m_addPanelAction->setVisible(!locked);
     }
-}
-
-void DefaultDesktop::configure()
-{
-    emit configureRequested();
 }
 
 void DefaultDesktop::addPanel()
@@ -177,10 +173,7 @@ QList<QAction*> DefaultDesktop::contextualActions()
         connect(m_runCommandAction, SIGNAL(triggered(bool)), this, SLOT(runCommand()));
         m_runCommandAction->setIcon(KIcon("system-run"));
 
-        m_setupDesktopAction = new QAction(i18n("Desktop Settings..."), this);
-        m_setupDesktopAction->setIcon(KIcon("configure"));
-        connect(m_setupDesktopAction, SIGNAL(triggered()), this, SLOT(configure()));
-
+        m_setupDesktopAction = action("configure");
         m_lockDesktopAction = action("lock widgets");
 
         m_lockScreenAction = new QAction(i18n("Lock Screen"), this);

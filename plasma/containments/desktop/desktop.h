@@ -74,7 +74,6 @@ protected:
 
 protected Q_SLOTS:
     void runCommand();
-    void configure();
 
     void lockScreen();
     void logout();
