@@ -114,7 +114,7 @@ bool GglAppletScript::init() {
       ggadget::EnsureDirectories(profile_dir.c_str());
 
       // Set global file manager.
-      ggadget::SetupGlobalFileManager(profile_dir);
+      ggadget::SetupGlobalFileManager(profile_dir.c_str());
 
       // Load global extensions.
       ggadget::ExtensionManager *ext_manager =
