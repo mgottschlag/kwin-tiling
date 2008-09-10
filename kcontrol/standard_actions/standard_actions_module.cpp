@@ -136,7 +136,7 @@ void StandardActionsModule::save()
         "The changes have been saved. Please consider:"
         "<ul><li>Applications need to be restarted to see the changes.</li>"
         "    <li>This change could introduce shortcut conflicts in some applications.</li>"
-        "</ul" );
+        "</ul>" );
     KMessageBox::information(this, message, title, "shortcuts_saved_info");
     }
 
