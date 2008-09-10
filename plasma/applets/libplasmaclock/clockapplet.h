@@ -71,6 +71,7 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::Applet
         void showCalendar(QGraphicsSceneMouseEvent *event);
         void configAccepted();
         void adjustView();
+        void updateClockDefaultsTo();
 
     private:
         void updateToolTipContent();

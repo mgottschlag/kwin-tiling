@@ -102,14 +102,22 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     parent->addPage(widget, i18n("Time Zones"), icon());
 
     d->ui.localTimeZone->setChecked(isLocalTimezone());
-    foreach(QString tz, d->selectedTimezones) {
+    foreach (QString tz, d->selectedTimezones) {
         d->ui.timeZones->setSelected(tz, true);
     }
     d->ui.timeZones->setEnabled(!isLocalTimezone());
 
+    updateClockDefaultsTo();
+    int defaultSelection = d->ui.clockDefaultsTo->findText(currentTimezone());
+    if (defaultSelection >= 0) {
+        d->ui.clockDefaultsTo->setCurrentIndex(defaultSelection);
+    }
+    d->ui.clockDefaultsTo->setEnabled(!isLocalTimezone());
+
     parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+    connect(d->ui.timeZones, SIGNAL(itemSelectionChanged()), this, SLOT(updateClockDefaultsTo()));
 
 #if 0
 #ifdef CLOCK_APPLET_CONF
@@ -143,10 +151,8 @@ void ClockApplet::configAccepted()
 
     if (d->ui.localTimeZone->isChecked() || d->selectedTimezones.isEmpty()) {
         newTimezone = localTimezone();
-    } else if (d->selectedTimezones.contains(currentTimezone())) {
-        newTimezone = currentTimezone();
     } else {
-        newTimezone = d->selectedTimezones.at(0);
+        newTimezone = d->ui.clockDefaultsTo->currentText();
     }
 
     changeEngineTimezone(currentTimezone(), newTimezone);
@@ -164,6 +170,17 @@ void ClockApplet::adjustView()
     if (d->view && extender()) {
         d->view->setSceneRect(extender()->mapToScene(extender()->boundingRect()).boundingRect());
         d->view->resize(extender()->size().toSize());
+    }
+}
+
+void ClockApplet::updateClockDefaultsTo()
+{
+    QString oldSelection = d->ui.clockDefaultsTo->currentText();
+    d->ui.clockDefaultsTo->clear();
+    d->ui.clockDefaultsTo->addItems(d->ui.timeZones->selection());
+    int newPosition = d->ui.clockDefaultsTo->findText(oldSelection);
+    if (newPosition >= 0) {
+        d->ui.clockDefaultsTo->setCurrentIndex(newPosition);
     }
 }
 
