@@ -1,5 +1,9 @@
 [Desktop Entry]
 Name=Files and Directories
+Name[nds]=Dateien un Ornern
+Name[pt]=Ficheiros e Pastas
+Name[pt_BR]=Ficheiros e Pastas
+Name[uk]=Файли і каталоги
 Comment=Info about files and directories for Plasmoids
 Comment[be@latin]=Źviestki pra fajły j katalohi dla plazmoidaŭ
 Comment[bg]=Информация за файлове и директории (Plasmoids)

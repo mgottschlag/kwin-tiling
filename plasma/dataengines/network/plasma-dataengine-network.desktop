@@ -1,11 +1,17 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Networking
+Name[nds]=Nettwark
+Name[pt]=Rede
+Name[pt_BR]=Rede
+Name[uk]=Робота у мережі
 Comment=Network information for Plasmoids
 Comment[be@latin]=Sietkavyja źviestki dla plazmoidaŭ
 Comment[el]=Πληροφορίες δικτύου για πλασμοειδή
+Comment[gl]=Información da rede para os Plasmoides
 Comment[gu]=પ્લાઝમોઇડ માટે નેટવર્ક માહિતી
 Comment[km]=ព័ត៌មាន​បណ្ដាញ​សម្រាប់ Plasmoids
+Comment[nds]=Nettwark-Informatschonen för Lüttprogrammen
 Comment[pt]=Informação sobre a rede para os Plasmóides
 Comment[pt_BR]=Informação sobre a rede para os Plasmóides
 Comment[sv]=Nätverksinformation för Plasmoider

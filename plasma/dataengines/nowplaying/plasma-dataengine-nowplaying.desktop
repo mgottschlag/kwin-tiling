@@ -1,5 +1,9 @@
 [Desktop Entry]
 Name=Now Playing
+Name[nds]=Lopen Stück
+Name[pt]=Agora a Tocar
+Name[pt_BR]=Agora a Tocar
+Name[uk]=Зараз відтворюється
 
 Comment=Lists currently playing music
 Comment[ca]=Llista la música que s'està reproduint actualment

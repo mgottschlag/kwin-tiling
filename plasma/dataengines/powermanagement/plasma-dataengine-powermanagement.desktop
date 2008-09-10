@@ -1,5 +1,9 @@
 [Desktop Entry]
 Name=Power Management
+Name[nds]=Stroomkuntrull
+Name[pt]=Gestão de Energia
+Name[pt_BR]=Gestão de Energia
+Name[uk]=Керування живленням
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
 Icon=power
