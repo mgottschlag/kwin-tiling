@@ -163,11 +163,15 @@ void CDuplicatesDialog::scanFinished()
                     else
                         tt++;
                 }
-                top->setExpanded(true);
                 top->setData(COL_FILE, Qt::DecorationRole,
                              QVariant(SmallIcon(t1>tt ? "application-x-font-type1" : "application-x-font-ttf")));
                 top->setFont(COL_FILE, boldFont);
             }
+
+            QTreeWidgetItem *item=0L;
+            for(int i=0; item=itsView->topLevelItem(i); ++i)
+                item->setExpanded(true);
+
             itsView->setSortingEnabled(true);
             itsView->header()->resizeSections(QHeaderView::ResizeToContents);
 
