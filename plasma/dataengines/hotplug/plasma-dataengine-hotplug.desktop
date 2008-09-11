@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=Hotplug Events
+Name[km]=ព្រឹត្តិការណ៍​ដោត​ដើរ
 Name[nds]=Tokoppel-Begeefnissen
 Name[pt]=Eventos do Hotplug
 Name[pt_BR]=Eventos do Hotplug
+Name[sv]=Inkopplingshändelser
 Name[uk]=Події гарячого підключення
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service

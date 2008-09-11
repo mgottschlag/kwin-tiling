@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=Window Information
+Name[km]=ព័ត៌មាន​បង្អួច
 Name[nds]=Finster-Informatschonen
 Name[pt]=Informação das Janelas
 Name[pt_BR]=Informação das Janelas
+Name[sv]=Fönsterinformation
 Name[uk]=Інформація про вікна
 Type=Service
 Icon=alarmclock

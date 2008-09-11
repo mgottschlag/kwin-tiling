@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=Power Management
+Name[km]=ការ​គ្រប់គ្រង​ថាមពល
 Name[nds]=Stroomkuntrull
 Name[pt]=Gestão de Energia
 Name[pt_BR]=Gestão de Energia
+Name[sv]=Strömsparhantering
 Name[uk]=Керування живленням
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service

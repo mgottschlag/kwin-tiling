@@ -1,8 +1,10 @@
 [Desktop Entry]
 Name=Weather
+Name[km]=អាកាសធាតុ
 Name[nds]=Weder
 Name[pt]=Meteorologia
 Name[pt_BR]=Meteorologia
+Name[sv]=Väder
 Name[uk]=Погода
 Comment=Weather data for Plasmoids
 Comment[be@latin]=Źviestki pra nadvorje dla plazmoidaŭ
