@@ -45,6 +45,11 @@ void PlasmaViewHost::Private::OnViewMoved(int x, int y) {
     info->applet->moveBy(x, y);
 }
 
+void PlasmaViewHost::Private::OnGeometryChanged(int dleft, int dtop, int dw, int dh) {
+  kDebug() << info->applet->geometry();
+  info->applet->moveBy(dleft, dtop);
+}
+
 void PlasmaViewHost::Private::OnOptionViewOK() {
   HandleOptionViewResponse(ViewInterface::OPTIONS_VIEW_FLAG_OK);
 }

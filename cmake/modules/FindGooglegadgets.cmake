@@ -19,7 +19,7 @@ endif ( GOOGLEGADGETS_INCLUDE_DIRS )
 # in the FIND_PATH() and FIND_LIBRARY() calls
 if( NOT WIN32 )
   INCLUDE(FindPkgConfig)
-  PKG_CHECK_MODULES(GOOGLEGADGETS libggadget-1.0 libggadget-qt-1.0)
+  PKG_CHECK_MODULES(GOOGLEGADGETS libggadget-1.0>=0.10.2 libggadget-qt-1.0>=0.10.2)
 endif( NOT WIN32 )
 
 INCLUDE(FindPackageHandleStandardArgs)

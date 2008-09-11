@@ -169,7 +169,6 @@ void GglAppletScript::loadGadget() {
 void GglAppletScript::paintInterface(QPainter *p,
                                      const QStyleOptionGraphicsItem *option,
                                      const QRect &contentsRect) {
-  if (d->info.host) d->info.host->AdjustAppletSize();
 }
 
 void GglAppletScript::mousePressEvent(QGraphicsSceneMouseEvent *event) {

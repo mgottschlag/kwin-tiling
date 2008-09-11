@@ -112,9 +112,12 @@ class PlasmaViewHost::Private : public QObject {
       widget_ = new QtViewWidget(view_, false, true, false, false);
       EmbededWidget(info->applet, widget_);
       info->applet->setBackgroundHints(Plasma::Applet::NoBackground);
-      if (info->is_floating)
+      if (info->is_floating) {
         connect(widget_, SIGNAL(moved(int, int)),
                 this, SLOT(OnViewMoved(int, int)));
+        connect(widget_, SIGNAL(geometryChanged(int, int, int, int)),
+                this, SLOT(OnGeometryChanged(int, int, int, int)));
+      }
 
       if (info->applet->formFactor() == Plasma::Vertical)
         view_->SetWidth(info->applet->size().width());
@@ -147,8 +150,8 @@ class PlasmaViewHost::Private : public QObject {
   }
 
   void QueueResize() {
-    if (info->applet)
-      info->applet->update();
+    if (info->host)
+      info->host->AdjustAppletSize();
   }
 
   bool ShowContextMenu(int button) {
@@ -192,6 +195,7 @@ class PlasmaViewHost::Private : public QObject {
 
  public slots:
   void OnViewMoved(int x, int y);
+  void OnGeometryChanged(int dleft, int dtop, int dw, int dh);
   void OnOptionViewOK();
   void OnOptionViewCancel();
 };

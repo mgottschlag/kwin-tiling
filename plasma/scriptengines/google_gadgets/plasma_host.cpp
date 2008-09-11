@@ -220,10 +220,14 @@ void PlasmaHost::AdjustAppletSize() {
 
   QtViewWidget *widget = static_cast<QtViewWidget*>(d->info->main_view_host->GetNativeWidget());
   kDebug() << "applet old size:" << d->info->applet->size();
-  kDebug() << "widget old size:" << widget->size();
+  if (widget) kDebug() << "widget old size:" << widget->size();
   d->info->applet->resize(w, h);
+  if (widget) {
+    widget->AdjustToViewSize();
+    widget->resize(w, h);
+  }
   kDebug() << "applet new size:" << d->info->applet->size();
-  kDebug() << "widget new size:" << widget->size();
+  if (widget) kDebug() << "widget new size:" << widget->size();
 }
 
 void PlasmaHost::OnConstraintsEvent(Plasma::Constraints constraints) {
