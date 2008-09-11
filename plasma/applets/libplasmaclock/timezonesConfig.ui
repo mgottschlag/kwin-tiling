@@ -72,38 +72,5 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>localTimeZone</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>timeZones</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>209</x>
-     <y>53</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>209</x>
-     <y>239</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>localTimeZone</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>clockDefaultsTo</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>153</x>
-     <y>15</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>206</x>
-     <y>208</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
