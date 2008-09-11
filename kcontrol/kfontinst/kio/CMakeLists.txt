@@ -54,7 +54,7 @@ else (KFI_USE_POLICY_KIT AND POLKITDBUS_FOUND)
     set(kio_fonts_PART_SRCS KioFonts.cpp Server.cpp Socket.cpp SuProc.cpp ${libkxftconfig_SRCS})
     set(kio_fonts_helper_SRCS Helper.cpp Socket.cpp ${libkxftconfig_SRCS})
     kde4_add_executable(kio_fonts_helper ${kio_fonts_helper_SRCS} )
-    target_link_libraries(kio_fonts_helper ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} kfontinst )
+    target_link_libraries(kio_fonts_helper ${QT_QTGUI_LIBRARY} ${QT_QTNETWORK_LIBRARY} kfontinst )
     install(TARGETS kio_fonts_helper DESTINATION ${LIBEXEC_INSTALL_DIR} )
 
 endif (KFI_USE_POLICY_KIT AND POLKITDBUS_FOUND)
