@@ -101,18 +101,15 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
 
     parent->addPage(widget, i18n("Time Zones"), icon());
 
-    d->ui.localTimeZone->setChecked(isLocalTimezone());
     foreach (QString tz, d->selectedTimezones) {
         d->ui.timeZones->setSelected(tz, true);
     }
-    d->ui.timeZones->setEnabled(!isLocalTimezone());
 
     updateClockDefaultsTo();
     int defaultSelection = d->ui.clockDefaultsTo->findText(currentTimezone());
     if (defaultSelection >= 0) {
         d->ui.clockDefaultsTo->setCurrentIndex(defaultSelection);
     }
-    d->ui.clockDefaultsTo->setEnabled(!isLocalTimezone());
 
     parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
@@ -149,7 +146,8 @@ void ClockApplet::configAccepted()
 
     QString newTimezone;
 
-    if (d->ui.localTimeZone->isChecked() || d->selectedTimezones.isEmpty()) {
+    if (d->ui.clockDefaultsTo->currentIndex() == 0) {
+        //The first position in ui.clockDefaultsTo is "Local"
         newTimezone = localTimezone();
     } else {
         newTimezone = d->ui.clockDefaultsTo->currentText();
@@ -178,9 +176,17 @@ void ClockApplet::updateClockDefaultsTo()
     QString oldSelection = d->ui.clockDefaultsTo->currentText();
     d->ui.clockDefaultsTo->clear();
     d->ui.clockDefaultsTo->addItems(d->ui.timeZones->selection());
+    d->ui.clockDefaultsTo->insertItem(0, "Local");
     int newPosition = d->ui.clockDefaultsTo->findText(oldSelection);
     if (newPosition >= 0) {
         d->ui.clockDefaultsTo->setCurrentIndex(newPosition);
+    }
+    if (d->ui.clockDefaultsTo->count() > 1) {
+        d->ui.clockDefaultsTo->setEnabled(true);
+    }
+    else {
+        // Only "Local" in ui.clockDefaultsTo
+        d->ui.clockDefaultsTo->setEnabled(false);
     }
 }
 
@@ -210,7 +216,7 @@ void ClockApplet::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
-    if (d->selectedTimezones.count() <= 1 || isLocalTimezone()){
+    if (d->selectedTimezones.count() <= 1) {
         return;
     }
 

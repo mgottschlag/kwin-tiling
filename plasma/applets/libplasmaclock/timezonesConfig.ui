@@ -11,13 +11,6 @@
   </property>
   <layout class="QVBoxLayout" >
    <item>
-    <widget class="QCheckBox" name="localTimeZone" >
-     <property name="text" >
-      <string>Use &amp;local time zone</string>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="KTimeZoneWidget" name="timeZones" >
      <property name="minimumSize" >
       <size>
