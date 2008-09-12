@@ -150,10 +150,11 @@ class PlasmaViewHost::Private : public QObject {
   }
 
   void QueueResize() {
-    if (type_ == ViewHostInterface::VIEW_HOST_MAIN)
+    if (type_ == ViewHostInterface::VIEW_HOST_MAIN && !is_popout_) {
       info->host->AdjustAppletSize();
-    else if (type_ == ViewHostInterface::VIEW_HOST_DETAILS && widget_)
+    } else if (widget_) {
       widget_->AdjustToViewSize();
+    }
   }
 
   bool ShowContextMenu(int button) {

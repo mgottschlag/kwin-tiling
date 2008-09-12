@@ -14,6 +14,10 @@
   limitations under the License.
 */
 
+#include <ggadget/gadget_consts.h>
+#include <ggadget/gadget.h>
+#include <ggadget/messages.h>
+#include <ggadget/menu_interface.h>
 #include "panel_decorator.h"
 
 namespace ggadget {
@@ -25,10 +29,10 @@ PanelDecorator::PanelDecorator(ViewHostInterface *host)
 PanelDecorator::~PanelDecorator() {}
 
 void PanelDecorator::OnAddDecoratorMenuItems(MenuInterface *menu) {
-/*  int priority = MenuInterface::MENU_ITEM_PRI_DECORATOR;
+  int priority = MenuInterface::MENU_ITEM_PRI_DECORATOR;
   menu->AddItem(
       GM_(IsMinimized() ? "MENU_ITEM_EXPAND" : "MENU_ITEM_COLLAPSE"), 0, 0,
-      NewSlot(impl_, &Impl::CollapseExpandMenuCallback), priority);*/
+      NewSlot(this, &PanelDecorator::CollapseExpandMenuCallback), priority);
 }
 
 } // namespace ggadget

@@ -28,6 +28,9 @@ class PanelDecorator : public DockedMainViewDecorator {
   virtual void OnAddDecoratorMenuItems(MenuInterface *menu);
 
  private:
+  void CollapseExpandMenuCallback(const char *) {
+    SetMinimized(!IsMinimized());
+  }
   DISALLOW_EVIL_CONSTRUCTORS(PanelDecorator);
 };
 
