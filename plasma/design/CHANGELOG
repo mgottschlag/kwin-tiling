@@ -122,6 +122,8 @@ Plugins/Addons
         * NowPlaying
             * Plasma::Service for controlling media players
             * supports MPRIS
+        * Powermanagement
+            * Added a new source for managing PowerDevil profiles
 
     * ScriptEngines
         * NEW: GoogleGadgets support
