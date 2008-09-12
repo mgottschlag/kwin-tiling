@@ -109,8 +109,6 @@ void LauncherApplet::init()
         connect(menueditor, SIGNAL(triggered(bool)), this, SLOT(startMenuEditor()));
     }
 
-    setAspectRatioMode(Plasma::ConstrainedSquare);
-
     Q_ASSERT( ! d->switcher );
     d->switcher = new QAction(i18n("Switch to Classic Menu Style"), this);
     d->switcher->setVisible(immutability() == Plasma::Mutable);
@@ -158,9 +156,8 @@ void LauncherApplet::popupEvent(bool show)
 {
     if (show) {
         Plasma::ToolTipManager::self()->setToolTipActivated(this, false);
+        d->launcher->setLauncherOrigin(popupPlacement(), location());
         d->createLauncher();
-        QPoint iconPosition = view()->mapToGlobal(view()->mapFromScene(scenePos()));
-        d->launcher->setLauncherOrigin(iconPosition, location());
     } else {
         Plasma::ToolTipManager::self()->setToolTipActivated(this, true);
     }

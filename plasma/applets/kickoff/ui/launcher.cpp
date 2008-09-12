@@ -89,10 +89,8 @@ public:
         , contextMenuFactory(0)
         , autoHide(false)
         , visibleItemCount(10)
-        , launcherOrigin(QPoint(-1, -1))
-        , isResizing(false)
-        , resizePlacement( NorthEast )
-        , panelEdge( Plasma::LeftEdge )
+        , placement(Plasma::TopPosedLeftAlignedPopup)
+        , panelEdge(Plasma::LeftEdge)
     {
     }
 
@@ -423,11 +421,7 @@ public:
     ContextMenuFactory *contextMenuFactory;
     bool autoHide;
     int visibleItemCount;
-    QPoint launcherOrigin;
-    bool isResizing;
-    int resizeOffsetX;
-    int resizeOffsetY;
-    CompassDirection resizePlacement;
+    Plasma::PopupPlacement placement;
     Plasma::Location panelEdge;
 };
 
@@ -523,17 +517,14 @@ void Launcher::init()
     setLayout(layout);
     //setBackgroundRole(QPalette::AlternateBase);
     //setAutoFillBackground(true);
-    d->resizePlacement = Private::NorthEast;
+
+    //let's start with a default size
+    resize(minimumSizeHint().width(), 500);
 }
 
 QSize Launcher::minimumSizeHint() const
 {
-    QSize size = QWidget::sizeHint();
-
-    // the extra 2 pixels are to make room for the content margins; see moveEvent
-    const int CONTENT_MARGIN_WIDTH = 2;
-
-    size.rwidth() += CONTENT_MARGIN_WIDTH;
+    QSize size;
 
     switch ( d->panelEdge ) {
         case Plasma::LeftEdge:
@@ -541,6 +532,7 @@ QSize Launcher::minimumSizeHint() const
             size.rheight() = d->searchBar->sizeHint().height() +
                      d->footer->sizeHint().height() +
                      qMax( d->favoritesView->sizeHintForRow(0)*3 + ItemDelegate::HEADER_HEIGHT, d->contentSwitcher->sizeHint().height() );
+            size.rwidth() = d->contentSwitcher->sizeHint().width() + d->favoritesView->sizeHint().width();
             break;
         case Plasma::TopEdge:
         case Plasma::BottomEdge:
@@ -548,6 +540,7 @@ QSize Launcher::minimumSizeHint() const
             size.rheight() = d->searchBar->sizeHint().height() +
                      d->contentSwitcher->sizeHint().height() + d->footer->sizeHint().height() +
                      d->favoritesView->sizeHintForRow(0)*3 + ItemDelegate::HEADER_HEIGHT;
+            size.rwidth() = d->contentSwitcher->sizeHint().width();
             break;
     }
     return size;
@@ -555,20 +548,8 @@ QSize Launcher::minimumSizeHint() const
 
 QSize Launcher::sizeHint() const
 {
-    KConfigGroup sizeGroup;
-    if (d->applet) {
-       sizeGroup = d->applet->config();
-    } else {
-       sizeGroup = componentData().config()->group("Size");
-    }
-    const int width = qMin(sizeGroup.readEntry("Width", 0), QApplication::desktop()->screen()->width()-50);
-    const int height = qMin(sizeGroup.readEntry("Height", 0), QApplication::desktop()->screen()->height()-50);
-    QSize wanted(width, height);
-    bool isDefault = wanted.isNull();
+    QSize wanted(width(), height());
     wanted = wanted.expandedTo(minimumSizeHint());
-    if (isDefault) {
-       wanted.setHeight( wanted.height() + ( d->favoritesView->sizeHintForRow(0) * (d->visibleItemCount - 3) ) );
-    }
 
     return wanted;
 }
@@ -746,6 +727,7 @@ void Launcher::keyPressEvent(QKeyEvent *event)
 void Launcher::showEvent(QShowEvent *e)
 {
     d->searchBar->setFocus();
+
     QWidget::showEvent(e);
 }
 
@@ -761,127 +743,39 @@ void Launcher::resultsAvailable()
     d->searchView->setCurrentIndex(d->searchModel->index(0, 0, root));
 }
 
-void Launcher::setLauncherOrigin(const QPoint &origin, Plasma::Location location)
-{
-/* 8 interesting positions for the menu to popup, depending where
- * the launcher and panel it is on are sited:
- *
- * K3PANELPANELPANEL4K
- * 2                 5
- * P                 P
- * A                 A
- * N                 N
- * E                 E
- * L                 L
- * 1                 6
- * K8PANELPANELPANEL7K
- *
- * Position determines optimum layout according to Fitt's Law:
- * Assumption 1: The hardcoded tab order defines a desirable priority order
- * Goal 1: TabBar perpendicular to direction of mouse travel from launcher to target, to prevent
- * mousing over non-target tabs and potential unnecessary tab switches
- * Goal 2 the movie: Tabs are ordered by decreasing priority along the mouse travel vector away
- * from the launcher
- * Constraint: The search widget is different to the tabs and footer is of lowest priority so 
- * these should always be situated furthest away from the origin
- *
- * | Position | TabLayout | TabOrder   | rx | ry
- * |    1     |  South    | left2right | =  | -
- * |    2     |  North    | l2r        | =  | +
- * |    3     |  West     | top2bottom | +  | =
- * |    4     |  East     | t2b        | -  | =
- * |    5     |  North    | r2l        | -  | +
- * |    6     |  South    | r2l        | -  | -
- * |    7     |  East     | b2t        | -  | -
- * |    8     |  West     | b2t        | +  | +
- */
-    if (d->launcherOrigin == origin && d->panelEdge == location) {
-        return;
+void Launcher::setLauncherOrigin(const Plasma::PopupPlacement placement, Plasma::Location location) {
+    if (d->placement != placement) {
+        d->placement = placement;
+ 
+        switch (placement) {
+        case Plasma::TopPosedRightAlignedPopup:
+            d->setSouthLayout(Private::ReverseTabOrder);
+            break;
+        case Plasma::LeftPosedTopAlignedPopup:
+            d->setEastLayout(Private::NormalTabOrder);
+            break;
+        case Plasma::LeftPosedBottomAlignedPopup:
+            d->setEastLayout(Private::ReverseTabOrder);
+            break;
+        case Plasma::BottomPosedLeftAlignedPopup:
+            d->setNorthLayout(Private::NormalTabOrder);
+            break;
+        case Plasma::BottomPosedRightAlignedPopup:
+            d->setNorthLayout(Private::ReverseTabOrder);
+            break;
+        case Plasma::RightPosedTopAlignedPopup:
+            d->setWestLayout(Private::NormalTabOrder);
+            break;
+        case Plasma::RightPosedBottomAlignedPopup:
+            d->setWestLayout(Private::ReverseTabOrder);
+            break;
+        case Plasma::TopPosedLeftAlignedPopup:
+        default:
+            d->setSouthLayout(Private::NormalTabOrder);
+            break;
+        }
     }
-
-    //should never happen, or happen if this function is called when the menu is in
-    //a planar containment, where this function is useless
-    if (!parentWidget()) {
-        return;
-    }
-
-    d->launcherOrigin = origin;
     d->panelEdge = location;
-    QPoint relativePosition = parentWidget()->pos() - d->launcherOrigin;
-    int rx = relativePosition.x();
-    int ry = relativePosition.y();
-
-    if ( rx < 0 ) {
-        if ( ry < 0 ) {
-            if ( location == Plasma::RightEdge ) {
-                // Position 7
-                kDebug() << "menu position " << 7;
-                d->resizePlacement = Private::NorthWest;
-                d->setEastLayout( Private::ReverseTabOrder );
-            } else { // Plasma::BottomEdge
-                // Position 6
-                kDebug() << "menu position " << 6;
-                d->resizePlacement = Private::NorthWest;
-                d->setSouthLayout( Private::ReverseTabOrder );
-            }
-        } else if ( ry == 0 ) {
-            // Position 4
-            kDebug() << "menu position " << 4;
-            d->resizePlacement = Private::SouthWest;
-            d->setEastLayout( Private::NormalTabOrder );
-        } else {
-            // Position 5
-            kDebug() << "menu position " << 5;
-            d->resizePlacement = Private::SouthWest;
-            d->setNorthLayout( Private::ReverseTabOrder );
-        }
-    } else if ( rx == 0 ) {
-        if ( ry < 0 ) {
-            // Position 1
-            kDebug() << "menu position " << 1;
-            d->resizePlacement = Private::NorthEast;
-            d->setSouthLayout( Private::NormalTabOrder );
-        } else {
-            // Position 2
-            kDebug() << "menu position " << 2;
-            d->resizePlacement = Private::SouthEast;
-            d->setNorthLayout( Private::NormalTabOrder );
-        }
-    } else { // rx > 0
-        if ( ry == 0 ) {
-            // Position 3
-            kDebug() << "menu position " << 3;
-            d->resizePlacement = Private::SouthEast;
-            d->setWestLayout( Private::NormalTabOrder );
-        } else { //ry > 0
-            // Position 8
-            kDebug() << "menu position " << 8;
-            d->resizePlacement = Private::NorthEast;
-            d->setWestLayout( Private::ReverseTabOrder );
-        }
-    }
-}
-
-QPoint Launcher::launcherOrigin() const
-{
-    return d->launcherOrigin;
-}
-
-void Launcher::mouseReleaseEvent(QMouseEvent *e)
-{
-    if (d->isResizing) {
-       d->isResizing = false;
-       KConfigGroup sizeGroup;
-       if (d->applet) {
-          sizeGroup = d->applet->config();
-       } else {
-          sizeGroup = componentData().config()->group("Size");
-       }
-       sizeGroup.writeEntry("Height", height());
-       sizeGroup.writeEntry("Width", width());
-       emit configNeedsSaving();
-    }
-    QWidget::mouseReleaseEvent(e);
 }
 
 #include "launcher.moc"

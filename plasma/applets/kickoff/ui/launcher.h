@@ -61,8 +61,8 @@ public:
     void setApplet(Plasma::Applet *applet);
 
     /** Specifies the direction the launcher is popping up in relative to its icon */
-    void setLauncherOrigin(const QPoint &pos, Plasma::Location location);
-    QPoint launcherOrigin() const;
+    void setLauncherOrigin(const Plasma::PopupPlacement placement, Plasma::Location location);
+
 
     // reimplemented
     virtual bool eventFilter(QObject *object, QEvent *event);
@@ -81,7 +81,6 @@ protected:
     virtual void keyPressEvent(QKeyEvent *event);
     virtual void showEvent(QShowEvent *event);
     virtual void hideEvent(QHideEvent *event);
-    virtual void mouseReleaseEvent(QMouseEvent *e);
 
 private Q_SLOTS:
     void focusSearchView(const QString& query);
