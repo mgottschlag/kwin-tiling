@@ -1,6 +1,7 @@
 /*
  *   Copyright (C) 2007 Aaron Seigo <aseigo@kde.org>
  *   Copyright (C) 2007 Sebastian Kuegler <sebas@kde.org>
+ *   Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -25,6 +26,7 @@
 #include <solid/battery.h>
 #include <solid/acadapter.h>
 
+#include <QtDBus/QDBusConnection>
 #include <QHash>
 
 /**
@@ -51,13 +53,15 @@ private slots:
     void updateAcPlugState(bool newState);
     void deviceRemoved(const QString& udi);
     void deviceAdded(const QString& udi);
+    void profilesChanged(const QString &current, const QStringList &profiles);
 
 private:
     Solid::AcAdapter* m_acadapter;
     QStringList m_sources;
-    
+    QDBusConnection m_dbus;
+
     QHash<QString, QString> m_batterySources;
-    
+
 };
 
 K_EXPORT_PLASMA_DATAENGINE(powermanagement, PowermanagementEngine)

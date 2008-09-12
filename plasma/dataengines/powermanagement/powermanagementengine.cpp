@@ -2,6 +2,7 @@
  *   Copyright (C) 2007 Aaron Seigo <aseigo@kde.org>
  *   Copyright (C) 2007 Sebastian Kuegler <sebas@kde.org>
  *   CopyRight (C) 2007 Maor Vanmak <mvanmak1@gmail.com>
+ *   Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -30,16 +31,21 @@
 #include <KDebug>
 #include <KLocale>
 
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusReply>
+
 #include "plasma/datacontainer.h"
 
 PowermanagementEngine::PowermanagementEngine(QObject* parent, const QVariantList& args)
         : Plasma::DataEngine(parent, args)
         , m_acadapter(0)
         , m_sources(0)
+        , m_dbus(QDBusConnection::sessionBus())
 {
     Q_UNUSED(args)
 
-    m_sources << I18N_NOOP("Battery") << I18N_NOOP("AC Adapter") << I18N_NOOP("Sleepstates");
+    m_sources << I18N_NOOP("Battery") << I18N_NOOP("AC Adapter") << I18N_NOOP("Sleepstates") << 
+                 I18N_NOOP("PowerDevil");
 
     // This following call can be removed, but if we do, the
     // data is not shown in the plasmaengineexplorer.
@@ -55,9 +61,33 @@ void PowermanagementEngine::init()
             this,                              SLOT(deviceRemoved(QString)));
     connect(Solid::DeviceNotifier::instance(), SIGNAL(deviceAdded(QString)),
             this,                              SLOT(deviceAdded(QString)));
+
+    QStringList modules;
+    QDBusInterface kdedInterface("org.kde.kded", "/kded", "org.kde.kded");
+    QDBusReply<QStringList> reply = kdedInterface.call("loadedModules");
+
+    if (!reply.isValid()) {
+        return;
+    }
+
+    modules = reply.value();
+
+    if (modules.contains("powerdevil")) {
+
+        if (!m_dbus.connect("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil",
+                          "profileChanged", this,
+                           SLOT(profilesChanged(const QString&, const QStringList&)))) {
+            kDebug() << "error!";
+        }
+
+        QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.kded", "/modules/powerdevil",
+                           "org.kde.PowerDevil", "streamData");
+        m_dbus.call(msg);
+
+    }
 }
 
-QStringList PowermanagementEngine::sources() const 
+QStringList PowermanagementEngine::sources() const
 {
     return m_sources + m_batterySources.values();
 }
@@ -121,7 +151,7 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
         setData(I18N_NOOP("Sleepstates"), I18N_NOOP("Suspend"), false);
         setData(I18N_NOOP("Sleepstates"), I18N_NOOP("Hibernate"), false);
 
-        foreach (Solid::PowerManagement::SleepState sleepstate, sleepstates) {
+        foreach (const Solid::PowerManagement::SleepState &sleepstate, sleepstates) {
             if (sleepstate == Solid::PowerManagement::StandbyState) {
                 setData(I18N_NOOP("Sleepstates"), I18N_NOOP("Supports standby"), true);
             } else if (sleepstate == Solid::PowerManagement::SuspendState) {
@@ -131,6 +161,10 @@ bool PowermanagementEngine::sourceRequestEvent(const QString &name)
             }
             kDebug() << "Sleepstate \"" << sleepstate << "\" supported.";
         }
+    } else if (name == I18N_NOOP("PowerDevil")) {
+        QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.kded", "/modules/powerdevil",
+                           "org.kde.PowerDevil", "streamData");
+        m_dbus.call(msg);
     } else {
         kDebug() << "Data for '" << name << "' not found";
     }
@@ -219,6 +253,12 @@ void PowermanagementEngine::deviceAdded(const QString& udi)
             setData("Battery", "sources", sourceNames);
         }
     }
+}
+
+void PowermanagementEngine::profilesChanged( const QString &current, const QStringList &profiles )
+{
+    setData(I18N_NOOP("PowerDevil"), I18N_NOOP("currentProfile"), current);
+    setData(I18N_NOOP("PowerDevil"), I18N_NOOP("availableProfiles"), profiles);
 }
 
 #include "powermanagementengine.moc"
