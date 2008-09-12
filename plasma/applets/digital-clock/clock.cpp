@@ -105,6 +105,8 @@ void Clock::init()
 
 void Clock::constraintsEvent(Plasma::Constraints constraints)
 {
+    ClockApplet::constraintsEvent(constraints);
+
     if (constraints & Plasma::SizeConstraint) {
         updateSize();
     }

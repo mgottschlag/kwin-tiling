@@ -97,6 +97,8 @@ void Clock::connectToEngine()
 
 void Clock::constraintsEvent(Plasma::Constraints constraints)
 {
+    ClockApplet::constraintsEvent(constraints);
+
     if (constraints & Plasma::FormFactorConstraint) {
         setBackgroundHints(NoBackground);
     }

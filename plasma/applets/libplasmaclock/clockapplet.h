@@ -24,7 +24,7 @@
 #include <QtCore/QTime>
 #include <QtCore/QDate>
 
-#include <plasma/applet.h>
+#include <plasma/popupapplet.h>
 #include <plasma/dataengine.h>
 #include <plasma/dialog.h>
 #include "ui_calendar.h"
@@ -39,7 +39,7 @@ namespace Plasma
     class Svg;
 }
 
-class PLASMACLOCK_EXPORT ClockApplet : public Plasma::Applet
+class PLASMACLOCK_EXPORT ClockApplet : public Plasma::PopupApplet
 {
     Q_OBJECT
     public:
@@ -57,20 +57,17 @@ class PLASMACLOCK_EXPORT ClockApplet : public Plasma::Applet
         QString m_prettyTimezone;
 
     protected:
-        void mousePressEvent(QGraphicsSceneMouseEvent *event);
-        void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
         void wheelEvent(QGraphicsSceneWheelEvent *event);
         void createConfigurationInterface(KConfigDialog *parent);
         virtual void createClockConfigurationInterface(KConfigDialog *parent);
         virtual void clockConfigAccepted();
         virtual void changeEngineTimezone(const QString &oldTimezone, const QString &newTimezone);
         void initExtenderItem(Plasma::ExtenderItem *item);
+        QGraphicsWidget *graphicsWidget();
 
     protected Q_SLOTS:
         void setCurrentTimezone(const QString &tz);
-        void showCalendar(QGraphicsSceneMouseEvent *event);
         void configAccepted();
-        void adjustView();
         void updateClockDefaultsTo();
 
     private:

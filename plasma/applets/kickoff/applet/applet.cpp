@@ -83,7 +83,7 @@ void LauncherApplet::Private::initToolTip()
     Plasma::ToolTipManager::ToolTipContent data;
     data.mainText = i18n("Kickoff Application Launcher");
     data.subText = i18n("Favorites, applications, computer places, recently used items and desktop sessions");
-    data.image = q->icon().pixmap(IconSize(KIconLoader::Desktop));
+    data.image = q->popupIcon().pixmap(IconSize(KIconLoader::Desktop));
     Plasma::ToolTipManager::self()->setToolTipContent(q, data);
 }
 
@@ -93,7 +93,7 @@ LauncherApplet::LauncherApplet(QObject *parent, const QVariantList &args)
 {
     KGlobal::locale()->insertCatalog("plasma_applet_launcher");
     setHasConfigurationInterface(true);
-    setIcon("start-here-kde");
+    setPopupIcon("start-here-kde");
 }
 
 LauncherApplet::~LauncherApplet()

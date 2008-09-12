@@ -66,12 +66,14 @@ public:
     QString timezone;
     QPoint clicked;
     QStringList selectedTimezones;
+    Plasma::Extender *calendarExt;
 };
 
 ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent, args),
+    : Plasma::PopupApplet(parent, args),
       d(new Private)
 {
+    setPopupIcon(QIcon());
 }
 
 ClockApplet::~ClockApplet()
@@ -99,7 +101,7 @@ void ClockApplet::createConfigurationInterface(KConfigDialog *parent)
     QWidget *widget = new QWidget();
     d->ui.setupUi(widget);
 
-    parent->addPage(widget, i18n("Time Zones"), icon());
+    parent->addPage(widget, i18n("Time Zones"), Applet::icon());
 
     foreach (QString tz, d->selectedTimezones) {
         d->ui.timeZones->setSelected(tz, true);
@@ -163,14 +165,6 @@ void ClockApplet::configAccepted()
     emit configNeedsSaving();
 }
 
-void ClockApplet::adjustView()
-{
-    if (d->view && extender()) {
-        d->view->setSceneRect(extender()->mapToScene(extender()->boundingRect()).boundingRect());
-        d->view->resize(extender()->size().toSize());
-    }
-}
-
 void ClockApplet::updateClockDefaultsTo()
 {
     QString oldSelection = d->ui.clockDefaultsTo->currentText();
@@ -194,24 +188,6 @@ void ClockApplet::changeEngineTimezone(const QString &oldTimezone, const QString
 {
     Q_UNUSED(oldTimezone);
     Q_UNUSED(newTimezone);
-}
-
-void ClockApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    if (event->buttons() == Qt::LeftButton) {
-        d->clicked = scenePos().toPoint();
-        event->setAccepted(true);
-        return;
-    }
-
-    Applet::mousePressEvent(event);
-}
-
-void ClockApplet::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    if ((d->clicked - scenePos().toPoint()).manhattanLength() < KGlobalSettings::dndEventDelay()) {
-        showCalendar(event);
-    }
 }
 
 void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
@@ -249,7 +225,7 @@ void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
 {
     d->calendar = new KDatePicker;
     d->calendar->setMinimumSize(d->calendar->sizeHint());
-    QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget(this);
+    QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget();
     proxy->setWidget(d->calendar);
     item->setWidget(proxy);
     item->setTitle(i18n("Calendar"));
@@ -264,42 +240,24 @@ void ClockApplet::init()
     m_prettyTimezone = tzParts.value(1);
 
     Plasma::Extender *extender = new Plasma::Extender(this);
-    containment()->corona()->addOffscreenWidget(extender);
-    connect(extender, SIGNAL(geometryChanged()), this, SLOT(adjustView()));
 }
 
-void ClockApplet::showCalendar(QGraphicsSceneMouseEvent *event)
+QGraphicsWidget *ClockApplet::graphicsWidget()
 {
-    Q_UNUSED(event);
-
-    adjustView();
-
-    if (!d->calendarDialog) {
-        if (!extender()) {
-            // in case the subclass didn't call the parent init() properly
-            ClockApplet::init();
-        }
-
-        if (!d->calendar) {
-            Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-            eItem->setName("calendar");
-            initExtenderItem(eItem);
-        }
-
-        d->calendarDialog = new Plasma::Dialog();
-        d->calendarDialog->setWindowFlags(Qt::Popup);
-        d->calendarDialog->setGraphicsWidget(extender());
+    if (!extender()) {
+        // in case the subclass didn't call the parent init() properly
+        ClockApplet::init();
+    }
+    if (!d->calendar) {
+        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
+        eItem->setName("calendar");
+        initExtenderItem(eItem);
     }
 
-    if (d->calendarDialog->isVisible()) {
-        d->calendarDialog->hide();
-    } else {
-        //kDebug();
-        Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
-        d->calendar->setDate(data["Date"].toDate());
-        d->calendarDialog->move(popupPosition(d->calendarDialog->sizeHint()));
-        d->calendarDialog->show();
-    }
+    Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
+    d->calendar->setDate(data["Date"].toDate());
+
+    return extender();
 }
 
 void ClockApplet::setCurrentTimezone(const QString &tz)
