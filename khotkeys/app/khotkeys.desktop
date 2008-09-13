@@ -36,6 +36,7 @@ Name[vi]=Phím nóng KDE
 Name[wa]=KTchôdèsTapes
 Name[x-test]=xxKHotKeysxx
 Name[zh_TW]=KDE 熱鍵
+Comment=KHotKeys daemon. No daemon, no hotkeys.
 Type=Service
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-Library=khotkeys
