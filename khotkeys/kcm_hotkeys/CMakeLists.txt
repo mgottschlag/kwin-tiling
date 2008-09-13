@@ -4,7 +4,7 @@ include_directories(ui)
 set(
     kcm_hotkeys_PART_SRCS
     kcm_hotkeys.cpp
-    kcm_gestures.cpp
+    # kcm_gestures.cpp
     kcm_module_factory.cpp
     global_settings_widget.cpp
     hotkeys_model.cpp
@@ -59,7 +59,7 @@ install(
 
 install(
     FILES khotkeys.desktop
-          gestures.desktop
+#          gestures.desktop
           settings-input-actions.desktop
     DESTINATION ${SERVICES_INSTALL_DIR}
     )
