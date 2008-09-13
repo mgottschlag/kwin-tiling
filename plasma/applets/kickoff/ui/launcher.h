@@ -63,11 +63,9 @@ public:
     /** Specifies the direction the launcher is popping up in relative to its icon */
     void setLauncherOrigin(const Plasma::PopupPlacement placement, Plasma::Location location);
 
-
     // reimplemented
     virtual bool eventFilter(QObject *object, QEvent *event);
     virtual QSize minimumSizeHint() const;
-    virtual QSize sizeHint() const;
 
     /** Reset the launcher. This is called e.g. by the Kickoff-applet before shown to be sure
     we don't display old searches and switch back to the favorite-view. */

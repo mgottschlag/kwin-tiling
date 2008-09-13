@@ -72,8 +72,6 @@ using namespace Kickoff;
 class Launcher::Private
 {
 public:
-    enum CompassDirection { North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest };
-
     Private(Launcher *launcher)
         : q(launcher)
         , applet(0)
@@ -90,7 +88,7 @@ public:
         , autoHide(false)
         , visibleItemCount(10)
         , placement(Plasma::TopPosedLeftAlignedPopup)
-        , panelEdge(Plasma::LeftEdge)
+        , panelEdge(Plasma::BottomEdge)
     {
     }
 
@@ -543,15 +541,8 @@ QSize Launcher::minimumSizeHint() const
             size.rwidth() = d->contentSwitcher->sizeHint().width();
             break;
     }
+
     return size;
-}
-
-QSize Launcher::sizeHint() const
-{
-    QSize wanted(width(), height());
-    wanted = wanted.expandedTo(minimumSizeHint());
-
-    return wanted;
 }
 
 void Launcher::setAutoHide(bool hide)
