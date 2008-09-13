@@ -18,7 +18,3 @@ add_subdirectory( data )
 add_subdirectory( update )
 add_subdirectory( test )
 
-########### install files ###############
-
-install( FILES khotkeys.desktop DESTINATION ${AUTOSTART_INSTALL_DIR} )
-
