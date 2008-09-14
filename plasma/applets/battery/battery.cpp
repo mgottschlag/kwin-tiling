@@ -39,6 +39,7 @@
 #include <plasma/svg.h>
 #include <plasma/theme.h>
 #include <plasma/animator.h>
+#include <plasma/dialog.h>
 
 Battery::Battery(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
@@ -63,6 +64,9 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     setAspectRatioMode(Plasma::ConstrainedSquare );
     m_textRect = QRect();
     m_theme = new Plasma::Svg(this);
+
+    m_dialog = new Plasma::Dialog(0);
+    m_dialog->resize(200,200);
 }
 
 void Battery::init()
@@ -238,6 +242,33 @@ void Battery::readColors()
     m_boxColor.setAlpha(m_boxAlpha);
 }
 
+void Battery::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (event->buttons() == Qt::LeftButton) {
+        m_clicked = scenePos().toPoint();
+        event->setAccepted(true);
+        return;
+    }
+
+    Applet::mousePressEvent(event);
+}
+
+void Battery::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    if ((m_clicked - scenePos().toPoint()).manhattanLength() < KGlobalSettings::dndEventDelay()) {
+        if (!m_dialog->isVisible()) {
+            m_dialog->move(popupPosition(m_dialog->sizeHint()));
+            m_dialog->show();
+            kDebug() << "DIALOG SHOW =================";
+        } else {
+            m_dialog->hide();
+            kDebug() << "DIALOG HIDDEN =================";
+        }
+    }
+}
+
+
+
 void Battery::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     showLabel(true);
@@ -260,6 +291,7 @@ void Battery::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 Battery::~Battery()
 {
+    delete m_dialog;
 }
 
 void Battery::showLabel(bool show)

@@ -28,6 +28,7 @@
 #include <plasma/applet.h>
 #include <plasma/animator.h>
 #include <plasma/dataengine.h>
+#include <plasma/dialog.h>
 #include "ui_batteryConfig.h"
 
 namespace Plasma
@@ -62,6 +63,8 @@ class Battery : public Plasma::Applet
 
     protected:
         void createConfigurationInterface(KConfigDialog *parent);
+        void mousePressEvent(QGraphicsSceneMouseEvent *event);
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
     private slots:
         void animationUpdate(qreal progress);
@@ -114,6 +117,12 @@ class Battery : public Plasma::Applet
         int m_batteryAnimId;
         qreal m_batteryAlpha;
         bool m_batteryFadeIn;
+
+
+        Plasma::Dialog *m_dialog;
+        QPoint m_clicked;
+        bool m_dialogShown;
+
 
         // Internal data
         QList<QVariant> batterylist, acadapterlist;
