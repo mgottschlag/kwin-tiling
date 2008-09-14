@@ -82,8 +82,8 @@ but also a very powerful tool to control large server farms.</para>
 <title>Getting started</title>
 
 <para>&ksysguard; can be started from the &kmenu;, using the entry 
-<guimenuitem>System Monitor</guimenuitem> in the
-<guimenu>System Tools</guimenu> menu. Alternatively, you
+<guimenuitem>System Monitor</guimenuitem> in the <menuchoice>
+<guimenu>Applications</guimenu><guisubmenu>System</guisubmenu></menuchoice> menu. Alternatively, you
 can start it by typing <command>ksysguard</command> in a terminal.</para>
 
 <para>The &ksysguard; main window consists of a menu bar, an optional tool bar 
