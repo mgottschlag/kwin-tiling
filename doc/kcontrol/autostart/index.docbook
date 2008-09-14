@@ -51,7 +51,7 @@ You cannot amend this column. It states the name of the program or script you wa
 <varlistentry><term><guilabel>Command</guilabel></term>
 <listitem>
 <para>
-This column lists the commands that are run to start the program. Commands can be modified through the <guibutton>Properties</guibutton> button or by double clicking the program/scrip row. The command is extracted from the Desktop file from the Exec key.
+This column lists the commands that are run to start the program. Commands can be modified through the <guibutton>Properties</guibutton> button or by double clicking the program/script row. The command is extracted from the Desktop file from the Exec key.
 </para>
 <para>
 For a script the command is the path to the script.
