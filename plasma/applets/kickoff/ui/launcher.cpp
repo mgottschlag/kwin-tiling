@@ -515,9 +515,6 @@ void Launcher::init()
     setLayout(layout);
     //setBackgroundRole(QPalette::AlternateBase);
     //setAutoFillBackground(true);
-
-    //let's start with a default size
-    resize(minimumSizeHint().width(), 500);
 }
 
 QSize Launcher::minimumSizeHint() const
@@ -543,6 +540,11 @@ QSize Launcher::minimumSizeHint() const
     }
 
     return size;
+}
+
+QSize Launcher::sizeHint() const
+{
+    return QSize(minimumSizeHint().width(), 500);
 }
 
 void Launcher::setAutoHide(bool hide)

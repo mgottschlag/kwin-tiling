@@ -66,6 +66,7 @@ public:
     // reimplemented
     virtual bool eventFilter(QObject *object, QEvent *event);
     virtual QSize minimumSizeHint() const;
+    virtual QSize sizeHint() const;
 
     /** Reset the launcher. This is called e.g. by the Kickoff-applet before shown to be sure
     we don't display old searches and switch back to the favorite-view. */
