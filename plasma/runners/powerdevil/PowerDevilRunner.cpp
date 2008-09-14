@@ -30,8 +30,6 @@ PowerDevilRunner::PowerDevilRunner( QObject *parent, const QVariantList &args )
         : Plasma::AbstractRunner( parent ),
         m_dbus( QDBusConnection::sessionBus() )
 {
-    KGlobal::locale()->insertCatalog( "powerdevil" );
-
     Q_UNUSED( args )
 
     /* Let's define all the words here. m_words contains all the words that
