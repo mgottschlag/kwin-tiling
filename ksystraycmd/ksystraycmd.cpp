@@ -25,7 +25,7 @@
 
 
 KSysTrayCmd::KSysTrayCmd()
-  : KSystemTrayIcon( 0 ),
+  : KSystemTrayIcon( static_cast<QWidget*>(0) ),
     isVisible(true), lazyStart( false ), noquit( false ), quitOnHide( false ), onTop(false), ownIcon(false),
     win(0), client(0), top(0), left(0)
 {
