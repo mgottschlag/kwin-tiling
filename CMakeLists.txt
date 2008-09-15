@@ -34,6 +34,8 @@ if (NOT WIN32)
 endif (NOT WIN32)
 configure_file (config-workspace.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-workspace.h )
 
+macro_bool_to_01(X11_Xscreensaver_FOUND HAVE_XSCREENSAVER)
+
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DHAVE_CONFIG_H=1)
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
 
@@ -73,7 +75,9 @@ macro_optional_add_subdirectory( ksplash )
 macro_optional_add_subdirectory( khotkeys )
 macro_optional_add_subdirectory( klipper )
 macro_optional_add_subdirectory( ksysguard )
+if(HAVE_XSCREENSAVER)
 macro_optional_add_subdirectory( powerdevil )
+endif(HAVE_XSCREENSAVER)
 endif(NOT WIN32)
 macro_optional_add_subdirectory( krunner )
 macro_optional_add_subdirectory( solid )
