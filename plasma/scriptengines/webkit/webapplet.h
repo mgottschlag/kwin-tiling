@@ -24,7 +24,7 @@ THE SOFTWARE.
 
 #include <QUrl>
 
-#include <Plasma/DataEngine>
+#include <plasma/dataengine.h>
 #include <plasma/scripting/appletscript.h>
 
 class QWebFrame;
