@@ -246,7 +246,7 @@
         <string>Download new wallpapers</string>
        </property>
        <property name="text" >
-        <string>Get new wallpapers...</string>
+        <string>Get New Wallpapers...</string>
        </property>
       </widget>
      </item>
