@@ -42,7 +42,8 @@ PowerDevilRunner::PowerDevilRunner( QObject *parent, const QVariantList &args )
     m_words << i18nc( "Note this is a KRunner keyword", "power profile" ) <<
     i18nc( "Note this is a KRunner keyword", "power governor" ) <<
     i18nc( "Note this is a KRunner keyword", "power scheme" ) <<
-    i18nc( "Note this is a KRunner keyword", "screen brightness" );
+    i18nc( "Note this is a KRunner keyword", "screen brightness" ) <<
+    i18nc( "Note this is a KRunner keyword", "suspend" );
 
     setObjectName( "PowerDevil" );
 }
@@ -91,9 +92,9 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
             } else if ( word == i18nc( "Note this is a KRunner keyword", "power governor" ) ) {
                 QDBusMessage msg = QDBusMessage::createMethodCall( "org.kde.kded",
                                    "/modules/powerdevil", "org.kde.PowerDevil", "getSupportedGovernors" );
-                QDBusReply<QStringList> govs = m_dbus.call( msg );
+                QDBusReply<QVariantMap> govs = m_dbus.call( msg );
 
-                foreach( const QString &ent, govs.value() ) {
+                foreach( const QString &ent, govs.value().keys() ) {
                     if ( term.split( ' ' ).count() == 3 ) {
                         if ( !ent.startsWith( term.split( ' ' ).at( 2 ) ) )
                             continue;
@@ -105,7 +106,7 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
 
                     match.setIcon( KIcon( "battery-charging-040" ) );
                     match.setText( i18n( "Set CPU Governor to '%1'", ent ) );
-                    match.setData( ent );
+                    match.setData( govs.value()[ent].toInt() );
 
                     match.setRelevance( 1 );
                     match.setId( "GovernorChange" );
@@ -189,6 +190,25 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
                     match3.setId( "TurnOffScreen" );
                     context.addMatch( term, match3 );
                 }
+
+            } else if ( word == i18nc( "Note this is a KRunner keyword", "suspend" ) ) {
+                QDBusMessage msg = QDBusMessage::createMethodCall( "org.kde.kded",
+                                   "/modules/powerdevil", "org.kde.PowerDevil", "getSupportedSuspendMethods" );
+                QDBusReply<QVariantMap> methods = m_dbus.call( msg );
+
+                foreach( const QString &ent, methods.value().keys() ) {
+                    Plasma::QueryMatch match( this );
+
+                    match.setType( Plasma::QueryMatch::ExactMatch );
+
+                    match.setIcon( KIcon( "battery-charging-040" ) );
+                    match.setText( ent );
+                    match.setData( methods.value()[ent].toInt() );
+
+                    match.setRelevance( 1 );
+                    match.setId( "Suspend" );
+                    context.addMatch( term, match );
+                }
             }
         }
     }
@@ -204,7 +224,7 @@ void PowerDevilRunner::run( const Plasma::RunnerContext &context, const Plasma::
         iface.call( "refreshStatus" );
         iface.call( "setProfile", match.data().toString() );
     } else if ( match.id() == "PowerDevil_GovernorChange" ) {
-        iface.call( "setGovernor", match.data().toString() );
+        iface.call( "setGovernor", match.data().toInt() );
     } else if ( match.id() == "PowerDevil_SchemeChange" ) {
         iface.call( "setPowersavingScheme", match.data().toString() );
     } else if ( match.id() == "PowerDevil_BrightnessChange" ) {
@@ -215,6 +235,8 @@ void PowerDevilRunner::run( const Plasma::RunnerContext &context, const Plasma::
         iface.call( "setBrightness", -2 );
     } else if ( match.id() == "PowerDevil_TurnOffScreen" ) {
         iface.call( "turnOffScreen" );
+    } else if ( match.id() == "PowerDevil_Suspend" ) {
+        iface.call( "suspend", match.data().toInt() );
     }
 }
 
