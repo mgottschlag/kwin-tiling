@@ -362,8 +362,9 @@ main( int argc ATTR_UNUSED, char **argv )
 	gSendInt( G_Ready );
 
 	if (themer) {
-		QPixmap pm( dw->screen()->size() );
-		themer->paintBackground( &pm );
+		QPixmap pm( dw->size() );
+		for (int i = 0; i < dw->numScreens(); i++)
+			themer->paintBackground( &pm, dw->screenGeometry( i ), i == _greeterScreen );
 		QPalette palette;
 		palette.setBrush( dw->backgroundRole(), QBrush( pm ) );
 		dw->setPalette( palette );

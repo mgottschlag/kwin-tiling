@@ -176,7 +176,7 @@ KdmThemer::widgetEvent( QEvent *e )
 			//kDebug() << "paint on: " << paintRect;
 
 			QPainter p( widget() );
-			rootItem->paint( &p, paintRect, false );
+			rootItem->paint( &p, paintRect, false, true );
 			rootItem->showWidget();
 		}
 		break;
@@ -186,14 +186,13 @@ KdmThemer::widgetEvent( QEvent *e )
 }
 
 void
-KdmThemer::paintBackground( QPaintDevice *dev )
+KdmThemer::paintBackground( QPaintDevice *dev, const QRect &rect, bool primaryScreen )
 {
 	debug() << "==== setting background geometry ====";
-	QRect rect( 0, 0, dev->width(), dev->height() );
 	QStack<QSize> ps;
 	rootItem->setGeometry( ps, rect, true );
 	QPainter p( dev );
-	rootItem->paint( &p, rect, true );
+	rootItem->paint( &p, rect, true, primaryScreen );
 }
 
 void

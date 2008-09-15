@@ -29,6 +29,7 @@ class KdmItem;
 
 class QDomNode;
 class QPaintDevice;
+class QRect;
 
 /**
 * @author Unai Garro
@@ -69,7 +70,7 @@ public:
 	void setTypeVisible( const QString &t, bool show );
 	bool typeVisible( const QString &t ) { return m_showTypes.value( t, false ); }
 
-	void paintBackground( QPaintDevice *dev );
+	void paintBackground( QPaintDevice *dev, const QRect &rect, bool primaryScreen );
 
 Q_SIGNALS:
 	void activated( const QString &id );

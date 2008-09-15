@@ -138,6 +138,10 @@ KdmItem::KdmItem( QObject *parent, const QDomNode &node )
 	setObjectName( el.attribute( "id", QString::number( (ulong)this, 16 ) ) );
 	isButton = toBool( el.attribute( "button", "false" ) );
 	isBackground = toBool( el.attribute( "background", "false" ) );
+	QString screen = el.attribute( "screen", isBackground ? "all" : "greeter" );
+	paintOnScreen =
+		screen == "greeter" ? ScrGreeter :
+		screen == "other" ? ScrOther : ScrAll;
 
 	if (!parentItem)
 		// The "toplevel" node (the screen) is really just like a fixed node
@@ -325,7 +329,7 @@ KdmItem::setGeometry( QStack<QSize> &parentSizes, const QRect &newGeometry, bool
 }
 
 void
-KdmItem::paint( QPainter *p, const QRect &rect, bool background )
+KdmItem::paint( QPainter *p, const QRect &rect, bool background, bool primaryScreen )
 {
 	if (!isVisible())
 		return;
@@ -338,7 +342,11 @@ KdmItem::paint( QPainter *p, const QRect &rect, bool background )
 		return;
 
 	QRect contentsRect = area.intersected( rect );
-	if (!contentsRect.isEmpty() && (!background || isBackground)) {
+	if (!contentsRect.isEmpty() &&
+	    (!background || isBackground) &&
+	    (paintOnScreen == ScrAll ||
+	     ((paintOnScreen == ScrGreeter) == primaryScreen)))
+	{
 		drawContents( p, contentsRect );
 		if (debugLevel & DEBUG_THEMING) {
 			// Draw bounding rect for this item
@@ -355,7 +363,7 @@ KdmItem::paint( QPainter *p, const QRect &rect, bool background )
 
 	// Dispatch paint events to children
 	forEachChild (itm)
-		itm->paint( p, rect, background );
+		itm->paint( p, rect, background, primaryScreen );
 }
 
 bool
