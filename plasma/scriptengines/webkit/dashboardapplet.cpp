@@ -23,8 +23,8 @@ THE SOFTWARE.
 
 #include <QWebFrame>
 
-#include <Plasma/WebContent>
-#include <Plasma/Applet>
+#include <plasma/widgets/webcontent.h>
+#include <plasma/applet.h>
 
 DashboardApplet::DashboardApplet(QObject *parent, const QVariantList &args)
     : WebApplet(parent, args)

@@ -28,9 +28,9 @@ THE SOFTWARE.
 
 #include <KColorScheme>
 
-#include <Plasma/WebContent>
-#include <Plasma/Applet>
-#include <Plasma/Theme>
+#include "plasma/widgets/webcontent.h"
+#include "plasma/applet.h"
+#include "plasma/theme.h"
 
 #define JS_CONSTANTS_CONSTRAINT \
 "var NoConstraint = %1;\n"\
