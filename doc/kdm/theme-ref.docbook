@@ -258,6 +258,16 @@ Screenshot=screenshot.png
 
       </para>
 
+      <para>
+        In multi-screen setups, themes may also specify the look of other
+        screens than the one the greeter is on - but typically only background
+        items will appear there. To specify which screen(s) an item should
+        appear on, the <literal>screen</literal> attribute can be used with the
+        value being one of <literal>greeter</literal>, <literal>other</literal>
+        or <literal>all</literal>, meaning the screen the greeter is on, all
+        screens the greeter is not on and all screens, resp.
+      </para>
+
       <variablelist>
         <para>
           Each item can be given a name via the <literal>id</literal>
