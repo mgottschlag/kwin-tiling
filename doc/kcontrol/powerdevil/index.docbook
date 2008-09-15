@@ -11,8 +11,8 @@
 <!-- TRANS:ROLES_OF_TRANSLATORS -->
 </authorgroup>
 
-<date>2008-09-02</date>
-<releaseinfo>1.0</releaseinfo>
+<date>2008-09-16</date>
+<releaseinfo>1.1</releaseinfo>
 
 <keywordset>
 <keyword>KDE</keyword>
@@ -72,16 +72,15 @@ If checked, you will be notified through a passive popup whenever PowerDevil tri
 </para>
 </listitem>
 </varlistentry>
-</variablelist>
-</sect2>
 
-<sect2 id="actions">
-<title>Battery Management Settings</title>
+<varlistentry><term><guilabel>Preferred polling system</guilabel></term>
+<listitem>
 <para>
-Here you can configure some settings related to battery levels.
+You can pick your favourite polling system here. You have 3 options: XSync, Grabber Widget, and Standard Timer. Standard Timer is the most compatible, though it causes a lot of wakeups and it can impact on your battery duration. The Grabber widget system uses an intelligent timer system combined with an offscreen widget. The XSync method relies on the XSync extension, and it's the preferred choice for reliability and performance, since it doesn't trigger unneeded wakeups. Unless XSync it's not supported, hence not shown in the list, use it as your preferred choice unless you have a specific need.
 </para>
+</listitem>
+</varlistentry>
 
-<variablelist>
 <varlistentry><term><guibutton>Low battery level</guibutton></term>
 <listitem>
 <para>
@@ -176,6 +175,13 @@ Here you can set which CPU governor will be used.
 <listitem>
 <para>
 This defines the powersaving scheme the system will use.
+</para>
+</listitem>
+</varlistentry>
+<varlistentry><term><guibutton>When loading profile, execute</guibutton></term>
+<listitem>
+<para>
+You can specify a script to be run upon profile loading here.
 </para>
 </listitem>
 </varlistentry>
