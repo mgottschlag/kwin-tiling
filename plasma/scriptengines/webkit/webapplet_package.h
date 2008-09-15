@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2007 Zack Rusin <zack@kde.org>
+Copyright (c) 2008 Petri Damstén <damu@iki.fi>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -18,48 +18,19 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
- */
-#ifndef WEBAPPLET_H
-#define WEBAPPLET_H
+*/
 
-#include <QUrl>
+#ifndef WEBAPPLET_PACKAGE_H
+#define WEBAPPLET_PACKAGE_H
 
-#include <Plasma/DataEngine>
-#include <plasma/scripting/appletscript.h>
+#include <Plasma/PackageStructure>
 
-class QWebFrame;
-
-namespace Plasma
+class WebAppletPackage : public Plasma::PackageStructure
 {
-    class WebContent;
-} // namespace Plasma
-
-class WebApplet : public Plasma::AppletScript
-{
-    Q_OBJECT
 public:
-    WebApplet(QObject *parent, const QVariantList &args);
-    ~WebApplet();
-
-    bool init();
-
-protected:
-    Plasma::WebContent *view() const;
-    void paintInterface(QPainter *painter,
-                                const QStyleOptionGraphicsItem *option,
-                                const QRect &contentsRect);
-    static QByteArray dataFor(const QString &str);
-    Plasma::WebContent* page();
-    bool loaded();
-
-protected slots:
-    void connectFrame(QWebFrame *);
-    virtual void loadFinished(bool);
-    virtual void initJsObjects();
-
-private:
-    class Private;
-    Private *const d;
+    WebAppletPackage(QObject *parent, QVariantList args);
 };
+
+K_EXPORT_PLASMA_PACKAGESTRUCTURE(webkit, WebAppletPackage)
 
 #endif

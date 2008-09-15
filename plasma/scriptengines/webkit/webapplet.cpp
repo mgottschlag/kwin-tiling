@@ -22,15 +22,15 @@ THE SOFTWARE.
 #include "webapplet.h"
 
 #include "webpage.h"
-#include "plasmajs.h"
 
-#include <QDebug>
 #include <QPainter>
 #include <QWebView>
 #include <QWebFrame>
 #include <QWebPage>
+#include <QFile>
 
 #include <plasma/applet.h>
+#include <plasma/package.h>
 #include <plasma/widgets/webcontent.h>
 
 using namespace Plasma;
@@ -48,7 +48,7 @@ public:
         loaded = false;
 
         Plasma::Applet *applet = q->applet();
-        applet->resize(150, 150);
+        applet->setAcceptsHoverEvents(true);
 
         page = new Plasma::WebContent(applet);
         page->setPage(new WebPage(page));
@@ -60,6 +60,10 @@ public:
 
         page->mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAlwaysOff);
         page->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAlwaysOff);
+
+        QPalette palette = page->palette();
+        palette.setBrush(QPalette::Background, QBrush(Qt::transparent));
+        page->setPalette(palette);
     }
 
     Plasma::WebContent *page;
@@ -81,29 +85,25 @@ WebApplet::~WebApplet()
 bool WebApplet::init()
 {
     d->init(this);
+
+    QString webpage;
+    webpage = package()->filePath("mainscript");
+    //kDebug() << "webpage is at" << webpage;
+    if (webpage.isEmpty()) {
+        return false;
+    }
+    //kDebug() << package()->path() << package()->filePath("root");
+    d->page->mainFrame()->setHtml(dataFor(webpage), QUrl(package()->filePath("root")));
     return true;
 }
 
 void WebApplet::paintInterface(QPainter *painter,
-                               const QStyleOptionGraphicsItem *,
-                               const QRect & contentsRect)
+                               const QStyleOptionGraphicsItem *option,
+                               const QRect &contentsRect)
 {
-    //painter->save();
-    /*QPalette pal = painter->palette();
-    pal.setBrush(QPalette::Background, Qt::transparent);
-    painter.setPalette(pal);*/
-    //painter->restore();
-}
-
-void WebApplet::load(const QUrl &url)
-{
-    kDebug() << "Loading" << url;
-    d->page->setUrl(url);
-
-    //done to make sure we have very little layout space for
-    //html which will mean that the returned contents-size will be
-    //the minimum size for the widget.
-    //d->->resize(10, 10);
+    Q_UNUSED(painter)
+    Q_UNUSED(option)
+    Q_UNUSED(contentsRect)
 }
 
 Plasma::WebContent* WebApplet::view() const
@@ -113,18 +113,7 @@ Plasma::WebContent* WebApplet::view() const
 
 void WebApplet::loadFinished(bool success)
 {
-    kDebug() << success;
-    if (success) {
-        QSize newSize = d->page->mainFrame()->contentsSize();
-        applet()->setGeometry(QRectF(QPoint(), newSize));
-    }
-}
-
-void WebApplet::constraintsEvent(Plasma::Constraints constraints)
-{
-    if (d->page && constraints & Plasma::SizeConstraint) {
-        d->page->resize(size());
-    }
+    d->loaded = success;
 }
 
 void WebApplet::connectFrame(QWebFrame *frame)
@@ -135,32 +124,25 @@ void WebApplet::connectFrame(QWebFrame *frame)
 
 void WebApplet::initJsObjects()
 {
-    QWebFrame *frame = qobject_cast<QWebFrame*>(sender());
-    Q_ASSERT(frame);
-    frame->addToJavaScriptWindowObject(QLatin1String("applet"), this);
-    frame->addToJavaScriptWindowObject(QLatin1String("plasma"), new PlasmaJs(this));
 }
 
-void WebApplet::setHtml(const QByteArray &html, const QUrl &baseUrl)
+QByteArray WebApplet::dataFor(const QString &str)
 {
-    //done to make sure we have very little layout space for
-    //html which will mean that the returned contents-size will be
-    //the minimum size for the widget.
-    //d->webView->resize(10, 10);
-
-    kDebug() << "loading" << baseUrl;
-    d->page->mainFrame()->setHtml(html, baseUrl);
+    QFile f(str);
+    f.open(QIODevice::ReadOnly);
+    QByteArray data = f.readAll();
+    f.close();
+    return data;
 }
 
-void WebApplet::loadHtml(const QUrl &url)
+Plasma::WebContent* WebApplet::page()
 {
-    //done to make sure we have very little layout space for
-    //html which will mean that the returned contents-size will be
-    //the minimum size for the widget.
-    //d->webView->resize(10, 10);
+    return d->page;
+}
 
-    kDebug() << "loading" << url;
-    d->page->mainFrame()->load(url);
+bool WebApplet::loaded()
+{
+    return d->loaded;
 }
 
 #include "webapplet.moc"

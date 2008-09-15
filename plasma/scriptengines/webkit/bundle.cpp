@@ -114,12 +114,13 @@ Bundle::Bundle(const QByteArray &data)
 }
 
 Bundle::Bundle(QObject *parent, QVariantList args)
-    : PackageStructure(0, "MacDashboard"),
+    : PackageStructure(parent, "MacDashboard"),
       m_isValid(false),
       m_tempDir(0),
       m_width(0),
       m_height(0)
 {
+    Q_UNUSED(args)
     setContentsPrefix(QString());
 }
 
@@ -306,12 +307,14 @@ bool Bundle::parsePlist(const QString &loc)
             m_width = itr.value().toInt();
         } else if (itr.key() == QLatin1String("MainHTML")) {
             m_htmlLocation = QString("%1%2").arg(path()).arg(itr.value());
-            addFileDefinition("webpage", itr.value(), i18n("Main Webpage"));
+            addFileDefinition("mainscript", itr.value(), i18n("Main Webpage"));
         } else {
             qDebug()<<"Unrecognized key = "<<itr.key();
         }
     }
     m_iconLocation = QString("%1Icon.png").arg(path());
+    kDebug() << path();
+    addDirectoryDefinition("root", "/", i18n("Root html dir"));
 
     //qDebug()<<"name = "<<m_name;
     //qDebug()<<"id   = "<<m_bundleId;

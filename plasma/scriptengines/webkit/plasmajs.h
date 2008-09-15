@@ -22,31 +22,17 @@ THE SOFTWARE.
 #ifndef PLASMAJS_H
 #define PLASMAJS_H
 
-#include <plasma/dataengine.h>
 #include <QObject>
-
-namespace Plasma {
-    class DataEngine;
-}
-
-class TestJs : public QObject
-{
-    Q_OBJECT
-public:
-    TestJs(QObject *parent=0);
-public Q_SLOTS:
-    void test();
-};
+#include <KConfigGroup>
+#include <Plasma/DataEngine>
 
 class PlasmaJs : public QObject
 {
     Q_OBJECT
 public:
     PlasmaJs(QObject *parent=0);
+
 public Q_SLOTS:
-    QObject *dataEngine(const QString &name);
-    QObject *loadDataEngine(const QString& name);
-    void unloadDataEngine(const QString& name);
     QStringList knownEngines();
 };
 
@@ -55,13 +41,16 @@ class DataEngineDataWrapper : public QObject
     Q_OBJECT
     Q_PROPERTY(int size READ size)
 public:
-    DataEngineDataWrapper(const Plasma::DataEngine::Data &data);
+    DataEngineDataWrapper(const Plasma::DataEngine::Data &data = Plasma::DataEngine::Data());
 
     int size() const;
+    void setData(const Plasma::DataEngine::Data &data);
+
 public Q_SLOTS:
     QVariant value(const QString &key) const;
     QStringList keys() const;
     QString key(int i) const;
+
 private:
     Plasma::DataEngine::Data m_data;
 };
@@ -74,18 +63,38 @@ class DataEngineWrapper : public QObject
     Q_PROPERTY(QString icon READ icon)
     Q_PROPERTY(QString engineName READ engineName)
 public:
-    DataEngineWrapper(Plasma::DataEngine *engine);
+    DataEngineWrapper(Plasma::DataEngine *engine, QObject *applet = 0);
     ~DataEngineWrapper();
 
     QStringList sources() const;
     QString engineName() const;
     bool isValid() const;
     QString icon() const;
+
 public Q_SLOTS:
     QObject *query(const QString &str) const;
+    void connectSource(const QString& source,
+                       uint pollingInterval = 0, uint intervalAlignment = 0);
 
 private:
     Plasma::DataEngine *m_engine;
+    QObject *m_applet;
+};
+
+class ConfigGroupWrapper : public QObject
+{
+    Q_OBJECT
+public:
+    ConfigGroupWrapper(const KConfigGroup &config = KConfigGroup());
+
+    void setConfig(const KConfigGroup &config);
+
+public Q_SLOTS:
+    QVariant readEntry(const QString &key, const QVariant &aDefault) const;
+    void writeEntry(const QString &key, const QVariant& value);
+
+private:
+    KConfigGroup m_config;
 };
 
 #endif

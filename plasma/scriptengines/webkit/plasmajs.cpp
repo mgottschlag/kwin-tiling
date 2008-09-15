@@ -20,11 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  */
 #include "plasmajs.h"
+#include "plasmawebapplet.h"
 
 #include "plasma/dataenginemanager.h"
 #include "plasma/dataengine.h"
-
-#include <QDebug>
 
 using namespace Plasma;
 
@@ -33,45 +32,37 @@ PlasmaJs::PlasmaJs(QObject *parent)
 {
 }
 
-QObject *PlasmaJs::dataEngine(const QString &name)
-{
-    DataEngine *engine = DataEngineManager::self()->engine(name);
-    DataEngineWrapper *wrapper =  new DataEngineWrapper(engine);
-    qDebug()<<"engine is "<<wrapper;
-    qDebug()<<"\t name = "<<wrapper->engineName()<<", valid = "<<wrapper->isValid();
-    return wrapper;
-}
-
-QObject *PlasmaJs::loadDataEngine(const QString& name)
-{
-    DataEngine *engine = DataEngineManager::self()->loadEngine(name);
-    //engine = new TestJs(this);
-    DataEngineWrapper *wrapper = new DataEngineWrapper(engine);
-    qDebug()<<"engine is "<<wrapper;
-    qDebug()<<"engine sources "<<wrapper->sources();
-    qDebug()<<"res = "<<wrapper->query("world");
-    return wrapper;
-}
-
-void PlasmaJs::unloadDataEngine(const QString& name)
-{
-    return DataEngineManager::self()->unloadEngine(name);
-}
-
 QStringList PlasmaJs::knownEngines()
 {
     return DataEngineManager::listAllEngines();
 }
 
-TestJs::TestJs(QObject *parent)
-    : QObject(parent)
+ConfigGroupWrapper::ConfigGroupWrapper(const KConfigGroup &config)
+: m_config(config)
 {
 }
 
-void TestJs::test()
+void ConfigGroupWrapper::setConfig(const KConfigGroup &config)
 {
-    qDebug()<<"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
-    qDebug()<<"XXXXXXX YES XXXXXXX";
+    //kDebug() << config.config()->name() << config.name();
+    m_config = config;
+}
+
+QVariant ConfigGroupWrapper::readEntry(const QString &key, const QVariant &aDefault) const
+{
+    // Should KConfig do this?
+    // There is readEntry(key, QVariant) but it does not seem to work
+    // (if writeEntry was not QVariant??)
+    if (aDefault.type() == QVariant::Int) {
+        return m_config.readEntry(key, aDefault.toInt());
+    } else {
+        return m_config.readEntry(key, aDefault.toString());
+    }
+}
+
+void ConfigGroupWrapper::writeEntry(const QString &key, const QVariant& value)
+{
+    m_config.writeEntry(key, value);
 }
 
 DataEngineDataWrapper::DataEngineDataWrapper(const DataEngine::Data &data)
@@ -82,6 +73,11 @@ DataEngineDataWrapper::DataEngineDataWrapper(const DataEngine::Data &data)
 int DataEngineDataWrapper::size() const
 {
     return m_data.count();
+}
+
+void DataEngineDataWrapper::setData(const Plasma::DataEngine::Data &data)
+{
+    m_data = data;
 }
 
 QVariant DataEngineDataWrapper::value(const QString &key) const
@@ -99,10 +95,9 @@ QString DataEngineDataWrapper::key(int i) const
     return m_data.keys().at(i);
 }
 
-DataEngineWrapper::DataEngineWrapper(Plasma::DataEngine *engine)
-    : QObject(engine), m_engine(engine)
+DataEngineWrapper::DataEngineWrapper(Plasma::DataEngine *engine, QObject *applet)
+    : QObject(engine), m_engine(engine), m_applet(applet)
 {
-    DataEngineManager::self()->loadEngine(engine->name()); //FIXME it's getting loaded twice
 }
 
 QStringList DataEngineWrapper::sources() const
@@ -133,7 +128,15 @@ QObject * DataEngineWrapper::query(const QString &str) const
 
 DataEngineWrapper::~DataEngineWrapper()
 {
-    DataEngineManager::self()->unloadEngine(m_engine->name()); //FIXME it might be getting unloaded twice
+}
+
+void DataEngineWrapper::connectSource(const QString& source,
+                                      uint pollingInterval, uint intervalAlignment)
+{
+    if (m_applet) {
+        m_engine->connectSource(source, m_applet, pollingInterval,
+                                (Plasma::IntervalAlignment)intervalAlignment);
+    }
 }
 
 #include "plasmajs.moc"

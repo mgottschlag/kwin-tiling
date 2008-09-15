@@ -21,26 +21,10 @@ THE SOFTWARE.
  */
 #include "dashboardapplet.h"
 
-#include <QGraphicsSceneMouseEvent>
-#include <kstandarddirs.h>
+#include <QWebFrame>
 
-#include <QApplication>
-#include <QPainter>
-#include <qdebug.h>
-#include <QtNetwork>
-#include <math.h>
-
-#include <plasma/applet.h>
-#include <plasma/package.h>
-
-static inline QByteArray dataFor(const QString &str)
-{
-    QFile f(str);
-    f.open(QIODevice::ReadOnly);
-    QByteArray data = f.readAll();
-    f.close();
-    return data;
-}
+#include <Plasma/WebContent>
+#include <Plasma/Applet>
 
 DashboardApplet::DashboardApplet(QObject *parent, const QVariantList &args)
     : WebApplet(parent, args)
@@ -53,21 +37,31 @@ DashboardApplet::~DashboardApplet()
 
 bool DashboardApplet::init()
 {
-    WebApplet::init();
-    //applet()->setHasConfigurationInterface(false);
-    applet()->setAcceptsHoverEvents(true);
-    //FIXME: setBackgroundHints is protected now
-    //applet()->setBackgroundHints(Plasma::Applet::NoBackground);
-    QString webpage = package()->filePath("webpage");
-    //kDebug() << "webpage is at" << webpage;
+    applet()->setAspectRatioMode(Plasma::FixedSize);
+    return WebApplet::init();
+}
 
-    if (webpage.isEmpty()) {
-        return false;
+void DashboardApplet::loadFinished(bool success)
+{
+    WebApplet::loadFinished(success);
+    if (success) {
+        page()->resize(page()->mainFrame()->contentsSize());
+        applet()->resize(page()->mainFrame()->contentsSize());
     }
+}
 
-    //kDebug() << QUrl(package()->path());
-    setHtml(dataFor(webpage), QUrl(package()->path()));
-    return true;
+void DashboardApplet::constraintsEvent(Plasma::Constraints constraints)
+{
+    if (constraints & Plasma::FormFactorConstraint) {
+        applet()->setBackgroundHints(Plasma::Applet::NoBackground);
+    }
+}
+
+void DashboardApplet::initJsObjects()
+{
+    QWebFrame *frame = qobject_cast<QWebFrame*>(sender());
+    Q_ASSERT(frame);
+    frame->addToJavaScriptWindowObject(QLatin1String("applet"), this);
 }
 
 #include "dashboardapplet.moc"

@@ -43,17 +43,20 @@ QWebPage * WebPage::createWindow(QWebPage::WebWindowType)
 
 void WebPage::javaScriptAlert(QWebFrame *frame, const QString& message)
 {
+    Q_UNUSED(frame)
     qDebug()<< "JS ALERT: "<< message;
 }
 
 void WebPage::javaScriptConsoleMessage(const QString& message, int lineNumber,
                                        const QString& sourceID)
 {
+    Q_UNUSED(sourceID)
     qDebug()<< "JS CONSOLE MESSAGE: line "<< lineNumber<<": " << message;
 }
 
 bool WebPage::javaScriptConfirm(QWebFrame *frame, const QString& msg)
 {
+    Q_UNUSED(frame)
     qDebug()<< "JS CONFIRM: "<< msg;
     return true;
 }
@@ -61,6 +64,7 @@ bool WebPage::javaScriptConfirm(QWebFrame *frame, const QString& msg)
 bool WebPage::javaScriptPrompt(QWebFrame *frame, const QString& msg,
                                const QString& defaultValue, QString* result)
 {
+    Q_UNUSED(frame)
     qDebug()<<"JS PROMPT: "<< msg <<", default text: "<<defaultValue;
     *result = defaultValue;
     return true;

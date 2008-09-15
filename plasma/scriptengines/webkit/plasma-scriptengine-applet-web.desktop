@@ -99,3 +99,4 @@ X-KDE-PluginInfo-License=BSD
 X-KDE-PluginInfo-EnabledByDefault=true
 X-Plasma-API=webkit
 X-Plasma-ComponentTypes=Applet
+X-Plasma-PackageFormat=webkit

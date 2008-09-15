@@ -38,6 +38,11 @@ public:
     ~DashboardApplet();
 
     bool init();
+
+protected slots:
+    virtual void loadFinished(bool success);
+    virtual void initJsObjects();
+    virtual void constraintsEvent(Plasma::Constraints constraints);
 };
 
 K_EXPORT_PLASMA_APPLETSCRIPTENGINE(dashboard, DashboardApplet)
