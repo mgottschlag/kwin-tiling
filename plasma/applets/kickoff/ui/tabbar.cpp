@@ -43,7 +43,8 @@ TabBar::TabBar(QWidget *parent)
         : QTabBar(parent),
         m_hoveredTabIndex(-1),
         m_switchOnHover(true),
-        m_animateSwitch(true)
+        m_animateSwitch(true),
+        m_animProgress(1.0)
 {
     m_lastIndex[0] = -1;
     connect(this, SIGNAL(currentChanged(int)), this, SLOT(startAnimation()));
@@ -312,8 +313,7 @@ void TabBar::paintEvent(QPaintEvent *event)
         tabIcon(i).paint(&painter, iconRect);
 
         // draw tab text
-        //TODO: we may want a nice animation also for the text
-        if (i != currentTab){
+        if (i != currentTab || m_animProgress < 0.9){
             painter.setPen(QPen(KColorScheme(QPalette::Active).foreground(KColorScheme::InactiveText), 0));
         }else{
             painter.setPen(QPen(KColorScheme(QPalette::Active).foreground(KColorScheme::NormalText), 0));
