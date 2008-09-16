@@ -32,7 +32,7 @@
 #include <kworkspace/kworkspace.h>
 #include <screensaver_interface.h>
 
-#define MINSIZE 48
+#define MINSIZE 8
 
 LockOut::LockOut(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args)
