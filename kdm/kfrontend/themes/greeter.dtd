@@ -25,15 +25,16 @@ Items with these IDs are always hidden:
 -->
 
 <!ATTLIST item
-	type (rect | entry | pixmap | label | svg | list) #REQUIRED
+	type (rect | entry | pixmap | label | svg | list | button) #REQUIRED
 	id CDATA #IMPLIED
 	button (true | false) #IMPLIED
 	background (true | false) #IMPLIED
+	screen (all | greeter | other) #IMPLIED
 >
 <!ATTLIST pos
 	x CDATA #IMPLIED
 	y CDATA #IMPLIED
-	anchor CDATA "c"
+	anchor CDATA "nw"
 	width CDATA #IMPLIED
 	height CDATA #IMPLIED
 	min-width CDATA #IMPLIED
@@ -59,7 +60,7 @@ Items with these IDs are always hidden:
 	%colorattrs;
 >
 <!ATTLIST stock
-	type (language | session | system | disconnect | quit | halt | reboot | chooser | caps-lock-warning | timed-label | welcome-label | username-label | domain-label | username-label | password-label | login) #REQUIRED
+	type (language | session | system | disconnect | quit | halt | reboot | chooser | caps-lock-warning | timed-label | welcome-label | domain-label | username-label | password-label | login) #REQUIRED
 >
 <!ATTLIST box
 	orientation (horizontal | vertical) "horizontal"
@@ -75,6 +76,8 @@ Items with these IDs are always hidden:
 <!ATTLIST show
 	modes CDATA #IMPLIED
 	type CDATA #IMPLIED
+	min-screen-width CDATA #IMPLIED
+	min-screen-height CDATA #IMPLIED
 >
 <!ATTLIST text
 	xml:lang CDATA #IMPLIED
@@ -83,6 +86,8 @@ Items with these IDs are always hidden:
 	labelcolor CDATA #IMPLIED
 	altlabelcolor CDATA #IMPLIED
 >
+<!-- FIXME? the full syntax for the palette specs is
+     ((all|active|inactive|disabled)-|)<role>-(color|alpha) -->
 <!ATTLIST style
 	font CDATA #IMPLIED
 	edit-font CDATA #IMPLIED
