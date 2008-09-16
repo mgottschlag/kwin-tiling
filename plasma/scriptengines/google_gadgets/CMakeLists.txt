@@ -7,6 +7,32 @@ include_directories(
    ${GOOGLEGADGETS_INCLUDE_DIRS}
    )
 
+execute_process(COMMAND pkg-config --variable=ggl_resource_dir libggadget-1.0
+    OUTPUT_VARIABLE gadgets_path)
+string(REPLACE \n "" gadgets_path ${gadgets_path})
+
+macro(install_ggl_gadget _name)
+  find_file(${_name}_path ${_name}.gg ${gadgets_path})
+  if (NOT ${${_name}_path} MATCHES "NOTFOUND")
+    set(gadget_name "ggl_${_name}")
+    set(gadget_readable_name ${_name})
+    set(gadget_comment ${_name})
+    set(gadget_path "${${_name}_path}")
+    set(gadget_options_name "${_name}_builtin")
+    configure_file(plasma-applet-ggl.desktop.tmpl
+      ${CMAKE_CURRENT_BINARY_DIR}/plasma-applet-ggl-${_name}.desktop
+      @only)
+    configure_file(config.txt.tmpl
+      ${CMAKE_CURRENT_BINARY_DIR}/config.txt.${_name}
+      @only)
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/plasma-applet-ggl-${_name}.desktop
+      DESTINATION ${SERVICES_INSTALL_DIR})
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/config.txt.${_name}
+      DESTINATION ${DATA_INSTALL_DIR}/plasma/plasmoids/${gadget_name}
+      RENAME config.txt)
+  endif (NOT ${${_name}_path} MATCHES "NOTFOUND")
+endmacro(install_ggl_gadget _name)
+
 # We add our source code here
 set(package_SRCS ggl_package.cpp)
 set(scriptengine_SRCS
@@ -31,3 +57,8 @@ install(TARGETS plasma_package_ggl DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-package-googlegadgets.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 install(TARGETS plasma_scriptengine_ggl DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-scriptengine-googlegadgets.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+
+install_ggl_gadget(photos)
+install_ggl_gadget(rss)
+install_ggl_gadget(analog_clock)
+install_ggl_gadget(weather_globe)
