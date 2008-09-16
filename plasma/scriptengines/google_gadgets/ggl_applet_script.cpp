@@ -26,7 +26,7 @@
 #include <QtGui/QColor>
 #include <QtGui/QGraphicsSceneMouseEvent>
 
-#include <plasma/applet.h> 
+#include <plasma/applet.h>
 #include <plasma/package.h>
 
 #include <ggadget/logger.h>
@@ -139,15 +139,19 @@ bool GglAppletScript::init() {
     }
   }
 
-  QFile config_file(package()->path() + "/config");
+  QFile config_file(package()->path() + "/config.txt");
   if (!config_file.open(QIODevice::ReadOnly)) {
     kError() << "Failed to open google gadget's config file at "
              << package()->path();
     return false;
   }
+  QTextStream in(&config_file);
+  d->gg_file_ = in.readLine();
+  d->options_ = in.readLine();
+  if (d->options_.isNull() || d->options_.isEmpty())
+    return false;
+
   applet()->setAspectRatioMode(Plasma::ConstrainedSquare);
-  QDataStream in(&config_file);
-  in >> d->gg_file_ >> d->options_;
   QTimer::singleShot(50, this, SLOT(loadGadget()));
   return true;
 }

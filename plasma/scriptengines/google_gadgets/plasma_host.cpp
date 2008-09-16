@@ -139,7 +139,7 @@ ViewHostInterface *PlasmaHost::NewViewHost(Gadget *,
       decorator->SetButtonVisible(MainViewDecoratorBase::CLOSE_BUTTON,
                                   false);
     } else {
-      PanelDecorator *decorator = new PanelDecorator(vh);
+      PanelDecorator *decorator = new PanelDecorator(vh, d->info);
       decorator->ConnectOnPopOut(NewSlot(d, &Private::OnPopOutHandler));
       decorator->ConnectOnPopIn(NewSlot(d, &Private::OnPopInHandler));
       dvh = new DecoratedViewHost(decorator);
@@ -221,7 +221,9 @@ void PlasmaHost::AdjustAppletSize() {
   QtViewWidget *widget = static_cast<QtViewWidget*>(d->info->main_view_host->GetNativeWidget());
   kDebug() << "applet old size:" << d->info->applet->size();
   if (widget) kDebug() << "widget old size:" << widget->size();
+  d->info->applet->setAspectRatioMode(Plasma::IgnoreAspectRatio);
   d->info->applet->resize(w, h);
+  d->info->applet->setAspectRatioMode(Plasma::ConstrainedSquare);
   if (widget) {
     widget->AdjustToViewSize();
     widget->resize(w, h);
@@ -235,6 +237,7 @@ void PlasmaHost::OnConstraintsEvent(Plasma::Constraints constraints) {
   ViewInterface *view = d->info->main_view_host->GetViewDecorator();
 
   if (constraints & Plasma::FormFactorConstraint) {
+    // TODO: Do something to handle it right
     kDebug() << "FormFactorConstraint changed";
   }
   if (constraints & Plasma::SizeConstraint) {

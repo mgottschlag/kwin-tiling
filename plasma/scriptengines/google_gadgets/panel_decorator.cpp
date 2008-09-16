@@ -14,16 +14,22 @@
   limitations under the License.
 */
 
+#include <QtGui/QMessageBox>
+
 #include <ggadget/gadget_consts.h>
 #include <ggadget/gadget.h>
 #include <ggadget/messages.h>
 #include <ggadget/menu_interface.h>
+#include <ggadget/decorated_view_host.h>
+#include <ggadget/qt/qt_view_widget.h>
+
+#include <plasma/applet.h>
 #include "panel_decorator.h"
 
 namespace ggadget {
 
-PanelDecorator::PanelDecorator(ViewHostInterface *host)
-    : DockedMainViewDecorator(host) {
+PanelDecorator::PanelDecorator(ViewHostInterface *host, GadgetInfo *info)
+    : DockedMainViewDecorator(host), info_(info) {
 }
 
 PanelDecorator::~PanelDecorator() {}
@@ -33,6 +39,22 @@ void PanelDecorator::OnAddDecoratorMenuItems(MenuInterface *menu) {
   menu->AddItem(
       GM_(IsMinimized() ? "MENU_ITEM_EXPAND" : "MENU_ITEM_COLLAPSE"), 0, 0,
       NewSlot(this, &PanelDecorator::CollapseExpandMenuCallback), priority);
+  menu->AddItem(
+      "Debug", 0, 0,
+      NewSlot(this, &PanelDecorator::ShowDebugInfo), priority);
 }
 
+void PanelDecorator::ShowDebugInfo(const char*) {
+  QString msg = "Applet size:(%1, %2)\nWidget size:(%3, %4)\nView size:(%5, %6)\n";
+  qt::QtViewWidget *widget = static_cast<qt::QtViewWidget*>(info_->main_view_host->GetNativeWidget());
+  ViewInterface *view = info_->main_view_host->GetViewDecorator();
+  QMessageBox::information(NULL,
+    "Debug",
+    msg.arg(info_->applet->size().width())
+       .arg(info_->applet->size().height())
+       .arg(widget->size().width())
+       .arg(widget->size().height())
+       .arg(view->GetWidth())
+       .arg(view->GetHeight()));
+}
 } // namespace ggadget

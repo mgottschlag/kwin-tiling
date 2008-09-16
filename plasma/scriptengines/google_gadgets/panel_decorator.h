@@ -19,11 +19,13 @@
 
 #include <ggadget/docked_main_view_decorator.h>
 
+#include "ggl_applet_script.h"
+
 namespace ggadget {
 
 class PanelDecorator : public DockedMainViewDecorator {
  public:
-  PanelDecorator(ViewHostInterface *host);
+  PanelDecorator(ViewHostInterface *host, GadgetInfo *info);
   virtual ~PanelDecorator();
   virtual void OnAddDecoratorMenuItems(MenuInterface *menu);
 
@@ -31,6 +33,8 @@ class PanelDecorator : public DockedMainViewDecorator {
   void CollapseExpandMenuCallback(const char *) {
     SetMinimized(!IsMinimized());
   }
+  void ShowDebugInfo(const char*);
+  GadgetInfo *info_;
   DISALLOW_EVIL_CONSTRUCTORS(PanelDecorator);
 };
 
