@@ -1220,7 +1220,11 @@ Screenshot=screenshot.png
         </seglistitem>
         <seglistitem>
           <seg>language</seg>
-          <seg><quote>_Language</quote></seg>
+          <seg><quote>Lan_guage</quote></seg>
+        </seglistitem>
+        <seglistitem>
+          <seg>login</seg>
+          <seg><quote>_Login</quote></seg>
         </seglistitem>
         <seglistitem>
           <seg>session</seg>
