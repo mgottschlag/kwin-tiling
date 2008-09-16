@@ -7,7 +7,9 @@ Name[nds]=Finster-Informatschonen
 Name[pt]=Informação das Janelas
 Name[pt_BR]=Informação das Janelas
 Name[sv]=Fönsterinformation
+Name[tr]=Pencere Bilgileri
 Name[uk]=Інформація про вікна
+Name[zh_TW]=視窗資訊
 Type=Service
 Icon=alarmclock
 

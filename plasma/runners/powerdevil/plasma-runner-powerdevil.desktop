@@ -1,7 +1,16 @@
 [Desktop Entry]
 Name=PowerDevil
+Name[nds]=Stroomdüvel
+Name[sv]=Powerdevil
 
 Comment=Basic Power Management Operations
+Comment[nds]=Eenfache Stroomkuntrull-Funkschonen
+Comment[pt]=Operações Básicas de Gestão da Energia
+Comment[pt_BR]=Operações Básicas de Gestão da Energia
+Comment[sv]=Grundläggande strömsparfunktioner
+Comment[tr]=Temel Güç Yönetimi İşlemleri
+Comment[uk]=Керування базовими операціями з керування живленням
+Comment[zh_TW]=基本的電源管理操作
 
 X-KDE-ServiceTypes=Plasma/Runner
 Type=Service

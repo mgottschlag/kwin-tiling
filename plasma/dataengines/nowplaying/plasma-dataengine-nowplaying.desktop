@@ -7,7 +7,9 @@ Name[nds]=Lopen Stück
 Name[pt]=Agora a Tocar
 Name[pt_BR]=Agora a Tocar
 Name[sv]=Spelar nu
+Name[tr]=Şimdi Dinleniyor
 Name[uk]=Зараз відтворюється
+Name[zh_TW]=現正播放
 
 Comment=Lists currently playing music
 Comment[ca]=Llista la música que s'està reproduint actualment
