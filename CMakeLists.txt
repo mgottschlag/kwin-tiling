@@ -35,6 +35,9 @@ endif (NOT WIN32)
 configure_file (config-workspace.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-workspace.h )
 
 macro_bool_to_01(X11_Xscreensaver_FOUND HAVE_XSCREENSAVER)
+macro_log_feature(HAVE_XSCREENSAVER "libxss" "XScreenSaver Library"
+  "http://www.x.org/" FALSE ""
+  "Needed to build powerdevil power manager")
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DHAVE_CONFIG_H=1)
 include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
