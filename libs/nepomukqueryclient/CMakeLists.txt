@@ -19,18 +19,18 @@ set(nepomukqueryclient_SRC
 )
 
 set_source_files_properties(
-  ${CMAKE_CURRENT_SOURCE_DIR}/org.kde.nepomuk.QueryService.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/org.kde.nepomuk.QueryService.xml
   PROPERTIES INCLUDE "querymetatype.h")
 
 set_source_files_properties(
-  ${CMAKE_CURRENT_SOURCE_DIR}/org.kde.nepomuk.Query.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/org.kde.nepomuk.Query.xml
   PROPERTIES INCLUDE "result.h")
 
 qt4_add_dbus_interface(nepomukqueryclient_SRC
-  ${CMAKE_CURRENT_SOURCE_DIR}/org.kde.nepomuk.QueryService.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/org.kde.nepomuk.QueryService.xml
   queryserviceinterface)
 qt4_add_dbus_interface(nepomukqueryclient_SRC
-  ${CMAKE_CURRENT_SOURCE_DIR}/org.kde.nepomuk.Query.xml
+  ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/org.kde.nepomuk.Query.xml
   queryinterface)
 
 kde4_add_library(nepomukqueryclient SHARED ${nepomukqueryclient_SRC})
