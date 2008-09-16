@@ -11,11 +11,11 @@
 
 <bookinfo>
 
-<title>The &kmenuedit; Handbook</title>
+<title>The KDE Menu Editor Handbook</title>
 
 <authorgroup>
 <author>&Milos.Prudek; &Milos.Prudek.mail;</author>
-
+<author>&Anne-Marie.Mahfouf; &Anne-Marie.Mahfouf.mail;</author>
 <othercredit role="reviewer">
 &Lauri.Watts; &Lauri.Watts.mail;
 <!-- <contrib>Reviewer</contrib> -->
@@ -27,13 +27,17 @@
 <year>2000</year>
 <holder>&Milos.Prudek;</holder>
 </copyright>
+<copyright>
+<year>2008</year>
+<holder>&Anne-Marie.Mahfouf;</holder>
+</copyright>
 
 <legalnotice>&FDLNotice;</legalnotice>
 
 <date>2008-09-15</date>
 <releaseinfo>0.8</releaseinfo>
 
-<abstract><para>&kmenuedit; allows editing of the &kde; &kmenu;. 
+<abstract><para>&kmenuedit; allows editing of the &kde; application launcher: &kickoff; or the classic &kmenu;. 
 </para></abstract>
 
 <keywordset>
@@ -54,10 +58,10 @@
 <para>&kmenuedit; allows editing of &kde; &kickoff; or classic &kmenu;.</para>
 
 <para>&kmenuedit; can be started either by &RMB; clicking the
-&kmenu; button on the panel and choosing
+application lancher button on the panel and choosing
 <guimenuitem>Menu Editor</guimenuitem>, or by choosing
 <guimenuitem>Menu Editor</guimenuitem> from the
-<guisubmenu>Settings</guisubmenu> submenu of the &kmenu; or by typing <userinput>kmenuedit
+<guisubmenu>Settings</guisubmenu> submenu of the application launcher or by typing <userinput>kmenuedit
 </userinput> in the &krunner; line.</para>
 
 <para>&kmenuedit; allows you to:</para>
@@ -80,7 +84,7 @@ and <guimenuitem>Paste</guimenuitem> menu items</para></listitem>
 <title>A Quick Start Guide to Adding an Entry to the application launcher</title>
 
   <para>In this example, we will add &firefox; to the <guisubmenu>Internet</guisubmenu> submenu. <note><para>Most applications can be added with &kappfinder;, &firefox; can usually be added that way, but was used for lack of a better example.</para></note></para>
-  <para>To start off, we need to open &kmenuedit;, so &RMB; on the &kmenu;, click <guimenuitem>Menu Editor</guimenuitem> to start &kmenuedit;. After &kmenuedit; has started, select <guisubmenu>Internet</guisubmenu> as shown in picture below. 
+  <para>To start off, we need to open &kmenuedit;, so &RMB; on the application launcher menu, click <guimenuitem>Menu Editor</guimenuitem> to start &kmenuedit;. After &kmenuedit; has started, select <guisubmenu>Internet</guisubmenu> as shown in picture below. 
 <screenshot>
 <screeninfo>Select <guisubmenu>Internet</guisubmenu></screeninfo>
 <mediaobject>
@@ -121,7 +125,7 @@ Press return, and you should see something like the picture below in the main wi
 </screenshot></para>
   
 <para>
-    Now lets fill in the <guilabel>Description:</guilabel>, in this case type <userinput>Web Browser</userinput>. <note><para>The description and name will be displayed on the &kmenu; as <quote>Web Browser (Firefox)</quote>.</para></note> We will need to fill in the executable name in the <guilabel>Command:</guilabel> field, in this instance we will type <userinput><command>firefox</command></userinput>.</para>
+    Now lets fill in the <guilabel>Description:</guilabel>, in this case type <userinput>Web Browser</userinput>. <note><para>The description and name will be displayed on the application launcher as <quote>Web Browser (Firefox)</quote>.</para></note> We will need to fill in the executable name in the <guilabel>Command:</guilabel> field, in this instance we will type <userinput><command>firefox</command></userinput>.</para>
 <note><para>Following the command, you can have several place holders which will be replaced with actual values when the program is run:
 <simplelist>
 <member>%f - a single file name</member>
@@ -161,7 +165,7 @@ Press return, and you should see something like the picture below in the main wi
 </mediaobject>
 </screenshot></para>
 
-<para>Click <menuchoice><guimenu>File</guimenu><guimenuitem>Save</guimenuitem></menuchoice>, wait for the <guilabel>Updating System Configuration</guilabel> dialog to get finished, you should find &firefox; in the &kmenu; <guisubmenu>Internet</guisubmenu> submenu!</para>
+<para>Click <menuchoice><guimenu>File</guimenu><guimenuitem>Save</guimenuitem></menuchoice>, wait for the <guilabel>Updating System Configuration</guilabel> dialog to get finished, you should find &firefox; in the application launcher <guisubmenu>Internet</guisubmenu> submenu!</para>
 
 
 
@@ -170,7 +174,7 @@ Press return, and you should see something like the picture below in the main wi
 <chapter id="using-kmenuedit">
 <title>Using &kmenuedit;</title>
 
-<para>The left application panel shows the &kmenu; structure. When
+<para>The left application panel shows the application launcher structure. When
 you browse items in the left panel, the right panel shows detailed
 information for the highlighted menu item.</para>
 
@@ -181,14 +185,13 @@ information for the highlighted menu item.</para>
 <varlistentry>
 <term><guilabel>Name:</guilabel></term>
 <listitem><para>This is the name of your program as it appears in the
-&kmenu; menu. It can be different from the real executable
+application launcher menu. It can be different from the real executable
 name. For instance the name of <command>mc</command> executable is
 "<application>Midnight Commander</application>".</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Description:</guilabel></term>
-<listitem><para>The description will be displayed together with the name in the &kmenu;. This is
-entirely optional.</para></listitem>
+<listitem><para>The description will be displayed together with the name in the application launcher. This is entirely optional.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Comment:</guilabel></term>
@@ -202,7 +205,7 @@ have permission to run the program.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Enable launch feedback</guilabel></term>
-<listitem><para>If this box is checked, this will display feedback when an application is started
+<listitem><para>If this box is checked, this will display feedback when an application is started.
 </para></listitem>
 </varlistentry>
 <varlistentry>
