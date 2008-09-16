@@ -53,20 +53,13 @@ class ClockApplet::Private
 {
 public:
     Private()
-        : calendarDialog(0),
-          calendar(0),
-          view(0),
-          timezone(ClockApplet::localTimezone())
+        : timezone(ClockApplet::localTimezone())
     {}
 
     Ui::timezonesConfig ui;
-    Plasma::Dialog *calendarDialog;
-    KDatePicker *calendar;
-    QGraphicsView *view;
     QString timezone;
     QPoint clicked;
     QStringList selectedTimezones;
-    Plasma::Extender *calendarExt;
 };
 
 ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
@@ -78,7 +71,6 @@ ClockApplet::ClockApplet(QObject *parent, const QVariantList &args)
 
 ClockApplet::~ClockApplet()
 {
-    delete d->calendar;
     delete d;
 }
 
@@ -223,10 +215,18 @@ void ClockApplet::wheelEvent(QGraphicsSceneWheelEvent *event)
 
 void ClockApplet::initExtenderItem(Plasma::ExtenderItem *item)
 {
-    d->calendar = new KDatePicker;
-    d->calendar->setMinimumSize(d->calendar->sizeHint());
-    QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget();
-    proxy->setWidget(d->calendar);
+    QGraphicsProxyWidget *proxy = new QGraphicsProxyWidget(item);
+    KDatePicker *calendar = new KDatePicker();
+    calendar->setMinimumSize(calendar->sizeHint());
+
+    Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
+    QDate date = data["Date"].toDate();
+    if (date.isValid()) {
+        calendar->setDate(date);
+    }
+
+    proxy->setWidget(calendar);
+
     item->setWidget(proxy);
     item->setTitle(i18n("Calendar"));
 }
@@ -239,7 +239,14 @@ void ClockApplet::init()
     QStringList tzParts = d->timezone.split("/");
     m_prettyTimezone = tzParts.value(1);
 
-    Plasma::Extender *extender = new Plasma::Extender(this);
+    new Plasma::Extender(this);
+
+    //avoid duplication
+    if (!extender()->item("calendar")) {
+        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
+        eItem->setName("calendar");
+        initExtenderItem(eItem);
+    }
 }
 
 QGraphicsWidget *ClockApplet::graphicsWidget()
@@ -248,14 +255,6 @@ QGraphicsWidget *ClockApplet::graphicsWidget()
         // in case the subclass didn't call the parent init() properly
         ClockApplet::init();
     }
-    if (!d->calendar) {
-        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-        eItem->setName("calendar");
-        initExtenderItem(eItem);
-    }
-
-    Plasma::DataEngine::Data data = dataEngine("time")->query(currentTimezone());
-    d->calendar->setDate(data["Date"].toDate());
 
     return extender();
 }
