@@ -49,7 +49,7 @@ KService::Ptr MenuEntryAction::service() const
     {
     if (!_service)
     {
-        const_cast<MenuEntryAction *>(this)->_service = KService::serviceByStorageId(command_url());
+        const_cast<MenuEntryAction *>(this)->_service = KService::serviceByName(command_url());
     }
     return _service;
     }
