@@ -26,6 +26,7 @@
 #include <QStyleOptionGraphicsItem>
 #include <QFont>
 #include <QGraphicsSceneHoverEvent>
+#include <QGraphicsLinearLayout>
 
 #include <KDebug>
 #include <KIcon>
@@ -39,10 +40,12 @@
 #include <plasma/svg.h>
 #include <plasma/theme.h>
 #include <plasma/animator.h>
-#include <plasma/dialog.h>
+#include <plasma/popupapplet.h>
+#include <plasma/widgets/label.h>
+#include <plasma/widgets/slider.h>
 
 Battery::Battery(QObject *parent, const QVariantList &args)
-    : Plasma::Applet(parent, args),
+    : Plasma::PopupApplet(parent, args),
       m_batteryStyle(0),
       m_theme(0),
       m_animId(-1),
@@ -60,13 +63,11 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
+    setPopupIcon(QIcon());
     resize(128, 128);
     setAspectRatioMode(Plasma::ConstrainedSquare );
     m_textRect = QRect();
     m_theme = new Plasma::Svg(this);
-
-    m_dialog = new Plasma::Dialog(0);
-    m_dialog->resize(200,200);
 }
 
 void Battery::init()
@@ -127,6 +128,8 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
                 setMaximumSize(qMax(m_textRect.width(), contentsRect().height()*m_numOfBattery), QWIDGETSIZE_MAX);
             }
             //kDebug() << "Horizontal FormFactor" << m_textRect.width() << contentsRect().height();
+        } else {
+            setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
         }
     }
     if (!m_showMultipleBatteries || m_numOfBattery < 2) {
@@ -179,7 +182,7 @@ void Battery::createConfigurationInterface(KConfigDialog *parent)
     QWidget *widget = new QWidget(parent);
     ui.setupUi(widget);
     parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
-    parent->addPage(widget, parent->windowTitle(), icon());
+    parent->addPage(widget, parent->windowTitle(), Applet::icon());
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
     ui.styleGroup->setSelected(m_batteryStyle);
@@ -242,33 +245,6 @@ void Battery::readColors()
     m_boxColor.setAlpha(m_boxAlpha);
 }
 
-void Battery::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    if (event->buttons() == Qt::LeftButton) {
-        m_clicked = scenePos().toPoint();
-        event->setAccepted(true);
-        return;
-    }
-
-    Applet::mousePressEvent(event);
-}
-
-void Battery::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    if ((m_clicked - scenePos().toPoint()).manhattanLength() < KGlobalSettings::dndEventDelay()) {
-        if (!m_dialog->isVisible()) {
-            m_dialog->move(popupPosition(m_dialog->sizeHint()));
-            m_dialog->show();
-            kDebug() << "DIALOG SHOW =================";
-        } else {
-            m_dialog->hide();
-            kDebug() << "DIALOG HIDDEN =================";
-        }
-    }
-}
-
-
-
 void Battery::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     showLabel(true);
@@ -291,7 +267,32 @@ void Battery::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 Battery::~Battery()
 {
-    delete m_dialog;
+}
+
+QGraphicsWidget *Battery::graphicsWidget()
+{
+    QGraphicsWidget *controls= new QGraphicsWidget(this);
+    QGraphicsLinearLayout *controlsLayout = new QGraphicsLinearLayout(controls);
+
+    controlsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    controlsLayout->setOrientation(Qt::Vertical);
+
+    Plasma::Label *brightnessLabel = new Plasma::Label(controls);
+    brightnessLabel->setText(i18n("Adjust Brightness"));
+    brightnessLabel->nativeWidget()->setWordWrap(false);
+    controlsLayout->addItem(brightnessLabel);
+
+    Plasma::Slider *brightnessSlider = new Plasma::Slider(controls);
+    brightnessSlider->setRange(0, 10);
+    brightnessSlider->nativeWidget()->setTickInterval(2);
+    brightnessSlider->setOrientation(Qt::Horizontal);
+
+    controlsLayout->addItem(brightnessSlider);
+    brightnessLabel->nativeWidget()->setWordWrap(false);
+
+    controls->setLayout(controlsLayout);
+
+    return controls;
 }
 
 void Battery::showLabel(bool show)
