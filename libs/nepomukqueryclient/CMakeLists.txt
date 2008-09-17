@@ -18,19 +18,42 @@ set(nepomukqueryclient_SRC
   queryserviceclient.cpp
 )
 
+if(BUILDING_WORKSPACE_SEPARATELY)
+  find_file(QUERY_INTERFACE
+    org.kde.nepomuk.Query.xml
+    PATHS ${XDG_DATA_DIRS} ${DBUS_INTERFACES_INSTALL_DIR}
+    PATH_SUFFIXES / /dbus-1/interfaces/
+    )
+  if(NOT QUERY_INTERFACE)
+    message(ERROR "Could not find org.kde.nepomuk.Query.xml. Is kdebase-runtime installed?")
+  endif(NOT QUERY_INTERFACE)
+
+  find_file(QUERYSERVICE_INTERFACE
+    org.kde.nepomuk.QueryService.xml
+    PATHS ${XDG_DATA_DIRS} ${DBUS_INTERFACES_INSTALL_DIR}
+    PATH_SUFFIXES / /dbus-1/interfaces/
+    )
+  if(NOT QUERYSERVICE_INTERFACE)
+    message(ERROR "Could not find org.kde.nepomuk.QueryService.xml. Is kdebase-runtime installed?")
+  endif(NOT QUERYSERVICE_INTERFACE)
+else(BUILDING_WORKSPACE_SEPARATELY)
+  set(QUERY_INTERFACE ${nepomuk_interfaces_SOURCE_DIR}/org.kde.nepomuk.Query.xml)
+  set(QUERYSERVICE_INTERFACE ${nepomuk_interfaces_SOURCE_DIR}/org.kde.nepomuk.QueryService.xml)
+endif(BUILDING_WORKSPACE_SEPARATELY)
+
 set_source_files_properties(
-  ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/org.kde.nepomuk.QueryService.xml
+  ${QUERYSERVICE_INTERFACE}
   PROPERTIES INCLUDE "querymetatype.h")
 
 set_source_files_properties(
-  ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/org.kde.nepomuk.Query.xml
+  ${QUERY_INTERFACE}
   PROPERTIES INCLUDE "result.h")
 
 qt4_add_dbus_interface(nepomukqueryclient_SRC
-  ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/org.kde.nepomuk.QueryService.xml
+  ${QUERYSERVICE_INTERFACE}
   queryserviceinterface)
 qt4_add_dbus_interface(nepomukqueryclient_SRC
-  ${CMAKE_CURRENT_SOURCE_DIR}/interfaces/org.kde.nepomuk.Query.xml
+  ${QUERY_INTERFACE}
   queryinterface)
 
 kde4_add_library(nepomukqueryclient SHARED ${nepomukqueryclient_SRC})

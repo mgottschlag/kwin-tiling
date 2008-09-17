@@ -3,6 +3,10 @@ project(KDEBASE_WORKSPACE)
 # where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules )
 
+if(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+    set(BUILDING_WORKSPACE_SEPARATELY true)
+endif(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+
 
 #search packages used by KDE
 find_package(KDE4 REQUIRED)
@@ -115,6 +119,6 @@ if (NOT WIN32)
     install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/safestartkde DESTINATION ${BIN_INSTALL_DIR})
 endif (NOT WIN32)
 
-if(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
-    macro_display_feature_log()
-endif(CMAKE_SOURCE_DIR STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+if(BUILDING_WORKSPACE_SEPARATELY)
+  macro_display_feature_log()
+endif(BUILDING_WORKSPACE_SEPARATELY)
