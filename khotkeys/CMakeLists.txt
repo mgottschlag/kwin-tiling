@@ -10,10 +10,11 @@ add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 # Convenience library
 add_subdirectory( libkhotkeysprivate )
+# has to be before kcm_hotkeys
+add_subdirectory( app )
 # kcm module to configure hotkeys
 add_subdirectory( kcm_hotkeys )
 # kdedmodule and standalone demon for hotkeys
-add_subdirectory( app )
 add_subdirectory( data )
 add_subdirectory( update )
 add_subdirectory( test )
