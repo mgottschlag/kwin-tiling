@@ -11,8 +11,6 @@
 #ifndef _CONDITIONS_H_
 #define _CONDITIONS_H_
 
-#include "config-khotkeys.h"
-
 #include "action_data_group.h"
 
 #include "windows.h"
@@ -99,11 +97,7 @@ class KDE_EXPORT Active_window_condition
         virtual bool match() const;
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         const Windowdef_list* window() const;
-#ifdef HAVE_COVARIANT_RETURN
         virtual Active_window_condition* copy( Condition_list_base* parent_P ) const;
-#else
-        virtual Condition* copy( Condition_list_base* parent_P ) const;
-#endif
         virtual const QString description() const;
     public Q_SLOTS:
         void active_window_changed( WId );
@@ -126,11 +120,7 @@ class KDE_EXPORT Existing_window_condition
         virtual bool match() const;
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
         const Windowdef_list* window() const;
-#ifdef HAVE_COVARIANT_RETURN
         virtual Existing_window_condition* copy( Condition_list_base* parent_P ) const;
-#else
-        virtual Condition* copy( Condition_list_base* parent_P ) const;
-#endif
         virtual const QString description() const;
     public Q_SLOTS:
         void window_added( WId w_P );

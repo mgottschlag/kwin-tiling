@@ -21,8 +21,6 @@
 #include "action_data.h"
 #include "windows.h"
 
-#include "config-khotkeys.h"
-
 #include <KDE/KConfigGroup>
 #include <KDE/KDebug>
 
@@ -189,11 +187,7 @@ const Windowdef_list* WindowTrigger::windows() const
     }
 
 
-#ifdef HAVE_COVARIANT_RETURN    // stupid gcc, it doesn't even warn it can't do this
 WindowTrigger* WindowTrigger::copy( ActionData* data_P ) const
-#else
-Trigger* WindowTrigger::copy( ActionData* data_P ) const
-#endif
     {
     WindowTrigger* ret = new WindowTrigger( data_P ? data_P : data, windows()->copy(),
         window_actions );

@@ -18,7 +18,6 @@
 */
 
 #include <config-X11.h>
-#include "config-khotkeys.h"
 
 #include "input.h"
 #include "shortcuts_handler.h"

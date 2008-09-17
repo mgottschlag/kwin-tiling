@@ -62,11 +62,7 @@ void Existing_window_condition::cfg_write( KConfigGroup& cfg_P ) const
     cfg_P.writeEntry( "Type", "EXISTING_WINDOW" ); // overwrites value set in base::cfg_write()
     }
 
-#ifdef HAVE_COVARIANT_RETURN
 Existing_window_condition* Existing_window_condition::copy( Condition_list_base* parent_P ) const
-#else
-Condition* Existing_window_condition::copy( Condition_list_base* parent_P ) const
-#endif
     {
     return new Existing_window_condition( window()->copy(), parent_P );
     }

@@ -31,7 +31,6 @@
 #include "voicesignature.h"
 
 #include "input.h"
-#include "config-khotkeys.h"
 #include "windows.h"
 
 
@@ -166,11 +165,7 @@ class KDE_EXPORT WindowTrigger
         WindowTrigger( KConfigGroup& cfg_P, ActionData* data_P );
         virtual ~WindowTrigger();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
-#ifdef HAVE_COVARIANT_RETURN    // stupid gcc, it doesn't even warn it can't do this
         virtual WindowTrigger* copy( ActionData* data_P ) const;
-#else
-        virtual Trigger* copy( ActionData* data_P ) const;
-#endif
         virtual const QString description() const;
         const Windowdef_list* windows() const;
         bool triggers_on( window_action_t w_action_P ) const;

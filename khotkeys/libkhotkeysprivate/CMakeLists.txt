@@ -1,25 +1,3 @@
-
-# Check for covariant return type
-check_cxx_source_compiles("
-  class A { public: virtual A* me(); };
-  class X { public: int x; virtual void ff() {}; };
-  class B : public X, public A { public: virtual B* me(); };
-  int foo( A* a )
-    {
-    A* aa = a->me();
-    return a == aa;
-    }
-  int main()
-    {
-    B* b = new B;
-    return foo( b ) == 0;
-    }
-  A* A::me() { return this; }
-  B* B::me() { return this; }
-" HAVE_COVARIANT_RETURN )
-
-configure_file(config-khotkeys.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-khotkeys.h )
-
 # KHotKey convenience library. Contains
 # - Actions
 # - Trigger

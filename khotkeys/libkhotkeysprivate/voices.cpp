@@ -9,8 +9,6 @@
 ****************************************************************************/
 
 
-#include "config-khotkeys.h"
-
 #include <kaction.h>
 
 #include "voices.h"
