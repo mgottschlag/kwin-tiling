@@ -32,6 +32,11 @@ MenuentryActionWidget::MenuentryActionWidget( KHotKeys::MenuEntryAction *action,
     connect(
         ui.applicationButton, SIGNAL(clicked()),
         this, SLOT(selectApplicationClicked()) );
+
+    connect(
+        ui.application, SIGNAL(textChanged(QString)),
+        _changedSignals, SLOT(map()) );
+    _changedSignals->setMapping(ui.application, "application" );
     }
 
 
@@ -41,12 +46,14 @@ MenuentryActionWidget::~MenuentryActionWidget()
 
 KHotKeys::MenuEntryAction *MenuentryActionWidget::action()
     {
+    Q_ASSERT(dynamic_cast<KHotKeys::MenuEntryAction*>(_action));
     return static_cast<KHotKeys::MenuEntryAction*>(_action);
     }
 
 
 const KHotKeys::MenuEntryAction *MenuentryActionWidget::action() const
     {
+    Q_ASSERT(dynamic_cast<KHotKeys::MenuEntryAction*>(_action));
     return static_cast<const KHotKeys::MenuEntryAction*>(_action);
     }
 
@@ -78,7 +85,21 @@ void MenuentryActionWidget::doCopyToObject()
 bool MenuentryActionWidget::isChanged() const
     {
     Q_ASSERT(action());
-    return ui.application->text() != action()->service()->name();
+
+    bool changed;
+
+    // There could be no service set, so be careful!
+    if (action()->service())
+        {
+        changed = ui.application->text() != action()->service()->name();
+        }
+    else
+        {
+        // No service set. If the string is not empty something changed.
+        changed = ! ui.application->text().isEmpty();
+        }
+
+    return changed;
     }
 
 
