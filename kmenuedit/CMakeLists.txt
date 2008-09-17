@@ -8,6 +8,11 @@ set(kmenueditcommon_STAT_SRCS preferencesdlg.cpp klinespellchecking.cpp basictab
 
 qt4_add_dbus_adaptor( kmenueditcommon_STAT_SRCS org.kde.kmenuedit.xml kmenuedit.h KMenuEdit)
 
+qt4_add_dbus_interface(
+    kmenueditcommon_STAT_SRCS
+    ${DBUS_INTERFACES_INSTALL_DIR}/org.kde.khotkeys.xml
+    khotkeys_interface)
+
 set(kmenuedit_KDEINIT_SRCS main.cpp ${kmenueditcommon_STAT_SRCS})
 
 kde4_add_kdeinit_executable( kmenuedit ${kmenuedit_KDEINIT_SRCS})

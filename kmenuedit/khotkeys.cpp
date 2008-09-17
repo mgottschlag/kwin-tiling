@@ -18,25 +18,12 @@
  *
  */
 
-#include <klibloader.h>
 #include "khotkeys.h"
+#include "khotkeys_interface.h"
 
-#ifndef Q_WS_WIN
-extern "C"
-{
-#endif
-    static void (*khotkeys_init_2)( void );
-    static void (*khotkeys_cleanup_2)( void );
-    static QString (*khotkeys_get_menu_entry_shortcut_2)( const QString& entry_P );
-    static QString (*khotkeys_change_menu_entry_shortcut_2)( const QString& entry_P,
-                                                             const QString& shortcut_P );
-    static bool (*khotkeys_menu_entry_moved_2)( const QString& new_P, const QString& old_P );
-    static void (*khotkeys_menu_entry_deleted_2)( const QString& entry_P );
-    static QStringList (*khotkeys_get_all_shortcuts_2)( );
-    static KService::Ptr (*khotkeys_find_menu_entry_2)( const QString& shortcut_P );
-#ifndef Q_WS_WIN
-}
-#endif
+
+#include "kdebug.h"
+#include "kmessagebox.h"
 
 static bool khotkeys_present = false;
 static bool khotkeys_inited = false;
@@ -44,53 +31,44 @@ static bool khotkeys_inited = false;
 bool KHotKeys::init()
 {
     khotkeys_inited = true;
-    KLibrary* lib = KLibLoader::self()->library( QLatin1String("kcm_khotkeys.so") );
-    if( lib == NULL ) return false;
 
-    khotkeys_init_2 = lib->resolveFunction( "khotkeys_init" );
-    khotkeys_cleanup_2 = lib->resolveFunction( "khotkeys_cleanup" );
-    khotkeys_get_menu_entry_shortcut_2 =
-        ( QString (*)( const QString& ))
-        ( lib->resolveFunction( "khotkeys_get_menu_entry_shortcut" ));
-    khotkeys_change_menu_entry_shortcut_2 =
-        ( QString (*)( const QString&, const QString& ))
-        ( lib->resolveFunction( "khotkeys_change_menu_entry_shortcut" ));
-    khotkeys_menu_entry_moved_2 =
-        ( bool (*)( const QString&, const QString& ))
-        ( lib->resolveFunction( "khotkeys_menu_entry_moved" ));
-    khotkeys_menu_entry_deleted_2 =
-        ( void (*)( const QString& ))
-        ( lib->resolveFunction( "khotkeys_menu_entry_deleted" ));
-    khotkeys_get_all_shortcuts_2 =
-        ( QStringList (*)( ))
-        ( lib->resolveFunction( "khotkeys_get_all_shortcuts" ));
-    khotkeys_find_menu_entry_2 =
-        ( KService::Ptr (*)( const QString& ))
-        ( lib->resolveFunction( "khotkeys_find_menu_entry" ));
+    // Check if khotkeys is running
+    QDBusConnection bus = QDBusConnection::sessionBus();
+    OrgKdeKhotkeysInterface khotkeysInterface(
+        "org.kde.kded",
+        "/modules/khotkeys",
+        bus,
+        NULL);
 
-    if( khotkeys_init_2
-        && khotkeys_cleanup_2
-        && khotkeys_get_menu_entry_shortcut_2
-        && khotkeys_change_menu_entry_shortcut_2
-        && khotkeys_menu_entry_moved_2
-        && khotkeys_menu_entry_deleted_2 )
-    {
-        khotkeys_init_2();
-        khotkeys_present = true;
-        return true;
-    }
-    return false;
+    QDBusError err;
+    if(!khotkeysInterface.isValid())
+        {
+        err = khotkeysInterface.lastError();
+        if (err.isValid())
+            {
+            kError() << err.name() << ":" << err.message();
+            }
+        KMessageBox::error(
+            NULL,
+            "<qt>" + i18n("Unable to contact khotkeys. Your changes are saved but i failed to activate them") + "</qt>" );
+        }
+
+    khotkeys_present = khotkeysInterface.isValid();
+    return true;
 }
 
 void KHotKeys::cleanup()
 {
-    if( khotkeys_inited && khotkeys_present )
-        khotkeys_cleanup_2();
+    if( khotkeys_inited && khotkeys_present ) {
+        // CleanUp ???
+    }
     khotkeys_inited = false;
 }
 
 bool KHotKeys::present()
 {
+    kDebug() << khotkeys_present;
+
     if( !khotkeys_inited )
         init();
     return khotkeys_present;
@@ -102,17 +80,21 @@ QString KHotKeys::getMenuEntryShortcut( const QString& entry_P )
         init();
     if( !khotkeys_present )
         return "";
-    return khotkeys_get_menu_entry_shortcut_2( entry_P );
+    // TODO
+    return "";
 }
 
-QString KHotKeys::changeMenuEntryShortcut( const QString& entry_P,
-    const QString shortcut_P )
+QString KHotKeys::changeMenuEntryShortcut(
+        const QString& entry_P,
+        const QString shortcut_P )
     {
     if( !khotkeys_inited )
         init();
     if( !khotkeys_present )
         return "";
-    return khotkeys_change_menu_entry_shortcut_2( entry_P, shortcut_P );
+
+    kDebug() << entry_P << "," << shortcut_P;
+    return "";
     }
 
 bool KHotKeys::menuEntryMoved( const QString& new_P, const QString& old_P )
@@ -120,8 +102,11 @@ bool KHotKeys::menuEntryMoved( const QString& new_P, const QString& old_P )
     if( !khotkeys_inited )
         init();
     if( !khotkeys_present )
-        return "";
-    return khotkeys_menu_entry_moved_2( new_P, old_P );
+        return false;
+
+    // For now so i don't forget to check this
+    Q_ASSERT(false);
+    return false;
 }
 
 void KHotKeys::menuEntryDeleted( const QString& entry_P )
@@ -130,23 +115,24 @@ void KHotKeys::menuEntryDeleted( const QString& entry_P )
         init();
     if( !khotkeys_present )
         return;
-    khotkeys_menu_entry_deleted_2( entry_P );
+    // TODO
+    Q_ASSERT(false);
 }
 
 QStringList KHotKeys::allShortCuts( )
 {
     if( !khotkeys_inited )
         init();
-    if (!khotkeys_get_all_shortcuts_2)
-        return QStringList();
-    return khotkeys_get_all_shortcuts_2();
+    // TODO
+    Q_ASSERT(false);
+    return QStringList();
 }
 
 KService::Ptr KHotKeys::findMenuEntry( const QString &shortcut_P )
 {
     if( !khotkeys_inited )
         init();
-    if (!khotkeys_find_menu_entry_2)
-        return KService::Ptr();
-    return khotkeys_find_menu_entry_2(shortcut_P);
+    // TODO
+    Q_ASSERT(false);
+    return KService::Ptr();
 }

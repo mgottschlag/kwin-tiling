@@ -5,7 +5,10 @@ include_directories( ${KDEBASE_WORKSPACE_SOURCE_DIR}/khotkeys/shared/ )
 
 set(khotkeys_update_SRCS update.cpp )
 
-qt4_add_dbus_interface(khotkeys_update_SRCS ../app/org.kde.khotkeys.xml khotkeysiface)
+qt4_add_dbus_interface(
+        khotkeys_update_SRCS
+        ${CMAKE_CURRENT_BINARY_DIR}/../app/org.kde.khotkeys.xml
+        khotkeysiface)
 
 kde4_add_executable( khotkeys_update ${khotkeys_update_SRCS})
 

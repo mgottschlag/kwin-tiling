@@ -12,7 +12,6 @@
 
 #include "action_data_group.h"
 #include "gestures.h"
-#include "khotkeysadaptor.h"
 #include "settings.h"
 
 
@@ -38,7 +37,6 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
     , dbus_adaptor(NULL)
     {
     setModuleName("khotkeys");
-    (void) new KhotkeysAdaptor(this);
 
     // Initialize the global data, grab keys
     KHotKeys::init_global_data( true, this );

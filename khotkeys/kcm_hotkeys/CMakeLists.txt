@@ -41,7 +41,7 @@ kde4_add_ui_files(
 
 qt4_add_dbus_interface(
     kcm_hotkeys_PART_SRCS
-    ../app/org.kde.khotkeys.xml
+    ${CMAKE_CURRENT_BINARY_DIR}/../app/org.kde.khotkeys.xml
     khotkeys_interface)
 
 

@@ -524,36 +524,11 @@ void BasicTab::slotCapturedKeySequence(const QKeySequence& seq)
        return;
     KShortcut cut(seq, QKeySequence());
 
-#ifdef __GNUC__
-#warning the following lines can be implemented again using the new functions in KGlobalAccel
-#endif
-    //if(KShortcutsEditor::checkGlobalShortcutsConflict( cut, true, window())
-    //    || KShortcutsEditor::checkStandardShortcutsConflict( cut, true, window()))
-    //  return;
-
     if ( KHotKeys::present() )
     {
-       if (!_menuEntryInfo->isShortcutAvailable( cut ) )
-       {
-          KService::Ptr service;
-          emit findServiceShortcut(cut, service);
-          if (!service)
-             service = KHotKeys::findMenuEntry(cut.toString());
-          if (service)
-          {
-             KMessageBox::sorry(this, i18n("<qt>The key <b>%1</b> can not be used here because it is already used to activate <b>%2</b>.</qt>", cut.toString(), service->name()));
-             _keyEdit->clearKeySequence();
-             return;
-          }
-          else
-          {
-             KMessageBox::sorry(this, i18n("<qt>The key <b>%1</b> can not be used here because it is already in use.</qt>", cut.toString()));
-             _keyEdit->clearKeySequence();
-             return;
-          }
-       }
        _menuEntryInfo->setShortcut( cut );
     }
+
     if (_menuEntryInfo)
        emit changed( _menuEntryInfo );
 }
