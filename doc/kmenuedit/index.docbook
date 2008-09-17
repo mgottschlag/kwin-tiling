@@ -218,7 +218,7 @@ application.
 </varlistentry>
 <varlistentry>
 <term><guilabel>Only show in &kde;</guilabel></term>
-<listitem><para>When checked, the application entry will only be visible in the &kde; application launcher and not in other desktops environments.
+<listitem><para>When checked, the application entry will only be visible in all &kde; application launchers but not in other desktops environments.
 </para></listitem>
 </varlistentry>
 </variablelist>
@@ -252,26 +252,6 @@ check this checkbox, and provide the username in the
 <guilabel>Username:</guilabel> field.</para></listitem>
 </varlistentry>
 </variablelist>
-
-<para>You can assign a special keyboard shortcut to launch your program.</para>
-
-<para>Click the <guibutton>None</guibutton> button to the right of the <guilabel>Current
-shortcut key:</guilabel> checkbox.</para>
-
-<para>A dialog box will pop up, allowing you to assign a <guilabel>Primary shortcut:</guilabel>
-by pressing the key combination on your keyboard that you want to be assigned to your program.
-It might be useful to assign a second
-keybinding to the same item by checking the
-<guilabel>Alternate shortcut:</guilabel> button, for
-example, if you often switch keyboard maps, and some shortcuts are not
-as convenient to type at all times.</para>
-
-<para>Click the <guiicon>x</guiicon> to clear the shortcut, if you
-made a mistake.  Check the <guilabel>Multi-key mode</guilabel> box if you
-want to assign a shortcut that uses more than one key.</para>
-
-<para>The dialog will close when you have selected a keybinding.
-</para>
 
 </sect1> 
 
@@ -381,10 +361,10 @@ item.</action></para></listitem>
 
 <varlistentry id="edit-restore">
 <term><menuchoice>
-<shortcut><keycap>Delete</keycap></shortcut>
+<shortcut><keycap>Restore</keycap></shortcut>
 <guimenu>Edit</guimenu> <guimenuitem>Restore to system menu</guimenuitem>
 </menuchoice></term>
-<listitem><para><action> - </action></para></listitem>
+<listitem><para><action>This will restore the application launcher as it was as default and remove all your custom settings. A message box will ask you if you really want to do that.</action></para></listitem>
 </varlistentry>
 
 <varlistentry id="settings-hide-toolbar">
@@ -450,7 +430,7 @@ Author</para>
 </itemizedlist>
 
 <para>Documentation copyright &copy; 2000 &Milos.Prudek;</para>
-
+<para>Documentation copyright &copy; 2008 &Anne-Marie.Mahfouf;</para>
 <para>Updated for &kde; 3.0 by &Lauri.Watts; &Lauri.Watts.mail;
 2002</para>
 
