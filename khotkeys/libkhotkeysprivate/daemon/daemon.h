@@ -20,8 +20,6 @@
 
 #include "kdemacros.h"
 
-#include "kded_module.h"
-
 /**
  * @author Michael Jansen <kde@michael-jansen.biz>
  */
@@ -29,16 +27,15 @@ namespace KHotKeys {
 
     namespace Daemon {
 
-    using KdedModuleDaemon::isRunning;
-    using KdedModuleDaemon::reload;
-    using KdedModuleDaemon::start;
-    using KdedModuleDaemon::stop;
+    KDE_EXPORT bool isRunning();
+    KDE_EXPORT bool reload();
+    KDE_EXPORT bool start();
+    KDE_EXPORT bool stop();
 
     /**
      * Is the daemon enabled by the user?
      */
     KDE_EXPORT bool isEnabled();
-
     }
 
 } // namespace KHotKeys::Daemon

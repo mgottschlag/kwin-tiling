@@ -39,6 +39,12 @@ kde4_add_ui_files(
     ui/menuentry_action_widget.ui
     )
 
+qt4_add_dbus_interface(
+    kcm_hotkeys_PART_SRCS
+    ../app/org.kde.khotkeys.xml
+    khotkeys_interface)
+
+
 kde4_add_plugin(
     kcm_hotkeys
     ${kcm_hotkeys_PART_SRCS}

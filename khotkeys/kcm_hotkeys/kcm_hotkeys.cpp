@@ -32,6 +32,7 @@
 #include "global_settings_widget.h"
 // REST
 #include "daemon/daemon.h"
+#include "khotkeys_interface.h"
 #include "hotkeys_model.h"
 #include "hotkeys_proxy_model.h"
 #include "hotkeys_tree_view.h"
@@ -331,51 +332,38 @@ void KCMHotkeysPrivate::save()
     // Write the settings
     model->save();
 
+    if (!(KHotKeys::Daemon::isRunning() or KHotKeys::Daemon::start()))
+        {
+        KMessageBox::error(
+            q,
+            "<qt>" + i18n("Unable to contact khotkeys. Your changes are saved but i failed to activate them") + "</qt>" );
+        return;
+        }
+
     // Inform kdedkhotkeys demon to reload settings
     QDBusConnection bus = QDBusConnection::sessionBus();
-    QPointer<QDBusInterface> iface = new QDBusInterface("org.kde.kded", "/modules/khotkeys",
-                                                        "org.kde.khotkeys", bus, q);
+    QPointer<OrgKdeKhotkeysInterface> iface = new OrgKdeKhotkeysInterface(
+        "org.kde.kded",
+        "/modules/khotkeys",
+        bus,
+        q);
+
+    QDBusError err;
     if(!iface->isValid())
         {
-        QDBusError err = iface->lastError();
-        if (err.isValid())
-            {
-            kError() << err.name() << ":" << err.message();
-            }
-        QDBusInterface kdedInterface( "org.kde.kded", "/kded","org.kde.kded" );
-        QDBusReply<bool> reply = kdedInterface.call( "loadModule", "khotkeys"  );
         err = iface->lastError();
         if (err.isValid())
             {
             kError() << err.name() << ":" << err.message();
             }
-
-        if ( reply.isValid() )
-            {
-            if ( reply.value() )
-                KMessageBox::error(q, "<qt>" + i18n("Started server <em>org.kde.khotkeys</em>.") + "</qt>");
-            else
-                KMessageBox::error(q, "<qt>" + i18n("Unable to start server <em>org.kde.khotkeys</em>.") + "</qt>");
-            }
-        else
-            {
-            KMessageBox::error(
-                q,
-                "<qt>" + i18n("Unable to start service <em>org.kde.khotkeys</em>.<br /><br /><i>Error: %1</i>",
-                              reply.error().message()) + "</qt>" );
-            }
-
+        KMessageBox::error(
+            q,
+            "<qt>" + i18n("Unable to contact khotkeys. Your changes are saved but i failed to activate them") + "</qt>" );
+        return;
         }
-    else
-        {
-        kDebug() << "Pinging khotkeys demon";
-        QDBusMessage reply = iface->call("reread_configuration");
-        QDBusError err = iface->lastError();
-        if (err.isValid())
-            {
-            kError() << err.name() << ":" << err.message();
-            }
-        }
+
+    // Reread the configuration. We have no possibility to check if it worked.
+    iface->reread_configuration();
     }
 
 

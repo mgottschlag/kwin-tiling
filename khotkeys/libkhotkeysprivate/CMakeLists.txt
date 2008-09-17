@@ -50,8 +50,6 @@ set(khotkeysprivate_SRCS
     # DAEMON
     daemon/daemon.h
     daemon/daemon.cpp
-    daemon/kded_module.cpp
-    daemon/kded_module.h
 
     # OTHER
     khotkeysglobal.cpp
