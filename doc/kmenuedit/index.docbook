@@ -37,7 +37,7 @@
 <date>2008-09-15</date>
 <releaseinfo>0.8</releaseinfo>
 
-<abstract><para>&kmenuedit; allows editing of the &kde; application launcher: &kickoff; or the classic &kmenu;. 
+<abstract><para>&kmenuedit; allows editing one of the &kde; application launchers: &kickoff;, the classic &kmenu; or Lancelot Launcher. 
 </para></abstract>
 
 <keywordset>
@@ -48,6 +48,7 @@
 <keyword>program</keyword>
 <keyword>menu</keyword>
 <keyword>kickoff</keyword>
+<keyword>Lancelot</keyword>
 </keywordset>
 
 </bookinfo>
@@ -55,7 +56,7 @@
 <chapter id="introduction">
 <title>Introduction</title>
 
-<para>&kmenuedit; allows editing of &kde; &kickoff; or classic &kmenu;.</para>
+<para>&kmenuedit; allows editing of &kde; application launchers: &kickoff;, classic &kmenu; or Lancelot Launcher.</para>
 
 <para>&kmenuedit; can be started either by &RMB; clicking the
 application lancher button on the panel and choosing
@@ -67,7 +68,7 @@ application lancher button on the panel and choosing
 <para>&kmenuedit; allows you to:</para>
 
 <itemizedlist>
-<listitem><para>View and edit the current application launcher (&kickoff; or classic menu)</para></listitem>
+<listitem><para>View and edit the current application launcher (&kickoff;, classic menu or Lancelot Launcher)</para></listitem>
 <listitem><para><guimenuitem>Cut</guimenuitem>, <guimenuitem>Copy</guimenuitem>
 and <guimenuitem>Paste</guimenuitem> menu items</para></listitem>
 <listitem><para>Create and delete submenus</para></listitem>
