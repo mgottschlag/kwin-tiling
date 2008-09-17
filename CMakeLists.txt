@@ -37,7 +37,7 @@ configure_file (config-workspace.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-work
 macro_bool_to_01(X11_Xscreensaver_FOUND HAVE_XSCREENSAVER)
 macro_log_feature(HAVE_XSCREENSAVER "libxss" "XScreenSaver Library"
   "http://www.x.org/" FALSE ""
-  "Needed to enable idle detection in PowerDevil power manager")
+  "Needed to enable fallback query methods in PowerDevil power manager")
 macro_log_feature(HAVE_XSYNC "libxext" "XSync Extension"
   "http://www.x.org/" FALSE ""
   "Needed to enable high efficency query in PowerDevil power manager. Strongly recommended.")
