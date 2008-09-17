@@ -22,6 +22,7 @@
 #include "term.h"
 
 #include <QtCore/QRegExp>
+#include <QtCore/QSet>
 
 #include <KDebug>
 #include <KLocale>
@@ -133,16 +134,22 @@ Nepomuk::Search::Query Nepomuk::Search::QueryParser::parseQuery( const QString& 
 class Nepomuk::Search::QueryParser::Private
 {
 public:
-    QString andKeyword;
-    QString orKeyword;
+    QSet<QString> andKeywords;
+    QSet<QString> orKeywords;
 };
 
 
 Nepomuk::Search::QueryParser::QueryParser()
     : d( new Private() )
 {
-    d->andKeyword = i18nc( "and keyword in desktop search strings", "and" );
-    d->orKeyword = i18nc( "or keyword in desktop search strings", "or" );
+    QString andListStr = i18nc( "Boolean AND keyword in desktop search strings. You can add several variants separated by spaces, e.g. retain the English one alongside the translation; keywords are not case sensitive. Make sure there is no conflict with the OR keyword.", "and" );
+    foreach ( const QString &andKeyword, andListStr.split( " ", QString::SkipEmptyParts ) ) {
+        d->andKeywords.insert( andKeyword.toLower() );
+    }
+    QString orListStr = i18nc( "Boolean OR keyword in desktop search strings. You can add several variants separated by spaces, e.g. retain the English one alongside the translation; keywords are not case sensitive. Make sure there is no conflict with the AND keyword.", "or" );
+    foreach ( const QString &orKeyword, orListStr.split( " ", QString::SkipEmptyParts ) ) {
+        d->orKeywords.insert( orKeyword.toLower() );
+    }
 }
 
 
@@ -218,10 +225,10 @@ Nepomuk::Search::Query Nepomuk::Search::QueryParser::parse( const QString& query
             else if ( s_plainTermRx.indexIn( query, pos ) == pos ) {
                 // FIXME: honour the +-
                 QString value = stripQuotes( s_plainTermRx.cap( 2 ) );
-                if ( value.length() == d->orKeyword.length() && value.toLower() == d->orKeyword ) {
+                if ( d->orKeywords.contains( value.toLower() ) ) {
                     inOrBlock = true;
                 }
-                else if ( value.length() == d->andKeyword.length() && value.toLower() == d->andKeyword ) {
+                else if ( d->andKeywords.contains( value.toLower() ) ) {
                     inAndBlock = true;
                 }
                 else {
