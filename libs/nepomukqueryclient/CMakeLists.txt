@@ -25,7 +25,7 @@ if(BUILDING_WORKSPACE_SEPARATELY)
     PATH_SUFFIXES / /dbus-1/interfaces/
     )
   if(NOT QUERY_INTERFACE)
-    message(ERROR "Could not find org.kde.nepomuk.Query.xml. Is kdebase-runtime installed?")
+    message(FATAL_ERROR "Could not find org.kde.nepomuk.Query.xml. Is kdebase-runtime installed?")
   endif(NOT QUERY_INTERFACE)
 
   find_file(QUERYSERVICE_INTERFACE
@@ -34,7 +34,7 @@ if(BUILDING_WORKSPACE_SEPARATELY)
     PATH_SUFFIXES / /dbus-1/interfaces/
     )
   if(NOT QUERYSERVICE_INTERFACE)
-    message(ERROR "Could not find org.kde.nepomuk.QueryService.xml. Is kdebase-runtime installed?")
+    message(FATAL_ERROR "Could not find org.kde.nepomuk.QueryService.xml. Is kdebase-runtime installed?")
   endif(NOT QUERYSERVICE_INTERFACE)
 else(BUILDING_WORKSPACE_SEPARATELY)
   set(QUERY_INTERFACE ${nepomuk_interfaces_SOURCE_DIR}/org.kde.nepomuk.Query.xml)
