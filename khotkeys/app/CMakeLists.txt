@@ -1,22 +1,26 @@
 ########### next target ###############
 
-set(kded_khotkeys_PART_SRCS kded.cpp )
+set(kded_khotkeys_PART_SRCS kded.cpp)
 
+# Generate the Dbus interface definition file
 qt4_add_dbus_adaptor(kded_khotkeys_PART_SRCS org.kde.khotkeys.xml kded.h KHotKeysModule)
 
 kde4_add_plugin(kded_khotkeys ${kded_khotkeys_PART_SRCS})
-install(FILES org.kde.khotkeys.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR})
 
-target_link_libraries(kded_khotkeys khotkeysprivate kworkspace ${KDE4_KDE3SUPPORT_LIBS} )
+target_link_libraries(kded_khotkeys khotkeysprivate kworkspace ${KDE4_KDE3SUPPORT_LIBS})
+
+# I'm not sure if this is needed anymore. Check it
 if(X11_XTest_FOUND)
-    target_link_libraries(kded_khotkeys ${X11_XTest_LIB} )
+    target_link_libraries(kded_khotkeys ${X11_XTest_LIB})
 endif(X11_XTest_FOUND)
-
-install(TARGETS kded_khotkeys  DESTINATION ${PLUGIN_INSTALL_DIR} )
 
 
 ########### install files ###############
 
-install( FILES khotkeys.desktop  DESTINATION  ${SERVICES_INSTALL_DIR}/kded )
+install(TARGETS kded_khotkeys  DESTINATION ${PLUGIN_INSTALL_DIR})
+
+install(FILES khotkeys.desktop DESTINATION  ${SERVICES_INSTALL_DIR}/kded)
+
+install(FILES org.kde.khotkeys.xml DESTINATION ${DBUS_INTERFACES_INSTALL_DIR})
 
 
