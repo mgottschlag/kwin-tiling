@@ -38,6 +38,7 @@ Name[x-test]=xxKHotKeysxx
 Name[zh_TW]=KDE 熱鍵
 Comment=KHotKeys daemon. No daemon, no hotkeys.
 Comment[gl]=Daemon KHotKey. Se non funciona o daemon, non hai hotkeys.
+Comment[km]=ដេមិន KHotKeys ។ គ្មាន​ដេមិន គ្មាន​ hotkeys ។
 Comment[nds]=KHotKeys-Dämoon. Keen Dämoon, keen Ingaavakschonen.
 Comment[pt]=Servidor do KHotKeys. Sem servidor, não existem teclas especiais.
 Comment[pt_BR]=Servidor do KHotKeys. Sem servidor, não existem teclas especiais.
