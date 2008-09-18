@@ -126,11 +126,9 @@ ActionDataBase* ActionDataBase::create_cfg_read( KConfigGroup& cfg_P, ActionData
         {
         if( cfg_P.readEntry( "AllowMerge", false ))
             {
-            for( ActionDataGroup::ConstIterator it = parent_P->first_child();
-                 it != parent_P->after_last_child();
-                 ++it )
+            Q_FOREACH(ActionDataBase *child,parent_P->children())
                 {
-                if( ActionDataGroup* existing = dynamic_cast< ActionDataGroup* >( *it ))
+                if( ActionDataGroup* existing = dynamic_cast< ActionDataGroup* >(child))
                     {
                     if( cfg_P.readEntry( "Name" ) == existing->name())
                         return existing;

@@ -64,12 +64,16 @@ class KDE_EXPORT ActionDataGroup
         virtual ~ActionDataGroup();
         virtual void update_triggers();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
-        typedef QList< ActionDataBase* >::iterator Iterator;
-        typedef QList< ActionDataBase* >::const_iterator ConstIterator;
-        ConstIterator first_child() const;
-        ConstIterator after_last_child() const;
-        int child_count() const;
 
+        /**
+         * Get a shallow copy of the list of children.
+         */
+        const QList<ActionDataBase*> children() const;
+
+        /**
+         * Number of childrens.
+         */
+        int size() const;
 
         /**
          * @reimp

@@ -280,18 +280,16 @@ int Settings::write_actions_recursively_v2( KConfigGroup& cfg_P, ActionDataGroup
     int cnt = 0;
     if( parent_P )
         {
-        for( ActionDataGroup::ConstIterator it = parent_P->first_child();
-            it != parent_P->after_last_child();
-             ++it )
+        Q_FOREACH(ActionDataBase *child,parent_P->children())
             {
             ++cnt;
-            if( enabled_P && (*it)->enabled( true ))
+            if( enabled_P && child->enabled( true ))
                 ++enabled_cnt;
             KConfigGroup itConfig( cfg_P.config(), save_cfg_group + '_' + QString::number( cnt ));
-            ( *it )->cfg_write( itConfig );
-            ActionDataGroup* grp = dynamic_cast< ActionDataGroup* >( *it );
+            child->cfg_write( itConfig );
+            ActionDataGroup* grp = dynamic_cast< ActionDataGroup* >(child);
             if( grp != NULL )
-                enabled_cnt += write_actions_recursively_v2( itConfig, grp, enabled_P && (*it)->enabled( true ));
+                enabled_cnt += write_actions_recursively_v2( itConfig, grp, enabled_P && child->enabled( true ));
             }
         }
     cfg_P.writeEntry( "DataCount", cnt );
@@ -330,11 +328,9 @@ void Settings::read_settings_v1( KConfig& cfg_P )
     KConfigGroup mainGroup( &cfg_P, "Main" );
     int sections = mainGroup.readEntry( "Num_Sections", 0 );
     ActionDataGroup* menuentries = NULL;
-    for( ActionDataGroup::ConstIterator it = m_actions->first_child();
-         it != m_actions->after_last_child();
-         ++it )
+    Q_FOREACH(ActionDataBase *child, m_actions->children())
         {
-        ActionDataGroup* tmp = dynamic_cast< ActionDataGroup* >( *it );
+        ActionDataGroup* tmp = dynamic_cast< ActionDataGroup* >(child);
         if( tmp == NULL )
             continue;
         if( tmp->system_group() == ActionDataGroup::SYSTEM_MENUENTRIES )

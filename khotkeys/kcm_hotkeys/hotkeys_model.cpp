@@ -54,13 +54,13 @@ QModelIndex KHotkeysModel::addGroup( const QModelIndex & parent )
         }
     Q_ASSERT(list);
 
-    beginInsertRows( parent, list->child_count(), list->child_count() );
+    beginInsertRows( parent, list->size(), list->size() );
 
     /* KHotKeys:: ActionDataGroup *action = */
     new KHotKeys::ActionDataGroup( list, i18n("New Group"), i18n("Comment"));
 
     endInsertRows();
-    return index( list->child_count()-1, NameColumn, parent );
+    return index( list->size()-1, NameColumn, parent );
     }
 
 
@@ -80,12 +80,12 @@ QModelIndex KHotkeysModel::insertActionData(  KHotKeys::ActionDataBase *data, co
         }
     Q_ASSERT(list);
 
-    beginInsertRows( parent, list->child_count(), list->child_count() );
+    beginInsertRows( parent, list->size(), list->size() );
 
     data->reparent(list);
 
     endInsertRows();
-    return index( list->child_count()-1, NameColumn, parent );
+    return index( list->size()-1, NameColumn, parent );
     }
 
 

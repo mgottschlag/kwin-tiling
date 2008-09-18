@@ -58,18 +58,6 @@ ActionDataGroup::~ActionDataGroup()
     }
 
 
-ActionDataGroup::ConstIterator ActionDataGroup::first_child() const
-    {
-    return _list.begin();
-    }
-
-
-ActionDataGroup::ConstIterator ActionDataGroup::after_last_child() const
-    {
-    return _list.end();
-    }
-
-
 bool ActionDataGroup::is_system_group() const
     {
     return _system_group != SYSTEM_NONE;
@@ -90,12 +78,6 @@ void ActionDataGroup::add_child(ActionDataBase* child_P)
     }
 
 
-int ActionDataGroup::child_count() const
-    {
-    return _list.size();
-    }
-
-
 void ActionDataGroup::aboutToBeErased()
     {
     Q_FOREACH( ActionDataBase *child, _list)
@@ -105,9 +87,21 @@ void ActionDataGroup::aboutToBeErased()
     }
 
 
+const QList<ActionDataBase*> ActionDataGroup::children() const
+    {
+    return _list;
+    }
+
+
 void ActionDataGroup::remove_child( ActionDataBase* child_P )
     {
     _list.removeAll( child_P ); // is not auto-delete
+    }
+
+
+int ActionDataGroup::size() const
+    {
+    return _list.size();
     }
 
 
@@ -122,10 +116,10 @@ void ActionDataGroup::cfg_write( KConfigGroup& cfg_P ) const
 
 void ActionDataGroup::update_triggers()
     {
-    for( ActionDataGroup::ConstIterator it = first_child();
-         it != after_last_child();
-         ++it )
-        ( *it )->update_triggers();
+    Q_FOREACH(ActionDataBase *child, children())
+        {
+        child->update_triggers();
+        }
     }
 
 
