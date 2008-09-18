@@ -9,6 +9,7 @@ set(taskmanager_LIB_SRCS
    taskmanager.cpp
    taskgroup.cpp
    taskitem.cpp
+   taskrmbmenu.cpp
    abstractgroupableitem.cpp
    groupmanager.cpp
    taskactions.cpp
