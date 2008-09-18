@@ -73,6 +73,7 @@ class Battery : public Plasma::PopupApplet
         void batteryAnimationUpdate(qreal progress);
         void sourceAdded(const QString &source);
         void sourceRemoved(const QString &source);
+        void brightnessChanged(const int brightness);
 
     private:
         Q_ENUMS( m_batteryStyle )

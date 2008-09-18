@@ -37,6 +37,8 @@
 #include <KConfigDialog>
 #include <KGlobalSettings>
 
+#include <solid/control/powermanager.h>
+
 #include <plasma/svg.h>
 #include <plasma/theme.h>
 #include <plasma/animator.h>
@@ -111,6 +113,10 @@ void Battery::init()
     dataUpdated(I18N_NOOP("AC Adapter"), dataEngine("powermanagement")->query(I18N_NOOP("AC Adapter")));
     m_numOfBattery = battery_sources.size();
     kDebug() << battery_sources.size();
+
+    kDebug() << "SOLID" << Solid::Control::PowerManager::brightness();
+    kDebug() << "SOLID" << Solid::Control::PowerManager::scheme();
+
 
     new Plasma::Extender(this);
     extender()->setEmptyExtenderMessage(i18n("no running jobs..."));
@@ -279,6 +285,11 @@ Battery::~Battery()
 {
 }
 
+void Battery::brightnessChanged(const int brightness)
+{
+    Solid::Control::PowerManager::setBrightness(brightness);
+}
+
 QGraphicsWidget *Battery::graphicsWidget()
 {
     kDebug();
@@ -297,12 +308,21 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
     Plasma::Label *brightnessLabel = new Plasma::Label(controls);
     brightnessLabel->setText(i18n("Adjust Brightness"));
     brightnessLabel->nativeWidget()->setWordWrap(false);
+
     controlsLayout->addItem(brightnessLabel);
 
     Plasma::Slider *brightnessSlider = new Plasma::Slider(controls);
-    brightnessSlider->setRange(0, 10);
-    brightnessSlider->nativeWidget()->setTickInterval(2);
+    brightnessSlider->setRange(0, 100);
+    brightnessSlider->setValue(Solid::Control::PowerManager::brightness());
+    brightnessSlider->nativeWidget()->setTickInterval(10);
     brightnessSlider->setOrientation(Qt::Horizontal);
+
+    connect(brightnessSlider, SIGNAL(valueChanged(int)),
+            this, SLOT(brightnessChanged(int)));
+
+    // TODO: update slider when brightness changes
+    //connect(Solid::Control::PowerManager, SIGNAL(brightnessChanged(int)),
+    //        brightnessSlider, SLOT(setValue(int)));
 
     controlsLayout->addItem(brightnessSlider);
     brightnessLabel->nativeWidget()->setWordWrap(false);
@@ -311,8 +331,6 @@ void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 
     item->setWidget(controls);
     item->setTitle(i18n("Power Management"));
-
-
 }
 
 void Battery::showLabel(bool show)
