@@ -19,8 +19,8 @@
 
 #include "shortcut_trigger_widget.h"
 
-#include "action_data.h"
-#include "triggers.h"
+#include "action_data/action_data.h"
+#include "triggers/triggers.h"
 
 #include <QtGui/QKeySequence>
 

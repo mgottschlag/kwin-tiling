@@ -56,7 +56,7 @@ class KDE_EXPORT ActionDataGroup
             ActionDataGroup* parent_P,
             const QString& name_P,
             const QString& comment_P,
-            Condition_list* conditions_P = 0,
+            Condition_list* conditions_P = NULL,
             system_group_t system_group_P = SYSTEM_NONE,
             bool enabled_P = false );
 

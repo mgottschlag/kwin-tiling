@@ -12,8 +12,9 @@
 
 #include "settings.h"
 
-#include "menuentry_shortcut_action_data.h"
-#include "command_url_shortcut_action_data.h"
+#include "action_data/action_data.h"
+#include "action_data/menuentry_shortcut_action_data.h"
+#include "action_data/command_url_shortcut_action_data.h"
 
 #include <kconfig.h>
 #include <kconfiggroup.h>
@@ -23,9 +24,8 @@
 #include <kglobal.h>
 #include <kmessagebox.h>
 
-#include "triggers.h"
-#include "conditions.h"
-#include "action_data.h"
+#include "triggers/triggers.h"
+#include "conditions/conditions.h"
 
 namespace KHotKeys
 {

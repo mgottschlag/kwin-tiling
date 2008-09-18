@@ -22,7 +22,7 @@
 #include "hotkeys_widget_iface.h"
 
 #include "libkhotkeysfwd.h"
-#include "triggers.h"
+#include "triggers/triggers.h"
 
 
 /**

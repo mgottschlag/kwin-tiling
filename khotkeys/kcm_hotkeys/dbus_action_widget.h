@@ -22,7 +22,7 @@
 #include "action_widget_base.h"
 #include "ui_dbus_action_widget.h"
 
-#include "actions.h"
+#include "actions/actions.h"
 
 
 /**

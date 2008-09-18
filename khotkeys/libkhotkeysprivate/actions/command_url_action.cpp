@@ -17,8 +17,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "actions.h"
-#include "action_data.h"
+#include "actions/actions.h"
+#include "action_data/action_data.h"
 
 #include <KDE/KAuthorized>
 #include <KDE/KConfigGroup>

@@ -1,10 +1,8 @@
 
 include_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeysprivate
     ${CMAKE_CURRENT_BINARY_DIR}/libkhotkeysprivate
-    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeysprivate/actions
-    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeysprivate/conditions
-    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeysprivate/triggers
-    ${CMAKE_CURRENT_SOURCE_DIR}/libkhotkeysprivate )
+    )
 
 add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 

@@ -21,8 +21,8 @@
 
 #include "hotkeys_model.h"
 
-#include "actions.h"
-#include "simple_action_data.h"
+#include "actions/actions.h"
+#include "action_data/simple_action_data.h"
 
 #include "KDE/KLocale"
 

@@ -11,7 +11,7 @@
 #ifndef _SETTINGS_H_
 #define _SETTINGS_H_
 
-#include "actions.h"
+#include "actions/actions.h"
 #include <kshortcut.h>
 
 class KConfig;

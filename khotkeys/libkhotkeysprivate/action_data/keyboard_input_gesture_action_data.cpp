@@ -9,8 +9,8 @@
 ****************************************************************************/
 
 #include "keyboard_input_gesture_action_data.h"
-#include "actions.h"
-#include "conditions.h"
+#include "actions/actions.h"
+#include "conditions/conditions.h"
 
 #include <kconfiggroup.h>
 

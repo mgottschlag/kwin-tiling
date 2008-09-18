@@ -10,8 +10,11 @@
 
 #include "kded.h"
 
-#include "action_data_group.h"
-#include "gestures.h"
+#include "action_data/action_data_group.h"
+#include "action_data/menuentry_shortcut_action_data.h"
+#include "actions/actions.h"
+
+#include "triggers/gestures.h"
 #include "settings.h"
 #include "khotkeysadaptor.h"
 

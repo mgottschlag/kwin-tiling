@@ -76,6 +76,8 @@ bool KHotKeys::present()
 
 QString KHotKeys::getMenuEntryShortcut( const QString& entry_P )
 {
+    kDebug();
+
     if( !khotkeys_inited )
         init();
 
@@ -83,13 +85,21 @@ QString KHotKeys::getMenuEntryShortcut( const QString& entry_P )
         return "";
 
     QDBusReply<QString> reply = khotkeysInterface->get_menuentry_shortcut(entry_P);
-    return reply;
+    if (!reply.isValid()) {
+        kError() << reply.error();
+        return "";
+
+    } else {
+        return reply;
+    }
 }
 
 QString KHotKeys::changeMenuEntryShortcut(
         const QString& entry_P,
         const QString shortcut_P )
-    {
+{
+    kDebug();
+
     if( !khotkeys_inited )
         init();
 
@@ -99,8 +109,15 @@ QString KHotKeys::changeMenuEntryShortcut(
     QDBusReply<QString> reply = khotkeysInterface->register_menuentry_shortcut(
             entry_P,
             shortcut_P);
-    return reply;
+
+    if (!reply.isValid()) {
+        kError() << reply.error();
+        return "";
+
+    } else {
+        return reply;
     }
+}
 
 void KHotKeys::menuEntryDeleted( const QString& entry_P )
 {

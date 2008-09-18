@@ -19,7 +19,7 @@
 
 #include "action_group_widget.h"
 
-#include "action_data_group.h"
+#include "action_data/action_data_group.h"
 
 ActionGroupWidget::ActionGroupWidget( QWidget *parent )
     : HotkeysWidgetBase(parent)

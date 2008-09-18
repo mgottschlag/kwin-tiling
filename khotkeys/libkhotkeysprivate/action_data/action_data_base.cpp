@@ -15,8 +15,8 @@
 #include "menuentry_shortcut_action_data.h"
 #include "keyboard_input_gesture_action_data.h"
 
-#include "triggers.h"
-#include "conditions.h"
+#include "triggers/triggers.h"
+#include "conditions/conditions.h"
 
 
 #include <kconfiggroup.h>

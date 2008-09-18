@@ -9,7 +9,7 @@
 ****************************************************************************/
 
 #include "simple_action_data.h"
-#include "actions.h"
+#include "actions/actions.h"
 
 #include <kconfiggroup.h>
 #include <kdebug.h>

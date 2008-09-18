@@ -17,8 +17,8 @@
    Boston, MA 02110-1301, USA.
 */
 
-#include "triggers.h"
-#include "action_data.h"
+#include "triggers/triggers.h"
+#include "action_data/action_data.h"
 #include "windows.h"
 
 #include <KDE/KAction>

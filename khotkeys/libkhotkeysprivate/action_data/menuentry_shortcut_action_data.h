@@ -12,8 +12,8 @@
 #define MENUENTRY_SHORTCUT_ACTION_DATA_H
 
 #include "simple_action_data.h"
-#include "triggers.h"
-#include "actions.h"
+#include "triggers/triggers.h"
+#include "actions/actions.h"
 
 
 namespace KHotKeys {

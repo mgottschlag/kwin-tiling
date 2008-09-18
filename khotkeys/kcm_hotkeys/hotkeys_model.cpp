@@ -19,8 +19,8 @@
 
 #include "hotkeys_model.h"
 
-#include "simple_action_data.h"
-#include "action_data_group.h"
+#include "action_data/simple_action_data.h"
+#include "action_data/action_data_group.h"
 
 #include <typeinfo>
 

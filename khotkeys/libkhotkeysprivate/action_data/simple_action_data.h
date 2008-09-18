@@ -11,10 +11,10 @@
 #ifndef SIMPLE_ACTION_DATA_H
 #define SIMPLE_ACTION_DATA_H
 
-#include "action_data.h"
+#include "action_data/action_data.h"
 
-#include "actions.h"
-#include "triggers.h"
+#include "actions/actions.h"
+#include "triggers/triggers.h"
 
 namespace KHotKeys {
 

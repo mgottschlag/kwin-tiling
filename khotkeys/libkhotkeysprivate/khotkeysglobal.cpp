@@ -18,8 +18,8 @@
 
 #include "input.h"
 #include "windows.h"
-#include "triggers.h"
-#include "gestures.h"
+#include "triggers/triggers.h"
+#include "triggers/gestures.h"
 #include "voices.h"
 #include "shortcuts_handler.h"
 

@@ -8,10 +8,10 @@
  
 ****************************************************************************/
 
-#include "action_data.h"
+#include "action_data/action_data.h"
 
-#include "actions.h"
-#include "triggers.h"
+#include "actions/actions.h"
+#include "triggers/triggers.h"
 
 #include <kconfiggroup.h>
 #include <kdebug.h>
