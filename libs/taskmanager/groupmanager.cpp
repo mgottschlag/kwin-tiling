@@ -99,6 +99,7 @@ GroupManager::GroupManager(QObject *parent)
 GroupManager::~GroupManager()
 {
     delete d->rootGroup;
+    delete d;
 }
 
 void GroupManager::reloadTasks() //TODO optimize: only remove what really is removed readd the rest to update grouping. if (!add(task)){remove(task);} an
