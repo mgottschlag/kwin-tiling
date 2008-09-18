@@ -57,8 +57,16 @@ AbstractGroupingStrategy::~AbstractGroupingStrategy()
     delete d;
 }
 
+void AbstractGroupingStrategy::desktopChanged(int newDesktop)
+{
+    Q_UNUSED(newDesktop)
+}
+
 QList <QAction*> *AbstractGroupingStrategy::strategyActions(QObject *parent, AbstractGroupableItem *item)
 {
+    Q_UNUSED(parent)
+    Q_UNUSED(item)
+
     return 0;
 }
 

@@ -53,7 +53,7 @@ public:
     virtual GroupManager::TaskGroupingStrategy type() const = 0;
 
     /** DesktopChanges time to backup any needed data */
-    virtual void desktopChanged(int newDesktop){};
+    virtual void desktopChanged(int newDesktop);
 
     /** Returns list of actions that a task can do in this groupingStrategy
     *  If the visualisation supports grouping it has to show these actions.
