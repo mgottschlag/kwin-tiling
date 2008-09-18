@@ -37,6 +37,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <kwindowsystem.h>
 #include <netwm.h>
 
+#include <taskmanager/taskmanager_export.h>
+
 namespace TaskManager
 {
 
@@ -52,7 +54,7 @@ typedef QHash<WId, TaskPtr> TaskDict;
  *
  * @see TaskManager
  */
-class KDE_EXPORT Task: public QObject, public KShared
+class TASKMANAGER_EXPORT Task : public QObject, public KShared
 {
     Q_OBJECT
     Q_PROPERTY( QString visibleName READ visibleName )
@@ -435,7 +437,7 @@ private:
  * FIXME: should be folded into the Task class the same way it has been with
  *        AppletInfo and KUrl
  */
-class KDE_EXPORT TaskDrag : public QDrag
+class TASKMANAGER_EXPORT TaskDrag : public QDrag
 {
 public:
     /**

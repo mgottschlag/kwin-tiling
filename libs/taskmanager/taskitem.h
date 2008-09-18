@@ -20,9 +20,9 @@
 #define TASKITEM_H
 
 #include "abstractgroupableitem.h"
-#include "task.h"
 #include "startup.h"
-
+#include "task.h"
+#include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
 {
@@ -31,7 +31,7 @@ namespace TaskManager
 /**
  * Wrapper class so we dont have to use the Task class directly and the TaskPtr remains guarded
  */
-class KDE_EXPORT TaskItem : public AbstractGroupableItem
+class TASKMANAGER_EXPORT TaskItem : public AbstractGroupableItem
 {
     Q_OBJECT
 public:

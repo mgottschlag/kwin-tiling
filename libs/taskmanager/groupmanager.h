@@ -24,10 +24,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef GROUPMANAGER_H
 #define GROUPMANAGER_H
 
+#include <QObject>
+
 #include "abstractgroupableitem.h"
 #include "task.h"
 #include "taskitem.h"
-#include <QObject>
+#include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
 {
@@ -38,7 +40,7 @@ class AbstractGroupingStrategy;
 /**
  * Manages the grouping stuff. It doesn't know anything about grouping and sorting itself, this is done in the grouping and sorting strategies.
  */
-class KDE_EXPORT GroupManager: public QObject
+class TASKMANAGER_EXPORT GroupManager: public QObject
 {
 
 Q_OBJECT

@@ -206,3 +206,6 @@ QList <QIcon> AbstractGroupingStrategy::iconSuggestions(TaskGroup *)
 }
 
 }//namespace
+
+#include "abstractgroupingstrategy.moc"
+

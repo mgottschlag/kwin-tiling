@@ -25,13 +25,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define BASICGROUPINGSTRATEGY_H
 
 #include "abstractgroupingstrategy.h"
+#include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
 {
 /**
  * Returns Basic guesses, not very advanced
  */
-class KDE_EXPORT BasicGroupingStrategy: public AbstractGroupingStrategy
+class TASKMANAGER_EXPORT BasicGroupingStrategy: public AbstractGroupingStrategy
 {
 private:
     BasicGroupingStrategy();

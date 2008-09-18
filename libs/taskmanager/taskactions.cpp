@@ -307,7 +307,7 @@ BasicMenu::BasicMenu(QWidget *parent, GroupPtr task, GroupManager &strategy, boo
 
 }
 
-
-
-
 } // TaskManager namespace
+
+#include "taskactions.moc"
+

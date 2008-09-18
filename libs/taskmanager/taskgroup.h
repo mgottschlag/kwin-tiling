@@ -19,9 +19,10 @@
 #ifndef TASKGROUP_H
 #define TASKGROUP_H
 
-#include "abstractgroupableitem.h"
-
 #include <QIcon>
+
+#include "abstractgroupableitem.h"
+#include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
 {
@@ -30,7 +31,7 @@ class GroupManager;
 /**
  * TaskGroup, a container for tasks and subgroups
  */
-class KDE_EXPORT TaskGroup : public AbstractGroupableItem
+class TASKMANAGER_EXPORT TaskGroup : public AbstractGroupableItem
 {
     Q_OBJECT
 public:

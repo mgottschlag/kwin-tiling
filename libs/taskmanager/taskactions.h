@@ -25,24 +25,25 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef TASKACTIONS_H
 #define TASKACTIONS_H
 
-// Own
-#include "task.h"
-#include "taskgroup.h"
-#include "taskitem.h"
-#include "groupmanager.h"
-
 // Qt
 #include <QMenu>
 #include <QList>
 #include <QPair>
 #include <QAction>
 
+// Own
+#include "task.h"
+#include "taskgroup.h"
+#include "taskitem.h"
+#include "groupmanager.h"
+#include <taskmanager/taskmanager_export.h>
+
 namespace TaskManager
 {
 
 
 /** Maximize a window or all windows in a group*/
-class KDE_EXPORT MaximizeAction : public QAction
+class TASKMANAGER_EXPORT MaximizeAction : public QAction
 {
     Q_OBJECT
 public:
@@ -51,7 +52,7 @@ public:
 
 
 /** Minimize a window or all windows in a group*/
-class KDE_EXPORT MinimizeAction : public QAction
+class TASKMANAGER_EXPORT MinimizeAction : public QAction
 {
     Q_OBJECT
 public:
@@ -59,7 +60,7 @@ public:
 };
 
 /** Move window to current desktop*/
-class KDE_EXPORT ToCurrentDesktopAction : public QAction
+class TASKMANAGER_EXPORT ToCurrentDesktopAction : public QAction
 {
     Q_OBJECT
 public:
@@ -71,7 +72,7 @@ private:
 };
 
 /** Shade a window or all windows in a group*/
-class KDE_EXPORT ShadeAction : public QAction
+class TASKMANAGER_EXPORT ShadeAction : public QAction
 {
     Q_OBJECT
 public:
@@ -79,7 +80,7 @@ public:
 };
 
 /** Resize a window or all windows in a group*/
-class KDE_EXPORT ResizeAction : public QAction
+class TASKMANAGER_EXPORT ResizeAction : public QAction
 {
     Q_OBJECT
 public:
@@ -87,7 +88,7 @@ public:
 };
 
 /** Move a window or all windows in a group*/
-class KDE_EXPORT MoveAction : public QAction
+class TASKMANAGER_EXPORT MoveAction : public QAction
 {
     Q_OBJECT
 public:
@@ -95,7 +96,7 @@ public:
 };
 
 /** Shade a window or all windows in a group*/
-class KDE_EXPORT CloseAction : public QAction
+class TASKMANAGER_EXPORT CloseAction : public QAction
 {
     Q_OBJECT
 public:
@@ -103,7 +104,7 @@ public:
 };
 
 /** Send a Task to a specific Desktop*/
-class KDE_EXPORT ToDesktopAction : public QAction
+class TASKMANAGER_EXPORT ToDesktopAction : public QAction
 {
     Q_OBJECT
 public:
@@ -117,7 +118,7 @@ private:
 
 
 /** Set a window or all windows in a group to FullScreen*/
-class KDE_EXPORT ViewFullscreenAction : public QAction
+class TASKMANAGER_EXPORT ViewFullscreenAction : public QAction
 {
     Q_OBJECT
 public:
@@ -125,7 +126,7 @@ public:
 };
 
 /** Keep a Window or all windows in a group above the rest */
-class KDE_EXPORT KeepAboveAction : public QAction
+class TASKMANAGER_EXPORT KeepAboveAction : public QAction
 {
     Q_OBJECT
 public:
@@ -133,7 +134,7 @@ public:
 };
 
 /** Keep a Window or all windows in a group below the rest*/
-class KDE_EXPORT KeepBelowAction : public QAction
+class TASKMANAGER_EXPORT KeepBelowAction : public QAction
 {
     Q_OBJECT
 public:
@@ -142,7 +143,7 @@ public:
 
 
 /** Leave current Group*/
-class KDE_EXPORT LeaveGroupAction : public QAction
+class TASKMANAGER_EXPORT LeaveGroupAction : public QAction
 {
     Q_OBJECT
 public:
@@ -157,7 +158,7 @@ private:
 };
 
 /** Remove Group
-class KDE_EXPORT RemoveGroupAction : public QAction
+class TASKMANAGER_EXPORT RemoveGroupAction : public QAction
 {
     Q_OBJECT
 public:
@@ -168,7 +169,7 @@ public:
 
 
 /** The ToDesktop menu */
-class KDE_EXPORT DesktopsMenu : public QMenu
+class TASKMANAGER_EXPORT DesktopsMenu : public QMenu
 {
     Q_OBJECT
 public:
@@ -176,7 +177,7 @@ public:
 };
 
 /** Menu with the actions that the groupingStrategy provides*/
-class KDE_EXPORT GroupingStrategyMenu : public QMenu
+class TASKMANAGER_EXPORT GroupingStrategyMenu : public QMenu
 {
     Q_OBJECT
 public:
@@ -184,7 +185,7 @@ public:
 };
 
 /** The Advanced menu */
-class KDE_EXPORT AdvancedMenu : public QMenu
+class TASKMANAGER_EXPORT AdvancedMenu : public QMenu
 {
     Q_OBJECT
 public:
@@ -192,7 +193,7 @@ public:
 };
 
 /** The standard menu*/
-class KDE_EXPORT BasicMenu : public QMenu
+class TASKMANAGER_EXPORT BasicMenu : public QMenu
 {
     Q_OBJECT
 public:

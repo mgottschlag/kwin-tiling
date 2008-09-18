@@ -24,12 +24,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef ABSTRACTSORTINGSTRATEGY_H
 #define ABSTRACTSORTINGSTRATEGY_H
 
-#include "abstractgroupableitem.h"
-#include "groupmanager.h"
 #include <QObject>
 
 
-
+#include "abstractgroupableitem.h"
+#include "groupmanager.h"
+#include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
 {
@@ -40,7 +40,7 @@ namespace TaskManager
  * Base class for strategies which can be used to
  * automatically sort tasks.
  */
-class KDE_EXPORT AbstractSortingStrategy : public QObject
+class TASKMANAGER_EXPORT AbstractSortingStrategy : public QObject
 {
     Q_OBJECT
 public:
@@ -75,7 +75,7 @@ private:
 };
 
 /** Sorts the tasks alphabetically by programname found in Task::classClass()*/
-class KDE_EXPORT AlphaSortingStrategy : public AbstractSortingStrategy
+class TASKMANAGER_EXPORT AlphaSortingStrategy : public AbstractSortingStrategy
 {
     Q_OBJECT
 public:

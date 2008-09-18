@@ -32,6 +32,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <ksharedptr.h>
 #include <kstartupinfo.h>
 
+#include <taskmanager/taskmanager_export.h>
+
 namespace TaskManager
 {
 
@@ -44,7 +46,7 @@ typedef QVector<StartupPtr> StartupList;
  *
  * @see TaskManager
  */
-class KDE_EXPORT Startup: public QObject, public KShared
+class TASKMANAGER_EXPORT Startup: public QObject, public KShared
 {
     Q_OBJECT
     Q_PROPERTY(QString text READ text)

@@ -315,4 +315,4 @@ bool TaskItem::demandsAttention()
 
 } // TaskManager namespace
 
-//#include "taskitem.moc"
+#include "taskitem.moc"

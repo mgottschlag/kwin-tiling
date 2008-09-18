@@ -504,4 +504,4 @@ bool TaskGroup::demandsAttention()
 
 } // TaskManager namespace
 
-//#include "taskgroup.moc"
+#include "taskgroup.moc"

@@ -1,7 +1,6 @@
 /*****************************************************************
 
-Copyright (c) 2001 Matthias Elter <elter@kde.org>
-Copyright (c) 2001 John Firebaugh <jfirebaugh@kde.org>
+Copyright 2008 Aaron Seigo <aseigo@kde.org
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,54 +21,25 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#ifndef TASKRMBMENU_H
-#define TASKRMBMENU_H
 
-// Own
-#include "task.h"
+#ifndef TASKMANAGER_EXPORT_H
+#define TASKMANAGER_EXPORT_H
 
-// Qt
-#include <QMenu>
-#include <QList>
-#include <QPair>
+/* needed for TASKMANAGER_EXPORT and KDE_IMPORT macros */
+#include <kdemacros.h>
 
-#include <taskmanager/taskmanager_export.h>
+#ifndef TASKMANAGER_EXPORT
+# if defined(MAKE_TASKMANAGER_LIB)
+   /* We are building this library */ 
+#  define TASKMANAGER_EXPORT KDE_EXPORT
+# else
+   /* We are using this library */ 
+#  define TASKMANAGER_EXPORT KDE_IMPORT
+# endif
+#endif
 
-namespace TaskManager
-{
-
-class TASKMANAGER_EXPORT TaskRMBMenu : public QMenu
-{
-	Q_OBJECT
-
-public:
-	explicit TaskRMBMenu(const TaskList&, bool showAll = true, QWidget *parent = 0);
-	explicit TaskRMBMenu(TaskPtr, bool showAll = true, QWidget *parent = 0);
-
-private:
-	void fillMenu(TaskPtr);
-	void fillMenu();
-    QMenu* makeAdvancedMenu(TaskPtr);
-	QMenu* makeDesktopsMenu(TaskPtr);
-	QMenu* makeDesktopsMenu();
-
-private Q_SLOTS:
-	void slotMinimizeAll();
-	void slotMaximizeAll();
-	void slotRestoreAll();
-	void slotShadeAll();
-	void slotCloseAll();
-	void slotAllToDesktop();
-	void slotAllToCurrentDesktop();
-	void slotToDesktop();
-
-private:
-	TaskList tasks;
-	bool showAll;
-	QList< QPair<TaskPtr, int> > toDesktopMap;
-};
-
-} // TaskManager namespace
-
+# ifndef TASKMANAGER_EXPORT_DEPRECATED
+#  define TASKMANAGER_EXPORT_DEPRECATED KDE_DEPRECATED TASKMANAGER_EXPORT
+# endif
 
 #endif

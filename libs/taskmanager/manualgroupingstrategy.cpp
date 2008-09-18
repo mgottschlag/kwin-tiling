@@ -554,5 +554,7 @@ void TaskGroupTemplate::itemDestroyed(AbstractGroupableItem *item)
     }
 }
 
-
 }//namespace
+
+#include "manualgroupingstrategy.moc"
+

@@ -36,6 +36,21 @@ endif (X11_Xcomposite_FOUND)
 set_target_properties(taskmanager PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 install(TARGETS taskmanager ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
-install( FILES task.h startup.h taskmanager.h taskgroup.h taskitem.h abstractgroupableitem.h groupmanager.h taskactions.h abstractgroupingstrategy.h programgroupingstrategy.h manualgroupingstrategy.h abstractsortingstrategy.h DESTINATION ${INCLUDE_INSTALL_DIR}/taskmanager  COMPONENT Devel )
+install(FILES
+   task.h
+   startup.h
+   taskmanager.h
+   taskgroup.h
+   taskitem.h
+   taskmanager_export.h
+   abstractgroupableitem.h
+   groupmanager.h
+   taskactions.h
+   abstractgroupingstrategy.h
+   programgroupingstrategy.h
+   manualgroupingstrategy.h
+   abstractsortingstrategy.h
+   DESTINATION ${INCLUDE_INSTALL_DIR}/taskmanager COMPONENT Devel
+   )
 
 

@@ -28,6 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // Own
 #include "startup.h"
 #include "task.h"
+#include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
 {
@@ -40,7 +41,7 @@ namespace TaskManager
  * @see Task
  * @see Startup
  */
-class KDE_EXPORT TaskManager : public QObject
+class TASKMANAGER_EXPORT TaskManager : public QObject
 {
     Q_OBJECT
     Q_PROPERTY( int currentDesktop READ currentDesktop )

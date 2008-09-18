@@ -24,13 +24,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef ABSTRACTGROUPINGSTRATEGY_H
 #define ABSTRACTGROUPINGSTRATEGY_H
 
-#include "abstractgroupableitem.h"
-#include "groupmanager.h"
-#include "taskgroup.h"
 #include <QObject>
 #include <QMenu>
 
-
+#include "abstractgroupableitem.h"
+#include "groupmanager.h"
+#include "taskgroup.h"
+#include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
 {
@@ -39,7 +39,7 @@ namespace TaskManager
  * Base class for strategies which can be used to
  * automatically group tasks.
  */
-class KDE_EXPORT AbstractGroupingStrategy : public QObject
+class TASKMANAGER_EXPORT AbstractGroupingStrategy : public QObject
 {
     Q_OBJECT
 public:
