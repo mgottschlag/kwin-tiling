@@ -239,24 +239,12 @@ void ClockApplet::init()
     QStringList tzParts = d->timezone.split("/");
     m_prettyTimezone = tzParts.value(1);
 
-    new Plasma::Extender(this);
-
     //avoid duplication
     if (!extender()->item("calendar")) {
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
         eItem->setName("calendar");
         initExtenderItem(eItem);
     }
-}
-
-QGraphicsWidget *ClockApplet::graphicsWidget()
-{
-    if (!extender()) {
-        // in case the subclass didn't call the parent init() properly
-        ClockApplet::init();
-    }
-
-    return extender();
 }
 
 void ClockApplet::setCurrentTimezone(const QString &tz)
