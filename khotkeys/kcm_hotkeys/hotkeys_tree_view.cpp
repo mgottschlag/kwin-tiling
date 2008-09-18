@@ -22,9 +22,11 @@
 #include "hotkeys_model.h"
 
 #include "actions/actions.h"
+#include "action_data/action_data_group.h"
 #include "action_data/simple_action_data.h"
 
 #include "KDE/KLocale"
+#include "KDE/KDebug"
 
 #include <QtCore/QSignalMapper>
 #include <QtGui/QContextMenuEvent>
@@ -37,43 +39,93 @@ HotkeysTreeViewContextMenu::HotkeysTreeViewContextMenu( const QModelIndex &index
     {
     setTitle( i18n("Test") );
 
-    QSignalMapper *mapper = new QSignalMapper(this);
-
     if (index.isValid())
         {
+        // Add the element specific actions
+        KHotKeys::ActionDataBase *element = parent->model()->indexToActionDataBase(index);
+        KHotKeys::ActionDataGroup *group =  parent->model()->indexToActionDataGroup(index);
+        if (!group)
+            {
+            kDebug() << "Going to the parent";
+            group = element->parent();
+            }
+
+        createTriggerMenus(group->allowedTriggerTypes(), group->allowedActionTypes());
+
+        // It is not allowed to create a subgroup for a system group.
+        if (!group->is_system_group())
+            {
+            addAction( i18n("New Group") , this, SLOT(newGroupAction()) );
+            }
+
+        // Global actions
+        addSeparator();
+
         // Item related actions
         addAction( i18n("Delete"), this, SLOT(deleteAction()) );
         }
+    else
+        {
+        createTriggerMenus(KHotKeys::Trigger::AllTypes, KHotKeys::Action::AllTypes);
+        addAction( i18n("New Group") , this, SLOT(newGroupAction()) );
 
-    // Global actions
-    addSeparator();
+        // Global actions
+        addSeparator();
 
-    QMenu *globalShortcut = new QMenu( i18n("New Global Shortcut") );
-
-    mapper->setMapping(
-        globalShortcut->addAction( i18n("Command/URL"), mapper, SLOT(map()) ),
-        KHotKeys::Action::CommandUrlActionType );
-
-    mapper->setMapping(
-        globalShortcut->addAction( i18n("Dbus Command"), mapper, SLOT(map()) ),
-        KHotKeys::Action::DBusActionType );
-
-    mapper->setMapping(
-        globalShortcut->addAction( i18n("K-Menu Entry"), mapper, SLOT(map()) ),
-        KHotKeys::Action::MenuEntryActionType );
-
-    addMenu( globalShortcut );
-    addAction( i18n("New Group") , this, SLOT(newGroupAction()) );
-
-    connect(
-        mapper, SIGNAL(mapped(int)),
-        this, SLOT(newGlobalShortcutActionAction(int)) );
+        // Item related actions
+        addAction( i18n("Delete"), this, SLOT(deleteAction()) );
+        }
     }
 
 
 HotkeysTreeViewContextMenu::~HotkeysTreeViewContextMenu()
     {}
 
+void HotkeysTreeViewContextMenu::createTriggerMenus(
+        KHotKeys::Trigger::TriggerTypes triggerTypes,
+        KHotKeys::Action::ActionTypes actionTypes)
+    {
+    if (triggerTypes & KHotKeys::Trigger::ShortcutTriggerType)
+        {
+        QSignalMapper *mapper = new QSignalMapper(this);
+
+        QMenu *menu = new QMenu( i18n("New Global Shortcut") );
+        populateTriggerMenu(menu, mapper, actionTypes);
+        addMenu(menu);
+
+        connect(
+            mapper, SIGNAL(mapped(int)),
+            this, SLOT(newGlobalShortcutActionAction(int)) );
+        }
+    }
+
+
+void HotkeysTreeViewContextMenu::populateTriggerMenu(
+        QMenu *menu,
+        QSignalMapper *mapper,
+        KHotKeys::Action::ActionTypes types)
+    {
+    if (types & KHotKeys::Action::CommandUrlActionType)
+        {
+        mapper->setMapping(
+            menu->addAction( i18n("Command/URL"), mapper, SLOT(map()) ),
+            KHotKeys::Action::CommandUrlActionType );
+        }
+
+    if (types & KHotKeys::Action::DBusActionType)
+        {
+        mapper->setMapping(
+            menu->addAction( i18n("Dbus Command"), mapper, SLOT(map()) ),
+            KHotKeys::Action::DBusActionType );
+        }
+
+    if (types & KHotKeys::Action::MenuEntryActionType)
+        {
+        mapper->setMapping(
+            menu->addAction( i18n("K-Menu Entry"), mapper, SLOT(map()) ),
+            KHotKeys::Action::MenuEntryActionType );
+        }
+    }
 
 void HotkeysTreeViewContextMenu::newGlobalShortcutActionAction( int actionType )
     {

@@ -58,6 +58,34 @@ ActionDataGroup::~ActionDataGroup()
     }
 
 
+
+Action::ActionTypes ActionDataGroup::allowedActionTypes() const
+    {
+    switch (_system_group)
+        {
+        case SYSTEM_MENUENTRIES:
+            return Action::MenuEntryActionType;
+
+        default:
+            return Action::AllTypes;
+        }
+    }
+
+
+Trigger::TriggerTypes ActionDataGroup::allowedTriggerTypes() const
+    {
+    switch (_system_group)
+        {
+        case SYSTEM_MENUENTRIES:
+            return Trigger::ShortcutTriggerType;
+
+        default:
+            return Trigger::AllTypes;
+        }
+    }
+
+
+
 bool ActionDataGroup::is_system_group() const
     {
     return _system_group != SYSTEM_NONE;

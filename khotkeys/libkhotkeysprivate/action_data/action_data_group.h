@@ -12,6 +12,8 @@
 #define ACTION_DATA_GROUP_H
 
 #include "action_data_base.h"
+#include "actions/actions.h"
+#include "triggers/triggers.h"
 
 #include "QtCore/QList"
 
@@ -64,6 +66,16 @@ class KDE_EXPORT ActionDataGroup
         virtual ~ActionDataGroup();
         virtual void update_triggers();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
+
+        /**
+         * What kind of actions are allowed for this group?
+         */
+        Action::ActionTypes allowedActionTypes() const;
+
+        /**
+         * What kind of trigger are allowed for this group?
+         */
+        Trigger::TriggerTypes allowedTriggerTypes() const;
 
         /**
          * Get a shallow copy of the list of children.

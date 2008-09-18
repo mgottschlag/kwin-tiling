@@ -48,12 +48,17 @@ class KDE_EXPORT Trigger
     Q_DISABLE_COPY( Trigger )
 
     public:
-        enum Type
+
+        enum TriggerType
             {
-            GestureTriggerType,
-            ShortcutTriggerType,
-            WindowTriggerType
+            GestureTriggerType  = 0x01, //!< @see GestureTrigger
+            ShortcutTriggerType = 0x02, //!< @see ShortcutTrigger
+            WindowTriggerType   = 0x04, //!< @see WindowTrigger
+            TriggerListType     = 0x08, //!< @see Trigger_list
+            AllTypes            = 0xFF  //!< All types. For convenience.
             };
+
+        Q_DECLARE_FLAGS(TriggerTypes, TriggerType)
 
         Trigger( ActionData* data_P );
         Trigger( KConfigGroup& cfg_P, ActionData* data_P );
@@ -69,10 +74,17 @@ class KDE_EXPORT Trigger
          */
         virtual void aboutToBeErased();
 
-        virtual Type type() const = 0;
+        /**
+         * The actual type for this trigger
+         */
+        virtual TriggerType type() const = 0;
+
     protected:
         ActionData* const data;
     };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Trigger::TriggerTypes)
+
 
 class KDE_EXPORT Trigger_list
     : public QList< Trigger* >
@@ -125,7 +137,7 @@ class KDE_EXPORT ShortcutTrigger
 
         void set_key_sequence( const QKeySequence &seq );
 
-        virtual Type type() const { return ShortcutTriggerType; }
+        virtual TriggerType type() const { return ShortcutTriggerType; }
 
         /**
          * @reimp
@@ -171,7 +183,7 @@ class KDE_EXPORT WindowTrigger
         bool triggers_on( window_action_t w_action_P ) const;
         virtual void activate( bool activate_P );
 
-        virtual Type type() const { return WindowTriggerType; }
+        virtual TriggerType type() const { return WindowTriggerType; }
     protected: // CHECKME neco private ?
         Windowdef_list* _windows;
         int window_actions;
@@ -203,7 +215,7 @@ class KDE_EXPORT GestureTrigger
         const QString& gesturecode() const;
         virtual void activate( bool activate_P );
 
-        virtual Type type() const { return GestureTriggerType; }
+        virtual TriggerType type() const { return GestureTriggerType; }
     protected Q_SLOTS:
         void handle_gesture( const QString& gesture_P, WId window_P );
     private:
@@ -229,7 +241,7 @@ class KDE_EXPORT Voice_trigger
         virtual void activate( bool activate_P );
         VoiceSignature voicesignature( int ech ) const;
         
-        virtual Type type() const { return SoundTrigger; }
+        virtual TriggerType type() const { return SoundTrigger; }
     public slots:
         void handle_Voice(  );
     private:

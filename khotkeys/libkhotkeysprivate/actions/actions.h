@@ -35,24 +35,80 @@ class KDE_EXPORT Action
 
     public:
 
-        enum Type
+        /**
+         * A enum for all possible action types.
+         *
+         * @see type()
+         */
+        enum ActionType
             {
-            ActivateWindowActionType,
-            CommandUrlActionType,
-            DBusActionType,
-            KeyboardInputActionType,
-            MenuEntryActionType
+            ActivateWindowActionType = 0x01, //!< @see ActivateWindowAction
+            CommandUrlActionType     = 0x02, //!< @see CommandUrlAction
+            DBusActionType           = 0x04, //!< @see DBusAction
+            KeyboardInputActionType  = 0x08, //!< @see KeyboardInputAction
+            MenuEntryActionType      = 0x10, //!< @see MenuEntryAction
+            ActionListType           = 0x11, //!< @see ActionList
+            AllTypes                 = 0xFF  //!< All types. For convenience
             };
 
+        Q_DECLARE_FLAGS(ActionTypes, ActionType)
+
+        /**
+         * Create a action
+         */
         Action( ActionData* data_P );
         Action( KConfigGroup& cfg_P, ActionData* data_P );
+
         virtual ~Action();
+
+        /**
+         * Execute the action.
+         */
         virtual void execute() = 0;
-        virtual Type type() = 0;
+
+        /**
+         * Have a look what's inside.
+         *
+         * @return the type of the action.
+         */
+        virtual ActionType type() = 0;
+
+        /**
+         * Returns a short descriptions of the action.
+         *
+         * The description is generated and can't be set.
+         *
+         * @return a description for this action
+         */
         virtual const QString description() const = 0;
+
+        /**
+         * Write the actions configuration to @p cfg_P.
+         */
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
-        virtual Action* copy( ActionData* data_P ) const = 0;
+
+        /**
+         * Read the configuration from @p cfg_P and create a new action.
+         *
+         * It's is the responsibility of the caller to make sure that @p cfg_P
+         * really holds the configuration for a action. But the code still
+         * tries to be as smart as possible when interpreting that stuff.
+         *
+         * The new actions will have @p parent_P as the parent.
+         *
+         * @param cfg_P the configuration object to read from
+         * @param data_P parent for the new object
+         *
+         * @returns the new action object.
+         */
         static Action* create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P );
+
+        /**
+         * Return a copy of the action. 
+         *
+         * This is a real deep copy.
+         */
+        virtual Action* copy( ActionData* data_P ) const = 0;
 
         /**
          * The action is about to be erased permanently
@@ -60,8 +116,15 @@ class KDE_EXPORT Action
         virtual void aboutToBeErased();
 
     protected:
+
+        /**
+         * The action data corresponding to this action.
+         */
         ActionData* const data;
     };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Action::ActionTypes)
+
 
 class KDE_EXPORT ActionList
     : public QList< Action* >
@@ -101,7 +164,7 @@ class KDE_EXPORT CommandUrlAction
         void set_command_url( const QString &command_url );
         QString command_url() const;
 
-        virtual Type type() { return CommandUrlActionType; }
+        virtual ActionType type() { return CommandUrlActionType; }
         virtual Action* copy( ActionData* data_P ) const;
     protected:
         QTimer timeout;
@@ -125,7 +188,7 @@ class KDE_EXPORT MenuEntryAction
 
         virtual const QString description() const;
         virtual Action* copy( ActionData* data_P ) const;
-        virtual Type type() { return Action::MenuEntryActionType; }
+        virtual ActionType type() { return Action::MenuEntryActionType; }
     private:
         KService::Ptr _service;
     };
@@ -157,7 +220,7 @@ class KDE_EXPORT DBusAction
 
         virtual const QString description() const;
         virtual Action* copy( ActionData* data_P ) const;
-        virtual Type type() { return DBusActionType; }
+        virtual ActionType type() { return DBusActionType; }
     private:
         QString _application; // CHECKME QCString ?
         QString _object;
@@ -184,7 +247,7 @@ class KDE_EXPORT KeyboardInputAction
         bool activeWindow() const;
         virtual const QString description() const;
         virtual Action* copy( ActionData* data_P ) const;
-        virtual Type type() { return KeyboardInputActionType; }
+        virtual ActionType type() { return KeyboardInputActionType; }
     private:
         QString _input;
         const Windowdef_list* _dest_window;
@@ -204,7 +267,7 @@ class KDE_EXPORT ActivateWindowAction
         const Windowdef_list* window() const;
         virtual const QString description() const;
         virtual Action* copy( ActionData* data_P ) const;
-        virtual Type type() { return ActivateWindowActionType; }
+        virtual ActionType type() { return ActivateWindowActionType; }
     private:
         const Windowdef_list* _window;
     };

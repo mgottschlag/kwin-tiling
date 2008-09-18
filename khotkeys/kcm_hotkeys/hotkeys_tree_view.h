@@ -21,10 +21,14 @@
 
 #include "libkhotkeysfwd.h"
 
+#include "triggers/triggers.h"
+#include "actions/actions.h"
 
 #include <QtGui/QMenu>
 #include <QtGui/QTreeView>
 
+
+class QSignalMapper;
 
 class KHotkeysModel;
 
@@ -75,6 +79,13 @@ public:
     HotkeysTreeViewContextMenu( const QModelIndex &index, HotkeysTreeView *parent = 0 );
     virtual ~HotkeysTreeViewContextMenu();
 
+    //! Create a submenu per allowed trigger type
+    void createTriggerMenus(
+        KHotKeys::Trigger::TriggerTypes triggerTypes,
+        KHotKeys::Action::ActionTypes actionTypes);
+
+    //! Populate a trigger menu
+    void populateTriggerMenu(QMenu *menu, QSignalMapper *mapper, KHotKeys::Action::ActionTypes types);
 
 private Q_SLOTS:
 
