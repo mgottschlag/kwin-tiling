@@ -2,7 +2,6 @@
 #define LIBKHOTKEYS_TEST_H
 
 #include <QtCore/QObject>
-#include <QtCore/QDebug>
 
 class Test : public QObject
     {
@@ -10,12 +9,8 @@ class Test : public QObject
 
 private Q_SLOTS:
 
-    // void init() { qDebug() << "!"; };
-    // void cleanup() { qDebug() << "!"; };
-
     void initTestCase();
     void cleanupTestCase();
-
 
     void testLoading();
 

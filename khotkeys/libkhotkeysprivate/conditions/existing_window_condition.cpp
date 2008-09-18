@@ -50,7 +50,7 @@ void Existing_window_condition::set_match( WId w_P )
         is_match = window()->match( Window_data( w_P ));
     else
         is_match = windows_handler->find_window( window()) != None;
-    kDebug( 1217 ) << "Existing_window_condition::set_match :" << is_match;
+    kDebug() << "Existing_window_condition::set_match :" << is_match;
     updated();
     }
 

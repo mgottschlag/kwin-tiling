@@ -58,7 +58,7 @@ void Voice_trigger::cfg_write( KConfigGroup& cfg_P ) const
 
 Trigger* Voice_trigger::copy( ActionData* data_P ) const
     {
-    kDebug( 1217 ) << "Voice_trigger::copy()";
+    kDebug() << "Voice_trigger::copy()";
     return new Voice_trigger( data_P ? data_P : data, voicecode(), voicesignature(1) , voicesignature(2) );
     }
 

@@ -51,7 +51,7 @@ Condition* Condition::create_cfg_read( KConfigGroup& cfg_P, Condition_list_base*
         return new And_condition( cfg_P, parent_P );
     if( type == "OR" )
         return new Or_condition( cfg_P, parent_P );
-    kWarning( 1217 ) << "Unknown Condition type read from cfg file\n";
+    kWarning() << "Unknown Condition type read from cfg file\n";
     return NULL;
     }
 

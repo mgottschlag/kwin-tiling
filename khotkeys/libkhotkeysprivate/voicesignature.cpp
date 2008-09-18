@@ -283,7 +283,7 @@ VoiceSignature::VoiceSignature(const Sound& sound)
 	unsigned int start , stop;
 	if(!window(sound,&start,&stop))
 	{
-		kWarning( 1217 ) << "No voice found in the sound" 	;
+		kWarning() << "No voice found in the sound" 	;
 		return;
 	}
 	
@@ -328,7 +328,7 @@ VoiceSignature::VoiceSignature(const Sound& sound)
 
 	}
 	
-//	kDebug( 1217 ) << "wind: "<< temp_wind << "  - fft: " << temp_fft << "  - moy: " << temp_moy;
+//	kDebug() << "wind: "<< temp_wind << "  - fft: " << temp_fft << "  - moy: " << temp_moy;
 }
 
 

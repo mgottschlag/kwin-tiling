@@ -114,7 +114,7 @@ void Sound::load(const QString& filename)
 
 void Sound::save(const QString& filename) const
 {
-	kDebug( 1217 ) << filename << " - " << data.size() <<  endl;
+	kDebug() << filename << " - " << data.size() <<  endl;
 	QFile file(filename);
 	if(!file.open(IO_WriteOnly))
 	{
@@ -133,7 +133,7 @@ void Sound::save(const QString& filename) const
         SoundData[ (uint)(2*f) ]=   val & 0x00FF;
         SoundData[(uint)(2*f+1)]=  (val & 0xFF00) >> 8;
 		
-//		kDebug( 1217 ) << data.at(f) << " / " << max << " = " << val << "  |  " <<   SoundData[ 2*f ] << " "<< SoundData[ 2*f+1 ] <<  endl;
+//		kDebug() << data.at(f) << " / " << max << " = " << val << "  |  " <<   SoundData[ 2*f ] << " "<< SoundData[ 2*f+1 ] <<  endl;
 	}
 
 	Q_UINT16 NumberOfChannels=2;

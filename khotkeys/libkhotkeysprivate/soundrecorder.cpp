@@ -38,7 +38,7 @@ bool SoundRecorder::init( KLibrary* lib )
     if( create_fun == NULL && lib != NULL )
         create_fun = (create_ptr) lib->symbol( "khotkeys_soundrecorder_create" );
 #endif
-//    kDebug( 1217 ) << "soundrecorder:" << create_fun << ":" << lib;
+//    kDebug() << "soundrecorder:" << create_fun << ":" << lib;
     return create_fun != NULL;
 }
 

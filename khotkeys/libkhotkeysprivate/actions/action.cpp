@@ -60,7 +60,7 @@ Action* Action::create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P )
         return new KeyboardInputAction( cfg_P, data_P );
     if( type == "ACTIVATE_WINDOW" )
         return new ActivateWindowAction( cfg_P, data_P );
-    kWarning( 1217 ) << "Unknown Action type read from cfg file\n";
+    kWarning() << "Unknown Action type read from cfg file\n";
     return NULL;
     }
 

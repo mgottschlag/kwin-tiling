@@ -66,7 +66,7 @@ Trigger* Trigger::create_cfg_read( KConfigGroup& cfg_P, ActionData* data_P )
         return new Voice_trigger (cfg_P, data_P );
 #endif
 
-    kWarning( 1217 ) << "Unknown Trigger type read from cfg file\n";
+    kWarning() << "Unknown Trigger type read from cfg file\n";
     return NULL;
     }
 

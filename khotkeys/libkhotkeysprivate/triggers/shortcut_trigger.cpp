@@ -124,7 +124,7 @@ void ShortcutTrigger::cfg_write( KConfigGroup& cfg_P ) const
 
 ShortcutTrigger* ShortcutTrigger::copy( ActionData* data_P ) const
     {
-    kDebug( 1217 ) << "Shortcut_trigger::copy()";
+    kDebug() << "Shortcut_trigger::copy()";
     return new ShortcutTrigger( data_P ? data_P : data, shortcut(), QUuid::createUuid());
     }
 

@@ -57,7 +57,7 @@ Gesture::Gesture( bool /*enabled_P*/, QObject* parent_P )
 
 Gesture::~Gesture()
     {
-    qDebug() << "Deleting Gesture";
+    kDebug() << "Deleting Gesture";
     enable( false );
     }
 
@@ -129,7 +129,7 @@ void Gesture::unregister_handler( QObject* receiver_P, const char* slot_P )
 
 bool Gesture::x11Event( XEvent* ev_P )
     {
-/*		kDebug(1217) << "   ( type = " << ev_P->type << " )" << KeyRelease << " " << KeyPress ;
+/*		kDebug() << "   ( type = " << ev_P->type << " )" << KeyRelease << " " << KeyPress ;
 		if( ev_P->type == XKeyPress || ev_P->type == XKeyRelease )
 		{
 			return voice_handler->x11Event( ev_P );
@@ -137,7 +137,7 @@ bool Gesture::x11Event( XEvent* ev_P )
 		
     if( ev_P->type == ButtonPress && ev_P->xbutton.button == button )
         {
-        kDebug( 1217 ) << "GESTURE: mouse press";
+        kDebug() << "GESTURE: mouse press";
         stroke.reset();
         stroke.record( ev_P->xbutton.x, ev_P->xbutton.y );
         nostroke_timer.start( timeout );
@@ -155,13 +155,13 @@ bool Gesture::x11Event( XEvent* ev_P )
         QString gesture( stroke.translate());
         if( gesture.isEmpty())
             {
-            kDebug( 1217 ) << "GESTURE: replay";
+            kDebug() << "GESTURE: replay";
             XAllowEvents( QX11Info::display(), AsyncPointer, CurrentTime );
             XUngrabPointer( QX11Info::display(), CurrentTime );
             mouse_replay( true );
             return true;
             }
-        kDebug( 1217 ) << "GESTURE: got: " << gesture;
+        kDebug() << "GESTURE: got: " << gesture;
         emit handle_gesture( gesture, windows_handler->window_at_position( start_x, start_y ));
         return true;
         }
@@ -179,7 +179,7 @@ bool Gesture::x11Event( XEvent* ev_P )
 
 void Gesture::stroke_timeout()
     {
-    kDebug( 1217 ) << "GESTURE: timeout";
+    kDebug() << "GESTURE: timeout";
     XAllowEvents( QX11Info::display(), AsyncPointer, CurrentTime );
     XUngrabPointer( QX11Info::display(), CurrentTime );
     mouse_replay( false );
@@ -221,11 +221,11 @@ void Gesture::grab_mouse( bool grab_P )
                 ButtonPressMask | ButtonReleaseMask | mask[ button ], GrabModeAsync, GrabModeAsync,
                 None, None );
         bool err = handler.error( true );
-        kDebug( 1217 ) << "Gesture grab:" << err;
+        kDebug() << "Gesture grab:" << err;
         }
     else
         {
-        kDebug( 1217 ) << "Gesture ungrab";
+        kDebug() << "Gesture ungrab";
         XUngrabButton( QX11Info::display(), button, AnyModifier, QX11Info::appRootWindow());
         }
     }

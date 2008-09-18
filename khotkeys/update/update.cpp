@@ -59,7 +59,7 @@ int main( int argc, char* argv[] )
         {
         org::kde::khotkeys iface("org.kde.khotkeys", "/modules/khotkeys", bus);
         iface.reread_configuration();
-        kDebug( 1217 ) << "telling khotkeys daemon to reread configuration";
+        kDebug() << "telling khotkeys daemon to reread configuration";
         }
     return 0;
     }

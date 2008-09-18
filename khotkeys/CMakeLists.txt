@@ -4,7 +4,7 @@ include_directories(
     ${CMAKE_CURRENT_BINARY_DIR}/libkhotkeysprivate
     )
 
-add_definitions (-DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
+add_definitions(-DKDE_DEFAULT_DEBUG_AREA=1217 -DQT3_SUPPORT -DQT3_SUPPORT_WARNINGS)
 
 # Convenience library
 add_subdirectory( libkhotkeysprivate )

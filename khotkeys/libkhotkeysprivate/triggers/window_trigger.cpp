@@ -40,7 +40,7 @@ WindowTrigger::WindowTrigger( ActionData* data_P, Windowdef_list* windows_P,
 WindowTrigger::WindowTrigger( KConfigGroup& cfg_P, ActionData* data_P )
     : Trigger( cfg_P, data_P ), active( false )
     {
-//    kDebug( 1217 ) << "WindowTrigger";
+//    kDebug() << "WindowTrigger";
     KConfigGroup windowsConfig( cfg_P.config(), cfg_P.name() + "Windows" );
     _windows = new Windowdef_list( windowsConfig );
     window_actions = cfg_P.readEntry( "WindowActions",0 );
@@ -50,14 +50,14 @@ WindowTrigger::WindowTrigger( KConfigGroup& cfg_P, ActionData* data_P )
 
 WindowTrigger::~WindowTrigger()
     {
-//    kDebug( 1217 ) << "~WindowTrigger :" << this;
+//    kDebug() << "~WindowTrigger :" << this;
     disconnect( windows_handler, NULL, this, NULL );
     delete _windows;
     }
 
 void WindowTrigger::init()
     {
-    kDebug( 1217 ) << "WindowTrigger::init()";
+    kDebug() << "WindowTrigger::init()";
     connect( windows_handler, SIGNAL( window_added( WId )), this, SLOT( window_added( WId )));
     connect( windows_handler, SIGNAL( window_removed( WId )), this, SLOT( window_removed( WId )));
     if( window_actions & ( WINDOW_ACTIVATES | WINDOW_DEACTIVATES /*| WINDOW_DISAPPEARS*/ ))
@@ -93,7 +93,7 @@ void WindowTrigger::active_window_changed( WId window_P )
         windows_handler->set_action_window( window_P );
         data->execute();
         }
-    kDebug( 1217 ) << "WindowTrigger::a_w_changed() : " << was_match << "|" << matches;
+    kDebug() << "WindowTrigger::a_w_changed() : " << was_match << "|" << matches;
     last_active_window = window_P;
     }
 
@@ -124,7 +124,7 @@ void WindowTrigger::window_added( WId window_P )
     {
     bool matches = windows()->match( Window_data( window_P ));
     existing_windows[ window_P ] = matches;
-    kDebug( 1217 ) << "WindowTrigger::w_added() : " << matches;
+    kDebug() << "WindowTrigger::w_added() : " << matches;
     if( active && matches && ( window_actions & WINDOW_APPEARS ))
         {
         windows_handler->set_action_window( window_P );
@@ -138,7 +138,7 @@ void WindowTrigger::window_removed( WId window_P )
     if( existing_windows.contains( window_P ))
         {
         bool matches = existing_windows[ window_P ];
-        kDebug( 1217 ) << "WindowTrigger::w_removed() : " << matches;
+        kDebug() << "WindowTrigger::w_removed() : " << matches;
         if( active && matches && ( window_actions & WINDOW_DISAPPEARS ))
             {
             windows_handler->set_action_window( window_P );
@@ -148,7 +148,7 @@ void WindowTrigger::window_removed( WId window_P )
         // CHECKME jenze co kdyz se window_removed zavola pred active_window_changed ?
         }
     else
-        kDebug( 1217 ) << "WindowTrigger::w_removed()";
+        kDebug() << "WindowTrigger::w_removed()";
     }
 
 
@@ -158,7 +158,7 @@ void WindowTrigger::window_changed( WId window_P, unsigned int dirty_P )
       // CHECKME kdyz se zmeni okno z match na non-match, asi to nebrat jako DISAPPEAR
     if( ! ( dirty_P & ( NET::WMName | NET::WMWindowType )))
         return;
-    kDebug( 1217 ) << "WindowTrigger::w_changed()";
+    kDebug() << "WindowTrigger::w_changed()";
     bool was_match = false;
     if( existing_windows.contains( window_P ))
         was_match = existing_windows[ window_P ];
@@ -177,7 +177,7 @@ void WindowTrigger::window_changed( WId window_P, unsigned int dirty_P )
             data->execute();
             }
         }
-    kDebug( 1217 ) << "WindowTrigger::w_changed() : " << was_match << "|" << matches;
+    kDebug() << "WindowTrigger::w_changed() : " << was_match << "|" << matches;
     }
 
 

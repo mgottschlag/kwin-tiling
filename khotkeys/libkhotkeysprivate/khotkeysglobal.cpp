@@ -96,7 +96,7 @@ bool haveArts()
         have_arts = 0;
         KLibrary* arts = KLibLoader::self()->library( QLatin1String("khotkeys_arts") );
         if( arts == NULL )
-            kDebug( 1217 ) << "Couldn't load khotkeys_arts:" << KLibLoader::self()->lastErrorMessage();
+            kDebug() << "Couldn't load khotkeys_arts:" << KLibLoader::self()->lastErrorMessage();
         if( arts != NULL && SoundRecorder::init( arts ))
             have_arts = 1;
         }

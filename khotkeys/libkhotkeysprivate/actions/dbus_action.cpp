@@ -124,7 +124,7 @@ void DBusAction::execute()
             args_str = nxt_pos >= 0 ? args_str.mid( nxt_pos ) : "";
             }
         }
-    kDebug( 1217 ) << "D-Bus call:" << _application << ":" << _object << ":" << _function << ":" << args_list;
+    kDebug() << "D-Bus call:" << _application << ":" << _object << ":" << _function << ":" << args_list;
     KProcess proc;
     proc << "qdbus" << _application << _object << _function << args_list;
     proc.startDetached();

@@ -33,7 +33,7 @@ ActionData::ActionData( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
 
 ActionData::~ActionData()
     {
-//    kDebug( 1217 ) << "~ActionData" << this;
+//    kDebug() << "~ActionData" << this;
     delete _triggers;
     delete _actions;
     // CHECKME jeste remove z parenta ?
@@ -170,12 +170,12 @@ void ActionData::set_actions( ActionList* actions_P )
 void ActionData::update_triggers()
     {
     bool activate = conditions_match() && enabled( false );
-    kDebug( 1217 ) << "### Update triggers: " << name() << ":" << activate;
+    kDebug() << "### Update triggers: " << name() << ":" << activate;
     for( Trigger_list::Iterator it = _triggers->begin();
          it != _triggers->end();
          ++it )
         {
-//        kDebug( 1217 ) << "Going over the triggers";
+//        kDebug() << "Going over the triggers";
         (*it)->activate( activate );
         }
     }

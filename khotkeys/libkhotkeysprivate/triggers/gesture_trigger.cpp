@@ -66,7 +66,7 @@ void GestureTrigger::cfg_write( KConfigGroup& cfg_P ) const
 
 Trigger* GestureTrigger::copy( ActionData* data_P ) const
     {
-    kDebug( 1217 ) << "GestureTrigger::copy()";
+    kDebug() << "GestureTrigger::copy()";
     return new GestureTrigger( data_P ? data_P : data, gesturecode());
     }
 
