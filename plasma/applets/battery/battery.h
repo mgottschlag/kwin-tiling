@@ -34,6 +34,7 @@
 namespace Plasma
 {
     class Svg;
+    class ExtenderItem;
 }
 
 class Battery : public Plasma::PopupApplet
@@ -64,6 +65,7 @@ class Battery : public Plasma::PopupApplet
     protected:
         void createConfigurationInterface(KConfigDialog *parent);
         QGraphicsWidget *graphicsWidget();
+        void initExtenderItem(Plasma::ExtenderItem *item);
 
     private slots:
         void animationUpdate(qreal progress);

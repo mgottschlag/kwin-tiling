@@ -40,6 +40,8 @@
 #include <plasma/svg.h>
 #include <plasma/theme.h>
 #include <plasma/animator.h>
+#include <plasma/extender.h>
+#include <plasma/extenderitem.h>
 #include <plasma/popupapplet.h>
 #include <plasma/widgets/label.h>
 #include <plasma/widgets/slider.h>
@@ -61,7 +63,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_numOfBattery(0)
 {
     kDebug() << "Loading applet battery";
-    setAcceptsHoverEvents(true);
+    //setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
     setPopupIcon(QIcon());
     resize(128, 128);
@@ -72,6 +74,10 @@ Battery::Battery(QObject *parent, const QVariantList &args)
 
 void Battery::init()
 {
+    new Plasma::Extender(this);
+    extender()->setEmptyExtenderMessage(i18n("no running jobs..."));
+    extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+
     KConfigGroup cg = config();
     m_showBatteryString = cg.readEntry("showBatteryString", false);
     m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", true);
@@ -109,6 +115,12 @@ void Battery::init()
     dataUpdated(I18N_NOOP("AC Adapter"), dataEngine("powermanagement")->query(I18N_NOOP("AC Adapter")));
     m_numOfBattery = battery_sources.size();
     kDebug() << battery_sources.size();
+
+    if (!extender()->item("powermanagement")) {
+        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
+        eItem->setName("powermanagement");
+        initExtenderItem(eItem);
+    }
 }
 
 void Battery::constraintsEvent(Plasma::Constraints constraints)
@@ -271,7 +283,14 @@ Battery::~Battery()
 
 QGraphicsWidget *Battery::graphicsWidget()
 {
-    QGraphicsWidget *controls= new QGraphicsWidget(this);
+    kDebug();
+    return extender();
+}
+
+void Battery::initExtenderItem(Plasma::ExtenderItem *item)
+{
+    kDebug();
+    QGraphicsWidget *controls = new QGraphicsWidget(item);
     QGraphicsLinearLayout *controlsLayout = new QGraphicsLinearLayout(controls);
 
     controlsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -292,7 +311,10 @@ QGraphicsWidget *Battery::graphicsWidget()
 
     controls->setLayout(controlsLayout);
 
-    return controls;
+    item->setWidget(controls);
+    item->setTitle(i18n("Power Management"));
+
+
 }
 
 void Battery::showLabel(bool show)
