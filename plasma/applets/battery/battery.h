@@ -64,7 +64,6 @@ class Battery : public Plasma::PopupApplet
 
     protected:
         void createConfigurationInterface(KConfigDialog *parent);
-        QGraphicsWidget *graphicsWidget();
         void initExtenderItem(Plasma::ExtenderItem *item);
 
     private slots:

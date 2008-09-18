@@ -290,12 +290,6 @@ void Battery::brightnessChanged(const int brightness)
     Solid::Control::PowerManager::setBrightness(brightness);
 }
 
-QGraphicsWidget *Battery::graphicsWidget()
-{
-    kDebug();
-    return extender();
-}
-
 void Battery::initExtenderItem(Plasma::ExtenderItem *item)
 {
     kDebug();
