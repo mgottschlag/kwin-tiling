@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef BASICGROUPINGSTRATEGY_H
 #define BASICGROUPINGSTRATEGY_H
 
-#include "abstractgroupingstrategy.h"
+#include <taskmanager/abstractgroupingstrategy.h>
 #include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
@@ -34,6 +34,8 @@ namespace TaskManager
  */
 class TASKMANAGER_EXPORT BasicGroupingStrategy: public AbstractGroupingStrategy
 {
+    Q_OBJECT
+
 private:
     BasicGroupingStrategy();
 
