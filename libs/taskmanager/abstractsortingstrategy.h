@@ -54,7 +54,7 @@ public:
     virtual GroupManager::TaskSortingStrategy type() const = 0;
 
     /** DesktopChanges time to backup any needed data */
-    virtual void desktopChanged(int newDesktop){};
+    virtual void desktopChanged(int newDesktop);
 
     /** Moves Item to new index*/
     bool moveItem(AbstractPtr, int);
@@ -80,8 +80,7 @@ class TASKMANAGER_EXPORT AlphaSortingStrategy : public AbstractSortingStrategy
     Q_OBJECT
 public:
     AlphaSortingStrategy(QObject *parent);
-    ~AlphaSortingStrategy(){};
-     
+
      /** Returns the strategy type */
     GroupManager::TaskSortingStrategy type() const;
 

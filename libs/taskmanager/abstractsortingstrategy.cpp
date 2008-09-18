@@ -127,6 +127,11 @@ void AbstractSortingStrategy::check(AbstractPtr itemToCheck)
     }
 }
 
+void AbstractSortingStrategy::desktopChanged(int newDesktop)
+{
+    Q_UNUSED(newDesktop)
+}
+
 bool AbstractSortingStrategy::moveItem(AbstractPtr item, int newIndex)
 {
     kDebug() << "move to " << newIndex;
