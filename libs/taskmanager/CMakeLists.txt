@@ -4,20 +4,20 @@
 ########### next target ###############
 
 set(taskmanager_LIB_SRCS
+   abstractgroupableitem.cpp
+   abstractgroupingstrategy.cpp
+   abstractsortingstrategy.cpp
+   groupmanager.cpp
    startup.cpp
+   strategies/programgroupingstrategy.cpp
+   strategies/manualgroupingstrategy.cpp
+   strategies/manualsortingstrategy.cpp
    task.cpp
-   taskmanager.cpp
+   taskactions.cpp
    taskgroup.cpp
    taskitem.cpp
+   taskmanager.cpp
    taskrmbmenu.cpp
-   abstractgroupableitem.cpp
-   groupmanager.cpp
-   taskactions.cpp
-   abstractgroupingstrategy.cpp
-   programgroupingstrategy.cpp
-   manualgroupingstrategy.cpp
-   abstractsortingstrategy.cpp
-   manualsortingstrategy.cpp
    )
 
 kde4_add_library(taskmanager SHARED ${taskmanager_LIB_SRCS})
@@ -37,19 +37,17 @@ set_target_properties(taskmanager PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVE
 install(TARGETS taskmanager ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 install(FILES
-   task.h
+   abstractgroupableitem.h
+   abstractgroupingstrategy.h
+   abstractsortingstrategy.h
+   groupmanager.h
    startup.h
-   taskmanager.h
+   task.h
+   taskactions.h
    taskgroup.h
    taskitem.h
+   taskmanager.h
    taskmanager_export.h
-   abstractgroupableitem.h
-   groupmanager.h
-   taskactions.h
-   abstractgroupingstrategy.h
-   programgroupingstrategy.h
-   manualgroupingstrategy.h
-   abstractsortingstrategy.h
    DESTINATION ${INCLUDE_INSTALL_DIR}/taskmanager COMPONENT Devel
    )
 
