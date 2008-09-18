@@ -74,10 +74,6 @@ Battery::Battery(QObject *parent, const QVariantList &args)
 
 void Battery::init()
 {
-    new Plasma::Extender(this);
-    extender()->setEmptyExtenderMessage(i18n("no running jobs..."));
-    extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-
     KConfigGroup cg = config();
     m_showBatteryString = cg.readEntry("showBatteryString", false);
     m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", true);
@@ -116,11 +112,13 @@ void Battery::init()
     m_numOfBattery = battery_sources.size();
     kDebug() << battery_sources.size();
 
-    if (!extender()->item("powermanagement")) {
-        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-        eItem->setName("powermanagement");
-        initExtenderItem(eItem);
-    }
+    new Plasma::Extender(this);
+    extender()->setEmptyExtenderMessage(i18n("no running jobs..."));
+    extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+
+    Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
+    eItem->setName("powermanagement");
+    initExtenderItem(eItem);
 }
 
 void Battery::constraintsEvent(Plasma::Constraints constraints)
