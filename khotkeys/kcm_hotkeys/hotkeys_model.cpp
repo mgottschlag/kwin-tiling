@@ -26,6 +26,7 @@
 
 #include <KDE/KDebug>
 #include <KDE/KLocale>
+#include <KDE/KIcon>
 
 
 KHotkeysModel::KHotkeysModel( QObject *parent )
@@ -159,8 +160,24 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
             }
         }
 
-        // For everything else
-        return QVariant();
+    // Decoration role
+    if (role==Qt::DecorationRole)
+        {
+        switch (index.column())
+            {
+            case 0:
+                return dynamic_cast<KHotKeys::ActionDataGroup*>(action)
+                    ? KIcon("folder")
+                    : QVariant();
+
+            default: 
+                return QVariant();
+            }
+        }
+
+
+    // For everything else
+    return QVariant();
     }
 
 
