@@ -21,53 +21,51 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ******************************************************************/
 
-#ifndef PROGRAMGROUPINGSTRATEGY_H
-#define PROGRAMGROUPINGSTRATEGY_H
+#ifndef MANUALSORTINGSTRATEGY_H
+#define MANUALSORTINGSTRATEGY_H
 
-#include "abstractgroupingstrategy.h"
-#include "taskgroup.h"
+#include "abstractsortingstrategy.h"
 
 namespace TaskManager
 {
 
-class GroupManager;
-
 /**
- * Groups tasks of the same program
- */
-class KDE_EXPORT ProgramGroupingStrategy: public AbstractGroupingStrategy
+* Manual Sorting
+* If showAllDesktops is enabled the position of the tasks logically changes on all desktops
+* If showAllDesktops is disabled the position only changes per virtual desktop even
+* if the task is on all desktops
+*/
+
+class KDE_EXPORT ManualSortingStrategy : public AbstractSortingStrategy
 {
     Q_OBJECT
 public:
-    ProgramGroupingStrategy(GroupManager *groupManager);
-    ~ProgramGroupingStrategy();
+    ManualSortingStrategy(GroupManager *parent);
+    ~ManualSortingStrategy();
 
-    void handleItem(AbstractPtr);
-    GroupManager::TaskGroupingStrategy type() const;
+    /** Adds group under control of sorting strategy*/
+    //void handleGroup(TaskGroup *);
 
-    /** Returns list of actions that a task can do in this groupingStrategy
-    *  fore example: start/stop group tasks of this program
-    */
-    QList <QAction*> *strategyActions(QObject *parent, AbstractGroupableItem *item);
+     /** Returns the strategy type */
+    GroupManager::TaskSortingStrategy type() const;
 
-    EditableGroupProperties editableGroupProperties(){return None;};
+    /** DesktopChanges, time to backup any needed data */
+    void desktopChanged(int newDesktop);
 
 protected slots:
-    /** Checks if the group is still necessary */
-    void checkGroup();
-private slots:
-    void toggleGrouping();
+     /** Handles a new item*/
+    virtual void handleItem(AbstractPtr);
 
 private:
-    bool programGrouping(TaskItem* taskItem, TaskGroup* groupItem);
+    /** Sorts list of items*/
+    void sortItems(ItemList&);
+
+    void storePositions(TaskGroup *group);
+
     class Private;
     Private * const d;
-
 };
 
 
-}
-
-
-
+} // TaskManager namespace
 #endif

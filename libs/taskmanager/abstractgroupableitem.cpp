@@ -1,7 +1,6 @@
 /*****************************************************************
 
-Copyright (c) 2000-2001 Matthias Elter <elter@kde.org>
-Copyright (c) 2001 Richard Moore <rich@kde.org>
+Copyright 2008 Christian Mollekopf <robertknight@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -124,4 +123,5 @@ bool AbstractGroupableItem::isGroupMember(const GroupPtr group)
 
 } // TaskManager namespace
 
-//#include "abstractgroupableitem.moc"
+#include "abstractgroupableitem.moc"
+

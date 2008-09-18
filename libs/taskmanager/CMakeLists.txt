@@ -3,7 +3,21 @@
 
 ########### next target ###############
 
-set(taskmanager_LIB_SRCS startup.cpp task.cpp taskmanager.cpp taskgroup.cpp taskitem.cpp  abstractgroupableitem.cpp  groupmanager.cpp taskactions.cpp abstractgroupingstrategy.cpp programgroupingstrategy.cpp manualgroupingstrategy.cpp abstractsortingstrategy.cpp)
+set(taskmanager_LIB_SRCS
+   startup.cpp
+   task.cpp
+   taskmanager.cpp
+   taskgroup.cpp
+   taskitem.cpp
+   abstractgroupableitem.cpp
+   groupmanager.cpp
+   taskactions.cpp
+   abstractgroupingstrategy.cpp
+   programgroupingstrategy.cpp
+   manualgroupingstrategy.cpp
+   abstractsortingstrategy.cpp
+   manualsortingstrategy.cpp
+   )
 
 kde4_add_library(taskmanager SHARED ${taskmanager_LIB_SRCS})
 
