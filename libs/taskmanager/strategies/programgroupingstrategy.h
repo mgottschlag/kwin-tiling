@@ -1,6 +1,6 @@
 /*****************************************************************
 
-Copyright 2008 Christian Mollekopf <robertknight@gmail.com>
+Copyright 2008 Christian Mollekopf <chrigi_1@hotmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
