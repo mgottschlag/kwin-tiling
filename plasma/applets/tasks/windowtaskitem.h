@@ -55,7 +55,7 @@ class WindowTaskItem : public QGraphicsWidget
 
 public:
     /** Constructs a new representation for a window task. */
-    WindowTaskItem(Tasks *parent, const bool showTooltip);
+    WindowTaskItem(Tasks *parent, bool showTooltip);
 
     /**Destruct the representation of the window task */
     ~WindowTaskItem();
@@ -127,6 +127,8 @@ signals:
 
 public slots:
     virtual void activate();
+    void toolTipAboutToShow();
+    void toolTipHidden();
 
 protected:
     virtual void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
@@ -172,9 +174,10 @@ protected:
     */
     void drawTextLayout(QPainter *painter, const QTextLayout &layout, const QRect &rect) const;
 
+    void updateToolTip();
 
 private slots:
-    void updateTask();
+    void updateTask(::TaskManager::TaskChanges changes);
     void animationUpdate(qreal progress);
 
 private:
@@ -183,6 +186,7 @@ private:
     QTimer* m_activateTimer;
 
     bool m_showTooltip;
+    bool m_showingTooltip;
     // area of item occupied by task's icon
     QRectF iconRect(const QRectF &bounds) const;
     // area of item occupied by task's text

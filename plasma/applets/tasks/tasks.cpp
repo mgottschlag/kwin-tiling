@@ -141,11 +141,11 @@ void Tasks::registerWindowTasks()
 
     while (iter.hasNext()) {
         iter.next();
-	if ((!iter.value()->isOnCurrentDesktop() && m_showOnlyCurrentDesktop) ||
-	              (!isOnMyScreen(iter.value()) && m_showOnlyCurrentScreen)) {
-	     connect(iter.value().data(),SIGNAL(changed()),
-                           this, SLOT(addAttentionTask()));
-	}
+        if ((!iter.value()->isOnCurrentDesktop() && m_showOnlyCurrentDesktop) ||
+            (!isOnMyScreen(iter.value()) && m_showOnlyCurrentScreen)) {
+            connect(iter.value().data(), SIGNAL(changed(::TaskManager::TaskChanges)),
+                    this, SLOT(addAttentionTask(::TaskManager::TaskChanges)));
+        }
         addWindowTask(iter.value());
     }
     updatePreferredSize();
@@ -577,8 +577,12 @@ void Tasks::themeRefresh()
 
 /** Adds a windowTaskItem that is demanding attention to the taskbar if it is not currently shown and is not on the current desktop.
 *This funtion applies when the m_showOnlyCurrentDesktop or m_showOnlyCurrentScreen switch set. */
-void Tasks::addAttentionTask()
+void Tasks::addAttentionTask(::TaskManager::TaskChanges changes)
 {
+    if (!(changes & TaskManager::StateChanged)) {
+        return;
+    }
+
     TaskPtr task;
     task.attach(qobject_cast<TaskManager::Task*>(sender()));
     if (task->demandsAttention() && !m_windowTaskItems.contains(task)) {

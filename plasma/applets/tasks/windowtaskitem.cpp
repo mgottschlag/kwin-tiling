@@ -45,11 +45,11 @@
 
 #include "tasks.h"
 
-WindowTaskItem::WindowTaskItem(Tasks *parent, const bool showTooltip)
+WindowTaskItem::WindowTaskItem(Tasks *parent, bool showTooltip)
     : QGraphicsWidget(parent),
       m_applet(parent),
       m_activateTimer(0),
-      m_showTooltip(showTooltip),
+      m_showingTooltip(false),
       m_flags(0),
       m_animId(0),
       m_alpha(1),
@@ -58,6 +58,7 @@ WindowTaskItem::WindowTaskItem(Tasks *parent, const bool showTooltip)
       m_attentionTimerId(0),
       m_attentionTicks(0)
 {
+    setShowTooltip(showTooltip);
     setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
@@ -98,6 +99,19 @@ void WindowTaskItem::activate()
     }
 }
 
+void WindowTaskItem::toolTipAboutToShow()
+{
+    m_showingTooltip = true;
+    updateToolTip();
+}
+
+void WindowTaskItem::toolTipHidden()
+{
+    m_showingTooltip = false;
+    Plasma::ToolTipManager::ToolTipContent data;
+    Plasma::ToolTipManager::self()->setToolTipContent(this, data);
+}
+
 void WindowTaskItem::close()
 {
     if (m_task) {
@@ -111,9 +125,8 @@ void WindowTaskItem::setShowTooltip(const bool showit)
     if (showit) {
         Plasma::ToolTipManager::self()->registerWidget(this);
     } else {
-      Plasma::ToolTipManager::self()->unregisterWidget(this);
+        Plasma::ToolTipManager::self()->unregisterWidget(this);
     }
-    updateTask();
 }
 
 void WindowTaskItem::setText(const QString &text)
@@ -534,7 +547,7 @@ void WindowTaskItem::drawTextLayout(QPainter *painter, const QTextLayout &layout
     painter->drawPixmap(rect.topLeft(), pixmap);
 }
 
-void WindowTaskItem::updateTask()
+void WindowTaskItem::updateTask(::TaskManager::TaskChanges changes)
 {
     Q_ASSERT(m_task);
 
@@ -561,23 +574,35 @@ void WindowTaskItem::updateTask()
 
     setTaskFlags(flags);
 
-    // basic title and icon
-    QIcon taskIcon = m_task->icon();
-
-    if (m_showTooltip) {
-      Plasma::ToolTipManager::ToolTipContent data;
-      data.mainText = m_task->visibleName();
-      data.subText = i18nc("Which virtual desktop a window is currently on", "On %1", KWindowSystem::desktopName(m_task->desktop()));
-      data.image = m_task->icon(KIconLoader::SizeSmall, KIconLoader::SizeSmall, false);
-      data.windowToPreview = m_task->window();
-
-      Plasma::ToolTipManager::self()->setToolTipContent(this,data);
+    if (changes & TaskManager::IconChanged) {
+        setIcon(m_task->icon());
     }
 
-    setIcon(taskIcon);
-    setText(m_task->visibleName());
+    if (changes & TaskManager::NameChanged) {
+        setText(m_task->visibleName());
+    }
+
+    if (m_showingTooltip &&
+        (changes & TaskManager::IconChanged ||
+         changes & TaskManager::NameChanged ||
+         changes & TaskManager::DesktopChanged)) {
+        updateToolTip();
+    }
+
     //redraw
     queueUpdate();
+}
+
+void WindowTaskItem::updateToolTip()
+{
+    Plasma::ToolTipManager::ToolTipContent data;
+    data.mainText = m_task->visibleName();
+    data.subText = i18nc("Which virtual desktop a window is currently on", "On %1",
+                         KWindowSystem::desktopName(m_task->desktop()));
+    data.image = m_task->icon(KIconLoader::SizeSmall, KIconLoader::SizeSmall, false);
+    data.windowToPreview = m_task->window();
+
+    Plasma::ToolTipManager::self()->setToolTipContent(this, data);
 }
 
 void WindowTaskItem::animationUpdate(qreal progress)
@@ -615,12 +640,10 @@ void WindowTaskItem::setWindowTask(TaskManager::TaskPtr task)
 
     m_task = task;
 
-    connect(task.constData(), SIGNAL(changed()),
-            this, SLOT(updateTask()));
-    connect(task.constData(), SIGNAL(iconChanged()),
-            this, SLOT(updateTask()));
+    connect(task.constData(), SIGNAL(changed(::TaskManager::TaskChanges)),
+            this, SLOT(updateTask(::TaskManager::TaskChanges)));
 
-    updateTask();
+    updateTask(TaskManager::EverythingChanged);
     publishIconGeometry();
 
     //kDebug() << "Task added, isActive = " << task->isActive();
