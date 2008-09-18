@@ -393,17 +393,17 @@ PanelController::PanelController(QWidget* parent)
     d->modeLabel = new QLabel(i18n("Visibility"), this);
     modeLayout->addWidget(d->modeLabel);
 
-    d->normalPanelTool = d->addTool(QString(), i18n("Always visible"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
+    d->normalPanelTool = d->addTool("checkmark", i18n("Always visible"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
     d->normalPanelTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     modeLayout->addWidget(d->normalPanelTool);
     connect(d->normalPanelTool, SIGNAL(toggled(bool)), this, SLOT(panelModeChanged(bool)));
 
-    d->autoHideTool = d->addTool(QString(), i18n("Auto hide"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
+    d->autoHideTool = d->addTool("video-display", i18n("Auto hide"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
     d->autoHideTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     modeLayout->addWidget(d->autoHideTool);
     connect(d->autoHideTool, SIGNAL(toggled(bool)), this, SLOT(panelModeChanged(bool)));
 
-    d->underWindowsTool = d->addTool(QString(), i18n("Windows can cover"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
+    d->underWindowsTool = d->addTool("view-fullscreen", i18n("Windows can cover"), modeFrame,  Qt::ToolButtonTextBesideIcon, true);
     d->underWindowsTool->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     modeLayout->addWidget(d->underWindowsTool);
     connect(d->underWindowsTool, SIGNAL(toggled(bool)), this, SLOT(panelModeChanged(bool)));
@@ -431,6 +431,7 @@ PanelController::PanelController(QWidget* parent)
     d->optionsDialog = new Plasma::Dialog(this);
     d->optionsDialog->installEventFilter(this);
     d->optDialogLayout = new QVBoxLayout(d->optionsDialog);
+    d->optDialogLayout->setMargin(0);
     d->optDialogLayout->addWidget(alignFrame);
     d->optDialogLayout->addWidget(modeFrame);
 
