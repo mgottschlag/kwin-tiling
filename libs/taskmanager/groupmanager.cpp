@@ -23,15 +23,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "groupmanager.h"
 
-#include <QColor>
-#include <QString>
-#include <QIcon>
-#include <QSet>
 #include <QList>
 #include <KDebug>
 #include <QTimer>
 
-#include <KIcon>
 
 #include "abstractsortingstrategy.h"
 #include "startup.h"

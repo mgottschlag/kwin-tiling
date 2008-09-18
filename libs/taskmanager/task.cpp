@@ -28,6 +28,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // Qt
 #include <QMimeData>
 #include <QTimer>
+#include <QApplication>
+#include <QDesktopWidget>
+
+#ifdef Q_WS_X11
+#include <QX11Info>
+#endif
 
 // KDE
 #include <KDebug>

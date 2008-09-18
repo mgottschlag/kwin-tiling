@@ -31,6 +31,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <KGlobal>
 #include <KLocale>
 
+#ifdef Q_WS_X11
+#include <QX11Info>
+#endif
+#include <QApplication>
+#include <QDesktopWidget>
+
 namespace TaskManager
 {
 

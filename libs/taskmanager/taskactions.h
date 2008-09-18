@@ -26,8 +26,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // Qt
 #include <QMenu>
-#include <QList>
-#include <QPair>
 #include <QAction>
 
 // Own

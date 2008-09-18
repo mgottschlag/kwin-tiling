@@ -28,9 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskmanager.h"
 
 #include <QMap>
-#include <QString>
 #include <QtAlgorithms>
-#include <QList>
 
 #include <KDebug>
 

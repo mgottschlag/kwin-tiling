@@ -26,11 +26,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define TASKMANAGER_P_H
 
 //Qt includes
-#include <QApplication>
-#include <QDesktopWidget>
 #ifdef Q_WS_X11
 
-#include <QX11Info>
 
 #include "config-X11.h"
 

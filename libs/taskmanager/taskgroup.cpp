@@ -30,12 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //#include "abstractsortingstrategy.h"
 
 // Qt
-#include <QMimeData>
-#include <QTimer>
 #include <QColor>
-#include <QSet>
-#include <QVector>
-#include <QPixmap>
 
 // KDE
 #include <KDebug>
