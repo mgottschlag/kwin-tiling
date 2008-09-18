@@ -26,10 +26,17 @@
 namespace KHotKeys
 {
 
-ActionDataBase::ActionDataBase( ActionDataGroup* parent_P, const QString& name_P,
-    const QString& comment_P, Condition_list* conditions_P, bool enabled_P )
-    : _parent( parent_P ), _conditions( conditions_P ), _name( name_P ), _comment( comment_P ),
-        _enabled( enabled_P )
+ActionDataBase::ActionDataBase(
+        ActionDataGroup* parent_P
+        ,const QString& name_P
+        ,const QString& comment_P
+        ,Condition_list* conditions_P
+        ,bool enabled_P)
+            : _parent(parent_P)
+              ,_conditions(conditions_P)
+              ,_name(name_P)
+              ,_comment(comment_P)
+              ,_enabled(enabled_P)
     {
     if( parent())
         parent()->add_child( this );
@@ -38,9 +45,11 @@ ActionDataBase::ActionDataBase( ActionDataGroup* parent_P, const QString& name_P
     }
 
 
-ActionDataBase::ActionDataBase( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
-    : _parent( parent_P )
-     ,_conditions(0)
+ActionDataBase::ActionDataBase(
+        KConfigGroup& cfg_P
+        ,ActionDataGroup* parent_P)
+            : _parent( parent_P)
+              ,_conditions(NULL)
     {
     _name = cfg_P.readEntry( "Name" );
     _comment = cfg_P.readEntry( "Comment" );
@@ -53,14 +62,14 @@ ActionDataBase::ActionDataBase( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
         kDebug() << "Reading conditions";
         _conditions = new Condition_list( conditionsConfig, this );
         }
-    if( parent())
+
+    if (parent())
         parent()->add_child( this );
     }
 
 
 ActionDataBase::~ActionDataBase()
     {
-//    kDebug( 1217 ) << "~ActionDataBase() :" << this;
     if( parent())
         parent()->remove_child( this );
     delete _conditions;
@@ -75,6 +84,8 @@ bool ActionDataBase::cfg_is_enabled( KConfigGroup& cfg_P )
 
 void ActionDataBase::cfg_write( KConfigGroup& cfg_P ) const
     {
+    kDebug() << cfg_P.keyList();
+
     cfg_P.writeEntry( "Type", "ERROR" ); // derived classes should call with their type
     cfg_P.writeEntry( "Name", name());
     cfg_P.writeEntry( "Comment", comment());
@@ -97,7 +108,6 @@ QString ActionDataBase::comment() const
 
 const Condition_list* ActionDataBase::conditions() const
     {
-//    Q_ASSERT( _conditions != 0 );
     return _conditions;
     }
 

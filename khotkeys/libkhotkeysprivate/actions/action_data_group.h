@@ -64,8 +64,8 @@ class KDE_EXPORT ActionDataGroup
         virtual ~ActionDataGroup();
         virtual void update_triggers();
         virtual void cfg_write( KConfigGroup& cfg_P ) const;
-        typedef QList< ActionDataBase* >::iterator Iterator; // CHECKME neni const :(
-        typedef QList< ActionDataBase* >::const_iterator ConstIterator; // CHECKME neni const :(
+        typedef QList< ActionDataBase* >::iterator Iterator;
+        typedef QList< ActionDataBase* >::const_iterator ConstIterator;
         ConstIterator first_child() const;
         ConstIterator after_last_child() const;
         int child_count() const;
@@ -93,12 +93,6 @@ class KDE_EXPORT ActionDataGroup
         // TODO : Make this unnessecary
         friend class ::KHotkeysModel;
 
-        //! The childs
-        QList< ActionDataBase* > list;
-
-        //! System group type
-        system_group_t _system_group; // e.g. menuedit entries, can't be deleted or renamed
-
         friend class ActionDataBase;
 
         //! Add a child to this collection
@@ -106,6 +100,12 @@ class KDE_EXPORT ActionDataGroup
 
         //! Remove a child from this collection
         void remove_child( ActionDataBase* child_P );
+
+        //! The childs
+        QList< ActionDataBase* > _list;
+
+        //! System group type
+        system_group_t _system_group; // e.g. menuedit entries, can't be deleted or renamed
 
     };
 

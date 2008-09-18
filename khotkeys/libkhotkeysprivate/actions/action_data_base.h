@@ -144,13 +144,24 @@ class KDE_EXPORT ActionDataBase
 
     protected:
 
-        void set_conditions( Condition_list* conditions_P );
+        //! Set the list of condition for this element
+        void set_conditions(Condition_list* conditions_P);
 
     private:
+
+        //! The parent or NULL
         ActionDataGroup* _parent;
+
+        //! List of conditions for this element
         Condition_list* _conditions;
+
+        //! Name for element
         QString _name;
+
+        //! The comment for this element
         QString _comment;
+
+        //! If this element is enabled
         bool _enabled; // is not really important, only used in conf. module and when reading cfg. file
     };
 

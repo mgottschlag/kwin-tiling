@@ -18,42 +18,55 @@
 namespace KHotKeys
 {
 
-ActionDataGroup::ActionDataGroup( KConfigGroup& cfg_P, ActionDataGroup* parent_P )
-    : ActionDataBase( cfg_P, parent_P )
+ActionDataGroup::ActionDataGroup(
+        KConfigGroup& cfg_P,
+        ActionDataGroup* parent_P)
+            : ActionDataBase( cfg_P, parent_P )
+              ,_list()
+              ,_system_group()
+
     {
     unsigned int system_group_tmp = cfg_P.readEntry( "SystemGroup", 0 );
-    if( system_group_tmp >= SYSTEM_MAX )
+
+    // Correct wrong values
+    if(system_group_tmp >= SYSTEM_MAX)
+        {
         system_group_tmp = 0;
+        }
+
     _system_group = static_cast< system_group_t >( system_group_tmp );
     }
 
 
-ActionDataGroup::ActionDataGroup( ActionDataGroup* parent_P, const QString& name_P,
-    const QString& comment_P, Condition_list* conditions_P, system_group_t system_group_P,
-    bool enabled_P )
-    : ActionDataBase( parent_P, name_P, comment_P, conditions_P, enabled_P ),
-        _system_group( system_group_P )
-    {
-    }
+ActionDataGroup::ActionDataGroup(
+        ActionDataGroup* parent_P,
+        const QString& name_P,
+        const QString& comment_P,
+        Condition_list* conditions_P,
+        system_group_t system_group_P,
+        bool enabled_P)
+            : ActionDataBase(parent_P, name_P, comment_P, conditions_P, enabled_P)
+              ,_list()
+              ,_system_group(system_group_P)
+    {}
 
 
 ActionDataGroup::~ActionDataGroup()
     {
-    kDebug( 1217 ) << "~ActionDataGroup() :" << list.count();
-    qDeleteAll(list);
-    list.clear();
+    qDeleteAll(_list);
+    _list.clear();
     }
 
 
 ActionDataGroup::ConstIterator ActionDataGroup::first_child() const
     {
-    return list.begin();
+    return _list.begin();
     }
 
 
 ActionDataGroup::ConstIterator ActionDataGroup::after_last_child() const
     {
-    return list.end();
+    return _list.end();
     }
 
 
@@ -69,27 +82,32 @@ ActionDataGroup::system_group_t ActionDataGroup::system_group() const
     }
 
 
-void ActionDataGroup::add_child( ActionDataBase* child_P )
+void ActionDataGroup::add_child(ActionDataBase* child_P)
     {
-    list.append( child_P );
+    // Just make sure we don't get the same child twice
+    Q_ASSERT(!_list.contains(child_P));
+    _list.append( child_P );
     }
+
 
 int ActionDataGroup::child_count() const
     {
-    return list.size();
+    return _list.size();
     }
+
 
 void ActionDataGroup::aboutToBeErased()
     {
-    Q_FOREACH( ActionDataBase *child, list)
+    Q_FOREACH( ActionDataBase *child, _list)
         {
         child->aboutToBeErased();
         }
     }
 
+
 void ActionDataGroup::remove_child( ActionDataBase* child_P )
     {
-    list.removeAll( child_P ); // is not auto-delete
+    _list.removeAll( child_P ); // is not auto-delete
     }
 
 
