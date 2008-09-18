@@ -277,7 +277,7 @@ bool TaskItem::isAlwaysOnTop()
     return taskPointer()->isAlwaysOnTop();
 }
 
-bool TaskItem::actionSupported(NET::Action action)
+bool TaskItem::isActionSupported(NET::Action action)
 {
     if (!d->task) {
         return false;
@@ -286,7 +286,7 @@ bool TaskItem::actionSupported(NET::Action action)
        return (taskPointer()->info().actionSupported(action));
     }
     return false;
-    //return (!KWindowSystem::allowedActionsSupported() || d->task->info().actionSupported(action));
+    //return (!KWindowSystem::allowedActionsSupported() || d->task->info().isActionSupported(action));
 }
 
 void TaskItem::close()

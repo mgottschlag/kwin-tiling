@@ -26,8 +26,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define TASKMANAGER_H
 
 // Own
-#include "startup.h"
-#include "task.h"
+#include <taskmanager/startup.h>
+#include <taskmanager/task.h>
 #include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager

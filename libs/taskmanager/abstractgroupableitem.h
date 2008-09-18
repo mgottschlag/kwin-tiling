@@ -24,10 +24,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef ABSTRACTGROUPABLEITEM_H
 #define ABSTRACTGROUPABLEITEM_H
 
-#include <QObject>
-#include <QSet>
+#include <QtCore/QObject>
 
-#include <kwindowsystem.h>
+#include <KDE/KWindowSystem>
 
 #include <taskmanager/taskmanager_export.h>
 
@@ -99,7 +98,7 @@ public slots:
     virtual void toggleAlwaysOnTop() = 0;
     virtual bool isAlwaysOnTop() = 0;
     
-    virtual bool actionSupported(NET::Action) = 0;
+    virtual bool isActionSupported(NET::Action) = 0;
     
     virtual void close() = 0;
 

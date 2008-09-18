@@ -19,9 +19,9 @@
 #ifndef TASKGROUP_H
 #define TASKGROUP_H
 
-#include <QIcon>
+#include <QtGui/QIcon>
 
-#include "abstractgroupableitem.h"
+#include <taskmanager/abstractgroupableitem.h>
 #include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
@@ -93,7 +93,7 @@ public slots:
     void toggleAlwaysOnTop();
     bool isAlwaysOnTop();
 
-    bool actionSupported(NET::Action);
+    bool isActionSupported(NET::Action);
 
     /** close all members of this group */
     void close();

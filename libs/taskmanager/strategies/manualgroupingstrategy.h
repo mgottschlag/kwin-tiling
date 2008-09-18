@@ -106,7 +106,7 @@ public slots:
     void toggleAlwaysOnTop(){};
     bool isAlwaysOnTop(){return false;};
 
-    bool actionSupported(NET::Action){return false;};
+    bool isActionSupported(NET::Action){return false;};
 
     /** close all members of this group */
     void close(){};

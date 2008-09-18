@@ -44,7 +44,7 @@ MinimizeAction::MinimizeAction(QObject *parent, AbstractPtr item)
     setText(i18n("Mi&nimize"));
     setCheckable(true);
     setChecked(item->isMinimized());
-    setEnabled(item->actionSupported(NET::ActionMinimize));
+    setEnabled(item->isActionSupported(NET::ActionMinimize));
 }
 
 
@@ -55,7 +55,7 @@ MaximizeAction::MaximizeAction(QObject *parent, AbstractPtr item)
     setText(i18n("Ma&ximize"));
     setCheckable(true);
     setChecked(item->isMaximized());
-    setEnabled(item->actionSupported(NET::ActionMax));
+    setEnabled(item->isActionSupported(NET::ActionMax));
 }
 
 ShadeAction::ShadeAction(QObject *parent, AbstractPtr item)
@@ -65,7 +65,7 @@ ShadeAction::ShadeAction(QObject *parent, AbstractPtr item)
     setText(i18n("&Shade"));
     setCheckable(true);
     setChecked(item->isShaded());
-    setEnabled(item->actionSupported(NET::ActionShade));
+    setEnabled(item->isActionSupported(NET::ActionShade));
 }
 
 ResizeAction::ResizeAction(QObject *parent, TaskItem* item)
@@ -74,7 +74,7 @@ ResizeAction::ResizeAction(QObject *parent, TaskItem* item)
     TaskPtr task = item->taskPointer();
     connect(this, SIGNAL(triggered()), task.data(), SLOT(resize()));
     setText(i18n("Re&size"));
-    setEnabled(item->actionSupported(NET::ActionResize));
+    setEnabled(item->isActionSupported(NET::ActionResize));
 }
 
 MoveAction::MoveAction(QObject *parent, TaskItem* item)
@@ -84,7 +84,7 @@ MoveAction::MoveAction(QObject *parent, TaskItem* item)
     connect(this, SIGNAL(triggered()), task.data(), SLOT(move()));
     setText(i18n("&Move"));
     setIcon(KIcon("transform-move"));
-    setEnabled(item->actionSupported(NET::ActionMove));
+    setEnabled(item->isActionSupported(NET::ActionMove));
 }
 
 CloseAction::CloseAction(QObject *parent, AbstractPtr item)
@@ -93,7 +93,7 @@ CloseAction::CloseAction(QObject *parent, AbstractPtr item)
     connect(this, SIGNAL(triggered()), item, SLOT(close()));
     setText(i18n("&Close"));
     setIcon(KIcon("window-close"));
-    setEnabled(item->actionSupported(NET::ActionClose));
+    setEnabled(item->isActionSupported(NET::ActionClose));
 }
 
 
@@ -147,7 +147,7 @@ DesktopsMenu::DesktopsMenu(QWidget *parent, AbstractPtr item)
     for (int i = 1; i <= TaskManager::self()->numberOfDesktops(); i++) {
         addAction( new ToDesktopAction(this,item,i) );
     }
-    setEnabled(item->actionSupported(NET::ActionChangeDesktop));
+    setEnabled(item->isActionSupported(NET::ActionChangeDesktop));
 }
 
 KeepAboveAction::KeepAboveAction(QObject *parent, AbstractPtr item)
@@ -178,7 +178,7 @@ ViewFullscreenAction::ViewFullscreenAction(QObject *parent, AbstractPtr item)
     setIcon(KIcon("view-fullscreen"));
     setCheckable(true);
     setChecked(item->isFullScreen());
-    setEnabled(item->actionSupported(NET::ActionFullScreen));
+    setEnabled(item->isActionSupported(NET::ActionFullScreen));
 }
 
 AdvancedMenu::AdvancedMenu(QWidget *parent, AbstractPtr task)

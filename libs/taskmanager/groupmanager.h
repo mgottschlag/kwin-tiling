@@ -24,11 +24,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef GROUPMANAGER_H
 #define GROUPMANAGER_H
 
-#include <QObject>
+#include <QtCore/QObject>
 
-#include "abstractgroupableitem.h"
-#include "task.h"
-#include "taskitem.h"
+#include <taskmanager/abstractgroupableitem.h>
+#include <taskmanager/task.h>
+#include <taskmanager/taskitem.h>
 #include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager

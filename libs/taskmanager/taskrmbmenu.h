@@ -25,14 +25,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef TASKRMBMENU_H
 #define TASKRMBMENU_H
 
-// Own
-#include "task.h"
-
 // Qt
-#include <QMenu>
-#include <QList>
-#include <QPair>
+#include <QtCore/QList>
+#include <QtCore/QPair>
+#include <QtGui/QMenu>
 
+// Own
+#include <taskmanager/task.h>
 #include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager

@@ -23,11 +23,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "manualgroupingstrategy.h"
 
+#include <QAction>
+
+#include <KDebug>
+
 #include "abstractgroupingstrategy.h"
 #include "groupmanager.h"
 #include "taskmanager.h"
-
-#include <KDebug>
 
 //#define QT_NO_DEBUG
 
@@ -38,13 +40,14 @@ class ManualGroupingStrategy::Private
 {
 public:
     Private()
-        :editableGroupProperties(AbstractGroupingStrategy::All),
-     currentTemplate(0),
-     tempItem(0),
-     tempGroup(0)
+        : currentTemplate(0),
+          editableGroupProperties(AbstractGroupingStrategy::All),
+          tempItem(0),
+          tempGroup(0),
+          oldDesktop(TaskManager::self()->currentDesktop())
     {
-        oldDesktop = TaskManager::self()->currentDesktop();
     }
+
     GroupManager *groupManager;
     QHash <int, TaskGroupTemplate*> templateTrees;
     TaskGroupTemplate* currentTemplate;
@@ -312,8 +315,9 @@ class TaskGroupTemplate::Private
 {
 public:
     Private()
-    : parentGroup(0),
-      group(0)
+    : group(0),
+      parentGroup(0),
+      groupingStrategy(0)
     {
     }
 
@@ -347,7 +351,6 @@ TaskGroupTemplate::TaskGroupTemplate(ManualGroupingStrategy *parent, TaskGroup *
                 TaskGroupTemplate *createdDuplication = new TaskGroupTemplate(parent, dynamic_cast<TaskGroup*>(item));
                 add(createdDuplication);
             } else {
-                TaskItem *taskItem = qobject_cast<TaskItem*>(item);
                 add(item);
             }
         }

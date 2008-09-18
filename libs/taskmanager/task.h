@@ -33,9 +33,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtGui/QIcon>
 
 // KDE
-#include <ksharedptr.h>
-#include <kwindowsystem.h>
-#include <netwm.h>
+#include <KDE/KSharedPtr>
+#include <KDE/KWindowSystem>
+#include <KDE/NETWinInfo>
 
 #include <taskmanager/taskmanager_export.h>
 

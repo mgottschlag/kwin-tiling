@@ -29,8 +29,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtCore/QObject>
 
 // KDE
-#include <ksharedptr.h>
-#include <kstartupinfo.h>
+#include <KSharedPtr>
+#include <KStartupInfo>
 
 #include <taskmanager/taskmanager_export.h>
 

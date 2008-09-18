@@ -24,11 +24,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef ABSTRACTSORTINGSTRATEGY_H
 #define ABSTRACTSORTINGSTRATEGY_H
 
-#include <QObject>
+#include <QtCore/QObject>
 
-
-#include "abstractgroupableitem.h"
-#include "groupmanager.h"
+#include <taskmanager/abstractgroupableitem.h>
+#include <taskmanager/groupmanager.h>
 #include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager

@@ -460,11 +460,11 @@ bool TaskGroup::isAlwaysOnTop()
 }
 
 
-bool TaskGroup::actionSupported(NET::Action action)
+bool TaskGroup::isActionSupported(NET::Action action)
 {
     if (KWindowSystem::allowedActionsSupported()) {
         foreach (AbstractPtr item, members()) {
-            if (!item->actionSupported(action)) {
+            if (!item->isActionSupported(action)) {
                 return false;
             }
         }

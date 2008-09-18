@@ -23,10 +23,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "programgroupingstrategy.h"
 
-#include "abstractgroupingstrategy.h"
-#include "groupmanager.h"
+#include <QAction>
 
 #include <KDebug>
+
+#include "abstractgroupingstrategy.h"
+#include "groupmanager.h"
 
 namespace TaskManager
 {

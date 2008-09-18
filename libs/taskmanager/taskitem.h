@@ -19,9 +19,9 @@
 #ifndef TASKITEM_H
 #define TASKITEM_H
 
-#include "abstractgroupableitem.h"
-#include "startup.h"
-#include "task.h"
+#include <taskmanager/abstractgroupableitem.h>
+#include <taskmanager/startup.h>
+#include <taskmanager/task.h>
 #include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
@@ -86,7 +86,7 @@ public slots:
     bool isActive();
     bool demandsAttention();
 
-    bool actionSupported(NET::Action);
+    bool isActionSupported(NET::Action);
 
     void close();
 

@@ -32,10 +32,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QAction>
 
 // Own
-#include "task.h"
-#include "taskgroup.h"
-#include "taskitem.h"
-#include "groupmanager.h"
+#include <taskmanager/groupmanager.h>
+#include <taskmanager/task.h>
+#include <taskmanager/taskgroup.h>
+#include <taskmanager/taskitem.h>
 #include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
