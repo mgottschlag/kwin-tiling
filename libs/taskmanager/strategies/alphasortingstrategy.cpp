@@ -62,7 +62,6 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
         if (item->isGroupItem()) {
             map.insertMulti((dynamic_cast<TaskGroup*>(item))->name(), item);
         } else {
-            //map.insertMulti((dynamic_cast<TaskItem*>(item))->taskPointer()->visibleName(), item);
             map.insertMulti((dynamic_cast<TaskItem*>(item))->taskPointer()->classClass(), item); //sort by programname not windowname
         }
     }
@@ -74,15 +73,6 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
     while (!map.empty()) {
         items.append(map.take(keyList.takeFirst()));
     }
-
-    //For debug
-   /* foreach (AbstractGroupableItem *item, items) {
-        if (item->isGroupItem()) {
-            kDebug() << (dynamic_cast<TaskGroup*>(item))->name();
-        } else {
-            kDebug() << (dynamic_cast<TaskItem*>(item))->taskPointer()->visibleName();
-        }
-    }*/
 
 }
 

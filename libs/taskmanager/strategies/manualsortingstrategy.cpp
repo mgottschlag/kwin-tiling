@@ -116,13 +116,6 @@ void ManualSortingStrategy::desktopChanged(int newDesktop)
 
 void ManualSortingStrategy::sortItems(ItemList &items)
 {
-    //TODO get the manually created layout here
-    /*
-    foreach (AbstractPtr item, items) {
-       d->managedItems.insert(item, items.indexOf(item));
-       handleItem(item);
-    }
-    */
 
     kDebug();
     QMap<int, AbstractGroupableItem*> map;
@@ -136,10 +129,6 @@ void ManualSortingStrategy::sortItems(ItemList &items)
             map.insertMulti(i, item);
             i++;
         }
-       /* } else {
-            map.insertMulti((dynamic_cast<TaskItem*>(item))->taskPointer()->visibleName(), item);
-        }*/
-        //handleItem(item);
     }
     items.clear();
     items = map.values();

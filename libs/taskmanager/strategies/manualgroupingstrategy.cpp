@@ -51,7 +51,6 @@ public:
     GroupManager *groupManager;
     QHash <int, TaskGroupTemplate*> templateTrees;
     TaskGroupTemplate* currentTemplate;
-    //QHash <TaskGroup*,TaskGroup*> correspondingGroups; //Template, Group
     QList <TaskGroup*> protectedGroups;
     AbstractGroupingStrategy::EditableGroupProperties editableGroupProperties;
     AbstractGroupableItem *tempItem;
@@ -163,22 +162,9 @@ void ManualGroupingStrategy::handleItem(AbstractPtr item)
                     kDebug() << "Error no template Found";
                 }
                 if (templateGroup->group()) {
-                    
-                    /*kDebug() << "1";
-                    kDebug() << templateGroup->group()->name();
-                    kDebug() << "2";
-                    kDebug() << oldTemplateGroup->group()->name();
-                    kDebug() << "3";
-                    if (!d->correspondingGroups.value(templateGroup)) {
-                        kDebug() << "error d->correspondingGroups.value(templateGroup)";
-                    }
-                    if (!d->correspondingGroups.value(oldTemplateGroup)) {
-                        kDebug() << "error d->correspondingGroups.value(oldTemplateGroup)";
-                    }*/
-
                     oldTemplateGroup->group()->add(templateGroup->group()); //add group to parent Group
                 } else {
-                    kDebug() << "Error item not in d->correspondingGroups";
+                    //kDebug();
                     d->groupManager->rootGroup()->add(item);
                     return;
                 }
@@ -288,19 +274,12 @@ bool ManualGroupingStrategy::groupItems(ItemList items)
     setName(nameSuggestions(group).first(), group);
     setColor(colorSuggestions(group).first(), group);
     setIcon(iconSuggestions(group).first(), group);
-    /*QString name = "Group";
-    int i = 1;
-    while (!setName(name + QString::number(i), group)) {
-        i++;
-    }*/
     return true;
 }
 
 void ManualGroupingStrategy::closeGroup(TaskGroup *group)
 {
     kDebug();
-    //if b(!(d->correspondingGroups.values().contains(group) && !groupManager->rootGroup()->hasMember(group))) {
-    //if (!d->correspondingGroups.values().contains(group)) { 
     if (!d->protectedGroups.contains(group)) { 
         AbstractGroupingStrategy::closeGroup(group);  
     } else if (group->parentGroup()) {

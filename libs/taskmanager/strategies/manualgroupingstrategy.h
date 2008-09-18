@@ -174,8 +174,6 @@ public:
 private slots:
     void leaveGroup();
     void removeGroup();
-    //void itemRemoved(AbstractGroupableItem*);
-    //void itemDestroyed();
     void groupChangedDesktop(int newDesk);
     void protectGroup(TaskGroup *group);
     void unprotectGroup(TaskGroup *group);
@@ -188,33 +186,13 @@ protected:
 
 private:
     bool manualGrouping(TaskItem* taskItem, TaskGroup* groupItem);
-    /** this function searches for item in group without relying on item to know about its parentgroup */
-  //  bool groupContainsItem(TaskGroup *group, AbstractGroupableItem *item);
-  //  AbstractGroupableItem *directMemberOfGroup(TaskGroup *group, AbstractGroupableItem *item);
-   // TaskGroup *findParentGroup(TaskGroup *group, AbstractPtr item);
 
     /** Create a duplication of a group with all subgroups TaskItems arent duplicated */
-   // TaskGroup *createDuplication(TaskGroup *oldGroup);
     TaskGroupTemplate *createDuplication(TaskGroup *group);
 
     class Private;
     Private * const d;
 };
-
-
-/*
-1 Desktop
-Group manually closed with close: close group
-Group closed because members removed: close group
-
-All Desktops:
-To all desktops action: Copy group template to the rootGroup of every desktop
-
-Normally we dont have to bother about on other desktops group trees there are the following exeptions:
-Group to desktop: add the group to desktops grouptree 
-
-*/
-
 
 
 }
