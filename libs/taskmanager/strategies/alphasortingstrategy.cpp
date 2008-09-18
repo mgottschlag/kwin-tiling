@@ -38,6 +38,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace TaskManager
 {
 
+AlphaSortingStrategy::AlphaSortingStrategy(QObject *parent)
+    :AbstractSortingStrategy(parent)
+{
+}
+
+// used in sortItems
 bool lessThan(const QString &s1, const QString &s2)
 {
    // return s1.toLower() < s2.toLower();
