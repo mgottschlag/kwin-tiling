@@ -39,6 +39,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "taskitem.h"
 #include "taskgroup.h"
 #include "taskmanager.h"
+#include "strategies/alphasortingstrategy.h"
 #include "strategies/programgroupingstrategy.h"
 #include "strategies/manualgroupingstrategy.h"
 #include "strategies/manualsortingstrategy.h"

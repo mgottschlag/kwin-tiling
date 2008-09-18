@@ -9,6 +9,7 @@ set(taskmanager_LIB_SRCS
    abstractsortingstrategy.cpp
    groupmanager.cpp
    startup.cpp
+   strategies/alphasortingstrategy.cpp
    strategies/programgroupingstrategy.cpp
    strategies/manualgroupingstrategy.cpp
    strategies/manualsortingstrategy.cpp
