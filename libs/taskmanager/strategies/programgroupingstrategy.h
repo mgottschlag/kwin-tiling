@@ -26,7 +26,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "abstractgroupingstrategy.h"
 #include "taskgroup.h"
-#include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
 {
@@ -36,7 +35,7 @@ class GroupManager;
 /**
  * Groups tasks of the same program
  */
-class TASKMANAGER_EXPORT ProgramGroupingStrategy: public AbstractGroupingStrategy
+class ProgramGroupingStrategy: public AbstractGroupingStrategy
 {
     Q_OBJECT
 public:

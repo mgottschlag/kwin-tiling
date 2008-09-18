@@ -36,7 +36,7 @@ namespace TaskManager
 * if the task is on all desktops
 */
 
-class TASKMANAGER_EXPORT ManualSortingStrategy : public AbstractSortingStrategy
+class ManualSortingStrategy : public AbstractSortingStrategy
 {
     Q_OBJECT
 public:

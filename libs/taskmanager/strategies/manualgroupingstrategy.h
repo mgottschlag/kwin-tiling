@@ -26,15 +26,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "abstractgroupingstrategy.h"
 #include "taskgroup.h"
-#include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
 {
+
 class ManualGroupingStrategy;
 /**
  * TaskGroup, a container for tasks and subgroups
  */
-class TASKMANAGER_EXPORT TaskGroupTemplate : public AbstractGroupableItem
+
+class TaskGroupTemplate : public AbstractGroupableItem
 {
     Q_OBJECT
 public:
@@ -143,7 +144,7 @@ class GroupManager;
  * To do this it keeps an exact copy of the rootGroup and all subgroups
  * for each desktop/screen 
  */
-class TASKMANAGER_EXPORT ManualGroupingStrategy: public AbstractGroupingStrategy
+class ManualGroupingStrategy: public AbstractGroupingStrategy
 {
     Q_OBJECT
 public:

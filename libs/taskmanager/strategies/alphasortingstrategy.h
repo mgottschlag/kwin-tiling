@@ -27,13 +27,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QtCore/QObject>
 
 #include <taskmanager/abstractsortingstrategy.h>
-#include <taskmanager/taskmanager_export.h>
 
 namespace TaskManager
 {
 
 /** Sorts the tasks alphabetically by programname found in Task::classClass()*/
-class TASKMANAGER_EXPORT AlphaSortingStrategy : public AbstractSortingStrategy
+class AlphaSortingStrategy : public AbstractSortingStrategy
 {
     Q_OBJECT
 public:
