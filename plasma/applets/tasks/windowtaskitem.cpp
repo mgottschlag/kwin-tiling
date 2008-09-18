@@ -62,7 +62,11 @@ WindowTaskItem::WindowTaskItem(Tasks *parent, const bool showTooltip)
     setAcceptsHoverEvents(true);
     setAcceptDrops(true);
 
-    Plasma::ToolTipManager::self()->registerWidget(this);
+    if (m_showTooltip) {
+        Plasma::ToolTipManager::self()->registerWidget(this);
+    } else {
+      Plasma::ToolTipManager::self()->unregisterWidget(this);
+    }
 
     QFontMetrics fm(KGlobalSettings::taskbarFont());
     QSize mSize = fm.size(0, "M");
@@ -104,6 +108,11 @@ void WindowTaskItem::close()
 void WindowTaskItem::setShowTooltip(const bool showit)
 {
     m_showTooltip = showit;
+    if (showit) {
+        Plasma::ToolTipManager::self()->registerWidget(this);
+    } else {
+      Plasma::ToolTipManager::self()->unregisterWidget(this);
+    }
     updateTask();
 }
 
@@ -564,9 +573,7 @@ void WindowTaskItem::updateTask()
 
       Plasma::ToolTipManager::self()->setToolTipContent(this,data);
     }
-    else {
-      Plasma::ToolTipManager::self()->unregisterWidget(this);
-    }
+
     setIcon(taskIcon);
     setText(m_task->visibleName());
     //redraw
