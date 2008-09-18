@@ -49,6 +49,19 @@ typedef KSharedPtr<Task> TaskPtr;
 typedef QVector<TaskPtr> TaskList;
 typedef QHash<WId, TaskPtr> TaskDict;
 
+enum TaskChange { TaskUnchanged = 0,
+                  NameChanged = 1,
+                  StateChanged = 2,
+                  DesktopChanged = 32,
+                  GeometryChanged = 64,
+                  WindowTypeChanged = 128,
+                  ActionsChanged = 256,
+                  TransientsChanged = 512,
+                  IconChanged = 1024,
+                  EverythingChanged = 0xffff
+                };
+Q_DECLARE_FLAGS(TaskChanges, TaskChange);
+
 /**
  * A dynamic interface to a task (main window).
  *
@@ -129,7 +142,7 @@ public:
      * none was found.
      */
     QPixmap icon( int width, int height, bool allowResize = false );
-    
+
     /**
      * \return a QIcon for the task
      */
@@ -387,22 +400,11 @@ public Q_SLOTS:
      */
     void publishIconGeometry(QRect);
 
-    /**
-     * Tells the task to generate a new thumbnail. When the thumbnail is
-     * ready the thumbnailChanged() signal will be emitted.
-     */
-    void updateThumbnail();
-
 Q_SIGNALS:
     /**
      * Indicates that this task has changed in some way.
      */
-    void changed();
-
-    /**
-     * Indicates that the icon for this task has changed.
-     */
-    void iconChanged();
+    void changed(::TaskManager::TaskChanges change);
 
     /**
      * Indicates that this task is now the active task.
@@ -413,15 +415,6 @@ Q_SIGNALS:
      * Indicates that this task is no longer the active task.
      */
     void deactivated();
-
-    /**
-     * Indicates that the thumbnail for this task has changed.
-     */
-    void thumbnailChanged();
-
-protected Q_SLOTS:
-    //* @internal
-    void generateThumbnail();
 
 protected:
     void findWindowFrameId();
@@ -464,5 +457,6 @@ private:
 
 } // TaskManager namespace
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(TaskManager::TaskChanges)
 
 #endif

@@ -199,7 +199,7 @@ void Task::refreshIcon()
 
     d->lastIcon = QPixmap();
     d->icon = QIcon();
-    emit iconChanged();
+    emit changed(IconChanged);
 }
 
 void Task::refresh(unsigned int dirty)
@@ -209,20 +209,46 @@ void Task::refresh(unsigned int dirty)
         NET::WMState | NET::XAWMState | NET::WMDesktop | NET::WMVisibleName | NET::WMGeometry | NET::WMWindowType,
         NET::WM2AllowedActions);
 
-    if (dirty != NET::WMName || name != visibleName())
-    {
-        emit changed();
+    TaskChanges changes = TaskUnchanged;
+
+    if (name != visibleName()) {
+        changes |= NameChanged;
+    }
+
+    if (dirty & NET::WMState || dirty & NET::XAWMState) {
+        changes |= StateChanged;
+    }
+
+    if (dirty & NET::WMDesktop) {
+        changes |= DesktopChanged;
+    }
+
+    if (dirty & NET::WMGeometry) {
+        changes |= GeometryChanged;
+    }
+
+    if (dirty & NET::WMWindowType) {
+        changes |= WindowTypeChanged;
+    }
+
+    if (dirty & NET::WM2AllowedActions) {
+        changes |= ActionsChanged;
+    }
+
+    if (changes != TaskUnchanged) {
+        emit changed(changes);
     }
 }
 
 void Task::setActive(bool a)
 {
     d->active = a;
-    emit changed();
-    if ( a )
+    emit changed(StateChanged);
+    if (a) {
       emit activated();
-    else
+    } else {
       emit deactivated();
+    }
 }
 
 double Task::thumbnailSize() const { return d->thumbSize; }
@@ -365,7 +391,7 @@ void Task::addTransient( WId w, const NETWinInfo& info )
     if (info.state() & NET::DemandsAttention)
     {
         d->transientsDemandingAttention.append(w);
-        emit changed();
+        emit changed(TransientsChanged);
     }
 }
 
@@ -860,49 +886,6 @@ void Task::publishIconGeometry(QRect rect)
     ni.setIconGeometry(r);
 }
 
-void Task::updateThumbnail()
-{
-    if ( !d->info.valid() ||
-            !isOnCurrentDesktop() ||
-            !isActive() ||
-            !d->grab.isNull() ) // We're already processing one...
-    {
-        return;
-    }
-
-    //
-    // We do this as a two stage process to remove the delay caused
-    // by the thumbnail generation. This makes things much smoother
-    // on slower machines.
-    //
-    QWidget *rootWin = qApp->desktop();
-    QRect geom = d->info.geometry();
-    d->grab = QPixmap::grabWindow(rootWin->winId(),
-                                geom.x(), geom.y(),
-                                geom.width(), geom.height());
-
-    if (!d->grab.isNull())
-    {
-       QTimer::singleShot(200, this, SLOT(generateThumbnail()));
-    }
-}
-
-void Task::generateThumbnail()
-{
-   if ( d->grab.isNull() )
-      return;
-
-   double width = d->grab.width();
-   double height = d->grab.height();
-   width = width * d->thumbSize;
-   height = height * d->thumbSize;
-
-   d->thumb = d->grab.scaled( qRound(width), qRound(height), Qt::IgnoreAspectRatio, Qt::SmoothTransformation );
-   d->grab = QPixmap(); // Makes grab a null image.
-
-   emit thumbnailChanged();
-}
-
 #ifdef THUMBNAILING_POSSIBLE
 QPixmap Task::thumbnail(int maxDimension)
 {
@@ -1072,7 +1055,8 @@ TaskList TaskDrag::decode( const QMimeData* e )
 
     return tasks;
 }
- 
+
 } // TaskManager namespace
 
 #include "task.moc"
+
