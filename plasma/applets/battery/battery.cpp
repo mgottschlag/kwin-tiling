@@ -117,18 +117,18 @@ void Battery::init()
     kDebug() << "SOLID" << Solid::Control::PowerManager::brightness();
     kDebug() << "SOLID" << Solid::Control::PowerManager::scheme();
 
-
-    new Plasma::Extender(this);
-    extender()->setEmptyExtenderMessage(i18n("no running jobs..."));
-    extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-
     Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
     eItem->setName("powermanagement");
     initExtenderItem(eItem);
+
+    //extender()->setEmptyExtenderMessage(i18n("no running jobs..."));
+    extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 }
 
 void Battery::constraintsEvent(Plasma::Constraints constraints)
 {
+    PopupApplet::constraintsEvent(constraints);
+
     if (constraints & (Plasma::FormFactorConstraint | Plasma::SizeConstraint)) {
         if (formFactor() == Plasma::Vertical) {
             if (!m_showMultipleBatteries) {
