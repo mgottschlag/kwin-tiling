@@ -94,9 +94,6 @@ class KDE_EXPORT ActionDataGroup
 
     protected:
 
-        // TODO : Make this unnessecary
-        friend class ::KHotkeysModel;
-
         friend class ActionDataBase;
 
         //! Add a child to this collection

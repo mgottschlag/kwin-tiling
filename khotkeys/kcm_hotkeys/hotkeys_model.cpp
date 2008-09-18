@@ -195,7 +195,7 @@ void KHotkeysModel::emitChanged(KHotKeys::ActionDataBase *item)
         }
     else
         {
-        int row = parent->_list.indexOf(item);
+        int row = parent->children().indexOf(item);
         topLeft = createIndex( row, 0, parent );
         bottomRight = createIndex( row, columnCount(topLeft), parent );
         }
@@ -254,12 +254,12 @@ QVariant KHotkeysModel::headerData( int section, Qt::Orientation, int role ) con
 QModelIndex KHotkeysModel::index( int row, int column, const QModelIndex &parent ) const
     {
     KHotKeys::ActionDataGroup *actionGroup = indexToActionDataGroup(parent);
-    if (!actionGroup || row>=actionGroup->_list.size() )
+    if (!actionGroup || row>=actionGroup->children().size() )
         {
         return QModelIndex();
         }
 
-    KHotKeys::ActionDataBase *action =  actionGroup->_list.at(row);
+    KHotKeys::ActionDataBase *action =  actionGroup->children().at(row);
     Q_ASSERT( action );
     return createIndex( row, column, action );
     }
@@ -316,7 +316,7 @@ QModelIndex KHotkeysModel::parent( const QModelIndex &index ) const
         return QModelIndex();
         }
 
-    int row = grandparent->_list.indexOf(parent);
+    int row = grandparent->children().indexOf(parent);
     return createIndex( row, 0, parent );
     }
 
@@ -358,7 +358,7 @@ int KHotkeysModel::rowCount( const QModelIndex &index ) const
         return 0;
         }
 
-    return group->_list.count();
+    return group->children().count();
     }
 
 
