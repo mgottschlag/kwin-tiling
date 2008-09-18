@@ -188,6 +188,7 @@ void ThemePage::save()
     KConfig config("kcminputrc");
     KConfigGroup c(&config, "Mouse");
     c.writeEntry("cursorTheme", theme->name());
+    c.sync();
 
     if (!applyTheme(theme))
     {
