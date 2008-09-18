@@ -51,7 +51,7 @@ enum GroupableAction { MaximizeAction = 0,
                     };
 
 enum TaskAction { ResizeAction = 0,
-                  MoveAction,
+                  MoveAction
                  };
 
 enum GroupingAction { LeaveGroupAction = 0
