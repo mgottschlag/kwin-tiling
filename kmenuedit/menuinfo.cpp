@@ -31,7 +31,6 @@
 // MenuFolderInfo
 //
 
-static QStringList *s_allShortcuts = 0;
 static QStringList *s_newShortcuts = 0;
 static QStringList *s_freeShortcuts = 0;
 static QStringList *s_deletedApps = 0;
@@ -470,16 +469,13 @@ void MenuEntryInfo::setInUse(bool inUse)
 
 bool MenuEntryInfo::isShortcutAvailable(const KShortcut &_shortcut)
 {
+   // We only have to check agains not saved local shortcuts.
+   // KKeySequenceWidget checks against all other registered shortcuts.
    if (shortCut == _shortcut)
       return true;
 
    QString shortcutKey = _shortcut.toString();
    bool available = true;
-   if (!s_allShortcuts)
-   {
-      s_allShortcuts = new QStringList(KHotKeys::allShortCuts());
-   }
-   available = !s_allShortcuts->contains(shortcutKey);
    if (available && s_newShortcuts)
    {
       available = !s_newShortcuts->contains(shortcutKey);

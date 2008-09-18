@@ -13,6 +13,7 @@
 #include "action_data_group.h"
 #include "gestures.h"
 #include "settings.h"
+#include "khotkeysadaptor.h"
 
 
 #include <kaboutdata.h>
@@ -34,7 +35,6 @@ K_EXPORT_PLUGIN(KHotKeysModuleFactory("khotkeys"))
 KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
     : KDEDModule(parent)
     , actions_root(NULL)
-    , dbus_adaptor(NULL)
     {
     setModuleName("khotkeys");
 
@@ -43,6 +43,8 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
 
     // Read the configuration from file khotkeysrc
     reread_configuration();
+
+    new KhotkeysAdaptor(this);
     }
 
 
@@ -76,6 +78,22 @@ void KHotKeysModule::reread_configuration()
     actions_root = settings.takeActions();
     KHotKeys::khotkeys_set_active( true );
     }
+
+
+QString KHotKeysModule::get_menuentry_shortcut(const QString &storageId) const
+    {
+    kDebug() << storageId;
+    return "ALT+X";
+    }
+
+QString KHotKeysModule::register_menuentry_shortcut(
+        const QString &storageId,
+        const QString &sequence)
+    {
+    kDebug() << storageId << "," << sequence;
+    return sequence;
+    }
+
 
 void KHotKeysModule::quit()
     {

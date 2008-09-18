@@ -27,6 +27,8 @@
 
 static bool khotkeys_present = false;
 static bool khotkeys_inited = false;
+static OrgKdeKhotkeysInterface *khotkeysInterface = NULL;
+
 
 bool KHotKeys::init()
 {
@@ -34,16 +36,16 @@ bool KHotKeys::init()
 
     // Check if khotkeys is running
     QDBusConnection bus = QDBusConnection::sessionBus();
-    OrgKdeKhotkeysInterface khotkeysInterface(
+    khotkeysInterface = new OrgKdeKhotkeysInterface(
         "org.kde.kded",
         "/modules/khotkeys",
         bus,
         NULL);
 
     QDBusError err;
-    if(!khotkeysInterface.isValid())
+    if(!khotkeysInterface->isValid())
         {
-        err = khotkeysInterface.lastError();
+        err = khotkeysInterface->lastError();
         if (err.isValid())
             {
             kError() << err.name() << ":" << err.message();
@@ -53,7 +55,7 @@ bool KHotKeys::init()
             "<qt>" + i18n("Unable to contact khotkeys. Your changes are saved but i failed to activate them") + "</qt>" );
         }
 
-    khotkeys_present = khotkeysInterface.isValid();
+    khotkeys_present = khotkeysInterface->isValid();
     return true;
 }
 
@@ -67,8 +69,6 @@ void KHotKeys::cleanup()
 
 bool KHotKeys::present()
 {
-    kDebug() << khotkeys_present;
-
     if( !khotkeys_inited )
         init();
     return khotkeys_present;
@@ -78,10 +78,12 @@ QString KHotKeys::getMenuEntryShortcut( const QString& entry_P )
 {
     if( !khotkeys_inited )
         init();
-    if( !khotkeys_present )
+
+    if( !khotkeys_present || !khotkeysInterface->isValid())
         return "";
-    // TODO
-    return "";
+
+    QDBusReply<QString> reply = khotkeysInterface->get_menuentry_shortcut(entry_P);
+    return reply;
 }
 
 QString KHotKeys::changeMenuEntryShortcut(
@@ -90,44 +92,30 @@ QString KHotKeys::changeMenuEntryShortcut(
     {
     if( !khotkeys_inited )
         init();
-    if( !khotkeys_present )
+
+    if( !khotkeys_present || !khotkeysInterface->isValid())
         return "";
 
-    kDebug() << entry_P << "," << shortcut_P;
-    return "";
+    QDBusReply<QString> reply = khotkeysInterface->register_menuentry_shortcut(
+            entry_P,
+            shortcut_P);
+    return reply;
     }
-
-bool KHotKeys::menuEntryMoved( const QString& new_P, const QString& old_P )
-{
-    if( !khotkeys_inited )
-        init();
-    if( !khotkeys_present )
-        return false;
-
-    // For now so i don't forget to check this
-    Q_ASSERT(false);
-    return false;
-}
 
 void KHotKeys::menuEntryDeleted( const QString& entry_P )
 {
     if( !khotkeys_inited )
         init();
-    if( !khotkeys_present )
+
+    if( !khotkeys_present || !khotkeysInterface->isValid())
         return;
-    // TODO
-    Q_ASSERT(false);
+
+    QDBusReply<QString> reply = khotkeysInterface->register_menuentry_shortcut(
+            entry_P,
+            "");
 }
 
-QStringList KHotKeys::allShortCuts( )
-{
-    if( !khotkeys_inited )
-        init();
-    // TODO
-    Q_ASSERT(false);
-    return QStringList();
-}
-
+/*
 KService::Ptr KHotKeys::findMenuEntry( const QString &shortcut_P )
 {
     if( !khotkeys_inited )
@@ -135,4 +123,4 @@ KService::Ptr KHotKeys::findMenuEntry( const QString &shortcut_P )
     // TODO
     Q_ASSERT(false);
     return KService::Ptr();
-}
+} */

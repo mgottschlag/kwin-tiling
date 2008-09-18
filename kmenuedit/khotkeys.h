@@ -35,10 +35,10 @@ public:
     static QString getMenuEntryShortcut( const QString& entry_P );
     static QString changeMenuEntryShortcut( const QString& entry_P,
                                             const QString shortcut_P );
-    static bool menuEntryMoved( const QString& new_P, const QString& old_P );
+    // static bool menuEntryMoved( const QString& new_P, const QString& old_P );
     static void menuEntryDeleted( const QString& entry_P );
-    static QStringList allShortCuts( );
-    static KService::Ptr findMenuEntry( const QString &shortcut_P );
+    // static QStringList allShortCuts( );
+    // static KService::Ptr findMenuEntry( const QString &shortcut_P );
 };
 
 #endif
