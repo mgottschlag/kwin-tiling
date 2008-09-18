@@ -22,15 +22,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 #include "groupmanager.h"
-#include "task.h"
-#include "startup.h"
-#include "taskmanager.h"
-#include "taskitem.h"
-#include "taskgroup.h"
-#include "programgroupingstrategy.h"
-#include "manualgroupingstrategy.h"
-#include "abstractsortingstrategy.h"
-#include "manualsortingstrategy.h"
 
 #include <QColor>
 #include <QString>
@@ -42,6 +33,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <KIcon>
 
+#include "abstractsortingstrategy.h"
+#include "startup.h"
+#include "task.h"
+#include "taskitem.h"
+#include "taskgroup.h"
+#include "taskmanager.h"
+#include "strategies/programgroupingstrategy.h"
+#include "strategies/manualgroupingstrategy.h"
+#include "strategies/manualsortingstrategy.h"
+
 namespace TaskManager
 {
 
@@ -52,11 +53,11 @@ public:
         :rootGroup(0),
          sortingStrategy(NoSorting),
          groupingStrategy(NoGrouping),
-         showOnlyCurrentDesktop(false),
-         showOnlyCurrentScreen(false),
          abstractGroupingStrategy(0),
          abstractSortingStrategy(0),
-         currentScreen(-1)
+         currentScreen(-1),
+         showOnlyCurrentDesktop(false),
+         showOnlyCurrentScreen(false)
     {
     }
 
@@ -67,12 +68,11 @@ public:
     TaskGroupingStrategy groupingStrategy;
     AbstractGroupingStrategy *abstractGroupingStrategy;
     AbstractSortingStrategy *abstractSortingStrategy;
-    bool showOnlyCurrentDesktop;
-    bool showOnlyCurrentScreen;
     int currentScreen;
     QTimer screenTimer;
     QList<TaskPtr> geometryTasks;
-
+    bool showOnlyCurrentDesktop : 1;
+    bool showOnlyCurrentScreen : 1;
 };
 
 
