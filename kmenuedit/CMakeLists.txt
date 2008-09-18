@@ -30,6 +30,7 @@ install(TARGETS kmenuedit ${INSTALL_TARGETS_DEFAULT_ARGS})
 install( FILES kmenuedit.desktop  DESTINATION  ${XDG_APPS_INSTALL_DIR} )
 install( FILES kmenueditui.rc  DESTINATION  ${DATA_INSTALL_DIR}/kmenuedit )
 
+add_dependencies(kdeinit_kmenuedit kded_khotkeys)
 
 kde4_install_icons( ${ICON_INSTALL_DIR}  )
 
