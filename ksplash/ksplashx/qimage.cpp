@@ -3388,7 +3388,7 @@ QStrList QImage::inputFormats()
     over a copy, e.g.
     \code
     QStringList list = myImage.inputFormatList();
-    QStringList::Iterator it = list.begin();
+    QStringList::const_iterator it = list.begin();
     while( it != list.end() ) {
 	myProcessing( *it );
 	++it;
@@ -3411,7 +3411,7 @@ QStringList QImage::inputFormatList()
     over a copy, e.g.
     \code
     QStringList list = myImage.outputFormatList();
-    QStringList::Iterator it = list.begin();
+    QStringList::const_iterator it = list.begin();
     while( it != list.end() ) {
 	myProcessing( *it );
 	++it;
@@ -3865,7 +3865,7 @@ void qt_init_image_plugins()
     plugin_manager = new QPluginManager<QImageFormatInterface>( IID_QImageFormat, QApplication::libraryPaths(), "/imageformats" );
 
     QStringList features = plugin_manager->featureList();
-    QStringList::Iterator it = features.begin();
+    QStringList::const_iterator it = features.begin();
     while ( it != features.end() ) {
 	QString str = *it;
 	++it;
@@ -6356,7 +6356,7 @@ QString QImage::text(const QImageTextKeyLang& kl) const
     over a copy, e.g.
     \code
     QStringList list = myImage.textLanguages();
-    QStringList::Iterator it = list.begin();
+    QStringList::const_iterator it = list.begin();
     while( it != list.end() ) {
 	myProcessing( *it );
 	++it;
@@ -6379,7 +6379,7 @@ QStringList QImage::textLanguages() const
     over a copy, e.g.
     \code
     QStringList list = myImage.textKeys();
-    QStringList::Iterator it = list.begin();
+    QStringList::const_iterator it = list.begin();
     while( it != list.end() ) {
 	myProcessing( *it );
 	++it;

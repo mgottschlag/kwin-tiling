@@ -71,7 +71,7 @@ BGAdvancedDialog::BGAdvancedDialog(KBackgroundRenderer *_r,
 
    // Load programs
    QStringList lst = KBackgroundProgram::list();
-   QStringList::Iterator it;
+   QStringList::const_iterator it;
    for (it=lst.begin(); it != lst.end(); ++it)
       addProgram(*it);
 

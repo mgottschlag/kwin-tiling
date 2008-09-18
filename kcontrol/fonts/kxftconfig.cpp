@@ -204,7 +204,7 @@ QString getConfigFile(bool system)
     // Go through list of files, looking for the preferred one...
     if(files.count())
     {
-        QStringList::Iterator it(files.begin()),
+        QStringList::const_iterator it(files.begin()),
                               end(files.end());
 
         for(; it!=end; ++it)
@@ -372,7 +372,7 @@ bool KXftConfig::apply()
             if(m_required&Dirs)
             {
                 QStringList           list(getDirList());
-                QStringList::Iterator it(list.begin()),
+                QStringList::const_iterator it(list.begin()),
                                       end(list.end());
 
                 for(it=list.begin(); it!=list.end(); ++it)

@@ -460,7 +460,7 @@ void CFontFileList::run()
         for(int n=0; it!=end && !itsTerminated; ++it)
         {
             QStringList           add;
-            QStringList::Iterator fIt((*it).begin()),
+            QStringList::const_iterator fIt((*it).begin()),
                                   fEnd((*it).end());
 
             for(; fIt!=fEnd && !itsTerminated; ++fIt, ++n)

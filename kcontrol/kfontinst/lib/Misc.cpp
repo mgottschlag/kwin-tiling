@@ -239,7 +239,7 @@ QString getFolder(const QString &defaultDir, const QString &root, QStringList &d
         return defaultDir;
     else
     {
-        QStringList::Iterator it,
+        QStringList::const_iterator it,
                               end=dirs.end();
         bool                  found=false;
 

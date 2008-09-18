@@ -301,7 +301,7 @@ void SplashInstaller::readThemesList()
     subdirs = dir.entryList( QDir::Dirs );
     // kDebug() << "readThemesList: " << subdirs;
     // TODO: Make sure it contains a *.rc file.
-    for (QStringList::Iterator l = subdirs.begin(); l != subdirs.end(); l++ )
+    for (QStringList::const_iterator l = subdirs.begin(); l != subdirs.end(); l++ )
       if ( !(*l).startsWith(QString(".")) )
       {
         mThemesList->blockSignals( true ); // Don't activate any theme until all themes are loaded.

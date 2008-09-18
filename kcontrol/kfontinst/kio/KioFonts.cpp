@@ -335,7 +335,7 @@ static void getFontFiles(const CDisabledFonts::TFileList &entries, CDisabledFont
 
         if(assoc.count())
         {
-            QStringList::Iterator fIt,
+            QStringList::const_iterator fIt,
                                   fEnd=assoc.end();
 
             for(fIt=assoc.begin(); fIt!=fEnd; ++fIt)
@@ -1086,7 +1086,7 @@ bool CKioFonts::createStatEntry(KIO::UDSEntry &entry, const KUrl &url, EFolder f
         folders.append(itsFolders[folder].location);
         folders.append(getDestFolder(itsFolders[folder].location, url.fileName()));
 
-        QStringList::Iterator it(folders.begin()),
+        QStringList::const_iterator it(folders.begin()),
                               end(folders.end());
 
         for(; it!=end; ++it)
@@ -2195,7 +2195,7 @@ void CKioFonts::del(const KUrl &url, bool)
 
                     if(files.count())
                     {
-                        QStringList::Iterator fIt,
+                        QStringList::const_iterator fIt,
                                               fEnd=files.end();
 
                         for(fIt=files.begin(); fIt!=fEnd; ++fIt)
@@ -2233,7 +2233,7 @@ void CKioFonts::del(const KUrl &url, bool)
 
                     if(files.count())
                     {
-                        QStringList::Iterator fIt,
+                        QStringList::const_iterator fIt,
                                               fEnd=files.end();
 
                         for(fIt=files.begin(); fIt!=fEnd; ++fIt)
@@ -3280,7 +3280,7 @@ bool CKioFonts::checkDestFile(const KUrl &src, const KUrl &dest, EFolder destFol
     folders.append(itsFolders[destFolder].location);
     folders.append(getDestFolder(itsFolders[destFolder].location, src.fileName()));
 
-    QStringList::Iterator it(folders.begin()),
+    QStringList::const_iterator it(folders.begin()),
                           end(folders.end());
     QString               destFile;
 
@@ -3379,7 +3379,7 @@ bool CKioFonts::confirmMultiple(const KUrl &url, const CDisabledFonts::TFileList
     for(it=files.begin(); it!=files.end(); ++it)
     {
         QStringList           fn(getFontNameEntries(folder, *it, OP_ENABLE==op));
-        QStringList::Iterator fnIt(fn.begin()),
+        QStringList::const_iterator fnIt(fn.begin()),
                               fnEnd(fn.end());
 
         for(; fnIt!=fnEnd; ++fnIt)
@@ -3391,7 +3391,7 @@ bool CKioFonts::confirmMultiple(const KUrl &url, const CDisabledFonts::TFileList
     {
         QString               out,
                               question;
-        QStringList::Iterator it,
+        QStringList::const_iterator it,
                               end=fonts.end();
 
         for(it=fonts.begin(); it!=end; ++it)

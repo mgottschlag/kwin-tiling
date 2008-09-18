@@ -522,7 +522,7 @@ void CFontViewPart::getMetaInfo(int face)
         if(meta.isValid() && meta.keys().count())
         {
             QStringList           keys(meta.keys());
-            QStringList::Iterator it(keys.begin()),
+            QStringList::const_iterator it(keys.begin()),
                                   end(keys.end());
 
             itsMetaInfo[face]="<table>";

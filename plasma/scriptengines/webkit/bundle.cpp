@@ -37,7 +37,7 @@ THE SOFTWARE.
 void recursive_print(const KArchiveDirectory *dir, const QString &path)
 {
     QStringList l = dir->entries();
-    QStringList::Iterator it = l.begin();
+    QStringList::const_iterator it = l.begin();
     for (; it != l.end(); ++it)
     {
         const KArchiveEntry* entry = dir->entry((*it));
@@ -65,7 +65,7 @@ void recursive_print(const KArchiveDirectory *dir, const QString &path)
 static const KArchiveDirectory *recursiveFind(const KArchiveDirectory *dir)
 {
     QStringList l = dir->entries();
-    QStringList::Iterator it;
+    QStringList::const_iterator it;
     for (it = l.begin(); it != l.end(); ++it) {
         const KArchiveEntry* entry = dir->entry((*it));
         if (entry->isDirectory()) {
@@ -191,7 +191,7 @@ bool Bundle::extractArchive(const KArchiveDirectory *dir, const QString &path)
 {
     QStringList l = dir->entries();
 
-    QStringList::Iterator it;
+    QStringList::const_iterator it;
     for (it = l.begin(); it != l.end(); ++it) {
         const KArchiveEntry* entry = dir->entry((*it));
         QString fullPath = QString("%1/%2").arg(path).arg(*it);

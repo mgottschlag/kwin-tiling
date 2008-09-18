@@ -153,7 +153,7 @@ static bool changeFileStatus(const QString &f, bool enable)
 
         if(files.count())
         {
-            QStringList::Iterator fIt,
+            QStringList::const_iterator fIt,
                                   fEnd=files.end();
 
             for(fIt=files.begin(); fIt!=fEnd; ++fIt)

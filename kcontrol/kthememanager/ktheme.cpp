@@ -235,7 +235,7 @@ QString KTheme::createYourself( bool pack )
               << "buttonForeground" << "linkColor" << "visitedLinkColor" << "alternateBackground";
 
     KConfigGroup generalGroup(globalConf, "General");
-    for ( QStringList::Iterator it = stdColors.begin(); it != stdColors.end(); ++it )
+    for ( QStringList::const_iterator it = stdColors.begin(); it != stdColors.end(); ++it )
         createColorElem( ( *it ), "global", colorsElem, generalGroup );
 
     QStringList kwinColors;
@@ -243,7 +243,7 @@ QString KTheme::createYourself( bool pack )
                << "activeBlend" << "inactiveForeground" << "activeTitleBtnBg" << "inactiveTitleBtnBg"
                << "frame" << "inactiveFrame" << "handle" << "inactiveHandle";
     KConfigGroup wmGroup(globalConf, "WM");
-    for ( QStringList::Iterator it = kwinColors.begin(); it != kwinColors.end(); ++it )
+    for ( QStringList::const_iterator it = kwinColors.begin(); it != kwinColors.end(); ++it )
         createColorElem( ( *it ), "kwin", colorsElem, wmGroup );
 
     m_root.appendChild( colorsElem );
@@ -338,7 +338,7 @@ QString KTheme::createYourself( bool pack )
             << "General"    << "taskbarFont"
             << "FMSettings" << "StandardFont";
 
-    for ( QStringList::Iterator it = fonts.begin(); it != fonts.end(); ++it ) {
+    for ( QStringList::const_iterator it = fonts.begin(); it != fonts.end(); ++it ) {
         QString group = *it; ++it;
         QString key   = *it;
         QString value;
