@@ -119,25 +119,3 @@ QString KHotKeys::changeMenuEntryShortcut(
     }
 }
 
-void KHotKeys::menuEntryDeleted( const QString& entry_P )
-{
-    if( !khotkeys_inited )
-        init();
-
-    if( !khotkeys_present || !khotkeysInterface->isValid())
-        return;
-
-    QDBusReply<QString> reply = khotkeysInterface->register_menuentry_shortcut(
-            entry_P,
-            "");
-}
-
-/*
-KService::Ptr KHotKeys::findMenuEntry( const QString &shortcut_P )
-{
-    if( !khotkeys_inited )
-        init();
-    // TODO
-    Q_ASSERT(false);
-    return KService::Ptr();
-} */

@@ -524,9 +524,14 @@ void BasicTab::slotCapturedKeySequence(const QKeySequence& seq)
        return;
     KShortcut cut(seq, QKeySequence());
 
-    if ( KHotKeys::present() )
+    if (_menuEntryInfo->isShortcutAvailable( cut ) && KHotKeys::present() )
     {
        _menuEntryInfo->setShortcut( cut );
+    }
+    else
+    {
+       // We will not assign the shortcut so reset the visible key sequence
+       _keyEdit->setKeySequence(QKeySequence());
     }
 
     if (_menuEntryInfo)

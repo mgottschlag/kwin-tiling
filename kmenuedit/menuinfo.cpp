@@ -183,7 +183,8 @@ void MenuFolderInfo::save(MenuFile *menuFile)
       for(QStringList::ConstIterator it = s_deletedApps->begin();
           it != s_deletedApps->end(); ++it)
       {
-         KHotKeys::menuEntryDeleted(*it);
+         // The shorcut is deleted if we set a empty sequence
+         KHotKeys::changeMenuEntryShortcut(*it, "");
       }
       delete s_deletedApps;
       s_deletedApps = 0;
