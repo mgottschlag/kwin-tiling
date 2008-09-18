@@ -22,9 +22,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ******************************************************************/
 
 #include "abstractgroupingstrategy.h"
-//#include "abstractsortingstrategy.h"
+
 #include <KDebug>
 #include <KIcon>
+
+//#include "abstractsortingstrategy.h"
+#include "task.h"
 
 namespace TaskManager
 {

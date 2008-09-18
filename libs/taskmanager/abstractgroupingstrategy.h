@@ -31,6 +31,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <taskmanager/taskgroup.h>
 #include <taskmanager/taskmanager_export.h>
 
+class QAction;
+
 namespace TaskManager
 {
 
