@@ -59,7 +59,7 @@ void MenuEntryAction::set_service( KService::Ptr service )
     {
     if (!service) return;
     _service = service;
-    set_command_url(service->name());
+    set_command_url(service->storageId());
     }
 
 
@@ -84,7 +84,7 @@ Action* MenuEntryAction::copy( ActionData* data_P ) const
 const QString MenuEntryAction::description() const
     {
     (void) service();
-    return i18n( "Menu entry: " ) + (_service ? _service->name() : QString());
+    return i18n( "Menu entry: " ) + (_service ? _service->comment() : QString());
     }
 
 

@@ -324,7 +324,6 @@ bool KHotkeysModel::removeRows( int row, int count, const QModelIndex &parent )
 
     KHotKeys::ActionDataBase *action = indexToActionDataBase(index(row,0,parent));
 
-    list->remove_child(action);
     action->aboutToBeErased();
     delete action;
 

@@ -239,6 +239,8 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
 
 void Settings::write_settings()
     {
+    kDebug();
+
     KConfig cfg( KHOTKEYS_CONFIG_FILE );
 
 // CHECKME    smazat stare sekce ?

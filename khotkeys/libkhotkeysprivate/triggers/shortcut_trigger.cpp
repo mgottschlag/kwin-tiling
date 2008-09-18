@@ -89,9 +89,11 @@ ShortcutTrigger::~ShortcutTrigger()
 
 void ShortcutTrigger::aboutToBeErased()
     {
+    kDebug();
     KAction *action = qobject_cast<KAction*>(keyboard_handler->getAction( _uuid ));
     if(action)
         {
+        kDebug() << "removing the global shortcut";
         action->forgetGlobalShortcut();
         }
     }

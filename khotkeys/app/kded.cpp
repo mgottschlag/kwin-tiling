@@ -15,7 +15,6 @@
 #include "actions/actions.h"
 
 #include "triggers/gestures.h"
-#include "settings.h"
 #include "khotkeysadaptor.h"
 
 
@@ -32,12 +31,14 @@ K_PLUGIN_FACTORY(KHotKeysModuleFactory,
     )
 K_EXPORT_PLUGIN(KHotKeysModuleFactory("khotkeys"))
 
+using namespace KHotKeys;
 
 // KhotKeysModule
 
 KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
     : KDEDModule(parent)
     , actions_root(NULL)
+    , _settings()
     {
     setModuleName("khotkeys");
 
@@ -60,41 +61,172 @@ KHotKeysModule::~KHotKeysModule()
 void KHotKeysModule::reread_configuration()
     {
     kDebug() << "Reloading the khotkeys configuration";
-    // Delete a previous configuration
-    delete actions_root;
 
     // Stop listening
+    actions_root = NULL; // Disables the dbus interface effectively
     KHotKeys::khotkeys_set_active( false );
 
     // Load the settings
-    KHotKeys::Settings settings;
-    settings.read_settings( false );
-    KHotKeys::gesture_handler->set_mouse_button( settings.gestureMouseButton() );
-    KHotKeys::gesture_handler->set_timeout( settings.gestureTimeOut() );
-    KHotKeys::gesture_handler->enable( !settings.areGesturesDisabled() );
-    KHotKeys::gesture_handler->set_exclude( settings.gesturesExclude() );
+    _settings.read_settings( false );
+    KHotKeys::gesture_handler->set_mouse_button( _settings.gestureMouseButton() );
+    KHotKeys::gesture_handler->set_timeout( _settings.gestureTimeOut() );
+    KHotKeys::gesture_handler->enable( !_settings.areGesturesDisabled() );
+    KHotKeys::gesture_handler->set_exclude( _settings.gesturesExclude() );
     // FIXME: SOUND
-    // KHotKeys::voice_handler->set_shortcut( settings.voice_shortcut );
-#if 0 // TEST CHECKME
-    settings.write_settings();
-#endif
-    actions_root = settings.takeActions();
+    // KHotKeys::voice_handler->set_shortcut( _settings.voice_shortcut );
+    actions_root = _settings.actions();
     KHotKeys::khotkeys_set_active( true );
     }
 
 
-QString KHotKeysModule::get_menuentry_shortcut(const QString &storageId) const
+ActionDataGroup* KHotKeysModule::menuentries_group()
     {
-    kDebug() << storageId;
-    return "ALT+X";
+    Q_ASSERT(actions_root);
+
+    // Search for the menuentries system group
+    ActionDataGroup *menuentries = NULL;
+
+    Q_FOREACH(KHotKeys::ActionDataBase* element, actions_root->children())
+        {
+        ActionDataGroup *group = dynamic_cast<ActionDataGroup*>(element);
+
+        if (group && (group->system_group() == ActionDataGroup::SYSTEM_MENUENTRIES))
+            {
+            menuentries = group;
+            break;
+            }
+        }
+
+    // Check if we found the group
+    if (menuentries==NULL)
+        {
+        // No group. Create one
+        menuentries = new ActionDataGroup(
+                actions_root,
+                "KMenuEdit",
+                "KMenuEdit Global Shortcuts",
+                NULL,
+                ActionDataGroup::SYSTEM_MENUENTRIES,
+                true);
+        }
+
+    return menuentries;
     }
+
+
+SimpleActionData* KHotKeysModule::menuentry_action(const QString &storageId)
+    {
+    ActionDataGroup *menuentries = menuentries_group();
+
+    // Now try to find the action
+    Q_FOREACH(ActionDataBase* element, menuentries->children())
+        {
+        SimpleActionData *actionData = dynamic_cast<SimpleActionData*>(element);
+
+        if (actionData && actionData->action())
+            {
+            MenuEntryAction *action = dynamic_cast<MenuEntryAction*>(actionData->action());
+            if (action && action->service() && (action->service()->storageId() == storageId))
+                {
+                return actionData;
+                }
+            }
+        }
+
+    return NULL;
+    }
+
+QString KHotKeysModule::get_menuentry_shortcut(const QString &storageId)
+    {
+    SimpleActionData* actionData = menuentry_action(storageId);
+
+    // No action found
+    if (actionData == NULL) return "";
+
+    // The action must have a shortcut trigger. but don't assume to much
+    ShortcutTrigger* shortcutTrigger = dynamic_cast<ShortcutTrigger*>(actionData->trigger());
+
+    Q_ASSERT(shortcutTrigger);
+    if (shortcutTrigger == NULL) return "";
+
+    return shortcutTrigger->shortcut().primary();
+    }
+
 
 QString KHotKeysModule::register_menuentry_shortcut(
         const QString &storageId,
         const QString &sequence)
     {
-    kDebug() << storageId << "," << sequence;
-    return sequence;
+    kDebug() << storageId << "(" << sequence << ")";
+
+    // Check the service we got. If it is invalid there is no need to
+    // continue.
+    KService::Ptr wantedService = KService::serviceByStorageId(storageId);
+    if (wantedService.isNull())
+        {
+        kError() << "Storage Id " << storageId << "not valid";
+        return "";
+        }
+
+    // Look for the action
+    SimpleActionData* actionData = menuentry_action(storageId);
+
+    // No action found. Create on if sequence is != ""
+    if (actionData == NULL)
+        {
+        kDebug() << "No action found";
+
+        // If the sequence is empty there is no need to create a action.
+        if (sequence.isEmpty()) return "";
+
+        kDebug() << "Creating a new action";
+
+        // Create the action
+        ActionDataGroup *menuentries = menuentries_group();
+
+        MenuEntryShortcutActionData *newAction = new MenuEntryShortcutActionData(
+                menuentries,
+                wantedService->name(),
+                storageId,
+                KShortcut(sequence),
+                storageId);
+
+        _settings.write_settings();
+
+        // Return the real shortcut
+        return newAction->trigger()->shortcut().primary();
+        }
+    // We found a action
+    else
+        {
+        if (sequence.isEmpty())
+            {
+            kDebug() << "Deleting the action";
+            actionData->aboutToBeErased();
+            delete actionData;
+            _settings.write_settings();
+            return "";
+            }
+        else
+            {
+            kDebug() << "Changing the action";
+            // The action must have a shortcut trigger. but don't assume to much
+            ShortcutTrigger* shortcutTrigger =
+                    dynamic_cast<ShortcutTrigger*>(actionData->trigger());
+            Q_ASSERT(shortcutTrigger);
+            if (shortcutTrigger == NULL) return "";
+
+            // Change the actionData
+            shortcutTrigger->set_key_sequence(sequence);
+            _settings.write_settings();
+
+            // Remove the resulting real shortcut
+            return shortcutTrigger->shortcut().primary();
+            }
+        }
+
+    Q_ASSERT(false);
+    return "";
     }
 
 

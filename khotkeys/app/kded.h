@@ -12,6 +12,7 @@
 #define _KHOTKEYS_KDED_H_
 
 #include <kdedmodule.h>
+#include "settings.h"
 
 #include <QtCore/QObject>
 #include <QtDBus/QtDBus>
@@ -20,9 +21,10 @@
 #include <KService>
 
 namespace KHotKeys
-{
-class ActionDataGroup;
-}
+    {
+    class ActionDataGroup;
+    class SimpleActionData;
+    }
 
 class KHotKeysModule
     : public KDEDModule
@@ -52,13 +54,29 @@ class KHotKeysModule
          *
          * @returns the active global shortcuts for that service
          */
-        QString get_menuentry_shortcut(const QString &storageId) const;
+        QString get_menuentry_shortcut(const QString &storageId);
 
     public:
         KHotKeysModule(QObject* parent, const QList<QVariant>&);
         virtual ~KHotKeysModule();
     private:
+
+        //! The action list from _settings for convenience
         KHotKeys::ActionDataGroup* actions_root;
+
+        //! The current settings
+        KHotKeys::Settings _settings;
+
+        /** 
+         * @name Some method in need for a better home 
+         */
+        //@{
+            //! Get the group for the menuentries. Will create it if needed
+            KHotKeys::ActionDataGroup *menuentries_group();
+
+            //! Find a menuentry_action for the service with @storageId in group @group
+            KHotKeys::SimpleActionData *menuentry_action(const QString &storageId);
+        //@}
     };
 
 //***************************************************************************
