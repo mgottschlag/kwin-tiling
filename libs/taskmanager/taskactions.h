@@ -1,7 +1,6 @@
 /*****************************************************************
 
-Copyright (c) 2001 Matthias Elter <elter@kde.org>
-Copyright (c) 2001 John Firebaugh <jfirebaugh@kde.org>
+Copyright (c) 2008 Christian Mollekopf <chrigi_1@hotmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -41,132 +40,52 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace TaskManager
 {
 
+enum GroupableAction { MaximizeAction = 0,
+                       MinimizeAction,
+                       ToCurrentDesktopAction,
+                       ToDesktopAction,
+                       ShadeAction,
+                       CloseAction,
+                       ViewFullscreenAction,
+                       KeepBelowAction
+                    };
 
-/** Maximize a window or all windows in a group*/
-class TASKMANAGER_EXPORT MaximizeAction : public QAction
-{
-    Q_OBJECT
-public:
-    MaximizeAction(QObject *parent, AbstractPtr task);
-};
+enum TaskAction { ResizeAction = 0,
+                  MoveAction,
+                 };
 
+enum GroupingAction { LeaveGroupAction = 0
+                      };
 
-/** Minimize a window or all windows in a group*/
-class TASKMANAGER_EXPORT MinimizeAction : public QAction
-{
-    Q_OBJECT
-public:
-    MinimizeAction(QObject *parent, AbstractPtr task);
-};
+/** 
+ * Factory method to create standard actions for groupable items.
+ * 
+ * @param action the action to create
+ * @param item the groupable item to associate it with
+ * @param parent the parent for the action
+ * @param desktop the desktop to associate the action with, only used for ToDesktopAction
+ */
+QAction *standardGroupableAction(GroupableAction action, AbstractPtr item, QObject *parent = 0, int desktop = 0);
 
-/** Move window to current desktop*/
-class TASKMANAGER_EXPORT ToCurrentDesktopAction : public QAction
-{
-    Q_OBJECT
-public:
-    ToCurrentDesktopAction(QObject *parent, AbstractPtr task);
-private slots:
-    void slotToCurrentDesktop();
-private:
-    AbstractPtr m_task;
-};
+/**
+ * Factory method to create standard actions for groupable items.
+ *
+ * @param action the action to create
+ * @param task the task to associate it with
+ * @param parent the parent for the action
+ */
+QAction *standardTaskAction(TaskAction action, TaskItem *task, QObject *parent = 0);
 
-/** Shade a window or all windows in a group*/
-class TASKMANAGER_EXPORT ShadeAction : public QAction
-{
-    Q_OBJECT
-public:
-    ShadeAction(QObject *parent, AbstractPtr task);
-};
-
-/** Resize a window or all windows in a group*/
-class TASKMANAGER_EXPORT ResizeAction : public QAction
-{
-    Q_OBJECT
-public:
-    ResizeAction(QObject *parent, TaskItem* task);
-};
-
-/** Move a window or all windows in a group*/
-class TASKMANAGER_EXPORT MoveAction : public QAction
-{
-    Q_OBJECT
-public:
-    MoveAction(QObject *parent, TaskItem* task);
-};
-
-/** Shade a window or all windows in a group*/
-class TASKMANAGER_EXPORT CloseAction : public QAction
-{
-    Q_OBJECT
-public:
-    CloseAction(QObject *parent, AbstractPtr task);
-};
-
-/** Send a Task to a specific Desktop*/
-class TASKMANAGER_EXPORT ToDesktopAction : public QAction
-{
-    Q_OBJECT
-public:
-    ToDesktopAction(QObject *parent, AbstractPtr task, int desktop);
-private slots:
-    void slotToDesktop();
-private:
-    int m_desktop;
-    AbstractPtr m_task;
-};
-
-
-/** Set a window or all windows in a group to FullScreen*/
-class TASKMANAGER_EXPORT ViewFullscreenAction : public QAction
-{
-    Q_OBJECT
-public:
-    ViewFullscreenAction(QObject *parent, AbstractPtr task);
-};
-
-/** Keep a Window or all windows in a group above the rest */
-class TASKMANAGER_EXPORT KeepAboveAction : public QAction
-{
-    Q_OBJECT
-public:
-    KeepAboveAction(QObject *parent, AbstractPtr task);
-};
-
-/** Keep a Window or all windows in a group below the rest*/
-class TASKMANAGER_EXPORT KeepBelowAction : public QAction
-{
-    Q_OBJECT
-public:
-    KeepBelowAction(QObject *parent, AbstractPtr task);
-};
-
-
-/** Leave current Group*/
-class TASKMANAGER_EXPORT LeaveGroupAction : public QAction
-{
-    Q_OBJECT
-public:
-    LeaveGroupAction(QObject *parent, AbstractPtr task, GroupManager&);
-
-private slots:
-    void leaveGroup();
-
-private:
-    AbstractPtr abstractItem;
-    GroupManager *groupingStrategy;
-};
-
-/** Remove Group
-class TASKMANAGER_EXPORT RemoveGroupAction : public QAction
-{
-    Q_OBJECT
-public:
-    RemoveGroupAction(QObject *parent, AbstractPtr task);
-};
-*/
-
-
+/**
+ * Factory method to create standard actions for groupable items.
+ *
+ * @param action the action to create
+ * @param item the groupable item to associate it with
+ * @param strategy the GroupManager used to coorinate the grouping
+ * @param parent the parent for the action
+ */
+QAction* standardGroupingAction(GroupingAction action, AbstractPtr item,
+                                GroupManager *strategy, QObject *parent = 0);
 
 /** The ToDesktop menu */
 class TASKMANAGER_EXPORT DesktopsMenu : public QMenu
@@ -181,7 +100,7 @@ class TASKMANAGER_EXPORT GroupingStrategyMenu : public QMenu
 {
     Q_OBJECT
 public:
-    GroupingStrategyMenu(QWidget *parent, AbstractGroupableItem* task, GroupManager &strategy);
+    GroupingStrategyMenu(QWidget *parent, AbstractGroupableItem *task, GroupManager *strategy);
 };
 
 /** The Advanced menu */
@@ -197,8 +116,8 @@ class TASKMANAGER_EXPORT BasicMenu : public QMenu
 {
     Q_OBJECT
 public:
-    BasicMenu(QWidget *parent, GroupPtr task, GroupManager &strategy, bool showAll);
-    BasicMenu(QWidget *parent, TaskItem* task, GroupManager &strategy, bool showAll);
+    BasicMenu(QWidget *parent, GroupPtr task, GroupManager *strategy, bool showAll);
+    BasicMenu(QWidget *parent, TaskItem* task, GroupManager *strategy, bool showAll);
 };
 
 
