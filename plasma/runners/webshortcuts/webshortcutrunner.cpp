@@ -38,9 +38,7 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
     Q_UNUSED(args);
     setObjectName("Web Shortcut");
     // query ktrader for all available searchproviders and preload the default icon
-    m_offers = serviceQuery("SearchProvider");
     m_icon = KIcon("internet-web-browser");
-    // TODO: read delimiter from config... it's in kuriikwsfilterrc:KeywordDelimiter=\s
     m_delimiter = loadDelimiter();
     setIgnoredTypes(Plasma::RunnerContext::FileSystem);
 }
@@ -48,15 +46,12 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
 QString WebshortcutRunner::loadDelimiter()
 {
     // TODO: KDirWatch :)
-    KConfig *kuriconfig = new KConfig("kuriikwsfilterrc", KConfig::NoGlobals);
-    KConfigGroup generalgroup( kuriconfig, "General" );
-    QString delimiter = generalgroup.readPathEntry( "KeywordDelimiter", QString(":") );
-    delete kuriconfig;
-    kDebug() << "keyworddelimiter is: " << delimiter;
+    KConfig kuriconfig("kuriikwsfilterrc", KConfig::NoGlobals);
+    KConfigGroup generalgroup(&kuriconfig, "General");
+    QString delimiter = generalgroup.readPathEntry("KeywordDelimiter", QString(":"));
+    //kDebug() << "keyworddelimiter is: " << delimiter;
     return delimiter;
 }
-
-
 
 WebshortcutRunner::~WebshortcutRunner()
 {
@@ -72,41 +67,34 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
 
     //kDebug() << "checking with" << term;
 
-    QMutexLocker lock(bigLock());
-    foreach (const KService::Ptr &service, m_offers) {
-        //TODO: how about getting the keys for the localized sites?
-        foreach (QString key, service->property("Keys").toStringList()) {
-            key = key.toLower() + m_delimiter;
-            if (term.size() > key.size() &&
-                term.startsWith(key, Qt::CaseInsensitive)) {
-                QString actionText = i18n("Search %1 for %2",service->name(),
-                                          term.right(term.length() - term.indexOf(m_delimiter) - 1));
-                QString url = getSearchQuery(service->property("Query").toString(), term);
-                //kDebug() << "url is" << url << "!!!!!!!!!!!!!!!!!!!!!!!";
+    int delimIndex = term.indexOf(m_delimiter);
 
-                Plasma::QueryMatch match(this);
-                match.setType(Plasma::QueryMatch::ExactMatch);
-                match.setText(actionText);
-                match.setData(service->property("Query").toString());
-                match.setRelevance(0.9);
-
-                // let's try if we can get a proper icon from the favicon cache
-                // getting the favicon is too slow and can easily lead to starving the thread pool out
-                /*
-                KIcon icon = getFavicon(url);
-                if (icon.isNull()){
-                    match.setIcon(m_icon);
-                } else {
-                    match.setIcon(icon);
-                }
-                */
-                match.setIcon(m_icon);
-
-                context.addMatch(term, match);
-                return;
-            }
-        }
+    if (delimIndex == term.length() - 1) {
+        return;
     }
+
+    QString key = term.left(delimIndex);
+    KService::List offers = serviceQuery("SearchProvider", QString("'%1' ~in Keys").arg(key));
+    if (offers.isEmpty()) {
+        return;
+    }
+
+    QMutexLocker lock(bigLock());
+    KService::Ptr service = offers.at(0);
+    QString actionText = i18n("Search %1 for %2", service->name(),
+                              term.right(term.length() - delimIndex - 1));
+    QString url = getSearchQuery(service->property("Query").toString(), term);
+    //kDebug() << "url is" << url << "!!!!!!!!!!!!!!!!!!!!!!!";
+
+    Plasma::QueryMatch match(this);
+    match.setType(Plasma::QueryMatch::ExactMatch);
+    match.setData(service->property("Query").toString());
+    match.setRelevance(0.9);
+    match.setText(actionText);
+
+    match.setIcon(getFavicon(url));
+    context.addMatch(term, match);
+    return;
 }
 
 QString WebshortcutRunner::getSearchQuery(const QString &query, const QString &term)
@@ -123,24 +111,24 @@ QString WebshortcutRunner::getSearchQuery(const QString &query, const QString &t
     return url.url();
 }
 
-KIcon WebshortcutRunner::getFavicon(const KUrl &url) {
+KIcon WebshortcutRunner::getFavicon(const KUrl &url)
+{
     // query the favicons module
     QDBusInterface favicon("org.kde.kded", "/modules/favicons", "org.kde.FavIcon");
     QDBusReply<QString> reply = favicon.call("iconForUrl", url.url());
 
     if (!reply.isValid()) {
-        return KIcon();
+        return m_icon;
     }
 
     // locate the favicon
-    QString iconFile = KGlobal::dirs()->findResource("cache", reply.value()+".png");
+    QString iconFile = KGlobal::dirs()->locateLocal("cache", reply.value() + ".png");
 
     if (iconFile.isNull()) {
-        return KIcon();
+        return m_icon;
     }
-    KIcon icon = KIcon(iconFile);
 
-    return icon;
+    return KIcon(iconFile);
 }
 
 void WebshortcutRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)

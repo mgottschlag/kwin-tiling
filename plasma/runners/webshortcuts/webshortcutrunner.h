@@ -40,7 +40,6 @@ class WebshortcutRunner : public Plasma::AbstractRunner {
         QString getSearchQuery(const QString &query, const QString &searchWord);
         KIcon getFavicon(const KUrl& url);
         QString loadDelimiter();
-        KService::List m_offers;
         KIcon m_icon;
         QString m_delimiter;
 };
