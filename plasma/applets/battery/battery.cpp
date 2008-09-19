@@ -114,14 +114,11 @@ void Battery::init()
     m_numOfBattery = battery_sources.size();
     kDebug() << battery_sources.size();
 
-    kDebug() << "SOLID" << Solid::Control::PowerManager::brightness();
-    kDebug() << "SOLID" << Solid::Control::PowerManager::scheme();
+    //kDebug() << "SOLID" << Solid::Control::PowerManager::brightness();
 
     Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
     eItem->setName("powermanagement");
-    initExtenderItem(eItem);
-
-    //extender()->setEmptyExtenderMessage(i18n("no running jobs..."));
+    initBatteryExtender(eItem);
     extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 }
 
@@ -290,7 +287,7 @@ void Battery::brightnessChanged(const int brightness)
     Solid::Control::PowerManager::setBrightness(brightness);
 }
 
-void Battery::initExtenderItem(Plasma::ExtenderItem *item)
+void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
 {
     kDebug();
     QGraphicsWidget *controls = new QGraphicsWidget(item);

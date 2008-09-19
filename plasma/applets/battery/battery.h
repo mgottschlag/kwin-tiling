@@ -64,7 +64,6 @@ class Battery : public Plasma::PopupApplet
 
     protected:
         void createConfigurationInterface(KConfigDialog *parent);
-        void initExtenderItem(Plasma::ExtenderItem *item);
 
     private slots:
         void animationUpdate(qreal progress);
@@ -82,6 +81,8 @@ class Battery : public Plasma::PopupApplet
         };
         void connectSources();
         void disconnectSources();
+        void initBatteryExtender(Plasma::ExtenderItem *item);
+
         int m_batteryStyle;
         /* Paint battery with proper charge level */
         void paintBattery(QPainter *p, const QRect &contentsRect, const int batteryPercent, const bool plugState);
