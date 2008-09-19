@@ -101,13 +101,8 @@ class PlasmaViewHost::Private : public QObject {
         dialog->exec();
       else
         dialog->show();
-    } else if (type_ == ViewHostInterface::VIEW_HOST_DETAILS) {
-      widget_ = new QtViewWidget(view_, false, false, true, false);
-      parent_widget_ = widget_;
-      SetGadgetWindowIcon(widget_, view_->GetGadget());
-      widget_->show();
-      widget_->move(info->applet->popupPosition(widget_->sizeHint()));
-    } else if (!is_popout_) {  // normal main view
+    } else if (type_ == ViewHostInterface::VIEW_HOST_MAIN && !is_popout_) {
+      // normal main view
       // Create a Widget (composite, decorated, movable, input_mask)
       widget_ = new QtViewWidget(view_, false, true, false, false);
       EmbededWidget(info->applet, widget_);
@@ -124,11 +119,12 @@ class PlasmaViewHost::Private : public QObject {
       if (info->applet->formFactor() == Plasma::Horizontal)
         view_->SetHeight(info->applet->size().height());
     } else {
+      // Popouted main view and details view
       widget_ = new QtViewWidget(view_, false, false, true, false);
       parent_widget_ = widget_;
       SetGadgetWindowIcon(widget_, view_->GetGadget());
-      widget_->show();
       widget_->move(info->applet->popupPosition(widget_->sizeHint()));
+      widget_->show();
     }
     return true;
   }

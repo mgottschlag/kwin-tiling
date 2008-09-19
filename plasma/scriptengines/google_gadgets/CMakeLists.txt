@@ -40,6 +40,7 @@ set(scriptengine_SRCS
   plasma_host.cpp
   plasma_view_host.cpp
   panel_decorator.cpp
+  floating_decorator.cpp
   )
 
 # Now make sure all files get to the right place

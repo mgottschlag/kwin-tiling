@@ -23,7 +23,6 @@
 #include <ggadget/script_runtime_manager.h>
 #include <ggadget/gadget_consts.h>
 #include <ggadget/decorated_view_host.h>
-#include <ggadget/floating_main_view_decorator.h>
 #include <ggadget/docked_main_view_decorator.h>
 #include <ggadget/popout_main_view_decorator.h>
 #include <ggadget/details_view_decorator.h>
@@ -35,6 +34,7 @@
 #include "plasma_view_host.h"
 #include "plasma_host.h"
 #include "panel_decorator.h"
+#include "floating_decorator.h"
 
 namespace ggadget {
 
@@ -126,18 +126,11 @@ ViewHostInterface *PlasmaHost::NewViewHost(Gadget *,
   DecoratedViewHost *dvh;
   if (type == ViewHostInterface::VIEW_HOST_MAIN) {
     if (d->info->is_floating) {
-      FloatingMainViewDecorator *decorator =
-          new FloatingMainViewDecorator(vh, true);
+      FloatingDecorator *decorator = new FloatingDecorator(vh);
       dvh = new DecoratedViewHost(decorator);
       decorator->ConnectOnClose(NewSlot(d, &Private::OnCloseMainViewHandler));
       decorator->ConnectOnPopOut(NewSlot(d, &Private::OnPopOutHandler));
       decorator->ConnectOnPopIn(NewSlot(d, &Private::OnPopInHandler));
-      decorator->SetButtonVisible(MainViewDecoratorBase::POP_IN_OUT_BUTTON,
-                                  false);
-      decorator->SetButtonVisible(MainViewDecoratorBase::MENU_BUTTON,
-                                  false);
-      decorator->SetButtonVisible(MainViewDecoratorBase::CLOSE_BUTTON,
-                                  false);
     } else {
       PanelDecorator *decorator = new PanelDecorator(vh, d->info);
       decorator->ConnectOnPopOut(NewSlot(d, &Private::OnPopOutHandler));

@@ -14,25 +14,21 @@
   limitations under the License.
 */
 
-#ifndef GGADGET_PANEL_DECORATOR_H__
-#define GGADGET_PANEL_DECORATOR_H__
+#ifndef GGADGET_FLOATING_DECORATOR_H__
+#define GGADGET_FLOATING_DECORATOR_H__
 
-#include <ggadget/docked_main_view_decorator.h>
-
-#include "ggl_applet_script.h"
+#include <ggadget/floating_main_view_decorator.h>
 
 namespace ggadget {
 
-class PanelDecorator : public DockedMainViewDecorator {
+class FloatingDecorator : public FloatingMainViewDecorator {
  public:
-  PanelDecorator(ViewHostInterface *host, GadgetInfo *info);
-  virtual ~PanelDecorator();
+  FloatingDecorator(ViewHostInterface *host);
+  virtual ~FloatingDecorator();
   virtual void OnAddDecoratorMenuItems(MenuInterface *menu);
 
  private:
-  void ShowDebugInfo(const char*);
-  GadgetInfo *info_;
-  DISALLOW_EVIL_CONSTRUCTORS(PanelDecorator);
+  DISALLOW_EVIL_CONSTRUCTORS(FloatingDecorator);
 };
 
 } // namespace ggadget
