@@ -52,6 +52,8 @@ Battery::Battery(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
       m_batteryStyle(0),
       m_theme(0),
+      m_availableProfiles(0),
+      m_currentProfile(0),
       m_animId(-1),
       m_alpha(1),
       m_fadeIn(false),
@@ -182,6 +184,11 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     } else if (source == I18N_NOOP("AC Adapter")) {
         m_acadapter_plugged = data[I18N_NOOP("Plugged in")].toBool();
         showAcAdapter(m_acadapter_plugged);
+
+    } else if (source == I18N_NOOP("PowerDevil")) {
+        m_availableProfiles = data[I18N_NOOP("availableProfiles")].toStringList();
+        m_currentProfile = data[I18N_NOOP("currentProfile")].toString();
+        kDebug() << "POWERDEVIL:" << m_availableProfiles << "[" << m_currentProfile << "]";
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
     }

@@ -105,6 +105,9 @@ class Battery : public Plasma::PopupApplet
         Plasma::Svg* m_theme;
         bool m_acadapter_plugged;
 
+        QStringList m_availableProfiles;
+        QString m_currentProfile;
+
         // Configuration dialog
         Ui::batteryConfig ui;
 
