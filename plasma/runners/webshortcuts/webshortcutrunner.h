@@ -37,11 +37,16 @@ class WebshortcutRunner : public Plasma::AbstractRunner {
         void run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match);
 
     private:
-        QString getSearchQuery(const QString &query, const QString &searchWord);
-        KIcon getFavicon(const KUrl& url);
+        QString searchQuery(const QString &query, const QString &searchWord);
+        KIcon iconForUrl(const KUrl& url);
         QString loadDelimiter();
-        KIcon m_icon;
+
         QString m_delimiter;
+        KIcon m_icon;
+        KIcon m_lastIcon;
+        QString m_lastKey;
+        QString m_lastServiceName;
+        Plasma::QueryMatch m_match;
 };
 
 K_EXPORT_PLASMA_RUNNER(webshortcuts, WebshortcutRunner)

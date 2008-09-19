@@ -32,7 +32,8 @@
 #include <KUrl>
 
 WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
-    : Plasma::AbstractRunner(parent, args)
+    : Plasma::AbstractRunner(parent, args),
+      m_match(this)
 {
     KGlobal::locale()->insertCatalog("krunner_webshortcutsrunner");
     Q_UNUSED(args);
@@ -41,6 +42,9 @@ WebshortcutRunner::WebshortcutRunner(QObject *parent, const QVariantList& args)
     m_icon = KIcon("internet-web-browser");
     m_delimiter = loadDelimiter();
     setIgnoredTypes(Plasma::RunnerContext::FileSystem);
+
+    m_match.setType(Plasma::QueryMatch::ExactMatch);
+    m_match.setRelevance(0.9);
 }
 
 QString WebshortcutRunner::loadDelimiter()
@@ -74,30 +78,35 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
     }
 
     QString key = term.left(delimIndex);
-    KService::List offers = serviceQuery("SearchProvider", QString("'%1' ~in Keys").arg(key));
-    if (offers.isEmpty()) {
-        return;
+
+    if (key != m_lastKey) {
+        KService::List offers = serviceQuery("SearchProvider", QString("'%1' in Keys").arg(key));
+
+        if (offers.isEmpty()) {
+            return;
+        }
+
+        QMutexLocker lock(bigLock());
+        KService::Ptr service = offers.at(0);
+        m_lastKey = key;
+        m_lastServiceName = service->name();
+
+        QString query = service->property("Query").toString();
+        m_match.setData(query);
+
+        m_match.setIcon(iconForUrl(query));
     }
 
-    QMutexLocker lock(bigLock());
-    KService::Ptr service = offers.at(0);
-    QString actionText = i18n("Search %1 for %2", service->name(),
+    QString actionText = i18n("Search %1 for %2", m_lastServiceName,
                               term.right(term.length() - delimIndex - 1));
-    QString url = getSearchQuery(service->property("Query").toString(), term);
     //kDebug() << "url is" << url << "!!!!!!!!!!!!!!!!!!!!!!!";
 
-    Plasma::QueryMatch match(this);
-    match.setType(Plasma::QueryMatch::ExactMatch);
-    match.setData(service->property("Query").toString());
-    match.setRelevance(0.9);
-    match.setText(actionText);
-
-    match.setIcon(getFavicon(url));
-    context.addMatch(term, match);
+    m_match.setText(actionText);
+    context.addMatch(term, m_match);
     return;
 }
 
-QString WebshortcutRunner::getSearchQuery(const QString &query, const QString &term)
+QString WebshortcutRunner::searchQuery(const QString &query, const QString &term)
 {
     QString searchWord = term.right(term.length() - term.indexOf(m_delimiter) - 1);
     if (searchWord.isEmpty()) {
@@ -111,7 +120,7 @@ QString WebshortcutRunner::getSearchQuery(const QString &query, const QString &t
     return url.url();
 }
 
-KIcon WebshortcutRunner::getFavicon(const KUrl &url)
+KIcon WebshortcutRunner::iconForUrl(const KUrl &url)
 {
     // query the favicons module
     QDBusInterface favicon("org.kde.kded", "/modules/favicons", "org.kde.FavIcon");
@@ -128,12 +137,13 @@ KIcon WebshortcutRunner::getFavicon(const KUrl &url)
         return m_icon;
     }
 
-    return KIcon(iconFile);
+    m_lastIcon = KIcon(iconFile);
+    return m_lastIcon;
 }
 
 void WebshortcutRunner::run(const Plasma::RunnerContext &context, const Plasma::QueryMatch &match)
 {
-    QString location = getSearchQuery(match.data().toString(), context.query());
+    QString location = searchQuery(match.data().toString(), context.query());
 
     if (!location.isEmpty()) {
         KToolInvocation::invokeBrowser(location);
