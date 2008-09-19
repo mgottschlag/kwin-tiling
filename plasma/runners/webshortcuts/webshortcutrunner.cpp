@@ -79,16 +79,23 @@ void WebshortcutRunner::match(Plasma::RunnerContext &context)
 
     QString key = term.left(delimIndex);
 
+    if (key == m_lastFailedKey) {
+        // we already know it's going to suck ;)
+        return;
+    }
+
     if (key != m_lastKey) {
         KService::List offers = serviceQuery("SearchProvider", QString("'%1' in Keys").arg(key));
 
         if (offers.isEmpty()) {
+            m_lastFailedKey = key;
             return;
         }
 
         QMutexLocker lock(bigLock());
         KService::Ptr service = offers.at(0);
         m_lastKey = key;
+        m_lastFailedKey.clear();
         m_lastServiceName = service->name();
 
         QString query = service->property("Query").toString();

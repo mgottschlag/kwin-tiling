@@ -44,6 +44,7 @@ class WebshortcutRunner : public Plasma::AbstractRunner {
         QString m_delimiter;
         KIcon m_icon;
         KIcon m_lastIcon;
+        QString m_lastFailedKey;
         QString m_lastKey;
         QString m_lastServiceName;
         Plasma::QueryMatch m_match;
