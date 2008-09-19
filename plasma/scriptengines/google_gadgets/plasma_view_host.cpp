@@ -136,7 +136,7 @@ void PlasmaViewHost::SetTooltip(const char *tooltip) {
 }
 
 bool PlasmaViewHost::ShowView(bool modal, int flags,
-                          Slot1<void, int> *feedback_handler) {
+                              Slot1<bool, int> *feedback_handler) {
   if (d->ShowView(modal, flags, feedback_handler)) {
     if (d->parent_widget_)
       d->parent_widget_->setWindowTitle(d->caption_);

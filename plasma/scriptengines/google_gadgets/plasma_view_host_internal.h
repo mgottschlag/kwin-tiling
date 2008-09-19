@@ -57,7 +57,7 @@ class PlasmaViewHost::Private : public QObject {
    *    - popouted main view and details view: Shown in QtViewWidget
    *    - options view: Shown in QDialog
    */
-  bool ShowView(bool modal, int flags, Slot1<void, int> *feedback_handler) {
+  bool ShowView(bool modal, int flags, Slot1<bool, int> *feedback_handler) {
     ASSERT(view_);
     if (feedback_handler_ && feedback_handler_ != feedback_handler)
       delete feedback_handler_;
@@ -178,7 +178,7 @@ class PlasmaViewHost::Private : public QObject {
   bool is_popout_;
   Connection *onoptionchanged_connection_;
 
-  Slot1<void, int> *feedback_handler_;
+  Slot1<bool, int> *feedback_handler_;
   QString caption_;
   QMenu context_menu_;
 
