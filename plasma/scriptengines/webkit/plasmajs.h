@@ -47,6 +47,7 @@ public:
     void setData(const Plasma::DataEngine::Data &data);
 
 public Q_SLOTS:
+    bool contains(const QString &key) const;
     QVariant value(const QString &key) const;
     QStringList keys() const;
     QString key(int i) const;

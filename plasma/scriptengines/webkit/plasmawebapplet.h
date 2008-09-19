@@ -83,6 +83,7 @@ public slots:
     QObject* objArg(int index) const;
     void dataUpdated(const QString& source, const Plasma::DataEngine::Data &data);
     void configChanged();
+    void themeChanged();
     void makeStylesheet();
 
 protected:

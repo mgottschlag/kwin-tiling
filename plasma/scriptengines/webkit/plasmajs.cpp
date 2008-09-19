@@ -53,8 +53,13 @@ QVariant ConfigGroupWrapper::readEntry(const QString &key, const QVariant &aDefa
     // Should KConfig do this?
     // There is readEntry(key, QVariant) but it does not seem to work
     // (if writeEntry was not QVariant??)
+    // kDebug() << aDefault.typeName();
     if (aDefault.type() == QVariant::Int) {
         return m_config.readEntry(key, aDefault.toInt());
+    } else if (aDefault.type() == QVariant::Double) {
+        return m_config.readEntry(key, aDefault.toDouble());
+    } else if (aDefault.type() == QVariant::Bool) {
+        return m_config.readEntry(key, aDefault.toBool());
     } else {
         return m_config.readEntry(key, aDefault.toString());
     }
@@ -83,6 +88,11 @@ void DataEngineDataWrapper::setData(const Plasma::DataEngine::Data &data)
 QVariant DataEngineDataWrapper::value(const QString &key) const
 {
     return m_data[key];
+}
+
+bool DataEngineDataWrapper::contains(const QString &key) const
+{
+    return m_data.keys().contains(key);
 }
 
 QStringList DataEngineDataWrapper::keys() const

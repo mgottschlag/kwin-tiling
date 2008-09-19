@@ -90,9 +90,9 @@ THE SOFTWARE.
 "var rect_width = 2;\n"\
 "var rect_height = 3;\n"\
 "var margin_left = 0;\n"\
-"var margin_top = 2;\n"\
-"var margin_right = 3;\n"\
-"var margin_bottom = 4;\n"\
+"var margin_top = 1;\n"\
+"var margin_right = 2;\n"\
+"var margin_bottom = 3;\n"\
 
 #define CSS "body { font-family: %3; font-size: %4pt; color:%1; background-color:%2 }\n"
 
@@ -160,7 +160,7 @@ bool PlasmaWebApplet::init()
     m_config.setConfig(KConfigGroup(applet()->config().config(), applet()->pluginName()));
     if (WebApplet::init()) {
         connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
-                this, SLOT(makeStylesheet()));
+                this, SLOT(themeChanged()));
         makeStylesheet();
         return true;
     }
@@ -187,6 +187,12 @@ void PlasmaWebApplet::makeStylesheet()
     }
 }
 
+void PlasmaWebApplet::themeChanged()
+{
+    makeStylesheet();
+    callJsFunction("themeChanged");
+}
+
 void PlasmaWebApplet::loadFinished(bool success)
 {
     WebApplet::loadFinished(success);
@@ -206,6 +212,7 @@ void PlasmaWebApplet::constraintsEvent(Plasma::Constraints constraints)
         applet()->getContentsMargins(&left, &top, &right, &bottom);
         page()->setPos(QPointF(left, top));
         page()->resize(WebApplet::size() - QSizeF(left + right, top + bottom));
+        //kDebug() << WebApplet::size() << left << right << top << bottom << page()->size();
     }
     callJsFunction("constraintsEvent", QVariantList() << (int)constraints);
 }
