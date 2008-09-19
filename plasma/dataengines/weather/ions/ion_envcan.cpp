@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Shawn Starr <shawn.starr@rogers.com>            *
+ *   Copyright (C) 2007-2008 by Shawn Starr <shawn.starr@rogers.com>       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -883,6 +883,10 @@ void EnvCanadaIon::updateWeather(const QString& source)
     // Real weather - Current conditions
     setData(source, "Observation Period", observationTime(source));
     setData(source, "Current Conditions", condition(source));
+
+    // Tell applet which icon to use for conditions
+    setData(source, "Condition Icon", getConditionIcon(source));
+
     dataFields = temperature(source);
     setData(source, "Temperature", dataFields["temperature"]);
 
@@ -1056,6 +1060,21 @@ QString EnvCanadaIon::condition(const QString& source)
     return d->m_weatherData[source].condition;
 }
 
+QString EnvCanadaIon::getConditionIcon(const QString& source)
+{ 
+    QString condition = d->m_weatherData[source].condition.toLower();
+    IconNames["sunny"] = ClearDay;
+    IconNames["clear"] = ClearNight;
+
+    switch (IconNames[condition]) {
+           case ClearDay:
+                return "weather-clear";
+           case ClearNight:
+                return "weather-clear-night";
+    }
+    return "weather-not-available";
+}
+    
 QString EnvCanadaIon::dewpoint(const QString& source)
 {
     if (!d->m_weatherData[source].dewpoint.isEmpty()) {

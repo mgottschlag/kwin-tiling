@@ -39,6 +39,10 @@ class ION_EXPORT IonInterface : public Plasma::DataEngine
     Q_PROPERTY(QString timezone READ timezone WRITE setTimezoneFormat)
 
 public:
+
+    enum ConditionIcons { ClearDay, ClearNight };
+    QMap<QString, ConditionIcons> IconNames;
+
     typedef QHash<QString, IonInterface*> IonDict; // Define Dict as a QHash for Ions
 
     /**
