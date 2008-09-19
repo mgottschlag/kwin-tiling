@@ -26,6 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QAction>
 
 #include <KDebug>
+#include <KLocale>
 
 #include "abstractgroupingstrategy.h"
 #include "groupmanager.h"
@@ -62,7 +63,7 @@ ProgramGroupingStrategy::~ProgramGroupingStrategy()
 QList <QAction*> *ProgramGroupingStrategy::strategyActions(QObject *parent, AbstractGroupableItem *item)
 {
     QList <QAction*> *actionList = new QList<QAction*> ();
-    QAction *a = new QAction("Start/Stop grouping this program", parent);
+    QAction *a = new QAction(i18n("Start/Stop grouping this program"), parent);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleGrouping()));
     actionList->append(a);
     d->tempItem = item;

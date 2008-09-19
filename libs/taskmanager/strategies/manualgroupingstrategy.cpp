@@ -26,6 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QAction>
 
 #include <KDebug>
+#include <KLocale>
 
 #include "abstractgroupingstrategy.h"
 #include "groupmanager.h"
@@ -86,14 +87,14 @@ QList <QAction*> *ManualGroupingStrategy::strategyActions(QObject *parent, Abstr
     QList <QAction*> *actionList = new QList<QAction*> ();
 
     if (item->grouped()) {
-        QAction *a = new QAction("Leave Group", parent);
+        QAction *a = new QAction(i18n("Leave Group"), parent);
         connect(a, SIGNAL(triggered()), this, SLOT(leaveGroup()));
         actionList->append(a);
         d->tempItem = item;
      //   actionList.append(LeaveGroupAction(groupManager,))
     }
     if (item->isGroupItem()) {
-        QAction *a = new QAction("Remove Group", parent);
+        QAction *a = new QAction(i18n("Remove Group"), parent);
         connect(a, SIGNAL(triggered()), this, SLOT(removeGroup()));
         actionList->append(a);
         d->tempGroup = dynamic_cast<TaskGroup*>(item);

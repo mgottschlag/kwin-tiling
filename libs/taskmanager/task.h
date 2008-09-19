@@ -60,7 +60,7 @@ enum TaskChange { TaskUnchanged = 0,
                   IconChanged = 1024,
                   EverythingChanged = 0xffff
                 };
-Q_DECLARE_FLAGS(TaskChanges, TaskChange);
+Q_DECLARE_FLAGS(TaskChanges, TaskChange)
 
 /**
  * A dynamic interface to a task (main window).

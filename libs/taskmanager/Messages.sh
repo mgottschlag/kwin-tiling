@@ -1,2 +1,2 @@
 #! /usr/bin/env bash
-$XGETTEXT *.cpp *.h -o $podir/libtaskmanager.pot
+$XGETTEXT *.cpp */*.cpp *.h -o $podir/libtaskmanager.pot
