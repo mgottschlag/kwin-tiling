@@ -263,10 +263,13 @@ shortcut key:</guilabel> checkbox.</para>
 <para>The button text will change to <guilabel>Input...</guilabel>
 and you can press the key combination on your keyboard that you want to be assigned to your program.
 </para>
+<para>You can reset the shortcut to <guilabel>None</guilabel> by using this button: <inlinemediaobject><imageobject> <imagedata
+fileref="reset.png" format="PNG"/></imageobject></inlinemediaobject>.
+</para>
 
-<para>Click the toolbar <guiicon>Save</guiicon> icon or use the <menuchoice>
+<para>Don't forget to save your setting by clicking the toolbar <guiicon>Save</guiicon> icon or using the <menuchoice>
 <guimenu>File</guimenu><guimenuitem>Save</guimenuitem>
-</menuchoice> menu item to save this setting.</para>
+</menuchoice> menu item.</para>
 
 </listitem>
 </varlistentry>
