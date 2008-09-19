@@ -124,8 +124,6 @@ void Battery::init()
 
 void Battery::constraintsEvent(Plasma::Constraints constraints)
 {
-    PopupApplet::constraintsEvent(constraints);
-
     if (constraints & (Plasma::FormFactorConstraint | Plasma::SizeConstraint)) {
         if (formFactor() == Plasma::Vertical) {
             if (!m_showMultipleBatteries) {
