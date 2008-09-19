@@ -297,6 +297,7 @@ public:
     Plasma::Dialog *optionsDialog;
     QBoxLayout *optDialogLayout;
     ToolButton *settingsTool;
+    Plasma::Svg *iconSvg;
 
     ToolButton *moveTool;
     ToolButton *sizeTool;
@@ -330,6 +331,10 @@ PanelController::PanelController(QWidget* parent)
 
     d->background = new Plasma::PanelSvg(this);
     d->background->setImagePath("dialogs/background");
+    d->background->setContainsMultipleImages(true);
+
+    d->iconSvg = new Plasma::Svg(this);
+    d->iconSvg->setImagePath("widgets/configuration-icons");
     d->background->setContainsMultipleImages(true);
 
     //setWindowFlags(Qt::Popup);
@@ -408,7 +413,6 @@ PanelController::PanelController(QWidget* parent)
     modeLayout->addWidget(d->underWindowsTool);
     connect(d->underWindowsTool, SIGNAL(toggled(bool)), this, SLOT(panelModeChanged(bool)));
 
-
     d->layout->addStretch();
     d->moveTool = d->addTool("transform-move", i18n("Screen edge"), this);
     d->moveTool->installEventFilter(this);
@@ -444,8 +448,8 @@ PanelController::PanelController(QWidget* parent)
     connect(d->ruler, SIGNAL(rulersMoved(int, int, int)), this, SLOT(rulersMoved(int, int, int)));
     d->extLayout->addWidget(d->ruler);
 
-    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(setPalette()));
-    setPalette();
+    connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), SLOT(themeChanged()));
+    themeChanged();
 }
 
 PanelController::~PanelController()
@@ -566,12 +570,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
         }
         d->background->setEnabledBorders(Plasma::PanelSvg::RightBorder);
         d->extLayout->setContentsMargins(0, 0, d->background->marginSize(Plasma::RightMargin), 0);
-        d->sizeTool->setCursor(Qt::SizeHorCursor);
-        d->sizeTool->setText(i18n("Width"));
-        d->leftAlignTool->setText(i18n("Top"));
-        d->rightAlignTool->setText(i18n("Bottom"));
 
-        d->ruler->setAvailableLength(screenGeom.height());
         break;
     case Plasma::RightEdge:
         d->layout->setDirection(QBoxLayout::TopToBottom);
@@ -582,12 +581,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
         }
         d->background->setEnabledBorders(Plasma::PanelSvg::LeftBorder);
         d->extLayout->setContentsMargins(d->background->marginSize(Plasma::LeftMargin), 0, 0, 0);
-        d->sizeTool->setCursor(Qt::SizeHorCursor);
-        d->sizeTool->setText(i18n("Width"));
-        d->leftAlignTool->setText(i18n("Top"));
-        d->rightAlignTool->setText(i18n("Bottom"));
 
-        d->ruler->setAvailableLength(screenGeom.height());
         break;
     case Plasma::TopEdge:
         if (QApplication::layoutDirection() == Qt::RightToLeft) {
@@ -598,12 +592,7 @@ void PanelController::setLocation(const Plasma::Location &loc)
         d->extLayout->setDirection(QBoxLayout::BottomToTop);
         d->background->setEnabledBorders(Plasma::PanelSvg::BottomBorder);
         d->extLayout->setContentsMargins(0, 0, 0, d->background->marginSize(Plasma::BottomMargin));
-        d->sizeTool->setCursor(Qt::SizeVerCursor);
-        d->sizeTool->setText(i18n("Height"));
-        d->leftAlignTool->setText(i18n("Left"));
-        d->rightAlignTool->setText(i18n("Right"));
 
-        d->ruler->setAvailableLength(screenGeom.width());
         break;
     case Plasma::BottomEdge:
     default:
@@ -615,13 +604,32 @@ void PanelController::setLocation(const Plasma::Location &loc)
         d->extLayout->setDirection(QBoxLayout::TopToBottom);
         d->background->setEnabledBorders(Plasma::PanelSvg::TopBorder);
         d->extLayout->setContentsMargins(0, d->background->marginSize(Plasma::TopMargin), 0, 0);
+
+        break;
+    }
+
+    switch (loc) {
+    case Plasma::LeftEdge:
+    case Plasma::RightEdge:
+        d->sizeTool->setCursor(Qt::SizeHorCursor);
+        d->sizeTool->setText(i18n("Width"));
+        d->sizeTool->setIcon(d->iconSvg->pixmap("size-horizontal"));
+        d->leftAlignTool->setText(i18n("Top"));
+        d->rightAlignTool->setText(i18n("Bottom"));
+
+        d->ruler->setAvailableLength(screenGeom.height());
+
+        break;
+    case Plasma::TopEdge:
+    case Plasma::BottomEdge:
+    default:
         d->sizeTool->setCursor(Qt::SizeVerCursor);
         d->sizeTool->setText(i18n("Height"));
+        d->sizeTool->setIcon(d->iconSvg->pixmap("size-vertical"));
         d->leftAlignTool->setText(i18n("Left"));
         d->rightAlignTool->setText(i18n("Right"));
 
         d->ruler->setAvailableLength(screenGeom.width());
-        break;
     }
 
     d->ruler->setMaximumSize(d->ruler->sizeHint());
@@ -695,7 +703,7 @@ PanelView::PanelMode PanelController::panelMode() const
     }
 }
 
-void PanelController::setPalette()
+void PanelController::themeChanged()
 {
     QColor color = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     QPalette p = d->alignLabel->palette();
@@ -703,6 +711,19 @@ void PanelController::setPalette()
     p.setColor(QPalette::Inactive, QPalette::WindowText, color);
     d->alignLabel->setPalette(p);
     d->modeLabel->setPalette(p);
+
+    d->sizeTool->setIcon(d->iconSvg->pixmap("move"));
+
+    switch (d->location) {
+        case Plasma::LeftEdge:
+        case Plasma::RightEdge:
+            d->sizeTool->setIcon(d->iconSvg->pixmap("size-horizontal"));
+            break;
+        case Plasma::TopEdge:
+        case Plasma::BottomEdge:
+        default:
+            d->sizeTool->setIcon(d->iconSvg->pixmap("size-vertical"));
+    }
 }
 
 void PanelController::paintEvent(QPaintEvent *event)

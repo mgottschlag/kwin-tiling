@@ -60,7 +60,7 @@ public:
     PanelView::PanelMode panelMode() const;
 
 public Q_SLOTS:
-    void setPalette();
+    void themeChanged();
 
 protected:
     void paintEvent(QPaintEvent *event);
