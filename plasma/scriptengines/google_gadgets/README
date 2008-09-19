@@ -10,9 +10,6 @@ To get the lastest version of GGL, please check out the code from svn:
 
 svn checkout http://google-gadgets-for-linux.googlecode.com/svn/trunk/ google-gadgets-for-linux-read-only
 
-and after to generate Makefile (cmake support is not finished yet) 
-sh autotools/bootstrap.sh
-
 Usage:
 
 To install Google gadgets into plasma, run:
