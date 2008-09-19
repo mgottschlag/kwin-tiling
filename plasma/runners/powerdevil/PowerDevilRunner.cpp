@@ -79,7 +79,7 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
                         match.setIcon( KIcon( settings->readEntry( "iconname" ) ) );
                     }
 
-                    match.setText( i18n( "Set Profile to '%1'", settings->readEntry( "name" ) ) );
+                    match.setText( i18n( "Set Profile to '%1'", profile ) );
                     match.setData( profile );
 
                     match.setRelevance( 1 );
@@ -219,7 +219,6 @@ void PowerDevilRunner::run( const Plasma::RunnerContext &context, const Plasma::
     Q_UNUSED( context )
 
     QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", m_dbus );
-
     if ( match.id() == "PowerDevil_ProfileChange" ) {
         iface.call( "refreshStatus" );
         iface.call( "setProfile", match.data().toString() );
