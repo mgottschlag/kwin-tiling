@@ -252,8 +252,25 @@ applications</link>.</para></listitem>
 check this checkbox, and provide the username in the
 <guilabel>Username:</guilabel> field.</para></listitem>
 </varlistentry>
-</variablelist>
 
+<varlistentry>
+<term><guilabel>Current shortcut key:</guilabel></term>
+<listitem><para>You can assign a special keyboard shortcut to launch your program.</para>
+
+<para>Click the <guibutton>None</guibutton> button to the right of the <guilabel>Current
+shortcut key:</guilabel> checkbox.</para>
+
+<para>The button text will change to <guilabel>Input...</guilabel>
+and you can press the key combination on your keyboard that you want to be assigned to your program.
+</para>
+
+<para>Click the toolbar <guiicon>Save</guiicon> icon or use the <menuchoice>
+<guimenu>File</guimenu><guimenuitem>Save</guimenuitem>
+</menuchoice> menu item to save this setting.</para>
+
+</listitem>
+</varlistentry>
+</variablelist>
 </sect1> 
 
 </chapter>
