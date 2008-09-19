@@ -188,6 +188,7 @@ Gadget* PlasmaHost::LoadGadget(const char *path, const char *options_name) {
   if (!gadget->ShowMainView()) {
     LOG("Failed to show main view of gadget %s", path);
     delete gadget;
+    d->info->main_view_host = NULL;
     return NULL;
   }
 
@@ -235,6 +236,7 @@ void PlasmaHost::AdjustAppletSize() {
 void PlasmaHost::OnConstraintsEvent(Plasma::Constraints constraints) {
   if (!d->info->main_view_host) return;
   ViewInterface *view = d->info->main_view_host->GetViewDecorator();
+  if (!view) return;
 
   if (constraints & Plasma::FormFactorConstraint) {
     // TODO: Do something to handle it right

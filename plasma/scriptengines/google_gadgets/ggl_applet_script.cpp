@@ -135,6 +135,7 @@ bool GglAppletScript::init() {
       ext_manager->RegisterLoadedExtensions(&script_runtime_register);
 
       ext_manager->SetReadonly();
+      ggadget::InitXHRUserAgent("ggl-plasma");
       g_initialized = true;
     }
   }
@@ -194,9 +195,13 @@ void GglAppletScript::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 
 QList<QAction*> GglAppletScript::contextualActions() {
   d->menu_.clear();
-  ggadget::qt::QtMenu qt_menu(&d->menu_);
-  ggadget::ViewInterface *view = d->info.main_view_host->GetViewDecorator();
-  view->OnAddContextMenuItems(&qt_menu);
+  if (d->info.main_view_host) {
+    ggadget::ViewInterface *view = d->info.main_view_host->GetViewDecorator();
+    if (view) {
+      ggadget::qt::QtMenu qt_menu(&d->menu_);
+      view->OnAddContextMenuItems(&qt_menu);
+    }
+  }
   return d->menu_.actions();
 }
 
@@ -206,7 +211,8 @@ void GglAppletScript::constraintsEvent(Plasma::Constraints constraints) {
 }
 
 void GglAppletScript::showConfigurationInterface() {
-  d->info.gadget->ShowOptionsDialog();
+  if (d->info.gadget)
+    d->info.gadget->ShowOptionsDialog();
 }
 
 #include "ggl_applet_script.moc"
