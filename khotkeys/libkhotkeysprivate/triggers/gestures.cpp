@@ -57,7 +57,6 @@ Gesture::Gesture( bool /*enabled_P*/, QObject* parent_P )
 
 Gesture::~Gesture()
     {
-    kDebug() << "Deleting Gesture";
     enable( false );
     }
 

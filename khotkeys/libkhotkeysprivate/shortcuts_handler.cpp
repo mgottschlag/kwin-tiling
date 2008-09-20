@@ -31,7 +31,6 @@
 #include <KDE/KAction>
 #include <KDE/KDebug>
 
-
 namespace KHotKeys {
 
 
@@ -55,7 +54,6 @@ KAction *ShortcutsHandler::addAction(
         const QString &text,
         const KShortcut &shortcut )
     {
-    kDebug() << "Creating action for " << id << " - " << text << ":" << shortcut.primary();
     // Create the action
     KAction *newAction = _actions->addAction(id);
     if (!newAction)
@@ -67,7 +65,6 @@ KAction *ShortcutsHandler::addAction(
     // see KAction::~KAction
     if (_type==Configuration)
         {
-        kDebug() << "Making it a configuration action";
         newAction->setProperty("isConfigurationAction", QVariant(true));
         }
     newAction->setText(text);
@@ -81,9 +78,6 @@ KAction *ShortcutsHandler::addAction(
         return 0;
         }
     Q_ASSERT(newAction->isEnabled());
-    kDebug() << "Finished creating action for " << id << " - " << text << ":" 
-             << newAction->globalShortcut().primary()
-             << newAction->globalShortcut().alternate();
     return newAction;
     }
 
@@ -96,7 +90,6 @@ QAction *ShortcutsHandler::getAction( const QString &id )
 
 bool ShortcutsHandler::removeAction( const QString &id )
     {
-    kDebug() << "Removing action for " << id;
     QAction *action = getAction( id );
     if (!action)
         {

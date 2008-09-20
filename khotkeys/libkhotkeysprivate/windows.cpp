@@ -48,7 +48,6 @@ Windows::Windows( bool enable_signal_P, QObject* parent_P )
 
 Windows::~Windows()
     {
-    kDebug() << "Destroying Windows";
     }
 
 void Windows::window_added_slot( WId window_P )
