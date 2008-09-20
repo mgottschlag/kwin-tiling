@@ -56,6 +56,7 @@ void DesktopCorona::checkScreens()
             c->setScreen(i);
             c->setFormFactor(Plasma::Planar);
             c->flushPendingConstraintsEvents();
+            c->setActivity(i18n("Desktop"));
         } else if (i >= m_numScreens) {
             // now ensure that if our screen count changed we actually get views
             // for them, even if the Containment already existed for that screen
