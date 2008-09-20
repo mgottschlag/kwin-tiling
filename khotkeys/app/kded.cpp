@@ -54,7 +54,8 @@ KHotKeysModule::KHotKeysModule(QObject* parent, const QList<QVariant>&)
 
 KHotKeysModule::~KHotKeysModule()
     {
-    delete actions_root;
+    // actions_root belongs to _settings.
+    actions_root = NULL;
     }
 
 
