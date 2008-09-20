@@ -115,7 +115,7 @@ void HotkeysTreeViewContextMenu::populateTriggerMenu(
     if (types & KHotKeys::Action::DBusActionType)
         {
         mapper->setMapping(
-            menu->addAction( i18n("Dbus Command"), mapper, SLOT(map()) ),
+            menu->addAction( i18n("D-Bus Command"), mapper, SLOT(map()) ),
             KHotKeys::Action::DBusActionType );
         }
 
