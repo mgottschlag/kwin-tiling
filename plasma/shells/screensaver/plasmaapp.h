@@ -88,7 +88,7 @@ public Q_SLOTS:
     /**
      * @return the window id of our view, or 0 if there is none
      */
-    WId viewWinId();
+    uint viewWinId();
 
 private Q_SLOTS:
     void cleanup();
