@@ -42,6 +42,7 @@ public:
     QString m_code;
     QString m_territory;
     QString m_cityName;
+    IconNames m_conditionList;
 
     // Weather information
     QHash<QString, WeatherData> m_weatherData;
@@ -86,8 +87,31 @@ EnvCanadaIon::~EnvCanadaIon()
 // Get the master list of locations to be parsed
 void EnvCanadaIon::init()
 {
+    setupConditionIcons();
+
     // Get the real city XML URL so we can parse this
     getXMLSetup();
+}
+
+void EnvCanadaIon::setupConditionIcons(void)
+{
+//    ClearDay, FewCloudsDay, PartlyCloudyDay, Overcast,
+//    Showers, ScatteredShowers, Thunderstorm, Snow,
+//    FewCloudsNight, PartlyCloudyNight, ClearNight,
+//    Mist, NotAvailable
+//
+//  FIXME: We have to know if the place is in AM or PM so we can display the right icons for some conditions
+    d->m_conditionList["sunny"] = ClearDay;
+    d->m_conditionList["mainly sunny"] = FewCloudsDay;
+    d->m_conditionList["clear"] = ClearNight;
+    d->m_conditionList["mainly clear"] = FewCloudsNight;
+    d->m_conditionList["partly cloudy"] = PartlyCloudyDay;
+    d->m_conditionList["mostly cloudy"] = PartlyCloudyDay;
+    d->m_conditionList["cloudy"] = Overcast;
+    d->m_conditionList["light snow"] = Snow;
+    d->m_conditionList["snow grains"] = Snow;
+    d->m_conditionList["light rainshower"] = ScatteredShowers;
+    d->m_conditionList["recent thunderstorm"] = Thunderstorm;
 }
 
 QStringList EnvCanadaIon::validate(const QString& source) const
@@ -646,7 +670,7 @@ void EnvCanadaIon::parseShortForecast(WeatherData::ForecastInfo *forecast, QXmlS
                 forecast->popPrecent = xml.readElementText();
             }
             if (xml.name() == "textSummary") {
-                forecast->shortForecast = xml.readElementText();
+                forecast->shortForecast = getWeatherIcon(d->m_conditionList, xml.readElementText().toLower());
             }
         }
     }
@@ -884,8 +908,8 @@ void EnvCanadaIon::updateWeather(const QString& source)
     setData(source, "Observation Period", observationTime(source));
     setData(source, "Current Conditions", condition(source));
 
-    // Tell applet which icon to use for conditions
-    setData(source, "Condition Icon", getConditionIcon(source));
+    // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
+    setData(source, "Condition Icon", getWeatherIcon(d->m_conditionList, d->m_weatherData[source].condition));
 
     dataFields = temperature(source);
     setData(source, "Temperature", dataFields["temperature"]);
@@ -1060,21 +1084,6 @@ QString EnvCanadaIon::condition(const QString& source)
     return d->m_weatherData[source].condition;
 }
 
-QString EnvCanadaIon::getConditionIcon(const QString& source)
-{ 
-    QString condition = d->m_weatherData[source].condition.toLower();
-    IconNames["sunny"] = ClearDay;
-    IconNames["clear"] = ClearNight;
-
-    switch (IconNames[condition]) {
-           case ClearDay:
-                return "weather-clear";
-           case ClearNight:
-                return "weather-clear-night";
-    }
-    return "weather-not-available";
-}
-    
 QString EnvCanadaIon::dewpoint(const QString& source)
 {
     if (!d->m_weatherData[source].dewpoint.isEmpty()) {

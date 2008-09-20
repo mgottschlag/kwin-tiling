@@ -132,7 +132,6 @@ public:
     bool timezone(void);
     void setTimezoneFormat(const QString& tz);
     void updateWeather(const QString& source);
-    QString getConditionIcon(const QString& source);
 
 protected:
     void init();  // Setup the city location, fetching the correct URL name.
@@ -146,6 +145,8 @@ protected slots:
 
 private:
     /* Environment Canada Methods - Internal for Ion */
+
+    void setupConditionIcons(void);
 
     // Place information
     QString country(const QString& source);
