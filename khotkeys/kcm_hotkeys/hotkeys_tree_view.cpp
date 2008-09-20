@@ -210,6 +210,11 @@ void HotkeysTreeViewContextMenu::deleteAction()
 HotkeysTreeView::HotkeysTreeView( QWidget *parent )
     : QTreeView(parent)
     {
+    setObjectName("khotkeys treeview");
+    setAllColumnsShowFocus(true);
+    setDragEnabled(true);
+    setAcceptDrops(true);
+    setDropIndicatorShown(true);
     }
 
 
@@ -230,6 +235,7 @@ HotkeysTreeView::contextMenuEvent( QContextMenuEvent *event )
 void
 HotkeysTreeView::modelReset()
     {
+    kDebug();
     resizeColumnToContents(0);
     }
 

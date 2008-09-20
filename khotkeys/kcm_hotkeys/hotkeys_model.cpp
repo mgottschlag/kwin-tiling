@@ -24,9 +24,39 @@
 
 #include <typeinfo>
 
+#include <QMimeData>
+
 #include <KDE/KDebug>
 #include <KDE/KLocale>
 #include <KDE/KIcon>
+
+static KHotKeys::ActionDataBase *findElement(
+        void *ptr
+        ,KHotKeys::ActionDataGroup *root)
+    {
+    Q_ASSERT(root);
+    if (!root) return NULL;
+
+    KHotKeys::ActionDataBase *match = NULL;
+
+    Q_FOREACH( KHotKeys::ActionDataBase *element, root->children())
+        {
+        if (ptr == element)
+            {
+            match = element;
+            break;
+            }
+
+        if (KHotKeys::ActionDataGroup *subGroup = dynamic_cast<KHotKeys::ActionDataGroup*>(element))
+            {
+            match = findElement(ptr, subGroup);
+            if (match) break;
+            }
+        }
+
+    return match;
+    }
+
 
 
 KHotkeysModel::KHotkeysModel( QObject *parent )
@@ -41,7 +71,6 @@ KHotkeysModel::~KHotkeysModel()
     }
 
 
-// Add a group
 QModelIndex KHotkeysModel::addGroup( const QModelIndex & parent )
     {
     KHotKeys::ActionDataGroup *list;
@@ -130,7 +159,7 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
         }
 
     // Display and Tooltip. Tooltip displays the complete name. That's nice if
-    // there is not enough space 
+    // there is not enough space
     if (role==Qt::DisplayRole || role==Qt::ToolTipRole)
         {
         switch (index.column())
@@ -170,7 +199,7 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
                     ? KIcon("folder")
                     : QVariant();
 
-            default: 
+            default:
                 return QVariant();
             }
         }
@@ -178,6 +207,65 @@ QVariant KHotkeysModel::data( const QModelIndex &index, int role ) const
 
     // For everything else
     return QVariant();
+    }
+
+
+bool KHotkeysModel::dropMimeData(
+        const QMimeData *data
+        ,Qt::DropAction action
+        ,int row
+        ,int column
+        ,const QModelIndex &parent)
+    {
+    kDebug()
+        << parent.data(Qt::DisplayRole) << ","
+        << row << ","
+        << column;
+
+    // We only support move actions and our own mime type
+    if ( (action!=Qt::CopyAction)
+            || !data->hasFormat("application/x-pointer"))
+        {
+        kDebug() << "Drop not supported " << data->formats();
+        return false;
+        }
+
+    // Decode the stream
+    QByteArray encodedData = data->data("application/x-pointer");
+    QDataStream stream(&encodedData, QIODevice::ReadOnly);
+    QList<quintptr> ptrs;
+    while (!stream.atEnd())
+        {
+        quintptr ptr;
+        stream >> ptr;
+        ptrs << ptr;
+        }
+
+    // No pointers, nothing to do
+    if (ptrs.empty()) return false;
+
+    // Get the group we have to drop into
+    QModelIndex dropIndex = parent;
+    KHotKeys::ActionDataGroup *dropToGroup = indexToActionDataGroup(dropIndex);
+    if (!dropToGroup)
+        {
+        dropIndex = parent.parent();
+        dropToGroup = indexToActionDataGroup(dropIndex);
+        }
+
+    kDebug() << "dropping to " << dropToGroup->name();
+
+    // Do the moves
+    Q_FOREACH(quintptr ptr, ptrs)
+        {
+        KHotKeys::ActionDataBase *element = findElement(
+                reinterpret_cast<void*>(ptr),
+                _actions);
+
+        if (element) moveElement(element, dropToGroup);
+        }
+
+    return true;
     }
 
 
@@ -206,22 +294,26 @@ void KHotkeysModel::emitChanged(KHotKeys::ActionDataBase *item)
 
 Qt::ItemFlags KHotkeysModel::flags( const QModelIndex &index ) const
     {
+    Qt::ItemFlags flags = QAbstractItemModel::flags(index);
+
     if (!index.isValid())
         {
-        return QAbstractItemModel::flags(index);
+            return flags | Qt::ItemIsDropEnabled;
         }
-
-    // Get the item behind the index
-    KHotKeys::ActionDataBase *action = indexToActionDataBase(index);
-    Q_ASSERT(action);
 
     switch (index.column())
         {
         case 1:
-            return QAbstractItemModel::flags(index) | Qt::ItemIsUserCheckable;
+            return flags
+                | Qt::ItemIsUserCheckable
+                | Qt::ItemIsDragEnabled
+                | Qt::ItemIsDropEnabled;
 
         default:
-            return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+            return flags
+                | Qt::ItemIsEditable
+                | Qt::ItemIsDragEnabled
+                | Qt::ItemIsDropEnabled;
         }
     }
 
@@ -292,6 +384,93 @@ void KHotkeysModel::load()
     _settings.read_settings(true);
     _actions = _settings.actions();
     reset();
+    }
+
+
+QMimeData *KHotkeysModel::mimeData(const QModelIndexList &indexes) const
+    {
+    QMimeData * mimeData = new QMimeData();
+    QByteArray encodedData;
+
+    QDataStream stream(&encodedData, QIODevice::WriteOnly);
+
+    Q_FOREACH (QModelIndex index, indexes)
+        {
+        if (index.isValid() and index.column() == 0)
+            {
+            KHotKeys::ActionDataBase *element = indexToActionDataBase(index);
+            // We use the pointer as id.
+            stream << reinterpret_cast<quintptr>(element);
+            }
+        }
+
+    mimeData->setData("application/x-pointer", encodedData);
+    return mimeData;
+    }
+
+
+QStringList KHotkeysModel::mimeTypes() const
+    {
+    QStringList types;
+    types << "application/x-pointer";
+    return types;
+    }
+
+
+bool KHotkeysModel::moveElement(
+        KHotKeys::ActionDataBase *element
+        ,KHotKeys::ActionDataGroup *newGroup
+        ,int position)
+    {
+    Q_ASSERT(element && newGroup);
+    if (!element || !newGroup) return false;
+
+    // TODO: Make this logic more advanced
+    // We do not allow moving into our systemgroup
+    if (newGroup->is_system_group()) return false;
+
+    // Make sure we don't move a group to one of it's children or
+    // itself.
+    KHotKeys::ActionDataGroup *tmp = newGroup;
+    do  {
+        if (tmp == element)
+            {
+            kDebug() << "Forbidden move" << tmp->name();
+            return false;
+            }
+        }
+        while((tmp = tmp->parent()));
+
+    KHotKeys::ActionDataGroup *oldParent = element->parent();
+
+    // TODO: Make this logic more advanced
+    // We do not allow moving from our systemgroup
+    if (oldParent->is_system_group()) return false;
+
+    // Remove it from it's current place
+    kDebug() << "Removing from";
+    kDebug() << KHotkeysModel::data(createIndex(0, 0, oldParent), Qt::DisplayRole);
+    kDebug() << "item " << oldParent->children().indexOf(element);
+    kDebug() << "from " << oldParent->children().size();
+    beginRemoveRows(
+            createIndex(0, 0, oldParent),
+            oldParent->children().indexOf(element),
+            oldParent->children().indexOf(element));
+    element->reparent(0);
+    endRemoveRows();
+
+    // Add to the new
+    kDebug() << "Adding to";
+    kDebug() << KHotkeysModel::data(createIndex(0, 0, newGroup), Qt::DisplayRole);
+    kDebug() << "from " << newGroup->children().size();
+    beginInsertRows(
+            createIndex(0, 0, newGroup),
+            newGroup->children().size(),
+            newGroup->children().size());
+    element->reparent(newGroup);
+    endInsertRows();
+
+    return true;
     }
 
 

@@ -77,6 +77,18 @@ class KHotkeysModel : public QAbstractItemModel
     Qt::ItemFlags flags( const QModelIndex &index ) const;
 
     /**
+     * Support dropping
+     */
+    bool dropMimeData(
+            const QMimeData *data
+            ,Qt::DropAction action
+            ,int row
+            ,int column
+            ,const QModelIndex &parent);
+    QMimeData *mimeData(const QModelIndexList &indexes) const;
+    QStringList mimeTypes() const;
+
+    /**
      * Get the KHotKeys::ActionDataBase behind the index.
      */
     KHotKeys::ActionDataBase *indexToActionDataBase( const QModelIndex &index ) const;
@@ -94,6 +106,19 @@ class KHotkeysModel : public QAbstractItemModel
      */
     void load();
 
+    /** 
+     * Move @p element to @p newGroup at @position.
+     *
+     * @param element  move this element
+     * @param newGroup to this group
+     * @param position and put it at this position. default is last
+     *
+     * @return @c true if moved, @c false if not.
+     */
+    bool moveElement(
+            KHotKeys::ActionDataBase *element
+            ,KHotKeys::ActionDataGroup *newGroup
+            ,int position = -1);
     /**
      * Save the settings to the file
      */
