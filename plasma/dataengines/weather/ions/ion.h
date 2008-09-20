@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Shawn Starr <shawn.starr@rogers.com>            *
+ *   Copyright (C) 2007-2008 by Shawn Starr <shawn.starr@rogers.com>       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -40,8 +40,12 @@ class ION_EXPORT IonInterface : public Plasma::DataEngine
 
 public:
 
-    enum ConditionIcons { ClearDay, ClearNight };
-    QMap<QString, ConditionIcons> IconNames;
+    enum ConditionIcons { ClearDay, FewCloudsDay, PartlyCloudyDay, Overcast,
+                          Showers, ScatteredShowers, Thunderstorm, Snow,
+                          FewCloudsNight, PartlyCloudyNight, ClearNight,
+                          Mist, NotAvailable };
+
+    typedef QMap<QString, ConditionIcons> IconNames; // Map conditions to the right icon
 
     typedef QHash<QString, IonInterface*> IonDict; // Define Dict as a QHash for Ions
 
@@ -77,6 +81,12 @@ public:
      */
     virtual bool timezone(void) = 0;
 
+    /**
+     * Returns weather icon filename to display in applet.
+     * @return icon name
+     */
+    QString getWeatherIcon(const IconNames& ConditionList, const QString& condition);
+   
 public Q_SLOTS:
 
     /**

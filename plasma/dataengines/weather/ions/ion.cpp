@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Shawn Starr <shawn.starr@rogers.com>            *
+ *   Copyright (C) 2007-2008 by Shawn Starr <shawn.starr@rogers.com>       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -98,4 +98,40 @@ void IonInterface::setInitialized(bool initialized)
             updateSourceEvent(source);
         }
     }
+}
+
+/**
+ * Return weather icon to display in an applet when given a condition.
+ */
+QString IonInterface::getWeatherIcon(const IconNames& ConditionList, const QString& condition)
+{
+    switch(ConditionList[condition.toLower()]) {
+          case ClearDay:
+               return "weather-clear";
+          case FewCloudsDay:
+               return "weather-few-clouds";
+          case PartlyCloudyDay:
+               return "weather-clouds";
+          case Overcast:
+               return "weather-many-clouds";
+          case Showers:
+               return "weather-showers";
+          case ScatteredShowers:
+               return "weather-showers-scattered";
+          case Thunderstorm:
+               return "weather-storm";
+          case Snow:
+               return "weather-snow";
+          case FewCloudsNight:
+               return "weather-few-clouds-night";
+          case PartlyCloudyNight:
+               return "weather-clouds-night";
+          case ClearNight:
+               return "weather-clear-night";
+          case Mist:
+               return "weather-mist";
+          case NotAvailable:
+               return "weather-none-available";
+          }
+     return "weather-none-available";
 }
