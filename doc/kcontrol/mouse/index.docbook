@@ -187,7 +187,7 @@ slider.</para>
 
 <tip><para>In general, the higher you set the <guilabel>Pointer
 acceleration</guilabel> value, the higher you will want to set the
-<guilabel>Pointer threshold</guilabel> value.  For example, A
+<guilabel>Pointer threshold</guilabel> value.  For example, a
 <guilabel>Pointer threshold</guilabel> of 4 pixels may
 be appropriate for a <guilabel>Pointer Acceleration</guilabel> of
 2x, but 10 pixels might be
