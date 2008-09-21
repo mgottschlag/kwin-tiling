@@ -41,15 +41,16 @@ HotkeysTreeViewContextMenu::HotkeysTreeViewContextMenu( const QModelIndex &index
 
     if (index.isValid())
         {
-        // Add the element specific actions
+
         KHotKeys::ActionDataBase *element = parent->model()->indexToActionDataBase(index);
         KHotKeys::ActionDataGroup *group =  parent->model()->indexToActionDataGroup(index);
-        if (!group)
+        bool isGroup = group;   // Is the current element a group
+        if (!isGroup)
             {
-            kDebug() << "Going to the parent";
             group = element->parent();
             }
 
+        // Create the create actions
         createTriggerMenus(group->allowedTriggerTypes(), group->allowedActionTypes());
 
         // It is not allowed to create a subgroup for a system group.
@@ -58,22 +59,20 @@ HotkeysTreeViewContextMenu::HotkeysTreeViewContextMenu( const QModelIndex &index
             addAction( i18n("New Group") , this, SLOT(newGroupAction()) );
             }
 
-        // Global actions
-        addSeparator();
+        // It is not allowed to delete a system group
+        if (!(isGroup && group->is_system_group()))
+            {
+            // Global actions
+            addSeparator();
 
-        // Item related actions
-        addAction( i18n("Delete"), this, SLOT(deleteAction()) );
+            // Item related actions
+            addAction( i18n("Delete"), this, SLOT(deleteAction()) );
+            }
         }
     else
         {
         createTriggerMenus(KHotKeys::Trigger::AllTypes, KHotKeys::Action::AllTypes);
         addAction( i18n("New Group") , this, SLOT(newGroupAction()) );
-
-        // Global actions
-        addSeparator();
-
-        // Item related actions
-        addAction( i18n("Delete"), this, SLOT(deleteAction()) );
         }
     }
 

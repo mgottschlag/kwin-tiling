@@ -167,17 +167,91 @@ bool Settings::import( KConfig& cfg_P, bool ask_P )
     return read_settings( cfg_P, true, ask_P ? ImportAsk : ImportSilent );
     }
 
+
+void Settings::initialize()
+    {
+    // Create the KMenuEdit group
+    get_system_group(ActionDataGroup::SYSTEM_MENUENTRIES);
+    }
+
+
+ActionDataGroup *Settings::get_system_group(ActionDataGroup::system_group_t group_id)
+    {
+    Q_ASSERT(m_actions);
+
+    // Search for the menuentries system group.
+    ActionDataGroup *system_group = NULL;
+
+    Q_FOREACH(KHotKeys::ActionDataBase* element, m_actions->children())
+        {
+        ActionDataGroup *group = dynamic_cast<ActionDataGroup*>(element);
+
+        if (group && (group->system_group() == group_id))
+            {
+            system_group = group;
+            break;
+            }
+        }
+
+    // Check if we found the group
+    if (system_group==NULL)
+        {
+        switch (group_id)
+            {
+            case ActionDataGroup::SYSTEM_MENUENTRIES:
+                system_group = new ActionDataGroup(
+                        m_actions,
+                        "KMenuEdit",
+                        "KMenuEdit Global Shortcuts",
+                        NULL,
+                        ActionDataGroup::SYSTEM_MENUENTRIES,
+                        true);
+                break;
+
+            default:
+                Q_ASSERT(false);
+                return NULL;
+            }
+        }
+
+    Q_ASSERT(system_group);
+    return system_group;
+    }
+
+
 bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportType import_P )
     {
-    setActions(0);
-    if( m_actions == NULL )
-        m_actions = new ActionDataGroup( NULL, "should never see", "should never see",
-            NULL, ActionDataGroup::SYSTEM_ROOT, true );
-    if( cfg_P.groupList().count() == 0 ) // empty
+    // Reread settings. First delete what we have
+    setActions(NULL);
+
+    // Initialize m_actions
+    m_actions = new ActionDataGroup(
+            NULL,
+            "should never see",
+            "should never see",
+            NULL,
+            ActionDataGroup::SYSTEM_ROOT,
+            true );
+
+    // If the config group we should read from is empty, return.
+    if( cfg_P.groupList().count() == 0 ) {
         return false;
+    }
+
+    // If we read the main settings and there is no main. Initialize the file
+    // and return
     KConfigGroup mainGroup( &cfg_P, "Main" ); // main group
-    if( import_P == ImportNone ) // reading main cfg file
+    if (import_P == ImportNone)
+        {
+        if (!cfg_P.groupList().contains("Main"))
+            {
+            initialize();
+            return false;
+            }
+
+        // List of already imported configuration files
         already_imported = mainGroup.readEntry( "AlreadyImported",QStringList() );
+        }
     else
         {
         QString import_id = mainGroup.readEntry( "ImportId" );
@@ -234,13 +308,14 @@ bool Settings::read_settings( KConfig& cfg_P, bool include_disabled_P, ImportTyp
     gestures_exclude = new Windowdef_list( gesturesExcludeConfig );
     KConfigGroup voiceConfig( &cfg_P, "Voice" );
     voice_shortcut=KShortcut( voiceConfig.readEntry("Shortcut" , "")  );
+
+    // Ensure the system groups exist
+    initialize();
     return true;
     }
 
 void Settings::write_settings()
     {
-    kDebug();
-
     KConfig cfg( KHOTKEYS_CONFIG_FILE );
 
 // CHECKME    smazat stare sekce ?

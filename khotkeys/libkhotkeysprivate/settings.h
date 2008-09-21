@@ -12,6 +12,7 @@
 #define _SETTINGS_H_
 
 #include "actions/actions.h"
+#include "action_data/action_data_group.h"
 #include <kshortcut.h>
 
 class KConfig;
@@ -45,6 +46,11 @@ public:
 
     Settings();
     ~Settings();
+
+    /**
+     * Get the system group.
+     */
+    ActionDataGroup *get_system_group(ActionDataGroup::system_group_t group_id);
 
     /**
      * Read the settings.
@@ -163,6 +169,11 @@ protected:
         KConfigGroup& cfg_P,
         ActionDataGroup* parent_P,
         bool include_disabled_P );
+
+    /**
+     * Initialize the settings
+     */
+    void initialize();
 
 private:
 

@@ -80,44 +80,12 @@ void KHotKeysModule::reread_configuration()
     }
 
 
-ActionDataGroup* KHotKeysModule::menuentries_group()
-    {
-    Q_ASSERT(actions_root);
-
-    // Search for the menuentries system group
-    ActionDataGroup *menuentries = NULL;
-
-    Q_FOREACH(KHotKeys::ActionDataBase* element, actions_root->children())
-        {
-        ActionDataGroup *group = dynamic_cast<ActionDataGroup*>(element);
-
-        if (group && (group->system_group() == ActionDataGroup::SYSTEM_MENUENTRIES))
-            {
-            menuentries = group;
-            break;
-            }
-        }
-
-    // Check if we found the group
-    if (menuentries==NULL)
-        {
-        // No group. Create one
-        menuentries = new ActionDataGroup(
-                actions_root,
-                "KMenuEdit",
-                "KMenuEdit Global Shortcuts",
-                NULL,
-                ActionDataGroup::SYSTEM_MENUENTRIES,
-                true);
-        }
-
-    return menuentries;
-    }
 
 
 SimpleActionData* KHotKeysModule::menuentry_action(const QString &storageId)
     {
-    ActionDataGroup *menuentries = menuentries_group();
+    ActionDataGroup *menuentries = _settings.get_system_group(
+            ActionDataGroup::SYSTEM_MENUENTRIES);
 
     // Now try to find the action
     Q_FOREACH(ActionDataBase* element, menuentries->children())
@@ -183,7 +151,8 @@ QString KHotKeysModule::register_menuentry_shortcut(
         kDebug() << "Creating a new action";
 
         // Create the action
-        ActionDataGroup *menuentries = menuentries_group();
+        ActionDataGroup *menuentries = _settings.get_system_group(
+                ActionDataGroup::SYSTEM_MENUENTRIES);
 
         MenuEntryShortcutActionData *newAction = new MenuEntryShortcutActionData(
                 menuentries,

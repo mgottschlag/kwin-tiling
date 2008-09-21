@@ -48,7 +48,7 @@ class KDE_EXPORT Action
             KeyboardInputActionType  = 0x08, //!< @see KeyboardInputAction
             MenuEntryActionType      = 0x10, //!< @see MenuEntryAction
             ActionListType           = 0x11, //!< @see ActionList
-            AllTypes                 = 0xFF  //!< All types. For convenience
+            AllTypes                 = 0xEF  //!< All types. For convenience
             };
 
         Q_DECLARE_FLAGS(ActionTypes, ActionType)
