@@ -104,6 +104,11 @@ Plugins/Addons
             * Standardized multi-timezone support in libplasmaclock
         * Folder view
             * Filtering improvements: mimetype and exclusion based.
+            * Sorting options, options for locking the icons in place and/or forcing grid alignment.
+            * Uses a top-to-bottom icon arrangement when used as a containment.
+            * Remembers icon positions.
+            * No longer blocks the GUI when loading large folders.
+            * Shows a busy animation while loading folders / laying out icons.
         * Default desktop containment
             * Wheel mouse == switch desktop
             * Creation of widgets on desktop containments puts them in empty areas, avoiding overlap
