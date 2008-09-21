@@ -64,12 +64,12 @@ GlobalShortcutsModule::GlobalShortcutsModule(QWidget *parent, const QVariantList
 
     // Add import scheme button
     KPushButton *importButton = new KPushButton(this);
-    importButton->setText(i18n("Import scheme..."));
+    importButton->setText(i18n("Import Scheme..."));
     connect(importButton, SIGNAL(clicked()), this, SLOT(importScheme()));
 
     // Add export scheme button
     KPushButton *exportButton = new KPushButton(this);
-    exportButton->setText(i18n("Export scheme..."));
+    exportButton->setText(i18n("Export Scheme..."));
     connect(exportButton, SIGNAL(clicked()), this, SLOT(exportScheme()));
 
     // Layout for the buttons
@@ -138,7 +138,7 @@ void GlobalShortcutsModule::load()
 
             // Always call this to enable global shortcuts for the action. The editor widget
             // checks it.
-            // Also actually load the shortcut using the KAction::Autoloading mechanism. 
+            // Also actually load the shortcut using the KAction::Autoloading mechanism.
             // Avoid setting the default shortcut; it would just be written to the global
             // configuration so we would not get the real one below.
             action->setGlobalShortcut(KShortcut(), KAction::ActiveShortcut);
@@ -180,7 +180,7 @@ void GlobalShortcutsModule::importScheme()
         int choice = KMessageBox::warningContinueCancel(
                          parentWidget(),
                          i18n("Your current changes will be lost if you load another scheme before saving this one"),
-                         i18n("Load shortcurt scheme"),
+                         i18n("Load Shortcurt Scheme"),
                          KGuiItem(i18n("Load")));
         if (choice != KMessageBox::Continue) {
             return;

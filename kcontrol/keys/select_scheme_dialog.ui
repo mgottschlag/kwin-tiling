@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle" >
-   <string>Select a shortcut scheme</string>
+   <string>Select Shortcut Scheme</string>
   </property>
   <property name="modal" >
    <bool>true</bool>
@@ -47,7 +47,7 @@
        <string>Select one of the standard KDE shortcut schemes</string>
       </property>
       <property name="text" >
-       <string>&amp;Standard Scheme</string>
+       <string>&amp;Standard scheme:</string>
       </property>
       <property name="alignment" >
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -100,7 +100,7 @@
        <string>Select a shortcut scheme file</string>
       </property>
       <property name="text" >
-       <string>&amp;Path</string>
+       <string>&amp;Path:</string>
       </property>
       <property name="alignment" >
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
