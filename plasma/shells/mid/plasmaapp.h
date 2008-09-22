@@ -65,11 +65,9 @@ public:
 
 private:
     PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap);
-    static void crashHandler(int signal);
     void reserveStruts();
 
 private Q_SLOTS:
-    void setCrashHandler();
     void cleanup();
     void syncConfig();
     void createView(Plasma::Containment *containment);

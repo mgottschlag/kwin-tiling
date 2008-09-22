@@ -92,11 +92,9 @@ protected:
 
 private:
     PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap);
-    static void crashHandler(int signal);
     DesktopView* viewForScreen(int screen) const;
 
 private Q_SLOTS:
-    void setCrashHandler();
     void cleanup();
     void syncConfig();
     void appletBrowserDestroyed();

@@ -135,27 +135,11 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
       m_panelHidden(0)
 {
     KGlobal::locale()->insertCatalog("libplasma");
+    KCrash::setFlags(KCrash::AutoRestart);
 
     new PlasmaAppAdaptor(this);
     QDBusConnection::sessionBus().registerObject("/App", this);
     notifyStartup(false);
-
-    // TODO: this same pattern is in KRunner (see workspace/krunner/restartingapplication.h)
-    // would be interesting to see if this could be shared.
-    if (!KCrash::crashHandler())
-    {
-        // this means we've most likely crashed once. so let's see if we
-        // stay up for more than 10s time, and if so reset the
-        // crash handler since the crash isn't a frequent offender
-        QTimer::singleShot(10000, this, SLOT(setCrashHandler()));
-    }
-    else
-    {
-        // See if a crash handler was installed. It was if the -nocrashhandler
-        // argument was given, but the app eats the kde options so we can't
-        // check that directly. If it wasn't, don't install our handler either.
-        setCrashHandler();
-    }
 
     // Enlarge application pixmap cache
     // Calculate the size required to hold background pixmaps for all screens.
@@ -414,21 +398,6 @@ DesktopView* PlasmaApp::viewForScreen(int screen) const
     }
 
     return 0;
-}
-
-void PlasmaApp::setCrashHandler()
-{
-    KCrash::setEmergencySaveFunction(PlasmaApp::crashHandler);
-}
-
-void PlasmaApp::crashHandler(int signal)
-{
-    Q_UNUSED(signal);
-
-    fprintf(stderr, "Plasma crashed, attempting to automatically recover\n");
-
-    sleep(1);
-    system("plasma --nocrashhandler &"); // try to restart
 }
 
 Plasma::Corona* PlasmaApp::corona()

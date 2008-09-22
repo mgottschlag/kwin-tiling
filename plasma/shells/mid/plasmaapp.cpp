@@ -108,26 +108,12 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
       m_isDesktop(false)
 {
     KGlobal::locale()->insertCatalog("libplasma");
+    KCrash::setFlags(KCrash::AutoRestart);
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
     bool isDesktop = args->isSet("desktop");
     if (isDesktop) {
         notifyStartup(false);
-    }
-
-    // TODO: this same pattern is in KRunner (see workspace/krunner/restartingapplication.h)
-    // would be interesting to see if this could be shared.
-    if (!KCrash::crashHandler())
-    {
-        // this means we've most likely crashed once. so let's see if we
-        // stay up for more than 10s time, and if so reset the
-        // crash handler since the crash isn't a frequent offender
-        QTimer::singleShot(10000, this, SLOT(setCrashHandler()));
-    } else {
-        // See if a crash handler was installed. It was if the -nocrashhandler
-        // argument was given, but the app eats the kde options so we can't
-        // check that directly. If it wasn't, don't install our handler either.
-        setCrashHandler();
     }
 
     //TODO: decide how to handle the cache size; possibilities:
@@ -256,21 +242,6 @@ void PlasmaApp::adjustSize(int screen)
     m_window->setFixedSize(width, height);
     m_mainView->setFixedSize(width, height - CONTROL_BAR_HEIGHT);
     reserveStruts();
-}
-
-void PlasmaApp::setCrashHandler()
-{
-    KCrash::setEmergencySaveFunction(PlasmaApp::crashHandler);
-}
-
-void PlasmaApp::crashHandler(int signal)
-{
-    Q_UNUSED(signal);
-
-    fprintf(stderr, "Plasma crashed, attempting to automatically recover\n");
-
-    sleep(1);
-    system("plasma --nocrashhandler &"); // try to restart
 }
 
 void PlasmaApp::reserveStruts()
