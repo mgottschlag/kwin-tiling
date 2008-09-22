@@ -430,6 +430,7 @@ void Panel::paintInterface(QPainter *painter,
                            const QStyleOptionGraphicsItem *option,
                            const QRect& contentsRect)
 {
+    Q_UNUSED(contentsRect)
     //FIXME: this background drawing is bad and ugly =)
     // draw the background untransformed (saves lots of per-pixel-math)
     painter->save();
@@ -451,7 +452,7 @@ void Panel::paintInterface(QPainter *painter,
     painter->setCompositionMode(QPainter::CompositionMode_Source);
     painter->setRenderHint(QPainter::Antialiasing);
 
-    m_background->paintPanel(painter);
+    m_background->paintPanel(painter, option->exposedRect, option->exposedRect);
 
     if (containmentOpt && containmentOpt->view) {
         containmentOpt->view->setMask(m_background->mask());
