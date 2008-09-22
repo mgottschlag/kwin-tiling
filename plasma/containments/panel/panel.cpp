@@ -452,7 +452,7 @@ void Panel::paintInterface(QPainter *painter,
     painter->setCompositionMode(QPainter::CompositionMode_Source);
     painter->setRenderHint(QPainter::Antialiasing);
 
-    m_background->paintPanel(painter, option->exposedRect, option->exposedRect);
+    m_background->paintPanel(painter, option->exposedRect);
 
     if (containmentOpt && containmentOpt->view) {
         containmentOpt->view->setMask(m_background->mask());
