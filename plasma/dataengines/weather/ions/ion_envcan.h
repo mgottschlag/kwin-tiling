@@ -24,6 +24,7 @@
 
 #include <QtXml/QXmlStreamReader>
 #include <QtCore/QStringList>
+#include <QDateTime>
 #include <QDebug>
 #include <kurl.h>
 #include <kio/job.h>
@@ -72,6 +73,11 @@ public:
 
     // Current observation information.
     QString obsTimestamp;
+  
+    // Icon info to aproximate periods
+    QString iconPeriodHour;
+    QString iconPeriodAP;
+    
     QString condition;
     QString temperature;
     QString dewpoint;
@@ -129,8 +135,6 @@ public:
     EnvCanadaIon(QObject *parent, const QVariantList &args);
     ~EnvCanadaIon();
     bool updateIonSource(const QString& source); // Sync data source with Applet
-    bool timezone(void);
-    void setTimezoneFormat(const QString& tz);
     void updateWeather(const QString& source);
 
 protected:
@@ -157,6 +161,8 @@ private:
 
     // Current Conditions Weather info
     QString observationTime(const QString& source);
+    bool night(const QString& source);
+    int periodHour(const QString& source);
     QMap<QString, QString> warnings(const QString& source);
     QString condition(const QString& source);
     QMap<QString, QString> temperature(const QString& source);
