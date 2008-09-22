@@ -62,8 +62,10 @@ Desktop Theme
 * NEW: widgets/button for theming pushbuttons
 * NEW: widgets/frame for theming Plasma::Frame used also in other widgets
 * NEW: widgets/scrollbars to theme Plasma::ScrollBar and views scrollbars in libplasma
+* NEW: widgets/configuration-icons: little icons used for configuration purposes across Plasma
 * NEW: color role for buttons text and background
 * NEW: Plasma::Slider follows theme
+* NEW: Applet handle all svg-themed
 
 Plasma Desktop Shell
 --------------------
