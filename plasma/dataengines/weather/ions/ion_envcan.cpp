@@ -124,6 +124,7 @@ void EnvCanadaIon::setupConditionIcons(void)
     d->m_conditionDayList["chance of flurries or rain showers"] = NotAvailable;
     d->m_conditionDayList["a few flurries"] = Snow;
     d->m_conditionDayList["fog patches"] = Mist;
+    d->m_conditionDayList["fog"] = Mist;
 
     d->m_conditionNightList["clear"] = ClearNight;
     d->m_conditionNightList["mainly clear"] = FewCloudsNight;
@@ -149,6 +150,7 @@ void EnvCanadaIon::setupConditionIcons(void)
     d->m_conditionNightList["chance of flurries or rain showers"] = NotAvailable;
     d->m_conditionNightList["a few flurries"] = Snow;
     d->m_conditionNightList["fog patches"] = Mist;
+    d->m_conditionNightList["fog" ] = Mist;
 
     // forecasts that are explicit on period.
     d->m_conditionDayList["a mix of sun and cloud"] = PartlyCloudyDay;
