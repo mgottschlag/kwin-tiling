@@ -26,7 +26,7 @@
 #include <QStyleOptionGraphicsItem>
 #include <QFont>
 #include <QGraphicsSceneHoverEvent>
-#include <QGraphicsLinearLayout>
+#include <QGraphicsGridLayout>
 
 #include <KDebug>
 #include <KIcon>
@@ -319,26 +319,26 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
     // extender when the applet is embedded into another applet, such
     // as the battery applet is also embedded into the battery's extender.
     if (!m_isEmbedded) {
-        kDebug();
-        QGraphicsWidget *controls = new QGraphicsWidget(item);
-        //item->resize(400, 300);
-        QGraphicsLinearLayout *controlsLayout = new QGraphicsLinearLayout(controls);
+        int row = 0;
+        int rowHeight = 30;
 
+        QGraphicsWidget *controls = new QGraphicsWidget(item);
+        QGraphicsGridLayout *controlsLayout = new QGraphicsGridLayout(controls);
         controlsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        controlsLayout->setOrientation(Qt::Vertical);
+        controlsLayout->setColumnPreferredWidth(0, rowHeight);
+        controlsLayout->setColumnPreferredWidth(1, 200);
+        controlsLayout->setColumnPreferredWidth(2, rowHeight);
 
         m_statusLabel = new Plasma::Label(controls);
-        m_statusLabel->setMinimumSize(200,30);
-        kDebug() << "CSS Before:" << m_statusLabel->styleSheet() << QString(m_font.pointSize() *2) << m_font.pointSize();
+        m_statusLabel->setMinimumSize(200, rowHeight);
         m_statusLabel->setStyleSheet(QString("font: bold %1pt;").arg(m_font.pointSize() *1.5));
         m_statusLabel->nativeWidget()->setWordWrap(false);
         updateStatus();
-
-        controlsLayout->addItem(m_statusLabel);
+        controlsLayout->addItem(m_statusLabel, row, 0, 1, 3);
+        row++;
 
         Battery *applet = static_cast<Battery*>(Plasma::Applet::load("battery"));
         if (applet) {
-            kDebug() << applet->name() << " Applet loaded inside Extender";
             applet->setParent(this);
             applet->setAcceptsHoverEvents(false);
             applet->setParentItem(controls);
@@ -348,47 +348,48 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
             applet->setBackgroundHints(NoBackground);
             applet->setFlag(QGraphicsItem::ItemIsMovable, false);
             applet->init();
-            controlsLayout->addItem(applet);
+            controlsLayout->addItem(applet, row, 1, 1, 2);
+            row++;
         }
 
         Plasma::Label *profileLabel = new Plasma::Label(controls);
         profileLabel->setText("Performance Profile");
-        controlsLayout->addItem(profileLabel);
+        controlsLayout->addItem(profileLabel, row, 0, 1, 3);
+        row++;
 
         m_profileCombo = new Plasma::ComboBox(controls);
         m_profileCombo->addItem("Profile One"); // TODO
         m_profileCombo->addItem("Other Profile"); // TODO
-        controlsLayout->addItem(m_profileCombo);
-
+        controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
+        row++;
 
         Plasma::Label *brightnessLabel = new Plasma::Label(controls);
         brightnessLabel->setText(i18n("Screen Brightness"));
         brightnessLabel->nativeWidget()->setWordWrap(false);
-
-        controlsLayout->addItem(brightnessLabel);
+        controlsLayout->addItem(brightnessLabel, row, 0, 1, 3);
+        row++;
 
         Plasma::Slider *brightnessSlider = new Plasma::Slider(controls);
         brightnessSlider->setRange(0, 100);
         brightnessSlider->setValue(Solid::Control::PowerManager::brightness());
         brightnessSlider->nativeWidget()->setTickInterval(10);
         brightnessSlider->setOrientation(Qt::Horizontal);
-
         connect(brightnessSlider, SIGNAL(valueChanged(int)),
                 this, SLOT(brightnessChanged(int)));
-
-        // TODO: update slider when brightness changes
+        // FIXME: update slider when brightness changes
         //connect(Solid::Control::PowerManager, SIGNAL(brightnessChanged(int)),
         //        brightnessSlider, SLOT(setValue(int)));
+        controlsLayout->addItem(brightnessSlider, row, 1, 1, 1);
+        row++;
 
-        controlsLayout->addItem(brightnessSlider);
         brightnessLabel->nativeWidget()->setWordWrap(false);
 
         Plasma::PushButton *configButton = new Plasma::PushButton(controls);
         configButton->setText(i18n("Configure Powermanagement ..."));
         connect(configButton, SIGNAL(clicked()),
                 this, SLOT(openConfig()));
-        controlsLayout->addItem(configButton);
-
+        controlsLayout->addItem(configButton, row, 1, 1, 2);
+        row++;
 
         controls->setLayout(controlsLayout);
         item->setWidget(controls);
