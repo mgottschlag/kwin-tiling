@@ -33,8 +33,9 @@
 #include <plasma/containment.h>
 #include <plasma/dataenginemanager.h>
 
-MidCorona::MidCorona(QObject *parent)
-    : Plasma::Corona(parent)
+MidCorona::MidCorona(QObject *parent, QWidget *mainWindow)
+    : Plasma::Corona(parent),
+      m_mainWindow(mainWindow)
 {
     init();
 }
@@ -83,9 +84,10 @@ void MidCorona::loadDefaultLayout()
 
     emit containmentAdded(c);
 
+    QVariantList midPanelArgs;
+    midPanelArgs << m_mainWindow->width();
+    c = addContainment("midpanel", midPanelArgs);
     /*
-    todo: replace with an applet layout at the top
-
     loadDefaultApplet("systemtray", panel);
 
     foreach (Plasma::Applet* applet, panel->applets()) {

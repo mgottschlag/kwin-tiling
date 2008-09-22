@@ -36,7 +36,7 @@ class MidView : public Plasma::View
     Q_OBJECT
 
 public:
-    MidView(Plasma::Containment *containment, QWidget *parent = 0);
+    MidView(Plasma::Containment *containment, int uid, QWidget *parent = 0);
     ~MidView();
 
     /**
@@ -44,7 +44,8 @@ public:
      */
     void connectContainment(Plasma::Containment *containment);
 
-    static uint defaultId() { return 1; }
+    static uint mainViewId() { return 1; }
+    static uint controlBarId() { return 2; }
 
 public slots:
     void showAppletBrowser();

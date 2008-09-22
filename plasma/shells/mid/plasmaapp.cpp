@@ -141,10 +141,10 @@ PlasmaApp::PlasmaApp(Display* display, Qt::HANDLE visual, Qt::HANDLE colormap)
     layout->setMargin(0);
     layout->setSpacing(0);
 
-    m_controlBar = new MidView(0, m_window);
+    m_controlBar = new MidView(0, MidView::controlBarId(), m_window);
     m_controlBar->setFixedHeight(CONTROL_BAR_HEIGHT);
     m_controlBar->setBackgroundBrush(Qt::red);
-    m_mainView = new MidView(0, m_window);
+    m_mainView = new MidView(0, MidView::mainViewId(), m_window);
 
     layout->addWidget(m_controlBar);
     layout->addWidget(m_mainView);
@@ -263,7 +263,7 @@ void PlasmaApp::reserveStruts()
 Plasma::Corona* PlasmaApp::corona()
 {
     if (!m_corona) {
-        m_corona = new MidCorona(this);
+        m_corona = new MidCorona(this, m_window);
         connect(m_corona, SIGNAL(containmentAdded(Plasma::Containment*)),
                 this, SLOT(createView(Plasma::Containment*)));
         connect(m_corona, SIGNAL(configSynced()), this, SLOT(syncConfig()));
@@ -301,9 +301,11 @@ void PlasmaApp::notifyStartup(bool completed)
 
 void PlasmaApp::createView(Plasma::Containment *containment)
 {
-    if (m_mainView && containment->id() == MidView::defaultId()) {
-        kDebug() << "setting the mainview containment!";
+    //kDebug() << "new containment" << (QObject*)containment << containment->id();
+    if (m_mainView && containment->id() == MidView::mainViewId()) {
         m_mainView->setContainment(containment);
+    } else if (m_controlBar && containment->id() == MidView::controlBarId()) {
+        m_controlBar->setContainment(containment);
     }
 }
 

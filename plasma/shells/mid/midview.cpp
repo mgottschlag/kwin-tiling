@@ -27,8 +27,8 @@
 #include "plasma/corona.h"
 #include "plasma/containment.h"
 
-MidView::MidView(Plasma::Containment *containment, QWidget *parent)
-    : Plasma::View(containment, defaultId(), parent)
+MidView::MidView(Plasma::Containment *containment, int uid, QWidget *parent)
+    : Plasma::View(containment, uid, parent)
 {
     setFocusPolicy(Qt::NoFocus);
     connectContainment(containment);
@@ -69,6 +69,10 @@ void MidView::setContainment(Plasma::Containment *c)
 
     Plasma::View::setContainment(c);
     connectContainment(c);
+    if (id() == controlBarId()) {
+        //TODO: probably needs to be configurable =)
+        c->setLocation(Plasma::TopEdge);
+    }
     c->resize(size());
 }
 
