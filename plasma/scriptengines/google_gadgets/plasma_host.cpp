@@ -97,6 +97,9 @@ class PlasmaHost::Private {
     ViewInterface *child = info->expanded_main_view_host->GetView();
     ASSERT(child);
     if (child) {
+      // Close details view
+      child->GetGadget()->CloseDetailsView();
+           
       child->SwitchViewHost(info->main_view_host);
       SimpleEvent event(Event::EVENT_POPIN);
       info->main_view_host->GetViewDecorator()->OnOtherEvent(event);

@@ -20,6 +20,7 @@
 #include <plasma/applet.h>
 #include <ggadget/qt/qt_menu.h>
 #include <ggadget/view_interface.h>
+#include <ggadget/qt/utilities.h>
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
 namespace ggadget{
@@ -123,7 +124,17 @@ class PlasmaViewHost::Private : public QObject {
       widget_ = new QtViewWidget(view_, false, false, true, false);
       parent_widget_ = widget_;
       SetGadgetWindowIcon(widget_, view_->GetGadget());
-      widget_->move(info->applet->popupPosition(widget_->sizeHint()));
+      if (info->expanded_main_view_host
+          && type_ == ViewHostInterface::VIEW_HOST_DETAILS) {
+        int w = view_->GetWidth();
+        int h = view_->GetHeight();
+        QWidget *expanded =
+            static_cast<QWidget*>(info->expanded_main_view_host->GetNativeWidget());
+        QPoint p = ggadget::qt::GetPopupPosition(expanded->geometry(), QSize(w, h));
+        widget_->move(p);
+      } else {
+        widget_->move(info->applet->popupPosition(widget_->sizeHint()));
+      }
       widget_->show();
     }
     return true;
