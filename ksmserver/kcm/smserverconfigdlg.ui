@@ -146,7 +146,7 @@
       <item>
        <widget class="KLineEdit" name="excludeLineedit" >
         <property name="whatsThis" >
-         <string>Here you can enter a comma-separated list of applications that should not be saved in sessions, and therefore will not be started when restoring a session. For example 'xterm,xconsole'.</string>
+         <string>Here you can enter a colon or comma separated list of applications that should not be saved in sessions, and therefore will not be started when restoring a session. For example 'xterm:konsole' or 'xterm,konsole'.</string>
         </property>
        </widget>
       </item>
