@@ -49,9 +49,13 @@
 #include <plasma/widgets/label.h>
 #include <plasma/widgets/slider.h>
 #include <plasma/widgets/pushbutton.h>
+#include <plasma/widgets/combobox.h>
 
 Battery::Battery(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
+      m_isEmbedded(false),
+      m_svgFile(0),
+      m_statusLabel(0),
       m_batteryStyle(0),
       m_theme(0),
       m_availableProfiles(0),
@@ -66,10 +70,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_batteryAlpha(1),
       m_batteryFadeIn(true),
       m_isHovered(false),
-      m_numOfBattery(0),
-      m_isEmbedded(false),
-      m_svgFile(0),
-      m_statusLabel(0)
+      m_numOfBattery(0)
 {
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
@@ -326,7 +327,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         controlsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         controlsLayout->setOrientation(Qt::Vertical);
 
-        m_statusLabel = new Plasma::Label(this);
+        m_statusLabel = new Plasma::Label(controls);
         m_statusLabel->setMinimumSize(200,30);
         kDebug() << "CSS Before:" << m_statusLabel->styleSheet() << QString(m_font.pointSize() *2) << m_font.pointSize();
         m_statusLabel->setStyleSheet(QString("font: bold %1pt;").arg(m_font.pointSize() *1.5));
@@ -340,7 +341,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
             kDebug() << applet->name() << " Applet loaded inside Extender";
             applet->setParent(this);
             applet->setAcceptsHoverEvents(false);
-            applet->setParentItem(this);
+            applet->setParentItem(controls);
             applet->setEmbedded(true);
             applet->setSvgFile(m_svgFile);
             applet->setMinimumSize(64, 64);
@@ -349,6 +350,17 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
             applet->init();
             controlsLayout->addItem(applet);
         }
+
+        Plasma::Label *profileLabel = new Plasma::Label(controls);
+        profileLabel->setText("Performance Profile");
+        controlsLayout->addItem(profileLabel);
+
+        m_profileCombo = new Plasma::ComboBox(controls);
+        m_profileCombo->addItem("Profile One"); // TODO
+        m_profileCombo->addItem("Other Profile"); // TODO
+        controlsLayout->addItem(m_profileCombo);
+
+
         Plasma::Label *brightnessLabel = new Plasma::Label(controls);
         brightnessLabel->setText(i18n("Screen Brightness"));
         brightnessLabel->nativeWidget()->setWordWrap(false);
@@ -371,7 +383,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         controlsLayout->addItem(brightnessSlider);
         brightnessLabel->nativeWidget()->setWordWrap(false);
 
-        Plasma::PushButton *configButton = new Plasma::PushButton(this);
+        Plasma::PushButton *configButton = new Plasma::PushButton(controls);
         configButton->setText(i18n("Configure Powermanagement ..."));
         connect(configButton, SIGNAL(clicked()),
                 this, SLOT(openConfig()));

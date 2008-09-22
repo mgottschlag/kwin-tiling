@@ -36,6 +36,7 @@ namespace Plasma
     class Svg;
     class Label;
     class ExtenderItem;
+    class ComboBox;
 }
 
 class Battery : public Plasma::PopupApplet
@@ -91,6 +92,7 @@ class Battery : public Plasma::PopupApplet
         bool m_isEmbedded;
         QString m_svgFile;
         Plasma::Label *m_statusLabel;
+        Plasma::ComboBox *m_profileCombo;
 
         int m_batteryStyle;
         /* Paint battery with proper charge level */
