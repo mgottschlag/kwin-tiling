@@ -74,6 +74,7 @@ class Battery : public Plasma::PopupApplet
         void sourceAdded(const QString &source);
         void sourceRemoved(const QString &source);
         void brightnessChanged(const int brightness);
+        void openConfig();
 
     private:
         Q_ENUMS( m_batteryStyle )
@@ -85,7 +86,7 @@ class Battery : public Plasma::PopupApplet
         void disconnectSources();
         void initBatteryExtender(Plasma::ExtenderItem *item);
         void updateStatus();
-        
+
         /* Prevent creating infinite loops by embedding applets inside applets */
         bool m_isEmbedded;
         QString m_svgFile;

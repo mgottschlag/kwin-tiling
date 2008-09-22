@@ -32,6 +32,7 @@
 #include <KIcon>
 #include <KLocalizedString>
 #include <KSharedConfig>
+#include <KToolInvocation>
 #include <KDialog>
 #include <KColorScheme>
 #include <KConfigDialog>
@@ -47,6 +48,7 @@
 #include <plasma/popupapplet.h>
 #include <plasma/widgets/label.h>
 #include <plasma/widgets/slider.h>
+#include <plasma/widgets/pushbutton.h>
 
 Battery::Battery(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
@@ -311,6 +313,10 @@ void Battery::setEmbedded(const bool embedded)
 
 void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
 {
+    // We only show the extender for applets that are not embedded, as
+    // that would create infinitve loops, you really don't want an applet
+    // extender when the applet is embedded into another applet, such
+    // as the battery applet is also embedded into the battery's extender.
     if (!m_isEmbedded) {
         kDebug();
         QGraphicsWidget *controls = new QGraphicsWidget(item);
@@ -365,8 +371,14 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         controlsLayout->addItem(brightnessSlider);
         brightnessLabel->nativeWidget()->setWordWrap(false);
 
-        controls->setLayout(controlsLayout);
+        Plasma::PushButton *configButton = new Plasma::PushButton(this);
+        configButton->setText(i18n("Configure Powermanagement ..."));
+        connect(configButton, SIGNAL(clicked()),
+                this, SLOT(openConfig()));
+        controlsLayout->addItem(configButton);
 
+
+        controls->setLayout(controlsLayout);
         item->setWidget(controls);
         item->setTitle(i18n("Power Management"));
     }
@@ -384,6 +396,14 @@ void Battery::updateStatus()
         }
     }
 
+}
+
+void Battery::openConfig()
+{
+    kDebug() << "opening powermanagement configuration dialog";
+    QStringList args;
+    args << "powerdevilconfig";
+    KToolInvocation::kdeinitExec("kcmshell4", args);
 }
 
 void Battery::showLabel(bool show)
