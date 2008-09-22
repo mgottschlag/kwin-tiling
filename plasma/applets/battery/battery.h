@@ -50,7 +50,6 @@ class Battery : public Plasma::PopupApplet
         void setPath(const QString&);
         QSizeF sizeHint(const Qt::SizeHint which, const QSizeF& constraint) const;
         Qt::Orientations expandingDirections() const;
-
         void constraintsEvent(Plasma::Constraints constraints);
 
     public slots:
@@ -64,6 +63,8 @@ class Battery : public Plasma::PopupApplet
 
     protected:
         void createConfigurationInterface(KConfigDialog *parent);
+        void setEmbedded(const bool embedded);
+        void setSvgFile(const QString svg);
 
     private slots:
         void animationUpdate(qreal progress);
@@ -82,6 +83,10 @@ class Battery : public Plasma::PopupApplet
         void connectSources();
         void disconnectSources();
         void initBatteryExtender(Plasma::ExtenderItem *item);
+        
+        /* Prevent creating infinite loops by embedding applets inside applets */
+        bool m_isEmbedded;
+        QString m_svgFile;
 
         int m_batteryStyle;
         /* Paint battery with proper charge level */

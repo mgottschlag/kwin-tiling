@@ -64,16 +64,24 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_batteryAlpha(1),
       m_batteryFadeIn(true),
       m_isHovered(false),
-      m_numOfBattery(0)
+      m_numOfBattery(0),
+      m_isEmbedded(false),
+      m_svgFile(0)
 {
     kDebug() << "Loading applet battery";
-    //setAcceptsHoverEvents(true);
+    setAcceptsHoverEvents(true);
     setHasConfigurationInterface(true);
     setPopupIcon(QIcon());
     resize(128, 128);
     setAspectRatioMode(Plasma::ConstrainedSquare );
     m_textRect = QRect();
     m_theme = new Plasma::Svg(this);
+    m_svgFile = "widgets/battery";
+}
+
+void Battery::setSvgFile(const QString svg)
+{
+    m_svgFile = svg;
 }
 
 void Battery::init()
@@ -82,15 +90,17 @@ void Battery::init()
     m_showBatteryString = cg.readEntry("showBatteryString", false);
     m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", true);
 
-    QString svgFile = QString();
-    if (cg.readEntry("style", 0) == 0) {
-        m_batteryStyle = OxygenBattery;
-        svgFile = "widgets/battery-oxygen";
-    } else {
-        m_batteryStyle = ClassicBattery;
-        svgFile = "widgets/battery";
+    if (!m_isEmbedded) {
+        m_svgFile= QString();
+        if (cg.readEntry("style", 0) == 0) {
+            m_batteryStyle = OxygenBattery;
+            m_svgFile= "widgets/battery-oxygen";
+        } else {
+            m_batteryStyle = ClassicBattery;
+            m_svgFile= "widgets/battery";
+        }
     }
-    m_theme->setImagePath(svgFile);
+    m_theme->setImagePath(m_svgFile);
     m_theme->setContainsMultipleImages(false);
 
     m_theme->resize(contentsRect().size());
@@ -117,11 +127,12 @@ void Battery::init()
     kDebug() << battery_sources.size();
 
     //kDebug() << "SOLID" << Solid::Control::PowerManager::brightness();
-
-    Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-    eItem->setName("powermanagement");
-    initBatteryExtender(eItem);
-    extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    if (!m_isEmbedded) {
+        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
+        eItem->setName("powermanagement");
+        initBatteryExtender(eItem);
+        extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    }
 }
 
 void Battery::constraintsEvent(Plasma::Constraints constraints)
@@ -226,11 +237,11 @@ void Battery::configAccepted()
     }
 
     if (ui.styleGroup->selected() != m_batteryStyle) {
-        QString svgFile = QString();
+        QString m_svgFile= QString();
         if (ui.styleGroup->selected() == OxygenBattery) {
-            svgFile = "widgets/battery-oxygen";
+            m_svgFile= "widgets/battery-oxygen";
         } else {
-            svgFile = "widgets/battery";
+            m_svgFile= "widgets/battery";
         }
         if (m_acadapter_plugged) {
             showAcAdapter(false);
@@ -239,8 +250,8 @@ void Battery::configAccepted()
         m_batteryStyle = ui.styleGroup->selected();
         delete m_theme;
         m_theme = new Plasma::Svg(this);
-        m_theme->setImagePath(svgFile);
-        kDebug() << "Changing theme to " << svgFile;
+        m_theme->setImagePath(m_svgFile);
+        kDebug() << "Changing theme to " << m_svgFile;
         cg.writeEntry("style", m_batteryStyle);
         m_theme->resize(contentsRect().size());
         if (m_acadapter_plugged) {
@@ -292,41 +303,61 @@ void Battery::brightnessChanged(const int brightness)
     Solid::Control::PowerManager::setBrightness(brightness);
 }
 
+void Battery::setEmbedded(const bool embedded)
+{
+    m_isEmbedded = embedded;
+}
+
 void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
 {
-    kDebug();
-    QGraphicsWidget *controls = new QGraphicsWidget(item);
-    QGraphicsLinearLayout *controlsLayout = new QGraphicsLinearLayout(controls);
+    if (!m_isEmbedded) {
+        kDebug();
+        QGraphicsWidget *controls = new QGraphicsWidget(item);
+        QGraphicsLinearLayout *controlsLayout = new QGraphicsLinearLayout(controls);
 
-    controlsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    controlsLayout->setOrientation(Qt::Vertical);
+        controlsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        controlsLayout->setOrientation(Qt::Vertical);
+        Battery *applet = static_cast<Battery*>(Plasma::Applet::load("battery"));
+        if (applet) {
+            kDebug() << applet->name() << " Applet loaded inside Extender";
+            applet->setParent(this);
+            applet->setAcceptsHoverEvents(false);
+            applet->setParentItem(this);
+            applet->setEmbedded(true);
+            applet->setSvgFile(m_svgFile);
+            applet->setMinimumSize(64, 64);
+            applet->setBackgroundHints(NoBackground);
+            applet->setFlag(QGraphicsItem::ItemIsMovable, false);
+            applet->init();
+            controlsLayout->addItem(applet);
+        }
+        Plasma::Label *brightnessLabel = new Plasma::Label(controls);
+        brightnessLabel->setText(i18n("Adjust Brightness"));
+        brightnessLabel->nativeWidget()->setWordWrap(false);
 
-    Plasma::Label *brightnessLabel = new Plasma::Label(controls);
-    brightnessLabel->setText(i18n("Adjust Brightness"));
-    brightnessLabel->nativeWidget()->setWordWrap(false);
+        controlsLayout->addItem(brightnessLabel);
 
-    controlsLayout->addItem(brightnessLabel);
+        Plasma::Slider *brightnessSlider = new Plasma::Slider(controls);
+        brightnessSlider->setRange(0, 100);
+        brightnessSlider->setValue(Solid::Control::PowerManager::brightness());
+        brightnessSlider->nativeWidget()->setTickInterval(10);
+        brightnessSlider->setOrientation(Qt::Horizontal);
 
-    Plasma::Slider *brightnessSlider = new Plasma::Slider(controls);
-    brightnessSlider->setRange(0, 100);
-    brightnessSlider->setValue(Solid::Control::PowerManager::brightness());
-    brightnessSlider->nativeWidget()->setTickInterval(10);
-    brightnessSlider->setOrientation(Qt::Horizontal);
+        connect(brightnessSlider, SIGNAL(valueChanged(int)),
+                this, SLOT(brightnessChanged(int)));
 
-    connect(brightnessSlider, SIGNAL(valueChanged(int)),
-            this, SLOT(brightnessChanged(int)));
+        // TODO: update slider when brightness changes
+        //connect(Solid::Control::PowerManager, SIGNAL(brightnessChanged(int)),
+        //        brightnessSlider, SLOT(setValue(int)));
 
-    // TODO: update slider when brightness changes
-    //connect(Solid::Control::PowerManager, SIGNAL(brightnessChanged(int)),
-    //        brightnessSlider, SLOT(setValue(int)));
+        controlsLayout->addItem(brightnessSlider);
+        brightnessLabel->nativeWidget()->setWordWrap(false);
 
-    controlsLayout->addItem(brightnessSlider);
-    brightnessLabel->nativeWidget()->setWordWrap(false);
+        controls->setLayout(controlsLayout);
 
-    controls->setLayout(controlsLayout);
-
-    item->setWidget(controls);
-    item->setTitle(i18n("Power Management"));
+        item->setWidget(controls);
+        item->setTitle(i18n("Power Management"));
+    }
 }
 
 void Battery::showLabel(bool show)
@@ -597,7 +628,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
             // paint battery with appropriate charge level
             paintBattery(p, corect, battery_data.value()[I18N_NOOP("Percent")].toInt(), battery_data.value()[I18N_NOOP("Plugged in")].toBool());
 
-            if (m_showBatteryString || m_isHovered) {
+            if (m_isEmbedded || m_showBatteryString || m_isHovered) {
                 // Show the charge percentage with a box on top of the battery
                 QString batteryLabel;
                 if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
@@ -629,7 +660,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         }
         // paint battery with appropriate charge level
         paintBattery(p, contentsRect,  battery_charge, has_battery);
-        if (m_showBatteryString || m_isHovered) {
+        if (m_isEmbedded || m_showBatteryString || m_isHovered) {
             // Show the charge percentage with a box on top of the battery
             QString batteryLabel;
             if(has_battery) {
