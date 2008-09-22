@@ -36,7 +36,6 @@
 class ION_EXPORT IonInterface : public Plasma::DataEngine
 {
     Q_OBJECT
-    Q_PROPERTY(QString timezone READ timezone WRITE setTimezoneFormat)
 
 public:
 
@@ -76,17 +75,13 @@ public:
     bool isUsed() const;
 
     /**
-     * Reimplement to check if timeformat is UTC or not.
-     * @return true if UTC, false if local time.
-     */
-    virtual bool timezone(void) = 0;
-
-    /**
      * Returns weather icon filename to display in applet.
+     * @param conditionList a QList map pair of icons mapped to a enumeration of conditions.
+     * @param condition the current condition being reported.
      * @return icon name
      */
     QString getWeatherIcon(const IconNames& ConditionList, const QString& condition);
-   
+  
 public Q_SLOTS:
 
     /**
@@ -120,12 +115,6 @@ protected:
     friend class WeatherEngine;
 
 private:
-    /**
-     * Sets the system default for UTC from KDateTime::currentDateTime This is internally set by the WeatherEngine itself.
-     * @arg isUtc The UTC state, maybe 0 or 1.
-     */
-    virtual void setTimezoneFormat(const QString& isUtc) = 0;
-
     class Private;
     Private* const d;
 };
