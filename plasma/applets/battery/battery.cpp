@@ -66,7 +66,8 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_isHovered(false),
       m_numOfBattery(0),
       m_isEmbedded(false),
-      m_svgFile(0)
+      m_svgFile(0),
+      m_statusLabel(0)
 {
     kDebug() << "Loading applet battery";
     setAcceptsHoverEvents(true);
@@ -88,7 +89,7 @@ void Battery::init()
 {
     KConfigGroup cg = config();
     m_showBatteryString = cg.readEntry("showBatteryString", false);
-    m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", true);
+    m_showMultipleBatteries = cg.readEntry("showMultipleBatteries", !m_isEmbedded);
 
     if (!m_isEmbedded) {
         m_svgFile= QString();
@@ -195,7 +196,6 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     } else if (source == I18N_NOOP("AC Adapter")) {
         m_acadapter_plugged = data[I18N_NOOP("Plugged in")].toBool();
         showAcAdapter(m_acadapter_plugged);
-
     } else if (source == I18N_NOOP("PowerDevil")) {
         m_availableProfiles = data[I18N_NOOP("availableProfiles")].toStringList();
         m_currentProfile = data[I18N_NOOP("currentProfile")].toString();
@@ -203,6 +203,7 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
     }
+    updateStatus();
     update();
 }
 
@@ -313,10 +314,21 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
     if (!m_isEmbedded) {
         kDebug();
         QGraphicsWidget *controls = new QGraphicsWidget(item);
+        //item->resize(400, 300);
         QGraphicsLinearLayout *controlsLayout = new QGraphicsLinearLayout(controls);
 
         controlsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         controlsLayout->setOrientation(Qt::Vertical);
+
+        m_statusLabel = new Plasma::Label(this);
+        m_statusLabel->setMinimumSize(200,30);
+        kDebug() << "CSS Before:" << m_statusLabel->styleSheet() << QString(m_font.pointSize() *2) << m_font.pointSize();
+        m_statusLabel->setStyleSheet(QString("font: bold %1pt;").arg(m_font.pointSize() *1.5));
+        m_statusLabel->nativeWidget()->setWordWrap(false);
+        updateStatus();
+
+        controlsLayout->addItem(m_statusLabel);
+
         Battery *applet = static_cast<Battery*>(Plasma::Applet::load("battery"));
         if (applet) {
             kDebug() << applet->name() << " Applet loaded inside Extender";
@@ -332,7 +344,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
             controlsLayout->addItem(applet);
         }
         Plasma::Label *brightnessLabel = new Plasma::Label(controls);
-        brightnessLabel->setText(i18n("Adjust Brightness"));
+        brightnessLabel->setText(i18n("Screen Brightness"));
         brightnessLabel->nativeWidget()->setWordWrap(false);
 
         controlsLayout->addItem(brightnessLabel);
@@ -358,6 +370,20 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         item->setWidget(controls);
         item->setTitle(i18n("Power Management"));
     }
+}
+
+void Battery::updateStatus()
+{
+    kDebug() << "AC PLUGGED IN:" << m_acadapter_plugged;
+    if (m_statusLabel) {
+        kDebug() << "CSS Before:" << m_statusLabel->styleSheet();
+        if (m_acadapter_plugged) {
+            m_statusLabel->setText(i18n("AC Adapter Plugged in"));
+        } else {
+            m_statusLabel->setText(i18n("On Battery"));
+        }
+    }
+
 }
 
 void Battery::showLabel(bool show)
@@ -614,7 +640,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         return;
     }
 
-    if (m_showMultipleBatteries) {
+    if (m_isEmbedded || m_showMultipleBatteries) {
         // paint each battery with own charge level
         int battery_num = 0;
         int width = contentsRect.width()/m_numOfBattery;
@@ -663,7 +689,7 @@ void Battery::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option
         if (m_isEmbedded || m_showBatteryString || m_isHovered) {
             // Show the charge percentage with a box on top of the battery
             QString batteryLabel;
-            if(has_battery) {
+            if (has_battery) {
                 batteryLabel = QString::number(battery_charge);
                 batteryLabel.append("%");
             } else {

@@ -34,6 +34,7 @@
 namespace Plasma
 {
     class Svg;
+    class Label;
     class ExtenderItem;
 }
 
@@ -83,10 +84,12 @@ class Battery : public Plasma::PopupApplet
         void connectSources();
         void disconnectSources();
         void initBatteryExtender(Plasma::ExtenderItem *item);
+        void updateStatus();
         
         /* Prevent creating infinite loops by embedding applets inside applets */
         bool m_isEmbedded;
         QString m_svgFile;
+        Plasma::Label *m_statusLabel;
 
         int m_batteryStyle;
         /* Paint battery with proper charge level */
