@@ -76,12 +76,12 @@ TaskGroup* AbstractGroupingStrategy::createGroup(ItemList items)
 {
     kDebug();
     GroupPtr oldGroup;
-    if (items.first()->grouped()) {
+    if (items.first()->isGrouped()) {
         oldGroup = items.first()->parentGroup();
     } else {
         oldGroup = d->groupManager->rootGroup();
     }
-    
+
     TaskGroup *newGroup = new TaskGroup(d->groupManager);
     d->createdGroups.append(newGroup);
     //connect(newGroup, SIGNAL(empty(TaskGroup*)), this, SLOT(closeGroup(TaskGroup*)));

@@ -67,7 +67,7 @@ AbstractGroupableItem::~AbstractGroupableItem()
 }
 
 
-bool AbstractGroupableItem::grouped() const
+bool AbstractGroupableItem::isGrouped() const
 {
     return parentGroup() && parentGroup()->parentGroup();
 }

@@ -86,7 +86,7 @@ QList<QAction*> ManualGroupingStrategy::strategyActions(QObject *parent, Abstrac
 {
     QList<QAction*> actionList;
 
-    if (item->grouped()) {
+    if (item->isGrouped()) {
         QAction *a = new QAction(i18n("Leave Group"), parent);
         connect(a, SIGNAL(triggered()), this, SLOT(leaveGroup()));
         actionList.append(a);
@@ -107,7 +107,7 @@ QList<QAction*> ManualGroupingStrategy::strategyActions(QObject *parent, Abstrac
 void ManualGroupingStrategy::leaveGroup()
 {
     Q_ASSERT(d->tempItem);
-    if (d->tempItem->grouped()) {
+    if (d->tempItem->isGrouped()) {
         d->tempItem->parentGroup()->parentGroup()->add(d->tempItem);
     }
     d->tempItem = 0;

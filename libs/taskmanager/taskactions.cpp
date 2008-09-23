@@ -265,7 +265,7 @@ LeaveGroupActionImpl::LeaveGroupActionImpl(QObject *parent, AbstractPtr item, Gr
     connect(this, SIGNAL(triggered()), this, SLOT(leaveGroup()));
     setText(i18n("&Leave Group"));
     setIcon(KIcon("window-close"));
-    setEnabled(item->grouped());
+    setEnabled(item->isGrouped());
 }
 
 void LeaveGroupActionImpl::leaveGroup()
@@ -327,7 +327,7 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* task, GroupManager *strategy, bo
         }
     }
 
-    if (task->grouped()) {
+    if (task->isGrouped()) {
         addSeparator();
         addMenu(new BasicMenu(this, task->parentGroup(), strategy, showAll));
     }
@@ -371,7 +371,7 @@ BasicMenu::BasicMenu(QWidget *parent, GroupPtr task, GroupManager *strategy, boo
         }
     }
 
-    if (task->grouped()) {
+    if (task->isGrouped()) {
         addSeparator();
         addMenu(new BasicMenu(parent, task->parentGroup(), strategy, showAll));
     }

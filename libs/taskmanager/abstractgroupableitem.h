@@ -61,7 +61,7 @@ public:
     /**
     *   Not only member of rootGroup
     */
-    bool grouped() const;
+    bool isGrouped() const;
 
     bool isGroupMember(const GroupPtr group);
     virtual bool isGroupItem() const = 0;
