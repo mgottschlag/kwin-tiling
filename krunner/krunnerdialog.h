@@ -39,6 +39,11 @@ class KRunnerDialog : public KDialog
                                Qt::WindowFlags f =  Qt::Dialog | Qt::FramelessWindowHint);
         virtual ~KRunnerDialog();
 
+    public Q_SLOTS:
+        virtual void display(const QString& term = QString()) = 0;
+        virtual void switchUser() = 0;
+        virtual void clearHistory() = 0;
+
     protected:
         void paintEvent( QPaintEvent *e );
         void resizeEvent( QResizeEvent *e );
