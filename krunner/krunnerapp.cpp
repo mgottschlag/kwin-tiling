@@ -135,7 +135,13 @@ void KRunnerApp::initialize()
     setQuitOnLastWindowClosed(false);
     KCrash::setFlags(KCrash::AutoRestart);
     initializeStartupNotification();
-    m_interface = new Interface;
+    switch (KRunnerSettings::interface()) {
+        case KRunnerSettings::EnumInterface::CommandOriented:
+        case KRunnerSettings::EnumInterface::TaskOriented:
+        default:
+            m_interface = new Interface;
+            break;
+    }
 
 #ifdef Q_WS_X11
     //FIXME: if argb visuals enabled Qt will always set WM_CLASS as "qt-subapplication" no matter what
