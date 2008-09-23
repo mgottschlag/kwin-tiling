@@ -62,24 +62,36 @@ ProgramGroupingStrategy::~ProgramGroupingStrategy()
 
 QList<QAction*> ProgramGroupingStrategy::strategyActions(QObject *parent, AbstractGroupableItem *item)
 {
-    QList <QAction*> actionList;
-    QAction *a = new QAction(i18n("Start/Stop grouping this program"), parent);
+    QAction *a = new QAction(parent);
+    QString name = className(item);
+    if (d->blackList.contains(name)) {
+        a->setText(i18n("Allow this program to be grouped"));
+    } else {
+        a->setText(i18n("Do not allow this program to be grouped"));
+    }
     connect(a, SIGNAL(triggered()), this, SLOT(toggleGrouping()));
+
+    QList<QAction*> actionList;
     actionList.append(a);
     d->tempItem = item;
     return actionList;
 }
 
-void ProgramGroupingStrategy::toggleGrouping()
+QString ProgramGroupingStrategy::className(AbstractGroupableItem *item)
 {
     QString name;
     if (d->tempItem->isGroupItem()) { //maybe add the condition that the subgroup was created by programGrouping
         TaskGroup *group = qobject_cast<TaskGroup*>(d->tempItem);
         TaskItem *task = qobject_cast<TaskItem*>(group->members().first()); //There are only TaskItems in programGrouping groups
-        name = task->taskPointer()->classClass();
-    } else {
-        name = (qobject_cast<TaskItem*>(d->tempItem))->taskPointer()->classClass();
+        return task->taskPointer()->classClass();
     }
+
+    return (qobject_cast<TaskItem*>(d->tempItem))->taskPointer()->classClass();
+}
+
+void ProgramGroupingStrategy::toggleGrouping()
+{
+    QString name = className(d->tempItem);
 
     if (d->blackList.contains(name)) {
         d->blackList.removeAll(name);
