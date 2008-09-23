@@ -49,6 +49,7 @@
 #include <plasma/abstractrunner.h>
 #include <plasma/runnermanager.h>
 #include <plasma/theme.h>
+#include <plasma/svg.h>
 
 #include "kworkspace/kdisplaymanager.h"
 
@@ -71,6 +72,11 @@ Interface::Interface(QWidget* parent)
     setWindowTitle( i18n("Run Command") );
     setWindowIcon(KIcon("system-run"));
 
+    m_iconSvg = new Plasma::Svg(this);
+    m_iconSvg->setImagePath("widgets/configuration-icons");
+    m_iconSvg->setContainsMultipleImages(true);
+    m_iconSvg->resize(KIconLoader::SizeSmall, KIconLoader::SizeSmall);
+
     m_hideResultsTimer.setSingleShot(true);
     connect(&m_hideResultsTimer, SIGNAL(timeout()), this, SLOT(hideResultsArea()));
 
@@ -85,7 +91,7 @@ Interface::Interface(QWidget* parent)
     m_configButton = new QToolButton(buttonContainer);
     m_configButton->setText(i18n("Settings"));
     m_configButton->setToolTip(i18n("Settings"));
-    m_configButton->setIcon(KIcon("configure"));
+    m_configButton->setIcon(m_iconSvg->pixmap("configure"));
     connect(m_configButton, SIGNAL(clicked()), SLOT(showConfigDialog()));
     bottomLayout->addWidget( m_configButton );
 
@@ -105,7 +111,7 @@ Interface::Interface(QWidget* parent)
 //    m_activityButton->setAutoDefault(false);
     m_activityButton->setText(i18n("Show System Activity"));
     m_activityButton->setToolTip(i18n("Show System Activity"));
-    m_activityButton->setIcon(KIcon("utilities-system-monitor"));
+    m_activityButton->setIcon(m_iconSvg->pixmap("status"));
     connect(m_activityButton, SIGNAL(clicked()), qApp, SLOT(showTaskManager()));
     connect(m_activityButton, SIGNAL(clicked()), this, SLOT(close()));
     bottomLayout->addWidget(m_activityButton);
@@ -128,7 +134,7 @@ Interface::Interface(QWidget* parent)
     KGuiItem guiItem = KStandardGuiItem::close();
     m_closeButton->setText(guiItem.text());
     m_closeButton->setToolTip(guiItem.text().remove('&'));
-    m_closeButton->setIcon(KIcon("dialog-close"));
+    m_closeButton->setIcon(m_iconSvg->pixmap("close"));
 //    m_closeButton->setDefault(false);
 //    m_closeButton->setAutoDefault(false);
     connect(m_closeButton, SIGNAL(clicked(bool)), SLOT(close()));
@@ -291,6 +297,11 @@ void Interface::themeUpdated()
     m_descriptionLabel->setPalette(p);
     m_previousPage->setPalette(p);
     m_nextPage->setPalette(p);
+
+    //reset the icons
+    m_configButton->setIcon(m_iconSvg->pixmap("configure"));
+    m_activityButton->setIcon(m_iconSvg->pixmap("status"));
+    m_closeButton->setIcon(m_iconSvg->pixmap("close"));
 }
 
 void Interface::clearHistory()

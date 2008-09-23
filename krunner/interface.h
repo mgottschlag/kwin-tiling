@@ -42,6 +42,11 @@ class ResultItem;
 class ResultScene;
 class KRunnerConfigDialog;
 
+namespace Plasma
+{
+    class Svg;
+}
+
 class Interface : public KRunnerDialog
 {
     Q_OBJECT
@@ -86,6 +91,7 @@ class Interface : public KRunnerDialog
         QLabel *m_descriptionLabel;
         QLabel *m_previousPage;
         QLabel *m_nextPage;
+        Plasma::Svg *m_iconSvg;
         QToolButton *m_configButton;
         QToolButton *m_activityButton;
         QToolButton *m_closeButton;
