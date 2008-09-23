@@ -40,6 +40,8 @@
 #include <KMessageBox>
 #include <KWindowSystem>
 
+#include <plasma/runnermanager.h>
+
 #include "processui/ksysguardprocesslist.h"
 
 #include "appadaptor.h"
@@ -129,6 +131,7 @@ KRunnerApp::KRunnerApp(Display *display, Qt::HANDLE visual, Qt::HANDLE colormap)
 KRunnerApp::~KRunnerApp()
 {
     delete m_interface;
+    delete m_runnerManager;
 }
 
 void KRunnerApp::initialize()
@@ -136,11 +139,15 @@ void KRunnerApp::initialize()
     setQuitOnLastWindowClosed(false);
     KCrash::setFlags(KCrash::AutoRestart);
     initializeStartupNotification();
+
+    m_runnerManager = new Plasma::RunnerManager;
+    m_runnerManager->reloadConfiguration(); // pre-load the runners
+
     switch (KRunnerSettings::interface()) {
         case KRunnerSettings::EnumInterface::CommandOriented:
         case KRunnerSettings::EnumInterface::TaskOriented:
         default:
-            m_interface = new Interface;
+            m_interface = new Interface(m_runnerManager);
             break;
     }
 

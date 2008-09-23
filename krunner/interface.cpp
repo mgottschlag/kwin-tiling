@@ -61,7 +61,7 @@
 
 static const int MIN_WIDTH = 400;
 
-Interface::Interface(QWidget* parent)
+Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget* parent)
     : KRunnerDialog(parent),
       m_configDialog(0),
       m_delayedRun(false),
@@ -185,7 +185,7 @@ Interface::Interface(QWidget* parent)
     m_resultsView->setAlignment(Qt::AlignLeft | Qt::AlignTop);
 
     //kDebug() << "size:" << m_resultsView->size() << m_resultsView->minimumSize();
-    m_resultsScene = new ResultScene(this);
+    m_resultsScene = new ResultScene(runnerManager, this);
     m_resultsView->setScene(m_resultsScene);
     m_resultsView->setMinimumSize(m_resultsScene->minimumSizeHint());
     connect(m_resultsScene, SIGNAL(matchCountChanged(int)), this, SLOT(matchCountChanged(int)));

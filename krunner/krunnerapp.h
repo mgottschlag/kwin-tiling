@@ -88,6 +88,7 @@ private:
     KRunnerApp(Display *display, Qt::HANDLE visual = 0, Qt::HANDLE colormap = 0);
     void initialize();
 
+    Plasma::RunnerManager *m_runnerManager;
     KActionCollection *m_actionCollection;
 #ifdef Q_WS_X11
     SaverEngine m_saver;

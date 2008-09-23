@@ -45,16 +45,16 @@ class KRunnerConfigDialog;
 
 namespace Plasma
 {
+    class RunnerManager;
     class Svg;
 }
 
 class Interface : public KRunnerDialog
 {
     Q_OBJECT
-    Q_CLASSINFO( "D-Bus Interface", "org.kde.krunner.Interface" )
 
     public:
-        explicit Interface( QWidget* parent = 0 );
+        explicit Interface(Plasma::RunnerManager *m_runnerManager, QWidget* parent = 0);
         ~Interface();
 
     public Q_SLOTS:

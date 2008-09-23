@@ -37,8 +37,9 @@
 
 #include "resultitem.h"
 
-ResultScene::ResultScene(QObject *parent)
+ResultScene::ResultScene(Plasma::RunnerManager *manager, QObject *parent)
     : QGraphicsScene(parent),
+      m_runnerManager(manager),
       m_itemCount(0),
       m_cIndex(0),
       m_rowStride(0),
@@ -48,8 +49,6 @@ ResultScene::ResultScene(QObject *parent)
 {
     setItemIndexMethod(NoIndex);
 
-    m_runnerManager = new Plasma::RunnerManager(this);
-    m_runnerManager->reloadConfiguration(); // pre-load the runners
     connect(m_runnerManager, SIGNAL(matchesChanged(const QList<Plasma::QueryMatch>&)),
             this, SLOT(setQueryMatches(const QList<Plasma::QueryMatch>&)));
 
