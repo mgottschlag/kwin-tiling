@@ -296,10 +296,6 @@ void Interface::display(const QString& term)
 {
     m_searchTerm->setFocus();
 
-    if (!term.isEmpty()) {
-        m_searchTerm->setItemText(0, term);
-    }
-
     KWindowSystem::setOnDesktop(winId(), KWindowSystem::currentDesktop());
 
     // TODO: set a nice welcome string when the string freeze lifts
@@ -309,6 +305,10 @@ void Interface::display(const QString& term)
     resetInterface();
     centerOnScreen();
     KWindowSystem::forceActiveWindow(winId());
+
+    if (!term.isEmpty()) {
+        m_searchTerm->setItemText(0, term);
+    }
 }
 
 void Interface::centerOnScreen()
