@@ -304,7 +304,12 @@ void KRunnerApp::showTaskManager()
 #endif
 }
 
-void KRunnerApp::display(const QString &term)
+void KRunnerApp::display()
+{
+    m_interface->display();
+}
+
+void KRunnerApp::query(const QString &term)
 {
     m_interface->display(term);
 }

@@ -73,7 +73,10 @@ public Q_SLOTS:
     Q_SCRIPTABLE void showTaskManager();
 
     /** Display the interface */
-    Q_SCRIPTABLE void display(const QString& term = QString());
+    Q_SCRIPTABLE void display();
+
+    /** Display the interface */
+    Q_SCRIPTABLE void query(const QString& term);
 
     /** Display the interface, using clipboard contents */
     Q_SCRIPTABLE void displayWithClipboardContents();
