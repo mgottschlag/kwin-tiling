@@ -28,6 +28,12 @@
 
 class KActionCollection;
 class KDialog;
+
+namespace Plasma
+{
+    class RunnerManager;
+};
+
 class Interface;
 class StartupId;
 

@@ -53,7 +53,6 @@
 #include "kworkspace/kdisplaymanager.h"
 
 #include "collapsiblewidget.h"
-#include "configdialog.h"
 #include "interfaceadaptor.h"
 #include "krunnersettings.h"
 #include "resultscene.h"
@@ -62,8 +61,7 @@
 static const int MIN_WIDTH = 400;
 
 Interface::Interface(Plasma::RunnerManager *runnerManager, QWidget* parent)
-    : KRunnerDialog(parent),
-      m_configDialog(0),
+    : KRunnerDialog(runnerManager, parent),
       m_delayedRun(false),
       m_running(false),
       m_queryRunning(false)
@@ -489,24 +487,6 @@ void Interface::switchUser()
             m_resultsScene->launchQuery("SESSIONS", info.pluginName());
         }
     }
-}
-
-void Interface::showConfigDialog()
-{
-    if (!m_configDialog) {
-        m_configDialog = new KRunnerConfigDialog(m_resultsScene->manager());
-        connect(m_configDialog, SIGNAL(finished()), this, SLOT(configCompleted()));
-    }
-
-    KWindowSystem::setOnDesktop(m_configDialog->winId(), KWindowSystem::currentDesktop());
-    KWindowSystem::activateWindow(m_configDialog->winId());
-    m_configDialog->show();
-}
-
-void Interface::configCompleted()
-{
-    m_configDialog->deleteLater();
-    m_configDialog = 0;
 }
 
 void Interface::matchCountChanged(int count)

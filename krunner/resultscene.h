@@ -43,7 +43,7 @@ class ResultScene : public QGraphicsScene
     Q_OBJECT
 
     public:
-        explicit ResultScene(QObject * parent = 0);
+        explicit ResultScene(Plasma::RunnerManager *runnerManager, QObject *parent = 0);
         ~ResultScene();
 
         void resize(int width, int height);

@@ -41,7 +41,6 @@ class KCompletion;
 
 class ResultItem;
 class ResultScene;
-class KRunnerConfigDialog;
 
 namespace Plasma
 {
@@ -71,9 +70,7 @@ class Interface : public KRunnerDialog
         void run(ResultItem *item);
         void runDefaultResultItem();
         void queryTextEdited(const QString &query);
-        void showConfigDialog();
         void updateDescriptionLabel(ResultItem *item);
-        void configCompleted();
         void matchCountChanged(int count);
         void hideResultsArea();
         void themeUpdated();
@@ -83,7 +80,6 @@ class Interface : public KRunnerDialog
         void centerOnScreen();
         void setStaticQueryMode(bool staticQuery);
 
-        KRunnerConfigDialog *m_configDialog;
         QTimer m_hideResultsTimer;
 
         QWidget *m_buttonContainer;

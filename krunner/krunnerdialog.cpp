@@ -28,21 +28,26 @@
 #include <QBitmap>
 
 #include <KDebug>
+#include <KWindowSystem>
 #ifdef Q_WS_X11
 #include <NETRootInfo>
 #endif
 
 #include "plasma/panelsvg.h"
+#include "plasma/runnermanager.h"
 #include "plasma/theme.h"
 
+#include "configdialog.h"
 #include "krunnerapp.h"
 
 #ifdef Q_WS_X11
 #include <X11/Xlib.h>
 #endif
 
-KRunnerDialog::KRunnerDialog( QWidget * parent, Qt::WindowFlags f )
-    : KDialog(parent, f)
+KRunnerDialog::KRunnerDialog(Plasma::RunnerManager *runnerManager, QWidget *parent, Qt::WindowFlags f )
+    : KDialog(parent, f),
+      m_configDialog(0),
+      m_runnerManager(runnerManager)
 {
     setButtons(0);
     m_background = new Plasma::PanelSvg(this);
@@ -57,6 +62,24 @@ KRunnerDialog::KRunnerDialog( QWidget * parent, Qt::WindowFlags f )
 
 KRunnerDialog::~KRunnerDialog()
 {
+}
+
+void KRunnerDialog::showConfigDialog()
+{
+    if (!m_configDialog) {
+        m_configDialog = new KRunnerConfigDialog(m_runnerManager);
+        connect(m_configDialog, SIGNAL(finished()), this, SLOT(configCompleted()));
+    }
+
+    KWindowSystem::setOnDesktop(m_configDialog->winId(), KWindowSystem::currentDesktop());
+    KWindowSystem::activateWindow(m_configDialog->winId());
+    m_configDialog->show();
+}
+
+void KRunnerDialog::configCompleted()
+{
+    m_configDialog->deleteLater();
+    m_configDialog = 0;
 }
 
 void KRunnerDialog::themeUpdated()

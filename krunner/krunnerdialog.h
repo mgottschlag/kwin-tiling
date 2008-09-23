@@ -24,22 +24,28 @@
 
 namespace Plasma
 {
+    class RunnerManager;
     class PanelSvg;
 }
+
+class KRunnerConfigDialog;
 
 class KRunnerDialog : public KDialog
 {
     Q_OBJECT
 
     public:
-        explicit KRunnerDialog( QWidget * parent = 0,
-                                Qt::WindowFlags f =  Qt::Dialog | Qt::FramelessWindowHint );
+        explicit KRunnerDialog(Plasma::RunnerManager *manager, QWidget *parent = 0,
+                               Qt::WindowFlags f =  Qt::Dialog | Qt::FramelessWindowHint);
         virtual ~KRunnerDialog();
 
     protected:
         void paintEvent( QPaintEvent *e );
         void resizeEvent( QResizeEvent *e );
         void mousePressEvent( QMouseEvent *e );
+
+    protected Q_SLOTS:
+        void showConfigDialog();
 
     private Q_SLOTS:
         /**
@@ -48,7 +54,11 @@ class KRunnerDialog : public KDialog
         void themeUpdated();
 
     private:
+        void configCompleted();
         void paintBackground(QPainter* painter, const QRect &exposedRect);
+
+        KRunnerConfigDialog *m_configDialog;
+        Plasma::RunnerManager *m_runnerManager;
         Plasma::PanelSvg *m_background;
         QPixmap *m_cachedBackground;
 };
