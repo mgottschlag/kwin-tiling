@@ -595,6 +595,10 @@ void WindowTaskItem::updateTask(::TaskManager::TaskChanges changes)
 
 void WindowTaskItem::updateToolTip()
 {
+    if (!m_task) {
+        return;
+    }
+
     Plasma::ToolTipManager::ToolTipContent data;
     data.mainText = m_task->visibleName();
     data.subText = i18nc("Which virtual desktop a window is currently on", "On %1",
