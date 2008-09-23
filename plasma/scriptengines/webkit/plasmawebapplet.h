@@ -57,6 +57,7 @@ public:
 public slots:
     QObject* dataEngine(const QString& name);
     QObject* config();
+    QObject* globalConfig();
     void setScrollBarPolicy(int orientation, int policy);
     void setDefaultSize(qreal w, qreal h);
     QVariantList screenRect();
@@ -98,6 +99,7 @@ private:
     QVariantList m_args;
     DataEngineDataWrapper m_dataEngineData;
     ConfigGroupWrapper m_config;
+    ConfigGroupWrapper m_globalConfig;
     KTemporaryFile m_temp;
     bool m_useDefaultSize;
     static QString m_jsConstants;

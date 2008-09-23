@@ -155,9 +155,8 @@ PlasmaWebApplet::~PlasmaWebApplet()
 bool PlasmaWebApplet::init()
 {
     m_useDefaultSize = (applet()->contentsRect().size() == QSizeF(0, 0));
-    // FIXME: xml based config does not work with normal applet config
-    //config.setConfig(applet->config());
-    m_config.setConfig(KConfigGroup(applet()->config().config(), applet()->pluginName()));
+    m_config.setConfig(applet()->config());
+    m_globalConfig.setConfig(applet()->globalConfig());
     if (WebApplet::init()) {
         connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()),
                 this, SLOT(themeChanged()));
@@ -282,6 +281,11 @@ QObject* PlasmaWebApplet::dataEngine(const QString& name)
 QObject* PlasmaWebApplet::config()
 {
     return &m_config;
+}
+
+QObject* PlasmaWebApplet::globalConfig()
+{
+    return &m_globalConfig;
 }
 
 void PlasmaWebApplet::resize(qreal w, qreal h)
