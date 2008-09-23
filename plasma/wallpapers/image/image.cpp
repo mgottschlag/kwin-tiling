@@ -361,18 +361,29 @@ void Image::fillMetaInfo(Background *b)
     // Prepare more user-friendly forms of some pieces of data.
     // - license by config is more a of a key value,
     //   try to get the proper name if one of known licenses.
-    QString license = b->license();
+
+    // not needed for now...
+    //QString license = b->license();
+    /*
     KAboutLicense knownLicense = KAboutLicense::byKeyword(license);
     if (knownLicense.key() != KAboutData::License_Custom) {
         license = knownLicense.name(KAboutData::ShortName);
     }
+    */
     // - last ditch attempt to localize author's name, if not such by config
     //   (translators can "hook" names from outside if resolute enough).
-    QString author = i18nc("Wallpaper info, author name", "%1", b->author());
-
-    setMetadata(m_uiImage.m_authorLine, author);
-    setMetadata(m_uiImage.m_licenseLine, license);
-    setMetadata(m_uiImage.m_emailLine, b->email());
+    if (!b->author().isEmpty()) {
+        QString author = i18nc("Wallpaper info, author name", "%1", b->author());
+        m_uiImage.m_authorLabel->setAlignment(Qt::AlignRight);
+        setMetadata(m_uiImage.m_authorLine, author);
+    } else {
+        setMetadata(m_uiImage.m_authorLine, QString());
+        m_uiImage.m_authorLabel->setAlignment(Qt::AlignLeft);
+    }
+    setMetadata(m_uiImage.m_licenseLine, QString());
+    setMetadata(m_uiImage.m_emailLine, QString());
+    m_uiImage.m_emailLabel->hide();
+    m_uiImage.m_licenseLabel->hide();
 }
 
 bool Image::setMetadata(QLabel *label, const QString &text)
