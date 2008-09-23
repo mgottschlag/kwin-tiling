@@ -22,6 +22,8 @@
 #include "battery.h"
 
 #include <QApplication>
+#include <QDBusConnection>
+#include <QDBusInterface>
 #include <QPainter>
 #include <QStyleOptionGraphicsItem>
 #include <QFont>
@@ -351,6 +353,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
             applet->setFlag(QGraphicsItem::ItemIsMovable, false);
             applet->init();
             controlsLayout->addItem(applet, row, 1, 1, 2);
+            controlsLayout->setRowSpacing(row, 20);
             row++;
         }
 
@@ -360,12 +363,11 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         row++;
 
         m_profileCombo = new Plasma::ComboBox(controls);
-        //m_profileCombo->addItem("Profile One"); // TODO
-        //m_profileCombo->addItem("Other Profile"); // TODO
         connect(m_profileCombo, SIGNAL(activated(QString)),
                 this, SLOT(setProfile(QString)));
 
         controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
+        controlsLayout->setRowSpacing(row, 20);
         row++;
 
         Plasma::Label *brightnessLabel = new Plasma::Label(controls);
@@ -385,6 +387,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         //connect(Solid::Control::PowerManager, SIGNAL(brightnessChanged(int)),
         //        brightnessSlider, SLOT(setValue(int)));
         controlsLayout->addItem(brightnessSlider, row, 1, 1, 1);
+        controlsLayout->setRowSpacing(row, 20);
         row++;
 
         brightnessLabel->nativeWidget()->setWordWrap(false);
@@ -445,7 +448,11 @@ void Battery::openConfig()
 void Battery::setProfile(const QString &profile)
 {
     if (m_currentProfile != profile) {
-        kDebug() << "Needs implementation: Changing performance profile to " << profile;    // FIXME
+        kDebug() << "Changing performance profile to " << profile;
+        QDBusConnection dbus( QDBusConnection::sessionBus() );
+        QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
+        iface.call( "refreshStatus" );
+        iface.call( "setProfile", profile );
     }
 }
 
