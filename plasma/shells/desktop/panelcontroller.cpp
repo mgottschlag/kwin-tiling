@@ -414,12 +414,13 @@ PanelController::PanelController(QWidget* parent)
     connect(d->underWindowsTool, SIGNAL(toggled(bool)), this, SLOT(panelModeChanged(bool)));
 
     d->layout->addStretch();
-    d->moveTool = d->addTool("transform-move", i18n("Screen edge"), this);
+    d->moveTool = d->addTool(QString(), i18n("Screen edge"), this);
+    d->moveTool->setIcon(d->iconSvg->pixmap("move"));
     d->moveTool->installEventFilter(this);
     d->moveTool->setCursor(Qt::SizeAllCursor);
     d->layout->addWidget(d->moveTool);
 
-    d->sizeTool = d->addTool("transform-scale", i18n("Height"), this);
+    d->sizeTool = d->addTool(QString(), i18n("Height"), this);
     d->sizeTool->installEventFilter(this);
     d->sizeTool->setCursor(Qt::SizeVerCursor);
     d->layout->addWidget(d->sizeTool);
