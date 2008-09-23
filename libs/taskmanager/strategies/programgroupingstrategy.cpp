@@ -80,13 +80,13 @@ QList<QAction*> ProgramGroupingStrategy::strategyActions(QObject *parent, Abstra
 QString ProgramGroupingStrategy::className(AbstractGroupableItem *item)
 {
     QString name;
-    if (d->tempItem->isGroupItem()) { //maybe add the condition that the subgroup was created by programGrouping
-        TaskGroup *group = qobject_cast<TaskGroup*>(d->tempItem);
+    if (item->isGroupItem()) { //maybe add the condition that the subgroup was created by programGrouping
+        TaskGroup *group = qobject_cast<TaskGroup*>(item);
         TaskItem *task = qobject_cast<TaskItem*>(group->members().first()); //There are only TaskItems in programGrouping groups
         return task->taskPointer()->classClass();
     }
 
-    return (qobject_cast<TaskItem*>(d->tempItem))->taskPointer()->classClass();
+    return (qobject_cast<TaskItem*>(item))->taskPointer()->classClass();
 }
 
 void ProgramGroupingStrategy::toggleGrouping()
