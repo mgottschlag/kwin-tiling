@@ -135,8 +135,7 @@ void DefaultDesktop::runCommand()
     }
 
     QString interface("org.kde.krunner");
-    org::kde::krunner::Interface krunner(interface, "/Interface",
-                                         QDBusConnection::sessionBus());
+    org::kde::krunner::App krunner(interface, "/App", QDBusConnection::sessionBus());
     krunner.display();
 }
 
