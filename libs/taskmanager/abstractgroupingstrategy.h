@@ -80,15 +80,15 @@ public:
 
     virtual bool setName(const QString &, TaskGroup*);
     /** Returns a List of unused Names*/
-    virtual QList <QString> nameSuggestions(TaskGroup *);
+    virtual QList<QString> nameSuggestions(TaskGroup *);
 
     virtual bool setColor(const QColor &, TaskGroup*);
     /** Returns a list of unused colors*/
-    virtual QList <QColor> colorSuggestions(TaskGroup *);
+    virtual QList<QColor> colorSuggestions(TaskGroup *);
 
     virtual bool setIcon(const QIcon &, TaskGroup*);
     /** Returns a list of icons*/
-    virtual QList <QIcon> iconSuggestions(TaskGroup *);
+    virtual QList<QIcon> iconSuggestions(TaskGroup *);
 
 protected slots:
     /** Adds all group members to the parentgroup of group and removes the group */
@@ -102,14 +102,11 @@ protected slots:
 
 protected:
     /** Create a group with items and returns the newly created group */
-    virtual TaskGroup* createGroup(ItemList items);
+    TaskGroup* createGroup(ItemList items);
 
 private:
     class Private;
     Private * const d;
-
-
-    
 };
 
 } // TaskManager namespace

@@ -274,15 +274,13 @@ bool ManualGroupingStrategy::groupItems(ItemList items)
 void ManualGroupingStrategy::closeGroup(TaskGroup *group)
 {
     kDebug();
-    if (!d->protectedGroups.contains(group)) { 
-        AbstractGroupingStrategy::closeGroup(group);  
+    if (!d->protectedGroups.contains(group)) {
+        AbstractGroupingStrategy::closeGroup(group);
     } else if (group->parentGroup()) {
         group->parentGroup()->remove(group);
         kDebug() << "Group protected";
     }
 }
-
-
 
 class TaskGroupTemplate::Private
 {

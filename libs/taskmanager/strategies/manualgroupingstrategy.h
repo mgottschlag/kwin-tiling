@@ -178,8 +178,6 @@ private slots:
     void resetCurrentTemplate();
 
 protected:
-    /** Create a group with items and returns the newly created group */
-   // TaskGroup* createGroup(ItemList items);
     void closeGroup(TaskGroup*);
 
 private:
