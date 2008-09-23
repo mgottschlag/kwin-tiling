@@ -5,5 +5,16 @@
     </method>
     <method name="showTaskManager">
     </method>
+    <method name="display">
+      <arg name="term" type="s" direction="in"/>
+    </method>
+    <method name="display">
+    </method>
+    <method name="displayWithClipboardContents">
+    </method>
+    <method name="switchUser">
+    </method>
+    <method name="clearHistory">
+    </method>
   </interface>
 </node>

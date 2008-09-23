@@ -22,8 +22,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <QProcess>
+#include <QClipboard>
 #include <QObject>
+#include <QProcess>
 #include <QTimer>
 #include <QtDBus/QtDBus>
 #include <QLineEdit>
@@ -294,6 +295,27 @@ void KRunnerApp::showTaskManager()
         w->filterLineEdit()->setFocus();
     }
 #endif
+}
+
+void KRunnerApp::display(const QString &term)
+{
+    m_interface->display(term);
+}
+
+void KRunnerApp::displayWithClipboardContents()
+{
+   QString clipboardData = QApplication::clipboard()->text(QClipboard::Selection);
+   m_interface->display(clipboardData);
+}
+
+void KRunnerApp::switchUser()
+{
+    m_interface->switchUser();
+}
+
+void KRunnerApp::clearHistory()
+{
+    m_interface->clearHistory();
 }
 
 void KRunnerApp::taskDialogFinished()

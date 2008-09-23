@@ -22,7 +22,6 @@
 
 #include <QAction>
 #include <QApplication>
-#include <QClipboard>
 #include <QDesktopWidget>
 #include <QGraphicsView>
 #include <QHBoxLayout>
@@ -204,10 +203,7 @@ Interface::Interface(QWidget* parent)
     themeUpdated();
     connect(Plasma::Theme::defaultTheme(), SIGNAL(themeChanged()), this, SLOT(themeUpdated()));
 
-    new InterfaceAdaptor( this );
-    QDBusConnection::sessionBus().registerObject( "/Interface", this );
-
-    new QShortcut( QKeySequence( Qt::Key_Escape ), this, SLOT(close()) );
+    new QShortcut(QKeySequence( Qt::Key_Escape ), this, SLOT(close()));
 
     m_layout->addStretch(1);
     setTabOrder(0, m_configButton);
@@ -337,12 +333,6 @@ void Interface::centerOnScreen()
     move(r.left() + (r.width() / 2) - (w / 2),
          r.top() + (r.height() / 2) - (h / 2));
     //kDebug() << "moved to" << pos();
-}
-
-void Interface::displayWithClipboardContents()
-{
-   QString clipboardData = QApplication::clipboard()->text(QClipboard::Selection);
-   display(clipboardData);
 }
 
 void Interface::setWidgetPalettes()

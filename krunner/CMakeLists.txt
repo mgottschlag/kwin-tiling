@@ -33,7 +33,6 @@ include_directories(${KDEBASE_WORKSPACE_SOURCE_DIR}/libs/ksysguard
 configure_file(config-xautolock.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-xautolock.h)
 
 set(krunner_KCFG_SRCS krunnersettings.kcfgc kscreensaversettings.kcfgc klaunchsettings.kcfgc)
-set(krunner_dbusXML org.kde.krunner.Interface.xml)
 set(krunner_dbusAppXML org.kde.krunner.App.xml)
 set(screensaver_dbusXML org.freedesktop.ScreenSaver.xml)
 set(kscreensaver_dbusXML org.kde.screensaver.xml)
@@ -61,7 +60,6 @@ endif(NOT WIN32)
 
 kde4_add_kcfg_files(krunner_SRCS ${krunner_KCFG_SRCS})
 
-qt4_add_dbus_adaptor(krunner_SRCS ${krunner_dbusXML} interface.h Interface)
 qt4_add_dbus_adaptor(krunner_SRCS ${krunner_dbusAppXML} krunnerapp.h KRunnerApp)
 if(NOT WIN32)
 qt4_add_dbus_adaptor(krunner_SRCS ${screensaver_dbusXML} saverengine.h SaverEngine)
@@ -94,4 +92,4 @@ install(TARGETS krunner         ${INSTALL_TARGETS_DEFAULT_ARGS} )
 install(FILES krunner.desktop  DESTINATION  ${AUTOSTART_INSTALL_DIR})
 install(FILES kscreensaversettings.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
 install(FILES klaunch.kcfg  DESTINATION  ${KCFG_INSTALL_DIR})
-install(FILES ${krunner_dbusAppXML} ${krunner_dbusXML} ${screensaver_dbusXML} ${kscreensaver_dbusXML} DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
+install(FILES ${krunner_dbusAppXML} ${screensaver_dbusXML} ${kscreensaver_dbusXML} DESTINATION ${DBUS_INTERFACES_INSTALL_DIR} )
