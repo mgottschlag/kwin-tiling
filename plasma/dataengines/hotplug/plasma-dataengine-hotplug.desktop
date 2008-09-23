@@ -10,6 +10,7 @@ Name[pt_BR]=Eventos do Hotplug
 Name[sv]=Inkopplingshändelser
 Name[tr]=Hotplug Olayları
 Name[uk]=Події гарячого підключення
+Name[x-test]=xxHotplug Eventsxx
 Name[zh_TW]=熱插拔事件
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service

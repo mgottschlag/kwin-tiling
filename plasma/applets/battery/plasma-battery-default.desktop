@@ -76,6 +76,7 @@ Comment[sl]=Oglejte si stanje napolnjenosti baterij
 Comment[sv]=Se batteriets laddningsstatus
 Comment[tr]=Pilinizin güç durumuna bakın
 Comment[uk]=Перегляньте стан заряду вашого акумулятора
+Comment[x-test]=xxSee the power status of your batteryxx
 Comment[zh_TW]=查看您的電池的電力狀態
 Icon=battery
 Type=Service

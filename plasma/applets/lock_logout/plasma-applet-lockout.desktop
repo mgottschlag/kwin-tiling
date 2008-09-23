@@ -75,6 +75,7 @@ Comment[sl]=Zaklenite zaslon, ali pa se odjavite
 Comment[sv]=Lås skärmen eller logga ut
 Comment[tr]=Ekranı kilitleyin ya da çıkın
 Comment[uk]=Заблокуйте екран або вийдіть
+Comment[x-test]=xxLock the screen or log outxx
 Comment[zh_TW]=鎖定螢幕或登出
 Icon=system-shutdown
 Type=Service

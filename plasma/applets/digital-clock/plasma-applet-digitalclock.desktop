@@ -78,6 +78,7 @@ Comment[sl]=Prikaz časa v digitalni obliki
 Comment[sv]=Tid visad med digitalformat
 Comment[tr]=Dijital biçimde gösterilen saat 
 Comment[uk]=Час, показаний у цифровому форматі
+Comment[x-test]=xxTime displayed in a digital formatxx
 Comment[zh_TW]=以數位格式顯示時間
 
 Icon=chronometer

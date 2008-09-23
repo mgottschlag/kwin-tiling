@@ -74,6 +74,7 @@ Comment[sl]=Preklapljajte med zagnanimi programi
 Comment[sv]=Byt mellan program som kör
 Comment[tr]=Çalışan uygulamalar arasında gezin
 Comment[uk]=Перемкніть запущені програми
+Comment[x-test]=xxSwitch between running applicationsxx
 Comment[zh_TW]=在執行中的應用程式間切換
 Icon=taskbar
 Type=Service

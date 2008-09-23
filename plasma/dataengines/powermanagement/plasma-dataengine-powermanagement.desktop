@@ -10,6 +10,7 @@ Name[pt_BR]=Gestão de Energia
 Name[sv]=Strömsparhantering
 Name[tr]=Güç Yönetimi
 Name[uk]=Керування живленням
+Name[x-test]=xxPower Managementxx
 Name[zh_TW]=電源管理
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service

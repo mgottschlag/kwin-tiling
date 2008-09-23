@@ -43,6 +43,7 @@ Name[uz]=Asbob-uskunalar
 Name[uz@cyrillic]=Асбоб-ускуналар
 Name[vi]=Phần cứng
 Name[wa]=Éndjolreye
+Name[x-test]=xxHardwarexx
 Name[zh_TW]=硬體
 Comment=Hardware Integration Configuration with Solid
 Comment[be@latin]=Nałady systemy absłuhoŭvańnia aparatury praz słužbu „Solid”
@@ -59,6 +60,7 @@ Comment[sl]=Nastavitev integracije s strojno opremo s pomočjo Solida
 Comment[sv]=Inställning av hårdvaruintegrering med Solid
 Comment[tr]=Solid ile Donanım Bütünleşme Yapılandırması
 Comment[uk]=Налаштування інтеграції обладнання з Solid
+Comment[x-test]=xxHardware Integration Configuration with Solidxx
 Comment[zh_TW]=使用 Solid 硬體整合設定
 
 X-KDE-Keywords=Solid,Hardware,Power,Network,Discovery,Management

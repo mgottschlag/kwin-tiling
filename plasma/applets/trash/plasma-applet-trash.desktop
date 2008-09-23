@@ -68,6 +68,7 @@ Comment[sl]=Dostop do zbrisanih datotek in map
 Comment[sv]=Åtkomst av borttagna objekt
 Comment[tr]=Silinen ögelere erişin
 Comment[uk]=Доступ до вилучених елементів
+Comment[x-test]=xxAccess to deleted itemsxx
 Comment[zh_TW]=存取已刪除的項目
 Type=Service
 Icon=user-trash

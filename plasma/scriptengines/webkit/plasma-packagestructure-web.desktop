@@ -50,6 +50,7 @@ Comment[pt]=Elemento HTML
 Comment[pt_BR]=Elemento HTML
 Comment[sv]=Grafisk HTML-komponent
 Comment[uk]=Віджет HTML
+Comment[x-test]=xxHTML widgetxx
 Comment[zh_TW]=HTML 元件
 Type=Service
 ServiceTypes=Plasma/PackageStructure

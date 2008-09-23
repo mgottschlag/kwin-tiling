@@ -86,6 +86,7 @@ Comment[sl]=Privzet vsebnik namizja
 Comment[sv]=Skrivbordets standardinneslutning
 Comment[tr]=Öntanımlı masaüstü içeriği
 Comment[uk]=Типове розмежування стільниці
+Comment[x-test]=xxDefault desktop containmentxx
 Comment[zh_TW]=預設桌面容器
 Icon=user-desktop
 Type=Service

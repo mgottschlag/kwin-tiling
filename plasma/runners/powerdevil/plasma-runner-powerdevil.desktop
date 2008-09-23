@@ -2,6 +2,7 @@
 Name=PowerDevil
 Name[nds]=Stroomdüvel
 Name[sv]=Powerdevil
+Name[x-test]=xxPowerDevilxx
 
 Comment=Basic Power Management Operations
 Comment[be@latin]=Prostyja aperacyi dla kiravańnia enerhijaj
@@ -12,6 +13,7 @@ Comment[pt_BR]=Operações Básicas de Gestão da Energia
 Comment[sv]=Grundläggande strömsparfunktioner
 Comment[tr]=Temel Güç Yönetimi İşlemleri
 Comment[uk]=Керування базовими операціями з керування живленням
+Comment[x-test]=xxBasic Power Management Operationsxx
 Comment[zh_TW]=基本的電源管理操作
 
 X-KDE-ServiceTypes=Plasma/Runner

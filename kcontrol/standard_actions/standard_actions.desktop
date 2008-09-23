@@ -31,6 +31,7 @@ Name[sv]=Vanliga snabbtangenter
 Name[te]=ప్రామాణిక కీబోర్‍డ్ లఘువులు
 Name[tr]=Standart Klavye Kısayolları
 Name[uk]=Стандартні скорочення клавіатури
+Name[x-test]=xxStandard Keyboard Shortcutsxx
 Name[zh_TW]=標準鍵盤捷徑
 
 Comment=Configuration of standard keybindings
@@ -52,6 +53,7 @@ Comment[sv]=Anpassa vanliga snabbtangenter
 Comment[te]=ప్రామాణిక కీబైండిగ్‍స్  యొక్క ఆకృతీకరణ
 Comment[tr]=Standart tuş bağıntıları yapılandırılması
 Comment[uk]=Налаштування стандартних прив'язок клавіш
+Comment[x-test]=xxConfiguration of standard keybindingsxx
 Comment[zh_TW]=標準按鍵組合設定
 X-KDE-Keywords=Keys,Global key bindings,Key scheme,Key bindings,shortcuts,application shortcuts
 

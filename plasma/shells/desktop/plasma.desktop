@@ -15,6 +15,7 @@ Name[sl]=Namizno delovno okolje Plazma
 Name[sv]=Plasma arbetsområde för skrivbordet
 Name[tr]=Plasma Masaüstü Çalışma Alanı
 Name[uk]=Робочий простір стільниці Плазми
+Name[x-test]=xxPlasma Desktop Workspacexx
 Name[zh_TW]=Plasma 桌面工作空間
 Type=Service
 X-KDE-StartupNotify=false

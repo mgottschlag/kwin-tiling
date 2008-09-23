@@ -45,6 +45,7 @@ Comment[pt_BR]=Servidor do KHotKeys. Sem servidor, não existem teclas especiais
 Comment[sv]=Demon för Khotkeys. Utan demon inga snabbtangenter.
 Comment[tr]=KHotKeys servisi. Servis yoksa kısayol da yoktur.
 Comment[uk]=Фонова служба KHotKeys. Без фонової служби не буде клавіатурних скорочень.
+Comment[x-test]=xxKHotKeys daemon. No daemon, no hotkeys.xx
 Comment[zh_TW]=KDE 熱鍵守護程式。沒有守護程式，就沒有熱鍵。
 Type=Service
 X-KDE-ServiceTypes=KDEDModule

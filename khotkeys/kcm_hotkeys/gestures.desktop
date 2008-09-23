@@ -26,6 +26,7 @@ Name[sv]=Musgester
 Name[te]=మౌస్ గెస్‍ట్‌రెస్
 Name[tr]=Fare Hareketleri
 Name[uk]=Жести мишкою
+Name[x-test]=xxMouse Gesturesxx
 Name[zh_TW]=滑鼠手勢
 
 Comment=Configure Mouse Gestures
@@ -47,6 +48,7 @@ Comment[sv]=Anpassa musgester
 Comment[te]=మౌస్ గెస్‍ట్‌రెస్ ఆకృతీకరణ
 Comment[tr]=Fare Hareketlerini Yapılandır
 Comment[uk]=Налаштувати жести мишки
+Comment[x-test]=xxConfigure Mouse Gesturesxx
 Comment[zh_TW]=設定滑鼠手勢
 
 Categories=Qt;KDE;X-KDE-settings-accessibility;
