@@ -92,6 +92,7 @@ class Battery : public Plasma::PopupApplet
         bool m_isEmbedded;
         QString m_svgFile;
         Plasma::Label *m_statusLabel;
+        Plasma::Label *m_profileLabel;
         Plasma::ComboBox *m_profileCombo;
 
         int m_batteryStyle;

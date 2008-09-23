@@ -1,7 +1,7 @@
 /***************************************************************************
- *   Copyright (C) 2007-2008 by Riccardo Iaconelli <riccardo@kde.org>      *
- *   Copyright (C) 2007-2008 by Sebastian Kuegler <sebas@kde.org>          *
- *   Copyright (C) 2007 by Luka Renko <lure@kubuntu.org>                   *
+ *   Copyright 2007-2008 by Riccardo Iaconelli <riccardo@kde.org>          *
+ *   Copyright 2007-2008 by Sebastian Kuegler <sebas@kde.org>              *
+ *   Copyright 2007 by Luka Renko <lure@kubuntu.org>                       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -56,6 +56,8 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_isEmbedded(false),
       m_svgFile(0),
       m_statusLabel(0),
+      m_profileLabel(0),
+      m_profileCombo(0),
       m_batteryStyle(0),
       m_theme(0),
       m_availableProfiles(0),
@@ -127,10 +129,21 @@ void Battery::init()
         dataUpdated(battery_source, dataEngine("powermanagement")->query(battery_source));
     }
     dataUpdated(I18N_NOOP("AC Adapter"), dataEngine("powermanagement")->query(I18N_NOOP("AC Adapter")));
-    m_numOfBattery = battery_sources.size();
-    kDebug() << battery_sources.size();
+    dataUpdated(I18N_NOOP("PowerDevil"), dataEngine("powermanagement")->query(I18N_NOOP("PowerDevil")));
+    //dataUpdated(I18N_NOOP("PowerDevil"), dataEngine("powermanagement")->query(I18N_NOOP("PowerDevil")));
+    /*
+    kDebug() << "DE:" << dataEngine("powermanagement")->query(I18N_NOOP("PowerDevil"));
+    const QStringList& profiles = dataEngine("powermanagement")->query(I18N_NOOP("PowerDevil"))[I18N_NOOP("availableProfiles")].toStringList();
+    const QString& current = dataEngine("powermanagement")->query(I18N_NOOP("PowerDevil"))[I18N_NOOP("currentProfiles")].toString();
 
-    //kDebug() << "SOLID" << Solid::Control::PowerManager::brightness();
+    kDebug() << "--------> Profiles, Current:" << profiles << current;
+    foreach (const QString &p, profiles) {
+        dataUpdated(p, dataEngine("powermanagement")->query(p));
+    }
+    */
+    kDebug() << "DE::::::::::" << dataEngine("powermanagement")->query(I18N_NOOP("PowerDevil"))[I18N_NOOP("availableProfiles")].toStringList();
+    m_numOfBattery = battery_sources.size();
+
     if (!m_isEmbedded) {
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
         eItem->setName("powermanagement");
@@ -200,6 +213,7 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
         m_acadapter_plugged = data[I18N_NOOP("Plugged in")].toBool();
         showAcAdapter(m_acadapter_plugged);
     } else if (source == I18N_NOOP("PowerDevil")) {
+        kDebug() << data;
         m_availableProfiles = data[I18N_NOOP("availableProfiles")].toStringList();
         m_currentProfile = data[I18N_NOOP("currentProfile")].toString();
         kDebug() << "POWERDEVIL:" << m_availableProfiles << "[" << m_currentProfile << "]";
@@ -352,9 +366,9 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
             row++;
         }
 
-        Plasma::Label *profileLabel = new Plasma::Label(controls);
-        profileLabel->setText("Performance Profile");
-        controlsLayout->addItem(profileLabel, row, 0, 1, 3);
+        m_profileLabel = new Plasma::Label(controls);
+        m_profileLabel->setText("Performance Profile");
+        controlsLayout->addItem(m_profileLabel, row, 0, 1, 3);
         row++;
 
         m_profileCombo = new Plasma::ComboBox(controls);
@@ -399,16 +413,25 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
 
 void Battery::updateStatus()
 {
-    kDebug() << "AC PLUGGED IN:" << m_acadapter_plugged;
+    kDebug() << "updating extender ...";
     if (m_statusLabel) {
-        kDebug() << "CSS Before:" << m_statusLabel->styleSheet();
         if (m_acadapter_plugged) {
             m_statusLabel->setText(i18n("AC Adapter Plugged in"));
         } else {
             m_statusLabel->setText(i18n("On Battery"));
         }
     }
-
+    /*
+    if (m_profileLabel && m_profileCombo) {
+        if (m_availableProfiles.empty()) {
+            m_profileCombo->hide();
+            m_profileLabel->hide();
+        } else {
+            m_profileCombo->show();
+            m_profileLabel->show();
+        }
+    }
+    */
 }
 
 void Battery::openConfig()
@@ -741,6 +764,8 @@ void Battery::connectSources() {
     }
 
     dataEngine("powermanagement")->connectSource(I18N_NOOP("AC Adapter"), this);
+    dataEngine("powermanagement")->connectSource(I18N_NOOP("PowerDevil"), this);
+    //dataEngine("powermanagement")->connectSource(I18N_NOOP("Sleepstates"), this);
 
     connect(dataEngine("powermanagement"), SIGNAL(sourceAdded(QString)),
             this,                          SLOT(sourceAdded(QString)));
@@ -757,6 +782,7 @@ void Battery::disconnectSources()
     }
 
     dataEngine("powermanagement")->disconnectSource(I18N_NOOP("AC Adapter"), this);
+    dataEngine("powermanagement")->disconnectSource(I18N_NOOP("PowerDevil"), this);
 
     disconnect(SLOT(sourceAdded(QString)));
     disconnect(SLOT(sourceRemoved(QString)));
