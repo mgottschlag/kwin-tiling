@@ -53,6 +53,7 @@ ProgramGroupingStrategy::ProgramGroupingStrategy(GroupManager *groupManager)
      d(new Private)
 {
     d->groupManager = groupManager;
+    setType(GroupManager::ProgramGrouping);
 }
 
 ProgramGroupingStrategy::~ProgramGroupingStrategy()
@@ -177,11 +178,6 @@ void ProgramGroupingStrategy::checkGroup()
     if (group->members().size() <= 1) {
         closeGroup(group);
     }
-}
-
-GroupManager::TaskGroupingStrategy ProgramGroupingStrategy::type() const
-{
-    return GroupManager::ProgramGrouping; 
 }
 
 }//namespace

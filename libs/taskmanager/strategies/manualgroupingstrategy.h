@@ -155,8 +155,6 @@ public:
     *otherwise the item goes to the rootGroup
     */
     void handleItem(AbstractPtr);
-    /** Return the strategy type */
-    GroupManager::TaskGroupingStrategy type() const;
     /** Should be called if the user wants to manually add an item to a group */
     //bool addItemToGroup(AbstractGroupableItem*, TaskGroup*);
     /** Should be called if the user wants to group items manually */

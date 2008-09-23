@@ -46,11 +46,11 @@ public:
     AbstractSortingStrategy(QObject *parent);
     virtual ~AbstractSortingStrategy();
 
+     /** Returns the strategy type */
+    GroupManager::TaskSortingStrategy type() const;
+
     /** Adds group under control of sorting strategy. all added supgroups are automatically added to this sortingStrategy*/
     void handleGroup(TaskGroup *);
-
-     /** Returns the strategy type */
-    virtual GroupManager::TaskSortingStrategy type() const = 0;
 
     /** DesktopChanges time to backup any needed data */
     virtual void desktopChanged(int newDesktop);
@@ -64,6 +64,9 @@ protected slots:
      /** Checks if the order has to be updated must be connect to AbstractGroupableItem* */
     void check(AbstractPtr item = 0);
 //void removeGroup();
+
+protected:
+    void setType(GroupManager::TaskSortingStrategy strategy);
 
 private:
     /** Sorts list of items according to startegy. Has to be reimlemented by every sortingStrategy*/

@@ -55,6 +55,7 @@ ManualSortingStrategy::ManualSortingStrategy(GroupManager *parent)
     d(new Private)
 {
     d->groupingStrategy = parent;
+    setType(GroupManager::ManualSorting);
 
     d->desktops = new desktopHashTable();
     //TODO add a screenHashTable
@@ -149,12 +150,6 @@ void ManualSortingStrategy::handleItem(AbstractPtr item)
         Q_ASSERT(item->parentGroup());
         d->managedItems->insert(item, item->parentGroup()->members().indexOf(item));
     }
-}
-
-
-GroupManager::TaskSortingStrategy ManualSortingStrategy::type() const
-{
-    return GroupManager::ManualSorting;
 }
 
 } //namespace

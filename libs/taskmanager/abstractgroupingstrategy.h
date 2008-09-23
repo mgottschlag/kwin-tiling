@@ -51,7 +51,7 @@ public:
     virtual void handleItem(AbstractPtr) = 0;
 
      /** Returns the strategy type */
-    virtual GroupManager::TaskGroupingStrategy type() const = 0;
+    virtual GroupManager::TaskGroupingStrategy type() const;
 
     /** DesktopChanges time to backup any needed data */
     virtual void desktopChanged(int newDesktop);
@@ -96,6 +96,9 @@ protected slots:
 
     /** Checks if the group is still necessary, removes group if empty*/
     virtual void checkGroup();
+
+     /** Returns the strategy type */
+    void setType(GroupManager::TaskGroupingStrategy type);
 
 protected:
     /** Create a group with items and returns the newly created group */

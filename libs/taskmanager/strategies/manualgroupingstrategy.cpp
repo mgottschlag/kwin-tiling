@@ -66,16 +66,13 @@ ManualGroupingStrategy::ManualGroupingStrategy(GroupManager *groupManager)
      d(new Private)
 {
     d->groupManager = groupManager;
+    setType(GroupManager::ManualGrouping);
 }
 
 ManualGroupingStrategy::~ManualGroupingStrategy()
-
 {
     delete d;
 }
-
-
-
 
 AbstractGroupingStrategy::EditableGroupProperties ManualGroupingStrategy::editableGroupProperties()
 {
@@ -123,12 +120,6 @@ void ManualGroupingStrategy::removeGroup()
         //Group gets automatically closed on empty signal
     }
     d->tempGroup = 0;
-}
-
-
-GroupManager::TaskGroupingStrategy ManualGroupingStrategy::type() const
-{
-    return GroupManager::ManualGrouping; 
 }
 
 void ManualGroupingStrategy::unprotectGroup(TaskGroup *group)

@@ -40,11 +40,12 @@ class AbstractSortingStrategy::Private
 {
 public:
     Private()
+        : type(GroupManager::NoSorting)
     {
     }
 
-    QList <TaskGroup*> managedGroups;
-
+    QList<TaskGroup*> managedGroups;
+    GroupManager::TaskSortingStrategy type;
 };
 
 
@@ -58,6 +59,16 @@ AbstractSortingStrategy::AbstractSortingStrategy(QObject *parent)
 AbstractSortingStrategy::~AbstractSortingStrategy()
 {
     delete d;
+}
+
+GroupManager::TaskSortingStrategy AbstractSortingStrategy::type() const
+{
+    return d->type;
+}
+
+void AbstractSortingStrategy::setType(GroupManager::TaskSortingStrategy type)
+{
+    d->type = type;
 }
 
 void AbstractSortingStrategy::handleGroup(TaskGroup *group)

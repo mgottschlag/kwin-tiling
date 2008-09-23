@@ -38,9 +38,6 @@ class AlphaSortingStrategy : public AbstractSortingStrategy
 public:
     AlphaSortingStrategy(QObject *parent);
 
-     /** Returns the strategy type */
-    GroupManager::TaskSortingStrategy type() const;
-
 private:
     /** Sorts list of items*/
     void sortItems(ItemList&);

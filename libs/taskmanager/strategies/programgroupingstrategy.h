@@ -43,7 +43,6 @@ public:
     ~ProgramGroupingStrategy();
 
     void handleItem(AbstractPtr);
-    GroupManager::TaskGroupingStrategy type() const;
 
     /** Returns list of actions that a task can do in this groupingStrategy
     *  fore example: start/stop group tasks of this program

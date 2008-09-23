@@ -41,6 +41,7 @@ namespace TaskManager
 AlphaSortingStrategy::AlphaSortingStrategy(QObject *parent)
     :AbstractSortingStrategy(parent)
 {
+    setType(GroupManager::AlphaSorting);
 }
 
 // used in sortItems
@@ -74,12 +75,6 @@ void AlphaSortingStrategy::sortItems(ItemList &items)
         items.append(map.take(keyList.takeFirst()));
     }
 
-}
-
-
-GroupManager::TaskSortingStrategy AlphaSortingStrategy::type() const
-{
-    return GroupManager::AlphaSorting;
 }
 
 } //namespace

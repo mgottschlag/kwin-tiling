@@ -46,9 +46,6 @@ public:
     /** Adds group under control of sorting strategy*/
     //void handleGroup(TaskGroup *);
 
-     /** Returns the strategy type */
-    GroupManager::TaskSortingStrategy type() const;
-
     /** DesktopChanges, time to backup any needed data */
     void desktopChanged(int newDesktop);
 
