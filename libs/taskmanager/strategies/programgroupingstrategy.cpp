@@ -60,12 +60,12 @@ ProgramGroupingStrategy::~ProgramGroupingStrategy()
     delete d;
 }
 
-QList <QAction*> *ProgramGroupingStrategy::strategyActions(QObject *parent, AbstractGroupableItem *item)
+QList<QAction*> ProgramGroupingStrategy::strategyActions(QObject *parent, AbstractGroupableItem *item)
 {
-    QList <QAction*> *actionList = new QList<QAction*> ();
+    QList <QAction*> actionList;
     QAction *a = new QAction(i18n("Start/Stop grouping this program"), parent);
     connect(a, SIGNAL(triggered()), this, SLOT(toggleGrouping()));
-    actionList->append(a);
+    actionList.append(a);
     d->tempItem = item;
     return actionList;
 }
@@ -74,30 +74,29 @@ void ProgramGroupingStrategy::toggleGrouping()
 {
     QString name;
     if (d->tempItem->isGroupItem()) { //maybe add the condition that the subgroup was created by programGrouping
-	TaskGroup *group = qobject_cast<TaskGroup*>(d->tempItem);
-	TaskItem *task = qobject_cast<TaskItem*>(group->members().first()); //There are only TaskItems in programGrouping groups
-	name = task->taskPointer()->classClass();
+        TaskGroup *group = qobject_cast<TaskGroup*>(d->tempItem);
+        TaskItem *task = qobject_cast<TaskItem*>(group->members().first()); //There are only TaskItems in programGrouping groups
+        name = task->taskPointer()->classClass();
     } else {
-	name = (qobject_cast<TaskItem*>(d->tempItem))->taskPointer()->classClass();
+        name = (qobject_cast<TaskItem*>(d->tempItem))->taskPointer()->classClass();
     }
-    
+
     if (d->blackList.contains(name)) {
-	d->blackList.removeAll(name);
-	if (d->tempItem->isGroupItem()) {
-	    foreach (AbstractGroupableItem *item, (qobject_cast<TaskGroup*>(d->tempItem))->members()) {
-		handleItem(item);
-	    }
-	} else {
-	    handleItem(d->tempItem);
-	}
-	
+        d->blackList.removeAll(name);
+        if (d->tempItem->isGroupItem()) {
+            foreach (AbstractGroupableItem *item, (qobject_cast<TaskGroup*>(d->tempItem))->members()) {
+                handleItem(item);
+            }
+        } else {
+            handleItem(d->tempItem);
+        }
     } else {
-	d->blackList.append(name);
-	if (d->tempItem->isGroupItem()) {
-	    closeGroup(qobject_cast<TaskGroup*>(d->tempItem));
-	} else {
-	    d->groupManager->rootGroup()->add(d->tempItem);
-	}
+        d->blackList.append(name);
+        if (d->tempItem->isGroupItem()) {
+            closeGroup(qobject_cast<TaskGroup*>(d->tempItem));
+        } else {
+            d->groupManager->rootGroup()->add(d->tempItem);
+        }
     }
     d->tempItem = 0;
 }

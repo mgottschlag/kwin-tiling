@@ -48,7 +48,7 @@ public:
     /** Returns list of actions that a task can do in this groupingStrategy
     *  fore example: start/stop group tasks of this program
     */
-    QList <QAction*> *strategyActions(QObject *parent, AbstractGroupableItem *item);
+    QList<QAction*> strategyActions(QObject *parent, AbstractGroupableItem *item);
 
     EditableGroupProperties editableGroupProperties(){return None;};
 

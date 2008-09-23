@@ -38,10 +38,11 @@ public:
     Private()
     {
     }
+
     GroupManager *groupManager;
     QStringList usedNames;
-    QList <QColor> usedColors;
-    QList <TaskGroup*> createdGroups;
+    QList<QColor> usedColors;
+    QList<TaskGroup*> createdGroups;
 };
 
 
@@ -54,7 +55,7 @@ AbstractGroupingStrategy::AbstractGroupingStrategy(GroupManager *groupManager)
 
 AbstractGroupingStrategy::~AbstractGroupingStrategy()
 {
-    foreach (TaskGroup *group, d->createdGroups){ //cleanup all created groups
+    foreach (TaskGroup *group, d->createdGroups) { //cleanup all created groups
         closeGroup(group);
     }
     delete d;
@@ -65,12 +66,9 @@ void AbstractGroupingStrategy::desktopChanged(int newDesktop)
     Q_UNUSED(newDesktop)
 }
 
-QList <QAction*> *AbstractGroupingStrategy::strategyActions(QObject *parent, AbstractGroupableItem *item)
+QList<QAction*> AbstractGroupingStrategy::strategyActions(QObject *parent, AbstractGroupableItem *item)
 {
-    Q_UNUSED(parent)
-    Q_UNUSED(item)
-
-    return 0;
+    return QList<QAction*>();
 }
 
 
@@ -92,8 +90,8 @@ TaskGroup* AbstractGroupingStrategy::createGroup(ItemList items)
         newGroup->add(item);
     }
     oldGroup->add(newGroup);
-  /*  if (d->groupManager->sortingStrategyPointer()) {
-        //d->groupManager->sortingStrategyPointer()->handleGroup(newGroup);
+  /*  if (d->groupManager->taskSorter()) {
+        //d->groupManager->taskSorter()->handleGroup(newGroup);
     }*/
     return newGroup;
 }

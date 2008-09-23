@@ -432,7 +432,7 @@ GroupManager::TaskSortingStrategy GroupManager::sortingStrategy() const
     return d->sortingStrategy;
 }
 
-AbstractSortingStrategy* GroupManager::sortingStrategyPointer() const
+AbstractSortingStrategy* GroupManager::taskSorter() const
 {
     return d->abstractSortingStrategy;
 }
@@ -481,7 +481,7 @@ GroupManager::TaskGroupingStrategy GroupManager::groupingStrategy() const
     return d->groupingStrategy;
 }
 
-AbstractGroupingStrategy* GroupManager::groupingStrategyPointer() const
+AbstractGroupingStrategy* GroupManager::taskGrouper() const
 {
     return d->abstractGroupingStrategy;
 }

@@ -125,8 +125,8 @@ void TaskGroup::add(AbstractPtr item)
 
     d->m_members.append(item);
     item->addedToGroup(this);
-    /*if (d->groupingStrategy->sortingStrategyPointer()) {
-        d->groupingStrategy->sortingStrategyPointer()->handleItem(item);
+    /*if (d->groupingStrategy->taskSorter()) {
+        d->groupingStrategy->taskSorter()->handleItem(item);
     }*/
     connect(item, SIGNAL(changed()), this, SIGNAL(changed()));
     //For debug
@@ -145,13 +145,11 @@ void TaskGroup::add(AbstractPtr item)
 void TaskGroup::remove(AbstractPtr item)
 {
     Q_ASSERT(item);
-    
-    if (!item->isGroupItem()) {
-        if ((dynamic_cast<TaskItem*>(item))->taskPointer()) {
-            kDebug() << "Remove item" << (dynamic_cast<TaskItem*>(item))->taskPointer()->visibleName();
-        }
-    } else {
+
+    if (item->isGroupItem()) {
         kDebug() << "Remove group" << (dynamic_cast<TaskGroup*>(item))->name();
+    } else if ((dynamic_cast<TaskItem*>(item))->taskPointer()) {
+        kDebug() << "Remove item" << (dynamic_cast<TaskItem*>(item))->taskPointer()->visibleName();
     }
     kDebug() << "from Group: " << name();
 
@@ -167,9 +165,9 @@ void TaskGroup::remove(AbstractPtr item)
     if (!d->m_members.contains(item)) {
         kDebug() << "couldn't find item";
         return;
-    } 
+    }
     disconnect(item, 0, this, 0);
- 
+
     d->m_members.removeAll(item);
     item->removedFromGroup();
     /*if(d->m_members.isEmpty()){

@@ -280,14 +280,13 @@ GroupingStrategyMenu::GroupingStrategyMenu(QWidget *parent, AbstractGroupableIte
     Q_ASSERT(strategy);
 
     setTitle("Grouping strategy actions");
-    if (strategy->groupingStrategyPointer()) {
-        QList <QAction*> *groupingStrategyActions = strategy->groupingStrategyPointer()->strategyActions(this, task);
-        if (groupingStrategyActions && !groupingStrategyActions->empty()) {
+    if (strategy->taskGrouper()) {
+        QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, task);
+        if (!groupingStrategyActions.empty()) {
             addSeparator();
-            foreach (QAction *action, *groupingStrategyActions) {
+            foreach (QAction *action, groupingStrategyActions) {
                 addAction(action);
             }
-            // delete groupingStrategyActions;
         }
     }
 
@@ -316,12 +315,12 @@ BasicMenu::BasicMenu(QWidget *parent, TaskItem* task, GroupManager *strategy, bo
     addAction(new MinimizeActionImpl(this, task));
     addAction(new MaximizeActionImpl(this, task));
     addAction(new ShadeActionImpl(this, task));
- 
-    if (strategy->groupingStrategyPointer()) {
-        QList <QAction*> *groupingStrategyActions = strategy->groupingStrategyPointer()->strategyActions(this, task);
-        if (groupingStrategyActions && !groupingStrategyActions->empty()) {
+
+    if (strategy->taskGrouper()) {
+        QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, task);
+        if (!groupingStrategyActions.isEmpty()) {
             addSeparator();
-            foreach (QAction *action, *groupingStrategyActions) {
+            foreach (QAction *action, groupingStrategyActions) {
                 addAction(action);
             }
             // delete groupingStrategyActions;
@@ -362,14 +361,13 @@ BasicMenu::BasicMenu(QWidget *parent, GroupPtr task, GroupManager *strategy, boo
     addAction(new MaximizeActionImpl(this, task));
     addAction(new ShadeActionImpl(this, task));
 
-    if (strategy->groupingStrategyPointer()) {
-        QList <QAction*> *groupingStrategyActions = strategy->groupingStrategyPointer()->strategyActions(this, task);
-        if (groupingStrategyActions && !groupingStrategyActions->empty()) {
+    if (strategy->taskGrouper()) {
+        QList<QAction*> groupingStrategyActions = strategy->taskGrouper()->strategyActions(this, task);
+        if (!groupingStrategyActions.isEmpty()) {
             addSeparator();
-            foreach (QAction *action, *groupingStrategyActions) {
+            foreach (QAction *action, groupingStrategyActions) {
                 addAction(action);
             }
-            delete groupingStrategyActions;
         }
     }
 

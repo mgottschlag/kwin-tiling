@@ -59,7 +59,7 @@ public:
     /** Returns list of actions that a task can do in this groupingStrategy
     *  If the visualisation supports grouping it has to show these actions.
     */
-    virtual QList <QAction*> *strategyActions(QObject *parent, AbstractGroupableItem *item);
+    virtual QList<QAction*> strategyActions(QObject *parent, AbstractGroupableItem *item);
 
     enum EditableGroupProperties
     {
@@ -74,7 +74,7 @@ public:
     * The visualization should create a configuration interface based on this.
     */
     virtual EditableGroupProperties editableGroupProperties() = 0;
-  
+
     /** The following functions check if a property is editable and sets it on group*/
     virtual bool addItemToGroup(AbstractGroupableItem *, TaskGroup*);
 

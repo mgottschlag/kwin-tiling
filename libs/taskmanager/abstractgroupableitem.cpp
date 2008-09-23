@@ -60,7 +60,7 @@ AbstractGroupableItem::~AbstractGroupableItem()
 {
     kDebug();
     emit destroyed(this);
-    if (parentGroup()){
+    if (parentGroup()) {
         kDebug() << "Error: item gets destroyed but still has a parent group";
     }
     delete d;
@@ -69,12 +69,7 @@ AbstractGroupableItem::~AbstractGroupableItem()
 
 bool AbstractGroupableItem::grouped() const
 {
-    if (parentGroup()){
-        if (parentGroup()->parentGroup()) { // not only member of rootGroup
-            return true;
-        }
-    }
-    return false;
+    return parentGroup() && parentGroup()->parentGroup();
 }
 
 GroupPtr AbstractGroupableItem::parentGroup() const
@@ -90,7 +85,7 @@ void AbstractGroupableItem::addedToGroup(const GroupPtr group)
         kDebug() << "Null Group Pointer";
         return;
     }
-    
+
     d->m_parentGroup = group;
 }
 

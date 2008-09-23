@@ -67,7 +67,7 @@ public:
 
     TaskGroupingStrategy groupingStrategy() const;
     void setGroupingStrategy(TaskGroupingStrategy);
-    AbstractGroupingStrategy* groupingStrategyPointer() const;
+    AbstractGroupingStrategy* taskGrouper() const;
 
 
     /**
@@ -83,7 +83,7 @@ public:
 
     TaskSortingStrategy sortingStrategy() const;
     void setSortingStrategy(TaskSortingStrategy);
-    AbstractSortingStrategy* sortingStrategyPointer() const;
+    AbstractSortingStrategy* taskSorter() const;
 
     bool showOnlyCurrentScreen() const;
     void setShowOnlyCurrentScreen(bool);

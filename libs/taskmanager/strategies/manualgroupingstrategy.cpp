@@ -50,9 +50,9 @@ public:
     }
 
     GroupManager *groupManager;
-    QHash <int, TaskGroupTemplate*> templateTrees;
+    QHash<int, TaskGroupTemplate*> templateTrees;
     TaskGroupTemplate* currentTemplate;
-    QList <TaskGroup*> protectedGroups;
+    QList<TaskGroup*> protectedGroups;
     AbstractGroupingStrategy::EditableGroupProperties editableGroupProperties;
     AbstractGroupableItem *tempItem;
     TaskGroup *tempGroup;
@@ -82,23 +82,25 @@ AbstractGroupingStrategy::EditableGroupProperties ManualGroupingStrategy::editab
     return d->editableGroupProperties;
 }
 
-QList <QAction*> *ManualGroupingStrategy::strategyActions(QObject *parent, AbstractGroupableItem *item)
+QList<QAction*> ManualGroupingStrategy::strategyActions(QObject *parent, AbstractGroupableItem *item)
 {
-    QList <QAction*> *actionList = new QList<QAction*> ();
+    QList<QAction*> actionList;
 
     if (item->grouped()) {
         QAction *a = new QAction(i18n("Leave Group"), parent);
         connect(a, SIGNAL(triggered()), this, SLOT(leaveGroup()));
-        actionList->append(a);
+        actionList.append(a);
         d->tempItem = item;
      //   actionList.append(LeaveGroupAction(groupManager,))
     }
+
     if (item->isGroupItem()) {
         QAction *a = new QAction(i18n("Remove Group"), parent);
         connect(a, SIGNAL(triggered()), this, SLOT(removeGroup()));
-        actionList->append(a);
+        actionList.append(a);
         d->tempGroup = dynamic_cast<TaskGroup*>(item);
     }
+
     return actionList;
 }
 
