@@ -51,7 +51,7 @@ public:
     virtual void handleItem(AbstractPtr) = 0;
 
      /** Returns the strategy type */
-    virtual GroupManager::TaskGroupingStrategy type() const;
+    GroupManager::TaskGroupingStrategy type() const;
 
     /** DesktopChanges time to backup any needed data */
     virtual void desktopChanged(int newDesktop);

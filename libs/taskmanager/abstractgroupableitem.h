@@ -67,7 +67,6 @@ public:
     virtual bool isGroupItem() const = 0;
 
 public slots:
-
     /** Functions that both, Tasks and Groups have */
     virtual void toDesktop(int) = 0;
     virtual bool isOnCurrentDesktop() = 0;
@@ -97,9 +96,9 @@ public slots:
     virtual void setAlwaysOnTop(bool) = 0;
     virtual void toggleAlwaysOnTop() = 0;
     virtual bool isAlwaysOnTop() = 0;
-    
+
     virtual bool isActionSupported(NET::Action) = 0;
-    
+
     virtual void close() = 0;
 
     virtual bool isActive() = 0;
