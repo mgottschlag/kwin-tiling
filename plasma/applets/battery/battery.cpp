@@ -60,7 +60,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_profileCombo(0),
       m_batteryStyle(0),
       m_theme(0),
-      m_availableProfiles(0),
+      m_availableProfiles(QStringList()),
       m_currentProfile(0),
       m_animId(-1),
       m_alpha(1),
@@ -128,21 +128,10 @@ void Battery::init()
         kDebug() << "BatterySource:" << battery_source;
         dataUpdated(battery_source, dataEngine("powermanagement")->query(battery_source));
     }
-    dataUpdated(I18N_NOOP("AC Adapter"), dataEngine("powermanagement")->query(I18N_NOOP("AC Adapter")));
-    dataUpdated(I18N_NOOP("PowerDevil"), dataEngine("powermanagement")->query(I18N_NOOP("PowerDevil")));
-    //dataUpdated(I18N_NOOP("PowerDevil"), dataEngine("powermanagement")->query(I18N_NOOP("PowerDevil")));
-    /*
-    kDebug() << "DE:" << dataEngine("powermanagement")->query(I18N_NOOP("PowerDevil"));
-    const QStringList& profiles = dataEngine("powermanagement")->query(I18N_NOOP("PowerDevil"))[I18N_NOOP("availableProfiles")].toStringList();
-    const QString& current = dataEngine("powermanagement")->query(I18N_NOOP("PowerDevil"))[I18N_NOOP("currentProfiles")].toString();
-
-    kDebug() << "--------> Profiles, Current:" << profiles << current;
-    foreach (const QString &p, profiles) {
-        dataUpdated(p, dataEngine("powermanagement")->query(p));
-    }
-    */
-    kDebug() << "DE::::::::::" << dataEngine("powermanagement")->query(I18N_NOOP("PowerDevil"))[I18N_NOOP("availableProfiles")].toStringList();
     m_numOfBattery = battery_sources.size();
+
+    dataUpdated(I18N_NOOP("AC Adapter"), dataEngine("powermanagement")->query(I18N_NOOP("AC Adapter")));
+
 
     if (!m_isEmbedded) {
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
@@ -213,10 +202,9 @@ void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data 
         m_acadapter_plugged = data[I18N_NOOP("Plugged in")].toBool();
         showAcAdapter(m_acadapter_plugged);
     } else if (source == I18N_NOOP("PowerDevil")) {
-        kDebug() << data;
         m_availableProfiles = data[I18N_NOOP("availableProfiles")].toStringList();
         m_currentProfile = data[I18N_NOOP("currentProfile")].toString();
-        kDebug() << "POWERDEVIL:" << m_availableProfiles << "[" << m_currentProfile << "]";
+        //kDebug() << "PowerDevil profiles:" << m_availableProfiles << "[" << m_currentProfile << "]";
     } else {
         kDebug() << "Applet::Dunno what to do with " << source;
     }
@@ -372,8 +360,8 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         row++;
 
         m_profileCombo = new Plasma::ComboBox(controls);
-        m_profileCombo->addItem("Profile One"); // TODO
-        m_profileCombo->addItem("Other Profile"); // TODO
+        //m_profileCombo->addItem("Profile One"); // TODO
+        //m_profileCombo->addItem("Other Profile"); // TODO
         controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
         row++;
 
@@ -413,7 +401,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
 
 void Battery::updateStatus()
 {
-    kDebug() << "updating extender ...";
+    //kDebug() << "updating extender ...";
     if (m_statusLabel) {
         if (m_acadapter_plugged) {
             m_statusLabel->setText(i18n("AC Adapter Plugged in"));
@@ -421,7 +409,17 @@ void Battery::updateStatus()
             m_statusLabel->setText(i18n("On Battery"));
         }
     }
-    /*
+
+    if (!m_availableProfiles.empty() && m_profileCombo) {
+        m_profileCombo->clear();
+        m_profileCombo->addItem(m_currentProfile);
+        foreach (const QString &p, m_availableProfiles) {
+            if (m_currentProfile != p) {
+                m_profileCombo->addItem(p);
+            }
+        }
+    }
+
     if (m_profileLabel && m_profileCombo) {
         if (m_availableProfiles.empty()) {
             m_profileCombo->hide();
@@ -431,7 +429,6 @@ void Battery::updateStatus()
             m_profileLabel->show();
         }
     }
-    */
 }
 
 void Battery::openConfig()
@@ -794,6 +791,9 @@ void Battery::sourceAdded(const QString& source)
         dataEngine("powermanagement")->connectSource(source, this);
         m_numOfBattery++;
     }
+    if (source == "PowerDevil") {
+        dataEngine("powermanagement")->connectSource(source, this);
+    }
 }
 
 void Battery::sourceRemoved(const QString& source)
@@ -801,6 +801,9 @@ void Battery::sourceRemoved(const QString& source)
     if (m_batteries_data.remove(source)) {
         m_numOfBattery--;
         update();
+    }
+    if (source == "PowerDevil") {
+        dataEngine("powermanagement")->disconnectSource(source, this);
     }
 }
 
