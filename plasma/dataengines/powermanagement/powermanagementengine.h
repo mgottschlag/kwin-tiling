@@ -1,7 +1,7 @@
 /*
- *   Copyright (C) 2007 Aaron Seigo <aseigo@kde.org>
- *   Copyright (C) 2007 Sebastian Kuegler <sebas@kde.org>
- *   Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
+ *   Copyright 2007 Aaron Seigo <aseigo@kde.org>
+ *   Copyright 2007-2008 Sebastian Kuegler <sebas@kde.org>
+ *   Copyright 2008 Dario Freddi <drf54321@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -31,7 +31,7 @@
 
 /**
  * This class provides runtime information about the battery and AC status
- * for use in a simple battery monitor Plasma applets.
+ * for use in power management Plasma applets.
  */
 class PowermanagementEngine : public Plasma::DataEngine
 {

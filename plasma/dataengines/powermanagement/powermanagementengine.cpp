@@ -1,8 +1,8 @@
 /*
- *   Copyright (C) 2007 Aaron Seigo <aseigo@kde.org>
- *   Copyright (C) 2007 Sebastian Kuegler <sebas@kde.org>
- *   CopyRight (C) 2007 Maor Vanmak <mvanmak1@gmail.com>
- *   Copyright (C) 2008 Dario Freddi <drf54321@gmail.com>
+ *   Copyright 2007 Aaron Seigo <aseigo@kde.org>
+ *   Copyright 2007-2008 Sebastian Kuegler <sebas@kde.org>
+ *   CopyRight 2007 Maor Vanmak <mvanmak1@gmail.com>
+ *   Copyright 2008 Dario Freddi <drf54321@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License version 2 as
@@ -44,8 +44,7 @@ PowermanagementEngine::PowermanagementEngine(QObject* parent, const QVariantList
 {
     Q_UNUSED(args)
 
-    m_sources << I18N_NOOP("Battery") << I18N_NOOP("AC Adapter") << I18N_NOOP("Sleepstates") << 
-                 I18N_NOOP("PowerDevil");
+    m_sources << I18N_NOOP("Battery") << I18N_NOOP("AC Adapter") << I18N_NOOP("Sleepstates") << I18N_NOOP("PowerDevil");
 
     // This following call can be removed, but if we do, the
     // data is not shown in the plasmaengineexplorer.
@@ -259,6 +258,7 @@ void PowermanagementEngine::profilesChanged( const QString &current, const QStri
 {
     setData(I18N_NOOP("PowerDevil"), I18N_NOOP("currentProfile"), current);
     setData(I18N_NOOP("PowerDevil"), I18N_NOOP("availableProfiles"), profiles);
+    scheduleSourcesUpdated();
 }
 
 #include "powermanagementengine.moc"
