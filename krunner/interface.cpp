@@ -84,11 +84,11 @@ Interface::Interface(QWidget* parent)
     m_layout = new QVBoxLayout(w);
     m_layout->setMargin(0);
 
-    QWidget *buttonContainer = new QWidget(w);
-    QHBoxLayout *bottomLayout = new QHBoxLayout(buttonContainer);
+    m_buttonContainer = new QWidget(w);
+    QHBoxLayout *bottomLayout = new QHBoxLayout(m_buttonContainer);
     bottomLayout->setMargin(0);
 
-    m_configButton = new QToolButton(buttonContainer);
+    m_configButton = new QToolButton(m_buttonContainer);
     m_configButton->setText(i18n("Settings"));
     m_configButton->setToolTip(i18n("Settings"));
     m_configButton->setIcon(m_iconSvg->pixmap("configure"));
@@ -96,7 +96,7 @@ Interface::Interface(QWidget* parent)
     bottomLayout->addWidget( m_configButton );
 
     /*
-    KPushButton *m_optionsButton = new KPushButton(KStandardGuiItem::configure(), buttonContainer);
+    KPushButton *m_optionsButton = new KPushButton(KStandardGuiItem::configure(), m_buttonContainer);
     m_optionsButton->setDefault(false);
     m_optionsButton->setAutoDefault(false);
     m_optionsButton->setText(i18n("Show Options"));
@@ -106,7 +106,7 @@ Interface::Interface(QWidget* parent)
     bottomLayout->addWidget( m_optionsButton );
     */
 
-    m_activityButton = new QToolButton(buttonContainer);
+    m_activityButton = new QToolButton(m_buttonContainer);
 //    m_activityButton->setDefault(false);
 //    m_activityButton->setAutoDefault(false);
     m_activityButton->setText(i18n("Show System Activity"));
@@ -117,19 +117,7 @@ Interface::Interface(QWidget* parent)
     bottomLayout->addWidget(m_activityButton);
     //bottomLayout->addStretch(10);
 
-    QString stringReserver = i18n("Launch");
-    stringReserver = i18n("Click to execute the selected item above");
-    stringReserver = i18n("Show Options");
-    /*
-    QString runButtonWhatsThis = i18n( "Click to execute the selected item above" );
-    m_runButton = new QToolButton(KGuiItem(i18n("Launch"), "system-run", QString(), runButtonWhatsThis), buttonContainer);
-    m_runButton->setEnabled( false );
-    m_runButton->setDefault(true);
-    m_runButton->setAutoDefault(true);
-    connect( m_runButton, SIGNAL( clicked(bool) ), SLOT(run()) );
-    bottomLayout->addWidget( m_runButton );
-    */
-    m_closeButton = new QToolButton(buttonContainer);
+    m_closeButton = new QToolButton(m_buttonContainer);
     //TODO: use a better string for this dialog when we are out of string freeze?
     KGuiItem guiItem = KStandardGuiItem::close();
     m_closeButton->setText(guiItem.text());
@@ -140,7 +128,7 @@ Interface::Interface(QWidget* parent)
     connect(m_closeButton, SIGNAL(clicked(bool)), SLOT(close()));
     bottomLayout->addWidget(m_closeButton);
 
-    m_layout->addWidget(buttonContainer);
+    m_layout->addWidget(m_buttonContainer);
 
     m_searchTerm = new KHistoryComboBox(false, w);
     m_searchTerm->setDuplicatesEnabled(false);
@@ -163,23 +151,23 @@ Interface::Interface(QWidget* parent)
     m_searchTerm->setHistoryItems(KRunnerSettings::pastQueries());
     bottomLayout->insertWidget(2, m_searchTerm, 10);
 
-    QHBoxLayout *statusLayout = new QHBoxLayout();
+    m_statusLayout = new QHBoxLayout();
     m_descriptionLabel = new QLabel(w);
     m_descriptionLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
     m_descriptionLabel->hide();
-    statusLayout->addWidget(m_descriptionLabel, 10, Qt::AlignLeft | Qt::AlignTop);
+    m_statusLayout->addWidget(m_descriptionLabel, 10, Qt::AlignLeft | Qt::AlignTop);
 
     m_previousPage = new QLabel(w);
     m_previousPage->setText("<a href=\"prev\">&lt;&lt;</a>");
     m_previousPage->hide();
-    statusLayout->addWidget(m_previousPage, 0, Qt::AlignLeft | Qt::AlignTop);
+    m_statusLayout->addWidget(m_previousPage, 0, Qt::AlignLeft | Qt::AlignTop);
 
     m_nextPage = new QLabel(w);
     m_nextPage->setText("<a href=\"next\">&gt;&gt;</a>");
     m_nextPage->hide();
-    statusLayout->addWidget(m_nextPage, 0, Qt::AlignLeft | Qt::AlignTop);
+    m_statusLayout->addWidget(m_nextPage, 0, Qt::AlignLeft | Qt::AlignTop);
 
-    m_layout->addLayout(statusLayout);
+    m_layout->addLayout(m_statusLayout);
 
     m_dividerLine = new QWidget(w);
     m_dividerLine->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Minimum);
@@ -371,6 +359,7 @@ void Interface::setWidgetPalettes()
 
 void Interface::resetInterface()
 {
+    setStaticQueryMode(false);
     m_delayedRun = false;
     m_searchTerm->setCurrentItem(QString(), true, 0);
     m_descriptionLabel->clear();
@@ -384,6 +373,22 @@ void Interface::resetInterface()
     adjustSize();
     //kDebug() << size() << minimumSizeHint();
     resize(minimumSizeHint());
+}
+
+void Interface::setStaticQueryMode(bool staticQuery)
+{
+    if (staticQuery) {
+        m_statusLayout->addWidget(m_closeButton);
+    } else {
+        m_buttonContainer->layout()->addWidget(m_closeButton);
+    }
+
+    // don't show the search and other control buttons in the case of a static query
+    m_buttonContainer->setVisible(!staticQuery);
+/*    m_configButton->setVisible(visible);
+    m_activityButton->setVisible(visible);
+    m_closeButton->setVisible(visible);
+    m_searchTerm->setVisible(visible);*/
 }
 
 void Interface::closeEvent(QCloseEvent *e)
@@ -490,6 +495,7 @@ void Interface::switchUser()
             //m_header->setPixmap("system-switch-user");
 
             //TODO: ugh, magic strings. See sessions/sessionrunner.cpp
+            setStaticQueryMode(true);
             m_resultsScene->launchQuery("SESSIONS", info.pluginName());
         }
     }

@@ -33,6 +33,7 @@
 class QGraphicsView;
 class QLabel;
 class QToolButton;
+class QHBoxLayout;
 class QVBoxLayout;
 
 class KHistoryComboBox;
@@ -83,11 +84,14 @@ class Interface : public KRunnerDialog
 
     private:
         void centerOnScreen();
+        void setStaticQueryMode(bool staticQuery);
 
         KRunnerConfigDialog *m_configDialog;
         QTimer m_hideResultsTimer;
 
+        QWidget *m_buttonContainer;
         QVBoxLayout* m_layout;
+        QHBoxLayout* m_statusLayout;
         QLabel *m_descriptionLabel;
         QLabel *m_previousPage;
         QLabel *m_nextPage;
