@@ -59,6 +59,7 @@ private slots:
     void toggleGrouping();
 
 private:
+    QString className(AbstractGroupableItem *item);
     bool programGrouping(TaskItem* taskItem, TaskGroup* groupItem);
     class Private;
     Private * const d;

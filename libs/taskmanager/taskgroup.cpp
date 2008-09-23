@@ -113,7 +113,7 @@ void TaskGroup::add(AbstractPtr item)
         }
         kDebug() << " to Group " << name();
     }
- 
+
     if (d->m_members.contains(item)) {
         kDebug() << "already in this group";
         return;

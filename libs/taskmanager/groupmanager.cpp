@@ -57,8 +57,8 @@ public:
     {
     }
 
-    QHash <TaskPtr, TaskItem*> itemList; //holds all tasks of the Taskmanager
-    QHash <StartupPtr, TaskItem*> startupList;
+    QHash<TaskPtr, TaskItem*> itemList; //holds all tasks of the Taskmanager
+    QHash<StartupPtr, TaskItem*> startupList;
     TaskGroup *rootGroup; //the current layout
     TaskSortingStrategy sortingStrategy;
     TaskGroupingStrategy groupingStrategy;
@@ -80,9 +80,9 @@ GroupManager::GroupManager(QObject *parent)
 {
     connect(TaskManager::self(), SIGNAL(taskAdded(TaskPtr)), this, SLOT(add(TaskPtr)));
     connect(TaskManager::self(), SIGNAL(taskRemoved(TaskPtr)), this, SLOT(remove(TaskPtr)));
-    connect(TaskManager::self(), SIGNAL(startupAdded(StartupPtr)),this, SLOT(add(StartupPtr)));
-    connect(TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)),this, SLOT(remove(StartupPtr)));
-    d->rootGroup = new TaskGroup(this,"RootGroup",Qt::transparent);
+    connect(TaskManager::self(), SIGNAL(startupAdded(StartupPtr)), this, SLOT(add(StartupPtr)));
+    connect(TaskManager::self(), SIGNAL(startupRemoved(StartupPtr)), this, SLOT(remove(StartupPtr)));
+    d->rootGroup = new TaskGroup(this, "RootGroup", Qt::transparent);
     //reloadTasks();
     d->screenTimer.setSingleShot(true);
     d->screenTimer.setInterval(300);
@@ -93,6 +93,8 @@ GroupManager::GroupManager(QObject *parent)
 
 GroupManager::~GroupManager()
 {
+    delete d->abstractSortingStrategy;
+    delete d->abstractGroupingStrategy;
     delete d->rootGroup;
     delete d;
 }
