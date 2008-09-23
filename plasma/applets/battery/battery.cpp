@@ -362,6 +362,9 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         m_profileCombo = new Plasma::ComboBox(controls);
         //m_profileCombo->addItem("Profile One"); // TODO
         //m_profileCombo->addItem("Other Profile"); // TODO
+        connect(m_profileCombo, SIGNAL(activated(QString)),
+                this, SLOT(setProfile(QString)));
+
         controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
         row++;
 
@@ -437,6 +440,13 @@ void Battery::openConfig()
     QStringList args;
     args << "powerdevilconfig";
     KToolInvocation::kdeinitExec("kcmshell4", args);
+}
+
+void Battery::setProfile(const QString &profile)
+{
+    if (m_currentProfile != profile) {
+        kDebug() << "Needs implementation: Changing performance profile to " << profile;    // FIXME
+    }
 }
 
 void Battery::showLabel(bool show)
