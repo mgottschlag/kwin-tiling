@@ -46,7 +46,6 @@
 
 #include "appadaptor.h"
 #include "kworkspace.h"
-#include "interfaceadaptor.h"
 #include "interface.h"
 #ifdef Q_WS_X11
 #include "startupid.h"
