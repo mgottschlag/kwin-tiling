@@ -153,8 +153,8 @@ void GroupManager::add(StartupPtr task)
     if (!d->startupList.contains(task)) {
         item = new TaskItem(this,task);
         d->startupList.insert(task, item); 
+        d->rootGroup->add(item);
     }
-    d->rootGroup->add(item);
 }
 
 void GroupManager::remove(StartupPtr task)
