@@ -35,8 +35,18 @@ class PowerDevilRunner : public Plasma::AbstractRunner
         void run( const Plasma::RunnerContext &context, const Plasma::QueryMatch &action );
 
     private:
+        void updateStatus();
+
         QStringList m_words;
         QDBusConnection m_dbus;
+
+        QStringList m_supportedGovernors;
+        QHash<QString, int> m_governorData;
+        QStringList m_availableProfiles;
+        QHash<QString, QString> m_profileIcon;
+        QStringList m_supportedSchemes;
+        QStringList m_suspendMethods;
+        QHash<QString, int> m_suspendData;
 };
 
 K_EXPORT_PLASMA_RUNNER( powerdevil, PowerDevilRunner )

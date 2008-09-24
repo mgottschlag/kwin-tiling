@@ -46,10 +46,66 @@ PowerDevilRunner::PowerDevilRunner( QObject *parent, const QVariantList &args )
     i18nc( "Note this is a KRunner keyword", "suspend" );
 
     setObjectName( "PowerDevil" );
+    updateStatus();
 }
 
 PowerDevilRunner::~PowerDevilRunner()
 {
+}
+
+void PowerDevilRunner::updateStatus()
+{
+    kDebug() << "\n\n\n #################### Updating PowerDevilRunner ############################";
+
+    // Governors
+    {
+        QDBusMessage msg = QDBusMessage::createMethodCall( "org.kde.kded",
+                            "/modules/powerdevil", "org.kde.PowerDevil", "getSupportedGovernors" );
+        QDBusReply<QVariantMap> govs = m_dbus.call( msg );
+        m_supportedGovernors = govs.value().keys();
+        foreach( const QString &governor, m_supportedGovernors ) {
+            m_governorData[governor] = govs.value()[governor].toInt();
+        }
+        kDebug() << "Governors:" << m_supportedGovernors << m_governorData;
+    }
+    // Profiles and their icons
+    {
+        KConfig *profilesConfig = new KConfig( "powerdevilprofilesrc", KConfig::SimpleConfig );
+        m_availableProfiles = profilesConfig->groupList();
+        foreach( const QString &profile, m_availableProfiles ) {
+            KConfigGroup *settings = new KConfigGroup( profilesConfig, profile );
+            if ( settings->readEntry( "iconname" ).isEmpty() ) {
+                m_profileIcon[profile] = "battery-charging-040";
+            } else {
+                m_profileIcon[profile] = settings->readEntry("iconname");
+            }
+            delete settings;
+        }
+        delete profilesConfig;
+        kDebug() << "Profiles:" << m_availableProfiles;
+        kDebug() << "Icons:" << m_profileIcon;
+    }
+
+    // Schemes
+    {
+        QDBusMessage msg = QDBusMessage::createMethodCall( "org.kde.kded",
+                            "/modules/powerdevil", "org.kde.PowerDevil", "getSupportedSchemes" );
+        QDBusReply<QStringList> schemes = m_dbus.call( msg );
+        m_supportedSchemes = schemes.value();
+        kDebug() << "Schemes:" << m_supportedSchemes;
+    }
+
+    // Suspend
+    {
+        QDBusMessage msg = QDBusMessage::createMethodCall( "org.kde.kded",
+                                "/modules/powerdevil", "org.kde.PowerDevil", "getSupportedSuspendMethods" );
+        QDBusReply<QVariantMap> methods = m_dbus.call( msg );
+        m_suspendMethods = methods.value().keys();
+        foreach( const QString &method, m_suspendMethods ) {
+            m_suspendData[method] = methods.value()[method].toInt();
+        }
+        kDebug() << "Suspend:" << m_suspendMethods << m_suspendData;
+    }
 }
 
 void PowerDevilRunner::match( Plasma::RunnerContext &context )
@@ -59,25 +115,17 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
     foreach( const QString &word, m_words ) {
         if ( term.startsWith( word, Qt::CaseInsensitive ) ) {
             if ( word == i18nc( "Note this is a KRunner keyword", "power profile" ) ) {
-                KConfig *m_profilesConfig = new KConfig( "powerdevilprofilesrc", KConfig::SimpleConfig );
-
-                foreach( const QString &profile, m_profilesConfig->groupList() ) {
+                foreach( const QString &profile, m_availableProfiles ) {
                     if ( term.split( ' ' ).count() == 3 ) {
                         if ( !profile.startsWith( term.split( ' ' ).at( 2 ) ) )
                             continue;
                     }
 
-                    KConfigGroup *settings = new KConfigGroup( m_profilesConfig, profile );
-
                     Plasma::QueryMatch match( this );
 
                     match.setType( Plasma::QueryMatch::ExactMatch );
 
-                    if ( settings->readEntry( "iconname" ).isEmpty() ) {
-                        match.setIcon( KIcon( "battery-charging-040" ) );
-                    } else {
-                        match.setIcon( KIcon( settings->readEntry( "iconname" ) ) );
-                    }
+                    match.setIcon( KIcon( m_profileIcon[profile] ) );
 
                     match.setText( i18n( "Set Profile to '%1'", profile ) );
                     match.setData( profile );
@@ -86,15 +134,9 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
                     match.setId( "ProfileChange" );
                     context.addMatch( term, match );
 
-                    delete settings;
                 }
-                delete m_profilesConfig;
             } else if ( word == i18nc( "Note this is a KRunner keyword", "power governor" ) ) {
-                QDBusMessage msg = QDBusMessage::createMethodCall( "org.kde.kded",
-                                   "/modules/powerdevil", "org.kde.PowerDevil", "getSupportedGovernors" );
-                QDBusReply<QVariantMap> govs = m_dbus.call( msg );
-
-                foreach( const QString &ent, govs.value().keys() ) {
+                foreach( const QString &ent, m_supportedGovernors ) {
                     if ( term.split( ' ' ).count() == 3 ) {
                         if ( !ent.startsWith( term.split( ' ' ).at( 2 ) ) )
                             continue;
@@ -106,18 +148,14 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
 
                     match.setIcon( KIcon( "battery-charging-040" ) );
                     match.setText( i18n( "Set CPU Governor to '%1'", ent ) );
-                    match.setData( govs.value()[ent].toInt() );
+                    match.setData( m_governorData[ent] );
 
                     match.setRelevance( 1 );
                     match.setId( "GovernorChange" );
                     context.addMatch( term, match );
                 }
             } else if ( word == i18nc( "Note this is a KRunner keyword", "power scheme" ) ) {
-                QDBusMessage msg = QDBusMessage::createMethodCall( "org.kde.kded",
-                                   "/modules/powerdevil", "org.kde.PowerDevil", "getSupportedSchemes" );
-                QDBusReply<QStringList> schemes = m_dbus.call( msg );
-
-                foreach( const QString &ent, schemes.value() ) {
+                foreach( const QString &ent, m_supportedSchemes ) {
                     if ( term.split( ' ' ).count() == 3 ) {
                         if ( !ent.startsWith( term.split( ' ' ).at( 2 ) ) )
                             continue;
@@ -192,18 +230,14 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
                 }
 
             } else if ( word == i18nc( "Note this is a KRunner keyword", "suspend" ) ) {
-                QDBusMessage msg = QDBusMessage::createMethodCall( "org.kde.kded",
-                                   "/modules/powerdevil", "org.kde.PowerDevil", "getSupportedSuspendMethods" );
-                QDBusReply<QVariantMap> methods = m_dbus.call( msg );
-
-                foreach( const QString &ent, methods.value().keys() ) {
+                foreach( const QString &ent, m_suspendMethods ) {
                     Plasma::QueryMatch match( this );
 
                     match.setType( Plasma::QueryMatch::ExactMatch );
 
                     match.setIcon( KIcon( "battery-charging-040" ) );
                     match.setText( ent );
-                    match.setData( methods.value()[ent].toInt() );
+                    match.setData( m_suspendData[ent] );
 
                     match.setRelevance( 1 );
                     match.setId( "Suspend" );
