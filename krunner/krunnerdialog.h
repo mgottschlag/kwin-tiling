@@ -54,12 +54,16 @@ class KRunnerDialog : public KDialog
 
     private Q_SLOTS:
         /**
-         * React to theme changes 
+         * React to theme changes
          */
         void themeUpdated();
 
-    private:
+        /**
+         * React to configuration changes
+         */
         void configCompleted();
+
+    private:
         void paintBackground(QPainter* painter, const QRect &exposedRect);
 
         KRunnerConfigDialog *m_configDialog;
