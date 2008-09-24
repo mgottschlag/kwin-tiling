@@ -53,7 +53,6 @@
 #include "kworkspace/kdisplaymanager.h"
 
 #include "collapsiblewidget.h"
-#include "interfaceadaptor.h"
 #include "krunnersettings.h"
 #include "resultscene.h"
 #include "resultitem.h"
