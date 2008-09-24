@@ -34,8 +34,11 @@ class PowerDevilRunner : public Plasma::AbstractRunner
         void match( Plasma::RunnerContext &context );
         void run( const Plasma::RunnerContext &context, const Plasma::QueryMatch &action );
 
-    private:
+    private slots:
         void updateStatus();
+
+    private:
+        void initUpdateTriggers();
 
         QStringList m_words;
         QDBusConnection m_dbus;

@@ -19,12 +19,15 @@
 
 #include "PowerDevilRunner.h"
 
+#include <QDBusInterface>
+#include <QDBusReply>
+
 #include <KIcon>
 #include <KLocale>
 #include <KDebug>
+#include <KDirWatch>
+#include <KStandardDirs>
 #include <KRun>
-#include <QDBusInterface>
-#include <QDBusReply>
 
 PowerDevilRunner::PowerDevilRunner( QObject *parent, const QVariantList &args )
         : Plasma::AbstractRunner( parent ),
@@ -47,16 +50,54 @@ PowerDevilRunner::PowerDevilRunner( QObject *parent, const QVariantList &args )
 
     setObjectName( "PowerDevil" );
     updateStatus();
+    initUpdateTriggers();
 }
 
 PowerDevilRunner::~PowerDevilRunner()
 {
 }
 
+void PowerDevilRunner::initUpdateTriggers()
+{
+
+    // listen for changes to the profiles
+    KDirWatch *profilesWatch = new KDirWatch(this);
+    profilesWatch->addFile(KStandardDirs::locate("config", "powerdevilprofilesrc"));
+    connect(profilesWatch,SIGNAL(dirty(QString)),this,SLOT(updateStatus()()));
+    connect(profilesWatch,SIGNAL(created(QString)),this,SLOT(updateStatus()()));
+    connect(profilesWatch,SIGNAL(deleted(QString)),this,SLOT(updateStatus()()));
+
+    // Also receive updates triggered through the DBus
+    QStringList modules;
+    QDBusInterface kdedInterface("org.kde.kded", "/kded", "org.kde.kded");
+    QDBusReply<QStringList> reply = kdedInterface.call("loadedModules");
+
+    if (!reply.isValid()) {
+        return;
+    }
+
+    modules = reply.value();
+
+    if (modules.contains("powerdevil")) {
+
+        // profiles: Use KDirWatch, maybe?
+        if (!m_dbus.connect("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil",
+                          "profileChanged", this, SLOT(updateStatus()))) {
+            kDebug() << "error!";
+        }
+        if (!m_dbus.connect("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil",
+                          "stateChanged", this, SLOT(updateStatus()))) {
+            kDebug() << "error!";
+        }
+
+        QDBusMessage msg = QDBusMessage::createMethodCall("org.kde.kded", "/modules/powerdevil",
+                           "org.kde.PowerDevil", "streamData");
+        m_dbus.call(msg);
+    }
+}
+
 void PowerDevilRunner::updateStatus()
 {
-    kDebug() << "\n\n\n #################### Updating PowerDevilRunner ############################";
-
     // Governors
     {
         QDBusMessage msg = QDBusMessage::createMethodCall( "org.kde.kded",
@@ -66,8 +107,8 @@ void PowerDevilRunner::updateStatus()
         foreach( const QString &governor, m_supportedGovernors ) {
             m_governorData[governor] = govs.value()[governor].toInt();
         }
-        kDebug() << "Governors:" << m_supportedGovernors << m_governorData;
     }
+
     // Profiles and their icons
     {
         KConfig *profilesConfig = new KConfig( "powerdevilprofilesrc", KConfig::SimpleConfig );
@@ -82,8 +123,6 @@ void PowerDevilRunner::updateStatus()
             delete settings;
         }
         delete profilesConfig;
-        kDebug() << "Profiles:" << m_availableProfiles;
-        kDebug() << "Icons:" << m_profileIcon;
     }
 
     // Schemes
@@ -92,7 +131,6 @@ void PowerDevilRunner::updateStatus()
                             "/modules/powerdevil", "org.kde.PowerDevil", "getSupportedSchemes" );
         QDBusReply<QStringList> schemes = m_dbus.call( msg );
         m_supportedSchemes = schemes.value();
-        kDebug() << "Schemes:" << m_supportedSchemes;
     }
 
     // Suspend
@@ -104,7 +142,6 @@ void PowerDevilRunner::updateStatus()
         foreach( const QString &method, m_suspendMethods ) {
             m_suspendData[method] = methods.value()[method].toInt();
         }
-        kDebug() << "Suspend:" << m_suspendMethods << m_suspendData;
     }
 }
 
