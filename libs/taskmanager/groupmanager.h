@@ -36,6 +36,7 @@ namespace TaskManager
 
 class AbstractSortingStrategy;
 class AbstractGroupingStrategy;
+class GroupManagerPrivate;
 
 /**
  * Manages the grouping stuff. It doesn't know anything about grouping and sorting itself, this is done in the grouping and sorting strategies.
@@ -48,12 +49,11 @@ public:
     GroupManager(QObject *parent);
     ~GroupManager();
 
-
     /**
     * Returns a group which contains all items and subgroups.
     * Visualisations should be based on this.
     */
-    GroupPtr rootGroup();
+    GroupPtr rootGroup() const;
 
     /**
     * Strategy used to Group new items
@@ -131,27 +131,16 @@ public slots:
     */
     void reconnect();
 
-private slots:
-
-    /**
-    * Keep track of changes in Taskmanager
-    */
-    void currentDesktopChanged(int);
-    void taskChangedDesktop(TaskPtr);
-    void addAttentionTask();
-    void windowChangedGeometry(TaskPtr task);
-
-    void checkScreenChange();
-
-    void itemDestroyed();
-
 private:
-    /** reload all tasks from TaskManager */
-    void reloadTasks();
+    Q_PRIVATE_SLOT(d, void currentDesktopChanged(int));
+    Q_PRIVATE_SLOT(d, void taskChangedDesktop(TaskPtr));
+    Q_PRIVATE_SLOT(d, void addAttentionTask());
+    Q_PRIVATE_SLOT(d, void windowChangedGeometry(TaskPtr task));
+    Q_PRIVATE_SLOT(d, void checkScreenChange());
+    Q_PRIVATE_SLOT(d, void itemDestroyed());
 
-    class Private;
-    Private * const d;
-
+    friend class GroupManagerPrivate;
+    GroupManagerPrivate * const d;
 };
 }
 #endif
