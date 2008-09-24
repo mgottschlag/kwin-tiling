@@ -130,12 +130,12 @@ public slots:
     void reconnect();
 
 private:
-    Q_PRIVATE_SLOT(d, void currentDesktopChanged(int));
-    Q_PRIVATE_SLOT(d, void taskChangedDesktop(TaskPtr));
-    Q_PRIVATE_SLOT(d, void addAttentionTask());
-    Q_PRIVATE_SLOT(d, void windowChangedGeometry(TaskPtr task));
-    Q_PRIVATE_SLOT(d, void checkScreenChange());
-    Q_PRIVATE_SLOT(d, void itemDestroyed());
+    Q_PRIVATE_SLOT(d, void currentDesktopChanged(int))
+    Q_PRIVATE_SLOT(d, void taskChangedDesktop(TaskPtr))
+    Q_PRIVATE_SLOT(d, void addAttentionTask())
+    Q_PRIVATE_SLOT(d, void windowChangedGeometry(TaskPtr task))
+    Q_PRIVATE_SLOT(d, void checkScreenChange())
+    Q_PRIVATE_SLOT(d, void itemDestroyed())
 
     friend class GroupManagerPrivate;
     GroupManagerPrivate * const d;
