@@ -1,5 +1,10 @@
 [Desktop Entry]
 Name=Panel for Mobile Internet Devices
+Name[nds]=Paneel för mobil Internetreedschappen
+Name[pt]=Painel para os Dispositivos de Internet Móvel
+Name[pt_BR]=Painel para os Dispositivos de Internet Móvel
+Name[uk]=Панель для мобільних інтернет-пристроїв
+Name[zh_TW]=行動網路裝置的面板
 Comment=A containment for a panel
 Comment[af]='n Plekhouer vir 'n paneel
 Comment[be@latin]=Jomišča dla paneli
@@ -29,7 +34,7 @@ Comment[nb]=En beholder for et panel
 Comment[nds]=En Gelaats för en Paneel
 Comment[ne]=प्यानलका लागि एउटा रोकथाम
 Comment[nl]=Een insluiting voor een paneel
-Comment[nn]=Ein bahaldar for panel
+Comment[nn]=Ein behaldar for panel
 Comment[pa]=ਇੱਕ ਪੈਨਲ ਲਈ ਕੰਨਟੇਨਮੈਂਟ
 Comment[pl]=Kontener na panelu
 Comment[pt]=Um contentor para um painel
