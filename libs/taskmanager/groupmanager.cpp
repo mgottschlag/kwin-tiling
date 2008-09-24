@@ -389,7 +389,6 @@ void GroupManagerPrivate::windowChangedGeometry(TaskPtr task)
     }
 
     if (!screenTimer.isActive()) {
-        emit q->getCurrentScreen();
         screenTimer.start();
     }
 }

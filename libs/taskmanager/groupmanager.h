@@ -113,8 +113,6 @@ signals:
     void itemRemoved(AbstractGroupableItem*);
     /** Signal that the item is no longer available */
    // void startupRemoved(AbstractGroupableItem*);
-    /** If this signal is emitted, the visualization is expected to update the current screen with setScreen(int);*/
-    void getCurrentScreen();
 
 public slots:
     /**
