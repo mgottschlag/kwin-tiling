@@ -115,7 +115,7 @@ void PowerDevilRunner::updateStatus()
         foreach( const QString &profile, m_availableProfiles ) {
             KConfigGroup *settings = new KConfigGroup( profilesConfig, profile );
             if ( settings->readEntry( "iconname" ).isEmpty() ) {
-                m_profileIcon[profile] = "battery-charging-040";
+                m_profileIcon[profile] = "preferences-system-power-management";
             } else {
                 m_profileIcon[profile] = settings->readEntry("iconname");
             }
