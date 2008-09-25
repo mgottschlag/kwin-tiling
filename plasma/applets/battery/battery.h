@@ -53,6 +53,7 @@ class Battery : public Plasma::PopupApplet
         QSizeF sizeHint(const Qt::SizeHint which, const QSizeF& constraint) const;
         Qt::Orientations expandingDirections() const;
         void constraintsEvent(Plasma::Constraints constraints);
+        void popupEvent(bool show);
 
     public slots:
         void dataUpdated(const QString &name, const Plasma::DataEngine::Data &data);
@@ -91,8 +92,10 @@ class Battery : public Plasma::PopupApplet
 
         /* Prevent creating infinite loops by embedding applets inside applets */
         bool m_isEmbedded;
+        bool m_extenderVisible;
         QString m_svgFile;
         Plasma::Label *m_statusLabel;
+        Plasma::Label *m_batteryLabel;
         Plasma::Label *m_profileLabel;
         Plasma::ComboBox *m_profileCombo;
 

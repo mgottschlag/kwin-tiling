@@ -56,6 +56,7 @@
 Battery::Battery(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
       m_isEmbedded(false),
+      m_extenderVisible(false),
       m_svgFile(0),
       m_statusLabel(0),
       m_profileLabel(0),
@@ -341,6 +342,17 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         controlsLayout->addItem(m_statusLabel, row, 0, 1, 3);
         row++;
 
+        QGraphicsGridLayout *batteryLayout = new QGraphicsGridLayout(controlsLayout);
+        batteryLayout->setColumnPreferredWidth(0, 100);
+        batteryLayout->setColumnPreferredWidth(1, 100);
+
+        m_batteryLabel = new Plasma::Label(controls);
+        m_batteryLabel->setMinimumSize(100, 100);
+        m_batteryLabel->setText(i18n("Battery:\nCPU:"));
+        m_batteryLabel->setStyleSheet(QString("font: %1pt;").arg(m_font.pointSize() +1));
+
+        batteryLayout->addItem(m_batteryLabel, 0, 0, 1, 1, Qt::AlignLeft);
+
         Battery *applet = static_cast<Battery*>(Plasma::Applet::load("battery"));
         if (applet) {
             applet->setParent(this);
@@ -348,16 +360,19 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
             applet->setParentItem(controls);
             applet->setEmbedded(true);
             applet->setSvgFile(m_svgFile);
-            applet->setMinimumSize(64, 64);
+            applet->setMinimumSize(100, 100);
             applet->setBackgroundHints(NoBackground);
             applet->setFlag(QGraphicsItem::ItemIsMovable, false);
             applet->init();
-            controlsLayout->addItem(applet, row, 1, 1, 2);
-            controlsLayout->setRowSpacing(row, 20);
-            row++;
+            batteryLayout->addItem(applet, 0, 1, 1, 1, Qt::AlignRight);
         }
 
+        controlsLayout->addItem(batteryLayout, row, 0, 1, 3);
+        controlsLayout->setRowSpacing(row, 20);
+        row++;
+
         m_profileLabel = new Plasma::Label(controls);
+        m_profileLabel->setStyleSheet(QString("font: bold;"));
         m_profileLabel->setText("Performance Profile");
         controlsLayout->addItem(m_profileLabel, row, 0, 1, 3);
         row++;
@@ -371,6 +386,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         row++;
 
         Plasma::Label *brightnessLabel = new Plasma::Label(controls);
+        brightnessLabel->setStyleSheet(QString("font: bold;"));
         brightnessLabel->setText(i18n("Screen Brightness"));
         brightnessLabel->nativeWidget()->setWordWrap(false);
         controlsLayout->addItem(brightnessLabel, row, 0, 1, 3);
@@ -405,9 +421,51 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
     }
 }
 
+void Battery::popupEvent(bool show)
+{
+    m_extenderVisible = show;
+    updateStatus();
+}
+
 void Battery::updateStatus()
 {
+    if (!m_extenderVisible) {
+        kDebug() << "No update, extender not shown.";
+        return;
+    }
     //kDebug() << "updating extender ...";
+    if (m_numOfBattery) {
+        QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
+        QString batteryLabelText;
+        int bnum = 0;
+        while (battery_data.hasNext()) {
+            battery_data.next();
+            kDebug() <<  "NO" << m_numOfBattery;
+            if (m_numOfBattery == 1) {
+                batteryLabelText.append("<b>Battery:</b> ");
+            } else {
+                batteryLabelText.append(QString("<b>Battery %1:</b> ").arg(bnum));
+            }
+            //battery_data.value()[I18N_NOOP("Percent")].toInt()
+            //battery_data.value()[I18N_NOOP("Plugged in")].toBool();
+            if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
+                batteryLabelText.append(battery_data.value()[I18N_NOOP("Percent")].toString());
+            } else {
+                batteryLabelText.append(i18nc("Battery is not plugged in", "not present"));
+            }
+            batteryLabelText.append("%\n");
+            if (m_acadapter_plugged) {
+                batteryLabelText.append((i18n(" (charging) <br />")));
+                batteryLabelText.append(i18n("<br /><b>AC Adapter:</b> Plugged in"));
+            } else {
+                batteryLabelText.append((i18n(" (discharging)<br />")));
+                batteryLabelText.append(i18n("<br /><b>AC Adapter:</b> Not plugged in"));
+            }
+            kDebug() << "TEXT:" << batteryLabelText;
+        }
+        m_batteryLabel->setText(batteryLabelText);
+    }
+
     if (m_statusLabel) {
         if (m_acadapter_plugged) {
             m_statusLabel->setText(i18n("AC Adapter Plugged in"));
@@ -496,7 +554,7 @@ void Battery::showAcAdapter(bool show)
         return;
     }
     m_acFadeIn = show;
-    const int FadeInDuration = 300;
+    const int FadeInDuration = 600;
     // As long as the animation is running, we fake it's still plugged in so it gets
     // painted in paintInterface()
     m_acadapter_plugged = true;
