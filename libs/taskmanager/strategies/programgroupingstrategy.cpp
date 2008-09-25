@@ -44,7 +44,7 @@ public:
     GroupManager *groupManager;
     AbstractGroupingStrategy::EditableGroupProperties editableGroupProperties;
     AbstractGroupableItem *tempItem;
-    QStringList blackList; //Don't group this programs
+    QStringList blackList; //Programs in this list should not be grouped
 };
 
 

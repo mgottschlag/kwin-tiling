@@ -68,8 +68,14 @@ public:
     void setParentGroup(TaskGroupTemplate *);
 
 signals:
+    /** Unprotects group so it can get closed
+    */
     void unprotectGroup(TaskGroup *);
+    /** used to inform the group that there is still a desktop with this group so it wont
+    *	be closed when empty
+    */
     void protectGroup(TaskGroup *);
+    
     void destroyed(AbstractGroupableItem *);
 
 private slots:
@@ -77,7 +83,7 @@ private slots:
 
 
 public slots:
-    /** the following are functions which perform the corresponding actions on all member tasks */
+    /** Needed because we subclass AbstractGroupableItem */
     void toDesktop(int){};
     bool isOnCurrentDesktop(){return false;};
     bool isOnAllDesktops(){return false;};
@@ -170,11 +176,24 @@ public:
     void desktopChanged(int newDesktop);
 
 private slots:
+
+    /** Actions which the strategy offers*/
+    /** sender item leaves group*/
     void leaveGroup();
+    /** Removes all items from the sender group and adds to the parent Group*/
     void removeGroup();
+
+
     void groupChangedDesktop(int newDesk);
+    /** Protects group from being closed, because the tasks in the group are just temporarily 
+    *	not available (not on the desktop,...). Every TaskGroupTemplate calls this so the group is
+    *	is only closed if it isn't present on any desktop.
+    */
     void protectGroup(TaskGroup *group);
+    /** Unprotects group so it can get closed
+    */
     void unprotectGroup(TaskGroup *group);
+    /** This function makes sure that if the rootGroup template already got deleted nobody tries to access it again*/
     void resetCurrentTemplate();
 
 protected:

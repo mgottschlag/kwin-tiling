@@ -43,9 +43,6 @@ public:
     ManualSortingStrategy(GroupManager *parent);
     ~ManualSortingStrategy();
 
-    /** Adds group under control of sorting strategy*/
-    //void handleGroup(TaskGroup *);
-
     /** DesktopChanges, time to backup any needed data */
     void desktopChanged(int newDesktop);
 

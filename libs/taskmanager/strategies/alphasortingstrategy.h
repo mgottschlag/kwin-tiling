@@ -39,7 +39,7 @@ public:
     AlphaSortingStrategy(QObject *parent);
 
 private:
-    /** Sorts list of items*/
+    /** Sorts list of items according to strategy*/
     void sortItems(ItemList&);
 };
 

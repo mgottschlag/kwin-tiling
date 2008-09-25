@@ -41,7 +41,8 @@ class ProgramGroupingStrategy: public AbstractGroupingStrategy
 public:
     ProgramGroupingStrategy(GroupManager *groupManager);
     ~ProgramGroupingStrategy();
-
+    /** Tasks are passed to this function to be grouped by this strategy
+    */
     void handleItem(AbstractPtr);
 
     /** Returns list of actions that a task can do in this groupingStrategy
@@ -55,6 +56,9 @@ protected slots:
     /** Checks if the group is still necessary */
     void checkGroup();
 private slots:
+    /** The program of the sender() of this function is started or stopped being grouped
+    *	by this strategy. This is done by adding the program to d->blackList
+    */
     void toggleGrouping();
 
 private:
