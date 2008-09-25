@@ -38,13 +38,19 @@ class ION_EXPORT IonInterface : public Plasma::DataEngine
     Q_OBJECT
 
 public:
-
+ 
     enum ConditionIcons { ClearDay, FewCloudsDay, PartlyCloudyDay, Overcast,
                           Showers, ScatteredShowers, Thunderstorm, Snow,
                           FewCloudsNight, PartlyCloudyNight, ClearNight,
                           Mist, NotAvailable };
 
-    typedef QMap<QString, ConditionIcons> IconNames; // Map conditions to the right icon
+    struct conditionMapping {
+      ConditionIcons type;
+      const char *condition;
+    };
+
+    conditionMapping m_conditionDayList[];
+    conditionMapping m_conditionNightList[];
 
     typedef QHash<QString, IonInterface*> IonDict; // Define Dict as a QHash for Ions
 
@@ -80,7 +86,7 @@ public:
      * @param condition the current condition being reported.
      * @return icon name
      */
-    QString getWeatherIcon(const IconNames& ConditionList, const QString& condition);
+    QString getWeatherIcon(const struct conditionMapping[], const QString& condition);
   
 public Q_SLOTS:
 

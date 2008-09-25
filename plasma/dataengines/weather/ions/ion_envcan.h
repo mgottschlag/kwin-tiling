@@ -38,6 +38,10 @@ class WeatherData
 {
 
 public:
+    // Maps the icon keys
+  //  static IonInterface::conditionMapping m_conditionDayList[];
+  //  static IonInterface::conditionMapping m_conditionNightList[];
+    
     // Warning info, can have more than one, especially in Canada, eh? :)
     struct WarningInfo {
         QString url;

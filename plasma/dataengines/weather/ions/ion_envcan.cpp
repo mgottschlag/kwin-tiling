@@ -42,8 +42,6 @@ public:
     QString m_code;
     QString m_territory;
     QString m_cityName;
-    IconNames m_conditionNightList;
-    IconNames m_conditionDayList;
 
     // Weather information
     QHash<QString, WeatherData> m_weatherData;
@@ -101,60 +99,64 @@ void EnvCanadaIon::setupConditionIcons(void)
 //    FewCloudsNight, PartlyCloudyNight, ClearNight,
 //    Mist, NotAvailable
 //
-    d->m_conditionDayList["sunny"] = ClearDay;
-    d->m_conditionDayList["mainly sunny"] = FewCloudsDay;
-    d->m_conditionDayList["partly cloudy"] = PartlyCloudyDay;
-    d->m_conditionDayList["mostly cloudy"] = PartlyCloudyDay;
-    d->m_conditionDayList["cloudy periods"] = PartlyCloudyDay;
-    d->m_conditionDayList["increasing cloudiness"] = Overcast;
-    d->m_conditionDayList["cloudy"] = Overcast;
-    d->m_conditionDayList["overcast"] = Overcast;
-    d->m_conditionDayList["light snow"] = Snow;
-    d->m_conditionDayList["snow grains"] = Snow;
-    d->m_conditionDayList["light rainshower"] = ScatteredShowers;
-    d->m_conditionDayList["light rain"] = Showers;
-    d->m_conditionDayList["rain"] = Showers;
-    d->m_conditionDayList["periods of rain"] = Showers;
-    d->m_conditionDayList["recent thunderstorm"] = Thunderstorm;
-    d->m_conditionDayList["chance of showers"] = Showers;
-    d->m_conditionDayList["change of flurries"] = Snow;
-    d->m_conditionDayList["a few clouds"] = FewCloudsDay;
-    d->m_conditionDayList["a few showers"] = ScatteredShowers;
-    d->m_conditionDayList["a few rain showers or flurries"] = NotAvailable; // FIXME: MISSING ICONS!!!
-    d->m_conditionDayList["chance of flurries or rain showers"] = NotAvailable;
-    d->m_conditionDayList["a few flurries"] = Snow;
-    d->m_conditionDayList["fog patches"] = Mist;
-    d->m_conditionDayList["fog"] = Mist;
+    conditionMapping m_conditionDayList[] = {
+       {ClearDay,"sunny"},
+       {FewCloudsDay,"mainly sunny"},
+       {ClearDay,"clearing"},
+       {PartlyCloudyDay,"partly cloudy"},
+       {PartlyCloudyDay,"mostly cloudy"},
+       {PartlyCloudyDay,"cloudy periods"},
+       {Overcast, "increasing cloudiness"},
+       {Overcast, "cloudy"},
+       {Overcast, "overcast"},
+       {Snow, "light snow"},
+       {Snow, "snow grains"},
+       {ScatteredShowers, "light rainshower"},
+       {Showers, "light rain"},
+       {Showers, "rain"},
+       {Showers, "periods of rain"},
+       {Thunderstorm, "recent thunderstorm"},
+       {Showers, "chance of showers"},
+       {Snow, "chance of flurries"},
+       {FewCloudsDay, "a few clouds"},
+       {ScatteredShowers, "a few showers"},
+       {NotAvailable, "a few rain showers or flurries"},
+       {NotAvailable, "chance of flurries or rain showers"},
+       {Snow, " a few flurries"},
+       {Mist, "fog patches"},
+       {Mist, "fog"},
+       // Explicit
+       {PartlyCloudyDay, "sunny with cloudy periods"},
+       {PartlyCloudyDay, "a mix of sun and cloud"},
+    };
 
-    d->m_conditionNightList["clear"] = ClearNight;
-    d->m_conditionNightList["mainly clear"] = FewCloudsNight;
-    d->m_conditionNightList["clearing"] = ClearNight;
-    d->m_conditionNightList["partly cloudy"] = PartlyCloudyNight;
-    d->m_conditionNightList["mostly cloudy"] = PartlyCloudyNight;
-    d->m_conditionNightList["increasing cloudiness"] = Overcast;
-    d->m_conditionNightList["cloudy periods"] = PartlyCloudyNight;
-    d->m_conditionNightList["cloudy"] = Overcast;
-    d->m_conditionNightList["overcast"] = Overcast;
-    d->m_conditionNightList["light snow"] = Snow;
-    d->m_conditionNightList["snow grains"] = Snow;
-    d->m_conditionNightList["light rainshower"] = ScatteredShowers;
-    d->m_conditionNightList["light rain"] = Showers;
-    d->m_conditionNightList["rain"] = Showers;
-    d->m_conditionNightList["periods of rain"] = Showers;
-    d->m_conditionNightList["recent thunderstorm"] = Thunderstorm;
-    d->m_conditionNightList["chance of showers"] = Showers;
-    d->m_conditionNightList["chance of flurries"] = Snow;
-    d->m_conditionNightList["a few clouds"] = FewCloudsNight;
-    d->m_conditionNightList["a few showers"] = ScatteredShowers;
-    d->m_conditionNightList["a few rain showers or flurries"] = NotAvailable;
-    d->m_conditionNightList["chance of flurries or rain showers"] = NotAvailable;
-    d->m_conditionNightList["a few flurries"] = Snow;
-    d->m_conditionNightList["fog patches"] = Mist;
-    d->m_conditionNightList["fog" ] = Mist;
-
-    // forecasts that are explicit on period.
-    d->m_conditionDayList["a mix of sun and cloud"] = PartlyCloudyDay;
-    d->m_conditionDayList["sunny with cloudy periods"] = PartlyCloudyDay;
+    conditionMapping m_conditionNightList[] = {
+       {ClearNight,"clear"},
+       {FewCloudsNight,"mainly clear"},
+       {ClearNight, "clearing"},
+       {PartlyCloudyNight,"partly cloudy"},
+       {PartlyCloudyNight,"mostly cloudy"},
+       {PartlyCloudyNight,"cloudy periods"},
+       {Overcast, "increasing cloudiness"},
+       {Overcast, "cloudy"},
+       {Overcast, "overcast"},
+       {Snow, "light snow"},
+       {Snow, "snow grains"},
+       {ScatteredShowers, "light rainshower"},
+       {Showers, "light rain"},
+       {Showers, "rain"},
+       {Showers, "periods of rain"},
+       {Thunderstorm, "recent thunderstorm"},
+       {Showers, "chance of showers"},
+       {Snow, "chance of flurries"},
+       {FewCloudsNight, "a few clouds"},
+       {ScatteredShowers, "a few showers"},
+       {NotAvailable, "a few rain showers or flurries"},
+       {NotAvailable, "chance of flurries or rain showers"},
+       {Snow, "a few flurries"},
+       {Mist, "fog patches"},
+       {Mist, "fog"},
+    };
 }
 
 QStringList EnvCanadaIon::validate(const QString& source) const
@@ -699,9 +701,9 @@ void EnvCanadaIon::parseShortForecast(WeatherData::ForecastInfo *forecast, QXmlS
             }
             if (xml.name() == "textSummary") {
                 if ((forecast->forecastPeriod == "tonight") || (forecast->forecastPeriod.contains("night"))) {
-                     forecast->shortForecast = getWeatherIcon(d->m_conditionNightList, xml.readElementText().toLower());
+                     forecast->shortForecast = getWeatherIcon(m_conditionNightList, xml.readElementText().toLower());
                 } else {
-                     forecast->shortForecast = getWeatherIcon(d->m_conditionDayList, xml.readElementText().toLower()); 
+                     forecast->shortForecast = getWeatherIcon(m_conditionDayList, xml.readElementText().toLower()); 
                 }
             }
         }
@@ -927,9 +929,9 @@ void EnvCanadaIon::updateWeather(const QString& source)
 
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
     if (night(source) && periodHour(source) >= 4) {
-        setData(source, "Condition Icon", getWeatherIcon(d->m_conditionNightList, d->m_weatherData[source].condition));
+        setData(source, "Condition Icon", getWeatherIcon(m_conditionNightList, d->m_weatherData[source].condition));
     } else {
-        setData(source, "Condition Icon", getWeatherIcon(d->m_conditionDayList, d->m_weatherData[source].condition));
+        setData(source, "Condition Icon", getWeatherIcon(m_conditionDayList, d->m_weatherData[source].condition));
     }
 
     dataFields = temperature(source);
