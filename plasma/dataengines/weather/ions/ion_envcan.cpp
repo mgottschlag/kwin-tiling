@@ -42,6 +42,7 @@ public:
     QString m_code;
     QString m_territory;
     QString m_cityName;
+    IconNames m_conditionList;
 
     // Weather information
     QHash<QString, WeatherData> m_weatherData;
@@ -52,8 +53,8 @@ public:
     QXmlStreamReader m_xmlSetup;
     KUrl *m_url;
     KIO::TransferJob *m_job;
-    
-    QDateTime m_dateFormat;
+
+    int m_timezoneType;  // Ion option: Timezone may be local time or UTC time
 };
 
 
@@ -99,64 +100,18 @@ void EnvCanadaIon::setupConditionIcons(void)
 //    FewCloudsNight, PartlyCloudyNight, ClearNight,
 //    Mist, NotAvailable
 //
-    conditionMapping m_conditionDayList[] = {
-       {ClearDay,"sunny"},
-       {FewCloudsDay,"mainly sunny"},
-       {ClearDay,"clearing"},
-       {PartlyCloudyDay,"partly cloudy"},
-       {PartlyCloudyDay,"mostly cloudy"},
-       {PartlyCloudyDay,"cloudy periods"},
-       {Overcast, "increasing cloudiness"},
-       {Overcast, "cloudy"},
-       {Overcast, "overcast"},
-       {Snow, "light snow"},
-       {Snow, "snow grains"},
-       {ScatteredShowers, "light rainshower"},
-       {Showers, "light rain"},
-       {Showers, "rain"},
-       {Showers, "periods of rain"},
-       {Thunderstorm, "recent thunderstorm"},
-       {Showers, "chance of showers"},
-       {Snow, "chance of flurries"},
-       {FewCloudsDay, "a few clouds"},
-       {ScatteredShowers, "a few showers"},
-       {NotAvailable, "a few rain showers or flurries"},
-       {NotAvailable, "chance of flurries or rain showers"},
-       {Snow, " a few flurries"},
-       {Mist, "fog patches"},
-       {Mist, "fog"},
-       // Explicit
-       {PartlyCloudyDay, "sunny with cloudy periods"},
-       {PartlyCloudyDay, "a mix of sun and cloud"},
-    };
-
-    conditionMapping m_conditionNightList[] = {
-       {ClearNight,"clear"},
-       {FewCloudsNight,"mainly clear"},
-       {ClearNight, "clearing"},
-       {PartlyCloudyNight,"partly cloudy"},
-       {PartlyCloudyNight,"mostly cloudy"},
-       {PartlyCloudyNight,"cloudy periods"},
-       {Overcast, "increasing cloudiness"},
-       {Overcast, "cloudy"},
-       {Overcast, "overcast"},
-       {Snow, "light snow"},
-       {Snow, "snow grains"},
-       {ScatteredShowers, "light rainshower"},
-       {Showers, "light rain"},
-       {Showers, "rain"},
-       {Showers, "periods of rain"},
-       {Thunderstorm, "recent thunderstorm"},
-       {Showers, "chance of showers"},
-       {Snow, "chance of flurries"},
-       {FewCloudsNight, "a few clouds"},
-       {ScatteredShowers, "a few showers"},
-       {NotAvailable, "a few rain showers or flurries"},
-       {NotAvailable, "chance of flurries or rain showers"},
-       {Snow, "a few flurries"},
-       {Mist, "fog patches"},
-       {Mist, "fog"},
-    };
+//  FIXME: We have to know if the place is in AM or PM so we can display the right icons for some conditions
+    d->m_conditionList["sunny"] = ClearDay;
+    d->m_conditionList["mainly sunny"] = FewCloudsDay;
+    d->m_conditionList["clear"] = ClearNight;
+    d->m_conditionList["mainly clear"] = FewCloudsNight;
+    d->m_conditionList["partly cloudy"] = PartlyCloudyDay;
+    d->m_conditionList["mostly cloudy"] = PartlyCloudyDay;
+    d->m_conditionList["cloudy"] = Overcast;
+    d->m_conditionList["light snow"] = Snow;
+    d->m_conditionList["snow grains"] = Snow;
+    d->m_conditionList["light rainshower"] = ScatteredShowers;
+    d->m_conditionList["recent thunderstorm"] = Thunderstorm;
 }
 
 QStringList EnvCanadaIon::validate(const QString& source) const
@@ -394,7 +349,6 @@ void EnvCanadaIon::parseDateTime(WeatherData& data, QXmlStreamReader& xml, Weath
     QString dateType = xml.attributes().value("name").toString();
     QString dateZone = xml.attributes().value("zone").toString();
 
-    QString selectTimeStamp;
 
     while (!xml.atEnd()) {
         xml.readNext();
@@ -405,9 +359,6 @@ void EnvCanadaIon::parseDateTime(WeatherData& data, QXmlStreamReader& xml, Weath
 
         if (xml.isStartElement()) {
             if (dateType == "xmlCreation") {
-                return;
-            }
-            if (dateZone == "UTC") {
                 return;
             }
             if (xml.name() == "year") {
@@ -421,18 +372,36 @@ void EnvCanadaIon::parseDateTime(WeatherData& data, QXmlStreamReader& xml, Weath
             else if (xml.name() == "minute")
                 xml.readElementText();
             else if (xml.name() == "timeStamp")
-                selectTimeStamp = xml.readElementText();
+                xml.readElementText();
             else if (xml.name() == "textSummary") {
+                if (timezone() && dateZone == "UTC") {
+                    // Which timestamp are we for?
+
                     if (dateType == "eventIssue") {
                         if (warning) {
                             warning->timestamp = xml.readElementText();
                         }
                     } else if (dateType == "observation") {
-                        xml.readElementText();
-                        d->m_dateFormat = QDateTime::fromString(selectTimeStamp,"yyyyMMddHHmmss");
-                        data.obsTimestamp = d->m_dateFormat.toString("dd.MM.yyyy @ hh:mm ap");
-                        data.iconPeriodHour = d->m_dateFormat.toString("hh");
-                        data.iconPeriodAP = d->m_dateFormat.toString("ap");
+                        data.obsTimestamp = xml.readElementText();
+                    } else if (dateType == "forecastIssue") {
+                        data.forecastTimestamp = xml.readElementText();
+                    } else if (dateType == "sunrise") {
+                        data.sunriseTimestamp = xml.readElementText();
+                    } else if (dateType == "sunset") {
+                        data.sunsetTimestamp = xml.readElementText();
+                    } else if (dateType == "moonrise") {
+                        data.moonriseTimestamp = xml.readElementText();
+                    } else if (dateType == "moonset") {
+                        data.moonsetTimestamp = xml.readElementText();
+                    }
+
+                } else if (dateZone != "UTC") {
+                    if (dateType == "eventIssue") {
+                        if (warning) {
+                            warning->timestamp = xml.readElementText();
+                        }
+                    } else if (dateType == "observation") {
+                        data.obsTimestamp = xml.readElementText();
                     } else if (dateType == "forecastIssue") {
                         data.forecastTimestamp = xml.readElementText();
                     } else if (dateType == "sunrise") {
@@ -447,6 +416,7 @@ void EnvCanadaIon::parseDateTime(WeatherData& data, QXmlStreamReader& xml, Weath
                 }
             }
         }
+    }
 }
 
 void EnvCanadaIon::parseLocations(WeatherData& data, QXmlStreamReader& xml)
@@ -659,7 +629,7 @@ void EnvCanadaIon::parseForecast(WeatherData& data, QXmlStreamReader& xml, Weath
 
         if (xml.isStartElement()) {
             if (xml.name() == "period") {
-                forecast->forecastPeriod = xml.attributes().value("textForecastName").toString();
+                forecast->forecastPeriod = xml.readElementText();
             } else if (xml.name() == "textSummary") {
                 forecast->forecastSummary = xml.readElementText();
             } else if (xml.name() == "abbreviatedForecast") {
@@ -700,11 +670,7 @@ void EnvCanadaIon::parseShortForecast(WeatherData::ForecastInfo *forecast, QXmlS
                 forecast->popPrecent = xml.readElementText();
             }
             if (xml.name() == "textSummary") {
-                if ((forecast->forecastPeriod == "tonight") || (forecast->forecastPeriod.contains("night"))) {
-                     forecast->shortForecast = getWeatherIcon(m_conditionNightList, xml.readElementText().toLower());
-                } else {
-                     forecast->shortForecast = getWeatherIcon(m_conditionDayList, xml.readElementText().toLower()); 
-                }
+                forecast->shortForecast = getWeatherIcon(d->m_conditionList, xml.readElementText().toLower());
             }
         }
     }
@@ -911,6 +877,21 @@ void EnvCanadaIon::parseUnknownElement(QXmlStreamReader& xml)
     }
 }
 
+void EnvCanadaIon::setTimezoneFormat(const QString& tz)
+{
+    d->m_timezoneType = tz.toInt(); // Boolean
+}
+
+bool EnvCanadaIon::timezone()
+{
+    if (d->m_timezoneType) {
+        return true;
+    }
+
+    // Not UTC, local time
+    return false;
+}
+
 void EnvCanadaIon::updateWeather(const QString& source)
 {
     QMap<QString, QString> dataFields;
@@ -928,11 +909,7 @@ void EnvCanadaIon::updateWeather(const QString& source)
     setData(source, "Current Conditions", condition(source));
 
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
-    if (night(source) && periodHour(source) >= 4) {
-        setData(source, "Condition Icon", getWeatherIcon(m_conditionNightList, d->m_weatherData[source].condition));
-    } else {
-        setData(source, "Condition Icon", getWeatherIcon(m_conditionDayList, d->m_weatherData[source].condition));
-    }
+    setData(source, "Condition Icon", getWeatherIcon(d->m_conditionList, d->m_weatherData[source].condition));
 
     dataFields = temperature(source);
     setData(source, "Temperature", dataFields["temperature"]);
@@ -1099,20 +1076,6 @@ QString EnvCanadaIon::observationTime(const QString& source)
 {
     return d->m_weatherData[source].obsTimestamp;
 }
-
-bool EnvCanadaIon::night(const QString& source)
-{
-    if (d->m_weatherData[source].iconPeriodAP == "pm") {
-        return true;
-    }
-    return false;
-}
-
-int EnvCanadaIon::periodHour(const QString& source)
-{
-    return d->m_weatherData[source].iconPeriodHour.toInt();
-}
-
 QString EnvCanadaIon::condition(const QString& source)
 {
     if (d->m_weatherData[source].condition.isEmpty()) {
@@ -1223,14 +1186,10 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
 
     for (int i = 0; i < d->m_weatherData[source].forecasts.size(); ++i) {
         // We need to shortform the day/night strings.
-        if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("Tonight")) {
-            d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Tonight", "nite");
-        }
-       
         if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("night")) {
-            d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("night","nt");
+            d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("night", "nt");
         }
- 
+        
         if (d->m_weatherData[source].forecasts[i]->forecastPeriod.contains("Saturday")) {
             d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Saturday", "Sat");
         }
