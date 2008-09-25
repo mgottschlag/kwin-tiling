@@ -37,6 +37,7 @@ namespace Plasma
     class Label;
     class ExtenderItem;
     class ComboBox;
+    class Slider;
 }
 
 class Battery : public Plasma::PopupApplet
@@ -76,6 +77,7 @@ class Battery : public Plasma::PopupApplet
         void sourceAdded(const QString &source);
         void sourceRemoved(const QString &source);
         void brightnessChanged(const int brightness);
+        void updateSlider(const float brightness);
         void openConfig();
         void setProfile(const QString &profile);
 
@@ -98,6 +100,7 @@ class Battery : public Plasma::PopupApplet
         Plasma::Label *m_batteryLabel;
         Plasma::Label *m_profileLabel;
         Plasma::ComboBox *m_profileCombo;
+        Plasma::Slider *m_brightnessSlider;
 
         int m_batteryStyle;
         /* Paint battery with proper charge level */

@@ -314,6 +314,11 @@ void Battery::brightnessChanged(const int brightness)
     Solid::Control::PowerManager::setBrightness(brightness);
 }
 
+void Battery::updateSlider(const float brightness)
+{
+    m_brightnessSlider->setValue((int) brightness);
+}
+
 void Battery::setEmbedded(const bool embedded)
 {
     m_isEmbedded = embedded;
@@ -397,17 +402,19 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         controlsLayout->addItem(brightnessLabel, row, 0, 1, 3);
         row++;
 
-        Plasma::Slider *brightnessSlider = new Plasma::Slider(controls);
-        brightnessSlider->setRange(0, 100);
-        brightnessSlider->setValue(Solid::Control::PowerManager::brightness());
-        brightnessSlider->nativeWidget()->setTickInterval(10);
-        brightnessSlider->setOrientation(Qt::Horizontal);
-        connect(brightnessSlider, SIGNAL(valueChanged(int)),
+        m_brightnessSlider = new Plasma::Slider(controls);
+        m_brightnessSlider->setRange(0, 100);
+        m_brightnessSlider->setValue(Solid::Control::PowerManager::brightness());
+        m_brightnessSlider->nativeWidget()->setTickInterval(10);
+        m_brightnessSlider->setOrientation(Qt::Horizontal);
+        connect(m_brightnessSlider, SIGNAL(valueChanged(int)),
                 this, SLOT(brightnessChanged(int)));
-        // FIXME: update slider when brightness changes
-        //connect(Solid::Control::PowerManager, SIGNAL(brightnessChanged(int)),
-        //        brightnessSlider, SLOT(setValue(int)));
-        controlsLayout->addItem(brightnessSlider, row, 1, 1, 1);
+        
+        Solid::Control::PowerManager::Notifier *notifier = Solid::Control::PowerManager::notifier();
+
+        connect(notifier, SIGNAL(brightnessChanged(float)),
+                this, SLOT(updateSlider(float)));
+        controlsLayout->addItem(m_brightnessSlider, row, 1, 1, 1);
 
         Plasma::Icon *brightnessIcon = new Plasma::Icon(controls);
         brightnessIcon->setIcon("ktip");
