@@ -20,7 +20,7 @@ ItemSpace::ItemSpace ()
 {
 }
 
-void ItemSpace::addItem (bool pushBack, const QRectF &preferredGeom, const QRectF &lastGeom)
+void ItemSpace::addItem(bool pushBack, const QRectF &preferredGeom, const QRectF &lastGeom)
 {
     ItemSpaceItem newItem;
     newItem.pushBack = pushBack;
@@ -53,7 +53,7 @@ void ItemSpace::setWorkingArea (QSizeF area)
     workingGeom = area;
 }
 
-void ItemSpace::activate ()
+void ItemSpace::activate()
 {
     for (int i=0; i<items.size(); i++) {
         ItemSpaceItem &item = items[i];
@@ -123,7 +123,7 @@ qreal ItemSpace::positionVisibility (int itemIndex)
     return (itemVisibleSurface / itemSurface);
 }
 
-void ItemSpace::offsetPositions (const QPointF &offset)
+void ItemSpace::offsetPositions(const QPointF &offset)
 {
     for (int i=0; i<items.size(); i++) {
         ItemSpaceItem &item = items[i];
@@ -132,19 +132,21 @@ void ItemSpace::offsetPositions (const QPointF &offset)
     }
 }
 
-qreal ItemSpace::performPush (int itemIndex, Direction direction, qreal amount, qreal minAmount, bool ignoreBorder)
+qreal ItemSpace::performPush(int itemIndex, Direction direction, qreal amount, qreal minAmount, bool ignoreBorder)
 {
     QList<int> previous;
     qreal canPush = pushItem(itemIndex, direction, amount, &previous, false, ignoreBorder);
     if (canPush >= minAmount) {
         previous = QList<int>();
+        //FIXME: we are calling pushItem twice here; it should call once, cache the results
+        //       and then perform the push
         pushItem(itemIndex, direction, canPush, &previous, true, ignoreBorder);
         return canPush;
     }
     return 0;
 }
 
-void ItemSpace::findPullGroup (int thisItem, QList<int> *currentItems)
+void ItemSpace::findPullGroup(int thisItem, QList<int> *currentItems)
 {
     QRectF origGeom = items[thisItem].lastGeometry;
     QRectF fullGeom = origGeom.adjusted(-shiftingSpacing, -shiftingSpacing, shiftingSpacing, shiftingSpacing);
@@ -160,7 +162,7 @@ void ItemSpace::findPullGroup (int thisItem, QList<int> *currentItems)
     }
 }
 
-qreal ItemSpace::pushItem (int itemIndex, Direction direction, qreal amount, const QList<int> *previousItems, bool doPush, bool ignoreBorder)
+qreal ItemSpace::pushItem(int itemIndex, Direction direction, qreal amount, const QList<int> *previousItems, bool doPush, bool ignoreBorder)
 {
     QList<int> pullGroup;
 
@@ -203,7 +205,7 @@ qreal ItemSpace::pushItem (int itemIndex, Direction direction, qreal amount, con
         }
 
         // look for items in the way
-        for (int j=0; j<items.size(); j++) {
+        for (int j = 0; j < items.size(); ++j) {
             if (currentItems.contains(j)) {
                 continue;
             }
@@ -268,7 +270,7 @@ qreal ItemSpace::pushItem (int itemIndex, Direction direction, qreal amount, con
     return amount;
 }
 
-bool ItemSpace::positionedProperly (QRectF itemGeom)
+bool ItemSpace::positionedProperly(QRectF itemGeom)
 {
     QRectF fullGeom = itemGeom.adjusted(-placementSpacing, -placementSpacing, placementSpacing, placementSpacing);
     return (QRectF(QPointF(), workingGeom).contains(fullGeom));

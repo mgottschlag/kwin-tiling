@@ -40,14 +40,14 @@ class ItemSpace
   public:
     ItemSpace ();
 
-    void addItem (bool pushBack, const QRectF &preferredGeom, const QRectF &lastGeom = QRectF());
-    void removeAt (int itemIndex);
-    int count ();
+    void addItem(bool pushBack, const QRectF &preferredGeom, const QRectF &lastGeom = QRectF());
+    void removeAt(int itemIndex);
+    int count();
 
-    void setWorkingArea (QSizeF area);
-    void activate ();
+    void setWorkingArea(QSizeF area);
+    void activate();
 
-    qreal positionVisibility (int itemIndex);
+    qreal positionVisibility(int itemIndex);
 
     enum Direction {
         DirLeft = 1,
@@ -56,10 +56,10 @@ class ItemSpace
         DirDown = 8
     };
 
-    void offsetPositions (const QPointF &offset);
-    qreal performPush (int itemIndex, Direction direction, qreal amount, qreal minAmount, bool ignoreBorder);
-    void findPullGroup (int thisItem, QList<int> *currentItems);
-    qreal pushItem (int itemIndex, Direction direction, qreal amount, const QList<int> *previousItems, bool doPush, bool ignoreBorder);
+    void offsetPositions(const QPointF &offset);
+    qreal performPush(int itemIndex, Direction direction, qreal amount, qreal minAmount, bool ignoreBorder);
+    void findPullGroup(int thisItem, QList<int> *currentItems);
+    qreal pushItem(int itemIndex, Direction direction, qreal amount, const QList<int> *previousItems, bool doPush, bool ignoreBorder);
 
     QList<QPointF> positionVertically(
         const QSizeF &itemSize,
@@ -68,7 +68,7 @@ class ItemSpace
         bool findAll
     ) const;
 
-    bool positionedProperly (QRectF itemGeom);
+    bool positionedProperly(QRectF itemGeom);
 
     QRectF itemInRegionStartingFirstHoriz(const QRectF &region) const;
     QRectF itemInRegionEndingLastHoriz(const QRectF &region) const;
