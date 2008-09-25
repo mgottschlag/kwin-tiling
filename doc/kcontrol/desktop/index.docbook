@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+<!DOCTYPE article PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN"
+"dtd/kdex.dtd" [
+<!ENTITY % addindex "IGNORE">
+<!ENTITY % English "INCLUDE" > <!-- change language only here -->
+]>
+
+<article lang="&language;">
+<articleinfo>
+
+<authorgroup>
+<author>&Mike.McBride; &Mike.McBride.mail;</author>
+<author>&Jost.Schenck; &Jost.Schenck.mail;</author>
+<!-- TRANS:ROLES_OF_TRANSLATORS -->
+</authorgroup>
+
+<date>2005-02-20</date>
+<releaseinfo>3.4</releaseinfo>
+
+<keywordset>
+<keyword>KDE</keyword>
+<keyword>KControl</keyword>
+<keyword>desktop</keyword>
+</keywordset>
+</articleinfo>
+
+<sect1 id="desktop">
+
+<title>Desktop</title>
+
+<sect2 id="desktop-appearance">
+<title><guilabel>Appearance Tab</guilabel></title>
+
+<para>Here you can configure how icons on your desktop appear.</para>
+
+<variablelist>
+<varlistentry>
+<term><guilabel>Standard font:</guilabel></term>
+<listitem><para>This option can be used to change the typeface used on the
+desktop.  Simply select your typeface from the dropdown box.</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Font size:</guilabel></term>
+<listitem><para>You can change the relative size of the text on the Desktop.
+</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Normal text color:</guilabel></term>
+<listitem><para>This option lets you select the color of normal (or
+unhighlighted) text.</para></listitem>
+</varlistentry>
+<varlistentry><term><guilabel>Text background color:</guilabel></term>
+<listitem><para>This option lets you select the background color of
+normal text.  If left unchecked, the text has a transparent
+background.  If selected, you can choose the color by pressing the button.
+</para></listitem>
+</varlistentry>
+<varlistentry>
+<term><guilabel>Underline filenames:</guilabel></term>
+<listitem><para>Determines if file names are underlined on the
+Desktop.</para></listitem>
+</varlistentry>
+</variablelist>
+</sect2>
+
+<sect2 id="desktop-number">
+<title><guilabel>Multiple Desktops</guilabel></title>
+
+<para>&kde; offers you the possibility to have several virtual
+desktops. In this tab you can configure the number of desktops as well
+as their names. Just use the slider to adjust the number of
+desktops. You can assign names to the desktops by entering text into the
+text fields below.</para> 
+
+<para>If you enable <guilabel>Mouse wheel over desktop switches
+desktop</guilabel> then scrolling the wheel over an empty space on the
+desktop will change to the next virtual desktop numerically, in the
+direction you scrolled (either up or down).</para>
+
+</sect2>
+
+</sect1>
+
+</article>

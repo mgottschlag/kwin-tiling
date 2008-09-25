@@ -40,7 +40,7 @@ public:
     /**
      * Adds a service to watch for.
      *
-     * @param factory the factory for the the player
+     * @param factory the factory for the player
      */
     void addFactory(PollingPlayerFactory* factory);
 
