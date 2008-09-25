@@ -1,6 +1,7 @@
 <?xml version="1.0" ?>
 <!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" 
 "dtd/kdex.dtd" [
+ <!ENTITY kappname "&kde; Menu Editor">
   <!ENTITY package "kdebase">
   <!ENTITY firefox "<application>Firefox</application>">
   <!ENTITY % addindex "IGNORE">
@@ -382,7 +383,6 @@ item.</action></para></listitem>
 
 <varlistentry id="edit-restore">
 <term><menuchoice>
-<shortcut><keycap>Restore</keycap></shortcut>
 <guimenu>Edit</guimenu> <guimenuitem>Restore to system menu</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>This will restore the application launcher as it was as default and remove all your custom settings. A message box will ask you if you really want to do that.</action></para></listitem>
@@ -391,7 +391,7 @@ item.</action></para></listitem>
 <varlistentry id="settings-hide-toolbar">
 <term><menuchoice>
 <guimenu>Settings</guimenu>
-<guimenuitem>Show/Hide Toolbar</guimenuitem>
+<guimenuitem>Show Toolbar</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>Show or hide the toolbar</action></para></listitem>
 </varlistentry>
