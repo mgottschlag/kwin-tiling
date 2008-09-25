@@ -103,7 +103,7 @@ void IonInterface::setInitialized(bool initialized)
 /**
  * Return weather icon to display in an applet when given a condition.
  */
-QString IonInterface::getWeatherIcon(const IconNames& ConditionList, const QString& condition)
+QString IonInterface::getWeatherIcon(const QMap<QString, ConditionIcons> &ConditionList, const QString& condition)
 {
     switch(ConditionList[condition.toLower()]) {
           case ClearDay:

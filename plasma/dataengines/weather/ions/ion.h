@@ -44,8 +44,6 @@ public:
                           FewCloudsNight, PartlyCloudyNight, ClearNight,
                           Mist, NotAvailable };
 
-    typedef QMap<QString, ConditionIcons> IconNames; // Map conditions to the right icon
-
     typedef QHash<QString, IonInterface*> IonDict; // Define Dict as a QHash for Ions
 
     /**
@@ -80,7 +78,7 @@ public:
      * @param condition the current condition being reported.
      * @return icon name
      */
-    QString getWeatherIcon(const IconNames& ConditionList, const QString& condition);
+    QString getWeatherIcon(const QMap<QString, ConditionIcons> &ConditionList, const QString& condition);
   
 public Q_SLOTS:
 

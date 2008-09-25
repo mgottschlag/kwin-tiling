@@ -42,8 +42,6 @@ public:
     QString m_code;
     QString m_territory;
     QString m_cityName;
-    IconNames m_conditionNightList;
-    IconNames m_conditionDayList;
 
     // Weather information
     QHash<QString, WeatherData> m_weatherData;
@@ -88,73 +86,92 @@ EnvCanadaIon::~EnvCanadaIon()
 // Get the master list of locations to be parsed
 void EnvCanadaIon::init()
 {
-    setupConditionIcons();
-
     // Get the real city XML URL so we can parse this
     getXMLSetup();
 }
 
-void EnvCanadaIon::setupConditionIcons(void)
+QMap<QString,IonInterface::ConditionIcons> EnvCanadaIon::setupDayIconMappings(void)
 {
 //    ClearDay, FewCloudsDay, PartlyCloudyDay, Overcast,
 //    Showers, ScatteredShowers, Thunderstorm, Snow,
 //    FewCloudsNight, PartlyCloudyNight, ClearNight,
 //    Mist, NotAvailable
 //
-    d->m_conditionDayList["sunny"] = ClearDay;
-    d->m_conditionDayList["mainly sunny"] = FewCloudsDay;
-    d->m_conditionDayList["partly cloudy"] = PartlyCloudyDay;
-    d->m_conditionDayList["mostly cloudy"] = PartlyCloudyDay;
-    d->m_conditionDayList["cloudy periods"] = PartlyCloudyDay;
-    d->m_conditionDayList["increasing cloudiness"] = Overcast;
-    d->m_conditionDayList["cloudy"] = Overcast;
-    d->m_conditionDayList["overcast"] = Overcast;
-    d->m_conditionDayList["light snow"] = Snow;
-    d->m_conditionDayList["snow grains"] = Snow;
-    d->m_conditionDayList["light rainshower"] = ScatteredShowers;
-    d->m_conditionDayList["light rain"] = Showers;
-    d->m_conditionDayList["rain"] = Showers;
-    d->m_conditionDayList["periods of rain"] = Showers;
-    d->m_conditionDayList["recent thunderstorm"] = Thunderstorm;
-    d->m_conditionDayList["chance of showers"] = Showers;
-    d->m_conditionDayList["change of flurries"] = Snow;
-    d->m_conditionDayList["a few clouds"] = FewCloudsDay;
-    d->m_conditionDayList["a few showers"] = ScatteredShowers;
-    d->m_conditionDayList["a few rain showers or flurries"] = NotAvailable; // FIXME: MISSING ICONS!!!
-    d->m_conditionDayList["chance of flurries or rain showers"] = NotAvailable;
-    d->m_conditionDayList["a few flurries"] = Snow;
-    d->m_conditionDayList["fog patches"] = Mist;
-    d->m_conditionDayList["fog"] = Mist;
-
-    d->m_conditionNightList["clear"] = ClearNight;
-    d->m_conditionNightList["mainly clear"] = FewCloudsNight;
-    d->m_conditionNightList["clearing"] = ClearNight;
-    d->m_conditionNightList["partly cloudy"] = PartlyCloudyNight;
-    d->m_conditionNightList["mostly cloudy"] = PartlyCloudyNight;
-    d->m_conditionNightList["increasing cloudiness"] = Overcast;
-    d->m_conditionNightList["cloudy periods"] = PartlyCloudyNight;
-    d->m_conditionNightList["cloudy"] = Overcast;
-    d->m_conditionNightList["overcast"] = Overcast;
-    d->m_conditionNightList["light snow"] = Snow;
-    d->m_conditionNightList["snow grains"] = Snow;
-    d->m_conditionNightList["light rainshower"] = ScatteredShowers;
-    d->m_conditionNightList["light rain"] = Showers;
-    d->m_conditionNightList["rain"] = Showers;
-    d->m_conditionNightList["periods of rain"] = Showers;
-    d->m_conditionNightList["recent thunderstorm"] = Thunderstorm;
-    d->m_conditionNightList["chance of showers"] = Showers;
-    d->m_conditionNightList["chance of flurries"] = Snow;
-    d->m_conditionNightList["a few clouds"] = FewCloudsNight;
-    d->m_conditionNightList["a few showers"] = ScatteredShowers;
-    d->m_conditionNightList["a few rain showers or flurries"] = NotAvailable;
-    d->m_conditionNightList["chance of flurries or rain showers"] = NotAvailable;
-    d->m_conditionNightList["a few flurries"] = Snow;
-    d->m_conditionNightList["fog patches"] = Mist;
-    d->m_conditionNightList["fog" ] = Mist;
+    QMap<QString,ConditionIcons> dayList;
+    dayList["sunny"] = ClearDay;
+    dayList["mainly sunny"] = FewCloudsDay;
+    dayList["partly cloudy"] = PartlyCloudyDay;
+    dayList["mostly cloudy"] = PartlyCloudyDay;
+    dayList["cloudy periods"] = PartlyCloudyDay;
+    dayList["increasing cloudiness"] = Overcast;
+    dayList["cloudy"] = Overcast;
+    dayList["overcast"] = Overcast;
+    dayList["light snow"] = Snow;
+    dayList["snow grains"] = Snow;
+    dayList["light rainshower"] = ScatteredShowers;
+    dayList["light rain"] = Showers;
+    dayList["rain"] = Showers;
+    dayList["periods of rain"] = Showers;
+    dayList["recent thunderstorm"] = Thunderstorm;
+    dayList["chance of showers"] = Showers;
+    dayList["change of flurries"] = Snow;
+    dayList["a few clouds"] = FewCloudsDay;
+    dayList["a few showers"] = ScatteredShowers;
+    dayList["a few rain showers or flurries"] = NotAvailable; // FIXME: MISSING ICONS!!!
+    dayList["chance of flurries or rain showers"] = NotAvailable;
+    dayList["a few flurries"] = Snow;
+    dayList["fog patches"] = Mist;
+    dayList["fog"] = Mist;
 
     // forecasts that are explicit on period.
-    d->m_conditionDayList["a mix of sun and cloud"] = PartlyCloudyDay;
-    d->m_conditionDayList["sunny with cloudy periods"] = PartlyCloudyDay;
+    dayList["a mix of sun and cloud"] = PartlyCloudyDay;
+    dayList["sunny with cloudy periods"] = PartlyCloudyDay;
+
+    return dayList;
+}
+
+QMap<QString,IonInterface::ConditionIcons> EnvCanadaIon::setupNightIconMappings(void)
+{
+    QMap<QString,ConditionIcons> nightList;
+    nightList["clear"] = ClearNight;
+    nightList["mainly clear"] = FewCloudsNight;
+    nightList["clearing"] = ClearNight;
+    nightList["partly cloudy"] = PartlyCloudyNight;
+    nightList["mostly cloudy"] = PartlyCloudyNight;
+    nightList["increasing cloudiness"] = Overcast;
+    nightList["cloudy periods"] = PartlyCloudyNight;
+    nightList["cloudy"] = Overcast;
+    nightList["overcast"] = Overcast;
+    nightList["light snow"] = Snow;
+    nightList["snow grains"] = Snow;
+    nightList["light rainshower"] = ScatteredShowers;
+    nightList["light rain"] = Showers;
+    nightList["rain"] = Showers;
+    nightList["periods of rain"] = Showers;
+    nightList["recent thunderstorm"] = Thunderstorm;
+    nightList["chance of showers"] = Showers;
+    nightList["chance of flurries"] = Snow;
+    nightList["a few clouds"] = FewCloudsNight;
+    nightList["a few showers"] = ScatteredShowers;
+    nightList["a few rain showers or flurries"] = NotAvailable;
+    nightList["chance of flurries or rain showers"] = NotAvailable;
+    nightList["a few flurries"] = Snow;
+    nightList["fog patches"] = Mist;
+    nightList["fog"] = Mist;
+
+    return nightList;
+}
+
+QMap<QString,IonInterface::ConditionIcons> const& EnvCanadaIon::dayIcons(void)
+{
+    static QMap<QString,ConditionIcons> const dval = setupDayIconMappings();
+    return dval;
+}
+
+QMap<QString,IonInterface::ConditionIcons> const& EnvCanadaIon::nightIcons(void)
+{
+    static QMap<QString,ConditionIcons> const nval = setupNightIconMappings();
+    return nval;
 }
 
 QStringList EnvCanadaIon::validate(const QString& source) const
@@ -208,7 +225,6 @@ bool EnvCanadaIon::updateIonSource(const QString& source)
 // Parses city list and gets the correct city based on ID number
 void EnvCanadaIon::getXMLSetup()
 {
-
     d->m_url = new KUrl("http://dd.weatheroffice.ec.gc.ca/EC_sites/xml/siteList.xml");
 
     KIO::TransferJob *job = KIO::get(d->m_url->url(), KIO::NoReload, KIO::HideProgressInfo);
@@ -699,9 +715,9 @@ void EnvCanadaIon::parseShortForecast(WeatherData::ForecastInfo *forecast, QXmlS
             }
             if (xml.name() == "textSummary") {
                 if ((forecast->forecastPeriod == "tonight") || (forecast->forecastPeriod.contains("night"))) {
-                     forecast->shortForecast = getWeatherIcon(d->m_conditionNightList, xml.readElementText().toLower());
+                     forecast->shortForecast = getWeatherIcon(nightIcons(), xml.readElementText().toLower());
                 } else {
-                     forecast->shortForecast = getWeatherIcon(d->m_conditionDayList, xml.readElementText().toLower()); 
+                     forecast->shortForecast = getWeatherIcon(dayIcons(), xml.readElementText().toLower()); 
                 }
             }
         }
@@ -927,9 +943,9 @@ void EnvCanadaIon::updateWeather(const QString& source)
 
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
     if (night(source) && periodHour(source) >= 4) {
-        setData(source, "Condition Icon", getWeatherIcon(d->m_conditionNightList, d->m_weatherData[source].condition));
+        setData(source, "Condition Icon", getWeatherIcon(nightIcons(), d->m_weatherData[source].condition));
     } else {
-        setData(source, "Condition Icon", getWeatherIcon(d->m_conditionDayList, d->m_weatherData[source].condition));
+        setData(source, "Condition Icon", getWeatherIcon(dayIcons(), d->m_weatherData[source].condition));
     }
 
     dataFields = temperature(source);

@@ -150,7 +150,11 @@ protected slots:
 private:
     /* Environment Canada Methods - Internal for Ion */
 
-    void setupConditionIcons(void);
+    QMap<QString,ConditionIcons> setupDayIconMappings(void);
+    QMap<QString,ConditionIcons> setupNightIconMappings(void);
+
+    QMap<QString,ConditionIcons> const& nightIcons(void);
+    QMap<QString,ConditionIcons> const& dayIcons(void);
 
     // Place information
     QString country(const QString& source);
