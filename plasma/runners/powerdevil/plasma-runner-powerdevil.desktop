@@ -1,9 +1,4 @@
 [Desktop Entry]
-Name=PowerDevil
-Name[nds]=Stroomdüvel
-Name[sv]=Powerdevil
-Name[x-test]=xxPowerDevilxx
-
 Comment=Basic Power Management Operations
 Comment[be@latin]=Prostyja aperacyi dla kiravańnia enerhijaj
 Comment[km]=ប្រតិបត្តិការ​គ្រប់គ្រង​ថាមពល​ជា​មូលដ្ឋាន
@@ -15,15 +10,17 @@ Comment[tr]=Temel Güç Yönetimi İşlemleri
 Comment[uk]=Керування базовими операціями з керування живленням
 Comment[x-test]=xxBasic Power Management Operationsxx
 Comment[zh_TW]=基本的電源管理操作
-
-X-KDE-ServiceTypes=Plasma/Runner
+Icon=preferences-system-power-management
+Name=PowerDevil
+Name[nds]=Stroomdüvel
+Name[sv]=Powerdevil
+Name[x-test]=xxPowerDevilxx
 Type=Service
 X-KDE-Library=krunner_powerdevil
-Icon=battery-charging-040
-
 X-KDE-PluginInfo-Author=Dario Freddi
 X-KDE-PluginInfo-Email=drf@kdemod.ath.cx
+X-KDE-PluginInfo-EnabledByDefault=true
+X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-Name=PowerDevil
 X-KDE-PluginInfo-Version=1.0
-X-KDE-PluginInfo-License=GPL
-X-KDE-PluginInfo-EnabledByDefault=true
+X-KDE-ServiceTypes=Plasma/Runner

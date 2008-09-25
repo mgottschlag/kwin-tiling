@@ -1,5 +1,6 @@
 /***************************************************************************
- *   Copyright (C) 2008 by Dario Freddi <drf@kdemod.ath.cx>                *
+ *   Copyright 2008 by Dario Freddi <drf@kdemod.ath.cx>                    *
+ *   Copyright 2008 by Sebastian Kügler <sebas@kde.org>                    *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -174,7 +175,7 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
                     }
                     Plasma::QueryMatch match( this );
                     match.setType( Plasma::QueryMatch::ExactMatch );
-                    match.setIcon( KIcon( "battery-charging-040" ) );
+                    match.setIcon( KIcon( "preferences-system-power-management" ) );
                     match.setText( i18n( "Set CPU Governor to '%1'", ent ) );
                     match.setData( m_governorData[ent] );
                     match.setRelevance( 1 );
@@ -193,7 +194,7 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
 
                     match.setType( Plasma::QueryMatch::ExactMatch );
 
-                    match.setIcon( KIcon( "battery-charging-040" ) );
+                    match.setIcon( KIcon( "preferences-system-power-management" ) );
                     match.setText( i18n( "Set Powersaving Scheme to '%1'", ent ) );
                     match.setData( ent );
 
@@ -209,7 +210,7 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
                         int brightness = qBound( 0, b, 100 );
                         Plasma::QueryMatch match( this );
                         match.setType( Plasma::QueryMatch::ExactMatch );
-                        match.setIcon( KIcon( "battery-charging-040" ) );
+                        match.setIcon( KIcon( "preferences-system-power-management" ) );
                         match.setText( i18n( "Set Brightness to %1", brightness ) );
                         match.setData( brightness );
                         match.setRelevance( 1 );
@@ -219,7 +220,7 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
                 } else if ( term.split( ' ' ).count() == 2 ) {
                     Plasma::QueryMatch match1( this );
                     match1.setType( Plasma::QueryMatch::ExactMatch );
-                    match1.setIcon( KIcon( "battery-charging-040" ) );
+                    match1.setIcon( KIcon( "preferences-system-power-management" ) );
                     match1.setText( i18n( "Dim screen totally" ) );
                     match1.setRelevance( 1 );
                     match1.setId( "DimTotal" );
@@ -227,7 +228,7 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
 
                     Plasma::QueryMatch match2( this );
                     match2.setType( Plasma::QueryMatch::ExactMatch );
-                    match2.setIcon( KIcon( "battery-charging-040" ) );
+                    match2.setIcon( KIcon( "preferences-system-power-management" ) );
                     match2.setText( i18n( "Dim screen by half" ) );
                     match2.setRelevance( 1 );
                     match2.setId( "DimHalf" );
@@ -235,7 +236,7 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
 
                     Plasma::QueryMatch match3( this );
                     match3.setType( Plasma::QueryMatch::ExactMatch );
-                    match3.setIcon( KIcon( "battery-charging-040" ) );
+                    match3.setIcon( KIcon( "preferences-system-power-management" ) );
                     match3.setText( i18n( "Turn off screen" ) );
                     match3.setRelevance( 1 );
                     match3.setId( "TurnOffScreen" );
@@ -245,7 +246,7 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
                 foreach( const QString &ent, m_suspendMethods ) {
                     Plasma::QueryMatch match( this );
                     match.setType( Plasma::QueryMatch::ExactMatch );
-                    match.setIcon( KIcon( "battery-charging-040" ) );
+                    match.setIcon( KIcon( "preferences-system-power-management" ) );
                     match.setText( ent );
                     match.setData( m_suspendData[ent] );
                     match.setRelevance( 1 );
