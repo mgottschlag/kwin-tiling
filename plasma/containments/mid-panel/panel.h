@@ -67,7 +67,7 @@ private:
     /**
      * recalculate which borders to show
      */
-    void updateBorders(const QRect &geom);
+    void updateBorders();
 
     Plasma::PanelSvg *m_background;
     QAction* m_configureAction;

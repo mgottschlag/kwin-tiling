@@ -190,9 +190,8 @@ void Panel::updateSize()
     }
 }
 
-void Panel::updateBorders(const QRect &geom)
+void Panel::updateBorders()
 {
-    Plasma::Location loc = location();
     PanelSvg::EnabledBorders enabledBorders = PanelSvg::AllBorders;
 
     kDebug() << "!!!!!!!!!!!!!!!! location be:" << location();
@@ -256,28 +255,26 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
 
     if (constraints & Plasma::FormFactorConstraint) {
         Plasma::FormFactor form = formFactor();
+        Qt::Orientation layoutDirection = form == Plasma::Vertical ? Qt::Vertical : Qt::Horizontal;
 
         // create our layout!
-        if (form == Plasma::Horizontal || Plasma::Vertical) {
-            if (layout()) {
-                QGraphicsLayout *lay = layout();
-                QGraphicsLinearLayout * linearLay = dynamic_cast<QGraphicsLinearLayout *>(lay);
-                if (linearLay) {
-                    linearLay->setOrientation(form == Plasma::Horizontal ? Qt::Horizontal :
-                                                                           Qt::Vertical);
-                }
-            } else {
-                QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
-                lay->setOrientation(form == Plasma::Horizontal ? Qt::Horizontal : Qt::Vertical);
-                lay->setContentsMargins(0, 0, 0, 0);
-                lay->setSpacing(4);
-                lay->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
-                setLayout(lay);
-                updateBorders(geometry().toRect());
+        if (layout()) {
+            QGraphicsLayout *lay = layout();
+            QGraphicsLinearLayout * linearLay = dynamic_cast<QGraphicsLinearLayout *>(lay);
+            if (linearLay) {
+                linearLay->setOrientation(layoutDirection);
+            }
+        } else {
+            QGraphicsLinearLayout *lay = new QGraphicsLinearLayout(this);
+            lay->setOrientation(layoutDirection);
+            lay->setContentsMargins(0, 0, 0, 0);
+            lay->setSpacing(4);
+            lay->setSizePolicy(QSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding));
+            setLayout(lay);
+            updateBorders();
 
-                foreach (Applet *applet, applets()) {
-                    lay->addItem(applet);
-                }
+            foreach (Applet *applet, applets()) {
+                lay->addItem(applet);
             }
         }
     }
@@ -295,7 +292,7 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
         }
 
         m_background->resizePanel(size);
-        updateBorders(geometry().toRect());
+        updateBorders();
     }
 
     //FIXME: this seems the only way to correctly resize the layout the first time when the
@@ -317,10 +314,7 @@ void Panel::constraintsEvent(Plasma::Constraints constraints)
             m_configureAction->setVisible(unlocked);
         }
 
-        QGraphicsView *panelView = view();
-        if (panelView) {
-            updateBorders(panelView->geometry());
-        }
+        updateBorders();
     }
 }
 
@@ -360,7 +354,7 @@ void Panel::themeUpdated()
         setMinimumHeight(newSize.height());
     }
 
-    updateBorders(geometry().toRect());
+    updateBorders();
 }
 
 void Panel::paintInterface(QPainter *painter,
