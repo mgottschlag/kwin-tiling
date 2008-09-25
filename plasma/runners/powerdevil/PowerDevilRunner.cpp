@@ -79,8 +79,6 @@ void PowerDevilRunner::initUpdateTriggers()
     modules = reply.value();
 
     if (modules.contains("powerdevil")) {
-
-        // profiles: Use KDirWatch, maybe?
         if (!m_dbus.connect("org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil",
                           "profileChanged", this, SLOT(updateStatus()))) {
             kDebug() << "error!";
@@ -154,39 +152,31 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
             if ( word == i18nc( "Note this is a KRunner keyword", "power profile" ) ) {
                 foreach( const QString &profile, m_availableProfiles ) {
                     if ( term.split( ' ' ).count() == 3 ) {
-                        if ( !profile.startsWith( term.split( ' ' ).at( 2 ) ) )
+                        if ( !profile.startsWith( term.split( ' ' ).at( 2 ) ) ) {
                             continue;
+                        }
                     }
-
                     Plasma::QueryMatch match( this );
-
                     match.setType( Plasma::QueryMatch::ExactMatch );
-
                     match.setIcon( KIcon( m_profileIcon[profile] ) );
-
                     match.setText( i18n( "Set Profile to '%1'", profile ) );
                     match.setData( profile );
-
                     match.setRelevance( 1 );
                     match.setId( "ProfileChange" );
                     context.addMatch( term, match );
-
                 }
             } else if ( word == i18nc( "Note this is a KRunner keyword", "power governor" ) ) {
                 foreach( const QString &ent, m_supportedGovernors ) {
                     if ( term.split( ' ' ).count() == 3 ) {
-                        if ( !ent.startsWith( term.split( ' ' ).at( 2 ) ) )
+                        if ( !ent.startsWith( term.split( ' ' ).at( 2 ) ) ) {
                             continue;
+                        }
                     }
-
                     Plasma::QueryMatch match( this );
-
                     match.setType( Plasma::QueryMatch::ExactMatch );
-
                     match.setIcon( KIcon( "battery-charging-040" ) );
                     match.setText( i18n( "Set CPU Governor to '%1'", ent ) );
                     match.setData( m_governorData[ent] );
-
                     match.setRelevance( 1 );
                     match.setId( "GovernorChange" );
                     context.addMatch( term, match );
@@ -194,8 +184,9 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
             } else if ( word == i18nc( "Note this is a KRunner keyword", "power scheme" ) ) {
                 foreach( const QString &ent, m_supportedSchemes ) {
                     if ( term.split( ' ' ).count() == 3 ) {
-                        if ( !ent.startsWith( term.split( ' ' ).at( 2 ) ) )
+                        if ( !ent.startsWith( term.split( ' ' ).at( 2 ) ) ) {
                             continue;
+                        }
                     }
 
                     Plasma::QueryMatch match( this );
@@ -213,69 +204,50 @@ void PowerDevilRunner::match( Plasma::RunnerContext &context )
             } else if ( word == i18nc( "Note this is a KRunner keyword", "screen brightness" ) ) {
                 if ( term.split( ' ' ).count() == 3 ) {
                     bool test;
-
                     int b = term.split( ' ' ).at( 2 ).toInt( &test );
-
                     if ( test ) {
                         int brightness = qBound( 0, b, 100 );
-
                         Plasma::QueryMatch match( this );
-
                         match.setType( Plasma::QueryMatch::ExactMatch );
-
                         match.setIcon( KIcon( "battery-charging-040" ) );
                         match.setText( i18n( "Set Brightness to %1", brightness ) );
                         match.setData( brightness );
-
                         match.setRelevance( 1 );
                         match.setId( "BrightnessChange" );
                         context.addMatch( term, match );
                     }
                 } else if ( term.split( ' ' ).count() == 2 ) {
                     Plasma::QueryMatch match1( this );
-
                     match1.setType( Plasma::QueryMatch::ExactMatch );
-
                     match1.setIcon( KIcon( "battery-charging-040" ) );
                     match1.setText( i18n( "Dim screen totally" ) );
-
                     match1.setRelevance( 1 );
                     match1.setId( "DimTotal" );
                     context.addMatch( term, match1 );
 
                     Plasma::QueryMatch match2( this );
-
                     match2.setType( Plasma::QueryMatch::ExactMatch );
-
                     match2.setIcon( KIcon( "battery-charging-040" ) );
                     match2.setText( i18n( "Dim screen by half" ) );
-
                     match2.setRelevance( 1 );
                     match2.setId( "DimHalf" );
                     context.addMatch( term, match2 );
 
                     Plasma::QueryMatch match3( this );
-
                     match3.setType( Plasma::QueryMatch::ExactMatch );
-
                     match3.setIcon( KIcon( "battery-charging-040" ) );
                     match3.setText( i18n( "Turn off screen" ) );
-
                     match3.setRelevance( 1 );
                     match3.setId( "TurnOffScreen" );
                     context.addMatch( term, match3 );
                 }
-
             } else if ( word == i18nc( "Note this is a KRunner keyword", "suspend" ) ) {
                 foreach( const QString &ent, m_suspendMethods ) {
                     Plasma::QueryMatch match( this );
-
                     match.setType( Plasma::QueryMatch::ExactMatch );
-
                     match.setIcon( KIcon( "battery-charging-040" ) );
                     match.setText( ent );
                     match.setData( m_suspendData[ent] );
-
                     match.setRelevance( 1 );
                     match.setId( "Suspend" );
                     context.addMatch( term, match );
