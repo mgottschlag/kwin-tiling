@@ -60,6 +60,7 @@ Battery::Battery(QObject *parent, const QVariantList &args)
       m_extenderVisible(false),
       m_svgFile(0),
       m_statusLabel(0),
+      m_batteryLabel(0),
       m_profileLabel(0),
       m_profileCombo(0),
       m_batteryStyle(0),
@@ -432,15 +433,18 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
 
 void Battery::popupEvent(bool show)
 {
+    // Not sure why m_extenderVisible gets set to false somewhen,
+    // FIXME: re-enable (set = show) to save some cycles
     m_extenderVisible = show;
+    //kDebug() << "visible?" << m_extenderVisible;
     updateStatus();
 }
 
 void Battery::updateStatus()
 {
     if (!m_extenderVisible) {
-        kDebug() << "No update, extender not shown.";
-        return;
+        // We could chicken out here ...
+        //return;
     }
     //kDebug() << "updating extender ...";
     if (m_numOfBattery && m_batteryLabel) {
@@ -469,7 +473,7 @@ void Battery::updateStatus()
                 batteryLabelText.append((i18n(" (discharging)<br />")));
                 batteryLabelText.append(i18n("<br /><b>AC Adapter:</b> Not plugged in"));
             }
-            kDebug() << "TEXT:" << batteryLabelText;
+            //kDebug() << "TEXT:" << batteryLabelText;
         }
         m_batteryLabel->setText(batteryLabelText);
     }
