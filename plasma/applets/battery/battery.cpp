@@ -52,6 +52,7 @@
 #include <plasma/widgets/slider.h>
 #include <plasma/widgets/pushbutton.h>
 #include <plasma/widgets/combobox.h>
+#include <plasma/widgets/icon.h>
 
 Battery::Battery(QObject *parent, const QVariantList &args)
     : Plasma::PopupApplet(parent, args),
@@ -331,14 +332,16 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         QGraphicsGridLayout *controlsLayout = new QGraphicsGridLayout(controls);
         controlsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         controlsLayout->setColumnPreferredWidth(0, rowHeight);
-        controlsLayout->setColumnPreferredWidth(1, 200);
+        controlsLayout->setColumnMinimumWidth(1, 240);
         controlsLayout->setColumnPreferredWidth(2, rowHeight);
 
         m_statusLabel = new Plasma::Label(controls);
-        m_statusLabel->setMinimumSize(200, rowHeight);
-        m_statusLabel->setStyleSheet(QString("font: bold %1pt;").arg(m_font.pointSize() *1.5));
-        m_statusLabel->nativeWidget()->setWordWrap(false);
-        updateStatus();
+        //m_statusLabel->setMinimumSize(200, rowHeight);
+        m_statusLabel->setStyleSheet(QString("font: bold;"));
+        //m_statusLabel->nativeWidget()->setWordWrap(false);
+        m_statusLabel->setText("Battery Status");
+
+        //updateStatus();
         controlsLayout->addItem(m_statusLabel, row, 0, 1, 3);
         row++;
 
@@ -350,6 +353,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         m_batteryLabel->setMinimumSize(100, 100);
         m_batteryLabel->setText(i18n("Battery:\nCPU:"));
         m_batteryLabel->setStyleSheet(QString("font: %1pt;").arg(m_font.pointSize() +1));
+        m_batteryLabel->nativeWidget()->setWordWrap(false);
 
         batteryLayout->addItem(m_batteryLabel, 0, 0, 1, 1, Qt::AlignLeft);
 
@@ -367,7 +371,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
             batteryLayout->addItem(applet, 0, 1, 1, 1, Qt::AlignRight);
         }
 
-        controlsLayout->addItem(batteryLayout, row, 0, 1, 3);
+        controlsLayout->addItem(batteryLayout, row, 1, 1, 2);
         controlsLayout->setRowSpacing(row, 20);
         row++;
 
@@ -403,6 +407,11 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         //connect(Solid::Control::PowerManager, SIGNAL(brightnessChanged(int)),
         //        brightnessSlider, SLOT(setValue(int)));
         controlsLayout->addItem(brightnessSlider, row, 1, 1, 1);
+
+        Plasma::Icon *brightnessIcon = new Plasma::Icon(controls);
+        brightnessIcon->setIcon("ktip");
+        brightnessIcon->setAcceptsHoverEvents(false);
+        controlsLayout->addItem(brightnessIcon, row, 2, 1, 1);
         controlsLayout->setRowSpacing(row, 20);
         row++;
 
@@ -434,26 +443,25 @@ void Battery::updateStatus()
         return;
     }
     //kDebug() << "updating extender ...";
-    if (m_numOfBattery) {
+    if (m_numOfBattery && m_batteryLabel) {
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
         QString batteryLabelText;
         int bnum = 0;
         while (battery_data.hasNext()) {
             battery_data.next();
-            kDebug() <<  "NO" << m_numOfBattery;
+
             if (m_numOfBattery == 1) {
                 batteryLabelText.append("<b>Battery:</b> ");
             } else {
                 batteryLabelText.append(QString("<b>Battery %1:</b> ").arg(bnum));
             }
-            //battery_data.value()[I18N_NOOP("Percent")].toInt()
-            //battery_data.value()[I18N_NOOP("Plugged in")].toBool();
+
             if (battery_data.value()[I18N_NOOP("Plugged in")].toBool()) {
                 batteryLabelText.append(battery_data.value()[I18N_NOOP("Percent")].toString());
             } else {
                 batteryLabelText.append(i18nc("Battery is not plugged in", "not present"));
             }
-            batteryLabelText.append("%\n");
+            batteryLabelText.append("%");
             if (m_acadapter_plugged) {
                 batteryLabelText.append((i18n(" (charging) <br />")));
                 batteryLabelText.append(i18n("<br /><b>AC Adapter:</b> Plugged in"));
@@ -465,7 +473,7 @@ void Battery::updateStatus()
         }
         m_batteryLabel->setText(batteryLabelText);
     }
-
+    /*
     if (m_statusLabel) {
         if (m_acadapter_plugged) {
             m_statusLabel->setText(i18n("AC Adapter Plugged in"));
@@ -473,7 +481,7 @@ void Battery::updateStatus()
             m_statusLabel->setText(i18n("On Battery"));
         }
     }
-
+    */
     if (!m_availableProfiles.empty() && m_profileCombo) {
         m_profileCombo->clear();
         m_profileCombo->addItem(m_currentProfile);
