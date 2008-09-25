@@ -90,6 +90,13 @@ public:
 
     bool showOnlyCurrentDesktop() const;
     void setShowOnlyCurrentDesktop(bool);
+  /*TODO
+    bool onlyGroupWhenFull() const;
+    void setOnlyGroupWhenFull(bool);
+    /** Must be set by the visualization.
+     *  If onlyGroupWhenFull() groups are only created when d->groupIsFull is set
+     */
+   /* void groupIsFull(bool); */
 
 
     /** 
@@ -101,8 +108,7 @@ public:
     bool manualSortingRequest(AbstractGroupableItem* taskItem, int newIndex);
 
     /**
-     * The Visualization is responsible to update the screen number the visualization is currently on, 
-     * when the getCurrentScreen() signal is emitted
+     * The Visualization is responsible to update the screen number the visualization is currently on.
      */
     void setScreen(int screen);
 

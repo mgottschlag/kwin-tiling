@@ -54,7 +54,9 @@ public:
           abstractSortingStrategy(0),
           currentScreen(-1),
           showOnlyCurrentDesktop(false),
-          showOnlyCurrentScreen(false)
+          showOnlyCurrentScreen(false),
+	  onlyGroupWhenFull(false),
+	  groupIsFull(false)
     {
     }
 
@@ -86,6 +88,8 @@ public:
     QList<TaskPtr> geometryTasks;
     bool showOnlyCurrentDesktop : 1;
     bool showOnlyCurrentScreen : 1;
+    bool onlyGroupWhenFull;
+    bool groupIsFull;
 };
 
 
@@ -437,6 +441,21 @@ void GroupManager::reconnect()
 
     d->reloadTasks();
 }
+
+/*bool GroupManager::onlyGroupWhenFull() const
+{
+    return d->onlyGroupWhenFull;
+}
+
+void GroupManager::setOnlyGroupWhenFull(bool state)
+{
+    d->onlyGroupWhenFull = state;
+}
+
+void GroupManager::groupIsFull(bool state)
+{
+    d->groupIsFull = state;
+}*/
 
 bool GroupManager::showOnlyCurrentScreen() const
 {
