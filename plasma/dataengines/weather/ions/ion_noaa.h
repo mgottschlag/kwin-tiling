@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Shawn Starr <shawn.starr@rogers.com>            *
+ *   Copyright (C) 2007-2008 by Shawn Starr <shawn.starr@rogers.com>       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -25,6 +25,7 @@
 #include <QtXml/QXmlStreamReader>
 #include <QtCore/QStringList>
 #include <QDebug>
+#include <QDateTime>
 #include <kurl.h>
 #include <kio/job.h>
 #include <kio/scheduler.h>
@@ -44,7 +45,11 @@ public:
 
     // Current observation information.
     QString observationTime;
+    QString iconPeriodHour;
+    QString iconPeriodAP;
+    QString iconName;
     QString weather;
+
     QString temperature_F;
     QString temperature_C;
     QString humidity;
@@ -70,8 +75,6 @@ public:
     NOAAIon(QObject *parent, const QVariantList &args);
     ~NOAAIon();
     void init(void);  // Setup the city location, fetching the correct URL name.
-    bool timezone(void);
-    void setTimezoneFormat(const QString& tz);
     bool updateIonSource(const QString& source); // Sync data source with Applet
     void updateWeather(const QString& source);
 
@@ -84,6 +87,11 @@ protected slots:
 
 private:
     /* NOAA Methods - Internal for Ion */
+    QMap<QString,ConditionIcons> setupDayIconMappings(void);
+    QMap<QString,ConditionIcons> setupNightIconMappings(void);
+
+    QMap<QString,ConditionIcons> const& nightIcons(void);
+    QMap<QString,ConditionIcons> const& dayIcons(void);
 
     // Place information
     QString country(const QString& source);
@@ -92,6 +100,8 @@ private:
 
     // Current Conditions Weather info
     QString observationTime(const QString& source);
+    bool night(const QString& source);
+    int periodHour(const QString& source);
     QString condition(const QString& source);
     QMap<QString, QString> temperature(const QString& source);
     QString dewpoint(const QString& source);

@@ -114,6 +114,7 @@ QMap<QString,IonInterface::ConditionIcons> EnvCanadaIon::setupDayIconMappings(vo
     dayList["periods of rain"] = Showers;
     dayList["recent thunderstorm"] = Thunderstorm;
     dayList["chance of showers"] = Showers;
+    dayList["chance of showers or drizzle"] = Showers;
     dayList["change of flurries"] = Snow;
     dayList["a few clouds"] = FewCloudsDay;
     dayList["a few showers"] = ScatteredShowers;
@@ -150,6 +151,7 @@ QMap<QString,IonInterface::ConditionIcons> EnvCanadaIon::setupNightIconMappings(
     nightList["periods of rain"] = Showers;
     nightList["recent thunderstorm"] = Thunderstorm;
     nightList["chance of showers"] = Showers;
+    nightList["chance of showers or drizzle"] = Showers;
     nightList["chance of flurries"] = Snow;
     nightList["a few clouds"] = FewCloudsNight;
     nightList["a few showers"] = ScatteredShowers;
@@ -948,9 +950,9 @@ void EnvCanadaIon::updateWeather(const QString& source)
 
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
     if (night(source) && periodHour(source) >= 4) {
-        setData(source, "Condition Icon", getWeatherIcon(nightIcons(), d->m_weatherData[source].condition));
+        setData(source, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
     } else {
-        setData(source, "Condition Icon", getWeatherIcon(dayIcons(), d->m_weatherData[source].condition));
+        setData(source, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
     }
 
     dataFields = temperature(source);

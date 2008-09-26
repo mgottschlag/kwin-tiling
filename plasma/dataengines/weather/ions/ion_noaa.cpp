@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Shawn Starr <shawn.starr@rogers.com>            *
+ *   Copyright (C) 2007-2008 by Shawn Starr <shawn.starr@rogers.com>       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -53,8 +53,40 @@ public:
     KUrl *m_url;
     KIO::TransferJob *m_job;
 
-    int m_timezoneType;  // Ion option: Timezone may be local time or UTC time
+    QDateTime m_dateFormat;
 };
+
+QMap<QString,IonInterface::ConditionIcons> NOAAIon::setupDayIconMappings(void)
+{
+
+//    ClearDay, FewCloudsDay, PartlyCloudyDay, Overcast,
+//    Showers, ScatteredShowers, Thunderstorm, Snow,
+//    FewCloudsNight, PartlyCloudyNight, ClearNight,
+//    Mist, NotAvailable
+//
+    QMap<QString,ConditionIcons> dayList;
+    dayList["fair"] = FewCloudsDay;
+    return dayList;
+}
+
+QMap<QString,IonInterface::ConditionIcons> NOAAIon::setupNightIconMappings(void)
+{
+    QMap<QString,ConditionIcons> nightList;
+    nightList["fair"] = FewCloudsNight;
+    return nightList;
+}
+
+QMap<QString,IonInterface::ConditionIcons> const& NOAAIon::dayIcons(void)
+{
+    static QMap<QString,ConditionIcons> const dval = setupDayIconMappings();
+    return dval;
+}
+
+QMap<QString,IonInterface::ConditionIcons> const& NOAAIon::nightIcons(void)
+{
+    static QMap<QString,ConditionIcons> const nval = setupNightIconMappings();
+    return nval;
+}
 
 // ctor, dtor
 NOAAIon::NOAAIon(QObject *parent, const QVariantList &args)
@@ -295,8 +327,20 @@ WeatherData NOAAIon::parseWeatherSite(WeatherData& data, QXmlStreamReader& xml)
                 data.stationID = xml.readElementText();
             } else if (xml.name() == "observation_time") {
                 data.observationTime = xml.readElementText();
+                QStringList tmpDateStr = data.observationTime.split(" ");
+                data.observationTime = QString("%1 %2").arg(tmpDateStr[5]).arg(tmpDateStr[6]);
+                d->m_dateFormat = QDateTime::fromString(data.observationTime, "h:mm ap");
+                data.iconPeriodHour = d->m_dateFormat.toString("h");
+                data.iconPeriodAP = d->m_dateFormat.toString("ap");
+
             } else if (xml.name() == "weather") {
                 data.weather = xml.readElementText();
+                // Pick which icon set depending on period of day
+                if (data.iconPeriodAP == "pm" && data.iconPeriodHour.toInt() >= 4) {
+                    data.iconName = getWeatherIcon(nightIcons(), data.weather.toLower());
+                } else {
+                    data.iconName = getWeatherIcon(dayIcons(), data.weather.toLower());
+                }
             } else if (xml.name() == "temp_f") {
                 data.temperature_F = xml.readElementText();
             } else if (xml.name() == "temp_c") {
@@ -376,23 +420,6 @@ void NOAAIon::parseUnknownElement(QXmlStreamReader& xml)
     }
 }
 
-// Not used in this ion yet.
-void NOAAIon::setTimezoneFormat(const QString& tz)
-{
-    d->m_timezoneType = tz.toInt(); // Boolean
-}
-
-// Not used in this ion yet.
-bool NOAAIon::timezone()
-{
-    if (d->m_timezoneType) {
-        return true;
-    }
-
-    // Not UTC, local time
-    return false;
-}
-
 void NOAAIon::updateWeather(const QString& source)
 {
     QMap<QString, QString> dataFields;
@@ -405,6 +432,13 @@ void NOAAIon::updateWeather(const QString& source)
     // Real weather - Current conditions
     setData(source, "Observation Period", observationTime(source));
     setData(source, "Current Conditions", condition(source));
+
+    if (night(source) && periodHour(source) >= 4) {
+        setData(source, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
+    } else {
+        setData(source, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
+    }
+
     dataFields = temperature(source);
     setData(source, "Temperature", dataFields["temperature"]);
 
@@ -482,6 +516,20 @@ QString NOAAIon::observationTime(const QString& source)
 {
     return d->m_weatherData[source].observationTime;
 }
+
+bool NOAAIon::night(const QString& source)
+{
+    if (d->m_weatherData[source].iconPeriodAP == "pm") {
+        return true;
+    }
+    return false;
+}
+
+int NOAAIon::periodHour(const QString& source)
+{
+    return d->m_weatherData[source].iconPeriodHour.toInt();
+}
+
 QString NOAAIon::condition(const QString& source)
 {
     if (d->m_weatherData[source].weather.isEmpty() || d->m_weatherData[source].weather == "NA") {
