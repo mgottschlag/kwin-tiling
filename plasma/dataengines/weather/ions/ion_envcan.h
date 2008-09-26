@@ -51,6 +51,7 @@ public:
     struct ForecastInfo {
         QString forecastPeriod;
         QString forecastSummary;
+        QString iconName;
         QString shortForecast;
 
         QString forecastTempHigh;

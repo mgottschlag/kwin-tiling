@@ -702,6 +702,8 @@ void EnvCanadaIon::parseShortForecast(WeatherData::ForecastInfo *forecast, QXmlS
 {
     Q_ASSERT(xml.isStartElement() && xml.name() == "abbreviatedForecast");
 
+    QString shortText;
+
     while (!xml.atEnd()) {
         xml.readNext();
 
@@ -714,10 +716,13 @@ void EnvCanadaIon::parseShortForecast(WeatherData::ForecastInfo *forecast, QXmlS
                 forecast->popPrecent = xml.readElementText();
             }
             if (xml.name() == "textSummary") {
+                shortText = xml.readElementText();
                 if ((forecast->forecastPeriod == "tonight") || (forecast->forecastPeriod.contains("night"))) {
-                     forecast->shortForecast = getWeatherIcon(nightIcons(), xml.readElementText().toLower());
+                     forecast->iconName = getWeatherIcon(nightIcons(), shortText.toLower());
+                     forecast->shortForecast = shortText;
                 } else {
-                     forecast->shortForecast = getWeatherIcon(dayIcons(), xml.readElementText().toLower()); 
+                     forecast->iconName = getWeatherIcon(dayIcons(), shortText.toLower());
+                     forecast->shortForecast = shortText;
                 }
             }
         }
@@ -1039,8 +1044,8 @@ void EnvCanadaIon::updateWeather(const QString& source)
     foreach(const QString &forecastItem, forecastList) {
         fieldList = forecastItem.split('|');
 
-        setData(source, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5") \
-                .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[2]).arg(fieldList[3]).arg(fieldList[4]));
+        setData(source, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6") \
+                .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[2]).arg(fieldList[3]).arg(fieldList[4]).arg(fieldList[5]));
 
 /*
         setData(source, QString("Long Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6|%7|%8") \
@@ -1209,6 +1214,9 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
         if (d->m_weatherData[source].forecasts[i]->shortForecast.isEmpty()) {
             d->m_weatherData[source].forecasts[i]->shortForecast = "N/A";
         }
+        if (d->m_weatherData[source].forecasts[i]->iconName.isEmpty()) {
+            d->m_weatherData[source].forecasts[i]->iconName = "N/A";
+        }
         if (d->m_weatherData[source].forecasts[i]->forecastSummary.isEmpty()) {
             d->m_weatherData[source].forecasts[i]->forecastSummary = "N/A";
         }
@@ -1272,8 +1280,9 @@ QVector<QString> EnvCanadaIon::forecasts(const QString& source)
             d->m_weatherData[source].forecasts[i]->forecastPeriod.replace("Friday", "Fri");
         }
 
-        forecastData.append(QString("%1|%2|%3|%4|%5") \
+        forecastData.append(QString("%1|%2|%3|%4|%5|%6") \
                              .arg(d->m_weatherData[source].forecasts[i]->forecastPeriod) \
+                             .arg(d->m_weatherData[source].forecasts[i]->iconName) \
                              .arg(d->m_weatherData[source].forecasts[i]->shortForecast) \
                              .arg(d->m_weatherData[source].forecasts[i]->forecastTempHigh) \
                              .arg(d->m_weatherData[source].forecasts[i]->forecastTempLow) \
