@@ -218,9 +218,12 @@ void PlasmaHost::AdjustAppletSize() {
   QtViewWidget *widget = static_cast<QtViewWidget*>(d->info->main_view_host->GetNativeWidget());
   kDebug() << "applet old size:" << d->info->applet->size();
   if (widget) kDebug() << "widget old size:" << widget->size();
-  d->info->applet->setAspectRatioMode(Plasma::IgnoreAspectRatio);
-  d->info->applet->resize(w, h);
-  d->info->applet->setAspectRatioMode(Plasma::ConstrainedSquare);
+  if (d->info->is_floating) {
+    d->info->applet->resize(w, h);
+  } else {
+    d->info->applet->setMinimumSize(w, h);
+    d->info->applet->setMaximumSize(w, h);
+  }
   if (widget) {
     widget->AdjustToViewSize();
     widget->resize(w, h);
