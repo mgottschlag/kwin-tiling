@@ -96,17 +96,17 @@ int main(int argc, char **argv)
         Plasma::PackageStructure *installer = new Plasma::PackageStructure();
         if (type == i18n("plasmoid") || type == "plasmoid") {
             packageRoot = "plasma/plasmoids/";
-            servicePrefix = "plasma-applet-";
+            installer->setServicePrefix("plasma-applet-");
         } else if (type == i18n("theme") || type == "theme") {
             packageRoot = "desktoptheme/";
         } else if (type == i18n("wallpaper") || type == "wallpaper") {
             packageRoot = "wallpapers/";
         } else if (type == i18n("dataengine") || type == "dataengine") {
             packageRoot = "plasma/dataengines/";
-            servicePrefix = "plasma-dataengine-";
+            installer->setServicePrefix("plasma-dataengine-");
         } else if (type == i18n("runner") || type == "runner") {
             packageRoot = "plasma/runners/";
-            servicePrefix = "plasma-abstractrunner-";
+            installer->setServicePrefix("plasma-runner-");
         } else {
             // support for non-native widget packages
             delete installer;
@@ -128,8 +128,7 @@ int main(int argc, char **argv)
                             type, error));
                 return 1;
             }
-
-            packageRoot = "plasma/plasmoids";
+            packageRoot = installer->defaultPackageRoot();
         }
 
         if (args->isSet("packageroot")) {
