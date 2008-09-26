@@ -41,7 +41,6 @@ public:
     QHash<QString, UKMETIon::Private::XMLMapInfo> m_place;
     QVector<QString> m_locations;
     QStringList m_matchLocations;
-    bool isValid;
 
 public:
     // Weather information
@@ -60,7 +59,7 @@ public:
     KUrl *m_url;
     KIO::TransferJob *m_job;
 
-    int m_timezoneType;  // Ion option: Timezone may be local time or UTC time
+    QDateTime m_dateFormat;
 };
 
 
@@ -91,6 +90,43 @@ UKMETIon::~UKMETIon()
 void UKMETIon::init()
 {
     setInitialized(true);
+}
+
+QMap<QString,IonInterface::ConditionIcons> UKMETIon::setupDayIconMappings(void)
+{
+//    ClearDay, FewCloudsDay, PartlyCloudyDay, Overcast,
+//    Showers, ScatteredShowers, Thunderstorm, Snow,
+//    FewCloudsNight, PartlyCloudyNight, ClearNight,
+//    Mist, NotAvailable
+
+      QMap<QString,ConditionIcons> dayList;
+      dayList["sunny"] = ClearDay;
+      dayList["sunny intervals"] = PartlyCloudyDay;
+      dayList["partly cloudy"] = PartlyCloudyDay;
+      dayList["cloudy"] = Overcast;
+      dayList["light showers"] = ScatteredShowers;
+      return dayList;
+}
+
+QMap<QString,IonInterface::ConditionIcons> UKMETIon::setupNightIconMappings(void)
+{
+      QMap<QString,ConditionIcons> nightList;
+      nightList["cloudy"] = Overcast;
+      nightList["partly cloudy"] = PartlyCloudyNight;
+      nightList["light showers"] = ScatteredShowers;
+      return nightList;
+}
+
+QMap<QString,IonInterface::ConditionIcons> const& UKMETIon::dayIcons(void)
+{
+    static QMap<QString,ConditionIcons> const dval = setupDayIconMappings();
+    return dval;
+}
+
+QMap<QString,IonInterface::ConditionIcons> const& UKMETIon::nightIcons(void)
+{
+    static QMap<QString,ConditionIcons> const nval = setupNightIconMappings();
+    return nval;
 }
 
 // Get a specific Ion's data
@@ -473,6 +509,11 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 QStringList conditionData = conditionString.split(":");
 
                 data.obsTime = conditionData[0];
+                kDebug() << "OBSERVATION TIME: " << data.obsTime;
+                kDebug() << QDateTime::fromString("0300 GMT", "hhmm 'GMT'").toLocalTime();
+
+                // Friday at 0200 GMT
+                
                 data.condition = conditionData[1].split(".")[0].trimmed();
             } else if (xml.name() == "link") {
                 d->m_place[source].XMLforecastURL = xml.readElementText();
@@ -623,23 +664,6 @@ void UKMETIon::parseFiveDayForecast(const QString& source, QXmlStreamReader& xml
     delete forecast;
 }
 
-// Not used in this ion yet.
-void UKMETIon::setTimezoneFormat(const QString& tz)
-{
-    d->m_timezoneType = tz.toInt(); // Boolean
-}
-
-// Not used in this ion yet.
-bool UKMETIon::timezone()
-{
-    if (d->m_timezoneType) {
-        return true;
-    }
-
-    // Not UTC, local time
-    return false;
-}
-
 void UKMETIon::validate(const QString& source)
 {
     bool beginflag = true;
@@ -687,6 +711,13 @@ void UKMETIon::updateWeather(const QString& source)
     setData(weatherSource, "Observation Period", observationTime(source));
     setData(weatherSource, "Current Conditions", condition(source));
 
+    // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
+    if (night(source) && periodHour(source) >= 4) {
+        setData(source, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
+    } else {
+        setData(source, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
+    }
+
     setData(weatherSource, "Humidity", humidity(source));
     setData(weatherSource, "Visibility", visibility(source));
 
@@ -713,9 +744,9 @@ void UKMETIon::updateWeather(const QString& source)
     foreach(const QString &forecastItem, forecastList) {
         fieldList = forecastItem.split('|');
 
-        setData(weatherSource, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5") \
+        setData(weatherSource, QString("Short Forecast Day %1").arg(i), QString("%1|%2|%3|%4|%5|%6") \
                 .arg(fieldList[0]).arg(fieldList[1]).arg(fieldList[2]).arg(fieldList[3]) \
-                .arg(fieldList[4]));
+                .arg(fieldList[4]).arg(fieldList[5]));
         i++;
     }
 
@@ -735,6 +766,19 @@ QString UKMETIon::station(const QString& source)
 QString UKMETIon::observationTime(const QString& source)
 {
     return d->m_weatherData[source].obsTime;
+}
+
+bool UKMETIon::night(const QString& source)
+{
+    if (d->m_weatherData[source].iconPeriodAP == "pm") {
+        return true;
+    }
+    return false;
+}
+
+int UKMETIon::periodHour(const QString& source)
+{
+    return d->m_weatherData[source].iconPeriodHour.toInt();
 }
 
 QString UKMETIon::condition(const QString& source)
@@ -826,8 +870,9 @@ QVector<QString> UKMETIon::forecasts(const QString& source)
             d->m_weatherData[source].forecasts[i]->period.replace("Friday", "Fri");
         }
 
-        forecastData.append(QString("%1|%2|%3|%4|%5") \
+        forecastData.append(QString("%1|%2|%3|%4|%5|%6") \
                             .arg(d->m_weatherData[source].forecasts[i]->period) \
+                            .arg(d->m_weatherData[source].forecasts[i]->iconName) \
                             .arg(d->m_weatherData[source].forecasts[i]->summary) \
                             .arg(d->m_weatherData[source].forecasts[i]->tempHigh) \
                             .arg(d->m_weatherData[source].forecasts[i]->tempLow) \

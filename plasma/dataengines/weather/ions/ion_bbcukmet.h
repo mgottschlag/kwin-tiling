@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Shawn Starr <shawn.starr@rogers.com>            *
+ *   Copyright (C) 2007-2008 by Shawn Starr <shawn.starr@rogers.com>       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -25,6 +25,7 @@
 #include <QtXml/QXmlStreamReader>
 #include <QRegExp>
 #include <QtCore/QStringList>
+#include <QDateTime>
 #include <QDebug>
 #include <kurl.h>
 #include <kio/job.h>
@@ -42,6 +43,9 @@ public:
     QString stationName;
     // Current observation information.
     QString obsTime;
+    QString iconPeriodHour;
+    QString iconPeriodAP;
+
     QString condition;
     QString temperature_C;
     QString temperature_F;
@@ -55,6 +59,7 @@ public:
     // Five day forecast
     struct ForecastInfo {
         QString period;
+        QString iconName;
         QString summary;
         int tempHigh;
         int tempLow;
@@ -74,14 +79,14 @@ public:
     UKMETIon(QObject *parent, const QVariantList &args);
     ~UKMETIon();
     void init();  // Setup the city location, fetching the correct URL name.
-    bool timezone(void);
-    void setTimezoneFormat(const QString& tz);
     bool updateIonSource(const QString& source);
     void updateWeather(const QString& source);
 
     QString place(const QString& source);
     QString station(const QString& source);
     QString observationTime(const QString& source);
+    bool night(const QString& source);
+    int periodHour(const QString& source);
     QString condition(const QString& source);
     QMap<QString, QString> temperature(const QString& source);
     QMap<QString, QString> wind(const QString& source);
@@ -101,6 +106,12 @@ protected slots:
 
 private:
     /* UKMET Methods - Internal for Ion */
+
+    QMap<QString,ConditionIcons> setupDayIconMappings(void);
+    QMap<QString,ConditionIcons> setupNightIconMappings(void);
+
+    QMap<QString,ConditionIcons> const& nightIcons(void);
+    QMap<QString,ConditionIcons> const& dayIcons(void);
 
     // Load and Parse the place search XML listings
     void findPlace(const QString& place, const QString& source);
