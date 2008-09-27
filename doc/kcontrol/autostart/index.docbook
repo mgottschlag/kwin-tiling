@@ -51,7 +51,7 @@ You cannot amend this column. It states the name of the program or script you wa
 <varlistentry><term><guilabel>Command</guilabel></term>
 <listitem>
 <para>
-This column lists the commands that are run to start the program. Commands can be modified through the <guibutton>Properties</guibutton> button or by double clicking the program/scrip row. The command is extracted from the Desktop file from the Exec key.
+This column lists the commands that are run to start the program. Commands can be modified through the <guibutton>Properties</guibutton> button or by double clicking the program/script row. The command is extracted from the Desktop file from the Exec key.
 </para>
 <para>
 For a script the command is the path to the script.
@@ -134,7 +134,7 @@ This button allows you to change the properties of the program or script. You ha
 <varlistentry><term><guibutton>Advanced</guibutton></term>
 <listitem>
 <para>
-This button only applies to programs (&ie; Desktop files). A dialog asks you if you only want the program to autostart only in &kde; (and not in other desktop environments you might run). By default, the program will autostart in all desktop environment you might run. Checking <guilabel>Autostart only in KDE</guilabel> will autostart the program if you start the &kde; desktop environment.
+This button only applies to programs (&ie; Desktop files). A dialog asks you if you only want the program to autostart only in &kde; (and not in other desktop environments you might run). By default, the program will autostart in all desktop environments you might run. Checking <guilabel>Autostart only in KDE</guilabel> will autostart the program only if you start the &kde; desktop environment.
 </para>
 <para>
 This sets the value KDE to the OnlyShowIn key of the program Desktop file.

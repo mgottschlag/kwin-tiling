@@ -97,10 +97,10 @@ leave the default settings.  They are:</para>
 <listitem><para><guilabel>Restart computer</guilabel></para></listitem>
 </itemizedlist>
 
-<para>Finally, you can enter a colon (<literal>:</literal>)
+<para>Finally, you can enter a colon (<literal>:</literal>) or comma (<literal>,</literal>)
 separated list of applications that should not be saved in sessions,
-and therefore won't be started when restoring a session.  For example
-<userinput>xterm:konsole</userinput>.</para>
+and therefore will not be started when restoring a session.  For example
+<userinput>xterm:konsole</userinput> or <userinput>xterm,konsole</userinput>.</para>
 
 </sect2>
 

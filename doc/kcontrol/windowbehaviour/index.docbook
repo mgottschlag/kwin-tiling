@@ -49,7 +49,7 @@ shading</quote>.
 <note>
 <para>
 Please note that the configuration in this module will not take effect
-if you don not use &kde;'s native window manager, &kwin;. If you do use a
+if you do not use &kde;'s native window manager, &kwin;. If you do use a
 different window manager, please refer to its documentation for how to
 customize window behavior.
 </para>

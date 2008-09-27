@@ -1,6 +1,7 @@
 <?xml version="1.0" ?>
 <!DOCTYPE book PUBLIC "-//KDE//DTD DocBook XML V4.2-Based Variant V1.1//EN" 
 "dtd/kdex.dtd" [
+ <!ENTITY kappname "&kde; Menu Editor">
   <!ENTITY package "kdebase">
   <!ENTITY firefox "<application>Firefox</application>">
   <!ENTITY % addindex "IGNORE">
@@ -11,11 +12,11 @@
 
 <bookinfo>
 
-<title>The &kmenuedit; Handbook</title>
+<title>The KDE Menu Editor Handbook</title>
 
 <authorgroup>
 <author>&Milos.Prudek; &Milos.Prudek.mail;</author>
-
+<author>&Anne-Marie.Mahfouf; &Anne-Marie.Mahfouf.mail;</author>
 <othercredit role="reviewer">
 &Lauri.Watts; &Lauri.Watts.mail;
 <!-- <contrib>Reviewer</contrib> -->
@@ -27,13 +28,17 @@
 <year>2000</year>
 <holder>&Milos.Prudek;</holder>
 </copyright>
+<copyright>
+<year>2008</year>
+<holder>&Anne-Marie.Mahfouf;</holder>
+</copyright>
 
 <legalnotice>&FDLNotice;</legalnotice>
 
-<date>2006-11-23</date>
-<releaseinfo>0.7 (&kde; 3.5.5)</releaseinfo>
+<date>2008-09-15</date>
+<releaseinfo>0.8</releaseinfo>
 
-<abstract><para>&kmenuedit; allows editing of the &kde; &kmenu;. 
+<abstract><para>&kmenuedit; allows editing one of the &kde; application launchers: &kickoff;, the classic &kmenu; or Lancelot Launcher. 
 </para></abstract>
 
 <keywordset>
@@ -43,8 +48,8 @@
 <keyword>application</keyword>
 <keyword>program</keyword>
 <keyword>menu</keyword>
-<keyword>kicker</keyword>
-
+<keyword>kickoff</keyword>
+<keyword>Lancelot</keyword>
 </keywordset>
 
 </bookinfo>
@@ -52,18 +57,19 @@
 <chapter id="introduction">
 <title>Introduction</title>
 
-<para>&kmenuedit; allows editing of &kde; &kmenu;.</para>
+<para>&kmenuedit; allows editing of &kde; application launchers: &kickoff;, classic &kmenu; or Lancelot Launcher.</para>
 
 <para>&kmenuedit; can be started either by &RMB; clicking the
-&kmenu; button on the panel and choosing
+application lancher button on the panel and choosing
 <guimenuitem>Menu Editor</guimenuitem>, or by choosing
 <guimenuitem>Menu Editor</guimenuitem> from the
-<guisubmenu>Settings</guisubmenu> submenu of the &kmenu;.</para>
+<guisubmenu>Settings</guisubmenu> submenu of the application launcher or by typing <userinput>kmenuedit
+</userinput> in the &krunner; line.</para>
 
 <para>&kmenuedit; allows you to:</para>
 
 <itemizedlist>
-<listitem><para>View and edit the current &kmenu;</para></listitem>
+<listitem><para>View and edit the current application launcher (&kickoff;, classic menu or Lancelot Launcher)</para></listitem>
 <listitem><para><guimenuitem>Cut</guimenuitem>, <guimenuitem>Copy</guimenuitem>
 and <guimenuitem>Paste</guimenuitem> menu items</para></listitem>
 <listitem><para>Create and delete submenus</para></listitem>
@@ -77,10 +83,10 @@ and <guimenuitem>Paste</guimenuitem> menu items</para></listitem>
 <author>&Virgil.J.Nisly; &Virgil.J.Nisly.mail;</author>
 </authorgroup>
 </chapterinfo>
-<title>A Quick Start Guide to Adding an Entry to the &kmenu;</title>
+<title>A Quick Start Guide to Adding an Entry to the application launcher</title>
 
   <para>In this example, we will add &firefox; to the <guisubmenu>Internet</guisubmenu> submenu. <note><para>Most applications can be added with &kappfinder;, &firefox; can usually be added that way, but was used for lack of a better example.</para></note></para>
-  <para>To start off, we need to open &kmenuedit;, so &RMB; on the &kmenu;, click <guimenuitem>Menu Editor</guimenuitem> to start &kmenuedit;. After &kmenuedit; has started, select <guisubmenu>Internet</guisubmenu> as shown in picture below. 
+  <para>To start off, we need to open &kmenuedit;, so &RMB; on the application launcher menu, click <guimenuitem>Menu Editor</guimenuitem> to start &kmenuedit;. After &kmenuedit; has started, select <guisubmenu>Internet</guisubmenu> as shown in picture below. 
 <screenshot>
 <screeninfo>Select <guisubmenu>Internet</guisubmenu></screeninfo>
 <mediaobject>
@@ -121,7 +127,7 @@ Press return, and you should see something like the picture below in the main wi
 </screenshot></para>
   
 <para>
-    Now lets fill in the <guilabel>Description:</guilabel>, in this case type <userinput>Web Browser</userinput>. <note><para>The description and name will be displayed on the &kmenu; as <quote>Web Browser (Firefox)</quote>.</para></note> We will need to fill in the executable name in the <guilabel>Command:</guilabel> field, in this instance we will type <userinput><command>firefox</command></userinput>.</para>
+    Now lets fill in the <guilabel>Description:</guilabel>, in this case type <userinput>Web Browser</userinput>. <note><para>The description and name will be displayed on the application launcher as <quote>Web Browser (Firefox)</quote>.</para></note> We will need to fill in the executable name in the <guilabel>Command:</guilabel> field, in this instance we will type <userinput><command>firefox</command></userinput>.</para>
 <note><para>Following the command, you can have several place holders which will be replaced with actual values when the program is run:
 <simplelist>
 <member>%f - a single file name</member>
@@ -161,7 +167,7 @@ Press return, and you should see something like the picture below in the main wi
 </mediaobject>
 </screenshot></para>
 
-<para>Click <menuchoice><guimenu>File</guimenu><guimenuitem>Save</guimenuitem></menuchoice>, wait for the <guilabel>Updating System Configuration</guilabel> dialog to get finished, you should find &firefox; in the &kmenu; <guisubmenu>Internet</guisubmenu> submenu!</para>
+<para>Click <menuchoice><guimenu>File</guimenu><guimenuitem>Save</guimenuitem></menuchoice>, wait for the <guilabel>Updating System Configuration</guilabel> dialog to get finished, you should find &firefox; in the application launcher <guisubmenu>Internet</guisubmenu> submenu!</para>
 
 
 
@@ -170,25 +176,24 @@ Press return, and you should see something like the picture below in the main wi
 <chapter id="using-kmenuedit">
 <title>Using &kmenuedit;</title>
 
-<para>The left application panel shows the &kmenu; structure. When
+<para>The left application panel shows the application launcher structure. When
 you browse items in the left panel, the right panel shows detailed
 information for the highlighted menu item.</para>
 
 <sect1 id="details-general">
-<title>General program information</title>
+<title>General tab</title>
 
 <variablelist>
 <varlistentry>
 <term><guilabel>Name:</guilabel></term>
 <listitem><para>This is the name of your program as it appears in the
-&kmenu; menu. It can be different from the real executable
+application launcher menu. It can be different from the real executable
 name. For instance the name of <command>mc</command> executable is
 "<application>Midnight Commander</application>".</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Description:</guilabel></term>
-<listitem><para>The description will be displayed together with the name in the &kmenu;. This is
-entirely optional.</para></listitem>
+<listitem><para>The description will be displayed together with the name in the application launcher. This is entirely optional.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Comment:</guilabel></term>
@@ -202,7 +207,7 @@ have permission to run the program.</para></listitem>
 </varlistentry>
 <varlistentry>
 <term><guilabel>Enable launch feedback</guilabel></term>
-<listitem><para>If this box is checked, this will display feedback when an application is started
+<listitem><para>If this box is checked, this will display feedback when an application is started.
 </para></listitem>
 </varlistentry>
 <varlistentry>
@@ -214,11 +219,17 @@ application.
 </para></listitem>
 </varlistentry>
 <varlistentry>
-<term><guiicon>Icon List</guiicon></term>
-<listitem><para>Click
-this icon to display a choice of icons. Choose an icon for your
-program.</para></listitem>
+<term><guilabel>Only show in &kde;</guilabel></term>
+<listitem><para>When checked, the application entry will only be visible in all &kde; application launchers but not in other desktops environments.
+</para></listitem>
 </varlistentry>
+</variablelist>
+</sect1>
+
+<sect1 id="details-advanced">
+<title>Advanced tab</title>
+
+<variablelist>
 <varlistentry>
 <term><guilabel>Work path:</guilabel></term>
 <listitem><para>Specify the work path of the program. This will be the current
@@ -242,28 +253,28 @@ applications</link>.</para></listitem>
 check this checkbox, and provide the username in the
 <guilabel>Username:</guilabel> field.</para></listitem>
 </varlistentry>
-</variablelist>
 
-<para>You can assign a special keyboard shortcut to launch your program.</para>
+<varlistentry>
+<term><guilabel>Current shortcut key:</guilabel></term>
+<listitem><para>You can assign a special keyboard shortcut to launch your program.</para>
 
 <para>Click the <guibutton>None</guibutton> button to the right of the <guilabel>Current
 shortcut key:</guilabel> checkbox.</para>
 
-<para>A dialog box will pop up, allowing you to assign a <guilabel>Primary shortcut:</guilabel>
-by pressing the key combination on your keyboard that you want to be assigned to your program.
-It might be useful to assign a second
-keybinding to the same item by checking the
-<guilabel>Alternate shortcut:</guilabel> button, for
-example, if you often switch keyboard maps, and some shortcuts are not
-as convenient to type at all times.</para>
-
-<para>Click the <guiicon>x</guiicon> to clear the shortcut, if you
-made a mistake.  Check the <guilabel>Multi-key mode</guilabel> box if you
-want to assign a shortcut that uses more than one key.</para>
-
-<para>The dialog will close when you have selected a keybinding.
+<para>The button text will change to <guilabel>Input...</guilabel>
+and you can press the key combination on your keyboard that you want to be assigned to your program.
+</para>
+<para>You can reset the shortcut to <guilabel>None</guilabel> by using this button: <inlinemediaobject><imageobject> <imagedata
+fileref="reset.png" format="PNG"/></imageobject></inlinemediaobject>.
 </para>
 
+<para>Don't forget to save your setting by clicking the toolbar <guiicon>Save</guiicon> icon or using the <menuchoice>
+<guimenu>File</guimenu><guimenuitem>Save</guimenuitem>
+</menuchoice> menu item.</para>
+
+</listitem>
+</varlistentry>
+</variablelist>
 </sect1> 
 
 </chapter>
@@ -370,10 +381,17 @@ selected place in the <guimenu>Main</guimenu> menu. You must first use
 item.</action></para></listitem>
 </varlistentry>
 
+<varlistentry id="edit-restore">
+<term><menuchoice>
+<guimenu>Edit</guimenu> <guimenuitem>Restore to system menu</guimenuitem>
+</menuchoice></term>
+<listitem><para><action>This will restore the application launcher as it was as default and remove all your custom settings. A message box will ask you if you really want to do that.</action></para></listitem>
+</varlistentry>
+
 <varlistentry id="settings-hide-toolbar">
 <term><menuchoice>
 <guimenu>Settings</guimenu>
-<guimenuitem>Show/Hide Toolbar</guimenuitem>
+<guimenuitem>Show Toolbar</guimenuitem>
 </menuchoice></term>
 <listitem><para><action>Show or hide the toolbar</action></para></listitem>
 </varlistentry>
@@ -396,6 +414,14 @@ Toolbars...</guimenuitem></menuchoice></term>
 </listitem>
 </varlistentry>
 
+<varlistentry id="settings-configure-kmenuedit">
+<term><menuchoice>
+<guimenu>Settings</guimenu><guimenuitem>Configure
+&kde; Menu Editor...</guimenuitem></menuchoice></term>
+<listitem>
+<para><action>Open the Menu Editor settings dialog.</action></para>
+</listitem>
+</varlistentry>
 </variablelist>
 
 &help.menu.documentation;
@@ -425,7 +451,7 @@ Author</para>
 </itemizedlist>
 
 <para>Documentation copyright &copy; 2000 &Milos.Prudek;</para>
-
+<para>Documentation copyright &copy; 2008 &Anne-Marie.Mahfouf;</para>
 <para>Updated for &kde; 3.0 by &Lauri.Watts; &Lauri.Watts.mail;
 2002</para>
 

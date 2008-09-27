@@ -262,7 +262,7 @@ This button will provide help specific to the current module. Clicking the butto
 <term>Defaults</term>
 <listitem>
 <para>
-Clicking this button will restore this module to its default values. You much click <guibutton>Apply</guibutton> to save the options.
+Clicking this button will restore this module to its default values. You must click <guibutton>Apply</guibutton> to save the options.
 </para>
 </listitem>
 </varlistentry>
