@@ -2,6 +2,7 @@
 Comment=Basic Power Management Operations
 Comment[be@latin]=Prostyja aperacyi dla kiravańnia enerhijaj
 Comment[gl]=Operacións básicas de xestión da enerxía
+Comment[gu]=સામાન્ય પાવર વ્યવસ્થાપક પ્રક્રિયાઓ
 Comment[km]=ប្រតិបត្តិការ​គ្រប់គ្រង​ថាមពល​ជា​មូលដ្ឋាន
 Comment[nds]=Eenfache Stroomkuntrull-Funkschonen
 Comment[pt]=Operações Básicas de Gestão da Energia
@@ -13,6 +14,7 @@ Comment[x-test]=xxBasic Power Management Operationsxx
 Comment[zh_TW]=基本的電源管理操作
 Icon=preferences-system-power-management
 Name=PowerDevil
+Name[gu]=પાવરડેવિલ
 Name[nds]=Stroomdüvel
 Name[sv]=Powerdevil
 Name[x-test]=xxPowerDevilxx
