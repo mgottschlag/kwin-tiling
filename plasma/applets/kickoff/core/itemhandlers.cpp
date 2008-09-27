@@ -1,4 +1,4 @@
-/*  
+/*
     Copyright 2007 Robert Knight <robertknight@gmail.com>
 
     This library is free software; you can redistribute it and/or
@@ -25,6 +25,7 @@
 
 // KDE
 #include <KDebug>
+#include <KJob>
 #include <KService>
 #include <KToolInvocation>
 #include <KUrl>
@@ -65,10 +66,38 @@ bool LeaveItemHandler::openUrl(const KUrl& url)
     m_logoutAction = url.path().remove('/');
 
     if (m_logoutAction == "sleep") {
-        Solid::Control::PowerManager::suspend(Solid::Control::PowerManager::ToRam);
+        // Check if powerdevil is running, and use its methods to suspend if available
+        // otherwise go through Solid directly
+        QStringList modules;
+        QDBusInterface kdedInterface("org.kde.kded", "/kded", "org.kde.kded");
+        QDBusReply<QStringList> reply = kdedInterface.call("loadedModules");
+        if (reply.isValid() && reply.value().contains("powerdevil")) {
+            kDebug() << "Using powerdevil to suspend";
+            QDBusConnection dbus( QDBusConnection::sessionBus() );
+            QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
+            iface.call( "suspend", Solid::Control::PowerManager::ToRam );
+        } else {
+            kDebug() << "Powerdevil not available, using solid to suspend";
+            KJob * job = Solid::Control::PowerManager::suspend(Solid::Control::PowerManager::ToRam);
+            job->start();
+        }
         return true;
     } else if (m_logoutAction == "hibernate") {
-        Solid::Control::PowerManager::suspend(Solid::Control::PowerManager::ToDisk);
+        // Check if powerdevil is running, and use its methods to hibernate if available
+        // otherwise go through Solid directly
+        QStringList modules;
+        QDBusInterface kdedInterface("org.kde.kded", "/kded", "org.kde.kded");
+        QDBusReply<QStringList> reply = kdedInterface.call("loadedModules");
+        if (reply.isValid() && reply.value().contains("powerdevil")) {
+            kDebug() << "Using powerdevil to hibernate";
+            QDBusConnection dbus( QDBusConnection::sessionBus() );
+            QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
+            iface.call( "suspend", Solid::Control::PowerManager::ToDisk );
+        } else {
+            kDebug() << "Powerdevil not available, using solid to hibernate";
+            KJob * job = Solid::Control::PowerManager::suspend(Solid::Control::PowerManager::ToDisk);
+            job->start();
+        }
         return true;
     } else if (m_logoutAction == "lock") {
         // decouple dbus call, otherwise we'll run into a dead-lock
@@ -96,7 +125,7 @@ void LeaveItemHandler::logout()
     if (m_logoutAction == "logout") {
         type = KWorkSpace::ShutdownTypeNone;
     } else if (m_logoutAction == "lock") {
-        kDebug() << "Locking screen"; 
+        kDebug() << "Locking screen";
     } else if (m_logoutAction == "switch") {
         kDebug() << "Switching user";
     } else if (m_logoutAction == "restart") {

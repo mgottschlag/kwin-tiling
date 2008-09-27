@@ -53,6 +53,7 @@ QSize BrandingButton::sizeHint() const
 
 void BrandingButton::paintEvent(QPaintEvent *event)
 {
+    Q_UNUSED( event );
     if (!m_svg->isValid()) {
         kDebug() << "bad branding svg!";
         return;
