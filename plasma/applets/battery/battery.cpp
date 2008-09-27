@@ -30,6 +30,7 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
+#include <QTimer>
 
 #include <KDebug>
 #include <KIcon>
@@ -42,7 +43,10 @@
 #include <KGlobalSettings>
 #include <KPushButton>
 
+#include <kworkspace/kworkspace.h>
+
 #include <solid/control/powermanager.h>
+#include <solid/powermanagement.h>
 
 #include <plasma/svg.h>
 #include <plasma/theme.h>
@@ -203,15 +207,11 @@ QSizeF Battery::sizeHint(const Qt::SizeHint which, const QSizeF& constraint) con
 
 void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
-    kDebug() << "#######################" << source;
     if (source.startsWith(I18N_NOOP("Battery"))) {
         m_batteries_data[source] = data;
     } else if (source == I18N_NOOP("AC Adapter")) {
         m_acadapter_plugged = data[I18N_NOOP("Plugged in")].toBool();
         showAcAdapter(m_acadapter_plugged);
-    } else if (source == I18N_NOOP("Sleepstates")) {
-        m_suspendMethods = data[I18N_NOOP("Sleepstates")].toStringList();
-        kDebug() << "m_suspendMethods:" << m_suspendMethods;
     } else if (source == I18N_NOOP("PowerDevil")) {
         m_availableProfiles = data[I18N_NOOP("availableProfiles")].toStringList();
         m_currentProfile = data[I18N_NOOP("currentProfile")].toString();
@@ -313,6 +313,36 @@ void Battery::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 
 Battery::~Battery()
 {
+}
+
+void Battery::suspend()
+{
+    //kDebug() << "Suspending as you wish ...";
+    QDBusConnection dbus( QDBusConnection::sessionBus() );
+    QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
+    iface.call( "suspend", Solid::Control::PowerManager::ToRam );
+}
+
+void Battery::hibernate()
+{
+    //kDebug() << "Hibernating as you wish ...";
+    QDBusConnection dbus( QDBusConnection::sessionBus() );
+    QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
+    iface.call( "suspend", Solid::Control::PowerManager::ToDisk );
+}
+
+void Battery::shutdown()
+{
+    QTimer::singleShot(0, this, SLOT(halt()));
+}
+
+void Battery::halt()
+{
+    //kDebug() << "Shutting down as you wish ...";
+//FIXME: the proper fix is to implement the KWorkSpace methods for Windows
+#ifndef Q_WS_WIN
+    KWorkSpace::requestShutDown(KWorkSpace::ShutdownConfirmDefault, KWorkSpace::ShutdownTypeHalt);
+#endif
 }
 
 void Battery::brightnessChanged(const int brightness)
@@ -440,16 +470,31 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
 
         QGraphicsLinearLayout *actionsLayout = new QGraphicsLinearLayout(controlsLayout);
 
-        Plasma::Icon *suspendButton = new Plasma::Icon(controls);
-        suspendButton->setIcon("system-suspend");
-        actionsLayout->addItem(suspendButton);
+        QSet<Solid::PowerManagement::SleepState> sleepstates = Solid::PowerManagement::supportedSleepStates();
+        foreach (const Solid::PowerManagement::SleepState &sleepstate, sleepstates) {
+            if (sleepstate == Solid::PowerManagement::StandbyState) {
+                // Not interesting at this point ...
+                kDebug() << "standby supported." << Solid::PowerManagement::StandbyState;
+            } else if (sleepstate == Solid::PowerManagement::SuspendState) {
+                Plasma::Icon *suspendButton = new Plasma::Icon(controls);
+                suspendButton->setIcon("system-suspend");
+                actionsLayout->addItem(suspendButton);
+                connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
 
-        Plasma::Icon *hibernateButton = new Plasma::Icon(controls);
-        hibernateButton->setIcon("system-suspend-hibernate");
-        actionsLayout->addItem(hibernateButton);
+                kDebug() << "suspend-to-ram supported." << Solid::PowerManagement::StandbyState;
+            } else if (sleepstate == Solid::PowerManagement::HibernateState) {
+                Plasma::Icon *hibernateButton = new Plasma::Icon(controls);
+                hibernateButton->setIcon("system-suspend-hibernate");
+                actionsLayout->addItem(hibernateButton);
+                connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
+                kDebug() << "suspend-to-disk supported." << Solid::PowerManagement::HibernateState;
+            }
+        }
+
 
         Plasma::Icon *shutdownButton = new Plasma::Icon(controls);
         shutdownButton->setIcon("system-shutdown");
+        connect(shutdownButton, SIGNAL(clicked()), this, SLOT(shutdown()));
         actionsLayout->addItem(shutdownButton);
 
 
