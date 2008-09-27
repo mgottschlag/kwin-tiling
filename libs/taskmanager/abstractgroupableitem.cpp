@@ -77,7 +77,7 @@ GroupPtr AbstractGroupableItem::parentGroup() const
     //kDebug();
     return d->m_parentGroup;
 }
-
+/*
 void AbstractGroupableItem::addedToGroup(const GroupPtr group)
 {
     kDebug() << "Added to group " ;
@@ -94,6 +94,11 @@ void AbstractGroupableItem::removedFromGroup()
 {
     kDebug() << "Remove Parent " ;
     d->m_parentGroup = 0;
+}*/
+
+void AbstractGroupableItem::setParentGroup(const GroupPtr group)
+{
+    d->m_parentGroup = group;
 }
 
 

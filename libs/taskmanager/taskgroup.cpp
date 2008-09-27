@@ -124,10 +124,8 @@ void TaskGroup::add(AbstractPtr item)
     }
 
     d->m_members.append(item);
-    item->addedToGroup(this);
-    /*if (d->groupingStrategy->taskSorter()) {
-        d->groupingStrategy->taskSorter()->handleItem(item);
-    }*/
+    item->setParentGroup(this);
+
     connect(item, SIGNAL(changed()), this, SIGNAL(changed()));
     //For debug
    /* foreach (AbstractGroupableItem *item, d->m_members) {
@@ -169,7 +167,7 @@ void TaskGroup::remove(AbstractPtr item)
     disconnect(item, 0, this, 0);
 
     d->m_members.removeAll(item);
-    item->removedFromGroup();
+    item->setParentGroup(0);
     /*if(d->m_members.isEmpty()){
         kDebug() << "empty";
         emit empty(this);

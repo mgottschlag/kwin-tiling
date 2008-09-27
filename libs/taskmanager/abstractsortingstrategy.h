@@ -63,7 +63,7 @@ protected slots:
     virtual void handleItem(AbstractPtr);
      /** Checks if the order has to be updated must be connect to AbstractGroupableItem* */
     void check(AbstractPtr item = 0);
-//void removeGroup();
+//void removeGroup(); //FIXME necessary?
 
 protected:
     void setType(GroupManager::TaskSortingStrategy strategy);

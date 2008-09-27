@@ -80,7 +80,7 @@ void AbstractSortingStrategy::handleGroup(TaskGroup *group)
     disconnect(group, 0, this, 0); //To avoid duplicate connections
    // connect(group, SIGNAL(changed()), this, SLOT(check()));
     connect(group, SIGNAL(itemAdded(AbstractPtr)), this, SLOT(handleItem(AbstractPtr)));
-    connect(group, SIGNAL(destroyed()), this, SLOT(removeGroup()));
+    connect(group, SIGNAL(destroyed()), this, SLOT(removeGroup())); //FIXME necessary
     foreach (AbstractPtr item, group->members()) {
         handleItem(item);
     }
@@ -161,7 +161,6 @@ bool AbstractSortingStrategy::moveItem(AbstractPtr item, int newIndex)
         newIndex--; //the index has to be adjusted if we move the item from right to left because the item onthe left is removed first
     }
     list.move(list.indexOf(item), newIndex);
-    //d->managedItems->insert(item, newIndex);
     kDebug() << "new index " << item->parentGroup()->members().indexOf(item); 
     TaskGroup* group = item->parentGroup();
     group->itemMoved(item);

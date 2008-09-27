@@ -76,6 +76,8 @@ public:
     virtual EditableGroupProperties editableGroupProperties() = 0;
 
     /** The following functions check if a property is editable and sets it on group*/
+
+    /**	Adds an item to group if EditableGroupProperties::Members is set*/
     virtual bool addItemToGroup(AbstractGroupableItem *, TaskGroup*);
 
     virtual bool setName(const QString &, TaskGroup*);

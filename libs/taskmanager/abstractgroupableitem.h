@@ -104,8 +104,9 @@ public slots:
     virtual bool isActive() = 0;
     virtual bool demandsAttention() = 0;
 
-    void removedFromGroup();
-    void addedToGroup(const GroupPtr group);
+    void setParentGroup(const GroupPtr group);
+    /*void removedFromGroup();
+    void addedToGroup(const GroupPtr group);*/
 
 signals:
     void changed();
