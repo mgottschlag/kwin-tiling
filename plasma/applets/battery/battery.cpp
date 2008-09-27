@@ -29,6 +29,7 @@
 #include <QFont>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsGridLayout>
+#include <QGraphicsLinearLayout>
 
 #include <KDebug>
 #include <KIcon>
@@ -39,6 +40,7 @@
 #include <KColorScheme>
 #include <KConfigDialog>
 #include <KGlobalSettings>
+#include <KPushButton>
 
 #include <solid/control/powermanager.h>
 
@@ -201,11 +203,15 @@ QSizeF Battery::sizeHint(const Qt::SizeHint which, const QSizeF& constraint) con
 
 void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
+    kDebug() << "#######################" << source;
     if (source.startsWith(I18N_NOOP("Battery"))) {
         m_batteries_data[source] = data;
     } else if (source == I18N_NOOP("AC Adapter")) {
         m_acadapter_plugged = data[I18N_NOOP("Plugged in")].toBool();
         showAcAdapter(m_acadapter_plugged);
+    } else if (source == I18N_NOOP("Sleepstates")) {
+        m_suspendMethods = data[I18N_NOOP("Sleepstates")].toStringList();
+        kDebug() << "m_suspendMethods:" << m_suspendMethods;
     } else if (source == I18N_NOOP("PowerDevil")) {
         m_availableProfiles = data[I18N_NOOP("availableProfiles")].toStringList();
         m_currentProfile = data[I18N_NOOP("currentProfile")].toString();
@@ -400,6 +406,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         brightnessLabel->setText(i18n("Screen Brightness"));
         brightnessLabel->nativeWidget()->setWordWrap(false);
         controlsLayout->addItem(brightnessLabel, row, 0, 1, 3);
+        brightnessLabel->nativeWidget()->setWordWrap(false);
         row++;
 
         m_brightnessSlider = new Plasma::Slider(controls);
@@ -409,7 +416,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         m_brightnessSlider->setOrientation(Qt::Horizontal);
         connect(m_brightnessSlider, SIGNAL(valueChanged(int)),
                 this, SLOT(brightnessChanged(int)));
-        
+
         Solid::Control::PowerManager::Notifier *notifier = Solid::Control::PowerManager::notifier();
 
         connect(notifier, SIGNAL(brightnessChanged(float)),
@@ -423,10 +430,36 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         controlsLayout->setRowSpacing(row, 20);
         row++;
 
-        brightnessLabel->nativeWidget()->setWordWrap(false);
+
+        Plasma::Label *actionsLabel = new Plasma::Label(controls);
+        actionsLabel->setStyleSheet(QString("font: bold;"));
+        actionsLabel->setText(i18n("Actions"));
+        actionsLabel->nativeWidget()->setWordWrap(false);
+        controlsLayout->addItem(actionsLabel, row, 0, 1, 3);
+        row++;
+
+        QGraphicsLinearLayout *actionsLayout = new QGraphicsLinearLayout(controlsLayout);
+
+        Plasma::Icon *suspendButton = new Plasma::Icon(controls);
+        suspendButton->setIcon("system-suspend");
+        actionsLayout->addItem(suspendButton);
+
+        Plasma::Icon *hibernateButton = new Plasma::Icon(controls);
+        hibernateButton->setIcon("system-suspend-hibernate");
+        actionsLayout->addItem(hibernateButton);
+
+        Plasma::Icon *shutdownButton = new Plasma::Icon(controls);
+        shutdownButton->setIcon("system-shutdown");
+        actionsLayout->addItem(shutdownButton);
+
+
+        controlsLayout->addItem(actionsLayout, row, 1, 1, 2);
+        //controlsLayout->setRowSpacing(row, 20);
+        row++;
 
         Plasma::PushButton *configButton = new Plasma::PushButton(controls);
-        configButton->setText(i18n("Configure Powermanagement ..."));
+        configButton->setText(i18n("More ..."));
+        configButton->nativeWidget()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
         connect(configButton, SIGNAL(clicked()),
                 this, SLOT(openConfig()));
         controlsLayout->addItem(configButton, row, 1, 1, 2);
@@ -856,7 +889,7 @@ void Battery::connectSources() {
 
     dataEngine("powermanagement")->connectSource(I18N_NOOP("AC Adapter"), this);
     dataEngine("powermanagement")->connectSource(I18N_NOOP("PowerDevil"), this);
-    //dataEngine("powermanagement")->connectSource(I18N_NOOP("Sleepstates"), this);
+    dataEngine("powermanagement")->connectSource(I18N_NOOP("Sleepstates"), this);
 
     connect(dataEngine("powermanagement"), SIGNAL(sourceAdded(QString)),
             this,                          SLOT(sourceAdded(QString)));

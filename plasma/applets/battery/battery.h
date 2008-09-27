@@ -126,6 +126,7 @@ class Battery : public Plasma::PopupApplet
 
         QStringList m_availableProfiles;
         QString m_currentProfile;
+        QStringList m_suspendMethods;
 
         // Configuration dialog
         Ui::batteryConfig ui;
