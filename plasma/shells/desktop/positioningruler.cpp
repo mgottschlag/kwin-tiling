@@ -133,11 +133,11 @@ public:
             break;
         }
 
-        leftMaxSliderRect.setSize(sliderGraphics->elementSize(elementPrefix + "left-limit-slider"));
-        leftMinSliderRect.setSize(sliderGraphics->elementSize(elementPrefix + "right-limit-slider"));
+        leftMaxSliderRect.setSize(sliderGraphics->elementSize(elementPrefix + "maxslider"));
+        leftMinSliderRect.setSize(sliderGraphics->elementSize(elementPrefix + "minslider"));
         rightMaxSliderRect.setSize(leftMinSliderRect.size());
         rightMinSliderRect.setSize(leftMaxSliderRect.size());
-        offsetSliderRect.setSize(sliderGraphics->elementSize(elementPrefix + "offset-slider"));
+        offsetSliderRect.setSize(sliderGraphics->elementSize(elementPrefix + "offsetslider"));
     }
 
     void setupSliders(const QSize &totalSize)
@@ -503,16 +503,21 @@ void PositioningRuler::paintEvent(QPaintEvent *event)
     }
 
     if (d->alignment != Qt::AlignLeft) {
-        d->sliderGraphics->paint(&painter, d->leftMaxSliderRect, elementPrefix + "left-limit-slider");
-        d->sliderGraphics->paint(&painter, d->leftMinSliderRect, elementPrefix + "right-limit-slider");
+        painter.save();
+        QTransform transform;
+        transform.scale(-1, 1);
+        painter.setTransform(transform);
+        d->sliderGraphics->paint(&painter, transform.mapRect(d->leftMaxSliderRect), elementPrefix + "maxslider");
+        d->sliderGraphics->paint(&painter, transform.mapRect(d->leftMinSliderRect), elementPrefix + "minslider");
+        painter.restore();
     }
 
     if (d->alignment != Qt::AlignRight) {
-        d->sliderGraphics->paint(&painter, d->rightMaxSliderRect, elementPrefix + "right-limit-slider");
-        d->sliderGraphics->paint(&painter, d->rightMinSliderRect, elementPrefix + "left-limit-slider");
+        d->sliderGraphics->paint(&painter, d->rightMaxSliderRect, elementPrefix + "maxslider");
+        d->sliderGraphics->paint(&painter, d->rightMinSliderRect, elementPrefix + "minslider");
     }
 
-    d->sliderGraphics->paint(&painter, d->offsetSliderRect, elementPrefix + "offset-slider");
+    d->sliderGraphics->paint(&painter, d->offsetSliderRect, elementPrefix + "offsetslider");
 }
 
 void PositioningRuler::wheelEvent(QWheelEvent *event)
