@@ -30,8 +30,8 @@ class PanelDecorator : public DockedMainViewDecorator {
   virtual void OnAddDecoratorMenuItems(MenuInterface *menu);
 
  private:
-  void ShowDebugInfo(const char*);
-  GadgetInfo *info_;
+  class Private;
+  Private *d;
   DISALLOW_EVIL_CONSTRUCTORS(PanelDecorator);
 };
 

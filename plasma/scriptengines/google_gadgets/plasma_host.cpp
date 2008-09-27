@@ -94,6 +94,7 @@ class PlasmaHost::Private {
 
   void OnPopInHandler() {
     kDebug() << "OnPopInHandler";
+    if (!info->expanded_main_view_host) return;
     ViewInterface *child = info->expanded_main_view_host->GetView();
     ASSERT(child);
     if (child) {
@@ -136,6 +137,12 @@ ViewHostInterface *PlasmaHost::NewViewHost(Gadget *,
       decorator->ConnectOnPopIn(NewSlot(d, &Private::OnPopInHandler));
     } else {
       PanelDecorator *decorator = new PanelDecorator(vh, d->info);
+      if (d->info->applet->location() == Plasma::TopEdge
+          || d->info->applet->location() == Plasma::BottomEdge) {
+        decorator->SetAllowYMargin(true);
+        decorator->SetAllowXMargin(false);
+        decorator->SetResizeBorderVisible(false, false, false, true);
+      }
       decorator->ConnectOnPopOut(NewSlot(d, &Private::OnPopOutHandler));
       decorator->ConnectOnPopIn(NewSlot(d, &Private::OnPopInHandler));
       dvh = new DecoratedViewHost(decorator);
@@ -221,8 +228,7 @@ void PlasmaHost::AdjustAppletSize() {
   if (d->info->is_floating) {
     d->info->applet->resize(w, h);
   } else {
-    d->info->applet->setMinimumSize(w, h);
-    d->info->applet->setMaximumSize(w, h);
+    d->info->applet->setPreferredSize(w, h);
   }
   if (widget) {
     widget->AdjustToViewSize();

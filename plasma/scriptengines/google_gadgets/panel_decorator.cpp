@@ -28,34 +28,64 @@
 
 namespace ggadget {
 
+class PanelDecorator::Private {
+ public:
+  Private(GadgetInfo *info) : owner_(NULL), info_(info){}
+
+  void ShowDebugInfo(const char*) {
+    QString msg = "Applet size:(%1, %2)\nWidget size:(%3, %4)\nView size:(%5, %6)\n";
+    qt::QtViewWidget *widget = static_cast<qt::QtViewWidget*>(info_->main_view_host->GetNativeWidget());
+    ViewInterface *view = info_->main_view_host->GetViewDecorator();
+    QMessageBox::information(NULL,
+                             "Debug",
+                             msg.arg(info_->applet->size().width())
+                             .arg(info_->applet->size().height())
+                             .arg(widget->size().width())
+                             .arg(widget->size().height())
+                             .arg(view->GetWidth())
+                             .arg(view->GetHeight()));
+  }
+  void ShowIcon(const char*) {
+    owner_->SetMinimizedIconVisible(!owner_->IsMinimizedIconVisible());
+  }
+  void ShowCaption(const char*) {
+    owner_->SetMinimizedCaptionVisible(!owner_->IsMinimizedCaptionVisible());
+  }
+  void OnAddDecoratorMenuItems(MenuInterface *menu) {
+    int priority = MenuInterface::MENU_ITEM_PRI_DECORATOR;
+    owner_->AddCollapseExpandMenuItem(menu);
+    if (owner_->IsMinimized()) {
+      menu->AddItem("Show Icon", 
+                    owner_->IsMinimizedIconVisible()?MenuInterface::MENU_ITEM_FLAG_CHECKED:0,
+                    0,
+                    NewSlot(this, &Private::ShowIcon), priority);
+      menu->AddItem("Show Caption", 
+                    owner_->IsMinimizedCaptionVisible()?MenuInterface::MENU_ITEM_FLAG_CHECKED:0,
+                    0,
+                    NewSlot(this, &Private::ShowCaption), priority);
+    }
+
+    menu->AddItem(
+        "Debug", 0, 0,
+        NewSlot(this, &Private::ShowDebugInfo), priority);
+  }
+  PanelDecorator *owner_;
+  GadgetInfo *info_;
+};
+
 PanelDecorator::PanelDecorator(ViewHostInterface *host, GadgetInfo *info)
-    : DockedMainViewDecorator(host), info_(info) {
+    : DockedMainViewDecorator(host), d(new Private(info)) {
   SetButtonVisible(MainViewDecoratorBase::POP_IN_OUT_BUTTON, false);
   SetButtonVisible(MainViewDecoratorBase::MENU_BUTTON, false);
   SetButtonVisible(MainViewDecoratorBase::CLOSE_BUTTON, false);
+  d->owner_ = this;
 }
 
 PanelDecorator::~PanelDecorator() {}
 
 void PanelDecorator::OnAddDecoratorMenuItems(MenuInterface *menu) {
-  int priority = MenuInterface::MENU_ITEM_PRI_DECORATOR;
-  AddCollapseExpandMenuItem(menu);
-  menu->AddItem(
-      "Debug", 0, 0,
-      NewSlot(this, &PanelDecorator::ShowDebugInfo), priority);
+  d->OnAddDecoratorMenuItems(menu);
 }
 
-void PanelDecorator::ShowDebugInfo(const char*) {
-  QString msg = "Applet size:(%1, %2)\nWidget size:(%3, %4)\nView size:(%5, %6)\n";
-  qt::QtViewWidget *widget = static_cast<qt::QtViewWidget*>(info_->main_view_host->GetNativeWidget());
-  ViewInterface *view = info_->main_view_host->GetViewDecorator();
-  QMessageBox::information(NULL,
-    "Debug",
-    msg.arg(info_->applet->size().width())
-       .arg(info_->applet->size().height())
-       .arg(widget->size().width())
-       .arg(widget->size().height())
-       .arg(view->GetWidth())
-       .arg(view->GetHeight()));
-}
+
 } // namespace ggadget

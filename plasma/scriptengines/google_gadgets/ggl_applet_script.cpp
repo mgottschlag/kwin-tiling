@@ -174,6 +174,13 @@ void GglAppletScript::loadGadget() {
 void GglAppletScript::paintInterface(QPainter *p,
                                      const QStyleOptionGraphicsItem *option,
                                      const QRect &contentsRect) {
+#if 0
+  QRect r = contentsRect;
+  p->setPen(QColor(0, 0, 255));
+  p->drawLine(r.left(), r.top(), r.right(), r.bottom());
+  p->drawLine(r.left(), r.bottom(), r.right(), r.top());
+  p->drawRect(r);
+#endif
 }
 
 void GglAppletScript::mousePressEvent(QGraphicsSceneMouseEvent *event) {
