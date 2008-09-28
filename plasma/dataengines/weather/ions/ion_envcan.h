@@ -76,7 +76,7 @@ public:
     QString obsTimestamp;
   
     // Icon info to aproximate periods
-    QString iconPeriodHour;
+    int iconPeriodHour;
     QString iconPeriodAP;
     
     QString condition;

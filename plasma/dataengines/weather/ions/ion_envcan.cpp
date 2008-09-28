@@ -466,7 +466,7 @@ void EnvCanadaIon::parseDateTime(WeatherData& data, QXmlStreamReader& xml, Weath
                         xml.readElementText();
                         d->m_dateFormat = QDateTime::fromString(selectTimeStamp,"yyyyMMddHHmmss");
                         data.obsTimestamp = d->m_dateFormat.toString("dd.MM.yyyy @ hh:mm ap");
-                        data.iconPeriodHour = d->m_dateFormat.toString("hh");
+                        data.iconPeriodHour = d->m_dateFormat.toString("hh").toInt();
                         data.iconPeriodAP = d->m_dateFormat.toString("ap");
                     } else if (dateType == "forecastIssue") {
                         data.forecastTimestamp = xml.readElementText();
@@ -1183,7 +1183,7 @@ bool EnvCanadaIon::night(const QString& source)
 
 int EnvCanadaIon::periodHour(const QString& source)
 {
-    return d->m_weatherData[source].iconPeriodHour.toInt();
+    return d->m_weatherData[source].iconPeriodHour;
 }
 
 QString EnvCanadaIon::condition(const QString& source)
