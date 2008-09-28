@@ -165,7 +165,7 @@ static inline __m64 add(const __m64 m1, const __m64 m2)
 }
 
 
-static inline __m64 load(const __uint32_t pixel, const __m64 zero)
+static inline __m64 load(const quint32 pixel, const __m64 zero)
 {
     __m64 m = _mm_cvtsi32_si64(pixel);
     return _mm_unpacklo_pi8(m, zero);
@@ -181,7 +181,7 @@ static inline quint32 store(const __m64 pixel, const __m64 zero)
 static void scanline_blend_mmx(const quint32 *over, const quint8 a, const quint32 *under,
                                quint32 *result, uint length)
 {
-    register const __m64 alpha    = _mm_set1_pi16(__uint16_t (a));
+    register const __m64 alpha    = _mm_set1_pi16(quint16 (a));
     register const __m64 negalpha = _mm_xor_si64(alpha, _mm_set1_pi16 (0x00ff));
     register const __m64 zero     = _mm_setzero_si64();
 
