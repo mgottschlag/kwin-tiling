@@ -39,7 +39,7 @@ class ION_EXPORT IonInterface : public Plasma::DataEngine
 
 public:
 
-    enum ConditionIcons { ClearDay, FewCloudsDay, PartlyCloudyDay, Overcast,
+    enum ConditionIcons { ClearDay = 1, FewCloudsDay, PartlyCloudyDay, Overcast,
                           Showers, ScatteredShowers, Thunderstorm, Snow,
                           FewCloudsNight, PartlyCloudyNight, ClearNight,
                           Mist, NotAvailable };
