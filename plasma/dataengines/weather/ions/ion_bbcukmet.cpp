@@ -111,6 +111,7 @@ QMap<QString,IonInterface::ConditionIcons> UKMETIon::setupDayIconMappings(void)
 QMap<QString,IonInterface::ConditionIcons> UKMETIon::setupNightIconMappings(void)
 {
       QMap<QString,ConditionIcons> nightList;
+      nightList["clear"] = ClearNight;
       nightList["cloudy"] = Overcast;
       nightList["partly cloudy"] = PartlyCloudyNight;
       nightList["light showers"] = ScatteredShowers;
@@ -509,12 +510,13 @@ void UKMETIon::parseWeatherObservation(const QString& source, WeatherData& data,
                 QStringList conditionData = conditionString.split(":");
 
                 data.obsTime = conditionData[0];
-                kDebug() << "OBSERVATION TIME: " << data.obsTime;
-                kDebug() << QDateTime::fromString("0300 GMT", "hhmm 'GMT'").toLocalTime();
-
                 // Friday at 0200 GMT
-                
+                d->m_dateFormat =  QDateTime::fromString(data.obsTime.split("at")[1].trimmed(), "hhmm 'GMT'");
+                data.iconPeriodHour = d->m_dateFormat.toString("hh").toInt();
+                data.iconPeriodAP = d->m_dateFormat.toString("ap");
+ 
                 data.condition = conditionData[1].split(".")[0].trimmed();
+
             } else if (xml.name() == "link") {
                 d->m_place[source].XMLforecastURL = xml.readElementText();
             } else if (xml.name() == "description") {
@@ -638,6 +640,7 @@ void UKMETIon::parseFiveDayForecast(const QString& source, QXmlStreamReader& xml
                         break;
                     case Summary:
                         forecast->summary = dataText;
+                        forecast->iconName = getWeatherIcon(dayIcons(), forecast->summary.toLower());
                         dataItem++;
                         break;
                     case MaxTemp:
@@ -712,10 +715,10 @@ void UKMETIon::updateWeather(const QString& source)
     setData(weatherSource, "Current Conditions", condition(source));
 
     // Tell applet which icon to use for conditions and provide mapping for condition type to the icons to display
-    if (night(source) && periodHour(source) >= 4) {
-        setData(source, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
+    if (night(source) && periodHour(source) >= 16) {
+        setData(weatherSource, "Condition Icon", getWeatherIcon(nightIcons(), condition(source)));
     } else {
-        setData(source, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
+        setData(weatherSource, "Condition Icon", getWeatherIcon(dayIcons(), condition(source)));
     }
 
     setData(weatherSource, "Humidity", humidity(source));
@@ -778,7 +781,7 @@ bool UKMETIon::night(const QString& source)
 
 int UKMETIon::periodHour(const QString& source)
 {
-    return d->m_weatherData[source].iconPeriodHour.toInt();
+    return d->m_weatherData[source].iconPeriodHour;
 }
 
 QString UKMETIon::condition(const QString& source)

@@ -43,10 +43,11 @@ public:
     QString stationName;
     // Current observation information.
     QString obsTime;
-    QString iconPeriodHour;
+    int iconPeriodHour;
     QString iconPeriodAP;
 
     QString condition;
+    QString conditionIcon;
     QString temperature_C;
     QString temperature_F;
     QString windDirection;
