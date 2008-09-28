@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (C) 2007 by Shawn Starr <shawn.starr@rogers.com>            *
+ *   Copyright (C) 2007-2008 by Shawn Starr <shawn.starr@rogers.com>       *
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
@@ -104,7 +104,10 @@ QMap<QString,IonInterface::ConditionIcons> UKMETIon::setupDayIconMappings(void)
       dayList["sunny intervals"] = PartlyCloudyDay;
       dayList["partly cloudy"] = PartlyCloudyDay;
       dayList["cloudy"] = Overcast;
+      dayList["drizzle"] = ScatteredShowers;
+      dayList["hail showers"] = Showers;
       dayList["light showers"] = ScatteredShowers;
+      dayList["heavy showers"] = Showers;
       return dayList;
 }
 
@@ -115,6 +118,9 @@ QMap<QString,IonInterface::ConditionIcons> UKMETIon::setupNightIconMappings(void
       nightList["cloudy"] = Overcast;
       nightList["partly cloudy"] = PartlyCloudyNight;
       nightList["light showers"] = ScatteredShowers;
+      nightList["drizzle"] = ScatteredShowers;
+      nightList["hail showers"] = Showers;
+      nightList["heavy showers"] = Showers;
       return nightList;
 }
 
