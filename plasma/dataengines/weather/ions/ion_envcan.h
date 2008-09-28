@@ -38,8 +38,8 @@ class WeatherData
 {
 
 public:
-    // Warning info, can have more than one, especially in Canada, eh? :)
-    struct WarningInfo {
+    // WeatherEvent can have more than one, especially in Canada, eh? :)
+    struct WeatherEvent {
         QString url;
         QString type;
         QString priority;
@@ -96,7 +96,8 @@ public:
     QString windGust;
     QString windDirection;
 
-    QVector <WeatherData::WarningInfo *> warnings;
+    QVector <WeatherData::WeatherEvent *> watches;
+    QVector <WeatherData::WeatherEvent *> warnings;
 
     QString normalHigh;
     QString normalLow;
@@ -168,6 +169,7 @@ private:
     QString observationTime(const QString& source);
     bool night(const QString& source);
     int periodHour(const QString& source);
+    QMap<QString, QString> watches(const QString& source);
     QMap<QString, QString> warnings(const QString& source);
     QString condition(const QString& source);
     QMap<QString, QString> temperature(const QString& source);
@@ -200,7 +202,7 @@ private:
 
     // Parse weather XML data
     WeatherData parseWeatherSite(WeatherData& data, QXmlStreamReader& xml);
-    void parseDateTime(WeatherData& data, QXmlStreamReader& xml, WeatherData::WarningInfo* warning = NULL);
+    void parseDateTime(WeatherData& data, QXmlStreamReader& xml, WeatherData::WeatherEvent* event = NULL);
     void parseLocations(WeatherData& data, QXmlStreamReader& xml);
     void parseConditions(WeatherData& data, QXmlStreamReader& xml);
     void parseWarnings(WeatherData& data, QXmlStreamReader& xml);
