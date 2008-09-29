@@ -1,6 +1,7 @@
 [Misc]
 Name=CDE
 Name[hi]=सीडीई
+Name[kn]=ಸಿಡಿಇ
 Name[ml]=സിഡിഇ
 Name[sr]=ЦДЕ
 Name[te]=సిడిఈ
@@ -32,6 +33,7 @@ Comment[it]=Stile integrato CDE
 Comment[ja]=ビルトイン CDE スタイル (テーマなし)
 Comment[kk]=Құрамындағы нақыштарсыз CDE стилі
 Comment[km]=រចនាប័ទ្ម​ជាប់​ជាមួយ CDE ដែល​គ្មាន​ស្បែក​
+Comment[kn]=ಅಂತರ್ಭೂತ  ಪರಿಸರವಿನ್ಯಾಸವಿಲ್ಲದಂತಹ (ಥೀಮ್) ಸಿಡಿಇ ವೈಖರಿ
 Comment[ko]=내장된 테마를 적용하지 않은 CDE 스타일
 Comment[lt]=Įtaisytas betemis CDE stilius
 Comment[lv]=Iebūvētais, netēmotais CDE stils

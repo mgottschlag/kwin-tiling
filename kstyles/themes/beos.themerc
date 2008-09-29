@@ -1,6 +1,7 @@
 [Misc]
 Name=BeOS
 Name[hi]=बीई-ओएस
+Name[kn]=ಬಿಇಓಎಸ್
 Name[ml]=ബിഇഒഎസ്
 Name[sr]=БеОС
 Name[te]=బిఓఎస్
@@ -35,6 +36,7 @@ Comment[it]=Stile ispirato a BeOS
 Comment[ja]=BeOS 風のスタイル (テーマなし)
 Comment[kk]=Нақыштарсыз BeOS-секілді стиль
 Comment[km]=រចនាប័ទ្ម​ដូចជា BeOS ដែល​គ្មាន​ស្បែក
+Comment[kn]=ಬಿಇಓಎಸ್ ನಂತಹ ಪರಿಸರವಿನ್ಯಾಸವಿಲ್ಲದಂತಹ (ಥೀಮ್) ವೈಖರಿ
 Comment[ko]=테마를 적용하지 않은 BeOS를 닮은 스타일
 Comment[ku]=Cureyê BeOS- wekî bêdirb
 Comment[lt]=Betemis BeOS tipo stilius

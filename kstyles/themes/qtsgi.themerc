@@ -1,5 +1,6 @@
 [Misc]
 Name=SGI
+Name[kn]=ಎಸ್ ಜಿಐ
 Name[ml]=എസ്ജിഐ
 Name[ne]=एसजीआई
 Name[sr]=СГИ
@@ -30,6 +31,7 @@ Comment[it]=Stile integrato SGI
 Comment[ja]=ビルトイン SGI スタイル
 Comment[kk]=Құрамындағы Platinum стилі
 Comment[km]=រចនាប័ទ្ម​ជាប់​ជាមួយ SGI
+Comment[kn]=ಅಂತರ್ಭೂತ  ಎಸ್ ಜಿಐ ವೈಖರಿ
 Comment[ko]=내장된 SGI 스타일
 Comment[lt]=Įtaisytas SGI stilius
 Comment[lv]=Iebūvētais  SGI stils
