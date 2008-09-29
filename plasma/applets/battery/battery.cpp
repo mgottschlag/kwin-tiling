@@ -945,7 +945,7 @@ void Battery::connectSources() {
 
     dataEngine("powermanagement")->connectSource(I18N_NOOP("AC Adapter"), this);
     dataEngine("powermanagement")->connectSource(I18N_NOOP("PowerDevil"), this);
-    dataEngine("powermanagement")->connectSource(I18N_NOOP("Sleepstates"), this);
+    //dataEngine("powermanagement")->connectSource(I18N_NOOP("SleepStates"), this);
 
     connect(dataEngine("powermanagement"), SIGNAL(sourceAdded(QString)),
             this,                          SLOT(sourceAdded(QString)));
