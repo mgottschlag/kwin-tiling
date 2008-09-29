@@ -369,12 +369,13 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
     if (!m_isEmbedded) {
         int row = 0;
         int rowHeight = 30;
+        int columnWidth = 80;
 
         QGraphicsWidget *controls = new QGraphicsWidget(item);
         QGraphicsGridLayout *controlsLayout = new QGraphicsGridLayout(controls);
         controlsLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         controlsLayout->setColumnPreferredWidth(0, rowHeight);
-        controlsLayout->setColumnMinimumWidth(1, 240);
+        controlsLayout->setColumnMinimumWidth(1, 2*columnWidth);
         controlsLayout->setColumnPreferredWidth(2, rowHeight);
 
         m_statusLabel = new Plasma::Label(controls);
@@ -388,11 +389,11 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         row++;
 
         QGraphicsGridLayout *batteryLayout = new QGraphicsGridLayout(controlsLayout);
-        batteryLayout->setColumnPreferredWidth(0, 100);
-        batteryLayout->setColumnPreferredWidth(1, 100);
+        batteryLayout->setColumnPreferredWidth(0, columnWidth);
+        batteryLayout->setColumnPreferredWidth(1, 60);
 
         m_batteryLabel = new Plasma::Label(controls);
-        m_batteryLabel->setMinimumSize(100, 100);
+        m_batteryLabel->setMinimumSize(100, columnWidth);
         m_batteryLabel->setText(i18n("Battery:\nCPU:"));
         m_batteryLabel->setStyleSheet(QString("font: %1pt;").arg(m_font.pointSize() +1));
         m_batteryLabel->nativeWidget()->setWordWrap(false);
@@ -406,7 +407,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
             applet->setParentItem(controls);
             applet->setEmbedded(true);
             applet->setSvgFile(m_svgFile);
-            applet->setMinimumSize(100, 100);
+            applet->setMinimumSize(80, columnWidth);
             applet->setBackgroundHints(NoBackground);
             applet->setFlag(QGraphicsItem::ItemIsMovable, false);
             applet->init();
