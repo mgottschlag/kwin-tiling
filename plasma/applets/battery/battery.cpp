@@ -136,7 +136,7 @@ void Battery::init()
     connectSources();
 
     foreach (const QString &battery_source, battery_sources) {
-        kDebug() << "BatterySource:" << battery_source;
+        //kDebug() << "BatterySource:" << battery_source;
         dataUpdated(battery_source, dataEngine("powermanagement")->query(battery_source));
     }
     m_numOfBattery = battery_sources.size();
@@ -418,20 +418,6 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         controlsLayout->setRowSpacing(row, 20);
         row++;
 
-        m_profileLabel = new Plasma::Label(controls);
-        m_profileLabel->setStyleSheet(QString("font: bold;"));
-        m_profileLabel->setText("Performance Profile");
-        controlsLayout->addItem(m_profileLabel, row, 0, 1, 3);
-        row++;
-
-        m_profileCombo = new Plasma::ComboBox(controls);
-        connect(m_profileCombo, SIGNAL(activated(QString)),
-                this, SLOT(setProfile(QString)));
-
-        controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
-        controlsLayout->setRowSpacing(row, 20);
-        row++;
-
         Plasma::Label *brightnessLabel = new Plasma::Label(controls);
         brightnessLabel->setStyleSheet(QString("font: bold;"));
         brightnessLabel->setText(i18n("Screen Brightness"));
@@ -461,6 +447,19 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         controlsLayout->setRowSpacing(row, 20);
         row++;
 
+        m_profileLabel = new Plasma::Label(controls);
+        m_profileLabel->setStyleSheet(QString("font: bold;"));
+        m_profileLabel->setText("Performance Profile");
+        controlsLayout->addItem(m_profileLabel, row, 0, 1, 3);
+        row++;
+
+        m_profileCombo = new Plasma::ComboBox(controls);
+        connect(m_profileCombo, SIGNAL(activated(QString)),
+                this, SLOT(setProfile(QString)));
+
+        controlsLayout->addItem(m_profileCombo, row, 1, 1, 2);
+        controlsLayout->setRowSpacing(row, 20);
+        row++;
 
         Plasma::Label *actionsLabel = new Plasma::Label(controls);
         actionsLabel->setStyleSheet(QString("font: bold;"));
@@ -469,47 +468,58 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         controlsLayout->addItem(actionsLabel, row, 0, 1, 3);
         row++;
 
-        QGraphicsLinearLayout *actionsLayout = new QGraphicsLinearLayout(controlsLayout);
+        QGraphicsGridLayout *actionsLayout = new QGraphicsGridLayout(controlsLayout);
+        actionsLayout->setColumnSpacing(0, 0);
+        actionsLayout->setColumnSpacing(1, 0);
 
         QSet<Solid::PowerManagement::SleepState> sleepstates = Solid::PowerManagement::supportedSleepStates();
         foreach (const Solid::PowerManagement::SleepState &sleepstate, sleepstates) {
             if (sleepstate == Solid::PowerManagement::StandbyState) {
                 // Not interesting at this point ...
-                kDebug() << "standby supported." << Solid::PowerManagement::StandbyState;
+                //kDebug() << "standby supported." << Solid::PowerManagement::StandbyState;
             } else if (sleepstate == Solid::PowerManagement::SuspendState) {
                 Plasma::Icon *suspendButton = new Plasma::Icon(controls);
                 suspendButton->setIcon("system-suspend");
-                actionsLayout->addItem(suspendButton);
+                suspendButton->setText(i18n("Sleep"));
+                suspendButton->setOrientation(Qt::Horizontal);
+                suspendButton->setMaximumHeight(36);
+                actionsLayout->addItem(suspendButton, 0, 0);
                 connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
 
-                kDebug() << "suspend-to-ram supported." << Solid::PowerManagement::StandbyState;
+                //kDebug() << "suspend-to-ram supported." << Solid::PowerManagement::SuspendState;
             } else if (sleepstate == Solid::PowerManagement::HibernateState) {
                 Plasma::Icon *hibernateButton = new Plasma::Icon(controls);
                 hibernateButton->setIcon("system-suspend-hibernate");
-                actionsLayout->addItem(hibernateButton);
+                hibernateButton->setText(i18n("Hibernate"));
+                hibernateButton->setOrientation(Qt::Horizontal);
+                hibernateButton->setMaximumHeight(36);
+                actionsLayout->addItem(hibernateButton, 0, 1);
                 connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
-                kDebug() << "suspend-to-disk supported." << Solid::PowerManagement::HibernateState;
+                //kDebug() << "suspend-to-disk supported." << Solid::PowerManagement::HibernateState;
             }
         }
 
-
+        /*
         Plasma::Icon *shutdownButton = new Plasma::Icon(controls);
         shutdownButton->setIcon("system-shutdown");
         connect(shutdownButton, SIGNAL(clicked()), this, SLOT(shutdown()));
         actionsLayout->addItem(shutdownButton);
-
-
-        controlsLayout->addItem(actionsLayout, row, 1, 1, 2);
-        //controlsLayout->setRowSpacing(row, 20);
-        row++;
-
+        */
+        actionsLayout->setRowSpacing(0, 10);
         Plasma::PushButton *configButton = new Plasma::PushButton(controls);
         configButton->setText(i18n("More ..."));
         configButton->nativeWidget()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
         connect(configButton, SIGNAL(clicked()),
                 this, SLOT(openConfig()));
-        controlsLayout->addItem(configButton, row, 1, 1, 2);
+        //configButton->setMaximumHeight(30);
+        actionsLayout->addItem(configButton, 1, 1);
+
+        controlsLayout->addItem(actionsLayout, row, 1, 1, 2);
+        //controlsLayout->setRowSpacing(row, 20);
         row++;
+
+        //controlsLayout->addItem(configButton, row, 1, 1, 2);
+        //row++;
 
         controls->setLayout(controlsLayout);
         item->setWidget(controls);
@@ -553,7 +563,7 @@ void Battery::updateStatus()
             }
             batteryLabelText.append("%");
             if (m_acadapter_plugged) {
-                batteryLabelText.append((i18n(" (charging) <br />")));
+                batteryLabelText.append((i18n(" charged<br />")));
                 batteryLabelText.append(i18n("<br /><b>AC Adapter:</b> Plugged in"));
             } else {
                 batteryLabelText.append((i18n(" (discharging)<br />")));
