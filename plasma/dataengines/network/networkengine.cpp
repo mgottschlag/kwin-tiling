@@ -155,11 +155,13 @@ void NetworkEngine::updateInterfaceData(const QString &source, const Solid::Cont
     Q_ASSERT(iface);
     Solid::Control::IPv4Config network = iface->ipV4Config();
 
+#if 0
     if (network.isValid()) {
         setData(source, I18N_NOOP("Broadcast"), network.broadcast());
     } else {
         removeData(source, I18N_NOOP("Broadcast"));
     }
+#endif
 
     QList<Solid::Control::IPv4Address> addresses = network.addresses();
     if (addresses.isEmpty()) {
