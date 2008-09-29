@@ -449,7 +449,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
 
         m_profileLabel = new Plasma::Label(controls);
         m_profileLabel->setStyleSheet(QString("font: bold;"));
-        m_profileLabel->setText("Performance Profile");
+        m_profileLabel->setText("Power Profile");
         controlsLayout->addItem(m_profileLabel, row, 0, 1, 3);
         row++;
 
@@ -614,7 +614,7 @@ void Battery::openConfig()
 void Battery::setProfile(const QString &profile)
 {
     if (m_currentProfile != profile) {
-        kDebug() << "Changing performance profile to " << profile;
+        kDebug() << "Changing power profile to " << profile;
         QDBusConnection dbus( QDBusConnection::sessionBus() );
         QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
         iface.call( "refreshStatus" );
