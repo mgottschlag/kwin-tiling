@@ -382,7 +382,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         //m_statusLabel->setMinimumSize(200, rowHeight);
         m_statusLabel->setStyleSheet(QString("font: bold;"));
         //m_statusLabel->nativeWidget()->setWordWrap(false);
-        m_statusLabel->setText("Battery Status");
+        m_statusLabel->setText(i18n("Battery Status"));
 
         //updateStatus();
         controlsLayout->addItem(m_statusLabel, row, 0, 1, 3);
@@ -449,7 +449,7 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
 
         m_profileLabel = new Plasma::Label(controls);
         m_profileLabel->setStyleSheet(QString("font: bold;"));
-        m_profileLabel->setText("Power Profile");
+        m_profileLabel->setText(i18n("Power Profile"));
         controlsLayout->addItem(m_profileLabel, row, 0, 1, 3);
         row++;
 
