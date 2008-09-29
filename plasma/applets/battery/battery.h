@@ -78,12 +78,11 @@ class Battery : public Plasma::PopupApplet
         void sourceRemoved(const QString &source);
         void brightnessChanged(const int brightness);
         void updateSlider(const float brightness);
+        void setFullBrightness();
         void openConfig();
         void setProfile(const QString &profile);
         void suspend();
         void hibernate();
-        void shutdown();
-        void halt();
 
     private:
         Q_ENUMS( m_batteryStyle )

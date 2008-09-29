@@ -186,7 +186,6 @@ void Battery::constraintsEvent(Plasma::Constraints constraints)
     }
 }
 
-
 QSizeF Battery::sizeHint(const Qt::SizeHint which, const QSizeF& constraint) const
 {
     Q_UNUSED( which );
@@ -203,7 +202,6 @@ QSizeF Battery::sizeHint(const Qt::SizeHint which, const QSizeF& constraint) con
     }
     return sizeHint;
 }
-
 
 void Battery::dataUpdated(const QString& source, const Plasma::DataEngine::Data &data)
 {
@@ -317,7 +315,6 @@ Battery::~Battery()
 
 void Battery::suspend()
 {
-    //kDebug() << "Suspending as you wish ...";
     QDBusConnection dbus( QDBusConnection::sessionBus() );
     QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
     iface.call( "suspend", Solid::Control::PowerManager::ToRam );
@@ -325,24 +322,9 @@ void Battery::suspend()
 
 void Battery::hibernate()
 {
-    //kDebug() << "Hibernating as you wish ...";
     QDBusConnection dbus( QDBusConnection::sessionBus() );
     QDBusInterface iface( "org.kde.kded", "/modules/powerdevil", "org.kde.PowerDevil", dbus );
     iface.call( "suspend", Solid::Control::PowerManager::ToDisk );
-}
-
-void Battery::shutdown()
-{
-    QTimer::singleShot(0, this, SLOT(halt()));
-}
-
-void Battery::halt()
-{
-    //kDebug() << "Shutting down as you wish ...";
-//FIXME: the proper fix is to implement the KWorkSpace methods for Windows
-#ifndef Q_WS_WIN
-    KWorkSpace::requestShutDown(KWorkSpace::ShutdownConfirmDefault, KWorkSpace::ShutdownTypeHalt);
-#endif
 }
 
 void Battery::brightnessChanged(const int brightness)
@@ -353,6 +335,12 @@ void Battery::brightnessChanged(const int brightness)
 void Battery::updateSlider(const float brightness)
 {
     m_brightnessSlider->setValue((int) brightness);
+}
+
+void Battery::setFullBrightness()
+{
+    brightnessChanged(100);
+    updateSlider(100);
 }
 
 void Battery::setEmbedded(const bool embedded)
@@ -379,12 +367,9 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         controlsLayout->setColumnPreferredWidth(2, rowHeight);
 
         m_statusLabel = new Plasma::Label(controls);
-        //m_statusLabel->setMinimumSize(200, rowHeight);
         m_statusLabel->setStyleSheet(QString("font: bold;"));
-        //m_statusLabel->nativeWidget()->setWordWrap(false);
         m_statusLabel->setText(i18n("Battery Status"));
 
-        //updateStatus();
         controlsLayout->addItem(m_statusLabel, row, 0, 1, 3);
         row++;
 
@@ -442,7 +427,8 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
 
         Plasma::Icon *brightnessIcon = new Plasma::Icon(controls);
         brightnessIcon->setIcon("ktip");
-        brightnessIcon->setAcceptsHoverEvents(false);
+        connect(brightnessIcon, SIGNAL(clicked()),
+                this, SLOT(setFullBrightness()));
         controlsLayout->addItem(brightnessIcon, row, 2, 1, 1);
         controlsLayout->setRowSpacing(row, 20);
         row++;
@@ -472,11 +458,12 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
         actionsLayout->setColumnSpacing(0, 0);
         actionsLayout->setColumnSpacing(1, 0);
 
+        // Sleep and Hibernate buttons
         QSet<Solid::PowerManagement::SleepState> sleepstates = Solid::PowerManagement::supportedSleepStates();
         foreach (const Solid::PowerManagement::SleepState &sleepstate, sleepstates) {
             if (sleepstate == Solid::PowerManagement::StandbyState) {
                 // Not interesting at this point ...
-                //kDebug() << "standby supported." << Solid::PowerManagement::StandbyState;
+
             } else if (sleepstate == Solid::PowerManagement::SuspendState) {
                 Plasma::Icon *suspendButton = new Plasma::Icon(controls);
                 suspendButton->setIcon("system-suspend");
@@ -486,7 +473,6 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
                 actionsLayout->addItem(suspendButton, 0, 0);
                 connect(suspendButton, SIGNAL(clicked()), this, SLOT(suspend()));
 
-                //kDebug() << "suspend-to-ram supported." << Solid::PowerManagement::SuspendState;
             } else if (sleepstate == Solid::PowerManagement::HibernateState) {
                 Plasma::Icon *hibernateButton = new Plasma::Icon(controls);
                 hibernateButton->setIcon("system-suspend-hibernate");
@@ -495,31 +481,20 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
                 hibernateButton->setMaximumHeight(36);
                 actionsLayout->addItem(hibernateButton, 0, 1);
                 connect(hibernateButton, SIGNAL(clicked()), this, SLOT(hibernate()));
-                //kDebug() << "suspend-to-disk supported." << Solid::PowerManagement::HibernateState;
             }
         }
 
-        /*
-        Plasma::Icon *shutdownButton = new Plasma::Icon(controls);
-        shutdownButton->setIcon("system-shutdown");
-        connect(shutdownButton, SIGNAL(clicked()), this, SLOT(shutdown()));
-        actionsLayout->addItem(shutdownButton);
-        */
+        // More settings button
         actionsLayout->setRowSpacing(0, 10);
         Plasma::PushButton *configButton = new Plasma::PushButton(controls);
         configButton->setText(i18n("More ..."));
         configButton->nativeWidget()->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
         connect(configButton, SIGNAL(clicked()),
                 this, SLOT(openConfig()));
-        //configButton->setMaximumHeight(30);
         actionsLayout->addItem(configButton, 1, 1);
 
         controlsLayout->addItem(actionsLayout, row, 1, 1, 2);
-        //controlsLayout->setRowSpacing(row, 20);
         row++;
-
-        //controlsLayout->addItem(configButton, row, 1, 1, 2);
-        //row++;
 
         controls->setLayout(controlsLayout);
         item->setWidget(controls);
@@ -529,20 +504,16 @@ void Battery::initBatteryExtender(Plasma::ExtenderItem *item)
 
 void Battery::popupEvent(bool show)
 {
-    // Not sure why m_extenderVisible gets set to false somewhen,
-    // FIXME: re-enable (set = show) to save some cycles
     m_extenderVisible = show;
-    //kDebug() << "visible?" << m_extenderVisible;
     updateStatus();
 }
 
 void Battery::updateStatus()
 {
     if (!m_extenderVisible) {
-        // We could chicken out here ...
-        //return;
+        return;
     }
-    //kDebug() << "updating extender ...";
+
     if (m_numOfBattery && m_batteryLabel) {
         QHashIterator<QString, QHash<QString, QVariant > > battery_data(m_batteries_data);
         QString batteryLabelText;
@@ -569,19 +540,10 @@ void Battery::updateStatus()
                 batteryLabelText.append((i18n(" (discharging)<br />")));
                 batteryLabelText.append(i18n("<br /><b>AC Adapter:</b> Not plugged in"));
             }
-            //kDebug() << "TEXT:" << batteryLabelText;
         }
         m_batteryLabel->setText(batteryLabelText);
     }
-    /*
-    if (m_statusLabel) {
-        if (m_acadapter_plugged) {
-            m_statusLabel->setText(i18n("AC Adapter Plugged in"));
-        } else {
-            m_statusLabel->setText(i18n("On Battery"));
-        }
-    }
-    */
+
     if (!m_availableProfiles.empty() && m_profileCombo) {
         m_profileCombo->clear();
         m_profileCombo->addItem(m_currentProfile);
@@ -945,7 +907,6 @@ void Battery::connectSources() {
 
     dataEngine("powermanagement")->connectSource(I18N_NOOP("AC Adapter"), this);
     dataEngine("powermanagement")->connectSource(I18N_NOOP("PowerDevil"), this);
-    //dataEngine("powermanagement")->connectSource(I18N_NOOP("SleepStates"), this);
 
     connect(dataEngine("powermanagement"), SIGNAL(sourceAdded(QString)),
             this,                          SLOT(sourceAdded(QString)));
