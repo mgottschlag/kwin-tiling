@@ -72,6 +72,8 @@ void checkComposite()
         kError() << "Cannot connect to the X server";
         return;
     }
+    if( qgetenv( "KDE_SKIP_ARGB_VISUALS" ) == "1" )
+        return;
 
     int screen = DefaultScreen(dpy);
     int eventBase, errorBase;

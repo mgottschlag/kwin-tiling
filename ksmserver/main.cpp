@@ -83,6 +83,8 @@ bool writeTest(QByteArray path)
 
 void checkComposite()
 {
+    if( qgetenv( "KDE_SKIP_ARGB_VISUALS" ) == "1" )
+        return;
     // thanks to zack rusin and frederik for pointing me in the right direction
     // for the following bits of X11 code
     dpy = XOpenDisplay(0); // open default display
@@ -115,11 +117,13 @@ void checkComposite()
                 visual = xvi[i].visual;
                 colormap = XCreateColormap(dpy, RootWindow(dpy, screen),
                                             visual, AllocNone);
-                break;
+                return;
             }
         }
 
     }
+    XCloseDisplay( dpy );
+    dpy = NULL;
 }
 
 void sanity_check( int argc, char* argv[], KAboutData* aboutDataPtr )
@@ -259,11 +263,10 @@ extern "C" KDE_EXPORT int kdemain( int argc, char* argv[] )
     checkComposite();
     KApplication *a;
 
-    if (DefaultDepth(dpy, DefaultScreen(dpy)) >= 24) { // 16bpp breaks the software logout effect for some reason???
+    if( dpy != NULL && DefaultDepth(dpy, DefaultScreen(dpy)) >= 24) // 16bpp breaks the software logout effect for some reason???
         a = new KApplication(dpy, visual ? Qt::HANDLE(visual) : 0, colormap ? Qt::HANDLE(colormap) : 0);
-    } else {
+    else
         a = new KApplication(true);
-    }
     fcntl(ConnectionNumber(QX11Info::display()), F_SETFD, 1);
 
     KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
